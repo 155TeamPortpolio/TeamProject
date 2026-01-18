@@ -8,6 +8,7 @@ struct OrbitCamPoseState
 {
     Vector2 targetRotDeg{};
     Vector2 curRotDeg{};
+    _float  desiredDist{};
     _float  targetDist{};
     _float  curDist{};
     Vector3 targetPivot{};

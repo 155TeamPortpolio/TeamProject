@@ -59,7 +59,7 @@ HRESULT CThugAssaulter::Initialize(INIT_DESC* pArg)
 	//m_pTransform->Scale({ 0.01f,0.01f,0.01f });
 
 	auto pModel = Get_Component<CSkeletalModel>();
- 	pModel->Link_Model(G_GlobalLevelKey, "ThugAssaulter.model");
+	pModel->Link_Model(G_GlobalLevelKey, "ThugAssaulter.model");
 
 	auto pMaterial = Get_Component<CMaterial>();
 	pMaterial->Link_Material(G_GlobalLevelKey, "ThugAssaulter.mat");
@@ -78,13 +78,10 @@ HRESULT CThugAssaulter::Initialize(INIT_DESC* pArg)
 	if (FAILED(Initialize_StateMachine()))
 		return E_FAIL;
 
-	// ï¿½Ó½ï¿½ È®ï¿½Î¿ï¿½
+	// ÀÓ½Ã È®ÀÎ¿ë
 	CGameInstance::GetInstance()->Get_GUISystem()->Get_Context()->pSelectedObject = this;
-	// ï¿½Ó½ï¿½
-
-	Create_MeshPyramid();
-	// ï¿½Ó½ï¿½
-	m_tStatus.iNowHP = 100;
+	// ÀÓ½Ã
+	m_tStatus.iMaxHP = 100;
 
 	return S_OK;
 }
@@ -113,7 +110,7 @@ void CThugAssaulter::Update(_float dt)
 void CThugAssaulter::Late_Update(_float dt)
 {
 	Get_Component<CCharacterController>()->Late_Update(dt);
-	
+
 	__super::Late_Update(dt);
 }
 
@@ -137,7 +134,7 @@ void CThugAssaulter::Render_GUI()
 	ImGui::BeginChild("##ThugAssaulterStatus", ImVec2{ 0, childHeight }, true);
 	ImGui::Text("Current State : %s", m_pStateMachine->Get_CurrentStateName().c_str());
 
-	// bool ï¿½ï¿½ï¿½ï¿½ È®ï¿½Î¿ï¿½(ï¿½ï¿½ï¿½ï¿½ ï¿½Ò°ï¿½)
+	// bool º¯¼ö È®ÀÎ¿ë(¼öÁ¤ ºÒ°¡)
 	ImGui::BeginDisabled(true);
 	ImGui::EndDisabled();
 
@@ -148,7 +145,7 @@ void CThugAssaulter::Render_GUI()
 	ImGui::SeparatorText("Status");
 	auto pCharacter = GetCharacterOnField();
 	if (nullptr != pCharacter) {
-		ImGui::BeginChild("TracePlayer##ThugAssaulterStatus", ImVec2{ 0, childHeight + textLineHeight * 2.f }, true);
+		ImGui::BeginChild("TracePlayer##ThugAssaulterStatus", ImVec2{ 0, childHeight + textLineHeight * 4.f }, true);
 
 		ImGui::Text("AnimName : %s", Get_Component<CAnimator3D>()->Get_CurAnimName().c_str());
 		ImGui::Text("SelfDir: %.2f, %.2f, %.2f", m_tTargetingInfo.vDirSelfLook.x, m_tTargetingInfo.vDirSelfLook.y, m_tTargetingInfo.vDirSelfLook.z);
@@ -159,6 +156,7 @@ void CThugAssaulter::Render_GUI()
 		ImGui::BeginDisabled(true);
 		//ImGui::Checkbox(u8"isLookPlayer", &m_isLookPlayer);
 		ImGui::Checkbox("IsGroggy", &m_isGroggy);
+		ImGui::Checkbox("IsOnAttack", &m_isOnAttack);
 		ImGui::EndDisabled();
 
 		ImGui::EndChild();
@@ -173,36 +171,36 @@ void CThugAssaulter::Render_GUI()
 	if (ImGui::TreeNode("Test State##ThugAssaulterCheckState")) {
 		//ImGui::BeginChild("State##ThugBulkyEnforcerStatus", ImVec2{ 0, childHeight }, true);
 
-		if (ImGui::TreeNode("AttackState##ThugAssaulterTestState_Attack")) 
+		if (ImGui::TreeNode("AttackState##ThugAssaulterTestState_Attack"))
 		{
-			if (ImGui::Button(u8"1. Attack01")) 
+			if (ImGui::Button(u8"1. Attack01"))
 			{
 				m_pStateMachine->Set_Int("AttackPattern", 1);
 				m_pStateMachine->Set_Trigger("Idle_To_Attack");
 			}
-			if (ImGui::Button(u8"2. Attack02")) 
+			if (ImGui::Button(u8"2. Attack02"))
 			{
 				m_pStateMachine->Set_Int("AttackPattern", 2);
 				m_pStateMachine->Set_Trigger("Idle_To_Attack");
 			}
-			if (ImGui::Button(u8"3. Attack03")) 
+			if (ImGui::Button(u8"3. Attack03"))
 			{
 				m_pStateMachine->Set_Int("AttackPattern", 3);
 				m_pStateMachine->Set_Trigger("Idle_To_Attack");
 			}
-			if (ImGui::Button(u8"4. Attack04")) 
+			if (ImGui::Button(u8"4. Attack04"))
 			{
 				m_pStateMachine->Set_Int("AttackPattern", 4);
 				m_pStateMachine->Set_Trigger("Idle_To_Attack");
 			}
 			ImGui::TreePop();
 		}
-		if (ImGui::TreeNode("Death##ThugAssaulterTestDeath")) 
+		if (ImGui::TreeNode("Death##ThugAssaulterTestDeath"))
 		{
 			if (ImGui::Button("Death Front"))
 				m_pStateMachine->Change_State("Death");
 
-			if (ImGui::Button("Death Back")) 
+			if (ImGui::Button("Death Back"))
 			{
 				m_pStateMachine->Set_Bool("DeathBack", true);
 				m_pStateMachine->Change_State("Death");
@@ -210,14 +208,14 @@ void CThugAssaulter::Render_GUI()
 
 			ImGui::TreePop();
 		}
-		if (ImGui::TreeNode("Groggy&Hit##ThugAssaulterTestGroggy&Hit")) 
+		if (ImGui::TreeNode("Groggy&Hit##ThugAssaulterTestGroggy&Hit"))
 		{
 			if (ImGui::Button("Increase Groggy value 30"))
 				m_tStatus.iGroggyValue += 30;
 
 			if (ImGui::Button("Hit"))
 				TakeDamage(DAMAGE_TYPE::NORMAL, 20.f);
-		
+
 			if (ImGui::Button("Execute"))
 				m_tStatus.iNowHP -= m_tStatus.iMaxHP;
 
@@ -240,8 +238,17 @@ void CThugAssaulter::Render_GUI()
 	m_pStateMachine->Render_GUI();
 #pragma endregion
 
-	// BattleSystem ï¿½Ã°ï¿½ È®ï¿½Î¿ï¿½
-	if (ImGui::TreeNode("BattleSystem TimeScale Check##TimeScaleCheck")) {
+	if (ImGui::TreeNode("BattleSystem TimeScale Check##TimeScaleCheck"))
+	{
+		if (ImGui::Button(u8"È¸ÇÇ È¿°ú##BattleSystemVFXEvade"))
+			BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::EVADE);
+
+
+		ImGui::TreePop();
+	}
+	// BattleSystem ½Ã°£ È®ÀÎ¿ë
+	if (ImGui::TreeNode("BattleSystem TimeScale Check##TimeScaleCheck"))
+	{
 		ImGui::BeginChild("##BattleSystemTimeScaleCheck", ImVec2{ 0, childHeight + textLineHeight * 15.f }, true);
 
 		auto pTimeScales = BattleSystem()->GetTimeScales();
@@ -271,14 +278,14 @@ void CThugAssaulter::Render_GUI()
 		}
 		ImGui::DragFloat("Scale Value##scalevalue", &m_fTestScaleValue, 0.1f);
 		ImGui::DragFloat("Scale Duration##scaleDuration", &m_fTestScaleDuration, 0.1f);
-		
+
 		if (ImGui::Button("Player TimeScale"))
 			BattleSystem()->StartTimeScale(CBattleSystem::BATTLE_OBJ_TYPE::PLAYER, m_fTestScaleDuration, m_fTestScaleValue, 0.f, 0.f);
-		
+
 		ImGui::SameLine(0.f, 10.f);
 		if (ImGui::Button("Monster TimeScale"))
 			BattleSystem()->StartTimeScale(CBattleSystem::BATTLE_OBJ_TYPE::MONSTER, m_fTestScaleDuration, m_fTestScaleValue, 0.f, 0.f);
-		
+
 		ImGui::EndChild();
 		ImGui::TreePop();
 	}
@@ -304,15 +311,15 @@ HRESULT CThugAssaulter::Ready_Children(INIT_DESC* pArg)
 	WeaponDesc.pOwnerAnimator3D = Get_Component<CAnimator3D>();
 	WeaponDesc.eAttackColliderType = COLLIDER_TYPE::BOX;
 	WeaponDesc.vCenter = { 0.f, 0.f,-0.7f };
-	WeaponDesc.vAttackSize = { 0.15f, 0.15f, 1.1f };
-	WeaponDesc.vTriggerSize = { 2.f,0.f,0.f };
+	WeaponDesc.vAttackSize = { 0.2f, 0.2f, 1.1f };
+	WeaponDesc.vTriggerSize = { 4.f,0.f,0.f };
 
 	if (FAILED(AttachBattleColliderObject(&WeaponDesc)))
 		return E_FAIL;
 
 	Create_AttackSign("Bip001_Head");
-	Create_MeshPyramid();
 	Create_UIEnemyStatus("Bip001_Spine2");
+	Create_MeshPyramid();
 
 	return S_OK;
 }
@@ -356,7 +363,7 @@ void CThugAssaulter::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage)
 		return;
 
 
- 	switch (eDamageType)
+	switch (eDamageType)
 	{
 	case Client::DAMAGE_TYPE::NORMAL:
 	{
@@ -381,7 +388,7 @@ void CThugAssaulter::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage)
 			.LayerBlend(1.f, 0.f, 1.f, EaseType::Linear)
 			.Loop(false)
 			.Apply();
-		
+
 		m_tStatus.iNowHP -= fDamage * 1.5f;
 	}
 	else
@@ -395,11 +402,8 @@ void CThugAssaulter::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage)
 		m_tStatus.iGroggyValue += 16;
 	}
 
-	//m_tStatus.iNowHP -= fDamage;
-	
-
-
-
+	if (0.f > m_tStatus.iNowHP)
+		m_tStatus.iNowHP = 0.f;
 }
 
 /* For.State Machine */
@@ -420,7 +424,7 @@ HRESULT CThugAssaulter::Initialize_StateMachine()
 
 	m_pStateMachine->Set_DefaultState("Born");
 	m_pStateMachine->Initialize(this);
-	
+
 	Get_Component<CAnimator3D>()->Set_Animation("ThugAssaulter_Ani_Born")
 		.Apply();
 
@@ -444,16 +448,16 @@ HRESULT CThugAssaulter::Initialize_Transitions()
 {
 	m_pStateMachine->Register_Transition("Born", "Idle",
 		CStateMachine<CThugAssaulter>::CONDITION_ANIMATION_END);
-	
+
 	m_pStateMachine->Register_Transition("Idle", "Attack",
 		CStateMachine<CThugAssaulter>::CONDITION_TRIGGER, "Idle_To_Attack");
-	
+
 	m_pStateMachine->Register_Transition("Idle", "Move",
 		CStateMachine<CThugAssaulter>::CONDITION_TRIGGER, "Idle_To_Move");
-	
+
 	m_pStateMachine->Register_Transition("Idle", "Chase",
 		CStateMachine<CThugAssaulter>::CONDITION_TRIGGER, "Idle_To_Chase");
-	
+
 	m_pStateMachine->Register_Transition("Idle", "Death",
 		CStateMachine<CThugAssaulter>::CONDITION_TRIGGER, "Idle_To_Death");
 
@@ -465,18 +469,18 @@ HRESULT CThugAssaulter::Initialize_Transitions()
 
 HRESULT CThugAssaulter::Ready_Rules()
 {
-	// x = Idleï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Â·ï¿½ ï¿½Ñ¾î°¡ï¿½ï¿½ ï¿½ï¿½Å¸ï¿½ï¿½, y = dt ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½Ì¸Ó¿ï¿½
+	// x = Idle¿¡¼­ ´ÙÀ½ »óÅÂ·Î ³Ñ¾î°¡´Â ÄðÅ¸ÀÓ, y = dt ´õÇÑ Å¸ÀÌ¸Ó¿ë
 	m_vIdleTime = { 1.f, 0.f };
-	
-	//// Target ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (default = 5.f)
+
+	//// Target °¨Áö ¹üÀ§ (default = 5.f)
 	//m_fDetectedRange = 5.f;
-	
+
 	m_tHysteriesis.fEvadeEnter = 2.f;
 	m_tHysteriesis.fComboEnter = 3.f;
 	m_tHysteriesis.fComboExit = 4.f;
 	m_tHysteriesis.fChaseEnter = 7.f;
 	m_tHysteriesis.fChaseExit = 5.f;
-	
+
 	return S_OK;
 }
 
@@ -488,12 +492,12 @@ void CThugAssaulter::Update_States(_float dt)
 		m_pStateMachine->Reset_Trigger("Idle_To_Move");
 		m_pStateMachine->Reset_Trigger("Idle_To_Chase");
 		m_pStateMachine->Reset_Trigger("Idle_To_Death");
-	
+
 		m_isIdle = false;
 	}
-	
- 	CheckDistanceFromPlayer();
-	
+
+	CheckDistanceFromPlayer();
+
 	//================================
 	ControlState(dt);
 	//================================
@@ -502,28 +506,28 @@ void CThugAssaulter::Update_States(_float dt)
 void CThugAssaulter::ControlState(const _float dt)
 {
 	if ("Death" != m_pStateMachine->Get_CurrentStateName() &&
-		0 >= m_tStatus.iNowHP )
+		0 >= m_tStatus.iNowHP)
 		m_pStateMachine->Change_State("Death");
 
 	if ("Death" != m_pStateMachine->Get_CurrentStateName() &&
 		"Groggy" != m_pStateMachine->Get_CurrentStateName() &&
-		true == m_isGroggy) 
+		true == m_isGroggy)
 		m_pStateMachine->Change_State("Groggy");
-	
+
 
 	if (true == m_isAutoPatternPlay &&
-		"Idle" == m_pStateMachine->Get_CurrentStateName()) 
+		"Idle" == m_pStateMachine->Get_CurrentStateName())
 	{
 
 		m_vIdleTime.y += dt;
 
-		if (m_vIdleTime.x <= m_vIdleTime.y) 
+		if (m_vIdleTime.x <= m_vIdleTime.y)
 		{
-			if (true == m_pStateMachine->Get_Bool("Chase")) 
+			if (true == m_pStateMachine->Get_Bool("Chase"))
 				m_pStateMachine->Set_Trigger("Idle_To_Chase");
 			else if (true == m_pStateMachine->Get_Bool("Death"))
 				m_pStateMachine->Set_Trigger("Idle_To_Death");
-			else if ("Attack" != m_pStateMachine->Get_PrevStateName()) 
+			else if ("Attack" != m_pStateMachine->Get_PrevStateName())
 				m_pStateMachine->Set_Trigger("Idle_To_Attack");
 			else
 				m_pStateMachine->Set_Trigger("Idle_To_Move");
@@ -552,7 +556,7 @@ void CThugAssaulter::ProcessDamage(DAMAGE_TYPE eDamageType)
 	{
 	case Client::DAMAGE_TYPE::NORMAL:
 	{
-		
+
 		break;
 	}
 	case Client::DAMAGE_TYPE::HARD:

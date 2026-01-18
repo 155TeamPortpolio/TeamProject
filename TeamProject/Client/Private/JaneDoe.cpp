@@ -63,6 +63,7 @@ HRESULT CJaneDoe::Initialize_Prototype()
 
 		/* Texture */
 		ResourceManager()->Add_ResourcePath("Eff_MeleeTrail_078_YZ_05.png", "../Bin/Resources/Effect/Texture/Eff_MeleeTrail_078_YZ_05.png");
+		ResourceManager()->Add_ResourcePath("smoke2.png", "../Bin/Resources/Effect/Texture/smoke2.png");
 		ResourceManager()->Add_ResourcePath("Dissolve.png", "../Bin/Resources/Effect/Texture/Dissolve.png");
 
 		/* Model */

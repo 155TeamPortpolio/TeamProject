@@ -30,6 +30,7 @@ void CThugAssaulter_Attack::Enter(CThugAssaulter* pOwner)
 		iAttackPatternIndex = Helper::Get_Random_Int(1, 4);
 		AttackFromIndex(iAttackPatternIndex);
 	}
+	pOwner->SetOnAttack(true);
 	pOwner->CaptureRotateToDir(pOwner->GetTargetingInfo().vDirToTarget);
 }
 
@@ -44,6 +45,7 @@ void CThugAssaulter_Attack::Update(CThugAssaulter* pOwner, _float dt)
 
 void CThugAssaulter_Attack::Exit(CThugAssaulter* pOwner)
 {
+	pOwner->SetOnAttack(false);
 }
 
 void CThugAssaulter_Attack::Register_States()
