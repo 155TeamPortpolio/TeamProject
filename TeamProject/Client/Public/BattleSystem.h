@@ -111,6 +111,11 @@ public: //setter
 	void	StartTimeScale(BATTLE_OBJ_TYPE eObjType, _float fDuration, _float fScale, _float fStartLerpTime = 0.f, _float fEndLerpTime = 0.f);
 	void	StartShaderVFX(BATTLE_VFX_TYPE eVFXType);
 
+
+public:	/* 堡开 单固瘤 窃荐 : 救己后 */
+	void	TakeAreaDamage(const _float3& vCenter, _float fRadius, const HitDesc& hitDesc);
+	void	TakeAllDamage(const HitDesc& hitDesc);
+
 public:
 	_bool isMonsterCleared();
 

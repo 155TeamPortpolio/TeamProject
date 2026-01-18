@@ -96,7 +96,7 @@ namespace Engine {
 	}COLLIDER_DESC;
 
 	typedef struct CCTinitDesc : public COMPONENT_DESC {
-		_float			fStepOffset = { 0.5f };				// 계단 등반 높이
+		_float			fStepOffset = { 0.1f };				// 계단 등반 높이
 		_float			fSlopeLimit = { 45.0f };			// 등반 각도 제한
 		_float			fMaxSpeed = 100.f;
 
