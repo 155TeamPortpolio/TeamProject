@@ -13,7 +13,6 @@ struct VS_OUT
     float4 vNormal : NORMAL;
     float2 vTexcoord : TEXCOORD0;
     float4 vProjPos : TEXCOORD1;
-    
 };
 
 
@@ -33,6 +32,36 @@ VS_OUT VS_MAIN(VS_IN In)
     return Out;
 }
 
+VS_OUT VS_BILLBOARD(VS_IN In)
+{
+    VS_OUT Out;
+    matrix matWV, matWVP;
+
+    float3 objectWorld = mul(float4(0, 0, 0, 1), ObjectBufferArray[TransformIndex].Transform).xyz;
+    
+    float2 worldScale;
+    worldScale.x = length(ObjectBufferArray[TransformIndex].Transform._11_12_13);
+    worldScale.y = length(ObjectBufferArray[TransformIndex].Transform._21_22_23);
+
+    float3 camRight = normalize(matViewInverse._11_12_13); // X축
+    float3 camUp = normalize(matViewInverse._21_22_23); // Y축
+    float3 camForward = normalize(matViewInverse._31_32_33); // Z축
+
+    // 정점 위치(로컬 quad 좌표) 적용
+    float3 worldPos = objectWorld + camRight * In.vPosition.x * worldScale.x + camUp * In.vPosition.y * worldScale.y;
+
+    float4 vPos = mul(float4(worldPos, 1.f), matView);
+    Out.vPosition = mul(vPos, matProjection);
+
+    // 텍스처 좌표
+    Out.vTexcoord = In.vTexcoord;
+
+    // Normal은 카메라를 향하도록 고정 (조명 넣는다면 기존 메시 normals 불필요)
+    Out.vNormal = float4(normalize(-camForward), 0.f);
+
+    Out.vProjPos = Out.vPosition;
+    return Out;
+}
 
 struct PS_IN
 {
@@ -117,6 +146,7 @@ technique11 DefaultTechnique
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN();
     }
+
     pass Shadow
     {
         SetRasterizerState(RS_Default);
@@ -126,5 +156,16 @@ technique11 DefaultTechnique
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN();
     }
+
+    pass Billboard
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_BILLBOARD();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_MAIN();
+    }
+    
 }
 

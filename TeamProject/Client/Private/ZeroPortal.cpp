@@ -36,13 +36,13 @@ HRESULT CZeroPortal::Initialize_Prototype()
 	CMaterial* pMaterial = Get_Component<CMaterial>();
 
 	ID3D11Device* pDevice = CGameInstance::GetInstance()->Get_Device();
-	CMaterialInstance* customInstance = CMaterialInstance::Create_Handle("Rect_Effect_Base", "Opaque", pDevice);
+	CMaterialInstance* customInstance = CMaterialInstance::Create_Handle("Rect_Effect_Base", "Billboard", pDevice);
 	pMaterial->Insert_MaterialInstance(customInstance, nullptr);
 	auto MaterialDat = customInstance->Get_MaterialData();
 	if (MaterialDat)
 		MaterialDat->Link_Shader(G_GlobalLevelKey, "VTX_NorTex.hlsl");
 	customInstance->Get_MaterialData()->Link_Texture(G_GlobalLevelKey, "Eff_Objects_048.png", TEXTURE_TYPE::DIFFUSE); 
-
+	
 	return S_OK;
 }
 
