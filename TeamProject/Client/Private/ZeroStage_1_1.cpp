@@ -132,7 +132,6 @@ void CZeroStage_1_1::Rake_MapResources()
 			filesystem::path MaterialPath = ModelPath;
 			MaterialPath.replace_extension(".mat");
 
-
 			pRcsMgr->Add_ResourcePath(ModelPath.filename().string(), ModelPath.string());
 			pRcsMgr->Add_ResourcePath(MaterialPath.filename().string(), MaterialPath.string());
 
