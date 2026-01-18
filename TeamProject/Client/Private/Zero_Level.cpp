@@ -1,22 +1,16 @@
 #include "pch.h"
 #include "Zero_Level.h"
 #include "GameInstance.h"
+#include "BattleSystem.h"
+
 #include "Helper_Func.h"
+#include "EffectContainer.h"
+
 #include "Stage.h"
 #include "ZeroStage_Boss.h"
-#include "BattleSystem.h"
-#include "EffectContainer.h"
 
 // Camera
 #include "Camera.h"
-#include "FreeCam.h"
-#include "CamDirector.h"
-#include "OrbitCam.h"
-#include "ShadowCam.h"
-#include "SequenceCam.h"
-#include "CamPanel.h"
-#include "CamLoader.h"
-
 #include "UI_MeshPyramid.h"
 
 #include "Player.h"
@@ -28,10 +22,6 @@
 #include "Sacrifice_Orb.h"
 #include "EnemyAttackCollider.h"
 #include "EnemyTriggerCollider.h"
-
-#include "MapLoader.h"
-#include "MapPlacedObject.h"
-#include "MapTriggerObject.h"
 
 /* UI */
 #include "UIDirector.h"
@@ -226,4 +216,8 @@ void CZero_Level::Free()
 	CBattleSystem::GetInstance()->DestroyInstance();
 	m_pGameInstance->DestroyInstance();
 	m_pCamDirector->DestroyInstance();
+
+	auto pPlayer = ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Player));
+	auto castedPlayer = dynamic_cast<CPlayer*>(pPlayer);
+	castedPlayer->Clear_Characters();
 }
