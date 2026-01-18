@@ -347,7 +347,8 @@ void COrbitCam::Priority_Update(_float dt)
         const float pitchRad = XMConvertToRadians(pose.targetRotDeg.y);
         const Quaternion q = Quaternion::CreateFromYawPitchRoll(yawRad, pitchRad, 0.f);
 
-        const Vector3 backDir = Vector3::Transform(Vector3(0.f, 0.f, -1.f), q);
+        Vector3 backDir = Vector3::Transform(Vector3(0.f, 0.f, -1.f), q);
+        backDir.Normalize();
         const Vector3 pivot = pose.targetPivot;
 
         const float desired = pose.desiredDist;
