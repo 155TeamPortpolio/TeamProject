@@ -94,8 +94,8 @@ HRESULT CZeroStage_Boss::Ready_Stage(CZero_Level::StageContext& context)
 
 HRESULT CZeroStage_Boss::Enter_Stage(CZero_Level::StageContext& context)
 {
-	//CamDirector().SetCurTarget();
-	//CamDirector().RequestSequence("Intro/Jane_Intro");
+	CamDirector().AutoTarget();
+	CamDirector().RequestSequence("Intro/Jane_Intro");
 
 	return S_OK;
 }
