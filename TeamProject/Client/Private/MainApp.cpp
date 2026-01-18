@@ -293,12 +293,14 @@ void CMainApp::ToggleCursor()
 void CMainApp::UpdateCursor(_float dt)
 {
 	if (InputDevice()->Key_Tap(VK_TAB))
+	{
 		ToggleCursor();
+		GUISystem()->Set_GUIActive(false);
+	}
 
 	if (m_isMouseLocked)
 	{
 		POINT c = GetClientCenterInScreen();
 		SetCursorPos(c.x, c.y);
 	}
-
 }
