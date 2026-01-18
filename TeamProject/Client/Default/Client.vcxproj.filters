@@ -640,9 +640,6 @@
     <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Attack\Ex">
       <UniqueIdentifier>{a9950fa8-5297-46a6-a3df-8f280c177142}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\ThugAssaulter\State\HitKnockBack">
-      <UniqueIdentifier>{21be2d5e-07b3-4f61-925b-50159b231242}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\Object\Enemy\ThugAssaulter\State\HitAirborne">
       <UniqueIdentifier>{3d2e029f-4d71-43ec-b8b7-23a2b2d37ade}</UniqueIdentifier>
     </Filter>
@@ -723,6 +720,9 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Enemy\ThugBulkyEnforcer\Normal Enemy">
       <UniqueIdentifier>{59940dfa-0539-4aed-8091-bbfb2c81fd85}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\ThugAssaulter\State\Hit">
+      <UniqueIdentifier>{ee380fa9-e341-4ac3-a59e-18404a3b9ff5}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1347,9 +1347,6 @@
     <ClInclude Include="..\Public\CorinState_ExAttack.h">
       <Filter>02. GameObject\Object\Player\Character\Corin\State\Attack\Ex</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\ThugAssaulter_HitKnockBack.h">
-      <Filter>02. GameObject\Object\Enemy\ThugAssaulter\State\HitKnockBack</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\ThugAssaulter_HitAirborne.h">
       <Filter>02. GameObject\Object\Enemy\ThugAssaulter\State\HitAirborne</Filter>
     </ClInclude>
@@ -1406,6 +1403,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\MapInvisibleWall.h">
       <Filter>02. GameObject\MapObject\03. MapInvisibleWall</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ThugAssaulter_Hit.h">
+      <Filter>02. GameObject\Object\Enemy\ThugAssaulter\State\Hit</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2007,9 +2007,6 @@
     <ClCompile Include="..\private\ThugAssaulter_Groggy.cpp">
       <Filter>02. GameObject\Object\Enemy\ThugAssaulter\State\Groggy</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\ThugAssaulter_HitKnockBack.cpp">
-      <Filter>02. GameObject\Object\Enemy\ThugAssaulter\State\HitKnockBack</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\ThugAssaulter_HitAirborne.cpp">
       <Filter>02. GameObject\Object\Enemy\ThugAssaulter\State\HitAirborne</Filter>
     </ClCompile>
@@ -2059,6 +2056,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\ZeroStage_Normal.cpp">
       <Filter>01. Level\04. Zero\Stage_Normal</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ThugAssaulter_Hit.cpp">
+      <Filter>02. GameObject\Object\Enemy\ThugAssaulter\State\Hit</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
