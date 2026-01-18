@@ -67,7 +67,7 @@ HRESULT CScott_Level::Awake()
 	pProto->Add_ProtoType("Scott_Level", "Proto_GameObject_Portal", CPortal::Create());
 
 	//============== Map ============================
-	Ready_Map("Scott_Level", "Zero_1_1");
+	Ready_Map("Scott_Level", "Zero_Worksite");
 	
 
 	return S_OK;
