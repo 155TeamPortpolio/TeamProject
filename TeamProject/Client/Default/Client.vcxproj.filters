@@ -1401,6 +1401,9 @@
     <ClInclude Include="..\Public\OrbitLockOnData.h">
       <Filter>02. GameObject\Camera\04. OrbitCam\00. LockOnController</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\ZeroStage_Normal.h">
+      <Filter>01. Level\04. Zero\Stage_Normal</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2044,6 +2047,9 @@
     </ClCompile>
     <ClCompile Include="..\private\OrbitLockOnController.cpp">
       <Filter>02. GameObject\Camera\04. OrbitCam\00. LockOnController</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\ZeroStage_Normal.cpp">
+      <Filter>01. Level\04. Zero\Stage_Normal</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
