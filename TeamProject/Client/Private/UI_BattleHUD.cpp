@@ -122,13 +122,6 @@ void CUI_BattleHUD::Cache_Handles(CUI_Object* pRoot)
 
     m_handles[Child::CUR_HP_TEXT] = pRoot->Get_DescendantHandle("curHpText");
     m_handles[Child::MAX_HP_TEXT] = pRoot->Get_DescendantHandle("maxHpText");
-
-    m_handles[Child::BOSS] = pRoot->Get_DescendantHandle("boss");
-    m_handles[Child::BOSS_ICON] = pRoot->Get_DescendantHandle("bossIcon");
-    m_handles[Child::BOSS_HP_BACK] = pRoot->Get_DescendantHandle("bossHpBack");
-    m_handles[Child::BOSS_HP_FRONT] = pRoot->Get_DescendantHandle("bossHpFront");
-    m_handles[Child::BOSS_GROGGY] = pRoot->Get_DescendantHandle("bossGroggy");
-    m_handles[Child::BOSS_GROGGY_TEXT] = pRoot->Get_DescendantHandle("bossGroggyText");
 }
 
 void CUI_BattleHUD::Set_Values(UI_PLAYER_STATUS_DESC desc)
