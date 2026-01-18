@@ -17,6 +17,11 @@ public:
 	virtual HRESULT Enter_Stage(CZero_Level::StageContext& context)override;
 	virtual HRESULT Exit_Stage(CZero_Level::StageContext& context)override;
 
+private:
+	void Intro();
+	void Battle(); 
+private:
+	OBJECT_HANDLE m_PlayerHandle = {};
 public:
 	static CZeroStage_Normal* Create(class CZero_Level* pOwnerLevel);
 	virtual void Free();

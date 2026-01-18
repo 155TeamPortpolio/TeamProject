@@ -43,12 +43,16 @@ CZero_Level::CZero_Level(const string& LevelKey)
 
 HRESULT CZero_Level::Initialize()
 {
+	/* UI */
+	auto uiDirector = CUIDirector::GetInstance();
+	uiDirector->Load_LevelObjects("Zero_Level");
+
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_Sacrifice", CSacrifice::Create());
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_SacrificeHand", CSacrificeHand::Create());
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_SacrificeLaser", CSacrifice_Laser::Create());
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_SacrificeOrb", CSacrifice_Orb::Create());
-	PrototypeManager()->Add_ProtoType("Test_Level", "Proto_GameObject_ThugBulkyEnforcer", CThugBulkyEnforcer::Create());
-	PrototypeManager()->Add_ProtoType("Test_Level", "Proto_GameObject_ThugAssaulter", CThugAssaulter::Create());
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_ThugBulkyEnforcer", CThugBulkyEnforcer::Create());
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_ThugAssaulter", CThugAssaulter::Create());
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_EnemyAttackCollider", CEnemyAttackCollider::Create());
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_EnemyTriggerCollider", CEnemyTriggerCollider::Create());
 
@@ -133,16 +137,12 @@ HRESULT CZero_Level::Awake()
 	if (!m_Context.hPlayer.isValid())
 		return E_FAIL;
 
-	/* UI */
-	auto uiDirector = CUIDirector::GetInstance();
-	uiDirector->Load_LevelObjects("Zero_Level");
-
 	auto boss = CZeroStage_Boss::Create(this);
 	auto normal = CZeroStage_Boss::Create(this);
 	m_StageContainer.emplace(StageType::Boss, boss);
 	m_StageContainer.emplace(StageType::Normal, normal);
 
-	//ChangeStage( StageType::Normal )
+	ChangeStage(StageType::Normal, 0);
 	return S_OK;
 }
 
@@ -193,7 +193,6 @@ HRESULT CZero_Level::ChangeStage(StageType nextStageType, _int StageID)
 	return m_Context.pNowStage->Enter_Stage(m_Context);
 }
 
-
 CZero_Level* CZero_Level::Create(const string& LevelKey)
 {
 	CZero_Level* instance = new CZero_Level(LevelKey);
@@ -207,15 +206,17 @@ CZero_Level* CZero_Level::Create(const string& LevelKey)
 
 void CZero_Level::Free()
 {
-	m_Context.pNowStage = nullptr;
+	__super::Free();
 
+	m_Context.pNowStage = nullptr;
 	for (auto& pair : m_StageContainer)
 		Safe_Release(pair.second);
 	m_StageContainer.clear();
 
-	__super::Free();
 	m_pGameInstance->DestroyInstance();
 	m_pCamDirector->DestroyInstance();
+
+	RenderSystem()->Set_FogDesc({ _float4(0.08f, 0.02f, 0.02f, 1.0f),0.f, 0.f, 0.02f, false });
 
 	auto pPlayer = ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Player));
 	auto castedPlayer = dynamic_cast<CPlayer*>(pPlayer);
