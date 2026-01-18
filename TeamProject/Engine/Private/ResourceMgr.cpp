@@ -773,8 +773,9 @@ void CResourceMgr::Load_InitialResource()
 	m_Resources[0].m_Shaders.emplace("VTX_Mesh.hlsl", CShader::Create(m_pDevice, "../Bin/ShaderFiles/VTX_Mesh.hlsl", "VTX_Mesh.hlsl"));
 	m_Resources[0].m_Shaders.emplace("VTX_NorTex.hlsl", CShader::Create(m_pDevice, "../Bin/ShaderFiles/VTX_NorTex.hlsl", "VTX_NorTex.hlsl"));
 	m_Resources[0].m_Shaders.emplace("VTX_SkinMesh.hlsl", CShader::Create(m_pDevice, "../Bin/ShaderFiles/VTX_SkinMesh.hlsl", "VTX_SkinMesh.hlsl"));
+	m_Resources[0].m_Shaders.emplace("VTX_Character.hlsl", CShader::Create(m_pDevice, "../Bin/ShaderFiles/VTX_Character.hlsl", "VTX_Character.hlsl"));
+	m_Resources[0].m_Shaders.emplace("VTX_Enemy.hlsl", CShader::Create(m_pDevice, "../Bin/ShaderFiles/VTX_Enemy.hlsl", "VTX_Enemy.hlsl"));
 	m_Resources[0].m_Shaders.emplace("VTX_UI.hlsl", CShader::Create(m_pDevice, "../Bin/ShaderFiles/VTX_UI.hlsl", "VTX_UI.hlsl"));
-	m_Resources[0].m_Shaders.emplace("VTX_UIMesh.hlsl", CShader::Create(m_pDevice, "../Bin/ShaderFiles/VTX_UIMesh.hlsl", "VTX_UIMesh.hlsl"));
 	m_Resources[0].m_Shaders.emplace("VTX_Cloud.hlsl", CShader::Create(m_pDevice, "../Bin/ShaderFiles/VTX_Cloud.hlsl", "VTX_Cloud.hlsl"));
 	m_Resources[0].m_Shaders.emplace("VTX_Debug.hlsl", CShader::Create(m_pDevice, "../Bin/ShaderFiles/VTX_Debug.hlsl", "VTX_Debug.hlsl"));
 	m_Resources[0].m_Shaders.emplace("VTX_Point.hlsl", CShader::Create(m_pDevice, "../Bin/ShaderFiles/VTX_Point.hlsl", "VTX_Point.hlsl"));
