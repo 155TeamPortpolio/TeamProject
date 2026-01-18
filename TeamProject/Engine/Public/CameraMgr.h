@@ -3,6 +3,7 @@
 #include "ICameraService.h"
 #include "Camera.h"
 #include "ShakeController.h"
+#include "ZoomController.h"
 
 NS_BEGIN(Engine)
 
@@ -30,13 +31,24 @@ public:
     void     Clear(_float blendTime = 0.25f)                  override;
 
 public:
-    void     SetShake(_float ampDeg, _float freq, _float dur, _float fadeOutSec = 0.f) override;
-    void     AddShake(_float ampDeg, _float freq, _float dur, _float fadeOutSec = 0.f) override;
-    void     ClearShake(_float fadeOutSec = 0.f)                                       override;
+    void     SetShake(_float ampDeg, _float freq, _float dur, _float fadeOutSec = 0.f) override { m_shake.Set(ampDeg, freq, dur, fadeOutSec); }
+    void     AddShake(_float ampDeg, _float freq, _float dur, _float fadeOutSec = 0.f) override { m_shake.Add(ampDeg, freq, dur, fadeOutSec); }
+    void     ClearShake(_float fadeOutSec = 0.f)                                       override { m_shake.Clear(fadeOutSec); }
+
+public:
+    void     SetZoomPunch(_float amountDeg, _float attackSec = 0.02f, _float outSec = 0.1f) override { m_zoom.SetPunch(amountDeg, attackSec, outSec); }
+    void     AddZoomPunch(_float amountDeg, _float attackSec = 0.02f, _float outSec = 0.1f) override { m_zoom.AddPunch(amountDeg, attackSec, outSec); }
+    void     ClearZoom(_float fadeOutSec = 0.f) override { m_zoom.Clear(fadeOutSec); }
 
 public:
     void     SetShake(CamShakeType type, _float strength = 1.f) override { m_shake.Set(type, strength); }
     void     AddShake(CamShakeType type, _float strength = 1.f) override { m_shake.Add(type, strength); }
+
+    void     SetZoom(CamZoomType type, _float strength = 1.f)   override { m_zoom.Set(type, strength); }
+    void     AddZoom(CamZoomType type, _float strength = 1.f)   override { m_zoom.Add(type, strength); }
+
+    void     AddImpact(CamShakeType shakeType, CamZoomType zoomType, _float strength = 1.f) override;
+    void     AddImpact(_uint shakeType, _uint zoomType, _float strength = 1.f) override;
 
     Lens     Get_Lens()       const override;
     Lens     Get_ShadowLens() const override;
@@ -115,6 +127,7 @@ private:
     OBJECT_HANDLE   m_baseCamObj{};
     OBJECT_HANDLE   m_shadowCamObj{};
     ShakeController m_shake{};
+    ZoomController  m_zoom{};
 
 private:
     vector<OverrideEntry> m_overrides{};

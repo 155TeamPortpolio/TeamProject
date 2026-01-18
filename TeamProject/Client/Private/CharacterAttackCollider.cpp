@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "GameInstance.h"
 #include "CharacterAttackCollider.h"
 
 #include "BattleSystem.h"
@@ -10,6 +11,8 @@
 #include "Child.h"
 
 #include "Enemy.h"
+// Camera
+#include "CameraMgr.h"
 
 CCharacterAttackCollider::CCharacterAttackCollider()
 	: CGameObject()
@@ -95,7 +98,14 @@ void CCharacterAttackCollider::OnTriggerEnter(CGameObject* pOther)
 	{
 		pEnemy->TakeDamage(m_tHitDesc.eDamageType, m_tHitDesc.fDamage);
 		BattleSystem()->GetBattlePlayer()->Add_Gauge(10.f, 100.f);
+		
+		// Camera
+		//CameraManager()->AddShake(CamShakeType::HitCrit);
+		//CameraManager()->AddZoomPunch(0.8f, 0.045f, 0.15f);
+		//CameraManager()->AddImpact(CamShakeType::TapSoft, CamZoomType::TapSoft, 1.5f);
+		CameraManager()->AddImpact(0, 0, 1.5f);
 	}
+
 }
 
 void CCharacterAttackCollider::OnTriggerStay(CGameObject* pOther)
@@ -111,6 +121,9 @@ void CCharacterAttackCollider::OnTriggerStay(CGameObject* pOther)
 	{
 		pEnemy->TakeDamage(m_tHitDesc.eDamageType, m_tHitDesc.fDamage);
 		BattleSystem()->GetBattlePlayer()->Add_Gauge(10.f, 100.f);
+
+		// Camera
+		CameraManager()->AddImpact(0, 0, 1.f);
 	}
 }
 

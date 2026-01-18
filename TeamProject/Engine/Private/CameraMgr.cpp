@@ -7,7 +7,7 @@
 
 CGameObject* CCameraMgr::ResolveObj(OBJECT_HANDLE handle) const
 {
-    return handle.isValid() ? ObjectManager()->Request_Object(handle) : nullptr;
+    return ObjectManager()->Request_Object(handle);
 }
 
 CCamera* CCameraMgr::ResolveCam(OBJECT_HANDLE handle) const
@@ -121,16 +121,18 @@ CCameraMgr::CamPoseFrame CCameraMgr::BlendPose(const CamPoseFrame& a, const CamP
 
 void CCameraMgr::ApplyCache(CamCache& outCache, const CamPoseFrame& pose)
 {
-    const Matrix rotM  = Matrix::CreateFromQuaternion(pose.rot);
-    const Matrix trM   = Matrix::CreateTranslation(pose.pos);
+    const Matrix rotM = Matrix::CreateFromQuaternion(pose.rot);
+    const Matrix trM = Matrix::CreateTranslation(pose.pos);
     const Matrix world = rotM * trM;
 
     outCache.view = world.Invert();
 
+    const _float fovRad = pose.lens.fov * (XM_PI / 180.f);
+
     if (pose.lens.projType == CamProjType::Perspective)
-        outCache.proj = DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(pose.lens.fov), pose.lens.aspect, pose.lens.nearZ, pose.lens.farZ);
+        outCache.proj = XMMatrixPerspectiveFovLH(fovRad, pose.lens.aspect, pose.lens.nearZ, pose.lens.farZ);
     else
-        outCache.proj = DirectX::XMMatrixOrthographicLH(pose.lens.orthoHeight * pose.lens.aspect, pose.lens.orthoHeight, pose.lens.nearZ, pose.lens.farZ);
+        outCache.proj = XMMatrixOrthographicLH(pose.lens.orthoHeight * pose.lens.aspect, pose.lens.orthoHeight, pose.lens.nearZ, pose.lens.farZ);
 
     outCache.invView = outCache.view.Invert();
     outCache.invProj = outCache.proj.Invert();
@@ -164,21 +166,6 @@ void CCameraMgr::UpdateShadowCache()
     }
 }
 
-void CCameraMgr::SetShake(_float ampDeg, _float freq, _float dur, _float fadeOutSec)
-{
-    m_shake.Set(ampDeg, dur, fadeOutSec);
-}
-
-void CCameraMgr::AddShake(_float ampDeg, _float freq, _float dur, _float fadeOutSec)
-{
-    m_shake.Add(ampDeg, dur, fadeOutSec);
-}
-
-void CCameraMgr::ClearShake(_float fadeOutSec)
-{
-    m_shake.Clear(fadeOutSec);
-}
-
 void CCameraMgr::Update(_float dt)
 {
     if (!m_baseCamObj.isValid()) return;
@@ -191,7 +178,7 @@ void CCameraMgr::Update(_float dt)
         m_blendTime += dt;
 
         const _float rawT = m_blendTime / m_blendDuration;
-        const _float t    = Math::ApplyEase(m_easeType, rawT);
+        const _float t = Math::ApplyEase(m_easeType, rawT);
 
         if (rawT >= 1.f)
         {
@@ -212,10 +199,34 @@ void CCameraMgr::Update(_float dt)
     m_outputPose.rot.Normalize();
     m_outputPose.pos += posDelta;
 
+    const _float zoomDeg = m_zoom.Apply(dt);
+    if (zoomDeg != 0.f)
+    {
+        const _float minFov = 8.f;
+        const _float maxFov = 120.f;
+
+        m_outputPose.lens.fov -= zoomDeg;
+
+        if (m_outputPose.lens.fov < minFov) m_outputPose.lens.fov = minFov;
+        if (m_outputPose.lens.fov > maxFov) m_outputPose.lens.fov = maxFov;
+    }
+
     ApplyCache(main, m_outputPose);
 
     if (m_shadowCamObj.isValid())
         UpdateShadowCache();
+}
+
+void CCameraMgr::AddImpact(CamShakeType shakeType, CamZoomType zoomType, _float strength)
+{
+    m_shake.Add(shakeType, strength);
+    m_zoom.Add(zoomType, strength);
+}
+
+void CCameraMgr::AddImpact(_uint shakeType, _uint zoomType, _float strength)
+{
+    m_shake.Add(static_cast<CamShakeType>(shakeType), strength);
+    m_zoom.Add(static_cast<CamZoomType>(zoomType), strength);
 }
 
 Lens CCameraMgr::Get_Lens() const
@@ -254,16 +265,17 @@ void CCameraMgr::Free()
 {
     m_overrides.clear();
     m_shake.Reset();
+    m_zoom.Reset();
 
     m_baseCamObj.Reset();
     m_shadowCamObj.Reset();
 
-    m_isBlending    = false;
-    m_blendTime     = 0.f;
+    m_isBlending = false;
+    m_blendTime = 0.f;
     m_blendDuration = 0.f;
     m_blendTargetObj.Reset();
-    m_outputPose    = {};
+    m_outputPose = {};
 
-    main   = {};
+    main = {};
     shadow = {};
 }
