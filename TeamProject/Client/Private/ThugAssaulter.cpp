@@ -81,8 +81,6 @@ HRESULT CThugAssaulter::Initialize(INIT_DESC* pArg)
 
 	// 임시 확인용
 	CGameInstance::GetInstance()->Get_GUISystem()->Get_Context()->pSelectedObject = this;
-	// 임시
-	m_tStatus.iMaxHP = 100;
 
 	return S_OK;
 }

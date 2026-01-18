@@ -164,6 +164,7 @@ void CThugBulkyEnforcer::Render_GUI()
 		ImGui::Text("AnimName : %s", Get_Component<CAnimator3D>()->Get_CurAnimName().c_str());
 		ImGui::Text("SelfDir: %.2f, %.2f, %.2f", m_tTargetingInfo.vDirSelfLook.x, m_tTargetingInfo.vDirSelfLook.y, m_tTargetingInfo.vDirSelfLook.z);
 		ImGui::Text("CaptureDir: %.2f, %.2f, %.2f", m_vDirToLookCapture.x, m_vDirToLookCapture.y, m_vDirToLookCapture.z);
+		ImGui::Text("HP : %d", (_int)m_tStatus.iNowHP);
 		ImGui::Text("Groggy Value : %d", m_tStatus.iGroggyValue);
 
 		ImGui::BeginDisabled(true);

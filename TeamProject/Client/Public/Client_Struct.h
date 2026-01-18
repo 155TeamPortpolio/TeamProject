@@ -16,7 +16,7 @@ namespace Client {
 		string	DisplayName = {};
 		_float	CCT_fHeight = {};
 		_float	CCT_fRadius = {};
-		_float3 CCT_vPos = {};
+		_float	iMaxHP = {};
 
 		_uint	CCT_iCollisionMask = 0xFFFFFFFF;
 		_bool	CCT_bAutoFit = { false };
