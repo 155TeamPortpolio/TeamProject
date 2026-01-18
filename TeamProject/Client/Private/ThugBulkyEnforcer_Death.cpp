@@ -29,6 +29,9 @@ void CThugBulkyEnforcer_Death::Enter(CThugBulkyEnforcer* pOwner)
 void CThugBulkyEnforcer_Death::Update(CThugBulkyEnforcer* pOwner, _float dt)
 {
 	__super::Update(pOwner, dt);
+
+	if (m_fAnimProgress > 0.99f)
+		pOwner->Death();
 }
 
 void CThugBulkyEnforcer_Death::Exit(CThugBulkyEnforcer* pOwner)
