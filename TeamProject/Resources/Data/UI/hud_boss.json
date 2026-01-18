@@ -190,7 +190,7 @@
                 },
                 {
                     "alive": true,
-                    "instanceName": "bossIcon",
+                    "instanceName": "icon",
                     "transform": {
                         "anchor": 9,
                         "anchorOffset": [
@@ -225,7 +225,7 @@
                 },
                 {
                     "alive": true,
-                    "instanceName": "bossHpBg",
+                    "instanceName": "hpBg",
                     "transform": {
                         "anchor": 9,
                         "anchorOffset": [
@@ -260,7 +260,7 @@
                 },
                 {
                     "alive": true,
-                    "instanceName": "bossHpBack",
+                    "instanceName": "hpBack",
                     "transform": {
                         "anchor": 9,
                         "anchorOffset": [
@@ -300,7 +300,7 @@
                 },
                 {
                     "alive": true,
-                    "instanceName": "bossHpFront",
+                    "instanceName": "hpFront",
                     "transform": {
                         "anchor": 9,
                         "anchorOffset": [
@@ -340,7 +340,7 @@
                 },
                 {
                     "alive": true,
-                    "instanceName": "bossGroggyBg",
+                    "instanceName": "groggyBg",
                     "transform": {
                         "anchor": 9,
                         "anchorOffset": [
@@ -375,7 +375,7 @@
                 },
                 {
                     "alive": true,
-                    "instanceName": "bossGroggy",
+                    "instanceName": "groggy",
                     "transform": {
                         "anchor": 9,
                         "anchorOffset": [
@@ -415,7 +415,7 @@
                 },
                 {
                     "alive": true,
-                    "instanceName": "bossGroggyText",
+                    "instanceName": "groggyText",
                     "transform": {
                         "anchor": 1,
                         "anchorOffset": [

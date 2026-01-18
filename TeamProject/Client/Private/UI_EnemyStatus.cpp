@@ -52,23 +52,17 @@ void CUI_EnemyStatus::Update(_float dt)
 
     // 몬스터 본 위치 기준으로 UI 위치 갱신
     Set_WorldPosition();
-
-    Update_HPBackGauge(dt);
-
-    // HP / Groggy 게이지 갱신
+     
     _float fRatio = m_pMonsterStatus->iNowHP / max(m_pMonsterStatus->iMaxHP, 1.f);
+
+    // HP Front
     Set_GaugeFill(Child::GAUGE_HP_FRONT, m_pMonsterStatus->iNowHP / max(m_pMonsterStatus->iMaxHP, 1.f));
-    if (fabs(fRatio - m_hpBack.fTargetRatio) > (HPBACK_DELTA / m_pMonsterStatus->iMaxHP))    // hp 변화량이 HPBACK_DELTA를 넘었을 때
-    {
-        m_hpBack.fTargetRatio = fRatio;
-        m_hpBack.fDelayTimer = 0.f;
-        m_hpBack.isDelay = true;
-        Set_Color(Child::GAUGE_HP_BACK, UI_HPBACK_DARK);
-    }
 
+    // HP Back
+    Update_HPBackGauge(fRatio, dt);
+
+    // Groggy
     Set_GaugeFill(Child::GAUGE_GROGGY, m_pMonsterStatus->iGroggyValue / m_fGroggyMax);
-
-    // Groggy 텍스트 갱신
     Set_GroggyText(m_pMonsterStatus->iGroggyValue);
 
     // 모든 하위 UI 업데이트
@@ -101,12 +95,21 @@ void CUI_EnemyStatus::Set_WorldPosition()
     Update_WorldToScreen(matWorld.Translation());
 }
 
-void CUI_EnemyStatus::Update_HPBackGauge(_float dt)
+void CUI_EnemyStatus::Update_HPBackGauge(_float fRatio, _float dt)
 {
+    // HP 변화 감지
+    if (fabs(fRatio - m_hpBack.fTargetRatio) > (HPBACK_DELTA / m_pMonsterStatus->iMaxHP))    // hp 변화량이 HPBACK_DELTA를 넘었을 때
+    {
+        m_hpBack.fTargetRatio = fRatio;
+        m_hpBack.fDelayTimer = 0.f;
+        m_hpBack.isDelay = true;
+        Set_Color(Child::GAUGE_HP_BACK, UI_HPBACK_DARK);
+    }
+
+    // Delay 처리
     if (m_hpBack.isDelay)
     {
         m_hpBack.fDelayTimer += dt;
-
         if (m_hpBack.fDelayTimer < m_hpBack.fDelayTime)
             return;
 
@@ -114,6 +117,7 @@ void CUI_EnemyStatus::Update_HPBackGauge(_float dt)
         Set_Color(Child::GAUGE_HP_BACK, UI_HPBACK_LIGHT);
     }
 
+    // 보간
     _float t = dt * HPBACK_LERP_SPEED;
     m_hpBack.fCurRatio = Math::Lerp(m_hpBack.fCurRatio, m_hpBack.fTargetRatio, t);
     Set_GaugeFill(Child::GAUGE_HP_BACK, m_hpBack.fCurRatio);
