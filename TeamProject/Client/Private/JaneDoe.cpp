@@ -60,15 +60,19 @@ HRESULT CJaneDoe::Initialize_Prototype()
 	{
 		/* Asset */
 		ResourceManager()->Add_ResourcePath("janedoe_normal1_slash.json", "../Bin/Resources/Effect/Data/JaneDoe/janedoe_normal1_slash.json");
+		ResourceManager()->Add_ResourcePath("janedoe_normal2_slash.json", "../Bin/Resources/Effect/Data/JaneDoe/janedoe_normal2_slash.json");
 
 		/* Texture */
 		ResourceManager()->Add_ResourcePath("Eff_MeleeTrail_078_YZ_05.png", "../Bin/Resources/Effect/Texture/Eff_MeleeTrail_078_YZ_05.png");
 		ResourceManager()->Add_ResourcePath("smoke2.png", "../Bin/Resources/Effect/Texture/smoke2.png");
 		ResourceManager()->Add_ResourcePath("Dissolve.png", "../Bin/Resources/Effect/Texture/Dissolve.png");
+		ResourceManager()->Add_ResourcePath("smoke2.png", "../Bin/Resources/Effect/Texture/smoke2.png");
 
 		/* Model */
 		ResourceManager()->Add_ResourcePath("JaneDoe_Slash0.model", "../Bin/Resources/Effect/Model/JaneDoe_Slash0/JaneDoe_Slash0.model");
 		ResourceManager()->Add_ResourcePath("JaneDoe_Slash0.mat", "../Bin/Resources/Effect/Model/JaneDoe_Slash0/JaneDoe_Slash0.mat");
+		ResourceManager()->Add_ResourcePath("JaneDoe_Slash1.model", "../Bin/Resources/Effect/Model/JaneDoe_Slash1/JaneDoe_Slash1.model");
+		ResourceManager()->Add_ResourcePath("JaneDoe_Slash1.mat", "../Bin/Resources/Effect/Model/JaneDoe_Slash1/JaneDoe_Slash1.mat");
 	}
 	return S_OK;
 }
@@ -186,6 +190,20 @@ void CJaneDoe::On_Special()
 		desc.eState = UI_ACTION_STATE::EXECUTING;
 		EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
 	}
+	string strCurrentState = m_pStateMachine->Get_CurrentStateName();
+	if (strCurrentState == "Attack")	// NormalAttack Áß Äµ½½ÇØ¼­ ExAttack
+	{
+		CJaneDoeState_Attack* pAttack = static_cast<CJaneDoeState_Attack*>(
+			m_pStateMachine->Get_CurrentState());
+		if (pAttack && pAttack->Get_SubStateMachine())
+		{
+			if (pAttack->Get_SubStateMachine()->Get_CurrentStateName() == "NormalAttack")
+			{
+				pAttack->Get_SubStateMachine()->Set_Trigger("ToExAttack");
+				return;
+			}
+		}
+	}
 	m_pStateMachine->Set_Int("AttackEntryMode", 2);
 	m_pStateMachine->Set_Trigger("Attack");
 }
@@ -290,6 +308,7 @@ HRESULT CJaneDoe::Initialize_Stat()
 
 	auto LVDesc = CDataBase::GetInstance()->GetLevelDesc(m_iCurrentLevel);
 	m_fMaxHP = LVDesc.MaxHP;
+	m_fCurrentHP = m_fMaxHP;
 	m_fDefense = LVDesc.Defend;
 	m_fAttackPower = LVDesc.Attack;
 	
@@ -362,6 +381,42 @@ HRESULT CJaneDoe::Initialize_Effects()
 		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
 			.Asset("janedoe_normal1_slash.json")
 			.Build("JaneDoe_Normal_Slash1");
+
+		pObjectContainer->Add_Child(pEffect);
+	}
+
+	/* Normal Slash2 */
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("janedoe_normal1_slash.json")
+			.Build("JaneDoe_Normal_Slash2");
+
+		pObjectContainer->Add_Child(pEffect);
+	}
+
+	/* Normal Slash3 */
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("janedoe_normal1_slash.json")
+			.Build("JaneDoe_Normal_Slash3");
+
+		pObjectContainer->Add_Child(pEffect);
+	}
+
+	/* Normal Slash4 */
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("janedoe_normal1_slash.json")
+			.Build("JaneDoe_Normal_Slash4");
+
+		pObjectContainer->Add_Child(pEffect);
+	}
+
+	/* Cross Slash */
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("janedoe_normal2_slash.json")
+			.Build("JaneDoe_Cross_Slash");
 
 		pObjectContainer->Add_Child(pEffect);
 	}
