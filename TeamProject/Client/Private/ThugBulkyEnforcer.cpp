@@ -22,6 +22,7 @@
 #include "ThugBulkyEnforcer_Chase.h"
 #include "ThugBulkyEnforcer_Groggy.h"
 #include "ThugBulkyEnforcer_Death.h"
+#include "ThugBulkyEnforcer_Hit.h"
 
 #include "AttackSign.h"
 
@@ -163,6 +164,7 @@ void CThugBulkyEnforcer::Render_GUI()
 		ImGui::Text("AnimName : %s", Get_Component<CAnimator3D>()->Get_CurAnimName().c_str());
 		ImGui::Text("SelfDir: %.2f, %.2f, %.2f", m_tTargetingInfo.vDirSelfLook.x, m_tTargetingInfo.vDirSelfLook.y, m_tTargetingInfo.vDirSelfLook.z);
 		ImGui::Text("CaptureDir: %.2f, %.2f, %.2f", m_vDirToLookCapture.x, m_vDirToLookCapture.y, m_vDirToLookCapture.z);
+		ImGui::Text("HP : %d", (_int)m_tStatus.iNowHP);
 		ImGui::Text("Groggy Value : %d", m_tStatus.iGroggyValue);
 
 		ImGui::BeginDisabled(true);
@@ -481,6 +483,12 @@ void CThugBulkyEnforcer::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage)
 			.Apply();
 		m_tStatus.iNowHP -= fDamage * 1.5f;
 	}
+	else if ("Idle" == m_pStateMachine->Get_CurrentStateName())
+	{
+		m_pStateMachine->Set_Trigger("Idle_To_Hit");
+		DIR eDir = GetDIRToPlayer();
+		m_pStateMachine->Set_Int("Dir", ENUM(eDir));
+	}
 	else {
 		Get_Component<CAnimator3D>()->Set_Animation(1, "ThugBulkyEnforcer_Ani_Hit_Stay")
 			.LayerBlend(1.f, 0.f, 1.f, EaseType::Linear)
@@ -528,6 +536,7 @@ HRESULT CThugBulkyEnforcer::Initialize_States()
 	m_pStateMachine->Register_State("Chase", CThugBulkyEnforcer_Chase::Create());
 	m_pStateMachine->Register_State("Groggy", CThugBulkyEnforcer_Groggy::Create());
 	m_pStateMachine->Register_State("Death", CThugBulkyEnforcer_Death::Create());
+	m_pStateMachine->Register_State("Hit", CThugBulkyEnforcer_Hit::Create());
 
 	return S_OK;
 }
@@ -551,6 +560,9 @@ HRESULT CThugBulkyEnforcer::Initialize_Transitions()
 
 	m_pStateMachine->Register_Transition("Idle", "Death",
 		CStateMachine<CThugBulkyEnforcer>::CONDITION_TRIGGER, "Idle_To_Death");
+
+	m_pStateMachine->Register_Transition("Idle", "Hit",
+		CStateMachine<CThugBulkyEnforcer>::CONDITION_TRIGGER, "Idle_To_Hit");
 
 	return S_OK;
 }

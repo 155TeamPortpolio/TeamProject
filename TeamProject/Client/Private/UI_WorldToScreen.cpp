@@ -4,6 +4,9 @@
 #include "GameInstance.h"
 #include "ObjectContainer.h"
 
+#include "CameraMgr.h"
+#include "Player.h"
+
 HRESULT CUI_WorldToScreen::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
@@ -27,8 +30,16 @@ void CUI_WorldToScreen::Update_WorldToScreen(_float3 vPosition)
 {
     auto pCameraMgr = CGameInstance::GetInstance()->Get_CameraMgr();
     
+    // 월드 위치로 스크린 위치 구하기
     Helper::WorldToScreen(vPosition, m_vAnchorOffset, *pCameraMgr->Get_ViewMatrix(), *pCameraMgr->Get_ProjMatrix(), _float4(0.f, 0.f, m_WinSize.x, m_WinSize.y));
-    m_Zpriority = vPosition.z;
+
+    // 플레이어와 월드 위치 사이의 방향 벡터와 카메라 룩을 내적해서 깊이 구하기
+    auto pPlayer = ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Player));
+    Vector4 vPlayerPos = static_cast<CPlayer*>(pPlayer)->Get_CurCharacterHandle().Get()->Get_Position();
+    Vector3 vDiff = (Vector3(vPosition) - Vector3(vPlayerPos));
+    vDiff.Normalize();
+    _float fDot = vDiff.Dot(Vector3(pCameraMgr->GetForward()));
+    m_Zpriority = fDot;
 
     //_float fNearDist = 5.f;
     //_float fFarDist = 6.f;
