@@ -89,7 +89,9 @@ void CCharacterAttackCollider::OnTriggerEnter(CGameObject* pOther)
 
 	auto pEnemy = dynamic_cast<CEnemy*>(pOther);
 	if (nullptr != pEnemy)
+	{
 		pEnemy->TakeDamage(m_tHitDesc.eDamageType, m_tHitDesc.fDamage);
+	}
 }
 
 void CCharacterAttackCollider::OnTriggerStay(CGameObject* pOther)
@@ -102,7 +104,9 @@ void CCharacterAttackCollider::OnTriggerStay(CGameObject* pOther)
 
 	auto pEnemy = dynamic_cast<CEnemy*>(pOther);
 	if (nullptr != pEnemy)
+	{
 		pEnemy->TakeDamage(m_tHitDesc.eDamageType, m_tHitDesc.fDamage);
+	}
 }
 
 void CCharacterAttackCollider::OnTriggerExit(CGameObject* pOther)
