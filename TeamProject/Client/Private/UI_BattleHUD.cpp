@@ -26,32 +26,34 @@ HRESULT CUI_BattleHUD::Initialize(INIT_DESC* pArg)
     const string& filePath = ResourceManager()->Get_ResourcePath("hud_battle.json");
     Load(Helper::LoadJson<nlohmann::ordered_json>(filePath));
 
-    // 클라이언트에서 만든 ui 자식으로 추가
+    // 핸들 캐싱 (JSON으로 로드한 자식들)
+    Cache_Handles();
+
+    // 클라이언트에서 만든 ui 자식으로 추가 (추가하면서 핸들 캐싱함)
     const string& strLevelKey = LevelManager()->Get_NowLevelKey();
     Add_PartObject(strLevelKey, "Proto_GameObject_Decibel", "decibel", Child::ULTIMATE1, _float2(50.f, 136.f));
     Add_PartObject(strLevelKey, "Proto_GameObject_BattleHUDAction", "action", Child::ACTION, _float2(1178.f, 655.f));
-
-    // 핸들 캐싱
-    Cache_Handles();
-    
+     
     // 이벤트 : UI_PLAYER_STATUS_DESC
     Get_Component<CEventListener>()->Add_Listener<UI_PLAYER_STATUS_DESC>([&](const UI_PLAYER_STATUS_DESC& desc)
         {
             Set_Values(desc);
         });
 
-    //Set_Animation(0);
+    Set_Animation(0);
 
     return S_OK;
 }
 
 void CUI_BattleHUD::Awake()
-{ 
+{
 }
 
 void CUI_BattleHUD::Update(_float dt)
 {
     __super::Update(dt);
+
+    Update_HPBackGauge(dt);
 
     Get_Component<CObjectContainer>()->UpdateChild(dt);
 }
@@ -71,39 +73,24 @@ void CUI_BattleHUD::Add_PartObject(const string& strLevelKey, const string& strP
 
 void CUI_BattleHUD::Cache_Handles()
 {
-    m_handles[Child::ROLE1] = Get_DescendantHandle("role1");
-    m_handles[Child::ROLE2] = Get_DescendantHandle("role2");
-    m_handles[Child::ROLE3] = Get_DescendantHandle("role3");
+    for (_int i = 0; i < 3; ++i)
+    {
+        m_handles[ROLE_CHILD[i]] = Get_DescendantHandle("role" + to_string(i + 1));
+        m_handles[ICON_CHILD[i]] = Get_DescendantHandle("icon" + to_string(i + 1));
+        m_handles[HPFRONT_CHILD[i]] = Get_DescendantHandle("hpFront" + to_string(i + 1));
+        m_handles[HPBACK_CHILD[i]] = Get_DescendantHandle("hpBack" + to_string(i + 1));
+        m_handles[SPECIAL_CHILD[i]] = Get_DescendantHandle("special" + to_string(i + 1));
+        m_handles[SPECIALARROW_CHILD[i]] = Get_DescendantHandle("specialArrow" + to_string(i + 1));
+    }
 
-    m_handles[Child::ICON1] = Get_DescendantHandle("icon1");
-    m_handles[Child::ICON2] = Get_DescendantHandle("icon2");
-    m_handles[Child::ICON3] = Get_DescendantHandle("icon3");
-
-    m_handles[Child::HP_FRONT1] = Get_DescendantHandle("hpFront1");
-    m_handles[Child::HP_FRONT2] = Get_DescendantHandle("hpFront2");
-    m_handles[Child::HP_FRONT3] = Get_DescendantHandle("hpFront3");
-
-    m_handles[Child::HP_BACK1] = Get_DescendantHandle("hpBack1");
-    m_handles[Child::HP_BACK2] = Get_DescendantHandle("hpBack2");
-    m_handles[Child::HP_BACK3] = Get_DescendantHandle("hpBack3");
-
-    m_handles[Child::SPECIAL1] = Get_DescendantHandle("special1");
-    m_handles[Child::SPECIAL2] = Get_DescendantHandle("special2");
-    m_handles[Child::SPECIAL3] = Get_DescendantHandle("special3");
-
-    m_handles[Child::SPECIALARROW1] = Get_DescendantHandle("specialArrow1");
-    m_handles[Child::SPECIALARROW2] = Get_DescendantHandle("specialArrow2");
-    m_handles[Child::SPECIALARROW3] = Get_DescendantHandle("specialArrow3");
-
-    m_handles[Child::ULTIMATE2] = Get_DescendantHandle("ultimate2");
-    m_handles[Child::ULTIMATE3] = Get_DescendantHandle("ultimate3");
-
-    m_handles[Child::ULTIMATEICON2] = Get_DescendantHandle("ultimateIcon2");
-    m_handles[Child::ULTIMATEICON3] = Get_DescendantHandle("ultimateIcon3");
+    for (_int i = 1; i < 3; ++i)
+    {
+        m_handles[ULTIMATE_CHILD[i]] = Get_DescendantHandle("ultimate" + to_string(i + 1));
+        m_handles[ULTIMATEICON_CHILD[i]] = Get_DescendantHandle("ultimateIcon" + to_string(i + 1));
+    }
 
     m_handles[Child::CUR_HP_TEXT] = Get_DescendantHandle("curHpText");
     m_handles[Child::MAX_HP_TEXT] = Get_DescendantHandle("maxHpText");
-
 }
 
 void CUI_BattleHUD::Set_Values(UI_PLAYER_STATUS_DESC desc)
@@ -114,7 +101,17 @@ void CUI_BattleHUD::Set_Values(UI_PLAYER_STATUS_DESC desc)
     Set_Texture(ICON_CHILD[iIndex], ICONTEXTURES[ENUM(desc.eCharacter)]);
 
     // HP
-    Set_GaugeFill(HPFRONT_CHILD[iIndex], desc.hp.fCurValue / desc.hp.fMaxValue);
+    _float fRatio = desc.hp.fCurValue / desc.hp.fMaxValue;
+    Set_GaugeFill(HPFRONT_CHILD[iIndex], fRatio);
+
+    // HP Back
+    auto& hpBack = m_hpBack[iIndex];
+    if (fabs(fRatio - hpBack.fTargetRatio) > (HPBACK_DELTA / desc.hp.fMaxValue))    // hp 변화량이 HPBACK_DELTA를 넘었을 때
+    {
+        hpBack.fTargetRatio = fRatio;
+        hpBack.fDelayTimer = 0.f;
+        hpBack.isDelay = true;
+    }
 
     // Special
     _float fSpecialRatio = desc.special.fCurValue / desc.special.fMaxValue;
@@ -171,6 +168,27 @@ void CUI_BattleHUD::Set_UltimateIcon(_int iIndex, _float fRatio)
     }
     else if(!isAlive && Is_Alive(ULTIMATEICON_CHILD[iIndex]))
         Set_Alive(ULTIMATEICON_CHILD[iIndex], false);
+}
+
+void CUI_BattleHUD::Update_HPBackGauge(_float dt)
+{
+    for (_int i = 0; i < ROLE_COUNT; ++i)
+    {
+        auto& hpBack = m_hpBack[i];
+        if (hpBack.isDelay)
+        {
+            hpBack.fDelayTimer += dt;
+
+            if (hpBack.fDelayTimer < hpBack.fDelayTime)
+                continue;
+
+            hpBack.isDelay = false;
+        }
+
+        _float t = dt * HPBACK_LERP_SPEED;
+        hpBack.fCurRatio = Math::Lerp(hpBack.fCurRatio, hpBack.fTargetRatio, t);
+        Set_GaugeFill(HPBACK_CHILD[i], hpBack.fCurRatio);
+    }
 }
 
 _bool CUI_BattleHUD::Is_Alive(Child child)

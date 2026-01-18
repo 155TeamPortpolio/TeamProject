@@ -5,6 +5,7 @@ NS_BEGIN(Client)
 
 class CUI_BattleHUD final : public CUI_Object
 {
+private:
 	enum Child {
 		ROLE1, ROLE2, ROLE3, 
 		ICON1, ICON2, ICON3,
@@ -48,8 +49,12 @@ public:
 private:
 	UI_HANDLE			m_handles[ENUM(Child::END)];
 
-	_bool				m_isUltimate[3] = {};
-	// 150 48
+	static constexpr _int ROLE_COUNT = 3;
+	static constexpr _float HPBACK_DELTA = 5.f;
+	static constexpr _float HPBACK_LERP_SPEED = 7.f;
+
+	GAUGE_DELAY_DESC	m_hpBack[ROLE_COUNT] = {};
+
 private:
 	const _int			m_iPlayerHPWidth = 5;
 	const _int			m_iBossHPWidth = 2;
@@ -57,12 +62,13 @@ private:
 private:
 	void Add_PartObject( const string& strLevelKey, const string& strPrototypeTag, const string& strInstanceName, Child child, _float2 vOffset = _float2());
 	void Cache_Handles();
-
+	 
 	void Set_Values(UI_PLAYER_STATUS_DESC desc);
-
 	void Set_Special(_int iIndex, _float fRatio, _float fThresRatio);
 	void Set_UltimateIcon(_int iIndex, _float fRatio);
-	
+
+	void Update_HPBackGauge(_float dt);
+
 	_bool Is_Alive(Child child);
 	void Set_Alive(Child child, _bool isAlive);
 	void Set_Color(Child child, _float4 vColor);

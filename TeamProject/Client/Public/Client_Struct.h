@@ -55,4 +55,13 @@ namespace Client {
 		_float      fInterval = 0.f;
 		_uint       iMaxCount = 1;
 	};
+
+	// 게이지 지연및 보간 상태
+	typedef struct tagGaugeDelayDesc {
+		_float fCurRatio = { 1.f };
+		_float fTargetRatio = { 1.f };
+		_float fDelayTimer = {};
+		_float fDelayTime = { 0.3f };
+		_bool isDelay = {};
+	}GAUGE_DELAY_DESC;
 }
