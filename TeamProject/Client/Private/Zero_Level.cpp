@@ -29,6 +29,9 @@
 /* UI */
 #include "UIDirector.h"
 
+/* Interactable */
+#include "ZeroPortal.h"
+
 /*Map*/
 #include "MapLoader.h"
 
@@ -51,7 +54,7 @@ HRESULT CZero_Level::Initialize()
 	PrototypeManager()->Add_ProtoType("Test_Level", "Proto_GameObject_ThugAssaulter", CThugAssaulter::Create());
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_EnemyAttackCollider", CEnemyAttackCollider::Create());
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_EnemyTriggerCollider", CEnemyTriggerCollider::Create());
-
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_ZeroPortal", CZeroPortal::Create());
 	RenderSystem()->Set_FogDesc({ _float4(0.08f, 0.02f, 0.02f, 1.0f),0.f, 0.f, 0.02f, true });
 	auto boss = CZeroStage_Boss::Create(this);
 	auto normal = CZeroStage_Normal::Create(this);
