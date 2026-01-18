@@ -36,10 +36,13 @@ HRESULT CUI_BossHUD::Initialize(INIT_DESC* pArg)
 
 void CUI_BossHUD::Awake()
 {
+    Set_Animation(0);
 }
 
 void CUI_BossHUD::Update(_float dt)
 {
+    __super::Update(dt);
+
     if (!m_pMonsterStatus)
         return;
 
