@@ -64,8 +64,9 @@ HRESULT CZeroStage_Normal::Enter_Stage(CZero_Level::StageContext& context)
 	m_eStageStage = StageState::Entrance;
 	m_PlayerHandle = context.hPlayer;
 
-	CCamDirector::GetInstance()->SetCurTarget();
+	CCamDirector::GetInstance()->SetTarget(context.hPlayer);
 	CCamDirector::GetInstance()->RequestSequence("Intro/Jane_Intro");
+
 
 	return S_OK;
 }
@@ -78,6 +79,8 @@ HRESULT CZeroStage_Normal::Exit_Stage(CZero_Level::StageContext& context)
 
 void CZeroStage_Normal::Intro()
 {
+	m_isSequenceEnd = CCamDirector::GetInstance()->IsPlaying("Intro/Jane_Intro");
+
 	if (m_isSequenceEnd) {
 		CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_ThugAssaulter", { -13.f, -5.f,34.f });
 		CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_ThugAssaulter", { -1.f, -5.f,38.f });
@@ -89,7 +92,10 @@ void CZeroStage_Normal::Intro()
 
 void CZeroStage_Normal::Battle()
 {
-	_bool isBattleEnd = {};
+	_bool isBattleEnd = CBattleSystem::GetInstance()->isMonsterCleared();
+	if (isBattleEnd) {
+		m_eStageStage = StageState::BattleEnd;
+	}
 
 }
 

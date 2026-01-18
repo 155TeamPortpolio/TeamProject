@@ -87,7 +87,7 @@ HRESULT CZeroStage_Boss::Enter_Stage(CZero_Level::StageContext& context)
 {
 	Ready_Map("Zero_Level", "Zero_Boss1");
 	m_eStageStage = StageState::Entrance;
-	CCamDirector::GetInstance()->SetCurTarget();
+	CCamDirector::GetInstance()->SetTarget(context.hPlayer);
 	CCamDirector::GetInstance()->RequestSequence("Intro/Jane_Intro");
 
 	return S_OK;

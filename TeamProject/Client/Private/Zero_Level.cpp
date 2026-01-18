@@ -150,18 +150,18 @@ void CZero_Level::Update()
 {
 	m_Context.pNowStage->Update();
 
-	if (InputDevice()->Key_Tap(VK_F4))
-	{
-		CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_Sacrifice", { 0.f, 0.5f,0.f });
-	}
-	if (InputDevice()->Key_Tap(VK_F5))
-	{
-		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
-			.Asset("hit_ground_smoke_strong.json")
-			.Build("Smoke");
-
-		ObjectManager()->Add_Object(pEffect, { "Zero_Level","Effect_Layer" });
-	}
+	//if (InputDevice()->Key_Tap(VK_F4))
+	//{
+	//	CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_Sacrifice", { 0.f, 0.5f,0.f });
+	//}
+	////if (InputDevice()->Key_Tap(VK_F5))
+	//{
+	//	auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+	//		.Asset("hit_ground_smoke_strong.json")
+	//		.Build("Smoke");
+	//
+	//	ObjectManager()->Add_Object(pEffect, { "Zero_Level","Effect_Layer" });
+	//}
 
 }
 
