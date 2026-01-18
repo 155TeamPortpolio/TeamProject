@@ -720,6 +720,9 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Interactable\ZeroPortal">
       <UniqueIdentifier>{178b3764-628b-48ca-8cb2-36ae8c8f8dbd}</UniqueIdentifier>
+       </Filter>
+    <Filter Include="02. GameObject\Camera\04. OrbitCam\00. LockOnController">
+      <UniqueIdentifier>{ab87437a-0803-4974-b6ba-72bdda89f83e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1389,8 +1392,16 @@
     <ClInclude Include="..\Public\UI_BossHUD.h">
       <Filter>02. GameObject\UI\01. 2D\HUD_Boss</Filter>
     </ClInclude>
+
     <ClInclude Include="..\Public\ZeroPortal.h">
       <Filter>02. GameObject\Object\Interactable\ZeroPortal</Filter>
+   </ClInclude>
+    <ClInclude Include="..\public\OrbitLockOnController.h">
+      <Filter>02. GameObject\Camera\04. OrbitCam\00. LockOnController</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\OrbitLockOnData.h">
+      <Filter>02. GameObject\Camera\04. OrbitCam\00. LockOnController</Filter>
+
     </ClInclude>
     <ClInclude Include="..\Public\ZeroStage_Normal.h">
       <Filter>01. Level\04. Zero\Stage_Normal</Filter>
@@ -2042,8 +2053,13 @@
     <ClCompile Include="..\Private\UI_BossHUD.cpp">
       <Filter>02. GameObject\UI\01. 2D\HUD_Boss</Filter>
     </ClCompile>
+
     <ClCompile Include="..\Private\ZeroPortal.cpp">
       <Filter>02. GameObject\Object\Interactable\ZeroPortal</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\OrbitLockOnController.cpp">
+      <Filter>02. GameObject\Camera\04. OrbitCam\00. LockOnController</Filter>
+
     </ClCompile>
     <ClCompile Include="..\Private\ZeroStage_Normal.cpp">
       <Filter>01. Level\04. Zero\Stage_Normal</Filter>
