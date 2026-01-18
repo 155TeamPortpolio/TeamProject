@@ -19,15 +19,17 @@ HRESULT CUI_MeshBillboard::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
 
+	Add_Component<CStaticModel>();
+	Add_Component<CMaterial>();
+
 	return S_OK;
 }
 
 HRESULT CUI_MeshBillboard::Initialize(INIT_DESC* pArg)
 {
-	auto pModel = Add_Component<CStaticModel>();
-	auto pMaterial = Add_Component<CMaterial>();
-
 	__super::Initialize(pArg);	 
+
+	auto pModel = Get_Component<CStaticModel>();
 
 	//pModel->Link_Model("Test_Level", "UI_3DBillboard_Zero.model");
 	pModel->Set_RenderType(RENDER_PASS_TYPE::RENDER_3DUI);
@@ -66,7 +68,7 @@ CGameObject* CUI_MeshBillboard::Create()
 
 CGameObject* CUI_MeshBillboard::Clone(INIT_DESC* pArg)
 {
-	CUI_MeshBillboard* pInstance = new CUI_MeshBillboard;
+	CUI_MeshBillboard* pInstance = new CUI_MeshBillboard(*this);
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
 		MSG_BOX("Failed to Clone : CUI_MeshBillboard");

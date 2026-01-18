@@ -73,7 +73,7 @@ HRESULT CZeroStage_Boss::Awake()
 {
 
 	//============== Map ============================
-	Ready_Map("ZeroStage_Boss", "Zero_Boss1");
+	
 
 	return S_OK;
 }
@@ -88,12 +88,15 @@ HRESULT CZeroStage_Boss::Ready_Stage(CZero_Level::StageContext& context)
 	if (nullptr == pMapLoader)
 		MSG_BOX("Failed to Load MapData!");
 	Safe_Release(pMapLoader);
+	Ready_Map("Zero_Level", "Zero_Boss1");
 	return S_OK;
 }
 
 HRESULT CZeroStage_Boss::Enter_Stage(CZero_Level::StageContext& context)
 {
-	
+	//CamDirector().SetCurTarget();
+	//CamDirector().RequestSequence("Intro/Jane_Intro");
+
 	return S_OK;
 }
 

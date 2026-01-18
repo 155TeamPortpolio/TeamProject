@@ -23,11 +23,15 @@ public:
     void Late_Update(_float dt) override;
 
 public:
+    void Play() override;
+
+public:
     static CMeshNode* Create();
     CGameObject* Clone(INIT_DESC* pArg) override;
     virtual void Free() override;
 
 protected:
+    void Reset();
     void Update_TextureSlotModule(_float dt);
     void Update_ColorModule(_float dt);
     void Update_ScaleModule(_float dt);

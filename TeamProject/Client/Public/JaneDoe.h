@@ -49,6 +49,9 @@ private:
     HRESULT Initialize_Stat();
     HRESULT Initialize_Weapon();
 
+    /* 이펙트 생성 */
+    HRESULT Initialize_Effects();
+
 private:
     void         Update_States();
     void         Process_AttackInput(const string& strCurrentState);

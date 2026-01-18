@@ -42,7 +42,9 @@ void CSacrificeState_Death::Exit(CSacrifice* pOwner)
 void CSacrificeState_Death_Phase1::Enter(CSacrifice* pOwner)
 {
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
-	pAnimator->Change_Animation("SacrificeBringer_Ani_P1_Death_Stay").Loop(false).Speed(1.4f).Apply();
+	pAnimator->Change_Animation("SacrificeBringer_Ani_P1_Death_Stay").Loop(false).Speed(1.2f).Apply();
+
+	pOwner->Set_Hitable(false);
 }
 
 void CSacrificeState_Death_Phase1::Update(CSacrifice* pOwner, _float dt)
@@ -57,7 +59,9 @@ void CSacrificeState_Death_Phase1::Exit(CSacrifice* pOwner)
 void CSacrificeState_Death_Phase2::Enter(CSacrifice* pOwner)
 {
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
-	pAnimator->Change_Animation("SacrificeBringer_Ani_P2_Death_Stay").Loop(false).Speed(1.4f).Apply();
+	pAnimator->Change_Animation("SacrificeBringer_Ani_P2_Death_Stay").Loop(false).Speed(1.2f).Apply();
+
+	pOwner->Set_Hitable(false);
 }
 
 void CSacrificeState_Death_Phase2::Update(CSacrifice* pOwner, _float dt)
