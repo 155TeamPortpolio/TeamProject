@@ -171,7 +171,10 @@
     <ClInclude Include="..\public\Interactable.h" />
     <ClInclude Include="..\Public\CorinState_UltimateAttack.h" />
     <ClInclude Include="..\public\JaneDoeState_Hit.h" />
+    <ClInclude Include="..\public\OrbitLockOnController.h" />
+    <ClInclude Include="..\Public\OrbitLockOnData.h" />
     <ClInclude Include="..\Public\SacrificeState_Groggy.h" />
+    <ClInclude Include="..\Public\MapInvisibleWall.h" />
     <ClInclude Include="..\public\Portal.h" />
     <ClInclude Include="..\Public\SacrificeState_Groggy_Phase1.h" />
     <ClInclude Include="..\Public\SacrificeState_Groggy_Phase2.h" />
@@ -243,7 +246,6 @@
     <ClInclude Include="..\public\JaneDoeState_UltimateAttack.h" />
     <ClInclude Include="..\public\JaneDoeState_Walk.h" />
     <ClInclude Include="..\Public\MainCity_Level.h" />
-    <ClInclude Include="..\public\MapAnimObject.h" />
     <ClInclude Include="..\Public\OrbitCamTypes.h" />
     <ClInclude Include="..\Public\Sacrifice_Laser.h" />
     <ClInclude Include="..\public\JaneDoeState_SwitchInAttack.h" />
@@ -362,6 +364,7 @@
     <ClInclude Include="..\Public\UI_UltimateAction.h" />
     <ClInclude Include="..\Public\UVAnimationUI.h" />
     <ClInclude Include="..\public\JaneDoe.h" />
+    <ClInclude Include="..\Public\ZeroPortal.h" />
     <ClInclude Include="..\public\ZeroStage_1_1.h" />
     <ClInclude Include="..\Public\ZeroStage_Boss.h" />
     <ClInclude Include="..\Public\ZeroStage_Normal.h" />
@@ -420,6 +423,7 @@
     <ClCompile Include="..\private\Interactable.cpp" />
     <ClCompile Include="..\Private\CorinState_UltimateAttack.cpp" />
     <ClCompile Include="..\private\JaneDoeState_Hit.cpp" />
+    <ClCompile Include="..\private\OrbitLockOnController.cpp" />
     <ClCompile Include="..\Private\SacrificeState_Groggy.cpp" />
     <ClCompile Include="..\private\Portal.cpp" />
     <ClCompile Include="..\Private\SacrificeState_Groggy_Phase1.cpp" />
@@ -489,7 +493,6 @@
     <ClCompile Include="..\private\EnemyTriggerCollider.cpp" />
     <ClCompile Include="..\Private\GaugeUI.cpp" />
     <ClCompile Include="..\Private\ImageUI.cpp" />
-    <ClCompile Include="..\Private\MapAnimObject.cpp" />
     <ClCompile Include="..\Private\MapInvisibleWall.cpp" />
     <ClCompile Include="..\Private\Sacrifice_Laser.cpp" />
     <ClCompile Include="..\private\JaneDoeState_SwitchIn.cpp" />
@@ -602,6 +605,7 @@
     <ClCompile Include="..\Private\UI_UltimateAction.cpp" />
     <ClCompile Include="..\Private\UVAnimationUI.cpp" />
     <ClCompile Include="..\private\JaneDoe.cpp" />
+    <ClCompile Include="..\Private\ZeroPortal.cpp" />
     <ClCompile Include="..\private\ZeroStage_1_1.cpp" />
     <ClCompile Include="..\Private\ZeroStage_Boss.cpp" />
     <ClCompile Include="..\Private\ZeroStage_Normal.cpp" />

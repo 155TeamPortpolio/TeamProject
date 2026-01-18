@@ -1,0 +1,15 @@
+{
+  "TagDataFormat": "Portal",
+  "TagArea": "Zero_1_1",
+  "iVersion": 1,
+  "values": [
+    {
+      "iObjID": 14,
+      "TagName": "NextLevel",
+      "defaultvalue": {
+        "type": "String",
+        "value": "Zero_Boss1"
+      }
+    }
+  ]
+}

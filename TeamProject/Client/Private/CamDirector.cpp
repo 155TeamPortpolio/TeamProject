@@ -69,6 +69,12 @@ void CCamDirector::Update(_float dt)
 
     auto seqPlayer = GetSeqObj()->Get_Component<CCamSequencePlayer>();
 
+    if (seqPlayer->GetSequence()->space == CamSpace::Local && !m_spaceRefHandle.isValid())
+    {
+        AbortSequenceToOrbit(true);
+        return;
+    }
+
     if (m_playing.pendingStart)
     {
         m_playing.blendInRemain -= dt;
@@ -83,7 +89,7 @@ void CCamDirector::Update(_float dt)
 
     seqPlayer->Update(dt);
 
-    if (!seqPlayer->IsPlaying()) 
+    if (!seqPlayer->IsPlaying())
         StopAll(m_playing.defaultBlendOutSec);
 }
 
@@ -107,6 +113,22 @@ void CCamDirector::UpdateInput()
     //    camMgr.AddShake(CamShakeType::HitNormal);
 }
 
+void CCamDirector::AbortSequenceToOrbit(_bool resetTime)
+{
+    auto seqObj = GetSeqObj();
+    auto seqPlayer = seqObj->Get_Component<CCamSequencePlayer>();
+
+    seqPlayer->SetApplyEnabled(false);
+    seqPlayer->Stop(false);
+
+    if (resetTime) seqPlayer->SetTime(0.f);
+
+    camMgr.Clear(0.f);
+    camMgr.Set_MainCam(GetOrbitCamComp(), 0.f);
+
+    m_playing = {};
+}
+
 void CCamDirector::UpdatePlayer()
 {
     auto player = GetPlayer();
@@ -116,22 +138,16 @@ void CCamDirector::UpdatePlayer()
 
     if (type == ENUM(CPlayer::PLAYER::END) || !focus.isValid())
     {
-        if (m_focusHandle.isValid())
-            GetOrbitCam()->ClearTarget();
+        if (m_focusHandle.isValid()) GetOrbitCam()->ClearTarget();
+
         m_focusHandle.Reset();
         m_focusType = type;
         return;
     }
 
-    if (type != m_focusType)
-    {
-        m_focusType = type;
-    }
+    if (type != m_focusType) m_focusType = type;
 
-    if (type != m_focusType)
-        m_focusType = type;
-
-    if (!m_focusHandle.isValid() || focus.hObjID != m_focusHandle.hObjID)
+    if (!m_focusHandle.isValid() || focus != m_focusHandle)
     {
         m_focusHandle = focus;
         SetTarget(m_focusHandle);
@@ -161,6 +177,9 @@ _uint CCamDirector::RequestSequence(const string& key, const CamSequenceRequestD
     if (m_playing.active) StopAll(req.blendOutSec);
 
     auto& entry = m_seqs.at(key);
+
+    if (entry.seqDesc.space == CamSpace::Local && !m_spaceRefHandle.isValid())
+        return 0u;
 
     CamType resolvedReturnCamType = req.returnCamType;
     if (resolvedReturnCamType == CamType::None) resolvedReturnCamType = m_returnCamType;
@@ -200,6 +219,11 @@ _uint CCamDirector::RequestSequence(const string& key, const CamSequenceRequestD
     else seqPlayer->Play();
 
     return handle;
+}
+
+_bool CCamDirector::IsPlaying() const
+{
+    return GetSeqCam()->IsPlaying();
 }
 
 _bool CCamDirector::StopRequest(_uint handle, _float blendOutSec, _bool resetTime)
