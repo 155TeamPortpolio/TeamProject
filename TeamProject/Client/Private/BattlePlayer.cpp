@@ -67,8 +67,8 @@ void CBattlePlayer::Priority_Update(_float dt)
 {
 	if (m_pCurrentCharacter == nullptr)
 		return;
-
-	Update_Input(dt);
+	if(Can_Input())
+		Update_Input(dt);
 	Update_Target();
 }
 
