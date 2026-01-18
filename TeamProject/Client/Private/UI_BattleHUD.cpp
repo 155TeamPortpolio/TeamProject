@@ -12,6 +12,7 @@ HRESULT CUI_BattleHUD::Initialize_Prototype()
 {
     __super::Initialize_Prototype();
 
+    Add_Component<CObjectContainer>();
     Add_Component<CEventListener>();
 
     return S_OK;
@@ -21,70 +22,41 @@ HRESULT CUI_BattleHUD::Initialize(INIT_DESC* pArg)
 {
     __super::Initialize(pArg);
 
-    m_handles.resize(Child::END);
+    // JSON 기반 UI 구성 로드
+    const string& filePath = ResourceManager()->Get_ResourcePath("hud_battle.json");
+    Load(Helper::LoadJson<nlohmann::ordered_json>(filePath));
 
-    auto pRoot = Ready_Prefab();
-    if (!pRoot)
-        MSG_BOX("Failed to Ready_Prefab : CUI_BattleHUD");
+    // 클라이언트에서 만든 ui 자식으로 추가
+    const string& strLevelKey = LevelManager()->Get_NowLevelKey();
+    Add_PartObject(strLevelKey, "Proto_GameObject_Decibel", "decibel", Child::ULTIMATE1, _float2(50.f, 136.f));
+    Add_PartObject(strLevelKey, "Proto_GameObject_BattleHUDAction", "action", Child::ACTION, _float2(1178.f, 655.f));
 
+    // 핸들 캐싱
+    Cache_Handles();
+    
     // 이벤트 : UI_PLAYER_STATUS_DESC
     Get_Component<CEventListener>()->Add_Listener<UI_PLAYER_STATUS_DESC>([&](const UI_PLAYER_STATUS_DESC& desc)
         {
             Set_Values(desc);
         });
 
+    //Set_Animation(0);
+
     return S_OK;
 }
 
 void CUI_BattleHUD::Awake()
-{
-    // 루트 UI의 0번 애니메이션 재생 (FadeIn)
-    if (m_hRoot.isValid())
-        m_hRoot.Get()->Set_Animation(0);
-
-    //Set_Alive(Child::BOSS, true);
+{ 
 }
 
 void CUI_BattleHUD::Update(_float dt)
 {
-    // boss몬스터 이벤트 테스트
-    //if (InputDevice()->Key_Down('P'))
-    //{
-    //    UI_BOSS_STATUS_DESC desc = {};
-    //    desc.hp.fCurValue = 50.f;
-    //    desc.hp.fMaxValue = 100.f;
-    //    desc.iGroggy = 5;
-    //    EventSystem()->Broadcast<UI_BOSS_STATUS_DESC>({ desc });
-    //}
+    __super::Update(dt);
+
+    Get_Component<CObjectContainer>()->UpdateChild(dt);
 }
 
-CUI_Object* CUI_BattleHUD::Ready_Prefab()
-{
-    auto pGameInstance = CGameInstance::GetInstance();
-    const string& strLevelKey = pGameInstance->Get_LevelMgr()->Get_NowLevelKey();
-
-    // Battle HUD 프리팹 (json) 로드 후 UI 트리 루트(CanvasPanel) 생성
-    CUI_Object* pRoot = Builder::Create_UIObject({ strLevelKey, "Proto_GameObject_CanvasPanel" })
-        .Asset("hud_battle.json")
-        .Build("prefab");
-
-    if (!pRoot)
-        return nullptr;
-
-    Add_PartObject(pRoot, strLevelKey, "Proto_GameObject_Decibel", "decibel", Child::ULTIMATE1, _float2(50.f, 136.f));
-    Add_PartObject(pRoot, strLevelKey, "Proto_GameObject_BattleHUDAction", "action", Child::ACTION, _float2(1178.f, 655.f));
-
-    // 생성된 루트 UI를 uiMgr에 등록
-    if (FAILED(pGameInstance->Get_UIMgr()->Add_UIObject(pRoot, strLevelKey)))
-        return nullptr;
-
-    // UI 트리 기준으로 주요 핸들 캐싱 (root / chidlren)
-    Cache_Handles(pRoot);
-
-    return pRoot;
-}
-
-void CUI_BattleHUD::Add_PartObject(CUI_Object* pRoot, const string& strLevelKey, const string& strPrototypeTag, const string& strInstanceName, Child child, _float2 vOffset)
+void CUI_BattleHUD::Add_PartObject(const string& strLevelKey, const string& strPrototypeTag, const string& strInstanceName, Child child, _float2 vOffset)
 {
     CUI_Object* pObj = Builder::Create_UIObject({ strLevelKey, strPrototypeTag })
         .Offset(vOffset)
@@ -93,35 +65,41 @@ void CUI_BattleHUD::Add_PartObject(CUI_Object* pRoot, const string& strLevelKey,
     if (!pObj)
         return;
 
-    pRoot->Get_Component<CObjectContainer>()->Add_Child(pObj);
-
-    UI_HANDLE handle = pObj->Get_Handle();
-    if (!handle.isValid())
-        return;
-
-    m_handles[child] = handle;
+    Get_Component<CObjectContainer>()->Add_Child(pObj);
+    m_handles[child] = pObj->Get_Handle();
 }
 
-void CUI_BattleHUD::Cache_Handles(CUI_Object* pRoot)
+void CUI_BattleHUD::Cache_Handles()
 {
-    // 루트 핸들 캐싱
-    m_hRoot = pRoot->Get_Handle();
+    m_handles[Child::ROLE1] = Get_DescendantHandle("role1");
+    m_handles[Child::ROLE2] = Get_DescendantHandle("role2");
+    m_handles[Child::ROLE3] = Get_DescendantHandle("role3");
 
-    // 자식 핸들 캐싱
-    for (_int i = 0; i < 3; ++i)
-    {
-        m_handles[ROLE_CHILD[i]] = pRoot->Get_DescendantHandle("role" + to_string(i + 1));
-        m_handles[ICON_CHILD[i]] = pRoot->Get_DescendantHandle("icon" + to_string(i + 1));
-        m_handles[HPBACK_CHILD[i]] = pRoot->Get_DescendantHandle("hpBack" + to_string(i + 1));
-        m_handles[HPFRONT_CHILD[i]] = pRoot->Get_DescendantHandle("hpFront" + to_string(i + 1));
-        m_handles[SPECIAL_CHILD[i]] = pRoot->Get_DescendantHandle("special" + to_string(i + 1));
-        m_handles[SPECIALARROW_CHILD[i]] = pRoot->Get_DescendantHandle("specialArrow" + to_string(i + 1));
-        m_handles[ULTIMATE_CHILD[i]] = pRoot->Get_DescendantHandle("ultimate" + to_string(i + 1));
-        m_handles[ULTIMATEICON_CHILD[i]] = pRoot->Get_DescendantHandle("ultimateIcon" + to_string(i + 1));
-    }
+    m_handles[Child::ICON1] = Get_DescendantHandle("icon1");
+    m_handles[Child::ICON2] = Get_DescendantHandle("icon2");
+    m_handles[Child::ICON3] = Get_DescendantHandle("icon3");
 
-    m_handles[Child::CUR_HP_TEXT] = pRoot->Get_DescendantHandle("curHpText");
-    m_handles[Child::MAX_HP_TEXT] = pRoot->Get_DescendantHandle("maxHpText");
+    m_handles[Child::HP_FRONT1] = Get_DescendantHandle("hpFront1");
+    m_handles[Child::HP_FRONT2] = Get_DescendantHandle("hpFront2");
+    m_handles[Child::HP_FRONT3] = Get_DescendantHandle("hpFront3");
+
+    m_handles[Child::SPECIAL1] = Get_DescendantHandle("special1");
+    m_handles[Child::SPECIAL2] = Get_DescendantHandle("special2");
+    m_handles[Child::SPECIAL3] = Get_DescendantHandle("special3");
+
+    m_handles[Child::SPECIALARROW1] = Get_DescendantHandle("specialArrow1");
+    m_handles[Child::SPECIALARROW2] = Get_DescendantHandle("specialArrow2");
+    m_handles[Child::SPECIALARROW3] = Get_DescendantHandle("specialArrow3");
+
+    m_handles[Child::ULTIMATE2] = Get_DescendantHandle("ultimate2");
+    m_handles[Child::ULTIMATE3] = Get_DescendantHandle("ultimate3");
+
+    m_handles[Child::ULTIMATEICON2] = Get_DescendantHandle("ultimateIcon2");
+    m_handles[Child::ULTIMATEICON3] = Get_DescendantHandle("ultimateIcon3");
+
+    m_handles[Child::CUR_HP_TEXT] = Get_DescendantHandle("curHpText");
+    m_handles[Child::MAX_HP_TEXT] = Get_DescendantHandle("maxHpText");
+
 }
 
 void CUI_BattleHUD::Set_Values(UI_PLAYER_STATUS_DESC desc)
@@ -178,8 +156,8 @@ void CUI_BattleHUD::Set_Special(_int iIndex, _float fRatio, _float fThresRatio)
 
 void CUI_BattleHUD::Set_UltimateIcon(_int iIndex, _float fRatio)
 {
-    if (0 >= iIndex || iIndex > 2)
-        return;
+    //if (0 >= iIndex || iIndex > 2)
+    //    return;
 
     _bool isAlive = (fRatio >= 1.f);
     if (isAlive && !Is_Alive(ULTIMATEICON_CHILD[iIndex]))
@@ -215,7 +193,7 @@ void CUI_BattleHUD::Set_Color(Child child, _float4 vColor)
         });
 }
 
-void CUI_BattleHUD::Set_Animation(Child child, _int iIndex)
+void CUI_BattleHUD::Set_Anim(Child child, _int iIndex)
 {
     ForChild(child, [iIndex](CUI_Object* ui) {
         ui->Set_Animation(iIndex);
