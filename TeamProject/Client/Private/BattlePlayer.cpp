@@ -339,27 +339,27 @@ void CBattlePlayer::Update_Target()
 {
 	if (m_TargetHandle.isValid())
 	{
-		if (m_TargetHandle.Get()->Get_Tag() == "Boss")
-		{
-			if ((m_TargetHandle.Get()->Get_WorldPos() - m_pCurrentCharacter->Get_WorldPos()).Length()
-				< TARGET_MAXDISTANCE * 10.f)
-				return;
-		}
+		_float fMaxDistance = (m_TargetHandle.Get()->Get_Tag() == "Boss")
+			? TARGET_BOSS_MAXDISTANCE
+			: TARGET_MAXDISTANCE;
 
-		if((m_TargetHandle.Get()->Get_WorldPos() - m_pCurrentCharacter->Get_WorldPos()).Length()
-			< TARGET_MAXDISTANCE)
+		if ((m_TargetHandle.Get()->Get_WorldPos() - m_pCurrentCharacter->Get_WorldPos()).Length()
+			< fMaxDistance)
 			return;
 	}
 
 	auto Monsters = CBattleSystem::GetInstance()->GetBattleObjects(CBattleSystem::BATTLE_OBJ_TYPE::MONSTER);
-
 	_float fminDistance = FLT_MAX;
 	for (auto& monster : Monsters)
 	{
 		_vector3 vToMonster = monster.vPos - m_pCurrentCharacter->Get_WorldPos();
 		_float fDistance = vToMonster.Length();
 
-		if (fDistance < fminDistance)
+		_float fDetectDistance = (monster.hObject.Get()->Get_Tag() == "Boss")
+			? TARGET_BOSS_MAXDISTANCE
+			: TARGET_MAXDISTANCE;
+
+		if (fDistance < fDetectDistance && fDistance < fminDistance)
 		{
 			fminDistance = fDistance;
 			m_TargetHandle = monster.hObject;
