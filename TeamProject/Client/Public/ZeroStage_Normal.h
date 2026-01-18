@@ -3,6 +3,7 @@
 class CZeroStage_Normal :
     public CStage
 {
+private:
 	CZeroStage_Normal();
 	~CZeroStage_Normal() DEFAULT;
 

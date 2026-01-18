@@ -33,12 +33,6 @@ public:
 	StageContext& Get_StageContext() { return m_Context; };
 	HRESULT ChangeStage(StageType nextStageType, _int StageID);
 
-public:
-	void Ready_Map(const string& LevelTag, const string& AreaTag);
-
-private:
-	void Rake_MapResources();
-
 private:
 	CGameInstance* m_pGameInstance = {nullptr};
 	CCamDirector* m_pCamDirector = { nullptr };

@@ -8,11 +8,12 @@
 
 #include "Stage.h"
 #include "ZeroStage_Boss.h"
+#include "ZeroStage_Normal.h"
 
 // Camera
 #include "Camera.h"
+#include "CamDirector.h"
 #include "UI_MeshPyramid.h"
-
 #include "Player.h"
 
 /* Enemy */
@@ -20,11 +21,16 @@
 #include "SacrificeHand.h"
 #include "Sacrifice_Laser.h"
 #include "Sacrifice_Orb.h"
+#include "ThugBulkyEnforcer.h"
+#include "ThugAssaulter.h"
 #include "EnemyAttackCollider.h"
 #include "EnemyTriggerCollider.h"
 
 /* UI */
 #include "UIDirector.h"
+
+/*Map*/
+#include "MapLoader.h"
 
 CZero_Level::CZero_Level(const string& LevelKey)
 	:CLevel(LevelKey),
@@ -41,21 +47,20 @@ HRESULT CZero_Level::Initialize()
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_SacrificeHand", CSacrificeHand::Create());
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_SacrificeLaser", CSacrifice_Laser::Create());
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_SacrificeOrb", CSacrifice_Orb::Create());
+	PrototypeManager()->Add_ProtoType("Test_Level", "Proto_GameObject_ThugBulkyEnforcer", CThugBulkyEnforcer::Create());
+	PrototypeManager()->Add_ProtoType("Test_Level", "Proto_GameObject_ThugAssaulter", CThugAssaulter::Create());
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_EnemyAttackCollider", CEnemyAttackCollider::Create());
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_EnemyTriggerCollider", CEnemyTriggerCollider::Create());
 
 	RenderSystem()->Set_FogDesc({ _float4(0.08f, 0.02f, 0.02f, 1.0f),0.f, 0.f, 0.02f, true });
-	Rake_MapResources();
 	auto boss = CZeroStage_Boss::Create(this);
+	auto normal = CZeroStage_Normal::Create(this);
 	m_StageContainer.emplace(StageType::Boss, boss);
+	m_StageContainer.emplace(StageType::Normal, normal);
 
-	//m_Context.eStageType = StageType::Boss;
-	//m_Context.pNowStage = boss;
-	//
+	ChangeStage(StageType::Normal, 1);
+	m_Context.pNowStage->Ready_Stage(m_Context);
 
-	ChangeStage(StageType::Boss, 0);
-m_Context.pNowStage->Ready_Stage(m_Context);
-	/* Pre load È°ï¿½ï¿½È­ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿? ï¿½ï¿½ï¿½â¼­ ï¿½ï¿½ï¿½ï¿½ */
 	{
 		//==================== Effect =======================
 		auto pResource = ResourceManager();
@@ -119,8 +124,6 @@ m_Context.pNowStage->Ready_Stage(m_Context);
 HRESULT CZero_Level::Awake()
 {
 	/* Enemy */
-
-
 	/* Player */
 	auto pPlayer = ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Player));
 	auto castedPlayer = dynamic_cast<CPlayer*>(pPlayer);
@@ -134,22 +137,18 @@ HRESULT CZero_Level::Awake()
 	auto uiDirector = CUIDirector::GetInstance();
 	uiDirector->Load_LevelObjects("Zero_Level");
 
-	/*?‹œ?ž‘ ?Š¤?…Œ?´ì§? ?„¸?Œ…*/
 	auto boss = CZeroStage_Boss::Create(this);
 	auto normal = CZeroStage_Boss::Create(this);
 	m_StageContainer.emplace(StageType::Boss, boss);
+	m_StageContainer.emplace(StageType::Normal, normal);
 
-	m_Context.eStageType = StageType::Boss;
-	m_Context.pNowStage = boss;
-	m_Context.pNowStage->Ready_Stage(m_Context);
+	//ChangeStage( StageType::Normal )
 	return S_OK;
 }
 
 void CZero_Level::Update()
 {
 	m_Context.pNowStage->Update();
-
-	CBattleSystem::GetInstance()->Update();
 
 	if (InputDevice()->Key_Tap(VK_F4))
 	{
@@ -194,13 +193,6 @@ HRESULT CZero_Level::ChangeStage(StageType nextStageType, _int StageID)
 	return m_Context.pNowStage->Enter_Stage(m_Context);
 }
 
-void CZero_Level::Ready_Map(const string& LevelTag, const string& AreaTag)
-{
-	CMapLoader* pMapLoader = CMapLoader::Create(LevelTag, AreaTag);
-	if (nullptr == pMapLoader)
-		MSG_BOX("Failed to Load MapData!");
-	Safe_Release(pMapLoader);
-}
 
 CZero_Level* CZero_Level::Create(const string& LevelKey)
 {
@@ -222,7 +214,6 @@ void CZero_Level::Free()
 	m_StageContainer.clear();
 
 	__super::Free();
-	CBattleSystem::GetInstance()->DestroyInstance();
 	m_pGameInstance->DestroyInstance();
 	m_pCamDirector->DestroyInstance();
 
