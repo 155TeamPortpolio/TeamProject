@@ -173,6 +173,8 @@
     <ClInclude Include="..\public\JaneDoeState_Hit.h" />
     <ClInclude Include="..\Public\SacrificeState_Groggy.h" />
     <ClInclude Include="..\public\Portal.h" />
+    <ClInclude Include="..\Public\SacrificeState_Groggy_Phase1.h" />
+    <ClInclude Include="..\Public\SacrificeState_Groggy_Phase2.h" />
     <ClInclude Include="..\public\ThugAssaulter_Groggy.h" />
     <ClInclude Include="..\Public\Belle.h" />
     <ClInclude Include="..\Public\BelleState_Idle.h" />
@@ -420,6 +422,8 @@
     <ClCompile Include="..\private\JaneDoeState_Hit.cpp" />
     <ClCompile Include="..\Private\SacrificeState_Groggy.cpp" />
     <ClCompile Include="..\private\Portal.cpp" />
+    <ClCompile Include="..\Private\SacrificeState_Groggy_Phase1.cpp" />
+    <ClCompile Include="..\Private\SacrificeState_Groggy_Phase2.cpp" />
     <ClCompile Include="..\private\ThugAssaulter_Groggy.cpp" />
     <ClCompile Include="..\Private\Belle.cpp" />
     <ClCompile Include="..\Private\BelleState_Idle.cpp" />

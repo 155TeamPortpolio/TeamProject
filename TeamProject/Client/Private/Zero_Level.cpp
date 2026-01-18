@@ -46,7 +46,16 @@ HRESULT CZero_Level::Initialize()
 
 	RenderSystem()->Set_FogDesc({ _float4(0.08f, 0.02f, 0.02f, 1.0f),0.f, 0.f, 0.02f, true });
 	Rake_MapResources();
-	/* Pre load È°ï¿½ï¿½È­ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½â¼­ ï¿½ï¿½ï¿½ï¿½ */
+	auto boss = CZeroStage_Boss::Create(this);
+	m_StageContainer.emplace(StageType::Boss, boss);
+
+	//m_Context.eStageType = StageType::Boss;
+	//m_Context.pNowStage = boss;
+	//
+
+	ChangeStage(StageType::Boss, 0);
+m_Context.pNowStage->Ready_Stage(m_Context);
+	/* Pre load È°ï¿½ï¿½È­ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿? ï¿½ï¿½ï¿½â¼­ ï¿½ï¿½ï¿½ï¿½ */
 	{
 		//==================== Effect =======================
 		auto pResource = ResourceManager();
@@ -125,7 +134,7 @@ HRESULT CZero_Level::Awake()
 	auto uiDirector = CUIDirector::GetInstance();
 	uiDirector->Load_LevelObjects("Zero_Level");
 
-	/*ì‹œì‘ ìŠ¤í…Œì´ì§€ ì„¸íŒ…*/
+	/*?‹œ?‘ ?Š¤?…Œ?´ì§? ?„¸?Œ…*/
 	auto boss = CZeroStage_Boss::Create(this);
 	auto normal = CZeroStage_Boss::Create(this);
 	m_StageContainer.emplace(StageType::Boss, boss);
