@@ -5,7 +5,9 @@
 
 //Components
 #include "Material.h"
-#include "StaticModel.h"
+#include "MaterialInstance.h"
+#include "MaterialData.h"
+#include "RectModel.h"
 #include "EventListener.h"
 
 CZeroPortal::CZeroPortal()
@@ -24,6 +26,22 @@ HRESULT CZeroPortal::Initialize_Prototype()
 		return E_FAIL;
 
 	Add_Component<CEventListener>();
+	Add_Component<CRectModel>();
+	Add_Component<CMaterial>();
+
+	ResourceManager()->Add_ResourcePath("Eff_Objects_048.png", "../Bin/Resources/Effect/Texture/Eff_Objects_048.png");
+
+	auto pModel = Get_Component<CRectModel>();
+	pModel->Link_Model(G_GlobalLevelKey, "Engine_Default_Rect");
+	CMaterial* pMaterial = Get_Component<CMaterial>();
+
+	ID3D11Device* pDevice = CGameInstance::GetInstance()->Get_Device();
+	CMaterialInstance* customInstance = CMaterialInstance::Create_Handle("Rect_Effect_Base", "Opaque", pDevice);
+	pMaterial->Insert_MaterialInstance(customInstance, nullptr);
+	auto MaterialDat = customInstance->Get_MaterialData();
+	if (MaterialDat)
+		MaterialDat->Link_Shader(G_GlobalLevelKey, "VTX_NorTex.hlsl");
+	customInstance->Get_MaterialData()->Link_Texture(G_GlobalLevelKey, "Eff_Objects_048.png", TEXTURE_TYPE::DIFFUSE); 
 
 	return S_OK;
 }
@@ -32,10 +50,6 @@ HRESULT CZeroPortal::Initialize(INIT_DESC* pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
-
-	auto* pDesc = static_cast<ZEROPORTAL_DESC*>(pArg);
-
-	m_NextMapTag = pDesc->NextMapTag;
 
 	Get_Component<CEventListener>()->Add_Listener<LevelSwitched>([&](LevelSwitched desc) 
 		{
@@ -54,8 +68,10 @@ void CZeroPortal::Priority_Update(_float dt)
 
 void CZeroPortal::Update(_float dt)
 {
+	
 	Get_Component<CCollider>()->Update(dt);
-	Interact();
+	//Add_Component<CRectModel>()->Draw(CGameInstance::GetInstance()->Get_Context(), );
+	//Interact();
 }
 
 void CZeroPortal::Late_Update(_float dt)
@@ -69,9 +85,6 @@ void CZeroPortal::OnTriggerEnter(CGameObject* pOther)
 		return;
 
 	m_bIsInteractable = true;
-
-	//상호작용버튼 만들기전 임시 닿으면실행
-
 }
 
 void CZeroPortal::OnTriggerStay(CGameObject* pOher)
@@ -94,6 +107,7 @@ void CZeroPortal::Interact()
 		return;
 	
 	if (InputDevice()->Key_Down('F')) {
+		//다음 맵 불러오는 로직?
 		LevelManager()->Set_LoadingLevel("Loading_Level");
 		LevelManager()->Request_ChangeLevel("Zero_Level", true);
 	}

@@ -33,6 +33,7 @@ VS_OUT VS_MAIN(VS_IN In)
     return Out;
 }
 
+
 struct PS_IN
 {
     float4 vPosition : SV_POSITION;
@@ -53,7 +54,7 @@ PS_OUT PS_MAIN(PS_IN In)
     PS_OUT Out;
     
     //이거는 래핑한다는뜻, 30을 곱해서 반복적인 타일을 만들어주는 것
-    vector vMtrlDiffuse = DiffuseTexture.Sample(DefaultSampler, In.vTexcoord * 30.f);
+    vector vMtrlDiffuse = DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
     if (vMtrlDiffuse.a < 0.3f)
         discard;
     

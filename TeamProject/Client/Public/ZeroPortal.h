@@ -1,6 +1,8 @@
 #pragma once
 #include "Interactable.h"
 
+
+
 NS_BEGIN(Client)
 
 struct LevelSwitched {
@@ -15,7 +17,7 @@ public:
         string NextMapTag{};
     }ZEROPORTAL_DESC;
 
-protected:
+private:
     CZeroPortal();
     CZeroPortal(const CZeroPortal& rhs);
     virtual ~CZeroPortal() DEFAULT;
@@ -34,7 +36,8 @@ public:
 
     virtual void    Interact() override;
 
-protected:
+private:
+    _bool  m_bVisible = { false };
     string m_NextMapTag{};
 
 public:
