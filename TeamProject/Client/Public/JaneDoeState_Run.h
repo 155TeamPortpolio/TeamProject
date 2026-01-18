@@ -24,6 +24,9 @@ public:
     virtual void Update(CJaneDoe* pOwner, _float dt) override;
     virtual void Exit(CJaneDoe* pOwner) override {}
 
+private:
+    _float m_fTurnbackCooldown = 0.f;
+
 public:
     static CJaneDoeState_Run_Loop* Create() { return new CJaneDoeState_Run_Loop(); }
     virtual void Free() override { __super::Free(); }

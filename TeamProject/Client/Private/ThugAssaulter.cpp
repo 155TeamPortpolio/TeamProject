@@ -22,6 +22,7 @@
 #include "ThugAssaulter_Death.h"
 #include "ThugAssaulter_Move.h"
 #include "ThugAssaulter_Groggy.h"
+#include "ThugAssaulter_Hit.h"
 
 #include "AttackSign.h"
 
@@ -391,6 +392,12 @@ void CThugAssaulter::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage)
 
 		m_tStatus.iNowHP -= fDamage * 1.5f;
 	}
+	else if ("Idle" == m_pStateMachine->Get_CurrentStateName())
+	{
+		m_pStateMachine->Set_Trigger("Idle_To_Hit");
+		DIR eDir = GetDIRToPlayer(); 
+		m_pStateMachine->Set_Int("Dir", ENUM(eDir));
+	}
 	else
 	{
 		Get_Component<CAnimator3D>()->Set_Animation(1, "ThugAssaulter_Ani_Hit_Stay")
@@ -440,6 +447,7 @@ HRESULT CThugAssaulter::Initialize_States()
 	m_pStateMachine->Register_State("Chase", CThugAssaulter_Chase::Create());
 	m_pStateMachine->Register_State("Death", CThugAssaulter_Death::Create());
 	m_pStateMachine->Register_State("Groggy", CThugAssaulter_Groggy::Create());
+	m_pStateMachine->Register_State("Hit", CThugAssaulter_Hit::Create());
 
 	return S_OK;
 }
@@ -448,22 +456,19 @@ HRESULT CThugAssaulter::Initialize_Transitions()
 {
 	m_pStateMachine->Register_Transition("Born", "Idle",
 		CStateMachine<CThugAssaulter>::CONDITION_ANIMATION_END);
-
 	m_pStateMachine->Register_Transition("Idle", "Attack",
 		CStateMachine<CThugAssaulter>::CONDITION_TRIGGER, "Idle_To_Attack");
-
 	m_pStateMachine->Register_Transition("Idle", "Move",
 		CStateMachine<CThugAssaulter>::CONDITION_TRIGGER, "Idle_To_Move");
-
 	m_pStateMachine->Register_Transition("Idle", "Chase",
 		CStateMachine<CThugAssaulter>::CONDITION_TRIGGER, "Idle_To_Chase");
-
 	m_pStateMachine->Register_Transition("Idle", "Death",
 		CStateMachine<CThugAssaulter>::CONDITION_TRIGGER, "Idle_To_Death");
-
 	m_pStateMachine->Register_Transition("Idle", "Groggy",
 		CStateMachine<CThugAssaulter>::CONDITION_TRIGGER, "Idle_To_Groggy");
-
+	m_pStateMachine->Register_Transition("Idle", "Hit",
+		CStateMachine<CThugAssaulter>::CONDITION_TRIGGER, "Idle_To_Hit");
+	
 	return S_OK;
 }
 
@@ -549,7 +554,7 @@ void CThugAssaulter::CheckDistanceFromPlayer()
 		m_tTargetingInfo.fDistance <= m_tHysteriesis.fChaseExit)
 		m_pStateMachine->Set_Bool("Chase", false);
 }
-
+ 
 void CThugAssaulter::ProcessDamage(DAMAGE_TYPE eDamageType)
 {
 	switch (eDamageType)
@@ -569,8 +574,6 @@ void CThugAssaulter::ProcessDamage(DAMAGE_TYPE eDamageType)
 
 		break;
 	}
-	default:
-		break;
 	}
 
 }

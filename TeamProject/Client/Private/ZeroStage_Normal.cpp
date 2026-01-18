@@ -57,6 +57,7 @@ void CZeroStage_Normal::Update()
 
 HRESULT CZeroStage_Normal::Ready_Stage(CZero_Level::StageContext& context)
 {
+	Ready_Map("Zero_Level", "Zero_1_1");
 	return S_OK;
 }
 
@@ -74,7 +75,6 @@ HRESULT CZeroStage_Normal::Enter_Stage(CZero_Level::StageContext& context)
 
 HRESULT CZeroStage_Normal::Exit_Stage(CZero_Level::StageContext& context)
 {
-	ObjectManager()->Get_Layer({ "Zero_Level","PlacedObject_Layer" })->Clear_Layer();
 	return S_OK;
 }
 
