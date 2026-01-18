@@ -8,11 +8,11 @@ NS_END
 
 NS_BEGIN(Client)
 
-class CEnemy abstract:
+class CEnemy abstract :
     public CGameObject
 {
 public:
-    enum class BATTLE_COLTYPE{ ATTACK, TRIGGER };
+    enum class BATTLE_COLTYPE { ATTACK, TRIGGER };
 protected:
     CEnemy();
     CEnemy(const CEnemy& rhg);
@@ -25,56 +25,57 @@ public:
     virtual void    Update(_float dt) override;
     virtual void    Late_Update(_float dt) override;
 
-    virtual void OnPooledAcquire(INIT_DESC* pArg = nullptr) {}	// Ç®ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
-    virtual void OnPooledRelease() {}							// Ç®ï¿½ï¿½ ï¿½ï¿½ï¿½Æ°ï¿½ ï¿½ï¿½
+    virtual void OnPooledAcquire(INIT_DESC* pArg = nullptr) {}	// Ç®¿¡¼­ ²¨³¾ ¶§
+    virtual void OnPooledRelease() {}							// Ç®·Î µ¹¾Æ°¥ ¶§
 
 
-public: 
+public:
     /* Getter */
-    // ï¿½ï¿½ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ä³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯
-    BATTLEOBJ_INFO*         GetCharacterOnField();
-    // ï¿½ï¿½ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ä³ï¿½ï¿½ï¿½Í¿ï¿½ï¿½ï¿½ ï¿½Å¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯
-    TARGETING_INFO&         GetTargetingInfo() { return m_tTargetingInfo; }
-    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Status ï¿½ï¿½ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½ï¿½È¯
+    // ÇöÀç ÇÃ·¹ÀÌ ÁßÀÎ Ä³¸¯ÅÍÀÇ Á¤º¸¸¦ ¹ÝÈ¯
+    BATTLEOBJ_INFO* GetCharacterOnField();
+    // ÇöÀç ÇÃ·¹ÀÌ ÁßÀÎ Ä³¸¯ÅÍ¿ÍÀÇ °Å¸®Á¤º¸¸¦ ¹ÝÈ¯
+    TARGETING_INFO& GetTargetingInfo() { return m_tTargetingInfo; }
+    // ¸ó½ºÅÍÀÇ Status ±¸Á¶Ã¼¸¦ ¹ÝÈ¯
     MONSTER_STATUS          GetStatus() { return m_tStatus; }
-    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Status ï¿½ï¿½ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½È¯
-    const MONSTER_STATUS*   GetStatusPtr() const { return &m_tStatus; }
-    // Groggy ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯
+    // ¸ó½ºÅÍÀÇ Status ±¸Á¶Ã¼ Æ÷ÀÎÅÍ¸¦ ¹ÝÈ¯
+    const MONSTER_STATUS* GetStatusPtr() const { return &m_tStatus; }
+    // Groggy »óÅÂ ¹ÝÈ¯
     _bool                   IsGroggy() const { return m_isGroggy; }
+    // °ø°ÝÁßÀÎÁö »óÅÂ ¹ÝÈ¯
+    _bool                   IsOnAttack() const { return m_isOnAttack; }
 
     /* Setter*/
-    // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ attack sign ï¿½ï¿½ï¿½ï¿½Æ® È°ï¿½ï¿½È­ ï¿½Ô¼ï¿½
+    // ¸ó½ºÅÍ °ø°Ý ½Ã attack sign ÀÌÆåÆ® È°¼ºÈ­ ÇÔ¼ö
     virtual void        Active_AttackSign(_bool parryEnable = true);
-    // ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½ï¿½â¿¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ È£ï¿½ï¿½ ï¿½ï¿½ ï¿½Ô¼ï¿½
+    // ÇÃ·¹ÀÌ¾î ¹«±â¿¡¼­ ¸ó½ºÅÍÇÑÅ× µ¥¹ÌÁö ÀÔÈú ¶§ È£Ãâ µÉ ÇÔ¼ö
     virtual void        TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage) {};
-    /* Æ®ï¿½ï¿½ï¿½ï¿½ ï¿½Ý¶ï¿½ï¿½Ì´ï¿½ï¿½ï¿½ ï¿½Ù·ï¿½ Å°ï¿½ï¿½, AttackOffsetTime ï¿½Ú¿ï¿½ Attack ï¿½Ý¶ï¿½ï¿½Ì´ï¿½ï¿½ï¿½
-    AttackPlayTimeï¿½ï¿½Å­ Å°ï¿½ï¿½ Æ®ï¿½ï¿½ï¿½Å¿ï¿½ Attackï¿½Ý¶ï¿½ï¿½Ì´ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
-    void                SetAutoPlayBattleCollider(const string& tagBattleCollider, _float fAttackOffsetTime, _float fAttackPlayTime, const HitDesc & hitDesc);
-
+    /* Æ®¸®°Å ÄÝ¶óÀÌ´õ¸¦ ¹Ù·Î Å°°í, AttackOffsetTime µÚ¿¡ Attack ÄÝ¶óÀÌ´õ¸¦
+    AttackPlayTime¸¸Å­ Å°°í Æ®¸®°Å¿Í AttackÄÝ¶óÀÌ´õ¸¦ Á¾·áÇÔ*/
+    void                SetAutoPlayBattleCollider(const string& tagBattleCollider, _float fAttackOffsetTime, _float fAttackPlayTime, const HitDesc& hitDesc);
+    /* ¸ó½ºÅÍ°¡ Á×´Â ½ÃÄö½º°¡ ´Ù ³¡³ª°í È£ÃâÇÒ °Í. */
     void                Death();
+    void                SetOnAttack(_bool is) { m_isOnAttack = is; }
 
 protected:
-    // Target(Player->Character)ï¿½ï¿½ï¿½ï¿½ ï¿½Å¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
+    // Target(Player->Character)°úÀÇ °Å¸® Á¤º¸ °è»ê
     void                ComputeTargetingInfo();
-    // Target(Player->Character)ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½, Targetï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Targetï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ GUIï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+    // Target(Player->Character)ÀÌ ÀÖÀ» ¶§, TargetÀÇ Á¤º¸¿Í TargetÀ¸·Î ºÎÅÍÀÇ Á¤º¸ GUI¿¡ ·»´õ
     void                Render_GUI_ForTargetInfo();
-    // Attack Sign ï¿½ï¿½Ã¼ ï¿½ß°ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+    // Attack Sign °´Ã¼ Ãß°¡ ¹× ºÎÂø º» ÁöÁ¤
     virtual void        Create_AttackSign(string boneTag);
-    // BattleCollider ï¿½ï¿½Ã¼ ï¿½ß°ï¿½
-    HRESULT             AttachBattleColliderObject(BATTLE_COLLIDER_DESC* pDesc);
-    // Groggy ï¿½ï¿½Ä¡ ï¿½ï¿½ï¿½ï¿½
+    // BattleCollider °´Ã¼ Ãß°¡. µ¶¸³µÈ °ø°Ý¿ë BattleCollider°¡ ÇÊ¿äÇÒ ¶§, isSeparate = trueÇÒ°Í(ex ·¹ÀÌÀú, ÃÑ¾Ë µî)
+    HRESULT             AttachBattleColliderObject(BATTLE_COLLIDER_DESC* pDesc, _bool isSeparate = false);
+    // Groggy ¼öÄ¡ °ü¸®
     void                ManageGroggy(const _float dt);
 
-    void                Create_MeshPyramid();
-
-
-    // Enemy Status ï¿½ï¿½Ã¼ ï¿½ß°ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½, ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Í·ï¿½ ï¿½ï¿½ï¿½ï¿½
+    // Enemy Status °´Ã¼ Ãß°¡ ¹× ¿ùµå Çà·Ä, º» ·ÎÄÃ Çà·Ä Æ÷ÀÎÅÍ·Î Àü´Þ
     virtual void        Create_UIEnemyStatus(string boneTag);
     virtual void        Create_UIBossHUD();
+    void                Create_MeshPyramid();
 
 #pragma region BattleCollider
 protected:
-    void                SetBattleColliderObject(const string& tagBattleColliderObject, BATTLE_COLTYPE eBattleColliderType, _bool is, const HitDesc & hitdesc);
+    void                SetBattleColliderObject(const string& tagBattleColliderObject, BATTLE_COLTYPE eBattleColliderType, _bool is, const HitDesc& hitdesc = {});
     void                FinishBattleColliderObject(const string& tagBattleColliderObject);
     void                ShowBattleColliderForCheck(_bool is);
     void                CheckAutoBattlePlay(const _float dt);
@@ -98,20 +99,22 @@ protected:
 protected:
     UI_HANDLE               m_hUIEnemyStatus = {};
 
-    // BattleSystemï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Characterï¿½ï¿½ï¿½ï¿½
-    vector<BATTLEOBJ_INFO>  m_PlayerCharacterInfos; 
-    // Target(Player-Character)ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½, Target ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ã¼
+    // BattleSystemÀ¸·Î ºÎÅÍ ¾ò¾î¿Â CharacterÁ¤º¸
+    vector<BATTLEOBJ_INFO>  m_PlayerCharacterInfos;
+    // Target(Player-Character)ÀÌ ÀÖÀ» ¶§, Target »çÀÌÀÇ Á¤º¸ ±¸Á¶Ã¼
     TARGETING_INFO          m_tTargetingInfo = {};
-    // ï¿½Ã·ï¿½ï¿½Ì¾î¸¦ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½Å¸ï¿½ ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½ï¿½Ý¿ï¿½ ï¿½ï¿½Å¸ï¿½ È¤ï¿½ï¿½ ï¿½ß°Ý¿ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½)
-    _float                  m_fDetectedRange = { 5.f };    
-    // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í½ï¿½
+    // ÇÃ·¹ÀÌ¾î¸¦ °¨ÁöÇÏ´Â »ç°Å¸® ¹üÀ§(°ø°Ý¿ë »ç°Å¸® È¤Àº Ãß°Ý¿ëÀ¸·Î »ç¿ë)
+    _float                  m_fDetectedRange = { 5.f };
+    // ¸ó½ºÅÍ ½ºÅ×ÀÌÅÍ½º
     MONSTER_STATUS          m_tStatus = {};
     /* Groggy */
     _bool                   m_isGroggy = { false };
     _float                  m_fGroggyDecreaseTime = {};
 
- 
-protected: 
+    _bool                   m_isOnAttack = { false };
+
+
+protected:
     virtual CGameObject* Clone(INIT_DESC* pArg) PURE;
     virtual void Free() override;
 };

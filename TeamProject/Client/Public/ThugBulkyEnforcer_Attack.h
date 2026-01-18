@@ -53,6 +53,9 @@ public:
 public:
 	static CThugBulkyEnforcer_Attack2* Create() { return new CThugBulkyEnforcer_Attack2(); }
 	virtual void Free() override { __super::Free(); }
+
+private:
+	_bool	m_isSecondAttack = { false };
 };
 
 // 앞으로 도약하면서 양손 아래로 펀치
