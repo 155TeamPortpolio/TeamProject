@@ -1,5 +1,8 @@
 #include "pch.h"
 #include "JaneDoeState_UltimateAttack.h"
+
+#include "BattleSystem.h"
+
 #include "JaneDoe.h"
 
 #include "CamDirector.h"
@@ -60,6 +63,8 @@ void CJaneDoeState_UltimateAttack_Loop::Enter(CJaneDoe* pOwner)
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "SwitchIn_Attack_Ex")
         //.Speed(2.f)
         .Apply();
+
+    m_fDamageTimer = m_fDamageInterval;
 }
 
 void CJaneDoeState_UltimateAttack_Loop::Update(CJaneDoe* pOwner, _float dt)
@@ -67,6 +72,31 @@ void CJaneDoeState_UltimateAttack_Loop::Update(CJaneDoe* pOwner, _float dt)
     pOwner->Process_RootMotion(dt,
         ENUM(CJaneDoe::ROOTMOTION_MASK::MOVE) |
         ENUM(CJaneDoe::ROOTMOTION_MASK::QUATERNION));
+
+    for (const auto& Event : pOwner->Get_Component<CAnimator3D>()->Get_EventBus())
+    {
+        if (Event.Type != CLIP_EVENT_TYPE::NOTIFY) continue;
+        if (Event.Tag == "UltimateEnd")
+        {
+            m_bDamageActive = false;
+        }
+    }
+
+    if (m_bDamageActive)
+    {
+        m_fDamageTimer += dt;
+        if (m_fDamageTimer >= m_fDamageInterval)
+        {
+            m_fDamageTimer -= m_fDamageInterval;
+            BattleSystem()->TakeAllDamage({ HIT_TYPE::ONCE, DAMAGE_TYPE::ULTIMATE, 10.f, 0, 0 });
+        }
+    }
+}
+
+void CJaneDoeState_UltimateAttack_Loop::Exit(CJaneDoe* pOwner)
+{
+    m_fDamageTimer = 0.f;
+    m_bDamageActive = true;
 }
 
 void CJaneDoeState_UltimateAttack_End::Enter(CJaneDoe* pOwner)

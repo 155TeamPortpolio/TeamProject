@@ -1704,6 +1704,9 @@
     <FxCompile Include="..\Public\Engine_Shader\VTX_Trail.hlsl">
       <Filter>98. BasicShader\Mesh</Filter>
     </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\VTX_Portal.hlsl">
+      <Filter>98. BasicShader\Etc</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="cpp.hint" />
