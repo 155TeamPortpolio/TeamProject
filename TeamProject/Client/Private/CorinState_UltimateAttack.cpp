@@ -7,6 +7,7 @@
 void CCorinState_UltimateAttack::Enter(CCorin* pOwner)
 {
     pOwner->Push_Invincible();
+    pOwner->Lock_Move();
 
     if (!m_pSubStateMachine)
     {
@@ -73,6 +74,9 @@ void CCorinState_UltimateAttack_End::Enter(CCorin* pOwner)
         //.Speed(2.f)
         .EndAt(0.85f)
         .Apply();
+
+    pOwner->Pop_Invincible();
+    pOwner->Unlock_Move();
 }
 
 void CCorinState_UltimateAttack_End::Update(CCorin* pOwner, _float dt)
