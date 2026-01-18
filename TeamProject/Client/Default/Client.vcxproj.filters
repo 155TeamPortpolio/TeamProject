@@ -675,7 +675,7 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Groggy\Phase2">
       <UniqueIdentifier>{39d34e5c-e90f-42e5-8ab2-9a7718897258}</UniqueIdentifier>
-    </Filter>  
+    </Filter>
     <Filter Include="02. GameObject\UI\01. 2D\HUD_Field">
       <UniqueIdentifier>{67a92256-8431-4efd-a556-ed70b96c93e3}</UniqueIdentifier>
     </Filter>
@@ -717,6 +717,9 @@
     </Filter>
     <Filter Include="02. GameObject\UI\01. 2D\HUD_Boss">
       <UniqueIdentifier>{08e52f74-1069-4a36-8336-1e2e4192678c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Interactable\ZeroPortal">
+      <UniqueIdentifier>{178b3764-628b-48ca-8cb2-36ae8c8f8dbd}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1373,7 +1376,7 @@
     </ClInclude>
     <ClInclude Include="..\Public\SacrificeState_Groggy_Phase2.h">
       <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Groggy\Phase2</Filter>
-    </ClInclude>  
+    </ClInclude>
     <ClInclude Include="..\Public\UI_BattleHUD.h">
       <Filter>02. GameObject\UI\01. 2D\HUD_Battle</Filter>
     </ClInclude>
@@ -1382,9 +1385,13 @@
     </ClInclude>
     <ClInclude Include="..\Public\UI_MeshPyramidData.h">
       <Filter>02. GameObject\UI\02. 3D\Mesh\UI_MeshPyramid</Filter>
-          </ClInclude>
+    </ClInclude>
     <ClInclude Include="..\Public\UI_BossHUD.h">
       <Filter>02. GameObject\UI\01. 2D\HUD_Boss</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MapInvisibleWall.h" />
+    <ClInclude Include="..\Public\ZeroPortal.h">
+      <Filter>02. GameObject\Object\Interactable\ZeroPortal</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2020,7 +2027,7 @@
     </ClCompile>
     <ClCompile Include="..\Private\SacrificeState_Groggy_Phase2.cpp">
       <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Groggy\Phase2</Filter>
-    </ClCompile>  
+    </ClCompile>
     <ClCompile Include="..\Private\UI_BattleHUD.cpp">
       <Filter>02. GameObject\UI\01. 2D\HUD_Battle</Filter>
     </ClCompile>
@@ -2029,6 +2036,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\UI_BossHUD.cpp">
       <Filter>02. GameObject\UI\01. 2D\HUD_Boss</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\ZeroPortal.cpp">
+      <Filter>02. GameObject\Object\Interactable\ZeroPortal</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

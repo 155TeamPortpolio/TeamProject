@@ -362,6 +362,7 @@
     <ClInclude Include="..\Public\UI_UltimateAction.h" />
     <ClInclude Include="..\Public\UVAnimationUI.h" />
     <ClInclude Include="..\public\JaneDoe.h" />
+    <ClInclude Include="..\Public\ZeroPortal.h" />
     <ClInclude Include="..\public\ZeroStage_1_1.h" />
     <ClInclude Include="..\Public\ZeroStage_Boss.h" />
     <ClInclude Include="..\Public\Zero_Level.h" />
@@ -600,6 +601,7 @@
     <ClCompile Include="..\Private\UI_UltimateAction.cpp" />
     <ClCompile Include="..\Private\UVAnimationUI.cpp" />
     <ClCompile Include="..\private\JaneDoe.cpp" />
+    <ClCompile Include="..\Private\ZeroPortal.cpp" />
     <ClCompile Include="..\private\ZeroStage_1_1.cpp" />
     <ClCompile Include="..\Private\ZeroStage_Boss.cpp" />
     <ClCompile Include="..\Private\Zero_Level.cpp" />
