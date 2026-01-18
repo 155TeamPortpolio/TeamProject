@@ -400,6 +400,7 @@ HRESULT CThugBulkyEnforcer::Ready_Children(INIT_DESC* pArg)
 
 	Create_AttackSign("Bip001_Head");
 	Create_UIEnemyStatus("Bip001_Spine2");
+	Create_MeshPyramid();
 	//auto pAttackSign = Builder::Create_Object({ G_GlobalLevelKey,"Proto_GameObject_AttackSign" })
 	//	.Build("AttackSign");
 	//pObjectContainer->Add_Child(pAttackSign, false);

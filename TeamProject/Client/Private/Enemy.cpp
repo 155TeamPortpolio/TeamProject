@@ -399,6 +399,7 @@ void CEnemy::Create_MeshPyramid()
 	Get_Component<CObjectContainer>()->Add_Child(meshPyramid);
 }
 
+
 void CEnemy::SetBattleColliderObject(const string& tagBattleColliderObject, BATTLE_COLTYPE eBattleColliderType, _bool is, const HitDesc& hitdesc)
 {
 	string tagBattleCol = tagBattleColliderObject;
@@ -410,7 +411,19 @@ void CEnemy::SetBattleColliderObject(const string& tagBattleColliderObject, BATT
 
 	auto iter = m_BattleColliderChildrenIndex.find(tagBattleCol);
 	if (iter == m_BattleColliderChildrenIndex.end())
-		return;
+	{
+		// 트리거 중에 해당되는 이름의 Trigger가 없을경우(만들 때, Separate == false로 했을 때)
+		if (BATTLE_COLTYPE::TRIGGER == eBattleColliderType)
+		{
+			string defaultTriggerCol = "DefaultTriggerCollider";
+			iter = m_BattleColliderChildrenIndex.find(defaultTriggerCol);
+			if (iter == m_BattleColliderChildrenIndex.end())
+				return;
+		}
+		else
+			return;
+	}
+
 
 	auto pBattleCol = Get_Component<CObjectContainer>()->Get_Children()[iter->second];
 	if (nullptr == pBattleCol)
@@ -428,7 +441,10 @@ void CEnemy::SetBattleColliderObject(const string& tagBattleColliderObject, BATT
 
 void CEnemy::FinishBattleColliderObject(const string& tagBattleColliderObject)
 {
-	string tagAttackCol = tagBattleColliderObject + "_AttackCollider";
+	SetBattleColliderObject(tagBattleColliderObject, BATTLE_COLTYPE::ATTACK, false);
+	SetBattleColliderObject(tagBattleColliderObject, BATTLE_COLTYPE::TRIGGER, false);
+
+	/*string tagAttackCol = tagBattleColliderObject + "_AttackCollider";
 	string tagTriggerCol = tagBattleColliderObject + "_TriggerCollider";
 
 	auto iterAttack = m_BattleColliderChildrenIndex.find(tagAttackCol);
@@ -447,13 +463,14 @@ void CEnemy::FinishBattleColliderObject(const string& tagBattleColliderObject)
 
 	dynamic_cast<CEnemyAttackCollider*>(children[iterAttack->second])->End_Attack();
 	children[iterAttack->second]->Get_Component<CCollider>()->Set_CompActive(false);
-	children[iterTrigger->second]->Get_Component<CCollider>()->Set_CompActive(false);
+	children[iterTrigger->second]->Get_Component<CCollider>()->Set_CompActive(false);*/
 }
 
 void CEnemy::SetAutoPlayBattleCollider(const string& tagBattleCollider, _float fAttackOffsetTime, _float fAttackPlayTime, const HitDesc& hitDesc)
 {
 	SetBattleColliderObject(tagBattleCollider, BATTLE_COLTYPE::TRIGGER, true, hitDesc);
 
+	m_tAutoBattleCol.tHitDesc = hitDesc;
 	m_tAutoBattleCol.tagBattleCollider = tagBattleCollider;
 	m_tAutoBattleCol.isAutoPlay = true;
 	m_tAutoBattleCol.isAttackColliderPlay = false;
@@ -499,8 +516,8 @@ void CEnemy::CheckAutoBattlePlay(const _float dt)
 	{
 		if (m_tAutoBattleCol.fAttackColStartProgress <= pAnimator3D->Get_CurAnimDuration())
 		{
-			SetBattleColliderObject(m_tAutoBattleCol.tagBattleCollider, BATTLE_COLTYPE::TRIGGER, false, {});
-			SetBattleColliderObject(m_tAutoBattleCol.tagBattleCollider, BATTLE_COLTYPE::ATTACK, true, {});
+			//SetBattleColliderObject(m_tAutoBattleCol.tagBattleCollider, BATTLE_COLTYPE::TRIGGER, false, {});
+			SetBattleColliderObject(m_tAutoBattleCol.tagBattleCollider, BATTLE_COLTYPE::ATTACK, true, m_tAutoBattleCol.tHitDesc);
 
 			m_tAutoBattleCol.isAttackColliderPlay = true;
 		}
