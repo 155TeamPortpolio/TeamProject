@@ -339,20 +339,27 @@ void CBattlePlayer::Update_Target()
 {
 	if (m_TargetHandle.isValid())
 	{
-		if((m_TargetHandle.Get()->Get_WorldPos() - m_pCurrentCharacter->Get_WorldPos()).Length()
-			< TARGET_MAXDISTANCE)
+		_float fMaxDistance = (m_TargetHandle.Get()->Get_Tag() == "Boss")
+			? TARGET_BOSS_MAXDISTANCE
+			: TARGET_MAXDISTANCE;
+
+		if ((m_TargetHandle.Get()->Get_WorldPos() - m_pCurrentCharacter->Get_WorldPos()).Length()
+			< fMaxDistance)
 			return;
 	}
 
 	auto Monsters = CBattleSystem::GetInstance()->GetBattleObjects(CBattleSystem::BATTLE_OBJ_TYPE::MONSTER);
-
 	_float fminDistance = FLT_MAX;
 	for (auto& monster : Monsters)
 	{
 		_vector3 vToMonster = monster.vPos - m_pCurrentCharacter->Get_WorldPos();
 		_float fDistance = vToMonster.Length();
 
-		if (fDistance < fminDistance)
+		_float fDetectDistance = (monster.hObject.Get()->Get_Tag() == "Boss")
+			? TARGET_BOSS_MAXDISTANCE
+			: TARGET_MAXDISTANCE;
+
+		if (fDistance < fDetectDistance && fDistance < fminDistance)
 		{
 			fminDistance = fDistance;
 			m_TargetHandle = monster.hObject;
@@ -422,8 +429,8 @@ CGameObject* CBattlePlayer::CreateBattleCharacter(CHARACTER character)
 	characterCCT.iCollisionMask = 0xFFFFFFFF;
 	//characterCCT.iCollisionMask = 0xFFFFFFFF & ~ENUM(COLLISION_GROUP::COMMON);
 	characterCCT.bAutoFit = false;
-	characterCCT.fHeight = 1.28f;
-	characterCCT.fRadius = 0.2f;
+	characterCCT.fHeight = 1.15f;
+	characterCCT.fRadius = 0.3f;
 	characterCCT.eGroup = COLLISION_GROUP::PLAYER;
 	//characterCCT.fBoundingMinY = -0.88f;
 	characterCCT.vPos = { 0.f, 1.5f, 0.f };
@@ -441,6 +448,8 @@ CGameObject* CBattlePlayer::CreateBattleCharacter(CHARACTER character)
 	}
 	case CHARACTER::Corin:
 	{
+		characterCCT.fHeight = 0.75f;
+		characterCCT.fRadius = 0.4f;
 		auto Corin = Builder::Create_Object({ G_GlobalLevelKey, "Proto_GameObject_Corin" })
 			.Position(_float3(3.f, 0.f, 0.f))
 			.CharacterController(characterCCT)

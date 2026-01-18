@@ -514,9 +514,6 @@
     <Filter Include="01. Level\04. Zero\Stage_Boss">
       <UniqueIdentifier>{0311033b-83a6-4978-8774-ad77717efc65}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\Normal Enemy">
-      <UniqueIdentifier>{59940dfa-0539-4aed-8091-bbfb2c81fd85}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\Object\Enemy\ThugAssaulter">
       <UniqueIdentifier>{ead5c6a6-c6b3-4863-8252-1087ac356fe2}</UniqueIdentifier>
     </Filter>
@@ -643,9 +640,6 @@
     <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Attack\Ex">
       <UniqueIdentifier>{a9950fa8-5297-46a6-a3df-8f280c177142}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\ThugAssaulter\State\HitKnockBack">
-      <UniqueIdentifier>{21be2d5e-07b3-4f61-925b-50159b231242}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\Object\Enemy\ThugAssaulter\State\HitAirborne">
       <UniqueIdentifier>{3d2e029f-4d71-43ec-b8b7-23a2b2d37ade}</UniqueIdentifier>
     </Filter>
@@ -720,9 +714,15 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Interactable\ZeroPortal">
       <UniqueIdentifier>{178b3764-628b-48ca-8cb2-36ae8c8f8dbd}</UniqueIdentifier>
-       </Filter>
+    </Filter>
     <Filter Include="02. GameObject\Camera\04. OrbitCam\00. LockOnController">
       <UniqueIdentifier>{ab87437a-0803-4974-b6ba-72bdda89f83e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\ThugBulkyEnforcer\Normal Enemy">
+      <UniqueIdentifier>{59940dfa-0539-4aed-8091-bbfb2c81fd85}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\ThugAssaulter\State\Hit">
+      <UniqueIdentifier>{ee380fa9-e341-4ac3-a59e-18404a3b9ff5}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1249,7 +1249,7 @@
       <Filter>01. Level\04. Zero</Filter>
     </ClInclude>
     <ClInclude Include="..\public\EnemyNormal.h">
-      <Filter>02. GameObject\Object\Enemy\Normal Enemy</Filter>
+      <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\Normal Enemy</Filter>
     </ClInclude>
     <ClInclude Include="..\public\ThugAssaulter.h">
       <Filter>02. GameObject\Object\Enemy\ThugAssaulter</Filter>
@@ -1347,9 +1347,6 @@
     <ClInclude Include="..\Public\CorinState_ExAttack.h">
       <Filter>02. GameObject\Object\Player\Character\Corin\State\Attack\Ex</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\ThugAssaulter_HitKnockBack.h">
-      <Filter>02. GameObject\Object\Enemy\ThugAssaulter\State\HitKnockBack</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\ThugAssaulter_HitAirborne.h">
       <Filter>02. GameObject\Object\Enemy\ThugAssaulter\State\HitAirborne</Filter>
     </ClInclude>
@@ -1392,22 +1389,23 @@
     <ClInclude Include="..\Public\UI_BossHUD.h">
       <Filter>02. GameObject\UI\01. 2D\HUD_Boss</Filter>
     </ClInclude>
-
     <ClInclude Include="..\Public\ZeroPortal.h">
       <Filter>02. GameObject\Object\Interactable\ZeroPortal</Filter>
-   </ClInclude>
+    </ClInclude>
     <ClInclude Include="..\public\OrbitLockOnController.h">
       <Filter>02. GameObject\Camera\04. OrbitCam\00. LockOnController</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\OrbitLockOnData.h">
       <Filter>02. GameObject\Camera\04. OrbitCam\00. LockOnController</Filter>
-
     </ClInclude>
     <ClInclude Include="..\Public\ZeroStage_Normal.h">
       <Filter>01. Level\04. Zero\Stage_Normal</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\MapInvisibleWall.h">
       <Filter>02. GameObject\MapObject\03. MapInvisibleWall</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ThugAssaulter_Hit.h">
+      <Filter>02. GameObject\Object\Enemy\ThugAssaulter\State\Hit</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1920,7 +1918,7 @@
       <Filter>01. Level\04. Zero</Filter>
     </ClCompile>
     <ClCompile Include="..\private\EnemyNormal.cpp">
-      <Filter>02. GameObject\Object\Enemy\Normal Enemy</Filter>
+      <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\Normal Enemy</Filter>
     </ClCompile>
     <ClCompile Include="..\private\ThugAssaulter.cpp">
       <Filter>02. GameObject\Object\Enemy\ThugAssaulter</Filter>
@@ -2009,9 +2007,6 @@
     <ClCompile Include="..\private\ThugAssaulter_Groggy.cpp">
       <Filter>02. GameObject\Object\Enemy\ThugAssaulter\State\Groggy</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\ThugAssaulter_HitKnockBack.cpp">
-      <Filter>02. GameObject\Object\Enemy\ThugAssaulter\State\HitKnockBack</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\ThugAssaulter_HitAirborne.cpp">
       <Filter>02. GameObject\Object\Enemy\ThugAssaulter\State\HitAirborne</Filter>
     </ClCompile>
@@ -2053,16 +2048,17 @@
     <ClCompile Include="..\Private\UI_BossHUD.cpp">
       <Filter>02. GameObject\UI\01. 2D\HUD_Boss</Filter>
     </ClCompile>
-
     <ClCompile Include="..\Private\ZeroPortal.cpp">
       <Filter>02. GameObject\Object\Interactable\ZeroPortal</Filter>
     </ClCompile>
     <ClCompile Include="..\private\OrbitLockOnController.cpp">
       <Filter>02. GameObject\Camera\04. OrbitCam\00. LockOnController</Filter>
-
     </ClCompile>
     <ClCompile Include="..\Private\ZeroStage_Normal.cpp">
       <Filter>01. Level\04. Zero\Stage_Normal</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ThugAssaulter_Hit.cpp">
+      <Filter>02. GameObject\Object\Enemy\ThugAssaulter\State\Hit</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

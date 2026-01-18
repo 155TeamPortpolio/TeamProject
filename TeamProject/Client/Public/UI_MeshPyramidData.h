@@ -21,7 +21,7 @@ struct UI_MeshPyramidConfig
     float posSmoothSpeed = 22.f;
     float yawSmoothSpeed = 26.f;
 
-    float ringRadius = 1.f;
+    float ringRadius = 1.0f;
     float yOffset = 0.03f;
 
     float basePitchRad = 3.14159265359f * 0.5f;
@@ -30,12 +30,12 @@ struct UI_MeshPyramidConfig
 
     float maxFootStepPerFrame = 2.0f;
     float maxTargetStepPerFrame = 2.0f;
+
+    float maxPosStepPerFrame = 0.35f;
 };
 
 struct UI_MeshPyramidRuntime
 {
-    Vector4 colorAlpha{};
-
     float fadeT = 0.f;
     float alertBlinkT = 0.f;
     bool  isAlert = false;
@@ -46,8 +46,14 @@ struct UI_MeshPyramidRuntime
     Vector2 lastTargetXZ{};
     bool    hasLastTargetXZ = false;
 
+    Vector3 smoothPos{};
+    bool    hasSmoothPos = false;
+
     float lastYawRad = 0.f;
     bool  hasLastYaw = false;
+
+    Vector3 lastDirXZ = {0.f, 0.f, 1.f};
+    bool    hasLastDir = false;
 };
 
 NS_END
