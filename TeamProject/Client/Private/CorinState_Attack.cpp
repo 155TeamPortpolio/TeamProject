@@ -24,6 +24,9 @@ void CCorinState_Attack::Enter(CCorin* pOwner)
         m_pSubStateMachine->Get_State("ExAttack")->Set_Tag("ExAttack");
         m_pSubStateMachine->Get_State("UltimateAttack")->Set_Tag("UltimateAttack");
 
+        m_pSubStateMachine->Register_Transition("NormalAttack", "ExAttack",
+            CStateMachine<CCorin>::CONDITION_TRIGGER, "ToExAttack");
+
         m_pSubStateMachine->Set_DefaultState("NormalAttack");
     }
 
