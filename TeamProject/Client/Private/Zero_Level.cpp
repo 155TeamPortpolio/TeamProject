@@ -33,6 +33,9 @@
 #include "MapPlacedObject.h"
 #include "MapTriggerObject.h"
 
+/* UI */
+#include "UIDirector.h"
+
 CZero_Level::CZero_Level(const string& LevelKey)
 	:CLevel(LevelKey),
 	m_pGameInstance{ CGameInstance::GetInstance() },
@@ -134,6 +137,10 @@ HRESULT CZero_Level::Awake()
 	/* Player */
 	auto pPlayer = CCamDirector::GetInstance()->GetPlayer();
 	pPlayer->Set_PlayerType(CPlayer::PLAYER::BATTLE);
+
+	/* UI */
+	auto uiDirector = CUIDirector::GetInstance();
+	uiDirector->Load_LevelObjects("Zero_Level");
 
 	return S_OK;
 }

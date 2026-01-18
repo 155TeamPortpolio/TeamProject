@@ -26,6 +26,11 @@ void CJaneDoeState_ExAttack::Update(CJaneDoe* pOwner, _float dt)
     __super::Update(pOwner, dt);
 }
 
+void CJaneDoeState_ExAttack::Exit(CJaneDoe* pOwner)
+{
+    __super::Exit(pOwner);
+}
+
 void CJaneDoeState_ExAttack_Start::Enter(CJaneDoe* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_ExSpecial")

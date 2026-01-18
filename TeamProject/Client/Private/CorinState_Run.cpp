@@ -54,6 +54,11 @@ void CCorinState_Run::Update(CCorin* pOwner, _float dt)
     m_pSubStateMachine->Set_Bool("IsMove", pOwner->Is_Move_Buffer());
 }
 
+void CCorinState_Run::Exit(CCorin* pOwner)
+{
+    __super::Exit(pOwner);
+}
+
 void CCorinState_Run_Loop::Enter(CCorin* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Run")

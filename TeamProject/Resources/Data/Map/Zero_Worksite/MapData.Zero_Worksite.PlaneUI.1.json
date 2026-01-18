@@ -1,26 +1,26 @@
 {
-  "TagDataFormat": "MeshUI",
-  "TagArea": "TrainingRoom",
+  "TagDataFormat": "PlaneUI",
+  "TagArea": "Zero_Worksite",
   "iVersion": 1,
   "values": [
     {
-      "iObjID": 4,
+      "iObjID": 15,
       "TagName": "PrototypeTag",
       "defaultvalue": {
         "type": "String",
-        "value": "Proto_GameObject_MeshBillboard"
+        "value": "Proto_GameObject_IconLabel"
       }
     },
     {
-      "iObjID": 4,
+      "iObjID": 15,
       "TagName": "AssetKey",
       "defaultvalue": {
         "type": "String",
-        "value": "UI_3DBillboard_Zero"
+        "value": "icon_label.json"
       }
     },
     {
-      "iObjID": 4,
+      "iObjID": 15,
       "TagName": "Offset",
       "defaultvalue": {
         "type": "Float3",
@@ -28,18 +28,6 @@
           0.0,
           2.0,
           0.0
-        ]
-      }
-    },
-    {
-      "iObjID": 4,
-      "TagName": "Scale",
-      "defaultvalue": {
-        "type": "Float3",
-        "value": [
-          1.0,
-          1.0,
-          1.0
         ]
       }
     }

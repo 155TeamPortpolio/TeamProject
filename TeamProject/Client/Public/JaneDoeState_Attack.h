@@ -10,7 +10,7 @@ class CJaneDoeState_Attack :
 public:
     virtual void Enter(CJaneDoe* pOwner) override;
     virtual void Update(CJaneDoe* pOwner, _float dt) override;
-    virtual void Exit(CJaneDoe* pOwner) override {}
+    virtual void Exit(CJaneDoe* pOwner) override;
 
 private:
     _float      m_fHoldTime = 0.f;

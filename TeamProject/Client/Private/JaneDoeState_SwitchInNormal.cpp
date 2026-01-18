@@ -49,3 +49,8 @@ void CJaneDoeState_SwitchInNormal::Update(CJaneDoe* pOwner, _float dt)
         pSwitch->Get_SubStateMachine()->Set_Trigger("Complete");
     }
 }
+
+void CJaneDoeState_SwitchInNormal::Exit(CJaneDoe* pOwner)
+{
+    __super::Exit(pOwner);
+}

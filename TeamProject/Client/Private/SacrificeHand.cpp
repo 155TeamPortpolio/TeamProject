@@ -87,10 +87,10 @@ void CSacrificeHand::Priority_Update(_float dt)
 
 void CSacrificeHand::Update(_float dt)
 {
-	__super::Update(dt);
-
 	Get_Component<CAnimator3D>()->Update_Animation(dt);
 	m_pStateMachine->Update(dt);
+
+	__super::Update(dt);
 }
 
 void CSacrificeHand::Late_Update(_float dt)
