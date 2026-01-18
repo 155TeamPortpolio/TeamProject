@@ -75,6 +75,9 @@ public:
     void Late_Update(_float dt);
     void Render_GUI();
 
+public:
+    void    Add_Gauge(_float fEnergy, _float fDecibel);
+
 private:
     void    Update_Input(_float dt);
     void    Process_Movement(_float dt);
