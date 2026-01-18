@@ -24,6 +24,9 @@ public:
     virtual void Update(CCorin* pOwner, _float dt) override;
     virtual void Exit(CCorin* pOwner) override {}
 
+private:
+    _float m_fTurnbackCooldown = 0.f;
+
 public:
     static CCorinState_Run_Loop* Create() { return new CCorinState_Run_Loop(); }
     virtual void Free() override { __super::Free(); }
