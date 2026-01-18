@@ -34,6 +34,9 @@
 /* UI */
 #include "UI_EnemyStatus.h"
 #include "UI_MeshPyramid.h"
+#include "UI_MeshBillboard.h"
+
+#include "UI_IconLabel.h" 
 
 CMainApp::CMainApp()
 {
@@ -73,6 +76,8 @@ HRESULT CMainApp::Initialize()
 	Create_GlobalPlayer();
 	Create_GlobalCamObjs();
 
+	ToggleCursor();
+
 	#ifdef  _USING_GUI
 		ImGui::SetCurrentContext(m_pGameInstance->Get_GUISystem()->GetEngineImGuiContext());
 	#endif //  _USING_GUI
@@ -84,6 +89,9 @@ void CMainApp::Update(const float dt)
 	m_pGameInstance->Update_Engine(dt);
 	CBattleSystem::GetInstance()->Update();
 	CCamDirector::GetInstance()->Update(dt);
+
+	if (InputDevice()->Key_Tap(VK_F11))
+		ToggleCursor();
 }
 
 HRESULT CMainApp::Render()
@@ -97,12 +105,12 @@ HRESULT CMainApp::Render()
 
 void CMainApp::Set_Levels() //���� ��� �Լ� ->��� ������
 {
-	LevelManager()->Register_Level("Test_Level", []()->CLevel* {return CTestLevel::Create("Test_Level"); });
-	LevelManager()->Register_Level("Logo_Level", []()->CLevel* {return CLogoLevel::Create("Logo_Level"); });
-	LevelManager()->Register_Level("Loading_Level", []()->CLevel* {return CLoadingLevel::Create("Loading_Level"); });
+	LevelManager()->Register_Level("Test_Level",     []()->CLevel* {return CTestLevel::Create("Test_Level"); });
+	LevelManager()->Register_Level("Logo_Level",     []()->CLevel* {return CLogoLevel::Create("Logo_Level"); });
+	LevelManager()->Register_Level("Loading_Level",  []()->CLevel* {return CLoadingLevel::Create("Loading_Level"); });
 	LevelManager()->Register_Level("MainCity_Level", []()->CLevel* {return CMainCity_Level::Create("MainCity_Level"); });
-	LevelManager()->Register_Level("Scott_Level", []()->CLevel* {return CScott_Level::Create("Scott_Level"); });
-	LevelManager()->Register_Level("Zero_Level", []()->CLevel* {return CZero_Level::Create("Zero_Level"); });
+	LevelManager()->Register_Level("Scott_Level",    []()->CLevel* {return CScott_Level::Create("Scott_Level"); });
+	LevelManager()->Register_Level("Zero_Level",     []()->CLevel* {return CZero_Level::Create("Zero_Level"); });
 
 	LevelManager()->Set_LoadingLevel("Loading_Level");
 	m_pGameInstance->Notify_LevelSet(); 
@@ -156,6 +164,8 @@ void CMainApp::Initialize_GlobalPrototype()
 	/* UI */
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_EnemyStatus", CUI_EnemyStatus::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_MeshPyramid", CUI_MeshPyramid::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_MeshBillboard", CUI_MeshBillboard::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_IconLabel", CUI_IconLabel::Create());
 }
 
 void CMainApp::Create_GlobalCamObjs()
@@ -219,4 +229,29 @@ void CMainApp::Create_GlobalPlayer()
 	ObjectManager()->Add_Object(Player, { G_GlobalLevelKey, "Player_Layer" });
 
 	ObjectManager()->Remember_Global(ENUM(GLOBAL_ID::Player), Player->Get_Handle(), false);
+}
+
+void CMainApp::ToggleCursor()
+{
+	RECT want{};
+	GetClientRect(g_hWnd, &want);
+
+	POINT lt{want.left, want.top};
+	POINT rb{want.right, want.bottom};
+
+	ClientToScreen(g_hWnd, &lt);
+	ClientToScreen(g_hWnd, &rb);
+
+	want.left = lt.x;
+	want.top = lt.y;
+	want.right = rb.x;
+	want.bottom = rb.y;
+
+	RECT cur{};
+	GetClipCursor(&cur);
+
+	if (EqualRect(&cur, &want)) 
+		ClipCursor(nullptr);
+	else 
+		ClipCursor(&want);
 }

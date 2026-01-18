@@ -4,9 +4,10 @@
 #include "BattleSystem.h"
 
 /* Object */
-#include "AttackSign.h"
-#include "UI_EnemyStatus.h"
+#include "AttackSign.h" 
 #include "EnemyAttackCollider.h"
+#include "UI_EnemyStatus.h"
+#include "UI_BossHUD.h"
 
 /* Component */
 #include "ObjectContainer.h"
@@ -197,6 +198,21 @@ void CEnemy::Create_UIEnemyStatus(string boneTag)
 	m_hUIEnemyStatus = pEnemyStatus->Get_Handle();
 }
 
+void CEnemy::Create_UIBossHUD()
+{
+	// BOSS_HUD_DESC 생성
+	CUI_BossHUD::BOSS_HUD_DESC* pDesc = new CUI_BossHUD::BOSS_HUD_DESC;
+	pDesc->pMonsterStatus = &m_tStatus;
+
+	// BossHUD UI 생성
+	auto pEnemyStatus = Builder::Create_UIObject({ LevelManager()->Get_NowLevelKey(),"Proto_GameObject_BossHUD"})
+		.Add_UIDesc(pDesc)
+		.Build("bossHUD");
+
+	// UI Mgr에 등록
+	CGameInstance::GetInstance()->Get_UIMgr()->Add_UIObject(pEnemyStatus, CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey());
+}
+
 HRESULT CEnemy::AttachBattleColliderObject(BATTLE_COLLIDER_DESC* pDesc)
 {
 	//_bool           isAttachBone = { true };                // 뼈에 붙이는지
@@ -327,6 +343,14 @@ void CEnemy::ManageGroggy(const _float dt)
 			m_isGroggy = false;
 		}
 	}
+}
+
+void CEnemy::Create_MeshPyramid()
+{
+	auto meshPyramid = Builder::Create_Object({G_GlobalLevelKey, "Proto_GameObject_MeshPyramid"})
+		.Build("MeshPyramid");
+
+	Get_Component<CObjectContainer>()->Add_Child(meshPyramid);
 }
 
 void CEnemy::SetBattleColliderObject(const string& tagBattleColliderObject, BATTLE_COLTYPE eBattleColliderType, _bool is, const HitDesc& hitdesc = {})
