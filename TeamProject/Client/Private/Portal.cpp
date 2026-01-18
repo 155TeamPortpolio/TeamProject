@@ -20,14 +20,6 @@ HRESULT CPortal::Initialize_Prototype()
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
 
-	Add_Component<CStaticModel>();
-	Add_Component<CMaterial>();
-
-	auto pModel = Get_Component<CStaticModel>();
-	pModel->Link_Model(G_GlobalLevelKey, "Default.model");
-	auto pMaterial = Get_Component<CMaterial>();
-	pMaterial->Link_Material(G_GlobalLevelKey, "Default.mat");
-
 	return S_OK;
 }
 
