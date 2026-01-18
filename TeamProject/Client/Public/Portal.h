@@ -11,7 +11,7 @@ public:
         string NextNameTag{};
     }PORTAL_DESC;
 
-protected:
+private:
     CPortal();
     CPortal(const CPortal& rhs);
     virtual ~CPortal() DEFAULT;
@@ -30,7 +30,7 @@ public:
 
     virtual void    Interact() override;
 
-protected:
+private:
     string m_NextLevelTag{};
 
 public:

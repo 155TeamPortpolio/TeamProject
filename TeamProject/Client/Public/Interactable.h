@@ -1,6 +1,10 @@
 #pragma once
 #include "GameObject.h"
 
+NS_BEGIN(Engine)
+class CGameInstance;
+NS_END
+
 NS_BEGIN(Client)
 
 class CInteractable abstract :

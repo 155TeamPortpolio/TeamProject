@@ -220,7 +220,7 @@ void CMeshNode_Edit::Import(nlohmann::ordered_json& json)
 void CMeshNode_Edit::Export(nlohmann::ordered_json& json)
 {
 	_vector3 vOffsetPosition = m_pTransform->Get_Pos();
-	_vector4 vOffsetQuaternion = m_pTransform->Get_QuaternionRotate();
+	_quaternion vOffsetQuaternion = m_pTransform->Get_QuaternionRotate();
 
 	json =
 	{
@@ -239,7 +239,7 @@ void CMeshNode_Edit::Export(nlohmann::ordered_json& json)
 
 		/* Offset Transform */
 		{"offset_position",json::array({vOffsetPosition.x,vOffsetPosition.y,vOffsetPosition.z})},
-		{"offset_quaternion",json::array({vOffsetQuaternion.x,vOffsetQuaternion.y,vOffsetPosition.z,vOffsetQuaternion.w})},
+		{"offset_quaternion",json::array({vOffsetQuaternion.x,vOffsetQuaternion.y,vOffsetQuaternion.z,vOffsetQuaternion.w})},
 
 		/* Texture Module */
 		{"sampler_mode",m_TextureSlotModule.iSamplerModeParam},
