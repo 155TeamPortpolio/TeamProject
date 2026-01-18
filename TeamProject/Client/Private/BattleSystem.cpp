@@ -81,10 +81,14 @@ void CBattleSystem::SpawnMosnter(const string& MonsterProtoTag, _float3 vSpawnPo
 	MonsterCCT.fRadius = MonsterTableDesc.CCT_fRadius;
 	MonsterCCT.vPos = vSpawnPos;
 	MonsterCCT.vPos.y += MonsterCCT.fHeight;
+
+	CEnemy::ENEMY_DESC* enemyDesc = new CEnemy::ENEMY_DESC();
+	enemyDesc->iMaxHP = MonsterTableDesc.iMaxHP;
 	
 	const string NowLevel = CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey();
 
 	auto pMonster = Builder::Create_Object({ NowLevel,MonsterTableDesc.ProtoTag })
+		.Add_ObjDesc(enemyDesc)
 		.CharacterController(MonsterCCT)
 		.Build(MonsterTableDesc.DisplayName);
 
