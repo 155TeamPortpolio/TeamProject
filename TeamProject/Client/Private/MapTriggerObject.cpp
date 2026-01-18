@@ -40,6 +40,7 @@ HRESULT CMapTriggerObject::Initialize(INIT_DESC* pArg)
 	Ready_PlaneUI(pObjDesc);
 	Ready_MeshUI(pObjDesc);
 	Ready_Interactable(pObjDesc);
+	Ready_ZeroPortal(pObjDesc);
 	Ready_InvwalI(pObjDesc);
 	Ready_PlayerPos(pObjDesc);
 
@@ -238,6 +239,43 @@ void CMapTriggerObject::Ready_Interactable(const MAP_TRIGGEROBJ_DESC* pObjDesc)
 	}
 }
 
+void CMapTriggerObject::Ready_ZeroPortal(const MAP_TRIGGEROBJ_DESC* pObjDesc)
+{
+	auto iter = pObjDesc->SlotDataValues.find("ZeroPortal");
+
+	if (iter != pObjDesc->SlotDataValues.end()) {
+		string PrototypeTag = "Proto_GameObject_ZeroPortal";
+
+		for (auto& tFieldData : iter->second)
+		{
+			if (tFieldData.TagName == "NextLevel")
+			{
+				_float3 vPos = {};
+				XMStoreFloat3(&vPos, m_pTransform->Get_Pos());
+				_vector3 vScale = m_pTransform->Get_Scale();
+
+				COLLIDER_DESC ColDesc = {};
+				ColDesc.eGroup = COLLISION_GROUP::INTERACABLE;
+				ColDesc.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER);
+				ColDesc.eType = Get_Component<CCollider>()->Get_Type();
+				ColDesc.bAutoFit = false;
+				ColDesc.bTrigger = true; // 충돌 박스 생성하는 트리거
+				ColDesc.vCenter = Get_Component<CCollider>()->Get_Center();
+				ColDesc.vSize = pObjDesc->vUp;
+				ColDesc.vRotation = Get_Component<CCollider>()->Get_Rotation();
+
+				string ZeroPrototypeTag = "Proto_GameObject_ZeroPortal";
+				auto pZeroObj = Builder::Create_Object({ pObjDesc->TagLevel, ZeroPrototypeTag })
+					.Position(vPos)
+					.Collider(ColDesc)
+					.Build("ZeroPortal");
+
+				CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(pZeroObj, { pObjDesc->TagLevel, "InteractableObject_Layer" });
+			}
+		}
+	}
+}
+
 void CMapTriggerObject::Ready_InvwalI(const MAP_TRIGGEROBJ_DESC* pObjDesc)
 {
 	auto iter = pObjDesc->SlotDataValues.find("Invwall");
@@ -257,10 +295,11 @@ void CMapTriggerObject::Ready_InvwalI(const MAP_TRIGGEROBJ_DESC* pObjDesc)
 				pDesc->InstanceName = "InvWall";
 
 				COLLIDER_DESC ColDesc = {};
+				ColDesc.eGroup = COLLISION_GROUP::COMMON;
 				ColDesc.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER);
-				ColDesc.eType = Get_Component<CCollider>()->Get_Type();
+				ColDesc.eType = COLLIDER_TYPE::BOX;
 				ColDesc.bAutoFit = false;
-				ColDesc.bTrigger = *GetSlotValue<bool>(tFieldData.defaultvalue);; // 충돌 박스 생성하는 트리거
+				ColDesc.bTrigger = false; // 충돌 박스 생성하는 트리거
 				ColDesc.vCenter = {0.f, 0.f, 0.f};
 				ColDesc.vSize = pObjDesc->vUp;
 				ColDesc.vRotation = Get_Component<CCollider>()->Get_Rotation();
@@ -286,8 +325,8 @@ void CMapTriggerObject::Ready_PlayerPos(const MAP_TRIGGEROBJ_DESC* pObjDesc)
 
 		auto player = dynamic_cast<CPlayer*>(ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Player)));
 		auto character = player->Get_CurCharacterHandle().Get();
-		if (!character) return;
-		character->Get_Component<CCharacterController>()->Set_Position(m_pTransform->Get_Pos());
+		if (character)
+			character->Get_Component<CCharacterController>()->Set_Position(m_pTransform->Get_Pos());
 	}
 }
 

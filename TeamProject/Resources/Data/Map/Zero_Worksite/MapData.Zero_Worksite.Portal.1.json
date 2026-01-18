@@ -8,7 +8,7 @@
       "TagName": "NextLevel",
       "defaultvalue": {
         "type": "String",
-        "value": "Test_Level"
+        "value": "Zero_Level"
       }
     }
   ]

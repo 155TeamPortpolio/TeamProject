@@ -419,7 +419,7 @@
         },
         {
           "iObjID": 14,
-          "TagModelResourceKey": "Portal",
+          "TagModelResourceKey": "ZeroPortal",
           "TagMaterialResourceKey": "BOX",
           "vRight": [
             0.0,

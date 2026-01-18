@@ -60,15 +60,19 @@ HRESULT CJaneDoe::Initialize_Prototype()
 	{
 		/* Asset */
 		ResourceManager()->Add_ResourcePath("janedoe_normal1_slash.json", "../Bin/Resources/Effect/Data/JaneDoe/janedoe_normal1_slash.json");
+		ResourceManager()->Add_ResourcePath("janedoe_normal2_slash.json", "../Bin/Resources/Effect/Data/JaneDoe/janedoe_normal2_slash.json");
 
 		/* Texture */
 		ResourceManager()->Add_ResourcePath("Eff_MeleeTrail_078_YZ_05.png", "../Bin/Resources/Effect/Texture/Eff_MeleeTrail_078_YZ_05.png");
 		ResourceManager()->Add_ResourcePath("smoke2.png", "../Bin/Resources/Effect/Texture/smoke2.png");
 		ResourceManager()->Add_ResourcePath("Dissolve.png", "../Bin/Resources/Effect/Texture/Dissolve.png");
+		ResourceManager()->Add_ResourcePath("smoke2.png", "../Bin/Resources/Effect/Texture/smoke2.png");
 
 		/* Model */
 		ResourceManager()->Add_ResourcePath("JaneDoe_Slash0.model", "../Bin/Resources/Effect/Model/JaneDoe_Slash0/JaneDoe_Slash0.model");
 		ResourceManager()->Add_ResourcePath("JaneDoe_Slash0.mat", "../Bin/Resources/Effect/Model/JaneDoe_Slash0/JaneDoe_Slash0.mat");
+		ResourceManager()->Add_ResourcePath("JaneDoe_Slash1.model", "../Bin/Resources/Effect/Model/JaneDoe_Slash1/JaneDoe_Slash1.model");
+		ResourceManager()->Add_ResourcePath("JaneDoe_Slash1.mat", "../Bin/Resources/Effect/Model/JaneDoe_Slash1/JaneDoe_Slash1.mat");
 	}
 	return S_OK;
 }
@@ -377,6 +381,42 @@ HRESULT CJaneDoe::Initialize_Effects()
 		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
 			.Asset("janedoe_normal1_slash.json")
 			.Build("JaneDoe_Normal_Slash1");
+
+		pObjectContainer->Add_Child(pEffect);
+	}
+
+	/* Normal Slash2 */
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("janedoe_normal1_slash.json")
+			.Build("JaneDoe_Normal_Slash2");
+
+		pObjectContainer->Add_Child(pEffect);
+	}
+
+	/* Normal Slash3 */
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("janedoe_normal1_slash.json")
+			.Build("JaneDoe_Normal_Slash3");
+
+		pObjectContainer->Add_Child(pEffect);
+	}
+
+	/* Normal Slash4 */
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("janedoe_normal1_slash.json")
+			.Build("JaneDoe_Normal_Slash4");
+
+		pObjectContainer->Add_Child(pEffect);
+	}
+
+	/* Cross Slash */
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("janedoe_normal2_slash.json")
+			.Build("JaneDoe_Cross_Slash");
 
 		pObjectContainer->Add_Child(pEffect);
 	}
