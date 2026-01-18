@@ -6,7 +6,6 @@
 /* Object */
 #include "AttackSign.h" 
 #include "EnemyAttackCollider.h"
-#include "UI_MeshPyramid.h"
 #include "UI_EnemyStatus.h"
 #include "UI_BossHUD.h"
 
@@ -60,7 +59,7 @@ void CEnemy::Late_Update(_float dt)
 BATTLEOBJ_INFO* CEnemy::GetCharacterOnField()
 {
 	for (auto& info : m_PlayerCharacterInfos) {
-		if (true == info.isOnField && 
+		if (true == info.isOnField &&
 			info.hObject == CBattleSystem::GetInstance()->GetCurCharacterHandle())
 			return &info;
 	}
@@ -74,42 +73,42 @@ void CEnemy::ComputeTargetingInfo()
 		return;
 
 	m_tTargetingInfo = {};
-	
+
 	m_tTargetingInfo.vTargetPos = pTargetInfo->vPos;
 	m_tTargetingInfo.vSelfPos = m_pTransform->Get_Pos();
 	m_tTargetingInfo.vDirSelfLook = m_pTransform->Dir(Engine::STATE::LOOK);
 	m_tTargetingInfo.vDirSelfLook.Normalize();
-	
-	// Yï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½(XZï¿½ï¿½ï¿½)
+
+	// YÃà Á¦°Å ÇÑ ¼öÆò ¹æÇâ º¤ÅÍ °è»ê ¹öÀü(XZÆò¸é)
 	_vector3 vTargetPosH = { m_tTargetingInfo.vTargetPos.x, 0.f, m_tTargetingInfo.vTargetPos.z };
 	_vector3 vSelfPosH = { m_tTargetingInfo.vSelfPos.x, 0.f, m_tTargetingInfo.vSelfPos.z };
 	_vector3 vDirToTarget = vTargetPosH - vSelfPosH;
 
-	// Yï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ 3D ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½(XYZ)
+	// YÃà Á¦°Å ¾ÈÇÑ 3D ¹æÇâ º¤ÅÍ °è»ê ¹öÀü(XYZ)
 	//_vector3 vDirToTarget = m_tTargetingInfo.vTargetPos - m_tTargetingInfo.vSelfPos;
 
 	m_tTargetingInfo.fDistanceSq = vDirToTarget.LengthSquared();
 	if (m_tTargetingInfo.fDistanceSq <= m_fDetectedRange * m_fDetectedRange)
 		m_tTargetingInfo.isDetected = true;
 
-	// sqrt ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Å¿ï¿½ï¿½ï¿½ ï¿½Ä¿ï¿½ ï¿½ï¿½ï¿½ï¿½È­ ï¿½Ê¿ï¿½ï¿½ ï¿½Æ·ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+	// sqrt °è»êÀÌ ºñ±³Àû ¹«°Å¿ö¼­ ÈÄ¿¡ ÃÖÀûÈ­ ÇÊ¿ä½Ã ¾Æ·¡ ½Ä »ç¿ë °í·Á
 	//m_tTargetingInfo.fDistance = (m_tTargetingInfo.fDistanceSq > m_fDetectedRange * m_fDetectedRange) ? 
 	//	sqrt(m_tTargetingInfo.fDistanceSq) : m_fDetectedRange;
-	m_tTargetingInfo.fDistance = sqrt(m_tTargetingInfo.fDistanceSq); 
+	m_tTargetingInfo.fDistance = sqrt(m_tTargetingInfo.fDistanceSq);
 
-	// È¤ï¿½ï¿½ ï¿½ï¿½ 0 ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+	// È¤½Ã ¸ð¸¦ 0 ³ª´©±â ¹æÁö
 	if (m_tTargetingInfo.fDistance > 1e-12f) {
 		vDirToTarget.Normalize();
 	}
 	m_tTargetingInfo.vDirToTarget = vDirToTarget;
 
-	// ï¿½ï¿½ï¿½ XZï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
+	// Æò¸é XZ»ó ³»Àû °è»ê
 	_vector3 vSelfLookH = m_tTargetingInfo.vDirSelfLook;
 	vSelfLookH.y = 0.f;
 	vSelfLookH.Normalize();
 	m_tTargetingInfo.fDotTarget = vSelfLookH.Dot(m_tTargetingInfo.vDirToTarget);
 
-	// 3Dï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½(XYZ)
+	// 3D°ø°£»ó ³»Àû(XYZ)
 	//m_tTargetingInfo.fDotTarget = m_tTargetingInfo.vDirSelfLook.Dot(m_tTargetingInfo.vDirToTarget);
 }
 
@@ -155,7 +154,7 @@ void CEnemy::Create_AttackSign(string boneTag)
 void CEnemy::Active_AttackSign(_bool parryEnable)
 {
 	auto pAttackSign = Get_Component<CObjectContainer>()->Find_ObjectByName("AttackSign");
-	
+
 	_bool IsReallyParryEnable = parryEnable;
 
 	if (true == parryEnable) {
@@ -168,7 +167,7 @@ void CEnemy::Active_AttackSign(_bool parryEnable)
 
 void CEnemy::Create_UIEnemyStatus(string boneTag)
 {
-	// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 
+	// ¿ùµå Çà·Ä Æ÷ÀÎÅÍ 
 	if (!m_pTransform)
 		return;
 
@@ -176,64 +175,57 @@ void CEnemy::Create_UIEnemyStatus(string boneTag)
 	if (!pParentWorld)
 		return;
 
-	// ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	// º» ·ÎÄÃ Çà·Ä Æ÷ÀÎÅÍ
 	const _float4x4* pBoneLocal = Get_Component<CAnimator3D>()->Get_BoneMatrixPtr(CAnimator3D::BoneSpace::COMBINED, boneTag);
 	if (!pBoneLocal)
-		return; 
+		return;
 
-	// ENEMYSTATUS_DESC ï¿½ï¿½ï¿½ï¿½
+	// ENEMYSTATUS_DESC »ý¼º
 	CUI_EnemyStatus::ENEMYSTATUS_DESC* pDesc = new CUI_EnemyStatus::ENEMYSTATUS_DESC;
 	pDesc->pParentWorld = pParentWorld;
 	pDesc->pBoneLocal = pBoneLocal;
 	pDesc->pMonsterStatus = &m_tStatus;
 	pDesc->tOwnerHandle = Get_Handle();
 
-	// EnemyStatus UI ï¿½ï¿½ï¿½ï¿½
+	// EnemyStatus UI »ý¼º
+	const string& strLevelKey = LevelManager()->Get_NowLevelKey();
 	auto pEnemyStatus = Builder::Create_UIObject({ G_GlobalLevelKey,"Proto_GameObject_EnemyStatus" })
 		.Add_UIDesc(pDesc)
 		.Build("EnemyStatus");
 
-	// UI Mgrï¿½ï¿½ ï¿½ï¿½ï¿½
-	CGameInstance::GetInstance()->Get_UIMgr()->Add_UIObject(pEnemyStatus, CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey());
+	// UI Mgr¿¡ µî·Ï
+	CGameInstance::GetInstance()->Get_UIMgr()->Add_UIObject(pEnemyStatus, strLevelKey);
 
 	m_hUIEnemyStatus = pEnemyStatus->Get_Handle();
 }
 
 void CEnemy::Create_UIBossHUD()
 {
-	// BOSS_HUD_DESC ï¿½ï¿½ï¿½ï¿½
+	// BOSS_HUD_DESC »ý¼º
 	CUI_BossHUD::BOSS_HUD_DESC* pDesc = new CUI_BossHUD::BOSS_HUD_DESC;
 	pDesc->pMonsterStatus = &m_tStatus;
 
-	// BossHUD UI ï¿½ï¿½ï¿½ï¿½
-	auto pEnemyStatus = Builder::Create_UIObject({ LevelManager()->Get_NowLevelKey(),"Proto_GameObject_BossHUD"})
+	// BossHUD UI »ý¼º
+	const string& strLevelKey = LevelManager()->Get_NowLevelKey();
+	auto pBossHUD = Builder::Create_UIObject({ strLevelKey,"Proto_GameObject_BossHUD" })
 		.Add_UIDesc(pDesc)
 		.Build("bossHUD");
 
-	// UI Mgrï¿½ï¿½ ï¿½ï¿½ï¿½
-	CGameInstance::GetInstance()->Get_UIMgr()->Add_UIObject(pEnemyStatus, CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey());
+	// UI Mgr¿¡ µî·Ï
+	CGameInstance::GetInstance()->Get_UIMgr()->Add_UIObject(pBossHUD, strLevelKey);
 }
-
-void CEnemy::Create_MeshPyramid()
+HRESULT CEnemy::AttachBattleColliderObject(BATTLE_COLLIDER_DESC* pDesc, _bool isSeparate)
 {
-	auto meshPyramid = Builder::Create_Object({G_GlobalLevelKey, "Proto_GameObject_MeshPyramid"})
-		.Build("MeshPyramid");
-
-	Get_Component<CObjectContainer>()->Add_Child(meshPyramid, false);
-}
-
-HRESULT CEnemy::AttachBattleColliderObject(BATTLE_COLLIDER_DESC* pDesc)
-{
-	//_bool           isAttachBone = { true };                // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ï¿½ï¿½
-	//string          tagBone = "";                           // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ï¶ï¿½, ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¸ï¿½
-	//CAnimator3D* pOwnerAnimator3D = { nullptr };           // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ï¶ï¿½, Ownerï¿½ï¿½ ï¿½Ö´Ï¸ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	//_bool           isAttachBone = { true };                // »À¿¡ ºÙÀÌ´ÂÁö
+	//string          tagBone = "";                           // »À¿¡ ºÙÀÏ¶§, ºÙÀÏ »ÀÀÇ ÀÌ¸§
+	//CAnimator3D* pOwnerAnimator3D = { nullptr };           // »À¿¡ ºÙÀÏ¶§, OwnerÀÇ ¾Ö´Ï¸ÞÀÌÅÍ Æ÷ÀÎÅÍ
 	//COLLIDER_TYPE   eAttackColliderType = COLLIDER_TYPE::SPHERE;  // BOX, SPHERE, CAPSULE
-	///* ï¿½ï¿½ï¿½ï¿½ HitÃ³ï¿½ï¿½ï¿½ï¿½ Attackï¿½ï¿½ ï¿½Ý¶ï¿½ï¿½Ì´ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	///* ½ÇÁ¦ HitÃ³¸®µÉ Attack¿ë ÄÝ¶óÀÌ´õÀÇ »çÀÌÁî
 	//Box: HalfExtents(x, y, z),
 	//Sphere : Radius(x),
 	//Capsule : Radius(x) / HalfHeight(y)*/
 	//_float3         vAttackSize = { 1.f, 1.f, 1.f };
-	///* Parrying ï¿½ï¿½ È¸ï¿½Ç¿ï¿½ ï¿½Ý¶ï¿½ï¿½Ì´ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½. Attackï¿½ëº¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Å©ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½
+	///* Parrying ¹× È¸ÇÇ¿ë ÄÝ¶óÀÌ´õÀÇ »çÀÌÁî. Attack¿ëº¸´Ù »çÀÌÁî Å©°Ô ÇÒ °Í
 	//Box: HalfExtents(x, y, z),
 	//Sphere : Radius(x),
 	//Capsule : Radius(x) / HalfHeight(y)*/
@@ -242,7 +234,7 @@ HRESULT CEnemy::AttachBattleColliderObject(BATTLE_COLLIDER_DESC* pDesc)
 	if (nullptr == pDesc)
 		return E_FAIL;
 
-	// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ï°Çµï¿½ ï¿½Ö´Ï¸ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½È°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ BOOM! ï¿½Ù½Ã°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	// º»¿¡ ºÙÀÏ°Çµ¥ ¾Ö´Ï¸ÞÀÌÅÍ ¾È°¡Á®¿À¸é BOOM! ´Ù½Ã°¡Á®¿À·Å
 	if (true == pDesc->isAttachBone && nullptr == pDesc->pOwnerAnimator3D)
 		return E_FAIL;
 
@@ -256,6 +248,85 @@ HRESULT CEnemy::AttachBattleColliderObject(BATTLE_COLLIDER_DESC* pDesc)
 	rigidbodyDesc.bEnableGravity = false;
 	rigidbodyDesc.isKinematic = true;
 	rigidbodyDesc.bLockY = true;
+
+#pragma region TriggerCollider
+	if (false == isSeparate)
+	{
+		auto iter = m_BattleColliderChildrenIndex.find("DefaultTriggerCollider");
+
+		// DefaultTriggerCollider°¡ ¾øÀ» ¶§ »ý¼º
+		if (iter == m_BattleColliderChildrenIndex.end())
+		{
+			COLLIDER_DESC TriggercolliderDesc = {};
+			TriggercolliderDesc.eGroup = COLLISION_GROUP::MONSTER_PARRY;
+			TriggercolliderDesc.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER) | ENUM(COLLISION_GROUP::PLAYER_ATTACK);
+			TriggercolliderDesc.bTrigger = true;
+			TriggercolliderDesc.bAutoFit = false;
+			TriggercolliderDesc.eType = pDesc->eTriggerColliderType;
+			TriggercolliderDesc.vSize = pDesc->vTriggerSize;
+			TriggercolliderDesc.fSizeScale = pDesc->fSizeScale;
+			TriggercolliderDesc.vCenter = {}; //pDesc->vCenter;
+			TriggercolliderDesc.vRotation = pDesc->vRotation;
+
+			string tagTriggerInstance = "DefaultTriggerCollider";
+
+			auto pTriggerCollider = Builder::Create_Object({ tagNowLevel, "Proto_GameObject_EnemyTriggerCollider" })
+				.RigidBody(rigidbodyDesc)
+				.Collider(TriggercolliderDesc)
+				.Build(tagTriggerInstance);
+
+			if (nullptr == pTriggerCollider)
+				return E_FAIL;
+
+			_int iTriggerColliderChildIndex = { -1 };
+			// »À¿¡ ºÙÀÏ ¶§
+			//if (true == pDesc->isAttachBone) {
+			iTriggerColliderChildIndex = pObjectContainer->Add_Child(pTriggerCollider, false);
+			pTriggerCollider->Get_Component<CBoneFollower>()->Link_Bone(pDesc->pOwnerAnimator3D, "RootNode");
+			//}
+			//else
+			//	iTriggerColliderChildIndex = pObjectContainer->Add_Child(pTriggerCollider, true);
+
+			m_BattleColliderChildrenIndex.emplace(tagTriggerInstance, iTriggerColliderChildIndex);
+		}
+	}
+	else
+	{
+		COLLIDER_DESC TriggercolliderDesc = {};
+		TriggercolliderDesc.eGroup = COLLISION_GROUP::MONSTER_PARRY;
+		TriggercolliderDesc.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER) | ENUM(COLLISION_GROUP::PLAYER_ATTACK);
+		TriggercolliderDesc.bTrigger = true;
+		TriggercolliderDesc.bAutoFit = false;
+		TriggercolliderDesc.eType = pDesc->eTriggerColliderType;
+		TriggercolliderDesc.vSize = pDesc->vTriggerSize;
+		TriggercolliderDesc.fSizeScale = pDesc->fSizeScale;
+		TriggercolliderDesc.vCenter = pDesc->vCenter;
+		TriggercolliderDesc.vRotation = pDesc->vRotation;
+
+		string tagTriggerInstance = pDesc->tagName + "_TriggerCollider";
+
+		auto pTriggerCollider = Builder::Create_Object({ tagNowLevel, "Proto_GameObject_EnemyTriggerCollider" })
+			.RigidBody(rigidbodyDesc)
+			.Collider(TriggercolliderDesc)
+			.Build(tagTriggerInstance);
+
+		if (nullptr == pTriggerCollider)
+			return E_FAIL;
+
+		_int iTriggerColliderChildIndex = { -1 };
+		// »À¿¡ ºÙÀÏ ¶§
+		if (true == pDesc->isAttachBone) {
+			iTriggerColliderChildIndex = pObjectContainer->Add_Child(pTriggerCollider, false);
+			pTriggerCollider->Get_Component<CBoneFollower>()->Link_Bone(pDesc->pOwnerAnimator3D, pDesc->tagBone);
+		}
+		else
+			iTriggerColliderChildIndex = pObjectContainer->Add_Child(pTriggerCollider, true);
+
+		m_BattleColliderChildrenIndex.emplace(tagTriggerInstance, iTriggerColliderChildIndex);
+	}
+
+#pragma endregion
+
 
 #pragma region AttackCollider
 	COLLIDER_DESC AttackcolliderDesc = {};
@@ -280,7 +351,7 @@ HRESULT CEnemy::AttachBattleColliderObject(BATTLE_COLLIDER_DESC* pDesc)
 		return E_FAIL;
 
 	_int iAttackColliderChildIndex = { -1 };
-	// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
+	// »À¿¡ ºÙÀÏ ¶§
 	if (true == pDesc->isAttachBone) {
 		iAttackColliderChildIndex = pObjectContainer->Add_Child(pAttackCollider, false);
 		pAttackCollider->Get_Component<CBoneFollower>()->Link_Bone(pDesc->pOwnerAnimator3D, pDesc->tagBone);
@@ -288,65 +359,31 @@ HRESULT CEnemy::AttachBattleColliderObject(BATTLE_COLLIDER_DESC* pDesc)
 	else
 		iAttackColliderChildIndex = pObjectContainer->Add_Child(pAttackCollider, true);
 
-	m_BattleColliderChildrenIndex.emplace(tagAttackInstance , iAttackColliderChildIndex);
+	m_BattleColliderChildrenIndex.emplace(tagAttackInstance, iAttackColliderChildIndex);
 #pragma endregion	
 
-#pragma region TriggerCollider
-	COLLIDER_DESC TriggercolliderDesc = {};
-	TriggercolliderDesc.eGroup = COLLISION_GROUP::MONSTER_PARRY;
-	TriggercolliderDesc.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER) | ENUM(COLLISION_GROUP::PLAYER_ATTACK);
-	TriggercolliderDesc.bTrigger = true;
-	TriggercolliderDesc.bAutoFit = false;
-	TriggercolliderDesc.eType = pDesc->eTriggerColliderType;
-	TriggercolliderDesc.vSize = pDesc->vTriggerSize;
-	TriggercolliderDesc.fSizeScale = pDesc->fSizeScale;
-	TriggercolliderDesc.vCenter = pDesc->vCenter;
-	TriggercolliderDesc.vRotation = pDesc->vRotation;
-
-	string tagTriggerInstance = pDesc->tagName + "_TriggerCollider";
-
-	auto pTriggerCollider = Builder::Create_Object({ tagNowLevel, "Proto_GameObject_EnemyTriggerCollider" })
-		.RigidBody(rigidbodyDesc)
-		.Collider(TriggercolliderDesc)
-		.Build(tagTriggerInstance);
-
-	if (nullptr == pTriggerCollider)
-		return E_FAIL;
-
-	_int iTriggerColliderChildIndex = { -1 };
-	// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
-	if (true == pDesc->isAttachBone) {
-		iTriggerColliderChildIndex = pObjectContainer->Add_Child(pTriggerCollider, false);
-		pTriggerCollider->Get_Component<CBoneFollower>()->Link_Bone(pDesc->pOwnerAnimator3D, pDesc->tagBone);
-	}
-	else
-		iTriggerColliderChildIndex = pObjectContainer->Add_Child(pTriggerCollider, true);
-
-	m_BattleColliderChildrenIndex.emplace(tagTriggerInstance, iTriggerColliderChildIndex);
-#pragma endregion	
 
 	return S_OK;
 }
-
 void CEnemy::ManageGroggy(const _float dt)
 {
-	if (false == m_isGroggy && 100 <= m_tStatus.iGroggyValue) 
+	if (false == m_isGroggy && 100 <= m_tStatus.iGroggyValue)
 	{
 		m_tStatus.iGroggyValue = 100;
 		m_isGroggy = true;
 	}
 
-	if (true == m_isGroggy) 
+	if (true == m_isGroggy)
 	{
 		m_fGroggyDecreaseTime += dt;
 
-		if (0.1f <= m_fGroggyDecreaseTime) 
+		if (0.1f <= m_fGroggyDecreaseTime)
 		{
 			--m_tStatus.iGroggyValue;
 			m_fGroggyDecreaseTime = 0.f;
 		}
 
-		if (0 > m_tStatus.iGroggyValue) 
+		if (0 > m_tStatus.iGroggyValue)
 		{
 			m_tStatus.iGroggyValue = 0;
 			m_isGroggy = false;
@@ -354,7 +391,16 @@ void CEnemy::ManageGroggy(const _float dt)
 	}
 }
 
-void CEnemy::SetBattleColliderObject(const string& tagBattleColliderObject, BATTLE_COLTYPE eBattleColliderType, _bool is, const HitDesc& hitdesc = {})
+void CEnemy::Create_MeshPyramid()
+{
+	auto meshPyramid = Builder::Create_Object({ G_GlobalLevelKey, "Proto_GameObject_MeshPyramid" })
+		.Build("MeshPyramid");
+
+	Get_Component<CObjectContainer>()->Add_Child(meshPyramid);
+}
+
+
+void CEnemy::SetBattleColliderObject(const string& tagBattleColliderObject, BATTLE_COLTYPE eBattleColliderType, _bool is, const HitDesc& hitdesc)
 {
 	string tagBattleCol = tagBattleColliderObject;
 
@@ -365,7 +411,19 @@ void CEnemy::SetBattleColliderObject(const string& tagBattleColliderObject, BATT
 
 	auto iter = m_BattleColliderChildrenIndex.find(tagBattleCol);
 	if (iter == m_BattleColliderChildrenIndex.end())
-		return;
+	{
+		// Æ®¸®°Å Áß¿¡ ÇØ´çµÇ´Â ÀÌ¸§ÀÇ Trigger°¡ ¾øÀ»°æ¿ì(¸¸µé ¶§, Separate == false·Î ÇßÀ» ¶§)
+		if (BATTLE_COLTYPE::TRIGGER == eBattleColliderType)
+		{
+			string defaultTriggerCol = "DefaultTriggerCollider";
+			iter = m_BattleColliderChildrenIndex.find(defaultTriggerCol);
+			if (iter == m_BattleColliderChildrenIndex.end())
+				return;
+		}
+		else
+			return;
+	}
+
 
 	auto pBattleCol = Get_Component<CObjectContainer>()->Get_Children()[iter->second];
 	if (nullptr == pBattleCol)
@@ -383,7 +441,10 @@ void CEnemy::SetBattleColliderObject(const string& tagBattleColliderObject, BATT
 
 void CEnemy::FinishBattleColliderObject(const string& tagBattleColliderObject)
 {
-	string tagAttackCol = tagBattleColliderObject + "_AttackCollider";
+	SetBattleColliderObject(tagBattleColliderObject, BATTLE_COLTYPE::ATTACK, false);
+	SetBattleColliderObject(tagBattleColliderObject, BATTLE_COLTYPE::TRIGGER, false);
+
+	/*string tagAttackCol = tagBattleColliderObject + "_AttackCollider";
 	string tagTriggerCol = tagBattleColliderObject + "_TriggerCollider";
 
 	auto iterAttack = m_BattleColliderChildrenIndex.find(tagAttackCol);
@@ -402,13 +463,14 @@ void CEnemy::FinishBattleColliderObject(const string& tagBattleColliderObject)
 
 	dynamic_cast<CEnemyAttackCollider*>(children[iterAttack->second])->End_Attack();
 	children[iterAttack->second]->Get_Component<CCollider>()->Set_CompActive(false);
-	children[iterTrigger->second]->Get_Component<CCollider>()->Set_CompActive(false);
+	children[iterTrigger->second]->Get_Component<CCollider>()->Set_CompActive(false);*/
 }
 
 void CEnemy::SetAutoPlayBattleCollider(const string& tagBattleCollider, _float fAttackOffsetTime, _float fAttackPlayTime, const HitDesc& hitDesc)
 {
 	SetBattleColliderObject(tagBattleCollider, BATTLE_COLTYPE::TRIGGER, true, hitDesc);
 
+	m_tAutoBattleCol.tHitDesc = hitDesc;
 	m_tAutoBattleCol.tagBattleCollider = tagBattleCollider;
 	m_tAutoBattleCol.isAutoPlay = true;
 	m_tAutoBattleCol.isAttackColliderPlay = false;
@@ -425,7 +487,7 @@ void CEnemy::Death()
 		if (nullptr != pSelectedObject &&
 			this == pSelectedObject)
 			GUISystem()->Get_Context()->pSelectedObject = nullptr;
-		
+
 		if (true == m_hUIEnemyStatus.isValid())
 			UIManager()->Remove_UIObject(m_hUIEnemyStatus.Get());
 	}
@@ -450,12 +512,12 @@ void CEnemy::CheckAutoBattlePlay(const _float dt)
 		return;
 
 	auto pAnimator3D = Get_Component<CAnimator3D>();
-	if (false == m_tAutoBattleCol.isAttackColliderPlay) 
-	{	
-		if (m_tAutoBattleCol.fAttackColStartProgress <= pAnimator3D->Get_CurAnimDuration()) 
-		{ 
-			SetBattleColliderObject(m_tAutoBattleCol.tagBattleCollider, BATTLE_COLTYPE::TRIGGER, false, {});
-			SetBattleColliderObject(m_tAutoBattleCol.tagBattleCollider, BATTLE_COLTYPE::ATTACK, true, {});
+	if (false == m_tAutoBattleCol.isAttackColliderPlay)
+	{
+		if (m_tAutoBattleCol.fAttackColStartProgress <= pAnimator3D->Get_CurAnimDuration())
+		{
+			//SetBattleColliderObject(m_tAutoBattleCol.tagBattleCollider, BATTLE_COLTYPE::TRIGGER, false, {});
+			SetBattleColliderObject(m_tAutoBattleCol.tagBattleCollider, BATTLE_COLTYPE::ATTACK, true, m_tAutoBattleCol.tHitDesc);
 
 			m_tAutoBattleCol.isAttackColliderPlay = true;
 		}
@@ -465,7 +527,7 @@ void CEnemy::CheckAutoBattlePlay(const _float dt)
 		m_tAutoBattleCol.vAttackColLifeTime.y = pAnimator3D->Get_CurAnimDuration() - m_tAutoBattleCol.fAttackColStartProgress;
 
 		if (true == m_tAutoBattleCol.IsAttackColFinish())
-			{
+		{
 			FinishBattleColliderObject(m_tAutoBattleCol.tagBattleCollider);
 			m_tAutoBattleCol.vAttackColLifeTime.y = 0.f;
 			m_tAutoBattleCol.isAttackColliderPlay = false;
@@ -497,8 +559,8 @@ _bool CEnemy::IsAliveBattleColliderObject(const string& tagBattleColliderObject,
 void CEnemy::Render_GUI_ForShowBattleColliderHit()
 {
 	ImGui::BeginDisabled(true);
-	ImGui::Checkbox(u8"Hitï¿½ï¿½", &m_isEnterAttackHit);
-	ImGui::Checkbox(u8"È¸ï¿½ï¿½ ï¿½ï¿½ ï¿½Ð¸ï¿½ ï¿½ï¿½ï¿½ï¿½", &m_isEnterTriggerHit);
+	ImGui::Checkbox(u8"HitÁß", &m_isEnterAttackHit);
+	ImGui::Checkbox(u8"È¸ÇÇ ¹× ÆÐ¸µ °¡´É", &m_isEnterTriggerHit);
 	ImGui::EndDisabled();
 }
 

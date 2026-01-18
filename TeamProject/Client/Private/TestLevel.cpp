@@ -142,8 +142,8 @@ HRESULT CTestLevel::Awake()
 	Ready_TestObject();
 	Ready_Npc();
 
-	//m_pCamDirector->SetCurTarget();
-	//m_pCamDirector->RequestSequence("Intro/Jane_Intro");
+	m_pCamDirector->AutoTarget();
+	m_pCamDirector->RequestSequence("Intro/Jane_Intro");
 
 	//GameInstance()->Set_EngineTimeScale(0.33f);
 

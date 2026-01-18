@@ -286,7 +286,7 @@ void CMapTriggerObject::Ready_PlayerPos(const MAP_TRIGGEROBJ_DESC* pObjDesc)
 
 		auto player = dynamic_cast<CPlayer*>(ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Player)));
 		auto character = player->Get_CurCharacterHandle().Get();
-		if(character)
+		if (!character) return;
 		character->Get_Component<CCharacterController>()->Set_Position(m_pTransform->Get_Pos());
 	}
 }
