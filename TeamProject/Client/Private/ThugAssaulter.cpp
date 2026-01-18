@@ -497,6 +497,7 @@ void CThugAssaulter::Update_States(_float dt)
 		m_pStateMachine->Reset_Trigger("Idle_To_Move");
 		m_pStateMachine->Reset_Trigger("Idle_To_Chase");
 		m_pStateMachine->Reset_Trigger("Idle_To_Death");
+		m_pStateMachine->Reset_Trigger("Idle_To_Hit");
 
 		m_isIdle = false;
 	}
@@ -555,25 +556,3 @@ void CThugAssaulter::CheckDistanceFromPlayer()
 		m_pStateMachine->Set_Bool("Chase", false);
 }
  
-void CThugAssaulter::ProcessDamage(DAMAGE_TYPE eDamageType)
-{
-	switch (eDamageType)
-	{
-	case Client::DAMAGE_TYPE::NORMAL:
-	{
-
-		break;
-	}
-	case Client::DAMAGE_TYPE::HARD:
-	{
-
-		break;
-	}
-	case Client::DAMAGE_TYPE::AIRBORNE:
-	{
-
-		break;
-	}
-	}
-
-}
