@@ -1,11 +1,11 @@
 #pragma once
 #include "Stage.h"
-class CZeroStage_Normal :
+class CZeroStage_Elite :
     public CStage
 {
 private:
-	CZeroStage_Normal();
-	~CZeroStage_Normal() DEFAULT;
+	CZeroStage_Elite();
+	~CZeroStage_Elite() DEFAULT;
 
 public:
 	virtual HRESULT Initialize(class CZero_Level* pOwnerLevel);
@@ -24,8 +24,9 @@ private:
 private:
 	OBJECT_HANDLE m_PlayerHandle = {};
 	_bool m_isSequenceEnd = {};
+	_float m_radialDt = {};
 public:
-	static CZeroStage_Normal* Create(class CZero_Level* pOwnerLevel);
+	static CZeroStage_Elite* Create(class CZero_Level* pOwnerLevel);
 	virtual void Free();
 };
 

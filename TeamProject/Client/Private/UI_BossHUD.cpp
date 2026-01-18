@@ -46,12 +46,78 @@ void CUI_BossHUD::Update(_float dt)
     if (!m_pMonsterStatus)
         return;
 
-    //Set_GaugeFill(Child::GAUGE_HP_BACK, 0.7f);
-    Set_GaugeFill(Child::GAUGE_HP_FRONT, m_pMonsterStatus->iNowHP / max(m_pMonsterStatus->iMaxHP, 1.f));
+    _float fRatio = m_pMonsterStatus->iNowHP / max(m_pMonsterStatus->iMaxHP, 1.f);
+
+    // HP Front
+    Set_GaugeFill(Child::GAUGE_HP_FRONT, fRatio);
+
+    // HP Back
+    Update_HPBackGauge(fRatio, dt);
+
+    // Groggy
     Set_GaugeFill(Child::GAUGE_GROGGY, m_pMonsterStatus->iGroggyValue / m_fGroggyMax);
     Set_NumberText(Child::TEXT_GROGGY, m_pMonsterStatus->iGroggyValue, 2);
 
     Get_Component<CObjectContainer>()->UpdateChild(dt);
+}
+
+void CUI_BossHUD::Update_HPBackGauge(_float fRatio, _float dt)
+{
+    // HP 변화 감지
+    if (fabs(fRatio - m_hpBack.fTargetRatio) > (HPBACK_DELTA / m_pMonsterStatus->iMaxHP))    // hp 변화량이 HPBACK_DELTA를 넘었을 때
+    {
+        m_hpBack.fTargetRatio = fRatio;
+        m_hpBack.fDelayTimer = 0.f;
+        m_hpBack.isDelay = true;
+        m_isBlinking = true;
+    }
+
+    // Delay 처리
+    if (m_hpBack.isDelay)
+    {
+        m_hpBack.fDelayTimer += dt;
+        if (m_hpBack.fDelayTimer < m_hpBack.fDelayTime)
+        {
+            //Apply_Blink(fRatio, dt);  // 딜레이 때도 깜빡이게 할지 고민 중
+            return;
+        } 
+
+        m_hpBack.isDelay = false; 
+    }
+
+    // 보간
+    _float t = dt * HPBACK_LERP_SPEED;
+    m_hpBack.fCurRatio = Math::Lerp(m_hpBack.fCurRatio, m_hpBack.fTargetRatio, t);
+    Set_GaugeFill(Child::GAUGE_HP_BACK, m_hpBack.fCurRatio);
+
+    // 깜빡임 종료 조건
+    if (fabs(m_hpBack.fCurRatio - m_hpBack.fTargetRatio) < 0.001f)
+    {
+        m_hpBack.fCurRatio = m_hpBack.fTargetRatio;
+        m_isBlinking = false;
+        Set_Color(Child::GAUGE_HP_BACK, UI_HPBACK_DARK);
+    }
+
+    // 깜빡임 적용
+    if (m_isBlinking)
+        Apply_Blink(fRatio, dt);
+}
+
+void CUI_BossHUD::Apply_Blink(_float fRatio, _float dt)
+{
+    _float fBlinkSpeed = Math::Lerp(BLINK_SPEED_MAX, BLINK_SPEED_MIN, fRatio);
+    m_fBlinkAcc += dt * fBlinkSpeed;
+
+    _float t = (sinf(m_fBlinkAcc) * 0.5f) + 0.5f; // 0 ~ 1
+    Vector4 vColor = Vector4::Lerp(Vector4(UI_HPBACK_DARK), Vector4(UI_HPBACK_LIGHT), t);
+    Set_Color(Child::GAUGE_HP_BACK, vColor);
+}
+
+void CUI_BossHUD::Set_Color(Child child, _float4 vColor)
+{
+    ForChild(child, [vColor](CUI_Object* ui) {
+        ui->Set_Color(vColor);
+        });
 }
 
 void CUI_BossHUD::Set_GaugeFill(Child child, _float fFillAmount)

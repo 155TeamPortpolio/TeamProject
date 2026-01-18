@@ -1,13 +1,7 @@
 #pragma once
 #include "Interactable.h"
 
-
-
 NS_BEGIN(Client)
-
-struct LevelSwitched {
-
-};
 
 class CZeroPortal final :
     public CInteractable
@@ -39,7 +33,8 @@ public:
 private:
     _bool  m_bVisible = { false };
     string m_NextMapTag{};
-
+    _float m_Time = {};
+    class CStage* m_pTargetStage = { nullptr };
 public:
     static CZeroPortal* Create();
     virtual CGameObject* Clone(INIT_DESC* pArg) override;

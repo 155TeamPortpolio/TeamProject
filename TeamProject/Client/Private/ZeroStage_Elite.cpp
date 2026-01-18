@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "ZeroStage_Normal.h"
+#include "ZeroStage_Elite.h"
 #include "Zero_Level.h"
 #include "BattleSystem.h"
 #include "CamDirector.h"
@@ -7,11 +7,11 @@
 #include "Layer.h"
 #include "Player.h"
 
-CZeroStage_Normal::CZeroStage_Normal()
+CZeroStage_Elite::CZeroStage_Elite()
 {
 }
 
-HRESULT CZeroStage_Normal::Initialize(CZero_Level* pOwnerLevel)
+HRESULT CZeroStage_Elite::Initialize(CZero_Level* pOwnerLevel)
 {
 	if (!pOwnerLevel)
 		return E_FAIL;
@@ -20,18 +20,20 @@ HRESULT CZeroStage_Normal::Initialize(CZero_Level* pOwnerLevel)
 	return S_OK;
 }
 
-HRESULT CZeroStage_Normal::Awake()
+HRESULT CZeroStage_Elite::Awake()
 {
 	return S_OK;
 }
 
-void CZeroStage_Normal::Update()
+void CZeroStage_Elite::Update()
 {
+
 	switch (m_eStageStage)
 	{
 	case Client::CStage::StageState::None:
 		break;
 	case Client::CStage::StageState::Entrance:
+		m_radialDt += GameInstance()->Get_EngineDeltaTime();
 		Intro();
 		break;
 	case Client::CStage::StageState::BattleStart:
@@ -45,47 +47,58 @@ void CZeroStage_Normal::Update()
 	default:
 		break;
 	}
+	//if (InputDevice()->Key_Tap(VK_F4))
+	//{
+	//
+	//}
+	//if (InputDevice()->Key_Tap(VK_F5))
+	//{
+	//	m_isSequenceEnd = true;
+	//}
 }
 
-HRESULT CZeroStage_Normal::Ready_Stage(CZero_Level::StageContext& context)
+HRESULT CZeroStage_Elite::Ready_Stage(CZero_Level::StageContext& context)
 {
 	Ready_Map("Zero_Level", "Zero_1_1");
 	return S_OK;
 }
 
-HRESULT CZeroStage_Normal::Enter_Stage(CZero_Level::StageContext& context)
+HRESULT CZeroStage_Elite::Enter_Stage(CZero_Level::StageContext& context)
 {
 	Ready_Map("Zero_Level", "Zero_1_1");
 	m_eStageStage = StageState::Entrance;
 	m_PlayerHandle = context.hPlayer;
+	RenderSystem()->Apply_RadialBlur(2.f);
 
 	if(context.isFirstIn){
 		CCamDirector::GetInstance()->SetTarget(context.hPlayer);
-		CCamDirector::GetInstance()->AutoTarget();
 		CCamDirector::GetInstance()->RequestSequence("Intro/Jane_Intro");
 	}
+
 	return S_OK;
 }
 
-HRESULT CZeroStage_Normal::Exit_Stage(CZero_Level::StageContext& context)
+HRESULT CZeroStage_Elite::Exit_Stage(CZero_Level::StageContext& context)
 {
 	return S_OK;
 }
 
-void CZeroStage_Normal::Intro()
+void CZeroStage_Elite::Intro()
 {
-	m_isSequenceEnd = !CCamDirector::GetInstance()->IsPlaying("Intro/Jane_Intro");
+	if (m_radialDt > 2.f) {
+		m_isSequenceEnd = true;
+	}
 
 	if (m_isSequenceEnd) {
 		CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_ThugAssaulter", { -13.f, -5.f,34.f });
-		CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_ThugAssaulter", { -1.f, -5.f,38.f });
+		CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_ThugBulkyEnforcer", { -1.f, -5.f,38.f });
 		CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_ThugAssaulter", { -12.f, -5.f,34.f });
 		CBattleSystem::GetInstance()->SetActive(true);
 		m_eStageStage = StageState::BattleStart;
 	}
 }
 
-void CZeroStage_Normal::Battle()
+void CZeroStage_Elite::Battle()
 {
 	_bool isBattleEnd = CBattleSystem::GetInstance()->isMonsterCleared();
 	if (isBattleEnd) {
@@ -96,14 +109,14 @@ void CZeroStage_Normal::Battle()
 	}
 }
 
-void CZeroStage_Normal::Outro()
+void CZeroStage_Elite::Outro()
 {
-	m_pOwnerLevel->ChangeStage(CZero_Level::StageType::Elite, 0);
+	m_pOwnerLevel->ChangeStage(CZero_Level::StageType::Boss, 0);
 }
 
-CZeroStage_Normal* CZeroStage_Normal::Create(CZero_Level* pOwnerLevel)
+CZeroStage_Elite* CZeroStage_Elite::Create(CZero_Level* pOwnerLevel)
 {
-	CZeroStage_Normal* pInstance = new CZeroStage_Normal;
+	CZeroStage_Elite* pInstance = new CZeroStage_Elite;
 	if (FAILED(pInstance->Initialize(pOwnerLevel)))
 	{
 		Safe_Release(pInstance);
@@ -112,7 +125,7 @@ CZeroStage_Normal* CZeroStage_Normal::Create(CZero_Level* pOwnerLevel)
 	return pInstance;
 }
 
-void CZeroStage_Normal::Free()
+void CZeroStage_Elite::Free()
 {
 	__super::Free();
 }
