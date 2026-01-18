@@ -501,7 +501,7 @@ void CCharacter::Update_Decibel(_float dt)
 		m_fCurrentDecibel = MAX_DECIBEL;
 		return;
 	}
-	m_fCurrentDecibel += dt * 750.f;
+	m_fCurrentDecibel += dt * 50.f;
 }
 
 void CCharacter::Update_Invincible(_float dt)

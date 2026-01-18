@@ -207,7 +207,7 @@ protected:
     // 궁극기
     _float          m_fCurrentDecibel = {};
     _float          m_fPrevDecibel = {};
-    static constexpr _float MAX_DECIBEL = { 100 };
+    static constexpr _float MAX_DECIBEL = { 3000.f };
 
     _float          m_fAttackPower = { 10.f };
     _float          m_fDefense = { 5.f };
