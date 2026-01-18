@@ -25,6 +25,7 @@ void CJaneDoeState_Evade::Enter(CJaneDoe* pOwner)
     else
         m_pSubStateMachine->Set_DefaultState("Backstep");
 
+    m_pSubStateMachine->Set_Bool("Extreme", false);
 
     __super::Enter(pOwner);
 }
