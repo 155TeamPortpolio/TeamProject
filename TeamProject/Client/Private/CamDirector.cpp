@@ -221,6 +221,11 @@ _uint CCamDirector::RequestSequence(const string& key, const CamSequenceRequestD
     return handle;
 }
 
+_bool CCamDirector::IsPlaying() const
+{
+    GetSeqCam()->IsPlaying();
+}
+
 _bool CCamDirector::StopRequest(_uint handle, _float blendOutSec, _bool resetTime)
 {
     const Matrix outWorld = *camMgr.Get_InversedViewMatrix();
