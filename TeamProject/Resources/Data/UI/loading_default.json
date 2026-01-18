@@ -1,4 +1,5 @@
 {
+    "alive": true,
     "instanceName": "loading_default",
     "transform": {
         "anchor": 5,
@@ -27,111 +28,55 @@
         1.0
     ],
     "pass": "Opaque",
-    "useMask": false,
-    "animClips": [
-        {
-            "duration": 0.5,
-            "keyframes": [
-                {
-                    "angle": 0.0,
-                    "color": [
-                        1.0,
-                        1.0,
-                        1.0,
-                        0.0
-                    ],
-                    "easeType": 7,
-                    "position": [
-                        0.0,
-                        0.0
-                    ],
-                    "scale": [
-                        1.0,
-                        1.0
-                    ],
-                    "time": 0.0
-                },
-                {
-                    "angle": 0.0,
-                    "color": [
-                        1.0,
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "easeType": 0,
-                    "position": [
-                        0.0,
-                        0.0
-                    ],
-                    "scale": [
-                        1.0,
-                        1.0
-                    ],
-                    "time": 0.5
-                }
-            ],
-            "loop": false,
-            "name": "clip0"
-        },
-        {
-            "duration": 0.5,
-            "keyframes": [
-                {
-                    "angle": 0.0,
-                    "color": [
-                        1.0,
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "easeType": 5,
-                    "position": [
-                        0.0,
-                        0.0
-                    ],
-                    "scale": [
-                        1.0,
-                        1.0
-                    ],
-                    "time": 0.0
-                },
-                {
-                    "angle": 0.0,
-                    "color": [
-                        1.0,
-                        1.0,
-                        1.0,
-                        0.0
-                    ],
-                    "easeType": 0,
-                    "position": [
-                        0.0,
-                        0.0
-                    ],
-                    "scale": [
-                        1.0,
-                        1.0
-                    ],
-                    "time": 0.5
-                }
-            ],
-            "loop": false,
-            "name": "clip1"
-        }
-    ],
+    "animClips": [],
     "children": [
         {
-            "instanceName": "nowLoading",
+            "alive": true,
+            "instanceName": "Image",
             "transform": {
-                "anchor": 10,
+                "anchor": 0,
                 "anchorOffset": [
-                    -400.0,
-                    -140.0
+                    -800.0,
+                    -450.0
                 ],
                 "size": [
-                    340.0,
-                    90.0
+                    1600.0,
+                    900.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "pass": "Opaque",
+            "animClips": [],
+            "children": [],
+            "typeTag": "Image",
+            "textureTag": "empty.png"
+        },
+        {
+            "alive": true,
+            "instanceName": "fade",
+            "transform": {
+                "anchor": 5,
+                "anchorOffset": [
+                    0.0,
+                    0.0
+                ],
+                "size": [
+                    1600.0,
+                    900.0
                 ],
                 "scale": [
                     1.0,
@@ -147,13 +92,12 @@
                 1.0,
                 1.0,
                 1.0,
-                1.0
+                0.0
             ],
             "pass": "Opaque",
-            "useMask": false,
             "animClips": [
                 {
-                    "duration": 0.30000001192092896,
+                    "duration": 0.5,
                     "keyframes": [
                         {
                             "angle": 0.0,
@@ -161,7 +105,7 @@
                                 1.0,
                                 1.0,
                                 1.0,
-                                1.0
+                                0.0
                             ],
                             "easeType": 7,
                             "position": [
@@ -173,44 +117,6 @@
                                 1.0
                             ],
                             "time": 0.0
-                        },
-                        {
-                            "angle": 2.0,
-                            "color": [
-                                1.0,
-                                1.0,
-                                1.0,
-                                1.0
-                            ],
-                            "easeType": 2,
-                            "position": [
-                                0.0,
-                                0.0
-                            ],
-                            "scale": [
-                                1.0,
-                                1.0
-                            ],
-                            "time": 0.10000000149011612
-                        },
-                        {
-                            "angle": -2.0,
-                            "color": [
-                                1.0,
-                                1.0,
-                                1.0,
-                                1.0
-                            ],
-                            "easeType": 7,
-                            "position": [
-                                0.0,
-                                0.0
-                            ],
-                            "scale": [
-                                1.0,
-                                1.0
-                            ],
-                            "time": 0.20000000298023224
                         },
                         {
                             "angle": 0.0,
@@ -229,25 +135,71 @@
                                 1.0,
                                 1.0
                             ],
-                            "time": 0.30000001192092896
+                            "time": 0.5
                         }
                     ],
-                    "loop": true,
+                    "loop": false,
                     "name": "clip0"
+                },
+                {
+                    "duration": 0.5,
+                    "keyframes": [
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "easeType": 5,
+                            "position": [
+                                0.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 0.0
+                        },
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                0.0
+                            ],
+                            "easeType": 0,
+                            "position": [
+                                0.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 0.5
+                        }
+                    ],
+                    "loop": false,
+                    "name": "clip1"
                 }
             ],
             "children": [
                 {
+                    "alive": true,
                     "instanceName": "nowLoading",
                     "transform": {
-                        "anchor": 9,
+                        "anchor": 10,
                         "anchorOffset": [
-                            0.0,
-                            -74.0
+                            -400.0,
+                            -140.0
                         ],
                         "size": [
-                            234.52175903320313,
-                            58.0
+                            340.0,
+                            90.0
                         ],
                         "scale": [
                             1.0,
@@ -266,53 +218,171 @@
                         1.0
                     ],
                     "pass": "Opaque",
-                    "useMask": false,
-                    "animClips": [],
-                    "children": [],
-                    "typeTag": "Image",
-                    "textureTag": "LoadingText.png"
-                },
-                {
-                    "instanceName": "run",
-                    "transform": {
-                        "anchor": 10,
-                        "anchorOffset": [
-                            -100.0,
-                            -100.0
-                        ],
-                        "size": [
-                            100.0,
-                            100.0
-                        ],
-                        "scale": [
-                            1.0,
-                            1.0
-                        ],
-                        "pivot": [
-                            0.0,
-                            0.0
-                        ],
-                        "radian": 0.0
-                    },
-                    "color": [
-                        1.0,
-                        1.0,
-                        1.0,
-                        1.0
+                    "animClips": [
+                        {
+                            "duration": 0.30000001192092896,
+                            "keyframes": [
+                                {
+                                    "angle": 0.0,
+                                    "color": [
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "easeType": 7,
+                                    "position": [
+                                        0.0,
+                                        0.0
+                                    ],
+                                    "scale": [
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "time": 0.0
+                                },
+                                {
+                                    "angle": 2.0,
+                                    "color": [
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "easeType": 2,
+                                    "position": [
+                                        0.0,
+                                        0.0
+                                    ],
+                                    "scale": [
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "time": 0.10000000149011612
+                                },
+                                {
+                                    "angle": -2.0,
+                                    "color": [
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "easeType": 7,
+                                    "position": [
+                                        0.0,
+                                        0.0
+                                    ],
+                                    "scale": [
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "time": 0.20000000298023224
+                                },
+                                {
+                                    "angle": 0.0,
+                                    "color": [
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "easeType": 0,
+                                    "position": [
+                                        0.0,
+                                        0.0
+                                    ],
+                                    "scale": [
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "time": 0.30000001192092896
+                                }
+                            ],
+                            "loop": true,
+                            "name": "clip0"
+                        }
                     ],
-                    "pass": "SpriteAnimation",
-                    "useMask": false,
-                    "animClips": [],
-                    "children": [],
-                    "typeTag": "SpriteAnimation",
-                    "textureTag": "Run2.png",
-                    "spriteAnimation": {
-                        "loop": true,
-                        "frameCountX": 6,
-                        "frameCountY": 5,
-                        "frameCountTotal": 30,
-                        "frameSpeed": 48.0
-                    }
+                    "children": [
+                        {
+                            "alive": true,
+                            "instanceName": "Image",
+                            "transform": {
+                                "anchor": 9,
+                                "anchorOffset": [
+                                    0.0,
+                                    -74.0
+                                ],
+                                "size": [
+                                    234.52175903320313,
+                                    58.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "pass": "Opaque",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "Image",
+                            "textureTag": "LoadingText.png"
+                        },
+                        {
+                            "alive": true,
+                            "instanceName": "Image",
+                            "transform": {
+                                "anchor": 10,
+                                "anchorOffset": [
+                                    -100.0,
+                                    -100.0
+                                ],
+                                "size": [
+                                    100.0,
+                                    100.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "pass": "SpriteAnimation",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "SpriteAnimation",
+                            "textureTag": "Run2.png",
+                            "spriteAnimation": {
+                                "loop": true,
+                                "frameCountX": 6,
+                                "frameCountY": 5,
+                                "frameCountTotal": 30,
+                                "frameSpeed": 48.0
+                            }
+                        }
+                    ],
+                    "typeTag": "CanvasPanel"
                 }
             ],
             "typeTag": "CanvasPanel"
