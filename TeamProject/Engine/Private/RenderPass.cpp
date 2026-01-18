@@ -682,7 +682,7 @@ void SkinnedShadowPass::Execute_Opaque(ID3D11DeviceContext* pContext, CRenderer*
 			pCurShader->Bind_Value("SkinningOffset", SkinningBoneParam);
 		}
 
-		//packet.pMaterial->Apply_Material(pContext, packet.MaterialIndex);
+		packet.pMaterial->Apply_Material(pContext, packet.MaterialIndex);
 		pCurShader->Apply("Shadow", pContext);
 		packet.pModel->Draw(pContext, packet.DrawIndex);
 		packet.pMaterial->ResetMaterial(packet.DrawIndex);
