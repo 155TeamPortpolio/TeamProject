@@ -1,6 +1,9 @@
 #include "pch.h"
 #include "CharacterAttackCollider.h"
 
+#include "BattleSystem.h"
+#include "BattlePlayer.h"
+
 #include "RigidBody.h"
 #include "Collider.h"
 #include "BoneFollower.h"
@@ -67,30 +70,12 @@ void CCharacterAttackCollider::Render_GUI()
 
 void CCharacterAttackCollider::OnCollisionEnter(CGameObject* pOther)
 {
-	auto pCollidable = pOther->Get_Component<ICollidable>();
-	if (pCollidable && (pCollidable->Get_Group() != COLLISION_GROUP::MONSTER))
-		return;
-	if (!Try_Hit(pOther))
-		return;
-	
-	// MSG_BOX("Damage On Enter");
-	// 데미지 주는 코드
-	// 여기에 안들어와요
-	auto pEnemy = dynamic_cast<CEnemy*>(pOther);
-	if (nullptr != pEnemy)
-		pEnemy->TakeDamage(DAMAGE_TYPE::NORMAL, 10);
+
 }
 
 void CCharacterAttackCollider::OnCollisionStay(CGameObject* pOther)
 {
-	auto pCollidable = pOther->Get_Component<ICollidable>();
-	if (pCollidable && (pCollidable->Get_Group() != COLLISION_GROUP::MONSTER))
-		return;
-	if (!Try_Hit(pOther))
-		return;
 
-	// MSG_BOX("Damage On Stay");
-	// 데미지 주는 코드
 }
 
 void CCharacterAttackCollider::OnCollisionExit(CGameObject* pOther)
@@ -105,15 +90,28 @@ void CCharacterAttackCollider::OnTriggerEnter(CGameObject* pOther)
 	if (!Try_Hit(pOther))
 		return;
 
-	// MSG_BOX("Damage On Enter");
-	// 데미지 주는 코드
 	auto pEnemy = dynamic_cast<CEnemy*>(pOther);
 	if (nullptr != pEnemy)
-		pEnemy->TakeDamage(DAMAGE_TYPE::NORMAL, 10);
+	{
+		pEnemy->TakeDamage(m_tHitDesc.eDamageType, m_tHitDesc.fDamage);
+		BattleSystem()->GetBattlePlayer()->Add_Gauge(10.f, 100.f);
+	}
 }
 
 void CCharacterAttackCollider::OnTriggerStay(CGameObject* pOther)
 {
+	auto pCollidable = pOther->Get_Component<ICollidable>();
+	if (pCollidable && (pCollidable->Get_Group() != COLLISION_GROUP::MONSTER))
+		return;
+	if (!Try_Hit(pOther))
+		return;
+
+	auto pEnemy = dynamic_cast<CEnemy*>(pOther);
+	if (nullptr != pEnemy)
+	{
+		pEnemy->TakeDamage(m_tHitDesc.eDamageType, m_tHitDesc.fDamage);
+		BattleSystem()->GetBattlePlayer()->Add_Gauge(10.f, 100.f);
+	}
 }
 
 void CCharacterAttackCollider::OnTriggerExit(CGameObject* pOther)

@@ -30,7 +30,10 @@ void CJaneDoeState_Attack::Enter(CJaneDoe* pOwner)
 
         m_pSubStateMachine->Register_Transition("NormalAttack", "BranchAttack",
             CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "Passion");
-
+        
+        m_pSubStateMachine->Register_Transition("NormalAttack", "ExAttack",
+            CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "ToExAttack");
+        
         m_pSubStateMachine->Set_DefaultState("NormalAttack");
     }
     _int iEntryMode = pOwner->Get_StateMachine()->Get_Int("AttackEntryMode");

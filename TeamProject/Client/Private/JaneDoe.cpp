@@ -186,6 +186,20 @@ void CJaneDoe::On_Special()
 		desc.eState = UI_ACTION_STATE::EXECUTING;
 		EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
 	}
+	string strCurrentState = m_pStateMachine->Get_CurrentStateName();
+	if (strCurrentState == "Attack")	// NormalAttack Áß Äµ½½ÇØ¼­ ExAttack
+	{
+		CJaneDoeState_Attack* pAttack = static_cast<CJaneDoeState_Attack*>(
+			m_pStateMachine->Get_CurrentState());
+		if (pAttack && pAttack->Get_SubStateMachine())
+		{
+			if (pAttack->Get_SubStateMachine()->Get_CurrentStateName() == "NormalAttack")
+			{
+				pAttack->Get_SubStateMachine()->Set_Trigger("ToExAttack");
+				return;
+			}
+		}
+	}
 	m_pStateMachine->Set_Int("AttackEntryMode", 2);
 	m_pStateMachine->Set_Trigger("Attack");
 }
@@ -290,6 +304,7 @@ HRESULT CJaneDoe::Initialize_Stat()
 
 	auto LVDesc = CDataBase::GetInstance()->GetLevelDesc(m_iCurrentLevel);
 	m_fMaxHP = LVDesc.MaxHP;
+	m_fCurrentHP = m_fMaxHP;
 	m_fDefense = LVDesc.Defend;
 	m_fAttackPower = LVDesc.Attack;
 	
