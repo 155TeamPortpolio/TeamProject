@@ -188,12 +188,13 @@ void CEnemy::Create_UIEnemyStatus(string boneTag)
 	pDesc->tOwnerHandle = Get_Handle();
 
 	// EnemyStatus UI 생성
+	const string& strLevelKey = LevelManager()->Get_NowLevelKey();
 	auto pEnemyStatus = Builder::Create_UIObject({ G_GlobalLevelKey,"Proto_GameObject_EnemyStatus" })
 		.Add_UIDesc(pDesc)
 		.Build("EnemyStatus");
 
 	// UI Mgr에 등록
-	CGameInstance::GetInstance()->Get_UIMgr()->Add_UIObject(pEnemyStatus, CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey());
+	CGameInstance::GetInstance()->Get_UIMgr()->Add_UIObject(pEnemyStatus, strLevelKey);
 
 	m_hUIEnemyStatus = pEnemyStatus->Get_Handle();
 }
@@ -205,12 +206,13 @@ void CEnemy::Create_UIBossHUD()
 	pDesc->pMonsterStatus = &m_tStatus;
 
 	// BossHUD UI 생성
-	auto pEnemyStatus = Builder::Create_UIObject({ LevelManager()->Get_NowLevelKey(),"Proto_GameObject_BossHUD"})
+	const string& strLevelKey = LevelManager()->Get_NowLevelKey();
+	auto pBossHUD = Builder::Create_UIObject({ strLevelKey,"Proto_GameObject_BossHUD"})
 		.Add_UIDesc(pDesc)
 		.Build("bossHUD");
 
 	// UI Mgr에 등록
-	CGameInstance::GetInstance()->Get_UIMgr()->Add_UIObject(pEnemyStatus, CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey());
+	CGameInstance::GetInstance()->Get_UIMgr()->Add_UIObject(pBossHUD, strLevelKey);
 }
 
 HRESULT CEnemy::AttachBattleColliderObject(BATTLE_COLLIDER_DESC* pDesc)
