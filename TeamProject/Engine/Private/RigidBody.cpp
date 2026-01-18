@@ -233,7 +233,7 @@ void CRigidBody::Add_Torque(_fvector vTorque, PxForceMode::Enum eMode)
 
 void CRigidBody::Set_Velocity(_fvector vVelocity)
 {
-	if (m_pActor)
+	if (m_pActor && !m_bKinematic)
 	{
 		PxRigidDynamic* pDynamic = m_pActor->is<PxRigidDynamic>();
 		if (pDynamic) pDynamic->setLinearVelocity(ToPxVec3(vVelocity));
@@ -242,7 +242,7 @@ void CRigidBody::Set_Velocity(_fvector vVelocity)
 
 void CRigidBody::Set_AngularVelocity(_fvector vAngVelocity)
 {
-	if (m_pActor)
+	if (m_pActor && !m_bKinematic)
 	{
 		PxRigidDynamic* pDynamic = m_pActor->is<PxRigidDynamic>();
 		if (pDynamic) pDynamic->setAngularVelocity(ToPxVec3(vAngVelocity));
