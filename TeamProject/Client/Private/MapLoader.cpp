@@ -8,6 +8,7 @@
 
 #include "DataBase.h"
 #include "MapPlacedObject.h"
+#include "MapTriggerObject.h"
 
 CMapLoader::CMapLoader()
     : m_TagLayers{ "PlacedObject_Layer", "TriggerObject_Layer" }
@@ -160,7 +161,7 @@ void CMapLoader::Place_TriggerObjectFromLoadData(MapData_Object* pData)
                           XMConvertToRadians(pData->vLook[1]),
                           XMConvertToRadians(pData->vLook[2]) };
 
-    CMapObject::MAPOBJ_DESC* Desc = new CMapObject::MAPOBJ_DESC;
+    CMapTriggerObject::MAP_TRIGGEROBJ_DESC* Desc = new CMapTriggerObject::MAP_TRIGGEROBJ_DESC;
     Desc->TagLevel = m_TagLevel;
     Desc->TagModelKey = pData->TagModelResourceKey;
     Desc->TagMaterialKey = pData->TagMaterialResourceKey;
@@ -169,10 +170,14 @@ void CMapLoader::Place_TriggerObjectFromLoadData(MapData_Object* pData)
         for (auto& FieldData : tSlotData.second[pData->iObjID])
             Desc->SlotDataValues[tSlotData.first].push_back(FieldData);
     }
+    Desc->vRight = { pData->vRight[0], pData->vRight[1], pData->vRight[2] };
+    Desc->vUp = { pData->vUp[0], pData->vUp[1], pData->vUp[2] };
+    Desc->vLook = { pData->vLook[0], pData->vLook[1], pData->vLook[2] };
+
 
     CGameObject* pStaticObject = Builder::Create_Object({ G_GlobalLevelKey ,"Proto_GameObject_MapTriggerObject" })
         .Add_ObjDesc(Desc)
-        .Collider(ColDesc)
+        //.Collider(ColDesc)
         .Position({ pData->vPos[0], pData->vPos[1], pData->vPos[2] })
         .Build(pData->TagModelResourceKey);
 

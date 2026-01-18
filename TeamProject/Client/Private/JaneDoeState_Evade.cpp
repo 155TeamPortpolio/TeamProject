@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "BattleSystem.h"
 #include "JaneDoeState_Evade.h"
 #include "JaneDoe.h"
 
@@ -7,6 +8,8 @@
 
 void CJaneDoeState_Evade::Enter(CJaneDoe* pOwner)
 {
+    pOwner->Push_Invincible();
+
     if (!m_pSubStateMachine)
     {
         m_pSubStateMachine = CStateMachine<CJaneDoe>::Create();
@@ -22,6 +25,7 @@ void CJaneDoeState_Evade::Enter(CJaneDoe* pOwner)
     else
         m_pSubStateMachine->Set_DefaultState("Backstep");
 
+    m_pSubStateMachine->Set_Bool("Extreme", false);
 
     __super::Enter(pOwner);
 }
@@ -29,6 +33,15 @@ void CJaneDoeState_Evade::Enter(CJaneDoe* pOwner)
 void CJaneDoeState_Evade::Update(CJaneDoe* pOwner, _float dt)
 {
     __super::Update(pOwner, dt);
+
+    if (m_fAnimProgress >= 0.02f)
+    {  
+        if (pOwner->Can_Parry() && !m_pSubStateMachine->Get_Bool("Extreme"))
+        {
+            BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::EVADE);
+            m_pSubStateMachine->Set_Bool("Extreme", true);
+        }
+    }
 
     if (m_pSubStateMachine->Get_Trigger("Complete"))
     {
@@ -59,5 +72,6 @@ void CJaneDoeState_Evade::Update(CJaneDoe* pOwner, _float dt)
 
 void CJaneDoeState_Evade::Exit(CJaneDoe* pOwner)
 {
+    pOwner->Pop_Invincible();
     __super::Exit(pOwner);
 }

@@ -68,6 +68,7 @@ HRESULT CScott_Level::Awake()
 
 	//============== Map ============================
 	Ready_Map("Scott_Level", "Zero_Worksite");
+	
 
 	return S_OK;
 }

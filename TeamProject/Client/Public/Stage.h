@@ -19,7 +19,11 @@ public:
 	virtual HRESULT Exit_Stage(CZero_Level::StageContext& context)PURE;
 
 protected:
+	virtual void Ready_Map(const string& LevelTag, const string& AreaTag);
+
+protected:
 	class CZero_Level* m_pOwnerLevel = { nullptr };
+
 public:
     virtual void Free();
 };

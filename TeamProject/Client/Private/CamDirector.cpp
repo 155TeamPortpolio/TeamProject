@@ -53,7 +53,7 @@ void CCamDirector::SetTarget(OBJECT_HANDLE targetHandle)
     SetSpaceRef(targetHandle);
 }
 
-void CCamDirector::SetCurTarget()
+void CCamDirector::AutoTarget()
 {
     auto handle = GetPlayer()->Get_CurCharacterHandle();
     if (handle.isValid())
@@ -67,7 +67,13 @@ void CCamDirector::Update(_float dt)
 
     if (!m_playing.active) return;
 
-    auto seqPlayer = GetSeqObj()->Get_Component<CCamSequencePlayer>();
+    auto seqPlayer = GetSeqPlayer();
+
+    if (seqPlayer->GetSequence()->space == CamSpace::Local && !m_spaceRefHandle.isValid())
+    {
+        AbortSequenceToOrbit(true);
+        return;
+    }
 
     if (m_playing.pendingStart)
     {
@@ -83,7 +89,7 @@ void CCamDirector::Update(_float dt)
 
     seqPlayer->Update(dt);
 
-    if (!seqPlayer->IsPlaying()) 
+    if (!seqPlayer->IsPlaying())
         StopAll(m_playing.defaultBlendOutSec);
 }
 
@@ -94,6 +100,9 @@ CPlayer* CCamDirector::GetPlayer() const
 
 void CCamDirector::UpdateInput()
 {
+    if (!IsPlaying("Intro/Jane_Intro") && InputDevice()->Key_Tap('Y'))
+        exit(0);
+
     if (InputDevice()->Key_Tap(VK_F1))
         camMgr.Set_MainCam(GetFreeCamComp(), 0.5f);
 
@@ -107,6 +116,21 @@ void CCamDirector::UpdateInput()
     //    camMgr.AddShake(CamShakeType::HitNormal);
 }
 
+void CCamDirector::AbortSequenceToOrbit(_bool resetTime)
+{
+    auto seqPlayer = GetSeqPlayer();
+
+    seqPlayer->SetApplyEnabled(false);
+    seqPlayer->Stop(false);
+
+    if (resetTime) seqPlayer->SetTime(0.f);
+
+    camMgr.Clear(0.f);
+    camMgr.Set_MainCam(GetOrbitCamComp(), 0.f);
+
+    m_playing = {};
+}
+
 void CCamDirector::UpdatePlayer()
 {
     auto player = GetPlayer();
@@ -116,22 +140,16 @@ void CCamDirector::UpdatePlayer()
 
     if (type == ENUM(CPlayer::PLAYER::END) || !focus.isValid())
     {
-        if (m_focusHandle.isValid())
-            GetOrbitCam()->ClearTarget();
+        if (m_focusHandle.isValid()) GetOrbitCam()->ClearTarget();
+
         m_focusHandle.Reset();
         m_focusType = type;
         return;
     }
 
-    if (type != m_focusType)
-    {
-        m_focusType = type;
-    }
+    if (type != m_focusType) m_focusType = type;
 
-    if (type != m_focusType)
-        m_focusType = type;
-
-    if (!m_focusHandle.isValid() || focus.hObjID != m_focusHandle.hObjID)
+    if (!m_focusHandle.isValid() || focus != m_focusHandle)
     {
         m_focusHandle = focus;
         SetTarget(m_focusHandle);
@@ -156,11 +174,23 @@ _uint CCamDirector::RequestSequence(const string& key, _float blendInSec, _bool 
     return RequestSequence(key, req);
 }
 
+_bool CCamDirector::IsPlaying(const string& key) const
+{
+    if (!m_playing.active)      return false;
+    if (m_playing.key != key)   return false;
+    if (m_playing.pendingStart) return true;
+
+    return GetSeqObj()->Get_Component<CCamSequencePlayer>()->IsPlaying();
+}
+
 _uint CCamDirector::RequestSequence(const string& key, const CamSequenceRequestDesc& req)
 {
     if (m_playing.active) StopAll(req.blendOutSec);
 
     auto& entry = m_seqs.at(key);
+
+    if (entry.seqDesc.space == CamSpace::Local && !m_spaceRefHandle.isValid())
+        return 0u;
 
     CamType resolvedReturnCamType = req.returnCamType;
     if (resolvedReturnCamType == CamType::None) resolvedReturnCamType = m_returnCamType;
@@ -168,9 +198,8 @@ _uint CCamDirector::RequestSequence(const string& key, const CamSequenceRequestD
     if (req.returnMode == CamReturnMode::RestorePrev && resolvedReturnCamType == CamType::Orbit)
         GetOrbitCam()->CaptureSnapshot(m_playing.prevOrbit);
 
-    auto seqObj = GetSeqObj();
-    auto seqPlayer = seqObj->Get_Component<CCamSequencePlayer>();
-    auto seqCam = seqObj->Get_Component<CCamera>();
+    auto seqPlayer = GetSeqPlayer();
+    auto seqCam    = GetSeqCamComp();
 
     seqPlayer->SetSequence(&entry.seqDesc);
 
@@ -210,8 +239,7 @@ _bool CCamDirector::StopRequest(_uint handle, _float blendOutSec, _bool resetTim
     Quaternion outRot = Quaternion::CreateFromRotationMatrix(outWorld);
     outRot.Normalize();
 
-    auto seqObj = GetSeqObj();
-    auto seqPlayer = seqObj->Get_Component<CCamSequencePlayer>();
+    auto seqPlayer = GetSeqPlayer();
 
     seqPlayer->SetApplyEnabled(false);
     seqPlayer->Stop(false);

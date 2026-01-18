@@ -55,6 +55,9 @@ void CJaneDoeState_Hit::Update(CJaneDoe* pOwner, _float dt)
 		ENUM(CJaneDoe::ROOTMOTION_MASK::MOVE) |
 		ENUM(CJaneDoe::ROOTMOTION_MASK::QUATERNION));
 
+	if(m_pSubStateMachine->Get_CurrentState()->Get_AnimProgress() > 0.3f)
+		pOwner->Unlock_Move();
+
 	__super::Update(pOwner, dt);
 }
 

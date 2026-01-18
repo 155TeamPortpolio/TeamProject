@@ -17,7 +17,7 @@ public:
     void          SetSpaceRef(OBJECT_HANDLE handle)          { m_spaceRefHandle         = handle; }
     void          SetReturnCam(CamType type)                 { m_returnCamType          = type;   }
     void          SetTarget(OBJECT_HANDLE targetHandle);
-    void          SetCurTarget();
+    void          AutoTarget();
 
     OBJECT_HANDLE GetCamHandle(CamType type) const { return m_camHandles[ENUM(type)];                }
     COrbitCam*    GetOrbitCam()              const { return static_cast<COrbitCam*>(GetOrbitObj());  }
@@ -33,6 +33,8 @@ public:
     CCamera*      GetSeqCamComp()            const { return GetSeqCam()->Get_Component<CCamera>();   }
     CCamera*      GetOrbitCamComp()          const { return GetOrbitCam()->Get_Component<CCamera>(); }
     CPlayer*      GetPlayer()                const;
+    
+    CCamSequencePlayer* GetSeqPlayer()       const { return GetSeqObj()->Get_Component<CCamSequencePlayer>(); }
 
 public:
     _bool         Register(const string& key, const filesystem::path& path);
@@ -43,7 +45,10 @@ public:
     _uint         RequestSequence(const string& key);
     _uint         RequestSequence(const string& key, const CamSequenceRequestDesc& req);
     _uint         RequestSequence(const string& key, _float blendInSec, _bool resetTime, _float blendOutSec);
-                  
+    
+    _bool         IsPlaying(const string& key) const;
+
+
     _bool         StopRequest(_uint handle, _float blendOutSec = 0.25f, _bool resetTime = true);
     void          StopAll(_float blendOutSec = 0.25f);
     void          Update(_float dt);
@@ -51,6 +56,7 @@ public:
 private:
     void          UpdatePlayer();
     void          UpdateInput();
+    void          AbortSequenceToOrbit(_bool resetTime);
 
 private:
     ICameraService&         camMgr;

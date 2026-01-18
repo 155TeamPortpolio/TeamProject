@@ -5,6 +5,11 @@ NS_BEGIN(Client)
 class CMapTriggerObject :
     public CMapObject 
 {
+public:
+    typedef struct tagMapTriggerObject final : public CMapObject::MAPOBJ_DESC {
+        _float3   vRight{}, vUp{}, vLook{};
+    }MAP_TRIGGEROBJ_DESC;
+
 private:
     CMapTriggerObject();
     CMapTriggerObject(const CMapTriggerObject& rhs);
@@ -28,9 +33,11 @@ public:
     void Render_GUI() override;
 
 private:
-    void Ready_PlaneUI(const MAPOBJ_DESC* pObjDesc);
-    void Ready_MeshUI(const MAPOBJ_DESC* pObjDesc);
-    void Ready_Interactable(const MAPOBJ_DESC* pObjDesc);
+    void Ready_PlaneUI(const MAP_TRIGGEROBJ_DESC* pObjDesc);
+    void Ready_MeshUI(const MAP_TRIGGEROBJ_DESC* pObjDesc);
+    void Ready_Interactable(const MAP_TRIGGEROBJ_DESC* pObjDesc);
+    void Ready_InvwalI(const MAP_TRIGGEROBJ_DESC* pObjDesc);
+    void Ready_PlayerPos(const MAP_TRIGGEROBJ_DESC* pObjDesc);
 
 public:
     static CMapTriggerObject* Create();
