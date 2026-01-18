@@ -809,6 +809,45 @@ void CResourceMgr::Load_InitialResource()
  
 _bool CResourceMgr::RequestPreload(const PreloadKey& key)
 {
+	PreloadKey tmpKey = key;
+	int index = ValidLevel(tmpKey.levelKey);
+	if (index == -1) {
+		return false;
+	}
+
+	auto& pool =  m_Resources[index];
+	switch (tmpKey.type)
+	{
+	case Engine::ResourceType::Texture:
+		if(pool.m_Textures.count(tmpKey.resourceKey))
+			return false;
+	case Engine::ResourceType::Sound:
+		if (pool.m_Sounds.count(tmpKey.resourceKey))
+			return false;
+	case Engine::ResourceType::Shader:
+		if (pool.m_Shaders.count(tmpKey.resourceKey))
+			return false;
+	case Engine::ResourceType::Model:
+		if (pool.m_ModelDatas.count(tmpKey.resourceKey))
+			return false;
+	case Engine::ResourceType::Material:
+		if (pool.m_MaterialInstances.count(tmpKey.resourceKey))
+			return false;
+	case Engine::ResourceType::ComputeShader:
+		if (pool.m_ComputeShaders.count(tmpKey.resourceKey))
+			return false;
+	case Engine::ResourceType::Animation:
+		if (pool.m_AnimationMetas.count(tmpKey.resourceKey))
+			return false;
+	case Engine::ResourceType::Effect:
+		if (pool.m_EffectAssets.count(tmpKey.resourceKey))
+			return false;
+	case Engine::ResourceType::None:
+			return false;
+	default:
+		break;
+	}
+
 	return m_pPreloader->Request(key);
 }
 

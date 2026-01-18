@@ -200,6 +200,11 @@ void CBattleSystem::StartShaderVFX(BATTLE_VFX_TYPE eVFXType)
 	RenderSystem()->Register_AddictiveColor(&m_BattleVFX.vLerpColor);
 }
 
+_bool CBattleSystem::isMonsterCleared()
+{
+	return m_BattleObjInfos[BATTLE_OBJ_TYPE::MONSTER].empty(); 
+}
+
 void CBattleSystem::Update_BattleInfo()
 {
 	for (_int i = 0; i < static_cast<_int>(BATTLE_OBJ_TYPE::END); ++i) {
