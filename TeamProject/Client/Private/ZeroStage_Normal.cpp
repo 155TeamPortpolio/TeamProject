@@ -63,6 +63,7 @@ HRESULT CZeroStage_Normal::Enter_Stage(CZero_Level::StageContext& context)
 	Ready_Map("Zero_Level", "Zero_1_1");
 	m_eStageStage = StageState::Entrance;
 	m_PlayerHandle = context.hPlayer;
+
 	CCamDirector::GetInstance()->SetCurTarget();
 	CCamDirector::GetInstance()->RequestSequence("Intro/Jane_Intro");
 
@@ -79,8 +80,8 @@ void CZeroStage_Normal::Intro()
 {
 	if (m_isSequenceEnd) {
 		CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_ThugAssaulter", { -13.f, -5.f,34.f });
-		CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_ThugAssaulter", { -1.f, 5.f,38.f });
-		CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_ThugAssaulter", { -12.f, 5.f,34.f });
+		CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_ThugAssaulter", { -1.f, -5.f,38.f });
+		CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_ThugAssaulter", { -12.f, -5.f,34.f });
 		CBattleSystem::GetInstance()->SetActive(true);
 		m_eStageStage = StageState::BattleStart;
 	}
