@@ -29,7 +29,7 @@
 #include "EnemyAttackCollider.h"
 #include "EnemyTriggerCollider.h"
 
-
+#include "MapLoader.h"
 #include "MapPlacedObject.h"
 #include "MapTriggerObject.h"
 
@@ -47,23 +47,19 @@ CZero_Level::CZero_Level(const string& LevelKey)
 
 HRESULT CZero_Level::Initialize()
 {
-	CBattleSystem::GetInstance()->SetActive(true);
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_Sacrifice", CSacrifice::Create());
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_SacrificeHand", CSacrificeHand::Create());
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_SacrificeLaser", CSacrifice_Laser::Create());
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_SacrificeOrb", CSacrifice_Orb::Create());
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_EnemyAttackCollider", CEnemyAttackCollider::Create());
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_EnemyTriggerCollider", CEnemyTriggerCollider::Create());
+
 	RenderSystem()->Set_FogDesc({ _float4(0.08f, 0.02f, 0.02f, 1.0f),0.f, 0.f, 0.02f, true });
-
 	Rake_MapResources();
-	auto boss = CZeroStage_Boss::Create(this);
-	m_StageContainer.emplace(StageType::Boss, boss);
-
-	m_Context.eStageType = StageType::Boss;
-	m_Context.pNowStage = boss;
-	m_Context.pNowStage->Ready_Stage(m_Context);
-
 	/* Pre load Ȱ��ȭ ������ ��� ���⼭ ���� */
 	{
 		//==================== Effect =======================
-
 		auto pResource = ResourceManager();
-
 		/* Assets */
 		pResource->Add_ResourcePath("test_particle.json", "../Bin/Resources/Effect/Data/test_particle.json");
 		pResource->Add_ResourcePath("spawn_smoke.json", "../Bin/Resources/Effect/Data/spawn_smoke.json");
@@ -126,22 +122,29 @@ HRESULT CZero_Level::Initialize()
 HRESULT CZero_Level::Awake()
 {
 	/* Enemy */
-	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_Sacrifice", CSacrifice::Create());
-	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_SacrificeHand", CSacrificeHand::Create());
-	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_SacrificeLaser", CSacrifice_Laser::Create());
-	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_SacrificeOrb", CSacrifice_Orb::Create());
 
-	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_EnemyAttackCollider", CEnemyAttackCollider::Create());
-	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_EnemyTriggerCollider", CEnemyTriggerCollider::Create());
 
 	/* Player */
-	auto pPlayer = CCamDirector::GetInstance()->GetPlayer();
-	pPlayer->Set_PlayerType(CPlayer::PLAYER::BATTLE);
+	auto pPlayer = ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Player));
+	auto castedPlayer = dynamic_cast<CPlayer*>(pPlayer);
+	castedPlayer->Set_PlayerType(CPlayer::PLAYER::BATTLE);
+	m_Context.hPlayer = castedPlayer->Get_CurCharacterHandle();
+
+	if (!m_Context.hPlayer.isValid())
+		return E_FAIL;
 
 	/* UI */
 	auto uiDirector = CUIDirector::GetInstance();
 	uiDirector->Load_LevelObjects("Zero_Level");
 
+	/*시작 스테이지 세팅*/
+	auto boss = CZeroStage_Boss::Create(this);
+	auto normal = CZeroStage_Boss::Create(this);
+	m_StageContainer.emplace(StageType::Boss, boss);
+
+	m_Context.eStageType = StageType::Boss;
+	m_Context.pNowStage = boss;
+	m_Context.pNowStage->Ready_Stage(m_Context);
 	return S_OK;
 }
 
@@ -157,7 +160,6 @@ void CZero_Level::Update()
 	}
 	if (InputDevice()->Key_Tap(VK_F5))
 	{
-		//vBonePosition.y -= 0.2f;
 		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
 			.Asset("hit_ground_smoke_strong.json")
 			.Build("Smoke");
@@ -173,7 +175,6 @@ HRESULT CZero_Level::Render()
 
 void CZero_Level::PreLoad_Level()
 {
-	/*���⿡ Add ResourcePath �ֱ�*/
 	
 }
 
@@ -196,27 +197,12 @@ HRESULT CZero_Level::ChangeStage(StageType nextStageType, _int StageID)
 	return m_Context.pNowStage->Enter_Stage(m_Context);
 }
 
-void CZero_Level::Rake_MapResources()
+void CZero_Level::Ready_Map(const string& LevelTag, const string& AreaTag)
 {
-	filesystem::path MapDataFolderPath = "../Bin/Resources/MapData/Model/";
-	Helper::EnsureDirectoryExist(MapDataFolderPath);
-
-
-	auto pRcsMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
-	for (const auto& entry : filesystem::recursive_directory_iterator(MapDataFolderPath))
-	{
-		if (entry.is_regular_file() && entry.path().extension() == ".model")
-		{
-			filesystem::path ModelPath = entry.path();
-			filesystem::path MaterialPath = ModelPath;
-			MaterialPath.replace_extension(".mat");
-
-
-			pRcsMgr->Add_ResourcePath(ModelPath.filename().string(), ModelPath.string());
-			pRcsMgr->Add_ResourcePath(MaterialPath.filename().string(), MaterialPath.string());
-
-		}
-	}
+	CMapLoader* pMapLoader = CMapLoader::Create(LevelTag, AreaTag);
+	if (nullptr == pMapLoader)
+		MSG_BOX("Failed to Load MapData!");
+	Safe_Release(pMapLoader);
 }
 
 void CZero_Level::Ready_3DUI()

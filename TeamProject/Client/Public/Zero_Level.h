@@ -15,6 +15,7 @@ public:
 		StageType eStageType;
 		_int StageID = { -1 };
 		class CStage* pNowStage = { nullptr };
+		OBJECT_HANDLE hPlayer = {};
 	}StageContext;
 
 private:
@@ -32,15 +33,18 @@ public:
 	StageContext& Get_StageContext() { return m_Context; };
 	HRESULT ChangeStage(StageType nextStageType, _int StageID);
 
+public:
+	void Ready_Map(const string& LevelTag, const string& AreaTag);
+
 private:
 	void Rake_MapResources();
 	void Ready_3DUI();
 
 private:
 	CGameInstance* m_pGameInstance = {nullptr};
-	unordered_map<StageType,class CStage*> m_StageContainer;
-	StageContext m_Context = {};
 	CCamDirector* m_pCamDirector = { nullptr };
+	StageContext m_Context = {};
+	unordered_map<StageType,class CStage*> m_StageContainer;
 
 public:
 	static CZero_Level* Create(const string& LevelKey);
