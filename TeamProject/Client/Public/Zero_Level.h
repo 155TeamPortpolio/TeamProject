@@ -15,6 +15,7 @@ public:
 		StageType eStageType;
 		_int StageID = { -1 };
 		class CStage* pNowStage = { nullptr };
+		OBJECT_HANDLE hPlayer = {};
 	}StageContext;
 
 private:
@@ -33,13 +34,10 @@ public:
 	HRESULT ChangeStage(StageType nextStageType, _int StageID);
 
 private:
-	void Rake_MapResources();
-
-private:
 	CGameInstance* m_pGameInstance = {nullptr};
-	unordered_map<StageType,class CStage*> m_StageContainer;
-	StageContext m_Context = {};
 	CCamDirector* m_pCamDirector = { nullptr };
+	StageContext m_Context = {};
+	unordered_map<StageType,class CStage*> m_StageContainer;
 
 public:
 	static CZero_Level* Create(const string& LevelKey);

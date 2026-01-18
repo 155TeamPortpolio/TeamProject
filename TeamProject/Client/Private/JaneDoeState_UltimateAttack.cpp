@@ -6,6 +6,9 @@
 
 void CJaneDoeState_UltimateAttack::Enter(CJaneDoe* pOwner)
 {
+    pOwner->Push_Invincible();
+    pOwner->Lock_Move();
+
     if (!m_pSubStateMachine)
     {
         m_pSubStateMachine = CStateMachine<CJaneDoe>::Create();
@@ -71,6 +74,9 @@ void CJaneDoeState_UltimateAttack_End::Enter(CJaneDoe* pOwner)
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "SwitchIn_Attack_Ex_End")
         //.Speed(2.f)
         .Apply();
+
+    pOwner->Pop_Invincible();
+    pOwner->Unlock_Move();
 }
 
 void CJaneDoeState_UltimateAttack_End::Update(CJaneDoe* pOwner, _float dt)

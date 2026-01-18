@@ -13,6 +13,7 @@
 #include "UIDirector.h"
 #include "DataBase.h"
 #include "BattleSystem.h"
+#include "FieldSystem.h"
 
 // Camera
 #include "CamDirector.h"
@@ -73,6 +74,7 @@ HRESULT CMainApp::Initialize()
 	auto uiDirector = CUIDirector::GetInstance();
 	uiDirector->Initialize();
 
+	CFieldSystem::GetInstance();
 	/* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿? ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½ï¿½ ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿? */
 	Initialize_GlobalPrototype();
 	Create_GlobalPlayer();
@@ -139,6 +141,7 @@ void CMainApp::Free()
 	CUIDirector::GetInstance()->DestroyInstance();
 	CCamDirector::GetInstance()->DestroyInstance();
 	CDataBase::GetInstance()->DestroyInstance();
+	CFieldSystem::GetInstance()->DestroyInstance();
 }
 
 void CMainApp::Initialize_GlobalPrototype()
