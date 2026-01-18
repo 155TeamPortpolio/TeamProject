@@ -101,21 +101,6 @@ void CAIMaterial::Render_GUI(vector<_uint>& TextureIndexes)
 	}
 	ImGui::SameLine();
 	ImGui::Text(m_MaterialKey.c_str());
-	if (ImGui::BeginCombo(string("##shaderPass").c_str(), passes[m_currentPassIndex].c_str())) {
-		for (int i = 0; i < passes.size(); ++i) {
-			bool isSelected = (i == m_currentPassIndex);
-
-			if (ImGui::Selectable(passes[i].c_str(), isSelected)) {
-				m_currentPassIndex = i;
-				m_passConstant = passes[i];
-			}
-
-			if (isSelected)
-				ImGui::SetItemDefaultFocus();
-		}
-		ImGui::EndCombo();
-	}
-
 	if (ImGui::Button("Add Materia(One)")) {
 		MaterialTabOpened = !MaterialTabOpened;
 	}
