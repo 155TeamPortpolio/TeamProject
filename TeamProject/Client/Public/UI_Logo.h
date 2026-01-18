@@ -19,9 +19,6 @@ public:
 	virtual void    Late_Update(_float dt)           override { __super::Late_Update(dt); }
 	virtual void    Render_GUI()                     override { __super::Render_GUI(); }
 
-private:
-	UI_HANDLE		m_hRoot = {};
-
 public:
 	static  CGameObject* Create();
 	virtual CGameObject* Clone(INIT_DESC* pArg = {}) override;
