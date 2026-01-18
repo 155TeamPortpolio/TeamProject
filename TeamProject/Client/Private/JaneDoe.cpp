@@ -340,9 +340,6 @@ HRESULT CJaneDoe::Initialize_Weapon()
 	if (FAILED(Attach_AttackCollider(&BootsR_WeaponDesc)))
 		return E_FAIL;
 
-	Active_AttackCollider("FootWeapon_L", true);
-	Active_AttackCollider("FootWeapon_R", true);
-
 	return S_OK;
 }
 
