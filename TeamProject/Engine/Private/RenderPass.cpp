@@ -399,6 +399,7 @@ void ParticlePass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
 		packet.pParticleSystem->Bind_Buffer(pContext);
 		packet.pMaterial->Apply_Material(pContext, 0);
 		packet.pParticleSystem->Draw(pContext);
+		packet.pMaterial->ResetMaterial(0);
 	}
 
 	m_Packets.clear();
@@ -584,6 +585,7 @@ void StaticShadowPass::Execute_Opaque(ID3D11DeviceContext* pContext, CRenderer* 
 		//packet.pMaterial->Apply_Material(pContext, packet.MaterialIndex);
 		pCurShader->Apply("Shadow", pContext);
 		packet.pModel->Draw(pContext, packet.DrawIndex);
+		packet.pMaterial->ResetMaterial(packet.DrawIndex);
 	}
 	if (IsFinal)
 	{
@@ -683,6 +685,7 @@ void SkinnedShadowPass::Execute_Opaque(ID3D11DeviceContext* pContext, CRenderer*
 		packet.pMaterial->Apply_Material(pContext, packet.MaterialIndex);
 		pCurShader->Apply("Shadow", pContext);
 		packet.pModel->Draw(pContext, packet.DrawIndex);
+		packet.pMaterial->ResetMaterial(packet.DrawIndex);
 	}
 	if (IsFinal)
 	{
@@ -763,6 +766,7 @@ void NonLightPass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
 
 		packet.pMaterial->Apply_Material(pContext, packet.MaterialIndex);
 		packet.pModel->Draw(pContext, packet.DrawIndex);
+		packet.pMaterial->ResetMaterial(packet.DrawIndex);
 	}
 
 	m_Packets.clear();
@@ -845,6 +849,7 @@ void EffectPass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
 
 		packet.pMaterial->Apply_Material(pContext, packet.MaterialIndex);
 		packet.pModel->Draw(pContext, packet.DrawIndex);
+		packet.pMaterial->ResetMaterial(packet.DrawIndex);
 	}
 
 	m_Packets.clear();
@@ -925,6 +930,7 @@ void UI3DPass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
 
 		packet.pMaterial->Apply_Material(pContext, packet.MaterialIndex);
 		packet.pModel->Draw(pContext, packet.DrawIndex);
+		packet.pMaterial->ResetMaterial(packet.DrawIndex);
 	}
 
 	m_Packets.clear();

@@ -76,7 +76,6 @@ HRESULT CMainApp::Initialize()
 	Create_GlobalPlayer();
 	Create_GlobalCamObjs();
 
-	ToggleCursor();
 
 	#ifdef  _USING_GUI
 		ImGui::SetCurrentContext(m_pGameInstance->Get_GUISystem()->GetEngineImGuiContext());
@@ -114,7 +113,7 @@ void CMainApp::Set_Levels() //���� ��� �Լ� ->��� ��
 
 	LevelManager()->Set_LoadingLevel("Loading_Level");
 	m_pGameInstance->Notify_LevelSet(); 
-	m_pGameInstance->Get_LevelMgr()->Request_ChangeLevel("Zero_Level",true); 
+	m_pGameInstance->Get_LevelMgr()->Request_ChangeLevel("Test_Level",false); 
 } 
 
 CMainApp* CMainApp::Create()
