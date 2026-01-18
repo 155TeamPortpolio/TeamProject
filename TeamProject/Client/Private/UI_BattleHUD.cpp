@@ -83,6 +83,10 @@ void CUI_BattleHUD::Cache_Handles()
     m_handles[Child::HP_FRONT2] = Get_DescendantHandle("hpFront2");
     m_handles[Child::HP_FRONT3] = Get_DescendantHandle("hpFront3");
 
+    m_handles[Child::HP_BACK1] = Get_DescendantHandle("hpBack1");
+    m_handles[Child::HP_BACK2] = Get_DescendantHandle("hpBack2");
+    m_handles[Child::HP_BACK3] = Get_DescendantHandle("hpBack3");
+
     m_handles[Child::SPECIAL1] = Get_DescendantHandle("special1");
     m_handles[Child::SPECIAL2] = Get_DescendantHandle("special2");
     m_handles[Child::SPECIAL3] = Get_DescendantHandle("special3");
