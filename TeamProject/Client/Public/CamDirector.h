@@ -51,6 +51,7 @@ public:
 private:
     void          UpdatePlayer();
     void          UpdateInput();
+    void          AbortSequenceToOrbit(_bool resetTime);
 
 private:
     ICameraService&         camMgr;
