@@ -223,7 +223,7 @@ _uint CCamDirector::RequestSequence(const string& key, const CamSequenceRequestD
 
 _bool CCamDirector::IsPlaying() const
 {
-    GetSeqCam()->IsPlaying();
+    return GetSeqCam()->IsPlaying();
 }
 
 _bool CCamDirector::StopRequest(_uint handle, _float blendOutSec, _bool resetTime)

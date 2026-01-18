@@ -46,8 +46,6 @@ void CJaneDoeState_RushAttack::Enter(CJaneDoe* pOwner)
 
 void CJaneDoeState_RushAttack::Update(CJaneDoe* pOwner, _float dt)
 {
-    __super::Update(pOwner, dt);
-
     for (const auto& Event : pOwner->Get_Component<CAnimator3D>()->Get_EventBus())
     {
         if (Event.Type != CLIP_EVENT_TYPE::NOTIFY) continue;
@@ -85,6 +83,7 @@ void CJaneDoeState_RushAttack::Update(CJaneDoe* pOwner, _float dt)
             pOwner->End_AttackCollider("FootWeapon_R");
         }
     }
+    __super::Update(pOwner, dt);
 }
 
 void CJaneDoeState_RushAttack::Exit(CJaneDoe* pOwner)

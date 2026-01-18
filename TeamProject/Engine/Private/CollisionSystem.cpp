@@ -120,10 +120,10 @@ void CCollisionSystem::Late_Update(_float dt)
 #ifdef USE_MULTITHREAD_PHYSICS
 	lock_guard<recursive_mutex> lock(m_SlotMutex);
 #endif
-	Clean_DeadSlots();
+	Remove_DeactiveSlots();
+	Clean_DeadSlots();     
 	Stay_TriggerCollisions();
 	Process_CollisionEvents();
-	Remove_DeactiveSlots();
 }
 
 void CCollisionSystem::Render_GUI()
