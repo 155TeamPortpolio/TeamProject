@@ -82,6 +82,10 @@ public:
 public:
     static CJaneDoeState_Attack_04* Create() { return new CJaneDoeState_Attack_04(); }
     virtual void Free() override { __super::Free(); }
+
+private:
+    void Update_Effects(CJaneDoe* pOwner);
+
 };
 
 class CJaneDoeState_Attack_05 : public IBaseState<CJaneDoe>

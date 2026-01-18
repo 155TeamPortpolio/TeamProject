@@ -234,6 +234,11 @@ void CBattleSystem::TakeAllDamage(const HitDesc& hitDesc)
 	}
 }
 
+_bool CBattleSystem::isMonsterCleared()
+{
+	return m_BattleObjInfos[BATTLE_OBJ_TYPE::MONSTER].empty(); 
+}
+
 void CBattleSystem::Update_BattleInfo()
 {
 	for (_int i = 0; i < static_cast<_int>(BATTLE_OBJ_TYPE::END); ++i) {

@@ -21,7 +21,7 @@ public:
     
 private:
     CGameInstance* m_pGameInstance{}; 
-
+    _float m_leastTime = { 0.f };
 private:
     void PreLoadLevel();
     ResourceType CheckResourceType(const string& fileName);
