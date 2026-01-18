@@ -75,9 +75,6 @@ HRESULT CZeroStage_1_1::Initialize(CZero_Level* pOwnerLevel)
 HRESULT CZeroStage_1_1::Awake()
 {
 
-	//============== Map ============================
-	Ready_Map("ZeroStage_1_1", "Zero_1_1");
-
 	return S_OK;
 }
 
@@ -87,7 +84,7 @@ void CZeroStage_1_1::Update()
 
 HRESULT CZeroStage_1_1::Ready_Stage(CZero_Level::StageContext& context)
 {
-	CMapLoader* pMapLoader = CMapLoader::Create("Zero_Level", "Zero_Boss1");
+	CMapLoader* pMapLoader = CMapLoader::Create("Zero_Level", "Zero_1_1");
 
 	if (nullptr == pMapLoader)
 		MSG_BOX("Failed to Load MapData!");

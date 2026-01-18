@@ -17,14 +17,14 @@ public:
     void Priority_Update(_float dt) override;
     void Update(_float dt) override;
     void Late_Update(_float dt) override;
+    virtual void Export_ObjectData(void* pDesc) override;
 
 public:
     void Render_GUI() override;
 
 private:
-    _bool    bCollided{};
-    _vector2 FenceOffset{};
-    _vector2 ImageSize{};
+    _vector2 m_vFenceOffset{};
+    _vector2 m_vImageSize{};
     
 public:
     static CMapInvisibleWall* Create();

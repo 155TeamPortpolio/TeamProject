@@ -493,9 +493,6 @@
     <Filter Include="02. GameObject\MapObject\03. MapInvisibleWall">
       <UniqueIdentifier>{b312b594-fbbd-4c58-99ff-ef3b7b832dfe}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\MapObject\04. MapAnimObject">
-      <UniqueIdentifier>{e27cbe5a-363f-497d-9eed-e754ea9d0f34}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\Object\Enemy\Sacrifice\Sacrifice_Orb">
       <UniqueIdentifier>{68fc2704-df5f-4515-afc4-be9016f4d9a1}</UniqueIdentifier>
     </Filter>
@@ -721,6 +718,9 @@
     <Filter Include="02. GameObject\UI\01. 2D\HUD_Boss">
       <UniqueIdentifier>{08e52f74-1069-4a36-8336-1e2e4192678c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Interactable\ZeroPortal">
+      <UniqueIdentifier>{178b3764-628b-48ca-8cb2-36ae8c8f8dbd}</UniqueIdentifier>
+       </Filter>
     <Filter Include="02. GameObject\Camera\04. OrbitCam\00. LockOnController">
       <UniqueIdentifier>{ab87437a-0803-4974-b6ba-72bdda89f83e}</UniqueIdentifier>
     </Filter>
@@ -1233,9 +1233,6 @@
     <ClInclude Include="..\Public\UI_SwitchAction.h">
       <Filter>02. GameObject\UI\01. 2D\HUD_Battle\Action\Switch</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\MapAnimObject.h">
-      <Filter>02. GameObject\MapObject\04. MapAnimObject</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Sacrifice_Orb.h">
       <Filter>02. GameObject\Object\Enemy\Sacrifice\Sacrifice_Orb</Filter>
     </ClInclude>
@@ -1395,14 +1392,22 @@
     <ClInclude Include="..\Public\UI_BossHUD.h">
       <Filter>02. GameObject\UI\01. 2D\HUD_Boss</Filter>
     </ClInclude>
+
+    <ClInclude Include="..\Public\ZeroPortal.h">
+      <Filter>02. GameObject\Object\Interactable\ZeroPortal</Filter>
+   </ClInclude>
     <ClInclude Include="..\public\OrbitLockOnController.h">
       <Filter>02. GameObject\Camera\04. OrbitCam\00. LockOnController</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\OrbitLockOnData.h">
       <Filter>02. GameObject\Camera\04. OrbitCam\00. LockOnController</Filter>
+
     </ClInclude>
     <ClInclude Include="..\Public\ZeroStage_Normal.h">
       <Filter>01. Level\04. Zero\Stage_Normal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MapInvisibleWall.h">
+      <Filter>02. GameObject\MapObject\03. MapInvisibleWall</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1896,9 +1901,6 @@
     <ClCompile Include="..\Private\UI_SwitchAction.cpp">
       <Filter>02. GameObject\UI\01. 2D\HUD_Battle\Action\Switch</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\MapAnimObject.cpp">
-      <Filter>02. GameObject\MapObject\04. MapAnimObject</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\MapInvisibleWall.cpp">
       <Filter>02. GameObject\MapObject\03. MapInvisibleWall</Filter>
     </ClCompile>
@@ -2030,6 +2032,12 @@
     <ClCompile Include="..\Private\CorinState_SwitchInParryAid.cpp">
       <Filter>02. GameObject\Object\Player\Character\Corin\State\Switch\SwitchIn\ParryAid</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\Portal.cpp">
+      <Filter>02. GameObject\Object\Interactable\Portal</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Interactable.cpp">
+      <Filter>02. GameObject\Object\Interactable</Filter>
+    </ClCompile>
     <ClCompile Include="..\Private\SacrificeState_Groggy_Phase1.cpp">
       <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Groggy\Phase1</Filter>
     </ClCompile>
@@ -2045,8 +2053,13 @@
     <ClCompile Include="..\Private\UI_BossHUD.cpp">
       <Filter>02. GameObject\UI\01. 2D\HUD_Boss</Filter>
     </ClCompile>
+
+    <ClCompile Include="..\Private\ZeroPortal.cpp">
+      <Filter>02. GameObject\Object\Interactable\ZeroPortal</Filter>
+    </ClCompile>
     <ClCompile Include="..\private\OrbitLockOnController.cpp">
       <Filter>02. GameObject\Camera\04. OrbitCam\00. LockOnController</Filter>
+
     </ClCompile>
     <ClCompile Include="..\Private\ZeroStage_Normal.cpp">
       <Filter>01. Level\04. Zero\Stage_Normal</Filter>
