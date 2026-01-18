@@ -301,6 +301,41 @@
                         },
                         {
                             "alive": true,
+                            "instanceName": "hpBack",
+                            "transform": {
+                                "anchor": 0,
+                                "anchorOffset": [
+                                    -52.25,
+                                    -7.0
+                                ],
+                                "size": [
+                                    87.0,
+                                    14.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                0.5921568870544434,
+                                0.1568627506494522,
+                                0.125490203499794,
+                                1.0
+                            ],
+                            "pass": "Opaque",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "Image",
+                            "textureTag": "MonsterHPBg01.png"
+                        },
+                        {
+                            "alive": true,
                             "instanceName": "hpGauge",
                             "transform": {
                                 "anchor": 0,
@@ -398,8 +433,8 @@
                                 "radian": 0.0
                             },
                             "color": [
-                                0.9960784316062927,
-                                0.6627451181411743,
+                                1.0,
+                                0.6941176652908325,
                                 0.0,
                                 1.0
                             ],
@@ -438,9 +473,9 @@
                                 "radian": 0.0
                             },
                             "color": [
-                                0.9960784316062927,
-                                0.6549019813537598,
-                                0.003921568859368563,
+                                1.0,
+                                0.6941176652908325,
+                                0.0,
                                 1.0
                             ],
                             "pass": "Opaque",
