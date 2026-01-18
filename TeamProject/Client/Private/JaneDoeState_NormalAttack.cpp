@@ -8,6 +8,7 @@
 
 void CJaneDoeState_NormalAttack::Enter(CJaneDoe* pOwner)
 {
+    pOwner->Lock_Move();
     m_iComboIndex = 0;
 
     if (!m_pSubStateMachine)
@@ -317,4 +318,5 @@ void CJaneDoeState_Attack_End::Enter(CJaneDoe* pOwner)
     pOwner->Get_Animator()->Change_Animation(arrEndAnims[iIndex])
         .Speed(1.2f)
         .Apply();
+    pOwner->Unlock_Move();
 }

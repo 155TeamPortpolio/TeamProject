@@ -15,8 +15,6 @@ class CUI_BattleHUD final : public CUI_Object
 		ULTIMATE1, ULTIMATE2, ULTIMATE3,
 		ULTIMATEICON1, ULTIMATEICON2, ULTIMATEICON3,
 		CUR_HP_TEXT, MAX_HP_TEXT,
-
-		BOSS, BOSS_ICON, BOSS_HP_BACK, BOSS_HP_FRONT, BOSS_GROGGY, BOSS_GROGGY_TEXT,
 		ACTION,
 		END
 	};
@@ -64,7 +62,6 @@ private:
 	void Cache_Handles(CUI_Object* pRoot);
 
 	void Set_Values(UI_PLAYER_STATUS_DESC desc);
-	void Set_Values(UI_BOSS_STATUS_DESC desc);
 
 	void Set_Special(_int iIndex, _float fRatio, _float fThresRatio);
 	void Set_UltimateIcon(_int iIndex, _float fRatio);

@@ -155,6 +155,41 @@ void CMaterialInstance::SetBlendIf_AlphaDiffuse(AlphaCheckLevel level, const str
 
 void CMaterialInstance::Render_GUI()
 {
+	CShader* shaderPtr = m_pMaterialData->Get_Shader();
+	const auto& passList = shaderPtr->Get_PassList();
+
+	int currentIndex = -1;
+	for (int passIndex = 0; passIndex < (int)passList.size(); ++passIndex)
+	{
+		if (override_Pass == passList[passIndex]) {
+			currentIndex = passIndex;
+			break;
+		}
+	}
+
+	if (!passList.empty() && currentIndex < 0)
+	{
+		override_Pass = passList[0];
+		currentIndex = 0;
+	}
+
+	const char* previewText = (!passList.empty()) ? passList[currentIndex].c_str() : "(No Pass)";
+
+	if (ImGui::BeginCombo("##shaderPass", previewText))
+	{
+		for (int passIndex = 0; passIndex < (int)passList.size(); ++passIndex)
+		{
+			bool isSelected = (passIndex == currentIndex);
+			if (ImGui::Selectable(passList[passIndex].c_str(), isSelected))
+			{
+				override_Pass = passList[passIndex];
+			}
+			if (isSelected)
+				ImGui::SetItemDefaultFocus();
+		}
+		ImGui::EndCombo();
+	}
+
 	m_pMaterialData->Render_GUI(m_TextureIndexs);
 }
 
