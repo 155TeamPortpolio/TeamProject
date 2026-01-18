@@ -50,6 +50,11 @@ HRESULT CZero_Level::Initialize()
 	auto uiDirector = CUIDirector::GetInstance();
 	uiDirector->Load_LevelObjects("Zero_Level");
 
+	auto pPlayer = ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Player));
+	auto castedPlayer = dynamic_cast<CPlayer*>(pPlayer);
+	castedPlayer->Set_PlayerType(CPlayer::PLAYER::BATTLE);
+	m_Context.hPlayer = castedPlayer->Get_CurCharacterHandle();
+
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_Sacrifice", CSacrifice::Create());
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_SacrificeHand", CSacrificeHand::Create());
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_SacrificeLaser", CSacrifice_Laser::Create());
@@ -132,20 +137,12 @@ HRESULT CZero_Level::Awake()
 {
 	/* Enemy */
 	/* Player */
-	auto pPlayer = ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Player));
-	auto castedPlayer = dynamic_cast<CPlayer*>(pPlayer);
-	castedPlayer->Set_PlayerType(CPlayer::PLAYER::BATTLE);
-	m_Context.hPlayer = castedPlayer->Get_CurCharacterHandle();
 
 	if (!m_Context.hPlayer.isValid())
 		return E_FAIL;
 
-	auto boss = CZeroStage_Boss::Create(this);
-	auto normal = CZeroStage_Boss::Create(this);
-	m_StageContainer.emplace(StageType::Boss, boss);
-	m_StageContainer.emplace(StageType::Normal, normal);
-
 	ChangeStage(StageType::Normal, 0);
+
 	return S_OK;
 }
 

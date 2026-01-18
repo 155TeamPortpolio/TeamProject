@@ -5,6 +5,7 @@
 #include "CamDirector.h"
 #include "GameInstance.h"
 #include "Layer.h"
+#include "Player.h"
 
 CZeroStage_Normal::CZeroStage_Normal()
 {
@@ -39,18 +40,19 @@ void CZeroStage_Normal::Update()
 	case Client::CStage::StageState::BattleEnd:
 		break;
 	case Client::CStage::StageState::Outro:
+		Outro();
 		break;
 	default:
 		break;
 	}
-	if (InputDevice()->Key_Tap(VK_F4))
-	{
-		m_pOwnerLevel->ChangeStage(CZero_Level::StageType::Boss, 0);
-	}
-	if (InputDevice()->Key_Tap(VK_F5))
-	{
-		m_isSequenceEnd = true;
-	}
+	//if (InputDevice()->Key_Tap(VK_F4))
+	//{
+	//
+	//}
+	//if (InputDevice()->Key_Tap(VK_F5))
+	//{
+	//	m_isSequenceEnd = true;
+	//}
 }
 
 HRESULT CZeroStage_Normal::Ready_Stage(CZero_Level::StageContext& context)
@@ -67,7 +69,6 @@ HRESULT CZeroStage_Normal::Enter_Stage(CZero_Level::StageContext& context)
 	CCamDirector::GetInstance()->SetTarget(context.hPlayer);
 	CCamDirector::GetInstance()->RequestSequence("Intro/Jane_Intro");
 
-
 	return S_OK;
 }
 
@@ -79,7 +80,7 @@ HRESULT CZeroStage_Normal::Exit_Stage(CZero_Level::StageContext& context)
 
 void CZeroStage_Normal::Intro()
 {
-	m_isSequenceEnd = CCamDirector::GetInstance()->IsPlaying("Intro/Jane_Intro");
+	m_isSequenceEnd = !CCamDirector::GetInstance()->IsPlaying("Intro/Jane_Intro");
 
 	if (m_isSequenceEnd) {
 		CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_ThugAssaulter", { -13.f, -5.f,34.f });
@@ -95,9 +96,15 @@ void CZeroStage_Normal::Battle()
 	_bool isBattleEnd = CBattleSystem::GetInstance()->isMonsterCleared();
 	if (isBattleEnd) {
 		m_eStageStage = StageState::BattleEnd;
-		//CBattleSystem::GetInstance().
+		CBattleSystem::GetInstance()->SetActive(false);
+		STAGE_CHANGED_DESC Stage_End = {this};
+		EventSystem()->Broadcast<STAGE_CHANGED_DESC>(Stage_End);
 	}
+}
 
+void CZeroStage_Normal::Outro()
+{
+	m_pOwnerLevel->ChangeStage(CZero_Level::StageType::Boss, 0);
 }
 
 CZeroStage_Normal* CZeroStage_Normal::Create(CZero_Level* pOwnerLevel)

@@ -56,6 +56,8 @@
 #include "UIDirector.h"
 #include "UI_MeshBillboard.h"
 
+#include "GameInstance.h"
+#include "Layer.h"
 
 CZeroStage_Boss::CZeroStage_Boss()
 {
@@ -87,6 +89,8 @@ HRESULT CZeroStage_Boss::Enter_Stage(CZero_Level::StageContext& context)
 {
 	Ready_Map("Zero_Level", "Zero_Boss1");
 	m_eStageStage = StageState::Entrance;
+	m_PlayerHandle = context.hPlayer;
+
 	CCamDirector::GetInstance()->SetTarget(context.hPlayer);
 	CCamDirector::GetInstance()->RequestSequence("Intro/Jane_Intro");
 
@@ -95,6 +99,7 @@ HRESULT CZeroStage_Boss::Enter_Stage(CZero_Level::StageContext& context)
 
 HRESULT CZeroStage_Boss::Exit_Stage(CZero_Level::StageContext& context)
 {
+	ObjectManager()->Get_Layer({ "Zero_Level","PlacedObject_Layer" })->Clear_Layer();
 	return S_OK;
 }
 
