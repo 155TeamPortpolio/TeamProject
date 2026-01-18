@@ -375,7 +375,7 @@ void CEnemy::ManageGroggy(const _float dt)
 	}
 }
 
-void CEnemy::SetBattleColliderObject(const string& tagBattleColliderObject, BATTLE_COLTYPE eBattleColliderType, _bool is, const HitDesc& hitdesc = {})
+void CEnemy::SetBattleColliderObject(const string& tagBattleColliderObject, BATTLE_COLTYPE eBattleColliderType, _bool is, const HitDesc& hitdesc)
 {
 	string tagBattleCol = tagBattleColliderObject;
 
@@ -491,7 +491,7 @@ void CEnemy::CheckAutoBattlePlay(const _float dt)
 	{	
 		if (m_tAutoBattleCol.fAttackColStartProgress <= pAnimator3D->Get_CurAnimDuration()) 
 		{ 
-			SetBattleColliderObject(m_tAutoBattleCol.tagBattleCollider, BATTLE_COLTYPE::TRIGGER, false, {});
+			//SetBattleColliderObject(m_tAutoBattleCol.tagBattleCollider, BATTLE_COLTYPE::TRIGGER, false, {});
 			SetBattleColliderObject(m_tAutoBattleCol.tagBattleCollider, BATTLE_COLTYPE::ATTACK, true, m_tAutoBattleCol.tHitDesc);
 
 			m_tAutoBattleCol.isAttackColliderPlay = true;

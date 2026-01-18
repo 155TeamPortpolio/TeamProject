@@ -167,10 +167,8 @@ void CThugBulkyEnforcer::Render_GUI()
 
 		ImGui::BeginDisabled(true);
 		ImGui::Checkbox(u8"isLookPlayer", &m_isLookPlayer);
-		ImGui::Checkbox(u8"Hit용 트리거 활성화", &m_isBattleAttackOn);
 		ImGui::Checkbox(u8"회피용 트리거 활성화", &m_isBattleTriggerOn);
-		ImGui::Checkbox(u8"Hit중", &m_isEnterAttackHit);
-		ImGui::Checkbox(u8"회피 및 패링 가능", &m_isEnterTriggerHit);
+		ImGui::Checkbox(u8"isOnAttack", &m_isOnAttack);
 		ImGui::EndDisabled();
 	
 	ImGui::EndChild();

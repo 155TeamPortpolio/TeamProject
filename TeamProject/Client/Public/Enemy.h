@@ -41,6 +41,8 @@ public:
     const MONSTER_STATUS*   GetStatusPtr() const { return &m_tStatus; }
     // Groggy 상태 반환
     _bool                   IsGroggy() const { return m_isGroggy; }
+    // 공격중인지 상태 반환
+    _bool                   IsOnAttack() const { return m_isOnAttack; }
 
     /* Setter*/
     // 몬스터 공격 시 attack sign 이펙트 활성화 함수
@@ -50,8 +52,9 @@ public:
     /* 트리거 콜라이더를 바로 키고, AttackOffsetTime 뒤에 Attack 콜라이더를
     AttackPlayTime만큼 키고 트리거와 Attack콜라이더를 종료함*/
     void                SetAutoPlayBattleCollider(const string& tagBattleCollider, _float fAttackOffsetTime, _float fAttackPlayTime, const HitDesc & hitDesc);
-
+    /* 몬스터가 죽는 시퀀스가 다 끝나고 호출할 것. */
     void                Death();
+    void                SetOnAttack(_bool is) { m_isOnAttack = is; }
 
 protected:
     // Target(Player->Character)과의 거리 정보 계산
@@ -71,7 +74,7 @@ protected:
 
 #pragma region BattleCollider
 protected:
-    void                SetBattleColliderObject(const string& tagBattleColliderObject, BATTLE_COLTYPE eBattleColliderType, _bool is, const HitDesc & hitdesc);
+    void                SetBattleColliderObject(const string& tagBattleColliderObject, BATTLE_COLTYPE eBattleColliderType, _bool is, const HitDesc& hitdesc = {});
     void                FinishBattleColliderObject(const string& tagBattleColliderObject);
     void                ShowBattleColliderForCheck(_bool is);
     void                CheckAutoBattlePlay(const _float dt);
@@ -106,6 +109,8 @@ protected:
     /* Groggy */
     _bool                   m_isGroggy = { false };
     _float                  m_fGroggyDecreaseTime = {};
+    
+    _bool                   m_isOnAttack = { false };
 
  
 protected: 
