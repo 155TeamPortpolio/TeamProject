@@ -20,7 +20,7 @@ HRESULT CInteractable::Initialize_Prototype()
 		return E_FAIL;
 
 	Add_Component<CCollider>();
-	Add_Component<CCollider>()->Set_CollisionGroup(COLLISION_GROUP::INTERACABLE);
+	//Add_Component<CCollider>()->Set_CollisionGroup(COLLISION_GROUP::INTERACABLE);
 
 	return S_OK;
 }
