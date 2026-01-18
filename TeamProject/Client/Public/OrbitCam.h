@@ -52,6 +52,8 @@ private:
     Vector3 GetBasePivotTargetPos(OBJECT_HANDLE handle) const;
     void    UpdateTargetSwitch(_float dt);
 
+    _float GetCollisionAllowedDist(const Vector3& pivot, const Vector3& backDir, float desiredDist) const;
+
 private:
     OrbitCamPoseState         pose{};
     OrbitCamInputState        input{};
