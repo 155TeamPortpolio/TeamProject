@@ -12,7 +12,6 @@ HRESULT CSequenceCam::Initialize_Prototype()
 HRESULT CSequenceCam::Initialize(INIT_DESC* pArg)
 {
     __super::Initialize(pArg);
-    m_seqPlayer = Get_Component<CCamSequencePlayer>();
     return S_OK;
 }
 

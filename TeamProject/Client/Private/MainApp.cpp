@@ -13,6 +13,7 @@
 #include "UIDirector.h"
 #include "DataBase.h"
 #include "BattleSystem.h"
+#include "FieldSystem.h"
 
 // Camera
 #include "CamDirector.h"
@@ -24,6 +25,8 @@
 
 #include "MapPlacedObject.h"
 #include "MapTriggerObject.h"
+#include "MapInvisibleWall.h"
+
 #include "SpriteNode.h"
 #include "MeshNode.h"
 #include "TrailNode.h"
@@ -71,12 +74,12 @@ HRESULT CMainApp::Initialize()
 	auto uiDirector = CUIDirector::GetInstance();
 	uiDirector->Initialize();
 
-	/* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½ï¿½ ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½ */
+	CFieldSystem::GetInstance();
+	/* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿? ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½ï¿½ ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿? */
 	Initialize_GlobalPrototype();
 	Create_GlobalPlayer();
 	Create_GlobalCamObjs();
-
-
+	
 	#ifdef  _USING_GUI
 		ImGui::SetCurrentContext(m_pGameInstance->Get_GUISystem()->GetEngineImGuiContext());
 	#endif //  _USING_GUI
@@ -102,7 +105,7 @@ HRESULT CMainApp::Render()
 	return S_OK;
 }
 
-void CMainApp::Set_Levels() //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½ ->ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+void CMainApp::Set_Levels() //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿? ï¿½Ô¼ï¿½ ->ï¿½ï¿½ï¿? ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 {
 	LevelManager()->Register_Level("Test_Level",     []()->CLevel* {return CTestLevel::Create("Test_Level"); });
 	LevelManager()->Register_Level("Logo_Level",     []()->CLevel* {return CLogoLevel::Create("Logo_Level"); });
@@ -113,7 +116,7 @@ void CMainApp::Set_Levels() //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½ ->ï¿½ï¿½ï¿½ ï¿½ï¿½
 
 	LevelManager()->Set_LoadingLevel("Loading_Level");
 	m_pGameInstance->Notify_LevelSet(); 
-	m_pGameInstance->Get_LevelMgr()->Request_ChangeLevel("Test_Level",false); 
+	m_pGameInstance->Get_LevelMgr()->Request_ChangeLevel("Scott_Level",true); 
 } 
 
 CMainApp* CMainApp::Create()
@@ -137,6 +140,7 @@ void CMainApp::Free()
 	CUIDirector::GetInstance()->DestroyInstance();
 	CCamDirector::GetInstance()->DestroyInstance();
 	CDataBase::GetInstance()->DestroyInstance();
+	CFieldSystem::GetInstance()->DestroyInstance();
 }
 
 void CMainApp::Initialize_GlobalPrototype()
@@ -144,6 +148,7 @@ void CMainApp::Initialize_GlobalPrototype()
 	/* Prototype Tag */
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_MapPlacedObject", CMapPlacedObject::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_MapTriggerObject", CMapTriggerObject::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_MapInvisibleWall", CMapInvisibleWall::Create());
 
 	// Camera
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_OrbitCam",    COrbitCam::Create());

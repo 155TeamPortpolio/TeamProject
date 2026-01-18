@@ -1,59 +1,68 @@
 #include "pch.h"
-#include "Portal.h"
+#include "ZeroPortal.h"
 #include "LevelMgr.h"
 #include "GameInstance.h"
 
+//Components
 #include "Material.h"
 #include "StaticModel.h"
-CPortal::CPortal()
+#include "EventListener.h"
+
+CZeroPortal::CZeroPortal()
 	: CInteractable()
 {
 }
 
-CPortal::CPortal(const CPortal& rhs)
+CZeroPortal::CZeroPortal(const CZeroPortal& rhs)
 	: CInteractable(rhs)
 {
 }
 
-HRESULT CPortal::Initialize_Prototype()
+HRESULT CZeroPortal::Initialize_Prototype()
 {
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
 
+	Add_Component<CEventListener>();
+
 	return S_OK;
 }
 
-HRESULT CPortal::Initialize(INIT_DESC* pArg)
+HRESULT CZeroPortal::Initialize(INIT_DESC* pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-	auto* pDesc = static_cast<PORTAL_DESC*>(pArg);
+	auto* pDesc = static_cast<ZEROPORTAL_DESC*>(pArg);
 
-	m_NextLevelTag = pDesc->NextNameTag;
+	m_NextMapTag = pDesc->NextMapTag;
+
+	Get_Component<CEventListener>()->Add_Listener<LevelSwitched>([&](LevelSwitched desc) 
+		{
+		});
 
 	return S_OK;
 }
 
-void CPortal::Awake()
+void CZeroPortal::Awake()
 {
 }
 
-void CPortal::Priority_Update(_float dt)
+void CZeroPortal::Priority_Update(_float dt)
 {
 }
 
-void CPortal::Update(_float dt)
+void CZeroPortal::Update(_float dt)
 {
 	Get_Component<CCollider>()->Update(dt);
 	Interact();
 }
 
-void CPortal::Late_Update(_float dt)
+void CZeroPortal::Late_Update(_float dt)
 {
 }
 
-void CPortal::OnTriggerEnter(CGameObject* pOther)
+void CZeroPortal::OnTriggerEnter(CGameObject* pOther)
 {
 	auto pCollidable = pOther->Get_Component<ICollidable>();
 	if (pCollidable && (pCollidable->Get_Group() != COLLISION_GROUP::PLAYER))
@@ -65,12 +74,12 @@ void CPortal::OnTriggerEnter(CGameObject* pOther)
 
 }
 
-void CPortal::OnTriggerStay(CGameObject* pOher)
+void CZeroPortal::OnTriggerStay(CGameObject* pOher)
 {
 	
 }
 
-void CPortal::OnTriggerExit(CGameObject* pOther)
+void CZeroPortal::OnTriggerExit(CGameObject* pOther)
 {
 	auto pCollidable = pOther->Get_Component<ICollidable>();
 	if (pCollidable && (pCollidable->Get_Group() != COLLISION_GROUP::PLAYER))
@@ -79,20 +88,20 @@ void CPortal::OnTriggerExit(CGameObject* pOther)
 	m_bIsInteractable = false;
 }
 
-void CPortal::Interact()
+void CZeroPortal::Interact()
 {
 	if (!m_bIsInteractable)
 		return;
 	
 	if (InputDevice()->Key_Down('F')) {
 		LevelManager()->Set_LoadingLevel("Loading_Level");
-		LevelManager()->Request_ChangeLevel(m_NextLevelTag, true);
+		LevelManager()->Request_ChangeLevel("Zero_Level", true);
 	}
 }
 
-CPortal* CPortal::Create()
+CZeroPortal* CZeroPortal::Create()
 {
-	CPortal* Instance = new CPortal();
+	CZeroPortal* Instance = new CZeroPortal();
 	if (FAILED(Instance->Initialize_Prototype()))
 	{
 		Safe_Release(Instance);
@@ -101,9 +110,9 @@ CPortal* CPortal::Create()
 	return Instance;
 }
 
-CGameObject* CPortal::Clone(INIT_DESC* pArg)
+CGameObject* CZeroPortal::Clone(INIT_DESC* pArg)
 {
-	CPortal* Instance = new CPortal(*this);
+	CZeroPortal* Instance = new CZeroPortal(*this);
 	if (FAILED(Instance->Initialize(pArg)))
 	{
 		Safe_Release(Instance);
@@ -112,7 +121,7 @@ CGameObject* CPortal::Clone(INIT_DESC* pArg)
 	return Instance;
 }
 
-void CPortal::Free()
+void CZeroPortal::Free()
 {
 	__super::Free();
 }

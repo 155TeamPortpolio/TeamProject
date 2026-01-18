@@ -2,10 +2,13 @@
 #include "UI_Logo.h"
 
 #include "GameInstance.h"
+#include "ObjectContainer.h"
 
 HRESULT CUI_Logo::Initialize_Prototype()
 {
     __super::Initialize_Prototype();
+
+    Add_Component<CObjectContainer>();
 
     return S_OK;
 }
@@ -14,34 +17,27 @@ HRESULT CUI_Logo::Initialize(INIT_DESC* pArg)
 {
     __super::Initialize(pArg);
 
+    // JSON 기반 UI 구성 로드
+    const string& filePath = ResourceManager()->Get_ResourcePath("logo.json");
+    Load(Helper::LoadJson<nlohmann::ordered_json>(filePath));
+
+    // 자식(fade) 자식의 0번 애니메이션 재생 (FadeIn)
+    if (auto pObj = Get_Component<CObjectContainer>()->Find_Descendant("fade"))
+        if (auto pUI = dynamic_cast<CUI_Object*>(pObj))
+            pUI->Set_Animation(0);
+
     return S_OK;
 }
 
 void CUI_Logo::Awake()
-{
-    string strCurrentLevel = CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey();
-
-    // Logo 프리팹 (json) 로드 후 UI 트리 루트(CanvasPanel) 생성
-    CUI_Object* pPrefab = Builder::Create_UIObject({ strCurrentLevel, "Proto_GameObject_CanvasPanel" })
-        .Asset("logo.json")
-        .Build("prefab");
-    
-    if (!pPrefab)
-        return;
-
-    // 생성된 루트 UI를 uiMgr에 등록
-    CGameInstance::GetInstance()->Get_UIMgr()->Add_UIObject(pPrefab, strCurrentLevel);
-
-    // 루트 핸들 캐싱
-    m_hRoot = pPrefab->Get_Handle();
-
-    // 루트 UI의 0번 애니메이션 재생 (FadeIn)
-    if (m_hRoot.isValid())
-        m_hRoot.Get()->Set_Animation(0);
+{ 
 }
 
 void CUI_Logo::Update(_float dt)
-{ 
+{
+    __super::Update(dt);
+
+    Get_Component<CObjectContainer>()->UpdateChild(dt);
 }
 
 CGameObject* CUI_Logo::Create()

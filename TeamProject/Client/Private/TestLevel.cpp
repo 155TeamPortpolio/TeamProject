@@ -67,7 +67,7 @@
 CTestLevel::CTestLevel(const string& LevelKey)
 	:CLevel(LevelKey),
 	m_pGameInstance{ CGameInstance::GetInstance() },
-	m_pCamDirector{ CCamDirector::GetInstance() }
+	m_pCamDirector{ CCamDirector::GetInstance() } 
 {
 	Safe_AddRef(m_pGameInstance);
 	Safe_AddRef(m_pCamDirector);
@@ -142,11 +142,10 @@ HRESULT CTestLevel::Awake()
 	Ready_TestObject();
 	Ready_Npc();
 
-	m_pCamDirector->SetTarget(m_pPlayer->Get_CurCharacterHandle());
+	//m_pCamDirector->SetCurTarget();
+	//m_pCamDirector->RequestSequence("Intro/Jane_Intro");
 
-	auto handle = m_pPlayer->Get_CurCharacterHandle();
-	m_pCamDirector->SetCurTarget();
-	m_pCamDirector->RequestSequence("Intro/Jane_Intro");
+	//GameInstance()->Set_EngineTimeScale(0.33f);
 
 	return S_OK;
 }
@@ -154,8 +153,6 @@ HRESULT CTestLevel::Awake()
 void CTestLevel::Update()
 {
 	CBattleSystem::GetInstance()->Update();
-
-
 
 	if (InputDevice()->Key_Tap(VK_F4))
 	{
