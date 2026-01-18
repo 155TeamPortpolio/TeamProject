@@ -72,6 +72,6 @@ private:
     _int                    m_focusType = -1;
 };
 
-inline auto& CamDirector() { return *CCamDirector::GetInstance(); }
+inline auto* CamDirector() { return CCamDirector::GetInstance(); }
 
 NS_END
