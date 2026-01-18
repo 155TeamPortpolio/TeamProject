@@ -155,7 +155,7 @@ _bool CPhysicsSystem::Raycast(const PHYSICS_RAY& desc, PHYSICS_RAY_HIT& outHit)
 
     PxRaycastBuffer hit;
     PxQueryFilterData filterData;
-    filterData.flags = PxQueryFlag::eSTATIC | PxQueryFlag::eDYNAMIC;
+    filterData.flags = PxQueryFlag::eSTATIC | PxQueryFlag::eDYNAMIC | PxQueryFlag::ePREFILTER;
 
     CRaycastFilterCallback filterCallback(desc.iCollisionMask, desc.bQueryTrigger);
 
