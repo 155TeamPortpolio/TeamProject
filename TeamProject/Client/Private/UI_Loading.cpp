@@ -28,16 +28,18 @@ HRESULT CUI_Loading::Initialize(INIT_DESC* pArg)
     else
         fileName = "loading_default";
 
-    //fileName = "loading_hollow";
+    //fileName = "loading_default"; //테스트 코드
      
     // JSON 기반 UI 구성 로드
     const string& filePath = ResourceManager()->Get_ResourcePath(fileName + ".json");
     Load(Helper::LoadJson<nlohmann::ordered_json>(filePath));
 
-    // 0번 애니메이션 재생 (FadeIn)
-    Set_Animation(0);
+    // 자식(fade) 자식의 0번 애니메이션 재생 (FadeIn)
+    if (auto pObj = Get_Component<CObjectContainer>()->Find_Descendant("fade"))
+        if (auto pUI = dynamic_cast<CUI_Object*>(pObj))
+            pUI->Set_Animation(0);
 
-    // now loading의 0번 애니메이션 재생 (각도 움직임)
+    // 자식(now loading)의 0번 애니메이션 재생 (각도 움직임)
     if (auto pObj = Get_Component<CObjectContainer>()->Find_Descendant("nowLoading"))
         if (auto pUI = dynamic_cast<CUI_Object*>(pObj))
             pUI->Set_Animation(0);

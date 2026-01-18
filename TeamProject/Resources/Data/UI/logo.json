@@ -25,105 +25,49 @@
         1.0,
         1.0,
         1.0,
-        0.0
+        1.0
     ],
     "pass": "Opaque",
-    "animClips": [
-        {
-            "duration": 0.5,
-            "keyframes": [
-                {
-                    "angle": 0.0,
-                    "color": [
-                        1.0,
-                        1.0,
-                        1.0,
-                        0.0
-                    ],
-                    "easeType": 7,
-                    "position": [
-                        0.0,
-                        0.0
-                    ],
-                    "scale": [
-                        1.0,
-                        1.0
-                    ],
-                    "time": 0.0
-                },
-                {
-                    "angle": 0.0,
-                    "color": [
-                        1.0,
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "easeType": 0,
-                    "position": [
-                        0.0,
-                        0.0
-                    ],
-                    "scale": [
-                        1.0,
-                        1.0
-                    ],
-                    "time": 0.5
-                }
-            ],
-            "loop": false,
-            "name": "clip0"
-        },
-        {
-            "duration": 0.5,
-            "keyframes": [
-                {
-                    "angle": 0.0,
-                    "color": [
-                        1.0,
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "easeType": 5,
-                    "position": [
-                        0.0,
-                        0.0
-                    ],
-                    "scale": [
-                        1.0,
-                        1.0
-                    ],
-                    "time": 0.0
-                },
-                {
-                    "angle": 0.0,
-                    "color": [
-                        1.0,
-                        1.0,
-                        1.0,
-                        0.0
-                    ],
-                    "easeType": 0,
-                    "position": [
-                        0.0,
-                        0.0
-                    ],
-                    "scale": [
-                        1.0,
-                        1.0
-                    ],
-                    "time": 0.5
-                }
-            ],
-            "loop": false,
-            "name": "clip1"
-        }
-    ],
+    "animClips": [],
     "children": [
         {
             "alive": true,
-            "instanceName": "logo",
+            "instanceName": "Image",
+            "transform": {
+                "anchor": 0,
+                "anchorOffset": [
+                    -800.0,
+                    -450.0
+                ],
+                "size": [
+                    1600.0,
+                    900.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "pass": "Opaque",
+            "animClips": [],
+            "children": [],
+            "typeTag": "Image",
+            "textureTag": "empty.png"
+        },
+        {
+            "alive": true,
+            "instanceName": "fade",
             "transform": {
                 "anchor": 0,
                 "anchorOffset": [
@@ -148,10 +92,56 @@
                 1.0,
                 1.0,
                 1.0,
-                1.0
+                0.0
             ],
             "pass": "Opaque",
-            "animClips": [],
+            "animClips": [
+                {
+                    "duration": 0.5,
+                    "keyframes": [
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                0.0
+                            ],
+                            "easeType": 0,
+                            "position": [
+                                0.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 0.0
+                        },
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "easeType": 0,
+                            "position": [
+                                0.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 0.5
+                        }
+                    ],
+                    "loop": false,
+                    "name": "clip0"
+                }
+            ],
             "children": [],
             "typeTag": "Image",
             "textureTag": "Logo_Mi2.png"

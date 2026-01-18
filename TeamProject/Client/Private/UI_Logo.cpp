@@ -21,8 +21,10 @@ HRESULT CUI_Logo::Initialize(INIT_DESC* pArg)
     const string& filePath = ResourceManager()->Get_ResourcePath("logo.json");
     Load(Helper::LoadJson<nlohmann::ordered_json>(filePath));
 
-    // 0번 애니메이션 재생 (FadeIn)
-    Set_Animation(0);
+    // 자식(fade) 자식의 0번 애니메이션 재생 (FadeIn)
+    if (auto pObj = Get_Component<CObjectContainer>()->Find_Descendant("fade"))
+        if (auto pUI = dynamic_cast<CUI_Object*>(pObj))
+            pUI->Set_Animation(0);
 
     return S_OK;
 }
