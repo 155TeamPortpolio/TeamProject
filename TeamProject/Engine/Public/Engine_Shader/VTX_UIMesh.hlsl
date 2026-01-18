@@ -1,6 +1,7 @@
 #include "Shader_Define.hlsl"
 
-float4 colorAlpha;
+float3 color     = float3(1.f, 1.f, 1.f);
+float  alpha     = 1.f;
 
 struct VS_IN
 {
@@ -61,9 +62,15 @@ struct PS_OUT
 PS_OUT PS_MAIN(PS_IN In)
 {
     PS_OUT Out;
-    Out.vDiffuse = colorAlpha;
+
+    float4 tex = DiffuseTexture.Sample(LinearClampSampler, In.vTexcoord);
+    clip(tex.a - 0.05f);
+
+    float4 outCol = float4(color, tex.a * alpha);
 
     vector vNormalDesc = NormalTexture.Sample(DefaultSampler, In.vTexcoord);
+
+    Out.vDiffuse = outCol;
 
     if (vNormalDesc.a > 0.2f)
     {
@@ -99,8 +106,9 @@ technique11 DefaultTechnique
     pass Opaque
     {
         SetRasterizerState(RS_Default);
+
         SetDepthStencilState(DSS_Default, 0);
-        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
