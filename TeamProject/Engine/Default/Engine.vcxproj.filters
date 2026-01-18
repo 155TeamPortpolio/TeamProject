@@ -1092,6 +1092,24 @@
     <Filter Include="00. System\02. Gui\GUI_Panel\EnvPanel">
       <UniqueIdentifier>{8b442149-c628-41be-8ecc-533ff36b2e28}</UniqueIdentifier>
     </Filter>
+    <Filter Include="98. BasicShader\Function">
+      <UniqueIdentifier>{403cea51-631e-49db-91d2-b6e2137da33f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="98. BasicShader\Define">
+      <UniqueIdentifier>{37fad9fe-d21c-4c34-b0f7-a5a92270f6ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="98. BasicShader\SkinMesh">
+      <UniqueIdentifier>{bb438f5f-e5d6-4572-b704-25840c0068e3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="98. BasicShader\Mesh">
+      <UniqueIdentifier>{4417c73e-9320-47d6-b949-333c14f9d5c0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="98. BasicShader\Etc">
+      <UniqueIdentifier>{b72023e0-eadd-4ae2-ae08-d93208ab179f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="98. BasicShader\UI">
+      <UniqueIdentifier>{344ee409-7a31-4dc3-9741-3c5131d36b7a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <!-- ClCompile 항목들 - 중복 제거 버전 -->
@@ -1557,57 +1575,6 @@
   </ItemGroup>
   <ItemGroup>
     <!-- Shader Files -->
-    <FxCompile Include="..\Public\Engine_Shader\VTX_UI.hlsl">
-      <Filter>98. BasicShader</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Public\Engine_Shader\Shader_Define.hlsl">
-      <Filter>98. BasicShader</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Public\Engine_Shader\Shader_State.hlsl">
-      <Filter>98. BasicShader</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Public\Engine_Shader\Shader_Function.hlsl">
-      <Filter>98. BasicShader</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Public\Engine_Shader\Shader_PBRFunction.hlsl">
-      <Filter>98. BasicShader</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Public\Engine_Shader\VTX_Mesh.hlsl">
-      <Filter>98. BasicShader</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Public\Engine_Shader\VTX_NorTex.hlsl">
-      <Filter>98. BasicShader</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Public\Engine_Shader\VTX_SkinMesh.hlsl">
-      <Filter>98. BasicShader</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Public\Engine_Shader\VTX_TexPos.hlsl">
-      <Filter>98. BasicShader</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Public\Engine_Shader\VTX_Debug.hlsl">
-      <Filter>98. BasicShader</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Public\Engine_Shader\VTX_Point.hlsl">
-      <Filter>98. BasicShader</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Public\Engine_Shader\VTX_InstancePoint.hlsl">
-      <Filter>98. BasicShader</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Public\Engine_Shader\VTX_EffectMesh.hlsl">
-      <Filter>98. BasicShader</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Public\Engine_Shader\VTX_DemoInstance.hlsl">
-      <Filter>98. BasicShader</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Public\Engine_Shader\VTX_PlaneGrid.hlsl">
-      <Filter>98. BasicShader</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Public\Engine_Shader\VTX_DecalMesh.hlsl">
-      <Filter>98. BasicShader</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Public\Engine_Shader\VTX_Cloud.hlsl">
-      <Filter>98. BasicShader</Filter>
-    </FxCompile>
     <FxCompile Include="..\Public\Engine_Shader\CS_Particle.hlsli">
       <Filter>98. BasicShader\Compute Shader</Filter>
     </FxCompile>
@@ -1638,9 +1605,6 @@
     <FxCompile Include="..\Public\Engine_Shader\Shader_Deferred.hlsl">
       <Filter>98. BasicShader\Deferred</Filter>
     </FxCompile>
-    <FxCompile Include="..\Public\Engine_Shader\Shader_Deferred_Define.hlsl">
-      <Filter>98. BasicShader\Deferred</Filter>
-    </FxCompile>
     <FxCompile Include="..\Public\Engine_Shader\Shader_Deferred_StaticMesh.hlsl">
       <Filter>98. BasicShader\Deferred</Filter>
     </FxCompile>
@@ -1650,20 +1614,80 @@
     <FxCompile Include="..\Public\Engine_Shader\Shader_Deferred_Effect.hlsl">
       <Filter>98. BasicShader\Deferred</Filter>
     </FxCompile>
-    <FxCompile Include="..\Public\Engine_Shader\Shader_Shadow.hlsl">
-      <Filter>98. BasicShader\Deferred</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Public\Engine_Shader\VTX_Trail.hlsl">
-      <Filter>98. BasicShader</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Public\Engine_Shader\VTX_UIMesh.hlsl">
-      <Filter>98. BasicShader</Filter>
-    </FxCompile>
     <FxCompile Include="..\Public\Engine_Shader\CS_AlphaInspect.hlsl">
       <Filter>98. BasicShader\Compute Shader</Filter>
     </FxCompile>
     <FxCompile Include="..\Public\Engine_Shader\VTX_UIMesh.hlsl">
       <Filter>98. BasicShader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\Shader_PBRFunction.hlsl">
+      <Filter>98. BasicShader\Function</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\Shader_Function.hlsl">
+      <Filter>98. BasicShader\Function</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\Shader_Shadow.hlsl">
+      <Filter>98. BasicShader\Function</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\Shader_Deferred_Define.hlsl">
+      <Filter>98. BasicShader\Define</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\Shader_Define.hlsl">
+      <Filter>98. BasicShader\Define</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\Shader_State.hlsl">
+      <Filter>98. BasicShader\Define</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\VTX_Cloud.hlsl">
+      <Filter>98. BasicShader\Mesh</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\VTX_DecalMesh.hlsl">
+      <Filter>98. BasicShader\Mesh</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\VTX_Character.hlsl">
+      <Filter>98. BasicShader\SkinMesh</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\VTX_DemoInstance.hlsl">
+      <Filter>98. BasicShader\Mesh</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\VTX_EffectMesh.hlsl">
+      <Filter>98. BasicShader\Mesh</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\VTX_Enemy.hlsl">
+      <Filter>98. BasicShader\SkinMesh</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\VTX_Mesh.hlsl">
+      <Filter>98. BasicShader\Mesh</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\VTX_PlaneGrid.hlsl">
+      <Filter>98. BasicShader\Mesh</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\VTX_InstancePoint.hlsl">
+      <Filter>98. BasicShader\Etc</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\VTX_Debug.hlsl">
+      <Filter>98. BasicShader\Etc</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\VTX_Point.hlsl">
+      <Filter>98. BasicShader\Etc</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\VTX_SkinMesh.hlsl">
+      <Filter>98. BasicShader\SkinMesh</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\VTX_UI.hlsl">
+      <Filter>98. BasicShader\UI</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\VTX_UIMesh.hlsl">
+      <Filter>98. BasicShader\UI</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\VTX_TexPos.hlsl">
+      <Filter>98. BasicShader\UI</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\VTX_NorTex.hlsl">
+      <Filter>98. BasicShader\Etc</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\VTX_Trail.hlsl">
+      <Filter>98. BasicShader\Mesh</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
