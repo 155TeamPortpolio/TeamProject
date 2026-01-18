@@ -59,7 +59,7 @@ void CUI_DecibelDigits::Ready_PartObjects()
 
         if (i == ENUM(Child::BG))
         {
-            pObj->Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, "CombatBg00.png");
+            pObj->Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, "CombatBgDigits.png");
             pObj->Set_Color(Helper::HexToColor("#000000"));
         }
         
