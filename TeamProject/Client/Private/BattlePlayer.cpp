@@ -339,6 +339,13 @@ void CBattlePlayer::Update_Target()
 {
 	if (m_TargetHandle.isValid())
 	{
+		if (m_TargetHandle.Get()->Get_Tag() == "Boss")
+		{
+			if ((m_TargetHandle.Get()->Get_WorldPos() - m_pCurrentCharacter->Get_WorldPos()).Length()
+				< TARGET_MAXDISTANCE * 10.f)
+				return;
+		}
+
 		if((m_TargetHandle.Get()->Get_WorldPos() - m_pCurrentCharacter->Get_WorldPos()).Length()
 			< TARGET_MAXDISTANCE)
 			return;
