@@ -81,7 +81,7 @@ HRESULT CThugAssaulter::Initialize(INIT_DESC* pArg)
 	// 임시 확인용
 	CGameInstance::GetInstance()->Get_GUISystem()->Get_Context()->pSelectedObject = this;
 	// 임시
-	m_tStatus.iNowHP = 100;
+	m_tStatus.iMaxHP = 100;
 
 	return S_OK;
 }
@@ -310,8 +310,8 @@ HRESULT CThugAssaulter::Ready_Children(INIT_DESC* pArg)
 	WeaponDesc.pOwnerAnimator3D = Get_Component<CAnimator3D>();
 	WeaponDesc.eAttackColliderType = COLLIDER_TYPE::BOX;
 	WeaponDesc.vCenter = { 0.f, 0.f,-0.7f };
-	WeaponDesc.vAttackSize = { 0.15f, 0.15f, 1.1f };
-	WeaponDesc.vTriggerSize = { 2.f,0.f,0.f };
+	WeaponDesc.vAttackSize = { 0.2f, 0.2f, 1.1f };
+	WeaponDesc.vTriggerSize = { 4.f,0.f,0.f };
 
 	if (FAILED(AttachBattleColliderObject(&WeaponDesc)))
 		return E_FAIL;
@@ -400,11 +400,8 @@ void CThugAssaulter::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage)
 		m_tStatus.iGroggyValue += 16;
 	}
 
-	//m_tStatus.iNowHP -= fDamage;
-	
-
-
-
+	if (0.f > m_tStatus.iNowHP)
+		m_tStatus.iNowHP = 0.f;
 }
 
 /* For.State Machine */

@@ -60,6 +60,8 @@ void CThugAssaulter_Attack::Register_Transitions()
 
 void CThugAssaulter_Attack::AttackFromIndex(_int iMoveIndex)
 {
+	// юс╫ц
+	iMoveIndex = 1;
 	switch (iMoveIndex)
 	{
 	case 1:

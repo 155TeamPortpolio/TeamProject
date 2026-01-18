@@ -60,8 +60,8 @@ protected:
     void                Render_GUI_ForTargetInfo();
     // Attack Sign 객체 추가 및 부착 본 지정
     virtual void        Create_AttackSign(string boneTag);
-    // BattleCollider 객체 추가
-    HRESULT             AttachBattleColliderObject(BATTLE_COLLIDER_DESC* pDesc);
+    // BattleCollider 객체 추가. 독립된 공격용 BattleCollider가 필요할 때, isSeparate = true할것(ex 레이저, 총알 등)
+    HRESULT             AttachBattleColliderObject(BATTLE_COLLIDER_DESC* pDesc, _bool isSeparate = false);
     // Groggy 수치 관리
     void                ManageGroggy(const _float dt);
 

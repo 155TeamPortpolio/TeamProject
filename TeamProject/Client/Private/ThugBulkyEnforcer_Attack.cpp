@@ -285,7 +285,7 @@ void CThugBulkyEnforcer_Attack1::Enter(CThugBulkyEnforcer* pOwner)
 	hitdesc.fDamage = 10.f;
 
 	//0.18 / 0.23
-	pOwner->SetAutoPlayBattleCollider("Weapon_R", 0.18, 0.05f, hitdesc);
+	pOwner->SetAutoPlayBattleCollider("Weapon_R", 0.18, 0.03f, hitdesc);
 }
 
 void CThugBulkyEnforcer_Attack1::Update(CThugBulkyEnforcer* pOwner, _float dt)
@@ -327,7 +327,9 @@ void CThugBulkyEnforcer_Attack2::Enter(CThugBulkyEnforcer* pOwner)
 	hitdesc.fDamage = 10.f;
 
 	// 0.25 / 0.30
-	pOwner->SetAutoPlayBattleCollider("Weapon_L", 0.25, 0.05f, hitdesc);
+	pOwner->SetAutoPlayBattleCollider("Weapon_R", 0.19, 0.03f, hitdesc);
+
+	m_isSecondAttack = false;
 }
 
 void CThugBulkyEnforcer_Attack2::Update(CThugBulkyEnforcer* pOwner, _float dt)
@@ -338,6 +340,20 @@ void CThugBulkyEnforcer_Attack2::Update(CThugBulkyEnforcer* pOwner, _float dt)
 		vRootBoneMoveDelta,
 		qRot,
 		dt);
+
+	// 두번째 공격 시작 trigger 켜기
+	if (false == m_isSecondAttack && m_fAnimProgress > 0.25f) {
+		pOwner->CaptureRotateDir(pOwner->GetTargetingInfo().vDirToTarget, 10.f);
+		//pOwner->Active_AttackSign();
+
+		HitDesc hitdesc = {};
+		hitdesc.eDamageType = DAMAGE_TYPE::NORMAL;
+		hitdesc.eHitType = HIT_TYPE::ONCE;
+		hitdesc.fDamage = 10.f;
+		// 0.30 / 0.33
+		pOwner->SetAutoPlayBattleCollider("Weapon_L", 0.25f, 0.03f, hitdesc);
+		m_isSecondAttack = true;
+	}
 
 	ATTACK_BLACK_BOARD& blackboard = pOwner->GetBlackBoard();
 	//if (m_fAnimProgress >= 0.65f)
@@ -369,7 +385,7 @@ void CThugBulkyEnforcer_Attack3::Enter(CThugBulkyEnforcer* pOwner)
 	hitdesc.fDamage = 10.f;
 
 	// 0.20 / 0.23
-	pOwner->SetAutoPlayBattleCollider("Weapon_R", 0.2f, 0.03f, hitdesc);
+	pOwner->SetAutoPlayBattleCollider("Ankle", 0.18f, 0.05f, hitdesc);
 }
 
 void CThugBulkyEnforcer_Attack3::Update(CThugBulkyEnforcer* pOwner, _float dt)
@@ -383,16 +399,16 @@ void CThugBulkyEnforcer_Attack3::Update(CThugBulkyEnforcer* pOwner, _float dt)
 
 
 	// 두번째 공격 시작 이펙트 및 trigger 켜기
-	if (false == m_isSecondAttack && m_fAnimProgress > 0.22f) {
+	if (false == m_isSecondAttack && m_fAnimProgress > 0.25f) {
 		pOwner->CaptureRotateDir(pOwner->GetTargetingInfo().vDirToTarget, 10.f);
 		pOwner->Active_AttackSign();
 	
 		HitDesc hitdesc = {};
 		hitdesc.eDamageType = DAMAGE_TYPE::HARD;
 		hitdesc.eHitType = HIT_TYPE::ONCE;
-		hitdesc.fDamage = 10.f;
+		hitdesc.fDamage = 20.f;
 		// 0.30 / 0.33
-		pOwner->SetAutoPlayBattleCollider("Weapon_R", 0.3f, 0.03f, hitdesc);
+		pOwner->SetAutoPlayBattleCollider("Weapon_R", 0.29f, 0.03f, hitdesc);
 		m_isSecondAttack = true;
 	}
 
@@ -424,7 +440,7 @@ void CThugBulkyEnforcer_Attack4::Enter(CThugBulkyEnforcer* pOwner)
 	hitdesc.fDamage = 10.f;
 
 	// 0.18 / 0.25
-	pOwner->SetAutoPlayBattleCollider("Weapon_R", 0.18f, 0.07f, hitdesc);
+	pOwner->SetAutoPlayBattleCollider("Weapon_R", 0.17f, 0.07f, hitdesc);
 }
 
 void CThugBulkyEnforcer_Attack4::Update(CThugBulkyEnforcer* pOwner, _float dt)
@@ -465,7 +481,7 @@ void CThugBulkyEnforcer_Attack5_1::Enter(CThugBulkyEnforcer* pOwner)
 	hitdesc.fDamage = 10.f;
 
 	// 0.23 /0.27
-	pOwner->SetAutoPlayBattleCollider("Weapon_L", 0.23f, 0.04f, hitdesc);
+	pOwner->SetAutoPlayBattleCollider("Weapon_L", 0.22f, 0.03f, hitdesc);
 }
 
 void CThugBulkyEnforcer_Attack5_1::Update(CThugBulkyEnforcer* pOwner, _float dt)
@@ -506,7 +522,7 @@ void CThugBulkyEnforcer_Attack5_2::Enter(CThugBulkyEnforcer* pOwner)
 	hitdesc.eHitType = HIT_TYPE::ONCE;
 	hitdesc.fDamage = 10.f;
 	// 0.16/0.19
-	pOwner->SetAutoPlayBattleCollider("Weapon_R", 0.16f, 0.03f, hitdesc);
+	pOwner->SetAutoPlayBattleCollider("Weapon_R", 0.18f, 0.03f, hitdesc);
 
 	m_isFinishFirst = false;
 }
@@ -523,7 +539,7 @@ void CThugBulkyEnforcer_Attack5_2::Update(CThugBulkyEnforcer* pOwner, _float dt)
 	// ================= 두번째 왼손 어퍼 (공격 전 이펙트 없음) ======================
 	
 	if (false == m_isFinishFirst &&
-		m_fAnimProgress >= 0.27f) {
+		m_fAnimProgress >= 0.25f) {
 		
 		HitDesc hitdesc = {};
 		hitdesc.eDamageType = DAMAGE_TYPE::NORMAL;
@@ -531,7 +547,7 @@ void CThugBulkyEnforcer_Attack5_2::Update(CThugBulkyEnforcer* pOwner, _float dt)
 		hitdesc.fDamage = 10.f;
 
 		// 0.27/0.30
-		pOwner->SetAutoPlayBattleCollider("Weapon_L", 0.27f, 0.03f, hitdesc);
+		pOwner->SetAutoPlayBattleCollider("Weapon_L", 0.25f, 0.03f, hitdesc);
 		m_isFinishFirst = true;
 	}
 

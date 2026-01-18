@@ -51,6 +51,8 @@ HRESULT CThugBulkyEnforcer::Initialize_Prototype()
 	pResourceMgr->Add_ResourcePath("ThugBulkyEnforcer_Meta.json", "../Bin/Resources/Model/skeletal/Enemy/ThugBulkyEnforcer/ThugBulkyEnforcer_Meta.json");
 
 	return S_OK;
+
+
 }
 
 HRESULT CThugBulkyEnforcer::Initialize(INIT_DESC* pArg)
@@ -66,7 +68,7 @@ HRESULT CThugBulkyEnforcer::Initialize(INIT_DESC* pArg)
 	auto pAnimator = Get_Component<CAnimator3D>();
 	pAnimator->LinkAnimate_Model(G_GlobalLevelKey, "Monster_ThugBulkyEnforcer.model");
 	pAnimator->Link_MetaData(G_GlobalLevelKey, "ThugBulkyEnforcer_Meta.json");
-	pAnimator->Set_MotionBone(3);	//Bip001
+	//pAnimator->Set_MotionBone(3);	//Bip001
 	pAnimator->Set_ExtractMotionboneMovement(AXIS::X | AXIS::Z);
 	pAnimator->Resize_Layer(2);
 	for (size_t i = 1; i < 2; i++)
@@ -273,24 +275,7 @@ void CThugBulkyEnforcer::Render_GUI()
 			if (ImGui::Button("Increase Groggy value 30"))
 				m_tStatus.iGroggyValue += 30;
 			if (ImGui::Button("Hit")) {
-				if ("Groggy" == m_pStateMachine->Get_CurrentStateName()) {
-					//for (size_t i = 9; i < 10; i++)
-					//{
-						Get_Component<CAnimator3D>()->Set_Animation(1, "ThugBulkyEnforcer_Ani_Stun_Hit_Stay")
-							.LayerBlend(1.f, 0.5f, 1.f, EaseType::Linear)
-							.Loop(false)
-							.Apply();
-					//}
-				}
-				else {
-					//for (size_t i = 1; i < 10; i++)
-					//{
-						Get_Component<CAnimator3D>()->Set_Animation(1, "ThugBulkyEnforcer_Ani_Hit_Shake")
-							.LayerBlend(1.f, 0.5f, 1.f, EaseType::Linear)
-							.Loop(false)
-							.Apply();
-					//}
-				}
+				TakeDamage(DAMAGE_TYPE::NORMAL, 10.f);
 			}
 
 			ImGui::TreePop();
@@ -381,25 +366,32 @@ HRESULT CThugBulkyEnforcer::Ready_Children(INIT_DESC* pArg)
 	auto pObjectContainer = Get_Component<CObjectContainer>();
 
 	BATTLE_COLLIDER_DESC WeaponLDesc = {};
-
 	WeaponLDesc.tagName = "Weapon_L";
 	WeaponLDesc.isAttachBone = true;
 	WeaponLDesc.tagBone = "Ctr_L_Weapon_3";
 	WeaponLDesc.pOwnerAnimator3D = Get_Component<CAnimator3D>();
 	WeaponLDesc.vAttackSize = { 1.5f, 0.f, 0.f };
-	WeaponLDesc.vTriggerSize = { 3.f,0.f,0.f };
+	WeaponLDesc.vTriggerSize = { 5.f,0.f,0.f };
 
 	if(FAILED(AttachBattleColliderObject(&WeaponLDesc)))
 		return E_FAIL;
 
 	BATTLE_COLLIDER_DESC WeaponRDesc = {};
-
 	WeaponRDesc.tagName = "Weapon_R";
 	WeaponRDesc.isAttachBone = true;
 	WeaponRDesc.tagBone = "Ctr_R_Weapon_3";
 	WeaponRDesc.pOwnerAnimator3D = Get_Component<CAnimator3D>();
 	WeaponRDesc.vAttackSize = { 1.5f, 0.f, 0.f };
-	WeaponRDesc.vTriggerSize = { 3.f,0.f,0.f };
+
+	if (FAILED(AttachBattleColliderObject(&WeaponRDesc)))
+		return E_FAIL;
+
+	BATTLE_COLLIDER_DESC AnkleDesc = {};
+	WeaponRDesc.tagName = "Ankle";
+	WeaponRDesc.isAttachBone = true;
+	WeaponRDesc.tagBone = "Skn_R_AnkleF_Fix";
+	WeaponRDesc.pOwnerAnimator3D = Get_Component<CAnimator3D>();
+	WeaponRDesc.vAttackSize = { 1.5f, 0.f, 0.f };
 
 	if (FAILED(AttachBattleColliderObject(&WeaponRDesc)))
 		return E_FAIL;
@@ -408,8 +400,8 @@ HRESULT CThugBulkyEnforcer::Ready_Children(INIT_DESC* pArg)
 
 	// ================================================================================================
 
-
-	Create_AttackSign("Bip001 Head");
+	Create_AttackSign("Bip001_Head");
+	Create_UIEnemyStatus("Bip001_Spine2");
 	//auto pAttackSign = Builder::Create_Object({ G_GlobalLevelKey,"Proto_GameObject_AttackSign" })
 	//	.Build("AttackSign");
 	//pObjectContainer->Add_Child(pAttackSign, false);
@@ -461,7 +453,46 @@ void CThugBulkyEnforcer::FinishWeaponCollider()
 
 void CThugBulkyEnforcer::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage)
 {
+	if (0 >= m_tStatus.iNowHP)
+		return;
 
+	switch (eDamageType)
+	{
+	case Client::DAMAGE_TYPE::NORMAL:
+	{
+
+		break;
+	}
+	case Client::DAMAGE_TYPE::HARD:
+	{
+
+		break;
+	}
+	case Client::DAMAGE_TYPE::AIRBORNE:
+	{
+
+		break;
+	}
+	}
+
+	if ("Groggy" == m_pStateMachine->Get_CurrentStateName()) {
+		Get_Component<CAnimator3D>()->Set_Animation(1, "ThugBulkyEnforcer_Ani_Stun_Hit_Stay")
+			.LayerBlend(1.f, 0.f, 1.f, EaseType::Linear)
+			.Loop(false)
+			.Apply();
+		m_tStatus.iNowHP -= fDamage * 1.5f;
+	}
+	else {
+		Get_Component<CAnimator3D>()->Set_Animation(1, "ThugBulkyEnforcer_Ani_Hit_Stay")
+			.LayerBlend(1.f, 0.f, 1.f, EaseType::Linear)
+			.Loop(false)
+			.Apply();
+		m_tStatus.iNowHP -= fDamage;
+		m_tStatus.iGroggyValue += 16;
+	}		
+
+	if (0.f > m_tStatus.iNowHP)
+		m_tStatus.iNowHP = 0.f;
 }
 
 /* For.State Machine */
@@ -569,10 +600,14 @@ void CThugBulkyEnforcer::Update_States(_float dt)
 
 void CThugBulkyEnforcer::ControlState(const _float dt)
 {
-	if ("Groggy" != m_pStateMachine->Get_CurrentStateName() &&
-		true == m_isGroggy) {
+	if ("Death" != m_pStateMachine->Get_CurrentStateName() &&
+		0 >= m_tStatus.iNowHP)
+		m_pStateMachine->Change_State("Death");
+
+	if ("Death" != m_pStateMachine->Get_CurrentStateName() &&
+		"Groggy" != m_pStateMachine->Get_CurrentStateName() &&
+		true == m_isGroggy)
 		m_pStateMachine->Change_State("Groggy");
-	}
 
 	if (true == m_isAutoPatternPlay &&
 		"Idle" == m_pStateMachine->Get_CurrentStateName()) {
