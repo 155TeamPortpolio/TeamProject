@@ -3,6 +3,10 @@
 
 NS_BEGIN(Client)
 
+struct LevelSwitched {
+
+};
+
 class CZeroPortal final :
     public CInteractable
 {
