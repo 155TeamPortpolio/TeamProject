@@ -670,6 +670,12 @@
     <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Groggy">
       <UniqueIdentifier>{fe64c87d-b23d-4725-bdd1-3b9d2c8dbbbd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Groggy\Phase1">
+      <UniqueIdentifier>{4cf40d05-c921-4e36-a3d2-8fd32437073f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Groggy\Phase2">
+      <UniqueIdentifier>{39d34e5c-e90f-42e5-8ab2-9a7718897258}</UniqueIdentifier>
+    </Filter>  
     <Filter Include="02. GameObject\UI\01. 2D\HUD_Field">
       <UniqueIdentifier>{67a92256-8431-4efd-a556-ed70b96c93e3}</UniqueIdentifier>
     </Filter>
@@ -708,6 +714,9 @@
     </Filter>
     <Filter Include="02. GameObject\UI\01. 2D\HUD_Battle\Action\Ultimate">
       <UniqueIdentifier>{0482ff2d-216c-4a8a-aa1b-5293b6620271}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\HUD_Boss">
+      <UniqueIdentifier>{08e52f74-1069-4a36-8336-1e2e4192678c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1359,14 +1368,23 @@
     <ClInclude Include="..\Public\CorinState_SwitchInParryAid.h">
       <Filter>02. GameObject\Object\Player\Character\Corin\State\Switch\SwitchIn\ParryAid</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\MapInvisibleWall.h">
-      <Filter>02. GameObject\MapObject\03. MapInvisibleWall</Filter>
+    <ClInclude Include="..\Public\SacrificeState_Groggy_Phase1.h">
+      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Groggy\Phase1</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\SacrificeState_Groggy_Phase2.h">
+      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Groggy\Phase2</Filter>
+    </ClInclude>  
     <ClInclude Include="..\Public\UI_BattleHUD.h">
       <Filter>02. GameObject\UI\01. 2D\HUD_Battle</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UI_FieldHUD.h">
       <Filter>02. GameObject\UI\01. 2D\HUD_Field</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_MeshPyramidData.h">
+      <Filter>02. GameObject\UI\02. 3D\Mesh\UI_MeshPyramid</Filter>
+          </ClInclude>
+    <ClInclude Include="..\Public\UI_BossHUD.h">
+      <Filter>02. GameObject\UI\01. 2D\HUD_Boss</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1997,11 +2015,20 @@
     <ClCompile Include="..\private\Interactable.cpp">
       <Filter>02. GameObject\Object\Interactable</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\SacrificeState_Groggy_Phase1.cpp">
+      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Groggy\Phase1</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\SacrificeState_Groggy_Phase2.cpp">
+      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Groggy\Phase2</Filter>
+    </ClCompile>  
     <ClCompile Include="..\Private\UI_BattleHUD.cpp">
       <Filter>02. GameObject\UI\01. 2D\HUD_Battle</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UI_FieldHUD.cpp">
       <Filter>02. GameObject\UI\01. 2D\HUD_Field</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_BossHUD.cpp">
+      <Filter>02. GameObject\UI\01. 2D\HUD_Boss</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

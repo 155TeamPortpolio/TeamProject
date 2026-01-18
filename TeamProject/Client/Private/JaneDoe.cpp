@@ -2,12 +2,14 @@
 #include "JaneDoe.h"
 #include "GameInstance.h"
 #include "DataBase.h"
+#include "EffectContainer.h"
 
 #include "Material.h"
 #include "MaterialInstance.h"
 
 #include "Animator3D.h"
 #include "CharacterController.h"
+#include "ObjectContainer.h"
 
 #include "StateMachine.h"
 #include "JaneDoeState_Idle.h"
@@ -53,6 +55,20 @@ HRESULT CJaneDoe::Initialize_Prototype()
 
 	Get_Component<CModel>()->Link_Model(G_GlobalLevelKey, "JaneDoeModel.model");
 	Get_Component<CMaterial>()->Link_Material(G_GlobalLevelKey, "JaneDoeModel.mat");
+
+	/* 이펙트 리소스 임시 로드 */
+	{
+		/* Asset */
+		ResourceManager()->Add_ResourcePath("janedoe_normal1_slash.json", "../Bin/Resources/Effect/Data/JaneDoe/janedoe_normal1_slash.json");
+
+		/* Texture */
+		ResourceManager()->Add_ResourcePath("Eff_MeleeTrail_078_YZ_05.png", "../Bin/Resources/Effect/Texture/Eff_MeleeTrail_078_YZ_05.png");
+		ResourceManager()->Add_ResourcePath("Dissolve.png", "../Bin/Resources/Effect/Texture/Dissolve.png");
+
+		/* Model */
+		ResourceManager()->Add_ResourcePath("JaneDoe_Slash0.model", "../Bin/Resources/Effect/Model/JaneDoe_Slash0/JaneDoe_Slash0.model");
+		ResourceManager()->Add_ResourcePath("JaneDoe_Slash0.mat", "../Bin/Resources/Effect/Model/JaneDoe_Slash0/JaneDoe_Slash0.mat");
+	}
 	return S_OK;
 }
 
@@ -65,6 +81,9 @@ HRESULT CJaneDoe::Initialize(INIT_DESC* pArg)
 		return E_FAIL;
 
 	if (FAILED(Initialize_Weapon()))	   
+		return E_FAIL;
+
+	if (FAILED(Initialize_Effects()))
 		return E_FAIL;
 
 	return S_OK;
@@ -320,6 +339,31 @@ HRESULT CJaneDoe::Initialize_Weapon()
 
 	Active_AttackCollider("FootWeapon_L", true);
 	Active_AttackCollider("FootWeapon_R", true);
+
+	return S_OK;
+}
+
+HRESULT CJaneDoe::Initialize_Effects()
+{
+	auto pObjectContainer = Get_Component<CObjectContainer>();
+
+	/* Normal Slash0 */
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("janedoe_normal1_slash.json")
+			.Build("JaneDoe_Normal_Slash0");
+
+		pObjectContainer->Add_Child(pEffect);
+	}
+
+	/* Normal Slash1 */
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("janedoe_normal1_slash.json")
+			.Build("JaneDoe_Normal_Slash1");
+
+		pObjectContainer->Add_Child(pEffect);
+	}
 
 	return S_OK;
 }

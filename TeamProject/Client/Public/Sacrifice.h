@@ -51,7 +51,7 @@ public:
     _bool IsOverDrive()const { return m_IsOverDrive; }
     _bool IsOverDriveCharged()const { return m_IsOverDriveCharged; }
 
-    void SetOverDrive(_bool overdrive) { m_IsOverDrive = overdrive; }
+    void SetOverDrive(_bool overdrive);
     void SetOverDriveCharged(_bool charged) { m_IsOverDriveCharged = charged; }
 
     void Idle();
@@ -60,6 +60,7 @@ public:
 
     ATTACK_BLACK_BOARD& GetBlackBoard() { return m_AttackBlackBoard; }
     PHASE GetCurrPhase()const { return m_eCurrPhase; }
+    void ChangePhase_SetUp();
 
     /* Hand */
     void Phase1Attack();
@@ -79,6 +80,9 @@ public:
     void Set_DissolveState(DISSOLVE_STATE state, _float duration);
     DISSOLVE_STATE Get_DissolveState()const { return m_eDissolveState; }
     void Update_Dissolve(_float dt);
+
+    void Set_HitBlendable(_bool hitBlend) { m_IsHitBlendable = hitBlend; }
+    void Set_Hitable(_bool hit) { m_IsHitable = hit; }
 
 private:
     void Create_Children();
@@ -117,6 +121,9 @@ private:
     DISSOLVE_STATE m_eDissolveState = DISSOLVE_STATE::NONE;
 
     /* Battle Params */
-    _bool m_IsHitBlendable = false;
+    _bool m_IsHitBlendable = true;
+    _bool m_IsHitable = true;
+    _float m_fOverDriveElapsedTime{};
+    _float m_fOverDriveDuration = 20.f;
 };
 NS_END

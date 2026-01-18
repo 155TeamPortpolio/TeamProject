@@ -136,7 +136,7 @@ void CMapTriggerObject::Ready_PlaneUI(const MAP_TRIGGEROBJ_DESC* pObjDesc)
 		_float3 vPos = {};
 		XMStoreFloat3(&vPos, m_pTransform->Get_Pos());
 
-		auto pObj = Builder::Create_UIObject({ pObjDesc->TagLevel, PrototypeTag })
+		auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, PrototypeTag })
 			.Asset(AssetKey)
 			.WorldPos(vPos + vOffset)
 			.Build("planeUI");
@@ -183,7 +183,7 @@ void CMapTriggerObject::Ready_MeshUI(const MAP_TRIGGEROBJ_DESC* pObjDesc)
 		MODEL_INIT_DESC modelDesc =  MODEL_INIT_DESC(G_GlobalLevelKey, AssetKey + ".model");
 		MATERIAL_INIT_DESC matDesc = MATERIAL_INIT_DESC(G_GlobalLevelKey, AssetKey + ".mat");
 		
-		auto pObj = Builder::Create_Object({ pObjDesc->TagLevel, PrototypeTag })
+		auto pObj = Builder::Create_Object({ G_GlobalLevelKey, PrototypeTag })
 			.Position(vPos + vOffset)
 			.Scale(vScale)
 			.Model_Link(modelDesc, MESH_TYPE::NONANIM)
