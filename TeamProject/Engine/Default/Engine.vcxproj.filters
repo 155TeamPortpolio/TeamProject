@@ -1104,11 +1104,11 @@
     <Filter Include="98. BasicShader\Mesh">
       <UniqueIdentifier>{4417c73e-9320-47d6-b949-333c14f9d5c0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="98. BasicShader\Etc">
-      <UniqueIdentifier>{b72023e0-eadd-4ae2-ae08-d93208ab179f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="98. BasicShader\UI">
       <UniqueIdentifier>{344ee409-7a31-4dc3-9741-3c5131d36b7a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="98. BasicShader\Deferred\Etc">
+      <UniqueIdentifier>{b72023e0-eadd-4ae2-ae08-d93208ab179f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1663,13 +1663,13 @@
       <Filter>98. BasicShader\Mesh</Filter>
     </FxCompile>
     <FxCompile Include="..\Public\Engine_Shader\VTX_InstancePoint.hlsl">
-      <Filter>98. BasicShader\Etc</Filter>
+      <Filter>98. BasicShader\Deferred\Etc</Filter>
     </FxCompile>
     <FxCompile Include="..\Public\Engine_Shader\VTX_Debug.hlsl">
-      <Filter>98. BasicShader\Etc</Filter>
+      <Filter>98. BasicShader\Deferred\Etc</Filter>
     </FxCompile>
     <FxCompile Include="..\Public\Engine_Shader\VTX_Point.hlsl">
-      <Filter>98. BasicShader\Etc</Filter>
+      <Filter>98. BasicShader\Deferred\Etc</Filter>
     </FxCompile>
     <FxCompile Include="..\Public\Engine_Shader\VTX_SkinMesh.hlsl">
       <Filter>98. BasicShader\SkinMesh</Filter>
@@ -1684,9 +1684,12 @@
       <Filter>98. BasicShader\UI</Filter>
     </FxCompile>
     <FxCompile Include="..\Public\Engine_Shader\VTX_NorTex.hlsl">
-      <Filter>98. BasicShader\Etc</Filter>
+      <Filter>98. BasicShader\Deferred\Etc</Filter>
     </FxCompile>
     <FxCompile Include="..\Public\Engine_Shader\VTX_Trail.hlsl">
+      <Filter>98. BasicShader\Mesh</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\VTX_Portal.hlsl">
       <Filter>98. BasicShader\Mesh</Filter>
     </FxCompile>
   </ItemGroup>

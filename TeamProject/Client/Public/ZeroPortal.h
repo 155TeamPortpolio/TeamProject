@@ -39,6 +39,7 @@ public:
 private:
     _bool  m_bVisible = { false };
     string m_NextMapTag{};
+    _float m_Time = 0.f;
 
 public:
     static CZeroPortal* Create();
