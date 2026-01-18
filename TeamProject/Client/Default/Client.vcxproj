@@ -189,8 +189,8 @@
     <ClInclude Include="..\Public\FieldCharacter.h" />
     <ClInclude Include="..\Public\FieldPlayer.h" />
     <ClInclude Include="..\Public\FieldSystem.h" />
+    <ClInclude Include="..\public\ThugAssaulter_Hit.h" />
     <ClInclude Include="..\public\ThugAssaulter_HitAirborne.h" />
-    <ClInclude Include="..\public\ThugAssaulter_HitKnockBack.h" />
     <ClInclude Include="..\Public\UI_BossHUD.h" />
     <ClInclude Include="..\Public\UI_EnemyStatus.h" />
     <ClInclude Include="..\Public\UI_FieldHUD.h" />
@@ -439,8 +439,8 @@
     <ClCompile Include="..\Private\FieldCharacter.cpp" />
     <ClCompile Include="..\Private\FieldPlayer.cpp" />
     <ClCompile Include="..\Private\FieldSystem.cpp" />
+    <ClCompile Include="..\private\ThugAssaulter_Hit.cpp" />
     <ClCompile Include="..\private\ThugAssaulter_HitAirborne.cpp" />
-    <ClCompile Include="..\private\ThugAssaulter_HitKnockBack.cpp" />
     <ClCompile Include="..\Private\UI_BossHUD.cpp" />
     <ClCompile Include="..\Private\UI_EnemyStatus.cpp" />
     <ClCompile Include="..\Private\UI_FieldHUD.cpp" />

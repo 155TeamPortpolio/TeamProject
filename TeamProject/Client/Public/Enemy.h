@@ -8,6 +8,9 @@ NS_END
 
 NS_BEGIN(Client)
 
+enum class HIT_DIR { FU, FD, FL, FR, BU, BD, BL, BR };
+enum class DIR {F, FR, R, BR, B, BL, L, FL};
+
 class CEnemy abstract :
     public CGameObject
 {
@@ -32,17 +35,17 @@ public:
 public:
     /* Getter */
     // 현재 플레이 중인 캐릭터의 정보를 반환
-    BATTLEOBJ_INFO* GetCharacterOnField();
+    BATTLEOBJ_INFO*     GetCharacterOnField();
     // 현재 플레이 중인 캐릭터와의 거리정보를 반환
-    TARGETING_INFO& GetTargetingInfo() { return m_tTargetingInfo; }
+    TARGETING_INFO&     GetTargetingInfo() { return m_tTargetingInfo; }
     // 몬스터의 Status 구조체를 반환
-    MONSTER_STATUS          GetStatus() { return m_tStatus; }
+    MONSTER_STATUS      GetStatus() { return m_tStatus; }
     // 몬스터의 Status 구조체 포인터를 반환
-    const MONSTER_STATUS* GetStatusPtr() const { return &m_tStatus; }
+    const MONSTER_STATUS*   GetStatusPtr() const { return &m_tStatus; }
     // Groggy 상태 반환
-    _bool                   IsGroggy() const { return m_isGroggy; }
+    _bool              IsGroggy() const { return m_isGroggy; }
     // 공격중인지 상태 반환
-    _bool                   IsOnAttack() const { return m_isOnAttack; }
+    _bool              IsOnAttack() const { return m_isOnAttack; }
 
     /* Setter*/
     // 몬스터 공격 시 attack sign 이펙트 활성화 함수
@@ -67,6 +70,8 @@ protected:
     HRESULT             AttachBattleColliderObject(BATTLE_COLLIDER_DESC* pDesc, _bool isSeparate = false);
     // Groggy 수치 관리
     void                ManageGroggy(const _float dt);
+    // 몬스터 Look 기준 플레이어가 어느 방향에 있는지 알려주는 함수
+    DIR                 GetDIRToPlayer();
 
     // Enemy Status 객체 추가 및 월드 행렬, 본 로컬 행렬 포인터로 전달
     virtual void        Create_UIEnemyStatus(string boneTag);
@@ -97,8 +102,8 @@ protected:
 #pragma endregion
 
 protected:
+    // Status HUD 소멸할때 UI매니저에 보내서 지워야함
     UI_HANDLE               m_hUIEnemyStatus = {};
-
     // BattleSystem으로 부터 얻어온 Character정보
     vector<BATTLEOBJ_INFO>  m_PlayerCharacterInfos;
     // Target(Player-Character)이 있을 때, Target 사이의 정보 구조체
