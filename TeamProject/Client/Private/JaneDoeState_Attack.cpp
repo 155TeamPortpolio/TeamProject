@@ -95,6 +95,7 @@ void CJaneDoeState_Attack::Update(CJaneDoe* pOwner, _float dt)
 
 void CJaneDoeState_Attack::Exit(CJaneDoe* pOwner)
 {
+    pOwner->End_AllAttackColliders();
     __super::Exit(pOwner);
 }
 

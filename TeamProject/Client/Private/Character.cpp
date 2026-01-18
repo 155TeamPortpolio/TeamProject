@@ -211,11 +211,11 @@ void CCharacter::OnTriggerExit(CGameObject* pOther)
 
 void CCharacter::On_Move(const InputInfo& inputInfo)
 {
-	if (false == m_bCanMove)	return;
-	_bool prevResetMove = m_inputInfo.resetMove;  // ���� �� ���
-
+	_bool prevResetMove = m_inputInfo.resetMove;
 	m_inputInfo = inputInfo;
-	m_inputInfo.resetMove = prevResetMove;  // ����
+	m_inputInfo.resetMove = prevResetMove;
+
+	if (false == m_bCanMove) return;
 
 	if (inputInfo.direction.LengthSquared() > 0.01f)
 	{
@@ -380,10 +380,20 @@ void CCharacter::End_AttackCollider(const string& strName)
 
 void CCharacter::End_AllAttackColliders()
 {
-	for (auto Collider : m_AttackColliderIndex)
+	CObjectContainer* pContainer = Get_Component<CObjectContainer>();
+	if (!pContainer) return;
+
+	auto& children = pContainer->Get_Children();
+
+	for (auto& Collider : m_AttackColliderIndex)
 	{
-		CCharacterAttackCollider* pCollider = Find_AttackCollider(Collider.first);
-		if (nullptr == pCollider)	continue;
+		if (Collider.second < 0 || Collider.second >= static_cast<_int>(children.size()))
+			continue;
+
+		CCharacterAttackCollider* pCollider =
+			static_cast<CCharacterAttackCollider*>(children[Collider.second]);
+		if (nullptr == pCollider) continue;
+
 		pCollider->End_Attack();
 	}
 }
