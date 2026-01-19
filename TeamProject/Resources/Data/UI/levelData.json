@@ -26,6 +26,12 @@
           "prototypeTag": "Proto_GameObject_BattleHUD",
           "instanceName": "battleHUD",
           "prefabPath" : ""
+        },
+        
+        {
+          "prototypeTag": "Proto_GameObject_SceneFrame",
+          "instanceName": "sceneFrame",
+          "prefabPath" : ""
         }
       ]
     },
