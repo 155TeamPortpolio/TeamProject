@@ -6,6 +6,7 @@
 #include "GameInstance.h"
 #include "Layer.h"
 #include "Player.h"
+#include "UIDirector.h"
 
 CZeroStage_Normal::CZeroStage_Normal()
 {
@@ -51,6 +52,10 @@ void CZeroStage_Normal::Update()
 	default:
 		break;
 	}
+
+	if (InputDevice()->Key_Tap(VK_SPACE)) {
+		CUIDirector::GetInstance()->FadeIn_Screen(1.f);
+	}
 }
 
 HRESULT CZeroStage_Normal::Ready_Stage(CZero_Level::StageContext& context)
@@ -85,8 +90,11 @@ HRESULT CZeroStage_Normal::Enter_Stage(CZero_Level::StageContext& context)
 				});
 		}
 		else {
-			m_introFlow.AddWait(seqId, 2.0f);
+			m_introFlow.AddWait(seqId, 0.5f);
+			m_introFlow.AddOnce(seqId, [this]() {CUIDirector::GetInstance()->FadeOut_Screen(1.f); });
+			m_introFlow.AddWait(seqId, 0.5f);
 			m_introFlow.AddOnce(seqId, [this]() {RenderSystem()->Apply_RadialBlur(2.f); });
+			m_introFlow.AddWait(seqId, 2.0f);
 		}
 
 		m_introFlow.EndSequence(seqId);
@@ -129,20 +137,9 @@ void CZeroStage_Normal::Outro()
 {
 	if (!m_outroFlowBuilt) {
 		m_outroFlowBuilt = true;
-
 		size_t seqId = m_outroFlow.BeginSequence();
+		m_outroFlow.AddOnce(seqId, [this]() {CUIDirector::GetInstance()->FadeIn_Screen(1.f); });
 		m_outroFlow.AddWait(seqId, 2.0f);
-		m_outroFlow.AddOnce(seqId, [this]() {RenderSystem()->Apply_RadialBlur(2.f); });
-		m_outroFlow.AddOnce(seqId, [this]() {RenderSystem()->Register_AddictiveColor(&baseColor); });
-
-		m_outroFlow.AddTween(seqId, 0.5f, [this](float t)
-			{
-				baseColor.x -= t;
-				baseColor.y -= t;
-				baseColor.z -= t;
-			});
-
-		m_outroFlow.EndSequence(seqId);
 	}
 
 	m_outroFlow.Start();
@@ -153,6 +150,8 @@ void CZeroStage_Normal::End()
 {
 	if (m_outroFlow.IsDoneAll()) {
 		RenderSystem()->UnRegister_AddictiveColor();
+		ObjectManager()->Get_Layer({ "Zero_Level","PlacedObject_Layer" })->Clear_Layer();
+		ObjectManager()->Get_Layer({ "Zero_Level","InteractableObject_Layer" })->Clear_Layer();
 		m_pOwnerLevel->ChangeStage(CZero_Level::StageType::Elite, 0);
 	}
 }

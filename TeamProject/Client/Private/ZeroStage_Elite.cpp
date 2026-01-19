@@ -7,6 +7,7 @@
 #include "Layer.h"
 #include "Player.h"
 #include "StageFx.h"
+#include "UIDirector.h"
 
 CZeroStage_Elite::CZeroStage_Elite()
 {
@@ -86,9 +87,12 @@ HRESULT CZeroStage_Elite::Enter_Stage(CZero_Level::StageContext& context)
 					return !CCamDirector::GetInstance()->IsPlaying("Intro/Jane_Intro");
 				});
 		}
-		else {
+		else { 
+			m_introFlow.AddWait(seqId, 0.5f);
+			m_introFlow.AddOnce(seqId, [this]() {CUIDirector::GetInstance()->FadeOut_Screen(1.f); });
+			m_introFlow.AddWait(seqId, 0.5f);
+			m_introFlow.AddOnce(seqId, [this]() {RenderSystem()->Apply_RadialBlur(2.f); });
 			m_introFlow.AddWait(seqId, 2.0f);
-			m_introFlow.AddOnce(seqId, [this](){RenderSystem()->Apply_RadialBlur(2.f);});
 		}
 		
 		m_introFlow.EndSequence(seqId);
@@ -134,18 +138,8 @@ void CZeroStage_Elite::Outro()
 		m_outroFlowBuilt = true;
 
 		size_t seqId = m_outroFlow.BeginSequence();
+		m_outroFlow.AddOnce(seqId, [this]() {CUIDirector::GetInstance()->FadeIn_Screen(1.f); });
 		m_outroFlow.AddWait(seqId, 2.0f);
-		m_outroFlow.AddOnce(seqId, [this]() {RenderSystem()->Apply_RadialBlur(2.f); });
-		m_outroFlow.AddOnce(seqId, [this]() {RenderSystem()->Register_AddictiveColor(&baseColor); });
-
-		m_outroFlow.AddTween(seqId, 0.5f, [this](float t)
-			{
-				baseColor.x -= t;
-				baseColor.y -= t;
-				baseColor.z -= t;
-			});
-
-		m_outroFlow.EndSequence(seqId);
 	}
 
 	m_outroFlow.Start();
@@ -156,6 +150,8 @@ void CZeroStage_Elite::End()
 {
 	if (m_outroFlow.IsDoneAll()) {
 		RenderSystem()->UnRegister_AddictiveColor();
+		ObjectManager()->Get_Layer({ "Zero_Level","PlacedObject_Layer" })->Clear_Layer();
+		ObjectManager()->Get_Layer({ "Zero_Level","InteractableObject_Layer" })->Clear_Layer();
 		m_pOwnerLevel->ChangeStage(CZero_Level::StageType::Boss, 0);
 	}
 }
