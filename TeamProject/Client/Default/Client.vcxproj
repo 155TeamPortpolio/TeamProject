@@ -179,6 +179,7 @@
     <ClInclude Include="..\public\Portal.h" />
     <ClInclude Include="..\Public\SacrificeState_Groggy_Phase1.h" />
     <ClInclude Include="..\Public\SacrificeState_Groggy_Phase2.h" />
+    <ClInclude Include="..\Public\StageFx.h" />
     <ClInclude Include="..\public\ThugAssaulter_Groggy.h" />
     <ClInclude Include="..\Public\Belle.h" />
     <ClInclude Include="..\Public\BelleState_Idle.h" />
@@ -275,6 +276,7 @@
     <ClInclude Include="..\Public\UIDesign_Macro.h" />
     <ClInclude Include="..\public\UI_MeshPyramid.h" />
     <ClInclude Include="..\Public\UI_MeshPyramidData.h" />
+    <ClInclude Include="..\Public\UI_ScreenFade.h" />
     <ClInclude Include="..\Public\UI_WorldToScreen.h" />
     <ClInclude Include="..\Public\UI_IconLabel.h" />
     <ClInclude Include="..\Public\UI_BattleHUD.h" />
@@ -489,6 +491,7 @@
     <ClCompile Include="..\private\ThugAssaulter_Idle.cpp" />
     <ClCompile Include="..\private\ThugAssaulter_Move.cpp" />
     <ClCompile Include="..\private\UI_MeshPyramid.cpp" />
+    <ClCompile Include="..\Private\UI_ScreenFade.cpp" />
     <ClCompile Include="..\Private\UI_WorldToScreen.cpp" />
     <ClCompile Include="..\Private\UI_IconLabel.cpp" />
     <ClCompile Include="..\Private\UI_BattleHUDAction.cpp" />

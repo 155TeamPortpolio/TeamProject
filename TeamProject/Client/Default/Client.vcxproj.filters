@@ -724,6 +724,17 @@
     <Filter Include="02. GameObject\Object\Enemy\ThugAssaulter\State\Hit">
       <UniqueIdentifier>{ee380fa9-e341-4ac3-a59e-18404a3b9ff5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Level\04. Zero\Stage_Super">
+      <UniqueIdentifier>{2d99fd31-8614-425b-a72e-b5c437bc2fc3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Level\04. Zero\StageFX">
+      <UniqueIdentifier>{33438fca-4c48-4f14-b7da-99d59fbd7f51}</UniqueIdentifier>
+        </Filter>
+        <Filter Include="02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Hit">
+ </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\ScreenFade">
+      <UniqueIdentifier>{4df49a7d-2281-4c98-b765-1a9115005f18}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Hit">
       <UniqueIdentifier>{08855f1c-eef5-461f-9c1c-f6d5844ec678}</UniqueIdentifier>
     </Filter>
@@ -1296,9 +1307,6 @@
     <ClInclude Include="..\Public\CharacterAttackCollider.h">
       <Filter>02. GameObject\Object\Player\Character\AttackCollider</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Stage.h">
-      <Filter>01. Level\04. Zero</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\UI_IconLabel.h">
       <Filter>02. GameObject\UI\02. 3D\Plane\IconLabel</Filter>
     </ClInclude>
@@ -1416,6 +1424,9 @@
     <ClInclude Include="..\public\ThugAssaulter_Hit.h">
       <Filter>02. GameObject\Object\Enemy\ThugAssaulter\State\Hit</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UI_ScreenFade.h">
+      <Filter>02. GameObject\UI\01. 2D\ScreenFade</Filter>
+    </ClInclude>
     <ClInclude Include="..\public\ThugBulkyEnforcer_Hit.h">
       <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Hit</Filter>
     </ClInclude>
@@ -1424,6 +1435,12 @@
     </ClInclude>
     <ClInclude Include="..\public\OBJFactory.h">
       <Filter>02. GameObject\MapObject\OBJFactory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Stage.h">
+      <Filter>01. Level\04. Zero\Stage_Super</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\StageFx.h">
+      <Filter>01. Level\04. Zero\StageFX</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1974,9 +1991,6 @@
     <ClCompile Include="..\Private\ZeroStage_Boss.cpp">
       <Filter>01. Level\04. Zero\Stage_Boss</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Stage.cpp">
-      <Filter>01. Level\04. Zero</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\UI_IconLabel.cpp">
       <Filter>02. GameObject\UI\02. 3D\Plane\IconLabel</Filter>
     </ClCompile>
@@ -2078,6 +2092,9 @@
     <ClCompile Include="..\private\ThugAssaulter_Hit.cpp">
       <Filter>02. GameObject\Object\Enemy\ThugAssaulter\State\Hit</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\UI_ScreenFade.cpp">
+      <Filter>02. GameObject\UI\01. 2D\ScreenFade</Filter>
+    </ClCompile>
     <ClCompile Include="..\private\ThugBulkyEnforcer_Hit.cpp">
       <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Hit</Filter>
     </ClCompile>
@@ -2086,6 +2103,9 @@
     </ClCompile>
     <ClCompile Include="..\private\OBJFactory.cpp">
       <Filter>02. GameObject\MapObject\OBJFactory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Stage.cpp">
+      <Filter>01. Level\04. Zero\Stage_Super</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
