@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "Stage.h"
 #include "MapLoader.h"
+#include "CamDirector.h"
 
 CStage::CStage()
 {
