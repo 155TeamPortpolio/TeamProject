@@ -4,7 +4,7 @@
   "iVersion": 1,
   "values": [
     {
-      "iObjID": 15,
+      "iObjID": 17,
       "TagName": "PrototypeTag",
       "defaultvalue": {
         "type": "String",
@@ -12,7 +12,7 @@
       }
     },
     {
-      "iObjID": 15,
+      "iObjID": 17,
       "TagName": "AssetKey",
       "defaultvalue": {
         "type": "String",
@@ -20,13 +20,13 @@
       }
     },
     {
-      "iObjID": 15,
+      "iObjID": 17,
       "TagName": "Offset",
       "defaultvalue": {
         "type": "Float3",
         "value": [
           0.0,
-          2.0,
+          1.0,
           0.0
         ]
       }
