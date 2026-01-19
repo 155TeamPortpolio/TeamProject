@@ -23,6 +23,8 @@ public:
 	EaseType	easeType = {};
 
 	tagUIKeyframe(_float _fTime = 0.f) : fTime(_fTime) {}
+	tagUIKeyframe(_float _fTime, _float2 _vScale, _float _fAngle, _float2 _vPosition, _float4 _vColor, EaseType _easeType) :
+		fTime(_fTime), vScale(_vScale), fAngle(_fAngle), vPosition(_vPosition), vColor(_vColor), easeType(_easeType) {}
 	}UI_KEYFRAME;
 
 	typedef struct tagUIAnimationClip {
@@ -126,7 +128,9 @@ public:
 
 public:
 	void Play_Animation(_float dt);					
-	void Set_Animation(_uint iIndex, _bool isLoop = false);				
+	void Set_Animation(_uint iIndex, _bool isLoop = false);
+	_bool Set_LastKeyframeTime(_uint iClipIndex, _float fTime);
+
 	_bool Is_AnimFinished();
 
 public:
@@ -141,6 +145,8 @@ private:
 	_float2 Get_Point_Screen(_float2 anchor, _float x = 0.f, _float y = 0.f);
 	_float2 Get_Point_Local(_float2 anchor, _float x = 0.f, _float y = 0.f);
 	_float2 Calc_AnchorPoint();
+
+	_bool Set_KeyframeTime(UI_ANIM_CLIP& clip, _int iKeyframeIndex, _float fTime);
 
 protected:
 	/*스크린 사이즈*/

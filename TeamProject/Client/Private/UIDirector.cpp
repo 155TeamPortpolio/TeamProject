@@ -4,8 +4,29 @@
 #include "GameInstance.h"
 #include "UI_Object.h"
 #include "UILoader.h"
+#include "UI_ScreenFade.h"
 
 IMPLEMENT_SINGLETON(CUIDirector);
+
+void CUIDirector::FadeIn_Screen(_float fDuration)
+{
+	if (!m_hScreenFade.isValid() || fDuration <= 0.f)
+		return;
+
+	CUI_ScreenFade::FADE_DESC desc = {};
+	desc.fDuration = fDuration;
+	m_hScreenFade.Get()->UI_Active(&desc);
+}
+
+void CUIDirector::FadeOut_Screen(_float fDuration)
+{
+	if (!m_hScreenFade.isValid() || fDuration <= 0.f)
+		return;
+
+	CUI_ScreenFade::FADE_DESC desc = {};
+	desc.fDuration = fDuration;
+	m_hScreenFade.Get()->UI_DeActive(&desc);
+}
 
 void CUIDirector::Initialize()
 {
@@ -70,6 +91,16 @@ void CUIDirector::Load_LevelObjects(const string& levelKey)
 		if (!result.second)
 			MSG_BOX("UI Object Already Exists : UI Director");
 	}
+
+	// 화면 전환시 사용할 스크린 페이드 
+	auto pScreenFade = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_ScreenFade" })
+		.Build("screenFade");
+
+	if (!pScreenFade)
+		return;
+
+	UIManager()->Add_UIObject(pScreenFade, levelKey);
+	m_hScreenFade = pScreenFade->Get_Handle();
 }
 
 void CUIDirector::Load_UILevelData(const string& resourceKey)
