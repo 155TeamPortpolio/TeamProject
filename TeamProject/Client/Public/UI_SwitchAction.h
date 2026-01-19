@@ -34,6 +34,8 @@ private:
 	INTERACT_STATE	m_interactState = { INTERACT_STATE::ENABLE };
 	_bool			m_isVisualInitialized = {};
 
+	UI_ACTION_PRIMARY_MODE m_eMode = { UI_ACTION_PRIMARY_MODE ::ATTACK};
+
 private: 
 	void Set_InteractState(INTERACT_STATE state);
 	void Execute(EXECUTE_MODE mode);

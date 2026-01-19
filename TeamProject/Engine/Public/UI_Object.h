@@ -78,6 +78,7 @@ public:
 	void Set_AnchorOffset(_float2 vOffset) { m_vAnchorOffset = vOffset; }
 	void Set_AnchorOffsetX(_float fOffset) { m_vAnchorOffset.x = fOffset; }
 	void Set_Color(_float4 vColor) { m_vColor = vColor; }
+	void Set_Alpha(_float fAlpha) { m_vColor.w = fAlpha; }
 	void Rotate_Left(_float _radian) { m_fRadian += _radian; }
 	/*Get Size*/
 	_float2 Get_PxSize() { return m_vSize * m_vScale; }

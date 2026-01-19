@@ -70,13 +70,13 @@ HRESULT CMainApp::Initialize()
 	Set_Levels();
 
 	CDataBase::GetInstance()->CreateTable();
-	CBattleSystem::GetInstance(); //ï¿½ì¼± ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	CBattleSystem::GetInstance();
 	CDataBase::GetInstance();
 	auto uiDirector = CUIDirector::GetInstance();
 	uiDirector->Initialize();
 
 	CFieldSystem::GetInstance();
-	/* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿? ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½ï¿½ ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿? */
+
 	Initialize_GlobalPrototype();
 	Create_GlobalPlayer();
 	Create_GlobalCamObjs();
@@ -84,6 +84,9 @@ HRESULT CMainApp::Initialize()
 	#ifdef  _USING_GUI
 		ImGui::SetCurrentContext(m_pGameInstance->Get_GUISystem()->GetEngineImGuiContext());
 	#endif //  _USING_GUI
+
+	m_cursorController.Initialize();
+
 	return S_OK;
 }
 
@@ -93,8 +96,7 @@ void CMainApp::Update(const float dt)
 	CBattleSystem::GetInstance()->Update();
 	CCamDirector::GetInstance()->Update(dt);
 
-	if (InputDevice()->Key_Tap(VK_F11))
-		ToggleCursor();
+	m_cursorController.Update(dt);
 }
 
 HRESULT CMainApp::Render()
@@ -106,7 +108,7 @@ HRESULT CMainApp::Render()
 	return S_OK;
 }
 
-void CMainApp::Set_Levels() //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿? ï¿½Ô¼ï¿½ ->ï¿½ï¿½ï¿? ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+void CMainApp::Set_Levels()
 {
 	LevelManager()->Register_Level("Test_Level",     []()->CLevel* {return CTestLevel::Create("Test_Level"); });
 	LevelManager()->Register_Level("Logo_Level",     []()->CLevel* {return CLogoLevel::Create("Logo_Level"); });
@@ -235,29 +237,4 @@ void CMainApp::Create_GlobalPlayer()
 	ObjectManager()->Add_Object(Player, { G_GlobalLevelKey, "Player_Layer" });
 
 	ObjectManager()->Remember_Global(ENUM(GLOBAL_ID::Player), Player->Get_Handle(), false);
-}
-
-void CMainApp::ToggleCursor()
-{
-	RECT want{};
-	GetClientRect(g_hWnd, &want);
-
-	POINT lt{want.left, want.top};
-	POINT rb{want.right, want.bottom};
-
-	ClientToScreen(g_hWnd, &lt);
-	ClientToScreen(g_hWnd, &rb);
-
-	want.left = lt.x;
-	want.top = lt.y;
-	want.right = rb.x;
-	want.bottom = rb.y;
-
-	RECT cur{};
-	GetClipCursor(&cur);
-
-	if (EqualRect(&cur, &want)) 
-		ClipCursor(nullptr);
-	else 
-		ClipCursor(&want);
 }

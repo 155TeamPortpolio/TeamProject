@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "GameInstance.h"
 #include "CharacterAttackCollider.h"
 
 #include "GameInstance.h"
@@ -11,6 +12,8 @@
 #include "Child.h"
 
 #include "Enemy.h"
+// Camera
+#include "CameraMgr.h"
 
 #include "EffectContainer.h"
 
@@ -96,6 +99,7 @@ void CCharacterAttackCollider::OnTriggerEnter(CGameObject* pOther)
 	auto pEnemy = dynamic_cast<CEnemy*>(pOther);
 	if (nullptr != pEnemy)
 	{
+		CollisionSystem()->Log_CollisionEvent("Enemy Take Enter Damage" + to_string(m_tHitDesc.fDamage));
 		pEnemy->TakeDamage(m_tHitDesc.eDamageType, m_tHitDesc.fDamage);
 		BattleSystem()->GetBattlePlayer()->Add_Gauge(10.f, 100.f);
 
@@ -107,7 +111,14 @@ void CCharacterAttackCollider::OnTriggerEnter(CGameObject* pOther)
 			.Build("BasicHit");
 
 		ObjectManager()->Add_Object(pEffect, { pEnemy->Get_Level(),"Effect_Layer" });
+		
+		// Camera
+		//CameraManager()->AddShake(CamShakeType::HitCrit);
+		//CameraManager()->AddZoomPunch(0.8f, 0.045f, 0.15f);
+		//CameraManager()->AddImpact(CamShakeType::TapSoft, CamZoomType::TapSoft, 1.5f);
+		CameraManager()->AddImpact(0);
 	}
+
 }
 
 void CCharacterAttackCollider::OnTriggerStay(CGameObject* pOther)
@@ -117,12 +128,16 @@ void CCharacterAttackCollider::OnTriggerStay(CGameObject* pOther)
 		return;
 	if (!Try_Hit(pOther))
 		return;
-
+	
 	auto pEnemy = dynamic_cast<CEnemy*>(pOther);
 	if (nullptr != pEnemy)
 	{
+		CollisionSystem()->Log_CollisionEvent("Enemy Take Stay Damage" + to_string(m_tHitDesc.fDamage));
 		pEnemy->TakeDamage(m_tHitDesc.eDamageType, m_tHitDesc.fDamage);
 		BattleSystem()->GetBattlePlayer()->Add_Gauge(10.f, 100.f);
+
+		// Camera
+		CameraManager()->AddImpact(0);
 	}
 }
 

@@ -37,8 +37,8 @@ public:
     CCamSequencePlayer* GetSeqPlayer()       const { return GetSeqObj()->Get_Component<CCamSequencePlayer>(); }
 
 public:
-    _bool         Register(const string& key, const filesystem::path& path);
-    _bool         Register(const string& key, const filesystem::path& path, const CamSequenceRequestDesc& defaultReq);
+    _bool         Register(const string& key, const fs::path& path);
+    _bool         Register(const string& key, const fs::path& path, const CamSequenceRequestDesc& defaultReq);
     void          UnRegister(const string& key);
             
 public:           
@@ -72,6 +72,6 @@ private:
     _int                    m_focusType = -1;
 };
 
-inline auto& CamDirector() { return *CCamDirector::GetInstance(); }
+inline auto* CamDirector() { return CCamDirector::GetInstance(); }
 
 NS_END
