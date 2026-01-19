@@ -69,7 +69,7 @@ namespace
             const string key = rel.generic_string();
             const CamSequenceRequestDesc req = ResolveDefaultReq(key);
 
-            CamDirector().Register(key, path, req);
+            CamDirector()->Register(key, path, req);
         }
     }
 }

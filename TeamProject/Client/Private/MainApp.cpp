@@ -70,13 +70,13 @@ HRESULT CMainApp::Initialize()
 	Set_Levels();
 
 	CDataBase::GetInstance()->CreateTable();
-	CBattleSystem::GetInstance(); //ï¿½ì¼± ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	CBattleSystem::GetInstance();
 	CDataBase::GetInstance();
 	auto uiDirector = CUIDirector::GetInstance();
 	uiDirector->Initialize();
 
 	CFieldSystem::GetInstance();
-	/* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿? ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½ï¿½ ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿? */
+
 	Initialize_GlobalPrototype();
 	Create_GlobalPlayer();
 	Create_GlobalCamObjs();
@@ -93,8 +93,7 @@ void CMainApp::Update(const float dt)
 	CBattleSystem::GetInstance()->Update();
 	CCamDirector::GetInstance()->Update(dt);
 
-	if (InputDevice()->Key_Tap(VK_F11))
-		ToggleCursor();
+	UpdateCursor(dt);
 }
 
 HRESULT CMainApp::Render()
@@ -106,7 +105,7 @@ HRESULT CMainApp::Render()
 	return S_OK;
 }
 
-void CMainApp::Set_Levels() //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿? ï¿½Ô¼ï¿½ ->ï¿½ï¿½ï¿? ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+void CMainApp::Set_Levels()
 {
 	LevelManager()->Register_Level("Test_Level",     []()->CLevel* {return CTestLevel::Create("Test_Level"); });
 	LevelManager()->Register_Level("Logo_Level",     []()->CLevel* {return CLogoLevel::Create("Logo_Level"); });
@@ -237,27 +236,73 @@ void CMainApp::Create_GlobalPlayer()
 	ObjectManager()->Remember_Global(ENUM(GLOBAL_ID::Player), Player->Get_Handle(), false);
 }
 
-void CMainApp::ToggleCursor()
+RECT CMainApp::GetClientRectInScreen() const
 {
-	RECT want{};
-	GetClientRect(g_hWnd, &want);
+	RECT rc{};
+	GetClientRect(g_hWnd, &rc);
 
-	POINT lt{want.left, want.top};
-	POINT rb{want.right, want.bottom};
+	POINT lt{rc.left, rc.top};
+	POINT rb{rc.right, rc.bottom};
 
 	ClientToScreen(g_hWnd, &lt);
 	ClientToScreen(g_hWnd, &rb);
 
-	want.left = lt.x;
-	want.top = lt.y;
-	want.right = rb.x;
-	want.bottom = rb.y;
+	rc.left = lt.x;
+	rc.top = lt.y;
+	rc.right = rb.x;
+	rc.bottom = rb.y;
 
-	RECT cur{};
-	GetClipCursor(&cur);
+	return rc;
+}
 
-	if (EqualRect(&cur, &want)) 
+POINT CMainApp::GetClientCenterInScreen() const
+{
+	RECT rc = GetClientRectInScreen();
+
+	POINT c{};
+	c.x = (rc.left + rc.right) / 2;
+	c.y = (rc.top + rc.bottom) / 2;
+	return c;
+}
+
+void CMainApp::SetMouseLock(_bool lock)
+{
+	m_isMouseLocked = lock;
+
+	if (lock)
+	{
+		RECT rc = GetClientRectInScreen();
+		ClipCursor(&rc);
+
+		while (ShowCursor(FALSE) >= 0) {}
+
+		POINT c = GetClientCenterInScreen();
+		SetCursorPos(c.x, c.y);
+	}
+	else
+	{
 		ClipCursor(nullptr);
-	else 
-		ClipCursor(&want);
+
+		while (ShowCursor(TRUE) < 0) {}
+	}
+}
+
+void CMainApp::ToggleCursor()
+{
+	SetMouseLock(!m_isMouseLocked);
+}
+
+void CMainApp::UpdateCursor(_float dt)
+{
+	if (InputDevice()->Key_Tap(VK_TAB))
+	{
+		ToggleCursor();
+		GUISystem()->Set_GUIActive(false);
+	}
+
+	if (m_isMouseLocked)
+	{
+		POINT c = GetClientCenterInScreen();
+		SetCursorPos(c.x, c.y);
+	}
 }

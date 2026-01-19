@@ -32,6 +32,7 @@ HRESULT CZeroPortal::Initialize_Prototype()
 
 	ResourceManager()->Add_ResourcePath("Eff_Objects_048.png", "../Bin/Resources/Effect/Texture/Eff_Objects_048.png");
 	ResourceManager()->Add_ResourcePath("Eff_Noise_092.png", "../Bin/Resources/Effect/Texture/Eff_Noise_092.png");
+	ResourceManager()->Add_ResourcePath("Eff_Noise_097_LYX_01.png", "../Bin/Resources/Effect/Texture/Eff_Noise_097_LYX_01.png");
 
 	auto pModel = Get_Component<CPlaneModel>();
 	pModel->Link_Model(G_GlobalLevelKey, "Engine_Default_Rect");
@@ -42,9 +43,10 @@ HRESULT CZeroPortal::Initialize_Prototype()
 	pMaterial->Insert_MaterialInstance(customInstance, nullptr);
 	auto MaterialDat = customInstance->Get_MaterialData();
 	if (MaterialDat)
-		MaterialDat->Link_Shader(G_GlobalLevelKey, "VTX_Portal.hlsl");
+		MaterialDat->Link_Shader(G_GlobalLevelKey, "VTX_Portal.hlsl")  ;
 	customInstance->Get_MaterialData()->Link_Texture(G_GlobalLevelKey, "Eff_Objects_048.png", TEXTURE_TYPE::DIFFUSE);
 	customInstance->Get_MaterialData()->Link_Texture(G_GlobalLevelKey, "Eff_Noise_092.png", TEXTURE_TYPE::NOISE);
+	customInstance->Get_MaterialData()->Link_Texture(G_GlobalLevelKey, "Eff_Noise_097_LYX_01.png", TEXTURE_TYPE::AMBIENT);
 
 	m_eRenderLayer = RENDER_LAYER::None;
 	return S_OK;

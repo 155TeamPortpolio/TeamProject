@@ -383,6 +383,7 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\RigidBody.h" />
     <ClInclude Include="..\Public\Shader.h" />
     <ClInclude Include="..\public\ShakeController.h" />
+    <ClInclude Include="..\Public\ShakeControllerData.h" />
     <ClInclude Include="..\Public\SizeBySpeed.h" />
     <ClInclude Include="..\Public\SkeletalModel.h" />
     <ClInclude Include="..\Public\Skeleton.h" />
@@ -417,6 +418,8 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\VI_Rect.h" />
     <ClInclude Include="..\Public\VI_Terrain.h" />
     <ClInclude Include="..\Public\VI_Trail.h" />
+    <ClInclude Include="..\public\ZoomController.h" />
+    <ClInclude Include="..\Public\ZoomControllerData.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\imgui_stdlib.cpp">
@@ -569,6 +572,7 @@ exit /b 0</Command>
     <ClCompile Include="..\Private\VI_Rect.cpp" />
     <ClCompile Include="..\Private\VI_Terrain.cpp" />
     <ClCompile Include="..\Private\VI_Trail.cpp" />
+    <ClCompile Include="..\private\ZoomController.cpp" />
     <ClCompile Include="..\Public\GUI_Inc\backends\imgui_impl_dx11.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
