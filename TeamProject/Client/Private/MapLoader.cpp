@@ -157,10 +157,12 @@ void CMapLoader::Place_TriggerObjectFromLoadData(MapData_Object* pData)
     ColDesc.bTrigger = true; // 충돌 박스 생성하는 트리거
     ColDesc.vCenter = { pData->vRight[0], pData->vRight[1], pData->vRight[2] };
     ColDesc.vSize = { pData->vUp[0], pData->vUp[1], pData->vUp[2] };
+    //pData->vLook이 float4 쿼터니언으로 등어옴
+    //그래서 이거 Euler로 변환해서 넣어야함
     ColDesc.vRotation = { XMConvertToRadians(pData->vLook[0]),
                           XMConvertToRadians(pData->vLook[1]),
                           XMConvertToRadians(pData->vLook[2]) };
-
+    
     CMapTriggerObject::MAP_TRIGGEROBJ_DESC* Desc = new CMapTriggerObject::MAP_TRIGGEROBJ_DESC;
     Desc->TagLevel = m_TagLevel;
     Desc->TagModelKey = pData->TagModelResourceKey;

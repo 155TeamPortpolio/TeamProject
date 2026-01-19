@@ -727,6 +727,9 @@
     <Filter Include="02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Hit">
       <UniqueIdentifier>{08855f1c-eef5-461f-9c1c-f6d5844ec678}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\MapObject\OBJFactory">
+      <UniqueIdentifier>{8b852d8f-36c2-4c1e-b080-ca2b3222160f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1419,6 +1422,9 @@
     <ClInclude Include="..\Public\ZeroStage_Elite.h">
       <Filter>01. Level\04. Zero\Stage_Elite</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\OBJFactory.h">
+      <Filter>02. GameObject\MapObject\OBJFactory</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2077,6 +2083,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\ZeroStage_Elite.cpp">
       <Filter>01. Level\04. Zero\Stage_Elite</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\OBJFactory.cpp">
+      <Filter>02. GameObject\MapObject\OBJFactory</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
