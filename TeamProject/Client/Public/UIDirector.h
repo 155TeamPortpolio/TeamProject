@@ -39,7 +39,6 @@ private:
 	string								m_levelKey;
 	nlohmann::json						m_json = {};
 	unordered_map<string, UI_HANDLE>	m_handles = {};
-	UI_HANDLE							m_hScreenFade = {};
 
 public:
 	virtual void Free() override;
