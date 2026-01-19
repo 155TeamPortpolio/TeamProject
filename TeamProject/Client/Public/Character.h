@@ -88,7 +88,7 @@ public:
     _float  Get_CurrentDecibel() const { return m_fCurrentDecibel; }
     _float  Get_PrevDecibel() const { return m_fPrevDecibel; }
     _float  Get_MaxDecibel() const { return MAX_DECIBEL; }
-    void    Set_Decibel(_float fDecibel) { m_fCurrentDecibel = min(fDecibel, MAX_DECIBEL); }
+    void    Set_Decibel(_float fDecibel) { m_fCurrentDecibel = fDecibel; }
     // 움직임
     _vector3    Get_InputDir() const { return m_inputInfo.direction; }
     _vector3    Get_PrevInputDir() const { return m_inputInfo.prevDirection; }
@@ -140,6 +140,7 @@ public:
     virtual void    OnTriggerExit(CGameObject* pOther) override;
 
 public:
+    virtual void    On_Start() {};
     virtual void    On_Move(const InputInfo& inputInfo);
     virtual void    On_Attack();
     virtual void    On_Evade();
