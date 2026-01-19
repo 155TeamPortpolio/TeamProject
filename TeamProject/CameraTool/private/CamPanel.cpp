@@ -2235,6 +2235,19 @@ void CCamPanel::DrawKeyframeEditor_SelectedKeyTable(bool& ioChangedAny)
             }
         }
 
+        BeginRow("Dist");
+        {
+            const _vector3 p = keyPtr->pos;
+            const float dist = sqrtf(p.x * p.x + p.y * p.y + p.z * p.z);
+
+            ImGui::AlignTextToFramePadding();
+            ImGui::Text("%.2f", dist);
+            ImGui::SameLine();
+
+            if (target.sequence && target.sequence->space == CamSpace::Local) ImGui::TextDisabled("(to Ref)");
+            else ImGui::TextDisabled("(to Origin)");
+        }
+
         BeginRow("Look");
         {
             _vector3 look = keyPtr->look;
@@ -2247,6 +2260,36 @@ void CCamPanel::DrawKeyframeEditor_SelectedKeyTable(bool& ioChangedAny)
                     ioChangedAny = true;
                 }
             }
+        }
+
+        BeginRow("LookAt");
+        {
+            if (!keyEditUI.lookTargetInited)
+            {
+                keyEditUI.lookTargetInited = true;
+                keyEditUI.lookTargetPos = _vector3(0.f, 0.f, 0.f);
+            }
+
+            _vector3 tgt = keyEditUI.lookTargetPos;
+            if (DrawVec3Row_LeftLabel("lookat_target", tgt, 0.05f))
+                keyEditUI.lookTargetPos = tgt;
+
+            ImGui::SameLine(0.f, 12.f);
+
+            if (ImGui::SmallButton("Look"))
+            {
+                _vector3 dir = keyEditUI.lookTargetPos - keyPtr->pos;
+                if (dir.LengthSquared() > 1e-8f)
+                {
+                    dir.Normalize();
+                    keyPtr->look = dir;
+                    ioChangedAny = true;
+                }
+            }
+
+            ImGui::SameLine();
+            if (target.sequence && target.sequence->space == CamSpace::Local) ImGui::TextDisabled("Local");
+            else ImGui::TextDisabled("World");
         }
 
         BeginRow("Roll");
@@ -2301,8 +2344,8 @@ void CCamPanel::DrawKeyframeEditor_SelectedKeyTable(bool& ioChangedAny)
     char msg[256];
     sprintf_s(msg, u8"적용하면 기존 키 %d개가 덮어씌워져 제거됩니다.\n그래도 적용할까요?", keyEditUI.pendingOverwriteCount);
 
-    const ConfirmResult timeR = DrawConfirmPopupModal( "TimeCollisionConfirm", nullptr,
-        { u8"같은 시간대에 키가 이미 있습니다.", msg }, u8"적용",  u8"취소", 120.f);
+    const ConfirmResult timeR = DrawConfirmPopupModal("TimeCollisionConfirm", nullptr,
+        {u8"같은 시간대에 키가 이미 있습니다.", msg}, u8"적용", u8"취소", 120.f);
 
     if (timeR == ConfirmResult::Ok)
     {
