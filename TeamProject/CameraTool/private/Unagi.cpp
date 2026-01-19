@@ -46,7 +46,8 @@ namespace
 				"JaneDoe.mat", "JaneDoe.mat",
 				"JaneDoe_Meta.json", "Avatar_Female_Size03_JaneDoe_Meta.json",
 				0.01f,
-				"Avatar_Female_Size03_JaneDoe_Ani_Idle"
+				"Avatar_Female_Size03_JaneDoe_Ani_SwitchIn_Attack_Ex_Start"
+				//"Avatar_Female_Size03_JaneDoe_Ani_Idle"
 			}
 		};
 		return table[(int)v];
