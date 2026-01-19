@@ -167,6 +167,12 @@ void CMeshNode::Play()
 	Reset();
 }
 
+void CMeshNode::Stop()
+{
+	m_isAlive = false;
+	m_IsEffectActive = false;
+}
+
 CMeshNode* CMeshNode::Create()
 {
 	CMeshNode* instance = new CMeshNode();

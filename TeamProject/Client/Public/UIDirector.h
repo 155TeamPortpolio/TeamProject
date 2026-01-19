@@ -15,6 +15,12 @@ private:
 	virtual ~CUIDirector() = default;
 
 public:
+	/* 화면 페이드인 실행 (검정 화면 -> 화면) */
+	void FadeIn_Screen(_float fDuration = 0.5f);
+	/* 화면 페이드아웃 실행 (화면 -> 검정 화면) */
+	void FadeOut_Screen(_float fDuration = 0.5f);
+
+public:
 	/* 모든 레벨에 필요한 공통 데이터 등록 */
 	void Initialize();
 	/* 레벨별로 필요한 프로토타입, 게임 오브젝트 등록 */
@@ -28,6 +34,7 @@ private:
 	string								m_levelKey;
 	nlohmann::json						m_json = {};
 	unordered_map<string, UI_HANDLE>	m_handles = {};
+	UI_HANDLE							m_hScreenFade = {};
 
 public:
 	virtual void Free() override;
