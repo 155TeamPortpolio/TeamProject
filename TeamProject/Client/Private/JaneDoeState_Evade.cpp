@@ -73,5 +73,6 @@ void CJaneDoeState_Evade::Update(CJaneDoe* pOwner, _float dt)
 void CJaneDoeState_Evade::Exit(CJaneDoe* pOwner)
 {
     pOwner->Pop_Invincible();
+    pOwner->Set_InvincibleTimer(0.5f); // 추가 무적 설정
     __super::Exit(pOwner);
 }
