@@ -6,6 +6,11 @@ CStage::CStage()
 {
 }
 
+void CStage::StageChangeOn(CZero_Level::StageType nextStageType, _int StageID)
+{
+	m_eStageStage = StageState::Outro;
+}
+
 void CStage::Ready_Map(const string& LevelTag, const string& AreaTag)
 {
 	CMapLoader* pMapLoader = CMapLoader::Create(LevelTag, AreaTag);

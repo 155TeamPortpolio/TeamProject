@@ -13,7 +13,7 @@ public:
 
 private:
 	enum Child { ICON, GAUGE_HP_BACK, GAUGE_HP_FRONT, GAUGE_GROGGY, TEXT_GROGGY, END };
-	inline static const string INSTANCENAMES[ENUM(Child::END)] = { "bossIcon", "bossHpBack", "bossHpFront", "bossGroggy", "bossGroggyText" };
+	inline static const string INSTANCENAMES[ENUM(Child::END)] = { "icon", "hpBack", "hpFront", "groggy", "groggyText" };
 
 private:
 	CUI_BossHUD() {}
@@ -34,9 +34,22 @@ private:
 
 	const MONSTER_STATUS*	m_pMonsterStatus = { nullptr };
 
+	static constexpr _float HPBACK_DELTA = 5.f;
+	static constexpr _float HPBACK_LERP_SPEED = 7.f;
+	GAUGE_DELAY_DESC		m_hpBack = {};
+
+	_bool					m_isBlinking = {};
+	_float					m_fBlinkAcc = {};
+	static constexpr _float BLINK_SPEED_MIN = 10.f; 
+	static constexpr _float BLINK_SPEED_MAX = 50.f; 
+
 	const _float			m_fGroggyMax = { 100.f };	// 그로기 맥스는 무조건 100
 
 private:
+	void Update_HPBackGauge(_float fRatio, _float dt);
+	void Apply_Blink(_float fRatio, _float dt);
+
+	void Set_Color(Child child, _float4 vColor);
 	void Set_GaugeFill(Child child, _float fFillAmount);
 	void Set_NumberText(Child child, _int iNum, _int iWidth);
 

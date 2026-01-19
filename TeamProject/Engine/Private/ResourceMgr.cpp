@@ -741,6 +741,7 @@ void CResourceMgr::Load_InitialResource()
 	Add_ResourcePath("VTX_UIMesh.hlsl", "../Bin/ShaderFiles/VTX_UIMesh.hlsl");
 	Add_ResourcePath("VTX_Debug.hlsl", "../Bin/ShaderFiles/VTX_Debug.hlsl");
 	Add_ResourcePath("VTX_Cloud.hlsl", "../Bin/ShaderFiles/VTX_Cloud.hlsl");
+	Add_ResourcePath("VTX_Portal.hlsl", "../Bin/ShaderFiles/VTX_Portal.hlsl");
 	Add_ResourcePath("VTX_Point.hlsl", "../Bin/ShaderFiles/VTX_Point.hlsl");
 	Add_ResourcePath("VTX_InstancePoint.hlsl", "../Bin/ShaderFiles/VTX_InstancePoint.hlsl");
 	Add_ResourcePath("VTX_EffectMesh.hlsl", "../Bin/ShaderFiles/VTX_EffectMesh.hlsl");
@@ -779,6 +780,7 @@ void CResourceMgr::Load_InitialResource()
 	m_Resources[0].m_Shaders.emplace("VTX_Enemy.hlsl", CShader::Create(m_pDevice, "../Bin/ShaderFiles/VTX_Enemy.hlsl", "VTX_Enemy.hlsl"));
 	m_Resources[0].m_Shaders.emplace("VTX_UI.hlsl", CShader::Create(m_pDevice, "../Bin/ShaderFiles/VTX_UI.hlsl", "VTX_UI.hlsl"));
 	m_Resources[0].m_Shaders.emplace("VTX_Cloud.hlsl", CShader::Create(m_pDevice, "../Bin/ShaderFiles/VTX_Cloud.hlsl", "VTX_Cloud.hlsl"));
+	m_Resources[0].m_Shaders.emplace("VTX_Portal.hlsl", CShader::Create(m_pDevice, "../Bin/ShaderFiles/VTX_Portal.hlsl", "VTX_Portal.hlsl"));
 	m_Resources[0].m_Shaders.emplace("VTX_Debug.hlsl", CShader::Create(m_pDevice, "../Bin/ShaderFiles/VTX_Debug.hlsl", "VTX_Debug.hlsl"));
 	m_Resources[0].m_Shaders.emplace("VTX_Point.hlsl", CShader::Create(m_pDevice, "../Bin/ShaderFiles/VTX_Point.hlsl", "VTX_Point.hlsl"));
 	m_Resources[0].m_Shaders.emplace("VTX_EffectMesh.hlsl", CShader::Create(m_pDevice, "../Bin/ShaderFiles/VTX_EffectMesh.hlsl", "VTX_EffectMesh.hlsl"));
@@ -811,6 +813,45 @@ void CResourceMgr::Load_InitialResource()
  
 _bool CResourceMgr::RequestPreload(const PreloadKey& key)
 {
+	PreloadKey tmpKey = key;
+	int index = ValidLevel(tmpKey.levelKey);
+	if (index == -1) {
+		return false;
+	}
+
+	auto& pool =  m_Resources[index];
+	switch (tmpKey.type)
+	{
+	case Engine::ResourceType::Texture:
+		if(pool.m_Textures.count(tmpKey.resourceKey))
+			return false;
+	case Engine::ResourceType::Sound:
+		if (pool.m_Sounds.count(tmpKey.resourceKey))
+			return false;
+	case Engine::ResourceType::Shader:
+		if (pool.m_Shaders.count(tmpKey.resourceKey))
+			return false;
+	case Engine::ResourceType::Model:
+		if (pool.m_ModelDatas.count(tmpKey.resourceKey))
+			return false;
+	case Engine::ResourceType::Material:
+		if (pool.m_MaterialInstances.count(tmpKey.resourceKey))
+			return false;
+	case Engine::ResourceType::ComputeShader:
+		if (pool.m_ComputeShaders.count(tmpKey.resourceKey))
+			return false;
+	case Engine::ResourceType::Animation:
+		if (pool.m_AnimationMetas.count(tmpKey.resourceKey))
+			return false;
+	case Engine::ResourceType::Effect:
+		if (pool.m_EffectAssets.count(tmpKey.resourceKey))
+			return false;
+	case Engine::ResourceType::None:
+			return false;
+	default:
+		break;
+	}
+
 	return m_pPreloader->Request(key);
 }
 

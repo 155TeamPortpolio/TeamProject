@@ -112,6 +112,13 @@ public: //setter
 	void	StartShaderVFX(BATTLE_VFX_TYPE eVFXType);
 
 
+public:	/* 堡开 单固瘤 窃荐 : 救己后 */
+	void	TakeAreaDamage(const _float3& vCenter, _float fRadius, const HitDesc& hitDesc);
+	void	TakeAllDamage(const HitDesc& hitDesc);
+
+public:
+	_bool isMonsterCleared();
+
 private:
 	void	Update_BattleInfo();
 	void	ClearBattleStage();

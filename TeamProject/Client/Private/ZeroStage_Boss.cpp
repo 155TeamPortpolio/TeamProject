@@ -56,6 +56,8 @@
 #include "UIDirector.h"
 #include "UI_MeshBillboard.h"
 
+#include "GameInstance.h"
+#include "Layer.h"
 
 CZeroStage_Boss::CZeroStage_Boss()
 {
@@ -71,10 +73,6 @@ HRESULT CZeroStage_Boss::Initialize(CZero_Level* pOwnerLevel)
 
 HRESULT CZeroStage_Boss::Awake()
 {
-
-	//============== Map ============================
-	
-
 	return S_OK;
 }
 
@@ -84,58 +82,26 @@ void CZeroStage_Boss::Update()
 
 HRESULT CZeroStage_Boss::Ready_Stage(CZero_Level::StageContext& context)
 {
-	CMapLoader* pMapLoader = CMapLoader::Create("Zero_Level", "Zero_Boss1");
-	if (nullptr == pMapLoader)
-		MSG_BOX("Failed to Load MapData!");
-	Safe_Release(pMapLoader);
-	Ready_Map("Zero_Level", "Zero_Boss1");
 	return S_OK;
 }
 
 HRESULT CZeroStage_Boss::Enter_Stage(CZero_Level::StageContext& context)
 {
-	//CamDirector().SetCurTarget();
-	//CamDirector().RequestSequence("Intro/Jane_Intro");
-
+	Ready_Map("Zero_Level", "Zero_Boss1");
+	m_eStageStage = StageState::Entrance;
+	m_PlayerHandle = context.hPlayer;
+	
+	CCamDirector::GetInstance()->SetTarget(context.hPlayer);
+	CCamDirector::GetInstance()->RequestSequence("Intro/Jane_Intro");
+	BattleSystem()->SpawnMosnter("Proto_GameObject_Sacrifice", { 0.f, 0.5f,0.f });
+	BattleSystem()->SetActive(true);
 	return S_OK;
 }
 
 HRESULT CZeroStage_Boss::Exit_Stage(CZero_Level::StageContext& context)
 {
+	ObjectManager()->Get_Layer({ "Zero_Level","PlacedObject_Layer" })->Clear_Layer();
 	return S_OK;
-}
-
-void CZeroStage_Boss::Ready_Map(const string& LevelTag, const string& AreaTag)
-{
-	//// Ready MapObject key and path to ResourceMgr 
-	Rake_MapResources();
-	//Map Loader Logic is going to Change
-	CMapLoader* pMapLoader = CMapLoader::Create(LevelTag, AreaTag);
-	if (nullptr == pMapLoader)
-		MSG_BOX("Failed to Load MapData!");
-	Safe_Release(pMapLoader);
-}
-
-void CZeroStage_Boss::Rake_MapResources()
-{
-	filesystem::path MapDataFolderPath = "../Bin/Resources/MapData/Model/";
-	Helper::EnsureDirectoryExist(MapDataFolderPath);
-
-	auto pRcsMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
-	for (const auto& entry : filesystem::recursive_directory_iterator(MapDataFolderPath))
-	{
-		if (entry.is_regular_file() && entry.path().extension() == ".model")
-		{
-			filesystem::path ModelPath = entry.path();
-			filesystem::path MaterialPath = ModelPath;
-			MaterialPath.replace_extension(".mat");
-
-
-			pRcsMgr->Add_ResourcePath(ModelPath.filename().string(), ModelPath.string());
-			pRcsMgr->Add_ResourcePath(MaterialPath.filename().string(), MaterialPath.string());
-
-		}
-	}
 }
 
 CZeroStage_Boss* CZeroStage_Boss::Create( CZero_Level* pOwnerLevel)
