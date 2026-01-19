@@ -108,6 +108,7 @@ HRESULT CSacrifice::Initialize_Prototype()
 		pResource->Add_ResourcePath("Eff_Smoke_113.png", "../Bin/Resources/Effect/Texture/Eff_Smoke_113.png");
 		pResource->Add_ResourcePath("Eff_MeleeTrail_078_YZ_03.png", "../Bin/Resources/Effect/Texture/Eff_MeleeTrail_078_YZ_03.png");
 		pResource->Add_ResourcePath("Dissolve.png", "../Bin/Resources/Effect/Texture/Dissolve.png");
+		pResource->Add_ResourcePath("sacrifice_sword_slash.png", "../Bin/Resources/Effect/Texture/sacrifice_sword_slash.png");
 
 		/* Models */
 		pResource->Add_ResourcePath("Smoke_Cone2.model", "../Bin/Resources/Effect/Model/Sacrifice_Smoke_Trail/Smoke_Cone2.model");
@@ -165,8 +166,8 @@ HRESULT CSacrifice::Initialize(INIT_DESC* pArg)
 
 void CSacrifice::Awake()
 {
-	m_vRimLightColor = _float3(1.f, 0.2f, 0.f);
-	m_fRimLightPower = 2.f;
+	m_vRimLightColor = _float3(1.f, 0.3f, 0.f);
+	m_fRimLightPower = 4.f;
 	m_fDissolveTilling = 5.f;
 
 	auto pMaterial = Get_Component<CMaterial>();
@@ -211,7 +212,8 @@ void CSacrifice::Render_GUI()
 {
 	__super::Render_GUI();
 
-	ImGui::Text("Distance to target : %lf", m_tTargetingInfo.fDistance);
+	Render_GUI_ForTargetInfo();
+	ImGui::Text("Current State : %s", m_pStateMachine->Get_CurrentStateName().c_str());
 }
 
 CSacrifice* CSacrifice::Create()
@@ -287,7 +289,7 @@ void CSacrifice::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage)
 			}
 
 			m_tStatus.iNowHP -= fDamage;
-			m_tStatus.iGroggyValue += 16;
+			m_tStatus.iGroggyValue += 2;
 		}
 	}
 }
@@ -380,6 +382,7 @@ void CSacrifice::ChangePhase_SetUp()
 	m_tStatus.iMaxHP = 1000.f;
 	m_tStatus.iNowHP = m_tStatus.iMaxHP;
 	m_tStatus.iGroggyValue = 0;
+	m_vRimLightColor = _float3{ 1.f,0.f,0.f };
 }
 
 void CSacrifice::Phase1Attack()
@@ -843,7 +846,12 @@ void CSacrifice::Update_States(_float dt)
 	}
 
 	if (InputDevice()->Key_Tap('P'))
-		m_tStatus.iNowHP = 0.f;
+	{
+		m_tStatus.iGroggyValue = 99;
+	}
+
+	if (InputDevice()->Key_Tap('O'))
+		m_IsOverDrive = true;
 
 	if (PHASE::PHASE2 == m_eCurrPhase && !m_IsOverDrive)
 	{
@@ -880,4 +888,7 @@ void CSacrifice::Update_States(_float dt)
 		if (PHASE::PHASE1 == m_eCurrPhase)
 			m_pStateMachine->Set_Trigger("Change_Phase");
 	}
+
+	if ("Groggy" != m_pStateMachine->Get_CurrentStateName() && "Death" != m_pStateMachine->Get_CurrentStateName() && m_isGroggy)
+		m_pStateMachine->Change_State("Groggy");
 }

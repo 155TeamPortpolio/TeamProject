@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "CharacterAttackCollider.h"
 
+#include "GameInstance.h"
 #include "BattleSystem.h"
 #include "BattlePlayer.h"
 
@@ -10,6 +11,8 @@
 #include "Child.h"
 
 #include "Enemy.h"
+
+#include "EffectContainer.h"
 
 CCharacterAttackCollider::CCharacterAttackCollider()
 	: CGameObject()
@@ -95,6 +98,15 @@ void CCharacterAttackCollider::OnTriggerEnter(CGameObject* pOther)
 	{
 		pEnemy->TakeDamage(m_tHitDesc.eDamageType, m_tHitDesc.fDamage);
 		BattleSystem()->GetBattlePlayer()->Add_Gauge(10.f, 100.f);
+
+		/* Effect Test */
+		_vector3 vWorldPosition = m_pTransform->Get_WorldPos();
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer"})
+			.Asset("basic_hit.json")
+			.Position(vWorldPosition)
+			.Build("BasicHit");
+
+		ObjectManager()->Add_Object(pEffect, { pEnemy->Get_Level(),"Effect_Layer" });
 	}
 }
 
