@@ -26,6 +26,8 @@ HRESULT CUI_ScreenFade::Initialize(INIT_DESC* pArg)
     Ready_FadeIn();
     Ready_FadeOut();
 
+    m_Zpriority = -999;
+
 	return S_OK;
 }
 
