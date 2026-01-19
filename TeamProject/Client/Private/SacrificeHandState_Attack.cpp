@@ -310,7 +310,7 @@ void CSacrificeHandState_OverDrive_Release_Start_Phase2::Enter(CSacrificeHand* p
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Set_Animation("Monster_SacrificeBringerHand_Ani_P2_OverDrive_Charge_Start_New").Loop(false).Speed(1.2f).Apply();
 
-
+	pOwner->Set_DissolveState(CSacrificeHand::DISSOLVE_STATE::NONE, 0.f);
 	pOwner->SetVisable(true);
 }
 
@@ -359,6 +359,7 @@ void CSacrificeHandState_OverDrive_Release_End_Phase2::Enter(CSacrificeHand* pOw
 {
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Set_Animation("Monster_SacrificeBringerHand_Ani_P2_OverDrive_Release_Start").Loop(false).Speed(1.2f).Apply();
+
 }
 
 void CSacrificeHandState_OverDrive_Release_End_Phase2::Update(CSacrificeHand* pOwner, _float dt)
@@ -372,6 +373,11 @@ void CSacrificeHandState_OverDrive_Release_End_Phase2::Update(CSacrificeHand* pO
 		if (!blackBoard.stateQueue.empty())
 			blackBoard.isRequestNext = true;
 	}
+
+	if (IsCrossAnimProgress(0.8f))
+		pOwner->Set_DissolveState(CSacrificeHand::DISSOLVE_STATE::DISAPPEAR, 0.2f);
+
+	pOwner->Update_Dissolve(dt);
 }
 
 void CSacrificeHandState_OverDrive_Release_End_Phase2::Exit(CSacrificeHand* pOwner)
