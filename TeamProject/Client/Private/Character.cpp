@@ -27,22 +27,19 @@ void CCharacter::Update_DissolveProgress(_float dt)
 	m_fDissolveProgress += dt;
 }
 
-void CCharacter::Reset_DissolveProgress()
-{
-	m_fDissolveProgress = 0.f;
-	SetRenderLayer(RENDER_LAYER::None);
-}
-
 void CCharacter::Active_Character()
 {
 	m_pCCT->Set_CompActive(true);
 	SetRenderLayer(RENDER_LAYER::Default);
+	m_fDissolveProgress = 0.f;
 }
 
 void CCharacter::DeActive_Character()
 {
 	m_pCCT->Set_CompActive(false);
 	SetRenderLayer(RENDER_LAYER::None);
+	m_fDissolveProgress = 0.f;
+	m_iInvincibleCount = 0;
 }
 
 void CCharacter::Process_RootMotion(_float dt, const ROOTMOTION_DESC& desc)
