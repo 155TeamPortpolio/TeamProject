@@ -17,6 +17,8 @@ CMapToolCore::CMapToolCore()
 
 vector<LOADED_OBJECT> CMapToolCore::Load_MapData()
 {
+	Clear_Layer(MAPOBJ_TYPE::ALL);
+
 	filesystem::path OpenPath = Helper::OpenFile_Dialogue();
 
 	if (OpenPath.empty())
@@ -26,7 +28,6 @@ vector<LOADED_OBJECT> CMapToolCore::Load_MapData()
 		MSG_BOX("[MapTool] Load Map Data Failed.\nJson 파일이 아닙니다.");
 		return vector<LOADED_OBJECT>();
 	}
-
 
 	MapData_Header mapdata = Helper::LoadJson<MapData_Header>(OpenPath.string());
 
@@ -70,17 +71,17 @@ void CMapToolCore::Clear_Layer(MAPOBJ_TYPE eObjType)
 {
 	_uint i = ENUM(eObjType);
 
-	if (m_tMapToolContext.TagLayers[ENUM(eObjType)] == "All_Layer") {
-		for (_int j = 0; j < m_tMapToolContext.TagLayers.size(); j++)
+	if (g_tagMapObjType[ENUM(eObjType)] == "All_Layer") {
+		for (_int j = 0; j < ENUM(MAPOBJ_TYPE::END); j++)
 		{
-			CLayer* pLayer = m_pGameInstance->Get_ObjectMgr()->Get_Layer({ g_TagMapToolLevel, m_tMapToolContext.TagLayers[j] });
+			CLayer* pLayer = m_pGameInstance->Get_ObjectMgr()->Get_Layer({ g_TagMapToolLevel, g_tagMapObjType[j] });
 			if (nullptr == pLayer)
 				continue;
 			pLayer->Clear_Layer();
 		}
 	}
 	else {
-		CLayer* pLayer = m_pGameInstance->Get_ObjectMgr()->Get_Layer({ g_TagMapToolLevel, m_tMapToolContext.TagLayers[ENUM(eObjType)] });
+		CLayer* pLayer = m_pGameInstance->Get_ObjectMgr()->Get_Layer({ g_TagMapToolLevel, g_tagMapObjType[ENUM(eObjType)] });
 		if (nullptr == pLayer) {
 			ImGui::PopID();
 			return;
@@ -94,9 +95,9 @@ void CMapToolCore::Clear_Layer(MAPOBJ_TYPE eObjType)
 MAPOBJ_TYPE CMapToolCore::Check_LayerTag(const string& TagLayer)
 {
 	MAPOBJ_TYPE eType = {};
-	if (m_tMapToolContext.TagLayers[ENUM(MAPOBJ_TYPE::PLACED)] == TagLayer)
+	if (g_tagMapObjType[ENUM(MAPOBJ_TYPE::PLACED)] == TagLayer)
 		eType = MAPOBJ_TYPE::PLACED;
-	else if (m_tMapToolContext.TagLayers[ENUM(MAPOBJ_TYPE::TRIGGER)] == TagLayer)
+	else if (g_tagMapObjType[ENUM(MAPOBJ_TYPE::TRIGGER)] == TagLayer)
 		eType = MAPOBJ_TYPE::TRIGGER;
 	else
 		eType = MAPOBJ_TYPE::END;
@@ -147,7 +148,7 @@ void CMapToolCore::Place_PlacedObjectFromLoadData(MapData_Object* pData)
  
 	pStaticObject->Get_Component<CCollider>()->Set_DebugRender(m_tMapToolContext.isAllDebugRender);
 
-	pObjMgr->Add_Object(pStaticObject, { g_TagMapToolLevel, m_tMapToolContext.TagLayers[ENUM(MAPOBJ_TYPE::PLACED)] });
+	pObjMgr->Add_Object(pStaticObject, { g_TagMapToolLevel, g_tagMapObjType[ENUM(MAPOBJ_TYPE::PLACED)] });
 
 
 }
@@ -185,7 +186,7 @@ void CMapToolCore::Place_TriggerObjectFromLoadData(MapData_Object* pData)
 	pStaticObject->Get_Component<CCollider>()->Set_DebugRender(m_tMapToolContext.isAllDebugRender);
 
 	IObjectService* pObjMgr = m_pGameInstance->Get_ObjectMgr();
-	pObjMgr->Add_Object(pStaticObject, { g_TagMapToolLevel, m_tMapToolContext.TagLayers[ENUM(MAPOBJ_TYPE::TRIGGER)] });
+	pObjMgr->Add_Object(pStaticObject, { g_TagMapToolLevel, g_tagMapObjType[ENUM(MAPOBJ_TYPE::TRIGGER)] });
 }
 
 void CMapToolCore::Set_AllObjectDebugRender(_bool is)
