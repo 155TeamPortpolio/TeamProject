@@ -665,7 +665,7 @@ void CStateMachine<Type>::Render_History()
 }
 
 template<typename Type>
-inline void CStateMachine<Type>::Render_StateGraph()
+void CStateMachine<Type>::Render_StateGraph()
 {
 	if (!ImGui::CollapsingHeader("State Graph"))
 		return;

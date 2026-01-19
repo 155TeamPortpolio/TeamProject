@@ -109,9 +109,8 @@ void CBattlePlayer::Update(_float dt)
 	/* Energy */
 	desc.eType = UI_ACTION_TYPE::SPECIAL;
 	CCharacter::EnergyDesc tEnergy = m_pCurrentCharacter->Get_EnergyDesc();
-
-	if (tEnergy.fCurrentEnergy > tEnergy.fSpecialEnergy &&
-		tEnergy.fPrevEnergy <= tEnergy.fSpecialEnergy)
+	if (tEnergy.fCurrentEnergy >= tEnergy.fSpecialEnergy &&
+		tEnergy.fPrevEnergy < tEnergy.fSpecialEnergy)
 	{
 		desc.eState = UI_ACTION_STATE::AVAILABLE;
 		EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
@@ -121,8 +120,8 @@ void CBattlePlayer::Update(_float dt)
 	desc.eType = UI_ACTION_TYPE::ULTIMATE;
 	_float fCurrent = m_pCurrentCharacter->Get_CurrentDecibel();
 	_float fPrev = m_pCurrentCharacter->Get_PrevDecibel();
-	if (fCurrent > m_pCurrentCharacter->Get_MaxDecibel() &&
-		fPrev <= m_pCurrentCharacter->Get_MaxDecibel())
+	if (fCurrent >= m_pCurrentCharacter->Get_MaxDecibel() &&
+		fPrev < m_pCurrentCharacter->Get_MaxDecibel())
 	{
 		desc.eState = UI_ACTION_STATE::AVAILABLE;
 		EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
@@ -153,19 +152,26 @@ void CBattlePlayer::Add_Gauge(_float fEnergy, _float fDecibel)
 		tempQueue.pop();
 
 		CCharacter::EnergyDesc tEnergy = pCharacter->Get_EnergyDesc();
+		_float fCurrentDecibel = pCharacter->Get_CurrentDecibel();
 
 		if (eOwner == UI_STATUS_OWNER::ROLE1)
 		{
 			tEnergy.fCurrentEnergy += fEnergy;
-			pCharacter->Set_Decibel(pCharacter->Get_CurrentDecibel() + fDecibel);
+			fCurrentDecibel += fDecibel;
 		}
 		else
 		{
 			tEnergy.fCurrentEnergy += fEnergy * 0.1f;
-			pCharacter->Set_Decibel(pCharacter->Get_CurrentDecibel() + fDecibel * 0.1f);
+			fCurrentDecibel += fDecibel * 0.1f;
 		}
 
+		if (tEnergy.fCurrentEnergy > pCharacter->Get_MaxEnergy())
+			tEnergy.fCurrentEnergy = pCharacter->Get_MaxEnergy();
+		if (fCurrentDecibel > pCharacter->Get_MaxDecibel())
+			fCurrentDecibel = pCharacter->Get_MaxDecibel();
+
 		pCharacter->Set_CurrentEnergy(tEnergy.fCurrentEnergy);
+		pCharacter->Set_Decibel(fCurrentDecibel);
 	}
 }
 
