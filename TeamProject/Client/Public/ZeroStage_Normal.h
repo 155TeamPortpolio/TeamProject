@@ -21,9 +21,10 @@ private:
 	void Intro();
 	void Battle(); 
 	void Outro();
+	void End();
 private:
-	OBJECT_HANDLE m_PlayerHandle = {};
-	_bool m_isSequenceEnd = {};
+	_float3 baseColor = { 1.0f, 1.0f, 1.0f };
+
 public:
 	static CZeroStage_Normal* Create(class CZero_Level* pOwnerLevel);
 	virtual void Free();

@@ -724,6 +724,12 @@
     <Filter Include="02. GameObject\Object\Enemy\ThugAssaulter\State\Hit">
       <UniqueIdentifier>{ee380fa9-e341-4ac3-a59e-18404a3b9ff5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Level\04. Zero\Stage_Super">
+      <UniqueIdentifier>{2d99fd31-8614-425b-a72e-b5c437bc2fc3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Level\04. Zero\StageFX">
+      <UniqueIdentifier>{33438fca-4c48-4f14-b7da-99d59fbd7f51}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1290,9 +1296,6 @@
     <ClInclude Include="..\Public\CharacterAttackCollider.h">
       <Filter>02. GameObject\Object\Player\Character\AttackCollider</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Stage.h">
-      <Filter>01. Level\04. Zero</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\UI_IconLabel.h">
       <Filter>02. GameObject\UI\02. 3D\Plane\IconLabel</Filter>
     </ClInclude>
@@ -1412,6 +1415,12 @@
     </ClInclude>
     <ClInclude Include="..\Public\ZeroStage_Elite.h">
       <Filter>01. Level\04. Zero\Stage_Elite</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Stage.h">
+      <Filter>01. Level\04. Zero\Stage_Super</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\StageFx.h">
+      <Filter>01. Level\04. Zero\StageFX</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1962,9 +1971,6 @@
     <ClCompile Include="..\Private\ZeroStage_Boss.cpp">
       <Filter>01. Level\04. Zero\Stage_Boss</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Stage.cpp">
-      <Filter>01. Level\04. Zero</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\UI_IconLabel.cpp">
       <Filter>02. GameObject\UI\02. 3D\Plane\IconLabel</Filter>
     </ClCompile>
@@ -2068,6 +2074,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\ZeroStage_Elite.cpp">
       <Filter>01. Level\04. Zero\Stage_Elite</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Stage.cpp">
+      <Filter>01. Level\04. Zero\Stage_Super</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

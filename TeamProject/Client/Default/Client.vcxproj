@@ -178,6 +178,7 @@
     <ClInclude Include="..\public\Portal.h" />
     <ClInclude Include="..\Public\SacrificeState_Groggy_Phase1.h" />
     <ClInclude Include="..\Public\SacrificeState_Groggy_Phase2.h" />
+    <ClInclude Include="..\Public\StageFx.h" />
     <ClInclude Include="..\public\ThugAssaulter_Groggy.h" />
     <ClInclude Include="..\Public\Belle.h" />
     <ClInclude Include="..\Public\BelleState_Idle.h" />
