@@ -7,6 +7,14 @@
 
 IMPLEMENT_SINGLETON(CUIDirector);
 
+void CUIDirector::FadeScreen(_bool isFadeIn)
+{
+	if (!m_hScreenFade.isValid())
+		return;
+
+	m_hScreenFade.Get()->Set_Animation((isFadeIn) ? 0 : 1);
+}
+
 void CUIDirector::Initialize()
 {
 	// ui 관련 이미지, 폰트, json 파일 리소스 매니저에 등록
@@ -70,6 +78,16 @@ void CUIDirector::Load_LevelObjects(const string& levelKey)
 		if (!result.second)
 			MSG_BOX("UI Object Already Exists : UI Director");
 	}
+
+	// 화면 전환시 사용할 스크린 페이드 
+	auto pScreenFade = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_ScreenFade" })
+		.Build("screenFade");
+
+	if (!pScreenFade)
+		return;
+
+	UIManager()->Add_UIObject(pScreenFade, levelKey);
+	m_hScreenFade = pScreenFade->Get_Handle();
 }
 
 void CUIDirector::Load_UILevelData(const string& resourceKey)

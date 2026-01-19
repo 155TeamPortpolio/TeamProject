@@ -15,6 +15,9 @@ private:
 	virtual ~CUIDirector() = default;
 
 public:
+	void FadeScreen(_bool isFadeIn);
+
+public:
 	/* 모든 레벨에 필요한 공통 데이터 등록 */
 	void Initialize();
 	/* 레벨별로 필요한 프로토타입, 게임 오브젝트 등록 */
@@ -28,6 +31,7 @@ private:
 	string								m_levelKey;
 	nlohmann::json						m_json = {};
 	unordered_map<string, UI_HANDLE>	m_handles = {};
+	UI_HANDLE							m_hScreenFade = {};
 
 public:
 	virtual void Free() override;

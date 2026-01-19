@@ -35,6 +35,7 @@
 #include "AttackSign.h"
 #include "Player.h"
 /* UI */
+#include "UI_ScreenFade.h"
 #include "UI_EnemyStatus.h"
 #include "UI_MeshPyramid.h"
 #include "UI_MeshBillboard.h"
@@ -166,6 +167,7 @@ void CMainApp::Initialize_GlobalPrototype()
 	/*Player*/
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Player", CPlayer::Create());
 	/* UI */
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_ScreenFade", CUI_ScreenFade::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_EnemyStatus", CUI_EnemyStatus::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_MeshPyramid", CUI_MeshPyramid::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_MeshBillboard", CUI_MeshBillboard::Create());
