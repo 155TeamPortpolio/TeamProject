@@ -4,7 +4,7 @@
   "iVersion": 1,
   "values": [
     {
-      "iObjID": 17,
+      "iObjID": 16,
       "TagName": "SpawnPoint",
       "defaultvalue": {
         "type": "Bool",

@@ -117,7 +117,7 @@ void CMainApp::Set_Levels() //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿? ï¿½Ô¼ï¿½ ->ï¿½ï¿½ï¿? ï¿½ï¿½
 
 	LevelManager()->Set_LoadingLevel("Loading_Level");
 	m_pGameInstance->Notify_LevelSet(); 
-	m_pGameInstance->Get_LevelMgr()->Request_ChangeLevel("Scott_Level",true); 
+	m_pGameInstance->Get_LevelMgr()->Request_ChangeLevel("Test_Level",true); 
 } 
 
 CMainApp* CMainApp::Create()
