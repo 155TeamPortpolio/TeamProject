@@ -54,4 +54,13 @@ typedef struct tagTargetLockDesc {
 
 #pragma endregion
 
+#pragma region StageChange
+typedef struct tagStageChangedDesc {
+	class CStage* pStage = {};
+
+}STAGE_CHANGED_DESC;
+
+#pragma endregion
+
+
 NS_END

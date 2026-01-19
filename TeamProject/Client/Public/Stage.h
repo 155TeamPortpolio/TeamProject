@@ -6,7 +6,7 @@ class CStage :
     public CBase
 {
 protected:
-	enum class StageState {None,Entrance,BattleStart,BattleEnd,Outro};
+	enum class StageState {None,Entrance,BattleStart,BattleEnd,Outro,End};
 protected:
     CStage();
     ~CStage() DEFAULT;
@@ -19,6 +19,8 @@ public:
 	virtual HRESULT Ready_Stage(CZero_Level::StageContext& context)PURE;
 	virtual HRESULT Enter_Stage(CZero_Level::StageContext& context)PURE;
 	virtual HRESULT Exit_Stage(CZero_Level::StageContext& context)PURE;
+
+	virtual void StageChangeOn(CZero_Level::StageType nextStageType, _int StageID);
 
 protected:
 	virtual void Ready_Map(const string& LevelTag, const string& AreaTag);

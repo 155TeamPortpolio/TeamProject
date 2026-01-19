@@ -20,6 +20,7 @@ public:
 private:
 	void Intro();
 	void Battle(); 
+	void Outro();
 private:
 	OBJECT_HANDLE m_PlayerHandle = {};
 	_bool m_isSequenceEnd = {};

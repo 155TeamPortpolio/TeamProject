@@ -190,7 +190,7 @@
                 },
                 {
                     "alive": true,
-                    "instanceName": "bossIcon",
+                    "instanceName": "icon",
                     "transform": {
                         "anchor": 9,
                         "anchorOffset": [
@@ -225,7 +225,7 @@
                 },
                 {
                     "alive": true,
-                    "instanceName": "bossHpBg",
+                    "instanceName": "hpBg",
                     "transform": {
                         "anchor": 9,
                         "anchorOffset": [
@@ -260,7 +260,7 @@
                 },
                 {
                     "alive": true,
-                    "instanceName": "bossHpBack",
+                    "instanceName": "hpBack",
                     "transform": {
                         "anchor": 9,
                         "anchorOffset": [
@@ -282,9 +282,9 @@
                         "radian": 0.0
                     },
                     "color": [
-                        1.0,
-                        0.0,
-                        0.0,
+                        0.5921568870544434,
+                        0.1568627506494522,
+                        0.125490203499794,
                         1.0
                     ],
                     "pass": "LinearFill",
@@ -300,7 +300,7 @@
                 },
                 {
                     "alive": true,
-                    "instanceName": "bossHpFront",
+                    "instanceName": "hpFront",
                     "transform": {
                         "anchor": 9,
                         "anchorOffset": [
@@ -340,7 +340,7 @@
                 },
                 {
                     "alive": true,
-                    "instanceName": "bossGroggyBg",
+                    "instanceName": "groggyBg",
                     "transform": {
                         "anchor": 9,
                         "anchorOffset": [
@@ -375,7 +375,7 @@
                 },
                 {
                     "alive": true,
-                    "instanceName": "bossGroggy",
+                    "instanceName": "groggy",
                     "transform": {
                         "anchor": 9,
                         "anchorOffset": [
@@ -398,8 +398,8 @@
                     },
                     "color": [
                         1.0,
-                        0.8549019694328308,
-                        0.019607843831181526,
+                        0.6941176652908325,
+                        0.0,
                         1.0
                     ],
                     "pass": "LinearFill",
@@ -415,7 +415,7 @@
                 },
                 {
                     "alive": true,
-                    "instanceName": "bossGroggyText",
+                    "instanceName": "groggyText",
                     "transform": {
                         "anchor": 1,
                         "anchorOffset": [
@@ -438,8 +438,8 @@
                     },
                     "color": [
                         1.0,
-                        0.8549019694328308,
-                        0.019607843831181526,
+                        0.6941176652908325,
+                        0.0,
                         1.0
                     ],
                     "pass": "Opaque",

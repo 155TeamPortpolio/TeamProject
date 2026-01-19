@@ -191,6 +191,7 @@
     <ClInclude Include="..\Public\FieldSystem.h" />
     <ClInclude Include="..\public\ThugAssaulter_Hit.h" />
     <ClInclude Include="..\public\ThugAssaulter_HitAirborne.h" />
+    <ClInclude Include="..\public\ThugBulkyEnforcer_Hit.h" />
     <ClInclude Include="..\Public\UI_BossHUD.h" />
     <ClInclude Include="..\Public\UI_EnemyStatus.h" />
     <ClInclude Include="..\Public\UI_FieldHUD.h" />
@@ -368,6 +369,7 @@
     <ClInclude Include="..\Public\ZeroPortal.h" />
     <ClInclude Include="..\public\ZeroStage_1_1.h" />
     <ClInclude Include="..\Public\ZeroStage_Boss.h" />
+    <ClInclude Include="..\Public\ZeroStage_Elite.h" />
     <ClInclude Include="..\Public\ZeroStage_Normal.h" />
     <ClInclude Include="..\Public\Zero_Level.h" />
     <ClInclude Include="Client.h" />
@@ -442,6 +444,7 @@
     <ClCompile Include="..\Private\FieldSystem.cpp" />
     <ClCompile Include="..\private\ThugAssaulter_Hit.cpp" />
     <ClCompile Include="..\private\ThugAssaulter_HitAirborne.cpp" />
+    <ClCompile Include="..\private\ThugBulkyEnforcer_Hit.cpp" />
     <ClCompile Include="..\Private\UI_BossHUD.cpp" />
     <ClCompile Include="..\Private\UI_EnemyStatus.cpp" />
     <ClCompile Include="..\Private\UI_FieldHUD.cpp" />
@@ -610,6 +613,7 @@
     <ClCompile Include="..\Private\ZeroPortal.cpp" />
     <ClCompile Include="..\private\ZeroStage_1_1.cpp" />
     <ClCompile Include="..\Private\ZeroStage_Boss.cpp" />
+    <ClCompile Include="..\Private\ZeroStage_Elite.cpp" />
     <ClCompile Include="..\Private\ZeroStage_Normal.cpp" />
     <ClCompile Include="..\Private\Zero_Level.cpp" />
     <ClCompile Include="Client.cpp" />
