@@ -19,9 +19,10 @@ HRESULT CUI_ScreenFade::Initialize(INIT_DESC* pArg)
     pSprite->Link_Shader(G_GlobalLevelKey, "VTX_UI.hlsl");
     pSprite->Change_Texture(0, G_GlobalLevelKey, "empty.png");
 
-    m_vSize = _float2(1600.f, 900.f);
-    m_vColor = _float4(0.f, 0.f, 0.f, 1.f);
+    m_vSize = m_WinSize;
+    m_vColor = _float4(0.f, 0.f, 0.f, 0.f);
 
+    // 애니메이션 클립 생성하면서 인덱스 캐싱
     Ready_FadeIn();
     Ready_FadeOut();
 
@@ -37,89 +38,67 @@ void CUI_ScreenFade::Update(_float dt)
     __super::Update(dt);
 }
 
+void CUI_ScreenFade::UI_Active(void* pArg)
+{ 
+    FADE_DESC* pDesc = static_cast<FADE_DESC*>(pArg);
+    if (!pDesc)
+        return;
+
+    Set_LastKeyframeTime(m_iFadeInIndex, pDesc->fDuration);
+    Set_Animation(m_iFadeInIndex);
+}
+
+void CUI_ScreenFade::UI_DeActive(void* pArg)
+{
+    FADE_DESC* pDesc = static_cast<FADE_DESC*>(pArg);
+    if (!pDesc)
+        return;
+
+    Set_LastKeyframeTime(m_iFadeOutIndex, pDesc->fDuration);
+    Set_Animation(m_iFadeOutIndex);
+}
+
 void CUI_ScreenFade::Ready_FadeIn()
 {
-    // 화면 시작할 때 검정 화면이 사라지면서 화면 보임
+    // 화면 -> 검정 화면
 
     UI_ANIM_CLIP clip = {};
     clip.strName = "fadeIn";
-    clip.fDuration = 0.5f;
+    clip.fDuration = m_fInitDuration;
     clip.isLoop = false;
 
-    // --------------------
-    // Keyframe 0 (time = 0.0)
-    // --------------------
+    clip.keyframes =
     {
-        UI_KEYFRAME keyframe = {};
-        keyframe.fTime = 0.0f;
-        keyframe.fAngle = 0.0f;
-        keyframe.vPosition = { 0.0f, 0.0f };
-        keyframe.vScale = { 1.0f, 1.0f };
-        keyframe.vColor = { 0.f, 0.f, 0.f, 1.0f }; // alpha 1
-        keyframe.easeType = EaseType::InOutSine;
+        { 0.0f, {1.f,1.f}, 0.f, {}, {0.f,0.f,0.f,0.f}, EaseType::InOutSine },
+        { 0.5f, {1.f,1.f}, 0.f, {}, {0.f,0.f,0.f,1.f}, EaseType::None }
+    };
 
-        clip.keyframes.push_back(keyframe);
-    }
-
-    // --------------------
-    // Keyframe 1 (time = 0.5)
-    // --------------------
-    {
-        UI_KEYFRAME keyframe = {};
-        keyframe.fTime = 0.5f;
-        keyframe.fAngle = 0.0f;
-        keyframe.vPosition = { 0.0f, 0.0f };
-        keyframe.vScale = { 1.0f, 1.0f };
-        keyframe.vColor = { 0.f, 0.f, 0.f, 0.0f }; // alpha 0
-        keyframe.easeType = EaseType::None;
-
-        clip.keyframes.push_back(keyframe);
-    }
-
-    m_AnimClips.push_back(clip);
+    m_iFadeInIndex = Register_AnimClip(clip);
 }
 
 void CUI_ScreenFade::Ready_FadeOut()
 {
-    // 화면 끝날 때 화면이 검정 화면에 가려짐
+    // 검정 화면 -> 화면
 
     UI_ANIM_CLIP clip = {};
     clip.strName = "fadeOut";
-    clip.fDuration = 0.5f;
+    clip.fDuration = m_fInitDuration;
     clip.isLoop = false;
 
-    UI_KEYFRAME keyframe = {};
-    // --------------------
-    // Keyframe 0 (time = 0.0)
-    // --------------------
+    clip.keyframes =
     {
-        UI_KEYFRAME keyframe = {};
-        keyframe.fTime = 0.0f;
-        keyframe.fAngle = 0.0f;
-        keyframe.vPosition = { 0.0f, 0.0f };
-        keyframe.vScale = { 1.0f, 1.0f };
-        keyframe.vColor = { 0.f, 0.f, 0.f, 0.0f }; // alpha 0
-        keyframe.easeType = EaseType::InOutSine;
+        { 0.0f, {1.f,1.f}, 0.f, {}, {0.f,0.f,0.f,1.f}, EaseType::InOutSine },
+        { 0.5f, {1.f,1.f}, 0.f, {}, {0.f,0.f,0.f,0.f}, EaseType::None }
+    };
 
-        clip.keyframes.push_back(keyframe);
-    }
+    m_iFadeOutIndex = Register_AnimClip(clip);
+}
 
-    // --------------------
-    // Keyframe 1 (time = 0.5)
-    // --------------------
-    {
-        UI_KEYFRAME keyframe = {};
-        keyframe.fTime = 0.5f;
-        keyframe.fAngle = 0.0f;
-        keyframe.vPosition = { 0.0f, 0.0f };
-        keyframe.vScale = { 1.0f, 1.0f };
-        keyframe.vColor = { 0.f, 0.f, 0.f, 1.0f }; // alpha 1
-        keyframe.easeType = EaseType::None;
-
-        clip.keyframes.push_back(keyframe);
-    }
-
+_int CUI_ScreenFade::Register_AnimClip(UI_ANIM_CLIP& clip)
+{
+    _int iIndex = static_cast<_int>(m_AnimClips.size());
     m_AnimClips.push_back(clip);
+    return iIndex;
 }
 
 CGameObject* CUI_ScreenFade::Create()

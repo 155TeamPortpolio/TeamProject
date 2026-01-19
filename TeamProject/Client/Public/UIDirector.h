@@ -15,7 +15,10 @@ private:
 	virtual ~CUIDirector() = default;
 
 public:
-	void FadeScreen(_bool isFadeIn);
+	/* 화면 페이드인 실행 (검정 화면 -> 화면) */
+	void FadeIn_Screen(_float fDuration = 0.5f);
+	/* 화면 페이드아웃 실행 (화면 -> 검정 화면) */
+	void FadeOut_Screen(_float fDuration = 0.5f);
 
 public:
 	/* 모든 레벨에 필요한 공통 데이터 등록 */

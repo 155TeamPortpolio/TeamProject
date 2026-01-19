@@ -4,15 +4,28 @@
 #include "GameInstance.h"
 #include "UI_Object.h"
 #include "UILoader.h"
+#include "UI_ScreenFade.h"
 
 IMPLEMENT_SINGLETON(CUIDirector);
 
-void CUIDirector::FadeScreen(_bool isFadeIn)
+void CUIDirector::FadeIn_Screen(_float fDuration)
 {
-	if (!m_hScreenFade.isValid())
+	if (!m_hScreenFade.isValid() || fDuration <= 0.f)
 		return;
 
-	m_hScreenFade.Get()->Set_Animation((isFadeIn) ? 0 : 1);
+	CUI_ScreenFade::FADE_DESC desc = {};
+	desc.fDuration = fDuration;
+	m_hScreenFade.Get()->UI_Active(&desc);
+}
+
+void CUIDirector::FadeOut_Screen(_float fDuration)
+{
+	if (!m_hScreenFade.isValid() || fDuration <= 0.f)
+		return;
+
+	CUI_ScreenFade::FADE_DESC desc = {};
+	desc.fDuration = fDuration;
+	m_hScreenFade.Get()->UI_DeActive(&desc);
 }
 
 void CUIDirector::Initialize()
