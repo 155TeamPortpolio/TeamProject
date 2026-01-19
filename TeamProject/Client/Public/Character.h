@@ -113,7 +113,6 @@ public:
     void        Set_Switch(SWITCH eType) { m_eSwitchType = eType; }
 
     void        Update_DissolveProgress(_float dt); /*dissolve*/
-    void        Reset_DissolveProgress();
 
     OBJECT_HANDLE       Get_TargetHandle() { return m_TargetHandle; };
     void                Set_TargetHandle(OBJECT_HANDLE targetHandle) { m_TargetHandle = targetHandle; };
