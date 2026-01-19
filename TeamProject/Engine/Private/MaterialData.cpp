@@ -55,8 +55,6 @@ HRESULT CMaterialData::Initialize(const string& levelKey, ifstream& ifs, const s
 	return S_OK;
 }
 
-
-
 void CMaterialData::ApplyData(ID3D11DeviceContext* pContext, const vector<_uint>& TextureIndexs)
 {
 	if(TextureIndexs.size() < MAX_TEXTURE_TYPE_VALUE) return;
@@ -67,6 +65,7 @@ void CMaterialData::ApplyData(ID3D11DeviceContext* pContext, const vector<_uint>
 
 	for (_uint i = 0; i < MAX_TEXTURE_TYPE_VALUE; ++i)
 	{
+		param.pData = nullptr; // 루프 시작마다 리셋
 		auto it = m_Textures.find(static_cast<TEXTURE_TYPE>(i));
 
 		if (it != m_Textures.end())
@@ -95,7 +94,22 @@ HRESULT CMaterialData::Set_MaterialConstantBuffer(ID3D11Buffer* pCBuffer)
 
 _bool CMaterialData::Has_Texture(TEXTURE_TYPE eType)
 {
-	return !m_Textures[eType].empty();
+	auto it = m_Textures.find(eType);
+	return (it != m_Textures.end() && !it->second.empty());
+}
+
+_bool CMaterialData::Has_NonOpaque(TEXTURE_TYPE eType, _uint Index, AlphaCheckLevel level)
+{
+	if (m_Textures[eType].empty())
+		return false;
+	if (m_Textures[eType].size() <= Index)
+		return false;
+	if (m_Textures[eType][Index] == nullptr)
+		return false;
+
+	auto texture = m_Textures[eType][Index];
+
+	return texture->AlphaCheck(level);
 }
 
 void CMaterialData::Render_GUI()
@@ -162,10 +176,10 @@ HRESULT CMaterialData::Link_Texture(const string& levelKey, const string& textur
 	}
 
 	// 새로운 텍스처 로드
-	CTexture* pTexture = CGameInstance::GetInstance()->Get_ResourceMgr()->Load_Texture(levelKey, textureKey);
+	CTexture* pTexture = CGameInstance::GetInstance()->Get_ResourceMgr()->Load_Texture(levelKey, textureKey, eType==TEXTURE_TYPE::DIFFUSE);
 	if (!pTexture)
 	{
-		MSG_BOX("There is no Texture Key : Link_Texture");
+		//MSG_BOX("There is no Texture Key : Link_Texture");
 		return E_FAIL;
 	}
 
@@ -272,6 +286,11 @@ string CMaterialData::ConvertToConstant(TEXTURE_TYPE eType)
 	case Engine::TEXTURE_TYPE::GLTF_METALLIC_ROUGHNESS:
 		return "GltfMetalicRoughnessTexture";
 
+	case Engine::TEXTURE_TYPE::NOISE:
+		return "NoiseTexture";
+
+	case Engine::TEXTURE_TYPE::DISSOLVE:
+		return "DissolveTexture";
 	default:
 		break;
 	}

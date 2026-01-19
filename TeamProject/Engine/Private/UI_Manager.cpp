@@ -12,56 +12,93 @@ CUI_Manager::CUI_Manager()
 
 CUI_Manager::~CUI_Manager()
 {
+	//Builder::Create_Object().
 }
 
 void CUI_Manager::Pre_EngineUpdate(_float dt)
 {
 
-	for (auto pObject : DeleteUIs)
+	for (CUI_Object* obj : DeleteUIs)
 	{
-		_uint ObjectID = pObject->Get_ObjectID();
-		//pObject->Get_Layer()->Remove_GameObject(ObjectID);
-		//pObject->Set_Layer(nullptr);
-	}
+		if (!obj) continue;
 
+		const _int idx = obj->Get_SystemIndex();
+		if (idx < 0) continue;
+
+		const auto levelKey = obj->Get_SystemLevel();
+
+		auto itLevel = m_UIObjects.find(levelKey);
+		if (itLevel == m_UIObjects.end()) continue;
+
+		auto& vec = itLevel->second;
+		if (idx >= static_cast<_int>(vec.size())) continue;
+
+		// 아직 그 슬롯에 그 객체가 있을 때만 제거
+		if (vec[idx] != obj) continue;
+
+		// 시스템 연결 끊기
+		obj->Set_OnSystem("", -1);
+
+		Safe_Release(vec[idx]);
+		vec[idx] = nullptr;
+	}
 	DeleteUIs.clear();
-	
+
 	m_nowLevelKey = CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey();
-	for (auto& UI : m_UIObjects[m_nowLevelKey])
-		if (UI && UI->Is_Root())
-			UI->Pre_EngineUpdate(dt);
+	
+	auto itLevel = m_UIObjects.find(m_nowLevelKey);
+	if (itLevel == m_UIObjects.end())
+		return; 
+
+	for (auto* uiObj : itLevel->second)
+		if (uiObj && uiObj->Is_Root())
+			uiObj->Pre_EngineUpdate(dt);
 }
 
 void CUI_Manager::Post_EngineUpdate(_float dt)
 {
 	Sort_UI();
 
-	for (auto& UI : m_UIObjects[m_nowLevelKey]) {
-		if (UI && UI->Is_Root())
-			UI->Post_EngineUpdate(dt);
-	}
+	auto itLevel = m_UIObjects.find(m_nowLevelKey);
+	if (itLevel == m_UIObjects.end())
+		return;
+
+	for (auto* uiObj : m_SortedUIObjects)
+			uiObj->Post_EngineUpdate(dt);
 }
 
 void CUI_Manager::Priority_Update(_float dt)
 {
-	for (auto& UI : m_UIObjects[m_nowLevelKey]) {
-		if (UI && UI->Is_Root())
-			UI->Priority_Update(dt);
-	}
+	auto itLevel = m_UIObjects.find(m_nowLevelKey);
+	if (itLevel == m_UIObjects.end())
+		return;
+
+	for (auto* uiObj : itLevel->second)
+		if (uiObj && uiObj->Is_Root())
+			uiObj->Priority_Update(dt);
 }
 
 void CUI_Manager::Update(_float dt)
 {
-	for (auto& UI : m_UIObjects[m_nowLevelKey])
-		if (UI && UI->Is_Root())
-			UI->Update(dt);
+	auto itLevel = m_UIObjects.find(m_nowLevelKey);
+	if (itLevel == m_UIObjects.end())
+		return;
+
+	for (auto* uiObj : itLevel->second)
+		if (uiObj && uiObj->Is_Root())
+			uiObj->Update(dt);
 }
 
 void CUI_Manager::Late_Update(_float dt)
 {
-	for (auto& UI : m_UIObjects[m_nowLevelKey])
-		if (UI && UI->Is_Root())
-			UI->Late_Update(dt);
+
+	auto itLevel = m_UIObjects.find(m_nowLevelKey);
+	if (itLevel == m_UIObjects.end())
+		return;
+
+	for (auto* uiObj : itLevel->second)
+		if (uiObj && uiObj->Is_Root())
+			uiObj->Late_Update(dt);
 }
 
 void CUI_Manager::Clear(const string& LevelTag)
@@ -88,6 +125,7 @@ HRESULT CUI_Manager::Sync_To_Level()
 
 	for (string& name : LevelList)
 		m_UIObjects.emplace(name, UIobjects());
+	return S_OK;
 }
 
 HRESULT CUI_Manager::Add_UIObject(CUI_Object* object, const string& level)
@@ -104,6 +142,7 @@ HRESULT CUI_Manager::Add_UIObject(CUI_Object* object, const string& level)
 
 	auto& map = m_UIObjects.at(level);
 	Add_Object_Recursive(level, object);
+	return S_OK;
 }
 
 void CUI_Manager::Add_Object_Recursive(const string& LevelTag, CUI_Object* object)
@@ -138,26 +177,35 @@ void CUI_Manager::Add_Object_Recursive(const string& LevelTag, CUI_Object* objec
 			Add_Object_Recursive(LevelTag, CastChild);
 	}
 }
-
 void CUI_Manager::Remove_UIObject(CUI_Object* object)
 {
-
-	if (object == nullptr)
-		return;
-	_int systemIndex = object->Get_SystemIndex();
-	if (systemIndex == -1)
-		return;
-	auto& map = m_UIObjects.at(object->Get_SystemLevel());
-
-	if (map.empty())
-		return;
-	if (systemIndex >= map.size())
+	if (!object)
 		return;
 
-	object->Set_OnSystem("", -1);
-	Safe_Release(map[systemIndex]);
-	map[systemIndex] = nullptr;
+	const _int systemIndex = object->Get_SystemIndex();
+	if (systemIndex < 0)
+		return;
+
+	const auto level = object->Get_SystemLevel();
+
+	auto itLevel = m_UIObjects.find(level);
+	if (itLevel == m_UIObjects.end())
+		return;
+
+	auto& vec = itLevel->second;
+	if (systemIndex >= static_cast<_int>(vec.size()))
+		return;
+
+	if (vec[systemIndex] != object)
+		return;
+
+	auto it = std::find(DeleteUIs.begin(), DeleteUIs.end(), object);
+	if (it != DeleteUIs.end())
+		return;
+
+	DeleteUIs.push_back(object);
 }
+ 
 
 static vector<CUI_Object*> emptyVec;
 
@@ -171,15 +219,82 @@ const vector<CUI_Object*>& CUI_Manager::Get_LevelUI(const string& leveTag)
 	return emptyVec;
 }
 
+CUI_Object* CUI_Manager::Request_UIObject(const UI_HANDLE& handle)
+{
+	// 삭제 예정이면 실패
+	auto itDelete = std::find_if(DeleteUIs.begin(), DeleteUIs.end(),
+		[&](CUI_Object* uiPtr)
+		{
+			return uiPtr && uiPtr->Get_ObjectID() == handle.hObjID;
+		});
+
+	if (itDelete != DeleteUIs.end())
+		return nullptr;
+
+	const bool hasLevel = !handle.Level.empty();
+
+	if (hasLevel)
+	{
+		auto itLevel = m_UIObjects.find(handle.Level);
+		if (itLevel != m_UIObjects.end())
+		{
+			UIobjects& uiList = itLevel->second;
+
+			if (handle.SystemIndex >= 0 &&
+				handle.SystemIndex < static_cast<_int>(uiList.size()))
+			{
+				CUI_Object* candidate = uiList[handle.SystemIndex];
+				if (candidate && candidate->Get_ObjectID() == handle.hObjID)
+					return candidate;
+			}
+
+			auto itUI = std::find_if(uiList.begin(), uiList.end(),
+				[&](CUI_Object* uiPtr)
+				{
+					return uiPtr && uiPtr->Get_ObjectID() == handle.hObjID;
+				});
+
+			if (itUI != uiList.end())
+				return *itUI;
+		}
+	}
+
+	for (auto& levelPair : m_UIObjects)
+	{
+		UIobjects& uiList = levelPair.second;
+
+		auto itUI = std::find_if(uiList.begin(), uiList.end(),
+			[&](CUI_Object* uiPtr)
+			{
+				return uiPtr && uiPtr->Get_ObjectID() == handle.hObjID;
+			});
+
+		if (itUI != uiList.end())
+			return *itUI;
+	}
+
+	return nullptr;
+}
 
 void CUI_Manager::Sort_UI()
 {
-	for (auto& pair : m_UIObjects) {
-		sort(pair.second.begin(), pair.second.end(),
-			[&](CUI_Object* a, CUI_Object* b) {
-				return a->Get_Priority() < b->Get_Priority();
-			});
+	m_SortedUIObjects.clear();
+	m_SortedUIObjects.reserve(256);
+
+	for (auto& pair : m_UIObjects)
+	{
+		for (CUI_Object* ui : pair.second)
+		{
+			if (ui && ui->Is_Root())
+				m_SortedUIObjects.push_back(ui);
+		}
 	}
+
+	std::stable_sort(m_SortedUIObjects.begin(), m_SortedUIObjects.end(),
+		[]( CUI_Object* left,  CUI_Object* right)
+		{
+			return left->Get_ZPriority() > right->Get_ZPriority();
+		});
 }
 
 CUI_Manager* CUI_Manager::Create()

@@ -33,6 +33,7 @@ public:
     void Apply(const string& m_passConstant,ID3D11DeviceContext* pContext);
     HRESULT Reset_Value();
     HRESULT Bind_Value(const string& ConstantName, const SHADER_PARAM& parameter);
+    HRESULT SetRawValueOrClear(ID3DX11EffectVariable* effectVariable, const void* dataPtr, UINT byteSize);
     HRESULT SetConstantBuffer(const string& ConstantName, ID3D11Buffer* pData);
 
 public:
@@ -46,9 +47,11 @@ public:
 private:
     HRESULT Bind_Matrix(const string& ConstantName, const _float4x4* pMatrix);
     HRESULT Bind_ShaderResource(const string& ConstantName, ID3D11ShaderResourceView* pSRV);
-    HRESULT Bind_ShaderResourceArray(const string& ConstantName, ID3D11ShaderResourceView* pSRVArr);
+    HRESULT Bind_ShaderResourceArray(const string& ConstantName, ID3D11ShaderResourceView* pSRVArr);    
+    HRESULT Bind_MatrixArray(const string& ConstantName, const _float4x4* pMatrices, _uint iCount);
 
-private: //Compile
+private:
+    //Compile
     void ReflectShader();
     HRESULT InitializeTechnique(wstring wPath);
     CompileState Check_Chached(wstring wPath);

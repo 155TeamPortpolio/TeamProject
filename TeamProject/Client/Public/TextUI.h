@@ -1,0 +1,33 @@
+#pragma once
+#include "UI_Object.h"
+
+NS_BEGIN(Client)
+
+class CTextUI final : public CUI_Object
+{
+private:
+	CTextUI() {}
+	CTextUI(const CTextUI& rhs) : CUI_Object(rhs) {}
+	virtual ~CTextUI() DEFAULT;
+
+public:
+	virtual HRESULT Initialize_Prototype()           override;
+	virtual HRESULT Initialize(INIT_DESC* pArg = {}) override;
+	virtual void    Priority_Update(_float dt)       override { __super::Priority_Update(dt); }
+	virtual void    Update(_float dt)                override;
+	virtual void    Late_Update(_float dt)           override { __super::Late_Update(dt); }
+	virtual void    Render_GUI()                     override { __super::Render_GUI(); }
+
+public:
+	virtual void    Load(const nlohmann::ordered_json& data) override;
+
+public:
+	static  CGameObject* Create();
+	virtual CGameObject* Clone(INIT_DESC* pArg = {}) override;
+	virtual void Free() override { __super::Free(); }
+};
+
+NS_END
+
+// 폰트 크기 32로 해서 스케일
+// /FastPack /CharacterRegion:0x0020-0x00FF /CharacterRegion:0x3131-0x3163 /CharacterRegion:0xAC00-0xD800 /DefaultCharacter:0xAC00 font.spritefont

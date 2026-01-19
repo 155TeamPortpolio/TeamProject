@@ -24,6 +24,10 @@ HRESULT CMaterial::Initialize_Prototype()
 
 HRESULT CMaterial::Initialize(COMPONENT_DESC* pArg)
 {
+	if (pArg != nullptr) {
+		auto desc = static_cast<MATERIAL_INIT_DESC*>(pArg);
+		Link_Material(desc->LevelKey, desc->MaterialKey);
+	}
 	return S_OK;
 }
 
@@ -34,6 +38,7 @@ HRESULT CMaterial::Link_Material(const string& levelKey, const string& materialK
 		Safe_Release(data);
 
 	m_MaterialInstances = CGameInstance::GetInstance()->Get_ResourceMgr()->Load_MaterialFromFile(levelKey, materialKey);
+
 	return S_OK;
 }
 
@@ -71,6 +76,12 @@ _uint CMaterial::Get_MaterialDataID(_uint subsetIndex)
 	return m_MaterialInstances[subsetIndex]->Get_MaterialDataID();
 }
 
+void CMaterial::Add_MaterialData(CMaterialInstance* pInstance, string strDataName, SHADER_PARAM param)
+{
+	if (pInstance == nullptr) return;
+	pInstance->Set_Param(strDataName, param);
+}
+
 void CMaterial::Apply_Material(ID3D11DeviceContext* pContext, _uint subsetIndex)
 {
 	if (subsetIndex >= m_MaterialInstances.size()) return;
@@ -103,6 +114,12 @@ CMaterialInstance* CMaterial::Get_MaterialInstance(_uint Index)
 	return m_MaterialInstances[Index];
 }
 
+void CMaterial::ResetMaterial(_uint Index)
+{
+	if (Index >= m_MaterialInstances.size()) return;
+	m_MaterialInstances[Index]->Reset_DynamicSlot();
+}
+
 const string& CMaterial::GetPassConstant(_uint subsetIndex)
 {
 	return m_MaterialInstances[subsetIndex]->Get_PassConstant();
@@ -117,6 +134,19 @@ CMaterialInstance* CMaterial::Find_MaterialByName(const string& MaterialName)
 	if (iter == m_MaterialInstances.end()) return nullptr;
 
 	return *iter;
+}
+
+_bool CMaterial::isValid(_uint index)
+{
+	return m_MaterialInstances[index]->isValid();
+}
+
+void CMaterial::SetBlendHasAlpha(AlphaCheckLevel checkLevel , const string& BlendPass)
+{
+	for (auto instance : m_MaterialInstances)
+	{
+		instance->SetBlendIf_AlphaDiffuse(checkLevel, BlendPass);
+	}
 }
 
 CMaterial* CMaterial::Create()
@@ -167,6 +197,7 @@ void CMaterial::Render_GUI()
 				CMaterialInstance* hMaterial = m_MaterialInstances[i];
 				if (ImGui::BeginTabItem(hMaterial->Get_MaterialName().c_str()))
 				{
+
 					hMaterial->Render_GUI();
 					ImGui::EndTabItem();
 				}

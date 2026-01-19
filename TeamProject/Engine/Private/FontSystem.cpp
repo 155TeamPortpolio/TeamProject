@@ -85,20 +85,11 @@ HRESULT CFontSystem::Render_Font()
 			if (pFont) m_pBatch->End();
 			pFont = m_Fonts[m_Texts[i].systemIndex];
 
-#ifdef _DEBUG
 			m_pBatch->Begin(
 				SpriteSortMode_Deferred,
-				m_pStates->Opaque(),   // ← default는 non-premultiplied
+				m_pStates->AlphaBlend(),  
 				nullptr, nullptr, nullptr, nullptr, XMMatrixIdentity()
 			);
-#endif // _DEBUG
-#ifndef _DEBUG
-			m_pBatch->Begin(
-				SpriteSortMode_Deferred,
-				m_pStates->AlphaBlend(),   // ← default는 non-premultiplied
-				nullptr, nullptr, nullptr, nullptr, XMMatrixIdentity()
-			);
-#endif // _DEBUG
 		}
 		if (m_Texts[i].info.OutLined) {
 			pFont->DrawOutlinedText(m_pBatch,
@@ -129,6 +120,92 @@ HRESULT CFontSystem::Render_Font()
 
 	m_Texts.clear(); 
 	return S_OK;
+}
+
+HRESULT CFontSystem::Render_TextFont(string TextKey)
+{
+	auto iter = std::find_if(m_Texts.begin(), m_Texts.end(),
+		[&TextKey](const TextData& textData) {
+			return textData.info.TextKey == TextKey;
+		});
+
+	if (iter == m_Texts.end())
+		return S_OK;
+
+	TextData& Text = *iter;
+
+	if (Text.systemIndex >= m_Fonts.size() || !m_Fonts[Text.systemIndex])
+		return E_FAIL;
+
+	ID3D11InputLayout* pPrevLayout = nullptr;
+	m_pContext->IAGetInputLayout(&pPrevLayout);
+
+	CCustomFont* pFont = m_Fonts[Text.systemIndex];
+
+	m_pContext->GSSetShader(nullptr, nullptr, 0);
+	
+	/*x축 shear 행렬*/
+	_float2 vSize = {};
+	XMStoreFloat2(&vSize, pFont->TextSize(Text.info.Text));
+	_float2 vCenter = { Text.info.TextPos.x + vSize.x * 0.5f, Text.info.TextPos.y + vSize.y * 0.5f };
+
+	_matrix matShear =
+		XMMatrixTranslation(-vCenter.x, -vCenter.y, 0.f) *
+		XMMatrixSet(
+			1.f, Text.info.vShear.y, 0.f, 0.f,
+			Text.info.vShear.x, 1.f, 0.f, 0.f,
+			0.f, 0.f, 1.f, 0.f,
+			0.f, 0.f, 0.f, 1.f) *
+		XMMatrixTranslation(vCenter.x, vCenter.y, 0.f);
+
+	m_pBatch->Begin(
+		SpriteSortMode_Deferred,
+		m_pStates->AlphaBlend(),
+		nullptr, nullptr, nullptr, nullptr, matShear
+	);
+
+	if (Text.info.OutLined) {
+		pFont->DrawOutlinedText(
+			m_pBatch,
+			Text.info.Text,
+			Text.info.TextPos,
+			PremultipledColor(Text.info.OutLineColor),
+			PremultipledColor(Text.info.TextColor),
+			Text.info.Thickness,
+			Text.info.Rotation,
+			Text.info.Origin,
+			Text.info.Scale
+		);
+	}
+	else {
+		pFont->Draw(
+			m_pBatch,
+			Text.info.Text,
+			Text.info.TextPos,
+			PremultipledColor(Text.info.TextColor),
+			Text.info.Rotation,
+			Text.info.Origin,
+			Text.info.Scale
+		);
+	}
+
+	m_pBatch->End();
+
+	m_pContext->IASetInputLayout(pPrevLayout);
+	Safe_Release(pPrevLayout);
+
+	return S_OK;
+}
+
+HRESULT CFontSystem::Clear_Texts()
+{
+	m_Texts.clear();
+	return S_OK;
+}
+
+_vector CFontSystem::PremultipledColor(_float4 vColor)
+{
+	return XMVectorSet(vColor.x * vColor.w, vColor.y * vColor.w, vColor.z * vColor.w, vColor.w);
 }
 
 CFontSystem* CFontSystem::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

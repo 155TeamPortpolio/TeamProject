@@ -1,0 +1,128 @@
+#pragma once
+#include "IPhysicsService.h"
+
+NS_BEGIN(Engine)
+
+class CRaycastFilterCallback : public PxQueryFilterCallback
+{
+public:
+    CRaycastFilterCallback(_uint iMask, _bool bQueryTrigger = false)
+        : m_iTargetMask(iMask), m_bQueryTrigger(bQueryTrigger) {
+    }
+
+    virtual PxQueryHitType::Enum preFilter(
+        const PxFilterData& filterData,
+        const PxShape* shape,
+        const PxRigidActor* actor,
+        PxHitFlags& queryFlags) override
+    {
+        // shape에서 직접 QueryFilterData 가져오기
+        PxFilterData shapeFilter = shape->getQueryFilterData();
+        PxU32 shapeGroup = shapeFilter.word0;
+
+        // 마스크 검사
+        if ((m_iTargetMask & shapeGroup) == 0)
+            return PxQueryHitType::eNONE;
+
+        // 트리거 처리
+        if (shape->getFlags() & PxShapeFlag::eTRIGGER_SHAPE)
+        {
+            if (!m_bQueryTrigger)
+                return PxQueryHitType::eNONE;
+            return PxQueryHitType::eTOUCH;
+        }
+
+        return PxQueryHitType::eBLOCK;
+    }
+
+    virtual PxQueryHitType::Enum postFilter(
+        const PxFilterData& filterData,
+        const PxQueryHit& hit) override
+    {
+        return PxQueryHitType::eNONE;
+    }
+
+private:
+    _uint m_iTargetMask;
+    _bool m_bQueryTrigger;
+};
+
+class CPhysicsSystem final : public IPhysicsService
+{
+#ifdef USINGPHYSICS 
+
+private:
+    CPhysicsSystem() DEFAULT;
+    virtual ~CPhysicsSystem() DEFAULT;
+
+public:
+    PxPhysics* Get_Physics()           override { return m_pPhysics; }
+    PxScene* Get_Scene()             override { return m_pScene; }
+    PxControllerManager* Get_ControllerManager() override { return m_pControllerManager; }
+    PxMaterial* Get_DefaultMaterial()   override { return m_pMaterial; }
+    HRESULT              Add_Material(const string& strKey, _float fStatic, _float fDynamic, _float fRestitution) override;
+    PxMaterial* Get_Material(const string& strKey) override;
+
+public:
+    HRESULT       Initialize();
+    virtual void  Update(_float dt) override;
+    virtual void  Late_Update(_float dt) override;
+
+    virtual _bool Raycast(const PHYSICS_RAY& desc, PHYSICS_RAY_HIT& outHit) override;
+    virtual _bool Raycast_Multiple(const PHYSICS_RAY& desc, PHYSICS_RAY_HITS& outHits) override;
+    virtual _bool Raycast_All(const PHYSICS_RAY& desc, PHYSICS_RAY_HITS& outHits) override;
+
+    virtual PxTriangleMesh* Cook_TriangleMesh(const string& strModelKey, class CModel* pModel) override;
+
+private:
+    void Setup_RayHitInfo(const PxRaycastHit& pxHit, PHYSICS_RAY_HIT& outHit);
+
+    static PxFilterFlags SimulationFilterShader(
+        PxFilterObjectAttributes attributes0, PxFilterData filterData0,
+        PxFilterObjectAttributes attributes1, PxFilterData filterData1,
+        PxPairFlags& pairFlags, const void* constantBlock, PxU32 constantBlockSize);
+
+    HRESULT Cooking(const string& strModelKey, class CModel* pModel);
+    PxTriangleMesh* Load_CookedMesh(const string& strFilePath);
+
+private:
+    class CUserErrorCallback : public PxErrorCallback
+    {
+    public:
+        virtual void reportError(PxErrorCode::Enum code, const char* message, const char* file, int line) override
+        {
+            // 디버그 출력
+            char buffer[1024];
+            sprintf_s(buffer, "[PhysX Error] %s (%s line %d)\n", message, file, line);
+            OutputDebugStringA(buffer);
+        }
+    };
+
+private:
+    PxFoundation* m_pFoundation = { nullptr }; // 기반
+    PxPhysics* m_pPhysics = { nullptr }; // 물리객체를 만들기(Device 역할)
+    PxPvd* m_pPvd = { nullptr }; // 디버깅 툴용
+    PxDefaultCpuDispatcher* m_pDispatcher = { nullptr }; // 스레드관리자(멀티스레딩 물리연산)
+    PxScene* m_pScene = { nullptr }; // 물리월드
+    PxMaterial* m_pMaterial = { nullptr }; // 기본 물리재질
+    map<string, PxMaterial*> m_Materials;                        // 물리재질
+    PxControllerManager* m_pControllerManager = { nullptr }; // 캐릭터 움직임 관리하는 매니저
+    PxDefaultAllocator       m_Allocator;                        // 메모리 할당자
+    CUserErrorCallback       m_ErrorCallback;                    // 에러 리포터
+
+    //_float                  m_fTimer = {};
+    //const _float            m_fDelta = 1.0f / 60.f;
+    map<string, PxTriangleMesh*> m_CachedTriangleMeshes;                 // 쿠킹된 메쉬 캐싱
+    PxCooking* m_pCooking = { nullptr };
+
+    _float m_fFixedTimeStep = 1.f / 60.f;  // 60Hz
+    _float m_fAccumulator = 0.f;
+
+public:
+    static CPhysicsSystem* Create();
+    virtual void Free() override;
+#endif
+
+};
+
+NS_END

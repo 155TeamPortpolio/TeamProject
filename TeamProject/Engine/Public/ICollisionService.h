@@ -8,17 +8,15 @@ public IService
 protected:
     virtual  ~ICollisionService() DEFAULT;
 public:
-    virtual void Update(_float dt) PURE;
-    virtual void Late_Update(_float dt) PURE;
-
-public:
-   virtual _int RegisterCollider(class CCollider* pCollider, _int Index) PURE;
-   virtual void UnregisterCollider(class CCollider* pCollider, _int Index)PURE;
-   virtual void DeActiveCollider(class CCollider* pCollider, _int Index)PURE;
-   virtual void ActiveCollider(class CCollider* pCollider, _int Index)PURE;
-
-#ifdef _DEBUG
-   virtual void Render_Debug() PURE;
-#endif 
+    virtual void  Update(_float dt) PURE;
+    virtual void  Late_Update(_float dt) PURE;
+    virtual void  Render_GUI() PURE;
+    virtual PxUserControllerHitReport* Get_CCTCallback() PURE;
+    virtual _int  RegisterCollidable(class ICollidable* pCollidable, _int Index) PURE;
+    virtual void  UnRegisterCollidable(class ICollidable* pCollidable, _int Index) PURE;
+    virtual void  Set_Render(_bool bRender) PURE;
+    virtual _bool Get_Render() const PURE;
+    virtual void  Log_CollisionEvent(const string& strEvent) PURE;
+    virtual void  Render_Debug() PURE;
 };
 NS_END

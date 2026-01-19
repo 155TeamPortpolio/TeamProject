@@ -9,20 +9,21 @@ class ENGINE_DLL CUIObjcetBuilder
         ~CUIObjcetBuilder();
     public:
         class CUI_Object* Build(const string& instanceKey, _uint* id = nullptr);
+
     public:
-        CUIObjcetBuilder& Position(const _float2 position);
+        CUIObjcetBuilder& Offset(const _float2 offset);
         CUIObjcetBuilder& Rotate(const _float rotate);
         CUIObjcetBuilder& Scale(const _float2 scale);
-        CUIObjcetBuilder& Set_Anchor(ANCHOR eAnchor, _float2 vPivot);
+        CUIObjcetBuilder& Size(const _float2 size);
+        CUIObjcetBuilder& Anchor(ANCHOR eAnchor);
+        CUIObjcetBuilder& Asset(const string& assetKey);
+        CUIObjcetBuilder& Add_UIDesc(UI_DESC* pArg);
+        CUIObjcetBuilder& WorldPos(const _float3 worldPos);
 
     private:
         class CGameInstance* m_pGameInstance = { nullptr };
         CLONE_DESC* m_CloneDesc = { nullptr };
         UI_DESC* m_pObjDesc = { nullptr };
-
-        _bool m_bPivoted = { false };
-        ANCHOR m_eAnchor = { ANCHOR::Center};
-        _float2 m_vPivot = {};
         unordered_map<type_index, COMPONENT_DESC*> m_CompDesc;
 };
 

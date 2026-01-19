@@ -135,9 +135,60 @@ void CTransform::Set_vectorPos(_fvector position)
 	}
 }
 
+void CTransform::Set_WorldPos(_fvector position)
+{
+	if (m_pParentTransform)
+	{
+		_float4x4 matParentInverse = m_pParentTransform->Get_InverseWorldMatrix();
+		_vector vLocalPos = XMVector3TransformCoord(position, XMLoadFloat4x4(&matParentInverse));
+		Set_vectorPos(vLocalPos);
+	}
+	else
+	{
+		Set_vectorPos(position);
+	}
+	MarkDirty();
+}
+
 void CTransform::Set_Y(const _float& position)
 {
 	m_vPosition.y = position;
+	MarkDirty();
+}
+
+void CTransform::Set_Quaternion(_fvector quaternion)
+{
+	_vector4 quat = quaternion;
+	quat.Normalize();
+	XMStoreFloat4(&m_qRotation, quat);
+	MarkDirty();
+}
+
+void CTransform::Add_Quaternion(_quaternion quaternion)
+{
+	_fvector myQuaternion = XMLoadFloat4(&m_qRotation);
+	_fvector newQuaternion = XMQuaternionMultiply(quaternion, myQuaternion);
+	_vector finalQuaternion = XMQuaternionNormalize(newQuaternion);
+	XMStoreFloat4(&m_qRotation, finalQuaternion);
+	MarkDirty();
+}
+
+void CTransform::Set_WorldQuaternion(_fvector quaternion)
+{
+	if (m_pParentTransform)
+	{	// 부모 스케일이 균등하지 않으면 나중에 문제 생길 수 있음 : ex) scale(1,2,1)
+		_float4x4 parentWorldMat = m_pParentTransform->Get_WorldMatrix();	// 부모월드행렬
+		_vector parentScale, parentRot, parentTrans;
+		XMMatrixDecompose(&parentScale, &parentRot, &parentTrans, XMLoadFloat4x4(&parentWorldMat));	// 회전추출
+		_vector parentRotInv = XMQuaternionInverse(parentRot);	// 회전행렬의 역행렬
+		_vector localRot = XMQuaternionMultiply(quaternion, parentRotInv);
+
+		Set_Quaternion(localRot);
+	}
+	else
+	{
+		Set_Quaternion(quaternion);
+	}
 	MarkDirty();
 }
 
@@ -206,6 +257,9 @@ _float4x4* CTransform::Get_InverseWorldMatrix_Ptr()
 
 _vector CTransform::Get_WorldPos()
 {
+	if (Check_Dirty())
+		Update_Transform();
+
 	if (m_pParentTransform) {
 		_vector worldpos = XMVector3Transform(XMLoadFloat4(&m_vPosition), XMLoadFloat4x4(m_pParentTransform->Get_WorldMatrix_Ptr()));
 		return worldpos;
@@ -250,19 +304,45 @@ void CTransform::TranslateMatrix(_fmatrix matrix)
 void CTransform::Render_GUI()
 {
 	ImGui::SeparatorText("Transform");
-	float childWidth = ImGui::GetContentRegionAvail().x;
 	const float textLineHeight = ImGui::GetTextLineHeightWithSpacing();
 	const float childHeight = (textLineHeight * 8) + (ImGui::GetStyle().WindowPadding.y * 2);
 
 	ImGui::BeginChild("##TransformChild", ImVec2{ 0, childHeight }, true);
+
 	ImGui::TextColored(ImVec4(1.f, 1.f, 1.f, 1.f), "Position");
-	ImGui::InputFloat3("##Position", reinterpret_cast<float*>(&m_vPosition), "%.1f", ImGuiInputTextFlags_ReadOnly);
-	ImGui::TextColored(ImVec4(1.f, 1.f, 1.f, 1.f), "Rotation");
-	ImGui::InputFloat4("##Rotation", reinterpret_cast<float*>(&m_qRotation), "%.4f", ImGuiInputTextFlags_ReadOnly);
+	_bool changedPos = ImGui::InputFloat3("##Position", reinterpret_cast<float*>(&m_vPosition), "%.1f");
+
 	ImGui::TextColored(ImVec4(1.f, 1.f, 1.f, 1.f), "Scale");
-	ImGui::InputFloat3("##Scale", reinterpret_cast<float*>(&m_vScale), "%.1f", ImGuiInputTextFlags_ReadOnly);
+	_bool changedScl = ImGui::InputFloat3("##Scale", reinterpret_cast<float*>(&m_vScale), "%.1f");
+
+	ImGui::TextColored(ImVec4(1.f, 1.f, 1.f, 1.f), "Rotation");
+	ImGui::InputFloat4("##Rotation", reinterpret_cast<float*>(&m_qRotation), "%.2f", ImGuiInputTextFlags_ReadOnly);
+
+	_float rad = XMConvertToRadians(90);
+	// X
+	ImGui::TextColored(ImVec4(1.f, 1.f, 1.f, 1.f), "Rotate X");
+	if (ImGui::Button("X -90")) Rotation(XMVectorSet(1, 0, 0, 0), -rad);
+	ImGui::SameLine();
+	if (ImGui::Button("X +90")) Rotation(XMVectorSet(1, 0, 0, 0), +rad);
+
+	// Y
+	ImGui::TextColored(ImVec4(1.f, 1.f, 1.f, 1.f), "Rotate Y");
+	if (ImGui::Button("Y -90")) Rotation(XMVectorSet(0, 1, 0, 0), -rad);
+	ImGui::SameLine();
+	if (ImGui::Button("Y +90")) Rotation(XMVectorSet(0, 1, 0, 0), +rad);
+
+	// Z
+	ImGui::TextColored(ImVec4(1.f, 1.f, 1.f, 1.f), "Rotate Z");
+	if (ImGui::Button("Z -90")) Rotation(XMVectorSet(0, 0, 1, 0), -rad);
+	ImGui::SameLine();
+	if (ImGui::Button("Z +90")) Rotation(XMVectorSet(0, 0, 1, 0), +rad);
+
+	if (changedPos || changedScl)
+		MarkDirty();
+
 	ImGui::EndChild();
 }
+
 
 void CTransform::LookAt(_fvector vAt)
 {
@@ -292,7 +372,24 @@ void CTransform::LookAt(_fvector vAt)
 	XMStoreFloat4(&m_qRotation, vQuaternion);
 
 	MarkDirty();
+}
 
+void CTransform::Set_Look(_fvector vAt)
+{
+	_fvector vLookDir = XMVector3Normalize(vAt);
+	_vector vPos = XMLoadFloat4(&m_vPosition);
+	_fvector vWorldUp = XMVectorSet(0.f, 1.f, 0.f, 0.f);
+	_fvector vRight = XMVector3Normalize(XMVector3Cross(vWorldUp, vLookDir));
+	_fvector vUp = XMVector3Cross(vLookDir, vRight);
+	_matrix vRotmat = XMMatrixIdentity();
+	vRotmat.r[0] = vRight;
+	vRotmat.r[1] = vUp;
+	vRotmat.r[2] = vLookDir;
+
+	_vector vQuaternion = XMQuaternionRotationMatrix(vRotmat);
+	XMStoreFloat4(&m_qRotation, vQuaternion);
+
+	MarkDirty();
 }
 
 void CTransform::Override_Rotation(_fvector vAxis, _float fRadian)
@@ -312,7 +409,7 @@ void CTransform::Reset_Rotation()
 
 void CTransform::Update_Transform()
 {
-	if (m_pParentTransform && m_pParentTransform->m_bDirty)
+	if (m_pParentTransform/* && m_pParentTransform->m_bDirty*/)
 		m_pParentTransform->Update_Transform();
 
 	_matrix matScale = XMMatrixScaling(m_vScale.x, m_vScale.y, m_vScale.z);
@@ -371,8 +468,6 @@ void CTransform::MarkDirty()
 	m_bDirty = true;
 	m_VersionCounter++;
 }
-
-
 
 CTransform* CTransform::Create()
 {

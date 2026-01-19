@@ -5,30 +5,30 @@
 #include "Texture.h"
 #include "IResourceService.h"
 #include "VI_Point.h"
-
-CSprite2D::CSprite2D()
-{
-}
+#include "UI_Object.h"
 
 CSprite2D::CSprite2D(const CSprite2D& rhs)
-	:CComponent(rhs)
+	:CComponent(rhs),
+	m_pShader(rhs.m_pShader),
+	m_pPoint(rhs.m_pPoint),
+	m_pTextures(rhs.m_pTextures),
+	m_TextKey(rhs.m_TextKey)
 {
-}
-
-CSprite2D::~CSprite2D()
-{
+	Safe_AddRef(m_pShader);
+	Safe_AddRef(m_pPoint);
+	for (auto tex : m_pTextures)
+		Safe_AddRef(tex);
 }
 
 HRESULT CSprite2D::Initialize_Prototype()
 {
-	
+	m_pPoint = CVI_Point::Create(CGameInstance::GetInstance()->Get_Device(), "Sprite2D");
+
 	return S_OK;
 }
 
-
 HRESULT CSprite2D::Initialize(COMPONENT_DESC* pArg)
 {
-	m_pPoint = CVI_Point::Create(CGameInstance::GetInstance()->Get_Device(), "Sprite2D");
 	if (m_pPoint == nullptr)
 		return E_FAIL;
 
@@ -53,9 +53,9 @@ void CSprite2D::Apply_Shader(ID3D11DeviceContext* pContext)
 		m_pShader->Bind_Value("SpriteTexture", param);
 	}
 
-	for (auto& Slot : m_DynamicSlots) {
+	for (auto& Slot : m_DynamicSlots) 
 		m_pShader->Bind_Value(Slot.first, Slot.second);
-	}
+
 
 	m_pShader->Apply(m_PassConstant, pContext);
 }
@@ -71,9 +71,9 @@ void CSprite2D::Draw_Sprite(ID3D11DeviceContext* pContext)
 
 HRESULT CSprite2D::ChangeSprite(_uint Index)
 {
-	if (Index >= m_pTextures.size()) {
+	if (Index >= m_pTextures.size()) 
 		return E_FAIL;
-	}
+	
 
 	if(m_pTextures[Index] == nullptr)
 		return E_FAIL;
@@ -87,9 +87,9 @@ CVIBuffer* CSprite2D::Get_Buffer()
 	return m_pPoint;
 }
 
-HRESULT CSprite2D::Add_Texture(const string& levelKey, const string& TextureKey)
+HRESULT CSprite2D::Add_Texture(const string& levelKey, const string& texKey)
 {
-	CTexture* pTexture = CGameInstance::GetInstance()->Get_ResourceMgr()->Load_Texture(levelKey, TextureKey);
+	CTexture* pTexture = CGameInstance::GetInstance()->Get_ResourceMgr()->Load_Texture(levelKey, texKey, true);
 
 	if (!pTexture)
 		return E_FAIL;
@@ -99,23 +99,23 @@ HRESULT CSprite2D::Add_Texture(const string& levelKey, const string& TextureKey)
 	return S_OK;
 }
 
-HRESULT CSprite2D::Change_Texture(_uint index, const string& levelKey, const string& TextureKey)
+HRESULT CSprite2D::Change_Texture(_uint idx, const string& levelKey, const string& texKey)
 {
-	if (index >= m_pTextures.size()){
-		Add_Texture(levelKey, TextureKey);
-		return S_OK;
-	}
-	else {
-		if (m_pTextures[index])
-			Safe_Release(m_pTextures[index]);
+	if (idx >= m_pTextures.size())
+		Add_Texture(levelKey, texKey);
+	else
+	{
+		if (m_pTextures[idx])
+			Safe_Release(m_pTextures[idx]);
 
-		CTexture* pTexture = CGameInstance::GetInstance()->Get_ResourceMgr()->Load_Texture(levelKey, TextureKey);
-
-		if (!pTexture)
+		auto tex = CGameInstance::GetInstance()->Get_ResourceMgr()->Load_Texture(levelKey, texKey, true);
+		if (!tex)
 			return E_FAIL;
-		m_pTextures[index] = pTexture;
-		Safe_AddRef(pTexture);
+
+		m_pTextures[idx] = tex;
+		Safe_AddRef(tex);
 	}
+	return S_OK;
 }
 
 HRESULT CSprite2D::Link_Shader(const string& levelKey, const string& shaderKey)
@@ -136,6 +136,12 @@ HRESULT CSprite2D::ChangePass(const string& passConstant)
 		return S_OK;
 
 	m_PassConstant = passConstant;
+	return S_OK;
+}
+
+HRESULT CSprite2D::Set_TextKey(const string& textKey)
+{
+	m_TextKey = textKey;
 	return S_OK;
 }
 
@@ -178,9 +184,26 @@ bool CSprite2D::IsValid()
 	return false;
 }
 
-
 void CSprite2D::Render_GUI()
 {
+	if (!m_pTextures.empty()) 
+	{
+		ImGui::Image((ImTextureID)m_pTextures.front()->Get_SRV(),
+			ImVec2(1280 / 5, 720 / 5));
+	}
+}
+
+_float CSprite2D::Get_AspectRatio()
+{
+	if (m_pTextures.empty() || m_pTextures.size() <= m_iDrawIndex || !m_pTextures[m_iDrawIndex])
+		return 1.f;
+
+	const _uint2 vSize = m_pTextures[m_iDrawIndex]->Get_Size();
+
+	if (vSize.x == 0 || vSize.y == 0)
+		return 1.f;
+
+	return vSize.x / static_cast<_float>(vSize.y);
 }
 
 CSprite2D* CSprite2D::Create()
@@ -194,11 +217,6 @@ CSprite2D* CSprite2D::Create()
 	return instance;
 }
 
-CComponent* CSprite2D::Clone()
-{
-	return new CSprite2D(*this);
-}
-
 void CSprite2D::Free()
 {
 	__super::Free();
@@ -206,7 +224,5 @@ void CSprite2D::Free()
 	Safe_Release(m_pShader);
 
 	for (auto& texture : m_pTextures)
-	{
 		Safe_Release(texture);
-	}
 }

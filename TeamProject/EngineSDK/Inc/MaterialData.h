@@ -32,11 +32,12 @@ public:
 
 public:
 	_bool Has_Texture(TEXTURE_TYPE eType);
+	_bool Has_NonOpaque(TEXTURE_TYPE eType, _uint Index, AlphaCheckLevel level);
 public:
 	virtual void Render_GUI();
 	virtual void Render_GUI( vector<_uint>& TextureIndexs);
 
-protected:
+public:
 	string ConvertToConstant(TEXTURE_TYPE eType);
 
 protected:

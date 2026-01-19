@@ -34,9 +34,18 @@ public:
 	virtual void Late_Update(_float dt) PURE;
 
 public:
-	virtual void OnCollisionEnter(COLLISION_CONTEXT context);
-	virtual void OnCollisionStay(COLLISION_CONTEXT context);
-	virtual void OnCollisionExit(COLLISION_CONTEXT context);
+	virtual void OnCollisionEnter() {};
+	virtual void OnCollisionStay() {};
+	virtual void OnCollisionExit() {};
+	virtual void OnTriggerEnter() {};
+	virtual void OnTriggerExit() {};
+
+	virtual void OnCollisionEnter(CGameObject* pOther) {};
+	virtual void OnCollisionStay(CGameObject* pOther) {};
+	virtual void OnCollisionExit(CGameObject* pOther) {};
+	virtual void OnTriggerEnter(CGameObject* pOther) {};
+	virtual void OnTriggerStay(CGameObject* pOther) {};
+	virtual void OnTriggerExit(CGameObject* pOther) {};
 
 public:
 	_bool Has_Tag(const string& tag) { return m_InstanceTag == tag; };
@@ -55,11 +64,18 @@ public:
 
 public:
 	LAYER_DESC Get_LayerDesc();
+	OBJECT_HANDLE Get_Handle();
 public:
 	const string& Get_InstanceName() { return m_InstanceName; }
 	const _uint Get_ObjectID() { return m_ObjectID; }
-	_float4x4* Get_WorldMatrix();
+	/*----------------------------------------*/
+	_float4x4* Get_WorldMatrix_Ptr();
 	_float4 Get_Position();
+
+	Matrix Get_WorldMatrix();
+	_vector3 Get_WorldPos();
+	_quaternion Get_WorldQuat();
+	/*----------------------------------------*/
  	_bool Is_Root() { return m_isRootObject; };
 	const vector<CGameObject*> Get_Children();
 
@@ -68,14 +84,29 @@ public:
 	void Set_Alive(_bool alive) { m_isAlive = alive; };
 
 public:
+	void Set_FromPool(_bool fromPool) { m_PoolMark.fromPool = fromPool; }
+	bool IsFromPool() const { return m_PoolMark.fromPool; }
+	void Set_PoolKey(CLONE_DESC key) { m_PoolMark.key = key; }
+	const CLONE_DESC& Get_PoolKey() const { return m_PoolMark.key; }
+
+	virtual void OnPooledAcquire(INIT_DESC* pArg = nullptr) {}		// 풀에서 꺼낼 때
+	virtual void OnPooledRelease() {}														// 풀로 돌아갈 때
+
+public:
 	void SetRenderLayer(RENDER_LAYER layer) { m_eRenderLayer = layer; };
 	RENDER_LAYER GetRenderLayer() const {return m_eRenderLayer; };
 
 private:
 	HRESULT Make_OpaquePacket();
 	HRESULT Make_BlendedPacket(OPAQUE_PACKET packet);
+	HRESULT Make_NonLightPacket(OPAQUE_PACKET packet);
 	HRESULT Make_InstancePacket();
+	HRESULT Make_ParticlePacket();
+	HRESULT Make_EffectPacket(OPAQUE_PACKET packet);
+	HRESULT Make_3DUIPacket(OPAQUE_PACKET packet);
 
+private:
+	_float Calculate_LinearDepth(const MINMAX_BOX& box);
 protected:
 	_bool m_isRootObject = { true };
 	_uint m_ObjectID = {};
@@ -92,6 +123,7 @@ protected:
 
 protected:
 	RENDER_LAYER m_eRenderLayer = { RENDER_LAYER::Default };
+	POOL_MARK m_PoolMark;
 
 public:
 	virtual CGameObject* Clone(INIT_DESC* pArg = nullptr)PURE;
@@ -121,11 +153,13 @@ inline T* CGameObject::Add_Component(Args && ...args)
 		m_Components.insert({ type_index(typeid(CModel)), comp });
 		Safe_AddRef(comp);
 	}
-	if constexpr (is_base_of_v<CCollider, T>) //충돌체 특수 처리
+
+	if constexpr (is_base_of_v<ICollidable, T>)
 	{
-		m_Components.insert({ type_index(typeid(CCollider)), comp });
+		m_Components.insert({ type_index(typeid(ICollidable)), comp });
 		Safe_AddRef(comp);
 	}
+
 	return comp;
 }
 
@@ -150,14 +184,14 @@ inline HRESULT CGameObject::Remove_Component()
 			Safe_Release(iter->second);
 			m_Components.erase(type_index(typeid(CModel)));
 		}
-		if constexpr (is_base_of_v<CCollider, T>) //충돌체 특수 처리
+		if constexpr (is_base_of_v<ICollidable, T>)
 		{
 			Safe_Release(iter->second);
-			m_Components.erase(type_index(typeid(CCollider)));
+			m_Components.erase(type_index(typeid(ICollidable)));
 		}
 		Safe_Release(iter->second);
 		m_Components.erase(iter);
-			return S_OK;
+		return S_OK;
 	}
 	else {
 		return E_FAIL;

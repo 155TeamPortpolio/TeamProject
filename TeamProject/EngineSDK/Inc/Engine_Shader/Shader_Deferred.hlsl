@@ -1,27 +1,18 @@
-#include "Shader_Define.hlsl"
+#include "Shader_Deferred_Define.hlsl"
 
 matrix g_WorldMatrix;
 
-Texture2D g_NormalTexture;
-Texture2D g_DiffuseTexture;
-Texture2D g_ShadeTexture;
-Texture2D g_SpecularTexture;
-Texture2D g_EmmisiveTexture;
-Texture2D g_DepthTexture;
-Texture2D g_ShadowTexture;
+float   g_FogDensity;
+float4  g_FogColor;
+bool    g_FogUse;
+float   g_Time;
 
-Texture2D g_FinalTexture;
-Texture2D g_UITexture;
-Texture2D g_PostProcessTexture;
-
-vector g_vLightDir;
-vector g_vLightPos;
-float      g_fLightRange;
-vector g_vLightDiffuse;
-vector g_vLightAmbient;
-vector g_vLightSpecular;
-vector g_vMtrlAmbient = 1.f;
-vector g_vMtrlSpecular = 1.f;
+float   g_RadialEaseT;
+float3  g_AddictiveColor;
+float   g_AddictiveStrength = 3.f;
+bool   g_UseAddictiveColor = false;
+float2  g_RadialCenter;
+bool    g_RadialUse = false;
 
 struct VS_IN
 {
@@ -61,184 +52,316 @@ struct PS_OUT_BACKBUFFER
 
 struct PS_OUT_LIGHT
 {
-    vector vShade : SV_TARGET0;
-    vector vSpecular : SV_TARGET1;
+    vector vLight : SV_TARGET0;
+    float2 fLightInfo : SV_TARGET1;
 };
 
-PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
+struct PS_OUT_RESULT
 {
-    PS_OUT_LIGHT Out;
+    vector vResult : SV_TARGET0;
+};
+
+PS_OUT_RESULT PS_FOG(PS_IN In)
+{
+    PS_OUT_RESULT Out;
+
+    float4 vStaticDepthDesc = StaticDepthTexture.Sample(DefaultSampler, In.vTexcoord);
+    float4 vSkinnedDepthDesc = SkinnedDepthTexture.Sample(DefaultSampler, In.vTexcoord);
+    float4 vScene = FinalTexture.Sample(DefaultSampler, In.vTexcoord);
     
-    vector vNormalDesc = g_NormalTexture.Sample(DefaultSampler, In.vTexcoord);
-    vector vNormal = vector(vNormalDesc.xyz * 2.f - 1.f, 0.f);
-    vector vDepthDesc = g_DepthTexture.Sample(DefaultSampler, In.vTexcoord);
+    float effectAlpha = 1 - EffectCombinedTexture.Sample(DefaultSampler, In.vTexcoord).a;
+    
+    if (g_FogUse == false)
+    {
+        Out.vResult = vScene;
+        return Out;
+    }
+    
+    float4 vDepthDesc = (vStaticDepthDesc.x > 0.0001f) ? vStaticDepthDesc : vSkinnedDepthDesc;
     float fViewZ = vDepthDesc.y * zFar;
     
-    Out.vShade = g_vLightDiffuse * saturate(dot(normalize(g_vLightDir) * -1.f, vNormal)) +
-        (g_vLightAmbient * g_vMtrlAmbient);
-    
     vector vWorldPos;
-    
-    /* Åõ¿µ°ø°£ »óÀÇx, y¸¦ ±¸ÇÑ´Ù. */
-    
-    /* ·ÎÄÃÀ§Ä¡ * ¿ùµåÇà·Ä * ºäÇà·Ä * Åõ¿µÇà·Ä * 1/w */
     vWorldPos.x = In.vTexcoord.x * 2.f - 1.f;
     vWorldPos.y = In.vTexcoord.y * -2.f + 1.f;
     vWorldPos.z = vDepthDesc.x;
     vWorldPos.w = 1.f;
     
-    /* ·ÎÄÃÀ§Ä¡ * ¿ùµåÇà·Ä * ºäÇà·Ä * Åõ¿µÇà·Ä * 1/w * w */
     vWorldPos = vWorldPos * fViewZ;
-    
-    /* Åõ¿µÇà·ÄÀÇ ¿ªÀ» °öÇÑ´Ù. */
-    /* ·ÎÄÃÀ§Ä¡ * ¿ùµåÇà·Ä * ºäÇà·Ä */
     vWorldPos = mul(vWorldPos, matProjectionInverse);
-    
-    /* ·ÎÄÃÀ§Ä¡ * ¿ùµåÇà·Ä  */
     vWorldPos = mul(vWorldPos, matViewInverse);
     
-    vector vLook = vWorldPos - vCamPosition;
-    vector vReflect = normalize(reflect(normalize(g_vLightDir), vNormal));
+    float3 vViewDir = vWorldPos.xyz - vCamPosition.xyz;
+    float fDistance = length(vViewDir);
     
-    Out.vSpecular = (g_vLightSpecular * g_vMtrlSpecular) * pow(saturate(dot(normalize(vLook) * -1.f, vReflect)), 50.f);
+    float fFogFactor = exp(-g_FogDensity * fDistance);
+    
+    fFogFactor = saturate(fFogFactor);
+    fFogFactor = lerp(0.3f, 1.0f, fFogFactor);
+    
+    float4 vFoggedColor = lerp(g_FogColor, vScene, fFogFactor);
+ 
+    Out.vResult = lerp(vScene, vFoggedColor, effectAlpha);
     
     return Out;
 }
 
-PS_OUT_LIGHT PS_MAIN_POINT(PS_IN In)
+PS_OUT_RESULT PS_HDR_BRIGHTPASS(PS_IN In)
 {
-    PS_OUT_LIGHT Out;
+    PS_OUT_RESULT Out;
     
-    vector vNormalDesc = g_NormalTexture.Sample(DefaultSampler, In.vTexcoord);
-    vector vNormal = vector(vNormalDesc.xyz * 2.f - 1.f, 0.f);
-    vector vDepthDesc = g_DepthTexture.Sample(DefaultSampler, In.vTexcoord);
-    float fViewZ = vDepthDesc.y * zFar;
+    float4 scene = FinalTexture.Sample(DefaultSampler, In.vTexcoord);
+    float4 bright = SoftExtractBright(scene);
     
-    vector vWorldPos;
+    Out.vResult = bright;
+
+    return Out;
+}
+
+PS_OUT_RESULT PS_HDR_BLURH(PS_IN In)
+{
+    PS_OUT_RESULT Out;
     
-    /* Åõ¿µ°ø°£ »óÀÇx, y¸¦ ±¸ÇÑ´Ù. */
+    float2 texelSize = 1.0 / float2(fScreenWidth, fScreenHeight);
+    float3 result = 0;
     
-    /* ·ÎÄÃÀ§Ä¡ * ¿ùµåÇà·Ä * ºäÇà·Ä * Åõ¿µÇà·Ä * 1/w */
-    vWorldPos.x = In.vTexcoord.x * 2.f - 1.f;
-    vWorldPos.y = In.vTexcoord.y * -2.f + 1.f;
-    vWorldPos.z = vDepthDesc.x;
-    vWorldPos.w = 1.f;
+    float weights[3] = { 0.398942, 0.241971, 0.053991 };
     
-    /* ·ÎÄÃÀ§Ä¡ * ¿ùµåÇà·Ä * ºäÇà·Ä * Åõ¿µÇà·Ä * 1/w * w */
-    vWorldPos = vWorldPos * fViewZ;
+    result = HDRBrightTexture.Sample(DefaultSampler, In.vTexcoord).rgb * weights[0];
     
-    /* Åõ¿µÇà·ÄÀÇ ¿ªÀ» °öÇÑ´Ù. */
-    /* ·ÎÄÃÀ§Ä¡ * ¿ùµåÇà·Ä * ºäÇà·Ä */
-    vWorldPos = mul(vWorldPos, matProjectionInverse);
+    for (int i = 1; i < 3; ++i)
+    {
+        float2 offset = float2(texelSize.x * i, 0);
+        result += HDRBrightTexture.Sample(DefaultSampler, In.vTexcoord + offset).rgb * weights[i];
+        result += HDRBrightTexture.Sample(DefaultSampler, In.vTexcoord - offset).rgb * weights[i];
+    }
     
-    /* ·ÎÄÃÀ§Ä¡ * ¿ùµåÇà·Ä  */
-    vWorldPos = mul(vWorldPos, matViewInverse);
+    Out.vResult = float4(result, 1.0);
+    return Out;
+}
+
+PS_OUT_RESULT PS_HDR_BLURV(PS_IN In)
+{
+    PS_OUT_RESULT Out;
     
-    vector vLightDir = vWorldPos - g_vLightPos;
+    float2 texelSize = 1.0 / float2(fScreenWidth, fScreenHeight);
+    float3 result = 0;
+
+    float weights[3] = { 0.398942, 0.241971, 0.053991 };
+
+    result = HDRBlurXTexture.Sample(DefaultSampler, In.vTexcoord).rgb * weights[0];
     
-    float fAtt = saturate((g_fLightRange - length(vLightDir)) / g_fLightRange);
+    for (int i = 1; i < 3; ++i)
+    {
+        float2 offset = float2(0, texelSize.y * i);
+        result += HDRBlurXTexture.Sample(DefaultSampler, In.vTexcoord + offset).rgb * weights[i];
+        result += HDRBlurXTexture.Sample(DefaultSampler, In.vTexcoord - offset).rgb * weights[i];
+    }
     
-    Out.vShade = (g_vLightDiffuse * saturate(dot(normalize(vLightDir) * -1.f, vNormal)) +
-        (g_vLightAmbient * g_vMtrlAmbient)) * fAtt;
-    
-    vector vLook = vWorldPos - vCamPosition;
-    vector vReflect = normalize(reflect(normalize(vLightDir), vNormal));
-    
-    Out.vSpecular = (g_vLightSpecular * g_vMtrlSpecular) * pow(saturate(dot(normalize(vLook) * -1.f, vReflect)), 50.f) * fAtt;
+    Out.vResult = float4(result, 1.0);
     
     return Out;
 }
+
+PS_OUT_RESULT PS_RADIAL_BLUR(PS_IN In)
+{
+    PS_OUT_RESULT Out;
+    
+    float4 final = FinalTexture.Sample(DefaultSampler, In.vTexcoord);
+    
+    if (g_RadialUse == false)
+    {
+        Out.vResult = final;
+        return Out;
+    }
+    
+    float2 dir = In.vTexcoord - g_RadialCenter;
+    float dist = length(dir);
+    dir = normalize(dir);
+        
+    float3 result = float3(0, 0, 0);
+    float samples = 15.0f;
+    float strength = g_RadialEaseT * 0.15;
+        
+    for (float i = 0; i < samples; i++)
+    {
+        float offset = (i / samples) * strength * dist;
+        result += FinalTexture.Sample(DefaultSampler, In.vTexcoord - dir * offset).rgb;
+    }
+        
+    Out.vResult = float4(result / samples, final.a);
+
+    return Out;
+}
+
+PS_OUT_RESULT PS_DISTORTION_ADD(PS_IN In)
+{
+    PS_OUT_RESULT Out;
+    
+    // ============================================
+    // ï¿½×½ï¿½Æ®ï¿½ï¿½ ï¿½Ä¶ï¿½ï¿½ï¿½ï¿½ (ï¿½ï¿½ï¿½â¼­ ï¿½ï¿½ï¿½ï¿½)
+    // ============================================
+    float2 center = float2(0.5, 0.5); // È­ï¿½ï¿½ ï¿½ß¾ï¿½
+    float radius = 0.3; // È¿ï¿½ï¿½ ï¿½Ý°ï¿½ (ï¿½×½ï¿½Æ®: 0.2 ~ 0.5)
+    float power = 2.0; // ï¿½î¼± ï¿½ï¿½ï¿½ï¿½ (ï¿½×½ï¿½Æ®: 1.0 ~ 5.0)
+    float strength = 0.8; // ï¿½Ö°ï¿½ ï¿½ï¿½ï¿½ï¿½ (ï¿½×½ï¿½Æ®: -1.0 ~ 1.0)
+    
+    // ============================================
+    // Spherical Distortion ï¿½ï¿½ï¿½
+    // ============================================
+    float2 offset = In.vTexcoord - center;
+    
+    // Aspect Ratio ï¿½ï¿½ï¿½ï¿½
+    offset.x *= 1.777;
+    
+    float distance = length(offset);
+    
+    // ï¿½Ý°ï¿½ ï¿½ï¿½
+    if (distance > radius || distance < 0.0001)
+    {
+        Out.vResult = float4(0.5, 0.5, 0.5, 1.0);
+        return Out;
+    }
+    
+    // ï¿½ï¿½ï¿½ï¿½È­ï¿½ï¿½ ï¿½Å¸ï¿½
+    float normalizedDist = distance / radius;
+    
+    // ï¿½ß½É¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ï°ï¿½
+    float distortStrength = 1.0 - normalizedDist;
+    distortStrength = pow(distortStrength, power);
+    
+    // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
+    float2 direction = normalize(offset);
+    float2 distortion = direction * distortStrength * strength;
+    
+    // Aspect ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    distortion.x /= 1.777;
+    
+    // ï¿½ï¿½ï¿½ï¿½
+    Out.vResult = float4(distortion + 0.5, 0.5, 1.0);
+    
+    return Out;
+}
+
 
 PS_OUT_BACKBUFFER PS_MAIN_COMBINED(PS_IN In)
 {
     PS_OUT_BACKBUFFER Out;
     
-    vector vDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
-    if (0.0f == vDiffuse.a)
-        discard;
+    vector vSkinned = SkinnedCombinedTexture.Sample(DefaultSampler, In.vTexcoord);
+    vector vStatic = StaticCombinedTexture.Sample(DefaultSampler, In.vTexcoord);
+    vector vEffect = EffectCombinedTexture.Sample(DefaultSampler, In.vTexcoord);
+    vector vUI = UICombinedTexture.Sample(DefaultSampler, In.vTexcoord);
     
-    vector vShade = g_ShadeTexture.Sample(DefaultSampler, In.vTexcoord);
-    vector vSpecular = g_SpecularTexture.Sample(DefaultSampler, In.vTexcoord);
+    float3 result = vSkinned.rgb;
     
-    Out.vBackBuffer = vDiffuse * vShade + vSpecular;
-    
-    vector vDepthDesc = g_DepthTexture.Sample(DefaultSampler, In.vTexcoord);
-    float fViewZ = vDepthDesc.y * zFar;
-    
-    vector vWorldPos;
-    
-    vWorldPos.x = In.vTexcoord.x * 2.f - 1.f;
-    vWorldPos.y = In.vTexcoord.y * -2.f + 1.f;
-    vWorldPos.z = vDepthDesc.x;
-    vWorldPos.w = 1.f;
-    
-    vWorldPos = vWorldPos * fViewZ;
-    
-    vWorldPos = mul(vWorldPos, matProjectionInverse);
-    
-    vWorldPos = mul(vWorldPos, matViewInverse);
-    
-    vWorldPos = mul(vWorldPos, matShadowView);
-    
-    vWorldPos = mul(vWorldPos, matShadowProjection);
-    
-    float2 vTexcoord;
-    
-    vTexcoord.x = vWorldPos.x / vWorldPos.w * 0.5f + 0.5f;
-    vTexcoord.y = vWorldPos.y / vWorldPos.w * -0.5f + 0.5f;
-    
-    float4 vLightDepthDesc = g_ShadowTexture.Sample(DefaultSampler, vTexcoord);
-    
-    if (vWorldPos.w - 0.01f > vLightDepthDesc.y * zShadowFar)
-    {
-        Out.vBackBuffer *= 0.3f;
-    }
+    result.rgb = lerp(result.rgb, vStatic.rgb, vStatic.a);
+    result.rgb = lerp(result.rgb, vUI.rgb, vUI.a);
+    float3 finalColor = vEffect.rgb + result * (1.f - vEffect.a);
+    float alpha = max(vEffect.a, max(vUI.a, max(vSkinned.a, vStatic.a)));
+    Out.vBackBuffer = float4(finalColor, alpha);
     
     return Out;
 }
 
 float4 PS_MAIN_FINAL(PS_IN In) : SV_Target
 {
-    float4 scene = g_FinalTexture.Sample(DefaultSampler, In.vTexcoord);
-    float4 ui = g_UITexture.Sample(DefaultSampler, In.vTexcoord);
-    float3 mapped = scene.rgb;
+    float4 scene = FinalTexture.Sample(DefaultSampler, In.vTexcoord);
+    float4 radialBloom = RadialBloomTexture.Sample(DefaultSampler, In.vTexcoord);
+    float4 hdrBloom = HDRBloomFinalTexture.Sample(DefaultSampler, In.vTexcoord);
+    float4 ui = UI2DTexture.Sample(DefaultSampler, In.vTexcoord);
+    
+    float3 hdrColor = scene.rgb;
+    
+    if (g_UseAddictiveColor)
+    {
+        float skinnedAlpha = 1 - SkinnedCombinedTexture.Sample(DefaultSampler, In.vTexcoord).a;
+        float3 tinted = scene.rgb + scene.rgb * g_AddictiveColor * g_AddictiveStrength;
+        hdrColor = lerp(scene.rgb, tinted, skinnedAlpha);
+    }
+    
+    hdrColor += hdrBloom.rgb * 0.3;
+    
+    float3 mapped = ACESFilm(hdrColor) + radialBloom.rgb;
+    
+    float3 finalColor = ui.rgb + mapped * (1.f - ui.a);
 
-    return float4((1 - ui.a) * mapped.xyz + (ui.a * ui.rgb), 1.f);
+    return float4(finalColor, scene.a);
 }
 
 
 technique11 DefaultTechnique
 {
-    pass Directional
-    {
-        SetRasterizerState(RS_Default);
-        SetDepthStencilState(DSS_None, 0);
-        SetBlendState(BS_Blend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-        VertexShader = compile vs_5_0 VS_MAIN();
-        GeometryShader = NULL;
-        PixelShader = compile ps_5_0 PS_MAIN_DIRECTIONAL();
-    }
-
-    pass Point
-    {
-        SetRasterizerState(RS_Default);
-        SetDepthStencilState(DSS_None, 0);
-        SetBlendState(BS_Blend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-        VertexShader = compile vs_5_0 VS_MAIN();
-        GeometryShader = NULL;
-        PixelShader = compile ps_5_0 PS_MAIN_POINT();
-    }
-
-    pass Combined
+    pass HDR_BRIGHT
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_None, 0);
         SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_HDR_BRIGHTPASS();
+    }
+
+    pass HDR_BLURH
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_HDR_BLURH();
+    }
+
+    pass HDR_BLURV
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_HDR_BLURV();
+    }
+
+    pass RADIAL
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_RADIAL_BLUR();
+    }
+
+    pass DISTORTION_ADD
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_Additive, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_DISTORTION_ADD();
+    }
+
+    pass FOG
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_FOG();
+    }
+
+    pass COMBINED
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_Premultiplied, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_COMBINED();
     }
-    pass Final
+
+    pass FINAL
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_None, 0);
@@ -248,4 +371,3 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_MAIN_FINAL();
     }
 }
-

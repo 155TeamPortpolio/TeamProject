@@ -5,7 +5,7 @@
 #include "ModelData.h"
 #include"GameObject.h"
 #include "Transform.h"
-
+#include "Mesh.h"
 CSkeletalModel::CSkeletalModel()
 {
 }
@@ -27,7 +27,10 @@ HRESULT CSkeletalModel::Initialize_Prototype()
 
 HRESULT CSkeletalModel::Initialize(COMPONENT_DESC* pArg)
 {
-
+	if (pArg != nullptr) {
+		auto desc = static_cast<MODEL_INIT_DESC*>(pArg);
+		Link_Model(desc->LevelKey, desc->ModelKey);
+	}
 	return S_OK;
 }
 
@@ -35,6 +38,10 @@ HRESULT CSkeletalModel::Link_Model(const string& levelKey, const string& modelDa
 {
 	Safe_Release(m_pData);
 	m_pData = CGameInstance::GetInstance()->Get_ResourceMgr()->Load_ModelData(levelKey, modelDataKey);
+
+	if (!m_pData)
+		return E_FAIL;
+
 	Safe_AddRef(m_pData);
 	m_DrawableMeshes.resize(m_pData->Get_MeshCount(), true);
 
@@ -153,9 +160,24 @@ MINMAX_BOX CSkeletalModel::Get_LocalBoundingBox()
 		 }
 
 		 m_bDirty = false;
-		 return m_FinalMatices;
+		 return m_CombinedMatrices;
 	 }
 }
+
+ vector<_float4x4> CSkeletalModel::Get_BoneMatrices(_uint meshIndex)
+ {
+	 vector<_float4x4> result;
+	 result.reserve(m_CombinedMatrices.size());
+
+	 for (size_t i = 0; i < m_CombinedMatrices.size(); ++i)
+	 {
+		 _smatrix final = m_CombinedMatrices[i];
+		 _smatrix offset= m_pData->Get_Offset(meshIndex, i);
+
+		 result.push_back(offset*final);
+	 }
+	 return result;
+ }
 
  _float4x4* CSkeletalModel::Get_BoneMatrixPtr(const string& boneName)
  {
@@ -188,7 +210,8 @@ vector<MINMAX_BOX> CSkeletalModel::Get_MeshBoundingBoxes()
 
 MINMAX_BOX CSkeletalModel::Get_MeshBoundingBox(_uint index)
 {
-	return m_pData->Get_MeshBoundingBox(index);
+	return Get_LocalBoundingBox();
+	//return m_pData->Get_MeshBoundingBox(index);
 }
 
 _bool CSkeletalModel::isReadyToDraw()
@@ -227,27 +250,68 @@ void CSkeletalModel::Hide_MehsByName(const string& name)
 	else
 		m_DrawableMeshes[index] = false;
 }
-
 void CSkeletalModel::Render_GUI()
 {
-	ImGui::SeparatorText("Animate Model");
-	float childWidth = ImGui::GetContentRegionAvail().x;
+	ImGui::SeparatorText("Skeletal Model");
 	const float textLineHeight = ImGui::GetTextLineHeightWithSpacing();
-	const float childHeight = (textLineHeight * (m_pData->Get_MeshCount() + 4)) + (ImGui::GetStyle().WindowPadding.y * 2);
+	const float childHeight = (textLineHeight * (m_pData->Get_MeshCount() + 4))
+		+ (ImGui::GetStyle().WindowPadding.y * 2);
 
-	ImGui::BeginChild("##Animate ModelChild", ImVec2{ 0, childHeight }, true);
-		m_pData->Render_GUI();
-		string ID = "HideMesh : ";
-		for (size_t i = 0; i < m_pData->Get_MeshCount(); i++)
+	ImGui::BeginChild("##Skeletal ModelChild", ImVec2{ 0, childHeight }, true);
+	if (ImGui::Button("HideProxy"))
+	{
+		for (_uint index : m_pData->Get_ProxyIndex()) {
+			m_DrawableMeshes[index] = !m_DrawableMeshes[index];
+		};
+	}
+	m_pData->Render_GUI();
+
+	const size_t meshCount = m_pData->Get_MeshCount();
+
+	for (size_t i = 0; i < meshCount; ++i)
+	{
+		const string meshKey = m_pData->Get_Mesh(i)->Get_Key();
+
+		// 안전: m_DrawableMeshes가 meshCount보다 작으면 접근 터짐
+		if (m_DrawableMeshes.size() < meshCount)
+			m_DrawableMeshes.resize(meshCount, true);
+
+		const bool hidden = (m_DrawableMeshes[i] == false);
+
+		// 숨김 상태면 버튼 색 변경
+		if (hidden)
 		{
-
-			if (ImGui::Button((ID + to_string(i)).c_str()))
-			{
-				if (m_DrawableMeshes.size() >= 1) {
-					m_DrawableMeshes[i] = !m_DrawableMeshes[i];
-				}
-			}
+			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.55f, 0.15f, 0.15f, 1.00f));
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.70f, 0.20f, 0.20f, 1.00f));
+			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.45f, 0.12f, 0.12f, 1.00f));
 		}
+
+		// 라벨/ID 분리 (같은 이름 충돌 방지)
+		string label = (hidden ? "[HIDDEN]" : "") + meshKey;
+		string imguiId = "##HideMeshBtn_" + meshKey + "_" + std::to_string(i);
+
+		if (ImGui::Button((label + imguiId).c_str()))
+		{
+			m_DrawableMeshes[i] = !m_DrawableMeshes[i];
+		}
+
+		if (hidden)
+			ImGui::PopStyleColor(3);
+
+
+		if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal))
+		{
+			const bool hidden = !m_DrawableMeshes[i]; // 예시
+			const std::string& meshKey = m_pData->Get_Mesh(i)->Get_Key(); // 예시
+			_uint count = m_pData->Get_Mesh(i)->Get_SkinnedVerticesCount();
+
+			ImGui::SetTooltip("%s%s\nVertices : %u",
+				hidden ? "Hidden mesh: " : "Visible mesh: ",
+				meshKey.c_str(),
+				(unsigned)count);
+		}
+
+	}
 	ImGui::EndChild();
 }
 

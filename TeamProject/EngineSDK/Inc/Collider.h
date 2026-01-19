@@ -1,55 +1,93 @@
 #pragma once
-#include "Component.h"
+#include "ICollidable.h"
+#include "RigidBody.h"
+
 NS_BEGIN(Engine)
-class ENGINE_DLL CCollider abstract:
-    public CComponent
+
+class ENGINE_DLL CCollider final : public ICollidable
 {
-protected:
+private:
     CCollider();
     CCollider(const CCollider& rhs);
     virtual ~CCollider() DEFAULT;
 
 public:
+    PxRigidActor* Get_PxActor()
+    {
+        // 리지드바디가 붙어있다면 동적 Actor 반환
+        if (m_pAttachedRigidBody)
+            return m_pAttachedRigidBody->Get_Body();
+        // 없다면 정적 Actor 반환 (Static Collider)
+        return m_pStaticActor;
+    }
+    PxShape*        Get_Shape() { return m_pShape; }
+    _bool           Is_Trigger() const { return m_bTrigger; }
+    COLLIDER_TYPE   Get_Type() const { return m_eType; }
+    _float3         Get_Center() const { return m_vCenter; }
+    _float3         Get_Size() const { return m_vSize; }
+    _float3         Get_Rotation() const { return m_vRotation; }
+    void            Set_MapToolMode(_bool bEnable) { m_bMapTool = bEnable; }
+    _bool           Is_MapToolMode() const { return m_bMapTool; }
+
+public:
     virtual HRESULT Initialize_Prototype() override;
     virtual HRESULT Initialize(COMPONENT_DESC* pArg) override;
-    virtual void Update() PURE;
-    virtual void Late_Update() PURE;
+    void            Update(_float dt);
+    void            Render_GUI();
+    // 충돌 이벤트 핸들러 (System에서 호출)
+    virtual void    OnCollisionEnter(ICollidable* pOther) override;
+    virtual void    OnCollisionStay(ICollidable* pOther) override;
+    virtual void    OnCollisionExit(ICollidable* pOther) override;
+    void            OnTriggerEnter(ICollidable* pOther) override;
+    void            OnTriggerStay(ICollidable* pOther) override;
+    void            OnTriggerExit(ICollidable* pOther) override;
+
+private:
+    _bool           m_bDebugRender = { true };
+public:
+    virtual void    Render(PrimitiveBatch<VertexPositionColor>* pBatch, _fvector vColor) override;
+    _bool           IsDebugRender() { return m_bDebugRender; }
+    void            Set_DebugRender(_bool bDebugRender) { m_bDebugRender = bDebugRender; }
+
 
 public:
-   virtual _bool Intersect(COLLIDER_SLOT* pSlot) PURE;
-   virtual _bool Has_Desc() PURE;
-   virtual void Make_MinMaxCollider(MINMAX_BOX minMax)PURE;
-   virtual void Set_ColliderActive(_bool Active);
+    void            Set_Center(const _float3& vCenter);
+    void            Set_Size(const _float3& vSize);
+    void            Set_Rotation(const _float3& vRotation);
+    void            Set_Trigger(_bool bTrigger);
+    void            Set_ContactOffset(_float fOffset);  // 충돌계산시작 버퍼 구간 : 크면 허공충돌, 작으면 터널링/겹침
+    void            Set_RestOffset(_float fOffset);     // 정지했을때 서로 유지하려는 거리 : 양수일때 바깥충돌, 음수일때 안쪽충돌
+    void            Set_CollisionMask(_uint iMask) override;
+    void            Set_CollisionGroup(COLLISION_GROUP eGroup)override;
 
-#ifdef _DEBUG
-    virtual void Render(PrimitiveBatch<VertexPositionColor>* pBatch, _fvector vColor) PURE;
-#endif
+private:
+    void            Update_LocalPose();
+    HRESULT         AutoFit(COLLIDER_DESC* pDesc);
+    void            Sync_Transform();
+
+private:
+    class IPhysicsService*      m_pPhysicsSystem = { nullptr };
+    class CTransform*           m_pOwnerTransform = { nullptr };
+    PxShape*                    m_pShape = { nullptr };
+    class CRigidBody*           m_pAttachedRigidBody = { nullptr };
+    PxRigidStatic*              m_pStaticActor = { nullptr };
+
+    PxTriangleMesh*             m_pTriangleMesh = { nullptr };  // 쿠킹된 메쉬
+    _bool                       m_bCooked = { false };      // 쿠킹 여부
+    COLLIDER_TYPE               m_eType = {};
+
+    _float3                     m_vCenter = {};
+    _float3                     m_vSize = {};
+    _float3                     m_vRotation = {};
+    _bool                       m_bTrigger = {};
+    string                      m_strMaterialTag = {};
+
+    _bool                       m_bMapTool = { false };
+
 
 public:
-    virtual COLLIDER_TYPE Get_ColliderType() PURE;
-    COLLISION_CONTEXT Get_Context() { return m_CollisionContext; };
-    void Set_Context(class CGameObject* pObject,const string& eventTag) { m_CollisionContext.Owner = pObject; m_CollisionContext.EventTag = eventTag;};
-    void Set_ContextOwner(class CGameObject* pObject) { m_CollisionContext.Owner = pObject; };
-    void Set_ContextEvent(const string& eventTag) { m_CollisionContext.EventTag = eventTag; };
-    void Reset_Context() { m_CollisionContext.Owner = m_pOwner;  m_CollisionContext.EventTag = {}; };
-    void Reset_ContextEvent() { m_CollisionContext.EventTag = {}; };
-    void Reset_ContextOwner() { m_CollisionContext.Owner = m_pOwner; };
-
-public:
-    void Render_GUI();
-    virtual void Set_CompActive(_bool bActive) override;
-    virtual void Releas_Component() override;
-
-protected:
-    _bool Compare_Same(COLLIDER_SLOT* prev, COLLIDER_SLOT* current);
-
-protected:
-    _int m_SystemIndex = { -1 };
-    COLLISION_CONTEXT m_CollisionContext = {};
-    unordered_set<COLLIDER_SLOT*> m_prevCollider = {}; //이전 프레임에 부딪힘
-    unordered_set<COLLIDER_SLOT*> m_CurrentCollider = {}; //현재 프레임에 부딪힘.
-
-public:
+    static CCollider* Create();
+    virtual CComponent* Clone() override;
     virtual void Free() override;
 };
 

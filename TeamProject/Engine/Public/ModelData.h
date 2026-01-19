@@ -1,6 +1,8 @@
 #pragma once
 #include "Base.h"
+#include "DynamicBoneStruct.h"
 NS_BEGIN(Engine)
+
 class ENGINE_DLL CModelData :
 	public CBase
 {
@@ -12,6 +14,7 @@ public:
 	HRESULT Initialize(const string& filePath, ID3D11Device* pDevice);
 #pragma region Rendering
 	HRESULT Render_Mesh(ID3D11DeviceContext* pContext, _uint Index);
+	HRESULT Render_Mesh(ID3D11DeviceContext* pContext, _uint MeshIndex,_uint IslandIndex);
 
 #pragma endregion 
 
@@ -20,11 +23,13 @@ public:
 	_uint Get_MaterialIndex(_uint meshIndex);
 	_bool hasMesh() { return !m_Meshes.empty(); }
 	class CMesh* Get_Mesh(_uint meshIndex) { return m_Meshes[meshIndex]; }
+	_float4x4 Get_Offset(_uint meshIndex, _uint boneIndex);
 	const D3D11_INPUT_ELEMENT_DESC* Get_ElementDesc(_uint DrawIndex);
 	const _uint Get_ElementCount(_uint DrawIndex);
 	const string_view Get_ElementKey(_uint DrawIndex);
 	_bool isSkinned() { return (m_pSkeleton != nullptr); }
 	_int Find_MeshIndex(const string& name);
+	vector<_uint> Get_ProxyIndex() { return m_ProxyMarked; }
 #pragma endregion 
 
 #pragma region Skeleton
@@ -40,10 +45,14 @@ public:
 	const vector<_int> GenerateFollowingIndices(class CModelData* pMasterData);
 	MINMAX_BOX Get_LocalBoundingBox();
 	MINMAX_BOX Get_MeshBoundingBox(_uint index);
+	_bool Get_RiggedData(HumanoidRigData& outData);
 
+	void Get_AffectBoneIndices(vector<_int>& outvec, _int StartBoneIndex);
+	vector<DYNAMIC_CHAIN_GROUP> Get_ChaingGroups();
 #pragma endregion 
-	virtual void Render_GUI();
 #pragma region GUI
+	virtual void Render_GUI();
+#pragma endregion 
 
 protected:
 	class CSkeleton* m_pSkeleton = { nullptr };
@@ -53,6 +62,8 @@ protected:
 	_float3 m_vMaxLocal = { -FLT_MAX ,-FLT_MAX ,-FLT_MAX };
 
 	_bool isGui_BoneTabOpen = { false };
+	vector<_uint> m_ProxyMarked;
+	
 public:
 	static CModelData* Create(const string& filePath, ID3D11Device* pDevice);
 	virtual void Free() override;

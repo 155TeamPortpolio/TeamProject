@@ -21,14 +21,11 @@ public:
 
 public:
 	HRESULT Add_MRT(const string& strMRTTag, const string& strTargetTag);
-	HRESULT Begin_MRT(const string& strMRTTag);
+	HRESULT Begin_MRT(const string& strMRTTag, _uint Clear = 0xFF, ID3D11DepthStencilView* pExternalDSV = nullptr, _bool DSVClear = true);
 	HRESULT End_MRT();
-	HRESULT Get_TargetParam(const string& strTargetTag, SHADER_PARAM& param);
+	HRESULT Bind_Target(const string& strTargetTag, class CShader* pShader, const string& constantName);
+	vector<class CRenderTarget*>& Find_MRT(const string& strMRTTag);
 	ID3D11DepthStencilView* Get_MTR_DSV(const string& strMRTTag);
-
-public:
-	HRESULT Bind_Targets(const vector<string>& targetNames, bool clearColor, bool clearDepth);
-	HRESULT Restore_Targets();
 
 #ifdef _USING_GUI
 	void Render_GUI();
@@ -42,8 +39,6 @@ public:
 
 private:
 	class CRenderTarget* Find_RenderTarget(const string& strTargetTag);
-	vector<CRenderTarget*>& Find_MRT(const string& strMRTTag);
-
 private:
 	ID3D11Device* m_pDevice = { nullptr };
 	ID3D11DeviceContext* m_pContext = { nullptr };
@@ -56,7 +51,9 @@ private:
 	ID3D11DepthStencilView* m_pDSV = { nullptr };
 
 #ifdef _USING_GUI
+	_bool TargetFilter(const string& tag, const string& filter);
 	_float width, height;
+	string Filter = {};
 #endif // _USING_GUI
 
 	/*Client Target*/

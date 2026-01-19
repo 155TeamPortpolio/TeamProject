@@ -9,6 +9,8 @@
 #include "HierarchyPanel.h"
 #include "InspectorPanel.h"
 #include "GuizmoPanel.h"
+#include "DebugBonePanel.h"
+#include "EnvPanel.h"
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);                // Use ImGui::GetCurrentContext()
 
@@ -27,10 +29,9 @@ HRESULT CGUISystem::Initialize(const ENGINE_DESC& engine, ID3D11Device* pDevice,
 	ImGuiIO& io = ImGui::GetIO();
 	m_GuiIo = &ImGui::GetIO();
 
-	//		ImFont* fonts = io.Fonts->AddFontFromFileTTF("../../Resources/font/SUIT-Bold.ttf", 16.0f, nullptr,
-	//			io.Fonts->GetGlyphRangesKorean()); //
-	//		
-	//		io.FontDefault = fonts;
+	ImFont* fonts = io.Fonts->AddFontFromFileTTF("../../Font/SUIT-Bold.ttf", 16.0f, nullptr,
+		io.Fonts->GetGlyphRangesKorean()); //
+	io.FontDefault = fonts;
 	ImGui::StyleColorsDark();
 	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     /*키보드 컨트롤*/
 	io.DisplaySize = ImVec2((float)engine.iWinSizeX, (float)engine.iWinSizeY);
@@ -57,6 +58,8 @@ void CGUISystem::Update(_float dt)
 	if (m_pGameInstance->Get_InputDev()->Key_Tap(VK_F9))
 		m_bActiveGUI = !m_bActiveGUI;
 
+	if (!m_bActiveGUI) return;
+
 	m_tGuiContext.viewPort = m_pGameInstance->Get_ClientSize();
 	m_GuiIo->DisplaySize = ImVec2(m_tGuiContext.viewPort.x, m_tGuiContext.viewPort.y);
 
@@ -79,12 +82,12 @@ void CGUISystem::Set_Theme()
 	style.GrabRounding = 6.0f;
 
 	style.TreeLinesFlags = ImGuiTreeNodeFlags_DrawLinesToNodes;
-	style.TreeLinesSize = 1.5f;        
-	style.TreeLinesRounding = 5.0f;      
+	style.TreeLinesSize = 1.5f;
+	style.TreeLinesRounding = 5.0f;
 
-	style.FramePadding = ImVec2(4, 4);   
-	style.ItemSpacing = ImVec2(2, 4);  
-	
+	style.FramePadding = ImVec2(4, 4);
+	style.ItemSpacing = ImVec2(2, 4);
+
 	style.FrameBorderSize = 1.5f;
 	style.SelectableTextAlign = ImVec2(0.0f, 0.5f);
 	style.ButtonTextAlign = ImVec2(0.5f, 0.5f);
@@ -119,15 +122,23 @@ void CGUISystem::Set_Theme()
 
 void CGUISystem::Set_Panel()
 {
-	m_Panels.push_back(CHierarchyPanel::Create(&m_tGuiContext));
+	m_pHierachyPanel = CHierarchyPanel::Create(&m_tGuiContext);
+	m_pBonePanel = CDebugBonePanel::Create(&m_tGuiContext);
+	m_Panels.push_back(m_pHierachyPanel);
 	m_Panels.push_back(CInspectorPanel::Create(&m_tGuiContext));
 	m_Panels.push_back(CGuizmoPanel::Create(&m_tGuiContext));
+	m_Panels.push_back(CEnvPanel::Create(&m_tGuiContext));
+	m_Panels.push_back(m_pBonePanel);
+}
+void CGUISystem::Set_Bone(_int boneIndex)
+{
+	m_pBonePanel->Set_Bone(boneIndex);
 }
 
 void CGUISystem::Render_Frame()
 {
 	ImGuiIO& io = ImGui::GetIO();
-	ImGui::SetNextWindowPos(ImVec2(500, 5), ImGuiCond_Always);
+	ImGui::SetNextWindowPos(ImVec2(300, 5), ImGuiCond_Always);
 	ImGui::Begin("FPSWindow", nullptr,
 		ImGuiWindowFlags_NoTitleBar |
 		ImGuiWindowFlags_NoResize |
@@ -148,18 +159,6 @@ void CGUISystem::Adjust_Alpha(_float dt)
 		m_bUsingUI = false;
 	else
 		m_bUsingUI = true;
-
-	ImGuiStyle& style = ImGui::GetStyle();
-	float alpha = style.Alpha;
-
-	if (m_bUsingUI)
-		alpha += dt;
-	else
-		alpha -= dt * 0.4f;
-
-	alpha = clamp(alpha, 0.3f, 1.f);
-	style.Alpha = alpha;
-
 }
 
 void CGUISystem::GUI_Begin()
@@ -171,19 +170,20 @@ void CGUISystem::GUI_Begin()
 
 void CGUISystem::Render_GUI()
 {
-	if (!m_bActiveGUI) return;
 	GUI_Begin();
-
+	Render_Frame();
+	if (!m_bActiveGUI) { GUI_End();  return; };
 	for (auto& panel : m_Panels) {
-		if(panel->Get_Active())
+		if (panel->Get_Active())
 			panel->Render_GUI();
 	}
-	
-	Render_Frame();
+
+	Render_CollisionBtn();
 #ifdef _USING_GUI
 	CGameInstance::GetInstance()->Get_RenderSystem()->Render_GUI();
 #endif // _USING_GUI
 
+	Render_DebugBtn();
 
 	GUI_End();
 }
@@ -212,6 +212,11 @@ bool CGUISystem::Set_ProcHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 	return ImGui_ImplWin32_WndProcHandler(hWnd, message, wParam, lParam);
 }
 
+void CGUISystem::Set_UIMode()
+{
+	m_pHierachyPanel->Set_UI_Mode();
+}
+
 void CGUISystem::Register_Panel(CBasePanel* pPanel)
 {
 	m_Panels.push_back(pPanel);
@@ -220,20 +225,57 @@ void CGUISystem::Register_Panel(CBasePanel* pPanel)
 
 void CGUISystem::Test()
 {
-	if (ImGui::Begin("Level Selector")) 
+	if (ImGui::Begin("Level Selector"))
 	{
 		ImGui::Separator();
 		const auto& levelList = CGameInstance::GetInstance()->Get_LevelMgr()->Get_LevelList();
-		GUIWidget::ShowListString(levelList, [&](const string& selectedLevel)->void {
+		GuiUtil::ShowListString(levelList, [&](const string& selectedLevel)->void {
 			string debugMessage = "Button for '" + selectedLevel + "' was clicked. \n";
 			OutputDebugStringA(debugMessage.c_str());
 			ImGuiStyle& style = ImGui::GetStyle();
 			});
 
 		static _vector vec = XMVectorSet(1, 1, 1, 1);
-		vec= GUIWidget::Vector4Float("TestVector", vec);
+		vec = GuiUtil::Vector4Float("TestVector", vec);
 	}
-	ImGui::End(); 
+	ImGui::End();
+}
+
+void CGUISystem::Render_DebugBtn()
+{
+	ImGui::Begin("##Render_Debug_View",nullptr, ImGuiWindowFlags_NoTitleBar |
+		ImGuiWindowFlags_NoResize |
+		ImGuiWindowFlags_NoMove |
+		ImGuiWindowFlags_NoScrollbar |
+		ImGuiWindowFlags_NoSavedSettings |
+		ImGuiWindowFlags_NoBackground |
+		ImGuiWindowFlags_AlwaysAutoResize);
+	if (ImGui::Button("RenderDebug")) {
+		_bool NowCond = CGameInstance::GetInstance()->Get_RenderSystem()->GetOn();
+		CGameInstance::GetInstance()->Get_RenderSystem()->SetOn(!NowCond);
+	}
+	ImGui::End();
+}
+
+void CGUISystem::Render_CollisionBtn()
+{
+	ImGui::SetNextWindowPos(ImVec2(400, 5), ImGuiCond_Always);
+	ImGui::Begin("##Collision", nullptr,
+		ImGuiWindowFlags_NoTitleBar |
+		ImGuiWindowFlags_NoResize |
+		ImGuiWindowFlags_NoMove |
+		ImGuiWindowFlags_NoScrollbar |
+		ImGuiWindowFlags_NoSavedSettings |
+		ImGuiWindowFlags_NoBackground|
+		ImGuiWindowFlags_AlwaysAutoResize);
+
+	_bool Render = CGameInstance::GetInstance()->Get_CollisionSystem()->Get_Render();
+	if (ImGui::Button(Render?"Collision Show":"Collision Hide")) {
+		CGameInstance::GetInstance()->Get_CollisionSystem()->Set_Render(!Render);
+	}
+	if (Render)
+		CollisionSystem()->Render_GUI();
+	ImGui::End();
 }
 
 CGUISystem* CGUISystem::Create(const ENGINE_DESC& engine, ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

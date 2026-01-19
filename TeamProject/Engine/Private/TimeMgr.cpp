@@ -47,6 +47,24 @@ _float CTimeMgr::Get_TotalTime(const string& timerID)
 	return instance->Get_TotalTime();
 }
 
+_float CTimeMgr::Get_RawDeltaTime(const string& timerID, _bool raw)
+{
+	CTimer* instance = Find_Timer(timerID);
+
+	if (!instance) return 0.f;
+
+	return instance->Get_RawDeltaTime(raw);
+}
+
+_float CTimeMgr::Get_RawTotalTime(const string& timerID)
+{
+	CTimer* instance = Find_Timer(timerID);
+
+	if (!instance) return 0.f;
+
+	return instance->Get_RawTotalTime();
+}
+
 void CTimeMgr::Set_TimeScale(const string& timerID, _float scale)
 {
 	CTimer* instance = Find_Timer(timerID);

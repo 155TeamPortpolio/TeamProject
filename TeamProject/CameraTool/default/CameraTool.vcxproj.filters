@@ -13,11 +13,74 @@
     <ClInclude Include="CameraTool.h">
       <Filter>99. Etc\99. Useless</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\FirstLevel.h">
-      <Filter>01. Level</Filter>
+    <ClInclude Include="..\public\Unagi.h">
+      <Filter>03. Obj\02. Unagi</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\DebugCamData.h">
+      <Filter>03. Obj\00. CamObject</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Grid.h">
+      <Filter>03. Obj\03. Grid</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\CamPanelUtil.h">
+      <Filter>02. Panel\00. CamPanel\CamPanelUtil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\CameraTool_Enum.h">
+      <Filter>99. Etc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\CameraTool_Struct.h">
+      <Filter>99. Etc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ThirdParty\GUI_Inc\GraphEditor.h">
+      <Filter>99. Etc\99. Useless\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ThirdParty\GUI_Inc\imconfig.h">
+      <Filter>99. Etc\99. Useless\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ThirdParty\GUI_Inc\ImCurveEdit.h">
+      <Filter>99. Etc\99. Useless\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ThirdParty\GUI_Inc\ImGradient.h">
+      <Filter>99. Etc\99. Useless\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ThirdParty\GUI_Inc\imgui.h">
+      <Filter>99. Etc\99. Useless\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ThirdParty\GUI_Inc\imgui_internal.h">
+      <Filter>99. Etc\99. Useless\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ThirdParty\GUI_Inc\ImGuizmo.h">
+      <Filter>99. Etc\99. Useless\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ThirdParty\GUI_Inc\ImSequencer.h">
+      <Filter>99. Etc\99. Useless\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ThirdParty\GUI_Inc\imstb_rectpack.h">
+      <Filter>99. Etc\99. Useless\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ThirdParty\GUI_Inc\imstb_textedit.h">
+      <Filter>99. Etc\99. Useless\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ThirdParty\GUI_Inc\imstb_truetype.h">
+      <Filter>99. Etc\99. Useless\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ThirdParty\GUI_Inc\ImZoomSlider.h">
+      <Filter>99. Etc\99. Useless\ImGui</Filter>
     </ClInclude>
     <ClInclude Include="..\public\CamObj.h">
-      <Filter>03. Obj</Filter>
+      <Filter>03. Obj\00. CamObject</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\FreeCam.h">
+      <Filter>03. Obj\01. FreeCam</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\FirstLevel.h">
+      <Filter>01. Level\00. FirstLevel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\CamPanel.h">
+      <Filter>02. Panel\00. CamPanel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\CamPanelData.h">
+      <Filter>02. Panel\00. CamPanel</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -47,6 +110,33 @@
     <Filter Include="03. Obj">
       <UniqueIdentifier>{c2111396-6794-42c1-aab0-48cb16489bb7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="99. Etc\99. Useless\ImGui">
+      <UniqueIdentifier>{fbfc5b63-d139-4854-9034-dfde3870e289}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Obj\00. CamObject">
+      <UniqueIdentifier>{2d1f6ea8-fad9-46aa-bbba-0c5a65380ae3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Obj\01. FreeCam">
+      <UniqueIdentifier>{b4764ff6-58dc-4996-b9bf-21c3d4a9f756}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Obj\02. Unagi">
+      <UniqueIdentifier>{eef41651-0e8b-45c5-9d8c-d8deaf8027d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Obj\03. Grid">
+      <UniqueIdentifier>{84f15bf7-4f1a-4438-aad4-dad5e84bf49d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Level\00. FirstLevel">
+      <UniqueIdentifier>{e1559102-528c-4204-9823-cea2ba202453}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Panel\00. CamPanel">
+      <UniqueIdentifier>{4223fa56-42b5-4389-a1b8-76b42e1dcf5b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Panel\01. RecPanel">
+      <UniqueIdentifier>{c1393735-3ce0-4fdb-b7f5-814ddb76c2f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Panel\00. CamPanel\CamPanelUtil">
+      <UniqueIdentifier>{6971a1bb-6f0a-401e-826b-0f48029fd767}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\pch.cpp">
@@ -55,14 +145,59 @@
     <ClCompile Include="..\private\MainApp.cpp">
       <Filter>00. MainApp</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\FirstLevel.cpp">
-      <Filter>01. Level</Filter>
+    <ClCompile Include="..\private\Unagi.cpp">
+      <Filter>03. Obj\02. Unagi</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Grid.cpp">
+      <Filter>03. Obj\03. Grid</Filter>
     </ClCompile>
     <ClCompile Include="CameraTool.cpp">
       <Filter>99. Etc\99. Useless</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\CamPanelUtil.cpp">
+      <Filter>02. Panel\00. CamPanel\CamPanelUtil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ThirdParty\GUI_Inc\GraphEditor.cpp">
+      <Filter>99. Etc\99. Useless\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ThirdParty\GUI_Inc\ImCurveEdit.cpp">
+      <Filter>99. Etc\99. Useless\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ThirdParty\GUI_Inc\ImGradient.cpp">
+      <Filter>99. Etc\99. Useless\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ThirdParty\GUI_Inc\imgui.cpp">
+      <Filter>99. Etc\99. Useless\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ThirdParty\GUI_Inc\imgui_demo.cpp">
+      <Filter>99. Etc\99. Useless\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ThirdParty\GUI_Inc\imgui_draw.cpp">
+      <Filter>99. Etc\99. Useless\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ThirdParty\GUI_Inc\imgui_tables.cpp">
+      <Filter>99. Etc\99. Useless\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ThirdParty\GUI_Inc\imgui_widgets.cpp">
+      <Filter>99. Etc\99. Useless\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ThirdParty\GUI_Inc\ImGuizmo.cpp">
+      <Filter>99. Etc\99. Useless\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ThirdParty\GUI_Inc\ImSequencer.cpp">
+      <Filter>99. Etc\99. Useless\ImGui</Filter>
+    </ClCompile>
     <ClCompile Include="..\private\CamObj.cpp">
-      <Filter>03. Obj</Filter>
+      <Filter>03. Obj\00. CamObject</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\FreeCam.cpp">
+      <Filter>03. Obj\01. FreeCam</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\FirstLevel.cpp">
+      <Filter>01. Level\00. FirstLevel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CamPanel.cpp">
+      <Filter>02. Panel\00. CamPanel</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

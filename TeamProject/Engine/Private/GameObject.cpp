@@ -16,6 +16,9 @@
 #include "InstanceModel.h"
 #include "MaterialInstance.h"
 #include "Layer.h"
+#include "RigidBody.h"
+#include "ParticleSystem.h"
+
 _uint CGameObject::s_NextID = 1;
 
 CGameObject::CGameObject()
@@ -45,7 +48,8 @@ CGameObject::CGameObject(const CGameObject& rhs)
 
 		if (pair.first == type_index(typeid(CModel)))
 			continue;
-		if (pair.first == type_index(typeid(CCollider)))
+
+		if (pair.first == type_index(typeid(ICollidable)))
 			continue;
 
 		else {
@@ -58,8 +62,8 @@ CGameObject::CGameObject(const CGameObject& rhs)
 				Safe_AddRef(comp);
 			}
 
-			if (dynamic_cast<CCollider*>(comp)) {
-				m_Components.emplace(type_index(typeid(CCollider)), comp);
+			if (dynamic_cast<ICollidable*>(comp)) {
+				m_Components.emplace(type_index(typeid(ICollidable)), comp);
 				Safe_AddRef(comp);
 			}
 		}
@@ -80,7 +84,6 @@ HRESULT CGameObject::Initialize_Prototype()
 
 HRESULT CGameObject::Initialize(INIT_DESC* pArg)
 {
-
 	if (!m_pTransform) {
 		m_pTransform = Add_Component<CTransform>();
 		Safe_AddRef(m_pTransform);
@@ -90,13 +93,34 @@ HRESULT CGameObject::Initialize(INIT_DESC* pArg)
 		return S_OK;
 
 	GAMEOBJECT_DESC* obj = static_cast<GAMEOBJECT_DESC*>(pArg);
+
+	// Transform 초기화
+	auto tfIter = m_Components.find(type_index(typeid(CTransform)));
+	if (tfIter != m_Components.end()) {
+		auto descIter = obj->CompDesc.find(type_index(typeid(CTransform)));
+		if (descIter == obj->CompDesc.end())
+			tfIter->second->Initialize(nullptr);
+		else
+			tfIter->second->Initialize(descIter->second);
+	}
+
+	// RigidBody 초기화
+	auto rbIter = m_Components.find(type_index(typeid(CRigidBody)));
+	if (rbIter != m_Components.end()) {
+		auto descIter = obj->CompDesc.find(type_index(typeid(CRigidBody)));
+		if (descIter == obj->CompDesc.end())
+			rbIter->second->Initialize(nullptr);
+		else
+			rbIter->second->Initialize(descIter->second);
+	}
+
 	for (auto& pair : m_Components)
 	{
-
-		if (pair.first == type_index(typeid(CModel)))
-			continue;
-		if (pair.first == type_index(typeid(CCollider)))
-			continue;
+		/*상속 주는 친구들은 제외*/
+		if (pair.first == type_index(typeid(CTransform))) continue;
+		if (pair.first == type_index(typeid(CModel))) continue;
+		if (pair.first == type_index(typeid(ICollidable))) continue;
+		if (pair.first == type_index(typeid(CRigidBody))) continue;
 
 		auto iter = obj->CompDesc.find(pair.first);
 		/*각자 컴포넌트에 맞는 설명체 찾아서 넣어줌. 없으면 그냥 이니셜ㄹ라이즈*/
@@ -119,58 +143,36 @@ void CGameObject::Pre_EngineUpdate(_float dt)
 		m_isRootObject = true;
 	}
 
-	for (auto& child : Get_Children()) {
-		if (child && child->Is_Alive())
-			child->Pre_EngineUpdate(dt);
+	if (CObjectContainer* pObjContainer = Get_Component<CObjectContainer>()) {
+		pObjContainer->Pre_EngineUpdateChild(dt);
 	}
 }
 
 void CGameObject::Post_EngineUpdate(_float dt)
 {
+	if (m_eRenderLayer ==RENDER_LAYER::None)
+		return;
+
 	/*패킷은 용도별로 따로 만든다.*/
-	if (m_eRenderLayer != RENDER_LAYER::CustomOnly) {
+	if (m_isAlive) {
+		if (m_eRenderLayer != RENDER_LAYER::CustomOnly) {
 
-		if (Get_Component<CInstanceModel>()) {
-			Make_InstancePacket();
-		}
-		else {
-			Make_OpaquePacket();
-		}
-
-#ifdef _DEBUG
-		DEBUG_PACKET debugPacket = {};
-		debugPacket.pModel = Get_Component<CModel>();
-		debugPacket.pDebug = Get_Component<CDebugRender>();
-		debugPacket.pWorldMatrix = m_pTransform->Get_WorldMatrix_Ptr();
-		if (debugPacket.pDebug) {
-			for (size_t i = 0; i < debugPacket.pDebug->Get_DebugBoxCount(); i++)
-			{
-				if (!debugPacket.pModel->isDrawable(i)) continue;
-				debugPacket.DrawIndex = i;
-				CGameInstance::GetInstance()->Get_RenderSystem()->Submit_Debug(debugPacket);
+			if (Get_Component<CInstanceModel>()) {
+				Make_InstancePacket();
 			}
+			else if (Get_Component<CParticleSystem>()) {
+				Make_ParticlePacket();
+			}
+			else {
+				Make_OpaquePacket();
+			}
+
 		}
-
-#endif // _DEBUG
-
 	}
 
-	for (auto& child : Get_Children()) {
-		if (child && child->Is_Alive())
-			child->Post_EngineUpdate(dt);
+	if (CObjectContainer* pObjContainer = Get_Component<CObjectContainer>()) {
+		pObjContainer->Post_EngineUpdateChild(dt);
 	}
-}
-
-void CGameObject::OnCollisionEnter(COLLISION_CONTEXT context)
-{
-}
-
-void CGameObject::OnCollisionStay(COLLISION_CONTEXT context)
-{
-}
-
-void CGameObject::OnCollisionExit(COLLISION_CONTEXT context)
-{
 }
 
 void CGameObject::Render_GUI()
@@ -179,6 +181,7 @@ void CGameObject::Render_GUI()
 	for (auto& pair : m_Components) {
 		if (pair.first == type_index(typeid(CTransform))) continue;
 		if (pair.first == type_index(typeid(CModel))) continue;
+		if (pair.first == type_index(typeid(ICollidable))) continue;
 		pair.second->Render_GUI();
 	}
 }
@@ -196,22 +199,33 @@ void CGameObject::RenderHierarchy(CGameObject*& SelectedObject, bool isSelected)
 		(isSelected ? ImGuiTreeNodeFlags_Selected : 0) |
 		(Children.empty() ? (ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen) : 0);
 
-	string TreeNodeName = m_InstanceName + " (" + to_string(Children.empty() ? 0 : Children.size()) + ")";
+	string TreeNodeName = m_InstanceName + " (" + to_string(Children.empty() ? 0 : Children.size()) + ")"+ "##" + to_string(m_ObjectID) ;
 	bool opened = ImGui::TreeNodeEx(TreeNodeName.c_str(), flags);
+	if (isSelected)
+	{
+
+		ImDrawList* draw = ImGui::GetWindowDrawList();
+		ImVec2 minPos = ImGui::GetItemRectMin();
+		ImVec2 maxPos = ImGui::GetItemRectMax();
+
+		draw->AddRectFilled(
+			ImVec2(minPos.x, minPos.y),
+			ImVec2(minPos.x + 4.0f, maxPos.y),
+			IM_COL32(237, 0, 134, 255));
+
+		draw->AddRect(minPos, maxPos, IM_COL32(237, 0, 134, 255), 2.0f, 0, 1.0f);
+	}
 
 	if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen())
 		SelectedObject = this;
-	if (opened && !Children.empty()) {
-		for (auto& childObject : Children) {
-			if (!childObject) continue;
-			bool childSelected = (SelectedObject == childObject);
-			childObject->RenderHierarchy(SelectedObject, childSelected);
-		}
 
+	if (opened && !Children.empty()) {
+		Get_Component<CObjectContainer>()->RenderHierarchy(SelectedObject);
 		ImGui::TreePop();
 	}
 
 	ImGui::PopID();
+
 }
 
 void CGameObject::Set_Layer(CLayer* pLayer)
@@ -235,10 +249,28 @@ const vector<CGameObject*> CGameObject::Get_Children()
 
 LAYER_DESC CGameObject::Get_LayerDesc()
 {
-	return LAYER_DESC{m_LevelTag,m_pLayer->Get_LayerTag()};
+	return LAYER_DESC{ m_LevelTag,m_pLayer->Get_LayerTag() };
 }
 
-_float4x4* CGameObject::Get_WorldMatrix()
+OBJECT_HANDLE CGameObject::Get_Handle()
+{
+	OBJECT_HANDLE hObj = {};
+	if (m_LevelTag.empty() || !m_pLayer) {
+		hObj.Reset();
+		hObj.Layer = "";
+		hObj.Level = "";
+		hObj.hObjID = m_ObjectID;
+		return hObj;
+	}
+
+	hObj.Layer = m_pLayer->Get_LayerTag();
+	hObj.Level = m_LevelTag;
+	hObj.hObjID = m_ObjectID;
+
+	return hObj;
+}
+
+_float4x4* CGameObject::Get_WorldMatrix_Ptr()
 {
 	return m_pTransform->Get_WorldMatrix_Ptr();
 }
@@ -250,12 +282,34 @@ _float4 CGameObject::Get_Position()
 	return pos;
 }
 
+Matrix CGameObject::Get_WorldMatrix()
+{
+	return m_pTransform->Get_WorldMatrix();
+}
+
+_vector3 CGameObject::Get_WorldPos()
+{
+	return m_pTransform->Get_WorldPos();
+}
+
+_quaternion CGameObject::Get_WorldQuat()
+{
+	_quaternion quat = m_pTransform->Get_QuaternionRotate();
+	quat.Normalize();
+
+	return quat;
+}
+
 HRESULT CGameObject::Make_OpaquePacket()
 {
 	OPAQUE_PACKET packet;
 	packet.pModel = { nullptr };
 	packet.bSkinning = false;
 	packet.pMaterial = Get_Component<CMaterial>();
+	packet.ObjID = m_ObjectID;
+	if(!packet.pMaterial)return E_FAIL;
+
+	packet.LookVector = m_pTransform->Dir(STATE::LOOK);
 	packet.pWorldMatrix = m_pTransform->Get_WorldMatrix_Ptr();
 
 	packet.pModel = Get_Component<CModel>();
@@ -285,18 +339,35 @@ HRESULT CGameObject::Make_OpaquePacket()
 		if (!packet.pModel->isDrawable(i)) continue;
 		packet.DrawIndex = i;
 		packet.MaterialIndex = packet.pModel->Get_MaterialIndex(i);
+		packet.fLinearZ = Calculate_LinearDepth(packet.pModel->Get_LocalBoundingBox());
 
 		if (packet.pMaterial->Get_MaterialInstance(packet.MaterialIndex)->IsBlened()) {
 			Make_BlendedPacket(packet);
 		}
 		else if (packet.pModel->Get_RenderType() == RENDER_PASS_TYPE::RENDER_OPAQUE)
-			CGameInstance::GetInstance()->Get_RenderSystem()->Submit_Opaque(packet);
+		{
+			if(packet.bSkinning) CGameInstance::GetInstance()->Get_RenderSystem()->Submit_SkinnedMesh_Opaque(packet);
+			else  CGameInstance::GetInstance()->Get_RenderSystem()->Submit_StaticMesh_Opaque(packet);
+		}
 		else if (packet.pModel->Get_RenderType() == RENDER_PASS_TYPE::PRIORITY)
 			CGameInstance::GetInstance()->Get_RenderSystem()->Submit_Priority(packet);
+		else if (packet.pModel->Get_RenderType() == RENDER_PASS_TYPE::NONLIGHT_OPAQUE)
+			CGameInstance::GetInstance()->Get_RenderSystem()->Submit_NonLight(packet);
+		else if (packet.pModel->Get_RenderType() == RENDER_PASS_TYPE::RENDER_EFFECT)
+			Make_EffectPacket(packet);
+		else if (packet.pModel->Get_RenderType() == RENDER_PASS_TYPE::RENDER_3DUI)
+			Make_3DUIPacket(packet);
 
-		if (packet.pModel->doShadowCast()) {
-			CGameInstance::GetInstance()->Get_RenderSystem()->Submit_Shadow(packet);
-		}
+		 if (packet.pModel->doShadowCast()) {
+			 if (packet.pMaterial->isValid(packet.MaterialIndex))
+			 {
+				 if (packet.bSkinning)
+					 CGameInstance::GetInstance()->Get_RenderSystem()->Submit_SkinnedShadow(packet);
+				 else
+					 CGameInstance::GetInstance()->Get_RenderSystem()->Submit_StaticShadow(packet);
+
+			 }
+		 }
 	}
 	return S_OK;
 }
@@ -312,6 +383,7 @@ HRESULT CGameObject::Make_BlendedPacket(OPAQUE_PACKET packet)
 	newPacket.pMaterial = packet.pMaterial;
 	newPacket.pPayLoad = packet.pPayLoad;
 	newPacket.pWorldMatrix = packet.pWorldMatrix;
+	newPacket.ObjID = m_ObjectID;
 	//float3 toObj = objWorldPos - cameraPos;
 	//float dist = dot(toObj, cameraForward);
 
@@ -329,11 +401,18 @@ HRESULT CGameObject::Make_BlendedPacket(OPAQUE_PACKET packet)
 	return S_OK;
 }
 
+HRESULT CGameObject::Make_NonLightPacket(OPAQUE_PACKET packet)
+{
+	CGameInstance::GetInstance()->Get_RenderSystem()->Submit_NonLight(packet);
+	return S_OK;
+}
+
 HRESULT CGameObject::Make_InstancePacket()
 {
 	INSTANCE_PACKET packet;
 	packet.pModel = Get_Component<CInstanceModel>();
 	packet.pMaterial = Get_Component<CMaterial>();
+	packet.ObjID = m_ObjectID;
 
 	if (!packet.pModel || !packet.pModel->Get_CompActive()) return E_FAIL;
 	for (size_t i = 0; i < packet.pModel->Get_MeshCount(); i++)
@@ -343,12 +422,89 @@ HRESULT CGameObject::Make_InstancePacket()
 		packet.MaterialIndex = packet.pModel->Get_MaterialIndex(i);
 		packet.pWorldMatrix = m_pTransform->Get_WorldMatrix_Ptr();
 		CGameInstance::GetInstance()->Get_RenderSystem()->Submit_Instance(packet);
-		if (packet.pModel->doShadowCast()) {
-			CGameInstance::GetInstance()->Get_RenderSystem()->Submit_Shadow(packet);
-		}
 	}
 
 	return S_OK;
+}
+
+HRESULT CGameObject::Make_ParticlePacket()
+{
+	CParticleSystem* pParticle = Get_Component<CParticleSystem>();
+
+	PARTICLE_PACKET packet;
+	if (pParticle->IsWorldSpace())
+		packet.WorldMatrix = _smatrix::Identity;
+	else
+		packet.WorldMatrix = m_pTransform->Get_WorldMatrix();
+	packet.ObjID = m_ObjectID;
+	packet.pParticleSystem = Get_Component<CParticleSystem>();
+	packet.pMaterial = Get_Component<CMaterial>();
+	if (!packet.pParticleSystem || !packet.pMaterial) return E_FAIL;
+
+	CGameInstance::GetInstance()->Get_RenderSystem()->Submit_Particle(packet);
+
+	return S_OK;
+}
+
+HRESULT CGameObject::Make_EffectPacket(OPAQUE_PACKET packet)
+{
+	EFFECT_PACKET newPacket = {};
+	newPacket.bSkinning = packet.bSkinning;
+	newPacket.DrawIndex = packet.DrawIndex;
+	newPacket.MaterialIndex = packet.MaterialIndex;
+	newPacket.SkinningOffset = packet.SkinningOffset;
+	newPacket.pModel = packet.pModel;
+	newPacket.pMaterial = packet.pMaterial;
+	newPacket.pPayLoad = packet.pPayLoad;
+	newPacket.pWorldMatrix = packet.pWorldMatrix;
+	//float3 toObj = objWorldPos - cameraPos;
+	//float dist = dot(toObj, cameraForward);
+	packet.ObjID = m_ObjectID;
+
+	const _float4x4* viewInverseMat = CGameInstance::GetInstance()->Get_CameraMgr()->Get_InversedViewMatrix();
+	_matrix viewInverse = XMLoadFloat4x4(viewInverseMat);
+
+	_float4 camPos = CGameInstance::GetInstance()->Get_CameraMgr()->Get_CameraPos();
+
+	_vector CamDist = m_pTransform->Get_Pos() - XMLoadFloat4(&camPos);
+	_vector CamForward = XMVector4Normalize(viewInverse.r[2]);
+
+	newPacket.DistanceToCamera = XMVectorGetX(XMVector4Dot(CamDist, CamForward));
+
+	CGameInstance::GetInstance()->Get_RenderSystem()->Submit_Effect(newPacket);
+	return S_OK;
+}
+
+HRESULT CGameObject::Make_3DUIPacket(OPAQUE_PACKET packet)
+{
+	CGameInstance::GetInstance()->Get_RenderSystem()->Submit_UI3D(packet);
+	return S_OK;
+}
+
+_float CGameObject::Calculate_LinearDepth(const MINMAX_BOX& box)
+{
+	_vector3 centerLocal = (_vector3(box.vMin) + _vector3(box.vMax)) * 0.5f;
+	const _float4x4* worldPtr = m_pTransform->Get_WorldMatrix_Ptr(); 
+	_matrix world = XMLoadFloat4x4(worldPtr);
+
+	_vector centerLocal4 = XMVectorSet(centerLocal.x, centerLocal.y, centerLocal.z, 1.0f);
+	_vector centerWorld4 = XMVector4Transform(centerLocal4, world);
+
+	_vector3 centerWorld;
+	XMStoreFloat3(reinterpret_cast<_float3*>(&centerWorld), centerWorld4);
+
+	_vector4 camPos4 = CameraManager()->Get_CameraPos();
+	_vector3 camPos{ camPos4.x, camPos4.y, camPos4.z };
+
+	_vector4 forward4 = CameraManager()->GetForward();
+	_vector3 forward{ forward4.x, forward4.y, forward4.z };
+	forward.Normalize();
+
+	_vector3 toCenter = centerWorld - camPos;
+	_float depth = toCenter.Dot(forward);
+
+	if (depth < 0.f) depth = 0.f;
+	return depth;
 }
 
 

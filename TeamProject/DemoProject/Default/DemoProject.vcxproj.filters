@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="98. Default">
@@ -25,6 +25,36 @@
     <Filter Include="02. DemoObject\DemoUI">
       <UniqueIdentifier>{13432f48-7c58-4317-9130-020d9e26b42c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="97. GUI_Inc">
+      <UniqueIdentifier>{a11db653-af6a-4eb5-8d32-146e7ef2f709}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. DemoObject\DemoGrid">
+      <UniqueIdentifier>{c66fd9c3-82e7-4802-96d7-4733975e64a8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="96. DemoShader">
+      <UniqueIdentifier>{b85ecac9-0442-4d9a-bcc3-36944c48427f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. DemoObject\InstanceDemo">
+      <UniqueIdentifier>{071519c1-f878-49a6-9b56-3b2964a6dd82}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Level\DemoLevel">
+      <UniqueIdentifier>{3d6a0f15-7788-4b46-91ad-0e5521566e0e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Level\PhysicsLevel">
+      <UniqueIdentifier>{75bec75e-0af6-4df9-b616-d26f7c4e4104}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. DemoObject\DemoShaderModel">
+      <UniqueIdentifier>{898bf3e7-709f-48b4-b574-22a7ec05ffbd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. DemoObject\DemoPlayer">
+      <UniqueIdentifier>{de0b3c12-5943-417e-b837-66c275c05e91}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. DemoObject\DemoShaderAnimModel">
+      <UniqueIdentifier>{3407796f-ec5b-4d5a-beb1-157a52b9ff8f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. DemoObject\DemoFloor">
+      <UniqueIdentifier>{8d029e85-8d6f-4322-a696-eae22a635241}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DemoProject.h">
@@ -45,9 +75,6 @@
     <ClInclude Include="..\Public\Demo_Defines.h">
       <Filter>99. Defines</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\DemoLevel.h">
-      <Filter>01. Level</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\DemoCamera.h">
       <Filter>02. DemoObject\DemoCamera</Filter>
     </ClInclude>
@@ -57,8 +84,74 @@
     <ClInclude Include="..\Public\DemoModel.h">
       <Filter>02. DemoObject\DemoModel</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\backends\imgui_impl_dx11.h">
+      <Filter>97. GUI_Inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\backends\imgui_impl_win32.h">
+      <Filter>97. GUI_Inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\GraphEditor.h">
+      <Filter>97. GUI_Inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\imconfig.h">
+      <Filter>97. GUI_Inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\ImCurveEdit.h">
+      <Filter>97. GUI_Inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\ImGradient.h">
+      <Filter>97. GUI_Inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\imgui.h">
+      <Filter>97. GUI_Inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\imgui_internal.h">
+      <Filter>97. GUI_Inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\ImGuizmo.h">
+      <Filter>97. GUI_Inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\ImSequencer.h">
+      <Filter>97. GUI_Inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\imstb_rectpack.h">
+      <Filter>97. GUI_Inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\imstb_textedit.h">
+      <Filter>97. GUI_Inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\imstb_truetype.h">
+      <Filter>97. GUI_Inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\ImZoomSlider.h">
+      <Filter>97. GUI_Inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\DemoGrid.h">
+      <Filter>02. DemoObject\DemoGrid</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\InstanceDemo.h">
+      <Filter>02. DemoObject\InstanceDemo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\DemoLevel.h">
+      <Filter>01. Level\DemoLevel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\PhysicsLevel.h">
+      <Filter>01. Level\PhysicsLevel</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\DemoUI.h">
       <Filter>02. DemoObject\DemoUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\DemoPlayer.h">
+      <Filter>02. DemoObject\DemoPlayer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\DemoShaderModel.h">
+      <Filter>02. DemoObject\DemoShaderModel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\DemoFloor.h">
+      <Filter>02. DemoObject\DemoFloor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\DemoShaderAnimModel.h">
+      <Filter>02. DemoObject\DemoShaderAnimModel</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -67,9 +160,6 @@
     </ClCompile>
     <ClCompile Include="..\Private\MainApp.cpp">
       <Filter>00. MainApp</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\DemoLevel.cpp">
-      <Filter>01. Level</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\DemoCamera.cpp">
       <Filter>02. DemoObject\DemoCamera</Filter>
@@ -82,6 +172,66 @@
     </ClCompile>
     <ClCompile Include="..\Private\DemoUI.cpp">
       <Filter>02. DemoObject\DemoUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\backends\imgui_impl_dx11.cpp">
+      <Filter>97. GUI_Inc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\backends\imgui_impl_win32.cpp">
+      <Filter>97. GUI_Inc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\GraphEditor.cpp">
+      <Filter>97. GUI_Inc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\ImCurveEdit.cpp">
+      <Filter>97. GUI_Inc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\ImGradient.cpp">
+      <Filter>97. GUI_Inc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\imgui.cpp">
+      <Filter>97. GUI_Inc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\imgui_demo.cpp">
+      <Filter>97. GUI_Inc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\imgui_draw.cpp">
+      <Filter>97. GUI_Inc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\imgui_tables.cpp">
+      <Filter>97. GUI_Inc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\imgui_widgets.cpp">
+      <Filter>97. GUI_Inc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\ImGuizmo.cpp">
+      <Filter>97. GUI_Inc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\ImSequencer.cpp">
+      <Filter>97. GUI_Inc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\DemoGrid.cpp">
+      <Filter>02. DemoObject\DemoGrid</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\InstanceDemo.cpp">
+      <Filter>02. DemoObject\InstanceDemo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\DemoLevel.cpp">
+      <Filter>01. Level\DemoLevel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\PhysicsLevel.cpp">
+      <Filter>01. Level\PhysicsLevel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\DemoPlayer.cpp">
+      <Filter>02. DemoObject\DemoPlayer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\DemoShaderModel.cpp">
+      <Filter>02. DemoObject\DemoShaderModel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\DemoFloor.cpp">
+      <Filter>02. DemoObject\DemoFloor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\DemoShaderAnimModel.cpp">
+      <Filter>02. DemoObject\DemoShaderAnimModel</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

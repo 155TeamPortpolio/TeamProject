@@ -25,13 +25,29 @@ HRESULT CLevelMgr::Request_ChangeLevel(string LevelID,_bool Load)
     if (!m_LevelCreators.count(LevelID))
         return E_FAIL;
 
-    m_NextLevelTag = LevelID;
-    if (Load) //로딩 설정이 없으면 그냥 바로 로드되었다 치고 다음레벨로 넘어감.
+    m_TransDesc.nextLevelKey = LevelID;
+    m_TransDesc.useLoading = Load;
+
+    if (Load&&!m_LoadingLevelKey.empty()) //로딩 설정이 없으면 그냥 바로 로드되었다 치고 다음레벨로 넘어감.
         m_eState = LEVEL_STATE::REQUEST;
     else
         m_eState = LEVEL_STATE::LOADED;
 
     return S_OK;
+}
+
+HRESULT CLevelMgr::Request_ChangeLevel(string levelID, LEVEL_TRANS_DESC desc)
+{
+    if (!m_LevelCreators.count(levelID))
+        return E_FAIL;
+
+    m_TransDesc = desc;
+    if (desc.useLoading && !m_LoadingLevelKey.empty()) //로딩 설정이 없으면 그냥 바로 로드되었다 치고 다음레벨로 넘어감.
+        m_eState = LEVEL_STATE::REQUEST;
+    else
+        m_eState = LEVEL_STATE::LOADED;
+
+    return E_NOTIMPL;
 }
 
 void CLevelMgr::Update(_float dt)
@@ -42,7 +58,10 @@ void CLevelMgr::Update(_float dt)
         break;
     case Engine::LEVEL_STATE::REQUEST: //다음 레벨로 가는 것을 요청한 상태
         if (!m_LoadingLevelKey.empty() && m_LevelCreators.count(m_LoadingLevelKey)) {
-            ClearResource();
+
+            if(m_TransDesc.KeepResource == false)
+                ClearResource();
+
             m_pCurrentLevel = m_LevelCreators[m_LoadingLevelKey]();
             m_pCurrentLevel->Awake(); //확정 후 초기화
             m_eState = LEVEL_STATE::LOADING; //로딩 레벨 설정이 되어 있으면 로딩을 진행함.
@@ -55,11 +74,14 @@ void CLevelMgr::Update(_float dt)
         //이 사이는 강제적으로 로딩레벨을 거치고 가게 함.
 
     case Engine::LEVEL_STATE::LOADED: //로딩이 완료되면 아까 요청한 레벨로 전환
-        if (!m_NextLevelTag.empty() && m_LevelCreators.count(m_NextLevelTag)) {
-            ClearResource();
-            m_pCurrentLevel = m_LevelCreators[m_NextLevelTag](); 
+        if (!m_TransDesc.nextLevelKey.empty() && m_LevelCreators.count(m_TransDesc.nextLevelKey)) {
+
+            if (m_TransDesc.KeepResource == false)
+                ClearResource();
+
+            m_pCurrentLevel = m_LevelCreators[m_TransDesc.nextLevelKey]();
             m_eState = LEVEL_STATE::STABLE;
-            m_NextLevelTag.clear();
+            m_TransDesc.Reset();
             m_pCurrentLevel->Awake(); //확정 후 초기화
         }
         break;
@@ -128,7 +150,7 @@ const string& CLevelMgr::Get_NowLevelKey()
     if (m_pCurrentLevel)
         return m_pCurrentLevel->Get_Key();
     else
-        return m_LoadingLevelKey;
+        return m_TransDesc.nextLevelKey;
 }
 
 #pragma endregion

@@ -1,0 +1,336 @@
+{
+    "alive": true,
+    "instanceName": "hud_battle_evadeAction",
+    "transform": {
+        "anchor": 5,
+        "anchorOffset": [
+            0.0,
+            0.0
+        ],
+        "size": [
+            72.0,
+            108.0
+        ],
+        "scale": [
+            1.0,
+            1.0
+        ],
+        "pivot": [
+            0.0,
+            0.0
+        ],
+        "radian": 0.0
+    },
+    "color": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+    ],
+    "pass": "Opaque",
+    "animClips": [],
+    "children": [
+        {
+            "alive": true,
+            "instanceName": "bg",
+            "transform": {
+                "anchor": 4,
+                "anchorOffset": [
+                    -36.0,
+                    0.0
+                ],
+                "size": [
+                    72.0,
+                    72.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                0.027450980618596077,
+                0.027450980618596077,
+                0.027450980618596077,
+                1.0
+            ],
+            "pass": "Opaque",
+            "animClips": [],
+            "children": [],
+            "typeTag": "Image",
+            "textureTag": "Circle72.png"
+        },
+        {
+            "alive": true,
+            "instanceName": "gaugeBg",
+            "transform": {
+                "anchor": 4,
+                "anchorOffset": [
+                    -31.0,
+                    5.0
+                ],
+                "size": [
+                    62.0,
+                    62.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                0.1411764770746231,
+                0.1411764770746231,
+                0.14901961386203766,
+                1.0
+            ],
+            "pass": "Opaque",
+            "animClips": [],
+            "children": [],
+            "typeTag": "Image",
+            "textureTag": "BtnCircle.png"
+        },
+        {
+            "alive": true,
+            "instanceName": "image",
+            "transform": {
+                "anchor": 4,
+                "anchorOffset": [
+                    -24.185565948486328,
+                    13.0
+                ],
+                "size": [
+                    48.371131896972656,
+                    46.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                0.1411764770746231,
+                0.1411764770746231,
+                0.14901961386203766,
+                1.0
+            ],
+            "pass": "Opaque",
+            "animClips": [],
+            "children": [],
+            "typeTag": "Image",
+            "textureTag": "BtnEvade.png"
+        },
+        {
+            "alive": true,
+            "instanceName": "gauge",
+            "transform": {
+                "anchor": 4,
+                "anchorOffset": [
+                    -31.0,
+                    5.0
+                ],
+                "size": [
+                    62.0,
+                    62.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "pass": "RadialFill",
+            "animClips": [],
+            "children": [],
+            "typeTag": "Gauge",
+            "textureTag": "SkillBtnD.png",
+            "gauge": {
+                "direction": 1.0,
+                "fillAmount": 1.0,
+                "radial": true
+            }
+        },
+        {
+            "alive": true,
+            "instanceName": "icon",
+            "transform": {
+                "anchor": 4,
+                "anchorOffset": [
+                    -25.237112045288086,
+                    12.199999809265137
+                ],
+                "size": [
+                    50.47422409057617,
+                    48.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                0.5882353186607361,
+                0.5882353186607361,
+                0.5882353186607361,
+                1.0
+            ],
+            "pass": "Opaque",
+            "animClips": [],
+            "children": [],
+            "typeTag": "Image",
+            "textureTag": "BtnEvade.png"
+        },
+        {
+            "alive": true,
+            "instanceName": "text",
+            "transform": {
+                "anchor": 5,
+                "anchorOffset": [
+                    11.899999618530273,
+                    19.5
+                ],
+                "size": [
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "pass": "Opaque",
+            "animClips": [],
+            "children": [],
+            "typeTag": "Text",
+            "text": {
+                "content": "",
+                "fontTag": "NanumSquareNeo.spritefont",
+                "fontScale": 0.5499998927116394,
+                "outlined": true,
+                "outlineThickness": 1.0,
+                "outlineColor": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "shear": [
+                    0.0,
+                    0.0
+                ]
+            }
+        },
+        {
+            "alive": true,
+            "instanceName": "image",
+            "transform": {
+                "anchor": 8,
+                "anchorOffset": [
+                    -13.269230842590332,
+                    -30.0
+                ],
+                "size": [
+                    26.538461685180664,
+                    30.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "pass": "Opaque",
+            "animClips": [],
+            "children": [],
+            "typeTag": "Image",
+            "textureTag": "MouseRIconBlack.png"
+        },
+        {
+            "alive": true,
+            "instanceName": "mouse",
+            "transform": {
+                "anchor": 8,
+                "anchorOffset": [
+                    -13.269230842590332,
+                    -30.0
+                ],
+                "size": [
+                    26.538461685180664,
+                    30.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "pass": "Opaque",
+            "animClips": [],
+            "children": [],
+            "typeTag": "Image",
+            "textureTag": "MouseRIcon.png"
+        }
+    ],
+    "typeTag": "CanvasPanel"
+}

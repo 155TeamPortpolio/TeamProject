@@ -28,6 +28,11 @@ namespace Engine
 	typedef		XMFLOAT2					_float2;
 	typedef		XMFLOAT3					_float3;
 	typedef		XMFLOAT4					_float4;
+
+	typedef		XMUINT2						_uint2;
+	typedef		XMUINT3						_uint3;
+	typedef		XMUINT4						_uint4;
+
 	typedef		XMFLOAT4X4			_float4x4;
 
 	/* SIMD 연산을 위한 데이터 선언 */
@@ -46,15 +51,23 @@ namespace Engine
 	typedef		DirectX::SimpleMath::Vector3	_vector3;
 	typedef		DirectX::SimpleMath::Vector4	_vector4;
 	typedef		DirectX::SimpleMath::Matrix		_smatrix;
+	typedef		DirectX::SimpleMath::Quaternion _quaternion;
 
 	using LEVEL_CREATOR = function<class CLevel* ()>;
 	static const string G_GlobalLevelKey = "Global_Level";
-	static constexpr _uint g_iMaxNumBones = 16384;
-	static constexpr _uint g_iMaxTransform = 4096;
+	static const string G_EngineTimerID = "Engine_Timer";
+	static constexpr _uint g_iMaxNumBones = 5000000;
+	static constexpr _uint g_iMaxTransform = 50000;
 	static constexpr _uint g_iMaxLightss = 46;
 	static constexpr _uint MAX_TEXTURE_TYPE_VALUE = static_cast<_uint>(TEXTURE_TYPE::END);
+	static constexpr _uint g_iMaxNumInstances = 3000;
+	static constexpr _uint g_iMaxNumTrailPoints = 512;
 	const unsigned int g_iMaxWidth = 8192;
-	const unsigned int g_iMaxHeight = 4608;
+	const unsigned int g_iMaxHeight = 8192;
+
+
+	static constexpr _uint modelDataVersion = 0107;
+
 }
 
 #endif // Engine_Typedef_h__

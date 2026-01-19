@@ -19,6 +19,7 @@
 #include "DirectXTK_Inc/Effects.h"
 #include <DirectXTK_Inc/CommonStates.h>
 #include <DirectXTK_Inc/SimpleMath.h>
+#include "ThirdPartyCsv.h"
 
 #include <vector>
 #include <list>
@@ -40,6 +41,13 @@
 #include <fstream>
 #include <variant>
 #include <stack>
+#include <atomic>                           // m_stop, m_active 같은 원자 변수
+#include <condition_variable>     // 작업 대기/깨우기
+#include <deque>                           // 작업 큐 (앞에서 pop)
+#include <future>                           // std::future / std::packaged_task
+#include <mutex>                            // 뮤텍스
+#include <thread>                           // 스레드 생성/join
+#include <type_traits>                  // std::invoke_result_t
 
 #include <commdlg.h>										// GetSaveFileName API를 위해 필요
 #pragma comment(lib, "Comdlg32.lib")	// 라이브러리 링크
@@ -50,13 +58,14 @@ using namespace DirectX::SimpleMath;
 
 #include <FMOD_Inc/fmod.hpp>
 
-// 기존 new 매크로로 인해 충돌 방지
+// 기존 new 매크로로 인해 충돌5 방지
 #pragma push_macro("new")
 #undef new
 #include "GUI_Inc/imgui.h"
 #include "GUI_Inc/ImGuizmo.h"
 #include "GUI_Inc/backends/imgui_impl_win32.h"
 #include "GUI_Inc/backends/imgui_impl_dx11.h"
+#include "GUI_Inc/imgui_stdlib.h"
 #include "NFD_Inc/nfd.h"
 #pragma pop_macro("new")
 
@@ -65,8 +74,13 @@ using namespace DirectX::SimpleMath;
 using json = nlohmann::json;
 
 //--PhysX--//
+#pragma push_macro("new") 
+#undef new 
 #include "PhysX_Inc/PxPhysicsAPI.h"
+#define USINGPHYSICS
+//#define USE_MULTITHREAD_PHYSICS
 using namespace physx;
+#pragma pop_macro("new")
 
 #define UNICODE
 #define _UNICODE
@@ -76,9 +90,14 @@ using namespace physx;
 #include "Engine_Typedef.h"
 #include "Engine_Function.h"
 #include "Engine_Struct.h"
+#include "Engine_RenderStruct.h"
 #include "Engine_Layouts.h"
 #include "Build_Struct.h"
 #include "Data_Packets.h"
+#include "PreLoad_Struct.h"
+#include "AnimationLayout.h"
+#include "Humanoid.h"
+
 using namespace Engine;
 
 #include <windowsx.h>

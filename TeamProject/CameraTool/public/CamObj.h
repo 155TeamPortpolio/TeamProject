@@ -1,25 +1,35 @@
 #pragma once
 
+#include "DebugCamData.h"
+#include "GameObject.h"
+
 NS_BEGIN(CameraTool)
 
-class CamObj : public CGameObject
+enum class CamMoveConstraint
 {
-private:
-    CamObj() = default;
-    CamObj(const CamObj& rhs) : CGameObject(rhs) {}
-	virtual ~CamObj() = default;
+    Free, X, Y, Z, XY, XZ, YZ, Orbit
+};
+
+class CCamObj abstract : public CGameObject
+{
+protected:
+    CCamObj() : CGameObject() {}
+    CCamObj(const CCamObj& rhs) : CGameObject(rhs) {}
+    virtual ~CCamObj() = default;
 
 public:
-    HRESULT Initialize_Prototype()      override;
-    HRESULT Initialize(INIT_DESC* pArg) override;
-    void    Priority_Update(_float dt)  override;
-    void    Update(_float dt)           override;
-    void    Late_Update(_float dt)      override;
+    virtual HRESULT Initialize_Prototype()      override;
+    virtual HRESULT Initialize(INIT_DESC* pArg) override;
+    virtual void    Priority_Update(_float dt)  override PURE;
+    virtual void    Update(_float dt)           override PURE;
+    virtual void    Late_Update(_float dt)      override PURE;
 
-private:
-    static CamObj* Create();
-    virtual void Free() override;
-    CGameObject* Clone(INIT_DESC* pArg) override;
+    virtual void    SetControlEnabled(_bool enabled) {}
+    virtual void    SetMoveConstraint(CamMoveConstraint mode) {}
+    virtual void    SetOrbitState(const CamOrbitState& next) {}
+
+public:
+    virtual CGameObject* Clone(INIT_DESC* pArg) override PURE;
 };
 
 NS_END

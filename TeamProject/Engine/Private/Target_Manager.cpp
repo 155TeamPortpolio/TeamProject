@@ -1,6 +1,8 @@
 #include "Engine_Defines.h"
 #include "Target_Manager.h"
 #include "RenderTarget.h"
+#include "Shader.h"
+#include "Helper_Func.h"
 
 CTarget_Manager::CTarget_Manager(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice{ pDevice }
@@ -27,7 +29,7 @@ HRESULT CTarget_Manager::Add_MRT(const string& strMRTTag, const string& strTarge
 	return S_OK;
 }
 
-HRESULT CTarget_Manager::Begin_MRT(const string& strMRTTag)
+HRESULT CTarget_Manager::Begin_MRT(const string& strMRTTag, _uint Clear, ID3D11DepthStencilView* pExternalDSV, _bool DSVClear)
 {
 	vector<CRenderTarget*>& pMRTList = Find_MRT(strMRTTag);
 
@@ -63,17 +65,21 @@ HRESULT CTarget_Manager::Begin_MRT(const string& strMRTTag)
 
 	for (auto& pRenderTarget : pMRTList)
 	{
-		pRenderTarget->Clear();
+		if (Clear & (1 << iNumRenderTargets))
+			pRenderTarget->Clear();
 
 		pRenderTargets[iNumRenderTargets] = pRenderTarget->Get_RTV();
 		iNumRenderTargets++;
 
+
 		if (pMrtDSV == nullptr) {
 			pMrtDSV = pRenderTarget->Get_DSV();
-			m_pContext->ClearDepthStencilView(pMrtDSV, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0);
 		}
-	}
 
+	}
+	if (pExternalDSV) pMrtDSV = pExternalDSV;
+
+	if (pMrtDSV && DSVClear) m_pContext->ClearDepthStencilView(pMrtDSV, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0);
 	// ·»´õ Å¸°Ù, µª½º ¹ÙÀÎµù
 	m_pContext->OMSetRenderTargets(iNumRenderTargets, pRenderTargets, pMrtDSV);
 
@@ -99,15 +105,18 @@ HRESULT CTarget_Manager::End_MRT()
 	return S_OK;
 }
 
-HRESULT CTarget_Manager::Get_TargetParam(const string& strTargetTag, SHADER_PARAM& param)
+HRESULT CTarget_Manager::Bind_Target(const string& strTargetTag, CShader * pShader, const string& constantName)
 {
 	CRenderTarget* pRenderTarget = Find_RenderTarget(strTargetTag);
 	if (nullptr == pRenderTarget)
 		return E_FAIL;
 
-	param.iSize = 0;
-	param.pData = pRenderTarget->Get_SRV();
-	param.typeName = "Texture2D";
+	SHADER_PARAM Param;
+	Param.iSize = 0;
+	Param.pData = pRenderTarget->Get_SRV();
+	Param.typeName = "Texture2D";
+
+	pShader->Bind_Value(constantName, Param);
 
 	return S_OK;
 }
@@ -127,89 +136,6 @@ ID3D11DepthStencilView* CTarget_Manager::Get_MTR_DSV(const string& strMRTTag)
 	}
 	return pMRTList[0]->Get_DSV();
 }
-
-HRESULT CTarget_Manager::Bind_Targets(const vector<string>& targetNames, bool clearColor, bool clearDepth)
-{
-	if (targetNames.empty())
-		return E_FAIL;
-
-	SavedState saved;
-	m_pContext->OMGetRenderTargets(1, &saved.pPrevRTV, &saved.pPrevDSV);
-	m_pContext->RSGetViewports(&saved.NumViewports, &saved.PrevViewPort);
-	m_SaveEngineStates.push(saved);
-
-	vector<CRenderTarget*> bindTargets;
-	bindTargets.reserve(targetNames.size());
-
-	for (auto& key : targetNames)
-	{
-		auto& mrtList = Find_MRT(key);      
-		if (!mrtList.empty())               
-		{
-			for (auto& pTarget : mrtList)
-				bindTargets.push_back(pTarget);
-			continue;
-		}
-
-		CRenderTarget* pTarget = Get_CustomTarget(key);
-		if (!pTarget)
-			pTarget = Get_EngineTarget(key);
-
-		if (!pTarget)
-		{
-			return E_FAIL;
-		}
-
-		bindTargets.push_back(pTarget);
-	}
-
-	ID3D11RenderTargetView* RTVs[8] = { nullptr };
-	ID3D11DepthStencilView* dsv = nullptr;
-	UINT count = 0;
-
-	for (CRenderTarget* target : bindTargets)
-	{
-		if (count >= 8) break;
-		RTVs[count++] = target->Get_RTV();
-		if (!dsv) dsv = target->Get_DSV();
-	}
-
-	for (auto& target : bindTargets)
-		if (clearColor) target->Clear();
-
-	if (dsv && clearDepth)
-		m_pContext->ClearDepthStencilView(dsv, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0);
-
-	if (count == 0 && dsv)
-	{
-		m_pContext->OMSetRenderTargets(0, nullptr, dsv);
-		return S_OK;
-	}
-
-	m_pContext->OMSetRenderTargets(count, RTVs, dsv);
-	return S_OK;
-}
-
-
-
-HRESULT CTarget_Manager::Restore_Targets()
-{
-	if (m_SaveEngineStates.empty())
-		return E_FAIL;
-
-	SavedState state = m_SaveEngineStates.top();
-	m_SaveEngineStates.pop();
-
-	// ¿ø·¡ »óÅÂ º¹¿ø
-	m_pContext->OMSetRenderTargets(1, &state.pPrevRTV, state.pPrevDSV);
-	m_pContext->RSSetViewports(state.NumViewports, &state.PrevViewPort);
-
-	Safe_Release(state.pPrevRTV);
-	Safe_Release(state.pPrevDSV);
-
-	return S_OK;
-}
-
 
 #ifdef _USING_GUI
 void CTarget_Manager::Render_GUI()
@@ -232,11 +158,17 @@ void CTarget_Manager::Render_GUI()
 	if (TabOpen) {
 		if (ImGui::Begin("RenderTargets", &TabOpen))
 		{
+			ImGui::Text("Filter"); ImGui::SameLine();
+			ImGui::InputText("##FilterText", &Filter);
+
+
 			for (auto& rtPair : m_EngineRenderTargets)
 			{
 				const string& tag = rtPair.first;
 				CRenderTarget* pRT = rtPair.second;
 				if (!pRT) continue;
+				if (!TargetFilter(tag, Filter))
+					continue;
 
 				if (ImGui::TreeNode(tag.c_str()))
 				{
@@ -452,6 +384,16 @@ vector<CRenderTarget*>& CTarget_Manager::Find_MRT(const string& strMRTTag)
 	return iter->second;
 }
 
+_bool CTarget_Manager::TargetFilter(const string& tag, const string& filter)
+{
+	if (filter.empty())
+		return true;
+
+	string tagLower = Helper::ToLower(tag);
+	string filterLower = Helper::ToLower(filter);
+
+	return tagLower.find(filterLower) != string::npos;
+}
 
 CTarget_Manager* CTarget_Manager::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {

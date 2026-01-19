@@ -4,6 +4,8 @@
 #include "GameObject.h"
 #include "IObjectService.h"
 #include "Child.h"
+#include "UI_Object.h"
+#include "Layer.h"
 
 CObjectContainer::CObjectContainer()
 {
@@ -22,35 +24,109 @@ CObjectContainer::~CObjectContainer()
 HRESULT CObjectContainer::Initialize_Prototype()
 {
 	//*Initialize Prototype시에는 다른 오브젝트들과 부모자식 관계 설정하지 않는 것으로*//
-    return S_OK;
+	return S_OK;
 }
 
 HRESULT CObjectContainer::Initialize(COMPONENT_DESC* pArg)
 {
 	//각자가 자기것만 담당하는 걸로. 단, 이때에는 추가된 자식에 대한 레이어 추가는 진행이 알아서 됨.
 
-    return S_OK;
+	return S_OK;
+}
+
+void CObjectContainer::Pre_EngineUpdateChild(_float dt)
+{
+	m_UpdateOrderSnapShot.reserve(m_UpdateOrder.size());
+	m_UpdateOrderSnapShot = m_UpdateOrder;
+	for (_uint id : m_UpdateOrderSnapShot)
+	{
+		if (id == 0) continue;
+
+		auto indexIter = m_IndexByID.find(id);
+		if (indexIter == m_IndexByID.end()) continue;
+
+		CGameObject* child = m_ChildrenObjects[indexIter->second];
+		if (child && child->Is_Alive())
+			child->Pre_EngineUpdate(dt);
+	}
+}
+
+void CObjectContainer::Post_EngineUpdateChild(_float dt)
+{
+	for (_uint id : m_UpdateOrderSnapShot)
+	{
+		if (id == 0) continue;
+
+		auto indexIter = m_IndexByID.find(id);
+		if (indexIter == m_IndexByID.end()) continue;
+
+		CGameObject* child = m_ChildrenObjects[indexIter->second];
+		if (child && child->Is_Alive())
+			child->Post_EngineUpdate(dt);
+	}
 }
 
 void CObjectContainer::Priority_UpdateChild(_float dt)
 {
-	for (auto& child : m_ChildrenObjects)
-		if (child && child->Is_Alive()) child->Priority_Update(dt);
+	for (_uint id : m_UpdateOrderSnapShot)
+	{
+		if (id == 0) continue;
+
+		auto indexIter = m_IndexByID.find(id);
+		if (indexIter == m_IndexByID.end()) continue;
+
+		CGameObject* child = m_ChildrenObjects[indexIter->second];
+		if (child && child->Is_Alive())
+			child->Priority_Update(dt);
+	}
 }
 
 void CObjectContainer::UpdateChild(_float dt)
 {
-	for (auto& child : m_ChildrenObjects) 
-		if (child && child->Is_Alive()) child->Update(dt);
+	for (_uint id : m_UpdateOrderSnapShot)
+	{
+		if (id == 0) continue;
+
+		auto indexIter = m_IndexByID.find(id);
+		if (indexIter == m_IndexByID.end()) continue;
+
+		CGameObject* child = m_ChildrenObjects[indexIter->second];
+		if (child && child->Is_Alive())
+			child->Update(dt);
+	}
 }
 
 void CObjectContainer::Late_UpdateChild(_float dt)
 {
-	for (auto& child : m_ChildrenObjects)
-		if (child && child->Is_Alive()) child->Late_Update(dt);
+	for (_uint id : m_UpdateOrderSnapShot)
+	{
+		if (id == 0) continue;
+
+		auto indexIter = m_IndexByID.find(id);
+		if (indexIter == m_IndexByID.end()) continue;
+
+		CGameObject* child = m_ChildrenObjects[indexIter->second];
+		if (child && child->Is_Alive())
+			child->Late_Update(dt);
+	}
 }
 
-	/*자식 전체 순회 -> 효율 떨어짐*/
+void CObjectContainer::RenderHierarchy(CGameObject*& SelectedObject)
+{
+	for (_uint id : m_UpdateOrderSnapShot)
+	{
+		if (id == 0) continue;
+
+		auto indexIter = m_IndexByID.find(id);
+		if (indexIter == m_IndexByID.end()) continue;
+
+		CGameObject* child = m_ChildrenObjects[indexIter->second];
+		if (child)
+			child->RenderHierarchy(SelectedObject, child == SelectedObject);
+	}
+}
+
+/*자식 전체 순회 -> 효율 떨어짐*/
 CGameObject* CObjectContainer::Find_ObjectByName(const string& ObjectName)
 {
 
@@ -69,7 +145,7 @@ CGameObject* CObjectContainer::Find_ObjectByName(const string& ObjectName)
 CGameObject* CObjectContainer::Find_ObjectByID(_uint ObjectID)
 {
 	auto iter = m_IndexByID.find(ObjectID);
-	if (iter == m_IndexByID.end()){
+	if (iter == m_IndexByID.end()) {
 		return nullptr;
 	}
 	else {
@@ -104,10 +180,35 @@ _int CObjectContainer::Find_IndexByID(_uint ObjectID)
 	}
 }
 
-/*IParent-> vector<CGamObject*> m_CHilds*/
-/*UPdate_Child(dt)*/
+/*이름으로 재귀 돌음. 후손 중 만난 첫번째 조건 부합 자손 가져옴*/
+CGameObject* CObjectContainer::Find_Descendant(const string& instanceName)
+{
+	vector<CGameObject*> stackList;
+	stackList.reserve(64);
 
-_int CObjectContainer::Add_Child(CGameObject* pObject, _bool SyncTransform )
+	for (CGameObject* child : m_ChildrenObjects)   
+		if (child) stackList.push_back(child);
+
+	while (!stackList.empty())
+	{
+		CGameObject* node = stackList.back();
+		stackList.pop_back();
+
+		if (!node) continue;
+
+		if (node->Get_InstanceName() == instanceName)
+			return node;
+
+		const auto& children = node->Get_Children();
+		for (CGameObject* descent : children)
+			if (descent) 
+				stackList.push_back(descent);
+	}
+
+	return nullptr;
+}
+
+_int CObjectContainer::Add_Child(CGameObject* pObject, _bool SyncTransform)
 {
 	if (nullptr == pObject) return -1;
 
@@ -117,7 +218,6 @@ _int CObjectContainer::Add_Child(CGameObject* pObject, _bool SyncTransform )
 		/*이미 추가되어 있음.*/
 		return m_IndexByID[ObjectID];
 	}
-
 	_uint ObjectIndex = m_ChildrenObjects.size();
 
 	for (size_t i = 0; i < m_ChildrenObjects.size(); i++)
@@ -129,44 +229,126 @@ _int CObjectContainer::Add_Child(CGameObject* pObject, _bool SyncTransform )
 	}
 
 	if (ObjectIndex == m_ChildrenObjects.size()) //마지막에 추가
-	{
 		m_ChildrenObjects.push_back(pObject);
-	}
-	else {
+	else
 		m_ChildrenObjects[ObjectIndex] = pObject;
-	}
-	
 
 	CChild* child = pObject->Add_Component<CChild>(m_pOwner);
-	child->Sync_To_Parent(SyncTransform);
+	CUI_Object* ownerCast = dynamic_cast<CUI_Object*>(m_pOwner);
+	_bool isUI = (ownerCast != nullptr);
+
+	if (isUI)
+		child->Sync_To_Parent(false);
+	else
+		child->Sync_To_Parent(SyncTransform);
 
 	string name = pObject->Get_InstanceName();
 	m_ChildrensName.emplace(ObjectID, name);
-	m_IndexByID.emplace(ObjectID, ObjectIndex);
+	m_IndexByID[ObjectID] = ObjectIndex;
+	m_ChildrensName[ObjectID] = pObject->Get_InstanceName();
+
+	// 각 아이디 별로 들어온 순서 기록
+	m_OrderIndexByID[ObjectID] = (_uint)m_UpdateOrder.size();
+	m_UpdateOrder.push_back(ObjectID);
+
 	Safe_AddRef(pObject);
+
+	/*부모의 업데이트 동안에, 차일드가 추가됨*/
+	if (isUI) {
+		if (!ownerCast->Get_Level().empty()) {
+			CUI_Object* uiCast = dynamic_cast<CUI_Object*>(pObject);
+			CGameInstance::GetInstance()->Get_UIMgr()->Add_UIObject(uiCast, ownerCast->Get_Level());
+		}
+	}
+	else {
+		/*레이어가 있으면*/
+		if (m_pOwner->Get_Layer()) {
+			CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(pObject, m_pOwner->Get_LayerDesc());
+		}
+	}
 
 	return static_cast<int>(ObjectIndex);
 }
 
-void CObjectContainer::Destroy_Child(_uint ChildIndex)
+void CObjectContainer::Destroy_Child(_uint childIndex)
 {
-	if (m_ChildrenObjects.size() <= ChildIndex)
+	if (m_ChildrenObjects.size() <= childIndex)
 		return;
 
-	CGameObject* target= m_ChildrenObjects[ChildIndex];
-	  
-	auto nameIter = m_ChildrensName.find(target->Get_ObjectID());
-	m_ChildrensName.erase(nameIter);
-	auto IndexIter = m_IndexByID.find(target->Get_ObjectID());
-	m_IndexByID.erase(IndexIter);
+	CGameObject* targetObject = m_ChildrenObjects[childIndex];
+	if (targetObject == nullptr)
+		return;
 
-	m_ChildrenObjects[ChildIndex] = nullptr;
+	const _uint objectId = targetObject->Get_ObjectID();
+	{
+		auto orderIndexIter = m_OrderIndexByID.find(objectId);
+		if (orderIndexIter != m_OrderIndexByID.end())
+		{
+			const _uint orderIndex = orderIndexIter->second;
 
-	//여기서 자식 오브젝트를 지우는 작업 필요.
-	//해당 컴포넌트 안에서도 지우고, 레이어에서도 지우는 작업이 필요함. 
-	CGameInstance::GetInstance()->Get_ObjectMgr()->Remove_Object(target);
-	Safe_Release(target);
+			if (orderIndex < (_uint)m_UpdateOrder.size() && m_UpdateOrder[orderIndex] == objectId)
+			{
+				m_UpdateOrder.erase(m_UpdateOrder.begin() + orderIndex);
+			}
+			else
+			{
+				for (_uint scanIndex = 0; scanIndex < (_uint)m_UpdateOrder.size(); ++scanIndex)
+				{
+					if (m_UpdateOrder[scanIndex] == objectId)
+					{
+						m_UpdateOrder.erase(m_UpdateOrder.begin() + scanIndex);
+						break;
+					}
+				}
+			}
+
+			m_OrderIndexByID.erase(orderIndexIter);
+		}
+		else
+		{
+			for (_uint scanIndex = 0; scanIndex < (_uint)m_UpdateOrder.size(); ++scanIndex)
+			{
+				if (m_UpdateOrder[scanIndex] == objectId)
+				{
+					m_UpdateOrder.erase(m_UpdateOrder.begin() + scanIndex);
+					break;
+				}
+			}
+		}
+
+		m_OrderIndexByID.clear();
+		m_OrderIndexByID.reserve(m_UpdateOrder.size());
+		for (_uint orderIndex = 0; orderIndex < (_uint)m_UpdateOrder.size(); ++orderIndex)
+			m_OrderIndexByID[m_UpdateOrder[orderIndex]] = orderIndex;
+	}
+
+	{
+		auto nameIter = m_ChildrensName.find(objectId);
+		if (nameIter != m_ChildrensName.end())
+			m_ChildrensName.erase(nameIter);
+
+		auto indexIter = m_IndexByID.find(objectId);
+		if (indexIter != m_IndexByID.end())
+			m_IndexByID.erase(indexIter);
+	}
+
+	m_ChildrenObjects[childIndex] = nullptr;
+
+	CUI_Object* uiObject = dynamic_cast<CUI_Object*>(targetObject);
+	const _bool isUIObject = (uiObject != nullptr);
+
+	if (isUIObject)
+	{
+		CGameInstance::GetInstance()->Get_UIMgr()->Remove_UIObject(uiObject);
+		Safe_Release(uiObject);
+	}
+	else
+	{
+		CGameInstance::GetInstance()->Get_ObjectMgr()->Remove_Object(targetObject);
+		Safe_Release(targetObject);
+	}
 }
+
 
 void CObjectContainer::Dettach_Child(_uint ChildIndex)
 {
@@ -187,6 +369,211 @@ void CObjectContainer::Dettach_Child(_uint ChildIndex)
 	target->Get_Component<CChild>()->Dettach_Parent();
 	target->Remove_Component<CChild>();
 	Safe_Release(target);
+}
+
+void CObjectContainer::Render_GUI()
+{
+	ImGui::SeparatorText("Object_Container");
+
+	const float textLineHeight = ImGui::GetTextLineHeightWithSpacing();
+	const float childHeight = (textLineHeight * ((float)m_UpdateOrder.size() + 3.0f)) + (ImGui::GetStyle().WindowPadding.y * 2.0f);
+
+	ImGui::BeginChild("##ObjectContainerChild", ImVec2{ 0, childHeight }, true);
+	ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 8.0f);
+
+	for (_uint orderIndex = 0; orderIndex < (_uint)m_UpdateOrder.size(); ++orderIndex)
+	{
+		const _uint objectId = m_UpdateOrder[orderIndex];
+		if (objectId == 0)
+			continue; // Destroy에서 0 박은 슬롯
+
+		auto indexIter = m_IndexByID.find(objectId);
+		if (indexIter == m_IndexByID.end())
+			continue;
+
+		const _uint childIndex = indexIter->second;
+		CGameObject* childObject = (childIndex < (_uint)m_ChildrenObjects.size()) ? m_ChildrenObjects[childIndex] : nullptr;
+		if (!childObject)
+			continue;
+
+		ImGui::PushID((int)objectId);
+
+		const string labelText = childObject->Get_InstanceName() + "  (ID:" + to_string(objectId) + ")";
+		ImGui::AlignTextToFramePadding();
+		ImGui::TextUnformatted(labelText.c_str());
+		ImGui::SameLine();
+
+		const float spacing = 6.0f;
+
+		ImGui::SameLine(0.0f, spacing);
+		if (ImGui::SmallButton("Up"))
+			Upper_Order(childObject);
+
+		ImGui::SameLine(0.0f, spacing);
+		if (ImGui::SmallButton("Down"))
+			Lower_Order(childObject);
+
+		ImGui::SameLine(0.0f, spacing);
+		if (ImGui::SmallButton("Delete"))
+			Destroy_Child(childIndex);
+
+		// 툴팁
+		if (ImGui::IsItemHovered())
+		{
+			ImGui::BeginTooltip();
+			ImGui::Text("Delete : %s", childObject->Get_InstanceName().c_str());
+			ImGui::EndTooltip();
+		}
+
+		ImGui::PopID();
+	}
+
+	ImGui::PopStyleVar();
+	ImGui::EndChild();
+}
+
+
+void CObjectContainer::ReorderChildren(CGameObject* objectPtr, _uint targetIndex)
+{
+	if (!objectPtr) return;
+
+	const _uint objectId = objectPtr->Get_ObjectID();
+	if (m_IndexByID.find(objectId) == m_IndexByID.end()) return;
+
+	_bool found = false;
+	_uint currentIndex = 0;
+
+	for (_uint scanIndex = 0; scanIndex < (_uint)m_UpdateOrder.size(); ++scanIndex)
+	{
+		if (m_UpdateOrder[scanIndex] == objectId)
+		{
+			found = true;
+			currentIndex = scanIndex;
+			m_UpdateOrder.erase(m_UpdateOrder.begin() + scanIndex);
+			break;
+		}
+	}
+	if (!found) return;
+
+	// 삭제로 인해 뒤쪽 인덱스가 당겨지는 보정
+	if (currentIndex < targetIndex)
+		targetIndex = (targetIndex == 0) ? 0 : (targetIndex );
+
+	if (targetIndex > (_uint)m_UpdateOrder.size())
+		targetIndex = (_uint)m_UpdateOrder.size();
+
+	m_UpdateOrder.insert(m_UpdateOrder.begin() + targetIndex, objectId);
+
+	m_OrderIndexByID.clear();
+	m_OrderIndexByID.reserve(m_UpdateOrder.size());
+	for (_uint orderIndex = 0; orderIndex < (_uint)m_UpdateOrder.size(); ++orderIndex)
+		m_OrderIndexByID[m_UpdateOrder[orderIndex]] = orderIndex;
+}
+
+
+
+void CObjectContainer::Upper_Order(CGameObject* pObject)
+{
+	if (!pObject)
+		return;
+
+	const _uint objectId = pObject->Get_ObjectID();
+
+	auto it = m_OrderIndexByID.find(objectId);
+	if (it == m_OrderIndexByID.end())
+		return;
+
+	const _uint curIndex = it->second;
+	if (curIndex == 0)
+		return; // 이미 맨 위
+
+	ReorderChildren(pObject, curIndex - 1);
+}
+
+void CObjectContainer::Lower_Order(CGameObject* pObject)
+{
+	if (!pObject)
+		return;
+
+	const _uint objectId = pObject->Get_ObjectID();
+
+	auto it = m_OrderIndexByID.find(objectId);
+	if (it == m_OrderIndexByID.end())
+		return;
+
+	const _uint curIndex = it->second;
+	const _uint count = (_uint)m_UpdateOrder.size();
+	if (count == 0)
+		return;
+
+	if (curIndex + 1 >= count)
+		return; // 이미 맨 아래
+
+	ReorderChildren(pObject, curIndex + 1);
+}
+
+void CObjectContainer::Set_Order_First(CGameObject* pObject)
+{
+	if (!pObject)
+		return;
+
+	const _uint objectId = pObject->Get_ObjectID();
+
+	// 이미 있는지 체크해서, 이미 맨 위면 조기 종료
+	auto it = m_OrderIndexByID.find(objectId);
+	if (it != m_OrderIndexByID.end() && it->second == 0)
+		return;
+
+	ReorderChildren(pObject, 0);
+}
+
+void CObjectContainer::Set_Order_Last(CGameObject* pObject)
+{
+	if (!pObject)
+		return;
+
+	const _uint objectId = pObject->Get_ObjectID();
+
+	const _uint count = (_uint)m_UpdateOrder.size();
+	if (count == 0)
+	{
+		ReorderChildren(pObject, 0);
+		return;
+	}
+
+	// 이미 있는지 체크해서, 이미 맨 아래면 조기 종료
+	auto it = m_OrderIndexByID.find(objectId);
+	if (it != m_OrderIndexByID.end() && it->second + 1 == count)
+		return;
+
+	ReorderChildren(pObject, count);
+}
+
+CGameObject* CObjectContainer::Get_ChildByOrder(_uint Index)
+{
+	if (Index >= m_UpdateOrder.size())
+		return nullptr;
+
+	_uint objectId = m_UpdateOrder[Index];
+	auto it = m_IndexByID.find(objectId);
+	if (it == m_IndexByID.end())
+		return nullptr;
+
+	return m_ChildrenObjects[it->second];
+}
+
+vector<CGameObject*> CObjectContainer::Get_ChildrenByOrder()
+{
+	vector<CGameObject*> objects;
+	objects.reserve(m_UpdateOrder.size());
+
+	for (size_t i = 0; i < m_UpdateOrder.size(); ++i)
+	{
+		if (auto pObj = Get_ChildByOrder(i))
+			objects.push_back(pObj);
+	}
+
+	return objects;
 }
 
 CObjectContainer* CObjectContainer::Create()
@@ -213,12 +600,14 @@ void CObjectContainer::Free()
 	if (m_ChildrenObjects.empty()) return;
 
 	for (auto& child : m_ChildrenObjects) {
-		if(child)
-		child->Get_Component<CChild>()->Dettach_Parent();
+		if (child)
+			child->Get_Component<CChild>()->Dettach_Parent();
 		Safe_Release(child);
 	}
 
 	m_ChildrenObjects.clear();
 	m_ChildrensName.clear();
 	m_IndexByID.clear();
+	m_OrderIndexByID.clear();
+	m_UpdateOrder.clear();
 }

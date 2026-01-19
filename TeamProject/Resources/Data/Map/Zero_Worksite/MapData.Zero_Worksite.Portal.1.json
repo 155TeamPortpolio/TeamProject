@@ -1,0 +1,15 @@
+{
+  "TagDataFormat": "Portal",
+  "TagArea": "Zero_Worksite",
+  "iVersion": 1,
+  "values": [
+    {
+      "iObjID": 15,
+      "TagName": "NextLevel",
+      "defaultvalue": {
+        "type": "String",
+        "value": "Zero_Level"
+      }
+    }
+  ]
+}

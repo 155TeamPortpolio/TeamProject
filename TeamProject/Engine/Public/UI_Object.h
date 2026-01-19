@@ -1,10 +1,45 @@
 #pragma once
 #include "GameObject.h"
+#include "Helper_Func.h"
+
 NS_BEGIN(Engine)
 class ENGINE_DLL CUI_Object abstract : public CGameObject
 {
+	//		명칭, 스케일 배율
+	//		사이즈는 픽셀
+	//		
+	//		피봇은 트랜스폼 기준점
+	//		
+	//		앵커는 부모 기준 각
+	//		앵커 오프셋 나의fxfy
+
+public:
+	typedef struct tagUIKeyframe {
+	_float		fTime = {};
+	_float2		vScale = { 1.f, 1.f };
+	_float		fAngle = {};
+	_float2		vPosition = {};
+	_float4		vColor = { 1.f, 1.f, 1.f, 1.f };
+	EaseType	easeType = {};
+
+	tagUIKeyframe(_float _fTime = 0.f) : fTime(_fTime) {}
+	tagUIKeyframe(_float _fTime, _float2 _vScale, _float _fAngle, _float2 _vPosition, _float4 _vColor, EaseType _easeType) :
+		fTime(_fTime), vScale(_vScale), fAngle(_fAngle), vPosition(_vPosition), vColor(_vColor), easeType(_easeType) {}
+	}UI_KEYFRAME;
+
+	typedef struct tagUIAnimationClip {
+		string		strName;
+		_bool		isLoop = {};
+		_float		fDuration = { 1.f };
+	
+		vector<UI_KEYFRAME>	keyframes;
+
+		tagUIAnimationClip() {}
+		tagUIAnimationClip(string _strName) : strName(_strName) {}
+	}UI_ANIM_CLIP;
+
 protected:
-	CUI_Object();
+	CUI_Object() {}
 	CUI_Object(const CUI_Object& rhs);
 	virtual ~CUI_Object() DEFAULT;
 
@@ -18,88 +53,153 @@ public:
 	virtual void Priority_Update(_float dt)override;
 	virtual void Update(_float dt)override;
 	virtual void Late_Update(_float dt)override;
+
 public:
 	/*활성 비활성에 대한 로직을 스스로*/
 	virtual void UI_Active(void* pArg = nullptr) {};
 	virtual void UI_DeActive(void* pArg = nullptr) {};
-public :
-	_uint Get_Priority() { return m_iPriority; };
-	void Set_Priority(_uint priority) { m_iPriority = priority; }
-	void Set_CenterPos(_float2 pos) { m_fLocalX = pos.x; m_fLocalY = pos.y; }
-	void Set_Size(_float2 size) { m_fSizeX = size.x; m_fSizeY = size.y; }
-	void Set_Size(_fvector size);
 
+	virtual void Enter_Hover() {}
+	virtual void Exit_Hover() {}
+	virtual void OnClick() {}
+
+	void Set_Size(_float2 size) { m_vSize= size; } 
 	_bool Size_To(_fvector size, _float Speed);
 	_bool Move_To(_fvector size, _float Speed);
 	_bool Rotate_To(_float rad, _float Speed);
-
-	_float2 Get_CenterPos() { return{ m_fLocalX ,m_fLocalY }; }
 
 public:
 	void Render_GUI() override;
 
 public:
 	void Update_UITransform();
-	void Rotate_Left(_float _radian);
-
+	void Set_LeftTop(_float2 desiredLT) {}
+	void Set_Anchor(ANCHOR eAnchor) { m_eAnchor = eAnchor; }
+	void Set_AnchorOffset(_float2 vOffset) { m_vAnchorOffset = vOffset; }
+	void Set_AnchorOffsetX(_float fOffset) { m_vAnchorOffset.x = fOffset; }
+	void Set_Color(_float4 vColor) { m_vColor = vColor; }
+	void Rotate_Left(_float _radian) { m_fRadian += _radian; }
 	/*Get Size*/
-	_float HalfX() { return m_fSizeX * 0.5f; }
-	_float HalfY() { return m_fSizeY * 0.5f; }
+	_float2 Get_PxSize() { return m_vSize * m_vScale; }
+	_float2 Half_PxSize() { return Get_PxSize() * 0.5f; }
+	_float2 Get_RectTopLeft_Screen() ;
+	_float2 Get_CombinedScale() { return m_vCombinedScale; }
+	_float2 Get_AnchorOffset() { return m_vAnchorOffset; }
 
+	// Screen anchors
+	_float2 LT(_float x = 0.f, _float y = 0.f) { return Get_Point_Screen({ 0.f,   0.f }, x, y); }
+	_float2 LC(_float x = 0.f, _float y = 0.f) { return Get_Point_Screen({ 0.f,   0.5f }, x, y); }
+	_float2 LB(_float x = 0.f, _float y = 0.f) { return Get_Point_Screen({ 0.f,   1.f }, x, y); }
 
-	/*Get Anchor*/
-	_float2 LT(_float x = 0.f, _float y = 0.f) { return { m_fWorldX - HalfX() + x, m_fWorldY - HalfY() + y }; }
-	_float2 LC(_float x = 0.f, _float y = 0.f) { return { m_fWorldX - HalfX() + x, m_fWorldY + y }; }
-	_float2 LB(_float x = 0.f, _float y = 0.f) { return { m_fWorldX - HalfX() + x, m_fWorldY + HalfY() + y }; }
+	_float2 CT(_float x = 0.f, _float y = 0.f) { return Get_Point_Screen({ 0.5f,  0.f }, x, y); }
+	_float2 Center(_float x = 0.f, _float y = 0.f) { return Get_Point_Screen({ 0.5f, 0.5f }, x, y); }
+	_float2 CB(_float x = 0.f, _float y = 0.f) { return Get_Point_Screen({ 0.5f,  1.f }, x, y); }
 
-	_float2 CT(_float x = 0.f, _float y = 0.f) { return { m_fWorldX + x , m_fWorldY - HalfY() + y }; }
-	_float2 Center(_float x = 0.f, _float y = 0.f) { return { m_fWorldX + x,m_fWorldY + y }; }
-	_float2 CB(_float x = 0.f, _float y = 0.f) { return { m_fWorldX + x , m_fWorldY + HalfY() + y }; }
+	_float2 RT(_float x = 0.f, _float y = 0.f) { return Get_Point_Screen({ 1.f,   0.f }, x, y); }
+	_float2 RC(_float x = 0.f, _float y = 0.f) { return Get_Point_Screen({ 1.f,   0.5f }, x, y); }
+	_float2 RB(_float x = 0.f, _float y = 0.f) { return Get_Point_Screen({ 1.f,   1.f }, x, y); }
 
-	_float2 RT(_float x = 0.f, _float y = 0.f) { return { m_fWorldX + HalfX() + x, m_fWorldY - HalfY() + y }; }
-	_float2 RC(_float x = 0.f, _float y = 0.f) { return { m_fWorldX + HalfX() + x, m_fWorldY + y }; }
-	_float2 RB(_float x = 0.f, _float y = 0.f) { return   { m_fWorldX + HalfX() + x, m_fWorldY + HalfY() + y }; }
+	// Local anchors (parent anchor 기준 좌표계)
+	_float2 Local_LT(_float x = 0.f, _float y = 0.f) { return Get_Point_Local({ 0.f,  0.f }, x, y); }
+	_float2 Local_LC(_float x = 0.f, _float y = 0.f) { return Get_Point_Local({ 0.f,  0.5f }, x, y); }
+	_float2 Local_LB(_float x = 0.f, _float y = 0.f) { return Get_Point_Local({ 0.f,  1.f }, x, y); }
 
-	/*Get Anchor*/
-	_float2 Local_LT(_float x = 0.f, _float y = 0.f) { return { m_fLocalX - HalfX() + x, m_fLocalY - HalfY() + y }; }
-	_float2 Local_LC(_float x = 0.f, _float y = 0.f) { return { m_fLocalX - HalfX() + x, m_fLocalY + y }; }
-	_float2 Local_LB(_float x = 0.f, _float y = 0.f) { return { m_fLocalX - HalfX() + x, m_fLocalY + HalfY() + y }; }
+	_float2 Local_CT(_float x = 0.f, _float y = 0.f) { return Get_Point_Local({ 0.5f, 0.f }, x, y); }
+	_float2 Local_Center(_float x = 0.f, _float y = 0.f) { return Get_Point_Local({ 0.5f,0.5f }, x, y); }
+	_float2 Local_CB(_float x = 0.f, _float y = 0.f) { return Get_Point_Local({ 0.5f, 1.f }, x, y); }
 
-	_float2 Local_CT(_float x = 0.f, _float y = 0.f) { return { m_fLocalX + x, m_fLocalY - HalfY() + y }; }
-	_float2 Local_Center(_float x = 0.f, _float y = 0.f) { return { m_fLocalX + x,m_fLocalY + y }; }
-	_float2 Local_CB(_float x = 0.f, _float y = 0.f) { return { m_fLocalX + x, m_fLocalY + HalfY() + y }; }
+	_float2 Local_RT(_float x = 0.f, _float y = 0.f) { return Get_Point_Local({ 1.f,  0.f }, x, y); }
+	_float2 Local_RC(_float x = 0.f, _float y = 0.f) { return Get_Point_Local({ 1.f,  0.5f }, x, y); }
+	_float2 Local_RB(_float x = 0.f, _float y = 0.f) { return Get_Point_Local({ 1.f,  1.f }, x, y); }
 
-	_float2 Local_RT(_float x = 0.f, _float y = 0.f) { return { m_fLocalX + HalfX() + x, m_fLocalY - HalfY() + y }; }
-	_float2 Local_RC(_float x = 0.f, _float y = 0.f) { return { m_fLocalX + HalfX() + x, m_fLocalY + y }; }
-	_float2 Local_RB(_float x = 0.f, _float y = 0.f) { return   { m_fLocalX + HalfX() + x, m_fLocalY + HalfY() + y }; }
-
-
-	_float2 Align_To(ANCHOR pivot, _float2 _pivot);
+	void Align_To(ANCHOR anchor) { m_eAnchor = anchor; }
+	void Set_Pivot(_float2 newPivot);
 
 public:
-	void Set_OnSystem(const string& Level, _int systemIndex) { m_Level = Level; m_SystemIndex = systemIndex; }
+	void Set_OnSystem(const string& Level, _int systemIndex) { m_LevelTag = Level; m_SystemIndex = systemIndex; }
 	_int Get_SystemIndex() { return m_SystemIndex; }
-	string Get_SystemLevel() { return m_Level; }
+	string Get_SystemLevel() { return m_LevelTag; }
+	_float Get_ZPriority() { return m_Zpriority; };
+	void Set_ZPriority(_float priority) { m_Zpriority = priority; }
+
+public:
+	void Set_Clickable(_bool isClickable) { m_isClickable = isClickable; }
+	_bool Is_Clickable() { return m_isClickable; }
+
+public:
+	void Play_Animation(_float dt);					
+	void Set_Animation(_uint iIndex, _bool isLoop = false);
+	_bool Set_LastKeyframeTime(_uint iClipIndex, _float fTime);
+
+	_bool Is_AnimFinished();
+
+public:
+	virtual void Save(nlohmann::ordered_json& data) {}
+	virtual void Load(const nlohmann::ordered_json& data);
+
+public:
+	UI_HANDLE Get_Handle();
+	UI_HANDLE Get_DescendantHandle(const string& instanceName);
+
+private:
+	_float2 Get_Point_Screen(_float2 anchor, _float x = 0.f, _float y = 0.f);
+	_float2 Get_Point_Local(_float2 anchor, _float x = 0.f, _float y = 0.f);
+	_float2 Calc_AnchorPoint();
+
+	_bool Set_KeyframeTime(UI_ANIM_CLIP& clip, _int iKeyframeIndex, _float fTime);
 
 protected:
-	_float m_WinSizeX = {};
-	_float m_WinSizeY = {};
+	/*스크린 사이즈*/
+	_float2 m_WinSize = {};
+	/*부모 기준의 앵커 오프셋*/
+	_float2 m_vAnchorOffset = {};
+	/*스크린 기준의 오프셋*/
+	_float2 m_vScreenOffset = {};
+	ANCHOR m_eAnchor = ANCHOR::Left|ANCHOR::Top; 
 
-	_float m_fLocalX = {};
-	_float m_fLocalY = {};
-	_float m_fSizeX = {};
-	_float m_fSizeY = {};
-	_uint m_iPriority = {UINT_MAX};
+	/*픽셀 상의 크기*/
+	_float2 m_vSize = {};
+
+	/*좌상단 위치*/
+	_float2 m_vLeftTop = {};
+
+	/*크기 배율*/
+	_float2 m_vScale = {};
+	/*크기 배율 - 부모가 있다면 부모 스케일을 곱한 값 */
+	_float2 m_vCombinedScale = {};
+
+	/*트랜스폼 기준점 - 내부 좌표 기준 : 0~1, 0~1 */
+	_float2 m_vPivot= {};
 
 	_float m_fRadian = {};
+	_float m_Zpriority = {0.f};
 
-	string m_Level = {};
-	_int m_SystemIndex = {-1};
+	_int m_SystemIndex = {-1}; /* 유아이 매니저에서 배정한 벡터의 인덱스*/
 
-	_float m_fWorldX = {};
-	_float m_fWorldY = {};
+	_bool m_isClickable = {};
 
-	_bool m_bAttachParent = { true };
+	/*텍스쳐에 곱해지는 기본 컬러 (sRGB)*/
+	Vector4 m_vColor = { 1.f, 1.f, 1.f, 1.f };
+	/*셰이더로 전달되는 컬러 (m_vColor를 감마 2.2 보정하여 Linear Space로 변환한 값)*/
+	Vector4 m_vColorLinear{};
+	/*부모 알파와 자신의 알파를 곱한 최종 알파 값*/
+	_float m_vCombinedAlpha = { 1.f };
+
+	/*애니메이션*/
+	_bool m_isBlending = {};
+	_float m_fBlendTime = {};
+	_float m_fBlendDuration = {}; 
+
+	vector<UI_ANIM_CLIP> m_AnimClips;
+	_int m_iCurrentClipIndex = { -1 };
+	_bool m_isAnimLoop = { false };
+
+	/*애니메이션 위치 오프셋 값으로 m_vAnchorOffset에 더해지는 값*/
+	_float2 m_vAnimPosition = {};
+
+	/*월드 좌표계에 고정된 UI의 기준 위치 (World-Space Anchor)*/
+	_float3 m_vWorldPos = {};
+
 public:
 	virtual void Free() override;
 };

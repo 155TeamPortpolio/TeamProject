@@ -74,6 +74,19 @@ HRESULT CSkeletonFollower::Link_MasterModel(CSkeletalModel* pMasterModel)
 	return S_OK;
 }
 
+vector<_float4x4> CSkeletonFollower::Get_BoneMatrices(_uint meshIndex)
+{
+	vector<_float4x4> result;
+	result.reserve(m_ReflectedMatices.size());
+
+	for (size_t i = 0; i < m_ReflectedMatices.size(); ++i)
+	{
+		_smatrix final = m_ReflectedMatices[i];
+		_smatrix offset = m_pMyData->Get_Offset(meshIndex, i);
+		result.push_back(offset * final);
+	}
+	return result;
+}
 
 void CSkeletonFollower::Set_MasterAnimator(CAnimator3D* pAnimator)
 {
@@ -92,8 +105,11 @@ HRESULT CSkeletonFollower::ReLink_WithMaster()
 
 void CSkeletonFollower::Sync_Bones(_float dt)
 {
-	auto& masterFinalVec = m_pMasterAnimator->Get_BoneMatrices();        // SkinMatrix (World*Offset)
-	auto& masterCombinedVec = m_pMasterAnimator->Get_CombinedBoneMatrices(); // Combined (World)
+	//auto& masterFinalVec = m_pMasterAnimator->Get_CombinedBoneMatrices();        // SkinMatrix (World*Offset)
+	//auto& masterCombinedVec = m_pMasterAnimator->Get_CombinedBoneMatrices(); // Combined (World)
+
+	auto& masterFinalVec = m_pMasterAnimator->Get_BoneMatrices(CAnimator3D::BoneSpace::COMBINED);    // SkinMatrix (World*Offset)
+	auto& masterCombinedVec = m_pMasterAnimator->Get_BoneMatrices(CAnimator3D::BoneSpace::COMBINED); // Combined (World)
 
 	for (size_t i = 0; i < m_ReflectedIndices.size(); i++)
 	{
@@ -118,11 +134,7 @@ void CSkeletonFollower::Sync_Bones(_float dt)
 				? XMLoadFloat4x4(&masterCombinedVec[masterParentIdx])
 				: XMMatrixIdentity();
 
-
-			// ¸¶Áö¸·¿¡ Offset °ö
-			_matrix matFinal = matOffset * (matLocal * matParent);
-
-			XMStoreFloat4x4(&m_ReflectedMatices[i], matFinal);
+			XMStoreFloat4x4(&m_ReflectedMatices[i], (matLocal * matParent));
 		}
 		else
 		{

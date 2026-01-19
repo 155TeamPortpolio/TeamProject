@@ -1,0 +1,636 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>17.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{a13d6ef8-e4ea-44a8-a528-6aa4b1c2bd11}</ProjectGuid>
+    <RootNamespace>Client</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutDir>../Bin/</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>../Bin/</OutDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <AdditionalIncludeDirectories>../../EngineSDK/Inc/;../Public/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalOptions>/wd4005 /wd4251 /wd4819 /wd4267 /wd4244 /wd4172 /wd4018 /wd4838 /wd4305 /wd4101 /wd4129 /wd4715 /wd4067 %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>../../EngineSDK/Lib/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Engine.lib;fmod_vc.lib;DirectXTKd.lib;PhysX_64.lib;PhysXCommon_64.lib;PhysXFoundation_64.lib;PhysXCooking_64.lib;PhysXExtensions_static_64.lib;PhysXCharacterKinematic_static_64.lib;PhysXPvdSDK_static_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalOptions>/IGNORE:4099 %(AdditionalOptions)</AdditionalOptions>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <AdditionalIncludeDirectories>../../EngineSDK/Inc/;../Public/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalOptions>/wd4005 /wd4251 /wd4819 /wd4267 /wd4244 /wd4172 /wd4018 /wd4838 /wd4305 /wd4101 /wd4129 /wd4715 /wd4067 %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>../../EngineSDK/Lib/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Engine.lib;fmod_vc.lib;DirectXTK.lib;PhysX_64.lib;PhysXCommon_64.lib;PhysXFoundation_64.lib;PhysXCooking_64.lib;PhysXExtensions_static_64.lib;PhysXCharacterKinematic_static_64.lib;PhysXPvdSDK_static_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalOptions>/IGNORE:4099 %(AdditionalOptions)</AdditionalOptions>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\backends\imgui_impl_dx11.h" />
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\backends\imgui_impl_win32.h" />
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\imgui.h" />
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\ImGuizmo.h" />
+    <ClInclude Include="..\Public\Anbi.h" />
+    <ClInclude Include="..\Public\AnbiState_Attack.h" />
+    <ClInclude Include="..\Public\AnbiState_Idle.h" />
+    <ClInclude Include="..\Public\AnbiState_Move.h" />
+    <ClInclude Include="..\Public\AnbiState_NormalAttack.h" />
+    <ClInclude Include="..\Public\AnbiState_Run.h" />
+    <ClInclude Include="..\Public\AnbiState_Walk.h" />
+    <ClInclude Include="..\Public\AttackSign.h" />
+    <ClInclude Include="..\public\BangBooAsk.h" />
+    <ClInclude Include="..\public\BangBooAskState_Idle.h" />
+    <ClInclude Include="..\public\BangBooDeliver.h" />
+    <ClInclude Include="..\public\BangBooDeliverState_Idle.h" />
+    <ClInclude Include="..\public\BangBooPay.h" />
+    <ClInclude Include="..\public\BangBooPayState_Idle.h" />
+    <ClInclude Include="..\public\BattlePlayer.h" />
+    <ClInclude Include="..\public\BattleSystem.h" />
+    <ClInclude Include="..\Public\CorinState_SwitchInParryAid.h" />
+    <ClInclude Include="..\public\CursorController.h" />
+    <ClInclude Include="..\public\Interactable.h" />
+    <ClInclude Include="..\Public\CorinState_UltimateAttack.h" />
+    <ClInclude Include="..\public\JaneDoeState_Hit.h" />
+    <ClInclude Include="..\public\OBJFactory.h" />
+    <ClInclude Include="..\public\OrbitLockOnController.h" />
+    <ClInclude Include="..\Public\OrbitLockOnData.h" />
+    <ClInclude Include="..\Public\SacrificeState_Groggy.h" />
+    <ClInclude Include="..\Public\MapInvisibleWall.h" />
+    <ClInclude Include="..\public\Portal.h" />
+    <ClInclude Include="..\Public\SacrificeState_Groggy_Phase1.h" />
+    <ClInclude Include="..\Public\SacrificeState_Groggy_Phase2.h" />
+    <ClInclude Include="..\Public\StageFx.h" />
+    <ClInclude Include="..\public\ThugAssaulter_Groggy.h" />
+    <ClInclude Include="..\Public\Belle.h" />
+    <ClInclude Include="..\Public\BelleState_Idle.h" />
+    <ClInclude Include="..\Public\BelleState_Move.h" />
+    <ClInclude Include="..\Public\BelleState_Run.h" />
+    <ClInclude Include="..\Public\BelleState_Walk.h" />
+    <ClInclude Include="..\Public\CorinState_ExAttack.h" />
+    <ClInclude Include="..\Public\CorinState_Hit.h" />
+    <ClInclude Include="..\Public\FieldCharacter.h" />
+    <ClInclude Include="..\Public\FieldPlayer.h" />
+    <ClInclude Include="..\Public\FieldSystem.h" />
+    <ClInclude Include="..\public\ThugAssaulter_Hit.h" />
+    <ClInclude Include="..\public\ThugAssaulter_HitAirborne.h" />
+    <ClInclude Include="..\public\ThugBulkyEnforcer_Hit.h" />
+    <ClInclude Include="..\Public\UI_BossHUD.h" />
+    <ClInclude Include="..\Public\UI_EnemyStatus.h" />
+    <ClInclude Include="..\Public\UI_FieldHUD.h" />
+    <ClInclude Include="..\Public\UI_MeshBillboard.h" />
+    <ClInclude Include="..\Public\ButtonUI.h" />
+    <ClInclude Include="..\Public\CamDirectorData.h" />
+    <ClInclude Include="..\public\CamLoader.h" />
+    <ClInclude Include="..\public\CamObject.h" />
+    <ClInclude Include="..\public\CamDirector.h" />
+    <ClInclude Include="..\Public\CanvasPanel.h" />
+    <ClInclude Include="..\public\CamPanel.h" />
+    <ClInclude Include="..\Public\Character.h" />
+    <ClInclude Include="..\Public\CharacterAttackCollider.h" />
+    <ClInclude Include="..\Public\Client_Enum.h" />
+    <ClInclude Include="..\Public\Corin.h" />
+    <ClInclude Include="..\Public\CorinState_Attack.h" />
+    <ClInclude Include="..\Public\CorinState_Backstep.h" />
+    <ClInclude Include="..\Public\CorinState_Dash.h" />
+    <ClInclude Include="..\Public\CorinState_Evade.h" />
+    <ClInclude Include="..\Public\CorinState_Idle.h" />
+    <ClInclude Include="..\Public\CorinState_Move.h" />
+    <ClInclude Include="..\Public\CorinState_NormalAttack.h" />
+    <ClInclude Include="..\Public\CorinState_Run.h" />
+    <ClInclude Include="..\Public\CorinState_RushAttack.h" />
+    <ClInclude Include="..\Public\CorinState_SwitchIn.h" />
+    <ClInclude Include="..\Public\CorinState_SwitchInAttack.h" />
+    <ClInclude Include="..\Public\CorinState_SwitchInNormal.h" />
+    <ClInclude Include="..\Public\CorinState_SwitchOut.h" />
+    <ClInclude Include="..\Public\CorinState_Walk.h" />
+    <ClInclude Include="..\public\DataBase.h" />
+    <ClInclude Include="..\Public\Enemy.h" />
+    <ClInclude Include="..\public\EnemyAttackCollider.h" />
+    <ClInclude Include="..\public\EnemyNormal.h" />
+    <ClInclude Include="..\public\EnemyTriggerCollider.h" />
+    <ClInclude Include="..\Public\Enemy_Struct.h" />
+    <ClInclude Include="..\Public\Event_Struct.h" />
+    <ClInclude Include="..\Public\GaugeUI.h" />
+    <ClInclude Include="..\public\JaneDoeState_Attack.h" />
+    <ClInclude Include="..\public\JaneDoeState_BackStep.h" />
+    <ClInclude Include="..\public\JaneDoeState_BranchAttack.h" />
+    <ClInclude Include="..\public\JaneDoeState_Dash.h" />
+    <ClInclude Include="..\public\JaneDoeState_Evade.h" />
+    <ClInclude Include="..\public\JaneDoeState_ExAttack.h" />
+    <ClInclude Include="..\public\JaneDoeState_Idle.h" />
+    <ClInclude Include="..\public\JaneDoeState_Move.h" />
+    <ClInclude Include="..\public\JaneDoeState_NormalAttack.h" />
+    <ClInclude Include="..\public\JaneDoeState_Run.h" />
+    <ClInclude Include="..\public\JaneDoeState_RushAttack.h" />
+    <ClInclude Include="..\public\JaneDoeState_SwitchIn.h" />
+    <ClInclude Include="..\public\JaneDoeState_SwitchInExAttack.h" />
+    <ClInclude Include="..\public\JaneDoeState_SwitchInParryAid.h" />
+    <ClInclude Include="..\public\JaneDoeState_SwitchOut.h" />
+    <ClInclude Include="..\public\JaneDoeState_UltimateAttack.h" />
+    <ClInclude Include="..\public\JaneDoeState_Walk.h" />
+    <ClInclude Include="..\Public\MainCity_Level.h" />
+    <ClInclude Include="..\Public\OrbitCamTypes.h" />
+    <ClInclude Include="..\Public\Sacrifice_Laser.h" />
+    <ClInclude Include="..\public\JaneDoeState_SwitchInAttack.h" />
+    <ClInclude Include="..\public\JaneDoeState_SwitchInNormal.h" />
+    <ClInclude Include="..\public\Npc.h" />
+    <ClInclude Include="..\public\OfficeMeow.h" />
+    <ClInclude Include="..\public\OfficeMeowState_Idle.h" />
+    <ClInclude Include="..\public\OfficeMeowState_Think.h" />
+    <ClInclude Include="..\public\OfficeMeowState_Welcome.h" />
+    <ClInclude Include="..\Public\Sacrifice_Orb.h" />
+    <ClInclude Include="..\Public\Scott_Level.h" />
+    <ClInclude Include="..\public\ServiceNpc.h" />
+    <ClInclude Include="..\Public\Stage.h" />
+    <ClInclude Include="..\public\ThugAssaulter.h" />
+    <ClInclude Include="..\public\ThugAssaulter_Attack.h" />
+    <ClInclude Include="..\public\ThugAssaulter_Born.h" />
+    <ClInclude Include="..\public\ThugAssaulter_Chase.h" />
+    <ClInclude Include="..\public\ThugAssaulter_Death.h" />
+    <ClInclude Include="..\public\ThugAssaulter_Idle.h" />
+    <ClInclude Include="..\public\ThugAssaulter_Move.h" />
+    <ClInclude Include="..\public\ThugBulkyEnforcer_Chase.h" />
+    <ClInclude Include="..\Public\Player.h" />
+    <ClInclude Include="..\public\ThugBulkyEnforcer_Death.h" />
+    <ClInclude Include="..\public\ThugBulkyEnforcer_Groggy.h" />
+    <ClInclude Include="..\Public\UIDesign_Macro.h" />
+    <ClInclude Include="..\public\UI_MeshPyramid.h" />
+    <ClInclude Include="..\Public\UI_MeshPyramidData.h" />
+    <ClInclude Include="..\Public\UI_ScreenFade.h" />
+    <ClInclude Include="..\Public\UI_WorldToScreen.h" />
+    <ClInclude Include="..\Public\UI_IconLabel.h" />
+    <ClInclude Include="..\Public\UI_BattleHUD.h" />
+    <ClInclude Include="..\Public\UI_BattleHUDAction.h" />
+    <ClInclude Include="..\Public\UI_Decibel.h" />
+    <ClInclude Include="..\Public\UI_DecibelDigits.h" />
+    <ClInclude Include="..\Public\UI_DecibelKanji.h" />
+    <ClInclude Include="..\Public\UI_DecibelPts.h" />
+    <ClInclude Include="..\Public\UI_DecibelText.h" />
+    <ClInclude Include="..\Public\UI_EvadeAction.h" />
+    <ClInclude Include="..\Public\UI_Loading.h" />
+    <ClInclude Include="..\Public\LoadingLevel.h" />
+    <ClInclude Include="..\Public\UI_Logo.h" />
+    <ClInclude Include="..\public\MaskUI.h" />
+    <ClInclude Include="..\public\ThugBulkyEnforcer_Born.h" />
+    <ClInclude Include="..\Public\IBaseState.h" />
+    <ClInclude Include="..\Public\IHState.h" />
+    <ClInclude Include="..\Public\ImageUI.h" />
+    <ClInclude Include="..\Public\LogoLevel.h" />
+    <ClInclude Include="..\Public\MapData_Defines.h" />
+    <ClInclude Include="..\Public\MapLoader_Helper.h" />
+    <ClInclude Include="..\Public\Miyabi.h" />
+    <ClInclude Include="..\Public\MiyabiState_Attack.h" />
+    <ClInclude Include="..\Public\MiyabiState_ChargeAttack.h" />
+    <ClInclude Include="..\Public\MiyabiState_Idle.h" />
+    <ClInclude Include="..\Public\MiyabiState_Move.h" />
+    <ClInclude Include="..\Public\MiyabiState_NormalAttack.h" />
+    <ClInclude Include="..\Public\MiyabiState_Run.h" />
+    <ClInclude Include="..\Public\MiyabiState_Walk.h" />
+    <ClInclude Include="..\public\OrbitCam.h" />
+    <ClInclude Include="..\Public\Client_Struct.h" />
+    <ClInclude Include="..\Public\FreeCam.h" />
+    <ClInclude Include="..\Public\MainApp.h" />
+    <ClInclude Include="..\public\MapFloorObject.h" />
+    <ClInclude Include="..\public\MapLoader.h" />
+    <ClInclude Include="..\public\MapObject.h" />
+    <ClInclude Include="..\public\MapPlacedObject.h" />
+    <ClInclude Include="..\public\MapTriggerObject.h" />
+    <ClInclude Include="..\Public\pch.h" />
+    <ClInclude Include="..\Public\Sacrifice.h" />
+    <ClInclude Include="..\Public\SacrificeHandState_Attack.h" />
+    <ClInclude Include="..\Public\SacrificeHandState_Hit.h" />
+    <ClInclude Include="..\Public\SacrificeHandState_Idle.h" />
+    <ClInclude Include="..\Public\SacrificeState_Attack.h" />
+    <ClInclude Include="..\Public\SacrificeState_Attack_Phase1.h" />
+    <ClInclude Include="..\Public\SacrificeState_Attack_Phase2.h" />
+    <ClInclude Include="..\Public\SacrificeState_Born.h" />
+    <ClInclude Include="..\Public\SacrificeState_ChangePhase.h" />
+    <ClInclude Include="..\Public\SacrificeState_Death.h" />
+    <ClInclude Include="..\Public\SacrificeState_Evade.h" />
+    <ClInclude Include="..\Public\SacrificeState_Evade_Phase1.h" />
+    <ClInclude Include="..\Public\SacrificeState_Evade_Phase2.h" />
+    <ClInclude Include="..\Public\SacrificeState_Hit.h" />
+    <ClInclude Include="..\Public\SacrificeState_Hit_Phase1.h" />
+    <ClInclude Include="..\Public\SacrificeState_Hit_Phase2.h" />
+    <ClInclude Include="..\Public\SacrificeState_Idle.h" />
+    <ClInclude Include="..\Public\SacrificeState_Parry.h" />
+    <ClInclude Include="..\Public\SacrificeState_Parry_Phase1.h" />
+    <ClInclude Include="..\Public\SacrificeState_Parry_Phase2.h" />
+    <ClInclude Include="..\Public\SacrificeState_Walk.h" />
+    <ClInclude Include="..\Public\SacrificeState_Walk_Phase1.h" />
+    <ClInclude Include="..\Public\SacrificeHand.h" />
+    <ClInclude Include="..\Public\SacrificeState_Walk_Phase2.h" />
+    <ClInclude Include="..\public\SequenceCam.h" />
+    <ClInclude Include="..\public\ShadowCam.h" />
+    <ClInclude Include="..\Public\SpriteAnimationUI.h" />
+    <ClInclude Include="..\Public\StateMachine.h" />
+    <ClInclude Include="..\Public\StateParameter.h" />
+    <ClInclude Include="..\public\TestCloud.h" />
+    <ClInclude Include="..\Public\TestFloor.h" />
+    <ClInclude Include="..\Public\TestLevel.h" />
+    <ClInclude Include="..\Public\TestMap.h" />
+    <ClInclude Include="..\Public\TestObject.h" />
+    <ClInclude Include="..\public\TestPlane.h" />
+    <ClInclude Include="..\Public\TestState_Dash.h" />
+    <ClInclude Include="..\Public\TestState_Idle.h" />
+    <ClInclude Include="..\Public\TestState_Jump.h" />
+    <ClInclude Include="..\Public\TestState_Walk.h" />
+    <ClInclude Include="..\Public\TextUI.h" />
+    <ClInclude Include="..\public\ThugBulkyEnforcer.h" />
+    <ClInclude Include="..\public\ThugBulkyEnforcer_Attack.h" />
+    <ClInclude Include="..\public\ThugBulkyEnforcer_Idle.h" />
+    <ClInclude Include="..\public\ThugBulkyEnforcer_Move.h" />
+    <ClInclude Include="..\public\UIDirector.h" />
+    <ClInclude Include="..\public\UILoader.h" />
+    <ClInclude Include="..\Public\UI_PrimaryAction.h" />
+    <ClInclude Include="..\Public\UI_SpecialAction.h" />
+    <ClInclude Include="..\Public\UI_SwitchAction.h" />
+    <ClInclude Include="..\Public\UI_UltimateAction.h" />
+    <ClInclude Include="..\Public\UVAnimationUI.h" />
+    <ClInclude Include="..\public\JaneDoe.h" />
+    <ClInclude Include="..\Public\ZeroPortal.h" />
+    <ClInclude Include="..\public\ZeroStage_1_1.h" />
+    <ClInclude Include="..\Public\ZeroStage_Boss.h" />
+    <ClInclude Include="..\Public\ZeroStage_Elite.h" />
+    <ClInclude Include="..\Public\ZeroStage_Normal.h" />
+    <ClInclude Include="..\Public\Zero_Level.h" />
+    <ClInclude Include="Client.h" />
+    <ClInclude Include="framework.h" />
+    <ClInclude Include="Resource.h" />
+    <ClInclude Include="targetver.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\backends\imgui_impl_dx11.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\backends\imgui_impl_win32.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\imgui.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\ImGuizmo.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\imgui_draw.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\imgui_tables.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\imgui_widgets.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Private\Anbi.cpp" />
+    <ClCompile Include="..\Private\AnbiState_Attack.cpp" />
+    <ClCompile Include="..\Private\AnbiState_Idle.cpp" />
+    <ClCompile Include="..\Private\AnbiState_Move.cpp" />
+    <ClCompile Include="..\Private\AnbiState_NormalAttack.cpp" />
+    <ClCompile Include="..\Private\AnbiState_Run.cpp" />
+    <ClCompile Include="..\Private\AnbiState_Walk.cpp" />
+    <ClCompile Include="..\Private\AttackSign.cpp" />
+    <ClCompile Include="..\private\BangBooAsk.cpp" />
+    <ClCompile Include="..\private\BangBooAskState_Idle.cpp" />
+    <ClCompile Include="..\private\BangBooDeliver.cpp" />
+    <ClCompile Include="..\private\BangBooDeliverState_Idle.cpp" />
+    <ClCompile Include="..\private\BangBooPay.cpp" />
+    <ClCompile Include="..\private\BangBooPayState_Idle.cpp" />
+    <ClCompile Include="..\private\BattlePlayer.cpp" />
+    <ClCompile Include="..\private\BattleSystem.cpp" />
+    <ClCompile Include="..\Private\CorinState_SwitchInParryAid.cpp" />
+    <ClCompile Include="..\private\CursorController.cpp" />
+    <ClCompile Include="..\private\Interactable.cpp" />
+    <ClCompile Include="..\Private\CorinState_UltimateAttack.cpp" />
+    <ClCompile Include="..\private\JaneDoeState_Hit.cpp" />
+    <ClCompile Include="..\private\OBJFactory.cpp" />
+    <ClCompile Include="..\private\OrbitLockOnController.cpp" />
+    <ClCompile Include="..\Private\SacrificeState_Groggy.cpp" />
+    <ClCompile Include="..\private\Portal.cpp" />
+    <ClCompile Include="..\Private\SacrificeState_Groggy_Phase1.cpp" />
+    <ClCompile Include="..\Private\SacrificeState_Groggy_Phase2.cpp" />
+    <ClCompile Include="..\private\ThugAssaulter_Groggy.cpp" />
+    <ClCompile Include="..\Private\Belle.cpp" />
+    <ClCompile Include="..\Private\BelleState_Idle.cpp" />
+    <ClCompile Include="..\Private\BelleState_Move.cpp" />
+    <ClCompile Include="..\Private\BelleState_Run.cpp" />
+    <ClCompile Include="..\Private\BelleState_Walk.cpp" />
+    <ClCompile Include="..\Private\CorinState_ExAttack.cpp" />
+    <ClCompile Include="..\Private\CorinState_Hit.cpp" />
+    <ClCompile Include="..\Private\FieldCharacter.cpp" />
+    <ClCompile Include="..\Private\FieldPlayer.cpp" />
+    <ClCompile Include="..\Private\FieldSystem.cpp" />
+    <ClCompile Include="..\private\ThugAssaulter_Hit.cpp" />
+    <ClCompile Include="..\private\ThugAssaulter_HitAirborne.cpp" />
+    <ClCompile Include="..\private\ThugBulkyEnforcer_Hit.cpp" />
+    <ClCompile Include="..\Private\UI_BossHUD.cpp" />
+    <ClCompile Include="..\Private\UI_EnemyStatus.cpp" />
+    <ClCompile Include="..\Private\UI_FieldHUD.cpp" />
+    <ClCompile Include="..\Private\UI_MeshBillboard.cpp" />
+    <ClCompile Include="..\Private\ButtonUI.cpp" />
+    <ClCompile Include="..\Private\CamLoader.cpp" />
+    <ClCompile Include="..\private\CamObject.cpp" />
+    <ClCompile Include="..\private\CamDirector.cpp" />
+    <ClCompile Include="..\Private\CanvasPanel.cpp" />
+    <ClCompile Include="..\private\CamPanel.cpp" />
+    <ClCompile Include="..\Private\Character.cpp" />
+    <ClCompile Include="..\Private\CharacterAttackCollider.cpp" />
+    <ClCompile Include="..\Private\Corin.cpp" />
+    <ClCompile Include="..\Private\CorinState_Attack.cpp" />
+    <ClCompile Include="..\Private\CorinState_Backstep.cpp" />
+    <ClCompile Include="..\Private\CorinState_Dash.cpp" />
+    <ClCompile Include="..\Private\CorinState_Evade.cpp" />
+    <ClCompile Include="..\Private\CorinState_Idle.cpp" />
+    <ClCompile Include="..\Private\CorinState_Move.cpp" />
+    <ClCompile Include="..\Private\CorinState_NormalAttack.cpp" />
+    <ClCompile Include="..\Private\CorinState_Run.cpp" />
+    <ClCompile Include="..\Private\CorinState_RushAttack.cpp" />
+    <ClCompile Include="..\Private\CorinState_SwitchIn.cpp" />
+    <ClCompile Include="..\Private\CorinState_SwitchInAttack.cpp" />
+    <ClCompile Include="..\Private\CorinState_SwitchInNormal.cpp" />
+    <ClCompile Include="..\Private\CorinState_SwitchOut.cpp" />
+    <ClCompile Include="..\Private\CorinState_Walk.cpp" />
+    <ClCompile Include="..\private\JaneDoeState_BranchAttack.cpp" />
+    <ClCompile Include="..\private\EnemyNormal.cpp" />
+    <ClCompile Include="..\private\JaneDoeState_ExAttack.cpp" />
+    <ClCompile Include="..\private\JaneDoeState_UltimateAttack.cpp" />
+    <ClCompile Include="..\Private\Sacrifice_Orb.cpp" />
+    <ClCompile Include="..\Private\MainCity_Level.cpp" />
+    <ClCompile Include="..\Private\Scott_Level.cpp" />
+    <ClCompile Include="..\Private\Stage.cpp" />
+    <ClCompile Include="..\private\ThugAssaulter.cpp" />
+    <ClCompile Include="..\private\ThugAssaulter_Attack.cpp" />
+    <ClCompile Include="..\private\ThugAssaulter_Born.cpp" />
+    <ClCompile Include="..\private\ThugAssaulter_Chase.cpp" />
+    <ClCompile Include="..\private\ThugAssaulter_Death.cpp" />
+    <ClCompile Include="..\private\ThugAssaulter_Idle.cpp" />
+    <ClCompile Include="..\private\ThugAssaulter_Move.cpp" />
+    <ClCompile Include="..\private\UI_MeshPyramid.cpp" />
+    <ClCompile Include="..\Private\UI_ScreenFade.cpp" />
+    <ClCompile Include="..\Private\UI_WorldToScreen.cpp" />
+    <ClCompile Include="..\Private\UI_IconLabel.cpp" />
+    <ClCompile Include="..\Private\UI_BattleHUDAction.cpp" />
+    <ClCompile Include="..\private\DataBase.cpp" />
+    <ClCompile Include="..\Private\Enemy.cpp" />
+    <ClCompile Include="..\private\EnemyAttackCollider.cpp" />
+    <ClCompile Include="..\private\EnemyTriggerCollider.cpp" />
+    <ClCompile Include="..\Private\GaugeUI.cpp" />
+    <ClCompile Include="..\Private\ImageUI.cpp" />
+    <ClCompile Include="..\Private\MapInvisibleWall.cpp" />
+    <ClCompile Include="..\Private\Sacrifice_Laser.cpp" />
+    <ClCompile Include="..\private\JaneDoeState_SwitchIn.cpp" />
+    <ClCompile Include="..\private\JaneDoeState_SwitchInExAttack.cpp" />
+    <ClCompile Include="..\private\JaneDoeState_SwitchInParryAid.cpp" />
+    <ClCompile Include="..\private\JaneDoeState_SwitchOut.cpp" />
+    <ClCompile Include="..\private\JaneDoeState_SwitchInAttack.cpp" />
+    <ClCompile Include="..\private\JaneDoeState_SwitchInNormal.cpp" />
+    <ClCompile Include="..\private\Npc.cpp" />
+    <ClCompile Include="..\private\OfficeMeow.cpp" />
+    <ClCompile Include="..\private\OfficeMeowState_Idle.cpp" />
+    <ClCompile Include="..\private\OfficeMeowState_Think.cpp" />
+    <ClCompile Include="..\private\OfficeMeowState_Welcome.cpp" />
+    <ClCompile Include="..\private\ServiceNpc.cpp" />
+    <ClCompile Include="..\private\ThugBulkyEnforcer_Chase.cpp" />
+    <ClCompile Include="..\private\JaneDoeState_Attack.cpp" />
+    <ClCompile Include="..\private\JaneDoeState_BackStep.cpp" />
+    <ClCompile Include="..\private\JaneDoeState_Dash.cpp" />
+    <ClCompile Include="..\private\JaneDoeState_Evade.cpp" />
+    <ClCompile Include="..\private\JaneDoeState_Idle.cpp" />
+    <ClCompile Include="..\private\JaneDoeState_Move.cpp" />
+    <ClCompile Include="..\private\JaneDoeState_NormalAttack.cpp" />
+    <ClCompile Include="..\private\JaneDoeState_Run.cpp" />
+    <ClCompile Include="..\private\JaneDoeState_RushAttack.cpp" />
+    <ClCompile Include="..\private\JaneDoeState_Walk.cpp" />
+    <ClCompile Include="..\Private\Player.cpp" />
+    <ClCompile Include="..\private\ThugBulkyEnforcer_Death.cpp" />
+    <ClCompile Include="..\private\ThugBulkyEnforcer_Groggy.cpp" />
+    <ClCompile Include="..\Private\UI_BattleHUD.cpp" />
+    <ClCompile Include="..\Private\UI_Decibel.cpp" />
+    <ClCompile Include="..\Private\UI_DecibelDigits.cpp" />
+    <ClCompile Include="..\Private\UI_DecibelKanji.cpp" />
+    <ClCompile Include="..\Private\UI_DecibelPts.cpp" />
+    <ClCompile Include="..\Private\UI_DecibelText.cpp" />
+    <ClCompile Include="..\Private\UI_EvadeAction.cpp" />
+    <ClCompile Include="..\Private\UI_Loading.cpp" />
+    <ClCompile Include="..\Private\LoadingLevel.cpp" />
+    <ClCompile Include="..\Private\UI_Logo.cpp" />
+    <ClCompile Include="..\Private\LogoLevel.cpp" />
+    <ClCompile Include="..\private\MaskUI.cpp" />
+    <ClCompile Include="..\Private\Miyabi.cpp" />
+    <ClCompile Include="..\Private\MiyabiState_Attack.cpp" />
+    <ClCompile Include="..\Private\MiyabiState_ChargeAttack.cpp" />
+    <ClCompile Include="..\Private\MiyabiState_Idle.cpp" />
+    <ClCompile Include="..\Private\MiyabiState_Move.cpp" />
+    <ClCompile Include="..\Private\MiyabiState_NormalAttack.cpp" />
+    <ClCompile Include="..\Private\MiyabiState_Run.cpp" />
+    <ClCompile Include="..\Private\MiyabiState_Walk.cpp" />
+    <ClCompile Include="..\private\OrbitCam.cpp" />
+    <ClCompile Include="..\Private\FreeCam.cpp" />
+    <ClCompile Include="..\Private\MainApp.cpp" />
+    <ClCompile Include="..\private\MapFloorObject.cpp" />
+    <ClCompile Include="..\private\MapLoader.cpp" />
+    <ClCompile Include="..\private\MapObject.cpp" />
+    <ClCompile Include="..\private\MapPlacedObject.cpp" />
+    <ClCompile Include="..\private\MapTriggerObject.cpp" />
+    <ClCompile Include="..\Private\pch.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Private\Sacrifice.cpp" />
+    <ClCompile Include="..\Private\SacrificeHandState_Attack.cpp" />
+    <ClCompile Include="..\Private\SacrificeHandState_Hit.cpp" />
+    <ClCompile Include="..\Private\SacrificeHandState_Idle.cpp" />
+    <ClCompile Include="..\Private\SacrificeState_Attack.cpp" />
+    <ClCompile Include="..\Private\SacrificeState_Attack_Phase1.cpp" />
+    <ClCompile Include="..\Private\SacrificeState_Attack_Phase2.cpp" />
+    <ClCompile Include="..\Private\SacrificeState_Born.cpp" />
+    <ClCompile Include="..\Private\SacrificeState_ChangePhase.cpp" />
+    <ClCompile Include="..\Private\SacrificeState_Death.cpp" />
+    <ClCompile Include="..\Private\SacrificeState_Evade.cpp" />
+    <ClCompile Include="..\Private\SacrificeState_Evade_Phase1.cpp" />
+    <ClCompile Include="..\Private\SacrificeState_Evade_Phase2.cpp" />
+    <ClCompile Include="..\Private\SacrificeState_Hit.cpp" />
+    <ClCompile Include="..\Private\SacrificeState_Hit_Phase1.cpp" />
+    <ClCompile Include="..\Private\SacrificeState_Hit_Phase2.cpp" />
+    <ClCompile Include="..\Private\SacrificeState_Idle.cpp" />
+    <ClCompile Include="..\Private\SacrificeState_Parry.cpp" />
+    <ClCompile Include="..\Private\SacrificeState_Parry_Phase1.cpp" />
+    <ClCompile Include="..\Private\SacrificeState_Parry_Phase2.cpp" />
+    <ClCompile Include="..\Private\SacrificeState_Walk.cpp" />
+    <ClCompile Include="..\Private\SacrificeState_Walk_Phase1.cpp" />
+    <ClCompile Include="..\Private\SacrificeHand.cpp" />
+    <ClCompile Include="..\Private\SacrificeState_Walk_Phase2.cpp" />
+    <ClCompile Include="..\private\SequenceCam.cpp" />
+    <ClCompile Include="..\private\ShadowCam.cpp" />
+    <ClCompile Include="..\Private\SpriteAnimationUI.cpp" />
+    <ClCompile Include="..\Private\StateParameter.cpp" />
+    <ClCompile Include="..\private\TestCloud.cpp" />
+    <ClCompile Include="..\Private\TestFloor.cpp" />
+    <ClCompile Include="..\Private\TestLevel.cpp" />
+    <ClCompile Include="..\Private\TestMap.cpp" />
+    <ClCompile Include="..\Private\TestObject.cpp" />
+    <ClCompile Include="..\private\TestPlane.cpp" />
+    <ClCompile Include="..\Private\TestState_Dash.cpp" />
+    <ClCompile Include="..\Private\TestState_Idle.cpp" />
+    <ClCompile Include="..\Private\TestState_Jump.cpp" />
+    <ClCompile Include="..\Private\TestState_Walk.cpp" />
+    <ClCompile Include="..\Private\TextUI.cpp" />
+    <ClCompile Include="..\private\ThugBulkyEnforcer.cpp" />
+    <ClCompile Include="..\private\ThugBulkyEnforcer_Attack.cpp" />
+    <ClCompile Include="..\private\ThugBulkyEnforcer_Born.cpp" />
+    <ClCompile Include="..\private\ThugBulkyEnforcer_Idle.cpp" />
+    <ClCompile Include="..\private\ThugBulkyEnforcer_Move.cpp" />
+    <ClCompile Include="..\private\UIDirector.cpp" />
+    <ClCompile Include="..\private\UILoader.cpp" />
+    <ClCompile Include="..\Private\UI_PrimaryAction.cpp" />
+    <ClCompile Include="..\Private\UI_SpecialAction.cpp" />
+    <ClCompile Include="..\Private\UI_SwitchAction.cpp" />
+    <ClCompile Include="..\Private\UI_UltimateAction.cpp" />
+    <ClCompile Include="..\Private\UVAnimationUI.cpp" />
+    <ClCompile Include="..\private\JaneDoe.cpp" />
+    <ClCompile Include="..\Private\ZeroPortal.cpp" />
+    <ClCompile Include="..\private\ZeroStage_1_1.cpp" />
+    <ClCompile Include="..\Private\ZeroStage_Boss.cpp" />
+    <ClCompile Include="..\Private\ZeroStage_Elite.cpp" />
+    <ClCompile Include="..\Private\ZeroStage_Normal.cpp" />
+    <ClCompile Include="..\Private\Zero_Level.cpp" />
+    <ClCompile Include="Client.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Client.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Client.ico" />
+    <Image Include="small.ico" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

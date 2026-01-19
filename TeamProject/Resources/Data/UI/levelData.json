@@ -1,0 +1,53 @@
+{
+  "levels": {
+    "Logo_Level": {
+      "objects": [
+        {
+          "prototypeTag": "Proto_GameObject_Logo",
+          "instanceName": "logo",
+          "prefabPath" : ""
+        }
+      ]
+    },
+
+    "Loading_Level": {
+      "objects": [
+        {
+          "prototypeTag": "Proto_GameObject_Loading",
+          "instanceName": "loading",
+          "prefabPath" : ""
+        }
+      ]
+    },
+
+    "Test_Level": {
+      "objects": [ 
+        {
+          "prototypeTag": "Proto_GameObject_BattleHUD",
+          "instanceName": "battleHUD",
+          "prefabPath" : ""
+        }
+      ]
+    },
+
+    "Zero_Level": {
+      "objects": [ 
+        {
+          "prototypeTag": "Proto_GameObject_BattleHUD",
+          "instanceName": "battleHUD",
+          "prefabPath" : ""
+        }
+      ]
+    },
+
+    "Scott_Level": {
+      "objects": [ 
+        {
+          "prototypeTag": "Proto_GameObject_FieldHUD",
+          "instanceName": "fieldHUD",
+          "prefabPath" : ""
+        }
+      ]
+    }
+  }
+}

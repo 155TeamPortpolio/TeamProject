@@ -1,0 +1,126 @@
+#include "pch.h"
+#include "UI_BattleHUDAction.h"
+
+#include "GameInstance.h"
+#include "ObjectContainer.h"
+#include "EventListener.h"
+
+HRESULT CUI_BattleHUDAction::Initialize_Prototype()
+{
+	__super::Initialize_Prototype();
+
+	Add_Component<CObjectContainer>();
+    Add_Component<CEventListener>();
+
+	return S_OK;
+}
+
+HRESULT CUI_BattleHUDAction::Initialize(INIT_DESC* pArg)
+{
+    __super::Initialize(pArg);
+
+    Set_Size(_float2(340.f, 224.f));
+    Ready_PartObjects();
+
+    // 액션 이벤트
+    Get_Component<CEventListener>()->Add_Listener<UI_ACTION_DESC>([&](const UI_ACTION_DESC& desc)
+        {
+            if (desc.eType != UI_ACTION_TYPE::ALL)
+                return;
+
+            if (desc.eState == UI_ACTION_STATE::DISABLE)
+                Set_EnableAll(false);
+            else if (desc.eState == UI_ACTION_STATE::ENABLE)
+                Set_EnableAll(true);
+        });
+
+    return S_OK;
+}
+
+void CUI_BattleHUDAction::Update(_float dt)
+{
+    __super::Update(dt);
+
+    // 이벤트 테스트 코드
+    //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('P'))
+    //{
+    //    UI_ACTION_DESC desc = {};
+    //    desc.eType = UI_ACTION_TYPE::ALL;
+    //    desc.eState = UI_ACTION_STATE::DISABLE;
+    //    EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
+    //}
+    //
+    //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('O'))
+    //{
+    //    UI_ACTION_DESC desc = {};
+    //    desc.eType = UI_ACTION_TYPE::ALL;
+    //    desc.eState = UI_ACTION_STATE::ENABLE;
+    //    EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
+    //}
+
+	Get_Component<CObjectContainer>()->UpdateChild(dt);
+}
+
+void CUI_BattleHUDAction::Ready_PartObjects()
+{
+    auto pContainer = Get_Component<CObjectContainer>();
+    const string& strLevelKey = CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey();
+
+    Attach_Child(strLevelKey, "Proto_GameObject_PrimaryAction", "primary", &m_handles[ENUM(Child::PRIMARY)], _float2(0.f, m_vOffset.y));
+    Attach_Child(strLevelKey, "Proto_GameObject_EvadeAction", "evade", &m_handles[ENUM(Child::EVADE)], m_vOffset);
+    Attach_Child(strLevelKey, "Proto_GameObject_SpecialAction", "special", &m_handles[ENUM(Child::SPECIAL)], _float2(m_vOffset.x * 2.f, m_vOffset.y));
+    Attach_Child(strLevelKey, "Proto_GameObject_SwitchAction", "switch", &m_handles[ENUM(Child::SWITCH)], _float2(m_vOffset.x * 3.f, m_vOffset.y));
+    Attach_Child(strLevelKey, "Proto_GameObject_UltimateAction", "ultimate", &m_handles[ENUM(Child::ULTIMATE)], _float2(m_vOffset.x * 3.f, 0.f));
+}
+
+void CUI_BattleHUDAction::Attach_Child(const string& strLevelKey, const string& strPrototypeTag, const string& strInstanceName, UI_HANDLE* pHandleOut, _float2 vOffset)
+{
+    CUI_Object* pObj = Builder::Create_UIObject({ strLevelKey, strPrototypeTag })
+            .Build(strInstanceName);
+
+    if (!pObj)
+        return;
+
+    Get_Component<CObjectContainer>()->Add_Child(pObj);
+
+    pObj->Set_AnchorOffset(vOffset);
+
+    if (pHandleOut)
+        *pHandleOut = pObj->Get_Handle();
+}
+
+void CUI_BattleHUDAction::Set_EnableAll(_bool isActive)
+{
+    for (_int i = 0; i < ENUM(Child::END); ++i)
+        Set_Enable(static_cast<Child>(i), isActive);
+}
+
+void CUI_BattleHUDAction::Set_Enable(Child child, _bool isActive)
+{
+    if(isActive)    
+        ForChild(child, [](CUI_Object* ui) { ui->UI_Active(); });
+    else
+        ForChild(child, [](CUI_Object* ui) { ui->UI_DeActive(); });
+}
+
+CGameObject* CUI_BattleHUDAction::Create()
+{
+    CUI_BattleHUDAction* pInstance = new CUI_BattleHUDAction();
+    if (FAILED(pInstance->Initialize_Prototype()))
+    {
+        MSG_BOX("Failed to Create : CUI_BattleHUDAction");
+        Safe_Release(pInstance);
+    }
+    return pInstance;
+}
+
+CGameObject* CUI_BattleHUDAction::Clone(INIT_DESC* pArg)
+{
+    CUI_BattleHUDAction* pInstance = new CUI_BattleHUDAction(*this);
+    if (FAILED(pInstance->Initialize(pArg)))
+    {
+        MSG_BOX("Failed to Clone : CUI_BattleHUDAction");
+        Safe_Release(pInstance);
+    }
+    return pInstance;
+}

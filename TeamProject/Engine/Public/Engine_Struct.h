@@ -11,6 +11,8 @@ namespace Engine
 
 	/* Key Input struct*/
 	typedef struct tagKeyDesc {
+		_int VK_Input = {-1};
+		string VK_Name = {};
 		_bool PrevDown = false;
 		_bool CurrDown = false;
 		KEY_STATE state = KEY_STATE::NONE_KEY;
@@ -31,13 +33,15 @@ namespace Engine
 
 	/* Light Desc struct*/
 	typedef struct tagLightDesc {
-		_float4		vLightPosition = {};
-		_float4		vLightDirection = {};
+		union { _float4 vLightPosition;  _float4 vOffsetPosition; };
+		_float4		vLightDirection = { 0,-1,0,0 };
 		_float4		vLightDiffuse = {};
 		_float4		vLightAmbient = {};
 		_float4		vLightSpecular = {};
 		_float			fLightRange = {};
-		_float3		lightPadding = {};
+		_float			fLightIntensity = { 3.f };
+		_float2		lightPadding = {};
+		LIGHT_TYPE eType = { LIGHT_TYPE::DIRECTIONAL };
 	}LIGHT_DESC;
 
 	/*File Info Desc*/
@@ -54,7 +58,13 @@ namespace Engine
 		_uint IndicesCount = {};
 		_uint MaterialIndex = {};
 		_uint BoneCount = {};
+		_uint offsetCount = {};
 	}MESH_INFO_HEADER;
+
+	typedef struct ENGINE_DLL tagMeshOffsetHeader {
+		_uint BoneIndex;
+		_float4x4 offsetMat;
+	}MESH_OFFSET;
 
 	typedef struct ENGINE_DLL tagSkeletonFileHeader {
 		_uint BoneCount = {};
@@ -72,9 +82,16 @@ namespace Engine
 		_float4 vMtrDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
 		_float4 vMtrlAmbient = _float4(0.3f, 0.3f, 0.3f, 1.f);
 		_float4 vMtrlSpecular = _float4(1.0f, 1.0f, 1.0f, 1.f);
-		_float4 vEmissive = _float4(0.f, 0.f, 0.f, 0.f);  
+		_float4 vEmissive = _float4(0.f, 0.f, 0.f, 0.f);
 		_float fSpecularPow = { 0.1f };
 		_float3 vPadding;
+	};
+
+	struct BloomConstants
+	{
+		_float BloomType = 0;
+		_float BloomIntensity = 1.f;
+		_float2 Center = _float2(0.5f, 0.5f);
 	};
 
 	typedef struct ENGINE_DLL tagMaterialFileHeader {
@@ -100,8 +117,7 @@ namespace Engine
 	}TEXTURE_INFO_HEADER;
 
 	/*Animation*/
-	typedef struct ENGINE_DLL tagAnimationClipHeader {
-		_bool					bLoop = { };
+	typedef struct ENGINE_DLL tagAnimationInfoHeader {
 		_float					fDuration = {};
 		_float					fTickPerSecond = {};
 		_uint					iNumChannels = {};
@@ -126,7 +142,7 @@ namespace Engine
 		_float3			vScale;
 		_float4			vRotation = { 0,0,0,1 };
 		_float3			vTranslation;
-		_float				fTrackPosition;
+		_float			fTrackPosition;
 
 		_bool IsBefore(_float nowTrackPosition) {
 			return fTrackPosition < nowTrackPosition;
@@ -195,7 +211,7 @@ namespace Engine
 			_matrix world = XMLoadFloat4x4(&worldMat);
 			_vector min = XMLoadFloat3(&vMin);
 			_vector max = XMLoadFloat3(&vMax);
-			XMStoreFloat3(&newBox.vMin, XMVector3TransformCoord(min,world));
+			XMStoreFloat3(&newBox.vMin, XMVector3TransformCoord(min, world));
 			XMStoreFloat3(&newBox.vMax, XMVector3TransformCoord(min, world));
 			return newBox;
 		}
@@ -215,9 +231,43 @@ namespace Engine
 		_float3 vHittedPosition = {};
 	}RAY_HIT;
 
+	// Physics Ray Info
+	typedef struct tagPhysicsRayInfo {
+		_float3 vOrigin = {};                 // ÏãúÏûëÏ†ê
+		_float3 vDirection = {};              // Î∞©Ìñ• (Ï†ïÍ∑úÌôîÎê®)
+		_float	fMaxDistance = 1000.f;        // ÏµúÎåÄ Í±∞Î¶¨
+		_uint	iCollisionMask = 0xFFFFFFFF;  // Ï∂©Îèå Î†àÏù¥Ïñ¥ ÎßàÏä§ÌÅ¨
+		_bool	bQueryTrigger = false;        // Ìä∏Î¶¨Í±∞ÎèÑ Í≤ÄÏÇ¨Ìï†ÏßÄ Ïó¨Î∂Ä
+		_uint	iMaxHits = 1;                 // ÏµúÎåÄ Í≤ÄÏ∂ú Í∞úÏàò
+	}PHYSICS_RAY;
+
+	// Physics Hit Info
+	typedef struct tagPhysicsRayHitInfo {
+		_bool				bHit = false;          // Ï∂©Îèå Ïó¨Î∂Ä
+		_float				fDistance = 0.f;       // Ï∂©Îèå ÏßÄÏ†êÍπåÏßÄÏùò Í±∞Î¶¨
+		_float3				vPoint = {};           // Ï∂©Îèå ÏßÄÏ†ê ÏõîÎìú Ï¢åÌëú
+		_float3				vNormal = {};          // Ï∂©Îèå ÌëúÎ©¥Ïùò Î≤ïÏÑ†
+		class CGameObject* pHitObject = nullptr;  // Ï∂©ÎèåÌïú Ïò§Î∏åÏ†ùÌä∏
+		class ICollidable* pCollidable = nullptr; // Ï∂©ÎèåÌïú Ïª¥Ìè¨ÎÑåÌä∏
+		PxShape* pShape = nullptr;      // Ï∂©ÎèåÌïú Shape
+	}PHYSICS_RAY_HIT;
+
+	// Physics Hits Info
+	typedef struct tagPhysicsRayHitsInfo {
+		_uint iHitCount = 0;
+		vector<PHYSICS_RAY_HIT> vecHits;
+
+		void Clear()
+		{
+			iHitCount = 0;
+			vecHits.clear();
+		}
+	}PHYSICS_RAY_HITS;
+
+
 	typedef struct tagInstanceInitDESC {
-		_uint instanceStride = {};		// ¿ŒΩ∫≈œΩ∫ ±∏¡∂√º ≈©±‚ 
-		_uint instanceCount = {};     // √÷¥Î ¿ŒΩ∫≈œΩ∫ ∞≥ºˆ
+		_uint instanceStride = {};		// Ïù∏Ïä§ÌÑ¥Ïä§ Íµ¨Ï°∞Ï≤¥ ÌÅ¨Í∏∞ 
+		_uint instanceCount = {};     // ÏµúÎåÄ Ïù∏Ïä§ÌÑ¥Ïä§ Í∞úÏàò
 		_uint ElementCount = {};
 		const D3D11_INPUT_ELEMENT_DESC* pElementDesc = { nullptr };
 		string ElementKey = {  };
@@ -227,10 +277,10 @@ namespace Engine
 	{
 		enum class STATE : _uint
 		{
-			NONE = 0,   // ∫ÒæÓ ¿÷¿Ω (ΩΩ∑‘ πÃªÁøÎ)
-			ACTIVE = 1,   // √Êµπ ∞ÀªÁ ¥ÎªÛ
-			INACTIVE = 2,   // ¿œΩ√ ∫Ò»∞º∫ (√Êµπ ∞ÀªÁ ¡¶ø‹)
-			DEAD = 3,   // º“¿Ø¿⁄∞° ªË¡¶µ , øœ¿¸»˜ ¡¶∞≈ øπ¡§
+			NONE = 0,   // ÎπÑÏñ¥ ÏûàÏùå (Ïä¨Î°Ø ÎØ∏ÏÇ¨Ïö©)
+			ACTIVE = 1,   // Ï∂©Îèå Í≤ÄÏÇ¨ ÎåÄÏÉÅ
+			INACTIVE = 2,   // ÏùºÏãú ÎπÑÌôúÏÑ± (Ï∂©Îèå Í≤ÄÏÇ¨ Ï†úÏô∏)
+			DEAD = 3,   // ÏÜåÏú†ÏûêÍ∞Ä ÏÇ≠Ï†úÎê®, ÏôÑÏ†ÑÌûà Ï†úÍ±∞ ÏòàÏ†ï
 		};
 
 		class CCollider* pCollider;
@@ -255,17 +305,20 @@ namespace Engine
 	}COLLISION_CONTEXT;
 
 	typedef struct tagUITextInfo {
+		string		TextKey;
 		wstring		Text = {};
 		_float2		TextPos = {};
 		_float4		TextColor = {};
 		string FontTag;
 		_float Scale = 1.f;
 		_float Rotation = 0.f;
-		_float2 Origin = { 0.f, 0.f }; // »∏¿¸ü‘ ¡ﬂ¡°
+		_float2 Origin = { 0.f, 0.f };
 
 		_bool OutLined = { false };
 		_float Thickness = 0.f;
 		_float4 OutLineColor = {};
+
+		_float2 vShear = {};
 	}TEXT_INFO;
 
 
@@ -273,7 +326,7 @@ namespace Engine
 		_bool isLoop;
 		_float fDuration;
 		_float TickperSecond;
-		vector<_uint> AnimationKeyFrame; 
+		vector<_uint> AnimationKeyFrame;
 		vector<_float> FramePercent;
 	}MATERIAL_CLIP;
 
@@ -296,9 +349,9 @@ namespace Engine
 	};
 
 	/* Effect */
-
-	typedef struct tagEffectNode
+	typedef struct tagEffectNode : public INIT_DESC
 	{
+		_uint eType = static_cast<_uint>(EFFECT_TYPE::END);
 		_float fDelayTime{};
 		_float fDuration{};
 		_bool isLoop = false;
@@ -306,20 +359,247 @@ namespace Engine
 
 	typedef struct tagSpriteNode : public tagEffectNode
 	{
+		string TextureKey{};
+		string TexturePath{};
 
+		_bool isAnimated = false;
+		_uint iMaxFrameIndex{};
+		_float fSpeed{};
 	}SPRITE_NODE;
 
 	typedef struct tagParticleNode : public tagEffectNode
 	{
+		string TextureKey{};
+		string TexturePath{};
 
+		_float3 vOffsetPosition{};
+		_float4 vOffsetQuaternion{};
+
+		//_bool isLoop = false; Î∂ÄÎ™® Íµ¨Ï°∞Ï≤¥ÏóêÏÑú Î£®ÌîÑ Ï†úÏñ¥Ìï®
+		_uint iRGBMaskMode{};
+		_uint iModuleMask{};
+		_uint iColorMode{};
+		_bool isWorld = true;
+		_uint iBurstCount{};
+		_float fSpawnPerSec;
+		_uint iMaxSpawnParticleCount{};
+
+		_float2 vStartSpeed{};
+		_float2 vStartLifeTime{};
+		_float2 vStartSize{};
+
+		_uint SpawnShape{};
+		_float3 vCenter{};
+		_float3 vHalfBox{};
+		_float fRadius{};
+
+		_bool useGravity = false;
+		_float fGravityScale{};
+
+		/*Life Time Velocity*/
+		_float fDampScale{};
+
+		/*Life Time Size*/
+		_float2 vStartScale{};
+		_float2 vEndScale{};
+
+		/*Life Time Color*/
+		_float4 vStartColor{};
+		_float4 vEndColor{};
+
+		/* Life Time Alpha */
+		_float4 vAlphaKey{ 1.f,1.f,1.f,1.f };
+		_float2 vRatio{ 0.3f,0.6f };
+
+		/*Texture Sheet Animation*/
+		_bool isParticleAnimated = false;
+		_bool isRandomFrameIndex = false;
+		_uint iCol{ 1 };
+		_uint iRow{ 1 };
+		_uint iMaxFrameIndex{};
+
+		/*Noise*/
+		_float3 vStrength{};
+		_float3 vFrequency{};
+		_float3 vScrollSpeed{};
+
+		static tagParticleNode FromJson(nlohmann::ordered_json& json);
 	}PARTICLE_NODE;
 
-	typedef struct tagEffectAsset
+	typedef struct tagMeshNode : public tagEffectNode
 	{
-		string Name{};
+		string ModelTag{};
+		string MaterialTag{};
+
+		string DiffuseTextureTag{};
+		string NoiseTextureTag{};
+		string DissolveTextureTag{};
+
+		_float3 vOffsetPosition{};
+		_float4 vOffsetQuaternion{};
+
+		/* Texture Slot */
+		_uint SamplerMode{};
+		_uint MainUsage{};
+		_uint Red{};
+		_uint Green{};
+		_uint Blue{};
+		_uint Alpha{};
+		_uint iColorMode{};
+		_uint iRGBMask{};
+
+		/* Color */
+		_uint ColorEaseType{};
+		_float4 vStartColor{ 1.f,1.f,1.f,1.f };
+		_float4 vEndColor{ 1.f,1.f,1.f,1.f };
+
+		/* Scale */
+		_uint ScaleEaseType{};
+		_float3 vStartScale{ 1.f,1.f,1.f };
+		_float3 vEndScale{ 1.f,1.f,1.f };
+
+		/* UV Anim */
+		_uint UVEaseType{};
+		_float2 vStartUVOffset{};
+		_float2 vEndUVOffset{};
+
+		/* Sprite Animation */
+		_uint iCol{ 1 };
+		_uint iRow{ 1 };
+		_uint iMaxFrameIndex{ 1 };
+
+		/* Dissolve */
+		_float fEnableDissolve{};
+		_uint DissolveEase{};
+		_float fDissolveSoftness{};
+		_float fDissolveStartProgress{};
+		_float fDissolveEndProgress{};
+
+		/* Bloom */
+		_float fBloomIntensity{};
+
+		/* Noise */
+		_float fEnableNoise{};
+		_float fNoiseStrength{};
+		_float fNoiseTilling{};
+		_float2 vNoiseUVSpeed{};
+
+		static tagMeshNode FromJson(nlohmann::ordered_json& json);
+	}MESH_NODE;
+
+	typedef struct tagTrailNode : public tagEffectNode
+	{
+		string TextureKey{};
+		string TexturePath{};
+
+		_uint iMode{};
+		_uint iTextureMode{};
+		_uint iColorMode{};
+		_float fMaxLifeTime{};
+
+		/* Texture Mode */
+		_float2 vUVSpeed{};
+		_float fTile{};
+
+		/* Color Mode */
+		_float4 vStartColor{};
+		_float4 vEndColor{};
+
+		/* Center Mode */
+		_float fStartWidth{};
+		_float fEndWidth{};
+
+		/* Segment Mode */
+		_float fMinDistance{};
+
+		static tagTrailNode FromJson(nlohmann::ordered_json& json);
+	}TRAIL_NODE;
+
+	typedef struct tagEffectAsset : public INIT_DESC
+	{
+		_uint iNodeCount{};
 		_float fDuration{};
-		vector<tagEffectNode> Nodes;
+		_bool isLoop = false;
+		vector<tagEffectNode*> Nodes;
+
+		static tagEffectAsset FromJson(nlohmann::ordered_json& json);
 	}EFFECT_ASSET;
+
+	typedef struct ENGINE_DLL tagObjectHandle {
+		string Level = {};
+		string Layer = {};
+		_uint hObjID = {};
+
+		_bool isValid();
+		void Reset();
+		class CGameObject* Get();
+		void Delete();
+		_bool operator==(const tagObjectHandle& rhs) {
+			if (isValid())
+				return hObjID == rhs.hObjID;
+			else
+				return false;
+		}
+		_bool operator !=(const tagObjectHandle& rhs) {
+			return hObjID != rhs.hObjID;
+		}
+		tagObjectHandle& operator= (const tagObjectHandle& rhs) {
+			Level = rhs.Level;
+			Layer = rhs.Layer;
+			hObjID = rhs.hObjID;
+			return *this;
+		}
+		class CGameObject* operator()() { return Get(); }
+		template<typename TObject>
+		TObject* GetAs() const
+		{
+			static_assert(std::is_pointer_v<TObject> == false, "TObject must be a type, not a pointer type.");
+
+			CGameObject* objectPtr = Get();
+			if (!objectPtr) return nullptr;
+			return dynamic_cast<TObject*>(objectPtr);
+		}
+
+	}OBJECT_HANDLE;
+
+	typedef struct ENGINE_DLL tagUIHandle {
+		string Level = {};
+		_uint hObjID = {};
+		_int SystemIndex = { -1 };
+
+		_bool isValid();
+		void Reset();
+		class CUI_Object* Get();
+		void Release();
+
+	}UI_HANDLE;
+
+	struct IK_CONTEXT
+	{
+		class CAnimator3D*		pAnimator;
+		vector<_int>			BoneIndices;
+		_vector3				vPoleVector;
+		_float					fWeight;
+		vector<_quaternion>     OutRotations;
+		vector<_vector3>		OutPositions;
+		_bool					bSuccess;
+
+		IK_CONTEXT()
+			: pAnimator(nullptr)
+			, vPoleVector(0.f, 0.f, 1.f)
+			, fWeight(1.f)
+			, bSuccess(false)
+		{
+		}
+	};
+
+	typedef struct tagLevelTransitionArgument {
+		string nextLevelKey = {};
+		_bool useLoading = { false };
+		_bool KeepResource = { false };
+		void Reset() { nextLevelKey.clear(); useLoading = false; KeepResource = false; }
+	}LEVEL_TRANS_DESC;
+
 }
 
 

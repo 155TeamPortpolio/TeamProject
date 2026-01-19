@@ -4,23 +4,21 @@
 
 NS_BEGIN(CameraTool)
 
-class FirstLevel : public CLevel
+class CFirstLevel final : public CLevel
 {
 private:
-	FirstLevel(const string& key);
-	
-public:
-    virtual HRESULT Initialize() override;
-    virtual HRESULT Awake()      override;
-    virtual void    Update()     override;
-    virtual HRESULT Render()     override;
-
-private:
-    CGameInstance* game{};
+    CFirstLevel(const string& key) : CLevel(key) {}
+    virtual ~CFirstLevel() DEFAULT;
 
 public:
-    static FirstLevel* Create(const string& key);
-    virtual void Free() override;
+    HRESULT Initialize() override { return S_OK; }
+    HRESULT Awake()      override;
+    void    Update()     override;
+    HRESULT Render()     override { return S_OK; }
+
+public:
+    static CFirstLevel* Create(const string& key);
+    void Free() override { __super::Free(); }
 };
 
 NS_END

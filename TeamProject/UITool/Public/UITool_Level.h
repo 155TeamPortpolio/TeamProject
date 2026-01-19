@@ -29,6 +29,17 @@ private:
     CGameInstance* m_pGameInstance = { nullptr };
 
 public:
+    static vector<string> m_strFontKeys;
+    static vector<const _char*> m_szFontKeys;
+
+private:
+    HRESULT Ready_Textures();
+    HRESULT Ready_Fonts();
+    HRESULT Ready_Camera();
+    HRESULT Ready_UIObjects();
+    HRESULT Ready_GUIPanel();
+
+public:
     static CUITool_Level* Create(const string& LevelKey);
     virtual void Free() override;
 };

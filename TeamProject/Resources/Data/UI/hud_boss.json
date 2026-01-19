@@ -1,0 +1,472 @@
+{
+    "alive": true,
+    "instanceName": "hud_boss",
+    "transform": {
+        "anchor": 5,
+        "anchorOffset": [
+            0.0,
+            0.0
+        ],
+        "size": [
+            1600.0,
+            900.0
+        ],
+        "scale": [
+            1.0,
+            1.0
+        ],
+        "pivot": [
+            0.0,
+            0.0
+        ],
+        "radian": 0.0
+    },
+    "color": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+    ],
+    "pass": "Opaque",
+    "animClips": [
+        {
+            "duration": 0.5,
+            "keyframes": [
+                {
+                    "angle": 0.0,
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        0.0
+                    ],
+                    "easeType": 7,
+                    "position": [
+                        0.0,
+                        0.0
+                    ],
+                    "scale": [
+                        1.0,
+                        1.0
+                    ],
+                    "time": 0.0
+                },
+                {
+                    "angle": 0.0,
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "easeType": 0,
+                    "position": [
+                        0.0,
+                        0.0
+                    ],
+                    "scale": [
+                        1.0,
+                        1.0
+                    ],
+                    "time": 0.5
+                }
+            ],
+            "loop": false,
+            "name": "clip0"
+        },
+        {
+            "duration": 0.5,
+            "keyframes": [
+                {
+                    "angle": 0.0,
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "easeType": 3,
+                    "position": [
+                        0.0,
+                        0.0
+                    ],
+                    "scale": [
+                        1.0,
+                        1.0
+                    ],
+                    "time": 0.0
+                },
+                {
+                    "angle": 0.0,
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        0.0
+                    ],
+                    "easeType": 0,
+                    "position": [
+                        0.0,
+                        0.0
+                    ],
+                    "scale": [
+                        1.0,
+                        1.0
+                    ],
+                    "time": 0.5
+                }
+            ],
+            "loop": false,
+            "name": "clip1"
+        }
+    ],
+    "children": [
+        {
+            "alive": true,
+            "instanceName": "group",
+            "transform": {
+                "anchor": 6,
+                "anchorOffset": [
+                    -696.0,
+                    0.0
+                ],
+                "size": [
+                    696.0,
+                    90.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "pass": "Opaque",
+            "animClips": [],
+            "children": [
+                {
+                    "alive": true,
+                    "instanceName": "bg",
+                    "transform": {
+                        "anchor": 9,
+                        "anchorOffset": [
+                            0.0,
+                            -52.0
+                        ],
+                        "size": [
+                            638.0,
+                            52.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "pass": "Opaque",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "Image",
+                    "textureTag": "BossBg.png"
+                },
+                {
+                    "alive": true,
+                    "instanceName": "icon",
+                    "transform": {
+                        "anchor": 9,
+                        "anchorOffset": [
+                            514.0,
+                            -47.33300018310547
+                        ],
+                        "size": [
+                            118.125,
+                            42.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "pass": "Opaque",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "Image",
+                    "textureTag": "IconMonster_SacrificeBringer.png"
+                },
+                {
+                    "alive": true,
+                    "instanceName": "hpBg",
+                    "transform": {
+                        "anchor": 9,
+                        "anchorOffset": [
+                            48.0,
+                            -48.0
+                        ],
+                        "size": [
+                            475.0,
+                            23.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        0.2823529541492462,
+                        0.2823529541492462,
+                        0.2823529541492462,
+                        1.0
+                    ],
+                    "pass": "Opaque",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "Image",
+                    "textureTag": "BossHPBg.png"
+                },
+                {
+                    "alive": true,
+                    "instanceName": "hpBack",
+                    "transform": {
+                        "anchor": 9,
+                        "anchorOffset": [
+                            48.0,
+                            -48.0
+                        ],
+                        "size": [
+                            475.0,
+                            23.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        0.5921568870544434,
+                        0.1568627506494522,
+                        0.125490203499794,
+                        1.0
+                    ],
+                    "pass": "LinearFill",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "Gauge",
+                    "textureTag": "BossHPBg.png",
+                    "gauge": {
+                        "direction": 1.0,
+                        "fillAmount": 1.0,
+                        "radial": false
+                    }
+                },
+                {
+                    "alive": true,
+                    "instanceName": "hpFront",
+                    "transform": {
+                        "anchor": 9,
+                        "anchorOffset": [
+                            48.0,
+                            -48.0
+                        ],
+                        "size": [
+                            475.0,
+                            23.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "pass": "LinearFill",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "Gauge",
+                    "textureTag": "BossHPFill.png",
+                    "gauge": {
+                        "direction": 1.0,
+                        "fillAmount": 1.0,
+                        "radial": false
+                    }
+                },
+                {
+                    "alive": true,
+                    "instanceName": "groggyBg",
+                    "transform": {
+                        "anchor": 9,
+                        "anchorOffset": [
+                            39.0,
+                            -33.5
+                        ],
+                        "size": [
+                            424.0,
+                            9.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        0.2823529541492462,
+                        0.2823529541492462,
+                        0.2823529541492462,
+                        1.0
+                    ],
+                    "pass": "Opaque",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "Image",
+                    "textureTag": "BossFillBg.png"
+                },
+                {
+                    "alive": true,
+                    "instanceName": "groggy",
+                    "transform": {
+                        "anchor": 9,
+                        "anchorOffset": [
+                            40.0,
+                            -33.0
+                        ],
+                        "size": [
+                            424.0,
+                            9.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        1.0,
+                        0.6941176652908325,
+                        0.0,
+                        1.0
+                    ],
+                    "pass": "LinearFill",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "Gauge",
+                    "textureTag": "BossFillBg.png",
+                    "gauge": {
+                        "direction": 1.0,
+                        "fillAmount": 1.0,
+                        "radial": false
+                    }
+                },
+                {
+                    "alive": true,
+                    "instanceName": "groggyText",
+                    "transform": {
+                        "anchor": 1,
+                        "anchorOffset": [
+                            1.0,
+                            -7.5
+                        ],
+                        "size": [
+                            29.249996185302734,
+                            33.82707977294922
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        1.0,
+                        0.6941176652908325,
+                        0.0,
+                        1.0
+                    ],
+                    "pass": "Opaque",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "Text",
+                    "text": {
+                        "content": "19",
+                        "fontTag": "Impact.spritefont",
+                        "fontScale": 0.6499999165534973,
+                        "outlined": false,
+                        "outlineThickness": 1.0,
+                        "outlineColor": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                        ],
+                        "shear": [
+                            -0.5,
+                            0.0
+                        ]
+                    }
+                }
+            ],
+            "typeTag": "CanvasPanel"
+        }
+    ],
+    "typeTag": "CanvasPanel"
+}

@@ -1,47 +1,29 @@
 #include "pch.h"
+#include "Light.h"
+#include "CamSequencePlayer.h"
 
-HRESULT CamObj::Initialize_Prototype()
+HRESULT CCamObj::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
 	Add_Component<CCamera>();
 	Add_Component<CLight>();
+	Add_Component<CCamSequencePlayer>();
 	return S_OK;
 }
 
-HRESULT CamObj::Initialize(INIT_DESC* arg)
+HRESULT CCamObj::Initialize(INIT_DESC* arg)
 {
 	__super::Initialize(arg);
-	m_pTransform->LookAt({ 0, 0, 0 });
+
+	LIGHT_DESC desc{};
+	desc.vLightPosition  = {};
+	desc.fLightRange     = {};
+	desc.fLightIntensity = 1.f;
+	desc.vLightDirection = {0.0f, -1.0f, 1.0f, 0.0f};
+	desc.vLightDiffuse   = {1.0f, 1.0f, 1.0f, 1.0f};
+	desc.vLightAmbient   = {0.6f, 0.6f, 0.6f, 1.0f};
+	desc.vLightSpecular  = {1.0f, 1.0f, 1.0f, 1.0f};
+	Get_Component<CLight>()->Set_Desc(desc, LIGHT_TYPE::DIRECTIONAL);
+
 	return S_OK;
-}
-
-void CamObj::Priority_Update(_float dt)
-{
-}
-
-void CamObj::Update(_float dt)
-{
-}
-
-void CamObj::Late_Update(_float dt)
-{
-}
-
-CamObj* CamObj::Create()
-{
-	auto inst = new CamObj();
-	inst->Initialize_Prototype();
-	return inst;
-}
-
-CGameObject* CamObj::Clone(INIT_DESC* arg)
-{
-	auto inst = new CamObj(*this);
-	inst->Initialize(arg);
-	return inst;
-}
-
-void CamObj::Free()
-{
-	__super::Free();
 }

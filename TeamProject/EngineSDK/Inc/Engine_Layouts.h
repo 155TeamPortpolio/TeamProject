@@ -61,14 +61,16 @@ namespace Engine {
 		XMFLOAT3		vNormal;
 		XMFLOAT2		vTexcoord;
 		XMFLOAT3		vTangent;
+		XMFLOAT3		vBinormal;
 
 		static constexpr string_view  Key = "VTXMESH";
-		static constexpr unsigned int					iElementCount = { 4 };
+		static constexpr unsigned int					iElementCount = { 5 };
 		static constexpr D3D11_INPUT_ELEMENT_DESC		Elements[iElementCount] = {
 			{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
 			{"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0,12, D3D11_INPUT_PER_VERTEX_DATA, 0},
 			{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0},
 			{"TANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 32, D3D11_INPUT_PER_VERTEX_DATA, 0},
+			{"BINORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 44, D3D11_INPUT_PER_VERTEX_DATA, 0}
 		};
 	}VTXMESH;
 
@@ -78,20 +80,69 @@ namespace Engine {
 		XMFLOAT3		vNormal;
 		XMFLOAT2		vTexcoord;
 		XMFLOAT3		vTangent;
+		XMFLOAT3		vBinormal;
 
 		XMUINT4 vBlendIndex;
 		XMFLOAT4 vBlendWeight;
 
 		static constexpr string_view  Key = "VTXSKINMESH";
-		static constexpr unsigned int					iElementCount = { 6 };
+		static constexpr unsigned int					iElementCount = { 7 };
 		static constexpr D3D11_INPUT_ELEMENT_DESC		Elements[iElementCount] = {
 			{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
 			{"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0,12, D3D11_INPUT_PER_VERTEX_DATA, 0},
 			{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0},
 			{"TANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 32, D3D11_INPUT_PER_VERTEX_DATA, 0},
-			{ "BLENDINDEX", 0, DXGI_FORMAT_R32G32B32A32_UINT, 0, 44, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-			{ "BLENDWEIGHT", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 60, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+			{"BINORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 44, D3D11_INPUT_PER_VERTEX_DATA, 0},
+			{"BLENDINDEX", 0, DXGI_FORMAT_R32G32B32A32_UINT, 0, 56, D3D11_INPUT_PER_VERTEX_DATA, 0},
+			{"BLENDWEIGHT", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 72, D3D11_INPUT_PER_VERTEX_DATA, 0}
 		};
 	}VTXSKINMESH;
 
+	/* Particle */
+	typedef struct ENGINE_DLL tagVertexInstancePoint
+	{
+		_float4 vRight{}, vUp{}, vLook{};
+		_float4 vTraslate{};
+		_float3 vVelocity{};
+		_float4 vColor{};
+		_float2 vLifeTime{};
+		_uint iFrameIndex{};
+		_float2 pad{};
+	}VTX_INSTANCE_POINT;
+
+	typedef struct ENGINE_DLL tagVertexInstancePointElement
+	{
+		static constexpr string_view Key = "VTX_INSTANCE_POINT_ELEMENT";
+		static constexpr unsigned int iElementCount = { 9 };
+		static constexpr D3D11_INPUT_ELEMENT_DESC Elements[iElementCount] = {
+			{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+
+			{"WORLD", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 0, D3D11_INPUT_PER_INSTANCE_DATA, 1},
+			{"WORLD", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 16, D3D11_INPUT_PER_INSTANCE_DATA, 1},
+			{"WORLD", 2, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 32, D3D11_INPUT_PER_INSTANCE_DATA, 1},
+			{"WORLD", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 48, D3D11_INPUT_PER_INSTANCE_DATA, 1},
+			{"TEXCOORD", 0, DXGI_FORMAT_R32G32B32_FLOAT, 1, 64, D3D11_INPUT_PER_INSTANCE_DATA, 1},
+			{"TEXCOORD", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 76, D3D11_INPUT_PER_INSTANCE_DATA, 1},
+			{"TEXCOORD", 2, DXGI_FORMAT_R32G32_FLOAT,1,92, D3D11_INPUT_PER_INSTANCE_DATA, 1},
+			{"TEXCOORD", 3, DXGI_FORMAT_R32_UINT, 1, 100, D3D11_INPUT_PER_INSTANCE_DATA, 1}
+		};
+	}VTX_INSTANCE_POINT_ELEMENT;
+
+	/* Ribbon Trail */
+	typedef struct tagVertexRibbonTrail
+	{
+		_float3 vPosition{};
+		_float2 vTexcoord{};
+		_float2 vLifeTime{};
+		_float4 vColor{};
+
+		static constexpr string_view Key = "VTXTRAIL";
+		static constexpr unsigned int iElementCount = { 4 };
+		static constexpr D3D11_INPUT_ELEMENT_DESC Elements[iElementCount] = {
+			{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+			{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
+			{"TEXCOORD", 1, DXGI_FORMAT_R32G32_FLOAT, 0, 20, D3D11_INPUT_PER_VERTEX_DATA, 0},
+			{"TEXCOORD", 2, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 28, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		};
+	}VTXTRAIL;
 };

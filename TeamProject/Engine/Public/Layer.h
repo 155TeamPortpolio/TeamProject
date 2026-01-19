@@ -26,6 +26,12 @@ public:
 	void Set_RenderState(_bool render) { m_isRender = render; };
 	string Get_LayerTag() { return m_LayerTag; }
 
+public: 
+	void Clear_Layer();
+	void Set_TimeScale(_float scale) { m_LayerTimeScale = scale; };
+	void Reset_TimeScale() { m_LayerTimeScale = 1.f; };
+	_float Get_TimeScale() { return m_LayerTimeScale; }
+
 private:
 	vector<class CGameObject*>			m_GameObjects; /*순회용*/
 	unordered_map<_uint, _uint>				m_IndexByID; /*오브젝트 ID / 벡터 인덱스*/
@@ -33,6 +39,7 @@ private:
 
 	_bool m_isRender = { true };
 	string m_LayerTag = { true };
+	_float m_LayerTimeScale = { 1.f };
 
 public:
 	static CLayer* Create();

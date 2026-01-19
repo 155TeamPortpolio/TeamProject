@@ -31,16 +31,41 @@ public:
 	virtual const unordered_map<string, class CLayer*>& Get_LevelLayer(const string& LevelTag) override;
 	virtual  CLayer* Get_Layer(const LAYER_DESC& SrcLayer) override;
 
+public:
+	virtual class CGameObject* Request_Object(const OBJECT_HANDLE& handle) override;
+	virtual class CGameObject* Acquire(const CLONE_DESC& desc) override;
+
 private:
 	 void Add_Object_Recursive(CLayer* pLayer, class CGameObject* object);
 	 void Add_Object_Recursive(CLayer* pLayer, class CGameObject* object,string LevelTag);
+	 void Prune_Queues_ByLevel(const string& levelTag);
+
+public:
+	virtual void Set_LevelTimeScale(string LevelTag, _float scale) override;
+	virtual void Reset_LevelTimeScale(string LevelTag) override;
+	virtual void Set_LayerTimeScale(const LAYER_DESC& Layer, _float scale) override;
+	virtual void Reset_LayerTimeScale(const LAYER_DESC& Layer) override;
+	virtual _float Get_LayerTimeScale(const LAYER_DESC& Layer) override;
+
+public:
+	virtual _bool Remember_Global(_uint RememberKey, const OBJECT_HANDLE& handle, _bool replaceIfExists);
+	virtual class CGameObject* Find_Global(_uint KeyID);
+	virtual _bool Unregister_Global(_uint keyID);
+	virtual void Clear_Global();
 
 private:
 	class CGameInstance* m_pGameInstance = { nullptr };
+	class CObjectPool* m_pObjectPool = { nullptr };
 	unordered_map<string, LAYERS> m_Layers; //(레벨 태그 / (레이어 태그/레이어))
 
 	/*object Array to Delete*/
-	vector<CGameObject*> DeleteObjs;
+	vector<CGameObject*> m_DeleteObjs;
+	unordered_set<_uint> m_DeleteIDs;
+
+	vector<CGameObject*> m_ReleaseObjs;
+	unordered_set<_uint> m_ReleaseIDs;
+
+	unordered_map<_uint, OBJECT_HANDLE> m_globalHandleByKey;
 
 public:
 	static CObjectMgr* Create();

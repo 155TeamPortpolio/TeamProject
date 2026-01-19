@@ -2,7 +2,7 @@
 #include "ModelData.h"
 #include "Mesh.h"
 #include "Skeleton.h"
-
+#include "Helper_Func.h"
 CModelData::CModelData()
 {
 }
@@ -23,6 +23,7 @@ HRESULT CModelData::Initialize(const string& filePath, ID3D11Device* pDevice)
 	MODEL_FILE_HEADER fileHeader = {};
 	ifs.read(reinterpret_cast<char*>(&fileHeader), sizeof(fileHeader));
 
+
 	for (int i = 0; i < fileHeader.MeshCount; ++i) {
 		CMesh* newMesh = CMesh::Create(pDevice, ifs, fileHeader.isAnimate? MESH_TYPE::ANIM : MESH_TYPE::NONANIM);
 		if (newMesh)
@@ -34,6 +35,11 @@ HRESULT CModelData::Initialize(const string& filePath, ID3D11Device* pDevice)
 				Safe_Release(mesh);
 			return E_FAIL;
 		}
+		string keyLower = Helper::ToLower(newMesh->Get_Key());
+		if (keyLower.find("proxy") != string::npos)
+			m_ProxyMarked.push_back(m_Meshes.size() - 1);	
+		if (keyLower.find("eff") != string::npos)
+			m_ProxyMarked.push_back(m_Meshes.size() - 1);
 	}
 
 	if (fileHeader.isAnimate) {
@@ -64,6 +70,9 @@ HRESULT CModelData::Initialize(const string& filePath, ID3D11Device* pDevice)
 	return S_OK;
 }
 
+_bool CModelData::Get_RiggedData(HumanoidRigData& outData) {
+	 return m_pSkeleton->Get_RiggedData(outData); 
+}
 _uint CModelData::Get_MaterialIndex(_uint meshIndex)
 {
 	return m_Meshes[meshIndex]->Get_MaterialIndex();
@@ -71,16 +80,22 @@ _uint CModelData::Get_MaterialIndex(_uint meshIndex)
 
 _uint CModelData::Get_BoneCount()
 {
+	if (!m_pSkeleton)
+		return 0;
 	return m_pSkeleton->Get_BoneCount();
 }
 
 _int CModelData::Find_BoneIndexByName(const string& BoneName)
 {
+	if (!m_pSkeleton)
+		return -1;
 	return m_pSkeleton->Find_BoneIndexByName(BoneName);
 }
 
 const string& CModelData::Find_BoneNameByIndex(_uint BoneIndex)
 {
+	if (!m_pSkeleton)
+		return "";
 	return m_pSkeleton->Find_BoneNameByIndex(BoneIndex);
 }
 
@@ -90,6 +105,12 @@ _bool CModelData::isRootBone(_uint BoneIndex)
 		return true;
 	else
 		return false;
+}
+
+
+_float4x4 CModelData::Get_Offset(_uint meshIndex, _uint boneIndex)
+{
+	return m_Meshes[meshIndex]->Get_MeshOffset(boneIndex);
 }
 
 const D3D11_INPUT_ELEMENT_DESC* CModelData::Get_ElementDesc(_uint DrawIndex)
@@ -120,14 +141,6 @@ _int CModelData::Find_MeshIndex(const string& name)
 
 void CModelData::Render_GUI()
 {
-	string meshCount = "Mesh : " + to_string(m_Meshes.size());
-
-	ImGui::Text(meshCount.c_str());
-	for (auto& mesh : m_Meshes) {
-		mesh->Render_GUI();
-	}
-	ImGui::Separator();
-
 	if (m_pSkeleton) {
 		if (ImGui::Button("Bones Tab")) {
 			isGui_BoneTabOpen = !isGui_BoneTabOpen;
@@ -145,6 +158,7 @@ void CModelData::Render_GUI()
 		}
 	}
 
+
 }
 
 HRESULT CModelData::Render_Mesh(ID3D11DeviceContext* pContext, _uint Index)
@@ -153,6 +167,16 @@ HRESULT CModelData::Render_Mesh(ID3D11DeviceContext* pContext, _uint Index)
 
 	m_Meshes[Index]->Bind_Buffer(pContext);
 	m_Meshes[Index]->Render(pContext);
+
+	return S_OK;
+}
+
+HRESULT CModelData::Render_Mesh(ID3D11DeviceContext* pContext, _uint MeshIndex, _uint IslandIndex)
+{
+	if (MeshIndex >= m_Meshes.size()) return E_FAIL;
+
+	m_Meshes[MeshIndex]->Bind_Buffer(pContext);
+	m_Meshes[MeshIndex]->Render_Island(pContext, IslandIndex);
 
 	return S_OK;
 }
@@ -193,6 +217,17 @@ MINMAX_BOX CModelData::Get_MeshBoundingBox(_uint index)
 	box.vMax = m_Meshes[index]->Get_MaxVertexLocal();
 	box.vMin = m_Meshes[index]->Get_MinVertexLocal();
 	return box;
+}
+
+void CModelData::Get_AffectBoneIndices(vector<_int>& outvec, _int StartBoneIndex)
+{
+	outvec.clear();
+	m_pSkeleton->Get_AffectBoneIndices(outvec, StartBoneIndex);
+}
+
+vector<DYNAMIC_CHAIN_GROUP> CModelData::Get_ChaingGroups()
+{
+	return m_pSkeleton->Get_ChainGroups();
 }
 
 _int CModelData::Get_BoneParentIndex(_uint i)

@@ -8,6 +8,9 @@
 #define			NS_BEGIN(NAMESPACE)		namespace NAMESPACE {
 #define			NS_END						}
 
+#define			ENUM(ENUM) static_cast<unsigned int>(ENUM)
+#define			ENUM_TO_STRING(x) #x
+
 #define			USING(NAMESPACE)	using namespace NAMESPACE;
 
 #define DEFAULT =default

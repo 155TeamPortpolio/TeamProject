@@ -115,19 +115,48 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>Engine_Defines.h</PrecompiledHeaderFile>
+      <AdditionalOptions>/wd4005 /wd4251 /wd4819 /wd4267 /wd4244 /wd4172 /wd4018 /wd4838 /wd4305 /wd4101 /wd4129 /wd4715 /wd4067 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>../ThirdPartyLib/;../ThirdPartyLib/PhysX/$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>fmodL_vc.lib;d3d11.lib;dxguid.lib;Effects11d.lib;DirectXTKd.lib;assimp-vc143-mtd.lib;PhysXFoundation_64.lib;PhysXCommon_64.lib;PhysX_64.lib;PhysXExtensions_static_64.lib;PhysXPvdSDK_static_64.lib;PhysXCharacterKinematic_static_64.lib;PhysXCooking_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>../ThirdPartyLib/;../ThirdPartyLib/PhysX/deb;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>fmodL_vc.lib;d3d11.lib;dxguid.lib;Effects11d.lib;DirectXTKd.lib;assimp-vc143-mtd.lib;PhysX_64.lib;PhysXCommon_64.lib;PhysXFoundation_64.lib;PhysXCooking_64.lib;PhysXExtensions_static_64.lib;PhysXCharacterKinematic_static_64.lib;PhysXPvdSDK_static_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalOptions>/IGNORE:4099 %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PostBuildEvent>
-      <Command>if not exist "$(TargetDir)Engine_Shaders\" mkdir "$(TargetDir)Engine_Shaders\"
-copy /y "$(TargetDir)*.cso" "$(TargetDir)Engine_Shaders\"
-xcopy /y "$(SolutionDir)Engine\ThirdPartyLib\PhysX\$(Configuration)\*.lib" "$(TargetDir)"
-xcopy /y "$(SolutionDir)Engine\Bin\PhysX\$(Configuration)\*.dll" "$(TargetDir)"
-call "$(SolutionDir)UpdateLib.bat"</Command>
+      <Command>@echo off
+setlocal
+echo === PostBuild: Engine / Debug / x64 ===
+echo TargetDir: "$(TargetDir)"
+echo SolutionDir: "$(SolutionDir)"
+
+REM 1) 셰이더 폴더 생성
+if not exist "$(TargetDir)Engine_Shaders\" mkdir "$(TargetDir)Engine_Shaders\"
+
+REM 2) *.cso 복사
+if exist "$(TargetDir)*.cso" (
+    copy /y "$(TargetDir)*.cso" "$(TargetDir)Engine_Shaders\"
+) else (
+    echo [PostBuild] No .cso files found (skip copy)
+)
+
+REM 3) 라이브러리/리소스 업데이트 배치 호출
+if exist "$(SolutionDir)UpdateLib.bat" (
+    echo [PostBuild] Calling UpdateLib.bat with Debug...
+    call "$(SolutionDir)UpdateLib.bat" Debug
+    if errorlevel 1 (
+        echo [PostBuild] UpdateLib.bat failed with errorlevel %errorlevel%
+        exit /b %errorlevel%
+    )
+    echo [PostBuild] UpdateLib.bat completed successfully
+) else (
+    echo [PostBuild][ERROR] UpdateLib.bat not found: "$(SolutionDir)UpdateLib.bat"
+    exit /b 1
+)
+
+endlocal
+exit /b 0</Command>
     </PostBuildEvent>
     <FxCompile>
       <ShaderModel>5.0</ShaderModel>
@@ -148,19 +177,48 @@ call "$(SolutionDir)UpdateLib.bat"</Command>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>Engine_Defines.h</PrecompiledHeaderFile>
+      <AdditionalOptions>/wd4005 /wd4251 /wd4819 /wd4267 /wd4244 /wd4172 /wd4018 /wd4838 /wd4305 /wd4101 /wd4129 /wd4715 /wd4067 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>../ThirdPartyLib/;../ThirdPartyLib/PhysX/$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>fmod_vc.lib;d3d11.lib;dxguid.lib;Effects11.lib;DirectXTK.lib;assimp-vc143-mt.lib;PhysXFoundation_64.lib;PhysXCommon_64.lib;PhysX_64.lib;PhysXExtensions_static_64.lib;PhysXPvdSDK_static_64.lib;PhysXCharacterKinematic_static_64.lib;PhysXCooking_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>../ThirdPartyLib/;../ThirdPartyLib/PhysX/rel;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>fmod_vc.lib;d3d11.lib;dxguid.lib;Effects11.lib;DirectXTK.lib;assimp-vc143-mt.lib;PhysX_64.lib;PhysXCommon_64.lib;PhysXFoundation_64.lib;PhysXCooking_64.lib;PhysXExtensions_static_64.lib;PhysXCharacterKinematic_static_64.lib;PhysXPvdSDK_static_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalOptions>/IGNORE:4099 %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PostBuildEvent>
-      <Command>if not exist "$(TargetDir)Engine_Shaders\" mkdir "$(TargetDir)Engine_Shaders\"
-copy /y "$(TargetDir)*.cso" "$(TargetDir)Engine_Shaders\"
-xcopy /y "$(SolutionDir)Engine\ThirdPartyLib\PhysX\$(Configuration)\*.lib" "$(TargetDir)"
-xcopy /y "$(SolutionDir)Engine\Bin\PhysX\$(Configuration)\*.dll" "$(TargetDir)"
-call "$(SolutionDir)UpdateLib.bat"</Command>
+      <Command>@echo off
+setlocal
+echo === PostBuild: Engine / Release / x64 ===
+echo TargetDir: "$(TargetDir)"
+echo SolutionDir: "$(SolutionDir)"
+
+REM 1) 셰이더 폴더 생성
+if not exist "$(TargetDir)Engine_Shaders\" mkdir "$(TargetDir)Engine_Shaders\"
+
+REM 2) *.cso 복사
+if exist "$(TargetDir)*.cso" (
+    copy /y "$(TargetDir)*.cso" "$(TargetDir)Engine_Shaders\"
+) else (
+    echo [PostBuild] No .cso files found (skip copy)
+)
+
+REM 3) 라이브러리/리소스 업데이트 배치 호출
+if exist "$(SolutionDir)UpdateLib.bat" (
+    echo [PostBuild] Calling UpdateLib.bat with Release...
+    call "$(SolutionDir)UpdateLib.bat" Release
+    if errorlevel 1 (
+        echo [PostBuild] UpdateLib.bat failed with errorlevel %errorlevel%
+        exit /b %errorlevel%
+    )
+    echo [PostBuild] UpdateLib.bat completed successfully
+) else (
+    echo [PostBuild][ERROR] UpdateLib.bat not found: "$(SolutionDir)UpdateLib.bat"
+    exit /b 1
+)
+
+endlocal
+exit /b 0</Command>
     </PostBuildEvent>
     <FxCompile>
       <ShaderModel>5.0</ShaderModel>
@@ -169,9 +227,12 @@ call "$(SolutionDir)UpdateLib.bat"</Command>
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\Public\AABB_Collider.h" />
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\imgui_stdlib.h" />
     <ClInclude Include="..\Public\AnimationClip.h" />
+    <ClInclude Include="..\Public\AnimationLayout.h" />
     <ClInclude Include="..\Public\Animator3D.h" />
+    <ClInclude Include="..\Public\AnimatorStruct.h" />
+    <ClInclude Include="..\Public\AnimBuilder.h" />
     <ClInclude Include="..\Public\AudioDevice.h" />
     <ClInclude Include="..\Public\AudioSource.h" />
     <ClInclude Include="..\Public\Base.h" />
@@ -182,15 +243,62 @@ call "$(SolutionDir)UpdateLib.bat"</Command>
     <ClInclude Include="..\Public\Build_Struct.h" />
     <ClInclude Include="..\Public\Camera.h" />
     <ClInclude Include="..\Public\CameraMgr.h" />
+    <ClInclude Include="..\Public\Camera_Enum.h" />
+    <ClInclude Include="..\Public\Camera_Struct.h" />
+    <ClInclude Include="..\Public\CamEvaluator.h" />
+    <ClInclude Include="..\Public\CamFovLinearEvaluator.h" />
+    <ClInclude Include="..\Public\CamFovPerSegmentEvaluator.h" />
+    <ClInclude Include="..\Public\CamFovSmoothEvaluator.h" />
+    <ClInclude Include="..\Public\CamPosBSplineEvaluator.h" />
+    <ClInclude Include="..\Public\CamPosCatmullRomEvaluator.h" />
+    <ClInclude Include="..\Public\CamPosCentripetalEvaluator.h" />
+    <ClInclude Include="..\Public\CamPosHermiteEvaluator.h" />
+    <ClInclude Include="..\Public\CamPosLinearEvaluator.h" />
+    <ClInclude Include="..\Public\CamPosOrbitArcEvaulator.h" />
+    <ClInclude Include="..\Public\CamPosPerSegmentEvaluator.h" />
+    <ClInclude Include="..\Public\CamRotPerSegmentEvaluator.h" />
+    <ClInclude Include="..\Public\CamRotSlerpEvaluator.h" />
+    <ClInclude Include="..\Public\CamRotSquadEvaluator.h" />
+    <ClInclude Include="..\Public\CamSequencePlayer.h" />
+    <ClInclude Include="..\Public\CamUtil.h" />
     <ClInclude Include="..\Public\Channel.h" />
+    <ClInclude Include="..\Public\CharacterController.h" />
     <ClInclude Include="..\Public\Child.h" />
+    <ClInclude Include="..\Public\ClickManager.h" />
     <ClInclude Include="..\Public\Collider.h" />
     <ClInclude Include="..\Public\CollisionSystem.h" />
     <ClInclude Include="..\Public\Component.h" />
+    <ClInclude Include="..\Public\ComputeShader.h" />
+    <ClInclude Include="..\public\CSMShadow.h" />
     <ClInclude Include="..\Public\CustomFont.h" />
     <ClInclude Include="..\Public\Data_Packets.h" />
+    <ClInclude Include="..\Public\DebugBonePanel.h" />
     <ClInclude Include="..\Public\DebugDraw.h" />
     <ClInclude Include="..\Public\DebugRender.h" />
+    <ClInclude Include="..\Public\DynamicBone.h" />
+    <ClInclude Include="..\Public\DynamicBoneStruct.h" />
+    <ClInclude Include="..\Public\EffectBuilder.h" />
+    <ClInclude Include="..\public\EffectContainer.h" />
+    <ClInclude Include="..\public\EffectNode.h" />
+    <ClInclude Include="..\public\EffectRenderer.h" />
+    <ClInclude Include="..\Public\Engine_Json.h" />
+    <ClInclude Include="..\public\Engine_Math.h" />
+    <ClInclude Include="..\Public\Engine_RenderStruct.h" />
+    <ClInclude Include="..\Public\EnvPanel.h" />
+    <ClInclude Include="..\Public\EventListener.h" />
+    <ClInclude Include="..\Public\EventSystem.h" />
+    <ClInclude Include="..\Public\FootIK.h" />
+    <ClInclude Include="..\public\ForwardRenderer.h" />
+    <ClInclude Include="..\Public\HiZ_Culling.h" />
+    <ClInclude Include="..\Public\Humanoid.h" />
+    <ClInclude Include="..\Public\ICamEvaluator.h" />
+    <ClInclude Include="..\Public\IInputService.h" />
+    <ClInclude Include="..\Public\IKSolver.h" />
+    <ClInclude Include="..\Public\LifeTimeColor.h" />
+    <ClInclude Include="..\Public\MeshEffectModule.h" />
+    <ClInclude Include="..\Public\Noise.h" />
+    <ClInclude Include="..\Public\LifeTimeSize.h" />
+    <ClInclude Include="..\Public\LifeTimeVelocity.h" />
     <ClInclude Include="..\Public\Engine_Defines.h" />
     <ClInclude Include="..\Public\Engine_Enum.h" />
     <ClInclude Include="..\Public\Engine_Function.h" />
@@ -205,7 +313,7 @@ call "$(SolutionDir)UpdateLib.bat"</Command>
     <ClInclude Include="..\Public\GameObjectBuilder.h" />
     <ClInclude Include="..\Public\GraphicDevice.h" />
     <ClInclude Include="..\Public\GUISystem.h" />
-    <ClInclude Include="..\Public\GUIWidget.h" />
+    <ClInclude Include="..\Public\GUIUtil.h" />
     <ClInclude Include="..\Public\GuizmoPanel.h" />
     <ClInclude Include="..\Public\GUI_Context.h" />
     <ClInclude Include="..\Public\GUI_Inc\backends\imgui_impl_dx11.h" />
@@ -216,6 +324,7 @@ call "$(SolutionDir)UpdateLib.bat"</Command>
     <ClInclude Include="..\Public\HierarchyPanel.h" />
     <ClInclude Include="..\Public\IAudioService.h" />
     <ClInclude Include="..\Public\ICameraService.h" />
+    <ClInclude Include="..\Public\ICollidable.h" />
     <ClInclude Include="..\Public\ICollisionService.h" />
     <ClInclude Include="..\Public\IFontService.h" />
     <ClInclude Include="..\Public\IGUIService.h" />
@@ -224,7 +333,13 @@ call "$(SolutionDir)UpdateLib.bat"</Command>
     <ClInclude Include="..\Public\InputMgr.h" />
     <ClInclude Include="..\Public\InspectorPanel.h" />
     <ClInclude Include="..\Public\InstanceModel.h" />
+    <ClInclude Include="..\Public\IParticleModule.h" />
+    <ClInclude Include="..\Public\ObjectPool.h" />
+    <ClInclude Include="..\Public\OrbitArcData.h" />
+    <ClInclude Include="..\Public\ParticleParams.h" />
+    <ClInclude Include="..\Public\ParticleSystem.h" />
     <ClInclude Include="..\Public\IObjectService.h" />
+    <ClInclude Include="..\Public\IPhysicsService.h" />
     <ClInclude Include="..\Public\IRayService.h" />
     <ClInclude Include="..\Public\IRenderService.h" />
     <ClInclude Include="..\Public\IResourceService.h" />
@@ -241,51 +356,79 @@ call "$(SolutionDir)UpdateLib.bat"</Command>
     <ClInclude Include="..\Public\MaterialData.h" />
     <ClInclude Include="..\Public\MaterialInstance.h" />
     <ClInclude Include="..\Public\Mesh.h" />
+    <ClInclude Include="..\Public\MeshNode.h" />
     <ClInclude Include="..\Public\Model.h" />
     <ClInclude Include="..\Public\ModelData.h" />
     <ClInclude Include="..\Public\NFD_Inc\nfd.h" />
     <ClInclude Include="..\Public\NFD_Inc\nfd_common.h" />
-    <ClInclude Include="..\Public\OBB_Collider.h" />
     <ClInclude Include="..\Public\ObjectContainer.h" />
     <ClInclude Include="..\Public\ObjectMgr.h" />
+    <ClInclude Include="..\Public\ParticleNode.h" />
+    <ClInclude Include="..\Public\PhysicsSystem.h" />
     <ClInclude Include="..\Public\PipeLine.h" />
     <ClInclude Include="..\Public\PlaneModel.h" />
+    <ClInclude Include="..\public\PointModel.h" />
+    <ClInclude Include="..\public\PostRenderer.h" />
+    <ClInclude Include="..\Public\PreloadScheduler.h" />
+    <ClInclude Include="..\Public\PreLoad_Struct.h" />
     <ClInclude Include="..\Public\PrototypeMgr.h" />
     <ClInclude Include="..\Public\RayReceiver.h" />
     <ClInclude Include="..\Public\RaySystem.h" />
     <ClInclude Include="..\Public\RectModel.h" />
+    <ClInclude Include="..\public\Renderer.h" />
     <ClInclude Include="..\Public\RenderPass.h" />
     <ClInclude Include="..\Public\RenderSystem.h" />
     <ClInclude Include="..\Public\RenderTarget.h" />
     <ClInclude Include="..\Public\ResourceMgr.h" />
+    <ClInclude Include="..\Public\RigidBody.h" />
     <ClInclude Include="..\Public\Shader.h" />
+    <ClInclude Include="..\public\ShakeController.h" />
+    <ClInclude Include="..\Public\ShakeControllerData.h" />
+    <ClInclude Include="..\Public\SizeBySpeed.h" />
     <ClInclude Include="..\Public\SkeletalModel.h" />
     <ClInclude Include="..\Public\Skeleton.h" />
     <ClInclude Include="..\Public\SkeletonFollower.h" />
+    <ClInclude Include="..\public\SkinnedMeshRenderer.h" />
     <ClInclude Include="..\Public\SoundData.h" />
-    <ClInclude Include="..\Public\Sphere_Collider.h" />
     <ClInclude Include="..\Public\Sprite2D.h" />
+    <ClInclude Include="..\public\SpriteNode.h" />
+    <ClInclude Include="..\public\StaticMeshRenderer.h" />
     <ClInclude Include="..\Public\StaticModel.h" />
+    <ClInclude Include="..\Public\StructuredBuffer.h" />
     <ClInclude Include="..\Public\Target_Manager.h" />
     <ClInclude Include="..\Public\TextSlot.h" />
     <ClInclude Include="..\Public\Texture.h" />
+    <ClInclude Include="..\Public\TextureSheetAnimation.h" />
+    <ClInclude Include="..\Public\ThirdPartyCsv.h" />
+    <ClInclude Include="..\Public\ThreadPool.h" />
     <ClInclude Include="..\Public\TimeMgr.h" />
     <ClInclude Include="..\Public\Timer.h" />
+    <ClInclude Include="..\Public\TrailModel.h" />
+    <ClInclude Include="..\Public\TrailNode.h" />
     <ClInclude Include="..\Public\Transform.h" />
     <ClInclude Include="..\Public\UIObjcetBuilder.h" />
+    <ClInclude Include="..\public\UIRenderer.h" />
     <ClInclude Include="..\Public\UI_Manager.h" />
     <ClInclude Include="..\Public\UI_Object.h" />
     <ClInclude Include="..\Public\VIBuffer.h" />
     <ClInclude Include="..\Public\VI_Cube.h" />
+    <ClInclude Include="..\Public\VI_InstancePoint.h" />
     <ClInclude Include="..\Public\VI_Plane.h" />
     <ClInclude Include="..\Public\VI_Point.h" />
     <ClInclude Include="..\Public\VI_Rect.h" />
     <ClInclude Include="..\Public\VI_Terrain.h" />
+    <ClInclude Include="..\Public\VI_Trail.h" />
+    <ClInclude Include="..\public\ZoomController.h" />
+    <ClInclude Include="..\Public\ZoomControllerData.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\Private\AABB_Collider.cpp" />
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\imgui_stdlib.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="..\Private\AnimationClip.cpp" />
     <ClCompile Include="..\Private\Animator3D.cpp" />
+    <ClCompile Include="..\Private\AnimBuilder.cpp" />
     <ClCompile Include="..\Private\AudioDevice.cpp" />
     <ClCompile Include="..\Private\AudioSource.cpp" />
     <ClCompile Include="..\Private\Base.cpp" />
@@ -294,15 +437,53 @@ call "$(SolutionDir)UpdateLib.bat"</Command>
     <ClCompile Include="..\Private\BoneFollower.cpp" />
     <ClCompile Include="..\Private\Camera.cpp" />
     <ClCompile Include="..\Private\CameraMgr.cpp" />
+    <ClCompile Include="..\Private\CamEvaluator.cpp" />
+    <ClCompile Include="..\Private\CamFovLinearEvaluator.cpp" />
+    <ClCompile Include="..\Private\CamFovPerSegmentEvaluator.cpp" />
+    <ClCompile Include="..\Private\CamFovSmoothEvaluator.cpp" />
+    <ClCompile Include="..\Private\CamPosBSplineEvaluator.cpp" />
+    <ClCompile Include="..\Private\CamPosCatmullRomEvaluator.cpp" />
+    <ClCompile Include="..\Private\CamPosCentripetalEvaluator.cpp" />
+    <ClCompile Include="..\Private\CamPosHermiteEvaluator.cpp" />
+    <ClCompile Include="..\Private\CamPosLinearEvaluator.cpp" />
+    <ClCompile Include="..\Private\CamPosOrbitArcEvaulator.cpp" />
+    <ClCompile Include="..\Private\CamPosPerSegmentEvaluator.cpp" />
+    <ClCompile Include="..\Private\CamRotPerSegmentEvaluator.cpp" />
+    <ClCompile Include="..\Private\CamRotSlerpEvaluator.cpp" />
+    <ClCompile Include="..\Private\CamRotSquadEvaluator.cpp" />
+    <ClCompile Include="..\Private\CamSequencePlayer.cpp" />
+    <ClCompile Include="..\Private\CamUtil.cpp" />
     <ClCompile Include="..\Private\Channel.cpp" />
+    <ClCompile Include="..\Private\CharacterController.cpp" />
     <ClCompile Include="..\Private\Child.cpp" />
+    <ClCompile Include="..\Private\ClickManager.cpp" />
     <ClCompile Include="..\Private\Collider.cpp" />
     <ClCompile Include="..\Private\CollisionSystem.cpp" />
     <ClCompile Include="..\Private\Component.cpp" />
+    <ClCompile Include="..\Private\ComputeShader.cpp" />
+    <ClCompile Include="..\private\CSMShadow.cpp" />
     <ClCompile Include="..\Private\CustomFont.cpp" />
     <ClCompile Include="..\Private\Data_Packets.cpp" />
+    <ClCompile Include="..\Private\DebugBonePanel.cpp" />
     <ClCompile Include="..\Private\DebugDraw.cpp" />
     <ClCompile Include="..\Private\DebugRender.cpp" />
+    <ClCompile Include="..\Private\DynamicBone.cpp" />
+    <ClCompile Include="..\Private\EffectBuilder.cpp" />
+    <ClCompile Include="..\private\EffectContainer.cpp" />
+    <ClCompile Include="..\private\EffectNode.cpp" />
+    <ClCompile Include="..\private\EffectRenderer.cpp" />
+    <ClCompile Include="..\private\Engine_Math.cpp" />
+    <ClCompile Include="..\Private\Engine_Struct.cpp" />
+    <ClCompile Include="..\Private\EnvPanel.cpp" />
+    <ClCompile Include="..\Private\EventListener.cpp" />
+    <ClCompile Include="..\Private\EventSystem.cpp" />
+    <ClCompile Include="..\Private\FootIK.cpp" />
+    <ClCompile Include="..\private\ForwardRenderer.cpp" />
+    <ClCompile Include="..\Private\HiZ_Culling.cpp" />
+    <ClCompile Include="..\Private\LifeTimeColor.cpp" />
+    <ClCompile Include="..\Private\Noise.cpp" />
+    <ClCompile Include="..\Private\LifeTimeSize.cpp" />
+    <ClCompile Include="..\Private\LifeTimeVelocity.cpp" />
     <ClCompile Include="..\Private\Engine_Defines.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -313,13 +494,16 @@ call "$(SolutionDir)UpdateLib.bat"</Command>
     <ClCompile Include="..\Private\GameObjectBuilder.cpp" />
     <ClCompile Include="..\Private\GraphicDevice.cpp" />
     <ClCompile Include="..\Private\GUISystem.cpp" />
-    <ClCompile Include="..\Private\GUIWidget.cpp" />
+    <ClCompile Include="..\Private\GUIUtil.cpp" />
     <ClCompile Include="..\Private\GuizmoPanel.cpp" />
     <ClCompile Include="..\Private\Helper_Func.cpp" />
     <ClCompile Include="..\Private\HierarchyPanel.cpp" />
     <ClCompile Include="..\Private\InputMgr.cpp" />
     <ClCompile Include="..\Private\InspectorPanel.cpp" />
     <ClCompile Include="..\Private\InstanceModel.cpp" />
+    <ClCompile Include="..\Private\IParticleModule.cpp" />
+    <ClCompile Include="..\Private\ObjectPool.cpp" />
+    <ClCompile Include="..\Private\ParticleSystem.cpp" />
     <ClCompile Include="..\Private\Layer.cpp" />
     <ClCompile Include="..\Private\Level.cpp" />
     <ClCompile Include="..\Private\LevelMgr.cpp" />
@@ -331,44 +515,64 @@ call "$(SolutionDir)UpdateLib.bat"</Command>
     <ClCompile Include="..\Private\MaterialData.cpp" />
     <ClCompile Include="..\Private\MaterialInstance.cpp" />
     <ClCompile Include="..\Private\Mesh.cpp" />
+    <ClCompile Include="..\Private\MeshNode.cpp" />
     <ClCompile Include="..\Private\Model.cpp" />
     <ClCompile Include="..\Private\ModelData.cpp" />
-    <ClCompile Include="..\Private\OBB_Collider.cpp" />
     <ClCompile Include="..\Private\ObjectContainer.cpp" />
     <ClCompile Include="..\Private\ObjectMgr.cpp" />
+    <ClCompile Include="..\Private\ParticleNode.cpp" />
+    <ClCompile Include="..\Private\PhysicsSystem.cpp" />
     <ClCompile Include="..\Private\PipeLine.cpp" />
     <ClCompile Include="..\Private\PlaneModel.cpp" />
+    <ClCompile Include="..\private\PointModel.cpp" />
+    <ClCompile Include="..\private\PostRenderer.cpp" />
+    <ClCompile Include="..\Private\PreloadScheduler.cpp" />
     <ClCompile Include="..\Private\PrototypeMgr.cpp" />
     <ClCompile Include="..\Private\RayReceiver.cpp" />
     <ClCompile Include="..\Private\RaySystem.cpp" />
     <ClCompile Include="..\Private\RectModel.cpp" />
+    <ClCompile Include="..\private\Renderer.cpp" />
     <ClCompile Include="..\Private\RenderPass.cpp" />
     <ClCompile Include="..\Private\RenderSystem.cpp" />
     <ClCompile Include="..\Private\RenderTarget.cpp" />
     <ClCompile Include="..\Private\ResourceMgr.cpp" />
+    <ClCompile Include="..\Private\RigidBody.cpp" />
     <ClCompile Include="..\Private\Shader.cpp" />
+    <ClCompile Include="..\private\ShakeController.cpp" />
+    <ClCompile Include="..\Private\SizeBySpeed.cpp" />
     <ClCompile Include="..\Private\SkeletalModel.cpp" />
     <ClCompile Include="..\Private\Skeleton.cpp" />
     <ClCompile Include="..\Private\SkeletonFollower.cpp" />
+    <ClCompile Include="..\private\SkinnedMeshRenderer.cpp" />
     <ClCompile Include="..\Private\SoundData.cpp" />
-    <ClCompile Include="..\Private\Sphere_Collider.cpp" />
     <ClCompile Include="..\Private\Sprite2D.cpp" />
+    <ClCompile Include="..\private\SpriteNode.cpp" />
+    <ClCompile Include="..\private\StaticMeshRenderer.cpp" />
     <ClCompile Include="..\Private\StaticModel.cpp" />
+    <ClCompile Include="..\Private\StructuredBuffer.cpp" />
     <ClCompile Include="..\Private\Target_Manager.cpp" />
     <ClCompile Include="..\Private\TextSlot.cpp" />
     <ClCompile Include="..\Private\Texture.cpp" />
+    <ClCompile Include="..\Private\TextureSheetAnimation.cpp" />
+    <ClCompile Include="..\Private\ThreadPool.cpp" />
     <ClCompile Include="..\Private\TimeMgr.cpp" />
     <ClCompile Include="..\Private\Timer.cpp" />
+    <ClCompile Include="..\Private\TrailModel.cpp" />
+    <ClCompile Include="..\Private\TrailNode.cpp" />
     <ClCompile Include="..\Private\Transform.cpp" />
     <ClCompile Include="..\Private\UIObjcetBuilder.cpp" />
+    <ClCompile Include="..\private\UIRenderer.cpp" />
     <ClCompile Include="..\Private\UI_Manager.cpp" />
     <ClCompile Include="..\Private\UI_Object.cpp" />
     <ClCompile Include="..\Private\VIBuffer.cpp" />
     <ClCompile Include="..\Private\VI_Cube.cpp" />
+    <ClCompile Include="..\Private\VI_InstancePoint.cpp" />
     <ClCompile Include="..\Private\VI_Plane.cpp" />
     <ClCompile Include="..\Private\VI_Point.cpp" />
     <ClCompile Include="..\Private\VI_Rect.cpp" />
     <ClCompile Include="..\Private\VI_Terrain.cpp" />
+    <ClCompile Include="..\Private\VI_Trail.cpp" />
+    <ClCompile Include="..\private\ZoomController.cpp" />
     <ClCompile Include="..\Public\GUI_Inc\backends\imgui_impl_dx11.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
@@ -407,15 +611,110 @@ call "$(SolutionDir)UpdateLib.bat"</Command>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="..\..\EngineSDK\Inc\Engine_Shader\CS_HiZ_Copy.hlsl">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CS_MAIN</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CS_MAIN</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
+    </FxCompile>
+    <FxCompile Include="..\..\EngineSDK\Inc\Engine_Shader\CS_OcclusionCull.hlsl">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CS_MAIN</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CS_MAIN</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
+    </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\CS_AlphaInspect.hlsl" />
+    <FxCompile Include="..\Public\Engine_Shader\CS_HiZ_Reduce.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CS_MAIN</EntryPointName>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CS_MAIN</EntryPointName>
+    </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\CS_Particle_Basic.hlsl">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CS_MAIN</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CS_MAIN</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CS_MAIN</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CS_MAIN</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
+    </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\CS_Particle_BuildInstance.hlsl">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CS_MAIN</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CS_MAIN</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CS_MAIN</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CS_MAIN</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
+    </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\CS_Particle_DeadListInit.hlsl">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'"> CS_MAIN</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compute</ShaderType>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'"> CS_MAIN</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compute</ShaderType>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'"> CS_MAIN</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'"> CS_MAIN</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\CS_Particle_Func.hlsl" />
+    <FxCompile Include="..\Public\Engine_Shader\CS_Particle_Spawn.hlsl">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CS_MAIN</EntryPointName>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CS_MAIN</EntryPointName>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CS_MAIN</EntryPointName>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CS_MAIN</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
+    </FxCompile>
     <FxCompile Include="..\Public\Engine_Shader\Shader_Deferred.hlsl" />
+    <FxCompile Include="..\Public\Engine_Shader\Shader_Deferred_Define.hlsl" />
+    <FxCompile Include="..\Public\Engine_Shader\Shader_Deferred_SkinnedMesh.hlsl" />
+    <FxCompile Include="..\Public\Engine_Shader\Shader_Deferred_StaticMesh.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\Shader_Define.hlsl" />
+    <FxCompile Include="..\Public\Engine_Shader\Shader_Function.hlsl" />
+    <FxCompile Include="..\Public\Engine_Shader\Shader_PBRFunction.hlsl" />
+    <FxCompile Include="..\Public\Engine_Shader\Shader_Shadow.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\Shader_State.hlsl" />
+    <FxCompile Include="..\Public\Engine_Shader\Shader_Deferred_Effect.hlsl" />
+    <FxCompile Include="..\Public\Engine_Shader\VTX_Character.hlsl" />
+    <FxCompile Include="..\Public\Engine_Shader\VTX_Cloud.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_Debug.hlsl" />
+    <FxCompile Include="..\Public\Engine_Shader\VTX_DecalMesh.hlsl" />
+    <FxCompile Include="..\Public\Engine_Shader\VTX_EffectMesh.hlsl" />
+    <FxCompile Include="..\Public\Engine_Shader\VTX_DemoInstance.hlsl" />
+    <FxCompile Include="..\Public\Engine_Shader\VTX_Enemy.hlsl" />
+    <FxCompile Include="..\Public\Engine_Shader\VTX_InstancePoint.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_Mesh.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_NorTex.hlsl" />
+    <FxCompile Include="..\Public\Engine_Shader\VTX_PlaneGrid.hlsl" />
+    <FxCompile Include="..\Public\Engine_Shader\VTX_Point.hlsl" />
+    <FxCompile Include="..\Public\Engine_Shader\VTX_Portal.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_SkinMesh.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_TexPos.hlsl" />
+    <FxCompile Include="..\Public\Engine_Shader\VTX_Trail.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_UI.hlsl" />
+    <FxCompile Include="..\Public\Engine_Shader\VTX_UIMesh.hlsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\Public\Engine_Shader\CS_Particle.hlsli">
+      <FileType>Document</FileType>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="cpp.hint" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

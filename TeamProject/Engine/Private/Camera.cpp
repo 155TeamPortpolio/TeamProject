@@ -2,77 +2,74 @@
 #include "Camera.h"
 #include "GameObject.h"
 
-CCamera::CCamera()
-{
-}
-
-CCamera::CCamera(const CCamera& rhs)
-	:CComponent(rhs)
-{
-}
-
-HRESULT CCamera::Initialize_Prototype()
-{
-	return S_OK;
-}
-
 HRESULT CCamera::Initialize(COMPONENT_DESC* pArg)
 {
-	if (pArg == nullptr)
-		return S_OK;
-
-	CAMERA_DESC* Camera = static_cast<CAMERA_DESC*>(pArg);
-	m_pTransform = m_pOwner->Get_Component<CTransform>();
-	Safe_AddRef(m_pTransform); 
-
-	m_fFov = Camera->fFov;
-	m_fFar = Camera->fFar;
-	m_fNear = Camera->fNear;
-	m_fAspect = Camera->fAspect;
-	
+	CAMERA_DESC* cam = static_cast<CAMERA_DESC*>(pArg);
+	Set_Lens(cam->fFov, cam->fAspect, cam->fNear, cam->fFar);
 	return S_OK;
 }
 
-_float4x4 CCamera::Get_ViewMatrix()
+Matrix CCamera::Get_ViewMatrix() const
 {
-
-	return m_pTransform->Get_InverseWorldMatrix();
+	return m_pOwner->Get_Component<CTransform>()->Get_InverseWorldMatrix();
 }
 
-_matrix CCamera::Get_PureViewMatrix()
+Matrix CCamera::Get_ProjMatrix() const
 {
-	_float3     vUpDir = { 0.f, 1.f, 0.f };
+	switch (m_projType)
+	{
+	case CamProjType::Perspective:
+		return XMMatrixPerspectiveFovLH(XMConvertToRadians(m_lens.fov), m_lens.aspect, m_lens.zNear , m_lens.zFar);
 
-	//	return XMMatrixLookAtLH(
-	//		XMVectorSetW(m_pTransform->Get_WorldPos(), 1.f),
-	//		XMVectorSetW(m_pTransform->Get_WorldPos()+m_pTransform->Dir(STATE::LOOK), 1.f),
-	//		XMLoadFloat3(&vUpDir));
-	return XMLoadFloat4x4(m_pTransform->Get_InverseWorldMatrix_Ptr());
+	case CamProjType::Orthographic:
+		const _float height = m_orthoSize * 2.f;
+		const _float width  = height * m_lens.aspect;
+		return XMMatrixOrthographicLH(width, height, m_lens.zNear, m_lens.zFar);
+	}
+	return {};
 }
 
-_matrix CCamera::Get_ProjMatrix()
+_vector CCamera::Get_Pos() const
 {
-	return XMMatrixPerspectiveFovLH(XMConvertToRadians(m_fFov), m_fAspect,m_fNear,m_fFar);
+	return m_pOwner->Get_Component<CTransform>()->Get_Pos();
+}
+
+void CCamera::Set_Lens(_float fov, _float aspect, _float zNear, _float zFar)
+{
+	m_lens.fov    = fov; 
+	m_lens.aspect = aspect;
+	m_lens.zNear  = zNear;
+	m_lens.zFar   = zFar;
 }
 
 _bool CCamera::Lerp_FOV(_float dst, _float dt)
 {
-	if (dt < 0.f) dt = 0.f;
-	if (dt > 1.f) dt = 1.f;
+	dt = clamp(dt, 0.f, 1.f);
+	m_lens.fov += (dst - m_lens.fov) * dt;
 
-	m_fFov = m_fFov + (dst - m_fFov) * dt;
-
-	if (fabsf(dst - m_fFov) < 0.05f)
+	if (fabsf(dst - m_lens.fov) < 0.05f)
 	{
-		m_fFov = dst;
+		m_lens.fov = dst;
 		return true;
 	}
-
 	return false;
+}
+
+CCamera* CCamera::Create()
+{
+	CCamera* instance = new CCamera();
+	if (FAILED(instance->Initialize_Prototype()))
+	{
+		MSG_BOX("Camera Create Failed : CCamera");
+		Safe_Release(instance);
+	}
+	return instance;
 }
 
 void CCamera::Render_GUI()
 {
+	__super::Render_GUI();
+
 	ImGui::SeparatorText("Camera");
 	float childWidth = ImGui::GetContentRegionAvail().x;
 	const float textLineHeight = ImGui::GetTextLineHeightWithSpacing();
@@ -80,35 +77,13 @@ void CCamera::Render_GUI()
 
 	ImGui::BeginChild("##CameraChild", ImVec2{ 0, childHeight }, true);
 	ImGui::Text("Field of View");
-	ImGui::InputFloat("##FoV", &m_fFov, 1.0f, 0.0f, "%.1f");
+	ImGui::InputFloat("##FoV", &m_lens.fov, 1.0f, 0.0f, "%.1f");
 
 	ImGui::Text("Near Plane");
-	ImGui::InputFloat("##Near", &m_fNear, 1.0f, 0.0f, "%.1f");
+	ImGui::InputFloat("##Near", &m_lens.zNear, 1.0f, 0.0f, "%.1f");
 
 	ImGui::Text("Far Plane");
-	ImGui::InputFloat("##Far", &m_fFar, 1.0f, 0.0f, "%.1f");
+	ImGui::InputFloat("##Far", &m_lens.zFar, 1.0f, 0.0f, "%.1f");
 
 	ImGui::EndChild();
-}
-
-CCamera* CCamera::Create()
-{
-	CCamera* instance = new CCamera();
-	if (FAILED(instance->Initialize_Prototype())) {
-		MSG_BOX("Camera Create Failed : CCamera");
-		Safe_Release(instance);
-	}
-	return instance;
-}
-
-CComponent* CCamera::Clone()
-{
-	CCamera* instance = new CCamera(*this);
-	return instance;
-}
-
-void CCamera::Free()
-{
-	__super::Free();
-	Safe_Release(m_pTransform);
 }

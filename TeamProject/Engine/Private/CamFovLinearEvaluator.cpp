@@ -1,0 +1,24 @@
+#include "Engine_Defines.h"
+#include "CamFovLinearEvaluator.h"
+
+bool CCamFovLinearEvaluator::Build(const vector<CamKeyFrame>& keys)
+{
+	if (keys.empty())
+		return false;
+
+	keyframes = &keys;
+	return true;
+}
+
+_float CCamFovLinearEvaluator::Evaluate(float time) const
+{
+	const CamKeySegment segment = CamUtil::FindKeySegment(*keyframes, time);
+
+	const _uint segmentIdx = segment.segmentIdx;
+	const float u          = segment.normalizedTime;
+
+	const float startFov = (*keyframes)[segmentIdx].fov;
+	const float endFov   = (*keyframes)[segmentIdx + 1].fov;
+
+	return startFov + (endFov - startFov) * u;
+}

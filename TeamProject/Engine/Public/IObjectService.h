@@ -18,6 +18,8 @@ public:
 	virtual void Add_Object(class CGameObject* object, const LAYER_DESC& layer)PURE;
 	virtual void Remove_Object(class CGameObject* object) PURE;
 	virtual void Change_Layer(const LAYER_DESC& SrcLayer, class CGameObject* object, const LAYER_DESC& DstLayer) PURE;
+	virtual class CGameObject* Request_Object(const OBJECT_HANDLE& handle) PURE;
+	virtual class CGameObject* Acquire(const CLONE_DESC& desc) PURE;
 
 	virtual const unordered_map<string, class CLayer*>& Get_LevelLayer(const string& LevelTag)PURE;
 	virtual  CLayer* Get_Layer(const LAYER_DESC& SrcLayer) PURE;
@@ -25,6 +27,19 @@ public:
 	virtual void Clear(const string& LevelTag)PURE;
 	virtual HRESULT Sync_To_Level()PURE;
 
+
+	virtual void Set_LevelTimeScale(string LevelTag,_float scale) PURE;
+	virtual void Reset_LevelTimeScale(string LevelTag) PURE;
+
+	virtual void Set_LayerTimeScale(const LAYER_DESC& Layer,_float scale) PURE;
+	virtual void Reset_LayerTimeScale(const LAYER_DESC& Layer) PURE;
+	virtual _float Get_LayerTimeScale(const LAYER_DESC& Layer) PURE;
+
+
+	virtual _bool Remember_Global(_uint RememberKey, const OBJECT_HANDLE& handle, _bool replaceIfExists)PURE;
+	virtual class CGameObject* Find_Global(_uint KeyID)PURE;
+	virtual _bool Unregister_Global(_uint keyID)PURE;
+	virtual void Clear_Global()PURE;
 };
 
 NS_END

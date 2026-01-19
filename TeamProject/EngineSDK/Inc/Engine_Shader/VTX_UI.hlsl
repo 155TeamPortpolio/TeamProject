@@ -1,5 +1,7 @@
 #include "Shader_Define.hlsl"
 
+#define PI 3.14159265359
+
 struct VS_IN
 {
     float3 vPosition : POSITION;
@@ -44,13 +46,13 @@ void GS_MAIN(point GS_IN In[1], inout TriangleStream<GS_OUT> triStream)
     float3 offsetRight = right * ( scaleX*0.5f);
     float3 offsetUp = up * (scaleY * 0.5f);
 
-    // ¡§¡° 4∞≥ ¿ßƒ° ∞ËªÍ (ø˘µÂ ±‚¡ÿ)
+    // Ï†ïÏ†ê 4Í∞ú ÏúÑÏπò Í≥ÑÏÇ∞ (ÏõîÎìú Í∏∞Ï§Ä)
     float3 p0 = worldPos + (-offsetRight + offsetUp);
     float3 p1 = worldPos + (offsetRight + offsetUp);
     float3 p2 = worldPos + (offsetRight - offsetUp);
     float3 p3 = worldPos + (-offsetRight - offsetUp);
 
-    // ¡˜±≥ ≈ıøµ ªÁøÎ
+    // ÏßÅÍµê Ìà¨ÏòÅ ÏÇ¨Ïö©
     v[0].vPosition = mul(float4(p0, 1.f), matOrthograph);
     v[0].vTexcoord = float2(0, 0);
 
@@ -74,6 +76,19 @@ void GS_MAIN(point GS_IN In[1], inout TriangleStream<GS_OUT> triStream)
     triStream.RestartStrip();
 }
 
+uint Col = 1;
+uint Row = 1;
+uint FrameIndex;
+
+float2 UVOffset;
+ 
+float FillAmount;
+float Direction;
+
+float4 vColor;
+
+float2 vFlip;
+
 struct PS_IN
 {
     float4 vPosition : SV_POSITION;
@@ -89,24 +104,249 @@ PS_OUT PS_MAIN(PS_IN In)
 {
     PS_OUT Out;
     
-    vector vDiffuse = SpriteTexture.Sample(LinearSampler, In.vTexcoord);
-        
-    if (vDiffuse.a < 0.1f)
-        discard;
-    Out.vColor = vDiffuse ;
+    float2 vTexcoord = { In.vTexcoord.x * (1.f - 2.f * vFlip.x) + vFlip.x, In.vTexcoord.y * (1.f - 2.f * vFlip.y) + vFlip.y };
+    
+    vector vDiffuse = SpriteTexture.Sample(LinearSampler, vTexcoord);
+    //clip(vDiffuse.a - 0.1f);
+    
+    float4 color = vDiffuse * vColor;
+    Out.vColor.rgb = color.rgb * color.a;
+    Out.vColor.a = color.a;
+    
     return Out;
 }
 
+PS_OUT PS_MAIN_SPRITEANIMATION(PS_IN In)
+{    
+    PS_OUT Out;
+    
+    vector vDiffuse = SpriteTexture.Sample(LinearSampler, CalculateFrameIndex(Col, Row, FrameIndex, In.vTexcoord));
+    clip(vDiffuse.a - 0.1f);
+    
+    float4 color = vDiffuse * vColor;
+    Out.vColor.rgb = color.rgb * color.a;
+    Out.vColor.a = color.a;
+    
+    return Out;
+}
+
+PS_OUT PS_MAIN_UVANIMATION(PS_IN In)
+{
+    PS_OUT Out;
+    
+    vector vDiffuse = SpriteTexture.Sample(LinearSampler, In.vTexcoord + UVOffset);
+    clip(vDiffuse.a - 0.1f);
+    
+    float4 color = vDiffuse * vColor;
+    Out.vColor.rgb = color.rgb * color.a;
+    Out.vColor.a = color.a;
+    
+    return Out;
+}
+
+PS_OUT PS_MAIN_LINEARFILL(PS_IN In)
+{
+    PS_OUT Out;
+    
+    float2 vTexcoord = { In.vTexcoord.x * (1.f - 2.f * Direction) + Direction, In.vTexcoord.y };
+    vector vDiffuse = SpriteTexture.Sample(LinearSampler, In.vTexcoord);
+    clip(vDiffuse.a - 0.1f);
+    
+    clip(FillAmount - vTexcoord.x);
+    
+    float4 color = vDiffuse * vColor;
+    Out.vColor.rgb = color.rgb * color.a;
+    Out.vColor.a = color.a;
+    
+    return Out;
+}
+
+PS_OUT PS_MAIN_RADIALFILL(PS_IN In)
+{
+    PS_OUT Out;
+    
+    vector vDiffuse = SpriteTexture.Sample(LinearSampler, In.vTexcoord);
+    clip(vDiffuse.a - 0.1f);
+    
+    float2 vTexcoord = In.vTexcoord - 0.5f;
+    float  fAngle    = atan2(vTexcoord.y, vTexcoord.x);
+    fAngle = fAngle / (PI * 2.f) + 0.5f; // 0 ~ 1Î°ú Ï†ïÍ∑úÌôî
+    fAngle = (1.f - Direction) - frac(fAngle - 0.25f) * (Direction * -2.f + 1.f);
+    
+    clip(FillAmount - fAngle);
+    
+    float4 color = vDiffuse * vColor;
+    Out.vColor.rgb = color.rgb * color.a;
+    Out.vColor.a = color.a;
+    
+    return Out;
+}
+// ---------------------------------------------------------------------------------------
+float MaskThreshold = 0.1f;
+
+PS_OUT PS_STENCIL_WRITE_ALPHA(PS_IN In)
+{
+    PS_OUT Out;
+
+    float2 vTexcoord = float2(
+        In.vTexcoord.x * (1.f - 2.f * vFlip.x) + vFlip.x,
+        In.vTexcoord.y * (1.f - 2.f * vFlip.y) + vFlip.y
+    );
+
+    vector vDiffuse = SpriteTexture.Sample(LinearSampler, vTexcoord);
+    clip(vDiffuse.a - MaskThreshold);
+
+    Out.vColor = 1;
+    return Out;
+}
+
+float MaskPreviewAlpha = 0.5f;
+
+PS_OUT PS_MAIN_MASKPREVIEW(PS_IN In)
+{
+    PS_OUT Out;
+
+    float2 vTexcoord = float2(
+        In.vTexcoord.x * (1.f - 2.f * vFlip.x) + vFlip.x,
+        In.vTexcoord.y * (1.f - 2.f * vFlip.y) + vFlip.y
+    );
+
+    vector vDiffuse = SpriteTexture.Sample(LinearSampler, vTexcoord);
+    clip(vDiffuse.a - 0.1f);
+
+    Out.vColor = (vDiffuse * vColor) * MaskPreviewAlpha;
+    return Out;
+}
+// -------------------------------------------------------------------------------------
 technique11 DefaultTechnique
 {
     pass Opaque
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_None, 0);
-        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-        VertexShader = compile vs_5_0 VS_MAIN();
+        SetBlendState(BS_Premultiplied, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader   = compile vs_5_0 VS_MAIN();
         GeometryShader = compile gs_5_0 GS_MAIN();
-        PixelShader = compile ps_5_0 PS_MAIN();
-    }  
-}
+        PixelShader    = compile ps_5_0 PS_MAIN();
+    }
 
+    pass SpriteAnimation
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_Premultiplied, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader   = compile vs_5_0 VS_MAIN();
+        GeometryShader = compile gs_5_0 GS_MAIN();
+        PixelShader    = compile ps_5_0 PS_MAIN_SPRITEANIMATION();
+    }
+
+    pass UVAnimation
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_Premultiplied, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader   = compile vs_5_0 VS_MAIN();
+        GeometryShader = compile gs_5_0 GS_MAIN();
+        PixelShader    = compile ps_5_0 PS_MAIN_UVANIMATION();
+    }
+
+    pass LinearFill
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_Premultiplied, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader   = compile vs_5_0 VS_MAIN();
+        GeometryShader = compile gs_5_0 GS_MAIN();
+        PixelShader    = compile ps_5_0 PS_MAIN_LINEARFILL();
+    }
+
+    pass RadialFill
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_Premultiplied, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader   = compile vs_5_0 VS_MAIN();
+        GeometryShader = compile gs_5_0 GS_MAIN();
+        PixelShader    = compile ps_5_0 PS_MAIN_RADIALFILL();
+    }
+
+    pass UI_MaskPreview
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_Premultiplied, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader   = compile vs_5_0 VS_MAIN();
+        GeometryShader = compile gs_5_0 GS_MAIN();
+        PixelShader    = compile ps_5_0 PS_MAIN_MASKPREVIEW();
+    }
+
+    pass UI_StencilWrite
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_UIWriteStencil, 1);
+        SetBlendState(BS_ColorWriteOff, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader   = compile vs_5_0 VS_MAIN();
+        GeometryShader = compile gs_5_0 GS_MAIN();
+        PixelShader    = compile ps_5_0 PS_STENCIL_WRITE_ALPHA();
+    }
+
+    pass UI_StencilWritePreview
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_UIWriteStencil, 1);
+        SetBlendState(BS_Premultiplied, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader   = compile vs_5_0 VS_MAIN();
+        GeometryShader = compile gs_5_0 GS_MAIN();
+        PixelShader    = compile ps_5_0 PS_MAIN_MASKPREVIEW();
+    }
+
+    pass Opaque_StencilTest
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_UIStencilTest, 1);
+        SetBlendState(BS_Premultiplied, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader   = compile vs_5_0 VS_MAIN();
+        GeometryShader = compile gs_5_0 GS_MAIN();
+        PixelShader    = compile ps_5_0 PS_MAIN();
+    }
+
+    pass UVAnimation_StencilTest
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_UIStencilTest, 1);
+        SetBlendState(BS_Premultiplied, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader   = compile vs_5_0 VS_MAIN();
+        GeometryShader = compile gs_5_0 GS_MAIN();
+        PixelShader    = compile ps_5_0 PS_MAIN_UVANIMATION();
+    }
+
+    pass LinearFill_StencilTest
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_UIStencilTest, 1);
+        SetBlendState(BS_Premultiplied, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader   = compile vs_5_0 VS_MAIN();
+        GeometryShader = compile gs_5_0 GS_MAIN();
+        PixelShader    = compile ps_5_0 PS_MAIN_LINEARFILL();
+    }
+
+    pass RadialFill_StencilTest
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_UIStencilTest, 1);
+        SetBlendState(BS_Premultiplied, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader   = compile vs_5_0 VS_MAIN();
+        GeometryShader = compile gs_5_0 GS_MAIN();
+        PixelShader    = compile ps_5_0 PS_MAIN_RADIALFILL();
+    }
+
+    pass SpriteAnimation_StencilTest
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_UIStencilTest, 1);
+        SetBlendState(BS_Premultiplied, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader   = compile vs_5_0 VS_MAIN();
+        GeometryShader = compile gs_5_0 GS_MAIN();
+        PixelShader    = compile ps_5_0 PS_MAIN_SPRITEANIMATION();
+    }
+}

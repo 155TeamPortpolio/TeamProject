@@ -17,3 +17,6 @@
 #include "IRayService.h"
 #include "ICollisionService.h"
 #include "IFontService.h"
+#include "IPhysicsService.h"
+#include "EventSystem.h"
+#include "ClickManager.h"

@@ -12,7 +12,7 @@ private:
 
 public:
 	void ApplyData(ID3D11DeviceContext* pContext);
-	HRESULT Create_CBuffer(ID3D11Device* pDevice);
+
 
 public:
 	const string& Get_PassConstant();
@@ -25,23 +25,30 @@ public:
 public:
 	HRESULT Set_Param(const string& ConstantName, const SHADER_PARAM& parameter);
 	SHADER_PARAM* Get_Param(const string& ConstantName);
-
 	HRESULT Override_Pass(const string& passConstant) { override_Pass = passConstant; return S_OK; };
 	HRESULT Reset_Pass();
 	HRESULT Override_Constant(const MaterialConstants& materialConstant);
 	HRESULT Reset_Constant();
-
+	void Reset_DynamicSlot();
 public:
 	vector<_uint>& Get_TextureIndex() { return m_TextureIndexs; }
 	void ChangeTexture(TEXTURE_TYPE type, _uint index);
 	void Set_Blended(_bool blend) { m_IsBlended = blend; };
 	_bool IsBlened() { return m_IsBlended; }
+	void Set_OutLine(_bool outline) { m_IsUseOutLine = outline; }
+	_bool IsUseOutLine() { return m_IsUseOutLine; }
+	_bool isValid();
 
+	void SetBlendIf_AlphaDiffuse(AlphaCheckLevel level, const string& pass);
 public:
 	virtual void Render_GUI();
 
 private:
+	void ClearDynamicSlotsBound(CShader* materialShader);
+
+private:
 	_bool m_IsBlended = { false };
+	_bool m_IsUseOutLine = { false };
 	vector<_uint> m_TextureIndexs;
 	unordered_map<string, SHADER_PARAM> m_DynamicSlots;
 
@@ -49,7 +56,6 @@ private:
 
 	MaterialConstants overrides_Constant = {};
 	class CMaterialData* m_pMaterialData = { nullptr };
-	ID3D11Buffer* m_pCBuffer = { nullptr };
 	ID3D11Device* m_pDevice = { nullptr };
 
 public:

@@ -1,5 +1,6 @@
 #include "Engine_Defines.h"
 #include "InputMgr.h"
+#include "Helper_Func.h"
 
 CInputMgr::CInputMgr()
 {
@@ -14,6 +15,11 @@ HRESULT CInputMgr::Initialize(HWND hwnd)
     m_hWnd = hwnd;
 	m_Keyboard.resize(256);
 
+	for (size_t i = 0; i < m_Keyboard.size(); i++)
+	{
+		m_Keyboard[i].VK_Input = i;
+		m_Keyboard[i].VK_Name = Helper::VK_ToString(i);
+	}
     RAWINPUTDEVICE rid[2];
 
 	// Å°º¸µå
@@ -73,15 +79,6 @@ void CInputMgr::Update()
 
 	GetCursorPos(&m_pMousePos);
 	ScreenToClient(m_hWnd, &m_pMousePos);
-
-	if (m_Keyboard['A'].state == KEY_STATE::TAP)
-		OutputDebugStringA("A Key Down\n");
-
-	if (m_Keyboard['A'].state == KEY_STATE::HOLD)
-		OutputDebugStringA("A Key Hold\n");
-
-	if (m_Keyboard['A'].state == KEY_STATE::AWAY)
-		OutputDebugStringA("A Key Up\n");
 }
 
 const _float2& CInputMgr::Mouse_Pos()
@@ -102,6 +99,30 @@ void CInputMgr::Process_Input(LPARAM lParam)
 		RAWINPUT* raw = reinterpret_cast<RAWINPUT*>(m_vecInputMsg.data());
 		Process_RawInput(raw);
 	}
+}
+
+vector<KEY_DESC> CInputMgr::GetPressedKeys()
+{
+	vector<KEY_DESC> result;
+	for (size_t i = 0; i < m_Keyboard.size(); i++)
+	{
+		if (Key_Down(i)) {
+			result.push_back(m_Keyboard[i]);
+		}
+	}
+	return result;
+}
+
+vector<KEY_DESC> CInputMgr::GetPressedMouse()
+{
+	vector<KEY_DESC> result;
+
+	result.resize(3);
+	result[0] = m_Mouse.mouseKey[0];
+	result[1] = m_Mouse.mouseKey[1];
+	result[2] = m_Mouse.mouseKey[2];
+
+	return result;
 }
 
 void CInputMgr::Process_RawInput(RAWINPUT* raw)

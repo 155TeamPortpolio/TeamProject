@@ -5,6 +5,7 @@
 #pragma pack_constant_buffers
 
 #include "Shader_State.hlsl"
+#include "Shader_Function.hlsl"
 
 cbuffer FrameBuffer : register(b0)
 {
@@ -18,20 +19,10 @@ cbuffer FrameBuffer : register(b0)
     float zFar;
 };
 
-cbuffer LightBuffer : register(b1)
-{
-    vector vLightPosition;
-    vector vLightDirection;
-    vector vLightDiffuse;
-    vector vLightAmbient;
-    vector vLightSpecular;
-    float   fLightRange;
-    float3 lightPadding;
-};
-
 cbuffer TransformPerDraw : register(b2)
 {
     uint TransformIndex;
+    vector vLookVector;
 };
 
 cbuffer SkinningPerDraw : register(b4)
@@ -53,10 +44,28 @@ cbuffer ShadowBuffer : register(b8)
     matrix matShadowProjection;
     matrix matShadowViewInverse;
     matrix matShadowProjectionInverse;
+    matrix matStaticLightViewProj[4];
+    matrix matSkinnedLightViewProj[4];
+    float4 vCascadeSplits;
     float4 vShadowPosition;
+    int iCurrentCascade;
     float zShadowFar;
-    float3 ShadowPadding;
+    
+    float2 ShadowPadding;
 };
+
+cbuffer LightBuffer : register(b9)
+{
+    vector vLightDir;
+    vector vLightPos;
+    vector vLightDiffuse;
+    vector vLightAmbient;
+    vector vLightSpecular;
+    float fLightRange;
+    float fLightIntensity;
+    int iLightSize;
+    float LightPadding;
+}
 
 struct BoneMatrix{matrix BoneMat;};
 struct TransfomMatrix{matrix Transform;};
@@ -79,6 +88,8 @@ Texture2D EmmisionTexture : register(t13);
 Texture2D MetalnessTexture : register(t14);
 Texture2D DiffuseRoughnessTexture : register(t15);
 Texture2D AmbientOcclusionTexture : register(t16);
+Texture2D NoiseTexture : register(t17);
+Texture2D DissolveTexture : register(t18);
 
 
 // 式式式式式式式式式式式式式  SRV 式式式式式式式式式式式式式
@@ -87,4 +98,5 @@ StructuredBuffer<TransfomMatrix> ObjectBufferArray : register(t31);
 
 // 式式式式式式式式式式式式式  Sprite 式式式式式式式式式式式式式
 Texture2D SpriteTexture : register(t29);
+Texture2D MaskTexture   : register(t28);
 #endif // __SHADER_DEFINE_HLSL__

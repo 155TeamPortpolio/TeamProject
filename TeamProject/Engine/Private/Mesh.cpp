@@ -33,7 +33,7 @@ HRESULT CMesh::Initialize_From_File(ID3D11Device* pDevice, ifstream& ifs, MESH_T
 	m_ElementCount = eType == MESH_TYPE::ANIM ? VTXSKINMESH::iElementCount : VTXMESH::iElementCount;
 	m_ElementKey = eType == MESH_TYPE::ANIM ? VTXSKINMESH::Key : VTXMESH::Key;
 	m_ElementDesc = eType == MESH_TYPE::ANIM ? VTXSKINMESH::Elements : VTXMESH::Elements;
-
+	m_OffsetCount = infoHeader.offsetCount;
 	HRESULT hr = eType == MESH_TYPE::ANIM ? Create_AnimateVertex(pDevice, ifs) : Create_StaticVertex(pDevice, ifs);
 
 	if (FAILED(hr))
@@ -71,7 +71,12 @@ HRESULT CMesh::Create_AnimateVertex(ID3D11Device* pDevice, ifstream& ifs)
 	subData.pSysMem = vertices.data();
 
 	HRESULT hr = pDevice->CreateBuffer(&VBDesc, &subData, &m_pVB);
-
+	for (size_t i = 0; i < m_OffsetCount; i++)
+	{
+		MESH_OFFSET offset;
+		ifs.read(reinterpret_cast<char*>(&offset), sizeof(MESH_OFFSET));
+		m_MeshOffset.emplace(offset.BoneIndex, offset.offsetMat);
+	}
 	m_Skined = vertices;
 	return hr;
 }
@@ -81,11 +86,15 @@ HRESULT CMesh::Create_StaticVertex(ID3D11Device* pDevice, ifstream& ifs)
 	m_ElementCount = VTXMESH::iElementCount;
 	m_ElementKey = VTXMESH::Key;
 	m_ElementDesc = VTXMESH::Elements;
-	vector<VTXMESH>vertices = {};
-	vertices.resize(m_iVerticesCount);
+	m_StaticVertex.resize(m_iVerticesCount);
 
-	ifs.read(reinterpret_cast<char*>(vertices.data()), m_iVerticesCount * m_iVertexStride);
-
+	ifs.read(reinterpret_cast<char*>(m_StaticVertex.data()), m_iVerticesCount * m_iVertexStride);
+	for (size_t i = 0; i < m_OffsetCount; i++)
+	{
+		MESH_OFFSET offset;
+		ifs.read(reinterpret_cast<char*>(&offset), sizeof(MESH_OFFSET));
+		m_MeshOffset.emplace(offset.BoneIndex, offset.offsetMat);
+	}
 	D3D11_BUFFER_DESC VBDesc;
 	VBDesc.ByteWidth = m_iVertexStride * m_iVerticesCount;
 	VBDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -95,14 +104,14 @@ HRESULT CMesh::Create_StaticVertex(ID3D11Device* pDevice, ifstream& ifs)
 	VBDesc.StructureByteStride = m_iVertexStride;
 
 	D3D11_SUBRESOURCE_DATA subData;
-	subData.pSysMem = vertices.data();
+	subData.pSysMem = m_StaticVertex.data();
 
 	HRESULT hr = pDevice->CreateBuffer(&VBDesc, &subData, &m_pVB);
 
 	m_vMeshMinLocal = { FLT_MAX,FLT_MAX ,FLT_MAX };
 	m_vMeshMaxLocal = { -FLT_MAX,-FLT_MAX ,-FLT_MAX };
 
-	for (const auto& vertex : vertices) {
+	for (const auto& vertex : m_StaticVertex) {
 		m_vMeshMinLocal.x = min(m_vMeshMinLocal.x, vertex.vPosition.x);
 		m_vMeshMinLocal.y = min(m_vMeshMinLocal.y, vertex.vPosition.y);
 		m_vMeshMinLocal.z = min(m_vMeshMinLocal.z, vertex.vPosition.z);
@@ -133,10 +142,36 @@ HRESULT CMesh::Create_Index(ID3D11Device* pDevice)
 	subData.pSysMem = m_indices.data();
 	HRESULT hr = pDevice->CreateBuffer(&IDDesc, &subData, &m_pIB);
 
-	vector<_uint>v = {};
-	m_indices.swap(v);
+	Build_Island();
 	return hr;
+}
 
+_float4x4 CMesh::Get_MeshOffset(_uint boneIndex)
+{
+	auto iter = m_MeshOffset.find(boneIndex);
+	if (iter != m_MeshOffset.end()) {
+		return iter->second;
+	}
+	else {
+		_float4x4 identity;
+		XMStoreFloat4x4(&identity, XMMatrixIdentity());
+		return identity;
+	}
+}
+
+HRESULT CMesh::Render_Island(ID3D11DeviceContext* pContext, _uint islandIndex)
+{
+	pContext->DrawIndexed(m_Islands[islandIndex].indexCount, m_Islands[islandIndex].startIndex, 0);
+	return S_OK;
+}
+
+void CMesh::Build_Island()
+{
+	MINMAX_BOX b{};
+	b.vMin = { FLT_MAX,FLT_MAX,FLT_MAX };
+	b.vMax = { -FLT_MAX,-FLT_MAX,-FLT_MAX };
+
+	m_indices;
 }
 
 void CMesh::Create_BoneMinMax(CSkeleton* pSkeleton)
@@ -171,6 +206,12 @@ void CMesh::Render_GUI()
 	ImGui::Text(m_VIKey.c_str());
 }
 
+void CMesh::ExpandBox(MINMAX_BOX& b, const _float3& p)
+{
+	b.vMin.x = min(b.vMin.x, p.x); b.vMin.y = min(b.vMin.y, p.y); b.vMin.z = min(b.vMin.z, p.z);
+	b.vMax.x = max(b.vMax.x, p.x); b.vMax.y = max(b.vMax.y, p.y); b.vMax.z = max(b.vMax.z, p.z);
+}
+
 
 CMesh* CMesh::Create(ID3D11Device* pDevice, ifstream& ifs, MESH_TYPE eType)
 {
@@ -185,6 +226,7 @@ void CMesh::Free()
 {
 	__super::Free();
 
-	vector<_uint>i = {};
-	m_indices.swap(i);
+	vector<_uint>().swap(m_indices);
+	vector<VTXMESH>().swap(m_StaticVertex);
+	vector<VTXSKINMESH>().swap(m_Skined);
 }

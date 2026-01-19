@@ -25,50 +25,53 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,_In_opt_ HINSTANCE hPrevInstance,
 
     if (!InitInstance(hInstance, nCmdShow)) return FALSE;
 
-    auto mainApp = MainApp::Create();
-    auto game = CGameInstance::GetInstance();
-    Safe_AddRef(game);
+    CMainApp* mainApp = CMainApp::Create();
+    CGameInstance* gameInstance = CGameInstance::GetInstance();
+    Safe_AddRef(gameInstance);
 
-    auto timer = game->Get_TimeMgr();
+    ITimeService* timer = gameInstance->Get_TimeMgr();
     Safe_AddRef(timer);
-    timer->Add_Timer("Default");
-    timer->Add_Timer("FPS_60");
+    timer->Add_Timer("Frame_Timer");
 
-    MSG    msg{};
-    _float timeAcc{};
-    _bool  stop = false;
+    if (!mainApp)
+        return FALSE;
 
-    while (1)
+    MSG msg{};
+
+    _float      fTimeAcc = {};
+    _bool Break = false;
+    const float step = 1.f / FrameRate;
+    while (true)
     {
-        while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
+        while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) 
         {
-            if (msg.message == WM_QUIT)
-                stop = true;
+            if (msg.message == WM_QUIT) 
+                Break = true;
 
             TranslateMessage(&msg);
             DispatchMessage(&msg);
         }
-        if (stop)
+        if (Break) 
             break;
 
-        timer->Update_Timer("Default");
-        timeAcc += timer->Get_DeltaTime("Default");
+        timer->Update_Timer("Frame_Timer");
+        fTimeAcc += timer->Get_RawDeltaTime("Frame_Timer");
 
-        if (timeAcc >= 1.f / FrameRate)
+        if (fTimeAcc >= step)
         {
-            timer->Update_Timer("FPS_60");
-            _float dt = timer->Get_DeltaTime("FPS_60");
+            gameInstance->Update_EngineTimer();
+            _float dt = gameInstance->Get_EngineDeltaTime();
             mainApp->Update(dt);
             mainApp->Render();
-            timeAcc = 0.f;
+            fTimeAcc = 0.f;
         }
     }
 
     Safe_Release(timer);
-    game->DestroyInstance();
+    gameInstance->DestroyInstance();
     Safe_Release(mainApp);
 
-    return (int) msg.wParam;
+    return (int)msg.wParam;
 }
 
 ATOM MyRegisterClass(HINSTANCE hInstance)
@@ -91,27 +94,100 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
     return RegisterClassExW(&wcex);
 }
 
+struct MonitorPickResult
+{
+    RECT workRect{};
+    bool found = false;
+};
+
+static BOOL CALLBACK EnumMonProc(HMONITOR hMon, HDC, LPRECT, LPARAM userData)
+{
+    auto* data = reinterpret_cast<pair<int, MonitorPickResult*>*>(userData);
+
+    MONITORINFO monitorInfo{};
+    monitorInfo.cbSize = sizeof(monitorInfo);
+    if (!GetMonitorInfo(hMon, &monitorInfo))
+        return TRUE;
+
+    static int curIdx = 0;
+
+    if (curIdx == data->first)
+    {
+        data->second->workRect = monitorInfo.rcWork;
+        data->second->found = true;
+        return FALSE;
+    }
+    curIdx++;
+    return TRUE;
+}
+
+static MonitorPickResult GetWorkRectOfMonitorIndex(int monitorIdx)
+{
+    MonitorPickResult result{};
+    pair<int, MonitorPickResult*> payload{monitorIdx, &result};
+
+    EnumDisplayMonitors(nullptr, nullptr, EnumMonProc, (LPARAM)&payload);
+    return result;
+}
+
+static RECT CalcWindowRectFromClientSize(int clientW, int clientH, DWORD style, DWORD exStyle)
+{
+    RECT rc{0, 0, clientW, clientH};
+    AdjustWindowRectEx(&rc, style, FALSE, exStyle);
+    return rc;
+}
+
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
     g_Inst = hInstance;
-    int monitorW = GetSystemMetrics(SM_CXSCREEN);
-    
-    HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
-        DefaultX, DefaultY, WinX, WinY,
-        nullptr, nullptr, hInstance, nullptr);
 
-   if (!hWnd) return FALSE;
+    HMONITOR hPrimary = MonitorFromPoint(POINT{0, 0}, MONITOR_DEFAULTTOPRIMARY);
+    MONITORINFO mi{};
+    mi.cbSize = sizeof(mi);
+    GetMonitorInfo(hPrimary, &mi);
 
-   ShowWindow(hWnd, nCmdShow);
-   UpdateWindow(hWnd);
-   g_hWnd = hWnd;
-   return TRUE;
+    const int primaryW = mi.rcMonitor.right - mi.rcMonitor.left;
+
+    if (primaryW > 2500)
+    {
+        WinX = 2560;
+        WinY = 1360;
+    }
+    else
+    {
+        WinX = 1600;
+        WinY = 900;
+    }
+    aspect = static_cast<float>(WinX) / static_cast<float>(WinY);
+
+    const DWORD style = WS_OVERLAPPEDWINDOW;
+    const DWORD exStyle = 0;
+
+    MonitorPickResult mon = GetWorkRectOfMonitorIndex(1);
+    if (!mon.found) mon = GetWorkRectOfMonitorIndex(0);
+
+    const int clientW = static_cast<int>(WinX);
+    const int clientH = static_cast<int>(WinY);
+
+    RECT winRc = CalcWindowRectFromClientSize(clientW, clientH, style, exStyle);
+    const int windowW = winRc.right - winRc.left;
+    const int windowH = winRc.bottom - winRc.top;
+
+    const int x = mon.workRect.left;
+    const int y = mon.workRect.top;
+
+    HWND hWnd = CreateWindowW(szWindowClass, szTitle, style, x, y, windowW, windowH, nullptr, nullptr, hInstance, nullptr);
+    if (!hWnd) return FALSE;
+
+    ShowWindow(hWnd, nCmdShow);
+    UpdateWindow(hWnd);
+    g_hWnd = hWnd;
+    return TRUE;
 }
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    auto game = CGameInstance::GetInstance();
-    if (game->HandleMessage(hWnd, message, wParam, lParam))
+    if (CGameInstance::GetInstance()->HandleMessage(hWnd, message, wParam, lParam))
         return 0;
     return DefWindowProc(hWnd, message, wParam, lParam);
 }

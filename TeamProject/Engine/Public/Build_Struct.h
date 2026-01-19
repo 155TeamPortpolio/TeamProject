@@ -33,9 +33,10 @@ namespace Engine {
 		virtual ~TransformInitDesc() DEFAULT;
 	}TRANSFORM_DESC;
 
+
 	typedef struct CameraInitDesc :public COMPONENT_DESC {
-		_float fNear = {1.f};
-		_float fFar = {500};
+		_float fNear = {0.1f};
+		_float fFar = {500.f};
 		_float fAspect = {};
 		_float fFov = {60.f};
 		CameraInitDesc() DEFAULT;
@@ -54,45 +55,70 @@ namespace Engine {
 		_float4		vDirection = {};
 		_float4		vPosition = {};
 		_float			fRange = {};
-
+		_float			fIntensity = { 3.f };
 
 		LightInitDesc() DEFAULT;
 		virtual ~LightInitDesc() DEFAULT;
-
 	}LIGHT_INIT_DESC;
 
+	typedef struct RigidBodyinitDesc : public COMPONENT_DESC {
+		_bool	isKinematic = false;      // Transform 제어 vs 물리 제어
+		_bool	bEnableGravity = true;    // 중력 적용
+		_float  fMass = 1.0f;            // 질량
+		_bool	bLockX = true;
+		_bool	bLockY = false;
+		_bool	bLockZ = true;
+		_float  fLinearDamping = 0.f;
+		_float  fAngularDamping = 0.05f;
+
+		RigidBodyinitDesc() DEFAULT;
+		virtual ~RigidBodyinitDesc() DEFAULT;
+	}RIGIDBODY_DESC;
+
 	typedef struct ColliderInitDesc :public COMPONENT_DESC {
-		_float3 vCenter = {};
+		COLLIDER_TYPE	eType = COLLIDER_TYPE::BOX;			// 충돌체 모양
+		COLLISION_GROUP eGroup = COLLISION_GROUP::COMMON;	// 충돌그룹
+		_uint			iCollisionMask = { 0xFFFFFFFF };	// 충돌할그룹 : 기본값 모두
+
+		_bool			bAutoFit = true;					// 박스 사이즈 자동 플래그
+		_float			fSizeScale = 1.f;					// 사이즈 비율
+		_float3			vCenter = { 0.f, 0.f, 0.f };		// 로컬 오프셋
+		_float3			vSize = { 1.f, 1.f, 1.f };			// Box: HalfExtents(x,y,z), Sphere: Radius(x), Capsule: Radius(x)/HalfHeight(y)
+		_float3			vRotation = { 0.f, 0.f, 0.f };		// 로컬 회전 (Radian)
+		_bool			bTrigger = false;					// 트리거 여부
+		string			strMaterialTag = "";				// 재질 태그
+		// 쿠킹 관련
+		_bool			bCooking = false;
+		string			strModelKey = "";					// 쿠킹용 모델 키
+
 		ColliderInitDesc() DEFAULT;
-		ColliderInitDesc(_float3 vCenter) :vCenter{ vCenter } {};
-		ColliderInitDesc(const ColliderInitDesc& rhs) :vCenter{ rhs.vCenter } {};
 		virtual ~ColliderInitDesc() DEFAULT;
 	}COLLIDER_DESC;
 
-	typedef struct ColliderAABBInitDesc :public COLLIDER_DESC {
-		_float3 vSize = {};
-		ColliderAABBInitDesc() DEFAULT;
-		ColliderAABBInitDesc(_float3 vCenter, _float3 vSize) :COLLIDER_DESC{ vCenter }, vSize{vSize} {};
-		ColliderAABBInitDesc(const ColliderAABBInitDesc& rhs) :COLLIDER_DESC{ rhs }, vSize{ rhs.vSize} {};
-		virtual ~ColliderAABBInitDesc() DEFAULT;
-	}AABB_COLLIDER_DESC;
+	typedef struct CCTinitDesc : public COMPONENT_DESC {
+		_float			fStepOffset = { 0.1f };				// 계단 등반 높이
+		_float			fSlopeLimit = { 45.0f };			// 등반 각도 제한
+		_float			fMaxSpeed = 100.f;
 
-	typedef struct ColliderInitOBBDesc :public COLLIDER_DESC {
-		_float3 vSize = {};
-		_float3 vEularRadians = {};
-		ColliderInitOBBDesc() DEFAULT;
-		virtual ~ColliderInitOBBDesc() DEFAULT;
-		ColliderInitOBBDesc(_float3 vCenter, _float3 vSize, _float3 vEularRadians) :COLLIDER_DESC{ vCenter }, vSize{ vSize }, vEularRadians{ vEularRadians } {};
-		ColliderInitOBBDesc(const ColliderInitOBBDesc& rhs) :COLLIDER_DESC{ rhs }, vSize{ rhs.vSize } , vEularRadians{rhs.vEularRadians } {};
-	}OBB_COLLIDER_DESC;
+		COLLISION_GROUP eGroup = COLLISION_GROUP::COMMON;	// 충돌그룹
+		_uint			iCollisionMask = { 0xFFFFFFFF };	// 충돌할그룹 : 기본값 모두
+		_float3			vPos = { 0.f, 0.f, 0.f };			// 초기 위치
+		_float			fHeight = { 2.0f };					// 캡슐 높이
+		_float			fRadius = { 0.5f };					// 캡슐 반지름
+		_float          fBoundingMinY = 0.0f;				// 바닥 로컬 위치
+		string			strMaterialTag = { "" };			// 재질
+		_float			fDensity = { 10.0f };				// 밀도 : 무게 역할
 
-	typedef struct ColliderInitSphereDesc :public COLLIDER_DESC {
-		_float fRadius = {};
-		ColliderInitSphereDesc() DEFAULT;
-		virtual ~ColliderInitSphereDesc() DEFAULT;
-		ColliderInitSphereDesc(_float3 vCenter, _float vRadius) :COLLIDER_DESC{ vCenter }, fRadius{ vRadius }{};
-		ColliderInitSphereDesc(const ColliderInitSphereDesc& rhs) :COLLIDER_DESC{ rhs }, fRadius{ rhs.fRadius }{};
-	}SPHERE_COLLIDER_DESC;
+		_bool           bAutoFit = true;					// 자동 크기 맞춤 플래그
+		_float          fSizeScale = 1.0f;					// 크기 스케일
+		_float          fRadiusScale = 1.0f;				// 반지름 별도 스케일(AutoFit에서 사용)
+		_float          fHeightScale = 1.0f;				// 높이 별도 스케일(AutoFit에서 사용)
+
+		_float          fContactOffset = 0.001f;			// 감지 시작 오프셋
+		_float          fRestOffset = 0.0f;					// 충돌 깊이 오프셋
+		CCTinitDesc() DEFAULT;
+		virtual ~CCTinitDesc() DEFAULT;
+	}CCT_DESC;
 
 	/*Parent Child Desc*/
 	typedef struct tagSetParentDesc :public COMPONENT_DESC {
@@ -100,6 +126,21 @@ namespace Engine {
 		tagSetParentDesc(CGameObject* pParent) : pParent{pParent} {};
 		virtual ~tagSetParentDesc() DEFAULT;
 	}PARENT_DESC;
+
+	typedef struct tagModelInitDesc : public COMPONENT_DESC
+	{
+		string LevelKey = {};
+		string ModelKey = {};
+		tagModelInitDesc(const string& levelKey, const string& modelKey) :LevelKey(levelKey), ModelKey(modelKey) {};
+		virtual ~tagModelInitDesc() DEFAULT;
+	}MODEL_INIT_DESC;
+	typedef struct tagMaterialInitDesc : public COMPONENT_DESC
+	{
+		string LevelKey = {};
+		string MaterialKey = {};
+		tagMaterialInitDesc(const string& levelKey, const string& materialKey) :LevelKey(levelKey), MaterialKey(materialKey) {};
+		virtual ~tagMaterialInitDesc() DEFAULT;
+	}MATERIAL_INIT_DESC;
 
 	/*Object Clone Desc*/
 	typedef struct tagGameObjectDesc : public INIT_DESC {
@@ -110,14 +151,28 @@ namespace Engine {
 	}GAMEOBJECT_DESC;
 
 	typedef struct tagUIObjectDesc : public GAMEOBJECT_DESC {
-		_float fX = {};
-		_float fY = {  };
-		_float fSizeX = {1.f };
-		_float fSizeY = { 1.f };
+		_float2 AnchorOffset = {};
+		_float2 Size = { 1.f,1.f};
+		_float2 Scale = {1.f,1.f };
 		_float fRadian = {};
+		ANCHOR eAnchor = { ANCHOR::Left | ANCHOR::Top };
+		string UIAssetKey = {};
+		_float3 worldPos = {};
 		tagUIObjectDesc() DEFAULT;
-		tagUIObjectDesc(const _float4& ui_Info) :fX(ui_Info.x), fY(ui_Info.y), fSizeX(ui_Info.z), fSizeY(ui_Info.w), GAMEOBJECT_DESC{} {}
 		virtual ~tagUIObjectDesc() DEFAULT;
+		tagUIObjectDesc& operator=(const tagUIObjectDesc& rhs) DEFAULT;
 	}UI_DESC;
 
+	typedef struct tagEffectObjectDesc : public GAMEOBJECT_DESC {
+		string EffectAssetKey{};
+
+		tagEffectObjectDesc() DEFAULT;
+		virtual ~tagEffectObjectDesc() DEFAULT;
+	}EFFECT_DESC;
+
+	struct POOL_MARK
+	{
+		bool fromPool = false;
+		CLONE_DESC key;
+	};
 }

@@ -19,15 +19,19 @@ private:
 	void ShowLayerList(const string& nowLevel);
 	void ShowObjectList();
 	void ShowUIObjectList();
+	void ShowGlobalObject();
 	_bool ToggleButton(const char* str_id, bool* v);
 	vector<string> ConvertObjectNameList(class CLayer* layer);
 
+public:
+	void Set_UI_Mode() { m_bShowUI = true; }
 private:
 	_bool m_bOpened = { true };
 	_float m_fPosX = {};
 	_uint m_iSelectedLevel = {};
 	_uint m_iSelectedLayer = {};
 	_bool m_bShowUI = false;
+	_float m_fPanelCX = {};
 public:
 	static CHierarchyPanel* Create(GUI_CONTEXT* context);
 	virtual void Free();

@@ -25,9 +25,11 @@ public:
     void Set_Position(_float2 Pos);
     void Set_Rotate(_float Rotate);
     void Set_Text(wstring Text) { m_Info.Text = Text; };
+    void Set_TextKey(string TextKey) { m_Info.TextKey = TextKey; };
     void Set_OutLine(_float Thickness, _float4 OutlineColor);
     void ReSet_OutLine() { m_Info.OutLined = false; };
     void Set_Origin(_float2 origin) { m_Info.Origin = origin; };
+    void Set_Shear(_float2 shear) { m_Info.vShear = shear; }
 
 public:
     void Push_Text();
@@ -40,7 +42,8 @@ public:
 public:
     void Set_Anchor(ANCHOR anchot, _float2 Pivot);
     _float2 Get_Anchor(ANCHOR anchot);
-    _float Get_TextSize();
+    _float2 Get_TextSize();
+    _float2 Get_Shear() { return m_Info.vShear; }
 
 private:
     class CCustomFont* m_pFont = { nullptr };

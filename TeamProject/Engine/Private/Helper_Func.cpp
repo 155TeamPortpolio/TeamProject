@@ -11,7 +11,7 @@ _bool Helper::ContainsNonAscii(const string& str)
 	}
 	return false;
 }
- 
+
 _bool Helper::IsPathInProjectFolder(const string& path)
 {
 	//현재 솔루션 Path
@@ -31,9 +31,8 @@ _bool Helper::IsPathInProjectFolder(const string& path)
 		return true;
 	}
 
-	return false;
+	return true;
 }
-
 
 string Helper::OpenFile_Dialogue()
 {
@@ -214,6 +213,92 @@ ENGINE_DLL vector<string> Helper::OpenMultiFiles()
 
 	return result;
 }
+
+ENGINE_DLL string Helper::OpenFile(const vector<pair<string, string>>& filters, const string& defaultExt)
+{
+	string result;
+	IFileOpenDialog* pFileOpen{};
+
+	HRESULT Initialize = CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
+	if (FAILED(Initialize))
+	{
+		MSG_BOX("Failed To Initialize Com Interface : CoInitializeEx");
+		return result;
+	}
+
+	HRESULT hr = CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_ALL, IID_IFileOpenDialog, reinterpret_cast<void**>(&pFileOpen));
+	if (FAILED(hr))
+	{
+		MSG_BOX("Failed To CReate Com Interface : CoCreateInstance");
+		CoUninitialize();
+		return result;
+	}
+
+	vector<wstring> wideLabels;
+	vector<wstring> widePatterns;
+	vector<COMDLG_FILTERSPEC> specs;
+
+	if (!filters.empty())
+	{
+		wideLabels.reserve(filters.size());
+		widePatterns.reserve(filters.size());
+		specs.reserve(filters.size());
+
+		for (const auto& f : filters)
+		{
+			wideLabels.push_back(ConvertToWideString(f.first));
+			widePatterns.push_back(ConvertToWideString(f.second));
+		}
+
+		for (size_t i = 0; i < filters.size(); ++i)
+		{
+			COMDLG_FILTERSPEC s = { wideLabels[i].c_str(), widePatterns[i].c_str() };
+			specs.push_back(s);
+		}
+
+		pFileOpen->SetFileTypes((UINT)specs.size(), specs.data());
+		pFileOpen->SetFileTypeIndex(1);
+
+		if (!defaultExt.empty())
+			pFileOpen->SetDefaultExtension(ConvertToWideString(defaultExt).c_str());
+	}
+
+	DWORD dwOptions;
+	pFileOpen->GetOptions(&dwOptions);
+	pFileOpen->SetOptions(dwOptions | FOS_FILEMUSTEXIST | FOS_PATHMUSTEXIST);
+
+	HRESULT openDialogue = pFileOpen->Show(0);
+
+	if (SUCCEEDED(openDialogue))
+	{
+		IShellItem* pItem{};
+		HRESULT openResult = pFileOpen->GetResult(&pItem);
+
+		if (SUCCEEDED(openResult))
+		{
+			PWSTR pszFilePath{};
+			if (SUCCEEDED(pItem->GetDisplayName(SIGDN_FILESYSPATH, &pszFilePath)))
+			{
+				string filePath = ConvertToString(pszFilePath);
+				CoTaskMemFree(pszFilePath);
+
+				if (Helper::ContainsNonAscii(filePath))
+					MSG_BOX("File Path Must Be English");
+				else if (!Helper::IsPathInProjectFolder(filePath))
+					MSG_BOX("Files outside the project folder cannot be selected");
+				else
+					result = filePath;
+			}
+			pItem->Release();
+		}
+	}
+
+	pFileOpen->Release();
+	CoUninitialize();
+
+	return result;
+}
+
 string Helper::SaveFileDialog()
 {
 	string savePath = "";
@@ -370,7 +455,6 @@ ENGINE_DLL HRESULT Helper::SaveTextureToDDs(ID3D11DeviceContext* pContext, const
 
 	ID3D11Texture2D* pTexture2D;
 	HRESULT hr_cast = pResource->QueryInterface(__uuidof(ID3D11Texture2D), (void**)&pTexture2D);
-
 	if (SUCCEEDED(hr_cast))
 	{
 		D3D11_TEXTURE2D_DESC desc;
@@ -415,6 +499,11 @@ static mt19937& RNG()
 	return rng;
 }
 
+ENGINE_DLL mt19937& Helper::Get_RNG()
+{
+	return RNG();
+}
+
 ENGINE_DLL _int Helper::Get_Random_Int(_int min, _int max)
 {
 	uniform_int_distribution<_int> dist(min, max);
@@ -426,4 +515,474 @@ ENGINE_DLL _float Helper::Get_Random_Float(_float min, _float max)
 	uniform_real_distribution<_float> dist(min, max);
 	return dist(RNG());
 
+}
+
+ENGINE_DLL _bool Helper::IsUnderDirectory(const filesystem::path& file, const filesystem::path& dir)
+{
+	error_code ec;
+
+	auto f = std::filesystem::weakly_canonical(file, ec);
+	if (ec) return false;
+
+	auto d = std::filesystem::weakly_canonical(dir, ec);
+	if (ec) return false;
+
+	auto fit = f.begin();
+	for (auto dit = d.begin(); dit != d.end(); ++dit, ++fit)
+	{
+		if (fit == f.end() || *fit != *dit)
+			return false;
+	}
+	return true;
+}
+
+ENGINE_DLL _bool Helper::EnsureDirectoryExist(const filesystem::path& dir)
+{
+	filesystem::path directory = dir;
+
+	error_code ec;
+
+	if (filesystem::exists(directory, ec))
+		return filesystem::is_directory(directory, ec); // 폴더면 true, 파일이면 false
+
+	filesystem::create_directories(directory, ec);      // 중간 경로까지 생성
+	return !ec && filesystem::is_directory(directory, ec);
+}
+ENGINE_DLL _bool Helper::ContainsCaseInsensitive(const std::string& text, const std::string& pattern)
+{
+	auto ToLower = [](unsigned char c) { return (char)std::tolower(c); };
+
+	string textLower(text.size(), '\0');
+	transform(text.begin(), text.end(), textLower.begin(), ToLower);
+
+	string patLower(pattern.size(), '\0');
+	transform(pattern.begin(), pattern.end(), patLower.begin(), ToLower);
+
+	return textLower.find(patLower) != std::string::npos;
+}
+
+ENGINE_DLL _bool Helper::WorldToScreen(const _float3& worldPos, _float2& outScreen, const _float4x4& view, const _float4x4& proj, const _float4& viewportXYWH)
+{
+	_matrix viewMat = XMLoadFloat4x4(&view);
+	_matrix projMat = XMLoadFloat4x4(&proj);
+
+	_vector pos = XMVectorSet(worldPos.x, worldPos.y, worldPos.z, 1.f);
+	_vector clip = XMVector4Transform(pos, viewMat * projMat);
+
+	float clipW = XMVectorGetW(clip);
+	if (clipW <= 1e-6f) return false; // 카메라 뒤
+
+	_vector ndc = clip / clipW;
+	float ndcX = XMVectorGetX(ndc);
+	float ndcY = XMVectorGetY(ndc);
+
+	outScreen.x = viewportXYWH.x + (ndcX * 0.5f + 0.5f) * viewportXYWH.z;
+	outScreen.y = viewportXYWH.y + (-ndcY * 0.5f + 0.5f) * viewportXYWH.w;
+	return true;
+}
+ENGINE_DLL _bool Helper::ScreenToWorldRay(
+	const _float2& screenPos,
+	_float3& outRayOrigin,
+	_float3& outRayDir,
+	const _float4x4& view,
+	const _float4x4& proj,
+	const _float4& viewportXYWH)
+{
+	_matrix viewMat = XMLoadFloat4x4(&view);
+	_matrix projMat = XMLoadFloat4x4(&proj);
+
+	// 역행렬
+	_matrix invView = XMMatrixInverse(nullptr, viewMat);
+	_matrix invProj = XMMatrixInverse(nullptr, projMat);
+
+	// Screen -> NDC
+	float ndcX = ((screenPos.x - viewportXYWH.x) / viewportXYWH.z) * 2.0f - 1.0f;
+	float ndcY = -(((screenPos.y - viewportXYWH.y) / viewportXYWH.w) * 2.0f - 1.0f);
+
+	// NDC -> View space (near/far)
+	// D3D: z in [0,1]
+	_vector nearClip = XMVectorSet(ndcX, ndcY, 0.0f, 1.0f);
+	_vector farClip = XMVectorSet(ndcX, ndcY, 1.0f, 1.0f);
+
+	_vector nearView = XMVector4Transform(nearClip, invProj);
+	_vector farView = XMVector4Transform(farClip, invProj);
+
+	float nearW = XMVectorGetW(nearView);
+	float farW = XMVectorGetW(farView);
+	if (fabsf(nearW) < 1e-6f || fabsf(farW) < 1e-6f)
+		return false;
+
+	nearView /= nearW;
+	farView /= farW;
+
+	// View -> World
+	_vector nearWorld = XMVector3TransformCoord(nearView, invView);
+	_vector farWorld = XMVector3TransformCoord(farView, invView);
+
+	_vector rayDir = XMVector3Normalize(farWorld - nearWorld);
+
+	outRayOrigin = _float3(XMVectorGetX(nearWorld), XMVectorGetY(nearWorld), XMVectorGetZ(nearWorld));
+	outRayDir = _float3(XMVectorGetX(rayDir), XMVectorGetY(rayDir), XMVectorGetZ(rayDir));
+	return true;
+}
+
+ENGINE_DLL _bool Helper::ScreenToWorldPoint(
+	const _float2& screenPos,
+	float depth01,
+	_float3& outWorldPos,
+	const _float4x4& view,
+	const _float4x4& proj,
+	const _float4& viewportXYWH)
+{
+	// depth01: D3D 기준 [0..1] (0=near, 1=far)
+	_matrix viewMat = XMLoadFloat4x4(&view);
+	_matrix projMat = XMLoadFloat4x4(&proj);
+	_matrix invView = XMMatrixInverse(nullptr, viewMat);
+	_matrix invProj = XMMatrixInverse(nullptr, projMat);
+
+	float ndcX = ((screenPos.x - viewportXYWH.x) / viewportXYWH.z) * 2.0f - 1.0f;
+	float ndcY = -(((screenPos.y - viewportXYWH.y) / viewportXYWH.w) * 2.0f - 1.0f);
+
+	_vector clip = XMVectorSet(ndcX, ndcY, depth01, 1.0f);
+
+	_vector viewPos = XMVector4Transform(clip, invProj);
+	float viewW = XMVectorGetW(viewPos);
+	if (fabsf(viewW) < 1e-6f)
+		return false;
+	viewPos /= viewW;
+
+	_vector worldPos = XMVector3TransformCoord(viewPos, invView);
+
+	outWorldPos = _float3(XMVectorGetX(worldPos), XMVectorGetY(worldPos), XMVectorGetZ(worldPos));
+	return true;
+}
+
+ENGINE_DLL _uint Helper::Get_Digit(_int value, _int place)
+{
+	_int temp = 1;
+	for (_int i = 0; i < place; ++i)
+		temp *= 10;
+
+	return (abs(value) / temp) % 10;
+}
+
+ENGINE_DLL _vector4 Helper::HexToColor(const string& hex)
+{
+	_vector4 vColor = { 1.f, 1.f, 1.f, 1.f };
+
+	if (hex[0] != '#')
+		return vColor;
+
+	if (hex.size() == 9)
+	{
+		vColor.x = stoi(hex.substr(1, 2), nullptr, 16) / 255.f;
+		vColor.y = stoi(hex.substr(3, 2), nullptr, 16) / 255.f;
+		vColor.z = stoi(hex.substr(5, 2), nullptr, 16) / 255.f;
+		vColor.w = stoi(hex.substr(7, 2), nullptr, 16) / 255.f;
+	}
+	else if (hex.size() == 7)
+	{
+		vColor.x = stoi(hex.substr(1, 2), nullptr, 16) / 255.f;
+		vColor.y = stoi(hex.substr(3, 2), nullptr, 16) / 255.f;
+		vColor.z = stoi(hex.substr(5, 2), nullptr, 16) / 255.f;
+	}
+
+	return vColor;
+}
+
+ENGINE_DLL string Helper::VK_ToString(_int vk)
+{
+	if (vk >= 'A' && vk <= 'Z')
+		return string(1, char(vk));
+
+	// 숫자
+	if (vk >= '0' && vk <= '9')
+		return string(1, char(vk));
+
+	// VK → ScanCode
+	UINT scanCode = MapVirtualKeyW(vk, MAPVK_VK_TO_VSC);
+	if (scanCode == 0)
+		return "VK_" + std::to_string(vk);
+
+	// 확장키(E0) 판정
+	bool isExtended =
+		vk == VK_LEFT || vk == VK_RIGHT ||
+		vk == VK_UP || vk == VK_DOWN ||
+		vk == VK_INSERT || vk == VK_DELETE ||
+		vk == VK_HOME || vk == VK_END ||
+		vk == VK_PRIOR || vk == VK_NEXT ||
+		vk == VK_DIVIDE ||
+		vk == VK_RCONTROL || vk == VK_RMENU;
+
+	LONG lParam = (LONG)(scanCode << 16);
+	if (isExtended)
+		lParam |= (1 << 24);
+
+	wchar_t buffer[64] = {};
+	if (GetKeyNameTextW(lParam, buffer, 64) > 0)
+		return WideToUtf8(buffer);
+
+	// 최종 폴백
+	return "VK_" + to_string(vk);
+}
+
+ENGINE_DLL string Helper::WideToUtf8(const wchar_t* wideText)
+{
+	if (!wideText || !*wideText)
+		return {};
+
+	int length = WideCharToMultiByte(
+		CP_UTF8, 0,
+		wideText, -1,
+		nullptr, 0,
+		nullptr, nullptr);
+
+	std::string utf8;
+	utf8.resize(length - 1);
+
+	WideCharToMultiByte(
+		CP_UTF8, 0,
+		wideText, -1,
+		utf8.data(), length,
+		nullptr, nullptr);
+
+	return utf8;
+}
+
+ENGINE_DLL void Helper::Format_FixedZeroPad(wchar_t* outBuf, size_t bufCount, _int value, _int width)
+{
+	swprintf_s(outBuf, bufCount, L"%0*d", width, value);
+}
+
+// -------------------------------------------------------------------------------------------------
+
+ENGINE_DLL bool Helper::DrawEaseComboPopup(EaseType& ioValue, EaseType shownValue)
+{
+	bool changed = false;
+	bool previewShown = false;
+
+	auto ShowPreview = [&](EaseType v)
+		{
+			if (previewShown) return;
+			previewShown = true;
+
+			ImVec2 itemMin = ImGui::GetItemRectMin();
+			ImVec2 itemMax = ImGui::GetItemRectMax();
+
+			const ImGuiStyle& style = ImGui::GetStyle();
+			const ImVec2 display = ImGui::GetIO().DisplaySize;
+
+			const float graphW = 260.f;
+			const float graphH = 110.f;
+
+			const float textH = ImGui::GetTextLineHeightWithSpacing();
+			const float tooltipW = graphW + style.WindowPadding.x * 2.f;
+			const float tooltipH = graphH + textH + style.ItemSpacing.y + style.WindowPadding.y * 2.f;
+
+			float x = itemMax.x + 12.f;
+			float y = itemMin.y;
+
+			if (x + tooltipW > display.x - 4.f) x = itemMin.x - 12.f - tooltipW;
+			if (y + tooltipH > display.y - 4.f) y = display.y - 4.f - tooltipH;
+			if (y < 4.f) y = 4.f;
+
+			ImGui::SetNextWindowPos(ImVec2(x, y), ImGuiCond_Always);
+			ImGui::SetNextWindowBgAlpha(0.96f);
+
+			ImGuiWindowFlags wf =
+				ImGuiWindowFlags_Tooltip |
+				ImGuiWindowFlags_NoTitleBar |
+				ImGuiWindowFlags_NoResize |
+				ImGuiWindowFlags_NoMove |
+				ImGuiWindowFlags_NoSavedSettings |
+				ImGuiWindowFlags_NoFocusOnAppearing |
+				ImGuiWindowFlags_NoNav;
+
+			if (ImGui::Begin("##EaseHoverPreview", nullptr, wf))
+			{
+				ImGui::TextDisabled("%s", Helper::EnumLabel(v));
+
+				ImGui::PushID((int)v);
+				DrawEaseGraph(v, ImVec2(graphW, graphH), "##ease_hover_graph");
+				ImGui::PopID();
+
+				ImGui::End();
+			}
+		};
+
+	auto Pick = [&](EaseType v)
+		{
+			const bool selected = (shownValue == v);
+
+			if (ImGui::Selectable(Helper::EnumLabel(v), selected))
+			{
+				ioValue = v;
+				changed = true;
+			}
+
+			if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayShort))
+				ShowPreview(v);
+
+			if (selected) ImGui::SetItemDefaultFocus();
+		};
+
+	Pick(EaseType::None);
+
+	ImGui::SeparatorText("A. Stable");
+	Pick(EaseType::InOutSine);
+	Pick(EaseType::OutCubic);
+	Pick(EaseType::InOutCubic);
+	Pick(EaseType::OutSine);
+	Pick(EaseType::InOutQuad);
+
+	ImGui::SeparatorText("B. Ease In");
+	Pick(EaseType::InSine);
+	Pick(EaseType::InCubic);
+	Pick(EaseType::InQuad);
+	Pick(EaseType::InCirc);
+
+	ImGui::SeparatorText("C. Settle / Stop");
+	Pick(EaseType::InOutCirc);
+	Pick(EaseType::OutCirc);
+	Pick(EaseType::OutQuad);
+
+	ImGui::SeparatorText("D. Strong");
+	Pick(EaseType::InQuart);
+	Pick(EaseType::InQuint);
+	Pick(EaseType::InOutQuart);
+	Pick(EaseType::OutQuart);
+	Pick(EaseType::InOutQuint);
+	Pick(EaseType::OutQuint);
+
+	ImGui::SeparatorText("E. Extreme");
+	Pick(EaseType::InOutExpo);
+	Pick(EaseType::OutExpo);
+	Pick(EaseType::InExpo);
+
+	ImGui::SeparatorText("F. Overshoot");
+	Pick(EaseType::OutBack);
+	Pick(EaseType::InOutBack);
+	Pick(EaseType::InBack);
+
+	ImGui::SeparatorText("G. Special");
+	Pick(EaseType::OutElastic);
+	Pick(EaseType::InOutElastic);
+	Pick(EaseType::InElastic);
+	Pick(EaseType::OutBounce);
+	Pick(EaseType::InOutBounce);
+	Pick(EaseType::InBounce);
+
+	return changed;
+}
+
+ENGINE_DLL void Helper::DrawEaseGraph(EaseType ease, ImVec2 size, const char* id)
+{
+	if (size.x <= 10.f) size.x = 360.f;
+	if (size.y <= 10.f) size.y = 180.f;
+
+	ImDrawList* dl = ImGui::GetWindowDrawList();
+	ImVec2 p0 = ImGui::GetCursorScreenPos();
+	ImVec2 p1(p0.x + size.x, p0.y + size.y);
+
+	ImGui::InvisibleButton(id, size);
+
+	ImU32 colBg = ImGui::GetColorU32(ImGuiCol_FrameBg);
+	ImU32 colBorder = ImGui::GetColorU32(ImGuiCol_Border);
+	ImU32 colGrid = ImGui::GetColorU32(ImGuiCol_TextDisabled);
+	ImU32 colLinear = ImGui::GetColorU32(ImGuiCol_TextDisabled);
+	ImU32 colCurve = ImGui::GetColorU32(ImGuiCol_Text);
+	ImU32 colWarn = ImGui::GetColorU32(ImGuiCol_ButtonActive);
+
+	dl->AddRectFilled(p0, p1, colBg, 6.f);
+	dl->AddRect(p0, p1, colBorder, 6.f);
+
+	const int samples = 160;
+	float minY = 1e9f;
+	float maxY = -1e9f;
+
+	for (int i = 0; i <= samples; ++i)
+	{
+		float u = (float)i / (float)samples;
+		float y = Math::ApplyEase(ease, u);
+		minY = min(minY, y);
+		maxY = max(maxY, y);
+	}
+
+	float lo = minY;
+	float hi = maxY;
+
+	if (lo > 0.f) lo = 0.f;
+	if (hi < 1.f) hi = 1.f;
+
+	float pad = (hi - lo) * 0.08f;
+	if (pad < 0.02f) pad = 0.02f;
+
+	lo -= pad;
+	hi += pad;
+
+	lo = max(lo, -1.0f);
+	hi = min(hi, 2.0f);
+
+	auto ToScreen = [&](float u, float y) -> ImVec2
+		{
+			float y01 = (y - lo) / (hi - lo);
+			y01 = clamp(y01, 0.f, 1.f);
+
+			float x = p0.x + u * size.x;
+			float ypix = p1.y - y01 * size.y;
+			return ImVec2(x, ypix);
+		};
+
+	const int gridN = 4;
+	for (int i = 1; i < gridN; ++i)
+	{
+		float t = (float)i / (float)gridN;
+		float x = p0.x + t * size.x;
+		float y = p0.y + t * size.y;
+
+		dl->AddLine(ImVec2(x, p0.y), ImVec2(x, p1.y), colGrid, 1.f);
+		dl->AddLine(ImVec2(p0.x, y), ImVec2(p1.x, y), colGrid, 1.f);
+	}
+
+	dl->AddLine(ToScreen(0.f, 0.f), ToScreen(1.f, 1.f), colLinear, 1.5f);
+
+	const bool overshoot = (minY < 0.f) || (maxY > 1.f);
+
+	ImVec2 prev = ToScreen(0.f, Math::ApplyEase(ease, 0.f));
+	for (int i = 1; i <= samples; ++i)
+	{
+		float u = (float)i / (float)samples;
+		float y = Math::ApplyEase(ease, u);
+		ImVec2 cur = ToScreen(u, y);
+		dl->AddLine(prev, cur, overshoot ? colWarn : colCurve, 2.0f);
+		prev = cur;
+	}
+
+	ImVec2 labelPos(p0.x + 10.f, p0.y + 8.f);
+	dl->AddText(labelPos, ImGui::GetColorU32(ImGuiCol_Text), Helper::EnumLabel(ease));
+
+	char rangeBuf[128];
+	sprintf_s(rangeBuf, "y range: %.2f .. %.2f", minY, maxY);
+	dl->AddText(ImVec2(labelPos.x, labelPos.y + 18.f), ImGui::GetColorU32(ImGuiCol_TextDisabled), rangeBuf);
+
+	if (overshoot)
+		dl->AddText(ImVec2(labelPos.x, labelPos.y + 36.f), colWarn, "Overshoot");
+}
+
+ENGINE_DLL bool Helper::DrawEaseCombo(const char* id, EaseType& ioValue, EaseType shownValue, float width)
+{
+	ImGui::SetNextItemWidth(width);
+
+	if (!ImGui::BeginCombo(id, Helper::EnumLabel(shownValue)))
+		return false;
+
+	const bool changed = DrawEaseComboPopup(ioValue, shownValue);
+
+	ImGui::EndCombo();
+	return changed;
+}
+
+ENGINE_DLL bool Helper::DrawEaseCombo(const char* id, EaseType& ioValue, float width)
+{
+	return DrawEaseCombo(id, ioValue, ioValue, width);
 }

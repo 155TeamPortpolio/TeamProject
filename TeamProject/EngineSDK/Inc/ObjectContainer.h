@@ -13,27 +13,50 @@ private:
 public:
     HRESULT Initialize_Prototype();
     HRESULT Initialize(COMPONENT_DESC* pArg) override;
+    virtual void Pre_EngineUpdateChild(_float dt);
+    virtual void Post_EngineUpdateChild(_float dt);
     void Priority_UpdateChild(_float dt) ;
     void UpdateChild(_float dt) ;
     void Late_UpdateChild(_float dt) ;
+
 public:
     class CGameObject* Find_ObjectByName(const string& ObjectName);
     class CGameObject* Find_ObjectByID(_uint ObjectID);
     _int Find_IndexByName(const string& ObjectName);
     _int Find_IndexByID(_uint ObjectID);
 
+public:
+    class CGameObject* Find_Descendant(const string& instanceName);
     _int Add_Child(class CGameObject* pObject, _bool SyncTransform = true);
     void Destroy_Child(_uint ChildIndex);
     void Dettach_Child(_uint ChildIndex);
-    void FreeSubTree(CGameObject* node);
-    void RemoveChildReference(CGameObject* node);
 
 public:
+    void Render_GUI() override;
+    void RenderHierarchy(CGameObject*& outSelected);
+
+public:
+    void ReorderChildren(class CGameObject* pObject, _uint Index);
+    void Upper_Order(class CGameObject* pObject);
+    void Lower_Order(class CGameObject* pObject);
+    void Set_Order_First(class CGameObject* pObject);
+    void Set_Order_Last(class CGameObject* pObject);
+public:
     const vector<class CGameObject*> Get_Children() { return m_ChildrenObjects; };
+
+public:
+    CGameObject* Get_ChildByOrder(_uint Index);
+    vector<CGameObject*> Get_ChildrenByOrder();
+
 private:    
     map<_uint, string> m_ChildrensName; /*오브젝트  ID, 이름*/
     map<_uint, _uint> m_IndexByID; /*오브젝트  ID, 인덱스*/
     vector<class CGameObject*> m_ChildrenObjects;
+
+    vector<_uint> m_UpdateOrder;                 
+    vector<_uint> m_UpdateOrderSnapShot;                 
+    unordered_map<_uint, _uint> m_OrderIndexByID; 
+
 public:
     static CObjectContainer* Create();
     virtual CComponent* Clone();

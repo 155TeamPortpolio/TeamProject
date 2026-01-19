@@ -11,11 +11,13 @@
 #include "Camera.h"
 #include "Model.h"
 #include "Light.h"
-#include "AABB_Collider.h"
-#include "OBB_Collider.h"
-#include "Sphere_Collider.h"
-#include "Child.h"
+#include "RigidBody.h"
+#include "CharacterController.h"
 
+#include "Child.h"
+#include "StaticModel.h"
+#include "SkeletalModel.h"
+#include "Material.h"
 CGameObjectBuilder::CGameObjectBuilder(const CLONE_DESC& _cloneDesc)
 	:m_pGameInstance(CGameInstance::GetInstance())
 {
@@ -59,20 +61,26 @@ CGameObject* CGameObjectBuilder::Build(const string& instanceKey, _uint* id)
 	for (auto& pair : m_CompDesc)
 		m_pObjDesc->CompDesc[pair.first] = pair.second;
 
-	//프로토 매니저에서 가져오기
-	CGameObject* instance = m_pGameInstance->Get_PrototypeMgr()->Clone_Prototype(
-		m_CloneDesc.OriginLevel, m_CloneDesc.protoTag, 
-		m_pObjDesc);
-
-	if (!instance) {
-		return nullptr;
+	CGameObject* instance = nullptr;
+	if (m_isFromPool)
+	{
+		instance = ObjectManager()->Acquire(m_CloneDesc);
+		if (!instance) return nullptr;
+		instance->Set_FromPool(true);
+		instance->OnPooledAcquire(m_pObjDesc);
 	}
-	/*즉 -> 클론 후에 레이어에서 삽입하고 있는 중임*/
+	else{
+		instance = m_pGameInstance->Get_PrototypeMgr()->Clone_Prototype(
+			m_CloneDesc.OriginLevel, m_CloneDesc.protoTag,
+			m_pObjDesc);
+			if (!instance) return nullptr;
+			instance->Set_FromPool(false);
+			instance->Awake();
+	}
 	
 	if (instance && id) {
 		*id = instance->Get_ObjectID();
 	}
-	instance->Awake();
 	return instance;
 }
 
@@ -123,26 +131,47 @@ CGameObjectBuilder& CGameObjectBuilder::Scale(const _float3 scale)
 	return *this;
 }
 
-CGameObjectBuilder& CGameObjectBuilder::AABB_Collider(const AABB_COLLIDER_DESC& desc)
+CGameObjectBuilder& CGameObjectBuilder::Collider(const COLLIDER_DESC& desc)
 {
-	AABB_COLLIDER_DESC* AABB_Desc = new AABB_COLLIDER_DESC(desc);
-	m_CompDesc.emplace(type_index(typeid(CAABB_Collider)), AABB_Desc);
+	COLLIDER_DESC* colliderDesc = new COLLIDER_DESC(desc);
+	m_CompDesc.emplace(type_index(typeid(CCollider)), colliderDesc);
 	return *this;
 }
 
-CGameObjectBuilder& CGameObjectBuilder::OBB_Collider(const OBB_COLLIDER_DESC& desc)
+CGameObjectBuilder& CGameObjectBuilder::RigidBody(const RIGIDBODY_DESC& desc)
 {
-	OBB_COLLIDER_DESC* OBB_Desc = new OBB_COLLIDER_DESC(desc);
-	m_CompDesc.emplace(type_index(typeid(COBB_Collider)), OBB_Desc);
+	RIGIDBODY_DESC* rigidbodyDesc = new RIGIDBODY_DESC(desc);
+	m_CompDesc.emplace(type_index(typeid(CRigidBody)), rigidbodyDesc);
 	return *this;
 }
 
-CGameObjectBuilder& CGameObjectBuilder::Sphere_Collider(const SPHERE_COLLIDER_DESC& desc)
+CGameObjectBuilder& CGameObjectBuilder::CharacterController(const CCT_DESC& desc)
 {
-	SPHERE_COLLIDER_DESC* SPHERE_desc = new SPHERE_COLLIDER_DESC(desc);
-	m_CompDesc.emplace(type_index(typeid(CSphere_Collider)), SPHERE_desc);
+	CCT_DESC* cctDesc = new CCT_DESC(desc);
+	m_CompDesc.emplace(type_index(typeid(CCharacterController)), cctDesc);
 	return *this;
 }
+
+//CGameObjectBuilder& CGameObjectBuilder::AABB_Collider(const AABB_COLLIDER_DESC& desc)
+//{
+//	AABB_COLLIDER_DESC* AABB_Desc = new AABB_COLLIDER_DESC(desc);
+//	m_CompDesc.emplace(type_index(typeid(CAABB_Collider)), AABB_Desc);
+//	return *this;
+//}
+//
+//CGameObjectBuilder& CGameObjectBuilder::OBB_Collider(const OBB_COLLIDER_DESC& desc)
+//{
+//	OBB_COLLIDER_DESC* OBB_Desc = new OBB_COLLIDER_DESC(desc);
+//	m_CompDesc.emplace(type_index(typeid(COBB_Collider)), OBB_Desc);
+//	return *this;
+//}
+//
+//CGameObjectBuilder& CGameObjectBuilder::Sphere_Collider(const SPHERE_COLLIDER_DESC& desc)
+//{
+//	SPHERE_COLLIDER_DESC* SPHERE_desc = new SPHERE_COLLIDER_DESC(desc);
+//	m_CompDesc.emplace(type_index(typeid(CSphere_Collider)), SPHERE_desc);
+//	return *this;
+//}
 
 CGameObjectBuilder& CGameObjectBuilder::Set_Parent(const PARENT_DESC& parent)
 {
@@ -151,11 +180,38 @@ CGameObjectBuilder& CGameObjectBuilder::Set_Parent(const PARENT_DESC& parent)
 	return *this;
 }
 
+CGameObjectBuilder& CGameObjectBuilder::Model_Link(const MODEL_INIT_DESC& pArg, MESH_TYPE eType)
+{
+	MODEL_INIT_DESC* ModelDesc = new MODEL_INIT_DESC(pArg);
+	if (eType == MESH_TYPE::ANIM) {
+		m_CompDesc.emplace(type_index(typeid(CSkeletalModel)), ModelDesc);
+
+	}
+	else {
+		m_CompDesc.emplace(type_index(typeid(CStaticModel)), ModelDesc);
+	}
+	return *this;
+}
+	
+CGameObjectBuilder& CGameObjectBuilder::Material_Link(const MATERIAL_INIT_DESC& pArg)
+{
+	MATERIAL_INIT_DESC* MaterialDesc = new MATERIAL_INIT_DESC(pArg);
+	m_CompDesc.emplace(type_index(typeid(CMaterial)), MaterialDesc);
+	return *this;
+}
+
 CGameObjectBuilder& CGameObjectBuilder::Add_ObjDesc(GAMEOBJECT_DESC* pArg)
 {
 	if (pArg == nullptr) return *this;
 	m_pObjDesc = pArg;
 	return *this;
+}
+
+CGameObjectBuilder& CGameObjectBuilder::FromPool()
+{
+	m_isFromPool = true;
+	return *this;
+	// TODO: 여기에 return 문을 삽입합니다.
 }
 
 CGameObjectBuilder& CGameObjectBuilder::Camera(const CAMERA_DESC& camera)

@@ -17,7 +17,10 @@
 #include "RaySystem.h"
 #include "CollisionSystem.h"
 #include "FontSystem.h"
+#include "PhysicsSystem.h"
+#include "EventSystem.h"
 #include "Level.h"
+#include "ClickManager.h"
 
 IMPLEMENT_SINGLETON(CGameInstance)
 
@@ -41,18 +44,24 @@ _bool CGameInstance::Init_Engine(const ENGINE_DESC& engine)
 	m_pPrototypeManager = CPrototypeMgr::Create();
 	m_pObjectManager = CObjectMgr::Create();
 	m_pResourceManager = CResourceMgr::Create(m_pDevice, m_pDeviceContext);
+	m_pResourceManager->Load_InitialResource();
 	m_pCameraManager = CCameraMgr::Create();
 	m_pUIManager = CUI_Manager::Create();
 	m_pLightService = CLightMgr::Create();
 	m_pRaySystem = CRaySystem::Create();
 	m_pRenderSystem = CRenderSystem::Create(m_pDevice, m_pDeviceContext);
+	m_pPhysicsSystem = CPhysicsSystem::Create();
 	m_pCollisionSystem = CCollisionSystem::Create(m_pDevice, m_pDeviceContext);
 	m_pFontSystem = CFontSystem::Create(m_pDevice, m_pDeviceContext);
+	m_pEventSystem = CEventSystem::Create();
+	m_pClickManager = CClickManager::Create(engine.hWnd);
+
 
 #if defined _USING_GUI
 	m_pGuiSystem = CGUISystem::Create(engine, m_pDevice, m_pDeviceContext);
 #endif
 
+	m_pTimeManager->Add_Timer(G_EngineTimerID);
 	Notify_LevelSet();
 	return TRUE;
 }
@@ -65,6 +74,21 @@ void CGameInstance::Notify_LevelSet()
 	m_pUIManager->Sync_To_Level();
 }
 
+void CGameInstance::Update_EngineTimer()
+{
+	m_pTimeManager->Update_Timer(G_EngineTimerID);
+}
+
+_float CGameInstance::Get_EngineDeltaTime()
+{
+	return m_pTimeManager->Get_DeltaTime(G_EngineTimerID);
+}
+
+void CGameInstance::Set_EngineTimeScale(_float fScale)
+{
+	m_pTimeManager->Set_TimeScale(G_EngineTimerID, fScale);
+}
+
 void CGameInstance::Clear_LevelResource(const string& levelKey)
 {
 	if (levelKey.empty()) return;
@@ -73,39 +97,56 @@ void CGameInstance::Clear_LevelResource(const string& levelKey)
 	m_pResourceManager->Clear_Resource(levelKey);
 	m_pObjectManager->Clear(levelKey);
 	m_pUIManager->Clear(levelKey);
+
+#ifdef _USING_GUI
+	m_pGuiSystem->Get_Context()->pSelectedObject = nullptr;
+#endif // _USING_GUI
+
 }
 
 
 void CGameInstance::Update_Engine(_float dt)
 {
+	_float realDt = m_pTimeManager->Get_RawDeltaTime(G_EngineTimerID);
+
 	m_totalFrameCount++;
+
+
 	/*엔진 제어 업데이트 -> 동기화용*/
-	m_pObjectManager->Pre_EngineUpdate(dt);
-	m_pUIManager->Pre_EngineUpdate(dt);
+	m_pObjectManager->Pre_EngineUpdate(realDt);
+	m_pUIManager->Pre_EngineUpdate(realDt);
 
 
 	/*클라 제어 업데이트 -> 게임 로직*/
 	m_pObjectManager->Priority_Update(dt);
-	m_pUIManager->Priority_Update(dt);
+	m_pUIManager->Priority_Update(realDt);
 	m_pLevelManager->Update(dt);
 	m_pCameraManager->Update(dt);
 	m_pObjectManager->Update(dt);
-	m_pUIManager->Update(dt);
+	m_pUIManager->Update(realDt);
 	m_pRaySystem->Update(dt);
 	m_pSoundDevice->Update();
+	m_pRenderSystem->Update(dt);
+
+#ifdef USINGPHYSICS
+	m_pCollisionSystem->Update(dt);
+	m_pPhysicsSystem->Update(dt);
+#endif // USINPHYSICS
 
 #if defined _USING_GUI
-	m_pGuiSystem->Update(dt);
+	m_pGuiSystem->Update(realDt);
 #endif
-	m_pCollisionSystem->Update(dt);
-	m_pCollisionSystem->Late_Update(dt);
-
 	m_pObjectManager->Late_Update(dt);
-	m_pUIManager->Late_Update(dt);
+	m_pUIManager->Late_Update(realDt);
+#ifdef USINGPHYSICS
+	m_pPhysicsSystem->Late_Update(dt);
+	m_pCollisionSystem->Late_Update(dt);
+#endif // USINPHYSICS
 	/*엔진 제어 업데이트 -> 렌더 패킷 제출용*/
-	m_pInputDevice->Update();
-	m_pObjectManager->Post_EngineUpdate(dt);
-	m_pUIManager->Post_EngineUpdate(dt);
+	m_pInputDevice->Update(); 
+	m_pObjectManager->Post_EngineUpdate(realDt);
+	m_pUIManager->Post_EngineUpdate(realDt);
+	m_pClickManager->Update(realDt);
 }
 
 void CGameInstance::Release_Engine()
@@ -128,6 +169,9 @@ void CGameInstance::Release_Engine()
 	Safe_Release(m_pRaySystem);
 	Safe_Release(m_pCollisionSystem);
 	Safe_Release(m_pFontSystem);
+	Safe_Release(m_pPhysicsSystem);
+	Safe_Release(m_pEventSystem);
+	Safe_Release(m_pClickManager);
 
 	DestroyInstance();
 }
@@ -194,9 +238,7 @@ HRESULT CGameInstance::Draw()
 {
 	m_pRenderSystem->Render();
 	m_pLevelManager->Render(m_pDeviceContext);
-#if defined _DEBUG
 	m_pCollisionSystem->Render_Debug();
-#endif
 #if defined _USING_GUI
 	m_pGuiSystem->Render_GUI();
 #endif

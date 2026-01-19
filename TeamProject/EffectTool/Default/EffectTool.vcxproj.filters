@@ -19,6 +19,39 @@
     <Filter Include="02. Object\ToolCamera">
       <UniqueIdentifier>{a7d69e36-eb59-4bb5-bb9f-e64b33953271}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. Object\EffectContainer_Edit">
+      <UniqueIdentifier>{1ae2124c-45a7-4b8b-9572-68b0191e8fbd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Object\EffectContainer_Edit\EffectNode">
+      <UniqueIdentifier>{8f44f3bc-dd62-44b5-9ae8-4392ad9f0b2c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Object\EffectContainer_Edit\EffectNode\SpriteNode">
+      <UniqueIdentifier>{2dd56c51-16cc-4d2f-bd4f-f9f7d33e04bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="99. Defines\ImGui">
+      <UniqueIdentifier>{8770c344-8604-4f68-a3bc-33a07affc731}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Object\ToolLight">
+      <UniqueIdentifier>{6024827c-522f-4e3b-be3c-db4e525e39bd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Object\EffectContainer_Edit\EffectNode\ParticleNode">
+      <UniqueIdentifier>{14853119-7764-4e03-9155-0e747b7a92fa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Object\ToolGrid">
+      <UniqueIdentifier>{ff41e5bd-1f6f-459b-b664-f2125fd2a16a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Shader">
+      <UniqueIdentifier>{c44fbadb-0d72-4e4f-92aa-1823199eaa89}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Object\EffectContainer_Edit\EffectNode\MeshNode">
+      <UniqueIdentifier>{7d25f85e-bf2d-454f-8c76-5978ff6c0f8a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Object\EffectContainer_Edit\EffectNode\TrailNode">
+      <UniqueIdentifier>{bdd3d4d3-e76c-42f3-b79d-ebd85a239607}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Object\ToolModel">
+      <UniqueIdentifier>{142b27c3-4f5f-4d76-9bb9-aad4f2c431b1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EffectTool.h">
@@ -48,6 +81,75 @@
     <ClInclude Include="..\public\ToolCamera.h">
       <Filter>02. Object\ToolCamera</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\EffectContainer_Edit.h">
+      <Filter>02. Object\EffectContainer_Edit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\SpriteNode_Edit.h">
+      <Filter>02. Object\EffectContainer_Edit\EffectNode\SpriteNode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\GraphEditor.h">
+      <Filter>99. Defines\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\imconfig.h">
+      <Filter>99. Defines\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\ImCurveEdit.h">
+      <Filter>99. Defines\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\ImGradient.h">
+      <Filter>99. Defines\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\imgui.h">
+      <Filter>99. Defines\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\imgui_internal.h">
+      <Filter>99. Defines\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\ImGuizmo.h">
+      <Filter>99. Defines\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\ImSequencer.h">
+      <Filter>99. Defines\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\imstb_rectpack.h">
+      <Filter>99. Defines\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\imstb_textedit.h">
+      <Filter>99. Defines\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\imstb_truetype.h">
+      <Filter>99. Defines\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\ImZoomSlider.h">
+      <Filter>99. Defines\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\backends\imgui_impl_dx11.h">
+      <Filter>99. Defines\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\backends\imgui_impl_win32.h">
+      <Filter>99. Defines\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ToolLight.h">
+      <Filter>02. Object\ToolLight</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ParticleNode_Edit.h">
+      <Filter>02. Object\EffectContainer_Edit\EffectNode\ParticleNode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ToolGrid.h">
+      <Filter>02. Object\ToolGrid</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MeshNode_Edit.h">
+      <Filter>02. Object\EffectContainer_Edit\EffectNode\MeshNode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\IEditable.h">
+      <Filter>02. Object\EffectContainer_Edit\EffectNode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\TrailNode_Edit.h">
+      <Filter>02. Object\EffectContainer_Edit\EffectNode\TrailNode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ToolModel.h">
+      <Filter>02. Object\ToolModel</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EffectTool.cpp">
@@ -65,6 +167,69 @@
     <ClCompile Include="..\private\ToolCamera.cpp">
       <Filter>02. Object\ToolCamera</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\EffectContainer_Edit.cpp">
+      <Filter>02. Object\EffectContainer_Edit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\SpriteNode_Edit.cpp">
+      <Filter>02. Object\EffectContainer_Edit\EffectNode\SpriteNode</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\GraphEditor.cpp">
+      <Filter>99. Defines\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\ImCurveEdit.cpp">
+      <Filter>99. Defines\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\ImGradient.cpp">
+      <Filter>99. Defines\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\imgui.cpp">
+      <Filter>99. Defines\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\imgui_demo.cpp">
+      <Filter>99. Defines\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\imgui_draw.cpp">
+      <Filter>99. Defines\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\imgui_tables.cpp">
+      <Filter>99. Defines\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\imgui_widgets.cpp">
+      <Filter>99. Defines\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\ImGuizmo.cpp">
+      <Filter>99. Defines\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\ImSequencer.cpp">
+      <Filter>99. Defines\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\backends\imgui_impl_dx11.cpp">
+      <Filter>99. Defines\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\backends\imgui_impl_win32.cpp">
+      <Filter>99. Defines\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\ToolLight.cpp">
+      <Filter>02. Object\ToolLight</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\ParticleNode_Edit.cpp">
+      <Filter>02. Object\EffectContainer_Edit\EffectNode\ParticleNode</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\ToolGrid.cpp">
+      <Filter>02. Object\ToolGrid</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MeshNode_Edit.cpp">
+      <Filter>02. Object\EffectContainer_Edit\EffectNode\MeshNode</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\IEditable.cpp">
+      <Filter>02. Object\EffectContainer_Edit\EffectNode</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\TrailNode_Edit.cpp">
+      <Filter>02. Object\EffectContainer_Edit\EffectNode\TrailNode</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\ToolModel.cpp">
+      <Filter>02. Object\ToolModel</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="EffectTool.ico">
@@ -78,5 +243,10 @@
     <ResourceCompile Include="EffectTool.rc">
       <Filter>98. Default</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\Bin\ShaderFiles\VTX_PlaneGrid.hlsl">
+      <Filter>97. Shader</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

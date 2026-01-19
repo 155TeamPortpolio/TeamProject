@@ -56,14 +56,14 @@ void CToolCamera::Priority_Update(_float dt)
 	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down(VK_SPACE))
 		m_pTransform->Translate(WorldUp * dt * m_fSpeed);
 
-	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down(VK_CONTROL))
+	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down(VK_SHIFT))
 		m_pTransform->Translate(WorldUp * dt * -m_fSpeed);
 
 	_float Yaw = {}; //Y축 회전
 	_float Pitch = {};//X축 회전
 
 	if (CGameInstance::GetInstance()->Get_InputDev()->Mouse_Down(MOUSE_BTN::RB)) {
-		Yaw = CGameInstance::GetInstance()->Get_InputDev()->Mouse_DeltaX() * dt * m_fMouseSensitive;
+		Yaw = CGameInstance::GetInstance()->Get_InputDev()->Mouse_DeltaX() * dt * m_fMouseSensitive * -1.f;
 		Pitch = CGameInstance::GetInstance()->Get_InputDev()->Mouse_DeltaY() * dt * m_fMouseSensitive;
 	}
 
