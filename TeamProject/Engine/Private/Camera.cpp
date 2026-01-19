@@ -16,17 +16,14 @@ Matrix CCamera::Get_ViewMatrix() const
 
 Matrix CCamera::Get_ProjMatrix() const
 {
-	switch (m_projType)
+	if (m_projType == CamProjType::Perspective)
+		return XMMatrixPerspectiveFovLH(XMConvertToRadians(m_lens.fov), m_lens.aspect, m_lens.zNear, m_lens.zFar);
+	else
 	{
-	case CamProjType::Perspective:
-		return XMMatrixPerspectiveFovLH(XMConvertToRadians(m_lens.fov), m_lens.aspect, m_lens.zNear , m_lens.zFar);
-
-	case CamProjType::Orthographic:
 		const _float height = m_orthoSize * 2.f;
-		const _float width  = height * m_lens.aspect;
+		const _float width = height * m_lens.aspect;
 		return XMMatrixOrthographicLH(width, height, m_lens.zNear, m_lens.zFar);
 	}
-	return {};
 }
 
 _vector CCamera::Get_Pos() const

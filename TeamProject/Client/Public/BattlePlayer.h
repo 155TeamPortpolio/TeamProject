@@ -68,6 +68,8 @@ public:
     void            Lock_Input() { m_bLockInput = true; }
     void            UnLock_Input() { m_bLockInput = false; }
 
+    void            QuestStart();
+
 public:
     HRESULT Initialize();
     void Priority_Update(_float dt);

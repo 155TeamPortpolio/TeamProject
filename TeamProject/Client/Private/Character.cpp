@@ -520,18 +520,18 @@ void CCharacter::Update_Energy(_float dt)
 	if (m_tEnergy.fCurrentEnergy >= MAX_ENERGY)
 	{
 		m_tEnergy.fCurrentEnergy = MAX_ENERGY;
+		m_tEnergy.fPrevEnergy = MAX_ENERGY;
 		return;
 	}
 	if (m_tEnergy.fCurrentEnergy < 0.f)
 	{
 		m_tEnergy.fCurrentEnergy = 0.f;
+		m_tEnergy.fPrevEnergy = 0.f;
 	}
+	m_tEnergy.fCurrentEnergy += dt;
+
 	if (InputDevice()->Key_Down('P'))
 		m_tEnergy.fCurrentEnergy += m_tEnergy.fEnergyWeight * dt * 10.f;
-	if (InputDevice()->Key_Tap('M'))
-		m_tEnergy.fCurrentEnergy = MAX_ENERGY;
-
-	m_tEnergy.fCurrentEnergy += dt;
 }
 
 void CCharacter::Update_Decibel(_float dt)
@@ -540,11 +540,13 @@ void CCharacter::Update_Decibel(_float dt)
 	if (m_fCurrentDecibel >= MAX_DECIBEL)
 	{
 		m_fCurrentDecibel = MAX_DECIBEL;
+		m_fPrevDecibel = MAX_DECIBEL;
 		return;
 	}
+	m_fCurrentDecibel += dt * 50.f;
+
 	if (InputDevice()->Key_Tap('U'))
 		m_fCurrentDecibel = MAX_DECIBEL;
-	m_fCurrentDecibel += dt * 50.f;
 }
 
 void CCharacter::Update_Invincible(_float dt)

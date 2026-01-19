@@ -41,6 +41,7 @@ private:
     void    DrawHiddenHandle();
 	_bool   DrawConstraintBar();
 	_bool   DrawOrbitTargetBar();
+    void    DrawPath();
 
 private:
     void    SetRecording(_bool on);
