@@ -724,6 +724,9 @@
     <Filter Include="02. GameObject\Object\Enemy\ThugAssaulter\State\Hit">
       <UniqueIdentifier>{ee380fa9-e341-4ac3-a59e-18404a3b9ff5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\ScreenFade">
+      <UniqueIdentifier>{4df49a7d-2281-4c98-b765-1a9115005f18}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Hit">
       <UniqueIdentifier>{08855f1c-eef5-461f-9c1c-f6d5844ec678}</UniqueIdentifier>
     </Filter>
@@ -1413,6 +1416,9 @@
     <ClInclude Include="..\public\ThugAssaulter_Hit.h">
       <Filter>02. GameObject\Object\Enemy\ThugAssaulter\State\Hit</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UI_ScreenFade.h">
+      <Filter>02. GameObject\UI\01. 2D\ScreenFade</Filter>
+    </ClInclude>
     <ClInclude Include="..\public\ThugBulkyEnforcer_Hit.h">
       <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Hit</Filter>
     </ClInclude>
@@ -2071,6 +2077,9 @@
     </ClCompile>
     <ClCompile Include="..\private\ThugAssaulter_Hit.cpp">
       <Filter>02. GameObject\Object\Enemy\ThugAssaulter\State\Hit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_ScreenFade.cpp">
+      <Filter>02. GameObject\UI\01. 2D\ScreenFade</Filter>
     </ClCompile>
     <ClCompile Include="..\private\ThugBulkyEnforcer_Hit.cpp">
       <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Hit</Filter>

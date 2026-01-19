@@ -314,6 +314,16 @@ _float2 CUI_Object::Calc_AnchorPoint()
     return anchorPoint;
 }
 
+_bool CUI_Object::Set_KeyframeTime(UI_ANIM_CLIP& clip, _int iKeyframeIndex, _float fTime)
+{
+    auto& keyframes = clip.keyframes;
+    if (iKeyframeIndex >= keyframes.size())
+        return false;
+
+    keyframes[iKeyframeIndex].fTime = fTime;
+    return true;
+}
+
 void CUI_Object::Play_Animation(_float dt)
 {
     if (m_iCurrentClipIndex < 0 || m_iCurrentClipIndex >= (_int)m_AnimClips.size()) return;
@@ -421,6 +431,15 @@ void CUI_Object::Set_Animation(_uint iIndex, _bool isLoop)
     m_iCurrentClipIndex = iIndex;
     m_isBlending = true;
     m_fBlendTime = 0.f;
+}
+
+_bool CUI_Object::Set_LastKeyframeTime(_uint iClipIndex, _float fTime)
+{
+    if (iClipIndex >= m_AnimClips.size())
+        return false;
+
+    m_AnimClips[iClipIndex].fDuration = fTime;
+    return Set_KeyframeTime(m_AnimClips[iClipIndex], m_AnimClips.size() - 1, fTime);
 }
 
 _bool CUI_Object::Is_AnimFinished()
