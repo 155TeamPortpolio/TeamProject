@@ -4,7 +4,7 @@
   "iVersion": 1,
   "values": [
     {
-      "iObjID": 5,
+      "iObjID": 4,
       "TagName": "bCooking",
       "defaultvalue": {
         "type": "Bool",
@@ -12,7 +12,7 @@
       }
     },
     {
-      "iObjID": 7,
+      "iObjID": 6,
       "TagName": "bCooking",
       "defaultvalue": {
         "type": "Bool",

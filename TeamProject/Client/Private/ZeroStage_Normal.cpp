@@ -6,6 +6,7 @@
 #include "GameInstance.h"
 #include "Layer.h"
 #include "Player.h"
+#include "UIDirector.h"
 
 CZeroStage_Normal::CZeroStage_Normal()
 {
@@ -27,11 +28,13 @@ HRESULT CZeroStage_Normal::Awake()
 
 void CZeroStage_Normal::Update()
 {
+	float dt = TimeManager()->Get_RawDeltaTime(G_EngineTimerID);
+	m_fStageTime += dt;
+
 	switch (m_eStageStage)
 	{
-	case Client::CStage::StageState::None:
-		break;
 	case Client::CStage::StageState::Entrance:
+		m_introFlow.Tick(dt);
 		Intro();
 		break;
 	case Client::CStage::StageState::BattleStart:
@@ -42,9 +45,14 @@ void CZeroStage_Normal::Update()
 	case Client::CStage::StageState::Outro:
 		Outro();
 		break;
+	case Client::CStage::StageState::End:
+		m_outroFlow.Tick(dt);
+		End();
+		break;
 	default:
 		break;
 	}
+
 }
 
 HRESULT CZeroStage_Normal::Ready_Stage(CZero_Level::StageContext& context)
@@ -58,12 +66,7 @@ HRESULT CZeroStage_Normal::Enter_Stage(CZero_Level::StageContext& context)
 	Ready_Map("Zero_Level", "Zero_1_1");
 	m_eStageStage = StageState::Entrance;
 	m_PlayerHandle = context.hPlayer;
-
-	if(context.isFirstIn){
-		CCamDirector::GetInstance()->SetTarget(context.hPlayer);
-		CCamDirector::GetInstance()->AutoTarget();
-		CCamDirector::GetInstance()->RequestSequence("Intro/Jane_Intro");
-	}
+	BaseIntro(context);
 	return S_OK;
 }
 
@@ -74,12 +77,12 @@ HRESULT CZeroStage_Normal::Exit_Stage(CZero_Level::StageContext& context)
 
 void CZeroStage_Normal::Intro()
 {
-	m_isSequenceEnd = !CCamDirector::GetInstance()->IsPlaying("Intro/Jane_Intro");
-
-	if (m_isSequenceEnd) {
+	if (m_introFlow.IsDoneAll())
+	{
 		CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_ThugAssaulter", { -13.f, -5.f,34.f });
 		CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_ThugAssaulter", { -1.f, -5.f,38.f });
 		CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_ThugAssaulter", { -12.f, -5.f,34.f });
+
 		CBattleSystem::GetInstance()->SetActive(true);
 		m_eStageStage = StageState::BattleStart;
 	}
@@ -98,8 +101,20 @@ void CZeroStage_Normal::Battle()
 
 void CZeroStage_Normal::Outro()
 {
-	m_pOwnerLevel->ChangeStage(CZero_Level::StageType::Elite, 0);
+	BaseOutro();
+	m_eStageStage = StageState::End;
 }
+
+void CZeroStage_Normal::End()
+{
+	if (m_outroFlow.IsDoneAll()) {
+		RenderSystem()->UnRegister_AddictiveColor();
+		ObjectManager()->Get_Layer({ "Zero_Level","PlacedObject_Layer" })->Clear_Layer();
+		ObjectManager()->Get_Layer({ "Zero_Level","InteractableObject_Layer" })->Clear_Layer();
+		m_pOwnerLevel->ChangeStage(CZero_Level::StageType::Elite, 0);
+	}
+}
+
 
 CZeroStage_Normal* CZeroStage_Normal::Create(CZero_Level* pOwnerLevel)
 {

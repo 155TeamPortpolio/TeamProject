@@ -6,6 +6,8 @@
 #include "GameInstance.h"
 #include "Layer.h"
 #include "Player.h"
+#include "StageFx.h"
+#include "UIDirector.h"
 
 CZeroStage_Elite::CZeroStage_Elite()
 {
@@ -28,12 +30,13 @@ HRESULT CZeroStage_Elite::Awake()
 void CZeroStage_Elite::Update()
 {
 
+	float dt = TimeManager()->Get_RawDeltaTime(G_EngineTimerID);
+	m_fStageTime += dt;
+
 	switch (m_eStageStage)
 	{
-	case Client::CStage::StageState::None:
-		break;
 	case Client::CStage::StageState::Entrance:
-		m_radialDt += GameInstance()->Get_EngineDeltaTime();
+		m_introFlow.Tick(dt);
 		Intro();
 		break;
 	case Client::CStage::StageState::BattleStart:
@@ -44,17 +47,13 @@ void CZeroStage_Elite::Update()
 	case Client::CStage::StageState::Outro:
 		Outro();
 		break;
+	case Client::CStage::StageState::End:
+		m_outroFlow.Tick(dt);
+		End();
+		break;
 	default:
 		break;
 	}
-	//if (InputDevice()->Key_Tap(VK_F4))
-	//{
-	//
-	//}
-	//if (InputDevice()->Key_Tap(VK_F5))
-	//{
-	//	m_isSequenceEnd = true;
-	//}
 }
 
 HRESULT CZeroStage_Elite::Ready_Stage(CZero_Level::StageContext& context)
@@ -68,12 +67,7 @@ HRESULT CZeroStage_Elite::Enter_Stage(CZero_Level::StageContext& context)
 	Ready_Map("Zero_Level", "Zero_1_1");
 	m_eStageStage = StageState::Entrance;
 	m_PlayerHandle = context.hPlayer;
-	RenderSystem()->Apply_RadialBlur(2.f);
-
-	if(context.isFirstIn){
-		CCamDirector::GetInstance()->SetTarget(context.hPlayer);
-		CCamDirector::GetInstance()->RequestSequence("Intro/Jane_Intro");
-	}
+	BaseIntro(context);
 
 	return S_OK;
 }
@@ -85,14 +79,12 @@ HRESULT CZeroStage_Elite::Exit_Stage(CZero_Level::StageContext& context)
 
 void CZeroStage_Elite::Intro()
 {
-	if (m_radialDt > 2.f) {
-		m_isSequenceEnd = true;
-	}
-
-	if (m_isSequenceEnd) {
+	if (m_introFlow.IsDoneAll())
+	{
 		CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_ThugAssaulter", { -13.f, -5.f,34.f });
 		CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_ThugBulkyEnforcer", { -1.f, -5.f,38.f });
 		CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_ThugAssaulter", { -12.f, -5.f,34.f });
+
 		CBattleSystem::GetInstance()->SetActive(true);
 		m_eStageStage = StageState::BattleStart;
 	}
@@ -109,9 +101,22 @@ void CZeroStage_Elite::Battle()
 	}
 }
 
+
 void CZeroStage_Elite::Outro()
 {
-	m_pOwnerLevel->ChangeStage(CZero_Level::StageType::Boss, 0);
+	BaseOutro();
+	m_outroFlow.Start();
+	m_eStageStage = StageState::End;
+}
+
+void CZeroStage_Elite::End()
+{
+	if (m_outroFlow.IsDoneAll()) {
+		RenderSystem()->UnRegister_AddictiveColor();
+		ObjectManager()->Get_Layer({ "Zero_Level","PlacedObject_Layer" })->Clear_Layer();
+		ObjectManager()->Get_Layer({ "Zero_Level","InteractableObject_Layer" })->Clear_Layer();
+		m_pOwnerLevel->ChangeStage(CZero_Level::StageType::Boss, 0);
+	}
 }
 
 CZeroStage_Elite* CZeroStage_Elite::Create(CZero_Level* pOwnerLevel)
