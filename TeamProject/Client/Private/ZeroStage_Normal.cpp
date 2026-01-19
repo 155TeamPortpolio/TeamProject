@@ -53,9 +53,6 @@ void CZeroStage_Normal::Update()
 		break;
 	}
 
-	if (InputDevice()->Key_Tap(VK_SPACE)) {
-		CUIDirector::GetInstance()->FadeIn_Screen(1.f);
-	}
 }
 
 HRESULT CZeroStage_Normal::Ready_Stage(CZero_Level::StageContext& context)
