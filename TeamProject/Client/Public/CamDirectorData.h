@@ -9,6 +9,8 @@ class CCamSequencePlayer; class ICameraService; class IObjectService;
 NS_END
 
 NS_BEGIN(Client)
+namespace fs = filesystem;
+
 class CBattlePlayer; class CFieldCharacter; class CPlayer; 
 
 enum class CamType { None, Free, Orbit, Sequence, End };

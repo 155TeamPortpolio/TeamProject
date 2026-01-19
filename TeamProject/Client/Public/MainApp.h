@@ -33,6 +33,16 @@ private:
 	void Create_GlobalCamObjs();
 	void Create_GlobalPlayer();
 
-	void ToggleCursor();
+	// MouseLock
+private:
+	RECT  GetClientRectInScreen() const;
+	POINT GetClientCenterInScreen() const;
+
+	void  SetMouseLock(_bool lock);
+	void  ToggleCursor();
+	void  UpdateCursor(_float dt);
+
+private:
+	_bool m_isMouseLocked = false;
 };
 

@@ -1,8 +1,10 @@
 #pragma once
 #include "IService.h"
 #include "Engine_Math.h"
+#include "ZoomControllerData.h"
+
 NS_BEGIN(Engine)
-class CCamera; struct Lens; enum class CamShakeType;
+class CCamera; struct Lens; enum class CamShakeType; enum class CamZoomType;
 
 class ENGINE_DLL ICameraService abstract : public IService
 {
@@ -31,8 +33,18 @@ public:
     virtual void AddShake(_float ampDeg, _float freq, _float dur, _float fadeOutSec = 0.f) PURE;
     virtual void ClearShake(_float fadeOutSec = 0.f) PURE;
 
+    virtual void SetZoomPunch(_float amountDeg, _float attackSec = 0.020f, _float releaseSec = 0.100f) PURE;
+    virtual void AddZoomPunch(_float amountDeg, _float attackSec = 0.020f, _float releaseSec = 0.100f) PURE;
+    virtual void ClearZoom(_float fadeOutSec = 0.f) PURE;
+
     virtual void SetShake(CamShakeType type, _float strength = 1.f) PURE;
     virtual void AddShake(CamShakeType type, _float strength = 1.f) PURE;
+
+    virtual void SetZoom(CamZoomType type, _float strength = 1.f) PURE;
+    virtual void AddZoom(CamZoomType type, _float strength = 1.f) PURE;
+
+    virtual void AddImpact(CamShakeType shakeType, CamZoomType zoomType, _float strength = 1.f) PURE;
+    virtual void AddImpact(_uint shakeType = 0u, _uint zoomType = ENUM(CamZoomType::End), _float strength = 1.f) PURE;
 
     virtual Lens Get_Lens() const PURE;
     virtual Lens Get_ShadowLens() const PURE;
