@@ -125,7 +125,7 @@ void CSacrificeState_Attack_Phase2::BuildPattern(CSacrifice* pOwner)
 		}
 		else
 		{
-			_uint iRandIndex = Helper::Get_Random_Int(0, 3);
+			_uint iRandIndex = Helper::Get_Random_Int(0, 4);
 			switch (iRandIndex)
 			{
 			case 0:
@@ -403,6 +403,7 @@ void CSacrificeState_Attack_05_1_Phase2::Update(CSacrifice* pOwner, _float dt)
 			blackBoard.isRequestNext = true;
 	}
 
+	Update_Effects(pOwner);
 	pOwner->RotateToTarget(dt, 10.f);
 	pOwner->MoveByRootMotion(dt);
 }
@@ -423,13 +424,9 @@ void CSacrificeState_Attack_05_1_Phase2::Update_Effects(CSacrifice* pOwner)
 			.Asset("sacrifice_smoke_slash2.json")
 			.Build("SmokeSlash");
 
-		_vector3 vRight = pTransform->Dir(STATE::RIGHT);
-
 		_vector3 vWorldPosition = pTransform->Get_WorldPos();
-		vWorldPosition.y += 2.f;
-		vWorldPosition += vRight * 0.5f;
 		_quaternion worldQuaternion = pTransform->Get_QuaternionRotate();
-		_quaternion localQuaternion = _quaternion(0.07f, 0.06f, 0.99f, 0.12f);
+		_quaternion localQuaternion = _quaternion(0.0f, 0.0f, 0.f, 0.1f);
 		localQuaternion *= worldQuaternion;
 
 		auto pEffectTransform = effect->Get_Component<CTransform>();

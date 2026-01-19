@@ -107,6 +107,7 @@ public:
 
 private:
 	void Update_Effects(CSacrifice* pOwner);
+
 };
 
 class CSacrificeState_Attack_08_Phase2 : public IHState<CSacrifice>

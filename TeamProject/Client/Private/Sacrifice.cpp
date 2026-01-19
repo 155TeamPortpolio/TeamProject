@@ -89,6 +89,8 @@ HRESULT CSacrifice::Initialize_Prototype()
 		pResource->Add_ResourcePath("sacrifice_axe_slash.json", "../Bin/Resources/Effect/Data/sacrifice_axe_slash.json");
 		pResource->Add_ResourcePath("sacrifice_rush_trail.json", "../Bin/Resources/Effect/Data/sacrifice_rush_trail.json");
 		pResource->Add_ResourcePath("sacrifice_axe_slash2.json", "../Bin/Resources/Effect/Data/sacrifice_axe_slash2.json");
+		pResource->Add_ResourcePath("sacrifice_axe_slash2.json", "../Bin/Resources/Effect/Data/sacrifice_axe_slash2.json");
+		pResource->Add_ResourcePath("sacrifice_smoke_slash2.json", "../Bin/Resources/Effect/Data/sacrifice_smoke_slash2.json");
 
 		/* Textures */
 		pResource->Add_ResourcePath("attack_sign.png", "../Bin/Resources/Effect/Texture/attack_sign.png");
@@ -119,6 +121,8 @@ HRESULT CSacrifice::Initialize_Prototype()
 		pResource->Add_ResourcePath("Sacrifice_Smoke_Slash5.mat", "../Bin/Resources/Effect/Model/Sacrifice_Smoke_Slash5/Sacrifice_Smoke_Slash5.mat");
 		pResource->Add_ResourcePath("Sacrifice_Smoke_Slash6.model", "../Bin/Resources/Effect/Model/Sacrifice_Smoke_Slash6/Sacrifice_Smoke_Slash6.model");
 		pResource->Add_ResourcePath("Sacrifice_Smoke_Slash6.mat", "../Bin/Resources/Effect/Model/Sacrifice_Smoke_Slash6/Sacrifice_Smoke_Slash6.mat");
+		pResource->Add_ResourcePath("Sacrifice_Smoke_Slash7.model", "../Bin/Resources/Effect/Model/Sacrifice_Smoke_Slash7/Sacrifice_Smoke_Slash7.model");
+		pResource->Add_ResourcePath("Sacrifice_Smoke_Slash7.mat", "../Bin/Resources/Effect/Model/Sacrifice_Smoke_Slash7/Sacrifice_Smoke_Slash7.mat");
 		pResource->Add_ResourcePath("Sacrifice_Sword_Slash2.model", "../Bin/Resources/Effect/Model/Sacrifice_Sword_Slash2/Sacrifice_Sword_Slash2.model");
 		pResource->Add_ResourcePath("Sacrifice_Sword_Slash2.mat", "../Bin/Resources/Effect/Model/Sacrifice_Sword_Slash2/Sacrifice_Sword_Slash2.mat");
 		pResource->Add_ResourcePath("Sacrifice_Axe_Slash.model", "../Bin/Resources/Effect/Model/Sacrifice_Axe_Slash/Sacrifice_Axe_Slash.model");
