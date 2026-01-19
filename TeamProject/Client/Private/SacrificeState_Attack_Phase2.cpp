@@ -297,7 +297,10 @@ void CSacrificeState_Attack_05_Phase2::Enter(CSacrifice* pOwner)
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("Monster_SacrificeBringer_Ani_P2_Attack_05").Loop(false).Speed(1.2f).Apply();
 
+	HitDesc hitDesc{};
+	hitDesc.fDamage = 30.f;
 	pOwner->Active_AttackSign();
+	pOwner->SetAutoPlayBattleCollider("Right_Arm", 0.f, 0.2f, hitDesc);
 }
 
 void CSacrificeState_Attack_05_Phase2::Update(CSacrifice* pOwner, _float dt)
@@ -311,6 +314,8 @@ void CSacrificeState_Attack_05_Phase2::Update(CSacrifice* pOwner, _float dt)
 			blackBoard.isRequestNext = true;
 	}
 
+	Update_Effects(pOwner);
+
 	if(m_fAnimProgress<0.4f)
 		pOwner->RotateToTarget(dt, 10.f);
 	pOwner->MoveByRootMotion(dt);
@@ -320,10 +325,71 @@ void CSacrificeState_Attack_05_Phase2::Exit(CSacrifice* pOwner)
 {
 }
 
+void CSacrificeState_Attack_05_Phase2::Update_Effects(CSacrifice* pOwner)
+{
+	auto pTransform = pOwner->Get_Component<CTransform>();
+	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
+
+	/* Smoke Slash */
+	if (IsCrossAnimProgress(0.15f))
+	{
+		auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_smoke_slash.json")
+			.Build("SmokeSlash");
+
+		_vector3 vRight = pTransform->Dir(STATE::RIGHT);
+
+		_vector3 vWorldPosition = pTransform->Get_WorldPos();
+		vWorldPosition.y += 2.f;
+		vWorldPosition += vRight * 0.5f;
+		_quaternion worldQuaternion = pTransform->Get_QuaternionRotate();
+		_quaternion localQuaternion = _quaternion(0.07f, 0.06f, 0.99f, 0.12f);
+		localQuaternion *= worldQuaternion;
+
+		auto pEffectTransform = effect->Get_Component<CTransform>();
+		pEffectTransform->Set_Quaternion(localQuaternion);
+		pEffectTransform->Set_Pos(vWorldPosition);
+
+		ObjectManager()->Add_Object(effect, { pOwner->Get_Level(),"Effect_Layer" });
+	}
+
+	/* Hit ground smoke */
+	if (IsCrossAnimProgress(0.16f))
+	{
+		_vector3 vBonePosition = pAnimator->Get_BonePosition(CAnimator3D::BoneSpace::COMBINED, "Skn_Finger2_03");
+		vBonePosition = _vector3::Transform(vBonePosition, pTransform->Get_WorldMatrix());
+
+		auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("hit_ground_smoke.json")
+			.Position(vBonePosition)
+			.Build("Smoke");
+
+		auto flare = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_hit_ground_flare.json")
+			.Position(vBonePosition)
+			.Build("Smoke");
+
+		vBonePosition.y += 2.f;
+		auto smoke = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_hit_ground_flare_smoke.json")
+			.Position(vBonePosition)
+			.Build("FlareSmoke");
+
+		CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(effect, { pOwner->Get_Level(),"Effect_Layer" });
+		CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(flare, { pOwner->Get_Level(),"Effect_Layer" });
+		CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(smoke, { pOwner->Get_Level(),"Effect_Layer" });
+	}
+}
+
 void CSacrificeState_Attack_05_1_Phase2::Enter(CSacrifice* pOwner)
 {
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("Monster_SacrificeBringer_Ani_P2_Attack_05_1").Loop(false).Speed(1.f).Apply();
+
+	HitDesc hitDesc{};
+	hitDesc.fDamage = 30.f;
+	pOwner->Active_AttackSign();
+	pOwner->SetAutoPlayBattleCollider("Right_Arm", 0.f, 0.2f, hitDesc);
 }
 
 void CSacrificeState_Attack_05_1_Phase2::Update(CSacrifice* pOwner, _float dt)
@@ -345,12 +411,43 @@ void CSacrificeState_Attack_05_1_Phase2::Exit(CSacrifice* pOwner)
 {
 }
 
+void CSacrificeState_Attack_05_1_Phase2::Update_Effects(CSacrifice* pOwner)
+{
+	auto pTransform = pOwner->Get_Component<CTransform>();
+	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
+
+	/* Smoke Slash */
+	if (IsCrossAnimProgress(0.15f))
+	{
+		auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_smoke_slash2.json")
+			.Build("SmokeSlash");
+
+		_vector3 vRight = pTransform->Dir(STATE::RIGHT);
+
+		_vector3 vWorldPosition = pTransform->Get_WorldPos();
+		vWorldPosition.y += 2.f;
+		vWorldPosition += vRight * 0.5f;
+		_quaternion worldQuaternion = pTransform->Get_QuaternionRotate();
+		_quaternion localQuaternion = _quaternion(0.07f, 0.06f, 0.99f, 0.12f);
+		localQuaternion *= worldQuaternion;
+
+		auto pEffectTransform = effect->Get_Component<CTransform>();
+		pEffectTransform->Set_Quaternion(localQuaternion);
+		pEffectTransform->Set_Pos(vWorldPosition);
+
+		ObjectManager()->Add_Object(effect, { pOwner->Get_Level(),"Effect_Layer" });
+	}
+}
+
 void CSacrificeState_Attack_08_Phase2::Enter(CSacrifice* pOwner)
 {
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("Monster_SacrificeBringer_Ani_P2_Attack_08").Loop(false).Speed(1.2f).Apply();
 
+	HitDesc hitDesc{};
 	pOwner->Active_AttackSign();
+	pOwner->SetAutoPlayBattleCollider("Axe", 0.f, 0.4f, hitDesc);
 
 	m_IsAttackStart = false;
 	m_IsAttackEnd = false; 

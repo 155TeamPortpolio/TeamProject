@@ -90,6 +90,8 @@ public:
 	static CSacrificeState_Attack_05_Phase2* Create() { return new CSacrificeState_Attack_05_Phase2(); }
 	virtual void Free() override { __super::Free(); }
 
+private:
+	void Update_Effects(CSacrifice* pOwner);
 };
 
 class CSacrificeState_Attack_05_1_Phase2 : public IHState<CSacrifice>
@@ -103,6 +105,8 @@ public:
 	static CSacrificeState_Attack_05_1_Phase2* Create() { return new CSacrificeState_Attack_05_1_Phase2(); }
 	virtual void Free() override { __super::Free(); }
 
+private:
+	void Update_Effects(CSacrifice* pOwner);
 };
 
 class CSacrificeState_Attack_08_Phase2 : public IHState<CSacrifice>
