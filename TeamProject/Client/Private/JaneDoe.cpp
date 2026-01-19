@@ -12,6 +12,7 @@
 #include "ObjectContainer.h"
 
 #include "StateMachine.h"
+#include "JaneDoeState_Start.h"
 #include "JaneDoeState_Idle.h"
 #include "JaneDoeState_Move.h"
 #include "JaneDoeState_Attack.h"
@@ -161,6 +162,11 @@ void CJaneDoe::Render_GUI()
 	}
 }
 
+void CJaneDoe::On_Start()
+{
+	m_pStateMachine->Set_Trigger("QuestStart");
+}
+
 void CJaneDoe::On_SwitchIn(SWITCH eType)
 {
 	m_fDissolveProgress = 0.f;
@@ -239,6 +245,7 @@ HRESULT CJaneDoe::Initialize_StateMachine()
 
 HRESULT CJaneDoe::Initialize_States()
 {
+	m_pStateMachine->Register_State("Start", CJaneDoeState_Start::Create());
 	m_pStateMachine->Register_State("Idle", CJaneDoeState_Idle::Create());
 	m_pStateMachine->Register_State("Move", CJaneDoeState_Move::Create());
 	m_pStateMachine->Register_State("Attack", CJaneDoeState_Attack::Create());
@@ -252,6 +259,13 @@ HRESULT CJaneDoe::Initialize_States()
 
 HRESULT CJaneDoe::Initialize_Transitions()
 {
+	// Start
+	m_pStateMachine->Register_AnyStateTransition("Start",
+		CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "QuestStart");
+
+	m_pStateMachine->Register_Transition("Start", "Idle",
+		CStateMachine<CJaneDoe>::CONDITION_ANIMATION_END);
+
 	// Idle -> Move
 	m_pStateMachine->Register_Transition("Idle", "Move",
 		CStateMachine<CJaneDoe>::CONDITION_BOOL_TRUE, "IsMove");
