@@ -23,13 +23,13 @@ CGameObject* CCamDirector::GetCamObj(CamType type) const
     return objMgr.Request_Object(m_camHandles[ENUM(type)]);
 }
 
-_bool CCamDirector::Register(const string& key, const filesystem::path& path)
+_bool CCamDirector::Register(const string& key, const fs::path& path)
 {
     CamSequenceRequestDesc req{};
     return Register(key, path, req);
 }
 
-_bool CCamDirector::Register(const string& key, const filesystem::path& path, const CamSequenceRequestDesc& defaultReq)
+_bool CCamDirector::Register(const string& key, const fs::path& path, const CamSequenceRequestDesc& defaultReq)
 {
     CamDirectorSeqEntry entry{};
     entry.path = path;

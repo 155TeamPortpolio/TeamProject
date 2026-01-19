@@ -69,13 +69,13 @@ HRESULT CMainApp::Initialize()
 	Set_Levels();
 
 	CDataBase::GetInstance()->CreateTable();
-	CBattleSystem::GetInstance(); //ï¿½ì¼± ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	CBattleSystem::GetInstance();
 	CDataBase::GetInstance();
 	auto uiDirector = CUIDirector::GetInstance();
 	uiDirector->Initialize();
 
 	CFieldSystem::GetInstance();
-	/* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿? ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½ï¿½ ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿? */
+
 	Initialize_GlobalPrototype();
 	Create_GlobalPlayer();
 	Create_GlobalCamObjs();
@@ -104,7 +104,7 @@ HRESULT CMainApp::Render()
 	return S_OK;
 }
 
-void CMainApp::Set_Levels() //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿? ï¿½Ô¼ï¿½ ->ï¿½ï¿½ï¿? ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+void CMainApp::Set_Levels()
 {
 	LevelManager()->Register_Level("Test_Level",     []()->CLevel* {return CTestLevel::Create("Test_Level"); });
 	LevelManager()->Register_Level("Logo_Level",     []()->CLevel* {return CLogoLevel::Create("Logo_Level"); });
