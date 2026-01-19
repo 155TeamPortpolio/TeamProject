@@ -61,7 +61,7 @@ HRESULT CZero_Level::Initialize()
 	m_StageContainer.emplace(StageType::Boss, boss);
 	m_StageContainer.emplace(StageType::Normal, normal);
 
-	ChangeStage(StageType::Normal, 1);
+	ChangeStage(StageType::Boss, 1);
 	m_Context.pNowStage->Ready_Stage(m_Context);
 
 	{

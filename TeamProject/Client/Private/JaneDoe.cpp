@@ -62,18 +62,22 @@ HRESULT CJaneDoe::Initialize_Prototype()
 		ResourceManager()->Add_ResourcePath("janedoe_normal1_slash.json", "../Bin/Resources/Effect/Data/JaneDoe/janedoe_normal1_slash.json");
 		ResourceManager()->Add_ResourcePath("janedoe_normal2_slash.json", "../Bin/Resources/Effect/Data/JaneDoe/janedoe_normal2_slash.json");
 		ResourceManager()->Add_ResourcePath("janedoe_normal3_slash.json", "../Bin/Resources/Effect/Data/JaneDoe/janedoe_normal3_slash.json");
+		ResourceManager()->Add_ResourcePath("janedoe_normal1_sting.json", "../Bin/Resources/Effect/Data/JaneDoe/janedoe_normal1_sting.json");
 
 		/* Texture */
 		ResourceManager()->Add_ResourcePath("Eff_MeleeTrail_078_YZ_05.png", "../Bin/Resources/Effect/Texture/Eff_MeleeTrail_078_YZ_05.png");
 		ResourceManager()->Add_ResourcePath("smoke2.png", "../Bin/Resources/Effect/Texture/smoke2.png");
 		ResourceManager()->Add_ResourcePath("Dissolve.png", "../Bin/Resources/Effect/Texture/Dissolve.png");
-		ResourceManager()->Add_ResourcePath("smoke2.png", "../Bin/Resources/Effect/Texture/smoke2.png");
+		ResourceManager()->Add_ResourcePath("smoke0.png", "../Bin/Resources/Effect/Texture/smoke0.png");
+		ResourceManager()->Add_ResourcePath("Eff_Trail_140_LYF_01.png", "../Bin/Resources/Effect/Texture/Eff_Trail_140_LYF_01.png");
 
 		/* Model */
 		ResourceManager()->Add_ResourcePath("JaneDoe_Slash0.model", "../Bin/Resources/Effect/Model/JaneDoe_Slash0/JaneDoe_Slash0.model");
 		ResourceManager()->Add_ResourcePath("JaneDoe_Slash0.mat", "../Bin/Resources/Effect/Model/JaneDoe_Slash0/JaneDoe_Slash0.mat");
 		ResourceManager()->Add_ResourcePath("JaneDoe_Slash1.model", "../Bin/Resources/Effect/Model/JaneDoe_Slash1/JaneDoe_Slash1.model");
 		ResourceManager()->Add_ResourcePath("JaneDoe_Slash1.mat", "../Bin/Resources/Effect/Model/JaneDoe_Slash1/JaneDoe_Slash1.mat");
+		ResourceManager()->Add_ResourcePath("JaneDoe_Sting0.model", "../Bin/Resources/Effect/Model/JaneDoe_Sting0/JaneDoe_Sting0.model");
+		ResourceManager()->Add_ResourcePath("JaneDoe_Sting0.mat", "../Bin/Resources/Effect/Model/JaneDoe_Sting0/JaneDoe_Sting0.mat");
 	}
 	return S_OK;
 }
@@ -374,6 +378,7 @@ HRESULT CJaneDoe::Initialize_Effects()
 			.Asset("janedoe_normal1_slash.json")
 			.Build("JaneDoe_Normal_Slash0");
 
+		pEffect->Stop();
 		pObjectContainer->Add_Child(pEffect);
 	}
 
@@ -383,6 +388,7 @@ HRESULT CJaneDoe::Initialize_Effects()
 			.Asset("janedoe_normal1_slash.json")
 			.Build("JaneDoe_Normal_Slash1");
 
+		pEffect->Stop();
 		pObjectContainer->Add_Child(pEffect);
 	}
 
@@ -392,6 +398,7 @@ HRESULT CJaneDoe::Initialize_Effects()
 			.Asset("janedoe_normal1_slash.json")
 			.Build("JaneDoe_Normal_Slash2");
 
+		pEffect->Stop();
 		pObjectContainer->Add_Child(pEffect);
 	}
 
@@ -401,6 +408,7 @@ HRESULT CJaneDoe::Initialize_Effects()
 			.Asset("janedoe_normal1_slash.json")
 			.Build("JaneDoe_Normal_Slash3");
 
+		pEffect->Stop();
 		pObjectContainer->Add_Child(pEffect);
 	}
 
@@ -410,6 +418,7 @@ HRESULT CJaneDoe::Initialize_Effects()
 			.Asset("janedoe_normal1_slash.json")
 			.Build("JaneDoe_Normal_Slash4");
 
+		pEffect->Stop();
 		pObjectContainer->Add_Child(pEffect);
 	}
 
@@ -419,6 +428,7 @@ HRESULT CJaneDoe::Initialize_Effects()
 			.Asset("janedoe_normal2_slash.json")
 			.Build("JaneDoe_Cross_Slash");
 
+		pEffect->Stop();
 		pObjectContainer->Add_Child(pEffect);
 	}
 
@@ -428,6 +438,17 @@ HRESULT CJaneDoe::Initialize_Effects()
 			.Asset("janedoe_normal3_slash.json")
 			.Build("JaneDoe_Wide_Slash");
 
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+
+	/* Sting */
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("janedoe_normal1_sting.json")
+			.Build("JaneDoe_Sting");
+
+		pEffect->Stop();
 		pObjectContainer->Add_Child(pEffect, false);
 	}
 

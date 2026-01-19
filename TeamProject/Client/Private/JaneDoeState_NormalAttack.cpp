@@ -452,6 +452,29 @@ void CJaneDoeState_Attack_06::Update_Effects(CJaneDoe* pOwner)
         pEffectTransform->Set_Quaternion(_quaternion(0.76f, -0.22f, -0.25f, 0.55f));
         static_cast<CEffectContainer*>(effect)->Play();
     }
+
+    /* Sting */
+    if (IsCrossAnimProgress(0.63f))
+    {
+        auto pTransform = pOwner->Get_Component<CTransform>();
+
+        auto pObjectContainer = pOwner->Get_Component<CObjectContainer>();
+
+        _smatrix worldMatrix = pTransform->Get_WorldMatrix();
+        _vector3 vWorldPosition = _vector3::Transform(_vector3(0.f, 3.5f, -1.4f), worldMatrix);
+
+        _quaternion localQuaternion = _quaternion(0.28f, 0.f, 0.f, 0.96f);
+        _quaternion worldQuaternion = pTransform->Get_QuaternionRotate();
+        localQuaternion *= worldQuaternion;
+
+        auto effect = pObjectContainer->Find_ObjectByName("JaneDoe_Sting");
+        auto pEffectTransform = effect->Get_Component<CTransform>();
+
+        pEffectTransform->Set_WorldPos(vWorldPosition);
+        pEffectTransform->Set_WorldQuaternion(localQuaternion);
+
+        static_cast<CEffectContainer*>(effect)->Play();
+    }
 }
 
 void CJaneDoeState_Attack_End::Enter(CJaneDoe* pOwner)

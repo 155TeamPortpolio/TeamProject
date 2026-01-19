@@ -24,6 +24,7 @@ public:
 
 public:
     void Play() override;
+    void Stop() override;
 
 public:
     static CMeshNode* Create();
