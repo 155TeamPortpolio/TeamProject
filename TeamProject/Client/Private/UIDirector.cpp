@@ -5,6 +5,7 @@
 #include "UI_Object.h"
 #include "UILoader.h"
 #include "UI_ScreenFade.h"
+#include "UI_BattleHUD.h"
 
 IMPLEMENT_SINGLETON(CUIDirector);
 
@@ -26,6 +27,26 @@ void CUIDirector::FadeOut_Screen(_float fDuration)
 	CUI_ScreenFade::FADE_DESC desc = {};
 	desc.fDuration = fDuration;
 	m_hScreenFade.Get()->UI_DeActive(&desc);
+}
+
+void CUIDirector::Show_BattleHUD(_bool isFade)
+{
+	auto it = m_handles.find("hud_battle");
+	if (!it->second.isValid())
+		return;
+
+	CUI_BattleHUD::SHOW_DESC desc = {};
+	desc.isFade = isFade;
+	it->second.Get()->UI_Active(&desc);
+}
+
+void CUIDirector::Hide_BattleHUD()
+{
+	auto it = m_handles.find("hud_battle");
+	if (!it->second.isValid())
+		return;
+
+	it->second.Get()->UI_DeActive();
 }
 
 void CUIDirector::Initialize()
@@ -94,7 +115,7 @@ void CUIDirector::Load_LevelObjects(const string& levelKey)
 
 	// 화면 전환시 사용할 스크린 페이드 
 	auto pScreenFade = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_ScreenFade" })
-		.Build("screenFade");
+		.Build("screen_fade");
 
 	if (!pScreenFade)
 		return;

@@ -24,13 +24,13 @@
       "objects": [ 
         {
           "prototypeTag": "Proto_GameObject_BattleHUD",
-          "instanceName": "battleHUD",
+          "instanceName": "hud_battle",
           "prefabPath" : ""
         },
         
         {
           "prototypeTag": "Proto_GameObject_SceneFrame",
-          "instanceName": "sceneFrame",
+          "instanceName": "scene_frame",
           "prefabPath" : ""
         }
       ]
@@ -40,7 +40,7 @@
       "objects": [ 
         {
           "prototypeTag": "Proto_GameObject_BattleHUD",
-          "instanceName": "battleHUD",
+          "instanceName": "hud_battle",
           "prefabPath" : ""
         }
       ]
@@ -50,7 +50,7 @@
       "objects": [ 
         {
           "prototypeTag": "Proto_GameObject_FieldHUD",
-          "instanceName": "fieldHUD",
+          "instanceName": "hud_field",
           "prefabPath" : ""
         }
       ]
