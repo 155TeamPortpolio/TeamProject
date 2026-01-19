@@ -5,6 +5,7 @@
 
 void CCorinState_SwitchOut::Enter(CCorin* pOwner)
 {
+    pOwner->Push_Invincible();
     pOwner->Lock_Move();
     pOwner->Stop_Rotation();
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "SwitchOut_Normal")

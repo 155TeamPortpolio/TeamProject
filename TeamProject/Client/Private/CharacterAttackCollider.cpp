@@ -96,6 +96,7 @@ void CCharacterAttackCollider::OnTriggerEnter(CGameObject* pOther)
 	auto pEnemy = dynamic_cast<CEnemy*>(pOther);
 	if (nullptr != pEnemy)
 	{
+		CollisionSystem()->Log_CollisionEvent("Enemy Take Enter Damage" + to_string(m_tHitDesc.fDamage));
 		pEnemy->TakeDamage(m_tHitDesc.eDamageType, m_tHitDesc.fDamage);
 		BattleSystem()->GetBattlePlayer()->Add_Gauge(10.f, 100.f);
 		
@@ -115,10 +116,11 @@ void CCharacterAttackCollider::OnTriggerStay(CGameObject* pOther)
 		return;
 	if (!Try_Hit(pOther))
 		return;
-
+	
 	auto pEnemy = dynamic_cast<CEnemy*>(pOther);
 	if (nullptr != pEnemy)
 	{
+		CollisionSystem()->Log_CollisionEvent("Enemy Take Stay Damage" + to_string(m_tHitDesc.fDamage));
 		pEnemy->TakeDamage(m_tHitDesc.eDamageType, m_tHitDesc.fDamage);
 		BattleSystem()->GetBattlePlayer()->Add_Gauge(10.f, 100.f);
 

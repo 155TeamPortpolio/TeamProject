@@ -171,9 +171,18 @@ void CCharacter::OnCollisionExit(CGameObject* pOther)
 
 void CCharacter::OnTriggerEnter(CGameObject* pOther)
 {
-	if (Is_Invincible())	return;
 	ICollidable* pCollidable = pOther->Get_Component<ICollidable>();
 	if (!pCollidable) return;
+
+	if (pCollidable->Get_Group() == COLLISION_GROUP::INTERACABLE)
+	{
+		// Interact 활성화
+		UI_ACTION_PRIMARY_DESC desc;
+		desc.eMode = UI_ACTION_PRIMARY_MODE::INTERACT;
+		EventSystem()->Broadcast<UI_ACTION_PRIMARY_DESC>({ desc });
+	}
+
+	if (Is_Invincible())	return;
 	CollisionSystem()->Log_CollisionEvent(Helper::EnumToString(pCollidable->Get_Group()));
 	if (pCollidable->Get_Group() == COLLISION_GROUP::MONSTER_PARRY)
 	{
@@ -206,6 +215,41 @@ void CCharacter::OnTriggerStay(CGameObject* pOther)
 
 void CCharacter::OnTriggerExit(CGameObject* pOther)
 {
+	ICollidable* pCollidable = pOther->Get_Component<ICollidable>();
+	if (!pCollidable) return;
+
+	if (pCollidable->Get_Group() == COLLISION_GROUP::INTERACABLE)
+	{
+		// Interact 비활성화
+		UI_ACTION_PRIMARY_DESC desc;
+		desc.eMode = UI_ACTION_PRIMARY_MODE::ATTACK;
+		EventSystem()->Broadcast<UI_ACTION_PRIMARY_DESC>({ desc });
+		
+		// Energy, Decibel 
+		UI_ACTION_DESC actiondesc;
+		actiondesc.eType = UI_ACTION_TYPE::SPECIAL;
+		if (m_tEnergy.fCurrentEnergy >= m_tEnergy.fSpecialEnergy)
+		{
+			actiondesc.eState = UI_ACTION_STATE::AVAILABLE;
+		}
+		else
+		{
+			actiondesc.eState = UI_ACTION_STATE::ENABLE;
+		}
+		EventSystem()->Broadcast<UI_ACTION_DESC>({ actiondesc });
+
+		actiondesc.eType = UI_ACTION_TYPE::ULTIMATE;
+		if (m_fCurrentDecibel >= MAX_DECIBEL)
+		{
+			actiondesc.eState = UI_ACTION_STATE::AVAILABLE;
+		}
+		else
+		{
+			actiondesc.eState = UI_ACTION_STATE::ENABLE;
+		}
+		EventSystem()->Broadcast<UI_ACTION_DESC>({ actiondesc });
+	}
+
 	m_ParryableTargets.erase(pOther);
 }
 

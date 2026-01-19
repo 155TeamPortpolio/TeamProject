@@ -88,7 +88,7 @@ public:
     _float  Get_CurrentDecibel() const { return m_fCurrentDecibel; }
     _float  Get_PrevDecibel() const { return m_fPrevDecibel; }
     _float  Get_MaxDecibel() const { return MAX_DECIBEL; }
-    void    Set_Decibel(_float fDecibel) { m_fCurrentDecibel = fDecibel; }
+    void    Set_Decibel(_float fDecibel) { m_fCurrentDecibel = min(fDecibel, MAX_DECIBEL); }
     // 움직임
     _vector3    Get_InputDir() const { return m_inputInfo.direction; }
     _vector3    Get_PrevInputDir() const { return m_inputInfo.prevDirection; }
@@ -117,7 +117,6 @@ public:
 
     OBJECT_HANDLE       Get_TargetHandle() { return m_TargetHandle; };
     void                Set_TargetHandle(OBJECT_HANDLE targetHandle) { m_TargetHandle = targetHandle; };
-
 
     void    Active_Character();
     void    DeActive_Character();
