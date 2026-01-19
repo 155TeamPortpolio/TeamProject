@@ -8,13 +8,17 @@ NS_END
 
 NS_BEGIN(Client)
 
-enum class HIT_DIR { FU, FD, FL, FR, BU, BD, BL, BR };
 enum class DIR {F, FR, R, BR, B, BL, L, FL};
 
 class CEnemy abstract :
     public CGameObject
 {
 public:
+    typedef struct tagEnemyCreateDesc : public Engine::GAMEOBJECT_DESC 
+    {
+        _float  iMaxHP = {};
+    }ENEMY_DESC;
+
     enum class BATTLE_COLTYPE { ATTACK, TRIGGER };
 protected:
     CEnemy();
@@ -28,8 +32,8 @@ public:
     virtual void    Update(_float dt) override;
     virtual void    Late_Update(_float dt) override;
 
-    virtual void OnPooledAcquire(INIT_DESC* pArg = nullptr) {}	// 풀에서 꺼낼 때
-    virtual void OnPooledRelease() {}							// 풀로 돌아갈 때
+    virtual void    OnPooledAcquire(INIT_DESC* pArg = nullptr) {}	// 풀에서 꺼낼 때
+    virtual void    OnPooledRelease() {}							// 풀로 돌아갈 때
 
 
 public:

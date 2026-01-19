@@ -37,6 +37,10 @@ HRESULT CEnemy::Initialize(INIT_DESC* pArg)
 {
 	__super::Initialize(pArg);
 
+	ENEMY_DESC* pDesc = static_cast<ENEMY_DESC*>(pArg);
+
+	m_tStatus.iMaxHP = m_tStatus.iNowHP = pDesc->iMaxHP;
+
 	return S_OK;
 }
 

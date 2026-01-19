@@ -57,6 +57,7 @@ void CGUISystem::Update(_float dt)
 {
 	if (m_pGameInstance->Get_InputDev()->Key_Tap(VK_F9))
 		m_bActiveGUI = !m_bActiveGUI;
+
 	if (!m_bActiveGUI) return;
 
 	m_tGuiContext.viewPort = m_pGameInstance->Get_ClientSize();

@@ -51,8 +51,8 @@ void CThugAssaulter_Hit::Exit(CThugAssaulter* pOwner)
 void CThugAssaulter_Hit::Register_States()
 {
 	m_pSubStateMachine->Register_State("Knock", CThugAssaulter_Hit_Knock::Create());
-	m_pSubStateMachine->Register_State("H_Front", CThugAssaulter_Hit_H_Front::Create());
-	m_pSubStateMachine->Register_State("H_Back", CThugAssaulter_Hit_H_Back::Create());
+	m_pSubStateMachine->Register_State("Hit_H_Front", CThugAssaulter_Hit_H_Front::Create());
+	m_pSubStateMachine->Register_State("Hit_H_Back", CThugAssaulter_Hit_H_Back::Create());
 	m_pSubStateMachine->Register_State("Hit_L_Back_Down", CThugAssaulter_Hit_L_Back_Down::Create());
 	m_pSubStateMachine->Register_State("Hit_L_Back_Up", CThugAssaulter_Hit_L_Back_Up::Create());
 	m_pSubStateMachine->Register_State("Hit_L_Back_Left", CThugAssaulter_Hit_L_Back_Left::Create());
