@@ -48,8 +48,8 @@ public:
     void     AddZoom(CamZoomType type, _float strength = 1.f)   override { m_zoom.Add(type, strength); }
 
     void     AddImpact(CamShakeType shakeType, CamZoomType zoomType, _float strength = 1.f) override;
-    void     AddImpact(_uint shakeType, _uint zoomType, _float strength = 1.f) override;
-
+    void     AddImpact(_uint shakeType = 0u, _uint zoomType = ENUM(CamZoomType::End), _float strength = 1.f) override;
+;
     Lens     Get_Lens()       const override;
     Lens     Get_ShadowLens() const override;
 

@@ -225,8 +225,11 @@ void CCameraMgr::AddImpact(CamShakeType shakeType, CamZoomType zoomType, _float 
 
 void CCameraMgr::AddImpact(_uint shakeType, _uint zoomType, _float strength)
 {
-    m_shake.Add(static_cast<CamShakeType>(shakeType), strength);
-    m_zoom.Add(static_cast<CamZoomType>(zoomType), strength);
+    if (shakeType < ENUM(CamShakeType::End))
+        m_shake.Add(static_cast<CamShakeType>(shakeType), strength);
+
+    if (zoomType < ENUM(CamShakeType::End))
+        m_zoom.Add(static_cast<CamZoomType>(zoomType), strength);
 }
 
 Lens CCameraMgr::Get_Lens() const

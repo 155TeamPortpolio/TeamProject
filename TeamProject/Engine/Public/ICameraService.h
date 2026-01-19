@@ -1,6 +1,8 @@
 #pragma once
 #include "IService.h"
 #include "Engine_Math.h"
+#include "ZoomControllerData.h"
+
 NS_BEGIN(Engine)
 class CCamera; struct Lens; enum class CamShakeType; enum class CamZoomType;
 
@@ -42,7 +44,7 @@ public:
     virtual void AddZoom(CamZoomType type, _float strength = 1.f) PURE;
 
     virtual void AddImpact(CamShakeType shakeType, CamZoomType zoomType, _float strength = 1.f) PURE;
-    virtual void AddImpact(_uint shakeType, _uint zoomType, _float strength = 1.f) PURE;
+    virtual void AddImpact(_uint shakeType = 0u, _uint zoomType = ENUM(CamZoomType::End), _float strength = 1.f) PURE;
 
     virtual Lens Get_Lens() const PURE;
     virtual Lens Get_ShadowLens() const PURE;
