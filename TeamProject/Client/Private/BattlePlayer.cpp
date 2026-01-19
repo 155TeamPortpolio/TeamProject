@@ -47,6 +47,11 @@ void CBattlePlayer::SetBattleCharacters(vector<CHARACTER> battleCharacters)
 	CBattleSystem::GetInstance()->SetPlayer(m_CharacterHandles);
 }
 
+void CBattlePlayer::QuestStart()
+{
+	m_pCurrentCharacter->On_Start();
+}
+
 HRESULT CBattlePlayer::Initialize()
 {
 	CBattleSystem::GetInstance()->SetBattlePlayer(this);

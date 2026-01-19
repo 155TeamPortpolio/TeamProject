@@ -140,6 +140,7 @@ public:
     virtual void    OnTriggerExit(CGameObject* pOther) override;
 
 public:
+    virtual void    On_Start() {};
     virtual void    On_Move(const InputInfo& inputInfo);
     virtual void    On_Attack();
     virtual void    On_Evade();
