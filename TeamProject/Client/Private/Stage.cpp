@@ -52,7 +52,7 @@ void CStage::BaseIntro(CZero_Level::StageContext& context)
 		}
 
 		m_introFlow.EndSequence(seqId);
-	}
+	}	
 
 	m_introFlow.Start();
 }
