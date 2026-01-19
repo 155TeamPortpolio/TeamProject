@@ -35,6 +35,7 @@
 #include "AttackSign.h"
 #include "Player.h"
 /* UI */
+#include "UI_ScreenFade.h"
 #include "UI_EnemyStatus.h"
 #include "UI_MeshPyramid.h"
 #include "UI_MeshBillboard.h"
@@ -116,7 +117,7 @@ void CMainApp::Set_Levels() //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿? ï¿½Ô¼ï¿½ ->ï¿½ï¿½ï¿? ï¿½ï¿½
 
 	LevelManager()->Set_LoadingLevel("Loading_Level");
 	m_pGameInstance->Notify_LevelSet(); 
-	m_pGameInstance->Get_LevelMgr()->Request_ChangeLevel("Scott_Level",true); 
+	m_pGameInstance->Get_LevelMgr()->Request_ChangeLevel("Test_Level",true); 
 } 
 
 CMainApp* CMainApp::Create()
@@ -166,6 +167,7 @@ void CMainApp::Initialize_GlobalPrototype()
 	/*Player*/
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Player", CPlayer::Create());
 	/* UI */
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_ScreenFade", CUI_ScreenFade::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_EnemyStatus", CUI_EnemyStatus::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_MeshPyramid", CUI_MeshPyramid::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_MeshBillboard", CUI_MeshBillboard::Create());

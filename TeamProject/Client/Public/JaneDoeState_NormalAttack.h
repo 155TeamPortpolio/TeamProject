@@ -98,6 +98,10 @@ public:
 public:
     static CJaneDoeState_Attack_05* Create() { return new CJaneDoeState_Attack_05(); }
     virtual void Free() override { __super::Free(); }
+
+private:
+    void Update_Effects(CJaneDoe* pOwner);
+
 };
 
 class CJaneDoeState_Attack_06 : public IBaseState<CJaneDoe>
@@ -110,6 +114,10 @@ public:
 public:
     static CJaneDoeState_Attack_06* Create() { return new CJaneDoeState_Attack_06(); }
     virtual void Free() override { __super::Free(); }
+
+private:
+    void Update_Effects(CJaneDoe* pOwner);
+
 };
 
 class CJaneDoeState_Attack_End : public IBaseState<CJaneDoe>

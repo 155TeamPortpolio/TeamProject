@@ -214,7 +214,7 @@
           "TagModelResourceKey": "Stage_Zero_Abyss_1_1_NAPMesh.model",
           "TagMaterialResourceKey": "Stage_Zero_Abyss_1_1_NAPMesh.mat",
           "vRight": [
-            0.9490808248519897,
+            1.0,
             0.0,
             0.0,
             0.0
@@ -228,12 +228,12 @@
           "vLook": [
             0.0,
             0.0,
-            0.9573989510536194,
+            1.0,
             0.0
           ],
           "vPos": [
-            21.788652420043945,
-            -16.5,
+            21.623668670654297,
+            -16.331668853759766,
             38.97603988647461,
             1.0
           ]
