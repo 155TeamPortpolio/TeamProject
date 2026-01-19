@@ -23,13 +23,13 @@ CGameObject* CCamDirector::GetCamObj(CamType type) const
     return objMgr.Request_Object(m_camHandles[ENUM(type)]);
 }
 
-_bool CCamDirector::Register(const string& key, const filesystem::path& path)
+_bool CCamDirector::Register(const string& key, const fs::path& path)
 {
     CamSequenceRequestDesc req{};
     return Register(key, path, req);
 }
 
-_bool CCamDirector::Register(const string& key, const filesystem::path& path, const CamSequenceRequestDesc& defaultReq)
+_bool CCamDirector::Register(const string& key, const fs::path& path, const CamSequenceRequestDesc& defaultReq)
 {
     CamDirectorSeqEntry entry{};
     entry.path = path;
@@ -100,9 +100,6 @@ CPlayer* CCamDirector::GetPlayer() const
 
 void CCamDirector::UpdateInput()
 {
-    if (!IsPlaying("Intro/Jane_Intro") && InputDevice()->Key_Tap('Y'))
-        exit(0);
-
     if (InputDevice()->Key_Tap(VK_F1))
         camMgr.Set_MainCam(GetFreeCamComp(), 0.5f);
 
@@ -111,9 +108,6 @@ void CCamDirector::UpdateInput()
 
     if (InputDevice()->Key_Tap(VK_F3))
         RequestSequence("Intro/Jane_Intro");
-
-    //if (InputDevice()->Mouse_Tap(MOUSE_BTN::LB))
-    //    camMgr.AddShake(CamShakeType::HitNormal);
 }
 
 void CCamDirector::AbortSequenceToOrbit(_bool resetTime)
