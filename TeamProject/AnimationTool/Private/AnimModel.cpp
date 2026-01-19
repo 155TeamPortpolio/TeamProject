@@ -202,27 +202,6 @@ void CAnimModel::Load_ModelOnce()
 		string ext = p.extension().string();
 		string stem = p.stem().string();
 
-		// 기준 이름 설정
-		if (baseName.empty())
-			baseName = stem;
-		else if (baseName != stem) {
-			if (ext == ".json") {
-				size_t pos = stem.find("_Meta");
-				if (pos == string::npos)
-					return;
-
-				if (baseName != stem.substr(0, pos))
-					return;
-			}
-			else {
-				if (baseName != stem) {
-					size_t pos = baseName.find(stem);
-					if (pos == string::npos)
-						return;
-				}
-			}
-		}
-
 		if (ext == ".model")
 		{
 			if (bModel) return;

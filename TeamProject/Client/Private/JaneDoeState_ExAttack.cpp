@@ -23,6 +23,28 @@ void CJaneDoeState_ExAttack::Enter(CJaneDoe* pOwner)
 
 void CJaneDoeState_ExAttack::Update(CJaneDoe* pOwner, _float dt)
 {
+    for (const auto& Event : pOwner->Get_Component<CAnimator3D>()->Get_EventBus())
+    {
+        if (Event.Type != CLIP_EVENT_TYPE::NOTIFY) continue;
+
+        if (Event.Tag == "LFootStart")
+        {
+            pOwner->Begin_AttackCollider("FootWeapon_L", { HIT_TYPE::INTERVAL, DAMAGE_TYPE::HARD, Helper::Get_Random_Float(30,60), 0.05, 0 });
+        }
+        else if (Event.Tag == "LFootEnd")
+        {
+            pOwner->End_AttackCollider("FootWeapon_L");
+        }
+        else if (Event.Tag == "RFootStart")
+        {
+            pOwner->Begin_AttackCollider("FootWeapon_R", { HIT_TYPE::INTERVAL, DAMAGE_TYPE::HARD, Helper::Get_Random_Float(30,60), 0.05, 0 });
+        }
+        else if (Event.Tag == "RFootEnd")
+        {
+            pOwner->End_AttackCollider("FootWeapon_R");
+        }
+    }
+
     __super::Update(pOwner, dt);
 }
 
