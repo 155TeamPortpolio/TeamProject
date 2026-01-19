@@ -172,6 +172,7 @@
     <ClInclude Include="..\public\Interactable.h" />
     <ClInclude Include="..\Public\CorinState_UltimateAttack.h" />
     <ClInclude Include="..\public\JaneDoeState_Hit.h" />
+    <ClInclude Include="..\public\OBJFactory.h" />
     <ClInclude Include="..\public\OrbitLockOnController.h" />
     <ClInclude Include="..\Public\OrbitLockOnData.h" />
     <ClInclude Include="..\Public\SacrificeState_Groggy.h" />
@@ -429,6 +430,7 @@
     <ClCompile Include="..\private\Interactable.cpp" />
     <ClCompile Include="..\Private\CorinState_UltimateAttack.cpp" />
     <ClCompile Include="..\private\JaneDoeState_Hit.cpp" />
+    <ClCompile Include="..\private\OBJFactory.cpp" />
     <ClCompile Include="..\private\OrbitLockOnController.cpp" />
     <ClCompile Include="..\Private\SacrificeState_Groggy.cpp" />
     <ClCompile Include="..\private\Portal.cpp" />
