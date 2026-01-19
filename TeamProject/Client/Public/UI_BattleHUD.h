@@ -5,6 +5,7 @@ NS_BEGIN(Client)
 
 class CUI_BattleHUD final : public CUI_Object
 {
+private:
 	enum Child {
 		ROLE1, ROLE2, ROLE3, 
 		ICON1, ICON2, ICON3,
@@ -46,30 +47,32 @@ public:
 	virtual void    Render_GUI()                     override { __super::Render_GUI(); }
 
 private:
-	UI_HANDLE			m_hRoot;
-	vector<UI_HANDLE>	m_handles; 
+	UI_HANDLE			m_handles[ENUM(Child::END)];
 
-	_bool				m_isUltimate[3] = {};
-	// 150 48
+	static constexpr _int ROLE_COUNT = 3;
+	static constexpr _float HPBACK_DELTA = 5.f;
+	static constexpr _float HPBACK_LERP_SPEED = 7.f;
+
+	GAUGE_DELAY_DESC	m_hpBack[ROLE_COUNT] = {};
+
 private:
 	const _int			m_iPlayerHPWidth = 5;
 	const _int			m_iBossHPWidth = 2;
 
 private:
-	CUI_Object* Ready_Prefab();
-
-	void Add_PartObject(CUI_Object* pRoot, const string& strLevelKey, const string& strPrototypeTag, const string& strInstanceName, Child child, _float2 vOffset = _float2());
-	void Cache_Handles(CUI_Object* pRoot);
-
+	void Add_PartObject( const string& strLevelKey, const string& strPrototypeTag, const string& strInstanceName, Child child, _float2 vOffset = _float2());
+	void Cache_Handles();
+	 
 	void Set_Values(UI_PLAYER_STATUS_DESC desc);
-
 	void Set_Special(_int iIndex, _float fRatio, _float fThresRatio);
 	void Set_UltimateIcon(_int iIndex, _float fRatio);
-	
+
+	void Update_HPBackGauge(_float dt);
+
 	_bool Is_Alive(Child child);
 	void Set_Alive(Child child, _bool isAlive);
 	void Set_Color(Child child, _float4 vColor);
-	void Set_Animation(Child child, _int iIndex);
+	void Set_Anim(Child child, _int iIndex);
 	void Set_Texture(Child child, const string& strTextureKey); 
 	void Set_GaugeFill(Child child, _float fFillAmount);
 	void Set_NumberText(Child child, _int iNum, _int iWidth);

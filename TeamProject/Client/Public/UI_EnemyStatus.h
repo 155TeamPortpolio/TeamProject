@@ -24,8 +24,8 @@ public:
 	}ENEMYSTATUS_DESC;
 
 private:
-	enum class Child { ROOT, LOCKON, HP_GUAGE, GROGGY_GAUGE, GROGGY_TEXT, END };
-	inline static const string INSTANCENAMES[ENUM(Child::END)] = { "enemy_status", "lockOn", "hpGauge", "groggyGauge", "groggyText" };
+	enum class Child { LOCKON, GAUGE_HP_BACK, GAUGE_HP_FRONT, GAUGE_GROGGY, GROGGY_TEXT, END };
+	inline static const string INSTANCENAMES[ENUM(Child::END)] = { "lockOn", "hpBack", "hpFront", "groggy", "groggyText" };
 
 private:
 	CUI_EnemyStatus() {}
@@ -49,6 +49,15 @@ private:
 	const MONSTER_STATUS*	m_pMonsterStatus = { nullptr };
 	OBJECT_HANDLE			m_tOwnerHandle = {};
 
+	static constexpr _float HPBACK_DELTA = 5.f;
+	static constexpr _float HPBACK_LERP_SPEED = 7.f;
+	GAUGE_DELAY_DESC		m_hpBack = {};
+
+	_bool					m_isBlinking = {};
+	_float					m_fBlinkAcc = {};
+	static constexpr _float BLINK_SPEED_MIN = 10.f;
+	static constexpr _float BLINK_SPEED_MAX = 40.f;
+
 	const _float			m_fGroggyMax = { 100.f };	// 그로기 맥스는 무조건 100
 
 private:
@@ -56,9 +65,13 @@ private:
 
 	void Set_WorldPosition();
 
+	void Update_HPBackGauge(_float fRatio, _float dt);
+	void Apply_Blink(_float fRatio, _float dt);
+
 	void Set_Alive(Child child, _bool isAlive);
+	void Set_Color(Child child, _float4 vColor);
 	void Set_Animation(Child child, _int iIndex);
-	void Set_Gauge(Child child, _float fFillAmount);
+	void Set_GaugeFill(Child child, _float fFillAmount);
 	void Set_GroggyText(_int iGroggy); 
 	 
 private:

@@ -15,6 +15,7 @@ void CCorinState_Run::Enter(CCorin* pOwner)
         m_pSubStateMachine->Register_State("Turnback", CCorinState_Run_Turnback::Create());
 
         m_pSubStateMachine->Get_State("End")->Set_Tag("End");
+        m_pSubStateMachine->Get_State("Turnback")->Set_Tag("Turnback");
 
         m_pSubStateMachine->Register_Transition("Loop", "End",
             CStateMachine<CCorin>::CONDITION_BOOL_FALSE, "IsMove");
@@ -65,11 +66,24 @@ void CCorinState_Run_Loop::Enter(CCorin* pOwner)
         .Loop(true)
         .EndAt(0.93f)
         .Apply();
+
+    IHState<CCorin>* pRunState = Get_ParentState();
+    if (pRunState && pRunState->Get_SubStateMachine())
+    {
+        m_fTurnbackCooldown = pRunState->Get_SubStateMachine()->Get_Float("TurnbackCooldown");
+        pRunState->Get_SubStateMachine()->Set_Float("TurnbackCooldown", 0.f);
+    }
 }
 
 void CCorinState_Run_Loop::Update(CCorin* pOwner, _float dt)
 {
-    if (pOwner->Is_OppositeInput())
+    if (m_fTurnbackCooldown > 0.f)
+    {
+        m_fTurnbackCooldown -= dt;
+        if (pOwner->Is_OppositeInput())
+            pOwner->Set_ResetMove(true);
+    }
+    else if (pOwner->Is_OppositeInput())
     {
         IHState<CCorin>* pRunState = Get_ParentState();
         if (pRunState && pRunState->Get_SubStateMachine())
@@ -80,6 +94,7 @@ void CCorinState_Run_Loop::Update(CCorin* pOwner, _float dt)
     }
     pOwner->Process_RootMotion(dt);
 }
+
 
 void CCorinState_Run_End::Enter(CCorin* pOwner)
 {
@@ -104,11 +119,13 @@ void CCorinState_Run_Turnback::Update(CCorin* pOwner, _float dt)
         vInputDir.Normalize();
         pOwner->Rotate(vInputDir);
     }
-
     if (m_fAnimProgress > 0.5f && pOwner->Is_Move())
     {
         IHState<CCorin>* pRunState = Get_ParentState();
         if (pRunState && pRunState->Get_SubStateMachine())
+        {
+            pRunState->Get_SubStateMachine()->Set_Float("TurnbackCooldown", 1.f);
             pRunState->Get_SubStateMachine()->Set_Trigger("ToLoop");
+        }
     }
 }

@@ -17,7 +17,7 @@ public:
     virtual void Update(_float dt);
     virtual void Render_GUI();
     virtual ImGuiContext* GetEngineImGuiContext() override;
-
+    virtual void Set_GUIActive(_bool active) { m_bActiveGUI = active; }
 public:
     virtual GUI_CONTEXT* Get_Context() override  { return &m_tGuiContext; };
     virtual void Register_Panel(class CBasePanel* pPanel)override;

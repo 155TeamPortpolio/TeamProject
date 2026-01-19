@@ -160,7 +160,7 @@ HRESULT CDataBase::LoadMonsterCreationTable(const string& csvPath)
 	trim_chars = 앞 뒤 공백 제거
 	double_quote_escape = "..." 안의 쉼표 및 따옴표 처리 */
 	io::CSVReader<
-		4,
+		5,
 		io::trim_chars<' ', '\t'>,
 		io::double_quote_escape<',', '"'>
 	>in(csvPath);
@@ -172,16 +172,15 @@ HRESULT CDataBase::LoadMonsterCreationTable(const string& csvPath)
 	in.read_header(
 		io::ignore_extra_column | io::ignore_missing_column,
 		"ProtoTag", "DisplayName",
-		"CCT_fHeight", "CCT_fRadius"/*, "CCT_vPos_X", "CCT_vPos_Y", "CCT_vPos_Z"*/
+		"CCT_fHeight", "CCT_fRadius", "MaxHP"
 	);
 
 	string	ProtoTag{}, DisplayName{};
-	_float	CCT_fHeight{}, CCT_fRadius{};
-	//_float	CCT_vPos_X{}, CCT_vPos_Y{}, CCT_vPos_Z{};
+	_float	CCT_fHeight{}, CCT_fRadius{}, MaxHP{};
 
 	while (in.read_row(
 		ProtoTag, DisplayName,
-		CCT_fHeight, CCT_fRadius/*, CCT_vPos_X, CCT_vPos_Y, CCT_vPos_Z*/
+		CCT_fHeight, CCT_fRadius, MaxHP
 	))
 	{
 		if (ProtoTag.empty())
@@ -192,7 +191,7 @@ HRESULT CDataBase::LoadMonsterCreationTable(const string& csvPath)
 		desc.DisplayName = DisplayName;
 		desc.CCT_fHeight = CCT_fHeight;
 		desc.CCT_fRadius = CCT_fRadius;
-		//desc.CCT_vPos = { CCT_vPos_X, CCT_vPos_Y, CCT_vPos_Z };
+		desc.iMaxHP = MaxHP;
 
 		auto [iter, inserted] = m_MonsterCreationTables.emplace(desc.ProtoTag, move(desc));
 		if (false == inserted) {

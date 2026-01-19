@@ -66,7 +66,7 @@ void CUI_DecibelPts::Init_BgObject(CUI_Object* pBg, CUI_Object* pPts)
 {
     if (auto pSprite = pBg->Get_Component<CSprite2D>())
     {
-        pSprite->Change_Texture(0, G_GlobalLevelKey, "CombatBg00.png");
+        pSprite->Change_Texture(0, G_GlobalLevelKey, "CombatBgPts.png");
     }
     const _float2 pSize = pPts->Get_PxSize();
     pBg->Set_Size({ pSize.x + m_vPadding.x * 2.f, pSize.y + m_vPadding.y * 2.f });

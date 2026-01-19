@@ -1,6 +1,6 @@
 #pragma once
 
-#include "GameObject.h"
+#include "UI_MeshPyramidData.h"
 
 NS_BEGIN(Client)
 
@@ -20,15 +20,14 @@ public:
 
 private:
     _bool   IsOnScreen(_float marginPx = 0.f);
-    _bool   IsAlert();
 
 private:
-    Vector3 color       = {1.f, 1.f, 1.f};
-    _float  alpha       = 0.f;
-    _float  fadeInDur   = 1.f;
-    _float  fadeOutDur  = 1.f;
-    _float  fadeT       = 0.f;
-    _float  alertBlinkT = 0.f;
+    UI_MeshPyramidConfig  cfg{}; 
+    UI_MeshPyramidRuntime rt{};
+
+private:
+    Vector3 color = {1.f, 1.f, 1.f};
+    _float  alpha = 0.f;
 
 public:
     static CGameObject* Create();

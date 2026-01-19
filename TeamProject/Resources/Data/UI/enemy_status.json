@@ -288,9 +288,9 @@
                                 "radian": 0.0
                             },
                             "color": [
-                                0.800000011920929,
-                                0.10196078568696976,
-                                0.10196078568696976,
+                                0.29019609093666077,
+                                0.29411765933036804,
+                                0.2862745225429535,
                                 1.0
                             ],
                             "pass": "Opaque",
@@ -301,7 +301,47 @@
                         },
                         {
                             "alive": true,
-                            "instanceName": "hpGauge",
+                            "instanceName": "hpBack",
+                            "transform": {
+                                "anchor": 0,
+                                "anchorOffset": [
+                                    -52.25,
+                                    -7.0
+                                ],
+                                "size": [
+                                    87.0,
+                                    14.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                0.5921568870544434,
+                                0.1568627506494522,
+                                0.125490203499794,
+                                1.0
+                            ],
+                            "pass": "LinearFill",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "Gauge",
+                            "textureTag": "MonsterHPBg01.png",
+                            "gauge": {
+                                "direction": 0.0,
+                                "fillAmount": 1.0,
+                                "radial": false
+                            }
+                        },
+                        {
+                            "alive": true,
+                            "instanceName": "hpFront",
                             "transform": {
                                 "anchor": 0,
                                 "anchorOffset": [
@@ -376,7 +416,7 @@
                         },
                         {
                             "alive": true,
-                            "instanceName": "groggyGauge",
+                            "instanceName": "groggy",
                             "transform": {
                                 "anchor": 0,
                                 "anchorOffset": [
@@ -398,8 +438,8 @@
                                 "radian": 0.0
                             },
                             "color": [
-                                0.9960784316062927,
-                                0.6627451181411743,
+                                1.0,
+                                0.6941176652908325,
                                 0.0,
                                 1.0
                             ],
@@ -438,9 +478,9 @@
                                 "radian": 0.0
                             },
                             "color": [
-                                0.9960784316062927,
-                                0.6549019813537598,
-                                0.003921568859368563,
+                                1.0,
+                                0.6941176652908325,
+                                0.0,
                                 1.0
                             ],
                             "pass": "Opaque",

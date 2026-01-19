@@ -49,7 +49,6 @@ private:
     void Update_States(const _float dt);
     void ControlState(const _float dt);
     void CheckDistanceFromPlayer();
-    void ProcessDamage(DAMAGE_TYPE eDamageType);
 
 private:
     CStateMachine<CThugAssaulter>* m_pStateMachine = { nullptr };

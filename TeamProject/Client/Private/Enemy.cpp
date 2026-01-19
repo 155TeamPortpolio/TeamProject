@@ -37,6 +37,10 @@ HRESULT CEnemy::Initialize(INIT_DESC* pArg)
 {
 	__super::Initialize(pArg);
 
+	ENEMY_DESC* pDesc = static_cast<ENEMY_DESC*>(pArg);
+
+	m_tStatus.iMaxHP = m_tStatus.iNowHP = pDesc->iMaxHP;
+
 	return S_OK;
 }
 
@@ -131,6 +135,10 @@ void CEnemy::Render_GUI_ForTargetInfo()
 		ImGui::Text("Distance From Character : %.3f", m_tTargetingInfo.fDistance);
 		ImGui::Text("Dot with Target : %.2f", m_tTargetingInfo.fDotTarget);
 		ImGui::Text("Dir To Target : %.2f, %.2f, %.2f", m_tTargetingInfo.vDirToTarget.x, m_tTargetingInfo.vDirToTarget.y, m_tTargetingInfo.vDirToTarget.z);
+		
+		const _char* map[8] = { "F", "FR", "R", "BR", "B", "BL", "L", "FL" };
+		ImGui::Text("DIR : %s", map[ENUM(GetDIRToPlayer())]);
+		
 		ImGui::BeginDisabled(true);
 		ImGui::Checkbox(u8"isDetected", &m_tTargetingInfo.isDetected);
 		ImGui::EndDisabled();
@@ -389,6 +397,44 @@ void CEnemy::ManageGroggy(const _float dt)
 			m_isGroggy = false;
 		}
 	}
+}
+
+DIR CEnemy::GetDIRToPlayer()
+{
+	//_vector vSelfLook = m_tTargetingInfo.vDirSelfLook;
+	//vSelfLook = XMVectorSetY(vSelfLook, 0.f);
+	//_vector vSelfPos = m_tTargetingInfo.vSelfPos;
+	//vSelfPos = XMVectorSetY(vSelfPos, 0.f);
+	//_vector vPlayerPos = m_tTargetingInfo.vTargetPos;
+	//vPlayerPos = XMVectorSetY(vPlayerPos, 0.f);
+	//_vector vTo = m_tTargetingInfo.vDirToTarget;
+	//vTo = XMVectorSetY(vTo, 0.f);
+
+	// 너무 가까우면 정면으로 간주
+	//if (XMVectorGetX(XMVector3LengthSq(vTo)) < 1e-8f)
+	//	return DIR::F;
+
+	//vTo = XMVector3Normalize(vTo);
+
+	//_vector vForward = XMVector3Normalize(vSelfLook);
+
+	//_float fDot = XMVectorGetX(XMVector3Dot(vForward, vTo))
+
+	_float fwdX = XMVectorGetX(m_tTargetingInfo.vDirSelfLook);
+	_float fwdZ = XMVectorGetZ(m_tTargetingInfo.vDirSelfLook);
+	_float targetX = XMVectorGetX(m_tTargetingInfo.vDirToTarget);
+	_float targetZ = XMVectorGetZ(m_tTargetingInfo.vDirToTarget);
+
+	_float fDet = fwdX * targetZ - fwdZ * targetX;
+	_float fAngleRad = -atan2(fDet, m_tTargetingInfo.fDotTarget);
+
+	_float fDegree = XMConvertToDegrees(fAngleRad);
+	fDegree = fmodf(fDegree + 360.f, 360.f);
+
+	_int isector = static_cast<_int>((fDegree + 22.5f) / 45.f) & 7;
+
+	const DIR map[8] = { DIR::F, DIR::FR, DIR::R, DIR::BR, DIR::B, DIR::BL, DIR::L, DIR::FL };
+	return map[isector];
 }
 
 void CEnemy::Create_MeshPyramid()
