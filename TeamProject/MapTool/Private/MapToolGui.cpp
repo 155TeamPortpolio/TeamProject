@@ -1,4 +1,4 @@
- #include "pch.h"
+#include "pch.h"
 #include "MapToolGui.h"
 #include "GameInstance.h"
 #include "MapToolCore.h"
@@ -45,6 +45,8 @@ HRESULT CMapToolGui::Initialize()
     
     // 저장 성공 시, 알림 쿨타임
     m_vShowSaveFinish = { 3.f, 0.f };
+
+    CollisionSystem()->Set_Render(true);
 
     return S_OK;
 }
@@ -214,11 +216,6 @@ void CMapToolGui::Render_GUI()
         ImGui::TreePop();
     }
 
-    
-
-
-
-
     ImGui::PopID();
 }
 
@@ -356,7 +353,7 @@ void CMapToolGui::Place_Object(PHYSICS_RAY_HIT* pRayHit)
 
         pStaticObject->Get_Component<CCollider>()->Set_DebugRender(m_pMapToolContext->isAllDebugRender);
 
-        pObjMgr->Add_Object(pStaticObject, { g_TagMapToolLevel, m_pMapToolContext->TagLayers[ENUM(MAPOBJ_TYPE::PLACED)] });
+        pObjMgr->Add_Object(pStaticObject, { g_TagMapToolLevel, g_tagMapObjType[ENUM(MAPOBJ_TYPE::PLACED)] });
         break;
     }
     case MAPOBJ_TYPE::TRIGGER:
@@ -377,11 +374,9 @@ void CMapToolGui::Place_Object(PHYSICS_RAY_HIT* pRayHit)
 
         pStaticObject->Get_Component<CCollider>()->Set_DebugRender(m_pMapToolContext->isAllDebugRender);
 
-        pObjMgr->Add_Object(pStaticObject, { g_TagMapToolLevel, m_pMapToolContext->TagLayers[ENUM(MAPOBJ_TYPE::TRIGGER)] });
+        pObjMgr->Add_Object(pStaticObject, { g_TagMapToolLevel, g_tagMapObjType[ENUM(MAPOBJ_TYPE::TRIGGER)] });
         break;
     }
-    case MAPOBJ_TYPE::DECAL:
-        break;
     case MAPOBJ_TYPE::ALL:
         break;
     case MAPOBJ_TYPE::END:
@@ -396,7 +391,7 @@ void CMapToolGui::Place_Object(PHYSICS_RAY_HIT* pRayHit)
 void CMapToolGui::Set_ObjectPicking(_bool is)
 {
     // 사용X
-    CLayer* pStaticLayer = m_pGameInstance->Get_ObjectMgr()->Get_Layer({ g_TagMapToolLevel, m_pMapToolContext->TagLayers[ENUM(MAPOBJ_TYPE::PLACED)] });
+    CLayer* pStaticLayer = m_pGameInstance->Get_ObjectMgr()->Get_Layer({ g_TagMapToolLevel, g_tagMapObjType[ENUM(MAPOBJ_TYPE::PLACED)] });
     if (nullptr == pStaticLayer)
         return;
 
@@ -442,6 +437,8 @@ void CMapToolGui::PreSet_ModelResource()
 
 void CMapToolGui::Save_MapData()
 {
+    m_Data = {};
+
     m_Data.iVersion = m_pMapToolContext->iVersion;
     m_Data.TagArea = m_pMapToolContext->TagArea;
     m_Data.TagDataFormat = "Base";
@@ -449,12 +446,12 @@ void CMapToolGui::Save_MapData()
     _int    iObjIndex = {};
 
 
-    for (_uint i = 0; i < (_uint)m_pMapToolContext->TagLayers.size(); ++i) {
-        CLayer* pLayer = m_pGameInstance->Get_ObjectMgr()->Get_Layer({ g_TagMapToolLevel, m_pMapToolContext->TagLayers[i] });
+    for (_uint i = 0; i < ENUM(MAPOBJ_TYPE::END); ++i) {
+        CLayer* pLayer = m_pGameInstance->Get_ObjectMgr()->Get_Layer({ g_TagMapToolLevel, g_tagMapObjType[i] });
         if (nullptr == pLayer)
             continue;
         MapData_Layer DataLayer = {};
-        DataLayer.TagLayer = m_pMapToolContext->TagLayers[i];
+        DataLayer.TagLayer = g_tagMapObjType[i];
 
         for (auto& pObject : pLayer->Get_AllObject()) {
             MapData_Object DataDesc = {};
@@ -484,23 +481,22 @@ void CMapToolGui::Save_MapData()
 
 void CMapToolGui::Select_PlaceType()
 {
-    const _char* items[] = { "Placed Object", "Trigger Object","Decal Object","Ground Object" };
 
     if (m_iSelectedLayerIndex < 0) 
         m_iSelectedLayerIndex = 0;
 
-    if (m_iSelectedLayerIndex >= (_int)IM_ARRAYSIZE(items)) 
-        m_iSelectedLayerIndex = (_int)IM_ARRAYSIZE(items) - 1;
+    if (m_iSelectedLayerIndex >= (_int)IM_ARRAYSIZE(g_tagMapObjType)) 
+        m_iSelectedLayerIndex = (_int)IM_ARRAYSIZE(g_tagMapObjType) - 1;
 
     const _int iPrevIndex = m_iSelectedLayerIndex;
-    const _char* preview = items[m_iSelectedLayerIndex];
+    const _char* preview = g_tagMapObjType[m_iSelectedLayerIndex];
 
     if (ImGui::BeginCombo("Type", preview))
     {
-        for (_int i = 0; i < (_int)IM_ARRAYSIZE(items); ++i)
+        for (_int i = 0; i < (_int)IM_ARRAYSIZE(g_tagMapObjType); ++i)
         {
             const _bool isSelected = (i == m_iSelectedLayerIndex);
-            if (ImGui::Selectable(items[i], isSelected))
+            if (ImGui::Selectable(g_tagMapObjType[i], isSelected))
                 m_iSelectedLayerIndex = i;
 
             if (isSelected)
@@ -535,11 +531,11 @@ void CMapToolGui::Select_TriggerType()
 
 void CMapToolGui::Render_ClearLayer()
 {
-    auto pTagLayers = &m_pMapToolContext->TagLayers;
+    auto pTagLayers = &g_tagMapObjType;
 
     ImGui::PushID("MapTool_LayerDelete");
     ImGuiListClipper clipper;
-    clipper.Begin((_int)pTagLayers->size());
+    clipper.Begin(ENUM(MAPOBJ_TYPE::END));
     while (clipper.Step()) {
         for (_int i = clipper.DisplayStart; i < clipper.DisplayEnd; ++i) {
             const string TagClearLayer = (*pTagLayers)[i];
@@ -567,6 +563,9 @@ void CMapToolGui::Render_ClearLayer()
 
 void CMapToolGui::KeyInput()
 {
+    if (true == GUISystem()->UsingUI())
+        return;
+
     auto pInputDev = m_pGameInstance->Get_InputDev();
     
     ImGuiIO& io = ImGui::GetIO();
@@ -575,7 +574,7 @@ void CMapToolGui::KeyInput()
     if (pInputDev->Mouse_Tap(MOUSE_BTN::LB) && false == io.WantCaptureMouse) {
         PHYSICS_RAY_HIT HitDesc = {};
         if (true == m_pGameInstance->Get_PhysicsSystem()->Raycast(m_PhysicsRay, HitDesc)) {
-            if (m_pMapToolContext->TagLayers[ENUM(MAPOBJ_TYPE::PLACED)] == HitDesc.pHitObject->Get_Layer()->Get_LayerTag())
+            if (g_tagMapObjType[ENUM(MAPOBJ_TYPE::PLACED)] == HitDesc.pHitObject->Get_Layer()->Get_LayerTag())
                 CGameInstance::GetInstance()->Get_GUISystem()->Get_Context()->pSelectedObject = HitDesc.pHitObject  ;
         }
 
