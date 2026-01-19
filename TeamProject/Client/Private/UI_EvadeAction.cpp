@@ -33,10 +33,17 @@ HRESULT CUI_EvadeAction::Initialize(INIT_DESC* pArg)
     // 모드 변경 이벤트
     Get_Component<CEventListener>()->Add_Listener<UI_ACTION_PRIMARY_DESC>([&](const UI_ACTION_PRIMARY_DESC& desc)
         {
-            if(desc.eMode == UI_ACTION_PRIMARY_MODE::INTERACT)
-                Set_InteractState(INTERACT_STATE::DISABLE);
-            else
+            switch (desc.eMode)
+            {
+            case UI_ACTION_PRIMARY_MODE::ATTACK:
                 Set_InteractState(INTERACT_STATE::ENABLE);
+                break;
+            case UI_ACTION_PRIMARY_MODE::INTERACT:
+                Set_InteractState(INTERACT_STATE::DISABLE);
+                break;
+            }
+
+            m_eMode = desc.eMode;
         });
 
     // 액션 이벤트
@@ -59,7 +66,7 @@ HRESULT CUI_EvadeAction::Initialize(INIT_DESC* pArg)
     // 액션 이벤트
     Get_Component<CEventListener>()->Add_Listener<UI_ACTION_DESC>([&](const UI_ACTION_DESC& desc)
         {
-            if (desc.eType != UI_ACTION_TYPE::EVADE)
+            if (m_eMode == UI_ACTION_PRIMARY_MODE::INTERACT || desc.eType != UI_ACTION_TYPE::EVADE)
                 return;
 
             m_isPerfect = false;

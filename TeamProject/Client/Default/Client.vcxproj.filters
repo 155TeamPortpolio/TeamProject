@@ -729,23 +729,23 @@
     </Filter>
     <Filter Include="01. Level\04. Zero\StageFX">
       <UniqueIdentifier>{33438fca-4c48-4f14-b7da-99d59fbd7f51}</UniqueIdentifier>
-        </Filter>
-        <Filter Include="02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Hit">
- </Filter>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Hit">
+    </Filter>
     <Filter Include="02. GameObject\UI\01. 2D\ScreenFade">
       <UniqueIdentifier>{4df49a7d-2281-4c98-b765-1a9115005f18}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Hit">
       <UniqueIdentifier>{08855f1c-eef5-461f-9c1c-f6d5844ec678}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\UI\01. 2D\BattleIntroFrame">
-      <UniqueIdentifier>{da2fd65e-9bf7-4fb2-a1b2-95af726ef1a4}</UniqueIdentifier>
-    </Filter>
     <Filter Include="00. MainApp\00. CursorController">
       <UniqueIdentifier>{5e864d76-8135-44f8-b744-bd0c5b16cda6}</UniqueIdentifier>
-</Filter>
+    </Filter>
     <Filter Include="02. GameObject\MapObject\OBJFactory">
       <UniqueIdentifier>{8b852d8f-36c2-4c1e-b080-ca2b3222160f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\SceneFrame">
+      <UniqueIdentifier>{da2fd65e-9bf7-4fb2-a1b2-95af726ef1a4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1440,7 +1440,7 @@
       <Filter>01. Level\04. Zero\Stage_Elite</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UI_SceneFrame.h">
-      <Filter>02. GameObject\UI\01. 2D\BattleIntroFrame</Filter>
+      <Filter>02. GameObject\UI\01. 2D\SceneFrame</Filter>
     </ClInclude>
     <ClInclude Include="..\public\CursorController.h">
       <Filter>00. MainApp\00. CursorController</Filter>
@@ -2114,7 +2114,7 @@
       <Filter>01. Level\04. Zero\Stage_Elite</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UI_SceneFrame.cpp">
-      <Filter>02. GameObject\UI\01. 2D\BattleIntroFrame</Filter>
+      <Filter>02. GameObject\UI\01. 2D\SceneFrame</Filter>
     </ClCompile>
     <ClCompile Include="..\private\CursorController.cpp">
       <Filter>00. MainApp\00. CursorController</Filter>

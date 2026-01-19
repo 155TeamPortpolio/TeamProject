@@ -20,6 +20,11 @@ public:
 	/* 화면 페이드아웃 실행 (화면 -> 검정 화면) */
 	void FadeOut_Screen(_float fDuration = 0.5f);
 
+	/* 전투 HUD를 화면에 표시 */
+	void Show_BattleHUD(_bool isFade = true);
+	/* 전투 HUD를 화면에서 숨김 */
+	void Hide_BattleHUD();
+
 public:
 	/* 모든 레벨에 필요한 공통 데이터 등록 */
 	void Initialize();
@@ -34,7 +39,6 @@ private:
 	string								m_levelKey;
 	nlohmann::json						m_json = {};
 	unordered_map<string, UI_HANDLE>	m_handles = {};
-	UI_HANDLE							m_hScreenFade = {};
 
 public:
 	virtual void Free() override;
