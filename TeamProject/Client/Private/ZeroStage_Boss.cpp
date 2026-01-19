@@ -90,11 +90,7 @@ HRESULT CZeroStage_Boss::Enter_Stage(CZero_Level::StageContext& context)
 	Ready_Map("Zero_Level", "Zero_Boss1");
 	m_eStageStage = StageState::Entrance;
 	m_PlayerHandle = context.hPlayer;
-	
-	CCamDirector::GetInstance()->SetTarget(context.hPlayer);
-	CCamDirector::GetInstance()->RequestSequence("Intro/Jane_Intro");
-	BattleSystem()->SpawnMosnter("Proto_GameObject_Sacrifice", { 0.f, 0.5f,0.f });
-	BattleSystem()->SetActive(true);
+	BaseIntro(context);
 	return S_OK;
 }
 
