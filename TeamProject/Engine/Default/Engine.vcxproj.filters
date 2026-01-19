@@ -594,6 +594,15 @@
     <ClInclude Include="..\Public\EnvPanel.h">
       <Filter>00. System\02. Gui\GUI_Panel\EnvPanel</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\ZoomController.h">
+      <Filter>01. Utility\07. CameraManager\ZoomController</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ShakeControllerData.h">
+      <Filter>01. Utility\07. CameraManager\ShakeController</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ZoomControllerData.h">
+      <Filter>01. Utility\07. CameraManager\ZoomController</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <!-- Filter Definitions -->
@@ -1110,6 +1119,9 @@
     <Filter Include="98. BasicShader\UI">
       <UniqueIdentifier>{344ee409-7a31-4dc3-9741-3c5131d36b7a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\07. CameraManager\ZoomController">
+      <UniqueIdentifier>{e6a96919-8c00-4dcf-bf8d-56535eb3a99d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <!-- ClCompile 항목들 - 중복 제거 버전 -->
@@ -1571,6 +1583,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\EnvPanel.cpp">
       <Filter>00. System\02. Gui\GUI_Panel\EnvPanel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ZoomController.cpp">
+      <Filter>01. Utility\07. CameraManager\ZoomController</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
