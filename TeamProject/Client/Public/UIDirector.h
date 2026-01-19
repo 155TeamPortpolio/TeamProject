@@ -33,4 +33,6 @@ public:
 	virtual void Free() override;
 };
 
+inline auto* UIDirector() { return CUIDirector::GetInstance(); }
+
 NS_END
