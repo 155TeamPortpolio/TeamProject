@@ -1,0 +1,655 @@
+{
+  "TagDataFormat": "Base",
+  "TagArea": "Zero_Worksite",
+  "iVersion": 1,
+  "Layers": [
+    {
+      "TagLayer": "PlacedObject_Layer",
+      "Objects": [
+        {
+          "iObjID": 0,
+          "TagModelResourceKey": "Stage_Zero_WorkSite_Bridgeout.model",
+          "TagMaterialResourceKey": "Stage_Zero_WorkSite_Bridgeout.mat",
+          "vRight": [
+            0.9999967217445374,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            0.0,
+            0.0,
+            0.9999967217445374,
+            0.0
+          ],
+          "vPos": [
+            10.0,
+            -40.0,
+            10.0,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 1,
+          "TagModelResourceKey": "Stage_Zero_WorkSite_Buildingout.model",
+          "TagMaterialResourceKey": "Stage_Zero_WorkSite_Buildingout.mat",
+          "vRight": [
+            -1.0,
+            0.0,
+            1.1920928955078125e-07,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            0.9999985694885254,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            -1.1920911902052467e-07,
+            0.0,
+            -0.9999985694885254,
+            0.0
+          ],
+          "vPos": [
+            10.0,
+            -40.0,
+            10.0,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 2,
+          "TagModelResourceKey": "Stage_Zero_WorkSite_Ceilingout.model",
+          "TagMaterialResourceKey": "Stage_Zero_WorkSite_Ceilingout.mat",
+          "vRight": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "vPos": [
+            10.0,
+            -40.0,
+            10.0,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 3,
+          "TagModelResourceKey": "Stage_Zero_WorkSite_Constructionout.model",
+          "TagMaterialResourceKey": "Stage_Zero_WorkSite_Constructionout.mat",
+          "vRight": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            0.9999969601631165,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            0.0,
+            0.0,
+            0.9999969601631165,
+            0.0
+          ],
+          "vPos": [
+            10.0,
+            -40.0,
+            10.0,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 4,
+          "TagModelResourceKey": "Stage_Zero_WorkSite_Vehicleout.model",
+          "TagMaterialResourceKey": "Stage_Zero_WorkSite_Vehicleout.mat",
+          "vRight": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "vPos": [
+            10.0,
+            -40.0,
+            10.0,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 5,
+          "TagModelResourceKey": "Stage_Zero_WorkSite_Groundout.model",
+          "TagMaterialResourceKey": "Stage_Zero_WorkSite_Groundout.mat",
+          "vRight": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "vPos": [
+            10.0,
+            -40.0,
+            10.0,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 6,
+          "TagModelResourceKey": "Stage_Zero_WorkSite_Mountainout.model",
+          "TagMaterialResourceKey": "Stage_Zero_WorkSite_Mountainout.mat",
+          "vRight": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "vPos": [
+            10.0,
+            -40.0,
+            10.0,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 7,
+          "TagModelResourceKey": "Stage_Zero_WorkSite_NAPMesh1.model",
+          "TagMaterialResourceKey": "Stage_Zero_WorkSite_NAPMesh1.mat",
+          "vRight": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "vPos": [
+            10.0,
+            -40.0,
+            10.0,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 8,
+          "TagModelResourceKey": "Stage_Zero_WorkSite_NAPMesh2.model",
+          "TagMaterialResourceKey": "Stage_Zero_WorkSite_NAPMesh2.mat",
+          "vRight": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "vPos": [
+            10.0,
+            -40.0,
+            10.0,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 9,
+          "TagModelResourceKey": "Stage_Zero_WorkSite_PathMeshout.model",
+          "TagMaterialResourceKey": "Stage_Zero_WorkSite_PathMeshout.mat",
+          "vRight": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "vPos": [
+            10.0,
+            -40.0,
+            10.0,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 10,
+          "TagModelResourceKey": "Stage_Zero_WorkSite_Propout.model",
+          "TagMaterialResourceKey": "Stage_Zero_WorkSite_Propout.mat",
+          "vRight": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "vPos": [
+            10.0,
+            -40.0,
+            10.0,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 11,
+          "TagModelResourceKey": "Stage_Zero_WorkSite_SceneObjectStateWidgetRootout.model",
+          "TagMaterialResourceKey": "Stage_Zero_WorkSite_SceneObjectStateWidgetRootout.mat",
+          "vRight": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "vPos": [
+            10.0,
+            -40.0,
+            10.0,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 12,
+          "TagModelResourceKey": "Stage_Zero_WorkSite_Stairout.model",
+          "TagMaterialResourceKey": "Stage_Zero_WorkSite_Stairout.mat",
+          "vRight": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "vPos": [
+            10.0,
+            -40.0,
+            10.0,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 13,
+          "TagModelResourceKey": "Stage_Zero_WorkSite_Wallout.model",
+          "TagMaterialResourceKey": "Stage_Zero_WorkSite_Wallout.mat",
+          "vRight": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "vPos": [
+            10.0,
+            -40.0,
+            10.0,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 14,
+          "TagModelResourceKey": "Stage_Zero_WorkSite_Doorout.model",
+          "TagMaterialResourceKey": "Stage_Zero_WorkSite_Doorout.mat",
+          "vRight": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "vPos": [
+            10.0,
+            -40.0,
+            10.0,
+            1.0
+          ]
+        }
+      ]
+    },
+    {
+      "TagLayer": "TriggerObject_Layer",
+      "Objects": [
+        {
+          "iObjID": 15,
+          "TagModelResourceKey": "Portal",
+          "TagMaterialResourceKey": "BOX",
+          "vRight": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            3.5,
+            1.5,
+            1.2999999523162842,
+            0.0
+          ],
+          "vLook": [
+            -0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vPos": [
+            5.089061737060547,
+            -4.25,
+            8.7024507522583,
+            0.0
+          ]
+        },
+        {
+          "iObjID": 16,
+          "TagModelResourceKey": "SpawnPoint",
+          "TagMaterialResourceKey": "BOX",
+          "vRight": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            1.0,
+            1.0,
+            1.0,
+            0.0
+          ],
+          "vLook": [
+            -0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vPos": [
+            -0.12362861633300781,
+            -3.7850000858306885,
+            -5.950034141540527,
+            0.0
+          ]
+        },
+        {
+          "iObjID": 17,
+          "TagModelResourceKey": "ZeroUI",
+          "TagMaterialResourceKey": "BOX",
+          "vRight": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            0.10000000149011612,
+            0.10000000149011612,
+            0.10000000149011612,
+            0.0
+          ],
+          "vLook": [
+            -0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vPos": [
+            5.0091094970703125,
+            -3.2870664596557617,
+            9.357000350952148,
+            0.0
+          ]
+        },
+        {
+          "iObjID": 18,
+          "TagModelResourceKey": "OfficeMeow",
+          "TagMaterialResourceKey": "BOX",
+          "vRight": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            0.10000000149011612,
+            0.10000000149011612,
+            0.10000000149011612,
+            0.0
+          ],
+          "vLook": [
+            -0.0,
+            -1.7016764879226685,
+            0.0,
+            0.0
+          ],
+          "vPos": [
+            8.97172737121582,
+            -3.3889737129211426,
+            6.611456871032715,
+            0.0
+          ]
+        },
+        {
+          "iObjID": 19,
+          "TagModelResourceKey": "Deliver",
+          "TagMaterialResourceKey": "BOX",
+          "vRight": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            1.0,
+            1.0,
+            1.0,
+            0.0
+          ],
+          "vLook": [
+            -0.0,
+            3.114760637283325,
+            0.0,
+            0.0
+          ],
+          "vPos": [
+            -2.1465060710906982,
+            -3.8483376502990723,
+            11.849427223205566,
+            0.0
+          ]
+        },
+        {
+          "iObjID": 20,
+          "TagModelResourceKey": "Ask",
+          "TagMaterialResourceKey": "BOX",
+          "vRight": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            1.0,
+            1.0,
+            1.0,
+            0.0
+          ],
+          "vLook": [
+            -0.0,
+            3.127797842025757,
+            0.0,
+            0.0
+          ],
+          "vPos": [
+            -0.44388091564178467,
+            -3.915910243988037,
+            11.854595184326172,
+            0.0
+          ]
+        },
+        {
+          "iObjID": 21,
+          "TagModelResourceKey": "Pay",
+          "TagMaterialResourceKey": "BOX",
+          "vRight": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            1.0,
+            1.0,
+            1.0,
+            0.0
+          ],
+          "vLook": [
+            -0.0,
+            3.1204400062561035,
+            0.0,
+            0.0
+          ],
+          "vPos": [
+            1.148234248161316,
+            -4.104202747344971,
+            11.978363037109375,
+            0.0
+          ]
+        }
+      ]
+    }
+  ]
+}

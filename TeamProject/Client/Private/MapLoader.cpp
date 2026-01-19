@@ -175,7 +175,7 @@ void CMapLoader::Place_TriggerObjectFromLoadData(MapData_Object* pData)
     Desc->vRight = { pData->vRight[0], pData->vRight[1], pData->vRight[2] };
     Desc->vUp = { pData->vUp[0], pData->vUp[1], pData->vUp[2] };
     Desc->vLook = { pData->vLook[0], pData->vLook[1], pData->vLook[2] };
-
+    Desc->vPos = { pData->vPos[0], pData->vPos[1], pData->vPos[2] };
 
     CGameObject* pStaticObject = Builder::Create_Object({ G_GlobalLevelKey ,"Proto_GameObject_MapTriggerObject" })
         .Add_ObjDesc(Desc)
