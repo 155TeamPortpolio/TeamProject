@@ -303,7 +303,7 @@ void CTestLevel::Ready_Npc()
 	bangbooCCT.eGroup = COLLISION_GROUP::COMMON;
 	//meowCCT.fBoundingMinY = -0.83f;
 	bangbooCCT.vPos = { 22.5f, 1.5f, -30.f };
-
+	
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_BangBooPay", CBangBooPay::Create());
 	auto testBoo = Builder::Create_Object({ "Test_Level", "Proto_GameObject_BangBooPay" })
 		.CharacterController(bangbooCCT)

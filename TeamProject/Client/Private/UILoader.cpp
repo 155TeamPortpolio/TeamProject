@@ -27,10 +27,11 @@
 #include "UI_SpecialAction.h"
 #include "UI_SwitchAction.h"
 #include "UI_UltimateAction.h"
-
-#include "UI_FieldHUD.h"
+#include "UI_SceneFrame.h"
 
 #include "UI_BossHUD.h"
+
+#include "UI_FieldHUD.h"
 
 #include "UI_IconLabel.h"
 
@@ -153,13 +154,14 @@ void UILoader::Add_Prototype(const string& levelKey)
 		{"EvadeAction",		&CUI_EvadeAction::Create	},
 		{"SpecialAction",	&CUI_SpecialAction::Create	},
 		{"SwitchAction",	&CUI_SwitchAction::Create	},
-		{"UltimateAction",	&CUI_UltimateAction::Create	},
-
-		{"FieldHUD",		&CUI_FieldHUD::Create		},
+		{"UltimateAction",	&CUI_UltimateAction::Create	}, 
 
 		{"BossHUD",			&CUI_BossHUD::Create		},
 
+		{"FieldHUD",		&CUI_FieldHUD::Create		},
+
 		{"IconLabel",		&CUI_IconLabel::Create		},
+		{"SceneFrame",		&CUI_SceneFrame::Create		},
 	};
 
 	for (const Entry& entry : entries)
