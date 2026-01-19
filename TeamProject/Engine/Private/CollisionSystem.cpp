@@ -788,8 +788,13 @@ void CCollisionSystem::Process_CollisionEvents()
 			// Current에 없으면 Exit
 			if (!otherSlot.IsActive() || current.find(pOther) == current.end())
 			{
-				CCollider* pCollider = dynamic_cast<CCollider*>(pOther);
-				if (pCollider && pCollider->Is_Trigger())
+				CCollider* pThisCollider = dynamic_cast<CCollider*>(pCollidable);
+				CCollider* pOtherCollider = dynamic_cast<CCollider*>(pOther);
+
+				_bool bThisTrigger = (pThisCollider && pThisCollider->Is_Trigger());
+				_bool bOtherTrigger = (pOtherCollider && pOtherCollider->Is_Trigger());
+
+				if (bThisTrigger || bOtherTrigger)
 				{
 					pCollidable->OnTriggerExit(pOther);
 				}
@@ -815,30 +820,29 @@ void CCollisionSystem::Process_CollisionEvents()
 			auto pOther = *it;
 			// 슬롯 검증으로 해제된 포인터 필터링
 			if (!pOther) continue;
-
 			_int otherIdx = pOther->Get_SlotIndex();
 			if (otherIdx < 0 || otherIdx >= static_cast<_int>(m_Collidables.size()))
 				continue;
-
 			const auto& otherSlot = m_Collidables[otherIdx];
-
 			if (otherSlot.pCollidable != pOther) continue;
 			if (otherSlot.iGeneration != pOther->Get_SlotGeneration()) continue;
 			if (!otherSlot.IsActive()) continue;
 			if (!pOther->Get_Owner()) continue;
-
 			// Previous에도 있으면 Stay (Enter 다음 프레임부터)
 			if (previous.find(pOther) != previous.end())
 			{
-				CCollider* pCollider = dynamic_cast<CCollider*>(pOther);
-				if (pCollider && pCollider->Is_Trigger())
+				CCollider* pThisCollider = dynamic_cast<CCollider*>(pCollidable);
+				CCollider* pOtherCollider = dynamic_cast<CCollider*>(pOther);
+
+				_bool bThisTrigger = (pThisCollider && pThisCollider->Is_Trigger());
+				_bool bOtherTrigger = (pOtherCollider && pOtherCollider->Is_Trigger());
+
+				if (bThisTrigger || bOtherTrigger)
 				{
-					// 트리거는 여기서 Stay 처리 (TOUCH_PERSISTS 미지원)
 					pCollidable->OnTriggerStay(pOther);
 				}
 				else
 				{
-					// 일반 충돌 Stay
 					pCollidable->OnCollisionStay(pOther);
 				}
 
