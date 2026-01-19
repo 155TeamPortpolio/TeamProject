@@ -69,6 +69,7 @@ HRESULT CPlacedObject::Initialize(INIT_DESC* pArg)
 
 	auto pMaterialInstance = 	Get_Component<CMaterial>()->Get_MaterialInstance(0);
 	//pMaterialInstance->Set_Param("UVOffset", { &start ,"float4",sizeof(_float4) });
+	Get_Component<CCollider>()->Set_MapToolMode(true);
 
 
 	return S_OK; 

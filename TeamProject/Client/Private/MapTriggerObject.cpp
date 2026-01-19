@@ -11,6 +11,7 @@
 #include "Player.h"
 #include "CharacterController.h"
 #include "CamDirector.h"
+#include "OBJFactory.h"
 
 CMapTriggerObject::CMapTriggerObject()
 	: CMapObject()
@@ -293,7 +294,7 @@ void CMapTriggerObject::Ready_InvwalI(const MAP_TRIGGEROBJ_DESC* pObjDesc)
 
 				Engine::GAMEOBJECT_DESC* pDesc = new Engine::GAMEOBJECT_DESC;
 				pDesc->InstanceName = "InvWall";
-
+				
 				COLLIDER_DESC ColDesc = {};
 				ColDesc.eGroup = COLLISION_GROUP::COMMON;
 				ColDesc.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER);
@@ -312,6 +313,8 @@ void CMapTriggerObject::Ready_InvwalI(const MAP_TRIGGEROBJ_DESC* pObjDesc)
 					.Build("InvWall");
 
 				CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(pObj, { pObjDesc->TagLevel, "MapInvisibleWall_Layer" });
+
+				//Factory::Create_NPC();
 			}
 		}
 	}
@@ -327,6 +330,47 @@ void CMapTriggerObject::Ready_PlayerPos(const MAP_TRIGGEROBJ_DESC* pObjDesc)
 		auto character = player->Get_CurCharacterHandle().Get();
 		if (character)
 			character->Get_Component<CCharacterController>()->Set_Position(m_pTransform->Get_Pos());
+	}
+}
+
+void CMapTriggerObject::Ready_NPC(const MAP_TRIGGEROBJ_DESC* pObjDesc)
+{
+	auto iter = pObjDesc->SlotDataValues.find("NPC");
+
+	if (iter != pObjDesc->SlotDataValues.end()) {
+		string PrototypeTag = "Proto_GameObject_MapInvisibleWall";
+		
+		for (auto& tFieldData : iter->second)
+		{
+			if (tFieldData.TagName == "bCollider")
+			{
+				_float3 vPos = {};
+				XMStoreFloat3(&vPos, m_pTransform->Get_Pos());
+				_vector3 vScale = m_pTransform->Get_Scale();
+
+				Engine::GAMEOBJECT_DESC* pDesc = new Engine::GAMEOBJECT_DESC;
+				pDesc->InstanceName = "InvWall";
+
+				COLLIDER_DESC ColDesc = {};
+				ColDesc.eGroup = COLLISION_GROUP::COMMON;
+				ColDesc.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER);
+				ColDesc.eType = COLLIDER_TYPE::BOX;
+				ColDesc.bAutoFit = false;
+				ColDesc.bTrigger = false; // 충돌 박스 생성하는 트리거
+				ColDesc.vCenter = { 0.f, 0.f, 0.f };
+				ColDesc.vSize = pObjDesc->vUp;
+				ColDesc.vRotation = Get_Component<CCollider>()->Get_Rotation();
+
+				auto pObj = Builder::Create_Object({ G_GlobalLevelKey, PrototypeTag })
+					.Add_ObjDesc(pDesc)
+					.Position(vPos)
+					.Collider(ColDesc)
+					.Scale(vScale)
+					.Build("InvWall");
+
+				CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(pObj, { pObjDesc->TagLevel, "MapInvisibleWall_Layer" });
+			}
+		}
 	}
 }
 

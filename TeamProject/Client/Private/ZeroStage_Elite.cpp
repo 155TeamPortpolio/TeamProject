@@ -67,38 +67,8 @@ HRESULT CZeroStage_Elite::Enter_Stage(CZero_Level::StageContext& context)
 	Ready_Map("Zero_Level", "Zero_1_1");
 	m_eStageStage = StageState::Entrance;
 	m_PlayerHandle = context.hPlayer;
+	BaseIntro(context);
 
-	if (!m_introFlowBuilt)
-	{
-		m_introFlowBuilt = true;
-
-		size_t seqId = m_introFlow.BeginSequence();
-
-		if (context.isFirstIn)
-		{
-			m_introFlow.AddOnce(seqId, [context]() {if (context.isFirstIn)
-			{
-				CCamDirector::GetInstance()->AutoTarget();
-				CCamDirector::GetInstance()->RequestSequence("Intro/Jane_Intro");
-			}
-				});
-			m_introFlow.AddWaitUntil(seqId, []()
-				{
-					return !CCamDirector::GetInstance()->IsPlaying("Intro/Jane_Intro");
-				});
-		}
-		else { 
-			m_introFlow.AddWait(seqId, 0.5f);
-			m_introFlow.AddOnce(seqId, [this]() {CUIDirector::GetInstance()->FadeOut_Screen(1.f); });
-			m_introFlow.AddWait(seqId, 0.5f);
-			m_introFlow.AddOnce(seqId, [this]() {RenderSystem()->Apply_RadialBlur(2.f); });
-			m_introFlow.AddWait(seqId, 2.0f);
-		}
-		
-		m_introFlow.EndSequence(seqId);
-	}
-
-	m_introFlow.Start();
 	return S_OK;
 }
 
@@ -134,14 +104,7 @@ void CZeroStage_Elite::Battle()
 
 void CZeroStage_Elite::Outro()
 {
-	if (!m_outroFlowBuilt) {
-		m_outroFlowBuilt = true;
-
-		size_t seqId = m_outroFlow.BeginSequence();
-		m_outroFlow.AddOnce(seqId, [this]() {CUIDirector::GetInstance()->FadeIn_Screen(1.f); });
-		m_outroFlow.AddWait(seqId, 2.0f);
-	}
-
+	BaseOutro();
 	m_outroFlow.Start();
 	m_eStageStage = StageState::End;
 }

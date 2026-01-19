@@ -29,8 +29,7 @@ HRESULT CTriggerObject::Initialize(INIT_DESC* pArg)
 {
 	__super::Initialize(pArg);
 
-
-	//Get_Component<CCollider>()->Set_Rotation
+	Get_Component<CCollider>()->Set_MapToolMode(true);
 
 	return S_OK;
 }
@@ -75,10 +74,11 @@ void CTriggerObject::Export_ObjectData(void* pDesc)
 	_float3 vPosition; XMStoreFloat3(&vPosition, Get_Component<CTransform>()->Get_Pos());
 	_float3 vCenter = Get_Component<CCollider>()->Get_Center();
 	_float3 vSize = Get_Component<CCollider>()->Get_Size();
-	_float3 vRotation = Get_Component<CCollider>()->Get_Rotation();
+	_float4 vRotation; XMStoreFloat4(&vRotation, Get_Component<CTransform>()->Get_QuaternionRotate());
+	_vector3 vEulerRot = _quaternion(vRotation).ToEuler();
 	pObjectDesc->vRight = { vCenter.x, vCenter.y, vCenter.z, 0.f};
 	pObjectDesc->vUp = { vSize.x, vSize.y, vSize.z, 0.f };
-	pObjectDesc->vLook = { vRotation.x, vRotation.y, vRotation.z, 0.f };
+	pObjectDesc->vLook = { vEulerRot.x, vEulerRot.y, vEulerRot.z};
 	pObjectDesc->vPos = { vPosition.x,vPosition.y, vPosition.z, 0.f };
 	//_float4x4 matWorld = Get_Component<CTransform>()->Get_WorldMatrix();
 	//pObjectDesc->vRight = { matWorld._11,matWorld._12, matWorld._13, matWorld._14 };

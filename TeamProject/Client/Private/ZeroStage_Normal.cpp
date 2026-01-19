@@ -53,9 +53,6 @@ void CZeroStage_Normal::Update()
 		break;
 	}
 
-	if (InputDevice()->Key_Tap(VK_SPACE)) {
-		CUIDirector::GetInstance()->FadeIn_Screen(1.f);
-	}
 }
 
 HRESULT CZeroStage_Normal::Ready_Stage(CZero_Level::StageContext& context)
@@ -69,38 +66,7 @@ HRESULT CZeroStage_Normal::Enter_Stage(CZero_Level::StageContext& context)
 	Ready_Map("Zero_Level", "Zero_1_1");
 	m_eStageStage = StageState::Entrance;
 	m_PlayerHandle = context.hPlayer;
-
-	if (!m_introFlowBuilt)
-	{
-		m_introFlowBuilt = true;
-
-		size_t seqId = m_introFlow.BeginSequence();
-
-		if (context.isFirstIn)
-		{
-			m_introFlow.AddOnce(seqId, [context]() {if (context.isFirstIn)
-			{
-				CCamDirector::GetInstance()->AutoTarget();
-				CCamDirector::GetInstance()->RequestSequence("Intro/Jane_Intro");
-			}
-				});
-			m_introFlow.AddWaitUntil(seqId, []()
-				{
-					return !CCamDirector::GetInstance()->IsPlaying("Intro/Jane_Intro");
-				});
-		}
-		else {
-			m_introFlow.AddWait(seqId, 0.5f);
-			m_introFlow.AddOnce(seqId, [this]() {CUIDirector::GetInstance()->FadeOut_Screen(1.f); });
-			m_introFlow.AddWait(seqId, 0.5f);
-			m_introFlow.AddOnce(seqId, [this]() {RenderSystem()->Apply_RadialBlur(2.f); });
-			m_introFlow.AddWait(seqId, 2.0f);
-		}
-
-		m_introFlow.EndSequence(seqId);
-	}
-
-	m_introFlow.Start();
+	BaseIntro(context);
 	return S_OK;
 }
 
@@ -135,14 +101,7 @@ void CZeroStage_Normal::Battle()
 
 void CZeroStage_Normal::Outro()
 {
-	if (!m_outroFlowBuilt) {
-		m_outroFlowBuilt = true;
-		size_t seqId = m_outroFlow.BeginSequence();
-		m_outroFlow.AddOnce(seqId, [this]() {CUIDirector::GetInstance()->FadeIn_Screen(1.f); });
-		m_outroFlow.AddWait(seqId, 2.0f);
-	}
-
-	m_outroFlow.Start();
+	BaseOutro();
 	m_eStageStage = StageState::End;
 }
 

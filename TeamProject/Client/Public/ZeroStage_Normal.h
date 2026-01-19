@@ -23,7 +23,6 @@ private:
 	void Outro();
 	void End();
 private:
-	_float3 baseColor = { 1.0f, 1.0f, 1.0f };
 
 public:
 	static CZeroStage_Normal* Create(class CZero_Level* pOwnerLevel);
