@@ -30,6 +30,8 @@ HRESULT CUI_EvadeAction::Initialize(INIT_DESC* pArg)
 
 void CUI_EvadeAction::Update(_float dt)
 {
+    __super::Update(dt);
+
     Get_Component<CObjectContainer>()->UpdateChild(dt);
 }
 

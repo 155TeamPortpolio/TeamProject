@@ -29,6 +29,8 @@ HRESULT CUI_SpecialAction::Initialize(INIT_DESC* pArg)
 
 void CUI_SpecialAction::Update(_float dt)
 {
+	__super::Update(dt);
+
 	Get_Component<CObjectContainer>()->UpdateChild(dt);
 }
 

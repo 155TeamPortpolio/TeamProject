@@ -31,6 +31,8 @@ HRESULT CUI_UltimateAction::Initialize(INIT_DESC* pArg)
 
 void CUI_UltimateAction::Update(_float dt)
 {
+    __super::Update(dt);
+
     Get_Component<CObjectContainer>()->UpdateChild(dt);
 }
 

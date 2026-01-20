@@ -28,6 +28,8 @@ HRESULT CUI_PrimaryAction::Initialize(INIT_DESC* pArg)
 
 void CUI_PrimaryAction::Update(_float dt)
 {
+    __super::Update(dt);
+
     Get_Component<CObjectContainer>()->UpdateChild(dt);
 }
 
