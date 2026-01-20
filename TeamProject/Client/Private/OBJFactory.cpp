@@ -15,6 +15,10 @@ void Client::Factory::Create_Interactable(const CMapTriggerObject::MAP_TRIGGEROB
 	if (Desc->InstanceName == "Portal") {
 
 	}
+	/* ZeroPortal */
+	else if (Desc->InstanceName == "ZeroPortal") {
+
+	}
 }
 
 /* --------------------------------------------------------------------------------------------------------------------- */

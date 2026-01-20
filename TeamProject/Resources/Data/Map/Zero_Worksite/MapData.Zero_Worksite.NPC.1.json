@@ -1,5 +1,5 @@
 {
-  "TagDataFormat": "Portal",
+  "TagDataFormat": "NPC",
   "TagArea": "Zero_Worksite",
   "iVersion": 1,
   "values": [
@@ -32,7 +32,7 @@
       "TagName": "Name",
       "defaultvalue": {
         "type": "String",
-        "value": "BOX"
+        "value": "Pay"
       }
     }
   ]

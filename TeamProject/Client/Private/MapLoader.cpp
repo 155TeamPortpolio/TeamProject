@@ -23,13 +23,6 @@ HRESULT CMapLoader::Initialize(const string& TagLevel, const string& TagArea)
     if (nullptr == pPackets)
         return E_FAIL;
 
-
-
-
-
-
-
-
     _bool isFindBaseData = { false };
     for (auto& packet : *pPackets) {
         if ("Base" == packet.TagSlotFormat) {
