@@ -35,6 +35,7 @@ HRESULT CMeshNode_Edit::Initialize(INIT_DESC* pArg)
 	pModel->Set_RenderType(RENDER_PASS_TYPE::RENDER_EFFECT);
 	pModel->ShadowCast(false);
 
+	m_pTransform->Initialize(nullptr);
 	m_InstanceName = "MeshNode";
 
 	return S_OK;
@@ -111,6 +112,7 @@ void CMeshNode_Edit::Import(nlohmann::ordered_json& json)
 	m_DiffuseTextureTag = json.value("diffuse_texture_tag", "");
 	m_DissolveTextureTag = json.value("dissolve_texture_tag", "");
 	m_NoiseTextureTag = json.value("noise_texture_tag", "");
+	m_MaskTextureTag = json.value("mask_texture_tag", "");
 
 	/* Texture Slot Module */
 	m_TextureSlotModule.eSamplerMode = static_cast<TEXTURE_SLOT_MODULE::SAMPLER_MODE>(json.value("sampler_mode", 0));
@@ -246,6 +248,7 @@ void CMeshNode_Edit::Export(nlohmann::ordered_json& json)
 		{"diffuse_texture_tag",m_DiffuseTextureTag},
 		{"dissolve_texture_tag",m_DissolveTextureTag},
 		{"noise_texture_tag",m_NoiseTextureTag},
+		{"mask_texture_tag",m_MaskTextureTag},
 
 		/* Offset Transform */
 		{"offset_position",json::array({vOffsetPosition.x,vOffsetPosition.y,vOffsetPosition.z})},

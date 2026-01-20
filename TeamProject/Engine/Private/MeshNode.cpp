@@ -50,6 +50,7 @@ HRESULT CMeshNode::Initialize(INIT_DESC* pArg)
 		m_DiffuseTextureTag = pMeshNode->DiffuseTextureTag;
 		m_NoiseTextureTag = pMeshNode->NoiseTextureTag;
 		m_DissolveTextureTag = pMeshNode->DissolveTextureTag;
+		m_MaskTextureTag = pMeshNode->MaskTextureTag;
 
 		/* Offset Transform */
 		_vector3 vPosition = pMeshNode->vOffsetPosition;
@@ -145,7 +146,7 @@ HRESULT CMeshNode::Initialize(INIT_DESC* pArg)
 		auto pMaskTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_MaskTextureTag);
 
 		if (pMaskTexture)
-			pMaterialInstance->Set_Param("MaskTexture", { pMaskTexture->Get_SRV(),"Texture2D",0 });
+			pMaterialInstance->Set_Param("AlphaMaskTexture", { pMaskTexture->Get_SRV(),"Texture2D",0 });
 		else
 			MSG_BOX("Not exist Mask Texture : %s", m_MaskTextureTag.c_str());
 	}

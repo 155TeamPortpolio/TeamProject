@@ -43,7 +43,7 @@ void CBattlePlayer::SetBattleCharacters(vector<CHARACTER> battleCharacters)
 
 	m_pCurrentCharacter = m_BattleCharacters.front().second;
 	m_pCurrentCharacter->SetRenderLayer(RENDER_LAYER::Default);
-
+	
 	CBattleSystem::GetInstance()->SetPlayer(m_CharacterHandles);
 }
 
