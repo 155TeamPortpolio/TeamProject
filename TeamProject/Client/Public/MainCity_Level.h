@@ -22,12 +22,12 @@ public:
 	static void PreLoad_Level();
 
 private:
-	void ReadyMap();
+	void Ready_Map(const string& LevelTag, const string& AreaTag);
 private:
 	CGameInstance* m_pGameInstance={nullptr};
 	class CCamDirector* m_pCamDirector = { nullptr };
 	class CMapDataCloud* m_pMapDataCloud = { nullptr };
-
+	class CPlayer* m_pPlayer = { nullptr };
 public:
 	static CMainCity_Level* Create(const string& LevelKey);
 	virtual void Free() override;

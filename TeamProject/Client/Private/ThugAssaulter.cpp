@@ -154,7 +154,7 @@ void CThugAssaulter::Render_GUI()
 
 		ImGui::BeginDisabled(true);
 		//ImGui::Checkbox(u8"isLookPlayer", &m_isLookPlayer);
-		ImGui::Checkbox("IsGroggy", &m_isGroggy);
+		ImGui::Checkbox("IsGroggy", &m_tStatus.isGroggy);
 		ImGui::Checkbox("IsOnAttack", &m_isOnAttack);
 		ImGui::EndDisabled();
 
@@ -515,7 +515,7 @@ void CThugAssaulter::ControlState(const _float dt)
 
 	if ("Death" != m_pStateMachine->Get_CurrentStateName() &&
 		"Groggy" != m_pStateMachine->Get_CurrentStateName() &&
-		true == m_isGroggy)
+		true == m_tStatus.isGroggy)
 		m_pStateMachine->Change_State("Groggy");
 
 

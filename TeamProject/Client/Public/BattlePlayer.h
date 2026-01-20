@@ -98,14 +98,18 @@ private:
 private:
     HRESULT      Initialize_CharacterPrototype();
     CGameObject* CreateBattleCharacter(CHARACTER character);
-    void         RotateCharacterQueue();
+    void         SwitchToNext();
+    void         SwitchToPrev();
+    void         SwitchToIndex(_uint iIndex);
     void         NotifyCharacterSwitchIn();
     void         NotifyCharacterSwitchOut();
+    void         Sync_ActionUI();
 
 private:
-    queue<std::pair<string, class CCharacter*>>     m_BattleCharacters;
-    class CCharacter*                               m_pCurrentCharacter = nullptr;
-    vector<OBJECT_HANDLE>                           m_CharacterHandles{};
+    vector<class CCharacter*>   m_BattleCharacters;
+    _uint                       m_iCurrentIndex = { 0 };
+    class CCharacter*           m_pCurrentCharacter = nullptr;
+    vector<OBJECT_HANDLE>       m_CharacterHandles{};
     
     OBJECT_HANDLE       m_TargetHandle;
     _bool               m_bLockOn = { false };

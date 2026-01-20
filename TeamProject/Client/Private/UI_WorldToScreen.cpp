@@ -31,7 +31,8 @@ void CUI_WorldToScreen::Update_WorldToScreen(_float3 vPosition)
     auto pCameraMgr = CGameInstance::GetInstance()->Get_CameraMgr();
     
     // 월드 위치로 스크린 위치 구하기
-    Helper::WorldToScreen(vPosition, m_vAnchorOffset, *pCameraMgr->Get_ViewMatrix(), *pCameraMgr->Get_ProjMatrix(), _float4(0.f, 0.f, m_WinSize.x, m_WinSize.y));
+    _bool isAlive = Helper::WorldToScreen(vPosition, m_vAnchorOffset, *pCameraMgr->Get_ViewMatrix(), *pCameraMgr->Get_ProjMatrix(), _float4(0.f, 0.f, m_WinSize.x, m_WinSize.y));
+    Set_Alive(isAlive);
 
     // 플레이어와 월드 위치 사이의 방향 벡터와 카메라 룩을 내적해서 깊이 구하기
     auto pPlayer = ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Player));
