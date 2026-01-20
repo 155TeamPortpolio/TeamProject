@@ -20,6 +20,8 @@ public:
 	virtual void OnTriggerExit(ICollidable* pOther) PURE;
 
 	virtual void Render(PrimitiveBatch<VertexPositionColor>* pBatch, _fvector vColor) PURE;
+    _vector4 Get_ColliderColor() { return m_vColor; }
+    void    Set_ColliderColor(_vector4 vColor) { m_vColor = vColor; }
 
 	_bool IsColliding() const { return !m_CurrentCollisions.empty(); }
 	_bool IsCollidingWith(ICollidable* pOther) const
@@ -46,10 +48,13 @@ public:
 protected:
 	unordered_set<ICollidable*> m_CurrentCollisions;
 	unordered_set<ICollidable*> m_PreviousCollisions;
+
 	_int  m_iSlotIndex = { -1 };
 	_uint m_iSlotGeneration = { 0 };
-    COLLISION_GROUP m_eGroup = { COLLISION_GROUP::COMMON };
     _uint m_iCollisionMask = { 0xFFFFFFFF };
+    COLLISION_GROUP m_eGroup = { COLLISION_GROUP::COMMON };
+
+    _vector4 m_vColor = { 0.f, 0.5019608f, 0.f, 1.f };
 
 public:
 	virtual void Free() override { __super::Free(); }
@@ -65,14 +70,15 @@ namespace CollisionHelper
     {
         switch (eGroup)
         {
-        case COLLISION_GROUP::COMMON:        return "COMMON";
-        case COLLISION_GROUP::PLAYER:        return "PLAYER";
-        case COLLISION_GROUP::MONSTER:       return "MONSTER";
-        case COLLISION_GROUP::PLAYER_ATTACK: return "PLAYER_ATTACK";
-        case COLLISION_GROUP::MONSTER_ATTACK:return "MONSTER_ATTACK";
-        case COLLISION_GROUP::MONSTER_PARRY: return "MONSTER_PARRY";
-        case COLLISION_GROUP::CAMERA:        return "CAMERA";
-        default:                             return "UNKNOWN";
+        case COLLISION_GROUP::COMMON:             return "COMMON";
+        case COLLISION_GROUP::PLAYER:             return "PLAYER";
+        case COLLISION_GROUP::MONSTER:            return "MONSTER";
+        case COLLISION_GROUP::PLAYER_ATTACK:      return "PLAYER_ATTACK";
+        case COLLISION_GROUP::MONSTER_ATTACK:     return "MONSTER_ATTACK";
+        case COLLISION_GROUP::MONSTER_PARRY:      return "MONSTER_PARRY";
+        case COLLISION_GROUP::CAMERA:             return "CAMERA";
+        case COLLISION_GROUP::INTERACABLE:        return "INTERACABLE";
+        default:                                  return "UNKNOWN";
         }
     }
 
@@ -90,7 +96,8 @@ namespace CollisionHelper
                 COLLISION_GROUP::PLAYER_ATTACK,
                 COLLISION_GROUP::MONSTER_ATTACK,
                 COLLISION_GROUP::MONSTER_PARRY,
-                COLLISION_GROUP::CAMERA
+                COLLISION_GROUP::CAMERA,
+                COLLISION_GROUP::INTERACABLE
             };
 
             for (auto eGroup : groups)
@@ -126,7 +133,8 @@ namespace CollisionHelper
                 COLLISION_GROUP::PLAYER_ATTACK,
                 COLLISION_GROUP::MONSTER_ATTACK,
                 COLLISION_GROUP::MONSTER_PARRY,
-                COLLISION_GROUP::CAMERA
+                COLLISION_GROUP::CAMERA,
+                COLLISION_GROUP::INTERACABLE
             };
 
             for (auto eGroup : groups)
