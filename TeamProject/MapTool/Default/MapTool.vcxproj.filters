@@ -67,6 +67,9 @@
     <Filter Include="02. Object\MapTool Object\Trigger Object">
       <UniqueIdentifier>{482d9679-a300-492c-b307-31deb48303cd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. Object\MapTool Object\Entity Object">
+      <UniqueIdentifier>{43f3e07c-4a88-47cb-b928-cc7a869be20f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -153,6 +156,9 @@
     <ClInclude Include="..\public\TriggerObject.h">
       <Filter>02. Object\MapTool Object\Trigger Object</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\EntityObject.h">
+      <Filter>02. Object\MapTool Object\Entity Object</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -234,6 +240,9 @@
     </ClCompile>
     <ClCompile Include="..\private\TriggerObject.cpp">
       <Filter>02. Object\MapTool Object\Trigger Object</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\EntityObject.cpp">
+      <Filter>02. Object\MapTool Object\Entity Object</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

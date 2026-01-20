@@ -38,6 +38,27 @@ namespace MapTool {
 	}MapData_Header;
 	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(MapData_Header, TagDataFormat, TagArea, iVersion, Layers);
 
+	/* Entity Data */
+	typedef struct tagEntity
+	{
+		_int		iEntityID = { -1 };
+		string		tagName = {};
+		_int		iType = {};
+		array<_float, 3> vScale = { 0.f, 0.f, 0.f };
+		array<_float, 3> vRotation = { 0.f, 0.f, 0.f };
+		array<_float, 3> vTranslation= { 0.f, 0.f, 0.f };
+	}ENTITY;
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ENTITY, iEntityID, tagName, iType, vScale, vRotation, vTranslation);
+
+	typedef struct tagEntityHeader {
+		string		TagDataFormat = {};
+		string		TagArea = {};
+		_int		iVersion = 1;
+		vector<ENTITY> Entities;
+	}Entity_Header;
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Entity_Header, TagDataFormat, TagArea, iVersion, Entities);
+
+	//====================================
 	struct LOADED_OBJECT {
 		_int	iObjIdx = { -1 };
 		string	TagModelKey = {};
