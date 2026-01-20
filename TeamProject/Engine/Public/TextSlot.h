@@ -43,6 +43,7 @@ public:
     void Set_Anchor(ANCHOR anchot, _float2 Pivot);
     _float2 Get_Anchor(ANCHOR anchot);
     _float2 Get_TextSize();
+    _float Get_Scale();
     _float2 Get_Shear() { return m_Info.vShear; }
 
 private:
