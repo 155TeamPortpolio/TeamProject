@@ -416,7 +416,7 @@ HRESULT CCorin::Initialize_Transitions()
 
 	// SwitchOut
 	m_pStateMachine->Register_AnyStateTransition("SwitchOut",
-		CStateMachine<CCorin>::CONDITION_TRIGGER, "SwitchOut");
+		CStateMachine<CCorin>::CONDITION_TRIGGER, "SwitchOut", 1);
 
 	m_pStateMachine->Register_Transition("SwitchOut", "Idle",
 		CStateMachine<CCorin>::CONDITION_TRIGGER, "ToIdle");
