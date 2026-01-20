@@ -3,8 +3,6 @@
 
 #include "GameInstance.h"
 
-extern HWND g_hWnd;
-
 void CCursorController::Initialize()
 {
     m_cachedGuiActive = GUISystem()->Is_GUIActive();

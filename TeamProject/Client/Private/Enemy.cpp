@@ -375,13 +375,13 @@ HRESULT CEnemy::AttachBattleColliderObject(BATTLE_COLLIDER_DESC* pDesc, _bool is
 }
 void CEnemy::ManageGroggy(const _float dt)
 {
-	if (false == m_isGroggy && 100 <= m_tStatus.iGroggyValue)
+	if (false == m_tStatus.isGroggy && 100 <= m_tStatus.iGroggyValue)
 	{
 		m_tStatus.iGroggyValue = 100;
-		m_isGroggy = true;
+		m_tStatus.isGroggy = true;
 	}
 
-	if (true == m_isGroggy)
+	if (true == m_tStatus.isGroggy)
 	{
 		m_fGroggyDecreaseTime += dt;
 
@@ -394,7 +394,7 @@ void CEnemy::ManageGroggy(const _float dt)
 		if (0 > m_tStatus.iGroggyValue)
 		{
 			m_tStatus.iGroggyValue = 0;
-			m_isGroggy = false;
+			m_tStatus.isGroggy = false;
 		}
 	}
 }

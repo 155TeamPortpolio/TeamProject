@@ -34,14 +34,13 @@ void CBattlePlayer::SetBattleCharacters(vector<CHARACTER> battleCharacters)
 {
 	for (auto& character : battleCharacters)
 	{
-		string strCharacter = Helper::EnumToString(character);
 		auto newCharacter = dynamic_cast<CCharacter*>(CreateBattleCharacter(character));
-
-		m_BattleCharacters.push({ strCharacter,newCharacter });
+		m_BattleCharacters.push_back(newCharacter);
 		m_CharacterHandles.push_back(newCharacter->Get_Handle());
 	}
 
-	m_pCurrentCharacter = m_BattleCharacters.front().second;
+	m_iCurrentIndex = 0;
+	m_pCurrentCharacter = m_BattleCharacters[m_iCurrentIndex];
 	m_pCurrentCharacter->SetRenderLayer(RENDER_LAYER::Default);
 	
 	CBattleSystem::GetInstance()->SetPlayer(m_CharacterHandles);
@@ -147,19 +146,13 @@ void CBattlePlayer::Render_GUI()
 
 void CBattlePlayer::Add_Gauge(_float fEnergy, _float fDecibel)
 {
-	queue<std::pair<string, CCharacter*>> tempQueue = m_BattleCharacters;
-
-	for (UI_STATUS_OWNER eOwner = UI_STATUS_OWNER::ROLE1;
-		eOwner <= UI_STATUS_OWNER::ROLE3 && !tempQueue.empty();
-		eOwner = static_cast<UI_STATUS_OWNER>(ENUM(eOwner) + 1))
+	for (_uint i = 0; i < m_BattleCharacters.size(); ++i)
 	{
-		CCharacter* pCharacter = tempQueue.front().second;
-		tempQueue.pop();
-
+		CCharacter* pCharacter = m_BattleCharacters[i];
 		CCharacter::EnergyDesc tEnergy = pCharacter->Get_EnergyDesc();
 		_float fCurrentDecibel = pCharacter->Get_CurrentDecibel();
 
-		if (eOwner == UI_STATUS_OWNER::ROLE1)
+		if (i == m_iCurrentIndex)
 		{
 			tEnergy.fCurrentEnergy += fEnergy;
 			fCurrentDecibel += fDecibel;
@@ -381,18 +374,15 @@ void CBattlePlayer::Update_Target()
 
 void CBattlePlayer::Update_Status()
 {
-	queue<std::pair<string, CCharacter*>> tempQueue = m_BattleCharacters;
-	for (UI_STATUS_OWNER eOwner = UI_STATUS_OWNER::ROLE1;
-		eOwner <= UI_STATUS_OWNER::ROLE3 && !tempQueue.empty();
-		eOwner = static_cast<UI_STATUS_OWNER>(ENUM(eOwner) + 1))
+	for (_uint i = 0; i < m_BattleCharacters.size() && i < 3; ++i)
 	{
-		CCharacter* pCharacter = tempQueue.front().second;
-		tempQueue.pop();
+		CCharacter* pCharacter = m_BattleCharacters[i];
+		UI_STATUS_OWNER eOwner = static_cast<UI_STATUS_OWNER>(ENUM(UI_STATUS_OWNER::ROLE1) + i);
 
 		UI_PLAYER_STATUS_DESC desc;
 		desc.eOwner = eOwner;
 		desc.eCharacter = pCharacter->Get_CharacterName();
-		desc.hp = { pCharacter->Get_HP() , pCharacter->Get_MaxHP()};
+		desc.hp = { pCharacter->Get_HP(), pCharacter->Get_MaxHP() };
 		desc.special = { pCharacter->Get_EnergyDesc().fCurrentEnergy, pCharacter->Get_MaxEnergy() };
 		desc.specialThreshold = pCharacter->Get_EnergyDesc().fSpecialEnergy;
 		desc.ultimate = { pCharacter->Get_CurrentDecibel(), pCharacter->Get_MaxDecibel() };
@@ -403,22 +393,14 @@ void CBattlePlayer::Update_Status()
 
 void CBattlePlayer::Active_Battle()
 {
-	queue<std::pair<string, CCharacter*>> tempQueue = m_BattleCharacters;
-	CCharacter* pCharacter = tempQueue.front().second;
-	pCharacter->Active_Character();
+	if (!m_BattleCharacters.empty())
+		m_BattleCharacters[m_iCurrentIndex]->Active_Character();
 }
 
 void CBattlePlayer::DeActive_Battle()
 {
-	queue<std::pair<string, CCharacter*>> tempQueue = m_BattleCharacters;
-	for (UI_STATUS_OWNER eOwner = UI_STATUS_OWNER::ROLE1;
-		eOwner <= UI_STATUS_OWNER::ROLE3 && !tempQueue.empty();
-		eOwner = static_cast<UI_STATUS_OWNER>(ENUM(eOwner) + 1))
-	{
-		CCharacter* pCharacter = tempQueue.front().second;
-		tempQueue.pop();
+	for (auto* pCharacter : m_BattleCharacters)
 		pCharacter->DeActive_Character();
-	}
 }
 
 HRESULT CBattlePlayer::Initialize_CharacterPrototype()
@@ -472,12 +454,30 @@ CGameObject* CBattlePlayer::CreateBattleCharacter(CHARACTER character)
 	return nullptr;
 }
 
+void CBattlePlayer::SwitchToNext()
+{
+	m_iCurrentIndex = (m_iCurrentIndex + 1) % m_BattleCharacters.size();
+	m_pCurrentCharacter = m_BattleCharacters[m_iCurrentIndex];
+}
+
+void CBattlePlayer::SwitchToPrev()
+{
+	m_iCurrentIndex = (m_iCurrentIndex + m_BattleCharacters.size() - 1) % m_BattleCharacters.size();
+	m_pCurrentCharacter = m_BattleCharacters[m_iCurrentIndex];
+}
+
+void CBattlePlayer::SwitchToIndex(_uint iIndex)
+{
+	if (iIndex >= m_BattleCharacters.size()) return;
+	m_iCurrentIndex = iIndex;
+	m_pCurrentCharacter = m_BattleCharacters[m_iCurrentIndex];
+}
+
 HRESULT CBattlePlayer::ClearCharacters()
 {
-	while (!m_BattleCharacters.empty()) 
-	{
-		m_BattleCharacters.pop();
-	}
+	m_BattleCharacters.clear();
+	m_iCurrentIndex = 0;
+	m_pCurrentCharacter = nullptr;
 	return S_OK;
 }
 
@@ -487,36 +487,15 @@ void CBattlePlayer::NotifyCharacterSwitchIn()
 	m_pCurrentCharacter->Get_Component<CTransform>()->Set_Look(m_vSwitchLook);
 	m_pCurrentCharacter->Set_TargetHandle(m_TargetHandle);
 
-#pragma region UI
-	/* Energy */
-	UI_ACTION_DESC desc;
-	desc.eType = UI_ACTION_TYPE::SPECIAL;
-	CCharacter::EnergyDesc tEnergy = m_pCurrentCharacter->Get_EnergyDesc();
-	if (tEnergy.fCurrentEnergy >= tEnergy.fSpecialEnergy)
-	{
-		desc.eState = UI_ACTION_STATE::AVAILABLE;
-		EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
-	}
-	else
-	{
-		desc.eState = UI_ACTION_STATE::ENABLE;
-		EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
-	}
-	/* Ultimate */
-	desc.eType = UI_ACTION_TYPE::ULTIMATE;
-	_float fCurrent = m_pCurrentCharacter->Get_CurrentDecibel();
-	if (fCurrent >= m_pCurrentCharacter->Get_MaxDecibel())
-	{
-		desc.eState = UI_ACTION_STATE::AVAILABLE;
-		EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
-	}
-#pragma endregion
-
+	Sync_ActionUI();
+	// 이후 추가 예정
 	//if (m_pCurrentCharacter->Can_Parry())
 	//{
 	//	m_pCurrentCharacter->On_SwitchIn(CCharacter::SWITCH::PARRYAID);
 	//	return;
 	//}
+
+	m_pCurrentCharacter->Set_MainCharacter(true);
 	m_pCurrentCharacter->On_SwitchIn(CCharacter::SWITCH::NORMAL);
 }
 
@@ -529,34 +508,48 @@ void CBattlePlayer::NotifyCharacterSwitchOut()
 		- XMVectorScale(m_vSwitchLook, 6.f)
 		+ XMVectorSet(0.f, 1.f, 0.f, 0.f);
 
+	m_pCurrentCharacter->Set_MainCharacter(false);
 	m_pCurrentCharacter->On_SwitchOut();
 }
 
-void CBattlePlayer::RotateCharacterQueue()
+void CBattlePlayer::Sync_ActionUI()
 {
-	auto ReplacedPlayer = m_BattleCharacters.front();
-	m_BattleCharacters.pop();
-	m_BattleCharacters.push(ReplacedPlayer);
+	UI_ACTION_DESC desc;
+
+	// Energy
+	desc.eType = UI_ACTION_TYPE::SPECIAL;
+	CCharacter::EnergyDesc tEnergy = m_pCurrentCharacter->Get_EnergyDesc();
+	desc.eState = (tEnergy.fCurrentEnergy >= tEnergy.fSpecialEnergy)
+		? UI_ACTION_STATE::AVAILABLE
+		: UI_ACTION_STATE::ENABLE;
+	EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
+
+	// Ultimate
+	desc.eType = UI_ACTION_TYPE::ULTIMATE;
+	desc.eState = (m_pCurrentCharacter->Get_CurrentDecibel() >= m_pCurrentCharacter->Get_MaxDecibel())
+		? UI_ACTION_STATE::AVAILABLE
+		: UI_ACTION_STATE::ENABLE;
+	EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
 }
 
 HRESULT CBattlePlayer::SwitchCharacter(CHARACTER character)
 {
-	_bool bExtreme = false;
-	bExtreme = m_pCurrentCharacter->Can_Parry();
 	NotifyCharacterSwitchOut();
 	if (character == CHARACTER::END)
 	{
-		RotateCharacterQueue();
+		SwitchToNext();
 	}
 	else
 	{
-		string targetName = Helper::EnumToString(character);
-		while (m_BattleCharacters.front().first != targetName)
+		for (_uint i = 0; i < m_BattleCharacters.size(); ++i)
 		{
-			RotateCharacterQueue();
+			if (m_BattleCharacters[i]->Get_CharacterName() == character)
+			{
+				SwitchToIndex(i);
+				break;
+			}
 		}
 	}
-	m_pCurrentCharacter = m_BattleCharacters.front().second;
 	NotifyCharacterSwitchIn();
 	return S_OK;
 }

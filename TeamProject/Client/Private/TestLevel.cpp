@@ -55,6 +55,7 @@
 #include "BangBooPay.h"
 #include "BangBooAsk.h"
 #include "BangBooDeliver.h"
+#include "Howl.h"
 
 /* UI */
 #include "UIDirector.h"
@@ -329,6 +330,23 @@ void CTestLevel::Ready_Npc()
 		.Build("Test_Deliver");
 
 	objMgr->Add_Object(testBoo, { "Test_Level", "Npc_Layer" });
+
+	CCT_DESC howlCCT;
+	//meowCCT.eGroup = COLLISION_GROUP::PLAYER;
+	howlCCT.iCollisionMask = 0xFFFFFFFF;
+	//miyabiCCT.iCollisionMask = 0xFFFFFFFF & ~ENUM(COLLISION_GROUP::COMMON);
+	howlCCT.bAutoFit = false;
+	howlCCT.fHeight = 1.6f;
+	howlCCT.fRadius = 0.4f;
+	howlCCT.eGroup = COLLISION_GROUP::COMMON;
+	//meowCCT.fBoundingMinY = -0.83f;
+	howlCCT.vPos = { 19.f, 1.5f, -30.f };
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Howl", CHowl::Create());
+	auto testHowl = Builder::Create_Object({ "Test_Level", "Proto_GameObject_Howl" })
+		.CharacterController(howlCCT)
+		.Build("Test_Howl");
+
+	objMgr->Add_Object(testHowl, { "Test_Level", "Npc_Layer" });
 }
 
 HRESULT CTestLevel::Render()

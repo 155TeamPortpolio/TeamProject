@@ -7,8 +7,7 @@ class CUI_SpecialAction final : public CUI_Object
 {
 private:
 	enum class CHILD { BG, ICON, GROUP, MASK, UV, ACTIVE, BLINK, E, END };
-
-	static const string INSTANCENAMES[ENUM(CHILD::END)];
+	inline static const string INSTANCENAMES[ENUM(CHILD::END)] = { "bg", "icon", "group", "mask", "uv", "active", "blink", "e" };
 
 	enum class INTERACT_STATE { DISABLE, ENABLE, AVAILABLE };
 
@@ -28,13 +27,18 @@ public:
 	virtual void	UI_DeActive(void* pArg = nullptr)override;
 
 private:
-	UI_HANDLE		m_handles[ENUM(CHILD::END)];
+	CUI_Object*		m_pChildren[ENUM(CHILD::END)] = {};
+
 	_bool			m_isEnabled = { true };
 	_bool			m_isAvailable = {};
 
 	INTERACT_STATE	m_interactState = { INTERACT_STATE::ENABLE };
 
 private:
+	void Load_Json(const string& resourceKey);
+	void Cache_Children();
+	void Bind_EventListener();
+
 	void Set_InteractState(INTERACT_STATE state);
 	void Execute();
 
@@ -44,12 +48,9 @@ private:
 	void Apply_EnableVisual();
 	void Apply_AvailableVisual();
 
-	void Set_Alive(CHILD child, _bool isAlive);
-	void Set_Animation(CHILD child, _int iIndex);
-	void Set_Color(CHILD child, _float4 vColor);
-
-	template<typename Func>
-	void ForChild(CHILD child, Func&& func);
+	void Set_ChildAlive(CHILD child, _bool isAlive); 
+	void Set_ChildColor(CHILD child, _float4 vColor);
+	void Set_ChildAnimation(CHILD child, _int iIndex);
 
 public:
 	static  CGameObject* Create();
@@ -58,13 +59,3 @@ public:
 };
 
 NS_END
-
-template<typename Func>
-inline void CUI_SpecialAction::ForChild(CHILD child, Func&& func)
-{
-	auto& handle = m_handles[ENUM(child)];
-	if (!handle.isValid())
-		return;
-
-	func(handle.Get());
-}

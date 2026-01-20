@@ -307,7 +307,7 @@ HRESULT CJaneDoe::Initialize_Transitions()
 
 	// SwitchOut
 	m_pStateMachine->Register_AnyStateTransition("SwitchOut",
-		CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "SwitchOut");
+		CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "SwitchOut", 1);
 
 	m_pStateMachine->Register_Transition("SwitchOut", "Idle",
 		CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "ToIdle");
@@ -482,6 +482,8 @@ HRESULT CJaneDoe::Initialize_Effects()
 
 void CJaneDoe::Update_States()
 {
+	if (!Is_MainCharacter()) return;
+
 	m_pStateMachine->Set_Bool("IsMove", Is_Move_Buffer());
 
 	Process_EndState(m_pStateMachine->Get_CurrentStateName());

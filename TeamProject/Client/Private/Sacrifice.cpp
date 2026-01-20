@@ -168,6 +168,8 @@ HRESULT CSacrifice::Initialize(INIT_DESC* pArg)
 	if (FAILED(Create_Colliders()))
 		return E_FAIL;
 
+	Create_UIEnemyStatus("Bip001_Spine2");
+
 	return S_OK;
 }
 
@@ -898,6 +900,6 @@ void CSacrifice::Update_States(_float dt)
 			m_pStateMachine->Set_Trigger("Change_Phase");
 	}
 
-	if ("Groggy" != m_pStateMachine->Get_CurrentStateName() && "Death" != m_pStateMachine->Get_CurrentStateName() && m_isGroggy)
+	if ("Groggy" != m_pStateMachine->Get_CurrentStateName() && "Death" != m_pStateMachine->Get_CurrentStateName() && m_tStatus.isGroggy)
 		m_pStateMachine->Change_State("Groggy");
 }

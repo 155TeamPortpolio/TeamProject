@@ -747,11 +747,29 @@
     <Filter Include="02. GameObject\MapObject\OBJFactory">
       <UniqueIdentifier>{8b852d8f-36c2-4c1e-b080-ca2b3222160f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Interactable\Barricade">
+      <UniqueIdentifier>{8b1edd40-c12b-4e78-9bb4-7bbe13b2d7ba}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Start">
       <UniqueIdentifier>{2cbaf699-675f-4a4b-9bf0-f7322153d7d1}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Start">
       <UniqueIdentifier>{76da54b4-7055-4fbf-acd8-06dd1f78d7f4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Npc\Service\Howl">
+      <UniqueIdentifier>{8ed08d95-7d7d-4549-9bbe-fd2a5fe86237}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Npc\Service\Howl\State">
+      <UniqueIdentifier>{6a38974f-b8e7-450b-a2c5-b331e220f46f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Npc\Service\Howl\State\Idle">
+      <UniqueIdentifier>{b7e367bc-59d2-439e-b6b2-55a7595441dc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Npc\Service\Howl\State\Sleep">
+      <UniqueIdentifier>{ca32176e-d4ec-4610-9641-4118a8e7402f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Npc\Service\Howl\State\Wake">
+      <UniqueIdentifier>{981174f4-013c-4ec5-b733-83c655844118}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1424,9 +1442,6 @@
     <ClInclude Include="..\Public\OrbitLockOnData.h">
       <Filter>02. GameObject\Camera\04. OrbitCam\00. LockOnController</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\ZeroStage_Normal.h">
-      <Filter>01. Level\04. Zero\Stage_Normal</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\MapInvisibleWall.h">
       <Filter>02. GameObject\MapObject\03. MapInvisibleWall</Filter>
     </ClInclude>
@@ -1465,6 +1480,24 @@
     </ClInclude>
     <ClInclude Include="..\Public\CorinState_Start.h">
       <Filter>02. GameObject\Object\Player\Character\Corin\State\Start</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Howl.h">
+      <Filter>02. GameObject\Object\Npc\Service\Howl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\HowlState_Idle.h">
+      <Filter>02. GameObject\Object\Npc\Service\Howl\State\Idle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\HowlState_Sleep.h">
+      <Filter>02. GameObject\Object\Npc\Service\Howl\State\Sleep</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\HowlState_Wake.h">
+      <Filter>02. GameObject\Object\Npc\Service\Howl\State\Wake</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ZeroStage_Normal.h">
+      <Filter>01. Level\04. Zero\Stage_Normal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\IInteract.h">
+      <Filter>02. GameObject\Object\Interactable</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2142,6 +2175,18 @@
     </ClCompile>
     <ClCompile Include="..\Private\CorinState_Start.cpp">
       <Filter>02. GameObject\Object\Player\Character\Corin\State\Start</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Howl.cpp">
+      <Filter>02. GameObject\Object\Npc\Service\Howl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\HowlState_Idle.cpp">
+      <Filter>02. GameObject\Object\Npc\Service\Howl\State\Idle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\HowlState_Sleep.cpp">
+      <Filter>02. GameObject\Object\Npc\Service\Howl\State\Sleep</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\HowlState_Wake.cpp">
+      <Filter>02. GameObject\Object\Npc\Service\Howl\State\Wake</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
