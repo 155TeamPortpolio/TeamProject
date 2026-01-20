@@ -171,10 +171,10 @@ void CSacrificeState_Attack_Phase1::BuildPattern(CSacrifice* pOwner)
 			}
 		}
 	}
-	blackBoard.stateQueue.clear();
-	blackBoard.stateQueue.push_back("Attack01_Phase1");
-	blackBoard.stateQueue.push_back("Attack03_Phase1");
-	blackBoard.stateQueue.push_back("Attack_Turn_Phase1");
+	//blackBoard.stateQueue.clear();
+	//blackBoard.stateQueue.push_back("Attack01_Phase1");
+	//blackBoard.stateQueue.push_back("Attack03_Phase1");
+	//blackBoard.stateQueue.push_back("Attack_Turn_Phase1");
 	
 	blackBoard.isRequestNext = true;
 }
@@ -565,7 +565,7 @@ void CSacrificeState_Attack_06_Phase1::Enter(CSacrifice* pOwner)
 
 void CSacrificeState_Attack_06_Phase1::Update(CSacrifice* pOwner, _float dt)
 {
-	if (m_fAnimProgress > 0.2f && m_fAnimProgress <= 0.65f)
+	if (m_fAnimProgress > 0.15f && m_fAnimProgress <= 0.65f)
 	{
 		auto pTransform = pOwner->Get_Component<CTransform>();
 		_quaternion vRot = _quaternion::CreateFromYawPitchRoll(XMConvertToRadians(180.f) * dt, 0.f, 0.f);
@@ -1016,10 +1016,10 @@ void CSacrificeState_Attack_Roar_Phase1::Update(CSacrifice* pOwner, _float dt)
 		}
 	}
 
-	if (IsCrossAnimProgress(0.4f))
+	if (IsCrossAnimProgress(0.5f))
 		pOwner->Set_DissolveState(CSacrifice::DISSOLVE_STATE::DISAPPEAR, 0.3f);
 
-	if (IsCrossAnimProgress(0.6f))
+	if (IsCrossAnimProgress(0.7f))
 	{
 		pOwner->Set_DissolveState(CSacrifice::DISSOLVE_STATE::APPEAR, 0.2f);
 		pOwner->Get_Component<CCharacterController>()->Set_Position(_vector3(-2.f, 1.f, 21.f));
@@ -1027,6 +1027,7 @@ void CSacrificeState_Attack_Roar_Phase1::Update(CSacrifice* pOwner, _float dt)
 	}
 
 	pOwner->Update_Dissolve(dt);
+	Update_Effects(pOwner);
 }
 
 void CSacrificeState_Attack_Roar_Phase1::Exit(CSacrifice* pOwner)

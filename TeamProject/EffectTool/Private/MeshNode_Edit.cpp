@@ -168,6 +168,8 @@ void CMeshNode_Edit::Import(nlohmann::ordered_json& json)
 
 	/* Bloom Module */
 	m_BloomModule.fIntensity = json.value("bloom_intensity", 1.f);
+	m_BloomModule.fSoftness = json.value("bloom_softness", m_BloomModule.fSoftness);
+	m_BloomModule.fThreshold = json.value("bloom_threshold", m_BloomModule.fThreshold);
 
 	/* Noise Module */
 	m_NoiseModule.fEnableNoise = json.value("enable_noise", 0.f);
@@ -302,6 +304,8 @@ void CMeshNode_Edit::Export(nlohmann::ordered_json& json)
 
 		/* Bloom */
 		{"bloom_intensity",m_BloomModule.fIntensity},
+		{"bloom_threshold",m_BloomModule.fThreshold},
+		{"bloom_softness",m_BloomModule.fSoftness},
 
 		/* Noise */
 		{"enable_noise",m_NoiseModule.fEnableNoise},
@@ -554,6 +558,8 @@ void CMeshNode_Edit::SetUp_MeshEffect()
 	if (ImGui::CollapsingHeader("Bloom Module"))
 	{
 		ImGui::DragFloat("Bloom Intensity", &m_BloomModule.fIntensity);
+		ImGui::DragFloat("Bloom Threshold", &m_BloomModule.fThreshold);
+		ImGui::DragFloat("Bloom Softness", &m_BloomModule.fSoftness);
 	}
 
 	if (ImGui::CollapsingHeader("Noise Module"))

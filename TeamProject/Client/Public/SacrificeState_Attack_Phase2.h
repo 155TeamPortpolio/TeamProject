@@ -213,6 +213,9 @@ public:
 	static CSacrificeState_Attack_Roar_Phase2* Create() { return new CSacrificeState_Attack_Roar_Phase2(); }
 	virtual void Free() override { __super::Free(); }
 
+private:
+	void Update_Effects(CSacrifice* pOwner);
+
 };
 
 class CSacrificeState_OverDrive_Release_Start_Phase2 : public IHState<CSacrifice>

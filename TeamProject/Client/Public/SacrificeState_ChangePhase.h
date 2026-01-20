@@ -13,5 +13,9 @@ public:
 public:
 	static CSacrificeState_ChangePhase* Create() { return new CSacrificeState_ChangePhase(); }
 	virtual void Free() override { __super::Free(); }
+
+private:
+	void Update_Effects(CSacrifice* pOwner);
+
 };
 NS_END

@@ -393,6 +393,7 @@ void CSacrifice::ChangePhase_SetUp()
 	m_tStatus.iMaxHP = 1000.f;
 	m_tStatus.iNowHP = m_tStatus.iMaxHP;
 	m_tStatus.iGroggyValue = 0;
+	m_tStatus.isGroggy = false;	
 	m_vRimLightColor = _float3{ 1.f,0.f,0.f };
 }
 
@@ -858,6 +859,7 @@ void CSacrifice::Update_States(_float dt)
 
 	if (InputDevice()->Key_Tap('P'))
 	{
+		m_tStatus.iNowHP = m_tStatus.iMaxHP * 0.1f;
 		m_tStatus.iGroggyValue = 99;
 	}
 
@@ -893,6 +895,9 @@ void CSacrifice::Update_States(_float dt)
 	/* Death */
 	if ("Death" != m_pStateMachine->Get_CurrentStateName() && "ChangePhase" != m_pStateMachine->Get_CurrentStateName() && m_tStatus.iNowHP <= 0.f)
 	{
+		m_tStatus.iGroggyValue = 0;
+		m_tStatus.isGroggy = false;
+
 		m_pStateMachine->Change_State("Death");
 		m_pStateMachine->Reset_Trigger("Change_Phase");
 

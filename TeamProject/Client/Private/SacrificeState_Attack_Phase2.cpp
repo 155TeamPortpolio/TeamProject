@@ -811,10 +811,10 @@ void CSacrificeState_Attack_Roar_Phase2::Update(CSacrifice* pOwner, _float dt)
 		pOwner->Set_DissolveState(CSacrifice::DISSOLVE_STATE::NONE, 0.f);
 	}
 
-	if (IsCrossAnimProgress(0.5f))
+	if (IsCrossAnimProgress(0.7f))
 		pOwner->Set_DissolveState(CSacrifice::DISSOLVE_STATE::DISAPPEAR, 0.2f);
 
-	if (IsCrossAnimProgress(0.7f))
+	if (IsCrossAnimProgress(0.8f))
 	{
 		pOwner->Set_DissolveState(CSacrifice::DISSOLVE_STATE::APPEAR, 0.2f);
 		pOwner->Get_Component<CCharacterController>()->Set_Position(_vector3(-15.f, 1.f, 22.f));
@@ -822,10 +822,32 @@ void CSacrificeState_Attack_Roar_Phase2::Update(CSacrifice* pOwner, _float dt)
 	}
 
 	pOwner->Update_Dissolve(dt);
+	Update_Effects(pOwner);
 }
 
 void CSacrificeState_Attack_Roar_Phase2::Exit(CSacrifice* pOwner)
 {
+}
+
+void CSacrificeState_Attack_Roar_Phase2::Update_Effects(CSacrifice* pOwner)
+{
+	auto pTransform = pOwner->Get_Component<CTransform>();
+
+	/* Roar Smoke */
+	if (IsCrossAnimProgress(0.31f))
+	{
+		auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_roar_smoke_down.json")
+			.Build("Sacrifice_Roar_Smoke_Down");
+
+		_smatrix worldMatrix = pTransform->Get_WorldMatrix();
+		_vector3 vWorldPosition = _vector3::Transform(_vector3(0.f, 1.f, 0.f), worldMatrix);
+
+		auto pEffectTransform = effect->Get_Component<CTransform>();
+		pEffectTransform->Set_WorldPos(vWorldPosition);
+
+		ObjectManager()->Add_Object(effect, { pOwner->Get_Level(),"Effect_Layer" });
+	}
 }
 
 void CSacrificeState_OverDrive_Release_Start_Phase2::Enter(CSacrifice* pOwner)
