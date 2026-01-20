@@ -161,7 +161,7 @@ void CUI_BossHUD::Set_GaugeFill(CHILD child, _float fFillAmount)
     pGauge->Set_FillAmount(fFillAmount);
 }
 
-void CUI_BossHUD::Set_GroggyText(_int iNum, _int iWidth)
+void CUI_BossHUD::Set_GroggyText(int iNum, _int iWidth)
 {
     if (!m_pGroggyText)
         return;
