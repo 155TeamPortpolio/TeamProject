@@ -185,20 +185,20 @@ void CUI_SwitchAction::Set_Alive(CHILD child, _bool isAlive)
 	m_pChildren[ENUM(child)]->Set_Alive(isAlive);
 }
 
-void CUI_SwitchAction::Set_Animation(CHILD child, _int iIndex)
-{
-	if (!m_pChildren[ENUM(child)])
-		return;
-
-	m_pChildren[ENUM(child)]->Set_Animation(iIndex);
-}
-
 void CUI_SwitchAction::Set_Color(CHILD child, _float4 vColor)
 {
 	if (!m_pChildren[ENUM(child)])
 		return;
 
 	m_pChildren[ENUM(child)]->Set_Color(vColor);
+}
+
+void CUI_SwitchAction::Set_Animation(CHILD child, _int iIndex)
+{
+	if (!m_pChildren[ENUM(child)])
+		return;
+
+	m_pChildren[ENUM(child)]->Set_Animation(iIndex);
 }
 
 CGameObject* CUI_SwitchAction::Create()
