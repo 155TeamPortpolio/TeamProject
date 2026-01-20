@@ -24,6 +24,8 @@ HRESULT CUI_Decibel::Initialize(INIT_DESC* pArg)
 {
     __super::Initialize(pArg);
 
+    Ready_PartObjects();
+
     // 이벤트 : UI_PLAYER_STATUS_DESC
     Get_Component<CEventListener>()->Add_Listener<UI_PLAYER_STATUS_DESC>([&](const UI_PLAYER_STATUS_DESC& desc)
         {
@@ -31,7 +33,6 @@ HRESULT CUI_Decibel::Initialize(INIT_DESC* pArg)
                 Set_Decibel(desc.ultimate.fCurValue);
         });
 
-    Ready_PartObjects();
 
 	return S_OK;
 }
@@ -50,22 +51,22 @@ void CUI_Decibel::Ready_PartObjects()
 
     CUI_DecibelPts::PTS_DESC* pPts = new CUI_DecibelPts::PTS_DESC;
     pPts->pColor = &m_vColor;
-    Attach_Child(strLevelKey, "Proto_GameObject_DecibelPts", "decibelPts", pPts, &m_handles[ENUM(Child::PTS)]);
+    Attach_Child(strLevelKey, "Proto_GameObject_DecibelPts", "decibelPts", pPts,CHILD::PTS);
 
     CUI_DecibelText::TEXT_DESC* pText = new CUI_DecibelText::TEXT_DESC;
     pText->pState = &m_iState;
     pText->pColor = &m_vColor;
-    Attach_Child(strLevelKey, "Proto_GameObject_DecibelText", "decibelText", pText, &m_handles[ENUM(Child::TEXTS)]);
+    Attach_Child(strLevelKey, "Proto_GameObject_DecibelText", "decibelText", pText, CHILD::TEXTS);
 
     CUI_DecibelDigits::DIGITS_DESC* pDigits = new CUI_DecibelDigits::DIGITS_DESC;
     pDigits->pDecibel = &m_fDecibel;
     pDigits->pColor = &m_vColor;
-    Attach_Child(strLevelKey, "Proto_GameObject_DecibelDigits", "decibelDigits", pDigits, &m_handles[ENUM(Child::DIGITS)]);
+    Attach_Child(strLevelKey, "Proto_GameObject_DecibelDigits", "decibelDigits", pDigits, CHILD::DIGITS);
 
     CUI_DecibelKanji::KANJI_DESC* pKanji = new CUI_DecibelKanji::KANJI_DESC;
     pKanji->pState = &m_iState;
     pKanji->pColor = &m_vColor;
-    Attach_Child(strLevelKey, "Proto_GameObject_DecibelKanji", "decibelKanji", pKanji, &m_handles[ENUM(Child::KANJI)]);
+    Attach_Child(strLevelKey, "Proto_GameObject_DecibelKanji", "decibelKanji", pKanji, CHILD::KANJI);
 }
 
 void CUI_Decibel::Set_Decibel(_float fDecibel)
@@ -101,23 +102,23 @@ void CUI_Decibel::Set_Decibel(_float fDecibel)
 
 void CUI_Decibel::Layout()
 {
-    if (!m_handles[ENUM(Child::KANJI)].isValid() ||
-        !m_handles[ENUM(Child::DIGITS)].isValid() ||
-        !m_handles[ENUM(Child::PTS)].isValid() ||
-        !m_handles[ENUM(Child::TEXTS)].isValid())
+    if (!m_pChildren[ENUM(CHILD::KANJI)] ||
+        !m_pChildren[ENUM(CHILD::DIGITS)] ||
+        !m_pChildren[ENUM(CHILD::PTS)] ||
+        !m_pChildren[ENUM(CHILD::TEXTS)])
         return;
 
-    _float2 vKanjiSize = m_handles[ENUM(Child::KANJI)].Get()->Get_PxSize();
-    _float2 vDigitsSize = m_handles[ENUM(Child::DIGITS)].Get()->Get_PxSize();
-    _float2 vPtsSize = m_handles[ENUM(Child::PTS)].Get()->Get_PxSize();
-    _float2 vTextsSize = m_handles[ENUM(Child::TEXTS)].Get()->Get_PxSize();
+    _float2 vKanjiSize = m_pChildren[ENUM(CHILD::KANJI)]->Get_PxSize();
+    _float2 vDigitsSize = m_pChildren[ENUM(CHILD::DIGITS)]->Get_PxSize();
+    _float2 vPtsSize = m_pChildren[ENUM(CHILD::PTS)]->Get_PxSize();
+    _float2 vTextsSize = m_pChildren[ENUM(CHILD::TEXTS)]->Get_PxSize();
 
-    m_handles[ENUM(Child::DIGITS)].Get()->Set_AnchorOffset(_float2(vKanjiSize.x * 0.8f, 0.f));
-    m_handles[ENUM(Child::PTS)].Get()->Set_AnchorOffset(_float2((vKanjiSize.x + vDigitsSize.x) * 0.82f, vDigitsSize.y - vPtsSize.y));
-    m_handles[ENUM(Child::TEXTS)].Get()->Set_AnchorOffset(_float2(vKanjiSize.x * 0.78f, vKanjiSize.y - vTextsSize.y));
+    m_pChildren[ENUM(CHILD::DIGITS)]->Set_AnchorOffset(_float2(vKanjiSize.x * 0.8f, 0.f));
+    m_pChildren[ENUM(CHILD::PTS)]->Set_AnchorOffset(_float2((vKanjiSize.x + vDigitsSize.x) * 0.82f, vDigitsSize.y - vPtsSize.y));
+    m_pChildren[ENUM(CHILD::TEXTS)]->Set_AnchorOffset(_float2(vKanjiSize.x * 0.78f, vKanjiSize.y - vTextsSize.y));
 }
 
-void CUI_Decibel::Attach_Child(const string& strLevelKey, const string& strPrototypeTag, const string& strInstanceName, UI_DESC* pDesc, UI_HANDLE* pHandleOut)
+void CUI_Decibel::Attach_Child(const string& strLevelKey, const string& strPrototypeTag, const string& strInstanceName, UI_DESC* pDesc, CHILD child)
 {
     auto builder = Builder::Create_UIObject({ strLevelKey, strPrototypeTag });
 
@@ -129,9 +130,7 @@ void CUI_Decibel::Attach_Child(const string& strLevelKey, const string& strProto
         return;
 
     Get_Component<CObjectContainer>()->Add_Child(pObj);
-
-    if (pHandleOut)
-        *pHandleOut = pObj->Get_Handle();
+    m_pChildren[ENUM(child)] = pObj;
 }
 
 CGameObject* CUI_Decibel::Create()
