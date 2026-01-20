@@ -1,8 +1,11 @@
 #include "pch.h"
 #include "CorinState_UltimateAttack.h"
+
+#include "BattleSystem.h"
+#include "CamDirector.h"
+
 #include "Corin.h"
 
-#include "CamDirector.h"
 
 void CCorinState_UltimateAttack::Enter(CCorin* pOwner)
 {
@@ -56,6 +59,7 @@ void CCorinState_UltimateAttack::Exit(CCorin* pOwner)
 
 void CCorinState_UltimateAttack_Start::Enter(CCorin* pOwner)
 {
+    BattleSystem()->StartTimeScale(CBattleSystem::BATTLE_OBJ_TYPE::MONSTER, 2.f, 0.f);
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "SwitchIn_Attack_Ex_Start")
         //.Speed(2.f)
         .Apply();
@@ -66,6 +70,10 @@ void CCorinState_UltimateAttack_Start::Update(CCorin* pOwner, _float dt)
     pOwner->Process_RootMotion(dt,
         ENUM(CCorin::ROOTMOTION_MASK::MOVE) |
         ENUM(CCorin::ROOTMOTION_MASK::QUATERNION));
+}
+
+void CCorinState_UltimateAttack_Start::Exit(CCorin* pOwner)
+{
 }
 
 void CCorinState_UltimateAttack_Loop::Enter(CCorin* pOwner)
