@@ -32,6 +32,9 @@ struct CamToolEditState
     _float editFov = 60.f;
     _float editRoll = 0.f;
 
+    bool playAllLink = false;
+    OBJECT_HANDLE playAllRefHandle{};
+
     CamMoveConstraint moveConstraint = CamMoveConstraint::Free;
     CamOrbitState     orbit{};
 };
@@ -67,6 +70,9 @@ struct KeyframeEditorUIState
     float pendingTimeValue = 0.f;
     int   pendingOverwriteCount = 0;
     bool  requestOpenTimeCollisionPopup = false;
+
+    _vector3 lookTargetPos{};
+    bool     lookTargetInited = false;
 };
 
 NS_END

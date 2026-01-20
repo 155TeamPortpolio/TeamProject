@@ -40,7 +40,7 @@ HRESULT CUI_BattleHUD::Initialize(INIT_DESC* pArg)
             Set_Values(desc);
         });
 
-    Set_Animation(0);
+    //Set_Alpha(0.f);   // 나중에 battleSystem에서 보이게 제어할 때 처음에는 알파 0으로 하는게 좋을 듯
 
     return S_OK;
 }
@@ -56,6 +56,23 @@ void CUI_BattleHUD::Update(_float dt)
     Update_HPBackGauge(dt);
 
     Get_Component<CObjectContainer>()->UpdateChild(dt);
+}
+
+void CUI_BattleHUD::UI_Active(void* pArg)
+{
+    if (!pArg)
+        return;
+
+    SHOW_DESC* pDesc = static_cast<SHOW_DESC*>(pArg);
+    if (pDesc->isFade)
+        Set_Animation(0);
+    else
+        Set_Alpha(1.f);
+}
+
+void CUI_BattleHUD::UI_DeActive(void* pArg)
+{
+    Set_Alpha(0.f);
 }
 
 void CUI_BattleHUD::Add_PartObject(const string& strLevelKey, const string& strPrototypeTag, const string& strInstanceName, Child child, _float2 vOffset)

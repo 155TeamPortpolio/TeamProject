@@ -23,7 +23,7 @@ void CJaneDoeState_SwitchOut::Update(CJaneDoe* pOwner, _float dt)
 
     if (m_fAnimProgress >= 0.6f)
     {
-        pOwner->Reset_DissolveProgress();
+        pOwner->DeActive_Character();
         pOwner->Get_StateMachine()->Set_Trigger("ToIdle");
     }
 }

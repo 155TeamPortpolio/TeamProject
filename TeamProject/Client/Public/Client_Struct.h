@@ -39,6 +39,7 @@ namespace Client {
 	};
 
 	typedef struct tagMapDataFilePacket {
+		string		TagDataFormat = {};			// MapData, EntityData
 		string		TagSlotFormat = {};			// Base, Physics, Effect, SlotA, SlotB ...
 		string		TagArea = {};				// 지형 이름
 		string		TagDataFileKey = {};		// 파일 이름

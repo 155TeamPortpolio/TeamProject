@@ -30,9 +30,9 @@ HRESULT COfficeMeow::Initialize_Prototype()
 	__super::Initialize_Prototype();
 
 	auto pResource = ResourceManager();
-	pResource->Add_ResourcePath("NPC_OfficerMeowji.model", "../Bin/Resources/Model/skeletal/NPC/OfficeMeowji/NPC_OfficerMeowji.model");
-	pResource->Add_ResourcePath("NPC_OfficerMeowji.mat", "../Bin/Resources/Model/skeletal/NPC/OfficeMeowji/NPC_OfficerMeowji.mat");
-	pResource->Add_ResourcePath("NPC_Male_OfficerMeowji_Meta.json", "../Bin/Resources/Model/skeletal/NPC/OfficeMeowji/NPC_Male_OfficerMeowji_Meta.json");
+	pResource->Add_ResourcePath("NPC_OfficerMeowji.model", "../Bin/Resources/Global/NPC/OfficeMeowji/NPC_OfficerMeowji.model");
+	pResource->Add_ResourcePath("NPC_OfficerMeowji.mat", "../Bin/Resources/Global/NPC/OfficeMeowji/NPC_OfficerMeowji.mat");
+	pResource->Add_ResourcePath("NPC_Male_OfficerMeowji_Meta.json", "../Bin/Resources/Global/NPC/OfficeMeowji/NPC_Male_OfficerMeowji_Meta.json");
 	
 	auto pModel = Get_Component<CSkeletalModel>();
 	pModel->Link_Model(G_GlobalLevelKey, "NPC_OfficerMeowji.model");

@@ -123,6 +123,9 @@ void CCamPanel::Update_Panel(_float dt)
         state.curTime = 0.f;
         state.playing = false;
 
+        state.playAllLink = false;
+        state.playAllRefHandle = {};
+
         if (target.player)
             target.player->SetApplyEnabled(false);
 
@@ -180,7 +183,11 @@ void CCamPanel::Update_Panel(_float dt)
 
     if (target.player && !state.recording)
         target.player->SetTime(state.curTime);
+
+    if (state.playAllLink && !state.recording)
+        animGUIController.SetTimeSec(state.playAllRefHandle, state.curTime);
 }
+
 
 void CCamPanel::Render_GUI()
 {
@@ -281,6 +288,8 @@ void CCamPanel::Render_GUI()
 
     if (panelUI.hidden)
         DrawHiddenHandle();
+
+    DrawPath();
 }
 
 void CCamPanel::SetCaptureTarget(CCamObj* camObj)
@@ -422,40 +431,20 @@ void CCamPanel::DrawToolbar()
 
 void CCamPanel::DrawCamSelector()
 {
-    ImGui::AlignTextToFramePadding();
-    ImGui::TextUnformatted("Target");
-    ImGui::SameLine();
-
     const bool hasSeq = (target.sequence != nullptr);
-    const char* preview = hasSeq ? target.sequence->name.c_str() : "None";
-
-    ImGui::SetNextItemWidth(90.f);
-    if (ImGui::BeginCombo("##cam_track_combo", preview))
-    {
-        ImGui::Selectable(preview, true);
-        ImGui::EndCombo();
-    }
-    if (ImGui::IsItemHovered())
-        ImGui::SetTooltip("%s", preview);
-
-    ImGui::SameLine(0.f, 6.f);
-
-    if (!hasSeq) ImGui::BeginDisabled();
-    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(6.f, 3.f));
-    if (ImGui::SmallButton("Flip180##flip_yaw180"))
-        FlipKeys_Yaw180();
-    ImGui::PopStyleVar();
-    if (!hasSeq) ImGui::EndDisabled();
-
-    ImGui::SameLine();
-    ImGui::Dummy(ImVec2(14.f, 0.f));
-    ImGui::SameLine();
 
     if (!hasSeq)
     {
         ImGui::TextDisabled("(No Sequence)");
         return;
     }
+
+    if (ImGui::SmallButton("Flip180##flip_yaw180"))
+        FlipKeys_Yaw180();
+
+    ImGui::SameLine();
+    ImGui::Dummy(ImVec2(14.f, 0.f));
+    ImGui::SameLine();
 
     bool changedAny = false;
 
@@ -508,7 +497,6 @@ void CCamPanel::DrawCamSelector()
     ImGui::SameLine();
     {
         const CamRotInterp shown = target.sequence->rotInterp;
-
         if (Helper::DrawEnumCombo("##rot_interp", target.sequence->rotInterp, shown, 140.f)) changedAny = true;
     }
 
@@ -521,7 +509,6 @@ void CCamPanel::DrawCamSelector()
     ImGui::SameLine();
     {
         const CamFovInterp shown = target.sequence->fovInterp;
-
         if (Helper::DrawEnumCombo("##fov_interp", target.sequence->fovInterp, shown, 140.f)) changedAny = true;
     }
 
@@ -622,12 +609,16 @@ void CCamPanel::DrawCamSelector()
             }
             ImGui::EndCombo();
         }
+
+        animGUIController.DrawInline(target.spaceRefHandle);
+        DrawPlayAll(target.spaceRefHandle);
     }
 
     ImGui::PopID();
 
     if (changedAny) PostEdit_SequenceChanged();
 }
+
 
 void CCamPanel::DrawKeyframeList()
 {
@@ -1193,6 +1184,217 @@ _bool CCamPanel::DrawOrbitTargetBar()
 
     return changed;
 }
+
+void CCamPanel::DrawPath()
+{
+    if (!target.sequence) return;
+
+    const auto& keys = target.sequence->keyframes;
+    if (keys.size() < 2) return;
+
+    const Matrix view = *CameraManager()->Get_ViewMatrix();
+    const Matrix proj = *CameraManager()->Get_ProjMatrix();
+
+    Vector2 vp = GameInstance()->Get_ClientSize();
+    const Vector4 viewport(0.f, 0.f, vp.x, vp.y);
+
+    Matrix refRT = Matrix::Identity;
+    if (target.sequence->space == CamSpace::Local && target.spaceRefHandle.isValid())
+        refRT = GetRefRT(target.spaceRefHandle);
+
+    Matrix invView = view.Invert();
+    Vector3 camPos(invView._41, invView._42, invView._43);
+
+    const float depthNear = 1.0f;
+    const float depthFar = 25.0f;
+
+    const int samplesPerSeg = 48;
+
+    auto ToWorld = [&](const CamKeyFrame& k) -> Vector3
+        {
+            _vector3 wp = k.pos;
+            if (target.sequence->space == CamSpace::Local) wp = ToWorldPos(k.pos, refRT);
+            return Vector3(wp.x, wp.y, wp.z);
+        };
+
+    auto DepthU = [&](const Vector3& p) -> float
+        {
+            const float d = (p - camPos).Length();
+            float u = (d - depthNear) / (depthFar - depthNear);
+            return clamp(u, 0.f, 1.f);
+        };
+
+    auto CatmullRom = [](const Vector3& p0, const Vector3& p1, const Vector3& p2, const Vector3& p3, float t) -> Vector3
+        {
+            const float t2 = t * t;
+            const float t3 = t2 * t;
+
+            return 0.5f * ((2.f * p1) +
+                (-p0 + p2) * t +
+                (2.f * p0 - 5.f * p1 + 4.f * p2 - p3) * t2 +
+                (-p0 + 3.f * p1 - 3.f * p2 + p3) * t3);
+        };
+
+    vector<Vector3> rawWorld;
+    rawWorld.reserve(keys.size());
+    for (const auto& k : keys)
+        rawWorld.push_back(ToWorld(k));
+
+    vector<Vector3> curve;
+    curve.reserve((rawWorld.size() - 1) * (samplesPerSeg + 1));
+
+    const int n = (int)rawWorld.size();
+    for (int i = 0; i < n - 1; ++i)
+    {
+        const Vector3 p1 = rawWorld[i];
+        const Vector3 p2 = rawWorld[i + 1];
+
+        const Vector3 p0 = (i - 1 >= 0) ? rawWorld[i - 1] : (p1 + (p1 - p2));
+        const Vector3 p3 = (i + 2 < n) ? rawWorld[i + 2] : (p2 + (p2 - p1));
+
+        int s0 = (i == 0) ? 0 : 1;
+        for (int s = s0; s <= samplesPerSeg; ++s)
+        {
+            float t = (float)s / (float)samplesPerSeg;
+            curve.push_back(CatmullRom(p0, p1, p2, p3, t));
+        }
+    }
+
+    ImDrawList* dl = ImGui::GetBackgroundDrawList();
+
+    bool hasPrev = false;
+    ImVec2 prevScreen{};
+    float  prevU = 0.f;
+
+    for (const auto& wp : curve)
+    {
+        Vector2 screen{};
+        if (!Helper::WorldToScreen(_float3(wp.x, wp.y, wp.z), (_float2&)screen, view, proj, viewport))
+        {
+            hasPrev = false;
+            continue;
+        }
+
+        const float u = DepthU(wp);
+
+        if (hasPrev)
+        {
+            const float a = Math::Lerp(255.f, 60.f, (prevU + u) * 0.5f);
+            const float t = Math::Lerp(3.0f, 1.2f, (prevU + u) * 0.5f);
+
+            dl->AddLine(prevScreen, ImVec2(screen.x, screen.y), IM_COL32(0, 255, 255, (int)a), t);
+        }
+
+        prevScreen = ImVec2(screen.x, screen.y);
+        prevU = u;
+        hasPrev = true;
+    }
+
+    const bool hasSel = HasValidSelection();
+    const _uint selId = hasSel ? GetSelectedKeyId() : 0;
+
+    for (const auto& k : keys)
+    {
+        Vector3 wp = ToWorld(k);
+
+        Vector2 screen{};
+        if (!Helper::WorldToScreen(_float3(wp.x, wp.y, wp.z), (_float2&)screen, view, proj, viewport))
+            continue;
+
+        const float u = DepthU(wp);
+        const bool isSel = hasSel && (k.keyId == selId);
+
+        float r = isSel ? 6.f : 4.f;
+        r *= Math::Lerp(1.15f, 0.65f, u);
+
+        const int a = (int)Math::Lerp(255.f, 90.f, u);
+
+        dl->AddCircleFilled(ImVec2(screen.x, screen.y), r,
+            isSel ? IM_COL32(255, 255, 0, a) : IM_COL32(255, 255, 255, a), 12);
+    }
+}
+
+void CCamPanel::DrawPlayAll(OBJECT_HANDLE spaceRefHandle)
+{
+    const bool hasCam = target.player != nullptr;
+    const bool hasAnim = animGUIController.HasAnimator(spaceRefHandle);
+
+    ImGui::SameLine(0.f, 6.f);
+
+    if (!hasCam || !hasAnim) ImGui::BeginDisabled();
+
+    auto HandleEqual = [](OBJECT_HANDLE a, OBJECT_HANDLE b) -> bool
+        {
+            return a.hObjID == b.hObjID && a.Level == b.Level && a.Layer == b.Layer;
+        };
+
+    const bool linkedThis = state.playAllLink && HandleEqual(state.playAllRefHandle, spaceRefHandle);
+    const bool camPlaying = !state.recording && state.playing;
+    const bool allPlaying = linkedThis && camPlaying;
+
+    if (allPlaying)
+        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.85f, 0.15f, 0.15f, 1.f));
+
+    ImGui::PushID(target.player);
+
+    if (ImGui::SmallButton(allPlaying ? "AllStop" : "AllPlay"))
+    {
+        if (allPlaying)
+        {
+            SetPlaying(false);
+
+            state.playAllLink = false;
+            state.playAllRefHandle = {};
+
+            animGUIController.SetPlaying(spaceRefHandle, false);
+        }
+        else
+        {
+            const float eps = 1e-4f;
+
+            SetRecording(false);
+
+            if (state.endTime > 1e-6f && state.curTime >= state.endTime - eps)
+                state.curTime = 0.f;
+
+            state.playAllLink = true;
+            state.playAllRefHandle = spaceRefHandle;
+
+            animGUIController.SetPlaying(spaceRefHandle, false);
+            animGUIController.SetTimeSec(spaceRefHandle, state.curTime);
+
+            SetPlaying(true);
+        }
+    }
+
+    if (allPlaying)
+        ImGui::PopStyleColor();
+
+    ImGui::SameLine(0.f, 4.f);
+
+    if (ImGui::SmallButton("Reset##all_reset"))
+    {
+        SetPlaying(false);
+
+        state.playAllLink = false;
+        state.playAllRefHandle = {};
+
+        animGUIController.SetPlaying(spaceRefHandle, false);
+
+        state.curTime = 0.f;
+
+        if (target.player && !state.recording)
+            target.player->SetTime(state.curTime);
+
+        animGUIController.SetTimeSec(spaceRefHandle, 0.f);
+    }
+
+    ImGui::PopID();
+
+    if (!hasCam || !hasAnim) ImGui::EndDisabled();
+}
+
+
 
 void CCamPanel::SetRecording(_bool on)
 {
@@ -2235,6 +2437,19 @@ void CCamPanel::DrawKeyframeEditor_SelectedKeyTable(bool& ioChangedAny)
             }
         }
 
+        BeginRow("Dist");
+        {
+            const _vector3 p = keyPtr->pos;
+            const float dist = sqrtf(p.x * p.x + p.y * p.y + p.z * p.z);
+
+            ImGui::AlignTextToFramePadding();
+            ImGui::Text("%.2f", dist);
+            ImGui::SameLine();
+
+            if (target.sequence && target.sequence->space == CamSpace::Local) ImGui::TextDisabled("(to Ref)");
+            else ImGui::TextDisabled("(to Origin)");
+        }
+
         BeginRow("Look");
         {
             _vector3 look = keyPtr->look;
@@ -2247,6 +2462,36 @@ void CCamPanel::DrawKeyframeEditor_SelectedKeyTable(bool& ioChangedAny)
                     ioChangedAny = true;
                 }
             }
+        }
+
+        BeginRow("LookAt");
+        {
+            if (!keyEditUI.lookTargetInited)
+            {
+                keyEditUI.lookTargetInited = true;
+                keyEditUI.lookTargetPos = _vector3(0.f, 0.f, 0.f);
+            }
+
+            _vector3 tgt = keyEditUI.lookTargetPos;
+            if (DrawVec3Row_LeftLabel("lookat_target", tgt, 0.05f))
+                keyEditUI.lookTargetPos = tgt;
+
+            ImGui::SameLine(0.f, 12.f);
+
+            if (ImGui::SmallButton("Look"))
+            {
+                _vector3 dir = keyEditUI.lookTargetPos - keyPtr->pos;
+                if (dir.LengthSquared() > 1e-8f)
+                {
+                    dir.Normalize();
+                    keyPtr->look = dir;
+                    ioChangedAny = true;
+                }
+            }
+
+            ImGui::SameLine();
+            if (target.sequence && target.sequence->space == CamSpace::Local) ImGui::TextDisabled("Local");
+            else ImGui::TextDisabled("World");
         }
 
         BeginRow("Roll");
@@ -2301,8 +2546,8 @@ void CCamPanel::DrawKeyframeEditor_SelectedKeyTable(bool& ioChangedAny)
     char msg[256];
     sprintf_s(msg, u8"적용하면 기존 키 %d개가 덮어씌워져 제거됩니다.\n그래도 적용할까요?", keyEditUI.pendingOverwriteCount);
 
-    const ConfirmResult timeR = DrawConfirmPopupModal( "TimeCollisionConfirm", nullptr,
-        { u8"같은 시간대에 키가 이미 있습니다.", msg }, u8"적용",  u8"취소", 120.f);
+    const ConfirmResult timeR = DrawConfirmPopupModal("TimeCollisionConfirm", nullptr,
+        {u8"같은 시간대에 키가 이미 있습니다.", msg}, u8"적용", u8"취소", 120.f);
 
     if (timeR == ConfirmResult::Ok)
     {

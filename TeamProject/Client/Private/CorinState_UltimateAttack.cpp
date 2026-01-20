@@ -27,6 +27,8 @@ void CCorinState_UltimateAttack::Enter(CCorin* pOwner)
         m_pSubStateMachine->Set_DefaultState("Start");
     }
     __super::Enter(pOwner);
+
+    CamDirector()->RequestSequence("Ultimate/Corin_Ultimate");
 }
 
 void CCorinState_UltimateAttack::Update(CCorin* pOwner, _float dt)
