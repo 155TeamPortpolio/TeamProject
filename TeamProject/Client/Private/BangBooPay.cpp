@@ -64,6 +64,8 @@ void CBangBooPay::Awake()
 	pAnimator->Set_Animation(Get_AnimName() + "Idle_Start")
 		.Loop(false)
 		.Apply();
+
+	__super::Awake();
 }
 
 void CBangBooPay::Priority_Update(_float dt)
