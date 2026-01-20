@@ -51,7 +51,7 @@ void CUI_DecibelKanji::Update(_float dt)
 void CUI_DecibelKanji::Ready_PartObjects()
 {
     auto pContainer = Get_Component<CObjectContainer>();
-    const string& strLevelKey = CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey();
+    const string& strLevelKey = LevelManager()->Get_NowLevelKey();
 
     for (_int i = 0; i < ENUM(CHILD::END); ++i)
     {
