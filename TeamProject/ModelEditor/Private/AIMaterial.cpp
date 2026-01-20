@@ -23,6 +23,7 @@ HRESULT CAIMaterial::Initialize(const aiMaterial* pAIMaterial, const string& fil
 	Add_AdditionalTexture(fileDirectory, "", "Map_M.png", TEXTURE_TYPE::METALNESS);
 	Add_AdditionalTexture(fileDirectory, "", "Map_A.png", TEXTURE_TYPE::AMBIENT);
 	Add_AdditionalTexture(fileDirectory, "", "Map_D.png", TEXTURE_TYPE::DIFFUSE);
+
 	LoadByAssimp(fileDirectory, pAIMaterial);
 
 	m_passConstant = "Opaque";
@@ -235,6 +236,12 @@ HRESULT CAIMaterial::LoadByAssimp(const std::string& fileDirectory, const aiMate
 
 void CAIMaterial::ReCheck_Material(const string& fileDirectory)
 {
+
+	Add_AdditionalTexture(fileDirectory, "", "_N.png", TEXTURE_TYPE::NORMALS);
+	Add_AdditionalTexture(fileDirectory, "", "_M.png", TEXTURE_TYPE::METALNESS);
+	Add_AdditionalTexture(fileDirectory, "", "_A.png", TEXTURE_TYPE::AMBIENT);
+	Add_AdditionalTexture(fileDirectory, "", "_D.png", TEXTURE_TYPE::DIFFUSE);
+
 	_bool hasDiffuse = !m_Textures[TEXTURE_TYPE::DIFFUSE].empty();
 	_bool hasNormal = !m_Textures[TEXTURE_TYPE::NORMALS].empty();
 	_bool hasMetal = !m_Textures[TEXTURE_TYPE::METALNESS].empty();
