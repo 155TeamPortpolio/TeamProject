@@ -16,7 +16,12 @@ namespace Client {
 
 	enum class HIT_TYPE { ONCE, INTERVAL, COUNT };
 	enum class DAMAGE_TYPE {NORMAL, HARD, AIRBORNE, ULTIMATE};
-	enum class DayPhase {EarlyMorning,Morning,Afternoon,LateNight};
+
+	//------------------- Field -------------------
+	enum class DayPhase {EarlyMorning,Morning,Afternoon,LateNight,Any};
+	enum class Speaker { Player, Npc, System };
+	enum class DialogueType {Normal, Choice, Quest};
+	enum class DialogueResult {Fail, Running, Success, None};
 }
 
 #endif
