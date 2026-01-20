@@ -747,6 +747,9 @@
     <Filter Include="02. GameObject\MapObject\OBJFactory">
       <UniqueIdentifier>{8b852d8f-36c2-4c1e-b080-ca2b3222160f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Interactable\Barricade">
+      <UniqueIdentifier>{8b1edd40-c12b-4e78-9bb4-7bbe13b2d7ba}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Start">
       <UniqueIdentifier>{2cbaf699-675f-4a4b-9bf0-f7322153d7d1}</UniqueIdentifier>
     </Filter>
@@ -1492,6 +1495,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\ZeroStage_Normal.h">
       <Filter>01. Level\04. Zero\Stage_Normal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\IInteract.h">
+      <Filter>02. GameObject\Object\Interactable</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

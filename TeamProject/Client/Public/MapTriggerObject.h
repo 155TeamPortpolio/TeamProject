@@ -7,7 +7,7 @@ class CMapTriggerObject :
 {
 public:
     typedef struct tagMapTriggerObject final : public CMapObject::MAPOBJ_DESC {
-        _float3   vRight{}, vUp{}, vLook{};
+        _float3   vRight{}, vUp{}, vLook{}, vPos;
     }MAP_TRIGGEROBJ_DESC;
 
 private:
