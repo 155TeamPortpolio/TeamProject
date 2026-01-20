@@ -201,6 +201,8 @@ void CCorin::On_Hit(DAMAGE_TYPE eType)
 
 void CCorin::Update_States()
 {
+	if (!Is_MainCharacter()) return;
+
 	m_pStateMachine->Set_Bool("IsMove", Is_Move_Buffer());
 	
 	Process_EndState(m_pStateMachine->Get_CurrentStateName());
