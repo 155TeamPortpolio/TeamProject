@@ -170,16 +170,25 @@ void CUI_PrimaryAction::Apply_AvailableVisual()
 
 void CUI_PrimaryAction::Set_ChildAlive(CHILD child, _bool isAlive)
 {
+    if (!m_pChildren[ENUM(child)])
+        return;
+
     m_pChildren[ENUM(child)]->Set_Alive(isAlive);
 }
 
 void CUI_PrimaryAction::Set_ChildColor(CHILD child, _float4 vColor)
 {
+    if (!m_pChildren[ENUM(child)])
+        return;
+
     m_pChildren[ENUM(child)]->Set_Color(vColor);
 }
 
 void CUI_PrimaryAction::Set_ChildAnimation(CHILD child, _int iIndex)
 {
+    if (!m_pChildren[ENUM(child)])
+        return;
+
     m_pChildren[ENUM(child)]->Set_Animation(iIndex);
 }
 
