@@ -1,6 +1,11 @@
 #include "pch.h"
 #include "Npc.h"
 
+#include "UI_NameIndicator.h"
+#include "FieldSystem.h"
+#include "GameInstance.h"
+#include "CharacterController.h"
+
 CNpc::CNpc()
 {
 }
@@ -26,6 +31,19 @@ HRESULT CNpc::Initialize(INIT_DESC* pArg)
 
 void CNpc::Update(_float dt)
 {
+}
+
+HRESULT CNpc::Add_NameIndicator()
+{
+    CUI_NameIndicator::INDICATOR_DESC* pDesc = new CUI_NameIndicator::INDICATOR_DESC;
+    pDesc->strName = m_strName;
+    pDesc->pCCT = Get_Component<CCharacterController>();
+    auto pUI = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_NameIndicator" })
+        .Add_UIDesc(pDesc)
+        .Build("nameIndicator");
+    UIManager()->Add_UIObject(pUI, LevelManager()->Get_NowLevelKey());
+
+    return S_OK;
 }
 
 void CNpc::Free()
