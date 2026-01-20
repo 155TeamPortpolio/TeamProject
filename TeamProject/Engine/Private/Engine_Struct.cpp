@@ -149,6 +149,7 @@ MESH_NODE Engine::tagMeshNode::FromJson(nlohmann::ordered_json& json)
 	node.DiffuseTextureTag = json.value("diffuse_texture_tag", "");
 	node.NoiseTextureTag = json.value("noise_texture_tag", "");
 	node.DissolveTextureTag = json.value("dissolve_texture_tag", "");
+	node.MaskTextureTag = json.value("mask_texture_tag", "");
 
 	auto offsetPostion = json.value("offset_position", json::array({ 0.f,0.f,0.f }));
 	auto offsetQuaternion = json.value("offset_quaternion", json::array({ 0.f,0.f,0.f,1.f }));
@@ -218,6 +219,10 @@ MESH_NODE Engine::tagMeshNode::FromJson(nlohmann::ordered_json& json)
 	node.fNoiseTilling = json.value("noise_tilling", 0.f);
 	node.vNoiseUVSpeed.x = json.at("noise_uvspeed").at("x").get<_float>();
 	node.vNoiseUVSpeed.y = json.at("noise_uvspeed").at("y").get<_float>();
+
+	/* Mask */
+	node.fEnableMask = json.value("enable_mask", 0.f);
+	node.fMaskTilling = json.value("mask_tilling", 0.f);
 
 	return node;
 }

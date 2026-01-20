@@ -84,6 +84,10 @@ float NoiseTiling;
 float2 NoiseUVSpeed;
 float ElapsedTime;
 
+/*Mask Params*/
+float EnableMask;
+float MaskTilling;
+
 struct VS_IN
 {
     float3 vPosition : POSITION;
@@ -168,6 +172,10 @@ PS_OUT PS_MAIN_DEFAULT(PS_IN In)
     float fDissolveAlpha = smoothstep(DissolveProgress - fDissolveSoftness, DissolveProgress + fDissolveSoftness, fDissolveMask);
     fDissolveAlpha = lerp(1.f, fDissolveAlpha, EnableDissolve);
     
+    /* Mask */
+    float fMask = ApplySamplerMode(SamplerMode, In.vTexcoord * MaskTilling, AlphaMaskTexture).r;
+    fMask = lerp(1.f, fMask, EnableMask);
+    
     //if (fDissolveMask < DissolveProgress)
     //    discard;
     
@@ -204,7 +212,7 @@ PS_OUT PS_MAIN_DEFAULT(PS_IN In)
     }
     
     float3 vColor = vResult.rgb;
-    float fAlpha = vResult.a * fDissolveAlpha;
+    float fAlpha = vResult.a * fDissolveAlpha * fMask;
     
     /* 깊이 기반 가중치 생성 */
     float fLinearZ = In.vViewPosition.z;

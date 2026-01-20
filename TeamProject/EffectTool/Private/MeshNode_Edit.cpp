@@ -35,6 +35,7 @@ HRESULT CMeshNode_Edit::Initialize(INIT_DESC* pArg)
 	pModel->Set_RenderType(RENDER_PASS_TYPE::RENDER_EFFECT);
 	pModel->ShadowCast(false);
 
+	m_pTransform->Initialize(nullptr);
 	m_InstanceName = "MeshNode";
 
 	return S_OK;
@@ -111,6 +112,7 @@ void CMeshNode_Edit::Import(nlohmann::ordered_json& json)
 	m_DiffuseTextureTag = json.value("diffuse_texture_tag", "");
 	m_DissolveTextureTag = json.value("dissolve_texture_tag", "");
 	m_NoiseTextureTag = json.value("noise_texture_tag", "");
+	m_MaskTextureTag = json.value("mask_texture_tag", "");
 
 	/* Texture Slot Module */
 	m_TextureSlotModule.eSamplerMode = static_cast<TEXTURE_SLOT_MODULE::SAMPLER_MODE>(json.value("sampler_mode", 0));
@@ -174,6 +176,10 @@ void CMeshNode_Edit::Import(nlohmann::ordered_json& json)
 	m_NoiseModule.vNoiseUVSpeed.x = json.at("noise_uvspeed").at("x").get<_float>();
 	m_NoiseModule.vNoiseUVSpeed.y = json.at("noise_uvspeed").at("y").get<_float>();
 
+	/* Mask Module */
+	m_MaskModule.fEnableMask = json.value("enable_mask", 0.f);
+	m_MaskModule.fMaskTilling = json.value("mask_tilling", 0.f);
+
 	{
 		m_SetMaterial = true;
 
@@ -198,6 +204,12 @@ void CMeshNode_Edit::Import(nlohmann::ordered_json& json)
 		{
 			auto pDissolveTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_DissolveTextureTag);
 			pMaterialInstance->Set_Param("DissolveTexture", { pDissolveTexture->Get_SRV(),"Texture2D",0 });
+		}
+
+		if (!m_MaskTextureTag.empty())
+		{
+			auto pMaskTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_MaskTextureTag);
+			pMaterialInstance->Set_Param("MaskTexture", { pMaskTexture->Get_SRV(),"Texture2D",0 });
 		}
 
 		m_SetMaterial = true;
@@ -236,6 +248,7 @@ void CMeshNode_Edit::Export(nlohmann::ordered_json& json)
 		{"diffuse_texture_tag",m_DiffuseTextureTag},
 		{"dissolve_texture_tag",m_DissolveTextureTag},
 		{"noise_texture_tag",m_NoiseTextureTag},
+		{"mask_texture_tag",m_MaskTextureTag},
 
 		/* Offset Transform */
 		{"offset_position",json::array({vOffsetPosition.x,vOffsetPosition.y,vOffsetPosition.z})},
@@ -294,7 +307,11 @@ void CMeshNode_Edit::Export(nlohmann::ordered_json& json)
 		{"enable_noise",m_NoiseModule.fEnableNoise},
 		{"noise_strength",m_NoiseModule.fNoiseStrength},
 		{"noise_tilling",m_NoiseModule.fNoiseTilling},
-		{"noise_uvspeed",{{"x",m_NoiseModule.vNoiseUVSpeed.x},{"y",m_NoiseModule.vNoiseUVSpeed.y}}}
+		{"noise_uvspeed",{{"x",m_NoiseModule.vNoiseUVSpeed.x},{"y",m_NoiseModule.vNoiseUVSpeed.y}}},
+
+		/* Mask */
+		{"enable_mask",m_MaskModule.fEnableMask},
+		{"mask_tilling",m_MaskModule.fMaskTilling}
 	};
 }
 
@@ -449,6 +466,8 @@ void CMeshNode_Edit::SetUp_MeshEffect()
 		Add_Texture(TEXTURE_TYPE::NOISE);
 	if (ImGui::Button("Add Dissolve Texture"))
 		Add_Texture(TEXTURE_TYPE::DISSOLVE);
+	if (ImGui::Button("Add Mask Texture"))
+		Add_Texture(TEXTURE_TYPE::ALPHA_MASK);
 
 	if (ImGui::CollapsingHeader("Texture Slot Module"))
 	{
@@ -547,6 +566,15 @@ void CMeshNode_Edit::SetUp_MeshEffect()
 		ImGui::DragFloat("Noise Tilling", &m_NoiseModule.fNoiseTilling);
 		ImGui::DragFloat2("Noise UVSpeed", &m_NoiseModule.vNoiseUVSpeed.x);
 	}
+
+	if (ImGui::CollapsingHeader("Mask Module"))
+	{
+		static _bool enableMask = false;
+		if (ImGui::Checkbox("Enable Mask", &enableMask))
+			m_MaskModule.fEnableMask = enableMask ? 1.f : 0.f;
+
+		ImGui::DragFloat("Mask Tilling", &m_MaskModule.fMaskTilling);
+	}
 }
 
 void CMeshNode_Edit::Add_Texture(TEXTURE_TYPE type)
@@ -578,6 +606,13 @@ void CMeshNode_Edit::Add_Texture(TEXTURE_TYPE type)
 
 			auto pDissolveTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_DissolveTextureTag);
 			pMaterialInstance->Set_Param("DissolveTexture", { pDissolveTexture->Get_SRV(),"Texture2D",0 });
+		}break;
+		case Engine::TEXTURE_TYPE::ALPHA_MASK:
+		{
+			m_MaskTextureTag = m_pContext->TextureTags[0];
+
+			auto pMaskTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_MaskTextureTag);
+			pMaterialInstance->Set_Param("AlphaMaskTexture", { pMaskTexture->Get_SRV(),"Texture2D",0 });
 		}break;
 		default:
 			break;

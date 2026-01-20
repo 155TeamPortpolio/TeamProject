@@ -94,7 +94,8 @@ namespace Engine
         GLTF_METALLIC_ROUGHNESS = 27,
 		NOISE = 28,
 		DISSOLVE = 29,
-		END = 30
+		ALPHA_MASK = 30,
+		END = 31
 	};
 
 	/* Effect */

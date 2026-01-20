@@ -72,7 +72,7 @@ HRESULT CZero_Level::Initialize()
 	m_StageContainer.emplace(StageType::Elite, CZeroStage_Elite::Create(this));
 
 	m_Context.isFirstIn = true;
-	ChangeStage(StageType::Normal, 1);
+	ChangeStage(StageType::Boss, 1);
 	m_Context.isFirstIn = false;
 	m_Context.pNowStage->Ready_Stage(m_Context);
 
@@ -121,6 +121,7 @@ HRESULT CZero_Level::Initialize()
 		pResource->Add_ResourcePath("Eff_Particle_009.png", "../Bin/Resources/Effect/Texture/Eff_Particle_009.png");
 		pResource->Add_ResourcePath("Eff_Particle_009.png", "../Bin/Resources/Effect/Texture/Eff_Particle_009.png");
 		pResource->Add_ResourcePath("Eff_Flare_060.png", "../Bin/Resources/Effect/Texture/Eff_Flare_060.png");
+		pResource->Add_ResourcePath("Eff_Trail_140_LYF_01.png", "../Bin/Resources/Effect/Texture/Eff_Trail_140_LYF_01.png");
 
 		/* Models */
 		pResource->Add_ResourcePath("Smoke_Cone2.model", "../Bin/Resources/Effect/Model/Sacrifice_Smoke_Trail/Smoke_Cone2.model");
