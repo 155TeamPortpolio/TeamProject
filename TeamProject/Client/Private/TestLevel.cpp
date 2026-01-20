@@ -42,6 +42,7 @@
 #include "Corin.h"
 #include "JaneDoe.h"
 #include "Player.h"
+#include "BattlePlayer.h"
 
 /* Enemy */
 #include "ThugBulkyEnforcer.h"
@@ -142,9 +143,11 @@ HRESULT CTestLevel::Awake()
 	Ready_TestObject();
 	Ready_Npc();
 
+
+	//m_pCamDirector->RequestSequence("Intro/Jane_Intro");
+	BattleSystem()->GetBattlePlayer()->QuestStart();
 	m_pCamDirector->AutoTarget();
-	m_pCamDirector->RequestSequence("Intro/Jane_Intro");
-	//m_pCamDirector->RequestSequence("Intro/Intro");
+	m_pCamDirector->RequestSequence("Intro/Intro");
 
 	//GameInstance()->Set_EngineTimeScale(0.33f);
 

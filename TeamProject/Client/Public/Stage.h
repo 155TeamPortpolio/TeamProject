@@ -29,6 +29,8 @@ protected:
 	virtual void Ready_Map(const string& LevelTag, const string& AreaTag);
 
 protected:
+	void BaseIntro(CZero_Level::StageContext& context);
+	void BaseOutro();
 
 protected:
 	_float m_fStageTime = {};

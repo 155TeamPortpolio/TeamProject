@@ -1,6 +1,8 @@
 #pragma once
 #include "Base.h"
 
+#include "CursorController.h"
+
 namespace Engine {
 	class CGameInstance;
 }
@@ -24,6 +26,8 @@ private:
 	ID3D11Device* m_pDevice = { nullptr };
 	ID3D11DeviceContext* m_pDeviceContext = {nullptr};
 
+	CCursorController m_cursorController;
+
 public:
 	static CMainApp* Create();
 	virtual void Free() override;
@@ -32,17 +36,5 @@ private:
 	void Initialize_GlobalPrototype();
 	void Create_GlobalCamObjs();
 	void Create_GlobalPlayer();
-
-	// MouseLock
-private:
-	RECT  GetClientRectInScreen() const;
-	POINT GetClientCenterInScreen() const;
-
-	void  SetMouseLock(_bool lock);
-	void  ToggleCursor();
-	void  UpdateCursor(_float dt);
-
-private:
-	_bool m_isMouseLocked = false;
 };
 

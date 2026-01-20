@@ -9,6 +9,7 @@
 #include "CharacterController.h"
 
 #include "StateMachine.h"
+#include "CorinState_Start.h"
 #include "CorinState_Idle.h"
 #include "CorinState_Move.h"
 #include "CorinState_Attack.h"
@@ -38,11 +39,11 @@ HRESULT CCorin::Initialize_Prototype()
 
 	auto pRcsMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
 	pRcsMgr->Add_ResourcePath("Corin.model",
-		"../Bin/Resources/Model/skeletal/Corin/Corin.model");
+		"../Bin/Resources/Global/BattleCharacter/Corin/Corin.model");
 	pRcsMgr->Add_ResourcePath("Corin.mat",
-		"../Bin/Resources/Model/skeletal/Corin/Corin.mat");
+		"../Bin/Resources/Global/BattleCharacter/Corin/Corin.mat");
 	pRcsMgr->Add_ResourcePath("Avatar_Female_Size01_Corin_Meta.json",
-		"../Bin/Resources/Model/skeletal/Corin/Avatar_Female_Size01_Corin_Meta.json");
+		"../Bin/Resources/Global/BattleCharacter/Corin/Avatar_Female_Size01_Corin_Meta.json");
 
 	Get_Component<CModel>()->Link_Model(G_GlobalLevelKey, "Corin.model");
 	Get_Component<CMaterial>()->Link_Material(G_GlobalLevelKey, "Corin.mat");
@@ -51,9 +52,12 @@ HRESULT CCorin::Initialize_Prototype()
 
 HRESULT CCorin::Initialize(INIT_DESC* pArg)
 {
-	if (FAILED(__super::Initialize(pArg))) return E_FAIL;
-	if (FAILED(Initialize_StateMachine())) return E_FAIL;
-	if (FAILED(Initialize_Weapon()))	   return E_FAIL;
+	if (FAILED(__super::Initialize(pArg)))
+		return E_FAIL;
+	if (FAILED(Initialize_StateMachine()))
+		return E_FAIL;
+	if (FAILED(Initialize_Weapon()))	   
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -131,6 +135,11 @@ void CCorin::Render_GUI()
 	ImGui::Separator();
 	ImGui::Text("Parrable Object %d", m_ParryableTargets.size());
 
+}
+
+void CCorin::On_Start()
+{
+	m_pStateMachine->Set_Trigger("QuestStart");
 }
 
 void CCorin::On_SwitchIn(SWITCH eType)
@@ -346,6 +355,7 @@ HRESULT CCorin::Initialize_StateMachine()
 
 HRESULT CCorin::Initialize_States()
 {
+	m_pStateMachine->Register_State("Start", CCorinState_Start::Create());
 	m_pStateMachine->Register_State("Idle", CCorinState_Idle::Create());
 	m_pStateMachine->Register_State("Move", CCorinState_Move::Create());
 	m_pStateMachine->Register_State("Attack", CCorinState_Attack::Create());
@@ -359,6 +369,13 @@ HRESULT CCorin::Initialize_States()
 
 HRESULT CCorin::Initialize_Transitions()
 {
+	// Start
+	m_pStateMachine->Register_AnyStateTransition("Start",
+		CStateMachine<CCorin>::CONDITION_TRIGGER, "QuestStart");
+
+	m_pStateMachine->Register_Transition("Start", "Idle",
+		CStateMachine<CCorin>::CONDITION_ANIMATION_END);
+
 	// Idle -> Move
 	m_pStateMachine->Register_Transition("Idle", "Move",
 		CStateMachine<CCorin>::CONDITION_BOOL_TRUE, "IsMove");
@@ -399,7 +416,7 @@ HRESULT CCorin::Initialize_Transitions()
 
 	// SwitchOut
 	m_pStateMachine->Register_AnyStateTransition("SwitchOut",
-		CStateMachine<CCorin>::CONDITION_TRIGGER, "SwitchOut");
+		CStateMachine<CCorin>::CONDITION_TRIGGER, "SwitchOut", 1);
 
 	m_pStateMachine->Register_Transition("SwitchOut", "Idle",
 		CStateMachine<CCorin>::CONDITION_TRIGGER, "ToIdle");

@@ -10,6 +10,8 @@
 
 void CJaneDoeState_SwitchIn::Enter(CJaneDoe* pOwner)
 {
+    pOwner->Active_Character();
+    pOwner->Push_Invincible();
     pOwner->Unlock_Move();
     if (!m_pSubStateMachine)
     {
@@ -57,5 +59,6 @@ void CJaneDoeState_SwitchIn::Update(CJaneDoe* pOwner, _float dt)
 
 void CJaneDoeState_SwitchIn::Exit(CJaneDoe* pOwner)
 {
+    pOwner->Pop_Invincible();
     __super::Exit(pOwner);
 }

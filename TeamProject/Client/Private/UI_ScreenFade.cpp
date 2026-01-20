@@ -62,7 +62,7 @@ void CUI_ScreenFade::UI_DeActive(void* pArg)
 
 void CUI_ScreenFade::Ready_FadeIn()
 {
-    // 화면 -> 검정 화면
+    /* 화면 페이드인 실행 (검정 화면 -> 화면) */
 
     UI_ANIM_CLIP clip = {};
     clip.strName = "fadeIn";
@@ -71,8 +71,8 @@ void CUI_ScreenFade::Ready_FadeIn()
 
     clip.keyframes =
     {
-        { 0.0f, {1.f,1.f}, 0.f, {}, {0.f,0.f,0.f,0.f}, EaseType::InOutSine },
-        { 0.5f, {1.f,1.f}, 0.f, {}, {0.f,0.f,0.f,1.f}, EaseType::None }
+        { 0.0f, {1.f,1.f}, 0.f, {}, {0.f,0.f,0.f,1.f}, EaseType::InOutSine },
+        { 0.5f, {1.f,1.f}, 0.f, {}, {0.f,0.f,0.f,0.f}, EaseType::None }
     };
 
     m_iFadeInIndex = Register_AnimClip(clip);
@@ -80,7 +80,7 @@ void CUI_ScreenFade::Ready_FadeIn()
 
 void CUI_ScreenFade::Ready_FadeOut()
 {
-    // 검정 화면 -> 화면
+    /* 화면 페이드아웃 실행 (화면 -> 검정 화면) */
 
     UI_ANIM_CLIP clip = {};
     clip.strName = "fadeOut";
@@ -89,8 +89,8 @@ void CUI_ScreenFade::Ready_FadeOut()
 
     clip.keyframes =
     {
-        { 0.0f, {1.f,1.f}, 0.f, {}, {0.f,0.f,0.f,1.f}, EaseType::InOutSine },
-        { 0.5f, {1.f,1.f}, 0.f, {}, {0.f,0.f,0.f,0.f}, EaseType::None }
+        { 0.0f, {1.f,1.f}, 0.f, {}, {0.f,0.f,0.f,0.f}, EaseType::InOutSine },
+        { 0.5f, {1.f,1.f}, 0.f, {}, {0.f,0.f,0.f,1.f}, EaseType::None }
     };
 
     m_iFadeOutIndex = Register_AnimClip(clip);

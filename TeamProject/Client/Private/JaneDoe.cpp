@@ -12,6 +12,7 @@
 #include "ObjectContainer.h"
 
 #include "StateMachine.h"
+#include "JaneDoeState_Start.h"
 #include "JaneDoeState_Idle.h"
 #include "JaneDoeState_Move.h"
 #include "JaneDoeState_Attack.h"
@@ -47,11 +48,11 @@ HRESULT CJaneDoe::Initialize_Prototype()
 
 	auto pRcsMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
 	pRcsMgr->Add_ResourcePath("JaneDoeModel.model",
-		"../Bin/Resources/Model/skeletal/JaneDoe/JaneDoeModel.model");
+		"../Bin/Resources/Global/BattleCharacter/JaneDoe/JaneDoeModel.model");
 	pRcsMgr->Add_ResourcePath("JaneDoe.mat",
-		"../Bin/Resources/Model/skeletal/JaneDoe/JaneDoe.mat");
+		"../Bin/Resources/Global/BattleCharacter/JaneDoe/JaneDoe.mat");
 	pRcsMgr->Add_ResourcePath("JaneDoe_Meta.json",
-		"../Bin/Resources/Model/skeletal/JaneDoe/JaneDoe_Meta.json");
+		"../Bin/Resources/Global/BattleCharacter/JaneDoe/JaneDoe_Meta.json");
 
 	Get_Component<CModel>()->Link_Model(G_GlobalLevelKey, "JaneDoeModel.model");
 	Get_Component<CMaterial>()->Link_Material(G_GlobalLevelKey, "JaneDoe.mat");
@@ -161,6 +162,11 @@ void CJaneDoe::Render_GUI()
 	}
 }
 
+void CJaneDoe::On_Start()
+{
+	m_pStateMachine->Set_Trigger("QuestStart");
+}
+
 void CJaneDoe::On_SwitchIn(SWITCH eType)
 {
 	m_fDissolveProgress = 0.f;
@@ -239,6 +245,7 @@ HRESULT CJaneDoe::Initialize_StateMachine()
 
 HRESULT CJaneDoe::Initialize_States()
 {
+	m_pStateMachine->Register_State("Start", CJaneDoeState_Start::Create());
 	m_pStateMachine->Register_State("Idle", CJaneDoeState_Idle::Create());
 	m_pStateMachine->Register_State("Move", CJaneDoeState_Move::Create());
 	m_pStateMachine->Register_State("Attack", CJaneDoeState_Attack::Create());
@@ -252,6 +259,13 @@ HRESULT CJaneDoe::Initialize_States()
 
 HRESULT CJaneDoe::Initialize_Transitions()
 {
+	// Start
+	m_pStateMachine->Register_AnyStateTransition("Start",
+		CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "QuestStart");
+
+	m_pStateMachine->Register_Transition("Start", "Idle",
+		CStateMachine<CJaneDoe>::CONDITION_ANIMATION_END);
+
 	// Idle -> Move
 	m_pStateMachine->Register_Transition("Idle", "Move",
 		CStateMachine<CJaneDoe>::CONDITION_BOOL_TRUE, "IsMove");
@@ -292,7 +306,7 @@ HRESULT CJaneDoe::Initialize_Transitions()
 
 	// SwitchOut
 	m_pStateMachine->Register_AnyStateTransition("SwitchOut",
-		CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "SwitchOut");
+		CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "SwitchOut", 1);
 
 	m_pStateMachine->Register_Transition("SwitchOut", "Idle",
 		CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "ToIdle");

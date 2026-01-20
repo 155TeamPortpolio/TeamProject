@@ -84,6 +84,9 @@ HRESULT CMainApp::Initialize()
 	#ifdef  _USING_GUI
 		ImGui::SetCurrentContext(m_pGameInstance->Get_GUISystem()->GetEngineImGuiContext());
 	#endif //  _USING_GUI
+
+	m_cursorController.Initialize();
+
 	return S_OK;
 }
 
@@ -93,7 +96,7 @@ void CMainApp::Update(const float dt)
 	CBattleSystem::GetInstance()->Update();
 	CCamDirector::GetInstance()->Update(dt);
 
-	UpdateCursor(dt);
+	m_cursorController.Update(dt);
 }
 
 HRESULT CMainApp::Render()
@@ -234,75 +237,4 @@ void CMainApp::Create_GlobalPlayer()
 	ObjectManager()->Add_Object(Player, { G_GlobalLevelKey, "Player_Layer" });
 
 	ObjectManager()->Remember_Global(ENUM(GLOBAL_ID::Player), Player->Get_Handle(), false);
-}
-
-RECT CMainApp::GetClientRectInScreen() const
-{
-	RECT rc{};
-	GetClientRect(g_hWnd, &rc);
-
-	POINT lt{rc.left, rc.top};
-	POINT rb{rc.right, rc.bottom};
-
-	ClientToScreen(g_hWnd, &lt);
-	ClientToScreen(g_hWnd, &rb);
-
-	rc.left = lt.x;
-	rc.top = lt.y;
-	rc.right = rb.x;
-	rc.bottom = rb.y;
-
-	return rc;
-}
-
-POINT CMainApp::GetClientCenterInScreen() const
-{
-	RECT rc = GetClientRectInScreen();
-
-	POINT c{};
-	c.x = (rc.left + rc.right) / 2;
-	c.y = (rc.top + rc.bottom) / 2;
-	return c;
-}
-
-void CMainApp::SetMouseLock(_bool lock)
-{
-	m_isMouseLocked = lock;
-
-	if (lock)
-	{
-		RECT rc = GetClientRectInScreen();
-		ClipCursor(&rc);
-
-		while (ShowCursor(FALSE) >= 0) {}
-
-		POINT c = GetClientCenterInScreen();
-		SetCursorPos(c.x, c.y);
-	}
-	else
-	{
-		ClipCursor(nullptr);
-
-		while (ShowCursor(TRUE) < 0) {}
-	}
-}
-
-void CMainApp::ToggleCursor()
-{
-	SetMouseLock(!m_isMouseLocked);
-}
-
-void CMainApp::UpdateCursor(_float dt)
-{
-	if (InputDevice()->Key_Tap(VK_TAB))
-	{
-		ToggleCursor();
-		GUISystem()->Set_GUIActive(false);
-	}
-
-	if (m_isMouseLocked)
-	{
-		POINT c = GetClientCenterInScreen();
-		SetCursorPos(c.x, c.y);
-	}
 }

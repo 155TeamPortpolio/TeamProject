@@ -1,0 +1,1907 @@
+{
+    "alive": true,
+    "instanceName": "scene_frame",
+    "transform": {
+        "anchor": 5,
+        "anchorOffset": [
+            0.0,
+            0.0
+        ],
+        "size": [
+            1600.0,
+            900.0
+        ],
+        "scale": [
+            1.0,
+            1.0
+        ],
+        "pivot": [
+            0.0,
+            0.0
+        ],
+        "radian": 0.0
+    },
+    "color": [
+        1.0,
+        1.0,
+        1.0,
+        0.0
+    ],
+    "pass": "Opaque",
+    "animClips": [],
+    "children": [
+        {
+            "alive": true,
+            "instanceName": "top",
+            "transform": {
+                "anchor": 4,
+                "anchorOffset": [
+                    -800.0,
+                    0.0
+                ],
+                "size": [
+                    1600.0,
+                    110.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "pass": "Opaque",
+            "animClips": [
+                {
+                    "duration": 1.0,
+                    "keyframes": [
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "easeType": 2,
+                            "position": [
+                                0.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 0.0
+                        },
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "easeType": 0,
+                            "position": [
+                                0.0,
+                                -110.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 1.0
+                        }
+                    ],
+                    "loop": false,
+                    "name": "clip0"
+                }
+            ],
+            "children": [
+                {
+                    "alive": true,
+                    "instanceName": "Image",
+                    "transform": {
+                        "anchor": 0,
+                        "anchorOffset": [
+                            -800.0,
+                            -55.0
+                        ],
+                        "size": [
+                            1600.0,
+                            110.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "pass": "Opaque",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "Image",
+                    "textureTag": "empty.png"
+                },
+                {
+                    "alive": true,
+                    "instanceName": "UVAnimation",
+                    "transform": {
+                        "anchor": 1,
+                        "anchorOffset": [
+                            0.0,
+                            -54.857139587402344
+                        ],
+                        "size": [
+                            80.0,
+                            109.71427917480469
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        0.09,
+                        0.09,
+                        0.09,
+                        1.0
+                    ],
+                    "pass": "UVAnimation",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "UVAnimation",
+                    "textureTag": "RoleInfoBGImg3.png",
+                    "uvAnimation": {
+                        "uvOffsetSpeed": [
+                            -0.2,
+                            0.0
+                        ]
+                    }
+                },
+                {
+                    "alive": true,
+                    "instanceName": "UVAnimation",
+                    "transform": {
+                        "anchor": 1,
+                        "anchorOffset": [
+                            80.0,
+                            -54.857139587402344
+                        ],
+                        "size": [
+                            80.0,
+                            109.71427917480469
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        0.09,
+                        0.09,
+                        0.09,
+                        1.0
+                    ],
+                    "pass": "UVAnimation",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "UVAnimation",
+                    "textureTag": "RoleInfoBGImg3.png",
+                    "uvAnimation": {
+                        "uvOffsetSpeed": [
+                            -0.2,
+                            0.0
+                        ]
+                    }
+                },
+                {
+                    "alive": true,
+                    "instanceName": "UVAnimation",
+                    "transform": {
+                        "anchor": 1,
+                        "anchorOffset": [
+                            160.0,
+                            -54.857139587402344
+                        ],
+                        "size": [
+                            80.0,
+                            109.71427917480469
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        0.09,
+                        0.09,
+                        0.09,
+                        1.0
+                    ],
+                    "pass": "UVAnimation",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "UVAnimation",
+                    "textureTag": "RoleInfoBGImg3.png",
+                    "uvAnimation": {
+                        "uvOffsetSpeed": [
+                            -0.2,
+                            0.0
+                        ]
+                    }
+                },
+                {
+                    "alive": true,
+                    "instanceName": "UVAnimation",
+                    "transform": {
+                        "anchor": 1,
+                        "anchorOffset": [
+                            240.0,
+                            -54.857139587402344
+                        ],
+                        "size": [
+                            80.0,
+                            109.71427917480469
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        0.09,
+                        0.09,
+                        0.09,
+                        1.0
+                    ],
+                    "pass": "UVAnimation",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "UVAnimation",
+                    "textureTag": "RoleInfoBGImg3.png",
+                    "uvAnimation": {
+                        "uvOffsetSpeed": [
+                            -0.2,
+                            0.0
+                        ]
+                    }
+                },
+                {
+                    "alive": true,
+                    "instanceName": "UVAnimation",
+                    "transform": {
+                        "anchor": 1,
+                        "anchorOffset": [
+                            320.0,
+                            -54.857139587402344
+                        ],
+                        "size": [
+                            80.0,
+                            109.71427917480469
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        0.09,
+                        0.09,
+                        0.09,
+                        1.0
+                    ],
+                    "pass": "UVAnimation",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "UVAnimation",
+                    "textureTag": "RoleInfoBGImg3.png",
+                    "uvAnimation": {
+                        "uvOffsetSpeed": [
+                            -0.2,
+                            0.0
+                        ]
+                    }
+                },
+                {
+                    "alive": true,
+                    "instanceName": "UVAnimation",
+                    "transform": {
+                        "anchor": 1,
+                        "anchorOffset": [
+                            400.0,
+                            -54.857139587402344
+                        ],
+                        "size": [
+                            80.0,
+                            109.71427917480469
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        0.09,
+                        0.09,
+                        0.09,
+                        1.0
+                    ],
+                    "pass": "UVAnimation",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "UVAnimation",
+                    "textureTag": "RoleInfoBGImg3.png",
+                    "uvAnimation": {
+                        "uvOffsetSpeed": [
+                            -0.2,
+                            0.0
+                        ]
+                    }
+                },
+                {
+                    "alive": true,
+                    "instanceName": "UVAnimation",
+                    "transform": {
+                        "anchor": 1,
+                        "anchorOffset": [
+                            480.0,
+                            -54.857139587402344
+                        ],
+                        "size": [
+                            80.0,
+                            109.71427917480469
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        0.09,
+                        0.09,
+                        0.09,
+                        1.0
+                    ],
+                    "pass": "UVAnimation",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "UVAnimation",
+                    "textureTag": "RoleInfoBGImg3.png",
+                    "uvAnimation": {
+                        "uvOffsetSpeed": [
+                            -0.2,
+                            0.0
+                        ]
+                    }
+                },
+                {
+                    "alive": true,
+                    "instanceName": "UVAnimation",
+                    "transform": {
+                        "anchor": 1,
+                        "anchorOffset": [
+                            560.0,
+                            -54.857139587402344
+                        ],
+                        "size": [
+                            80.0,
+                            109.71427917480469
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        0.09,
+                        0.09,
+                        0.09,
+                        1.0
+                    ],
+                    "pass": "UVAnimation",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "UVAnimation",
+                    "textureTag": "RoleInfoBGImg3.png",
+                    "uvAnimation": {
+                        "uvOffsetSpeed": [
+                            -0.2,
+                            0.0
+                        ]
+                    }
+                },
+                {
+                    "alive": true,
+                    "instanceName": "UVAnimation",
+                    "transform": {
+                        "anchor": 1,
+                        "anchorOffset": [
+                            640.0,
+                            -54.857139587402344
+                        ],
+                        "size": [
+                            80.0,
+                            109.71427917480469
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        0.09,
+                        0.09,
+                        0.09,
+                        1.0
+                    ],
+                    "pass": "UVAnimation",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "UVAnimation",
+                    "textureTag": "RoleInfoBGImg3.png",
+                    "uvAnimation": {
+                        "uvOffsetSpeed": [
+                            -0.2,
+                            0.0
+                        ]
+                    }
+                },
+                {
+                    "alive": true,
+                    "instanceName": "UVAnimation",
+                    "transform": {
+                        "anchor": 1,
+                        "anchorOffset": [
+                            720.0,
+                            -54.857139587402344
+                        ],
+                        "size": [
+                            80.0,
+                            109.71427917480469
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        0.09,
+                        0.09,
+                        0.09,
+                        1.0
+                    ],
+                    "pass": "UVAnimation",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "UVAnimation",
+                    "textureTag": "RoleInfoBGImg3.png",
+                    "uvAnimation": {
+                        "uvOffsetSpeed": [
+                            -0.2,
+                            0.0
+                        ]
+                    }
+                },
+                {
+                    "alive": true,
+                    "instanceName": "UVAnimation",
+                    "transform": {
+                        "anchor": 1,
+                        "anchorOffset": [
+                            800.0,
+                            -54.857139587402344
+                        ],
+                        "size": [
+                            80.0,
+                            109.71427917480469
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        0.09,
+                        0.09,
+                        0.09,
+                        1.0
+                    ],
+                    "pass": "UVAnimation",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "UVAnimation",
+                    "textureTag": "RoleInfoBGImg3.png",
+                    "uvAnimation": {
+                        "uvOffsetSpeed": [
+                            -0.2,
+                            0.0
+                        ]
+                    }
+                },
+                {
+                    "alive": true,
+                    "instanceName": "UVAnimation",
+                    "transform": {
+                        "anchor": 1,
+                        "anchorOffset": [
+                            880.0,
+                            -54.857139587402344
+                        ],
+                        "size": [
+                            80.0,
+                            109.71427917480469
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        0.09,
+                        0.09,
+                        0.09,
+                        1.0
+                    ],
+                    "pass": "UVAnimation",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "UVAnimation",
+                    "textureTag": "RoleInfoBGImg3.png",
+                    "uvAnimation": {
+                        "uvOffsetSpeed": [
+                            -0.2,
+                            0.0
+                        ]
+                    }
+                },
+                {
+                    "alive": true,
+                    "instanceName": "UVAnimation",
+                    "transform": {
+                        "anchor": 1,
+                        "anchorOffset": [
+                            960.0,
+                            -54.857139587402344
+                        ],
+                        "size": [
+                            80.0,
+                            109.71427917480469
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        0.09,
+                        0.09,
+                        0.09,
+                        1.0
+                    ],
+                    "pass": "UVAnimation",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "UVAnimation",
+                    "textureTag": "RoleInfoBGImg3.png",
+                    "uvAnimation": {
+                        "uvOffsetSpeed": [
+                            -0.2,
+                            0.0
+                        ]
+                    }
+                },
+                {
+                    "alive": true,
+                    "instanceName": "UVAnimation",
+                    "transform": {
+                        "anchor": 1,
+                        "anchorOffset": [
+                            1040.0,
+                            -54.857139587402344
+                        ],
+                        "size": [
+                            80.0,
+                            109.71427917480469
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        0.09,
+                        0.09,
+                        0.09,
+                        1.0
+                    ],
+                    "pass": "UVAnimation",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "UVAnimation",
+                    "textureTag": "RoleInfoBGImg3.png",
+                    "uvAnimation": {
+                        "uvOffsetSpeed": [
+                            -0.2,
+                            0.0
+                        ]
+                    }
+                },
+                {
+                    "alive": true,
+                    "instanceName": "UVAnimation",
+                    "transform": {
+                        "anchor": 1,
+                        "anchorOffset": [
+                            1120.0,
+                            -54.857139587402344
+                        ],
+                        "size": [
+                            80.0,
+                            109.71427917480469
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        0.09,
+                        0.09,
+                        0.09,
+                        1.0
+                    ],
+                    "pass": "UVAnimation",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "UVAnimation",
+                    "textureTag": "RoleInfoBGImg3.png",
+                    "uvAnimation": {
+                        "uvOffsetSpeed": [
+                            -0.2,
+                            0.0
+                        ]
+                    }
+                },
+                {
+                    "alive": true,
+                    "instanceName": "UVAnimation",
+                    "transform": {
+                        "anchor": 1,
+                        "anchorOffset": [
+                            1200.0,
+                            -54.857139587402344
+                        ],
+                        "size": [
+                            80.0,
+                            109.71427917480469
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        0.09,
+                        0.09,
+                        0.09,
+                        1.0
+                    ],
+                    "pass": "UVAnimation",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "UVAnimation",
+                    "textureTag": "RoleInfoBGImg3.png",
+                    "uvAnimation": {
+                        "uvOffsetSpeed": [
+                            -0.2,
+                            0.0
+                        ]
+                    }
+                },
+                {
+                    "alive": true,
+                    "instanceName": "UVAnimation",
+                    "transform": {
+                        "anchor": 1,
+                        "anchorOffset": [
+                            1280.0,
+                            -54.857139587402344
+                        ],
+                        "size": [
+                            80.0,
+                            109.71427917480469
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        0.09,
+                        0.09,
+                        0.09,
+                        1.0
+                    ],
+                    "pass": "UVAnimation",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "UVAnimation",
+                    "textureTag": "RoleInfoBGImg3.png",
+                    "uvAnimation": {
+                        "uvOffsetSpeed": [
+                            -0.2,
+                            0.0
+                        ]
+                    }
+                },
+                {
+                    "alive": true,
+                    "instanceName": "UVAnimation",
+                    "transform": {
+                        "anchor": 1,
+                        "anchorOffset": [
+                            1360.0,
+                            -54.857139587402344
+                        ],
+                        "size": [
+                            80.0,
+                            109.71427917480469
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        0.09,
+                        0.09,
+                        0.09,
+                        1.0
+                    ],
+                    "pass": "UVAnimation",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "UVAnimation",
+                    "textureTag": "RoleInfoBGImg3.png",
+                    "uvAnimation": {
+                        "uvOffsetSpeed": [
+                            -0.2,
+                            0.0
+                        ]
+                    }
+                },
+                {
+                    "alive": true,
+                    "instanceName": "UVAnimation",
+                    "transform": {
+                        "anchor": 1,
+                        "anchorOffset": [
+                            1440.0,
+                            -54.857139587402344
+                        ],
+                        "size": [
+                            80.0,
+                            109.71427917480469
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        0.09,
+                        0.09,
+                        0.09,
+                        1.0
+                    ],
+                    "pass": "UVAnimation",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "UVAnimation",
+                    "textureTag": "RoleInfoBGImg3.png",
+                    "uvAnimation": {
+                        "uvOffsetSpeed": [
+                            -0.2,
+                            0.0
+                        ]
+                    }
+                },
+                {
+                    "alive": true,
+                    "instanceName": "UVAnimation",
+                    "transform": {
+                        "anchor": 1,
+                        "anchorOffset": [
+                            1520.0,
+                            -54.857139587402344
+                        ],
+                        "size": [
+                            80.0,
+                            109.71427917480469
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        0.09,
+                        0.09,
+                        0.09,
+                        1.0
+                    ],
+                    "pass": "UVAnimation",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "UVAnimation",
+                    "textureTag": "RoleInfoBGImg3.png",
+                    "uvAnimation": {
+                        "uvOffsetSpeed": [
+                            -0.2,
+                            0.0
+                        ]
+                    }
+                }
+            ],
+            "typeTag": "CanvasPanel"
+        },
+        {
+            "alive": true,
+            "instanceName": "bottom",
+            "transform": {
+                "anchor": 8,
+                "anchorOffset": [
+                    -800.0,
+                    -110.0
+                ],
+                "size": [
+                    1600.0,
+                    110.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "pass": "Opaque",
+            "animClips": [
+                {
+                    "duration": 0.800000011920929,
+                    "keyframes": [
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "easeType": 2,
+                            "position": [
+                                0.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 0.0
+                        },
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "easeType": 0,
+                            "position": [
+                                0.0,
+                                110.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 0.800000011920929
+                        }
+                    ],
+                    "loop": false,
+                    "name": "clip0"
+                }
+            ],
+            "children": [
+                {
+                    "alive": true,
+                    "instanceName": "Image",
+                    "transform": {
+                        "anchor": 0,
+                        "anchorOffset": [
+                            -800.0,
+                            -55.0
+                        ],
+                        "size": [
+                            1600.0,
+                            110.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "pass": "Opaque",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "Image",
+                    "textureTag": "empty.png"
+                },
+                {
+                    "alive": true,
+                    "instanceName": "UVAnimation",
+                    "transform": {
+                        "anchor": 1,
+                        "anchorOffset": [
+                            0.0,
+                            -54.857139587402344
+                        ],
+                        "size": [
+                            80.0,
+                            109.71427917480469
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        0.09,
+                        0.09,
+                        0.09,
+                        1.0
+                    ],
+                    "pass": "UVAnimation",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "UVAnimation",
+                    "textureTag": "RoleInfoBGImg3.png",
+                    "uvAnimation": {
+                        "uvOffsetSpeed": [
+                            -0.2,
+                            0.0
+                        ]
+                    }
+                },
+                {
+                    "alive": true,
+                    "instanceName": "UVAnimation",
+                    "transform": {
+                        "anchor": 1,
+                        "anchorOffset": [
+                            80.0,
+                            -54.857139587402344
+                        ],
+                        "size": [
+                            80.0,
+                            109.71427917480469
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        0.09,
+                        0.09,
+                        0.09,
+                        1.0
+                    ],
+                    "pass": "UVAnimation",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "UVAnimation",
+                    "textureTag": "RoleInfoBGImg3.png",
+                    "uvAnimation": {
+                        "uvOffsetSpeed": [
+                            -0.2,
+                            0.0
+                        ]
+                    }
+                },
+                {
+                    "alive": true,
+                    "instanceName": "UVAnimation",
+                    "transform": {
+                        "anchor": 1,
+                        "anchorOffset": [
+                            160.0,
+                            -54.857139587402344
+                        ],
+                        "size": [
+                            80.0,
+                            109.71427917480469
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        0.09,
+                        0.09,
+                        0.09,
+                        1.0
+                    ],
+                    "pass": "UVAnimation",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "UVAnimation",
+                    "textureTag": "RoleInfoBGImg3.png",
+                    "uvAnimation": {
+                        "uvOffsetSpeed": [
+                            -0.2,
+                            0.0
+                        ]
+                    }
+                },
+                {
+                    "alive": true,
+                    "instanceName": "UVAnimation",
+                    "transform": {
+                        "anchor": 1,
+                        "anchorOffset": [
+                            240.0,
+                            -54.857139587402344
+                        ],
+                        "size": [
+                            80.0,
+                            109.71427917480469
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        0.09,
+                        0.09,
+                        0.09,
+                        1.0
+                    ],
+                    "pass": "UVAnimation",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "UVAnimation",
+                    "textureTag": "RoleInfoBGImg3.png",
+                    "uvAnimation": {
+                        "uvOffsetSpeed": [
+                            -0.2,
+                            0.0
+                        ]
+                    }
+                },
+                {
+                    "alive": true,
+                    "instanceName": "UVAnimation",
+                    "transform": {
+                        "anchor": 1,
+                        "anchorOffset": [
+                            320.0,
+                            -54.857139587402344
+                        ],
+                        "size": [
+                            80.0,
+                            109.71427917480469
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        0.09,
+                        0.09,
+                        0.09,
+                        1.0
+                    ],
+                    "pass": "UVAnimation",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "UVAnimation",
+                    "textureTag": "RoleInfoBGImg3.png",
+                    "uvAnimation": {
+                        "uvOffsetSpeed": [
+                            -0.2,
+                            0.0
+                        ]
+                    }
+                },
+                {
+                    "alive": true,
+                    "instanceName": "UVAnimation",
+                    "transform": {
+                        "anchor": 1,
+                        "anchorOffset": [
+                            400.0,
+                            -54.857139587402344
+                        ],
+                        "size": [
+                            80.0,
+                            109.71427917480469
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        0.09,
+                        0.09,
+                        0.09,
+                        1.0
+                    ],
+                    "pass": "UVAnimation",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "UVAnimation",
+                    "textureTag": "RoleInfoBGImg3.png",
+                    "uvAnimation": {
+                        "uvOffsetSpeed": [
+                            -0.2,
+                            0.0
+                        ]
+                    }
+                },
+                {
+                    "alive": true,
+                    "instanceName": "UVAnimation",
+                    "transform": {
+                        "anchor": 1,
+                        "anchorOffset": [
+                            480.0,
+                            -54.857139587402344
+                        ],
+                        "size": [
+                            80.0,
+                            109.71427917480469
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        0.09,
+                        0.09,
+                        0.09,
+                        1.0
+                    ],
+                    "pass": "UVAnimation",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "UVAnimation",
+                    "textureTag": "RoleInfoBGImg3.png",
+                    "uvAnimation": {
+                        "uvOffsetSpeed": [
+                            -0.2,
+                            0.0
+                        ]
+                    }
+                },
+                {
+                    "alive": true,
+                    "instanceName": "UVAnimation",
+                    "transform": {
+                        "anchor": 1,
+                        "anchorOffset": [
+                            560.0,
+                            -54.857139587402344
+                        ],
+                        "size": [
+                            80.0,
+                            109.71427917480469
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        0.09,
+                        0.09,
+                        0.09,
+                        1.0
+                    ],
+                    "pass": "UVAnimation",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "UVAnimation",
+                    "textureTag": "RoleInfoBGImg3.png",
+                    "uvAnimation": {
+                        "uvOffsetSpeed": [
+                            -0.2,
+                            0.0
+                        ]
+                    }
+                },
+                {
+                    "alive": true,
+                    "instanceName": "UVAnimation",
+                    "transform": {
+                        "anchor": 1,
+                        "anchorOffset": [
+                            640.0,
+                            -54.857139587402344
+                        ],
+                        "size": [
+                            80.0,
+                            109.71427917480469
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        0.09,
+                        0.09,
+                        0.09,
+                        1.0
+                    ],
+                    "pass": "UVAnimation",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "UVAnimation",
+                    "textureTag": "RoleInfoBGImg3.png",
+                    "uvAnimation": {
+                        "uvOffsetSpeed": [
+                            -0.2,
+                            0.0
+                        ]
+                    }
+                },
+                {
+                    "alive": true,
+                    "instanceName": "UVAnimation",
+                    "transform": {
+                        "anchor": 1,
+                        "anchorOffset": [
+                            720.0,
+                            -54.857139587402344
+                        ],
+                        "size": [
+                            80.0,
+                            109.71427917480469
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        0.09,
+                        0.09,
+                        0.09,
+                        1.0
+                    ],
+                    "pass": "UVAnimation",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "UVAnimation",
+                    "textureTag": "RoleInfoBGImg3.png",
+                    "uvAnimation": {
+                        "uvOffsetSpeed": [
+                            -0.2,
+                            0.0
+                        ]
+                    }
+                },
+                {
+                    "alive": true,
+                    "instanceName": "UVAnimation",
+                    "transform": {
+                        "anchor": 1,
+                        "anchorOffset": [
+                            800.0,
+                            -54.857139587402344
+                        ],
+                        "size": [
+                            80.0,
+                            109.71427917480469
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        0.09,
+                        0.09,
+                        0.09,
+                        1.0
+                    ],
+                    "pass": "UVAnimation",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "UVAnimation",
+                    "textureTag": "RoleInfoBGImg3.png",
+                    "uvAnimation": {
+                        "uvOffsetSpeed": [
+                            -0.2,
+                            0.0
+                        ]
+                    }
+                },
+                {
+                    "alive": true,
+                    "instanceName": "UVAnimation",
+                    "transform": {
+                        "anchor": 1,
+                        "anchorOffset": [
+                            880.0,
+                            -54.857139587402344
+                        ],
+                        "size": [
+                            80.0,
+                            109.71427917480469
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        0.09,
+                        0.09,
+                        0.09,
+                        1.0
+                    ],
+                    "pass": "UVAnimation",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "UVAnimation",
+                    "textureTag": "RoleInfoBGImg3.png",
+                    "uvAnimation": {
+                        "uvOffsetSpeed": [
+                            -0.2,
+                            0.0
+                        ]
+                    }
+                },
+                {
+                    "alive": true,
+                    "instanceName": "UVAnimation",
+                    "transform": {
+                        "anchor": 1,
+                        "anchorOffset": [
+                            960.0,
+                            -54.857139587402344
+                        ],
+                        "size": [
+                            80.0,
+                            109.71427917480469
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        0.09,
+                        0.09,
+                        0.09,
+                        1.0
+                    ],
+                    "pass": "UVAnimation",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "UVAnimation",
+                    "textureTag": "RoleInfoBGImg3.png",
+                    "uvAnimation": {
+                        "uvOffsetSpeed": [
+                            -0.2,
+                            0.0
+                        ]
+                    }
+                },
+                {
+                    "alive": true,
+                    "instanceName": "UVAnimation",
+                    "transform": {
+                        "anchor": 1,
+                        "anchorOffset": [
+                            1040.0,
+                            -54.857139587402344
+                        ],
+                        "size": [
+                            80.0,
+                            109.71427917480469
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        0.09,
+                        0.09,
+                        0.09,
+                        1.0
+                    ],
+                    "pass": "UVAnimation",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "UVAnimation",
+                    "textureTag": "RoleInfoBGImg3.png",
+                    "uvAnimation": {
+                        "uvOffsetSpeed": [
+                            -0.2,
+                            0.0
+                        ]
+                    }
+                },
+                {
+                    "alive": true,
+                    "instanceName": "UVAnimation",
+                    "transform": {
+                        "anchor": 1,
+                        "anchorOffset": [
+                            1120.0,
+                            -54.857139587402344
+                        ],
+                        "size": [
+                            80.0,
+                            109.71427917480469
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        0.09,
+                        0.09,
+                        0.09,
+                        1.0
+                    ],
+                    "pass": "UVAnimation",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "UVAnimation",
+                    "textureTag": "RoleInfoBGImg3.png",
+                    "uvAnimation": {
+                        "uvOffsetSpeed": [
+                            -0.2,
+                            0.0
+                        ]
+                    }
+                },
+                {
+                    "alive": true,
+                    "instanceName": "UVAnimation",
+                    "transform": {
+                        "anchor": 1,
+                        "anchorOffset": [
+                            1200.0,
+                            -54.857139587402344
+                        ],
+                        "size": [
+                            80.0,
+                            109.71427917480469
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        0.09,
+                        0.09,
+                        0.09,
+                        1.0
+                    ],
+                    "pass": "UVAnimation",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "UVAnimation",
+                    "textureTag": "RoleInfoBGImg3.png",
+                    "uvAnimation": {
+                        "uvOffsetSpeed": [
+                            -0.2,
+                            0.0
+                        ]
+                    }
+                },
+                {
+                    "alive": true,
+                    "instanceName": "UVAnimation",
+                    "transform": {
+                        "anchor": 1,
+                        "anchorOffset": [
+                            1280.0,
+                            -54.857139587402344
+                        ],
+                        "size": [
+                            80.0,
+                            109.71427917480469
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        0.09,
+                        0.09,
+                        0.09,
+                        1.0
+                    ],
+                    "pass": "UVAnimation",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "UVAnimation",
+                    "textureTag": "RoleInfoBGImg3.png",
+                    "uvAnimation": {
+                        "uvOffsetSpeed": [
+                            -0.2,
+                            0.0
+                        ]
+                    }
+                },
+                {
+                    "alive": true,
+                    "instanceName": "UVAnimation",
+                    "transform": {
+                        "anchor": 1,
+                        "anchorOffset": [
+                            1360.0,
+                            -54.857139587402344
+                        ],
+                        "size": [
+                            80.0,
+                            109.71427917480469
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        0.09,
+                        0.09,
+                        0.09,
+                        1.0
+                    ],
+                    "pass": "UVAnimation",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "UVAnimation",
+                    "textureTag": "RoleInfoBGImg3.png",
+                    "uvAnimation": {
+                        "uvOffsetSpeed": [
+                            -0.2,
+                            0.0
+                        ]
+                    }
+                },
+                {
+                    "alive": true,
+                    "instanceName": "UVAnimation",
+                    "transform": {
+                        "anchor": 1,
+                        "anchorOffset": [
+                            1440.0,
+                            -54.857139587402344
+                        ],
+                        "size": [
+                            80.0,
+                            109.71427917480469
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        0.09,
+                        0.09,
+                        0.09,
+                        1.0
+                    ],
+                    "pass": "UVAnimation",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "UVAnimation",
+                    "textureTag": "RoleInfoBGImg3.png",
+                    "uvAnimation": {
+                        "uvOffsetSpeed": [
+                            -0.2,
+                            0.0
+                        ]
+                    }
+                },
+                {
+                    "alive": true,
+                    "instanceName": "UVAnimation",
+                    "transform": {
+                        "anchor": 1,
+                        "anchorOffset": [
+                            1520.0,
+                            -54.857139587402344
+                        ],
+                        "size": [
+                            80.0,
+                            109.71427917480469
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        0.09,
+                        0.09,
+                        0.09,
+                        1.0
+                    ],
+                    "pass": "UVAnimation",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "UVAnimation",
+                    "textureTag": "RoleInfoBGImg3.png",
+                    "uvAnimation": {
+                        "uvOffsetSpeed": [
+                            -0.2,
+                            0.0
+                        ]
+                    }
+                }
+            ],
+            "typeTag": "CanvasPanel"
+        }
+    ],
+    "typeTag": "CanvasPanel"
+}

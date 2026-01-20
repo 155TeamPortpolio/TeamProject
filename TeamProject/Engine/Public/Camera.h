@@ -44,7 +44,6 @@ private:
 	Lens        m_lens{};
 	CamProjType m_projType = CamProjType::Perspective;
 	_float      m_orthoSize = 10.f;
-	Vector3     m_viewOffset{};
 
 public:
 	static  CCamera*    Create();

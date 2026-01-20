@@ -326,7 +326,7 @@ void CCollisionSystem::Render_GUI()
 			}
 			else if (slot.eState == COLLIDABLE_SLOT::STATE::INACTIVE)
 			{
-				ImGui::TextColored(ImVec4(0.7f, 0.7f, 0.f, 1), "%s [INACTIVE] %s",
+				ImGui::TextColored(ImVec4(1.f, 1.f, 1.f, 1), "%s [INACTIVE] %s",
 					typePrefix, ownerName.c_str());
 			}
 			else if (slot.pCollidable->IsColliding())
@@ -336,7 +336,11 @@ void CCollisionSystem::Render_GUI()
 			}
 			else
 			{
-				ImGui::Text("%s %s", typePrefix, ownerName.c_str());
+				ImGui::TextColored(ImVec4(slot.pCollidable->Get_ColliderColor().x,
+					slot.pCollidable->Get_ColliderColor().y,
+					slot.pCollidable->Get_ColliderColor().z,
+					slot.pCollidable->Get_ColliderColor().w),
+					"%s %s", typePrefix, ownerName.c_str());
 			}
 
 			ImGui::PopID();
@@ -788,8 +792,13 @@ void CCollisionSystem::Process_CollisionEvents()
 			// Current에 없으면 Exit
 			if (!otherSlot.IsActive() || current.find(pOther) == current.end())
 			{
-				CCollider* pCollider = dynamic_cast<CCollider*>(pOther);
-				if (pCollider && pCollider->Is_Trigger())
+				CCollider* pThisCollider = dynamic_cast<CCollider*>(pCollidable);
+				CCollider* pOtherCollider = dynamic_cast<CCollider*>(pOther);
+
+				_bool bThisTrigger = (pThisCollider && pThisCollider->Is_Trigger());
+				_bool bOtherTrigger = (pOtherCollider && pOtherCollider->Is_Trigger());
+
+				if (bThisTrigger || bOtherTrigger)
 				{
 					pCollidable->OnTriggerExit(pOther);
 				}
@@ -815,30 +824,29 @@ void CCollisionSystem::Process_CollisionEvents()
 			auto pOther = *it;
 			// 슬롯 검증으로 해제된 포인터 필터링
 			if (!pOther) continue;
-
 			_int otherIdx = pOther->Get_SlotIndex();
 			if (otherIdx < 0 || otherIdx >= static_cast<_int>(m_Collidables.size()))
 				continue;
-
 			const auto& otherSlot = m_Collidables[otherIdx];
-
 			if (otherSlot.pCollidable != pOther) continue;
 			if (otherSlot.iGeneration != pOther->Get_SlotGeneration()) continue;
 			if (!otherSlot.IsActive()) continue;
 			if (!pOther->Get_Owner()) continue;
-
 			// Previous에도 있으면 Stay (Enter 다음 프레임부터)
 			if (previous.find(pOther) != previous.end())
 			{
-				CCollider* pCollider = dynamic_cast<CCollider*>(pOther);
-				if (pCollider && pCollider->Is_Trigger())
+				CCollider* pThisCollider = dynamic_cast<CCollider*>(pCollidable);
+				CCollider* pOtherCollider = dynamic_cast<CCollider*>(pOther);
+
+				_bool bThisTrigger = (pThisCollider && pThisCollider->Is_Trigger());
+				_bool bOtherTrigger = (pOtherCollider && pOtherCollider->Is_Trigger());
+
+				if (bThisTrigger || bOtherTrigger)
 				{
-					// 트리거는 여기서 Stay 처리 (TOUCH_PERSISTS 미지원)
 					pCollidable->OnTriggerStay(pOther);
 				}
 				else
 				{
-					// 일반 충돌 Stay
 					pCollidable->OnCollisionStay(pOther);
 				}
 
@@ -1208,18 +1216,18 @@ void CCollisionSystem::Render_Debug()
 
 	m_pBatch->Begin();
 
-	XMVECTOR vColor;
+	_vector4 vColor;
 	for (const auto& slot : m_Collidables)
 	{
 		if (slot.IsValid() && slot.pCollidable->Get_CompActive())
 		{
 			if (dynamic_cast<CCollider*>(slot.pCollidable))
 			{
-				vColor = slot.pCollidable->IsColliding() ? Colors::Red : Colors::Green;
+				vColor = slot.pCollidable->IsColliding() ? _vector4{ 1.f,0.f,0.f,1.f } : slot.pCollidable->Get_ColliderColor();
 			}
 			else if (dynamic_cast<CCharacterController*>(slot.pCollidable))
 			{
-				vColor = slot.pCollidable->IsColliding() ? Colors::Orange : Colors::Cyan;
+				vColor = slot.pCollidable->IsColliding() ? _vector4{ 1.f,0.f,0.f,1.f } : slot.pCollidable->Get_ColliderColor();
 			}
 			slot.pCollidable->Render(m_pBatch, vColor);
 		}

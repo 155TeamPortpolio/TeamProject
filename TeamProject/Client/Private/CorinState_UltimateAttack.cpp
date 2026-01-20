@@ -27,6 +27,8 @@ void CCorinState_UltimateAttack::Enter(CCorin* pOwner)
         m_pSubStateMachine->Set_DefaultState("Start");
     }
     __super::Enter(pOwner);
+
+    CamDirector()->RequestSequence("Ultimate/Corin_Ultimate");
 }
 
 void CCorinState_UltimateAttack::Update(CCorin* pOwner, _float dt)
@@ -36,7 +38,7 @@ void CCorinState_UltimateAttack::Update(CCorin* pOwner, _float dt)
         if (Event.Type != CLIP_EVENT_TYPE::NOTIFY) continue;
         if (Event.Tag == "SawStart")
         {
-            pOwner->Begin_AttackCollider("Saw", { HIT_TYPE::INTERVAL, DAMAGE_TYPE::NORMAL, Helper::Get_Random_Float(20,40), 0.f });
+            pOwner->Begin_AttackCollider("Saw", { HIT_TYPE::INTERVAL, DAMAGE_TYPE::NORMAL, Helper::Get_Random_Float(20,40), 0.1f });
         }
         else if(Event.Tag == "SawEnd")
         {
