@@ -139,7 +139,48 @@ void CAIMaterial::Render_GUI(vector<_uint>& TextureIndexes)
 			ImGui::Text(msg.c_str());
 		ImGui::End();
 	}
-	__super::Render_GUI(TextureIndexes);
+	if (m_Textures.empty())
+		return;
+
+	for (auto& pair : m_Textures) {
+		ImGui::SeparatorText(ConvertToConstant(pair.first).c_str()); //텍스처 타입 콘스탄트로
+		_uint& CurrentIndex = TextureIndexes[static_cast<_uint>(pair.first)];
+		 auto& vector = pair.second;
+		for (size_t i = 0; i < vector.size(); i++)
+		{
+			string ButtonID = "##" + vector[i]->Get_Key() + "_" + to_string(i);
+			bool clicked = ImGui::ImageButton(
+				ButtonID.c_str(),
+				(ImTextureID)vector[i]->Get_SRV(),
+				ImVec2(64, 64)
+			);
+			if (clicked)
+			{
+				CurrentIndex = static_cast<_uint>(i);
+			}
+
+			if (ImGui::IsItemHovered() && ImGui::IsMouseReleased(ImGuiMouseButton_Right))
+			{
+				Safe_Release(vector[i]);
+				pair.second.erase(pair.second.begin() + i);
+
+				if (CurrentIndex >= pair.second.size())
+					CurrentIndex = pair.second.empty() ? 0 : static_cast<_uint>(pair.second.size() - 1);
+				break;
+			}
+
+			if (ImGui::IsItemHovered())
+			{
+				ImGui::BeginTooltip();
+				ImGui::Image((ImTextureID)vector[i]->Get_SRV(), ImVec2(256, 256));
+				ImGui::Text(vector[i]->Get_Key().c_str());
+				ImGui::EndTooltip();
+			}
+			ImGui::Text(vector[i]->Get_Key().c_str());
+			ImGui::Separator();
+		}
+	}
+
 }
 
 void CAIMaterial::LinkShader(const string& shader)
