@@ -87,10 +87,10 @@ void CSacrificeHand::Priority_Update(_float dt)
 
 void CSacrificeHand::Update(_float dt)
 {
-	Get_Component<CAnimator3D>()->Update_Animation(dt);
-	m_pStateMachine->Update(dt);
-
 	__super::Update(dt);
+
+	m_pStateMachine->Update(dt);
+	Get_Component<CAnimator3D>()->Update_Animation(dt);
 }
 
 void CSacrificeHand::Late_Update(_float dt)
@@ -133,8 +133,6 @@ void CSacrificeHand::Free()
 void CSacrificeHand::Phase1Attack()
 {
 	m_isAlive = true;
-	SetVisable(true);
-
 	m_AttackBlackBoard.eCurrPattern = PATTERN::PHASE1;
 	m_pStateMachine->Change_State("Attack");
 }
@@ -142,8 +140,6 @@ void CSacrificeHand::Phase1Attack()
 void CSacrificeHand::Phase2Attack()
 {
 	m_isAlive = true;
-	SetVisable(true);
-
 	m_AttackBlackBoard.eCurrPattern = PATTERN::PHASE2;
 	m_pStateMachine->Change_State("Attack");
 }
@@ -151,8 +147,6 @@ void CSacrificeHand::Phase2Attack()
 void CSacrificeHand::OverDrive_Start()
 {
 	m_isAlive = true;
-	SetVisable(true);
-
 	m_AttackBlackBoard.eCurrPattern = PATTERN::OVER_DRIVE_START;
 	m_pStateMachine->Change_State("Attack");
 }
@@ -160,8 +154,6 @@ void CSacrificeHand::OverDrive_Start()
 void CSacrificeHand::OverDrive_Attack1()
 {
 	m_isAlive = true;
-	SetVisable(true);
-
 	m_AttackBlackBoard.eCurrPattern = PATTERN::OVER_DRIVE_ATTACK01;
 	m_pStateMachine->Change_State("Attack");
 }
@@ -169,8 +161,6 @@ void CSacrificeHand::OverDrive_Attack1()
 void CSacrificeHand::OverDrive_Attack2()
 {
 	m_isAlive = true;
-	SetVisable(true);
-
 	m_AttackBlackBoard.eCurrPattern = PATTERN::OVER_DRIVE_ATTACK02;
 	m_pStateMachine->Change_State("Attack");
 }
@@ -178,8 +168,6 @@ void CSacrificeHand::OverDrive_Attack2()
 void CSacrificeHand::OverDrive_Attack3()
 {
 	m_isAlive = true;
-	SetVisable(true);
-
 	m_AttackBlackBoard.eCurrPattern = PATTERN::OVER_DRIVE_ATTACK03;
 	m_pStateMachine->Change_State("Attack");
 }
@@ -189,16 +177,8 @@ void CSacrificeHand::SetVisable(_bool isActive)
 	auto pModel = Get_Component<CSkeletalModel>();
 	_uint iMeshCount = pModel->Get_MeshCount();
 
-	if (isActive)
-	{
-		for (_uint i = 0; i < iMeshCount; ++i)
-			pModel->SetDrawable(i, true);
-	}
-	else
-	{
-		for (_uint i = 0; i < iMeshCount; ++i)
-			pModel->SetDrawable(i, false);
-	}
+	for (_uint i = 0; i < iMeshCount; ++i)
+		pModel->SetDrawable(i, isActive);
 }
 
 void CSacrificeHand::Idle()

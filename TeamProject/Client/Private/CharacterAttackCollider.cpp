@@ -2,6 +2,7 @@
 #include "GameInstance.h"
 #include "CharacterAttackCollider.h"
 
+#include "GameInstance.h"
 #include "BattleSystem.h"
 #include "BattlePlayer.h"
 
@@ -13,6 +14,8 @@
 #include "Enemy.h"
 // Camera
 #include "CameraMgr.h"
+
+#include "EffectContainer.h"
 
 CCharacterAttackCollider::CCharacterAttackCollider()
 	: CGameObject()
@@ -99,6 +102,15 @@ void CCharacterAttackCollider::OnTriggerEnter(CGameObject* pOther)
 		CollisionSystem()->Log_CollisionEvent("Enemy Take Enter Damage" + to_string(m_tHitDesc.fDamage));
 		pEnemy->TakeDamage(m_tHitDesc.eDamageType, m_tHitDesc.fDamage);
 		BattleSystem()->GetBattlePlayer()->Add_Gauge(10.f, 100.f);
+
+		/* Effect Test */
+		_vector3 vWorldPosition = m_pTransform->Get_WorldPos();
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer"})
+			.Asset("basic_hit.json")
+			.Position(vWorldPosition)
+			.Build("BasicHit");
+
+		ObjectManager()->Add_Object(pEffect, { pEnemy->Get_Level(),"Effect_Layer" });
 		
 		// Camera
 		//CameraManager()->AddShake(CamShakeType::HitCrit);

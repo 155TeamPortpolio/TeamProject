@@ -15,6 +15,12 @@ void CSacrificeState_Groggy_Phase2::Enter(CSacrifice* pOwner)
 
 	}
 
+	pOwner->DeactiveAxe();
+	pOwner->DeactiveSword();
+	pOwner->DeactiveWhip();
+	pOwner->DeactiveEyeLaser();
+	pOwner->DeactiveLaser();
+
 	BuildPattern(pOwner);
 	__super::Enter(pOwner);
 }
@@ -65,6 +71,8 @@ void CSacrificeState_Groggy_Phase2::BuildPattern(CSacrifice* pOwner)
 
 	blackBoard.stateQueue.push_back("Groggy_Loop_Phase2");
 	blackBoard.stateQueue.push_back("Groggy_End_Phase2");
+
+	blackBoard.isRequestNext = true;
 }
 
 void CSacrificeState_Groggy_Start_Front_Phase2::Enter(CSacrifice* pOwner)
@@ -128,7 +136,7 @@ void CSacrificeState_Groggy_Loop_Phase2::Update(CSacrifice* pOwner, _float dt)
 
 	pOwner->MoveByRootMotion(dt);
 
-	if (m_fStateTime >= 2.f)
+	if (pOwner->GetStatus().iGroggyValue <= 0)
 	{
 		blackBoard.isChainOpen = true;
 		if (!blackBoard.stateQueue.empty())

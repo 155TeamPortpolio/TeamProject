@@ -98,6 +98,8 @@ HRESULT CZero_Level::Initialize()
 		pResource->Add_ResourcePath("sacrifice_sword_slash.json", "../Bin/Resources/Effect/Data/sacrifice_sword_slash.json");
 		pResource->Add_ResourcePath("sacrifice_hand_smoke_trail.json", "../Bin/Resources/Effect/Data/sacrifice_hand_smoke_trail.json");
 		pResource->Add_ResourcePath("sacrifice_hand_ground_up.json", "../Bin/Resources/Effect/Data/sacrifice_hand_ground_up.json");
+		pResource->Add_ResourcePath("sacrifice_enviroment.json", "../Bin/Resources/Effect/Data/sacrifice_enviroment.json");
+		pResource->Add_ResourcePath("basic_hit.json", "../Bin/Resources/Effect/Data/basic_hit.json");
 
 		/* Textures */
 		pResource->Add_ResourcePath("attack_sign.png", "../Bin/Resources/Effect/Texture/attack_sign.png");
@@ -116,6 +118,9 @@ HRESULT CZero_Level::Initialize()
 		pResource->Add_ResourcePath("Eff_Noise_243_YZ_01.png", "../Bin/Resources/Effect/Texture/Eff_Noise_243_YZ_01.png");
 		pResource->Add_ResourcePath("Eff_Smoke_113.png", "../Bin/Resources/Effect/Texture/Eff_Smoke_113.png");
 		pResource->Add_ResourcePath("smoke0.png", "../Bin/Resources/Effect/Texture/smoke0.png");
+		pResource->Add_ResourcePath("Eff_Particle_009.png", "../Bin/Resources/Effect/Texture/Eff_Particle_009.png");
+		pResource->Add_ResourcePath("Eff_Particle_009.png", "../Bin/Resources/Effect/Texture/Eff_Particle_009.png");
+		pResource->Add_ResourcePath("Eff_Flare_060.png", "../Bin/Resources/Effect/Texture/Eff_Flare_060.png");
 
 		/* Models */
 		pResource->Add_ResourcePath("Smoke_Cone2.model", "../Bin/Resources/Effect/Model/Sacrifice_Smoke_Trail/Smoke_Cone2.model");
@@ -131,6 +136,11 @@ HRESULT CZero_Level::Initialize()
 		pResource->Add_ResourcePath("Circle0.mat", "../Bin/Resources/Effect/Model/Circle0/Circle0.mat");
 		pResource->Add_ResourcePath("Circle0.model", "../Bin/Resources/Effect/Model/Circle0/Circle0.model");
 
+		auto pEnviromentEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_enviroment.json")
+			.Build("Enviroment_Particle");
+
+		ObjectManager()->Add_Object(pEnviromentEffect, { "Zero_Level","Effect_Layer" });
 	}
 	
 	return S_OK;

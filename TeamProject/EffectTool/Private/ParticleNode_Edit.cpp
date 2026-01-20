@@ -5,6 +5,7 @@
 #include "Material.h"
 #include "MaterialInstance.h"
 #include "MaterialData.h"
+#include "Texture.h"
 #include "Helper_Func.h"
 
 CParticleNode_Edit::CParticleNode_Edit()
@@ -339,13 +340,12 @@ void CParticleNode_Edit::AddTextures()
 	{
 		if (!m_pContext->Textures.empty())
 		{
-			auto pMaterialData = Get_Component<CMaterial>()->Get_MaterialInstance(0)->Get_MaterialData();
-			pMaterialData->Link_Texture("EffectEdit_Level", m_pContext->TextureTags[0], TEXTURE_TYPE::DIFFUSE);
+			auto pTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_pContext->TextureTags[0]);
+			auto pMaterialInstance = Get_Component<CMaterial>()->Get_MaterialInstance(0);
+			pMaterialInstance->Set_Param("DiffuseTexture", { pTexture->Get_SRV(),"Texture2D",0 });
 
 			m_TextureKey = m_pContext->TextureTags[0];
 		}
-
-		Get_Component<CMaterial>()->Get_MaterialInstance(0)->ChangeTexture(TEXTURE_TYPE::DIFFUSE, 0);
 	}
 }
 
