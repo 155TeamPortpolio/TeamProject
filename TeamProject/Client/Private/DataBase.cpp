@@ -255,7 +255,7 @@ HRESULT CDataBase::LoadMapData(const string& MapDataFolderPath)
 			if (tokens.size() < 4)
 				continue;
 
-			if (tokens[0] != "MapData")
+			if (false == (tokens[0] == "MapData" || tokens[0] == "EntityData"))
 				continue;
 
 			_int iVersion = {};
@@ -265,10 +265,11 @@ HRESULT CDataBase::LoadMapData(const string& MapDataFolderPath)
 				continue;
 
 			// 현재 클라이언트 버전보다 높으면 패스
-			if (iVersion > g_iMapDataVersion)
-				continue;
+			//if (iVersion > g_iMapDataVersion)
+			//	continue;
 
 			MapData_Path_Packet packet = {};
+			packet.TagDataFormat = tokens[0];
 			packet.TagDataFileKey = FilePath.filename().string();
 			packet.TagDataFilePath = FilePath.string();
 			packet.TagArea = tokens[1];
@@ -276,9 +277,12 @@ HRESULT CDataBase::LoadMapData(const string& MapDataFolderPath)
 			packet.iVersion = iVersion;
 
 			auto& vecPacket = m_MapAreaData[packet.TagArea];
-
 			auto it = std::find_if(vecPacket.begin(), vecPacket.end(),
-				[&](const MapData_Path_Packet& p) { return p.TagSlotFormat == packet.TagSlotFormat; });
+				[&](const MapData_Path_Packet& p) { 
+					if (p.TagDataFormat == packet.TagDataFormat)
+						return p.TagSlotFormat == packet.TagSlotFormat; 
+					return false;
+				});
 
 			// 버전이 높다면 높은 버전으로 교체
 			if (it == vecPacket.end())

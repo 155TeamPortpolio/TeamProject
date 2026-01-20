@@ -1439,9 +1439,6 @@
     <ClInclude Include="..\Public\OrbitLockOnData.h">
       <Filter>02. GameObject\Camera\04. OrbitCam\00. LockOnController</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\ZeroStage_Normal.h">
-      <Filter>01. Level\04. Zero\Stage_Normal</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\MapInvisibleWall.h">
       <Filter>02. GameObject\MapObject\03. MapInvisibleWall</Filter>
     </ClInclude>
@@ -1492,6 +1489,9 @@
     </ClInclude>
     <ClInclude Include="..\public\HowlState_Wake.h">
       <Filter>02. GameObject\Object\Npc\Service\Howl\State\Wake</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ZeroStage_Normal.h">
+      <Filter>01. Level\04. Zero\Stage_Normal</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

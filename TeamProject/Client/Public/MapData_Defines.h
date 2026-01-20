@@ -50,6 +50,26 @@ namespace Client {
 	}MapData_Slot_Header;
 	//NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(MapData_Slot_Header, TagDataFormat, iVersion, values);
 
-	
+
+	/* Entity Data */
+	typedef struct tagEntityInitDesc
+	{
+		_int		iEntityID = { -1 };
+		string		tagName = {};
+		_int		iType = {};
+		array<_float, 3> vScale = { 0.f, 0.f, 0.f };
+		array<_float, 3> vRotation = { 0.f, 0.f, 0.f };
+		array<_float, 3> vTranslation = { 0.f, 0.f, 0.f };
+	}ENTITY_INIT;
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ENTITY_INIT, iEntityID, tagName, iType, vScale, vRotation, vTranslation);
+
+	typedef struct tagEntityHeader {
+		string		TagDataFormat = {};
+		string		TagArea = {};
+		_int		iVersion = 1;
+		vector<ENTITY_INIT> Entities;
+	}Entity_Header;
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Entity_Header, TagDataFormat, TagArea, iVersion, Entities);
+
 
 }
