@@ -14,7 +14,11 @@ namespace
 	struct AvatarAssetDesc
 	{
 		const char* folder;
-		const char* fileName;
+
+		const char* modelFile;
+		const char* matFile;
+		const char* metaFile;
+
 		_float      modelScale;
 		const char* idleClip;
 	};
@@ -23,16 +27,30 @@ namespace
 	{
 		static const AvatarAssetDesc table[] =
 		{
-			{"Corin",   "Corin",   1.f, "Avatar_Female_Size01_Corin_Ani_Idle"},
-			{"JaneDoe", "JaneDoe", 1.f, "Avatar_Female_Size03_JaneDoe_Ani_Idle"}
+			{
+				"Corin",
+				"Corin.model",
+				"Corin.mat",
+				"Corin_Meta.json", 
+				1.f,
+				"Avatar_Female_Size01_Corin_Ani_Idle"
+			},
+			{
+				"JaneDoe",
+				"JaneDoeModel.model",
+				"JaneDoe.mat",
+				"JaneDoe_Meta.json",
+				1.f,
+				"JaneDoe_Ani_Idle"
+			}
 		};
 		return table[(int)v];
-	};
+	}
 
 	fs::path GetPlayerBaseDir(Avatar v)
 	{
 		const auto& d = GetAvatarAssetDesc(v);
-		return fs::path("..") / "bin" / "Resources" / d.folder;
+		return fs::path("..") / "Bin" / "Resources" / d.folder;
 	}
 }
 
@@ -68,30 +86,29 @@ void CUnagi::ApplyAvatar(Avatar avatar)
 
 	const string levelName = "First_Level";
 	const auto& desc = GetAvatarAssetDesc(avatar);
-	const string fileName = desc.fileName;
 
 	const fs::path baseDir = GetPlayerBaseDir(avatar);
 
-	const string modelKey = fileName + ".model";
-	const string matKey = fileName + ".mat";
-	const string jsonKey = fileName + "_Meta.json";
+	const string Model = string(desc.modelFile);
+	const string Material = string(desc.matFile);
+	const string Meta = string(desc.metaFile);
 
-	const string modelPath = (baseDir / modelKey).string();
-	const string matPath = (baseDir / matKey).string();
-	const string jsonPath = (baseDir / jsonKey).string();
+	const string modelPath = (baseDir / desc.modelFile).string();
+	const string matPath = (baseDir / desc.matFile).string();
+	const string metaPath = (baseDir / desc.metaFile).string();
 
-	RES->Add_ResourcePath(modelKey, modelPath);
-	RES->Add_ResourcePath(matKey, matPath);
-	RES->Add_ResourcePath(jsonKey, jsonPath);
+	RES->Add_ResourcePath(Model, modelPath);
+	RES->Add_ResourcePath(Material, matPath);
+	RES->Add_ResourcePath(Meta, metaPath);
 
 	Get_Component<CTransform>()->Scale(Vector3{desc.modelScale, desc.modelScale, desc.modelScale});
 
 	auto anim = Get_Component<CAnimator3D>();
 
-	Get_Component<CModel>()->Link_Model(levelName, modelKey);
-	Get_Component<CMaterial>()->Link_Material(levelName, matKey);
-	anim->LinkAnimate_Model(levelName, modelKey);
-	anim->Link_MetaData(levelName, jsonKey);
+	Get_Component<CSkeletalModel>()->Link_Model(levelName, Model);
+	Get_Component<CMaterial>()->Link_Material(levelName, Material);
+	anim->LinkAnimate_Model(levelName, Model);
+	anim->Link_MetaData(levelName, Meta);
 
 	anim->Set_Pause(false, 0);
 	anim->Set_Animation(0, string(desc.idleClip)).Loop(true).Apply();

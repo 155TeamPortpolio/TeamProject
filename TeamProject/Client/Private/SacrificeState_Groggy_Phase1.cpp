@@ -12,8 +12,13 @@ void CSacrificeState_Groggy_Phase1::Enter(CSacrifice* pOwner)
 		m_pSubStateMachine->Register_State("Groggy_Start_B_Phase1",CSacrificeState_Groggy_Start_Back_Phase1::Create());
 		m_pSubStateMachine->Register_State("Groggy_Loop_Phase1",CSacrificeState_Groggy_Loop_Phase1::Create());
 		m_pSubStateMachine->Register_State("Groggy_End_Phase1",CSacrificeState_Groggy_End_Phase1::Create());
-
 	}
+
+	pOwner->DeactiveAxe();
+	pOwner->DeactiveSword();
+	pOwner->DeactiveWhip();
+	pOwner->DeactiveEyeLaser();
+	pOwner->DeactiveLaser();
 
 	BuildPattern(pOwner);
 	__super::Enter(pOwner);
@@ -65,6 +70,8 @@ void CSacrificeState_Groggy_Phase1::BuildPattern(CSacrifice* pOwner)
 
 	blackBoard.stateQueue.push_back("Groggy_Loop_Phase1");
 	blackBoard.stateQueue.push_back("Groggy_End_Phase1");
+
+	blackBoard.isRequestNext = true;
 }
 
 void CSacrificeState_Groggy_Start_Front_Phase1::Enter(CSacrifice* pOwner)
@@ -100,7 +107,7 @@ void CSacrificeState_Groggy_Start_Back_Phase1::Enter(CSacrifice* pOwner)
 
 void CSacrificeState_Groggy_Start_Back_Phase1::Update(CSacrifice* pOwner, _float dt)
 {
-	ATTACK_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
+	CSacrifice::SACRIFICE_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
 
 	pOwner->MoveByRootMotion(dt);
 
@@ -128,7 +135,7 @@ void CSacrificeState_Groggy_Loop_Phase1::Update(CSacrifice* pOwner, _float dt)
 
 	pOwner->MoveByRootMotion(dt);
 
-	if (m_fStateTime >= 2.f)
+	if (pOwner->GetStatus().iGroggyValue <= 0)
 	{
 		blackBoard.isChainOpen = true;
 		if (!blackBoard.stateQueue.empty())

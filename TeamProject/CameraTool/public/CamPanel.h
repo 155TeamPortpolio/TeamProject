@@ -41,6 +41,7 @@ private:
     void    DrawHiddenHandle();
 	_bool   DrawConstraintBar();
 	_bool   DrawOrbitTargetBar();
+    void    DrawPath();
 
 private:
     void    SetRecording(_bool on);
@@ -104,7 +105,7 @@ private:
     vector<OBJECT_HANDLE> spaceRefCandidates{};
 
     function<void(Avatar)> onAvatarChanged{};
-    Avatar avatarUI = Avatar::Corin;
+    Avatar avatarUI = Avatar::JaneDoe;
 
 public:
     static CCamPanel* Create(GUI_CONTEXT* context);

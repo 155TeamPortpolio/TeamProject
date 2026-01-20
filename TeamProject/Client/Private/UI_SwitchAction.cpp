@@ -32,13 +32,23 @@ HRESULT CUI_SwitchAction::Initialize(INIT_DESC* pArg)
 	// 모드 변경 이벤트
 	Get_Component<CEventListener>()->Add_Listener<UI_ACTION_PRIMARY_DESC>([&](const UI_ACTION_PRIMARY_DESC& desc)
 		{
-			Set_InteractState(INTERACT_STATE::DISABLE);
+			switch (desc.eMode)
+			{
+			case UI_ACTION_PRIMARY_MODE::ATTACK:
+				Set_InteractState(INTERACT_STATE::ENABLE);
+				break;
+			case UI_ACTION_PRIMARY_MODE::INTERACT:
+				Set_InteractState(INTERACT_STATE::DISABLE);
+				break;
+			}
+
+			m_eMode = desc.eMode;
 		});
 
 	// 액션 이벤트
 	Get_Component<CEventListener>()->Add_Listener<UI_ACTION_DESC>([&](const UI_ACTION_DESC& desc)
 		{
-			if (desc.eType != UI_ACTION_TYPE::SWITCH)
+			if (m_eMode == UI_ACTION_PRIMARY_MODE::INTERACT || desc.eType != UI_ACTION_TYPE::SWITCH)
 				return;
 
 			if (desc.eState == UI_ACTION_STATE::DISABLE)
@@ -64,6 +74,19 @@ void CUI_SwitchAction::Update(_float dt)
 		m_isVisualInitialized = Apply_DisableVisual();
 
 	// 이벤트 테스트 코드
+	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('M'))
+	{
+		UI_ACTION_PRIMARY_DESC desc = {};
+		desc.eMode = UI_ACTION_PRIMARY_MODE::INTERACT;
+	    EventSystem()->Broadcast<UI_ACTION_PRIMARY_DESC>({ desc });
+	}
+
+	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('N'))
+	{
+		UI_ACTION_PRIMARY_DESC desc = {};
+		desc.eMode = UI_ACTION_PRIMARY_MODE::ATTACK;
+		EventSystem()->Broadcast<UI_ACTION_PRIMARY_DESC>({ desc });
+	}
 	//if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('M'))
 	//{
 	//    UI_ACTION_DESC desc = {};

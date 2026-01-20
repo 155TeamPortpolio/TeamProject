@@ -113,11 +113,9 @@ public:
     void        Set_Switch(SWITCH eType) { m_eSwitchType = eType; }
 
     void        Update_DissolveProgress(_float dt); /*dissolve*/
-    void        Reset_DissolveProgress();
 
     OBJECT_HANDLE       Get_TargetHandle() { return m_TargetHandle; };
     void                Set_TargetHandle(OBJECT_HANDLE targetHandle) { m_TargetHandle = targetHandle; };
-
 
     void    Active_Character();
     void    DeActive_Character();
@@ -142,6 +140,7 @@ public:
     virtual void    OnTriggerExit(CGameObject* pOther) override;
 
 public:
+    virtual void    On_Start() {};
     virtual void    On_Move(const InputInfo& inputInfo);
     virtual void    On_Attack();
     virtual void    On_Evade();

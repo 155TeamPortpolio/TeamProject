@@ -141,6 +141,8 @@ HRESULT CCharacterController::Initialize(COMPONENT_DESC* pArg)
 	pShape->setQueryFilterData(filterData);      // 레이캐스팅용 필터
 	m_FilterData = filterData;
 
+	m_vColor = pDesc->vColliderColor;
+
 	CGameInstance::GetInstance()->Get_CollisionSystem()->RegisterCollidable(this, -1);
 
 	m_fHeight = pDesc->fHeight;

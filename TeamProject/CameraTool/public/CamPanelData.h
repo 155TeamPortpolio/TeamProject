@@ -67,6 +67,9 @@ struct KeyframeEditorUIState
     float pendingTimeValue = 0.f;
     int   pendingOverwriteCount = 0;
     bool  requestOpenTimeCollisionPopup = false;
+
+    _vector3 lookTargetPos{};
+    bool     lookTargetInited = false;
 };
 
 NS_END

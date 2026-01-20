@@ -729,9 +729,9 @@
     </Filter>
     <Filter Include="01. Level\04. Zero\StageFX">
       <UniqueIdentifier>{33438fca-4c48-4f14-b7da-99d59fbd7f51}</UniqueIdentifier>
-        </Filter>
-        <Filter Include="02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Hit">
- </Filter>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Hit">
+    </Filter>
     <Filter Include="02. GameObject\UI\01. 2D\ScreenFade">
       <UniqueIdentifier>{4df49a7d-2281-4c98-b765-1a9115005f18}</UniqueIdentifier>
     </Filter>
@@ -743,9 +743,15 @@
     </Filter>
     <Filter Include="00. MainApp\00. CursorController">
       <UniqueIdentifier>{5e864d76-8135-44f8-b744-bd0c5b16cda6}</UniqueIdentifier>
-</Filter>
+    </Filter>
     <Filter Include="02. GameObject\MapObject\OBJFactory">
       <UniqueIdentifier>{8b852d8f-36c2-4c1e-b080-ca2b3222160f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Start">
+      <UniqueIdentifier>{2cbaf699-675f-4a4b-9bf0-f7322153d7d1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Start">
+      <UniqueIdentifier>{76da54b4-7055-4fbf-acd8-06dd1f78d7f4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1454,6 +1460,12 @@
     <ClInclude Include="..\Public\StageFx.h">
       <Filter>01. Level\04. Zero\StageFX</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\JaneDoeState_Start.h">
+      <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Start</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CorinState_Start.h">
+      <Filter>02. GameObject\Object\Player\Character\Corin\State\Start</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2124,6 +2136,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\Stage.cpp">
       <Filter>01. Level\04. Zero\Stage_Super</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\JaneDoeState_Start.cpp">
+      <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Start</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CorinState_Start.cpp">
+      <Filter>02. GameObject\Object\Player\Character\Corin\State\Start</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

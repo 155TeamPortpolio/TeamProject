@@ -9,6 +9,8 @@
 
 void CCorinState_SwitchIn::Enter(CCorin* pOwner)
 {
+    pOwner->Active_Character();
+    pOwner->Push_Invincible();
     pOwner->Unlock_Move();
     if (!m_pSubStateMachine)
     {
@@ -70,5 +72,6 @@ void CCorinState_SwitchIn::Update(CCorin* pOwner, _float dt)
 
 void CCorinState_SwitchIn::Exit(CCorin* pOwner)
 {
+    pOwner->Pop_Invincible();
     __super::Exit(pOwner);
 }
