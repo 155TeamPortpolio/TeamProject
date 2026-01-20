@@ -111,6 +111,8 @@ public:
 
     SWITCH      Get_Switch() const { return m_eSwitchType; }
     void        Set_Switch(SWITCH eType) { m_eSwitchType = eType; }
+    _bool       Is_MainCharacter() const { return m_bIsMain; }
+    void        Set_MainCharacter(_bool bMain) { m_bIsMain = bMain; }
 
     void        Update_DissolveProgress(_float dt); /*dissolve*/
 
@@ -122,6 +124,7 @@ public:
 
     void   Set_Speed(_float fSpeed) { m_fMoveSpeed = fSpeed; }
     _float Get_Speed() const { return m_fMoveSpeed; }
+
 public:
     void Process_RootMotion(_float dt, const ROOTMOTION_DESC& desc);
     void Process_RootMotion(_float dt, _uint iModeMask = ENUM(ROOTMOTION_MASK::MOVE));
@@ -180,6 +183,7 @@ public:
     void Pop_Invincible() { if (m_iInvincibleCount > 0) --m_iInvincibleCount; }
     // 일시적 무적 - 회피 무적프레임 등
     void Set_InvincibleTimer(_float fDuration) { m_fInvincibleTimer = fDuration; }
+
 
 private:
     void    Update_Rotation(_float dt);
@@ -248,6 +252,8 @@ protected:
     // 무적
     _int    m_iInvincibleCount = { 0 };
     _float  m_fInvincibleTimer = { 0.f };
+
+    _bool m_bIsMain = { false };
 
 
 public:

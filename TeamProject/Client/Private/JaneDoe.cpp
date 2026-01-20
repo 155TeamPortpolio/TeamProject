@@ -471,6 +471,8 @@ HRESULT CJaneDoe::Initialize_Effects()
 
 void CJaneDoe::Update_States()
 {
+	if (!Is_MainCharacter()) return;
+
 	m_pStateMachine->Set_Bool("IsMove", Is_Move_Buffer());
 
 	Process_EndState(m_pStateMachine->Get_CurrentStateName());
