@@ -82,7 +82,7 @@ void CUI_UltimateAction::Bind_EventListener()
             else if (desc.eState == UI_ACTION_STATE::EXECUTING)
             {
                 Set_InteractState(INTERACT_STATE::DISABLE);
-                Set_Animation(CHILD::BLINK, 0);
+                Set_ChildAnimation(CHILD::BLINK, 0);
             }
         });
 }
@@ -100,13 +100,13 @@ void CUI_UltimateAction::Execute()
 
     m_interactState = INTERACT_STATE::ENABLE;
     Refresh_Visual();
-    Set_Animation(CHILD::GROUP1, 0);
-    Set_Animation(CHILD::GROUP2, 0);
-    Set_Animation(CHILD::BLACK, 0);
-    Set_Animation(CHILD::STAR, 0);
-    Set_Animation(CHILD::STAR1, 0);
-    Set_Animation(CHILD::STAR2, 0);
-    Set_Animation(CHILD::STAR3, 0);
+    Set_ChildAnimation(CHILD::GROUP1, 0);
+    Set_ChildAnimation(CHILD::GROUP2, 0);
+    Set_ChildAnimation(CHILD::BLACK, 0);
+    Set_ChildAnimation(CHILD::STAR, 0);
+    Set_ChildAnimation(CHILD::STAR1, 0);
+    Set_ChildAnimation(CHILD::STAR2, 0);
+    Set_ChildAnimation(CHILD::STAR3, 0);
 }
 
 void CUI_UltimateAction::Refresh_Visual()
@@ -122,19 +122,19 @@ void CUI_UltimateAction::Refresh_Visual()
 
 void CUI_UltimateAction::Apply_DisableVisual()
 {
-    Set_Color(CHILD::BG, UI_GRAY_MEDIUM);
-    Set_Color(CHILD::Q, UI_GRAY_LIGHTEST);
-    Set_Alive(CHILD::UV, false);
+    Set_ChildAlive(CHILD::UV, false);
+    Set_ChildColor(CHILD::BG, UI_GRAY_MEDIUM);
+    Set_ChildColor(CHILD::Q, UI_GRAY_LIGHTEST); 
 }
 
 void CUI_UltimateAction::Apply_EnableVisual()
 {
-    Set_Color(CHILD::BG, UI_GRAY_DARKEST);
-    Set_Color(CHILD::Q, UI_WHITE);
-    Set_Alive(CHILD::UV, true);
+    Set_ChildAlive(CHILD::UV, true);
+    Set_ChildColor(CHILD::BG, UI_GRAY_DARKEST);
+    Set_ChildColor(CHILD::Q, UI_WHITE); 
 }
 
-void CUI_UltimateAction::Set_Alive(CHILD child, _bool isAlive)
+void CUI_UltimateAction::Set_ChildAlive(CHILD child, _bool isAlive)
 {
     if (!m_pChildren[ENUM(child)])
         return;
@@ -142,7 +142,7 @@ void CUI_UltimateAction::Set_Alive(CHILD child, _bool isAlive)
     m_pChildren[ENUM(child)]->Set_Alive(isAlive);
 }
 
-void CUI_UltimateAction::Set_Color(CHILD child, _float4 vColor)
+void CUI_UltimateAction::Set_ChildColor(CHILD child, _float4 vColor)
 {
     if (!m_pChildren[ENUM(child)])
         return;
@@ -150,7 +150,7 @@ void CUI_UltimateAction::Set_Color(CHILD child, _float4 vColor)
     m_pChildren[ENUM(child)]->Set_Color(vColor);
 }
 
-void CUI_UltimateAction::Set_Animation(CHILD child, _int iIndex)
+void CUI_UltimateAction::Set_ChildAnimation(CHILD child, _int iIndex)
 {
     if (!m_pChildren[ENUM(child)])
         return;

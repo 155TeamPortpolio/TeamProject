@@ -117,8 +117,8 @@ void CUI_SwitchAction::Execute(EXECUTE_MODE mode)
 
 	//m_interactState = INTERACT_STATE::ENABLE;
 	Refresh_Visual();
-	Set_Animation(CHILD::GROUP, 0);
-	Set_Animation(CHILD::ICON, 0); 
+	Set_ChildAnimation(CHILD::GROUP, 0);
+	Set_ChildAnimation(CHILD::ICON, 0); 
 }
 
 void CUI_SwitchAction::Set_Gauge(_float fFillAmount)
@@ -148,38 +148,38 @@ void CUI_SwitchAction::Refresh_Visual()
 
 void CUI_SwitchAction::Apply_DisableVisual()
 {
-	Set_Color(CHILD::BG, UI_GRAY_MEDIUM);
-	Set_Color(CHILD::GAUGEBG, UI_GRAY_DARK);
-	Set_Color(CHILD::GAUGE, UI_GRAY_DARK);
-	Set_Color(CHILD::ICONBG, UI_GRAY_DARK);
-	Set_Color(CHILD::ICON, UI_GRAY_DARK);
-	Set_Color(CHILD::SPACE, UI_GRAY_LIGHTEST);
-	Set_Alive(CHILD::OUTLINE, true);
+	Set_ChildColor(CHILD::BG, UI_GRAY_MEDIUM);
+	Set_ChildColor(CHILD::GAUGEBG, UI_GRAY_DARK);
+	Set_ChildColor(CHILD::GAUGE, UI_GRAY_DARK);
+	Set_ChildColor(CHILD::ICONBG, UI_GRAY_DARK);
+	Set_ChildColor(CHILD::ICON, UI_GRAY_DARK);
+	Set_ChildColor(CHILD::SPACE, UI_GRAY_LIGHTEST);
+	Set_ChildAlive(CHILD::OUTLINE, true);
 }
 
 void CUI_SwitchAction::Apply_EnableVisual()
 {
-	Set_Color(CHILD::BG, UI_GRAY_LIGHT);
-	Set_Color(CHILD::GAUGEBG, UI_GRAY_DARK);
-	Set_Color(CHILD::GAUGE, UI_GRAY_LIGHTEST);
-	Set_Color(CHILD::ICONBG, UI_GRAY_DARK);
-	Set_Color(CHILD::ICON, UI_GRAY_DARK);
-	Set_Color(CHILD::SPACE, UI_GRAY_LIGHTEST);
-	Set_Alive(CHILD::OUTLINE, false);
+	Set_ChildColor(CHILD::BG, UI_GRAY_LIGHT);
+	Set_ChildColor(CHILD::GAUGEBG, UI_GRAY_DARK);
+	Set_ChildColor(CHILD::GAUGE, UI_GRAY_LIGHTEST);
+	Set_ChildColor(CHILD::ICONBG, UI_GRAY_DARK);
+	Set_ChildColor(CHILD::ICON, UI_GRAY_DARK);
+	Set_ChildColor(CHILD::SPACE, UI_GRAY_LIGHTEST);
+	Set_ChildAlive(CHILD::OUTLINE, false);
 }
 
 void CUI_SwitchAction::Apply_AvailableVisual()
 {
-	Set_Color(CHILD::BG, UI_GRAY_DARKEST);
-	Set_Color(CHILD::GAUGEBG, UI_GRAY_MEDIUM);
-	Set_Color(CHILD::GAUGE, UI_SWITCH_YELLOW);
-	Set_Color(CHILD::ICONBG, UI_GRAY_MEDIUM);
-	Set_Color(CHILD::ICON, UI_SWITCH_YELLOW);
-	Set_Color(CHILD::SPACE, UI_WHITE);
-	Set_Alive(CHILD::OUTLINE, false);
+	Set_ChildColor(CHILD::BG, UI_GRAY_DARKEST);
+	Set_ChildColor(CHILD::GAUGEBG, UI_GRAY_MEDIUM);
+	Set_ChildColor(CHILD::GAUGE, UI_SWITCH_YELLOW);
+	Set_ChildColor(CHILD::ICONBG, UI_GRAY_MEDIUM);
+	Set_ChildColor(CHILD::ICON, UI_SWITCH_YELLOW);
+	Set_ChildColor(CHILD::SPACE, UI_WHITE);
+	Set_ChildAlive(CHILD::OUTLINE, false);
 }
 
-void CUI_SwitchAction::Set_Alive(CHILD child, _bool isAlive)
+void CUI_SwitchAction::Set_ChildAlive(CHILD child, _bool isAlive)
 {
 	if (!m_pChildren[ENUM(child)])
 		return;
@@ -187,7 +187,7 @@ void CUI_SwitchAction::Set_Alive(CHILD child, _bool isAlive)
 	m_pChildren[ENUM(child)]->Set_Alive(isAlive);
 }
 
-void CUI_SwitchAction::Set_Color(CHILD child, _float4 vColor)
+void CUI_SwitchAction::Set_ChildColor(CHILD child, _float4 vColor)
 {
 	if (!m_pChildren[ENUM(child)])
 		return;
@@ -195,7 +195,7 @@ void CUI_SwitchAction::Set_Color(CHILD child, _float4 vColor)
 	m_pChildren[ENUM(child)]->Set_Color(vColor);
 }
 
-void CUI_SwitchAction::Set_Animation(CHILD child, _int iIndex)
+void CUI_SwitchAction::Set_ChildAnimation(CHILD child, _int iIndex)
 {
 	if (!m_pChildren[ENUM(child)])
 		return;

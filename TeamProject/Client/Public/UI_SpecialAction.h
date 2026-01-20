@@ -48,9 +48,9 @@ private:
 	void Apply_EnableVisual();
 	void Apply_AvailableVisual();
 
-	void Set_Alive(CHILD child, _bool isAlive); 
-	void Set_Color(CHILD child, _float4 vColor);
-	void Set_Animation(CHILD child, _int iIndex);
+	void Set_ChildAlive(CHILD child, _bool isAlive); 
+	void Set_ChildColor(CHILD child, _float4 vColor);
+	void Set_ChildAnimation(CHILD child, _int iIndex);
 
 public:
 	static  CGameObject* Create();
