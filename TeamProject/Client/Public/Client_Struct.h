@@ -38,6 +38,33 @@ namespace Client {
 		_float	Defend = {};
 	};
 
+	struct NpcDialogueDesc {
+		string			DialogueID = {};
+		wstring			Name = {};
+		_uint			SequenceID = {};
+		Speaker			Speaker;
+		DayPhase		DayPhase;
+		DialogueType	DialogueType;
+		_bool			Repeat;
+		wstring			Text;
+		DialogueResult	Result;
+		_uint			ChoiceNum;
+		string			Choice_ID1;
+		string			Choice_ID2;
+		string			Choice_ID3;
+	};
+
+	struct ChoiceDesc
+	{
+		string			ChoiceID;
+		wstring			Text;
+		DialogueResult	Result;
+		string			Next_DialogueID;
+		_int			Next_SequeceID;
+		string			ValueType;
+		variant<monostate, _int, _float, string> Value;
+	};
+
 	typedef struct tagMapDataFilePacket {
 		string		TagSlotFormat = {};			// Base, Physics, Effect, SlotA, SlotB ...
 		string		TagArea = {};				// 지형 이름
