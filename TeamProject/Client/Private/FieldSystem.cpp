@@ -2,6 +2,7 @@
 #include "FieldSystem.h"
 #include "FieldPlayer.h"
 #include "GameObject.h"
+#include "GameInstance.h"
 
 IMPLEMENT_SINGLETON(CFieldSystem)
 
@@ -13,6 +14,8 @@ void CFieldSystem::Update()
 {
 	if (false == m_isActive)
 		return;
+	_float delta = TimeManager()->Get_DeltaTime(G_EngineTimerID);
+	m_DayTime.Update_Timer(delta);
 }
 
 void CFieldSystem::SetFieldPlayer(CFieldPlayer* pFieldPlayer)

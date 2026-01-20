@@ -44,7 +44,7 @@ HRESULT CPhysicsSystem::Initialize()
     m_pPvd = PxCreatePvd(*m_pFoundation);
     // PVD 연결 (로컬호스트, 포트 5425, 타임아웃 10ms)
     PxPvdTransport* transport = PxDefaultPvdSocketTransportCreate("127.0.0.1", 5425, 10);
-    m_pPvd->connect(*transport, PxPvdInstrumentationFlag::eALL);
+    m_pPvd->connect(*transport, PxPvdInstrumentationFlag::eDEBUG);
     if (m_pPvd->isConnected())
     {
         // 연결 성공 로그
@@ -100,9 +100,9 @@ HRESULT CPhysicsSystem::Initialize()
     PxPvdSceneClient* pvdClient = m_pScene->getScenePvdClient();
     if (pvdClient)
     {
-        pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_CONSTRAINTS, true);
-        pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_SCENEQUERIES, true);
-        pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_CONTACTS, true);
+        pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_CONSTRAINTS, false);
+        pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_SCENEQUERIES, false);
+        pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_CONTACTS, false);
     }
     m_pScene->setVisualizationParameter(PxVisualizationParameter::eSCALE, 1.0f);
     m_pScene->setVisualizationParameter(PxVisualizationParameter::eCOLLISION_SHAPES, 1.0f);

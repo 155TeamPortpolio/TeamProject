@@ -44,6 +44,12 @@ void CSacrificeState_Death_Phase1::Enter(CSacrifice* pOwner)
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("SacrificeBringer_Ani_P1_Death_Stay").Loop(false).Speed(1.2f).Apply();
 
+	pOwner->DeactiveAxe();
+	pOwner->DeactiveSword();
+	pOwner->DeactiveWhip();
+	pOwner->DeactiveLaser();
+	pOwner->DeactiveEyeLaser();
+
 	pOwner->Set_Hitable(false);
 }
 
@@ -61,6 +67,11 @@ void CSacrificeState_Death_Phase2::Enter(CSacrifice* pOwner)
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("SacrificeBringer_Ani_P2_Death_Stay").Loop(false).Speed(1.2f).Apply();
 
+	pOwner->DeactiveAxe();
+	pOwner->DeactiveSword();
+	pOwner->DeactiveWhip();
+	pOwner->DeactiveLaser();
+	pOwner->DeactiveEyeLaser();
 	pOwner->Set_Hitable(false);
 }
 

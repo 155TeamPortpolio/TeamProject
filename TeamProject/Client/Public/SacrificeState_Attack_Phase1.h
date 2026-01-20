@@ -236,6 +236,10 @@ public:
 public:
 	static CSacrificeState_Attack_Turn_Phase1* Create() { return new CSacrificeState_Attack_Turn_Phase1(); }
 	virtual void Free() override { __super::Free(); }
+
+private:
+	void Update_Effects(CSacrifice* pOwner);
+
 };
 
 class CSacrificeState_Attack_Roar_Phase1 : public IBaseState<CSacrifice>

@@ -123,6 +123,9 @@ void CCamPanel::Update_Panel(_float dt)
         state.curTime = 0.f;
         state.playing = false;
 
+        state.playAllLink = false;
+        state.playAllRefHandle = {};
+
         if (target.player)
             target.player->SetApplyEnabled(false);
 
@@ -180,7 +183,11 @@ void CCamPanel::Update_Panel(_float dt)
 
     if (target.player && !state.recording)
         target.player->SetTime(state.curTime);
+
+    if (state.playAllLink && !state.recording)
+        animGUIController.SetTimeSec(state.playAllRefHandle, state.curTime);
 }
+
 
 void CCamPanel::Render_GUI()
 {
@@ -424,40 +431,20 @@ void CCamPanel::DrawToolbar()
 
 void CCamPanel::DrawCamSelector()
 {
-    ImGui::AlignTextToFramePadding();
-    ImGui::TextUnformatted("Target");
-    ImGui::SameLine();
-
     const bool hasSeq = (target.sequence != nullptr);
-    const char* preview = hasSeq ? target.sequence->name.c_str() : "None";
-
-    ImGui::SetNextItemWidth(90.f);
-    if (ImGui::BeginCombo("##cam_track_combo", preview))
-    {
-        ImGui::Selectable(preview, true);
-        ImGui::EndCombo();
-    }
-    if (ImGui::IsItemHovered())
-        ImGui::SetTooltip("%s", preview);
-
-    ImGui::SameLine(0.f, 6.f);
-
-    if (!hasSeq) ImGui::BeginDisabled();
-    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(6.f, 3.f));
-    if (ImGui::SmallButton("Flip180##flip_yaw180"))
-        FlipKeys_Yaw180();
-    ImGui::PopStyleVar();
-    if (!hasSeq) ImGui::EndDisabled();
-
-    ImGui::SameLine();
-    ImGui::Dummy(ImVec2(14.f, 0.f));
-    ImGui::SameLine();
 
     if (!hasSeq)
     {
         ImGui::TextDisabled("(No Sequence)");
         return;
     }
+
+    if (ImGui::SmallButton("Flip180##flip_yaw180"))
+        FlipKeys_Yaw180();
+
+    ImGui::SameLine();
+    ImGui::Dummy(ImVec2(14.f, 0.f));
+    ImGui::SameLine();
 
     bool changedAny = false;
 
@@ -510,7 +497,6 @@ void CCamPanel::DrawCamSelector()
     ImGui::SameLine();
     {
         const CamRotInterp shown = target.sequence->rotInterp;
-
         if (Helper::DrawEnumCombo("##rot_interp", target.sequence->rotInterp, shown, 140.f)) changedAny = true;
     }
 
@@ -523,7 +509,6 @@ void CCamPanel::DrawCamSelector()
     ImGui::SameLine();
     {
         const CamFovInterp shown = target.sequence->fovInterp;
-
         if (Helper::DrawEnumCombo("##fov_interp", target.sequence->fovInterp, shown, 140.f)) changedAny = true;
     }
 
@@ -624,12 +609,16 @@ void CCamPanel::DrawCamSelector()
             }
             ImGui::EndCombo();
         }
+
+        animGUIController.DrawInline(target.spaceRefHandle);
+        DrawPlayAll(target.spaceRefHandle);
     }
 
     ImGui::PopID();
 
     if (changedAny) PostEdit_SequenceChanged();
 }
+
 
 void CCamPanel::DrawKeyframeList()
 {
@@ -1324,6 +1313,87 @@ void CCamPanel::DrawPath()
             isSel ? IM_COL32(255, 255, 0, a) : IM_COL32(255, 255, 255, a), 12);
     }
 }
+
+void CCamPanel::DrawPlayAll(OBJECT_HANDLE spaceRefHandle)
+{
+    const bool hasCam = target.player != nullptr;
+    const bool hasAnim = animGUIController.HasAnimator(spaceRefHandle);
+
+    ImGui::SameLine(0.f, 6.f);
+
+    if (!hasCam || !hasAnim) ImGui::BeginDisabled();
+
+    auto HandleEqual = [](OBJECT_HANDLE a, OBJECT_HANDLE b) -> bool
+        {
+            return a.hObjID == b.hObjID && a.Level == b.Level && a.Layer == b.Layer;
+        };
+
+    const bool linkedThis = state.playAllLink && HandleEqual(state.playAllRefHandle, spaceRefHandle);
+    const bool camPlaying = !state.recording && state.playing;
+    const bool allPlaying = linkedThis && camPlaying;
+
+    if (allPlaying)
+        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.85f, 0.15f, 0.15f, 1.f));
+
+    ImGui::PushID(target.player);
+
+    if (ImGui::SmallButton(allPlaying ? "AllStop" : "AllPlay"))
+    {
+        if (allPlaying)
+        {
+            SetPlaying(false);
+
+            state.playAllLink = false;
+            state.playAllRefHandle = {};
+
+            animGUIController.SetPlaying(spaceRefHandle, false);
+        }
+        else
+        {
+            const float eps = 1e-4f;
+
+            SetRecording(false);
+
+            if (state.endTime > 1e-6f && state.curTime >= state.endTime - eps)
+                state.curTime = 0.f;
+
+            state.playAllLink = true;
+            state.playAllRefHandle = spaceRefHandle;
+
+            animGUIController.SetPlaying(spaceRefHandle, false);
+            animGUIController.SetTimeSec(spaceRefHandle, state.curTime);
+
+            SetPlaying(true);
+        }
+    }
+
+    if (allPlaying)
+        ImGui::PopStyleColor();
+
+    ImGui::SameLine(0.f, 4.f);
+
+    if (ImGui::SmallButton("Reset##all_reset"))
+    {
+        SetPlaying(false);
+
+        state.playAllLink = false;
+        state.playAllRefHandle = {};
+
+        animGUIController.SetPlaying(spaceRefHandle, false);
+
+        state.curTime = 0.f;
+
+        if (target.player && !state.recording)
+            target.player->SetTime(state.curTime);
+
+        animGUIController.SetTimeSec(spaceRefHandle, 0.f);
+    }
+
+    ImGui::PopID();
+
+    if (!hasCam || !hasAnim) ImGui::EndDisabled();
+}
+
 
 
 void CCamPanel::SetRecording(_bool on)

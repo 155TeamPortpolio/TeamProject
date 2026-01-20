@@ -39,11 +39,11 @@ HRESULT CCorin::Initialize_Prototype()
 
 	auto pRcsMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
 	pRcsMgr->Add_ResourcePath("Corin.model",
-		"../Bin/Resources/Model/skeletal/Corin/Corin.model");
+		"../Bin/Resources/Global/BattleCharacter/Corin/Corin.model");
 	pRcsMgr->Add_ResourcePath("Corin.mat",
-		"../Bin/Resources/Model/skeletal/Corin/Corin.mat");
+		"../Bin/Resources/Global/BattleCharacter/Corin/Corin.mat");
 	pRcsMgr->Add_ResourcePath("Avatar_Female_Size01_Corin_Meta.json",
-		"../Bin/Resources/Model/skeletal/Corin/Avatar_Female_Size01_Corin_Meta.json");
+		"../Bin/Resources/Global/BattleCharacter/Corin/Avatar_Female_Size01_Corin_Meta.json");
 
 	Get_Component<CModel>()->Link_Model(G_GlobalLevelKey, "Corin.model");
 	Get_Component<CMaterial>()->Link_Material(G_GlobalLevelKey, "Corin.mat");
@@ -416,7 +416,7 @@ HRESULT CCorin::Initialize_Transitions()
 
 	// SwitchOut
 	m_pStateMachine->Register_AnyStateTransition("SwitchOut",
-		CStateMachine<CCorin>::CONDITION_TRIGGER, "SwitchOut");
+		CStateMachine<CCorin>::CONDITION_TRIGGER, "SwitchOut", 1);
 
 	m_pStateMachine->Register_Transition("SwitchOut", "Idle",
 		CStateMachine<CCorin>::CONDITION_TRIGGER, "ToIdle");

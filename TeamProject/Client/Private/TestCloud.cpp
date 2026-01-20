@@ -108,6 +108,7 @@ void CTestCloud::Late_Update(_float dt)
 
 void CTestCloud::Render_GUI()
 {
+	ImGui::Begin("##EnvDesc");
 	float skyColor[3] = { m_vSkyColor.x, m_vSkyColor.y, m_vSkyColor.z };
 	float cloudColor[3] = { m_vSkyColor.x, m_vSkyColor.y, m_vSkyColor.z };
 	ImGui::SeparatorText("Sky Color");
@@ -141,6 +142,7 @@ void CTestCloud::Render_GUI()
 	ImGui::ColorButton("##CloudPreview",
 		ImVec4(m_vCloudColor.x, m_vCloudColor.y, m_vCloudColor.z, 1.0f),
 		ImGuiColorEditFlags_NoTooltip, ImVec2(18, 18));
+	ImGui::End();
 }
 
 CTestCloud* CTestCloud::Create()

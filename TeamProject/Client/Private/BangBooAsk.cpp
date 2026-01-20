@@ -28,9 +28,9 @@ HRESULT CBangBooAsk::Initialize_Prototype()
 	__super::Initialize_Prototype();
 
 	auto pResource = ResourceManager();
-	pResource->Add_ResourcePath("CashierBangbooAsk.model", "../Bin/Resources/Model/skeletal/NPC/141BangBoo/Ask/CashierBangbooAsk.model");
-	pResource->Add_ResourcePath("CashierBangbooAsk.mat", "../Bin/Resources/Model/skeletal/NPC/141BangBoo/Ask/CashierBangbooAsk.mat");
-	pResource->Add_ResourcePath("NPC_CashierBangbooAsk_Meta.json", "../Bin/Resources/Model/skeletal/NPC/141BangBoo/Ask/NPC_CashierBangbooAsk_Meta.json");
+	pResource->Add_ResourcePath("CashierBangbooAsk.model", "../Bin/Resources/Global/NPC/141BangBoo/Ask/CashierBangbooAsk.model");
+	pResource->Add_ResourcePath("CashierBangbooAsk.mat", "../Bin/Resources/Global/NPC/141BangBoo/Ask/CashierBangbooAsk.mat");
+	pResource->Add_ResourcePath("NPC_CashierBangbooAsk_Meta.json", "../Bin/Resources/Global/NPC/141BangBoo/Ask/NPC_CashierBangbooAsk_Meta.json");
 
 	auto pModel = Get_Component<CSkeletalModel>();
 	pModel->Link_Model(G_GlobalLevelKey, "CashierBangbooAsk.model");

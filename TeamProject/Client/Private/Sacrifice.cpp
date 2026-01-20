@@ -89,6 +89,8 @@ HRESULT CSacrifice::Initialize_Prototype()
 		pResource->Add_ResourcePath("sacrifice_axe_slash.json", "../Bin/Resources/Effect/Data/sacrifice_axe_slash.json");
 		pResource->Add_ResourcePath("sacrifice_rush_trail.json", "../Bin/Resources/Effect/Data/sacrifice_rush_trail.json");
 		pResource->Add_ResourcePath("sacrifice_axe_slash2.json", "../Bin/Resources/Effect/Data/sacrifice_axe_slash2.json");
+		pResource->Add_ResourcePath("sacrifice_axe_slash2.json", "../Bin/Resources/Effect/Data/sacrifice_axe_slash2.json");
+		pResource->Add_ResourcePath("sacrifice_smoke_slash2.json", "../Bin/Resources/Effect/Data/sacrifice_smoke_slash2.json");
 
 		/* Textures */
 		pResource->Add_ResourcePath("attack_sign.png", "../Bin/Resources/Effect/Texture/attack_sign.png");
@@ -108,6 +110,7 @@ HRESULT CSacrifice::Initialize_Prototype()
 		pResource->Add_ResourcePath("Eff_Smoke_113.png", "../Bin/Resources/Effect/Texture/Eff_Smoke_113.png");
 		pResource->Add_ResourcePath("Eff_MeleeTrail_078_YZ_03.png", "../Bin/Resources/Effect/Texture/Eff_MeleeTrail_078_YZ_03.png");
 		pResource->Add_ResourcePath("Dissolve.png", "../Bin/Resources/Effect/Texture/Dissolve.png");
+		pResource->Add_ResourcePath("sacrifice_sword_slash.png", "../Bin/Resources/Effect/Texture/sacrifice_sword_slash.png");
 
 		/* Models */
 		pResource->Add_ResourcePath("Smoke_Cone2.model", "../Bin/Resources/Effect/Model/Sacrifice_Smoke_Trail/Smoke_Cone2.model");
@@ -118,6 +121,8 @@ HRESULT CSacrifice::Initialize_Prototype()
 		pResource->Add_ResourcePath("Sacrifice_Smoke_Slash5.mat", "../Bin/Resources/Effect/Model/Sacrifice_Smoke_Slash5/Sacrifice_Smoke_Slash5.mat");
 		pResource->Add_ResourcePath("Sacrifice_Smoke_Slash6.model", "../Bin/Resources/Effect/Model/Sacrifice_Smoke_Slash6/Sacrifice_Smoke_Slash6.model");
 		pResource->Add_ResourcePath("Sacrifice_Smoke_Slash6.mat", "../Bin/Resources/Effect/Model/Sacrifice_Smoke_Slash6/Sacrifice_Smoke_Slash6.mat");
+		pResource->Add_ResourcePath("Sacrifice_Smoke_Slash7.model", "../Bin/Resources/Effect/Model/Sacrifice_Smoke_Slash7/Sacrifice_Smoke_Slash7.model");
+		pResource->Add_ResourcePath("Sacrifice_Smoke_Slash7.mat", "../Bin/Resources/Effect/Model/Sacrifice_Smoke_Slash7/Sacrifice_Smoke_Slash7.mat");
 		pResource->Add_ResourcePath("Sacrifice_Sword_Slash2.model", "../Bin/Resources/Effect/Model/Sacrifice_Sword_Slash2/Sacrifice_Sword_Slash2.model");
 		pResource->Add_ResourcePath("Sacrifice_Sword_Slash2.mat", "../Bin/Resources/Effect/Model/Sacrifice_Sword_Slash2/Sacrifice_Sword_Slash2.mat");
 		pResource->Add_ResourcePath("Sacrifice_Axe_Slash.model", "../Bin/Resources/Effect/Model/Sacrifice_Axe_Slash/Sacrifice_Axe_Slash.model");
@@ -160,13 +165,15 @@ HRESULT CSacrifice::Initialize(INIT_DESC* pArg)
 	if (FAILED(Create_Colliders()))
 		return E_FAIL;
 
+	Create_UIEnemyStatus("Bip001_Spine2");
+
 	return S_OK;
 }
 
 void CSacrifice::Awake()
 {
-	m_vRimLightColor = _float3(1.f, 0.2f, 0.f);
-	m_fRimLightPower = 2.f;
+	m_vRimLightColor = _float3(1.f, 0.3f, 0.f);
+	m_fRimLightPower = 4.f;
 	m_fDissolveTilling = 5.f;
 
 	auto pMaterial = Get_Component<CMaterial>();
@@ -211,7 +218,8 @@ void CSacrifice::Render_GUI()
 {
 	__super::Render_GUI();
 
-	ImGui::Text("Distance to target : %lf", m_tTargetingInfo.fDistance);
+	Render_GUI_ForTargetInfo();
+	ImGui::Text("Current State : %s", m_pStateMachine->Get_CurrentStateName().c_str());
 }
 
 CSacrifice* CSacrifice::Create()
@@ -287,7 +295,7 @@ void CSacrifice::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage)
 			}
 
 			m_tStatus.iNowHP -= fDamage;
-			m_tStatus.iGroggyValue += 16;
+			m_tStatus.iGroggyValue += 2;
 		}
 	}
 }
@@ -377,9 +385,10 @@ void CSacrifice::ChangePhase()
 
 void CSacrifice::ChangePhase_SetUp()
 {
-	m_tStatus.iMaxHP = 100.f;
+	m_tStatus.iMaxHP = 1000.f;
 	m_tStatus.iNowHP = m_tStatus.iMaxHP;
 	m_tStatus.iGroggyValue = 0;
+	m_vRimLightColor = _float3{ 1.f,0.f,0.f };
 }
 
 void CSacrifice::Phase1Attack()
@@ -843,7 +852,12 @@ void CSacrifice::Update_States(_float dt)
 	}
 
 	if (InputDevice()->Key_Tap('P'))
-		m_tStatus.iNowHP = 0.f;
+	{
+		m_tStatus.iGroggyValue = 99;
+	}
+
+	if (InputDevice()->Key_Tap('O'))
+		m_IsOverDrive = true;
 
 	if (PHASE::PHASE2 == m_eCurrPhase && !m_IsOverDrive)
 	{
@@ -880,4 +894,7 @@ void CSacrifice::Update_States(_float dt)
 		if (PHASE::PHASE1 == m_eCurrPhase)
 			m_pStateMachine->Set_Trigger("Change_Phase");
 	}
+
+	if ("Groggy" != m_pStateMachine->Get_CurrentStateName() && "Death" != m_pStateMachine->Get_CurrentStateName() && m_isGroggy)
+		m_pStateMachine->Change_State("Groggy");
 }
