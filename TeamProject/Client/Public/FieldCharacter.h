@@ -82,11 +82,14 @@ public:
 
     virtual void    OnCollisionExit(CGameObject* pOther) override;
     virtual void    OnTriggerEnter(CGameObject* pOther) override;
-    virtual void    OnTriggerStay(CGameObject* pOher) override;
+    virtual void    OnTriggerStay(CGameObject* pOther) override;
     virtual void    OnTriggerExit(CGameObject* pOther) override;
 
 public:
+    virtual void    Reset_State();
     virtual void    On_Move(const InputInfo& inputInfo);
+    virtual void    On_Interact();
+    virtual void    Process_Interact(CGameObject* pObject);
 
 private:
     void            Update_Rotation(_float dt);
@@ -102,6 +105,7 @@ protected:
     _quaternion                 m_qTargetRot = {};
     _bool                       m_bIsRotating = { false };
     _bool                       m_bCanMove = { true };
+    _bool                       m_bCanInteract = { false };
     InputInfo                   m_inputInfo;
     static constexpr _float     TURNBACK_ANGLE_THRESHOLD = 100.f;
 public:
