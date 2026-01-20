@@ -161,6 +161,7 @@
     <ClInclude Include="..\public\DefaultCamera.h" />
     <ClInclude Include="..\public\DefaultPlaneFloor.h" />
     <ClInclude Include="..\public\DummyModel.h" />
+    <ClInclude Include="..\public\EntityObject.h" />
     <ClInclude Include="..\public\Grid.h" />
     <ClInclude Include="..\public\MapToolAssistant.h" />
     <ClInclude Include="..\public\MapToolCore.h" />
@@ -212,6 +213,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\private\DecalObject.cpp" />
+    <ClCompile Include="..\private\EntityObject.cpp" />
     <ClCompile Include="..\private\MapToolAssistant.cpp" />
     <ClCompile Include="..\private\MapToolCore.cpp" />
     <ClCompile Include="..\private\MapToolObject.cpp" />
