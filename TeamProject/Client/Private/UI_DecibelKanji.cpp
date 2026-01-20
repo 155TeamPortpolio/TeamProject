@@ -34,11 +34,8 @@ HRESULT CUI_DecibelKanji::Initialize(INIT_DESC* pArg)
 
 void CUI_DecibelKanji::Update(_float dt)
 {
+    Set_Alpha((*m_pState == ENUM(CUI_Decibel::State::NONE)) ? 0.f : 1.f);
     Set_ChildColor(CHILD::KANJI, *m_pColor);
-
-    _float fAlpha = (*m_pState == ENUM(CUI_Decibel::State::NONE)) ? 0.f : 1.f;
-    Set_ChildAlpha(CHILD::BG, fAlpha);
-    Set_ChildAlpha(CHILD::KANJI, fAlpha);
 
     if (*m_pState != m_iPrevState)
     {
