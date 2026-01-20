@@ -232,7 +232,7 @@
         },
         {
             "alive": true,
-            "instanceName": "label",
+            "instanceName": "name",
             "transform": {
                 "anchor": 4,
                 "anchorOffset": [

@@ -16,6 +16,8 @@
 #include "HowlState_Sleep.h"
 #include "HowlState_Wake.h"
 
+#include "UI_NameIndicator.h"
+
 CHowl::CHowl()
     :CServiceNpc()
 {
@@ -67,6 +69,13 @@ void CHowl::Awake()
 		.Loop(true)
 		.Apply();
 
+	CUI_NameIndicator::INDICATOR_DESC* pDesc = new CUI_NameIndicator::INDICATOR_DESC;
+	pDesc->strName = m_strName;
+	pDesc->pCCT = Get_Component<CCharacterController>();
+	auto pUI = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_NameIndicator" })
+		.Add_UIDesc(pDesc)
+		.Build("nameIndicator");
+	UIManager()->Add_UIObject(pUI, LevelManager()->Get_NowLevelKey());
 	//CFieldSystem::GetInstance()->Set_DayPahse(DayPhase::LateNight);
 }
 

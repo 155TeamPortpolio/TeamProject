@@ -167,6 +167,11 @@ _float2 CTextSlot::Get_TextSize()
 		return _float2();
 }
 
+_float CTextSlot::Get_Scale()
+{
+	return m_Info.Scale;
+}
+
 CTextSlot* CTextSlot::Create()
 {
 	CTextSlot* instance = new CTextSlot();
