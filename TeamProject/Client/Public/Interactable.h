@@ -32,8 +32,6 @@ public:
     virtual void    OnTriggerStay(CGameObject* pOher)   override {};
     virtual void    OnTriggerExit(CGameObject* pOther)  override {};
 
-    virtual void    Interact() PURE;
-    
 protected:
     class CGameInstance* m_pGameInstance = { nullptr }; 
     _bool  m_bIsInteractable = { false };

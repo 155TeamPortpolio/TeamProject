@@ -1,12 +1,9 @@
 #pragma once
-#include "Base.h"
 
 class IInteract
 {
-protected:
-    virtual ~IInteract() = default;
-
 public:
+    virtual ~IInteract() = default;
     virtual void Interact() = 0;
 };
 

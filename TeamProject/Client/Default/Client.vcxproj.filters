@@ -1469,6 +1469,9 @@
     <ClInclude Include="..\Public\ZeroStage_Normal.h">
       <Filter>01. Level\04. Zero\Stage_Normal</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\IInteract.h">
+      <Filter>02. GameObject\Object\Interactable</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

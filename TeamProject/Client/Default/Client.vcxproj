@@ -170,6 +170,7 @@
     <ClInclude Include="..\Public\CorinState_Start.h" />
     <ClInclude Include="..\Public\CorinState_SwitchInParryAid.h" />
     <ClInclude Include="..\public\CursorController.h" />
+    <ClInclude Include="..\Public\IInteract.h" />
     <ClInclude Include="..\public\Interactable.h" />
     <ClInclude Include="..\Public\CorinState_UltimateAttack.h" />
     <ClInclude Include="..\public\JaneDoeState_Hit.h" />
