@@ -7,11 +7,10 @@ class CUI_PrimaryAction final : public CUI_Object
 {
 private: 
 	enum class CHILD { ATTACK, ATTACK_BG, ATTACK_ICON, ATTACK_MOUSE, INTERACT, INTERACT_GRADIENT, END };
+	inline static const string INSTANCENAMES[ENUM(CHILD::END)] = { "attack", "attackBg", "attackIcon", "attackMouse", "interact", "interactGradient" };
 
 	enum class MODE { ATTACK, INTERACT };
 	enum class INTERACT_STATE { DISABLE, ENABLE, AVAILABLE };
-
-	static const string INSTANCENAMES[ENUM(CHILD::END)];
 
 private:
 	CUI_PrimaryAction() {}
@@ -28,13 +27,17 @@ public:
 	virtual void	UI_Active(void* pArg = nullptr)  override;
 	virtual void	UI_DeActive(void* pArg = nullptr)override;
 
-private: 
-	UI_HANDLE		m_handles[ENUM(CHILD::END)];
+private:
+	CUI_Object*		m_pChildren[ENUM(CHILD::END)] = {};
 
 	MODE			m_mode = { MODE::ATTACK };
 	INTERACT_STATE	m_interactState = { INTERACT_STATE::ENABLE };
 
 private:
+	void Load_Json(const string& resourceKey);
+	void Cache_Children();
+	void Bind_EventListener();
+
 	void Set_ActionMode(MODE eMode);
 	void Set_InteractState(INTERACT_STATE state);
 	 
@@ -44,12 +47,9 @@ private:
 	void Apply_EnableVisual();
 	void Apply_AvailableVisual();
 
-	void Set_Alive(CHILD child, _bool isAlive);
-	void Set_Color(CHILD child, _float4 vColor);
-	void Set_Animation(CHILD child, _int iIndex);
-
-	template<typename Func>
-	void ForChild(CHILD child, Func&& func);
+	void Set_ChildAlive(CHILD child, _bool isAlive);
+	void Set_ChildColor(CHILD child, _float4 vColor);
+	void Set_ChildAnimation(CHILD child, _int iIndex);
 
 public:
 	static  CGameObject* Create();
@@ -58,13 +58,3 @@ public:
 };
 
 NS_END
-
-template<typename Func>
-inline void CUI_PrimaryAction::ForChild(CHILD child, Func&& func)
-{
-	auto& handle = m_handles[ENUM(child)];
-	if (!handle.isValid())
-		return;
-
-	func(handle.Get());
-}

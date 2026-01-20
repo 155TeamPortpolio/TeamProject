@@ -7,8 +7,6 @@
 #include "Sprite2D.h"
 #include "Texture.h" 
 
-const string CUI_DecibelKanji::KANJI_TEXTURES[ENUM(CUI_Decibel::State::END)] = { "CombatMaximum.png", "CombatUproar.png", "CombatBlasting.png", "CombatMaximum.png" };
-
 HRESULT CUI_DecibelKanji::Initialize_Prototype()
 {
     __super::Initialize_Prototype();
@@ -28,77 +26,95 @@ HRESULT CUI_DecibelKanji::Initialize(INIT_DESC* pArg)
 
     Ready_PartObjects();
 
+    Set_ChildColor(CHILD::BG, _float4(0.f, 0.f, 0.f, 1.f));
+    Change_SpriteTexture(CHILD::BG, "CombatBgKanji.png");
+
 	return S_OK;
 }
 
 void CUI_DecibelKanji::Update(_float dt)
 {
-    Set_Color();
+    Set_Alpha((*m_pState == ENUM(CUI_Decibel::State::NONE)) ? 0.f : 1.f);
+    Set_ChildColor(CHILD::KANJI, *m_pColor);
 
     if (*m_pState != m_iPrevState)
     {
         m_iPrevState = *m_pState;
 
-        Set_Kanji(static_cast<CUI_Decibel::State>(*m_pState));
+        Set_KanjiTexture(KANJI_TEXTURES[ENUM(static_cast<CUI_Decibel::State>(*m_pState))]);
     } 
 }
 
 void CUI_DecibelKanji::Ready_PartObjects()
 {
     auto pContainer = Get_Component<CObjectContainer>();
-    const string& strLevelKey = CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey();
+    const string& strLevelKey = LevelManager()->Get_NowLevelKey();
 
-    for (_int i = 0; i < ENUM(Child::END); ++i)
+    for (_int i = 0; i < ENUM(CHILD::END); ++i)
     {
         CUI_Object* pObj = Builder::Create_UIObject({ strLevelKey, "Proto_GameObject_Image" })
             .Build("decibelKanji" + to_string(i));
-
-        if (i == ENUM(Child::BG))
-        {
-            pObj->Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, "CombatBgKanji.png");
-            pObj->Set_Color(Helper::HexToColor("#000000"));
-        }
+        if (!pObj)
+            continue;
 
         pContainer->Add_Child(pObj);
-        m_handles[i] = pObj->Get_Handle();
+        m_pChildren[i] = pObj;
+
+        if (auto pSprite = m_pChildren[i]->Get_Component<CSprite2D>())
+            m_pSprites[i] = pSprite;
     }
 }
 
-void CUI_DecibelKanji::Set_Color()
+void CUI_DecibelKanji::Set_ChildColor(CHILD child, _float4 vColor)
 {
-    if (m_handles[ENUM(Child::KANJI)].isValid())
-        m_handles[ENUM(Child::KANJI)].Get()->Set_Color(*m_pColor);
+    auto pChild = m_pChildren[ENUM(child)];
+    if (!pChild)
+        return;
 
-    m_vColor.w = (*m_pState == ENUM(CUI_Decibel::State::NONE)) ? 0.f : 1.f ;
+    pChild->Set_Color(vColor);
 }
 
-void CUI_DecibelKanji::Set_Kanji(CUI_Decibel::State texture)
+void CUI_DecibelKanji::Set_ChildAlpha(CHILD child, _float fAlpha)
 {
-    Set_KanjiTexture(KANJI_TEXTURES[ENUM(texture)]);
-    Set_Layout();
+    auto pChild = m_pChildren[ENUM(child)];
+    if (!pChild)
+        return;
+
+    pChild->Set_Alpha(fAlpha);
+}
+
+void CUI_DecibelKanji::Change_SpriteTexture(CHILD child, const string& strTextureKey)
+{
+    auto pSprite = m_pSprites[ENUM(child)];
+    if (!pSprite)
+        return;
+
+    pSprite->Change_Texture(0, G_GlobalLevelKey, strTextureKey);
 }
 
 void CUI_DecibelKanji::Set_KanjiTexture(string textureKey)
 {
-    if (!m_handles[ENUM(Child::KANJI)].isValid())
+    auto pChild = m_pChildren[ENUM(CHILD::KANJI)];
+    if (!pChild)
         return;
 
-    auto pObj = m_handles[ENUM(Child::KANJI)].Get();
-    pObj->Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, textureKey);
-    pObj->Set_Size(_float2(m_fHeight * pObj->Get_Component<CSprite2D>()->Get_AspectRatio(), m_fHeight));
-    pObj->Set_AnchorOffset(_float2(m_vPadding.x * 0.9f, m_vPadding.y)); // (m_vPadding);//dlatlfh!
+    pChild->Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, textureKey);
+    pChild->Set_Size(_float2(m_fHeight * pChild->Get_Component<CSprite2D>()->Get_AspectRatio(), m_fHeight));
+    pChild->Set_AnchorOffset(_float2(m_vPadding.x * 0.9f, m_vPadding.y));
+
+    Set_Layout();
 }
 
 void CUI_DecibelKanji::Set_Layout()
 {
-    if (!m_handles[ENUM(Child::BG)].isValid())
+    auto pChild = m_pChildren[ENUM(CHILD::BG)];
+    if (!pChild)
         return;
 
-    auto pObj = m_handles[ENUM(Child::BG)].Get();
-    const _float2 vSize = m_handles[ENUM(Child::KANJI)].isValid() ? m_handles[ENUM(Child::KANJI)].Get()->Get_PxSize() : _float2();
-    pObj->Set_Size({ vSize.x + m_vPadding.x * 2.f, vSize.y + m_vPadding.y * 2.f});
-    pObj->Set_AnchorOffset({ 0.f, 0.f });
-    m_vSize = pObj->Get_PxSize();
+    const _float2 vSize = m_pChildren[ENUM(CHILD::KANJI)] ? m_pChildren[ENUM(CHILD::KANJI)]->Get_PxSize() : _float2();
+    pChild->Set_Size({ vSize.x + m_vPadding.x * 2.f, vSize.y + m_vPadding.y * 2.f});
+    pChild->Set_AnchorOffset({ 0.f, 0.f });
+    m_vSize = pChild->Get_PxSize();
 }
 
 CGameObject* CUI_DecibelKanji::Create()
