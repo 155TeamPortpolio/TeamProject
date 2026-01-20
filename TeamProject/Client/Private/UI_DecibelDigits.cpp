@@ -65,7 +65,6 @@ void CUI_DecibelDigits::Ready_PartObjects()
     {
         CUI_Object* pObj = Builder::Create_UIObject({ strLevelKey, "Proto_GameObject_Image" })
             .Build("decibelDigits" + to_string(i));
-
         if (!pObj)
             continue;
 
