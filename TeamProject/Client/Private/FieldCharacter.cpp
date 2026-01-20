@@ -9,6 +9,7 @@
 #include "Material.h"
 #include "ObjectContainer.h"
 
+#include "IInteract.h"
 
 CFieldCharacter::CFieldCharacter(const CFieldCharacter& rhs)
 	:CGameObject(rhs)
@@ -135,14 +136,24 @@ void CFieldCharacter::OnCollisionExit(CGameObject* pOther)
 
 void CFieldCharacter::OnTriggerEnter(CGameObject* pOther)
 {
+	if (m_bCanInteract == false) return;
+	Process_Interact(pOther);
 }
 
-void CFieldCharacter::OnTriggerStay(CGameObject* pOher)
+void CFieldCharacter::OnTriggerStay(CGameObject* pOther)
 {
+	if (m_bCanInteract == false) return;
+	Process_Interact(pOther);
 }
 
 void CFieldCharacter::OnTriggerExit(CGameObject* pOther)
 {
+
+}
+
+void CFieldCharacter::Reset_State()
+{
+	m_bCanInteract = false;
 }
 
 void CFieldCharacter::On_Move(const InputInfo& inputInfo)
@@ -159,6 +170,21 @@ void CFieldCharacter::On_Move(const InputInfo& inputInfo)
 		_vector3 dir = inputInfo.direction;
 		dir.Normalize();
 		Rotate(dir);
+	}
+}
+
+void CFieldCharacter::On_Interact()
+{
+	m_bCanInteract = true;
+}
+
+void CFieldCharacter::Process_Interact(CGameObject* pObject)
+{
+	auto pInteract = dynamic_cast<IInteract*>(pObject);
+
+	if (pInteract != nullptr)
+	{
+		pInteract->Interact();
 	}
 }
 

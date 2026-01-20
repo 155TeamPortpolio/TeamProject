@@ -57,6 +57,7 @@ public:
 
     HRESULT               Clear_Character();
 
+
 public:
     HRESULT Initialize();
     void Priority_Update(_float dt);
@@ -67,8 +68,11 @@ private:
     HRESULT                     Initialize_CharacterPrototype();
     class CFieldCharacter*      Create_Character();
 
-
+private:
+    void    Reset_State(_float dt);
     void    Update_Input(_float dt);
+    void    Update_Interact(_float dt);
+    void    Update_Movement(_float dt);
     void    Process_Movement(_float dt);
 
 private:

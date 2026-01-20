@@ -336,7 +336,7 @@ void CTestLevel::Ready_Npc()
 	howlCCT.iCollisionMask = 0xFFFFFFFF;
 	//miyabiCCT.iCollisionMask = 0xFFFFFFFF & ~ENUM(COLLISION_GROUP::COMMON);
 	howlCCT.bAutoFit = false;
-	howlCCT.fHeight = 1.6f;
+	howlCCT.fHeight = 0.7f;
 	howlCCT.fRadius = 0.4f;
 	howlCCT.eGroup = COLLISION_GROUP::COMMON;
 	//meowCCT.fBoundingMinY = -0.83f;
