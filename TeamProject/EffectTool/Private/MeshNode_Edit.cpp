@@ -463,6 +463,8 @@ void CMeshNode_Edit::SetUp_MeshEffect()
 		Add_Texture(TEXTURE_TYPE::NOISE);
 	if (ImGui::Button("Add Dissolve Texture"))
 		Add_Texture(TEXTURE_TYPE::DISSOLVE);
+	if (ImGui::Button("Add Mask Texture"))
+		Add_Texture(TEXTURE_TYPE::ALPHA_MASK);
 
 	if (ImGui::CollapsingHeader("Texture Slot Module"))
 	{
@@ -601,6 +603,13 @@ void CMeshNode_Edit::Add_Texture(TEXTURE_TYPE type)
 
 			auto pDissolveTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_DissolveTextureTag);
 			pMaterialInstance->Set_Param("DissolveTexture", { pDissolveTexture->Get_SRV(),"Texture2D",0 });
+		}break;
+		case Engine::TEXTURE_TYPE::ALPHA_MASK:
+		{
+			m_MaskTextureTag = m_pContext->TextureTags[0];
+
+			auto pMaskTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_MaskTextureTag);
+			pMaterialInstance->Set_Param("AlphaMaskTexture", { pMaskTexture->Get_SRV(),"Texture2D",0 });
 		}break;
 		default:
 			break;

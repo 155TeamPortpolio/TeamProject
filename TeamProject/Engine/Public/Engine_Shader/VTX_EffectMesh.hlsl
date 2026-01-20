@@ -173,7 +173,7 @@ PS_OUT PS_MAIN_DEFAULT(PS_IN In)
     fDissolveAlpha = lerp(1.f, fDissolveAlpha, EnableDissolve);
     
     /* Mask */
-    float fMask = ApplySamplerMode(SamplerMode, In.vTexcoord * MaskTilling, MaskTexture).r;
+    float fMask = ApplySamplerMode(SamplerMode, In.vTexcoord * MaskTilling, AlphaMaskTexture).r;
     fMask = lerp(1.f, fMask, EnableMask);
     
     //if (fDissolveMask < DissolveProgress)
