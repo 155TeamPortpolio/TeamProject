@@ -4,6 +4,8 @@
 #include "CamDirector.h"
 #include "GameInstance.h"
 #include "UIDirector.h"
+#include "BattleSystem.h"
+#include "BattlePlayer.h"
 
 CStage::CStage()
 {
@@ -34,6 +36,7 @@ void CStage::BaseIntro(CZero_Level::StageContext& context)
 		{
 			m_introFlow.AddOnce(seqId, [context]() {if (context.isFirstIn)
 			{
+				BattleSystem()->GetBattlePlayer()->QuestStart();
 				CCamDirector::GetInstance()->AutoTarget();
 				CCamDirector::GetInstance()->RequestSequence("Intro/Intro");
 			}

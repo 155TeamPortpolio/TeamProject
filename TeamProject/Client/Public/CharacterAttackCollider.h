@@ -26,8 +26,9 @@ public:
     virtual void    OnTriggerExit(CGameObject* pOther) override;
 
 public:
-    void Begin_Attack(const HitDesc& hitdesc);
-    void End_Attack();
+    _vector3    Get_PrevPos() { return m_vPrevPos; }
+    void        Begin_Attack(const HitDesc& hitdesc);
+    void        End_Attack();
 
 private:
     _bool   Try_Hit(CGameObject* pTarget);
@@ -42,6 +43,7 @@ private:
     HitDesc m_tHitDesc{};
     _float  m_fTimer = {};
 
+    _vector3 m_vPrevPos;
 
 public:
     static CCharacterAttackCollider* Create();

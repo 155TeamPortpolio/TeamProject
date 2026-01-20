@@ -29,8 +29,8 @@ namespace
 
         if (StartsWith(key, "Intro/"))
         {
-            req.blendInSec  = 0.05f;
-            req.blendOutSec = 0.45f;
+            req.blendInSec  = 0.0f;
+            req.blendOutSec = 0.5f;
             req.resetTime   = true;
             req.returnMode  = CamReturnMode::SnapToEnd;
             return req;
@@ -39,7 +39,7 @@ namespace
         if (StartsWith(key, "Ultimate/"))
         {
             req.blendInSec  = 0.f;
-            req.blendOutSec = 0.5f;
+            req.blendOutSec = 0.f;
             req.resetTime   = true;
             req.returnMode  = CamReturnMode::RestorePrev;
             return req;

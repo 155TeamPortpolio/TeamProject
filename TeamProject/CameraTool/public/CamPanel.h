@@ -4,6 +4,7 @@
 #include "CamPanelData.h"
 #include "Unagi.h"
 #include "CamPanelUtil.h"
+#include "AnimGUIController.h"
 
 #define CAM   CGameInstance::GetInstance()->Get_CameraMgr()
 #define GAME  CGameInstance::GetInstance()
@@ -42,6 +43,7 @@ private:
 	_bool   DrawConstraintBar();
 	_bool   DrawOrbitTargetBar();
     void    DrawPath();
+    void    DrawPlayAll(OBJECT_HANDLE spaceRefHandle);
 
 private:
     void    SetRecording(_bool on);
@@ -103,6 +105,8 @@ private:
     KeyframeListUIState   keyListUI{};
     KeyframeEditorUIState keyEditUI{};
     vector<OBJECT_HANDLE> spaceRefCandidates{};
+
+    CAnimGUIController    animGUIController;
 
     function<void(Avatar)> onAvatarChanged{};
     Avatar avatarUI = Avatar::JaneDoe;
