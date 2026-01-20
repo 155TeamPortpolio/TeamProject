@@ -29,12 +29,12 @@ private:
 	void    SyncRotation();
 
 private:
-	_float            moveSpeed      = 1.f;
-	_float            sensitivity    = 0.5f;
+	_float            moveSpeed      = 2.f;
+	_float            sensitivity    = 0.2f;
 	_vector2          targetRotDeg   = {};
 	Quaternion        curRot         = Quaternion::Identity;
 	Quaternion        targetRot      = Quaternion::Identity;
-	_float            rotSmoothSpeed = 20.f;
+	_float            rotSmoothSpeed = 18.f;
 	_bool             controlEnabled = true;
 
 	CamMoveConstraint moveConstraint = CamMoveConstraint::Free;

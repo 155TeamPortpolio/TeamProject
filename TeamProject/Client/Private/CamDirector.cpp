@@ -107,7 +107,10 @@ void CCamDirector::UpdateInput()
         camMgr.Set_MainCam(GetOrbitCamComp(), 0.5f);
 
     if (InputDevice()->Key_Tap(VK_F3))
-        RequestSequence("Intro/Jane_Intro");
+    {
+        BattleSystem()->GetBattlePlayer()->QuestStart();
+        RequestSequence("Intro/Intro");
+    }
 }
 
 void CCamDirector::AbortSequenceToOrbit(_bool resetTime)

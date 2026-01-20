@@ -32,6 +32,9 @@ struct CamToolEditState
     _float editFov = 60.f;
     _float editRoll = 0.f;
 
+    bool playAllLink = false;
+    OBJECT_HANDLE playAllRefHandle{};
+
     CamMoveConstraint moveConstraint = CamMoveConstraint::Free;
     CamOrbitState     orbit{};
 };
