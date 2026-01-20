@@ -123,6 +123,9 @@ void CCamPanel::Update_Panel(_float dt)
         state.curTime = 0.f;
         state.playing = false;
 
+        state.playAllLink = false;
+        state.playAllRefHandle = {};
+
         if (target.player)
             target.player->SetApplyEnabled(false);
 
@@ -180,7 +183,11 @@ void CCamPanel::Update_Panel(_float dt)
 
     if (target.player && !state.recording)
         target.player->SetTime(state.curTime);
+
+    if (state.playAllLink && !state.recording)
+        animGUIController.SetTimeSec(state.playAllRefHandle, state.curTime);
 }
+
 
 void CCamPanel::Render_GUI()
 {
@@ -1316,9 +1323,14 @@ void CCamPanel::DrawPlayAll(OBJECT_HANDLE spaceRefHandle)
 
     if (!hasCam || !hasAnim) ImGui::BeginDisabled();
 
+    auto HandleEqual = [](OBJECT_HANDLE a, OBJECT_HANDLE b) -> bool
+        {
+            return a.hObjID == b.hObjID && a.Level == b.Level && a.Layer == b.Layer;
+        };
+
+    const bool linkedThis = state.playAllLink && HandleEqual(state.playAllRefHandle, spaceRefHandle);
     const bool camPlaying = !state.recording && state.playing;
-    const bool animPlaying = hasAnim && animGUIController.IsPlaying(spaceRefHandle);
-    const bool allPlaying = camPlaying && animPlaying;
+    const bool allPlaying = linkedThis && camPlaying;
 
     if (allPlaying)
         ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.85f, 0.15f, 0.15f, 1.f));
@@ -1330,6 +1342,10 @@ void CCamPanel::DrawPlayAll(OBJECT_HANDLE spaceRefHandle)
         if (allPlaying)
         {
             SetPlaying(false);
+
+            state.playAllLink = false;
+            state.playAllRefHandle = {};
+
             animGUIController.SetPlaying(spaceRefHandle, false);
         }
         else
@@ -1341,8 +1357,11 @@ void CCamPanel::DrawPlayAll(OBJECT_HANDLE spaceRefHandle)
             if (state.endTime > 1e-6f && state.curTime >= state.endTime - eps)
                 state.curTime = 0.f;
 
+            state.playAllLink = true;
+            state.playAllRefHandle = spaceRefHandle;
+
+            animGUIController.SetPlaying(spaceRefHandle, false);
             animGUIController.SetTimeSec(spaceRefHandle, state.curTime);
-            animGUIController.SetPlaying(spaceRefHandle, true);
 
             SetPlaying(true);
         }
@@ -1356,6 +1375,10 @@ void CCamPanel::DrawPlayAll(OBJECT_HANDLE spaceRefHandle)
     if (ImGui::SmallButton("Reset##all_reset"))
     {
         SetPlaying(false);
+
+        state.playAllLink = false;
+        state.playAllRefHandle = {};
+
         animGUIController.SetPlaying(spaceRefHandle, false);
 
         state.curTime = 0.f;
@@ -1370,6 +1393,7 @@ void CCamPanel::DrawPlayAll(OBJECT_HANDLE spaceRefHandle)
 
     if (!hasCam || !hasAnim) ImGui::EndDisabled();
 }
+
 
 
 void CCamPanel::SetRecording(_bool on)

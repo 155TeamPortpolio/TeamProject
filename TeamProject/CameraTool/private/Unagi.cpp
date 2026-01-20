@@ -31,17 +31,21 @@ namespace
 				"Corin",
 				"Corin.model",
 				"Corin.mat",
-				"Corin_Meta.json", 
+				//"Avatar_Female_Size01_Corin_Meta.json", 
+			    "",
 				1.f,
-				"Avatar_Female_Size01_Corin_Ani_Idle"
+				"Avatar_Female_Size01_Corin_Ani_SwitchIn_Attack_Ex_Start"
 			},
 			{
 				"JaneDoe",
 				"JaneDoeModel.model",
 				"JaneDoe.mat",
+				//"",
 				"JaneDoe_Meta.json",
 				1.f,
-				"Avatar_Female_Size03_JaneDoe_Ani_QuestStart"
+				"Avatar_Female_Size03_JaneDoe_Ani_SwitchIn_Attack_Ex_Start"
+				// Avatar_Female_Size03_JaneDoe_Ani_SwitchIn_Attack_Ex_Start
+			    // Avatar_Female_Size03_JaneDoe_Ani_QuestStart
 			}
 		};
 		return table[(int)v];

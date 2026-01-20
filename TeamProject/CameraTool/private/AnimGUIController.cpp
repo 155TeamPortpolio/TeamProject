@@ -220,4 +220,5 @@ void CAnimGUIController::SetTimeSec(OBJECT_HANDLE spaceRefHandle, float timeSec)
     if (!anim) return;
 
     anim->Set_TimeSec(timeSec);
+    anim->Update_Animation(0.f);
 }
