@@ -177,6 +177,7 @@
     <ClInclude Include="..\public\HowlState_Wake.h" />
     <ClInclude Include="..\public\Interactable.h" />
     <ClInclude Include="..\Public\CorinState_UltimateAttack.h" />
+    <ClInclude Include="..\public\Jaeger.h" />
     <ClInclude Include="..\public\JaneDoeState_Hit.h" />
     <ClInclude Include="..\Public\JaneDoeState_Start.h" />
     <ClInclude Include="..\public\OBJFactory.h" />
@@ -443,6 +444,7 @@
     <ClCompile Include="..\private\HowlState_Wake.cpp" />
     <ClCompile Include="..\private\Interactable.cpp" />
     <ClCompile Include="..\Private\CorinState_UltimateAttack.cpp" />
+    <ClCompile Include="..\private\Jaeger.cpp" />
     <ClCompile Include="..\private\JaneDoeState_Hit.cpp" />
     <ClCompile Include="..\Private\JaneDoeState_Start.cpp" />
     <ClCompile Include="..\private\OBJFactory.cpp" />

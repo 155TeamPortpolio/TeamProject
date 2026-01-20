@@ -774,6 +774,9 @@
     <Filter Include="02. GameObject\UI\02. 3D\Plane\NameIndicator">
       <UniqueIdentifier>{5cba5655-54fb-44aa-988a-b83b85950f66}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Npc\Service\Jagger">
+      <UniqueIdentifier>{abd48ccf-d17d-43f0-99f5-1bb53ebc99fc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1505,6 +1508,9 @@
     <ClInclude Include="..\Public\UI_NameIndicator.h">
       <Filter>02. GameObject\UI\02. 3D\Plane\NameIndicator</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Jaeger.h">
+      <Filter>02. GameObject\Object\Npc\Service\Jagger</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2196,6 +2202,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\UI_NameIndicator.cpp">
       <Filter>02. GameObject\UI\02. 3D\Plane\NameIndicator</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Jaeger.cpp">
+      <Filter>02. GameObject\Object\Npc\Service\Jagger</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
