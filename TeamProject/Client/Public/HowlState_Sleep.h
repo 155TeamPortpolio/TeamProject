@@ -9,7 +9,7 @@ class CHowlState_Sleep :
 {
 public:
     virtual void Enter(CHowl* pOwner) override;
-    virtual void Update(CHowl* pOwner, _float dt) override;
+    virtual void Update(CHowl* pOwner, _float dt) override {}
     virtual void Exit(CHowl* pOwner) override {}
 
 public:

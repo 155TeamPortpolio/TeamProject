@@ -173,6 +173,7 @@
     <ClInclude Include="..\public\Howl.h" />
     <ClInclude Include="..\public\HowlState_Idle.h" />
     <ClInclude Include="..\public\HowlState_Sleep.h" />
+    <ClInclude Include="..\public\HowlState_Wake.h" />
     <ClInclude Include="..\public\Interactable.h" />
     <ClInclude Include="..\Public\CorinState_UltimateAttack.h" />
     <ClInclude Include="..\public\JaneDoeState_Hit.h" />
@@ -437,6 +438,7 @@
     <ClCompile Include="..\private\Howl.cpp" />
     <ClCompile Include="..\private\HowlState_Idle.cpp" />
     <ClCompile Include="..\private\HowlState_Sleep.cpp" />
+    <ClCompile Include="..\private\HowlState_Wake.cpp" />
     <ClCompile Include="..\private\Interactable.cpp" />
     <ClCompile Include="..\Private\CorinState_UltimateAttack.cpp" />
     <ClCompile Include="..\private\JaneDoeState_Hit.cpp" />

@@ -2,6 +2,7 @@
 #include "Howl.h"
 
 #include "GameInstance.h"
+#include "FieldSystem.h"
 
 //component
 #include "SkeletalModel.h"
@@ -13,6 +14,7 @@
 #include "StateMachine.h"
 #include "HowlState_Idle.h"
 #include "HowlState_Sleep.h"
+#include "HowlState_Wake.h"
 
 CHowl::CHowl()
     :CServiceNpc()
@@ -64,6 +66,8 @@ void CHowl::Awake()
 	pAnimator->Set_Animation(Get_AnimName() + "Idle01")
 		.Loop(true)
 		.Apply();
+
+	//CFieldSystem::GetInstance()->Set_DayPahse(DayPhase::LateNight);
 }
 
 void CHowl::Priority_Update(_float dt)
@@ -105,18 +109,40 @@ HRESULT CHowl::Initialize_States()
 {
 	m_pStateMachine->Register_State("Idle", CHowlState_Idle::Create());
 	m_pStateMachine->Register_State("Sleep", CHowlState_Sleep::Create());
+	m_pStateMachine->Register_State("Wake", CHowlState_Wake::Create());
 
 	return S_OK;
 }
 
 HRESULT CHowl::Initialize_Transitions()
 {
+	m_pStateMachine->Register_Transition("Sleep", "Wake",
+		CStateMachine<CHowl>::CONDITION_TRIGGER, "ToWake");
+
+	m_pStateMachine->Register_Transition("Wake", "Idle",
+		CStateMachine<CHowl>::CONDITION_TRIGGER, "ToIdle");
+
+	m_pStateMachine->Register_Transition("Idle", "Sleep",
+		CStateMachine<CHowl>::CONDITION_TRIGGER, "ToSleep");
+
+	m_pStateMachine->Register_Transition("Sleep", "Idle",
+		CStateMachine<CHowl>::CONDITION_TRIGGER, "ToIdle");
 
 	return S_OK;
 }
 
 void CHowl::Update_States(_float dt)
 {
+	if (m_pStateMachine->Get_CurrentStateName() != "Sleep" && m_pStateMachine->Get_CurrentStateName() != "Wake")
+	{
+		if (CFieldSystem::GetInstance()->Get_DayPhase() == DayPhase::LateNight)
+			m_pStateMachine->Set_Trigger("ToSleep");
+	}
+	else
+	{
+		if (CFieldSystem::GetInstance()->Get_DayPhase() != DayPhase::LateNight)
+			m_pStateMachine->Set_Trigger("ToIdle");
+	}
 }
 
 CHowl* CHowl::Create()

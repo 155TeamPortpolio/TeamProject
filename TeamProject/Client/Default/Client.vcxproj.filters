@@ -765,6 +765,9 @@
     <Filter Include="02. GameObject\Object\Npc\Service\Howl\State\Sleep">
       <UniqueIdentifier>{ca32176e-d4ec-4610-9641-4118a8e7402f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Npc\Service\Howl\State\Wake">
+      <UniqueIdentifier>{981174f4-013c-4ec5-b733-83c655844118}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1487,6 +1490,9 @@
     <ClInclude Include="..\public\HowlState_Sleep.h">
       <Filter>02. GameObject\Object\Npc\Service\Howl\State\Sleep</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\HowlState_Wake.h">
+      <Filter>02. GameObject\Object\Npc\Service\Howl\State\Wake</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2172,6 +2178,9 @@
     </ClCompile>
     <ClCompile Include="..\private\HowlState_Sleep.cpp">
       <Filter>02. GameObject\Object\Npc\Service\Howl\State\Sleep</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\HowlState_Wake.cpp">
+      <Filter>02. GameObject\Object\Npc\Service\Howl\State\Wake</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
