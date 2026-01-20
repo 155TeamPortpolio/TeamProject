@@ -64,6 +64,7 @@ HRESULT CJaneDoe::Initialize_Prototype()
 		ResourceManager()->Add_ResourcePath("janedoe_normal2_slash.json", "../Bin/Resources/Effect/Data/JaneDoe/janedoe_normal2_slash.json");
 		ResourceManager()->Add_ResourcePath("janedoe_normal3_slash.json", "../Bin/Resources/Effect/Data/JaneDoe/janedoe_normal3_slash.json");
 		ResourceManager()->Add_ResourcePath("janedoe_normal1_sting.json", "../Bin/Resources/Effect/Data/JaneDoe/janedoe_normal1_sting.json");
+		ResourceManager()->Add_ResourcePath("janedoe_normal2_sting.json", "../Bin/Resources/Effect/Data/JaneDoe/janedoe_normal2_sting.json");
 
 		/* Texture */
 		ResourceManager()->Add_ResourcePath("Eff_MeleeTrail_078_YZ_05.png", "../Bin/Resources/Effect/Texture/Eff_MeleeTrail_078_YZ_05.png");
@@ -456,7 +457,7 @@ HRESULT CJaneDoe::Initialize_Effects()
 		pObjectContainer->Add_Child(pEffect, false);
 	}
 
-	/* Sting */
+	/* Sting1 */
 	{
 		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
 			.Asset("janedoe_normal1_sting.json")
@@ -464,6 +465,16 @@ HRESULT CJaneDoe::Initialize_Effects()
 
 		pEffect->Stop();
 		pObjectContainer->Add_Child(pEffect, false);
+	}
+
+	/* Sting2 */
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("janedoe_normal2_sting.json")
+			.Build("JaneDoe_Sting2");
+
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect);
 	}
 
 	return S_OK;
