@@ -753,6 +753,18 @@
     <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Start">
       <UniqueIdentifier>{76da54b4-7055-4fbf-acd8-06dd1f78d7f4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Npc\Service\Howl">
+      <UniqueIdentifier>{8ed08d95-7d7d-4549-9bbe-fd2a5fe86237}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Npc\Service\Howl\State">
+      <UniqueIdentifier>{6a38974f-b8e7-450b-a2c5-b331e220f46f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Npc\Service\Howl\State\Idle">
+      <UniqueIdentifier>{b7e367bc-59d2-439e-b6b2-55a7595441dc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Npc\Service\Howl\State\Sleep">
+      <UniqueIdentifier>{ca32176e-d4ec-4610-9641-4118a8e7402f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1466,6 +1478,15 @@
     <ClInclude Include="..\Public\CorinState_Start.h">
       <Filter>02. GameObject\Object\Player\Character\Corin\State\Start</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Howl.h">
+      <Filter>02. GameObject\Object\Npc\Service\Howl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\HowlState_Idle.h">
+      <Filter>02. GameObject\Object\Npc\Service\Howl\State\Idle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\HowlState_Sleep.h">
+      <Filter>02. GameObject\Object\Npc\Service\Howl\State\Sleep</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2142,6 +2163,15 @@
     </ClCompile>
     <ClCompile Include="..\Private\CorinState_Start.cpp">
       <Filter>02. GameObject\Object\Player\Character\Corin\State\Start</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Howl.cpp">
+      <Filter>02. GameObject\Object\Npc\Service\Howl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\HowlState_Idle.cpp">
+      <Filter>02. GameObject\Object\Npc\Service\Howl\State\Idle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\HowlState_Sleep.cpp">
+      <Filter>02. GameObject\Object\Npc\Service\Howl\State\Sleep</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
