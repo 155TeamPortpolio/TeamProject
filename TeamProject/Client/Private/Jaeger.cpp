@@ -60,6 +60,8 @@ void CJaeger::Awake()
 	pAnimator->Set_Animation(Get_AnimName() + "Maincity_Idle_Normal03")
 		.Loop(true)
 		.Apply();
+
+	__super::Awake();
 }
 
 void CJaeger::Priority_Update(_float dt)

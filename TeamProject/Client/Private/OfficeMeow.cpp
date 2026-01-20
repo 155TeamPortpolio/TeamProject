@@ -66,6 +66,8 @@ void COfficeMeow::Awake()
 	pAnimator->Set_Animation(Get_AnimName() + "Idle01")
 		.Loop(true)
 		.Apply();
+
+	__super::Awake();
 }
 
 void COfficeMeow::Priority_Update(_float dt)
