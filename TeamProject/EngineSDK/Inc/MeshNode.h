@@ -41,6 +41,7 @@ protected:
     void Update_DissolveModule(_float dt);
     void Update_BloomModule(_float dt);
     void Update_NoiseModule(_float dt);
+    void Update_MaskModule(_float dt);
     void Bind_Params();
 
     /*Default Params*/
@@ -48,6 +49,7 @@ protected:
     string m_DiffuseTextureTag{};
     string m_DissolveTextureTag{};
     string m_NoiseTextureTag{};
+    string m_MaskTextureTag{};
 
     /*-----Modules-----*/
     TEXTURE_SLOT_MODULE m_TextureSlotModule{};
@@ -58,6 +60,6 @@ protected:
     DISSOLVE_MODULE m_DissolveModule{};
     BLOOM_MODULE m_BloomModule{};
     NOISE_MODULE m_NoiseModule{};
-
+    MASK_MODULE m_MaskModule{};
 };
 NS_END
