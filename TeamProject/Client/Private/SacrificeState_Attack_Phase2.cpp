@@ -424,7 +424,7 @@ void CSacrificeState_Attack_05_1_Phase2::Update_Effects(CSacrifice* pOwner)
 			.Asset("sacrifice_smoke_slash2.json")
 			.Build("SmokeSlash");
 
-		_vector3 vWorldPosition = pTransform->Get_WorldPos();
+		_vector3 vWorldPosition = _vector3::Transform(_vector3(0.f, 0.8f, 0.f), pTransform->Get_WorldMatrix());
 		_quaternion worldQuaternion = pTransform->Get_QuaternionRotate();
 		_quaternion localQuaternion = _quaternion(0.0f, 0.0f, 0.f, 0.1f);
 		localQuaternion *= worldQuaternion;

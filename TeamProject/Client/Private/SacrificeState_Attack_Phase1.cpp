@@ -171,6 +171,10 @@ void CSacrificeState_Attack_Phase1::BuildPattern(CSacrifice* pOwner)
 			}
 		}
 	}
+	blackBoard.stateQueue.clear();
+	blackBoard.stateQueue.push_back("Attack01_Phase1");
+	blackBoard.stateQueue.push_back("Attack03_Phase1");
+	blackBoard.stateQueue.push_back("Attack_Turn_Phase1");
 	
 	blackBoard.isRequestNext = true;
 }
@@ -214,17 +218,17 @@ void CSacrificeState_Attack_01_Phase1::Enter(CSacrifice* pOwner)
 
 void CSacrificeState_Attack_01_Phase1::Update(CSacrifice* pOwner, _float dt)
 {
-	pOwner->RotateToTarget(dt, 10.f);
-	pOwner->MoveByRootMotion(dt);
-
 	CSacrifice::SACRIFICE_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
-
 	if (m_fAnimProgress >= 0.3f)
 	{
 		blackBoard.isChainOpen = true;
 		if (!blackBoard.stateQueue.empty())
 			blackBoard.isRequestNext = true;
 	}
+
+	pOwner->RotateToTarget(dt, 10.f);
+	pOwner->MoveByRootMotion(dt);
+	Update_Effects(pOwner);
 }
 
 void CSacrificeState_Attack_01_Phase1::Exit(CSacrifice* pOwner)
@@ -233,7 +237,39 @@ void CSacrificeState_Attack_01_Phase1::Exit(CSacrifice* pOwner)
 
 void CSacrificeState_Attack_01_Phase1::Update_Effects(CSacrifice* pOwner)
 {
-	
+	auto pTransform = pOwner->Get_Component<CTransform>();
+	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
+
+	/* Smoke Sweep Trail */
+	if (IsCrossAnimProgress(0.14f))
+	{
+
+		auto effect2 = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_hand_sweep_trail.json")
+			.Build("HandSweepTrail");
+		effect2->AttachBone(pAnimator, "Skn_Finger3_03");
+
+		ObjectManager()->Add_Object(effect2, { pOwner->Get_Level(),"Effect_Layer" });
+	}
+
+	/* Smoke Slash */
+	if (IsCrossAnimProgress(0.15f))
+	{
+		auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_smoke_slash2.json")
+			.Build("SmokeSlash");
+
+		_vector3 vWorldPosition = _vector3::Transform(_vector3(0.f, 0.8f, 0.3f), pTransform->Get_WorldMatrix());
+		_quaternion worldQuaternion = pTransform->Get_QuaternionRotate();
+		_quaternion localQuaternion = _quaternion(0.0f, 0.0f, 0.f, 1.f);
+		localQuaternion *= worldQuaternion;
+
+		auto pEffectTransform = effect->Get_Component<CTransform>();
+		pEffectTransform->Set_Quaternion(localQuaternion);
+		pEffectTransform->Set_Pos(vWorldPosition);
+
+		ObjectManager()->Add_Object(effect, { pOwner->Get_Level(),"Effect_Layer" });
+	}
 }
 
 void CSacrificeState_Attack_02_Phase1::Enter(CSacrifice* pOwner)
@@ -916,10 +952,48 @@ void CSacrificeState_Attack_Turn_Phase1::Update(CSacrifice* pOwner, _float dt)
 
 	_quaternion vDeltaQuaternion = pAnimator->Get_RootBoneQuatDelta();
 	pTransform->Add_Quaternion(vDeltaQuaternion);
+
+	Update_Effects(pOwner);
 }
 
 void CSacrificeState_Attack_Turn_Phase1::Exit(CSacrifice* pOwner)
 {
+}
+
+void CSacrificeState_Attack_Turn_Phase1::Update_Effects(CSacrifice* pOwner)
+{
+	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
+	auto pTransform = pOwner->Get_Component<CTransform>();
+
+	/* Smoke Sweep Trail */
+	if (IsCrossAnimProgress(0.32f))
+	{
+		auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_hand_sweep_trail.json")
+			.Build("HandSweepTrail");
+		effect->AttachBone(pAnimator, "Skn_Finger3_03");
+
+		ObjectManager()->Add_Object(effect, { pOwner->Get_Level(),"Effect_Layer" });
+	}
+
+	/* Smoke Slash */
+	if (IsCrossAnimProgress(0.32f))
+	{
+		auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_smoke_slash2.json")
+			.Build("SmokeSlash");
+
+		_vector3 vWorldPosition = _vector3::Transform(_vector3(0.f, 0.8f, 0.3f), pTransform->Get_WorldMatrix());
+		_quaternion worldQuaternion = pTransform->Get_QuaternionRotate();
+		_quaternion localQuaternion = _quaternion(0.0f, 0.0f, 1.f, 0.f);
+		localQuaternion *= worldQuaternion;
+
+		auto pEffectTransform = effect->Get_Component<CTransform>();
+		pEffectTransform->Set_Quaternion(localQuaternion);
+		pEffectTransform->Set_Pos(vWorldPosition);
+
+		ObjectManager()->Add_Object(effect, { pOwner->Get_Level(),"Effect_Layer" });
+	}
 }
 
 void CSacrificeState_Attack_Roar_Phase1::Enter(CSacrifice* pOwner)
