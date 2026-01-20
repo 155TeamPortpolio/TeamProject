@@ -162,6 +162,8 @@ HRESULT CCollider::Initialize(COMPONENT_DESC* pArg)
 	m_pShape->setSimulationFilterData(filterData); // 시뮬레이션용 필터
 	m_pShape->setQueryFilterData(filterData);      // 레이캐스팅용 필터
 
+	m_vColor = pDesc->vColliderColor;
+
 	if (!m_bCooked)
 	{
 		_vector3 vPos = pDesc->vCenter;

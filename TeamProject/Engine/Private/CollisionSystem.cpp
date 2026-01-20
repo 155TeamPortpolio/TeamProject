@@ -326,7 +326,7 @@ void CCollisionSystem::Render_GUI()
 			}
 			else if (slot.eState == COLLIDABLE_SLOT::STATE::INACTIVE)
 			{
-				ImGui::TextColored(ImVec4(0.7f, 0.7f, 0.f, 1), "%s [INACTIVE] %s",
+				ImGui::TextColored(ImVec4(1.f, 1.f, 1.f, 1), "%s [INACTIVE] %s",
 					typePrefix, ownerName.c_str());
 			}
 			else if (slot.pCollidable->IsColliding())
@@ -336,7 +336,11 @@ void CCollisionSystem::Render_GUI()
 			}
 			else
 			{
-				ImGui::Text("%s %s", typePrefix, ownerName.c_str());
+				ImGui::TextColored(ImVec4(slot.pCollidable->Get_ColliderColor().x,
+					slot.pCollidable->Get_ColliderColor().y,
+					slot.pCollidable->Get_ColliderColor().z,
+					slot.pCollidable->Get_ColliderColor().w),
+					"%s %s", typePrefix, ownerName.c_str());
 			}
 
 			ImGui::PopID();
@@ -1212,18 +1216,18 @@ void CCollisionSystem::Render_Debug()
 
 	m_pBatch->Begin();
 
-	XMVECTOR vColor;
+	_vector4 vColor;
 	for (const auto& slot : m_Collidables)
 	{
 		if (slot.IsValid() && slot.pCollidable->Get_CompActive())
 		{
 			if (dynamic_cast<CCollider*>(slot.pCollidable))
 			{
-				vColor = slot.pCollidable->IsColliding() ? Colors::Red : Colors::Green;
+				vColor = slot.pCollidable->IsColliding() ? _vector4{ 1.f,0.f,0.f,1.f } : slot.pCollidable->Get_ColliderColor();
 			}
 			else if (dynamic_cast<CCharacterController*>(slot.pCollidable))
 			{
-				vColor = slot.pCollidable->IsColliding() ? Colors::Orange : Colors::Cyan;
+				vColor = slot.pCollidable->IsColliding() ? _vector4{ 1.f,0.f,0.f,1.f } : slot.pCollidable->Get_ColliderColor();
 			}
 			slot.pCollidable->Render(m_pBatch, vColor);
 		}

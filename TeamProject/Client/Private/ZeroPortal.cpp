@@ -85,12 +85,16 @@ void CZeroPortal::Priority_Update(_float dt)
 
 void CZeroPortal::Update(_float dt)
 {
-	m_Time += dt*2;
+	m_Time += dt;
 	Get_Component<CCollider>()->Update(dt);
+	Extend(dt);
 
 	if (m_bIsInteractable) {
-		//m_pTransform->AddScale({ sinf(XMConvertToRadians(m_Time)),sinf(XMConvertToRadians(m_Time))*2,dt});
 		Interact();
+		m_vTargetSize = { 3.f,4.f,3.f };
+	}
+	else {
+		m_vTargetSize = { 1.f,1.f,1.f };
 	}
 }
 
@@ -103,7 +107,7 @@ void CZeroPortal::OnTriggerEnter(CGameObject* pOther)
 	auto pCollidable = pOther->Get_Component<ICollidable>();
 	if (pCollidable && (pCollidable->Get_Group() != COLLISION_GROUP::PLAYER))
 		return;
-
+	m_fElapsedTime = 0;
 	m_bIsInteractable = true;
 }
 
@@ -117,7 +121,7 @@ void CZeroPortal::OnTriggerExit(CGameObject* pOther)
 	auto pCollidable = pOther->Get_Component<ICollidable>();
 	if (pCollidable && (pCollidable->Get_Group() != COLLISION_GROUP::PLAYER))
 		return;
-
+	m_fElapsedTime = 0;
 	m_bIsInteractable = false;
 }
 
@@ -130,6 +134,21 @@ void CZeroPortal::Interact()
 		m_pTargetStage->StageChangeOn(CZero_Level::StageType::Boss, 0);
 		m_bIsInteractable = false;
 	}
+}
+
+void CZeroPortal::Extend(_float dt)
+{
+	_vector3 nowScale  = m_pTransform->Get_Scale();
+	m_fElapsedTime += dt;
+
+	_float ratio = Math::Clamp01(m_fElapsedTime / m_fDuration);
+	_float Ease = Math::EaseInOutBounce(ratio);
+	Vector3 scale = Vector3::Lerp(nowScale,m_vTargetSize,Ease);
+	m_pTransform->Scale(scale);
+}
+
+void CZeroPortal::Contract(_float dt)
+{
 }
 
 CZeroPortal* CZeroPortal::Create()

@@ -314,10 +314,10 @@ void CSacrificeState_Attack_05_Phase2::Update(CSacrifice* pOwner, _float dt)
 			blackBoard.isRequestNext = true;
 	}
 
-	Update_Effects(pOwner);
-
-	if(m_fAnimProgress<0.4f)
+	if (m_fAnimProgress < 0.14f)
 		pOwner->RotateToTarget(dt, 10.f);
+
+	Update_Effects(pOwner);
 	pOwner->MoveByRootMotion(dt);
 }
 
@@ -417,6 +417,18 @@ void CSacrificeState_Attack_05_1_Phase2::Update_Effects(CSacrifice* pOwner)
 	auto pTransform = pOwner->Get_Component<CTransform>();
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 
+	/* Smoke Sweep Trail */
+	if (IsCrossAnimProgress(0.14f))
+	{
+
+		auto effect2 = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_hand_sweep_trail.json")
+			.Build("HandSweepTrail");
+		effect2->AttachBone(pAnimator, "Skn_Finger3_03");
+
+		ObjectManager()->Add_Object(effect2, { pOwner->Get_Level(),"Effect_Layer" });
+	}
+
 	/* Smoke Slash */
 	if (IsCrossAnimProgress(0.15f))
 	{
@@ -424,9 +436,9 @@ void CSacrificeState_Attack_05_1_Phase2::Update_Effects(CSacrifice* pOwner)
 			.Asset("sacrifice_smoke_slash2.json")
 			.Build("SmokeSlash");
 
-		_vector3 vWorldPosition = pTransform->Get_WorldPos();
+		_vector3 vWorldPosition = _vector3::Transform(_vector3(0.f, 0.8f, 0.3f), pTransform->Get_WorldMatrix());
 		_quaternion worldQuaternion = pTransform->Get_QuaternionRotate();
-		_quaternion localQuaternion = _quaternion(0.0f, 0.0f, 0.f, 0.1f);
+		_quaternion localQuaternion = _quaternion(0.0f, 0.0f, 0.f, 1.f);
 		localQuaternion *= worldQuaternion;
 
 		auto pEffectTransform = effect->Get_Component<CTransform>();
@@ -494,7 +506,7 @@ void CSacrificeState_Attack_08_Phase2::Update_Weapons(CSacrifice* pOwner)
 void CSacrificeState_Attack_08_Phase2::Update_Move(CSacrifice* pOwner, _float dt)
 {
 	/* Move Update */
-	if (m_fAnimProgress < 0.5f)
+	if (m_fAnimProgress < 0.3f)
 		pOwner->RotateToTarget(dt, 10.f);
 
 	auto pCCT = pOwner->Get_Component<CCharacterController>();
