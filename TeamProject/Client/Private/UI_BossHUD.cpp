@@ -23,13 +23,8 @@ HRESULT CUI_BossHUD::Initialize(INIT_DESC* pArg)
 
     __super::Initialize(pArg);
 
-    // JSON 기반 UI 구성 로드
-    const string& filePath = ResourceManager()->Get_ResourcePath("hud_boss.json");
-    Load(Helper::LoadJson<nlohmann::ordered_json>(filePath));
-
-    // 자식 UI 핸들 캐싱
-    for (_int i = 0; i < ENUM(Child::END); ++i)
-        m_handles[i] = Get_DescendantHandle(INSTANCENAMES[i]);
+    Load_Json("hud_boss.json");
+    Cache_Children();
 
     return S_OK;
 }
@@ -49,16 +44,51 @@ void CUI_BossHUD::Update(_float dt)
     _float fRatio = m_pMonsterStatus->iNowHP / max(m_pMonsterStatus->iMaxHP, 1.f);
 
     // HP Front
-    Set_GaugeFill(Child::GAUGE_HP_FRONT, fRatio);
+    Set_GaugeFill(CHILD::GAUGE_HP_FRONT, fRatio);
 
     // HP Back
     Update_HPBackGauge(fRatio, dt);
 
     // Groggy
-    Set_GaugeFill(Child::GAUGE_GROGGY, m_pMonsterStatus->iGroggyValue / m_fGroggyMax);
-    Set_NumberText(Child::TEXT_GROGGY, m_pMonsterStatus->iGroggyValue, 2);
+    Set_GaugeFill(CHILD::GAUGE_GROGGY, m_pMonsterStatus->iGroggyValue / m_fGroggyMax);
+    Set_GroggyText(m_pMonsterStatus->iGroggyValue, 2);
 
     Get_Component<CObjectContainer>()->UpdateChild(dt);
+}
+
+void CUI_BossHUD::Load_Json(const string& resourceKey)
+{
+    // JSON 기반 UI 구성 로드
+    const string& filePath = ResourceManager()->Get_ResourcePath(resourceKey);
+    Load(Helper::LoadJson<nlohmann::ordered_json>(filePath));
+}
+
+void CUI_BossHUD::Cache_Children()
+{
+    auto pContainer = Get_Component<CObjectContainer>();
+
+    // 자식 UI 오브젝트 포인터를 배열에 캐싱
+    for (_int i = 0; i < ENUM(CHILD::END); ++i)
+    {
+        const string& strInstanceName = INSTANCENAMES[i];
+        if (strInstanceName.empty())
+            continue;
+
+        auto pObj = pContainer->Find_Descendant(strInstanceName);
+        if (!pObj)
+            continue;
+
+        auto pUI = dynamic_cast<CUI_Object*>(pObj);
+        if (!pUI)
+            continue;
+
+        m_pChildren[i] = pUI;
+
+        if (auto pGauge = dynamic_cast<CGaugeUI*>(pUI))
+            m_pGauges[i] = pGauge;
+    }
+
+    m_pGroggyText = m_pChildren[ENUM(CHILD::TEXT_GROGGY)]->Get_Component<CTextSlot>();
 }
 
 void CUI_BossHUD::Update_HPBackGauge(_float fRatio, _float dt)
@@ -88,14 +118,14 @@ void CUI_BossHUD::Update_HPBackGauge(_float fRatio, _float dt)
     // 보간
     _float t = dt * HPBACK_LERP_SPEED;
     m_hpBack.fCurRatio = Math::Lerp(m_hpBack.fCurRatio, m_hpBack.fTargetRatio, t);
-    Set_GaugeFill(Child::GAUGE_HP_BACK, m_hpBack.fCurRatio);
+    Set_GaugeFill(CHILD::GAUGE_HP_BACK, m_hpBack.fCurRatio);
 
     // 깜빡임 종료 조건
     if (fabs(m_hpBack.fCurRatio - m_hpBack.fTargetRatio) < 0.001f)
     {
         m_hpBack.fCurRatio = m_hpBack.fTargetRatio;
         m_isBlinking = false;
-        Set_Color(Child::GAUGE_HP_BACK, UI_HPBACK_DARK);
+        Set_ChildColor(CHILD::GAUGE_HP_BACK, UI_HPBACK_DARK);
     }
 
     // 깜빡임 적용
@@ -110,38 +140,35 @@ void CUI_BossHUD::Apply_Blink(_float fRatio, _float dt)
 
     _float t = (sinf(m_fBlinkAcc) * 0.5f) + 0.5f; // 0 ~ 1
     Vector4 vColor = Vector4::Lerp(Vector4(UI_HPBACK_DARK), Vector4(UI_HPBACK_LIGHT), t);
-    Set_Color(Child::GAUGE_HP_BACK, vColor);
+    Set_ChildColor(CHILD::GAUGE_HP_BACK, vColor);
 }
 
-void CUI_BossHUD::Set_Color(Child child, _float4 vColor)
+void CUI_BossHUD::Set_ChildColor(CHILD child, _float4 vColor)
 {
-    ForChild(child, [vColor](CUI_Object* ui) {
-        ui->Set_Color(vColor);
-        });
+    auto pChild = m_pChildren[ENUM(child)];
+    if (!pChild)
+        return;
+
+    pChild->Set_Color(vColor);
 }
 
-void CUI_BossHUD::Set_GaugeFill(Child child, _float fFillAmount)
+void CUI_BossHUD::Set_GaugeFill(CHILD child, _float fFillAmount)
 {
-    ForChild(child, [fFillAmount](CUI_Object* ui) {
-        auto pGauge = dynamic_cast<CGaugeUI*>(ui);
-        if (!pGauge)
-            return;
+    auto pGauge = m_pGauges[ENUM(child)];
+    if (!pGauge)
+        return;
 
-        pGauge->Set_FillAmount(fFillAmount);
-        });
+    pGauge->Set_FillAmount(fFillAmount);
 }
 
-void CUI_BossHUD::Set_NumberText(Child child, _int iNum, _int iWidth)
+void CUI_BossHUD::Set_GroggyText(_int iNum, _int iWidth)
 {
-    ForChild(child, [iNum, iWidth](CUI_Object* ui) {
-        auto pTextSlot = ui->Get_Component<CTextSlot>();
-        if (!pTextSlot)
-            return;
-
-        wchar_t buf[32];
-        Helper::Format_FixedZeroPad(buf, _countof(buf), iNum, iWidth);
-        pTextSlot->Set_Text(buf);
-        });
+    if (!m_pGroggyText)
+        return;
+     
+    wchar_t buf[32];
+    Helper::Format_FixedZeroPad(buf, _countof(buf), iNum, iWidth);
+    m_pGroggyText->Set_Text(buf);
 }
 
 CGameObject* CUI_BossHUD::Create()
