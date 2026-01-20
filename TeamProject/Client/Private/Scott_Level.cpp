@@ -35,6 +35,8 @@
 /* Interactable */
 #include "Portal.h"
 
+#include "Jaeger.h"
+
 CScott_Level::CScott_Level(const string& LevelKey)
 	:CLevel(LevelKey),
 	m_pGameInstance{ CGameInstance::GetInstance() }
@@ -68,7 +70,7 @@ HRESULT CScott_Level::Awake()
 
 	//============== Map ============================
 	Ready_Map("Scott_Level", "Zero_Worksite");
-	
+	Ready_Npc();
 
 	return S_OK;
 }
@@ -99,6 +101,29 @@ void CScott_Level::Ready_Map(const string& LevelTag, const string& AreaTag)
 		MSG_BOX("Failed to Load MapData!");
 
 	Safe_Release(pMapLoader);
+}
+
+void CScott_Level::Ready_Npc()
+{
+	auto pProto = PrototypeManager();
+	auto objMgr = ObjectManager();
+
+	CCT_DESC jaegerCCT;
+	//meowCCT.eGroup = COLLISION_GROUP::PLAYER;
+	jaegerCCT.iCollisionMask = 0xFFFFFFFF;
+	//miyabiCCT.iCollisionMask = 0xFFFFFFFF & ~ENUM(COLLISION_GROUP::COMMON);
+	jaegerCCT.bAutoFit = false;
+	jaegerCCT.fHeight = 1.6f;
+	jaegerCCT.fRadius = 0.4f;
+	jaegerCCT.eGroup = COLLISION_GROUP::COMMON;
+	//jaegerCCT.fBoundingMinY = 0.f;
+	jaegerCCT.vPos = { 2.3f, 1.5f, 20.1f };
+	pProto->Add_ProtoType("Scott_Level", "Proto_GameObject_Jaeger", CJaeger::Create());
+	auto jaeger = Builder::Create_Object({ "Scott_Level", "Proto_GameObject_Jaeger" })
+		.CharacterController(jaegerCCT)
+		.Build("Jaeger");
+
+	objMgr->Add_Object(jaeger, { "Scott_Level", "Npc_Layer" });
 }
 
 void CScott_Level::Rake_MapResources()
