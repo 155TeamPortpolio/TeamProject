@@ -27,11 +27,11 @@ HRESULT CBelle::Initialize_Prototype()
 
 	auto pRcsMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
 	pRcsMgr->Add_ResourcePath("Belle.model",
-		"../Bin/Resources/Model/skeletal/FieldCharacter/Belle/Belle.model");
+		"../Bin/Resources/Global/FieldCharacter/Belle/Belle.model");
 	pRcsMgr->Add_ResourcePath("Belle.mat",
-		"../Bin/Resources/Model/skeletal/FieldCharacter/Belle/Belle.mat");
+		"../Bin/Resources/Global/FieldCharacter/Belle/Belle.mat");
 	pRcsMgr->Add_ResourcePath("Avatar_Female_Size02_Belle_Suibianguan_Meta.json",
-		"../Bin/Resources/Model/skeletal/FieldCharacter/Belle/Avatar_Female_Size02_Belle_Suibianguan_Meta.json");
+		"../Bin/Resources/Global/FieldCharacter/Belle/Avatar_Female_Size02_Belle_Suibianguan_Meta.json");
 
 	Get_Component<CModel>()->Link_Model(G_GlobalLevelKey, "Belle.model");
 	Get_Component<CMaterial>()->Link_Material(G_GlobalLevelKey, "Belle.mat");
