@@ -5,6 +5,11 @@ NS_BEGIN(MapTool)
 class CEntityObject :
     public CMapToolObject
 {
+public:
+    typedef struct tagEntityObjectCreateDesc : public CMapToolObject::MAPTOOL_OBJECT_DESC 
+    {
+        _int iType = {};
+    }ENTITY_INIT_DESC;
 private:
     CEntityObject();
     CEntityObject(const CEntityObject& rhs);

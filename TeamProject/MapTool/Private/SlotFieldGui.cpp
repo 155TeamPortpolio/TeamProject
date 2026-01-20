@@ -213,18 +213,19 @@ SlotValue& CSlotFieldGui::EnsureValue(_int iObjIndex, const FIELD_DATA_DEFINE& T
     return it->second;
 }
 
-void CSlotFieldGui::LoadBaseMapData()
+void CSlotFieldGui::LoadBaseData()
 {
-    m_LoadedObjects = m_pMapToolCore->Load_MapData();
+    m_LoadedData = {};
 
+    m_LoadedData = m_pMapToolCore->Load_MapData();
 
-    if (m_LoadedObjects.size() < 1) {
+    if (m_LoadedData.LoadedObjects.size() < 1) {
         MSG_BOX("데이터 읽기 실패!");
         return;
     }
    
-    if (m_ObjUserValue.size() != m_LoadedObjects.size())
-        m_ObjUserValue.resize(m_LoadedObjects.size());
+    if (m_ObjUserValue.size() != m_LoadedData.LoadedObjects.size())
+        m_ObjUserValue.resize(m_LoadedData.LoadedObjects.size());
 }
 
 void CSlotFieldGui::to_json(MTjson& j, const SlotValue& value)
@@ -264,13 +265,13 @@ void CSlotFieldGui::SaveSlotData()
     for (const auto& t : m_AppliedTabs)
         TabByID.emplace(t.id, &t);
 
-    const _int objCount = (_int)m_LoadedObjects.size();
+    const _int objCount = (_int)m_LoadedData.LoadedObjects.size();
     for (int objIdx = 0; objIdx < objCount; ++objIdx)
     {
         if (objIdx >= (_int)m_ObjUserValue.size())
             break;
 
-        const _int objNo = m_LoadedObjects[objIdx].iObjIdx;
+        const _int objNo = m_LoadedData.LoadedObjects[objIdx].iObjIdx;
         const auto& mp = m_ObjUserValue[objIdx];
 
         for (const auto& [slotId, val] : mp)
@@ -290,7 +291,7 @@ void CSlotFieldGui::SaveSlotData()
 
     }
 
-    string TagFileName = g_TagFileName_MapData + "." + m_pMapToolContext->TagArea + "." + SlotHeader.TagDataFormat + "." + std::to_string(SlotHeader.iVersion);
+    string TagFileName = m_LoadedData.tagDataFormat + "." + m_pMapToolContext->TagArea + "." + SlotHeader.TagDataFormat + "." + std::to_string(SlotHeader.iVersion);
     string SavePath = "../Bin/Data/NewSlotData/" + HelperMT::MakeTimestampFileName(TagFileName, ".json");
 
     //Helper::SaveJson<MapData_Slot_Header>(SlotHeader, SavePath);
@@ -556,12 +557,14 @@ void CSlotFieldGui::DrawRightPanel()
 
     ImGui::SameLine(0.f, 20.f);
 
-    if (ImGui::Button("Load Base MapData"))
-        LoadBaseMapData();
+    if (ImGui::Button("Load Base Data"))
+        LoadBaseData();
 
     ImGui::SameLine(0.f, 20.f);
-
-    ImGui::Text("Loaded Objects: %d", (int)m_LoadedObjects.size());
+    ImGui::Text("DataFormat : %s", m_LoadedData.tagDataFormat.c_str());
+    
+    ImGui::SameLine(0.f, 20.f);
+    ImGui::Text("Loaded Objects: %d", (int)m_LoadedData.LoadedObjects.size());
     
 
 
@@ -604,9 +607,9 @@ void CSlotFieldGui::DrawRightPanel()
         if (ImGui::BeginTable("ObjOnly", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg))
         {
             ImGui::TableSetupColumn("ObjectIndex", ImGuiTableColumnFlags_WidthFixed, 80.f);
-            ImGui::TableSetupColumn("PrefabKey");
+            ImGui::TableSetupColumn("Name");
             ImGui::TableHeadersRow();
-            for (auto& o : m_LoadedObjects)
+            for (auto& o : m_LoadedData.LoadedObjects)
             {
                 ImGui::TableNextRow();
                 ImGui::TableSetColumnIndex(0); ImGui::Text("%d", o.iObjIdx);
@@ -638,9 +641,9 @@ void CSlotFieldGui::DrawRightPanel()
 
         ImGui::TableHeadersRow();
 
-        for (int objIdx = 0; objIdx < (int)m_LoadedObjects.size(); ++objIdx)
+        for (int objIdx = 0; objIdx < (int)m_LoadedData.LoadedObjects.size(); ++objIdx)
         {
-            const auto& o = m_LoadedObjects[objIdx];
+            const auto& o = m_LoadedData.LoadedObjects[objIdx];
 
             ImGui::TableNextRow();
             ImGui::PushID(objIdx);
