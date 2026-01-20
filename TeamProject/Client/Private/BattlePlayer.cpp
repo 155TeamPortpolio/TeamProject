@@ -42,7 +42,8 @@ void CBattlePlayer::SetBattleCharacters(vector<CHARACTER> battleCharacters)
 	m_iCurrentIndex = 0;
 	m_pCurrentCharacter = m_BattleCharacters[m_iCurrentIndex];
 	m_pCurrentCharacter->SetRenderLayer(RENDER_LAYER::Default);
-	
+	m_pCurrentCharacter->Set_MainCharacter(true);
+
 	CBattleSystem::GetInstance()->SetPlayer(m_CharacterHandles);
 }
 
