@@ -32,7 +32,7 @@ void CSacrificeState_Attack_Phase1::Update(CSacrifice* pOwner, _float dt)
 {
 	__super::Update(pOwner, dt);
 
-	ATTACK_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
+	CSacrifice::SACRIFICE_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
 	if (blackBoard.isRequestNext)
 	{
 		blackBoard.isRequestNext = false;
@@ -88,91 +88,90 @@ void CSacrificeState_Attack_Phase1::Register_Transitions()
 
 void CSacrificeState_Attack_Phase1::BuildPattern(CSacrifice* pOwner)
 {
-	ATTACK_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
+	CSacrifice::SACRIFICE_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
+	blackBoard.iPatternCount++;
 	TARGETING_INFO& targetInfo = pOwner->GetTargetingInfo();
 
 	blackBoard.stateQueue.clear();
 
-	if (targetInfo.fDistance < 8.f)
+	if (blackBoard.iPatternCount >= 4)
 	{
-		_vector3 vLook = pOwner->Get_Component<CTransform>()->Dir(STATE::LOOK);
-		_vector3 vTargetDir = targetInfo.vDirToTarget;
-		if (vLook.Dot(vTargetDir) < 0.f)
+		blackBoard.iPatternCount = 0;
+		blackBoard.stateQueue.push_back("Attack_Roar_Phase1");
+		blackBoard.stateQueue.push_back("Attack06_Phase1");
+	}
+	else
+	{
+		if (targetInfo.fDistance < 8.f)
 		{
-			blackBoard.stateQueue.push_back("Attack_Turn_Phase1");
-			blackBoard.stateQueue.push_back("Attack02_Phase1");
+			_vector3 vLook = pOwner->Get_Component<CTransform>()->Dir(STATE::LOOK);
+			_vector3 vTargetDir = targetInfo.vDirToTarget;
+			if (vLook.Dot(vTargetDir) < 0.f)
+			{
+				blackBoard.stateQueue.push_back("Attack_Turn_Phase1");
+				blackBoard.stateQueue.push_back("Attack02_Phase1");
+			}
+			else
+			{
+				_uint iRandIndex = Helper::Get_Random_Int(0, 2);
+				switch (iRandIndex)
+				{
+				case 0:
+				{
+					blackBoard.stateQueue.push_back("Attack01_Phase1");
+					blackBoard.stateQueue.push_back("Attack02_Phase1");
+					blackBoard.stateQueue.push_back("Attack08_Phase1");
+				}break;
+				case 1:
+				{
+					/* Hand Pattern */
+					blackBoard.stateQueue.push_back("Attack10_Phase1");
+					blackBoard.stateQueue.push_back("Attack11_Phase1");
+					blackBoard.stateQueue.push_back("Attack12_Phase1");
+				}break;
+				case 2:
+				{
+					blackBoard.stateQueue.push_back("Attack01_Phase1");
+					blackBoard.stateQueue.push_back("Attack02_Phase1");
+				}break;
+				default:
+					break;
+				}
+			}
 		}
 		else
 		{
-			_uint iRandIndex = Helper::Get_Random_Int(0, 4);
+			_uint iRandIndex = Helper::Get_Random_Int(0, 3);
 			switch (iRandIndex)
 			{
 			case 0:
 			{
-				blackBoard.stateQueue.push_back("Attack01_Phase1");
+				blackBoard.stateQueue.push_back("Attack07_Phase1");
 				blackBoard.stateQueue.push_back("Attack02_Phase1");
 				blackBoard.stateQueue.push_back("Attack08_Phase1");
 			}break;
 			case 1:
 			{
-				/* Hand Pattern */
-				blackBoard.stateQueue.push_back("Attack10_Phase1");
-				blackBoard.stateQueue.push_back("Attack11_Phase1");
-				blackBoard.stateQueue.push_back("Attack12_Phase1");
+				blackBoard.stateQueue.push_back("Attack07_Phase1");
+				blackBoard.stateQueue.push_back("Attack02_Phase1");
+				blackBoard.stateQueue.push_back("Attack03_Phase1");
+				blackBoard.stateQueue.push_back("Arm_Recover");
 			}break;
 			case 2:
 			{
-				blackBoard.stateQueue.push_back("Attack05_Phase1");
-			
+				blackBoard.stateQueue.push_back("Attack04_1_Phase1");
+				blackBoard.stateQueue.push_back("Attack02_Phase1");
 			}break;
 			case 3:
-			{	
-				blackBoard.stateQueue.push_back("Attack_Roar_Phase1");
-				blackBoard.stateQueue.push_back("Attack06_Phase1");
-			}break;
-			case 4:
-			{	
-				blackBoard.stateQueue.push_back("Attack01_Phase1");
-				blackBoard.stateQueue.push_back("Attack02_Phase1");
+			{
+				blackBoard.stateQueue.push_back("Attack05_Phase1");
 			}break;
 			default:
 				break;
 			}
 		}
 	}
-	else
-	{
-		_uint iRandIndex = Helper::Get_Random_Int(0, 2);
-		switch (iRandIndex)
-		{
-		case 0:
-		{
-			blackBoard.stateQueue.push_back("Attack07_Phase1");
-			blackBoard.stateQueue.push_back("Attack02_Phase1");
-			blackBoard.stateQueue.push_back("Attack08_Phase1");
-		}break;
-		case 1:
-		{
-			blackBoard.stateQueue.push_back("Attack07_Phase1");
-			blackBoard.stateQueue.push_back("Attack02_Phase1");
-			blackBoard.stateQueue.push_back("Attack03_Phase1");
-			blackBoard.stateQueue.push_back("Arm_Recover");
-		}break;
-		case 2:
-		{
-			blackBoard.stateQueue.push_back("Attack04_1_Phase1");
-			blackBoard.stateQueue.push_back("Attack02_Phase1");
-		}break;
-		default:
-			break;
-		}
-	}
-
-	//blackBoard.stateQueue.clear();
-	//blackBoard.stateQueue.push_back("Attack06_Phase1");
-	//blackBoard.stateQueue.push_back("Attack06_Phase1");
-	//blackBoard.stateQueue.push_back("Attack06_Phase1");
-
+	
 	blackBoard.isRequestNext = true;
 }
 
@@ -185,7 +184,7 @@ void CSacrificeState_ArmRecover_Phase1::Enter(CSacrifice* pOwner)
 
 void CSacrificeState_ArmRecover_Phase1::Update(CSacrifice* pOwner, _float dt)
 {
-	ATTACK_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
+	CSacrifice::SACRIFICE_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
 
 	pOwner->RotateToTarget(dt, 10.f);
 	pOwner->MoveByRootMotion(dt);
@@ -218,7 +217,7 @@ void CSacrificeState_Attack_01_Phase1::Update(CSacrifice* pOwner, _float dt)
 	pOwner->RotateToTarget(dt, 10.f);
 	pOwner->MoveByRootMotion(dt);
 
-	ATTACK_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
+	CSacrifice::SACRIFICE_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
 
 	if (m_fAnimProgress >= 0.3f)
 	{
@@ -253,7 +252,7 @@ void CSacrificeState_Attack_02_Phase1::Enter(CSacrifice* pOwner)
 
 void CSacrificeState_Attack_02_Phase1::Update(CSacrifice* pOwner, _float dt)
 {
-	ATTACK_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
+	CSacrifice::SACRIFICE_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
 
 	if (m_fAnimProgress >= 0.2f)
 	{
@@ -322,7 +321,7 @@ void CSacrificeState_Attack_03_Phase1::Enter(CSacrifice* pOwner)
 
 void CSacrificeState_Attack_03_Phase1::Update(CSacrifice* pOwner, _float dt)
 {
-	ATTACK_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
+	CSacrifice::SACRIFICE_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
 
 	if (m_fAnimProgress >= 0.3f)
 	{
@@ -410,7 +409,7 @@ void CSacrificeState_Attack_04_1_Phase1::Enter(CSacrifice* pOwner)
 
 void CSacrificeState_Attack_04_1_Phase1::Update(CSacrifice* pOwner, _float dt)
 {
-	ATTACK_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
+	CSacrifice::SACRIFICE_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
 
 	if (m_fAnimProgress >= 0.25f)
 	{
@@ -451,7 +450,7 @@ void CSacrificeState_Attack_05_Phase1::Enter(CSacrifice* pOwner)
 
 void CSacrificeState_Attack_05_Phase1::Update(CSacrifice* pOwner, _float dt)
 {
-	ATTACK_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
+	CSacrifice::SACRIFICE_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
 
 	if (m_fAnimProgress >= 0.8f)
 	{
@@ -524,6 +523,7 @@ void CSacrificeState_Attack_06_Phase1::Enter(CSacrifice* pOwner)
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("SacrificeBringer_Ani_P1_Attack_06").Loop(true).Speed(1.f).Apply();
 	
+	pOwner->Set_HitBlendable(false);
 }
 
 void CSacrificeState_Attack_06_Phase1::Update(CSacrifice* pOwner, _float dt)
@@ -541,12 +541,14 @@ void CSacrificeState_Attack_06_Phase1::Update(CSacrifice* pOwner, _float dt)
 	if (IsCrossAnimProgress(0.65f))
 		pOwner->DeactiveLaser();
 	
-	ATTACK_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
+	CSacrifice::SACRIFICE_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
 	if (m_fAnimProgress >= 0.9f)
 	{
 		blackBoard.isChainOpen = true;
 		if (!blackBoard.stateQueue.empty())
 			blackBoard.isRequestNext = true;
+
+		pOwner->Set_HitBlendable(true);
 	}
 	
 	pOwner->MoveByRootMotion(dt);
@@ -568,7 +570,7 @@ void CSacrificeState_Attack_07_Phase1::Enter(CSacrifice* pOwner)
 
 void CSacrificeState_Attack_07_Phase1::Update(CSacrifice* pOwner, _float dt)
 {
-	ATTACK_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
+	CSacrifice::SACRIFICE_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
 
 	if (m_fAnimProgress >= 0.7f)
 	{
@@ -651,7 +653,7 @@ void CSacrificeState_Attack_08_Phase1::Enter(CSacrifice* pOwner)
 
 void CSacrificeState_Attack_08_Phase1::Update(CSacrifice* pOwner, _float dt)
 {
-	ATTACK_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
+	CSacrifice::SACRIFICE_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
 
 	if (m_fAnimProgress >= 0.8f)
 	{
@@ -826,7 +828,7 @@ void CSacrificeState_Attack_10_Phase1::Enter(CSacrifice* pOwner)
 
 void CSacrificeState_Attack_10_Phase1::Update(CSacrifice* pOwner, _float dt)
 {
-	ATTACK_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
+	CSacrifice::SACRIFICE_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
 
 	if (m_fAnimProgress >= 0.2f)
 	{
@@ -850,7 +852,7 @@ void CSacrificeState_Attack_11_Phase1::Enter(CSacrifice* pOwner)
 
 void CSacrificeState_Attack_11_Phase1::Update(CSacrifice* pOwner, _float dt)
 {
-	ATTACK_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
+	CSacrifice::SACRIFICE_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
 
 	if (m_fAnimProgress >= 0.3f)
 	{
@@ -874,7 +876,7 @@ void CSacrificeState_Attack_12_Phase1::Enter(CSacrifice* pOwner)
 
 void CSacrificeState_Attack_12_Phase1::Update(CSacrifice* pOwner, _float dt)
 {
-	ATTACK_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
+	CSacrifice::SACRIFICE_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
 
 	if (m_fAnimProgress >= 0.5f)
 	{
@@ -901,7 +903,7 @@ void CSacrificeState_Attack_Turn_Phase1::Enter(CSacrifice* pOwner)
 
 void CSacrificeState_Attack_Turn_Phase1::Update(CSacrifice* pOwner, _float dt)
 {
-	ATTACK_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
+	CSacrifice::SACRIFICE_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
 	if (m_fAnimProgress >= 0.6f)
 	{
 		blackBoard.isChainOpen = true;
@@ -928,7 +930,7 @@ void CSacrificeState_Attack_Roar_Phase1::Enter(CSacrifice* pOwner)
 
 void CSacrificeState_Attack_Roar_Phase1::Update(CSacrifice* pOwner, _float dt)
 {
-	ATTACK_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
+	CSacrifice::SACRIFICE_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
 	if (m_fAnimProgress >= 0.8f)
 	{
 		blackBoard.isChainOpen = true;
