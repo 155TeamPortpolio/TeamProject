@@ -23,22 +23,41 @@ HRESULT CMapLoader::Initialize(const string& TagLevel, const string& TagArea)
     if (nullptr == pPackets)
         return E_FAIL;
 
-    _bool isFindBaseData = { false };
+    _bool isFindMapBaseData = { false };
+    _bool isFindEntityBaseData = { false };
     for (auto& packet : *pPackets) {
-        if ("Base" == packet.TagSlotFormat) {
-            LoadBaseData(&packet);
-            isFindBaseData = true;
+
+        // MapData 로드
+        if ("MapData" == packet.TagDataFormat)
+        {
+            if ("Base" == packet.TagSlotFormat)
+            {
+                LoadMapBaseData(&packet);
+                isFindMapBaseData = true;
+            }
+            else
+                CacheSlotDataFile("MapData", packet.TagDataFilePath);
         }
-        else
-            CacheSlotDataFile(packet.TagDataFilePath);
+        // EntityData 로드
+        else if ("EntityData" == packet.TagDataFormat)
+        {
+            if ("Base" == packet.TagSlotFormat)
+            {
+                LoadEntityBaseData(&packet);
+                isFindEntityBaseData = true;
+            }
+            else
+                CacheSlotDataFile("EntityData", packet.TagDataFilePath);
+        }
+
     }
 
     // 맵 베이스 데이터 없으면 로드 불가!
-    if (false == isFindBaseData)
+    if (false == isFindMapBaseData)
         return E_FAIL;
 
-    auto iter = m_SlotFormatData.find("Collider");
-    if (iter != m_SlotFormatData.end())
+    auto iter = m_MapSlotFormatData.find("Collider");
+    if (iter != m_MapSlotFormatData.end())
         m_hasColliderData = true;
 
     for (auto& layerdata : m_MapBaseData.Layers) {
@@ -58,10 +77,17 @@ HRESULT CMapLoader::Initialize(const string& TagLevel, const string& TagArea)
                 break;
             }
         }
-            
+
     }
 
-	return S_OK;
+    // EntityData가 없으면 성공으로 넘김
+    if (false == isFindEntityBaseData)
+        return S_OK;
+
+    for (auto& EntityData : m_EntityBaseData.Entities)
+        Place_EntityFromLoadData(&EntityData);
+
+    return S_OK;
 }
 
 void CMapLoader::Place_PlacedObjectFromLoadData(MapData_Object* pData)
@@ -78,7 +104,7 @@ void CMapLoader::Place_PlacedObjectFromLoadData(MapData_Object* pData)
 
     COLLIDER_DESC ColliderDesc = {};
 
-    for (auto& tSlotData : m_SlotFormatData) {
+    for (auto& tSlotData : m_MapSlotFormatData) {
         if (tSlotData.first == "Collider" && true == m_hasColliderData) {
             // physics 데이터 넣는 부분. 개선의 여지가 있음
             for (auto& physicsData : tSlotData.second[pData->iObjID]) {
@@ -91,16 +117,16 @@ void CMapLoader::Place_PlacedObjectFromLoadData(MapData_Object* pData)
                 }
             }
         }
-        
+
         // 일단 데이터 다 때려넣기
-        for (auto& FieldData : tSlotData.second[pData->iObjID]) 
+        for (auto& FieldData : tSlotData.second[pData->iObjID])
             Desc->SlotDataValues[tSlotData.first].push_back(FieldData);
     }
-  
+
 
     _float3 vScl{}, vRot{}, vTrans{};
     _float4 vRotQ{};
-   
+
     // collider에 위치정보 구우려면 빌더단계에서ㄱㄱ
     _float4x4 matWorld = {
         pData->vRight[0], pData->vRight[1] , pData->vRight[2] , pData->vRight[3],
@@ -123,10 +149,10 @@ void CMapLoader::Place_PlacedObjectFromLoadData(MapData_Object* pData)
     if (nullptr == pStaticObject)
         return;
 
-    
+
     //pStaticObject->Get_Component<CTransform>()->TranslateMatrix(XMLoadFloat4x4(&matWorld));
 
-    pObjMgr->Add_Object(pStaticObject, { m_TagLevel, m_TagLayers[ENUM(MAPOBJ_TYPE::PLACED)]});
+    pObjMgr->Add_Object(pStaticObject, { m_TagLevel, m_TagLayers[ENUM(MAPOBJ_TYPE::PLACED)] });
 }
 
 void CMapLoader::Place_TriggerObjectFromLoadData(MapData_Object* pData)
@@ -155,12 +181,12 @@ void CMapLoader::Place_TriggerObjectFromLoadData(MapData_Object* pData)
     ColDesc.vRotation = { XMConvertToRadians(pData->vLook[0]),
                           XMConvertToRadians(pData->vLook[1]),
                           XMConvertToRadians(pData->vLook[2]) };
-    
+
     CMapTriggerObject::MAP_TRIGGEROBJ_DESC* Desc = new CMapTriggerObject::MAP_TRIGGEROBJ_DESC;
     Desc->TagLevel = m_TagLevel;
     Desc->TagModelKey = pData->TagModelResourceKey;
     Desc->TagMaterialKey = pData->TagMaterialResourceKey;
-    for (auto& tSlotData : m_SlotFormatData) {
+    for (auto& tSlotData : m_MapSlotFormatData) {
         // 일단 데이터 다 때려넣기
         for (auto& FieldData : tSlotData.second[pData->iObjID])
             Desc->SlotDataValues[tSlotData.first].push_back(FieldData);
@@ -168,7 +194,7 @@ void CMapLoader::Place_TriggerObjectFromLoadData(MapData_Object* pData)
     Desc->vRight = { pData->vRight[0], pData->vRight[1], pData->vRight[2] };
     Desc->vUp = { pData->vUp[0], pData->vUp[1], pData->vUp[2] };
     Desc->vLook = { pData->vLook[0], pData->vLook[1], pData->vLook[2] };
-    Desc->vPos = { pData->vPos[0], pData->vPos[1], pData->vPos[2] };
+
 
     CGameObject* pStaticObject = Builder::Create_Object({ G_GlobalLevelKey ,"Proto_GameObject_MapTriggerObject" })
         .Add_ObjDesc(Desc)
@@ -180,6 +206,29 @@ void CMapLoader::Place_TriggerObjectFromLoadData(MapData_Object* pData)
 
     IObjectService* pObjMgr = CGameInstance::GetInstance()->Get_ObjectMgr();
     pObjMgr->Add_Object(pStaticObject, { m_TagLevel, m_TagLayers[ENUM(MAPOBJ_TYPE::TRIGGER)] });
+}
+
+void CMapLoader::Place_EntityFromLoadData(ENTITY_INIT* pData)
+{
+    if (nullptr == pData)
+        return;
+
+    _int    iEntityID = pData->iEntityID;
+    string  tagName = pData->tagName;
+    _int    iType = pData->iType;
+    _float3 vScale = { pData->vScale[0], pData->vScale[1] ,pData->vScale[2] };
+    _float3 vRotation = { pData->vRotation[0], pData->vRotation[1] ,pData->vRotation[2] };
+    _float3 vTranslation = { pData->vTranslation[0], pData->vTranslation[1] ,pData->vTranslation[2] };
+    unordered_map<string, vector<FIELD_DATA>>  SlotDataValues;
+
+    for (auto& tSlotData : m_EntitySlotFormatData) {
+        // 일단 데이터 다 때려넣기
+        for (auto& FieldData : tSlotData.second[pData->iEntityID])
+            SlotDataValues[tSlotData.first].push_back(FieldData);
+    }
+
+    /* 여기에 엔티티 이용해서 생성 */
+
 }
 
 CMapLoader::MAPOBJ_TYPE CMapLoader::Check_LayerTag(const string& TagLayer)
@@ -195,7 +244,7 @@ CMapLoader::MAPOBJ_TYPE CMapLoader::Check_LayerTag(const string& TagLayer)
     return eType;
 }
 
-HRESULT CMapLoader::LoadBaseData(const MapData_Path_Packet* pPacket)
+HRESULT CMapLoader::LoadMapBaseData(const MapData_Path_Packet* pPacket)
 {
     filesystem::path OpenPath = pPacket->TagDataFilePath;
 
@@ -219,8 +268,35 @@ HRESULT CMapLoader::LoadBaseData(const MapData_Path_Packet* pPacket)
     return S_OK;
 }
 
-HRESULT CMapLoader::CacheSlotDataFile(const string& SlotDataFilePath)
+HRESULT CMapLoader::LoadEntityBaseData(const MapData_Path_Packet* pPacket)
 {
+    filesystem::path OpenPath = pPacket->TagDataFilePath;
+
+    if (OpenPath.empty())
+        return E_FAIL;
+
+    if (OpenPath.extension().string() != ".json") {
+        MSG_BOX("[MapTool] Load Entity Data Failed.\nJson 파일이 아닙니다.");
+        return E_FAIL;
+    }
+
+    m_EntityBaseData = Helper::LoadJson<Entity_Header>(OpenPath.string());
+    if (-1 == m_EntityBaseData.iVersion)
+        return E_FAIL;
+
+    if (m_EntityBaseData.iVersion != g_iMapDataVersion) {
+        MSG_BOX("[MapTool] Load Entity Data Failed.\n잘못된 버전입니다.");
+        return E_FAIL;
+    }
+
+    return S_OK;
+}
+
+HRESULT CMapLoader::CacheSlotDataFile(const string& DataFormat, const string& SlotDataFilePath)
+{
+    if (false == ("MapData" == DataFormat || "EntityData" == DataFormat))
+        return E_FAIL;
+
     ifstream ifs(SlotDataFilePath);
     if (false == ifs.is_open())
         return E_FAIL;
@@ -240,7 +316,8 @@ HRESULT CMapLoader::CacheSlotDataFile(const string& SlotDataFilePath)
     if (nullptr == values || false == values->is_array())
         return S_OK; // 빈 값으로 채우고 나가기 (터짐 방지)
 
-    ObjFieldMap& perObj = m_SlotFormatData[TagSlotFormat];
+    ObjFieldMap& perObj = "MapData" == DataFormat ?
+        m_MapSlotFormatData[TagSlotFormat] : m_EntitySlotFormatData[TagSlotFormat];
 
     for (const auto& elem : *values) {
         FIELD_DATA FieldData = {};
@@ -255,8 +332,8 @@ HRESULT CMapLoader::CacheSlotDataFile(const string& SlotDataFilePath)
 
 _bool CMapLoader::isThereFormat(const string& TagSlotFormat)
 {
-    auto iter = m_SlotFormatData.find(TagSlotFormat);
-    if (iter == m_SlotFormatData.end())
+    auto iter = m_MapSlotFormatData.find(TagSlotFormat);
+    if (iter == m_MapSlotFormatData.end())
         return false;
     return true;
 }
@@ -269,7 +346,7 @@ CMapLoader* CMapLoader::Create(const string& TagLevel, const string& TagArea)
         Safe_Release(instance);
         instance = nullptr;
         MSG_BOX("Failed to Create : CMapLoader");
-       
+
     }
 
     return instance;

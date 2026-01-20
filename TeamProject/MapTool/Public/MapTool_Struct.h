@@ -63,6 +63,12 @@ namespace MapTool {
 		_int	iObjIdx = { -1 };
 		string	TagModelKey = {};
 	};
+	
+	struct LOADED_DATA
+	{
+		string tagDataFormat = {};
+		vector<LOADED_OBJECT>	LoadedObjects;
+	};
 
 	/* Field Data */
 	// int64_t(= int) , double(= float)

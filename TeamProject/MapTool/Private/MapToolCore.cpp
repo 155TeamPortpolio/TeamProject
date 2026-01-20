@@ -5,6 +5,7 @@
 #include "Helper_MapTool.h"
 
 #include "PlacedObject.h"
+#include "EntityObject.h"
 #include "Layer.h"
 
 IMPLEMENT_SINGLETON(CMapToolCore)
@@ -15,56 +16,99 @@ CMapToolCore::CMapToolCore()
 	Safe_AddRef(m_pGameInstance);
 }
 
-vector<LOADED_OBJECT> CMapToolCore::Load_MapData()
+LOADED_DATA CMapToolCore::Load_MapData()
 {
 	Clear_Layer(MAPOBJ_TYPE::ALL);
 
 	filesystem::path OpenPath = Helper::OpenFile_Dialogue();
 
 	if (OpenPath.empty())
-		return vector<LOADED_OBJECT>();
+		return {};
 
 	if (OpenPath.extension().string() != ".json") {
 		MSG_BOX("[MapTool] Load Map Data Failed.\nJson 파일이 아닙니다.");
-		return vector<LOADED_OBJECT>();
+		return {};
 	}
 
-	MapData_Header mapdata = Helper::LoadJson<MapData_Header>(OpenPath.string());
+	LOADED_DATA	LoadedData = {};
+	//vector<LOADED_OBJECT>	LodedObjects;
 
-	if (mapdata.iVersion != m_tMapToolContext.iVersion) {
-		MSG_BOX("[MapTool] Load Map Data Failed.\n잘못된 버전입니다.");
-		return vector<LOADED_OBJECT>();
-	}
+	/* MapData일 때 */
+	if (OpenPath.string().find("MapData") != string::npos) 
+	{
+		MapData_Header mapdata = Helper::LoadJson<MapData_Header>(OpenPath.string());
 
-	m_tMapToolContext.TagArea = mapdata.TagArea;
+		if ("Base" != mapdata.TagDataFormat)
+		{
+			MSG_BOX("[MapTool] Load Map Data Failed.\nBaseData가 아닙니다.");
+			return {};
+		}
+		LoadedData.tagDataFormat = "MapData";
+		//if (mapdata.iVersion != m_tMapToolContext.iVersion) {
+		//	MSG_BOX("[MapTool] Load Map Data Failed.\n잘못된 버전입니다.");
+		//	return vector<LOADED_OBJECT>();
+		//}
+		m_tMapToolContext.iVersion = mapdata.iVersion;
+		m_tMapToolContext.TagArea = mapdata.TagArea;
 
-	vector<LOADED_OBJECT>	LodedObjects;
+		for (auto& layerdata : mapdata.Layers) {
+			// 레이어 태그 무결성 검사
+			MAPOBJ_TYPE eType = Check_LayerTag(layerdata.TagLayer);
+			if (MAPOBJ_TYPE::END == eType)
+				continue;
 
-	for (auto& layerdata : mapdata.Layers) {
-		// 레이어 태그 무결성 검사
-		MAPOBJ_TYPE eType = Check_LayerTag(layerdata.TagLayer);
-		if (MAPOBJ_TYPE::END == eType)
-			continue;
+			for (auto& objectdata : layerdata.Objects) {
+				switch (eType)
+				{
+				case MAPOBJ_TYPE::PLACED:
+					Place_PlacedObjectFromLoadData(&objectdata);
+					break;
+				case MAPOBJ_TYPE::TRIGGER:
+					Place_TriggerObjectFromLoadData(&objectdata);
+					break;
+				}
+				LOADED_OBJECT Desc = {};
+				Desc.iObjIdx = objectdata.iObjID;
+				Desc.TagModelKey = objectdata.TagModelResourceKey;
 
-		for (auto& objectdata : layerdata.Objects) {
-			switch (eType)
-			{
-			case MAPOBJ_TYPE::PLACED:
-				Place_PlacedObjectFromLoadData(&objectdata);
-				break;
-			case MAPOBJ_TYPE::TRIGGER:
-				Place_TriggerObjectFromLoadData(&objectdata);
-				break;
+				LoadedData.LoadedObjects.push_back(Desc);
 			}
-			LOADED_OBJECT Desc = {};
-			Desc.iObjIdx = objectdata.iObjID;
-			Desc.TagModelKey = objectdata.TagModelResourceKey;
-
-			LodedObjects.push_back(Desc);
 		}
 	}
+	else if (OpenPath.string().find("EntityData") != string::npos)
+	{
+		Entity_Header EntityHeader = Helper::LoadJson<Entity_Header>(OpenPath.string());
+	
+		if ("Base" != EntityHeader.TagDataFormat)
+		{
+			MSG_BOX("[MapTool] Load Entity Data Failed.\nBaseData가 아닙니다.");
+			return {};
+		}
 
-	return LodedObjects;
+		LoadedData.tagDataFormat = "EntityData";
+		m_tMapToolContext.iVersion = EntityHeader.iVersion;
+		m_tMapToolContext.TagArea = EntityHeader.TagArea;
+
+		for (auto& EntityData : EntityHeader.Entities)
+		{
+			Place_EntityObjectFromLoadData(&EntityData);
+			LOADED_OBJECT Desc = {};
+			Desc.iObjIdx = EntityData.iEntityID;
+			Desc.TagModelKey = EntityData.tagName;
+
+			LoadedData.LoadedObjects.push_back(Desc);
+		}
+	}
+	else
+	{
+		MSG_BOX("[MapTool] Load Data Failed.\n일치하는 DataFormat이 없습니다.");
+		return {};
+	}
+
+
+	
+
+	return LoadedData;
 }
 
 void CMapToolCore::Clear_Layer(MAPOBJ_TYPE eObjType)
@@ -187,6 +231,31 @@ void CMapToolCore::Place_TriggerObjectFromLoadData(MapData_Object* pData)
 
 	IObjectService* pObjMgr = m_pGameInstance->Get_ObjectMgr();
 	pObjMgr->Add_Object(pStaticObject, { g_TagMapToolLevel, g_tagMapObjType[ENUM(MAPOBJ_TYPE::TRIGGER)] });
+}
+
+void CMapToolCore::Place_EntityObjectFromLoadData(ENTITY* pData)
+{
+	COLLIDER_DESC ColDesc = {};
+	ColDesc.eType = COLLIDER_TYPE::BOX;
+	ColDesc.bTrigger = true; // 충돌 박스 생성하는 트리거
+	ColDesc.vSize = { pData->vScale[0], pData->vScale[1], pData->vScale[2] };
+	ColDesc.vRotation = { XMConvertToRadians(pData->vRotation[0]),
+						  XMConvertToRadians(pData->vRotation[1]),
+						  XMConvertToRadians(pData->vRotation[2]) };
+
+	CEntityObject::ENTITY_INIT_DESC* pDesc = new CEntityObject::ENTITY_INIT_DESC();
+	pDesc->iType = pData->iType;
+
+	string TagInstanceName = pData->tagName;
+	CGameObject* pStaticObject = Builder::Create_Object({ g_TagMapToolLevel ,"Proto_GameObject_EntityObject" })
+		.Add_ObjDesc(pDesc)
+		.Collider(ColDesc)
+		.Position({ pData->vTranslation[0], pData->vTranslation[1], pData->vTranslation[2] })
+		.Build(TagInstanceName);
+
+	pStaticObject->Get_Component<CCollider>()->Set_DebugRender(true);
+
+	ObjectManager()->Add_Object(pStaticObject, {g_TagMapToolLevel, g_tagMapObjType[ENUM(MAPOBJ_TYPE::ENTITY)]});
 }
 
 void CMapToolCore::Set_AllObjectDebugRender(_bool is)

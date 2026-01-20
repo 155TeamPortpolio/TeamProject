@@ -7,11 +7,11 @@ NS_BEGIN(Client)
 class CMapLoader final : public CBase
 {
 public:
-	enum class MAPOBJ_TYPE {PLACED, TRIGGER, ENTITY, END};
+	enum class MAPOBJ_TYPE { PLACED, TRIGGER, ENTITY, END };
 
-	using ObjFields			= vector<FIELD_DATA>;					// 한 데이터 묶음(ObjID, 변수명, 값)
-	using ObjFieldMap		= unordered_map<int, ObjFields>;		// ObjID별로 매핑된 데이터 묶음
-	using SlotFormatData	= unordered_map<string, ObjFieldMap>;	// slotFormat별로 매핑된 데이터 묶음
+	using ObjFields = vector<FIELD_DATA>;					// 한 데이터 묶음(ObjID, 변수명, 값)
+	using ObjFieldMap = unordered_map<int, ObjFields>;		// ObjID별로 매핑된 데이터 묶음
+	using SlotFormatData = unordered_map<string, ObjFieldMap>;	// slotFormat별로 매핑된 데이터 묶음
 
 private:
 	CMapLoader();
@@ -19,7 +19,7 @@ private:
 
 public:
 	HRESULT	Initialize(const string& TagLevel, const string& TagArea);
-	
+
 private:
 	void			Place_PlacedObjectFromLoadData(MapData_Object* pData);
 	void			Place_TriggerObjectFromLoadData(MapData_Object* pData);
@@ -28,7 +28,7 @@ private:
 	HRESULT			LoadMapBaseData(const MapData_Path_Packet* pPacket);
 	HRESULT			LoadEntityBaseData(const MapData_Path_Packet* pPacket);
 	HRESULT			CacheSlotDataFile(const string& DataFormat, const string& SlotDataFilePath);
-	
+
 	_bool			isThereFormat(const string& TagSlotFormat);
 
 private:
