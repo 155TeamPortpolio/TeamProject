@@ -16,6 +16,7 @@ namespace Client {
 
 	enum class HIT_TYPE { ONCE, INTERVAL, COUNT };
 	enum class DAMAGE_TYPE {NORMAL, HARD, AIRBORNE, ULTIMATE};
+	enum class DayPhase {EarlyMorning,Morning,Afternoon,LateNight};
 }
 
 #endif
