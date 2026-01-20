@@ -60,11 +60,8 @@ void CUI_DecibelKanji::Ready_PartObjects()
         pContainer->Add_Child(pObj);
         m_pChildren[i] = pObj;
 
-        auto pSprite = pObj->Get_Component<CSprite2D>();
-        if (!pSprite)
-            continue;
-
-        m_pSprites[i] = pSprite;
+        if (auto pSprite = m_pChildren[i]->Get_Component<CSprite2D>())
+            m_pSprites[i] = pSprite;
     }
 }
 

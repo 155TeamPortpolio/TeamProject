@@ -55,9 +55,21 @@ void CUI_EvadeAction::Load_Json(const string& resourceKey)
 
 void CUI_EvadeAction::Cache_Children()
 { 
+    auto pContainer = Get_Component<CObjectContainer>();
+
     // 자식 UI 오브젝트 포인터를 배열에 캐싱
     for (_int i = 0; i < ENUM(CHILD::END); ++i)
-        m_pChildren[i] = dynamic_cast<CUI_Object*>(Get_Component<CObjectContainer>()->Find_Descendant(INSTANCENAMES[i]));
+    {
+        const string& strInstanceName = INSTANCENAMES[i];
+        if (strInstanceName.empty())
+            continue;
+
+        auto pObj = pContainer->Find_Descendant(strInstanceName);
+        if (!pObj)
+            continue;
+
+        m_pChildren[i] = dynamic_cast<CUI_Object*>(pObj);
+    } 
 
     // 캐스팅이 필요한 자식, 컴포넌트는 별도로 캐싱
     m_pGauge = dynamic_cast<CGaugeUI*>(m_pChildren[ENUM(CHILD::GAUGE)]);
