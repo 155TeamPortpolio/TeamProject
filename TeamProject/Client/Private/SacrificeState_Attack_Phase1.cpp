@@ -366,9 +366,10 @@ void CSacrificeState_Attack_03_Phase1::Update(CSacrifice* pOwner, _float dt)
 			blackBoard.isRequestNext = true;
 	}
 
-	Update_Effects(pOwner);
+	if(m_fAnimProgress<0.14f)
+		pOwner->RotateToTarget(dt, 10.f);
 
-	pOwner->RotateToTarget(dt, 10.f);
+	Update_Effects(pOwner);
 	pOwner->MoveByRootMotion(dt);
 }
 
@@ -809,7 +810,7 @@ void CSacrificeState_Attack_08_Phase1::Update_Weapons(CSacrifice* pOwner)
 void CSacrificeState_Attack_08_Phase1::Update_Move(CSacrifice* pOwner, _float dt)
 {
 	/* Move Update */
-	if (m_fAnimProgress < 0.5f)
+	if (m_fAnimProgress < 0.3f)
 		pOwner->RotateToTarget(dt, 10.f);
 
 	auto pCCT = pOwner->Get_Component<CCharacterController>();
