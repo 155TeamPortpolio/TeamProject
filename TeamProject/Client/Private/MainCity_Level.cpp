@@ -11,8 +11,8 @@
 
 /* MapData */
 #include "MapLoader.h"
-#include "MapPlacedObject.h"
-#include "MapTriggerObject.h"
+
+#include "Player.h"
 
 /* UI */
 #include "UIDirector.h"
@@ -27,18 +27,24 @@ CMainCity_Level::CMainCity_Level(const string& LevelKey)
 
 HRESULT CMainCity_Level::Initialize()
 {
+	RenderSystem()->Set_FogDesc({ _float4(0.12f, 0.25f, 0.35f, 1.0f),0.f, 0.f, 0.005f, true });
 	return S_OK;
 }
 
 HRESULT CMainCity_Level::Awake()
 {
-	//============== Map ============================
-	PrototypeManager()->Add_ProtoType("MainCity_Level", "Proto_GameObject_MapPlacedObject", CMapPlacedObject::Create());
-	PrototypeManager()->Add_ProtoType("MainCity_Level", "Proto_GameObject_MapTriggerObject", CMapTriggerObject::Create());
+	m_pPlayer = dynamic_cast<CPlayer*>(ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Player)));
+	m_pPlayer->Set_PlayerType(CPlayer::PLAYER::FIELD);
 
-	//============== Map ============================
-	ReadyMap();
-	CUIDirector::GetInstance()->Load_LevelObjects("MainCity_Level");
+	IProtoService* pProto = CGameInstance::GetInstance()->Get_PrototypeMgr();
+	IResourceService* pResource = CGameInstance::GetInstance()->Get_ResourceMgr();
+	auto objMgr = m_pGameInstance->Get_ObjectMgr();
+
+	//==================== UI ===============
+	auto uiDirector = CUIDirector::GetInstance();
+	uiDirector->Load_LevelObjects("Scott_Level");
+
+	Ready_Map("MainCity_Level", "MainCity");
 	return S_OK;
 }
 
@@ -57,12 +63,13 @@ void CMainCity_Level::PreLoad_Level()
 {
 	}
 
-void CMainCity_Level::ReadyMap()
+void CMainCity_Level::Ready_Map(const string& LevelTag, const string& AreaTag)
 {
-	//CMapLoader* pMapLoader = CMapLoader::Create(m_LevelKey, m_pMapDataCloud, "TrainingRoom");
-	//if (nullptr == pMapLoader)
-	//	MSG_BOX("Failed to Load MapData!");
-	//Safe_Release(pMapLoader);
+	CMapLoader* pMapLoader = CMapLoader::Create(LevelTag, AreaTag);
+	if (nullptr == pMapLoader)
+		MSG_BOX("Failed to Load MapData!");
+
+	Safe_Release(pMapLoader);
 }
 
 CMainCity_Level* CMainCity_Level::Create(const string& LevelKey)
