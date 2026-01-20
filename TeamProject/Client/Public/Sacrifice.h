@@ -10,9 +10,16 @@ class CSacrifice final :
     public CEnemy
 {
 public:
+    typedef struct tagSacrificeBlackBoard : public ATTACK_BLACK_BOARD
+    {
+        _uint iPatternCount{};
+    }SACRIFICE_BLACK_BOARD;
+
+public:
     enum class PHASE { PHASE1, PHASE2, END };
     enum class PARTS { ICE, WEAPON_SWORD, WEAPON_AXE, WEAPON_WHIP, END };
     enum class DISSOLVE_STATE { DISAPPEAR, APPEAR, NONE, END };
+
 private:
     CSacrifice();
     CSacrifice(const CSacrifice& rhg);
@@ -58,7 +65,7 @@ public:
     void Evade();
     void ChangePhase();
 
-    ATTACK_BLACK_BOARD& GetBlackBoard() { return m_AttackBlackBoard; }
+    SACRIFICE_BLACK_BOARD& GetBlackBoard() { return m_AttackBlackBoard; }
     PHASE GetCurrPhase()const { return m_eCurrPhase; }
     void ChangePhase_SetUp();
 
@@ -95,7 +102,7 @@ private:
 private:
     CStateMachine<CSacrifice>* m_pStateMachine{};
     vector<_uint> m_PartMeshIndices;
-    ATTACK_BLACK_BOARD m_AttackBlackBoard{};
+    SACRIFICE_BLACK_BOARD m_AttackBlackBoard{};
     _bool m_RequestIdle = false;
 
     _float m_fIdleElasedTime{};

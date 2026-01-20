@@ -72,7 +72,7 @@ HRESULT CSkinnedMeshRenderer::Render_SkinnedMesh_Bloom()
 		m_pTargetManager->Bind_Target("Target_Bright_SkinnedMesh", m_pShader, "MeshBrightTexture");
 
 		Bind_WorldMatrix();
-
+  
 		m_pShader->Bind_Value("fScreenWidth", { &m_fScreenWidth, "float", sizeof(float)});
 		m_pShader->Bind_Value("fScreenHeight", { &m_fScreenHeight, "float", sizeof(float)});
 		ID3D11InputLayout* pLayout;
