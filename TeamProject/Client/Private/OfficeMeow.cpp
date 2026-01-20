@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "OfficeMeow.h"
 
 #include "GameInstance.h"
@@ -61,7 +61,7 @@ void COfficeMeow::Awake()
 	pAnimator->Set_MotionBone(13); //Bip001
 
 	m_strAnimName = "NPC_Male_OfficerMeowji_Ani_MainCity_Stand_";
-	m_strName = "OfficerMeow";
+	m_strName = L"냥냥이 치안관";
 
 	pAnimator->Set_Animation(Get_AnimName() + "Idle01")
 		.Loop(true)
