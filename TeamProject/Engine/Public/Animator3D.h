@@ -100,6 +100,15 @@ public://애니매이터 데이터
     _bool Get_isPause(_uint LayerIndex = 0);
     //
     class CModelData* Get_ModelData() { return m_pData; }
+
+    // ------------------------------------------
+    _int   Get_AnimClipCount() const;
+    string Get_AnimClipName(_uint clipIndex) const;
+    _float Get_TimeSec();
+    _float Get_DurationSec();
+    void   Set_TimeSec(_float timeSec);
+
+
     /*----- Setter -----*/
     
     //모션본 직접설정

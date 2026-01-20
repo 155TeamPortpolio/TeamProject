@@ -165,6 +165,8 @@ HRESULT CSacrifice::Initialize(INIT_DESC* pArg)
 	if (FAILED(Create_Colliders()))
 		return E_FAIL;
 
+	Create_UIEnemyStatus("Bip001_Spine2");
+
 	return S_OK;
 }
 

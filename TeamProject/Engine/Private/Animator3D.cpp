@@ -437,6 +437,74 @@ _bool CAnimator3D::Get_isPause(_uint LayerIndex)
 	return m_AnimLayers[LayerIndex].bPause;
 }
 
+_int CAnimator3D::Get_AnimClipCount() const
+{
+	return (_int)m_pAnimClips.size();
+}
+
+string CAnimator3D::Get_AnimClipName(_uint clipIndex) const
+{
+	if (clipIndex >= m_pAnimClips.size()) return "";
+	return m_pAnimClips[clipIndex]->Get_Name();
+}
+
+_float CAnimator3D::Get_TimeSec()
+{
+	if (m_AnimLayers.empty()) return 0.f;
+
+	auto& layer = m_AnimLayers[0];
+	return layer.bBlending ? layer.fBlendTrackPosition : layer.fCurrentTrackPosition;
+}
+
+_float CAnimator3D::Get_DurationSec()
+{
+	const _int cur = Get_CurAnimIndex(0);
+	if (cur < 0) return 0.f;
+
+	return m_pAnimClips[(size_t)cur]->Get_Duration();
+}
+
+void CAnimator3D::Set_TimeSec(_float timeSec)
+{
+	if (m_AnimLayers.empty()) return;
+
+	const _int cur = Get_CurAnimIndex(0);
+	if (cur < 0) return;
+
+	const _float dur = m_pAnimClips[(size_t)cur]->Get_Duration();
+
+	if (timeSec < 0.f) timeSec = 0.f;
+	if (dur > 0.f && timeSec > dur) timeSec = dur;
+
+	auto& layer = m_AnimLayers[0];
+
+	layer.fCurrentTrackPosition = timeSec;
+	layer.fBlendTrackPosition = timeSec;
+	layer.fPrevTrackPosition = timeSec;
+
+	const _bool wasPause = layer.bPause;
+
+	const _vector3    prevRootPos = layer.vPrevRootPos;
+	const _float4     prevRootQuat = layer.vPrevRootQuat;
+	const _vector3    prevMovePos = layer.vPrevMotionBonePos;
+	const _float3     prevMoveDelta = layer.vRootMoveDelta;
+	const _float4     prevQuatDelta = layer.vRootQuatDelta;
+	const _bool       prevWrapped = layer.bWrapped;
+
+	layer.bPause = false;
+	Update_Animation(0.f);
+	layer.bPause = wasPause;
+
+	layer.vPrevRootPos = prevRootPos;
+	layer.vPrevRootQuat = prevRootQuat;
+	layer.vPrevMotionBonePos = prevMovePos;
+	layer.vRootMoveDelta = prevMoveDelta;
+	layer.vRootQuatDelta = prevQuatDelta;
+	layer.bWrapped = prevWrapped;
+
+	Clear_Events();
+}
+
 void CAnimator3D::Set_MotionBone(_int MoveBoneIndex)
 {
 	for (auto& Layer : m_AnimLayers) {
