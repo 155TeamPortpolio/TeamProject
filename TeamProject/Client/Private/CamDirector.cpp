@@ -2,6 +2,7 @@
 #include "CamDirector.h"
 #include "GameInstance.h"
 #include "GameObject.h"
+#include "Helper_Func.h"
 // Camera
 #include "SequenceCam.h"
 #include "OrbitCam.h"
@@ -13,6 +14,7 @@
 #include "Player.h"
 #include "BattlePlayer.h"
 #include "BattleSystem.h"
+#include "Character.h"
 
 IMPLEMENT_SINGLETON(CCamDirector)
 
@@ -93,9 +95,33 @@ void CCamDirector::Update(_float dt)
         StopAll(m_playing.defaultBlendOutSec);
 }
 
+string CCamDirector::ResolveSeqKey(CamSeqType type) const
+{
+    const string typeToken = Helper::EnumToString(type);
+    const string charToken = GetCharacterStr();
+
+    string key;
+    key += typeToken;
+    key += "/";
+    key += charToken;
+    key += "_";
+    key += typeToken;
+    return key;
+}
+
 CPlayer* CCamDirector::GetPlayer() const
 {
     return static_cast<CPlayer*>(objMgr.Find_Global(ENUM(GLOBAL_ID::Player)));
+}
+
+CCharacter* CCamDirector::GetCharacter() const
+{
+    return static_cast<CCharacter*>(GetPlayer()->Get_CurCharacterHandle().Get());
+}
+
+string CCamDirector::GetCharacterStr() const
+{
+    return Helper::EnumToString(GetCharacter()->Get_CharacterName());
 }
 
 void CCamDirector::UpdateInput()
@@ -109,7 +135,7 @@ void CCamDirector::UpdateInput()
     if (InputDevice()->Key_Tap(VK_F3))
     {
         BattleSystem()->GetBattlePlayer()->QuestStart();
-        RequestSequence("Intro/Intro");
+        RequestSequence(CamSeqType::ZeroIntro);
     }
 }
 
@@ -171,6 +197,16 @@ _uint CCamDirector::RequestSequence(const string& key, _float blendInSec, _bool 
     return RequestSequence(key, req);
 }
 
+_uint CCamDirector::RequestSequence(CamSeqType type)
+{
+    return RequestSequence(ResolveSeqKey(type));
+}
+
+_uint CCamDirector::RequestSequence(CamSeqType type, const CamSequenceRequestDesc& req)
+{
+    return RequestSequence(ResolveSeqKey(type), req);
+}
+
 _bool CCamDirector::IsPlaying(const string& key) const
 {
     if (!m_playing.active)      return false;
@@ -178,6 +214,11 @@ _bool CCamDirector::IsPlaying(const string& key) const
     if (m_playing.pendingStart) return true;
 
     return GetSeqObj()->Get_Component<CCamSequencePlayer>()->IsPlaying();
+}
+
+_bool CCamDirector::IsPlaying(CamSeqType type) const
+{
+    return IsPlaying(ResolveSeqKey(type));
 }
 
 _uint CCamDirector::RequestSequence(const string& key, const CamSequenceRequestDesc& req)

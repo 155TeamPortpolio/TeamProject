@@ -81,7 +81,7 @@ CCameraMgr::CamPoseFrame CCameraMgr::CapturePose(CCamera* cam) const
 {
     CamPoseFrame pose{};
 
-    const Matrix view = cam->Get_ViewMatrix();
+    const Matrix view  = cam->Get_ViewMatrix();
     const Matrix world = view.Invert();
 
     pose.pos = world.Translation();
@@ -90,10 +90,10 @@ CCameraMgr::CamPoseFrame CCameraMgr::CapturePose(CCamera* cam) const
     pose.rot.Normalize();
 
     pose.lens.projType = cam->Get_ProjType();
-    pose.lens.fov = cam->Get_FOV();
-    pose.lens.nearZ = cam->Get_Near();
-    pose.lens.farZ = cam->Get_Far();
-    pose.lens.aspect = cam->Get_Aspect();
+    pose.lens.fov      = cam->Get_FOV();
+    pose.lens.nearZ    = cam->Get_Near();
+    pose.lens.farZ     = cam->Get_Far();
+    pose.lens.aspect   = cam->Get_Aspect();
 
     if (pose.lens.projType == CamProjType::Orthographic)
         pose.lens.orthoHeight = cam->Get_OrthoSize() * 2.f;

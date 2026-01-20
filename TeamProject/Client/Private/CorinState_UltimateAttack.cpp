@@ -28,7 +28,7 @@ void CCorinState_UltimateAttack::Enter(CCorin* pOwner)
     }
     __super::Enter(pOwner);
 
-    CamDirector()->RequestSequence("Ultimate/Corin_Ultimate");
+    CamDirector()->RequestSequence(CamSeqType::Ultimate);
 }
 
 void CCorinState_UltimateAttack::Update(CCorin* pOwner, _float dt)

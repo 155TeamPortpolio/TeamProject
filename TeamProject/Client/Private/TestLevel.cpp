@@ -144,10 +144,9 @@ HRESULT CTestLevel::Awake()
 	Ready_Npc();
 
 
-	//m_pCamDirector->RequestSequence("Intro/Jane_Intro");
 	BattleSystem()->GetBattlePlayer()->QuestStart();
 	m_pCamDirector->AutoTarget();
-	m_pCamDirector->RequestSequence("Intro/Intro");
+	m_pCamDirector->RequestSequence(CamSeqType::ZeroIntro);
 
 	//GameInstance()->Set_EngineTimeScale(0.33f);
 

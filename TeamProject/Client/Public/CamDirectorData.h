@@ -10,11 +10,11 @@ NS_END
 
 NS_BEGIN(Client)
 namespace fs = filesystem;
+class CBattlePlayer; class CFieldCharacter; class CPlayer; class CCharacter;
 
-class CBattlePlayer; class CFieldCharacter; class CPlayer; 
-
-enum class CamType { None, Free, Orbit, Sequence, End };
+enum class CamType       { None, Free, Orbit, Sequence, End };
 enum class CamReturnMode { None, SnapToEnd, RestorePrev };
+enum class CamSeqType    { BattleIntro, ZeroIntro, Ultimate, End };
 
 struct CamSequenceRequestDesc
 {
