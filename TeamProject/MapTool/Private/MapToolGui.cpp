@@ -65,6 +65,10 @@ void CMapToolGui::Update_Panel(_float dt)
 
 void CMapToolGui::Render_GUI()
 {
+    ImGui::SetNextWindowSize(ImVec2(400, 600), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowPos(ImVec2(200, 50), ImGuiCond_FirstUseEver);
+    ImGui::Begin("MapTool");
+
     ImGui::PushID(this);
 
     ImGui::SeparatorText("MapTool");
@@ -73,15 +77,14 @@ void CMapToolGui::Render_GUI()
     const float textLineHeight = ImGui::GetTextLineHeightWithSpacing();
     const float OneLineHeight = textLineHeight * 2.f;
     const float childControllerHeight = (textLineHeight * 2) + (ImGui::GetStyle().WindowPadding.y * 2);
-    ImGui::Text("textLineHeight : %.2f", textLineHeight);
 
     ///////////////////////////////
 
     ImGui::Text("Controller");
     ImGui::BeginChild("##MapToolGuiControllerChild", ImVec2{ 0, childControllerHeight }, true);
 
-    if (ImGui::Checkbox("IsDebugRender", &m_pMapToolContext->isAllDebugRender))
-        m_pMapToolCore->Set_AllObjectDebugRender(m_pMapToolContext->isAllDebugRender);
+    //if (ImGui::Checkbox("IsDebugRender", &m_pMapToolContext->isAllDebugRender))
+    //    m_pMapToolCore->Set_AllObjectDebugRender(m_pMapToolContext->isAllDebugRender);
 
     ImGui::Text("Last Ray Hit Pos : %.3f, %.3f, %.3f ", m_vRayHitPos.x, m_vRayHitPos.y, m_vRayHitPos.z);
     ImGui::EndChild();
@@ -199,6 +202,7 @@ void CMapToolGui::Render_GUI()
     }
 
     ImGui::PopID();
+    ImGui::End();
 }
 
 void CMapToolGui::RakeResources()
@@ -375,7 +379,6 @@ void CMapToolGui::Place_Object(PHYSICS_RAY_HIT* pRayHit)
         pStaticObject->Get_Component<CCollider>()->Set_DebugRender(true);
 
         pObjMgr->Add_Object(pStaticObject, { g_TagMapToolLevel, g_tagMapObjType[ENUM(MAPOBJ_TYPE::ENTITY)] });
-        //Proto_GameObject_EntityObject
 
         break;
     }
@@ -489,7 +492,7 @@ void CMapToolGui::Save_EntityData()
     
     m_EntityData.iVersion = m_pMapToolContext->iVersion;
     m_EntityData.TagArea = m_pMapToolContext->TagArea;
-    m_EntityData.TagDataFormat = "Entity";
+    m_EntityData.TagDataFormat = "Base";
 
     _int    iEntityIndex = {};
     
@@ -507,7 +510,7 @@ void CMapToolGui::Save_EntityData()
     }
     
     // 버전 없어도 될거같은데
-    string TagFileName = "EntityData." + m_pMapToolContext->TagArea + "." + m_EntityData.TagDataFormat;// + "." + std::to_string(m_MapData.iVersion);
+    string TagFileName = "EntityData." + m_pMapToolContext->TagArea + "." + m_EntityData.TagDataFormat + "." + std::to_string(m_MapData.iVersion);
     string SavePath = "../Bin/Data/NewEntityData/" + HelperMT::MakeTimestampFileName(TagFileName, ".json");
 
     if (true == HelperMT::ExportJsonFile<Entity_Header>(m_EntityData, SavePath))
