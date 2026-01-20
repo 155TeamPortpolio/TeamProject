@@ -7,8 +7,7 @@ class CUI_SwitchAction final : public CUI_Object
 {
 private:
 	enum class CHILD { GROUP, BG, GAUGEBG, GAUGE, ICONBG, ICON, OUTLINE, SPACE, END };
-
-	static const string INSTANCENAMES[ENUM(CHILD::END)];
+	inline static const string INSTANCENAMES[ENUM(CHILD::END)] = { "group", "bg", "gaugeBg", "gauge", "iconBg", "icon", "outline", "space" };
 
 	enum class INTERACT_STATE { DISABLE, ENABLE, AVAILABLE };
 	enum class EXECUTE_MODE { ANIM, NONANIM };
@@ -29,30 +28,30 @@ public:
 	virtual void	UI_DeActive(void* pArg = nullptr)override;
 
 private:
-	UI_HANDLE		m_handles[ENUM(CHILD::END)];
+	CUI_Object*		m_pChildren[ENUM(CHILD::END)] = {};
+	class CGaugeUI* m_pGauge = { nullptr };
 
 	INTERACT_STATE	m_interactState = { INTERACT_STATE::ENABLE };
-	_bool			m_isVisualInitialized = {};
-
 	UI_ACTION_PRIMARY_MODE m_eMode = { UI_ACTION_PRIMARY_MODE ::ATTACK};
 
-private: 
+private:
+	void Load_Json(const string& resourceKey);
+	void Cache_Children();
+	void Bind_EventListener();
+
 	void Set_InteractState(INTERACT_STATE state);
 	void Execute(EXECUTE_MODE mode);
-	void Set_FillAmount(_float fFillAmount);
+	void Set_Gauge(_float fFillAmount);
 
 	void Refresh_Visual();			// 상태 변경시에만 호출
 
-	_bool Apply_DisableVisual();
+	void Apply_DisableVisual();
 	void Apply_EnableVisual();
 	void Apply_AvailableVisual();
 
-	_bool Set_Alive(CHILD child, _bool isAlive);
-	_bool Set_Animation(CHILD child, _int iIndex);
-	_bool Set_Color(CHILD child, _float4 vColor);
-
-	template<typename Func>
-	_bool ForChild(CHILD child, Func&& func);
+	void Set_ChildAlive(CHILD child, _bool isAlive); 
+	void Set_ChildColor(CHILD child, _float4 vColor);
+	void Set_ChildAnimation(CHILD child, _int iIndex);
 
 public:
 	static  CGameObject* Create();
@@ -61,14 +60,3 @@ public:
 };
 
 NS_END
-
-template<typename Func>
-inline _bool CUI_SwitchAction::ForChild(CHILD child, Func&& func)
-{
-	auto& handle = m_handles[ENUM(child)];
-	if (!handle.isValid())
-		return false;
-
-	func(handle.Get());
-	return true;
-}

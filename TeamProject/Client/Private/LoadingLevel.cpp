@@ -91,7 +91,7 @@ void CLoadingLevel::PreLoadLevel()
 
 		resourceManager->Add_ResourcePath(fileName, filePath);
 
-		const ResourceType type = CheckResourceType(fileName);
+		const ResourceType type = CheckResourceType(filePath,fileName);
 		if (type == ResourceType::None)
 			continue;
 
@@ -116,7 +116,7 @@ void CLoadingLevel::PreLoadLevel()
 }
 
 
-ResourceType CLoadingLevel::CheckResourceType(const string& fileName)
+ResourceType CLoadingLevel::CheckResourceType(const string& filePath,const string& fileName)
 {
 	const string extRaw = filesystem::path(fileName).extension().string();
 
@@ -135,20 +135,46 @@ ResourceType CLoadingLevel::CheckResourceType(const string& fileName)
 	if (ext == ".mat")
 		return ResourceType::Material;
 
+	if(isEffect(filePath))
+		return ResourceType::Effect;
+
+	if(isAnim(filePath))
+		return ResourceType::Animation;
+
 	return	ResourceType::None;
 }
 
 _bool CLoadingLevel::isSRGB(const string& filePath)
 {
-	if (filePath.find("UI"))
+	const _bool uiFolder = (filePath.find("UI") != string::npos);
+	if (uiFolder)
 		return true;
-
+	//if (filePath.find("Effect"))
+	//	return true;
 	string fileName = filesystem::path(filePath).filename().string();
 
-	if(fileName.find("_D"))
+	const _bool isDiffuse = (fileName.find("_D") != string::npos);
+	if(isDiffuse)
 		return true;
 
 	return false;
+}
+
+_bool CLoadingLevel::isEffect(const string& filePath)
+{
+	const _bool effFolder = (filePath.find("Effect") != string::npos);
+	const string extRaw = filesystem::path(filePath).extension().string();
+	_bool effJson = extRaw == ".json";
+
+	return effFolder&&effJson;
+}
+
+_bool CLoadingLevel::isAnim(const string& filePath)
+{
+	string fileName = filesystem::path(filePath).filename().string();
+	const _bool animFolder = (filePath.find("Meta.json") != string::npos);
+
+	return animFolder ;
 }
 
 CLoadingLevel* CLoadingLevel::Create(const string& LevelKey)

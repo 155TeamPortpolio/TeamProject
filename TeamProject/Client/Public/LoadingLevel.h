@@ -24,8 +24,10 @@ private:
     _float m_leastTime = { 0.f };
 private:
     void PreLoadLevel();
-    ResourceType CheckResourceType(const string& fileName);
+    ResourceType CheckResourceType(const string& filePath,const string& fileName);
     _bool isSRGB(const string& filePath);
+    _bool isEffect(const string& filePath);
+    _bool isAnim(const string& filePath);
 private:
     string m_NextLevel = {};
     unordered_map<ResourceType, queue<PreloadKey>> m_LoadQue;

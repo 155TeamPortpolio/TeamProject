@@ -6,7 +6,7 @@ NS_BEGIN(Client)
 class CUI_BattleHUDAction final : public CUI_Object
 {
 private:
-	enum class Child { PRIMARY, EVADE, SPECIAL, SWITCH, ULTIMATE, END };
+	enum class CHILD { PRIMARY, EVADE, SPECIAL, SWITCH, ULTIMATE, END };
 
 private:
 	CUI_BattleHUDAction() {}
@@ -22,20 +22,18 @@ public:
 	virtual void    Render_GUI()                     override { __super::Render_GUI(); }
 
 private:
-	UI_HANDLE		m_handles[ENUM(Child::END)];
+	CUI_Object*		m_pChildren[ENUM(CHILD::END)];
 
 	const _float2	m_vOffset = { 91.f, 116.f };
 
 private:
 	void Ready_PartObjects();
+	void Bind_EventListener();
 
-	void Attach_Child(const string& strLevelKey, const string& strPrototypeTag, const string& strInstanceName, UI_HANDLE* pHandleOut = nullptr, _float2 vOffset = {});
+	void Attach_Child(const string& strLevelKey, const string& strPrototypeTag, const string& strInstanceName, CHILD child, _float2 vOffset = {});
 
 	void Set_EnableAll(_bool isActive);
-	void Set_Enable(Child child, _bool isActive);
-
-	template<typename Func>
-	void ForChild(Child child, Func&& func);
+	void Set_Enable(CHILD child, _bool isActive);
 
 public:
 	static  CGameObject* Create();
@@ -44,13 +42,3 @@ public:
 };
 
 NS_END
-
-template<typename Func>
-inline void CUI_BattleHUDAction::ForChild(Child child, Func&& func)
-{
-	auto& handle = m_handles[ENUM(child)];
-	if (!handle.isValid())
-		return;
-
-	func(handle.Get());
-}

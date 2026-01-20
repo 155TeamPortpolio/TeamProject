@@ -2,6 +2,10 @@
 #include "UI_Object.h"
 #include "Enemy_Struct.h"
 
+NS_BEGIN(Engine)
+class CTextSlot;
+NS_END
+
 NS_BEGIN(Client)
 
 class CUI_BossHUD final : public CUI_Object
@@ -12,8 +16,8 @@ public:
 	}BOSS_HUD_DESC;
 
 private:
-	enum Child { ICON, GAUGE_HP_BACK, GAUGE_HP_FRONT, GAUGE_GROGGY, TEXT_GROGGY, END };
-	inline static const string INSTANCENAMES[ENUM(Child::END)] = { "icon", "hpBack", "hpFront", "groggy", "groggyText" };
+	enum CHILD { ICON, GAUGE_HP_BACK, GAUGE_HP_FRONT, GAUGE_GROGGY, TEXT_GROGGY, END };
+	inline static const string INSTANCENAMES[ENUM(CHILD::END)] = { "icon", "hpBack", "hpFront", "groggy", "groggyText" };
 
 private:
 	CUI_BossHUD() {}
@@ -30,7 +34,9 @@ public:
 	virtual void    Render_GUI()                     override { __super::Render_GUI(); }
 
 private:
-	UI_HANDLE				m_handles[ENUM(Child::END)];
+	CUI_Object*				m_pChildren[ENUM(CHILD::END)] = {};
+	class CGaugeUI*			m_pGauges[ENUM(CHILD::END)] = {};
+	class CTextSlot*		m_pGroggyText = { nullptr };
 
 	const MONSTER_STATUS*	m_pMonsterStatus = { nullptr };
 
@@ -46,15 +52,15 @@ private:
 	const _float			m_fGroggyMax = { 100.f };	// 그로기 맥스는 무조건 100
 
 private:
+	void Load_Json(const string& resourceKey);
+	void Cache_Children();
+
 	void Update_HPBackGauge(_float fRatio, _float dt);
 	void Apply_Blink(_float fRatio, _float dt);
 
-	void Set_Color(Child child, _float4 vColor);
-	void Set_GaugeFill(Child child, _float fFillAmount);
-	void Set_NumberText(Child child, _int iNum, _int iWidth);
-
-	template<typename Func>
-	void ForChild(Child child, Func&& func);
+	void Set_ChildColor(CHILD child, _float4 vColor);
+	void Set_GaugeFill(CHILD child, _float fFillAmount);
+	void Set_GroggyText(_int iNum, _int iWidth);
 
 public:
 	static  CGameObject* Create();
@@ -63,13 +69,3 @@ public:
 };
 
 NS_END
-
-template<typename Func>
-inline void CUI_BossHUD::ForChild(Child child, Func&& func)
-{
-	auto& handle = m_handles[ENUM(child)];
-	if (!handle.isValid())
-		return;
-
-	func(handle.Get());
-}
