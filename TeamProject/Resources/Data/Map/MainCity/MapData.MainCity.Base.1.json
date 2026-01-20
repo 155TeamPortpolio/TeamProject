@@ -1,6 +1,6 @@
 {
   "TagDataFormat": "Base",
-  "TagArea": "Zero_Worksite",
+  "TagArea": "MainCity",
   "iVersion": 1,
   "Layers": [
     {
@@ -8,10 +8,10 @@
       "Objects": [
         {
           "iObjID": 0,
-          "TagModelResourceKey": "Stage_Zero_WorkSite_Bridgeout.model",
-          "TagMaterialResourceKey": "Stage_Zero_WorkSite_Bridgeout.mat",
+          "TagModelResourceKey": "Groundout.model",
+          "TagMaterialResourceKey": "Groundout.mat",
           "vRight": [
-            0.9999967217445374,
+            1.0,
             0.0,
             0.0,
             0.0
@@ -25,49 +25,49 @@
           "vLook": [
             0.0,
             0.0,
-            0.9999967217445374,
+            1.0,
             0.0
           ],
           "vPos": [
-            10.0,
-            -40.0,
-            10.0,
+            0.0,
+            0.0,
+            0.0,
             1.0
           ]
         },
         {
           "iObjID": 1,
-          "TagModelResourceKey": "Stage_Zero_WorkSite_Buildingout.model",
-          "TagMaterialResourceKey": "Stage_Zero_WorkSite_Buildingout.mat",
+          "TagModelResourceKey": "Interiorout.model",
+          "TagMaterialResourceKey": "Interiorout.mat",
           "vRight": [
-            -1.0,
+            1.0,
             0.0,
-            1.1920928955078125e-07,
+            0.0,
             0.0
           ],
           "vUp": [
             0.0,
-            0.9999985694885254,
+            1.0,
             0.0,
             0.0
           ],
           "vLook": [
-            -1.1920911902052467e-07,
             0.0,
-            -0.9999985694885254,
+            0.0,
+            1.0,
             0.0
           ],
           "vPos": [
-            10.0,
-            -40.0,
-            10.0,
+            0.0,
+            0.0,
+            0.0,
             1.0
           ]
         },
         {
           "iObjID": 2,
-          "TagModelResourceKey": "Stage_Zero_WorkSite_Ceilingout.model",
-          "TagMaterialResourceKey": "Stage_Zero_WorkSite_Ceilingout.mat",
+          "TagModelResourceKey": "MainCity_Interior_Coffee_01out.model",
+          "TagMaterialResourceKey": "MainCity_Interior_Coffee_01out.mat",
           "vRight": [
             1.0,
             0.0,
@@ -87,16 +87,16 @@
             0.0
           ],
           "vPos": [
-            10.0,
-            -40.0,
-            10.0,
+            0.0,
+            0.0,
+            0.0,
             1.0
           ]
         },
         {
           "iObjID": 3,
-          "TagModelResourceKey": "Stage_Zero_WorkSite_Constructionout.model",
-          "TagMaterialResourceKey": "Stage_Zero_WorkSite_Constructionout.mat",
+          "TagModelResourceKey": "Constructionout.model",
+          "TagMaterialResourceKey": "Constructionout.mat",
           "vRight": [
             1.0,
             0.0,
@@ -105,27 +105,27 @@
           ],
           "vUp": [
             0.0,
-            0.9999969601631165,
+            1.0,
             0.0,
             0.0
           ],
           "vLook": [
             0.0,
             0.0,
-            0.9999969601631165,
+            1.0,
             0.0
           ],
           "vPos": [
-            10.0,
-            -40.0,
-            10.0,
+            0.0,
+            0.0,
+            0.0,
             1.0
           ]
         },
         {
           "iObjID": 4,
-          "TagModelResourceKey": "Stage_Zero_WorkSite_Vehicleout.model",
-          "TagMaterialResourceKey": "Stage_Zero_WorkSite_Vehicleout.mat",
+          "TagModelResourceKey": "Common_Prop_Ball_01.model",
+          "TagMaterialResourceKey": "Common_Prop_Ball_01.mat",
           "vRight": [
             1.0,
             0.0,
@@ -145,16 +145,16 @@
             0.0
           ],
           "vPos": [
-            10.0,
-            -40.0,
-            10.0,
+            0.0,
+            0.0,
+            0.0,
             1.0
           ]
         },
         {
           "iObjID": 5,
-          "TagModelResourceKey": "Stage_Zero_WorkSite_Groundout.model",
-          "TagMaterialResourceKey": "Stage_Zero_WorkSite_Groundout.mat",
+          "TagModelResourceKey": "Bridgeout.model",
+          "TagMaterialResourceKey": "Bridgeout.mat",
           "vRight": [
             1.0,
             0.0,
@@ -174,16 +174,16 @@
             0.0
           ],
           "vPos": [
-            10.0,
-            -40.0,
-            10.0,
+            0.0,
+            0.0,
+            0.0,
             1.0
           ]
         },
         {
           "iObjID": 6,
-          "TagModelResourceKey": "Stage_Zero_WorkSite_Mountainout.model",
-          "TagMaterialResourceKey": "Stage_Zero_WorkSite_Mountainout.mat",
+          "TagModelResourceKey": "Buildingout.model",
+          "TagMaterialResourceKey": "Buildingout.mat",
           "vRight": [
             1.0,
             0.0,
@@ -203,16 +203,16 @@
             0.0
           ],
           "vPos": [
-            10.0,
-            -40.0,
-            10.0,
+            0.0,
+            0.0,
+            0.0,
             1.0
           ]
         },
         {
           "iObjID": 7,
-          "TagModelResourceKey": "Stage_Zero_WorkSite_NAPMesh1.model",
-          "TagMaterialResourceKey": "Stage_Zero_WorkSite_NAPMesh1.mat",
+          "TagModelResourceKey": "Ceilingout.model",
+          "TagMaterialResourceKey": "Ceilingout.mat",
           "vRight": [
             1.0,
             0.0,
@@ -232,16 +232,16 @@
             0.0
           ],
           "vPos": [
-            10.0,
-            -40.0,
-            10.0,
+            0.0,
+            0.0,
+            0.0,
             1.0
           ]
         },
         {
           "iObjID": 8,
-          "TagModelResourceKey": "Stage_Zero_WorkSite_NAPMesh2.model",
-          "TagMaterialResourceKey": "Stage_Zero_WorkSite_NAPMesh2.mat",
+          "TagModelResourceKey": "CloseUp_01out.model",
+          "TagMaterialResourceKey": "CloseUp_01out.mat",
           "vRight": [
             1.0,
             0.0,
@@ -261,16 +261,16 @@
             0.0
           ],
           "vPos": [
-            10.0,
-            -40.0,
-            10.0,
+            0.0,
+            0.0,
+            0.0,
             1.0
           ]
         },
         {
           "iObjID": 9,
-          "TagModelResourceKey": "Stage_Zero_WorkSite_PathMeshout.model",
-          "TagMaterialResourceKey": "Stage_Zero_WorkSite_PathMeshout.mat",
+          "TagModelResourceKey": "CloseUp_02out.model",
+          "TagMaterialResourceKey": "CloseUp_02out.mat",
           "vRight": [
             1.0,
             0.0,
@@ -290,16 +290,16 @@
             0.0
           ],
           "vPos": [
-            10.0,
-            -40.0,
-            10.0,
+            0.0,
+            0.0,
+            0.0,
             1.0
           ]
         },
         {
           "iObjID": 10,
-          "TagModelResourceKey": "Stage_Zero_WorkSite_Propout.model",
-          "TagMaterialResourceKey": "Stage_Zero_WorkSite_Propout.mat",
+          "TagModelResourceKey": "CloseUp_04 (1)out.model",
+          "TagMaterialResourceKey": "CloseUp_04 (1)out.mat",
           "vRight": [
             1.0,
             0.0,
@@ -319,16 +319,16 @@
             0.0
           ],
           "vPos": [
-            10.0,
-            -40.0,
-            10.0,
+            0.0,
+            0.0,
+            0.0,
             1.0
           ]
         },
         {
           "iObjID": 11,
-          "TagModelResourceKey": "Stage_Zero_WorkSite_SceneObjectStateWidgetRootout.model",
-          "TagMaterialResourceKey": "Stage_Zero_WorkSite_SceneObjectStateWidgetRootout.mat",
+          "TagModelResourceKey": "CloseUp_04out.model",
+          "TagMaterialResourceKey": "CloseUp_04out.mat",
           "vRight": [
             1.0,
             0.0,
@@ -348,16 +348,16 @@
             0.0
           ],
           "vPos": [
-            10.0,
-            -40.0,
-            10.0,
+            0.0,
+            0.0,
+            0.0,
             1.0
           ]
         },
         {
           "iObjID": 12,
-          "TagModelResourceKey": "Stage_Zero_WorkSite_Stairout.model",
-          "TagMaterialResourceKey": "Stage_Zero_WorkSite_Stairout.mat",
+          "TagModelResourceKey": "CloseUp_05out.model",
+          "TagMaterialResourceKey": "CloseUp_05out.mat",
           "vRight": [
             1.0,
             0.0,
@@ -377,16 +377,16 @@
             0.0
           ],
           "vPos": [
-            10.0,
-            -40.0,
-            10.0,
+            0.0,
+            0.0,
+            0.0,
             1.0
           ]
         },
         {
           "iObjID": 13,
-          "TagModelResourceKey": "Stage_Zero_WorkSite_Wallout.model",
-          "TagMaterialResourceKey": "Stage_Zero_WorkSite_Wallout.mat",
+          "TagModelResourceKey": "Common_Prop_PlutusCat_02out.model",
+          "TagMaterialResourceKey": "Common_Prop_PlutusCat_02out.mat",
           "vRight": [
             1.0,
             0.0,
@@ -406,16 +406,16 @@
             0.0
           ],
           "vPos": [
-            10.0,
-            -40.0,
-            10.0,
+            0.0,
+            0.0,
+            0.0,
             1.0
           ]
         },
         {
           "iObjID": 14,
-          "TagModelResourceKey": "Stage_Zero_WorkSite_Doorout.model",
-          "TagMaterialResourceKey": "Stage_Zero_WorkSite_Doorout.mat",
+          "TagModelResourceKey": "Common_Prop_StreetLamp_02 (1)out.model",
+          "TagMaterialResourceKey": "Common_Prop_StreetLamp_02 (1)out.mat",
           "vRight": [
             1.0,
             0.0,
@@ -435,218 +435,271 @@
             0.0
           ],
           "vPos": [
-            10.0,
-            -40.0,
-            10.0,
+            0.0,
+            0.0,
+            0.0,
             1.0
           ]
-        }
-      ]
-    },
-    {
-      "TagLayer": "TriggerObject_Layer",
-      "Objects": [
+        },
         {
           "iObjID": 15,
-          "TagModelResourceKey": "Portal",
-          "TagMaterialResourceKey": "BOX",
+          "TagModelResourceKey": "Common_Prop_StreetLamp_02 (2)out.model",
+          "TagMaterialResourceKey": "Common_Prop_StreetLamp_02 (2)out.mat",
           "vRight": [
-            0.0,
+            1.0,
             0.0,
             0.0,
             0.0
           ],
           "vUp": [
-            3.5,
-            1.5,
-            1.2999999523162842,
+            0.0,
+            1.0,
+            0.0,
             0.0
           ],
           "vLook": [
-            -0.0,
             0.0,
             0.0,
+            1.0,
             0.0
           ],
           "vPos": [
-            5.089061737060547,
-            -4.25,
-            8.7024507522583,
-            0.0
+            0.0,
+            0.0,
+            0.0,
+            1.0
           ]
         },
         {
           "iObjID": 16,
-          "TagModelResourceKey": "SpawnPoint",
-          "TagMaterialResourceKey": "BOX",
+          "TagModelResourceKey": "Common_Prop_StreetLamp_02out.model",
+          "TagMaterialResourceKey": "Common_Prop_StreetLamp_02out.mat",
           "vRight": [
-            0.0,
+            1.0,
             0.0,
             0.0,
             0.0
           ],
           "vUp": [
+            0.0,
             1.0,
-            1.0,
-            1.0,
+            0.0,
             0.0
           ],
           "vLook": [
-            -0.0,
             0.0,
             0.0,
+            1.0,
             0.0
           ],
           "vPos": [
-            -0.12362861633300781,
-            -3.7850000858306885,
-            -5.950034141540527,
-            0.0
+            0.0,
+            0.0,
+            0.0,
+            1.0
           ]
         },
         {
           "iObjID": 17,
-          "TagModelResourceKey": "ZeroUI",
-          "TagMaterialResourceKey": "BOX",
+          "TagModelResourceKey": "MainCity_Prop_GameConsole_01out.model",
+          "TagMaterialResourceKey": "MainCity_Prop_GameConsole_01out.mat",
           "vRight": [
-            0.0,
+            1.0,
             0.0,
             0.0,
             0.0
           ],
           "vUp": [
-            0.10000000149011612,
-            0.10000000149011612,
-            0.10000000149011612,
+            0.0,
+            1.0,
+            0.0,
             0.0
           ],
           "vLook": [
-            -0.0,
             0.0,
             0.0,
+            1.0,
             0.0
           ],
           "vPos": [
-            5.0091094970703125,
-            -3.2870664596557617,
-            9.357000350952148,
-            0.0
+            0.0,
+            0.0,
+            0.0,
+            1.0
           ]
         },
         {
           "iObjID": 18,
-          "TagModelResourceKey": "OfficeMeow",
-          "TagMaterialResourceKey": "BOX",
+          "TagModelResourceKey": "MainCity_Prop_ArcadeSign_06out.model",
+          "TagMaterialResourceKey": "MainCity_Prop_ArcadeSign_06out.mat",
           "vRight": [
-            0.0,
+            1.0,
             0.0,
             0.0,
             0.0
           ],
           "vUp": [
-            0.10000000149011612,
-            0.10000000149011612,
-            0.10000000149011612,
-            0.0
-          ],
-          "vLook": [
-            -0.0,
-            -1.7016764879226685,
+            0.0,
+            1.0,
             0.0,
             0.0
           ],
-          "vPos": [
-            8.97172737121582,
-            -3.3889737129211426,
-            6.611456871032715,
+          "vLook": [
+            0.0,
+            0.0,
+            1.0,
             0.0
+          ],
+          "vPos": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
           ]
         },
         {
           "iObjID": 19,
-          "TagModelResourceKey": "Deliver",
-          "TagMaterialResourceKey": "BOX",
+          "TagModelResourceKey": "MainCity_Prop_ArcadeSign_07out.model",
+          "TagMaterialResourceKey": "MainCity_Prop_ArcadeSign_07out.mat",
           "vRight": [
-            0.0,
+            1.0,
             0.0,
             0.0,
             0.0
           ],
           "vUp": [
+            0.0,
             1.0,
-            1.0,
-            1.0,
-            0.0
-          ],
-          "vLook": [
-            -0.0,
-            3.114760637283325,
             0.0,
             0.0
           ],
-          "vPos": [
-            -2.1465060710906982,
-            -3.9483376502990723,
-            11.849427223205566,
+          "vLook": [
+            0.0,
+            0.0,
+            1.0,
             0.0
+          ],
+          "vPos": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
           ]
         },
         {
           "iObjID": 20,
-          "TagModelResourceKey": "Ask",
-          "TagMaterialResourceKey": "BOX",
+          "TagModelResourceKey": "propout.model",
+          "TagMaterialResourceKey": "propout.mat",
           "vRight": [
-            0.0,
+            1.0,
             0.0,
             0.0,
             0.0
           ],
           "vUp": [
+            0.0,
             1.0,
-            1.0,
-            1.0,
-            0.0
-          ],
-          "vLook": [
-            -0.0,
-            3.127797842025757,
             0.0,
             0.0
           ],
-          "vPos": [
-            -0.44388091564178467,
-            -3.915910243988037,
-            11.854595184326172,
+          "vLook": [
+            0.0,
+            0.0,
+            1.0,
             0.0
+          ],
+          "vPos": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
           ]
         },
         {
           "iObjID": 21,
-          "TagModelResourceKey": "Pay",
-          "TagMaterialResourceKey": "BOX",
+          "TagModelResourceKey": "Stairout.model",
+          "TagMaterialResourceKey": "Stairout.mat",
           "vRight": [
-            0.0,
+            1.0,
             0.0,
             0.0,
             0.0
           ],
           "vUp": [
+            0.0,
             1.0,
-            1.0,
-            1.0,
-            0.0
-          ],
-          "vLook": [
-            -0.0,
-            3.1204400062561035,
             0.0,
             0.0
           ],
-          "vPos": [
-            1.148234248161316,
-            -3.904202747344971,
-            11.978363037109375,
+          "vLook": [
+            0.0,
+            0.0,
+            1.0,
             0.0
+          ],
+          "vPos": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 22,
+          "TagModelResourceKey": "Vehicleout.model",
+          "TagMaterialResourceKey": "Vehicleout.mat",
+          "vRight": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "vPos": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 23,
+          "TagModelResourceKey": "Wallout.model",
+          "TagMaterialResourceKey": "Wallout.mat",
+          "vRight": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "vPos": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
           ]
         }
       ]

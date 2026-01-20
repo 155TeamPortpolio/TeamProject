@@ -170,6 +170,7 @@
     <ClInclude Include="..\Public\CorinState_Start.h" />
     <ClInclude Include="..\Public\CorinState_SwitchInParryAid.h" />
     <ClInclude Include="..\public\CursorController.h" />
+    <ClInclude Include="..\Public\IInteract.h" />
     <ClInclude Include="..\public\Howl.h" />
     <ClInclude Include="..\public\HowlState_Idle.h" />
     <ClInclude Include="..\public\HowlState_Sleep.h" />

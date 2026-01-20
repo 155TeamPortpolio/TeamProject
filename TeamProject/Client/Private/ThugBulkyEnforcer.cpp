@@ -617,7 +617,7 @@ void CThugBulkyEnforcer::ControlState(const _float dt)
 
 	if ("Death" != m_pStateMachine->Get_CurrentStateName() &&
 		"Groggy" != m_pStateMachine->Get_CurrentStateName() &&
-		true == m_isGroggy)
+		true == m_tStatus.isGroggy)
 		m_pStateMachine->Change_State("Groggy");
 
 	if (true == m_isAutoPatternPlay &&

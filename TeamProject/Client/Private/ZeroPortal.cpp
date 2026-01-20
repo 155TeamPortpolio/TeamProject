@@ -77,6 +77,8 @@ void CZeroPortal::Awake()
 	{
 		pMaterial->Add_MaterialData(Instance, "g_Time", { &m_Time, "float", sizeof(_float) });
 	}
+
+
 }
 
 void CZeroPortal::Priority_Update(_float dt)

@@ -1,10 +1,11 @@
 #pragma once
 #include "Interactable.h"
+#include "IInteract.h"
 
 NS_BEGIN(Client)
 
 class CZeroPortal final :
-    public CInteractable
+    public CInteractable, public IInteract
 {
 public:
     typedef struct tagZeroPortalDesc : public Engine::GAMEOBJECT_DESC {
