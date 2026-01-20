@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "BangBooAsk.h"
 
 #include "GameInstance.h"
@@ -59,7 +59,7 @@ void CBangBooAsk::Awake()
 	pAnimator->Set_MotionBone(13); //Bip001
 
 	m_strAnimName = "NPC_CashierBangbooAsk_Ani_";
-	m_strName = "Ask";
+	m_strName = L"문의";
 
 	pAnimator->Set_Animation(Get_AnimName() + "Idle_Start")
 		.Loop(false)

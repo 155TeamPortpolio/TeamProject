@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "Howl.h"
 
 #include "GameInstance.h"
@@ -61,7 +61,7 @@ void CHowl::Awake()
 	pAnimator->Link_MetaData(G_GlobalLevelKey, "NPC_Special_Woof_Meta.json");
 
 	m_strAnimName = "NPC_Special_Woof_Ani_";
-	m_strName = "Howl";
+	m_strName = L"아우";
 
 	pAnimator->Set_Animation(Get_AnimName() + "Idle01")
 		.Loop(true)
