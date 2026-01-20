@@ -291,6 +291,10 @@ string CMaterialData::ConvertToConstant(TEXTURE_TYPE eType)
 
 	case Engine::TEXTURE_TYPE::DISSOLVE:
 		return "DissolveTexture";
+
+	case Engine::TEXTURE_TYPE::ALPHA_MASK:
+		return "AlphaMaskTexture";
+
 	default:
 		break;
 	}

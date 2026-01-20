@@ -132,7 +132,7 @@ void CJaneDoeState_Rush02_Start::Update(CJaneDoe* pOwner, _float dt)
 void CJaneDoeState_Rush02_Start::Update_Effects(CJaneDoe* pOwner)
 {
     /* Slash1 */
-    if (IsCrossAnimProgress(0.15f))
+    if (IsCrossAnimProgress(0.12f))
     {
         auto pObjectContainer = pOwner->Get_Component<CObjectContainer>();
 

@@ -174,6 +174,10 @@ void CMeshNode_Edit::Import(nlohmann::ordered_json& json)
 	m_NoiseModule.vNoiseUVSpeed.x = json.at("noise_uvspeed").at("x").get<_float>();
 	m_NoiseModule.vNoiseUVSpeed.y = json.at("noise_uvspeed").at("y").get<_float>();
 
+	/* Mask Module */
+	m_MaskModule.fEnableMask = json.value("enable_mask", 0.f);
+	m_MaskModule.fMaskTilling = json.value("mask_tilling", 0.f);
+
 	{
 		m_SetMaterial = true;
 
@@ -198,6 +202,12 @@ void CMeshNode_Edit::Import(nlohmann::ordered_json& json)
 		{
 			auto pDissolveTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_DissolveTextureTag);
 			pMaterialInstance->Set_Param("DissolveTexture", { pDissolveTexture->Get_SRV(),"Texture2D",0 });
+		}
+
+		if (!m_MaskTextureTag.empty())
+		{
+			auto pMaskTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_MaskTextureTag);
+			pMaterialInstance->Set_Param("MaskTexture", { pMaskTexture->Get_SRV(),"Texture2D",0 });
 		}
 
 		m_SetMaterial = true;
@@ -294,7 +304,11 @@ void CMeshNode_Edit::Export(nlohmann::ordered_json& json)
 		{"enable_noise",m_NoiseModule.fEnableNoise},
 		{"noise_strength",m_NoiseModule.fNoiseStrength},
 		{"noise_tilling",m_NoiseModule.fNoiseTilling},
-		{"noise_uvspeed",{{"x",m_NoiseModule.vNoiseUVSpeed.x},{"y",m_NoiseModule.vNoiseUVSpeed.y}}}
+		{"noise_uvspeed",{{"x",m_NoiseModule.vNoiseUVSpeed.x},{"y",m_NoiseModule.vNoiseUVSpeed.y}}},
+
+		/* Mask */
+		{"enable_mask",m_MaskModule.fEnableMask},
+		{"mask_tilling",m_MaskModule.fMaskTilling}
 	};
 }
 
@@ -546,6 +560,15 @@ void CMeshNode_Edit::SetUp_MeshEffect()
 		ImGui::DragFloat("Noise Strength", &m_NoiseModule.fNoiseStrength);
 		ImGui::DragFloat("Noise Tilling", &m_NoiseModule.fNoiseTilling);
 		ImGui::DragFloat2("Noise UVSpeed", &m_NoiseModule.vNoiseUVSpeed.x);
+	}
+
+	if (ImGui::CollapsingHeader("Mask Module"))
+	{
+		static _bool enableMask = false;
+		if (ImGui::Checkbox("Enable Mask", &enableMask))
+			m_MaskModule.fEnableMask = enableMask ? 1.f : 0.f;
+
+		ImGui::DragFloat("Mask Tilling", &m_MaskModule.fMaskTilling);
 	}
 }
 
