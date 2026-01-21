@@ -171,10 +171,13 @@ void CSacrificeState_Attack_Phase1::BuildPattern(CSacrifice* pOwner)
 			}
 		}
 	}
-	//blackBoard.stateQueue.clear();
-	//blackBoard.stateQueue.push_back("Attack01_Phase1");
-	//blackBoard.stateQueue.push_back("Attack03_Phase1");
-	//blackBoard.stateQueue.push_back("Attack_Turn_Phase1");
+	blackBoard.stateQueue.clear();
+	blackBoard.stateQueue.push_back("Attack01_Phase1");
+	blackBoard.stateQueue.push_back("Attack02_Phase1");
+	blackBoard.stateQueue.push_back("Attack03_Phase1");
+	blackBoard.stateQueue.push_back("Attack08_Phase1");
+	blackBoard.stateQueue.push_back("Attack08_Phase1");
+	blackBoard.stateQueue.push_back("Attack_Turn_Phase1");
 	
 	blackBoard.isRequestNext = true;
 }
@@ -243,7 +246,6 @@ void CSacrificeState_Attack_01_Phase1::Update_Effects(CSacrifice* pOwner)
 	/* Smoke Sweep Trail */
 	if (IsCrossAnimProgress(0.14f))
 	{
-
 		auto effect2 = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
 			.Asset("sacrifice_hand_sweep_trail.json")
 			.Build("HandSweepTrail");
@@ -255,20 +257,23 @@ void CSacrificeState_Attack_01_Phase1::Update_Effects(CSacrifice* pOwner)
 	/* Smoke Slash */
 	if (IsCrossAnimProgress(0.15f))
 	{
-		auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
-			.Asset("sacrifice_smoke_slash2.json")
-			.Build("SmokeSlash");
+		auto pTransform = pOwner->Get_Component<CTransform>();
+        auto pObjectContainer = pOwner->Get_Component<CObjectContainer>();
 
-		_vector3 vWorldPosition = _vector3::Transform(_vector3(0.f, 0.8f, 0.3f), pTransform->Get_WorldMatrix());
-		_quaternion worldQuaternion = pTransform->Get_QuaternionRotate();
-		_quaternion localQuaternion = _quaternion(0.0f, 0.0f, 0.f, 1.f);
-		localQuaternion *= worldQuaternion;
+        _smatrix worldMatrix = pTransform->Get_WorldMatrix();
+        _vector3 vWorldPosition = _vector3::Transform(_vector3(0.f, 0.8f, 0.3f), worldMatrix);
 
-		auto pEffectTransform = effect->Get_Component<CTransform>();
-		pEffectTransform->Set_Quaternion(localQuaternion);
-		pEffectTransform->Set_Pos(vWorldPosition);
+        _quaternion localQuaternion = _quaternion(0.f, 0.f, 0.f, 1.f);
+        _quaternion worldQuaternion = pTransform->Get_QuaternionRotate();
+        localQuaternion *= worldQuaternion;
 
-		ObjectManager()->Add_Object(effect, { pOwner->Get_Level(),"Effect_Layer" });
+        auto effect = pObjectContainer->Find_ObjectByName("Sacrifice_Smoke_Slash2");
+        auto pEffectTransform = effect->Get_Component<CTransform>();
+
+        pEffectTransform->Set_WorldPos(vWorldPosition);
+        pEffectTransform->Set_WorldQuaternion(localQuaternion);
+
+        static_cast<CEffectContainer*>(effect)->Play();
 	}
 }
 
@@ -324,24 +329,24 @@ void CSacrificeState_Attack_02_Phase1::Update_Effects(CSacrifice* pOwner)
 
 	if (IsCrossAnimProgress(0.05f))
 	{
-		auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
-			.Asset("sacrifice_sword_slash.json")
-			.Build("SwordSlash");
+		auto pTransform = pOwner->Get_Component<CTransform>();
 
-		_vector3 vRight = pTransform->Dir(STATE::RIGHT);
+		auto pObjectContainer = pOwner->Get_Component<CObjectContainer>();
 
 		_smatrix worldMatrix = pTransform->Get_WorldMatrix();
-		_vector3 vWorldPosition = _vector3::Transform(_vector3(0.2f, 2.f, 0.3f), worldMatrix);
+		_vector3 vWorldPosition = _vector3::Transform(_vector3(-0.3f, 2.f, 0.3f), worldMatrix);
 
-		_quaternion worldQuaternion = pTransform->Get_QuaternionRotate();
 		_quaternion localQuaternion = _quaternion(0.02f, 0.01f, 0.36f, 0.93f);
+		_quaternion worldQuaternion = pTransform->Get_QuaternionRotate();
 		localQuaternion *= worldQuaternion;
 
+		auto effect = pObjectContainer->Find_ObjectByName("Sacrifice_Sword_Slash");
 		auto pEffectTransform = effect->Get_Component<CTransform>();
-		pEffectTransform->Set_Quaternion(localQuaternion);
-		pEffectTransform->Set_Pos(vWorldPosition);
 
-		ObjectManager()->Add_Object(effect, { pOwner->Get_Level(),"Effect_Layer" });
+		pEffectTransform->Set_WorldPos(vWorldPosition);
+		pEffectTransform->Set_WorldQuaternion(localQuaternion);
+
+		static_cast<CEffectContainer*>(effect)->Play();
 	}
 }
 
@@ -738,47 +743,50 @@ void CSacrificeState_Attack_08_Phase1::Update_Effects(CSacrifice* pOwner)
 	/* Axe Slash2 */
 	if (IsCrossAnimProgress(0.17f))
 	{
+		auto pTransform = pOwner->Get_Component<CTransform>();
+
+		auto pObjectContainer = pOwner->Get_Component<CObjectContainer>();
+
 		_smatrix worldMatrix = pTransform->Get_WorldMatrix();
 		_vector3 vWorldPosition = _vector3::Transform(_vector3(0.3f, 2.5f, 0.f), worldMatrix);
 
-		_quaternion worldQuaternion = pTransform->Get_QuaternionRotate();
 		_quaternion localQuaternion = _quaternion(0.9f, 0.27f, -0.35f, 0.03f);
+		_quaternion worldQuaternion = pTransform->Get_QuaternionRotate();
 		localQuaternion *= worldQuaternion;
 
-		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
-			.Asset("sacrifice_axe_slash2.json")
-			.Position(vWorldPosition)
-			.Build("AxeSlash2");
+		auto effect = pObjectContainer->Find_ObjectByName("Sacrifice_Axe_Slash2");
+		auto pEffectTransform = effect->Get_Component<CTransform>();
 
-		pEffect->Get_Component<CTransform>()->Set_Quaternion(localQuaternion);
+		pEffectTransform->Set_WorldPos(vWorldPosition);
+		pEffectTransform->Set_WorldQuaternion(localQuaternion);
 
-		ObjectManager()->Add_Object(pEffect, { pOwner->Get_Level(),"Effect_Layer" });
+		static_cast<CEffectContainer*>(effect)->Play();
 	}
 
 	/* Axe Slash */
 	if (IsCrossAnimProgress(0.3f))
 	{
+		auto pObjectContainer = pOwner->Get_Component<CObjectContainer>();
+
 		_smatrix worldMatrix = pTransform->Get_WorldMatrix();
 		_vector3 vWorldPosition = _vector3::Transform(_vector3(-0.2f, 5.8f, 3.6f), worldMatrix);
 
-		_quaternion worldQuaternion = pTransform->Get_QuaternionRotate();
 		_quaternion localQuaternion = _quaternion(-0.07f, -0.01f, -0.64f, 0.77f);
+		_quaternion worldQuaternion = pTransform->Get_QuaternionRotate();
 		localQuaternion *= worldQuaternion;
 
-		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
-			.Asset("sacrifice_axe_slash.json")
-			.Position(vWorldPosition)
-			.Build("AxeSlash");
+		auto effect = pObjectContainer->Find_ObjectByName("Sacrifice_Axe_Slash1");
+		auto pEffectTransform = effect->Get_Component<CTransform>();
 
-		pEffect->Get_Component<CTransform>()->Set_Quaternion(localQuaternion);
+		pEffectTransform->Set_WorldPos(vWorldPosition);
+		pEffectTransform->Set_WorldQuaternion(localQuaternion);
 
-		ObjectManager()->Add_Object(pEffect, { pOwner->Get_Level(),"Effect_Layer" });
+		static_cast<CEffectContainer*>(effect)->Play();
 	}
 	
 	if (IsCrossAnimProgress(0.34f))
 	{
 		auto pAnimator = pOwner->Get_Component<CAnimator3D>();
-		auto pTransform = pOwner->Get_Component<CTransform>();
 
 		_vector3 vBonePosition = pAnimator->Get_BonePosition(CAnimator3D::BoneSpace::COMBINED, "Bip001 L Hand");
 		vBonePosition = _vector3::Transform(vBonePosition, pTransform->Get_WorldMatrix());
@@ -980,20 +988,14 @@ void CSacrificeState_Attack_Turn_Phase1::Update_Effects(CSacrifice* pOwner)
 	/* Smoke Slash */
 	if (IsCrossAnimProgress(0.32f))
 	{
-		auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
-			.Asset("sacrifice_smoke_slash2.json")
-			.Build("SmokeSlash");
+		auto pObjectContainer = pOwner->Get_Component<CObjectContainer>();
 
-		_vector3 vWorldPosition = _vector3::Transform(_vector3(0.f, 0.8f, 0.3f), pTransform->Get_WorldMatrix());
-		_quaternion worldQuaternion = pTransform->Get_QuaternionRotate();
-		_quaternion localQuaternion = _quaternion(0.0f, 0.0f, 1.f, 0.f);
-		localQuaternion *= worldQuaternion;
-
+		auto effect = pObjectContainer->Find_ObjectByName("Sacrifice_Smoke_Slash2");
 		auto pEffectTransform = effect->Get_Component<CTransform>();
-		pEffectTransform->Set_Quaternion(localQuaternion);
-		pEffectTransform->Set_Pos(vWorldPosition);
 
-		ObjectManager()->Add_Object(effect, { pOwner->Get_Level(),"Effect_Layer" });
+		pEffectTransform->Set_Pos(_vector3(0.f, 0.8f, 0.3f));
+		pEffectTransform->Set_Quaternion(_quaternion(0.0f, 0.f, 0.f, 1.f));
+		static_cast<CEffectContainer*>(effect)->Play();
 	}
 }
 

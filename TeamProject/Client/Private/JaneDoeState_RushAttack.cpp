@@ -120,8 +120,8 @@ void CJaneDoeState_Rush01_Start::Update_Effects(CJaneDoe* pOwner)
         auto effect = pObjectContainer->Find_ObjectByName("JaneDoe_Normal_Slash0");
         auto pEffectTransform = effect->Get_Component<CTransform>();
 
-        pEffectTransform->Set_Pos(_vector3(0.f, 0.f, 0.f));
-        pEffectTransform->Set_Quaternion(_quaternion(0.61f, 0.36f, -0.38f, 0.59f));
+        pEffectTransform->Set_Pos(_vector3(0.f, 0.2f, 0.f));
+        pEffectTransform->Set_Quaternion(_quaternion(0.64f, 0.f, 0.f, 0.77f));
         static_cast<CEffectContainer*>(effect)->Play();
     }
 

@@ -10,6 +10,7 @@
 #include "ZeroStage_Boss.h"
 #include "ZeroStage_Normal.h"
 #include "ZeroStage_Elite.h"
+#include "TestCloud.h"
 
 // Camera
 #include "Camera.h"
@@ -55,6 +56,14 @@ HRESULT CZero_Level::Initialize()
 	auto castedPlayer = dynamic_cast<CPlayer*>(pPlayer);
 	castedPlayer->Set_PlayerType(CPlayer::PLAYER::BATTLE);
 	m_Context.hPlayer = castedPlayer->Get_CurCharacterHandle();
+
+	/* Cloud */
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_TestCloud", CTestCloud::Create());
+	auto testCloud = Builder::Create_Object({ "Zero_Level", "Proto_GameObject_TestCloud" })
+		.Scale(_float3(2.f, 2.f, 2.f))
+		.Build("Test_Cloud");
+	
+	ObjectManager()->Add_Object(testCloud, {"Zero_Level", "Etc_Layer"});
 
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_Sacrifice", CSacrifice::Create());
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_SacrificeHand", CSacrificeHand::Create());

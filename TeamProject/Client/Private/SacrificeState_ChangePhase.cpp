@@ -14,6 +14,7 @@ void CSacrificeState_ChangePhase::Enter(CSacrifice* pOwner)
 void CSacrificeState_ChangePhase::Update(CSacrifice* pOwner, _float dt)
 {
 	Update_Effects(pOwner);
+	Update_RimLightColor(pOwner);
 }
 
 void CSacrificeState_ChangePhase::Exit(CSacrifice* pOwner)
@@ -41,5 +42,16 @@ void CSacrificeState_ChangePhase::Update_Effects(CSacrifice* pOwner)
 		pEffectTransform->Set_WorldPos(vWorldPosition);
 
 		ObjectManager()->Add_Object(effect, { pOwner->Get_Level(),"Effect_Layer" });
+	}
+}
+
+void CSacrificeState_ChangePhase::Update_RimLightColor(CSacrifice* pOwner)
+{
+	if (m_fStateTime < m_fRimLightChangeDuration)
+	{
+		_float t = m_fStateTime / m_fRimLightChangeDuration;
+		_float3 vColor = _vector3::Lerp(m_vStartColor, m_vEndColor, Math::ApplyEase(EaseType::Linear, t));
+
+		pOwner->Set_RimLightColor(vColor);
 	}
 }

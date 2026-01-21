@@ -88,6 +88,10 @@ public:
     DISSOLVE_STATE Get_DissolveState()const { return m_eDissolveState; }
     void Update_Dissolve(_float dt);
 
+    /* RimLight */
+    void Set_RimLightColor(_float3 color) { m_vRimLightColor = color; }
+
+    /* Hit Blend */
     void Set_HitBlendable(_bool hitBlend) { m_IsHitBlendable = hitBlend; }
     void Set_Hitable(_bool hit) { m_IsHitable = hit; }
 
@@ -97,6 +101,7 @@ private:
     HRESULT Initialize_StateMachine();
     HRESULT Initialize_States();
     HRESULT Initialize_Transitions();
+    HRESULT Initialize_Effects();
     void Update_States(_float dt);
 
 private:
