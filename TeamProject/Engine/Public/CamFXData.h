@@ -1,26 +1,7 @@
 #pragma once
 
 NS_BEGIN(Engine)
-
-enum class CamShakeType
-{
-    TapSoft,
-    HitLight,
-    HitNormal,
-    HitHeavy,
-    HitCrit,
-
-    ExplosionSmall,
-    ExplosionBig,
-
-    LandingLight,
-    LandingHeavy,
-
-    Dash,
-
-    End
-};
-
+// ---------------------- Shake ---------------------------
 struct CamShakePreset
 {
     _float kickRotDeg{};
@@ -59,6 +40,23 @@ struct CamShakeInstance
     _float p0{};
     _float p1{};
     _float p2{};
+};
+
+// ----------------- Zoom ------------------
+
+struct CamZoomPreset
+{
+    _float amountDeg{};
+    _float attackSec{};
+    _float releaseSec{};
+};
+
+struct CamZoomInstance
+{
+    _float amountDeg{};
+    _float attackSec{};
+    _float releaseSec{};
+    _float elapsed{};
 };
 
 NS_END

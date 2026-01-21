@@ -31,10 +31,11 @@ namespace
 				"Corin",
 				"Corin.model",
 				"Corin.mat",
-				//"Avatar_Female_Size01_Corin_Meta.json", 
-			    "",
+				"Avatar_Female_Size01_Corin_Meta.json", 
+			    //"",
 				1.f,
-				"Avatar_Female_Size01_Corin_Ani_SwitchIn_Attack_Ex_Start"
+				"Avatar_Female_Size01_Corin_Ani_QuestStart"
+				//"Avatar_Female_Size01_Corin_Ani_SwitchIn_Attack_Ex_Start"
 			},
 			{
 				"JaneDoe",

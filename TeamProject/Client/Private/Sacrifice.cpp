@@ -139,8 +139,6 @@ HRESULT CSacrifice::Initialize(INIT_DESC* pArg)
 {
 	__super::Initialize(pArg);
 
-	auto pMaterial = Get_Component<CMaterial>();
-
 	auto pAnimator = Get_Component<CAnimator3D>();
 	pAnimator->LinkAnimate_Model(G_GlobalLevelKey, "SacrificeBringer.model");
 	pAnimator->Link_MetaData(G_GlobalLevelKey, "SacrificeBringer_Meta.json");
@@ -166,6 +164,9 @@ HRESULT CSacrifice::Initialize(INIT_DESC* pArg)
 	Create_Children();
 
 	if (FAILED(Create_Colliders()))
+		return E_FAIL;
+
+	if (FAILED(Initialize_Effects()))
 		return E_FAIL;
 
 	Create_UIEnemyStatus("Bip001_Spine2");
@@ -393,7 +394,7 @@ void CSacrifice::ChangePhase_SetUp()
 	m_tStatus.iMaxHP = 1000.f;
 	m_tStatus.iNowHP = m_tStatus.iMaxHP;
 	m_tStatus.iGroggyValue = 0;
-	m_vRimLightColor = _float3{ 1.f,0.f,0.f };
+	m_tStatus.isGroggy = false;	
 }
 
 void CSacrifice::Phase1Attack()
@@ -844,6 +845,63 @@ HRESULT CSacrifice::Initialize_Transitions()
 	return S_OK;
 }
 
+HRESULT CSacrifice::Initialize_Effects()
+{
+	auto pObjectContainer = Get_Component<CObjectContainer>();
+
+	/* Sword Slash */
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_sword_slash.json")
+			.Build("Sacrifice_Sword_Slash");
+
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect,false);
+	}
+
+	/* Axe Slash1 */
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_axe_slash.json")
+			.Build("Sacrifice_Axe_Slash1");
+
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect,false);
+	}
+
+	/* Axe Slash2 */
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_axe_slash2.json")
+			.Build("Sacrifice_Axe_Slash2");
+
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect,false);
+	}
+
+	/* Smoke Slash1 */
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_smoke_slash.json")
+			.Build("Sacrifice_Smoke_Slash1");
+
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect,false);
+	}
+
+	/* Smoke Slash2 */
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_smoke_slash2.json")
+			.Build("Sacrifice_Smoke_Slash2");
+
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect,false);
+	}
+
+	return S_OK;
+}
+
 void CSacrifice::Update_States(_float dt)
 {
 	m_fIdleDuration = m_IsOverDriveCharged ? 2.f : 0.2f;
@@ -858,6 +916,7 @@ void CSacrifice::Update_States(_float dt)
 
 	if (InputDevice()->Key_Tap('P'))
 	{
+		m_tStatus.iNowHP = m_tStatus.iMaxHP * 0.1f;
 		m_tStatus.iGroggyValue = 99;
 	}
 
@@ -893,6 +952,9 @@ void CSacrifice::Update_States(_float dt)
 	/* Death */
 	if ("Death" != m_pStateMachine->Get_CurrentStateName() && "ChangePhase" != m_pStateMachine->Get_CurrentStateName() && m_tStatus.iNowHP <= 0.f)
 	{
+		m_tStatus.iGroggyValue = 0;
+		m_tStatus.isGroggy = false;
+
 		m_pStateMachine->Change_State("Death");
 		m_pStateMachine->Reset_Trigger("Change_Phase");
 

@@ -33,6 +33,8 @@ public:
     CCamera*      GetSeqCamComp()            const { return GetSeqCam()->Get_Component<CCamera>();   }
     CCamera*      GetOrbitCamComp()          const { return GetOrbitCam()->Get_Component<CCamera>(); }
     CPlayer*      GetPlayer()                const;
+    CCharacter*   GetCharacter()             const;
+    string        GetCharacterStr()          const;
     
     CCamSequencePlayer* GetSeqPlayer()       const { return GetSeqObj()->Get_Component<CCamSequencePlayer>(); }
 
@@ -45,13 +47,19 @@ public:
     _uint         RequestSequence(const string& key);
     _uint         RequestSequence(const string& key, const CamSequenceRequestDesc& req);
     _uint         RequestSequence(const string& key, _float blendInSec, _bool resetTime, _float blendOutSec);
+    _uint         RequestSequence(CamSeqType type);
+    _uint         RequestSequence(CamSeqType type, const CamSequenceRequestDesc& req);
     
     _bool         IsPlaying(const string& key) const;
+    _bool         IsPlaying(CamSeqType type) const;
 
 
     _bool         StopRequest(_uint handle, _float blendOutSec = 0.25f, _bool resetTime = true);
     void          StopAll(_float blendOutSec = 0.25f);
     void          Update(_float dt);
+
+private:
+    string        ResolveSeqKey(CamSeqType type) const;
 
 private:
     void          UpdatePlayer();
