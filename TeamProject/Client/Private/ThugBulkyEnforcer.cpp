@@ -82,14 +82,16 @@ HRESULT CThugBulkyEnforcer::Initialize(INIT_DESC* pArg)
 		return E_FAIL;
 
 	// 임시 확인용
+#ifdef _USING_GUI
 	CGameInstance::GetInstance()->Get_GUISystem()->Get_Context()->pSelectedObject = this;
-
+#endif
 
 	return S_OK;
 }
 
 void CThugBulkyEnforcer::Awake()
 {
+	__super::Awake();
 }
 
 void CThugBulkyEnforcer::Priority_Update(_float dt)

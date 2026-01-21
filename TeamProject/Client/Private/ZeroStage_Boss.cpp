@@ -116,7 +116,7 @@ HRESULT CZeroStage_Boss::Enter_Stage(CZero_Level::StageContext& context)
 	Ready_Map("Zero_Level", "Zero_Boss1");
 	m_eStageStage = StageState::Entrance;
 	m_PlayerHandle = context.hPlayer;
-	BaseIntro(context);
+	BossIntro(context);
 	return S_OK;
 }
 
@@ -130,8 +130,7 @@ void CZeroStage_Boss::Intro()
 {
 	if (m_introFlow.IsDoneAll())
 	{
-		CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_Sacrifice", { 0.f, 0.f,0.f });
-
+		CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_Sacrifice", {_vector3(-2.f, 1.f, 21.f)});
 		CBattleSystem::GetInstance()->SetActive(true);
 		m_eStageStage = StageState::BattleStart;
 	}

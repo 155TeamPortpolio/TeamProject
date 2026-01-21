@@ -49,6 +49,7 @@ HRESULT CZeroPortal::Initialize_Prototype()
 	customInstance->Get_MaterialData()->Link_Texture(G_GlobalLevelKey, "Eff_Noise_097_LYX_01.png", TEXTURE_TYPE::AMBIENT);
 
 	m_eRenderLayer = RENDER_LAYER::None;
+	m_isAlive = false;
 	return S_OK;
 }
 
@@ -61,6 +62,7 @@ HRESULT CZeroPortal::Initialize(INIT_DESC* pArg)
 		{
 			m_pTargetStage = desc.pStage;
 			m_eRenderLayer = RENDER_LAYER::Default;
+			m_isAlive = true;
 		});
 
 	return S_OK;
@@ -89,7 +91,7 @@ void CZeroPortal::Update(_float dt)
 {
 	m_Time += dt;
 	Get_Component<CCollider>()->Update(dt);
-	Extend(dt);
+	//Extend(dt);
 
 	if (m_bIsInteractable) {
 		Interact();

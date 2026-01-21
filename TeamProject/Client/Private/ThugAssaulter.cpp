@@ -80,13 +80,17 @@ HRESULT CThugAssaulter::Initialize(INIT_DESC* pArg)
 		return E_FAIL;
 
 	// 임시 확인용
+#ifdef _USING_GUI
 	CGameInstance::GetInstance()->Get_GUISystem()->Get_Context()->pSelectedObject = this;
+#endif // _USING_GUI
+
 
 	return S_OK;
 }
 
 void CThugAssaulter::Awake()
 {
+	__super::Awake();
 }
 
 void CThugAssaulter::Priority_Update(_float dt)
