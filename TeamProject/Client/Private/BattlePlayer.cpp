@@ -60,11 +60,6 @@ HRESULT CBattlePlayer::Initialize()
 	vector<CHARACTER> BattleCharacters = {CHARACTER::JaneDoe, CHARACTER::Corin};
 	SetBattleCharacters(BattleCharacters);
 
-	UI_ACTION_DESC desc;
-	desc.eType = UI_ACTION_TYPE::ULTIMATE;
-	desc.eState = UI_ACTION_STATE::DISABLE;
-	EventSystem()->Broadcast<UI_ACTION_DESC>({ desc }); 
-
 	return S_OK;
 }
 
