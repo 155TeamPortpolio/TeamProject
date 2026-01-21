@@ -367,9 +367,10 @@ void COrbitCam::Priority_Update(_float dt)
 
 void COrbitCam::UpdateInput(_float dt)
 {
+#ifdef _USING_GUI
     auto& io = ImGui::GetIO();
-
     if (io.WantCaptureMouse || ImGui::IsAnyItemActive() || ImGui::IsAnyItemHovered()) return;
+#endif //
 
     const float dx = InputDevice()->Mouse_DeltaX();
     const float dy = InputDevice()->Mouse_DeltaY();

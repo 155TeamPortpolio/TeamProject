@@ -5,6 +5,7 @@
 #include "Animator3D.h"
 #include "SkeletalModel.h"
 #include "CharacterController.h"
+#include "DataBase.h"
 
 CServiceNpc::CServiceNpc()
 	:CNpc()
@@ -36,6 +37,7 @@ HRESULT CServiceNpc::Initialize(INIT_DESC* pArg)
 
 void CServiceNpc::Awake()
 {
+	m_DiagloueData = CDataBase::GetInstance()->GetNpcIDData(m_strName);
 	Add_NameIndicator();
 }
 

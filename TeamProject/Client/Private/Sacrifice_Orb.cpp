@@ -78,20 +78,13 @@ void CSacrifice_Orb::Update(_float dt)
 		auto pRigidBody = Get_Component<CRigidBody>();
 		auto battle = CBattleSystem::GetInstance();
 
-		auto& battleInfos = battle->GetBattleObjects(CBattleSystem::BATTLE_OBJ_TYPE::PLAYER);
 		_vector3 vCurrPosition = m_pTransform->Get_WorldPos();
-
 		_vector3 vCurrDir = m_pTransform->Dir(STATE::LOOK);
 		_vector3 vTargetDir{};
 
-		for (auto& info : battleInfos)
-		{
-			if (info.isOnField) 
-			{
-				vTargetPos = info.vPos;
-				break;
-			}
-		}
+		auto playerHandle = BattleSystem()->GetCurCharacterHandle();
+		_vector3 targetPos = playerHandle.Get()->Get_Component<CTransform>()->Get_WorldPos();
+		vTargetPos = targetPos;
 
 		vTargetDir = vTargetPos - vCurrPosition;
 		vTargetDir.y = 0.f;

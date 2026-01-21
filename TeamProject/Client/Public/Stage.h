@@ -30,6 +30,7 @@ protected:
 
 protected:
 	void BaseIntro(CZero_Level::StageContext& context);
+	void BossIntro(CZero_Level::StageContext& context);
 	void BaseOutro();
 
 protected:

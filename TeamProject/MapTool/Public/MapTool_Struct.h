@@ -58,6 +58,20 @@ namespace MapTool {
 	}Entity_Header;
 	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Entity_Header, TagDataFormat, TagArea, iVersion, Entities);
 
+	/* BattleData */
+	typedef struct tagBattleData 
+	{
+		string		tagType = {};			// Player, Spawner, Monster Point
+		_int		iEntityID = { -1 };		
+		//string		tagName = {};
+
+		array<_float, 3> vScale = { 0.f, 0.f, 0.f };
+		array<_float, 3> vRotation = { 0.f, 0.f, 0.f };
+		array<_float, 3> vTranslation = { 0.f, 0.f, 0.f };
+	}BATTLE_DATA;
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Entity_Header, TagDataFormat, TagArea, iVersion, Entities);
+
+
 	//====================================
 	struct LOADED_OBJECT {
 		_int	iObjIdx = { -1 };

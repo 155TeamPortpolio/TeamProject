@@ -13,6 +13,8 @@
 #include "ObjectContainer.h"
 #include "Animator3D.h"
 #include "BoneFollower.h"
+#include "Material.h"
+#include "MaterialInstance.h"
 
 CEnemy::CEnemy()
 	:CGameObject()
@@ -42,6 +44,22 @@ HRESULT CEnemy::Initialize(INIT_DESC* pArg)
 	m_tStatus.iMaxHP = m_tStatus.iNowHP = pDesc->iMaxHP;
 
 	return S_OK;
+}
+
+void CEnemy::Awake()
+{
+	m_fDissolveProgress = 0.f;
+	m_fDissolveTilling = 1.f;
+
+	auto pMaterial = Get_Component<CMaterial>();
+	auto& materialInstances = pMaterial->Get_MaterialInstances();
+	auto dissolveTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, "Dissolve.png");
+
+	for (const auto& instance : materialInstances)
+	{
+		instance->Set_Param("fDissolveProgress", {&m_fDissolveProgress, "float", sizeof(_float)});
+		instance->Set_Param("fDissolveTiling", {&m_fDissolveTilling, "float", sizeof(_float)});
+	}
 }
 
 void CEnemy::Update(_float dt)
@@ -529,10 +547,12 @@ void CEnemy::Death()
 	if (BattleSystem()->ExitBattleObject(CBattleSystem::BATTLE_OBJ_TYPE::MONSTER, this->Get_Handle()))
 	{
 		ObjectManager()->Remove_Object(this);
+#ifdef _USING_GUI
 		auto pSelectedObject = GUISystem()->Get_Context()->pSelectedObject;
 		if (nullptr != pSelectedObject &&
 			this == pSelectedObject)
 			GUISystem()->Get_Context()->pSelectedObject = nullptr;
+#endif // _USING_GUI
 
 		if (true == m_hUIEnemyStatus.isValid())
 			UIManager()->Remove_UIObject(m_hUIEnemyStatus.Get());
