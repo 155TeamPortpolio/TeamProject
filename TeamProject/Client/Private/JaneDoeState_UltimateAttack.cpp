@@ -31,7 +31,7 @@ void CJaneDoeState_UltimateAttack::Enter(CJaneDoe* pOwner)
     }
     __super::Enter(pOwner);
 
-    CCamDirector::GetInstance()->RequestSequence("Ultimate/Jane_Ultimate");
+    CCamDirector::GetInstance()->RequestSequence(CamSeqType::Ultimate);
 }
 
 void CJaneDoeState_UltimateAttack::Update(CJaneDoe* pOwner, _float dt)

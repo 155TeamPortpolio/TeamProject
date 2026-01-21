@@ -774,8 +774,14 @@
     <Filter Include="02. GameObject\UI\02. 3D\Plane\NameIndicator">
       <UniqueIdentifier>{5cba5655-54fb-44aa-988a-b83b85950f66}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Object\Npc\Service\Jagger">
+    <Filter Include="02. GameObject\Object\Npc\Service\Jaeger">
       <UniqueIdentifier>{abd48ccf-d17d-43f0-99f5-1bb53ebc99fc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Npc\Child">
+      <UniqueIdentifier>{0368e7c3-90b2-4af8-9dc9-89ac1ef4405d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Npc\Child\NpcInteractZone">
+      <UniqueIdentifier>{4768ebeb-e730-4cea-a50b-d39ff7a5f643}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1509,7 +1515,10 @@
       <Filter>02. GameObject\UI\02. 3D\Plane\NameIndicator</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Jaeger.h">
-      <Filter>02. GameObject\Object\Npc\Service\Jagger</Filter>
+      <Filter>02. GameObject\Object\Npc\Service\Jaeger</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\NpcInteractZone.h">
+      <Filter>02. GameObject\Object\Npc\Child\NpcInteractZone</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2204,7 +2213,10 @@
       <Filter>02. GameObject\UI\02. 3D\Plane\NameIndicator</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Jaeger.cpp">
-      <Filter>02. GameObject\Object\Npc\Service\Jagger</Filter>
+      <Filter>02. GameObject\Object\Npc\Service\Jaeger</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\NpcInteractZone.cpp">
+      <Filter>02. GameObject\Object\Npc\Child\NpcInteractZone</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
