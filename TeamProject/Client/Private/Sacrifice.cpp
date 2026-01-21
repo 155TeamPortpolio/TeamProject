@@ -288,7 +288,7 @@ void CSacrifice::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage)
 				}
 			}
 
-			m_tStatus.iNowHP -= fDamage * 1.5f;
+			m_tStatus.iNowHP -= fDamage * 1.2f;
 		}
 		else
 		{
@@ -300,7 +300,7 @@ void CSacrifice::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage)
 					.Apply();
 			}
 
-			m_tStatus.iNowHP -= fDamage;
+			m_tStatus.iNowHP -= fDamage * 0.7f;
 			m_tStatus.iGroggyValue += 2;
 		}
 	}

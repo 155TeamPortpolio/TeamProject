@@ -13,6 +13,8 @@
 #include "ObjectContainer.h"
 #include "BoneFollower.h"
 
+#include "CamDirector.h"
+
 void CSacrificeState_Attack_Phase1::Enter(CSacrifice* pOwner)
 {
 	if (!m_pSubStateMachine)
@@ -432,9 +434,11 @@ void CSacrificeState_Attack_03_Phase1::Update_Effects(CSacrifice* pOwner)
 			.Position(vBonePosition)
 			.Build("FlareSmoke");
 
-		CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(effect, { pOwner->Get_Level(),"Effect_Layer" });
-		CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(flare, { pOwner->Get_Level(),"Effect_Layer" });
-		CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(smoke, { pOwner->Get_Level(),"Effect_Layer" });
+		ObjectManager()->Add_Object(effect, { pOwner->Get_Level(),"Effect_Layer" });
+		ObjectManager()->Add_Object(flare, { pOwner->Get_Level(),"Effect_Layer" });
+		ObjectManager()->Add_Object(smoke, { pOwner->Get_Level(),"Effect_Layer" });
+		
+		CameraManager()->AddImpact(ENUM(CamShakeType::HitHeavy), ENUM(CamZoomType::HitHeavy), 1.5f);
 	}
 }
 
@@ -797,6 +801,7 @@ void CSacrificeState_Attack_08_Phase1::Update_Effects(CSacrifice* pOwner)
 			.Build("Smoke");
 
 		ObjectManager()->Add_Object(pEffect, { pOwner->Get_Level(),"Effect_Layer" });
+		CameraManager()->AddImpact(ENUM(CamShakeType::ExplosionBig), ENUM(CamZoomType::ExplosionBig), 2.f);
 	}
 }
 

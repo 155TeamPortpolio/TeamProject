@@ -5,6 +5,7 @@
 #include "SkeletalModel.h"
 #include "GameInstance.h"
 #include "EffectContainer.h"
+#include "CamDirector.h"
 
 void CSacrificeState_Born::Enter(CSacrifice* pOwner)
 {
@@ -65,7 +66,7 @@ void CSacrificeState_Born_Phase1::Update_Effects(CSacrifice* pOwner)
 			.Build("SpawnSmoke");
 
 		CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(effect, { "Test_Level","Effect_Layer" });
-		CameraManager()->AddImpact(6, 6);
+		CameraManager()->AddImpact(ENUM(CamShakeType::ExplosionBig),ENUM(CamZoomType::ExplosionBig), 2.f);
 
 		m_IsEffectSpawn = true;
 	}
@@ -84,7 +85,8 @@ void CSacrificeState_Born_Phase1::Update_Effects(CSacrifice* pOwner)
 		pEffectTransform->Set_WorldPos(vWorldPosition);
 
 		ObjectManager()->Add_Object(effect, { pOwner->Get_Level(),"Effect_Layer" });
-		CameraManager()->AddImpact(2, 2);
+		//CameraManager()->AddImpact(2, 2);
+		CameraManager()->AddImpact(ENUM(CamShakeType::Roar25S), ENUM(CamZoomType::Roar25S));
 	}
 }
 
