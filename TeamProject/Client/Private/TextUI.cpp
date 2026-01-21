@@ -29,7 +29,7 @@ HRESULT CTextUI::Initialize(INIT_DESC* pArg)
 #ifdef _DEBUG
     pSprite->Add_Texture(G_GlobalLevelKey, "canvas.png");
 #else
-    pSprite->Add_Texture(G_GlobalLevelKey, "canvas.png");
+    pSprite->Add_Texture(G_GlobalLevelKey, "transparent.png");
 #endif
 
     return S_OK;
