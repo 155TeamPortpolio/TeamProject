@@ -21,6 +21,7 @@ public:
 public:
     HRESULT Set_Font(const string FontTag);
     void Set_Color(_float4 color);
+    void Set_OutlineAlpha(_float fAlpha);
     void Set_Size(_float scale);
     void Set_Position(_float2 Pos);
     void Set_Rotate(_float Rotate);

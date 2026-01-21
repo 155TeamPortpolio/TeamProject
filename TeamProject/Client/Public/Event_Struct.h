@@ -3,9 +3,7 @@
 NS_BEGIN(Client)
 
 #pragma region BattleHUD_Stat
-
 // ---------- Battle HUD : Stat ----------
-
 typedef struct tagUIStatusValue {
 	_float			fCurValue = {};
 	_float			fMaxValue = {};
@@ -30,9 +28,7 @@ typedef struct tagUICharacterOrder {
 #pragma endregion
 
 #pragma region BattleHUD_Action
-
 // ---------- Battle HUD : Action ----------
-
 /* UI로 전달되는 액션 상태 정보를 정의하는 구조체 */
 typedef struct tagUIActionDesc {
 	UI_ACTION_TYPE		eType = {};			// 액션 종류 (all, primary, evade, special, switch, ultimate)
@@ -62,5 +58,20 @@ typedef struct tagStageChangedDesc {
 
 #pragma endregion
 
+#pragma region Interactable & Dialogue
+// ---------- UI : Interactable ----------
+/* 인터랙션 가능 범위 진입/이탈 시 UI에 대상 이름과 상호작용 가능 여부를 전달 */
+typedef struct tagUIInteractableDesc{
+	wstring strName = {};
+	_bool isInteractable = {};
+}UI_INTERACTABLE_DESC;
+
+// ---------- UI : Dialogue ----------
+/* 인터랙션 키 입력 시 실행할 대화(Dialogue)와 시퀀스를 UI에 요청 */
+typedef struct tagUIDialogueRequestDesc {
+	string strDialogueID = {};
+	_uint iSequenceID = {};
+}UI_DIALOGUE_REQUEST_DESC;
+#pragma endregion
 
 NS_END

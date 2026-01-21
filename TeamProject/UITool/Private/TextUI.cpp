@@ -85,7 +85,7 @@ void CTextUI::Update(_float dt)
         pTextSlot->Set_Position(m_vLeftTop);
 
     pTextSlot->Push_Text();
-    pTextSlot->Set_Color(_float4(m_vColor.x, m_vColor.y, m_vColor.z, m_vCombinedAlpha));
+    pTextSlot->Set_Color(_float4(m_vColor.x, m_vColor.y, m_vColor.z, m_fCombinedAlpha));
 }
 
 void CTextUI::Render_GUI()
