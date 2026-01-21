@@ -274,6 +274,17 @@ void CTarget_Manager::Render_GUI()
 		ImGui::End();
 	}
 }
+
+_bool CTarget_Manager::TargetFilter(const string& tag, const string& filter)
+{
+	if (filter.empty())
+		return true;
+
+	string tagLower = Helper::ToLower(tag);
+	string filterLower = Helper::ToLower(filter);
+
+	return tagLower.find(filterLower) != string::npos;
+}
 #endif // _USING_GUI
 
 HRESULT CTarget_Manager::Create_Target(const RenderTargetDesc& targetDesc, _bool Engine)
@@ -384,16 +395,6 @@ vector<CRenderTarget*>& CTarget_Manager::Find_MRT(const string& strMRTTag)
 	return iter->second;
 }
 
-_bool CTarget_Manager::TargetFilter(const string& tag, const string& filter)
-{
-	if (filter.empty())
-		return true;
-
-	string tagLower = Helper::ToLower(tag);
-	string filterLower = Helper::ToLower(filter);
-
-	return tagLower.find(filterLower) != string::npos;
-}
 
 CTarget_Manager* CTarget_Manager::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
