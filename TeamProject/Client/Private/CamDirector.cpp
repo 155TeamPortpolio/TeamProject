@@ -134,8 +134,7 @@ void CCamDirector::UpdateInput()
 
     if (InputDevice()->Key_Tap(VK_F3))
     {
-        BattleSystem()->GetBattlePlayer()->QuestStart();
-        RequestSequence(CamSeqType::ZeroIntro);
+        RequestSequence(CamSeqType::BattleIntro);
     }
 }
 

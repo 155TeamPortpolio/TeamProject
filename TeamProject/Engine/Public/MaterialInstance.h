@@ -30,6 +30,8 @@ public:
 	HRESULT Override_Constant(const MaterialConstants& materialConstant);
 	HRESULT Reset_Constant();
 	void Reset_DynamicSlot();
+	void Reset_Textures();
+
 public:
 	vector<_uint>& Get_TextureIndex() { return m_TextureIndexs; }
 	void ChangeTexture(TEXTURE_TYPE type, _uint index);

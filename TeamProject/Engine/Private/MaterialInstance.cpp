@@ -127,6 +127,19 @@ void CMaterialInstance::Reset_DynamicSlot()
 		pShader->Bind_Value(pair.first, param);
 	}
 }
+void CMaterialInstance::Reset_Textures()
+{
+	CShader* pShader = m_pMaterialData->Get_Shader();
+	for (size_t i = 0; i < MAX_TEXTURE_TYPE_VALUE; i++)
+	{
+		string constant = m_pMaterialData->ConvertToConstant(static_cast<TEXTURE_TYPE>(i));
+		SHADER_PARAM param = {};
+		param.pData = nullptr;
+		param.typeName = "Texture2D";
+
+		pShader->Bind_Value(constant, param);
+	}
+}
 
 void CMaterialInstance::ChangeTexture(TEXTURE_TYPE type, _uint index)
 {

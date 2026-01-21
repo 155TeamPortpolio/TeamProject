@@ -27,12 +27,11 @@ public:
 protected:
     HRESULT         Add_NameIndicator();
     HRESULT         Add_InteractZonePrototype();
-    HRESULT         Add_InteractZone(_float4 vCenter, _float3 vSize = _float3(1.f,1.f,1.f));
+    HRESULT         Add_InteractZone(_float4 vCenter, _float3 vOffset, _float3 vSize = _float3(1.f,1.f,1.f));
 
 protected:
     string m_strAnimName = "";
     wstring m_strName = TEXT("");
-
 
 public:
     virtual CGameObject* Clone(INIT_DESC* pArg) PURE;

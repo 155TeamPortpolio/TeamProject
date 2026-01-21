@@ -124,8 +124,6 @@ private:
     /* Material Params */
     _float3 m_vRimLightColor{};
     _float m_fRimLightPower{};
-    _float m_fDissolveProgress{};
-    _float m_fDissolveTilling{};
 
     _bool m_IsOnDissolve = false;
     _float m_fDissolveDuration{};

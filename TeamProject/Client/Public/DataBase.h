@@ -19,6 +19,7 @@ public:
     PlayerDesc              GetPlayerDesc(const string& strName);
     PlayerLVDesc            GetLevelDesc(_uint lv);
     MonsterCreationDesc     GetMonsterDesc(const string& strName);
+    NpcIDDesc               GetNpcIDData(const wstring& strName);
     NpcDialogueDesc         GetNpcDialogueDesc(pair<string, _uint> dialogueID);
     ChoiceDesc              GetNpcChoiceDesc(const string& strName);
     const vector<MapData_Path_Packet>* GetMapDataPacket(const string& tagArea);
@@ -29,6 +30,7 @@ public:
     HRESULT LoadMonsterCreationTable(const string& csvPath);
     HRESULT LoadUICreationTable(const string& csvPath);
     HRESULT LoadMapData(const string& MapDataFolderPath);
+    HRESULT LoadNpcIDData(const string& csvPath);
     HRESULT LoadNpcDialogueData(const string& csvPath);
     HRESULT LoadNpcChoiceData(const string& csvPath);
 
@@ -51,6 +53,7 @@ private:
     // 지형별로 묶어놓은 맵 데이터 경로
     unordered_map<string, vector<MapData_Path_Packet>>	    m_MapAreaData;
     //NpcData
+    unordered_map<wstring, NpcIDDesc>                       m_NpcIDTables;
     map<pair<string, _uint>, NpcDialogueDesc>		        m_DialogueTables;
     unordered_map<string, ChoiceDesc>				        m_DialgoueChoiceTables;
 
