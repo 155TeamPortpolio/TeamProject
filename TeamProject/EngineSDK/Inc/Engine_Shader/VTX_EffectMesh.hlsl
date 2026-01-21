@@ -65,6 +65,7 @@ uint Row;
 uint FrameIndex;
 
 /* Bloom Params */
+float3 BloomColor;
 float BloomThreshold;
 float BloomSoftness;
 float BloomIntensity;
