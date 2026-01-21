@@ -65,6 +65,7 @@ void CSacrificeState_Born_Phase1::Update_Effects(CSacrifice* pOwner)
 			.Build("SpawnSmoke");
 
 		CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(effect, { "Test_Level","Effect_Layer" });
+		CameraManager()->AddImpact(6, 6);
 
 		m_IsEffectSpawn = true;
 	}
@@ -83,6 +84,7 @@ void CSacrificeState_Born_Phase1::Update_Effects(CSacrifice* pOwner)
 		pEffectTransform->Set_WorldPos(vWorldPosition);
 
 		ObjectManager()->Add_Object(effect, { pOwner->Get_Level(),"Effect_Layer" });
+		CameraManager()->AddImpact(2, 2);
 	}
 }
 
