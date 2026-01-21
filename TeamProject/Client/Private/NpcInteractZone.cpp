@@ -1,7 +1,9 @@
 #include "pch.h"
 #include "NpcInteractZone.h"
 
+#include "GameInstance.h"
 #include "Child.h"
+
 #include "Npc.h"
 #include "IInteract.h"
 
@@ -65,8 +67,17 @@ void CNpcInteractZone::OnTriggerEnter(CGameObject* pOther)
 	auto pCollidable = pOther->Get_Component<ICollidable>();
 	if (pCollidable && (pCollidable->Get_Group() != COLLISION_GROUP::PLAYER))
 		return;
-	
-	//UI Interact Call 보내기
+
+	auto pParent = Get_Component<CChild>()->Get_Parent();
+	if (pParent == nullptr) return;
+
+	auto pNpc = dynamic_cast<CNpc*>(pParent);
+	if (pNpc == nullptr) return;
+
+	UI_INTERACTABLE_DESC desc;
+	desc.isInteractable = true;
+	desc.strName = pNpc->Get_Name();
+	EventSystem()->Broadcast<UI_INTERACTABLE_DESC>({ desc });
 }
 
 void CNpcInteractZone::OnTriggerStay(CGameObject* pOther)
@@ -78,7 +89,17 @@ void CNpcInteractZone::OnTriggerExit(CGameObject* pOther)
 	auto pCollidable = pOther->Get_Component<ICollidable>();
 	if (pCollidable && (pCollidable->Get_Group() != COLLISION_GROUP::PLAYER))
 		return;
-	//UI InteractX Call 보내기
+
+	auto pParent = Get_Component<CChild>()->Get_Parent();
+	if (pParent == nullptr) return;
+
+	auto pNpc = dynamic_cast<CNpc*>(pParent);
+	if (pNpc == nullptr) return;
+
+	UI_INTERACTABLE_DESC desc;
+	desc.isInteractable = false;
+	desc.strName = pNpc->Get_Name();
+	EventSystem()->Broadcast<UI_INTERACTABLE_DESC>({ desc });
 }
 
 CNpcInteractZone* CNpcInteractZone::Create()
