@@ -18,7 +18,7 @@ public:
 
 private:
 	enum CHILD { NAME, ARROWL, ARROWR, END };
-	inline static const string INSTANCENAMES[ENUM(CHILD::END)] = { "name", "arrowLeft", "arrowRight" };
+	inline static const string INSTANCENAMES[ENUM(CHILD::END)] = { "name", "arrowL", "arrowR" };
 
 	enum class STATE { HIDDEN, VISIBLE, INTERACTABLE, END };
 
@@ -41,11 +41,13 @@ private:
 
 	class CTextSlot*	m_pName = { nullptr };
 	class CCharacterController* m_pCCT = { nullptr };
+	wstring				m_strName = { };
 	_float3				m_vPosition = {};
 
 	STATE				m_eState = {};
 
 	static constexpr _float	m_fRadius = { 5.f };
+	static constexpr _float m_fPadding = { 5.f };
 
 private:
 	void Cache_Children();
@@ -54,6 +56,8 @@ private:
 	void Update_State(STATE eNewState);
 
 	STATE CalcState_ByDistance();
+
+	_float2 Get_ChildSize(CHILD child);
 
 public:
 	static  CGameObject* Create();

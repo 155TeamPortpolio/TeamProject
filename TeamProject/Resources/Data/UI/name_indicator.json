@@ -123,7 +123,7 @@
     "children": [
         {
             "alive": true,
-            "instanceName": "arrowLeft",
+            "instanceName": "arrowL",
             "transform": {
                 "anchor": 1,
                 "anchorOffset": [
@@ -223,7 +223,7 @@
         },
         {
             "alive": true,
-            "instanceName": "arrowRight",
+            "instanceName": "arrowR",
             "transform": {
                 "anchor": 2,
                 "anchorOffset": [
