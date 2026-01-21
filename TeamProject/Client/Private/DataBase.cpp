@@ -32,7 +32,8 @@ HRESULT CDataBase::CreateTable()
 		return E_FAIL;
 	if (FAILED(LoadNpcChoiceData("../../Resources/Data/Npc/NPC_Choice.csv")))
 		return E_FAIL;
-
+	if (FAILED(LoadNpcIDData("../../Resources/Data/Npc/Npc_ID.csv")))
+		return E_FAIL;
 	return S_OK;
 }
 
@@ -59,6 +60,15 @@ MonsterCreationDesc CDataBase::GetMonsterDesc(const string& strName)
 	auto iter = m_MonsterCreationTables.find(strName);
 	if (iter == m_MonsterCreationTables.end())
 		return MonsterCreationDesc{};
+
+	return iter->second;
+}
+
+NpcIDDesc CDataBase::GetNpcIDData(const wstring& strName)
+{
+	auto iter = m_NpcIDTables.find(strName);
+	if (iter == m_NpcIDTables.end())
+		return NpcIDDesc{};
 
 	return iter->second;
 }
@@ -295,6 +305,42 @@ HRESULT CDataBase::LoadMapData(const string& MapDataFolderPath)
 	return S_OK;
 }
 
+HRESULT CDataBase::LoadNpcIDData(const string& csvPath)
+{
+	io::CSVReader<
+		4,
+		io::trim_chars<' ', '\t'>,
+		io::double_quote_escape<',', '"'>
+	>in(csvPath);
+
+	in.read_header(
+		io::ignore_extra_column | io::ignore_missing_column,
+		"Name", "StartID", "DialogueNum", "SequenceNum"
+	);
+	string			Name, StartID;
+	_uint			DialogueNum, SequenceNum;
+
+	while (in.read_row(Name, StartID, DialogueNum, SequenceNum))
+	{
+		if (Name.empty()) continue;
+
+		NpcIDDesc desc = {};
+		desc.Name = Helper::ConvertToWideString(Name);
+		desc.StartDialogueID = StartID;
+		desc.DialogueNum = DialogueNum;
+		desc.SequenceNum = SequenceNum;
+
+		auto [iter, inserted] = m_NpcIDTables.emplace(desc.Name, move(desc));
+		if (false == inserted)
+		{
+			wstring ErrorMsg = L"Duplicate MonsterKey in CSV : " + desc.Name;
+			MessageBox(NULL, ErrorMsg.c_str(), L"System Message", MB_OK);
+		}
+	}
+
+	return S_OK;
+}
+
 HRESULT CDataBase::LoadNpcDialogueData(const string& csvPath)
 {
 	io::CSVReader<
@@ -324,13 +370,13 @@ HRESULT CDataBase::LoadNpcDialogueData(const string& csvPath)
 
 		NpcDialogueDesc desc = {};
 		desc.DialogueID = DialogueID;
-		desc.Name = StringToWString(Name);
+		desc.Name = Helper::ConvertToWideString(Name);
 		desc.Speaker = StringToSpeaker(Speaker);
 		desc.SequenceID = SequenceID;
 		desc.DayPhase = StringToDayPhase(DayPhase);
 		desc.DialogueType = StringToDialogueType(DialogueType);
 		desc.Repeat = static_cast<_bool>(Repeat);
-		desc.Text = StringToWString(Text);
+		desc.Text = Helper::ConvertToWideString(Text);
 		desc.Result = StringToDialogueResult(Result);
 		desc.ChoiceNum = ChoiceNum;
 		desc.Choice_ID1 = Choice_ID1;
@@ -373,7 +419,7 @@ HRESULT CDataBase::LoadNpcChoiceData(const string& csvPath)
 
 		ChoiceDesc desc = {};
 		desc.ChoiceID = ChoiceID;
-		desc.Text = StringToWString(Text);
+		desc.Text = Helper::ConvertToWideString(Text);
 		desc.Result = StringToDialogueResult(Result);
 		desc.Next_DialogueID = NextID;
 		desc.Next_SequeceID = NextSequence;

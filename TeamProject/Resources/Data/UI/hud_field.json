@@ -2,10 +2,10 @@
     "alive": true,
     "instanceName": "hud_field",
     "transform": {
-        "anchor": 0,
+        "anchor": 5,
         "anchorOffset": [
-            -800.0,
-            -450.0
+            0.0,
+            0.0
         ],
         "size": [
             1600.0,
@@ -145,7 +145,9 @@
                         "shear": [
                             0.0,
                             0.0
-                        ]
+                        ],
+                        "autoPos": true,
+                        "anchor": 0
                     }
                 }
             ],
@@ -368,7 +370,9 @@
                                 "shear": [
                                     0.0,
                                     0.0
-                                ]
+                                ],
+                                "autoPos": true,
+                                "anchor": 0
                             }
                         }
                     ],
@@ -559,7 +563,9 @@
                                 "shear": [
                                     0.0,
                                     0.0
-                                ]
+                                ],
+                                "autoPos": true,
+                                "anchor": 0
                             }
                         }
                     ],
@@ -750,7 +756,9 @@
                                 "shear": [
                                     0.0,
                                     0.0
-                                ]
+                                ],
+                                "autoPos": true,
+                                "anchor": 0
                             }
                         }
                     ],
@@ -941,7 +949,9 @@
                                 "shear": [
                                     0.0,
                                     0.0
-                                ]
+                                ],
+                                "autoPos": true,
+                                "anchor": 0
                             }
                         }
                     ],
@@ -1132,7 +1142,9 @@
                                 "shear": [
                                     0.0,
                                     0.0
-                                ]
+                                ],
+                                "autoPos": true,
+                                "anchor": 0
                             }
                         },
                         {
@@ -1682,7 +1694,9 @@
                                         "shear": [
                                             0.0,
                                             0.0
-                                        ]
+                                        ],
+                                        "autoPos": true,
+                                        "anchor": 0
                                     }
                                 }
                             ],
@@ -1951,7 +1965,9 @@
                                 "shear": [
                                     0.0,
                                     0.0
-                                ]
+                                ],
+                                "autoPos": true,
+                                "anchor": 0
                             }
                         },
                         {
@@ -2377,7 +2393,9 @@
                                 "shear": [
                                     0.0,
                                     0.0
-                                ]
+                                ],
+                                "autoPos": true,
+                                "anchor": 0
                             }
                         }
                     ],
@@ -2598,7 +2616,9 @@
                                 "shear": [
                                     0.0,
                                     0.0
-                                ]
+                                ],
+                                "autoPos": true,
+                                "anchor": 0
                             }
                         },
                         {
