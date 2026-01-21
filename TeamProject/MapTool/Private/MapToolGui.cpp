@@ -179,6 +179,10 @@ void CMapToolGui::Render_GUI()
         if (ImGui::Button("Load")) {
             m_pMapToolCore->Load_MapData();
         }
+        ImGui::SameLine();
+        if (ImGui::Button("Load Entity")) {
+            m_pMapToolCore->Load_EntityData();
+        }
 
         ImGui::EndChild();
         ImGui::TreePop();

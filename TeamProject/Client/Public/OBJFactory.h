@@ -6,15 +6,25 @@ NS_BEGIN(Client)
 NS_BEGIN(Factory)
 
 typedef struct tagOBJFactoryDesc {
-	string ClassTag;
-	_vector3 vPos;
-	_vector3 vSize;
-	_vector3 vRot;
+	_int    iEntityID{};
+	string  tagName{};
+	string	tagLevel{};
+	_int    iType{};
+	_float3 vScale{};
+	_float3 vRotation{};
+	_float3 vTranslation{};
+	unordered_map<string, vector<FIELD_DATA>> SlotDataValues;
 }FACTORY_DESC;
 
-void Create_Interactable(const CMapTriggerObject::MAP_TRIGGEROBJ_DESC* Desc);
-void Create_NPC(const CMapTriggerObject::MAP_TRIGGEROBJ_DESC* Desc);
+typedef struct tagNPCSpec {
+	string ProtoTag;
+	function<CGameObject* ()> Create;
+}NPC_SPEC;
+
+void Create_Interactable(const FACTORY_DESC& Desc);
+void Create_NPC(const FACTORY_DESC& Desc);
+//extern unordered_map<string, Factory::NPC_SPEC> s_NPCTable;
 
 NS_END
-
 NS_END
+
