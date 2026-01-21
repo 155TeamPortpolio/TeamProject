@@ -27,6 +27,9 @@ void CCorinState_Attack::Enter(CCorin* pOwner)
         m_pSubStateMachine->Register_Transition("NormalAttack", "ExAttack",
             CStateMachine<CCorin>::CONDITION_TRIGGER, "ToExAttack");
 
+        m_pSubStateMachine->Register_AnyStateTransition("UltimateAttack",
+            CStateMachine<CCorin>::CONDITION_TRIGGER, "ToUltimate");
+
         m_pSubStateMachine->Set_DefaultState("NormalAttack");
     }
 
@@ -53,6 +56,13 @@ void CCorinState_Attack::Enter(CCorin* pOwner)
 
 void CCorinState_Attack::Update(CCorin* pOwner, _float dt)
 {
+    _int iEntryMode = pOwner->Get_StateMachine()->Get_Int("AttackEntryMode");
+    if (iEntryMode == 3)
+    {
+        pOwner->Get_StateMachine()->Set_Int("AttackEntryMode", 0);
+        m_pSubStateMachine->Set_Trigger("ToUltimate");
+    }
+
     if (pOwner->Get_TargetHandle().isValid())
     {
         auto target = pOwner->Get_TargetHandle().Get();

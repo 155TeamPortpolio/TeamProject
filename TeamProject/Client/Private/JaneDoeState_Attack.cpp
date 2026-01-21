@@ -34,6 +34,9 @@ void CJaneDoeState_Attack::Enter(CJaneDoe* pOwner)
         m_pSubStateMachine->Register_Transition("NormalAttack", "ExAttack",
             CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "ToExAttack");
         
+        m_pSubStateMachine->Register_AnyStateTransition("UltimateAttack",
+            CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "ToUltimate");
+
         m_pSubStateMachine->Set_DefaultState("NormalAttack");
     }
     _int iEntryMode = pOwner->Get_StateMachine()->Get_Int("AttackEntryMode");
@@ -65,6 +68,13 @@ void CJaneDoeState_Attack::Enter(CJaneDoe* pOwner)
 
 void CJaneDoeState_Attack::Update(CJaneDoe* pOwner, _float dt)
 {
+    _int iEntryMode = pOwner->Get_StateMachine()->Get_Int("AttackEntryMode");
+    if (iEntryMode == 3)
+    {
+        pOwner->Get_StateMachine()->Set_Int("AttackEntryMode", 0);
+        m_pSubStateMachine->Set_Trigger("ToUltimate");
+    }
+
     if (true/*pOwner->Has_PassionSkill()*/)
     {
         if (CGameInstance::GetInstance()->Get_InputDev()->Mouse_Hold(MOUSE_BTN::LB))
