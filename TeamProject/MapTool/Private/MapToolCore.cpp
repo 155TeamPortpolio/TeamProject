@@ -116,6 +116,44 @@ LOADED_DATA CMapToolCore::Load_MapData()
 	return LoadedData;
 }
 
+void CMapToolCore::Load_EntityData()
+{
+	filesystem::path OpenPath = Helper::OpenFile_Dialogue();
+
+	if (OpenPath.empty())
+		return;
+
+	if (OpenPath.extension().string() != ".json") {
+		MSG_BOX("[MapTool] Load Map Data Failed.\nJson 파일이 아닙니다.");
+		return;
+	}
+
+	LOADED_DATA	LoadedData = {};
+
+	if (OpenPath.string().find("EntityData") == string::npos) {
+		MSG_BOX("[MapTool] Load Entity Data Failed.\nBaseData가 아닙니다.");
+		return;
+	}
+
+	Clear_Layer(MAPOBJ_TYPE::ENTITY);
+
+	Entity_Header EntityHeader = Helper::LoadJson<Entity_Header>(OpenPath.string());
+	LoadedData.tagDataFormat = "EntityData";
+
+	m_tMapToolContext.iVersion = EntityHeader.iVersion;
+	m_tMapToolContext.TagArea = EntityHeader.TagArea;
+
+	for (auto& EntityData : EntityHeader.Entities)
+	{
+		Place_EntityObjectFromLoadData(&EntityData);
+		LOADED_OBJECT Desc = {};
+		Desc.iObjIdx = EntityData.iEntityID;
+		Desc.TagModelKey = EntityData.tagName;
+
+		LoadedData.LoadedObjects.push_back(Desc);
+	}
+}
+
 void CMapToolCore::Clear_Layer(MAPOBJ_TYPE eObjType)
 {
 	_uint i = ENUM(eObjType);
