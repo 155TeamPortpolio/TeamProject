@@ -2833,7 +2833,7 @@ bool CCamPanel::LoadSequenceFromPath(const string& anyPath)
     }
 
     CamSequenceDesc loaded{};
-    if (!CamUtil::Load(filesystem::path(picked), loaded, &err))
+    if (!CamUtil::Load(fs::path(picked), loaded, &err))
     {
         keyListUI.lastFileError = err;
         keyListUI.requestOpenFileErrorPopup = true;
@@ -2870,7 +2870,6 @@ bool CCamPanel::LoadSequenceFromPath(const string& anyPath)
     keyListUI.lastLoadedPath = picked;
     return true;
 }
-
 
 CCamPanel* CCamPanel::Create(GUI_CONTEXT* context)
 {
