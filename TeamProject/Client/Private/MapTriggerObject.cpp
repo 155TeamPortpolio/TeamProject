@@ -222,7 +222,7 @@ void CMapTriggerObject::Ready_Interactable(const MAP_TRIGGEROBJ_DESC* pObjDesc)
 				ColDesc.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER);
 				ColDesc.eType = Get_Component<CCollider>()->Get_Type();
 				ColDesc.bAutoFit = false;
-				ColDesc.bTrigger = false; // 충돌 박스 생성하는 트리거
+				ColDesc.bTrigger = true; // 충돌 박스 생성하는 트리거
 				ColDesc.vCenter = Get_Component<CCollider>()->Get_Center();
 				ColDesc.vSize = pObjDesc->vUp;
 				ColDesc.vRotation = Get_Component<CCollider>()->Get_Rotation();
