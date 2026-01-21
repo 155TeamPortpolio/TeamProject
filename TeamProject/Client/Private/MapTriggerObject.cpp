@@ -44,7 +44,6 @@ HRESULT CMapTriggerObject::Initialize(INIT_DESC* pArg)
 	Ready_ZeroPortal(pObjDesc);
 	Ready_InvwalI(pObjDesc);
 	Ready_PlayerPos(pObjDesc);
-	Ready_NPC(pObjDesc);
 
 	return S_OK;
 }
@@ -329,22 +328,6 @@ void CMapTriggerObject::Ready_PlayerPos(const MAP_TRIGGEROBJ_DESC* pObjDesc)
 		auto character = player->Get_CurCharacterHandle().Get();
 		if (character)
 			character->Get_Component<CCharacterController>()->Set_Position(m_pTransform->Get_Pos());
-	}
-}
-
-void CMapTriggerObject::Ready_NPC(const MAP_TRIGGEROBJ_DESC* pObjDesc)
-{
-	auto iter = pObjDesc->SlotDataValues.find("NPC");
-
-	if (iter != pObjDesc->SlotDataValues.end()) {		
-
-		for (auto& tFieldData : iter->second)
-		{
-			if(tFieldData.TagName == "Name")
-			{
-				Factory::Create_NPC(pObjDesc);
-			}
-		}
 	}
 }
 
