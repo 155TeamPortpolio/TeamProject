@@ -42,8 +42,8 @@ HRESULT CPrototypeMgr::Add_ProtoType(const string& LevelTag, const string& proto
 	CGameObject* pData = Find_Prototype(LevelTag, protoTag);
 
 	if (pData) {
+		Safe_Release(pProto);
 #ifdef _DEBUG
-
 		//MSG_BOX("There is alreay same Tag : CPrototypeMgr");
 #endif // _DEBUG
 
