@@ -3,6 +3,8 @@
 #include "GameInstance.h"
 
 #include "Collider.h"
+#include "StaticModel.h"
+#include "Material.h"
 
 CEntityObject::CEntityObject()
 	: CMapToolObject()
@@ -19,6 +21,13 @@ HRESULT CEntityObject::Initialize_Prototype()
 	__super::Initialize_Prototype();
 
 	Add_Component<CCollider>();
+	Add_Component<CStaticModel>();
+	Add_Component<CMaterial>();
+
+	auto pModel = Get_Component<CStaticModel>();
+	pModel->Link_Model(G_GlobalLevelKey, "Default.model");
+	auto pMaterial = Get_Component<CMaterial>();
+	pMaterial->Link_Material(G_GlobalLevelKey, "Default.mat");
 
 	return S_OK;
 }
