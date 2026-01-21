@@ -172,11 +172,11 @@ void CSacrificeState_Attack_Phase1::BuildPattern(CSacrifice* pOwner)
 		}
 	}
 	blackBoard.stateQueue.clear();
-	blackBoard.stateQueue.push_back("Attack01_Phase1");
-	blackBoard.stateQueue.push_back("Attack02_Phase1");
-	blackBoard.stateQueue.push_back("Attack03_Phase1");
-	blackBoard.stateQueue.push_back("Attack08_Phase1");
-	blackBoard.stateQueue.push_back("Attack08_Phase1");
+	blackBoard.stateQueue.push_back("Attack05_Phase1");
+	blackBoard.stateQueue.push_back("Attack05_Phase1");
+	blackBoard.stateQueue.push_back("Attack05_Phase1");
+	blackBoard.stateQueue.push_back("Attack05_Phase1");
+	blackBoard.stateQueue.push_back("Attack05_Phase1");
 	blackBoard.stateQueue.push_back("Attack_Turn_Phase1");
 	
 	blackBoard.isRequestNext = true;
