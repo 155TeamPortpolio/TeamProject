@@ -60,6 +60,10 @@ HRESULT CBattlePlayer::Initialize()
 	vector<CHARACTER> BattleCharacters = {CHARACTER::JaneDoe, CHARACTER::Corin};
 	SetBattleCharacters(BattleCharacters);
 
+	UI_ACTION_PRIMARY_DESC desc;
+	desc.eMode = UI_ACTION_PRIMARY_MODE::ATTACK;
+	EventSystem()->Broadcast<UI_ACTION_PRIMARY_DESC>({ desc });
+
 	return S_OK;
 }
 
@@ -132,9 +136,6 @@ void CBattlePlayer::Update(_float dt)
 
 void CBattlePlayer::Late_Update(_float dt)
 {
-	UI_ACTION_PRIMARY_DESC desc;
-	desc.eMode = UI_ACTION_PRIMARY_MODE::ATTACK;
-	EventSystem()->Broadcast<UI_ACTION_PRIMARY_DESC>({ desc });
 }
 
 void CBattlePlayer::Render_GUI()

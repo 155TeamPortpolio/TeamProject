@@ -103,8 +103,8 @@ void CUI_PrimaryAction::Bind_EventListener()
 
 void CUI_PrimaryAction::Set_ActionMode(MODE eMode)
 {
-    if (m_mode == eMode)
-        return;
+    //if (m_mode == eMode)
+    //    return;
 
     m_mode = eMode;
     _bool isAttackMode = (m_mode == MODE::ATTACK) ? true : false;
