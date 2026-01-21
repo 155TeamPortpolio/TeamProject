@@ -170,6 +170,8 @@ void CCharacter::OnTriggerEnter(CGameObject* pOther)
 
 	if (pCollidable->Get_Group() == COLLISION_GROUP::INTERACTABLE)
 	{
+		CollisionSystem()->Log_CollisionEvent(
+			"INTERACTABLE Enter - Other: " + pOther->Get_InstanceName());
 		// Interact 활성화
 		UI_ACTION_PRIMARY_DESC desc;
 		desc.eMode = UI_ACTION_PRIMARY_MODE::INTERACT;
@@ -230,7 +232,8 @@ void CCharacter::OnTriggerExit(CGameObject* pOther)
 	if (pCollidable->Get_Group() == COLLISION_GROUP::INTERACTABLE)
 	{
 		CollisionSystem()->Log_CollisionEvent(
-			"INTERACTABLE Exit - Other: " + pOther->Get_InstanceName());
+			"INTERACTABLE Exit - " + pOther->Get_InstanceName() +
+			" | Frame: " + to_string(GameInstance()->Get_FrameCount()));
 		// Interact 비활성화
 		UI_ACTION_PRIMARY_DESC desc;
 		desc.eMode = UI_ACTION_PRIMARY_MODE::ATTACK;

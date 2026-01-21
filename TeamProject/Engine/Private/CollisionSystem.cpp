@@ -526,13 +526,6 @@ void CCollisionSystem::Process_Trigger(PxTriggerPair* pairs, PxU32 count)
 		{
 			triggerCurrent.erase(pOther);
 			otherCurrent.erase(pTrigger);
-
-			pTrigger->OnTriggerExit(pOther);
-
-			if (!Is_SlotActive(idxTrigger) || !Is_SlotActive(idxOther))
-				continue;
-
-			pOther->OnTriggerExit(pTrigger);
 		}
 	}
 }
