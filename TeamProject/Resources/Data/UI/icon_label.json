@@ -278,7 +278,9 @@
                 "shear": [
                     0.0,
                     0.0
-                ]
+                ],
+                "autoPos": true,
+                "anchor": 0
             }
         }
     ],

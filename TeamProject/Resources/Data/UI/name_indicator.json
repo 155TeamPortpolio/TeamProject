@@ -240,8 +240,8 @@
                     11.349329948425293
                 ],
                 "size": [
-                    72.39997100830078,
-                    22.698659896850586
+                    0.0,
+                    0.0
                 ],
                 "scale": [
                     1.0,
@@ -264,7 +264,7 @@
             "children": [],
             "typeTag": "Text",
             "text": {
-                "content": "제로 공동",
+                "content": "이름",
                 "fontTag": "NanumSquareNeo.spritefont",
                 "fontScale": 0.39999985694885254,
                 "outlined": true,
@@ -278,7 +278,9 @@
                 "shear": [
                     0.0,
                     0.0
-                ]
+                ],
+                "autoPos": true,
+                "anchor": 0
             }
         }
     ],
