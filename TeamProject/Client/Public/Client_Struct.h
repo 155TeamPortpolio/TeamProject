@@ -38,6 +38,13 @@ namespace Client {
 		_float	Defend = {};
 	};
 
+	struct NpcIDDesc {
+		wstring Name = {};
+		string	StartDialogueID = {};
+		_int DialogueNum = {};
+		_int SequenceNum = {};
+	};
+
 	struct NpcDialogueDesc {
 		string			DialogueID = {};
 		wstring			Name = {};

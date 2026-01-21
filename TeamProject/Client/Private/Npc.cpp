@@ -71,8 +71,9 @@ HRESULT CNpc::Add_InteractZonePrototype()
 
 HRESULT CNpc::Add_InteractZone(_float4 vCenter, _float3 vOffset, _float3 vSize)
 {
-    Add_Component<CObjectContainer>();
-    CObjectContainer* pObjectContainer = Get_Component<CObjectContainer>();
+    Add_InteractZonePrototype();
+
+    CObjectContainer* pObjectContainer = Add_Component<CObjectContainer>();
 
     COLLIDER_DESC colliderDesc{};
     colliderDesc.eType = COLLIDER_TYPE::BOX;

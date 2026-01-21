@@ -19,6 +19,9 @@ public:
     virtual void    Update(_float dt) override;
     virtual void    Late_Update(_float dt) override;
 
+protected:
+    NpcIDDesc             m_DiagloueData;
+
 public:
     CGameObject* Clone(INIT_DESC* pArg) PURE;
     virtual void Free() override;

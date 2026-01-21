@@ -33,7 +33,6 @@ protected:
     string m_strAnimName = "";
     wstring m_strName = TEXT("");
 
-
 public:
     virtual CGameObject* Clone(INIT_DESC* pArg) PURE;
     virtual void Free() override;
