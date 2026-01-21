@@ -132,6 +132,9 @@ void CBattlePlayer::Update(_float dt)
 
 void CBattlePlayer::Late_Update(_float dt)
 {
+	UI_ACTION_PRIMARY_DESC desc;
+	desc.eMode = UI_ACTION_PRIMARY_MODE::ATTACK;
+	EventSystem()->Broadcast<UI_ACTION_PRIMARY_DESC>({ desc });
 }
 
 void CBattlePlayer::Render_GUI()
