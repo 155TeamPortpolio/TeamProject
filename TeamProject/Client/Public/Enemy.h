@@ -28,6 +28,7 @@ protected:
 public:
     virtual HRESULT Initialize_Prototype() override;
     virtual HRESULT Initialize(INIT_DESC* pArg) override;
+    virtual void Awake()override;
     virtual void    Priority_Update(_float dt) override {};
     virtual void    Update(_float dt) override;
     virtual void    Late_Update(_float dt) override;
@@ -122,6 +123,10 @@ protected:
 
     _bool                   m_isOnAttack = { false };
 
+
+    /* dissolve */
+    _float m_fDissolveProgress = 0.f;
+    _float m_fDissolveTilling = 1.f;
 
 protected:
     virtual CGameObject* Clone(INIT_DESC* pArg) PURE;

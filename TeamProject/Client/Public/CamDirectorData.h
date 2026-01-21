@@ -22,6 +22,7 @@ enum class CamShakeType
     ExplosionSmall, ExplosionBig,
     LandingLight, LandingHeavy,
     Dash,
+    Roar2S, Roar25S,
     End
 };
 
@@ -31,6 +32,7 @@ enum class CamZoomType
     ExplosionSmall, ExplosionBig,
     LandingLight, LandingHeavy,
     Dash,
+    Roar2S, Roar25S,
     End
 };
 

@@ -184,7 +184,7 @@ protected:
 	/*셰이더로 전달되는 컬러 (m_vColor를 감마 2.2 보정하여 Linear Space로 변환한 값)*/
 	Vector4 m_vColorLinear{};
 	/*부모 알파와 자신의 알파를 곱한 최종 알파 값*/
-	_float m_vCombinedAlpha = { 1.f };
+	_float m_fCombinedAlpha = { 1.f };
 
 	/*애니메이션*/
 	_bool m_isBlending = {};

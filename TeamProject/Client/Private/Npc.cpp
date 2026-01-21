@@ -69,17 +69,18 @@ HRESULT CNpc::Add_InteractZonePrototype()
     return S_OK;
 }
 
-HRESULT CNpc::Add_InteractZone(_float4 vCenter, _float3 vSize)
+HRESULT CNpc::Add_InteractZone(_float4 vCenter, _float3 vOffset, _float3 vSize)
 {
-    Add_Component<CObjectContainer>();
-    CObjectContainer* pObjectContainer = Get_Component<CObjectContainer>();
+    Add_InteractZonePrototype();
+
+    CObjectContainer* pObjectContainer = Add_Component<CObjectContainer>();
 
     COLLIDER_DESC colliderDesc{};
     colliderDesc.eType = COLLIDER_TYPE::BOX;
     colliderDesc.eGroup = COLLISION_GROUP::INTERACABLE;
     colliderDesc.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER);
     colliderDesc.bAutoFit = false;
-    colliderDesc.vCenter = _float3(0.f,0.f,1.5f);
+    colliderDesc.vCenter = vOffset;
     colliderDesc.vSize = vSize;
     colliderDesc.bTrigger = true;
 

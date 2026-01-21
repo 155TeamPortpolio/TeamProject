@@ -60,6 +60,29 @@ void CStage::BaseIntro(CZero_Level::StageContext& context)
 	m_introFlow.Start();
 }
 
+void CStage::BossIntro(CZero_Level::StageContext& context)
+{
+	if (!m_introFlowBuilt)
+	{
+		m_introFlowBuilt = true;
+
+		size_t seqId = m_introFlow.BeginSequence();
+		m_introFlow.AddWait(seqId, 0.2f);
+		m_introFlow.AddOnce(seqId, [this]() {CUIDirector::GetInstance()->FadeIn_Screen(1.f); });
+		m_introFlow.AddOnce(seqId, [context]() {
+			BattleSystem()->GetBattlePlayer()->QuestStart();
+			CCamDirector::GetInstance()->AutoTarget();
+			CCamDirector::GetInstance()->RequestSequence(CamSeqType::ZeroIntro);
+			});
+		m_introFlow.AddWaitUntil(seqId, []()
+			{
+				return !CamDirector()->IsPlaying(CamSeqType::ZeroIntro);
+			});
+		m_introFlow.EndSequence(seqId);
+	}
+
+	m_introFlow.Start();
+}
 void CStage::BaseOutro()
 {
 	if (!m_outroFlowBuilt) {

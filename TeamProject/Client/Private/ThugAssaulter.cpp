@@ -80,13 +80,17 @@ HRESULT CThugAssaulter::Initialize(INIT_DESC* pArg)
 		return E_FAIL;
 
 	// 임시 확인용
+#ifdef _USING_GUI
 	CGameInstance::GetInstance()->Get_GUISystem()->Get_Context()->pSelectedObject = this;
+#endif // _USING_GUI
+
 
 	return S_OK;
 }
 
 void CThugAssaulter::Awake()
 {
+	__super::Awake();
 }
 
 void CThugAssaulter::Priority_Update(_float dt)
@@ -388,7 +392,7 @@ void CThugAssaulter::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage)
 			.Loop(false)
 			.Apply();
 
-		m_tStatus.iNowHP -= fDamage * 1.5f;
+		m_tStatus.iNowHP -= fDamage * 1.2f; // 1.5f
 	}
 	else if ("Idle" == m_pStateMachine->Get_CurrentStateName())
 	{
@@ -403,8 +407,8 @@ void CThugAssaulter::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage)
 			.Loop(false)
 			.Apply();
 
-		m_tStatus.iNowHP -= fDamage;
-		m_tStatus.iGroggyValue += 16;
+		m_tStatus.iNowHP -= fDamage * 0.7f;
+		m_tStatus.iGroggyValue += 4;
 	}
 
 	if (0.f > m_tStatus.iNowHP)

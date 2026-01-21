@@ -44,6 +44,11 @@ void CTextSlot::Set_Color(_float4 color)
 	m_Info.TextColor = color;
 }
 
+void CTextSlot::Set_OutlineAlpha(_float fAlpha)
+{
+	m_Info.OutLineColor.w = fAlpha;
+}
+
 void CTextSlot::Set_Size(_float scale)
 {
 	m_Info.Scale = scale;
