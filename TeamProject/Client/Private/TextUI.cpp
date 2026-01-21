@@ -40,7 +40,12 @@ void CTextUI::Update(_float dt)
     __super::Update(dt);
 
     auto pTextSlot = Get_Component<CTextSlot>();
-    pTextSlot->Set_Position(m_vLeftTop);   
+
+    if (pTextSlot->Is_AutoPos())
+        pTextSlot->Update_Pivot({ m_vLeftTop.x + m_vSize.x * 0.5f, m_vLeftTop.y + m_vSize.y * 0.5f });
+    else
+        pTextSlot->Set_Position(m_vLeftTop);
+
     pTextSlot->Push_Text();
     pTextSlot->Set_Color(_float4(m_vColor.x, m_vColor.y, m_vColor.z, m_vCombinedAlpha));
 }
@@ -60,8 +65,11 @@ void CTextUI::Load(const nlohmann::ordered_json& data)
         string strText = textJson.value("content", "content");
         pTextSlot->Set_Text(Helper::ConvertToWideString(strText));
         pTextSlot->Set_Size(textJson.value("fontScale", 1.f));
-        pTextSlot->Set_Color(m_vColor);
-         
+        pTextSlot->Set_Color(m_vColor); 
+        //if (textJson.value("autoPos", true))
+        //    pTextSlot->Enable_AutoPos(static_cast<ANCHOR>(textJson.value("anchor", 0)));
+        pTextSlot->Enable_AutoPos(ANCHOR::Center);    //юс╫ц
+
         if (textJson.value("outlined", false))
         {
             auto color = textJson.value("outlineColor", json::array({ 1.0f, 1.0f, 1.0f, 1.0f }));

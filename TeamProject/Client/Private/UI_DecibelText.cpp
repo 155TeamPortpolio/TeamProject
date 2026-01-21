@@ -85,6 +85,7 @@ void CUI_DecibelText::Init_TextSlot()
     m_pText->Set_Font("NanumSquareNeo.spritefont");
     m_pText->Set_Size(m_fTextScale);
     m_pText->Set_Shear(_float2(-0.4f, 0.f));
+    m_pText->Enable_AutoPos(ANCHOR::Center);
 }
 
 void CUI_DecibelText::Set_Text(const wstring& wstrText)
