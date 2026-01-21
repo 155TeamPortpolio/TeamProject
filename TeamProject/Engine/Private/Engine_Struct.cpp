@@ -212,6 +212,8 @@ MESH_NODE Engine::tagMeshNode::FromJson(nlohmann::ordered_json& json)
 
 	/* Bloom */
 	node.fBloomIntensity = json.value("bloom_intensity", 0.f);
+	node.fBloomThreshold = json.value("bloom_threshold", 0.f);
+	node.fBloomSoftness = json.value("bloom_softness", 0.f);
 
 	/* Noise */
 	node.fEnableNoise = json.value("enable_noise", 0.f);
