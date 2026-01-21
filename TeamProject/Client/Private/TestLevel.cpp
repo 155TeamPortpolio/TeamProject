@@ -148,7 +148,7 @@ HRESULT CTestLevel::Awake()
 	m_pCamDirector->AutoTarget();
 	m_pCamDirector->RequestSequence(CamSeqType::ZeroIntro);
 
-	//GameInstance()->Set_EngineTimeScale(0.1f);
+	//GameInstance()->Set_EngineTimeScale(0.05f);
 
 	return S_OK;
 }

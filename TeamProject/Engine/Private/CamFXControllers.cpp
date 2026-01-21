@@ -88,19 +88,6 @@ namespace
     }
 }
 
-void ShakeController::RegisterPresets(const CamShakePreset* presets, _uint count)
-{
-    m_presets = presets;
-    m_presetCount = count;
-}
-
-const CamShakePreset& ShakeController::GetPreset(_uint type) const
-{
-    if (!m_presets) __debugbreak();
-    if (type >= m_presetCount) __debugbreak();
-    return m_presets[type];
-}
-
 void ShakeController::Reset()
 {
     m_instances.clear();
@@ -252,18 +239,6 @@ void ZoomController::RegisterPresets(const CamZoomPreset* presets, _uint count)
 {
     m_presets     = presets;
     m_presetCount = count;
-}
-
-const CamZoomPreset& ZoomController::GetPreset(_uint type) const
-{
-    if (!m_presets) __debugbreak();
-    if (type >= m_presetCount) __debugbreak();
-    return m_presets[type];
-}
-
-void ZoomController::Reset()
-{
-    m_instances.clear();
 }
 
 void ZoomController::SetPunch(_float amountDeg, _float attackSec, _float releaseSec)

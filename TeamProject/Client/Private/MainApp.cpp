@@ -120,7 +120,7 @@ void CMainApp::Set_Levels()
 
 	LevelManager()->Set_LoadingLevel("Loading_Level");
 	m_pGameInstance->Notify_LevelSet(); 
-	m_pGameInstance->Get_LevelMgr()->Request_ChangeLevel("Scott_Level",true); 
+	m_pGameInstance->Get_LevelMgr()->Request_ChangeLevel("Zero_Level",true); 
 } 
 
 CMainApp* CMainApp::Create()
@@ -187,7 +187,6 @@ void CMainApp::Create_GlobalCamObjs()
 
 	auto seqCam = Builder::Create_Object({G_GlobalLevelKey, "Proto_GameObject_SequenceCam"})
 		.Camera(aspect)
-		.Position({0.f, 2.f, -5.f})
 		.Build("SequenceCam");
 
 	auto freeCam = Builder::Create_Object({G_GlobalLevelKey, "Proto_GameObject_FreeCam"})
@@ -196,7 +195,7 @@ void CMainApp::Create_GlobalCamObjs()
 		.Build("FreeCam");
 
 	CCT_DESC desc;
-	desc.eGroup = COLLISION_GROUP::CAMERA;
+	desc.eGroup         = COLLISION_GROUP::CAMERA;
 	desc.iCollisionMask = ENUM(COLLISION_GROUP::COMMON);
 
 	auto orbitCam = Builder::Create_Object({G_GlobalLevelKey, "Proto_GameObject_OrbitCam"})
