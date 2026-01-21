@@ -71,6 +71,7 @@ void CBattlePlayer::Priority_Update(_float dt)
 {
 	if (m_pCurrentCharacter == nullptr)
 		return;
+	m_pCurrentCharacter->Reset_Interact();
 	if(Can_Input())
 		Update_Input(dt);
 	Update_Target();
@@ -233,6 +234,7 @@ void CBattlePlayer::Update_Input(_float dt)
 	Process_Switch();
 	Process_Ultimate();
 	Process_Energy();
+	Process_Interact();
 
 	if (InputDevice()->Mouse_Tap(MOUSE_BTN::MB) && m_fLockOnCooldown <= 0.f)
 	{
@@ -329,6 +331,14 @@ void CBattlePlayer::Process_Energy()
 	if (InputDevice()->Key_Down('E'))
 	{
 		m_pCurrentCharacter->On_Special();
+	}
+}
+
+void CBattlePlayer::Process_Interact()
+{
+	if(InputDevice()->Key_Tap('F'))
+	{
+		m_pCurrentCharacter->On_Interact();
 	}
 }
 

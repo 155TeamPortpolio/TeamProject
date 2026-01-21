@@ -89,6 +89,7 @@ private:
     void    Process_Switch();
     void    Process_Ultimate();
     void    Process_Energy();
+    void    Process_Interact();
 
     _bool   Can_Switch() const;
     _bool   Can_Input() const { return !m_bLockInput; }
