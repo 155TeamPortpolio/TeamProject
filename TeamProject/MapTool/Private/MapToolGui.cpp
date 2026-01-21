@@ -137,7 +137,7 @@ void CMapToolGui::Render_GUI()
 
     ImGui::Text("Data");
     if (ImGui::TreeNode("Data Save & Load")) {
-        ImGui::BeginChild("##MapToolGuiDataSaveChild", ImVec2{ 0, childHeight + textLineHeight }, true);
+        ImGui::BeginChild("##MapToolGuiDataSaveChild", ImVec2{ 0, childHeight + OneLineHeight * 1.5f }, true);
 
         ImGui::TextColored(ImVec4(1.f, 1.f, 1.f, 1.f), "Data Version");
         ImGui::InputInt("##Version", &m_pMapToolContext->iVersion);

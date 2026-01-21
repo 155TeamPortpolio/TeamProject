@@ -225,7 +225,7 @@ void CMapLoader::Place_EntityFromLoadData(ENTITY_INIT* pData)
         // 일단 데이터 다 때려넣기
         for (auto& FieldData : tSlotData.second[pData->iEntityID])
             SlotDataValues[tSlotData.first].push_back(FieldData);
-    }
+     }
 
     /* 여기에 엔티티 이용해서 생성 */
 
