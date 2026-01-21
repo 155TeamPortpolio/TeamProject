@@ -14,6 +14,7 @@ public:
 	HRESULT Initialize(const string& filePath, ID3D11Device* pDevice);
 #pragma region Rendering
 	HRESULT Render_Mesh(ID3D11DeviceContext* pContext, _uint Index);
+	HRESULT Render_MeshInstanced(ID3D11DeviceContext* pContext, _uint meshIndex, _uint instanceCount);
 #pragma endregion 
 
 #pragma region Mesh

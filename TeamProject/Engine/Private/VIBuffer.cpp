@@ -50,6 +50,12 @@ HRESULT CVIBuffer::Render(ID3D11DeviceContext* pContext)
 	return S_OK;
 }
 
+HRESULT CVIBuffer::Render_Instanced(ID3D11DeviceContext* pContext, _uint instanceCount)
+{
+	pContext->DrawIndexedInstanced(m_iIndicesCount, instanceCount, 0, 0, 0);
+	return S_OK;
+}
+
 void CVIBuffer::Render_GUI()
 {
 }

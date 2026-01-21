@@ -27,6 +27,11 @@ public:
 	virtual void Submit_Effect(const EFFECT_PACKET& packet)override { m_pEffectPass->Submit(packet); }
 
 public:
+	void BatcherBegin();
+	void BatchSubmit(const OPAQUE_PACKET& packet);
+	void BatchFlush(ID3D11DeviceContext* pContext, class RenderPass* pRenderPass,class CRenderer* pRenderer);
+
+public:
 	virtual void Update(_float dt) override;
 
 	virtual class CRenderer* GetRenderer(RENDERER_TYPE eType) override;
@@ -84,7 +89,7 @@ private:
 	class CPostRenderer* m_pPost;
 	class CUIRenderer* m_pUI;
 	class CEffectRenderer* m_pEffect;
-
+	class CStaticMeshBatcher* m_pBatcher = { nullptr };
 	_bool IsOn = true;
 
 public:

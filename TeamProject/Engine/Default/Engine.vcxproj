@@ -112,7 +112,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>../Public/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <MultiProcessorCompilation>false</MultiProcessorCompilation>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>Engine_Defines.h</PrecompiledHeaderFile>
       <AdditionalOptions>/wd4005 /wd4251 /wd4819 /wd4267 /wd4244 /wd4172 /wd4018 /wd4838 /wd4305 /wd4101 /wd4129 /wd4715 /wd4067 %(AdditionalOptions)</AdditionalOptions>
@@ -392,6 +392,7 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\SoundData.h" />
     <ClInclude Include="..\Public\Sprite2D.h" />
     <ClInclude Include="..\public\SpriteNode.h" />
+    <ClInclude Include="..\Public\StaticMeshBatcher.h" />
     <ClInclude Include="..\public\StaticMeshRenderer.h" />
     <ClInclude Include="..\Public\StaticModel.h" />
     <ClInclude Include="..\Public\StructuredBuffer.h" />
@@ -545,6 +546,7 @@ exit /b 0</Command>
     <ClCompile Include="..\Private\SoundData.cpp" />
     <ClCompile Include="..\Private\Sprite2D.cpp" />
     <ClCompile Include="..\private\SpriteNode.cpp" />
+    <ClCompile Include="..\Private\StaticMeshBatcher.cpp" />
     <ClCompile Include="..\private\StaticMeshRenderer.cpp" />
     <ClCompile Include="..\Private\StaticModel.cpp" />
     <ClCompile Include="..\Private\StructuredBuffer.cpp" />

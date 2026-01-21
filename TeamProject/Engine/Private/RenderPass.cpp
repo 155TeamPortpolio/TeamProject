@@ -101,22 +101,29 @@ void StaticOpaquePass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRender
 
 	m_VisiblePackets = pPipeLine->OcculsionCulling(frustums);
 
+	//for (auto& packet : m_VisiblePackets)
+	//{
+	//	if (packet.pMaterial->Get_Shader(packet.MaterialIndex) != pCurShader) {
+	//		BindConstant(pContext, packet.pModel, packet.pMaterial, packet.DrawIndex, packet.MaterialIndex, pRenderer);
+	//	}
+	//
+	//	SHADER_PARAM WorldMatParam{ &packet.TransformIndex, "uint",sizeof(UINT) };
+	//	pCurShader->Bind_Value("TransformIndex", WorldMatParam);
+	//
+	//	SHADER_PARAM LookParam{ &packet.LookVector, "vector",sizeof(_vector) };
+	//	pCurShader->Bind_Value("vLookVector", LookParam);
+	//
+	//	packet.pMaterial->Apply_Material(pContext, packet.MaterialIndex);
+	//	packet.pModel->Draw(pContext, packet.DrawIndex);
+	//	packet.pMaterial->ResetMaterial(packet.DrawIndex);
+	//}
+
+	m_pRenderSystem->BatcherBegin();
 	for (auto& packet : m_VisiblePackets)
 	{
-		if (packet.pMaterial->Get_Shader(packet.MaterialIndex) != pCurShader) {
-			BindConstant(pContext, packet.pModel, packet.pMaterial, packet.DrawIndex, packet.MaterialIndex, pRenderer);
-		}
-
-		SHADER_PARAM WorldMatParam{ &packet.TransformIndex, "uint",sizeof(UINT) };
-		pCurShader->Bind_Value("TransformIndex", WorldMatParam);
-
-		SHADER_PARAM LookParam{ &packet.LookVector, "vector",sizeof(_vector) };
-		pCurShader->Bind_Value("vLookVector", LookParam);
-
-		packet.pMaterial->Apply_Material(pContext, packet.MaterialIndex);
-		packet.pModel->Draw(pContext, packet.DrawIndex);
-		packet.pMaterial->ResetMaterial(packet.DrawIndex);
+		m_pRenderSystem->BatchSubmit(packet);
 	}
+	m_pRenderSystem->BatchFlush(pContext, this, pRenderer);
 
 	m_Packets.clear();
 	m_VisiblePackets.clear();
@@ -177,18 +184,18 @@ void SkinnedOpaquePass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRende
 		if (packet.pMaterial->Get_Shader(packet.MaterialIndex) != pCurShader) {
 			BindConstant(pContext, packet.pModel, packet.pMaterial, packet.DrawIndex, packet.MaterialIndex, pRenderer);
 		}
-
+	
 		SHADER_PARAM WorldMatParam{ &packet.TransformIndex, "uint",sizeof(UINT) };
 		pCurShader->Bind_Value("TransformIndex", WorldMatParam);
-
+	
 		SHADER_PARAM LookParam{ &packet.LookVector, "vector",sizeof(_vector) };
 		pCurShader->Bind_Value("vLookVector", LookParam);
-
+	
 		if (packet.bSkinning) {
 			SHADER_PARAM SkinningBoneParam{ &packet.SkinningOffset , "uint",sizeof(UINT) };
 			pCurShader->Bind_Value("SkinningOffset", SkinningBoneParam);
 		}
-
+	
 		packet.pMaterial->Apply_Material(pContext, packet.MaterialIndex);
 		packet.pModel->Draw(pContext, packet.DrawIndex);
 		packet.pMaterial->ResetMaterial(packet.DrawIndex);

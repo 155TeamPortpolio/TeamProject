@@ -16,6 +16,7 @@ public:
 public:
     virtual HRESULT Link_Model(const string& levelKey, const string& modelDataKey);
     HRESULT Draw(ID3D11DeviceContext* pContext, _uint Index) override;
+    virtual HRESULT Draw_Instanced(ID3D11DeviceContext* pContext, _uint index, _uint instanceCount);
 public:
     virtual const D3D11_INPUT_ELEMENT_DESC* Get_ElementDesc(_uint DrawIndex) override;
     virtual const _uint Get_ElementCount(_uint DrawIndex) override;

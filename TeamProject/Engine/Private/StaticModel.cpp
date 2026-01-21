@@ -136,6 +136,11 @@ HRESULT CStaticModel::Draw(ID3D11DeviceContext* pContext, _uint Index)
     return m_pData->Render_Mesh(pContext, Index);
 }
 
+HRESULT CStaticModel::Draw_Instanced(ID3D11DeviceContext* pContext, _uint index, _uint instanceCount)
+{
+    return m_pData->Render_MeshInstanced(pContext, index, instanceCount);
+}
+
 
 void CStaticModel::Render_GUI()
 {

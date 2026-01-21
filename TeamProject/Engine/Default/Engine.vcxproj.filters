@@ -597,6 +597,9 @@
     <ClInclude Include="..\Public\CamFXData.h">
       <Filter>01. Utility\07. CameraManager\CamFXControllers</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\StaticMeshBatcher.h">
+      <Filter>01. Utility\06. RenderSystem\RenderPass\StaticMeshBatcher</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <!-- Filter Definitions -->
@@ -1113,6 +1116,9 @@
     <Filter Include="01. Utility\07. CameraManager\CamFXControllers">
       <UniqueIdentifier>{f00f7d2f-c57c-47bf-9d75-ffa2c952a3f6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\06. RenderSystem\RenderPass\StaticMeshBatcher">
+      <UniqueIdentifier>{08102361-04ae-417c-a2e7-4bf0323f7a62}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <!-- ClCompile 항목들 - 중복 제거 버전 -->
@@ -1574,6 +1580,9 @@
     </ClCompile>
     <ClCompile Include="..\private\CamFXControllers.cpp">
       <Filter>01. Utility\07. CameraManager\CamFXControllers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\StaticMeshBatcher.cpp">
+      <Filter>01. Utility\06. RenderSystem\RenderPass\StaticMeshBatcher</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

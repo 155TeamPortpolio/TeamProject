@@ -12,6 +12,7 @@ public:
 	virtual HRESULT Initialize(ID3D11Device* pDevice);
 	virtual HRESULT Bind_Buffer(ID3D11DeviceContext* pContext);
 	virtual HRESULT Render(ID3D11DeviceContext* pContext);
+	virtual HRESULT Render_Instanced(ID3D11DeviceContext* pContext,_uint instanceCount);
 
 	const string& Get_Key() { return m_VIKey; }
 	virtual void Render_GUI();
