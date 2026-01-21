@@ -2,7 +2,6 @@
 
 #include "BasePanel.h"
 #include "CamPanelData.h"
-#include "Unagi.h"
 #include "CamPanelUtil.h"
 #include "AnimGUIController.h"
 
@@ -26,10 +25,6 @@ public:
 	void    SetCaptureTarget(CCamObj* camObj);
     void    SetSpaceReference(OBJECT_HANDLE handle);
     void    SetSpaceRefCandidates(initializer_list<OBJECT_HANDLE> handles);
-
-    void    SetOnAvatarChanged(function<void(Avatar)> func) { onAvatarChanged = move(func); }
-    void    SetAvatarUI(Avatar avatar)                      { avatarUI = avatar; }
-    Avatar  GetAvatarUI() const                             { return avatarUI; }
 
 private:
 	void    DrawToolbar();
@@ -83,6 +78,7 @@ private:
     void   EnsureNameBufSync();
     void   DoSaveSequence();
     void   DoLoadSequence();
+    void   ApplyActorVisibility();
 
 private:
     void   DrawKeyframeEditor_SelectedKeyTable(bool& ioChangedAny);
@@ -107,9 +103,6 @@ private:
     vector<OBJECT_HANDLE> spaceRefCandidates{};
 
     CAnimGUIController    animGUIController;
-
-    function<void(Avatar)> onAvatarChanged{};
-    Avatar avatarUI = Avatar::JaneDoe;
 
 public:
     static CCamPanel* Create(GUI_CONTEXT* context);
