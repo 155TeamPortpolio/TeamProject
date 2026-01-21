@@ -168,7 +168,7 @@ void CCharacter::OnTriggerEnter(CGameObject* pOther)
 	ICollidable* pCollidable = pOther->Get_Component<ICollidable>();
 	if (!pCollidable) return;
 
-	if (pCollidable->Get_Group() == COLLISION_GROUP::INTERACABLE)
+	if (pCollidable->Get_Group() == COLLISION_GROUP::INTERACTABLE)
 	{
 		// Interact 활성화
 		UI_ACTION_PRIMARY_DESC desc;
@@ -186,12 +186,10 @@ void CCharacter::OnTriggerEnter(CGameObject* pOther)
 	}
 
 	if (Is_Invincible())	return;
-	CollisionSystem()->Log_CollisionEvent(Helper::EnumToString(pCollidable->Get_Group()));
 	if (pCollidable->Get_Group() == COLLISION_GROUP::MONSTER_PARRY)
 	{
 
 		m_ParryableTargets.insert(pOther);
-		CollisionSystem()->Log_CollisionEvent("Insert");
 	}
 	else if (pCollidable->Get_Group() == COLLISION_GROUP::MONSTER_ATTACK)
 	{
@@ -210,15 +208,13 @@ void CCharacter::OnTriggerStay(CGameObject* pOther)
 			pInteract->Interact();
 		}
 	}
-
+	
 	if (Is_Invincible())	return;
 	ICollidable* pCollidable = pOther->Get_Component<ICollidable>();
 	if (!pCollidable) return;
-	CollisionSystem()->Log_CollisionEvent(Helper::EnumToString(pCollidable->Get_Group()));
 	if (pCollidable->Get_Group() == COLLISION_GROUP::MONSTER_PARRY)
 	{
 		m_ParryableTargets.insert(pOther);
-		CollisionSystem()->Log_CollisionEvent("Insert");
 	}
 	else if (pCollidable->Get_Group() == COLLISION_GROUP::MONSTER_ATTACK)
 	{
@@ -231,8 +227,10 @@ void CCharacter::OnTriggerExit(CGameObject* pOther)
 	ICollidable* pCollidable = pOther->Get_Component<ICollidable>();
 	if (!pCollidable) return;
 
-	if (pCollidable->Get_Group() == COLLISION_GROUP::INTERACABLE)
+	if (pCollidable->Get_Group() == COLLISION_GROUP::INTERACTABLE)
 	{
+		CollisionSystem()->Log_CollisionEvent(
+			"INTERACTABLE Exit - Other: " + pOther->Get_InstanceName());
 		// Interact 비활성화
 		UI_ACTION_PRIMARY_DESC desc;
 		desc.eMode = UI_ACTION_PRIMARY_MODE::ATTACK;

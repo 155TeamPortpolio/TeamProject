@@ -141,6 +141,8 @@ void CBattlePlayer::Late_Update(_float dt)
 
 void CBattlePlayer::Render_GUI()
 {
+	if (nullptr == m_pCurrentCharacter)
+		return;
 	ImGui::Text("Can Parry : %s", m_pCurrentCharacter->Can_Parry() ? "TRUE" : "FALSE");
 	ImGui::Text("Is Invicible : %s", m_pCurrentCharacter->Is_Invincible() ? "TRUE" : "FALSE");
 }

@@ -75,7 +75,7 @@ namespace CollisionHelper
         COLLISION_GROUP::MONSTER_ATTACK,
         COLLISION_GROUP::MONSTER_PARRY,
         COLLISION_GROUP::CAMERA,
-        COLLISION_GROUP::INTERACABLE
+        COLLISION_GROUP::INTERACTABLE
     };
     inline constexpr _int VALID_GROUP_COUNT = IM_ARRAYSIZE(VALID_GROUPS);
 
@@ -90,7 +90,7 @@ namespace CollisionHelper
         case COLLISION_GROUP::MONSTER_ATTACK:return "MONSTER_ATTACK";
         case COLLISION_GROUP::MONSTER_PARRY: return "MONSTER_PARRY";
         case COLLISION_GROUP::CAMERA:        return "CAMERA";
-        case COLLISION_GROUP::INTERACABLE:   return "INTERACABLE";
+        case COLLISION_GROUP::INTERACTABLE:   return "INTERACABLE";
         default:                             return "UNKNOWN";
         }
     }
