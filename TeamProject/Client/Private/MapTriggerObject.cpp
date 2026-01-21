@@ -300,7 +300,7 @@ void CMapTriggerObject::Ready_InvwalI(const MAP_TRIGGEROBJ_DESC* pObjDesc)
 				ColDesc.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER);
 				ColDesc.eType = COLLIDER_TYPE::BOX;
 				ColDesc.bAutoFit = false;
-				ColDesc.bTrigger = false; // 충돌 박스 생성하는 트리거
+				ColDesc.bTrigger = true; // 충돌 박스 생성하는 트리거
 				ColDesc.vCenter = {0.f, 0.f, 0.f};
 				ColDesc.vSize = pObjDesc->vUp;
 				ColDesc.vRotation = Get_Component<CCollider>()->Get_Rotation();
@@ -329,6 +329,7 @@ void CMapTriggerObject::Ready_PlayerPos(const MAP_TRIGGEROBJ_DESC* pObjDesc)
 		if (character)
 			character->Get_Component<CCharacterController>()->Set_Position(m_pTransform->Get_Pos());
 	}
+	Get_Component<CCollider>()->Set_Trigger(false);
 }
 
 CMapTriggerObject* CMapTriggerObject::Create()
