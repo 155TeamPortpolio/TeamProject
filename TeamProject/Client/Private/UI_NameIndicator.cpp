@@ -4,7 +4,9 @@
 #include "GameInstance.h"
 #include "ObjectContainer.h"
 #include "CharacterController.h"
+
 #include "TextSlot.h"
+#include "Player.h"
 
 HRESULT CUI_NameIndicator::Initialize_Prototype()
 {
@@ -18,14 +20,16 @@ HRESULT CUI_NameIndicator::Initialize_Prototype()
 HRESULT CUI_NameIndicator::Initialize(INIT_DESC* pArg)
 {
     INDICATOR_DESC* pDesc = static_cast<INDICATOR_DESC*>(pArg);
-    m_strName = pDesc->strName;
     m_pCCT = pDesc->pCCT;
 
     __super::Initialize(pArg);
 
     Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("name_indicator.json")));
     Cache_Children();
+
     Set_Name(pDesc->strName);
+
+    Set_Alpha(0.f);
 
     return S_OK;
 }
@@ -40,6 +44,8 @@ void CUI_NameIndicator::Update(_float dt)
         XMStoreFloat3(&m_vPosition, m_pCCT->Get_FootPosition() + XMVectorSet(0.f, m_pCCT->Get_HalfSize() * 2.f, 0.f, 0.f));
 
     Update_WorldToScreen(m_vPosition);
+
+    Update_State(CalcState_ByDistance());
 
     __super::Update(dt);
 
@@ -71,45 +77,30 @@ void CUI_NameIndicator::Set_Name(const wstring& strName)
     if (!m_pName)
         return;
 
-    m_strName = strName;
-
     m_pName->Set_Text(strName);
+}
 
-    //// 부모 크기 = 텍스트 크기
-    //_float2 textSize = m_pName->Get_TextSize() * m_pName->Get_Scale();
-    //m_vSize = textSize;
-    //
-    //// 로컬 중심
-    //_float2 localCenter = {
-    //    m_vSize.x * 0.5f,
-    //    m_vSize.y * 0.5f
-    //};
-    //
-    //m_pName->Set_AutoPos(
-    //    ANCHOR::Center,
-    //    localCenter
-    //);
+void CUI_NameIndicator::Update_State(STATE eNewState)
+{
+    if (m_eState == eNewState)
+        return;
 
-    //if (!m_pName)
-    //    return;
-    //
-    //m_pName->Set_Text(strName);
-    //
-    ////_float2 vSize = m_pName->Get_TextSize();
-    ////TCHAR szSize[32] = {};
-    ////swprintf_s(szSize, _countof(szSize), L"%f, %f\n", vSize.x, vSize.y);
-    ////OutputDebugString(szSize);
-    ////
-    ////m_vSize = _float2(100.f, 20.f);// m_pName->Get_TextSize()* m_pName->Get_Scale();
-    //_float2 parentCenter;
-    //parentCenter.x = m_vLeftTop.x + m_vSize.x * 0.5f;
-    //parentCenter.y = m_vLeftTop.y + m_vSize.y * 0.5f;
-    //
-    //// 4. 자식 텍스트를 부모 중심에 정렬
-    //m_pName->Set_AutoPos(
-    //    ANCHOR::Center,
-    //    parentCenter
-    //);
+    m_eState = eNewState;
+
+    if (m_eState == STATE::VISIBLE)
+        Set_Animation(0);
+    else if (m_eState == STATE::HIDDEN)
+        Set_Animation(1);
+}
+
+CUI_NameIndicator::STATE CUI_NameIndicator::CalcState_ByDistance()
+{
+    auto pPlayer = ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Player));
+    Vector4 vPlayerPos = static_cast<CPlayer*>(pPlayer)->Get_CurCharacterHandle().Get()->Get_Position();
+
+    Vector3 vDiff = (Vector3(m_vPosition) - Vector3(vPlayerPos));
+
+    return (max(m_fRadius, 1.f) >= vDiff.Length()) ? STATE::VISIBLE : STATE::HIDDEN;
 }
 
 CGameObject* CUI_NameIndicator::Create()
