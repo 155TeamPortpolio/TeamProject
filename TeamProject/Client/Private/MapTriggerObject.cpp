@@ -44,7 +44,6 @@ HRESULT CMapTriggerObject::Initialize(INIT_DESC* pArg)
 	Ready_ZeroPortal(pObjDesc);
 	Ready_InvwalI(pObjDesc);
 	Ready_PlayerPos(pObjDesc);
-	Ready_NPC(pObjDesc);
 
 	return S_OK;
 }
@@ -301,7 +300,7 @@ void CMapTriggerObject::Ready_InvwalI(const MAP_TRIGGEROBJ_DESC* pObjDesc)
 				ColDesc.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER);
 				ColDesc.eType = COLLIDER_TYPE::BOX;
 				ColDesc.bAutoFit = false;
-				ColDesc.bTrigger = false; // 충돌 박스 생성하는 트리거
+				ColDesc.bTrigger = true; // 충돌 박스 생성하는 트리거
 				ColDesc.vCenter = {0.f, 0.f, 0.f};
 				ColDesc.vSize = pObjDesc->vUp;
 				ColDesc.vRotation = Get_Component<CCollider>()->Get_Rotation();
@@ -330,22 +329,7 @@ void CMapTriggerObject::Ready_PlayerPos(const MAP_TRIGGEROBJ_DESC* pObjDesc)
 		if (character)
 			character->Get_Component<CCharacterController>()->Set_Position(m_pTransform->Get_Pos());
 	}
-}
-
-void CMapTriggerObject::Ready_NPC(const MAP_TRIGGEROBJ_DESC* pObjDesc)
-{
-	auto iter = pObjDesc->SlotDataValues.find("NPC");
-
-	if (iter != pObjDesc->SlotDataValues.end()) {		
-
-		for (auto& tFieldData : iter->second)
-		{
-			if(tFieldData.TagName == "Name")
-			{
-				Factory::Create_NPC(pObjDesc);
-			}
-		}
-	}
+	Get_Component<CCollider>()->Set_Trigger(false);
 }
 
 CMapTriggerObject* CMapTriggerObject::Create()
