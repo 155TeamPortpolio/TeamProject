@@ -42,7 +42,7 @@ void CTextUI::Update(_float dt)
     auto pTextSlot = Get_Component<CTextSlot>();
 
     if (pTextSlot->Is_AutoPos())
-        pTextSlot->Update_Pivot({ m_vLeftTop.x + m_vSize.x * 0.5f, m_vLeftTop.y + m_vSize.y * 0.5f });
+        pTextSlot->Update_Pivot(m_vLeftTop + m_vTextPivotOffset);
     else
         pTextSlot->Set_Position(m_vLeftTop);
 
@@ -65,11 +65,7 @@ void CTextUI::Load(const nlohmann::ordered_json& data)
         string strText = textJson.value("content", "content");
         pTextSlot->Set_Text(Helper::ConvertToWideString(strText));
         pTextSlot->Set_Size(textJson.value("fontScale", 1.f));
-        pTextSlot->Set_Color(m_vColor); 
-        //if (textJson.value("autoPos", true))
-        //    pTextSlot->Enable_AutoPos(static_cast<ANCHOR>(textJson.value("anchor", 0)));
-        pTextSlot->Enable_AutoPos(ANCHOR::Center);    //임시
-
+        pTextSlot->Set_Color(m_vColor);  
         if (textJson.value("outlined", false))
         {
             auto color = textJson.value("outlineColor", json::array({ 1.0f, 1.0f, 1.0f, 1.0f }));
@@ -77,6 +73,27 @@ void CTextUI::Load(const nlohmann::ordered_json& data)
         } 
         auto vShear = textJson.value("shear", json::array({ 0.0f, 0.0f }));
         Get_Component<CTextSlot>()->Set_Shear({vShear[0], vShear[1]});
+        if (textJson.value("autoPos", true))    //지금 오토포즈에 쓸 피봇 오프셋 계산을 로드에서 하는데, 만약에 클라이언트에서 텍스트 만들면 이거 처리 해줘야
+        {
+            auto eAnchor = textJson.value("anchor", 0);
+            pTextSlot->Enable_AutoPos(static_cast<ANCHOR>(eAnchor));
+
+            if (eAnchor & static_cast<_uint>(ANCHOR::Left))
+            {
+            }
+            else if (eAnchor & static_cast<_uint>(ANCHOR::Right))
+                m_vTextPivotOffset.x += m_vSize.x;
+            else
+                m_vTextPivotOffset.x += m_vSize.x * 0.5f;
+
+            if (eAnchor & static_cast<_uint>(ANCHOR::Top))
+            {
+            }
+            else if (eAnchor & static_cast<_uint>(ANCHOR::Bottom))
+                m_vTextPivotOffset.y += m_vSize.y;
+            else
+                m_vTextPivotOffset.y += m_vSize.y * 0.5f;
+        } 
     }
 }
 
