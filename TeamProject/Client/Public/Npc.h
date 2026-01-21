@@ -20,10 +20,14 @@ public:
     virtual void    Priority_Update(_float dt) override {};
     virtual void    Update(_float dt) override;
     virtual void    Late_Update(_float dt) override {};
-    
+
+protected:
+    HRESULT         Add_NameIndicator();
+
 protected:
     string m_strAnimName = "";
     wstring m_strName = TEXT("");
+
 
 public:
     virtual CGameObject* Clone(INIT_DESC* pArg) PURE;

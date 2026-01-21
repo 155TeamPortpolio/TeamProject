@@ -177,6 +177,7 @@
     <ClInclude Include="..\public\HowlState_Wake.h" />
     <ClInclude Include="..\public\Interactable.h" />
     <ClInclude Include="..\Public\CorinState_UltimateAttack.h" />
+    <ClInclude Include="..\public\Jaeger.h" />
     <ClInclude Include="..\public\JaneDoeState_Hit.h" />
     <ClInclude Include="..\Public\JaneDoeState_Start.h" />
     <ClInclude Include="..\public\OBJFactory.h" />
@@ -202,6 +203,7 @@
     <ClInclude Include="..\public\ThugAssaulter_Hit.h" />
     <ClInclude Include="..\public\ThugAssaulter_HitAirborne.h" />
     <ClInclude Include="..\public\ThugBulkyEnforcer_Hit.h" />
+    <ClInclude Include="..\Public\UI_NameIndicator.h" />
     <ClInclude Include="..\Public\UI_SceneFrame.h" />
     <ClInclude Include="..\Public\UI_BossHUD.h" />
     <ClInclude Include="..\Public\UI_EnemyStatus.h" />
@@ -442,6 +444,7 @@
     <ClCompile Include="..\private\HowlState_Wake.cpp" />
     <ClCompile Include="..\private\Interactable.cpp" />
     <ClCompile Include="..\Private\CorinState_UltimateAttack.cpp" />
+    <ClCompile Include="..\private\Jaeger.cpp" />
     <ClCompile Include="..\private\JaneDoeState_Hit.cpp" />
     <ClCompile Include="..\Private\JaneDoeState_Start.cpp" />
     <ClCompile Include="..\private\OBJFactory.cpp" />
@@ -464,6 +467,7 @@
     <ClCompile Include="..\private\ThugAssaulter_Hit.cpp" />
     <ClCompile Include="..\private\ThugAssaulter_HitAirborne.cpp" />
     <ClCompile Include="..\private\ThugBulkyEnforcer_Hit.cpp" />
+    <ClCompile Include="..\Private\UI_NameIndicator.cpp" />
     <ClCompile Include="..\Private\UI_SceneFrame.cpp" />
     <ClCompile Include="..\Private\UI_BossHUD.cpp" />
     <ClCompile Include="..\Private\UI_EnemyStatus.cpp" />

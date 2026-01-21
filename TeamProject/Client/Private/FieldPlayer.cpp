@@ -47,12 +47,12 @@ void CFieldPlayer::Priority_Update(_float dt)
 {
 	if (m_pCurrentCharacter == nullptr)
 		return;
-
-	Update_Input(dt);
+	Reset_State(dt);
 }
 
 void CFieldPlayer::Update(_float dt)
 {
+	Update_Input(dt);
 }
 
 void CFieldPlayer::Late_Update(_float dt)
@@ -96,7 +96,24 @@ HRESULT CFieldPlayer::Clear_Character()
 	return S_OK;
 }
 
+void CFieldPlayer::Reset_State(_float dt)
+{
+	m_pCurrentCharacter->Reset_State();
+}
+
 void CFieldPlayer::Update_Input(_float dt)
+{
+	if (!m_pCurrentCharacter) return;
+	Update_Movement(dt);
+	Update_Interact(dt);
+}
+
+void CFieldPlayer::Update_Interact(_float dt)
+{
+	if (InputDevice()->Key_Tap('F')) m_pCurrentCharacter->On_Interact();
+}
+
+void CFieldPlayer::Update_Movement(_float dt)
 {
 	m_input.prevDirection = m_input.direction;
 	m_input.previous = m_input.current;
@@ -147,9 +164,6 @@ void CFieldPlayer::Update_Input(_float dt)
 		m_input.direction = look * (_float)key.z + right * (_float)key.x;
 		m_input.direction.Normalize();
 	}
-
-	if (!m_pCurrentCharacter) return;
-
 	Process_Movement(dt);
 }
 

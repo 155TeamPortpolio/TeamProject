@@ -73,7 +73,8 @@ void CTextSlot::Push_Text()
 	}
 
 	if (m_AnchorInfo.bAutoPos) {
-		Set_Anchor(m_AnchorInfo.eAnchor, m_AnchorInfo.vPivot);
+		Apply_Align();
+		//Set_Anchor(m_AnchorInfo.eAnchor, m_AnchorInfo.vPivot);
 	}
 	if(isOutLined){
 		CGameInstance::GetInstance()->Get_FontSystem()->Push_Text(m_Info);
@@ -104,6 +105,22 @@ void CTextSlot::Set_AutoPos(ANCHOR anchor, _float2 Pivot)
 	m_AnchorInfo.bAutoPos = true;
 	m_AnchorInfo.vPivot = Pivot;
 	m_AnchorInfo.eAnchor = anchor;
+}
+
+void CTextSlot::Enable_AutoPos(ANCHOR anchor)
+{
+	m_AnchorInfo.bAutoPos = true;
+	m_AnchorInfo.eAnchor = anchor;
+}
+
+void CTextSlot::Disable_AutoPos()
+{
+	m_AnchorInfo.bAutoPos = false;
+}
+
+void CTextSlot::Update_Pivot(_float2 pivot)
+{
+	m_AnchorInfo.vPivot = pivot;
 }
 
 void CTextSlot::Set_Anchor(ANCHOR anchor, _float2 Pivot)
@@ -165,6 +182,54 @@ _float2 CTextSlot::Get_TextSize()
 	}
 	else
 		return _float2();
+}
+
+_float CTextSlot::Get_Scale()
+{
+	return m_Info.Scale;
+}
+
+void CTextSlot::Apply_Align()
+{
+	_vector size = m_pFont->TextSize(m_Info.Text);
+	float w = XMVectorGetX(size) * m_Info.Scale;
+	float h = XMVectorGetY(size) * m_Info.Scale;
+	_uint anchorFlags = static_cast<_uint>(m_AnchorInfo.eAnchor);
+
+	_float2 vPivot = m_AnchorInfo.vPivot;
+	// X√‡
+	if (anchorFlags & static_cast<_uint>(ANCHOR::Left))
+		m_Info.TextPos.x = vPivot.x;
+	else if (anchorFlags & static_cast<_uint>(ANCHOR::Right))
+		m_Info.TextPos.x = vPivot.x - w;
+	else // Center X
+		m_Info.TextPos.x = vPivot.x - w * 0.5f;
+
+	// Y√‡
+	if (anchorFlags & static_cast<_uint>(ANCHOR::Top))
+		m_Info.TextPos.y = vPivot.y;
+	else if (anchorFlags & static_cast<_uint>(ANCHOR::Bottom))
+		m_Info.TextPos.y = vPivot.y - h;
+	else // Center Y
+		m_Info.TextPos.y = vPivot.y - h * 0.5f;
+
+	//_float2 vSize = Get_TextSize();
+	//_float w = vSize.x * m_Info.Scale;
+	//_float h = vSize.y * m_Info.Scale;
+	//
+	//_float2 vPivot = m_AnchorInfo.vPivot;
+	//switch (m_AnchorInfo.eAnchor)
+	//{
+	//case ANCHOR::Left:
+	//	m_Info.TextPos = vPivot;
+	//	break;
+	//case ANCHOR::Center:
+	//	m_Info.TextPos = { vPivot.x - w * 0.5f, vPivot.y - h * 0.5f };
+	//	break;
+	//case ANCHOR::Right:
+	//	m_Info.TextPos = { vPivot.x - w, vPivot.y - h * 0.5f };
+	//	break;
+	//};
 }
 
 CTextSlot* CTextSlot::Create()

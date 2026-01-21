@@ -304,7 +304,7 @@ void CBattlePlayer::Process_Switch()
 		if (Can_Switch())
 		{
 			desc.eState = UI_ACTION_STATE::EXECUTING;
-			SwitchCharacter();
+			SwitchCharacter(m_bSwitchNext);
 			m_iParryingCount--;
 			if (m_iParryingCount == 0) m_iParryingCount = 6;
 			m_fSwitchCooldown = SWITCH_COOLDOWN;
@@ -457,21 +457,14 @@ CGameObject* CBattlePlayer::CreateBattleCharacter(CHARACTER character)
 
 void CBattlePlayer::SwitchToNext()
 {
-	m_iCurrentIndex = (m_iCurrentIndex + 1) % m_BattleCharacters.size();
-	m_pCurrentCharacter = m_BattleCharacters[m_iCurrentIndex];
+	swap(m_BattleCharacters[0], m_BattleCharacters[1]);
+	m_pCurrentCharacter = m_BattleCharacters[0];
 }
 
 void CBattlePlayer::SwitchToPrev()
 {
-	m_iCurrentIndex = (m_iCurrentIndex + m_BattleCharacters.size() - 1) % m_BattleCharacters.size();
-	m_pCurrentCharacter = m_BattleCharacters[m_iCurrentIndex];
-}
-
-void CBattlePlayer::SwitchToIndex(_uint iIndex)
-{
-	if (iIndex >= m_BattleCharacters.size()) return;
-	m_iCurrentIndex = iIndex;
-	m_pCurrentCharacter = m_BattleCharacters[m_iCurrentIndex];
+	swap(m_BattleCharacters[0], m_BattleCharacters[m_BattleCharacters.size() - 1]);
+	m_pCurrentCharacter = m_BattleCharacters[0];
 }
 
 HRESULT CBattlePlayer::ClearCharacters()
@@ -533,23 +526,16 @@ void CBattlePlayer::Sync_ActionUI()
 	EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
 }
 
-HRESULT CBattlePlayer::SwitchCharacter(CHARACTER character)
+HRESULT CBattlePlayer::SwitchCharacter(_bool bNext)
 {
 	NotifyCharacterSwitchOut();
-	if (character == CHARACTER::END)
+	if (bNext)
 	{
 		SwitchToNext();
 	}
 	else
 	{
-		for (_uint i = 0; i < m_BattleCharacters.size(); ++i)
-		{
-			if (m_BattleCharacters[i]->Get_CharacterName() == character)
-			{
-				SwitchToIndex(i);
-				break;
-			}
-		}
+		SwitchToPrev();
 	}
 	NotifyCharacterSwitchIn();
 	return S_OK;

@@ -16,6 +16,7 @@
 #include "HowlState_Sleep.h"
 #include "HowlState_Wake.h"
 
+
 CHowl::CHowl()
     :CServiceNpc()
 {
@@ -67,6 +68,7 @@ void CHowl::Awake()
 		.Loop(true)
 		.Apply();
 
+	__super::Awake();
 	//CFieldSystem::GetInstance()->Set_DayPahse(DayPhase::LateNight);
 }
 

@@ -55,7 +55,7 @@ private:
 
 public:
     OBJECT_HANDLE   GetCurCharacterHandle();
-    HRESULT         SwitchCharacter(CHARACTER character = CHARACTER::END);
+    HRESULT         SwitchCharacter(_bool bNext = true);
     void            SetBattleCharacters(vector<CHARACTER> battleCharacters);
     _int            GetParryingCount() const { return m_iParryingCount; }
     OBJECT_HANDLE   GetTargetHandle() const { return m_TargetHandle; }
@@ -100,7 +100,6 @@ private:
     CGameObject* CreateBattleCharacter(CHARACTER character);
     void         SwitchToNext();
     void         SwitchToPrev();
-    void         SwitchToIndex(_uint iIndex);
     void         NotifyCharacterSwitchIn();
     void         NotifyCharacterSwitchOut();
     void         Sync_ActionUI();
@@ -122,6 +121,7 @@ private:
     _float       m_fSwitchCooldown = { 0.f };
     _vector4     m_vSwitchPosition = XMVectorSet(0.f, 0.f, 0.f, 1.f);
     _vector4     m_vSwitchLook = XMVectorSet(0.f, 0.f, 0.f, 0.f);
+    _bool        m_bSwitchNext = true;
 
     _bool        m_bLockInput = false;
 
