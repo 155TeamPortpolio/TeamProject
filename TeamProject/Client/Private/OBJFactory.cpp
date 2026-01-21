@@ -29,8 +29,8 @@ static unordered_map<string, Factory::NPC_SPEC> s_NPCTable =
 {
 	{ "OfficeMeow",     Factory::NPC_SPEC{ "Proto_GameObject_OfficeMeow", &COfficeMeow::Create }},
 	{ "BangBooDeliver", Factory::NPC_SPEC{ "Proto_GameObject_BangBooDeliver", &CBangBooDeliver::Create } },
-	{ "BangBooPay",		Factory::NPC_SPEC{ "Proto_GameObject_BangBooPay", &CBangBooDeliver::Create } },
-	{ "BangBooAsk",		Factory::NPC_SPEC{ "Proto_GameObject_BangBooAsk", &CBangBooDeliver::Create } },
+	{ "BangBooPay",		Factory::NPC_SPEC{ "Proto_GameObject_BangBooPay", &CBangBooPay::Create } },
+	{ "BangBooAsk",		Factory::NPC_SPEC{ "Proto_GameObject_BangBooAsk", &CBangBooAsk::Create } },
 	{ "Howl",           Factory::NPC_SPEC{ "Proto_GameObject_Howl", &CHowl::Create } },
 	{ "Jaeger",         Factory::NPC_SPEC{ "Proto_GameObject_Jaeger", &CJaeger::Create } }
 };
