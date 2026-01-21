@@ -230,7 +230,7 @@ void CMapLoader::Place_EntityFromLoadData(ENTITY_INIT* pData)
         for (auto& FieldData : tSlotData.second[pData->iEntityID])
             FactoryDesc.SlotDataValues[tSlotData.first].push_back(FieldData);
     }
-    
+
     /* 여기에 엔티티 이용해서 생성 */
     Factory::Create_NPC(FactoryDesc);
 }
