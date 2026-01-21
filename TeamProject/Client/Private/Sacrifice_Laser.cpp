@@ -25,7 +25,7 @@ HRESULT CSacrifice_Laser::Initialize_Prototype()
 
 	/* Effect Asset */
 	ResourceManager()->Add_ResourcePath("laser_start.json", "../Bin/Resources/Effect/Data/laser_start.json");
-	ResourceManager()->Add_ResourcePath("laser3.json", "../Bin/Resources/Effect/Data/laser3.json");
+	ResourceManager()->Add_ResourcePath("laser4.json", "../Bin/Resources/Effect/Data/laser4.json");
 	ResourceManager()->Add_ResourcePath("laser_hit_point.json", "../Bin/Resources/Effect/Data/laser_hit_point.json");
 
 	/* Textures */
@@ -34,6 +34,7 @@ HRESULT CSacrifice_Laser::Initialize_Prototype()
 	ResourceManager()->Add_ResourcePath("Eff_Disorder_UU_23.png", "../Bin/Resources/Effect/Texture/Eff_Disorder_UU_23.png");
 	ResourceManager()->Add_ResourcePath("lightning6.png", "../Bin/Resources/Effect/Texture/lightning6.png");
 	ResourceManager()->Add_ResourcePath("Eff_Flare_085.png", "../Bin/Resources/Effect/Texture/Eff_Flare_085.png");
+	ResourceManager()->Add_ResourcePath("Flare_UU_02.png", "../Bin/Resources/Effect/Texture/Flare_UU_02.png");
 	ResourceManager()->Add_ResourcePath("Flare_UU_02.png", "../Bin/Resources/Effect/Texture/Flare_UU_02.png");
 
 	return S_OK;
@@ -56,7 +57,7 @@ HRESULT CSacrifice_Laser::Initialize(INIT_DESC* pArg)
 		.Build("LaserHitPoint");
 
 	_smatrix offsetMatrix = _smatrix::Identity;
-	offsetMatrix.Translation(_vector3(0.5f, 0.2f, 0.f));
+	offsetMatrix.Translation(_vector3(0.3f, 0.2f, 0.f));
 
 	auto pBoneFollower = Get_Component<CBoneFollower>();
 	pBoneFollower->Set_Offset(offsetMatrix);

@@ -81,7 +81,7 @@ HRESULT CZero_Level::Initialize()
 	m_StageContainer.emplace(StageType::Elite, CZeroStage_Elite::Create(this));
 
 	m_Context.isFirstIn = true;
-	ChangeStage(StageType::Normal, 1);
+	ChangeStage(StageType::Boss, 1);
 	m_Context.isFirstIn = false;
 	m_Context.pNowStage->Ready_Stage(m_Context);
 
@@ -109,7 +109,7 @@ HRESULT CZero_Level::Initialize()
 		pResource->Add_ResourcePath("sacrifice_hand_ground_up.json", "../Bin/Resources/Effect/Data/sacrifice_hand_ground_up.json");
 		pResource->Add_ResourcePath("sacrifice_enviroment.json", "../Bin/Resources/Effect/Data/sacrifice_enviroment.json");
 		pResource->Add_ResourcePath("basic_hit.json", "../Bin/Resources/Effect/Data/basic_hit.json");
-
+	
 		/* Textures */
 		pResource->Add_ResourcePath("attack_sign.png", "../Bin/Resources/Effect/Texture/attack_sign.png");
 		pResource->Add_ResourcePath("Eff_Particle_044.png", "../Bin/Resources/Effect/Texture/Eff_Particle_044.png");
@@ -132,7 +132,7 @@ HRESULT CZero_Level::Initialize()
 		pResource->Add_ResourcePath("Eff_Flare_060.png", "../Bin/Resources/Effect/Texture/Eff_Flare_060.png");
 		pResource->Add_ResourcePath("Eff_Trail_140_LYF_01.png", "../Bin/Resources/Effect/Texture/Eff_Trail_140_LYF_01.png");
 		pResource->Add_ResourcePath("VX_Noise_UU_16.png", "../Bin/Resources/Effect/Texture/VX_Noise_UU_16.png");
-
+	
 		/* Models */
 		pResource->Add_ResourcePath("Smoke_Cone2.model", "../Bin/Resources/Effect/Model/Sacrifice_Smoke_Trail/Smoke_Cone2.model");
 		pResource->Add_ResourcePath("Smoke_Cone2.mat", "../Bin/Resources/Effect/Model/Sacrifice_Smoke_Trail/Smoke_Cone2.mat");
