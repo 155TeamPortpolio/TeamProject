@@ -204,6 +204,7 @@ void CTextSlot::Apply_Align()
 		m_Info.TextPos.x = vPivot.x - w;
 	else // Center X
 		m_Info.TextPos.x = vPivot.x - w * 0.5f;
+	m_Info.TextPos.x += m_Info.vShear.x * h;
 
 	// Y√‡
 	if (anchorFlags & static_cast<_uint>(ANCHOR::Top))
@@ -212,24 +213,7 @@ void CTextSlot::Apply_Align()
 		m_Info.TextPos.y = vPivot.y - h;
 	else // Center Y
 		m_Info.TextPos.y = vPivot.y - h * 0.5f;
-
-	//_float2 vSize = Get_TextSize();
-	//_float w = vSize.x * m_Info.Scale;
-	//_float h = vSize.y * m_Info.Scale;
-	//
-	//_float2 vPivot = m_AnchorInfo.vPivot;
-	//switch (m_AnchorInfo.eAnchor)
-	//{
-	//case ANCHOR::Left:
-	//	m_Info.TextPos = vPivot;
-	//	break;
-	//case ANCHOR::Center:
-	//	m_Info.TextPos = { vPivot.x - w * 0.5f, vPivot.y - h * 0.5f };
-	//	break;
-	//case ANCHOR::Right:
-	//	m_Info.TextPos = { vPivot.x - w, vPivot.y - h * 0.5f };
-	//	break;
-	//};
+	m_Info.TextPos.y += m_Info.vShear.y * w;
 }
 
 CTextSlot* CTextSlot::Create()
