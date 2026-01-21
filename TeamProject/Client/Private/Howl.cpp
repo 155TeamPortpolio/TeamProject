@@ -41,6 +41,8 @@ HRESULT CHowl::Initialize_Prototype()
 	auto pMaterial = Get_Component<CMaterial>();
 	pMaterial->Link_Material(G_GlobalLevelKey, "NPC_Woof.mat");
 
+	Add_InteractZonePrototype();
+
 	return S_OK;
 }
 
@@ -69,6 +71,8 @@ void CHowl::Awake()
 		.Apply();
 
 	__super::Awake();
+
+	Add_InteractZone(Get_Position());
 	//CFieldSystem::GetInstance()->Set_DayPahse(DayPhase::LateNight);
 }
 
