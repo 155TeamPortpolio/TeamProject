@@ -18,7 +18,7 @@ CMapToolCore::CMapToolCore()
 
 LOADED_DATA CMapToolCore::Load_MapData()
 {
-	Clear_Layer(MAPOBJ_TYPE::ALL);
+	//Clear_Layer(MAPOBJ_TYPE::ALL);
 
 	filesystem::path OpenPath = Helper::OpenFile_Dialogue();
 
@@ -31,7 +31,6 @@ LOADED_DATA CMapToolCore::Load_MapData()
 	}
 
 	LOADED_DATA	LoadedData = {};
-	//vector<LOADED_OBJECT>	LodedObjects;
 
 	/* MapData일 때 */
 	if (OpenPath.string().find("MapData") != string::npos) 
@@ -43,6 +42,10 @@ LOADED_DATA CMapToolCore::Load_MapData()
 			MSG_BOX("[MapTool] Load Map Data Failed.\nBaseData가 아닙니다.");
 			return {};
 		}
+
+		Clear_Layer(MAPOBJ_TYPE::PLACED);
+		Clear_Layer(MAPOBJ_TYPE::TRIGGER);
+
 		LoadedData.tagDataFormat = "MapData";
 		//if (mapdata.iVersion != m_tMapToolContext.iVersion) {
 		//	MSG_BOX("[MapTool] Load Map Data Failed.\n잘못된 버전입니다.");
@@ -84,6 +87,8 @@ LOADED_DATA CMapToolCore::Load_MapData()
 			MSG_BOX("[MapTool] Load Entity Data Failed.\nBaseData가 아닙니다.");
 			return {};
 		}
+
+		Clear_Layer(MAPOBJ_TYPE::ENTITY);
 
 		LoadedData.tagDataFormat = "EntityData";
 		m_tMapToolContext.iVersion = EntityHeader.iVersion;
@@ -239,9 +244,6 @@ void CMapToolCore::Place_EntityObjectFromLoadData(ENTITY* pData)
 	ColDesc.eType = COLLIDER_TYPE::BOX;
 	ColDesc.bTrigger = true; // 충돌 박스 생성하는 트리거
 	ColDesc.vSize = { pData->vScale[0], pData->vScale[1], pData->vScale[2] };
-	ColDesc.vRotation = { XMConvertToRadians(pData->vRotation[0]),
-						  XMConvertToRadians(pData->vRotation[1]),
-						  XMConvertToRadians(pData->vRotation[2]) };
 
 	CEntityObject::ENTITY_INIT_DESC* pDesc = new CEntityObject::ENTITY_INIT_DESC();
 	pDesc->iType = pData->iType;
@@ -250,6 +252,7 @@ void CMapToolCore::Place_EntityObjectFromLoadData(ENTITY* pData)
 	CGameObject* pStaticObject = Builder::Create_Object({ g_TagMapToolLevel ,"Proto_GameObject_EntityObject" })
 		.Add_ObjDesc(pDesc)
 		.Collider(ColDesc)
+		.Rotate({ pData->vRotation[0], pData->vRotation[1], pData->vRotation[2] })
 		.Position({ pData->vTranslation[0], pData->vTranslation[1], pData->vTranslation[2] })
 		.Build(TagInstanceName);
 
