@@ -10,11 +10,29 @@ NS_END
 
 NS_BEGIN(Client)
 namespace fs = filesystem;
+class CBattlePlayer; class CFieldCharacter; class CPlayer; class CCharacter;
 
-class CBattlePlayer; class CFieldCharacter; class CPlayer; 
-
-enum class CamType { None, Free, Orbit, Sequence, End };
+enum class CamType       { None, Free, Orbit, Sequence, End };
 enum class CamReturnMode { None, SnapToEnd, RestorePrev };
+enum class CamSeqType    { BattleIntro, ZeroIntro, Ultimate, End };
+
+enum class CamShakeType
+{
+    TapSoft, HitLight, HitNormal, HitHeavy,
+    ExplosionSmall, ExplosionBig,
+    LandingLight, LandingHeavy,
+    Dash,
+    End
+};
+
+enum class CamZoomType
+{
+    TapSoft, HitLight, HitNormal, HitHeavy, HitCrit,
+    ExplosionSmall, ExplosionBig,
+    LandingLight, LandingHeavy,
+    Dash,
+    End
+};
 
 struct CamSequenceRequestDesc
 {
