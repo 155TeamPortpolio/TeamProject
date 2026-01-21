@@ -478,6 +478,8 @@ namespace Engine
 
 		/* Bloom */
 		_float fBloomIntensity{};
+		_float fBloomThreshold{};
+		_float fBloomSoftness{};
 
 		/* Noise */
 		_float fEnableNoise{};

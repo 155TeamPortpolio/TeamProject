@@ -97,6 +97,8 @@ HRESULT CMeshNode::Initialize(INIT_DESC* pArg)
 
 		/* Bloom */
 		m_BloomModule.fIntensity = pMeshNode->fBloomIntensity;
+		m_BloomModule.fThreshold = pMeshNode->fBloomThreshold;
+		m_BloomModule.fSoftness = pMeshNode->fBloomSoftness;
 
 		/* Noise */
 		m_NoiseModule.fEnableNoise = pMeshNode->fEnableNoise;

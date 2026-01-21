@@ -1,11 +1,46 @@
 #include "pch.h"
 #include "CamLoader.h"
 #include "CamDirector.h"
+#include "GameInstance.h"
 
 namespace fs = filesystem;
 
 namespace
 {
+    static const CamShakePreset kShakePresets[] =
+    {
+        CamShakePreset{0.10f, 0.00030f, 0.050f, 0.06f, 0.00018f, 16.f, 0.080f, 0.140f},
+        CamShakePreset{0.16f, 0.00042f, 0.055f, 0.08f, 0.00022f, 16.f, 0.090f, 0.160f},
+        CamShakePreset{0.22f, 0.00060f, 0.060f, 0.10f, 0.00030f, 15.f, 0.100f, 0.180f},
+        CamShakePreset{0.40f, 0.00095f, 0.070f, 0.18f, 0.00048f, 14.f, 0.120f, 0.220f},
+        CamShakePreset{0.55f, 0.00115f, 0.075f, 0.22f, 0.00060f, 13.f, 0.135f, 0.260f},
+
+        CamShakePreset{0.32f, 0.00105f, 0.080f, 0.16f, 0.00055f, 12.f, 0.140f, 0.260f},
+        CamShakePreset{0.75f, 0.00185f, 0.085f, 0.30f, 0.00095f, 11.f, 0.160f, 0.320f},
+
+        CamShakePreset{0.20f, 0.00095f, 0.070f, 0.08f, 0.00035f, 12.f, 0.110f, 0.220f},
+        CamShakePreset{0.48f, 0.00155f, 0.080f, 0.14f, 0.00055f, 11.f, 0.140f, 0.300f},
+
+        CamShakePreset{0.12f, 0.00040f, 0.060f, 0.10f, 0.00025f, 18.f, 0.080f, 0.140f},
+    };
+
+    static const CamZoomPreset kZoomPresets[] =
+    {
+        CamZoomPreset{0.45f, 0.050f, 0.120f},
+        CamZoomPreset{0.70f, 0.045f, 0.140f},
+        CamZoomPreset{0.90f, 0.045f, 0.150f},
+        CamZoomPreset{1.30f, 0.050f, 0.180f},
+        CamZoomPreset{1.70f, 0.055f, 0.200f},
+
+        CamZoomPreset{1.10f, 0.055f, 0.220f},
+        CamZoomPreset{2.10f, 0.060f, 0.260f},
+
+        CamZoomPreset{0.80f, 0.050f, 0.170f},
+        CamZoomPreset{1.40f, 0.055f, 0.230f},
+
+        CamZoomPreset{0.55f, 0.045f, 0.110f},
+    };
+
     _bool StartsWith(const string& s, const char* prefix)
     {
         const size_t n = strlen(prefix);
@@ -45,7 +80,7 @@ namespace
             return req;
         }
 
-        req.blendInSec  = 0.25f;
+        req.blendInSec  = 0.f;
         req.blendOutSec = 0.25f;
         req.resetTime   = true;
         req.returnMode  = CamReturnMode::SnapToEnd;
@@ -77,4 +112,6 @@ namespace
 void CamLoader::Load()
 {
     LoadFolder("../../Resources/Data/Camera");
+    CameraManager()->RegisterShakePresets(kShakePresets, ENUM(CamShakeType::End));
+    CameraManager()->RegisterZoomPresets(kZoomPresets,   ENUM(CamZoomType::End));
 }

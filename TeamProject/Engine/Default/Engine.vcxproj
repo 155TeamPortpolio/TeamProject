@@ -242,6 +242,7 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\Builder.h" />
     <ClInclude Include="..\Public\Build_Struct.h" />
     <ClInclude Include="..\Public\Camera.h" />
+    <ClInclude Include="..\public\CamFXControllers.h" />
     <ClInclude Include="..\Public\CameraMgr.h" />
     <ClInclude Include="..\Public\Camera_Enum.h" />
     <ClInclude Include="..\Public\Camera_Struct.h" />
@@ -249,6 +250,7 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\CamFovLinearEvaluator.h" />
     <ClInclude Include="..\Public\CamFovPerSegmentEvaluator.h" />
     <ClInclude Include="..\Public\CamFovSmoothEvaluator.h" />
+    <ClInclude Include="..\Public\CamFXData.h" />
     <ClInclude Include="..\Public\CamPosBSplineEvaluator.h" />
     <ClInclude Include="..\Public\CamPosCatmullRomEvaluator.h" />
     <ClInclude Include="..\Public\CamPosCentripetalEvaluator.h" />
@@ -382,8 +384,6 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\ResourceMgr.h" />
     <ClInclude Include="..\Public\RigidBody.h" />
     <ClInclude Include="..\Public\Shader.h" />
-    <ClInclude Include="..\public\ShakeController.h" />
-    <ClInclude Include="..\Public\ShakeControllerData.h" />
     <ClInclude Include="..\Public\SizeBySpeed.h" />
     <ClInclude Include="..\Public\SkeletalModel.h" />
     <ClInclude Include="..\Public\Skeleton.h" />
@@ -418,8 +418,6 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\VI_Rect.h" />
     <ClInclude Include="..\Public\VI_Terrain.h" />
     <ClInclude Include="..\Public\VI_Trail.h" />
-    <ClInclude Include="..\public\ZoomController.h" />
-    <ClInclude Include="..\Public\ZoomControllerData.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\imgui_stdlib.cpp">
@@ -436,6 +434,7 @@ exit /b 0</Command>
     <ClCompile Include="..\Private\Bone.cpp" />
     <ClCompile Include="..\Private\BoneFollower.cpp" />
     <ClCompile Include="..\Private\Camera.cpp" />
+    <ClCompile Include="..\private\CamFXControllers.cpp" />
     <ClCompile Include="..\Private\CameraMgr.cpp" />
     <ClCompile Include="..\Private\CamEvaluator.cpp" />
     <ClCompile Include="..\Private\CamFovLinearEvaluator.cpp" />
@@ -538,7 +537,6 @@ exit /b 0</Command>
     <ClCompile Include="..\Private\ResourceMgr.cpp" />
     <ClCompile Include="..\Private\RigidBody.cpp" />
     <ClCompile Include="..\Private\Shader.cpp" />
-    <ClCompile Include="..\private\ShakeController.cpp" />
     <ClCompile Include="..\Private\SizeBySpeed.cpp" />
     <ClCompile Include="..\Private\SkeletalModel.cpp" />
     <ClCompile Include="..\Private\Skeleton.cpp" />
@@ -572,7 +570,6 @@ exit /b 0</Command>
     <ClCompile Include="..\Private\VI_Rect.cpp" />
     <ClCompile Include="..\Private\VI_Terrain.cpp" />
     <ClCompile Include="..\Private\VI_Trail.cpp" />
-    <ClCompile Include="..\private\ZoomController.cpp" />
     <ClCompile Include="..\Public\GUI_Inc\backends\imgui_impl_dx11.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>

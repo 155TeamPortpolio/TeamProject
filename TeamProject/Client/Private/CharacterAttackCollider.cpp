@@ -117,7 +117,7 @@ void CCharacterAttackCollider::OnTriggerEnter(CGameObject* pOther)
 		//CameraManager()->AddShake(CamShakeType::HitCrit);
 		//CameraManager()->AddZoomPunch(0.8f, 0.045f, 0.15f);
 		//CameraManager()->AddImpact(CamShakeType::TapSoft, CamZoomType::TapSoft, 1.5f);
-		CameraManager()->AddImpact(0);
+		CameraManager()->AddImpact(1,0);
 	}
 
 }
@@ -138,7 +138,7 @@ void CCharacterAttackCollider::OnTriggerStay(CGameObject* pOther)
 		BattleSystem()->GetBattlePlayer()->Add_Gauge(10.f, 100.f);
 
 		// Camera
-		CameraManager()->AddImpact(0);
+		CameraManager()->AddImpact(1,0);
 	}
 }
 
