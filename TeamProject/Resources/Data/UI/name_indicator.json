@@ -28,11 +28,102 @@
         1.0
     ],
     "pass": "Opaque",
-    "animClips": [],
+    "animClips": [
+        {
+            "duration": 0.1,
+            "keyframes": [
+                {
+                    "angle": 0.0,
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        0.0
+                    ],
+                    "easeType": 2,
+                    "position": [
+                        0.0,
+                        0.0
+                    ],
+                    "scale": [
+                        1.0,
+                        1.0
+                    ],
+                    "time": 0.0
+                },
+                {
+                    "angle": 0.0,
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "easeType": 0,
+                    "position": [
+                        0.0,
+                        0.0
+                    ],
+                    "scale": [
+                        1.0,
+                        1.0
+                    ],
+                    "time": 0.1
+                }
+            ],
+            "loop": false,
+            "name": "clip0"
+        },
+        {
+            "duration": 0.1,
+            "keyframes": [
+                {
+                    "angle": 0.0,
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "easeType": 2,
+                    "position": [
+                        0.0,
+                        0.0
+                    ],
+                    "scale": [
+                        1.0,
+                        1.0
+                    ],
+                    "time": 0.0
+                },
+                {
+                    "angle": 0.0,
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        0.0
+                    ],
+                    "easeType": 0,
+                    "position": [
+                        0.0,
+                        0.0
+                    ],
+                    "scale": [
+                        1.0,
+                        1.0
+                    ],
+                    "time": 0.1
+                }
+            ],
+            "loop": false,
+            "name": "clip1"
+        }
+    ],
     "children": [
         {
             "alive": true,
-            "instanceName": "arrowLeft",
+            "instanceName": "arrowL",
             "transform": {
                 "anchor": 1,
                 "anchorOffset": [
@@ -132,7 +223,7 @@
         },
         {
             "alive": true,
-            "instanceName": "arrowRight",
+            "instanceName": "arrowR",
             "transform": {
                 "anchor": 2,
                 "anchorOffset": [
