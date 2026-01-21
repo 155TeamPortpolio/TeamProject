@@ -180,19 +180,9 @@ void CCollisionSystem::Render_GUI()
 	// 충돌 그룹별 통계
 	if (ImGui::CollapsingHeader("Group Statistics"))
 	{
-		const COLLISION_GROUP groups[] = {
-			COLLISION_GROUP::COMMON,
-			COLLISION_GROUP::PLAYER,
-			COLLISION_GROUP::MONSTER,
-			COLLISION_GROUP::PLAYER_ATTACK,
-			COLLISION_GROUP::MONSTER_ATTACK,
-			COLLISION_GROUP::MONSTER_PARRY,
-			COLLISION_GROUP::CAMERA,
-			COLLISION_GROUP::INTERACABLE
-		};
-
-		for (auto eGroup : groups)
+		for (_int i = 0; i < CollisionHelper::VALID_GROUP_COUNT; ++i)
 		{
+			COLLISION_GROUP eGroup = CollisionHelper::VALID_GROUPS[i];
 			_uint iGroupCount = 0;
 			_uint iGroupColliding = 0;
 
