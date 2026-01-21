@@ -94,11 +94,11 @@ void CZeroPortal::Update(_float dt)
 	//Extend(dt);
 
 	if (m_bIsInteractable) {
-		Interact();
-		m_vTargetSize = { 3.f,4.f,3.f };
+		//Interact();
+		//m_vTargetSize = { 3.f,4.f,3.f };
 	}
 	else {
-		m_vTargetSize = { 1.f,1.f,1.f };
+		//m_vTargetSize = { 1.f,1.f,1.f };
 	}
 }
 
@@ -134,10 +134,8 @@ void CZeroPortal::Interact()
 	if (!m_bIsInteractable)
 		return;
 
-	if (InputDevice()->Key_Tap('F')) {
-		m_pTargetStage->StageChangeOn(CZero_Level::StageType::Boss, 0);
-		m_bIsInteractable = false;
-	}
+	m_pTargetStage->StageChangeOn(CZero_Level::StageType::Boss, 0);
+	m_bIsInteractable = false;
 }
 
 void CZeroPortal::Extend(_float dt)
