@@ -143,12 +143,11 @@ HRESULT CTestLevel::Awake()
 	Ready_TestObject();
 	Ready_Npc();
 
-
 	BattleSystem()->GetBattlePlayer()->QuestStart();
 	m_pCamDirector->AutoTarget();
 	m_pCamDirector->RequestSequence(CamSeqType::ZeroIntro);
 
-	//GameInstance()->Set_EngineTimeScale(0.33f);
+	//GameInstance()->Set_EngineTimeScale(0.1f);
 
 	return S_OK;
 }

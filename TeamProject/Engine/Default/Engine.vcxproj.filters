@@ -585,23 +585,17 @@
     <ClInclude Include="..\Public\IInputService.h">
       <Filter>01. Utility\98. Services</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\ShakeController.h">
-      <Filter>01. Utility\07. CameraManager\ShakeController</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\CameraMgr.h">
       <Filter>01. Utility\07. CameraManager</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\EnvPanel.h">
       <Filter>00. System\02. Gui\GUI_Panel\EnvPanel</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\ZoomController.h">
-      <Filter>01. Utility\07. CameraManager\ZoomController</Filter>
+    <ClInclude Include="..\public\CamFXControllers.h">
+      <Filter>01. Utility\07. CameraManager\CamFXControllers</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\ShakeControllerData.h">
-      <Filter>01. Utility\07. CameraManager\ShakeController</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\ZoomControllerData.h">
-      <Filter>01. Utility\07. CameraManager\ZoomController</Filter>
+    <ClInclude Include="..\Public\CamFXData.h">
+      <Filter>01. Utility\07. CameraManager\CamFXControllers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1095,9 +1089,6 @@
     <Filter Include="99. Defines\AnimationLayout">
       <UniqueIdentifier>{08d4aef7-fcc3-432b-a822-f966d04565ac}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Utility\07. CameraManager\ShakeController">
-      <UniqueIdentifier>{225219f8-d4c9-4dab-9fe7-4ae38e2de98b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="00. System\02. Gui\GUI_Panel\EnvPanel">
       <UniqueIdentifier>{8b442149-c628-41be-8ecc-533ff36b2e28}</UniqueIdentifier>
     </Filter>
@@ -1119,8 +1110,8 @@
     <Filter Include="98. BasicShader\UI">
       <UniqueIdentifier>{344ee409-7a31-4dc3-9741-3c5131d36b7a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Utility\07. CameraManager\ZoomController">
-      <UniqueIdentifier>{e6a96919-8c00-4dcf-bf8d-56535eb3a99d}</UniqueIdentifier>
+    <Filter Include="01. Utility\07. CameraManager\CamFXControllers">
+      <UniqueIdentifier>{f00f7d2f-c57c-47bf-9d75-ffa2c952a3f6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1578,14 +1569,11 @@
     <ClCompile Include="..\Private\AnimBuilder.cpp">
       <Filter>01. Utility\04. Components\06. Animator3D\AnimBuilder</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\ShakeController.cpp">
-      <Filter>01. Utility\07. CameraManager\ShakeController</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\EnvPanel.cpp">
       <Filter>00. System\02. Gui\GUI_Panel\EnvPanel</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\ZoomController.cpp">
-      <Filter>01. Utility\07. CameraManager\ZoomController</Filter>
+    <ClCompile Include="..\private\CamFXControllers.cpp">
+      <Filter>01. Utility\07. CameraManager\CamFXControllers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

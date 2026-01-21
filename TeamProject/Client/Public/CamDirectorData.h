@@ -16,6 +16,24 @@ enum class CamType       { None, Free, Orbit, Sequence, End };
 enum class CamReturnMode { None, SnapToEnd, RestorePrev };
 enum class CamSeqType    { BattleIntro, ZeroIntro, Ultimate, End };
 
+enum class CamShakeType
+{
+    TapSoft, HitLight, HitNormal, HitHeavy,
+    ExplosionSmall, ExplosionBig,
+    LandingLight, LandingHeavy,
+    Dash,
+    End
+};
+
+enum class CamZoomType
+{
+    TapSoft, HitLight, HitNormal, HitHeavy, HitCrit,
+    ExplosionSmall, ExplosionBig,
+    LandingLight, LandingHeavy,
+    Dash,
+    End
+};
+
 struct CamSequenceRequestDesc
 {
     _float blendInSec  = 0.25f;
