@@ -78,6 +78,12 @@ typedef struct tagNoiseModule
 	_float2 vNoiseUVSpeed{};
 }NOISE_MODULE;
 
+typedef struct tagMaskModule
+{
+	_float fEnableMask{};
+	_float fMaskTilling{};
+}MASK_MODULE;
+
 typedef struct tagDistortionModule
 {
 

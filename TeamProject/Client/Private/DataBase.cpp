@@ -27,6 +27,11 @@ HRESULT CDataBase::CreateTable()
 	// 맵
 	if (FAILED(LoadMapData("../../Resources/Data/Map")))
 		return E_FAIL;
+	//Npc
+	if (FAILED(LoadNpcDialogueData("../../Resources/Data/Npc/NPC_Dialogue.csv")))
+		return E_FAIL;
+	if (FAILED(LoadNpcChoiceData("../../Resources/Data/Npc/NPC_Choice.csv")))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -54,6 +59,24 @@ MonsterCreationDesc CDataBase::GetMonsterDesc(const string& strName)
 	auto iter = m_MonsterCreationTables.find(strName);
 	if (iter == m_MonsterCreationTables.end())
 		return MonsterCreationDesc{};
+
+	return iter->second;
+}
+
+NpcDialogueDesc CDataBase::GetNpcDialogueDesc(pair<string, _uint> dialogueID)
+{
+	auto iter = m_DialogueTables.find(dialogueID);
+	if (iter == m_DialogueTables.end())
+		return NpcDialogueDesc{};
+
+	return iter->second;
+}
+
+ChoiceDesc CDataBase::GetNpcChoiceDesc(const string& strName)
+{
+	auto iter = m_DialgoueChoiceTables.find(strName);
+	if (iter == m_DialgoueChoiceTables.end())
+		return ChoiceDesc{};
 
 	return iter->second;
 }
@@ -232,7 +255,7 @@ HRESULT CDataBase::LoadMapData(const string& MapDataFolderPath)
 			if (tokens.size() < 4)
 				continue;
 
-			if (tokens[0] != "MapData")
+			if (false == (tokens[0] == "MapData" || tokens[0] == "EntityData"))
 				continue;
 
 			_int iVersion = {};
@@ -242,10 +265,11 @@ HRESULT CDataBase::LoadMapData(const string& MapDataFolderPath)
 				continue;
 
 			// 현재 클라이언트 버전보다 높으면 패스
-			if (iVersion > g_iMapDataVersion)
-				continue;
+			//if (iVersion > g_iMapDataVersion)
+			//	continue;
 
 			MapData_Path_Packet packet = {};
+			packet.TagDataFormat = tokens[0];
 			packet.TagDataFileKey = FilePath.filename().string();
 			packet.TagDataFilePath = FilePath.string();
 			packet.TagArea = tokens[1];
@@ -253,15 +277,117 @@ HRESULT CDataBase::LoadMapData(const string& MapDataFolderPath)
 			packet.iVersion = iVersion;
 
 			auto& vecPacket = m_MapAreaData[packet.TagArea];
-
 			auto it = std::find_if(vecPacket.begin(), vecPacket.end(),
-				[&](const MapData_Path_Packet& p) { return p.TagSlotFormat == packet.TagSlotFormat; });
+				[&](const MapData_Path_Packet& p) { 
+					if (p.TagDataFormat == packet.TagDataFormat)
+						return p.TagSlotFormat == packet.TagSlotFormat; 
+					return false;
+				});
 
 			// 버전이 높다면 높은 버전으로 교체
 			if (it == vecPacket.end())
 				vecPacket.push_back(packet);
 			else if (packet.iVersion > it->iVersion)
 				*it = packet;
+		}
+	}
+
+	return S_OK;
+}
+
+HRESULT CDataBase::LoadNpcDialogueData(const string& csvPath)
+{
+	io::CSVReader<
+		13,
+		io::trim_chars<' ', '\t'>,
+		io::double_quote_escape<',', '"'>
+	>in(csvPath);
+
+	in.read_header(
+		io::ignore_extra_column | io::ignore_missing_column,
+		"ID", "Name", "Sequence", "Speaker", "Time", "Type", "Repeat", "Text", "Result", "ChoiceNum",
+		"Choice1", "Choice2", "Choice3"
+	);
+	string			DialogueID, Choice_ID1, Choice_ID2, Choice_ID3;
+	string			Name, Text;
+	_uint			SequenceID, ChoiceNum;
+	_uint			Repeat;
+	string			Speaker;
+	string			DayPhase;
+	string			DialogueType;
+	string			Result;
+
+	while (in.read_row(DialogueID, Name, SequenceID, Speaker, DayPhase, DialogueType, Repeat, Text, Result,
+		ChoiceNum, Choice_ID1, Choice_ID2, Choice_ID3))
+	{
+		if (DialogueID.empty()) continue;
+
+		NpcDialogueDesc desc = {};
+		desc.DialogueID = DialogueID;
+		desc.Name = StringToWString(Name);
+		desc.Speaker = StringToSpeaker(Speaker);
+		desc.SequenceID = SequenceID;
+		desc.DayPhase = StringToDayPhase(DayPhase);
+		desc.DialogueType = StringToDialogueType(DialogueType);
+		desc.Repeat = static_cast<_bool>(Repeat);
+		desc.Text = StringToWString(Text);
+		desc.Result = StringToDialogueResult(Result);
+		desc.ChoiceNum = ChoiceNum;
+		desc.Choice_ID1 = Choice_ID1;
+		desc.Choice_ID2 = Choice_ID2;
+		desc.Choice_ID3 = Choice_ID3;
+
+		auto [iter, inserted] = m_DialogueTables.emplace(make_pair(desc.DialogueID, desc.SequenceID), move(desc));
+		if (false == inserted)
+		{
+			string ErrorMsg = "Duplicate DialogueTable in CSV : " + DialogueID;
+			std::wstring wErrorMsg(ErrorMsg.begin(), ErrorMsg.end());
+			MessageBox(NULL, wErrorMsg.c_str(), L"System Message", MB_OK);
+		}
+	}
+
+	return S_OK;
+}
+
+HRESULT CDataBase::LoadNpcChoiceData(const string& csvPath)
+{
+	io::CSVReader<
+		7,
+		io::trim_chars<' ', '\t'>,
+		io::double_quote_escape<',', '"'>
+	>in(csvPath);
+
+	in.read_header(
+		io::ignore_extra_column | io::ignore_missing_column,
+		"ChoiceID", "Text", "Result", "NextID", "NextSequence", "ValueType", "Value"
+	);
+	string			ChoiceID, NextID, ValueType;
+	string			Text;
+	_int			NextSequence;
+	string			Result;
+	string			Value;
+
+	while (in.read_row(ChoiceID, Text, Result, NextID, NextSequence, ValueType, Value))
+	{
+		if (ChoiceID.empty()) continue;
+
+		ChoiceDesc desc = {};
+		desc.ChoiceID = ChoiceID;
+		desc.Text = StringToWString(Text);
+		desc.Result = StringToDialogueResult(Result);
+		desc.Next_DialogueID = NextID;
+		desc.Next_SequeceID = NextSequence;
+		desc.ValueType = ValueType;
+		if (ValueType == "int" || ValueType == "Int") desc.Value = stoi(Value);
+		else if (ValueType == "float" || ValueType == "Float") desc.Value = stof(Value);
+		else if (ValueType == "string" || ValueType == "String")desc.Value = Value;
+
+		auto [iter, inserted] = m_DialgoueChoiceTables.emplace(ChoiceID, move(desc));
+		if (false == inserted)
+		{
+			string ErrorMsg = "Duplicate DialogueChoiceTable in CSV : " + ChoiceID;
+			std::wstring wErrorMsg(ErrorMsg.begin(), ErrorMsg.end());
+			MessageBox(NULL, wErrorMsg.c_str(), L"System Message", MB_OK);
 		}
 	}
 
@@ -280,6 +406,54 @@ vector<string_view> CDataBase::SplitFileName(string_view s, _char delim)
 		pos = next + 1;
 	}
 	return out;
+}
+
+DayPhase CDataBase::StringToDayPhase(const string& str)
+{
+	if (str == "EarlyMorning") return DayPhase::EarlyMorning;
+	if (str == "Morning") return DayPhase::Morning;
+	if (str == "Afternoon") return DayPhase::Afternoon;
+	if (str == "LateNight") return DayPhase::LateNight;
+	if (str == "Any") return DayPhase::Any;
+
+	return DayPhase::Any;
+}
+
+DialogueType CDataBase::StringToDialogueType(const string& str)
+{
+	if (str == "Normal") return DialogueType::Normal;
+	if (str == "Choice") return DialogueType::Choice;
+	if (str == "Quest") return DialogueType::Quest;
+
+	return DialogueType::Normal;
+}
+
+DialogueResult CDataBase::StringToDialogueResult(const string& str)
+{
+	if (str == "Running") return DialogueResult::Running;
+	if (str == "Success") return DialogueResult::Success;
+	if (str == "Fail") return DialogueResult::Fail;
+
+	return DialogueResult::Running;
+}
+
+Speaker CDataBase::StringToSpeaker(const string& str)
+{
+	if (str == "System") return Speaker::System;
+	if (str == "Npc") return Speaker::Npc;
+	if (str == "Player") return Speaker::Player;
+
+	return Speaker::Npc;
+}
+
+wstring CDataBase::StringToWString(const string& str)
+{
+	if (str.empty()) return wstring();
+
+	int size = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, NULL, 0);
+	wstring wstr(size - 1, 0);
+	MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, &wstr[0], size);
+	return wstr;
 }
 
 void CDataBase::Free()

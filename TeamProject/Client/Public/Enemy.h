@@ -47,7 +47,7 @@ public:
     // 몬스터의 Status 구조체 포인터를 반환
     const MONSTER_STATUS*   GetStatusPtr() const { return &m_tStatus; }
     // Groggy 상태 반환
-    _bool              IsGroggy() const { return m_isGroggy; }
+    _bool              IsGroggy() const { return m_tStatus.isGroggy; }
     // 공격중인지 상태 반환
     _bool              IsOnAttack() const { return m_isOnAttack; }
 
@@ -117,7 +117,7 @@ protected:
     // 몬스터 스테이터스
     MONSTER_STATUS          m_tStatus = {};
     /* Groggy */
-    _bool                   m_isGroggy = { false };
+    //_bool                   m_isGroggy = { false };
     _float                  m_fGroggyDecreaseTime = {};
 
     _bool                   m_isOnAttack = { false };

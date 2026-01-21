@@ -201,6 +201,8 @@ void CCorin::On_Hit(DAMAGE_TYPE eType)
 
 void CCorin::Update_States()
 {
+	if (!Is_MainCharacter()) return;
+
 	m_pStateMachine->Set_Bool("IsMove", Is_Move_Buffer());
 	
 	Process_EndState(m_pStateMachine->Get_CurrentStateName());
@@ -416,7 +418,7 @@ HRESULT CCorin::Initialize_Transitions()
 
 	// SwitchOut
 	m_pStateMachine->Register_AnyStateTransition("SwitchOut",
-		CStateMachine<CCorin>::CONDITION_TRIGGER, "SwitchOut");
+		CStateMachine<CCorin>::CONDITION_TRIGGER, "SwitchOut", 1);
 
 	m_pStateMachine->Register_Transition("SwitchOut", "Idle",
 		CStateMachine<CCorin>::CONDITION_TRIGGER, "ToIdle");

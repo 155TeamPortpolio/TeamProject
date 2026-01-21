@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "BangBooPay.h"
 
 #include "GameInstance.h"
@@ -59,11 +59,13 @@ void CBangBooPay::Awake()
 	pAnimator->Set_MotionBone(13); //Bip001
 
 	m_strAnimName = "NPC_CashierBangbooPay_";
-	m_strName = "Pay";
+	m_strName = L"구매";
 
 	pAnimator->Set_Animation(Get_AnimName() + "Idle_Start")
 		.Loop(false)
 		.Apply();
+
+	__super::Awake();
 }
 
 void CBangBooPay::Priority_Update(_float dt)

@@ -12,6 +12,7 @@ protected:
 
 public:
     const string&  Get_AnimName() const { return m_strAnimName; }
+    const wstring& Get_Name() const { return m_strName; }
 
 public:
     virtual HRESULT Initialize_Prototype() override;
@@ -19,10 +20,14 @@ public:
     virtual void    Priority_Update(_float dt) override {};
     virtual void    Update(_float dt) override;
     virtual void    Late_Update(_float dt) override {};
-    
+
+protected:
+    HRESULT         Add_NameIndicator();
+
 protected:
     string m_strAnimName = "";
-    string m_strName = "";
+    wstring m_strName = TEXT("");
+
 
 public:
     virtual CGameObject* Clone(INIT_DESC* pArg) PURE;

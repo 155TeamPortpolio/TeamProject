@@ -91,6 +91,7 @@ HRESULT CSacrifice::Initialize_Prototype()
 		pResource->Add_ResourcePath("sacrifice_axe_slash2.json", "../Bin/Resources/Effect/Data/sacrifice_axe_slash2.json");
 		pResource->Add_ResourcePath("sacrifice_axe_slash2.json", "../Bin/Resources/Effect/Data/sacrifice_axe_slash2.json");
 		pResource->Add_ResourcePath("sacrifice_smoke_slash2.json", "../Bin/Resources/Effect/Data/sacrifice_smoke_slash2.json");
+		pResource->Add_ResourcePath("sacrifice_roar_smoke_down.json", "../Bin/Resources/Effect/Data/sacrifice_roar_smoke_down.json");
 
 		/* Textures */
 		pResource->Add_ResourcePath("attack_sign.png", "../Bin/Resources/Effect/Texture/attack_sign.png");
@@ -111,6 +112,8 @@ HRESULT CSacrifice::Initialize_Prototype()
 		pResource->Add_ResourcePath("Eff_MeleeTrail_078_YZ_03.png", "../Bin/Resources/Effect/Texture/Eff_MeleeTrail_078_YZ_03.png");
 		pResource->Add_ResourcePath("Dissolve.png", "../Bin/Resources/Effect/Texture/Dissolve.png");
 		pResource->Add_ResourcePath("sacrifice_sword_slash.png", "../Bin/Resources/Effect/Texture/sacrifice_sword_slash.png");
+		pResource->Add_ResourcePath("Eff_Trail_140_LYF_01.png", "../Bin/Resources/Effect/Texture/Eff_Trail_140_LYF_01.png");
+		pResource->Add_ResourcePath("Eff_Mask_039_XCK_01.png", "../Bin/Resources/Effect/Texture/Eff_Mask_039_XCK_01.png");
 
 		/* Models */
 		pResource->Add_ResourcePath("Smoke_Cone2.model", "../Bin/Resources/Effect/Model/Sacrifice_Smoke_Trail/Smoke_Cone2.model");
@@ -219,6 +222,8 @@ void CSacrifice::Render_GUI()
 	__super::Render_GUI();
 
 	Render_GUI_ForTargetInfo();
+	m_pStateMachine->Render_GUI();
+
 	ImGui::Text("Current State : %s", m_pStateMachine->Get_CurrentStateName().c_str());
 }
 
@@ -895,6 +900,6 @@ void CSacrifice::Update_States(_float dt)
 			m_pStateMachine->Set_Trigger("Change_Phase");
 	}
 
-	if ("Groggy" != m_pStateMachine->Get_CurrentStateName() && "Death" != m_pStateMachine->Get_CurrentStateName() && m_isGroggy)
+	if ("Groggy" != m_pStateMachine->Get_CurrentStateName() && "Death" != m_pStateMachine->Get_CurrentStateName() && m_tStatus.isGroggy)
 		m_pStateMachine->Change_State("Groggy");
 }

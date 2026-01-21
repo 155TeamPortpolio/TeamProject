@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "BangBooDeliver.h"
 
 #include "GameInstance.h"
@@ -59,11 +59,13 @@ void CBangBooDeliver::Awake()
 	pAnimator->Set_MotionBone(13); //Bip001
 
 	m_strAnimName = "NPC_CashierBangbooDeliver_Ani_";
-	m_strName = "Deliver";
+	m_strName = L"잔돈";
 
 	pAnimator->Set_Animation(Get_AnimName() + "Idle_Start")
 		.Loop(false)
 		.Apply();
+
+	__super::Awake();
 }
 
 void CBangBooDeliver::Priority_Update(_float dt)

@@ -46,6 +46,7 @@ HRESULT CParticleNode_Edit::Initialize(INIT_DESC* pArg)
 	if (MaterialDat)
 		MaterialDat->Link_Shader(G_GlobalLevelKey, "VTX_InstancePoint.hlsl");
 
+	m_pTransform->Initialize(nullptr);
 	m_InstanceName = "ParticleNode";
 	m_IsEffectActive = false;
 

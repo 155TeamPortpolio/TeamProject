@@ -55,7 +55,7 @@ private:
 
 public:
     OBJECT_HANDLE   GetCurCharacterHandle();
-    HRESULT         SwitchCharacter(CHARACTER character = CHARACTER::END);
+    HRESULT         SwitchCharacter(_bool bNext = true);
     void            SetBattleCharacters(vector<CHARACTER> battleCharacters);
     _int            GetParryingCount() const { return m_iParryingCount; }
     OBJECT_HANDLE   GetTargetHandle() const { return m_TargetHandle; }
@@ -98,14 +98,17 @@ private:
 private:
     HRESULT      Initialize_CharacterPrototype();
     CGameObject* CreateBattleCharacter(CHARACTER character);
-    void         RotateCharacterQueue();
+    void         SwitchToNext();
+    void         SwitchToPrev();
     void         NotifyCharacterSwitchIn();
     void         NotifyCharacterSwitchOut();
+    void         Sync_ActionUI();
 
 private:
-    queue<std::pair<string, class CCharacter*>>     m_BattleCharacters;
-    class CCharacter*                               m_pCurrentCharacter = nullptr;
-    vector<OBJECT_HANDLE>                           m_CharacterHandles{};
+    vector<class CCharacter*>   m_BattleCharacters;
+    _uint                       m_iCurrentIndex = { 0 };
+    class CCharacter*           m_pCurrentCharacter = nullptr;
+    vector<OBJECT_HANDLE>       m_CharacterHandles{};
     
     OBJECT_HANDLE       m_TargetHandle;
     _bool               m_bLockOn = { false };
@@ -118,6 +121,7 @@ private:
     _float       m_fSwitchCooldown = { 0.f };
     _vector4     m_vSwitchPosition = XMVectorSet(0.f, 0.f, 0.f, 1.f);
     _vector4     m_vSwitchLook = XMVectorSet(0.f, 0.f, 0.f, 0.f);
+    _bool        m_bSwitchNext = true;
 
     _bool        m_bLockInput = false;
 

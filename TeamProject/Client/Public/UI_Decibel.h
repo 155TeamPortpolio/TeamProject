@@ -9,7 +9,7 @@ public:
 	enum State { NONE, COMBAT_UPROAR, COMBAT_BLASTING, COMBAT_MAXIMUM, END };
 
 private:
-	enum class Child { KANJI, DIGITS, PTS, TEXTS, END };
+	enum class CHILD { KANJI, DIGITS, PTS, TEXTS, END };
 	
 private:
 	CUI_Decibel() {}
@@ -25,6 +25,8 @@ public:
 	virtual void    Render_GUI()                     override { __super::Render_GUI(); }
 
 private:
+	CUI_Object*		m_pChildren[ENUM(CHILD::END)] = {};
+
 	_float			m_fDecibel = {};
 	_uint			m_iState = {};
 
@@ -33,8 +35,6 @@ private:
 
 	_vector4		m_vTargetColor = {};
 	_float			m_fColorLerpSpeed = { 8.f };
-
-	UI_HANDLE		m_handles[ENUM(Child::END)];
 
 private:
 	static constexpr UI_STATUS_OWNER	m_eOwner = UI_STATUS_OWNER::ROLE1;
@@ -45,7 +45,7 @@ private:
 	void Set_Decibel(_float fDecibel);
 	void Layout();
 
-	void Attach_Child(const string& strLevelKey, const string& strPrototypeTag, const string& strInstanceName, UI_DESC* pDesc, UI_HANDLE* pHandleOut = nullptr);
+	void Attach_Child(const string& strLevelKey, const string& strPrototypeTag, const string& strInstanceName, UI_DESC* pDesc, CHILD child);
 	
 public:
 	static  CGameObject* Create();

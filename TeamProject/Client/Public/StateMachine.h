@@ -39,6 +39,7 @@ public:
 		vector<CONDITION_INFO> Conditions;	// 다중조건(AND)
 		_float fExitTime = 1.f;
 		_bool  bExit = false;
+		_int   iPriority = { 0 };
 	}TRANSITION_INFO;
 
 	typedef struct StateTransitionRecord
@@ -72,7 +73,7 @@ public:
 		const vector<CONDITION_INFO>& Conditions,
 		_bool bExit = false, _float fExitTime = 1.f);				// 다중 조건
 	HRESULT Register_AnyStateTransition(const string& strTo,
-		TRANSITION_CONDITION eCondition, const string& strParam);	// 단일
+		TRANSITION_CONDITION eCondition, const string& strParam, _int iPriority = 0); // 단일
 	HRESULT Register_AnyStateTransition(const string& strTo,
 		const vector<CONDITION_INFO>& Conditions);					// 다중
 
@@ -365,7 +366,7 @@ HRESULT CStateMachine<Type>::Register_Transition(const string& strFrom, const st
 
 template<typename Type>
 HRESULT CStateMachine<Type>::Register_AnyStateTransition(const string& strTo,
-	TRANSITION_CONDITION eCondition, const string& strParam)
+	TRANSITION_CONDITION eCondition, const string& strParam, _int iPriority)
 {
 	if (strTo.empty())
 		return E_FAIL;
@@ -373,6 +374,7 @@ HRESULT CStateMachine<Type>::Register_AnyStateTransition(const string& strTo,
 	TRANSITION_INFO transition;
 	transition.strFromState = "AnyState";
 	transition.strToState = strTo;
+	transition.iPriority = iPriority;
 
 	if (eCondition != CONDITION_NONE)
 	{
@@ -468,6 +470,9 @@ void CStateMachine<Type>::Check_Transitions()
 template<typename Type>
 void CStateMachine<Type>::Check_AnyStateTransitions()
 {
+	const TRANSITION_INFO* pBestTransition = nullptr;
+	vector<const TRANSITION_INFO*> MetTransitions;  // 조건 만족한 모든 트랜지션
+
 	for (auto& transition : m_AnyStateTransitions)
 	{
 		if (transition.strToState == m_strCurrentState)
@@ -475,15 +480,27 @@ void CStateMachine<Type>::Check_AnyStateTransitions()
 
 		if (Check_Transition(transition))
 		{
-			for (auto& condition : transition.Conditions)
-			{	// 트리거 소모
-				if (condition.eCondition == CONDITION_TRIGGER)
-					Reset_Trigger(condition.strParameter);
-			}
-			Change_State(transition.strToState);
-			return;
+			MetTransitions.push_back(&transition);
+
+			if (!pBestTransition || transition.iPriority > pBestTransition->iPriority)
+				pBestTransition = &transition;
 		}
 	}
+
+	if (!pBestTransition)
+		return;
+
+	// 조건을 만족한 모든 트랜지션의 트리거 소모
+	for (auto* pTransition : MetTransitions)
+	{
+		for (auto& condition : pTransition->Conditions)
+		{
+			if (condition.eCondition == CONDITION_TRIGGER)
+				Reset_Trigger(condition.strParameter);
+		}
+	}
+
+	Change_State(pBestTransition->strToState);
 }
 
 template<typename Type>
@@ -634,9 +651,19 @@ void CStateMachine<Type>::Render_Transition()
 		_bool bConditionMet = Evaluate_Condition(transition);
 		ImVec4 color = bConditionMet ? ImVec4(1.f, 1.f, 0.f, 1.f) : ImVec4(0.5f, 0.5f, 0.5f, 1.f);
 
-		ImGui::TextColored(color, "-> %s [%s]",
-			transition.strToState.c_str(),
-			Get_Condition(transition).c_str());
+		if (transition.iPriority != 0)
+		{
+			ImGui::TextColored(color, "-> %s [P:%d] [%s]",
+				transition.strToState.c_str(),
+				transition.iPriority,
+				Get_Condition(transition).c_str());
+		}
+		else
+		{
+			ImGui::TextColored(color, "-> %s [%s]",
+				transition.strToState.c_str(),
+				Get_Condition(transition).c_str());
+		}
 	}
 }
 

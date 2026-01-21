@@ -50,6 +50,7 @@ HRESULT CMeshNode::Initialize(INIT_DESC* pArg)
 		m_DiffuseTextureTag = pMeshNode->DiffuseTextureTag;
 		m_NoiseTextureTag = pMeshNode->NoiseTextureTag;
 		m_DissolveTextureTag = pMeshNode->DissolveTextureTag;
+		m_MaskTextureTag = pMeshNode->MaskTextureTag;
 
 		/* Offset Transform */
 		_vector3 vPosition = pMeshNode->vOffsetPosition;
@@ -102,6 +103,10 @@ HRESULT CMeshNode::Initialize(INIT_DESC* pArg)
 		m_NoiseModule.fNoiseStrength = pMeshNode->fNoiseStrength;
 		m_NoiseModule.fNoiseTilling = pMeshNode->fNoiseTilling;
 		m_NoiseModule.vNoiseUVSpeed = pMeshNode->vNoiseUVSpeed;
+
+		/* Mask */
+		m_MaskModule.fEnableMask = pMeshNode->fEnableMask;
+		m_MaskModule.fMaskTilling = pMeshNode->fMaskTilling;
 	}
 
 	auto pMaterialInstance = pMaterial->Get_MaterialInstance(0);
@@ -110,19 +115,40 @@ HRESULT CMeshNode::Initialize(INIT_DESC* pArg)
 	if (!m_DiffuseTextureTag.empty())
 	{
 		auto pDiffuseTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_DiffuseTextureTag);
-		pMaterialInstance->Set_Param("DiffuseTexture", { pDiffuseTexture->Get_SRV(),"Texture2D",0 });
+
+		if (pDiffuseTexture)
+			pMaterialInstance->Set_Param("DiffuseTexture", { pDiffuseTexture->Get_SRV(),"Texture2D",0 });
+		else
+			MSG_BOX("Not exist Diffuse Texture : %s", m_DiffuseTextureTag.c_str());
 	}
 
 	if (!m_NoiseTextureTag.empty())
 	{
 		auto pNoiseTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_NoiseTextureTag);
-		pMaterialInstance->Set_Param("NoiseTexture", { pNoiseTexture->Get_SRV(),"Texture2D",0 });
+		if(pNoiseTexture)
+			pMaterialInstance->Set_Param("NoiseTexture", { pNoiseTexture->Get_SRV(),"Texture2D",0 });
+		else
+			MSG_BOX("Not exist Noise Texture : %s", m_NoiseTextureTag.c_str());
 	}
 
 	if (!m_DissolveTextureTag.empty())
 	{
 		auto pDissolveTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_DissolveTextureTag);
-		pMaterialInstance->Set_Param("DissolveTexture", { pDissolveTexture->Get_SRV(),"Texture2D",0 });
+
+		if (pDissolveTexture)
+			pMaterialInstance->Set_Param("DissolveTexture", { pDissolveTexture->Get_SRV(),"Texture2D",0 });
+		else
+			MSG_BOX("Not exist Dissolve Texture : %s", m_DissolveTextureTag.c_str());
+	}
+
+	if (!m_MaskTextureTag.empty())
+	{
+		auto pMaskTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_MaskTextureTag);
+
+		if (pMaskTexture)
+			pMaterialInstance->Set_Param("AlphaMaskTexture", { pMaskTexture->Get_SRV(),"Texture2D",0 });
+		else
+			MSG_BOX("Not exist Mask Texture : %s", m_MaskTextureTag.c_str());
 	}
 
 	return S_OK;
@@ -271,6 +297,10 @@ void CMeshNode::Update_NoiseModule(_float dt)
 
 }
 
+void CMeshNode::Update_MaskModule(_float dt)
+{
+}
+
 void CMeshNode::Bind_Params()
 {
 	auto pMaterialInstance = Get_Component<CMaterial>()->Get_MaterialInstance(0);
@@ -312,4 +342,7 @@ void CMeshNode::Bind_Params()
 	pMaterialInstance->Set_Param("NoiseUVSpeed", { &m_NoiseModule.vNoiseUVSpeed,"float2",sizeof(_float2) });
 	pMaterialInstance->Set_Param("ElapsedTime", { &m_fElpasedTime,"float",sizeof(_float) });
 
+	/* Mask */
+	pMaterialInstance->Set_Param("EnableMask", { &m_MaskModule.fEnableMask,"float",sizeof(_float) });
+	pMaterialInstance->Set_Param("MaskTilling", { &m_MaskModule.fMaskTilling,"float",sizeof(_float) });
 }

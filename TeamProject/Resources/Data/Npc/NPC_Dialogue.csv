@@ -1,0 +1,3 @@
+ID,Name,Sequence,Speaker,Time,Type,Repeat,Text,Result,ChoiceNum,Choice1,Choice2,Choice3
+Dialogue_001,아우,0,Player,LateNight,Choice,1,(아우가 단잠에 빠져 있다. 꺠울까 말까 ...),None,2,Choice_001,Choice_002,
+Dialogue_002,초병,0,Npc,Any,Choice,1,외부 차량은 전초기지에 출입할 수 없습니다. 전초기지를 떠나실 거라면 제가 모셔다 드리겠습니다. 필요하십니까?,None,2,Choice_003,Choice_004,

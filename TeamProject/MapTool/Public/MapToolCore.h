@@ -21,14 +21,15 @@ public:
 	void				Set_AllObjectDebugRender(_bool is);
 
 public:
-	vector<LOADED_OBJECT>	Load_MapData();
-	void					Clear_Layer(MAPOBJ_TYPE eObjType);
+	LOADED_DATA			Load_MapData();
+	void				Clear_Layer(MAPOBJ_TYPE eObjType);
 
 
 private:
 	MAPOBJ_TYPE		Check_LayerTag(const string& TagLayer);
 	void			Place_PlacedObjectFromLoadData(MapData_Object* pData);
 	void			Place_TriggerObjectFromLoadData(MapData_Object* pData);
+	void			Place_EntityObjectFromLoadData(ENTITY* pData);
 
 
 private:

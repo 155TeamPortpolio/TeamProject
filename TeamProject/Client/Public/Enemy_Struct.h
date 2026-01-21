@@ -74,5 +74,6 @@ namespace Client
         _float      iMaxHP = { 100.f };
         _float      iNowHP = iMaxHP;
         _int        iGroggyValue = {};
+        _bool       isGroggy = {};
     }MONSTER_STATUS;
 }

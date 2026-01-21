@@ -36,6 +36,7 @@ HRESULT CServiceNpc::Initialize(INIT_DESC* pArg)
 
 void CServiceNpc::Awake()
 {
+	Add_NameIndicator();
 }
 
 void CServiceNpc::Priority_Update(_float dt)
