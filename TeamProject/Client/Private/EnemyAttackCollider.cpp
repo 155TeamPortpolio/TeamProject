@@ -3,6 +3,7 @@
 
 #include "Helper_Func.h"
 #include "GameInstance.h"
+#include "CamDirector.h"
 
 /* Component */
 #include "RigidBody.h"
@@ -108,7 +109,10 @@ void CEnemyAttackCollider::OnTriggerEnter(CGameObject* pOther)
 	// 데미지 주는 코드
 	auto pEnemy = dynamic_cast<CCharacter*>(pOther);
 	if (nullptr != pEnemy)
+	{
 		pEnemy->Take_Damage(DAMAGE_TYPE::NORMAL, 10);
+		CameraManager()->AddImpact(1,0);
+	}
 }
 
 void CEnemyAttackCollider::OnTriggerStay(CGameObject* pOther)
@@ -122,7 +126,10 @@ void CEnemyAttackCollider::OnTriggerStay(CGameObject* pOther)
 	// 데미지 주는 코드
 	auto pEnemy = dynamic_cast<CCharacter*>(pOther);
 	if (nullptr != pEnemy)
+	{
 		pEnemy->Take_Damage(DAMAGE_TYPE::NORMAL, 10);
+		CameraManager()->AddImpact(1,0);
+	}
 }
 
 void CEnemyAttackCollider::OnTriggerExit(CGameObject* pOther)

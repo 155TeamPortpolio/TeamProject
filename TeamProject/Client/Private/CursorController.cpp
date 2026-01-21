@@ -5,8 +5,11 @@
 
 void CCursorController::Initialize()
 {
+#ifdef _USING_GUI
     m_cachedGuiActive = GUISystem()->Is_GUIActive();
     SyncMouseLockByGui();
+#endif // _USING_GUI
+
 }
 
 RECT CCursorController::GetClientRectInScreen() const
@@ -66,19 +69,24 @@ void CCursorController::ToggleMouseLock()
 
 void CCursorController::SyncMouseLockByGui()
 {
+#ifdef _USING_GUI
     if (m_cachedGuiActive) SetMouseLock(false);
     else                   SetMouseLock(true);
+#endif // _USING_GUI
 }
 
 void CCursorController::ToggleGui()
 {
+#ifdef _USING_GUI
     m_cachedGuiActive = !m_cachedGuiActive;
     GUISystem()->Set_GUIActive(m_cachedGuiActive);
     SyncMouseLockByGui();
+#endif // _USING_GUI
 }
 
 void CCursorController::Update(_float dt)
 {
+#ifdef _USING_GUI
     const _bool guiNow = GUISystem()->Is_GUIActive();
     if (guiNow != m_cachedGuiActive)
     {
@@ -88,7 +96,7 @@ void CCursorController::Update(_float dt)
 
     if (InputDevice()->Key_Tap(VK_TAB))
         ToggleGui();
-
+#endif // _USING_GUI
     if (InputDevice()->Key_Tap(VK_CAPITAL))
         ToggleMouseLock();
 

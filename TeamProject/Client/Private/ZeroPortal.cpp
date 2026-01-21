@@ -49,6 +49,7 @@ HRESULT CZeroPortal::Initialize_Prototype()
 	customInstance->Get_MaterialData()->Link_Texture(G_GlobalLevelKey, "Eff_Noise_097_LYX_01.png", TEXTURE_TYPE::AMBIENT);
 
 	m_eRenderLayer = RENDER_LAYER::None;
+	m_isAlive = false;
 	return S_OK;
 }
 
@@ -61,6 +62,7 @@ HRESULT CZeroPortal::Initialize(INIT_DESC* pArg)
 		{
 			m_pTargetStage = desc.pStage;
 			m_eRenderLayer = RENDER_LAYER::Default;
+			m_isAlive = true;
 		});
 
 	return S_OK;
@@ -89,14 +91,14 @@ void CZeroPortal::Update(_float dt)
 {
 	m_Time += dt;
 	Get_Component<CCollider>()->Update(dt);
-	Extend(dt);
+	//Extend(dt);
 
 	if (m_bIsInteractable) {
-		Interact();
-		m_vTargetSize = { 3.f,4.f,3.f };
+		//Interact();
+		//m_vTargetSize = { 3.f,4.f,3.f };
 	}
 	else {
-		m_vTargetSize = { 1.f,1.f,1.f };
+		//m_vTargetSize = { 1.f,1.f,1.f };
 	}
 }
 
@@ -132,10 +134,8 @@ void CZeroPortal::Interact()
 	if (!m_bIsInteractable)
 		return;
 
-	if (InputDevice()->Key_Tap('F')) {
-		m_pTargetStage->StageChangeOn(CZero_Level::StageType::Boss, 0);
-		m_bIsInteractable = false;
-	}
+	m_pTargetStage->StageChangeOn(CZero_Level::StageType::Boss, 0);
+	m_bIsInteractable = false;
 }
 
 void CZeroPortal::Extend(_float dt)
