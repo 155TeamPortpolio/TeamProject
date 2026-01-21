@@ -180,6 +180,7 @@
     <ClInclude Include="..\public\Jaeger.h" />
     <ClInclude Include="..\public\JaneDoeState_Hit.h" />
     <ClInclude Include="..\Public\JaneDoeState_Start.h" />
+    <ClInclude Include="..\public\NpcInteractZone.h" />
     <ClInclude Include="..\public\OBJFactory.h" />
     <ClInclude Include="..\public\OrbitLockOnController.h" />
     <ClInclude Include="..\Public\OrbitLockOnData.h" />
@@ -447,6 +448,7 @@
     <ClCompile Include="..\private\Jaeger.cpp" />
     <ClCompile Include="..\private\JaneDoeState_Hit.cpp" />
     <ClCompile Include="..\Private\JaneDoeState_Start.cpp" />
+    <ClCompile Include="..\private\NpcInteractZone.cpp" />
     <ClCompile Include="..\private\OBJFactory.cpp" />
     <ClCompile Include="..\private\OrbitLockOnController.cpp" />
     <ClCompile Include="..\Private\SacrificeState_Groggy.cpp" />
