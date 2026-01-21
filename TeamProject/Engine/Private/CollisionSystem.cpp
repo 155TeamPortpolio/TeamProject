@@ -1165,6 +1165,7 @@ void CCollisionSystem::UnRegisterCollidable(ICollidable* pCollidable, _int Index
 	{
 		if (m_Collidables[idx].pCollidable == pCollidable)
 		{
+			Exit_TriggerCollisions(pCollidable);
 			m_Collidables[idx].eState = COLLIDABLE_SLOT::STATE::DEAD;
 		}
 	}
