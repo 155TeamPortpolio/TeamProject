@@ -17,6 +17,7 @@
 #include "BattlePlayerPoint.h"
 #include "BattleSpawnerPoint.h"
 #include "BattleMonsterPoint.h"
+#include "BattleEndPoint.h"
 
 /* MapTool Gui */
 #include "MapToolGui.h"
@@ -40,6 +41,7 @@ HRESULT CMapToolLevel::Initialize()
 	pProto->Add_ProtoType("MapTool_Level", "Proto_GameObject_BattlePlayerPoint", CBattlePlayerPoint::Create());
 	pProto->Add_ProtoType("MapTool_Level", "Proto_GameObject_BattleSpawnerPoint", CBattleSpawnerPoint::Create());
 	pProto->Add_ProtoType("MapTool_Level", "Proto_GameObject_BattleMonsterPoint", CBattleMonsterPoint::Create());
+	pProto->Add_ProtoType("MapTool_Level", "Proto_GameObject_BattleEndPoint", CBattleEndPoint::Create());
 
 	return S_OK;
 }

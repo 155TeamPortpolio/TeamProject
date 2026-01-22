@@ -163,6 +163,11 @@ void CJaneDoe::Render_GUI()
 	}
 }
 
+void CJaneDoe::Reset_State()
+{
+	m_pStateMachine->Set_Trigger("ResetState");
+}
+
 void CJaneDoe::On_Start()
 {
 	m_pStateMachine->Set_Trigger("QuestStart");
@@ -179,13 +184,20 @@ void CJaneDoe::On_SwitchIn(SWITCH eType)
 
 void CJaneDoe::On_SwitchOut()
 {
-	m_pStateMachine->Set_Trigger("SwitchOut");
+	Push_Invincible();
+	Lock_Move();
+	Stop_Rotation();
+	if (m_pStateMachine->Get_CurrentStateName() == "Attack")
+	{
+		m_pStateMachine->Set_Bool("OutReserve", true);
+	}
+	else
+		m_pStateMachine->Set_Trigger("SwitchOut");
 }
 
 void CJaneDoe::On_Ultimate()
 {
 	__super::On_Ultimate();
-
 	m_pStateMachine->Set_Int("AttackEntryMode", 3);
 	m_pStateMachine->Set_Trigger("Attack");
 }
@@ -281,6 +293,9 @@ HRESULT CJaneDoe::Initialize_Transitions()
 	m_pStateMachine->Register_Transition("Move", "Idle",
 		CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "ToIdle");
 
+	m_pStateMachine->Register_AnyStateTransition("Idle",
+		CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "ResetState");
+
 	// Attack
 	m_pStateMachine->Register_AnyStateTransition("Attack",
 		CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "Attack");
@@ -318,8 +333,10 @@ HRESULT CJaneDoe::Initialize_Transitions()
 	m_pStateMachine->Register_Transition("SwitchOut", "Idle",
 		CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "ToIdle");
 
-	m_pStateMachine->Register_AnyStateTransition("Hit",
-		CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "ToHit");
+	vector<CStateMachine<CJaneDoe>::CONDITION_INFO> HitConditions;
+	HitConditions.push_back({ CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "ToHit" });
+	HitConditions.push_back({ CStateMachine<CJaneDoe>::CONDITION_BOOL_FALSE, "Resistance" });
+	m_pStateMachine->Register_AnyStateTransition("Hit", HitConditions);
 
 	m_pStateMachine->Register_Transition("Hit", "Idle",
 		CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "ToIdle");
@@ -489,6 +506,7 @@ HRESULT CJaneDoe::Initialize_Effects()
 void CJaneDoe::Update_States()
 {
 	if (!Is_MainCharacter()) return;
+	if (!m_pCCT->Get_CompActive()) return;
 
 	m_pStateMachine->Set_Bool("IsMove", Is_Move_Buffer());
 

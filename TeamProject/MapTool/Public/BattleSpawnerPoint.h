@@ -19,6 +19,14 @@ public:
     void Render_GUI() override;
     virtual void Export_ObjectData(void* pDesc) override;
 
+private:
+    void Render_GUI_MonsterIndices();
+
+private:
+    vector<_int>        m_SpawnMonsterIndices;
+    _int  m_InputValue = 0;
+    _int  m_iSelectedIndex = -1;
+    _bool m_isUniqueOnly = true;
 public:
     static CBattleSpawnerPoint* Create();
     CGameObject* Clone(INIT_DESC* pArg) override;
