@@ -82,6 +82,7 @@ void CCorinState_ExAttack_Start::Enter(CCorin* pOwner)
         pAnimator->Change_Animation(strAnimName + "Attack_Branch_02")
             .Speed(1.5f)
             .Apply();
+        pOwner->Push_Invincible();
     }
     else
     {
@@ -111,6 +112,10 @@ void CCorinState_ExAttack_Start::Update(CCorin* pOwner, _float dt)
         else if (Event.Tag == "SawEnd")
         {
             pOwner->End_AttackCollider("Saw");
+        }
+        else if (Event.Tag == "PopInvincible")
+        {
+            pOwner->Pop_Invincible();
         }
     }
 }

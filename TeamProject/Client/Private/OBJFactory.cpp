@@ -45,7 +45,7 @@ void Client::Factory::Create_NPC(const FACTORY_DESC& Desc)
 
 	CCT_DESC CCT; 
 
-	CCT.eGroup = COLLISION_GROUP::INTERACABLE;
+	CCT.eGroup = COLLISION_GROUP::INTERACTABLE;
 	CCT.iCollisionMask = 0xFFFFFFFF;
 	CCT.bAutoFit = false;
 	CCT.fHeight = 1.6f;

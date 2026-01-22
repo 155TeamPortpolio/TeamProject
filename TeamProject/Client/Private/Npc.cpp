@@ -77,7 +77,7 @@ HRESULT CNpc::Add_InteractZone(_float4 vCenter, _float3 vOffset, _float3 vSize)
 
     COLLIDER_DESC colliderDesc{};
     colliderDesc.eType = COLLIDER_TYPE::BOX;
-    colliderDesc.eGroup = COLLISION_GROUP::INTERACABLE;
+    colliderDesc.eGroup = COLLISION_GROUP::INTERACTABLE;
     colliderDesc.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER);
     colliderDesc.bAutoFit = false;
     colliderDesc.vCenter = vOffset;
