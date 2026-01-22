@@ -53,6 +53,7 @@ private:
     void Import();
     void Export();
     void Play();
+    void ReloadDirectory();
     void AddNode();
     void RemoveLastNode();
     void ContextClear();
