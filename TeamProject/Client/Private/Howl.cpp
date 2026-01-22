@@ -27,6 +27,14 @@ CHowl::CHowl(const CHowl& rhs)
 {
 }
 
+void CHowl::Execute()
+{
+	UI_DIALOGUE_REQUEST_DESC desc;
+	desc.strDialogueID = m_DiagloueData.StartDialogueID;
+	desc.iSequenceID = m_iNextSequceID;
+	EventSystem()->Broadcast<UI_DIALOGUE_REQUEST_DESC>({ desc });
+}
+
 HRESULT CHowl::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
@@ -70,7 +78,7 @@ void CHowl::Awake()
 
 	__super::Awake();
 
-	Add_InteractZone(Get_Position(), _float3(0.f, 0.f ,1.2f));
+	Add_InteractZone(Get_Position(), _float3(0.f, 0.f ,1.2f), Get_WorldRotation());
 	//CFieldSystem::GetInstance()->Set_DayPahse(DayPhase::LateNight);
 }
 

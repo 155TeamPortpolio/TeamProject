@@ -25,6 +25,9 @@ public:
     virtual void    OnTriggerStay(CGameObject* pOther) override;
     virtual void    OnTriggerExit(CGameObject* pOther) override;
 
+private:
+    void Update_UI_Interaction(_bool bInteract);
+
 public:
     static CNpcInteractZone* Create();
     virtual CGameObject* Clone(INIT_DESC* pArg) override;

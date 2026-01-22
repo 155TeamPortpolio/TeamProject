@@ -23,6 +23,9 @@
 #include "EffectContainer.h"
 #include "AttackSign.h"
 
+// Camera
+#include "CamDirector.h"
+
 /* Character */
 #include "Player.h"
 
@@ -71,6 +74,8 @@ HRESULT CScott_Level::Awake()
 	//============== Map ============================
 	Ready_Map("Scott_Level", "Zero_Worksite");
 	//Ready_Npc();
+
+	CamDirector()->AutoField();
 
 	return S_OK;
 }
