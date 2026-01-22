@@ -66,6 +66,13 @@ ENGINE_DLL Vector3 Math::SeedPhase(_uint& seed)
 	return {a, b, c};
 }
 
+ENGINE_DLL _float Math::MoveTowards(_float cur, _float target, _float maxDelta)
+{
+	const _float d = target - cur;
+	if (fabsf(d) <= maxDelta) return target;
+	return cur + (d > 0.f ? maxDelta : -maxDelta);
+}
+
 ENGINE_DLL _float Math::ApplyEase(EaseType type, _float t)
 {
 	t = clamp(t, 0.f, 1.f);

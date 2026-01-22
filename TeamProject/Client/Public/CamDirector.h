@@ -9,7 +9,7 @@ class CCamDirector final : public CBase
 {
     DECLARE_SINGLETON(CCamDirector)
 private:
-    CCamDirector();
+    CCamDirector() {}
     virtual ~CCamDirector() DEFAULT;
 
 public:
@@ -18,6 +18,7 @@ public:
     void          SetReturnCam(CamType type)                 { m_returnCamType          = type;   }
     void          SetTarget(OBJECT_HANDLE targetHandle);
     void          AutoTarget();
+    void          AutoField();
 
     OBJECT_HANDLE GetCamHandle(CamType type) const { return m_camHandles[ENUM(type)];                }
     COrbitCam*    GetOrbitCam()              const { return static_cast<COrbitCam*>(GetOrbitObj());  }
@@ -63,9 +64,6 @@ private:
     void          AbortSequenceToOrbit(_bool resetTime);
 
 private:
-    ICameraService&         camMgr;
-    IObjectService&         objMgr;
-
     CamDirectorSeqMap       m_seqs{};
     CamDirectorPlayingState m_playing{};
     CamDirectorCamHandles   m_camHandles{};
