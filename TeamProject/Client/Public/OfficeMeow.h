@@ -15,6 +15,7 @@ private:
 
 public:
     CStateMachine<COfficeMeow>* Get_StateMachine() { return m_pStateMachine; }
+    virtual void    Execute() override;
 
 public:
     virtual HRESULT Initialize_Prototype() override;

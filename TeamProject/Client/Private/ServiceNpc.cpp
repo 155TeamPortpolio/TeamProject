@@ -21,7 +21,7 @@ CServiceNpc::CServiceNpc(const CServiceNpc& rhs)
 void CServiceNpc::Process_Event(const NPC_INTERACT_DESC& desc)
 {
 	if (desc.strName != m_strName) return;
-	m_iLastSequceID = desc.iSequenceID;
+	m_iNextSequceID = desc.iSequenceID;
 
 	switch (desc.eResult)
 	{

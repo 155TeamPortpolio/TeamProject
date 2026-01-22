@@ -31,7 +31,7 @@ void CHowl::Execute()
 {
 	UI_DIALOGUE_REQUEST_DESC desc;
 	desc.strDialogueID = m_DiagloueData.StartDialogueID;
-	desc.iSequenceID = m_iLastSequceID;
+	desc.iSequenceID = m_iNextSequceID;
 	EventSystem()->Broadcast<UI_DIALOGUE_REQUEST_DESC>({ desc });
 }
 

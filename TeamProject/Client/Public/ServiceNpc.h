@@ -29,7 +29,7 @@ protected:
 
 protected:
     NpcIDDesc             m_DiagloueData;
-    _uint                 m_iLastSequceID = {};
+    _uint                 m_iNextSequceID = {};
 
 public:
     CGameObject* Clone(INIT_DESC* pArg) PURE;
