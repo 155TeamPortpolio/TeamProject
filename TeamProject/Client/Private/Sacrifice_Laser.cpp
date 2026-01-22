@@ -57,7 +57,7 @@ HRESULT CSacrifice_Laser::Initialize(INIT_DESC* pArg)
 		.Build("LaserHitPoint");
 
 	_smatrix offsetMatrix = _smatrix::Identity;
-	offsetMatrix.Translation(_vector3(0.3f, 0.2f, 0.f));
+	offsetMatrix.Translation(_vector3(0.8f, 0.f, 0.f));
 
 	auto pBoneFollower = Get_Component<CBoneFollower>();
 	pBoneFollower->Set_Offset(offsetMatrix);

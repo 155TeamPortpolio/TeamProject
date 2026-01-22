@@ -173,10 +173,10 @@ void CSacrificeState_Attack_Phase1::BuildPattern(CSacrifice* pOwner)
 			}
 		}
 	}
-	//blackBoard.stateQueue.clear();
-	//blackBoard.stateQueue.push_back("Attack05_Phase1");
-	//blackBoard.stateQueue.push_back("Attack05_Phase1");
-	//blackBoard.stateQueue.push_back("Attack05_Phase1");
+	blackBoard.stateQueue.clear();
+	blackBoard.stateQueue.push_back("Attack05_Phase1");
+	blackBoard.stateQueue.push_back("Attack05_Phase1");
+	blackBoard.stateQueue.push_back("Attack05_Phase1");
 	blackBoard.stateQueue.push_back("Attack_Roar_Phase1");
 	blackBoard.stateQueue.push_back("Attack06_Phase1");
 	//blackBoard.stateQueue.push_back("Attack_Turn_Phase1");
@@ -559,7 +559,28 @@ void CSacrificeState_Attack_05_Phase1::Update_Effects(CSacrifice* pOwner)
 	}
 
 	if (IsCrossAnimProgress(0.5f))
+	{
+		auto pTransform = pOwner->Get_Component<CTransform>();
+
+		_smatrix worldMatrix = pTransform->Get_WorldMatrix();
+		_vector3 vWorldPosition = _vector3::Transform(_vector3(0.5f, 0.f, 5.8f), worldMatrix);
+
+		_quaternion localQuaternion = _quaternion(0.f, 0.f, 0.f, 1.f);
+		_quaternion worldQuaternion = pTransform->Get_QuaternionRotate();
+		localQuaternion *= worldQuaternion;
+
+		auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_laser_shot_strong.json")
+			.Build("Sacrifice_Laser_Shot_Strong");
+
+		auto pEffectTransform = effect->Get_Component<CTransform>();
+		pEffectTransform->Set_WorldPos(vWorldPosition);
+		pEffectTransform->Set_WorldQuaternion(localQuaternion);
+
+		ObjectManager()->Add_Object(effect, { pOwner->Get_Level(),"Enemy_Effect_Layer" });
+
 		pOwner->ActiveLaser(1);
+	}
 
 	if (IsCrossAnimProgress(0.58f))
 		pOwner->DeactiveLaser();
@@ -609,7 +630,7 @@ void CSacrificeState_Attack_06_Phase1::Exit(CSacrifice* pOwner)
 void CSacrificeState_Attack_06_Phase1::Update_Effects(CSacrifice* pOwner)
 {
 	/* Laser Charge */
-	if (IsCrossAnimProgress(0.1f))
+	if (IsCrossAnimProgress(0.05f))
 	{
 		auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 		auto pTransform = pOwner->Get_Component<CTransform>();
