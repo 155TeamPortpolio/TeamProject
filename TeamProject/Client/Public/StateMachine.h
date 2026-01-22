@@ -123,6 +123,8 @@ private:
 	_bool	Evaluate_Condition(const TRANSITION_INFO& transition);
 	void	Record_Transition(const string& strFrom, const string& strTo, const string& strReason, _float fPrevStateTime);
 
+	string ConditiontoString(const CONDITION_INFO& cond);
+
 private:
 	Type*									 m_pOwner = { nullptr };
 	unordered_map<string, IBaseState<Type>*> m_States;
@@ -628,14 +630,30 @@ void CStateMachine<Type>::Render_Transition()
 		ImVec4 color = bCanTransit ? ImVec4(0.2f, 1.f, 0.2f, 1.f) : ImVec4(0.6f, 0.6f, 0.6f, 1.f);
 
 		ImGui::TextColored(color, "-> %s", transition.strToState.c_str());
-		ImGui::SameLine();
-		ImGui::TextColored(ImVec4(0.7f, 0.7f, 0.7f, 1.f),
-			"[%s]", Get_Condition(transition).c_str());
+
+		if (transition.Conditions.size() > 1)
+		{
+			ImGui::Indent();
+			for (auto& cond : transition.Conditions)
+			{
+				_bool bSingleMet = Evaluate_SingleCondition(cond);
+				ImVec4 condColor = bSingleMet ? ImVec4(0.2f, 1.f, 0.2f, 1.f) : ImVec4(1.f, 0.3f, 0.3f, 1.f);
+				ImGui::TextColored(condColor, "[%s] %s",
+					bSingleMet ? "O" : "X",
+					ConditiontoString(cond).c_str());
+			}
+			ImGui::Unindent();
+		}
+		else
+		{
+			ImGui::SameLine();
+			ImGui::TextColored(ImVec4(0.7f, 0.7f, 0.7f, 1.f),
+				"[%s]", Get_Condition(transition).c_str());
+		}
 
 		if (transition.bExit)
 		{
-			ImGui::SameLine();
-			ImGui::Text("(Exit: %.0f%%/%.0f%%)",
+			ImGui::Text("  (Exit: %.0f%%/%.0f%%)",
 				m_pCurrentState->Get_AnimProgress() * 100.f,
 				transition.fExitTime * 100.f);
 		}
@@ -652,17 +670,28 @@ void CStateMachine<Type>::Render_Transition()
 		ImVec4 color = bConditionMet ? ImVec4(1.f, 1.f, 0.f, 1.f) : ImVec4(0.5f, 0.5f, 0.5f, 1.f);
 
 		if (transition.iPriority != 0)
+			ImGui::TextColored(color, "-> %s [P:%d]", transition.strToState.c_str(), transition.iPriority);
+		else
+			ImGui::TextColored(color, "-> %s", transition.strToState.c_str());
+
+		if (transition.Conditions.size() > 1)
 		{
-			ImGui::TextColored(color, "-> %s [P:%d] [%s]",
-				transition.strToState.c_str(),
-				transition.iPriority,
-				Get_Condition(transition).c_str());
+			ImGui::Indent();
+			for (auto& cond : transition.Conditions)
+			{
+				_bool bSingleMet = Evaluate_SingleCondition(cond);
+				ImVec4 condColor = bSingleMet ? ImVec4(0.2f, 1.f, 0.2f, 1.f) : ImVec4(1.f, 0.3f, 0.3f, 1.f);
+				ImGui::TextColored(condColor, "[%s] %s",
+					bSingleMet ? "O" : "X",
+					ConditiontoString(cond).c_str());
+			}
+			ImGui::Unindent();
 		}
 		else
 		{
-			ImGui::TextColored(color, "-> %s [%s]",
-				transition.strToState.c_str(),
-				Get_Condition(transition).c_str());
+			ImGui::SameLine();
+			ImGui::TextColored(ImVec4(0.7f, 0.7f, 0.7f, 1.f),
+				"[%s]", Get_Condition(transition).c_str());
 		}
 	}
 }
@@ -975,6 +1004,33 @@ void CStateMachine<Type>::Record_Transition(const string& strFrom, const string&
 
 	if (m_History.size() > m_iMaxHistory)
 		m_History.pop_front();
+}
+
+template<typename Type>
+string CStateMachine<Type>::ConditiontoString(const CONDITION_INFO& cond)
+{
+	switch (cond.eCondition)
+	{
+	case CONDITION_NONE:
+		return "None";
+	case CONDITION_ANIMATION_END:
+		return "AnimEnd";
+	case CONDITION_ANIMATION_GREATER:
+		return "Anim > " + to_string(cond.fTimer);
+	case CONDITION_ANIMATION_LESS:
+		return "Anim < " + to_string(cond.fTimer);
+	case CONDITION_TIME_GREATER:
+		return "Time > " + to_string(cond.fTimer);
+	case CONDITION_TIME_LESS:
+		return "Time < " + to_string(cond.fTimer);
+	case CONDITION_BOOL_TRUE:
+		return cond.strParameter + " == true";
+	case CONDITION_BOOL_FALSE:
+		return cond.strParameter + " == false";
+	case CONDITION_TRIGGER:
+		return "Trigger: " + cond.strParameter;
+	}
+	return "Unknown";
 }
 
 template<typename Type>

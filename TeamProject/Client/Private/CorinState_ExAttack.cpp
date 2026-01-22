@@ -35,6 +35,7 @@ void CCorinState_ExAttack::Enter(CCorin* pOwner)
     // current, special º¯°æ
     if (bEnhanced)
     {
+        pOwner->Get_StateMachine()->Set_Bool("Resistance", true);
         pOwner->Set_CurrentEnergy(tDesc.fCurrentEnergy - 20.f);
         pOwner->Set_SpecialEnergy(20.f);
     }
@@ -70,6 +71,8 @@ void CCorinState_ExAttack::Update(CCorin* pOwner, _float dt)
 
 void CCorinState_ExAttack::Exit(CCorin* pOwner)
 {
+    pOwner->Set_SpecialEnergy(80.f);
+    pOwner->Get_StateMachine()->Set_Bool("Resistance", false);
     __super::Exit(pOwner);
 }
 
