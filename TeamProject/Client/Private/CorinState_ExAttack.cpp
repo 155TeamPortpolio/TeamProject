@@ -66,6 +66,19 @@ void CCorinState_ExAttack::Update(CCorin* pOwner, _float dt)
             }
         }
     }
+
+    auto pCorinState = pOwner->Get_StateMachine();
+    if (pCorinState->Get_Bool("OutReserve"))
+    {
+        if (m_pSubStateMachine->Get_CurrentStateName() == "End" ||
+            m_pSubStateMachine->Get_CurrentStateName() == "Explode" ||
+            Is_AnimEnd())
+        {
+            pCorinState->Set_Trigger("SwitchOut");
+            pCorinState->Set_Bool("OutReserve", false);
+        }
+    }
+
     __super::Update(pOwner, dt);
 }
 
@@ -73,7 +86,7 @@ void CCorinState_ExAttack::Exit(CCorin* pOwner)
 {
     pOwner->Set_SpecialEnergy(80.f);
     pOwner->Get_StateMachine()->Set_Bool("Resistance", false);
-    //UIÀçÀü¼Û
+
     if (pOwner->Is_MainCharacter())
     {
         UI_ACTION_DESC desc;
@@ -88,7 +101,6 @@ void CCorinState_ExAttack::Exit(CCorin* pOwner)
         }
         EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
     }
-
 
     __super::Exit(pOwner);
 }

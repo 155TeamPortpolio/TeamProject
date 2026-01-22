@@ -1478,7 +1478,7 @@
     <ClInclude Include="..\public\CursorController.h">
       <Filter>00. MainApp\00. CursorController</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\OBJFactory.h">
+    <ClInclude Include="..\public\EntitySpawner.h">
       <Filter>02. GameObject\MapObject\OBJFactory</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Stage.h">
@@ -2197,7 +2197,7 @@
     <ClCompile Include="..\private\CursorController.cpp">
       <Filter>00. MainApp\00. CursorController</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\OBJFactory.cpp">
+    <ClCompile Include="..\private\EntitySpawner.cpp">
       <Filter>02. GameObject\MapObject\OBJFactory</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Stage.cpp">

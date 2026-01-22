@@ -137,6 +137,11 @@ void CCorin::Render_GUI()
 
 }
 
+void CCorin::Reset_State()
+{
+	m_pStateMachine->Set_Trigger("ResetState");
+}
+
 void CCorin::On_Start()
 {
 	m_pStateMachine->Set_Trigger("QuestStart");
@@ -153,7 +158,15 @@ void CCorin::On_SwitchIn(SWITCH eType)
 
 void CCorin::On_SwitchOut()
 {
-	m_pStateMachine->Set_Trigger("SwitchOut");
+	Push_Invincible();
+	Lock_Move();
+	Stop_Rotation();
+	if (m_pStateMachine->Get_CurrentStateName() == "Attack")
+	{
+		m_pStateMachine->Set_Bool("OutReserve", true);
+	}
+	else
+		m_pStateMachine->Set_Trigger("SwitchOut");
 }
 
 void CCorin::On_Ultimate()
@@ -167,13 +180,18 @@ void CCorin::On_Special()
 {
 	if (InputDevice()->Key_Tap('E') == false) return;
 
+	m_tEnergy.fCurrentEnergy -= m_tEnergy.fSpecialEnergy;
+	UI_ACTION_DESC desc;
+	desc.eType = UI_ACTION_TYPE::SPECIAL;
 	if (m_tEnergy.fCurrentEnergy >= m_tEnergy.fSpecialEnergy)
 	{
-		UI_ACTION_DESC desc;
-		desc.eType = UI_ACTION_TYPE::SPECIAL;
-		desc.eState = UI_ACTION_STATE::EXECUTING;
-		EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
+		desc.eState = UI_ACTION_STATE::AVAILABLE;
 	}
+	else
+	{
+		desc.eState = UI_ACTION_STATE::EXECUTING;
+	}
+	EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
 
 	string strCurrentState = m_pStateMachine->Get_CurrentStateName();
 	if (strCurrentState == "Attack")	// NormalAttack Áß Äµ½½ÇØ¼­ ExAttack
@@ -202,6 +220,7 @@ void CCorin::On_Hit(DAMAGE_TYPE eType)
 void CCorin::Update_States()
 {
 	if (!Is_MainCharacter()) return;
+	if (!m_pCCT->Get_CompActive()) return;
 
 	m_pStateMachine->Set_Bool("IsMove", Is_Move_Buffer());
 	
@@ -385,6 +404,9 @@ HRESULT CCorin::Initialize_Transitions()
 	// Move -> Idle
 	m_pStateMachine->Register_Transition("Move", "Idle",
 		CStateMachine<CCorin>::CONDITION_TRIGGER, "ToIdle");
+
+	m_pStateMachine->Register_AnyStateTransition("Idle",
+		CStateMachine<CCorin>::CONDITION_TRIGGER, "ResetState");
 
 	// Attack
 	m_pStateMachine->Register_AnyStateTransition("Attack",

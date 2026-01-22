@@ -16,6 +16,8 @@ private:
 	enum class TEXTSLOT { NAME, MESSAGE, END };
 	inline static const string TEXTSLOT_INSTNAMES[ENUM(TEXTSLOT::END)] = { "name", "message" };
 
+	enum class STATE { INVISIBLE, VISIBLE, END };
+
 	typedef struct tagTypeWriteDesc {
 		wstring	strFullText = L"";	// 원본 텍스트
 		wstring	strCurText = L"";	// 현재까지 출력된 텍스트
@@ -80,21 +82,27 @@ public:
 	virtual void    Render_GUI()                     override { __super::Render_GUI(); }
 
 private:
-	CUI_Object*		m_pChildren[ENUM(CHILD::END)] = {};
-	class CButtonUI* m_pNextButton = { nullptr };
-	CTextSlot*		m_pTextSlots[ENUM(TEXTSLOT::END)] = {};
+	CUI_Object*			m_pChildren[ENUM(CHILD::END)] = {};
+	class CButtonUI*	m_pNextButton = { nullptr };
+	CTextSlot*			m_pTextSlots[ENUM(TEXTSLOT::END)] = {};
 
-	TYPEWRITER_DESC	m_tMessageTypeWriter = {};
+	STATE				m_eState = {};
 
-	pair<string, _uint> m_dialogueID = {};
-	DialogueResult	m_eResult = {};
+	TYPEWRITER_DESC		m_tMessageTypeWriter = {};
+	NpcDialogueDesc		m_tDialogueDesc = {};
 
 private:
 	void Cache_Children();
 	void Bind_EventListener();
 
+	void Open_Dialogue(const string& strNewSequenceID, _uint iNewSequenceID);
+	void Change_Dialogue();
+
+	void Change_State(STATE eState);
+
 	void Start_TypingMessage(const _wstring& strText);
 	void Update_TypingMessage(_float dt);
+	_bool Complete_TypingMessage();
 
 	void Set_ChildAnimation(CHILD eChild, _int iIndex);
 	void Set_ChildText(TEXTSLOT eTextSlot, const wstring& strText);
