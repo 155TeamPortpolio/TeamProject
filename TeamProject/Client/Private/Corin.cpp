@@ -180,13 +180,18 @@ void CCorin::On_Special()
 {
 	if (InputDevice()->Key_Tap('E') == false) return;
 
+	m_tEnergy.fCurrentEnergy -= m_tEnergy.fSpecialEnergy;
+	UI_ACTION_DESC desc;
+	desc.eType = UI_ACTION_TYPE::SPECIAL;
 	if (m_tEnergy.fCurrentEnergy >= m_tEnergy.fSpecialEnergy)
 	{
-		UI_ACTION_DESC desc;
-		desc.eType = UI_ACTION_TYPE::SPECIAL;
-		desc.eState = UI_ACTION_STATE::EXECUTING;
-		EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
+		desc.eState = UI_ACTION_STATE::AVAILABLE;
 	}
+	else
+	{
+		desc.eState = UI_ACTION_STATE::EXECUTING;
+	}
+	EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
 
 	string strCurrentState = m_pStateMachine->Get_CurrentStateName();
 	if (strCurrentState == "Attack")	// NormalAttack Áß Äµ½½ÇØ¼­ ExAttack
