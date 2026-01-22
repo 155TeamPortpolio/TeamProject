@@ -300,6 +300,11 @@ _quaternion CGameObject::Get_WorldQuat()
 	return quat;
 }
 
+_vector3 CGameObject::Get_WorldRotation()
+{
+	return _quaternion(m_pTransform->Get_QuaternionRotate()).ToEuler();
+}
+
 HRESULT CGameObject::Make_OpaquePacket()
 {
 	OPAQUE_PACKET packet;
