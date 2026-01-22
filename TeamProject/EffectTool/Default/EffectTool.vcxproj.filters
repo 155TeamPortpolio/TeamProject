@@ -52,6 +52,9 @@
     <Filter Include="02. Object\ToolModel">
       <UniqueIdentifier>{142b27c3-4f5f-4d76-9bb9-aad4f2c431b1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. Object\ToolMap">
+      <UniqueIdentifier>{6db58492-a663-44bb-9d7a-66a1801b4c58}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EffectTool.h">
@@ -150,6 +153,9 @@
     <ClInclude Include="..\Public\ToolModel.h">
       <Filter>02. Object\ToolModel</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\ToolMap.h">
+      <Filter>02. Object\ToolMap</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EffectTool.cpp">
@@ -229,6 +235,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\ToolModel.cpp">
       <Filter>02. Object\ToolModel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\ToolMap.cpp">
+      <Filter>02. Object\ToolMap</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

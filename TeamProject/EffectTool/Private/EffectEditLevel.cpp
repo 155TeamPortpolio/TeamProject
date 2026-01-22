@@ -15,6 +15,7 @@
 #include "MeshNode_Edit.h"
 #include "TrailNode_Edit.h"
 #include "ToolModel.h"
+#include "ToolMap.h"
 
 
 CEffectEditLevel::CEffectEditLevel(const string& LevelKey)
@@ -43,6 +44,7 @@ HRESULT CEffectEditLevel::Awake()
 	pProto->Add_ProtoType("EffectEdit_Level", "Proto_GameObject_ToolLight", CToolLight::Create());
 	pProto->Add_ProtoType("EffectEdit_Level", "Proto_GameObject_ToolGrid", CToolGrid::Create());
 	pProto->Add_ProtoType("EffectEdit_Level", "Proto_GameObject_ToolModel", CToolModel::Create());
+	pProto->Add_ProtoType("EffectEdit_Level", "Proto_GameObject_ToolMap", CToolMap::Create());
 
 	//pResource->Add_ResourcePath("test.json", "../Bin/Resource/Data/test.json");
 	//pResource->Load_EffectAsset(G_GlobalLevelKey, "test.json");
@@ -75,6 +77,9 @@ HRESULT CEffectEditLevel::Awake()
 
 	CGameObject* Model = Builder::Create_Object({ "EffectEdit_Level","Proto_GameObject_ToolModel" })
 		.Build("Model");
+	
+	CGameObject* Map = Builder::Create_Object({ "EffectEdit_Level","Proto_GameObject_ToolMap" })
+		.Build("Map");
 
 	LIGHT_INIT_DESC LightDesc{};
 	LightDesc.eType = LIGHT_TYPE::DIRECTIONAL;
@@ -91,6 +96,7 @@ HRESULT CEffectEditLevel::Awake()
 	pObjMgr->Add_Object(Model, { "EffectEdit_Level","Edit_Layer" });
 	pObjMgr->Add_Object(Light, { "EffectEdit_Level","Light_Layer" });
 	pObjMgr->Add_Object(Camera, { "EffectEdit_Level","Camera_Layer" });
+	pObjMgr->Add_Object(Map, { "EffectEdit_Level","Map_Layer" });
 
 	m_pGameInstance->Get_CameraMgr()->Set_MainCam(Camera->Get_Component<CCamera>());
 

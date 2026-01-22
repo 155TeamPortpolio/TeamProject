@@ -190,6 +190,9 @@ void CMeshNode_Edit::Import(nlohmann::ordered_json& json)
 	auto distortionUVSpeed = json.value("distortion_uvspeed", json::array({ 0.f,0.f }));
 	m_DistortionModule.vDistortionUVSpeed = _float2(distortionUVSpeed[0], distortionUVSpeed[1]);
 	
+	_float2 screenSize = CGameInstance::GetInstance()->Get_ClientSize();
+	m_fScreenWidth = screenSize.x;
+	m_fScreenHeight = screenSize.y;
 
 	{
 		m_SetMaterial = true;
