@@ -10,7 +10,7 @@
 #include "MapPlacedObject.h"
 #include "MapTriggerObject.h"
 
-#include "OBJFactory.h"
+#include "EntitySpawner.h"
 
 CMapLoader::CMapLoader()
     : m_TagLayers{ "PlacedObject_Layer", "TriggerObject_Layer" }
@@ -215,24 +215,23 @@ void CMapLoader::Place_EntityFromLoadData(ENTITY_INIT* pData)
     if (nullptr == pData)
         return;
 
-    Factory::FACTORY_DESC FactoryDesc{};
-    FactoryDesc.iEntityID = pData->iEntityID;
-    FactoryDesc.tagName = pData->tagName;
-    FactoryDesc.tagLevel = m_TagLevel;
-    FactoryDesc.iType = pData->iType;
-    FactoryDesc.vScale = { pData->vScale[0], pData->vScale[1] ,pData->vScale[2] };
-    FactoryDesc.vRotation = { pData->vRotation[0], pData->vRotation[1] ,pData->vRotation[2] };
-    FactoryDesc.vTranslation = { pData->vTranslation[0], pData->vTranslation[1] ,pData->vTranslation[2] };
+    Spawner::SPAWNER_DESC SpawnerDesc{};
+    SpawnerDesc.iEntityID = pData->iEntityID;
+    SpawnerDesc.tagName = pData->tagName;
+    SpawnerDesc.tagLevel = m_TagLevel;
+    SpawnerDesc.iType = pData->iType;
+    SpawnerDesc.vScale = { pData->vScale[0], pData->vScale[1] ,pData->vScale[2] };
+    SpawnerDesc.vRotation = { pData->vRotation[0], pData->vRotation[1] ,pData->vRotation[2] };
+    SpawnerDesc.vTranslation = { pData->vTranslation[0], pData->vTranslation[1] ,pData->vTranslation[2] };
     
-
     for (auto& tSlotData : m_EntitySlotFormatData) {
         // 일단 데이터 다 때려넣기
         for (auto& FieldData : tSlotData.second[pData->iEntityID])
-            FactoryDesc.SlotDataValues[tSlotData.first].push_back(FieldData);
+            SpawnerDesc.SlotDataValues[tSlotData.first].push_back(FieldData);
     }
 
     /* 여기에 엔티티 이용해서 생성 */
-    Factory::Create_Objects(FactoryDesc);
+    Spawner::Create_Entity(SpawnerDesc);
 }
 
 CMapLoader::MAPOBJ_TYPE CMapLoader::Check_LayerTag(const string& TagLayer)
