@@ -49,9 +49,6 @@
     <Filter Include="02. GameObject\Camera\04. OrbitCam">
       <UniqueIdentifier>{3ccc4b33-1ec4-4b1a-a032-fb66d8ec8e75}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Camera\99. CamDirector">
-      <UniqueIdentifier>{0d1fd986-9b7f-4463-b27c-8cc9eae09a0b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\MapObject">
       <UniqueIdentifier>{80767227-77fa-4633-b0c5-65b7efc809cd}</UniqueIdentifier>
     </Filter>
@@ -786,6 +783,12 @@
     <Filter Include="02. GameObject\UI\01. 2D\Dialogue">
       <UniqueIdentifier>{43edc525-691e-45eb-8315-9c2612cfad8d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03. Utility\07. CamDirector">
+      <UniqueIdentifier>{0d1fd986-9b7f-4463-b27c-8cc9eae09a0b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Camera\99. DisplayGate">
+      <UniqueIdentifier>{7cfc1b6e-36c2-4bb1-bb95-56819b1ab3d6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -828,7 +831,7 @@
       <Filter>02. GameObject\Camera\00. CamObject</Filter>
     </ClInclude>
     <ClInclude Include="..\public\CamDirector.h">
-      <Filter>02. GameObject\Camera\99. CamDirector</Filter>
+      <Filter>03. Utility\07. CamDirector</Filter>
     </ClInclude>
     <ClInclude Include="..\public\OrbitCam.h">
       <Filter>02. GameObject\Camera\04. OrbitCam</Filter>
@@ -1395,7 +1398,7 @@
       <Filter>02. GameObject\Object\Player\Character\Corin\State\Hit</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\CamDirectorData.h">
-      <Filter>02. GameObject\Camera\99. CamDirector</Filter>
+      <Filter>03. Utility\07. CamDirector</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\OrbitCamTypes.h">
       <Filter>02. GameObject\Camera\04. OrbitCam</Filter>
@@ -1447,9 +1450,6 @@
     </ClInclude>
     <ClInclude Include="..\Public\ZeroPortal.h">
       <Filter>02. GameObject\Object\Interactable\ZeroPortal</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\OrbitLockOnController.h">
-      <Filter>02. GameObject\Camera\04. OrbitCam\00. LockOnController</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\OrbitLockOnData.h">
       <Filter>02. GameObject\Camera\04. OrbitCam\00. LockOnController</Filter>
@@ -1526,6 +1526,12 @@
     <ClInclude Include="..\Public\UI_Dialogue.h">
       <Filter>02. GameObject\UI\01. 2D\Dialogue</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\OrbitLockOnController.h">
+      <Filter>02. GameObject\Camera\04. OrbitCam\00. LockOnController</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\DisplayGate.h">
+      <Filter>02. GameObject\Camera\99. DisplayGate</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -1587,7 +1593,7 @@
       <Filter>02. GameObject\Camera\03. SequenceCam</Filter>
     </ClCompile>
     <ClCompile Include="..\private\CamDirector.cpp">
-      <Filter>02. GameObject\Camera\99. CamDirector</Filter>
+      <Filter>03. Utility\07. CamDirector</Filter>
     </ClCompile>
     <ClCompile Include="..\private\OrbitCam.cpp">
       <Filter>02. GameObject\Camera\04. OrbitCam</Filter>
@@ -2226,6 +2232,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\UI_Dialogue.cpp">
       <Filter>02. GameObject\UI\01. 2D\Dialogue</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\DisplayGate.cpp">
+      <Filter>02. GameObject\Camera\99. DisplayGate</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
