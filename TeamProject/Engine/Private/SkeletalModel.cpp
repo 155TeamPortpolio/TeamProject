@@ -191,12 +191,10 @@ MINMAX_BOX CSkeletalModel::Get_LocalBoundingBox()
 MINMAX_BOX CSkeletalModel::Get_WorldBoundingBox()
 {
 	MINMAX_BOX wordlBox = m_pData->Get_LocalBoundingBox();
-	_float4x4* pWorldMat = m_pOwner->Get_Component<CTransform>()->Get_WorldMatrix_Ptr();
-	XMStoreFloat3(&wordlBox.vMin, XMVector3TransformCoord(XMLoadFloat3(&wordlBox.vMin), XMLoadFloat4x4(pWorldMat)));
-	XMStoreFloat3(&wordlBox.vMax, XMVector3TransformCoord(XMLoadFloat3(&wordlBox.vMax), XMLoadFloat4x4(pWorldMat)));
+	_float4x4 pWorldMat = m_pOwner->Get_Component<CTransform>()->Get_WorldMatrix();
+	wordlBox.TransformBox_8Corner(pWorldMat);
 	return wordlBox;
 }
-
 vector<MINMAX_BOX> CSkeletalModel::Get_MeshBoundingBoxes()
 {
 	vector<MINMAX_BOX> boxes;

@@ -12,12 +12,20 @@ protected:
     virtual ~CServiceNpc() DEFAULT;
 
 public:
+    void    Process_Event(const NPC_INTERACT_DESC& desc);
+
+public:
     virtual HRESULT Initialize_Prototype() override;
     virtual HRESULT Initialize(INIT_DESC* pArg) override;
     virtual void    Awake() override;
     virtual void    Priority_Update(_float dt) override;
     virtual void    Update(_float dt) override;
     virtual void    Late_Update(_float dt) override;
+
+protected:
+    virtual void    Success() {}
+    virtual void    Running() {}
+    virtual void    Fail()    {}
 
 protected:
     NpcIDDesc             m_DiagloueData;
