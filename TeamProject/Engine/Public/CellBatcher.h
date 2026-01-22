@@ -44,13 +44,13 @@ private:
 private:
     CellKey MakeCellKey(const _float4x4& world) const;
     bool CanBatch(const OPAQUE_PACKET& packet) const;
-    bool BuildOneBatch(ID3D11Device* device, const CellBatchKey& key, const vector<const OPAQUE_PACKET*>& packets);
+    bool BuildOneBatch(ID3D11Device* device, const CellBatchKey& key, const vector<OPAQUE_PACKET*>& packets);
 
 private:
     Options m_Options;
     _uint m_iFrameIndex = 0;
     class CRenderSystem* m_pRenderSystem = { nullptr };
-    unordered_map<CellBatchKey, vector<const OPAQUE_PACKET*>, CellBatchKeyHash> m_BatchGroups;
+    unordered_map<CellBatchKey, vector<OPAQUE_PACKET*>, CellBatchKeyHash> m_BatchGroups;
     unordered_map<CellBatchKey, CachedBatch, CellBatchKeyHash> m_Cached;
     unordered_map<string, ID3D11InputLayout*> m_LayoutCache;
 public:

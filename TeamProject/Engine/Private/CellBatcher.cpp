@@ -32,7 +32,7 @@ bool CCellBatcher::CanBatch(const OPAQUE_PACKET& packet) const
 	return true;
 }
 
-bool CCellBatcher::BuildOneBatch(ID3D11Device* device, const CellBatchKey& key, const vector<const OPAQUE_PACKET*>& packets)
+bool CCellBatcher::BuildOneBatch(ID3D11Device* device, const CellBatchKey& key, const vector<OPAQUE_PACKET*>& packets)
 {
 	if (!device) return false;
 	if (packets.size() < m_Options.minBatchCount) return false;
@@ -149,7 +149,6 @@ void CCellBatcher::SubmitVisiblePacket(OPAQUE_PACKET& packet)
 
 	CellBatchKey key{ cell, batch };
 	m_BatchGroups[key].push_back(&packet);
-	packet.isBatched = true;
 }
 
 void CCellBatcher::BuildBatchesIfNeeded(ID3D11Device* device)
@@ -184,7 +183,8 @@ void CCellBatcher::DrawBatches(ID3D11DeviceContext* context, RenderPass* pass, C
 		const CellBatchKey& key = pair.first;
 		CachedBatch& batch = pair.second;
 
-		if (m_BatchGroups.find(key) == m_BatchGroups.end())
+		auto groupIt = m_BatchGroups.find(key);
+		if (groupIt == m_BatchGroups.end())
 			continue;
 
 		if (!batch.shader || !batch.material)
@@ -219,6 +219,11 @@ void CCellBatcher::DrawBatches(ID3D11DeviceContext* context, RenderPass* pass, C
 
 		batch.material->ResetMaterial(0);
 		batch.lastUsedFrame = m_iFrameIndex;
+		for (OPAQUE_PACKET* packetPtr : groupIt->second)
+		{
+			if (packetPtr)
+				packetPtr->isBatched = true;
+		}
 	}
 
 	Safe_Release(device);
