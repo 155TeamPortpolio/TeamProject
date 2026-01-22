@@ -27,10 +27,10 @@ public:
 
     struct InputInfo
     {
-        _vector3 direction = {};
+        _vector3 direction = {0,0,0};
         _vector3 prevDirection = {};
         _float   bufferTimer = 0.f;
-        // Turnback ������ �߰�
+        // Turnback
         _int  prevMoveX = 0;
         _int  prevMoveZ = 0;
         _int  curMoveX = 0;
@@ -108,6 +108,7 @@ public:
     _float      Get_EvadeCooldown() const { return m_fEvadeCooldown; }
     _uint       Get_EvadeCount() const { return m_iEvadeCount; }
     void        Set_EvadeMax(_uint iMax) { m_iEvadeMax = iMax; }
+    void        Reset_Interact() { m_bCanInteract = false; }
 
     SWITCH      Get_Switch() const { return m_eSwitchType; }
     void        Set_Switch(SWITCH eType) { m_eSwitchType = eType; }
@@ -137,21 +138,22 @@ public:
     virtual void    Update(_float dt) override;
     virtual void    Late_Update(_float dt) override;
 
-    virtual void    OnCollisionExit(CGameObject* pOther) override;
     virtual void    OnTriggerEnter(CGameObject* pOther) override;
     virtual void    OnTriggerStay(CGameObject* pOher) override;
     virtual void    OnTriggerExit(CGameObject* pOther) override;
 
 public:
+    virtual void    Reset_State() {};
     virtual void    On_Start() {};
     virtual void    On_Move(const InputInfo& inputInfo);
     virtual void    On_Attack();
     virtual void    On_Evade();
-    virtual void    On_SwitchIn(SWITCH eType)   PURE;
-    virtual void    On_SwitchOut()              PURE;
+    virtual void    On_SwitchIn(SWITCH eType) {}
+    virtual void    On_SwitchOut() {}
     virtual void    On_Ultimate();
-    virtual void    On_Special() {}; // 개별 구현 
-    virtual void    On_Hit(DAMAGE_TYPE eType) {}; // 개별 구현
+    virtual void    On_Special() {} // 개별 구현 
+    virtual void    On_Hit(DAMAGE_TYPE eType) {} // 개별 구현
+    virtual void    On_Interact();
 
 public:
     HRESULT  Attach_AttackCollider(ATTACK_COLLIDER_DESC* pDesc);
@@ -216,11 +218,12 @@ protected:
     _float          m_fDefense = { 5.f };
     _float          m_fMoveSpeed = { 1.f };
     _uint           m_iCurrentLevel = { 1 };            //*ĳ���� ����*
-    // �Է�
+    // 상태
     InputInfo       m_inputInfo;
     _bool           m_bCanMove = { true };
     _bool           m_bIsAttack = { false };
     _bool           m_bIsEvade = { false };
+    _bool           m_bCanInteract = { false };
     // ȸ�� �ý���
     _bool                   m_bEvadeBuffer = { false };
     _uint                   m_iEvadeMax = 2;

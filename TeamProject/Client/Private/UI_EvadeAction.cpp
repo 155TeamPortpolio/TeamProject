@@ -81,6 +81,9 @@ void CUI_EvadeAction::Bind_EventListener()
     // 모드 변경 이벤트
     Get_Component<CEventListener>()->Add_Listener<UI_ACTION_PRIMARY_DESC>([&](const UI_ACTION_PRIMARY_DESC& desc)
         {
+            if (m_eMode == desc.eMode)
+                return;
+
             m_eMode = desc.eMode;
             switch (desc.eMode)
             {

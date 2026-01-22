@@ -214,10 +214,10 @@
             "alive": true,
             "instanceName": "text",
             "transform": {
-                "anchor": 5,
+                "anchor": 4,
                 "anchorOffset": [
-                    11.899999618530273,
-                    19.5
+                    -2.0999999046325684,
+                    36.0
                 ],
                 "size": [
                     0.0,
@@ -258,7 +258,9 @@
                 "shear": [
                     0.0,
                     0.0
-                ]
+                ],
+                "autoPos": true,
+                "anchor": 0
             }
         },
         {

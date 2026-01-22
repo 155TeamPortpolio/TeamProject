@@ -25,6 +25,14 @@ COfficeMeow::COfficeMeow(const COfficeMeow& rhs)
 {
 }
 
+void COfficeMeow::Execute()
+{
+	UI_DIALOGUE_REQUEST_DESC desc;
+	desc.strDialogueID = m_DiagloueData.StartDialogueID;
+	desc.iSequenceID = m_iNextSequceID;
+	EventSystem()->Broadcast<UI_DIALOGUE_REQUEST_DESC>({ desc });
+}
+
 HRESULT COfficeMeow::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
@@ -68,6 +76,8 @@ void COfficeMeow::Awake()
 		.Apply();
 
 	__super::Awake();
+
+	Add_InteractZone(Get_Position(), _float3(0.f, 0.f, 1.1f), Get_WorldRotation(), _float3(1.5f, 2.f, 1.5f));
 }
 
 void COfficeMeow::Priority_Update(_float dt)

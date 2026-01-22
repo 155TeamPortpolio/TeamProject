@@ -20,7 +20,7 @@ private:
 	enum CHILD { NAME, ARROWL, ARROWR, END };
 	inline static const string INSTANCENAMES[ENUM(CHILD::END)] = { "name", "arrowL", "arrowR" };
 
-	enum class STATE { HIDDEN, VISIBLE, INTERACTABLE, END };
+	enum class STATE { HIDDEN, VISIBLE, NOTINTERACTABLE, INTERACTABLE, END };
 
 private:
 	CUI_NameIndicator() {}
@@ -57,6 +57,8 @@ private:
 
 	STATE CalcState_ByDistance();
 
+	void Set_ChildAlive(CHILD child, _bool isAlive);
+	void Set_ChildAnimation(CHILD child, _int iIndex);
 	_float2 Get_ChildSize(CHILD child);
 
 public:

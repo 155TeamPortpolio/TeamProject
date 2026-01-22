@@ -9,8 +9,10 @@
 #include "Material.h"
 #include "ObjectContainer.h"
 #include "BoneFollower.h"
+#include "IInteract.h"
 
 #include "CharacterAttackCollider.h"
+
 
 CCharacter::CCharacter(const CCharacter& rhs)
 	: CGameObject(rhs)
@@ -40,6 +42,8 @@ void CCharacter::DeActive_Character()
 	SetRenderLayer(RENDER_LAYER::None);
 	m_fDissolveProgress = 0.f;
 	m_iInvincibleCount = 0;
+	m_inputInfo = {};
+	Reset_State();
 }
 
 void CCharacter::Process_RootMotion(_float dt, const ROOTMOTION_DESC& desc)
@@ -161,31 +165,33 @@ void CCharacter::Late_Update(_float dt)
 	m_bEvadeBuffer = false;
 }
 
-void CCharacter::OnCollisionExit(CGameObject* pOther)
-{
-	//MSG_BOX("Exit");
-}
-
 void CCharacter::OnTriggerEnter(CGameObject* pOther)
 {
 	ICollidable* pCollidable = pOther->Get_Component<ICollidable>();
 	if (!pCollidable) return;
 
-	if (pCollidable->Get_Group() == COLLISION_GROUP::INTERACABLE)
+	if (pCollidable->Get_Group() == COLLISION_GROUP::INTERACTABLE)
 	{
 		// Interact 활성화
 		UI_ACTION_PRIMARY_DESC desc;
 		desc.eMode = UI_ACTION_PRIMARY_MODE::INTERACT;
 		EventSystem()->Broadcast<UI_ACTION_PRIMARY_DESC>({ desc });
+		if (m_bCanInteract)
+		{
+			auto pInteract = dynamic_cast<IInteract*>(pOther);
+
+			if (pInteract != nullptr)
+			{
+				pInteract->Interact();
+			}
+		}
 	}
 
 	if (Is_Invincible())	return;
-	CollisionSystem()->Log_CollisionEvent(Helper::EnumToString(pCollidable->Get_Group()));
 	if (pCollidable->Get_Group() == COLLISION_GROUP::MONSTER_PARRY)
 	{
 
 		m_ParryableTargets.insert(pOther);
-		CollisionSystem()->Log_CollisionEvent("Insert");
 	}
 	else if (pCollidable->Get_Group() == COLLISION_GROUP::MONSTER_ATTACK)
 	{
@@ -195,14 +201,22 @@ void CCharacter::OnTriggerEnter(CGameObject* pOther)
 
 void CCharacter::OnTriggerStay(CGameObject* pOther)
 {
+	if(m_bCanInteract)
+	{
+		auto pInteract = dynamic_cast<IInteract*>(pOther);
+
+		if (pInteract != nullptr)
+		{
+			pInteract->Interact();
+		}
+	}
+	
 	if (Is_Invincible())	return;
 	ICollidable* pCollidable = pOther->Get_Component<ICollidable>();
 	if (!pCollidable) return;
-	CollisionSystem()->Log_CollisionEvent(Helper::EnumToString(pCollidable->Get_Group()));
 	if (pCollidable->Get_Group() == COLLISION_GROUP::MONSTER_PARRY)
 	{
 		m_ParryableTargets.insert(pOther);
-		CollisionSystem()->Log_CollisionEvent("Insert");
 	}
 	else if (pCollidable->Get_Group() == COLLISION_GROUP::MONSTER_ATTACK)
 	{
@@ -215,7 +229,7 @@ void CCharacter::OnTriggerExit(CGameObject* pOther)
 	ICollidable* pCollidable = pOther->Get_Component<ICollidable>();
 	if (!pCollidable) return;
 
-	if (pCollidable->Get_Group() == COLLISION_GROUP::INTERACABLE)
+	if (pCollidable->Get_Group() == COLLISION_GROUP::INTERACTABLE)
 	{
 		// Interact 비활성화
 		UI_ACTION_PRIMARY_DESC desc;
@@ -252,6 +266,8 @@ void CCharacter::OnTriggerExit(CGameObject* pOther)
 
 void CCharacter::On_Move(const InputInfo& inputInfo)
 {
+	if (!m_bIsMain)	return;
+
 	_bool prevResetMove = m_inputInfo.resetMove;
 	m_inputInfo = inputInfo;
 	m_inputInfo.resetMove = prevResetMove;
@@ -284,6 +300,11 @@ void CCharacter::On_Ultimate()
 	desc.eState = UI_ACTION_STATE::EXECUTING;
 	EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
 	m_fCurrentDecibel = 0.f;
+}
+
+void CCharacter::On_Interact()
+{
+	m_bCanInteract = true;
 }
 
 HRESULT CCharacter::Attach_AttackCollider(ATTACK_COLLIDER_DESC* pDesc)

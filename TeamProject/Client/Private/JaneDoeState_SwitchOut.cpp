@@ -5,8 +5,6 @@
 
 void CJaneDoeState_SwitchOut::Enter(CJaneDoe* pOwner)
 {
-    pOwner->Push_Invincible();
-    pOwner->Stop_Rotation();
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "SwitchOut_Normal")
         .Loop(false)
         .Apply();
@@ -29,5 +27,6 @@ void CJaneDoeState_SwitchOut::Update(CJaneDoe* pOwner, _float dt)
 
 void CJaneDoeState_SwitchOut::Exit(CJaneDoe* pOwner)
 {
+    pOwner->Get_StateMachine()->Set_Bool("IsMove", false);
     __super::Exit(pOwner);
 }

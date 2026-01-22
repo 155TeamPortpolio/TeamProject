@@ -15,7 +15,8 @@ namespace Math
 	ENGINE_DLL _float     SmoothStep01(_float t);
 	ENGINE_DLL _float     Clamp01(_float t);
 	ENGINE_DLL Vector3    SeedPhase(_uint& seed);
-	 
+	ENGINE_DLL _float     MoveTowards(_float cur, _float target, _float maxDelta);
+
 	ENGINE_DLL _float   ApplyEase(EaseType type, _float t);
 
 	// Easing 보간 (Camera 추천 순위 1~30)  (중복 없음)

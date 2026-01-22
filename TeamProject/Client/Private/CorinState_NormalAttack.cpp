@@ -59,6 +59,17 @@ void CCorinState_NormalAttack::Update(CCorin* pOwner, _float dt)
     if (CGameInstance::GetInstance()->Get_InputDev()->Mouse_Tap(MOUSE_BTN::LB))
         m_pSubStateMachine->Set_Trigger("NextCombo");
 
+    auto pCorinState = pOwner->Get_StateMachine();
+    if (pCorinState->Get_Bool("OutReserve"))
+    {
+        if(m_pSubStateMachine->Get_CurrentStateName() == "Attack_End" ||
+            Is_AnimEnd())
+        {
+            pCorinState->Set_Trigger("SwitchOut");
+            pCorinState->Set_Bool("OutReserve", false);
+        }
+    }
+
     __super::Update(pOwner, dt);
 }
 
@@ -203,7 +214,14 @@ void CCorinState_Attack_05::Update(CCorin* pOwner, _float dt)
         ENUM(CCorin::ROOTMOTION_MASK::QUATERNION));
     if (m_fAnimProgress >= 0.4f)
     {
-        pOwner->Begin_AttackCollider("Saw", { HIT_TYPE::COUNT, DAMAGE_TYPE::NORMAL, 1.f, 0.15f, 7 });
+        pOwner->Begin_AttackCollider("Saw",
+            HitDesc()
+            .Type(HIT_TYPE::COUNT)
+            .Damage(10.f, DAMAGE_TYPE::NORMAL)
+            .Interval(0.15f)
+            .MaxCount(7)
+            .Charge(10.f, 100.f)
+        );
     }
     if (m_fAnimProgress >= 0.99f)
     {

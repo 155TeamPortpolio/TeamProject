@@ -152,6 +152,7 @@ HRESULT CCharacterController::Initialize(COMPONENT_DESC* pArg)
 	m_fMaxSpeed = pDesc->fMaxSpeed;
 
 	m_pQueryFilter = new CCCTQueryFilter(&m_FilterData);
+	m_pCCTFilter = new CCCTFilterCallback();
 
 	return S_OK;
 }
@@ -184,6 +185,36 @@ void CCharacterController::OnTriggerStay(ICollidable* pOther)
 void CCharacterController::OnTriggerExit(ICollidable* pOther)
 {
 	m_pOwner->OnTriggerExit(pOther->Get_Owner());
+}
+
+void CCharacterController::Set_CompActive(_bool bActive)
+{
+	__super::Set_CompActive(bActive);
+	if (!m_pController) return;
+
+	PxRigidDynamic* pActor = m_pController->getActor();
+	if (!pActor) return;
+
+	PxShape* pShape = nullptr;
+	pActor->getShapes(&pShape, 1);
+	if (!pShape) return;
+
+	if (bActive)
+	{
+		pActor->setActorFlag(PxActorFlag::eDISABLE_SIMULATION, false);
+		m_FilterData.word1 = m_iCollisionMask;
+		m_QueryFilterData.word1 = m_iCollisionMask;
+		pShape->setSimulationFilterData(m_FilterData);
+		pShape->setQueryFilterData(m_FilterData);
+	}
+	else
+	{
+		pActor->setActorFlag(PxActorFlag::eDISABLE_SIMULATION, true);
+		m_FilterData.word1 = ENUM(COLLISION_GROUP::COMMON);
+		m_QueryFilterData.word1 = ENUM(COLLISION_GROUP::COMMON);
+		pShape->setSimulationFilterData(m_FilterData);
+		pShape->setQueryFilterData(m_FilterData);
+	}
 }
 
 void CCharacterController::Update(_float dt)
@@ -354,30 +385,10 @@ void CCharacterController::Render_GUI()
 
 		ImGui::Separator();
 		ImGui::Text("Collision Group:");
-		const char* groupNames[] = { "COMMON", "PLAYER", "MONSTER", "PLAYER_ATTACK", "MONSTER_ATTACK", "MONSTER_PARRY", "CAMERA" };
-		const COLLISION_GROUP groupValues[] = {
-			COLLISION_GROUP::COMMON,
-			COLLISION_GROUP::PLAYER,
-			COLLISION_GROUP::MONSTER,
-			COLLISION_GROUP::PLAYER_ATTACK,
-			COLLISION_GROUP::MONSTER_ATTACK,
-			COLLISION_GROUP::MONSTER_PARRY,
-			COLLISION_GROUP::CAMERA
-		};
-
-		_int iCurrentGroup = 0;
-		for (_int i = 0; i < 7; ++i)
+		COLLISION_GROUP eGroup = m_eGroup;
+		if (CollisionHelper::RenderCollisionGroupCombo("##CollisionGroup", eGroup))
 		{
-			if (m_eGroup == groupValues[i])
-			{
-				iCurrentGroup = i;
-				break;
-			}
-		}
-
-		if (ImGui::Combo("##CollisionGroup", &iCurrentGroup, groupNames, 7))
-		{
-			Set_CollisionGroup(groupValues[iCurrentGroup]);
+			Set_CollisionGroup(eGroup);
 		}
 
 		// 충돌 마스크 편집
@@ -635,6 +646,7 @@ void CCharacterController::Move(_fvector vDisplacement, _float dt)
 	filters.mFilterData = &m_QueryFilterData;
 	filters.mFilterCallback = m_pQueryFilter;
 	filters.mFilterFlags = PxQueryFlag::eSTATIC | PxQueryFlag::eDYNAMIC | PxQueryFlag::ePREFILTER;
+	filters.mCCTFilterCallback = m_pCCTFilter;  // CCT 간 필터 추가
 
 	const float dispLen = pxDisp.magnitude();
 	const float minDist = min(m_fMinMoveDist, dispLen * 0.25f);
@@ -900,6 +912,12 @@ void CCharacterController::Free()
 	{
 		m_pController->release();
 		m_pController = nullptr;
+	}
+
+	if (m_pCCTFilter)
+	{
+		delete m_pCCTFilter;
+		m_pCCTFilter = nullptr;
 	}
 
 	__super::Free();

@@ -74,6 +74,8 @@ _uint CStaticModel::Get_MaterialIndex(_uint Index)
 
 _bool CStaticModel::isDrawable(_uint Index)
 {
+    if (Index >= m_DrawableMeshes.size())
+        return false;
     return m_DrawableMeshes[Index];
 }
 
@@ -108,9 +110,8 @@ MINMAX_BOX CStaticModel::Get_LocalBoundingBox()
 MINMAX_BOX CStaticModel::Get_WorldBoundingBox()
 {
     MINMAX_BOX wordlBox = m_pData->Get_LocalBoundingBox();
-    _float4x4* pWorldMat = m_pOwner->Get_Component<CTransform>()->Get_WorldMatrix_Ptr();
-    XMStoreFloat3(&wordlBox.vMin, XMVector3TransformCoord(XMLoadFloat3(&wordlBox.vMin), XMLoadFloat4x4(pWorldMat)));
-    XMStoreFloat3(&wordlBox.vMax, XMVector3TransformCoord(XMLoadFloat3(&wordlBox.vMax), XMLoadFloat4x4(pWorldMat)));
+    _float4x4 pWorldMat = m_pOwner->Get_Component<CTransform>()->Get_WorldMatrix();
+    wordlBox.TransformBox_8Corner(pWorldMat);
     return wordlBox;
 }
 
@@ -134,6 +135,7 @@ HRESULT CStaticModel::Draw(ID3D11DeviceContext* pContext, _uint Index)
 {
     return m_pData->Render_Mesh(pContext, Index);
 }
+
 
 void CStaticModel::Render_GUI()
 {

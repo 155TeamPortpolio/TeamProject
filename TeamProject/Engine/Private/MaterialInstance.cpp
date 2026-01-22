@@ -3,8 +3,10 @@
 #include "MaterialData.h"
 #include "Shader.h"
 
+_uint CMaterialInstance::Next_ID = 0;
+
 CMaterialInstance::CMaterialInstance(CMaterialData* pData, ID3D11Device* pDevice)
-	: m_pMaterialData{ pData }, m_pDevice{ pDevice }
+	: m_pMaterialData{ pData }, m_pDevice{ pDevice }, m_MaterialInstance_ID{ ++Next_ID }
 {
 	Safe_AddRef(m_pMaterialData);
 	Safe_AddRef(m_pDevice);
@@ -15,6 +17,7 @@ CMaterialInstance::CMaterialInstance(const CMaterialInstance& rhs)
 	, m_pMaterialData{ rhs.m_pMaterialData }
 	, m_TextureIndexs{ rhs.m_TextureIndexs }
 	, overrides_Constant{ rhs.overrides_Constant }
+	, m_MaterialInstance_ID{ ++Next_ID }
 
 {
 	Safe_AddRef(m_pMaterialData);

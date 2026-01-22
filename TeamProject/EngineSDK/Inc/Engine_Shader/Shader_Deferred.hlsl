@@ -193,56 +193,6 @@ PS_OUT_RESULT PS_RADIAL_BLUR(PS_IN In)
     return Out;
 }
 
-PS_OUT_RESULT PS_DISTORTION_ADD(PS_IN In)
-{
-    PS_OUT_RESULT Out;
-    
-    // ============================================
-    // �׽�Ʈ�� �Ķ���� (���⼭ ����)
-    // ============================================
-    float2 center = float2(0.5, 0.5); // ȭ�� �߾�
-    float radius = 0.3; // ȿ�� �ݰ� (�׽�Ʈ: 0.2 ~ 0.5)
-    float power = 2.0; // � ���� (�׽�Ʈ: 1.0 ~ 5.0)
-    float strength = 0.8; // �ְ� ���� (�׽�Ʈ: -1.0 ~ 1.0)
-    
-    // ============================================
-    // Spherical Distortion ���
-    // ============================================
-    float2 offset = In.vTexcoord - center;
-    
-    // Aspect Ratio ����
-    offset.x *= 1.777;
-    
-    float distance = length(offset);
-    
-    // �ݰ� ��
-    if (distance > radius || distance < 0.0001)
-    {
-        Out.vResult = float4(0.5, 0.5, 0.5, 1.0);
-        return Out;
-    }
-    
-    // ����ȭ�� �Ÿ�
-    float normalizedDist = distance / radius;
-    
-    // �߽ɿ��� ���ϰ�
-    float distortStrength = 1.0 - normalizedDist;
-    distortStrength = pow(distortStrength, power);
-    
-    // ���� ���
-    float2 direction = normalize(offset);
-    float2 distortion = direction * distortStrength * strength;
-    
-    // Aspect ������
-    distortion.x /= 1.777;
-    
-    // ����
-    Out.vResult = float4(distortion + 0.5, 0.5, 1.0);
-    
-    return Out;
-}
-
-
 PS_OUT_BACKBUFFER PS_MAIN_COMBINED(PS_IN In)
 {
     PS_OUT_BACKBUFFER Out;
@@ -265,9 +215,12 @@ PS_OUT_BACKBUFFER PS_MAIN_COMBINED(PS_IN In)
 
 float4 PS_MAIN_FINAL(PS_IN In) : SV_Target
 {
-    float4 scene = FinalTexture.Sample(DefaultSampler, In.vTexcoord);
-    float4 radialBloom = RadialBloomTexture.Sample(DefaultSampler, In.vTexcoord);
-    float4 hdrBloom = HDRBloomFinalTexture.Sample(DefaultSampler, In.vTexcoord);
+    float2 distortion = DistortionTexture.Sample(DefaultSampler, In.vTexcoord).rg;
+    float2 distortedUV = saturate(In.vTexcoord + distortion);
+   
+    float4 scene = FinalTexture.Sample(DefaultSampler, distortedUV);
+    float4 radialBloom = RadialBloomTexture.Sample(DefaultSampler, distortedUV);
+    float4 hdrBloom = HDRBloomFinalTexture.Sample(DefaultSampler, distortedUV);
     float4 ui = UI2DTexture.Sample(DefaultSampler, In.vTexcoord);
     
     float3 hdrColor = scene.rgb;
@@ -329,16 +282,6 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_RADIAL_BLUR();
-    }
-
-    pass DISTORTION_ADD
-    {
-        SetRasterizerState(RS_Default);
-        SetDepthStencilState(DSS_None, 0);
-        SetBlendState(BS_Additive, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-        VertexShader = compile vs_5_0 VS_MAIN();
-        GeometryShader = NULL;
-        PixelShader = compile ps_5_0 PS_DISTORTION_ADD();
     }
 
     pass FOG

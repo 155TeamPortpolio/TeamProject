@@ -1433,8 +1433,17 @@ void CCamPanel::SetSpaceReference(OBJECT_HANDLE handle)
 {
     target.spaceRefHandle = handle;
 
-    if (target.player)
+    if (target.player && target.sequence && target.sequence->space == CamSpace::Local)
         target.player->SetSpaceReference(target.spaceRefHandle);
+
+    ApplyActorVisibility();
+
+    if (state.playAllLink)
+    {
+        state.playAllRefHandle = handle;
+        animGUIController.SetPlaying(handle, false);
+        animGUIController.SetTimeSec(handle, state.curTime);
+    }
 }
 
 void CCamPanel::SetSpaceRefCandidates(initializer_list<OBJECT_HANDLE> handles)
@@ -1449,6 +1458,8 @@ void CCamPanel::SetSpaceRefCandidates(initializer_list<OBJECT_HANDLE> handles)
         if (target.sequence->space == CamSpace::Local) target.player->SetSpaceReference(target.spaceRefHandle);
         else target.player->ClearSpaceReference();
     }
+
+    ApplyActorVisibility();
 }
 
 void CCamPanel::RecalcEndTimeFromKeys()
@@ -1890,6 +1901,20 @@ void CCamPanel::DoLoadSequence()
     LoadSequenceFromPath(picked);
 }
 
+void CCamPanel::ApplyActorVisibility()
+{
+    if (!target.spaceRefHandle.isValid()) return;
+
+    for (OBJECT_HANDLE h : spaceRefCandidates)
+    {
+        auto obj = OBJ->Request_Object(h);
+        obj->Set_Alive(h == target.spaceRefHandle);
+    }
+
+    auto selectedObj = OBJ->Request_Object(target.spaceRefHandle);
+    selectedObj->Set_Alive(true);
+}
+
 void CCamPanel::DrawKeyframeList_TopBar(vector<CamKeyFrame>& keys, bool& ioChangedAny)
 {
     const ImVec2 btnSize(78.f, 0.f);
@@ -1904,8 +1929,7 @@ void CCamPanel::DrawKeyframeList_TopBar(vector<CamKeyFrame>& keys, bool& ioChang
         {u8"CAPTURE(REC) OFF 상태에서 키를 추가할까요?", u8"- 이 키는 카메라에서 캡쳐되지 않습니다.", u8"- 마지막 키 복사/기본값으로 생성되며, 이후 Capture로 덮어쓸 수 있습니다."},
         u8"추가", u8"취소", 120.f);
 
-    if (addR == ConfirmResult::Ok)
-        AddKey_Default();
+    if (addR == ConfirmResult::Ok) AddKey_Default();
 
     ImGui::SameLine();
 
@@ -1973,29 +1997,24 @@ void CCamPanel::DrawKeyframeList_TopBar(vector<CamKeyFrame>& keys, bool& ioChang
     {
         keyListUI.lastFileError.clear();
 
-        if (target.sequence->keyframes.empty())
-            ImGui::OpenPopup("CamSeq_Save_EmptyConfirm");
-        else
-            DoSaveSequence();
+        if (target.sequence->keyframes.empty()) ImGui::OpenPopup("CamSeq_Save_EmptyConfirm");
+        else DoSaveSequence();
     }
 
     ImGui::SameLine();
 
-    if (ImGui::Button("Load", btnSize))
-        DoLoadSequence();
+    if (ImGui::Button("Load", btnSize)) DoLoadSequence();
 
     ImGui::SameLine();
 
-    if (ImGui::Button("Auto", btnSize))
-        ImGui::OpenPopup("CamSeq_AutoLoad");
+    if (ImGui::Button("Auto", btnSize)) ImGui::OpenPopup("CamSeq_AutoLoad");
 
     DrawAutoLoadPopup();
 
     const ConfirmResult saveEmptyR = DrawConfirmPopupModal("CamSeq_Save_EmptyConfirm", nullptr,
         {u8"키프레임이 0개입니다.", u8"그래도 저장할까요?"}, u8"저장", u8"취소", 120.f);
 
-    if (saveEmptyR == ConfirmResult::Ok)
-        DoSaveSequence();
+    if (saveEmptyR == ConfirmResult::Ok) DoSaveSequence();
 
     if (keyListUI.requestOpenFileErrorPopup)
     {
@@ -2013,13 +2032,45 @@ void CCamPanel::DrawKeyframeList_TopBar(vector<CamKeyFrame>& keys, bool& ioChang
     ImGui::SameLine();
     ImGui::Dummy(ImVec2(10.f, 0.f));
     ImGui::SameLine();
-    ImGui::TextDisabled("Avatar");
+    ImGui::TextDisabled("Actor");
     ImGui::SameLine();
-    ImGui::SetNextItemWidth(140.f);
 
-    if (Helper::DrawEnumCombo("##player_combo", avatarUI, avatarUI, 140.f))
+    auto MakeHandleLabel = [](OBJECT_HANDLE h) -> string
+        {
+            if (!h.isValid()) return "(None)";
+
+            auto obj = OBJ->Request_Object(h);
+            if (!obj) return "(Missing)";
+
+            const string& name = obj->Get_InstanceName();
+
+            string s;
+            s.reserve(name.size() + h.Layer.size() + 8);
+
+            s += name;
+            s += " (";
+            s += h.Layer;
+            s += ")";
+
+            return s;
+        };
+
+    const string preview = MakeHandleLabel(target.spaceRefHandle);
+
+    ImGui::SetNextItemWidth(220.f);
+    if (ImGui::BeginCombo("##actor_combo", preview.c_str()))
     {
-        if (onAvatarChanged) onAvatarChanged(avatarUI);
+        for (OBJECT_HANDLE h : spaceRefCandidates)
+        {
+            const string item = MakeHandleLabel(h);
+            const bool selected = (h == target.spaceRefHandle);
+
+            if (ImGui::Selectable(item.c_str(), selected))
+                SetSpaceReference(h);
+
+            if (selected) ImGui::SetItemDefaultFocus();
+        }
+        ImGui::EndCombo();
     }
 
     ImGui::SameLine();
@@ -2492,7 +2543,24 @@ void CCamPanel::DrawKeyframeEditor_SelectedKeyTable(bool& ioChangedAny)
             ImGui::SameLine();
             if (target.sequence && target.sequence->space == CamSpace::Local) ImGui::TextDisabled("Local");
             else ImGui::TextDisabled("World");
+
+            ImGui::SameLine(0.f, 12.f);
+
+            const _vector3 o = keyPtr->pos;
+            const _vector3 d = keyPtr->look;
+
+            if (fabsf(d.z) > 1e-6f)
+            {
+                const float tHit = -o.z / d.z;
+                const _vector3 hit = o + d * tHit;
+
+                if (tHit >= 0.f) ImGui::TextDisabled("AimXY(z=0): (%.2f, %.2f)", hit.x, hit.y);
+                else ImGui::TextDisabled("AimXY(z=0): (%.2f, %.2f) (behind)", hit.x, hit.y);
+            }
+            else
+                ImGui::TextDisabled("AimXY(z=0): (parallel)");
         }
+
 
         BeginRow("Roll");
         {
@@ -2782,7 +2850,7 @@ bool CCamPanel::LoadSequenceFromPath(const string& anyPath)
     }
 
     CamSequenceDesc loaded{};
-    if (!CamUtil::Load(filesystem::path(picked), loaded, &err))
+    if (!CamUtil::Load(fs::path(picked), loaded, &err))
     {
         keyListUI.lastFileError = err;
         keyListUI.requestOpenFileErrorPopup = true;
@@ -2819,7 +2887,6 @@ bool CCamPanel::LoadSequenceFromPath(const string& anyPath)
     keyListUI.lastLoadedPath = picked;
     return true;
 }
-
 
 CCamPanel* CCamPanel::Create(GUI_CONTEXT* context)
 {
