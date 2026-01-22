@@ -12,6 +12,7 @@
 #include "Child.h"
 
 #include "Enemy.h"
+#include "Character.h"
 // Camera
 #include "CameraMgr.h"
 
@@ -111,12 +112,16 @@ void CCharacterAttackCollider::OnTriggerEnter(CGameObject* pOther)
 			.Build("BasicHit");
 
 		ObjectManager()->Add_Object(pEffect, { pEnemy->Get_Level(),"Effect_Layer" });
-		
+
 		// Camera
-		//CameraManager()->AddShake(CamShakeType::HitCrit);
-		//CameraManager()->AddZoomPunch(0.8f, 0.045f, 0.15f);
-		//CameraManager()->AddImpact(CamShakeType::TapSoft, CamZoomType::TapSoft, 1.5f);
-		CameraManager()->AddImpact(1,0);
+		auto pCharacter = dynamic_cast<CCharacter*>(Get_Component<CChild>()->Get_Parent());
+		if(pCharacter != nullptr && pCharacter->Is_MainCharacter())
+		{
+			//CameraManager()->AddShake(CamShakeType::HitCrit);
+			//CameraManager()->AddZoomPunch(0.8f, 0.045f, 0.15f);
+			//CameraManager()->AddImpact(CamShakeType::TapSoft, CamZoomType::TapSoft, 1.5f);
+			CameraManager()->AddImpact(1, 0);
+		}
 	}
 
 }
@@ -136,7 +141,11 @@ void CCharacterAttackCollider::OnTriggerStay(CGameObject* pOther)
 		BattleSystem()->GetBattlePlayer()->Add_Gauge(m_tHitDesc.fEnergyCharge, m_tHitDesc.fDecibelCharge);
 
 		// Camera
-		CameraManager()->AddImpact(1,0);
+		auto pCharacter = dynamic_cast<CCharacter*>(Get_Component<CChild>()->Get_Parent());
+		if (pCharacter != nullptr && pCharacter->Is_MainCharacter())
+		{
+			CameraManager()->AddImpact(1, 0);
+		}
 	}
 }
 
