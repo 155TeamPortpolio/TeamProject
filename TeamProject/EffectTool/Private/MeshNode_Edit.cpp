@@ -38,6 +38,10 @@ HRESULT CMeshNode_Edit::Initialize(INIT_DESC* pArg)
 	m_pTransform->Initialize(nullptr);
 	m_InstanceName = "MeshNode";
 
+	_float2 screenSize = CGameInstance::GetInstance()->Get_ClientSize();
+	m_fScreenWidth = screenSize.x;
+	m_fScreenHeight = screenSize.y;
+
 	return S_OK;
 }
 
@@ -189,10 +193,6 @@ void CMeshNode_Edit::Import(nlohmann::ordered_json& json)
 	m_DistortionModule.fDistortionTilling = json.value("distortion_tilling", 0.f);
 	auto distortionUVSpeed = json.value("distortion_uvspeed", json::array({ 0.f,0.f }));
 	m_DistortionModule.vDistortionUVSpeed = _float2(distortionUVSpeed[0], distortionUVSpeed[1]);
-	
-	_float2 screenSize = CGameInstance::GetInstance()->Get_ClientSize();
-	m_fScreenWidth = screenSize.x;
-	m_fScreenHeight = screenSize.y;
 
 	{
 		m_SetMaterial = true;

@@ -196,7 +196,6 @@ PS_OUT PS_MAIN_DEFAULT(PS_IN In)
     float2 vDistortion = ApplySamplerMode(SamplerMode, vDistortionTexcoord, DistortionTexture).rg;
     vDistortion = vDistortion * DistortionStrength * float2(1.f / ScreenWidth, 1.f / ScreenHeight) * EnableDistortion;
     
-    
     float4 vResult = float4(1.f, 1.f, 1.f, 1.f);
     
     if (MainUsage == 0)  //as color mode
