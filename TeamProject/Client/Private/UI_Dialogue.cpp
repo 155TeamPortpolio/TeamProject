@@ -45,15 +45,15 @@ void CUI_Dialogue::Update(_float dt)
         desc.iSequenceID = 0;
         EventSystem()->Broadcast<UI_DIALOGUE_REQUEST_DESC>({ desc });
     }
+
+    // 테스트
+    if (InputDevice()->Key_Down('I'))
+        Set_Alive(false);
+
     /////////////////////////////////////
 
     __super::Update(dt);
-
-    // 테스트
-    if (m_eResult == DialogueResult::Running)
-        if (InputDevice()->Key_Down('I'))
-            Set_Alive(false);
-
+     
     Update_TypingMessage(dt);
 
     Get_Component<CObjectContainer>()->UpdateChild(dt);
