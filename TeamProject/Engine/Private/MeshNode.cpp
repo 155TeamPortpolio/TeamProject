@@ -303,6 +303,10 @@ void CMeshNode::Update_MaskModule(_float dt)
 {
 }
 
+void CMeshNode::Update_DistortionModule(_float dt)
+{
+}
+
 void CMeshNode::Bind_Params()
 {
 	auto pMaterialInstance = Get_Component<CMaterial>()->Get_MaterialInstance(0);
@@ -347,4 +351,9 @@ void CMeshNode::Bind_Params()
 	/* Mask */
 	pMaterialInstance->Set_Param("EnableMask", { &m_MaskModule.fEnableMask,"float",sizeof(_float) });
 	pMaterialInstance->Set_Param("MaskTilling", { &m_MaskModule.fMaskTilling,"float",sizeof(_float) });
+
+	/* Distortion */
+	pMaterialInstance->Set_Param("DistortionStrength", { &m_DistortionModule.fDistortionStrength,"float",sizeof(_float) });
+	pMaterialInstance->Set_Param("DistortionTilling", { &m_DistortionModule.fTilling,"float",sizeof(_float) });
+	pMaterialInstance->Set_Param("DistortionUVSpeed", { &m_DistortionModule.vDistortionUVSpeed,"float2",sizeof(_float2) });
 }

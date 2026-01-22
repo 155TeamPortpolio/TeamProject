@@ -86,5 +86,7 @@ typedef struct tagMaskModule
 
 typedef struct tagDistortionModule
 {
-
+	_float fDistortionStrength{};
+	_float fTilling{};
+	_float2 vDistortionUVSpeed{};
 }DISTORTION_MODULE;
