@@ -533,8 +533,28 @@ _bool CStateMachine<Type>::Check_Transition(const TRANSITION_INFO& transition)
 template<typename Type>
 void CStateMachine<Type>::Render_Info()
 {
-	ImGui::Text("Current State: %s", m_strCurrentState.c_str());
-	ImGui::Text("Default State: %s", m_strDefaultState.c_str());
+	// 현재 상태 전체 경로 표시
+	string strFullPath = m_strCurrentState;
+	CStateMachine<Type>* pSubFSM = nullptr;
+
+	IHState<Type>* pHState = dynamic_cast<IHState<Type>*>(m_pCurrentState);
+	if (pHState && pHState->Has_SubStateMachine())
+		pSubFSM = pHState->Get_SubStateMachine();
+
+	while (pSubFSM && pSubFSM->Get_CurrentState())
+	{
+		strFullPath += " > " + pSubFSM->Get_CurrentStateName();
+
+		IHState<Type>* pSubHState = dynamic_cast<IHState<Type>*>(pSubFSM->Get_CurrentState());
+		if (pSubHState && pSubHState->Has_SubStateMachine())
+			pSubFSM = pSubHState->Get_SubStateMachine();
+		else
+			pSubFSM = nullptr;
+	}
+
+	ImGui::TextColored(ImVec4(0.4f, 0.8f, 1.f, 1.f), "Current: %s", strFullPath.c_str());
+	ImGui::Text("Previous: %s", m_strPrevState.c_str());
+	ImGui::Text("Default: %s", m_strDefaultState.c_str());
 	ImGui::Text("State Time: %.2f", m_fStateTime);
 	ImGui::Text("Total Time: %.2f", m_fTotalTime);
 	ImGui::Separator();
@@ -708,16 +728,29 @@ void CStateMachine<Type>::Render_History()
 		return;
 	}
 
-	for (auto it = m_History.rbegin(); it != m_History.rend(); ++it)
+	ImGui::BeginChild("##HistoryScroll", ImVec2(0, 200), true);
+
+	for (auto it = m_History.begin(); it != m_History.end(); ++it)
 	{
-		ImGui::Text("[%.2fs] %s -> %s",
-			it->fTimestamp,
-			it->strFromState.c_str(),
-			it->strToState.c_str());
+		ImGui::TextColored(ImVec4(0.5f, 0.5f, 0.5f, 1.f), "[%6.2fs]", it->fTimestamp);
 		ImGui::SameLine();
-		ImGui::TextColored(ImVec4(0.5f, 0.8f, 0.5f, 1.f),
-			"(%.2fs, %s)", it->fPrevStateTime, it->strTriggerReason.c_str());
+
+		ImGui::TextColored(ImVec4(1.f, 0.6f, 0.2f, 1.f), "%s", it->strFromState.c_str());
+		ImGui::SameLine();
+		ImGui::TextColored(ImVec4(0.7f, 0.7f, 0.7f, 1.f), "->");
+		ImGui::SameLine();
+		ImGui::TextColored(ImVec4(0.2f, 1.f, 0.2f, 1.f), "%s", it->strToState.c_str());
+
+		ImGui::SameLine();
+		ImGui::TextColored(ImVec4(0.4f, 0.6f, 0.8f, 1.f), "%.2fs", it->fPrevStateTime);
+		ImGui::SameLine();
+		ImGui::TextColored(ImVec4(0.6f, 0.6f, 0.6f, 1.f), "(%s)", it->strTriggerReason.c_str());
 	}
+
+	if (ImGui::GetScrollY() < ImGui::GetScrollMaxY())
+		ImGui::SetScrollHereY(1.f);
+
+	ImGui::EndChild();
 }
 
 template<typename Type>
@@ -831,34 +864,124 @@ void CStateMachine<Type>::Render_Hierarchy(IBaseState<Type>* pState, _uint iDept
 	if (!pState)
 		return;
 
-	_bool bIsCurrent = (pState->Get_StateName() == m_strCurrentState);
-
-	if (bIsCurrent)
-		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.2f, 1.f, 0.2f, 1.f));
+	_bool bIsActivePath = false;
+	if (pState->Get_StateName() == m_strCurrentState)
+	{
+		bIsActivePath = true;
+	}
+	else
+	{
+		IHState<Type>* pParent = pState->Get_ParentState();
+		if (pParent && pParent->Has_SubStateMachine())
+		{
+			auto pParentFSM = pParent->Get_SubStateMachine();
+			if (pParentFSM->Get_CurrentStateName() == pState->Get_StateName())
+				bIsActivePath = true;
+		}
+	}
 
 	IHState<Type>* pHState = dynamic_cast<IHState<Type>*>(pState);
+	_bool bHasSubFSM = pHState && pHState->Has_SubStateMachine();
 
-	if (pHState && pHState->Has_SubStateMachine())
+	if (bIsActivePath)
+		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.2f, 1.f, 0.2f, 1.f));
+
+	if (bHasSubFSM)
 	{
-		if (ImGui::TreeNode(pState->Get_StateName().c_str()))
+		ImGuiTreeNodeFlags flags = bIsActivePath ? ImGuiTreeNodeFlags_DefaultOpen : 0;
+
+		if (ImGui::TreeNodeEx(pState->Get_StateName().c_str(), flags))
 		{
+			if (bIsActivePath)
+				ImGui::PopStyleColor();
+
 			auto pSubFSM = pHState->Get_SubStateMachine();
-			ImGui::TextColored(ImVec4(0.7f, 0.7f, 0.7f, 1.f),
-				"Current: %s", pSubFSM->Get_CurrentStateName().c_str());
+
+			string strSubPath = pSubFSM->Get_CurrentStateName();
+			CStateMachine<Type>* pDeepSub = nullptr;
+
+			IHState<Type>* pSubCurrent = dynamic_cast<IHState<Type>*>(pSubFSM->Get_CurrentState());
+			if (pSubCurrent && pSubCurrent->Has_SubStateMachine())
+				pDeepSub = pSubCurrent->Get_SubStateMachine();
+
+			while (pDeepSub && pDeepSub->Get_CurrentState())
+			{
+				strSubPath += " > " + pDeepSub->Get_CurrentStateName();
+				IHState<Type>* pDeepState = dynamic_cast<IHState<Type>*>(pDeepSub->Get_CurrentState());
+				if (pDeepState && pDeepState->Has_SubStateMachine())
+					pDeepSub = pDeepState->Get_SubStateMachine();
+				else
+					pDeepSub = nullptr;
+			}
+
+			ImGui::TextColored(ImVec4(0.4f, 0.8f, 1.f, 1.f), "Active: %s", strSubPath.c_str());
+			ImGui::TextColored(ImVec4(0.7f, 0.7f, 0.7f, 1.f), "Time: %.2fs  Anim: %.0f%%",
+				pSubFSM->Get_StateTime(),
+				pSubFSM->Get_CurrentState()->Get_AnimProgress() * 100.f);
+
+			auto& subParams = pSubFSM->m_Parameters;
+			if (!subParams.empty())
+			{
+				if (ImGui::TreeNode("Parameters"))
+				{
+					for (auto& pair : subParams)
+					{
+						switch (pair.second.Get_Type())
+						{
+						case CStateParameter::PARAM_BOOL:
+							ImGui::TextColored(
+								pair.second.Get_Bool() ? ImVec4(0.f, 1.f, 0.f, 1.f) : ImVec4(1.f, 0.3f, 0.3f, 1.f),
+								"%s: %s", pair.first.c_str(), pair.second.Get_Bool() ? "true" : "false");
+							break;
+						case CStateParameter::PARAM_TRIGGER:
+							ImGui::TextColored(
+								pair.second.Get_Trigger() ? ImVec4(1.f, 1.f, 0.f, 1.f) : ImVec4(0.5f, 0.5f, 0.5f, 1.f),
+								"%s: %s", pair.first.c_str(), pair.second.Get_Trigger() ? "ACTIVE" : "idle");
+							break;
+						case CStateParameter::PARAM_INT:
+							ImGui::Text("%s: %d", pair.first.c_str(), pair.second.Get_Int());
+							break;
+						case CStateParameter::PARAM_FLOAT:
+							ImGui::Text("%s: %.2f", pair.first.c_str(), pair.second.Get_Float());
+							break;
+						}
+					}
+					ImGui::TreePop();
+				}
+			}
+
+			ImGui::Separator();
 
 			for (auto& pair : pSubFSM->Get_States())
 				Render_Hierarchy(pair.second, iDepth + 1);
 
 			ImGui::TreePop();
+
+			if (bIsActivePath)
+				ImGui::SetScrollHereY(0.5f);
+
+			return;
 		}
+
+		if (bIsActivePath)
+			ImGui::PopStyleColor();
 	}
 	else
 	{
-		ImGui::BulletText("%s", pState->Get_StateName().c_str());
+		if (bIsActivePath)
+		{
+			ImGui::BulletText("%s (%.2fs, %.0f%%)",
+				pState->Get_StateName().c_str(),
+				pState->Get_StateTime(),
+				pState->Get_AnimProgress() * 100.f);
+			ImGui::SetScrollHereY(0.5f);
+			ImGui::PopStyleColor();
+		}
+		else
+		{
+			ImGui::BulletText("%s", pState->Get_StateName().c_str());
+		}
 	}
-
-	if (bIsCurrent)
-		ImGui::PopStyleColor();
 }
 
 template<typename Type>
@@ -988,13 +1111,29 @@ template<typename Type>
 void CStateMachine<Type>::Record_Transition(const string& strFrom, const string& strTo, const string& strReason, _float fPrevStateTime)
 {
 	StateTransitionRecord record;
-	record.strFromState = strFrom;
-	record.strToState = strTo;
 	record.fTimestamp = m_fTotalTime;
 	record.fPrevStateTime = fPrevStateTime;
-	record.strTriggerReason = strReason;
 
+	// From 상태의 전체 경로 구성
+	record.strFromState = strFrom;
 	IHState<Type>* pFromHState = dynamic_cast<IHState<Type>*>(Get_State(strFrom));
+	if (pFromHState && pFromHState->Has_SubStateMachine())
+	{
+		auto pSubFSM = pFromHState->Get_SubStateMachine();
+		while (pSubFSM && pSubFSM->Get_CurrentState())
+		{
+			record.strFromState += " > " + pSubFSM->Get_CurrentStateName();
+			IHState<Type>* pSubState = dynamic_cast<IHState<Type>*>(pSubFSM->Get_CurrentState());
+			if (pSubState && pSubState->Has_SubStateMachine())
+				pSubFSM = pSubState->Get_SubStateMachine();
+			else
+				pSubFSM = nullptr;
+		}
+	}
+
+	record.strToState = strTo;
+
+	// Trigger Reason
 	if (pFromHState && pFromHState->Get_ParentState())
 		record.strTriggerReason = pFromHState->Get_ParentState()->Get_StateName() + "::" + strReason;
 	else
