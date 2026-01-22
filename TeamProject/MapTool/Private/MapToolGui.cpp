@@ -111,6 +111,7 @@ void CMapToolGui::Render_GUI()
         fObjhectSettingChild *= 2.5f;
         break;
     case MapTool::MAPOBJ_TYPE::BATTLE:
+        fObjhectSettingChild *= 4.f;
         break;
     }
 
@@ -387,7 +388,10 @@ void CMapToolGui::Place_Object(PHYSICS_RAY_HIT* pRayHit)
         break;
     }
     case MAPOBJ_TYPE::BATTLE:
+    {
+        Place_BattleData(pRayHit);
         break;
+    }
     case MAPOBJ_TYPE::ALL:
         break;
     case MAPOBJ_TYPE::END:
@@ -397,6 +401,44 @@ void CMapToolGui::Place_Object(PHYSICS_RAY_HIT* pRayHit)
     }
 
    
+}
+
+void CMapToolGui::Place_BattleData(PHYSICS_RAY_HIT* pRayHit)
+{
+    COLLIDER_DESC ColDesc = {};
+    ColDesc.eType = COLLIDER_TYPE::BOX;
+    ColDesc.bTrigger = true; // 충돌 박스 생성하는 트리거
+    ColDesc.vSize = m_vBattleDataSize;
+
+    string tagProto = "";
+    string tagInstanceName = "";
+    switch (m_eBattlyDataType)
+    {
+    case MapTool::BATTLE_TYPE::PLAYER:
+        tagProto = "Proto_GameObject_BattlePlayerPoint";
+        tagInstanceName = "PlayerPoint";
+        break;
+    case MapTool::BATTLE_TYPE::SPAWNER:
+        tagProto = "Proto_GameObject_BattleSpawnerPoint";
+        tagInstanceName = "Spawner" + to_string(m_iSpawnerIndex++); 
+        break;
+    case MapTool::BATTLE_TYPE::MONSTER:
+        tagProto = "Proto_GameObject_BattleMonsterPoint";
+        tagInstanceName = "Monster" + to_string(m_iMonsterIndex++);
+        break;
+    case MapTool::BATTLE_TYPE::ENDPOINT:
+        break;
+    }
+
+    CGameObject* pStaticObject = Builder::Create_Object({ g_TagMapToolLevel ,tagProto })
+        .Collider(ColDesc)
+        .Position(pRayHit->vPoint)
+        .Build(tagInstanceName);
+
+    pStaticObject->Get_Component<CCollider>()->Set_DebugRender(true);
+
+    ObjectManager()->Add_Object(pStaticObject, {g_TagMapToolLevel, g_tagMapObjType[ENUM(MAPOBJ_TYPE::BATTLE)]});
+
 }
 
 void CMapToolGui::Set_ObjectPicking(_bool is)
@@ -521,6 +563,10 @@ void CMapToolGui::Save_EntityData()
         m_isShowEntityDataSaveFinish = true;
 }
 
+void CMapToolGui::Save_BattleData()
+{
+}
+
 void CMapToolGui::Select_PlaceType(const string& tagLabel)
 {
     if (m_iSelectedLayerIndex < 0) 
@@ -558,6 +604,7 @@ void CMapToolGui::Select_PlaceType(const string& tagLabel)
     case MapTool::MAPOBJ_TYPE::ENTITY:
         break;
     case MapTool::MAPOBJ_TYPE::BATTLE:
+        Select_BattleDataType();
         break;
     }
 }
@@ -576,6 +623,28 @@ void CMapToolGui::Select_TriggerType()
             if (ImGui::Selectable(items[i], isSelected)) {
                 m_TriggerTransform.eType = static_cast<COLLIDER_TYPE>(i);
                 m_TriggerTransform.vScale = { 1.f,1.f,1.f };
+            }
+
+            if (isSelected)
+                ImGui::SetItemDefaultFocus();
+        }
+        ImGui::EndCombo();
+    }
+}
+
+void CMapToolGui::Select_BattleDataType()
+{
+    const _char* items[] = { "None", "Player", "Spawner", "Monster", "EndPoint" };
+
+    const _char* preview = items[ENUM(m_eBattlyDataType)];
+
+    if (ImGui::BeginCombo("BattleData Type", preview))
+    {
+        for (_int i = 0; i < (_int)IM_ARRAYSIZE(items); ++i)
+        {
+            const _bool isSelected = (i == ENUM(m_eBattlyDataType));
+            if (ImGui::Selectable(items[i], isSelected)) {
+                m_eBattlyDataType = static_cast<BATTLE_TYPE>(i);
             }
 
             if (isSelected)
@@ -634,19 +703,26 @@ void CMapToolGui::Setting_SelectType()
     case MapTool::MAPOBJ_TYPE::ENTITY:
     {
         ImGui::TextColored(ImVec4(1.f, 1.f, 1.f, 1.f), "Entity Box Scale ( HalfExtents(x,y,z) )");
-        ImGui::InputFloat3("##BoxScale", reinterpret_cast<float*>(&m_vEntitySize), "%.1f");
+        ImGui::InputFloat3("##EntityBoxScale", reinterpret_cast<float*>(&m_vEntitySize), "%.1f");
         break;
     }
     case MapTool::MAPOBJ_TYPE::BATTLE:
+        ImGui::TextColored(ImVec4(1.f, 1.f, 1.f, 1.f), "BattleData Box Scale ( HalfExtents(x,y,z) )");
+        ImGui::InputFloat3("##BattleBoxScale", reinterpret_cast<float*>(&m_vBattleDataSize), "%.1f");
+        
+        switch (m_eBattlyDataType)
+        {
+        case MapTool::BATTLE_TYPE::SPAWNER:
+            ImGui::TextColored(ImVec4(1.f, 1.f, 1.f, 1.f), "SpawnerIndex");
+            ImGui::InputInt("##SpawnerIndex", &m_iSpawnerIndex);
+            break;
+        case MapTool::BATTLE_TYPE::MONSTER:
+            ImGui::TextColored(ImVec4(1.f, 1.f, 1.f, 1.f), "MonsterIndex");
+            ImGui::InputInt("##MonsterIndex", &m_iMonsterIndex);
+            break;
+        }
+        
         break;
-    }
-
-
-    if (ENUM(MAPOBJ_TYPE::TRIGGER) == m_iSelectedLayerIndex) {
-       
-    }
-    else {
-   
     }
 }
 
