@@ -34,6 +34,7 @@ void CButtonUI::Enter_Hover()
 {
     if (STATE::DISABLED == m_eState) return;
      
+    OutputDebugString(L"EnterHover\n");
     m_eState = STATE::HOVERED;
     if (m_EnterHover)
         m_EnterHover();
@@ -41,6 +42,7 @@ void CButtonUI::Enter_Hover()
 
 void CButtonUI::Exit_Hover()
 {
+    OutputDebugString(L"ExitHover\n");
     m_eState = STATE::NORMAL;
     if (m_ExitHover)
         m_ExitHover();
@@ -50,6 +52,7 @@ void CButtonUI::OnClick()
 {
     if (STATE::DISABLED == m_eState) return;
 
+    OutputDebugString(L"OnClick\n");
     m_eState = STATE::CLICKED;
     if (m_OnClick)
         m_OnClick();

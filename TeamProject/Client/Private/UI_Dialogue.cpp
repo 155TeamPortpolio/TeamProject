@@ -30,6 +30,7 @@ HRESULT CUI_Dialogue::Initialize(INIT_DESC* pArg)
     if (m_pNextButton)
         m_pNextButton->Set_OnClick([this]() { Change_Dialogue(); });
 
+    Set_Alive(false);
     Set_Alpha(0.f);
     Set_ChildAnimation(CHILD::ARROW1, 0);
     Set_ChildAnimation(CHILD::ARROW2, 0);
@@ -40,7 +41,10 @@ HRESULT CUI_Dialogue::Initialize(INIT_DESC* pArg)
 void CUI_Dialogue::Update(_float dt)
 {
     __super::Update(dt);
-     
+ 
+    if (m_eState == STATE::INVISIBLE && !m_isBlending)
+        Set_Alive(false);
+
     Update_TypingMessage(dt);
 
     Get_Component<CObjectContainer>()->UpdateChild(dt);
@@ -153,9 +157,11 @@ void CUI_Dialogue::Change_State(STATE eState)
     switch (eState)
     {
     case STATE::INVISIBLE:
+        //Set_Alive(false);
         Set_Animation(1);
         break;
     case STATE::VISIBLE:
+        Set_Alive(true);
         Set_Animation(0);
         break;
     }
