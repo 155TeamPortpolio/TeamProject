@@ -2,14 +2,18 @@
 #include "UI_Dialogue.h"
 
 #include "GameInstance.h"
+#include "DataBase.h"
 #include "ObjectContainer.h"
+#include "EventListener.h"
 #include "TextSlot.h"
+#include "ButtonUI.h"
 
 HRESULT CUI_Dialogue::Initialize_Prototype()
 {
     __super::Initialize_Prototype();
 
     Add_Component<CObjectContainer>();
+    Add_Component<CEventListener>();
 
     return S_OK;
 }
@@ -19,55 +23,38 @@ HRESULT CUI_Dialogue::Initialize(INIT_DESC* pArg)
     __super::Initialize(pArg);
 
     Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("dialogue.json")));
-
     Cache_Children();
+    Bind_EventListener();
 
-    Set_Alpha(0.f);
+    m_tMessageTypeWriter.onTyped = [&](_uint iIndex, const wstring& strText) { Set_ChildText(ENUM(CHILD::MESSAGE), strText); };
+
+    Set_Alive(false);
+    Set_ChildAnimation(CHILD::ARROW1, 0);
+    Set_ChildAnimation(CHILD::ARROW2, 0);
 
     return S_OK;
 }
 
-void CUI_Dialogue::Awake()
-{
-}
-
 void CUI_Dialogue::Update(_float dt)
 {
+    // 테스트 코드 : 이벤트 브로드캐스트
     if (InputDevice()->Key_Down('P'))
     {
-        Start_Typing(TYPING::NAME, L"가나다라마바사");
+        UI_DIALOGUE_REQUEST_DESC desc = {};
+        desc.strDialogueID = "Dialogue_001";
+        desc.iSequenceID = 0;
+        EventSystem()->Broadcast<UI_DIALOGUE_REQUEST_DESC>({ desc });
     }
-    if (InputDevice()->Key_Down('O'))
-    {
-        Start_Typing(TYPING::TEXT, L"가나다라마바사\n가나다러아ㅓ리너아러아환어라ㅣ너이라ㅓㅣ\nㅇ러ㅏㄴㅇ러ㅣㅏㅇ널");
-    }
-
-    for (_int i = 0; i < ENUM(TYPING::END); ++i)
-    {
-        auto& typing = m_tTyping[i];
-
-        if (typing.isTyping)
-        {
-            typing.fCharAcc += dt;
-
-            if (typing.fCharAcc >= typing.fCharInterval)
-            {
-                typing.fCharAcc = 0.f;
-
-                if (typing.iCurChar < typing.strFullText.length())
-                {
-                    typing.strCurText.push_back(typing.strFullText[typing.iCurChar]);
-                    ++typing.iCurChar;
-
-                    Set_ChildText(static_cast<TYPING>(i), typing.strCurText);
-                }
-                else
-                    typing.isTyping = false;
-            }
-        }
-    } 
+    /////////////////////////////////////
 
     __super::Update(dt);
+
+    // 테스트
+    if (m_eResult == DialogueResult::Running)
+        if (InputDevice()->Key_Down('I'))
+            Set_Alive(false);
+
+    Update_TypingMessage(dt);
 
     Get_Component<CObjectContainer>()->UpdateChild(dt);
 }
@@ -79,7 +66,7 @@ void CUI_Dialogue::Cache_Children()
     // 자식 UI 오브젝트 포인터를 배열에 캐싱
     for (_int i = 0; i < ENUM(CHILD::END); ++i)
     {
-        const string& strInstanceName = INSTANCENAMES[i];
+        const string& strInstanceName = CHILD_INSTNAMES[i];
         if (strInstanceName.empty())
             continue;
 
@@ -91,10 +78,21 @@ void CUI_Dialogue::Cache_Children()
         m_pChildren[i] = pUI;
     }
 
-    // 텍스트 컴포넌트를 배열에 캐싱
-    for (_int i = 0; i < ENUM(TYPING::END); ++i)
+    // 버튼 UI 포인터로 캐싱
+    for (_int i = 0; i < ENUM(CHILD::END); ++i)
     {
-        const string& strInstanceName = TEXTNAMES[i];
+        auto pObj = pContainer->Find_Descendant("next");
+        if (!pObj)
+            continue;
+
+        auto pUI = dynamic_cast<CUI_Object*>(pObj);
+        m_pNextButton = dynamic_cast<CButtonUI*>(pUI);
+    } 
+
+    // 텍스트 컴포넌트를 배열에 캐싱
+    for (_int i = 0; i < ENUM(TEXTSLOT::END); ++i)
+    {
+        const string& strInstanceName = TEXTSLOT_INSTNAMES[i];
         if (strInstanceName.empty())
             continue;
 
@@ -102,26 +100,71 @@ void CUI_Dialogue::Cache_Children()
         if (!pObj)
             continue;
 
-        m_pTexts[i] = pObj->Get_Component<CTextSlot>();
+        m_pTextSlots[i] = pObj->Get_Component<CTextSlot>();
     }
 }
 
-void CUI_Dialogue::Start_Typing(TYPING typing, const _wstring& strText)
+void CUI_Dialogue::Bind_EventListener()
 {
-    auto& text = m_tTyping[ENUM(typing)];
+    // 이벤트 : UI_DIALOGUE_REQUEST_DESC
+    Get_Component<CEventListener>()->Add_Listener<UI_DIALOGUE_REQUEST_DESC>([&](const UI_DIALOGUE_REQUEST_DESC& desc)
+        {
+            auto pair = make_pair(desc.strDialogueID, desc.iSequenceID);
+            if (pair == m_dialogueID)
+                return;
 
-    text.strFullText = strText;
-    text.strCurText = L"";
-    text.iCurChar = 0;
-    text.fCharAcc = 0.f;
-    text.isTyping = true;
+            if (!Is_Alive())
+            {
+                Set_Alive(true);
+                Set_Animation(0);
+            }
 
-    Set_ChildText(typing, L"");
+            m_dialogueID = pair;
+            auto dialogueDesc = CDataBase::GetInstance()->GetNpcDialogueDesc(m_dialogueID);
+            Set_ChildText(TEXTSLOT::NAME, dialogueDesc.Name);
+            Start_TypingMessage(dialogueDesc.Text);
+            m_eResult = dialogueDesc.Result;
+        });
 }
 
-void CUI_Dialogue::Set_ChildText(TYPING typing, const wstring& strText)
+void CUI_Dialogue::Start_TypingMessage(const _wstring& strText)
 {
-    auto pText = m_pTexts[ENUM(typing)];
+    m_tMessageTypeWriter.Start(strText);
+    Set_ChildText(TEXTSLOT::MESSAGE, L"");
+}
+
+void CUI_Dialogue::Update_TypingMessage(_float dt)
+{
+    m_tMessageTypeWriter.Update(dt, ENUM(CHILD::MESSAGE));
+
+    if (m_tMessageTypeWriter.isFinished())
+        m_tMessageTypeWriter.Complete();
+}
+
+void CUI_Dialogue::Set_ChildAnimation(CHILD eChild, _int iIndex)
+{
+    auto pChild = m_pChildren[ENUM(eChild)];
+    if (!pChild)
+        return;
+
+    pChild->Set_Animation(iIndex);
+}
+
+void CUI_Dialogue::Set_ChildText(TEXTSLOT eTextSlot, const wstring& strText)
+{
+    auto pText = m_pTextSlots[ENUM(eTextSlot)];
+    if (!pText)
+        return;
+
+    pText->Set_Text(strText);
+}
+
+void CUI_Dialogue::Set_ChildText(_uint iIndex, const wstring& strText)
+{
+    if (iIndex >= ENUM(TEXTSLOT::END))
+        return;
+
+    auto pText = m_pTextSlots[iIndex];
     if (!pText)
         return;
 
