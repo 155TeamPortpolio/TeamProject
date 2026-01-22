@@ -77,7 +77,7 @@ void COfficeMeow::Awake()
 
 	__super::Awake();
 
-	Add_InteractZone(Get_Position(), _float3(0.f, 0.f, 1.1f), _float3(1.5f, 2.f, 1.5f));
+	Add_InteractZone(Get_Position(), _float3(0.f, 0.f, 1.1f), Get_WorldRotation(), _float3(1.5f, 2.f, 1.5f));
 }
 
 void COfficeMeow::Priority_Update(_float dt)

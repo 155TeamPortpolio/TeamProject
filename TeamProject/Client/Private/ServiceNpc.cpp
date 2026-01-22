@@ -21,18 +21,18 @@ CServiceNpc::CServiceNpc(const CServiceNpc& rhs)
 void CServiceNpc::Process_Event(const NPC_INTERACT_DESC& desc)
 {
 	if (desc.strName != m_strName) return;
-	m_iNextSequceID = desc.iSequenceID;
-
+	m_iCurSequenceID = desc.iCurSequenceID;
+	m_iNextSequceID = desc.iNextSequenceID;
 	switch (desc.eResult)
 	{
 	case DialogueResult::Success:
-		Success();
+		Success(m_iCurSequenceID);
 		break;
 	case DialogueResult::Running:
-		Running();
+		Running(m_iCurSequenceID);
 		break;
 	case DialogueResult::Fail:
-		Fail();
+		Fail(m_iCurSequenceID);
 		break;
 	}
 }
