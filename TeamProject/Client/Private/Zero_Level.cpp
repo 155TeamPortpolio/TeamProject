@@ -83,7 +83,7 @@ HRESULT CZero_Level::Initialize()
 	m_Context.isFirstIn = true;
 	ChangeStage(StageType::Boss, 1);
 	m_Context.isFirstIn = false;
-	m_Context.pNowStage->Ready_Stage(m_Context);
+	//m_Context.pNowStage->Ready_Stage(m_Context);
 
 	{
 		auto pResource = ResourceManager();

@@ -36,35 +36,6 @@
           ]
         },
         {
-          "iObjID": 1,
-          "TagModelResourceKey": "TrainingRoom_2_1_NAPMeshRoot.model",
-          "TagMaterialResourceKey": "TrainingRoom_2_1_NAPMeshRoot.mat",
-          "vRight": [
-            1.0,
-            0.0,
-            0.0,
-            0.0
-          ],
-          "vUp": [
-            0.0,
-            1.0,
-            0.0,
-            0.0
-          ],
-          "vLook": [
-            0.0,
-            0.0,
-            1.0,
-            0.0
-          ],
-          "vPos": [
-            0.0,
-            0.0,
-            0.0,
-            1.0
-          ]
-        },
-        {
           "iObjID": 2,
           "TagModelResourceKey": "TrainingRoom_2_1_Pillar.model",
           "TagMaterialResourceKey": "TrainingRoom_2_1_Pillar.mat",

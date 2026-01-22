@@ -21,6 +21,7 @@ public:
 public:
     HRESULT Set_Font(const string FontTag);
     void Set_Color(_float4 color);
+    void Set_OutlineAlpha(_float fAlpha);
     void Set_Size(_float scale);
     void Set_Position(_float2 Pos);
     void Set_Rotate(_float Rotate);
@@ -52,6 +53,8 @@ public:
     /* AutoPos 기준이 되는 Pivot 좌표 갱신 
     - 부모 UI의 LeftTop, Size가 변할 수 있으므로 보통 Update에서 호출 
     - Pivot : 정렬 기준점 (ex. 부모 UI의 중심) */
+    _bool Is_AutoPos() { return m_AnchorInfo.bAutoPos; }
+    ANCHOR Get_AutoPosAnchor() { return m_AnchorInfo.eAnchor;}
     void Update_Pivot(_float2 pivot);
     void Set_Anchor(ANCHOR anchot, _float2 Pivot);
     _float2 Get_Anchor(ANCHOR anchot);

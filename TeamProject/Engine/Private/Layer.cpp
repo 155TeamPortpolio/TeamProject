@@ -5,6 +5,7 @@
 
 CLayer::CLayer()
 {
+	m_GameObjects.reserve(100);
 }
 
 HRESULT CLayer::Add_GameObject(CGameObject* pGameObject)

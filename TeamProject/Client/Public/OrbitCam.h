@@ -52,21 +52,21 @@ private:
     Vector3 GetBasePivotTargetPos(OBJECT_HANDLE handle) const;
     void    UpdateTargetSwitch(_float dt);
 
-    _float GetCollisionAllowedDist(const Vector3& pivot, const Vector3& backDir, float desiredDist) const;
+    _float  GetCollisionAllowedDist(const Vector3& pivot, const Vector3& backDir, float desiredDist);
 
 private:
     OrbitCamPoseState         pose{};
     OrbitCamInputState        input{};
     OrbitCamTargetSwitchState targetSwitch{};
     Profile                   profile{};
-
     COrbitLockOnController    lockOnCtrl{};
+    OBJECT_HANDLE             targetHandle{};
 
     _float                    autoYawHoldTimer = 0.f;
     Vector3                   prevTargetFoot{};
     _bool                     hasPrevTargetFoot = false;
-
-    OBJECT_HANDLE             targetHandle{};
+    _float                    m_curMaxYawSpeedDeg = 720.f;
+    _float                    m_curMaxPitchSpeedDeg = 540.f;
 
 public:
     static  COrbitCam* Create();

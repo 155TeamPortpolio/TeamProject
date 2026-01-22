@@ -1,4 +1,4 @@
 ProtoTag,DisplayName,CCT_fHeight,CCT_fRadius,MaxHP
-Proto_GameObject_ThugBulkyEnforcer,ThugBulky,1.28,0.45,300
-Proto_GameObject_Sacrifice,Sacrifice,1.6,0.8,1000
-Proto_GameObject_ThugAssaulter,ThugAssaulter,1.28,0.35,150
+Proto_GameObject_ThugBulkyEnforcer,ThugBulky,1.28,0.45,400
+Proto_GameObject_Sacrifice,Sacrifice,1.6,0.8,1500
+Proto_GameObject_ThugAssaulter,ThugAssaulter,1.28,0.35,200

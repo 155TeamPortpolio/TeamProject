@@ -190,7 +190,8 @@ void CSacrifice_Laser::ActiveLaser(_uint mode)
 	{
 		_vector3 vTargetPos{};
 		auto& battleInfos = CBattleSystem::GetInstance()->GetBattleObjects(CBattleSystem::BATTLE_OBJ_TYPE::PLAYER);
-		for (auto& info : battleInfos)
+		auto playerHandle = BattleSystem()->GetCurCharacterHandle();
+		/*for (auto& info : battleInfos)
 		{
 			if (info.isOnField)
 			{
@@ -198,8 +199,9 @@ void CSacrifice_Laser::ActiveLaser(_uint mode)
 				m_vTargetPos.y += 1.f;
 				break;
 			}
-		}
-
+		}*/
+		_vector3 targetPos = playerHandle.Get()->Get_Component<CTransform>()->Get_WorldPos();
+		m_vTargetPos = targetPos;
 		_vector3 vDir = m_vTargetPos - _vector3(m_pTransform->Get_WorldPos());
 		vDir.y = 0.f;
 		vDir.Normalize();

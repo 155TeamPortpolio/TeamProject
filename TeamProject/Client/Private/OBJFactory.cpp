@@ -7,95 +7,58 @@
 #include "BangBooPay.h"
 #include "BangBooAsk.h"
 #include "BangBooDeliver.h"
+#include "Howl.h"
+#include "Jaeger.h"
 
-void Client::Factory::Create_Interactable(const CMapTriggerObject::MAP_TRIGGEROBJ_DESC* Desc)
+void Client::Factory::Create_Interactable(const FACTORY_DESC& Desc)
 {
 
 	/* Portal */
-	if (Desc->InstanceName == "Portal") {
+	if (Desc.tagName == "Portal") {
 
 	}
 	/* ZeroPortal */
-	else if (Desc->InstanceName == "ZeroPortal") {
+	else if (Desc.tagName == "ZeroPortal") {
 
 	}
 }
 
 /* --------------------------------------------------------------------------------------------------------------------- */
-void Client::Factory::Create_NPC(const CMapTriggerObject::MAP_TRIGGEROBJ_DESC* Desc)
+
+static unordered_map<string, Factory::NPC_SPEC> s_NPCTable =
 {
-	CCT_DESC CCT;
-	/* OfficeMeow */
-	if (Desc->InstanceName == "OfficeMeow") {
-	
-		CCT.eGroup = COLLISION_GROUP::INTERACABLE;
-		CCT.iCollisionMask = 0xFFFFFFFF;
-		CCT.bAutoFit = false;
-		CCT.fHeight = 1.6f;
-		CCT.fRadius = 0.4f;
-		CCT.eGroup = COLLISION_GROUP::COMMON;
-		CCT.vPos = Desc->vPos;
-		
-		PrototypeManager()->Add_ProtoType(Desc->TagLevel, "Proto_GameObject_OfficeMeow", COfficeMeow::Create());
-		auto OfficeMeow = Builder::Create_Object({ Desc->TagLevel, "Proto_GameObject_OfficeMeow" })
-			.CharacterController(CCT)
-			.Rotate(Desc->vLook)
-			.Build("OfficeMeow");
+	{ "OfficeMeow",     Factory::NPC_SPEC{ "Proto_GameObject_OfficeMeow", &COfficeMeow::Create }},
+	{ "BangBooDeliver", Factory::NPC_SPEC{ "Proto_GameObject_BangBooDeliver", &CBangBooDeliver::Create } },
+	{ "BangBooPay",		Factory::NPC_SPEC{ "Proto_GameObject_BangBooPay", &CBangBooPay::Create } },
+	{ "BangBooAsk",		Factory::NPC_SPEC{ "Proto_GameObject_BangBooAsk", &CBangBooAsk::Create } },
+	{ "Howl",           Factory::NPC_SPEC{ "Proto_GameObject_Howl", &CHowl::Create } },
+	{ "Jaeger",         Factory::NPC_SPEC{ "Proto_GameObject_Jaeger", &CJaeger::Create } }
+};
 
-		ObjectManager()->Add_Object(OfficeMeow, { Desc->TagLevel, Desc->InstanceName });
-	}
-	/* BangBoo_Deliver */
-	else if (Desc->InstanceName == "Deliver") {
-		CCT.eGroup = COLLISION_GROUP::INTERACABLE;
-		CCT.iCollisionMask = 0xFFFFFFFF;
-		CCT.bAutoFit = false;
-		CCT.fHeight = 1.6f;
-		CCT.fRadius = 0.4f;
-		CCT.eGroup = COLLISION_GROUP::COMMON;
-		CCT.vPos = Desc->vPos;
+/* Proto_GameObject¸¦ Ãß°¡ */
+void Client::Factory::Create_NPC(const FACTORY_DESC& Desc)
+{
+	auto iter = s_NPCTable.find(Desc.tagName);
 
-		PrototypeManager()->Add_ProtoType(Desc->TagLevel, "Proto_GameObject_BangBooDeliver", CBangBooAsk::Create());
-		auto BangBoo_Deliver = Builder::Create_Object({ Desc->TagLevel, "Proto_GameObject_BangBooDeliver" })
-			.CharacterController(CCT)
-			.Rotate(Desc->vLook)
-			.Build("BangBoo_Deliver");
+	if (iter == s_NPCTable.end())
+		return;
 
-		ObjectManager()->Add_Object(BangBoo_Deliver, { Desc->TagLevel, Desc->InstanceName });
-	}
-	/* BangBoo_Ask */
-	else if (Desc->InstanceName == "Ask") {
-		CCT.eGroup = COLLISION_GROUP::INTERACABLE;
-		CCT.iCollisionMask = 0xFFFFFFFF;
-		CCT.bAutoFit = false;
-		CCT.fHeight = 1.6f;
-		CCT.fRadius = 0.4f;
-		CCT.eGroup = COLLISION_GROUP::COMMON;
-		CCT.vPos = Desc->vPos;
+	CCT_DESC CCT; 
 
-		PrototypeManager()->Add_ProtoType(Desc->TagLevel, "Proto_GameObject_BangBooAsk", CBangBooDeliver::Create());
-		auto BangBoo_Ask = Builder::Create_Object({ Desc->TagLevel, "Proto_GameObject_BangBooAsk" })
-			.CharacterController(CCT)
-			.Rotate(Desc->vLook)
-			.Build("BangBoo_Ask");
+	CCT.eGroup = COLLISION_GROUP::INTERACTABLE;
+	CCT.iCollisionMask = 0xFFFFFFFF;
+	CCT.bAutoFit = false;
+	CCT.fHeight = 1.6f;
+	CCT.fRadius = 0.4f;
+	CCT.eGroup = COLLISION_GROUP::COMMON;
+	CCT.vPos = Desc.vTranslation;
 
-		ObjectManager()->Add_Object(BangBoo_Ask, { Desc->TagLevel, Desc->InstanceName });
-	}
-	/* BangBoo_Pay */
-	else if (Desc->InstanceName == "Pay") {
-		CCT.eGroup = COLLISION_GROUP::INTERACABLE;
-		CCT.iCollisionMask = 0xFFFFFFFF;
-		CCT.bAutoFit = false;
-		CCT.fHeight = 1.6f;
-		CCT.fRadius = 0.4f;
-		CCT.eGroup = COLLISION_GROUP::COMMON;
-		CCT.vPos = Desc->vPos;
+	PrototypeManager()->Add_ProtoType(Desc.tagLevel, iter->second.ProtoTag, iter->second.Create());
 
-		PrototypeManager()->Add_ProtoType(Desc->TagLevel, "Proto_GameObject_BangBooPay", CBangBooPay::Create());
-		auto BangBoo_Pay = Builder::Create_Object({ Desc->TagLevel, "Proto_GameObject_BangBooPay" })
-			.CharacterController(CCT)
-			.Rotate(Desc->vLook)
-			.Build("BangBoo_Pay");
+	auto OBJ = Builder::Create_Object({ Desc.tagLevel, iter->second.ProtoTag })
+		.CharacterController(CCT)
+		.Rotate(Desc.vRotation)
+		.Build(Desc.tagName);
 
-		ObjectManager()->Add_Object(BangBoo_Pay, { Desc->TagLevel, Desc->InstanceName });
-	}
+	ObjectManager()->Add_Object(OBJ, { Desc.tagLevel, Desc.tagName });
 }

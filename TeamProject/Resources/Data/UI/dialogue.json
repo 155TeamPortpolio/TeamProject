@@ -1,0 +1,351 @@
+{
+    "alive": true,
+    "instanceName": "dialogue",
+    "transform": {
+        "anchor": 4,
+        "anchorOffset": [
+            -471.5,
+            663.0
+        ],
+        "size": [
+            943.0,
+            197.0
+        ],
+        "scale": [
+            1.0,
+            1.0
+        ],
+        "pivot": [
+            0.0,
+            0.0
+        ],
+        "radian": 0.0
+    },
+    "color": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+    ],
+    "pass": "Opaque",
+    "animClips": [],
+    "children": [
+        {
+            "alive": true,
+            "instanceName": "Image",
+            "transform": {
+                "anchor": 8,
+                "anchorOffset": [
+                    -471.5,
+                    -174.0
+                ],
+                "size": [
+                    943.0,
+                    174.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                0.11583012342453003,
+                0.11583012342453003,
+                0.11583012342453003,
+                1.0
+            ],
+            "pass": "Opaque",
+            "animClips": [],
+            "children": [],
+            "typeTag": "Image",
+            "textureTag": "empty.png"
+        },
+        {
+            "alive": true,
+            "instanceName": "CanvasPanel",
+            "transform": {
+                "anchor": 4,
+                "anchorOffset": [
+                    -50.0,
+                    0.0
+                ],
+                "size": [
+                    100.0,
+                    36.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "pass": "Opaque",
+            "animClips": [],
+            "children": [
+                {
+                    "alive": true,
+                    "instanceName": "name",
+                    "transform": {
+                        "anchor": 0,
+                        "anchorOffset": [
+                            -0.5,
+                            -0.5
+                        ],
+                        "size": [
+                            0.0,
+                            0.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "pass": "Opaque",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "Text",
+                    "text": {
+                        "content": "레이프",
+                        "fontTag": "NanumSquareNeo.spritefont",
+                        "fontScale": 0.4499998688697815,
+                        "outlined": true,
+                        "outlineThickness": 2.0,
+                        "outlineColor": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                        ],
+                        "shear": [
+                            0.0,
+                            0.0
+                        ],
+                        "autoPos": true,
+                        "anchor": 0
+                    }
+                }
+            ],
+            "typeTag": "CanvasPanel"
+        },
+        {
+            "alive": true,
+            "instanceName": "CanvasPanel",
+            "transform": {
+                "anchor": 8,
+                "anchorOffset": [
+                    -400.0,
+                    -136.0
+                ],
+                "size": [
+                    800.0,
+                    100.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "pass": "Opaque",
+            "animClips": [],
+            "children": [
+                {
+                    "alive": true,
+                    "instanceName": "text",
+                    "transform": {
+                        "anchor": 0,
+                        "anchorOffset": [
+                            -0.5,
+                            -0.5
+                        ],
+                        "size": [
+                            0.0,
+                            0.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "pass": "Opaque",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "Text",
+                    "text": {
+                        "content": "물론 데미르 할아버지는 항상 말을 하다 마셔서, 우리 어머니가 화가 났을 때\n찢어버린 만화책보다 이해하기 어렵지만... 계속 듣다 보니 당시의 일을 많이 알 수 \n있었어",
+                        "fontTag": "NanumSquareNeo.spritefont",
+                        "fontScale": 0.5499998927116394,
+                        "outlined": false,
+                        "outlineThickness": 1.0,
+                        "outlineColor": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                        ],
+                        "shear": [
+                            0.0,
+                            0.0
+                        ],
+                        "autoPos": true,
+                        "anchor": 0
+                    }
+                }
+            ],
+            "typeTag": "CanvasPanel"
+        },
+        {
+            "alive": true,
+            "instanceName": "CanvasPanel",
+            "transform": {
+                "anchor": 10,
+                "anchorOffset": [
+                    -46.0,
+                    -41.0
+                ],
+                "size": [
+                    46.0,
+                    41.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "pass": "Opaque",
+            "animClips": [],
+            "children": [
+                {
+                    "alive": true,
+                    "instanceName": "arrow1",
+                    "transform": {
+                        "anchor": 5,
+                        "anchorOffset": [
+                            0.0,
+                            0.0
+                        ],
+                        "size": [
+                            12.0,
+                            18.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "pass": "Opaque",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "Image",
+                    "textureTag": "TextArrow.png"
+                },
+                {
+                    "alive": true,
+                    "instanceName": "arrow2",
+                    "transform": {
+                        "anchor": 5,
+                        "anchorOffset": [
+                            12.0,
+                            0.0
+                        ],
+                        "size": [
+                            12.0,
+                            18.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "pass": "Opaque",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "Image",
+                    "textureTag": "TextArrow.png"
+                }
+            ],
+            "typeTag": "CanvasPanel"
+        }
+    ],
+    "typeTag": "CanvasPanel"
+}

@@ -11,23 +11,27 @@ protected:
     virtual ~CNpc() DEFAULT;
 
 public:
+    virtual void    Execute() {};
+
+public:
     const string&  Get_AnimName() const { return m_strAnimName; }
     const wstring& Get_Name() const { return m_strName; }
 
 public:
     virtual HRESULT Initialize_Prototype() override;
     virtual HRESULT Initialize(INIT_DESC* pArg) override;
-    virtual void    Priority_Update(_float dt) override {};
+    virtual void    Priority_Update(_float dt) override;
     virtual void    Update(_float dt) override;
-    virtual void    Late_Update(_float dt) override {};
+    virtual void    Late_Update(_float dt) override;
 
 protected:
     HRESULT         Add_NameIndicator();
+    HRESULT         Add_InteractZonePrototype();
+    HRESULT         Add_InteractZone(_float4 vCenter, _float3 vOffset, _float3 vSize = _float3(1.f,1.f,1.f));
 
 protected:
     string m_strAnimName = "";
     wstring m_strName = TEXT("");
-
 
 public:
     virtual CGameObject* Clone(INIT_DESC* pArg) PURE;

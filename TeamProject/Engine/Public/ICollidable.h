@@ -1,5 +1,6 @@
 #pragma once
 #include "Engine_Defines.h"
+#include "Helper_Func.h"
 #include "Component.h"
 
 NS_BEGIN(Engine)
@@ -65,47 +66,83 @@ NS_END
 
 namespace CollisionHelper
 {
-    // 충돌 그룹 이름 배열
+    // 유효한 충돌 그룹 목록 (END 제외)
+    inline constexpr COLLISION_GROUP VALID_GROUPS[] = {
+        COLLISION_GROUP::COMMON,
+        COLLISION_GROUP::PLAYER,
+        COLLISION_GROUP::MONSTER,
+        COLLISION_GROUP::PLAYER_ATTACK,
+        COLLISION_GROUP::MONSTER_ATTACK,
+        COLLISION_GROUP::MONSTER_PARRY,
+        COLLISION_GROUP::CAMERA,
+        COLLISION_GROUP::INTERACTABLE
+    };
+    inline constexpr _int VALID_GROUP_COUNT = IM_ARRAYSIZE(VALID_GROUPS);
+
     inline const char* GetCollisionGroupName(COLLISION_GROUP eGroup)
     {
         switch (eGroup)
         {
-        case COLLISION_GROUP::COMMON:             return "COMMON";
-        case COLLISION_GROUP::PLAYER:             return "PLAYER";
-        case COLLISION_GROUP::MONSTER:            return "MONSTER";
-        case COLLISION_GROUP::PLAYER_ATTACK:      return "PLAYER_ATTACK";
-        case COLLISION_GROUP::MONSTER_ATTACK:     return "MONSTER_ATTACK";
-        case COLLISION_GROUP::MONSTER_PARRY:      return "MONSTER_PARRY";
-        case COLLISION_GROUP::CAMERA:             return "CAMERA";
-        case COLLISION_GROUP::INTERACABLE:        return "INTERACABLE";
-        default:                                  return "UNKNOWN";
+        case COLLISION_GROUP::COMMON:        return "COMMON";
+        case COLLISION_GROUP::PLAYER:        return "PLAYER";
+        case COLLISION_GROUP::MONSTER:       return "MONSTER";
+        case COLLISION_GROUP::PLAYER_ATTACK: return "PLAYER_ATTACK";
+        case COLLISION_GROUP::MONSTER_ATTACK:return "MONSTER_ATTACK";
+        case COLLISION_GROUP::MONSTER_PARRY: return "MONSTER_PARRY";
+        case COLLISION_GROUP::CAMERA:        return "CAMERA";
+        case COLLISION_GROUP::INTERACTABLE:   return "INTERACABLE";
+        default:                             return "UNKNOWN";
         }
     }
 
-    // 충돌 마스크 GUI 렌더링
+    // Combo용 문자열 배열 자동 생성
+    inline const char** GetGroupNames()
+    {
+        static const char* names[VALID_GROUP_COUNT] = {};
+        static bool bInit = false;
+        if (!bInit)
+        {
+            for (_int i = 0; i < VALID_GROUP_COUNT; ++i)
+                names[i] = GetCollisionGroupName(VALID_GROUPS[i]);
+            bInit = true;
+        }
+        return names;
+    }
+
+    // 현재 그룹의 인덱스 반환
+    inline _int GetGroupIndex(COLLISION_GROUP eGroup)
+    {
+        for (_int i = 0; i < VALID_GROUP_COUNT; ++i)
+        {
+            if (VALID_GROUPS[i] == eGroup)
+                return i;
+        }
+        return 0;
+    }
+
+    // Collision Group Combo 렌더링
+    inline _bool RenderCollisionGroupCombo(const char* label, COLLISION_GROUP& eGroup)
+    {
+        _int iCurrentIndex = GetGroupIndex(eGroup);
+        if (ImGui::Combo(label, &iCurrentIndex, GetGroupNames(), VALID_GROUP_COUNT))
+        {
+            eGroup = VALID_GROUPS[iCurrentIndex];
+            return true;
+        }
+        return false;
+    }
+
+    // 충돌 마스크 GUI (기존 코드 수정)
     inline _bool RenderCollisionMaskEditor(const char* label, _uint& iMask)
     {
         _bool bChanged = false;
-
         if (ImGui::TreeNode(label))
         {
-            const COLLISION_GROUP groups[] = {
-                COLLISION_GROUP::COMMON,
-                COLLISION_GROUP::PLAYER,
-                COLLISION_GROUP::MONSTER,
-                COLLISION_GROUP::PLAYER_ATTACK,
-                COLLISION_GROUP::MONSTER_ATTACK,
-                COLLISION_GROUP::MONSTER_PARRY,
-                COLLISION_GROUP::CAMERA,
-                COLLISION_GROUP::INTERACABLE
-            };
-
-            for (auto eGroup : groups)
+            for (_int i = 0; i < VALID_GROUP_COUNT; ++i)
             {
-                _uint bit = ENUM(eGroup);
+                _uint bit = ENUM(VALID_GROUPS[i]);
                 _bool bEnabled = (iMask & bit) != 0;
-
-                if (ImGui::Checkbox(GetCollisionGroupName(eGroup), &bEnabled))
+                if (ImGui::Checkbox(GetCollisionGroupName(VALID_GROUPS[i]), &bEnabled))
                 {
                     if (bEnabled)
                         iMask |= bit;
@@ -114,40 +151,24 @@ namespace CollisionHelper
                     bChanged = true;
                 }
             }
-
             ImGui::TreePop();
         }
-
         return bChanged;
     }
 
-    // 충돌 마스크 읽기 전용 표시
     inline void RenderCollisionMaskReadOnly(const char* label, _uint iMask)
     {
         if (ImGui::TreeNode(label))
         {
-            const COLLISION_GROUP groups[] = {
-                COLLISION_GROUP::COMMON,
-                COLLISION_GROUP::PLAYER,
-                COLLISION_GROUP::MONSTER,
-                COLLISION_GROUP::PLAYER_ATTACK,
-                COLLISION_GROUP::MONSTER_ATTACK,
-                COLLISION_GROUP::MONSTER_PARRY,
-                COLLISION_GROUP::CAMERA,
-                COLLISION_GROUP::INTERACABLE
-            };
-
-            for (auto eGroup : groups)
+            for (_int i = 0; i < VALID_GROUP_COUNT; ++i)
             {
-                _uint bit = ENUM(eGroup);
+                _uint bit = ENUM(VALID_GROUPS[i]);
                 _bool bEnabled = (iMask & bit) != 0;
-
                 if (bEnabled)
-                    ImGui::TextColored(ImVec4(0.2f, 1.f, 0.2f, 1.f), "[O] %s", GetCollisionGroupName(eGroup));
+                    ImGui::TextColored(ImVec4(0.2f, 1.f, 0.2f, 1.f), "[O] %s", GetCollisionGroupName(VALID_GROUPS[i]));
                 else
-                    ImGui::TextColored(ImVec4(0.5f, 0.5f, 0.5f, 1.f), "[X] %s", GetCollisionGroupName(eGroup));
+                    ImGui::TextColored(ImVec4(0.5f, 0.5f, 0.5f, 1.f), "[X] %s", GetCollisionGroupName(VALID_GROUPS[i]));
             }
-
             ImGui::TreePop();
         }
     }
