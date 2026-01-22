@@ -139,7 +139,7 @@ private:
 
 	class CRenderSystem* m_pSystem = { nullptr };
 	BoundingFrustum m_Frustum;
-
+	_float4x4 identity;
 private:
 	class CHiZ_Culling* m_pHiZ = { nullptr };
 	class CCSMShadow* m_pStaticCSM = { nullptr };

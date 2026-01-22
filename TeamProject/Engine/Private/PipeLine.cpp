@@ -21,6 +21,7 @@ CPipeLine::CPipeLine()
 
 HRESULT CPipeLine::Initialize(ID3D11Device* pDevice, class CRenderSystem* pSystem)
 {
+	XMStoreFloat4x4(&identity, XMMatrixIdentity());
 	/*---------------------------------------------------------------------------------------------------- - */
 	/*상수 버퍼*/
 	D3D11_BUFFER_DESC desc = {};
@@ -371,8 +372,7 @@ HRESULT CPipeLine::Begin_ObjectBuffer(ID3D11DeviceContext* pContext)
 		return hr;
 
 	m_pObjectArray = reinterpret_cast<_float4x4*>(m_mappedObjectBuffer.pData); 
-	_float4x4 identity;
-	XMStoreFloat4x4(&identity, XMMatrixIdentity());
+	
 	m_pObjectArray[0] = identity;
 
 	m_ObjectOffset = 1;

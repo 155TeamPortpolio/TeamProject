@@ -196,6 +196,7 @@ void CRenderSystem::BuildBatchesIfNeeded()
 void CRenderSystem::DrawBatches(RenderPass* pPass, CRenderer* pRenderer)
 {
 	m_pBatcher->DrawBatches(m_pContext, pPass, pRenderer);
+	m_pBatcher->EndBatchFrame();
 }
 
 

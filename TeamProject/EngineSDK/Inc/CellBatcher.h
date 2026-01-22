@@ -16,6 +16,11 @@ public:
         _uint minBatchCount = 6;     // 이 이상일 때만 배칭
         _uint maxBuildPerFrame = 2;  // 프레임 hitch 방지
     };
+    struct CellRange
+    {
+        int minX, maxX;
+        int minZ, maxZ;
+    };
 
 private:
     explicit CCellBatcher(class CRenderSystem* pRenderSys, const Options& opt);
@@ -42,9 +47,11 @@ private:
 
 
 private:
-    CellKey MakeCellKey(const _float4x4& world) const;
+    CellKey MakeCellKey(const _float4x4& world,class CModel* pModel, _uint drawIndex) const;
     bool CanBatch(const OPAQUE_PACKET& packet) const;
     bool BuildOneBatch(ID3D11Device* device, const CellBatchKey& key, const vector<OPAQUE_PACKET*>& packets);
+    CellRange MakeCellRange(const _float4x4& worldMatrix, CModel* pModel, _uint drawIndex) const;
+    
 
 private:
     Options m_Options;

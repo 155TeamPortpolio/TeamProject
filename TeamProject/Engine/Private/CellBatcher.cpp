@@ -13,22 +13,26 @@ CCellBatcher::CCellBatcher(CRenderSystem* pRenderSys, const Options& opt)
 {
 }
 
-CellKey CCellBatcher::MakeCellKey(const _float4x4& world) const
+CellKey CCellBatcher::MakeCellKey(const _float4x4& worldMatrix, class CModel* pModel, _uint drawIndex) const
 {
-	_float worldX = world._41;
-	_float worldZ = world._43;
+	MINMAX_BOX localBox = pModel->Get_MeshBoundingBox(drawIndex);
+	MINMAX_BOX worldBox = localBox.TransformBox_8Corner(worldMatrix);
+
+	_float3 center;
+	center.x = (worldBox.vMin.x + worldBox.vMax.x) * 0.5f;
+	center.y = (worldBox.vMin.y + worldBox.vMax.y) * 0.5f;
+	center.z = (worldBox.vMin.z + worldBox.vMax.z) * 0.5f;
 
 	CellKey key;
-	key.x = (_int)floorf(worldX / m_Options.cellSize);
-	key.z = (_int)floorf(worldZ / m_Options.cellSize);
-
+	key.x = (_int)floorf(center.x / m_Options.cellSize);
+	key.z = (_int)floorf(center.z / m_Options.cellSize);
 	return key;
 }
 
 bool CCellBatcher::CanBatch(const OPAQUE_PACKET& packet) const
 {
 	if (!packet.pModel || !packet.pMaterial || !packet.pWorldMatrix) return false;
-	if (packet.bSkinning) return false; // static pass¶óµµ ¾ÈÀüÀåÄ¡
+	if (packet.bSkinning) return false; // static passï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¡
 	return true;
 }
 
@@ -40,7 +44,7 @@ bool CCellBatcher::BuildOneBatch(ID3D11Device* device, const CellBatchKey& key, 
 	vector<VTXMESH> mergedVertices;
 	vector<_uint> mergedIndices;
 
-	// ´ë·« reserve(Á¤È®È÷ ÇÕ»êÇÏ·Á¸é ÇÑ¹ø ´õ ·çÇÁ)
+	// ï¿½ë·« reserve(ï¿½ï¿½È®ï¿½ï¿½ ï¿½Õ»ï¿½ï¿½Ï·ï¿½ï¿½ï¿½ ï¿½Ñ¹ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
 	mergedVertices.reserve(packets.size() * 256);
 	mergedIndices.reserve(packets.size() * 512);
 
@@ -68,7 +72,7 @@ bool CCellBatcher::BuildOneBatch(ID3D11Device* device, const CellBatchKey& key, 
 		aabb.vMax.z = max(aabb.vMax.z, localBox.vMax.z);
 	}
 
-	// GPU VB/IB »ý¼º
+	// GPU VB/IB ï¿½ï¿½ï¿½ï¿½
 	ID3D11Buffer* VB = nullptr;
 	ID3D11Buffer* IB = nullptr;
 
@@ -100,7 +104,7 @@ bool CCellBatcher::BuildOneBatch(ID3D11Device* device, const CellBatchKey& key, 
 		}
 	}
 
-	// Ä³½Ã ÀúÀå(±âÁ¸ ÀÖÀ¸¸é ±³Ã¼)
+	// Ä³ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã¼)
 	CachedBatch batch{};
 	batch.pVB = VB;
 	batch.pIB = IB;
@@ -127,6 +131,19 @@ bool CCellBatcher::BuildOneBatch(ID3D11Device* device, const CellBatchKey& key, 
 	return true;
 }
 
+CCellBatcher::CellRange CCellBatcher::MakeCellRange(const _float4x4& worldMatrix, CModel* pModel, _uint drawIndex) const
+{
+	MINMAX_BOX localBox = pModel->Get_MeshBoundingBox(drawIndex);
+	MINMAX_BOX worldBox = localBox.TransformBox_8Corner(worldMatrix);
+
+	CellRange range{};
+	range.minX = (int)floorf(worldBox.vMin.x / m_Options.cellSize);
+	range.maxX = (int)floorf(worldBox.vMax.x / m_Options.cellSize);
+	range.minZ = (int)floorf(worldBox.vMin.z / m_Options.cellSize);
+	range.maxZ = (int)floorf(worldBox.vMax.z / m_Options.cellSize);
+	return range;
+}
+
 void CCellBatcher::BeginBatchFrame(_uint frameIndex)
 {
 	m_iFrameIndex = frameIndex;
@@ -140,15 +157,25 @@ void CCellBatcher::SubmitVisiblePacket(OPAQUE_PACKET& packet)
 	CShader* shader = packet.pMaterial->Get_Shader(packet.MaterialIndex);
 	if (!shader) return;
 
-	CellKey cell = MakeCellKey(*packet.pWorldMatrix);
-
 	BatchingKey batch;
 	batch.pMaterial = packet.pMaterial;
 	batch.iMaterialIndex = packet.MaterialIndex;
 	batch.pShader = shader;
 
-	CellBatchKey key{ cell, batch };
-	m_BatchGroups[key].push_back(&packet);
+	CellRange range = MakeCellRange(*packet.pWorldMatrix, packet.pModel, packet.DrawIndex);
+
+	for (int cellX = range.minX; cellX <= range.maxX; ++cellX)
+	{
+		for (int cellZ = range.minZ; cellZ <= range.maxZ; ++cellZ)
+		{
+			CellKey cell;
+			cell.x = cellX;
+			cell.z = cellZ;
+
+			CellBatchKey key{ cell, batch };
+			m_BatchGroups[key].push_back(&packet);
+		}
+	}
 }
 
 void CCellBatcher::BuildBatchesIfNeeded(ID3D11Device* device)
@@ -170,6 +197,7 @@ void CCellBatcher::BuildBatchesIfNeeded(ID3D11Device* device)
 			built += 1;
 	}
 }
+
 void CCellBatcher::DrawBatches(ID3D11DeviceContext* context, RenderPass* pass, CRenderer* renderer)
 {
 	if (!context) return;
@@ -255,8 +283,8 @@ void CCellBatcher::AppendWorldBaked(const vector<VTXMESH>& srcVertices, const ve
 	// DirectXMath
 	_matrix worldMat = XMLoadFloat4x4(&world);
 
-	// normal/tangent º¯È¯¿ë: inverse-transpose(3x3)
-	// - worldÀÇ translation Á¦°Å
+	// normal/tangent ï¿½ï¿½È¯ï¿½ï¿½: inverse-transpose(3x3)
+	// - worldï¿½ï¿½ translation ï¿½ï¿½ï¿½ï¿½
 	_matrix worldNoT = worldMat;
 	worldNoT.r[3] = XMVectorSet(0.f, 0.f, 0.f, 1.f);
 
