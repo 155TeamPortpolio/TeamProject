@@ -26,9 +26,12 @@ HRESULT CUI_Dialogue::Initialize(INIT_DESC* pArg)
     Cache_Children();
     Bind_EventListener();
 
-    m_tMessageTypeWriter.onTyped = [&](_uint iIndex, const wstring& strText) { Set_ChildText(ENUM(CHILD::MESSAGE), strText); };
+    m_tMessageTypeWriter.onTyped = [this](_uint iIndex, const wstring& strText) { Set_ChildText(ENUM(CHILD::MESSAGE), strText); };
 
-    Set_Alive(false);
+    if (m_pNextButton)
+        m_pNextButton->Set_OnClick([this]() { Change_Dialogue(); });
+
+    Set_Alpha(0.f);
     Set_ChildAnimation(CHILD::ARROW1, 0);
     Set_ChildAnimation(CHILD::ARROW2, 0);
 
@@ -37,21 +40,6 @@ HRESULT CUI_Dialogue::Initialize(INIT_DESC* pArg)
 
 void CUI_Dialogue::Update(_float dt)
 {
-    // 테스트 코드 : 이벤트 브로드캐스트
-    if (InputDevice()->Key_Down('P'))
-    {
-        UI_DIALOGUE_REQUEST_DESC desc = {};
-        desc.strDialogueID = "Dialogue_001";
-        desc.iSequenceID = 0;
-        EventSystem()->Broadcast<UI_DIALOGUE_REQUEST_DESC>({ desc });
-    }
-
-    // 테스트
-    if (InputDevice()->Key_Down('I'))
-        Set_Alive(false);
-
-    /////////////////////////////////////
-
     __super::Update(dt);
      
     Update_TypingMessage(dt);
@@ -79,15 +67,12 @@ void CUI_Dialogue::Cache_Children()
     }
 
     // 버튼 UI 포인터로 캐싱
-    for (_int i = 0; i < ENUM(CHILD::END); ++i)
+    auto pObj = pContainer->Find_Descendant("next");
+    if (pObj)
     {
-        auto pObj = pContainer->Find_Descendant("next");
-        if (!pObj)
-            continue;
-
         auto pUI = dynamic_cast<CUI_Object*>(pObj);
         m_pNextButton = dynamic_cast<CButtonUI*>(pUI);
-    } 
+    }
 
     // 텍스트 컴포넌트를 배열에 캐싱
     for (_int i = 0; i < ENUM(TEXTSLOT::END); ++i)
@@ -107,24 +92,67 @@ void CUI_Dialogue::Cache_Children()
 void CUI_Dialogue::Bind_EventListener()
 {
     // 이벤트 : UI_DIALOGUE_REQUEST_DESC
-    Get_Component<CEventListener>()->Add_Listener<UI_DIALOGUE_REQUEST_DESC>([&](const UI_DIALOGUE_REQUEST_DESC& desc)
+    Get_Component<CEventListener>()->Add_Listener<UI_DIALOGUE_REQUEST_DESC>([this](const UI_DIALOGUE_REQUEST_DESC& desc)
         {
-            auto pair = make_pair(desc.strDialogueID, desc.iSequenceID);
-            if (pair == m_dialogueID)
-                return;
-
-            if (!Is_Alive())
-            {
-                Set_Alive(true);
-                Set_Animation(0);
-            }
-
-            m_dialogueID = pair;
-            auto dialogueDesc = CDataBase::GetInstance()->GetNpcDialogueDesc(m_dialogueID);
-            Set_ChildText(TEXTSLOT::NAME, dialogueDesc.Name);
-            Start_TypingMessage(dialogueDesc.Text);
-            m_eResult = dialogueDesc.Result;
+            Open_Dialogue(desc.strDialogueID, desc.iSequenceID);
         });
+}
+
+void CUI_Dialogue::Open_Dialogue(const string& strNewSequenceID, _uint iNewSequenceID)
+{
+    auto pair = make_pair(strNewSequenceID, iNewSequenceID);
+    if (pair == make_pair(m_tDialogueDesc.DialogueID, m_tDialogueDesc.SequenceID))
+        return;
+
+    if (m_eState != STATE::VISIBLE)
+        Change_State(STATE::VISIBLE);
+
+    m_tDialogueDesc = CDataBase::GetInstance()->GetNpcDialogueDesc(pair);
+    Set_ChildText(TEXTSLOT::NAME, m_tDialogueDesc.Name);
+    Start_TypingMessage(m_tDialogueDesc.Text);
+}
+
+void CUI_Dialogue::Change_Dialogue()
+{
+    switch (m_tDialogueDesc.Result)
+    {
+    case DialogueResult::Success:
+    case DialogueResult::Fail:
+        Change_State(STATE::INVISIBLE);
+        {
+            // 현재는 다이얼로그만 보내는데, 선택지일 때는 선택지로 
+            NPC_INTERACT_DESC desc = {};
+            desc.strName = m_tDialogueDesc.Name;
+            desc.iCurSequenceID = m_tDialogueDesc.SequenceID;
+            desc.iNextSequenceID = m_tDialogueDesc.NextSequenceID;
+            desc.eResult = m_tDialogueDesc.Result;
+            EventSystem()->Broadcast<NPC_INTERACT_DESC>({ desc });
+        } 
+        break;
+
+    case DialogueResult::None:
+    case DialogueResult::Running:
+        _int iSequenceID = m_tDialogueDesc.SequenceID;
+        Open_Dialogue(m_tDialogueDesc.DialogueID, ++iSequenceID);
+        break;
+    }
+}
+
+void CUI_Dialogue::Change_State(STATE eState)
+{
+    if (m_eState == eState)
+        return;
+
+    m_eState = eState;
+    switch (eState)
+    {
+    case STATE::INVISIBLE:
+        Set_Animation(1);
+        break;
+    case STATE::VISIBLE:
+        Set_Animation(0);
+        break;
+    }
 }
 
 void CUI_Dialogue::Start_TypingMessage(const _wstring& strText)
