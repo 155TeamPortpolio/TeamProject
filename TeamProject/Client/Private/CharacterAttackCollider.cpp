@@ -101,7 +101,7 @@ void CCharacterAttackCollider::OnTriggerEnter(CGameObject* pOther)
 	if (nullptr != pEnemy)
 	{
 		pEnemy->TakeDamage(m_tHitDesc.eDamageType, m_tHitDesc.fDamage);
-		BattleSystem()->GetBattlePlayer()->Add_Gauge(10.f, 100.f);
+		BattleSystem()->GetBattlePlayer()->Add_Gauge(m_tHitDesc.fEnergyCharge, m_tHitDesc.fDecibelCharge);
 
 		/* Effect Test */
 		_vector3 vWorldPosition = m_pTransform->Get_WorldPos();
@@ -133,7 +133,7 @@ void CCharacterAttackCollider::OnTriggerStay(CGameObject* pOther)
 	if (nullptr != pEnemy)
 	{
 		pEnemy->TakeDamage(m_tHitDesc.eDamageType, m_tHitDesc.fDamage);
-		BattleSystem()->GetBattlePlayer()->Add_Gauge(10.f, 100.f);
+		BattleSystem()->GetBattlePlayer()->Add_Gauge(m_tHitDesc.fEnergyCharge, m_tHitDesc.fDecibelCharge);
 
 		// Camera
 		CameraManager()->AddImpact(1,0);
