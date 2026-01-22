@@ -68,16 +68,7 @@ void CNpcInteractZone::OnTriggerEnter(CGameObject* pOther)
 	if (pCollidable && (pCollidable->Get_Group() != COLLISION_GROUP::PLAYER))
 		return;
 
-	auto pParent = Get_Component<CChild>()->Get_Parent();
-	if (pParent == nullptr) return;
-
-	auto pNpc = dynamic_cast<CNpc*>(pParent);
-	if (pNpc == nullptr) return;
-
-	UI_INTERACTABLE_DESC desc;
-	desc.isInteractable = true;
-	desc.strName = pNpc->Get_Name();
-	EventSystem()->Broadcast<UI_INTERACTABLE_DESC>({ desc });
+	Update_UI_Interaction(true);
 }
 
 void CNpcInteractZone::OnTriggerStay(CGameObject* pOther)
@@ -90,6 +81,11 @@ void CNpcInteractZone::OnTriggerExit(CGameObject* pOther)
 	if (pCollidable && (pCollidable->Get_Group() != COLLISION_GROUP::PLAYER))
 		return;
 
+	Update_UI_Interaction(false);
+}
+
+void CNpcInteractZone::Update_UI_Interaction(_bool bInteract)
+{
 	auto pParent = Get_Component<CChild>()->Get_Parent();
 	if (pParent == nullptr) return;
 
@@ -97,7 +93,7 @@ void CNpcInteractZone::OnTriggerExit(CGameObject* pOther)
 	if (pNpc == nullptr) return;
 
 	UI_INTERACTABLE_DESC desc;
-	desc.isInteractable = false;
+	desc.isInteractable = bInteract;
 	desc.strName = pNpc->Get_Name();
 	EventSystem()->Broadcast<UI_INTERACTABLE_DESC>({ desc });
 }
