@@ -523,6 +523,22 @@ void CSacrificeState_Attack_05_Phase1::Update_Effects(CSacrifice* pOwner)
 		auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 		auto pTransform = pOwner->Get_Component<CTransform>();
 
+		_smatrix worldMatrix = pTransform->Get_WorldMatrix();
+		_vector3 vWorldPosition = _vector3::Transform(_vector3(0.5f, 0.f, 5.8f), worldMatrix);
+
+		_quaternion localQuaternion = _quaternion(0.f, 0.f, 0.f, 1.f);
+		_quaternion worldQuaternion = pTransform->Get_QuaternionRotate();
+		localQuaternion *= worldQuaternion;
+
+		auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_laser_shot.json")
+			.Build("Sacrifice_Laser_Shot");
+
+		auto pEffectTransform = effect->Get_Component<CTransform>();
+		pEffectTransform->Set_WorldPos(vWorldPosition);
+		pEffectTransform->Set_WorldQuaternion(localQuaternion);
+		ObjectManager()->Add_Object(effect, { pOwner->Get_Level(),"Enemy_Effect_Layer" });
+
 		_vector3 vTargetPosition = pOwner->GetTargetingInfo().vTargetPos;
 		_vector3 vBonePosition = pAnimator->Get_BonePosition(CAnimator3D::BoneSpace::COMBINED, "Ctr_Eye6_05");
 		vBonePosition = _vector3::Transform(vBonePosition, pTransform->Get_WorldMatrix());
@@ -536,12 +552,29 @@ void CSacrificeState_Attack_05_Phase1::Update_Effects(CSacrifice* pOwner)
 
 		pOrb->Get_Component<CTransform>()->Set_Look(vDir);
 		ObjectManager()->Add_Object(pOrb, { pOwner->Get_Level(),"Effect_Layer" });
+		
 	}
 
 	if (IsCrossAnimProgress(0.35f))
 	{
 		auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 		auto pTransform = pOwner->Get_Component<CTransform>();
+
+		_smatrix worldMatrix = pTransform->Get_WorldMatrix();
+		_vector3 vWorldPosition = _vector3::Transform(_vector3(0.5f, 0.f, 5.8f), worldMatrix);
+
+		_quaternion localQuaternion = _quaternion(0.f, 0.f, 0.f, 1.f);
+		_quaternion worldQuaternion = pTransform->Get_QuaternionRotate();
+		localQuaternion *= worldQuaternion;
+
+		auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_laser_shot.json")
+			.Build("Sacrifice_Laser_Shot");
+
+		auto pEffectTransform = effect->Get_Component<CTransform>();
+		pEffectTransform->Set_WorldPos(vWorldPosition);
+		pEffectTransform->Set_WorldQuaternion(localQuaternion);
+		ObjectManager()->Add_Object(effect, { pOwner->Get_Level(),"Enemy_Effect_Layer" });
 
 		_vector3 vTargetPosition = pOwner->GetTargetingInfo().vTargetPos;
 		_vector3 vBonePosition = pAnimator->Get_BonePosition(CAnimator3D::BoneSpace::COMBINED, "Ctr_Eye6_05");
