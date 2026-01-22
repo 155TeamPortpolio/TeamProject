@@ -247,6 +247,7 @@ TRAIL_NODE Engine::tagTrailNode::FromJson(nlohmann::ordered_json& json)
 	
 	node.vUVSpeed.x = json.at("uv_speed").at("x").get<_float>();
 	node.vUVSpeed.y = json.at("uv_speed").at("y").get<_float>();
+	node.fTile = json.value("tile", 0.f);
 	
 	node.vStartColor.x = json.at("start_color").at("x").get<_float>();
 	node.vStartColor.y = json.at("start_color").at("y").get<_float>();
