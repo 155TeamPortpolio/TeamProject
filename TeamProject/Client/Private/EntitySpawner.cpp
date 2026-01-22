@@ -151,7 +151,14 @@ void Client::Spawner::Create_ETC(const SPAWNER_DESC& Desc)
 	if (Desc.tagName == "PlayerSpawn") {
 		auto player = dynamic_cast<CPlayer*>(ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Player)));
 		auto character = player->Get_CurCharacterHandle().Get();
-		if (character)
-			character->Get_Component<CCharacterController>()->Set_Position(XMLoadFloat3(&Desc.vTranslation));
+		if (!character)
+			return
+
+		character->Get_Component<CCharacterController>()->Set_Position(XMLoadFloat3(&Desc.vTranslation));
+		character->Get_Component<CTransform>()->Set_Quaternion(
+			XMQuaternionRotationRollPitchYaw(
+				Desc.vRotation.x,
+				Desc.vRotation.y,
+				Desc.vRotation.z));
 	}
 }
