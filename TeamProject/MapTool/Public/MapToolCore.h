@@ -22,7 +22,7 @@ public:
 
 public:
 	LOADED_DATA			Load_MapData();
-	void				Load_EntityData();
+	void				Load_WithEntityData();
 	void				Clear_Layer(MAPOBJ_TYPE eObjType);
 
 

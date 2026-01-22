@@ -35,8 +35,12 @@ HRESULT CEntityObject::Initialize_Prototype()
 HRESULT CEntityObject::Initialize(INIT_DESC* pArg)
 {
 	__super::Initialize(pArg);
+	auto pDesc = static_cast<ENTITY_INIT_DESC*>(pArg);
+	m_iType = pDesc->iType;
+	
 
 	Get_Component<CCollider>()->Set_MapToolMode(true);
+	Get_Component<CCollider>()->Set_ColliderColor(Get_TypeColor());
 
 	return S_OK;
 }
@@ -75,6 +79,58 @@ void CEntityObject::Export_ObjectData(void* pDesc)
 	pEntityDesc->vTranslation = { vPosition.x, vPosition.y, vPosition.z };
 }
 
+string CEntityObject::Get_TypeName()
+{
+	string Typename;
+
+	switch (m_iType)
+	{
+	case 0: Typename = "NPC"; break;
+	case 1: Typename = "Interact"; break;
+	case 2: Typename = "ETC"; break;
+	default:
+		break;
+	}
+
+	return Typename;
+}
+
+_vector4 CEntityObject::Get_TypeColor()
+{
+
+	/*
+	White		= {1.f, 1.f, 1.f, 1.f};
+	Black		= {0.f, 0.f, 0.f, 1.f};
+	Red			= {1.f, 0.f, 0.f, 1.f};
+	Green		= {0.f, 1.f, 0.f, 1.f};
+	Blue		= {0.f, 0.f, 1.f, 1.f};
+	Yellow		= {1.f, 1.f, 0.f, 1.f};
+	Cyan		= {0.f, 1.f, 1.f, 1.f};
+	Magenta		= {1.f, 0.f, 1.f, 1.f};
+	Orange		= {1.f, 0.5f, 0.f, 1.f};
+	Purple		= {0.5f, 0.f, 0.5f, 1.f};
+	Pink		= {1.f, 0.75f, 0.8f, 1.f};
+	Lime		= {0.5f, 1.f, 0.f, 1.f};
+	Teal		= {0.f, 0.5f, 0.5f, 1.f};
+	Navy		= {0.f, 0.f, 0.5f, 1.f};
+	Olive		= {0.5f, 0.5f, 0.f, 1.f};
+	Maroon		= {0.5f, 0.f, 0.f, 1.f};
+	SkyBlue		= {0.4f, 0.7f, 1.f, 1.f};
+	LightGray	= {0.8f, 0.8f, 0.8f, 1.f};
+	*/
+	_vector4 TypeColor;
+	
+	switch (m_iType)
+	{
+	case 0: TypeColor = _vector4{ 1.f, 1.f, 0.f, 1.f }; break; // NPC : Yellow
+	case 1: TypeColor = _vector4{ 0.f, 1.f, 1.f, 1.f }; break; // ETC : Cyan
+	case 2: TypeColor = _vector4{ 0.5f, 0.f, 0.5f, 1.f }; break; // ETC : Purple
+	default:TypeColor = _vector4{ 0.f, 1.f, 0.f, 1.f }; break; // DEF : Green 
+	}
+
+	return TypeColor;
+}
+
 
 void CEntityObject::Render_GUI()
 {
@@ -84,7 +140,10 @@ void CEntityObject::Render_GUI()
 	
 	ImGui::InputText("##TriggerName", &m_InstanceName);
 	ImGui::TextColored(ImVec4(1.f, 1.f, 1.f, 1.f), "Client Type");
-	ImGui::InputInt("##Version", &m_iType);
+	if (ImGui::InputInt("##Version", &m_iType)) {
+		Get_Component<CCollider>()->Set_ColliderColor(Get_TypeColor());
+	};
+	ImGui::Text(Get_TypeName().c_str());
 
 	ImGui::PopID();
 }
