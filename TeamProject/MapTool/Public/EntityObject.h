@@ -25,7 +25,9 @@ public:
 
     virtual void Export_ObjectData(void* pDesc) override;
 
-
+private:
+    string Get_TypeName();
+    _vector4 Get_TypeColor();
 public:
     void Render_GUI() override;
 

@@ -186,9 +186,12 @@ void CMapToolCore::Load_WithEntityData()
 	filename.replace(pos, strlen("MapData"), "EntityData");
 	entityPath.replace_filename(filename);
 
+	if (!filesystem::exists(entityPath))
+		return;
+
 	Clear_Layer(MAPOBJ_TYPE::ENTITY);
 
-	Entity_Header EntityHeader = Helper::LoadJson<Entity_Header>(OpenPath.string());
+	Entity_Header EntityHeader = Helper::LoadJson<Entity_Header>(entityPath.string());
 	LoadedData.tagDataFormat = "EntityData";
 
 	m_tMapToolContext.iVersion = EntityHeader.iVersion;
@@ -331,6 +334,7 @@ void CMapToolCore::Place_EntityObjectFromLoadData(ENTITY* pData)
 {
 	COLLIDER_DESC ColDesc = {};
 	ColDesc.eType = COLLIDER_TYPE::BOX;
+	ColDesc.bAutoFit = false;
 	ColDesc.bTrigger = true; // 충돌 박스 생성하는 트리거
 	ColDesc.vSize = { pData->vScale[0], pData->vScale[1], pData->vScale[2] };
 
