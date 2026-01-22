@@ -142,11 +142,6 @@ _bool CMaterial::isValid(_uint index)
 	return m_MaterialInstances[index]->isValid();
 }
 
-_uint CMaterial::Get_InstacneID(_uint index)
-{
-	return m_MaterialInstances[index]->Get_InstacneID();
-}
-
 void CMaterial::SetBlendHasAlpha(AlphaCheckLevel checkLevel , const string& BlendPass)
 {
 	for (auto instance : m_MaterialInstances)

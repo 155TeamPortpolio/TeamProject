@@ -40,8 +40,8 @@ public:
 	void Set_OutLine(_bool outline) { m_IsUseOutLine = outline; }
 	_bool IsUseOutLine() { return m_IsUseOutLine; }
 	_bool isValid();
+
 	void SetBlendIf_AlphaDiffuse(AlphaCheckLevel level, const string& pass);
-	_uint Get_InstacneID() { return m_MaterialInstance_ID; }
 public:
 	virtual void Render_GUI();
 
@@ -59,15 +59,12 @@ private:
 	MaterialConstants overrides_Constant = {};
 	class CMaterialData* m_pMaterialData = { nullptr };
 	ID3D11Device* m_pDevice = { nullptr };
-	_uint m_MaterialInstance_ID = {0};
 
 public:
 	static CMaterialInstance* Make_Handle(class CMaterialData* pData, ID3D11Device* pDevice);
 	static CMaterialInstance* Create_Handle(const string& materialKey, const string& DefualtpassConstant, ID3D11Device* pDevice);
 	CMaterialInstance* Clone();
 	virtual void Free() override;
-
-	static _uint Next_ID ;
 };
 
 NS_END

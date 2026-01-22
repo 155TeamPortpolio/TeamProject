@@ -16,7 +16,7 @@
 #include "UIRenderer.h"
 #include "PostRenderer.h"
 #include "ForwardRenderer.h"
-#include "StaticMeshBatcher.h"
+
 CRenderSystem::CRenderSystem(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:m_pDevice{ pDevice }, m_pContext{ pContext }
 {
@@ -50,7 +50,7 @@ HRESULT CRenderSystem::Initialize()
 	m_pUI3DPass		= UI3DPass::Create(this);
 	m_pEffectPass	= EffectPass::Create(this);
 
-	m_pBatcher = CStaticMeshBatcher::Create(m_pDevice,4096);
+
 	m_pForward = CForwardRenderer::Create(m_pDevice,m_pContext, m_pTargetManager,m_pPipeLine);
 	m_pPost = CPostRenderer::Create(m_pDevice, m_pContext, m_pTargetManager, m_pPipeLine);
 	m_pUI = CUIRenderer::Create(m_pDevice, m_pContext, m_pTargetManager, m_pPipeLine);
@@ -116,21 +116,6 @@ _bool CRenderSystem::Get_FogDesc(FOG_DESC& outResult)
 void CRenderSystem::Set_FogDesc(FOG_DESC desc)
 {
 	m_pPost->Set_FogDesc(desc);
-}
-
-void CRenderSystem::BatcherBegin()
-{
-	m_pBatcher->BeginFrame();
-}
-
-void CRenderSystem::BatchSubmit(const OPAQUE_PACKET& packet)
-{
-	m_pBatcher->Submit(move(packet));
-}
-
-void CRenderSystem::BatchFlush(ID3D11DeviceContext* pContext, class RenderPass* pRenderPass, CRenderer* pRenderer)
-{
-	m_pBatcher->Flush(pContext, pRenderPass,pRenderer);
 }
 
 void CRenderSystem::Update(_float dt)
@@ -274,5 +259,4 @@ void CRenderSystem::Free()
 	Safe_Release(m_pPost);
 	Safe_Release(m_pUI);
 	Safe_Release(m_pEffect);
-	Safe_Release(m_pBatcher);
 }

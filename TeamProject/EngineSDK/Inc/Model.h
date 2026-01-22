@@ -15,7 +15,6 @@ public:
 	virtual const _uint Get_ElementCount(_uint DrawIndex) PURE;
 	virtual const string_view Get_ElementKey(_uint DrawIndex) PURE;
 	virtual HRESULT Draw(ID3D11DeviceContext* pContext, _uint Index) PURE;
-	virtual HRESULT Draw_Instanced(ID3D11DeviceContext* context, _uint index, _uint instanceCount) { return S_OK; };
 	virtual HRESULT Link_Model(const string& levelKey, const string& modelDataKey)PURE;
 
 public:
@@ -30,7 +29,7 @@ public:
 	virtual vector<MINMAX_BOX> Get_MeshBoundingBoxes()	PURE;
 	virtual MINMAX_BOX Get_MeshBoundingBox(_uint meshIndex)	PURE;
 	virtual MINMAX_BOX Get_WorldBoundingBox()	PURE;
-public:
+
 public:
 	void Set_RenderType(RENDER_PASS_TYPE eType) { m_eType = eType; };
 	void ShadowCast(_bool cast) { isShadowCast = cast; }

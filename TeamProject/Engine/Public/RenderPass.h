@@ -10,11 +10,9 @@ protected:
 	virtual ~RenderPass() DEFAULT;
 public:
 	virtual void Execute(ID3D11DeviceContext* pContext, class CRenderer* pRenderer) PURE;
-public:
+protected:
 	void BindConstant(ID3D11DeviceContext* pContext,class CModel* pModel, class CMaterial* pMaterial , _uint DrawIndex, _uint MaterialIndex, class CRenderer* pRenderer);
 	void BindConstant(ID3D11DeviceContext* pContext,class CSprite2D* pSprite , string passConstant, class CRenderer* pRenderer);
-public:
-	class CShader* Get_CurShader() { return pCurShader; }
 protected:
 	class CRenderSystem* m_pRenderSystem = { nullptr };
 	class CShader* pCurShader = { nullptr };
@@ -101,6 +99,7 @@ public:
 private:
 	vector<OPAQUE_PACKET> m_Packets;
 	vector<OPAQUE_PACKET> m_VisiblePackets;
+
 public:
 	static StaticOpaquePass* Create(class CRenderSystem* pRenderSystem) { return new StaticOpaquePass(pRenderSystem); }
 	virtual void Free() override {__super::Free(); m_Packets.clear();};
