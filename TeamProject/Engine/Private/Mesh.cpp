@@ -142,7 +142,6 @@ HRESULT CMesh::Create_Index(ID3D11Device* pDevice)
 	subData.pSysMem = m_indices.data();
 	HRESULT hr = pDevice->CreateBuffer(&IDDesc, &subData, &m_pIB);
 
-	Build_Island();
 	return hr;
 }
 
@@ -157,21 +156,6 @@ _float4x4 CMesh::Get_MeshOffset(_uint boneIndex)
 		XMStoreFloat4x4(&identity, XMMatrixIdentity());
 		return identity;
 	}
-}
-
-HRESULT CMesh::Render_Island(ID3D11DeviceContext* pContext, _uint islandIndex)
-{
-	pContext->DrawIndexed(m_Islands[islandIndex].indexCount, m_Islands[islandIndex].startIndex, 0);
-	return S_OK;
-}
-
-void CMesh::Build_Island()
-{
-	MINMAX_BOX b{};
-	b.vMin = { FLT_MAX,FLT_MAX,FLT_MAX };
-	b.vMax = { -FLT_MAX,-FLT_MAX,-FLT_MAX };
-
-	m_indices;
 }
 
 void CMesh::Create_BoneMinMax(CSkeleton* pSkeleton)
@@ -208,8 +192,7 @@ void CMesh::Render_GUI()
 
 void CMesh::ExpandBox(MINMAX_BOX& b, const _float3& p)
 {
-	b.vMin.x = min(b.vMin.x, p.x); b.vMin.y = min(b.vMin.y, p.y); b.vMin.z = min(b.vMin.z, p.z);
-	b.vMax.x = max(b.vMax.x, p.x); b.vMax.y = max(b.vMax.y, p.y); b.vMax.z = max(b.vMax.z, p.z);
+	b.ExpandBox(p);
 }
 
 

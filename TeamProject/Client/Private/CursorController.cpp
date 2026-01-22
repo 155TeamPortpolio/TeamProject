@@ -5,11 +5,12 @@
 
 void CCursorController::Initialize()
 {
+    m_monitorGate.SetMinWidth(2500);
+
 #ifdef _USING_GUI
     m_cachedGuiActive = GUISystem()->Is_GUIActive();
     SyncMouseLockByGui();
-#endif // _USING_GUI
-
+#endif
 }
 
 RECT CCursorController::GetClientRectInScreen() const
@@ -86,6 +87,8 @@ void CCursorController::ToggleGui()
 
 void CCursorController::Update(_float dt)
 {
+   // if (!m_monitorGate.Pass(g_hWnd)) return;
+
 #ifdef _USING_GUI
     const _bool guiNow = GUISystem()->Is_GUIActive();
     if (guiNow != m_cachedGuiActive)

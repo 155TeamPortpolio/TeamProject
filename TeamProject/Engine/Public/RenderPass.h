@@ -90,7 +90,7 @@ public:
 #pragma region STATICMESH_OPAQUE_PASS
 class StaticOpaquePass final : public RenderPass {
 private:
-	StaticOpaquePass(class CRenderSystem* pRenderSystem) :RenderPass{ pRenderSystem } {};
+	StaticOpaquePass(class CRenderSystem* pRenderSystem) :RenderPass{ pRenderSystem } { m_Packets.reserve(5000); };
 	virtual ~StaticOpaquePass() DEFAULT;
 public:
 	void Execute(ID3D11DeviceContext* pContext, class CRenderer* pRenderer) override;

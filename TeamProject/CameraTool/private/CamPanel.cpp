@@ -2543,7 +2543,24 @@ void CCamPanel::DrawKeyframeEditor_SelectedKeyTable(bool& ioChangedAny)
             ImGui::SameLine();
             if (target.sequence && target.sequence->space == CamSpace::Local) ImGui::TextDisabled("Local");
             else ImGui::TextDisabled("World");
+
+            ImGui::SameLine(0.f, 12.f);
+
+            const _vector3 o = keyPtr->pos;
+            const _vector3 d = keyPtr->look;
+
+            if (fabsf(d.z) > 1e-6f)
+            {
+                const float tHit = -o.z / d.z;
+                const _vector3 hit = o + d * tHit;
+
+                if (tHit >= 0.f) ImGui::TextDisabled("AimXY(z=0): (%.2f, %.2f)", hit.x, hit.y);
+                else ImGui::TextDisabled("AimXY(z=0): (%.2f, %.2f) (behind)", hit.x, hit.y);
+            }
+            else
+                ImGui::TextDisabled("AimXY(z=0): (parallel)");
         }
+
 
         BeginRow("Roll");
         {
@@ -2833,7 +2850,7 @@ bool CCamPanel::LoadSequenceFromPath(const string& anyPath)
     }
 
     CamSequenceDesc loaded{};
-    if (!CamUtil::Load(filesystem::path(picked), loaded, &err))
+    if (!CamUtil::Load(fs::path(picked), loaded, &err))
     {
         keyListUI.lastFileError = err;
         keyListUI.requestOpenFileErrorPopup = true;
@@ -2870,7 +2887,6 @@ bool CCamPanel::LoadSequenceFromPath(const string& anyPath)
     keyListUI.lastLoadedPath = picked;
     return true;
 }
-
 
 CCamPanel* CCamPanel::Create(GUI_CONTEXT* context)
 {
