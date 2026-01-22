@@ -116,7 +116,7 @@ LOADED_DATA CMapToolCore::Load_MapData()
 	return LoadedData;
 }
 
-void CMapToolCore::Load_EntityData()
+void CMapToolCore::Load_WithEntityData()
 {
 	filesystem::path OpenPath = Helper::OpenFile_Dialogue();
 
@@ -130,10 +130,61 @@ void CMapToolCore::Load_EntityData()
 
 	LOADED_DATA	LoadedData = {};
 
-	if (OpenPath.string().find("EntityData") == string::npos) {
-		MSG_BOX("[MapTool] Load Entity Data Failed.\nBaseData가 아닙니다.");
+	if (OpenPath.string().find("MapData") == string::npos) {
+		MSG_BOX("맵 데이터를 부르세요 :)");
 		return;
 	}
+
+	/* MapData 불러오기 */
+	MapData_Header mapdata = Helper::LoadJson<MapData_Header>(OpenPath.string());
+
+	if ("Base" != mapdata.TagDataFormat)
+	{
+		MSG_BOX("[MapTool] Load Map Data Failed.\nBaseData가 아닙니다.");
+		return;
+	}
+
+	Clear_Layer(MAPOBJ_TYPE::PLACED);
+	Clear_Layer(MAPOBJ_TYPE::TRIGGER);
+
+	LoadedData.tagDataFormat = "MapData";
+	m_tMapToolContext.iVersion = mapdata.iVersion;
+	m_tMapToolContext.TagArea = mapdata.TagArea;
+
+	for (auto& layerdata : mapdata.Layers) {
+		// 레이어 태그 무결성 검사
+		MAPOBJ_TYPE eType = Check_LayerTag(layerdata.TagLayer);
+		if (MAPOBJ_TYPE::END == eType)
+			continue;
+
+		for (auto& objectdata : layerdata.Objects) {
+			switch (eType)
+			{
+			case MAPOBJ_TYPE::PLACED:
+				Place_PlacedObjectFromLoadData(&objectdata);
+				break;
+			case MAPOBJ_TYPE::TRIGGER:
+				Place_TriggerObjectFromLoadData(&objectdata);
+				break;
+			}
+			LOADED_OBJECT Desc = {};
+			Desc.iObjIdx = objectdata.iObjID;
+			Desc.TagModelKey = objectdata.TagModelResourceKey;
+
+			LoadedData.LoadedObjects.push_back(Desc);
+		}
+	}
+
+	/* Entity가 있을 때 */
+	filesystem::path entityPath = OpenPath;
+	string filename = entityPath.filename().string();
+
+	size_t pos = filename.find("MapData");
+	if (pos == string::npos)
+		return;
+
+	filename.replace(pos, strlen("MapData"), "EntityData");
+	entityPath.replace_filename(filename);
 
 	Clear_Layer(MAPOBJ_TYPE::ENTITY);
 
@@ -170,7 +221,7 @@ void CMapToolCore::Clear_Layer(MAPOBJ_TYPE eObjType)
 	else {
 		CLayer* pLayer = m_pGameInstance->Get_ObjectMgr()->Get_Layer({ g_TagMapToolLevel, g_tagMapObjType[ENUM(eObjType)] });
 		if (nullptr == pLayer) {
-			ImGui::PopID();
+			//ImGui::PopID();
 			return;
 		}
 		pLayer->Clear_Layer();
