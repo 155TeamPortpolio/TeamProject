@@ -32,7 +32,7 @@ HRESULT CMapLoader::Initialize(const string& TagLevel, const string& TagArea, _u
     m_iSplitLoadCount = iSplitLoadCount;
 
     // 맵 오브젝트 분할 인덱스가 있으면 나눠서 없으면 한번에
-    (m_iSplitLoadCount == 0) ? PlaceObjects_Once() : PlaceObjects_Split();
+    (m_iSplitLoadCount == 0) ? PlaceObjects_Once() : Set_LoadingQueue();
 
     return S_OK;
 }
@@ -44,7 +44,8 @@ void CMapLoader::Update_Load()
 
     _int iCount = 0;
     while (iCount != m_iSplitLoadCount) {
-        PlaceObjects_Split();
+        if(PlaceObjects_Split())
+            break;
         ++iCount;
     }
 }
@@ -89,6 +90,28 @@ HRESULT CMapLoader::Load_BaseData(const string& TagArea, _bool* CheckMapBase, _b
     return S_OK;
 }
 
+void CMapLoader::Set_LoadingQueue()
+{
+    if (!m_bHasMapBase)
+        return;
+
+    for (auto& layerdata : m_MapBaseData.Layers) {
+        // 레이어 태그 무결성 검사
+        MAPOBJ_TYPE eType = Check_LayerTag(layerdata.TagLayer);
+        if (MAPOBJ_TYPE::END == eType)
+            continue;
+
+        for (auto& objectdata : layerdata.Objects) 
+            m_LoadingQueue.push({ eType, &objectdata });
+    }
+ 
+    if (!m_bHasEntityBase)
+        return;
+
+    for (auto& EntityData : m_EntityBaseData.Entities)
+        m_LoadingQueue.push({ MAPOBJ_TYPE::ENTITY, &EntityData });
+}
+
 void CMapLoader::PlaceObjects_Once()
 {
     m_bLoaded = true;
@@ -123,8 +146,24 @@ void CMapLoader::PlaceObjects_Once()
         Place_EntityFromLoadData(&EntityData);
 }
 
-void CMapLoader::PlaceObjects_Split()
+_bool CMapLoader::PlaceObjects_Split()
 {
+    if (m_LoadingQueue.empty())
+        return true;
+
+    auto& Job = m_LoadingQueue.front();
+
+    switch (Job.Type)
+    {
+    case MAPOBJ_TYPE::PLACED:   Place_PlacedObjectFromLoadData(static_cast<MapData_Object*>(Job.pData)); break;
+    case MAPOBJ_TYPE::TRIGGER:  Place_TriggerObjectFromLoadData(static_cast<MapData_Object*>(Job.pData)); break;
+    case MAPOBJ_TYPE::ENTITY:   Place_EntityFromLoadData(static_cast<ENTITY_INIT*>(Job.pData)); break;
+    default: break;
+    }
+
+    m_LoadingQueue.pop();
+
+    return m_LoadingQueue.empty();
 }
 
 void CMapLoader::Place_PlacedObjectFromLoadData(MapData_Object* pData)
@@ -384,7 +423,6 @@ CMapLoader* CMapLoader::Create(const string& TagLevel, const string& TagArea, _u
         Safe_Release(instance);
         instance = nullptr;
         MSG_BOX("Failed to Create : CMapLoader");
-
     }
 
     return instance;

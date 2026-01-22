@@ -13,6 +13,11 @@ public:
 	using ObjFieldMap = unordered_map<int, ObjFields>;		// ObjID별로 매핑된 데이터 묶음
 	using SlotFormatData = unordered_map<string, ObjFieldMap>;	// slotFormat별로 매핑된 데이터 묶음
 
+	struct LoadingQueue {
+		MAPOBJ_TYPE Type;
+		void* pData;
+	};
+
 private:
 	CMapLoader();
 	virtual ~CMapLoader() = default;
@@ -25,9 +30,9 @@ public:
 	
 private:
 	HRESULT			Load_BaseData(const string& TagArea, _bool* CheckMapBase, _bool* CheckEntityBase);
-
+	void			Set_LoadingQueue();
 	void			PlaceObjects_Once();
-	void			PlaceObjects_Split();
+	_bool			PlaceObjects_Split();
 
 private:
 	void			Place_PlacedObjectFromLoadData(MapData_Object* pData);
@@ -54,6 +59,7 @@ private:
 
 	_bool			m_hasColliderData = {};
 	unordered_map<_int, OBJECT_HANDLE>	m_EntityObjectHandle;
+	queue<LoadingQueue>		m_LoadingQueue;
 
 	_bool			m_bHasMapBase{}, m_bHasEntityBase{};
 	_bool			m_bLoaded = { false };
