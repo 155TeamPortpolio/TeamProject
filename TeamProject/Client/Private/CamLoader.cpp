@@ -6,7 +6,7 @@
 namespace fs = filesystem;
 
 namespace
-{
+{                                
     static const CamShakePreset kShakePresets[] =
     {
         CamShakePreset{0.10f, 0.00030f, 0.050f, 0.06f, 0.00018f, 16.f, 0.080f, 0.140f}, // TapSoft
@@ -89,7 +89,7 @@ namespace
         }
 
         req.blendInSec  = 0.f;
-        req.blendOutSec = 0.25f;
+        req.blendOutSec = 0.f;
         req.resetTime   = true;
         req.returnMode  = CamReturnMode::SnapToEnd;
         return req;

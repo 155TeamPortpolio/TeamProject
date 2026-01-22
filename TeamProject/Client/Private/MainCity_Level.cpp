@@ -45,6 +45,9 @@ HRESULT CMainCity_Level::Awake()
 	uiDirector->Load_LevelObjects("Scott_Level");
 
 	Ready_Map("MainCity_Level", "MainCity");
+
+	CamDirector()->AutoField();
+
 	return S_OK;
 }
 

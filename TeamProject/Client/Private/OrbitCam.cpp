@@ -9,16 +9,6 @@
 #include "CharacterController.h"
 #include "EventListener.h"
 
-namespace
-{
-    float MoveTowards(float cur, float target, float maxDelta)
-    {
-        const float d = target - cur;
-        if (fabsf(d) <= maxDelta) return target;
-        return cur + (d > 0.f ? maxDelta : -maxDelta);
-    }
-}
-
 void COrbitCam::Awake()
 {
     auto cc = Get_Component<CCharacterController>();
@@ -357,7 +347,7 @@ void COrbitCam::Priority_Update(_float dt)
         const float target = min(desired, allowed);
         const float speed = (target < pose.targetDist) ? profile.collisionZoomInSpeed : profile.collisionZoomOutSpeed;
 
-        pose.targetDist = MoveTowards(pose.targetDist, target, speed * dt);
+        pose.targetDist = Math::MoveTowards(pose.targetDist, target, speed * dt);
         pose.targetDist = clamp(pose.targetDist, profile.minDist, profile.maxDist);
     }
 
@@ -397,7 +387,6 @@ void COrbitCam::UpdateInput(_float dt)
     pose.targetRotDeg.x += yawDeltaDeg;
     pose.targetRotDeg.y += pitchDeltaDeg;
 }
-
 
 void COrbitCam::ClampTargets()
 {
