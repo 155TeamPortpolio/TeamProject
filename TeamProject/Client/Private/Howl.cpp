@@ -27,6 +27,14 @@ CHowl::CHowl(const CHowl& rhs)
 {
 }
 
+void CHowl::Execute()
+{
+	UI_DIALOGUE_REQUEST_DESC desc;
+	desc.strDialogueID = m_DiagloueData.StartDialogueID;
+	desc.iSequenceID = m_iNextSequceID;
+	EventSystem()->Broadcast<UI_DIALOGUE_REQUEST_DESC>({ desc });
+}
+
 HRESULT CHowl::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
