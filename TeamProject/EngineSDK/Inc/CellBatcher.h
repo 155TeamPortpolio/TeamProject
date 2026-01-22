@@ -30,7 +30,7 @@ public:
     void BeginBatchFrame(_uint frameIndex);
     void SubmitVisiblePacket(OPAQUE_PACKET& packet);
     void BuildBatchesIfNeeded(ID3D11Device* device);
-    void DrawBatches(ID3D11DeviceContext* context, RenderPass* pass, CRenderer* renderer);
+    _uint DrawBatches(ID3D11DeviceContext* context, RenderPass* pass, CRenderer* renderer);
     void EndBatchFrame();
     void Clear(); // 캐시 전부 제거
 
@@ -44,6 +44,7 @@ private:
     );
 
     ID3D11InputLayout* GetOrCreateBatchInputLayout(ID3D11Device* device, CShader* shader, const char* passName);
+    uint64_t ComputeGroupHash(const vector<OPAQUE_PACKET*>& packets) const;
 
 
 private:

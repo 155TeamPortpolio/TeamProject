@@ -45,7 +45,7 @@ public:
 	void BatchBegin();
 	void BatchVisiblePacket(OPAQUE_PACKET& packet);
 	void BuildBatchesIfNeeded();
-	void DrawBatches(RenderPass* pPass, class CRenderer* pRenderer);
+	_uint DrawBatches(RenderPass* pPass, class CRenderer* pRenderer);
 
 public:
 	virtual _bool GetOn() const  override{ return IsOn; }

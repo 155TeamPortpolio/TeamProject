@@ -79,6 +79,36 @@ struct CachedBatch
 	class  CShader* shader = { nullptr };
 	
 	_uint lastUsedFrame = 0;
+	uint64_t memberHash = 0;
+	size_t memberCount = 0;
 };
+static uint64_t HashPackets(const vector<OPAQUE_PACKET*>& packets)
+{
+	uint64_t hashValue = 1469598103934665603ull; // FNV-1a
+	for (auto* packetPtr : packets)
+	{
+		uint64_t value = (uint64_t)(uintptr_t)packetPtr->pWorldMatrix; // 또는 안정적인 object id가 있으면 그걸 쓰는 게 더 좋음
+		hashValue ^= value;
+		hashValue *= 1099511628211ull;
+		hashValue ^= (uint64_t)packetPtr->DrawIndex;
+		hashValue *= 1099511628211ull;
+	}
+	return hashValue;
+}
 
+static uint64_t HashCombine64(uint64_t current, uint64_t value)
+{
+	// FNV-1a 비슷한 간단 혼합
+	current ^= value;
+	current *= 1099511628211ull;
+	return current;
+}
+
+static uint64_t HashFloatBits(float value)
+{
+	uint32_t bits = 0;
+	static_assert(sizeof(bits) == sizeof(value), "size mismatch");
+	memcpy(&bits, &value, sizeof(value));
+	return (uint64_t)bits;
+}
 NS_END

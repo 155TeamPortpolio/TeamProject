@@ -110,9 +110,10 @@ void StaticOpaquePass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRender
 		m_pRenderSystem->BatchVisiblePacket(p);
 	}
 
+	_uint nonBatch = {};
+	_uint Batched = {};
 	m_pRenderSystem->BuildBatchesIfNeeded();
-	m_pRenderSystem->DrawBatches(this, pRenderer);
-	_int nonBatch = {};
+	Batched =m_pRenderSystem->DrawBatches(this, pRenderer);
 
 	for (auto& packet : m_VisiblePackets)
 	{
@@ -135,7 +136,6 @@ void StaticOpaquePass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRender
 		packet.pModel->Draw(pContext, packet.DrawIndex);
 		packet.pMaterial->ResetMaterial(packet.DrawIndex);
 	}
-	int i = nonBatch;
 	m_Packets.clear();
 	m_VisiblePackets.clear();
 }

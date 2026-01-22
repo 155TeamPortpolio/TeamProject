@@ -39,7 +39,8 @@ bool CCellBatcher::CanBatch(const OPAQUE_PACKET& packet) const
 bool CCellBatcher::BuildOneBatch(ID3D11Device* device, const CellBatchKey& key, const vector<OPAQUE_PACKET*>& packets)
 {
 	if (!device) return false;
-	if (packets.size() < m_Options.minBatchCount) return false;
+	if (packets.size() < m_Options.minBatchCount) 
+		return false;
 
 	vector<VTXMESH> mergedVertices;
 	vector<_uint> mergedIndices;
@@ -62,14 +63,14 @@ bool CCellBatcher::BuildOneBatch(ID3D11Device* device, const CellBatchKey& key, 
 		AppendWorldBaked(srcVertices, srcIndices, *packet.pWorldMatrix, mergedVertices, mergedIndices);
 
 		MINMAX_BOX localBox = pData->Get_MeshBoundingBox(packet.DrawIndex);
-		localBox.TransformBox_8Corner(*packet.pWorldMatrix);
+		MINMAX_BOX worldBox = localBox.TransformBox_8Corner(*packet.pWorldMatrix);
 
-		aabb.vMin.x = min(aabb.vMin.x, localBox.vMin.x);
-		aabb.vMin.y = min(aabb.vMin.y, localBox.vMin.y);
-		aabb.vMin.z = min(aabb.vMin.z, localBox.vMin.z);
-		aabb.vMax.x = max(aabb.vMax.x, localBox.vMax.x);
-		aabb.vMax.y = max(aabb.vMax.y, localBox.vMax.y);
-		aabb.vMax.z = max(aabb.vMax.z, localBox.vMax.z);
+		aabb.vMin.x = min(aabb.vMin.x, worldBox.vMin.x);
+		aabb.vMin.y = min(aabb.vMin.y, worldBox.vMin.y);
+		aabb.vMin.z = min(aabb.vMin.z, worldBox.vMin.z);
+		aabb.vMax.x = max(aabb.vMax.x, worldBox.vMax.x);
+		aabb.vMax.y = max(aabb.vMax.y, worldBox.vMax.y);
+		aabb.vMax.z = max(aabb.vMax.z, worldBox.vMax.z);
 	}
 
 	// GPU VB/IB ����
@@ -104,7 +105,6 @@ bool CCellBatcher::BuildOneBatch(ID3D11Device* device, const CellBatchKey& key, 
 		}
 	}
 
-	// ĳ�� ����(���� ������ ��ü)
 	CachedBatch batch{};
 	batch.pVB = VB;
 	batch.pIB = IB;
@@ -180,31 +180,61 @@ void CCellBatcher::SubmitVisiblePacket(OPAQUE_PACKET& packet)
 
 void CCellBatcher::BuildBatchesIfNeeded(ID3D11Device* device)
 {
-	_uint built = 0;
+	if (!device) return;
+
+	_uint builtCount = 0;
 
 	for (auto& pair : m_BatchGroups)
 	{
-		if (built >= m_Options.maxBuildPerFrame)
+		if (builtCount >= m_Options.maxBuildPerFrame)
 			break;
 
 		const CellBatchKey& key = pair.first;
-		const auto& packets = pair.second;
+		const vector<OPAQUE_PACKET*>& packets = pair.second;
 
-		if (m_Cached.find(key) != m_Cached.end())
+		// 배치 조건이 안 맞으면 스킵
+		if (packets.size() < m_Options.minBatchCount)
 			continue;
 
+		const uint64_t currentHash = ComputeGroupHash(packets);
+
+		auto cachedIt = m_Cached.find(key);
+		if (cachedIt != m_Cached.end())
+		{
+			CachedBatch& cachedBatch = cachedIt->second;
+
+			const bool sameCount = (cachedBatch.memberCount == (_uint)packets.size());
+			const bool sameHash = (cachedBatch.memberHash == currentHash);
+
+			if (sameCount && sameHash)
+				continue;
+		}
+
 		if (BuildOneBatch(device, key, packets))
-			built += 1;
+		{
+			auto updatedIt = m_Cached.find(key);
+			if (updatedIt != m_Cached.end())
+			{
+				updatedIt->second.memberHash = currentHash;
+				updatedIt->second.memberCount = (_uint)packets.size();
+			}
+
+			builtCount += 1;
+		}
 	}
 }
 
-void CCellBatcher::DrawBatches(ID3D11DeviceContext* context, RenderPass* pass, CRenderer* renderer)
+_uint CCellBatcher::DrawBatches(ID3D11DeviceContext* context, RenderPass* pass, CRenderer* renderer)
 {
-	if (!context) return;
+	if (!context)
+		return 0;
 
 	ID3D11Device* device = nullptr;
 	context->GetDevice(&device);
-	if (!device) return;
+	if (!device)
+		return 0;
+
+	_uint drawnBatchCount = 0;
 
 	for (auto& pair : m_Cached)
 	{
@@ -229,24 +259,31 @@ void CCellBatcher::DrawBatches(ID3D11DeviceContext* context, RenderPass* pass, C
 		SHADER_PARAM worldIdx{ &identityIndex, "uint", sizeof(UINT) };
 		batch.shader->Bind_Value("TransformIndex", worldIdx);
 
-		// VB/IB bind
 		UINT stride = batch.vertexStride;
 		UINT offset = 0;
-		context->IASetVertexBuffers(0, 1, &batch.pVB, &stride, &offset);
+		ID3D11Buffer* vertexBuffer = batch.pVB;
+		context->IASetVertexBuffers(0, 1, &vertexBuffer, &stride, &offset);
 		context->IASetIndexBuffer(batch.pIB, DXGI_FORMAT_R32_UINT, 0);
 		context->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 		CPipeLine* pipe = m_pRenderSystem->Get_Pipeline();
 		batch.shader->SetConstantBuffer("FrameBuffer", pipe->Get_FrameBuffer());
-		batch.shader->Bind_Value("ObjectBufferArray", { pipe->Get_ObjectResource(), "StructuredBuffer", sizeof(_float4x4)*g_iMaxTransform });
+		batch.shader->Bind_Value(
+			"ObjectBufferArray",
+			{ pipe->Get_ObjectResource(), "StructuredBuffer", sizeof(_float4x4) * g_iMaxTransform }
+		);
 
-		batch.shader->Apply("Opaque", context);
+		// 중요: 패스 적용이 필요하면 반드시 활성화
+		// batch.shader->Apply("Opaque", context);
+
 		batch.material->Apply_Material(context, batch.materialIndex);
 
 		context->DrawIndexed(batch.indexCount, 0, 0);
+		drawnBatchCount += 1;
 
 		batch.material->ResetMaterial(0);
 		batch.lastUsedFrame = m_iFrameIndex;
+
 		for (OPAQUE_PACKET* packetPtr : groupIt->second)
 		{
 			if (packetPtr)
@@ -255,6 +292,7 @@ void CCellBatcher::DrawBatches(ID3D11DeviceContext* context, RenderPass* pass, C
 	}
 
 	Safe_Release(device);
+	return drawnBatchCount;
 }
 
 
@@ -363,6 +401,33 @@ ID3D11InputLayout* CCellBatcher::GetOrCreateBatchInputLayout(
 
 	m_LayoutCache.emplace(key, layout);
 	return layout;
+}
+
+uint64_t CCellBatcher::ComputeGroupHash(const vector<OPAQUE_PACKET*>& packets) const
+{
+	uint64_t hashValue = 1469598103934665603ull;
+
+	for (const OPAQUE_PACKET* packetPtr : packets)
+	{
+		if (!packetPtr || !packetPtr->pWorldMatrix)
+			continue;
+
+		const _float4x4& worldMatrix = *packetPtr->pWorldMatrix;
+
+		// 모델/메쉬 식별
+		hashValue = HashCombine64(hashValue, (uint64_t)(uintptr_t)packetPtr->pModel);
+		hashValue = HashCombine64(hashValue, (uint64_t)packetPtr->DrawIndex);
+		hashValue = HashCombine64(hashValue, (uint64_t)packetPtr->MaterialIndex);
+
+		// 월드 위치(translation) 중심으로 넣기 (회전/스케일까지 포함하면 민감해져서 보통은 위치만)
+		hashValue = HashCombine64(hashValue, HashFloatBits(worldMatrix._41));
+		hashValue = HashCombine64(hashValue, HashFloatBits(worldMatrix._42));
+		hashValue = HashCombine64(hashValue, HashFloatBits(worldMatrix._43));
+	}
+
+	// 개수도 반영
+	hashValue = HashCombine64(hashValue, (uint64_t)packets.size());
+	return hashValue;
 }
 
 CCellBatcher* CCellBatcher::Create(CRenderSystem* pRenderSys, const Options& opt)
