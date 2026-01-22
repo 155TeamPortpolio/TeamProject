@@ -17,7 +17,6 @@ public:
 
 public:
     HRESULT Render_HDRBloom();
-    HRESULT Render_Distortion();
     HRESULT Render_RadialBlur();
     HRESULT Render_Fog();
     HRESULT Render_Final();
@@ -28,8 +27,8 @@ public:
     void    Apply_RadialBlur(_float duration,  _float2 center = _float2(0.5,0.5));
     void    Set_AddictiveColor(_float3* color);
 
-    void Register_AddictiveColor(_float3* pColor);
-    void UnRegister_AddictiveColor();
+    void    Register_AddictiveColor(_float3* pColor);
+    void    UnRegister_AddictiveColor();
 
 public:
     void Update(_float dt);
@@ -44,9 +43,7 @@ private:
     HRESULT Clear_PostProcess();
 
 private:
-    ID3D11ShaderResourceView* m_pDistortionNoiseTexture = { nullptr };
     vector<POST_PROCESS_COMMAND> m_PostCommands;
-
     //*≥Î¿Ã¡Ó*
     unordered_map<string, CTexture*> m_pNoiseTextures;
     vector<CTexture*>   m_pApplyNoiseTextures;

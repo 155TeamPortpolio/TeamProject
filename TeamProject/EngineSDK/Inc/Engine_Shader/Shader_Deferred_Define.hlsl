@@ -119,6 +119,9 @@ Texture2D UI2DTexture : register(t30);
 Texture2D UI3DTexture : register(t31);
 
 //式式式式式式式式式式式式式Post式式式式式式式式式式式式式式式
+//==Distortion==
+Texture2D DistortionTexture : register(t36);
+
 //===Bloom===
 Texture2D EffectBrightTexture : register(t40);
 Texture2D EffectBloomInfo : register(t41);

@@ -5,6 +5,7 @@
 #include "Animator3D.h"
 #include "SkeletalModel.h"
 #include "CharacterController.h"
+#include "EventListener.h"
 #include "DataBase.h"
 
 CServiceNpc::CServiceNpc()
@@ -17,6 +18,24 @@ CServiceNpc::CServiceNpc(const CServiceNpc& rhs)
 {
 }
 
+void CServiceNpc::Process_Event(const NPC_INTERACT_DESC& desc)
+{
+	if (desc.strName != m_strName) return;
+
+	switch (desc.bResult)
+	{
+	case DialogueResult::Success:
+		Success();
+		break;
+	case DialogueResult::Running:
+		Running();
+		break;
+	case DialogueResult::Fail:
+		Fail();
+		break;
+	}
+}
+
 HRESULT CServiceNpc::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
@@ -24,6 +43,7 @@ HRESULT CServiceNpc::Initialize_Prototype()
 	Add_Component<CSkeletalModel>();
 	Add_Component<CMaterial>();
 	Add_Component<CCharacterController>();
+	Add_Component<CEventListener>();
 
 	return S_OK;
 }
@@ -32,6 +52,10 @@ HRESULT CServiceNpc::Initialize(INIT_DESC* pArg)
 {
 	__super::Initialize(pArg);
 
+	Get_Component<CEventListener>()->Add_Listener<NPC_INTERACT_DESC>([&](const NPC_INTERACT_DESC& desc)
+		{
+			Process_Event(desc);
+		});
 	return S_OK;
 }
 
