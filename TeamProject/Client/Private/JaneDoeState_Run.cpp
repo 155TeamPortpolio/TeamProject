@@ -103,7 +103,8 @@ void CJaneDoeState_Run_End::Enter(CJaneDoe* pOwner)
 void CJaneDoeState_Run_Turnback::Enter(CJaneDoe* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "TurnBack")
-        .Speed(1.2f)
+        .Speed(1.5f)
+        .EndAt(0.33f)
         .Apply();
     pOwner->Reset_InputBuffer();
     pOwner->Set_ResetMove(true);
@@ -117,7 +118,7 @@ void CJaneDoeState_Run_Turnback::Update(CJaneDoe* pOwner, _float dt)
         vInputDir.Normalize();
         pOwner->Rotate(vInputDir);
     }
-    if (m_fAnimProgress > 0.5f && pOwner->Is_Move())
+    if (Is_AnimEnd() && pOwner->Is_Move())
     {
         IHState<CJaneDoe>* pRunState = Get_ParentState();
         if (pRunState && pRunState->Get_SubStateMachine())

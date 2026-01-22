@@ -34,13 +34,16 @@ private:
 	void			KeyInput();
 	void			Compute_Ray();
 	void			Place_Object(PHYSICS_RAY_HIT* pRayHit);
+	void			Place_BattleData(PHYSICS_RAY_HIT* pRayHit);
 	// 기존 레이피킹 방식. 사용X
 	void			Set_ObjectPicking(_bool is);
 	void			PreSet_ModelResource();
 	void			Save_MapData();
 	void			Save_EntityData();
+	void			Save_BattleData();
 	void			Select_PlaceType(const string& tagLabel);
 	void			Select_TriggerType();
+	void			Select_BattleDataType();
 	void			Setting_SelectType();
 
 	void			Render_ClearLayer();
@@ -74,6 +77,12 @@ private:
 	/* For.Entity */
 	_float3				m_vEntitySize = { 1.f, 1.f, 1.f };;
 	_int				m_iEntityIndex = {};
+
+	/* For.BattleData */
+	BATTLE_TYPE			m_eBattlyDataType = {};
+	_float3				m_vBattleDataSize = { 1.f, 1.f, 1.f };;
+	_int				m_iSpawnerIndex = {};
+	_int				m_iMonsterIndex = {};
 
 	/* For.Data */
 	MapData_Header	m_MapData = {};
