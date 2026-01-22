@@ -5,6 +5,8 @@ float4x4 g_worldMatrix;
 uint RGBMask;
 uint ColorMode;
 float Progress;
+float ScreenWidth;
+float ScreenHeight;
 
 /* Texture */
 #define NONE  0
@@ -53,6 +55,14 @@ float4 ApplySamplerMode(uint samplerMode,float2 texCoord ,Texture2D sampleTextur
     
 }
 
+float3 BoostBrightColor(float3 c, float boost, float start)
+{
+    float lum = dot(c, float3(0.2126, 0.7152, 0.0722));
+    float t = saturate((lum - start) / (1.0 - start)); // start=0.3~0.6
+    return c * (1.0 + boost * t); // boost=0.3~1.0
+}
+
+
 /*Color*/
 float4 vBaseColor;
 
@@ -75,9 +85,6 @@ float EnableDissolve;
 float DissolveProgress;
 float DissolveSoftness;
 
-/*Distortion Params*/
-
-
 /*Noise Params*/
 float EnableNoise;
 float NoiseStrength;
@@ -88,6 +95,12 @@ float ElapsedTime;
 /*Mask Params*/
 float EnableMask;
 float MaskTilling;
+
+/*Distortion Params*/
+float EnableDistortion;
+float DistortionStrength;
+float DistortionTilling;
+float DistortionUVSpeed;
 
 struct VS_IN
 {
@@ -178,8 +191,11 @@ PS_OUT PS_MAIN_DEFAULT(PS_IN In)
     float fMask = ApplySamplerMode(SamplerMode, In.vTexcoord * MaskTilling, AlphaMaskTexture).r;
     fMask = lerp(1.f, fMask, EnableMask);
     
-    //if (fDissolveMask < DissolveProgress)
-    //    discard;
+    /* Distortion */
+    float2 vDistortionTexcoord = In.vTexcoord * DistortionTilling + ElapsedTime * DistortionUVSpeed;
+    float2 vDistortion = ApplySamplerMode(SamplerMode, vDistortionTexcoord, DistortionTexture).rg;
+    vDistortion = vDistortion * DistortionStrength * float2(1.f / ScreenWidth, 1.f / ScreenHeight) * EnableDistortion;
+    
     
     float4 vResult = float4(1.f, 1.f, 1.f, 1.f);
     
@@ -227,7 +243,7 @@ PS_OUT PS_MAIN_DEFAULT(PS_IN In)
     Out.vBloomAcc.a = fAlpha;
     Out.vBloomInfo = float4(0.f, 1.5f, 0.f, 0.f);
     Out.vRevealage = float4(fAlpha, fAlpha, fAlpha, fAlpha);
-    Out.vDistortionAcc = float4(0.f, 0.f, 0.f, 0.f);
+    Out.vDistortionAcc = float4(vDistortion * fAlpha, 0.f, fAlpha);
     
     return Out;
 }

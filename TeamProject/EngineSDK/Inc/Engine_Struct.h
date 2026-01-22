@@ -475,6 +475,7 @@ namespace Engine
 		string NoiseTextureTag{};
 		string DissolveTextureTag{};
 		string MaskTextureTag{};
+		string DistortionTextureTag{};
 
 		_float3 vOffsetPosition{};
 		_float4 vOffsetQuaternion{};
@@ -530,6 +531,12 @@ namespace Engine
 		/* Mask */
 		_float fEnableMask{};
 		_float fMaskTilling{};
+
+		/* Distortion */
+		_float fEnableDistortion{};
+		_float fDistortionStrength{};
+		_float fDistortionTilling{};
+		_float2 vDistortionUVSpeed{};
 
 		static tagMeshNode FromJson(nlohmann::ordered_json& json);
 	}MESH_NODE;

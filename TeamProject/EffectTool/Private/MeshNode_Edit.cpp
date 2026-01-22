@@ -113,6 +113,7 @@ void CMeshNode_Edit::Import(nlohmann::ordered_json& json)
 	m_DissolveTextureTag = json.value("dissolve_texture_tag", "");
 	m_NoiseTextureTag = json.value("noise_texture_tag", "");
 	m_MaskTextureTag = json.value("mask_texture_tag", "");
+	m_DistortionTextureTag = json.value("distortion_texture_tag", "");
 
 	/* Texture Slot Module */
 	m_TextureSlotModule.eSamplerMode = static_cast<TEXTURE_SLOT_MODULE::SAMPLER_MODE>(json.value("sampler_mode", 0));
@@ -182,6 +183,14 @@ void CMeshNode_Edit::Import(nlohmann::ordered_json& json)
 	m_MaskModule.fEnableMask = json.value("enable_mask", 0.f);
 	m_MaskModule.fMaskTilling = json.value("mask_tilling", 0.f);
 
+	/* Distortion Module */
+	m_DistortionModule.fEnableDistortion = json.value("enable_distortion", 0.f);
+	m_DistortionModule.fDistortionStrength = json.value("distortion_strength", 0.f);
+	m_DistortionModule.fDistortionTilling = json.value("distortion_tilling", 0.f);
+	auto distortionUVSpeed = json.value("distortion_uvspeed", json::array({ 0.f,0.f }));
+	m_DistortionModule.vDistortionUVSpeed = _float2(distortionUVSpeed[0], distortionUVSpeed[1]);
+	
+
 	{
 		m_SetMaterial = true;
 
@@ -212,6 +221,12 @@ void CMeshNode_Edit::Import(nlohmann::ordered_json& json)
 		{
 			auto pMaskTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_MaskTextureTag);
 			pMaterialInstance->Set_Param("AlphaMaskTexture", { pMaskTexture->Get_SRV(),"Texture2D",0 });
+		}
+
+		if (!m_DistortionTextureTag.empty())
+		{
+			auto pDistortionTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_DistortionTextureTag);
+			pMaterialInstance->Set_Param("DistortionTexture", { pDistortionTexture->Get_SRV(),"Texture2D",0 });
 		}
 
 		m_SetMaterial = true;
@@ -251,6 +266,7 @@ void CMeshNode_Edit::Export(nlohmann::ordered_json& json)
 		{"dissolve_texture_tag",m_DissolveTextureTag},
 		{"noise_texture_tag",m_NoiseTextureTag},
 		{"mask_texture_tag",m_MaskTextureTag},
+		{"distortion_texture_tag",m_DistortionTextureTag},
 
 		/* Offset Transform */
 		{"offset_position",json::array({vOffsetPosition.x,vOffsetPosition.y,vOffsetPosition.z})},
@@ -315,7 +331,13 @@ void CMeshNode_Edit::Export(nlohmann::ordered_json& json)
 
 		/* Mask */
 		{"enable_mask",m_MaskModule.fEnableMask},
-		{"mask_tilling",m_MaskModule.fMaskTilling}
+		{"mask_tilling",m_MaskModule.fMaskTilling},
+
+		/* Distortion */
+		{"enable_distortion", m_DistortionModule.fEnableDistortion},
+		{"distortion_strength", m_DistortionModule.fDistortionStrength},
+		{"distortion_tilling",m_DistortionModule.fDistortionTilling},
+		{"distortion_uvspeed",json::array({m_DistortionModule.vDistortionUVSpeed.x,m_DistortionModule.vDistortionUVSpeed.y})}
 	};
 }
 
@@ -472,6 +494,8 @@ void CMeshNode_Edit::SetUp_MeshEffect()
 		Add_Texture(TEXTURE_TYPE::DISSOLVE);
 	if (ImGui::Button("Add Mask Texture"))
 		Add_Texture(TEXTURE_TYPE::ALPHA_MASK);
+	if (ImGui::Button("Add Distortion Texture"))
+		Add_Texture(TEXTURE_TYPE::DISTORTION);
 
 	if (ImGui::CollapsingHeader("Texture Slot Module"))
 	{
@@ -581,6 +605,17 @@ void CMeshNode_Edit::SetUp_MeshEffect()
 
 		ImGui::DragFloat("Mask Tilling", &m_MaskModule.fMaskTilling);
 	}
+
+	if (ImGui::CollapsingHeader("Distortion Module"))
+	{
+		static _bool enableDistortion = false;
+		if (ImGui::Checkbox("Enable Distortion", &enableDistortion))
+			m_DistortionModule.fEnableDistortion = enableDistortion ? 1.f : 0.f;
+
+		ImGui::DragFloat("Distortion Strength", &m_DistortionModule.fDistortionStrength);
+		ImGui::DragFloat("Distortion Tilling", &m_DistortionModule.fDistortionTilling);
+		ImGui::DragFloat2("Distortion UVSpeed", &m_DistortionModule.vDistortionUVSpeed.x);
+	}
 }
 
 void CMeshNode_Edit::Add_Texture(TEXTURE_TYPE type)
@@ -619,6 +654,13 @@ void CMeshNode_Edit::Add_Texture(TEXTURE_TYPE type)
 
 			auto pMaskTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_MaskTextureTag);
 			pMaterialInstance->Set_Param("AlphaMaskTexture", { pMaskTexture->Get_SRV(),"Texture2D",0 });
+		}break;
+		case Engine::TEXTURE_TYPE::DISTORTION:
+		{
+			m_DistortionTextureTag = m_pContext->TextureTags[0];
+
+			auto pDistortionTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_DistortionTextureTag);
+			pMaterialInstance->Set_Param("DistortionTexture", { pDistortionTexture->Get_SRV(),"Texture2D",0 });
 		}break;
 		default:
 			break;

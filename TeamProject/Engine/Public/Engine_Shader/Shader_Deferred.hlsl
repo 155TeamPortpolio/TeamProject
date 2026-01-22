@@ -215,7 +215,10 @@ PS_OUT_BACKBUFFER PS_MAIN_COMBINED(PS_IN In)
 
 float4 PS_MAIN_FINAL(PS_IN In) : SV_Target
 {
-    float2 distortion = DistortionTexture.Sample(DefaultSampler, In.vTexcoord).rg;
+    float4 distortionDesc = DistortionCombinedTexture.Sample(DefaultSampler, In.vTexcoord);
+    float2 distortion = distortionDesc.rg;
+    float weight = max(distortionDesc.a, 1e-6);
+    distortion /= weight;
     float2 distortedUV = saturate(In.vTexcoord + distortion);
    
     float4 scene = FinalTexture.Sample(DefaultSampler, distortedUV);

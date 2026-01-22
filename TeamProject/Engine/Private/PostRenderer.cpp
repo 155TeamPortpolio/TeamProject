@@ -161,7 +161,7 @@ HRESULT CPostRenderer::Render_Final()
 	m_pContext->IASetInputLayout(pLayout);
 
 	m_pTargetManager->Bind_Target("Target_Fog", m_pShader, "FinalTexture");
-	//m_pTargetManager->Bind_Target("Target_Distortion_Add", m_pShader, "DistortionTexture");
+	m_pTargetManager->Bind_Target("Target_DistortionAcc", m_pShader, "DistortionCombinedTexture");
 	m_pTargetManager->Bind_Target("Target_Radial", m_pShader, "RadialBloomTexture");
 	
 	m_pTargetManager->Bind_Target("Target_HDR_BlurY", m_pShader, "HDRBloomFinalTexture");

@@ -46,6 +46,9 @@ protected:
     void Bind_Params();
 
     /*Default Params*/
+    _float m_fScreenWidth{};
+    _float m_fScreenHeight{};
+
     _float m_fProgress{};  //전체 진행도
     string m_DiffuseTextureTag{};
     string m_DissolveTextureTag{};

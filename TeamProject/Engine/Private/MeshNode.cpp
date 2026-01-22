@@ -51,6 +51,7 @@ HRESULT CMeshNode::Initialize(INIT_DESC* pArg)
 		m_NoiseTextureTag = pMeshNode->NoiseTextureTag;
 		m_DissolveTextureTag = pMeshNode->DissolveTextureTag;
 		m_MaskTextureTag = pMeshNode->MaskTextureTag;
+		m_DistortionTextureTag = pMeshNode->DistortionTextureTag;
 
 		/* Offset Transform */
 		_vector3 vPosition = pMeshNode->vOffsetPosition;
@@ -109,6 +110,12 @@ HRESULT CMeshNode::Initialize(INIT_DESC* pArg)
 		/* Mask */
 		m_MaskModule.fEnableMask = pMeshNode->fEnableMask;
 		m_MaskModule.fMaskTilling = pMeshNode->fMaskTilling;
+
+		/* Distortion */
+		m_DistortionModule.fEnableDistortion = pMeshNode->fEnableDistortion;
+		m_DistortionModule.fDistortionStrength = pMeshNode->fDistortionStrength;
+		m_DistortionModule.fDistortionTilling = pMeshNode->fDistortionTilling;
+		m_DistortionModule.vDistortionUVSpeed = pMeshNode->vDistortionUVSpeed;
 	}
 
 	auto pMaterialInstance = pMaterial->Get_MaterialInstance(0);
@@ -153,6 +160,19 @@ HRESULT CMeshNode::Initialize(INIT_DESC* pArg)
 			MSG_BOX("Not exist Mask Texture : %s", m_MaskTextureTag.c_str());
 	}
 
+	if (!m_DistortionTextureTag.empty())
+	{
+		auto pDistortionTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_DistortionTextureTag);
+
+		if (pDistortionTexture)
+			pMaterialInstance->Set_Param("DistortionTexture", { pDistortionTexture->Get_SRV(), "Texture2D",0 });
+		else
+			MSG_BOX("Not exist Distortion Texture : %s", m_DistortionTextureTag.c_str());
+	}
+
+	_float2 screenSize = CGameInstance::GetInstance()->Get_ClientSize();
+	m_fScreenWidth = screenSize.x;
+	m_fScreenHeight = screenSize.y;
 	return S_OK;
 }
 
@@ -312,6 +332,8 @@ void CMeshNode::Bind_Params()
 	auto pMaterialInstance = Get_Component<CMaterial>()->Get_MaterialInstance(0);
 
 	pMaterialInstance->Set_Param("Progress", { &m_fProgress,"float",sizeof(_float) });
+	pMaterialInstance->Set_Param("ScreenWidth", { &m_fScreenWidth,"float",sizeof(_float) });
+	pMaterialInstance->Set_Param("ScreenHeight", { &m_fScreenHeight,"float",sizeof(_float) });
 
 	/* Texture */
 	pMaterialInstance->Set_Param("SamplerMode", { &m_TextureSlotModule.iSamplerModeParam,"uint",sizeof(_uint)});
@@ -353,7 +375,8 @@ void CMeshNode::Bind_Params()
 	pMaterialInstance->Set_Param("MaskTilling", { &m_MaskModule.fMaskTilling,"float",sizeof(_float) });
 
 	/* Distortion */
+	pMaterialInstance->Set_Param("EnableDistortion", { &m_DistortionModule.fEnableDistortion,"float",sizeof(_float) });
 	pMaterialInstance->Set_Param("DistortionStrength", { &m_DistortionModule.fDistortionStrength,"float",sizeof(_float) });
-	pMaterialInstance->Set_Param("DistortionTilling", { &m_DistortionModule.fTilling,"float",sizeof(_float) });
+	pMaterialInstance->Set_Param("DistortionTilling", { &m_DistortionModule.fDistortionTilling,"float",sizeof(_float) });
 	pMaterialInstance->Set_Param("DistortionUVSpeed", { &m_DistortionModule.vDistortionUVSpeed,"float2",sizeof(_float2) });
 }
