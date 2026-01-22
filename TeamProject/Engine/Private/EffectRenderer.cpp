@@ -194,14 +194,17 @@ HRESULT CEffectRenderer::Ready_Target()
 	RenderTargetDesc RevealageDesc = { "Target_Revealage" , DXGI_FORMAT_R16G16B16A16_UNORM , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(1.f, 1.f, 1.f, 1.f) ,ViewportDesc.Width, ViewportDesc.Height };
 	m_pTargetManager->Create_Target(RevealageDesc);
 
+	RenderTargetDesc DistortionAccDesc = { "Target_DistortionAcc",DXGI_FORMAT_R16G16B16A16_FLOAT, DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.f,0.f,0.f,0.f), ViewportDesc.Width,ViewportDesc.Height };
+	m_pTargetManager->Create_Target(DistortionAccDesc);
+
 	RenderTargetDesc DiffuseDesc = { "Target_DiffuseEffect" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(1.f, 1.f, 1.f, 1.f) ,ViewportDesc.Width, ViewportDesc.Height };
 	m_pTargetManager->Create_Target(DiffuseDesc);
 
 	RenderTargetDesc BloomDesc = { "Target_BloomEffect" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.0f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
 	m_pTargetManager->Create_Target(BloomDesc);
 
-	RenderTargetDesc DepthlDesc = { "Target_Distortion" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.0f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
-	m_pTargetManager->Create_Target(DepthlDesc);
+	RenderTargetDesc DistortionDesc = { "Target_DistortionEffect" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.0f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
+	m_pTargetManager->Create_Target(DistortionDesc);
 
 	RenderTargetDesc BloomBlurX_EffectDesc = { "Target_BloomBlurX_Effect" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT, _float4(0.0f, 0.0f, 0.0f, 0.0f) ,ViewportDesc.Width, ViewportDesc.Height };
 	m_pTargetManager->Create_Target(BloomBlurX_EffectDesc);
@@ -226,6 +229,8 @@ HRESULT CEffectRenderer::Ready_MRT()
 			return E_FAIL;
 		if (FAILED(m_pTargetManager->Add_MRT("MRT_WeightOIT", "Target_Revealage")))
 			return E_FAIL;
+		if (FAILED(m_pTargetManager->Add_MRT("MRT_WeightOIT", "Target_DistortionAcc")))
+			return E_FAIL;
 	}
 
 	{
@@ -233,8 +238,8 @@ HRESULT CEffectRenderer::Ready_MRT()
 			return E_FAIL;
 		if (FAILED(m_pTargetManager->Add_MRT("MRT_Effect", "Target_BloomEffect")))
 			return E_FAIL;
-		//if (FAILED(m_pTargetManager->Add_MRT("MRT_Effect", "Target_Distortion")))
-		//	return E_FAIL;
+		if (FAILED(m_pTargetManager->Add_MRT("MRT_Effect", "Target_DistortionEffect")))
+			return E_FAIL;
 	}
 
 	{
