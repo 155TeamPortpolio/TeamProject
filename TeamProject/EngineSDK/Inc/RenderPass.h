@@ -10,7 +10,7 @@ protected:
 	virtual ~RenderPass() DEFAULT;
 public:
 	virtual void Execute(ID3D11DeviceContext* pContext, class CRenderer* pRenderer) PURE;
-protected:
+public:
 	void BindConstant(ID3D11DeviceContext* pContext,class CModel* pModel, class CMaterial* pMaterial , _uint DrawIndex, _uint MaterialIndex, class CRenderer* pRenderer);
 	void BindConstant(ID3D11DeviceContext* pContext,class CSprite2D* pSprite , string passConstant, class CRenderer* pRenderer);
 protected:

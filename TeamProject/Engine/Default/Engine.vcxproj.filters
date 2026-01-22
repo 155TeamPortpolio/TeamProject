@@ -597,6 +597,15 @@
     <ClInclude Include="..\Public\CamFXData.h">
       <Filter>01. Utility\07. CameraManager\CamFXControllers</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\MeshSection.h">
+      <Filter>01. Utility\05. Resources\03. ModelData\Mesh\Section</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\StaticBathcer.h">
+      <Filter>01. Utility\06. RenderSystem\RenderPass\StaticBatcher</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CellBatcher.h">
+      <Filter>01. Utility\06. RenderSystem\RenderPass\StaticBatcher</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <!-- Filter Definitions -->
@@ -1113,6 +1122,12 @@
     <Filter Include="01. Utility\07. CameraManager\CamFXControllers">
       <UniqueIdentifier>{f00f7d2f-c57c-47bf-9d75-ffa2c952a3f6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\05. Resources\03. ModelData\Mesh\Section">
+      <UniqueIdentifier>{5532d0ff-12ea-4619-87ce-53057caa7081}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\06. RenderSystem\RenderPass\StaticBatcher">
+      <UniqueIdentifier>{240c392d-3b5b-4570-b94d-edb80e7ec869}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <!-- ClCompile 항목들 - 중복 제거 버전 -->
@@ -1574,6 +1589,9 @@
     </ClCompile>
     <ClCompile Include="..\private\CamFXControllers.cpp">
       <Filter>01. Utility\07. CameraManager\CamFXControllers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CellBatcher.cpp">
+      <Filter>01. Utility\06. RenderSystem\RenderPass\StaticBatcher</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

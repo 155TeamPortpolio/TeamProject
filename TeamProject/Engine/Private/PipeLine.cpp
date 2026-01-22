@@ -370,8 +370,12 @@ HRESULT CPipeLine::Begin_ObjectBuffer(ID3D11DeviceContext* pContext)
 	if (FAILED(hr))
 		return hr;
 
-	m_pObjectArray = reinterpret_cast<_float4x4*>(m_mappedObjectBuffer.pData);
-	m_ObjectOffset = 0;
+	m_pObjectArray = reinterpret_cast<_float4x4*>(m_mappedObjectBuffer.pData); 
+	_float4x4 identity;
+	XMStoreFloat4x4(&identity, XMMatrixIdentity());
+	m_pObjectArray[0] = identity;
+
+	m_ObjectOffset = 1;
 	return S_OK;
 }
 

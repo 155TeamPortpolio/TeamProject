@@ -101,18 +101,33 @@ void StaticOpaquePass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRender
 
 	m_VisiblePackets = pPipeLine->OcculsionCulling(frustums);
 
+	m_pRenderSystem->BatchBegin();
+
+	for (auto& p : m_VisiblePackets)
+		p.isBatched = false; 
+
+	for (auto& p : m_VisiblePackets) {
+		m_pRenderSystem->BatchVisiblePacket(p);
+	}
+
+	m_pRenderSystem->BuildBatchesIfNeeded();
+	m_pRenderSystem->DrawBatches(this, pRenderer);
+
 	for (auto& packet : m_VisiblePackets)
 	{
+		if (packet.isBatched)
+			continue;
+
 		if (packet.pMaterial->Get_Shader(packet.MaterialIndex) != pCurShader) {
 			BindConstant(pContext, packet.pModel, packet.pMaterial, packet.DrawIndex, packet.MaterialIndex, pRenderer);
 		}
-
+	
 		SHADER_PARAM WorldMatParam{ &packet.TransformIndex, "uint",sizeof(UINT) };
 		pCurShader->Bind_Value("TransformIndex", WorldMatParam);
-
+	
 		SHADER_PARAM LookParam{ &packet.LookVector, "vector",sizeof(_vector) };
 		pCurShader->Bind_Value("vLookVector", LookParam);
-
+	
 		packet.pMaterial->Apply_Material(pContext, packet.MaterialIndex);
 		packet.pModel->Draw(pContext, packet.DrawIndex);
 		packet.pMaterial->ResetMaterial(packet.DrawIndex);

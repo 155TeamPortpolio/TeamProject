@@ -16,6 +16,7 @@
 #include "UIRenderer.h"
 #include "PostRenderer.h"
 #include "ForwardRenderer.h"
+#include "CellBatcher.h"
 
 CRenderSystem::CRenderSystem(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:m_pDevice{ pDevice }, m_pContext{ pContext }
@@ -55,6 +56,7 @@ HRESULT CRenderSystem::Initialize()
 	m_pPost = CPostRenderer::Create(m_pDevice, m_pContext, m_pTargetManager, m_pPipeLine);
 	m_pUI = CUIRenderer::Create(m_pDevice, m_pContext, m_pTargetManager, m_pPipeLine);
 	m_pEffect = CEffectRenderer::Create(m_pDevice, m_pContext, m_pTargetManager, m_pPipeLine);
+	m_pBatcher = CCellBatcher::Create(this);
 
 	return S_OK;
 }
@@ -173,6 +175,27 @@ void CRenderSystem::Register_AddictiveColor(_float3* pColor)
 void CRenderSystem::UnRegister_AddictiveColor()
 {
 	m_pPost->UnRegister_AddictiveColor();
+}
+
+void CRenderSystem::BatchBegin()
+{
+	_uint FrameIndex = GameInstance()->Get_FrameCount();
+	m_pBatcher->BeginBatchFrame(FrameIndex);
+}
+
+void CRenderSystem::BatchVisiblePacket(OPAQUE_PACKET& packet)
+{
+	m_pBatcher->SubmitVisiblePacket(packet);
+}
+
+void CRenderSystem::BuildBatchesIfNeeded()
+{
+	m_pBatcher->BuildBatchesIfNeeded(m_pDevice);
+}
+
+void CRenderSystem::DrawBatches(RenderPass* pPass, CRenderer* pRenderer)
+{
+	m_pBatcher->DrawBatches(m_pContext, pPass, pRenderer);
 }
 
 
