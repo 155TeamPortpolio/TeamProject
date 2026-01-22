@@ -33,27 +33,29 @@ void CButtonUI::Awake()
 void CButtonUI::Enter_Hover()
 {
     if (STATE::DISABLED == m_eState) return;
-
-    OutputDebugString(L"Enter_Hover\n");
+     
+    OutputDebugString(L"EnterHover\n");
     m_eState = STATE::HOVERED;
+    if (m_EnterHover)
+        m_EnterHover();
 }
 
 void CButtonUI::Exit_Hover()
 {
-    OutputDebugString(L"Exit_Hover\n");
+    OutputDebugString(L"ExitHover\n");
     m_eState = STATE::NORMAL;
+    if (m_ExitHover)
+        m_ExitHover();
 }
 
 void CButtonUI::OnClick()
 {
     if (STATE::DISABLED == m_eState) return;
 
-    OutputDebugString(L"Clicked\n");
+    OutputDebugString(L"OnClick\n");
     m_eState = STATE::CLICKED;
-
-    BTN_EVENT event = {};
-    event.msg = Helper::ConvertToWideString(m_szEventMsg);
-    CGameInstance::GetInstance()->Get_EventSystem()->Broadcast<BTN_EVENT>({ event });
+    if (m_OnClick)
+        m_OnClick();
 }
 
 void CButtonUI::Load(const nlohmann::ordered_json& data)
