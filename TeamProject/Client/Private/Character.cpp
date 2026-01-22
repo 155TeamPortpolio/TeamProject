@@ -42,6 +42,8 @@ void CCharacter::DeActive_Character()
 	SetRenderLayer(RENDER_LAYER::None);
 	m_fDissolveProgress = 0.f;
 	m_iInvincibleCount = 0;
+	m_inputInfo = {};
+	Reset_State();
 }
 
 void CCharacter::Process_RootMotion(_float dt, const ROOTMOTION_DESC& desc)
@@ -264,6 +266,8 @@ void CCharacter::OnTriggerExit(CGameObject* pOther)
 
 void CCharacter::On_Move(const InputInfo& inputInfo)
 {
+	if (!m_bIsMain)	return;
+
 	_bool prevResetMove = m_inputInfo.resetMove;
 	m_inputInfo = inputInfo;
 	m_inputInfo.resetMove = prevResetMove;

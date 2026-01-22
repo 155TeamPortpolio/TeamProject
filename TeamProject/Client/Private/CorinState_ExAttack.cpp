@@ -35,6 +35,7 @@ void CCorinState_ExAttack::Enter(CCorin* pOwner)
     // current, special º¯°æ
     if (bEnhanced)
     {
+        pOwner->Get_StateMachine()->Set_Bool("Resistance", true);
         pOwner->Set_CurrentEnergy(tDesc.fCurrentEnergy - 20.f);
         pOwner->Set_SpecialEnergy(20.f);
     }
@@ -65,11 +66,42 @@ void CCorinState_ExAttack::Update(CCorin* pOwner, _float dt)
             }
         }
     }
+
+    auto pCorinState = pOwner->Get_StateMachine();
+    if (pCorinState->Get_Bool("OutReserve"))
+    {
+        if (m_pSubStateMachine->Get_CurrentStateName() == "End" ||
+            m_pSubStateMachine->Get_CurrentStateName() == "Explode" ||
+            Is_AnimEnd())
+        {
+            pCorinState->Set_Trigger("SwitchOut");
+            pCorinState->Set_Bool("OutReserve", false);
+        }
+    }
+
     __super::Update(pOwner, dt);
 }
 
 void CCorinState_ExAttack::Exit(CCorin* pOwner)
 {
+    pOwner->Set_SpecialEnergy(80.f);
+    pOwner->Get_StateMachine()->Set_Bool("Resistance", false);
+
+    if (pOwner->Is_MainCharacter())
+    {
+        UI_ACTION_DESC desc;
+        desc.eType = UI_ACTION_TYPE::SPECIAL;
+        if (pOwner->Get_EnergyDesc().fCurrentEnergy >= pOwner->Get_EnergyDesc().fSpecialEnergy)
+        {
+            desc.eState = UI_ACTION_STATE::AVAILABLE;
+        }
+        else
+        {
+            desc.eState = UI_ACTION_STATE::ENABLE;
+        }
+        EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
+    }
+
     __super::Exit(pOwner);
 }
 
@@ -103,11 +135,22 @@ void CCorinState_ExAttack_Start::Update(CCorin* pOwner, _float dt)
         if (Event.Type != CLIP_EVENT_TYPE::NOTIFY) continue;
         if (Event.Tag == "SawOnce")
         {
-            pOwner->Begin_AttackCollider("Saw", { HIT_TYPE::ONCE, DAMAGE_TYPE::NORMAL, Helper::Get_Random_Float(20,40), 0.f });
+            pOwner->Begin_AttackCollider("Saw", 
+                HitDesc()
+                .Type(HIT_TYPE::ONCE)
+                .Damage(Helper::Get_Random_Float(20,40), DAMAGE_TYPE::NORMAL)
+                .Charge(0.f,100.f)
+                );
         }
         else if (Event.Tag == "SawInterval")
         {
-            pOwner->Begin_AttackCollider("Saw", { HIT_TYPE::INTERVAL, DAMAGE_TYPE::NORMAL, Helper::Get_Random_Float(5,10), 0.1f });
+            pOwner->Begin_AttackCollider("Saw",
+                HitDesc()
+                .Type(HIT_TYPE::INTERVAL)
+                .Damage(Helper::Get_Random_Float(5.f, 10.f), DAMAGE_TYPE::NORMAL)
+                .Interval(0.1f)
+                .Charge(0.f, 50.f)
+            );
         }
         else if (Event.Tag == "SawEnd")
         {
@@ -157,8 +200,11 @@ void CCorinState_ExAttack_Loop::Update(CCorin* pOwner, _float dt)
         ENUM(CCorin::ROOTMOTION_MASK::MOVE) |
         ENUM(CCorin::ROOTMOTION_MASK::QUATERNION));
 
-    auto desc = pOwner->Get_EnergyDesc();
-    pOwner->Set_CurrentEnergy(desc.fCurrentEnergy - desc.fEnergyWeight * dt);
+    if(bEnhanced)
+    {
+        auto desc = pOwner->Get_EnergyDesc();
+        pOwner->Set_CurrentEnergy(desc.fCurrentEnergy - desc.fEnergyWeight * dt);
+    }
 }
 
 void CCorinState_ExAttack_Loop_Walk::Enter(CCorin* pOwner)

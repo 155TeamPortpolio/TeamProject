@@ -134,6 +134,8 @@ public:
 	virtual void Free() override { __super::Free(); }
 
 private:
+	void Update_Effects(CSacrifice* pOwner);
+
 };
 
 class CSacrificeState_Attack_07_Phase1 : public IBaseState<CSacrifice>

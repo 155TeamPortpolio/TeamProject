@@ -22,10 +22,10 @@ public:
     virtual _bool Mouse_Hold(MOUSE_BTN btn)override { return m_Mouse.mouseKey[static_cast<int>(btn)].state == KEY_STATE::HOLD; } ;
     virtual _bool Mouse_Away(MOUSE_BTN btn)override { return m_Mouse.mouseKey[static_cast<int>(btn)].state == KEY_STATE::AWAY; } ;
     virtual _bool Mouse_Down(MOUSE_BTN btn)override { return Mouse_Tap(btn) || Mouse_Hold(btn); }
-    virtual const _float& Mouse_DeltaX() override { return m_Mouse.fDeltaX; } ;
-    virtual const _float& Mouse_DeltaY()override { return m_Mouse.fDeltaY; } ;
-    virtual const _float& Mouse_DeltaW() override { return m_Mouse.fWheelDelta; } ;
-    virtual const _float2& Mouse_Pos() override;
+    virtual _float  Mouse_DeltaX() override { return m_Mouse.fDeltaX; } ;
+    virtual _float  Mouse_DeltaY()override { return m_Mouse.fDeltaY; } ;
+    virtual _float  Mouse_DeltaW() override { return m_Mouse.fWheelDelta; } ;
+    virtual _float2 Mouse_Pos() override;
 
     void Process_Input(LPARAM lParam);
 

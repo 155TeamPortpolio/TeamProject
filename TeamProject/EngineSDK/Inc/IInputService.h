@@ -20,10 +20,10 @@ public:
     virtual _bool Mouse_Away(MOUSE_BTN btn) PURE;
     virtual _bool Mouse_Down(MOUSE_BTN btn) PURE;
 
-    virtual const _float& Mouse_DeltaX() PURE;
-    virtual const _float& Mouse_DeltaY() PURE;
-    virtual const _float& Mouse_DeltaW()PURE;
-    virtual const _float2& Mouse_Pos() PURE;
+    virtual _float Mouse_DeltaX() PURE;
+    virtual _float Mouse_DeltaY() PURE;
+    virtual _float Mouse_DeltaW()PURE;
+    virtual _float2 Mouse_Pos() PURE;
 
     virtual vector<KEY_DESC> GetPressedKeys() PURE;
     virtual vector<KEY_DESC> GetPressedMouse() PURE;

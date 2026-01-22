@@ -28,7 +28,98 @@
         1.0
     ],
     "pass": "Opaque",
-    "animClips": [],
+    "animClips": [
+        {
+            "duration": 0.20000000298023224,
+            "keyframes": [
+                {
+                    "angle": 0.0,
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        0.0
+                    ],
+                    "easeType": 7,
+                    "position": [
+                        0.0,
+                        20.0
+                    ],
+                    "scale": [
+                        1.0,
+                        1.0
+                    ],
+                    "time": 0.0
+                },
+                {
+                    "angle": 0.0,
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "easeType": 0,
+                    "position": [
+                        0.0,
+                        0.0
+                    ],
+                    "scale": [
+                        1.0,
+                        1.0
+                    ],
+                    "time": 0.20000000298023224
+                }
+            ],
+            "loop": false,
+            "name": "clip0"
+        },
+        {
+            "duration": 0.20000000298023224,
+            "keyframes": [
+                {
+                    "angle": 0.0,
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "easeType": 5,
+                    "position": [
+                        0.0,
+                        0.0
+                    ],
+                    "scale": [
+                        1.0,
+                        1.0
+                    ],
+                    "time": 0.0
+                },
+                {
+                    "angle": 0.0,
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        0.0
+                    ],
+                    "easeType": 0,
+                    "position": [
+                        0.0,
+                        20.0
+                    ],
+                    "scale": [
+                        1.0,
+                        1.0
+                    ],
+                    "time": 0.20000000298023224
+                }
+            ],
+            "loop": false,
+            "name": "clip1"
+        }
+    ],
     "children": [
         {
             "alive": true,
@@ -187,7 +278,7 @@
             "children": [
                 {
                     "alive": true,
-                    "instanceName": "text",
+                    "instanceName": "message",
                     "transform": {
                         "anchor": 0,
                         "anchorOffset": [
@@ -219,7 +310,7 @@
                     "children": [],
                     "typeTag": "Text",
                     "text": {
-                        "content": "물론 데미르 할아버지는 항상 말을 하다 마셔서, 우리 어머니가 화가 났을 때\n찢어버린 만화책보다 이해하기 어렵지만... 계속 듣다 보니 당시의 일을 많이 알 수 \n있었어",
+                        "content": "메세지",
                         "fontTag": "NanumSquareNeo.spritefont",
                         "fontScale": 0.5499998927116394,
                         "outlined": false,
@@ -303,7 +394,72 @@
                         1.0
                     ],
                     "pass": "Opaque",
-                    "animClips": [],
+                    "animClips": [
+                        {
+                            "duration": 1.0,
+                            "keyframes": [
+                                {
+                                    "angle": 0.0,
+                                    "color": [
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "easeType": 2,
+                                    "position": [
+                                        0.0,
+                                        0.0
+                                    ],
+                                    "scale": [
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "time": 0.0
+                                },
+                                {
+                                    "angle": 0.0,
+                                    "color": [
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        0.0
+                                    ],
+                                    "easeType": 2,
+                                    "position": [
+                                        0.0,
+                                        0.0
+                                    ],
+                                    "scale": [
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "time": 0.5
+                                },
+                                {
+                                    "angle": 0.0,
+                                    "color": [
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "easeType": 0,
+                                    "position": [
+                                        0.0,
+                                        0.0
+                                    ],
+                                    "scale": [
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "time": 1.0
+                                }
+                            ],
+                            "loop": true,
+                            "name": "clip2"
+                        }
+                    ],
                     "children": [],
                     "typeTag": "Image",
                     "textureTag": "TextArrow.png"
@@ -338,10 +494,111 @@
                         1.0
                     ],
                     "pass": "Opaque",
-                    "animClips": [],
+                    "animClips": [
+                        {
+                            "duration": 1.0,
+                            "keyframes": [
+                                {
+                                    "angle": 0.0,
+                                    "color": [
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        0.0
+                                    ],
+                                    "easeType": 2,
+                                    "position": [
+                                        0.0,
+                                        0.0
+                                    ],
+                                    "scale": [
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "time": 0.0
+                                },
+                                {
+                                    "angle": 0.0,
+                                    "color": [
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "easeType": 2,
+                                    "position": [
+                                        0.0,
+                                        0.0
+                                    ],
+                                    "scale": [
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "time": 0.5
+                                },
+                                {
+                                    "angle": 0.0,
+                                    "color": [
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        0.0
+                                    ],
+                                    "easeType": 0,
+                                    "position": [
+                                        0.0,
+                                        0.0
+                                    ],
+                                    "scale": [
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "time": 1.0
+                                }
+                            ],
+                            "loop": true,
+                            "name": "clip3"
+                        }
+                    ],
                     "children": [],
                     "typeTag": "Image",
                     "textureTag": "TextArrow.png"
+                },
+                {
+                    "alive": true,
+                    "instanceName": "next",
+                    "transform": {
+                        "anchor": 0,
+                        "anchorOffset": [
+                            -30.0,
+                            -30.0
+                        ],
+                        "size": [
+                            40.0,
+                            40.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        1.0,
+                        0.0,
+                        1.0,
+                        0.0
+                    ],
+                    "pass": "Opaque",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "Button",
+                    "textureTag": "empty.png",
+                    "eventMsgTag": ""
                 }
             ],
             "typeTag": "CanvasPanel"

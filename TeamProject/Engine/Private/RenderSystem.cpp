@@ -88,7 +88,6 @@ HRESULT CRenderSystem::Render()
 	m_pPost->Render_HDRBloom();
 	m_pPost->Render_RadialBlur();
 	m_pForward->Render_Bloom();
-	//m_pPost->Render_Distortion();
 	m_pPost->Render_Final();
 
 	m_pUI->Render_CustomTarget();

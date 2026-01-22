@@ -59,6 +59,7 @@ namespace Client {
 		string			Choice_ID1;
 		string			Choice_ID2;
 		string			Choice_ID3;
+		_uint			NextSequenceID = {};
 	};
 
 	struct ChoiceDesc
@@ -89,6 +90,14 @@ namespace Client {
 		_float      fDamage = 0.f;
 		_float      fInterval = 0.f;
 		_uint       iMaxCount = 1;
+		_float      fEnergyCharge = 10.f;
+		_float      fDecibelCharge = 100.f;
+
+		HitDesc& Type(HIT_TYPE e) { eHitType = e; return *this; }
+		HitDesc& Damage(_float f, DAMAGE_TYPE e = DAMAGE_TYPE::NORMAL) { fDamage = f; eDamageType = e; return *this; }
+		HitDesc& Interval(_float f) { fInterval = f; return *this; }
+		HitDesc& MaxCount(_uint i) { iMaxCount = i; return *this; }
+		HitDesc& Charge(_float fEnergy, _float fDecibel) { fEnergyCharge = fEnergy; fDecibelCharge = fDecibel; return *this; }
 	};
 
 	// 게이지 지연및 보간 상태
