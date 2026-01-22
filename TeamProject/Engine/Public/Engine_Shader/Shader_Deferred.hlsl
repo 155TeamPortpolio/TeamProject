@@ -69,8 +69,6 @@ PS_OUT_RESULT PS_FOG(PS_IN In)
     float4 vSkinnedDepthDesc = SkinnedDepthTexture.Sample(DefaultSampler, In.vTexcoord);
     float4 vScene = FinalTexture.Sample(DefaultSampler, In.vTexcoord);
     
-    float effectAlpha = 1 - EffectCombinedTexture.Sample(DefaultSampler, In.vTexcoord).a;
-    
     if (g_FogUse == false)
     {
         Out.vResult = vScene;
@@ -100,7 +98,7 @@ PS_OUT_RESULT PS_FOG(PS_IN In)
     
     float4 vFoggedColor = lerp(g_FogColor, vScene, fFogFactor);
  
-    Out.vResult = lerp(vScene, vFoggedColor, effectAlpha);
+    Out.vResult = vFoggedColor;
     
     return Out;
 }
@@ -199,15 +197,15 @@ PS_OUT_BACKBUFFER PS_MAIN_COMBINED(PS_IN In)
     
     vector vSkinned = SkinnedCombinedTexture.Sample(DefaultSampler, In.vTexcoord);
     vector vStatic = StaticCombinedTexture.Sample(DefaultSampler, In.vTexcoord);
-    vector vEffect = EffectCombinedTexture.Sample(DefaultSampler, In.vTexcoord);
+    //vector vEffect = EffectCombinedTexture.Sample(DefaultSampler, In.vTexcoord);
     vector vUI = UICombinedTexture.Sample(DefaultSampler, In.vTexcoord);
     
     float3 result = vSkinned.rgb;
     
     result.rgb = lerp(result.rgb, vStatic.rgb, vStatic.a);
     result.rgb = lerp(result.rgb, vUI.rgb, vUI.a);
-    float3 finalColor = vEffect.rgb + result * (1.f - vEffect.a);
-    float alpha = max(vEffect.a, max(vUI.a, max(vSkinned.a, vStatic.a)));
+    float3 finalColor = result;
+    float alpha = max(vUI.a, max(vSkinned.a, vStatic.a));
     Out.vBackBuffer = float4(finalColor, alpha);
     
     return Out;
@@ -225,8 +223,10 @@ float4 PS_MAIN_FINAL(PS_IN In) : SV_Target
     float4 radialBloom = RadialBloomTexture.Sample(DefaultSampler, distortedUV);
     float4 hdrBloom = HDRBloomFinalTexture.Sample(DefaultSampler, distortedUV);
     float4 ui = UI2DTexture.Sample(DefaultSampler, In.vTexcoord);
+    float4 effect = EffectCombinedTexture.Sample(DefaultSampler, In.vTexcoord);
     
-    float3 hdrColor = scene.rgb;
+    float3 hdrColor = effect.rgb + scene.rgb * (1.f - effect.a);
+    float alpha = max(scene.a, effect.a);
     
     if (g_UseAddictiveColor)
     {
@@ -241,7 +241,7 @@ float4 PS_MAIN_FINAL(PS_IN In) : SV_Target
     
     float3 finalColor = ui.rgb + mapped * (1.f - ui.a);
 
-    return float4(finalColor, scene.a);
+    return float4(finalColor, alpha);
 }
 
 

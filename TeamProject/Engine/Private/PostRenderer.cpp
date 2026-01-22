@@ -132,7 +132,6 @@ HRESULT CPostRenderer::Render_Fog()
 
 	m_pTargetManager->Bind_Target("Target_Static_Depth", m_pShader, "StaticDepthTexture");
 	m_pTargetManager->Bind_Target("Target_Skinned_Depth", m_pShader, "SkinnedDepthTexture");
-	m_pTargetManager->Bind_Target("Target_Combined_Effect", m_pShader, "EffectCombinedTexture");
 	m_pTargetManager->Bind_Target("Target_Final", m_pShader, "FinalTexture");
 
 	m_pShader->SetConstantBuffer("FrameBuffer", m_pPipeLine->Get_FrameBuffer());
@@ -168,6 +167,7 @@ HRESULT CPostRenderer::Render_Final()
 	m_pTargetManager->Bind_Target("Target_UI", m_pShader, "UI2DTexture");
 
 	m_pTargetManager->Bind_Target("Target_Combined_SkinnedMesh", m_pShader, "SkinnedCombinedTexture");
+	m_pTargetManager->Bind_Target("Target_Combined_Effect", m_pShader, "EffectCombinedTexture");
 
 	if (m_pAddictiveColor != nullptr)
 	{
