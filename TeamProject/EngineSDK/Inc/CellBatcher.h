@@ -15,6 +15,7 @@ public:
         _float cellSize = 30.f;       // 너 월드 스케일에 맞게
         _uint minBatchCount = 6;     // 이 이상일 때만 배칭
         _uint maxBuildPerFrame = 2;  // 프레임 hitch 방지
+        _uint keepCachedFrames = 120;  // 프레임 hitch 방지
     };
     struct CellRange
     {
@@ -31,6 +32,7 @@ public:
     void SubmitVisiblePacket(OPAQUE_PACKET& packet);
     void BuildBatchesIfNeeded(ID3D11Device* device);
     _uint DrawBatches(ID3D11DeviceContext* context, RenderPass* pass, CRenderer* renderer);
+    void TrimCache();
     void EndBatchFrame();
     void Clear(); // 캐시 전부 제거
 

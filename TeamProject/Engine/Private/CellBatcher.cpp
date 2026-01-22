@@ -147,7 +147,8 @@ CCellBatcher::CellRange CCellBatcher::MakeCellRange(const _float4x4& worldMatrix
 void CCellBatcher::BeginBatchFrame(_uint frameIndex)
 {
 	m_iFrameIndex = frameIndex;
-	m_BatchGroups.clear();
+	m_BatchGroups.clear(); // 여기서만 clear
+	TrimCache();
 }
 
 void CCellBatcher::SubmitVisiblePacket(OPAQUE_PACKET& packet)
@@ -226,13 +227,11 @@ void CCellBatcher::BuildBatchesIfNeeded(ID3D11Device* device)
 
 _uint CCellBatcher::DrawBatches(ID3D11DeviceContext* context, RenderPass* pass, CRenderer* renderer)
 {
-	if (!context)
-		return 0;
+	if (!context) return 0;
 
 	ID3D11Device* device = nullptr;
 	context->GetDevice(&device);
-	if (!device)
-		return 0;
+	if (!device) return 0;
 
 	_uint drawnBatchCount = 0;
 
@@ -245,7 +244,22 @@ _uint CCellBatcher::DrawBatches(ID3D11DeviceContext* context, RenderPass* pass, 
 		if (groupIt == m_BatchGroups.end())
 			continue;
 
-		if (!batch.shader || !batch.material)
+		const vector<OPAQUE_PACKET*>& packets = groupIt->second;
+
+		// ✅ 중요: 캐시가 "현재 그룹"과 동일한 멤버인지 확인
+		const uint64_t currentHash = ComputeGroupHash(packets);
+		const bool upToDate =
+			(batch.memberCount == (_uint)packets.size()) &&
+			(batch.memberHash == currentHash);
+
+		if (!upToDate)
+		{
+			// 캐시가 낡았으면 이번 프레임엔 배치로 그리지 말고,
+			// non-batch 경로로 fallback 하게 둬야 깜빡임이 사라짐.
+			continue;
+		}
+
+		if (!batch.shader || !batch.material || !batch.pVB || !batch.pIB)
 			continue;
 
 		ID3D11InputLayout* layout = GetOrCreateBatchInputLayout(device, batch.shader, "Opaque");
@@ -254,7 +268,7 @@ _uint CCellBatcher::DrawBatches(ID3D11DeviceContext* context, RenderPass* pass, 
 
 		context->IASetInputLayout(layout);
 
-		// TransformIndex = 0 (identity)
+		// TransformIndex=0 (Begin_ObjectBuffer에서 [0]=identity 보장)
 		_uint identityIndex = 0;
 		SHADER_PARAM worldIdx{ &identityIndex, "uint", sizeof(UINT) };
 		batch.shader->Bind_Value("TransformIndex", worldIdx);
@@ -273,21 +287,20 @@ _uint CCellBatcher::DrawBatches(ID3D11DeviceContext* context, RenderPass* pass, 
 			{ pipe->Get_ObjectResource(), "StructuredBuffer", sizeof(_float4x4) * g_iMaxTransform }
 		);
 
-		// 중요: 패스 적용이 필요하면 반드시 활성화
+		// 패스 적용이 필요한 엔진이면 여기서 반드시 Apply 해라 (너는 주석처리해둠)
 		// batch.shader->Apply("Opaque", context);
 
 		batch.material->Apply_Material(context, batch.materialIndex);
 
 		context->DrawIndexed(batch.indexCount, 0, 0);
-		drawnBatchCount += 1;
+		drawnBatchCount++;
 
 		batch.material->ResetMaterial(0);
 		batch.lastUsedFrame = m_iFrameIndex;
 
-		for (OPAQUE_PACKET* packetPtr : groupIt->second)
+		for (OPAQUE_PACKET* packetPtr : packets)
 		{
-			if (packetPtr)
-				packetPtr->isBatched = true;
+			if (packetPtr) packetPtr->isBatched = true;
 		}
 	}
 
@@ -296,9 +309,26 @@ _uint CCellBatcher::DrawBatches(ID3D11DeviceContext* context, RenderPass* pass, 
 }
 
 
+void CCellBatcher::TrimCache()
+{
+	if (m_Options.keepCachedFrames == 0) return;
+
+	const _uint limit = m_Options.keepCachedFrames;
+	for (auto it = m_Cached.begin(); it != m_Cached.end(); )
+	{
+		CachedBatch& batch = it->second;
+		if ((m_iFrameIndex - batch.lastUsedFrame) > limit)
+		{
+			Safe_Release(batch.pVB);
+			Safe_Release(batch.pIB);
+			it = m_Cached.erase(it);
+			continue;
+		}
+		++it;
+	}
+}
 void CCellBatcher::EndBatchFrame()
 {
-	m_BatchGroups.clear();
 }
 
 void CCellBatcher::Clear()

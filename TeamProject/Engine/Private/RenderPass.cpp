@@ -102,25 +102,32 @@ void StaticOpaquePass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRender
 	m_VisiblePackets = pPipeLine->OcculsionCulling(frustums);
 
 	m_pRenderSystem->BatchBegin();
-
+	
 	for (auto& p : m_VisiblePackets)
 		p.isBatched = false; 
-
+	
 	for (auto& p : m_VisiblePackets) {
 		m_pRenderSystem->BatchVisiblePacket(p);
 	}
-
-	_uint nonBatch = {};
-	_uint Batched = {};
+	
+	_uint frustumCount = (_uint)frustums.size();
+	_uint occlusionCount = (_uint)m_VisiblePackets.size();
+	
+	_uint nonBatchCount = 0;
+	_uint batchedPacketCount = 0;
+	_uint batchedDrawCount = 0;
+	
 	m_pRenderSystem->BuildBatchesIfNeeded();
-	Batched =m_pRenderSystem->DrawBatches(this, pRenderer);
-
+	batchedDrawCount = m_pRenderSystem->DrawBatches(this, pRenderer);
+	for (const auto& packet : m_VisiblePackets)
+	{
+		if (packet.isBatched) ++batchedPacketCount;
+		else ++nonBatchCount;
+	}
 	for (auto& packet : m_VisiblePackets)
 	{
 		if (packet.isBatched)
 			continue;
-
-		nonBatch ++ ;
 
 		if (packet.pMaterial->Get_Shader(packet.MaterialIndex) != pCurShader) {
 			BindConstant(pContext, packet.pModel, packet.pMaterial, packet.DrawIndex, packet.MaterialIndex, pRenderer);
@@ -136,6 +143,23 @@ void StaticOpaquePass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRender
 		packet.pModel->Draw(pContext, packet.DrawIndex);
 		packet.pMaterial->ResetMaterial(packet.DrawIndex);
 	}
+
+
+	char buffer[256] = {};
+	sprintf_s(
+		buffer,
+		"[Visibility] frustum=%u occlusion=%u | "
+		"[Batch] packets: nonBatch=%u batched=%u sum=%u | "
+		"batchedDraw=%u\n",
+		(unsigned)frustumCount,
+		(unsigned)occlusionCount,
+		(unsigned)nonBatchCount,
+		(unsigned)batchedPacketCount,
+		(unsigned)(nonBatchCount + batchedPacketCount),
+		(unsigned)batchedDrawCount
+	);
+
+	OutputDebugStringA(buffer);
 	m_Packets.clear();
 	m_VisiblePackets.clear();
 }

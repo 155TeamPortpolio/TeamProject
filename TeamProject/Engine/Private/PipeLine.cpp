@@ -383,7 +383,7 @@ HRESULT CPipeLine::End_ObjectBuffer(ID3D11DeviceContext* pContext)
 {
 	pContext->Unmap(m_pDeviceObjectBuffer, 0);
 	m_pObjectArray = nullptr;
-	m_ObjectOffset = 0;
+	m_ObjectOffset = 1;
 	return S_OK;
 }
 
