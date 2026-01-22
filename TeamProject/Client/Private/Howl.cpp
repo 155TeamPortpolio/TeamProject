@@ -78,7 +78,7 @@ void CHowl::Awake()
 
 	__super::Awake();
 
-	Add_InteractZone(Get_Position(), _float3(0.f, 0.f ,1.2f));
+	Add_InteractZone(Get_Position(), _float3(0.f, 0.f ,1.2f), Get_WorldRotation());
 	//CFieldSystem::GetInstance()->Set_DayPahse(DayPhase::LateNight);
 }
 
