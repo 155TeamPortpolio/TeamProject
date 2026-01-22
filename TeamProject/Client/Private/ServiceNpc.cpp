@@ -21,8 +21,9 @@ CServiceNpc::CServiceNpc(const CServiceNpc& rhs)
 void CServiceNpc::Process_Event(const NPC_INTERACT_DESC& desc)
 {
 	if (desc.strName != m_strName) return;
+	m_iNextSequceID = desc.iSequenceID;
 
-	switch (desc.bResult)
+	switch (desc.eResult)
 	{
 	case DialogueResult::Success:
 		Success();
