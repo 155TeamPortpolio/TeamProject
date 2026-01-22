@@ -18,7 +18,16 @@ private:
 	virtual ~CMapLoader() = default;
 
 public:
-	HRESULT	Initialize(const string& TagLevel, const string& TagArea);
+	HRESULT Initialize(const string& TagLevel, const string& TagArea, _uint SplitLoadCount);
+	void	Update_Load();
+
+	OBJECT_HANDLE	MapIndexToEntityHandle(_uint iIndex);
+	
+private:
+	HRESULT			Load_BaseData(const string& TagArea, _bool* CheckMapBase, _bool* CheckEntityBase);
+
+	void			PlaceObjects_Once();
+	void			PlaceObjects_Split();
 
 private:
 	void			Place_PlacedObjectFromLoadData(MapData_Object* pData);
@@ -44,10 +53,15 @@ private:
 	unordered_map<string, unordered_map<_int, vector<FIELD_DATA>>>	m_EntitySlotFormatData;
 
 	_bool			m_hasColliderData = {};
+	unordered_map<_int, OBJECT_HANDLE>	m_EntityObjectHandle;
 
-
+	_bool			m_bHasMapBase{}, m_bHasEntityBase{};
+	_bool			m_bLoaded = { false };
+	_uint			m_LoadDataCount{};
+	_uint			m_iSplitLoadCount = { 0 };
+	
 public:
-	static CMapLoader* Create(const string& TagLevel, const string& TagArea);
+	static CMapLoader* Create(const string& TagLevel, const string& TagArea, _uint iSplitPlaceCount = 0);
 	virtual void Free() override;
 };
 
