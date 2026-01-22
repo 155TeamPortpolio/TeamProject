@@ -86,7 +86,8 @@ string CEntityObject::Get_TypeName()
 	switch (m_iType)
 	{
 	case 0: Typename = "NPC"; break;
-	case 1: Typename = "ETC"; break;
+	case 1: Typename = "Interact"; break;
+	case 2: Typename = "ETC"; break;
 	default:
 		break;
 	}
@@ -98,14 +99,24 @@ _vector4 CEntityObject::Get_TypeColor()
 {
 
 	/*
-	White   = {1.f, 1.f, 1.f, 1.f};
-	Black   = {0.f, 0.f, 0.f, 1.f};
-	Red     = {1.f, 0.f, 0.f, 1.f};
-	Green   = {0.f, 1.f, 0.f, 1.f};
-	Blue    = {0.f, 0.f, 1.f, 1.f};
-	Yellow  = {1.f, 1.f, 0.f, 1.f};
-	Cyan    = {0.f, 1.f, 1.f, 1.f};
-	Magenta = {1.f, 0.f, 1.f, 1.f};
+	White		= {1.f, 1.f, 1.f, 1.f};
+	Black		= {0.f, 0.f, 0.f, 1.f};
+	Red			= {1.f, 0.f, 0.f, 1.f};
+	Green		= {0.f, 1.f, 0.f, 1.f};
+	Blue		= {0.f, 0.f, 1.f, 1.f};
+	Yellow		= {1.f, 1.f, 0.f, 1.f};
+	Cyan		= {0.f, 1.f, 1.f, 1.f};
+	Magenta		= {1.f, 0.f, 1.f, 1.f};
+	Orange		= {1.f, 0.5f, 0.f, 1.f};
+	Purple		= {0.5f, 0.f, 0.5f, 1.f};
+	Pink		= {1.f, 0.75f, 0.8f, 1.f};
+	Lime		= {0.5f, 1.f, 0.f, 1.f};
+	Teal		= {0.f, 0.5f, 0.5f, 1.f};
+	Navy		= {0.f, 0.f, 0.5f, 1.f};
+	Olive		= {0.5f, 0.5f, 0.f, 1.f};
+	Maroon		= {0.5f, 0.f, 0.f, 1.f};
+	SkyBlue		= {0.4f, 0.7f, 1.f, 1.f};
+	LightGray	= {0.8f, 0.8f, 0.8f, 1.f};
 	*/
 	_vector4 TypeColor;
 	
@@ -113,6 +124,7 @@ _vector4 CEntityObject::Get_TypeColor()
 	{
 	case 0: TypeColor = _vector4{ 1.f, 1.f, 0.f, 1.f }; break; // NPC : Yellow
 	case 1: TypeColor = _vector4{ 0.f, 1.f, 1.f, 1.f }; break; // ETC : Cyan
+	case 2: TypeColor = _vector4{ 0.5f, 0.f, 0.5f, 1.f }; break; // ETC : Purple
 	default:TypeColor = _vector4{ 0.f, 1.f, 0.f, 1.f }; break; // DEF : Green 
 	}
 
