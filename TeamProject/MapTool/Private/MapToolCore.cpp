@@ -7,6 +7,7 @@
 #include "PlacedObject.h"
 #include "EntityObject.h"
 #include "Layer.h"
+#include "BattleObject.h"
 
 IMPLEMENT_SINGLETON(CMapToolCore)
 
@@ -18,8 +19,6 @@ CMapToolCore::CMapToolCore()
 
 LOADED_DATA CMapToolCore::Load_MapData()
 {
-	//Clear_Layer(MAPOBJ_TYPE::ALL);
-
 	filesystem::path OpenPath = Helper::OpenFile_Dialogue();
 
 	if (OpenPath.empty())
@@ -314,5 +313,6 @@ void CMapToolCore::Set_AllObjectDebugRender(_bool is)
 void CMapToolCore::Free()
 {
 	__super::Free();
+
 	Safe_Release(m_pGameInstance);
 }

@@ -7,7 +7,7 @@ class CGameInstance;
 NS_END
 
 NS_BEGIN(MapTool)
-
+class CBattleObject;
 class CMapToolCore final : public CBase
 {
 	DECLARE_SINGLETON(CMapToolCore)
@@ -35,11 +35,6 @@ private:
 
 private:
 	CGameInstance*		m_pGameInstance = { nullptr };
-
-	//vector<string>		m_TagLayers;
-	//_int				m_iVersion = { 1 };
-	//_bool				m_isAllDebugRender = { true };
-	//string				m_TagLoadArea = {};
 
 	MAPTOOL_CONTEXT		m_tMapToolContext = {};
 
