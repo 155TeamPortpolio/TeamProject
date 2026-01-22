@@ -21,9 +21,9 @@ typedef struct tagNPCSpec {
 	function<CGameObject* ()> Create;
 }NPC_SPEC;
 
-void Create_Interactable(const FACTORY_DESC& Desc);
+void Create_Objects(const FACTORY_DESC& Desc);
+void Create_ETC(const FACTORY_DESC& Desc);
 void Create_NPC(const FACTORY_DESC& Desc);
-//extern unordered_map<string, Factory::NPC_SPEC> s_NPCTable;
 
 NS_END
 NS_END
