@@ -515,6 +515,7 @@ void CBattlePlayer::NotifyCharacterSwitchOut()
 
 	m_pCurrentCharacter->Set_MainCharacter(false);
 	m_pCurrentCharacter->On_SwitchOut();
+	m_input.ResetBuffer();
 }
 
 void CBattlePlayer::Sync_ActionUI()
