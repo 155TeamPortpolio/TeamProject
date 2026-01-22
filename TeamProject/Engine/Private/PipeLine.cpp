@@ -404,8 +404,12 @@ _uint CPipeLine::Write_SkinningBuffer(vector<_float4x4> bones)
 	return LastOffset;
 }
 
+static uint32_t skinningMapCount = 0;
 HRESULT CPipeLine::Begin_SkinningBuffer(ID3D11DeviceContext* pContext)
 {
+	char eventName[64];
+	sprintf_s(eventName, "Skinning/Map_%u", (unsigned)skinningMapCount++);
+	PROFILE_SCOPE(&g_Profiler, eventName);
 	HRESULT hr = pContext->Map(
 		m_pDeviceSkinningBuffer,
 		0,
@@ -424,10 +428,12 @@ HRESULT CPipeLine::Begin_SkinningBuffer(ID3D11DeviceContext* pContext)
 
 HRESULT CPipeLine::End_SkinningBuffer(ID3D11DeviceContext* pContext)
 {
+	PROFILE_SCOPE(&g_Profiler, "Skinning/Unmap"); 
 	pContext->Unmap(m_pDeviceSkinningBuffer, 0);
 
 	m_pSkinningArray = nullptr;
 	m_SkinningOffset = 0;
+	skinningMapCount = { 0 };
 	return S_OK;
 }
 
