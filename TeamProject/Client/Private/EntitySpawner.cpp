@@ -108,7 +108,7 @@ void Client::Spawner::Create_Interactable(const SPAWNER_DESC& Desc)
 	/* Portal */
 	if (Desc.tagName == "Portal")
 	{
-		auto Slot = Desc.SlotDataValues.find("ETCSlot");
+		auto Slot = Desc.SlotDataValues.find("InteractSlot");
 
 		if (Slot != Desc.SlotDataValues.end()) {
 			for (auto tFieldData : Slot->second) {
