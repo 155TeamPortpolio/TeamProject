@@ -10,7 +10,7 @@ class CCamDirector final : public CBase
     DECLARE_SINGLETON(CCamDirector)
 private:
     CCamDirector();
-    virtual ~CCamDirector() = default;
+    virtual ~CCamDirector() DEFAULT;
 
 public:
     void          SetCam(CamType type, OBJECT_HANDLE handle) { m_camHandles[ENUM(type)] = handle; }
@@ -51,17 +51,13 @@ public:
     _uint         RequestSequence(CamSeqType type, const CamSequenceRequestDesc& req);
     
     _bool         IsPlaying(const string& key) const;
-    _bool         IsPlaying(CamSeqType type) const;
-
-
+    _bool         IsPlaying(CamSeqType type)   const;
     _bool         StopRequest(_uint handle, _float blendOutSec = 0.25f, _bool resetTime = true);
     void          StopAll(_float blendOutSec = 0.25f);
     void          Update(_float dt);
 
 private:
     string        ResolveSeqKey(CamSeqType type) const;
-
-private:
     void          UpdatePlayer();
     void          UpdateInput();
     void          AbortSequenceToOrbit(_bool resetTime);

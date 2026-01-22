@@ -163,21 +163,21 @@ OrbitLockOnEvalResult COrbitLockOnController::Evaluate(_float dt, const OrbitCam
 
 void COrbitLockOnController::StartBlend(_bool entering, const OrbitCamProfile& profile)
 {
-    m_blend.active = true;
+    m_blend.active   = true;
     m_blend.entering = entering;
-    m_blend.elapsed = 0.f;
+    m_blend.elapsed  = 0.f;
 
     if (entering)
     {
         m_blend.duration = profile.lockOnBlendInSec;
-        m_blend.ease = profile.lockOnBlendInEase;
-        m_blend.weight = 0.f;
+        m_blend.ease     = profile.lockOnBlendInEase;
+        m_blend.weight   = 0.f;
     }
     else
     {
         m_blend.duration = profile.lockOnBlendOutSec;
-        m_blend.ease = profile.lockOnBlendOutEase;
-        m_blend.weight = 1.f;
+        m_blend.ease     = profile.lockOnBlendOutEase;
+        m_blend.weight   = 1.f;
     }
 
     if (m_blend.duration <= 0.f) m_blend.duration = 0.0001f;

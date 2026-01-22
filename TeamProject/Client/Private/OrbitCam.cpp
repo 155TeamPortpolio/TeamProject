@@ -1,10 +1,12 @@
 #include "pch.h"
 #include "OrbitCam.h"
 #include "GameInstance.h"
-#include "CharacterController.h"
 #include "Character.h"
-#include "GUIUtil.h"
 #include "Helper_Func.h"
+#include "PhysicsSystem.h"
+
+// Components
+#include "CharacterController.h"
 #include "EventListener.h"
 
 namespace
@@ -21,7 +23,7 @@ void COrbitCam::Awake()
 {
     auto cc = Get_Component<CCharacterController>();
 
-    cc->Resize(0.1f, 0.1f);
+    cc->Resize(0.2f, 0.2f);
     cc->Set_GravityEnabled(false);
     cc->Set_StepOffset(0.f);
     cc->Set_SlopeLimit(89.f);
@@ -36,16 +38,13 @@ HRESULT COrbitCam::Initialize_Prototype()
     Add_Component<CCharacterController>();
     Add_Component<CEventListener>();
 
-    pose.targetRotDeg = Vector2(0.f, profile.startPitchDeg);
-    pose.curRotDeg = pose.targetRotDeg;
-
-    pose.desiredDist = profile.startDistance;
-    pose.targetDist = pose.desiredDist;
-    pose.curDist = pose.targetDist;
-
-    pose.targetPivot = Vector3::Zero;
-    pose.curPivot = pose.targetPivot;
-
+    pose.targetRotDeg        = Vector2(0.f, profile.startPitchDeg);
+    pose.curRotDeg           = pose.targetRotDeg;
+    pose.desiredDist         = profile.startDistance;
+    pose.targetDist          = pose.desiredDist;
+    pose.curDist             = pose.targetDist;
+    pose.targetPivot         = Vector3::Zero;
+    pose.curPivot            = pose.targetPivot;
     pose.pivotOverrideOffset = Vector3::Zero;
 
     ClampTargets();
@@ -69,7 +68,7 @@ HRESULT COrbitCam::Initialize(INIT_DESC* pArg)
 
 void COrbitCam::SetTarget(OBJECT_HANDLE handle)
 {
-    autoYawHoldTimer = profile.autoYawFollowDelay;
+    autoYawHoldTimer  = profile.autoYawFollowDelay;
     hasPrevTargetFoot = false;
 
     const float keepTargetDist = pose.desiredDist;
@@ -103,7 +102,6 @@ void COrbitCam::SetTarget(OBJECT_HANDLE handle)
 
     ClampTargets();
 }
-
 
 void COrbitCam::ClearTarget()
 {
@@ -166,7 +164,6 @@ void COrbitCam::SyncFromCurTransform()
     m_pTransform->LookAt(Vector4(pivot.x, pivot.y, pivot.z, 1.f));
 }
 
-
 void COrbitCam::SetTargetFrontView(CGameObject* obj, float distance, float pitchDeg, float heightOffset)
 {
     targetHandle = obj->Get_Handle();
@@ -209,7 +206,6 @@ void COrbitCam::SetTargetFrontView(CGameObject* obj, float distance, float pitch
     m_pTransform->Set_WorldPos(Vector4(camPos.x, camPos.y, camPos.z, 1.f));
     m_pTransform->LookAt(Vector4(pivot.x, pivot.y, pivot.z, 1.f));
 }
-
 
 void COrbitCam::SnapFromCamPose(const Vector3& camPos, const Quaternion& camRot)
 {
@@ -260,7 +256,6 @@ void COrbitCam::SnapFromCamPose(const Vector3& camPos, const Quaternion& camRot)
     m_pTransform->Set_WorldPos(Vector4(camPos.x, camPos.y, camPos.z, 1.f));
     m_pTransform->LookAt(Vector4(desiredPivot.x, desiredPivot.y, desiredPivot.z, 1.f));
 }
-
 
 void COrbitCam::CaptureSnapshot(OrbitCamSnapshot& out) const
 {
@@ -349,42 +344,60 @@ void COrbitCam::Priority_Update(_float dt)
 
         Vector3 backDir = Vector3::Transform(Vector3(0.f, 0.f, -1.f), q);
         backDir.Normalize();
-        const Vector3 pivot = pose.targetPivot;
 
+        const Vector3 pivot = pose.targetPivot;
         const float desired = pose.desiredDist;
         const float allowed = GetCollisionAllowedDist(pivot, backDir, desired);
-        const float nextTarget = allowed;
 
-        const float speed = (nextTarget < pose.targetDist) ? profile.collisionZoomInSpeed : profile.collisionZoomOutSpeed;
-        pose.targetDist = MoveTowards(pose.targetDist, nextTarget, speed * dt);
+        const _bool isCollisionConstrained = (allowed < desired - 0.001f);
+
+        m_curMaxYawSpeedDeg = isCollisionConstrained ? profile.maxYawSpeedDegWhenColliding : profile.maxYawSpeedDeg;
+        m_curMaxPitchSpeedDeg = isCollisionConstrained ? profile.maxPitchSpeedDegWhenColliding : profile.maxPitchSpeedDeg;
+
+        const float target = min(desired, allowed);
+        const float speed = (target < pose.targetDist) ? profile.collisionZoomInSpeed : profile.collisionZoomOutSpeed;
+
+        pose.targetDist = MoveTowards(pose.targetDist, target, speed * dt);
         pose.targetDist = clamp(pose.targetDist, profile.minDist, profile.maxDist);
     }
+
 
     SmoothStates(dt);
     ApplyOrbitPose(dt, lockRes);
 }
-
 
 void COrbitCam::UpdateInput(_float dt)
 {
 #ifdef _USING_GUI
     auto& io = ImGui::GetIO();
     if (io.WantCaptureMouse || ImGui::IsAnyItemActive() || ImGui::IsAnyItemHovered()) return;
-#endif //
+#endif
 
     const float dx = InputDevice()->Mouse_DeltaX();
     const float dy = InputDevice()->Mouse_DeltaY();
 
     const float w = lockOnCtrl.GetWeight();
 
-    if (w <= 0.f) pose.targetRotDeg.x += dx * input.sensitivityX;
-    pose.targetRotDeg.y += dy * input.sensitivityY;
+    float yawDeltaDeg = 0.f;
+    if (w <= 0.f) yawDeltaDeg = dx * input.sensitivityX;
+
+    float pitchDeltaDeg = dy * input.sensitivityY;
 
     if (dx != 0.f || dy != 0.f) autoYawHoldTimer = profile.autoYawFollowDelay;
 
     const float wheel = InputDevice()->Mouse_DeltaW() * 0.5f;
     if (wheel != 0.f) pose.desiredDist -= wheel * input.zoomSpeed;
+
+    const float maxYawThisFrame = m_curMaxYawSpeedDeg * dt;
+    const float maxPitchThisFrame = m_curMaxPitchSpeedDeg * dt;
+
+    yawDeltaDeg = clamp(yawDeltaDeg, -maxYawThisFrame, maxYawThisFrame);
+    pitchDeltaDeg = clamp(pitchDeltaDeg, -maxPitchThisFrame, maxPitchThisFrame);
+
+    pose.targetRotDeg.x += yawDeltaDeg;
+    pose.targetRotDeg.y += pitchDeltaDeg;
 }
+
 
 void COrbitCam::ClampTargets()
 {
@@ -536,25 +549,73 @@ void COrbitCam::UpdateTargetSwitch(_float dt)
     pose.pivotOverrideOffset = Vector3::Lerp(keepOffsetNow, Vector3::Zero, t);
 }
 
-_float COrbitCam::GetCollisionAllowedDist(const Vector3& pivot, const Vector3& backDir, float desiredDist) const
+_float COrbitCam::GetCollisionAllowedDist(const Vector3& pivot, const Vector3& backDir, float desiredDist)
 {
-    auto cc = const_cast<COrbitCam*>(this)->Get_Component<CCharacterController>();
+    auto cc = Get_Component<CCharacterController>();
 
     const float camRadius = cc->Get_Radius();
-    const float padding = 0.05f;
+    const float padding = 0.1f;
+    const float stepDeg = 4.f;
 
-    PHYSICS_RAY ray{};
-    ray.vOrigin = _float3(pivot.x, pivot.y, pivot.z);
-    ray.vDirection = _float3(backDir.x, backDir.y, backDir.z);
-    ray.fMaxDistance = desiredDist + camRadius + padding;
-    ray.iCollisionMask = cc->Get_CollisionMask();
-    ray.bQueryTrigger = false;
+    auto scene = PhysicsSystem()->Get_Scene();
+    if (!scene) return desiredDist;
 
-    PHYSICS_RAY_HIT hit{};
-    if (!PhysicsSystem()->Raycast(ray, hit)) return desiredDist;
+    const float startYaw = pose.curRotDeg.x;
+    const float startPitch = pose.curRotDeg.y;
 
-    const float allowed = hit.fDistance - camRadius - padding;
-    return clamp(allowed, profile.minDist, desiredDist);
+    const float endYaw = pose.targetRotDeg.x;
+    const float endPitch = pose.targetRotDeg.y;
+
+    const float deltaYaw = Math::WrapDeg(endYaw - startYaw);
+    const float deltaPitch = endPitch - startPitch;
+
+    const float maxAbs = max(fabsf(deltaYaw), fabsf(deltaPitch));
+    int steps = (int)ceilf(maxAbs / stepDeg);
+    if (steps < 1) steps = 1;
+    if (steps > 12) steps = 12;
+
+    PxSphereGeometry geom(camRadius);
+
+    PxQueryFilterData filterData;
+    filterData.flags = PxQueryFlag::eSTATIC | PxQueryFlag::eDYNAMIC | PxQueryFlag::ePREFILTER;
+
+    CRaycastFilterCallback filterCallback(cc->Get_CollisionMask(), false);
+
+    float minAllowed = desiredDist;
+
+    for (int i = 1; i <= steps; ++i)
+    {
+        const float t = (float)i / (float)steps;
+
+        const float yawRad = XMConvertToRadians(startYaw + deltaYaw * t);
+        const float pitchRad = XMConvertToRadians(startPitch + deltaPitch * t);
+
+        const Quaternion q = Quaternion::CreateFromYawPitchRoll(yawRad, pitchRad, 0.f);
+
+        Vector3 dir = Vector3::Transform(Vector3(0.f, 0.f, -1.f), q);
+        dir.Normalize();
+
+        PxVec3 pxOrigin(pivot.x, pivot.y, pivot.z);
+        PxVec3 pxDir(dir.x, dir.y, dir.z);
+
+        PxTransform posePx(pxOrigin);
+
+        PxSweepBuffer hit;
+        PxHitFlags hitFlags = PxHitFlag::ePOSITION | PxHitFlag::eNORMAL;
+
+        const float sweepDist = desiredDist + padding;
+
+        _bool ok = scene->sweep(geom, posePx, pxDir, sweepDist, hit, hitFlags, filterData, &filterCallback);
+
+        if (!ok || !hit.hasBlock) continue;
+
+        float allowed = hit.block.distance - padding;
+        allowed = clamp(allowed, profile.minDist, desiredDist);
+
+        if (allowed < minAllowed) minAllowed = allowed;
+    }
+
+    return minAllowed;
 }
 
 COrbitCam* COrbitCam::Create()

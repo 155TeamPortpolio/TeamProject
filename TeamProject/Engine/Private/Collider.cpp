@@ -504,31 +504,10 @@ void CCollider::Render_GUI()
 		ImGui::Separator();
 
 		ImGui::Text("Collision Group:");
-		const char* groupNames[] = { "COMMON", "PLAYER", "MONSTER", "PLAYER_ATTACK", "MONSTER_ATTACK", "MONSTER_PARRY", "CAMERA", "INTERACABLE"};
-		const COLLISION_GROUP groupValues[] = {
-			COLLISION_GROUP::COMMON,
-			COLLISION_GROUP::PLAYER,
-			COLLISION_GROUP::MONSTER,
-			COLLISION_GROUP::PLAYER_ATTACK,
-			COLLISION_GROUP::MONSTER_ATTACK,
-			COLLISION_GROUP::MONSTER_PARRY,
-			COLLISION_GROUP::CAMERA,
-			COLLISION_GROUP::INTERACABLE
-		};
-
-		_int iCurrentGroup = 0;
-		for (_int i = 0; i < 7; ++i)
+		COLLISION_GROUP eGroup = m_eGroup;
+		if (CollisionHelper::RenderCollisionGroupCombo("##CollisionGroup", eGroup))
 		{
-			if (m_eGroup == groupValues[i])
-			{
-				iCurrentGroup = i;
-				break;
-			}
-		}
-
-		if (ImGui::Combo("##CollisionGroup", &iCurrentGroup, groupNames, 7))
-		{
-			Set_CollisionGroup(groupValues[iCurrentGroup]);
+			Set_CollisionGroup(eGroup);
 		}
 
 		// 충돌 마스크 편집

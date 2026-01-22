@@ -133,9 +133,7 @@ void CCamDirector::UpdateInput()
         camMgr.Set_MainCam(GetOrbitCamComp(), 0.5f);
 
     if (InputDevice()->Key_Tap(VK_F3))
-    {
-        RequestSequence(CamSeqType::BattleIntro);
-    }
+        RequestSequence(CamSeqType::ZeroIntro);
 }
 
 void CCamDirector::AbortSequenceToOrbit(_bool resetTime)

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "DisplayGate.h"
+
 NS_BEGIN(Engine)
 class CGameInstance;
 NS_END
@@ -25,6 +27,8 @@ private:
     POINT GetClientCenterInScreen() const;
 
 private:
+    CMonitorGate m_monitorGate;
+
     _bool m_isMouseLocked = false;
     _bool m_cachedGuiActive = true;
 };

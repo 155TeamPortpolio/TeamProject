@@ -42,6 +42,7 @@
 
 #include "UI_IconLabel.h" 
 #include "UI_NameIndicator.h"
+#include "UI_Dialogue.h"
 
 CMainApp::CMainApp()
 {
@@ -120,7 +121,7 @@ void CMainApp::Set_Levels()
 
 	LevelManager()->Set_LoadingLevel("Loading_Level");
 	m_pGameInstance->Notify_LevelSet(); 
-	m_pGameInstance->Get_LevelMgr()->Request_ChangeLevel("Logo_Level",false); 
+	m_pGameInstance->Get_LevelMgr()->Request_ChangeLevel("Scott_Level",false); 
 } 
 
 CMainApp* CMainApp::Create()
@@ -176,6 +177,7 @@ void CMainApp::Initialize_GlobalPrototype()
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_MeshBillboard", CUI_MeshBillboard::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_IconLabel", CUI_IconLabel::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_NameIndicator", CUI_NameIndicator::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Dialogue", CUI_Dialogue::Create());
 }
 
 void CMainApp::Create_GlobalCamObjs()
