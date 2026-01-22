@@ -60,10 +60,9 @@ HRESULT CBattlePlayer::Initialize()
 	vector<CHARACTER> BattleCharacters = {CHARACTER::JaneDoe, CHARACTER::Corin};
 	SetBattleCharacters(BattleCharacters);
 
-	UI_ACTION_DESC desc;
-	desc.eType = UI_ACTION_TYPE::ULTIMATE;
-	desc.eState = UI_ACTION_STATE::DISABLE;
-	EventSystem()->Broadcast<UI_ACTION_DESC>({ desc }); 
+	UI_ACTION_PRIMARY_DESC desc;
+	desc.eMode = UI_ACTION_PRIMARY_MODE::ATTACK;
+	EventSystem()->Broadcast<UI_ACTION_PRIMARY_DESC>({ desc });
 
 	return S_OK;
 }
@@ -72,6 +71,7 @@ void CBattlePlayer::Priority_Update(_float dt)
 {
 	if (m_pCurrentCharacter == nullptr)
 		return;
+	m_pCurrentCharacter->Reset_Interact();
 	if(Can_Input())
 		Update_Input(dt);
 	Update_Target();
@@ -141,6 +141,8 @@ void CBattlePlayer::Late_Update(_float dt)
 
 void CBattlePlayer::Render_GUI()
 {
+	if (nullptr == m_pCurrentCharacter)
+		return;
 	ImGui::Text("Can Parry : %s", m_pCurrentCharacter->Can_Parry() ? "TRUE" : "FALSE");
 	ImGui::Text("Is Invicible : %s", m_pCurrentCharacter->Is_Invincible() ? "TRUE" : "FALSE");
 }
@@ -234,6 +236,7 @@ void CBattlePlayer::Update_Input(_float dt)
 	Process_Switch();
 	Process_Ultimate();
 	Process_Energy();
+	Process_Interact();
 
 	if (InputDevice()->Mouse_Tap(MOUSE_BTN::MB) && m_fLockOnCooldown <= 0.f)
 	{
@@ -330,6 +333,14 @@ void CBattlePlayer::Process_Energy()
 	if (InputDevice()->Key_Down('E'))
 	{
 		m_pCurrentCharacter->On_Special();
+	}
+}
+
+void CBattlePlayer::Process_Interact()
+{
+	if(InputDevice()->Key_Tap('F'))
+	{
+		m_pCurrentCharacter->On_Interact();
 	}
 }
 

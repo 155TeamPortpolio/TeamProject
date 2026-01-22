@@ -34,6 +34,8 @@ private:
 
 	INTERACT_STATE	m_interactState = { INTERACT_STATE::ENABLE };
 
+	UI_ACTION_PRIMARY_MODE m_eMode = { UI_ACTION_PRIMARY_MODE::END };
+
 private:
 	void Load_Json(const string& resourceKey);
 	void Cache_Children();

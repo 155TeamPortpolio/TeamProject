@@ -218,7 +218,7 @@ void CMapTriggerObject::Ready_Interactable(const MAP_TRIGGEROBJ_DESC* pObjDesc)
 				pPortalDesc->NextNameTag = NextLevelTag;
 
 				COLLIDER_DESC ColDesc = {};
-				ColDesc.eGroup = COLLISION_GROUP::INTERACABLE;
+				ColDesc.eGroup = COLLISION_GROUP::INTERACTABLE;
 				ColDesc.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER);
 				ColDesc.eType = Get_Component<CCollider>()->Get_Type();
 				ColDesc.bAutoFit = false;
@@ -256,7 +256,7 @@ void CMapTriggerObject::Ready_ZeroPortal(const MAP_TRIGGEROBJ_DESC* pObjDesc)
 				_vector3 vScale = m_pTransform->Get_Scale();
 
 				COLLIDER_DESC ColDesc = {};
-				ColDesc.eGroup = COLLISION_GROUP::INTERACABLE;
+				ColDesc.eGroup = COLLISION_GROUP::INTERACTABLE;
 				ColDesc.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER);
 				ColDesc.eType = Get_Component<CCollider>()->Get_Type();
 				ColDesc.bAutoFit = false;
