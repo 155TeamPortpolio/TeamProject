@@ -840,7 +840,11 @@ void CMapToolGui::KeyInput()
             string HitObjLayerTag = HitDesc.pHitObject->Get_Layer()->Get_LayerTag();
             if (g_tagMapObjType[ENUM(MAPOBJ_TYPE::PLACED)] == HitObjLayerTag ||
                 g_tagMapObjType[ENUM(MAPOBJ_TYPE::TRIGGER)] == HitObjLayerTag ||
-                g_tagMapObjType[ENUM(MAPOBJ_TYPE::ENTITY)] == HitObjLayerTag
+                g_tagMapObjType[ENUM(MAPOBJ_TYPE::ENTITY)] == HitObjLayerTag ||
+                g_tagBattleObjType[ENUM(BATTLE_TYPE::PLAYER)] == HitObjLayerTag ||
+                g_tagBattleObjType[ENUM(BATTLE_TYPE::MONSTER)] == HitObjLayerTag ||
+                g_tagBattleObjType[ENUM(BATTLE_TYPE::SPAWNER)] == HitObjLayerTag ||
+                g_tagBattleObjType[ENUM(BATTLE_TYPE::ENDPOINT)] == HitObjLayerTag
                 )
                 CGameInstance::GetInstance()->Get_GUISystem()->Get_Context()->pSelectedObject = HitDesc.pHitObject  ;
         }

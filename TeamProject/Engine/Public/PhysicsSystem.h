@@ -21,8 +21,8 @@ public:
         PxU32 shapeGroup = shapeFilter.word0;
 
         // 마스크 검사
-        if ((m_iTargetMask & shapeGroup) == 0)
-            return PxQueryHitType::eNONE;
+        //if ((m_iTargetMask & shapeGroup) == 0)
+        //    return PxQueryHitType::eNONE;
 
         // 트리거 처리
         if (shape->getFlags() & PxShapeFlag::eTRIGGER_SHAPE)
