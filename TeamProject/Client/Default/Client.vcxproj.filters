@@ -783,6 +783,9 @@
     <Filter Include="02. GameObject\Object\Npc\Child\NpcInteractZone">
       <UniqueIdentifier>{4768ebeb-e730-4cea-a50b-d39ff7a5f643}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\Dialogue">
+      <UniqueIdentifier>{43edc525-691e-45eb-8315-9c2612cfad8d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1520,6 +1523,9 @@
     <ClInclude Include="..\Public\TestLevel.h">
       <Filter>01. Level</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UI_Dialogue.h">
+      <Filter>02. GameObject\UI\01. 2D\Dialogue</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2217,6 +2223,9 @@
     </ClCompile>
     <ClCompile Include="..\private\NpcInteractZone.cpp">
       <Filter>02. GameObject\Object\Npc\Child\NpcInteractZone</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Dialogue.cpp">
+      <Filter>02. GameObject\UI\01. 2D\Dialogue</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
