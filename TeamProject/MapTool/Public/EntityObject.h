@@ -25,7 +25,9 @@ public:
 
     virtual void Export_ObjectData(void* pDesc) override;
 
-
+private:
+    string Get_TypeName();
+    _vector4 Get_TypeColor();
 public:
     void Render_GUI() override;
 
@@ -35,6 +37,6 @@ private:
 public:
     static CEntityObject* Create();
     CGameObject* Clone(INIT_DESC* pArg) override;
-    virtual void Free();
+    virtual void Free() override;
 };
 NS_END
