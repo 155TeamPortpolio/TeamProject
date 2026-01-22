@@ -97,28 +97,6 @@ HRESULT CPostRenderer::Render_HDRBloom()
 	return S_OK;
 }
 
-HRESULT CPostRenderer::Render_Distortion()
-{
-	//{
-	//	if (FAILED(m_pTargetManager->Begin_MRT("MRT_Distortion_Add"))) return E_FAIL;
-	// 
-	//	m_pTargetManager->Bind_Target("Target_Distortion", m_pShader,"g_DistortionTexture" );
-	//	m_pShader->Bind_Value("g_DistortionNoiseTexture", { m_pDistortionNoiseTexture, "Texture2D", 0 });
-	//
-	//	ID3D11InputLayout* pLayout;
-	//	Get_BufferInputLayout(m_pVIBuffer, m_pShader, "DISTORTION_ADD", &pLayout);
-	//	m_pContext->IASetInputLayout(pLayout);
-	//
-	//	m_pShader->Apply("DISTORTION_ADD", m_pContext);
-	//	m_pVIBuffer->Bind_Buffer(m_pContext);
-	//	m_pVIBuffer->Render(m_pContext);
-	//
-	//	m_pTargetManager->End_MRT();
-	//}
-	//
-	return S_OK;
-}
-
 HRESULT CPostRenderer::Render_RadialBlur()
 {
 	if (FAILED(m_pTargetManager->Begin_MRT("MRT_RadialBlur"))) return E_FAIL;
@@ -183,8 +161,9 @@ HRESULT CPostRenderer::Render_Final()
 	m_pContext->IASetInputLayout(pLayout);
 
 	m_pTargetManager->Bind_Target("Target_Fog", m_pShader, "FinalTexture");
+	//m_pTargetManager->Bind_Target("Target_Distortion_Add", m_pShader, "DistortionTexture");
 	m_pTargetManager->Bind_Target("Target_Radial", m_pShader, "RadialBloomTexture");
-
+	
 	m_pTargetManager->Bind_Target("Target_HDR_BlurY", m_pShader, "HDRBloomFinalTexture");
 	m_pTargetManager->Bind_Target("Target_UI", m_pShader, "UI2DTexture");
 
@@ -278,9 +257,6 @@ HRESULT CPostRenderer::Ready_Target()
 	RenderTargetDesc RadialBlurDesc = { "Target_Radial", DXGI_FORMAT_R16G16B16A16_FLOAT,DXGI_FORMAT_D24_UNORM_S8_UINT, _float4(0.0f, 0.0f, 0.0f, 0.0f),ViewportDesc.Width ,ViewportDesc.Height };
 	m_pTargetManager->Create_Target(RadialBlurDesc);
 
-	RenderTargetDesc DistortionAddDesc = { "Target_Distortion_Add" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.5f, 0.5f, 0.5f, 1.f) ,ViewportDesc.Width, ViewportDesc.Height };
-	m_pTargetManager->Create_Target(DistortionAddDesc);
-
 	RenderTargetDesc FogDesc = {"Target_Fog",DXGI_FORMAT_R16G16B16A16_FLOAT,DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.0f, 0.0f, 0.0f, 0.0f),ViewportDesc.Width,ViewportDesc.Height};
 	m_pTargetManager->Create_Target(FogDesc);
 
@@ -289,10 +265,6 @@ HRESULT CPostRenderer::Ready_Target()
 
 HRESULT CPostRenderer::Ready_MRT()
 {
-	{
-		if (FAILED(m_pTargetManager->Add_MRT("MRT_Distortion_Add", "Target_Distortion_Add"))) return E_FAIL;
-	}
-
 	{
 		if (FAILED(m_pTargetManager->Add_MRT("MRT_Fog", "Target_Fog"))) return E_FAIL;
 	}
@@ -397,6 +369,4 @@ void CPostRenderer::Free()
 	for (auto& texture : m_pNoiseTextures)
 		Safe_Release(texture.second);
 	m_pNoiseTextures.clear();
-
-	Safe_Release(m_pDistortionNoiseTexture);
 }
