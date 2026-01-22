@@ -232,7 +232,7 @@ void CMapLoader::Place_EntityFromLoadData(ENTITY_INIT* pData)
     }
 
     /* 여기에 엔티티 이용해서 생성 */
-    Factory::Create_NPC(FactoryDesc);
+    Factory::Create_Objects(FactoryDesc);
 }
 
 CMapLoader::MAPOBJ_TYPE CMapLoader::Check_LayerTag(const string& TagLayer)

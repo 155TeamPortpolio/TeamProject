@@ -22,6 +22,7 @@ typedef struct tagNPCSpec {
 }NPC_SPEC;
 
 void Create_Objects(const FACTORY_DESC& Desc);
+
 void Create_ETC(const FACTORY_DESC& Desc);
 void Create_NPC(const FACTORY_DESC& Desc);
 

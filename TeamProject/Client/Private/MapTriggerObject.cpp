@@ -40,10 +40,7 @@ HRESULT CMapTriggerObject::Initialize(INIT_DESC* pArg)
 	
 	Ready_PlaneUI(pObjDesc);
 	Ready_MeshUI(pObjDesc);
-	Ready_Interactable(pObjDesc);
-	Ready_ZeroPortal(pObjDesc);
 	Ready_InvwalI(pObjDesc);
-	Ready_PlayerPos(pObjDesc);
 
 	return S_OK;
 }

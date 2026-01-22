@@ -9,17 +9,17 @@
 #include "Transform.h"
 #include "Collider.h"
 
-/* Maptool Type 0 (ETC) */
-#include "Portal.h"
-#include "ZeroPortal.h"
-
-/* Maptool Type 1 (NPC) */
+/* Maptool Type 0 (NPC) */
 #include "OfficeMeow.h"
 #include "BangBooPay.h"
 #include "BangBooAsk.h"
 #include "BangBooDeliver.h"
 #include "Howl.h"
 #include "Jaeger.h"
+
+/* Maptool Type 1 (ETC) */
+#include "Portal.h"
+#include "ZeroPortal.h"
 
 /* --------------------------------------------------------------------------------------------------------------------- */
 
@@ -28,17 +28,58 @@ void Client::Factory::Create_Objects(const FACTORY_DESC& Desc)
 	switch (Desc.iType)
 	{
 	case 0:
-		Create_ETC(Desc); break;
-	case 1:
 		Create_NPC(Desc); break;
+	case 1:
+		Create_ETC(Desc); break;
 	default:
 		break;
 	}
 }
 
+/* --------------------------------------------------------------------------------------------------------------------- */
 
 /* Maptool Type 0 */
-#pragma region Entity0(ETC)
+#pragma region Entity0(NPC)
+static unordered_map<string, Factory::NPC_SPEC> s_NPCTable =
+{
+	{ "OfficeMeow",     Factory::NPC_SPEC{ "Proto_GameObject_OfficeMeow", &COfficeMeow::Create }},
+	{ "BangBooDeliver", Factory::NPC_SPEC{ "Proto_GameObject_BangBooDeliver", &CBangBooDeliver::Create } },
+	{ "BangBooPay",		Factory::NPC_SPEC{ "Proto_GameObject_BangBooPay", &CBangBooPay::Create } },
+	{ "BangBooAsk",		Factory::NPC_SPEC{ "Proto_GameObject_BangBooAsk", &CBangBooAsk::Create } },
+	{ "Howl",           Factory::NPC_SPEC{ "Proto_GameObject_Howl", &CHowl::Create } },
+	{ "Jaeger",         Factory::NPC_SPEC{ "Proto_GameObject_Jaeger", &CJaeger::Create } }
+};
+
+void Client::Factory::Create_NPC(const FACTORY_DESC& Desc)
+{
+	auto NPCTable = s_NPCTable.find(Desc.tagName);
+
+	if (NPCTable == s_NPCTable.end())
+		return;
+
+	CCT_DESC CCT; 
+
+	CCT.eGroup = COLLISION_GROUP::COMMON;
+	CCT.iCollisionMask = 0xFFFFFFFF;
+	CCT.bAutoFit = false;
+	CCT.fHeight = 1.6f;
+	CCT.fRadius = 0.4f;
+	CCT.vPos = Desc.vTranslation;
+
+	PrototypeManager()->Add_ProtoType(Desc.tagLevel, NPCTable->second.ProtoTag, NPCTable->second.Create());
+
+	auto OBJ = Builder::Create_Object({ Desc.tagLevel, NPCTable->second.ProtoTag })
+		.CharacterController(CCT)
+		.Rotate(Desc.vRotation)
+		.Build(Desc.tagName);
+
+	ObjectManager()->Add_Object(OBJ, { Desc.tagLevel, "NPC_Layer"});
+}
+#pragma endregion
+/* --------------------------------------------------------------------------------------------------------------------- */
+
+/* Maptool Type 1 */
+#pragma region Entity1(ETC)
 static unordered_map<string, Factory::NPC_SPEC> s_ETCTable =
 {
 	{ "Portal",     Factory::NPC_SPEC{ "Proto_GameObject_Portal", &CPortal::Create }},
@@ -53,7 +94,7 @@ void Client::Factory::Create_ETC(const FACTORY_DESC& Desc)
 		return;
 
 	COLLIDER_DESC tColDesc{};
-	GAMEOBJECT_DESC* pOBJDesc = {nullptr};
+	GAMEOBJECT_DESC* pOBJDesc = { nullptr };
 
 	tColDesc.eGroup = COLLISION_GROUP::INTERACTABLE;
 	tColDesc.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER);
@@ -108,45 +149,3 @@ void Client::Factory::Create_ETC(const FACTORY_DESC& Desc)
 	ObjectManager()->Add_Object(pObj, { Desc.tagLevel, "InteractableObject_Layer" });
 }
 #pragma endregion
-/* --------------------------------------------------------------------------------------------------------------------- */
-
-/* Maptool Type 1 */
-#pragma region Entity1(NPC)
-static unordered_map<string, Factory::NPC_SPEC> s_NPCTable =
-{
-	{ "OfficeMeow",     Factory::NPC_SPEC{ "Proto_GameObject_OfficeMeow", &COfficeMeow::Create }},
-	{ "BangBooDeliver", Factory::NPC_SPEC{ "Proto_GameObject_BangBooDeliver", &CBangBooDeliver::Create } },
-	{ "BangBooPay",		Factory::NPC_SPEC{ "Proto_GameObject_BangBooPay", &CBangBooPay::Create } },
-	{ "BangBooAsk",		Factory::NPC_SPEC{ "Proto_GameObject_BangBooAsk", &CBangBooAsk::Create } },
-	{ "Howl",           Factory::NPC_SPEC{ "Proto_GameObject_Howl", &CHowl::Create } },
-	{ "Jaeger",         Factory::NPC_SPEC{ "Proto_GameObject_Jaeger", &CJaeger::Create } }
-};
-
-void Client::Factory::Create_NPC(const FACTORY_DESC& Desc)
-{
-	auto NPCTable = s_NPCTable.find(Desc.tagName);
-
-	if (NPCTable == s_NPCTable.end())
-		return;
-
-	CCT_DESC CCT; 
-
-	CCT.eGroup = COLLISION_GROUP::COMMON;
-	CCT.iCollisionMask = 0xFFFFFFFF;
-	CCT.bAutoFit = false;
-	CCT.fHeight = 1.6f;
-	CCT.fRadius = 0.4f;
-	CCT.vPos = Desc.vTranslation;
-
-	PrototypeManager()->Add_ProtoType(Desc.tagLevel, NPCTable->second.ProtoTag, NPCTable->second.Create());
-
-	auto OBJ = Builder::Create_Object({ Desc.tagLevel, NPCTable->second.ProtoTag })
-		.CharacterController(CCT)
-		.Rotate(Desc.vRotation)
-		.Build(Desc.tagName);
-
-	ObjectManager()->Add_Object(OBJ, { Desc.tagLevel, "NPC_Layer"});
-}
-#pragma endregion
-/* --------------------------------------------------------------------------------------------------------------------- */
-
