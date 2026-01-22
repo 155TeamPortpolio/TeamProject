@@ -6,12 +6,7 @@
 #include "MapLoader_Helper.h"
 
 //포탈을 알고있어야 만드는디
-#include "Portal.h"
 #include "MapInvisibleWall.h"
-#include "Player.h"
-#include "CharacterController.h"
-#include "CamDirector.h"
-#include "OBJFactory.h"
 
 CMapTriggerObject::CMapTriggerObject()
 	: CMapObject()
@@ -193,87 +188,6 @@ void CMapTriggerObject::Ready_MeshUI(const MAP_TRIGGEROBJ_DESC* pObjDesc)
 	}
 }
 
-void CMapTriggerObject::Ready_Interactable(const MAP_TRIGGEROBJ_DESC* pObjDesc)
-{
-	auto iter = pObjDesc->SlotDataValues.find("Portal");
-
-	if (iter != pObjDesc->SlotDataValues.end()) {
-		string PrototypeTag = "Proto_GameObject_Portal";
-		
-		for (auto& tFieldData : iter->second)
-		{
-			if (tFieldData.TagName == "NextLevel")
-			{
-				_float3 vPos = {};
-				XMStoreFloat3(&vPos, m_pTransform->Get_Pos());
-				_vector3 vScale = m_pTransform->Get_Scale();
-
-				string NextLevelTag = *GetSlotValue<string>(tFieldData.defaultvalue);
-
-				CPortal::PORTAL_DESC* pPortalDesc = new CPortal::PORTAL_DESC;
-				pPortalDesc->InstanceName = "Portal" + NextLevelTag;
-				pPortalDesc->NextNameTag = NextLevelTag;
-
-				COLLIDER_DESC ColDesc = {};
-				ColDesc.eGroup = COLLISION_GROUP::INTERACTABLE;
-				ColDesc.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER);
-				ColDesc.eType = Get_Component<CCollider>()->Get_Type();
-				ColDesc.bAutoFit = false;
-				ColDesc.bTrigger = true; // 충돌 박스 생성하는 트리거
-				ColDesc.vCenter = Get_Component<CCollider>()->Get_Center();
-				ColDesc.vSize = pObjDesc->vUp;
-				ColDesc.vRotation = Get_Component<CCollider>()->Get_Rotation();
-
-				auto pObj = Builder::Create_Object({ pObjDesc->TagLevel, PrototypeTag })
-					.Add_ObjDesc(pPortalDesc)
-					.Position(vPos)
-					.Collider(ColDesc)
-					//.Scale(pObjDesc->vUp)
-					.Build("Portal");
-
-				CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(pObj, { pObjDesc->TagLevel, "InteractableObject_Layer" });
-			}
-		}
-	}
-}
-
-void CMapTriggerObject::Ready_ZeroPortal(const MAP_TRIGGEROBJ_DESC* pObjDesc)
-{
-	auto iter = pObjDesc->SlotDataValues.find("ZeroPortal");
-
-	if (iter != pObjDesc->SlotDataValues.end()) {
-		string PrototypeTag = "Proto_GameObject_ZeroPortal";
-
-		for (auto& tFieldData : iter->second)
-		{
-			if (tFieldData.TagName == "NextLevel")
-			{
-				_float3 vPos = {};
-				XMStoreFloat3(&vPos, m_pTransform->Get_Pos());
-				_vector3 vScale = m_pTransform->Get_Scale();
-
-				COLLIDER_DESC ColDesc = {};
-				ColDesc.eGroup = COLLISION_GROUP::INTERACTABLE;
-				ColDesc.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER);
-				ColDesc.eType = Get_Component<CCollider>()->Get_Type();
-				ColDesc.bAutoFit = false;
-				ColDesc.bTrigger = true; // 충돌 박스 생성하는 트리거
-				ColDesc.vCenter = Get_Component<CCollider>()->Get_Center();
-				ColDesc.vSize = pObjDesc->vUp;
-				ColDesc.vRotation = Get_Component<CCollider>()->Get_Rotation();
-
-				string ZeroPrototypeTag = "Proto_GameObject_ZeroPortal";
-				auto pZeroObj = Builder::Create_Object({ pObjDesc->TagLevel, ZeroPrototypeTag })
-					.Position(vPos)
-					.Collider(ColDesc)
-					.Build("ZeroPortal");
-
-				CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(pZeroObj, { pObjDesc->TagLevel, "InteractableObject_Layer" });
-			}
-		}
-	}
-}
-
 void CMapTriggerObject::Ready_InvwalI(const MAP_TRIGGEROBJ_DESC* pObjDesc)
 {
 	auto iter = pObjDesc->SlotDataValues.find("Invwall");
@@ -313,20 +227,6 @@ void CMapTriggerObject::Ready_InvwalI(const MAP_TRIGGEROBJ_DESC* pObjDesc)
 			}
 		}
 	}
-}
-
-void CMapTriggerObject::Ready_PlayerPos(const MAP_TRIGGEROBJ_DESC* pObjDesc)
-{
-	auto iter = pObjDesc->SlotDataValues.find("SpawnPoint");
-
-	if (iter != pObjDesc->SlotDataValues.end()) {
-
-		auto player = dynamic_cast<CPlayer*>(ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Player)));
-		auto character = player->Get_CurCharacterHandle().Get();
-		if (character)
-			character->Get_Component<CCharacterController>()->Set_Position(m_pTransform->Get_Pos());
-	}
-	Get_Component<CCollider>()->Set_Trigger(false);
 }
 
 CMapTriggerObject* CMapTriggerObject::Create()
