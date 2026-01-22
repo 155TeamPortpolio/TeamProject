@@ -69,7 +69,7 @@ HRESULT CNpc::Add_InteractZonePrototype()
     return S_OK;
 }
 
-HRESULT CNpc::Add_InteractZone(_float4 vCenter, _float3 vOffset, _float3 vSize)
+HRESULT CNpc::Add_InteractZone(_float4 vCenter, _float3 vOffset, _float3 vRotate, _float3 vSize)
 {
     Add_InteractZonePrototype();
 
@@ -86,6 +86,7 @@ HRESULT CNpc::Add_InteractZone(_float4 vCenter, _float3 vOffset, _float3 vSize)
 
     CGameObject* pInteractZone = Builder::Create_Object({ G_GlobalLevelKey, "Proto_GameObject_NpcCollider" })
         .Position(_float3(vCenter.x, vCenter.y,vCenter.z))
+        .Rotate(vRotate)
         .Collider(colliderDesc)
         .Build("NpcCollider");
 

@@ -481,22 +481,50 @@ void CTrailModel::Build_LineVertices()
 	p0.vPosition = _vector3(point.vPositionA) + vRight * 0.5f * point.fWidth;
 	p0.vLifeTime = _float2(point.fLifeTime, m_fMaxLifeTime);
 	p0.vColor = _vector4::Lerp(m_vStartColor, m_vEndColor, t);
-	p0.vTexcoord = _float2(0.f, 0.f);
 
 	p1.vPosition = _vector3(point.vPositionA) - vRight * 0.5f * point.fWidth;
 	p1.vLifeTime = _float2(point.fLifeTime, m_fMaxLifeTime);
 	p1.vColor = _vector4::Lerp(m_vStartColor, m_vEndColor, t);
-	p1.vTexcoord = _float2(0.f, 1.f);
 	
 	p2.vPosition = _vector3(point.vPositionB) + vRight * 0.5f * point.fWidth;
 	p2.vLifeTime = _float2(point.fLifeTime, m_fMaxLifeTime);
 	p2.vColor = _vector4::Lerp(m_vStartColor, m_vEndColor, t);
-	p2.vTexcoord = _float2(1.f, 0.f);
 
 	p3.vPosition = _vector3(point.vPositionB) - vRight * 0.5f * point.fWidth;
 	p3.vLifeTime = _float2(point.fLifeTime, m_fMaxLifeTime);
 	p3.vColor = _vector4::Lerp(m_vStartColor, m_vEndColor, t);
-	p3.vTexcoord = _float2(1.f, 1.f);
+
+	if (TEXTURE_MODE::STRETCH == m_eTextureMode)
+	{
+		p0.vTexcoord.x = 0.f;
+		p0.vTexcoord.y = 0.f;
+
+		p1.vTexcoord.x = 0.f;
+		p1.vTexcoord.y = 1.f;
+
+		p2.vTexcoord.x = 1.f;
+		p2.vTexcoord.y = 0.f;
+
+		p3.vTexcoord.x = 1.f;
+		p3.vTexcoord.y = 1.f;
+	}
+	else
+	{
+		_float fLength = _vector3(_vector3(point.vPositionA) - _vector3(point.vPositionB)).Length();
+
+		p0.vTexcoord.x = 0.f;
+		p0.vTexcoord.y = 0.f;
+
+		p1.vTexcoord.x = 0;
+		p1.vTexcoord.y = 1.f;
+
+		p2.vTexcoord.x = fLength * m_fTile;
+		p2.vTexcoord.y = 0.f;
+
+		p3.vTexcoord.x = fLength * m_fTile;
+		p3.vTexcoord.y = 1.f;
+	}
+
 
 	m_TrailVertices.push_back(p0);
 	m_TrailVertices.push_back(p1);
