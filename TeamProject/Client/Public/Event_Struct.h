@@ -72,6 +72,12 @@ typedef struct tagUIDialogueRequestDesc {
 	string strDialogueID = {};
 	_uint iSequenceID = {};
 }UI_DIALOGUE_REQUEST_DESC;
+
+//-----------Npc : 실행함수 ---------------
+typedef struct tagNpcInteractDesc {
+	wstring strName = {};
+	DialogueResult bResult = {};
+}NPC_INTERACT_DESC;
 #pragma endregion
 
 NS_END
