@@ -59,6 +59,7 @@ namespace Client {
 		string			Choice_ID1;
 		string			Choice_ID2;
 		string			Choice_ID3;
+		_uint			NextSequenceID = {};
 	};
 
 	struct ChoiceDesc

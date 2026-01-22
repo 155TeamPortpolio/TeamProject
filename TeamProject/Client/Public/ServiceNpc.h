@@ -23,12 +23,13 @@ public:
     virtual void    Late_Update(_float dt) override;
 
 protected:
-    virtual void    Success() {}
-    virtual void    Running() {}
-    virtual void    Fail()    {}
+    virtual void    Success(_uint curSequenceID) {}
+    virtual void    Running(_uint curSequenceID) {}
+    virtual void    Fail(_uint curSequenceID)    {}
 
 protected:
     NpcIDDesc             m_DiagloueData;
+    _uint                 m_iCurSequenceID = {};
     _uint                 m_iNextSequceID = {};
 
 public:
