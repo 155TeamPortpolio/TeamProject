@@ -118,9 +118,6 @@
     <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Attack\Phase1">
       <UniqueIdentifier>{964c7637-0a29-4115-a3ab-e67539825dbc}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Attack\Phase2">
-      <UniqueIdentifier>{8080e445-1ea3-4f5c-9188-7ec8d37887e4}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Walk\Phase1">
       <UniqueIdentifier>{a0d42fa8-de6c-4103-8f2b-ce937be8f959}</UniqueIdentifier>
     </Filter>
@@ -788,6 +785,9 @@
     </Filter>
     <Filter Include="02. GameObject\Camera\99. DisplayGate">
       <UniqueIdentifier>{7cfc1b6e-36c2-4bb1-bb95-56819b1ab3d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Attack\Phase2">
+      <UniqueIdentifier>{8080e445-1ea3-4f5c-9188-7ec8d37887e4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

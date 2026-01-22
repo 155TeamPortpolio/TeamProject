@@ -60,7 +60,7 @@ public:
 private:
     string        ResolveSeqKey(CamSeqType type) const;
     void          UpdatePlayer();
-    void          UpdateInput();
+    void          UpdateInput(_float dt);
     void          AbortSequenceToOrbit(_bool resetTime);
 
 private:

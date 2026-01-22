@@ -174,11 +174,9 @@ void CSacrificeState_Attack_Phase1::BuildPattern(CSacrifice* pOwner)
 		}
 	}
 	//blackBoard.stateQueue.clear();
-	//blackBoard.stateQueue.push_back("Attack05_Phase1");
-	//blackBoard.stateQueue.push_back("Attack05_Phase1");
-	//blackBoard.stateQueue.push_back("Attack05_Phase1");
-	//blackBoard.stateQueue.push_back("Attack05_Phase1");
-	//blackBoard.stateQueue.push_back("Attack05_Phase1");
+	//blackBoard.stateQueue.push_back("Attack08_Phase1");
+	//blackBoard.stateQueue.push_back("Attack08_Phase1");
+	//blackBoard.stateQueue.push_back("Attack08_Phase1");
 	//blackBoard.stateQueue.push_back("Attack_Turn_Phase1");
 	
 	blackBoard.isRequestNext = true;
@@ -435,11 +433,11 @@ void CSacrificeState_Attack_03_Phase1::Update_Effects(CSacrifice* pOwner)
 			.Position(vBonePosition)
 			.Build("FlareSmoke");
 
-		CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(effect, { pOwner->Get_Level(),"Effect_Layer" });
-		CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(flare, { pOwner->Get_Level(),"Effect_Layer" });
-		CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(smoke, { pOwner->Get_Level(),"Effect_Layer" });
+		ObjectManager()->Add_Object(effect, { pOwner->Get_Level(),"Effect_Layer" });
+		ObjectManager()->Add_Object(flare, { pOwner->Get_Level(),"Effect_Layer" });
+		ObjectManager()->Add_Object(smoke, { pOwner->Get_Level(),"Effect_Layer" });
 
-		CameraManager()->AddImpact(ENUM(CamShakeType::ExplosionBig), ENUM(CamZoomType::ExplosionBig), 1.5f);
+		CameraManager()->AddImpact(ENUM(CamShakeType::LandingCrush), ENUM(CamZoomType::LandingCrush), 2.5f);
 	}
 }
 
@@ -744,7 +742,7 @@ void CSacrificeState_Attack_08_Phase1::Update_Effects(CSacrifice* pOwner)
 		ObjectManager()->Add_Object(pEffect, { pOwner->Get_Level(),"Effect_Layer" });
 		ObjectManager()->Add_Object(pRockParticle, { pOwner->Get_Level(),"Effect_Layer" });
 
-		CameraManager()->AddImpact(ENUM(CamShakeType::ExplosionBig), ENUM(CamZoomType::ExplosionBig), 1.f);
+		CameraManager()->AddImpact(ENUM(CamShakeType::HitCrit), ENUM(CamZoomType::HitCrit), 0.75f);
 	}
 
 	/* Axe Slash2 */
@@ -805,7 +803,7 @@ void CSacrificeState_Attack_08_Phase1::Update_Effects(CSacrifice* pOwner)
 
 		ObjectManager()->Add_Object(pEffect, { pOwner->Get_Level(),"Effect_Layer" });
 
-		CameraManager()->AddImpact(ENUM(CamShakeType::ExplosionBig), ENUM(CamZoomType::ExplosionBig), 1.5f);
+		CameraManager()->AddImpact(ENUM(CamShakeType::LandingCrush), ENUM(CamZoomType::LandingCrush), 2.5f);
 	}
 }
 
@@ -1005,8 +1003,6 @@ void CSacrificeState_Attack_Turn_Phase1::Update_Effects(CSacrifice* pOwner)
 		pEffectTransform->Set_Pos(_vector3(0.f, 0.8f, 0.3f));
 		pEffectTransform->Set_Quaternion(_quaternion(0.0f, 0.f, 0.f, 1.f));
 		static_cast<CEffectContainer*>(effect)->Play();
-
-		CameraManager()->AddImpact(ENUM(CamShakeType::ExplosionBig), ENUM(CamZoomType::ExplosionBig), 0.8f);
 	}
 }
 
@@ -1066,6 +1062,7 @@ void CSacrificeState_Attack_Roar_Phase1::Update_Effects(CSacrifice* pOwner)
 
 		ObjectManager()->Add_Object(effect, { pOwner->Get_Level(),"Effect_Layer" });
 
-		CameraManager()->AddImpact(ENUM(CamShakeType::Roar25S), ENUM(CamZoomType::Roar25S), 0.8f);
+		CameraManager()->AddImpact(ENUM(CamShakeType::UltimateEnd), ENUM(CamZoomType::UltimateEnd), 1.f);
+		//CameraManager()->SetShakeType(ENUM(CamShakeType::Roar1S));
 	}
 }

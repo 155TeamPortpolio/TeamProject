@@ -63,12 +63,12 @@ void CCamDirector::AutoTarget()
 void CCamDirector::AutoField()
 {
     AutoTarget();
-    RequestSequence("Field/Back");
+    RequestSequence("Field/Front");
 }
 
 void CCamDirector::Update(_float dt)
 {
-    UpdateInput();
+    UpdateInput(dt);
     UpdatePlayer();
 
     if (!m_playing.active) return;
@@ -126,8 +126,22 @@ string CCamDirector::GetCharacterStr() const
     return Helper::EnumToString(GetCharacter()->Get_CharacterName());
 }
 
-void CCamDirector::UpdateInput()
+void CCamDirector::UpdateInput(_float dt)
 {
+    const Vector2 mousePos = InputDevice()->Mouse_Pos();
+
+    static _float acc = 0.f;
+    static char   buf[128]{};
+
+    acc += dt;
+    if (acc >= 0.1f)
+    {
+        acc -= 0.1f;
+
+        sprintf_s(buf, "Mouse Pos : (%ld, %ld)\n", (long)mousePos.x, (long)mousePos.y);
+        OutputDebugStringA(buf);
+    }
+
     if (InputDevice()->Key_Tap(VK_F1))
         CameraManager()->Set_MainCam(GetFreeCamComp(), 0.5f);
 
