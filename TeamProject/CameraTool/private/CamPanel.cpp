@@ -2326,6 +2326,30 @@ void CCamPanel::DrawKeyframeList_Table(vector<CamKeyFrame>& keys, bool& ioChange
                     }
 
                     if (!key.useCustomEase) ImGui::EndDisabled();
+
+                    ImGui::SameLine();
+                    ImGui::Dummy(ImVec2(10.f, 0.f));
+                    ImGui::SameLine();
+                    ImGui::TextDisabled("Tag");
+                    ImGui::SameLine();
+
+                    auto it = keyListUI.eventTagBufs.find(key.keyId);
+                    if (it == keyListUI.eventTagBufs.end())
+                    {
+                        array<char, 64> init{};
+                        strncpy_s(init.data(), init.size(), key.eventTag.c_str(), _TRUNCATE);
+                        it = keyListUI.eventTagBufs.emplace(key.keyId, init).first;
+                    }
+
+                    auto& tagBuf = it->second;
+
+                    ImGui::SetNextItemWidth(140.f);
+                    const bool enter = ImGui::InputText("##tag", tagBuf.data(), (int)tagBuf.size(), ImGuiInputTextFlags_EnterReturnsTrue);
+                    if (enter || ImGui::IsItemDeactivatedAfterEdit())
+                    {
+                        key.eventTag = string(tagBuf.data());
+                        ioChangedAny = true;
+                    }
                 }
 
                 ImGui::PopID();
@@ -2341,6 +2365,7 @@ void CCamPanel::DrawKeyframeList_Table(vector<CamKeyFrame>& keys, bool& ioChange
 
     ImGui::PopStyleVar(3);
 }
+
 
 void CCamPanel::DrawKeyframeEditor_SelectedKeyTable(bool& ioChangedAny)
 {
@@ -2858,6 +2883,7 @@ bool CCamPanel::LoadSequenceFromPath(const string& anyPath)
     }
 
     *target.sequence = move(loaded);
+    keyListUI.eventTagBufs.clear();
 
     if (target.sequence->space == CamSpace::Local && !target.spaceRefHandle.isValid() && !spaceRefCandidates.empty())
         target.spaceRefHandle = spaceRefCandidates[0];
@@ -2893,9 +2919,4 @@ CCamPanel* CCamPanel::Create(GUI_CONTEXT* context)
     auto inst = new CCamPanel(context);
     inst->Init();
     return inst;
-}
-
-void CCamPanel::Free()
-{
-    __super::Free();
 }

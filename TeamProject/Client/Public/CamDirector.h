@@ -17,6 +17,7 @@ public:
     void          SetSpaceRef(OBJECT_HANDLE handle)          { m_spaceRefHandle         = handle; }
     void          SetReturnCam(CamType type)                 { m_returnCamType          = type;   }
     void          SetTarget(OBJECT_HANDLE targetHandle);
+
     void          AutoTarget();
     void          AutoField();
 
@@ -53,6 +54,8 @@ public:
     
     _bool         IsPlaying(const string& key) const;
     _bool         IsPlaying(CamSeqType type)   const;
+    _bool         IsFinished(CamSeqType type, const string& eventTag) const;
+
     _bool         StopRequest(_uint handle, _float blendOutSec = 0.25f, _bool resetTime = true);
     void          StopAll(_float blendOutSec = 0.25f);
     void          Update(_float dt);
@@ -72,6 +75,9 @@ private:
 
     OBJECT_HANDLE           m_focusHandle{};
     _int                    m_focusType = -1;
+
+    _bool                   m_lastEndedValid = false;
+    string                  m_lastEndedKey{};
 };
 
 inline auto* CamDirector() { return CCamDirector::GetInstance(); }

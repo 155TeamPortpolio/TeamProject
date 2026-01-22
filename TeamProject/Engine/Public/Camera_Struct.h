@@ -1,6 +1,5 @@
 #pragma once
 #include "OrbitArcData.h"
-
 #include "Engine_math.h"
 
 NS_BEGIN(Engine)
@@ -22,7 +21,7 @@ struct CamBlendState
 };
 struct CamKeyFrame 
 {
-	_uint        keyId{}; // "배열이 재정렬/삭제/병합돼도 같은 키를 계속 가리키기 위한 고유 식별자"
+	_uint        keyId{}; 
 	_float       time{};
 			     
 	_vector3     pos{};
@@ -37,13 +36,14 @@ struct CamKeyFrame
 
 	_bool        useCustomEase   = false;
 	EaseType     outEase         = EaseType::None;
+
+	string       eventTag;
 };
-struct CamSequenceDesc // 하나의 카메라 시퀀스(컷씬/연출)를 정의하는 전체 프리셋 데이터.
-{                      // 어떤 타입/리그의 카메라인지와, 그 스퀀스를 구성하는 키프레임/마커 목록을 가짐.
+struct CamSequenceDesc 
+{ 
 	string              name; 
 					    
-	CamProjType         projType     = CamProjType::Perspective;
-					    
+	CamProjType         projType     = CamProjType::Perspective;			    
 	CamPlaybackMode     playbackMode = CamPlaybackMode::Once;
 					    
 	CamPosInterp        posInterp    = CamPosInterp::Linear;

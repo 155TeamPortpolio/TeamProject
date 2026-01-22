@@ -106,7 +106,6 @@ private:
 
 public:
     static CCamPanel* Create(GUI_CONTEXT* context);
-    virtual void Free() override;
 };
 
 NS_END
