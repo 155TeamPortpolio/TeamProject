@@ -538,20 +538,23 @@ _bool CHiZ_Culling::BuildOcclusionInput(
 	_uint indexInList,
 	OcclusionInput& outInput)
 {
+	MINMAX_BOX World = localAabbMinMax;
+	World.TransformBox_8Corner(Matrix(worldMatrix));
+
 	XMFLOAT3 size{
-		localAabbMinMax.vMax.x - localAabbMinMax.vMin.x,
-		localAabbMinMax.vMax.y - localAabbMinMax.vMin.y,
-		localAabbMinMax.vMax.z - localAabbMinMax.vMin.z
+		World.vMax.x - World.vMin.x,
+		World.vMax.y - World.vMin.y,
+		World.vMax.z - World.vMin.z
 	};
 	XMFLOAT3 center{
-		(localAabbMinMax.vMin.x + localAabbMinMax.vMax.x) * 0.5f,
-		(localAabbMinMax.vMin.y + localAabbMinMax.vMax.y) * 0.5f,
-		(localAabbMinMax.vMin.z + localAabbMinMax.vMax.z) * 0.5f
+		(World.vMin.x + World.vMax.x) * 0.5f,
+		(World.vMin.y + World.vMax.y) * 0.5f,
+		(World.vMin.z + World.vMax.z) * 0.5f
 	};
 	XMFLOAT3 extents{
-		(localAabbMinMax.vMax.x - localAabbMinMax.vMin.x) * 0.5f,
-		(localAabbMinMax.vMax.y - localAabbMinMax.vMin.y) * 0.5f,
-		(localAabbMinMax.vMax.z - localAabbMinMax.vMin.z) * 0.5f
+		(World.vMax.x - World.vMin.x) * 0.5f,
+		(World.vMax.y - World.vMin.y) * 0.5f,
+		(World.vMax.z - World.vMin.z) * 0.5f
 	};
 
 	_float maxAxis = max(size.x, max(size.y, size.z));
@@ -572,9 +575,7 @@ _bool CHiZ_Culling::BuildOcclusionInput(
 			flags |= OCCL_FLAG_RISK_GROUNDCONTACT;
 	}
 
-	BoundingBox localAabb(center, extents);
-	BoundingBox worldAabb;
-	localAabb.Transform(worldAabb, worldMatrix);
+	BoundingBox worldAabb(center, extents);
 
 	XMFLOAT3 corners[8];
 	worldAabb.GetCorners(corners);

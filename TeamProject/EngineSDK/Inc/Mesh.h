@@ -40,12 +40,6 @@ public:
 	_float4x4 Get_MeshOffset(_uint boneIndex);
 
 public:
-	 HRESULT Render_Island(ID3D11DeviceContext* pContext, _uint islandIndex);
-
-private:
-	void Build_Island();
-
-public:
 	void Create_BoneMinMax(class CSkeleton* pSkeleton);
 	void ExpandBox(MINMAX_BOX& b, const _float3& p);
 	virtual void Render_GUI();

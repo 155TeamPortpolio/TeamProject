@@ -424,8 +424,10 @@ HRESULT CCorin::Initialize_Transitions()
 		CStateMachine<CCorin>::CONDITION_TRIGGER, "ToIdle");
 
 	// Hit
-	m_pStateMachine->Register_AnyStateTransition("Hit",
-		CStateMachine<CCorin>::CONDITION_TRIGGER, "ToHit");
+	vector<CStateMachine<CCorin>::CONDITION_INFO> HitConditions;
+	HitConditions.push_back({ CStateMachine<CCorin>::CONDITION_TRIGGER, "ToHit" });
+	HitConditions.push_back({ CStateMachine<CCorin>::CONDITION_BOOL_FALSE, "Resistance" });
+	m_pStateMachine->Register_AnyStateTransition("Hit", HitConditions);
 
 	m_pStateMachine->Register_Transition("Hit", "Idle",
 		CStateMachine<CCorin>::CONDITION_TRIGGER, "ToIdle");
