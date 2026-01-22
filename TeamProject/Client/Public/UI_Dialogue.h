@@ -86,7 +86,7 @@ private:
 	class CButtonUI*	m_pNextButton = { nullptr };
 	CTextSlot*			m_pTextSlots[ENUM(TEXTSLOT::END)] = {};
 
-	STATE				m_eState = { STATE::INVISIBLE };
+	STATE				m_eState = {};
 
 	TYPEWRITER_DESC		m_tMessageTypeWriter = {};
 	NpcDialogueDesc		m_tDialogueDesc = {};
@@ -102,6 +102,7 @@ private:
 
 	void Start_TypingMessage(const _wstring& strText);
 	void Update_TypingMessage(_float dt);
+	_bool Complete_TypingMessage();
 
 	void Set_ChildAnimation(CHILD eChild, _int iIndex);
 	void Set_ChildText(TEXTSLOT eTextSlot, const wstring& strText);

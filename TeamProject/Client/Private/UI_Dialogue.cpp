@@ -27,7 +27,6 @@ HRESULT CUI_Dialogue::Initialize(INIT_DESC* pArg)
     Bind_EventListener();
 
     m_tMessageTypeWriter.onTyped = [this](_uint iIndex, const wstring& strText) { Set_ChildText(ENUM(CHILD::MESSAGE), strText); };
-
     if (m_pNextButton)
         m_pNextButton->Set_OnClick([this]() { Change_Dialogue(); });
 
@@ -118,20 +117,27 @@ void CUI_Dialogue::Change_Dialogue()
     {
     case DialogueResult::Success:
     case DialogueResult::Fail:
+    {
+        if (Complete_TypingMessage())
+            return;
+
         Change_State(STATE::INVISIBLE);
-        {
-            // 현재는 다이얼로그만 보내는데, 선택지일 때는 선택지로 
-            NPC_INTERACT_DESC desc = {};
-            desc.strName = m_tDialogueDesc.Name;
-            desc.iCurSequenceID = m_tDialogueDesc.SequenceID;
-            desc.iNextSequenceID = m_tDialogueDesc.NextSequenceID;
-            desc.eResult = m_tDialogueDesc.Result;
-            EventSystem()->Broadcast<NPC_INTERACT_DESC>({ desc });
-        } 
+
+        // 현재는 다이얼로그만 보내는데, 선택지일 때는 선택지로 
+        NPC_INTERACT_DESC desc = {};
+        desc.strName = m_tDialogueDesc.Name;
+        desc.iCurSequenceID = m_tDialogueDesc.SequenceID;
+        desc.iNextSequenceID = m_tDialogueDesc.NextSequenceID;
+        desc.eResult = m_tDialogueDesc.Result;
+        EventSystem()->Broadcast<NPC_INTERACT_DESC>({ desc });
+    } 
         break;
 
     case DialogueResult::None:
     case DialogueResult::Running:
+        if (Complete_TypingMessage())
+            return;
+
         _int iSequenceID = m_tDialogueDesc.SequenceID;
         Open_Dialogue(m_tDialogueDesc.DialogueID, ++iSequenceID);
         break;
@@ -167,6 +173,16 @@ void CUI_Dialogue::Update_TypingMessage(_float dt)
 
     if (m_tMessageTypeWriter.isFinished())
         m_tMessageTypeWriter.Complete();
+}
+
+_bool CUI_Dialogue::Complete_TypingMessage()
+{
+    if (!m_tMessageTypeWriter.isTyping)
+        return false;
+    
+    m_tMessageTypeWriter.Complete();
+    Set_ChildText(TEXTSLOT::MESSAGE, m_tMessageTypeWriter.strFullText);
+    return true;
 }
 
 void CUI_Dialogue::Set_ChildAnimation(CHILD eChild, _int iIndex)
