@@ -26,6 +26,18 @@ void CCorinState_RushAttack::Enter(CCorin* pOwner)
 
 void CCorinState_RushAttack::Update(CCorin* pOwner, _float dt)
 {
+    auto pCorinState = pOwner->Get_StateMachine();
+    if (pCorinState->Get_Bool("OutReserve"))
+    {
+        if (m_pSubStateMachine->Get_CurrentStateName() == "Rush_Start" ||
+            m_pSubStateMachine->Get_CurrentStateName() == "Rush_End" ||
+            Is_AnimEnd())
+        {
+            pCorinState->Set_Trigger("SwitchOut");
+            pCorinState->Set_Bool("OutReserve", false);
+        }
+    }
+
     __super::Update(pOwner, dt);
 }
 

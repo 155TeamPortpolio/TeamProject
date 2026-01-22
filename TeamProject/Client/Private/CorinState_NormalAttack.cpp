@@ -59,6 +59,17 @@ void CCorinState_NormalAttack::Update(CCorin* pOwner, _float dt)
     if (CGameInstance::GetInstance()->Get_InputDev()->Mouse_Tap(MOUSE_BTN::LB))
         m_pSubStateMachine->Set_Trigger("NextCombo");
 
+    auto pCorinState = pOwner->Get_StateMachine();
+    if (pCorinState->Get_Bool("OutReserve"))
+    {
+        if(m_pSubStateMachine->Get_CurrentStateName() == "Attack_End" ||
+            Is_AnimEnd())
+        {
+            pCorinState->Set_Trigger("SwitchOut");
+            pCorinState->Set_Bool("OutReserve", false);
+        }
+    }
+
     __super::Update(pOwner, dt);
 }
 
