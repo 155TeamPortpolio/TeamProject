@@ -123,6 +123,7 @@ void CTrailNode_Edit::Import(nlohmann::ordered_json& json)
 
 	m_vUVSpeed.x = json.at("uv_speed").at("x").get<_float>();
 	m_vUVSpeed.y = json.at("uv_speed").at("y").get<_float>();
+	m_fTile = json.value("tile", 0.f);
 
 	m_vStartColor.x = json.at("start_color").at("x").get<_float>();
 	m_vStartColor.y = json.at("start_color").at("y").get<_float>();

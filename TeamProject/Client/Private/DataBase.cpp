@@ -344,7 +344,7 @@ HRESULT CDataBase::LoadNpcIDData(const string& csvPath)
 HRESULT CDataBase::LoadNpcDialogueData(const string& csvPath)
 {
 	io::CSVReader<
-		13,
+		14,
 		io::trim_chars<' ', '\t'>,
 		io::double_quote_escape<',', '"'>
 	>in(csvPath);
@@ -352,11 +352,11 @@ HRESULT CDataBase::LoadNpcDialogueData(const string& csvPath)
 	in.read_header(
 		io::ignore_extra_column | io::ignore_missing_column,
 		"ID", "Name", "Sequence", "Speaker", "Time", "Type", "Repeat", "Text", "Result", "ChoiceNum",
-		"Choice1", "Choice2", "Choice3"
+		"Choice1", "Choice2", "Choice3", "NextSequence"
 	);
 	string			DialogueID, Choice_ID1, Choice_ID2, Choice_ID3;
 	string			Name, Text;
-	_uint			SequenceID, ChoiceNum;
+	_uint			SequenceID, ChoiceNum, NextSequenceID;
 	_uint			Repeat;
 	string			Speaker;
 	string			DayPhase;
@@ -364,7 +364,7 @@ HRESULT CDataBase::LoadNpcDialogueData(const string& csvPath)
 	string			Result;
 
 	while (in.read_row(DialogueID, Name, SequenceID, Speaker, DayPhase, DialogueType, Repeat, Text, Result,
-		ChoiceNum, Choice_ID1, Choice_ID2, Choice_ID3))
+		ChoiceNum, Choice_ID1, Choice_ID2, Choice_ID3, NextSequenceID))
 	{
 		if (DialogueID.empty()) continue;
 
@@ -382,6 +382,7 @@ HRESULT CDataBase::LoadNpcDialogueData(const string& csvPath)
 		desc.Choice_ID1 = Choice_ID1;
 		desc.Choice_ID2 = Choice_ID2;
 		desc.Choice_ID3 = Choice_ID3;
+		desc.NextSequenceID = NextSequenceID;
 
 		auto [iter, inserted] = m_DialogueTables.emplace(make_pair(desc.DialogueID, desc.SequenceID), move(desc));
 		if (false == inserted)

@@ -41,7 +41,13 @@ void CCorinState_UltimateAttack::Update(CCorin* pOwner, _float dt)
         if (Event.Type != CLIP_EVENT_TYPE::NOTIFY) continue;
         if (Event.Tag == "SawStart")
         {
-            pOwner->Begin_AttackCollider("Saw", { HIT_TYPE::INTERVAL, DAMAGE_TYPE::NORMAL, Helper::Get_Random_Float(20,40), 0.1f });
+            pOwner->Begin_AttackCollider("Saw",
+                HitDesc()
+                .Type(HIT_TYPE::INTERVAL)
+                .Damage(Helper::Get_Random_Float(20.f, 40.f), DAMAGE_TYPE::ULTIMATE)
+                .Interval(0.1f)
+                .Charge(10.f, 0.f)
+            );
         }
         else if(Event.Tag == "SawEnd")
         {
