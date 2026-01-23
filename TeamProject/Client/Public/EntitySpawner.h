@@ -21,11 +21,11 @@ typedef struct tagOBJSpec {
 	function<CGameObject* ()> Create;
 }OBJ_SPEC;
 
-void Create_Entity(const SPAWNER_DESC& Desc);
+OBJECT_HANDLE Create_Entity(const SPAWNER_DESC& Desc);
 
-void Create_NPC(const SPAWNER_DESC& Desc);
-void Create_Interactable(const SPAWNER_DESC& Desc);
-void Create_ETC(const SPAWNER_DESC& Desc);
+OBJECT_HANDLE Create_NPC(const SPAWNER_DESC& Desc);
+OBJECT_HANDLE Create_Interactable(const SPAWNER_DESC& Desc);
+OBJECT_HANDLE Create_ETC(const SPAWNER_DESC& Desc);
 NS_END
 NS_END
 

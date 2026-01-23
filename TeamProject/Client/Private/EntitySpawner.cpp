@@ -23,15 +23,14 @@
 
 /* --------------------------------------------------------------------------------------------------------------------- */
 
-void Client::Spawner::Create_Entity(const SPAWNER_DESC& Desc)
+OBJECT_HANDLE Client::Spawner::Create_Entity(const SPAWNER_DESC& Desc)
 {
 	switch (Desc.iType)
 	{
-	case 0:	Create_NPC(Desc);			break;
-	case 1:	Create_Interactable(Desc);	break;
-	case 2:	Create_ETC(Desc);			break;
-	default:
-		break;
+	case 0:	return Create_NPC(Desc);			break;
+	case 1:	return Create_Interactable(Desc);	break;
+	case 2:	return Create_ETC(Desc);			break;
+	default:return OBJECT_HANDLE();				break;
 	}
 }
 
@@ -49,12 +48,12 @@ static unordered_map<string, Spawner::OBJ_SPEC> s_NPCTable =
 	{ "Jaeger",         Spawner::OBJ_SPEC{ "Proto_GameObject_Jaeger", &CJaeger::Create } }
 };
 
-void Client::Spawner::Create_NPC(const SPAWNER_DESC& Desc)
+OBJECT_HANDLE Client::Spawner::Create_NPC(const SPAWNER_DESC& Desc)
 {
 	auto NPCTable = s_NPCTable.find(Desc.tagName);
 
 	if (NPCTable == s_NPCTable.end())
-		return;
+		return OBJECT_HANDLE();
 
 	CCT_DESC CCT; 
 
@@ -67,30 +66,31 @@ void Client::Spawner::Create_NPC(const SPAWNER_DESC& Desc)
 
 	PrototypeManager()->Add_ProtoType(Desc.tagLevel, NPCTable->second.ProtoTag, NPCTable->second.Create());
 
-	auto OBJ = Builder::Create_Object({ Desc.tagLevel, NPCTable->second.ProtoTag })
+	auto Object = Builder::Create_Object({ Desc.tagLevel, NPCTable->second.ProtoTag })
 		.CharacterController(CCT)
 		.Rotate(Desc.vRotation)
 		.Build(Desc.tagName);
 
-	ObjectManager()->Add_Object(OBJ, { Desc.tagLevel, "NPC_Layer"});
+	ObjectManager()->Add_Object(Object, { Desc.tagLevel, "NPC_Layer"});
+	return Object->Get_Handle();
 }
 #pragma endregion
 /* --------------------------------------------------------------------------------------------------------------------- */
 
 /* Maptool Type 1 */
 #pragma region Entity1(Interactable)
-static unordered_map<string, Spawner::OBJ_SPEC> s_ETCTable =
+static unordered_map<string, Spawner::OBJ_SPEC> s_InteractTable =
 {
 	{ "Portal",     Spawner::OBJ_SPEC{ "Proto_GameObject_Portal", &CPortal::Create }},
 	{ "ZeroPortal", Spawner::OBJ_SPEC{ "Proto_GameObject_ZeroPortal", &CZeroPortal::Create }}
 };
 
-void Client::Spawner::Create_Interactable(const SPAWNER_DESC& Desc)
+OBJECT_HANDLE Client::Spawner::Create_Interactable(const SPAWNER_DESC& Desc)
 {
-	auto ETCTable = s_ETCTable.find(Desc.tagName);
+	auto InteractTable = s_InteractTable.find(Desc.tagName);
 
-	if (ETCTable == s_ETCTable.end())
-		return;
+	if (InteractTable == s_InteractTable.end())
+		return OBJECT_HANDLE();
 
 	COLLIDER_DESC tColDesc{};
 	GAMEOBJECT_DESC* pOBJDesc = { nullptr };
@@ -125,19 +125,20 @@ void Client::Spawner::Create_Interactable(const SPAWNER_DESC& Desc)
 		}
 
 		if (nullptr == pOBJDesc)
-			return;
+			return OBJECT_HANDLE();
 	}
 #pragma endregion
 
-	PrototypeManager()->Add_ProtoType(Desc.tagLevel, ETCTable->second.ProtoTag, ETCTable->second.Create());
+	PrototypeManager()->Add_ProtoType(Desc.tagLevel, InteractTable->second.ProtoTag, InteractTable->second.Create());
 
-	auto pObj = Builder::Create_Object({ Desc.tagLevel, ETCTable->second.ProtoTag })
+	auto Object = Builder::Create_Object({ Desc.tagLevel, InteractTable->second.ProtoTag })
 		.Add_ObjDesc(pOBJDesc)
 		.Position(Desc.vTranslation)
 		.Collider(tColDesc)
 		.Build(Desc.tagLevel);
 
-	ObjectManager()->Add_Object(pObj, { Desc.tagLevel, "InteractableObject_Layer" });
+	ObjectManager()->Add_Object(Object, { Desc.tagLevel, "InteractableObject_Layer" });
+	return Object->Get_Handle();
 }
 #pragma endregion
 
@@ -145,20 +146,23 @@ void Client::Spawner::Create_Interactable(const SPAWNER_DESC& Desc)
 
 /* Maptool Type 2 */
 
-void Client::Spawner::Create_ETC(const SPAWNER_DESC& Desc)
+OBJECT_HANDLE Client::Spawner::Create_ETC(const SPAWNER_DESC& Desc)
 {
 	/* PlayerSpawn */
 	if (Desc.tagName == "PlayerSpawn") {
 		auto player = dynamic_cast<CPlayer*>(ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Player)));
 		auto character = player->Get_CurCharacterHandle().Get();
 		if (!character)
-			return
-
-		character->Get_Component<CCharacterController>()->Set_Position(XMLoadFloat3(&Desc.vTranslation));
+			return OBJECT_HANDLE();
+			
 		character->Get_Component<CTransform>()->Set_Quaternion(
 			XMQuaternionRotationRollPitchYaw(
 				Desc.vRotation.x,
 				Desc.vRotation.y,
 				Desc.vRotation.z));
+
+		character->Get_Component<CCharacterController>()->Set_Position(XMLoadFloat3(&Desc.vTranslation));
 	}
+
+	return OBJECT_HANDLE();
 }
