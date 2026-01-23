@@ -32,7 +32,7 @@ public:
 
 public:
     void    Lock_Input();
-    void    UnLock_Input();
+    void    Unlock_Input();
 
 private:
     class CFieldPlayer*   m_pFieldPlayer = nullptr;

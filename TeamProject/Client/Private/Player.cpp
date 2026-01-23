@@ -119,20 +119,6 @@ void CPlayer::Render_GUI()
 	}
 }
 
-void CPlayer::Lock_Input()
-{
-	if (m_ePlayerType == PLAYER::END) return;
-	if (m_ePlayerType == PLAYER::BATTLE) m_pBattlePlayer->Lock_Input();
-	//else m_pFieldPlayer->Lock_Input();
-}
-
-void CPlayer::UnLock_Input()
-{
-	if (m_ePlayerType == PLAYER::END) return;
-	if (m_ePlayerType == PLAYER::BATTLE) m_pBattlePlayer->UnLock_Input();
-	//else m_pFieldPlayer->UnLock_Input();
-}
-
 CPlayer* CPlayer::Create()
 {
 	CPlayer* Instance = new CPlayer();
