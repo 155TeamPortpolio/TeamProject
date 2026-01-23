@@ -140,12 +140,12 @@ void CCharacter::Priority_Update(_float dt)
 {
 	if (InputDevice()->Key_Tap('T'))
 		m_bTest = !m_bTest;
+
+	Get_Component<CObjectContainer>()->Priority_UpdateChild(dt);
 }
 
 void CCharacter::Update(_float dt)
 {
-	Get_Component<CObjectContainer>()->UpdateChild(dt);
-
 	m_pAnimator->Update_Animation(dt);
 	m_pCCT->Update(dt);
 	Update_Evade(dt);
@@ -153,16 +153,18 @@ void CCharacter::Update(_float dt)
 	Update_Energy(dt);
 	Update_Decibel(dt);
 	Update_Invincible(dt);
+
+	Get_Component<CObjectContainer>()->UpdateChild(dt);
 }
 
 void CCharacter::Late_Update(_float dt)
 {
-	Get_Component<CObjectContainer>()->Late_UpdateChild(dt);
-
 	m_pCCT->Late_Update(dt);
 	m_bIsAttack = false;
 	m_bIsEvade = false;
 	m_bEvadeBuffer = false;
+
+	Get_Component<CObjectContainer>()->Late_UpdateChild(dt);
 }
 
 void CCharacter::OnTriggerEnter(CGameObject* pOther)
@@ -351,6 +353,41 @@ HRESULT CCharacter::Attach_AttackCollider(ATTACK_COLLIDER_DESC* pDesc)
 	pAttackCollider->Get_Component<CBoneFollower>()->Link_Bone(pDesc->pOwnerAnimator, pDesc->tagBone);
 
 	m_AttackColliderIndex.emplace(strAttackName, iAttackColliderIndex);
+
+	return S_OK;
+}
+
+HRESULT CCharacter::Attach_ParryCollider(_float fRadius)
+{
+	CObjectContainer* pObjectContainer = Get_Component<CObjectContainer>();
+
+	if (nullptr == pObjectContainer)
+		return E_FAIL;
+
+	string strLevel = LevelManager()->Get_NowLevelKey();
+
+	RIGIDBODY_DESC rigidDesc{};
+	rigidDesc.isKinematic = true;
+	rigidDesc.bEnableGravity = false;
+
+	COLLIDER_DESC colliderDesc{};
+	colliderDesc.eType = COLLIDER_TYPE::SPHERE;
+	colliderDesc.eGroup = COLLISION_GROUP::PLAYER_ATTACK;
+	colliderDesc.iCollisionMask = ENUM(COLLISION_GROUP::MONSTER_ATTACK);
+	colliderDesc.bAutoFit = false;
+	colliderDesc.vCenter = { 0.f,0.f,0.f };
+	colliderDesc.vSize = { fRadius,0.f,0.f };
+	colliderDesc.bTrigger = true;
+
+	CGameObject* pParryCollider = Builder::Create_Object(
+		{ G_GlobalLevelKey, "Proto_GameObject_CharacterParryCollider" })
+		.RigidBody(rigidDesc)
+		.Collider(colliderDesc)
+		.Build(m_strName + "_ParryCollider");
+	if (nullptr == pParryCollider)
+		return E_FAIL;
+
+	pObjectContainer->Add_Child(pParryCollider, true);
 
 	return S_OK;
 }

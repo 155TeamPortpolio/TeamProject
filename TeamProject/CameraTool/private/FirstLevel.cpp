@@ -34,7 +34,7 @@ HRESULT CFirstLevel::Awake()
 	OBJ->Add_Object(freeCam,   {"First_Level", "Camera_Layer"});
 	OBJ->Add_Object(corin,     {"First_Level", "Model_Layer" });
 	OBJ->Add_Object(janeDoe,   {"First_Level", "Model_Layer" });
-	//OBJ->Add_Object(demoGrid,  {"First_Level", "Grid_Layer"});
+	OBJ->Add_Object(demoGrid,  {"First_Level", "Grid_Layer"});
 
 	CAM->Set_MainCam(freeCam->Get_Component<CCamera>());
 

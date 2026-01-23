@@ -4,6 +4,7 @@
 #include "GameObject.h"
 #include "GameInstance.h"
 #include "ObjectMgr.h"
+#include "Animator3D.h"
 
 #include "CamPosPerSegmentEvaluator.h"
 #include "CamRotPerSegmentEvaluator.h"
@@ -73,6 +74,23 @@ void CCamSequencePlayer::SetSequence(const CamSequenceDesc* seq)
     eval.dirty        = true;
 }
 
+void CCamSequencePlayer::SyncSpaceRefAnimatorTime(_float sampleTime)
+{
+    if (!target.seq) return;
+
+    const CamBoneAttachDesc& bone = target.seq->boneAttach;
+    if (!bone.enabled) return;
+    if (!apply.spaceRefHandle.isValid()) return;
+
+    auto refObj = ObjectManager()->Request_Object(apply.spaceRefHandle);
+    if (!refObj) return;
+
+    auto anim = refObj->Get_Component<CAnimator3D>();
+    if (!anim) return;
+
+    anim->Set_TimeSec(sampleTime);
+}
+
 void CCamSequencePlayer::Play()
 {
     if (!target.seq) return;
@@ -92,11 +110,13 @@ void CCamSequencePlayer::SetTime(_float t)
 {
     playback.playTime = t;
 
-    if (!target.seq || !apply.applyEnabled || target.seq->keyframes.empty()) return;               
+    if (!target.seq || !apply.applyEnabled || target.seq->keyframes.empty()) return;
 
     RebuildIfNeeded();
 
     const float sampleTime = CalcSampleTime(target.seq->playbackMode, playback.playTime, eval.evaluator->GetDuration());
+    SyncSpaceRefAnimatorTime(sampleTime);
+
     const float easedTime = eval.evaluator->RemapTimeBySegmentEasing(sampleTime);
     ApplyPose(eval.evaluator->Evaluate(easedTime));
 }
@@ -110,7 +130,9 @@ void CCamSequencePlayer::SetApplyEnabled(_bool enabled)
     RebuildIfNeeded();
 
     const float sampleTime = CalcSampleTime(target.seq->playbackMode, playback.playTime, eval.evaluator->GetDuration());
-    const float easedTime  = eval.evaluator->RemapTimeBySegmentEasing(sampleTime);
+    SyncSpaceRefAnimatorTime(sampleTime);
+
+    const float easedTime = eval.evaluator->RemapTimeBySegmentEasing(sampleTime);
     ApplyPose(eval.evaluator->Evaluate(easedTime));
 }
 
@@ -144,7 +166,9 @@ void CCamSequencePlayer::Update(_float dt)
     }
 
     const float sampleTime = CalcSampleTime(target.seq->playbackMode, playback.playTime, dur);
-    const float easedTime  = eval.evaluator->RemapTimeBySegmentEasing(sampleTime);
+    SyncSpaceRefAnimatorTime(sampleTime);
+
+    const float easedTime = eval.evaluator->RemapTimeBySegmentEasing(sampleTime);
     ApplyPose(eval.evaluator->Evaluate(easedTime));
 }
 
@@ -166,13 +190,25 @@ void CCamSequencePlayer::RebuildIfNeeded()
 
 void CCamSequencePlayer::ApplyPose(const CamPose& pose)
 {
-    if (target.seq && target.seq->space == CamSpace::Local)
+    const CamSequenceDesc* seq = target.seq;
+    const CamBoneAttachDesc* boneDesc = seq ? &seq->boneAttach : nullptr;
+
+    Vector3 worldPos(pose.pos.x, pose.pos.y, pose.pos.z);
+    Quaternion worldRot = pose.rot;
+    worldRot.Normalize();
+
+    Matrix spaceRefRT = Matrix::Identity;
+    Matrix boneRT = Matrix::Identity;
+    bool hasSpaceRefRT = false;
+    bool hasBoneRT = false;
+
+    const bool needSpaceRef = (seq && (seq->space == CamSpace::Local));
+    const bool needBone = (boneDesc && boneDesc->enabled && !boneDesc->boneName.empty());
+
+    if (needSpaceRef || needBone)
     {
         auto refObj = ObjectManager()->Request_Object(apply.spaceRefHandle);
-        if (!refObj)
-            return;
-
-        auto refTf  = refObj->Get_Component<CTransform>();
+        auto refTf = refObj->Get_Component<CTransform>();
 
         Matrix refWorld = Matrix(refTf->Get_WorldMatrix());
 
@@ -182,24 +218,76 @@ void CCamSequencePlayer::ApplyPose(const CamPose& pose)
         refWorld.Decompose(refS, refR, refT);
         refR.Normalize();
 
-        Matrix refRT = Matrix::CreateFromQuaternion(refR) * Matrix::CreateTranslation(refT);
+        spaceRefRT = Matrix::CreateFromQuaternion(refR) * Matrix::CreateTranslation(refT);
+        hasSpaceRefRT = true;
 
-        const Matrix localM = Matrix::CreateFromQuaternion(pose.rot) * Matrix::CreateTranslation(pose.pos);
-        Matrix worldM = localM * refRT;
+        if (needBone)
+        {
+            auto anim = refObj->Get_Component<CAnimator3D>();
+
+            Matrix boneWorld = Matrix(anim->Get_BoneMatrix(CAnimator3D::BoneSpace::WORLD, boneDesc->boneName));
+
+            Vector3 bs{};
+            Vector3 bt{};
+            Quaternion br = Quaternion::Identity;
+            boneWorld.Decompose(bs, br, bt);
+            br.Normalize();
+
+            boneRT = Matrix::CreateFromQuaternion(br) * Matrix::CreateTranslation(bt);
+            hasBoneRT = true;
+        }
+    }
+
+    if (seq && seq->space == CamSpace::Local)
+    {
+        Matrix parentRT = spaceRefRT;
+
+        if (boneDesc && boneDesc->enabled && boneDesc->mode == CamBoneMode::Parent && hasBoneRT)
+            parentRT = boneRT;
+
+        const Matrix localM = Matrix::CreateFromQuaternion(worldRot) * Matrix::CreateTranslation(worldPos);
+        Matrix worldM = localM * parentRT;
 
         Vector3 s{}, t{};
         Quaternion r = Quaternion::Identity;
         worldM.Decompose(s, r, t);
         r.Normalize();
 
-        apply.transform->Set_Pos(_vector3(t.x, t.y, t.z));
-        apply.transform->Set_Quaternion(_vector4(r.x, r.y, r.z, r.w));
+        worldPos = t;
+        worldRot = r;
     }
-    else
+
+    Quaternion finalRot = worldRot;
+
+    if (boneDesc && boneDesc->enabled && boneDesc->mode == CamBoneMode::LookAt)
     {
-        apply.transform->Set_Pos(pose.pos);
-        apply.transform->Set_Quaternion(_vector4(pose.rot.x, pose.rot.y, pose.rot.z, pose.rot.w));
+        Vector3 lookTarget = worldPos;
+
+        if (hasBoneRT) lookTarget = boneRT.Translation();
+        else if (hasSpaceRefRT) lookTarget = spaceRefRT.Translation();
+
+        Vector3 dir = worldPos - lookTarget;
+
+        if (dir.LengthSquared() > 1e-8f)
+        {
+            dir.Normalize();
+
+            Vector3 up(0.f, 1.f, 0.f);
+            if (fabsf(dir.Dot(up)) > 0.98f) up = Vector3(0.f, 0.f, 1.f);
+
+            Matrix lookM = Matrix::CreateWorld(Vector3::Zero, dir, up);
+            Quaternion lookRot = Quaternion::CreateFromRotationMatrix(lookM);
+            lookRot.Normalize();
+
+            Quaternion rollQ = Quaternion::CreateFromAxisAngle(dir, pose.roll);
+
+            finalRot = rollQ * lookRot;
+            finalRot.Normalize();
+        }
     }
+
+    apply.transform->Set_Pos(_vector3(worldPos.x, worldPos.y, worldPos.z));
+    apply.transform->Set_Quaternion(_vector4(finalRot.x, finalRot.y, finalRot.z, finalRot.w));
 
     if (apply.cam)
         apply.cam->Set_FOV(pose.fov);

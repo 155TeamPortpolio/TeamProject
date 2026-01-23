@@ -16,6 +16,17 @@
 #include "BattleSystem.h"
 #include "Character.h"
 
+namespace
+{
+    size_t FindEventKeyIdx(const vector<CamKeyFrame>& keys, const string& eventTag)
+    {
+        for (size_t i = 0; i < keys.size(); ++i)
+            if (keys[i].eventTag == eventTag) return i;
+
+        return (size_t)-1;
+    }
+}
+
 IMPLEMENT_SINGLETON(CCamDirector)
 
 CGameObject* CCamDirector::GetCamObj(CamType type) const
@@ -63,12 +74,12 @@ void CCamDirector::AutoTarget()
 void CCamDirector::AutoField()
 {
     AutoTarget();
-    RequestSequence("Field/Back");
+    RequestSequence("Field/Front");
 }
 
 void CCamDirector::Update(_float dt)
 {
-    UpdateInput();
+    UpdateInput(dt);
     UpdatePlayer();
 
     if (!m_playing.active) return;
@@ -126,7 +137,7 @@ string CCamDirector::GetCharacterStr() const
     return Helper::EnumToString(GetCharacter()->Get_CharacterName());
 }
 
-void CCamDirector::UpdateInput()
+void CCamDirector::UpdateInput(_float dt)
 {
     if (InputDevice()->Key_Tap(VK_F1))
         CameraManager()->Set_MainCam(GetFreeCamComp(), 0.5f);
@@ -140,6 +151,9 @@ void CCamDirector::UpdateInput()
 
 void CCamDirector::AbortSequenceToOrbit(_bool resetTime)
 {
+    m_lastEndedValid = false;
+    m_lastEndedKey.clear();
+
     auto seqPlayer = GetSeqPlayer();
 
     seqPlayer->SetApplyEnabled(false);
@@ -162,7 +176,8 @@ void CCamDirector::UpdatePlayer()
 
     if (type == ENUM(CPlayer::PLAYER::END) || !focus.isValid())
     {
-        if (m_focusHandle.isValid()) GetOrbitCam()->ClearTarget();
+        if (m_focusHandle.isValid())
+            GetOrbitCam()->ClearTarget();
 
         m_focusHandle.Reset();
         m_focusType = type;
@@ -220,6 +235,44 @@ _bool CCamDirector::IsPlaying(CamSeqType type) const
     return IsPlaying(ResolveSeqKey(type));
 }
 
+_bool CCamDirector::IsFinished(CamSeqType type, const string& eventTag) const
+{
+    if (!GetPlayer()->Get_CurCharacterHandle().isValid()) return false;
+
+    const string key = ResolveSeqKey(type);
+
+    if (m_playing.active && m_playing.key == key)
+    {
+        auto seqPlayer = GetSeqPlayer();
+        auto seq = seqPlayer->GetSequence();
+        if (!seq) return false;
+
+        const auto& keys = seq->keyframes;
+        if (keys.empty()) return false;
+
+        const size_t idx = FindEventKeyIdx(keys, eventTag);
+        if (idx == (size_t)-1) return false;
+
+        const _float t = seqPlayer->GetTime();
+
+        if (idx + 1 < keys.size()) return t >= keys[idx + 1].time;
+
+        return !seqPlayer->IsPlaying();
+    }
+
+    if (!m_lastEndedValid) return false;
+    if (m_lastEndedKey != key) return false;
+
+    auto it = m_seqs.find(key);
+    if (it == m_seqs.end()) return false;
+
+    const auto& keys = it->second.seqDesc.keyframes;
+    const size_t idx = FindEventKeyIdx(keys, eventTag);
+    if (idx == (size_t)-1) return false;
+
+    return true;
+}
+
 _uint CCamDirector::RequestSequence(const string& key, const CamSequenceRequestDesc& req)
 {
     if (m_playing.active) StopAll(req.blendOutSec);
@@ -270,6 +323,9 @@ _uint CCamDirector::RequestSequence(const string& key, const CamSequenceRequestD
 
 _bool CCamDirector::StopRequest(_uint handle, _float blendOutSec, _bool resetTime)
 {
+    m_lastEndedValid = m_playing.active;
+    m_lastEndedKey = m_playing.key;
+
     const Matrix outWorld = *CameraManager()->Get_InversedViewMatrix();
 
     Vector3 outPos = outWorld.Translation();

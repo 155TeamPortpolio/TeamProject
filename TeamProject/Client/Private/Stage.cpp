@@ -70,13 +70,16 @@ void CStage::BossIntro(CZero_Level::StageContext& context)
 		m_introFlow.AddWait(seqId, 0.2f);
 		m_introFlow.AddOnce(seqId, [this]() {CUIDirector::GetInstance()->FadeIn_Screen(1.f); });
 		m_introFlow.AddOnce(seqId, [context]() {
-			BattleSystem()->GetBattlePlayer()->QuestStart();
-			CCamDirector::GetInstance()->AutoTarget();
-			CCamDirector::GetInstance()->RequestSequence(CamSeqType::ZeroIntro);
+			//BattleSystem()->GetBattlePlayer()->QuestStart();
+			CamDirector()->AutoTarget();
+			//CamDirector()->RequestSequence(CamSeqType::ZeroIntro);
+			CamDirector()->RequestSequence(CamSeqType::BattleIntro);
+			
 			});
 		m_introFlow.AddWaitUntil(seqId, []()
 			{
-				return !CamDirector()->IsPlaying(CamSeqType::ZeroIntro);
+				//return !CamDirector()->IsPlaying(CamSeqType::ZeroIntro);
+				return !CamDirector()->IsPlaying(CamSeqType::BattleIntro);
 			});
 		m_introFlow.EndSequence(seqId);
 	}

@@ -109,17 +109,8 @@
     <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Hit">
       <UniqueIdentifier>{82010ee6-5be7-4dc2-b2fe-55411c9442cf}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\Sacrifice_Hand">
-      <UniqueIdentifier>{8fba8062-3d01-4a71-a27f-806808b2273d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\Sacrifice_Hand\State">
-      <UniqueIdentifier>{a7a195e0-0693-4efe-b00e-6aa09c326087}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Attack\Phase1">
       <UniqueIdentifier>{964c7637-0a29-4115-a3ab-e67539825dbc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Attack\Phase2">
-      <UniqueIdentifier>{8080e445-1ea3-4f5c-9188-7ec8d37887e4}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Walk\Phase1">
       <UniqueIdentifier>{a0d42fa8-de6c-4103-8f2b-ce937be8f959}</UniqueIdentifier>
@@ -183,15 +174,6 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Player\Character\Miyabi\State\Move\Run">
       <UniqueIdentifier>{d4841ea4-4d18-48a2-a3e4-59f14bf25a74}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\Sacrifice_Hand\State\Idle">
-      <UniqueIdentifier>{a674fc3d-8b1d-4da5-acd9-95c30ef10018}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\Sacrifice_Hand\State\Attack">
-      <UniqueIdentifier>{b0a4c5a3-595b-4977-8989-5129a6639450}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\Sacrifice_Hand\State\Hit">
-      <UniqueIdentifier>{9c64e158-5809-4bdf-b0bc-b248f585b1f3}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\Object\Enemy\ThugBulkyEnforcer">
       <UniqueIdentifier>{9ecf22bd-6ec3-4d22-b39a-bc4242f18996}</UniqueIdentifier>
@@ -544,9 +526,6 @@
     <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Attack\Ultimate">
       <UniqueIdentifier>{326635e2-7f00-483f-94bf-563eacfe15d1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Object\Player\Character\AttackCollider">
-      <UniqueIdentifier>{8cafc1ce-885d-4894-bbae-9bc579a5da0c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Attack\Branch">
       <UniqueIdentifier>{d798bf56-f080-4a83-85b8-8b18fca9b929}</UniqueIdentifier>
     </Filter>
@@ -785,6 +764,33 @@
     </Filter>
     <Filter Include="02. GameObject\Camera\99. DisplayGate">
       <UniqueIdentifier>{7cfc1b6e-36c2-4bb1-bb95-56819b1ab3d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Attack\Phase2">
+      <UniqueIdentifier>{8080e445-1ea3-4f5c-9188-7ec8d37887e4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Sacrifice_Hand">
+      <UniqueIdentifier>{8fba8062-3d01-4a71-a27f-806808b2273d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Sacrifice_Hand\State">
+      <UniqueIdentifier>{a7a195e0-0693-4efe-b00e-6aa09c326087}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Sacrifice_Hand\State\Idle">
+      <UniqueIdentifier>{a674fc3d-8b1d-4da5-acd9-95c30ef10018}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Sacrifice_Hand\State\Attack">
+      <UniqueIdentifier>{b0a4c5a3-595b-4977-8989-5129a6639450}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Sacrifice_Hand\State\Hit">
+      <UniqueIdentifier>{9c64e158-5809-4bdf-b0bc-b248f585b1f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Collider">
+      <UniqueIdentifier>{1487da32-f803-44c2-be56-7687fc06901a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Collider\ParryCollider">
+      <UniqueIdentifier>{9e151b16-ea22-445d-a015-cc45152d933a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Collider\AttackCollider">
+      <UniqueIdentifier>{8cafc1ce-885d-4894-bbae-9bc579a5da0c}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\MapObject\EntitySpawner">
       <UniqueIdentifier>{8b852d8f-36c2-4c1e-b080-ca2b3222160f}</UniqueIdentifier>
@@ -1350,7 +1356,7 @@
       <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Attack\Branch</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\CharacterAttackCollider.h">
-      <Filter>02. GameObject\Object\Player\Character\AttackCollider</Filter>
+      <Filter>02. GameObject\Object\Player\Character\Collider\AttackCollider</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UI_IconLabel.h">
       <Filter>02. GameObject\UI\02. 3D\Plane\IconLabel</Filter>
@@ -1531,6 +1537,9 @@
     </ClInclude>
     <ClInclude Include="..\public\DisplayGate.h">
       <Filter>02. GameObject\Camera\99. DisplayGate</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CharacterParryCollider.h">
+      <Filter>02. GameObject\Object\Player\Character\Collider\ParryCollider</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2073,7 +2082,7 @@
       <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Attack\Ultimate</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\CharacterAttackCollider.cpp">
-      <Filter>02. GameObject\Object\Player\Character\AttackCollider</Filter>
+      <Filter>02. GameObject\Object\Player\Character\Collider\AttackCollider</Filter>
     </ClCompile>
     <ClCompile Include="..\private\JaneDoeState_BranchAttack.cpp">
       <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Attack\Branch</Filter>
@@ -2235,6 +2244,9 @@
     </ClCompile>
     <ClCompile Include="..\private\DisplayGate.cpp">
       <Filter>02. GameObject\Camera\99. DisplayGate</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CharacterParryCollider.cpp">
+      <Filter>02. GameObject\Object\Player\Character\Collider\ParryCollider</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
