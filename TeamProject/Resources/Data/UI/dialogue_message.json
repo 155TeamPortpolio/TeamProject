@@ -566,7 +566,7 @@
                 },
                 {
                     "alive": true,
-                    "instanceName": "next",
+                    "instanceName": "btnNext",
                     "transform": {
                         "anchor": 0,
                         "anchorOffset": [

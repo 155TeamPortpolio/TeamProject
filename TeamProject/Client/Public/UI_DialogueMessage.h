@@ -13,11 +13,12 @@ public:
 	typedef struct tagMessageDesc {
 		wstring strName = {};
 		wstring strMessage = {};
+		_bool hasChoice = {};
 	}MESSAGE_DESC;
 
 private:
-	enum class CHILD { NAME, MESSAGE, ARROW1, ARROW2, NEXT, END };
-	inline static const string CHILD_INSTNAMES[ENUM(CHILD::END)] = { "name", "message", "arrow1", "arrow2", "next" };
+	enum class CHILD { NAME, MESSAGE, ARROW1, ARROW2, BTN_NEXT, END };
+	inline static const string CHILD_INSTNAMES[ENUM(CHILD::END)] = { "name", "message", "arrow1", "arrow2", "btnNext" };
 
 	enum class TEXTSLOT { NAME, MESSAGE, END };
 	inline static const string TEXTSLOT_INSTNAMES[ENUM(TEXTSLOT::END)] = { "name", "message" };
@@ -89,15 +90,17 @@ public:
 
 private:
 	CUI_Object*			m_pChildren[ENUM(CHILD::END)] = {};
-	class CButtonUI*	m_pNextButton = { nullptr };
+	class CButtonUI*	m_pBtnNext = { nullptr };
 	CTextSlot*			m_pTextSlots[ENUM(TEXTSLOT::END)] = {};
 
 	TYPEWRITER_DESC		m_tMessageTypeWriter = {};
+	_bool				m_hasChoice = {};
 
 private:
 	void Cache_Children();
 
 	void Change_Dialogue();
+	void Show_Choices();
 
 	void Start_TypingMessage(const _wstring& strText);
 	void Update_TypingMessage(_float dt);

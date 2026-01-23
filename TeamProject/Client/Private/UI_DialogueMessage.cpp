@@ -27,8 +27,9 @@ HRESULT CUI_DialogueMessage::Initialize(INIT_DESC* pArg)
     Cache_Children();
 
     m_tMessageTypeWriter.onTyped = [this](_uint iIndex, const wstring& strText) { Set_ChildText(ENUM(CHILD::MESSAGE), strText); };
-    if (m_pNextButton)
-        m_pNextButton->Set_OnClick([this]() { Change_Dialogue(); });
+
+    if (m_pBtnNext)
+        m_pBtnNext->Set_OnClick([this]() { Change_Dialogue(); });
 
     Set_Alpha(0.f);
     Set_ChildAnimation(CHILD::ARROW1, 0);
@@ -55,9 +56,9 @@ void CUI_DialogueMessage::UI_Active(void* pArg)
     } 
 
     MESSAGE_DESC* pDesc = static_cast<MESSAGE_DESC*>(pArg);
-
     Set_ChildText(TEXTSLOT::NAME, pDesc->strName);
     Start_TypingMessage(pDesc->strMessage);
+    m_hasChoice = pDesc->hasChoice;
 }
 
 void CUI_DialogueMessage::UI_DeActive(void* pArg)
@@ -85,11 +86,11 @@ void CUI_DialogueMessage::Cache_Children()
     }
 
     // 버튼 UI 포인터로 캐싱
-    auto pObj = pContainer->Find_Descendant("next");
+    auto pObj = pContainer->Find_Descendant("btnNext");
     if (pObj)
     {
         auto pUI = dynamic_cast<CUI_Object*>(pObj);
-        m_pNextButton = dynamic_cast<CButtonUI*>(pUI);
+        m_pBtnNext = dynamic_cast<CButtonUI*>(pUI);
     }
 
     // 텍스트 컴포넌트를 배열에 캐싱
@@ -112,9 +113,20 @@ void CUI_DialogueMessage::Change_Dialogue()
     if (Complete_TypingMessage())
         return;
 
-    auto parentObj = dynamic_cast<CUI_Dialogue*>(Get_Component<CChild>()->Get_Parent());
-    if (parentObj)
+    if (m_hasChoice)
+        return;
+
+    if (auto parentObj = dynamic_cast<CUI_Dialogue*>(Get_Component<CChild>()->Get_Parent()))
         parentObj->Change_Dialogue();
+}
+
+void CUI_DialogueMessage::Show_Choices()
+{
+    if (!m_hasChoice)
+        return;
+
+    if (auto parentObj = dynamic_cast<CUI_Dialogue*>(Get_Component<CChild>()->Get_Parent()))
+       parentObj->Show_Choices();
 }
 
 void CUI_DialogueMessage::Start_TypingMessage(const _wstring& strText)
@@ -128,7 +140,12 @@ void CUI_DialogueMessage::Update_TypingMessage(_float dt)
     m_tMessageTypeWriter.Update(dt, ENUM(CHILD::MESSAGE));
 
     if (m_tMessageTypeWriter.isFinished())
+    {
+        if (m_tMessageTypeWriter.isTyping)  /////////////
+            Show_Choices();
+
         m_tMessageTypeWriter.Complete();
+    } 
 }
 
 _bool CUI_DialogueMessage::Complete_TypingMessage()
@@ -136,8 +153,12 @@ _bool CUI_DialogueMessage::Complete_TypingMessage()
     if (!m_tMessageTypeWriter.isTyping)
         return false;
 
+    if (m_tMessageTypeWriter.isTyping)  ////////////
+        Show_Choices();
+
     m_tMessageTypeWriter.Complete();
     Set_ChildText(TEXTSLOT::MESSAGE, m_tMessageTypeWriter.strFullText);
+
     return true;
 }
 

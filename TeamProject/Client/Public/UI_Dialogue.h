@@ -20,6 +20,8 @@ private:
 
 public:
 	void Change_Dialogue();
+	void Change_Dialogue(ChoiceDesc desc);
+	void Show_Choices();
 
 public:
 	virtual HRESULT Initialize_Prototype()           override;
@@ -45,6 +47,8 @@ private:
 	
 	void Change_State(STATE eState);
 
+	void BroadCast_NPCInteractDesc(wstring strName, _uint iCurSequenceID, _uint iNextSequenceID, DialogueResult eResult);
+
 	void Set_ChildUIActive(CHILD child);
 	void Set_ChildUIDeActive(CHILD child);
 	_bool Is_ChildAnimFinished(CHILD child);
@@ -56,8 +60,3 @@ public:
 };
 
 NS_END
-
-// 처음 대화시작할 때 다른 UI 다 안 보이게 하고
-// 살짝 아래서부터 페이드인되면서 올라오고
-// 다 올라온 뒤에 글자 타이핑 시작. 근데 이름은 이미 보임
-// 그리고 대화 끝나면 아래로 살짝 내려가면서 페이드아웃

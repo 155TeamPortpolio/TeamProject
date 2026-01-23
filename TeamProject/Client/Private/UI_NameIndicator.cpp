@@ -50,8 +50,8 @@ void CUI_NameIndicator::Awake()
 
     Set_Alpha(0.f);
 
-    Set_ChildAlive(CHILD::ARROWL, false);
-    Set_ChildAlive(CHILD::ARROWR, false);
+    //Set_ChildAlive(CHILD::ARROWL, false);
+    //Set_ChildAlive(CHILD::ARROWR, false);
 }
 
 void CUI_NameIndicator::Update(_float dt)

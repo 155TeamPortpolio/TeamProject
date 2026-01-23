@@ -9,6 +9,7 @@
 #include "ButtonUI.h"
 
 #include "UI_DialogueMessage.h"
+#include "UI_DialogueChoice.h"
 
 void CUI_Dialogue::Change_Dialogue()
 {
@@ -18,23 +19,59 @@ void CUI_Dialogue::Change_Dialogue()
     case DialogueResult::Fail:
     {
         Change_State(STATE::INVISIBLE);
-
-        // 현재는 다이얼로그만 보내는데, 선택지일 때는 선택지로 
-        NPC_INTERACT_DESC desc = {};
-        desc.strName = m_tDialogueDesc.Name;
-        desc.iCurSequenceID = m_tDialogueDesc.SequenceID;
-        desc.iNextSequenceID = m_tDialogueDesc.NextSequenceID;
-        desc.eResult = m_tDialogueDesc.Result;
-        EventSystem()->Broadcast<NPC_INTERACT_DESC>({ desc });
+        BroadCast_NPCInteractDesc(m_tDialogueDesc.Name, m_tDialogueDesc.SequenceID, m_tDialogueDesc.NextSequenceID, m_tDialogueDesc.Result);
     }
     break;
 
-    case DialogueResult::None:
     case DialogueResult::Running:
+    case DialogueResult::None:
         _int iSequenceID = m_tDialogueDesc.SequenceID;
         Open_Dialogue(m_tDialogueDesc.DialogueID, ++iSequenceID);
         break;
     }
+}
+
+void CUI_Dialogue::Change_Dialogue(ChoiceDesc desc)
+{
+    if (desc.Next_SequeceID == 0)
+    {
+        Change_State(STATE::INVISIBLE);
+        BroadCast_NPCInteractDesc(m_tDialogueDesc.Name, m_tDialogueDesc.SequenceID, desc.Next_SequeceID, desc.Result);
+       
+        return;
+    } 
+
+    Open_Dialogue(m_tDialogueDesc.DialogueID, desc.Next_SequeceID);
+}
+
+void CUI_Dialogue::Show_Choices()
+{
+    if (m_tDialogueDesc.ChoiceNum <= 0)
+        return;
+
+    auto pChoice = m_pChildren[ENUM(CHILD::CHOICE)];
+    if (!pChoice)
+        return;
+
+    CUI_DialogueChoice::CHOICE_DESC desc = {};
+    desc.iChoiceNum = m_tDialogueDesc.ChoiceNum;
+    switch (desc.iChoiceNum)
+    {
+    case 1:
+        desc.strChoices.push_back(m_tDialogueDesc.Choice_ID1);
+        break;
+    case 2:
+        desc.strChoices.push_back(m_tDialogueDesc.Choice_ID1);
+        desc.strChoices.push_back(m_tDialogueDesc.Choice_ID2);
+        break;
+    case 3:
+        desc.strChoices.push_back(m_tDialogueDesc.Choice_ID1);
+        desc.strChoices.push_back(m_tDialogueDesc.Choice_ID2);
+        desc.strChoices.push_back(m_tDialogueDesc.Choice_ID3);
+        break;
+    }
+
+    pChoice->UI_Active(&desc);
 }
 
 HRESULT CUI_Dialogue::Initialize_Prototype()
@@ -54,7 +91,8 @@ HRESULT CUI_Dialogue::Initialize(INIT_DESC* pArg)
     m_vSize = m_WinSize;
 
     Add_Children(G_GlobalLevelKey, "Proto_GameObject_DialogueMessage", CHILD::MESSAGE);
-    
+    Add_Children(G_GlobalLevelKey, "Proto_GameObject_DialogueChoice", CHILD::CHOICE);
+
     Bind_EventListener();
 
     Set_Alive(false);
@@ -64,15 +102,6 @@ HRESULT CUI_Dialogue::Initialize(INIT_DESC* pArg)
 
 void CUI_Dialogue::Update(_float dt)
 {
-    // 테스트 
-    if (InputDevice()->Key_Down('O'))
-    {
-        UI_DIALOGUE_REQUEST_DESC desc = {};
-        desc.strDialogueID = "Dialogue_003";
-        desc.iSequenceID = 0;
-        EventSystem()->Broadcast< UI_DIALOGUE_REQUEST_DESC>({ desc });
-    } 
-
     __super::Update(dt);
 
     if (m_eState == STATE::INVISIBLE && Is_ChildAnimFinished(CHILD::MESSAGE))
@@ -106,29 +135,23 @@ void CUI_Dialogue::Bind_EventListener()
 void CUI_Dialogue::Open_Dialogue(const string& strNewSequenceID, _uint iNewSequenceID)
 {
     auto pair = make_pair(strNewSequenceID, iNewSequenceID);
-    if (pair == make_pair(m_tDialogueDesc.DialogueID, m_tDialogueDesc.SequenceID))
+    if (m_eState == STATE::VISIBLE && pair == make_pair(m_tDialogueDesc.DialogueID, m_tDialogueDesc.SequenceID))
         return;
 
     Change_State(STATE::VISIBLE);   // 여기서 하는게 맞나?
 
     m_tDialogueDesc = CDataBase::GetInstance()->GetNpcDialogueDesc(pair);
 
-    if (auto pMessage = m_pChildren[ENUM(CHILD::MESSAGE)])
-    {
-        CUI_DialogueMessage::MESSAGE_DESC desc = {};
-        desc.strName = m_tDialogueDesc.Name;
-        desc.strMessage = m_tDialogueDesc.Text;
+    auto pMessage = m_pChildren[ENUM(CHILD::MESSAGE)];
+    if (!pMessage)
+        return;
 
-        pMessage->UI_Active(&desc);
-    }
+    CUI_DialogueMessage::MESSAGE_DESC desc = {};
+    desc.strName = m_tDialogueDesc.Name;
+    desc.strMessage = m_tDialogueDesc.Text;
+    desc.hasChoice = (m_tDialogueDesc.ChoiceNum > 0) ? true : false;
 
-    switch (m_tDialogueDesc.DialogueType)
-    {
-    case DialogueType::Normal:  
-        break;
-    case DialogueType::Choice:
-        break;
-    }
+    pMessage->UI_Active(&desc);
 }
 
 void CUI_Dialogue::Change_State(STATE eState)
@@ -147,6 +170,16 @@ void CUI_Dialogue::Change_State(STATE eState)
         Set_ChildUIActive(CHILD::MESSAGE);
         break;
     }
+}
+
+void CUI_Dialogue::BroadCast_NPCInteractDesc(wstring strName, _uint iCurSequenceID, _uint iNextSequenceID, DialogueResult eResult)
+{
+    NPC_INTERACT_DESC desc = {};
+    desc.strName = strName;
+    desc.iCurSequenceID = iCurSequenceID;
+    desc.iNextSequenceID = iNextSequenceID;
+    desc.eResult = eResult;
+    EventSystem()->Broadcast<NPC_INTERACT_DESC>({ desc });
 }
 
 void CUI_Dialogue::Set_ChildUIActive(CHILD child)

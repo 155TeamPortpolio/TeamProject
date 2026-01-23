@@ -801,6 +801,9 @@
     <Filter Include="02. GameObject\UI\01. 2D\Dialogue\Message">
       <UniqueIdentifier>{8586251d-ec90-4723-ac77-2750945a94a4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\Dialogue\Choice">
+      <UniqueIdentifier>{db39c0af-f5db-4ad1-aad6-444af6dc0543}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1553,6 +1556,9 @@
     <ClInclude Include="..\Public\UI_DialogueMessage.h">
       <Filter>02. GameObject\UI\01. 2D\Dialogue\Message</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UI_DialogueChoice.h">
+      <Filter>02. GameObject\UI\01. 2D\Dialogue\Choice</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2265,6 +2271,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\UI_DialogueMessage.cpp">
       <Filter>02. GameObject\UI\01. 2D\Dialogue\Message</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_DialogueChoice.cpp">
+      <Filter>02. GameObject\UI\01. 2D\Dialogue\Choice</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
