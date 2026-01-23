@@ -11,6 +11,10 @@ private:
 	virtual ~CCharacterParryCollider() DEFAULT;
 
 public:
+	const unordered_set<CGameObject*>& Get_Targets() const { return m_ParryableTargets; }
+	_bool Can_Parry() const { return !m_ParryableTargets.empty(); }
+
+public:
 	HRESULT         Initialize_Prototype() override;
 	HRESULT         Initialize(INIT_DESC* pArg) override;
 	void	        Awake() override;
@@ -26,6 +30,7 @@ public:
 	_vector3    Get_PrevPos() { return m_vPrevPos; }
 
 private:
+	unordered_set<CGameObject*> m_ParryableTargets;
 	_vector3 m_vPrevPos;
 
 public:
