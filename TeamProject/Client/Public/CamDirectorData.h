@@ -15,6 +15,7 @@ class CBattlePlayer; class CFieldCharacter; class CPlayer; class CCharacter;
 enum class CamType       { None, Free, Orbit, Sequence, End };
 enum class CamReturnMode { None, SnapToEnd, RestorePrev };
 enum class CamSeqType    { BattleIntro, ZeroIntro, Ultimate, End };
+enum class CamEventType  { IntroFinished };
 
 enum class CamShakeType
 {
