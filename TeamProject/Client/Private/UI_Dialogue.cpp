@@ -11,6 +11,8 @@
 #include "UI_DialogueMessage.h"
 #include "UI_DialogueChoice.h"
 
+#include "CamDirector.h"
+
 void CUI_Dialogue::Change_Dialogue()
 {
     switch (m_tDialogueDesc.Result)
@@ -128,6 +130,7 @@ void CUI_Dialogue::Bind_EventListener()
     // ¿Ã∫•∆Æ : UI_DIALOGUE_REQUEST_DESC
     Get_Component<CEventListener>()->Add_Listener<UI_DIALOGUE_REQUEST_DESC>([this](const UI_DIALOGUE_REQUEST_DESC& desc)
         {
+            CamDirector()->StartDialog();
             Open_Dialogue(desc.strDialogueID, desc.iSequenceID);
         });
 }
@@ -162,8 +165,9 @@ void CUI_Dialogue::Change_State(STATE eState)
     m_eState = eState;
     switch (eState)
     {
-    case STATE::INVISIBLE:
+    case STATE::INVISIBLE: 
         Set_ChildUIDeActive(CHILD::MESSAGE);
+        CamDirector()->EndDialog();
         break;
     case STATE::VISIBLE:
         Set_Alive(true);
