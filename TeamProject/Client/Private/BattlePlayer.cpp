@@ -15,6 +15,7 @@
 //character class
 #include "Character.h"
 #include "CharacterAttackCollider.h"
+#include "CharacterParryCollider.h"
 #include "Corin.h"
 #include "JaneDoe.h"
 
@@ -423,6 +424,8 @@ HRESULT CBattlePlayer::Initialize_CharacterPrototype()
 	if (FAILED(pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_JaneDoe", CJaneDoe::Create())))
 		return E_FAIL;
 	if (FAILED(pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_CharacterAttackCollider", CCharacterAttackCollider::Create())))
+		return E_FAIL;
+	if (FAILED(pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_CharacterParryCollider", CCharacterParryCollider::Create())))
 		return E_FAIL;
 	return S_OK;
 }

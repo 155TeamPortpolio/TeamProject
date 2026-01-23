@@ -4,6 +4,8 @@
 #include "GameInstance.h"
 #include "ObjectContainer.h"
 
+#include "CamDirector.h"
+
 HRESULT CUI_SceneFrame::Initialize_Prototype()
 {
     __super::Initialize_Prototype();
@@ -33,11 +35,15 @@ HRESULT CUI_SceneFrame::Initialize(INIT_DESC* pArg)
 
 void CUI_SceneFrame::Awake()
 {
+    UI_Active();
 }
 
 void CUI_SceneFrame::Update(_float dt)
 {
     __super::Update(dt);
+
+    if (CamDirector()->IsFinished(CamEventType::IntroFinished))
+        UI_DeActive();
 
     // 테스트 코드
     //if (InputDevice()->Key_Down('P'))

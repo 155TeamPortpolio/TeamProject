@@ -76,7 +76,7 @@ namespace CamUtil
 
         const size_t count64 = values.size();
         assert(count64 <= (numeric_limits<_uint>::max)());
-        const _uint count = static_cast<_uint>(count64);
+        const _uint count = ENUM(count64);
 
         WriteData(outFile, count);
 

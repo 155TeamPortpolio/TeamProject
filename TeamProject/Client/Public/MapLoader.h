@@ -1,7 +1,7 @@
 #pragma once
 #include "Base.h"
 #include "MapData_Defines.h"
-
+#include "MapLoader_Helper.h"
 
 NS_BEGIN(Client)
 class CMapLoader final : public CBase
@@ -27,13 +27,16 @@ public:
 	void	Update_Load();
 
 	OBJECT_HANDLE	MapIndexToEntityHandle(_uint iIndex);
-	
+
+	template<typename T>
+	optional<T> Get_EntitySlotDataValue(const string& TagFormat, _uint iEntityIndex, const string& TagName);
+
 private:
 	HRESULT			Load_BaseData(const string& TagArea, _bool* CheckMapBase, _bool* CheckEntityBase);
 	void			Set_LoadingQueue();
 	void			PlaceObjects_Once();
 	_bool			PlaceObjects_Split();
-
+	
 private:
 	void			Place_PlacedObjectFromLoadData(MapData_Object* pData);
 	void			Place_TriggerObjectFromLoadData(MapData_Object* pData);
@@ -72,3 +75,24 @@ public:
 };
 
 NS_END
+
+template<typename T>
+inline optional<T> CMapLoader::Get_EntitySlotDataValue(const string& TagFormat, _uint iEntityIndex, const string& TagName)
+{
+	auto Format = m_EntitySlotFormatData.find(TagFormat);
+	if (Format == m_EntitySlotFormatData.end())
+		return T();
+
+	auto FileData = Format->second.find(iEntityIndex);
+	if (FileData == Format->second.end())
+		return T();
+
+	for (auto& FieldData : FileData->second) {
+
+		if (FieldData.TagName == TagName) {
+			return GetSlotValue<T>(FieldData.defaultvalue);;
+		}
+	}
+
+	return T();
+}

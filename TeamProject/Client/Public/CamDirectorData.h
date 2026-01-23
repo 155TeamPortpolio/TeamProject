@@ -15,24 +15,31 @@ class CBattlePlayer; class CFieldCharacter; class CPlayer; class CCharacter;
 enum class CamType       { None, Free, Orbit, Sequence, End };
 enum class CamReturnMode { None, SnapToEnd, RestorePrev };
 enum class CamSeqType    { BattleIntro, ZeroIntro, Ultimate, End };
+enum class CamEventType  { IntroFinished };
 
 enum class CamShakeType
 {
-    TapSoft, HitLight, HitNormal, HitHeavy,
-    ExplosionSmall, ExplosionBig,
-    LandingLight, LandingHeavy,
-    Dash,
-    Roar2S, Roar25S,
+    TapSoft, HitLight, HitNormal, HitHeavy, HitCrit,
+    ExplosionSmall, ExplosionBig, ExplosionHuge, ExplosionMega,
+    LandingLight, LandingHeavy, LandingCrush,
+    Dash, Dodge, SprintStep,
+    Parry, GuardBreak, Knockback, Stun,
+    UltimateStart, UltimateImpact, UltimateEnd,
+    EarthquakeShort, EarthquakeLong,
+    Roar1S, Roar15S, Roar2S, Roar25S, Roar4S,
     End
 };
 
 enum class CamZoomType
 {
     TapSoft, HitLight, HitNormal, HitHeavy, HitCrit,
-    ExplosionSmall, ExplosionBig,
-    LandingLight, LandingHeavy,
-    Dash,
-    Roar2S, Roar25S,
+    ExplosionSmall, ExplosionBig, ExplosionHuge, ExplosionMega,
+    LandingLight, LandingHeavy, LandingCrush,
+    Dash, Dodge, SprintStep,
+    Parry, GuardBreak, Knockback, Stun,
+    UltimateStart, UltimateImpact, UltimateEnd,
+    EarthquakeShort, EarthquakeLong,
+    Roar1S, Roar15S, Roar2S, Roar25S, Roar4S,
     End
 };
 
