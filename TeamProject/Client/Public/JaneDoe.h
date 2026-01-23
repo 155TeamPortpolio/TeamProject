@@ -39,6 +39,7 @@ public:
     virtual void    Render_GUI() override;
 
 public:
+    virtual void    Reset_State()              override;
     virtual void    On_Start()                 override;
     virtual void    On_SwitchIn(SWITCH eType)  override;   //*스위치 인 콜*
     virtual void    On_SwitchOut()             override;   //*스위치 아웃 콜*

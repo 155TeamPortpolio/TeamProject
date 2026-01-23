@@ -196,9 +196,7 @@ HRESULT CCollider::Initialize(COMPONENT_DESC* pArg)
 
 void CCollider::Update(_float dt)
 {
-	if (m_bMapTool ||
-		(m_pAttachedRigidBody && m_pAttachedRigidBody->Is_Kinematic())
-		)
+	if (m_bMapTool)
 	{
 		Sync_Transform();
 	}

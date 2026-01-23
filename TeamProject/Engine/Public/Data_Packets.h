@@ -40,7 +40,7 @@ namespace Engine {
 		_uint DrawIndex = {};		/*���° �޽� �׸��µ�?*/
 		_uint MaterialIndex = {};/*�� �޽ô� �����µ�*/
 		_uint SkinningOffset = {};
-		
+		_bool isBatched = { false };
 		_vector LookVector = {};
 
 		class CModel* pModel = { nullptr };

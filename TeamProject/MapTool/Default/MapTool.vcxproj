@@ -157,6 +157,11 @@
     <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\backends\imgui_impl_win32.h" />
     <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\imgui.h" />
     <ClInclude Include="..\..\Engine\Public\GUI_Inc\imgui_stdlib.h" />
+    <ClInclude Include="..\public\BattleEndPoint.h" />
+    <ClInclude Include="..\public\BattleMonsterPoint.h" />
+    <ClInclude Include="..\public\BattleObject.h" />
+    <ClInclude Include="..\public\BattlePlayerPoint.h" />
+    <ClInclude Include="..\public\BattleSpawnerPoint.h" />
     <ClInclude Include="..\public\DecalObject.h" />
     <ClInclude Include="..\public\DefaultCamera.h" />
     <ClInclude Include="..\public\DefaultPlaneFloor.h" />
@@ -212,6 +217,11 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="..\private\BattleEndPoint.cpp" />
+    <ClCompile Include="..\private\BattleMonsterPoint.cpp" />
+    <ClCompile Include="..\private\BattleObject.cpp" />
+    <ClCompile Include="..\private\BattlePlayerPoint.cpp" />
+    <ClCompile Include="..\private\BattleSpawnerPoint.cpp" />
     <ClCompile Include="..\private\DecalObject.cpp" />
     <ClCompile Include="..\private\EntityObject.cpp" />
     <ClCompile Include="..\private\MapToolAssistant.cpp" />

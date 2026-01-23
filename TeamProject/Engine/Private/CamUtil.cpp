@@ -7,10 +7,11 @@ namespace
     enum class CamVersion : _uint
     {
         V1 = 1u,
+        V2 = 2u,
     };
 
-    constexpr _uint kCamMagic   = 0x43414D53u;
-    constexpr _uint kCamVersion = static_cast<_uint>(CamVersion::V1);
+    constexpr _uint kCamMagic = 0x43414D53u;
+    constexpr _uint kCamVersion = static_cast<_uint>(CamVersion::V2);
 }
 
 CamKeySegment CamUtil::FindKeySegment(const vector<CamKeyFrame>& keyframes, float time)
@@ -247,6 +248,8 @@ bool CamUtil::Save(const filesystem::path& path, const CamSequenceDesc& seq, str
 
         WriteData(outFile, (uint8_t)(k.useCustomEase ? 1u : 0u));
         WriteData(outFile, static_cast<_uint>(k.outEase));
+
+        WriteString(outFile, k.eventTag);
     }
 
     outFile.flush();
@@ -294,7 +297,7 @@ bool CamUtil::Load(const filesystem::path& path, CamSequenceDesc& outSeq, string
         return false;
     }
 
-    if (version != kCamVersion)
+    if (version < static_cast<_uint>(CamVersion::V1) || version > kCamVersion)
     {
         SetErr("Unsupported version: " + to_string(static_cast<unsigned long>(version)));
         return false;
@@ -389,6 +392,15 @@ bool CamUtil::Load(const filesystem::path& path, CamSequenceDesc& outSeq, string
 
         k.useCustomEase = (useCustomEase != 0);
         k.outEase = static_cast<EaseType>(outEase);
+
+        if (version >= static_cast<_uint>(CamVersion::V2))
+        {
+            if (!ReadString(inFile, k.eventTag)) { SetErr("Read eventTag failed"); return false; }
+        }
+        else
+        {
+            k.eventTag.clear();
+        }
     }
 
     if (!inFile)

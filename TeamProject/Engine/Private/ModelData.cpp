@@ -141,24 +141,133 @@ _int CModelData::Find_MeshIndex(const string& name)
 
 void CModelData::Render_GUI()
 {
-	if (m_pSkeleton) {
-		if (ImGui::Button("Bones Tab")) {
+	if (m_pSkeleton)
+	{
+		if (ImGui::Button("Bones Tab"))
 			isGui_BoneTabOpen = !isGui_BoneTabOpen;
-		}
-		if(isGui_BoneTabOpen){
-		string boneCount = "Bone : " + to_string(m_pSkeleton->Get_BoneCount());
-		ImGui::Text(boneCount.c_str());
-		ImGui::SetNextWindowSize(ImVec2(500, 400));
-		
-		if (ImGui::Begin("SkeletonBones", &isGui_BoneTabOpen, ImGuiWindowFlags_NoCollapse))
+
+		if (isGui_BoneTabOpen)
 		{
-			m_pSkeleton->Render_GUI();
-		}
-		ImGui::End();
+			string boneCount = "Bone : " + to_string(m_pSkeleton->Get_BoneCount());
+			ImGui::Text(boneCount.c_str());
+			ImGui::SetNextWindowSize(ImVec2(500, 400));
+
+			if (ImGui::Begin("SkeletonBones", &isGui_BoneTabOpen, ImGuiWindowFlags_NoCollapse))
+				m_pSkeleton->Render_GUI();
+			ImGui::End();
 		}
 	}
 
+	if (ImGui::Button("Material Stats"))
+	{
+		isGui_MaterialStatsOpen = !isGui_MaterialStatsOpen;
+		if (isGui_MaterialStatsOpen)
+			m_cachedMaterialUsage = BuildMaterialUsageTable(true);
+	}
 
+	if (isGui_MaterialStatsOpen)
+	{
+		ImGui::SetNextWindowSize(ImVec2(520, 420), ImGuiCond_FirstUseEver);
+		if (ImGui::Begin("MaterialUsage", &isGui_MaterialStatsOpen, ImGuiWindowFlags_NoCollapse))
+		{
+			ImGui::Text("Mesh Count: %d", (int)m_Meshes.size());
+			ImGui::Separator();
+
+			if (ImGui::Button("Refresh"))
+				m_cachedMaterialUsage = BuildMaterialUsageTable(true);
+
+			ImGui::Separator();
+
+			if (ImGui::BeginTable("##MatUsageTable", 3, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_ScrollY))
+			{
+				ImGui::TableSetupColumn("MaterialIndex", ImGuiTableColumnFlags_WidthFixed, 120.f);
+				ImGui::TableSetupColumn("Meshes", ImGuiTableColumnFlags_WidthFixed, 70.f);
+				ImGui::TableSetupColumn("Mesh Indices", ImGuiTableColumnFlags_WidthStretch);
+				ImGui::TableHeadersRow();
+
+				for (const auto& row : m_cachedMaterialUsage)
+				{
+					ImGui::TableNextRow();
+
+					ImGui::TableSetColumnIndex(0);
+					ImGui::Text("%u", row.materialIndex);
+
+					ImGui::TableSetColumnIndex(1);
+					ImGui::Text("%u", row.meshCount);
+
+					ImGui::TableSetColumnIndex(2);
+
+					string label = "List##mat_" + to_string(row.materialIndex);
+					if (ImGui::TreeNode(label.c_str()))
+					{
+						for (size_t i = 0; i < row.meshIndices.size(); ++i)
+						{
+							ImGui::SameLine();
+							ImGui::Text("%u", row.meshIndices[i]);
+							if (i + 1 < row.meshIndices.size())
+							{
+								ImGui::SameLine();
+								ImGui::TextUnformatted(",");
+							}
+						}
+						ImGui::NewLine();
+						ImGui::TreePop();
+					}
+				}
+
+				ImGui::EndTable();
+			}
+		}
+		ImGui::End();
+	}
+}
+
+vector<MaterialUsageRow> CModelData::BuildMaterialUsageTable(_bool includeMeshIndices) const
+{
+	unordered_map<_uint, MaterialUsageRow> mapByMaterial;
+	mapByMaterial.reserve(m_Meshes.size());
+
+	for (_uint meshIndex = 0; meshIndex < (_uint)m_Meshes.size(); ++meshIndex)
+	{
+		CMesh* mesh = m_Meshes[meshIndex];
+		if (!mesh) continue;
+
+		_uint materialIndex = mesh->Get_MaterialIndex();
+
+		auto found = mapByMaterial.find(materialIndex);
+		if (found == mapByMaterial.end())
+		{
+			MaterialUsageRow row;
+			row.materialIndex = materialIndex;
+			row.meshCount = 1;
+			if (includeMeshIndices)
+				row.meshIndices.push_back(meshIndex);
+
+			mapByMaterial.emplace(materialIndex, std::move(row));
+		}
+		else
+		{
+			found->second.meshCount += 1;
+			if (includeMeshIndices)
+				found->second.meshIndices.push_back(meshIndex);
+		}
+	}
+
+	vector<MaterialUsageRow> rows;
+	rows.reserve(mapByMaterial.size());
+	for (auto& pair : mapByMaterial)
+		rows.push_back(std::move(pair.second));
+
+	// meshCount 내림차순으로 정렬(많이 쓰는 머티리얼이 위로)
+	sort(rows.begin(), rows.end(),
+		[](const MaterialUsageRow& leftRow, const MaterialUsageRow& rightRow)
+		{
+			if (leftRow.meshCount != rightRow.meshCount)
+				return leftRow.meshCount > rightRow.meshCount;
+			return leftRow.materialIndex < rightRow.materialIndex;
+		});
+
+	return rows;
 }
 
 HRESULT CModelData::Render_Mesh(ID3D11DeviceContext* pContext, _uint Index)

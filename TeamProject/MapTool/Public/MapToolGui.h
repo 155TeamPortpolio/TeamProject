@@ -34,13 +34,16 @@ private:
 	void			KeyInput();
 	void			Compute_Ray();
 	void			Place_Object(PHYSICS_RAY_HIT* pRayHit);
+	void			Place_BattleData(PHYSICS_RAY_HIT* pRayHit);
 	// 기존 레이피킹 방식. 사용X
 	void			Set_ObjectPicking(_bool is);
 	void			PreSet_ModelResource();
 	void			Save_MapData();
 	void			Save_EntityData();
-	void			Select_PlaceType(const string& tagLabel);
+	void			Save_BattleData();
+	void			Select_PlaceType(const string& tagLabel, _bool isShowDetail = true);
 	void			Select_TriggerType();
+	void			Select_BattleDataType();
 	void			Setting_SelectType();
 
 	void			Render_ClearLayer();
@@ -75,13 +78,20 @@ private:
 	_float3				m_vEntitySize = { 1.f, 1.f, 1.f };;
 	_int				m_iEntityIndex = {};
 
+	/* For.BattleData */
+	BATTLE_TYPE			m_eBattlyDataType = {};
+	_float3				m_vBattleDataSize = { 1.f, 1.f, 1.f };;
+	_int				m_iSpawnerIndex = {};
+	_int				m_iMonsterIndex = {};
+	_int				m_iEndPointIndex = {};
+
 	/* For.Data */
 	MapData_Header	m_MapData = {};
-	_float2			m_vShowMapDataSaveFinish = {};
-	_bool			m_isShowMapDataSaveFinish = { false };
 	Entity_Header	m_EntityData = {};
-	_float2			m_vShowEntityDataSaveFinish = {};
-	_bool			m_isShowEntityDataSaveFinish = { false };
+	BATTLE_FIELD_DATA m_BattleData = {};
+	_uint			m_iBattleTableIndex = {};
+	_float2			m_vShowDataSaveFinish = {};
+	_bool			m_isShowDataSaveFinish = { false };
 
 public:
 	static CMapToolGui* Create(GUI_CONTEXT* pContext);

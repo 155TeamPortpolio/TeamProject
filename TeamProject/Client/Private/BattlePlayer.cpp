@@ -15,6 +15,7 @@
 //character class
 #include "Character.h"
 #include "CharacterAttackCollider.h"
+#include "CharacterParryCollider.h"
 #include "Corin.h"
 #include "JaneDoe.h"
 
@@ -424,6 +425,8 @@ HRESULT CBattlePlayer::Initialize_CharacterPrototype()
 		return E_FAIL;
 	if (FAILED(pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_CharacterAttackCollider", CCharacterAttackCollider::Create())))
 		return E_FAIL;
+	if (FAILED(pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_CharacterParryCollider", CCharacterParryCollider::Create())))
+		return E_FAIL;
 	return S_OK;
 }
 
@@ -515,6 +518,7 @@ void CBattlePlayer::NotifyCharacterSwitchOut()
 
 	m_pCurrentCharacter->Set_MainCharacter(false);
 	m_pCurrentCharacter->On_SwitchOut();
+	m_input.ResetBuffer();
 }
 
 void CBattlePlayer::Sync_ActionUI()

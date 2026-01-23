@@ -42,6 +42,12 @@ public:
 	virtual void UnRegister_AddictiveColor() override;
 
 public:
+	void BatchBegin();
+	void BatchVisiblePacket(OPAQUE_PACKET& packet);
+	void BuildBatchesIfNeeded();
+	_uint DrawBatches(RenderPass* pPass, class CRenderer* pRenderer);
+
+public:
 	virtual _bool GetOn() const  override{ return IsOn; }
 	virtual void SetOn(_bool On) override { IsOn = On; }
 
@@ -90,6 +96,7 @@ private:
 
 	_bool IsOn = true;
 
+	class CCellBatcher* m_pBatcher = { nullptr };
 public:
 	static CRenderSystem* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual void Free() override;

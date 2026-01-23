@@ -1,6 +1,7 @@
 #pragma once
 #include "Base.h"
 NS_BEGIN(Engine)
+
 class ENGINE_DLL CPipeLine :
 	public CBase
 {
@@ -64,7 +65,6 @@ class ENGINE_DLL CPipeLine :
 		_float4x4 SkinningBuffer[g_iMaxNumBones];
 	};
 
-
 private:
 	CPipeLine();
 	virtual ~CPipeLine() DEFAULT;
@@ -84,12 +84,15 @@ public:
 	void Update_SkinnedCSM();
 	void Update_HiZ(ID3D11DeviceContext* pContext);
 
-	_uint Write_ObjectData(const _float4x4& worldMatrix);
 	HRESULT Begin_ObjectBuffer(ID3D11DeviceContext* pContext);
+	_uint Write_ObjectData(const _float4x4& worldMatrix);
+	_uint GetOrWriteTransform(_uint objId, const _float4x4& world);
 	HRESULT End_ObjectBuffer(ID3D11DeviceContext* pContext);
 
-	_uint Write_SkinningBuffer(vector<_float4x4> BoneMatrices);
+
 	HRESULT Begin_SkinningBuffer(ID3D11DeviceContext* pContext);
+	_uint GetOrWriteSkinning(_uint objId, _uint drawIndex, const vector<_float4x4>& bones);
+	_uint Write_SkinningBuffer(const vector<_float4x4>& bones);
 	HRESULT End_SkinningBuffer(ID3D11DeviceContext* pContext);
 
 	void Begin_ShadowRender(_bool IsSkinningMesh, _uint cascadeIndex);
@@ -115,6 +118,9 @@ public:
 	HRESULT Bind_Light(class CShader* pShader, class CVIBuffer* pBuffer, ID3D11DeviceContext* pContext, class CRenderer* pRenderer);
 	vector<OPAQUE_PACKET> OcculsionCulling(const vector<OPAQUE_PACKET>& frustums);
 
+
+private:
+
 private:
 	ID3D11Buffer* m_pDeviceFrameBuffer = { nullptr };
 	ID3D11Buffer* m_pDeviceShadowBuffer = { nullptr };
@@ -139,11 +145,17 @@ private:
 
 	class CRenderSystem* m_pSystem = { nullptr };
 	BoundingFrustum m_Frustum;
+	_float4x4 identity;
 
 private:
 	class CHiZ_Culling* m_pHiZ = { nullptr };
 	class CCSMShadow* m_pStaticCSM = { nullptr };
 	class CCSMShadow* m_pSkinnedCSM = { nullptr };
+
+	/*Frame Cache*/
+private:
+	unordered_map<uint64_t, _uint> m_skinningCache;
+	unordered_map<_uint, _uint> m_transformIndexCache;
 
 public:
 	static CPipeLine* Create(ID3D11Device* pDevice, class CRenderSystem* pSystem);

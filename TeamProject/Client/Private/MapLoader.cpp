@@ -10,23 +10,62 @@
 #include "MapPlacedObject.h"
 #include "MapTriggerObject.h"
 
-#include "OBJFactory.h"
+#include "EntitySpawner.h"
 
 CMapLoader::CMapLoader()
     : m_TagLayers{ "PlacedObject_Layer", "TriggerObject_Layer" }
 {
 }
 
-HRESULT CMapLoader::Initialize(const string& TagLevel, const string& TagArea)
+HRESULT CMapLoader::Initialize(const string& TagLevel, const string& TagArea, _uint iSplitLoadCount)
 {
     m_TagLevel = TagLevel;
 
+    // 맵 베이스 데이터 없으면 로드 불가!
+    if (FAILED(Load_BaseData(TagArea, &m_bHasMapBase, &m_bHasEntityBase)))
+        return E_FAIL;
+
+    auto iter = m_MapSlotFormatData.find("Collider");
+    if (iter != m_MapSlotFormatData.end())
+        m_hasColliderData = true;
+
+    m_iSplitLoadCount = iSplitLoadCount;
+
+    // 맵 오브젝트 분할 인덱스가 있으면 나눠서 없으면 한번에
+    (m_iSplitLoadCount == 0) ? PlaceObjects_Once() : Set_LoadingQueue();
+
+    return S_OK;
+}
+
+void CMapLoader::Update_Load()
+{
+    if (m_bLoaded)
+        return;
+
+    _int iCount = 0;
+    while (iCount != m_iSplitLoadCount) {
+        if(PlaceObjects_Split())
+            break;
+        ++iCount;
+    }
+}
+
+OBJECT_HANDLE CMapLoader::MapIndexToEntityHandle(_uint iIndex)
+{
+    auto iter = m_EntityObjectHandle.find(iIndex);
+    
+    if (iter == m_EntityObjectHandle.end())
+        return OBJECT_HANDLE();
+
+    return iter->second;
+}
+
+HRESULT CMapLoader::Load_BaseData(const string& TagArea, _bool* CheckMapBase, _bool* CheckEntityBase)
+{
     auto pPackets = CDataBase::GetInstance()->GetMapDataPacket(TagArea);
     if (nullptr == pPackets)
         return E_FAIL;
 
-    _bool isFindMapBaseData = { false };
-    _bool isFindEntityBaseData = { false };
     for (auto& packet : *pPackets) {
 
         // MapData 로드
@@ -35,7 +74,7 @@ HRESULT CMapLoader::Initialize(const string& TagLevel, const string& TagArea)
             if ("Base" == packet.TagSlotFormat)
             {
                 LoadMapBaseData(&packet);
-                isFindMapBaseData = true;
+                *CheckMapBase = true;
             }
             else
                 CacheSlotDataFile("MapData", packet.TagDataFilePath);
@@ -46,21 +85,44 @@ HRESULT CMapLoader::Initialize(const string& TagLevel, const string& TagArea)
             if ("Base" == packet.TagSlotFormat)
             {
                 LoadEntityBaseData(&packet);
-                isFindEntityBaseData = true;
+                *CheckEntityBase = true;
             }
             else
                 CacheSlotDataFile("EntityData", packet.TagDataFilePath);
         }
-
     }
 
-    // 맵 베이스 데이터 없으면 로드 불가!
-    if (false == isFindMapBaseData)
-        return E_FAIL;
+    return S_OK;
+}
 
-    auto iter = m_MapSlotFormatData.find("Collider");
-    if (iter != m_MapSlotFormatData.end())
-        m_hasColliderData = true;
+void CMapLoader::Set_LoadingQueue()
+{
+    if (!m_bHasMapBase)
+        return;
+
+    for (auto& layerdata : m_MapBaseData.Layers) {
+        // 레이어 태그 무결성 검사
+        MAPOBJ_TYPE eType = Check_LayerTag(layerdata.TagLayer);
+        if (MAPOBJ_TYPE::END == eType)
+            continue;
+
+        for (auto& objectdata : layerdata.Objects) 
+            m_LoadingQueue.push({ eType, &objectdata });
+    }
+ 
+    if (!m_bHasEntityBase)
+        return;
+
+    for (auto& EntityData : m_EntityBaseData.Entities)
+        m_LoadingQueue.push({ MAPOBJ_TYPE::ENTITY, &EntityData });
+}
+
+void CMapLoader::PlaceObjects_Once()
+{
+    m_bLoaded = true;
+
+    if (!m_bHasMapBase)
+        return;
 
     for (auto& layerdata : m_MapBaseData.Layers) {
         // 레이어 태그 무결성 검사
@@ -82,14 +144,31 @@ HRESULT CMapLoader::Initialize(const string& TagLevel, const string& TagArea)
 
     }
 
-    // EntityData가 없으면 성공으로 넘김
-    if (false == isFindEntityBaseData)
-        return S_OK;
+    if (!m_bHasEntityBase)
+        return;
 
     for (auto& EntityData : m_EntityBaseData.Entities)
         Place_EntityFromLoadData(&EntityData);
+}
 
-    return S_OK;
+_bool CMapLoader::PlaceObjects_Split()
+{
+    if (m_LoadingQueue.empty())
+        return true;
+
+    auto& Job = m_LoadingQueue.front();
+
+    switch (Job.Type)
+    {
+    case MAPOBJ_TYPE::PLACED:   Place_PlacedObjectFromLoadData(static_cast<MapData_Object*>(Job.pData)); break;
+    case MAPOBJ_TYPE::TRIGGER:  Place_TriggerObjectFromLoadData(static_cast<MapData_Object*>(Job.pData)); break;
+    case MAPOBJ_TYPE::ENTITY:   Place_EntityFromLoadData(static_cast<ENTITY_INIT*>(Job.pData)); break;
+    default: break;
+    }
+
+    m_LoadingQueue.pop();
+
+    return m_LoadingQueue.empty();
 }
 
 void CMapLoader::Place_PlacedObjectFromLoadData(MapData_Object* pData)
@@ -215,24 +294,23 @@ void CMapLoader::Place_EntityFromLoadData(ENTITY_INIT* pData)
     if (nullptr == pData)
         return;
 
-    Factory::FACTORY_DESC FactoryDesc{};
-    FactoryDesc.iEntityID = pData->iEntityID;
-    FactoryDesc.tagName = pData->tagName;
-    FactoryDesc.tagLevel = m_TagLevel;
-    FactoryDesc.iType = pData->iType;
-    FactoryDesc.vScale = { pData->vScale[0], pData->vScale[1] ,pData->vScale[2] };
-    FactoryDesc.vRotation = { pData->vRotation[0], pData->vRotation[1] ,pData->vRotation[2] };
-    FactoryDesc.vTranslation = { pData->vTranslation[0], pData->vTranslation[1] ,pData->vTranslation[2] };
+    Spawner::SPAWNER_DESC SpawnerDesc{};
+    SpawnerDesc.iEntityID = pData->iEntityID;
+    SpawnerDesc.tagName = pData->tagName;
+    SpawnerDesc.tagLevel = m_TagLevel;
+    SpawnerDesc.iType = pData->iType;
+    SpawnerDesc.vScale = { pData->vScale[0], pData->vScale[1] ,pData->vScale[2] };
+    SpawnerDesc.vRotation = { pData->vRotation[0], pData->vRotation[1] ,pData->vRotation[2] };
+    SpawnerDesc.vTranslation = { pData->vTranslation[0], pData->vTranslation[1] ,pData->vTranslation[2] };
     
-
     for (auto& tSlotData : m_EntitySlotFormatData) {
         // 일단 데이터 다 때려넣기
         for (auto& FieldData : tSlotData.second[pData->iEntityID])
-            FactoryDesc.SlotDataValues[tSlotData.first].push_back(FieldData);
+            SpawnerDesc.SlotDataValues[tSlotData.first].push_back(FieldData);
     }
 
     /* 여기에 엔티티 이용해서 생성 */
-    Factory::Create_NPC(FactoryDesc);
+    m_EntityObjectHandle.emplace(pData->iEntityID, Spawner::Create_Entity(SpawnerDesc));
 }
 
 CMapLoader::MAPOBJ_TYPE CMapLoader::Check_LayerTag(const string& TagLayer)
@@ -342,15 +420,14 @@ _bool CMapLoader::isThereFormat(const string& TagSlotFormat)
     return true;
 }
 
-CMapLoader* CMapLoader::Create(const string& TagLevel, const string& TagArea)
+CMapLoader* CMapLoader::Create(const string& TagLevel, const string& TagArea, _uint iSplitPlaceCount)
 {
     CMapLoader* instance = new CMapLoader();
 
-    if (FAILED(instance->Initialize(TagLevel, TagArea))) {
+    if (FAILED(instance->Initialize(TagLevel, TagArea, iSplitPlaceCount))) {
         Safe_Release(instance);
         instance = nullptr;
         MSG_BOX("Failed to Create : CMapLoader");
-
     }
 
     return instance;
