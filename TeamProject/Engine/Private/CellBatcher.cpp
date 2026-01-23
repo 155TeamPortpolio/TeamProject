@@ -13,6 +13,27 @@ CCellBatcher::CCellBatcher(CRenderSystem* pRenderSys, const Options& opt)
 {
 }
 
+static MergeSizes ComputeMergeSizes(const vector<OPAQUE_PACKET*>& packets)
+{
+	MergeSizes sizes{};
+	for (const OPAQUE_PACKET* packetPtr : packets)
+	{
+		if (!packetPtr || !packetPtr->pModel) continue;
+
+		const OPAQUE_PACKET& packet = *packetPtr;
+		auto* staticModel = static_cast<CStaticModel*>(packet.pModel);
+		auto* modelData = staticModel->Get_ModelData();
+		if (!modelData) continue;
+
+		auto* mesh = modelData->Get_Mesh(packet.DrawIndex);
+		if (!mesh) continue;
+
+		sizes.vertexCount += mesh->Get_StaticVertices().size();
+		sizes.indexCount += mesh->Get_Indices().size();
+	}
+	return sizes;
+}
+
 CellKey CCellBatcher::MakeCellKey(const _float4x4& worldMatrix, class CModel* pModel, _uint drawIndex) const
 {
 	MINMAX_BOX localBox = pModel->Get_MeshBoundingBox(drawIndex);
@@ -35,34 +56,53 @@ bool CCellBatcher::CanBatch(const OPAQUE_PACKET& packet) const
 	if (packet.bSkinning) return false; // static pass�� ������ġ
 	return true;
 }
-
 bool CCellBatcher::BuildOneBatch(ID3D11Device* device, const CellBatchKey& key, const vector<OPAQUE_PACKET*>& packets)
 {
 	if (!device) return false;
-	if (packets.size() < m_Options.minBatchCount) 
-		return false;
+	if (packets.size() < m_Options.minBatchCount) return false;
+
+#ifdef _USING_GUI
+	PROFILE_SCOPE(&g_Profiler, "Batch/BuildOneBatch");
+#endif
+
+	// 1) 정확한 reserve 계산 (realloc/메모리 스파이크 1순위 제거)
+#ifdef _USING_GUI
+	PROFILE_SCOPE(&g_Profiler, "Batch/BuildOneBatch/ComputeSizes");
+#endif
+	const MergeSizes mergeSizes = ComputeMergeSizes(packets);
 
 	vector<VTXMESH> mergedVertices;
 	vector<_uint> mergedIndices;
 
-	// �뷫 reserve(��Ȯ�� �ջ��Ϸ��� �ѹ� �� ����)
-	mergedVertices.reserve(packets.size() * 256);
-	mergedIndices.reserve(packets.size() * 512);
+	mergedVertices.reserve(mergeSizes.vertexCount);
+	mergedIndices.reserve(mergeSizes.indexCount);
 
 	MINMAX_BOX aabb{};
 	aabb.vMin = _float3{ FLT_MAX, FLT_MAX, FLT_MAX };
 	aabb.vMax = _float3{ -FLT_MAX, -FLT_MAX, -FLT_MAX };
 
+	// 2) CPU 굽기(여기서 튀면 카메라 이동/가시성 변화로 rebuild가 자주 나는 것)
+#ifdef _USING_GUI
+	PROFILE_SCOPE(&g_Profiler, "Batch/BuildOneBatch/BakeCPU");
+#endif
 	for (const OPAQUE_PACKET* packetPtr : packets)
 	{
+		if (!packetPtr) continue;
 		const OPAQUE_PACKET& packet = *packetPtr;
-		auto pData = static_cast<CStaticModel*>(packet.pModel)->Get_ModelData();
-		const vector<VTXMESH>& srcVertices = pData->Get_Mesh(packet.DrawIndex)->Get_StaticVertices();
-		const vector<_uint>& srcIndices = pData->Get_Mesh(packet.DrawIndex)->Get_Indices();
+
+		auto* staticModel = static_cast<CStaticModel*>(packet.pModel);
+		auto* modelData = staticModel ? staticModel->Get_ModelData() : nullptr;
+		if (!modelData) continue;
+
+		 auto* mesh = modelData->Get_Mesh(packet.DrawIndex);
+		if (!mesh) continue;
+
+		 const vector<VTXMESH>& srcVertices = mesh->Get_StaticVertices();
+		 const vector<_uint>& srcIndices = mesh->Get_Indices();
 
 		AppendWorldBaked(srcVertices, srcIndices, *packet.pWorldMatrix, mergedVertices, mergedIndices);
 
-		MINMAX_BOX localBox = pData->Get_MeshBoundingBox(packet.DrawIndex);
+		MINMAX_BOX localBox = modelData->Get_MeshBoundingBox(packet.DrawIndex);
 		MINMAX_BOX worldBox = localBox.TransformBox_8Corner(*packet.pWorldMatrix);
 
 		aabb.vMin.x = min(aabb.vMin.x, worldBox.vMin.x);
@@ -73,9 +113,12 @@ bool CCellBatcher::BuildOneBatch(ID3D11Device* device, const CellBatchKey& key, 
 		aabb.vMax.z = max(aabb.vMax.z, worldBox.vMax.z);
 	}
 
-	// GPU VB/IB ����
-	ID3D11Buffer* VB = nullptr;
-	ID3D11Buffer* IB = nullptr;
+	// 3) GPU 버퍼 생성(드라이버/메모리 튐은 여기서 주로 남)
+#ifdef _USING_GUI
+	PROFILE_SCOPE(&g_Profiler, "Batch/BuildOneBatch/CreateBuffers");
+#endif
+	ID3D11Buffer* vertexBuffer = nullptr;
+	ID3D11Buffer* indexBuffer = nullptr;
 
 	{
 		D3D11_BUFFER_DESC desc{};
@@ -86,7 +129,7 @@ bool CCellBatcher::BuildOneBatch(ID3D11Device* device, const CellBatchKey& key, 
 		D3D11_SUBRESOURCE_DATA sub{};
 		sub.pSysMem = mergedVertices.data();
 
-		if (FAILED(device->CreateBuffer(&desc, &sub, &VB)))
+		if (FAILED(device->CreateBuffer(&desc, &sub, &vertexBuffer)))
 			return false;
 	}
 	{
@@ -98,16 +141,16 @@ bool CCellBatcher::BuildOneBatch(ID3D11Device* device, const CellBatchKey& key, 
 		D3D11_SUBRESOURCE_DATA sub{};
 		sub.pSysMem = mergedIndices.data();
 
-		if (FAILED(device->CreateBuffer(&desc, &sub, &IB)))
+		if (FAILED(device->CreateBuffer(&desc, &sub, &indexBuffer)))
 		{
-			Safe_Release(VB);
+			Safe_Release(vertexBuffer);
 			return false;
 		}
 	}
 
 	CachedBatch batch{};
-	batch.pVB = VB;
-	batch.pIB = IB;
+	batch.pVB = vertexBuffer;
+	batch.pIB = indexBuffer;
 	batch.indexCount = (_uint)mergedIndices.size();
 	batch.material = key.batch.pMaterial;
 	batch.materialIndex = key.batch.iMaterialIndex;

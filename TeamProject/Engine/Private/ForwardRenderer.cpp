@@ -38,9 +38,10 @@ HRESULT CForwardRenderer::Initialize(CTarget_Manager* pTargetManager, CPipeLine*
 
 HRESULT CForwardRenderer::Render_Priority(PriorityPass* pPriorityPass)
 {
+	
 	m_pPipeLine->Update_FrameBuffer(m_pContext);
 	m_pPipeLine->Update_Frustum();
-
+	
 	if (FAILED(m_pTargetManager->Begin_MRT("MRT_Final"))) return E_FAIL;
 	pPriorityPass->Execute(m_pContext, this);
 

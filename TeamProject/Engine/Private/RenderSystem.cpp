@@ -38,21 +38,21 @@ HRESULT CRenderSystem::Initialize()
 	m_pPipeLine = CPipeLine::Create(m_pDevice, this);
 
 	/*RenderPass*/
-	m_pPriorityPass	= PriorityPass::Create(this);
-	m_pStaticPass	= StaticOpaquePass::Create(this);
-	m_pSkinnedPass	= SkinnedOpaquePass::Create(this);
+	m_pPriorityPass = PriorityPass::Create(this);
+	m_pStaticPass = StaticOpaquePass::Create(this);
+	m_pSkinnedPass = SkinnedOpaquePass::Create(this);
 	m_pStaticShadowPass = StaticShadowPass::Create(this);
 	m_pSkinnedShadowPass = SkinnedShadowPass::Create(this);
-	m_pInstancePass	= InstancePass::Create(this);
-	m_pBlendedPass	= BlendedPass::Create(this);
-	m_pParticlePass	= ParticlePass::Create(this);
-	m_pNonLightPass	= NonLightPass::Create(this);
-	m_pUIPass		= UIPass::Create(this);
-	m_pUI3DPass		= UI3DPass::Create(this);
-	m_pEffectPass	= EffectPass::Create(this);
+	m_pInstancePass = InstancePass::Create(this);
+	m_pBlendedPass = BlendedPass::Create(this);
+	m_pParticlePass = ParticlePass::Create(this);
+	m_pNonLightPass = NonLightPass::Create(this);
+	m_pUIPass = UIPass::Create(this);
+	m_pUI3DPass = UI3DPass::Create(this);
+	m_pEffectPass = EffectPass::Create(this);
 
 
-	m_pForward = CForwardRenderer::Create(m_pDevice,m_pContext, m_pTargetManager,m_pPipeLine);
+	m_pForward = CForwardRenderer::Create(m_pDevice, m_pContext, m_pTargetManager, m_pPipeLine);
 	m_pPost = CPostRenderer::Create(m_pDevice, m_pContext, m_pTargetManager, m_pPipeLine);
 	m_pUI = CUIRenderer::Create(m_pDevice, m_pContext, m_pTargetManager, m_pPipeLine);
 	m_pEffect = CEffectRenderer::Create(m_pDevice, m_pContext, m_pTargetManager, m_pPipeLine);
@@ -82,13 +82,14 @@ HRESULT CRenderSystem::Render()
 	m_pPipeLine->End_ObjectBuffer(m_pContext);
 	m_pPipeLine->End_SkinningBuffer(m_pContext);
 
+
 	m_pForward->Render_Priority(m_pPriorityPass);
 	m_pForward->Render_StaticShadow(m_pStaticShadowPass, !IsOn);
 	m_pForward->Render_SkinnedShadow(m_pSkinnedShadowPass, !IsOn);
 	m_pForward->Render_SkinnedMesh(m_pSkinnedPass);
 	m_pForward->Render_StaticMesh(m_pStaticPass, m_pInstancePass);
-	m_pPipeLine->Update_HiZ(m_pContext);
 
+	m_pPipeLine->Update_HiZ(m_pContext);
 	m_pUI->Render_3D(m_pUI3DPass);
 	m_pEffect->Render_Effect(m_pEffectPass, m_pParticlePass);
 	m_pEffect->Render_Effect_Bloom();
@@ -118,7 +119,7 @@ HRESULT CRenderSystem::Render()
 CRenderSystem* CRenderSystem::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CRenderSystem* Instance = new CRenderSystem(pDevice, pContext);
-	if (FAILED(Instance->Initialize())) 
+	if (FAILED(Instance->Initialize()))
 	{
 		Safe_Release(Instance);
 	}
@@ -130,7 +131,7 @@ _bool CRenderSystem::Get_FogDesc(FOG_DESC& outResult)
 	if (!m_pPost)
 		return false;
 
-	outResult= m_pPost->Get_FogDesc();
+	outResult = m_pPost->Get_FogDesc();
 	return true;
 }
 

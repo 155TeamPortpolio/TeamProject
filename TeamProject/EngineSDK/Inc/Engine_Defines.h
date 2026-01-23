@@ -239,11 +239,11 @@ struct ImgUiFrameProfiler
         if (!enable) return -1;
         if (!eventName) eventName = "(null)";
         if (eventCount >= PROFILER_MAX_EVENTS) return -1;
+        if (stackCount >= PROFILER_MAX_EVENTS) return -1; // <- 추가 (중요)
 
         const int eventIndex = eventCount++;
         EventRecord& record = events[eventIndex];
 
-        // name copy
         record.name[0] = '\0';
         strncpy_s(record.name, eventName, PROFILER_NAME_CAP - 1);
 
@@ -251,14 +251,11 @@ struct ImgUiFrameProfiler
         record.endTicks = 0;
         record.depth = stackCount;
 
-        if (stackCount < PROFILER_MAX_EVENTS)
-        {
-            stack[stackCount].eventIndex = eventIndex;
-            stackCount++;
-        }
-
+        stack[stackCount].eventIndex = eventIndex;
+        stackCount++;
         return eventIndex;
     }
+
 
     void EndEvent()
     {

@@ -47,7 +47,7 @@ void RenderPass::BindConstant(ID3D11DeviceContext* pContext, CModel* pModel, CMa
 	pContext->IASetInputLayout(pLayout);
 }
 
-void RenderPass::BindConstant(ID3D11DeviceContext* pContext,  CSprite2D* pSprite, string passConstant, class CRenderer* pRenderer)
+void RenderPass::BindConstant(ID3D11DeviceContext* pContext, CSprite2D* pSprite, string passConstant, class CRenderer* pRenderer)
 {
 	CPipeLine* pPipeLine = m_pRenderSystem->Get_Pipeline();
 	pCurShader = pSprite->Get_Shader();
@@ -95,22 +95,32 @@ void StaticOpaquePass::Write_Buffer(ID3D11DeviceContext* pContext)
 		[](const OPAQUE_PACKET& leftPacket, const OPAQUE_PACKET& rightPacket) {
 			return leftPacket.fLinearZ < rightPacket.fLinearZ;
 		});
-
-	m_VisiblePackets = pPipeLine->OcculsionCulling(frustums);
+	m_VisiblePackets = frustums;
 }
+
 void StaticOpaquePass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
 {
+	PROFILE_SCOPE(&g_Profiler, "Execute");
 	CPipeLine* pPipeLine = m_pRenderSystem->Get_Pipeline();
 	pCurShader = { nullptr };
 
+	vector<OPAQUE_PACKET> occlude;
+	occlude.reserve(m_VisiblePackets.size());
+	//occlude = m_VisiblePackets;
+
+	occlude = pPipeLine->OcculsionCulling(m_VisiblePackets);
+	
+	sort(occlude.begin(), occlude.end(),
+		[](const OPAQUE_PACKET& leftPacket, const OPAQUE_PACKET& rightPacket) {
+			return leftPacket.GetKey() < rightPacket.GetKey();
+		});
+	
 	m_pRenderSystem->BatchBegin();
-	for (auto& p : m_VisiblePackets)
-		p.isBatched = false; 
+	for (auto& p : occlude)
+		p.isBatched = false;
 	
-	for (auto& p : m_VisiblePackets) {
+	for (auto& p : occlude)
 		m_pRenderSystem->BatchVisiblePacket(p);
-	}
-	
 	_uint occlusionCount = (_uint)m_VisiblePackets.size();
 	
 	_uint nonBatchCount = 0;
@@ -119,13 +129,14 @@ void StaticOpaquePass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRender
 	
 	m_pRenderSystem->BuildBatchesIfNeeded();
 	batchedDrawCount = m_pRenderSystem->DrawBatches(this, pRenderer);
-	for (const auto& packet : m_VisiblePackets)
+	
+	for (const auto& packet : occlude)
 	{
 		if (packet.isBatched) ++batchedPacketCount;
 		else ++nonBatchCount;
 	}
 
-	for (auto& packet : m_VisiblePackets)
+	for (auto& packet : occlude)
 	{
 		if (packet.isBatched)
 			continue;
@@ -133,13 +144,13 @@ void StaticOpaquePass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRender
 		if (packet.pMaterial->Get_Shader(packet.MaterialIndex) != pCurShader) {
 			BindConstant(pContext, packet.pModel, packet.pMaterial, packet.DrawIndex, packet.MaterialIndex, pRenderer);
 		}
-	
+
 		SHADER_PARAM WorldMatParam{ &packet.TransformIndex, "uint",sizeof(UINT) };
 		pCurShader->Bind_Value("TransformIndex", WorldMatParam);
-	
+
 		SHADER_PARAM LookParam{ &packet.LookVector, "vector",sizeof(_vector) };
 		pCurShader->Bind_Value("vLookVector", LookParam);
-	
+
 		packet.pMaterial->Apply_Material(pContext, packet.MaterialIndex);
 		packet.pModel->Draw(pContext, packet.DrawIndex);
 		packet.pMaterial->ResetMaterial(packet.DrawIndex);
@@ -389,15 +400,15 @@ void ParticlePass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
 	{
 		auto& packet = m_Packets[i];
 
-		if (m_Packets[i].pMaterial->Get_Shader(0) != pCurShader) 
+		if (m_Packets[i].pMaterial->Get_Shader(0) != pCurShader)
 		{
 			BindConstant(pContext, packet.pParticleSystem, packet.pMaterial, 0, 0, pRenderer);
 
 			auto pRenderSystem = CGameInstance::GetInstance()->Get_RenderSystem();
-			
+
 			ID3D11ShaderResourceView* pStaticDepthSRV = pRenderSystem->Get_EngineTargetSRV("Target_Static_Depth");
 			ID3D11ShaderResourceView* pSkinnedDepthSRV = pRenderSystem->Get_EngineTargetSRV("Target_Skinned_Depth");
-			
+
 			pCurShader->Bind_Value("StaticMeshDepthTexture", { pStaticDepthSRV,"Texture2D",0 });
 			pCurShader->Bind_Value("SkinnedMeshDepthTexture", { pSkinnedDepthSRV,"Texture2D",0 });
 		}
@@ -434,7 +445,7 @@ void InstancePass::Write_Buffer(ID3D11DeviceContext* pContext)
 
 void InstancePass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
 {
- 	CPipeLine* pPipeLine = m_pRenderSystem->Get_Pipeline();
+	CPipeLine* pPipeLine = m_pRenderSystem->Get_Pipeline();
 	pCurShader = { nullptr };
 
 	/*ï¿½ï¿½Å¶ï¿½ï¿½ ï¿½ï¿½ï¿? ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½*/
@@ -471,7 +482,7 @@ void InstancePass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
 void InstancePass::Submit(INSTANCE_PACKET packet)
 {
 	if (packet.pModel == nullptr || packet.pMaterial == nullptr) return;
-		m_Packets.push_back(packet);
+	m_Packets.push_back(packet);
 }
 #pragma endregion
 
@@ -490,17 +501,17 @@ void UIPass::Write_Buffer(ID3D11DeviceContext* pContext)
 }
 void UIPass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
 {
- 	CPipeLine* pPipeLine = m_pRenderSystem->Get_Pipeline();
+	CPipeLine* pPipeLine = m_pRenderSystem->Get_Pipeline();
 	pCurShader = {};
 
 	for (auto& packet : m_Packets)
 	{
-		if (packet.pSprite2D->Get_Shader() != pCurShader) 
+		if (packet.pSprite2D->Get_Shader() != pCurShader)
 			BindConstant(pContext, packet.pSprite2D, packet.pSprite2D->Get_PassConstant(), pRenderer);
-	
+
 		SHADER_PARAM WorldMatParam{ &packet.TransformIndex, "uint",sizeof(UINT) };
 		pCurShader->Bind_Value("TransformIndex", WorldMatParam);
-		pCurShader->Bind_Value("vColor", {packet.pColor, "float4", sizeof(_float4)});
+		pCurShader->Bind_Value("vColor", { packet.pColor, "float4", sizeof(_float4) });
 		packet.pSprite2D->Apply_Shader(pContext);
 		packet.pSprite2D->Draw_Sprite(pContext);
 
@@ -668,7 +679,7 @@ void SkinnedShadowPass::Clear()
 
 void SkinnedShadowPass::Execute_Opaque(ID3D11DeviceContext* pContext, CRenderer* pRenderer, _bool IsFinal)
 {
-	
+
 	CPipeLine* pPipeLine = m_pRenderSystem->Get_Pipeline();
 	pCurShader = { nullptr };
 

@@ -6,21 +6,29 @@
 
 NS_BEGIN(Engine)
 
+struct MergeSizes
+{
+    size_t vertexCount = 0;
+    size_t indexCount = 0;
+};
+
 class CCellBatcher :
     public CBase
 {
 public:
+
+
     struct Options
     {
-        _float cellSize = 30.f;       // 너 월드 스케일에 맞게
-        _uint minBatchCount = 6;     // 이 이상일 때만 배칭
-        _uint maxBuildPerFrame = 2;  // 프레임 hitch 방지
-        _uint keepCachedFrames = 120;  // 프레임 hitch 방지
+        _float cellSize = 200.f;   
+        _uint minBatchCount = 30;    
+        _uint maxBuildPerFrame = 2;  
+        _uint keepCachedFrames = 180;
     };
     struct CellRange
     {
-        int minX, maxX;
-        int minZ, maxZ;
+        _int minX, maxX;
+        _int minZ, maxZ;
     };
 
 private:

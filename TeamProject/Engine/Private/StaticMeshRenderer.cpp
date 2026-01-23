@@ -34,6 +34,7 @@ HRESULT CStaticMeshRenderer::Initialize(CTarget_Manager* pTargetManager, CPipeLi
 
 HRESULT CStaticMeshRenderer::Render_StaticMesh(StaticOpaquePass* pOpaquePass, InstancePass* pInstancePass)
 {
+
 	ID3D11DepthStencilView* pDeferredDSV =
 		m_pTargetManager->Get_MTR_DSV("MRT_Deferred_Skinned");
 
@@ -43,7 +44,6 @@ HRESULT CStaticMeshRenderer::Render_StaticMesh(StaticOpaquePass* pOpaquePass, In
 	pOpaquePass->Execute(m_pContext, this);
 	pInstancePass->Execute(m_pContext, this);
 	if (FAILED(m_pTargetManager->End_MRT())) return E_FAIL;
-
 	return S_OK;
 }
 
