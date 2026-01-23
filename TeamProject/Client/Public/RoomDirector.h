@@ -5,17 +5,6 @@ NS_BEGIN(Client)
 class CRoomDirector :
     public CBase
 {
-    enum class ROOM_STATE {Unloaded,Preloading,Loaded,Active,Exiting};
-    struct RoomEntry
-    {
-        ROOM_DESC desc;
-        ROOM_STATE state = ROOM_STATE::Unloaded;
-        _uint preloadTaskId = 0;
-
-        //unique_ptr<IRoomScript> script;
-        vector<OBJECT_HANDLE> spawnedHandles;
-    };
-
 private:
     CRoomDirector();
     ~CRoomDirector() DEFAULT;
@@ -24,18 +13,22 @@ public:
     HRESULT Initialize();
     void Update();
 public:
-    bool RegisterRoom(const ROOM_DESC& desc);
-    bool RequestEnter(const string& roomKey, _bool overlay = true);
-    bool RequestExitTop();
+    _bool RegisterRoom(class CRoom* pRoom);
+    _bool RequestEnter(const string& roomKey, _bool overlay = true);
+    _bool RequestExitTop();
 
 public:
-    const string& GetCityRoomKey() const;
     const vector<string>& GetActiveRoomStack() const;
+    
+private:
+    void DoEnter(const string& key, _bool overlay);
 
 private:
-    unordered_map<string, ROOM_DESC> m_roomDescByKey; /*로드 정보*/
-    unordered_map<string, RoomEntry> m_roomStageByKey; /*런타임 정보*/
+    unordered_map<string, class CRoom*> m_Rooms;
+    vector<string> m_ActiveStacks;
 
+    string m_pendingEnterKey;
+    _bool m_pendingOverlay = true;
 public:
     static CRoomDirector* Create();
     virtual void Free();

@@ -110,6 +110,7 @@ namespace Client {
 	}GAUGE_DELAY_DESC;
 
 	typedef struct tagFieldRoomDesc {
-
+		string roomKey;
+		_bool persistent = { false };
 	}ROOM_DESC;
 }
