@@ -1643,8 +1643,15 @@ void CCamPanel::RecalcEndTimeFromKeys()
     for (size_t i = 0; i < keys.size(); ++i)
         maxT = max(maxT, keys[i].time);
 
+    if (state.playAllLink && animGUIController.HasAnimator(state.playAllRefHandle))
+    {
+        const float clipEnd = animGUIController.GetClipEndSec(state.playAllRefHandle);
+        maxT = max(maxT, clipEnd);
+    }
+
     state.endTime = maxT;
 }
+
 
 void CCamPanel::ClampCurTime()
 {
