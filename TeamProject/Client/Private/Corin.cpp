@@ -93,6 +93,9 @@ void CCorin::Awake()
 	//m_pAnimator->Initialize_FootIK(&ikDesc);
 
 	Initialize_Stat();
+
+	if (FAILED(Attach_ParryCollider(1.65f)))
+		return;
 }
 
 void CCorin::Priority_Update(_float dt)
