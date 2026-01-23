@@ -13,7 +13,7 @@ public:
 private:
     COrbitCam() {}
     COrbitCam(const COrbitCam& rhs) : CCamObject(rhs) {}
-    virtual ~COrbitCam() = default;
+    virtual ~COrbitCam() DEFAULT;
 
 public:
     HRESULT Initialize_Prototype()      override;

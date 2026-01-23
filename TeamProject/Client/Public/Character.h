@@ -27,10 +27,10 @@ public:
 
     struct InputInfo
     {
-        _vector3 direction = {};
+        _vector3 direction = {0,0,0};
         _vector3 prevDirection = {};
         _float   bufferTimer = 0.f;
-        // Turnback ������ �߰�
+        // Turnback
         _int  prevMoveX = 0;
         _int  prevMoveZ = 0;
         _int  curMoveX = 0;
@@ -143,19 +143,21 @@ public:
     virtual void    OnTriggerExit(CGameObject* pOther) override;
 
 public:
+    virtual void    Reset_State() {};
     virtual void    On_Start() {};
     virtual void    On_Move(const InputInfo& inputInfo);
     virtual void    On_Attack();
     virtual void    On_Evade();
-    virtual void    On_SwitchIn(SWITCH eType)   PURE;
-    virtual void    On_SwitchOut()              PURE;
+    virtual void    On_SwitchIn(SWITCH eType) {}
+    virtual void    On_SwitchOut() {}
     virtual void    On_Ultimate();
-    virtual void    On_Special() {}; // 개별 구현 
-    virtual void    On_Hit(DAMAGE_TYPE eType) {}; // 개별 구현
+    virtual void    On_Special() {} // 개별 구현 
+    virtual void    On_Hit(DAMAGE_TYPE eType) {} // 개별 구현
     virtual void    On_Interact();
 
 public:
     HRESULT  Attach_AttackCollider(ATTACK_COLLIDER_DESC* pDesc);
+    HRESULT  Attach_ParryCollider(_float fRadius);
     void     Rotate(_vector3 vDirection);
     void     Stop_Rotation();
 

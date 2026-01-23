@@ -13,6 +13,9 @@ namespace MapTool {
 	static const _char* g_tagMapObjType[] = { 
 		"NONE", "PlacedObject_Layer", "TriggerObject_Layer","EntityData_Layer", "BattleData_Layer", "All_Layer"};
 	enum class MAPOBJ_TYPE { NONE, PLACED, TRIGGER, ENTITY, BATTLE, ALL, END};
+	static const _char* g_tagBattleObjType[] = {
+		"NONE", "Player_Layer", "Spawner_Layer", "Monster_Layer", "EndPoint_Layer"};
+	enum class BATTLE_TYPE { NONE, PLAYER, SPAWNER, MONSTER, ENDPOINT, END};
 	enum class SLOT_DATA_TYPE { Int, Float, Bool, String, Float2, Float3, Float4, END };
 	static std::string g_TagMapToolLevel = "MapTool_Level";
 	static std::string g_TagFileName_MapData = "MapData";

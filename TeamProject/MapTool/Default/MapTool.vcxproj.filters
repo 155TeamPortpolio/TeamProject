@@ -70,6 +70,21 @@
     <Filter Include="02. Object\MapTool Object\Entity Object">
       <UniqueIdentifier>{43f3e07c-4a88-47cb-b928-cc7a869be20f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. Object\MapTool Object\Battle Object">
+      <UniqueIdentifier>{051565c7-1d58-4a30-a71a-af7a903f64b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Object\MapTool Object\Battle Object\BattlePlayerPoint">
+      <UniqueIdentifier>{7b2789c1-2d3c-4fdd-ac1a-f69c255ab439}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Object\MapTool Object\Battle Object\BattleSpawnerPoint">
+      <UniqueIdentifier>{a7d3bcb8-ea27-4d59-8343-d51646a350a0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Object\MapTool Object\Battle Object\BattleMonsterPoint">
+      <UniqueIdentifier>{4bbebc49-5dd5-4cd8-be54-ce1b049933ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Object\MapTool Object\Battle Object\BattleEndPoint">
+      <UniqueIdentifier>{3a20cff6-dba3-4ea4-b3c1-0c308081dedf}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -159,6 +174,21 @@
     <ClInclude Include="..\public\EntityObject.h">
       <Filter>02. Object\MapTool Object\Entity Object</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\BattleObject.h">
+      <Filter>02. Object\MapTool Object\Battle Object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\BattlePlayerPoint.h">
+      <Filter>02. Object\MapTool Object\Battle Object\BattlePlayerPoint</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\BattleSpawnerPoint.h">
+      <Filter>02. Object\MapTool Object\Battle Object\BattleSpawnerPoint</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\BattleMonsterPoint.h">
+      <Filter>02. Object\MapTool Object\Battle Object\BattleMonsterPoint</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\BattleEndPoint.h">
+      <Filter>02. Object\MapTool Object\Battle Object\BattleEndPoint</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -243,6 +273,21 @@
     </ClCompile>
     <ClCompile Include="..\private\EntityObject.cpp">
       <Filter>02. Object\MapTool Object\Entity Object</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BattleObject.cpp">
+      <Filter>02. Object\MapTool Object\Battle Object</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BattlePlayerPoint.cpp">
+      <Filter>02. Object\MapTool Object\Battle Object\BattlePlayerPoint</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BattleSpawnerPoint.cpp">
+      <Filter>02. Object\MapTool Object\Battle Object\BattleSpawnerPoint</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BattleMonsterPoint.cpp">
+      <Filter>02. Object\MapTool Object\Battle Object\BattleMonsterPoint</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BattleEndPoint.cpp">
+      <Filter>02. Object\MapTool Object\Battle Object\BattleEndPoint</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

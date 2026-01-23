@@ -18,6 +18,8 @@ void CJaneDoeState_ExAttack::Enter(CJaneDoe* pOwner)
 
         m_pSubStateMachine->Set_DefaultState("Start");
     }
+
+    pOwner->Push_Invincible();
     __super::Enter(pOwner);
 }
 
@@ -45,11 +47,23 @@ void CJaneDoeState_ExAttack::Update(CJaneDoe* pOwner, _float dt)
         }
     }
 
+    auto pJaneDoeState = pOwner->Get_StateMachine();
+    if (pJaneDoeState->Get_Bool("OutReserve"))
+    {
+        if (m_pSubStateMachine->Get_CurrentStateName() == "End" ||
+            Is_AnimEnd())
+        {
+            pJaneDoeState->Set_Trigger("SwitchOut");
+            pJaneDoeState->Set_Bool("OutReserve", false);
+        }
+    }
+
     __super::Update(pOwner, dt);
 }
 
 void CJaneDoeState_ExAttack::Exit(CJaneDoe* pOwner)
 {
+    pOwner->Pop_Invincible();
     __super::Exit(pOwner);
 }
 
@@ -57,6 +71,7 @@ void CJaneDoeState_ExAttack_Start::Enter(CJaneDoe* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_ExSpecial")
         .Speed(1.2f)
+        .EndAt(0.9f)
         .Apply();
 }
 

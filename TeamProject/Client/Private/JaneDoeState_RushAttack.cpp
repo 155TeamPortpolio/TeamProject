@@ -87,6 +87,18 @@ void CJaneDoeState_RushAttack::Update(CJaneDoe* pOwner, _float dt)
             pOwner->End_AttackCollider("FootWeapon_R");
         }
     }
+
+    auto pJaneDoeState = pOwner->Get_StateMachine();
+    if (pJaneDoeState->Get_Bool("OutReserve"))
+    {
+        if (m_pSubStateMachine->Get_CurrentState()->Get_Tag() == "End" ||
+            Is_AnimEnd())
+        {
+            pJaneDoeState->Set_Trigger("SwitchOut");
+            pJaneDoeState->Set_Bool("OutReserve", false);
+        }
+    }
+
     __super::Update(pOwner, dt);
 }
 
