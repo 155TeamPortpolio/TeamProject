@@ -42,7 +42,7 @@ HRESULT CMainCity_Level::Awake()
 
 	//==================== UI ===============
 	auto uiDirector = CUIDirector::GetInstance();
-	uiDirector->Load_LevelObjects("Scott_Level");
+	uiDirector->Load_LevelObjects("MainCity_Level");
 
 	Ready_Map("MainCity_Level", "MainCity");
 
