@@ -391,6 +391,7 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\Skeleton.h" />
     <ClInclude Include="..\Public\SkeletonFollower.h" />
     <ClInclude Include="..\public\SkinnedMeshRenderer.h" />
+    <ClInclude Include="..\Public\SkinningBuffer.h" />
     <ClInclude Include="..\Public\SoundData.h" />
     <ClInclude Include="..\Public\Sprite2D.h" />
     <ClInclude Include="..\public\SpriteNode.h" />
@@ -546,6 +547,7 @@ exit /b 0</Command>
     <ClCompile Include="..\Private\Skeleton.cpp" />
     <ClCompile Include="..\Private\SkeletonFollower.cpp" />
     <ClCompile Include="..\private\SkinnedMeshRenderer.cpp" />
+    <ClCompile Include="..\Private\SkinningBuffer.cpp" />
     <ClCompile Include="..\Private\SoundData.cpp" />
     <ClCompile Include="..\Private\Sprite2D.cpp" />
     <ClCompile Include="..\private\SpriteNode.cpp" />

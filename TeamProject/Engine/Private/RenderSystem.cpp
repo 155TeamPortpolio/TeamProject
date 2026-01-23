@@ -64,8 +64,8 @@ HRESULT CRenderSystem::Initialize()
 HRESULT CRenderSystem::Render()
 {
 	m_pForward->Render_Priority(m_pPriorityPass);
-	m_pForward->Render_StaticShadow(m_pStaticShadowPass, !IsOn);
-	m_pForward->Render_SkinnedShadow(m_pSkinnedShadowPass, !IsOn);
+	//m_pForward->Render_StaticShadow(m_pStaticShadowPass, !IsOn);
+	//m_pForward->Render_SkinnedShadow(m_pSkinnedShadowPass, !IsOn);
 	m_pForward->Render_SkinnedMesh(m_pSkinnedPass);
 	m_pForward->Render_StaticMesh(m_pStaticPass, m_pInstancePass);
 	m_pPipeLine->Update_HiZ(m_pContext);

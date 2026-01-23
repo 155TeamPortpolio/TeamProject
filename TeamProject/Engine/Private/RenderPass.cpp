@@ -87,8 +87,8 @@ void StaticOpaquePass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRender
 			XMLoadFloat4x4(packet.pWorldMatrix)))
 			continue;
 
-		_uint transformIndex = pPipeLine->Write_ObjectData(*packet.pWorldMatrix);
-		packet.TransformIndex = transformIndex;
+		_uint TransformIndex = pPipeLine->GetOrWriteTransform(packet.ObjID, *packet.pWorldMatrix);
+		packet.TransformIndex = TransformIndex;
 		frustums.push_back(packet);
 	}
 
@@ -101,29 +101,30 @@ void StaticOpaquePass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRender
 
 	m_VisiblePackets = pPipeLine->OcculsionCulling(frustums);
 
-	m_pRenderSystem->BatchBegin();
-	
-	for (auto& p : m_VisiblePackets)
-		p.isBatched = false; 
-	
-	for (auto& p : m_VisiblePackets) {
-		m_pRenderSystem->BatchVisiblePacket(p);
-	}
-	
-	_uint frustumCount = (_uint)frustums.size();
-	_uint occlusionCount = (_uint)m_VisiblePackets.size();
-	
-	_uint nonBatchCount = 0;
-	_uint batchedPacketCount = 0;
-	_uint batchedDrawCount = 0;
-	
-	m_pRenderSystem->BuildBatchesIfNeeded();
-	batchedDrawCount = m_pRenderSystem->DrawBatches(this, pRenderer);
-	for (const auto& packet : m_VisiblePackets)
-	{
-		if (packet.isBatched) ++batchedPacketCount;
-		else ++nonBatchCount;
-	}
+	//m_pRenderSystem->BatchBegin();
+	//
+	//for (auto& p : m_VisiblePackets)
+	//	p.isBatched = false; 
+	//
+	//for (auto& p : m_VisiblePackets) {
+	//	m_pRenderSystem->BatchVisiblePacket(p);
+	//}
+	//
+	//_uint frustumCount = (_uint)frustums.size();
+	//_uint occlusionCount = (_uint)m_VisiblePackets.size();
+	//
+	//_uint nonBatchCount = 0;
+	//_uint batchedPacketCount = 0;
+	//_uint batchedDrawCount = 0;
+	//
+	//m_pRenderSystem->BuildBatchesIfNeeded();
+	//batchedDrawCount = m_pRenderSystem->DrawBatches(this, pRenderer);
+	//for (const auto& packet : m_VisiblePackets)
+	//{
+	//	if (packet.isBatched) ++batchedPacketCount;
+	//	else ++nonBatchCount;
+	//}
+
 	for (auto& packet : m_VisiblePackets)
 	{
 		if (packet.isBatched)
@@ -144,22 +145,6 @@ void StaticOpaquePass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRender
 		packet.pMaterial->ResetMaterial(packet.DrawIndex);
 	}
 
-
-	char buffer[256] = {};
-	sprintf_s(
-		buffer,
-		"[Visibility] frustum=%u occlusion=%u | "
-		"[Batch] packets: nonBatch=%u batched=%u sum=%u | "
-		"batchedDraw=%u\n",
-		(unsigned)frustumCount,
-		(unsigned)occlusionCount,
-		(unsigned)nonBatchCount,
-		(unsigned)batchedPacketCount,
-		(unsigned)(nonBatchCount + batchedPacketCount),
-		(unsigned)batchedDrawCount
-	);
-
-	OutputDebugStringA(buffer);
 	m_Packets.clear();
 	m_VisiblePackets.clear();
 }
@@ -192,15 +177,21 @@ void SkinnedOpaquePass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRende
 
 	for (auto& packet : m_Packets)
 	{
-		_uint TransformIndex = pPipeLine->Write_ObjectData(*packet.pWorldMatrix);
+		_uint TransformIndex = pPipeLine->GetOrWriteTransform(packet.ObjID, *packet.pWorldMatrix);
 		_uint SkinningOffset = 0;
-		if (packet.bSkinning) {
+		if (packet.bSkinning)
+		{
+			// 지금 구조 유지: bones는 기존 방식대로 얻고,
+			// "쓰기"만 ObjID 캐시로 통과
 			if (holds_alternative<CAnimator3D*>(packet.pPayLoad))
-				SkinningOffset = pPipeLine->Write_SkinningBuffer(get<CAnimator3D*>(packet.pPayLoad)->Get_BoneMatrices(packet.DrawIndex));
+				SkinningOffset = pPipeLine->GetOrWriteSkinning(packet.ObjID, packet.DrawIndex,
+					get<CAnimator3D*>(packet.pPayLoad)->Get_BoneMatrices(packet.DrawIndex));
 			else if (holds_alternative<CSkeletonFollower*>(packet.pPayLoad))
-				SkinningOffset = pPipeLine->Write_SkinningBuffer(get<CSkeletonFollower*>(packet.pPayLoad)->Get_BoneMatrices(packet.DrawIndex));
+				SkinningOffset = pPipeLine->GetOrWriteSkinning(packet.ObjID, packet.DrawIndex,
+					get<CSkeletonFollower*>(packet.pPayLoad)->Get_BoneMatrices(packet.DrawIndex));
 			else
-				SkinningOffset = pPipeLine->Write_SkinningBuffer(dynamic_cast<CSkeletalModel*>(packet.pModel)->Get_BoneMatrices(packet.DrawIndex));
+				SkinningOffset = pPipeLine->GetOrWriteSkinning(packet.ObjID, packet.DrawIndex,
+					dynamic_cast<CSkeletalModel*>(packet.pModel)->Get_BoneMatrices(packet.DrawIndex));
 		}
 
 		packet.TransformIndex = TransformIndex;

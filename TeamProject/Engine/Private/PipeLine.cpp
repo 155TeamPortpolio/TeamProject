@@ -358,23 +358,27 @@ _uint CPipeLine::Write_ObjectData(const _float4x4& worldMatrix)
 	return LastOffset;
 }
 
+_uint CPipeLine::GetOrWriteTransform(_uint objId, const _float4x4& world)
+{
+	auto found = m_transformIndexCache.find(objId);
+	if (found != m_transformIndexCache.end())
+		return found->second;
+
+	_uint index = Write_ObjectData(world);
+	if (index != UINT_MAX)
+		m_transformIndexCache.emplace(objId, index);
+	return index;
+}
+
 HRESULT CPipeLine::Begin_ObjectBuffer(ID3D11DeviceContext* pContext)
 {
-	HRESULT hr = pContext->Map(
-		m_pDeviceObjectBuffer,
-		0,
-		D3D11_MAP_WRITE_DISCARD,
-		0,
-		&m_mappedObjectBuffer
-	);
+	m_transformIndexCache.clear(); // 추가
 
-	if (FAILED(hr))
-		return hr;
+	HRESULT hr = pContext->Map(m_pDeviceObjectBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &m_mappedObjectBuffer);
+	if (FAILED(hr)) return hr;
 
-	m_pObjectArray = reinterpret_cast<_float4x4*>(m_mappedObjectBuffer.pData); 
-	
+	m_pObjectArray = reinterpret_cast<_float4x4*>(m_mappedObjectBuffer.pData);
 	m_pObjectArray[0] = identity;
-
 	m_ObjectOffset = 1;
 	return S_OK;
 }
@@ -387,39 +391,49 @@ HRESULT CPipeLine::End_ObjectBuffer(ID3D11DeviceContext* pContext)
 	return S_OK;
 }
 
-_uint CPipeLine::Write_SkinningBuffer(vector<_float4x4> bones)
+static uint64_t MakeSkinKey(uint32_t objId, uint32_t drawIndex)
+{
+	return (uint64_t(objId) << 32) | uint64_t(drawIndex);
+}
+
+_uint CPipeLine::GetOrWriteSkinning(_uint objId, _uint drawIndex, const vector<_float4x4>& bones)
+{
+	uint64_t key = MakeSkinKey((uint32_t)objId, (uint32_t)drawIndex);
+
+	auto found = m_skinningCache.find(key);
+	if (found != m_skinningCache.end())
+		return found->second;
+
+	uint32_t offset = Write_SkinningBuffer(bones);
+	if (offset != UINT_MAX)
+		m_skinningCache.emplace(key, offset);
+	return offset;
+}
+
+_uint CPipeLine::Write_SkinningBuffer(const vector<_float4x4>& bones)
 {
 	if (!m_pSkinningArray) return UINT_MAX;
 
-	const _uint SkinningCount = static_cast<_uint>(bones.size());
+	const _uint count = (_uint)bones.size();
+	if (count == 0) return UINT_MAX;
 
-	if (m_SkinningOffset + SkinningCount > g_iMaxNumBones) {
+	if (m_SkinningOffset + count > g_iMaxNumBones) {
 		MSG_BOX("To Many Skinning");
-		return UINT_MAX; // 초과
+		return UINT_MAX;
 	}
 
-	memcpy(&m_pSkinningArray[m_SkinningOffset], bones.data(), sizeof(_float4x4) * SkinningCount);
-	_uint LastOffset = m_SkinningOffset;
-	m_SkinningOffset += SkinningCount;
-	return LastOffset;
+	memcpy(&m_pSkinningArray[m_SkinningOffset], bones.data(), sizeof(_float4x4) * count);
+	_uint last = m_SkinningOffset;
+	m_SkinningOffset += count;
+	return last;
 }
 
-static uint32_t skinningMapCount = 0;
 HRESULT CPipeLine::Begin_SkinningBuffer(ID3D11DeviceContext* pContext)
 {
-	char eventName[64];
-	sprintf_s(eventName, "Skinning/Map_%u", (unsigned)skinningMapCount++);
-	PROFILE_SCOPE(&g_Profiler, eventName);
-	HRESULT hr = pContext->Map(
-		m_pDeviceSkinningBuffer,
-		0,
-		D3D11_MAP_WRITE_DISCARD,
-		0,
-		&m_mappedSkinningBuffer
-	);
+	m_skinningCache.clear(); // 추가
 
-	if (FAILED(hr))
-		return hr;
+	HRESULT hr = pContext->Map(m_pDeviceSkinningBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &m_mappedSkinningBuffer);
+	if (FAILED(hr)) return hr;
 
 	m_pSkinningArray = reinterpret_cast<_float4x4*>(m_mappedSkinningBuffer.pData);
 	m_SkinningOffset = 0;
@@ -428,12 +442,10 @@ HRESULT CPipeLine::Begin_SkinningBuffer(ID3D11DeviceContext* pContext)
 
 HRESULT CPipeLine::End_SkinningBuffer(ID3D11DeviceContext* pContext)
 {
-	PROFILE_SCOPE(&g_Profiler, "Skinning/Unmap"); 
 	pContext->Unmap(m_pDeviceSkinningBuffer, 0);
 
 	m_pSkinningArray = nullptr;
 	m_SkinningOffset = 0;
-	skinningMapCount = { 0 };
 	return S_OK;
 }
 
@@ -518,6 +530,7 @@ vector<OPAQUE_PACKET> CPipeLine::OcculsionCulling(const vector<OPAQUE_PACKET>& f
 	return m_pHiZ->OcculsionCulling(frustums);
 }
 
+
 #ifdef _USING_GUI
 void CPipeLine::Render_GUI()
 {
@@ -549,7 +562,6 @@ void CPipeLine::Free()
 	Safe_Release(m_pDeviceSSAOBuffer);
 	Safe_Release(m_pDeviceLightBuffer);
 	Safe_Release(m_pDeviceSSAOKernelBuffer);
-
 	Safe_Release(m_pHiZ);
 	Safe_Release(m_pSkinnedCSM);
 	Safe_Release(m_pStaticCSM);
