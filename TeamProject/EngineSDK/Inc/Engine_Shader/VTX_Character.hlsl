@@ -2,12 +2,14 @@
 
 float3 vRimLightColor;
 float fRimLightPower;
-vector vOutLineColor;
+float4 vOutLineColor;
+float4 vMotionBlurColor;
 float fOutLineThickness;
 float fDissolveProgress;
 float fDissolveTiling;
 float4x4 g_OutLineBoneMatrices[512];
 matrix g_worldMatrix;
+Texture2D MotionBlurNoiseTexture;
 
 struct VS_IN
 {
@@ -110,6 +112,55 @@ VS_OUT VS_OUTLINE(VS_IN In)
     return Out;
 }
 
+struct VS_MOTIONOUT
+{
+    float4 vPosition : SV_POSITION;
+    float4 vNormal : NORMAL;
+    float2 vTexcoord : TEXCOORD0;
+    float4 vProjPos : TEXCOORD1;
+    float viewZ : TEXCOORD2;
+    float3 vTangent : TANGENT;
+    float3 vBinormal : BINORMAL;
+    float vWorldHeight : TEXCOORD3;
+};
+
+VS_MOTIONOUT VS_MOTIONBLUR(VS_IN In)
+{
+    VS_MOTIONOUT Out;
+    
+    float fWeightW = 1.0 - (In.vBlendWeight.x + In.vBlendWeight.y + In.vBlendWeight.z);
+
+    float4x4 BoneMatrix =
+        g_OutLineBoneMatrices[In.vBlendIndex.x] * In.vBlendWeight.x +
+        g_OutLineBoneMatrices[In.vBlendIndex.y] * In.vBlendWeight.y +
+        g_OutLineBoneMatrices[In.vBlendIndex.z] * In.vBlendWeight.z +
+        g_OutLineBoneMatrices[In.vBlendIndex.w] * fWeightW;
+    
+    vector vPosition = mul(float4(In.vPosition, 1.f), BoneMatrix);
+    vector vNormal = mul(float4(In.vNormal, 0.f), BoneMatrix);
+    vector vTangent = mul(float4(In.vTangent, 0.f), BoneMatrix);
+    vector vBinormal = mul(float4(In.vBinormal, 0.f), BoneMatrix);
+      
+    float3 worldPos = mul(vPosition, g_worldMatrix).xyz;
+    float4 viewPos = mul(float4(worldPos, 1.f), matView);
+    float4 projPos = mul(viewPos, matProjection);
+        
+    matrix matrixWV = mul(g_worldMatrix, matView);
+    matrix matrixWVP = mul(matrixWV, matProjection);
+    
+    Out.vWorldHeight = worldPos.y;
+    Out.vPosition = projPos;
+    
+    Out.vTexcoord = In.vTexcoord;
+    Out.vNormal = normalize(mul(vNormal, g_worldMatrix));
+    Out.vProjPos = Out.vPosition;
+
+    Out.vTangent = normalize(mul(vTangent, g_worldMatrix));
+    Out.vBinormal = normalize(mul(vBinormal, g_worldMatrix));
+
+    return Out;
+}
+
 struct PS_IN
 {
     float4 vPosition : SV_POSITION;
@@ -127,9 +178,9 @@ struct PS_OUT
     vector vNormal : SV_TARGET1;
     vector vDepth : SV_TARGET2;
     vector vMetalic : SV_TARGET3;
-    vector vAmbient : SV_Target4;
-    vector vRimLight : SV_Target5;
-    vector vLook : SV_Target6;
+    vector vAmbient : SV_TARGET4;
+    vector vRimLight : SV_TARGET5;
+    vector vLook : SV_TARGET6;
 };
 
 PS_OUT PS_MAIN(PS_IN In)
@@ -194,6 +245,39 @@ PS_OUT PS_OUTLINE(PS_IN In)
     PS_OUT Out;
     
     Out.vDiffuse = vOutLineColor;
+    
+    return Out;
+}
+
+struct PS_MOTIONIN
+{
+    float4 vPosition : SV_POSITION;
+    float4 vNormal : NORMAL;
+    float2 vTexcoord : TEXCOORD0;
+    float4 vProjPos : TEXCOORD1;
+    float viewZ : TEXCOORD2;
+    float3 vTangent : TANGENT;
+    float3 vBinormal : BINORMAL;
+    float vWorldHeight : TEXCOORD3;
+};
+
+struct PS_MOTIONOUT
+{
+    float4 vDiffuse : SV_TARGET0;
+    float fHeight : SV_TARGET1;
+};
+
+PS_MOTIONOUT PS_MOTIONBLUR(PS_MOTIONIN In)
+{
+    PS_MOTIONOUT Out;
+    
+    float4 color = vMotionBlurColor;    
+    
+    float heightNormalized = saturate((In.vWorldHeight - 0.0f) / 2.0f);
+    heightNormalized = 1.0f - heightNormalized;
+    Out.vDiffuse = color;
+    Out.fHeight = heightNormalized;
+    
     return Out;
 }
 
@@ -309,14 +393,25 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_MAIN_SHADOW();
     }
 
+    pass MotionBlur
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_MotionStencil, 0);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MOTIONBLUR();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_MOTIONBLUR();
+    }
+
     pass OutLine
     {
         SetRasterizerState(RS_CullFront);
         SetDepthStencilState(DSS_OutlineStencil, 1);
-        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_OUTLINE();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_OUTLINE();
     }
+
 }
 

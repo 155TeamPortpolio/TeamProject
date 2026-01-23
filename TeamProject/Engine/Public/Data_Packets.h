@@ -40,7 +40,7 @@ namespace Engine {
 		_uint DrawIndex = {};		/*���° �޽� �׸��µ�?*/
 		_uint MaterialIndex = {};/*�� �޽ô� �����µ�*/
 		_uint SkinningOffset = {};
-		
+		_bool isBatched = { false };
 		_vector LookVector = {};
 
 		class CModel* pModel = { nullptr };
@@ -173,4 +173,16 @@ namespace Engine {
 		_uint MeshIdx = {};
 		function<void(ID3D11DeviceContext*, _uint)> DrawCall;
 	}OUTLINE_COMMAND;
+
+	typedef ENGINE_DLL struct RenderMotionBlurCommand
+	{
+		class CShader* pShader = { nullptr };
+		_float4x4* pWorldMatrix = { nullptr };
+		vector<_float4x4> BoneParam = {};
+		string typeName = {};
+		_float4 vColor = {};
+		_uint iSize = {};
+		_uint MeshIdx = {};
+		function<void(ID3D11DeviceContext*, _uint)> DrawCall;
+	}MOTIONBLUR_COMMAND;
 }

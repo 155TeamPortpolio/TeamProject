@@ -120,6 +120,55 @@ PS_OUT_RESULT PS_RIMLIGHT(PS_IN In)
     return Out;
 }
 
+PS_OUT_RESULT PS_MOTIONBLUR(PS_IN In)
+{
+    PS_OUT_RESULT Out;
+    
+    float2 stripeUV = In.vTexcoord * float2(1.0f, 3.0f);
+    float stripes = MotionNoiseTexture.Sample(LinearSampler, stripeUV).r;
+    
+    float4 motionBlur;
+    
+    if (stripes > 0.6f)
+    {
+        motionBlur = float4(0, 0, 0, 0);
+        for (int i = -2; i <= 2; i++)
+        {
+            float2 offset = In.vTexcoord + float2(i * 0.003f, 0);
+            motionBlur += MotionBlurTexture.Sample(DefaultSampler, offset);
+        }
+        motionBlur /= 5.0f;
+        
+        float blurAmount = (stripes - 0.6f) / 0.4f;
+        float4 original = MotionBlurTexture.Sample(DefaultSampler, In.vTexcoord);
+        motionBlur = lerp(original, motionBlur, blurAmount);
+    }
+    else
+    {
+        motionBlur = MotionBlurTexture.Sample(DefaultSampler, In.vTexcoord);
+    }
+    
+    if (stripes > 0.6f)
+    {
+        float intensity = (stripes - 0.6f) * 1.5f;
+        motionBlur.rgb *= (1.0f + intensity * 0.5f);
+    }
+    if (stripes > 0.85f)
+    {
+        motionBlur.rgb *= 1.3f;
+    }
+
+    float screenGradient = MotionHeightTexture.Sample(DefaultSampler, In.vTexcoord).r;
+    screenGradient = screenGradient * screenGradient; 
+    
+    float3 darkColor = motionBlur.rgb * 0.05f; 
+    motionBlur.rgb = lerp(darkColor, motionBlur.rgb, screenGradient);
+
+    Out.vResult = float4(motionBlur.rgb, motionBlur.a);
+    
+    return Out;
+}
+
 //GaussianBlur
 static const float weights[9] =
 {
@@ -396,6 +445,16 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_RIMLIGHT();
+    }
+
+    pass MOTIONBLUR
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_MOTIONBLUR();
     }
 
     pass BRIGHT

@@ -47,6 +47,7 @@ HRESULT CUI_BattleHUD::Initialize(INIT_DESC* pArg)
 
 void CUI_BattleHUD::Awake()
 {
+    Set_Alpha(0.f);
 }
 
 void CUI_BattleHUD::Update(_float dt)

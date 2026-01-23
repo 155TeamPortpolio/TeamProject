@@ -222,7 +222,7 @@ float4 PS_MAIN_FINAL(PS_IN In) : SV_Target
     float4 radialBloom = RadialBloomTexture.Sample(DefaultSampler, distortedUV);
     float4 hdrBloom = HDRBloomFinalTexture.Sample(DefaultSampler, distortedUV);
     float4 ui = UI2DTexture.Sample(DefaultSampler, In.vTexcoord);
-    
+    float4 motionblur = MotionBlurTexture.Sample(DefaultSampler, In.vTexcoord);
     float3 hdrColor = scene.rgb;
     
     if (g_UseAddictiveColor)
@@ -234,7 +234,7 @@ float4 PS_MAIN_FINAL(PS_IN In) : SV_Target
     
     hdrColor += hdrBloom.rgb * 0.3;
     
-    float3 mapped = ACESFilm(hdrColor) + radialBloom.rgb;
+    float3 mapped = ACESFilm(hdrColor) + radialBloom.rgb + motionblur.rgb;
     
     float3 finalColor = ui.rgb + mapped * (1.f - ui.a);
 
@@ -297,7 +297,7 @@ technique11 DefaultTechnique
     pass COMBINED
     {
         SetRasterizerState(RS_Default);
-        SetDepthStencilState(DSS_Default, 0);
+        SetDepthStencilState(DSS_None, 0);
         SetBlendState(BS_Premultiplied, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;

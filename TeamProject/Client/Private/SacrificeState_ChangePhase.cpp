@@ -4,6 +4,7 @@
 #include "Sacrifice.h"
 #include "GameInstance.h"
 #include "EffectContainer.h"
+#include "CamDirector.h"
 
 void CSacrificeState_ChangePhase::Enter(CSacrifice* pOwner)
 {
@@ -42,6 +43,8 @@ void CSacrificeState_ChangePhase::Update_Effects(CSacrifice* pOwner)
 		pEffectTransform->Set_WorldPos(vWorldPosition);
 
 		ObjectManager()->Add_Object(effect, { pOwner->Get_Level(),"Effect_Layer" });
+
+		CameraManager()->SetShakeType(ENUM(CamShakeType::Roar15S));
 	}
 }
 

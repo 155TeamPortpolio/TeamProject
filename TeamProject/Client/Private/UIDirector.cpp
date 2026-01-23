@@ -51,6 +51,24 @@ void CUIDirector::Hide_BattleHUD()
 	it->second.Get()->UI_DeActive();
 }
 
+void CUIDirector::Show_SceneFrame()
+{
+	auto it = m_handles.find("scene_frame");
+	if (!it->second.isValid())
+		return;
+
+	it->second.Get()->UI_Active();
+}
+
+void CUIDirector::Hide_SceneFrame()
+{
+	auto it = m_handles.find("scene_frame");
+	if (!it->second.isValid())
+		return;
+
+	it->second.Get()->UI_DeActive();
+}
+
 void CUIDirector::Initialize()
 {
 	// ui 관련 이미지, 폰트, json 파일 리소스 매니저에 등록

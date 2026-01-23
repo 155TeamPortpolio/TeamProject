@@ -63,6 +63,8 @@ struct KeyframeListUIState
     string lastLoadedPath{};
     char   autoLoadPathBuf[260] = "";
     bool   didAutoLoadOnce = false;
+
+    unordered_map<_uint, array<char, 64>> eventTagBufs{};
 };
 struct KeyframeEditorUIState
 {

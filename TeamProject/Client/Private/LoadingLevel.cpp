@@ -43,7 +43,7 @@ void CLoadingLevel::Update()
 	/*쓰레드에게 미리 넣어둔 요청 큐의 완료 상태 반환 받는 법! 퍼센트 가능*/
 	_uint done = 0, total = 0;
 	pRcsMgr->GetPreloadProgress(done, total);
-	if (ResourceManager()->isLoadComplete() &&(m_leastTime>3.f))
+	if (ResourceManager()->isLoadComplete() &&(m_leastTime>1.f))
 	{
 		LevelManager()->Notify_LoadComplete();
 	}
