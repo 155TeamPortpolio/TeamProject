@@ -54,7 +54,7 @@ public:
     
     _bool         IsPlaying(const string& key) const;
     _bool         IsPlaying(CamSeqType type)   const;
-    _bool         IsFinished(CamSeqType type, const string& eventTag) const;
+    _bool         IsFinished(const string& eventTag) const;
 
     _bool         StopRequest(_uint handle, _float blendOutSec = 0.25f, _bool resetTime = true);
     void          StopAll(_float blendOutSec = 0.25f);

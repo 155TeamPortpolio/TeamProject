@@ -235,13 +235,9 @@ _bool CCamDirector::IsPlaying(CamSeqType type) const
     return IsPlaying(ResolveSeqKey(type));
 }
 
-_bool CCamDirector::IsFinished(CamSeqType type, const string& eventTag) const
+_bool CCamDirector::IsFinished(const string& eventTag) const
 {
-    if (!GetPlayer()->Get_CurCharacterHandle().isValid()) return false;
-
-    const string key = ResolveSeqKey(type);
-
-    if (m_playing.active && m_playing.key == key)
+    if (m_playing.active)
     {
         auto seqPlayer = GetSeqPlayer();
         auto seq = seqPlayer->GetSequence();
@@ -261,12 +257,13 @@ _bool CCamDirector::IsFinished(CamSeqType type, const string& eventTag) const
     }
 
     if (!m_lastEndedValid) return false;
-    if (m_lastEndedKey != key) return false;
+    if (m_lastEndedKey.empty()) return false;
 
-    auto it = m_seqs.find(key);
+    auto it = m_seqs.find(m_lastEndedKey);
     if (it == m_seqs.end()) return false;
 
     const auto& keys = it->second.seqDesc.keyframes;
+
     const size_t idx = FindEventKeyIdx(keys, eventTag);
     if (idx == (size_t)-1) return false;
 
