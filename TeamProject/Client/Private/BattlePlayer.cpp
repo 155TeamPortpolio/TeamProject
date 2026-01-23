@@ -496,15 +496,15 @@ void CBattlePlayer::NotifyCharacterSwitchIn()
 	m_pCurrentCharacter->Set_TargetHandle(m_TargetHandle);
 
 	Sync_ActionUI();
-	// 이후 추가 예정
-	//if (m_pCurrentCharacter->Can_Parry())
-	//{
-	//	m_pCurrentCharacter->On_SwitchIn(CCharacter::SWITCH::PARRYAID);
-	//	return;
-	//}
 
 	m_pCurrentCharacter->Set_MainCharacter(true);
-	m_pCurrentCharacter->On_SwitchIn(CCharacter::SWITCH::NORMAL);
+	if (m_bReserveParry)
+	{
+		m_pCurrentCharacter->On_SwitchIn(CCharacter::SWITCH::PARRYAID);
+		m_bReserveParry = false;
+	}
+	else
+		m_pCurrentCharacter->On_SwitchIn(CCharacter::SWITCH::NORMAL);
 }
 
 void CBattlePlayer::NotifyCharacterSwitchOut()
@@ -515,6 +515,15 @@ void CBattlePlayer::NotifyCharacterSwitchOut()
 		+ XMVectorScale(vRight, 0.5f)
 		- XMVectorScale(m_vSwitchLook, 6.f)
 		+ XMVectorSet(0.f, 1.f, 0.f, 0.f);
+
+	if (m_pCurrentCharacter->Can_Parry())
+	{
+		m_bReserveParry = true;
+		m_pCurrentCharacter->Calculate_Parry();
+		m_vSwitchPosition = _vector4{ m_pCurrentCharacter->Get_ParryPos() };
+		m_vSwitchPosition += {0.f, 1.f, 0.f, 0.f};
+		m_vSwitchLook = _vector4{ m_pCurrentCharacter->Get_ParryLook() };
+	}
 
 	m_pCurrentCharacter->Set_MainCharacter(false);
 	m_pCurrentCharacter->On_SwitchOut();

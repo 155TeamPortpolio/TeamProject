@@ -118,7 +118,7 @@ private:
 
     InputState   m_input;
     _uint        m_iParryingCount = 6;
-    _bool        m_bIsParrying = { false };
+    _bool        m_bReserveParry = { false };
     _float       m_fSwitchCooldown = { 0.f };
     _vector4     m_vSwitchPosition = XMVectorSet(0.f, 0.f, 0.f, 1.f);
     _vector4     m_vSwitchLook = XMVectorSet(0.f, 0.f, 0.f, 0.f);

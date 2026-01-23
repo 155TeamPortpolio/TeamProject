@@ -94,7 +94,8 @@ void CCorin::Awake()
 
 	Initialize_Stat();
 
-	if (FAILED(Attach_ParryCollider(1.65f)))
+	m_fParryOffset = 1.65f;
+	if(FAILED(Attach_ParryCollider(3.f)))
 		return;
 }
 
@@ -136,7 +137,6 @@ void CCorin::Render_GUI()
 
 	}
 	ImGui::Separator();
-	ImGui::Text("Parrable Object %d", m_ParryableTargets.size());
 
 }
 

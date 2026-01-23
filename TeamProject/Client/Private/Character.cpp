@@ -12,6 +12,7 @@
 #include "IInteract.h"
 
 #include "CharacterAttackCollider.h"
+#include "CharacterParryCollider.h"
 
 
 CCharacter::CCharacter(const CCharacter& rhs)
@@ -190,14 +191,10 @@ void CCharacter::OnTriggerEnter(CGameObject* pOther)
 	}
 
 	if (Is_Invincible())	return;
-	if (pCollidable->Get_Group() == COLLISION_GROUP::MONSTER_PARRY)
-	{
 
-		m_ParryableTargets.insert(pOther);
-	}
 	else if (pCollidable->Get_Group() == COLLISION_GROUP::MONSTER_ATTACK)
 	{
-		m_vTargetPos = pOther->Get_Component<CTransform>()->Dir(STATE::POSITION);
+		m_vHitPos = pOther->Get_Component<CTransform>()->Dir(STATE::POSITION);
 	}
 }
 
@@ -216,13 +213,10 @@ void CCharacter::OnTriggerStay(CGameObject* pOther)
 	if (Is_Invincible())	return;
 	ICollidable* pCollidable = pOther->Get_Component<ICollidable>();
 	if (!pCollidable) return;
-	if (pCollidable->Get_Group() == COLLISION_GROUP::MONSTER_PARRY)
-	{
-		m_ParryableTargets.insert(pOther);
-	}
+
 	else if (pCollidable->Get_Group() == COLLISION_GROUP::MONSTER_ATTACK)
 	{
-		m_vTargetPos = pOther->Get_Component<CTransform>()->Dir(STATE::POSITION);
+		m_vHitPos = pOther->Get_Component<CTransform>()->Dir(STATE::POSITION);
 	}
 }
 
@@ -263,7 +257,6 @@ void CCharacter::OnTriggerExit(CGameObject* pOther)
 		EventSystem()->Broadcast<UI_ACTION_DESC>({ actiondesc });
 	}
 
-	m_ParryableTargets.erase(pOther);
 }
 
 void CCharacter::On_Move(const InputInfo& inputInfo)
@@ -387,7 +380,7 @@ HRESULT CCharacter::Attach_ParryCollider(_float fRadius)
 	if (nullptr == pParryCollider)
 		return E_FAIL;
 
-	pObjectContainer->Add_Child(pParryCollider, true);
+	m_iParryColliderIndex = pObjectContainer->Add_Child(pParryCollider, true);
 
 	return S_OK;
 }
@@ -529,10 +522,16 @@ _bool CCharacter::Is_OppositeInput() const
 	return fAngle >= TURNBACK_ANGLE_THRESHOLD;
 }
 
-_bool CCharacter::Can_Parry() const
+_bool CCharacter::Can_Parry()
 {
-	if (m_ParryableTargets.empty())	return false;
-	return true;
+	// TODO : 패링카운트 체크 추가
+	CCharacterParryCollider* pParry = dynamic_cast<CCharacterParryCollider*>
+		(Get_Component<CObjectContainer>()->Get_Children()[m_iParryColliderIndex]);
+	if (pParry && pParry->Can_Parry())
+	{
+		return true;
+	}
+	return false;
 }
 
 void CCharacter::Update_Rotation(_float dt)
@@ -611,6 +610,27 @@ void CCharacter::Update_Invincible(_float dt)
 {
 	if (m_fInvincibleTimer > 0.f)
 		m_fInvincibleTimer -= dt;
+}
+
+void CCharacter::Calculate_Parry()
+{
+	CCharacterParryCollider* pParry = dynamic_cast<CCharacterParryCollider*>
+		(Get_Component<CObjectContainer>()->Get_Children()[m_iParryColliderIndex]);
+
+	_vector3 vPos = Get_WorldPos();
+	_vector3 vAttackPos = {};
+	_float fMinDist = FLT_MAX;
+	for (auto iter : pParry->Get_Targets())
+	{
+		_float fDist = (vPos - iter->Get_WorldPos()).Length();
+		if (fDist >= fMinDist)
+			continue;
+		fMinDist = fDist;
+		vAttackPos = iter->Get_WorldPos();
+	}
+	m_vParryLook = vAttackPos - vPos;
+	m_vParryLook.Normalize();
+	m_vParryPos = vAttackPos - m_vParryLook * m_fParryOffset;
 }
 
 CCharacterAttackCollider* CCharacter::Find_AttackCollider(const string& strName)

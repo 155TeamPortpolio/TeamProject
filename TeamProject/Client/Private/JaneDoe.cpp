@@ -121,8 +121,9 @@ void CJaneDoe::Awake()
 
 	Initialize_Stat();
 
-	m_tEnergy.fCurrentEnergy = 120;
-
+	m_fParryOffset = 1.15f;
+	if (FAILED(Attach_ParryCollider(3.f)))
+		return;
 }
 
 void CJaneDoe::Priority_Update(_float dt)

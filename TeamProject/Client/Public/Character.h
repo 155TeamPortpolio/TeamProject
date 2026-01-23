@@ -160,9 +160,12 @@ public:
     HRESULT  Attach_ParryCollider(_float fRadius);
     void     Rotate(_vector3 vDirection);
     void     Stop_Rotation();
-
     _bool    Is_OppositeInput() const;
-    _bool    Can_Parry() const;
+    
+    _bool    Can_Parry();
+    void     Calculate_Parry();
+    _vector3 Get_ParryPos() { return m_vParryPos; }
+    _vector3 Get_ParryLook() { return m_vParryLook; }
 
     _bool    Can_Evade() const;
     void     Use_Evade();
@@ -178,7 +181,7 @@ public:
     _bool    Is_Active_AttackCollider(const string& strName);
 
     void     Take_Damage(DAMAGE_TYPE eType, _float fDamage);
-    _vector3 Get_HitTargetPos() const { return m_vTargetPos; }
+    _vector3 Get_HitTargetPos() const { return m_vHitPos; }
 
     _bool Is_Invincible() const { return m_iInvincibleCount > 0 || m_fInvincibleTimer > 0.f; }
     // 상태머신용 - 명시적 제어
@@ -195,6 +198,7 @@ private:
     void    Update_Decibel(_float dt);
     void    Update_Invincible(_float dt);
 
+
     class CCharacterAttackCollider* Find_AttackCollider(const string& strName);
 
 protected:
@@ -203,63 +207,61 @@ protected:
     string                      m_strAnimName = "";   // For Animator
     string                      m_strName = "";       // 
     CHARACTER                   m_eCharacterName = { CHARACTER::JaneDoe };
+    _uint                       m_iCurrentLevel = { 1 };
     unordered_map<string, _int> m_AttackColliderIndex;
     // HP
     _float          m_fMaxHP = { 100.f };
     _float          m_fCurrentHP = { 100.f };
-    // 특수 스킬
-    EnergyDesc   m_tEnergy = {};
-    static  constexpr _float    MAX_ENERGY = { 120.f };
-    // 궁극기
-    _float          m_fCurrentDecibel = {};
-    _float          m_fPrevDecibel = {};
-    static constexpr _float MAX_DECIBEL = { 3000.f };
-
-    _float          m_fAttackPower = { 10.f };
-    _float          m_fDefense = { 5.f };
-    _float          m_fMoveSpeed = { 1.f };
-    _uint           m_iCurrentLevel = { 1 };            //*ĳ���� ����*
-    // 상태
+    // 상태 + 이동/회전
     InputInfo       m_inputInfo;
+    _bool           m_bIsMain = { false };
     _bool           m_bCanMove = { true };
     _bool           m_bIsAttack = { false };
     _bool           m_bIsEvade = { false };
     _bool           m_bCanInteract = { false };
-    // ȸ�� �ý���
-    _bool                   m_bEvadeBuffer = { false };
-    _uint                   m_iEvadeMax = 2;
-    _uint                   m_iEvadeCount = { 0 };
-    _float                  m_fEvadeTimer = { 0.f };
-    _float                  m_fEvadeCooldown = { 0.f };
-    static constexpr _float EVADE_COOLDOWN = 1.f;
-    //*����ġ �ý���*
-    SWITCH                  m_eSwitchType = SWITCH::END;
-    // ȸ��
     _quaternion     m_qCurrentRot = {};
     _quaternion     m_qTargetRot = {};
     _bool           m_bIsRotating = { false };
-    // �и�
-    unordered_set<CGameObject*>  m_ParryableTargets;
-    // 피격 위치
-    _vector3    m_vTargetPos = {};
-    // �׽�Ʈ��
-    _bool           m_bTest = { false };
-    //���̴�
-    _float3     m_vRimLightColor = _float3(0.f, 0.f, 0.f);
-    _float      m_fRimLightPower = { 0.f };
-    _float      m_fDissolveProgress = { 0.f };
-    _float      m_fDissolveTiling = { 10.f };
-    // ����
-    OBJECT_HANDLE                 m_TargetHandle;
-    static constexpr _float TURNBACK_ANGLE_THRESHOLD = 100.f;
-    _bool                         m_bLockOn = { false };
+    OBJECT_HANDLE   m_TargetHandle;
+    _bool           m_bLockOn = { false };
+    // 회피
+    _bool           m_bEvadeBuffer = { false };
+    _uint           m_iEvadeMax = 2;
+    _uint           m_iEvadeCount = { 0 };
+    _float          m_fEvadeTimer = { 0.f };
+    _float          m_fEvadeCooldown = { 0.f };
+    // 특수 스킬
+    EnergyDesc   m_tEnergy = {};
+    // 궁극기
+    _float          m_fCurrentDecibel = {};
+    _float          m_fPrevDecibel = {};
     // 무적
-    _int    m_iInvincibleCount = { 0 };
-    _float  m_fInvincibleTimer = { 0.f };
+    _int            m_iInvincibleCount = { 0 };
+    _float          m_fInvincibleTimer = { 0.f };
+    // 패링
+    _int            m_iParryColliderIndex = {};
+    SWITCH          m_eSwitchType = SWITCH::END;
+    _float          m_fParryOffset = {};
+    _vector3        m_vParryPos = {};
+    _vector3        m_vParryLook = {};
+    // 피격
+    _vector3        m_vHitPos = {};     // 피격 위치
+    // 효과
+    _float3         m_vRimLightColor = _float3(0.f, 0.f, 0.f);
+    _float          m_fRimLightPower = { 0.f };
+    _float          m_fDissolveProgress = { 0.f };
+    _float          m_fDissolveTiling = { 10.f };
+    // 테스트
+    _bool           m_bTest = { false };
+    // 미사용?
+    _float          m_fAttackPower = { 10.f };
+    _float          m_fDefense = { 5.f };
+    _float          m_fMoveSpeed = { 1.f };
 
-    _bool m_bIsMain = { false };
-
-
+    static constexpr _float     TURNBACK_ANGLE_THRESHOLD = 100.f;
+    static constexpr _float     EVADE_COOLDOWN = 1.f;
+    static  constexpr _float    MAX_ENERGY = { 120.f };
+    static constexpr _float     MAX_DECIBEL = { 3000.f };
 public:
     virtual CGameObject* Clone(INIT_DESC* pArg) PURE;
     virtual void Free() override;
