@@ -73,7 +73,6 @@ void RenderPass::Free()
 #pragma region STATICMESH_OPAQUE_PASS
 void StaticOpaquePass::Write_Buffer(ID3D11DeviceContext* pContext)
 {
-
 	CPipeLine* pPipeLine = m_pRenderSystem->Get_Pipeline();
 
 	vector<OPAQUE_PACKET> frustums;
@@ -100,7 +99,6 @@ void StaticOpaquePass::Write_Buffer(ID3D11DeviceContext* pContext)
 
 void StaticOpaquePass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
 {
-	PROFILE_SCOPE(&g_Profiler, "Execute");
 	CPipeLine* pPipeLine = m_pRenderSystem->Get_Pipeline();
 	pCurShader = { nullptr };
 
