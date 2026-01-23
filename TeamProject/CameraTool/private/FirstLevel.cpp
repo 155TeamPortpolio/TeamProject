@@ -37,7 +37,7 @@ HRESULT CFirstLevel::Awake()
 	OBJ->Add_Object(demoGrid,  {"First_Level", "Grid_Layer"});
 
 	CAM->Set_MainCam(freeCam->Get_Component<CCamera>());
-
+		
 	OBJECT_HANDLE corinHandle = corin->Get_Handle();
 	OBJECT_HANDLE janeHandle = janeDoe->Get_Handle();
 

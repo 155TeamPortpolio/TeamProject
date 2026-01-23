@@ -96,9 +96,11 @@ void CMainApp::Update(const float dt)
 {
 	m_pGameInstance->Update_Engine(dt);
 	CBattleSystem::GetInstance()->Update();
-	CCamDirector::GetInstance()->Update(dt);
+	CamDirector()->Update(dt);
 
+#ifdef NDEBUG
 	m_cursorController.Update(dt);
+#endif
 }
 
 HRESULT CMainApp::Render()
