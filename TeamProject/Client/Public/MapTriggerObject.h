@@ -36,6 +36,7 @@ private:
     void Ready_PlaneUI(const MAP_TRIGGEROBJ_DESC* pObjDesc);
     void Ready_MeshUI(const MAP_TRIGGEROBJ_DESC* pObjDesc);
     void Ready_InvwalI(const MAP_TRIGGEROBJ_DESC* pObjDesc);
+    void Ready_ZeroPortal(const MAP_TRIGGEROBJ_DESC* pObjDesc);
 
 public:
     static CMapTriggerObject* Create();

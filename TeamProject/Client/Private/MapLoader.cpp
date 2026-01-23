@@ -52,7 +52,12 @@ void CMapLoader::Update_Load()
 
 OBJECT_HANDLE CMapLoader::MapIndexToEntityHandle(_uint iIndex)
 {
-    return OBJECT_HANDLE();
+    auto iter = m_EntityObjectHandle.find(iIndex);
+    
+    if (iter == m_EntityObjectHandle.end())
+        return OBJECT_HANDLE();
+
+    return iter->second;
 }
 
 HRESULT CMapLoader::Load_BaseData(const string& TagArea, _bool* CheckMapBase, _bool* CheckEntityBase)
