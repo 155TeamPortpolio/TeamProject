@@ -36,6 +36,7 @@ HRESULT COrbitCam::Initialize_Prototype()
     pose.targetPivot         = Vector3::Zero;
     pose.curPivot            = pose.targetPivot;
     pose.pivotOverrideOffset = Vector3::Zero;
+    pose.pivotExternalOffset = Vector3::Zero;
 
     ClampTargets();
     return S_OK;
@@ -326,7 +327,6 @@ void COrbitCam::Priority_Update(_float dt)
     if (lockRes.weight <= 0.f) UpdateAutoYawFollow(dt);
 
     ClampTargets();
-
     {
         const float yawRad = XMConvertToRadians(pose.targetRotDeg.x);
         const float pitchRad = XMConvertToRadians(pose.targetRotDeg.y);
@@ -350,8 +350,6 @@ void COrbitCam::Priority_Update(_float dt)
         pose.targetDist = Math::MoveTowards(pose.targetDist, target, speed * dt);
         pose.targetDist = clamp(pose.targetDist, profile.minDist, profile.maxDist);
     }
-
-
     SmoothStates(dt);
     ApplyOrbitPose(dt, lockRes);
 }
@@ -412,7 +410,7 @@ void COrbitCam::SmoothStates(_float dt)
 Vector3 COrbitCam::GetPivotTargetPos() const
 {
     const Vector3 basePivot = GetBasePivotTargetPos(targetHandle);
-    return basePivot + pose.pivotOverrideOffset;
+    return basePivot + pose.pivotOverrideOffset + pose.pivotExternalOffset;
 }
 
 float COrbitCam::GetEffectiveDist() const
@@ -560,13 +558,13 @@ _float COrbitCam::GetCollisionAllowedDist(const Vector3& pivot, const Vector3& b
 
     const float maxAbs = max(fabsf(deltaYaw), fabsf(deltaPitch));
     int steps = (int)ceilf(maxAbs / stepDeg);
-    if (steps < 1) steps = 1;
+    if (steps < 1)  steps = 1;
     if (steps > 12) steps = 12;
 
     PxSphereGeometry geom(camRadius);
 
     PxQueryFilterData filterData;
-    filterData.flags = PxQueryFlag::eSTATIC | PxQueryFlag::eDYNAMIC | PxQueryFlag::ePREFILTER;
+    filterData.flags = PxQueryFlag::eSTATIC | PxQueryFlag::ePREFILTER;
 
     CRaycastFilterCallback filterCallback(cc->Get_CollisionMask(), false);
 

@@ -8,31 +8,32 @@ Matrix CCamBoneController::GetSpaceRT() const
     return GetSpaceRefRT();
 }
 
-Matrix CCamBoneController::GetBoneRT() const
+Matrix CCamBoneController::GetPosBoneRT() const
 {
-    if (!m_desc) return GetSpaceRefRT();
-    if (m_desc->boneName.empty()) return GetSpaceRefRT();
-    return GetBoneRT(m_desc->boneName);
+    if (!HasPosBone()) return GetSpaceRefRT();
+    return GetBoneRT(m_desc->posBoneName);
 }
 
-Matrix CCamBoneController::GetRefRT()
+Matrix CCamBoneController::GetLookAtBoneRT() const
 {
-    Matrix spaceRT = GetSpaceRefRT();
-    if (!IsEnabled()) return spaceRT;
-
-    if (m_desc->mode == CamBoneMode::Parent) return GetBoneRT(m_desc->boneName);
-    return spaceRT;
+    if (!HasLookAtBone()) return GetSpaceRefRT();
+    return GetBoneRT(m_desc->lookAtBoneName);
 }
 
-Vector3 CCamBoneController::GetLookAtTargetWorld()
+Vector3 CCamBoneController::GetSpacePosWorld() const
 {
-    Matrix spaceRT = GetSpaceRefRT();
-    if (!IsEnabled()) return spaceRT.Translation();
+    return GetSpaceRefRT().Translation();
+}
 
-    if (m_desc->mode == CamBoneMode::LookAt)
-        return GetBoneRT(m_desc->boneName).Translation();
+Vector3 CCamBoneController::GetPosBonePosWorld() const
+{
+    return GetPosBoneRT().Translation();
+}
 
-    return spaceRT.Translation();
+Vector3 CCamBoneController::GetLookAtTargetWorld() const
+{
+    if (HasLookAtBone()) return GetLookAtBoneRT().Translation();
+    return GetSpaceRefRT().Translation();
 }
 
 Matrix CCamBoneController::GetSpaceRefRT() const

@@ -3,6 +3,7 @@
 #include "GameInstance.h"
 #include "GameObject.h"
 #include "Helper_Func.h"
+#include "UIDirector.h"
 // Camera
 #include "SequenceCam.h"
 #include "OrbitCam.h"
@@ -15,6 +16,7 @@
 #include "BattlePlayer.h"
 #include "BattleSystem.h"
 #include "Character.h"
+
 
 namespace
 {
@@ -66,7 +68,7 @@ void CCamDirector::SetTarget(OBJECT_HANDLE targetHandle)
 
 void CCamDirector::AutoTarget()
 {
-    auto handle = GetPlayer()->Get_CurCharacterHandle();
+    auto handle = GetCurHandle();
     if (handle.isValid())
         SetTarget(handle);
 }
@@ -90,6 +92,7 @@ void CCamDirector::Update(_float dt)
         if (seqPlayer->GetSequence()->space == CamSpace::Local && !m_spaceRefHandle.isValid())
         {
             AbortSequenceToOrbit(true);
+            SyncSeqInputLock();
             UpdateInput(dt);
             return;
         }
@@ -117,7 +120,21 @@ void CCamDirector::Update(_float dt)
         }
     }
 
-    UpdateInput(dt);
+    SyncSeqInputLock();
+
+    if (IsValid())
+        m_dialogue.Update(dt, GetOrbitCamComp(), GetOrbitCam(), GetCharacter()->Get_Component<CTransform>());
+
+    if (!m_playing.active)
+        UpdateInput(dt);
+}
+
+void CCamDirector::StartBattleIntro(CamSeqType type)
+{
+    AutoTarget();
+    RequestSequence(type);
+    UIDirector()->Hide_BattleHUD();
+    UIDirector()->Show_SceneFrame();
 }
 
 string CCamDirector::ResolveSeqKey(CamSeqType type) const
@@ -139,12 +156,17 @@ CPlayer* CCamDirector::GetPlayer() const
 
 CCharacter* CCamDirector::GetCharacter() const
 {
-    return static_cast<CCharacter*>(GetPlayer()->Get_CurCharacterHandle().Get());
+    return static_cast<CCharacter*>(GetCurHandle().Get());
 }
 
 string CCamDirector::GetCharacterStr() const
 {
     return Helper::EnumToString(GetCharacter()->Get_CharacterName());
+}
+
+OBJECT_HANDLE CCamDirector::GetCurHandle() const
+{
+    return GetPlayer()->Get_CurCharacterHandle();
 }
 
 void CCamDirector::UpdateInput(_float dt)
@@ -153,10 +175,22 @@ void CCamDirector::UpdateInput(_float dt)
         CameraManager()->Set_MainCam(GetFreeCamComp(), 0.5f);
 
     if (InputDevice()->Key_Tap(VK_F2))
-        CameraManager()->Set_MainCam(GetOrbitCamComp(), 0.5f);
+    {
+        StartDialog();
+        GetPlayer()->Lock_Input();
+    }
 
     if (InputDevice()->Key_Tap(VK_F3))
-        RequestSequence(CamSeqType::BattleIntro);
+    {
+        EndDialog();
+        GetPlayer()->Unlock_Input();
+    }
+
+    //if (InputDevice()->Key_Tap(VK_F2))
+    //    CameraManager()->Set_MainCam(GetOrbitCamComp(), 0.5f);
+
+    //if (InputDevice()->Key_Tap(VK_F3))
+    //    RequestSequence(CamSeqType::ZeroIntro);
 }
 
 void CCamDirector::AbortSequenceToOrbit(_bool resetTime)
@@ -175,14 +209,41 @@ void CCamDirector::AbortSequenceToOrbit(_bool resetTime)
     CameraManager()->Set_MainCam(GetOrbitCamComp(), 0.f);
 
     m_playing = {};
+    SyncSeqInputLock();
+}
+
+void CCamDirector::SyncSeqInputLock()
+{
+    const _bool wantLock = m_playing.active;
+
+    if (wantLock && !m_seqInputLocked)
+    {
+        GetPlayer()->Lock_Input();
+        m_seqInputLocked = true;
+        return;
+    }
+
+    if (!wantLock && m_seqInputLocked)
+    {
+        GetPlayer()->Unlock_Input();
+        m_seqInputLocked = false;
+    }
+}
+
+void CCamDirector::StartDialog()
+{
+    m_dialogue.Begin(35.f, 0.5f, 0.8f);
+}
+
+void CCamDirector::EndDialog()
+{
+    m_dialogue.End(0.5f);
 }
 
 void CCamDirector::UpdatePlayer()
 {
-    auto player = GetPlayer();
-
-    const _int type = ENUM(player->Get_PlayerType());
-    OBJECT_HANDLE focus = player->Get_CurCharacterHandle();
+    const _int type = ENUM(GetPlayer()->Get_PlayerType());
+    OBJECT_HANDLE focus = GetCurHandle();
 
     if (type == ENUM(CPlayer::PLAYER::END) || !focus.isValid())
     {
@@ -336,11 +397,18 @@ _bool CCamDirector::StopRequest(_uint handle, _float blendOutSec, _bool resetTim
 
     const _bool ok = CameraManager()->Pop(handle, blendOutSec);
     m_playing = {};
+    SyncSeqInputLock();
     return ok;
 }
+
 
 void CCamDirector::StopAll(_float blendOutSec)
 {
     if (!m_playing.active) return;
     StopRequest(m_playing.handle, blendOutSec, true);
+}
+
+_bool CCamDirector::IsValid() const
+{
+    return GetPlayer()->Get_CurCharacterHandle().isValid();
 }

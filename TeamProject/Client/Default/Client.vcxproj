@@ -167,6 +167,7 @@
     <ClInclude Include="..\public\BangBooPayState_Idle.h" />
     <ClInclude Include="..\public\BattlePlayer.h" />
     <ClInclude Include="..\public\BattleSystem.h" />
+    <ClInclude Include="..\public\CamDialogueController.h" />
     <ClInclude Include="..\public\CamEventController.h" />
     <ClInclude Include="..\Public\CharacterParryCollider.h" />
     <ClInclude Include="..\Public\CorinState_Start.h" />
@@ -443,6 +444,7 @@
     <ClCompile Include="..\private\BangBooPayState_Idle.cpp" />
     <ClCompile Include="..\private\BattlePlayer.cpp" />
     <ClCompile Include="..\private\BattleSystem.cpp" />
+    <ClCompile Include="..\private\CamDialogueController.cpp" />
     <ClCompile Include="..\private\CamEventController.cpp" />
     <ClCompile Include="..\Private\CharacterParryCollider.cpp" />
     <ClCompile Include="..\Private\CorinState_Start.cpp" />
