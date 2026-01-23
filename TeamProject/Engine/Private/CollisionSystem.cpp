@@ -843,21 +843,26 @@ void CCollisionSystem::Process_CollisionEvents()
 void CCollisionSystem::Check_Initial_Overlap(ICollidable* pCollidable)
 {
 	if (!pCollidable) return;
-
 	PxRigidActor* pActor = nullptr;
 	_bool bIsTrigger = false;
 	PxShape* pMyShape = nullptr;
+	PxFilterData myFilter = {};
 
 	if (auto pCollider = dynamic_cast<CCollider*>(pCollidable))
 	{
 		pActor = pCollider->Get_PxActor();
 		bIsTrigger = pCollider->Is_Trigger();
 		pMyShape = pCollider->Get_Shape();
+		if (pMyShape)
+			myFilter = pMyShape->getSimulationFilterData();
 	}
 	else if (auto pCCT = dynamic_cast<CCharacterController*>(pCollidable))
 	{
 		pActor = pCCT->Get_PxActor();
 		bIsTrigger = false;
+		pMyShape = pCCT->Get_Shape();
+		if (pMyShape)
+			myFilter = pMyShape->getSimulationFilterData();
 	}
 
 	if (!pActor) return;
@@ -867,18 +872,12 @@ void CCollisionSystem::Check_Initial_Overlap(ICollidable* pCollidable)
 	PxScene* pScene = pActor->getScene();
 	if (!pScene) return;
 
-	// 내 필터 데이터 가져오기
-	PxFilterData myFilter;
-	if (pMyShape)
-		myFilter = pMyShape->getSimulationFilterData();
-
 	PxShape* shapes[16];
 	PxU32 nShapes = pActor->getShapes(shapes, 16);
 	for (PxU32 i = 0; i < nShapes; ++i)
 	{
 		PxShape* pShape = shapes[i];
 		if (!pShape) continue;
-
 		if (bIsTrigger && !(pShape->getFlags() & PxShapeFlag::eTRIGGER_SHAPE))
 			continue;
 
@@ -898,25 +897,22 @@ void CCollisionSystem::Check_Initial_Overlap(ICollidable* pCollidable)
 			{
 				PxActor* pOtherActor = buf.touches[k].actor;
 				PxShape* pOtherShape = buf.touches[k].shape;
-
 				if (pOtherActor == pActor) continue;
 
 				PxRigidActor* pOtherRigidActor = pOtherActor->is<PxRigidActor>();
 				if (!pOtherRigidActor) continue;
 
-				// 필터 검사 추가
-				if (pOtherShape && pMyShape)
+				// 필터 검사 - myFilter 사용
+				if (pOtherShape)
 				{
 					PxFilterData otherFilter = pOtherShape->getSimulationFilterData();
-
 					_uint myGroup = myFilter.word0;
 					_uint myMask = myFilter.word1;
 					_uint otherGroup = otherFilter.word0;
 					_uint otherMask = otherFilter.word1;
 
-					// 양방향 필터 검사
 					if ((myMask & otherGroup) == 0 || (otherMask & myGroup) == 0)
-						continue;  // 필터에 의해 충돌 무시
+						continue;
 				}
 
 				ICollidable* pOtherCollidable = Get_Collidable_Shape(pOtherShape, pOtherRigidActor);
