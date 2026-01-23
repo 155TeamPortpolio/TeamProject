@@ -798,6 +798,9 @@
     <Filter Include="02. GameObject\UI\01. 2D\SceneFrame">
       <UniqueIdentifier>{da2fd65e-9bf7-4fb2-a1b2-95af726ef1a4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\Dialogue\Message">
+      <UniqueIdentifier>{8586251d-ec90-4723-ac77-2750945a94a4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1547,6 +1550,9 @@
     <ClInclude Include="..\public\CamEventController.h">
       <Filter>02. GameObject\Camera\07. CamDirector\00. CamEventConsumer</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UI_DialogueMessage.h">
+      <Filter>02. GameObject\UI\01. 2D\Dialogue\Message</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2256,6 +2262,9 @@
     </ClCompile>
     <ClCompile Include="..\private\CamEventController.cpp">
       <Filter>02. GameObject\Camera\07. CamDirector\00. CamEventConsumer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_DialogueMessage.cpp">
+      <Filter>02. GameObject\UI\01. 2D\Dialogue\Message</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
