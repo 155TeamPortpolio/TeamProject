@@ -1,6 +1,8 @@
 #pragma once
 #include "Base.h"
 #include "DynamicBoneStruct.h"
+#include "MeshSection.h"
+
 NS_BEGIN(Engine)
 
 class ENGINE_DLL CModelData :
@@ -28,6 +30,7 @@ public:
 	_bool isSkinned() { return (m_pSkeleton != nullptr); }
 	_int Find_MeshIndex(const string& name);
 	vector<_uint> Get_ProxyIndex() { return m_ProxyMarked; }
+	vector<MaterialUsageRow> BuildMaterialUsageTable(_bool includeMeshIndices) const;
 #pragma endregion 
 
 #pragma region Skeleton
@@ -60,6 +63,9 @@ protected:
 	_float3 m_vMaxLocal = { -FLT_MAX ,-FLT_MAX ,-FLT_MAX };
 
 	_bool isGui_BoneTabOpen = { false };
+	_bool isGui_MaterialStatsOpen = false;
+	vector<MaterialUsageRow> m_cachedMaterialUsage;
+
 	vector<_uint> m_ProxyMarked;
 	
 public:
