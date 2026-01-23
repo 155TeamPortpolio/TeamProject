@@ -9,6 +9,7 @@
 #include "Material.h"
 #include "ObjectContainer.h"
 #include "BoneFollower.h"
+#include "Child.h"
 #include "IInteract.h"
 
 #include "CharacterAttackCollider.h"
@@ -350,7 +351,7 @@ HRESULT CCharacter::Attach_AttackCollider(ATTACK_COLLIDER_DESC* pDesc)
 	return S_OK;
 }
 
-HRESULT CCharacter::Attach_ParryCollider(_float fRadius)
+HRESULT CCharacter::Attach_ParryCollider()
 {
 	CObjectContainer* pObjectContainer = Get_Component<CObjectContainer>();
 
@@ -366,10 +367,10 @@ HRESULT CCharacter::Attach_ParryCollider(_float fRadius)
 	COLLIDER_DESC colliderDesc{};
 	colliderDesc.eType = COLLIDER_TYPE::SPHERE;
 	colliderDesc.eGroup = COLLISION_GROUP::PLAYER_ATTACK;
-	colliderDesc.iCollisionMask = ENUM(COLLISION_GROUP::MONSTER_ATTACK);
+	colliderDesc.iCollisionMask = ENUM(COLLISION_GROUP::MONSTER_PARRY);
 	colliderDesc.bAutoFit = false;
 	colliderDesc.vCenter = { 0.f,0.f,0.f };
-	colliderDesc.vSize = { fRadius,0.f,0.f };
+	colliderDesc.vSize = { 5.f,0.f,0.f };
 	colliderDesc.bTrigger = true;
 
 	CGameObject* pParryCollider = Builder::Create_Object(
@@ -621,15 +622,17 @@ void CCharacter::Calculate_Parry()
 	_vector3 vPos = Get_WorldPos();
 	_vector3 vAttackPos = {};
 	_float fMinDist = FLT_MAX;
+	/* 몬스터의 트리거 콜라이더로 검사. 이후 부모 오브젝트의 월드 좌표저장 */
 	for (auto iter : pParry->Get_Targets())
 	{
 		_float fDist = (vPos - iter->Get_WorldPos()).Length();
 		if (fDist >= fMinDist)
 			continue;
 		fMinDist = fDist;
-		vAttackPos = iter->Get_WorldPos();
+		vAttackPos = iter->Get_Component<CChild>()->Get_Parent()->Get_WorldPos();
 	}
 	m_vParryLook = vAttackPos - vPos;
+	m_vParryLook.y = 0.f;
 	m_vParryLook.Normalize();
 	m_vParryPos = vAttackPos - m_vParryLook * m_fParryOffset * (1.f + m_pCCT->Get_Radius());
 	m_vParryPos.y = vPos.y + 1.f;

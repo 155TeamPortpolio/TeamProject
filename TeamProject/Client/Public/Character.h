@@ -160,7 +160,7 @@ public:
 
 public:
     HRESULT  Attach_AttackCollider(ATTACK_COLLIDER_DESC* pDesc);
-    HRESULT  Attach_ParryCollider(_float fRadius);
+    HRESULT  Attach_ParryCollider();
     void     Rotate(_vector3 vDirection);
     void     Stop_Rotation();
     _bool    Is_OppositeInput() const;

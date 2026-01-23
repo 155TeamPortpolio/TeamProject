@@ -94,7 +94,7 @@ void CCorin::Awake()
 
 	Initialize_Stat();
 
-	if(FAILED(Attach_ParryCollider(3.f)))
+	if(FAILED(Attach_ParryCollider()))
 		return;
 }
 

@@ -153,7 +153,7 @@ void CJaneDoe::Awake()
 
 	Initialize_Stat();
 
-	if (FAILED(Attach_ParryCollider(3.f)))
+	if (FAILED(Attach_ParryCollider()))
 		return;
 	m_tEnergy.fCurrentEnergy = 120;
 
