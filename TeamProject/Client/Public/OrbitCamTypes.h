@@ -14,6 +14,7 @@ struct OrbitCamPoseState
     Vector3 targetPivot{};
     Vector3 curPivot{};
     Vector3 pivotOverrideOffset{};
+    Vector3 pivotExternalOffset{};
 };
 
 struct OrbitCamInputState

@@ -119,6 +119,9 @@ void CCamDirector::Update(_float dt)
         }
     }
 
+    if (GetPlayer()->Get_CurCharacterHandle().isValid())
+        m_dialogue.Update(dt, GetOrbitCamComp(), GetOrbitCam(), GetCharacter()->Get_Component<CTransform>());
+
     UpdateInput(dt);
 }
 
@@ -165,7 +168,7 @@ void CCamDirector::UpdateInput(_float dt)
         CameraManager()->Set_MainCam(GetOrbitCamComp(), 0.5f);
 
     if (InputDevice()->Key_Tap(VK_F3))
-        RequestSequence(CamSeqType::BattleIntro);
+        RequestSequence(CamSeqType::ZeroIntro);
 }
 
 void CCamDirector::AbortSequenceToOrbit(_bool resetTime)
@@ -184,6 +187,16 @@ void CCamDirector::AbortSequenceToOrbit(_bool resetTime)
     CameraManager()->Set_MainCam(GetOrbitCamComp(), 0.f);
 
     m_playing = {};
+}
+
+void CCamDirector::StartDialog()
+{
+    m_dialogue.Begin(30.f, 0.5f, 0.8f);
+}
+
+void CCamDirector::EndDialog()
+{
+    m_dialogue.End(0.5f);
 }
 
 void CCamDirector::UpdatePlayer()

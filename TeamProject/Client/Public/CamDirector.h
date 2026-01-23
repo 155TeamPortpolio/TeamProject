@@ -3,6 +3,7 @@
 #include "CameraMgr.h"
 #include "CamDirectorData.h"
 #include "CamEventController.h"
+#include "CamDialogueController.h"
 
 NS_BEGIN(Client)
 
@@ -53,8 +54,8 @@ public:
     _uint         RequestSequence(CamSeqType type);
     _uint         RequestSequence(CamSeqType type, const CamSequenceRequestDesc& req);
     
-    _bool         IsPlaying(const string& key) const;
-    _bool         IsPlaying(CamSeqType type)   const;
+    _bool         IsPlaying(const string& key)       const;
+    _bool         IsPlaying(CamSeqType type)         const;
     _bool         IsFinished(CamEventType eventType) const;
 
     _bool         StopRequest(_uint handle, _float blendOutSec = 0.25f, _bool resetTime = true);
@@ -69,11 +70,15 @@ private:
     void          UpdateInput(_float dt);
     void          AbortSequenceToOrbit(_bool resetTime);
 
+    void          StartDialog();
+    void          EndDialog();
+
 private:
     CamDirectorSeqMap       m_seqs{};
     CamDirectorPlayingState m_playing{};
     CamDirectorCamHandles   m_camHandles{};
     CCamEventController     m_events{};
+    CCamDialogueController  m_dialogue{};
 
     OBJECT_HANDLE           m_spaceRefHandle{};
     CamType                 m_returnCamType = CamType::None;
@@ -83,7 +88,8 @@ private:
 
     _bool                   m_lastEndedValid = false;
     string                  m_lastEndedKey{};
-};
+    _bool                   m_seqInputLocked = false;
+}; 
 
 inline auto* CamDirector() { return CCamDirector::GetInstance(); }
 

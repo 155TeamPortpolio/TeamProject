@@ -795,8 +795,11 @@
     <Filter Include="02. GameObject\Camera\07. CamDirector">
       <UniqueIdentifier>{0d1fd986-9b7f-4463-b27c-8cc9eae09a0b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Camera\07. CamDirector\00. CamEventConsumer">
+    <Filter Include="02. GameObject\Camera\07. CamDirector\00. CamEventController">
       <UniqueIdentifier>{e32e2694-55ad-4df0-9498-5b9d07742769}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Camera\07. CamDirector\01. CamDialogueController">
+      <UniqueIdentifier>{9d3b873e-a8e1-46d5-bf26-47096a796f2e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1545,7 +1548,10 @@
       <Filter>02. GameObject\Object\Player\Character\Collider\ParryCollider</Filter>
     </ClInclude>
     <ClInclude Include="..\public\CamEventController.h">
-      <Filter>02. GameObject\Camera\07. CamDirector\00. CamEventConsumer</Filter>
+      <Filter>02. GameObject\Camera\07. CamDirector\00. CamEventController</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\CamDialogueController.h">
+      <Filter>02. GameObject\Camera\07. CamDirector\01. CamDialogueController</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2255,7 +2261,10 @@
       <Filter>02. GameObject\Object\Player\Character\Collider\ParryCollider</Filter>
     </ClCompile>
     <ClCompile Include="..\private\CamEventController.cpp">
-      <Filter>02. GameObject\Camera\07. CamDirector\00. CamEventConsumer</Filter>
+      <Filter>02. GameObject\Camera\07. CamDirector\00. CamEventController</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CamDialogueController.cpp">
+      <Filter>02. GameObject\Camera\07. CamDirector\01. CamDialogueController</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
