@@ -4,10 +4,7 @@
 #include "CamPanelData.h"
 #include "CamPanelUtil.h"
 #include "AnimGUIController.h"
-
-#define CAM   CGameInstance::GetInstance()->Get_CameraMgr()
-#define GAME  CGameInstance::GetInstance()
-#define OBJ   CGameInstance::GetInstance()->Get_ObjectMgr()
+#include "CamBoneController.h"
 
 NS_BEGIN(CameraTool)
 
@@ -15,7 +12,7 @@ class CCamPanel final : public CBasePanel
 {
 private:
 	CCamPanel(GUI_CONTEXT* context) : CBasePanel(context) {}
-	~CCamPanel() = default;
+    ~CCamPanel() DEFAULT;
 
 	void    Init();
 
@@ -39,6 +36,7 @@ private:
 	_bool   DrawOrbitTargetBar();
     void    DrawPath();
     void    DrawPlayAll(OBJECT_HANDLE spaceRefHandle);
+    void    Draw_BoneAttachUI();
 
 private:
     void    SetRecording(_bool on);
@@ -97,6 +95,7 @@ private:
     CamToolEditState      state{};
     CamToolKeyPolicy      policy{};
     PanelUIState          panelUI{};
+    CCamBoneController    cameraBoneCtrl;
 
     KeyframeListUIState   keyListUI{};
     KeyframeEditorUIState keyEditUI{};

@@ -7,8 +7,9 @@ NS_BEGIN(Engine)
 struct CamPose
 {
 	_vector3   pos{};
-	Quaternion rot = Quaternion::Identity;
-	float      fov = 60.f;
+	Quaternion rot  = Quaternion::Identity;
+	float      fov  = 60.f;
+	float      roll = 0.f;
 };
 struct CamBlendState
 {
@@ -18,6 +19,12 @@ struct CamBlendState
 
 	CamPose from{};
 	CamPose to{};
+};
+struct CamBoneAttachDesc
+{
+	_bool       enabled = false;
+	CamBoneMode mode = CamBoneMode::Parent;
+	string      boneName = "Bip001";
 };
 struct CamKeyFrame 
 {
@@ -54,6 +61,7 @@ struct CamSequenceDesc
 	CamOrbitArcDesc     orbitArc{};
 
 	CamSpace            space        = CamSpace::World;
+	CamBoneAttachDesc   boneAttach{};
 
 	vector<CamKeyFrame> keyframes;
 
@@ -70,4 +78,5 @@ struct CamKeySegment
 	_uint  segmentIdx = 0;
 	_float normalizedTime = 0.f;
 };
+
 NS_END

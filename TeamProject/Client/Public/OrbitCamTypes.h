@@ -31,9 +31,9 @@ struct OrbitCamProfile
     _float pitchMin = -30.f;
     _float pitchMax = 40.f;
 
-    _float rotSmoothSpeed = 14.f;
-    _float distSmoothSpeed = 14.f;
-    _float pivotSmoothSpeed = 12.f;
+    _float rotSmoothSpeed = 12.f;
+    _float distSmoothSpeed = 10.f;
+    _float pivotSmoothSpeed = 10.f;
 
     _float offsetY = 0.f;
 

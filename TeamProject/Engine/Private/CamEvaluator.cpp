@@ -52,6 +52,7 @@ CamPose CCamEvaluator::Evaluate(float time) const
 	CamPose pose{};
 	pose.pos = posEval->Evaluate(time);
 	pose.rot = rotEval->Evaluate(time);
+	pose.roll = rotEval->GetLastRoll();
 	pose.fov = fovEval->Evaluate(time);
 	return pose;
 }
