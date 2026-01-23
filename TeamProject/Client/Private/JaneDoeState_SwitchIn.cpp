@@ -10,7 +10,7 @@
 
 void CJaneDoeState_SwitchIn::Enter(CJaneDoe* pOwner)
 {
-    pOwner->Active_Character();
+    //pOwner->Active_Character();
     pOwner->Push_Invincible();
     pOwner->Unlock_Move();
     if (!m_pSubStateMachine)

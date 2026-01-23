@@ -100,6 +100,9 @@ public:
     _bool       Can_Move() const { return m_bCanMove; }
     void        Lock_Move() { m_bCanMove = false; }
     void        Unlock_Move() { m_bCanMove = true; }
+    _bool       Can_Rotate() const { return m_bCanRotate; }
+    void        Lock_Rotate() { m_bCanRotate = false; }
+    void        Unlock_Rotate() { m_bCanRotate = true; }
     // 상태
     _bool       Is_Attack() const { return m_bIsAttack; }
     _bool       Is_Evade() const { return m_bIsEvade; }
@@ -190,7 +193,6 @@ public:
     // 일시적 무적 - 회피 무적프레임 등
     void Set_InvincibleTimer(_float fDuration) { m_fInvincibleTimer = fDuration; }
 
-
 private:
     void    Update_Rotation(_float dt);
     void    Update_Evade(_float dt);
@@ -221,6 +223,7 @@ protected:
     _bool           m_bCanInteract = { false };
     _quaternion     m_qCurrentRot = {};
     _quaternion     m_qTargetRot = {};
+    _bool           m_bCanRotate = { true };
     _bool           m_bIsRotating = { false };
     OBJECT_HANDLE   m_TargetHandle;
     _bool           m_bLockOn = { false };
@@ -241,7 +244,7 @@ protected:
     // 패링
     _int            m_iParryColliderIndex = {};
     SWITCH          m_eSwitchType = SWITCH::END;
-    _float          m_fParryOffset = {};
+    _float          m_fParryOffset = { 1.8f };
     _vector3        m_vParryPos = {};
     _vector3        m_vParryLook = {};
     // 피격

@@ -121,7 +121,6 @@ void CJaneDoe::Awake()
 
 	Initialize_Stat();
 
-	m_fParryOffset = 1.15f;
 	if (FAILED(Attach_ParryCollider(3.f)))
 		return;
 }

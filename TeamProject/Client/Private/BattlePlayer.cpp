@@ -491,13 +491,14 @@ HRESULT CBattlePlayer::ClearCharacters()
 
 void CBattlePlayer::NotifyCharacterSwitchIn()
 {
+	m_pCurrentCharacter->Set_MainCharacter(true);
+	m_pCurrentCharacter->Active_Character();
 	m_pCurrentCharacter->Get_Component<CCharacterController>()->Set_Position(m_vSwitchPosition);
 	m_pCurrentCharacter->Get_Component<CTransform>()->Set_Look(m_vSwitchLook);
 	m_pCurrentCharacter->Set_TargetHandle(m_TargetHandle);
 
 	Sync_ActionUI();
 
-	m_pCurrentCharacter->Set_MainCharacter(true);
 	if (m_bReserveParry)
 	{
 		m_pCurrentCharacter->On_SwitchIn(CCharacter::SWITCH::PARRYAID);
@@ -521,7 +522,6 @@ void CBattlePlayer::NotifyCharacterSwitchOut()
 		m_bReserveParry = true;
 		m_pCurrentCharacter->Calculate_Parry();
 		m_vSwitchPosition = _vector4{ m_pCurrentCharacter->Get_ParryPos() };
-		m_vSwitchPosition += {0.f, 1.f, 0.f, 0.f};
 		m_vSwitchLook = _vector4{ m_pCurrentCharacter->Get_ParryLook() };
 	}
 

@@ -536,6 +536,7 @@ _bool CCharacter::Can_Parry()
 
 void CCharacter::Update_Rotation(_float dt)
 {
+	if (!m_bCanRotate)	return;
 	_float fSpeed = 20.f;
 	if (m_qCurrentRot.Dot(m_qTargetRot) > 0.99f)
 	{
@@ -630,7 +631,8 @@ void CCharacter::Calculate_Parry()
 	}
 	m_vParryLook = vAttackPos - vPos;
 	m_vParryLook.Normalize();
-	m_vParryPos = vAttackPos - m_vParryLook * m_fParryOffset;
+	m_vParryPos = vAttackPos - m_vParryLook * m_fParryOffset * (1.f + m_pCCT->Get_Radius());
+	m_vParryPos.y = vPos.y + 1.f;
 }
 
 CCharacterAttackCollider* CCharacter::Find_AttackCollider(const string& strName)

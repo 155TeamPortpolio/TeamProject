@@ -94,7 +94,6 @@ void CCorin::Awake()
 
 	Initialize_Stat();
 
-	m_fParryOffset = 1.65f;
 	if(FAILED(Attach_ParryCollider(3.f)))
 		return;
 }
