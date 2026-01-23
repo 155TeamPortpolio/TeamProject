@@ -51,7 +51,7 @@ void CUI_Manager::Pre_EngineUpdate(_float dt)
 		return; 
 
 	for (auto* uiObj : itLevel->second)
-		if (uiObj && uiObj->Is_Root())
+		if (uiObj && uiObj->Is_Alive() && uiObj->Is_Root())
 			uiObj->Pre_EngineUpdate(dt);
 }
 
@@ -74,7 +74,7 @@ void CUI_Manager::Priority_Update(_float dt)
 		return;
 
 	for (auto* uiObj : itLevel->second)
-		if (uiObj && uiObj->Is_Root())
+		if (uiObj && uiObj->Is_Alive() && uiObj->Is_Root())
 			uiObj->Priority_Update(dt);
 }
 
@@ -85,7 +85,7 @@ void CUI_Manager::Update(_float dt)
 		return;
 
 	for (auto* uiObj : itLevel->second)
-		if (uiObj && uiObj->Is_Root())
+		if (uiObj && uiObj->Is_Alive() && uiObj->Is_Root())
 			uiObj->Update(dt);
 }
 
@@ -97,7 +97,7 @@ void CUI_Manager::Late_Update(_float dt)
 		return;
 
 	for (auto* uiObj : itLevel->second)
-		if (uiObj && uiObj->Is_Root())
+		if (uiObj && uiObj->Is_Alive() && uiObj->Is_Root())
 			uiObj->Late_Update(dt);
 }
 
@@ -285,7 +285,7 @@ void CUI_Manager::Sort_UI()
 	{
 		for (CUI_Object* ui : pair.second)
 		{
-			if (ui && ui->Is_Root())
+			if (ui && ui->Is_Alive() && ui->Is_Root())
 				m_SortedUIObjects.push_back(ui);
 		}
 	}
