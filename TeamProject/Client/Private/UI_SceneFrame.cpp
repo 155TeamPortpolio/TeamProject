@@ -6,6 +6,8 @@
 
 #include "CamDirector.h"
 
+#include "UIDirector.h"
+
 HRESULT CUI_SceneFrame::Initialize_Prototype()
 {
     __super::Initialize_Prototype();
@@ -25,7 +27,7 @@ HRESULT CUI_SceneFrame::Initialize(INIT_DESC* pArg)
 
     // 자식을 멤버로 캐싱
     auto pContainer = Get_Component<CObjectContainer>();
-    for(_int i = 0; i < ENUM(Child::END); ++i)
+    for(_int i = 0; i < ENUM(CHILD::END); ++i)
         m_pChildren[i] = dynamic_cast<CUI_Object*>(pContainer->Find_Descendant(INSTANCENAMES[i]));
 
     m_Zpriority = -1;
@@ -35,40 +37,67 @@ HRESULT CUI_SceneFrame::Initialize(INIT_DESC* pArg)
 
 void CUI_SceneFrame::Awake()
 {
-    UI_Active();
+    Set_Alive(false);
 }
 
 void CUI_SceneFrame::Update(_float dt)
 {
     __super::Update(dt);
 
+    Get_Component<CObjectContainer>()->UpdateChild(dt);
+
     if (CamDirector()->IsFinished(CamEventType::IntroFinished))
         UI_DeActive();
 
-    // 테스트 코드
-    //if (InputDevice()->Key_Down('P'))
-    //    UI_Active();
-    // 
-    //if (InputDevice()->Key_Down('O'))
-    //    UI_DeActive();
-
-    Get_Component<CObjectContainer>()->UpdateChild(dt);
+    if (m_eState == STATE::INVISIBLE && Is_ChildAnimFinished(CHILD::TOP) && Is_ChildAnimFinished(CHILD::BOTTOM))
+        Set_Alive(false);
 }
 
 void CUI_SceneFrame::UI_Active(void* pArg)
 {
-    m_vAnimPosition = {};
-    Set_Alpha(1.f);
+    Change_State(STATE::VISIBLE);
 }
 
 void CUI_SceneFrame::UI_DeActive(void* pArg)
 {
-    for (_int i = 0; i < ENUM(Child::END); ++i)
+    Change_State(STATE::INVISIBLE);
+}
+
+void CUI_SceneFrame::Change_State(STATE eState)
+{
+    if (eState == m_eState)
+        return;
+     
+    m_eState = eState;
+
+    switch (m_eState)
     {
-        auto pChild = m_pChildren[i];
-        if(pChild)
-            pChild->Set_Animation(0);
+    case STATE::VISIBLE:
+        Set_Alive(true);
+        break;
+    case STATE::INVISIBLE:
+        Set_ChildAnimation(CHILD::TOP, 0);
+        Set_ChildAnimation(CHILD::BOTTOM, 0);
+        break;
     }
+}
+
+void CUI_SceneFrame::Set_ChildAnimation(CHILD child, _int iIndex)
+{
+    auto pChild = m_pChildren[ENUM(child)];
+    if (!pChild)
+        return;
+
+    pChild->Set_Animation(iIndex);
+}
+
+_bool CUI_SceneFrame::Is_ChildAnimFinished(CHILD child)
+{
+    auto pChild = m_pChildren[ENUM(child)];
+    if (!pChild)
+        return false;
+
+    return pChild->Is_AnimFinished();
 }
 
 CGameObject* CUI_SceneFrame::Create()
