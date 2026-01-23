@@ -39,11 +39,18 @@ void CStage::BaseIntro(CZero_Level::StageContext& context)
 				BattleSystem()->GetBattlePlayer()->QuestStart();
 				CCamDirector::GetInstance()->AutoTarget();
 				CCamDirector::GetInstance()->RequestSequence(CamSeqType::ZeroIntro);
+				CUIDirector::GetInstance()->Show_SceneFrame();
+				CUIDirector::GetInstance()->Hide_BattleHUD();
 			}
 				});
 			m_introFlow.AddWaitUntil(seqId, []()
 				{
 					return !CamDirector()->IsPlaying(CamSeqType::ZeroIntro);
+				});
+			m_introFlow.AddOnce(seqId, [context]() {if (context.isFirstIn)
+			{
+				CUIDirector::GetInstance()->Show_BattleHUD();
+			}
 				});
 		}
 		else {
