@@ -30,7 +30,7 @@
     "pass": "Opaque",
     "animClips": [
         {
-            "duration": 0.10000000149011612,
+            "duration": 0.5,
             "keyframes": [
                 {
                     "angle": 0.0,
@@ -68,14 +68,14 @@
                         1.0,
                         1.0
                     ],
-                    "time": 0.10000000149011612
+                    "time": 0.5
                 }
             ],
             "loop": false,
             "name": "clip0"
         },
         {
-            "duration": 0.10000000149011612,
+            "duration": 0.5,
             "keyframes": [
                 {
                     "angle": 0.0,
@@ -113,7 +113,7 @@
                         1.0,
                         1.0
                     ],
-                    "time": 0.10000000149011612
+                    "time": 0.5
                 }
             ],
             "loop": false,

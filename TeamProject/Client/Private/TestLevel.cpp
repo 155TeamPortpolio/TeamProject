@@ -148,6 +148,7 @@ HRESULT CTestLevel::Awake()
 	m_pCamDirector->AutoTarget();
 	m_pCamDirector->RequestSequence(CamSeqType::ZeroIntro);
 	CUIDirector::GetInstance()->Show_SceneFrame();
+	CUIDirector::GetInstance()->Show_BattleHUD();
 	//GameInstance()->Set_EngineTimeScale(0.05f);
 
 	return S_OK;
