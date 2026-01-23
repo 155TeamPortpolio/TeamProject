@@ -249,9 +249,7 @@ void CSacrifice::RotateToTarget(_float dt, _float rotateSpeed)
 		return;
 
 	vCurrDir = _vector3::Lerp(vCurrDir, vTargetDir, dt * rotateSpeed);
-	_vector3 vAt = vPosition + vCurrDir;
-
-	m_pTransform->LookAt(vAt);
+	m_pTransform->Set_Look(vCurrDir);
 }
 
 void CSacrifice::MoveByRootMotion(_float dt, _float moveScale)

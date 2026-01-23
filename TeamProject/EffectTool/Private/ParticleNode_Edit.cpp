@@ -95,6 +95,7 @@ void CParticleNode_Edit::Play()
 
 	PARTICLE_NODE node{};
 
+	node.vPivot = m_vPivot;
 	node.iRGBMaskMode = m_iRGBMaskMode;
 	node.iColorMode = ENUM(m_eColorMode);
 	node.isWorld = m_IsWorld;
@@ -151,6 +152,8 @@ void CParticleNode_Edit::Import(nlohmann::ordered_json& json)
 	auto vOffsetPosition = json.value("offset_position", json::array({ 0.f,0.f,0.f }));
 	auto vOffsetQuaternion = json.value("offset_quaternion", json::array({ 0.f,0.f,0.f,1.f }));
 
+	auto pivot = json.value("pivot", json::array({ 0.5f,0.5f }));
+	m_vPivot = _float2(pivot[0], pivot[1]);
 	m_iRGBMaskMode = json.value("rgb_mask", m_iRGBMaskMode);
 	m_eColorMode = static_cast<CParticleSystem::COLOR_MODE>(json.at("color_mode").get<_uint>());
 	m_fDelayTime = json.value("delay_time", m_fDelayTime);
@@ -254,6 +257,7 @@ void CParticleNode_Edit::Export(nlohmann::ordered_json& json)
 		{"offset_position",json::array({vOffsetPosition.x,vOffsetPosition.y,vOffsetPosition.z})},
 		{"offset_quaternion",json::array({vOffsetQuaternion.x,vOffsetQuaternion.y,vOffsetQuaternion.z,vOffsetQuaternion.w})},
 
+		{"pivot",json::array({m_vPivot.x,m_vPivot.y})},
 		{"rgb_mask",m_iRGBMaskMode},
 		{"color_mode",ENUM(m_eColorMode)},
 		{"delay_time",m_fDelayTime},
@@ -359,6 +363,7 @@ void CParticleNode_Edit::SetUp_ParticleEffect()
 	ImGui::DragFloat("Delay Time", &m_fDelayTime);
 	ImGui::DragFloat("Duration", &m_fDuration);
 
+	isDirty |= ImGui::DragFloat2("Pivot", &m_vPivot.x);
 	isDirty |= ImGui::DragInt("RGB Mask Mode", reinterpret_cast<_int*>(&m_iRGBMaskMode));
 	isDirty |= Helper::DrawEnumCombo("Color Mode", m_eColorMode, 100.f);
 	isDirty |= ImGui::Checkbox("Is World", &m_IsWorld);
@@ -439,6 +444,7 @@ void CParticleNode_Edit::SetUp_ParticleEffect()
 
 		PARTICLE_NODE node{};
 
+		node.vPivot = m_vPivot;
 		node.iRGBMaskMode = m_iRGBMaskMode;
 		node.SpawnShape = ENUM(m_eSpawnShape);
 		node.iColorMode = ENUM(m_eColorMode);

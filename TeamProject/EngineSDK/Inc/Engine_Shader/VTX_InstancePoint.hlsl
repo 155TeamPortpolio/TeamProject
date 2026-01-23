@@ -10,6 +10,7 @@ uint Col;
 uint Row;
 uint ColorMode;
 uint RGBMask;
+float2 Pivot;
 
 struct VS_IN
 {
@@ -98,12 +99,18 @@ void GS_MAIN(point GS_IN In[1], inout TriangleStream<GS_OUT> triStream)
     float scaleX = In[0].vSize.x;
     float scaleY = In[0].vSize.y;
     
+    float halfX = scaleX * 0.5f;
+    float halfY = scaleY * 0.5f;
+    
+    float shiftX = (0.5f - Pivot.x) * scaleX;
+    float shiftY = (0.5f - Pivot.y) * scaleY;
+
     float2 offset[4] =
     {
-        float2(scaleX * 0.5f, scaleY * 0.5f),
-        float2(-scaleX * 0.5f, scaleY * 0.5f),
-        float2(-scaleX * 0.5f, -scaleY * 0.5f),
-        float2(scaleX * 0.5f, -scaleY * 0.5f)
+        float2(+halfX + shiftX, +halfY + shiftY),
+        float2(-halfX + shiftX, +halfY + shiftY),
+        float2(-halfX + shiftX, -halfY + shiftY),
+        float2(+halfX + shiftX, -halfY + shiftY)
     };
     
     for (int i = 0; i < 4; ++i)

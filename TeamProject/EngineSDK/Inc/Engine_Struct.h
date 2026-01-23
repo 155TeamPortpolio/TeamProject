@@ -415,7 +415,7 @@ namespace Engine
 		_float3 vOffsetPosition{};
 		_float4 vOffsetQuaternion{};
 
-		//_bool isLoop = false; 부모 구조체에서 루프 제어함
+		_float2 vPivot{ 0.5f,0.5f };
 		_uint iRGBMaskMode{};
 		_uint iModuleMask{};
 		_uint iColorMode{};
