@@ -60,15 +60,6 @@ bool CCellBatcher::BuildOneBatch(ID3D11Device* device, const CellBatchKey& key, 
 {
 	if (!device) return false;
 	if (packets.size() < m_Options.minBatchCount) return false;
-
-#ifdef _USING_GUI
-	PROFILE_SCOPE(&g_Profiler, "Batch/BuildOneBatch");
-#endif
-
-	// 1) 정확한 reserve 계산 (realloc/메모리 스파이크 1순위 제거)
-#ifdef _USING_GUI
-	PROFILE_SCOPE(&g_Profiler, "Batch/BuildOneBatch/ComputeSizes");
-#endif
 	const MergeSizes mergeSizes = ComputeMergeSizes(packets);
 
 	vector<VTXMESH> mergedVertices;
@@ -81,10 +72,6 @@ bool CCellBatcher::BuildOneBatch(ID3D11Device* device, const CellBatchKey& key, 
 	aabb.vMin = _float3{ FLT_MAX, FLT_MAX, FLT_MAX };
 	aabb.vMax = _float3{ -FLT_MAX, -FLT_MAX, -FLT_MAX };
 
-	// 2) CPU 굽기(여기서 튀면 카메라 이동/가시성 변화로 rebuild가 자주 나는 것)
-#ifdef _USING_GUI
-	PROFILE_SCOPE(&g_Profiler, "Batch/BuildOneBatch/BakeCPU");
-#endif
 	for (const OPAQUE_PACKET* packetPtr : packets)
 	{
 		if (!packetPtr) continue;
@@ -113,10 +100,6 @@ bool CCellBatcher::BuildOneBatch(ID3D11Device* device, const CellBatchKey& key, 
 		aabb.vMax.z = max(aabb.vMax.z, worldBox.vMax.z);
 	}
 
-	// 3) GPU 버퍼 생성(드라이버/메모리 튐은 여기서 주로 남)
-#ifdef _USING_GUI
-	PROFILE_SCOPE(&g_Profiler, "Batch/BuildOneBatch/CreateBuffers");
-#endif
 	ID3D11Buffer* vertexBuffer = nullptr;
 	ID3D11Buffer* indexBuffer = nullptr;
 
