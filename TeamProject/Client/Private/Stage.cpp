@@ -39,6 +39,7 @@ void CStage::BaseIntro(CZero_Level::StageContext& context)
 				BattleSystem()->GetBattlePlayer()->QuestStart();
 				CCamDirector::GetInstance()->AutoTarget();
 				CCamDirector::GetInstance()->RequestSequence(CamSeqType::ZeroIntro);
+				CUIDirector::GetInstance()->Show_SceneFrame();
 			}
 				});
 			m_introFlow.AddWaitUntil(seqId, []()
