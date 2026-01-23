@@ -86,7 +86,7 @@ void CUI_Object::Post_EngineUpdate(_float dt)
         packet.pSprite2D    = Get_Component<CSprite2D>();
         packet.pWorldMatrix = m_pTransform->Get_WorldMatrix_Ptr();
         packet.pColor       = &m_vColorLinear;
-
+        packet.ObjID        = m_ObjectID;
         _bool isUI     = (packet.pSprite2D != nullptr);
         _bool isValid  = (packet.pSprite2D->IsValid());
         _bool isActive = (packet.pSprite2D->Get_CompActive());
