@@ -79,35 +79,45 @@ void CCamDirector::AutoField()
 
 void CCamDirector::Update(_float dt)
 {
-    UpdateInput(dt);
+    m_events.BeginFrame();
+
     UpdatePlayer();
 
-    if (!m_playing.active) return;
-
-    auto seqPlayer = GetSeqPlayer();
-
-    if (seqPlayer->GetSequence()->space == CamSpace::Local && !m_spaceRefHandle.isValid())
+    if (m_playing.active)
     {
-        AbortSequenceToOrbit(true);
-        return;
-    }
+        auto seqPlayer = GetSeqPlayer();
 
-    if (m_playing.pendingStart)
-    {
-        m_playing.blendInRemain -= dt;
-
-        if (m_playing.blendInRemain <= 0.f)
+        if (seqPlayer->GetSequence()->space == CamSpace::Local && !m_spaceRefHandle.isValid())
         {
-            seqPlayer->Play();
-            m_playing.pendingStart = false;
+            AbortSequenceToOrbit(true);
+            UpdateInput(dt);
+            return;
         }
-        return;
+
+        if (m_playing.pendingStart)
+        {
+            m_playing.blendInRemain -= dt;
+
+            if (m_playing.blendInRemain <= 0.f)
+            {
+                seqPlayer->Play();
+                m_playing.pendingStart = false;
+            }
+
+            m_events.SyncTime(seqPlayer->GetTime(), seqPlayer->IsPlaying());
+        }
+        else
+        {
+            seqPlayer->Update(dt);
+
+            m_events.Evaluate(seqPlayer->GetTime(), seqPlayer->IsPlaying());
+
+            if (!seqPlayer->IsPlaying())
+                StopAll(m_playing.defaultBlendOutSec);
+        }
     }
 
-    seqPlayer->Update(dt);
-
-    if (!seqPlayer->IsPlaying())
-        StopAll(m_playing.defaultBlendOutSec);
+    UpdateInput(dt);
 }
 
 string CCamDirector::ResolveSeqKey(CamSeqType type) const
@@ -146,7 +156,7 @@ void CCamDirector::UpdateInput(_float dt)
         CameraManager()->Set_MainCam(GetOrbitCamComp(), 0.5f);
 
     if (InputDevice()->Key_Tap(VK_F3))
-        RequestSequence(CamSeqType::ZeroIntro);
+        RequestSequence(CamSeqType::BattleIntro);
 }
 
 void CCamDirector::AbortSequenceToOrbit(_bool resetTime)
@@ -235,42 +245,9 @@ _bool CCamDirector::IsPlaying(CamSeqType type) const
     return IsPlaying(ResolveSeqKey(type));
 }
 
-_bool CCamDirector::IsFinished(CamSeqType type, const string& eventTag) const
+_bool CCamDirector::IsFinished(CamEventType type) const
 {
-    if (!GetPlayer()->Get_CurCharacterHandle().isValid()) return false;
-
-    const string key = ResolveSeqKey(type);
-
-    if (m_playing.active && m_playing.key == key)
-    {
-        auto seqPlayer = GetSeqPlayer();
-        auto seq = seqPlayer->GetSequence();
-        if (!seq) return false;
-
-        const auto& keys = seq->keyframes;
-        if (keys.empty()) return false;
-
-        const size_t idx = FindEventKeyIdx(keys, eventTag);
-        if (idx == (size_t)-1) return false;
-
-        const _float t = seqPlayer->GetTime();
-
-        if (idx + 1 < keys.size()) return t >= keys[idx + 1].time;
-
-        return !seqPlayer->IsPlaying();
-    }
-
-    if (!m_lastEndedValid) return false;
-    if (m_lastEndedKey != key) return false;
-
-    auto it = m_seqs.find(key);
-    if (it == m_seqs.end()) return false;
-
-    const auto& keys = it->second.seqDesc.keyframes;
-    const size_t idx = FindEventKeyIdx(keys, eventTag);
-    if (idx == (size_t)-1) return false;
-
-    return true;
+    return m_events.IsFired(Helper::EnumToString(type));
 }
 
 _uint CCamDirector::RequestSequence(const string& key, const CamSequenceRequestDesc& req)
@@ -289,7 +266,7 @@ _uint CCamDirector::RequestSequence(const string& key, const CamSequenceRequestD
         GetOrbitCam()->CaptureSnapshot(m_playing.prevOrbit);
 
     auto seqPlayer = GetSeqPlayer();
-    auto seqCam    = GetSeqCamComp();
+    auto seqCam = GetSeqCamComp();
 
     seqPlayer->SetSequence(&entry.seqDesc);
 
@@ -317,6 +294,9 @@ _uint CCamDirector::RequestSequence(const string& key, const CamSequenceRequestD
 
     if (m_playing.pendingStart) seqPlayer->Pause();
     else seqPlayer->Play();
+
+    m_events.SetSequence(&entry.seqDesc);
+    m_events.SyncTime(seqPlayer->GetTime(), seqPlayer->IsPlaying());
 
     return handle;
 }

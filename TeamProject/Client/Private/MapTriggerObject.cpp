@@ -36,7 +36,7 @@ HRESULT CMapTriggerObject::Initialize(INIT_DESC* pArg)
 	Ready_PlaneUI(pObjDesc);
 	Ready_MeshUI(pObjDesc);
 	Ready_InvwalI(pObjDesc);
-
+	Ready_ZeroPortal(pObjDesc);
 	return S_OK;
 }
 
@@ -226,6 +226,39 @@ void CMapTriggerObject::Ready_InvwalI(const MAP_TRIGGEROBJ_DESC* pObjDesc)
 				CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(pObj, { pObjDesc->TagLevel, "MapInvisibleWall_Layer" });
 			}
 		}
+	}
+}
+
+void CMapTriggerObject::Ready_ZeroPortal(const MAP_TRIGGEROBJ_DESC* pObjDesc)
+{
+	auto iter = pObjDesc->SlotDataValues.find("ZeroPortal");
+	if (iter != pObjDesc->SlotDataValues.end()) {
+
+		for (auto& tFieldData : iter->second)
+		{
+			_float3 vPos = {};
+			XMStoreFloat3(&vPos, m_pTransform->Get_Pos());
+
+			COLLIDER_DESC tColDesc{};
+			GAMEOBJECT_DESC* pOBJDesc = { nullptr };
+
+			tColDesc.eGroup = COLLISION_GROUP::INTERACTABLE;
+			tColDesc.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER);
+			tColDesc.eType = COLLIDER_TYPE::BOX;
+			tColDesc.bAutoFit = false;
+			tColDesc.bTrigger = true; // 충돌 박스 생성하는 트리거
+			tColDesc.vCenter = { 0,0,0 };
+			tColDesc.vSize = pObjDesc->vUp;
+			tColDesc.vRotation = pObjDesc->vLook;
+
+			auto pObj = Builder::Create_Object({ pObjDesc->TagLevel, "Proto_GameObject_ZeroPortal" })
+				.Position(vPos)
+				.Collider(tColDesc)
+				.Build("ZeroPortal");
+
+			CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(pObj, { pObjDesc->TagLevel, "InteractableObject_Layer" });
+		}
+
 	}
 }
 

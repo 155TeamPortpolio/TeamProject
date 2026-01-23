@@ -263,6 +263,7 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\CamRotSquadEvaluator.h" />
     <ClInclude Include="..\Public\CamSequencePlayer.h" />
     <ClInclude Include="..\Public\CamUtil.h" />
+    <ClInclude Include="..\Public\CellBatcher.h" />
     <ClInclude Include="..\Public\Channel.h" />
     <ClInclude Include="..\Public\CharacterController.h" />
     <ClInclude Include="..\Public\Child.h" />
@@ -298,6 +299,7 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\IKSolver.h" />
     <ClInclude Include="..\Public\LifeTimeColor.h" />
     <ClInclude Include="..\Public\MeshEffectModule.h" />
+    <ClInclude Include="..\Public\MeshSection.h" />
     <ClInclude Include="..\Public\Noise.h" />
     <ClInclude Include="..\Public\LifeTimeSize.h" />
     <ClInclude Include="..\Public\LifeTimeVelocity.h" />
@@ -389,9 +391,11 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\Skeleton.h" />
     <ClInclude Include="..\Public\SkeletonFollower.h" />
     <ClInclude Include="..\public\SkinnedMeshRenderer.h" />
+    <ClInclude Include="..\Public\SkinningBuffer.h" />
     <ClInclude Include="..\Public\SoundData.h" />
     <ClInclude Include="..\Public\Sprite2D.h" />
     <ClInclude Include="..\public\SpriteNode.h" />
+    <ClInclude Include="..\Public\StaticBathcer.h" />
     <ClInclude Include="..\public\StaticMeshRenderer.h" />
     <ClInclude Include="..\Public\StaticModel.h" />
     <ClInclude Include="..\Public\StructuredBuffer.h" />
@@ -452,6 +456,7 @@ exit /b 0</Command>
     <ClCompile Include="..\Private\CamRotSquadEvaluator.cpp" />
     <ClCompile Include="..\Private\CamSequencePlayer.cpp" />
     <ClCompile Include="..\Private\CamUtil.cpp" />
+    <ClCompile Include="..\Private\CellBatcher.cpp" />
     <ClCompile Include="..\Private\Channel.cpp" />
     <ClCompile Include="..\Private\CharacterController.cpp" />
     <ClCompile Include="..\Private\Child.cpp" />
@@ -542,6 +547,7 @@ exit /b 0</Command>
     <ClCompile Include="..\Private\Skeleton.cpp" />
     <ClCompile Include="..\Private\SkeletonFollower.cpp" />
     <ClCompile Include="..\private\SkinnedMeshRenderer.cpp" />
+    <ClCompile Include="..\Private\SkinningBuffer.cpp" />
     <ClCompile Include="..\Private\SoundData.cpp" />
     <ClCompile Include="..\Private\Sprite2D.cpp" />
     <ClCompile Include="..\private\SpriteNode.cpp" />

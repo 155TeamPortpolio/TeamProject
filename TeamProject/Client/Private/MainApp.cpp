@@ -36,13 +36,14 @@
 #include "Player.h"
 /* UI */
 #include "UI_ScreenFade.h"
+#include "UI_SceneFrame.h"
 #include "UI_EnemyStatus.h"
 #include "UI_MeshPyramid.h"
 #include "UI_MeshBillboard.h"
 
 #include "UI_IconLabel.h" 
 #include "UI_NameIndicator.h"
-#include "UI_Dialogue.h"
+#include "UI_Dialogue.h" 
 
 CMainApp::CMainApp()
 {
@@ -96,9 +97,11 @@ void CMainApp::Update(const float dt)
 {
 	m_pGameInstance->Update_Engine(dt);
 	CBattleSystem::GetInstance()->Update();
-	CCamDirector::GetInstance()->Update(dt);
+	CamDirector()->Update(dt);
 
+#ifdef NDEBUG
 	m_cursorController.Update(dt);
+#endif
 }
 
 HRESULT CMainApp::Render()
@@ -172,12 +175,13 @@ void CMainApp::Initialize_GlobalPrototype()
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Player", CPlayer::Create());
 	/* UI */
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_ScreenFade", CUI_ScreenFade::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_SceneFrame", CUI_SceneFrame::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_EnemyStatus", CUI_EnemyStatus::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_MeshPyramid", CUI_MeshPyramid::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_MeshBillboard", CUI_MeshBillboard::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_IconLabel", CUI_IconLabel::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_NameIndicator", CUI_NameIndicator::Create());
-	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Dialogue", CUI_Dialogue::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Dialogue", CUI_Dialogue::Create()); 
 }
 
 void CMainApp::Create_GlobalCamObjs()

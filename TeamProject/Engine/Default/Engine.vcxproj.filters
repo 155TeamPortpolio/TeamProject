@@ -439,22 +439,22 @@
       <Filter>01. Utility\06. RenderSystem\RenderTarget\Manager</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Renderer.h">
-      <Filter>01. Utility\06. RenderSystem\Renderer</Filter>
+      <Filter>01. Utility\06. RenderSystem\RenderPass\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="..\public\ForwardRenderer.h">
-      <Filter>01. Utility\06. RenderSystem\Renderer\Forward</Filter>
+      <Filter>01. Utility\06. RenderSystem\RenderPass\Renderer\Forward</Filter>
     </ClInclude>
     <ClInclude Include="..\public\StaticMeshRenderer.h">
-      <Filter>01. Utility\06. RenderSystem\Renderer\Forward\StaticMesh</Filter>
+      <Filter>01. Utility\06. RenderSystem\RenderPass\Renderer\Forward\StaticMesh</Filter>
     </ClInclude>
     <ClInclude Include="..\public\SkinnedMeshRenderer.h">
-      <Filter>01. Utility\06. RenderSystem\Renderer\Forward\SkinnedMesh</Filter>
+      <Filter>01. Utility\06. RenderSystem\RenderPass\Renderer\Forward\SkinnedMesh</Filter>
     </ClInclude>
     <ClInclude Include="..\public\PostRenderer.h">
-      <Filter>01. Utility\06. RenderSystem\Renderer\Post</Filter>
+      <Filter>01. Utility\06. RenderSystem\RenderPass\Renderer\Post</Filter>
     </ClInclude>
     <ClInclude Include="..\public\EffectRenderer.h">
-      <Filter>01. Utility\06. RenderSystem\Renderer\Sub\Effect</Filter>
+      <Filter>01. Utility\06. RenderSystem\RenderPass\Renderer\Sub\Effect</Filter>
     </ClInclude>
     <!-- 01. Utility\07~14 Systems -->
     <ClInclude Include="..\Public\LightMgr.h">
@@ -544,7 +544,7 @@
       <Filter>99. Defines</Filter>
     </ClInclude>
     <ClInclude Include="..\public\UIRenderer.h">
-      <Filter>01. Utility\06. RenderSystem\Renderer\Sub\UI</Filter>
+      <Filter>01. Utility\06. RenderSystem\RenderPass\Renderer\Sub\UI</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\ThirdPartyCsv.h">
       <Filter>99. Defines</Filter>
@@ -596,6 +596,18 @@
     </ClInclude>
     <ClInclude Include="..\Public\CamFXData.h">
       <Filter>01. Utility\07. CameraManager\CamFXControllers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MeshSection.h">
+      <Filter>01. Utility\05. Resources\03. ModelData\Mesh\Section</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\StaticBathcer.h">
+      <Filter>01. Utility\06. RenderSystem\RenderPass\StaticBatcher</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CellBatcher.h">
+      <Filter>01. Utility\06. RenderSystem\RenderPass\StaticBatcher</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\SkinningBuffer.h">
+      <Filter>01. Utility\06. RenderSystem\PipeLine\Skinning</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -812,30 +824,6 @@
     </Filter>
     <Filter Include="01. Utility\06. RenderSystem\RenderPass">
       <UniqueIdentifier>{93d2fe97-017d-4bf0-8d44-479397e756d3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Utility\06. RenderSystem\Renderer">
-      <UniqueIdentifier>{3bb6f406-ad77-4896-a825-ecb33365a24b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Utility\06. RenderSystem\Renderer\Forward">
-      <UniqueIdentifier>{d07ca1cf-f099-45a3-8079-5d48aa1231f2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Utility\06. RenderSystem\Renderer\Forward\StaticMesh">
-      <UniqueIdentifier>{3399e2a4-5cf9-432a-ba40-e2ffb3a055d4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Utility\06. RenderSystem\Renderer\Forward\SkinnedMesh">
-      <UniqueIdentifier>{670bb359-f507-4bc6-b88d-704ea5a7b37d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Utility\06. RenderSystem\Renderer\Post">
-      <UniqueIdentifier>{ad75717a-5ba0-4d76-955a-31788a101f9c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Utility\06. RenderSystem\Renderer\Sub">
-      <UniqueIdentifier>{d06d10a8-d1f8-4aa2-9844-99b3c7525215}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Utility\06. RenderSystem\Renderer\Sub\Effect">
-      <UniqueIdentifier>{16665c44-ae1f-468f-96fa-d751804f685f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Utility\06. RenderSystem\Renderer\Sub\UI">
-      <UniqueIdentifier>{f3a221f7-b0ac-45a0-97db-98e951bc6a32}</UniqueIdentifier>
     </Filter>
     <Filter Include="01. Utility\07. CameraManager">
       <UniqueIdentifier>{f01bcb6b-de12-4966-85a7-81edbd40a0ad}</UniqueIdentifier>
@@ -1112,6 +1100,39 @@
     </Filter>
     <Filter Include="01. Utility\07. CameraManager\CamFXControllers">
       <UniqueIdentifier>{f00f7d2f-c57c-47bf-9d75-ffa2c952a3f6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\05. Resources\03. ModelData\Mesh\Section">
+      <UniqueIdentifier>{5532d0ff-12ea-4619-87ce-53057caa7081}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\06. RenderSystem\RenderPass\StaticBatcher">
+      <UniqueIdentifier>{240c392d-3b5b-4570-b94d-edb80e7ec869}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\06. RenderSystem\RenderPass\Renderer">
+      <UniqueIdentifier>{3bb6f406-ad77-4896-a825-ecb33365a24b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\06. RenderSystem\RenderPass\Renderer\Forward">
+      <UniqueIdentifier>{d07ca1cf-f099-45a3-8079-5d48aa1231f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\06. RenderSystem\RenderPass\Renderer\Forward\StaticMesh">
+      <UniqueIdentifier>{3399e2a4-5cf9-432a-ba40-e2ffb3a055d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\06. RenderSystem\RenderPass\Renderer\Forward\SkinnedMesh">
+      <UniqueIdentifier>{670bb359-f507-4bc6-b88d-704ea5a7b37d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\06. RenderSystem\RenderPass\Renderer\Post">
+      <UniqueIdentifier>{ad75717a-5ba0-4d76-955a-31788a101f9c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\06. RenderSystem\RenderPass\Renderer\Sub">
+      <UniqueIdentifier>{d06d10a8-d1f8-4aa2-9844-99b3c7525215}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\06. RenderSystem\RenderPass\Renderer\Sub\Effect">
+      <UniqueIdentifier>{16665c44-ae1f-468f-96fa-d751804f685f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\06. RenderSystem\RenderPass\Renderer\Sub\UI">
+      <UniqueIdentifier>{f3a221f7-b0ac-45a0-97db-98e951bc6a32}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\06. RenderSystem\PipeLine\Skinning">
+      <UniqueIdentifier>{b13ef6fd-d622-4e90-a05b-45296d976075}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1486,25 +1507,25 @@
       <Filter>01. Utility\06. RenderSystem\RenderTarget\Manager</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Renderer.cpp">
-      <Filter>01. Utility\06. RenderSystem\Renderer</Filter>
+      <Filter>01. Utility\06. RenderSystem\RenderPass\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="..\private\ForwardRenderer.cpp">
-      <Filter>01. Utility\06. RenderSystem\Renderer\Forward</Filter>
+      <Filter>01. Utility\06. RenderSystem\RenderPass\Renderer\Forward</Filter>
     </ClCompile>
     <ClCompile Include="..\private\StaticMeshRenderer.cpp">
-      <Filter>01. Utility\06. RenderSystem\Renderer\Forward\StaticMesh</Filter>
+      <Filter>01. Utility\06. RenderSystem\RenderPass\Renderer\Forward\StaticMesh</Filter>
     </ClCompile>
     <ClCompile Include="..\private\SkinnedMeshRenderer.cpp">
-      <Filter>01. Utility\06. RenderSystem\Renderer\Forward\SkinnedMesh</Filter>
+      <Filter>01. Utility\06. RenderSystem\RenderPass\Renderer\Forward\SkinnedMesh</Filter>
     </ClCompile>
     <ClCompile Include="..\private\PostRenderer.cpp">
-      <Filter>01. Utility\06. RenderSystem\Renderer\Post</Filter>
+      <Filter>01. Utility\06. RenderSystem\RenderPass\Renderer\Post</Filter>
     </ClCompile>
     <ClCompile Include="..\private\EffectRenderer.cpp">
-      <Filter>01. Utility\06. RenderSystem\Renderer\Sub\Effect</Filter>
+      <Filter>01. Utility\06. RenderSystem\RenderPass\Renderer\Sub\Effect</Filter>
     </ClCompile>
     <ClCompile Include="..\private\UIRenderer.cpp">
-      <Filter>01. Utility\06. RenderSystem\Renderer\Sub\UI</Filter>
+      <Filter>01. Utility\06. RenderSystem\RenderPass\Renderer\Sub\UI</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\CameraMgr.cpp">
       <Filter>01. Utility\07. CameraManager</Filter>
@@ -1574,6 +1595,12 @@
     </ClCompile>
     <ClCompile Include="..\private\CamFXControllers.cpp">
       <Filter>01. Utility\07. CameraManager\CamFXControllers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CellBatcher.cpp">
+      <Filter>01. Utility\06. RenderSystem\RenderPass\StaticBatcher</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\SkinningBuffer.cpp">
+      <Filter>01. Utility\06. RenderSystem\PipeLine\Skinning</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

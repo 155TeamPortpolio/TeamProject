@@ -12,6 +12,12 @@
           "prototypeTag": "Proto_GameObject_Dialogue",
           "instanceName": "dialogue",
           "prefabPath" : ""
+        },
+        
+        {
+          "prototypeTag": "Proto_GameObject_SceneFrame",
+          "instanceName": "scene_frame",
+          "prefabPath" : ""
         }
       ]
     },
@@ -41,12 +47,6 @@
         {
           "prototypeTag": "Proto_GameObject_BattleHUD",
           "instanceName": "hud_battle",
-          "prefabPath" : ""
-        },
-        
-        {
-          "prototypeTag": "Proto_GameObject_SceneFrame",
-          "instanceName": "scene_frame",
           "prefabPath" : ""
         }
       ]
