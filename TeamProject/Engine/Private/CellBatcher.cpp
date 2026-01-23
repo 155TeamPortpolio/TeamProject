@@ -495,4 +495,8 @@ CCellBatcher* CCellBatcher::Create(CRenderSystem* pRenderSys, const Options& opt
 void CCellBatcher::Free() {
 	__super::Free();
 	Clear();
+	for (auto& cache : m_Cached)
+	{
+		cache.second.Release();
+	}
 }
