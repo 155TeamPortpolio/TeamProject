@@ -187,6 +187,7 @@
     <ClInclude Include="..\public\EntitySpawner.h" />
     <ClInclude Include="..\public\OrbitLockOnController.h" />
     <ClInclude Include="..\Public\OrbitLockOnData.h" />
+    <ClInclude Include="..\Public\RoomDirector.h" />
     <ClInclude Include="..\Public\SacrificeState_Groggy.h" />
     <ClInclude Include="..\Public\MapInvisibleWall.h" />
     <ClInclude Include="..\public\Portal.h" />
@@ -458,6 +459,7 @@
     <ClCompile Include="..\private\NpcInteractZone.cpp" />
     <ClCompile Include="..\private\EntitySpawner.cpp" />
     <ClCompile Include="..\private\OrbitLockOnController.cpp" />
+    <ClCompile Include="..\Private\RoomDirector.cpp" />
     <ClCompile Include="..\Private\SacrificeState_Groggy.cpp" />
     <ClCompile Include="..\private\Portal.cpp" />
     <ClCompile Include="..\Private\SacrificeState_Groggy_Phase1.cpp" />
