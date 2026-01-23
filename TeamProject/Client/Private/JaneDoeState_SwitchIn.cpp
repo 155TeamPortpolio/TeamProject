@@ -10,7 +10,7 @@
 
 void CJaneDoeState_SwitchIn::Enter(CJaneDoe* pOwner)
 {
-    pOwner->Active_Character();
+    //pOwner->Active_Character();
     pOwner->Push_Invincible();
     pOwner->Unlock_Move();
     if (!m_pSubStateMachine)
@@ -42,6 +42,10 @@ void CJaneDoeState_SwitchIn::Enter(CJaneDoe* pOwner)
         m_pSubStateMachine->Set_DefaultState("ParryAid");
         break;
     }
+
+    m_pSubStateMachine->Reset_Trigger("Complete");
+    m_pSubStateMachine->Set_Int("ExitMode", 0);
+
     __super::Enter(pOwner);
 }
 
@@ -52,8 +56,27 @@ void CJaneDoeState_SwitchIn::Update(CJaneDoe* pOwner, _float dt)
     if (m_pSubStateMachine->Get_Trigger("Complete"))
     {
         m_pSubStateMachine->Reset_Trigger("Complete");
+
+        _int iExitMode = m_pSubStateMachine->Get_Int("ExitMode");
+        m_pSubStateMachine->Set_Int("ExitMode", 0);
+
         CStateMachine<CJaneDoe>* pRootFSM = pOwner->Get_StateMachine();
-        pRootFSM->Set_Trigger("ToIdle");
+
+        switch (iExitMode)
+        {
+        case 1:
+            pRootFSM->Set_Trigger("ToMove");
+            break;
+        case 2:
+            pRootFSM->Set_Trigger("Attack");
+            break;
+        case 3:
+            pRootFSM->Set_Trigger("ToEvade");
+            break;
+        default:
+            pRootFSM->Set_Trigger("ToIdle");
+            break;
+        }
     }
 }
 
@@ -61,4 +84,15 @@ void CJaneDoeState_SwitchIn::Exit(CJaneDoe* pOwner)
 {
     pOwner->Pop_Invincible();
     __super::Exit(pOwner);
+}
+
+_bool CJaneDoeState_SwitchIn::Handle_Transition(CJaneDoe* pOwner, const string& strState)
+{
+    if (m_pSubStateMachine->Get_CurrentStateName() == "ParryAid")
+    {
+        IHState<CJaneDoe>* pState = dynamic_cast<IHState<CJaneDoe>*>(m_pSubStateMachine->Get_CurrentState());
+        if (pState->Get_SubStateMachine()->Get_CurrentState()->Get_Tag() != "End")
+            return false;
+    }
+    return true;
 }

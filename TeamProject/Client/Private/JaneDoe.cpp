@@ -153,6 +153,8 @@ void CJaneDoe::Awake()
 
 	Initialize_Stat();
 
+	if (FAILED(Attach_ParryCollider()))
+		return;
 	m_tEnergy.fCurrentEnergy = 120;
 
 	auto Texture = ResourceManager()->Load_Texture(G_GlobalLevelKey, "Eff_Noise_045.png");

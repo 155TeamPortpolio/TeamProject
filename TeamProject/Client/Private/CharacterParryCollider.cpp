@@ -66,14 +66,30 @@ void CCharacterParryCollider::Render_GUI()
 
 void CCharacterParryCollider::OnTriggerEnter(CGameObject* pOther)
 {
+	ICollidable* pCollidable = pOther->Get_Component<ICollidable>();
+	if (!pCollidable) return;
+	auto pCharacter = dynamic_cast<CCharacter*>(Get_Component<CChild>()->Get_Parent());
+	if (pCharacter->Is_Invincible())	return;
+	
+	m_ParryableTargets.insert(pOther);
 }
 
 void CCharacterParryCollider::OnTriggerStay(CGameObject* pOther)
 {
+	ICollidable* pCollidable = pOther->Get_Component<ICollidable>();
+	if (!pCollidable) return;
+	auto pCharacter = dynamic_cast<CCharacter*>(Get_Component<CChild>()->Get_Parent());
+	if (pCharacter->Is_Invincible())	return;
+
+	m_ParryableTargets.insert(pOther);
 }
 
 void CCharacterParryCollider::OnTriggerExit(CGameObject* pOther)
 {
+	ICollidable* pCollidable = pOther->Get_Component<ICollidable>();
+	if (!pCollidable) return;
+
+	m_ParryableTargets.erase(pOther);
 }
 
 CCharacterParryCollider* CCharacterParryCollider::Create()
