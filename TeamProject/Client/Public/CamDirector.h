@@ -61,6 +61,8 @@ public:
     void          StopAll(_float blendOutSec = 0.25f);
     void          Update(_float dt);
 
+    void          StartBattleIntro(CamSeqType type);
+
 private:
     string        ResolveSeqKey(CamSeqType type) const;
     void          UpdatePlayer();

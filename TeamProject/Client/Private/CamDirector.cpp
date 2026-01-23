@@ -3,6 +3,7 @@
 #include "GameInstance.h"
 #include "GameObject.h"
 #include "Helper_Func.h"
+#include "UIDirector.h"
 // Camera
 #include "SequenceCam.h"
 #include "OrbitCam.h"
@@ -15,6 +16,7 @@
 #include "BattlePlayer.h"
 #include "BattleSystem.h"
 #include "Character.h"
+
 
 namespace
 {
@@ -118,6 +120,13 @@ void CCamDirector::Update(_float dt)
     }
 
     UpdateInput(dt);
+}
+
+void CCamDirector::StartBattleIntro(CamSeqType type)
+{
+    UIDirector()->Hide_BattleHUD();
+    AutoTarget();
+    RequestSequence(type);
 }
 
 string CCamDirector::ResolveSeqKey(CamSeqType type) const
