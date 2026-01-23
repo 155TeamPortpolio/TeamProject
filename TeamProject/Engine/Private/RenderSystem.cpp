@@ -63,6 +63,9 @@ HRESULT CRenderSystem::Initialize()
 
 HRESULT CRenderSystem::Render()
 {
+	m_pPipeLine->Begin_ObjectBuffer(m_pContext);
+	m_pPipeLine->Begin_SkinningBuffer(m_pContext);
+
 	m_pForward->Render_Priority(m_pPriorityPass);
 	//m_pForward->Render_StaticShadow(m_pStaticShadowPass, !IsOn);
 	//m_pForward->Render_SkinnedShadow(m_pSkinnedShadowPass, !IsOn);
@@ -84,11 +87,15 @@ HRESULT CRenderSystem::Render()
 	m_pForward->Render_OutLine();
 	m_pUI->Render_2D(m_pUIPass);
 
+	m_pPipeLine->End_ObjectBuffer(m_pContext);
+	m_pPipeLine->End_SkinningBuffer(m_pContext);
+
 	m_pPost->Render_Fog();
 	m_pPost->Render_HDRBloom();
 	m_pPost->Render_RadialBlur();
 	m_pForward->Render_Bloom();
 	m_pPost->Render_Final();
+
 
 	m_pUI->Render_CustomTarget();
 
