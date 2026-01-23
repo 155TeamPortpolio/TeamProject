@@ -20,7 +20,8 @@ private:
 	enum CHILD { NAME, ARROWL, ARROWR, END };
 	inline static const string INSTANCENAMES[ENUM(CHILD::END)] = { "name", "arrowL", "arrowR" };
 
-	enum class STATE { HIDDEN, VISIBLE, NOTINTERACTABLE, INTERACTABLE, END };
+	enum class STATE_VISIBLE { VISIBLE, HIDDEN, END };
+	enum class STATE_INTERACT { INTERACTABLE, NOTINTERACTABLE, END };
 
 private:
 	CUI_NameIndicator() {}
@@ -44,21 +45,26 @@ private:
 	wstring				m_strName = { };
 	_float3				m_vPosition = {};
 
-	STATE				m_eState = {};
+	STATE_VISIBLE		m_eVisible = { STATE_VISIBLE::END };
+	STATE_INTERACT		m_eInteract = { STATE_INTERACT::END };
 
 	static constexpr _float	m_fRadius = { 5.f };
-	static constexpr _float m_fPadding = { 5.f };
+	static constexpr _float m_fPadding = { 20.f };
 
 private:
 	void Cache_Children();
 
 	void Set_Name(const wstring& strName);
-	void Update_State(STATE eNewState);
 
-	STATE CalcState_ByDistance();
+	void Update_Visible(STATE_VISIBLE eNewState);
+	void Update_Interact(STATE_INTERACT eNewState);
 
-	void Set_ChildAlive(CHILD child, _bool isAlive);
+	STATE_VISIBLE CalcState_ByDistance();
+
+	void Set_ChildAlpha(CHILD child, _float fAlpha);
 	void Set_ChildAnimation(CHILD child, _int iIndex);
+	void Set_ChildStopAnimation(CHILD child);
+	_bool Is_ChildAnimFinished(CHILD child);
 	_float2 Get_ChildSize(CHILD child);
 
 public:
