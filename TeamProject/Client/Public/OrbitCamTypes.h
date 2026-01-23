@@ -18,8 +18,8 @@ struct OrbitCamPoseState
 
 struct OrbitCamInputState
 {
-    _float sensitivityX = 0.08f;
-    _float sensitivityY = 0.06f;
+    _float sensitivityX = 0.1f;
+    _float sensitivityY = 0.08f;
     _float zoomSpeed = 1.0f;
 };
 
@@ -31,9 +31,9 @@ struct OrbitCamProfile
     _float pitchMin = -30.f;
     _float pitchMax = 40.f;
 
-    _float rotSmoothSpeed = 10.f;
+    _float rotSmoothSpeed = 12.f;
     _float distSmoothSpeed = 10.f;
-    _float pivotSmoothSpeed = 8.f;
+    _float pivotSmoothSpeed = 10.f;
 
     _float offsetY = 0.f;
 
