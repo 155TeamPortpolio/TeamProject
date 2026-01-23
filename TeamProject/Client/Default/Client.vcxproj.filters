@@ -738,9 +738,6 @@
     <Filter Include="00. MainApp\00. CursorController">
       <UniqueIdentifier>{5e864d76-8135-44f8-b744-bd0c5b16cda6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\MapObject\OBJFactory">
-      <UniqueIdentifier>{8b852d8f-36c2-4c1e-b080-ca2b3222160f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\Object\Interactable\Barricade">
       <UniqueIdentifier>{8b1edd40-c12b-4e78-9bb4-7bbe13b2d7ba}</UniqueIdentifier>
     </Filter>
@@ -794,6 +791,8 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Player\Character\Collider\AttackCollider">
       <UniqueIdentifier>{8cafc1ce-885d-4894-bbae-9bc579a5da0c}</UniqueIdentifier>
+    <Filter Include="02. GameObject\MapObject\EntitySpawner">
+      <UniqueIdentifier>{8b852d8f-36c2-4c1e-b080-ca2b3222160f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1485,7 +1484,7 @@
       <Filter>00. MainApp\00. CursorController</Filter>
     </ClInclude>
     <ClInclude Include="..\public\EntitySpawner.h">
-      <Filter>02. GameObject\MapObject\OBJFactory</Filter>
+      <Filter>02. GameObject\MapObject\EntitySpawner</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Stage.h">
       <Filter>01. Level\04. Zero\Stage_Super</Filter>
@@ -2207,7 +2206,7 @@
       <Filter>00. MainApp\00. CursorController</Filter>
     </ClCompile>
     <ClCompile Include="..\private\EntitySpawner.cpp">
-      <Filter>02. GameObject\MapObject\OBJFactory</Filter>
+      <Filter>02. GameObject\MapObject\EntitySpawner</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Stage.cpp">
       <Filter>01. Level\04. Zero\Stage_Super</Filter>

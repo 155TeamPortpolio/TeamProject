@@ -32,6 +32,9 @@ HRESULT CBattleMonsterPoint::Initialize(INIT_DESC* pArg)
 	pColliderCom->Set_MapToolMode(true);
 	pColliderCom->Set_ColliderColor({ 0.f, 1.f, 1.f, 1.f });
 
+	m_eBattleType = BATTLE_TYPE::MONSTER;
+
+
 	return S_OK;
 }
 
@@ -42,6 +45,7 @@ void CBattleMonsterPoint::Awake()
 
 void CBattleMonsterPoint::Priority_Update(_float dt)
 {
+	__super::Priority_Update(dt);
 }
 
 void CBattleMonsterPoint::Update(_float dt)
@@ -51,32 +55,6 @@ void CBattleMonsterPoint::Update(_float dt)
 
 void CBattleMonsterPoint::Late_Update(_float dt)
 {
-}
-
-void CBattleMonsterPoint::Export_ObjectData(void* pDesc)
-{
-	//ENTITY* pEntityDesc = static_cast<ENTITY*>(pDesc);
-	//pEntityDesc->tagName = m_InstanceName;
-	//_float3 vSize = Get_Component<CCollider>()->Get_Size();
-	//_float4 qRotation; XMStoreFloat4(&qRotation, Get_Component<CTransform>()->Get_QuaternionRotate());
-	//_vector3 vEulerRotation = _quaternion(qRotation).ToEuler();
-	//_float3 vPosition; XMStoreFloat3(&vPosition, Get_Component<CTransform>()->Get_Pos());
-	//pEntityDesc->vScale = { vSize.x, vSize.y, vSize.z };
-	//pEntityDesc->vRotation = { vEulerRotation.x, vEulerRotation.y, vEulerRotation.z };
-	//pEntityDesc->vTranslation = { vPosition.x, vPosition.y, vPosition.z };
-}
-
-
-void CBattleMonsterPoint::Render_GUI()
-{
-	ImGui::PushID(this);
-
-	__super::Render_GUI();
-
-	ImGui::InputText("##TriggerName", &m_InstanceName);
-	ImGui::TextColored(ImVec4(1.f, 1.f, 1.f, 1.f), "Client Type");
-
-	ImGui::PopID();
 }
 
 CBattleMonsterPoint* CBattleMonsterPoint::Create()

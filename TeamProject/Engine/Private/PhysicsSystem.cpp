@@ -153,22 +153,65 @@ _bool CPhysicsSystem::Raycast(const PHYSICS_RAY& desc, PHYSICS_RAY_HIT& outHit)
     PxVec3 direction(desc.vDirection.x, desc.vDirection.y, desc.vDirection.z);
     direction.normalize();
 
-    PxRaycastBuffer hit;
     PxQueryFilterData filterData;
     filterData.flags = PxQueryFlag::eSTATIC | PxQueryFlag::eDYNAMIC | PxQueryFlag::ePREFILTER;
 
     CRaycastFilterCallback filterCallback(desc.iCollisionMask, desc.bQueryTrigger);
 
-    _bool bResult = m_pScene->raycast(origin, direction, desc.fMaxDistance, hit,
-        PxHitFlag::eDEFAULT, filterData, &filterCallback);
-
-    if (bResult && hit.hasBlock)
+    if (desc.bQueryTrigger)
     {
-        Setup_RayHitInfo(hit.block, outHit);
-        return true;
-    }
+        // 트리거 쿼리 : Touch 버퍼 사용
+        const PxU32 bufferSize = 32;
+        PxRaycastHit hitBuffer[bufferSize];
+        PxRaycastBuffer hit(hitBuffer, bufferSize);
 
-    return false;
+        m_pScene->raycast(origin, direction, desc.fMaxDistance, hit,
+            PxHitFlag::eDEFAULT, filterData, &filterCallback);
+
+        // Block, Touch
+        PxRaycastHit closestHit;
+        _float closestDist = FLT_MAX;
+        _bool bFound = false;
+
+        if (hit.hasBlock && hit.block.distance < closestDist)
+        {
+            closestHit = hit.block;
+            closestDist = hit.block.distance;
+            bFound = true;
+        }
+
+        for (PxU32 i = 0; i < hit.getNbTouches(); ++i)
+        {
+            const PxRaycastHit& touch = hit.getTouch(i);
+            if (touch.distance < closestDist)
+            {
+                closestHit = touch;
+                closestDist = touch.distance;
+                bFound = true;
+            }
+        }
+
+        if (bFound)
+        {
+            Setup_RayHitInfo(closestHit, outHit);
+            return true;
+        }
+        return false;
+    }
+    else
+    {
+        // 일반 쿼리
+        PxRaycastBuffer hit;
+        _bool bResult = m_pScene->raycast(origin, direction, desc.fMaxDistance, hit,
+            PxHitFlag::eDEFAULT, filterData, &filterCallback);
+
+        if (bResult && hit.hasBlock)
+        {
+            Setup_RayHitInfo(hit.block, outHit);
+            return true;
+        }
+        return false;
+    }
 }
 
 _bool CPhysicsSystem::Raycast_Multiple(const PHYSICS_RAY& desc, PHYSICS_RAY_HITS& outHits)
