@@ -12,6 +12,7 @@
 #include "UI_DialogueChoice.h"
 
 #include "CamDirector.h"
+#include "Player.h"
 
 void CUI_Dialogue::Change_Dialogue()
 {
@@ -108,6 +109,8 @@ void CUI_Dialogue::Update(_float dt)
 
     if (m_eState == STATE::INVISIBLE && Is_ChildAnimFinished(CHILD::MESSAGE))
     {
+        if (auto pPlayer = dynamic_cast<CPlayer*>(ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Player))))
+           pPlayer->Unlock_Input();// Invisible 상태가 되고, 애니메이션이 끝난 시점에 플레이어 인풋도 언락함 (만약에 애니메이션 없으면 타이머 별도로 둬야)
         Set_Alive(false);
         return;
     } 
@@ -129,9 +132,11 @@ void CUI_Dialogue::Bind_EventListener()
 { 
     // 이벤트 : UI_DIALOGUE_REQUEST_DESC
     Get_Component<CEventListener>()->Add_Listener<UI_DIALOGUE_REQUEST_DESC>([this](const UI_DIALOGUE_REQUEST_DESC& desc)
-        {
-            CamDirector()->StartDialog();
+        { 
             Open_Dialogue(desc.strDialogueID, desc.iSequenceID);
+            CamDirector()->StartDialog();
+            if (auto pPlayer = dynamic_cast<CPlayer*>(ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Player))))
+                pPlayer->Lock_Input();
         });
 }
 
