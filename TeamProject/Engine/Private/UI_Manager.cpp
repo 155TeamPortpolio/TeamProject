@@ -74,7 +74,7 @@ void CUI_Manager::Priority_Update(_float dt)
 		return;
 
 	for (auto* uiObj : itLevel->second)
-		if (uiObj && uiObj->Is_Root())
+		if (uiObj && uiObj->Is_Alive() && uiObj->Is_Root())
 			uiObj->Priority_Update(dt);
 }
 
