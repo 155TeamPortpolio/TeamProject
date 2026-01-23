@@ -2,12 +2,12 @@
 #include "BattleObject.h"
 
 NS_BEGIN(MapTool)
-class CBattleMonsterPoint final : public CBattleObject
+class CBattleEndPoint final : public CBattleObject
 {
 private:
-    CBattleMonsterPoint();
-    CBattleMonsterPoint(const CBattleMonsterPoint& rhs);
-    virtual ~CBattleMonsterPoint() DEFAULT;
+    CBattleEndPoint();
+    CBattleEndPoint(const CBattleEndPoint& rhs);
+    virtual ~CBattleEndPoint() DEFAULT;
 
 public:
     HRESULT Initialize_Prototype() override;
@@ -19,7 +19,7 @@ public:
     //virtual void Export_ObjectData(void* pDesc) override;
 
 public:
-    static CBattleMonsterPoint* Create();
+    static CBattleEndPoint* Create();
     CGameObject* Clone(INIT_DESC* pArg) override;
     virtual void Free() override;
 };
