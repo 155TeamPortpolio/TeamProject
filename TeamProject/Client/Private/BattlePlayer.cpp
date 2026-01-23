@@ -502,6 +502,7 @@ void CBattlePlayer::NotifyCharacterSwitchIn()
 	if (m_bReserveParry)
 	{
 		m_pCurrentCharacter->On_SwitchIn(CCharacter::SWITCH::PARRYAID);
+		m_pCurrentCharacter->Set_ParryHandle(m_ParryHandle);
 		m_bReserveParry = false;
 	}
 	else
@@ -520,7 +521,7 @@ void CBattlePlayer::NotifyCharacterSwitchOut()
 	if (m_pCurrentCharacter->Can_Parry())
 	{
 		m_bReserveParry = true;
-		m_pCurrentCharacter->Calculate_Parry();
+		m_ParryHandle = m_pCurrentCharacter->Calculate_Parry();
 		m_vSwitchPosition = _vector4{ m_pCurrentCharacter->Get_ParryPos() };
 		m_vSwitchLook = _vector4{ m_pCurrentCharacter->Get_ParryLook() };
 	}

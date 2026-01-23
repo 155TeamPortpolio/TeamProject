@@ -110,6 +110,7 @@ private:
     _uint                       m_iCurrentIndex = { 0 };
     class CCharacter*           m_pCurrentCharacter = nullptr;
     vector<OBJECT_HANDLE>       m_CharacterHandles{};
+    OBJECT_HANDLE               m_ParryHandle;
     
     OBJECT_HANDLE       m_TargetHandle;
     _bool               m_bLockOn = { false };

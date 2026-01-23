@@ -614,28 +614,39 @@ void CCharacter::Update_Invincible(_float dt)
 		m_fInvincibleTimer -= dt;
 }
 
-void CCharacter::Calculate_Parry()
+OBJECT_HANDLE CCharacter::Calculate_Parry()
 {
 	CCharacterParryCollider* pParry = dynamic_cast<CCharacterParryCollider*>
 		(Get_Component<CObjectContainer>()->Get_Children()[m_iParryColliderIndex]);
-
 	_vector3 vPos = Get_WorldPos();
-	_vector3 vAttackPos = {};
+	OBJECT_HANDLE targetHandle;
 	_float fMinDist = FLT_MAX;
-	/* 몬스터의 트리거 콜라이더로 검사. 이후 부모 오브젝트의 월드 좌표저장 */
+
+	/* 몬스터의 트리거 콜라이더로 검사. 이후 부모 오브젝트의 Handle 저장 */
 	for (auto iter : pParry->Get_Targets())
 	{
 		_float fDist = (vPos - iter->Get_WorldPos()).Length();
 		if (fDist >= fMinDist)
 			continue;
 		fMinDist = fDist;
-		vAttackPos = iter->Get_Component<CChild>()->Get_Parent()->Get_WorldPos();
+		targetHandle = iter->Get_Component<CChild>()->Get_Parent()->Get_Handle();
 	}
-	m_vParryLook = vAttackPos - vPos;
-	m_vParryLook.y = 0.f;
+
+	_vector3 vAttackPos = {};
+	_vector3 vAttackLook = {};
+	if (targetHandle.isValid())
+	{
+		vAttackPos = targetHandle.Get()->Get_Component<CCharacterController>()->Get_FootPosition();
+		vAttackLook = targetHandle.Get()->Get_Component<CTransform>()->Dir(STATE::LOOK);
+	}
+
+	m_vParryPos = vAttackPos + vAttackLook * m_fParryOffset;
+	m_vParryPos.y = vAttackPos.y;	// 땅으로 꺼지거나 뜨는현상 방지
+	m_vParryLook = vAttackPos - m_vParryPos;
 	m_vParryLook.Normalize();
-	m_vParryPos = vAttackPos - m_vParryLook * m_fParryOffset * (1.f + m_pCCT->Get_Radius());
-	m_vParryPos.y = vPos.y + 1.f;
+	m_vParryPos.y += 1.f;
+
+	return targetHandle;
 }
 
 CCharacterAttackCollider* CCharacter::Find_AttackCollider(const string& strName)

@@ -122,6 +122,8 @@ public:
 
     OBJECT_HANDLE       Get_TargetHandle() { return m_TargetHandle; };
     void                Set_TargetHandle(OBJECT_HANDLE targetHandle) { m_TargetHandle = targetHandle; };
+    OBJECT_HANDLE       Get_ParryHandle() { return m_ParryHandle; }
+    void                Set_ParryHandle(OBJECT_HANDLE parryHandle) { m_ParryHandle = parryHandle; }
 
     void    Active_Character();
     void    DeActive_Character();
@@ -165,10 +167,10 @@ public:
     void     Stop_Rotation();
     _bool    Is_OppositeInput() const;
     
-    _bool    Can_Parry();
-    void     Calculate_Parry();
-    _vector3 Get_ParryPos() { return m_vParryPos; }
-    _vector3 Get_ParryLook() { return m_vParryLook; }
+    _bool             Can_Parry();
+    OBJECT_HANDLE     Calculate_Parry();
+    _vector3          Get_ParryPos() { return m_vParryPos; }
+    _vector3          Get_ParryLook() { return m_vParryLook; }
 
     _bool    Can_Evade() const;
     void     Use_Evade();
@@ -247,6 +249,7 @@ protected:
     _float          m_fParryOffset = { 1.8f };
     _vector3        m_vParryPos = {};
     _vector3        m_vParryLook = {};
+    OBJECT_HANDLE   m_ParryHandle;
     // 피격
     _vector3        m_vHitPos = {};     // 피격 위치
     // 효과

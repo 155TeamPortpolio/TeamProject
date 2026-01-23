@@ -2,6 +2,7 @@
 #include "CorinState_SwitchInParryAid.h"
 
 #include "Corin.h"
+#include "Enemy.h"
 
 #include "CharacterController.h"
 
@@ -27,6 +28,13 @@ void CCorinState_SwitchInParryAid::Enter(CCorin* pOwner)
             CStateMachine<CCorin>::CONDITION_ANIMATION_END);
 
         m_pSubStateMachine->Set_DefaultState("Start");
+    }
+
+    if (pOwner->Get_ParryHandle().isValid())
+    {
+        CEnemy* pEnemy = dynamic_cast<CEnemy*>(pOwner->Get_ParryHandle().Get());
+        if (pEnemy)
+            pEnemy->TakeDamage(DAMAGE_TYPE::HARD, 0.f);
     }
 
     __super::Enter(pOwner);
