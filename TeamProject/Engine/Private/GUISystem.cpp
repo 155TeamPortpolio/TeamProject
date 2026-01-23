@@ -181,7 +181,7 @@ void CGUISystem::Render_GUI()
 	Render_CollisionBtn();
 #ifdef _USING_GUI
 	CGameInstance::GetInstance()->Get_RenderSystem()->Render_GUI();
-	g_Profiler.RenderImGui();
+	//g_Profiler.RenderImGui();
 #endif // _USING_GUI
 
 	Render_DebugBtn();
