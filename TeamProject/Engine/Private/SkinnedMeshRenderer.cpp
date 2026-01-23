@@ -6,6 +6,7 @@
 #include "RenderTarget.h"
 #include "Target_Manager.h"
 #include "Texture.h"
+#include "GameInstance.h"
 #include "PipeLine.h"
 #include "Shader.h"
 #include "Helper_Func.h"
@@ -191,6 +192,40 @@ HRESULT CSkinnedMeshRenderer::Render_SkinnedMesh_Combined()
 	return S_OK;
 }
 
+HRESULT CSkinnedMeshRenderer::Render_MotionBlur_Noise()
+{
+	if (m_MotionBlurCommands.empty())
+	{
+		return S_OK;
+	}
+
+	if (FAILED(m_pTargetManager->Begin_MRT("MRT_MotionNoise"))) return E_FAIL;
+
+	m_pShader->SetConstantBuffer("FrameBuffer", m_pPipeLine->Get_FrameBuffer());
+
+	ID3D11InputLayout* pLayout;
+	Get_BufferInputLayout(m_pVIBuffer, m_pShader, "MOTIONBLUR", &pLayout);
+	m_pContext->IASetInputLayout(pLayout);
+
+	m_pTargetManager->Bind_Target("Target_MotionBlur", m_pShader, "MotionBlurTexture");
+	m_pTargetManager->Bind_Target("Target_MotionHeight", m_pShader, "MotionHeightTexture");
+	if (RenderSystem()->Get_NoiseTexture(NOISE_FXTYPE::MOTIONBLUR) != nullptr)
+	{
+		m_pShader->Bind_Value("MotionNoiseTexture",
+			{ RenderSystem()->Get_NoiseTexture(NOISE_FXTYPE::MOTIONBLUR)->Get_SRV(), "Texture2D", 0 });
+	}
+	Bind_WorldMatrix();
+
+	m_pShader->Apply("MOTIONBLUR", m_pContext);
+	m_pVIBuffer->Bind_Buffer(m_pContext);
+	m_pVIBuffer->Render(m_pContext);
+
+	if (FAILED(m_pTargetManager->End_MRT()))return E_FAIL;
+
+	m_MotionBlurCommands.clear();
+	return S_OK;
+}
+
 void CSkinnedMeshRenderer::Update(_float dt)
 {
 }
@@ -221,8 +256,16 @@ HRESULT CSkinnedMeshRenderer::Ready_Target()
 	RenderTargetDesc FaceDesc = { "Target_FaceDir" , DXGI_FORMAT_R16G16B16A16_UNORM , DXGI_FORMAT_D24_UNORM_S8_UINT, _float4(0.f, 0.f, 0.f, 0.0f) ,ViewportDesc.Width, ViewportDesc.Height };
 	m_pTargetManager->Create_Target(FaceDesc);
 
+	RenderTargetDesc MotionBlurDesc = { "Target_MotionBlur" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT, _float4(0.0f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
+	m_pTargetManager->Create_Target(MotionBlurDesc);
+	RenderTargetDesc MotionHeightDesc = { "Target_MotionHeight" , DXGI_FORMAT_R16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT, _float4(0.0f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
+	m_pTargetManager->Create_Target(MotionHeightDesc);
+
+	RenderTargetDesc MotionNoiseDesc = { "Target_MotionNoise" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT, _float4(0.0f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
+	m_pTargetManager->Create_Target(MotionNoiseDesc);
+
 	RenderTargetDesc RimDesc = { "Target_RimLight" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT, _float4(0.0f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
-	m_pTargetManager->Create_Target(RimDesc);
+	m_pTargetManager->Create_Target(RimDesc);	
 
 	RenderTargetDesc RimLightDesc = { "Target_RimLightFinal" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT, _float4(0.0f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
 	m_pTargetManager->Create_Target(RimLightDesc);
@@ -271,6 +314,12 @@ HRESULT CSkinnedMeshRenderer::Ready_MRT()
 	}
 
 	{
+		if (FAILED(m_pTargetManager->Add_MRT("MRT_MotionBlur", "Target_MotionBlur"))) return E_FAIL;
+		if (FAILED(m_pTargetManager->Add_MRT("MRT_MotionBlur", "Target_MotionHeight"))) return E_FAIL;
+		if (FAILED(m_pTargetManager->Add_MRT("MRT_MotionNoise", "Target_MotionNoise"))) return E_FAIL;
+	}
+
+	{
 		if (FAILED(m_pTargetManager->Add_MRT("MRT_LightAcc_Skinned", "Target_LightAcc_SkinnedMesh"))) return E_FAIL;
 		if (FAILED(m_pTargetManager->Add_MRT("MRT_LightAcc_Skinned", "Target_LightInfo_SkinnedMesh"))) return E_FAIL;
 		if (FAILED(m_pTargetManager->Add_MRT("MRT_Combined_Skinned", "Target_Combined_SkinnedMesh"))) return E_FAIL;
@@ -287,14 +336,6 @@ HRESULT CSkinnedMeshRenderer::Process_OutLineQueue()
 		return S_OK;
 	}
 
-	ID3D11DepthStencilView* pDeferredDSV =
-		m_pTargetManager->Get_MTR_DSV("MRT_Deferred_Static");
-
-	ID3D11RenderTargetView* pPrevRTV = { nullptr };
-	ID3D11DepthStencilView* pPrevDSV = { nullptr };
-	m_pContext->OMGetRenderTargets(1, &pPrevRTV, &pPrevDSV);
-	m_pContext->OMSetRenderTargets(1, &pPrevRTV, pDeferredDSV);
-
 	for (auto& cmd : m_OutLineCommands)
 	{
 		cmd.pShader->SetConstantBuffer("FrameBuffer", m_pPipeLine->Get_FrameBuffer());
@@ -303,13 +344,32 @@ HRESULT CSkinnedMeshRenderer::Process_OutLineQueue()
 
 		cmd.DrawCall(m_pContext, cmd.MeshIdx);
 	}
-	ID3D11RenderTargetView* pRTVs[8] = { pPrevRTV };
-	m_pContext->OMSetRenderTargets(8, pRTVs, pPrevDSV);
-
-	Safe_Release(pPrevRTV);
-	Safe_Release(pPrevDSV);
 
 	m_OutLineCommands.clear();
+
+	if (FAILED(m_pTargetManager->End_MRT())) return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CSkinnedMeshRenderer::Process_MotionBlurQueue()
+{
+	if (m_MotionBlurCommands.empty())
+	{
+		return S_OK;
+	}
+
+	if (FAILED(m_pTargetManager->Begin_MRT("MRT_MotionBlur"))) return E_FAIL;
+
+	for (auto& cmd : m_MotionBlurCommands)
+	{
+		cmd.pShader->SetConstantBuffer("FrameBuffer", m_pPipeLine->Get_FrameBuffer());
+		cmd.pShader->Bind_Value("g_worldMatrix", { cmd.pWorldMatrix, "float4x4", sizeof(_float4x4) });
+		cmd.pShader->Bind_Value("vMotionBlurColor", { &cmd.vColor, "float4", sizeof(_float4) });
+		cmd.pShader->Bind_Value("g_OutLineBoneMatrices", { cmd.BoneParam.data(), cmd.typeName, cmd.iSize });
+
+		cmd.DrawCall(m_pContext, cmd.MeshIdx);
+	}
 
 	if (FAILED(m_pTargetManager->End_MRT())) return E_FAIL;
 
@@ -319,6 +379,11 @@ HRESULT CSkinnedMeshRenderer::Process_OutLineQueue()
 void CSkinnedMeshRenderer::Add_OutLineCommand(const OUTLINE_COMMAND& command)
 {
 	m_OutLineCommands.push_back(command);
+}
+
+void CSkinnedMeshRenderer::Add_MotionBlurCommand(const MOTIONBLUR_COMMAND& command)
+{
+	m_MotionBlurCommands.push_back(command);
 }
 
 CSkinnedMeshRenderer* CSkinnedMeshRenderer::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, CTarget_Manager* pTargetManager, CPipeLine* pPipeLine)

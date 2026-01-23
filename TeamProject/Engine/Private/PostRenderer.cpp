@@ -163,6 +163,7 @@ HRESULT CPostRenderer::Render_Final()
 	m_pTargetManager->Bind_Target("Target_Fog", m_pShader, "FinalTexture");
 	//m_pTargetManager->Bind_Target("Target_Distortion_Add", m_pShader, "DistortionTexture");
 	m_pTargetManager->Bind_Target("Target_Radial", m_pShader, "RadialBloomTexture");
+	m_pTargetManager->Bind_Target("Target_MotionNoise", m_pShader, "MotionBlurTexture");
 	
 	m_pTargetManager->Bind_Target("Target_HDR_BlurY", m_pShader, "HDRBloomFinalTexture");
 	m_pTargetManager->Bind_Target("Target_UI", m_pShader, "UI2DTexture");

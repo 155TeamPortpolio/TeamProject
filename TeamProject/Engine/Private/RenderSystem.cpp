@@ -80,6 +80,7 @@ HRESULT CRenderSystem::Render()
 	m_pForward->Render_Blended(m_pBlendedPass);
 	m_pForward->Render_NonLight(m_pNonLightPass);
 	m_pForward->Render_OutLine();
+	m_pForward->Render_MotionBlur();
 	m_pUI->Render_2D(m_pUIPass);
 
 	m_pPost->Render_Fog();
@@ -131,6 +132,10 @@ CRenderer* CRenderSystem::GetRenderer(RENDERER_TYPE eType)
 	case RENDERER_TYPE::FORWARD:
 		pRenderer = dynamic_cast<CRenderer*>(m_pForward);
 		break;
+	case RENDERER_TYPE::STATIC:
+	case RENDERER_TYPE::SKINNED:
+		pRenderer = m_pForward->GetRenderer(eType);
+		break;
 	case RENDERER_TYPE::POST:
 		pRenderer = dynamic_cast<CRenderer*>(m_pPost);
 		break;
@@ -149,14 +154,14 @@ void CRenderSystem::SetRimLightMode(RIMLIGHT eMode)
 	m_pForward->SetRimLightMode(eMode);
 }
 
-void CRenderSystem::Add_NoiseTexture(string strName, CTexture* noiseTexture)
+void CRenderSystem::Set_NoiseTexture(NOISE_FXTYPE eNoise, CTexture* noiseTexture)
 {
-	m_pPost->Add_NoiseTexture(strName, noiseTexture);
+	m_NoiseTextures[eNoise] = noiseTexture;
 }
 
-void CRenderSystem::Apply_Noise(vector<string> strNames, _float duration)
+CTexture* CRenderSystem::Get_NoiseTexture(NOISE_FXTYPE eNoise)
 {
-	m_pPost->Apply_Noise(strNames, duration);
+	return m_NoiseTextures[eNoise];
 }
 
 void CRenderSystem::Apply_RadialBlur(_float duration, _float2 center)
@@ -203,6 +208,11 @@ void CRenderSystem::Add_RenderCommand(const RENDER_CUSTOM_COMMAND& command, CUST
 void CRenderSystem::Add_OutLineCommand(const OUTLINE_COMMAND& command)
 {
 	m_pForward->Add_OutLineCommand(command);
+}
+
+void CRenderSystem::Add_MotionBlurCommand(const MOTIONBLUR_COMMAND& command)
+{
+	m_pForward->Add_MotionBlurCommand(command);
 }
 
 void CRenderSystem::Add_PostProcessCommand(const POST_PROCESS_COMMAND& command)

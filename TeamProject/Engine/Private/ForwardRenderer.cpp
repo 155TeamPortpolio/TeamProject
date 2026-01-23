@@ -36,6 +36,15 @@ HRESULT CForwardRenderer::Initialize(CTarget_Manager* pTargetManager, CPipeLine*
 	return S_OK;
 }
 
+CRenderer* CForwardRenderer::GetRenderer(RENDERER_TYPE eType)
+{
+	if (eType == RENDERER_TYPE::STATIC)
+		return dynamic_cast<CRenderer*>(m_pStaticRenderer);
+	if (eType == RENDERER_TYPE::SKINNED)
+		return dynamic_cast<CRenderer*>(m_pSkinnedRenderer);
+	return nullptr;
+}
+
 HRESULT CForwardRenderer::Render_Priority(PriorityPass* pPriorityPass)
 {
 	m_pPipeLine->Update_FrameBuffer(m_pContext);
@@ -147,40 +156,47 @@ HRESULT CForwardRenderer::Render_OutLine()
 	return S_OK;
 }
 
+HRESULT CForwardRenderer::Render_MotionBlur()
+{
+	m_pSkinnedRenderer->Process_MotionBlurQueue();
+	m_pSkinnedRenderer->Render_MotionBlur_Noise();
+	return S_OK;
+}
+
 HRESULT CForwardRenderer::Render_Blended(BlendedPass* pBlendPass)
 {
-	ID3D11DepthStencilView* pDeferredDSV =
-		m_pTargetManager->Get_MTR_DSV("MRT_Deferred_Skinned");
+	//ID3D11DepthStencilView* pDeferredDSV =
+	//	m_pTargetManager->Get_MTR_DSV("MRT_Deferred_Skinned");
 
-	ID3D11RenderTargetView* pPrevRTV = { nullptr };
-	ID3D11DepthStencilView* pPrevDSV = { nullptr };
-	m_pContext->OMGetRenderTargets(1, &pPrevRTV, &pPrevDSV);
-	m_pContext->OMSetRenderTargets(1, &pPrevRTV, pDeferredDSV);
+	//ID3D11RenderTargetView* pPrevRTV = { nullptr };
+	//ID3D11DepthStencilView* pPrevDSV = { nullptr };
+	//m_pContext->OMGetRenderTargets(1, &pPrevRTV, &pPrevDSV);
+	//m_pContext->OMSetRenderTargets(1, &pPrevRTV, pDeferredDSV);
 	pBlendPass->Execute(m_pContext, this);
-	ID3D11RenderTargetView* pRTVs[8] = { pPrevRTV };
-	m_pContext->OMSetRenderTargets(8, pRTVs, pPrevDSV);
+	//ID3D11RenderTargetView* pRTVs[8] = { pPrevRTV };
+	//m_pContext->OMSetRenderTargets(8, pRTVs, pPrevDSV);
 
-	Safe_Release(pPrevRTV);
-	Safe_Release(pPrevDSV);
+	//Safe_Release(pPrevRTV);
+	//Safe_Release(pPrevDSV);
 
 	return S_OK;
 }
 
 HRESULT CForwardRenderer::Render_NonLight(NonLightPass* pNonLightPass)
 {
-	ID3D11DepthStencilView* pDeferredDSV =
-		m_pTargetManager->Get_MTR_DSV("MRT_Deferred_Skinned");
-
-	ID3D11RenderTargetView* pPrevRTV = { nullptr };
-	ID3D11DepthStencilView* pPrevDSV = { nullptr };
-	m_pContext->OMGetRenderTargets(1, &pPrevRTV, &pPrevDSV);
-	m_pContext->OMSetRenderTargets(1, &pPrevRTV, pDeferredDSV);
+	//ID3D11DepthStencilView* pDeferredDSV =
+	//	m_pTargetManager->Get_MTR_DSV("MRT_Deferred_Skinned");
+	//
+	//ID3D11RenderTargetView* pPrevRTV = { nullptr };
+	//ID3D11DepthStencilView* pPrevDSV = { nullptr };
+	//m_pContext->OMGetRenderTargets(1, &pPrevRTV, &pPrevDSV);
+	//m_pContext->OMSetRenderTargets(1, &pPrevRTV, pDeferredDSV);
 	pNonLightPass->Execute(m_pContext, this);
-	ID3D11RenderTargetView* pRTVs[8] = { pPrevRTV };
-	m_pContext->OMSetRenderTargets(8, pRTVs, pPrevDSV);
-
-	Safe_Release(pPrevRTV);
-	Safe_Release(pPrevDSV);
+	//ID3D11RenderTargetView* pRTVs[8] = { pPrevRTV };
+	//m_pContext->OMSetRenderTargets(8, pRTVs, pPrevDSV);
+	//
+	//Safe_Release(pPrevRTV);
+	//Safe_Release(pPrevDSV);
 
 	return S_OK;
 }
@@ -220,6 +236,11 @@ HRESULT CForwardRenderer::Render_Bloom()
 void CForwardRenderer::Add_OutLineCommand(const OUTLINE_COMMAND& command)
 {
 	m_pSkinnedRenderer->Add_OutLineCommand(command);
+}
+
+void CForwardRenderer::Add_MotionBlurCommand(const MOTIONBLUR_COMMAND& command)
+{
+	m_pSkinnedRenderer->Add_MotionBlurCommand(command);
 }
 
 void CForwardRenderer::Update(_float dt)
