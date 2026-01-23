@@ -175,10 +175,22 @@ void CCamDirector::UpdateInput(_float dt)
         CameraManager()->Set_MainCam(GetFreeCamComp(), 0.5f);
 
     if (InputDevice()->Key_Tap(VK_F2))
-        CameraManager()->Set_MainCam(GetOrbitCamComp(), 0.5f);
+    {
+        StartDialog();
+        GetPlayer()->Lock_Input();
+    }
 
     if (InputDevice()->Key_Tap(VK_F3))
-        RequestSequence(CamSeqType::ZeroIntro);
+    {
+        EndDialog();
+        GetPlayer()->Unlock_Input();
+    }
+
+    //if (InputDevice()->Key_Tap(VK_F2))
+    //    CameraManager()->Set_MainCam(GetOrbitCamComp(), 0.5f);
+
+    //if (InputDevice()->Key_Tap(VK_F3))
+    //    RequestSequence(CamSeqType::ZeroIntro);
 }
 
 void CCamDirector::AbortSequenceToOrbit(_bool resetTime)
@@ -220,7 +232,7 @@ void CCamDirector::SyncSeqInputLock()
 
 void CCamDirector::StartDialog()
 {
-    m_dialogue.Begin(30.f, 0.5f, 0.8f);
+    m_dialogue.Begin(35.f, 0.5f, 0.8f);
 }
 
 void CCamDirector::EndDialog()

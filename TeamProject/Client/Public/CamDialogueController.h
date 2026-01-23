@@ -48,7 +48,11 @@ private:
 
         _float lastPivotDist = 0.f;
 
-        EaseType ease = EaseType::InOutSine;
+        Vector3 fromPivotWorld{};
+        Vector3 toPivotWorld{};
+        _bool   blendInit = false;
+
+        EaseType ease = EaseType::OutSine;
     };
 
     State m_state{};

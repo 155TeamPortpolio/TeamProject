@@ -40,6 +40,9 @@ public:
     Vector3 GetPivotOverrideOffset() const { return pose.pivotExternalOffset; }
     void    ClearPivotOverrideOffset() { pose.pivotExternalOffset = Vector3::Zero; }
 
+    Vector3 GetCurPivotWorld() const { return pose.curPivot; }
+    Vector3 GetBasePivotWorld() const { return GetBasePivotTargetPos(targetHandle) + pose.pivotOverrideOffset; }
+
 private:
     void    UpdateInput(_float dt);
     void    ClampTargets();
