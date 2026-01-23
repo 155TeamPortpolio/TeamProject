@@ -44,6 +44,9 @@ HRESULT CPostRenderer::Render_HDRBloom()
 		if (fogDesc.IsUse) m_pTargetManager->Bind_Target("Target_Fog", m_pShader, "FinalTexture");
 		else m_pTargetManager->Bind_Target("Target_Final", m_pShader, "FinalTexture");
 
+		/* Effect Combined Texture*/
+		m_pTargetManager->Bind_Target("Target_Combined_Effect", m_pShader, "EffectCombinedTexture");
+
 		Bind_WorldMatrix();
 
 		ID3D11InputLayout* pLayout;

@@ -108,7 +108,11 @@ PS_OUT_RESULT PS_HDR_BRIGHTPASS(PS_IN In)
     PS_OUT_RESULT Out;
     
     float4 scene = FinalTexture.Sample(DefaultSampler, In.vTexcoord);
-    float4 bright = SoftExtractBright(scene);
+    float4 effect = EffectCombinedTexture.Sample(DefaultSampler, In.vTexcoord);
+    float4 sceneBright = SoftExtractBright(scene);
+    float4 effectBright = SoftExtractBright(effect, 0.5f, 0.5f, 2.f);
+    
+    float4 bright = effectBright + sceneBright;
     
     Out.vResult = bright;
 
@@ -231,13 +235,13 @@ float4 PS_MAIN_FINAL(PS_IN In) : SV_Target
     if (g_UseAddictiveColor)
     {
         float skinnedAlpha = 1 - SkinnedCombinedTexture.Sample(DefaultSampler, In.vTexcoord).a;
-        float3 tinted = scene.rgb + scene.rgb * g_AddictiveColor * g_AddictiveStrength;
-        hdrColor = lerp(scene.rgb, tinted, skinnedAlpha);
+        float3 tinted = hdrColor.rgb + hdrColor.rgb * g_AddictiveColor * g_AddictiveStrength;
+        hdrColor = lerp(hdrColor.rgb, tinted, skinnedAlpha);
     }
     
     hdrColor += hdrBloom.rgb * 0.3;
     
-    float3 mapped = ACESFilm(hdrColor) + radialBloom.rgb;
+    float3 mapped = ACESFilm(hdrColor) + effect.rgb + radialBloom.rgb;
     
     float3 finalColor = ui.rgb + mapped * (1.f - ui.a);
 
