@@ -11,6 +11,7 @@ void CCorinState_SwitchIn::Enter(CCorin* pOwner)
 {
     //pOwner->Active_Character();
     pOwner->Push_Invincible();
+    pOwner->Unlock_Move();
     if (!m_pSubStateMachine)
     {
         m_pSubStateMachine = CStateMachine<CCorin>::Create();
