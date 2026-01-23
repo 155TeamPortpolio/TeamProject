@@ -30,6 +30,10 @@ public:
     virtual void    Late_Update(_float dt) override;
     virtual void    Render_GUI() override;
 
+public:
+    void    Lock_Input();
+    void    UnLock_Input();
+
 private:
     class CFieldPlayer*   m_pFieldPlayer = nullptr;
     class CBattlePlayer*  m_pBattlePlayer = nullptr;
