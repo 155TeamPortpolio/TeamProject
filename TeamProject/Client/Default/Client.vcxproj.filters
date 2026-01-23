@@ -804,6 +804,12 @@
     <Filter Include="03. Utility\06. FieldSystem\Room\Director">
       <UniqueIdentifier>{720e4aa3-1d89-41b4-81e8-92fa8ac3853a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\Dialogue\Message">
+      <UniqueIdentifier>{8586251d-ec90-4723-ac77-2750945a94a4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\Dialogue\Choice">
+      <UniqueIdentifier>{db39c0af-f5db-4ad1-aad6-444af6dc0543}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1553,6 +1559,12 @@
     <ClInclude Include="..\public\CamEventController.h">
       <Filter>02. GameObject\Camera\07. CamDirector\00. CamEventConsumer</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UI_DialogueMessage.h">
+      <Filter>02. GameObject\UI\01. 2D\Dialogue\Message</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_DialogueChoice.h">
+      <Filter>02. GameObject\UI\01. 2D\Dialogue\Choice</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\RoomDirector.h">
       <Filter>03. Utility\06. FieldSystem\Room\Director</Filter>
     </ClInclude>
@@ -2265,6 +2277,12 @@
     </ClCompile>
     <ClCompile Include="..\private\CamEventController.cpp">
       <Filter>02. GameObject\Camera\07. CamDirector\00. CamEventConsumer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_DialogueMessage.cpp">
+      <Filter>02. GameObject\UI\01. 2D\Dialogue\Message</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_DialogueChoice.cpp">
+      <Filter>02. GameObject\UI\01. 2D\Dialogue\Choice</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\RoomDirector.cpp">
       <Filter>03. Utility\06. FieldSystem\Room\Director</Filter>

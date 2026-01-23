@@ -1,6 +1,6 @@
 {
     "alive": true,
-    "instanceName": "dialogue",
+    "instanceName": "dialogue_message",
     "transform": {
         "anchor": 4,
         "anchorOffset": [
@@ -566,7 +566,7 @@
                 },
                 {
                     "alive": true,
-                    "instanceName": "next",
+                    "instanceName": "btnNext",
                     "transform": {
                         "anchor": 0,
                         "anchorOffset": [
