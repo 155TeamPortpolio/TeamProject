@@ -71,10 +71,10 @@ void RenderPass::Free()
 }
 
 #pragma region STATICMESH_OPAQUE_PASS
-void StaticOpaquePass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
+void StaticOpaquePass::Write_Buffer(ID3D11DeviceContext* pContext)
 {
+
 	CPipeLine* pPipeLine = m_pRenderSystem->Get_Pipeline();
-	pCurShader = { nullptr };
 
 	vector<OPAQUE_PACKET> frustums;
 	frustums.reserve(m_Packets.size());
@@ -97,30 +97,33 @@ void StaticOpaquePass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRender
 		});
 
 	m_VisiblePackets = pPipeLine->OcculsionCulling(frustums);
+}
+void StaticOpaquePass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
+{
+	CPipeLine* pPipeLine = m_pRenderSystem->Get_Pipeline();
+	pCurShader = { nullptr };
 
-	//m_pRenderSystem->BatchBegin();
-	//
-	//for (auto& p : m_VisiblePackets)
-	//	p.isBatched = false; 
-	//
-	//for (auto& p : m_VisiblePackets) {
-	//	m_pRenderSystem->BatchVisiblePacket(p);
-	//}
-	//
-	//_uint frustumCount = (_uint)frustums.size();
-	//_uint occlusionCount = (_uint)m_VisiblePackets.size();
-	//
-	//_uint nonBatchCount = 0;
-	//_uint batchedPacketCount = 0;
-	//_uint batchedDrawCount = 0;
-	//
-	//m_pRenderSystem->BuildBatchesIfNeeded();
-	//batchedDrawCount = m_pRenderSystem->DrawBatches(this, pRenderer);
-	//for (const auto& packet : m_VisiblePackets)
-	//{
-	//	if (packet.isBatched) ++batchedPacketCount;
-	//	else ++nonBatchCount;
-	//}
+	m_pRenderSystem->BatchBegin();
+	for (auto& p : m_VisiblePackets)
+		p.isBatched = false; 
+	
+	for (auto& p : m_VisiblePackets) {
+		m_pRenderSystem->BatchVisiblePacket(p);
+	}
+	
+	_uint occlusionCount = (_uint)m_VisiblePackets.size();
+	
+	_uint nonBatchCount = 0;
+	_uint batchedPacketCount = 0;
+	_uint batchedDrawCount = 0;
+	
+	m_pRenderSystem->BuildBatchesIfNeeded();
+	batchedDrawCount = m_pRenderSystem->DrawBatches(this, pRenderer);
+	for (const auto& packet : m_VisiblePackets)
+	{
+		if (packet.isBatched) ++batchedPacketCount;
+		else ++nonBatchCount;
+	}
 
 	for (auto& packet : m_VisiblePackets)
 	{
@@ -154,22 +157,17 @@ void StaticOpaquePass::Submit(OPAQUE_PACKET packet)
 #pragma endregion
 
 #pragma region SKINNEDMESH_OPAQUE_PASS
-void SkinnedOpaquePass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
+void SkinnedOpaquePass::Write_Buffer(ID3D11DeviceContext* pContext)
 {
 	CPipeLine* pPipeLine = m_pRenderSystem->Get_Pipeline();
-	pCurShader = { nullptr };
 
 	sort(m_Packets.begin(), m_Packets.end(),
 		[](const OPAQUE_PACKET& leftPacket, const OPAQUE_PACKET& rightPacket) {
 			return leftPacket.fLinearZ < rightPacket.fLinearZ;
 		});
 
-	/*ï¿½ï¿½Å¶ï¿½ï¿½ ï¿½ï¿½ï¿? ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½*/
 	if (m_Packets.empty())
 		return;
-
-	/*ï¿½ï¿½ï¿? ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ SRV ï¿½ï¿½ï¿½ï¿½*/
-
 
 	for (auto& packet : m_Packets)
 	{
@@ -177,8 +175,6 @@ void SkinnedOpaquePass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRende
 		_uint SkinningOffset = 0;
 		if (packet.bSkinning)
 		{
-			// Áö±Ý ±¸Á¶ À¯Áö: bones´Â ±âÁ¸ ¹æ½Ä´ë·Î ¾ò°í,
-			// "¾²±â"¸¸ ObjID Ä³½Ã·Î Åë°ú
 			if (holds_alternative<CAnimator3D*>(packet.pPayLoad))
 				SkinningOffset = pPipeLine->GetOrWriteSkinning(packet.ObjID, packet.DrawIndex,
 					get<CAnimator3D*>(packet.pPayLoad)->Get_BoneMatrices(packet.DrawIndex));
@@ -195,10 +191,12 @@ void SkinnedOpaquePass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRende
 
 		m_VisiblePackets.push_back(packet);
 	}
+}
+void SkinnedOpaquePass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
+{
+	CPipeLine* pPipeLine = m_pRenderSystem->Get_Pipeline();
+	pCurShader = { nullptr };
 
-
-
-	/*ï¿½ï¿½Î¿ï¿½ï¿½ï¿? ï¿½ï¿½ï¿½ï¿½*/
 	for (auto& packet : m_VisiblePackets)
 	{
 		if (packet.pMaterial->Get_Shader(packet.MaterialIndex) != pCurShader) {
@@ -233,32 +231,26 @@ void SkinnedOpaquePass::Submit(OPAQUE_PACKET packet)
 #pragma endregion
 
 #pragma region PRIORITY_PASS
-
-void PriorityPass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
+void PriorityPass::Write_Buffer(ID3D11DeviceContext* pContext)
 {
-	/*ï¿½Ì°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½*/
 	CPipeLine* pPipeLine = m_pRenderSystem->Get_Pipeline();
-	pCurShader = { nullptr };
 
-	/*ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½, ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Æ¼ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ ï¿½ðµ¨³ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ */
 	sort(m_Packets.begin(), m_Packets.end(),
 		[](const OPAQUE_PACKET& a, const OPAQUE_PACKET& b) {
 			return a.GetKey() < b.GetKey();
 		});
 
-	/*ï¿½ï¿½Å¶ï¿½ï¿½ ï¿½ï¿½ï¿? ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½*/
 	if (m_Packets.empty())
 		return;
 
-	
+
 	for (auto& packet : m_Packets)
 	{
-		//ï¿½ï¿½ï¿½â¼­ ï¿½Îµï¿½ï¿½ï¿½ ï¿½ß°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		_uint TransformIndex = pPipeLine->GetOrWriteTransform(packet.ObjID, *packet.pWorldMatrix);
 		_uint SkinningOffset = 0;
 		if (packet.bSkinning) {
 			if (holds_alternative<CAnimator3D*>(packet.pPayLoad))
-				SkinningOffset = pPipeLine->GetOrWriteSkinning(packet.ObjID, packet.DrawIndex,get<CAnimator3D*>(packet.pPayLoad)->Get_BoneMatrices(packet.DrawIndex));
+				SkinningOffset = pPipeLine->GetOrWriteSkinning(packet.ObjID, packet.DrawIndex, get<CAnimator3D*>(packet.pPayLoad)->Get_BoneMatrices(packet.DrawIndex));
 			else if (holds_alternative<CSkeletonFollower*>(packet.pPayLoad))
 				SkinningOffset = pPipeLine->GetOrWriteSkinning(packet.ObjID, packet.DrawIndex, get<CSkeletonFollower*>(packet.pPayLoad)->Get_BoneMatrices(packet.DrawIndex));
 			else
@@ -271,7 +263,12 @@ void PriorityPass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
 		m_VisiblePackets.push_back(packet);
 	}
 
-	/*ï¿½ï¿½Î¿ï¿½ï¿½ï¿? ï¿½ï¿½ï¿½ï¿½*/
+}
+void PriorityPass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
+{
+	CPipeLine* pPipeLine = m_pRenderSystem->Get_Pipeline();
+	pCurShader = { nullptr };
+
 	for (auto& packet : m_VisiblePackets)
 	{
 		if (packet.pMaterial->Get_Shader(packet.MaterialIndex) != pCurShader) {
@@ -303,20 +300,15 @@ void PriorityPass::Submit(OPAQUE_PACKET packet)
 #pragma endregion
 
 #pragma region BLENDED_PASS
-
-void BlendedPass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
+void BlendedPass::Write_Buffer(ID3D11DeviceContext* pContext)
 {
-	/*ï¿½Ì°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½*/
 	CPipeLine* pPipeLine = m_pRenderSystem->Get_Pipeline();
-	pCurShader = { nullptr };
 
-	/*ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½, ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Æ¼ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ ï¿½ðµ¨³ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ */
 	sort(m_Packets.begin(), m_Packets.end(),
 		[](const BLENDED_PACKET& a, const BLENDED_PACKET& b) {
 			return a.GetKey() < b.GetKey();
 		});
 
-	/*ï¿½ï¿½Å¶ï¿½ï¿½ ï¿½ï¿½ï¿? ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½*/
 	if (m_Packets.empty())
 		return;
 
@@ -328,8 +320,7 @@ void BlendedPass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
 				continue;
 		}
 
-		//ï¿½ï¿½ï¿½â¼­ ï¿½Îµï¿½ï¿½ï¿½ ï¿½ß°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
-		_uint TransformIndex = pPipeLine->GetOrWriteTransform(packet.ObjID,*packet.pWorldMatrix);
+		_uint TransformIndex = pPipeLine->GetOrWriteTransform(packet.ObjID, *packet.pWorldMatrix);
 		_uint SkinningOffset = 0;
 		if (packet.bSkinning) {
 			if (holds_alternative<CAnimator3D*>(packet.pPayLoad))
@@ -345,8 +336,11 @@ void BlendedPass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
 
 		m_VisiblePackets.push_back(packet);
 	}
-
-	/*ï¿½ï¿½Î¿ï¿½ï¿½ï¿? ï¿½ï¿½ï¿½ï¿½*/
+}
+void BlendedPass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
+{
+	CPipeLine* pPipeLine = m_pRenderSystem->Get_Pipeline();
+	pCurShader = { nullptr };
 	for (auto& packet : m_VisiblePackets)
 	{
 		if (packet.pMaterial->Get_Shader(packet.MaterialIndex) != pCurShader) {
@@ -380,7 +374,10 @@ void BlendedPass::Submit(BLENDED_PACKET packet)
 #pragma endregion
 
 #pragma region PARTICLE_PASS
+void ParticlePass::Write_Buffer(ID3D11DeviceContext* pContext)
+{
 
+}
 void ParticlePass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
 {
 	/*ï¿½Ì°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½*/
@@ -430,6 +427,10 @@ void ParticlePass::Submit(PARTICLE_PACKET packet)
 
 
 #pragma region INSTANCE_PASS
+void InstancePass::Write_Buffer(ID3D11DeviceContext* pContext)
+{
+
+}
 
 void InstancePass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
 {
@@ -475,18 +476,22 @@ void InstancePass::Submit(INSTANCE_PACKET packet)
 #pragma endregion
 
 #pragma region UI_PASS
-void UIPass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
+void UIPass::Write_Buffer(ID3D11DeviceContext* pContext)
 {
- 	CPipeLine* pPipeLine = m_pRenderSystem->Get_Pipeline();
-	pCurShader = {};
+	CPipeLine* pPipeLine = m_pRenderSystem->Get_Pipeline();
 
 	if (m_Packets.empty()) return;
 
 	for (auto& packet : m_Packets)
 	{
-		_uint TransformIndex  = pPipeLine->GetOrWriteTransform(packet.ObjID,*packet.pWorldMatrix);
+		_uint TransformIndex = pPipeLine->GetOrWriteTransform(packet.ObjID, *packet.pWorldMatrix);
 		packet.TransformIndex = TransformIndex;
 	}
+}
+void UIPass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
+{
+ 	CPipeLine* pPipeLine = m_pRenderSystem->Get_Pipeline();
+	pCurShader = {};
 
 	for (auto& packet : m_Packets)
 	{
@@ -512,6 +517,39 @@ void UIPass::Submit(SPRITE_PACKET packet)
 #pragma endregion
 
 #pragma region STATICSHADOW_PASS
+void StaticShadowPass::Write_Buffer(ID3D11DeviceContext* pContext)
+{
+	m_VisiblePackets.clear();
+	CPipeLine* pPipeLine = m_pRenderSystem->Get_Pipeline();
+	pCurShader = { nullptr };
+
+	sort(m_Packets.begin(), m_Packets.end(),
+		[](const OPAQUE_PACKET& a, const OPAQUE_PACKET& b) {
+			return a.GetKey() < b.GetKey();
+		});
+
+	if (m_Packets.empty())
+		return;
+
+	for (auto& packet : m_Packets)
+	{
+		_uint TransformIndex = pPipeLine->GetOrWriteTransform(packet.ObjID, *packet.pWorldMatrix);
+		_uint SkinningOffset = 0;
+		if (packet.bSkinning) {
+			if (holds_alternative<CAnimator3D*>(packet.pPayLoad))
+				SkinningOffset = pPipeLine->GetOrWriteSkinning(packet.ObjID, packet.DrawIndex, get<CAnimator3D*>(packet.pPayLoad)->Get_BoneMatrices(packet.DrawIndex));
+			else if (holds_alternative<CSkeletonFollower*>(packet.pPayLoad))
+				SkinningOffset = pPipeLine->GetOrWriteSkinning(packet.ObjID, packet.DrawIndex, get<CSkeletonFollower*>(packet.pPayLoad)->Get_BoneMatrices(packet.DrawIndex));
+			else
+				SkinningOffset = pPipeLine->GetOrWriteSkinning(packet.ObjID, packet.DrawIndex, dynamic_cast<CSkeletalModel*>(packet.pModel)->Get_BoneMatrices(packet.DrawIndex));
+		}
+
+		packet.TransformIndex = TransformIndex;
+		packet.SkinningOffset = SkinningOffset;
+		m_VisiblePackets.push_back(packet);
+	}
+}
+
 void StaticShadowPass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer, _bool IsFinal)
 {
 	Execute_Opaque(pContext, pRenderer, IsFinal);
@@ -533,35 +571,8 @@ void StaticShadowPass::Execute_Opaque(ID3D11DeviceContext* pContext, CRenderer* 
 	CPipeLine* pPipeLine = m_pRenderSystem->Get_Pipeline();
 	pCurShader = { nullptr };
 
-	sort(m_Packets.begin(), m_Packets.end(),
-		[](const OPAQUE_PACKET& a, const OPAQUE_PACKET& b) {
-			return a.GetKey() < b.GetKey();
-		});
-
-	if (m_Packets.empty())
-		return;
-
-	for (auto& packet : m_Packets)
-	{
-		_uint TransformIndex = pPipeLine->GetOrWriteTransform(packet.ObjID,*packet.pWorldMatrix);
-		_uint SkinningOffset = 0;
-		if (packet.bSkinning) {
-			if (holds_alternative<CAnimator3D*>(packet.pPayLoad))
-				SkinningOffset = pPipeLine->GetOrWriteSkinning(packet.ObjID, packet.DrawIndex, get<CAnimator3D*>(packet.pPayLoad)->Get_BoneMatrices(packet.DrawIndex));
-			else if (holds_alternative<CSkeletonFollower*>(packet.pPayLoad))
-				SkinningOffset = pPipeLine->GetOrWriteSkinning(packet.ObjID, packet.DrawIndex, get<CSkeletonFollower*>(packet.pPayLoad)->Get_BoneMatrices(packet.DrawIndex));
-			else
-				SkinningOffset = pPipeLine->GetOrWriteSkinning(packet.ObjID, packet.DrawIndex, dynamic_cast<CSkeletalModel*>(packet.pModel)->Get_BoneMatrices(packet.DrawIndex));
-		}
-
-		packet.TransformIndex = TransformIndex;
-		packet.SkinningOffset = SkinningOffset;
-		m_VisiblePackets.push_back(packet);
-	}
-
 	for (auto& packet : m_VisiblePackets)
 	{
-		packet.pMaterial->Get_Shader(packet.MaterialIndex)->SetConstantBuffer("ShadowBuffer", pPipeLine->Get_ShadowBuffer());
 		if (packet.pMaterial->Get_Shader(packet.MaterialIndex) != pCurShader) {
 			CPipeLine* pPipeLine = m_pRenderSystem->Get_Pipeline();
 			pCurShader = packet.pMaterial->Get_Shader(packet.MaterialIndex);
@@ -581,6 +592,8 @@ void StaticShadowPass::Execute_Opaque(ID3D11DeviceContext* pContext, CRenderer* 
 			pRenderer->Get_InputLayout(packet.pModel, pCurShader, packet.DrawIndex, "Shadow", &pLayout);
 			pContext->IASetInputLayout(pLayout);
 		}
+
+		packet.pMaterial->Get_Shader(packet.MaterialIndex)->SetConstantBuffer("ShadowBuffer", pPipeLine->Get_ShadowBuffer());
 
 		SHADER_PARAM WorldMatParam{ &packet.TransformIndex, "uint",sizeof(UINT) };
 		pCurShader->Bind_Value("TransformIndex", WorldMatParam);
@@ -606,6 +619,37 @@ void StaticShadowPass::Execute_Opaque(ID3D11DeviceContext* pContext, CRenderer* 
 #pragma endregion
 
 #pragma region SKINNEDSHADOW_PASS
+void SkinnedShadowPass::Write_Buffer(ID3D11DeviceContext* pContext)
+{
+	m_VisiblePackets.clear();
+	CPipeLine* pPipeLine = m_pRenderSystem->Get_Pipeline();
+
+	sort(m_Packets.begin(), m_Packets.end(),
+		[](const OPAQUE_PACKET& a, const OPAQUE_PACKET& b) {
+			return a.GetKey() < b.GetKey();
+		});
+
+	if (m_Packets.empty())
+		return;
+
+	for (auto& packet : m_Packets)
+	{
+		_uint TransformIndex = pPipeLine->GetOrWriteTransform(packet.ObjID, *packet.pWorldMatrix);
+		_uint SkinningOffset = 0;
+		if (packet.bSkinning) {
+			if (holds_alternative<CAnimator3D*>(packet.pPayLoad))
+				SkinningOffset = pPipeLine->GetOrWriteSkinning(packet.ObjID, packet.DrawIndex, get<CAnimator3D*>(packet.pPayLoad)->Get_BoneMatrices(packet.DrawIndex));
+			else if (holds_alternative<CSkeletonFollower*>(packet.pPayLoad))
+				SkinningOffset = pPipeLine->GetOrWriteSkinning(packet.ObjID, packet.DrawIndex, get<CSkeletonFollower*>(packet.pPayLoad)->Get_BoneMatrices(packet.DrawIndex));
+			else
+				SkinningOffset = pPipeLine->GetOrWriteSkinning(packet.ObjID, packet.DrawIndex, dynamic_cast<CSkeletalModel*>(packet.pModel)->Get_BoneMatrices(packet.DrawIndex));
+		}
+
+		packet.TransformIndex = TransformIndex;
+		packet.SkinningOffset = SkinningOffset;
+		m_VisiblePackets.push_back(packet);
+	}
+}
 void SkinnedShadowPass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer, _bool IsFinal)
 {
 	Execute_Opaque(pContext, pRenderer, IsFinal);
@@ -624,34 +668,9 @@ void SkinnedShadowPass::Clear()
 
 void SkinnedShadowPass::Execute_Opaque(ID3D11DeviceContext* pContext, CRenderer* pRenderer, _bool IsFinal)
 {
+	
 	CPipeLine* pPipeLine = m_pRenderSystem->Get_Pipeline();
 	pCurShader = { nullptr };
-
-	sort(m_Packets.begin(), m_Packets.end(),
-		[](const OPAQUE_PACKET& a, const OPAQUE_PACKET& b) {
-			return a.GetKey() < b.GetKey();
-		});
-
-	if (m_Packets.empty())
-		return;
-
-	for (auto& packet : m_Packets)
-	{
-		_uint TransformIndex = pPipeLine->GetOrWriteTransform(packet.ObjID,*packet.pWorldMatrix);
-		_uint SkinningOffset = 0;
-		if (packet.bSkinning) {
-			if (holds_alternative<CAnimator3D*>(packet.pPayLoad))
-				SkinningOffset = pPipeLine->GetOrWriteSkinning(packet.ObjID, packet.DrawIndex, get<CAnimator3D*>(packet.pPayLoad)->Get_BoneMatrices(packet.DrawIndex));
-			else if (holds_alternative<CSkeletonFollower*>(packet.pPayLoad))
-				SkinningOffset = pPipeLine->GetOrWriteSkinning(packet.ObjID, packet.DrawIndex, get<CSkeletonFollower*>(packet.pPayLoad)->Get_BoneMatrices(packet.DrawIndex));
-			else
-				SkinningOffset = pPipeLine->GetOrWriteSkinning(packet.ObjID, packet.DrawIndex, dynamic_cast<CSkeletalModel*>(packet.pModel)->Get_BoneMatrices(packet.DrawIndex));
-		}
-
-		packet.TransformIndex = TransformIndex;
-		packet.SkinningOffset = SkinningOffset;
-		m_VisiblePackets.push_back(packet);
-	}
 
 	for (auto& packet : m_VisiblePackets)
 	{
@@ -701,20 +720,15 @@ void SkinnedShadowPass::Execute_Opaque(ID3D11DeviceContext* pContext, CRenderer*
 #pragma endregion
 
 #pragma region NONLIGHT_PASS
-
-void NonLightPass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
+void NonLightPass::Write_Buffer(ID3D11DeviceContext* pContext)
 {
-	/*ï¿½Ì°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½*/
 	CPipeLine* pPipeLine = m_pRenderSystem->Get_Pipeline();
-	pCurShader = { nullptr };
 
-	/*ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½, ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Æ¼ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ ï¿½ðµ¨³ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ */
 	sort(m_Packets.begin(), m_Packets.end(),
 		[](const OPAQUE_PACKET& a, const OPAQUE_PACKET& b) {
 			return a.GetKey() < b.GetKey();
 		});
 
-	/*ï¿½ï¿½Å¶ï¿½ï¿½ ï¿½ï¿½ï¿? ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½*/
 	if (m_Packets.empty())
 		return;
 
@@ -725,8 +739,7 @@ void NonLightPass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
 				continue;
 		}
 
-		//ï¿½ï¿½ï¿½â¼­ ï¿½Îµï¿½ï¿½ï¿½ ï¿½ß°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
-		_uint TransformIndex = pPipeLine->GetOrWriteTransform(packet.ObjID,*packet.pWorldMatrix);
+		_uint TransformIndex = pPipeLine->GetOrWriteTransform(packet.ObjID, *packet.pWorldMatrix);
 		_uint SkinningOffset = 0;
 		if (packet.bSkinning) {
 			if (holds_alternative<CAnimator3D*>(packet.pPayLoad))
@@ -742,8 +755,12 @@ void NonLightPass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
 
 		m_VisiblePackets.push_back(packet);
 	}
-
-
+}
+void NonLightPass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
+{
+	/*ï¿½Ì°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½*/
+	CPipeLine* pPipeLine = m_pRenderSystem->Get_Pipeline();
+	pCurShader = { nullptr };
 	/*ï¿½ï¿½Î¿ï¿½ï¿½ï¿? ï¿½ï¿½ï¿½ï¿½*/
 	for (auto& packet : m_VisiblePackets)
 	{
@@ -778,33 +795,20 @@ void NonLightPass::Submit(OPAQUE_PACKET packet)
 #pragma endregion
 
 #pragma region EFFECT_PASS
-
-void EffectPass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
+void EffectPass::Write_Buffer(ID3D11DeviceContext* pContext)
 {
-	/*ï¿½Ì°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½*/
 	CPipeLine* pPipeLine = m_pRenderSystem->Get_Pipeline();
-	pCurShader = { nullptr };
-
-	/*ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½, ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Æ¼ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ ï¿½ðµ¨³ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ */
 	sort(m_Packets.begin(), m_Packets.end(),
 		[](const EFFECT_PACKET& a, const EFFECT_PACKET& b) {
 			return a.GetKey() < b.GetKey();
 		});
 
-	/*ï¿½ï¿½Å¶ï¿½ï¿½ ï¿½ï¿½ï¿? ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½*/
 	if (m_Packets.empty())
 		return;
 
-
 	for (auto& packet : m_Packets)
 	{
-		//if (!packet.bSkinning) {
-		//	if (!pPipeLine->isVisible(packet.pModel->Get_MeshBoundingBox(packet.DrawIndex), XMLoadFloat4x4(packet.pWorldMatrix)))
-		//		continue;
-		//}
-
-		//ï¿½ï¿½ï¿½â¼­ ï¿½Îµï¿½ï¿½ï¿½ ï¿½ß°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
-		_uint TransformIndex = pPipeLine->GetOrWriteTransform(packet.ObjID,*packet.pWorldMatrix);
+		_uint TransformIndex = pPipeLine->GetOrWriteTransform(packet.ObjID, *packet.pWorldMatrix);
 		_uint SkinningOffset = 0;
 		if (packet.bSkinning) {
 			if (holds_alternative<CAnimator3D*>(packet.pPayLoad))
@@ -820,9 +824,12 @@ void EffectPass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
 
 		m_VisiblePackets.push_back(packet);
 	}
+}
+void EffectPass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
+{
+	CPipeLine* pPipeLine = m_pRenderSystem->Get_Pipeline();
+	pCurShader = { nullptr };
 
-
-	/*ï¿½ï¿½Î¿ï¿½ï¿½ï¿? ï¿½ï¿½ï¿½ï¿½*/
 	for (auto& packet : m_VisiblePackets)
 	{
 		if (packet.pMaterial->Get_Shader(packet.MaterialIndex) != pCurShader) {
@@ -856,18 +863,15 @@ void EffectPass::Submit(EFFECT_PACKET packet)
 #pragma endregion
 
 #pragma region 3DUI_PASS
-void UI3DPass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
-{/*ï¿½Ì°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½*/
+void UI3DPass::Write_Buffer(ID3D11DeviceContext* pContext)
+{
 	CPipeLine* pPipeLine = m_pRenderSystem->Get_Pipeline();
-	pCurShader = { nullptr };
 
-	/*ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½, ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Æ¼ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ ï¿½ðµ¨³ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ */
 	sort(m_Packets.begin(), m_Packets.end(),
 		[](const OPAQUE_PACKET& a, const OPAQUE_PACKET& b) {
 			return a.GetKey() < b.GetKey();
 		});
 
-	/*ï¿½ï¿½Å¶ï¿½ï¿½ ï¿½ï¿½ï¿? ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½*/
 	if (m_Packets.empty())
 		return;
 
@@ -879,7 +883,7 @@ void UI3DPass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
 		}
 
 		//ï¿½ï¿½ï¿½â¼­ ï¿½Îµï¿½ï¿½ï¿½ ï¿½ß°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
-		_uint TransformIndex = pPipeLine->GetOrWriteTransform(packet.ObjID,*packet.pWorldMatrix);
+		_uint TransformIndex = pPipeLine->GetOrWriteTransform(packet.ObjID, *packet.pWorldMatrix);
 		_uint SkinningOffset = 0;
 		if (packet.bSkinning) {
 			if (holds_alternative<CAnimator3D*>(packet.pPayLoad))
@@ -896,7 +900,11 @@ void UI3DPass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
 		m_VisiblePackets.push_back(packet);
 	}
 
-	/*ï¿½ï¿½Î¿ï¿½ï¿½ï¿? ï¿½ï¿½ï¿½ï¿½*/
+}
+void UI3DPass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
+{
+	pCurShader = { nullptr };
+
 	for (auto& packet : m_VisiblePackets)
 	{
 		if (packet.pMaterial->Get_Shader(packet.MaterialIndex) != pCurShader) {

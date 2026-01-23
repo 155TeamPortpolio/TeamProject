@@ -11,6 +11,7 @@ CSkinningBuffer::CSkinningBuffer(ID3D11Device* pDevice, ID3D11DeviceContext* pCo
 HRESULT CSkinningBuffer::Initialize()
 {
     CreatePages();
+    return S_OK;
 }
 
 void CSkinningBuffer::BeginFrame() 
@@ -26,7 +27,7 @@ void CSkinningBuffer::BeginFrame()
 
 _bool CSkinningBuffer::Upload(const void* matrixFloat4x4Array, _uint boneCount, Allocation& outAlloc) 
 {
-
+    return false;
 }
 void CSkinningBuffer::BindSRV(ID3D11DeviceContext* context, _uint slot) const 
 {
@@ -35,7 +36,7 @@ void CSkinningBuffer::BindSRV(ID3D11DeviceContext* context, _uint slot) const
 
 ID3D11ShaderResourceView* CSkinningBuffer::GetSRV(_uint pageIndex) const 
 {
-
+    return nullptr;
 }
 
 _bool CSkinningBuffer::CreatePages()

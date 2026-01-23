@@ -66,9 +66,25 @@ HRESULT CRenderSystem::Render()
 	m_pPipeLine->Begin_ObjectBuffer(m_pContext);
 	m_pPipeLine->Begin_SkinningBuffer(m_pContext);
 
+	m_pPriorityPass->Write_Buffer(m_pContext);
+	m_pStaticShadowPass->Write_Buffer(m_pContext);
+	m_pSkinnedShadowPass->Write_Buffer(m_pContext);
+	m_pSkinnedPass->Write_Buffer(m_pContext);
+	m_pStaticPass->Write_Buffer(m_pContext);
+	m_pInstancePass->Write_Buffer(m_pContext);
+	m_pUI3DPass->Write_Buffer(m_pContext);
+	m_pEffectPass->Write_Buffer(m_pContext);
+	m_pParticlePass->Write_Buffer(m_pContext);
+	m_pBlendedPass->Write_Buffer(m_pContext);
+	m_pNonLightPass->Write_Buffer(m_pContext);
+	m_pUIPass->Write_Buffer(m_pContext);
+
+	m_pPipeLine->End_ObjectBuffer(m_pContext);
+	m_pPipeLine->End_SkinningBuffer(m_pContext);
+
 	m_pForward->Render_Priority(m_pPriorityPass);
-	//m_pForward->Render_StaticShadow(m_pStaticShadowPass, !IsOn);
-	//m_pForward->Render_SkinnedShadow(m_pSkinnedShadowPass, !IsOn);
+	m_pForward->Render_StaticShadow(m_pStaticShadowPass, !IsOn);
+	m_pForward->Render_SkinnedShadow(m_pSkinnedShadowPass, !IsOn);
 	m_pForward->Render_SkinnedMesh(m_pSkinnedPass);
 	m_pForward->Render_StaticMesh(m_pStaticPass, m_pInstancePass);
 	m_pPipeLine->Update_HiZ(m_pContext);
@@ -86,9 +102,6 @@ HRESULT CRenderSystem::Render()
 	m_pForward->Render_NonLight(m_pNonLightPass);
 	m_pForward->Render_OutLine();
 	m_pUI->Render_2D(m_pUIPass);
-
-	m_pPipeLine->End_ObjectBuffer(m_pContext);
-	m_pPipeLine->End_SkinningBuffer(m_pContext);
 
 	m_pPost->Render_Fog();
 	m_pPost->Render_HDRBloom();
@@ -290,4 +303,5 @@ void CRenderSystem::Free()
 	Safe_Release(m_pPost);
 	Safe_Release(m_pUI);
 	Safe_Release(m_pEffect);
+	Safe_Release(m_pBatcher);
 }
