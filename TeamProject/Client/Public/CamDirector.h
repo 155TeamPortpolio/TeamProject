@@ -19,7 +19,6 @@ public:
     void          SetSpaceRef(OBJECT_HANDLE handle)          { m_spaceRefHandle         = handle; }
     void          SetReturnCam(CamType type)                 { m_returnCamType          = type;   }
     void          SetTarget(OBJECT_HANDLE targetHandle);
-
     void          AutoTarget();
     void          AutoField();
 
@@ -39,6 +38,7 @@ public:
     CPlayer*      GetPlayer()                const;
     CCharacter*   GetCharacter()             const;
     string        GetCharacterStr()          const;
+    OBJECT_HANDLE GetCurHandle()             const;
     
     CCamSequencePlayer* GetSeqPlayer()       const { return GetSeqObj()->Get_Component<CCamSequencePlayer>(); }
 
@@ -61,7 +61,6 @@ public:
     _bool         StopRequest(_uint handle, _float blendOutSec = 0.25f, _bool resetTime = true);
     void          StopAll(_float blendOutSec = 0.25f);
     void          Update(_float dt);
-
     void          StartBattleIntro(CamSeqType type);
 
 private:
@@ -69,9 +68,11 @@ private:
     void          UpdatePlayer();
     void          UpdateInput(_float dt);
     void          AbortSequenceToOrbit(_bool resetTime);
+    void          SyncSeqInputLock();
 
     void          StartDialog();
     void          EndDialog();
+    _bool         IsValid() const;
 
 private:
     CamDirectorSeqMap       m_seqs{};

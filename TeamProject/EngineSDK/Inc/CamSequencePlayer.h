@@ -84,6 +84,8 @@ public:
 private:
 	void   RebuildIfNeeded();
 	void   ApplyPose(const CamPose& pose);
+	_float GetPlaybackDuration() const;
+	void   ApplyAtSampleTime(_float sampleTime);
 
 public:
 	static CCamSequencePlayer* Create();
