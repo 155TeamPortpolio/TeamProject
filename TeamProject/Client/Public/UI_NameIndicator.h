@@ -48,7 +48,7 @@ private:
 	STATE_VISIBLE		m_eVisible = { STATE_VISIBLE::END };
 	STATE_INTERACT		m_eInteract = { STATE_INTERACT::END };
 
-	static constexpr _float	m_fRadius = { 5.f };
+	static constexpr _float	m_fRadius = { 6.f };
 	static constexpr _float m_fPadding = { 20.f };
 
 private:
