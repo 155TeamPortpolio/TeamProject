@@ -1,5 +1,6 @@
 #include "pch.h"
-#include "AutoYawFollowController.h"
+#include "OrbitAutoYawFollowController.h"
+// Engine
 #include "Helper_Func.h"
 
 void COrbitAutoYawFollowController::OnTargetChanged(const OrbitCamProfile& profile)
