@@ -10,6 +10,14 @@ public:
     {
         _int iType = {};
     }ENTITY_INIT_DESC;
+
+    struct CurModel {
+        _bool IsSkinned = { false };
+        string ModelTag{};
+        string ModelKey{};
+        string MaterialKey{};
+    };
+
 private:
     CEntityObject();
     CEntityObject(const CEntityObject& rhs);
@@ -25,14 +33,20 @@ public:
 
     virtual void Export_ObjectData(void* pDesc) override;
 
+public:
+    const CurModel* Get_CurrentModel() { return &m_tCurModel; };
+    void Set_EntityModel(const string& ModelTag, const string& ModelKeyTag, const string& MaterialKeyTag);
+
 private:
     string Get_TypeName();
     _vector4 Get_TypeColor();
+
 public:
     void Render_GUI() override;
 
 private:
     _int        m_iType = {};
+    CurModel    m_tCurModel;
 
 public:
     static CEntityObject* Create();

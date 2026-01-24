@@ -14,6 +14,7 @@
 #include "MapToolAssistant.h"
 #include "BattleObject.h"
 #include "BattleSpawnerPoint.h"
+#include "EntityObject.h"
 
 CMapToolGui::CMapToolGui(GUI_CONTEXT* pContext)
     : CBasePanel(pContext)
@@ -178,7 +179,10 @@ void CMapToolGui::Render_GUI()
         if (ImGui::Button("LoadWithEntity")) {
             m_pMapToolCore->Load_WithEntityData();
         }
-
+        ImGui::SameLine();
+        if (ImGui::Button("SetEntityModel")) {
+            Set_EntityModel();
+        }
         ImGui::EndChild();
         ImGui::TreePop();
     }
@@ -229,8 +233,17 @@ void CMapToolGui::RakeResources()
 
             pRcsMgr->Add_ResourcePath(mpp.TagModelKey, mpp.TagModelPath);
             pRcsMgr->Add_ResourcePath(mpp.TagMaterialKey, mpp.TagMaterialPath);
+
+
+            //Get Only EntityModelName
+            if (ModelPath.string().find("Entity") != string::npos) {
+                m_EntityModelPathPackName.push_back(mpp.TagName);
+            }
+            
         }
     }
+
+    Load_EntityInit();
 }
 
 void CMapToolGui::CheckCoolTime(_float dt)
@@ -379,6 +392,13 @@ void CMapToolGui::Place_Object(PHYSICS_RAY_HIT* pRayHit)
 
         pObjMgr->Add_Object(pStaticObject, { g_TagMapToolLevel, g_tagMapObjType[ENUM(MAPOBJ_TYPE::ENTITY)] });
 
+        //if (-1 != m_iPickedEntityModelIndex) {
+        //    for (auto Pack : m_ModelPathPack)
+        //    {
+        //        if (Pack.TagName == m_EntityModelPathPackName[m_iPickedEntityModelIndex])
+        //            dynamic_cast<CEntityObject*>(pStaticObject)->Set_EntityModel(Pack.TagName, Pack.TagModelKey, Pack.TagMaterialKey);
+        //    }
+        //}
         break;
     }
     case MAPOBJ_TYPE::BATTLE:
@@ -554,9 +574,19 @@ void CMapToolGui::Save_EntityData()
     {
         ENTITY EntityDesc = {};
 
-        static_cast<CPlacedObject*>(pObject)->Export_ObjectData(&EntityDesc);
+        static_cast<CEntityObject*>(pObject)->Export_ObjectData(&EntityDesc);
         EntityDesc.iEntityID = iEntityIndex++;
         m_EntityData.Entities.push_back(EntityDesc);
+
+        string InstanceName = static_cast<CEntityObject*>(pObject)->Get_InstanceName();
+        string ModelTag = static_cast<CEntityObject*>(pObject)->Get_CurrentModel()->ModelTag;
+        m_iniModelName.emplace(InstanceName, ModelTag);
+
+        auto it = m_iniModelName.find(InstanceName);
+        if (it == m_iniModelName.end())
+            return;
+
+        m_iniModelName[it->second] = ModelTag;
     }
     
     // 버전 없어도 될거같은데
@@ -565,6 +595,51 @@ void CMapToolGui::Save_EntityData()
 
     if (true == HelperMT::ExportJsonFile<Entity_Header>(m_EntityData, SavePath))
         m_isShowDataSaveFinish = true;
+
+    Save_EntityInit();
+}
+
+void CMapToolGui::Save_MapToolEntityData()
+{
+    CLayer* pLayer = m_pGameInstance->Get_ObjectMgr()->Get_Layer({ g_TagMapToolLevel, g_tagMapObjType[ENUM(MAPOBJ_TYPE::ENTITY)] });
+    if (!pLayer) return;
+
+    string TagFileName = "EntityData." + m_pMapToolContext->TagArea + "." + m_EntityData.TagDataFormat + "." + std::to_string(m_MapData.iVersion);
+    string SavePath = "../Bin/Data/NewEntityData/" + HelperMT::MakeTimestampFileName(TagFileName, ".json");
+
+    if (true == HelperMT::ExportJsonFile<Entity_Header>(m_EntityData, SavePath))
+        m_isShowDataSaveFinish = true;
+}
+
+void CMapToolGui::Save_EntityInit()
+{
+    Helper::SaveJson<unordered_map<string, string>>(m_iniModelName, "../Bin/Resources/Model/Entity/ModelIni.json");
+}
+
+void CMapToolGui::Load_EntityInit()
+{
+    auto LoadData = Helper::LoadJson<unordered_map<string, string>>("../Bin/Resources/Model/Entity/ModelIni.json");
+
+    for (auto Data : LoadData)
+        m_iniModelName.emplace(Data.first, Data.second);
+}
+
+void CMapToolGui::Set_EntityModel()
+{
+    CLayer* pLayer = m_pGameInstance->Get_ObjectMgr()->Get_Layer({ g_TagMapToolLevel, g_tagMapObjType[ENUM(MAPOBJ_TYPE::ENTITY)] });
+    if (!pLayer) return;
+
+    for (auto& pObjects : pLayer->Get_AllObject())
+    {
+        CEntityObject* pEntity = dynamic_cast<CEntityObject*>(pObjects);
+
+        auto iter = m_iniModelName.find(pEntity->Get_InstanceName());
+        if (iter == m_iniModelName.end() || iter->second.empty())
+            continue;
+
+
+        pEntity->Set_EntityModel(pEntity->Get_InstanceName(), iter->second + ".model", iter->second + ".mat");
+    }
 }
 
 void CMapToolGui::Save_BattleData()
@@ -770,6 +845,41 @@ void CMapToolGui::Setting_SelectType()
     {
         ImGui::TextColored(ImVec4(1.f, 1.f, 1.f, 1.f), "Entity Box Scale ( HalfExtents(x,y,z) )");
         ImGui::InputFloat3("##EntityBoxScale", reinterpret_cast<float*>(&m_vEntitySize), "%.1f");
+        
+        auto pGuiContext = m_pGameInstance->Get_GUISystem()->Get_Context();
+
+        static string CurModelName = {};
+      
+        if (pGuiContext->pSelectedObject)
+        {
+            if (m_pSelectedEntityObject != dynamic_cast<CEntityObject*>(pGuiContext->pSelectedObject))
+            { 
+                m_pSelectedEntityObject = dynamic_cast<CEntityObject*>(pGuiContext->pSelectedObject);
+            }
+        }
+
+        if (ImGui::BeginCombo("EntityModel", CurModelName.c_str()))
+        {
+            for (int i = 0; i < m_EntityModelPathPackName.size(); ++i)
+            {
+                if (ImGui::Selectable(m_EntityModelPathPackName[i].c_str()))
+                {
+                    if (nullptr != m_pSelectedEntityObject)
+                    {
+                        for (auto Pack : m_ModelPathPack)
+                        {
+                            if (Pack.TagName == m_EntityModelPathPackName[i])
+                                m_pSelectedEntityObject->Set_EntityModel(Pack.TagName, Pack.TagModelKey, Pack.TagMaterialKey);
+                        }
+                    }
+
+                    CurModelName = m_EntityModelPathPackName[i];
+                    m_iPickedEntityModelIndex = i;
+                }
+            }
+            ImGui::EndCombo();
+        }
+
         break;
     }
     case MapTool::MAPOBJ_TYPE::BATTLE:
