@@ -2,7 +2,11 @@
 
 #include "CamObject.h"
 #include "OrbitLockOnController.h"
-#include "AutoYawFollowController.h"
+#include "OrbitAutoYawFollowController.h"
+#include "OrbitCollisionDistController.h"
+#include "OrbitTargetSwitchController.h"
+#include "OrbitInputController.h"
+#include "OrbitPoseSmootherController.h"
 
 NS_BEGIN(Client)
 
@@ -41,9 +45,7 @@ public:
     Vector3 GetBasePivotWorld() const { return GetBasePivotTargetPos(targetHandle) + pose.pivotInternalOffset; }
 
 private:
-    void    UpdateInput(_float dt);
     void    ClampTargets();
-    void    SmoothStates(_float dt);
 
     Vector3 GetPivotPos()       const { return pose.curPivot; }
     Vector3 GetPivotTargetPos() const;
@@ -51,19 +53,18 @@ private:
     void    ApplyOrbitPose(_float dt, const OrbitLockOnEvalResult& lockRes);
 
     Vector3 GetTargetFootPos() const;
-
     Vector3 GetBasePivotTargetPos(OBJECT_HANDLE handle) const;
-    void    UpdateTargetSwitch(_float dt);
-
-    _float  GetCollisionAllowedDist(const Vector3& pivot, float wantDist);
 
 private:
     OrbitCamPoseState               pose{};
     OrbitCamInputState              input{};
-    OrbitCamTargetSwitchState       targetSwitch{};
     OrbitCamProfile                 profile{};
     COrbitLockOnController          lockOnCtrl{};
     COrbitAutoYawFollowController   autoYawCtrl{};
+    COrbitCollisionDistController   collisionDistCtrl{};
+    COrbitTargetSwitchController    targetSwitchCtrl{};
+    COrbitInputController           inputCtrl{};
+    COrbitPoseSmootherController    poseSmootherCtrl{};
     OBJECT_HANDLE                   targetHandle{};
 
     _float                          m_curMaxYawSpeedDeg = 720.f;

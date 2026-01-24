@@ -75,6 +75,7 @@ void CCamDirector::AutoTarget()
 
 void CCamDirector::AutoField()
 {
+    //GameInstance()->Set_EngineTimeScale(0.05f);
     AutoTarget();
     RequestSequence("Field/Front");
 }
@@ -133,7 +134,7 @@ void CCamDirector::StartBattleIntro(CamSeqType type)
 {
     AutoTarget();
     RequestSequence(type);
-    UIDirector()->Hide_BattleHUD();
+    UIDirector()->Hide_HUD(CUIDirector::HUD::BATTLE);
     UIDirector()->Show_SceneFrame();
 }
 
