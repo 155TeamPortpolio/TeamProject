@@ -3,7 +3,9 @@
 #include "GameInstance.h"
 
 #include "Collider.h"
+#include "ModelData.h"
 #include "StaticModel.h"
+#include "SkeletalModel.h"
 #include "Material.h"
 
 CEntityObject::CEntityObject()
@@ -24,10 +26,12 @@ HRESULT CEntityObject::Initialize_Prototype()
 	Add_Component<CStaticModel>();
 	Add_Component<CMaterial>();
 
+	m_tCurModel = { false, "Default.model", "Default.mat" };
+
 	auto pModel = Get_Component<CStaticModel>();
-	pModel->Link_Model(G_GlobalLevelKey, "Default.model");
+	pModel->Link_Model(G_GlobalLevelKey, m_tCurModel.ModelKey);
 	auto pMaterial = Get_Component<CMaterial>();
-	pMaterial->Link_Material(G_GlobalLevelKey, "Default.mat");
+	pMaterial->Link_Material(G_GlobalLevelKey, m_tCurModel.MaterialKey);
 
 	return S_OK;
 }
@@ -78,9 +82,35 @@ void CEntityObject::Export_ObjectData(void* pDesc)
 	pEntityDesc->vTranslation = { vPosition.x, vPosition.y, vPosition.z };
 }
 
-void CEntityObject::Set_EntityModel(const string& ModelTag)
+void CEntityObject::Set_EntityModel(const string& ModelTag, const string& ModelKeyTag, const string& MaterialKeyTag)
 {
+	m_ModelTag = ModelTag;
 
+	CModelData* pData = CGameInstance::GetInstance()->Get_ResourceMgr()->Load_ModelData(g_TagMapToolLevel, ModelKeyTag);
+	if (nullptr == pData)
+		return;
+
+	_bool isSkinned = pData->isSkinned();
+	
+	if (true == isSkinned) {
+		if (false == m_tCurModel.IsSkinned) {
+			Remove_Component<CStaticModel>();
+			Add_Component<CSkeletalModel>();
+		}
+		Get_Component<CSkeletalModel>()->Link_Model(g_TagMapToolLevel, ModelKeyTag);
+	}
+	else {
+		if (true == m_tCurModel.IsSkinned) {
+			Remove_Component<CSkeletalModel>();
+			Add_Component<CStaticModel>();
+		}
+
+		Get_Component<CStaticModel>()->Link_Model(g_TagMapToolLevel, ModelKeyTag);
+	}
+
+	Get_Component<CMaterial>()->Link_Material(g_TagMapToolLevel, MaterialKeyTag);
+
+	m_tCurModel = { isSkinned, ModelKeyTag, MaterialKeyTag };
 }
 
 string CEntityObject::Get_TypeName()

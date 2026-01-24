@@ -795,24 +795,32 @@ void CMapToolGui::Setting_SelectType()
 
         static string CurModelName = {};
       
-        if (m_pSelectedEntityObject != dynamic_cast<CEntityObject*>(pGuiContext->pSelectedObject)) {
-            m_pSelectedEntityObject = dynamic_cast<CEntityObject*>(pGuiContext->pSelectedObject);
-            CurModelName = m_pSelectedEntityObject->Get_Tag();
+        if (pGuiContext->pSelectedObject)
+        {
+            if (m_pSelectedEntityObject != dynamic_cast<CEntityObject*>(pGuiContext->pSelectedObject))
+            { 
+                m_pSelectedEntityObject = dynamic_cast<CEntityObject*>(pGuiContext->pSelectedObject);
+                CurModelName = m_pSelectedEntityObject->Get_Tag();
+            }
         }
-        
+
         if (ImGui::BeginCombo("EntityModel", CurModelName.c_str()))
         {
             for (int i = 0; i < m_EntityModelPathPackName.size(); ++i)
-                if (ImGui::Selectable(m_EntityModelPathPackName[i].c_str())) {
-                    
-                    if (m_pSelectedEntityObject) {
-                        m_ModelPathPack.
-
-                        m_pSelectedEntityObject->Set_EntityModel(CurModelName);
+            {
+                if (ImGui::Selectable(m_EntityModelPathPackName[i].c_str()))
+                {
+                    if (nullptr != m_pSelectedEntityObject)
+                    {
+                        for (auto Pack : m_ModelPathPack)
+                        {
+                            if (Pack.TagName == m_EntityModelPathPackName[i])
+                                m_pSelectedEntityObject->Set_EntityModel(CurModelName, Pack.TagModelKey, Pack.TagMaterialKey);
+                        }
                     }
                     CurModelName = m_EntityModelPathPackName[i];
                 }
-
+            }
             ImGui::EndCombo();
         }
 
