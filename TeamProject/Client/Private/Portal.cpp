@@ -78,7 +78,7 @@ void CPortal::OnTriggerExit(CGameObject* pOther)
 	m_bIsInteractable = false;
 }
 
-void CPortal::Interact()
+void CPortal::Interact(CGameObject* pObject)
 {
 	if (!m_bIsInteractable)
 		return;

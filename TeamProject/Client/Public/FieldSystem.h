@@ -7,7 +7,8 @@ class CFieldSystem :
   DECLARE_SINGLETON(CFieldSystem)
 
   struct DayTimer {
-	  DayPhase m_eDayTime = { DayPhase::Morning };
+	  DayPhase m_eDayTime = { DayPhase::EarlyMorning };
+	  DayPhase m_ePreDayTime = { DayPhase::LateNight };
 	  _float currentHour = { 0.f };
 	  _float timeScale = {0.2f};
 	  void Update_Timer(_float dt) {
@@ -24,6 +25,12 @@ class CFieldSystem :
 			  m_eDayTime= DayPhase::LateNight;
 		  else
 			  m_eDayTime= DayPhase::EarlyMorning;
+
+		  if (m_eDayTime != m_ePreDayTime)
+		  {
+			  Notify_DayPhaseEvent();
+			  m_ePreDayTime = m_eDayTime;
+		  }
 	  }
 	  void Set_DayPhase(DayPhase ePhase) {
 		  m_eDayTime = ePhase;
@@ -44,7 +51,8 @@ class CFieldSystem :
 		  default:
 			  break;
 		  }
-	  }
+	  }  
+	  void Notify_DayPhaseEvent();
   };
 
 private:
@@ -56,16 +64,18 @@ public:
 
 public:
 	void	SetActive(_bool is) { m_isActive = is; }
+	_bool	IsActive() const { return m_isActive; }
 	
 public:
 	void	SetFieldPlayer(class CFieldPlayer* pFieldPlayer);
 	OBJECT_HANDLE					GetCurCharacterHandle() const;
 
-	/*여기서 대화를 진행하고 / 미니맵을 진행*/
-public:
-	DayPhase Get_DayPhase() { return m_DayTime.m_eDayTime; }
-	void Set_DayPahse(DayPhase ePhase) { m_DayTime.Set_DayPhase(ePhase); }
+	void	SetInteractHandle(OBJECT_HANDLE InteractHandle);
+	OBJECT_HANDLE					GetInteractHandle() const;
 
+public:
+	DayPhase Get_DayPhase() const { return m_DayTime.m_eDayTime; }
+	void Set_DayPahse(DayPhase ePhase) { m_DayTime.Set_DayPhase(ePhase); }
 
 public:
 	_bool RegisterRoom(class CRoom* pRoom);
@@ -79,7 +89,11 @@ private:
 	_bool	m_isActive = { false }; 
 	class CFieldPlayer* m_pFieldPlayer = { nullptr };
 	class CRoomDirector* m_pRoomDirector = { nullptr };
+
+private:
 	DayTimer m_DayTime = {};
+	OBJECT_HANDLE m_InteractHandle;
+
 public:
 	virtual void Free() override;
 };

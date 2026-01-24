@@ -61,9 +61,26 @@ OBJECT_HANDLE CFieldSystem::GetCurCharacterHandle() const
 		return OBJECT_HANDLE();
 }
 
+void CFieldSystem::SetInteractHandle(OBJECT_HANDLE InteractHandle)
+{
+	m_InteractHandle = InteractHandle;
+}
+
+OBJECT_HANDLE CFieldSystem::GetInteractHandle() const
+{
+	return m_InteractHandle;
+}
+
 void CFieldSystem::Free()
 {
 	__super::Free();
 	Safe_Release(m_pFieldPlayer);
 	Safe_Release(m_pRoomDirector);
+}
+
+void CFieldSystem::DayTimer::Notify_DayPhaseEvent()
+{
+	DAYPHASE_DESC desc{};
+	desc.dayPhase = m_eDayTime;
+	EventSystem()->Broadcast<DAYPHASE_DESC>({ desc });
 }

@@ -29,10 +29,10 @@ HRESULT CCanvasPanel::Initialize(INIT_DESC* pArg)
     Set_OriginTexSize(false);
     m_vSize = m_WinSize;
 
-#ifdef _DEBUG
+//#ifdef _DEBUG
     Get_Component<CSprite2D>()->Link_Shader(G_GlobalLevelKey, "VTX_UI.hlsl");
     Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, "canvas.png");
-#endif
+//#endif
 
     m_iCount++;
 
