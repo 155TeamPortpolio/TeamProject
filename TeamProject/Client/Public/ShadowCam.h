@@ -16,6 +16,9 @@ public:
     virtual void    Awake()                     override;
     virtual void    Update(_float dt)           override; 
 
+private:
+    void Update_LightByTime(DAYPHASE_DESC Desc);
+
 public:
     static  CShadowCam* Create();
     virtual CGameObject* Clone(INIT_DESC* pArg) override;
