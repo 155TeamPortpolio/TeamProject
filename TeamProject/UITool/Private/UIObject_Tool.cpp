@@ -418,10 +418,13 @@ void CUIObject_Tool::ApplySpriteTexture(_uint idx, const string& levelKey, const
 
     m_sizeMode = UISizeMode::FHD;
 
-    auto texture = sprite->Get_Texture(idx);
-    auto size    = texture->Get_Size();
+    if (sprite->IsValid())
+    {
+        auto texture = sprite->Get_Texture(idx);
+        auto size    = texture->Get_Size();
 
-    m_sizeFHD = {(float)size.x, (float)size.y};
+        m_sizeFHD = {(float)size.x, (float)size.y};
+    }
 
     if (!applyOriginSize || !Get_OriginTexSize()) return;
     const _float ratio = GetSizeRatio(m_sizeMode);
