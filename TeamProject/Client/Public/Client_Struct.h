@@ -108,4 +108,8 @@ namespace Client {
 		_float fDelayTime = { 0.3f };
 		_bool isDelay = {};
 	}GAUGE_DELAY_DESC;
+
+	typedef struct tagFieldRoomDesc {
+
+	}ROOM_DESC;
 }

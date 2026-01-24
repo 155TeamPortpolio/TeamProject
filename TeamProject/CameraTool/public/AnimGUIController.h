@@ -12,10 +12,11 @@ public:
     void DrawInline(OBJECT_HANDLE spaceRefHandle);
 
 public:
-    bool HasAnimator(OBJECT_HANDLE spaceRefHandle) const;
-    bool IsPlaying(OBJECT_HANDLE spaceRefHandle) const;
-    void SetPlaying(OBJECT_HANDLE spaceRefHandle, bool play);
-    void SetTimeSec(OBJECT_HANDLE spaceRefHandle, float timeSec);
+    bool  HasAnimator(OBJECT_HANDLE spaceRefHandle) const;
+    bool  IsPlaying(OBJECT_HANDLE spaceRefHandle) const;
+    void  SetPlaying(OBJECT_HANDLE spaceRefHandle, bool play);
+    void  SetTimeSec(OBJECT_HANDLE spaceRefHandle, float timeSec);
+    float GetClipEndSec(OBJECT_HANDLE spaceRefHandle) const;
 
 private:
     CAnimator3D* ResolveAnimator(OBJECT_HANDLE spaceRefHandle) const;

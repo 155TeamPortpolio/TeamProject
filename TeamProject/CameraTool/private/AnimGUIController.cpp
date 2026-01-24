@@ -186,7 +186,6 @@ void CAnimGUIController::DrawInline(OBJECT_HANDLE spaceRefHandle)
     }
 
     if (!hasAnim) ImGui::EndDisabled();
-
     if (!hasAnim) return;
 
     ImGui::SameLine(0.f, 8.f);
@@ -209,16 +208,23 @@ bool CAnimGUIController::IsPlaying(OBJECT_HANDLE spaceRefHandle) const
 void CAnimGUIController::SetPlaying(OBJECT_HANDLE spaceRefHandle, bool play)
 {
     auto anim = ResolveAnimator(spaceRefHandle);
-    if (!anim) return;
-
     anim->Set_Pause(!play, 0);
 }
 
 void CAnimGUIController::SetTimeSec(OBJECT_HANDLE spaceRefHandle, float timeSec)
 {
     auto anim = ResolveAnimator(spaceRefHandle);
-    if (!anim) return;
-
     anim->Set_TimeSec(timeSec);
     anim->Update_Animation(0.f);
+}
+
+float CAnimGUIController::GetClipEndSec(OBJECT_HANDLE spaceRefHandle) const
+{
+    auto anim = ResolveAnimator(spaceRefHandle);
+    if (!anim) return 0.f;
+
+    const float durT = anim->Get_DurationSec();
+    if (durT <= 0.f) return 0.f;
+
+    return durT;
 }

@@ -8,6 +8,75 @@
 #include "TextSlot.h"
 #include "ButtonUI.h"
 
+#include "UI_DialogueMessage.h"
+#include "UI_DialogueChoice.h"
+
+#include "CamDirector.h"
+#include "Player.h"
+
+void CUI_Dialogue::Change_Dialogue()
+{
+    switch (m_tDialogueDesc.Result)
+    {
+    case DialogueResult::Success:
+    case DialogueResult::Fail:
+    {
+        Change_State(STATE::INVISIBLE);
+        BroadCast_NPCInteractDesc(m_tDialogueDesc.Name, m_tDialogueDesc.SequenceID, m_tDialogueDesc.NextSequenceID, m_tDialogueDesc.Result);
+    }
+    break;
+
+    case DialogueResult::Running:
+    case DialogueResult::None:
+        _int iSequenceID = m_tDialogueDesc.SequenceID;
+        Open_Dialogue(m_tDialogueDesc.DialogueID, ++iSequenceID);
+        break;
+    }
+}
+
+void CUI_Dialogue::Change_Dialogue(ChoiceDesc desc)
+{
+    if (desc.Next_SequeceID == 0)
+    {
+        Change_State(STATE::INVISIBLE);
+        BroadCast_NPCInteractDesc(m_tDialogueDesc.Name, m_tDialogueDesc.SequenceID, desc.Next_SequeceID, desc.Result);
+       
+        return;
+    } 
+
+    Open_Dialogue(m_tDialogueDesc.DialogueID, desc.Next_SequeceID);
+}
+
+void CUI_Dialogue::Show_Choices()
+{
+    if (m_tDialogueDesc.ChoiceNum <= 0)
+        return;
+
+    auto pChoice = m_pChildren[ENUM(CHILD::CHOICE)];
+    if (!pChoice)
+        return;
+
+    CUI_DialogueChoice::CHOICE_DESC desc = {};
+    desc.iChoiceNum = m_tDialogueDesc.ChoiceNum;
+    switch (desc.iChoiceNum)
+    {
+    case 1:
+        desc.strChoices.push_back(m_tDialogueDesc.Choice_ID1);
+        break;
+    case 2:
+        desc.strChoices.push_back(m_tDialogueDesc.Choice_ID1);
+        desc.strChoices.push_back(m_tDialogueDesc.Choice_ID2);
+        break;
+    case 3:
+        desc.strChoices.push_back(m_tDialogueDesc.Choice_ID1);
+        desc.strChoices.push_back(m_tDialogueDesc.Choice_ID2);
+        desc.strChoices.push_back(m_tDialogueDesc.Choice_ID3);
+        break;
+    }
+
+    pChoice->UI_Active(&desc);
+}
+
 HRESULT CUI_Dialogue::Initialize_Prototype()
 {
     __super::Initialize_Prototype();
@@ -22,18 +91,14 @@ HRESULT CUI_Dialogue::Initialize(INIT_DESC* pArg)
 {
     __super::Initialize(pArg);
 
-    Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("dialogue.json")));
-    Cache_Children();
+    m_vSize = m_WinSize;
+
+    Add_Children(G_GlobalLevelKey, "Proto_GameObject_DialogueMessage", CHILD::MESSAGE);
+    Add_Children(G_GlobalLevelKey, "Proto_GameObject_DialogueChoice", CHILD::CHOICE);
+
     Bind_EventListener();
 
-    m_tMessageTypeWriter.onTyped = [this](_uint iIndex, const wstring& strText) { Set_ChildText(ENUM(CHILD::MESSAGE), strText); };
-    if (m_pNextButton)
-        m_pNextButton->Set_OnClick([this]() { Change_Dialogue(); });
-
     Set_Alive(false);
-    Set_Alpha(0.f);
-    Set_ChildAnimation(CHILD::ARROW1, 0);
-    Set_ChildAnimation(CHILD::ARROW2, 0);
 
     return S_OK;
 }
@@ -41,184 +106,116 @@ HRESULT CUI_Dialogue::Initialize(INIT_DESC* pArg)
 void CUI_Dialogue::Update(_float dt)
 {
     __super::Update(dt);
- 
-    if (m_eState == STATE::INVISIBLE && !m_isBlending)
-        Set_Alive(false);
 
-    Update_TypingMessage(dt);
+    if (m_eState == STATE::INVISIBLE && Is_ChildAnimFinished(CHILD::MESSAGE))
+    {
+        if (auto pPlayer = dynamic_cast<CPlayer*>(ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Player))))
+           pPlayer->Unlock_Input();// Invisible 상태가 되고, 애니메이션이 끝난 시점에 플레이어 인풋도 언락함 (만약에 애니메이션 없으면 타이머 별도로 둬야)
+        Set_Alive(false);
+        return;
+    } 
 
     Get_Component<CObjectContainer>()->UpdateChild(dt);
 }
 
-void CUI_Dialogue::Cache_Children()
+void CUI_Dialogue::Add_Children(const string& strLevelTag, const string& strPrototypeTag, CHILD child)
 {
-    auto pContainer = Get_Component<CObjectContainer>();
+    auto pObj = Builder::Create_UIObject({ strLevelTag, strPrototypeTag }).Build("");
+    if (!pObj)
+        return;
 
-    // 자식 UI 오브젝트 포인터를 배열에 캐싱
-    for (_int i = 0; i < ENUM(CHILD::END); ++i)
-    {
-        const string& strInstanceName = CHILD_INSTNAMES[i];
-        if (strInstanceName.empty())
-            continue;
-
-        auto pObj = pContainer->Find_Descendant(strInstanceName);
-        if (!pObj)
-            continue;
-
-        auto pUI = dynamic_cast<CUI_Object*>(pObj);
-        m_pChildren[i] = pUI;
-    }
-
-    // 버튼 UI 포인터로 캐싱
-    auto pObj = pContainer->Find_Descendant("next");
-    if (pObj)
-    {
-        auto pUI = dynamic_cast<CUI_Object*>(pObj);
-        m_pNextButton = dynamic_cast<CButtonUI*>(pUI);
-    }
-
-    // 텍스트 컴포넌트를 배열에 캐싱
-    for (_int i = 0; i < ENUM(TEXTSLOT::END); ++i)
-    {
-        const string& strInstanceName = TEXTSLOT_INSTNAMES[i];
-        if (strInstanceName.empty())
-            continue;
-
-        auto pObj = pContainer->Find_Descendant(strInstanceName);
-        if (!pObj)
-            continue;
-
-        m_pTextSlots[i] = pObj->Get_Component<CTextSlot>();
-    }
+    Get_Component<CObjectContainer>()->Add_Child(pObj);
+    m_pChildren[ENUM(child)] = pObj;
 }
 
 void CUI_Dialogue::Bind_EventListener()
-{
+{ 
     // 이벤트 : UI_DIALOGUE_REQUEST_DESC
     Get_Component<CEventListener>()->Add_Listener<UI_DIALOGUE_REQUEST_DESC>([this](const UI_DIALOGUE_REQUEST_DESC& desc)
-        {
+        { 
             Open_Dialogue(desc.strDialogueID, desc.iSequenceID);
+            CamDirector()->StartDialog();
+            if (auto pPlayer = dynamic_cast<CPlayer*>(ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Player))))
+                pPlayer->Lock_Input();
         });
 }
 
 void CUI_Dialogue::Open_Dialogue(const string& strNewSequenceID, _uint iNewSequenceID)
 {
     auto pair = make_pair(strNewSequenceID, iNewSequenceID);
-    if (pair == make_pair(m_tDialogueDesc.DialogueID, m_tDialogueDesc.SequenceID))
+    if (m_eState == STATE::VISIBLE && pair == make_pair(m_tDialogueDesc.DialogueID, m_tDialogueDesc.SequenceID))
         return;
 
-    if (m_eState != STATE::VISIBLE)
-        Change_State(STATE::VISIBLE);
+    Change_State(STATE::VISIBLE);   // 여기서 하는게 맞나?
 
     m_tDialogueDesc = CDataBase::GetInstance()->GetNpcDialogueDesc(pair);
-    Set_ChildText(TEXTSLOT::NAME, m_tDialogueDesc.Name);
-    Start_TypingMessage(m_tDialogueDesc.Text);
-}
 
-void CUI_Dialogue::Change_Dialogue()
-{
-    switch (m_tDialogueDesc.Result)
-    {
-    case DialogueResult::Success:
-    case DialogueResult::Fail:
-    {
-        if (Complete_TypingMessage())
-            return;
+    auto pMessage = m_pChildren[ENUM(CHILD::MESSAGE)];
+    if (!pMessage)
+        return;
 
-        Change_State(STATE::INVISIBLE);
+    CUI_DialogueMessage::MESSAGE_DESC desc = {};
+    desc.strName = m_tDialogueDesc.Name;
+    desc.strMessage = m_tDialogueDesc.Text;
+    desc.hasChoice = (m_tDialogueDesc.ChoiceNum > 0) ? true : false;
 
-        // 현재는 다이얼로그만 보내는데, 선택지일 때는 선택지로 
-        NPC_INTERACT_DESC desc = {};
-        desc.strName = m_tDialogueDesc.Name;
-        desc.iCurSequenceID = m_tDialogueDesc.SequenceID;
-        desc.iNextSequenceID = m_tDialogueDesc.NextSequenceID;
-        desc.eResult = m_tDialogueDesc.Result;
-        EventSystem()->Broadcast<NPC_INTERACT_DESC>({ desc });
-    } 
-        break;
-
-    case DialogueResult::None:
-    case DialogueResult::Running:
-        if (Complete_TypingMessage())
-            return;
-
-        _int iSequenceID = m_tDialogueDesc.SequenceID;
-        Open_Dialogue(m_tDialogueDesc.DialogueID, ++iSequenceID);
-        break;
-    }
+    pMessage->UI_Active(&desc);
 }
 
 void CUI_Dialogue::Change_State(STATE eState)
 {
     if (m_eState == eState)
         return;
-
+    
     m_eState = eState;
     switch (eState)
     {
-    case STATE::INVISIBLE:
-        //Set_Alive(false);
-        Set_Animation(1);
+    case STATE::INVISIBLE: 
+        Set_ChildUIDeActive(CHILD::MESSAGE);
+        CamDirector()->EndDialog();
         break;
     case STATE::VISIBLE:
         Set_Alive(true);
-        Set_Animation(0);
+        Set_ChildUIActive(CHILD::MESSAGE);
         break;
     }
 }
 
-void CUI_Dialogue::Start_TypingMessage(const _wstring& strText)
+void CUI_Dialogue::BroadCast_NPCInteractDesc(wstring strName, _uint iCurSequenceID, _uint iNextSequenceID, DialogueResult eResult)
 {
-    m_tMessageTypeWriter.Start(strText);
-    Set_ChildText(TEXTSLOT::MESSAGE, L"");
+    NPC_INTERACT_DESC desc = {};
+    desc.strName = strName;
+    desc.iCurSequenceID = iCurSequenceID;
+    desc.iNextSequenceID = iNextSequenceID;
+    desc.eResult = eResult;
+    EventSystem()->Broadcast<NPC_INTERACT_DESC>({ desc });
 }
 
-void CUI_Dialogue::Update_TypingMessage(_float dt)
+void CUI_Dialogue::Set_ChildUIActive(CHILD child)
 {
-    m_tMessageTypeWriter.Update(dt, ENUM(CHILD::MESSAGE));
-
-    if (m_tMessageTypeWriter.isFinished())
-        m_tMessageTypeWriter.Complete();
-}
-
-_bool CUI_Dialogue::Complete_TypingMessage()
-{
-    if (!m_tMessageTypeWriter.isTyping)
-        return false;
-    
-    m_tMessageTypeWriter.Complete();
-    Set_ChildText(TEXTSLOT::MESSAGE, m_tMessageTypeWriter.strFullText);
-    return true;
-}
-
-void CUI_Dialogue::Set_ChildAnimation(CHILD eChild, _int iIndex)
-{
-    auto pChild = m_pChildren[ENUM(eChild)];
+    auto pChild = m_pChildren[ENUM(child)];
     if (!pChild)
         return;
 
-    pChild->Set_Animation(iIndex);
+    pChild->UI_Active();
 }
 
-void CUI_Dialogue::Set_ChildText(TEXTSLOT eTextSlot, const wstring& strText)
+void CUI_Dialogue::Set_ChildUIDeActive(CHILD child)
 {
-    auto pText = m_pTextSlots[ENUM(eTextSlot)];
-    if (!pText)
+    auto pChild = m_pChildren[ENUM(child)];
+    if (!pChild)
         return;
 
-    pText->Set_Text(strText);
+    pChild->UI_DeActive();
 }
 
-void CUI_Dialogue::Set_ChildText(_uint iIndex, const wstring& strText)
+_bool CUI_Dialogue::Is_ChildAnimFinished(CHILD child)
 {
-    if (iIndex >= ENUM(TEXTSLOT::END))
-        return;
+    auto pChild = m_pChildren[ENUM(child)];
+    if (!pChild)
+        return false;
 
-    auto pText = m_pTextSlots[iIndex];
-    if (!pText)
-        return;
-
-    pText->Set_Text(strText);
+    return pChild->Is_AnimFinished();
 }
 
 CGameObject* CUI_Dialogue::Create()

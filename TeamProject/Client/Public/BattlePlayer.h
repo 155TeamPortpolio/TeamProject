@@ -110,6 +110,7 @@ private:
     _uint                       m_iCurrentIndex = { 0 };
     class CCharacter*           m_pCurrentCharacter = nullptr;
     vector<OBJECT_HANDLE>       m_CharacterHandles{};
+    OBJECT_HANDLE               m_ParryHandle;
     
     OBJECT_HANDLE       m_TargetHandle;
     _bool               m_bLockOn = { false };
@@ -118,7 +119,7 @@ private:
 
     InputState   m_input;
     _uint        m_iParryingCount = 6;
-    _bool        m_bIsParrying = { false };
+    _bool        m_bReserveParry = { false };
     _float       m_fSwitchCooldown = { 0.f };
     _vector4     m_vSwitchPosition = XMVectorSet(0.f, 0.f, 0.f, 1.f);
     _vector4     m_vSwitchLook = XMVectorSet(0.f, 0.f, 0.f, 0.f);
