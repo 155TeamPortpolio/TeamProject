@@ -583,6 +583,7 @@ namespace Engine
 
 	typedef struct tagEffectAsset : public INIT_DESC
 	{
+		_bool isBillboard = false;
 		_uint iNodeCount{};
 		_float fDuration{};
 		_bool isLoop = false;

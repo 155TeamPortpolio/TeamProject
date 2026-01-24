@@ -32,6 +32,7 @@ void CSacrificeState_ChangePhase::Update_Effects(CSacrifice* pOwner)
 	/* Roar Smoke */
 	if (IsCrossAnimProgress(0.7f))
 	{
+		/* Down */
 		auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
 			.Asset("sacrifice_roar_smoke_down.json")
 			.Build("Sacrifice_Roar_Smoke_Down");
@@ -42,7 +43,17 @@ void CSacrificeState_ChangePhase::Update_Effects(CSacrifice* pOwner)
 		auto pEffectTransform = effect->Get_Component<CTransform>();
 		pEffectTransform->Set_WorldPos(vWorldPosition);
 
+		/* Up */
+		auto effect2 = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_roar_smoke_up.json")
+			.Build("Sacrifice_Roar_Smoke_Up");
+
+		_vector3 vWorldPosition2 = _vector3::Transform(_vector3(0.f, 4.f, 0.f), worldMatrix);
+		auto pEffectTransform2 = effect2->Get_Component<CTransform>();
+		pEffectTransform2->Set_WorldPos(vWorldPosition2);
+
 		ObjectManager()->Add_Object(effect, { pOwner->Get_Level(),"Effect_Layer" });
+		ObjectManager()->Add_Object(effect2, { pOwner->Get_Level(),"Effect_Layer" });
 
 		CameraManager()->SetShakeType(ENUM(CamShakeType::Roar15S));
 	}

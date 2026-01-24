@@ -282,6 +282,7 @@ EFFECT_ASSET Engine::tagEffectAsset::FromJson(nlohmann::ordered_json& json)
 {
 	EFFECT_ASSET Effect{};
 
+	Effect.isBillboard = json.value("is_billboard", Effect.isBillboard);
 	Effect.iNodeCount = json.value("node_count", Effect.iNodeCount);
 	Effect.fDuration = json.value("duration", Effect.fDuration);
 	Effect.isLoop = json.value("is_loop", Effect.isLoop);

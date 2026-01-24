@@ -41,6 +41,7 @@ public:
 	virtual void Free();
 
 protected:
+	_bool m_IsBillBoard = false;
 	_bool m_IsLoop = false;
 	_float m_fDuration{};
 	_float m_fElapsedTime{};

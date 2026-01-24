@@ -55,14 +55,6 @@ float4 ApplySamplerMode(uint samplerMode,float2 texCoord ,Texture2D sampleTextur
     
 }
 
-float3 BoostBrightColor(float3 c, float boost, float start)
-{
-    float lum = dot(c, float3(0.2126, 0.7152, 0.0722));
-    float t = saturate((lum - start) / (1.0 - start)); // start=0.3~0.6
-    return c * (1.0 + boost * t); // boost=0.3~1.0
-}
-
-
 /*Color*/
 float4 vBaseColor;
 
