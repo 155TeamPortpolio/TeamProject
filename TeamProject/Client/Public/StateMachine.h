@@ -49,6 +49,7 @@ public:
 		_float fTimestamp = { 0.f };        // 게임 시간 기준
 		_float fPrevStateTime = { 0.f };    // 이전 상태에서 머문 시간
 		string strTriggerReason;  // 어떤 조건으로 전환되었는지
+		_uint  iDepth = { 0 };
 	}STATE_RECORD;
 
 public:
@@ -102,12 +103,21 @@ public:
 	_float			  Get_StateTime() const { return m_fStateTime; }
 	const unordered_map<string, IBaseState<Type>*>& Get_States() const { return m_States; }
 
+	void    Set_RootStateMachine(CStateMachine<Type>* pRoot, _uint iDepth)
+	{
+		m_pRootStateMachine = pRoot;
+		m_iHierarchyDepth = iDepth;
+	}
+	CStateMachine<Type>* Get_RootStateMachine() { return m_pRootStateMachine; }
+	_uint   Get_HierarchyDepth() const { return m_iHierarchyDepth; }
+
 private:
 	void    Update_AnimProgress();
 	void	Update_AnimProgress_Recursive(IBaseState<Type>* pState, _float fProgress);
 	void    Check_Transitions();
 	void    Check_AnyStateTransitions();
 	_bool   Check_Transition(const TRANSITION_INFO& transition);
+	void	Reset_Progress_Recursive(IBaseState<Type>* pState);
 
 	void	Render_Info();
 	void	Render_Animation();
@@ -122,8 +132,7 @@ private:
 	_bool	Evaluate_SingleCondition(const CONDITION_INFO& condition);
 	_bool	Evaluate_Condition(const TRANSITION_INFO& transition);
 	void	Record_Transition(const string& strFrom, const string& strTo, const string& strReason, _float fPrevStateTime);
-
-	string ConditiontoString(const CONDITION_INFO& cond);
+	string  ConditiontoString(const CONDITION_INFO& cond);
 
 private:
 	Type*									 m_pOwner = { nullptr };
@@ -136,8 +145,11 @@ private:
 	string                                   m_strCurrentState = "";
 	string                                   m_strDefaultState = "";
 	_float                                   m_fStateTime = 0.f;
+	CStateMachine<Type>*					 m_pRootStateMachine = { nullptr };
+	_uint                                    m_iHierarchyDepth = { 0 };
 	// Render_GUI
 	deque<STATE_RECORD>						 m_History = {};
+	_bool                                    m_bNewHistoryAdded = { false };
 	_uint									 m_iMaxHistory = 20;
 	_float									 m_fTotalTime = 0.f;
 	_bool									 m_bShowWindow = false;
@@ -283,6 +295,7 @@ HRESULT CStateMachine<Type>::Register_State(const string& strState, IBaseState<T
 		return E_FAIL;
 
 	pState->Set_StateName(strState);
+	pState->Set_OwnerStateMachine(this);
 	m_States[strState] = pState;
 
  	return S_OK;
@@ -429,9 +442,8 @@ void CStateMachine<Type>::Change_State(const string& strState)
     m_pCurrentState = iter->second;
     m_strCurrentState = strState;
     m_fStateTime = 0.f;
-    m_pCurrentState->m_fStateTime = 0.f;
-    m_pCurrentState->m_fAnimProgress = 0.f;
-    m_pCurrentState->m_fPrevAnimProgress = 0.f;
+
+	Reset_Progress_Recursive(m_pCurrentState);
 
     m_pCurrentState->Enter(m_pOwner);
     m_pCurrentState->End_Transition(m_pOwner, strPrevState);
@@ -531,6 +543,30 @@ _bool CStateMachine<Type>::Check_Transition(const TRANSITION_INFO& transition)
 	return true;
 }
 
+template<typename Type>
+void CStateMachine<Type>::Reset_Progress_Recursive(IBaseState<Type>* pState)
+{
+	if (!pState)
+		return;
+
+	pState->m_fStateTime = 0.f;
+	pState->m_fAnimProgress = 0.f;
+	pState->m_fPrevAnimProgress = 0.f;
+	pState->m_IsAnimProgressUpdate = false;
+
+	// 서브 상태머신이 있으면 그 안의 모든 상태도 리셋
+	IHState<Type>* pHState = dynamic_cast<IHState<Type>*>(pState);
+	if (pHState && pHState->Has_SubStateMachine())
+	{
+		auto pSubFSM = pHState->Get_SubStateMachine();
+		if (pSubFSM)
+		{
+			for (auto& pair : pSubFSM->Get_States())
+				Reset_Progress_Recursive(pair.second);
+		}
+	}
+}
+
 #pragma region RENDER
 template<typename Type>
 void CStateMachine<Type>::Render_Info()
@@ -559,6 +595,7 @@ void CStateMachine<Type>::Render_Info()
 	ImGui::Text("Default: %s", m_strDefaultState.c_str());
 	ImGui::Text("State Time: %.2f", m_fStateTime);
 	ImGui::Text("Total Time: %.2f", m_fTotalTime);
+	ImGui::Text("Hierarchy Depth: %d", m_iHierarchyDepth);
 	ImGui::Separator();
 }
 
@@ -569,9 +606,10 @@ void CStateMachine<Type>::Render_Animation()
 		return;
 
 	_float fProgress = m_pCurrentState->Get_AnimProgress();
+	_float fPrevProgress = m_pCurrentState->m_fPrevAnimProgress;
 
 	ImGui::ProgressBar(fProgress, ImVec2(-1, 0));
-	ImGui::Text("Progress: %.1f%%", fProgress * 100.f);
+	ImGui::Text("Progress: %.3f (Prev: %.3f)", fProgress, fPrevProgress);
 	ImGui::Text("AnimEnd: %s", m_pCurrentState->Is_AnimEnd() ? "TRUE" : "FALSE");
 }
 
@@ -730,27 +768,56 @@ void CStateMachine<Type>::Render_History()
 		return;
 	}
 
-	ImGui::BeginChild("##HistoryScroll", ImVec2(0, 200), true);
+	// Clear 버튼
+	if (ImGui::Button("Clear History"))
+		m_History.clear();
+	ImGui::SameLine();
+	ImGui::Text("(%d / %d)", (_int)m_History.size(), m_iMaxHistory);
+
+	ImGui::BeginChild("##HistoryScroll", ImVec2(0, 250), true);
 
 	for (auto it = m_History.begin(); it != m_History.end(); ++it)
 	{
+		// 깊이에 따른 색상 구분
+		ImVec4 depthColor;
+		switch (it->iDepth)
+		{
+		case 0: depthColor = ImVec4(1.f, 1.f, 1.f, 1.f); break;
+		case 1: depthColor = ImVec4(0.8f, 0.9f, 1.f, 1.f); break;
+		case 2: depthColor = ImVec4(0.7f, 0.8f, 0.95f, 1.f); break;
+		default: depthColor = ImVec4(0.6f, 0.7f, 0.9f, 1.f); break;
+		}
+
+		// 깊이에 따른 들여쓰기
+		if (it->iDepth > 0)
+		{
+			string strIndent(it->iDepth * 2, ' ');
+			strIndent += "L ";
+			ImGui::TextColored(ImVec4(0.4f, 0.4f, 0.4f, 1.f), "%s", strIndent.c_str());
+			ImGui::SameLine();
+		}
+
 		ImGui::TextColored(ImVec4(0.5f, 0.5f, 0.5f, 1.f), "[%6.2fs]", it->fTimestamp);
 		ImGui::SameLine();
 
 		ImGui::TextColored(ImVec4(1.f, 0.6f, 0.2f, 1.f), "%s", it->strFromState.c_str());
 		ImGui::SameLine();
-		ImGui::TextColored(ImVec4(0.7f, 0.7f, 0.7f, 1.f), "->");
+		ImGui::TextColored(depthColor, "->");
 		ImGui::SameLine();
 		ImGui::TextColored(ImVec4(0.2f, 1.f, 0.2f, 1.f), "%s", it->strToState.c_str());
 
 		ImGui::SameLine();
-		ImGui::TextColored(ImVec4(0.4f, 0.6f, 0.8f, 1.f), "%.2fs", it->fPrevStateTime);
+		ImGui::TextColored(ImVec4(0.4f, 0.6f, 0.8f, 1.f), "(%.2fs)", it->fPrevStateTime);
 		ImGui::SameLine();
-		ImGui::TextColored(ImVec4(0.6f, 0.6f, 0.6f, 1.f), "(%s)", it->strTriggerReason.c_str());
+		ImGui::TextColored(ImVec4(0.9f, 0.9f, 0.3f, 1.f), "[%s]", it->strTriggerReason.c_str());
 	}
 
-	if (ImGui::GetScrollY() < ImGui::GetScrollMaxY())
-		ImGui::SetScrollHereY(1.f);
+	// 새 기록이 추가됐을 때만 자동 스크롤 : OFF 
+	if (m_bNewHistoryAdded)
+	{
+		//ImGui::SetScrollHereY(1.f);
+		m_bNewHistoryAdded = false;
+	}
 
 	ImGui::EndChild();
 }
@@ -1112,39 +1179,28 @@ _bool CStateMachine<Type>::Evaluate_Condition(const TRANSITION_INFO& transition)
 template<typename Type>
 void CStateMachine<Type>::Record_Transition(const string& strFrom, const string& strTo, const string& strReason, _float fPrevStateTime)
 {
+	// 루트가 있으면 루트에 기록 위임
+	if (m_pRootStateMachine)
+	{
+		m_pRootStateMachine->Record_Transition(strFrom, strTo, strReason, fPrevStateTime);
+		return;
+	}
+
+	// 루트 상태머신에서 실제 기록
 	StateTransitionRecord record;
 	record.fTimestamp = m_fTotalTime;
 	record.fPrevStateTime = fPrevStateTime;
-
-	// From 상태의 전체 경로 구성
 	record.strFromState = strFrom;
-	IHState<Type>* pFromHState = dynamic_cast<IHState<Type>*>(Get_State(strFrom));
-	if (pFromHState && pFromHState->Has_SubStateMachine())
-	{
-		auto pSubFSM = pFromHState->Get_SubStateMachine();
-		while (pSubFSM && pSubFSM->Get_CurrentState())
-		{
-			record.strFromState += " > " + pSubFSM->Get_CurrentStateName();
-			IHState<Type>* pSubState = dynamic_cast<IHState<Type>*>(pSubFSM->Get_CurrentState());
-			if (pSubState && pSubState->Has_SubStateMachine())
-				pSubFSM = pSubState->Get_SubStateMachine();
-			else
-				pSubFSM = nullptr;
-		}
-	}
-
 	record.strToState = strTo;
-
-	// Trigger Reason
-	if (pFromHState && pFromHState->Get_ParentState())
-		record.strTriggerReason = pFromHState->Get_ParentState()->Get_StateName() + "::" + strReason;
-	else
-		record.strTriggerReason = strReason;
+	record.strTriggerReason = strReason;
+	record.iDepth = m_iHierarchyDepth;
 
 	m_History.push_back(record);
 
 	if (m_History.size() > m_iMaxHistory)
 		m_History.pop_front();
+
+	m_bNewHistoryAdded = true;
 }
 
 template<typename Type>
