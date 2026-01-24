@@ -65,11 +65,11 @@ public:
 public:
 	void	SetActive(_bool is) { m_isActive = is; }
 	_bool	IsActive() const { return m_isActive; }
+	
 public:
 	void	SetFieldPlayer(class CFieldPlayer* pFieldPlayer);
 	OBJECT_HANDLE					GetCurCharacterHandle() const;
 
-	/*여기서 대화를 진행하고 / 미니맵을 진행*/
 public:
 	DayPhase Get_DayPhase() const { return m_DayTime.m_eDayTime; }
 	void Set_DayPahse(DayPhase ePhase) { m_DayTime.Set_DayPhase(ePhase); }

@@ -26,7 +26,7 @@ void CUIObject_Tool::Awake()
 
     m_vAnchorOffset = Get_AnchorOffset(m_eAnchor);
 
-    Set_Clickable(true);
+   // Set_Clickable(true);
 }
 
 void CUIObject_Tool::Update(_float dt)
@@ -418,10 +418,13 @@ void CUIObject_Tool::ApplySpriteTexture(_uint idx, const string& levelKey, const
 
     m_sizeMode = UISizeMode::FHD;
 
-    auto texture = sprite->Get_Texture(idx);
-    auto size    = texture->Get_Size();
+    if (sprite->IsValid())
+    {
+        auto texture = sprite->Get_Texture(idx);
+        auto size    = texture->Get_Size();
 
-    m_sizeFHD = {(float)size.x, (float)size.y};
+        m_sizeFHD = {(float)size.x, (float)size.y};
+    }
 
     if (!applyOriginSize || !Get_OriginTexSize()) return;
     const _float ratio = GetSizeRatio(m_sizeMode);
@@ -525,7 +528,11 @@ void CUIObject_Tool::Render_GUI_SizeBlock()
     if (m_sizeFHD.x == 0.f && m_sizeFHD.y == 0.f)
         m_sizeFHD = {m_vSize.x / curRatio, m_vSize.y / curRatio};
      
-    _uint2 vSize = Get_Component<CSprite2D>()->Get_Texture(0)->Get_Size();
+    auto sprite = Get_Component<CSprite2D>();
+    _uint2 vSize{};
+    if (sprite->IsValid())
+       vSize = sprite->Get_Texture(0)->Get_Size();
+
     float fAspectRatio = vSize.x / max(static_cast<_float>(vSize.y), 1.f);
 
     ImGui::Checkbox(u8"##lock", &m_isAspectRatioLocked);
