@@ -34,6 +34,8 @@ void CServiceNpc::Process_Event(const NPC_INTERACT_DESC& desc)
 	case DialogueResult::Fail:
 		Fail(m_iCurSequenceID);
 		break;
+	case DialogueResult::None:
+		return;
 	}
 }
 
