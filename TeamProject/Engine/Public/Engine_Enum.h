@@ -96,7 +96,8 @@ namespace Engine
 		NOISE = 28,
 		DISSOLVE = 29,
 		ALPHA_MASK = 30,
-		END = 31
+		DISTORTION = 31,
+		END = 32
 	};
 
 	/* Effect */

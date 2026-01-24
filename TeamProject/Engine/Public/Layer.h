@@ -26,6 +26,10 @@ public:
 	void Set_RenderState(_bool render) { m_isRender = render; };
 	string Get_LayerTag() { return m_LayerTag; }
 
+public:
+	_bool isLayerAcitve() { return m_isRenderActive; }
+	void Set_LayerActive(_bool active) {m_isRenderActive= active; }
+
 public: 
 	void Clear_Layer();
 	void Set_TimeScale(_float scale) { m_LayerTimeScale = scale; };
@@ -38,6 +42,7 @@ private:
 	/*오브젝트 아이디, 해당 레이어 상의 인덱스*/
 
 	_bool m_isRender = { true };
+	_bool m_isRenderActive = { true };
 	string m_LayerTag = { true };
 	_float m_LayerTimeScale = { 1.f };
 

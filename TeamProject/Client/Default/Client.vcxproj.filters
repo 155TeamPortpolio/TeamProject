@@ -822,6 +822,15 @@
     <Filter Include="02. GameObject\UI\01. 2D\Dialogue\Choice">
       <UniqueIdentifier>{db39c0af-f5db-4ad1-aad6-444af6dc0543}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Camera\04. OrbitCam\01. AutoYawFollowController">
+      <UniqueIdentifier>{6b953709-9881-461d-9361-1c9d4a1baf80}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Camera\04. OrbitCam\02. CollisionDistanceController">
+      <UniqueIdentifier>{d86fe13b-8dc2-4d4e-ad78-30a6472350fb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Camera\04. OrbitCam\03. TargetSwitchController">
+      <UniqueIdentifier>{616212e1-403f-4164-857c-042c45688a4d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1589,6 +1598,9 @@
     <ClInclude Include="..\Public\Room_Street.h">
       <Filter>03. Utility\06. FieldSystem\Room\02. Street</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\AutoYawFollowController.h">
+      <Filter>02. GameObject\Camera\04. OrbitCam\01. AutoYawFollowController</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2316,6 +2328,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Room_Street.cpp">
       <Filter>03. Utility\06. FieldSystem\Room\02. Street</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\AutoYawFollowController.cpp">
+      <Filter>02. GameObject\Camera\04. OrbitCam\01. AutoYawFollowController</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

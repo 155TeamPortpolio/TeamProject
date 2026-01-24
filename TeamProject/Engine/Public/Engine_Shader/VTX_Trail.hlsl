@@ -52,6 +52,7 @@ struct PS_OUT
     float4 vBloomAcc : SV_Target1;
     float4 vBloomInfo : SV_Target2;
     float4 vRevealage : SV_Target3;
+    float4 vDistortionAcc : SV_Target4;
 };
 
 PS_OUT PS_MAIN(PS_IN In)
@@ -76,6 +77,7 @@ PS_OUT PS_MAIN(PS_IN In)
     Out.vBloomAcc = float4(0.f, 0.f, 0.f, 0.f); //SoftExtractBright(vPremulColor, 0.8f, 0.5f, 1.f) * fWeight;
     Out.vBloomInfo = float4(0.f, 1.f, 0.f, 0.f);
     Out.vRevealage = float4(fAlpha, fAlpha, fAlpha, fAlpha);
+    Out.vDistortionAcc = float4(0.f, 0.f, 0.f, 0.f);
     
     return Out;
 }
