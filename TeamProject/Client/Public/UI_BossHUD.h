@@ -1,5 +1,5 @@
 #pragma once
-#include "UI_Object.h"
+#include "UI_HUD.h"
 #include "Enemy_Struct.h"
 
 NS_BEGIN(Engine)
@@ -8,7 +8,7 @@ NS_END
 
 NS_BEGIN(Client)
 
-class CUI_BossHUD final : public CUI_Object
+class CUI_BossHUD final : public CUI_HUD
 {
 public:
 	typedef struct tagBossHUDDesc : public UI_DESC {
@@ -21,7 +21,7 @@ private:
 
 private:
 	CUI_BossHUD() {}
-	CUI_BossHUD(const CUI_BossHUD& rhs) : CUI_Object(rhs) {}
+	CUI_BossHUD(const CUI_BossHUD& rhs) : CUI_HUD(rhs) {}
 	virtual ~CUI_BossHUD() DEFAULT;
 
 public:
@@ -32,6 +32,8 @@ public:
 	virtual void    Update(_float dt)			     override;
 	virtual void    Late_Update(_float dt)           override { __super::Late_Update(dt); }
 	virtual void    Render_GUI()                     override { __super::Render_GUI(); }
+	virtual void	UI_Active(void* pArg = nullptr)  override;
+	virtual void	UI_DeActive(void* pArg = nullptr) override;
 
 private:
 	CUI_Object*				m_pChildren[ENUM(CHILD::END)] = {};

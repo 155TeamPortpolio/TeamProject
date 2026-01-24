@@ -57,6 +57,8 @@ public:
 
     HRESULT               Clear_Character();
 
+    void            Lock_Input() { m_bLockInput = true; }
+    void            UnLock_Input() { m_bLockInput = false; }
 
 public:
     HRESULT Initialize();
@@ -81,6 +83,7 @@ private:
 private:
     InputState   m_input;
     static constexpr _float KEY_BUFFER_TIME = 0.1f;
+    _bool        m_bLockInput = false;
 
 public:
     static CFieldPlayer* Create();

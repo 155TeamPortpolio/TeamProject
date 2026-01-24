@@ -134,8 +134,7 @@ void CCamDirector::StartBattleIntro(CamSeqType type)
 {
     AutoTarget();
     RequestSequence(type);
-   // UIDirector()->Hide_BattleHUD();
-    UIDirector()->Show_BattleHUD();
+    UIDirector()->Hide_HUD(CUIDirector::HUD::BATTLE);
     UIDirector()->Show_SceneFrame();
 }
 

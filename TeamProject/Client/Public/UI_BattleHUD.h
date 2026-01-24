@@ -1,5 +1,5 @@
 #pragma once
-#include "UI_Object.h"
+#include "UI_HUD.h"
 
 NS_BEGIN(Engine)
 class CSprite2D; class CTextSlot; 
@@ -8,13 +8,8 @@ NS_END
 NS_BEGIN(Client)
 class CUI_DamageText; class CGaugeUI;
 
-class CUI_BattleHUD final : public CUI_Object
+class CUI_BattleHUD final : public CUI_HUD
 {
-public:
-	typedef struct tagShowDesc {
-		_bool isFade = {};
-	}SHOW_DESC;
-
 private:
 	enum CHILD {
 		ROLE1,         ROLE2,         ROLE3,
@@ -59,7 +54,7 @@ private:
 
 private:
 	CUI_BattleHUD() {}
-	CUI_BattleHUD(const CUI_BattleHUD& rhs) : CUI_Object(rhs) {}
+	CUI_BattleHUD(const CUI_BattleHUD& rhs) : CUI_HUD(rhs) {}
 	virtual ~CUI_BattleHUD() DEFAULT;
 
 public:

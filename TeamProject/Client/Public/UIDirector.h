@@ -10,6 +10,10 @@ NS_BEGIN(Client)
 class CUIDirector final : public CBase
 {
 	DECLARE_SINGLETON(CUIDirector);
+
+public:
+	enum HUD { FIELD, BATTLE, END };
+
 private:
 	CUIDirector() {}
 	virtual ~CUIDirector() = default;
@@ -20,10 +24,10 @@ public:
 	/* 화면 페이드아웃 실행 (화면 -> 검정 화면) */
 	void FadeOut_Screen(_float fDuration = 0.5f);
 
-	/* 전투 HUD를 화면에 표시 */
-	void Show_BattleHUD(_bool isFade = true);
-	/* 전투 HUD를 화면에서 숨김 */
-	void Hide_BattleHUD();
+	/* HUD를 화면에 표시 */
+	void Show_HUD(HUD hud, _bool isFade = true);
+	/* HUD를 화면에서 숨김 */
+	void Hide_HUD(HUD hud);
 
 	/* 씬 프레임을 화면에 표시 (화면 위, 아래에 프레임) */
 	void Show_SceneFrame();
@@ -39,6 +43,9 @@ public:
 private:
 	/* json 파일에 저장된 레벨별 오브젝트 데이터를 읽고 저장 */
 	void Load_UILevelData(const string& resourceKey);
+	void Show_HUD(const string& strInstanceName, _bool isFade = true);
+	void Hide_HUD(const string& strInstanceName);
+	string Get_HUDName(HUD hud);
 
 private:
 	string								m_levelKey;

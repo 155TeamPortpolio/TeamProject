@@ -70,10 +70,12 @@ public:
 	void	SetFieldPlayer(class CFieldPlayer* pFieldPlayer);
 	OBJECT_HANDLE					GetCurCharacterHandle() const;
 
+	void	SetInteractHandle(OBJECT_HANDLE InteractHandle);
+	OBJECT_HANDLE					GetInteractHandle() const;
+
 public:
 	DayPhase Get_DayPhase() const { return m_DayTime.m_eDayTime; }
 	void Set_DayPahse(DayPhase ePhase) { m_DayTime.Set_DayPhase(ePhase); }
-
 
 public:
 	_bool RegisterRoom(class CRoom* pRoom);
@@ -87,7 +89,11 @@ private:
 	_bool	m_isActive = { false }; 
 	class CFieldPlayer* m_pFieldPlayer = { nullptr };
 	class CRoomDirector* m_pRoomDirector = { nullptr };
+
+private:
 	DayTimer m_DayTime = {};
+	OBJECT_HANDLE m_InteractHandle;
+
 public:
 	virtual void Free() override;
 };

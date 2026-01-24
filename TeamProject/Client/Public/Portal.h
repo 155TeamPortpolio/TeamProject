@@ -29,7 +29,7 @@ public:
     virtual void    OnTriggerStay(CGameObject* pOher)   override;
     virtual void    OnTriggerExit(CGameObject* pOther)  override;
 
-    virtual void    Interact() override;
+    virtual void    Interact(CGameObject* pObject = nullptr) override;
 
 private:
     string m_NextLevelTag{};

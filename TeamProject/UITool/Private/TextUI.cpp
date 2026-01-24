@@ -40,11 +40,11 @@ HRESULT CTextUI::Initialize(INIT_DESC* pArg)
 
     pSprite->Link_Shader(G_GlobalLevelKey, "VTX_UI.hlsl");
 
-#ifdef _DEBUG
+//#ifdef _DEBUG
     pSprite->Add_Texture(G_GlobalLevelKey, "canvas.png");
-#else
-    pSprite->Add_Texture(G_GlobalLevelKey, "transparent.png");
-#endif
+//#else
+//    pSprite->Add_Texture(G_GlobalLevelKey, "transparent.png");
+//#endif
 
     m_iCount++;
 

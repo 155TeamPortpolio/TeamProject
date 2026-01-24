@@ -30,7 +30,7 @@ HRESULT CBangBooDeliver::Initialize_Prototype()
 	auto pResource = ResourceManager();
 	pResource->Add_ResourcePath("CashierBangbooDeliver.model", "../Bin/Resources/Global/NPC/141BangBoo/Deliver/CashierBangbooDeliver.model");
 	pResource->Add_ResourcePath("CashierBangbooDeliver.mat", "../Bin/Resources/Global/NPC/141BangBoo/Deliver/CashierBangbooDeliver.mat");
-	pResource->Add_ResourcePath("NPC_Special_CashierBangboo_Deliver_Meta.json", "../Bin/Resources/Globall/NPC/141BangBoo/Deliver/NPC_Special_CashierBangboo_Deliver_Meta.json");
+	pResource->Add_ResourcePath("NPC_Special_CashierBangboo_Deliver_Meta.json", "../Bin/Resources/Global/NPC/141BangBoo/Deliver/NPC_Special_CashierBangboo_Deliver_Meta.json");
 
 	auto pModel = Get_Component<CSkeletalModel>();
 	pModel->Link_Model(G_GlobalLevelKey, "CashierBangbooDeliver.model");
