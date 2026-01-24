@@ -714,9 +714,6 @@
     <Filter Include="02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Hit">
       <UniqueIdentifier>{08855f1c-eef5-461f-9c1c-f6d5844ec678}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\UI\01. 2D\BattleIntroFrame">
-      <UniqueIdentifier>{da2fd65e-9bf7-4fb2-a1b2-95af726ef1a4}</UniqueIdentifier>
-    </Filter>
     <Filter Include="00. MainApp\00. CursorController">
       <UniqueIdentifier>{5e864d76-8135-44f8-b744-bd0c5b16cda6}</UniqueIdentifier>
     </Filter>
@@ -789,9 +786,6 @@
     <Filter Include="02. GameObject\Object\Player\Character\Collider\AttackCollider">
       <UniqueIdentifier>{8cafc1ce-885d-4894-bbae-9bc579a5da0c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\MapObject\EntitySpawner">
-      <UniqueIdentifier>{8b852d8f-36c2-4c1e-b080-ca2b3222160f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\Camera\07. CamDirector">
       <UniqueIdentifier>{0d1fd986-9b7f-4463-b27c-8cc9eae09a0b}</UniqueIdentifier>
     </Filter>
@@ -821,6 +815,27 @@
     </Filter>
     <Filter Include="02. GameObject\UI\01. 2D\Dialogue\Choice">
       <UniqueIdentifier>{db39c0af-f5db-4ad1-aad6-444af6dc0543}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Camera\04. OrbitCam\02. CollisionDistanceController">
+      <UniqueIdentifier>{d86fe13b-8dc2-4d4e-ad78-30a6472350fb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Camera\04. OrbitCam\03. TargetSwitchController">
+      <UniqueIdentifier>{616212e1-403f-4164-857c-042c45688a4d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\HUD">
+      <UniqueIdentifier>{39c59546-1cd0-4e05-a3ab-b3d83bf8d308}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Camera\04. OrbitCam\01. OrbitAutoYawFollowController">
+      <UniqueIdentifier>{6b953709-9881-461d-9361-1c9d4a1baf80}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Camera\04. OrbitCam\04. OrbitInputController">
+      <UniqueIdentifier>{f2b96f4c-58cb-4f92-b00f-2008a29960a0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Camera\04. OrbitCam\05. OrbitPoseSmootherController">
+      <UniqueIdentifier>{4b23b083-95ec-4c48-8cb8-297675f8781c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\MapObject\99. EntitySpawner">
+      <UniqueIdentifier>{8b852d8f-36c2-4c1e-b080-ca2b3222160f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1505,14 +1520,11 @@
     <ClInclude Include="..\Public\ZeroStage_Elite.h">
       <Filter>01. Level\04. Zero\Stage_Elite</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\UI_SceneFrame.h">
-      <Filter>02. GameObject\UI\01. 2D\BattleIntroFrame</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\CursorController.h">
       <Filter>00. MainApp\00. CursorController</Filter>
     </ClInclude>
     <ClInclude Include="..\public\EntitySpawner.h">
-      <Filter>02. GameObject\MapObject\EntitySpawner</Filter>
+      <Filter>02. GameObject\MapObject\99. EntitySpawner</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Stage.h">
       <Filter>01. Level\04. Zero\Stage_Super</Filter>
@@ -1588,6 +1600,27 @@
     </ClInclude>
     <ClInclude Include="..\Public\Room_Street.h">
       <Filter>03. Utility\06. FieldSystem\Room\02. Street</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\OrbitAutoYawFollowController.h">
+      <Filter>02. GameObject\Camera\04. OrbitCam\01. OrbitAutoYawFollowController</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\OrbitCollisionDistController.h">
+      <Filter>02. GameObject\Camera\04. OrbitCam\02. CollisionDistanceController</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\OrbitTargetSwitchController.h">
+      <Filter>02. GameObject\Camera\04. OrbitCam\03. TargetSwitchController</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\OrbitInputController.h">
+      <Filter>02. GameObject\Camera\04. OrbitCam\04. OrbitInputController</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\OrbitPoseSmootherController.h">
+      <Filter>02. GameObject\Camera\04. OrbitCam\05. OrbitPoseSmootherController</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_HUD.h">
+      <Filter>02. GameObject\UI\01. 2D\HUD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_SceneFrame.h">
+      <Filter>02. GameObject\UI\01. 2D\SceneFrame</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2248,14 +2281,11 @@
     <ClCompile Include="..\Private\ZeroStage_Elite.cpp">
       <Filter>01. Level\04. Zero\Stage_Elite</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\UI_SceneFrame.cpp">
-      <Filter>02. GameObject\UI\01. 2D\BattleIntroFrame</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\CursorController.cpp">
       <Filter>00. MainApp\00. CursorController</Filter>
     </ClCompile>
     <ClCompile Include="..\private\EntitySpawner.cpp">
-      <Filter>02. GameObject\MapObject\EntitySpawner</Filter>
+      <Filter>02. GameObject\MapObject\99. EntitySpawner</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Stage.cpp">
       <Filter>01. Level\04. Zero\Stage_Super</Filter>
@@ -2316,6 +2346,27 @@
     </ClCompile>
     <ClCompile Include="..\Private\Room_Street.cpp">
       <Filter>03. Utility\06. FieldSystem\Room\02. Street</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\OrbitAutoYawFollowController.cpp">
+      <Filter>02. GameObject\Camera\04. OrbitCam\01. OrbitAutoYawFollowController</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\OrbitCollisionDistController.cpp">
+      <Filter>02. GameObject\Camera\04. OrbitCam\02. CollisionDistanceController</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\OrbitTargetSwitchController.cpp">
+      <Filter>02. GameObject\Camera\04. OrbitCam\03. TargetSwitchController</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\OrbitInputController.cpp">
+      <Filter>02. GameObject\Camera\04. OrbitCam\04. OrbitInputController</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\OrbitPoseSmootherController.cpp">
+      <Filter>02. GameObject\Camera\04. OrbitCam\05. OrbitPoseSmootherController</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_HUD.cpp">
+      <Filter>02. GameObject\UI\01. 2D\HUD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_SceneFrame.cpp">
+      <Filter>02. GameObject\UI\01. 2D\SceneFrame</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -3,7 +3,9 @@
 #include "GameInstance.h"
 
 #include "Collider.h"
+#include "ModelData.h"
 #include "StaticModel.h"
+#include "SkeletalModel.h"
 #include "Material.h"
 
 CEntityObject::CEntityObject()
@@ -24,10 +26,12 @@ HRESULT CEntityObject::Initialize_Prototype()
 	Add_Component<CStaticModel>();
 	Add_Component<CMaterial>();
 
+	m_tCurModel = { false, "None", "Default.model", "Default.mat" };
+
 	auto pModel = Get_Component<CStaticModel>();
-	pModel->Link_Model(G_GlobalLevelKey, "Default.model");
+	pModel->Link_Model(G_GlobalLevelKey, m_tCurModel.ModelKey);
 	auto pMaterial = Get_Component<CMaterial>();
-	pMaterial->Link_Material(G_GlobalLevelKey, "Default.mat");
+	pMaterial->Link_Material(G_GlobalLevelKey, m_tCurModel.MaterialKey);
 
 	return S_OK;
 }
@@ -36,9 +40,10 @@ HRESULT CEntityObject::Initialize(INIT_DESC* pArg)
 {
 	__super::Initialize(pArg);
 	auto pDesc = static_cast<ENTITY_INIT_DESC*>(pArg);
-	m_iType = pDesc->iType;
-	
 
+	if(pDesc)
+		m_iType = pDesc->iType;
+	
 	Get_Component<CCollider>()->Set_MapToolMode(true);
 	Get_Component<CCollider>()->Set_ColliderColor(Get_TypeColor());
 
@@ -77,6 +82,35 @@ void CEntityObject::Export_ObjectData(void* pDesc)
 	pEntityDesc->vScale = { vSize.x, vSize.y, vSize.z };
 	pEntityDesc->vRotation = { vEulerRotation.x, vEulerRotation.y, vEulerRotation.z };
 	pEntityDesc->vTranslation = { vPosition.x, vPosition.y, vPosition.z };
+}
+
+void CEntityObject::Set_EntityModel(const string& ModelTag, const string& ModelKeyTag, const string& MaterialKeyTag)
+{
+	CModelData* pData = CGameInstance::GetInstance()->Get_ResourceMgr()->Load_ModelData(g_TagMapToolLevel, ModelKeyTag);
+	if (nullptr == pData)
+		return;
+
+	_bool isSkinned = pData->isSkinned();
+	
+	if (true == isSkinned) {
+		if (false == m_tCurModel.IsSkinned) {
+			Remove_Component<CStaticModel>();
+			Add_Component<CSkeletalModel>();
+		}
+		Get_Component<CSkeletalModel>()->Link_Model(g_TagMapToolLevel, ModelKeyTag);
+	}
+	else {
+		if (true == m_tCurModel.IsSkinned) {
+			Remove_Component<CSkeletalModel>();
+			Add_Component<CStaticModel>();
+		}
+
+		Get_Component<CStaticModel>()->Link_Model(g_TagMapToolLevel, ModelKeyTag);
+	}
+
+	Get_Component<CMaterial>()->Link_Material(g_TagMapToolLevel, MaterialKeyTag);
+
+	m_tCurModel = { isSkinned, ModelTag, ModelKeyTag, MaterialKeyTag };
 }
 
 string CEntityObject::Get_TypeName()
@@ -140,6 +174,7 @@ void CEntityObject::Render_GUI()
 	
 	ImGui::InputText("##TriggerName", &m_InstanceName);
 	ImGui::TextColored(ImVec4(1.f, 1.f, 1.f, 1.f), "Client Type");
+
 	if (ImGui::InputInt("##Version", &m_iType)) {
 		Get_Component<CCollider>()->Set_ColliderColor(Get_TypeColor());
 	};

@@ -98,11 +98,12 @@ void CCamDialogueController::Update(_float dt, CCamera* cam, COrbitCam* orbit, C
 
         m_state.toPivotWorld = m_state.restoring ? basePivot : (basePivot + look * m_state.holdPivotDist);
 
+        m_state.time = 0.f;
         m_state.blendInit = true;
     }
 
     _float outFov = m_state.holding ? m_state.holdFov : m_state.savedFov;
-    Vector3 outPivotWorld = orbit->GetBasePivotWorld();
+    Vector3 outPivotWorld = m_state.holding ? m_state.toPivotWorld : orbit->GetBasePivotWorld();
 
     if (m_state.blending)
     {
@@ -150,11 +151,11 @@ void CCamDialogueController::Update(_float dt, CCamera* cam, COrbitCam* orbit, C
     cam->Set_FOV(outFov);
 
     const Vector3 baseNow = orbit->GetBasePivotWorld();
-    orbit->SetPivotOverrideOffset(outPivotWorld - baseNow);
+    orbit->SetPivotExternalOffset(outPivotWorld - baseNow);
 
     if (!m_state.blending && m_state.restoring)
     {
-        orbit->ClearPivotOverrideOffset();
+        orbit->ClearPivotExternalOffset();
 
         m_state.restoring = false;
         m_state.savedFov = 0.f;
@@ -167,3 +168,4 @@ void CCamDialogueController::Update(_float dt, CCamera* cam, COrbitCam* orbit, C
         m_state.toPivotWorld = Vector3::Zero;
     }
 }
+

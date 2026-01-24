@@ -51,7 +51,7 @@ void CNpcInteractZone::Late_Update(_float dt)
 {
 }
 
-void CNpcInteractZone::Interact()
+void CNpcInteractZone::Interact(CGameObject* pObject)
 {
 	auto pParent = Get_Component<CChild>()->Get_Parent();
 	if (pParent == nullptr) return;

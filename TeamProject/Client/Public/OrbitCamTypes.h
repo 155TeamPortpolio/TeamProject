@@ -4,16 +4,58 @@
 
 NS_BEGIN(Client)
 
+struct OrbitAutoYawFollowState
+{
+    _float  holdTimer = 0.f;
+    Vector3 prevFoot{};
+    _bool   hasPrevFoot = false;
+};
+
+struct OrbitAutoYawFollowSnapshot
+{
+    OrbitAutoYawFollowState state{};
+};
+
+struct OrbitCollisionDistEvalResult
+{
+    _float allowedDist = 0.f;
+    _float goalDist = 0.f;
+    _bool  constrained = false;
+    _float maxYawSpeedDeg = 0.f;
+    _float maxPitchSpeedDeg = 0.f;
+};
+
+struct OrbitTargetSwitchState
+{
+    _bool   active = false;
+    _float  elapsed = 0.f;
+    Vector3 holdPivotWorld{};
+};
+
+struct OrbitTargetSwitchSnapshot
+{
+    OrbitTargetSwitchState state{};
+};
+
+struct OrbitInputEvalResult
+{
+    _float yawDeltaDeg = 0.f;
+    _float pitchDeltaDeg = 0.f;
+    _float zoomDelta = 0.f;
+};
+
+// ----------------------------------------------------------------------
+
 struct OrbitCamPoseState
 {
     Vector2 targetRotDeg{};
     Vector2 curRotDeg{};
-    _float  desiredDist{};
-    _float  targetDist{};
+    _float  wantDist{};
+    _float  goalDist{};
     _float  curDist{};
     Vector3 targetPivot{};
     Vector3 curPivot{};
-    Vector3 pivotOverrideOffset{};
+    Vector3 pivotInternalOffset{};
     Vector3 pivotExternalOffset{};
 };
 
@@ -21,16 +63,16 @@ struct OrbitCamInputState
 {
     _float sensitivityX = 0.1f;
     _float sensitivityY = 0.08f;
-    _float zoomSpeed = 1.0f;
+    _float zoomSpeed    = 1.0f;
 };
 
 struct OrbitCamProfile
 {
-    _float   minDist = 0.5f;
+    _float   minDist = 0.7f;
     _float   maxDist = 6.f;
              
-    _float   pitchMin = -30.f;
-    _float   pitchMax = 40.f;
+    _float   pitchMin = -40.f;
+    _float   pitchMax = 50.f;
              
     _float   rotSmoothSpeed = 14.f;
     _float   distSmoothSpeed = 12.f;
@@ -73,22 +115,13 @@ struct OrbitCamProfile
     _float   maxPitchSpeedDegWhenColliding = 180.f;
 };
 
-struct OrbitCamTargetSwitchState
-{
-    _bool   active = false;
-    _float  elapsed = 0.f;
-    Vector3 holdPivotWorld{};
-};
-
 struct OrbitCamSnapshot
 {
-    OrbitCamPoseState         pose{};
-    OrbitCamTargetSwitchState targetSwitch{};
-    OrbitLockOnSnapshot       lockOn{};
-    _float                    autoYawHoldTimer = 0.f;
-    Vector3                   prevTargetFoot{};
-    _bool                     hasPrevTargetFoot = false;
-    OBJECT_HANDLE             targetHandle{};
+    OrbitCamPoseState           pose{};
+    OrbitLockOnSnapshot         lockOn{};
+    OrbitAutoYawFollowSnapshot  autoYawFollow{};
+    OrbitTargetSwitchSnapshot   targetSwitch{};
+    OBJECT_HANDLE               targetHandle{};
 };
 
 NS_END

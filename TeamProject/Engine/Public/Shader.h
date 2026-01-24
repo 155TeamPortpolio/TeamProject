@@ -6,6 +6,15 @@ class ENGINE_DLL CShader final:
     public CBase
 {
     enum CompileState{Cached,Compiled};
+    struct CachedDefault
+    {
+        enum class Kind { Raw, SRV } kind = Kind::Raw;
+        vector<uint8_t> raw;  // PackedSize
+        ID3D11ShaderResourceView* pSRV = { nullptr };
+        _uint rawSize = 0;
+    };
+
+    unordered_map<string, CachedDefault> m_Defaults;
 
 public:
     typedef struct ShaderVariableTypeDesc {
@@ -31,7 +40,6 @@ public:
     HRESULT Initialize(ID3D11Device* pDevice,  const string& filePath);
   /*Render*/
     void Apply(const string& m_passConstant,ID3D11DeviceContext* pContext);
-    HRESULT Reset_Value();
     HRESULT Bind_Value(const string& ConstantName, const SHADER_PARAM& parameter);
     HRESULT SetRawValueOrClear(ID3DX11EffectVariable* effectVariable, const void* dataPtr, UINT byteSize);
     HRESULT SetConstantBuffer(const string& ConstantName, ID3D11Buffer* pData);
@@ -43,12 +51,14 @@ public:
     vector<string>  Get_PassList();
     HRESULT GetPassSignature(UINT iPassIndex, D3DX11_PASS_DESC* pOutPassDesc);
     HRESULT GetPassSignature(const string& m_passConstant, D3DX11_PASS_DESC* pOutPassDesc);
+    void ResetToDefaults();
 
 private:
     HRESULT Bind_Matrix(const string& ConstantName, const _float4x4* pMatrix);
     HRESULT Bind_ShaderResource(const string& ConstantName, ID3D11ShaderResourceView* pSRV);
     HRESULT Bind_ShaderResourceArray(const string& ConstantName, ID3D11ShaderResourceView* pSRVArr);    
     HRESULT Bind_MatrixArray(const string& ConstantName, const _float4x4* pMatrices, _uint iCount);
+    void    CacheDefaults();
 
 private:
     //Compile

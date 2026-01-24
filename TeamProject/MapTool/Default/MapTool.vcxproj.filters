@@ -52,9 +52,6 @@
     <Filter Include="03. MapTool System\MapToolGui">
       <UniqueIdentifier>{d7d994b2-905f-4cfe-8cf2-0ce25e9cca1a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03. MapTool System\SlotFieldGui">
-      <UniqueIdentifier>{7c030cdd-12e6-4235-af0f-e901f91843ac}</UniqueIdentifier>
-    </Filter>
     <Filter Include="03. MapTool System\00. MapToolCore">
       <UniqueIdentifier>{a8b4769b-6ec7-4997-8b77-72d1dec39669}</UniqueIdentifier>
     </Filter>
@@ -84,6 +81,9 @@
     </Filter>
     <Filter Include="02. Object\MapTool Object\Battle Object\BattleEndPoint">
       <UniqueIdentifier>{3a20cff6-dba3-4ea4-b3c1-0c308081dedf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. MapTool System\SlotFieldGui">
+      <UniqueIdentifier>{7c030cdd-12e6-4235-af0f-e901f91843ac}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

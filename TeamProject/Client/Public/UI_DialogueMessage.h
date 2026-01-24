@@ -99,6 +99,8 @@ private:
 private:
 	void Cache_Children();
 
+	void Update_KeyInput();
+
 	void Change_Dialogue();
 	void Show_Choices();
 
