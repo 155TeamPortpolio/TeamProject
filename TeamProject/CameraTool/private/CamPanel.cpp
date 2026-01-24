@@ -1,5 +1,7 @@
 #include "pch.h"
 #include "CamPanel.h"
+#include "Animator3D.h"
+#include "ModelData.h"
 
 #include "CamPanelUtil.h"
 #include "GUIUtil.h"
@@ -98,6 +100,33 @@ namespace
         if (cur < target) return min(cur + maxDelta, target);
         return max(cur - maxDelta, target);
     }
+    float ExtractRollRad(const Vector3& forward, const Vector3& up)
+    {
+        Vector3 f = forward;
+        Vector3 u = up;
+
+        if (f.LengthSquared() <= 1e-8f) f = Vector3(0.f, 0.f, 1.f);
+        else f.Normalize();
+
+        if (u.LengthSquared() <= 1e-8f) u = Vector3(0.f, 1.f, 0.f);
+        else u.Normalize();
+
+        Vector3 baseUp(0.f, 1.f, 0.f);
+        if (fabsf(f.Dot(baseUp)) > 0.98f) baseUp = Vector3(0.f, 0.f, 1.f);
+
+        Matrix lookM = Matrix::CreateWorld(Vector3::Zero, f, baseUp);
+        Quaternion lookRot = Quaternion::CreateFromRotationMatrix(lookM);
+        lookRot.Normalize();
+
+        Matrix lookRM = Matrix::CreateFromQuaternion(lookRot);
+
+        Vector3 upZero = Vector3::TransformNormal(Vector3(0.f, 1.f, 0.f), lookRM);
+        Vector3 rightZero = Vector3::TransformNormal(Vector3(1.f, 0.f, 0.f), lookRM);
+
+        const float sinA = u.Dot(rightZero);
+        const float cosA = u.Dot(upZero);
+        return atan2f(sinA, cosA);
+    }
 }
 
 void CCamPanel::Init()
@@ -162,7 +191,6 @@ void CCamPanel::Update_Panel(_float dt)
         if (state.endTime <= 1e-6f)
         {
             state.curTime = 0.f;
-            state.playing = false;
         }
         else
         {
@@ -173,10 +201,7 @@ void CCamPanel::Update_Panel(_float dt)
                 if (state.loop)
                     state.curTime = fmodf(state.curTime, state.endTime);
                 else
-                {
                     state.curTime = state.endTime;
-                    state.playing = false;
-                }
             }
         }
     }
@@ -187,7 +212,6 @@ void CCamPanel::Update_Panel(_float dt)
     if (state.playAllLink && !state.recording)
         animGUIController.SetTimeSec(state.playAllRefHandle, state.curTime);
 }
-
 
 void CCamPanel::Render_GUI()
 {
@@ -1394,6 +1418,149 @@ void CCamPanel::DrawPlayAll(OBJECT_HANDLE spaceRefHandle)
     if (!hasCam || !hasAnim) ImGui::EndDisabled();
 }
 
+void CCamPanel::Draw_BoneAttachUI()
+{
+    if (!target.sequence) return;
+
+    CamBoneAttachDesc& attach = target.sequence->boneAttach;
+
+    bool changed = false;
+
+    vector<string> boneNames;
+    boneNames.emplace_back("");
+
+    if (target.spaceRefHandle.isValid())
+    {
+        auto refObj = OBJ->Request_Object(target.spaceRefHandle);
+        auto anim = refObj->Get_Component<CAnimator3D>();
+        auto data = anim ? anim->Get_ModelData() : nullptr;
+
+        if (data)
+        {
+            vector<string> modelBones = data->Get_BoneNames();
+            boneNames.reserve(modelBones.size() + 1);
+            for (auto& n : modelBones) boneNames.push_back(n);
+        }
+    }
+
+    auto FindIndex = [&](const string& name) -> int
+        {
+            if (name.empty()) return 0;
+            for (int i = 1; i < (int)boneNames.size(); ++i)
+                if (boneNames[i] == name) return i;
+            return 0;
+        };
+
+    auto SameLineOrWrap = [&](float needW, float baseX, float indentX, float gap)
+        {
+            if (ImGui::GetContentRegionAvail().x < needW)
+            {
+                ImGui::NewLine();
+                ImGui::SetCursorPosX(baseX + indentX);
+                return;
+            }
+            ImGui::SameLine(0.f, gap);
+        };
+
+    const float baseX = ImGui::GetCursorPosX();
+
+    ImGui::PushID("BoneAttach");
+    ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(6.f, 4.f));
+
+    changed |= ImGui::Checkbox("##Enabled", &attach.enabled);
+    ImGui::SameLine(0.f, 8.f);
+
+    const float indentX = ImGui::GetFrameHeight() + 8.f;
+
+    ImGui::BeginDisabled(!attach.enabled);
+
+    ImGui::AlignTextToFramePadding();
+    ImGui::TextDisabled("Pos");
+    ImGui::SameLine(0.f, 6.f);
+
+    changed |= ImGui::Checkbox("##UsePos", &attach.usePosBone);
+    ImGui::SameLine(0.f, 6.f);
+
+    {
+        int curIdx = FindIndex(attach.posBoneName);
+        const char* preview = (curIdx == 0) ? "(none)" : boneNames[curIdx].c_str();
+
+        ImGui::BeginDisabled(!attach.usePosBone);
+        ImGui::SetNextItemWidth(170.f);
+        if (ImGui::BeginCombo("##PosBoneName", preview))
+        {
+            for (int i = 0; i < (int)boneNames.size(); ++i)
+            {
+                const bool selected = (i == curIdx);
+                const char* label = (i == 0) ? "(none)" : boneNames[i].c_str();
+
+                if (ImGui::Selectable(label, selected))
+                {
+                    attach.posBoneName = boneNames[i];
+                    changed = true;
+                }
+
+                if (selected) ImGui::SetItemDefaultFocus();
+            }
+            ImGui::EndCombo();
+        }
+        ImGui::EndDisabled();
+    }
+
+    ImGui::SameLine(0.f, 12.f);
+
+    ImGui::AlignTextToFramePadding();
+    ImGui::TextDisabled("LookAt");
+    ImGui::SameLine(0.f, 6.f);
+
+    changed |= ImGui::Checkbox("##UseLookAt", &attach.useLookAtBone);
+    ImGui::SameLine(0.f, 6.f);
+
+    {
+        int curIdx = FindIndex(attach.lookAtBoneName);
+        const char* preview = (curIdx == 0) ? "(none)" : boneNames[curIdx].c_str();
+
+        ImGui::BeginDisabled(!attach.useLookAtBone);
+        ImGui::SetNextItemWidth(170.f);
+        if (ImGui::BeginCombo("##LookAtBoneName", preview))
+        {
+            for (int i = 0; i < (int)boneNames.size(); ++i)
+            {
+                const bool selected = (i == curIdx);
+                const char* label = (i == 0) ? "(none)" : boneNames[i].c_str();
+
+                if (ImGui::Selectable(label, selected))
+                {
+                    attach.lookAtBoneName = boneNames[i];
+                    changed = true;
+                }
+
+                if (selected) ImGui::SetItemDefaultFocus();
+            }
+            ImGui::EndCombo();
+        }
+        ImGui::EndDisabled();
+    }
+
+    SameLineOrWrap(320.f, baseX, indentX, 12.f);
+
+    ImGui::BeginDisabled(!attach.usePosBone);
+    changed |= ImGui::Checkbox("Offset In Ref Rot Space", &attach.offsetInRefRotSpace);
+    ImGui::EndDisabled();
+
+    ImGui::SameLine(0.f, 12.f);
+
+    ImGui::BeginDisabled(!attach.useLookAtBone);
+    changed |= ImGui::Checkbox("Keep Roll From Key", &attach.keepRollFromKey);
+    ImGui::EndDisabled();
+
+    ImGui::EndDisabled();
+
+    ImGui::PopStyleVar();
+    ImGui::PopID();
+
+    if (changed) PostEdit_SequenceChanged();
+}
 
 
 void CCamPanel::SetRecording(_bool on)
@@ -1476,8 +1643,15 @@ void CCamPanel::RecalcEndTimeFromKeys()
     for (size_t i = 0; i < keys.size(); ++i)
         maxT = max(maxT, keys[i].time);
 
+    if (state.playAllLink && animGUIController.HasAnimator(state.playAllRefHandle))
+    {
+        const float clipEnd = animGUIController.GetClipEndSec(state.playAllRefHandle);
+        maxT = max(maxT, clipEnd);
+    }
+
     state.endTime = maxT;
 }
+
 
 void CCamPanel::ClampCurTime()
 {
@@ -1748,48 +1922,62 @@ void CCamPanel::CaptureSelectedKey_FromCaptureCam()
 
     auto camTr = target.captureCamObj->Get_Component<CTransform>();
 
-    _vector3 worldPos = camTr->Get_Pos();
+    _vector3 worldPos3 = camTr->Get_Pos();
+    Vector3 worldPos(worldPos3.x, worldPos3.y, worldPos3.z);
+
     _vector4 look4 = camTr->Dir(STATE::LOOK);
-    _vector3 worldLook = { look4.x, look4.y, look4.z };
+    Vector3 worldLook(look4.x, look4.y, look4.z);
     worldLook.Normalize();
 
-    if (target.sequence->space == CamSpace::Local)
+    const CamSequenceDesc* seq = target.sequence;
+    const CamBoneAttachDesc& attach = seq->boneAttach;
+
+    if (seq->space == CamSpace::Local)
     {
-        auto refObj = OBJ->Request_Object(target.spaceRefHandle);
-        auto refTr = refObj->Get_Component<CTransform>();
+        cameraBoneCtrl.SetSpaceRef(target.spaceRefHandle);
+        cameraBoneCtrl.SetDesc(&attach);
 
-        Matrix refWorld = Matrix(refTr->Get_WorldMatrix());
+        const bool needSync =
+            (seq->space == CamSpace::Local) ||
+            (attach.enabled && attach.usePosBone && !attach.posBoneName.empty()) ||
+            (attach.enabled && attach.useLookAtBone && !attach.lookAtBoneName.empty());
 
-        Vector3 s{};
-        Vector3 t{};
-        Quaternion r = Quaternion::Identity;
-        refWorld.Decompose(s, r, t);
-        r.Normalize();
+        if (needSync) animGUIController.SetTimeSec(target.spaceRefHandle, key.time);
 
-        Matrix refRT = Matrix::CreateFromQuaternion(r) * Matrix::CreateTranslation(t);
-        Matrix invRefRT = refRT.Invert();
+        Matrix spaceRT = cameraBoneCtrl.GetSpaceRT();
+        Matrix invSpaceRT = spaceRT.Invert();
 
-        Vector3 lp = Vector3::Transform(Vector3(worldPos.x, worldPos.y, worldPos.z), invRefRT);
-        Vector3 ll = Vector3::TransformNormal(Vector3(worldLook.x, worldLook.y, worldLook.z), invRefRT);
-        ll.Normalize();
+        Vector3 basePos = cameraBoneCtrl.GetSpacePosWorld();
 
-        key.pos = _vector3(lp.x, lp.y, lp.z);
-        key.look = _vector3(ll.x, ll.y, ll.z);
+        if (attach.enabled && attach.usePosBone && cameraBoneCtrl.HasPosBone())
+            basePos = cameraBoneCtrl.GetPosBonePosWorld();
+
+        Vector3 worldOffset = worldPos - basePos;
+        Vector3 offset = worldOffset;
+
+        if (attach.enabled && attach.offsetInRefRotSpace)
+            offset = Vector3::TransformNormal(worldOffset, invSpaceRT);
+
+        Vector3 localLook = Vector3::TransformNormal(worldLook, invSpaceRT);
+        localLook.Normalize();
+
+        key.pos = _vector3(offset.x, offset.y, offset.z);
+        key.look = _vector3(localLook.x, localLook.y, localLook.z);
     }
     else
     {
-        key.pos = worldPos;
-        key.look = worldLook;
+        key.pos = _vector3(worldPos.x, worldPos.y, worldPos.z);
+        key.look = _vector3(worldLook.x, worldLook.y, worldLook.z);
     }
 
-    if (target.captureCamComp)
-        key.fov = target.captureCamComp->Get_FOV();
+    if (target.captureCamComp) key.fov = target.captureCamComp->Get_FOV();
 
     key.roll = 0.f;
 
     SyncEditorFromSelection();
     PostEdit_SequenceChanged();
 }
+
 
 bool CCamPanel::ValidateCamPath(const string& pickedPath, string& outError) const
 {
@@ -2093,100 +2281,42 @@ void CCamPanel::DrawKeyframeList_HeaderArea(vector<CamKeyFrame>& keys, bool& ioC
     ImGui::AlignTextToFramePadding();
 
     ImGui::TextUnformatted("Keyframes");
+    ImGui::SameLine(0.f, 10.f);
 
-    float constraintStartX = 0.f;
-    float constraintW = 0.f;
+    const float headerStartX = ImGui::GetCursorPosX();
 
-    const float inputW = 220.f;
-    const float pad = 6.f;
-    const char* label = "Name";
-    const float labelW = ImGui::CalcTextSize(label).x;
-    const float totalW = labelW + pad + inputW;
+    bool constraintChanged = DrawConstraintBar();
 
-    ImGui::SameLine();
-    float nameX = ImGui::GetWindowContentRegionMax().x - totalW;
-    if (nameX < ImGui::GetCursorPosX()) nameX = ImGui::GetCursorPosX();
+    const float boneNeedW = 540.f;
 
-    constraintStartX = ImGui::GetCursorPosX();
-    float constraintMaxX = nameX - 10.f;
-    constraintW = constraintMaxX - constraintStartX;
-
-    bool constraintChanged = false;
-
-    if (constraintW > 150.f)
+    if (ImGui::GetContentRegionAvail().x < boneNeedW)
     {
-        ImVec2 clipMin = ImGui::GetCursorScreenPos();
-        ImVec2 clipMax = ImVec2(clipMin.x + constraintW, clipMin.y + ImGui::GetFrameHeight());
-
-        ImGui::PushClipRect(clipMin, clipMax, true);
-        constraintChanged = DrawConstraintBar();
-        ImGui::PopClipRect();
+        ImGui::NewLine();
+        ImGui::SetCursorPosX(headerStartX);
     }
+    else
+        ImGui::SameLine(0.f, 12.f);
 
-    ImGui::SameLine();
-    ImGui::SetCursorPosX(nameX);
-
-    ImGui::TextDisabled("%s", label);
-    ImGui::SameLine(0.f, pad);
-
-    ImGui::SetNextItemWidth(inputW);
-    const bool enter = ImGui::InputText("##prefab_name", keyListUI.prefabNameBuf, IM_ARRAYSIZE(keyListUI.prefabNameBuf), ImGuiInputTextFlags_EnterReturnsTrue);
-
-    keyListUI.nameEditing = ImGui::IsItemActive();
-
-    if (enter || ImGui::IsItemDeactivatedAfterEdit())
-    {
-        string nextName = keyListUI.prefabNameBuf;
-
-        if (nextName.empty())
-        {
-            keyListUI.lastFileError = "Name cannot be empty";
-            SyncNameBufFromSeq();
-            keyListUI.requestOpenFileErrorPopup = true;
-        }
-        else if (ContainsNonAscii(nextName))
-        {
-            keyListUI.lastFileError = "Name must be English";
-            SyncNameBufFromSeq();
-            keyListUI.requestOpenFileErrorPopup = true;
-        }
-        else
-            target.sequence->name = nextName;
-    }
+    Draw_BoneAttachUI();
 
     if (constraintChanged && target.captureCamObj && state.recording)
     {
         target.captureCamObj->SetMoveConstraint(state.moveConstraint);
-
-        if (state.moveConstraint == CamMoveConstraint::Orbit)
-            target.captureCamObj->SetOrbitState(state.orbit);
+        if (state.moveConstraint == CamMoveConstraint::Orbit) target.captureCamObj->SetOrbitState(state.orbit);
     }
 
     if (state.moveConstraint == CamMoveConstraint::Orbit)
     {
-        bool orbitChanged = false;
-
         ImGui::Spacing();
-        ImGui::SetCursorPosX(constraintStartX);
+        ImGui::SetCursorPosX(headerStartX);
 
-        if (constraintW > 150.f)
-        {
-            ImVec2 clipMin = ImGui::GetCursorScreenPos();
-            ImVec2 clipMax = ImVec2(clipMin.x + constraintW, clipMin.y + ImGui::GetFrameHeight());
-
-            ImGui::PushClipRect(clipMin, clipMax, true);
-            orbitChanged = DrawOrbitTargetBar();
-            ImGui::PopClipRect();
-        }
-        else
-            orbitChanged = DrawOrbitTargetBar();
-
-        if (orbitChanged && target.captureCamObj && state.recording)
-            target.captureCamObj->SetOrbitState(state.orbit);
+        bool orbitChanged = DrawOrbitTargetBar();
+        if (orbitChanged && target.captureCamObj && state.recording) target.captureCamObj->SetOrbitState(state.orbit);
     }
 
     ImGui::Separator();
 }
+
 
 void CCamPanel::DrawKeyframeList_Table(vector<CamKeyFrame>& keys, bool& ioChangedAny)
 {
@@ -2326,6 +2456,30 @@ void CCamPanel::DrawKeyframeList_Table(vector<CamKeyFrame>& keys, bool& ioChange
                     }
 
                     if (!key.useCustomEase) ImGui::EndDisabled();
+
+                    ImGui::SameLine();
+                    ImGui::Dummy(ImVec2(10.f, 0.f));
+                    ImGui::SameLine();
+                    ImGui::TextDisabled("Tag");
+                    ImGui::SameLine();
+
+                    auto it = keyListUI.eventTagBufs.find(key.keyId);
+                    if (it == keyListUI.eventTagBufs.end())
+                    {
+                        array<char, 64> init{};
+                        strncpy_s(init.data(), init.size(), key.eventTag.c_str(), _TRUNCATE);
+                        it = keyListUI.eventTagBufs.emplace(key.keyId, init).first;
+                    }
+
+                    auto& tagBuf = it->second;
+
+                    ImGui::SetNextItemWidth(140.f);
+                    const bool enter = ImGui::InputText("##tag", tagBuf.data(), (int)tagBuf.size(), ImGuiInputTextFlags_EnterReturnsTrue);
+                    if (enter || ImGui::IsItemDeactivatedAfterEdit())
+                    {
+                        key.eventTag = string(tagBuf.data());
+                        ioChangedAny = true;
+                    }
                 }
 
                 ImGui::PopID();
@@ -2341,6 +2495,7 @@ void CCamPanel::DrawKeyframeList_Table(vector<CamKeyFrame>& keys, bool& ioChange
 
     ImGui::PopStyleVar(3);
 }
+
 
 void CCamPanel::DrawKeyframeEditor_SelectedKeyTable(bool& ioChangedAny)
 {
@@ -2858,6 +3013,7 @@ bool CCamPanel::LoadSequenceFromPath(const string& anyPath)
     }
 
     *target.sequence = move(loaded);
+    keyListUI.eventTagBufs.clear();
 
     if (target.sequence->space == CamSpace::Local && !target.spaceRefHandle.isValid() && !spaceRefCandidates.empty())
         target.spaceRefHandle = spaceRefCandidates[0];
@@ -2893,9 +3049,4 @@ CCamPanel* CCamPanel::Create(GUI_CONTEXT* context)
     auto inst = new CCamPanel(context);
     inst->Init();
     return inst;
-}
-
-void CCamPanel::Free()
-{
-    __super::Free();
 }

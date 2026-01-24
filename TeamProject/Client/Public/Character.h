@@ -27,10 +27,10 @@ public:
 
     struct InputInfo
     {
-        _vector3 direction = {};
+        _vector3 direction = {0,0,0};
         _vector3 prevDirection = {};
         _float   bufferTimer = 0.f;
-        // Turnback ������ �߰�
+        // Turnback
         _int  prevMoveX = 0;
         _int  prevMoveZ = 0;
         _int  curMoveX = 0;
@@ -100,6 +100,9 @@ public:
     _bool       Can_Move() const { return m_bCanMove; }
     void        Lock_Move() { m_bCanMove = false; }
     void        Unlock_Move() { m_bCanMove = true; }
+    _bool       Can_Rotate() const { return m_bCanRotate; }
+    void        Lock_Rotate() { m_bCanRotate = false; }
+    void        Unlock_Rotate() { m_bCanRotate = true; }
     // 상태
     _bool       Is_Attack() const { return m_bIsAttack; }
     _bool       Is_Evade() const { return m_bIsEvade; }
@@ -119,6 +122,8 @@ public:
 
     OBJECT_HANDLE       Get_TargetHandle() { return m_TargetHandle; };
     void                Set_TargetHandle(OBJECT_HANDLE targetHandle) { m_TargetHandle = targetHandle; };
+    OBJECT_HANDLE       Get_ParryHandle() { return m_ParryHandle; }
+    void                Set_ParryHandle(OBJECT_HANDLE parryHandle) { m_ParryHandle = parryHandle; }
 
     void    Active_Character();
     void    DeActive_Character();
@@ -143,24 +148,29 @@ public:
     virtual void    OnTriggerExit(CGameObject* pOther) override;
 
 public:
+    virtual void    Reset_State() {};
     virtual void    On_Start() {};
     virtual void    On_Move(const InputInfo& inputInfo);
     virtual void    On_Attack();
     virtual void    On_Evade();
-    virtual void    On_SwitchIn(SWITCH eType)   PURE;
-    virtual void    On_SwitchOut()              PURE;
+    virtual void    On_SwitchIn(SWITCH eType) {}
+    virtual void    On_SwitchOut() {}
     virtual void    On_Ultimate();
-    virtual void    On_Special() {}; // 개별 구현 
-    virtual void    On_Hit(DAMAGE_TYPE eType) {}; // 개별 구현
+    virtual void    On_Special() {} // 개별 구현 
+    virtual void    On_Hit(DAMAGE_TYPE eType) {} // 개별 구현
     virtual void    On_Interact();
 
 public:
     HRESULT  Attach_AttackCollider(ATTACK_COLLIDER_DESC* pDesc);
+    HRESULT  Attach_ParryCollider();
     void     Rotate(_vector3 vDirection);
     void     Stop_Rotation();
-
     _bool    Is_OppositeInput() const;
-    _bool    Can_Parry() const;
+    
+    _bool             Can_Parry();
+    OBJECT_HANDLE     Calculate_Parry();
+    _vector3          Get_ParryPos() { return m_vParryPos; }
+    _vector3          Get_ParryLook() { return m_vParryLook; }
 
     _bool    Can_Evade() const;
     void     Use_Evade();
@@ -176,7 +186,7 @@ public:
     _bool    Is_Active_AttackCollider(const string& strName);
 
     void     Take_Damage(DAMAGE_TYPE eType, _float fDamage);
-    _vector3 Get_HitTargetPos() const { return m_vTargetPos; }
+    _vector3 Get_HitTargetPos() const { return m_vHitPos; }
 
     _bool Is_Invincible() const { return m_iInvincibleCount > 0 || m_fInvincibleTimer > 0.f; }
     // 상태머신용 - 명시적 제어
@@ -185,13 +195,13 @@ public:
     // 일시적 무적 - 회피 무적프레임 등
     void Set_InvincibleTimer(_float fDuration) { m_fInvincibleTimer = fDuration; }
 
-
 private:
     void    Update_Rotation(_float dt);
     void    Update_Evade(_float dt);
     void    Update_Energy(_float dt);
     void    Update_Decibel(_float dt);
     void    Update_Invincible(_float dt);
+
 
     class CCharacterAttackCollider* Find_AttackCollider(const string& strName);
 
@@ -201,63 +211,63 @@ protected:
     string                      m_strAnimName = "";   // For Animator
     string                      m_strName = "";       // 
     CHARACTER                   m_eCharacterName = { CHARACTER::JaneDoe };
+    _uint                       m_iCurrentLevel = { 1 };
     unordered_map<string, _int> m_AttackColliderIndex;
     // HP
     _float          m_fMaxHP = { 100.f };
     _float          m_fCurrentHP = { 100.f };
-    // 특수 스킬
-    EnergyDesc   m_tEnergy = {};
-    static  constexpr _float    MAX_ENERGY = { 120.f };
-    // 궁극기
-    _float          m_fCurrentDecibel = {};
-    _float          m_fPrevDecibel = {};
-    static constexpr _float MAX_DECIBEL = { 3000.f };
-
-    _float          m_fAttackPower = { 10.f };
-    _float          m_fDefense = { 5.f };
-    _float          m_fMoveSpeed = { 1.f };
-    _uint           m_iCurrentLevel = { 1 };            //*ĳ���� ����*
-    // 상태
+    // 상태 + 이동/회전
     InputInfo       m_inputInfo;
+    _bool           m_bIsMain = { false };
     _bool           m_bCanMove = { true };
     _bool           m_bIsAttack = { false };
     _bool           m_bIsEvade = { false };
     _bool           m_bCanInteract = { false };
-    // ȸ�� �ý���
-    _bool                   m_bEvadeBuffer = { false };
-    _uint                   m_iEvadeMax = 2;
-    _uint                   m_iEvadeCount = { 0 };
-    _float                  m_fEvadeTimer = { 0.f };
-    _float                  m_fEvadeCooldown = { 0.f };
-    static constexpr _float EVADE_COOLDOWN = 1.f;
-    //*����ġ �ý���*
-    SWITCH                  m_eSwitchType = SWITCH::END;
-    // ȸ��
     _quaternion     m_qCurrentRot = {};
     _quaternion     m_qTargetRot = {};
+    _bool           m_bCanRotate = { true };
     _bool           m_bIsRotating = { false };
-    // �и�
-    unordered_set<CGameObject*>  m_ParryableTargets;
-    // 피격 위치
-    _vector3    m_vTargetPos = {};
-    // �׽�Ʈ��
-    _bool           m_bTest = { false };
-    //���̴�
-    _float3     m_vRimLightColor = _float3(0.f, 0.f, 0.f);
-    _float      m_fRimLightPower = { 0.f };
-    _float      m_fDissolveProgress = { 0.f };
-    _float      m_fDissolveTiling = { 10.f };
-    // ����
-    OBJECT_HANDLE                 m_TargetHandle;
-    static constexpr _float TURNBACK_ANGLE_THRESHOLD = 100.f;
-    _bool                         m_bLockOn = { false };
+    OBJECT_HANDLE   m_TargetHandle;
+    _bool           m_bLockOn = { false };
+    // 회피
+    _bool           m_bEvadeBuffer = { false };
+    _uint           m_iEvadeMax = 2;
+    _uint           m_iEvadeCount = { 0 };
+    _float          m_fEvadeTimer = { 0.f };
+    _float          m_fEvadeCooldown = { 0.f };
+    // 특수 스킬
+    EnergyDesc   m_tEnergy = {};
+    // 궁극기
+    _float          m_fCurrentDecibel = {};
+    _float          m_fPrevDecibel = {};
     // 무적
-    _int    m_iInvincibleCount = { 0 };
-    _float  m_fInvincibleTimer = { 0.f };
+    _int            m_iInvincibleCount = { 0 };
+    _float          m_fInvincibleTimer = { 0.f };
+    // 패링
+    _int            m_iParryColliderIndex = {};
+    SWITCH          m_eSwitchType = SWITCH::END;
+    _float          m_fParryOffset = { 1.8f };
+    _vector3        m_vParryPos = {};
+    _vector3        m_vParryLook = {};
+    OBJECT_HANDLE   m_ParryHandle;
+    // 피격
+    _vector3        m_vHitPos = {};     // 피격 위치
+    // 효과
+    _float3         m_vRimLightColor = _float3(0.f, 0.f, 0.f);
+    _float          m_fRimLightPower = { 0.f };
+    _float          m_fDissolveProgress = { 0.f };
+    _float          m_fDissolveTiling = { 10.f };
+    // 테스트
+    _bool           m_bTest = { false };
+    // 미사용?
+    _float          m_fAttackPower = { 10.f };
+    _float          m_fDefense = { 5.f };
+    _float          m_fMoveSpeed = { 1.f };
 
-    _bool m_bIsMain = { false };
-
-
+    static constexpr _float     TURNBACK_ANGLE_THRESHOLD = 100.f;
+    static constexpr _float     EVADE_COOLDOWN = 1.f;
+    static  constexpr _float    MAX_ENERGY = { 120.f };
+    static constexpr _float     MAX_DECIBEL = { 3000.f };
 public:
     virtual CGameObject* Clone(INIT_DESC* pArg) PURE;
     virtual void Free() override;

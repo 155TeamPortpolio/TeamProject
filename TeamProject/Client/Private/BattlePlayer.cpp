@@ -15,6 +15,7 @@
 //character class
 #include "Character.h"
 #include "CharacterAttackCollider.h"
+#include "CharacterParryCollider.h"
 #include "Corin.h"
 #include "JaneDoe.h"
 
@@ -424,6 +425,8 @@ HRESULT CBattlePlayer::Initialize_CharacterPrototype()
 		return E_FAIL;
 	if (FAILED(pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_CharacterAttackCollider", CCharacterAttackCollider::Create())))
 		return E_FAIL;
+	if (FAILED(pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_CharacterParryCollider", CCharacterParryCollider::Create())))
+		return E_FAIL;
 	return S_OK;
 }
 
@@ -488,20 +491,22 @@ HRESULT CBattlePlayer::ClearCharacters()
 
 void CBattlePlayer::NotifyCharacterSwitchIn()
 {
+	m_pCurrentCharacter->Set_MainCharacter(true);
+	m_pCurrentCharacter->Active_Character();
 	m_pCurrentCharacter->Get_Component<CCharacterController>()->Set_Position(m_vSwitchPosition);
 	m_pCurrentCharacter->Get_Component<CTransform>()->Set_Look(m_vSwitchLook);
 	m_pCurrentCharacter->Set_TargetHandle(m_TargetHandle);
 
 	Sync_ActionUI();
-	// 이후 추가 예정
-	//if (m_pCurrentCharacter->Can_Parry())
-	//{
-	//	m_pCurrentCharacter->On_SwitchIn(CCharacter::SWITCH::PARRYAID);
-	//	return;
-	//}
 
-	m_pCurrentCharacter->Set_MainCharacter(true);
-	m_pCurrentCharacter->On_SwitchIn(CCharacter::SWITCH::NORMAL);
+	if (m_bReserveParry)
+	{
+		m_pCurrentCharacter->On_SwitchIn(CCharacter::SWITCH::PARRYAID);
+		m_pCurrentCharacter->Set_ParryHandle(m_ParryHandle);
+		m_bReserveParry = false;
+	}
+	else
+		m_pCurrentCharacter->On_SwitchIn(CCharacter::SWITCH::NORMAL);
 }
 
 void CBattlePlayer::NotifyCharacterSwitchOut()
@@ -513,8 +518,17 @@ void CBattlePlayer::NotifyCharacterSwitchOut()
 		- XMVectorScale(m_vSwitchLook, 6.f)
 		+ XMVectorSet(0.f, 1.f, 0.f, 0.f);
 
+	if (m_pCurrentCharacter->Can_Parry())
+	{
+		m_bReserveParry = true;
+		m_ParryHandle = m_pCurrentCharacter->Calculate_Parry();
+		m_vSwitchPosition = _vector4{ m_pCurrentCharacter->Get_ParryPos() };
+		m_vSwitchLook = _vector4{ m_pCurrentCharacter->Get_ParryLook() };
+	}
+
 	m_pCurrentCharacter->Set_MainCharacter(false);
 	m_pCurrentCharacter->On_SwitchOut();
+	m_input.ResetBuffer();
 }
 
 void CBattlePlayer::Sync_ActionUI()

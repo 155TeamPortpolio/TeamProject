@@ -140,6 +140,7 @@ HRESULT CCharacterController::Initialize(COMPONENT_DESC* pArg)
 	pShape->setSimulationFilterData(filterData); // 시뮬레이션용 필터
 	pShape->setQueryFilterData(filterData);      // 레이캐스팅용 필터
 	m_FilterData = filterData;
+	m_QueryFilterData = filterData;
 
 	m_vColor = pDesc->vColliderColor;
 
@@ -152,6 +153,7 @@ HRESULT CCharacterController::Initialize(COMPONENT_DESC* pArg)
 	m_fMaxSpeed = pDesc->fMaxSpeed;
 
 	m_pQueryFilter = new CCCTQueryFilter(&m_FilterData);
+	m_pCCTFilter = new CCCTFilterCallback();
 
 	return S_OK;
 }
@@ -184,6 +186,39 @@ void CCharacterController::OnTriggerStay(ICollidable* pOther)
 void CCharacterController::OnTriggerExit(ICollidable* pOther)
 {
 	m_pOwner->OnTriggerExit(pOther->Get_Owner());
+}
+
+void CCharacterController::Set_CompActive(_bool bActive)
+{
+	__super::Set_CompActive(bActive);
+	if (!m_pController)
+		return;
+	PxRigidDynamic* pActor = m_pController->getActor();
+	if (!pActor)
+		return;
+	PxShape* pShape = nullptr;
+	pActor->getShapes(&pShape, 1);
+	if (!pShape)
+		return;
+
+	if (bActive)
+	{
+		pActor->setActorFlag(PxActorFlag::eDISABLE_SIMULATION, false);
+		m_FilterData.word1 = m_iCollisionMask;
+		m_QueryFilterData.word0 = m_FilterData.word0;
+		m_QueryFilterData.word1 = m_iCollisionMask;
+		pShape->setSimulationFilterData(m_FilterData);
+		pShape->setQueryFilterData(m_FilterData);
+	}
+	else
+	{
+		pActor->setActorFlag(PxActorFlag::eDISABLE_SIMULATION, true);
+		m_FilterData.word1 = ENUM(COLLISION_GROUP::COMMON);
+		m_QueryFilterData.word0 = m_FilterData.word0;
+		m_QueryFilterData.word1 = ENUM(COLLISION_GROUP::COMMON);
+		pShape->setSimulationFilterData(m_FilterData);
+		pShape->setQueryFilterData(m_FilterData);
+	}
 }
 
 void CCharacterController::Update(_float dt)
@@ -609,12 +644,14 @@ void CCharacterController::Move(_fvector vDisplacement, _float dt)
 	XMStoreFloat3(&vDisp, vDisplacement);
 	PxVec3 pxDisp(vDisp.x, vDisp.y, vDisp.z);
 
-	m_QueryFilterData.word0 = m_FilterData.word1;
+	m_QueryFilterData.word0 = m_FilterData.word0;  // 그룹
+	m_QueryFilterData.word1 = m_FilterData.word1;  // 마스크
 
 	PxControllerFilters filters;
 	filters.mFilterData = &m_QueryFilterData;
 	filters.mFilterCallback = m_pQueryFilter;
 	filters.mFilterFlags = PxQueryFlag::eSTATIC | PxQueryFlag::eDYNAMIC | PxQueryFlag::ePREFILTER;
+	filters.mCCTFilterCallback = m_pCCTFilter;  // CCT 간 필터 추가
 
 	const float dispLen = pxDisp.magnitude();
 	const float minDist = min(m_fMinMoveDist, dispLen * 0.25f);
@@ -880,6 +917,12 @@ void CCharacterController::Free()
 	{
 		m_pController->release();
 		m_pController = nullptr;
+	}
+
+	if (m_pCCTFilter)
+	{
+		delete m_pCCTFilter;
+		m_pCCTFilter = nullptr;
 	}
 
 	__super::Free();

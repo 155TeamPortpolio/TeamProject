@@ -7,9 +7,13 @@
 #include "Material.h"
 #include "MaterialInstance.h"
 
+#include "SkeletalModel.h"
 #include "Animator3D.h"
 #include "CharacterController.h"
 #include "ObjectContainer.h"
+#include "Renderer.h"
+#include "Shader.h"
+#include "Texture.h"
 
 #include "StateMachine.h"
 #include "JaneDoeState_Start.h"
@@ -39,6 +43,32 @@ void CJaneDoe::Process_Passion(_float fPassionGauge)
 void CJaneDoe::Process_PassionSkill(_bool bAvailable)
 {
 	m_bPassionSkillAvailable = bAvailable;
+}
+
+void CJaneDoe::Update_MotionBlurQueue()
+{
+	++m_iFrameCount;
+	if (m_iFrameCount < FRAMECOUNT)
+		return;
+
+	m_iFrameCount = 0;
+	if (m_BoneMatrices.size() > 5)
+	{
+		m_BoneMatrices.pop_front();
+		m_WorldMatrices.pop_front();
+	}
+
+	auto Model = Get_Component<CSkeletalModel>();
+	vector<vector<_float4x4>> BoneMatrices;
+	BoneMatrices.resize(Model->Get_MeshCount());
+
+	for (_int i = 0; i < Model->Get_MeshCount(); ++i)
+	{
+		BoneMatrices[i] = m_pAnimator->Get_BoneMatrices(i);
+	}
+	_float4x4 worldMatrix = *m_pTransform->Get_WorldMatrix_Ptr(); 
+	m_WorldMatrices.push_back(worldMatrix);
+	m_BoneMatrices.push_back(BoneMatrices);
 }
 
 HRESULT CJaneDoe::Initialize_Prototype()
@@ -81,6 +111,8 @@ HRESULT CJaneDoe::Initialize_Prototype()
 		ResourceManager()->Add_ResourcePath("JaneDoe_Sting0.model", "../Bin/Resources/Effect/Model/JaneDoe_Sting0/JaneDoe_Sting0.model");
 		ResourceManager()->Add_ResourcePath("JaneDoe_Sting0.mat", "../Bin/Resources/Effect/Model/JaneDoe_Sting0/JaneDoe_Sting0.mat");
 	}
+
+	ResourceManager()->Add_ResourcePath("Eff_Noise_045.png", "../Bin/Resources/Global/BattleCharacter/JaneDoe/Eff_Noise_045.png");
 	return S_OK;
 }
 
@@ -121,12 +153,18 @@ void CJaneDoe::Awake()
 
 	Initialize_Stat();
 
+	if (FAILED(Attach_ParryCollider()))
+		return;
 	m_tEnergy.fCurrentEnergy = 120;
 
+	auto Texture = ResourceManager()->Load_Texture(G_GlobalLevelKey, "Eff_Noise_045.png");
+	RenderSystem()->Set_NoiseTexture(NOISE_FXTYPE::MOTIONBLUR, Texture);
 }
 
 void CJaneDoe::Priority_Update(_float dt)
 {
+	Update_MotionBlurQueue();
+	Add_PassionMotionBlur();
 	__super::Priority_Update(dt);
 }
 
@@ -163,6 +201,11 @@ void CJaneDoe::Render_GUI()
 	}
 }
 
+void CJaneDoe::Reset_State()
+{
+	m_pStateMachine->Set_Trigger("ResetState");
+}
+
 void CJaneDoe::On_Start()
 {
 	m_pStateMachine->Set_Trigger("QuestStart");
@@ -179,13 +222,20 @@ void CJaneDoe::On_SwitchIn(SWITCH eType)
 
 void CJaneDoe::On_SwitchOut()
 {
-	m_pStateMachine->Set_Trigger("SwitchOut");
+	Push_Invincible();
+	Lock_Move();
+	Stop_Rotation();
+	if (m_pStateMachine->Get_CurrentStateName() == "Attack")
+	{
+		m_pStateMachine->Set_Bool("OutReserve", true);
+	}
+	else
+		m_pStateMachine->Set_Trigger("SwitchOut");
 }
 
 void CJaneDoe::On_Ultimate()
 {
 	__super::On_Ultimate();
-
 	m_pStateMachine->Set_Int("AttackEntryMode", 3);
 	m_pStateMachine->Set_Trigger("Attack");
 }
@@ -281,6 +331,9 @@ HRESULT CJaneDoe::Initialize_Transitions()
 	m_pStateMachine->Register_Transition("Move", "Idle",
 		CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "ToIdle");
 
+	m_pStateMachine->Register_AnyStateTransition("Idle",
+		CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "ResetState");
+
 	// Attack
 	m_pStateMachine->Register_AnyStateTransition("Attack",
 		CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "Attack");
@@ -318,8 +371,10 @@ HRESULT CJaneDoe::Initialize_Transitions()
 	m_pStateMachine->Register_Transition("SwitchOut", "Idle",
 		CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "ToIdle");
 
-	m_pStateMachine->Register_AnyStateTransition("Hit",
-		CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "ToHit");
+	vector<CStateMachine<CJaneDoe>::CONDITION_INFO> HitConditions;
+	HitConditions.push_back({ CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "ToHit" });
+	HitConditions.push_back({ CStateMachine<CJaneDoe>::CONDITION_BOOL_FALSE, "Resistance" });
+	m_pStateMachine->Register_AnyStateTransition("Hit", HitConditions);
 
 	m_pStateMachine->Register_Transition("Hit", "Idle",
 		CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "ToIdle");
@@ -486,9 +541,68 @@ HRESULT CJaneDoe::Initialize_Effects()
 	return S_OK;
 }
 
+HRESULT CJaneDoe::Add_PassionMotionBlur()
+{
+	auto Model = Get_Component<CSkeletalModel>();
+	_uint size = sizeof(_float4x4) * m_pAnimator->Get_BoneMatrices(CAnimator3D::BoneSpace::COMBINED).size();
+	m_vRimLightColor = _float3(1.f, 0.1f, 0.f);
+	m_fRimLightPower = 3.f;
+	for (_int k = m_BoneMatrices.size() - 1; k >= 0; --k)
+	{
+		_float t = (_float)k / (_float)(m_BoneMatrices.size() - 1);
+		_float4 vColor;
+		vColor.x = 0.3f + (0.7f * t);           
+		vColor.y = 0.0f + (0.15f * t);          
+		vColor.z = 0.0f;
+		vColor.w = 0.08f + (0.9f * t);         
+
+		for (_int i = 0; i < Model->Get_MeshCount(); ++i)
+		{
+			if (Model->isDrawable(i) == false) continue;
+			MOTIONBLUR_COMMAND Command =
+			{
+				Get_Component<CMaterial>()->Get_Shader(Model->Get_MaterialIndex(i)),
+				&m_WorldMatrices[k],
+				m_BoneMatrices[k][i],
+				"float4x4[]",
+				vColor,
+				size ,
+				i,
+				[this](ID3D11DeviceContext* pContext, _uint index) {Render_PassionMotionBlur(pContext,index); }
+			};
+			RenderSystem()->Add_MotionBlurCommand(Command);
+		}
+	}
+	return S_OK;
+}
+
+HRESULT CJaneDoe::Render_PassionMotionBlur(ID3D11DeviceContext* pContext, _uint idx)
+{
+	auto RenderSys = RenderSystem()->GetRenderer(RENDERER_TYPE::SKINNED);
+	auto Model = Get_Component<CSkeletalModel>();
+	auto Material = Get_Component<CMaterial>();
+	_int Index = Model->Get_MaterialIndex(idx);
+	auto Shader = Material->Get_Shader(Index);
+	ID3D11InputLayout* pLayout;
+	RenderSys->Get_InputLayout(
+		Model,
+		Shader,
+		idx,
+		"MotionBlur",
+		&pLayout
+	);
+
+	pContext->IASetInputLayout(pLayout);
+	Shader->Apply("MotionBlur", pContext);
+	Model->Draw(pContext, idx);
+
+	return S_OK;
+}
+
 void CJaneDoe::Update_States()
 {
 	if (!Is_MainCharacter()) return;
+	if (!m_pCCT->Get_CompActive()) return;
 
 	m_pStateMachine->Set_Bool("IsMove", Is_Move_Buffer());
 

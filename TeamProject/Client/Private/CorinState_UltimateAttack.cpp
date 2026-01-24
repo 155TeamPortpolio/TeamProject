@@ -54,6 +54,17 @@ void CCorinState_UltimateAttack::Update(CCorin* pOwner, _float dt)
             pOwner->End_AttackCollider("Saw");
         }
     }
+
+    auto pCorinState = pOwner->Get_StateMachine();
+    if (pCorinState->Get_Bool("OutReserve"))
+    {
+        if (m_pSubStateMachine->Get_CurrentStateName() == "End")
+        {
+            pCorinState->Set_Trigger("SwitchOut");
+            pCorinState->Set_Bool("OutReserve", false);
+        }
+    }
+
     __super::Update(pOwner, dt);
 }
 

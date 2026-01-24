@@ -28,11 +28,35 @@ void CUI_WorldToScreen::Update(_float dt)
 
 void CUI_WorldToScreen::Update_WorldToScreen(_float3 vPosition)
 {
+    _bool isValid = Update_WorldToScreenPos(vPosition);
+    Update_Visibility(isValid);
+
+    if (m_isValid)
+        Update_ZPriority(vPosition);
+}
+
+_bool CUI_WorldToScreen::Update_WorldToScreenPos(_float3 vPosition)
+{
     auto pCameraMgr = CGameInstance::GetInstance()->Get_CameraMgr();
-    
-    // 월드 위치로 스크린 위치 구하기
-    _bool isAlive = Helper::WorldToScreen(vPosition, m_vAnchorOffset, *pCameraMgr->Get_ViewMatrix(), *pCameraMgr->Get_ProjMatrix(), _float4(0.f, 0.f, m_WinSize.x, m_WinSize.y));
-    Set_Alive(isAlive);
+
+    return Helper::WorldToScreen(vPosition, m_vAnchorOffset, *pCameraMgr->Get_ViewMatrix(), *pCameraMgr->Get_ProjMatrix(), _float4(0.f, 0.f, m_WinSize.x, m_WinSize.y));
+}
+
+void CUI_WorldToScreen::Update_Visibility(_bool isValid)
+{
+    if (isValid == m_isValid)
+        return;
+
+    m_isValid = isValid;
+    SetRenderLayer(isValid ? RENDER_LAYER::Default : RENDER_LAYER::None);
+}
+
+void CUI_WorldToScreen::Update_ZPriority(_float3 vPosition)
+{
+    if (!m_isValid)
+        return;
+
+    auto pCameraMgr = CGameInstance::GetInstance()->Get_CameraMgr();
 
     // 플레이어와 월드 위치 사이의 방향 벡터와 카메라 룩을 내적해서 깊이 구하기
     auto pPlayer = ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Player));
@@ -40,19 +64,5 @@ void CUI_WorldToScreen::Update_WorldToScreen(_float3 vPosition)
     Vector3 vDiff = (Vector3(vPosition) - Vector3(vPlayerPos));
     vDiff.Normalize();
     _float fDot = vDiff.Dot(Vector3(pCameraMgr->GetForward()));
-    m_Zpriority = fDot;
-
-    //_float fNearDist = 5.f;
-    //_float fFarDist = 6.f;
-    //_float fMinScale = 0.2f;
-    //_float fMaxScale = 1.f;
-    //
-    //_float fDistance = (_vector3(m_vWorldPos) - _vector3(pCameraMgr->Get_CameraPos())).Length();
-    //
-    //_float t = (fDistance - fNearDist) / (fFarDist - fNearDist);
-    //t = clamp(t, 0.f, 1.f);
-    //
-    //_float fScale = fMaxScale + (fMinScale - fMaxScale) * t;
-    //
-    //m_vScale = _float2(fScale, fScale);
+    m_Zpriority = fDot + 1.f;   // 플레이어랑 내적해서 구하기 때문에 화면상에서 테두리쪽에 있을 때 HUD 위에 그려져서 보정 값으로 1.f 더함
 }

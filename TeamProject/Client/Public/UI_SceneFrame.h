@@ -6,8 +6,10 @@ NS_BEGIN(Client)
 class CUI_SceneFrame final : public CUI_Object
 {
 private:
-	enum Child { TOP, BOTTOM, END };
-	inline static const string INSTANCENAMES[ENUM(Child::END)] = { "top", "bottom" };
+	enum CHILD { TOP, BOTTOM, END };
+	inline static const string INSTANCENAMES[ENUM(CHILD::END)] = { "top", "bottom" };
+
+	enum class STATE { INVISIBLE, VISIBLE, END };
 
 private:
 	CUI_SceneFrame() {}
@@ -26,7 +28,14 @@ public:
 	virtual void	UI_DeActive(void* pArg = nullptr) override;
 
 private:
-	CUI_Object*		m_pChildren[Child::END] = {};
+	CUI_Object*		m_pChildren[CHILD::END] = {};
+	STATE			m_eState = { STATE::END };
+
+private:
+	void Change_State(STATE eState);
+
+	void Set_ChildAnimation(CHILD child, _int iIndex);
+	_bool Is_ChildAnimFinished(CHILD child);
 
 public:
 	static  CGameObject* Create();

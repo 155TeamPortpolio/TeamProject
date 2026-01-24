@@ -201,13 +201,49 @@ PS_OUT_BACKBUFFER PS_MAIN_COMBINED(PS_IN In)
     vector vStatic = StaticCombinedTexture.Sample(DefaultSampler, In.vTexcoord);
     vector vEffect = EffectCombinedTexture.Sample(DefaultSampler, In.vTexcoord);
     vector vUI = UICombinedTexture.Sample(DefaultSampler, In.vTexcoord);
+    vector motionblur = MotionBlurTexture.Sample(DefaultSampler, In.vTexcoord);
     
-    float3 result = vSkinned.rgb;
+    float4 vStaticDepth = StaticDepthTexture.Sample(DefaultSampler, In.vTexcoord);
+    float4 vSkinnedDepth = SkinnedDepthTexture.Sample(DefaultSampler, In.vTexcoord);
     
-    result.rgb = lerp(result.rgb, vStatic.rgb, vStatic.a);
+    float3 result;
+    float resultAlpha;
+    
+    bool hasStatic = vStaticDepth.x > 0.0001f;
+    bool hasSkinned = vSkinnedDepth.x > 0.0001f;
+    
+    if (hasStatic && hasSkinned)
+    {
+        if (vStaticDepth.x < vSkinnedDepth.x) 
+        {
+            result = vStatic.rgb;
+            resultAlpha = vStatic.a;
+        }
+        else 
+        {
+            result = lerp(vStatic.rgb, vSkinned.rgb + motionblur.rgb, vSkinned.a);
+            resultAlpha = max(vSkinned.a, vStatic.a);
+        }
+    }
+    else if (hasSkinned)
+    {
+        result = vSkinned.rgb + motionblur.rgb;
+        resultAlpha = vSkinned.a;
+    }
+    else if (hasStatic)
+    {
+        result = vStatic.rgb;
+        resultAlpha = vStatic.a;
+    }
+    else
+    {
+        result = float3(0, 0, 0);
+        resultAlpha = 0;
+    }
+    
     result.rgb = lerp(result.rgb, vUI.rgb, vUI.a);
     float3 finalColor = vEffect.rgb + result * (1.f - vEffect.a);
-    float alpha = max(vEffect.a, max(vUI.a, max(vSkinned.a, vStatic.a)));
+    float alpha = max(vEffect.a, max(vUI.a,resultAlpha));
     Out.vBackBuffer = float4(finalColor, alpha);
     
     return Out;
@@ -222,7 +258,6 @@ float4 PS_MAIN_FINAL(PS_IN In) : SV_Target
     float4 radialBloom = RadialBloomTexture.Sample(DefaultSampler, distortedUV);
     float4 hdrBloom = HDRBloomFinalTexture.Sample(DefaultSampler, distortedUV);
     float4 ui = UI2DTexture.Sample(DefaultSampler, In.vTexcoord);
-    
     float3 hdrColor = scene.rgb;
     
     if (g_UseAddictiveColor)
@@ -297,7 +332,7 @@ technique11 DefaultTechnique
     pass COMBINED
     {
         SetRasterizerState(RS_Default);
-        SetDepthStencilState(DSS_Default, 0);
+        SetDepthStencilState(DSS_None, 0);
         SetBlendState(BS_Premultiplied, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;

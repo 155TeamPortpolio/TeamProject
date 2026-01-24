@@ -25,6 +25,7 @@ protected:
 public:
     virtual bool       Build(const vector<CamKeyFrame>& keys) = 0;
     virtual Quaternion Evaluate(float t) const = 0;
+    virtual float      GetLastRoll() const { return 0.f; }
 };
 
 class ENGINE_DLL ICamFovEvaluator abstract : public CBase

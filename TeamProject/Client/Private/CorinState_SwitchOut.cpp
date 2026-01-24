@@ -5,9 +5,6 @@
 
 void CCorinState_SwitchOut::Enter(CCorin* pOwner)
 {
-    pOwner->Push_Invincible();
-    pOwner->Lock_Move();
-    pOwner->Stop_Rotation();
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "SwitchOut_Normal")
         .Loop(false)
         .Apply();
@@ -30,5 +27,12 @@ void CCorinState_SwitchOut::Update(CCorin* pOwner, _float dt)
 
 void CCorinState_SwitchOut::Exit(CCorin* pOwner)
 {
+    pOwner->Get_StateMachine()->Set_Bool("IsMove", false);
     __super::Exit(pOwner);
+}
+
+_bool CCorinState_SwitchOut::Handle_Transition(CCorin* pOwner, const string& strState)
+{
+    if (strState == "Idle")  return true;
+    return false;
 }

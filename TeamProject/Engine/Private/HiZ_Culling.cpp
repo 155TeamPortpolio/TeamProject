@@ -539,7 +539,7 @@ _bool CHiZ_Culling::BuildOcclusionInput(
 	OcclusionInput& outInput)
 {
 	MINMAX_BOX World = localAabbMinMax;
-	World.TransformBox_8Corner(Matrix(worldMatrix));
+	World = World.TransformBox_8Corner(Matrix(worldMatrix));
 
 	XMFLOAT3 size{
 		World.vMax.x - World.vMin.x,

@@ -37,13 +37,17 @@ void CStage::BaseIntro(CZero_Level::StageContext& context)
 			m_introFlow.AddOnce(seqId, [context]() {if (context.isFirstIn)
 			{
 				BattleSystem()->GetBattlePlayer()->QuestStart();
-				CCamDirector::GetInstance()->AutoTarget();
-				CCamDirector::GetInstance()->RequestSequence(CamSeqType::ZeroIntro);
+				CamDirector()->StartBattleIntro(CamSeqType::ZeroIntro);
 			}
 				});
 			m_introFlow.AddWaitUntil(seqId, []()
 				{
 					return !CamDirector()->IsPlaying(CamSeqType::ZeroIntro);
+				});
+			m_introFlow.AddOnce(seqId, [context]() {if (context.isFirstIn)
+			{
+				CUIDirector::GetInstance()->Show_BattleHUD();
+			}
 				});
 		}
 		else {
@@ -70,13 +74,14 @@ void CStage::BossIntro(CZero_Level::StageContext& context)
 		m_introFlow.AddWait(seqId, 0.2f);
 		m_introFlow.AddOnce(seqId, [this]() {CUIDirector::GetInstance()->FadeIn_Screen(1.f); });
 		m_introFlow.AddOnce(seqId, [context]() {
-			BattleSystem()->GetBattlePlayer()->QuestStart();
-			CCamDirector::GetInstance()->AutoTarget();
-			CCamDirector::GetInstance()->RequestSequence(CamSeqType::ZeroIntro);
+			//BattleSystem()->GetBattlePlayer()->QuestStart();
+			CamDirector()->StartBattleIntro(CamSeqType::BattleIntro);
+			
 			});
 		m_introFlow.AddWaitUntil(seqId, []()
 			{
-				return !CamDirector()->IsPlaying(CamSeqType::ZeroIntro);
+				//return !CamDirector()->IsPlaying(CamSeqType::ZeroIntro);
+				return !CamDirector()->IsPlaying(CamSeqType::BattleIntro);
 			});
 		m_introFlow.EndSequence(seqId);
 	}

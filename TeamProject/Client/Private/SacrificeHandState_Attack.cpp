@@ -7,6 +7,8 @@
 #include "EffectContainer.h"
 #include "BattleSystem.h"
 
+#include "CamDirector.h"
+
 void CSacrificeHandState_Attack::Enter(CSacrificeHand* pOwner)
 {
 	if (!m_pSubStateMachine)
@@ -271,6 +273,7 @@ void CSacrificeHandState_Attack_03_Phase1::Update_Effects(CSacrificeHand* pOwner
 		ObjectManager()->Add_Object(effect, { "Zero_Level","Effect_Layer" });
 	}
 
+	/* Hit Ground Smoke */
 	if (IsCrossAnimProgress(0.41f))
 	{
 		auto pAnimator = pOwner->Get_Component<CAnimator3D>();
@@ -285,6 +288,8 @@ void CSacrificeHandState_Attack_03_Phase1::Update_Effects(CSacrificeHand* pOwner
 			.Build("Smoke");
 
 		ObjectManager()->Add_Object(pEffect, { "Zero_Level","Effect_Layer"});
+
+		CameraManager()->AddImpact(ENUM(CamShakeType::ExplosionBig), ENUM(CamZoomType::ExplosionBig), 1.6f);
 	}
 }
 

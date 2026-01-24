@@ -211,7 +211,7 @@ void CMeshNode_Edit::Import(nlohmann::ordered_json& json)
 		if (!m_MaskTextureTag.empty())
 		{
 			auto pMaskTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_MaskTextureTag);
-			pMaterialInstance->Set_Param("MaskTexture", { pMaskTexture->Get_SRV(),"Texture2D",0 });
+			pMaterialInstance->Set_Param("AlphaMaskTexture", { pMaskTexture->Get_SRV(),"Texture2D",0 });
 		}
 
 		m_SetMaterial = true;

@@ -14,62 +14,63 @@ struct OrbitCamPoseState
     Vector3 targetPivot{};
     Vector3 curPivot{};
     Vector3 pivotOverrideOffset{};
+    Vector3 pivotExternalOffset{};
 };
 
 struct OrbitCamInputState
 {
-    _float sensitivityX = 0.08f;
-    _float sensitivityY = 0.06f;
+    _float sensitivityX = 0.1f;
+    _float sensitivityY = 0.08f;
     _float zoomSpeed = 1.0f;
 };
 
 struct OrbitCamProfile
 {
-    _float minDist = 0.5f;
-    _float maxDist = 6.f;
-
-    _float pitchMin = -30.f;
-    _float pitchMax = 40.f;
-
-    _float rotSmoothSpeed = 10.f;
-    _float distSmoothSpeed = 10.f;
-    _float pivotSmoothSpeed = 8.f;
-
-    _float offsetY = 0.f;
-
-    _float startDistance = 4.8f;
-    _float startPitchDeg = -20.f;
-    _float startHeightOffset = 0.85f;
-
-    _bool  useAutoYawFollow = true;
-    _float autoYawFollowSpeed = 0.4f;
-    _float autoYawFollowDelay = 0.6f;
-
-    _float collisionZoomInSpeed = 12.f;
-    _float collisionZoomOutSpeed = 6.f;
+    _float   minDist = 0.5f;
+    _float   maxDist = 6.f;
+             
+    _float   pitchMin = -30.f;
+    _float   pitchMax = 40.f;
+             
+    _float   rotSmoothSpeed = 14.f;
+    _float   distSmoothSpeed = 12.f;
+    _float   pivotSmoothSpeed = 12.f;
+             
+    _float   offsetY = 0.f;
+             
+    _float   startDistance = 4.8f;
+    _float   startPitchDeg = -20.f;
+    _float   startHeightOffset = 0.85f;
+             
+    _bool    useAutoYawFollow = true;
+    _float   autoYawFollowSpeed = 0.4f;
+    _float   autoYawFollowDelay = 0.6f;
+             
+    _float   collisionZoomInSpeed = 12.f;
+    _float   collisionZoomOutSpeed = 6.f;
 
     _float   targetSwitchBlendSec = 1.f;
     EaseType targetSwitchEase = EaseType::OutCubic;
 
-    _float lockOnYawSpeed = 22.f;
-
-    _float lockOnFocusNear = 0.35f;
-    _float lockOnFocusFar = 0.70f;
-    _float lockOnFocusDist = 2.5f;
-
-    _bool  lockOnAutoZoom = true;
-    _float lockOnAutoZoomFactor = 0.35f;
+    _float   lockOnYawSpeed = 22.f;
+             
+    _float   lockOnFocusNear = 0.35f;
+    _float   lockOnFocusFar = 0.70f;
+    _float   lockOnFocusDist = 2.5f;
+             
+    _bool    lockOnAutoZoom = true;
+    _float   lockOnAutoZoomFactor = 0.35f;
 
     _float   lockOnBlendInSec = 0.5f;
     _float   lockOnBlendOutSec = 0.5f;
     EaseType lockOnBlendInEase = EaseType::InOutSine;
     EaseType lockOnBlendOutEase = EaseType::InOutSine;
 
-    _float maxYawSpeedDeg = 720.f;
-    _float maxPitchSpeedDeg = 540.f;
-
-    _float maxYawSpeedDegWhenColliding = 160.f;
-    _float maxPitchSpeedDegWhenColliding = 140.f;
+    _float   maxYawSpeedDeg = 720.f;
+    _float   maxPitchSpeedDeg = 540.f;
+             
+    _float   maxYawSpeedDegWhenColliding = 200.f;
+    _float   maxPitchSpeedDegWhenColliding = 180.f;
 };
 
 struct OrbitCamTargetSwitchState

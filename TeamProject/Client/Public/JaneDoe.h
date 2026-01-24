@@ -27,6 +27,8 @@ public:
     void Process_Passion(_float fPassionGauge);
     void Process_PassionSkill(_bool bAvailable);
 
+    void Update_MotionBlurQueue();
+
 public:
     virtual HRESULT Initialize_Prototype() override;
     virtual HRESULT Initialize(INIT_DESC* pArg) override;
@@ -37,6 +39,7 @@ public:
     virtual void    Render_GUI() override;
 
 public:
+    virtual void    Reset_State()              override;
     virtual void    On_Start()                 override;
     virtual void    On_SwitchIn(SWITCH eType)  override;   //*스위치 인 콜*
     virtual void    On_SwitchOut()             override;   //*스위치 아웃 콜*
@@ -54,6 +57,10 @@ private:
     HRESULT Initialize_Effects();
 
 private:
+    HRESULT Add_PassionMotionBlur();
+    HRESULT Render_PassionMotionBlur(ID3D11DeviceContext* pContext, _uint index);
+
+private:
     void         Update_States();
     void         Process_AttackInput(const string& strCurrentState);
     void         Process_EndState(const string& strCurrentState);
@@ -66,7 +73,11 @@ private: /* Passion */
 
 private:
     CStateMachine<CJaneDoe>* m_pStateMachine = { nullptr };
+    deque<vector<vector<_float4x4>>>        m_BoneMatrices;
+    deque<_float4x4>                        m_WorldMatrices;
 
+    _uint                   m_iFrameCount = 0;
+    static constexpr _uint  FRAMECOUNT = 7;
 public:
     static CJaneDoe* Create();
     virtual CGameObject* Clone(INIT_DESC* pArg) override;

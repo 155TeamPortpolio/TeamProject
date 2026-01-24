@@ -20,8 +20,12 @@ public:
     HRESULT Render_RimLight();
     HRESULT Render_SkinnedMesh_LightAcc();
     HRESULT Render_SkinnedMesh_Combined();
+    HRESULT Render_MotionBlur_Noise();
     HRESULT Process_OutLineQueue();
+    HRESULT Process_MotionBlurQueue();
     void Add_OutLineCommand(const OUTLINE_COMMAND& command);
+    void Add_MotionBlurCommand(const MOTIONBLUR_COMMAND& command);
+
 public:
     void Update(_float dt);
 
@@ -30,8 +34,9 @@ private:
     virtual HRESULT Ready_MRT() override;
 
 private:
-    RIMLIGHT RimLightMode = RIMLIGHT::OUTLINE;
+    RIMLIGHT RimLightMode = RIMLIGHT::RIMLIGHT;
     vector<OUTLINE_COMMAND> m_OutLineCommands;
+    vector<MOTIONBLUR_COMMAND> m_MotionBlurCommands;
     _float                  m_fScreenWidth;
     _float                  m_fScreenHeight;
 
