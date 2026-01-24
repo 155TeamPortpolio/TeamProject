@@ -250,6 +250,7 @@
     <ClInclude Include="..\public\HowlState_Wake.h" />
     <ClInclude Include="..\public\Interactable.h" />
     <ClInclude Include="..\Public\CorinState_UltimateAttack.h" />
+    <ClInclude Include="..\Public\Room.h" />
     <ClInclude Include="..\public\Jaeger.h" />
     <ClInclude Include="..\public\JaneDoeState_Hit.h" />
     <ClInclude Include="..\Public\JaneDoeState_Start.h" />
@@ -258,6 +259,7 @@
     <ClInclude Include="..\public\OrbitLockOnController.h" />
     <ClInclude Include="..\Public\OrbitLockOnData.h" />
     <ClInclude Include="..\Public\RoomDirector.h" />
+    <ClInclude Include="..\Public\Room_Street.h" />
     <ClInclude Include="..\Public\SacrificeState_Groggy.h" />
     <ClInclude Include="..\Public\MapInvisibleWall.h" />
     <ClInclude Include="..\public\Portal.h" />
@@ -534,6 +536,7 @@
     <ClCompile Include="..\private\HowlState_Wake.cpp" />
     <ClCompile Include="..\private\Interactable.cpp" />
     <ClCompile Include="..\Private\CorinState_UltimateAttack.cpp" />
+    <ClCompile Include="..\Private\Room.cpp" />
     <ClCompile Include="..\private\Jaeger.cpp" />
     <ClCompile Include="..\private\JaneDoeState_Hit.cpp" />
     <ClCompile Include="..\Private\JaneDoeState_Start.cpp" />
@@ -541,6 +544,7 @@
     <ClCompile Include="..\private\EntitySpawner.cpp" />
     <ClCompile Include="..\private\OrbitLockOnController.cpp" />
     <ClCompile Include="..\Private\RoomDirector.cpp" />
+    <ClCompile Include="..\Private\Room_Street.cpp" />
     <ClCompile Include="..\Private\SacrificeState_Groggy.cpp" />
     <ClCompile Include="..\private\Portal.cpp" />
     <ClCompile Include="..\Private\SacrificeState_Groggy_Phase1.cpp" />

@@ -284,7 +284,7 @@ void CResourceMgr::Init_PreLoader()
 			if (!model)
 			{
 				errorMessage = "Load_Model failed: " + key.resourceKey;
-				return false;
+				return false; 
 			}
 			return true;
 		});

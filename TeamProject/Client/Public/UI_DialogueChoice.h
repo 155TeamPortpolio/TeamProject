@@ -48,6 +48,7 @@ private:
 	CTextSlot*			m_pTextSlots[ENUM(TEXTSLOT::END)] = {};
 	class CButtonUI*	m_pBtns[ENUM(BTNS::END)] = {};
 
+	_uint				m_iNumChoices = {};
 	ChoiceDesc			m_pChoiceDesc[3] = {};
 
 private:

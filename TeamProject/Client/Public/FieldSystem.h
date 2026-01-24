@@ -56,7 +56,7 @@ public:
 
 public:
 	void	SetActive(_bool is) { m_isActive = is; }
-
+	
 public:
 	void	SetFieldPlayer(class CFieldPlayer* pFieldPlayer);
 	OBJECT_HANDLE					GetCurCharacterHandle() const;
@@ -66,13 +66,23 @@ public:
 	DayPhase Get_DayPhase() { return m_DayTime.m_eDayTime; }
 	void Set_DayPahse(DayPhase ePhase) { m_DayTime.Set_DayPhase(ePhase); }
 
+
+public:
+	_bool RegisterRoom(class CRoom* pRoom);
+	_bool RequestEnter(const string& roomKey, _bool overlay = true);
+	_bool RequestExitTop();
+
+public:
+	void PreLoadRoom();
+
 private:
 	_bool	m_isActive = { false }; 
 	class CFieldPlayer* m_pFieldPlayer = { nullptr };
-
+	class CRoomDirector* m_pRoomDirector = { nullptr };
 	DayTimer m_DayTime = {};
 public:
 	virtual void Free() override;
 };
 
+inline CFieldSystem* FieldSystem() { return CFieldSystem::GetInstance(); }
 NS_END

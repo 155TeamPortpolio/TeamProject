@@ -295,6 +295,9 @@ string CMaterialData::ConvertToConstant(TEXTURE_TYPE eType)
 	case Engine::TEXTURE_TYPE::ALPHA_MASK:
 		return "AlphaMaskTexture";
 
+	case Engine::TEXTURE_TYPE::DISTORTION:
+		return "DistortionTexture";
+
 	default:
 		break;
 	}

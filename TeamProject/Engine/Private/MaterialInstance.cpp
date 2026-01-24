@@ -122,13 +122,7 @@ HRESULT CMaterialInstance::Reset_Constant()
 
 void CMaterialInstance::Reset_DynamicSlot()
 {
-	CShader* pShader =m_pMaterialData->Get_Shader();
-	for (auto& pair : m_DynamicSlots)
-	{
-		SHADER_PARAM param = pair.second;
-		param.pData = nullptr;
-		pShader->Bind_Value(pair.first, param);
-	}
+	ClearDynamicSlotsBound(m_pMaterialData->Get_Shader());
 }
 void CMaterialInstance::Reset_Textures()
 {

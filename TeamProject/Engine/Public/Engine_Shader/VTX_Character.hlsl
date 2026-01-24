@@ -264,7 +264,10 @@ struct PS_MOTIONIN
 struct PS_MOTIONOUT
 {
     float4 vDiffuse : SV_TARGET0;
-    float fHeight : SV_TARGET1;
+    float4 vRimLight : SV_TARGET1;
+    float4 vNormal : SV_TARGET2;
+    float4 vDepth : SV_TARGET3;
+    float fHeight : SV_TARGET4;
 };
 
 PS_MOTIONOUT PS_MOTIONBLUR(PS_MOTIONIN In)
@@ -275,9 +278,25 @@ PS_MOTIONOUT PS_MOTIONBLUR(PS_MOTIONIN In)
     
     float heightNormalized = saturate((In.vWorldHeight - 0.0f) / 2.0f);
     heightNormalized = 1.0f - heightNormalized;
-    Out.vDiffuse = color;
+    Out.vDiffuse = color * DiffuseTexture.Sample(DefaultSampler, In.vTexcoord).a;
     Out.fHeight = heightNormalized;
     
+    vector vNormalDesc = NormalTexture.Sample(DefaultSampler, In.vTexcoord);
+
+    float3 vNormal;
+    vNormal.xy = vNormalDesc.xy * 2.f - 1.f;
+    vNormal.z = 1.f;
+    float3 T = normalize(In.vTangent);
+    float3 B = normalize(In.vBinormal * -1);
+    float3 N = normalize(In.vNormal.xyz);
+
+    float3x3 WorldMatrix = float3x3(T, B, N);
+    vNormal = mul(vNormal, WorldMatrix);
+    Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, vNormalDesc.z);
+    
+    Out.vRimLight = float4(vRimLightColor, fRimLightPower);
+    Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / zFar, 0.f, 1.f);
+ 
     return Out;
 }
 

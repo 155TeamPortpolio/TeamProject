@@ -284,6 +284,15 @@ BlendState BS_OITAccmulation
     SrcBlendAlpha[3] = Zero;
     DestBlendAlpha[3] = Inv_Src_Alpha;
     BlendOpAlpha[3] = Add;
+
+    /* Distortion */
+    BlendEnable[4] = true;
+    SrcBlend[4] = One;
+    DestBlend[4] = One;
+    BlendOp[4] = Add;
+    SrcBlendAlpha[4] = One;
+    DestBlendAlpha[4] = One;
+    BlendOpAlpha[4] = Add;
 };
 
 SamplerState DefaultSampler = sampler_state
