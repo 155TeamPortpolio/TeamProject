@@ -54,6 +54,7 @@ private:
     virtual ~CBattlePlayer() DEFAULT;
 
 public:
+    void            Initialize_Move(_vector3 vPos, _vector4 vRot);
     OBJECT_HANDLE   GetCurCharacterHandle();
     HRESULT         SwitchCharacter(_bool bNext = true);
     void            SetBattleCharacters(vector<CHARACTER> battleCharacters);

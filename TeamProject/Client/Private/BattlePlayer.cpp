@@ -26,6 +26,12 @@ CBattlePlayer::CBattlePlayer()
 {
 }
 
+void CBattlePlayer::Set_Move(_vector3 vPos, _vector4 vRot)
+{
+	m_pCurrentCharacter->Get_Component<CCharacterController>()->Set_Position(vPos);
+	m_pCurrentCharacter->Get_Component<CTransform>()->Rotation(vRot);
+}
+
 OBJECT_HANDLE CBattlePlayer::GetCurCharacterHandle()
 {
 	return m_pCurrentCharacter->Get_Handle(); 
@@ -36,6 +42,7 @@ void CBattlePlayer::SetBattleCharacters(vector<CHARACTER> battleCharacters)
 	for (auto& character : battleCharacters)
 	{
 		auto newCharacter = dynamic_cast<CCharacter*>(CreateBattleCharacter(character));
+		newCharacter->Set_MainCharacter(false);
 		m_BattleCharacters.push_back(newCharacter);
 		m_CharacterHandles.push_back(newCharacter->Get_Handle());
 	}
