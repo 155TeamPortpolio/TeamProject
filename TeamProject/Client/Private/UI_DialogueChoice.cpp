@@ -43,6 +43,13 @@ void CUI_DialogueChoice::Update(_float dt)
 {
     __super::Update(dt);
 
+    char vkKey = '0';
+    for (_int i = 0; i < m_iNumChoices; ++i)
+    {
+        if (InputDevice()->Key_Down(vkKey + (i + 1)))
+            Change_Dialogue(i);
+    }
+
     Get_Component<CObjectContainer>()->UpdateChild(dt);
 }
 
@@ -54,6 +61,7 @@ void CUI_DialogueChoice::UI_Active(void* pArg)
     auto pDataBase = CDataBase::GetInstance();
 
     CHOICE_DESC* pDesc = static_cast<CHOICE_DESC*>(pArg);
+    m_iNumChoices = pDesc->iChoiceNum;
     for (_int i = 0; i < pDesc->iChoiceNum; ++i)
     {
         m_pChoiceDesc[i] = pDataBase->GetNpcChoiceDesc(pDesc->strChoices[i]);
