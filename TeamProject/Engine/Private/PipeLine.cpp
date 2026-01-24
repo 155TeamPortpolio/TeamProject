@@ -292,13 +292,13 @@ HRESULT CPipeLine::Write_SSAOKernelBuffer(ID3D11Device* pDevice)
 
 void CPipeLine::Update_Frustum()
 {
-	_matrix view = XMLoadFloat4x4(CGameInstance::GetInstance()->Get_CameraMgr()->Get_ViewMatrix());
 	_matrix proj = XMLoadFloat4x4(CGameInstance::GetInstance()->Get_CameraMgr()->Get_ProjMatrix());
+	_smatrix invView = *CGameInstance::GetInstance()->Get_CameraMgr()->Get_InversedViewMatrix();
 
-	BoundingFrustum frustum;
-	BoundingFrustum::CreateFromMatrix(frustum, proj);
+	BoundingFrustum frustumView;
+	BoundingFrustum::CreateFromMatrix(frustumView, proj);
 
-	frustum.Transform(m_Frustum, XMMatrixInverse(nullptr, view));
+	frustumView.Transform(m_Frustum, invView);
 }
 
 void CPipeLine::Update_StaticCSM()
@@ -318,27 +318,30 @@ void CPipeLine::Update_HiZ(ID3D11DeviceContext* pContext)
 
 _bool CPipeLine::isVisible(MINMAX_BOX minMax, _fmatrix worldTransform)
 {
+	// 월드 AABB 계산
+	MINMAX_BOX worldBox = minMax.TransformBox_8Corner(Matrix(worldTransform));
+
 	XMFLOAT3 center{
-		(minMax.vMin.x + minMax.vMax.x) * 0.5f,
-		(minMax.vMin.y + minMax.vMax.y) * 0.5f,
-		(minMax.vMin.z + minMax.vMax.z) * 0.5f
+		(worldBox.vMin.x + worldBox.vMax.x) * 0.5f,
+		(worldBox.vMin.y + worldBox.vMax.y) * 0.5f,
+		(worldBox.vMin.z + worldBox.vMax.z) * 0.5f
 	};
 	XMFLOAT3 extents{
-		(minMax.vMax.x - minMax.vMin.x) * 0.5f,
-		(minMax.vMax.y - minMax.vMin.y) * 0.5f,
-		(minMax.vMax.z - minMax.vMin.z) * 0.5f
+		(worldBox.vMax.x - worldBox.vMin.x) * 0.5f,
+		(worldBox.vMax.y - worldBox.vMin.y) * 0.5f,
+		(worldBox.vMax.z - worldBox.vMin.z) * 0.5f
 	};
 
-	BoundingBox localAabb(center, extents);
-; 
-	BoundingOrientedBox obb;
-	BoundingOrientedBox::CreateFromBoundingBox(obb, localAabb);
+	if (!(extents.x > 0.f && extents.y > 0.f && extents.z > 0.f))
+		return false;
 
-	BoundingOrientedBox worldObb;
-	obb.Transform(worldObb, worldTransform);
+	extents.y = max(extents.y, 0.2f);
 
-	return m_Frustum.Intersects(worldObb);
+	BoundingBox worldAabb(center, extents);
+
+	return m_Frustum.Intersects(worldAabb);
 }
+
 
 
 _uint CPipeLine::Write_ObjectData(const _float4x4& worldMatrix)

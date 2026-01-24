@@ -221,15 +221,15 @@ namespace Engine
 			vMax.x = max(vMax.x, p.x); vMax.y = max(vMax.y, p.y); vMax.z = max(vMax.z, p.z);
 		}
 
-		tagMinMaxBoxInfo TransformBox_8Corner(_float4x4 worldMat) {
-			MINMAX_BOX outBox{};
+		tagMinMaxBoxInfo TransformBox_8Corner(const _float4x4& worldMat)
+		{
+			tagMinMaxBoxInfo outBox{};
 			outBox.vMin = { FLT_MAX, FLT_MAX, FLT_MAX };
 			outBox.vMax = { -FLT_MAX, -FLT_MAX, -FLT_MAX };
 
 			_matrix matTransform = XMLoadFloat4x4(&worldMat);
 
-
-			_float3 corners[8] =
+			const _float3 corners[8] =
 			{
 				{ vMin.x, vMin.y, vMin.z },
 				{ vMax.x, vMin.y, vMin.z },
@@ -244,12 +244,24 @@ namespace Engine
 
 			for (int cornerIndex = 0; cornerIndex < 8; ++cornerIndex)
 			{
-				_vector vCorner = XMVectorSet(corners[cornerIndex].x, corners[cornerIndex].y, corners[cornerIndex].z, 1.0f);
+				_vector vCorner = XMVectorSet(
+					corners[cornerIndex].x,
+					corners[cornerIndex].y,
+					corners[cornerIndex].z,
+					1.0f);
+
 				_vector vWorld = XMVector3TransformCoord(vCorner, matTransform);
 
 				_float3 worldPoint{};
 				XMStoreFloat3(&worldPoint, vWorld);
-				ExpandBox(worldPoint);
+
+				outBox.vMin.x = min(outBox.vMin.x, worldPoint.x);
+				outBox.vMin.y = min(outBox.vMin.y, worldPoint.y);
+				outBox.vMin.z = min(outBox.vMin.z, worldPoint.z);
+
+				outBox.vMax.x = max(outBox.vMax.x, worldPoint.x);
+				outBox.vMax.y = max(outBox.vMax.y, worldPoint.y);
+				outBox.vMax.z = max(outBox.vMax.z, worldPoint.z);
 			}
 
 			return outBox;

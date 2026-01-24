@@ -42,6 +42,9 @@ void CUI_DialogueMessage::Update(_float dt)
 {
     __super::Update(dt);
 
+    if (InputDevice()->Key_Down(VK_SPACE))
+        Change_Dialogue();
+
     Update_TypingMessage(dt);
 
     Get_Component<CObjectContainer>()->UpdateChild(dt);

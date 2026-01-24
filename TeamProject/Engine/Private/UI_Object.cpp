@@ -435,6 +435,13 @@ void CUI_Object::Set_Animation(_uint iIndex, _bool isLoop)
     m_fBlendTime = 0.f;
 }
 
+void CUI_Object::Stop_Animation()
+{
+    m_iCurrentClipIndex = -1;
+    m_isBlending = false;
+    m_fBlendTime = 0.f;
+}
+
 _bool CUI_Object::Set_LastKeyframeTime(_uint iClipIndex, _float fTime)
 {
     if (iClipIndex >= m_AnimClips.size())

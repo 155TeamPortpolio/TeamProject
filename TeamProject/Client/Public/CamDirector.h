@@ -62,6 +62,8 @@ public:
     void          StopAll(_float blendOutSec = 0.25f);
     void          Update(_float dt);
     void          StartBattleIntro(CamSeqType type);
+    void          StartDialog();
+    void          EndDialog();
 
 private:
     string        ResolveSeqKey(CamSeqType type) const;
@@ -69,9 +71,7 @@ private:
     void          UpdateInput(_float dt);
     void          AbortSequenceToOrbit(_bool resetTime);
     void          SyncSeqInputLock();
-
-    void          StartDialog();
-    void          EndDialog();
+      
     _bool         IsValid() const;
 
 private:
