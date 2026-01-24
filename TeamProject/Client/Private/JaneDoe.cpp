@@ -235,6 +235,14 @@ void CJaneDoe::On_SwitchOut()
 
 void CJaneDoe::On_Ultimate()
 {
+	IHState<CJaneDoe>* pState = dynamic_cast<IHState<CJaneDoe>*>(m_pStateMachine->Get_CurrentState());
+	if (pState)
+	{
+		CStateMachine<CJaneDoe>* pSub = pState->Get_SubStateMachine();
+		if (pSub && pSub->Get_CurrentStateName() == "UltimateAttack")
+			return;
+	}
+
 	__super::On_Ultimate();
 	m_pStateMachine->Set_Int("AttackEntryMode", 3);
 	m_pStateMachine->Set_Trigger("Attack");

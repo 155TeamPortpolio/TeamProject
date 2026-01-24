@@ -410,37 +410,33 @@ HRESULT CStateMachine<Type>::Register_AnyStateTransition(const string& strTo, co
 template<typename Type>
 void CStateMachine<Type>::Change_State(const string& strState)
 {
-	auto iter = m_States.find(strState);
-	if (iter == m_States.end())
-		return;
-	// 변경될 상태로 넘어가도 되는지 확인
-	if (m_pCurrentState && !m_pCurrentState->Handle_Transition(m_pOwner, strState))
-		return;
+    auto iter = m_States.find(strState);
+    if (iter == m_States.end())
+        return;
 
-	if (m_pCurrentState)
-	{
-		string strReason = "Manual";
-		Record_Transition(m_strCurrentState, strState, strReason, m_fStateTime);
-	}
+    if (m_pCurrentState && !m_pCurrentState->Handle_Transition(m_pOwner, strState))
+        return;
 
-	if (m_pCurrentState)
-	{
-		m_pCurrentState->Begin_Transition(m_pOwner, strState);
-		m_pCurrentState->Exit(m_pOwner);
-	}
+    if (m_pCurrentState)
+    {
+        m_pCurrentState->Begin_Transition(m_pOwner, strState);
+        m_pCurrentState->Exit(m_pOwner);
+    }
 
-	string strPrevState = m_strCurrentState;
-	m_strPrevState = m_strCurrentState;
+    string strPrevState = m_strCurrentState;
+    m_strPrevState = m_strCurrentState;
 
-	m_pCurrentState = iter->second;
-	m_strCurrentState = strState;
-	m_fStateTime = 0.f;
-	m_pCurrentState->m_fStateTime = 0.f;
-	m_pCurrentState->m_fAnimProgress = 0.f;
+    m_pCurrentState = iter->second;
+    m_strCurrentState = strState;
+    m_fStateTime = 0.f;
+    m_pCurrentState->m_fStateTime = 0.f;
+    m_pCurrentState->m_fAnimProgress = 0.f;
+    m_pCurrentState->m_fPrevAnimProgress = 0.f;
 
-	m_pCurrentState->Enter(m_pOwner);
-	m_pCurrentState->End_Transition(m_pOwner, strPrevState);
+    m_pCurrentState->Enter(m_pOwner);
+    m_pCurrentState->End_Transition(m_pOwner, strPrevState);
 }
+
 
 template<typename Type>
 void CStateMachine<Type>::Set_DefaultState(const string& strState)
@@ -458,11 +454,15 @@ void CStateMachine<Type>::Check_Transitions()
 
 		if (Check_Transition(transition))
 		{
+			string strReason = Get_Condition(transition);
+
 			for (auto& condition : transition.Conditions)
-			{	// 트리거 소모
+			{
 				if (condition.eCondition == CONDITION_TRIGGER)
 					Reset_Trigger(condition.strParameter);
 			}
+
+			Record_Transition(m_strCurrentState, transition.strToState, strReason, m_fStateTime);
 			Change_State(transition.strToState);
 			return;
 		}
@@ -473,7 +473,7 @@ template<typename Type>
 void CStateMachine<Type>::Check_AnyStateTransitions()
 {
 	const TRANSITION_INFO* pBestTransition = nullptr;
-	vector<const TRANSITION_INFO*> MetTransitions;  // 조건 만족한 모든 트랜지션
+	vector<const TRANSITION_INFO*> MetTransitions;
 
 	for (auto& transition : m_AnyStateTransitions)
 	{
@@ -492,7 +492,8 @@ void CStateMachine<Type>::Check_AnyStateTransitions()
 	if (!pBestTransition)
 		return;
 
-	// 조건을 만족한 모든 트랜지션의 트리거 소모
+	string strReason = Get_Condition(*pBestTransition);
+
 	for (auto* pTransition : MetTransitions)
 	{
 		for (auto& condition : pTransition->Conditions)
@@ -502,6 +503,7 @@ void CStateMachine<Type>::Check_AnyStateTransitions()
 		}
 	}
 
+	Record_Transition(m_strCurrentState, pBestTransition->strToState, strReason, m_fStateTime);
 	Change_State(pBestTransition->strToState);
 }
 
