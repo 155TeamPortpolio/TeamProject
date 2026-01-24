@@ -206,8 +206,10 @@ HRESULT CObjectMgr::Sync_To_Level()
 
 	vector<string> LevelList = pLevelMgr->Get_LevelList();
 
-	for (string& name : LevelList)
+	for (string& name : LevelList) {
 		m_Layers.emplace(name, LAYERS{});
+		m_Layers[name].reserve(10);
+	}
 
 	return S_OK;
 }
