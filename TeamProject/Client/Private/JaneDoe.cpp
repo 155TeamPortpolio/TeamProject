@@ -451,7 +451,7 @@ HRESULT CJaneDoe::Initialize_Effects()
 	/* Normal Slash0 */
 	{
 		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
-			.Asset("janedoe_normal1_slash.json")
+			.Asset("janedoe_normal1_slash_distortion.json")
 			.Build("JaneDoe_Normal_Slash0");
 
 		pEffect->Stop();
@@ -461,7 +461,7 @@ HRESULT CJaneDoe::Initialize_Effects()
 	/* Normal Slash1 */
 	{
 		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
-			.Asset("janedoe_normal1_slash.json")
+			.Asset("janedoe_normal1_slash_distortion.json")
 			.Build("JaneDoe_Normal_Slash1");
 
 		pEffect->Stop();
@@ -471,7 +471,7 @@ HRESULT CJaneDoe::Initialize_Effects()
 	/* Normal Slash2 */
 	{
 		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
-			.Asset("janedoe_normal1_slash.json")
+			.Asset("janedoe_normal1_slash_distortion.json")
 			.Build("JaneDoe_Normal_Slash2");
 
 		pEffect->Stop();
@@ -481,7 +481,7 @@ HRESULT CJaneDoe::Initialize_Effects()
 	/* Normal Slash3 */
 	{
 		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
-			.Asset("janedoe_normal1_slash.json")
+			.Asset("janedoe_normal1_slash_distortion.json")
 			.Build("JaneDoe_Normal_Slash3");
 
 		pEffect->Stop();
@@ -491,7 +491,7 @@ HRESULT CJaneDoe::Initialize_Effects()
 	/* Normal Slash4 */
 	{
 		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
-			.Asset("janedoe_normal1_slash.json")
+			.Asset("janedoe_normal1_slash_distortion.json")
 			.Build("JaneDoe_Normal_Slash4");
 
 		pEffect->Stop();
@@ -545,7 +545,8 @@ HRESULT CJaneDoe::Add_PassionMotionBlur()
 {
 	auto Model = Get_Component<CSkeletalModel>();
 	_uint size = sizeof(_float4x4) * m_pAnimator->Get_BoneMatrices(CAnimator3D::BoneSpace::COMBINED).size();
-
+	m_vRimLightColor = _float3(1.f, 0.1f, 0.f);
+	m_fRimLightPower = 3.f;
 	for (_int k = m_BoneMatrices.size() - 1; k >= 0; --k)
 	{
 		_float t = (_float)k / (_float)(m_BoneMatrices.size() - 1);
@@ -557,6 +558,7 @@ HRESULT CJaneDoe::Add_PassionMotionBlur()
 
 		for (_int i = 0; i < Model->Get_MeshCount(); ++i)
 		{
+			if (Model->isDrawable(i) == false) continue;
 			MOTIONBLUR_COMMAND Command =
 			{
 				Get_Component<CMaterial>()->Get_Shader(Model->Get_MaterialIndex(i)),
@@ -579,7 +581,6 @@ HRESULT CJaneDoe::Render_PassionMotionBlur(ID3D11DeviceContext* pContext, _uint 
 	auto RenderSys = RenderSystem()->GetRenderer(RENDERER_TYPE::SKINNED);
 	auto Model = Get_Component<CSkeletalModel>();
 	auto Material = Get_Component<CMaterial>();
-
 	_int Index = Model->Get_MaterialIndex(idx);
 	auto Shader = Material->Get_Shader(Index);
 	ID3D11InputLayout* pLayout;

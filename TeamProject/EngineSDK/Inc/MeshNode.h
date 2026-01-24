@@ -42,14 +42,19 @@ protected:
     void Update_BloomModule(_float dt);
     void Update_NoiseModule(_float dt);
     void Update_MaskModule(_float dt);
+    void Update_DistortionModule(_float dt);
     void Bind_Params();
 
     /*Default Params*/
+    _float m_fScreenWidth{};
+    _float m_fScreenHeight{};
+
     _float m_fProgress{};  //전체 진행도
     string m_DiffuseTextureTag{};
     string m_DissolveTextureTag{};
     string m_NoiseTextureTag{};
     string m_MaskTextureTag{};
+    string m_DistortionTextureTag{};
 
     /*-----Modules-----*/
     TEXTURE_SLOT_MODULE m_TextureSlotModule{};
@@ -61,5 +66,6 @@ protected:
     BLOOM_MODULE m_BloomModule{};
     NOISE_MODULE m_NoiseModule{};
     MASK_MODULE m_MaskModule{};
+    DISTORTION_MODULE m_DistortionModule{};
 };
 NS_END

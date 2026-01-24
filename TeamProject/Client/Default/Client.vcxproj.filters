@@ -807,14 +807,29 @@
     <Filter Include="03. Utility\06. FieldSystem\Room">
       <UniqueIdentifier>{3c7a7548-6ec8-44bd-ab8c-d800f9c1f45f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03. Utility\06. FieldSystem\Room\Director">
+    <Filter Include="03. Utility\06. FieldSystem\Room\02. Street">
+      <UniqueIdentifier>{49e5231b-dc58-454a-a08c-fc4c6137a751}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\06. FieldSystem\Room\01. Director">
       <UniqueIdentifier>{720e4aa3-1d89-41b4-81e8-92fa8ac3853a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\06. FieldSystem\Room\00. RoomSuper">
+      <UniqueIdentifier>{adac0c1c-e59e-4d29-8387-c059a199c741}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\UI\01. 2D\Dialogue\Message">
       <UniqueIdentifier>{8586251d-ec90-4723-ac77-2750945a94a4}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\UI\01. 2D\Dialogue\Choice">
       <UniqueIdentifier>{db39c0af-f5db-4ad1-aad6-444af6dc0543}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Camera\04. OrbitCam\01. AutoYawFollowController">
+      <UniqueIdentifier>{6b953709-9881-461d-9361-1c9d4a1baf80}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Camera\04. OrbitCam\02. CollisionDistanceController">
+      <UniqueIdentifier>{d86fe13b-8dc2-4d4e-ad78-30a6472350fb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Camera\04. OrbitCam\03. TargetSwitchController">
+      <UniqueIdentifier>{616212e1-403f-4164-857c-042c45688a4d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1547,9 +1562,6 @@
     <ClInclude Include="..\public\NpcInteractZone.h">
       <Filter>02. GameObject\Object\Npc\Child\NpcInteractZone</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\TestLevel.h">
-      <Filter>01. Level</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\UI_Dialogue.h">
       <Filter>02. GameObject\UI\01. 2D\Dialogue</Filter>
     </ClInclude>
@@ -1575,7 +1587,19 @@
       <Filter>02. GameObject\UI\01. 2D\Dialogue\Choice</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\RoomDirector.h">
-      <Filter>03. Utility\06. FieldSystem\Room\Director</Filter>
+      <Filter>03. Utility\06. FieldSystem\Room\01. Director</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\TestLevel.h">
+      <Filter>01. Level</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Room.h">
+      <Filter>03. Utility\06. FieldSystem\Room\00. RoomSuper</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Room_Street.h">
+      <Filter>03. Utility\06. FieldSystem\Room\02. Street</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\AutoYawFollowController.h">
+      <Filter>02. GameObject\Camera\04. OrbitCam\01. AutoYawFollowController</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2297,7 +2321,16 @@
       <Filter>02. GameObject\UI\01. 2D\Dialogue\Choice</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\RoomDirector.cpp">
-      <Filter>03. Utility\06. FieldSystem\Room\Director</Filter>
+      <Filter>03. Utility\06. FieldSystem\Room\01. Director</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Room.cpp">
+      <Filter>03. Utility\06. FieldSystem\Room\00. RoomSuper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Room_Street.cpp">
+      <Filter>03. Utility\06. FieldSystem\Room\02. Street</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\AutoYawFollowController.cpp">
+      <Filter>02. GameObject\Camera\04. OrbitCam\01. AutoYawFollowController</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

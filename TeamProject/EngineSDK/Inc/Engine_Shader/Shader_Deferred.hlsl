@@ -69,8 +69,6 @@ PS_OUT_RESULT PS_FOG(PS_IN In)
     float4 vSkinnedDepthDesc = SkinnedDepthTexture.Sample(DefaultSampler, In.vTexcoord);
     float4 vScene = FinalTexture.Sample(DefaultSampler, In.vTexcoord);
     
-    float effectAlpha = 1 - EffectCombinedTexture.Sample(DefaultSampler, In.vTexcoord).a;
-    
     if (g_FogUse == false)
     {
         Out.vResult = vScene;
@@ -100,7 +98,7 @@ PS_OUT_RESULT PS_FOG(PS_IN In)
     
     float4 vFoggedColor = lerp(g_FogColor, vScene, fFogFactor);
  
-    Out.vResult = lerp(vScene, vFoggedColor, effectAlpha);
+    Out.vResult = vFoggedColor;
     
     return Out;
 }
@@ -110,7 +108,11 @@ PS_OUT_RESULT PS_HDR_BRIGHTPASS(PS_IN In)
     PS_OUT_RESULT Out;
     
     float4 scene = FinalTexture.Sample(DefaultSampler, In.vTexcoord);
-    float4 bright = SoftExtractBright(scene);
+    float4 effect = EffectCombinedTexture.Sample(DefaultSampler, In.vTexcoord);
+    float4 sceneBright = SoftExtractBright(scene);
+    float4 effectBright = SoftExtractBright(effect, 0.5f, 0.5f, 2.f);
+    
+    float4 bright = effectBright + sceneBright;
     
     Out.vResult = bright;
 
@@ -199,46 +201,87 @@ PS_OUT_BACKBUFFER PS_MAIN_COMBINED(PS_IN In)
     
     vector vSkinned = SkinnedCombinedTexture.Sample(DefaultSampler, In.vTexcoord);
     vector vStatic = StaticCombinedTexture.Sample(DefaultSampler, In.vTexcoord);
-    vector vEffect = EffectCombinedTexture.Sample(DefaultSampler, In.vTexcoord);
+    //vector vEffect = EffectCombinedTexture.Sample(DefaultSampler, In.vTexcoord);
     vector vUI = UICombinedTexture.Sample(DefaultSampler, In.vTexcoord);
+    vector motionblur = MotionBlurTexture.Sample(DefaultSampler, In.vTexcoord);
     
-    float3 result = vSkinned.rgb;
+    float4 vStaticDepth = StaticDepthTexture.Sample(DefaultSampler, In.vTexcoord);
+    float4 vSkinnedDepth = SkinnedDepthTexture.Sample(DefaultSampler, In.vTexcoord);
     
-    result.rgb = lerp(result.rgb, vStatic.rgb, vStatic.a);
+    float3 result;
+    float resultAlpha;
+    
+    bool hasStatic = vStaticDepth.x > 0.0001f;
+    bool hasSkinned = vSkinnedDepth.x > 0.0001f;
+    
+    if (hasStatic && hasSkinned)
+    {
+        if (vStaticDepth.x < vSkinnedDepth.x) 
+        {
+            result = vStatic.rgb;
+            resultAlpha = vStatic.a;
+        }
+        else 
+        {
+            result = lerp(vStatic.rgb, vSkinned.rgb + motionblur.rgb, vSkinned.a);
+            resultAlpha = max(vSkinned.a, vStatic.a);
+        }
+    }
+    else if (hasSkinned)
+    {
+        result = vSkinned.rgb + motionblur.rgb;
+        resultAlpha = vSkinned.a;
+    }
+    else if (hasStatic)
+    {
+        result = vStatic.rgb;
+        resultAlpha = vStatic.a;
+    }
+    else
+    {
+        result = float3(0, 0, 0);
+        resultAlpha = 0;
+    }
+    
     result.rgb = lerp(result.rgb, vUI.rgb, vUI.a);
-    float3 finalColor = vEffect.rgb + result * (1.f - vEffect.a);
-    float alpha = max(vEffect.a, max(vUI.a, max(vSkinned.a, vStatic.a)));
-    Out.vBackBuffer = float4(finalColor, alpha);
+    float alpha = max(vUI.a,resultAlpha);
+    Out.vBackBuffer = float4(result.rgb, alpha);
     
     return Out;
 }
 
 float4 PS_MAIN_FINAL(PS_IN In) : SV_Target
 {
-    float2 distortion = DistortionTexture.Sample(DefaultSampler, In.vTexcoord).rg;
+    float4 distortionDesc = DistortionCombinedTexture.Sample(DefaultSampler, In.vTexcoord);
+    float2 distortion = distortionDesc.rg;
+    float weight = max(distortionDesc.a, 1e-6);
+    distortion /= weight;
     float2 distortedUV = saturate(In.vTexcoord + distortion);
    
     float4 scene = FinalTexture.Sample(DefaultSampler, distortedUV);
     float4 radialBloom = RadialBloomTexture.Sample(DefaultSampler, distortedUV);
     float4 hdrBloom = HDRBloomFinalTexture.Sample(DefaultSampler, distortedUV);
     float4 ui = UI2DTexture.Sample(DefaultSampler, In.vTexcoord);
+    float4 effect = EffectCombinedTexture.Sample(DefaultSampler, In.vTexcoord);
+    
     float4 motionblur = MotionBlurTexture.Sample(DefaultSampler, In.vTexcoord);
-    float3 hdrColor = scene.rgb;
+    float3 hdrColor = effect.rgb + scene.rgb * (1.f - effect.a);
+    float alpha = max(scene.a, effect.a);
     
     if (g_UseAddictiveColor)
     {
         float skinnedAlpha = 1 - SkinnedCombinedTexture.Sample(DefaultSampler, In.vTexcoord).a;
-        float3 tinted = scene.rgb + scene.rgb * g_AddictiveColor * g_AddictiveStrength;
-        hdrColor = lerp(scene.rgb, tinted, skinnedAlpha);
+        float3 tinted = hdrColor.rgb + hdrColor.rgb * g_AddictiveColor * g_AddictiveStrength;
+        hdrColor = lerp(hdrColor.rgb, tinted, skinnedAlpha);
     }
     
     hdrColor += hdrBloom.rgb * 0.3;
     
-    float3 mapped = ACESFilm(hdrColor) + radialBloom.rgb + motionblur.rgb;
+    float3 mapped = ACESFilm(hdrColor) + radialBloom.rgb + effect.rgb;
     
     float3 finalColor = ui.rgb + mapped * (1.f - ui.a);
 
-    return float4(finalColor, scene.a);
+    return float4(finalColor, alpha);
 }
 
 

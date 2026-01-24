@@ -113,6 +113,7 @@ void CLoadingLevel::PreLoadLevel()
 			queuePerType.second.pop();
 		}
 	}
+
 }
 
 

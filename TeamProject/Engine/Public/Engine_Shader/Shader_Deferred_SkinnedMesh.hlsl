@@ -114,8 +114,8 @@ PS_OUT_RESULT PS_RIMLIGHT(PS_IN In)
     fRim = pow(fRim, vRimInfo.a);
 
     float3 vRimColor = vRimInfo.rgb * fRim;
-
-    Out.vResult = float4(vRimColor, 1.f);
+   
+   Out.vResult = float4(vRimColor, 1.f);
 
     return Out;
 }
@@ -398,6 +398,7 @@ PS_OUT_RESULT PS_MAIN_COMBINED(PS_IN In)
     float fOutLine = NormalTexture.Sample(DefaultSampler, In.vTexcoord).a;
     vector vMetalic = MetalicTexture.Sample(DefaultSampler, In.vTexcoord).a;
     vector vBloom = MeshBloomFinalTexture.Sample(DefaultSampler, In.vTexcoord);
+    vector vMotionBlur = MotionBlurTexture.Sample(PointSampler, In.vTexcoord);
 
     float NdotL = vLightInfo.r;
     float2 vRampCoord = float2(1 - NdotL, 0.5f);
@@ -415,12 +416,14 @@ PS_OUT_RESULT PS_MAIN_COMBINED(PS_IN In)
     else
         Out.vResult = float4(vLight.rgb + vLightAmbient.rgb * vDiffuse.rgb * 0.5, vLight.a);
     
-    float rimIntensity = max(vRamp, 0.5f);
-    Out.vResult.rgb += vRimLight.rgb * rimIntensity;
+    Out.vResult.rgb += vRimLight.rgb;
     
     float3 specularColor = vLightSpecular.rgb * vLightInfo.g;
     Out.vResult.rgb += specularColor + vBloom.rgb;
-
+    float alpha = max(min(vRimLight.a, vMotionBlur.a),vLight.a);
+    
+    Out.vResult.a = alpha;
+    
     return Out;
 }
 

@@ -117,7 +117,15 @@ void CSacrifice_Orb::Render_GUI()
 
 void CSacrifice_Orb::OnTriggerEnter(CGameObject* pOther)
 {
-	ObjectManager()->Remove_Object(this);
+	ObjectManager()->Remove_Object(this); 
+
+	_vector3 vPosition = m_pTransform->Get_WorldPos();
+	auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+		.Asset("sacrifice_orb_explode.json")
+		.Position(vPosition)
+		.Build("Sacrifice_Orb_Explode");
+
+	ObjectManager()->Add_Object(effect, { Get_Level(),"Enemy_Effect_Layer" });
 }
 
 CSacrifice_Orb* CSacrifice_Orb::Create()

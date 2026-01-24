@@ -97,12 +97,12 @@ HRESULT CRenderSystem::Render()
 
 	m_pForward->Render_SSAO();
 	m_pForward->Render_LightAcc();
+	m_pForward->Render_MotionBlur();
 	m_pForward->Render_RimLight();
 	m_pForward->Render_Combined();
 	m_pForward->Render_Blended(m_pBlendedPass);
 	m_pForward->Render_NonLight(m_pNonLightPass);
 	m_pForward->Render_OutLine();
-	m_pForward->Render_MotionBlur();
 	m_pUI->Render_2D(m_pUIPass);
 
 	m_pPost->Render_Fog();

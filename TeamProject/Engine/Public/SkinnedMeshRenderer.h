@@ -34,7 +34,7 @@ private:
     virtual HRESULT Ready_MRT() override;
 
 private:
-    RIMLIGHT RimLightMode = RIMLIGHT::OUTLINE;
+    RIMLIGHT RimLightMode = RIMLIGHT::RIMLIGHT;
     vector<OUTLINE_COMMAND> m_OutLineCommands;
     vector<MOTIONBLUR_COMMAND> m_MotionBlurCommands;
     _float                  m_fScreenWidth;

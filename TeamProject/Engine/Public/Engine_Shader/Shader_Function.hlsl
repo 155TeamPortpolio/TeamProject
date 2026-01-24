@@ -77,4 +77,5 @@ float4 ApplyColorMode(uint ColorMode, float4 Diffuse, float4 Color)
     
     return vResult;
 }
+
 #endif
