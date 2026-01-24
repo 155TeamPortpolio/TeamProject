@@ -229,8 +229,8 @@ void CBattlePlayer::Cancel_ComboAttack()
 void CBattlePlayer::Update_Input(_float dt)
 {
 	// ÄÞº¸ Å×½ºÆ®
-	//if (InputDevice()->Key_Tap('C'))
-	//	Request_ComboAttack();
+	if (InputDevice()->Key_Tap('C'))
+		Request_ComboAttack();
 	if (m_bComboSelect)
 	{
 		Process_ComboSelect(dt);
