@@ -67,6 +67,20 @@ DepthStencilState DSS_None
     DepthWriteMask = zero;
 };
 
+DepthStencilState DSS_MotionStencil
+{
+    DepthEnable = true;
+    DepthWriteMask = ZERO;
+    
+    StencilEnable = true;
+    FrontFaceStencilFunc = EQUAL;
+    FrontFaceStencilPass = INCR;
+    BackFaceStencilFunc = EQUAL;
+    BackFaceStencilPass = INCR;
+    
+    StencilReadMask = 0xFF;
+    StencilWriteMask = 0xFF;
+};
 
 DepthStencilState DSS_WriteStencil
 {

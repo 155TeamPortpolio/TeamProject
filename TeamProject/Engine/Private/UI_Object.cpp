@@ -74,6 +74,8 @@ void CUI_Object::Post_EngineUpdate(_float dt)
     if (!m_isAlive) return;
 
     Update_UITransform();
+    if (m_eRenderLayer == RENDER_LAYER::None)
+        return;
 
     if (m_eRenderLayer != RENDER_LAYER::CustomOnly) {
 

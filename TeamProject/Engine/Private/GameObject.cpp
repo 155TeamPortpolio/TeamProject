@@ -389,6 +389,7 @@ HRESULT CGameObject::Make_BlendedPacket(OPAQUE_PACKET packet)
 	newPacket.pPayLoad = packet.pPayLoad;
 	newPacket.pWorldMatrix = packet.pWorldMatrix;
 	newPacket.ObjID = m_ObjectID;
+
 	//float3 toObj = objWorldPos - cameraPos;
 	//float dist = dot(toObj, cameraForward);
 
@@ -464,7 +465,7 @@ HRESULT CGameObject::Make_EffectPacket(OPAQUE_PACKET packet)
 	newPacket.pWorldMatrix = packet.pWorldMatrix;
 	//float3 toObj = objWorldPos - cameraPos;
 	//float dist = dot(toObj, cameraForward);
-	packet.ObjID = m_ObjectID;
+	newPacket.ObjID = m_ObjectID;
 
 	const _float4x4* viewInverseMat = CGameInstance::GetInstance()->Get_CameraMgr()->Get_InversedViewMatrix();
 	_matrix viewInverse = XMLoadFloat4x4(viewInverseMat);

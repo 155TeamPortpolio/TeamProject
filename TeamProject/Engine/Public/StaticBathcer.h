@@ -81,6 +81,11 @@ struct CachedBatch
 	_uint lastUsedFrame = 0;
 	uint64_t memberHash = 0;
 	size_t memberCount = 0;
+
+	void Release() {
+		Safe_Release(pVB);
+		Safe_Release(pIB);
+	}
 };
 static uint64_t HashPackets(const vector<OPAQUE_PACKET*>& packets)
 {
