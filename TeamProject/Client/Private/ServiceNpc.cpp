@@ -8,6 +8,9 @@
 #include "EventListener.h"
 #include "DataBase.h"
 
+#include "FieldCharacter.h"
+#include "FieldSystem.h"
+
 CServiceNpc::CServiceNpc()
 	:CNpc()
 {
@@ -33,6 +36,8 @@ void CServiceNpc::Process_Event(const NPC_INTERACT_DESC& desc)
 		break;
 	case DialogueResult::Fail:
 		Fail(m_iCurSequenceID);
+		break;
+	case DialogueResult::None:
 		break;
 	}
 }

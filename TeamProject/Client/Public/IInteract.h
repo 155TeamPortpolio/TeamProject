@@ -7,6 +7,6 @@ protected:
     virtual ~IInteract() = default;
 
 public:
-    virtual void Interact() = 0;
+    virtual void Interact(class CGameObject* pObject = nullptr) = 0;
 };
 
