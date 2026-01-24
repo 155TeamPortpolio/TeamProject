@@ -786,9 +786,6 @@
     <Filter Include="02. GameObject\Object\Player\Character\Collider\AttackCollider">
       <UniqueIdentifier>{8cafc1ce-885d-4894-bbae-9bc579a5da0c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\MapObject\EntitySpawner">
-      <UniqueIdentifier>{8b852d8f-36c2-4c1e-b080-ca2b3222160f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\Camera\07. CamDirector">
       <UniqueIdentifier>{0d1fd986-9b7f-4463-b27c-8cc9eae09a0b}</UniqueIdentifier>
     </Filter>
@@ -836,6 +833,9 @@
     </Filter>
     <Filter Include="02. GameObject\Camera\04. OrbitCam\05. OrbitPoseSmootherController">
       <UniqueIdentifier>{4b23b083-95ec-4c48-8cb8-297675f8781c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\MapObject\99. EntitySpawner">
+      <UniqueIdentifier>{8b852d8f-36c2-4c1e-b080-ca2b3222160f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1524,7 +1524,7 @@
       <Filter>00. MainApp\00. CursorController</Filter>
     </ClInclude>
     <ClInclude Include="..\public\EntitySpawner.h">
-      <Filter>02. GameObject\MapObject\EntitySpawner</Filter>
+      <Filter>02. GameObject\MapObject\99. EntitySpawner</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Stage.h">
       <Filter>01. Level\04. Zero\Stage_Super</Filter>
@@ -2285,7 +2285,7 @@
       <Filter>00. MainApp\00. CursorController</Filter>
     </ClCompile>
     <ClCompile Include="..\private\EntitySpawner.cpp">
-      <Filter>02. GameObject\MapObject\EntitySpawner</Filter>
+      <Filter>02. GameObject\MapObject\99. EntitySpawner</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Stage.cpp">
       <Filter>01. Level\04. Zero\Stage_Super</Filter>
