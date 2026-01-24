@@ -46,7 +46,7 @@ void CStage::BaseIntro(CZero_Level::StageContext& context)
 				});
 			m_introFlow.AddOnce(seqId, [context]() {if (context.isFirstIn)
 			{
-				CUIDirector::GetInstance()->Show_BattleHUD();
+				CUIDirector::GetInstance()->Show_HUD(CUIDirector::HUD::BATTLE);
 			}
 				});
 		}

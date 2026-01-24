@@ -1,16 +1,16 @@
 #pragma once
-#include "UI_Object.h"
+#include "UI_HUD.h"
 
 NS_BEGIN(Client)
 
-class CUI_FieldHUD final : public CUI_Object
+class CUI_FieldHUD final : public CUI_HUD
 {
 private:
 	enum Child { GRADIENTF, GRADIENTJ, ACTION, END };	/*임시로 F, J 그라디언트 */
 
 private:
 	CUI_FieldHUD() {}
-	CUI_FieldHUD(const CUI_FieldHUD& rhs) : CUI_Object(rhs) {}
+	CUI_FieldHUD(const CUI_FieldHUD& rhs) : CUI_HUD(rhs) {}
 	virtual ~CUI_FieldHUD() DEFAULT;
 
 public:
@@ -21,6 +21,8 @@ public:
 	virtual void    Update(_float dt)			     override;
 	virtual void    Late_Update(_float dt)           override { __super::Late_Update(dt); }
 	virtual void    Render_GUI()                     override { __super::Render_GUI(); }
+	virtual void	UI_Active(void* pArg = nullptr)  override;
+	virtual void	UI_DeActive(void* pArg = nullptr) override;
 
 private:
 	UI_HANDLE		m_handles[ENUM(Child::END)];

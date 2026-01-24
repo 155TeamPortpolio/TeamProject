@@ -26,11 +26,14 @@ HRESULT CUI_DialogueMessage::Initialize(INIT_DESC* pArg)
     Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("dialogue_message.json")));
     Cache_Children();
 
+    // 타이핑 중 글자 출력 콜백. 타이핑이 진행될 때마다 MESSAGE 텍스트 슬롯 갱신
     m_tMessageTypeWriter.onTyped = [this](_uint iIndex, const wstring& strText) { Set_ChildText(ENUM(CHILD::MESSAGE), strText); };
 
+    // 다음 버튼 클릭 시 다이얼로그 진행
     if (m_pBtnNext)
         m_pBtnNext->Set_OnClick([this]() { Change_Dialogue(); });
 
+    // 초기 상태 세팅
     Set_Alpha(0.f);
     Set_ChildAnimation(CHILD::ARROW1, 0);
     Set_ChildAnimation(CHILD::ARROW2, 0);
@@ -42,9 +45,10 @@ void CUI_DialogueMessage::Update(_float dt)
 {
     __super::Update(dt);
 
-    if (InputDevice()->Key_Down(VK_SPACE))
-        Change_Dialogue();
+    // 스페이스 입력으로 다이얼로그 진행
+    Update_KeyInput();
 
+    // 타이핑 메시지 업데이트
     Update_TypingMessage(dt);
 
     Get_Component<CObjectContainer>()->UpdateChild(dt);
@@ -52,20 +56,23 @@ void CUI_DialogueMessage::Update(_float dt)
 
 void CUI_DialogueMessage::UI_Active(void* pArg)
 {
+    // 인자가 없으면 기본 등장 애니메이션만 재생
     if (!pArg)
     {
         Set_Animation(0);
         return;
     } 
 
+    // 다이얼로그 메시지 데이터 수신
     MESSAGE_DESC* pDesc = static_cast<MESSAGE_DESC*>(pArg);
-    Set_ChildText(TEXTSLOT::NAME, pDesc->strName);
-    Start_TypingMessage(pDesc->strMessage);
-    m_hasChoice = pDesc->hasChoice;
+    Set_ChildText(TEXTSLOT::NAME, pDesc->strName);  // 화자 이름 설정
+    Start_TypingMessage(pDesc->strMessage);         // 메시지 타이핑 시작
+    m_hasChoice = pDesc->hasChoice;                 // 선택지 존재 여부 저장
 }
 
 void CUI_DialogueMessage::UI_DeActive(void* pArg)
 {
+    // 사라지는 애니메이션 재생
     Set_Animation(1);
 }
 
@@ -111,14 +118,23 @@ void CUI_DialogueMessage::Cache_Children()
     }
 }
 
+void CUI_DialogueMessage::Update_KeyInput()
+{
+    if (InputDevice()->Key_Down(VK_SPACE))
+        Change_Dialogue();
+}
+
 void CUI_DialogueMessage::Change_Dialogue()
 {
+    // 타이핑 중이면 먼저 전체 출력 처리
     if (Complete_TypingMessage())
         return;
 
+    // 선택지가 있는 경우 메시지 단계에서는 진행 불가
     if (m_hasChoice)
         return;
 
+    // 부모 UI_Dialogue에게 다이얼로그 진행 요청
     if (auto parentObj = dynamic_cast<CUI_Dialogue*>(Get_Component<CChild>()->Get_Parent()))
         parentObj->Change_Dialogue();
 }
@@ -128,6 +144,7 @@ void CUI_DialogueMessage::Show_Choices()
     if (!m_hasChoice)
         return;
 
+    // 부모 UI_Dialogue에 선택지 표시 요청
     if (auto parentObj = dynamic_cast<CUI_Dialogue*>(Get_Component<CChild>()->Get_Parent()))
        parentObj->Show_Choices();
 }
@@ -142,11 +159,14 @@ void CUI_DialogueMessage::Update_TypingMessage(_float dt)
 {
     m_tMessageTypeWriter.Update(dt, ENUM(CHILD::MESSAGE));
 
+    // 타이핑이 끝났을 때 처리
     if (m_tMessageTypeWriter.isFinished())
     {
-        if (m_tMessageTypeWriter.isTyping)  /////////////
+        // 타이핑이 끝나는 순간 선택지 표시
+        if (m_tMessageTypeWriter.isTyping)
             Show_Choices();
 
+        // 타이핑 상태 정리
         m_tMessageTypeWriter.Complete();
     } 
 }
@@ -156,7 +176,8 @@ _bool CUI_DialogueMessage::Complete_TypingMessage()
     if (!m_tMessageTypeWriter.isTyping)
         return false;
 
-    if (m_tMessageTypeWriter.isTyping)  ////////////
+    // 스킵 시에도 선택지는 표시
+    if (m_tMessageTypeWriter.isTyping)
         Show_Choices();
 
     m_tMessageTypeWriter.Complete();

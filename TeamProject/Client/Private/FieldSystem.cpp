@@ -61,6 +61,16 @@ OBJECT_HANDLE CFieldSystem::GetCurCharacterHandle() const
 		return OBJECT_HANDLE();
 }
 
+void CFieldSystem::SetInteractHandle(OBJECT_HANDLE InteractHandle)
+{
+	m_InteractHandle = InteractHandle;
+}
+
+OBJECT_HANDLE CFieldSystem::GetInteractHandle() const
+{
+	return m_InteractHandle;
+}
+
 void CFieldSystem::Free()
 {
 	__super::Free();

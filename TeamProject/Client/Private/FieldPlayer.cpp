@@ -103,7 +103,7 @@ void CFieldPlayer::Reset_State(_float dt)
 
 void CFieldPlayer::Update_Input(_float dt)
 {
-	if (!m_pCurrentCharacter) return;
+	if (!m_pCurrentCharacter || m_bLockInput) return;
 	Update_Movement(dt);
 	Update_Interact(dt);
 }
