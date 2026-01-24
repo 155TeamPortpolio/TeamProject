@@ -121,8 +121,10 @@ void CUI_Dialogue::Update(_float dt)
     __super::Update(dt);
 
     // 다이얼로그가 사라지는 상태이며
-    // 메시지 애니메이션이 끝났다면 완전히 종료 처리
-    if (m_eState == STATE::INVISIBLE && Is_ChildAnimFinished(CHILD::MESSAGE))
+    // 메시지, 선택 애니메이션이 끝났다면 완전히 종료 처리
+    if (m_eState == STATE::INVISIBLE && 
+        Is_ChildAnimFinished(CHILD::MESSAGE) && 
+        Is_ChildAnimFinished(CHILD::CHOICE))
     {
         // 플레이어 입력 언락
         if (auto pPlayer = dynamic_cast<CPlayer*>(ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Player))))

@@ -16,8 +16,9 @@ public:
 	}CHOICE_DESC;
 
 private:
-	enum CHILD { CHOICE1, CHOICE2, CHOICE3, END };
-	inline static const string CHILD_INSTNAMES[ENUM(CHILD::END)] = { "choice1", "choice2", "choice3" };
+	enum CHILD { CHOICE1, CHOICE2, CHOICE3, MASK1, MASK2, MASK3, OVERLAY1, OVERLAY2, OVERLAY3, END };
+	inline static const string CHILD_INSTNAMES[ENUM(CHILD::END)] = { "choice1", "choice2", "choice3", 
+		"mask1", "mask2", "mask3", "overlay1", "overlay2", "overlay3"};
 
 	enum class TEXTSLOT { MESSAGE1, MESSAGE2, MESSAGE3, END };
 	inline static const string TEXTSLOT_INSTNAMES[ENUM(TEXTSLOT::END)] = { "message1", "message2", "message3" };
@@ -26,6 +27,8 @@ private:
 	inline static const string BTN_INSTNAMES[ENUM(BTNS::END)] = { "btn1", "btn2", "btn3" };
 
 	inline static constexpr CHILD CHOICES[] = { CHOICE1, CHOICE2, CHOICE3 };
+	inline static constexpr CHILD MASKS[] = { MASK1, MASK2, MASK3 };
+	inline static constexpr CHILD OVERLAYS[] = { OVERLAY1, OVERLAY2, OVERLAY3 };
 
 private:
 	CUI_DialogueChoice() {}
@@ -43,6 +46,8 @@ public:
 	virtual void	UI_Active(void* pArg)			 override;
 	virtual void	UI_DeActive(void* pArg)			 override;
 
+	virtual _bool	Is_AnimFinished()				 override;
+
 private:
 	CUI_Object*			m_pChildren[ENUM(CHILD::END)] = {};
 	CTextSlot*			m_pTextSlots[ENUM(TEXTSLOT::END)] = {};
@@ -57,8 +62,12 @@ private:
 	void Update_KeyInput();
 
 	void Change_Dialogue(_int iIndex);
-
+	
+	void Set_ChildAnchorOffsetY(CHILD eChild, _float fOffset);
+	void Set_ChildAlpha(CHILD eChild, _float fAlpha);
 	void Set_ChildAnimation(CHILD eChild, _int iIndex);
+	_bool Is_ChildAnimFinished(CHILD eChild);
+
 	void Set_ChildText(TEXTSLOT eTextSlot, const wstring& strText);
 
 public:
