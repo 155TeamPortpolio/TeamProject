@@ -67,3 +67,10 @@ void CFieldSystem::Free()
 	Safe_Release(m_pFieldPlayer);
 	Safe_Release(m_pRoomDirector);
 }
+
+void CFieldSystem::DayTimer::Notify_DayPhaseEvent()
+{
+	DAYPHASE_DESC desc{};
+	desc.dayPhase = m_eDayTime;
+	EventSystem()->Broadcast<DAYPHASE_DESC>({ desc });
+}

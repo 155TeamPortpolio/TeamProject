@@ -75,6 +75,7 @@ void CCamDirector::AutoTarget()
 
 void CCamDirector::AutoField()
 {
+    //GameInstance()->Set_EngineTimeScale(0.05f);
     AutoTarget();
     RequestSequence("Field/Front");
 }

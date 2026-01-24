@@ -822,9 +822,6 @@
     <Filter Include="02. GameObject\UI\01. 2D\Dialogue\Choice">
       <UniqueIdentifier>{db39c0af-f5db-4ad1-aad6-444af6dc0543}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Camera\04. OrbitCam\01. AutoYawFollowController">
-      <UniqueIdentifier>{6b953709-9881-461d-9361-1c9d4a1baf80}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\Camera\04. OrbitCam\02. CollisionDistanceController">
       <UniqueIdentifier>{d86fe13b-8dc2-4d4e-ad78-30a6472350fb}</UniqueIdentifier>
     </Filter>
@@ -833,6 +830,15 @@
     </Filter>
     <Filter Include="02. GameObject\UI\01. 2D\HUD">
       <UniqueIdentifier>{39c59546-1cd0-4e05-a3ab-b3d83bf8d308}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Camera\04. OrbitCam\01. OrbitAutoYawFollowController">
+      <UniqueIdentifier>{6b953709-9881-461d-9361-1c9d4a1baf80}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Camera\04. OrbitCam\04. OrbitInputController">
+      <UniqueIdentifier>{f2b96f4c-58cb-4f92-b00f-2008a29960a0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Camera\04. OrbitCam\05. OrbitPoseSmootherController">
+      <UniqueIdentifier>{4b23b083-95ec-4c48-8cb8-297675f8781c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1601,8 +1607,20 @@
     <ClInclude Include="..\Public\Room_Street.h">
       <Filter>03. Utility\06. FieldSystem\Room\02. Street</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\AutoYawFollowController.h">
-      <Filter>02. GameObject\Camera\04. OrbitCam\01. AutoYawFollowController</Filter>
+    <ClInclude Include="..\public\OrbitAutoYawFollowController.h">
+      <Filter>02. GameObject\Camera\04. OrbitCam\01. OrbitAutoYawFollowController</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\OrbitCollisionDistController.h">
+      <Filter>02. GameObject\Camera\04. OrbitCam\02. CollisionDistanceController</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\OrbitTargetSwitchController.h">
+      <Filter>02. GameObject\Camera\04. OrbitCam\03. TargetSwitchController</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\OrbitInputController.h">
+      <Filter>02. GameObject\Camera\04. OrbitCam\04. OrbitInputController</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\OrbitPoseSmootherController.h">
+      <Filter>02. GameObject\Camera\04. OrbitCam\05. OrbitPoseSmootherController</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UI_HUD.h">
       <Filter>02. GameObject\UI\01. 2D\HUD</Filter>
@@ -2335,8 +2353,20 @@
     <ClCompile Include="..\Private\Room_Street.cpp">
       <Filter>03. Utility\06. FieldSystem\Room\02. Street</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\AutoYawFollowController.cpp">
-      <Filter>02. GameObject\Camera\04. OrbitCam\01. AutoYawFollowController</Filter>
+    <ClCompile Include="..\private\OrbitAutoYawFollowController.cpp">
+      <Filter>02. GameObject\Camera\04. OrbitCam\01. OrbitAutoYawFollowController</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\OrbitCollisionDistController.cpp">
+      <Filter>02. GameObject\Camera\04. OrbitCam\02. CollisionDistanceController</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\OrbitTargetSwitchController.cpp">
+      <Filter>02. GameObject\Camera\04. OrbitCam\03. TargetSwitchController</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\OrbitInputController.cpp">
+      <Filter>02. GameObject\Camera\04. OrbitCam\04. OrbitInputController</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\OrbitPoseSmootherController.cpp">
+      <Filter>02. GameObject\Camera\04. OrbitCam\05. OrbitPoseSmootherController</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UI_HUD.cpp">
       <Filter>02. GameObject\UI\01. 2D\HUD</Filter>
