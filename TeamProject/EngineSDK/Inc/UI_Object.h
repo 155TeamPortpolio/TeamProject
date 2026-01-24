@@ -135,6 +135,7 @@ public:
 public:
 	void Play_Animation(_float dt);
 	void Set_Animation(_uint iIndex, _bool isLoop = false);
+	void Stop_Animation();
 	_bool Set_LastKeyframeTime(_uint iClipIndex, _float fTime);
 
 	_bool Is_AnimFinished();
