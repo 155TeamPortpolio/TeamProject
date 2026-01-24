@@ -242,7 +242,7 @@ float4 PS_MAIN_FINAL(PS_IN In) : SV_Target
     
     hdrColor += hdrBloom.rgb * 0.3;
     
-    float3 mapped = ACESFilm(hdrColor) + radialBloom.rgb + motionblur.rgb  + effect.rgb;
+    float3 mapped = ACESFilm(hdrColor) + radialBloom.rgb + motionblur.rgb+ effect.rgb;
     
     float3 finalColor = ui.rgb + mapped * (1.f - ui.a);
 
