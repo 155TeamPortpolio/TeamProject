@@ -2,14 +2,12 @@
 
 #include "CamObject.h"
 #include "OrbitLockOnController.h"
+#include "AutoYawFollowController.h"
 
 NS_BEGIN(Client)
 
 class COrbitCam final : public CCamObject
 {
-public:
-    using Profile = OrbitCamProfile;
-
 private:
     COrbitCam() {}
     COrbitCam(const COrbitCam& rhs) : CCamObject(rhs) {}
@@ -20,14 +18,13 @@ public:
     HRESULT Initialize(INIT_DESC* pArg) override;
     void    Awake()                     override;
     void    Priority_Update(_float dt)  override;
-    void    Render_GUI()                override;
+    //void    Render_GUI()                override;
 
 public:
     void    SetTarget(OBJECT_HANDLE handle);
     void    ClearTarget();
 
     void    SyncFromCurTransform();
-    void    SetTargetFrontView(CGameObject* obj, float distance, float pitchDeg, float heightOffset);
     void    SnapFromCamPose(const Vector3& camPos, const Quaternion& camRot);
 
     void    CaptureSnapshot(OrbitCamSnapshot& out) const;
@@ -36,12 +33,12 @@ public:
     void    SetLockOn(OBJECT_HANDLE handle);
     void    ClearLockOn();
 
-    void    SetPivotOverrideOffset(const Vector3& offset) { pose.pivotExternalOffset = offset; }
-    Vector3 GetPivotOverrideOffset() const { return pose.pivotExternalOffset; }
-    void    ClearPivotOverrideOffset() { pose.pivotExternalOffset = Vector3::Zero; }
+    void    SetPivotExternalOffset(const Vector3& offset) { pose.pivotExternalOffset = offset; }
+    Vector3 GetPivotExternalOffset() const { return pose.pivotExternalOffset; }
+    void    ClearPivotExternalOffset() { pose.pivotExternalOffset = Vector3::Zero; }
 
     Vector3 GetCurPivotWorld() const { return pose.curPivot; }
-    Vector3 GetBasePivotWorld() const { return GetBasePivotTargetPos(targetHandle) + pose.pivotOverrideOffset; }
+    Vector3 GetBasePivotWorld() const { return GetBasePivotTargetPos(targetHandle) + pose.pivotInternalOffset; }
 
 private:
     void    UpdateInput(_float dt);
@@ -53,27 +50,24 @@ private:
     float   GetEffectiveDist()  const;
     void    ApplyOrbitPose(_float dt, const OrbitLockOnEvalResult& lockRes);
 
-    void    UpdateAutoYawFollow(_float dt);
     Vector3 GetTargetFootPos() const;
 
     Vector3 GetBasePivotTargetPos(OBJECT_HANDLE handle) const;
     void    UpdateTargetSwitch(_float dt);
 
-    _float  GetCollisionAllowedDist(const Vector3& pivot, const Vector3& backDir, float desiredDist);
+    _float  GetCollisionAllowedDist(const Vector3& pivot, float wantDist);
 
 private:
-    OrbitCamPoseState         pose{};
-    OrbitCamInputState        input{};
-    OrbitCamTargetSwitchState targetSwitch{};
-    Profile                   profile{};
-    COrbitLockOnController    lockOnCtrl{};
-    OBJECT_HANDLE             targetHandle{};
+    OrbitCamPoseState               pose{};
+    OrbitCamInputState              input{};
+    OrbitCamTargetSwitchState       targetSwitch{};
+    OrbitCamProfile                 profile{};
+    COrbitLockOnController          lockOnCtrl{};
+    COrbitAutoYawFollowController   autoYawCtrl{};
+    OBJECT_HANDLE                   targetHandle{};
 
-    _float                    autoYawHoldTimer = 0.f;
-    Vector3                   prevTargetFoot{};
-    _bool                     hasPrevTargetFoot = false;
-    _float                    m_curMaxYawSpeedDeg = 720.f;
-    _float                    m_curMaxPitchSpeedDeg = 540.f;
+    _float                          m_curMaxYawSpeedDeg = 720.f;
+    _float                          m_curMaxPitchSpeedDeg = 540.f;
 
 public:
     static  COrbitCam* Create();
