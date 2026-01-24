@@ -36,7 +36,7 @@ private:
 	_float4		m_uvRangeY = {};	 // T0, T1, B0, B1 (CPU에서 계산해서 넘김)
 
 private:
-	void Render_GUI_NineSlice();
+	_bool Render_GUI_NineSlice();
 
 public:
 	inline static const string m_strTypeTag = "NineSlice";
