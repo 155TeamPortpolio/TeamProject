@@ -18,16 +18,21 @@ void CUI_Dialogue::Change_Dialogue()
 {
     switch (m_tDialogueDesc.Result)
     {
+    // 대화가 성공 / 실패로 종료되는 경우
     case DialogueResult::Success:
     case DialogueResult::Fail:
-    {
+    {   
+        // UI를 닫고
         Change_State(STATE::INVISIBLE);
+        // NPC 상호작용 결과를 외부 시스템에 알림
         BroadCast_NPCInteractDesc(m_tDialogueDesc.Name, m_tDialogueDesc.SequenceID, m_tDialogueDesc.NextSequenceID, m_tDialogueDesc.Result);
     }
     break;
 
+    // 아직 대화가 이어지는 경우
     case DialogueResult::Running:
     case DialogueResult::None:
+        // 다음 시퀀스로 진행
         _int iSequenceID = m_tDialogueDesc.SequenceID;
         Open_Dialogue(m_tDialogueDesc.DialogueID, ++iSequenceID);
         break;
@@ -36,19 +41,24 @@ void CUI_Dialogue::Change_Dialogue()
 
 void CUI_Dialogue::Change_Dialogue(ChoiceDesc desc)
 {
+    // 선택 결과가 대화 종료를 의미하는 경우
     if (desc.Next_SequeceID == 0)
     {
+        // UI를 닫고
         Change_State(STATE::INVISIBLE);
+        // NPC 상호작용 결과를 외부 시스템에 알림
         BroadCast_NPCInteractDesc(m_tDialogueDesc.Name, m_tDialogueDesc.SequenceID, desc.Next_SequeceID, desc.Result);
        
         return;
     } 
 
+    // 다음 시퀀스가 있다면 해당 시퀀스로 대화 진행
     Open_Dialogue(m_tDialogueDesc.DialogueID, desc.Next_SequeceID);
 }
 
 void CUI_Dialogue::Show_Choices()
 {
+    // 선택지가 없는 경우 처리하지 않음
     if (m_tDialogueDesc.ChoiceNum <= 0)
         return;
 
@@ -56,6 +66,8 @@ void CUI_Dialogue::Show_Choices()
     if (!pChoice)
         return;
 
+    // 선택지 UI에 넘길 데이터 구성
+    // 선택지 개수에 따라 문자열 채우기
     CUI_DialogueChoice::CHOICE_DESC desc = {};
     desc.iChoiceNum = m_tDialogueDesc.ChoiceNum;
     switch (desc.iChoiceNum)
@@ -74,6 +86,7 @@ void CUI_Dialogue::Show_Choices()
         break;
     }
 
+    // 선택지 UI 활성화
     pChoice->UI_Active(&desc);
 }
 
@@ -90,15 +103,15 @@ HRESULT CUI_Dialogue::Initialize_Prototype()
 HRESULT CUI_Dialogue::Initialize(INIT_DESC* pArg)
 {
     __super::Initialize(pArg);
-
-    m_vSize = m_WinSize;
-
+     
     Add_Children(G_GlobalLevelKey, "Proto_GameObject_DialogueMessage", CHILD::MESSAGE);
     Add_Children(G_GlobalLevelKey, "Proto_GameObject_DialogueChoice", CHILD::CHOICE);
 
     Bind_EventListener();
 
+    // 초기 상태 세팅 
     Set_Alive(false);
+    m_vSize = m_WinSize;
 
     return S_OK;
 }
@@ -107,10 +120,13 @@ void CUI_Dialogue::Update(_float dt)
 {
     __super::Update(dt);
 
+    // 다이얼로그가 사라지는 상태이며
+    // 메시지 애니메이션이 끝났다면 완전히 종료 처리
     if (m_eState == STATE::INVISIBLE && Is_ChildAnimFinished(CHILD::MESSAGE))
     {
+        // 플레이어 입력 언락
         if (auto pPlayer = dynamic_cast<CPlayer*>(ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Player))))
-           pPlayer->Unlock_Input();// Invisible 상태가 되고, 애니메이션이 끝난 시점에 플레이어 인풋도 언락함 (만약에 애니메이션 없으면 타이머 별도로 둬야)
+           pPlayer->Unlock_Input();
         Set_Alive(false);
         return;
     } 
@@ -133,8 +149,11 @@ void CUI_Dialogue::Bind_EventListener()
     // 이벤트 : UI_DIALOGUE_REQUEST_DESC
     Get_Component<CEventListener>()->Add_Listener<UI_DIALOGUE_REQUEST_DESC>([this](const UI_DIALOGUE_REQUEST_DESC& desc)
         { 
+            // 대화 UI 시작
             Open_Dialogue(desc.strDialogueID, desc.iSequenceID);
+            // 대화용 카메라 연출 시작
             CamDirector()->StartDialog();
+            // 플레이어 입력 잠금
             if (auto pPlayer = dynamic_cast<CPlayer*>(ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Player))))
                 pPlayer->Lock_Input();
         });
@@ -143,22 +162,27 @@ void CUI_Dialogue::Bind_EventListener()
 void CUI_Dialogue::Open_Dialogue(const string& strNewSequenceID, _uint iNewSequenceID)
 {
     auto pair = make_pair(strNewSequenceID, iNewSequenceID);
+    // 이미 같은 다이얼로그가 열려있다면 무시
     if (m_eState == STATE::VISIBLE && pair == make_pair(m_tDialogueDesc.DialogueID, m_tDialogueDesc.SequenceID))
         return;
 
-    Change_State(STATE::VISIBLE);   // 여기서 하는게 맞나?
+    // 다이얼로그 표시 상태로 전환
+    Change_State(STATE::VISIBLE);
 
+    // DB에서 다이얼로그 데이터 가져오기
     m_tDialogueDesc = CDataBase::GetInstance()->GetNpcDialogueDesc(pair);
 
     auto pMessage = m_pChildren[ENUM(CHILD::MESSAGE)];
     if (!pMessage)
         return;
 
+    // 메시지 UI에 넘길 데이터 구성
     CUI_DialogueMessage::MESSAGE_DESC desc = {};
     desc.strName = m_tDialogueDesc.Name;
     desc.strMessage = m_tDialogueDesc.Text;
     desc.hasChoice = (m_tDialogueDesc.ChoiceNum > 0) ? true : false;
 
+    // 메시지 UI 활성화
     pMessage->UI_Active(&desc);
 }
 
@@ -170,13 +194,15 @@ void CUI_Dialogue::Change_State(STATE eState)
     m_eState = eState;
     switch (eState)
     {
-    case STATE::INVISIBLE: 
+    case STATE::INVISIBLE:
+        // 메시지 UI 비활성화 + 카메라 연출 종료
         Set_ChildUIDeActive(CHILD::MESSAGE);
         CamDirector()->EndDialog();
         break;
     case STATE::VISIBLE:
-        Set_Alive(true);
+        // UI 활성화
         Set_ChildUIActive(CHILD::MESSAGE);
+        Set_Alive(true);
         break;
     }
 }

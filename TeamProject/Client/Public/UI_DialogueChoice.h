@@ -54,6 +54,8 @@ private:
 private:
 	void Cache_Children();
 
+	void Update_KeyInput();
+
 	void Change_Dialogue(_int iIndex);
 
 	void Set_ChildAnimation(CHILD eChild, _int iIndex);
