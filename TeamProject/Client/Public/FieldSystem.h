@@ -56,7 +56,7 @@ public:
 
 public:
 	void	SetActive(_bool is) { m_isActive = is; }
-
+	
 public:
 	void	SetFieldPlayer(class CFieldPlayer* pFieldPlayer);
 	OBJECT_HANDLE					GetCurCharacterHandle() const;

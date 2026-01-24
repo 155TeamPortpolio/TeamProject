@@ -53,6 +53,8 @@ public:
 	virtual _bool Unregister_Global(_uint keyID);
 	virtual void Clear_Global();
 
+public:
+
 private:
 	class CGameInstance* m_pGameInstance = { nullptr };
 	class CObjectPool* m_pObjectPool = { nullptr };
