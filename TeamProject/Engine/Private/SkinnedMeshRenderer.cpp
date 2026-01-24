@@ -114,7 +114,7 @@ HRESULT CSkinnedMeshRenderer::Render_RimLight()
 	m_pTargetManager->Bind_Target("Target_RimLight", m_pShader, "RimLightTexture");
 	m_pTargetManager->Bind_Target("Target_Skinned_Normal", m_pShader, "NormalTexture");
 	m_pTargetManager->Bind_Target("Target_Skinned_Depth", m_pShader, "DepthTexture");
-
+	
 	Bind_WorldMatrix();
 	m_pShader->SetConstantBuffer("FrameBuffer", m_pPipeLine->Get_FrameBuffer());
 
@@ -179,6 +179,7 @@ HRESULT CSkinnedMeshRenderer::Render_SkinnedMesh_Combined()
 	m_pTargetManager->Bind_Target("Target_LightInfo_SkinnedMesh", m_pShader, "LightInfoTexture");
 	m_pTargetManager->Bind_Target("Target_RimLightFinal", m_pShader, "RimLightFinalTexture");
 	m_pTargetManager->Bind_Target("Target_BloomBlurY_SkinnedMesh", m_pShader, "MeshBloomFinalTexture");
+	m_pTargetManager->Bind_Target("Target_MotionBlur", m_pShader, "MotionBlurTexture");
 
 	m_pShader->Bind_Value("RampTexture", { m_pRampTexture->Get_SRV(), "Texture2D", 0 });
 
@@ -315,6 +316,9 @@ HRESULT CSkinnedMeshRenderer::Ready_MRT()
 
 	{
 		if (FAILED(m_pTargetManager->Add_MRT("MRT_MotionBlur", "Target_MotionBlur"))) return E_FAIL;
+		if (FAILED(m_pTargetManager->Add_MRT("MRT_MotionBlur", "Target_RimLight"))) return E_FAIL;
+		if (FAILED(m_pTargetManager->Add_MRT("MRT_MotionBlur", "Target_Skinned_Normal"))) return E_FAIL;
+		if (FAILED(m_pTargetManager->Add_MRT("MRT_MotionBlur", "Target_Skinned_Depth"))) return E_FAIL;
 		if (FAILED(m_pTargetManager->Add_MRT("MRT_MotionBlur", "Target_MotionHeight"))) return E_FAIL;
 		if (FAILED(m_pTargetManager->Add_MRT("MRT_MotionNoise", "Target_MotionNoise"))) return E_FAIL;
 	}
@@ -359,7 +363,7 @@ HRESULT CSkinnedMeshRenderer::Process_MotionBlurQueue()
 		return S_OK;
 	}
 
-	if (FAILED(m_pTargetManager->Begin_MRT("MRT_MotionBlur"))) return E_FAIL;
+	if (FAILED(m_pTargetManager->Begin_MRT("MRT_MotionBlur", 0b10001))) return E_FAIL;
 
 	for (auto& cmd : m_MotionBlurCommands)
 	{
