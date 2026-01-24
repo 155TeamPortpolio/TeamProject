@@ -837,6 +837,15 @@
     <Filter Include="02. GameObject\Camera\04. OrbitCam\05. OrbitPoseSmootherController">
       <UniqueIdentifier>{4b23b083-95ec-4c48-8cb8-297675f8781c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\HUD_Battle\DamageText">
+      <UniqueIdentifier>{4ca6e733-edcb-4ac1-88df-cd51632b53c6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\HUD_Battle\DamageText\Atlas_Sprite">
+      <UniqueIdentifier>{141ad35d-d882-4929-ae9d-00da8a8aaf8e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\HUD_Battle\DamageText\DamageText">
+      <UniqueIdentifier>{04c4b73f-8429-408a-91c9-5eebde162c6e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1619,6 +1628,12 @@
     <ClInclude Include="..\public\OrbitPoseSmootherController.h">
       <Filter>02. GameObject\Camera\04. OrbitCam\05. OrbitPoseSmootherController</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\UI_AtlasSprite.h">
+      <Filter>02. GameObject\UI\01. 2D\HUD_Battle\DamageText\Atlas_Sprite</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_DamageText.h">
+      <Filter>02. GameObject\UI\01. 2D\HUD_Battle\DamageText\DamageText</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2361,6 +2376,12 @@
     </ClCompile>
     <ClCompile Include="..\private\OrbitPoseSmootherController.cpp">
       <Filter>02. GameObject\Camera\04. OrbitCam\05. OrbitPoseSmootherController</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_AtlasSprite.cpp">
+      <Filter>02. GameObject\UI\01. 2D\HUD_Battle\DamageText\Atlas_Sprite</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_DamageText.cpp">
+      <Filter>02. GameObject\UI\01. 2D\HUD_Battle\DamageText\DamageText</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

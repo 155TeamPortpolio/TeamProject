@@ -29,6 +29,9 @@
 #include "UI_UltimateAction.h"
 #include "UI_SceneFrame.h"
 
+#include "UI_AtlasSprite.h"
+#include "UI_DamageText.h"
+
 #include "UI_BossHUD.h"
 
 #include "UI_FieldHUD.h"
@@ -162,6 +165,9 @@ void UILoader::Add_Prototype(const string& levelKey)
 
 		{"IconLabel",		&CUI_IconLabel::Create		},
 		{"SceneFrame",		&CUI_SceneFrame::Create		},
+
+		{"AtlasSprite",     &CUI_AtlasSprite::Create    },
+		{"DamageText",      &CUI_DamageText::Create     },
 	};
 
 	for (const Entry& entry : entries)
