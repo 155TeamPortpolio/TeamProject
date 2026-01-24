@@ -29,6 +29,8 @@ private:
 	_bool		m_isFlipY{};
 	_float2		m_vFlip{};
 
+	_bool		m_isNineSliceDirty = {};
+
 	_float4		m_vBorderPx = { };	// left, right, top, bottom (픽셀)
 	_float4		m_uvRangeX = {};	// L0, L1, R0, R1 (CPU에서 계산해서 넘김)
 	_float4		m_uvRangeY = {};	 // T0, T1, B0, B1 (CPU에서 계산해서 넘김)

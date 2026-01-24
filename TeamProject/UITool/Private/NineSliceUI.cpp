@@ -120,8 +120,8 @@ void CNineSliceUI::Render_GUI_NineSlice()
         if (fSum > m_vSize.y)
         {
             _float fScale = m_vSize.y / fSum;
-            m_vBorderPx.x *= fScale;
-            m_vBorderPx.y *= fScale;
+            m_vBorderPx.z *= fScale;
+            m_vBorderPx.w *= fScale;
         }
     }
 }
