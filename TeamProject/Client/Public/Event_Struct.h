@@ -58,6 +58,13 @@ typedef struct tagStageChangedDesc {
 
 #pragma endregion
 
+#pragma region FieldDayPhase
+typedef struct tagDayPhaseDesc {
+	DayPhase dayPhase;
+}DAYPHASE_DESC;
+
+#pragma endregion
+
 #pragma region Interactable & Dialogue
 // ---------- UI : Interactable ----------
 /* 인터랙션 가능 범위 진입/이탈 시 UI에 대상 이름과 상호작용 가능 여부를 전달 */
