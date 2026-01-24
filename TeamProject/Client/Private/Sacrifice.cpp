@@ -108,7 +108,7 @@ HRESULT CSacrifice::Initialize(INIT_DESC* pArg)
 void CSacrifice::Awake()
 {
 	m_vRimLightColor = _float3(1.f, 0.3f, 0.f);
-	m_fRimLightPower = 4.f;
+	m_fRimLightPower = 8.f;
 	m_fDissolveTilling = 5.f;
 
 	auto pMaterial = Get_Component<CMaterial>();
