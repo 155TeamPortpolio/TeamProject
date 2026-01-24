@@ -9,8 +9,9 @@
 
 void CCorinState_SwitchIn::Enter(CCorin* pOwner)
 {
-    pOwner->Active_Character();
+    //pOwner->Active_Character();
     pOwner->Push_Invincible();
+    pOwner->Unlock_Move();
     if (!m_pSubStateMachine)
     {
         m_pSubStateMachine = CStateMachine<CCorin>::Create();
@@ -35,6 +36,10 @@ void CCorinState_SwitchIn::Enter(CCorin* pOwner)
         m_pSubStateMachine->Set_DefaultState("ParryAid");
         break;
     }
+
+    m_pSubStateMachine->Reset_Trigger("Complete");
+    m_pSubStateMachine->Set_Int("ExitMode", 0);
+
     __super::Enter(pOwner);
 }
 
@@ -73,4 +78,15 @@ void CCorinState_SwitchIn::Exit(CCorin* pOwner)
 {
     pOwner->Pop_Invincible();
     __super::Exit(pOwner);
+}
+
+_bool CCorinState_SwitchIn::Handle_Transition(CCorin* pOwner, const string& strState)
+{
+    if (m_pSubStateMachine->Get_CurrentStateName() == "ParryAid")
+    {
+        IHState<CCorin>* pState = dynamic_cast<IHState<CCorin>*>(m_pSubStateMachine->Get_CurrentState());
+        if (pState->Get_SubStateMachine()->Get_CurrentState()->Get_Tag() != "End")
+            return false;
+    }
+    return true;
 }

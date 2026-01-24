@@ -22,9 +22,16 @@ struct CamBlendState
 };
 struct CamBoneAttachDesc
 {
-	_bool       enabled = false;
-	CamBoneMode mode = CamBoneMode::Parent;
-	string      boneName = "Bip001";
+	_bool  enabled = false;
+
+	_bool  usePosBone = false;
+	_bool  useLookAtBone = false;
+
+	string posBoneName;
+	string lookAtBoneName;
+
+	_bool  offsetInRefRotSpace = true;
+	_bool  keepRollFromKey = true;
 };
 struct CamKeyFrame 
 {
@@ -48,22 +55,24 @@ struct CamKeyFrame
 };
 struct CamSequenceDesc 
 { 
-	string              name; 
-					    
-	CamProjType         projType     = CamProjType::Perspective;			    
-	CamPlaybackMode     playbackMode = CamPlaybackMode::Once;
-					    
-	CamPosInterp        posInterp    = CamPosInterp::Linear;
-	CamRotInterp        rotInterp    = CamRotInterp::Slerp;
-	CamFovInterp        fovInterp    = CamFovInterp::Linear;
+	string              name;
 
-	EaseType            segmentEase  = EaseType::None;
+	CamProjType         projType = CamProjType::Perspective;
+	CamPlaybackMode     playbackMode = CamPlaybackMode::Once;
+
+	CamPosInterp        posInterp = CamPosInterp::Linear;
+	CamRotInterp        rotInterp = CamRotInterp::Slerp;
+	CamFovInterp        fovInterp = CamFovInterp::Linear;
+
+	EaseType            segmentEase = EaseType::None;
 	CamOrbitArcDesc     orbitArc{};
 
-	CamSpace            space        = CamSpace::World;
+	CamSpace            space = CamSpace::World;
 	CamBoneAttachDesc   boneAttach{};
 
 	vector<CamKeyFrame> keyframes;
+
+	float               refAnimDurSec = 0.f;
 
 	float GetDuration() const
 	{

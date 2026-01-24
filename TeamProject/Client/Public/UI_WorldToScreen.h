@@ -22,6 +22,15 @@ public:
 protected:
 	void Update_WorldToScreen(_float3 vPosition);
 
+private:
+	_bool			m_isValid = {};
+
+private:
+	/* 월드 위치로 스크린 위치 구하기. true : 카메라 앞, false : 카메라 뒤 */
+	_bool Update_WorldToScreenPos(_float3 vPosition);
+	void Update_Visibility(_bool isValid);
+	void Update_ZPriority(_float3 vPosition);
+
 public:
 	virtual void Free() { __super::Free(); }
 };

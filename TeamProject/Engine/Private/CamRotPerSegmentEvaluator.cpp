@@ -63,10 +63,6 @@ Quaternion CCamRotPerSegmentEvaluator::Evaluate(_float time) const
     if (n == 1)
     {
         lastRoll = keys[0].roll;
-
-        const bool lookAt = (seq && seq->boneAttach.enabled && seq->boneAttach.mode == CamBoneMode::LookAt);
-        if (lookAt) return Quaternion::Identity;
-
         return evalSlerp ? evalSlerp->Evaluate(keys[0].time) : Quaternion::Identity;
     }
 
@@ -91,9 +87,6 @@ Quaternion CCamRotPerSegmentEvaluator::Evaluate(_float time) const
 
         lastRoll = LerpAngle(k0.roll, k1.roll, u);
     }
-
-    const bool lookAt = (seq && seq->boneAttach.enabled && seq->boneAttach.mode == CamBoneMode::LookAt);
-    if (lookAt) return Quaternion::Identity;
 
     switch (mode)
     {

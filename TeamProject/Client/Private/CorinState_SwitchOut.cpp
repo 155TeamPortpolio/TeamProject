@@ -30,3 +30,9 @@ void CCorinState_SwitchOut::Exit(CCorin* pOwner)
     pOwner->Get_StateMachine()->Set_Bool("IsMove", false);
     __super::Exit(pOwner);
 }
+
+_bool CCorinState_SwitchOut::Handle_Transition(CCorin* pOwner, const string& strState)
+{
+    if (strState == "Idle")  return true;
+    return false;
+}
