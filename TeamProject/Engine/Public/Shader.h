@@ -69,6 +69,8 @@ private:
     HRESULT Compile_From_HLSL(ID3D11Device* pDevice, wstring wPath);
     HRESULT Compile_From_CSO(ID3D11Device* pDevice, wstring wPath);
 
+    void ClearEffectCaches();
+
 private:
     _uint m_ShaderID = {};
     string m_ShaderKey;
