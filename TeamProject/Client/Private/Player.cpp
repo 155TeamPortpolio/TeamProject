@@ -101,6 +101,9 @@ void CPlayer::Lock_Input()
 
 	if (m_ePlayerType == PLAYER::BATTLE) 
 		m_pBattlePlayer->Lock_Input();
+
+	if (m_ePlayerType == PLAYER::FIELD)
+		m_pFieldPlayer->Lock_Input();
 }
 
 void CPlayer::Unlock_Input()
@@ -109,6 +112,9 @@ void CPlayer::Unlock_Input()
 
 	if (m_ePlayerType == PLAYER::BATTLE)
 		m_pBattlePlayer->UnLock_Input();
+
+	if (m_ePlayerType == PLAYER::FIELD)
+		m_pFieldPlayer->UnLock_Input();
 }
 
 void CPlayer::Render_GUI()

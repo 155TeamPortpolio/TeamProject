@@ -129,7 +129,7 @@ void CZeroPortal::OnTriggerExit(CGameObject* pOther)
 	m_bIsInteractable = false;
 }
 
-void CZeroPortal::Interact()
+void CZeroPortal::Interact(CGameObject* pObject)
 {
 	if (!m_bIsInteractable)
 		return;

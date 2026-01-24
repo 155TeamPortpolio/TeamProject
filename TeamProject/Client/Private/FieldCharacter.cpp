@@ -10,6 +10,7 @@
 #include "ObjectContainer.h"
 
 #include "IInteract.h"
+#include "FieldSystem.h"
 
 CFieldCharacter::CFieldCharacter(const CFieldCharacter& rhs)
 	:CGameObject(rhs)
@@ -184,7 +185,8 @@ void CFieldCharacter::Process_Interact(CGameObject* pObject)
 
 	if (pInteract != nullptr)
 	{
-		pInteract->Interact();
+		FieldSystem()->SetInteractHandle(pObject->Get_Handle());
+		pInteract->Interact(this);
 	}
 }
 
