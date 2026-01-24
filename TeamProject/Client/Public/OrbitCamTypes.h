@@ -15,6 +15,35 @@ struct OrbitAutoYawFollowSnapshot
 {
     OrbitAutoYawFollowState state{};
 };
+
+struct OrbitCollisionDistEvalResult
+{
+    _float allowedDist = 0.f;
+    _float goalDist = 0.f;
+    _bool  constrained = false;
+    _float maxYawSpeedDeg = 0.f;
+    _float maxPitchSpeedDeg = 0.f;
+};
+
+struct OrbitTargetSwitchState
+{
+    _bool   active = false;
+    _float  elapsed = 0.f;
+    Vector3 holdPivotWorld{};
+};
+
+struct OrbitTargetSwitchSnapshot
+{
+    OrbitTargetSwitchState state{};
+};
+
+struct OrbitInputEvalResult
+{
+    _float yawDeltaDeg = 0.f;
+    _float pitchDeltaDeg = 0.f;
+    _float zoomDelta = 0.f;
+};
+
 // ----------------------------------------------------------------------
 
 struct OrbitCamPoseState
@@ -39,11 +68,11 @@ struct OrbitCamInputState
 
 struct OrbitCamProfile
 {
-    _float   minDist = 0.5f;
+    _float   minDist = 0.7f;
     _float   maxDist = 6.f;
              
-    _float   pitchMin = -30.f;
-    _float   pitchMax = 40.f;
+    _float   pitchMin = -40.f;
+    _float   pitchMax = 50.f;
              
     _float   rotSmoothSpeed = 14.f;
     _float   distSmoothSpeed = 12.f;
@@ -86,19 +115,12 @@ struct OrbitCamProfile
     _float   maxPitchSpeedDegWhenColliding = 180.f;
 };
 
-struct OrbitCamTargetSwitchState
-{
-    _bool   active = false;
-    _float  elapsed = 0.f;
-    Vector3 holdPivotWorld{};
-};
-
 struct OrbitCamSnapshot
 {
     OrbitCamPoseState           pose{};
-    OrbitCamTargetSwitchState   targetSwitch{};
     OrbitLockOnSnapshot         lockOn{};
     OrbitAutoYawFollowSnapshot  autoYawFollow{};
+    OrbitTargetSwitchSnapshot   targetSwitch{};
     OBJECT_HANDLE               targetHandle{};
 };
 

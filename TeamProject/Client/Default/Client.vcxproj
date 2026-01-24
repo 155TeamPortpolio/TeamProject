@@ -227,7 +227,7 @@
     <ClInclude Include="..\Public\AnbiState_Run.h" />
     <ClInclude Include="..\Public\AnbiState_Walk.h" />
     <ClInclude Include="..\Public\AttackSign.h" />
-    <ClInclude Include="..\public\AutoYawFollowController.h" />
+    <ClInclude Include="..\public\OrbitAutoYawFollowController.h" />
     <ClInclude Include="..\public\BangBooAsk.h" />
     <ClInclude Include="..\public\BangBooAskState_Idle.h" />
     <ClInclude Include="..\public\BangBooDeliver.h" />
@@ -239,6 +239,7 @@
     <ClInclude Include="..\public\CamDialogueController.h" />
     <ClInclude Include="..\public\CamEventController.h" />
     <ClInclude Include="..\Public\CharacterParryCollider.h" />
+    <ClInclude Include="..\public\OrbitCollisionDistController.h" />
     <ClInclude Include="..\Public\CorinState_Start.h" />
     <ClInclude Include="..\Public\CorinState_SwitchInParryAid.h" />
     <ClInclude Include="..\public\CursorController.h" />
@@ -250,6 +251,9 @@
     <ClInclude Include="..\public\HowlState_Wake.h" />
     <ClInclude Include="..\public\Interactable.h" />
     <ClInclude Include="..\Public\CorinState_UltimateAttack.h" />
+    <ClInclude Include="..\public\OrbitInputController.h" />
+    <ClInclude Include="..\public\OrbitPoseSmootherController.h" />
+    <ClInclude Include="..\public\OrbitTargetSwitchController.h" />
     <ClInclude Include="..\Public\Room.h" />
     <ClInclude Include="..\public\Jaeger.h" />
     <ClInclude Include="..\public\JaneDoeState_Hit.h" />
@@ -514,7 +518,7 @@
     <ClCompile Include="..\Private\AnbiState_Run.cpp" />
     <ClCompile Include="..\Private\AnbiState_Walk.cpp" />
     <ClCompile Include="..\Private\AttackSign.cpp" />
-    <ClCompile Include="..\private\AutoYawFollowController.cpp" />
+    <ClCompile Include="..\private\OrbitAutoYawFollowController.cpp" />
     <ClCompile Include="..\private\BangBooAsk.cpp" />
     <ClCompile Include="..\private\BangBooAskState_Idle.cpp" />
     <ClCompile Include="..\private\BangBooDeliver.cpp" />
@@ -526,6 +530,7 @@
     <ClCompile Include="..\private\CamDialogueController.cpp" />
     <ClCompile Include="..\private\CamEventController.cpp" />
     <ClCompile Include="..\Private\CharacterParryCollider.cpp" />
+    <ClCompile Include="..\private\OrbitCollisionDistController.cpp" />
     <ClCompile Include="..\Private\CorinState_Start.cpp" />
     <ClCompile Include="..\Private\CorinState_SwitchInParryAid.cpp" />
     <ClCompile Include="..\private\CursorController.cpp" />
@@ -536,6 +541,9 @@
     <ClCompile Include="..\private\HowlState_Wake.cpp" />
     <ClCompile Include="..\private\Interactable.cpp" />
     <ClCompile Include="..\Private\CorinState_UltimateAttack.cpp" />
+    <ClCompile Include="..\private\OrbitInputController.cpp" />
+    <ClCompile Include="..\private\OrbitPoseSmootherController.cpp" />
+    <ClCompile Include="..\private\OrbitTargetSwitchController.cpp" />
     <ClCompile Include="..\Private\Room.cpp" />
     <ClCompile Include="..\private\Jaeger.cpp" />
     <ClCompile Include="..\private\JaneDoeState_Hit.cpp" />
