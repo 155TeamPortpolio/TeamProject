@@ -831,6 +831,9 @@
     <Filter Include="02. GameObject\Camera\04. OrbitCam\03. TargetSwitchController">
       <UniqueIdentifier>{616212e1-403f-4164-857c-042c45688a4d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\HUD">
+      <UniqueIdentifier>{39c59546-1cd0-4e05-a3ab-b3d83bf8d308}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1601,6 +1604,9 @@
     <ClInclude Include="..\public\AutoYawFollowController.h">
       <Filter>02. GameObject\Camera\04. OrbitCam\01. AutoYawFollowController</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UI_HUD.h">
+      <Filter>02. GameObject\UI\01. 2D\HUD</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2331,6 +2337,9 @@
     </ClCompile>
     <ClCompile Include="..\private\AutoYawFollowController.cpp">
       <Filter>02. GameObject\Camera\04. OrbitCam\01. AutoYawFollowController</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_HUD.cpp">
+      <Filter>02. GameObject\UI\01. 2D\HUD</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

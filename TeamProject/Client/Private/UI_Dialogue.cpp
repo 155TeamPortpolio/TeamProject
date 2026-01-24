@@ -12,6 +12,7 @@
 #include "UI_DialogueChoice.h"
 
 #include "CamDirector.h"
+#include "UIDirector.h"
 #include "Player.h"
 
 void CUI_Dialogue::Change_Dialogue()
@@ -129,6 +130,8 @@ void CUI_Dialogue::Update(_float dt)
         // 플레이어 입력 언락
         if (auto pPlayer = dynamic_cast<CPlayer*>(ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Player))))
            pPlayer->Unlock_Input();
+        CUIDirector::GetInstance()->Show_HUD(CUIDirector::HUD::FIELD);
+        CUIDirector::GetInstance()->Show_HUD(CUIDirector::HUD::BATTLE);
         Set_Alive(false);
         return;
     } 
@@ -155,6 +158,8 @@ void CUI_Dialogue::Bind_EventListener()
             Open_Dialogue(desc.strDialogueID, desc.iSequenceID);
             // 대화용 카메라 연출 시작
             CamDirector()->StartDialog();
+            CUIDirector::GetInstance()->Hide_HUD(CUIDirector::HUD::FIELD);
+            CUIDirector::GetInstance()->Hide_HUD(CUIDirector::HUD::BATTLE); 
             // 플레이어 입력 잠금
             if (auto pPlayer = dynamic_cast<CPlayer*>(ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Player))))
                 pPlayer->Lock_Input();

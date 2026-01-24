@@ -283,6 +283,7 @@
     <ClInclude Include="..\Public\UI_Dialogue.h" />
     <ClInclude Include="..\Public\UI_DialogueChoice.h" />
     <ClInclude Include="..\Public\UI_DialogueMessage.h" />
+    <ClInclude Include="..\Public\UI_HUD.h" />
     <ClInclude Include="..\Public\UI_NameIndicator.h" />
     <ClInclude Include="..\Public\UI_SceneFrame.h" />
     <ClInclude Include="..\Public\UI_BossHUD.h" />
@@ -566,6 +567,7 @@
     <ClCompile Include="..\Private\UI_Dialogue.cpp" />
     <ClCompile Include="..\Private\UI_DialogueChoice.cpp" />
     <ClCompile Include="..\Private\UI_DialogueMessage.cpp" />
+    <ClCompile Include="..\Private\UI_HUD.cpp" />
     <ClCompile Include="..\Private\UI_NameIndicator.cpp" />
     <ClCompile Include="..\Private\UI_SceneFrame.cpp" />
     <ClCompile Include="..\Private\UI_BossHUD.cpp" />
