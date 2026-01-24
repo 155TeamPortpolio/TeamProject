@@ -52,6 +52,9 @@
     <Filter Include="02.Object\UI\MaskUI">
       <UniqueIdentifier>{42b8a1af-206a-4ae7-b0cf-d4a9d0c50b20}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.Object\UI\9Slice">
+      <UniqueIdentifier>{3568b5f3-084b-4c28-bdd6-3f8ebcd6b2f7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="UITool.h">
@@ -123,6 +126,9 @@
     <ClInclude Include="..\public\MaskUI.h">
       <Filter>02.Object\UI\MaskUI</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\NineSliceUI.h">
+      <Filter>02.Object\UI\9Slice</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="UITool.cpp">
@@ -190,6 +196,9 @@
     </ClCompile>
     <ClCompile Include="..\private\MaskUI.cpp">
       <Filter>02.Object\UI\MaskUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\NineSliceUI.cpp">
+      <Filter>02.Object\UI\9Slice</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
