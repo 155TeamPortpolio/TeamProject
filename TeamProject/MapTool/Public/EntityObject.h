@@ -13,6 +13,7 @@ public:
 
     struct CurModel {
         _bool IsSkinned = { false };
+        string ModelTag{};
         string ModelKey{};
         string MaterialKey{};
     };
@@ -33,7 +34,7 @@ public:
     virtual void Export_ObjectData(void* pDesc) override;
 
 public:
-    string Get_CurrentModel() { return m_ModelTag; };
+    const CurModel* Get_CurrentModel() { return &m_tCurModel; };
     void Set_EntityModel(const string& ModelTag, const string& ModelKeyTag, const string& MaterialKeyTag);
 
 private:
@@ -45,8 +46,8 @@ public:
 
 private:
     _int        m_iType = {};
-    string      m_ModelTag{};
     CurModel    m_tCurModel;
+
 public:
     static CEntityObject* Create();
     CGameObject* Clone(INIT_DESC* pArg) override;

@@ -109,9 +109,6 @@ LOADED_DATA CMapToolCore::Load_MapData()
 		return {};
 	}
 
-
-	
-
 	return LoadedData;
 }
 

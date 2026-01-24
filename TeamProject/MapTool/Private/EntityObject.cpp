@@ -26,7 +26,7 @@ HRESULT CEntityObject::Initialize_Prototype()
 	Add_Component<CStaticModel>();
 	Add_Component<CMaterial>();
 
-	m_tCurModel = { false, "Default.model", "Default.mat" };
+	m_tCurModel = { false, "None", "Default.model", "Default.mat" };
 
 	auto pModel = Get_Component<CStaticModel>();
 	pModel->Link_Model(G_GlobalLevelKey, m_tCurModel.ModelKey);
@@ -40,7 +40,9 @@ HRESULT CEntityObject::Initialize(INIT_DESC* pArg)
 {
 	__super::Initialize(pArg);
 	auto pDesc = static_cast<ENTITY_INIT_DESC*>(pArg);
-	m_iType = pDesc->iType;
+
+	if(pDesc)
+		m_iType = pDesc->iType;
 	
 	Get_Component<CCollider>()->Set_MapToolMode(true);
 	Get_Component<CCollider>()->Set_ColliderColor(Get_TypeColor());
@@ -84,8 +86,6 @@ void CEntityObject::Export_ObjectData(void* pDesc)
 
 void CEntityObject::Set_EntityModel(const string& ModelTag, const string& ModelKeyTag, const string& MaterialKeyTag)
 {
-	m_ModelTag = ModelTag;
-
 	CModelData* pData = CGameInstance::GetInstance()->Get_ResourceMgr()->Load_ModelData(g_TagMapToolLevel, ModelKeyTag);
 	if (nullptr == pData)
 		return;
@@ -110,7 +110,7 @@ void CEntityObject::Set_EntityModel(const string& ModelTag, const string& ModelK
 
 	Get_Component<CMaterial>()->Link_Material(g_TagMapToolLevel, MaterialKeyTag);
 
-	m_tCurModel = { isSkinned, ModelKeyTag, MaterialKeyTag };
+	m_tCurModel = { isSkinned, ModelTag, ModelKeyTag, MaterialKeyTag };
 }
 
 string CEntityObject::Get_TypeName()
