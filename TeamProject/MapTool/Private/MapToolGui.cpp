@@ -14,6 +14,7 @@
 #include "MapToolAssistant.h"
 #include "BattleObject.h"
 #include "BattleSpawnerPoint.h"
+#include "EntityObject.h"
 
 CMapToolGui::CMapToolGui(GUI_CONTEXT* pContext)
     : CBasePanel(pContext)
@@ -229,6 +230,12 @@ void CMapToolGui::RakeResources()
 
             pRcsMgr->Add_ResourcePath(mpp.TagModelKey, mpp.TagModelPath);
             pRcsMgr->Add_ResourcePath(mpp.TagMaterialKey, mpp.TagMaterialPath);
+
+
+            //Get Only EntityModelName
+            if (ModelPath.string().find("Entity") != string::npos) {
+                m_EntityModelPathPackName.push_back(mpp.TagName);
+            }
         }
     }
 }
@@ -565,6 +572,19 @@ void CMapToolGui::Save_EntityData()
 
     if (true == HelperMT::ExportJsonFile<Entity_Header>(m_EntityData, SavePath))
         m_isShowDataSaveFinish = true;
+
+    
+}
+
+void CMapToolGui::Save_MapToolEntityData()
+{
+    CLayer* pLayer = m_pGameInstance->Get_ObjectMgr()->Get_Layer({ g_TagMapToolLevel, g_tagMapObjType[ENUM(MAPOBJ_TYPE::ENTITY)] });
+
+    string TagFileName = "EntityData." + m_pMapToolContext->TagArea + "." + m_EntityData.TagDataFormat + "." + std::to_string(m_MapData.iVersion);
+    string SavePath = "../Bin/Data/NewEntityData/" + HelperMT::MakeTimestampFileName(TagFileName, ".json");
+
+    if (true == HelperMT::ExportJsonFile<Entity_Header>(m_EntityData, SavePath))
+        m_isShowDataSaveFinish = true;
 }
 
 void CMapToolGui::Save_BattleData()
@@ -770,6 +790,32 @@ void CMapToolGui::Setting_SelectType()
     {
         ImGui::TextColored(ImVec4(1.f, 1.f, 1.f, 1.f), "Entity Box Scale ( HalfExtents(x,y,z) )");
         ImGui::InputFloat3("##EntityBoxScale", reinterpret_cast<float*>(&m_vEntitySize), "%.1f");
+        
+        auto pGuiContext = m_pGameInstance->Get_GUISystem()->Get_Context();
+
+        static string CurModelName = {};
+      
+        if (m_pSelectedEntityObject != dynamic_cast<CEntityObject*>(pGuiContext->pSelectedObject)) {
+            m_pSelectedEntityObject = dynamic_cast<CEntityObject*>(pGuiContext->pSelectedObject);
+            CurModelName = m_pSelectedEntityObject->Get_Tag();
+        }
+        
+        if (ImGui::BeginCombo("EntityModel", CurModelName.c_str()))
+        {
+            for (int i = 0; i < m_EntityModelPathPackName.size(); ++i)
+                if (ImGui::Selectable(m_EntityModelPathPackName[i].c_str())) {
+                    
+                    if (m_pSelectedEntityObject) {
+                        m_ModelPathPack.
+
+                        m_pSelectedEntityObject->Set_EntityModel(CurModelName);
+                    }
+                    CurModelName = m_EntityModelPathPackName[i];
+                }
+
+            ImGui::EndCombo();
+        }
+
         break;
     }
     case MapTool::MAPOBJ_TYPE::BATTLE:

@@ -40,6 +40,7 @@ private:
 	void			PreSet_ModelResource();
 	void			Save_MapData();
 	void			Save_EntityData();
+	void			Save_MapToolEntityData();
 	void			Save_BattleData();
 	void			Select_PlaceType(const string& tagLabel, _bool isShowDetail = true);
 	void			Select_TriggerType();
@@ -75,8 +76,10 @@ private:
 	_int		m_iTriggerIndex = {};
 
 	/* For.Entity */
-	_float3				m_vEntitySize = { 1.f, 1.f, 1.f };;
-	_int				m_iEntityIndex = {};
+	_float3				 m_vEntitySize = { 1.f, 1.f, 1.f };;
+	_int				 m_iEntityIndex = {};
+	vector<string>		 m_EntityModelPathPackName{};
+	class CEntityObject* m_pSelectedEntityObject;
 
 	/* For.BattleData */
 	BATTLE_TYPE			m_eBattlyDataType = {};

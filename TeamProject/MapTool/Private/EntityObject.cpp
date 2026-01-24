@@ -38,7 +38,6 @@ HRESULT CEntityObject::Initialize(INIT_DESC* pArg)
 	auto pDesc = static_cast<ENTITY_INIT_DESC*>(pArg);
 	m_iType = pDesc->iType;
 	
-
 	Get_Component<CCollider>()->Set_MapToolMode(true);
 	Get_Component<CCollider>()->Set_ColliderColor(Get_TypeColor());
 
@@ -77,6 +76,11 @@ void CEntityObject::Export_ObjectData(void* pDesc)
 	pEntityDesc->vScale = { vSize.x, vSize.y, vSize.z };
 	pEntityDesc->vRotation = { vEulerRotation.x, vEulerRotation.y, vEulerRotation.z };
 	pEntityDesc->vTranslation = { vPosition.x, vPosition.y, vPosition.z };
+}
+
+void CEntityObject::Set_EntityModel(const string& ModelTag)
+{
+
 }
 
 string CEntityObject::Get_TypeName()
@@ -140,6 +144,7 @@ void CEntityObject::Render_GUI()
 	
 	ImGui::InputText("##TriggerName", &m_InstanceName);
 	ImGui::TextColored(ImVec4(1.f, 1.f, 1.f, 1.f), "Client Type");
+
 	if (ImGui::InputInt("##Version", &m_iType)) {
 		Get_Component<CCollider>()->Set_ColliderColor(Get_TypeColor());
 	};

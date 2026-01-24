@@ -25,14 +25,20 @@ public:
 
     virtual void Export_ObjectData(void* pDesc) override;
 
+public:
+    string Get_CurrentModel() { return m_ModelTag; };
+    void Set_EntityModel(const string& ModelTag, const string& ModelTag, const string& MaterialTag);
+
 private:
     string Get_TypeName();
     _vector4 Get_TypeColor();
+
 public:
     void Render_GUI() override;
 
 private:
     _int        m_iType = {};
+    string      m_ModelTag{};
 
 public:
     static CEntityObject* Create();
