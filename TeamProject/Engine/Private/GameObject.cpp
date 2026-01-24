@@ -364,6 +364,7 @@ HRESULT CGameObject::Make_OpaquePacket()
 			Make_3DUIPacket(packet);
 
 		 if (packet.pModel->doShadowCast()) {
+
 			 if (packet.pMaterial->isValid(packet.MaterialIndex))
 			 {
 				 if (packet.bSkinning)
