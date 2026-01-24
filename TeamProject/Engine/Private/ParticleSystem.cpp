@@ -280,6 +280,7 @@ void CParticleSystem::ApplyPending()
 	if (m_iMaxSpawnParticleCount != m_PendingChanged.iMaxSpawnParticleCount)
 		CreateStructuredBuffers(m_PendingChanged.iMaxSpawnParticleCount);
 
+	m_vPivot = m_PendingChanged.vPivot;
 	m_iRGBMaskMode = m_PendingChanged.iRGBMaskMode;
 	m_eModuelMask = static_cast<MODULE_MASK>(m_PendingChanged.iModuleMask);
 	m_eColorMode = static_cast<COLOR_MODE>(m_PendingChanged.iColorMode);
@@ -337,6 +338,8 @@ void CParticleSystem::ApplyPending()
 	customInstance->Set_Param("Row", { &m_TextureSheetAnimation.iRow,"uint",sizeof(_uint) });
 
 	customInstance->Set_Param("ColorMode", { &m_eColorMode,"uint",sizeof(_uint) });
+
+	customInstance->Set_Param("Pivot", { &m_vPivot,"float2",sizeof(_float2) });
 
 	m_IsChanged = false;
 }

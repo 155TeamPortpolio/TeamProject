@@ -108,7 +108,7 @@ HRESULT CSacrifice::Initialize(INIT_DESC* pArg)
 void CSacrifice::Awake()
 {
 	m_vRimLightColor = _float3(1.f, 0.3f, 0.f);
-	m_fRimLightPower = 4.f;
+	m_fRimLightPower = 8.f;
 	m_fDissolveTilling = 5.f;
 
 	auto pMaterial = Get_Component<CMaterial>();
@@ -249,9 +249,7 @@ void CSacrifice::RotateToTarget(_float dt, _float rotateSpeed)
 		return;
 
 	vCurrDir = _vector3::Lerp(vCurrDir, vTargetDir, dt * rotateSpeed);
-	_vector3 vAt = vPosition + vCurrDir;
-
-	m_pTransform->LookAt(vAt);
+	m_pTransform->Set_Look(vCurrDir);
 }
 
 void CSacrifice::MoveByRootMotion(_float dt, _float moveScale)
