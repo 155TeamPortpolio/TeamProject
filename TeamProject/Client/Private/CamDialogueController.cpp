@@ -10,29 +10,38 @@
 
 namespace
 {
-    Vector3 GetLookDir(CTransform* tr)
+    struct PivotSample
     {
-        const Vector4 look4 = tr->Dir(STATE::LOOK);
-        Vector3 look(look4.x, look4.y, look4.z);
-        if (look.LengthSquared() <= 0.f) look = Vector3(0.f, 0.f, 1.f);
-        look.Normalize();
-        return look;
-    }
+        Vector3 basePivot{};
+        Vector3 facePivot{};
+        _bool   valid = false;
+    };
 
-    Vector3 GetPivotWorldFromHandle(OBJECT_HANDLE handle, _float offsetY)
+    PivotSample SamplePivots(OBJECT_HANDLE handle, _float offsetY, _float faceYOffsetMul)
     {
-        if (!handle.isValid()) return Vector3::Zero;
+        PivotSample s{};
+
+        if (!handle.isValid()) return s;
 
         auto obj = ObjectManager()->Request_Object(handle);
-        if (!obj) return Vector3::Zero;
+        if (!obj) return s;
 
         auto cc = obj->Get_Component<CCharacterController>();
-        if (!cc) return Vector3::Zero;
+        if (!cc) return s;
 
         const Vector4 foot4 = cc->Get_FootPosition();
         const Vector3 foot(foot4.x, foot4.y, foot4.z);
 
-        return foot + Vector3(0.f, cc->Get_HalfSize() * 1.5f + offsetY, 0.f);
+        const _float half = cc->Get_HalfSize();
+        const Vector3 base = foot + Vector3(0.f, half * 1.5f + offsetY, 0.f);
+
+        const _float faceY = half * 2.f * faceYOffsetMul;
+        const Vector3 face = foot + Vector3(0.f, faceY + offsetY, 0.f);
+
+        s.basePivot = base;
+        s.facePivot = face;
+        s.valid = true;
+        return s;
     }
 
     Vector3 ClampOffset(const Vector3& offset, _float maxLen)
@@ -56,8 +65,6 @@ void CCamDialogueController::Reset()
     savedFov = 0.f;
     holdFov = 30.f;
 
-    assumedPartnerFrontDist = 1.f;
-
     partnerHandle.Reset();
 
     time = 0.f;
@@ -68,17 +75,17 @@ void CCamDialogueController::Reset()
 
     fromPivotWorld = Vector3::Zero;
     toPivotWorld = Vector3::Zero;
+
     blendInit = false;
 
     ease = EaseType::InOutSine;
+
     maxPivotOffset = 0.8f;
+    faceYOffsetMul = 0.85f;
 }
 
-void CCamDialogueController::Begin(_float targetFov, _float blendSec, _float assumedPartnerFrontDistArg, OBJECT_HANDLE partnerHandleArg)
+void CCamDialogueController::Begin(_float targetFov, _float blendSec)
 {
-    assumedPartnerFrontDist = assumedPartnerFrontDistArg;
-    partnerHandle = partnerHandleArg;
-
     holdFov = targetFov;
 
     holding = true;
@@ -95,6 +102,8 @@ void CCamDialogueController::Begin(_float targetFov, _float blendSec, _float ass
     toPivotWorld = Vector3::Zero;
 
     blendInit = false;
+
+    partnerHandle = FieldSystem()->GetInteractHandle();
 }
 
 void CCamDialogueController::End(_float blendSec)
@@ -121,34 +130,46 @@ void CCamDialogueController::Update(_float dt, CCamera* cam, COrbitCam* orbit, C
 
     const _float curFov = cam->Get_FOV();
 
-    if ((holding || restoring) && savedFov == 0.f)
-        savedFov = curFov;
+    if ((holding || restoring) && savedFov == 0.f) savedFov = curFov;
 
-    const Vector3 basePivot = orbit->GetBasePivotWorld();
+    if (holding && !partnerHandle.isValid())
+        partnerHandle = FieldSystem()->GetInteractHandle();
 
+    const _float offsetY = orbit->GetProfileOffsetY();
+
+    const PivotSample me = SamplePivots(orbit->GetTargetHandle(), offsetY, faceYOffsetMul);
+    if (!me.valid) return;
+
+    const PivotSample partner = SamplePivots(partnerHandle, offsetY, faceYOffsetMul);
+
+    Vector3 basePivot = me.basePivot;
     Vector3 desiredPivot = basePivot;
 
+    if (partner.valid)
     {
-        const _float offsetY = orbit->GetProfileOffsetY();
-        const Vector3 partnerPivot = GetPivotWorldFromHandle(partnerHandle, offsetY);
+        const Vector3 midXZ = Vector3(
+            (me.facePivot.x + partner.facePivot.x) * 0.5f,
+            0.f,
+            (me.facePivot.z + partner.facePivot.z) * 0.5f
+        );
 
-        if (partnerPivot != Vector3::Zero)
-        {
-            desiredPivot = (basePivot + partnerPivot) * 0.5f;
-        }
-        else
-        {
-            const Vector3 look = GetLookDir(focusTr);
-            const _float front = assumedPartnerFrontDist * 0.5f;
-            desiredPivot = basePivot + look * front;
-        }
+        const _float midY = (me.facePivot.y + partner.facePivot.y) * 0.5f;
 
+        desiredPivot = Vector3(midXZ.x, midY, midXZ.z);
+    }
+
+    {
         const Vector3 rawOffset = desiredPivot - basePivot;
         desiredPivot = basePivot + ClampOffset(rawOffset, maxPivotOffset);
     }
 
     _float desiredHoldFov = holdFov;
-    if (orbit->IsDistConstrained()) desiredHoldFov = savedFov;
+
+    if (orbit->IsDistConstrained())
+    {
+        desiredHoldFov = savedFov;
+        desiredPivot = basePivot;
+    }
 
     if (blending && !blendInit)
     {
@@ -209,8 +230,7 @@ void CCamDialogueController::Update(_float dt, CCamera* cam, COrbitCam* orbit, C
 
     cam->Set_FOV(outFov);
 
-    const Vector3 baseNow = orbit->GetBasePivotWorld();
-    orbit->SetPivotExternalOffset(outPivotWorld - baseNow);
+    orbit->SetPivotExternalOffset(outPivotWorld - basePivot);
 
     if (!blending && restoring)
     {

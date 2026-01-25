@@ -52,6 +52,8 @@ public:
     _bool   IsDistConstrained() const { return m_distConstrained; }
     _float  GetProfileOffsetY() const { return profile.offsetY; }
 
+    OBJECT_HANDLE GetTargetHandle() const { return targetHandle; }
+
 private:
     void    ClampTargets();
 
