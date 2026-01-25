@@ -210,6 +210,7 @@ void CBattleSystem::ReadyBattle(const string& tagArea, _uint iPrefabIndex)
 
 		// 풀에 넣어야함
 
+
 		if (nullptr == pMonster)
 			return;
 		CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(pMonster, { NowLevel, "Enemy_Layer" });
@@ -242,7 +243,7 @@ void CBattleSystem::SpawnMosnter(const string& MonsterProtoTag, _float3 vSpawnPo
 
 	CEnemy::ENEMY_DESC* enemyDesc = new CEnemy::ENEMY_DESC();
 	enemyDesc->iMaxHP = MonsterTableDesc.iMaxHP;
-	
+
 	const string NowLevel = CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey();
 
 	auto pMonster = Builder::Create_Object({ NowLevel,MonsterTableDesc.ProtoTag })
@@ -252,10 +253,24 @@ void CBattleSystem::SpawnMosnter(const string& MonsterProtoTag, _float3 vSpawnPo
 
 	if (nullptr == pMonster)
 		return;
-	
-	CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(pMonster, { NowLevel, "Enemy_Layer"});
+
+	CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(pMonster, { NowLevel, "Enemy_Layer" });
 
 	m_Handles[BATTLE_OBJ_TYPE::MONSTER].push_back(pMonster->Get_Handle());
+}
+
+void CBattleSystem::SpawnMosnterFromPool(const string& MonsterProtoTag, _float3 vSpawnPos, _float3 vRot)
+{
+	MonsterCreationDesc MonsterTableDesc = CDataBase::GetInstance()->GetMonsterDesc(MonsterProtoTag);
+	if (true == MonsterTableDesc.ProtoTag.empty())
+		return;
+
+	const string NowLevel = CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey();
+	auto pMonster = Builder::Create_Object({ NowLevel, MonsterProtoTag })
+		.Position(vSpawnPos)
+		.Rotate(vRot)
+		.FromPool()
+		.Build(MonsterTableDesc.DisplayName);
 }
 
 _bool CBattleSystem::ExitBattleObject(BATTLE_OBJ_TYPE eObjType, OBJECT_HANDLE hObject)

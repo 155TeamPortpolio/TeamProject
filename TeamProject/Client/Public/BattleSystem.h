@@ -102,6 +102,7 @@ public: //setter
 	void	ReadyBattle(const string& tagArea, _uint iPrefabIndex = 1);
 	
 	void	SpawnMosnter(const string& MonsterProtoTag, _float3 vSpawnPos);
+	void	SpawnMosnterFromPool(const string& MonsterProtoTag, _float3 vSpawnPos, _float3 vRot);
 	_bool	ExitBattleObject(BATTLE_OBJ_TYPE eObjType, OBJECT_HANDLE hObject);
 	// 플레이어(캐릭터들) 로직 정해지기 전까지 임시
 	void	SetPlayer(vector<OBJECT_HANDLE> hPlayers);

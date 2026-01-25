@@ -2,6 +2,7 @@
 #include "MonsterSpawner.h"
 #include "GameInstance.h"
 #include "Collider.h"
+#include "BattleSystem.h"
 
 CMonsterSpawner::CMonsterSpawner()
 	: CGameObject()
@@ -50,11 +51,12 @@ void CMonsterSpawner::OnTriggerEnter(CGameObject* pOther)
 	for (auto& data : m_SpawnDesc)
 	{
 		string tagInstanceName = to_string(data.iSpawnID) + "_" + data.tagProto;
-		auto pMonster = Builder::Create_Object({ LevelManager()->Get_NowLevelKey(), data.tagProto})
-			.Rotate(data.vRotation)
-			.Position(data.vPosition)
-			.FromPool()
-			.Build(tagInstanceName);
+		BattleSystem()->SpawnMosnterFromPool(data.tagProto, data.vPosition, data.vRotation);
+		//auto pMonster = Builder::Create_Object({ LevelManager()->Get_NowLevelKey(), data.tagProto})
+		//	.Rotate(data.vRotation)
+		//	.Position(data.vPosition)
+		//	.FromPool()
+		//	.Build(tagInstanceName);
 	}
 }
 
