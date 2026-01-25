@@ -37,7 +37,7 @@
                 "anchor": 6,
                 "anchorOffset": [
                     0.0,
-                    272.0
+                    400.0
                 ],
                 "size": [
                     448.0,
@@ -57,7 +57,7 @@
                 1.0,
                 1.0,
                 1.0,
-                0.0
+                1.0
             ],
             "pass": "Opaque",
             "animClips": [
@@ -310,6 +310,100 @@
                     "children": [
                         {
                             "alive": true,
+                            "instanceName": "Image",
+                            "transform": {
+                                "anchor": 1,
+                                "anchorOffset": [
+                                    0.0,
+                                    -26.0
+                                ],
+                                "size": [
+                                    512.0,
+                                    52.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ],
+                            "pass": "Opaque",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "Image",
+                            "textureTag": "MissionTargetMask.png"
+                        },
+                        {
+                            "alive": true,
+                            "instanceName": "NineSlice",
+                            "transform": {
+                                "anchor": 0,
+                                "anchorOffset": [
+                                    -209.0,
+                                    -28.0
+                                ],
+                                "size": [
+                                    432.0,
+                                    60.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "pass": "NineSlice",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "NineSlice",
+                            "textureTag": "HollowEventFrame.png",
+                            "nineSlice": {
+                                "borderPx": [
+                                    30.0,
+                                    0.0,
+                                    30.0,
+                                    30.0
+                                ],
+                                "uvRangeX": [
+                                    0.0,
+                                    0.11627907305955887,
+                                    1.0,
+                                    1.0
+                                ],
+                                "uvRangeY": [
+                                    0.0,
+                                    0.24193547666072845,
+                                    0.7580645084381104,
+                                    1.0
+                                ],
+                                "textureSize": [
+                                    258.0,
+                                    124.0
+                                ]
+                            }
+                        },
+                        {
+                            "alive": true,
                             "instanceName": "mask1",
                             "transform": {
                                 "anchor": 1,
@@ -426,41 +520,6 @@
                             "children": [],
                             "typeTag": "Mask",
                             "maskTextureKey": "MissionTargetMask.png"
-                        },
-                        {
-                            "alive": true,
-                            "instanceName": "Image",
-                            "transform": {
-                                "anchor": 2,
-                                "anchorOffset": [
-                                    -448.0,
-                                    -29.0
-                                ],
-                                "size": [
-                                    448.0,
-                                    58.0
-                                ],
-                                "scale": [
-                                    1.0,
-                                    1.0
-                                ],
-                                "pivot": [
-                                    0.0,
-                                    0.0
-                                ],
-                                "radian": 0.0
-                            },
-                            "color": [
-                                0.10038608312606812,
-                                0.10038608312606812,
-                                0.10038608312606812,
-                                1.0
-                            ],
-                            "pass": "Opaque_StencilTest",
-                            "animClips": [],
-                            "children": [],
-                            "typeTag": "Image",
-                            "textureTag": "empty.png"
                         },
                         {
                             "alive": true,
@@ -587,7 +646,7 @@
                             "transform": {
                                 "anchor": 1,
                                 "anchorOffset": [
-                                    12.0,
+                                    16.0,
                                     -12.0
                                 ],
                                 "size": [
@@ -622,8 +681,8 @@
                             "transform": {
                                 "anchor": 1,
                                 "anchorOffset": [
-                                    44.0,
-                                    -0.5
+                                    46.0,
+                                    -0.0
                                 ],
                                 "size": [
                                     0.0,
@@ -718,7 +777,7 @@
                 "anchor": 6,
                 "anchorOffset": [
                     0.0,
-                    443.0
+                    500.0
                 ],
                 "size": [
                     448.0,
@@ -738,7 +797,7 @@
                 1.0,
                 1.0,
                 1.0,
-                0.0
+                0.9803921580314636
             ],
             "pass": "Opaque",
             "animClips": [
@@ -1029,6 +1088,100 @@
                     "children": [
                         {
                             "alive": true,
+                            "instanceName": "Image",
+                            "transform": {
+                                "anchor": 1,
+                                "anchorOffset": [
+                                    0.0,
+                                    -26.0
+                                ],
+                                "size": [
+                                    512.0,
+                                    52.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ],
+                            "pass": "Opaque",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "Image",
+                            "textureTag": "MissionTargetMask.png"
+                        },
+                        {
+                            "alive": true,
+                            "instanceName": "NineSlice",
+                            "transform": {
+                                "anchor": 0,
+                                "anchorOffset": [
+                                    -209.0,
+                                    -28.0
+                                ],
+                                "size": [
+                                    432.0,
+                                    60.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "pass": "NineSlice",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "NineSlice",
+                            "textureTag": "HollowEventFrame.png",
+                            "nineSlice": {
+                                "borderPx": [
+                                    30.0,
+                                    0.0,
+                                    30.0,
+                                    30.0
+                                ],
+                                "uvRangeX": [
+                                    0.0,
+                                    0.11627907305955887,
+                                    1.0,
+                                    1.0
+                                ],
+                                "uvRangeY": [
+                                    0.0,
+                                    0.24193547666072845,
+                                    0.7580645084381104,
+                                    1.0
+                                ],
+                                "textureSize": [
+                                    258.0,
+                                    124.0
+                                ]
+                            }
+                        },
+                        {
+                            "alive": true,
                             "instanceName": "mask2",
                             "transform": {
                                 "anchor": 1,
@@ -1145,41 +1298,6 @@
                             "children": [],
                             "typeTag": "Mask",
                             "maskTextureKey": "MissionTargetMask.png"
-                        },
-                        {
-                            "alive": true,
-                            "instanceName": "Image",
-                            "transform": {
-                                "anchor": 2,
-                                "anchorOffset": [
-                                    -420.0,
-                                    -29.0
-                                ],
-                                "size": [
-                                    420.0,
-                                    58.0
-                                ],
-                                "scale": [
-                                    1.0,
-                                    1.0
-                                ],
-                                "pivot": [
-                                    0.0,
-                                    0.0
-                                ],
-                                "radian": 0.0
-                            },
-                            "color": [
-                                0.10196078568696976,
-                                0.10196078568696976,
-                                0.10196078568696976,
-                                1.0
-                            ],
-                            "pass": "Opaque_StencilTest",
-                            "animClips": [],
-                            "children": [],
-                            "typeTag": "Image",
-                            "textureTag": "empty.png"
                         },
                         {
                             "alive": true,
@@ -1306,7 +1424,7 @@
                             "transform": {
                                 "anchor": 1,
                                 "anchorOffset": [
-                                    12.0,
+                                    16.0,
                                     -12.0
                                 ],
                                 "size": [
@@ -1341,7 +1459,7 @@
                             "transform": {
                                 "anchor": 1,
                                 "anchorOffset": [
-                                    44.0,
+                                    46.0,
                                     -0.5
                                 ],
                                 "size": [
@@ -1437,7 +1555,7 @@
                 "anchor": 6,
                 "anchorOffset": [
                     0.0,
-                    545.0
+                    600.0
                 ],
                 "size": [
                     448.0,
@@ -1457,7 +1575,7 @@
                 1.0,
                 1.0,
                 1.0,
-                0.0
+                1.0
             ],
             "pass": "Opaque",
             "animClips": [
@@ -1748,6 +1866,100 @@
                     "children": [
                         {
                             "alive": true,
+                            "instanceName": "Image",
+                            "transform": {
+                                "anchor": 1,
+                                "anchorOffset": [
+                                    0.0,
+                                    -26.0
+                                ],
+                                "size": [
+                                    512.0,
+                                    52.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ],
+                            "pass": "Opaque",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "Image",
+                            "textureTag": "MissionTargetMask.png"
+                        },
+                        {
+                            "alive": true,
+                            "instanceName": "NineSlice",
+                            "transform": {
+                                "anchor": 0,
+                                "anchorOffset": [
+                                    -209.0,
+                                    -28.0
+                                ],
+                                "size": [
+                                    432.0,
+                                    60.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "pass": "NineSlice",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "NineSlice",
+                            "textureTag": "HollowEventFrame.png",
+                            "nineSlice": {
+                                "borderPx": [
+                                    30.0,
+                                    0.0,
+                                    30.0,
+                                    30.0
+                                ],
+                                "uvRangeX": [
+                                    0.0,
+                                    0.11627907305955887,
+                                    1.0,
+                                    1.0
+                                ],
+                                "uvRangeY": [
+                                    0.0,
+                                    0.24193547666072845,
+                                    0.7580645084381104,
+                                    1.0
+                                ],
+                                "textureSize": [
+                                    258.0,
+                                    124.0
+                                ]
+                            }
+                        },
+                        {
+                            "alive": true,
                             "instanceName": "mask3",
                             "transform": {
                                 "anchor": 1,
@@ -1864,41 +2076,6 @@
                             "children": [],
                             "typeTag": "Mask",
                             "maskTextureKey": "MissionTargetMask.png"
-                        },
-                        {
-                            "alive": true,
-                            "instanceName": "Image",
-                            "transform": {
-                                "anchor": 2,
-                                "anchorOffset": [
-                                    -420.0,
-                                    -29.0
-                                ],
-                                "size": [
-                                    420.0,
-                                    58.0
-                                ],
-                                "scale": [
-                                    1.0,
-                                    1.0
-                                ],
-                                "pivot": [
-                                    0.0,
-                                    0.0
-                                ],
-                                "radian": 0.0
-                            },
-                            "color": [
-                                0.10038608312606812,
-                                0.10038608312606812,
-                                0.10038608312606812,
-                                1.0
-                            ],
-                            "pass": "Opaque_StencilTest",
-                            "animClips": [],
-                            "children": [],
-                            "typeTag": "Image",
-                            "textureTag": "empty.png"
                         },
                         {
                             "alive": true,
@@ -2025,7 +2202,7 @@
                             "transform": {
                                 "anchor": 1,
                                 "anchorOffset": [
-                                    12.0,
+                                    16.0,
                                     -12.0
                                 ],
                                 "size": [
@@ -2060,7 +2237,7 @@
                             "transform": {
                                 "anchor": 1,
                                 "anchorOffset": [
-                                    44.0,
+                                    46.0,
                                     -0.5
                                 ],
                                 "size": [
