@@ -274,9 +274,9 @@ CGameObject* CObjectMgr::Request_Object(const OBJECT_HANDLE& handle)
 }
 
 
-CGameObject* CObjectMgr::Acquire(const CLONE_DESC& desc)
+CGameObject* CObjectMgr::Acquire(const CLONE_DESC& desc,INIT_DESC* pArg)
 {
-	return m_pObjectPool->Acquire(desc);
+	return m_pObjectPool->Acquire(desc,pArg);
 }
 
 void CObjectMgr::Prune_Queues_ByLevel(const string& levelTag)
