@@ -64,7 +64,7 @@ CGameObject* CGameObjectBuilder::Build(const string& instanceKey, _uint* id)
 	CGameObject* instance = nullptr;
 	if (m_isFromPool)
 	{
-		instance = ObjectManager()->Acquire(m_CloneDesc);
+		instance = ObjectManager()->Acquire(m_CloneDesc, m_pObjDesc);
 		if (!instance) return nullptr;
 		instance->Set_FromPool(true);
 		instance->OnPooledAcquire(m_pObjDesc);

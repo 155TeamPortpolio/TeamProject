@@ -114,7 +114,6 @@ void CCorinState_UltimateAttack_End::Enter(CCorin* pOwner)
         .EndAt(0.85f)
         .Apply();
 
-    pOwner->Pop_Invincible();
     pOwner->Unlock_Move();
 }
 
