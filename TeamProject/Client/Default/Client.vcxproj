@@ -289,6 +289,7 @@
     <ClInclude Include="..\Public\FieldSystem.h" />
     <ClInclude Include="..\public\ThugAssaulter_Hit.h" />
     <ClInclude Include="..\public\ThugAssaulter_HitAirborne.h" />
+    <ClInclude Include="..\public\ThugAssaulter_Parried.h" />
     <ClInclude Include="..\public\ThugBulkyEnforcer_Hit.h" />
     <ClInclude Include="..\Public\UI_Dialogue.h" />
     <ClInclude Include="..\Public\UI_DialogueChoice.h" />
@@ -581,6 +582,7 @@
     <ClCompile Include="..\Private\FieldSystem.cpp" />
     <ClCompile Include="..\private\ThugAssaulter_Hit.cpp" />
     <ClCompile Include="..\private\ThugAssaulter_HitAirborne.cpp" />
+    <ClCompile Include="..\private\ThugAssaulter_Parried.cpp" />
     <ClCompile Include="..\private\ThugBulkyEnforcer_Hit.cpp" />
     <ClCompile Include="..\Private\UI_Dialogue.cpp" />
     <ClCompile Include="..\Private\UI_DialogueChoice.cpp" />
