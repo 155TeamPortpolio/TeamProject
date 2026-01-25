@@ -59,8 +59,6 @@ public:
 
 	void   Invalidate() { eval.dirty = true; }
 
-	void   SyncSpaceRefAnimatorTime(_float sampleTime);
-
 	void   Play();
 	void   Pause() { playback.playing = false; }
 	void   Stop(_bool resetTime = true);

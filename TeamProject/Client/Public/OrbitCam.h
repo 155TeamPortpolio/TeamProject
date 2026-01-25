@@ -34,6 +34,7 @@ public:
     void    CaptureSnapshot(OrbitCamSnapshot& out) const;
     void    RestoreSnapshot(const OrbitCamSnapshot& snapshot);
 
+    void    FreezeFor(_float sec) { if (sec > m_freezeRemain) m_freezeRemain = sec; }
     void    SetLockOn(OBJECT_HANDLE handle);
     void    ClearLockOn();
 
@@ -69,6 +70,7 @@ private:
 
     _float                          m_curMaxYawSpeedDeg = 720.f;
     _float                          m_curMaxPitchSpeedDeg = 540.f;
+    _float                          m_freezeRemain = 0.f;
 
 public:
     static  COrbitCam* Create();

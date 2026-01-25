@@ -88,9 +88,6 @@
     <ClInclude Include="..\public\JaneDoe.h">
       <Filter>03. Obj\99. Character\01. JaneDoe</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\CamBoneController.h">
-      <Filter>03. Obj\05. CamBoneController</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CameraTool.ico">
@@ -151,9 +148,6 @@
     </Filter>
     <Filter Include="01. Level\00. FirstLevel">
       <UniqueIdentifier>{e1559102-528c-4204-9823-cea2ba202453}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03. Obj\05. CamBoneController">
-      <UniqueIdentifier>{b11c6d27-ffb2-48ac-844c-c2f0d8b9cebc}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -222,9 +216,6 @@
     </ClCompile>
     <ClCompile Include="..\private\JaneDoe.cpp">
       <Filter>03. Obj\99. Character\01. JaneDoe</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\CamBoneController.cpp">
-      <Filter>03. Obj\05. CamBoneController</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

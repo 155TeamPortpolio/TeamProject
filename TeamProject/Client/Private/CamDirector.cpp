@@ -17,7 +17,6 @@
 #include "BattleSystem.h"
 #include "Character.h"
 
-
 namespace
 {
     size_t FindEventKeyIdx(const vector<CamKeyFrame>& keys, const string& eventTag)
@@ -75,7 +74,6 @@ void CCamDirector::AutoTarget()
 
 void CCamDirector::AutoField()
 {
-    //GameInstance()->Set_EngineTimeScale(0.05f);
     AutoTarget();
     RequestSequence("Field/Front");
 }
@@ -175,23 +173,12 @@ void CCamDirector::UpdateInput(_float dt)
     if (InputDevice()->Key_Tap(VK_F1))
         CameraManager()->Set_MainCam(GetFreeCamComp(), 0.5f);
 
-    //if (InputDevice()->Key_Tap(VK_F2))
-    //{
-    //    StartDialog();
-    //    GetPlayer()->Lock_Input();
-    //}
-
-    //if (InputDevice()->Key_Tap(VK_F3))
-    //{
-    //    EndDialog();
-    //    GetPlayer()->Unlock_Input();
-    //}
-
     if (InputDevice()->Key_Tap(VK_F2))
         CameraManager()->Set_MainCam(GetOrbitCamComp(), 0.5f);
 
-    //if (InputDevice()->Key_Tap(VK_F3))
-    //    RequestSequence(CamSeqType::ZeroIntro);
+    if (InputDevice()->Key_Tap(VK_F3))
+         RequestSequence("Field/Front");
+       // RequestSequence("Field/Front", 0.f, true, 0.f);
 }
 
 void CCamDirector::AbortSequenceToOrbit(_bool resetTime)
@@ -379,8 +366,6 @@ _bool CCamDirector::StopRequest(_uint handle, _float blendOutSec, _bool resetTim
     seqPlayer->SetApplyEnabled(false);
     seqPlayer->Stop(false);
 
-    if (resetTime) seqPlayer->SetTime(0.f);
-
     if (m_playing.returnCamType != CamType::None && m_playing.returnMode != CamReturnMode::None)
     {
         auto returnObj = ObjectManager()->Request_Object(m_playing.returnCamHandle);
@@ -390,15 +375,23 @@ _bool CCamDirector::StopRequest(_uint handle, _float blendOutSec, _bool resetTim
             auto orbit = static_cast<COrbitCam*>(returnObj);
 
             if (m_playing.returnMode == CamReturnMode::SnapToEnd)
+            {
                 orbit->SnapFromCamPose(outPos, outRot);
+                orbit->FreezeFor(blendOutSec);
+            }
             else if (m_playing.returnMode == CamReturnMode::RestorePrev)
+            {
                 orbit->RestoreSnapshot(m_playing.prevOrbit);
+                orbit->FreezeFor(blendOutSec);
+            }
         }
     }
 
     const _bool ok = CameraManager()->Pop(handle, blendOutSec);
+
     m_playing = {};
     SyncSeqInputLock();
+
     return ok;
 }
 

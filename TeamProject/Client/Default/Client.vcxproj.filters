@@ -819,9 +819,6 @@
     <Filter Include="02. GameObject\Camera\04. OrbitCam\01. OrbitAutoYawFollowController">
       <UniqueIdentifier>{6b953709-9881-461d-9361-1c9d4a1baf80}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Camera\04. OrbitCam\04. OrbitInputController">
-      <UniqueIdentifier>{f2b96f4c-58cb-4f92-b00f-2008a29960a0}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\Camera\04. OrbitCam\05. OrbitPoseSmootherController">
       <UniqueIdentifier>{4b23b083-95ec-4c48-8cb8-297675f8781c}</UniqueIdentifier>
     </Filter>
@@ -851,6 +848,9 @@
     </Filter>
     <Filter Include="02. GameObject\UI\03. UIElement\NineSlice">
       <UniqueIdentifier>{2646c162-8883-48f9-b637-d3f38abb755c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Camera\04. OrbitCam\04. OrbitInputController">
+      <UniqueIdentifier>{f2b96f4c-58cb-4f92-b00f-2008a29960a0}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

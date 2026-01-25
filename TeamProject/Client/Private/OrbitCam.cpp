@@ -182,36 +182,45 @@ void COrbitCam::SnapFromCamPose(const Vector3& camPos, const Quaternion& camRot)
     Vector3 forward = Vector3::Transform(Vector3(0.f, 0.f, 1.f), camRot);
     forward.Normalize();
 
-    Vector3 toBase = basePivot - camPos;
-    float d = toBase.Length();
+    float d = (basePivot - camPos).Length();
     d = clamp(d, profile.minDist, profile.maxDist);
 
-    const Vector3 desiredPivot = camPos + forward * d;
+    const Vector3 holdPivotWorld = camPos + forward * d;
 
-    pose.pivotInternalOffset = desiredPivot - basePivot;
+    targetSwitchCtrl.Reset();
 
-    pose.targetPivot = desiredPivot;
-    pose.curPivot = desiredPivot;
+    pose.pivotExternalOffset = Vector3::Zero;
+    pose.pivotInternalOffset = holdPivotWorld - basePivot;
 
-    Vector3 toPivot = desiredPivot - camPos;
-    const float rawDist = toPivot.Length();
-    toPivot /= rawDist;
+    pose.curPivot = holdPivotWorld;
+    pose.targetPivot = holdPivotWorld;
 
-    const float yawRad = atan2f(toPivot.x, toPivot.z);
-    const float pitchRad = asinf(clamp(-toPivot.y, -1.f, 1.f));
+    {
+        Vector3 toPivot = holdPivotWorld - camPos;
+        const float rawDist = toPivot.Length();
+        toPivot /= rawDist;
 
-    pose.curRotDeg.x = XMConvertToDegrees(yawRad);
-    pose.curRotDeg.y = XMConvertToDegrees(pitchRad);
-    pose.targetRotDeg = pose.curRotDeg;
+        const float yawRad = atan2f(toPivot.x, toPivot.z);
+        const float pitchRad = asinf(clamp(-toPivot.y, -1.f, 1.f));
 
-    pose.curDist = rawDist;
-    pose.goalDist = rawDist;
-    pose.wantDist = rawDist;
+        pose.curRotDeg.x = XMConvertToDegrees(yawRad);
+        pose.curRotDeg.y = XMConvertToDegrees(pitchRad);
+        pose.targetRotDeg = pose.curRotDeg;
+    }
+
+    pose.curDist = d;
+    pose.goalDist = d;
+    pose.wantDist = d;
+
+    m_curMaxYawSpeedDeg = profile.maxYawSpeedDeg;
+    m_curMaxPitchSpeedDeg = profile.maxPitchSpeedDeg;
+
+    poseSmootherCtrl.Reset();
 
     ClampTargets();
 
     m_pTransform->Set_WorldPos(Vector4(camPos.x, camPos.y, camPos.z, 1.f));
-    m_pTransform->LookAt(Vector4(desiredPivot.x, desiredPivot.y, desiredPivot.z, 1.f));
+    m_pTransform->LookAt(Vector4(holdPivotWorld.x, holdPivotWorld.y, holdPivotWorld.z, 1.f));
 }
 
 void COrbitCam::CaptureSnapshot(OrbitCamSnapshot& out) const
@@ -263,9 +272,16 @@ void COrbitCam::Priority_Update(_float dt)
 {
     if (!targetHandle.isValid()) return;
 
+    if (m_freezeRemain > 0.f)
+    {
+        m_freezeRemain -= dt;
+        return;
+    }
+
     if (lockOnCtrl.IsActiveOrBlending() && !lockOnCtrl.GetHandle().isValid())
         ClearLockOn();
 
+    if (targetSwitchCtrl.IsActive())
     {
         const Vector3 basePivotNow = GetBasePivotTargetPos(targetHandle);
         pose.pivotInternalOffset = targetSwitchCtrl.EvaluateInternalOffset(dt, profile, basePivotNow);
@@ -288,8 +304,7 @@ void COrbitCam::Priority_Update(_float dt)
     OrbitLockOnEvalResult lockRes{};
     if (lockOnCtrl.IsActiveOrBlending())
     {
-        lockRes = lockOnCtrl.Evaluate(dt, profile, targetHandle, pose.targetRotDeg.x, pose.wantDist,
-            [&](OBJECT_HANDLE h) { return GetBasePivotTargetPos(h); });
+        lockRes = lockOnCtrl.Evaluate(dt, profile, targetHandle, pose.targetRotDeg.x, pose.wantDist, [&](OBJECT_HANDLE h) { return GetBasePivotTargetPos(h); });
 
         pose.targetRotDeg.x += lockRes.yawAddDeg;
         if (lockRes.hasDist) pose.wantDist = lockRes.dist;
