@@ -161,6 +161,7 @@ public:
     virtual void    On_Special() {} // 개별 구현 
     virtual void    On_Hit(DAMAGE_TYPE eType) {} // 개별 구현
     virtual void    On_Interact();
+    /* */
 
 public:
     HRESULT  Attach_AttackCollider(ATTACK_COLLIDER_DESC* pDesc);

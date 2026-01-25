@@ -114,7 +114,7 @@ void CJaneDoeState_UltimateAttack_Loop::Exit(CJaneDoe* pOwner)
 void CJaneDoeState_UltimateAttack_End::Enter(CJaneDoe* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "SwitchIn_Attack_Ex_End")
-        //.Speed(2.f)
+        .EndAt(0.3f)
         .Apply();
 
     pOwner->Unlock_Move();
