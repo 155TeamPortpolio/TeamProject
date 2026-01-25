@@ -39,6 +39,7 @@ private:
 	 void Add_Object_Recursive(CLayer* pLayer, class CGameObject* object);
 	 void Add_Object_Recursive(CLayer* pLayer, class CGameObject* object,string LevelTag);
 	 void Prune_Queues_ByLevel(const string& levelTag);
+	void Release_Subtree_ToPool(CGameObject* root);
 
 public:
 	virtual void Set_LevelTimeScale(string LevelTag, _float scale) override;
