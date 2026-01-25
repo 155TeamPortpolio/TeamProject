@@ -229,6 +229,7 @@
     <ClInclude Include="..\Public\AttackSign.h" />
     <ClInclude Include="..\public\DialogueNpc.h" />
     <ClInclude Include="..\public\ElectricBoo.h" />
+    <ClInclude Include="..\Public\NineSliceUI.h" />
     <ClInclude Include="..\public\OrbitAutoYawFollowController.h" />
     <ClInclude Include="..\public\BangBooAsk.h" />
     <ClInclude Include="..\public\BangBooAskState_Idle.h" />
@@ -524,6 +525,7 @@
     <ClCompile Include="..\Private\AttackSign.cpp" />
     <ClCompile Include="..\private\DialogueNpc.cpp" />
     <ClCompile Include="..\private\ElectricBoo.cpp" />
+    <ClCompile Include="..\Private\NineSliceUI.cpp" />
     <ClCompile Include="..\private\OrbitAutoYawFollowController.cpp" />
     <ClCompile Include="..\private\BangBooAsk.cpp" />
     <ClCompile Include="..\private\BangBooAskState_Idle.cpp" />

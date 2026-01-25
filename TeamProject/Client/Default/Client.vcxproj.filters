@@ -783,9 +783,6 @@
     <Filter Include="02. GameObject\Object\Player\Character\Collider\AttackCollider">
       <UniqueIdentifier>{8cafc1ce-885d-4894-bbae-9bc579a5da0c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\MapObject\EntitySpawner">
-      <UniqueIdentifier>{8b852d8f-36c2-4c1e-b080-ca2b3222160f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\Camera\07. CamDirector">
       <UniqueIdentifier>{0d1fd986-9b7f-4463-b27c-8cc9eae09a0b}</UniqueIdentifier>
     </Filter>
@@ -842,6 +839,12 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Npc\Dialogue\ElectricBoo\PairBoo">
       <UniqueIdentifier>{dbad4b25-cb03-4327-9954-39e24a41bcc9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\MapObject\99. EntitySpawner">
+      <UniqueIdentifier>{8b852d8f-36c2-4c1e-b080-ca2b3222160f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\03. UIElement\NineSlice">
+      <UniqueIdentifier>{2646c162-8883-48f9-b637-d3f38abb755c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1530,7 +1533,7 @@
       <Filter>00. MainApp\00. CursorController</Filter>
     </ClInclude>
     <ClInclude Include="..\public\EntitySpawner.h">
-      <Filter>02. GameObject\MapObject\EntitySpawner</Filter>
+      <Filter>02. GameObject\MapObject\99. EntitySpawner</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Stage.h">
       <Filter>01. Level\04. Zero\Stage_Super</Filter>
@@ -1636,6 +1639,9 @@
     </ClInclude>
     <ClInclude Include="..\public\PairBoo.h">
       <Filter>02. GameObject\Object\Npc\Dialogue\ElectricBoo\PairBoo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\NineSliceUI.h">
+      <Filter>02. GameObject\UI\03. UIElement\NineSlice</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2300,7 +2306,7 @@
       <Filter>00. MainApp\00. CursorController</Filter>
     </ClCompile>
     <ClCompile Include="..\private\EntitySpawner.cpp">
-      <Filter>02. GameObject\MapObject\EntitySpawner</Filter>
+      <Filter>02. GameObject\MapObject\99. EntitySpawner</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Stage.cpp">
       <Filter>01. Level\04. Zero\Stage_Super</Filter>
@@ -2391,6 +2397,9 @@
     </ClCompile>
     <ClCompile Include="..\private\PairBoo.cpp">
       <Filter>02. GameObject\Object\Npc\Dialogue\ElectricBoo\PairBoo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\NineSliceUI.cpp">
+      <Filter>02. GameObject\UI\03. UIElement\NineSlice</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

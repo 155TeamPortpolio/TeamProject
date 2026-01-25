@@ -103,10 +103,9 @@ void StaticOpaquePass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRender
 	pCurShader = { nullptr };
 
 	vector<OPAQUE_PACKET> occlude;
-	occlude.reserve(m_VisiblePackets.size());
-	//occlude = m_VisiblePackets;
-
+	//occlude.reserve(m_VisiblePackets.size());
 	occlude = pPipeLine->OcculsionCulling(m_VisiblePackets);
+	//occlude = m_VisiblePackets;
 	
 	sort(occlude.begin(), occlude.end(),
 		[](const OPAQUE_PACKET& leftPacket, const OPAQUE_PACKET& rightPacket) {
