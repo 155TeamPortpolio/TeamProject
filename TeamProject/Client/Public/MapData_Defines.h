@@ -83,11 +83,11 @@ namespace Client {
 		unordered_map<string, MapSlotValue> SlotValues;
 
 		template<typename T>
-		const T* Get_SlotValue(const string& SlotTag) const
+		T Get_SlotValue(const string& SlotTag) const
 		{
 			auto iter = SlotValues.find(SlotTag);
 			if (iter == SlotValues.end()) return nullptr;
-			return std::get_if<T>(&iter->second);
+			return *std::get_if<T>(&iter->second);
 		}
 	}CASHED_OBJECT;
 
@@ -130,5 +130,15 @@ namespace Client {
 			return nullptr;
 		}
 
+		const CASHED_OBJECT* GetDataByDataName(const string& NameTag, MAPOBJ_TYPE eType) const
+		{
+			const vector<CASHED_OBJECT>* Data = Select(eType);
+			if (!Data) return nullptr;
+
+			for (const auto& iter : *Data)
+				if (iter.DataName == NameTag) return &iter;
+
+			return nullptr;
+		}
 	}CASHED_OBJ_DATA;
 }
