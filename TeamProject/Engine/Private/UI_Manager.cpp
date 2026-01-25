@@ -18,9 +18,7 @@ CUI_Manager::~CUI_Manager()
 
 void CUI_Manager::Pre_EngineUpdate(_float dt)
 {
-
-	
-
+	CleanUp();
 	m_nowLevelKey = CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey();
 	
 	auto itLevel = m_UIObjects.find(m_nowLevelKey);
@@ -327,6 +325,42 @@ CUI_Object* CUI_Manager::Acquire(const CLONE_DESC& desc, INIT_DESC* pArg)
 	return m_pUIPool->Acquire(desc, pArg);
 }
 
+void CUI_Manager::Prune_Queues_ByLevel(const string& levelTag)
+{
+	auto IsSameLevel = [&](CUI_Object* obj) -> bool
+		{
+			if (!obj) return false;
+			return obj->Get_Level() == levelTag;
+		};
+
+	{
+		vector<CUI_Object*> newList;
+		newList.reserve(m_ReleaseUIs.size());
+
+		for (auto* obj : m_ReleaseUIs)
+		{
+			if (!IsSameLevel(obj))
+				newList.push_back(obj);
+			else
+				m_ReleaseUI_IDs.erase(obj->Get_ObjectID());
+		}
+		m_ReleaseUIs.swap(newList);
+	}
+
+	{
+		vector<CUI_Object*> newList;
+		newList.reserve(DeleteUIs.size());
+
+		for (auto* obj : DeleteUIs)
+		{
+			if (!IsSameLevel(obj))
+				newList.push_back(obj);
+			else
+				DeleteUI_IDs.erase(obj->Get_ObjectID());
+		}
+		DeleteUIs.swap(newList);
+	}
+}
 void CUI_Manager::Sort_UI()
 {
 	m_SortedUIObjects.clear();
