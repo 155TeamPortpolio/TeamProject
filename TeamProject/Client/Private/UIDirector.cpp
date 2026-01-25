@@ -6,6 +6,7 @@
 #include "UILoader.h"
 #include "UI_ScreenFade.h"
 #include "UI_HUD.h"
+#include "UI_DamageText.h"
 
 IMPLEMENT_SINGLETON(CUIDirector);
 
@@ -58,6 +59,24 @@ void CUIDirector::Hide_SceneFrame()
 
 	it->second.Get()->UI_DeActive();
 }
+
+void CUIDirector::Request_DamageText(void* pArg)
+{
+	if (!pArg) return;
+	auto desc = static_cast<CUI_DamageText*>(pArg);
+
+	const string levelKey = LevelManager()->Get_NowLevelKey();
+
+	auto dmgText = Builder::Create_UIObject({G_GlobalLevelKey, "Proto_GameObject_DamageText"})
+		.FromPool()
+		.Build("DamageText");
+
+	dmgText->UI_Active(desc);
+
+	// UI Mgr¿¡ µî·Ï
+	UIManager()->Add_UIObject(dmgText, levelKey);
+}
+
 
 void CUIDirector::Initialize()
 {
