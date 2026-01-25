@@ -14,7 +14,6 @@ OrbitInputEvalResult COrbitInputController::Evaluate(_float dt, const OrbitCamPr
     auto& io = ImGui::GetIO();
     if (io.WantCaptureMouse || ImGui::IsAnyItemActive() || ImGui::IsAnyItemHovered()) return out;
 #endif
-
     const float dx = InputDevice()->Mouse_DeltaX();
     const float dy = InputDevice()->Mouse_DeltaY();
 

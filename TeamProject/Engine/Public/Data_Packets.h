@@ -150,7 +150,8 @@ namespace Engine {
 
 
 	typedef struct tagCustomRenderRequestCommand {
-		string TargetKey;                    
+		string TargetKey;                  
+		_bool bClear = {};
 		function<void(ID3D11DeviceContext*)> DrawCallback;  
 	}RENDER_CUSTOM_COMMAND;
 

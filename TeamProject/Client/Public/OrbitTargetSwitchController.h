@@ -8,6 +8,7 @@ class COrbitTargetSwitchController
 {
 public:
     void    Reset() { m_state = {}; }
+    _bool   IsActive() const { return m_state.active; }
 
     void    BeginSwitch(const OrbitCamProfile& profile, const Vector3& holdPivotWorld);
     Vector3 EvaluateInternalOffset(_float dt, const OrbitCamProfile& profile, const Vector3& basePivotNow);

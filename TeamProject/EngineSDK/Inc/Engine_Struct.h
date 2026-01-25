@@ -486,7 +486,8 @@ namespace Engine
 		string DiffuseTextureTag{};
 		string NoiseTextureTag{};
 		string DissolveTextureTag{};
-		string MaskTextureTag{};
+		string MaskTextureTagA{};
+		string MaskTextureTagB{};
 		string DistortionTextureTag{};
 
 		_float3 vOffsetPosition{};
@@ -541,7 +542,8 @@ namespace Engine
 		_float2 vNoiseUVSpeed{};
 
 		/* Mask */
-		_float fEnableMask{};
+		_float fEnableMaskA{};
+		_float fEnableMaskB{};
 		_float fMaskTilling{};
 
 		/* Distortion */
@@ -583,6 +585,7 @@ namespace Engine
 
 	typedef struct tagEffectAsset : public INIT_DESC
 	{
+		_bool isBillboard = false;
 		_uint iNodeCount{};
 		_float fDuration{};
 		_bool isLoop = false;

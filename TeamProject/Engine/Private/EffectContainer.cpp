@@ -33,6 +33,7 @@ HRESULT CEffectContainer::Initialize(INIT_DESC* pArg)
 	EFFECT_DESC* pDesc = static_cast<EFFECT_DESC*>(pArg);
 
 	EFFECT_ASSET pAsset = pResource->Load_EffectAsset(G_GlobalLevelKey, pDesc->EffectAssetKey);
+	m_IsBillBoard = pAsset.isBillboard;
 	m_fDuration = pAsset.fDuration;
 	m_IsLoop = pAsset.isLoop;
 	m_iNumNodes = pAsset.Nodes.size();
@@ -101,6 +102,16 @@ void CEffectContainer::Update(_float dt)
 		}
 
 		Get_Component<CObjectContainer>()->UpdateChild(dt);
+	}
+
+	if (m_IsBillBoard)
+	{
+		_vector4 vCamPosition = CameraManager()->Get_CameraPos();
+		_vector3 vCurrPosition = m_pTransform->Get_WorldPos();
+		_vector3 vDir = _vector3(vCamPosition.x, vCamPosition.y, vCamPosition.z) - vCurrPosition;
+		vDir.Normalize();
+
+		m_pTransform->Set_Look(vDir);
 	}
 
 }
