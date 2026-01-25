@@ -541,6 +541,17 @@ void CSacrificeState_Attack_05_Phase1::Update_Effects(CSacrifice* pOwner)
 	/* Orb1 */
 	if (IsCrossAnimProgress(0.3f))
 	{
+		COLLIDER_DESC colliderDesc = {};
+		colliderDesc.eGroup = COLLISION_GROUP::MONSTER_ATTACK;
+		colliderDesc.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER);
+		colliderDesc.bTrigger = true;
+		colliderDesc.bAutoFit = false;
+		colliderDesc.eType = COLLIDER_TYPE::SPHERE;
+		colliderDesc.vSize = _float3{ 2.f,2.f,2.f };
+		colliderDesc.fSizeScale = 1.f;
+		colliderDesc.vCenter = _float3{ 0.f,0.f,0.f };
+		colliderDesc.vRotation = _float3{ 0.f,0.f,0.f };
+
 		auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 		auto pTransform = pOwner->Get_Component<CTransform>();
 
@@ -569,6 +580,7 @@ void CSacrificeState_Attack_05_Phase1::Update_Effects(CSacrifice* pOwner)
 
 		auto pOrb = Builder::Create_Object({ "Zero_Level","Proto_GameObject_SacrificeOrb"})
 			.Position(vBonePosition)
+			.Collider(colliderDesc)
 			.Build("SacrificeOrb");
 
 		pOrb->Get_Component<CTransform>()->Set_Look(vDir);
@@ -578,6 +590,17 @@ void CSacrificeState_Attack_05_Phase1::Update_Effects(CSacrifice* pOwner)
 	/* Orb2 */
 	if (IsCrossAnimProgress(0.35f))
 	{
+		COLLIDER_DESC colliderDesc = {};
+		colliderDesc.eGroup = COLLISION_GROUP::MONSTER_ATTACK;
+		colliderDesc.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER);
+		colliderDesc.bTrigger = true;
+		colliderDesc.bAutoFit = false;
+		colliderDesc.eType = COLLIDER_TYPE::SPHERE;
+		colliderDesc.vSize = _float3{ 2.f,2.f,2.f };
+		colliderDesc.fSizeScale = 1.f;
+		colliderDesc.vCenter = _float3{ 0.f,0.f,0.f };
+		colliderDesc.vRotation = _float3{ 0.f,0.f,0.f };
+
 		auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 		auto pTransform = pOwner->Get_Component<CTransform>();
 
@@ -606,6 +629,7 @@ void CSacrificeState_Attack_05_Phase1::Update_Effects(CSacrifice* pOwner)
 
 		auto pOrb = Builder::Create_Object({ "Zero_Level","Proto_GameObject_SacrificeOrb" })
 			.Position(vBonePosition)
+			.Collider(colliderDesc)
 			.Build("SacrificeOrb");
 
 		pOrb->Get_Component<CTransform>()->Set_Look(vDir);

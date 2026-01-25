@@ -1,5 +1,12 @@
 ID,Name,Sequence,Speaker,Time,Type,Repeat,Text,Result,ChoiceNum,Choice1,Choice2,Choice3,NextSequence
-Dialogue_001,아우,0,Player,LateNight,Choice,1,(아우가 단잠에 빠져 있다. 꺠울까 말까 ...),None,2,Choice_001,Choice_002,,0
+Dialogue_001,아우,0,Player,LateNight,Choice,1,(아우가 단잠에 빠져 있다. 깨울까 말까 ...),None,2,Choice_001,Choice_002,,0
 Dialogue_002,초병,0,Npc,Any,Choice,1,외부 차량은 전초기지에 출입할 수 없습니다. 전초기지를 떠나실 거라면 제가 모셔다 드리겠습니다. 필요하십니까?,None,2,Choice_003,Choice_004,,0
 Dialogue_003,냥냥이 치안관,0,Npc,Any,Choice,1,선량한 시민분! 오늘의 날씨가 궁금하신가요?,None,2,Choice_005,Choice_006,,1
 Dialogue_003,냥냥이 치안관,1,Npc,Any,Normal,1,오늘의 날씨는 맑음입니다,Fail,,,,,0
+Dialogue_004,전류감별부,0,Npc,Any,Normal,1,웅나~ (여기 충전소 써본 적 있어?),Running,,,,,1
+Dialogue_004,충전부,1,Npc,Any,Normal,1,"웅나?(음... 아니, 그런데 충전소마다 뭐가 달라?)",Running,,,,,2
+Dialogue_004,전류감별부,2,Npc,Any,Normal,1,웅나나!(어떤 충전소는 찌릿찌릿하고 어떤 곳은 양이 많아 배불러...),Running,,,,,3
+Dialogue_004,충전부,3,Npc,Any,Normal,1,웅나...(그렇게 말하니... 확실히 미묘한 차이가 있는 것 같네...),Running,,,,,4
+Dialogue_004,전류감별부,4,Npc,Any,Normal,1,웅나웅나!(당연히 차이가 있지! 수력 전기는 부드럽고 화력 전기는 뒷맛이 뜨거워),Running,,,,,5
+Dialogue_004,전류감별부,5,Npc,Any,Normal,1,웅나웅나!(여기 충전소에서는 풍부하고 섬세한 체험을 할 수 있어. \n다른 가게와는 레벨이 다르지!),Running,,,,,6
+Dialogue_004,충전부,6,Npc,Any,Normal,1,웅나!(전류감별부만 믿을게!),Fail,,,,,0

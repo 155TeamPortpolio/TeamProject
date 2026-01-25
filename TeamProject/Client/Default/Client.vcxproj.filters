@@ -370,9 +370,6 @@
     <Filter Include="02. GameObject\Object\Npc\Service">
       <UniqueIdentifier>{210a1075-7fe0-417a-8c56-982a1dbb01ef}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Object\Npc\Conversation">
-      <UniqueIdentifier>{0bafe532-d8a7-4715-bb85-07a6f77d204c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\Object\Npc\Service\OfficeMeow">
       <UniqueIdentifier>{ff2cc5c8-e319-4641-8d0c-2bbd0faf386d}</UniqueIdentifier>
     </Filter>
@@ -837,8 +834,20 @@
     <Filter Include="02. GameObject\UI\01. 2D\HUD_Battle\DamageText\DamageText">
       <UniqueIdentifier>{04c4b73f-8429-408a-91c9-5eebde162c6e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Npc\Dialogue">
+      <UniqueIdentifier>{0bafe532-d8a7-4715-bb85-07a6f77d204c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Npc\Dialogue\ElectricBoo">
+      <UniqueIdentifier>{108374b6-14e8-4ada-9809-798940fc8321}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Npc\Dialogue\ElectricBoo\PairBoo">
+      <UniqueIdentifier>{dbad4b25-cb03-4327-9954-39e24a41bcc9}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02. GameObject\MapObject\99. EntitySpawner">
       <UniqueIdentifier>{8b852d8f-36c2-4c1e-b080-ca2b3222160f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\04. BattleSystem\Monster Spawner">
+      <UniqueIdentifier>{0bdcfd9b-76a0-4c91-82f2-9a71e5d819f5}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\UI\03. UIElement\NineSlice">
       <UniqueIdentifier>{2646c162-8883-48f9-b637-d3f38abb755c}</UniqueIdentifier>
@@ -1577,6 +1586,12 @@
     <ClInclude Include="..\public\DisplayGate.h">
       <Filter>02. GameObject\Camera\99. DisplayGate</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\BattleSystem_Struct.h">
+      <Filter>03. Utility\04. BattleSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\MonsterSpawner.h">
+      <Filter>03. Utility\04. BattleSystem\Monster Spawner</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\CharacterParryCollider.h">
       <Filter>02. GameObject\Object\Player\Character\Collider\ParryCollider</Filter>
     </ClInclude>
@@ -1630,6 +1645,15 @@
     </ClInclude>
     <ClInclude Include="..\Public\UI_SceneFrame.h">
       <Filter>02. GameObject\UI\01. 2D\SceneFrame</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\DialogueNpc.h">
+      <Filter>02. GameObject\Object\Npc\Dialogue</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ElectricBoo.h">
+      <Filter>02. GameObject\Object\Npc\Dialogue\ElectricBoo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\PairBoo.h">
+      <Filter>02. GameObject\Object\Npc\Dialogue\ElectricBoo\PairBoo</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\NineSliceUI.h">
       <Filter>02. GameObject\UI\03. UIElement\NineSlice</Filter>
@@ -2332,6 +2356,9 @@
     <ClCompile Include="..\private\DisplayGate.cpp">
       <Filter>02. GameObject\Camera\99. DisplayGate</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\MonsterSpawner.cpp">
+      <Filter>03. Utility\04. BattleSystem\Monster Spawner</Filter>
+    </ClCompile>
     <ClCompile Include="..\Private\CharacterParryCollider.cpp">
       <Filter>02. GameObject\Object\Player\Character\Collider\ParryCollider</Filter>
     </ClCompile>
@@ -2382,6 +2409,15 @@
     </ClCompile>
     <ClCompile Include="..\Private\UI_SceneFrame.cpp">
       <Filter>02. GameObject\UI\01. 2D\SceneFrame</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\DialogueNpc.cpp">
+      <Filter>02. GameObject\Object\Npc\Dialogue</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ElectricBoo.cpp">
+      <Filter>02. GameObject\Object\Npc\Dialogue\ElectricBoo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\PairBoo.cpp">
+      <Filter>02. GameObject\Object\Npc\Dialogue\ElectricBoo\PairBoo</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\NineSliceUI.cpp">
       <Filter>02. GameObject\UI\03. UIElement\NineSlice</Filter>

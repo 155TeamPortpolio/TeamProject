@@ -600,6 +600,8 @@ namespace Engine
 		void Reset();
 		class CGameObject* Get();
 		void Delete();
+		void Set_Alive(_bool alive);
+		_bool isAlive();
 		_bool operator==(const tagObjectHandle& rhs) {
 			if (isValid())
 				return hObjID == rhs.hObjID;
