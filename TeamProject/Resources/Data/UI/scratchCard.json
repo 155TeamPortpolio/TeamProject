@@ -1,0 +1,508 @@
+{
+    "alive": true,
+    "instanceName": "scratchCard",
+    "transform": {
+        "anchor": 0,
+        "anchorOffset": [
+            -215.0,
+            -129.0
+        ],
+        "size": [
+            430.0,
+            258.0
+        ],
+        "scale": [
+            1.0,
+            1.0
+        ],
+        "pivot": [
+            0.0,
+            0.0
+        ],
+        "radian": 0.0
+    },
+    "color": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+    ],
+    "pass": "Opaque",
+    "animClips": [],
+    "children": [
+        {
+            "alive": true,
+            "instanceName": "Image",
+            "transform": {
+                "anchor": 0,
+                "anchorOffset": [
+                    -224.0,
+                    -136.55615234375
+                ],
+                "size": [
+                    448.0,
+                    273.1123046875
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "pass": "Opaque",
+            "animClips": [],
+            "children": [],
+            "typeTag": "Image",
+            "textureTag": "ScratchCardBg.png"
+        },
+        {
+            "alive": true,
+            "instanceName": "Image",
+            "transform": {
+                "anchor": 8,
+                "anchorOffset": [
+                    -218.0,
+                    -178.25413513183594
+                ],
+                "size": [
+                    436.0,
+                    178.25413513183594
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                0.01568627543747425,
+                0.8627451062202454,
+                0.2078431397676468,
+                1.0
+            ],
+            "pass": "Opaque",
+            "animClips": [],
+            "children": [],
+            "typeTag": "Image",
+            "textureTag": "ScratchCardBg02.png"
+        },
+        {
+            "alive": true,
+            "instanceName": "Image",
+            "transform": {
+                "anchor": 8,
+                "anchorOffset": [
+                    -218.0,
+                    -179.13999938964844
+                ],
+                "size": [
+                    436.0,
+                    179.13999938964844
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                0.9411764740943909,
+                0.9215686321258545,
+                0.14901961386203766,
+                1.0
+            ],
+            "pass": "Opaque",
+            "animClips": [],
+            "children": [],
+            "typeTag": "Image",
+            "textureTag": "ScratchCardBg03.png"
+        },
+        {
+            "alive": true,
+            "instanceName": "Image",
+            "transform": {
+                "anchor": 5,
+                "anchorOffset": [
+                    15.0,
+                    19.0
+                ],
+                "size": [
+                    252.0,
+                    42.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "pass": "Opaque",
+            "animClips": [],
+            "children": [],
+            "typeTag": "Image",
+            "textureTag": "ScratchCardTittle.png"
+        },
+        {
+            "alive": true,
+            "instanceName": "Image",
+            "transform": {
+                "anchor": 6,
+                "anchorOffset": [
+                    -70.0,
+                    8.0
+                ],
+                "size": [
+                    60.0,
+                    57.142860412597656
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "pass": "Opaque",
+            "animClips": [],
+            "children": [],
+            "typeTag": "Image",
+            "textureTag": "ScratchCardTittleLogo.png"
+        },
+        {
+            "alive": true,
+            "instanceName": "CanvasPanel",
+            "transform": {
+                "anchor": 4,
+                "anchorOffset": [
+                    -192.0,
+                    76.0
+                ],
+                "size": [
+                    384.0,
+                    10.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "pass": "Opaque",
+            "animClips": [],
+            "children": [
+                {
+                    "alive": true,
+                    "instanceName": "Image",
+                    "transform": {
+                        "anchor": 9,
+                        "anchorOffset": [
+                            0.0,
+                            -5.277777671813965
+                        ],
+                        "size": [
+                            190.0,
+                            5.277777671813965
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "pass": "Opaque",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "Image",
+                    "textureTag": "ScratchCardLabelDot.png"
+                },
+                {
+                    "alive": true,
+                    "instanceName": "Image",
+                    "transform": {
+                        "anchor": 10,
+                        "anchorOffset": [
+                            -190.0,
+                            -5.277777671813965
+                        ],
+                        "size": [
+                            190.0,
+                            5.277777671813965
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "pass": "Opaque",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "Image",
+                    "textureTag": "ScratchCardLabelDot.png"
+                },
+                {
+                    "alive": true,
+                    "instanceName": "Image",
+                    "transform": {
+                        "anchor": 5,
+                        "anchorOffset": [
+                            -1.0,
+                            0.0
+                        ],
+                        "size": [
+                            190.0,
+                            5.277777671813965
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": -3.1415927410125732
+                    },
+                    "color": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "pass": "Opaque",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "Image",
+                    "textureTag": "ScratchCardLabelDot.png"
+                },
+                {
+                    "alive": true,
+                    "instanceName": "Image",
+                    "transform": {
+                        "anchor": 6,
+                        "anchorOffset": [
+                            -191.0,
+                            0.0
+                        ],
+                        "size": [
+                            190.0,
+                            5.277777671813965
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": -3.1415927410125732
+                    },
+                    "color": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "pass": "Opaque",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "Image",
+                    "textureTag": "ScratchCardLabelDot.png"
+                }
+            ],
+            "typeTag": "CanvasPanel"
+        },
+        {
+            "alive": true,
+            "instanceName": "reward",
+            "transform": {
+                "anchor": 4,
+                "anchorOffset": [
+                    -130.0,
+                    114.0
+                ],
+                "size": [
+                    260.0,
+                    83.09278106689453
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "pass": "Opaque",
+            "animClips": [],
+            "children": [],
+            "typeTag": "Image",
+            "textureTag": "ScratchCardRewardIcon01.png"
+        },
+        {
+            "alive": true,
+            "instanceName": "scratch",
+            "transform": {
+                "anchor": 0,
+                "anchorOffset": [
+                    -159.5,
+                    -29.697999954223633
+                ],
+                "size": [
+                    319.0,
+                    111.3968276977539
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "pass": "Opaque",
+            "animClips": [],
+            "children": [],
+            "typeTag": "Image",
+            "textureTag": "ScratchCardLabelIcon04.png"
+        },
+        {
+            "alive": true,
+            "instanceName": "Text",
+            "transform": {
+                "anchor": 9,
+                "anchorOffset": [
+                    16.0,
+                    -12.0
+                ],
+                "size": [
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                0.03921568766236305,
+                0.03921568766236305,
+                0.03921568766236305,
+                1.0
+            ],
+            "pass": "Opaque",
+            "animClips": [],
+            "children": [],
+            "typeTag": "Text",
+            "text": {
+                "content": "복권은  1일 1회",
+                "fontTag": "NanumSquareNeo.spritefont",
+                "fontScale": 0.39999985694885254,
+                "outlined": false,
+                "outlineThickness": 1.0,
+                "outlineColor": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "shear": [
+                    0.0,
+                    0.0
+                ],
+                "autoPos": true,
+                "anchor": 9
+            }
+        }
+    ],
+    "typeTag": "CanvasPanel"
+}
