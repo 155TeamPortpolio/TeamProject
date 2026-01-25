@@ -35,7 +35,7 @@ void CBattleFXFlow::Update(_float dt)
     }
 }
 
-void CBattleFXFlow::Clear(_bool callOnEnd = true)
+void CBattleFXFlow::Clear(_bool callOnEnd)
 {
     if (callOnEnd && m_isRunning && m_onEnd)
         m_onEnd();

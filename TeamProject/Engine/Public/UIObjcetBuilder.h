@@ -19,12 +19,14 @@ class ENGINE_DLL CUIObjcetBuilder
         CUIObjcetBuilder& Asset(const string& assetKey);
         CUIObjcetBuilder& Add_UIDesc(UI_DESC* pArg);
         CUIObjcetBuilder& WorldPos(const _float3 worldPos);
+        CUIObjcetBuilder& FromPool();
 
     private:
         class CGameInstance* m_pGameInstance = { nullptr };
-        CLONE_DESC* m_CloneDesc = { nullptr };
+        CLONE_DESC m_CloneDesc = {  };
         UI_DESC* m_pObjDesc = { nullptr };
         unordered_map<type_index, COMPONENT_DESC*> m_CompDesc;
+        _bool m_isFromPool = { false };
 };
 
 NS_END
