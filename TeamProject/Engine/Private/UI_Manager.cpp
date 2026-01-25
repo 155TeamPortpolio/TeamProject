@@ -18,14 +18,12 @@ CUI_Manager::~CUI_Manager()
 
 void CUI_Manager::Pre_EngineUpdate(_float dt)
 {
-
 	CleanUp();
-
 	m_nowLevelKey = CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey();
-	
+
 	auto itLevel = m_UIObjects.find(m_nowLevelKey);
 	if (itLevel == m_UIObjects.end())
-		return; 
+		return;
 
 	for (auto* uiObj : itLevel->second)
 		if (uiObj && uiObj->Is_Alive() && uiObj->Is_Root())
@@ -41,7 +39,7 @@ void CUI_Manager::Post_EngineUpdate(_float dt)
 		return;
 
 	for (auto* uiObj : m_SortedUIObjects)
-			uiObj->Post_EngineUpdate(dt);
+		uiObj->Post_EngineUpdate(dt);
 }
 
 void CUI_Manager::Priority_Update(_float dt)
@@ -80,7 +78,6 @@ void CUI_Manager::Late_Update(_float dt)
 
 void CUI_Manager::Clear(const string& LevelTag)
 {
-	Prune_Queues_ByLevel(LevelTag);
 	auto iter = m_UIObjects.find(LevelTag);
 	if (iter != m_UIObjects.end())
 	{
@@ -88,8 +85,6 @@ void CUI_Manager::Clear(const string& LevelTag)
 			Safe_Release(UI);
 		iter->second.clear();
 	}
-
-	m_pUIPool->ClearAll();
 }
 
 HRESULT CUI_Manager::Sync_To_Level()
@@ -132,13 +127,15 @@ void CUI_Manager::Add_Object_Recursive(const string& LevelTag, CUI_Object* objec
 
 	for (size_t i = 0; i < map.size(); i++)
 	{
+		/*º¤ÅÍ¸¦ ¼øÈ¸ÇÏ¸é¼­ ³ÎÆ÷ÀÎÅÍ°¡ ÀÖ´ÂÁö °Ë»ö*/
 		if (map[i] == nullptr) {
 			ObjectIndex = i;
 			break;
 		}
 	}
 
-	if (ObjectIndex == map.size())
+	/*°°Àº IDÀÇ ¿ÀºêÁ§Æ®°¡ ¾ø´Ù¸é*/
+	if (ObjectIndex == map.size()) /*¸¶Áö¸·¿¡ Ãß°¡*/
 		map.push_back(object);
 	else
 		map[ObjectIndex] = object;
@@ -155,44 +152,96 @@ void CUI_Manager::Add_Object_Recursive(const string& LevelTag, CUI_Object* objec
 			Add_Object_Recursive(LevelTag, CastChild);
 	}
 }
+
 void CUI_Manager::Remove_UIObject(CUI_Object* object)
 {
-	if (!object)
-		return;
-
+	if (!object) return;
 	const _int systemIndex = object->Get_SystemIndex();
-	if (systemIndex < 0)
-		return;
-
+	if (systemIndex < 0) return;
+	/*À¯¾ÆÀÌ¿¡ ¹èÄ¡µÈ Àû ¾øÀ½*/
 	const auto level = object->Get_SystemLevel();
-
 	auto itLevel = m_UIObjects.find(level);
 	if (itLevel == m_UIObjects.end())
 		return;
-
 	auto& vec = itLevel->second;
 	if (systemIndex >= static_cast<_int>(vec.size()))
 		return;
-
 	if (vec[systemIndex] != object)
 		return;
+	/*¿©±â±îÁö°¡ ¸» ¾ÈµÇ´Â ¿ÀºêÁ§Æ®°¡ µé¾î¿È*/
 
-	if (object->IsFromPool()) {
+	if (object->IsFromPool())
+	{
 		if (m_ReleaseUI_IDs.count(object->Get_ObjectID()))
 			return;
-
 		m_ReleaseUIs.push_back(object);
 		m_ReleaseUI_IDs.insert(object->Get_ObjectID());
 	}
 	else {
 		if (DeleteUI_IDs.count(object->Get_ObjectID()))
 			return;
-
 		DeleteUIs.push_back(object);
 		DeleteUI_IDs.insert(object->Get_ObjectID());
 	}
-	
 }
+
+void CUI_Manager::Release_Subtree_ToPool(CUI_Object* root)
+{
+	if (!root) return;
+
+	vector<CUI_Object*> nodes;
+	nodes.reserve(32);
+
+	vector<CUI_Object*> stack;
+	stack.reserve(32);
+	stack.push_back(root);
+
+	while (!stack.empty())
+	{
+		CUI_Object* node = stack.back();
+		stack.pop_back();
+		if (!node) continue;
+
+		nodes.push_back(node);
+
+		auto children = node->Get_Children();
+		for (auto* childBase : children)
+		{
+			CUI_Object* child = dynamic_cast<CUI_Object*>(childBase);
+			if (child) stack.push_back(child);
+		}
+	}
+
+	for (CUI_Object* node : nodes)
+	{
+		if (!node) continue;
+
+		const _int idx = node->Get_SystemIndex();
+		if (idx >= 0)
+		{
+			const auto levelKey = node->Get_SystemLevel();
+			auto itLevel = m_UIObjects.find(levelKey);
+			if (itLevel != m_UIObjects.end())
+			{
+				auto& vec = itLevel->second;
+				if (idx < static_cast<_int>(vec.size()) && vec[idx] == node)
+					vec[idx] = nullptr;
+			}
+		}
+
+		node->Set_OnSystem("", -1);
+
+		if (node != root)
+		{
+			node->OnPooledRelease();
+		}
+	}
+
+	root->OnPooledRelease();
+	const CLONE_DESC& poolKey = root->Get_PoolKey();
+	m_pUIPool->Return(poolKey, root);
+}
+
 
 void CUI_Manager::CleanUp()
 {
@@ -211,10 +260,10 @@ void CUI_Manager::CleanUp()
 		auto& vec = itLevel->second;
 		if (idx >= static_cast<_int>(vec.size())) continue;
 
-		// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½Ô¿ï¿½ ï¿½ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+		// ¾ÆÁ÷ ±× ½½·Ô¿¡ ±× °´Ã¼°¡ ÀÖÀ» ¶§¸¸ Á¦°Å
 		if (vec[idx] != obj) continue;
 
-		// ï¿½Ã½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+		// ½Ã½ºÅÛ ¿¬°á ²÷±â
 		obj->Set_OnSystem("", -1);
 
 		Safe_Release(vec[idx]);
@@ -226,25 +275,7 @@ void CUI_Manager::CleanUp()
 	for (CUI_Object* obj : m_ReleaseUIs)
 	{
 		if (!obj) continue;
-
-		const _int idx = obj->Get_SystemIndex();
-		if (idx < 0) continue;
-
-		const auto levelKey = obj->Get_SystemLevel();
-
-		auto itLevel = m_UIObjects.find(levelKey);
-		if (itLevel == m_UIObjects.end()) continue;
-
-		auto& vec = itLevel->second;
-		if (idx >= static_cast<_int>(vec.size())) continue;
-
-		if (vec[idx] != obj) continue;
-
-		obj->Set_OnSystem("", -1);
-		obj->OnPooledRelease();
-		const CLONE_DESC& poolKey = obj->Get_PoolKey();
-		m_pUIPool->Return(poolKey, obj);
-		vec[idx] = nullptr;
+		Release_Subtree_ToPool(obj);
 	}
 	m_ReleaseUIs.clear();
 	m_ReleaseUI_IDs.clear();
@@ -264,6 +295,7 @@ const vector<CUI_Object*>& CUI_Manager::Get_LevelUI(const string& leveTag)
 
 CUI_Object* CUI_Manager::Request_UIObject(const UI_HANDLE& handle)
 {
+	// »èÁ¦ ¿¹Á¤ÀÌ¸é ½ÇÆÐ
 	auto itDelete = std::find_if(DeleteUIs.begin(), DeleteUIs.end(),
 		[&](CUI_Object* uiPtr)
 		{
@@ -359,6 +391,7 @@ void CUI_Manager::Prune_Queues_ByLevel(const string& levelTag)
 		DeleteUIs.swap(newList);
 	}
 }
+
 void CUI_Manager::Sort_UI()
 {
 	m_SortedUIObjects.clear();
@@ -374,7 +407,7 @@ void CUI_Manager::Sort_UI()
 	}
 
 	std::stable_sort(m_SortedUIObjects.begin(), m_SortedUIObjects.end(),
-		[]( CUI_Object* left,  CUI_Object* right)
+		[](CUI_Object* left, CUI_Object* right)
 		{
 			return left->Get_ZPriority() > right->Get_ZPriority();
 		});

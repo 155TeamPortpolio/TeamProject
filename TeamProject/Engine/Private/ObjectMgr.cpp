@@ -55,13 +55,8 @@ void CObjectMgr::Late_Update(_float dt)
 
 	for (auto pObject : m_ReleaseObjs)
 	{
-		_uint ObjectID = pObject->Get_ObjectID();
-		pObject->Get_Layer()->Pop_GameObject(ObjectID);
-		pObject->Set_Layer(nullptr);
-		pObject->OnPooledRelease();
-		const CLONE_DESC& poolKey = pObject->Get_PoolKey();
-
-		m_pObjectPool->Return(poolKey, pObject);
+		if (!pObject) continue;
+		Release_Subtree_ToPool(pObject);
 	}
 	m_ReleaseObjs.clear();
 	m_ReleaseIDs.clear();
@@ -316,6 +311,55 @@ void CObjectMgr::Prune_Queues_ByLevel(const string& levelTag)
 	}
 }
 
+void CObjectMgr::Release_Subtree_ToPool(CGameObject* root)
+{
+	if (!root) return;
+
+	vector<CGameObject*> nodes;
+	nodes.reserve(32);
+
+	vector<CGameObject*> stack;
+	stack.reserve(32);
+	stack.push_back(root);
+
+	while (!stack.empty())
+	{
+		CGameObject* node = stack.back();
+		stack.pop_back();
+		if (!node) continue;
+
+		nodes.push_back(node);
+
+		auto children = node->Get_Children();
+		for (auto* child : children)
+		{
+			if (child) stack.push_back(child);
+		}
+	}
+
+	for (CGameObject* node : nodes)
+	{
+		if (!node) continue;
+
+		CLayer* layerPtr = node->Get_Layer();
+		if (layerPtr)
+		{
+			const _uint id = node->Get_ObjectID();
+			layerPtr->Pop_GameObject(id);
+			node->Set_Layer(nullptr);
+		}
+	}
+
+	for (CGameObject* node : nodes)
+	{
+		if (!node || node == root) continue;
+		node->OnPooledRelease(); // 없으면 생략 가능
+	}
+
+	root->OnPooledRelease();
+	const CLONE_DESC& poolKey = root->Get_PoolKey();
+	m_pObjectPool->Return(poolKey, root);
+}
 void CObjectMgr::Set_LevelTimeScale(string LevelTag, _float scale)
 {
 	auto iter = m_Layers.find(LevelTag);
