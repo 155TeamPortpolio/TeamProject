@@ -17,7 +17,7 @@ public:
     virtual void Update() PURE;
     virtual void OnResumeFromOverlay() PURE;
 
-private:
+protected:
     string m_RoomKey = {};
     _bool m_isPersistent = { false };
 

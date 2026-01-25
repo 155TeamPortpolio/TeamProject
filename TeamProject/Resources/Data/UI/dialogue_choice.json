@@ -312,6 +312,41 @@
                             "alive": true,
                             "instanceName": "Image",
                             "transform": {
+                                "anchor": 2,
+                                "anchorOffset": [
+                                    -391.3299865722656,
+                                    -19.665000915527344
+                                ],
+                                "size": [
+                                    391.3299865722656,
+                                    39.33000183105469
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.7843137383460999
+                            ],
+                            "pass": "Opaque",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "Image",
+                            "textureTag": "empty.png"
+                        },
+                        {
+                            "alive": true,
+                            "instanceName": "Image",
+                            "transform": {
                                 "anchor": 1,
                                 "anchorOffset": [
                                     0.0,
@@ -1090,6 +1125,41 @@
                             "alive": true,
                             "instanceName": "Image",
                             "transform": {
+                                "anchor": 2,
+                                "anchorOffset": [
+                                    -351.3299865722656,
+                                    -18.665000915527344
+                                ],
+                                "size": [
+                                    351.3299865722656,
+                                    37.33000183105469
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.7843137383460999
+                            ],
+                            "pass": "Opaque",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "Image",
+                            "textureTag": "empty.png"
+                        },
+                        {
+                            "alive": true,
+                            "instanceName": "Image",
+                            "transform": {
                                 "anchor": 1,
                                 "anchorOffset": [
                                     0.0,
@@ -1864,6 +1934,41 @@
                     "pass": "Opaque",
                     "animClips": [],
                     "children": [
+                        {
+                            "alive": true,
+                            "instanceName": "Image",
+                            "transform": {
+                                "anchor": 2,
+                                "anchorOffset": [
+                                    -383.3299865722656,
+                                    -20.665000915527344
+                                ],
+                                "size": [
+                                    383.3299865722656,
+                                    41.33000183105469
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.7843137383460999
+                            ],
+                            "pass": "Opaque",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "Image",
+                            "textureTag": "empty.png"
+                        },
                         {
                             "alive": true,
                             "instanceName": "Image",

@@ -179,7 +179,7 @@ HRESULT CSkinnedMeshRenderer::Render_SkinnedMesh_Combined()
 	m_pTargetManager->Bind_Target("Target_LightInfo_SkinnedMesh", m_pShader, "LightInfoTexture");
 	m_pTargetManager->Bind_Target("Target_RimLightFinal", m_pShader, "RimLightFinalTexture");
 	m_pTargetManager->Bind_Target("Target_BloomBlurY_SkinnedMesh", m_pShader, "MeshBloomFinalTexture");
-	m_pTargetManager->Bind_Target("Target_MotionBlur", m_pShader, "MotionBlurTexture");
+	m_pTargetManager->Bind_Target("Target_MotionNoise", m_pShader, "MotionBlurTexture");
 
 	m_pShader->Bind_Value("RampTexture", { m_pRampTexture->Get_SRV(), "Texture2D", 0 });
 
@@ -197,6 +197,8 @@ HRESULT CSkinnedMeshRenderer::Render_MotionBlur_Noise()
 {
 	if (m_MotionBlurCommands.empty())
 	{
+		m_pTargetManager->Get_EngineTarget("Target_MotionBlur")->Clear();
+		m_pTargetManager->Get_EngineTarget("Target_MotionHeight")->Clear();
 		return S_OK;
 	}
 
@@ -210,6 +212,8 @@ HRESULT CSkinnedMeshRenderer::Render_MotionBlur_Noise()
 
 	m_pTargetManager->Bind_Target("Target_MotionBlur", m_pShader, "MotionBlurTexture");
 	m_pTargetManager->Bind_Target("Target_MotionHeight", m_pShader, "MotionHeightTexture");
+	m_pTargetManager->Bind_Target("Target_Skinned_Depth", m_pShader, "DepthTexture");
+
 	if (RenderSystem()->Get_NoiseTexture(NOISE_FXTYPE::MOTIONBLUR) != nullptr)
 	{
 		m_pShader->Bind_Value("MotionNoiseTexture",
@@ -266,7 +270,7 @@ HRESULT CSkinnedMeshRenderer::Ready_Target()
 	m_pTargetManager->Create_Target(MotionNoiseDesc);
 
 	RenderTargetDesc RimDesc = { "Target_RimLight" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT, _float4(0.0f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
-	m_pTargetManager->Create_Target(RimDesc);	
+	m_pTargetManager->Create_Target(RimDesc);
 
 	RenderTargetDesc RimLightDesc = { "Target_RimLightFinal" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT, _float4(0.0f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
 	m_pTargetManager->Create_Target(RimLightDesc);
@@ -340,6 +344,14 @@ HRESULT CSkinnedMeshRenderer::Process_OutLineQueue()
 		return S_OK;
 	}
 
+	ID3D11DepthStencilView* pDeferredDSV =
+		m_pTargetManager->Get_MTR_DSV("MRT_Deferred_Skinned");
+
+	ID3D11RenderTargetView* pPrevRTV = { nullptr };
+	ID3D11DepthStencilView* pPrevDSV = { nullptr };
+	m_pContext->OMGetRenderTargets(1, &pPrevRTV, &pPrevDSV);
+	m_pContext->OMSetRenderTargets(1, &pPrevRTV, pDeferredDSV);
+
 	for (auto& cmd : m_OutLineCommands)
 	{
 		cmd.pShader->SetConstantBuffer("FrameBuffer", m_pPipeLine->Get_FrameBuffer());
@@ -348,6 +360,11 @@ HRESULT CSkinnedMeshRenderer::Process_OutLineQueue()
 
 		cmd.DrawCall(m_pContext, cmd.MeshIdx);
 	}
+	ID3D11RenderTargetView* pRTVs[8] = { pPrevRTV };
+	m_pContext->OMSetRenderTargets(8, pRTVs, pPrevDSV);
+
+	Safe_Release(pPrevRTV);
+	Safe_Release(pPrevDSV);
 
 	m_OutLineCommands.clear();
 

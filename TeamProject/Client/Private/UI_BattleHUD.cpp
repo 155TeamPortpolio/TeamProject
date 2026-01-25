@@ -1,12 +1,13 @@
 #include "pch.h"
 #include "UI_BattleHUD.h"
-
+#include "GaugeUI.h" 
+#include "UI_DamageText.h"
+// Engine
 #include "GameInstance.h"
 #include "ObjectContainer.h"
 #include "EventListener.h"
 #include "TextSlot.h"
 #include "Sprite2D.h"
-#include "GaugeUI.h" 
 
 HRESULT CUI_BattleHUD::Initialize_Prototype()
 {
@@ -33,7 +34,7 @@ HRESULT CUI_BattleHUD::Initialize(INIT_DESC* pArg)
     const string& strLevelKey = LevelManager()->Get_NowLevelKey();
     Add_PartObject(strLevelKey, "Proto_GameObject_Decibel", "decibel", CHILD::ULTIMATE1, _float2(50.f, 136.f));
     Add_PartObject(strLevelKey, "Proto_GameObject_BattleHUDAction", "action", CHILD::ACTION, _float2(1178.f, 655.f));
-     
+
     // ¿Ã∫•∆Æ : UI_PLAYER_STATUS_DESC
     Get_Component<CEventListener>()->Add_Listener<UI_PLAYER_STATUS_DESC>([&](const UI_PLAYER_STATUS_DESC& desc)
         {
@@ -76,21 +77,21 @@ void CUI_BattleHUD::UI_DeActive(void* pArg)
     Set_Alpha(0.f);
 }
 
-void CUI_BattleHUD::Add_PartObject(const string& strLevelKey, const string& strPrototypeTag, const string& strInstanceName, CHILD child, _float2 vOffset)
+void CUI_BattleHUD::Add_PartObject(const string& strLevelKey, const string& strPrototypeTag, const string& strInstanceName, CHILD child, _float2 vOffset, UI_DESC* pDesc)
 {
-    CUI_Object* pUI = Builder::Create_UIObject({ strLevelKey, strPrototypeTag })
-        .Offset(vOffset)
-        .Build(strInstanceName);
+    auto builder = Builder::Create_UIObject({strLevelKey, strPrototypeTag});
 
-    if (!pUI)
-        return;
+    if (pDesc) builder.Add_UIDesc(pDesc);
+
+    CUI_Object* pUI = builder.Offset(vOffset).Build(strInstanceName);
+    if (!pUI) return;
 
     Get_Component<CObjectContainer>()->Add_Child(pUI);
     m_pChildren[child] = pUI;
 
-    m_pSprites[child] = pUI->Get_Component<CSprite2D>();
-    m_ptextSlots[child] = pUI->Get_Component<CTextSlot>();
-    m_pGauges[child] = dynamic_cast<CGaugeUI*>(pUI);
+    m_pSprites[child]     = pUI->Get_Component<CSprite2D>();
+    m_ptextSlots[child]   = pUI->Get_Component<CTextSlot>();
+    m_pGauges[child]      = dynamic_cast<CGaugeUI*>(pUI);
 }
 
 void CUI_BattleHUD::Cache_Children()
@@ -111,9 +112,9 @@ void CUI_BattleHUD::Cache_Children()
         auto pUI = dynamic_cast<CUI_Object*>(pObj);
         m_pChildren[i] = pUI;
 
-        m_pSprites[i] = pUI->Get_Component<CSprite2D>();
-        m_ptextSlots[i] = pUI->Get_Component<CTextSlot>();
-        m_pGauges[i] = dynamic_cast<CGaugeUI*>(pUI);
+        m_pSprites[i]     = pUI->Get_Component<CSprite2D>();
+        m_ptextSlots[i]   = pUI->Get_Component<CTextSlot>();
+        m_pGauges[i]      = dynamic_cast<CGaugeUI*>(pUI);
     } 
 }
 

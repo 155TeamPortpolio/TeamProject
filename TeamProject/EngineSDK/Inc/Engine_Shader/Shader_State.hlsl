@@ -70,7 +70,8 @@ DepthStencilState DSS_None
 DepthStencilState DSS_MotionStencil
 {
     DepthEnable = true;
-    DepthWriteMask = ZERO;
+    DepthWriteMask = ALL;
+    DepthFunc = LESS_EQUAL;
     
     StencilEnable = true;
     FrontFaceStencilFunc = EQUAL;

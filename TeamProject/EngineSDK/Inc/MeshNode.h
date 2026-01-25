@@ -53,7 +53,8 @@ protected:
     string m_DiffuseTextureTag{};
     string m_DissolveTextureTag{};
     string m_NoiseTextureTag{};
-    string m_MaskTextureTag{};
+    string m_MaskTextureTagA{};
+    string m_MaskTextureTagB{};
     string m_DistortionTextureTag{};
 
     /*-----Modules-----*/

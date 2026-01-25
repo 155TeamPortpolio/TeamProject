@@ -2,6 +2,10 @@
 
 #include "OrbitLockOnData.h"
 
+NS_BEGIN(Engine)
+class CGameObject;
+NS_END
+
 NS_BEGIN(Client)
 
 struct OrbitAutoYawFollowState
@@ -9,11 +13,6 @@ struct OrbitAutoYawFollowState
     _float  holdTimer = 0.f;
     Vector3 prevFoot{};
     _bool   hasPrevFoot = false;
-};
-
-struct OrbitAutoYawFollowSnapshot
-{
-    OrbitAutoYawFollowState state{};
 };
 
 struct OrbitCollisionDistEvalResult
@@ -35,6 +34,11 @@ struct OrbitTargetSwitchState
 struct OrbitTargetSwitchSnapshot
 {
     OrbitTargetSwitchState state{};
+};
+
+struct OrbitAutoYawFollowSnapshot
+{
+    OrbitAutoYawFollowState state{};
 };
 
 struct OrbitInputEvalResult

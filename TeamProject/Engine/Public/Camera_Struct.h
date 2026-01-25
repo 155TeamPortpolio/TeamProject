@@ -20,19 +20,6 @@ struct CamBlendState
 	CamPose from{};
 	CamPose to{};
 };
-struct CamBoneAttachDesc
-{
-	_bool  enabled = false;
-
-	_bool  usePosBone = false;
-	_bool  useLookAtBone = false;
-
-	string posBoneName;
-	string lookAtBoneName;
-
-	_bool  offsetInRefRotSpace = true;
-	_bool  keepRollFromKey = true;
-};
 struct CamKeyFrame 
 {
 	_uint        keyId{}; 
@@ -68,7 +55,6 @@ struct CamSequenceDesc
 	CamOrbitArcDesc     orbitArc{};
 
 	CamSpace            space = CamSpace::World;
-	CamBoneAttachDesc   boneAttach{};
 
 	vector<CamKeyFrame> keyframes;
 
