@@ -35,7 +35,7 @@ void CBattleFXFlow::Update(_float dt)
     }
 }
 
-void CBattleFXFlow::Clear(_bool callOnEnd = true)
+void CBattleFXFlow::Clear(_bool callOnEnd)
 {
     if (callOnEnd && m_isRunning && m_onEnd)
         m_onEnd();
@@ -51,7 +51,7 @@ void CBattleFXFlow::Clear(_bool callOnEnd = true)
 void CBattleFXFlow::AddWait(_float duration)
 {
     _float elapsed = 0.f;
-    m_steps.emplace_back([=](_float dt) mutable -> bool { /*elapsed가 함수 로컬이어서 뮤터블*/
+    m_steps.emplace_back([=](_float dt) mutable -> bool {
         elapsed += dt;
         return elapsed < duration;
         });
