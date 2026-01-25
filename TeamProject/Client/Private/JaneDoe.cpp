@@ -591,7 +591,6 @@ HRESULT CJaneDoe::Render_PassionMotionBlur(ID3D11DeviceContext* pContext, _uint 
 	Shader->Apply("MotionBlur", pContext);
 	Model->Draw(pContext, idx);
 
-	Material->ResetMaterial(Index);
 	return S_OK;
 }
 
