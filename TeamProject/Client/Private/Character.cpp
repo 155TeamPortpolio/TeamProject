@@ -196,6 +196,8 @@ void CCharacter::OnTriggerEnter(CGameObject* pOther)
 			if (pInteract != nullptr)
 			{
 				pInteract->Interact();
+				m_inputInfo = {};
+				Reset_State();
 			}
 		}
 	}
@@ -217,6 +219,8 @@ void CCharacter::OnTriggerStay(CGameObject* pOther)
 		if (pInteract != nullptr)
 		{
 			pInteract->Interact();
+			m_inputInfo = {};
+			Reset_State();
 		}
 	}
 	
@@ -271,8 +275,10 @@ void CCharacter::OnTriggerExit(CGameObject* pOther)
 
 void CCharacter::On_Move(const InputInfo& inputInfo)
 {
-	if (!m_bIsMain)	return;
-
+	if (!m_bIsMain)
+		return;
+	//if (m_bCanInteract)
+	//	return;
 	_bool prevResetMove = m_inputInfo.resetMove;
 	m_inputInfo = inputInfo;
 	m_inputInfo.resetMove = prevResetMove;
