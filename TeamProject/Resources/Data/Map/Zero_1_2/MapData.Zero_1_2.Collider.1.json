@@ -1,0 +1,39 @@
+{
+  "TagDataFormat": "Collider",
+  "TagArea": "Zero_1_2",
+  "iVersion": 1,
+  "values": [
+    {
+      "iObjID": 0,
+      "TagName": "bCooking",
+      "defaultvalue": {
+        "type": "Bool",
+        "value": true
+      }
+    },
+    {
+      "iObjID": 6,
+      "TagName": "bCooking",
+      "defaultvalue": {
+        "type": "Bool",
+        "value": true
+      }
+    },
+    {
+      "iObjID": 7,
+      "TagName": "bCooking",
+      "defaultvalue": {
+        "type": "Bool",
+        "value": true
+      }
+    },
+    {
+      "iObjID": 9,
+      "TagName": "bCooking",
+      "defaultvalue": {
+        "type": "Bool",
+        "value": true
+      }
+    }
+  ]
+}
