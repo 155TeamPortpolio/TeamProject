@@ -837,6 +837,9 @@
     <Filter Include="02. GameObject\MapObject\99. EntitySpawner">
       <UniqueIdentifier>{8b852d8f-36c2-4c1e-b080-ca2b3222160f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\UI\03. UIElement\NineSlice">
+      <UniqueIdentifier>{2646c162-8883-48f9-b637-d3f38abb755c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1622,6 +1625,9 @@
     <ClInclude Include="..\Public\UI_SceneFrame.h">
       <Filter>02. GameObject\UI\01. 2D\SceneFrame</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\NineSliceUI.h">
+      <Filter>02. GameObject\UI\03. UIElement\NineSlice</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2367,6 +2373,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\UI_SceneFrame.cpp">
       <Filter>02. GameObject\UI\01. 2D\SceneFrame</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\NineSliceUI.cpp">
+      <Filter>02. GameObject\UI\03. UIElement\NineSlice</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

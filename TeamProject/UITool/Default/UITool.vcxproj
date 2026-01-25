@@ -165,6 +165,7 @@
     <ClInclude Include="..\Public\ImageUI.h" />
     <ClInclude Include="..\Public\MainApp.h" />
     <ClInclude Include="..\public\MaskUI.h" />
+    <ClInclude Include="..\Public\NineSliceUI.h" />
     <ClInclude Include="..\Public\pch.h" />
     <ClInclude Include="..\Public\TestUI.h" />
     <ClInclude Include="..\Public\TextUI.h" />
@@ -193,6 +194,7 @@
     <ClCompile Include="..\Private\ImageUI.cpp" />
     <ClCompile Include="..\Private\MainApp.cpp" />
     <ClCompile Include="..\private\MaskUI.cpp" />
+    <ClCompile Include="..\Private\NineSliceUI.cpp" />
     <ClCompile Include="..\Private\pch.cpp" />
     <ClCompile Include="..\Private\TestUI.cpp" />
     <ClCompile Include="..\Private\TextUI.cpp" />

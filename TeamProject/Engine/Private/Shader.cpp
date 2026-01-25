@@ -272,19 +272,10 @@ void CShader::CacheDefaults()
 			(typeDesc.Type == D3D_SVT_TEXTURE2D || typeDesc.Type == D3D_SVT_TEXTURE2DARRAY ||
 				typeDesc.Type == D3D_SVT_BUFFER || typeDesc.Type == D3D_SVT_STRUCTURED_BUFFER))
 		{
-			auto* srvVar = var->AsShaderResource();
-			if (!srvVar || !srvVar->IsValid())
-				continue;
-
-			ID3D11ShaderResourceView* prevSrv = nullptr;
-			if (SUCCEEDED(srvVar->GetResource(&prevSrv)))
-			{
-				CachedDefault def;
-				def.kind = CachedDefault::Kind::SRV;
-				def.pSRV = prevSrv;
-				if (prevSrv) prevSrv->Release();
-				m_Defaults.emplace(name, std::move(def));
-			}
+			CachedDefault def;
+			def.kind = CachedDefault::Kind::SRV;
+			def.pSRV = nullptr; 
+			m_Defaults.emplace(name, std::move(def));
 			continue;
 		}
 
@@ -382,7 +373,7 @@ void CShader::ResetToDefaults()
 		{
 			auto* srvVar = var->AsShaderResource();
 			if (srvVar && srvVar->IsValid())
-				srvVar->SetResource(def.pSRV);
+				srvVar->SetResource(def.pSRV); 
 		}
 		else
 		{
@@ -394,6 +385,12 @@ void CShader::ResetToDefaults()
 
 HRESULT CShader::InitializeTechnique(wstring wPath)
 {
+	m_Passes.clear();
+	m_Variables.clear();
+	m_CBuffers.clear();
+	m_Defaults.clear();
+	Safe_Release(m_pTechnique);
+
 	m_pTechnique = m_pEffect->GetTechniqueByIndex(0);
 	D3DX11_TECHNIQUE_DESC tDesc{};
 	m_pTechnique->GetDesc(&tDesc);
@@ -433,6 +430,9 @@ CShader::CompileState CShader::Check_Chached(wstring wPath)
 
 HRESULT CShader::Compile_From_HLSL(ID3D11Device* pDevice, wstring wPath)
 {
+	Safe_Release(m_pTechnique);
+	Safe_Release(m_pEffect);
+	ClearEffectCaches();
 
 	_uint		iCompileFlag = {};
 
@@ -494,6 +494,14 @@ HRESULT CShader::Compile_From_CSO(ID3D11Device* pDevice, wstring wPath)
 	return E_FAIL;
 }
 
+void CShader::ClearEffectCaches()
+{
+	m_Passes.clear();
+	m_Variables.clear();
+	m_CBuffers.clear();
+	m_Defaults.clear();
+	m_pTechnique = nullptr; // 기존 포인터 무효
+}
 
 CShader* CShader::Create(ID3D11Device* pDevice, const string& filePath, const string& shaderKey)
 {
