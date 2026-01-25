@@ -12,6 +12,7 @@
 #include "TextUI.h"
 #include "UVAnimationUI.h"
 #include "MaskUI.h"
+#include "NineSliceUI.h"
 
 #include "UI_Logo.h"
 #include "UI_Loading.h"
@@ -139,6 +140,7 @@ void UILoader::Add_Prototype(const string& levelKey)
 		{"Text",            &CTextUI::Create            },
 		{"UVAnimation",     &CUVAnimationUI::Create     },
 		{"Mask",			&CMaskUI::Create			},
+		{"NineSlice",		&CNineSliceUI::Create		},
 
 		{"Logo",			&CUI_Logo::Create			},
 		{"Loading",			&CUI_Loading::Create		},

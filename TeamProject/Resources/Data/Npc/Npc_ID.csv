@@ -1,4 +1,5 @@
-Name,StartID,DialogueNum,SequenceNum
-아우,Dialogue_001,1,1
-초병,Dialogue_002,1,1
-냥냥이 치안관,Dialogue_003,1,2
+Name,StartID,DialogueNum,SequenceNum,ID
+아우,Dialogue_001,1,1,0
+초병,Dialogue_002,1,1,1
+냥냥이 치안관,Dialogue_003,1,2,2
+전류감별부,Dialogue_004,1,7,3

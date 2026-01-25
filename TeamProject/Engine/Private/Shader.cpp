@@ -19,19 +19,19 @@ HRESULT CShader::Initialize(ID3D11Device* pDevice, const string& filePath)
 {
 	wstring wPath = Helper::ConvertToWideString(filePath);
 
-	CompileState eState = 	Check_Chached(wPath);
+	CompileState eState = Check_Chached(wPath);
 
 	if (eState == Cached) {
-		if (FAILED(Compile_From_CSO(pDevice,wPath))) {
+		if (FAILED(Compile_From_CSO(pDevice, wPath))) {
 			return E_FAIL;
 		}
 	}
 	else {
-		if (FAILED(Compile_From_HLSL(pDevice,wPath))) {
+		if (FAILED(Compile_From_HLSL(pDevice, wPath))) {
 			return E_FAIL;
 		}
 	}
-	
+
 
 	return InitializeTechnique(wPath);
 }
@@ -45,7 +45,7 @@ HRESULT CShader::GetPassSignature(UINT iPassIndex, D3DX11_PASS_DESC* pOutPassDes
 
 	if (!pPass)
 		return E_FAIL;
-	
+
 	pPass->GetDesc(pOutPassDesc);
 	return S_OK;
 }
@@ -76,7 +76,7 @@ HRESULT CShader::Bind_Value(const string& ConstantName, const SHADER_PARAM& para
 
 		if (iter == m_CBuffers.end())
 			return E_FAIL;
-	
+
 		HRESULT hr = iter->second.pHandle->SetRawValue(parameter.pData, 0, parameter.iSize);
 
 		if (FAILED(hr)) {
@@ -100,7 +100,7 @@ HRESULT CShader::Bind_Value(const string& ConstantName, const SHADER_PARAM& para
 		else if (parameter.typeName == "StructuredBuffer")
 			return Bind_ShaderResource(ConstantName, static_cast<ID3D11ShaderResourceView*>(parameter.pData));
 		else if (parameter.typeName == "float4x4[]") {
-			return Bind_MatrixArray(ConstantName,reinterpret_cast<const _float4x4*>(parameter.pData),parameter.iSize / sizeof(_float4x4)  // 배열 크기 계산
+			return Bind_MatrixArray(ConstantName, reinterpret_cast<const _float4x4*>(parameter.pData), parameter.iSize / sizeof(_float4x4)  // 배열 크기 계산
 			);
 		}
 		HRESULT hr = SetRawValueOrClear(iter->second.pHandle, parameter.pData, parameter.iSize);
@@ -112,7 +112,7 @@ HRESULT CShader::Bind_Value(const string& ConstantName, const SHADER_PARAM& para
 	}
 }
 
- HRESULT CShader::SetRawValueOrClear(ID3DX11EffectVariable* effectVariable, const void* dataPtr, UINT byteSize)
+HRESULT CShader::SetRawValueOrClear(ID3DX11EffectVariable* effectVariable, const void* dataPtr, UINT byteSize)
 {
 	if (!effectVariable || !effectVariable->IsValid())
 		return E_FAIL;
@@ -147,7 +147,7 @@ HRESULT CShader::SetConstantBuffer(const string& ConstantName, ID3D11Buffer* pDa
 		MSG_BOX("Wrong ConstantBuffer is Binding : CShader");
 		return E_FAIL;
 	}
-	
+
 	return iter->second.pHandle->SetConstantBuffer(pData);
 }
 
@@ -250,6 +250,49 @@ HRESULT CShader::Bind_MatrixArray(const string& ConstantName, const _float4x4* p
 	return S_OK;
 }
 
+void CShader::CacheDefaults()
+{
+	m_Defaults.clear();
+	for (auto& pair : m_Variables)
+	{
+		const std::string& name = pair.first;
+		ID3DX11EffectVariable* var = pair.second.pHandle;
+		if (!var || !var->IsValid())
+			continue;
+
+		ID3DX11EffectType* type = var->GetType();
+		if (!type || !type->IsValid())
+			continue;
+
+		D3DX11_EFFECT_TYPE_DESC typeDesc = {};
+		if (FAILED(type->GetDesc(&typeDesc)))
+			continue;
+
+		if (typeDesc.Class == D3D_SVC_OBJECT &&
+			(typeDesc.Type == D3D_SVT_TEXTURE2D || typeDesc.Type == D3D_SVT_TEXTURE2DARRAY ||
+				typeDesc.Type == D3D_SVT_BUFFER || typeDesc.Type == D3D_SVT_STRUCTURED_BUFFER))
+		{
+			CachedDefault def;
+			def.kind = CachedDefault::Kind::SRV;
+			def.pSRV = nullptr; 
+			m_Defaults.emplace(name, std::move(def));
+			continue;
+		}
+
+		const _uint packed = typeDesc.PackedSize;
+		if (packed > 0)
+		{
+			CachedDefault def;
+			def.kind = CachedDefault::Kind::Raw;
+			def.rawSize = packed;
+			def.raw.resize(packed);
+
+			if (SUCCEEDED(var->GetRawValue(def.raw.data(), 0, packed)))
+				m_Defaults.emplace(name, std::move(def));
+		}
+	}
+}
+
 void CShader::ReflectShader()
 {
 	D3DX11_EFFECT_DESC effectDesc;
@@ -257,7 +300,7 @@ void CShader::ReflectShader()
 
 	for (size_t i = 0; i < effectDesc.GlobalVariables; i++)
 	{
-		ID3DX11EffectVariable* pVariable=m_pEffect->GetVariableByIndex(i);
+		ID3DX11EffectVariable* pVariable = m_pEffect->GetVariableByIndex(i);
 		if (!pVariable->IsValid())
 			continue;
 
@@ -265,7 +308,7 @@ void CShader::ReflectShader()
 		pVariable->GetDesc(&varDesc);
 
 		ID3DX11EffectType* pType = pVariable->GetType();
-		D3DX11_EFFECT_TYPE_DESC tType; 
+		D3DX11_EFFECT_TYPE_DESC tType;
 		pType->GetDesc(&tType);
 
 		string typname = tType.TypeName;
@@ -276,7 +319,7 @@ void CShader::ReflectShader()
 
 		ID3DX11EffectConstantBuffer* pParentCBuffer = pVariable->GetParentConstantBuffer();
 
-		if (pParentCBuffer->IsValid()) 
+		if (pParentCBuffer->IsValid())
 		{
 			D3DX11_EFFECT_VARIABLE_DESC cbVarDesc;
 			pParentCBuffer->GetDesc(&cbVarDesc);
@@ -306,9 +349,48 @@ void CShader::ReflectShader()
 		m_CBuffers.emplace(cbDesc.Name, cbDesc);
 	}
 }
+void CShader::ResetToDefaults()
+{
+	for (auto& pair : m_Defaults)
+	{
+		const string& name = pair.first;
+		const CachedDefault& def = pair.second;
+
+		auto it = m_Variables.find(name);
+		if (it == m_Variables.end())
+			continue;
+
+		if (it->second.parentCBufferName.empty())
+			continue;
+		if (it->second.parentCBufferName != "$Globals")
+			continue;
+
+		ID3DX11EffectVariable* var = it->second.pHandle;
+		if (!var || !var->IsValid())
+			continue;
+
+		if (def.kind == CachedDefault::Kind::SRV)
+		{
+			auto* srvVar = var->AsShaderResource();
+			if (srvVar && srvVar->IsValid())
+				srvVar->SetResource(def.pSRV); 
+		}
+		else
+		{
+			if (!def.raw.empty())
+				var->SetRawValue(def.raw.data(), 0, def.rawSize);
+		}
+	}
+}
 
 HRESULT CShader::InitializeTechnique(wstring wPath)
 {
+	m_Passes.clear();
+	m_Variables.clear();
+	m_CBuffers.clear();
+	m_Defaults.clear();
+	Safe_Release(m_pTechnique);
+
 	m_pTechnique = m_pEffect->GetTechniqueByIndex(0);
 	D3DX11_TECHNIQUE_DESC tDesc{};
 	m_pTechnique->GetDesc(&tDesc);
@@ -325,7 +407,7 @@ HRESULT CShader::InitializeTechnique(wstring wPath)
 
 	m_FileName = filesystem::path(wPath).stem().wstring();
 	ReflectShader();
-
+	CacheDefaults();
 	return S_OK;
 }
 
@@ -348,6 +430,9 @@ CShader::CompileState CShader::Check_Chached(wstring wPath)
 
 HRESULT CShader::Compile_From_HLSL(ID3D11Device* pDevice, wstring wPath)
 {
+	Safe_Release(m_pTechnique);
+	Safe_Release(m_pEffect);
+	ClearEffectCaches();
 
 	_uint		iCompileFlag = {};
 
@@ -409,6 +494,14 @@ HRESULT CShader::Compile_From_CSO(ID3D11Device* pDevice, wstring wPath)
 	return E_FAIL;
 }
 
+void CShader::ClearEffectCaches()
+{
+	m_Passes.clear();
+	m_Variables.clear();
+	m_CBuffers.clear();
+	m_Defaults.clear();
+	m_pTechnique = nullptr; // 기존 포인터 무효
+}
 
 CShader* CShader::Create(ID3D11Device* pDevice, const string& filePath, const string& shaderKey)
 {
@@ -417,7 +510,7 @@ CShader* CShader::Create(ID3D11Device* pDevice, const string& filePath, const st
 		MessageBoxA(nullptr, filePath.c_str(), "CShader Create error", MB_OK);
 		Safe_Release(instance);
 	}
-	if(instance)
+	if (instance)
 		instance->m_ShaderKey = shaderKey;
 
 	return instance;

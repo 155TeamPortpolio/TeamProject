@@ -117,8 +117,8 @@ CMaterialInstance* CMaterial::Get_MaterialInstance(_uint Index)
 void CMaterial::ResetMaterial(_uint Index)
 {
 	if (Index >= m_MaterialInstances.size()) return;
-	m_MaterialInstances[Index]->Reset_DynamicSlot();
-	m_MaterialInstances[Index]->Reset_Textures();
+	//m_MaterialInstances[Index]->Reset_DynamicSlot();
+	//m_MaterialInstances[Index]->Reset_Textures();
 }
 
 const string& CMaterial::GetPassConstant(_uint subsetIndex)

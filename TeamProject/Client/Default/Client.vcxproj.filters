@@ -331,9 +331,6 @@
     <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchIn\Attack">
       <UniqueIdentifier>{3b25628b-24fb-4600-ba33-add740b3d93e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchIn\ExAttack">
-      <UniqueIdentifier>{cfb004a7-4664-4a91-9c59-083d3b491dc9}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchIn\ParryAid">
       <UniqueIdentifier>{4b65cf7d-c3b5-4826-8da1-334e9b9c6ca9}</UniqueIdentifier>
     </Filter>
@@ -372,9 +369,6 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Npc\Service">
       <UniqueIdentifier>{210a1075-7fe0-417a-8c56-982a1dbb01ef}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Npc\Conversation">
-      <UniqueIdentifier>{0bafe532-d8a7-4715-bb85-07a6f77d204c}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\Object\Npc\Service\OfficeMeow">
       <UniqueIdentifier>{ff2cc5c8-e319-4641-8d0c-2bbd0faf386d}</UniqueIdentifier>
@@ -450,9 +444,6 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchIn\Attack">
       <UniqueIdentifier>{3b25628b-24fb-4600-ba33-add740b3d93e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchIn\ExAttack">
-      <UniqueIdentifier>{cfb004a7-4664-4a91-9c59-083d3b491dc9}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchIn\ParryAid">
       <UniqueIdentifier>{4b65cf7d-c3b5-4826-8da1-334e9b9c6ca9}</UniqueIdentifier>
@@ -834,8 +825,20 @@
     <Filter Include="02. GameObject\Camera\04. OrbitCam\05. OrbitPoseSmootherController">
       <UniqueIdentifier>{4b23b083-95ec-4c48-8cb8-297675f8781c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Npc\Dialogue">
+      <UniqueIdentifier>{0bafe532-d8a7-4715-bb85-07a6f77d204c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Npc\Dialogue\ElectricBoo">
+      <UniqueIdentifier>{108374b6-14e8-4ada-9809-798940fc8321}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Npc\Dialogue\ElectricBoo\PairBoo">
+      <UniqueIdentifier>{dbad4b25-cb03-4327-9954-39e24a41bcc9}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02. GameObject\MapObject\99. EntitySpawner">
       <UniqueIdentifier>{8b852d8f-36c2-4c1e-b080-ca2b3222160f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\03. UIElement\NineSlice">
+      <UniqueIdentifier>{2646c162-8883-48f9-b637-d3f38abb755c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1265,9 +1268,6 @@
     <ClInclude Include="..\public\JaneDoeState_SwitchInAttack.h">
       <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchIn\Attack</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\JaneDoeState_SwitchInExAttack.h">
-      <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchIn\ExAttack</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\EnemyAttackCollider.h">
       <Filter>02. GameObject\Object\Enemy\EnemyCollider\ForAttack</Filter>
     </ClInclude>
@@ -1621,6 +1621,18 @@
     </ClInclude>
     <ClInclude Include="..\Public\UI_SceneFrame.h">
       <Filter>02. GameObject\UI\01. 2D\SceneFrame</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\DialogueNpc.h">
+      <Filter>02. GameObject\Object\Npc\Dialogue</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ElectricBoo.h">
+      <Filter>02. GameObject\Object\Npc\Dialogue\ElectricBoo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\PairBoo.h">
+      <Filter>02. GameObject\Object\Npc\Dialogue\ElectricBoo\PairBoo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\NineSliceUI.h">
+      <Filter>02. GameObject\UI\03. UIElement\NineSlice</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2039,9 +2051,6 @@
     <ClCompile Include="..\private\JaneDoeState_SwitchInAttack.cpp">
       <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchIn\Attack</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\JaneDoeState_SwitchInExAttack.cpp">
-      <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchIn\ExAttack</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\EnemyAttackCollider.cpp">
       <Filter>02. GameObject\Object\Enemy\EnemyCollider\ForAttack</Filter>
     </ClCompile>
@@ -2367,6 +2376,18 @@
     </ClCompile>
     <ClCompile Include="..\Private\UI_SceneFrame.cpp">
       <Filter>02. GameObject\UI\01. 2D\SceneFrame</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\DialogueNpc.cpp">
+      <Filter>02. GameObject\Object\Npc\Dialogue</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ElectricBoo.cpp">
+      <Filter>02. GameObject\Object\Npc\Dialogue\ElectricBoo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\PairBoo.cpp">
+      <Filter>02. GameObject\Object\Npc\Dialogue\ElectricBoo\PairBoo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\NineSliceUI.cpp">
+      <Filter>02. GameObject\UI\03. UIElement\NineSlice</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -60,7 +60,7 @@ public:
     };
 
 public:
-    enum class SWITCH { NORMAL, ATTACK, EXATTACK, PARRYAID, END };
+    enum class SWITCH { NORMAL, ATTACK, PARRYAID, END };
 
 protected:
     CCharacter() {}
@@ -236,7 +236,7 @@ protected:
     _float          m_fEvadeTimer = { 0.f };
     _float          m_fEvadeCooldown = { 0.f };
     // 특수 스킬
-    EnergyDesc   m_tEnergy = {};
+    EnergyDesc      m_tEnergy = {};
     // 궁극기
     _float          m_fCurrentDecibel = {};
     _float          m_fPrevDecibel = {};
