@@ -30,6 +30,9 @@
 #include "UI_UltimateAction.h"
 #include "UI_SceneFrame.h"
 
+#include "UI_AtlasSprite.h"
+#include "UI_DamageText.h"
+
 #include "UI_BossHUD.h"
 
 #include "UI_FieldHUD.h"

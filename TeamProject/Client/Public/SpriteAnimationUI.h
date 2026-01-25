@@ -3,7 +3,7 @@
 
 NS_BEGIN(Client)
 
-class CSpriteAnimationUI final : public CUI_Object
+class CSpriteAnimationUI : public CUI_Object
 {
 private:
 	CSpriteAnimationUI() {}
