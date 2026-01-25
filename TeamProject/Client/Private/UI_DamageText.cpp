@@ -1,16 +1,25 @@
 #include "pch.h"
 #include "UI_DamageText.h"
-// Engine
+
 #include "ObjectContainer.h"
 #include "GameInstance.h"
 #include "LevelMgr.h"
 
+CUI_DamageText::CUI_DamageText(const CUI_DamageText& rhs) : CUI_Object(rhs)
+{
+    m_glyphs.clear();
+    m_baseOffsets.clear();
+    m_digits.clear();
+
+    m_baseTotalW = 1.f;
+    m_time = 0.f;
+    m_scaleNow = 1.f;
+}
+
 HRESULT CUI_DamageText::Initialize_Prototype()
 {
     __super::Initialize_Prototype();
-
     Add_Component<CObjectContainer>();
-
     return S_OK;
 }
 
@@ -18,38 +27,54 @@ HRESULT CUI_DamageText::Initialize(INIT_DESC* pArg)
 {
     __super::Initialize(pArg);
 
-    m_atlasTextureKey = "DamageText.png";
-    m_frameCountX = 8;
-    m_frameCountY = 8;
+    m_glyphs.clear();
+    m_baseOffsets.clear();
+    m_digits.clear();
 
-    m_glyphHeightPx = 96.f;
-    m_glyphSpacingPx = 2.f;
+    {
+        m_atlasTextureKey = "DamageText.png";
 
-    m_lifeSec = 0.80f;
-    m_risePx = 0.f;
+        m_frameCountX = 8;
+        m_frameCountY = 8;
+
+        m_glyphHeightPx = 96.f;
+        m_glyphSpacingPx = 2.f;
+
+        m_lifeSec = 1.5f;
+        m_risePx = 0.f;
+
+        m_overlapHold = 0.3f;
+    }
+
+    m_time = 0.f;
+    m_scaleNow = 1.f;
+
+    auto base = Get_AnchorOffset();
+    m_baseAnchorOffset = Vector2(base.x, base.y);
 
     Set_Color(_float4(1.f, 1.f, 1.f, 1.f));
 
-    m_time = 0.f;
-    m_baseAnchorOffset = Get_AnchorOffset();
-
-    Set_DamageValue(1234);
+    Set_DamageValue(123456789);
 
     return S_OK;
 }
 
+
 void CUI_DamageText::Update(_float dt)
 {
-    __super::Update(dt);
-    Update_Anim(dt);
-    Get_Component<CObjectContainer>()->UpdateChild(dt);
+    static constexpr _float timeScale = 0.2f;
+
+    __super::Update(dt * timeScale);
+
+    Update_Anim(dt * timeScale);
+    Apply_LayoutScaled();
+
+    Get_Component<CObjectContainer>()->UpdateChild(dt * timeScale);
 }
 
 void CUI_DamageText::Set_DamageValue(_int damageValue)
 {
-    if (damageValue < 0) 
-        damageValue = 0;
-
+    if (damageValue < 0) damageValue = 0;
     Set_TextNumber(to_string(damageValue));
 }
 
@@ -57,13 +82,13 @@ void CUI_DamageText::Set_TextNumber(const string& digits)
 {
     m_digits = digits;
 
-    Ensure_GlyphCount((_uint)m_digits.size());
+    const _uint count = (_uint)m_digits.size();
+    Ensure_GlyphCount(count);
 
-    for (_uint i = 0; i < (_uint)m_digits.size(); ++i)
+    for (_uint i = 0; i < count; ++i)
     {
         const char c = m_digits[i];
         _uint frameIndex = 0;
-
         if (c >= '0' && c <= '9') frameIndex = GetDigitFrameIdx((_uint)(c - '0'));
 
         auto glyph = GetGlyph(i);
@@ -71,15 +96,28 @@ void CUI_DamageText::Set_TextNumber(const string& digits)
         glyph->Set_HeightPx(m_glyphHeightPx);
         glyph->Set_FrameIndex(frameIndex);
         glyph->Set_Color(m_vColor);
-    }
-
-    for (_uint i = (_uint)m_digits.size(); i < (_uint)m_glyphs.size(); ++i)
-    {
-        auto glyph = GetGlyph(i);
         glyph->Set_Alpha(0.f);
     }
 
-    Layout_Glyphs();
+    for (_uint i = count; i < (_uint)m_glyphs.size(); ++i)
+        GetGlyph(i)->Set_Alpha(0.f);
+
+    m_time = 0.f;
+    m_scaleNow = 1.f;
+
+    auto base = Get_AnchorOffset();
+    m_baseAnchorOffset = Vector2(base.x, base.y);
+
+    if (count > 0u)
+    {
+        const auto px = GetGlyph(0)->Get_PxSize();
+        m_glyphAspect = px.y > 0.f ? (px.x / px.y) : 1.f;
+    }
+    else
+        m_glyphAspect = 1.f;
+
+    Rebuild_BaseLayout();
+    Apply_LayoutScaled();
 }
 
 void CUI_DamageText::Ensure_GlyphCount(_uint count)
@@ -89,7 +127,7 @@ void CUI_DamageText::Ensure_GlyphCount(_uint count)
 
     while ((_uint)m_glyphs.size() < count)
     {
-        CUI_AtlasSprite::ATLAS_DESC* pDesc = new CUI_AtlasSprite::ATLAS_DESC;
+        auto pDesc = new CUI_AtlasSprite::ATLAS_DESC;
         pDesc->textureKey = m_atlasTextureKey;
         pDesc->frameCountX = m_frameCountX;
         pDesc->frameCountY = m_frameCountY;
@@ -112,99 +150,166 @@ void CUI_DamageText::Ensure_GlyphCount(_uint count)
     }
 }
 
-void CUI_DamageText::Layout_Glyphs()
+void CUI_DamageText::Rebuild_BaseLayout()
 {
     const _uint count = (_uint)m_digits.size();
 
-    _float sumW = 0.f;
-    for (_uint i = 0; i < count; ++i) sumW += GetGlyph(i)->Get_PxSize().x;
+    m_baseOffsets.clear();
+    m_baseTotalW = 1.f;
 
-    const _float avgW = sumW / max(1u, count);
+    if (count == 0u) return;
 
-    const _float normalOverlap = 0.65f;
-    const _float compactOverlap = 0.88f;
+    m_baseOffsets.resize(count);
 
-    const _float overlap = Math::Lerp(normalOverlap, compactOverlap, m_compactRatio);
-    const _float spacing = m_glyphSpacingPx - (avgW * overlap);
+    const _float glyphW = m_glyphHeightPx * m_glyphAspect;
 
-    _float totalW = 0.f;
+    const _float overlapPx = glyphW * (1.f - m_overlapHold);
+    const _float spacing = m_glyphSpacingPx - overlapPx;
+
+    _float totalW = glyphW * (_float)count;
+    if (count > 1u) totalW += spacing * (_float)(count - 1u);
+
+    m_baseTotalW = max(1.f, totalW);
+
+    _float x = -m_baseTotalW * 0.5f;
     for (_uint i = 0; i < count; ++i)
     {
-        totalW += GetGlyph(i)->Get_PxSize().x;
-        if (i + 1 < count) totalW += spacing;
+        m_baseOffsets[i] = Vector2(x, 0.f);
+        x += glyphW + spacing;
     }
-
-    _float x = -totalW * 0.5f;
-
-    for (_uint i = 0; i < count; ++i)
-    {
-        auto glyph = GetGlyph(i);
-
-        glyph->Set_Alpha(m_vColor.w);
-        glyph->Set_AnchorOffset({x, 0.f});
-
-        x += glyph->Get_PxSize().x + spacing;
-    }
-
-    Set_Size({max(1.f, totalW), m_glyphHeightPx});
 }
+
+void CUI_DamageText::Apply_LayoutScaled()
+{
+    const _uint count = (_uint)m_digits.size();
+
+    if (count == 0u)
+    {
+        Set_Size(Vector2(1.f, 1.f));
+        return;
+    }
+
+    const _float digitInStaggerSec = 0.035f;
+    const _float digitInSec = 0.10f;
+
+    const _float digitOutStaggerSec = 0.035f;
+    const _float digitOutSec = 0.10f;
+
+    const _float inTotalSec = (count - 1u) * digitInStaggerSec + digitInSec;
+    const _float outTotalSec = (count - 1u) * digitOutStaggerSec + digitOutSec;
+
+    _float holdSec = m_lifeSec - (inTotalSec + outTotalSec);
+    if (holdSec < 0.f) holdSec = 0.f;
+
+    const _float exitStartSec = inTotalSec + holdSec;
+
+    _float rise = 0.f;
+    if (m_risePx > 0.f)
+    {
+        const _float u = clamp(m_time / m_lifeSec, 0.f, 1.f);
+        rise = m_risePx * u;
+    }
+
+    Set_AnchorOffset(Vector2(m_baseAnchorOffset.x, m_baseAnchorOffset.y - rise));
+
+    const _float glyphW = m_glyphHeightPx * m_glyphAspect;
+    const _float glyphH = m_glyphHeightPx;
+
+    const _float scaleStart = 1.08f;
+    const _float scaleHold = 0.68f;
+    const _float scaleEnd = 0.42f;
+
+    for (_uint i = 0; i < count; ++i)
+    {
+        const _uint phase = i;
+
+        const _float inStart = phase * digitInStaggerSec;
+
+        _float s = scaleStart;
+        if (m_time >= inStart)
+        {
+            _float u = (m_time - inStart) / digitInSec;
+            u = clamp(u, 0.f, 1.f);
+            u = Math::ApplyEase(EaseType::OutCubic, u);
+            s = Math::Lerp(scaleStart, scaleHold, u);
+        }
+
+        const _float outStart = exitStartSec + phase * digitOutStaggerSec;
+        if (m_time >= outStart)
+        {
+            _float u = (m_time - outStart) / digitOutSec;
+            u = clamp(u, 0.f, 1.f);
+            u = Math::ApplyEase(EaseType::OutCubic, u);
+            s = Math::Lerp(scaleHold, scaleEnd, u);
+        }
+
+        const Vector2 base = m_baseOffsets[i];
+
+        const _float dx = (glyphW - glyphW * s) * 0.5f;
+        const _float dy = (glyphH - glyphH * s) * 0.5f;
+
+        auto glyph = GetGlyph(i);
+        glyph->Set_AnchorOffset(Vector2(base.x + dx, base.y + dy));
+        glyph->Set_HeightPx(m_glyphHeightPx * s);
+    }
+
+    Set_Size(Vector2(m_baseTotalW, m_glyphHeightPx));
+}
+
 
 
 void CUI_DamageText::Update_Anim(_float dt)
 {
+    const _uint count = (_uint)m_digits.size();
+    if (count == 0u) return;
+
     m_time += dt;
 
-    const _float fadeInSec = 0.10f;
-    const _float holdSec = 0.25f;
-    const _float fadeOutSec = max(0.01f, m_lifeSec - (fadeInSec + holdSec));
+    const _float digitInStaggerSec = 0.035f;
+    const _float digitInSec = 0.10f;
 
-    const _float t1 = fadeInSec;
-    const _float t2 = fadeInSec + holdSec;
-    const _float t3 = fadeInSec + holdSec + fadeOutSec;
+    const _float digitOutStaggerSec = 0.050f;
+    const _float digitOutSec = 0.22f;
 
-    _float alpha = 1.f;
-    _float scale = 0.50f;
+    const _float inTotalSec = (count - 1u) * digitInStaggerSec + digitInSec;
+    const _float outTotalSec = (count - 1u) * digitOutStaggerSec + digitOutSec;
 
-    if (m_time < t1)
+    _float holdSec = m_lifeSec - (inTotalSec + outTotalSec);
+    if (holdSec < 0.f) holdSec = 0.f;
+
+    const _float exitStartSec = inTotalSec + holdSec;
+    const _float endSec = exitStartSec + outTotalSec;
+
+    for (_uint i = 0; i < count; ++i)
     {
-        _float u = m_time / t1;
+        const _uint phase = i;
 
-        alpha = u;
-        scale = Math::Lerp(1.00f, 0.50f, u);
+        const _float inStart = phase * digitInStaggerSec;
 
-        m_compactRatio = 1.f;
+        _float alphaIn = 0.f;
+        if (m_time >= inStart)
+        {
+            _float u = (m_time - inStart) / digitInSec;
+            u = clamp(u, 0.f, 1.f);
+            alphaIn = Math::ApplyEase(EaseType::OutCubic, u);
+        }
+
+        const _float outStart = exitStartSec + phase * digitOutStaggerSec;
+
+        _float alphaOut = 1.f;
+        if (m_time >= outStart)
+        {
+            _float u = (m_time - outStart) / digitOutSec;
+            u = clamp(u, 0.f, 1.f);
+            alphaOut = 1.f - Math::ApplyEase(EaseType::OutCubic, u);
+        }
+
+        const _float alpha = clamp(alphaIn * alphaOut, 0.f, 1.f);
+        GetGlyph(i)->Set_Alpha(alpha * m_vColor.w);
     }
-    else if (m_time < t2)
-    {
-        _float u = (m_time - t1) / (t2 - t1);
 
-        alpha = 1.f;
-        scale = 0.50f;
-
-        m_compactRatio = 1.f - u;
-    }
-    else
-    {
-        _float u = (m_time - t2) / (t3 - t2);
-        u = clamp(u, 0.f, 1.f);
-
-        alpha = 1.f - u;
-        scale = Math::Lerp(0.50f, 0.35f, u);
-
-        m_compactRatio = 0.60f;
-    }
-
-    m_scaleNow = scale;
-
-    Set_Alpha(alpha);
-    m_vScale = {scale, scale};
-
-    Layout_Glyphs();
-
-    if (m_time >= t3)
-        Set_Alive(false);
+    if (m_time >= endSec) Set_Alive(false);
 }
-
 
 _uint CUI_DamageText::GetDigitFrameIdx(_uint digit) const
 {
