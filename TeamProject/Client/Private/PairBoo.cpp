@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "PairBoo.h"
 
 #include "GameInstance.h"
@@ -58,7 +58,7 @@ void CPairBoo::Awake()
 	pAnimator->Link_MetaData(G_GlobalLevelKey, "NPC_Bangboo_Sumoboo_Meta.json");
 
 	m_strAnimName = "NPC_Bangboo_Sumoboo_Ani_HSC_";
-	m_strName = L"ÃæÀüÀ» ±â´Ù¸®´Â Bangboo";
+	m_strName = L"ì¶©ì „ë¶€";
 
 	pAnimator->Set_Animation(Get_AnimName() + "Idle")
 		.Loop(true)
