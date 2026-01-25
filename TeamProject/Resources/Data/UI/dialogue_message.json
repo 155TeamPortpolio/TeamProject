@@ -123,6 +123,41 @@
     "children": [
         {
             "alive": true,
+            "instanceName": "Image",
+            "transform": {
+                "anchor": 8,
+                "anchorOffset": [
+                    -460.1650085449219,
+                    -163.3300018310547
+                ],
+                "size": [
+                    920.3300170898438,
+                    154.3300018310547
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                0.0,
+                0.0,
+                0.0,
+                0.9411764740943909
+            ],
+            "pass": "Opaque",
+            "animClips": [],
+            "children": [],
+            "typeTag": "Image",
+            "textureTag": "empty.png"
+        },
+        {
+            "alive": true,
             "instanceName": "NineSlice",
             "transform": {
                 "anchor": 4,
