@@ -23,7 +23,9 @@ public:
     NpcIDDesc               GetNpcIDData(const wstring& strName);
     NpcDialogueDesc         GetNpcDialogueDesc(pair<string, _uint> dialogueID);
     ChoiceDesc              GetNpcChoiceDesc(const string& strName);
-    const vector<MapData_Path_Packet>* GetMapDataPacket(const string& tagArea);
+    const vector<MapData_Path_Packet>*  GetMapDataPacket(const string& tagArea);
+    const MapData_Path_Packet*          GetBattleFieldDataPacket(const string& tagArea);
+    const vector<MONSTER_SPAWN_DESC>*   GetMonsterSpawnData(const string& tagArea);
 
 public:
     HRESULT LoadPlayerCreationTable(const string& csvPath);
@@ -34,6 +36,9 @@ public:
     HRESULT LoadNpcIDData(const string& csvPath);
     HRESULT LoadNpcDialogueData(const string& csvPath);
     HRESULT LoadNpcChoiceData(const string& csvPath);
+    HRESULT LoadBattleFieldData(const string& BattleDataFolderPath);
+    HRESULT LoadMonsterSpawnData(const string& csvPath);
+
 
 public:
     const CASHED_OBJ_DATA* Get_CashedData(const string& MapTag);
@@ -62,6 +67,10 @@ private:
     unordered_map<wstring, NpcIDDesc>                       m_NpcIDTables;
     map<pair<string, _uint>, NpcDialogueDesc>		        m_DialogueTables;
     unordered_map<string, ChoiceDesc>				        m_DialgoueChoiceTables;
+    // BattleField Data
+    unordered_map<string, MapData_Path_Packet>	            m_BattleFieldData;
+    // tagArea >>> vector<MONSTER_SPAWN_DESC>
+    unordered_map<string, vector<MONSTER_SPAWN_DESC>>       m_MonsterSpawnDesc;
 
     //맵 데이터 <-> 런타임 데이터 연결용 (현재 작동중인 레벨에서만)
     unordered_map<string, CASHED_OBJ_DATA>                  m_CashedData;

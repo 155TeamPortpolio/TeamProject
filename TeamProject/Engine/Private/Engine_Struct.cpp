@@ -43,6 +43,19 @@ void Engine::tagObjectHandle::Delete()
 	Reset();
 }
 
+void Engine::tagObjectHandle::Set_Alive(_bool alive)
+{
+	if (auto pObj = Get())
+		pObj->Set_Alive(alive);
+}
+
+_bool Engine::tagObjectHandle::isAlive()
+{
+	if (auto pObj = Get())
+		return pObj->Is_Alive();
+	return false;
+}
+
 PARTICLE_NODE Engine::tagParticleNode::FromJson(nlohmann::ordered_json& json)
 {
 	PARTICLE_NODE node{};

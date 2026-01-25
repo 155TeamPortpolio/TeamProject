@@ -40,18 +40,16 @@ HRESULT CCollider::Initialize(COMPONENT_DESC* pArg)
 
 	m_pAttachedRigidBody = m_pOwner->Get_Component<CRigidBody>();
 
-	if (!pArg) return S_OK;
+	COLLIDER_DESC desc;
+	if (pArg)
+		desc = *static_cast<COLLIDER_DESC*>(pArg);
 
-	COLLIDER_DESC* pDesc = static_cast<COLLIDER_DESC*>(pArg);
-
-	if (pDesc->bAutoFit && !pDesc->bCooking)
-	{
-		AutoFit(pDesc);
-	}
+	if (desc.bAutoFit && !desc.bCooking)
+		AutoFit(&desc);
 
 	PxGeometry* pGeometry = nullptr;
-	// 쿠킹이 필요한 경우
-	if (pDesc->bCooking)
+
+	if (desc.bCooking)
 	{
 		m_bCooked = true;
 
@@ -68,8 +66,7 @@ HRESULT CCollider::Initialize(COMPONENT_DESC* pArg)
 			return E_FAIL;
 		}
 
-		m_pTriangleMesh = m_pPhysicsSystem->Cook_TriangleMesh(pDesc->strModelKey, pModel);
-
+		m_pTriangleMesh = m_pPhysicsSystem->Cook_TriangleMesh(desc.strModelKey, pModel);
 		if (!m_pTriangleMesh)
 		{
 			MSG_BOX("CCollider::Initialize : Failed to Cook TriangleMesh");
@@ -80,16 +77,16 @@ HRESULT CCollider::Initialize(COMPONENT_DESC* pArg)
 	}
 	else
 	{
-		switch (pDesc->eType)
+		switch (desc.eType)
 		{
 		case COLLIDER_TYPE::BOX:
-			pGeometry = new PxBoxGeometry(pDesc->vSize.x * 0.5f, pDesc->vSize.y * 0.5f, pDesc->vSize.z * 0.5f);
+			pGeometry = new PxBoxGeometry(desc.vSize.x * 0.5f, desc.vSize.y * 0.5f, desc.vSize.z * 0.5f);
 			break;
 		case COLLIDER_TYPE::SPHERE:
-			pGeometry = new PxSphereGeometry(pDesc->vSize.x);
+			pGeometry = new PxSphereGeometry(desc.vSize.x);
 			break;
 		case COLLIDER_TYPE::CAPSULE:
-			pGeometry = new PxCapsuleGeometry(pDesc->vSize.x, pDesc->vSize.y * 0.5f);
+			pGeometry = new PxCapsuleGeometry(desc.vSize.x, desc.vSize.y * 0.5f);
 			break;
 		}
 	}
@@ -100,11 +97,11 @@ HRESULT CCollider::Initialize(COMPONENT_DESC* pArg)
 		return E_FAIL;
 	}
 
-	if (m_pAttachedRigidBody)	// Dynamic Actor(RigidBody O)
+	if (m_pAttachedRigidBody)
 	{
-		m_pShape = m_pAttachedRigidBody->Attach_Shape(*pGeometry, pDesc->strMaterialTag);
+		m_pShape = m_pAttachedRigidBody->Attach_Shape(*pGeometry, desc.strMaterialTag);
 	}
-	else						// Static Actor(RigidBody X)
+	else
 	{
 		PxPhysics* pPhysics = m_pPhysicsSystem->Get_Physics();
 		PxScene* pScene = m_pPhysicsSystem->Get_Scene();
@@ -131,7 +128,10 @@ HRESULT CCollider::Initialize(COMPONENT_DESC* pArg)
 			return E_FAIL;
 		}
 
-		PxMaterial* pMaterial = m_pPhysicsSystem->Get_Material(pDesc->strMaterialTag);
+		PxMaterial* pMaterial = m_pPhysicsSystem->Get_Material(desc.strMaterialTag);
+		if (!pMaterial)
+			pMaterial = m_pPhysicsSystem->Get_DefaultMaterial();
+
 		m_pShape = PxRigidActorExt::createExclusiveShape(*m_pStaticActor, *pGeometry, *pMaterial);
 
 		m_pStaticActor->userData = m_pOwner;
@@ -145,29 +145,30 @@ HRESULT CCollider::Initialize(COMPONENT_DESC* pArg)
 		return E_FAIL;
 	}
 
-	// Shape Flag
 	m_pShape->setFlag(PxShapeFlag::eSCENE_QUERY_SHAPE, true);
 	m_pShape->setFlag(PxShapeFlag::eSIMULATION_SHAPE, true);
 	m_pShape->setFlag(PxShapeFlag::eVISUALIZATION, true);
-	m_pShape->setContactOffset(0.02f);  // 기본값: 0.02
-	m_pShape->setRestOffset(0.0f);      // 관통 허용 거리 최소화
-	if (pDesc->bTrigger) {
+	m_pShape->setContactOffset(0.02f);
+	m_pShape->setRestOffset(0.0f);
+
+	if (desc.bTrigger)
+	{
 		m_pShape->setFlag(PxShapeFlag::eSIMULATION_SHAPE, false);
 		m_pShape->setFlag(PxShapeFlag::eTRIGGER_SHAPE, true);
 	}
 
 	PxFilterData filterData;
-	filterData.word0 = ENUM(pDesc->eGroup);
-	filterData.word1 = pDesc->iCollisionMask;
-	m_pShape->setSimulationFilterData(filterData); // 시뮬레이션용 필터
-	m_pShape->setQueryFilterData(filterData);      // 레이캐스팅용 필터
+	filterData.word0 = ENUM(desc.eGroup);
+	filterData.word1 = desc.iCollisionMask;
+	m_pShape->setSimulationFilterData(filterData);
+	m_pShape->setQueryFilterData(filterData);
 
-	m_vColor = pDesc->vColliderColor;
+	m_vColor = desc.vColliderColor;
 
 	if (!m_bCooked)
 	{
-		_vector3 vPos = pDesc->vCenter;
-		_vector4 vRot = XMQuaternionRotationRollPitchYaw(pDesc->vRotation.x, pDesc->vRotation.y, pDesc->vRotation.z);
+		_vector3 vPos = desc.vCenter;
+		_vector4 vRot = XMQuaternionRotationRollPitchYaw(desc.vRotation.x, desc.vRotation.y, desc.vRotation.z);
 
 		PxTransform localPose;
 		localPose.p = PxVec3(vPos.x, vPos.y, vPos.z);
@@ -175,21 +176,76 @@ HRESULT CCollider::Initialize(COMPONENT_DESC* pArg)
 		m_pShape->setLocalPose(localPose);
 	}
 
-	m_pShape->userData = this;		// UserData 설정
-	delete pGeometry;				// Geometry 메모리 해제
+	m_pShape->userData = this;
+	delete pGeometry;
 
-	// 멤버 변수 저장
-	m_eType = pDesc->eType;
-	m_eGroup = pDesc->eGroup;
-	m_iCollisionMask = pDesc->iCollisionMask;
-	m_vCenter = pDesc->vCenter;
-	m_vSize = pDesc->vSize;
-	m_vRotation = pDesc->vRotation;
-	m_bTrigger = pDesc->bTrigger;
-	m_strMaterialTag = pDesc->strMaterialTag;
+	m_eType = desc.eType;
+	m_eGroup = desc.eGroup;
+	m_iCollisionMask = desc.iCollisionMask;
+	m_vCenter = desc.vCenter;
+	m_vSize = desc.vSize;
+	m_vRotation = desc.vRotation;
+	m_bTrigger = desc.bTrigger;
+	m_strMaterialTag = desc.strMaterialTag;
 
-	// 시스템 등록
 	CGameInstance::GetInstance()->Get_CollisionSystem()->RegisterCollidable(this, -1);
+
+	return S_OK;
+}
+
+HRESULT CCollider::ReInitialize(COMPONENT_DESC* pArg)
+{
+	COLLIDER_DESC desc;
+	if (pArg)
+	{
+		desc = *static_cast<COLLIDER_DESC*>(pArg);
+		if (desc.bAutoFit && !m_bCooked)
+			AutoFit(&desc);
+	}
+
+	// Static Actor Global Pose
+	if (m_pStaticActor)
+	{
+		_vector vPos = m_pOwnerTransform->Get_WorldPos();
+		_matrix mWorldMat = XMLoadFloat4x4(m_pOwnerTransform->Get_WorldMatrix_Ptr());
+		_vector vScale, vRot, vTrans;
+		XMMatrixDecompose(&vScale, &vRot, &vTrans, mWorldMat);
+
+		PxTransform pose(
+			PxVec3(XMVectorGetX(vPos), XMVectorGetY(vPos), XMVectorGetZ(vPos)),
+			PxQuat(XMVectorGetX(vRot), XMVectorGetY(vRot), XMVectorGetZ(vRot), XMVectorGetW(vRot))
+		);
+		m_pStaticActor->setGlobalPose(pose);
+	}
+
+	// Geometry Size
+	if (!m_bCooked)
+		Set_Size(desc.vSize);
+
+	// Local Pose
+	if (!m_bCooked)
+	{
+		Set_Center(desc.vCenter);
+		Set_Rotation(desc.vRotation);
+	}
+
+	// Filter
+	if (m_eGroup != desc.eGroup)
+		Set_CollisionGroup(desc.eGroup);
+
+	if (m_iCollisionMask != desc.iCollisionMask)
+		Set_CollisionMask(desc.iCollisionMask);
+
+	// Trigger
+	if (m_bTrigger != desc.bTrigger)
+		Set_Trigger(desc.bTrigger);
+
+	// Properties
+	m_vColor = desc.vColliderColor;
+
+	// Collision State Reset
+	m_PreviousCollisions.clear();
+	m_CurrentCollisions.clear();
 
 	return S_OK;
 }

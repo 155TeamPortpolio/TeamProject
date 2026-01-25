@@ -166,38 +166,38 @@ HRESULT CForwardRenderer::Render_MotionBlur()
 
 HRESULT CForwardRenderer::Render_Blended(BlendedPass* pBlendPass)
 {
-	//ID3D11DepthStencilView* pDeferredDSV =
-	//	m_pTargetManager->Get_MTR_DSV("MRT_Deferred_Skinned");
+	ID3D11DepthStencilView* pDeferredDSV =
+		m_pTargetManager->Get_MTR_DSV("MRT_Deferred_Skinned");
 
-	//ID3D11RenderTargetView* pPrevRTV = { nullptr };
-	//ID3D11DepthStencilView* pPrevDSV = { nullptr };
-	//m_pContext->OMGetRenderTargets(1, &pPrevRTV, &pPrevDSV);
-	//m_pContext->OMSetRenderTargets(1, &pPrevRTV, pDeferredDSV);
+	ID3D11RenderTargetView* pPrevRTV = { nullptr };
+	ID3D11DepthStencilView* pPrevDSV = { nullptr };
+	m_pContext->OMGetRenderTargets(1, &pPrevRTV, &pPrevDSV);
+	m_pContext->OMSetRenderTargets(1, &pPrevRTV, pDeferredDSV);
 	pBlendPass->Execute(m_pContext, this);
-	//ID3D11RenderTargetView* pRTVs[8] = { pPrevRTV };
-	//m_pContext->OMSetRenderTargets(8, pRTVs, pPrevDSV);
+	ID3D11RenderTargetView* pRTVs[8] = { pPrevRTV };
+	m_pContext->OMSetRenderTargets(8, pRTVs, pPrevDSV);
 
-	//Safe_Release(pPrevRTV);
-	//Safe_Release(pPrevDSV);
+	Safe_Release(pPrevRTV);
+	Safe_Release(pPrevDSV);
 
 	return S_OK;
 }
 
 HRESULT CForwardRenderer::Render_NonLight(NonLightPass* pNonLightPass)
 {
-	//ID3D11DepthStencilView* pDeferredDSV =
-	//	m_pTargetManager->Get_MTR_DSV("MRT_Deferred_Skinned");
-	//
-	//ID3D11RenderTargetView* pPrevRTV = { nullptr };
-	//ID3D11DepthStencilView* pPrevDSV = { nullptr };
-	//m_pContext->OMGetRenderTargets(1, &pPrevRTV, &pPrevDSV);
-	//m_pContext->OMSetRenderTargets(1, &pPrevRTV, pDeferredDSV);
+	ID3D11DepthStencilView* pDeferredDSV =
+		m_pTargetManager->Get_MTR_DSV("MRT_Deferred_Skinned");
+	
+	ID3D11RenderTargetView* pPrevRTV = { nullptr };
+	ID3D11DepthStencilView* pPrevDSV = { nullptr };
+	m_pContext->OMGetRenderTargets(1, &pPrevRTV, &pPrevDSV);
+	m_pContext->OMSetRenderTargets(1, &pPrevRTV, pDeferredDSV);
 	pNonLightPass->Execute(m_pContext, this);
-	//ID3D11RenderTargetView* pRTVs[8] = { pPrevRTV };
-	//m_pContext->OMSetRenderTargets(8, pRTVs, pPrevDSV);
-	//
-	//Safe_Release(pPrevRTV);
-	//Safe_Release(pPrevDSV);
+	ID3D11RenderTargetView* pRTVs[8] = { pPrevRTV };
+	m_pContext->OMSetRenderTargets(8, pRTVs, pPrevDSV);
+	
+	Safe_Release(pPrevRTV);
+	Safe_Release(pPrevDSV);
 
 	return S_OK;
 }

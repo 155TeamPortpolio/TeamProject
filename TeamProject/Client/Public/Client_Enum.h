@@ -2,7 +2,7 @@
 #define Client_Enum_h__
 
 namespace Client {
-	enum class GLOBAL_ID : _uint { FreeCam, OrbitCam, SeqCam, ShadowCam, Player };
+	enum class GLOBAL_ID : _uint { FreeCam, OrbitCam, SeqCam, ShadowCam, Player, Cloud };
 	enum class CHARACTER { JaneDoe, Corin, END };
 
 	/* UI */

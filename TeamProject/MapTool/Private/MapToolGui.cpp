@@ -648,7 +648,7 @@ void CMapToolGui::Save_BattleData()
 
     m_BattleData.TagDataFormat = "BattleData";
     m_BattleData.TagArea = m_pMapToolContext->TagArea;
-    m_BattleData.iTableIndex = m_iBattleTableIndex;
+    //m_BattleData.iTableIndex = m_iBattleTableIndex;
  
     CLayer* pPlayerLayer = m_pGameInstance->Get_ObjectMgr()->Get_Layer(
         { g_TagMapToolLevel, g_tagBattleObjType[ENUM(BATTLE_TYPE::PLAYER)] });
@@ -698,7 +698,7 @@ void CMapToolGui::Save_BattleData()
         }
     }
 
-    string TagFileName = m_BattleData.TagDataFormat + "." + m_pMapToolContext->TagArea + "." + std::to_string(m_iBattleTableIndex);
+    string TagFileName = m_BattleData.TagDataFormat + "." + m_pMapToolContext->TagArea;// + "." + std::to_string(m_iBattleTableIndex);
     string SavePath = "../Bin/Data/NewBattleData/" + HelperMT::MakeTimestampFileName(TagFileName, ".json");
 
     if (true == HelperMT::ExportJsonFile<BATTLE_FIELD_DATA>(m_BattleData, SavePath))

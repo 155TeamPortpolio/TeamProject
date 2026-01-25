@@ -54,11 +54,11 @@ HRESULT CCharacterController::Initialize_Prototype()
 HRESULT CCharacterController::Initialize(COMPONENT_DESC* pArg)
 {
 	m_pPhysicsSystem = CGameInstance::GetInstance()->Get_PhysicsSystem();
-	if (!m_pPhysicsSystem) return E_FAIL;
-
+	if (!m_pPhysicsSystem) 
+		return E_FAIL;
 	m_pManager = m_pPhysicsSystem->Get_ControllerManager();
-	if (!m_pManager) return E_FAIL;
-
+	if (!m_pManager) 
+		return E_FAIL;
 	m_pOwnerTransform = m_pOwner->Get_Component<CTransform>();
 	if (!m_pOwnerTransform)
 	{
@@ -66,46 +66,47 @@ HRESULT CCharacterController::Initialize(COMPONENT_DESC* pArg)
 		return E_FAIL;
 	}
 
-	CCT_DESC* pDesc = {nullptr};
+	CCT_DESC desc;
 	if (pArg)
 	{
-		pDesc = static_cast<CCT_DESC*>(pArg);
-		if (pDesc->bAutoFit)
-		{
-			AutoFit(pDesc);
-		}
+		desc = *static_cast<CCT_DESC*>(pArg);
+		if (desc.bAutoFit)
+			AutoFit(&desc);
 		else
-		{
-			m_fBoundingMinY = pDesc->fBoundingMinY;
-		}
-
-		// 음수면 발이 바닥에 묻히는 상태 -> 양수 오프셋으로 보정
-		if (m_fBoundingMinY < 0.f)
-			m_fFootOffset = -m_fBoundingMinY;
-		else
-			m_fFootOffset = 0.f;
+			m_fBoundingMinY = desc.fBoundingMinY;
+	}
+	else
+	{
+		_float3 vOwnerPos;
+		XMStoreFloat3(&vOwnerPos, m_pOwnerTransform->Dir(STATE::POSITION));
+		desc.vPos = vOwnerPos;
 	}
 
-	m_pMaterial = m_pPhysicsSystem->Get_Material(pDesc->strMaterialTag);
+	if (m_fBoundingMinY < 0.f)
+		m_fFootOffset = -m_fBoundingMinY;
+	else
+		m_fFootOffset = 0.f;
+
+	m_pMaterial = m_pPhysicsSystem->Get_Material(desc.strMaterialTag);
+	if (!m_pMaterial)
+		m_pMaterial = m_pPhysicsSystem->Get_DefaultMaterial();
 
 	PxUserControllerHitReport* pHitReport =
 		CGameInstance::GetInstance()->Get_CollisionSystem()->Get_CCTCallback();
 
 	PxCapsuleControllerDesc capsuleDesc;
-	capsuleDesc.height = pDesc->fHeight;
-	capsuleDesc.radius = pDesc->fRadius;
+	capsuleDesc.height = desc.fHeight;
+	capsuleDesc.radius = desc.fRadius;
 	capsuleDesc.climbingMode = PxCapsuleClimbingMode::eCONSTRAINED;
-	capsuleDesc.stepOffset = pDesc->fStepOffset;
+	capsuleDesc.stepOffset = desc.fStepOffset;
 	capsuleDesc.material = m_pMaterial;
-	capsuleDesc.slopeLimit = cosf(XMConvertToRadians(pDesc->fSlopeLimit));
-	capsuleDesc.contactOffset = max(pDesc->fContactOffset, 0.01f);
+	capsuleDesc.slopeLimit = cosf(XMConvertToRadians(desc.fSlopeLimit));
+	capsuleDesc.contactOffset = max(desc.fContactOffset, 0.01f);
 	capsuleDesc.upDirection = PxVec3(0, 1, 0);
-	capsuleDesc.density = pDesc->fDensity;
-	capsuleDesc.position = PxExtendedVec3(pDesc->vPos.x, pDesc->vPos.y, pDesc->vPos.z);
+	capsuleDesc.density = desc.fDensity;
 
-	_float fAdjustY = pDesc->vPos.y + m_fFootOffset + pDesc->fRadius + (pDesc->fHeight * 0.5f);
-	capsuleDesc.position = PxExtendedVec3(pDesc->vPos.x, fAdjustY, pDesc->vPos.z);
-
+	_float fAdjustY = desc.vPos.y + m_fFootOffset + desc.fRadius + (desc.fHeight * 0.5f);
+	capsuleDesc.position = PxExtendedVec3(desc.vPos.x, fAdjustY, desc.vPos.z);
 	capsuleDesc.reportCallback = pHitReport;
 	capsuleDesc.behaviorCallback = nullptr;
 
@@ -123,34 +124,34 @@ HRESULT CCharacterController::Initialize(COMPONENT_DESC* pArg)
 	}
 
 	m_pController->getActor()->userData = m_pOwner;
-	Set_Position(XMLoadFloat3(&pDesc->vPos));
+	Set_Position(XMLoadFloat3(&desc.vPos));
 
 	PxShape* pShape;
 	m_pController->getActor()->getShapes(&pShape, 1);
 	pShape->userData = this;
-	pShape->setContactOffset(pDesc->fContactOffset);
-	pShape->setRestOffset(pDesc->fRestOffset);
+	pShape->setContactOffset(desc.fContactOffset);
+	pShape->setRestOffset(desc.fRestOffset);
 
-	m_eGroup = pDesc->eGroup;
-	m_iCollisionMask = pDesc->iCollisionMask;
+	m_eGroup = desc.eGroup;
+	m_iCollisionMask = desc.iCollisionMask;
 
 	PxFilterData filterData;
-	filterData.word0 = ENUM(pDesc->eGroup);
-	filterData.word1 = pDesc->iCollisionMask;
-	pShape->setSimulationFilterData(filterData); // 시뮬레이션용 필터
-	pShape->setQueryFilterData(filterData);      // 레이캐스팅용 필터
+	filterData.word0 = ENUM(desc.eGroup);
+	filterData.word1 = desc.iCollisionMask;
+	pShape->setSimulationFilterData(filterData);
+	pShape->setQueryFilterData(filterData);
+
 	m_FilterData = filterData;
 	m_QueryFilterData = filterData;
-
-	m_vColor = pDesc->vColliderColor;
+	m_vColor = desc.vColliderColor;
 
 	CGameInstance::GetInstance()->Get_CollisionSystem()->RegisterCollidable(this, -1);
 
-	m_fHeight = pDesc->fHeight;
-	m_fRadius = pDesc->fRadius;
-	m_fStepOffset = pDesc->fStepOffset;
-	m_fSlopeLimit = pDesc->fSlopeLimit;
-	m_fMaxSpeed = pDesc->fMaxSpeed;
+	m_fHeight = desc.fHeight;
+	m_fRadius = desc.fRadius;
+	m_fStepOffset = desc.fStepOffset;
+	m_fSlopeLimit = desc.fSlopeLimit;
+	m_fMaxSpeed = desc.fMaxSpeed;
 
 	m_pQueryFilter = new CCCTQueryFilter(&m_FilterData);
 	m_pCCTFilter = new CCCTFilterCallback();
@@ -219,6 +220,72 @@ void CCharacterController::Set_CompActive(_bool bActive)
 		pShape->setSimulationFilterData(m_FilterData);
 		pShape->setQueryFilterData(m_FilterData);
 	}
+}
+
+HRESULT CCharacterController::ReInitialize(COMPONENT_DESC* pArg)
+{
+	CCT_DESC desc;
+	if (pArg)
+	{
+		desc = *static_cast<CCT_DESC*>(pArg);
+		if (desc.bAutoFit)
+			AutoFit(&desc);
+	}
+	else
+	{
+		_float3 vOwnerPos;
+		XMStoreFloat3(&vOwnerPos, m_pOwnerTransform->Dir(STATE::POSITION));
+		desc.vPos = vOwnerPos;
+	}
+
+	// Position
+	Set_Position(XMLoadFloat3(&desc.vPos));
+
+	// Size
+	if (m_fHeight != desc.fHeight || m_fRadius != desc.fRadius)
+		Resize(desc.fHeight, desc.fRadius);
+
+	// Step/Slope
+	if (m_fStepOffset != desc.fStepOffset)
+		Set_StepOffset(desc.fStepOffset);
+
+	if (m_fSlopeLimit != desc.fSlopeLimit)
+		Set_SlopeLimit(desc.fSlopeLimit);
+
+	// Filter
+	if (m_eGroup != desc.eGroup)
+		Set_CollisionGroup(desc.eGroup);
+
+	if (m_iCollisionMask != desc.iCollisionMask)
+		Set_CollisionMask(desc.iCollisionMask);
+
+	// Contact/Rest Offset
+	if (m_fContactOffset != desc.fContactOffset)
+		Set_ContactOffset(desc.fContactOffset);
+
+	if (m_fRestOffset != desc.fRestOffset)
+		Set_RestOffset(desc.fRestOffset);
+
+	// Properties
+	m_fMaxSpeed = desc.fMaxSpeed;
+	m_vColor = desc.vColliderColor;
+
+	// Velocity Reset
+	m_vVelocity = {};
+	m_vPrevVelocity = {};
+	m_bGrounded = false;
+
+	// Collision State Reset
+	m_CurrentCollisions.clear();
+	m_PreviousCollisions.clear();
+
+	// Debug Reset
+	m_bShowDebugRay = false;
+	m_vRayStart = {};
+	m_vRayEnd = {};
+	m_DebugRayHit = {};
+
+	return S_OK;
 }
 
 void CCharacterController::Update(_float dt)

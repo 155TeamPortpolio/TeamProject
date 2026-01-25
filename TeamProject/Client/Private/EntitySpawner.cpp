@@ -62,7 +62,7 @@ OBJECT_HANDLE Client::Spawner::Create_NPC(const SPAWNER_DESC& Desc)
 	CCT.bAutoFit = false;
 	CCT.fHeight = 1.6f;
 	CCT.fRadius = 0.4f;
-	CCT.vPos = Desc.vTranslation;
+	//CCT.vPos = Desc.vTranslation;
 
 	PrototypeManager()->Add_ProtoType(Desc.tagLevel, NPCTable->second.ProtoTag, NPCTable->second.Create());
 
@@ -71,6 +71,8 @@ OBJECT_HANDLE Client::Spawner::Create_NPC(const SPAWNER_DESC& Desc)
 		.Rotate(Desc.vRotation)
 		.Build(Desc.tagName);
 
+	Object->Get_Component<CCharacterController>()->Set_FootPosition(Desc.vTranslation);
+	
 	ObjectManager()->Add_Object(Object, { Desc.tagLevel, "NPC_Layer"});
 	return Object->Get_Handle();
 }
@@ -161,7 +163,7 @@ OBJECT_HANDLE Client::Spawner::Create_ETC(const SPAWNER_DESC& Desc)
 				Desc.vRotation.y,
 				Desc.vRotation.z));
 
-		character->Get_Component<CCharacterController>()->Set_Position(XMLoadFloat3(&Desc.vTranslation));
+		character->Get_Component<CCharacterController>()->Set_FootPosition(XMLoadFloat3(&Desc.vTranslation));
 	}
 
 	return OBJECT_HANDLE();

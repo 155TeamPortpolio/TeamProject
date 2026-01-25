@@ -34,6 +34,14 @@ HRESULT CDataBase::CreateTable()
 		return E_FAIL;
 	if (FAILED(LoadNpcIDData("../../Resources/Data/Npc/Npc_ID.csv")))
 		return E_FAIL;
+
+	// Battle Data
+	if (FAILED(LoadBattleFieldData("../../Resources/Data/Battle")))
+		return E_FAIL;
+	if (FAILED(LoadMonsterSpawnData("../../Resources/Data/Battle/MonsterSpawn.csv")))
+		return E_FAIL;
+
+
 	return S_OK;
 }
 
@@ -95,6 +103,24 @@ const vector<MapData_Path_Packet>* CDataBase::GetMapDataPacket(const string& tag
 {
 	auto iter = m_MapAreaData.find(tagArea);
 	if (iter == m_MapAreaData.end())
+		return nullptr;
+
+	return &iter->second;
+}
+
+const MapData_Path_Packet* CDataBase::GetBattleFieldDataPacket(const string& tagArea)
+{
+	auto iter = m_BattleFieldData.find(tagArea);
+	if (iter == m_BattleFieldData.end())
+		return nullptr;
+
+	return &iter->second;
+}
+
+const vector<MONSTER_SPAWN_DESC>* CDataBase::GetMonsterSpawnData(const string& tagArea)
+{
+	auto iter = m_MonsterSpawnDesc.find(tagArea);
+	if (iter == m_MonsterSpawnDesc.end())
 		return nullptr;
 
 	return &iter->second;
@@ -376,7 +402,7 @@ HRESULT CDataBase::LoadNpcDialogueData(const string& csvPath)
 		desc.DayPhase = StringToDayPhase(DayPhase);
 		desc.DialogueType = StringToDialogueType(DialogueType);
 		desc.Repeat = static_cast<_bool>(Repeat);
-		desc.Text = Helper::ConvertToWideString(Text);
+		desc.Text = StringToWString(Text);
 		desc.Result = StringToDialogueResult(Result);
 		desc.ChoiceNum = ChoiceNum;
 		desc.Choice_ID1 = Choice_ID1;
@@ -462,6 +488,94 @@ void CDataBase::Clear_CashedData()
 	m_CashedData.clear();
 }
 
+HRESULT CDataBase::LoadBattleFieldData(const string& BattleDataFolderPath)
+{
+	Helper::EnsureDirectoryExist(BattleDataFolderPath);
+
+	for (const auto& entry : filesystem::recursive_directory_iterator(BattleDataFolderPath))
+	{
+		if (entry.is_regular_file() && entry.path().extension() == ".json")
+		{
+			filesystem::path FilePath = entry.path();
+			// ../BattleData.Stage1.json
+			// ../BattleData.Stage1.json
+			// ../BattleData.Stage1.json
+			// ../BattleData.Stage2.json
+
+
+			if (entry.path().filename().string().find("BattleData") == string::npos)
+				continue;
+
+			const string stem = FilePath.stem().string();
+			auto tokens = SplitFileName(stem, '.');
+
+			if (tokens.size() != 2)
+				continue;
+
+			//_int iVersion = {};
+			//// version을 string -> int로 변환
+			//auto [ptr, ec] = std::from_chars(tokens[2].data(), tokens[2].data() + tokens[2].size(), iVersion);
+			//if (ec != std::errc{})   // 숫자 파싱 실패
+			//	continue;
+
+			MapData_Path_Packet packet = {};
+			packet.TagDataFormat = tokens[0];
+			packet.TagDataFileKey = FilePath.filename().string();
+			packet.TagDataFilePath = FilePath.string();
+			packet.TagArea = tokens[1];
+			//packet.iVersion = iVersion;			
+
+			m_BattleFieldData[packet.TagArea] = packet;
+		}           
+	}
+
+	return S_OK;
+}
+
+HRESULT CDataBase::LoadMonsterSpawnData(const string& csvPath)
+{
+	/*
+	column_count = read_header에 넣는 컬럼 수(헤더 개수)
+	trim_chars = 앞 뒤 공백 제거
+	double_quote_escape = "..." 안의 쉼표 및 따옴표 처리 */
+	io::CSVReader<
+		4,
+		io::trim_chars<' ', '\t'>,
+		io::double_quote_escape<',', '"'>
+	>in(csvPath);
+
+	/*
+	헤더 이름으로 매핑(컬럼 순서 바뀌어도 무관)
+	파일에 다른 컬럼이 더 있거나 누락된 컬럼이 있어도 무시함
+	*/
+	in.read_header(
+		io::ignore_extra_column | io::ignore_missing_column,
+		"tagArea", "TableNumber",
+		"MonsterSpawnID", "MonsterKey"
+	);
+
+	string	tagArea{}, MonsterKey{};
+	_int	TableNumber{}, MonsterSpawnID{};
+
+	while (in.read_row(
+		tagArea, TableNumber,
+		MonsterSpawnID, MonsterKey
+	))
+	{
+		if (tagArea.empty())
+			continue;
+
+		MONSTER_SPAWN_DESC	MonsterSpawnDesc= {};
+
+		MonsterSpawnDesc.MonsterSpawnID = MonsterSpawnID;
+		MonsterSpawnDesc.MonsterKey = MonsterKey;
+
+		m_MonsterSpawnDesc[tagArea].push_back(MonsterSpawnDesc);
+	}
+
+	return S_OK;
+}
+
 vector<string_view> CDataBase::SplitFileName(string_view s, _char delim)
 {
 	vector<string_view> out;
@@ -518,9 +632,15 @@ wstring CDataBase::StringToWString(const string& str)
 {
 	if (str.empty()) return wstring();
 
-	int size = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, NULL, 0);
+	string processed = str;
+	size_t pos = 0;
+	while ((pos = processed.find("\\n", pos)) != string::npos) {
+		processed.replace(pos, 2, "\n");
+		pos += 1;
+	}
+	int size = MultiByteToWideChar(CP_UTF8, 0, processed.c_str(), -1, NULL, 0);
 	wstring wstr(size - 1, 0);
-	MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, &wstr[0], size);
+	MultiByteToWideChar(CP_UTF8, 0, processed.c_str(), -1, &wstr[0], size);
 	return wstr;
 }
 
