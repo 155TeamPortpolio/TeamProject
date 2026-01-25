@@ -167,7 +167,6 @@ CScott_Level* CScott_Level::Create(const string& LevelKey)
 void CScott_Level::Free()
 {
 	__super::Free();
-	CBattleSystem::GetInstance()->DestroyInstance();
 	m_pGameInstance->DestroyInstance();
 	m_pPlayer->Clear_Characters();
 }

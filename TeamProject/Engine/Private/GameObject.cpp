@@ -84,7 +84,7 @@ HRESULT CGameObject::Initialize_Prototype()
 
 HRESULT CGameObject::Initialize(INIT_DESC* pArg)
 {
-	if (!m_pTransform) {
+ 	if (!m_pTransform) {
 		m_pTransform = Add_Component<CTransform>();
 		Safe_AddRef(m_pTransform);
 	}

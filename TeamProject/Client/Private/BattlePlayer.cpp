@@ -26,7 +26,7 @@ CBattlePlayer::CBattlePlayer()
 {
 }
 
-void CBattlePlayer::Set_Move(_vector3 vPos, _vector4 vRot)
+void CBattlePlayer::Set_Move(_vector3 vPos, _vector3 vRot)
 {
 	m_pCurrentCharacter->Get_Component<CCharacterController>()->Set_Position(vPos);
 	m_pCurrentCharacter->Get_Component<CTransform>()->Rotation(vRot);
