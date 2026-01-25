@@ -298,6 +298,7 @@ void CThugAssaulter::Render_GUI()
 
 void CThugAssaulter::OnPooledAcquire(INIT_DESC* pArg)
 {
+	Initialize(pArg);
 }
 
 void CThugAssaulter::OnPooledRelease()

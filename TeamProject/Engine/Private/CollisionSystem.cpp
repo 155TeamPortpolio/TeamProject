@@ -1026,7 +1026,7 @@ void CCollisionSystem::Remove_DeactiveSlots()
 	// 모든 ACTIVE Collidable의 충돌 목록에서 제거
 	for (auto& slot : m_Collidables)
 	{
-		if (!slot.IsActive()) continue;
+		if (!slot.IsActive() || !slot.IsValid()) continue;
 
 		auto& current = slot.pCollidable->Get_CurrentCollisions();
 		auto& previous = slot.pCollidable->Get_PreviousCollisions();

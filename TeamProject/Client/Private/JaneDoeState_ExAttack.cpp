@@ -1,5 +1,7 @@
 #include "pch.h"
 #include "JaneDoeState_ExAttack.h"
+#include "GameInstance.h"
+
 #include "JaneDoe.h"
 
 void CJaneDoeState_ExAttack::Enter(CJaneDoe* pOwner)
@@ -18,6 +20,23 @@ void CJaneDoeState_ExAttack::Enter(CJaneDoe* pOwner)
 
         m_pSubStateMachine->Set_DefaultState("Start");
     }
+
+    CCharacter::EnergyDesc energyDesc = pOwner->Get_EnergyDesc();
+    energyDesc.fCurrentEnergy -= energyDesc.fSpecialEnergy;
+    pOwner->Set_CurrentEnergy(energyDesc.fCurrentEnergy);
+
+    UI_ACTION_DESC desc;
+    desc.eType = UI_ACTION_TYPE::SPECIAL;
+    if (energyDesc.fCurrentEnergy >= energyDesc.fSpecialEnergy)
+    {
+        desc.eState = UI_ACTION_STATE::AVAILABLE;
+    }
+    else
+    {
+        desc.eState = UI_ACTION_STATE::EXECUTING;
+    }
+    EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
+
 
     pOwner->Push_Invincible();
     __super::Enter(pOwner);

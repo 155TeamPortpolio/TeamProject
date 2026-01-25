@@ -41,6 +41,7 @@ void CJaneDoeState_Attack::Enter(CJaneDoe* pOwner)
     }
     _int iEntryMode = pOwner->Get_StateMachine()->Get_Int("AttackEntryMode");
     pOwner->Get_StateMachine()->Set_Int("AttackEntryMode", 0);
+    m_pSubStateMachine->Reset_Trigger("Passion");
 
     switch (iEntryMode)
     {

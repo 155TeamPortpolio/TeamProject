@@ -33,7 +33,7 @@ public:
 
 public:
 	virtual class CGameObject* Request_Object(const OBJECT_HANDLE& handle) override;
-	virtual class CGameObject* Acquire(const CLONE_DESC& desc) override;
+	virtual class CGameObject* Acquire(const CLONE_DESC& desc, INIT_DESC* pArg) override;
 
 private:
 	 void Add_Object_Recursive(CLayer* pLayer, class CGameObject* object);

@@ -16,18 +16,18 @@ void CJaneDoeState_UltimateAttack::Enter(CJaneDoe* pOwner)
     {
         m_pSubStateMachine = CStateMachine<CJaneDoe>::Create();
 
-        m_pSubStateMachine->Register_State("Start", CJaneDoeState_UltimateAttack_Start::Create());
-        m_pSubStateMachine->Register_State("Loop", CJaneDoeState_UltimateAttack_Loop::Create());
-        m_pSubStateMachine->Register_State("End", CJaneDoeState_UltimateAttack_End::Create());
+        m_pSubStateMachine->Register_State("UltimateAttack_Start", CJaneDoeState_UltimateAttack_Start::Create());
+        m_pSubStateMachine->Register_State("UltimateAttack_Loop", CJaneDoeState_UltimateAttack_Loop::Create());
+        m_pSubStateMachine->Register_State("UltimateAttack_End", CJaneDoeState_UltimateAttack_End::Create());
 
-        m_pSubStateMachine->Get_State("End")->Set_Tag("End");
+        m_pSubStateMachine->Get_State("UltimateAttack_End")->Set_Tag("End");
 
-        m_pSubStateMachine->Register_Transition("Start", "Loop",
+        m_pSubStateMachine->Register_Transition("UltimateAttack_Start", "UltimateAttack_Loop",
             CStateMachine<CJaneDoe>::CONDITION_ANIMATION_END);
-        m_pSubStateMachine->Register_Transition("Loop", "End",
+        m_pSubStateMachine->Register_Transition("UltimateAttack_Loop", "UltimateAttack_End",
             CStateMachine<CJaneDoe>::CONDITION_ANIMATION_END);
 
-        m_pSubStateMachine->Set_DefaultState("Start");
+        m_pSubStateMachine->Set_DefaultState("UltimateAttack_Start");
     }
     __super::Enter(pOwner);
 
@@ -51,6 +51,7 @@ void CJaneDoeState_UltimateAttack::Update(CJaneDoe* pOwner, _float dt)
 
 void CJaneDoeState_UltimateAttack::Exit(CJaneDoe* pOwner)
 {
+    pOwner->Pop_Invincible();
     __super::Exit(pOwner);
 }
 
@@ -116,7 +117,6 @@ void CJaneDoeState_UltimateAttack_End::Enter(CJaneDoe* pOwner)
         //.Speed(2.f)
         .Apply();
 
-    pOwner->Pop_Invincible();
     pOwner->Unlock_Move();
 }
 

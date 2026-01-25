@@ -56,6 +56,7 @@
 #include "BangBooAsk.h"
 #include "BangBooDeliver.h"
 #include "Howl.h"
+#include "ElectricBoo.h"
 
 /* UI */
 #include "UIDirector.h"
@@ -80,8 +81,7 @@ HRESULT CTestLevel::Initialize()
 	//if (FAILED(CBattleSystem::GetInstance()->LoadMonsterCreationTable("../../Resources/Data/MonsterTable/MonsterTable.csv")))
 	//	MSG_BOX("Failed to Load MonsterTable!");
 
-	// It will be changed soooooon
-	CBattleSystem::GetInstance()->SetActive(true);
+
 	RenderSystem()->Set_FogDesc({ _float4(0.12f, 0.25f, 0.35f, 1.0f),0.f, 0.f, 0.005f, true });
 
 	return S_OK;
@@ -91,6 +91,9 @@ HRESULT CTestLevel::Awake()
 {
 	m_pPlayer = dynamic_cast<CPlayer*>(ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Player)));
 	m_pPlayer->Set_PlayerType(CPlayer::PLAYER::BATTLE);
+
+	auto pCloud = ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Cloud));
+	pCloud->Set_Alive(true);
 
 	IProtoService* pProto = CGameInstance::GetInstance()->Get_PrototypeMgr();
 	IResourceService* pResource = CGameInstance::GetInstance()->Get_ResourceMgr();
@@ -139,6 +142,10 @@ HRESULT CTestLevel::Awake()
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_EnemyAttackCollider", CEnemyAttackCollider::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_EnemyTriggerCollider", CEnemyTriggerCollider::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_ThugAssaulter", CThugAssaulter::Create());
+
+	CBattleSystem::GetInstance()->ReadyBattle("TrainingRoom", 1);
+	// It will be changed soooooon
+	CBattleSystem::GetInstance()->SetActive(true);
 
 	//====================Test=================
 	Ready_TestObject();
@@ -265,12 +272,6 @@ void CTestLevel::Ready_TestObject()
 	//}
 
 	// =====================TestCloud=========================
-	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestCloud", CTestCloud::Create());
-	auto testCloud = Builder::Create_Object({ "Test_Level", "Proto_GameObject_TestCloud" })
-		.Scale(_float3(2.f, 2.f, 2.f))
-		.Build("Test_Cloud");
-	
-	objMgr->Add_Object(testCloud, { "Test_Level", "Etc_Layer" });
 }
 
 void CTestLevel::Ready_Npc()
@@ -340,7 +341,7 @@ void CTestLevel::Ready_Npc()
 	howlCCT.eGroup = COLLISION_GROUP::COMMON;
 	//meowCCT.fBoundingMinY = -0.83f;
 	howlCCT.vPos = { 19.f, 1.5f, -30.f };
-	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Howl", CHowl::Create());
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Howl", CElectricBoo::Create());
 	auto testHowl = Builder::Create_Object({ "Test_Level", "Proto_GameObject_Howl" })
 		.CharacterController(howlCCT)
 		.Build("Test_Howl");

@@ -36,19 +36,6 @@ HRESULT CSacrifice_Orb::Initialize(INIT_DESC* pArg)
 {
 	__super::Initialize(pArg);
 
-	COLLIDER_DESC colliderDesc = {};
-	colliderDesc.eGroup = COLLISION_GROUP::MONSTER_ATTACK;
-	colliderDesc.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER);
-	colliderDesc.bTrigger = true;
-	colliderDesc.bAutoFit = false;
-	colliderDesc.eType = COLLIDER_TYPE::SPHERE;
-	colliderDesc.vSize = _float3{ 2.f,2.f,2.f };
-	colliderDesc.fSizeScale = 1.f;
-	colliderDesc.vCenter = _float3{ 0.f,0.f,0.f };
-	colliderDesc.vRotation = _float3{ 0.f,0.f,0.f };
-
-	auto pCollider = Get_Component<CCollider>()->Initialize(&colliderDesc);
-
 	auto pRigidBody = Get_Component<CRigidBody>();
 	pRigidBody->Set_Kinematic(true);
 	 

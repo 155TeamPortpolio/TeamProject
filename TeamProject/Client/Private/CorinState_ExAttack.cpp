@@ -49,20 +49,24 @@ void CCorinState_ExAttack::Update(CCorin* pOwner, _float dt)
 {
     if (!m_pSubStateMachine->Get_Bool("ExFinished"))
     {
-        if (!InputDevice()->Key_Down('E'))
+        string strCurrentState = m_pSubStateMachine->Get_CurrentStateName();
+        if (strCurrentState == "Loop" || strCurrentState == "Loop_Walk")
         {
-            if (m_pSubStateMachine->Get_Bool("Enhanced"))
-                m_pSubStateMachine->Set_Int("ExplodeEntryMode", 2);
-            else
-                m_pSubStateMachine->Set_Int("ExplodeEntryMode", 1);
-            m_pSubStateMachine->Set_Trigger("ToExplode");
-        }
-        else if (m_pSubStateMachine->Get_Bool("Enhanced"))
-        {
-            if (pOwner->Get_EnergyDesc().fCurrentEnergy <= pOwner->Get_EnergyDesc().fSpecialEnergy)
+            if (!InputDevice()->Key_Down('E'))
             {
-                m_pSubStateMachine->Set_Int("ExplodeEntryMode", 2);
+                if (m_pSubStateMachine->Get_Bool("Enhanced"))
+                    m_pSubStateMachine->Set_Int("ExplodeEntryMode", 2);
+                else
+                    m_pSubStateMachine->Set_Int("ExplodeEntryMode", 1);
                 m_pSubStateMachine->Set_Trigger("ToExplode");
+            }
+            else if (m_pSubStateMachine->Get_Bool("Enhanced"))
+            {
+                if (pOwner->Get_EnergyDesc().fCurrentEnergy <= pOwner->Get_EnergyDesc().fSpecialEnergy)
+                {
+                    m_pSubStateMachine->Set_Int("ExplodeEntryMode", 2);
+                    m_pSubStateMachine->Set_Trigger("ToExplode");
+                }
             }
         }
     }

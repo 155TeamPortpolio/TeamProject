@@ -9,7 +9,7 @@ private:
     ~CObjectPool() DEFAULT;
 
 public:
-    class CGameObject* Acquire(const CLONE_DESC& cloneDesc);
+    class CGameObject* Acquire(const CLONE_DESC& cloneDesc, INIT_DESC* pArg);
     void Return(const CLONE_DESC& cloneDesc, CGameObject* objectPtr);
 
     void ClearAll();                 // 레벨 전환 등에서 전체 비우기
