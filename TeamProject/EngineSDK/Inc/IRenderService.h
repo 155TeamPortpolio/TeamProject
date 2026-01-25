@@ -29,6 +29,7 @@ public:
 
 public:
     virtual class CRenderer* GetRenderer(RENDERER_TYPE eType = RENDERER_TYPE::FORWARD) PURE;
+    virtual HRESULT Create_RenderTarget(const RenderTargetDesc& desc) PURE;
     virtual void Set_FogDesc(FOG_DESC desc)PURE;
     virtual _bool Get_FogDesc(FOG_DESC& outResult) PURE;
 
