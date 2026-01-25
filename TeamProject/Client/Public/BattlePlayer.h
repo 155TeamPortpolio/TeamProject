@@ -54,6 +54,7 @@ private:
     virtual ~CBattlePlayer() DEFAULT;
 
 public:
+    void            Set_Move(_vector3 vPos, _vector3 vRot);
     OBJECT_HANDLE   GetCurCharacterHandle();
     HRESULT         SwitchCharacter(_bool bNext = true);
     void            SetBattleCharacters(vector<CHARACTER> battleCharacters);
@@ -79,6 +80,9 @@ public:
 
 public:
     void    Add_Gauge(_float fEnergy, _float fDecibel);
+    void    Request_ComboAttack();
+    void    Execute_ComboAttack(_bool bNext);
+    void    Cancel_ComboAttack();
 
 private:
     void    Update_Input(_float dt);
@@ -90,6 +94,7 @@ private:
     void    Process_Ultimate();
     void    Process_Energy();
     void    Process_Interact();
+    void    Process_ComboSelect(_float dt);
 
     _bool   Can_Switch() const;
     _bool   Can_Input() const { return !m_bLockInput; }
@@ -127,11 +132,14 @@ private:
 
     _bool        m_bLockInput = false;
 
+    _bool        m_bComboSelect = false;
+    _float       m_fComboSelectTimer = {};
+
     static constexpr _float KEY_BUFFER_TIME = 0.1f;
     static constexpr _float SWITCH_COOLDOWN = 1.f;
     static constexpr _float TARGET_MAXDISTANCE = 10.f;
     static constexpr _float TARGET_BOSS_MAXDISTANCE = 100.f;
-
+    static constexpr _float COMBO_SELECT_DURATION = 2.f;
 public:
     static CBattlePlayer* Create();
     virtual void Free() override;
