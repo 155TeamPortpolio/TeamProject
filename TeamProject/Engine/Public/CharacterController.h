@@ -108,6 +108,8 @@ public:
     virtual void    OnTriggerExit(ICollidable* pOthter) override;
 
     virtual void    Set_CompActive(_bool bActive) override;
+   
+    HRESULT         ReInitialize(COMPONENT_DESC* pArg);
 
     void            Update(_float dt);
     void            Late_Update(_float dt);

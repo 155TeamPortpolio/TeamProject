@@ -193,6 +193,63 @@ HRESULT CCollider::Initialize(COMPONENT_DESC* pArg)
 	return S_OK;
 }
 
+HRESULT CCollider::ReInitialize(COMPONENT_DESC* pArg)
+{
+	COLLIDER_DESC desc;
+	if (pArg)
+	{
+		desc = *static_cast<COLLIDER_DESC*>(pArg);
+		if (desc.bAutoFit && !m_bCooked)
+			AutoFit(&desc);
+	}
+
+	// Static Actor Global Pose
+	if (m_pStaticActor)
+	{
+		_vector vPos = m_pOwnerTransform->Get_WorldPos();
+		_matrix mWorldMat = XMLoadFloat4x4(m_pOwnerTransform->Get_WorldMatrix_Ptr());
+		_vector vScale, vRot, vTrans;
+		XMMatrixDecompose(&vScale, &vRot, &vTrans, mWorldMat);
+
+		PxTransform pose(
+			PxVec3(XMVectorGetX(vPos), XMVectorGetY(vPos), XMVectorGetZ(vPos)),
+			PxQuat(XMVectorGetX(vRot), XMVectorGetY(vRot), XMVectorGetZ(vRot), XMVectorGetW(vRot))
+		);
+		m_pStaticActor->setGlobalPose(pose);
+	}
+
+	// Geometry Size
+	if (!m_bCooked)
+		Set_Size(desc.vSize);
+
+	// Local Pose
+	if (!m_bCooked)
+	{
+		Set_Center(desc.vCenter);
+		Set_Rotation(desc.vRotation);
+	}
+
+	// Filter
+	if (m_eGroup != desc.eGroup)
+		Set_CollisionGroup(desc.eGroup);
+
+	if (m_iCollisionMask != desc.iCollisionMask)
+		Set_CollisionMask(desc.iCollisionMask);
+
+	// Trigger
+	if (m_bTrigger != desc.bTrigger)
+		Set_Trigger(desc.bTrigger);
+
+	// Properties
+	m_vColor = desc.vColliderColor;
+
+	// Collision State Reset
+	m_PreviousCollisions.clear();
+	m_CurrentCollisions.clear();
+
+	return S_OK;
+}
+
 void CCollider::Update(_float dt)
 {
 	if (m_bMapTool)

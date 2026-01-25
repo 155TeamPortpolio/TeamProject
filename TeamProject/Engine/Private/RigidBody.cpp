@@ -99,6 +99,59 @@ HRESULT CRigidBody::Initialize(COMPONENT_DESC* pArg)
 	return S_OK;
 }
 
+HRESULT CRigidBody::ReInitialize(COMPONENT_DESC* pArg)
+{
+	RIGIDBODY_DESC desc;
+	if (pArg)
+		desc = *static_cast<RIGIDBODY_DESC*>(pArg);
+
+	// Pose
+	_vector vPos = m_pOwnerTransform->Get_WorldPos();
+	_smatrix mWorldMat = m_pOwnerTransform->Get_WorldMatrix();
+	_vector vScale, vRot, vTrans;
+	XMMatrixDecompose(&vScale, &vRot, &vTrans, mWorldMat);
+
+	PxTransform pose(ToPxVec3(vPos), ToPxQuat(vRot));
+	m_pActor->setGlobalPose(pose);
+
+	// Velocity Reset
+	PxRigidDynamic* pDynamic = m_pActor->is<PxRigidDynamic>();
+	if (pDynamic)
+	{
+		pDynamic->setLinearVelocity(PxVec3(0.f));
+		pDynamic->setAngularVelocity(PxVec3(0.f));
+	}
+
+	// Kinematic
+	if (m_bKinematic != desc.isKinematic)
+		Set_Kinematic(desc.isKinematic);
+
+	// Gravity
+	if (m_bGravity != desc.bEnableGravity)
+		Set_Gravity(desc.bEnableGravity);
+
+	// Mass
+	if (m_fMass != desc.fMass)
+		Set_Mass(desc.fMass);
+
+	// Damping
+	if (m_fLinearDamping != desc.fLinearDamping)
+		Set_LinearDamping(desc.fLinearDamping);
+
+	if (m_fAngularDamping != desc.fAngularDamping)
+		Set_AngularDamping(desc.fAngularDamping);
+
+	// Rotation Lock
+	if (m_bLockX != desc.bLockX || m_bLockY != desc.bLockY || m_bLockZ != desc.bLockZ)
+		Set_RotationLock(desc.bLockX, desc.bLockY, desc.bLockZ);
+
+	// Wake Up
+	if (pDynamic && pDynamic->isSleeping())
+		pDynamic->wakeUp();
+
+	return S_OK;
+}
+
 void CRigidBody::Late_Update(_float dt)
 {
 	if (!m_pActor) return;
