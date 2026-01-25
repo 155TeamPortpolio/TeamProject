@@ -85,7 +85,10 @@ float2 NoiseUVSpeed;
 float ElapsedTime;
 
 /*Mask Params*/
-float EnableMask;
+Texture2D AlphaMaskTextureA;
+Texture2D AlphaMaskTextureB;
+float EnableMaskA;
+float EnableMaskB;
 float MaskTilling;
 
 /*Distortion Params*/
@@ -180,8 +183,13 @@ PS_OUT PS_MAIN_DEFAULT(PS_IN In)
     fDissolveAlpha = lerp(1.f, fDissolveAlpha, EnableDissolve);
     
     /* Mask */
-    float fMask = ApplySamplerMode(SamplerMode, In.vTexcoord * MaskTilling, AlphaMaskTexture).r;
-    fMask = lerp(1.f, fMask, EnableMask);
+    float fMaskA = ApplySamplerMode(SamplerMode, In.vTexcoord * MaskTilling, AlphaMaskTextureA).r;
+    fMaskA = lerp(1.f, fMaskA, EnableMaskA);
+    
+    float fMaskB = ApplySamplerMode(SamplerMode, In.vTexcoord * MaskTilling, AlphaMaskTextureB).r;
+    fMaskB = lerp(1.f, fMaskB, EnableMaskB);
+    
+    float fMask = fMaskA * fMaskB;
     
     /* Distortion */
     float2 vDistortionTexcoord = In.vTexcoord * DistortionTilling + ElapsedTime * DistortionUVSpeed;
