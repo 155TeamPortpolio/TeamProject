@@ -16,6 +16,7 @@
 #include "CharacterParryCollider.h"
 
 #include "UI_DamageText.h"
+#include "UIDirector.h"
 
 
 CCharacter::CCharacter(const CCharacter& rhs)
@@ -119,8 +120,6 @@ HRESULT CCharacter::Initialize(INIT_DESC* pArg)
 	m_pCCT = Get_Component<CCharacterController>();
 	Safe_AddRef(m_pAnimator);
 	Safe_AddRef(m_pCCT);
-
-	Create_DamageText();
 
 	if (pArg == nullptr) return S_OK;
 	GAMEOBJECT_DESC* pCharacterDesc = static_cast<GAMEOBJECT_DESC*>(pArg);
@@ -526,7 +525,7 @@ void CCharacter::Take_Damage(DAMAGE_TYPE eType, _float fDamage)
 	desc.pos    = m_vHitPos;
 	desc.damage = (_int)fDamage;
 
-	m_dmgText.Get()->UI_Active(&desc);
+	UIDirector()->Request_DamageText(&desc);
 }
 
 _bool CCharacter::Is_OppositeInput() const
@@ -634,19 +633,6 @@ void CCharacter::Update_Invincible(_float dt)
 {
 	if (m_fInvincibleTimer > 0.f)
 		m_fInvincibleTimer -= dt;
-}
-
-void CCharacter::Create_DamageText()
-{
-	const string levelKey = LevelManager()->Get_NowLevelKey();
-
-	auto dmgText = Builder::Create_UIObject({G_GlobalLevelKey, "Proto_GameObject_DamageText"})
-		.Build("DamageText");
-
-	// UI Mgr¿¡ µî·Ï
-	UIManager()->Add_UIObject(dmgText, levelKey);
-
-	m_dmgText = dmgText->Get_Handle();
 }
 
 OBJECT_HANDLE CCharacter::Calculate_Parry()
