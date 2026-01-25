@@ -17,42 +17,37 @@ public:
 
     void  Update(_float dt, CCamera* cam, COrbitCam* orbit, CTransform* focusTr);
 
-    _bool IsHolding() const { return m_state.holding; }
-    _bool IsBusy()    const { return m_state.holding || m_state.blending; }
+    _bool IsHolding() const { return holding; }
+    _bool IsBusy()    const { return holding || blending; }
 
-    void  SetPartner(OBJECT_HANDLE handle) { m_state.partnerHandle = handle; }
-    void  ClearPartner() { m_state.partnerHandle.Reset(); }
+    void  SetPartner(OBJECT_HANDLE handle) { partnerHandle = handle; }
+    void  ClearPartner() { partnerHandle.Reset(); }
 
 private:
-    struct State
-    {
-        _bool         holding = false;
-        _bool         blending = false;
-        _bool         restoring = false;
+    _bool         holding = false;
+    _bool         blending = false;
+    _bool         restoring = false;
 
-        _float        savedFov = 0.f;
-        _float        holdFov = 30.f;
+    _float        savedFov = 0.f;
+    _float        holdFov = 30.f;
 
-        _float        assumedPartnerFrontDist = 1.f;
+    _float        assumedPartnerFrontDist = 1.f;
 
-        OBJECT_HANDLE partnerHandle{};
+    OBJECT_HANDLE partnerHandle{};
 
-        _float        time = 0.f;
-        _float        dur = 0.5f;
+    _float        time = 0.f;
+    _float        dur = 0.5f;
 
-        _float        fromFov = 0.f;
-        _float        toFov = 0.f;
+    _float        fromFov = 0.f;
+    _float        toFov = 0.f;
 
-        Vector3       fromPivotWorld{};
-        Vector3       toPivotWorld{};
-        _bool         blendInit = false;
+    Vector3       fromPivotWorld{};
+    Vector3       toPivotWorld{};
+    _bool         blendInit = false;
 
-        EaseType      ease = EaseType::InOutSine;
+    EaseType      ease = EaseType::InOutSine;
 
-        _float        maxPivotOffset = 0.8f;
-    };
-
-    State m_state{};
+    _float        maxPivotOffset = 0.8f;
 };
 
 NS_END
