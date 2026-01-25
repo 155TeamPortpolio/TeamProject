@@ -6,6 +6,7 @@
 
 #include "Npc.h"
 #include "IInteract.h"
+#include "RigidBody.h"
 
 CNpcInteractZone::CNpcInteractZone()
     :CGameObject()
@@ -22,6 +23,7 @@ HRESULT CNpcInteractZone::Initialize_Prototype()
     __super::Initialize_Prototype();
 
 	Add_Component<CCollider>();
+	Add_Component<CRigidBody>();
 	
     return S_OK;
 }
@@ -49,6 +51,7 @@ void CNpcInteractZone::Update(_float dt)
 
 void CNpcInteractZone::Late_Update(_float dt)
 {
+	Get_Component<CRigidBody>()->Late_Update(dt);
 }
 
 void CNpcInteractZone::Interact(CGameObject* pObject)
