@@ -1418,151 +1418,6 @@ void CCamPanel::DrawPlayAll(OBJECT_HANDLE spaceRefHandle)
     if (!hasCam || !hasAnim) ImGui::EndDisabled();
 }
 
-void CCamPanel::Draw_BoneAttachUI()
-{
-    if (!target.sequence) return;
-
-    CamBoneAttachDesc& attach = target.sequence->boneAttach;
-
-    bool changed = false;
-
-    vector<string> boneNames;
-    boneNames.emplace_back("");
-
-    if (target.spaceRefHandle.isValid())
-    {
-        auto refObj = OBJ->Request_Object(target.spaceRefHandle);
-        auto anim = refObj->Get_Component<CAnimator3D>();
-        auto data = anim ? anim->Get_ModelData() : nullptr;
-
-        if (data)
-        {
-            vector<string> modelBones = data->Get_BoneNames();
-            boneNames.reserve(modelBones.size() + 1);
-            for (auto& n : modelBones) boneNames.push_back(n);
-        }
-    }
-
-    auto FindIndex = [&](const string& name) -> int
-        {
-            if (name.empty()) return 0;
-            for (int i = 1; i < (int)boneNames.size(); ++i)
-                if (boneNames[i] == name) return i;
-            return 0;
-        };
-
-    auto SameLineOrWrap = [&](float needW, float baseX, float indentX, float gap)
-        {
-            if (ImGui::GetContentRegionAvail().x < needW)
-            {
-                ImGui::NewLine();
-                ImGui::SetCursorPosX(baseX + indentX);
-                return;
-            }
-            ImGui::SameLine(0.f, gap);
-        };
-
-    const float baseX = ImGui::GetCursorPosX();
-
-    ImGui::PushID("BoneAttach");
-    ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(6.f, 4.f));
-
-    changed |= ImGui::Checkbox("##Enabled", &attach.enabled);
-    ImGui::SameLine(0.f, 8.f);
-
-    const float indentX = ImGui::GetFrameHeight() + 8.f;
-
-    ImGui::BeginDisabled(!attach.enabled);
-
-    ImGui::AlignTextToFramePadding();
-    ImGui::TextDisabled("Pos");
-    ImGui::SameLine(0.f, 6.f);
-
-    changed |= ImGui::Checkbox("##UsePos", &attach.usePosBone);
-    ImGui::SameLine(0.f, 6.f);
-
-    {
-        int curIdx = FindIndex(attach.posBoneName);
-        const char* preview = (curIdx == 0) ? "(none)" : boneNames[curIdx].c_str();
-
-        ImGui::BeginDisabled(!attach.usePosBone);
-        ImGui::SetNextItemWidth(170.f);
-        if (ImGui::BeginCombo("##PosBoneName", preview))
-        {
-            for (int i = 0; i < (int)boneNames.size(); ++i)
-            {
-                const bool selected = (i == curIdx);
-                const char* label = (i == 0) ? "(none)" : boneNames[i].c_str();
-
-                if (ImGui::Selectable(label, selected))
-                {
-                    attach.posBoneName = boneNames[i];
-                    changed = true;
-                }
-
-                if (selected) ImGui::SetItemDefaultFocus();
-            }
-            ImGui::EndCombo();
-        }
-        ImGui::EndDisabled();
-    }
-
-    ImGui::SameLine(0.f, 12.f);
-
-    ImGui::AlignTextToFramePadding();
-    ImGui::TextDisabled("LookAt");
-    ImGui::SameLine(0.f, 6.f);
-
-    changed |= ImGui::Checkbox("##UseLookAt", &attach.useLookAtBone);
-    ImGui::SameLine(0.f, 6.f);
-
-    {
-        int curIdx = FindIndex(attach.lookAtBoneName);
-        const char* preview = (curIdx == 0) ? "(none)" : boneNames[curIdx].c_str();
-
-        ImGui::BeginDisabled(!attach.useLookAtBone);
-        ImGui::SetNextItemWidth(170.f);
-        if (ImGui::BeginCombo("##LookAtBoneName", preview))
-        {
-            for (int i = 0; i < (int)boneNames.size(); ++i)
-            {
-                const bool selected = (i == curIdx);
-                const char* label = (i == 0) ? "(none)" : boneNames[i].c_str();
-
-                if (ImGui::Selectable(label, selected))
-                {
-                    attach.lookAtBoneName = boneNames[i];
-                    changed = true;
-                }
-
-                if (selected) ImGui::SetItemDefaultFocus();
-            }
-            ImGui::EndCombo();
-        }
-        ImGui::EndDisabled();
-    }
-
-    SameLineOrWrap(320.f, baseX, indentX, 12.f);
-
-    ImGui::BeginDisabled(!attach.usePosBone);
-    changed |= ImGui::Checkbox("Offset In Ref Rot Space", &attach.offsetInRefRotSpace);
-    ImGui::EndDisabled();
-
-    ImGui::SameLine(0.f, 12.f);
-
-    ImGui::BeginDisabled(!attach.useLookAtBone);
-    changed |= ImGui::Checkbox("Keep Roll From Key", &attach.keepRollFromKey);
-    ImGui::EndDisabled();
-
-    ImGui::EndDisabled();
-
-    ImGui::PopStyleVar();
-    ImGui::PopID();
-
-    if (changed) PostEdit_SequenceChanged();
-}
-
-
 void CCamPanel::SetRecording(_bool on)
 {
     if (state.recording == on) return;
@@ -1929,39 +1784,17 @@ void CCamPanel::CaptureSelectedKey_FromCaptureCam()
     Vector3 worldLook(look4.x, look4.y, look4.z);
     worldLook.Normalize();
 
-    const CamSequenceDesc* seq = target.sequence;
-    const CamBoneAttachDesc& attach = seq->boneAttach;
-
-    if (seq->space == CamSpace::Local)
+    if (target.sequence && target.sequence->space == CamSpace::Local)
     {
-        cameraBoneCtrl.SetSpaceRef(target.spaceRefHandle);
-        cameraBoneCtrl.SetDesc(&attach);
+        const Matrix refRT = GetRefRT(target.spaceRefHandle);
+        const Matrix inv = refRT.Invert();
 
-        const bool needSync =
-            (seq->space == CamSpace::Local) ||
-            (attach.enabled && attach.usePosBone && !attach.posBoneName.empty()) ||
-            (attach.enabled && attach.useLookAtBone && !attach.lookAtBoneName.empty());
+        const Vector3 localPos = Vector3::Transform(worldPos, inv);
 
-        if (needSync) animGUIController.SetTimeSec(target.spaceRefHandle, key.time);
-
-        Matrix spaceRT = cameraBoneCtrl.GetSpaceRT();
-        Matrix invSpaceRT = spaceRT.Invert();
-
-        Vector3 basePos = cameraBoneCtrl.GetSpacePosWorld();
-
-        if (attach.enabled && attach.usePosBone && cameraBoneCtrl.HasPosBone())
-            basePos = cameraBoneCtrl.GetPosBonePosWorld();
-
-        Vector3 worldOffset = worldPos - basePos;
-        Vector3 offset = worldOffset;
-
-        if (attach.enabled && attach.offsetInRefRotSpace)
-            offset = Vector3::TransformNormal(worldOffset, invSpaceRT);
-
-        Vector3 localLook = Vector3::TransformNormal(worldLook, invSpaceRT);
+        Vector3 localLook = Vector3::TransformNormal(worldLook, inv);
         localLook.Normalize();
 
-        key.pos = _vector3(offset.x, offset.y, offset.z);
+        key.pos = _vector3(localPos.x, localPos.y, localPos.z);
         key.look = _vector3(localLook.x, localLook.y, localLook.z);
     }
     else
@@ -1971,13 +1804,11 @@ void CCamPanel::CaptureSelectedKey_FromCaptureCam()
     }
 
     if (target.captureCamComp) key.fov = target.captureCamComp->Get_FOV();
-
     key.roll = 0.f;
 
     SyncEditorFromSelection();
     PostEdit_SequenceChanged();
 }
-
 
 bool CCamPanel::ValidateCamPath(const string& pickedPath, string& outError) const
 {
@@ -2274,7 +2105,6 @@ void CCamPanel::DrawKeyframeList_TopBar(vector<CamKeyFrame>& keys, bool& ioChang
     ImGui::TextDisabled("%s", summaryBuf);
 }
 
-
 void CCamPanel::DrawKeyframeList_HeaderArea(vector<CamKeyFrame>& keys, bool& ioChangedAny)
 {
     ImGui::Separator();
@@ -2286,18 +2116,6 @@ void CCamPanel::DrawKeyframeList_HeaderArea(vector<CamKeyFrame>& keys, bool& ioC
     const float headerStartX = ImGui::GetCursorPosX();
 
     bool constraintChanged = DrawConstraintBar();
-
-    const float boneNeedW = 540.f;
-
-    if (ImGui::GetContentRegionAvail().x < boneNeedW)
-    {
-        ImGui::NewLine();
-        ImGui::SetCursorPosX(headerStartX);
-    }
-    else
-        ImGui::SameLine(0.f, 12.f);
-
-    Draw_BoneAttachUI();
 
     if (constraintChanged && target.captureCamObj && state.recording)
     {
@@ -2316,7 +2134,6 @@ void CCamPanel::DrawKeyframeList_HeaderArea(vector<CamKeyFrame>& keys, bool& ioC
 
     ImGui::Separator();
 }
-
 
 void CCamPanel::DrawKeyframeList_Table(vector<CamKeyFrame>& keys, bool& ioChangedAny)
 {

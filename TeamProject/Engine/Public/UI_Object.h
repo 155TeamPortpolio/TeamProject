@@ -68,6 +68,7 @@ public:
 	void Set_EnterExit(function<void()> func) { m_ExitHover = move(func); }
 	void Set_OnClick(function<void()> func) { m_OnClick = move(func); }
 
+	void Set_Scale(Vector2 scale) { m_vScale = scale; }
 	void Set_Size(_float2 size) { m_vSize = size; }
 	_bool Size_To(_fvector size, _float Speed);
 	_bool Move_To(_fvector size, _float Speed);

@@ -147,6 +147,11 @@ void CRenderSystem::Update(_float dt)
 	m_pPost->Update(dt);
 }
 
+HRESULT CRenderSystem::Create_RenderTarget(const RenderTargetDesc& desc)
+{
+	return 	m_pTargetManager->Create_Target(desc, false);
+}
+
 CRenderer* CRenderSystem::GetRenderer(RENDERER_TYPE eType)
 {
 	CRenderer* pRenderer = nullptr;

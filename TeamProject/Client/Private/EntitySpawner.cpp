@@ -21,7 +21,43 @@
 #include "Portal.h"
 #include "ZeroPortal.h"
 
+#pragma region Tables
+/* Maptool Type 0 */
+static unordered_map<string, Spawner::OBJ_SPEC> s_NPCTable =
+{
+	{ "OfficeMeow",     Spawner::OBJ_SPEC{ "Proto_GameObject_OfficeMeow", &COfficeMeow::Create }},
+	{ "BangBooDeliver", Spawner::OBJ_SPEC{ "Proto_GameObject_BangBooDeliver", &CBangBooDeliver::Create } },
+	{ "BangBooPay",		Spawner::OBJ_SPEC{ "Proto_GameObject_BangBooPay", &CBangBooPay::Create } },
+	{ "BangBooAsk",		Spawner::OBJ_SPEC{ "Proto_GameObject_BangBooAsk", &CBangBooAsk::Create } },
+	{ "Howl",           Spawner::OBJ_SPEC{ "Proto_GameObject_Howl", &CHowl::Create } },
+	{ "Jaeger",         Spawner::OBJ_SPEC{ "Proto_GameObject_Jaeger", &CJaeger::Create } }
+};
+
+/* Maptool Type 1 */
+static unordered_map<string, Spawner::OBJ_SPEC> s_InteractTable =
+{
+	{ "Portal",     Spawner::OBJ_SPEC{ "Proto_GameObject_Portal", &CPortal::Create }},
+	{ "ZeroPortal", Spawner::OBJ_SPEC{ "Proto_GameObject_ZeroPortal", &CZeroPortal::Create }}
+};
+#pragma endregion
+
 /* --------------------------------------------------------------------------------------------------------------------- */
+
+void Client::Spawner::Register_Prototype(const string& MapDataName, const string& PrototypeTag, function<CGameObject* ()> Create, ENTITY_TYPE EntityType)
+{
+	unordered_map<string, Spawner::OBJ_SPEC>* Table = { nullptr };
+
+	switch (EntityType)
+	{
+	case Client::Spawner::ENTITY_TYPE::NPC:			Table = &s_NPCTable;		break;
+	case Client::Spawner::ENTITY_TYPE::INTERACTABLE:Table = &s_InteractTable;	break;
+	case Client::Spawner::ENTITY_TYPE::ETC:										return;
+	default:																	return;
+	}
+
+	Table->emplace(MapDataName, Spawner::OBJ_SPEC{ PrototypeTag, Create });
+}
+
 
 OBJECT_HANDLE Client::Spawner::Create_Entity(const SPAWNER_DESC& Desc)
 {
@@ -38,16 +74,6 @@ OBJECT_HANDLE Client::Spawner::Create_Entity(const SPAWNER_DESC& Desc)
 
 /* Maptool Type 0 */
 #pragma region Entity0(NPC)
-static unordered_map<string, Spawner::OBJ_SPEC> s_NPCTable =
-{
-	{ "OfficeMeow",     Spawner::OBJ_SPEC{ "Proto_GameObject_OfficeMeow", &COfficeMeow::Create }},
-	{ "BangBooDeliver", Spawner::OBJ_SPEC{ "Proto_GameObject_BangBooDeliver", &CBangBooDeliver::Create } },
-	{ "BangBooPay",		Spawner::OBJ_SPEC{ "Proto_GameObject_BangBooPay", &CBangBooPay::Create } },
-	{ "BangBooAsk",		Spawner::OBJ_SPEC{ "Proto_GameObject_BangBooAsk", &CBangBooAsk::Create } },
-	{ "Howl",           Spawner::OBJ_SPEC{ "Proto_GameObject_Howl", &CHowl::Create } },
-	{ "Jaeger",         Spawner::OBJ_SPEC{ "Proto_GameObject_Jaeger", &CJaeger::Create } }
-};
-
 OBJECT_HANDLE Client::Spawner::Create_NPC(const SPAWNER_DESC& Desc)
 {
 	auto NPCTable = s_NPCTable.find(Desc.tagName);
@@ -77,16 +103,11 @@ OBJECT_HANDLE Client::Spawner::Create_NPC(const SPAWNER_DESC& Desc)
 	return Object->Get_Handle();
 }
 #pragma endregion
+
 /* --------------------------------------------------------------------------------------------------------------------- */
 
 /* Maptool Type 1 */
 #pragma region Entity1(Interactable)
-static unordered_map<string, Spawner::OBJ_SPEC> s_InteractTable =
-{
-	{ "Portal",     Spawner::OBJ_SPEC{ "Proto_GameObject_Portal", &CPortal::Create }},
-	{ "ZeroPortal", Spawner::OBJ_SPEC{ "Proto_GameObject_ZeroPortal", &CZeroPortal::Create }}
-};
-
 OBJECT_HANDLE Client::Spawner::Create_Interactable(const SPAWNER_DESC& Desc)
 {
 	auto InteractTable = s_InteractTable.find(Desc.tagName);
@@ -147,7 +168,7 @@ OBJECT_HANDLE Client::Spawner::Create_Interactable(const SPAWNER_DESC& Desc)
 /* --------------------------------------------------------------------------------------------------------------------- */
 
 /* Maptool Type 2 */
-
+#pragma region Entity2(ETC)
 OBJECT_HANDLE Client::Spawner::Create_ETC(const SPAWNER_DESC& Desc)
 {
 	/* PlayerSpawn */
@@ -168,3 +189,6 @@ OBJECT_HANDLE Client::Spawner::Create_ETC(const SPAWNER_DESC& Desc)
 
 	return OBJECT_HANDLE();
 }
+#pragma endregion
+
+/* --------------------------------------------------------------------------------------------------------------------- */

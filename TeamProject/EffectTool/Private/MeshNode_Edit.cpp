@@ -116,7 +116,8 @@ void CMeshNode_Edit::Import(nlohmann::ordered_json& json)
 	m_DiffuseTextureTag = json.value("diffuse_texture_tag", "");
 	m_DissolveTextureTag = json.value("dissolve_texture_tag", "");
 	m_NoiseTextureTag = json.value("noise_texture_tag", "");
-	m_MaskTextureTag = json.value("mask_texture_tag", "");
+	m_MaskTextureTagA = json.value("mask_texture_tag", "");
+	m_MaskTextureTagB = json.value("mask_texture_tagB", "");
 	m_DistortionTextureTag = json.value("distortion_texture_tag", "");
 
 	/* Texture Slot Module */
@@ -184,7 +185,8 @@ void CMeshNode_Edit::Import(nlohmann::ordered_json& json)
 	m_NoiseModule.vNoiseUVSpeed.y = json.at("noise_uvspeed").at("y").get<_float>();
 
 	/* Mask Module */
-	m_MaskModule.fEnableMask = json.value("enable_mask", 0.f);
+	m_MaskModule.fEnableMaskA = json.value("enable_mask", 0.f);
+	m_MaskModule.fEnableMaskB = json.value("enable_maskB", 0.f);
 	m_MaskModule.fMaskTilling = json.value("mask_tilling", 0.f);
 
 	/* Distortion Module */
@@ -220,10 +222,16 @@ void CMeshNode_Edit::Import(nlohmann::ordered_json& json)
 			pMaterialInstance->Set_Param("DissolveTexture", { pDissolveTexture->Get_SRV(),"Texture2D",0 });
 		}
 
-		if (!m_MaskTextureTag.empty())
+		if (!m_MaskTextureTagA.empty())
 		{
-			auto pMaskTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_MaskTextureTag);
-			pMaterialInstance->Set_Param("AlphaMaskTexture", { pMaskTexture->Get_SRV(),"Texture2D",0 });
+			auto pMaskTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_MaskTextureTagA);
+			pMaterialInstance->Set_Param("AlphaMaskTextureA", { pMaskTexture->Get_SRV(),"Texture2D",0 });
+		}
+		
+		if (!m_MaskTextureTagB.empty())
+		{
+			auto pMaskTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_MaskTextureTagB);
+			pMaterialInstance->Set_Param("AlphaMaskTextureB", { pMaskTexture->Get_SRV(),"Texture2D",0 });
 		}
 
 		if (!m_DistortionTextureTag.empty())
@@ -268,7 +276,8 @@ void CMeshNode_Edit::Export(nlohmann::ordered_json& json)
 		{"diffuse_texture_tag",m_DiffuseTextureTag},
 		{"dissolve_texture_tag",m_DissolveTextureTag},
 		{"noise_texture_tag",m_NoiseTextureTag},
-		{"mask_texture_tag",m_MaskTextureTag},
+		{"mask_texture_tag",m_MaskTextureTagA},
+		{"mask_texture_tagB",m_MaskTextureTagB},
 		{"distortion_texture_tag",m_DistortionTextureTag},
 
 		/* Offset Transform */
@@ -333,7 +342,8 @@ void CMeshNode_Edit::Export(nlohmann::ordered_json& json)
 		{"noise_uvspeed",{{"x",m_NoiseModule.vNoiseUVSpeed.x},{"y",m_NoiseModule.vNoiseUVSpeed.y}}},
 
 		/* Mask */
-		{"enable_mask",m_MaskModule.fEnableMask},
+		{"enable_mask",m_MaskModule.fEnableMaskA},
+		{"enable_maskB",m_MaskModule.fEnableMaskB},
 		{"mask_tilling",m_MaskModule.fMaskTilling},
 
 		/* Distortion */
@@ -490,15 +500,17 @@ void CMeshNode_Edit::SetUp_MeshEffect()
 	ImGui::DragFloat("Duration", &m_fDuration);
 
 	if (ImGui::Button("Add Diffuse Texture"))
-		Add_Texture(TEXTURE_TYPE::DIFFUSE);
+		Add_Texture(EFFECT_TEXTURE_TYPE::DIFFUSE);
 	if (ImGui::Button("Add Noise Texture"))
-		Add_Texture(TEXTURE_TYPE::NOISE);
+		Add_Texture(EFFECT_TEXTURE_TYPE::NOISE);
 	if (ImGui::Button("Add Dissolve Texture"))
-		Add_Texture(TEXTURE_TYPE::DISSOLVE);
-	if (ImGui::Button("Add Mask Texture"))
-		Add_Texture(TEXTURE_TYPE::ALPHA_MASK);
+		Add_Texture(EFFECT_TEXTURE_TYPE::DISSOLVE);
+	if (ImGui::Button("Add MaskA Texture"))
+		Add_Texture(EFFECT_TEXTURE_TYPE::MASK_A);
+	if (ImGui::Button("Add MaskB Texture"))
+		Add_Texture(EFFECT_TEXTURE_TYPE::MASK_B);
 	if (ImGui::Button("Add Distortion Texture"))
-		Add_Texture(TEXTURE_TYPE::DISTORTION);
+		Add_Texture(EFFECT_TEXTURE_TYPE::DISTORTION);
 
 	if (ImGui::CollapsingHeader("Texture Slot Module"))
 	{
@@ -510,7 +522,7 @@ void CMeshNode_Edit::SetUp_MeshEffect()
 
 		if (TEXTURE_SLOT_MODULE::MAIN_USAGE::AS_COLOR == m_TextureSlotModule.eMainUsage)
 		{
-			static _bool useRGBMask = false;
+			_bool useRGBMask = m_TextureSlotModule.iRGBMask > 0 ? true : false;
 
 			ImGui::DragInt("Color Mode", reinterpret_cast<_int*>(&m_TextureSlotModule.iColorMode));
 			ImGui::Checkbox("RGB Mask", &useRGBMask);
@@ -572,7 +584,7 @@ void CMeshNode_Edit::SetUp_MeshEffect()
 
 	if (ImGui::CollapsingHeader("Dissolve Module"))
 	{
-		static _bool enableDissolve = false;
+		_bool enableDissolve = m_DissolveModule.fEnableDissolve > 0.5f ? true : false;
 		if (ImGui::Checkbox("Enable Dissolve", &enableDissolve))
 			m_DissolveModule.fEnableDissolve = enableDissolve ? 1.f : 0.f;
 
@@ -591,7 +603,7 @@ void CMeshNode_Edit::SetUp_MeshEffect()
 
 	if (ImGui::CollapsingHeader("Noise Module"))
 	{
-		static _bool enableNoise = false;
+		_bool enableNoise = m_NoiseModule.fEnableNoise > 0.5f ? true : false;
 		if (ImGui::Checkbox("Enable Noise", &enableNoise))
 			m_NoiseModule.fEnableNoise = enableNoise ? 1.f : 0.f;
 
@@ -602,16 +614,20 @@ void CMeshNode_Edit::SetUp_MeshEffect()
 
 	if (ImGui::CollapsingHeader("Mask Module"))
 	{
-		static _bool enableMask = false;
-		if (ImGui::Checkbox("Enable Mask", &enableMask))
-			m_MaskModule.fEnableMask = enableMask ? 1.f : 0.f;
+		_bool enableMaskA = m_MaskModule.fEnableMaskA > 0.5f ? true : false;
+		_bool enableMaskB = m_MaskModule.fEnableMaskB > 0.5f ? true : false;
+
+		if (ImGui::Checkbox("Enable MaskA", &enableMaskA))
+			m_MaskModule.fEnableMaskA = enableMaskA ? 1.f : 0.f;
+		if(ImGui::Checkbox("Enable MaskB",&enableMaskB))
+			m_MaskModule.fEnableMaskB = enableMaskB ? 1.f : 0.f;
 
 		ImGui::DragFloat("Mask Tilling", &m_MaskModule.fMaskTilling);
 	}
 
 	if (ImGui::CollapsingHeader("Distortion Module"))
 	{
-		static _bool enableDistortion = false;
+		_bool enableDistortion = m_DistortionModule.fEnableDistortion > 0.5f ? 1.f : 0.f;
 		if (ImGui::Checkbox("Enable Distortion", &enableDistortion))
 			m_DistortionModule.fEnableDistortion = enableDistortion ? 1.f : 0.f;
 
@@ -621,7 +637,7 @@ void CMeshNode_Edit::SetUp_MeshEffect()
 	}
 }
 
-void CMeshNode_Edit::Add_Texture(TEXTURE_TYPE type)
+void CMeshNode_Edit::Add_Texture(EFFECT_TEXTURE_TYPE type)
 {
 
 	if (!m_pContext->Textures.empty())
@@ -630,35 +646,42 @@ void CMeshNode_Edit::Add_Texture(TEXTURE_TYPE type)
 
 		switch (type)
 		{
-		case Engine::TEXTURE_TYPE::DIFFUSE:
+		case EFFECT_TEXTURE_TYPE::DIFFUSE:
 		{
 			m_DiffuseTextureTag = m_pContext->TextureTags[0];
 
 			auto pDiffuseTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_DiffuseTextureTag);
 			pMaterialInstance->Set_Param("DiffuseTexture", { pDiffuseTexture->Get_SRV(),"Texture2D",0 });
 		}break;
-		case Engine::TEXTURE_TYPE::NOISE:
+		case EFFECT_TEXTURE_TYPE::NOISE:
 		{
 			m_NoiseTextureTag = m_pContext->TextureTags[0];
 
 			auto pNoiseTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_NoiseTextureTag);
 			pMaterialInstance->Set_Param("NoiseTexture", { pNoiseTexture->Get_SRV(),"Texture2D",0 });
 		}break;
-		case Engine::TEXTURE_TYPE::DISSOLVE:
+		case EFFECT_TEXTURE_TYPE::DISSOLVE:
 		{
 			m_DissolveTextureTag = m_pContext->TextureTags[0];
 
 			auto pDissolveTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_DissolveTextureTag);
 			pMaterialInstance->Set_Param("DissolveTexture", { pDissolveTexture->Get_SRV(),"Texture2D",0 });
 		}break;
-		case Engine::TEXTURE_TYPE::ALPHA_MASK:
+		case EFFECT_TEXTURE_TYPE::MASK_A:
 		{
-			m_MaskTextureTag = m_pContext->TextureTags[0];
+			m_MaskTextureTagA = m_pContext->TextureTags[0];
 
-			auto pMaskTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_MaskTextureTag);
-			pMaterialInstance->Set_Param("AlphaMaskTexture", { pMaskTexture->Get_SRV(),"Texture2D",0 });
+			auto pMaskTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_MaskTextureTagA);
+			pMaterialInstance->Set_Param("AlphaMaskTextureA", { pMaskTexture->Get_SRV(),"Texture2D",0 });
 		}break;
-		case Engine::TEXTURE_TYPE::DISTORTION:
+		case EFFECT_TEXTURE_TYPE::MASK_B:
+		{
+			m_MaskTextureTagB = m_pContext->TextureTags[0];
+
+			auto pMaskTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_MaskTextureTagB);
+			pMaterialInstance->Set_Param("AlphaMaskTextureB", { pMaskTexture->Get_SRV(),"Texture2D",0 });
+		}break;
+		case EFFECT_TEXTURE_TYPE::DISTORTION:
 		{
 			m_DistortionTextureTag = m_pContext->TextureTags[0];
 

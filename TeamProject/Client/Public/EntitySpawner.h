@@ -21,6 +21,10 @@ typedef struct tagOBJSpec {
 	function<CGameObject* ()> Create;
 }OBJ_SPEC;
 
+enum class ENTITY_TYPE { NPC, INTERACTABLE, ETC };
+
+//임시용으로 콜백함수받음 나중에없앨것
+void Register_Prototype(const string& MapDataName, const string& PrototypeTag, function<CGameObject*()> Create, ENTITY_TYPE EntityaType);
 OBJECT_HANDLE Create_Entity(const SPAWNER_DESC& Desc);
 
 OBJECT_HANDLE Create_NPC(const SPAWNER_DESC& Desc);

@@ -25,9 +25,4 @@ enum class CamSpace
 {
 	Local, World
 };
-enum class CamBoneMode
-{
-	Parent, LookAt
-};
-
 NS_END
