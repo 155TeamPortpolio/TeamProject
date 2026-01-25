@@ -843,6 +843,9 @@
     <Filter Include="02. GameObject\UI\03. UIElement\NineSlice">
       <UniqueIdentifier>{2646c162-8883-48f9-b637-d3f38abb755c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03. Utility\04. BattleSystem\FX_Battle">
+      <UniqueIdentifier>{80b278d6-d073-43f9-b769-b90f4b580861}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1577,9 +1580,6 @@
     <ClInclude Include="..\public\DisplayGate.h">
       <Filter>02. GameObject\Camera\99. DisplayGate</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\BattleSystem_Struct.h">
-      <Filter>03. Utility\04. BattleSystem</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\MonsterSpawner.h">
       <Filter>03. Utility\04. BattleSystem\Monster Spawner</Filter>
     </ClInclude>
@@ -1642,6 +1642,12 @@
     </ClInclude>
     <ClInclude Include="..\Public\NineSliceUI.h">
       <Filter>02. GameObject\UI\03. UIElement\NineSlice</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\BattleSystem_Struct.h">
+      <Filter>03. Utility\04. BattleSystem\Monster Spawner</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\BattleFXFlow.h">
+      <Filter>03. Utility\04. BattleSystem\FX_Battle</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2400,6 +2406,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\NineSliceUI.cpp">
       <Filter>02. GameObject\UI\03. UIElement\NineSlice</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\BattleFXFlow.cpp">
+      <Filter>03. Utility\04. BattleSystem\FX_Battle</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
