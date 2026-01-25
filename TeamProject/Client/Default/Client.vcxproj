@@ -530,7 +530,9 @@
     <ClCompile Include="..\Private\AttackSign.cpp" />
     <ClCompile Include="..\Private\BattleFXFlow.cpp" />
     <ClCompile Include="..\private\Room_Lottery.cpp" />
-    <ClCompile Include="..\private\UI_DamageText.cpp" />
+    <ClCompile Include="..\private\UI_DamageText.cpp">
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='ReleaseDebug|x64'">Disabled</Optimization>
+    </ClCompile>
     <ClCompile Include="..\private\DialogueNpc.cpp" />
     <ClCompile Include="..\private\ElectricBoo.cpp" />
     <ClCompile Include="..\Private\NineSliceUI.cpp" />
