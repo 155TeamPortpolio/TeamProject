@@ -1,5 +1,6 @@
 #pragma once
 #include "Base.h"
+#include "MapData_Defines.h"
 
 NS_BEGIN(Client)
 
@@ -34,6 +35,11 @@ public:
     HRESULT LoadNpcDialogueData(const string& csvPath);
     HRESULT LoadNpcChoiceData(const string& csvPath);
 
+public:
+    const CASHED_OBJ_DATA* Get_CashedData(const string& MapTag);
+    void Update_CashedData(const string& MapTag, const CASHED_OBJ_DATA& Data);
+    void Clear_CashedData();
+
 private:
     vector<string_view> SplitFileName(string_view s, _char delim);
 
@@ -56,6 +62,9 @@ private:
     unordered_map<wstring, NpcIDDesc>                       m_NpcIDTables;
     map<pair<string, _uint>, NpcDialogueDesc>		        m_DialogueTables;
     unordered_map<string, ChoiceDesc>				        m_DialgoueChoiceTables;
+
+    //맵 데이터 <-> 런타임 데이터 연결용 (현재 작동중인 레벨에서만)
+    unordered_map<string, CASHED_OBJ_DATA>                  m_CashedData;
 
 public:
     virtual void Free() override;

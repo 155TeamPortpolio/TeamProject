@@ -72,4 +72,62 @@ namespace Client {
 	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Entity_Header, TagDataFormat, TagArea, iVersion, Entities);
 
 
+	// DB 맵 데이터 저장용
+	enum class MAPOBJ_TYPE { PLACED, TRIGGER, INVWALL, ENTITY, END };
+	using MapSlotValue = variant<monostate, _int, _float, _bool, string, _float2, _float3, _float4>;
+	typedef struct tagCashedMapObject {
+		_int			DataIndex;
+		string			DataName;
+		OBJECT_HANDLE	Handle;
+		unordered_map<string, MapSlotValue> SlotValues;
+
+		template<typename T>
+		T Get_SlotValue(const string& SlotTag)
+		{
+			auto iter = SlotValues.find(SlotTag);
+			if (iter == SlotValues.end()) return T();
+			return get_if<T>(iter->second);
+		}
+	}CASHED_OBJECT;
+
+	typedef struct tagCashedData {
+		string MapDataTag;
+		vector<CASHED_OBJECT> MapObj;
+		vector<CASHED_OBJECT> Trigger;
+		vector<CASHED_OBJECT> InvWall;
+		vector<CASHED_OBJECT> Entity;
+
+		const vector<CASHED_OBJECT>* Select(MAPOBJ_TYPE eType) const
+		{
+			switch (eType)
+			{
+			case MAPOBJ_TYPE::PLACED:	return &MapObj;
+			case MAPOBJ_TYPE::TRIGGER:	return &Trigger;
+			case MAPOBJ_TYPE::INVWALL:	return &InvWall;
+			case MAPOBJ_TYPE::ENTITY:	return &Entity;
+			default:					return nullptr;
+			}
+		}
+
+		const CASHED_OBJECT* GetDataByVectorIndex(_uint i, MAPOBJ_TYPE eType) const
+		{
+			const vector<CASHED_OBJECT>* Data = Select(eType);
+			if (!Data) return nullptr;
+			
+			if (!Data || Data->size() <= i) return nullptr;
+			return &(*Data)[i];
+		}
+
+		const CASHED_OBJECT* GetDataByDataIndex(_uint i, MAPOBJ_TYPE eType) const
+		{
+			const vector<CASHED_OBJECT>* Data = Select(eType);
+			if (!Data) return nullptr;
+			
+			for (const auto& iter : *Data)
+				if (iter.DataIndex == i) return &iter;
+
+			return nullptr;
+		}
+
+	}CASHED_OBJ_DATA;
 }

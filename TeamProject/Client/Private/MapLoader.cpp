@@ -50,16 +50,6 @@ void CMapLoader::Update_Load()
     }
 }
 
-OBJECT_HANDLE CMapLoader::MapIndexToEntityHandle(_uint iIndex)
-{
-    auto iter = m_EntityObjectHandle.find(iIndex);
-    
-    if (iter == m_EntityObjectHandle.end())
-        return OBJECT_HANDLE();
-
-    return iter->second;
-}
-
 HRESULT CMapLoader::Load_BaseData(const string& TagArea, _bool* CheckMapBase, _bool* CheckEntityBase)
 {
     auto pPackets = CDataBase::GetInstance()->GetMapDataPacket(TagArea);
@@ -133,10 +123,10 @@ void CMapLoader::PlaceObjects_Once()
         for (auto& objectdata : layerdata.Objects) {
             switch (eType)
             {
-            case Client::CMapLoader::MAPOBJ_TYPE::PLACED:
+            case Client::MAPOBJ_TYPE::PLACED:
                 Place_PlacedObjectFromLoadData(&objectdata);
                 break;
-            case Client::CMapLoader::MAPOBJ_TYPE::TRIGGER:
+            case Client::MAPOBJ_TYPE::TRIGGER:
                 Place_TriggerObjectFromLoadData(&objectdata);
                 break;
             }
@@ -153,9 +143,9 @@ void CMapLoader::PlaceObjects_Once()
 
 _bool CMapLoader::PlaceObjects_Split()
 {
-    if (m_LoadingQueue.empty())
+    if (m_LoadingQueue.empty()) {
         return true;
-
+    }
     auto& Job = m_LoadingQueue.front();
 
     switch (Job.Type)
@@ -234,6 +224,20 @@ void CMapLoader::Place_PlacedObjectFromLoadData(MapData_Object* pData)
     //pStaticObject->Get_Component<CTransform>()->TranslateMatrix(XMLoadFloat4x4(&matWorld));
 
     pObjMgr->Add_Object(pStaticObject, { m_TagLevel, m_TagLayers[ENUM(MAPOBJ_TYPE::PLACED)] });
+
+    /* 캐싱용 데이터 */
+    CASHED_OBJECT OBJ;
+    OBJ.DataIndex = pData->iObjID;
+    OBJ.DataName = pData->TagModelResourceKey;
+    OBJ.Handle = pStaticObject->Get_Handle();
+
+    for (auto& tSlotData : m_EntitySlotFormatData) {
+        for (auto& FieldData : tSlotData.second[pData->iObjID])
+            OBJ.SlotValues.emplace(FieldData.TagName, FieldData.defaultvalue.value);
+    }
+
+    m_MapObjectHandle.push_back(OBJ);
+
 }
 
 void CMapLoader::Place_TriggerObjectFromLoadData(MapData_Object* pData)
@@ -309,11 +313,21 @@ void CMapLoader::Place_EntityFromLoadData(ENTITY_INIT* pData)
             SpawnerDesc.SlotDataValues[tSlotData.first].push_back(FieldData);
     }
 
-    /* 여기에 엔티티 이용해서 생성 */
-    m_EntityObjectHandle.emplace(pData->iEntityID, Spawner::Create_Entity(SpawnerDesc));
+    /* 캐싱용 데이터 */
+    CASHED_OBJECT OBJ;
+    OBJ.DataIndex = pData->iEntityID;
+    OBJ.DataName = pData->tagName;
+    OBJ.Handle = Spawner::Create_Entity(SpawnerDesc);
+
+    for (auto& tSlotData : m_EntitySlotFormatData) {
+        for (auto& FieldData : tSlotData.second[pData->iEntityID])
+            OBJ.SlotValues.emplace(FieldData.TagName, FieldData.defaultvalue.value);
+    }
+    
+    m_EntityObjectHandle.push_back(OBJ);
 }
 
-CMapLoader::MAPOBJ_TYPE CMapLoader::Check_LayerTag(const string& TagLayer)
+MAPOBJ_TYPE CMapLoader::Check_LayerTag(const string& TagLayer)
 {
     MAPOBJ_TYPE eType = {};
     if (m_TagLayers[ENUM(MAPOBJ_TYPE::PLACED)] == TagLayer)

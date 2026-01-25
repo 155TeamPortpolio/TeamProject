@@ -7,8 +7,6 @@ NS_BEGIN(Client)
 class CMapLoader final : public CBase
 {
 public:
-	enum class MAPOBJ_TYPE { PLACED, TRIGGER, ENTITY, END };
-
 	using ObjFields = vector<FIELD_DATA>;					// 한 데이터 묶음(ObjID, 변수명, 값)
 	using ObjFieldMap = unordered_map<int, ObjFields>;		// ObjID별로 매핑된 데이터 묶음
 	using SlotFormatData = unordered_map<string, ObjFieldMap>;	// slotFormat별로 매핑된 데이터 묶음
@@ -25,8 +23,6 @@ private:
 public:
 	HRESULT Initialize(const string& TagLevel, const string& TagArea, _uint SplitLoadCount);
 	void	Update_Load();
-
-	OBJECT_HANDLE	MapIndexToEntityHandle(_uint iIndex);
 
 	template<typename T>
 	optional<T> Get_EntitySlotDataValue(const string& TagFormat, _uint iEntityIndex, const string& TagName);
@@ -59,9 +55,11 @@ private:
 	unordered_map<Format유형(effect, physics...), unordered_map<오브젝트 ID, vector<(ObjID, 변수명, 값)>>>*/
 	unordered_map<string, unordered_map<_int, vector<FIELD_DATA>>>	m_MapSlotFormatData;
 	unordered_map<string, unordered_map<_int, vector<FIELD_DATA>>>	m_EntitySlotFormatData;
+	_bool m_hasColliderData = {};
 
-	_bool			m_hasColliderData = {};
-	unordered_map<_int, OBJECT_HANDLE>	m_EntityObjectHandle;
+	/*--------------------------------------------------------------------*/
+	vector<CASHED_OBJECT>	m_MapObjectHandle;
+	vector<CASHED_OBJECT>	m_EntityObjectHandle;
 	queue<LoadingQueue>		m_LoadingQueue;
 
 	_bool			m_bHasMapBase{}, m_bHasEntityBase{};
