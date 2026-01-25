@@ -19,7 +19,7 @@ CUI_Manager::~CUI_Manager()
 void CUI_Manager::Pre_EngineUpdate(_float dt)
 {
 
-	
+	CleanUp();
 
 	m_nowLevelKey = CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey();
 	
