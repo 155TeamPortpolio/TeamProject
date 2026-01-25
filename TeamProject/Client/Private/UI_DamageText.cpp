@@ -5,6 +5,22 @@
 #include "GameInstance.h"
 #include "LevelMgr.h"
 
+namespace
+{
+    constexpr float kDamage_InTotalSec  = 0.50f;
+    constexpr float kDamage_HoldSec     = 3.00f;
+    constexpr float kDamage_OutTotalSec = 0.50f;
+
+    constexpr float kDamage_DigitInSec  = 0.20f;
+    constexpr float kDamage_DigitOutSec = 0.20f;
+
+    constexpr float kDamage_AlphaOutSecRatio = 0.50f;
+
+    constexpr float kDamage_ScaleStart = 1.85f;
+    constexpr float kDamage_ScaleHold = 0.68f;
+    constexpr float kDamage_ScaleEnd = 0.42f;
+}
+
 CUI_DamageText::CUI_DamageText(const CUI_DamageText& rhs) : CUI_Object(rhs)
 {
     m_glyphs.clear();
@@ -32,7 +48,7 @@ HRESULT CUI_DamageText::Initialize(INIT_DESC* pArg)
     m_digits.clear();
 
     {
-        m_atlasTextureKey = "DamageText.png";
+        m_atlasTexKey = "DamageText.png";
 
         m_frameCountX = 8;
         m_frameCountY = 8;
@@ -54,22 +70,19 @@ HRESULT CUI_DamageText::Initialize(INIT_DESC* pArg)
 
     Set_Color(_float4(1.f, 1.f, 1.f, 1.f));
 
-    Set_DamageValue(123456789);
+    Set_DamageValue(1234);
 
     return S_OK;
 }
 
-
 void CUI_DamageText::Update(_float dt)
 {
-    static constexpr _float timeScale = 0.2f;
+    __super::Update(dt);
 
-    __super::Update(dt * timeScale);
-
-    Update_Anim(dt * timeScale);
+    Update_Anim(dt);
     Apply_LayoutScaled();
 
-    Get_Component<CObjectContainer>()->UpdateChild(dt * timeScale);
+    Get_Component<CObjectContainer>()->UpdateChild(dt);
 }
 
 void CUI_DamageText::Set_DamageValue(_int damageValue)
@@ -92,7 +105,7 @@ void CUI_DamageText::Set_TextNumber(const string& digits)
         if (c >= '0' && c <= '9') frameIndex = GetDigitFrameIdx((_uint)(c - '0'));
 
         auto glyph = GetGlyph(i);
-        glyph->Set_Atlas(m_atlasTextureKey, m_frameCountX, m_frameCountY);
+        glyph->Set_Atlas(m_atlasTexKey, m_frameCountX, m_frameCountY);
         glyph->Set_HeightPx(m_glyphHeightPx);
         glyph->Set_FrameIndex(frameIndex);
         glyph->Set_Color(m_vColor);
@@ -118,36 +131,6 @@ void CUI_DamageText::Set_TextNumber(const string& digits)
 
     Rebuild_BaseLayout();
     Apply_LayoutScaled();
-}
-
-void CUI_DamageText::Ensure_GlyphCount(_uint count)
-{
-    auto pContainer = Get_Component<CObjectContainer>();
-    const string& levelKey = LevelManager()->Get_NowLevelKey();
-
-    while ((_uint)m_glyphs.size() < count)
-    {
-        auto pDesc = new CUI_AtlasSprite::ATLAS_DESC;
-        pDesc->textureKey = m_atlasTextureKey;
-        pDesc->frameCountX = m_frameCountX;
-        pDesc->frameCountY = m_frameCountY;
-        pDesc->frameIndex = 0;
-        pDesc->heightPx = m_glyphHeightPx;
-
-        auto builder = Builder::Create_UIObject({levelKey, "Proto_GameObject_AtlasSprite"});
-        builder.Add_UIDesc(pDesc);
-
-        CUI_Object* obj = builder.Build("damageGlyph" + to_string((_uint)m_glyphs.size()));
-        auto glyph = dynamic_cast<CUI_AtlasSprite*>(obj);
-
-        if (!glyph) return;
-
-        pContainer->Add_Child(glyph);
-        m_glyphs.push_back(glyph);
-
-        glyph->Align_To(ANCHOR::Left | ANCHOR::Top);
-        glyph->Set_Pivot({0.f, 0.f});
-    }
 }
 
 void CUI_DamageText::Rebuild_BaseLayout()
@@ -189,24 +172,35 @@ void CUI_DamageText::Apply_LayoutScaled()
         return;
     }
 
-    const _float digitInStaggerSec = 0.035f;
-    const _float digitInSec = 0.10f;
+    const _float inTotalSec = 0.5f;
+    const _float holdSec = 3.0f;
+    const _float outTotalSec = 0.5f;
 
-    const _float digitOutStaggerSec = 0.035f;
-    const _float digitOutSec = 0.10f;
+    _float digitInSec = inTotalSec;
+    _float digitInStaggerSec = 0.f;
 
-    const _float inTotalSec = (count - 1u) * digitInStaggerSec + digitInSec;
-    const _float outTotalSec = (count - 1u) * digitOutStaggerSec + digitOutSec;
+    if (count > 1u)
+    {
+        digitInSec = 0.20f;
+        digitInStaggerSec = (inTotalSec - digitInSec) / (_float)(count - 1u);
+    }
 
-    _float holdSec = m_lifeSec - (inTotalSec + outTotalSec);
-    if (holdSec < 0.f) holdSec = 0.f;
+    _float digitOutSec = outTotalSec;
+    _float digitOutStaggerSec = 0.f;
+
+    if (count > 1u)
+    {
+        digitOutSec = 0.20f;
+        digitOutStaggerSec = (outTotalSec - digitOutSec) / (_float)(count - 1u);
+    }
 
     const _float exitStartSec = inTotalSec + holdSec;
+    const _float endSec = exitStartSec + outTotalSec;
 
     _float rise = 0.f;
     if (m_risePx > 0.f)
     {
-        const _float u = clamp(m_time / m_lifeSec, 0.f, 1.f);
+        const _float u = clamp(m_time / endSec, 0.f, 1.f);
         rise = m_risePx * u;
     }
 
@@ -215,15 +209,13 @@ void CUI_DamageText::Apply_LayoutScaled()
     const _float glyphW = m_glyphHeightPx * m_glyphAspect;
     const _float glyphH = m_glyphHeightPx;
 
-    const _float scaleStart = 1.08f;
+    const _float scaleStart = 1.85f;
     const _float scaleHold = 0.68f;
     const _float scaleEnd = 0.42f;
 
     for (_uint i = 0; i < count; ++i)
     {
-        const _uint phase = i;
-
-        const _float inStart = phase * digitInStaggerSec;
+        const _float inStart = (_float)i * digitInStaggerSec;
 
         _float s = scaleStart;
         if (m_time >= inStart)
@@ -234,7 +226,7 @@ void CUI_DamageText::Apply_LayoutScaled()
             s = Math::Lerp(scaleStart, scaleHold, u);
         }
 
-        const _float outStart = exitStartSec + phase * digitOutStaggerSec;
+        const _float outStart = exitStartSec + (_float)i * digitOutStaggerSec;
         if (m_time >= outStart)
         {
             _float u = (m_time - outStart) / digitOutSec;
@@ -257,7 +249,6 @@ void CUI_DamageText::Apply_LayoutScaled()
 }
 
 
-
 void CUI_DamageText::Update_Anim(_float dt)
 {
     const _uint count = (_uint)m_digits.size();
@@ -265,26 +256,36 @@ void CUI_DamageText::Update_Anim(_float dt)
 
     m_time += dt;
 
-    const _float digitInStaggerSec = 0.035f;
-    const _float digitInSec = 0.10f;
+    const _float inTotalSec = 0.5f;
+    const _float holdSec = 3.0f;
+    const _float outTotalSec = 0.5f;
 
-    const _float digitOutStaggerSec = 0.050f;
-    const _float digitOutSec = 0.22f;
+    _float digitInSec = inTotalSec;
+    _float digitInStaggerSec = 0.f;
 
-    const _float inTotalSec = (count - 1u) * digitInStaggerSec + digitInSec;
-    const _float outTotalSec = (count - 1u) * digitOutStaggerSec + digitOutSec;
+    if (count > 1u)
+    {
+        digitInSec = 0.20f;
+        digitInStaggerSec = (inTotalSec - digitInSec) / (_float)(count - 1u);
+    }
 
-    _float holdSec = m_lifeSec - (inTotalSec + outTotalSec);
-    if (holdSec < 0.f) holdSec = 0.f;
+    _float digitOutSec = outTotalSec;
+    _float digitOutStaggerSec = 0.f;
+
+    if (count > 1u)
+    {
+        digitOutSec = 0.20f;
+        digitOutStaggerSec = (outTotalSec - digitOutSec) / (_float)(count - 1u);
+    }
+
+    const _float alphaOutSec = digitOutSec * 0.5f;
 
     const _float exitStartSec = inTotalSec + holdSec;
     const _float endSec = exitStartSec + outTotalSec;
 
     for (_uint i = 0; i < count; ++i)
     {
-        const _uint phase = i;
-
-        const _float inStart = phase * digitInStaggerSec;
+        const _float inStart = (_float)i * digitInStaggerSec;
 
         _float alphaIn = 0.f;
         if (m_time >= inStart)
@@ -294,12 +295,12 @@ void CUI_DamageText::Update_Anim(_float dt)
             alphaIn = Math::ApplyEase(EaseType::OutCubic, u);
         }
 
-        const _float outStart = exitStartSec + phase * digitOutStaggerSec;
+        const _float outStart = exitStartSec + (_float)i * digitOutStaggerSec;
 
         _float alphaOut = 1.f;
         if (m_time >= outStart)
         {
-            _float u = (m_time - outStart) / digitOutSec;
+            _float u = (m_time - outStart) / alphaOutSec;
             u = clamp(u, 0.f, 1.f);
             alphaOut = 1.f - Math::ApplyEase(EaseType::OutCubic, u);
         }
@@ -309,6 +310,35 @@ void CUI_DamageText::Update_Anim(_float dt)
     }
 
     if (m_time >= endSec) Set_Alive(false);
+}
+
+
+void CUI_DamageText::Ensure_GlyphCount(_uint count)
+{
+    auto container = Get_Component<CObjectContainer>();
+    const string& levelKey = LevelManager()->Get_NowLevelKey();
+
+    while ((_uint)m_glyphs.size() < count)
+    {
+        auto pDesc = new CUI_AtlasSprite::ATLAS_DESC;
+        pDesc->texKey = m_atlasTexKey;
+        pDesc->frameCountX = m_frameCountX;
+        pDesc->frameCountY = m_frameCountY;
+        pDesc->frameIndex = 0;
+        pDesc->heightPx = m_glyphHeightPx;
+
+        auto builder = Builder::Create_UIObject({levelKey, "Proto_GameObject_AtlasSprite"});
+        builder.Add_UIDesc(pDesc);
+
+        CUI_Object* obj = builder.Build("damageGlyph" + to_string((_uint)m_glyphs.size()));
+        auto glyph = static_cast<CUI_AtlasSprite*>(obj);
+
+        container->Add_Child(glyph);
+        m_glyphs.push_back(glyph);
+
+        glyph->Align_To(ANCHOR::Left | ANCHOR::Top);
+        glyph->Set_Pivot({0.f, 0.f});
+    }
 }
 
 _uint CUI_DamageText::GetDigitFrameIdx(_uint digit) const

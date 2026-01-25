@@ -8,7 +8,7 @@ class CUI_AtlasSprite final : public CUI_Object
 public:
     struct ATLAS_DESC : public UI_DESC
     {
-        string textureKey;
+        string texKey;
         _uint  frameCountX = 1;
         _uint  frameCountY = 1;
         _uint  frameIndex = 0;
@@ -36,7 +36,7 @@ private:
     void Update_SizeByHeight();
 
 private:
-    string m_textureKey;
+    string m_texKey;
 
     _uint  m_frameCountX = 1;
     _uint  m_frameCountY = 1;

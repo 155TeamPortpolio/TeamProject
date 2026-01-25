@@ -14,25 +14,25 @@ HRESULT CUI_AtlasSprite::Initialize_Prototype()
 
 HRESULT CUI_AtlasSprite::Initialize(INIT_DESC* pArg)
 {
-    ATLAS_DESC* pDesc = static_cast<ATLAS_DESC*>(pArg);
+    ATLAS_DESC* desc = static_cast<ATLAS_DESC*>(pArg);
 
     __super::Initialize(pArg);
 
-    auto pSprite = Get_Component<CSprite2D>();
-    pSprite->Link_Shader(G_GlobalLevelKey, "VTX_UI.hlsl");
-    pSprite->ChangePass("SpriteAnimation");
+    auto sprite = Get_Component<CSprite2D>();
+    sprite->Link_Shader(G_GlobalLevelKey, "VTX_UI.hlsl");
+    sprite->ChangePass("SpriteAnimation");
 
-    if (pDesc)
+    if (desc)
     {
-        m_textureKey = pDesc->textureKey;
-        m_frameCountX = pDesc->frameCountX;
-        m_frameCountY = pDesc->frameCountY;
-        m_frameIndex = pDesc->frameIndex;
-        m_heightPx = pDesc->heightPx;
+        m_texKey      = desc->texKey;
+        m_frameCountX = desc->frameCountX;
+        m_frameCountY = desc->frameCountY;
+        m_frameIndex  = desc->frameIndex;
+        m_heightPx    = desc->heightPx;
     }
 
-    if (!m_textureKey.empty())
-        pSprite->Change_Texture(0, G_GlobalLevelKey, m_textureKey);
+    if (!m_texKey.empty())
+        sprite->Change_Texture(0, G_GlobalLevelKey, m_texKey);
 
     Update_SizeByHeight();
     Apply_Params();
@@ -49,11 +49,11 @@ void CUI_AtlasSprite::Update(_float dt)
 
 void CUI_AtlasSprite::Set_Atlas(const string& textureKey, _uint frameCountX, _uint frameCountY)
 {
-    m_textureKey = textureKey;
+    m_texKey = textureKey;
     m_frameCountX = max(1u, frameCountX);
     m_frameCountY = max(1u, frameCountY);
 
-    Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, m_textureKey);
+    Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, m_texKey);
 
     Update_SizeByHeight();
     Apply_Params();

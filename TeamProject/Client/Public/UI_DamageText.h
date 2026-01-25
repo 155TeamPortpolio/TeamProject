@@ -31,7 +31,7 @@ private:
     CUI_AtlasSprite* GetGlyph(_uint i) const { return m_glyphs[i]; }
 
 private:
-    string m_atlasTextureKey;
+    string m_atlasTexKey;
 
     _float m_glyphAspect = 1.f;
 
