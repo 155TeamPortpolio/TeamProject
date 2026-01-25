@@ -139,11 +139,14 @@ void CMapLoader::PlaceObjects_Once()
 
     for (auto& EntityData : m_EntityBaseData.Entities)
         Place_EntityFromLoadData(&EntityData);
+
+    Update_Database();
 }
 
 _bool CMapLoader::PlaceObjects_Split()
 {
     if (m_LoadingQueue.empty()) {
+        Update_Database();
         return true;
     }
     auto& Job = m_LoadingQueue.front();
@@ -159,6 +162,17 @@ _bool CMapLoader::PlaceObjects_Split()
     m_LoadingQueue.pop();
 
     return m_LoadingQueue.empty();
+}
+
+void CMapLoader::Update_Database()
+{
+    CASHED_OBJ_DATA Data;
+    Data.MapDataTag = m_TagLevel;
+    Data.MapObj = m_MapObjectHandle;
+    Data.Trigger = m_TriggerObjectHandle;
+    Data.Entity = m_EntityObjectHandle;
+
+    CDataBase::GetInstance()->Update_CashedData(m_TagLevel, Data);
 }
 
 void CMapLoader::Place_PlacedObjectFromLoadData(MapData_Object* pData)
@@ -291,6 +305,19 @@ void CMapLoader::Place_TriggerObjectFromLoadData(MapData_Object* pData)
 
     IObjectService* pObjMgr = CGameInstance::GetInstance()->Get_ObjectMgr();
     pObjMgr->Add_Object(pStaticObject, { m_TagLevel, m_TagLayers[ENUM(MAPOBJ_TYPE::TRIGGER)] });
+
+    /* 캐싱용 데이터 */
+    CASHED_OBJECT OBJ;
+    OBJ.DataIndex = pData->iObjID;
+    OBJ.DataName = pData->TagModelResourceKey;
+    OBJ.Handle = pStaticObject->Get_Handle();
+
+    for (auto& tSlotData : m_EntitySlotFormatData) {
+        for (auto& FieldData : tSlotData.second[pData->iObjID])
+            OBJ.SlotValues.emplace(FieldData.TagName, FieldData.defaultvalue.value);
+    }
+
+    m_MapObjectHandle.push_back(OBJ);
 }
 
 void CMapLoader::Place_EntityFromLoadData(ENTITY_INIT* pData)

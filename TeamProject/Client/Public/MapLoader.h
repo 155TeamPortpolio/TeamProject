@@ -32,6 +32,7 @@ private:
 	void			Set_LoadingQueue();
 	void			PlaceObjects_Once();
 	_bool			PlaceObjects_Split();
+	void			Update_Database();
 	
 private:
 	void			Place_PlacedObjectFromLoadData(MapData_Object* pData);
@@ -59,6 +60,7 @@ private:
 
 	/*--------------------------------------------------------------------*/
 	vector<CASHED_OBJECT>	m_MapObjectHandle;
+	vector<CASHED_OBJECT>	m_TriggerObjectHandle;
 	vector<CASHED_OBJECT>	m_EntityObjectHandle;
 	queue<LoadingQueue>		m_LoadingQueue;
 

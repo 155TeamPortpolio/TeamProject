@@ -467,27 +467,6 @@ HRESULT CDataBase::LoadNpcChoiceData(const string& csvPath)
 	return S_OK;
 }
 
-const CASHED_OBJ_DATA* CDataBase::Get_CashedData(const string& MapTag)
-{
-	auto iter = m_CashedData.find(MapTag);
-	if (iter == m_CashedData.end()) return nullptr;
-	return &iter->second;
-}
-
-void CDataBase::Update_CashedData(const string& MapTag, const CASHED_OBJ_DATA& Data)
-{
-	auto iter = m_CashedData.find(MapTag);
-	if (iter != m_CashedData.end())
-		iter->second = Data;
-	else
-		m_CashedData.emplace(MapTag, Data);
-}
-
-void CDataBase::Clear_CashedData()
-{
-	m_CashedData.clear();
-}
-
 HRESULT CDataBase::LoadBattleFieldData(const string& BattleDataFolderPath)
 {
 	Helper::EnsureDirectoryExist(BattleDataFolderPath);
@@ -574,6 +553,27 @@ HRESULT CDataBase::LoadMonsterSpawnData(const string& csvPath)
 	}
 
 	return S_OK;
+}
+
+const CASHED_OBJ_DATA* CDataBase::Get_CashedData(const string& MapTag)
+{
+	auto iter = m_CashedData.find(MapTag);
+	if (iter == m_CashedData.end()) return nullptr;
+	return &iter->second;
+}
+
+void CDataBase::Update_CashedData(const string& MapTag, const CASHED_OBJ_DATA& Data)
+{
+	auto iter = m_CashedData.find(MapTag);
+	if (iter != m_CashedData.end())
+		iter->second = Data;
+	else
+		m_CashedData.emplace(MapTag, Data);
+}
+
+void CDataBase::Clear_CashedData()
+{
+	m_CashedData.clear();
 }
 
 vector<string_view> CDataBase::SplitFileName(string_view s, _char delim)
