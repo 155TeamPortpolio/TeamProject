@@ -12,16 +12,13 @@ class CCamDialogueController
 public:
     void  Reset();
 
-    void  Begin(_float targetFov = 30.f, _float blendSec = 0.5f, _float assumedPartnerFrontDist = 1.f, OBJECT_HANDLE partnerHandle = {});
+    void  Begin(_float targetFov = 30.f, _float blendSec = 0.5f);
     void  End(_float blendSec = 0.5f);
 
     void  Update(_float dt, CCamera* cam, COrbitCam* orbit, CTransform* focusTr);
 
     _bool IsHolding() const { return holding; }
     _bool IsBusy()    const { return holding || blending; }
-
-    void  SetPartner(OBJECT_HANDLE handle) { partnerHandle = handle; }
-    void  ClearPartner() { partnerHandle.Reset(); }
 
 private:
     _bool         holding = false;
@@ -30,8 +27,6 @@ private:
 
     _float        savedFov = 0.f;
     _float        holdFov = 30.f;
-
-    _float        assumedPartnerFrontDist = 1.f;
 
     OBJECT_HANDLE partnerHandle{};
 
@@ -48,6 +43,7 @@ private:
     EaseType      ease = EaseType::InOutSine;
 
     _float        maxPivotOffset = 0.8f;
+    _float        faceYOffsetMul = 0.85f;
 };
 
 NS_END
