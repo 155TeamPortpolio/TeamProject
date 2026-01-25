@@ -89,7 +89,7 @@ private:
 	MapData_Header	m_MapData = {};
 	Entity_Header	m_EntityData = {};
 	BATTLE_FIELD_DATA m_BattleData = {};
-	_uint			m_iBattleTableIndex = {};
+	///_uint			m_iBattleTableIndex = {};
 	_float2			m_vShowDataSaveFinish = {};
 	_bool			m_isShowDataSaveFinish = { false };
 

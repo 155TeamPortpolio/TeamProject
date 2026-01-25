@@ -74,7 +74,7 @@ namespace Client {
 	};
 
 	typedef struct tagMapDataFilePacket {
-		string		TagDataFormat = {};			// MapData, EntityData
+		string		TagDataFormat = {};			// MapData, EntityData, BattleData
 		string		TagSlotFormat = {};			// Base, Physics, Effect, SlotA, SlotB ...
 		string		TagArea = {};				// 지형 이름
 		string		TagDataFileKey = {};		// 파일 이름
@@ -108,4 +108,11 @@ namespace Client {
 		_float fDelayTime = { 0.3f };
 		_bool isDelay = {};
 	}GAUGE_DELAY_DESC;
+
+	typedef struct tagBattlePointMappingData
+	{
+		_int	MonsterSpawnID = { -1 };
+		string	MonsterKey = "";
+	}MONSTER_SPAWN_DESC;
+
 }
