@@ -7,12 +7,8 @@
 
 namespace
 {
-    // 데미지 텍스트에 사용할 아틀라스(스프라이트 시트) 텍스처 키
-    // CUI_AtlasSprite가 이 키로 텍스처/리소스를 찾는 용도
     static const string kAtlasTexKey = "DamageText.png";
 
-    // 아틀라스(스프라이트 시트)의 가로/세로 프레임 개수
-    // frameIdx를 (x,y) 그리드에서 하나로 펴는 기준이 됨
     constexpr _uint  kFrameCountX = 8;
     constexpr _uint  kFrameCountY = 8;
 
@@ -36,7 +32,7 @@ namespace
     // 전체 "등장" 구간의 총 시간(초)
     // 여러 자리일 때 digitInStaggerSec로 각 자리 등장 시작을 분산시키되,
     // 전체적으로 kInTotalSec 안에 다 들어오게 맞춤
-    constexpr _float kInTotalSec = 0.5f;
+    constexpr _float kInTotalSec = 0.4f;
 
     // 등장 후 화면에 유지되는(홀드) 시간(초)
     constexpr _float kHoldSec = 1.50f;
@@ -44,7 +40,7 @@ namespace
     // 전체 "퇴장" 구간의 총 시간(초)
     // 여러 자리일 때 digitOutStaggerSec로 각 자리 퇴장 시작을 분산시키되,
     // 전체적으로 kOutTotalSec 안에 다 들어오게 맞춤
-    constexpr _float kOutTotalSec = 0.50f;
+    constexpr _float kOutTotalSec = 0.40f;
 
     // 한 자리(글리프)당 인(등장) 애니메이션 지속 시간(초)
     // 여러 자리일 때 각 자리별 인 애니가 이 시간만큼 진행됨
@@ -62,8 +58,8 @@ namespace
     // - Hold : 유지 구간에서의 안정 크기
     // - End  : 사라질 때의 최종 크기
     constexpr _float kScaleStart = 1.85f;
-    constexpr _float kScaleHold = 0.68f;
-    constexpr _float kScaleEnd = 0.42f;
+    constexpr _float kScaleHold  = 0.68f;
+    constexpr _float kScaleEnd   = 0.42f;
 
     // 스케일/알파에 적용하는 이징 타입
     // - ScaleEase: 크기 변화에 쓰는 곡선
