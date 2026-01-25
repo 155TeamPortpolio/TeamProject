@@ -49,32 +49,50 @@ namespace
 
 void CCamDialogueController::Reset()
 {
+    holding = false;
+    blending = false;
+    restoring = false;
+
+    savedFov = 0.f;
     holdFov = 30.f;
-    dur = 0.5f;
-    ease = EaseType::InOutSine;
+
     assumedPartnerFrontDist = 1.f;
-    blendInit = false;
+
+    partnerHandle.Reset();
+
+    time = 0.f;
+    dur = 0.5f;
+
+    fromFov = 0.f;
+    toFov = 0.f;
+
     fromPivotWorld = Vector3::Zero;
     toPivotWorld = Vector3::Zero;
+    blendInit = false;
+
+    ease = EaseType::InOutSine;
     maxPivotOffset = 0.8f;
 }
 
-void CCamDialogueController::Begin(_float targetFov, _float blendSec, _float assumedPartnerFrontDist, OBJECT_HANDLE partnerHandle)
+void CCamDialogueController::Begin(_float targetFov, _float blendSec, _float assumedPartnerFrontDistArg, OBJECT_HANDLE partnerHandleArg)
 {
-    assumedPartnerFrontDist = assumedPartnerFrontDist;
-    partnerHandle = partnerHandle;
+    assumedPartnerFrontDist = assumedPartnerFrontDistArg;
+    partnerHandle = partnerHandleArg;
 
     holdFov = targetFov;
 
     holding = true;
     restoring = false;
 
-    blending = (blendSec > 0.f);
+    blending = true;
     time = 0.f;
     dur = blendSec > 0.f ? blendSec : 0.f;
 
     fromFov = 0.f;
     toFov = 0.f;
+
+    fromPivotWorld = Vector3::Zero;
+    toPivotWorld = Vector3::Zero;
 
     blendInit = false;
 }
@@ -84,12 +102,15 @@ void CCamDialogueController::End(_float blendSec)
     holding = false;
     restoring = true;
 
-    blending = (blendSec > 0.f);
+    blending = true;
     time = 0.f;
     dur = blendSec > 0.f ? blendSec : 0.f;
 
     fromFov = 0.f;
     toFov = 0.f;
+
+    fromPivotWorld = Vector3::Zero;
+    toPivotWorld = Vector3::Zero;
 
     blendInit = false;
 }
@@ -141,12 +162,15 @@ void CCamDialogueController::Update(_float dt, CCamera* cam, COrbitCam* orbit, C
         blendInit = true;
     }
 
+    _float outFov = curFov;
+    Vector3 outPivotWorld = orbit->GetCurPivotWorld();
+
     if (blending)
     {
         if (dur <= 0.f)
         {
-            cam->Set_FOV(toFov);
-            orbit->SetPivotExternalOffset(toPivotWorld - orbit->GetBasePivotWorld());
+            outFov = restoring ? savedFov : desiredHoldFov;
+            outPivotWorld = restoring ? basePivot : desiredPivot;
             blending = false;
         }
         else
@@ -162,32 +186,31 @@ void CCamDialogueController::Update(_float dt, CCamera* cam, COrbitCam* orbit, C
 
             const _float t = Math::ApplyEase(ease, clamp(rawT, 0.f, 1.f));
 
-            const _float toFov = restoring ? savedFov : desiredHoldFov;
-            const Vector3 toPivot = restoring ? basePivot : desiredPivot;
+            const _float endFov = restoring ? savedFov : toFov;
+            const Vector3 endPivot = restoring ? basePivot : toPivotWorld;
 
-            const _float outFov = fromFov + (toFov - fromFov) * t;
-            const Vector3 outPivotWorld = Vector3::Lerp(fromPivotWorld, toPivot, t);
-
-            cam->Set_FOV(outFov);
-            orbit->SetPivotExternalOffset(outPivotWorld - orbit->GetBasePivotWorld());
-
-            this->toFov = toFov;
-            this->toPivotWorld = toPivot;
+            outFov = fromFov + (endFov - fromFov) * t;
+            outPivotWorld = Vector3::Lerp(fromPivotWorld, endPivot, t);
         }
     }
     else
     {
         if (holding)
         {
-            cam->Set_FOV(desiredHoldFov);
-            orbit->SetPivotExternalOffset(desiredPivot - orbit->GetBasePivotWorld());
+            outFov = desiredHoldFov;
+            outPivotWorld = desiredPivot;
         }
         else
         {
-            cam->Set_FOV(savedFov);
-            orbit->SetPivotExternalOffset(basePivot - orbit->GetBasePivotWorld());
+            outFov = savedFov;
+            outPivotWorld = basePivot;
         }
     }
+
+    cam->Set_FOV(outFov);
+
+    const Vector3 baseNow = orbit->GetBasePivotWorld();
+    orbit->SetPivotExternalOffset(outPivotWorld - baseNow);
 
     if (!blending && restoring)
     {
@@ -195,14 +218,16 @@ void CCamDialogueController::Update(_float dt, CCamera* cam, COrbitCam* orbit, C
 
         restoring = false;
         holding = false;
+
         savedFov = 0.f;
 
         fromFov = 0.f;
         toFov = 0.f;
 
-        blendInit = false;
         fromPivotWorld = Vector3::Zero;
         toPivotWorld = Vector3::Zero;
+
+        blendInit = false;
 
         partnerHandle.Reset();
     }
