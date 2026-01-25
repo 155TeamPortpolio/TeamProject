@@ -42,7 +42,7 @@ protected:
 	virtual void Render_GUI_Transform();			
 	virtual void Render_GUI_Animation();			
 	virtual void Render_GUI_Color();
-	virtual void Render_GUI_Image(string& strTextureKey);
+	virtual _bool Render_GUI_Image(string& strTextureKey);
 
 	virtual void ApplySpriteTexture(_uint idx, const string& levelKey, const string& texKey, _bool applyOriginSize);
 
