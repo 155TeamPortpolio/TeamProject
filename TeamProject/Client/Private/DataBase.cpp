@@ -376,7 +376,7 @@ HRESULT CDataBase::LoadNpcDialogueData(const string& csvPath)
 		desc.DayPhase = StringToDayPhase(DayPhase);
 		desc.DialogueType = StringToDialogueType(DialogueType);
 		desc.Repeat = static_cast<_bool>(Repeat);
-		desc.Text = Helper::ConvertToWideString(Text);
+		desc.Text = StringToWString(Text);
 		desc.Result = StringToDialogueResult(Result);
 		desc.ChoiceNum = ChoiceNum;
 		desc.Choice_ID1 = Choice_ID1;
@@ -497,9 +497,15 @@ wstring CDataBase::StringToWString(const string& str)
 {
 	if (str.empty()) return wstring();
 
-	int size = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, NULL, 0);
+	string processed = str;
+	size_t pos = 0;
+	while ((pos = processed.find("\\n", pos)) != string::npos) {
+		processed.replace(pos, 2, "\n");
+		pos += 1;
+	}
+	int size = MultiByteToWideChar(CP_UTF8, 0, processed.c_str(), -1, NULL, 0);
 	wstring wstr(size - 1, 0);
-	MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, &wstr[0], size);
+	MultiByteToWideChar(CP_UTF8, 0, processed.c_str(), -1, &wstr[0], size);
 	return wstr;
 }
 
