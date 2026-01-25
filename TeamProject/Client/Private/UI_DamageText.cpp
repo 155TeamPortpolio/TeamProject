@@ -165,7 +165,8 @@ void CUI_DamageText::UI_DeActive(void* arg)
     m_baseTotalW = 1.f;
 
     m_time = 0.f;
-    SetRenderLayer(RENDER_LAYER::None);
+
+    UIManager()->Remove_UIObject(this);
 }
 
 void CUI_DamageText::SetDamage(_int damage)
@@ -309,7 +310,8 @@ void CUI_DamageText::Update_Anim(_float dt)
         GetGlyph(i)->Set_Alpha(alpha * m_vColor.w);
     }
 
-    if (m_time >= t.endSec) UI_DeActive();
+    if (m_time >= t.endSec) 
+        UI_DeActive();
 }
 
 void CUI_DamageText::Ensure_GlyphCount(_uint count)
