@@ -294,7 +294,7 @@ void COrbitCam::Priority_Update(_float dt)
         const float w = lockOnCtrl.GetWeight();
 
         const OrbitInputEvalResult inRes =
-            inputCtrl.Evaluate(dt, profile, input, w, m_curMaxYawSpeedDeg, m_curMaxPitchSpeedDeg, autoYawCtrl);
+            inputCtrl.Evaluate(dt, profile, input, w, m_curMaxYawSpeedDeg, m_curMaxPitchSpeedDeg, autoYawCtrl, m_inputLocked);
 
         pose.targetRotDeg.x += inRes.yawDeltaDeg;
         pose.targetRotDeg.y += inRes.pitchDeltaDeg;
@@ -327,7 +327,10 @@ void COrbitCam::Priority_Update(_float dt)
 
         const Vector3 pivot = pose.targetPivot;
 
-        const OrbitCollisionDistEvalResult distRes = collisionDistCtrl.Evaluate(dt, profile, scene, cc, pivot, pose.wantDist, pose.curRotDeg, pose.targetRotDeg, pose.goalDist);
+        const OrbitCollisionDistEvalResult distRes =
+            collisionDistCtrl.Evaluate(dt, profile, scene, cc, pivot, pose.wantDist, pose.curRotDeg, pose.targetRotDeg, pose.goalDist);
+
+        m_distConstrained = distRes.constrained;
 
         m_curMaxYawSpeedDeg = distRes.maxYawSpeedDeg;
         m_curMaxPitchSpeedDeg = distRes.maxPitchSpeedDeg;
@@ -337,6 +340,8 @@ void COrbitCam::Priority_Update(_float dt)
     poseSmootherCtrl.Smooth(dt, profile, pose);
     ApplyOrbitPose(dt, lockRes);
 }
+
+
 
 void COrbitCam::ClampTargets()
 {
