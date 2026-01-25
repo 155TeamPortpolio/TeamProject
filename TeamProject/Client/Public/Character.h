@@ -12,6 +12,8 @@ NS_BEGIN(Client)
 template<typename Type>
 class CStateMachine;
 
+class CUI_DamageText;
+
 class CCharacter abstract : public CGameObject
 {
 public:
@@ -227,7 +229,7 @@ protected:
     _quaternion     m_qTargetRot = {};
     _bool           m_bCanRotate = { true };
     _bool           m_bIsRotating = { false };
-    OBJECT_HANDLE   m_TargetHandle;
+    OBJECT_HANDLE   m_TargetHandle;  
     _bool           m_bLockOn = { false };
     // 회피
     _bool           m_bEvadeBuffer = { false };

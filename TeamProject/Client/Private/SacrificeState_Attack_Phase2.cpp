@@ -158,6 +158,14 @@ void CSacrificeState_Attack_Phase2::BuildPattern(CSacrifice* pOwner)
 			}
 		}
 	}
+	blackBoard.stateQueue.clear();
+	blackBoard.iPatternCount = 0;
+	blackBoard.stateQueue.push_back("Attack_Charge_Start_Phase2");
+	blackBoard.stateQueue.push_back("Attack_Charge_Loop_Phase2");
+	blackBoard.stateQueue.push_back("Attack_Charge_U_Start_Phase2");
+	blackBoard.stateQueue.push_back("Attack_Charge_U_Loop_Phase2");
+	blackBoard.stateQueue.push_back("Attack_Charge_U_End_Phase2");
+	blackBoard.stateQueue.push_back("Attack08_Phase2");
 
 	blackBoard.isRequestNext = true;
 }
@@ -502,7 +510,7 @@ void CSacrificeState_Attack_08_Phase2::Update_Weapons(CSacrifice* pOwner)
 		pOwner->ActiveAxe();
 		m_IsAttackStart = true;
 	}
-	
+
 	if (IsCrossAnimProgress(0.85f))
 	{
 		pOwner->DeactiveAxe();
@@ -631,6 +639,43 @@ void CSacrificeState_Attack_08_Phase2::Update_Effects(CSacrifice* pOwner)
 
 		CameraManager()->AddImpact(ENUM(CamShakeType::LandingCrush), ENUM(CamZoomType::LandingCrush), 2.5f);
 	}
+
+	/* Axe Charge */
+	if (IsCrossAnimProgress(0.37f))
+	{
+		auto pTransform = pOwner->Get_Component<CTransform>();
+
+		_vector3 vWorldPosition = _vector3::Transform(_vector3(-0.6f, 0.1f, 2.1f), pTransform->Get_WorldMatrix());
+
+		auto effectDown = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_axe_charge_down.json")
+			.Position(vWorldPosition)
+			.Build("Sacrifice_Axe_Charge_Down");
+
+		auto effectUp = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_axe_charge_up.json")
+			.Position(vWorldPosition)
+			.Build("Sacrifice_Axe_Charge_Up");
+
+		ObjectManager()->Add_Object(effectDown, { pOwner->Get_Level(),"Enemy_Effect_Layer" });
+		ObjectManager()->Add_Object(effectUp, { pOwner->Get_Level(),"Enemy_Effect_Layer" });
+	}
+
+	/* Explode */
+	if (IsCrossAnimProgress(0.67f))
+	{
+		auto pTransform = pOwner->Get_Component<CTransform>();
+
+		_vector3 vWorldPosition = _vector3::Transform(_vector3(-0.6f, 0.1f, 2.1f), pTransform->Get_WorldMatrix());
+
+		auto effectDown = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_axe_explode.json")
+			.Position(vWorldPosition)
+			.Build("Sacrifice_Axe_Charge_Down");
+
+		ObjectManager()->Add_Object(effectDown, { pOwner->Get_Level(),"Enemy_Effect_Layer" });
+	}
+
 }
 
 void CSacrificeState_Attack_Charge_Start_Phase2::Enter(CSacrifice* pOwner)
@@ -658,12 +703,32 @@ void CSacrificeState_Attack_Charge_Start_Phase2::Update(CSacrifice* pOwner, _flo
 		}
 	}
 
+	Update_Effects(pOwner);
 	pOwner->RotateToTarget(dt, 10.f);
 	pOwner->MoveByRootMotion(dt);
 }
 
 void CSacrificeState_Attack_Charge_Start_Phase2::Exit(CSacrifice* pOwner)
 {
+}
+
+void CSacrificeState_Attack_Charge_Start_Phase2::Update_Effects(CSacrifice* pOwner)
+{
+	/* Laser Charge2 */
+	if (IsCrossAnimProgress(0.6f))
+	{
+		auto pAnimator = pOwner->Get_Component<CAnimator3D>();
+
+		auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_laser_charge2.json")
+			.Build("Sacrifice_Laser_Charge2");
+
+		_smatrix offsetMatrix = _smatrix::Identity;
+		offsetMatrix.Translation(_vector3(0.8f, 0.f, 0.f));
+
+		effect->AttachBone(pAnimator, "Skn_R_Hand", offsetMatrix);
+		ObjectManager()->Add_Object(effect, { pOwner->Get_Level(),"Enemy_Effect_Layer" });
+	}
 }
 
 void CSacrificeState_Attack_Charge_Loop_Phase2::Enter(CSacrifice* pOwner)
@@ -686,20 +751,20 @@ void CSacrificeState_Attack_Charge_Loop_Phase2::Update(CSacrifice* pOwner, _floa
 	}
 	else
 	{
-		if (!m_IsStartDissolve && m_fStateTime >= 0.4f)
+		if (!m_IsStartDissolve && m_fStateTime >= 1.5f)
 		{
 			pOwner->Set_DissolveState(CSacrifice::DISSOLVE_STATE::DISAPPEAR, 0.3f);
 			m_IsStartDissolve = true;
 		}
 
-		if (!m_IsEndDissolve && m_fStateTime >= 0.7f)
+		if (!m_IsEndDissolve && m_fStateTime >= 1.8f)
 		{
 			pOwner->Set_DissolveState(CSacrifice::DISSOLVE_STATE::APPEAR, 0.3f);
 			pOwner->Get_Component<CCharacterController>()->Set_Position(_vector3(-2.f, 1.f, 21.f));
 			m_IsEndDissolve = true;
 		}
 
-		if (m_fStateTime >= 1.5f)
+		if (m_fStateTime >= 2.1f)
 		{
 			blackBoard.isChainOpen = true;
 			if (!blackBoard.stateQueue.empty())
@@ -746,12 +811,32 @@ void CSacrificeState_Attack_Charge_U_Start_Phase2::Update(CSacrifice* pOwner, _f
 		}
 	}
 
-	if (IsCrossAnimProgress(0.7f))
-		pOwner->ActiveEyeLaser();
+	Update_Effects(pOwner);
+
 }
 
 void CSacrificeState_Attack_Charge_U_Start_Phase2::Exit(CSacrifice* pOwner)
 {
+}
+
+void CSacrificeState_Attack_Charge_U_Start_Phase2::Update_Effects(CSacrifice* pOwner)
+{
+	/* Laser Smoke */
+	if (IsCrossAnimProgress(0.62f))
+	{
+		_vector3 vWorldPosition = pOwner->Get_Component<CTransform>()->Get_WorldPos();
+
+		auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_laser_shot_smoke2.json")
+			.Position(vWorldPosition)
+			.Build("Sacrifice_Laser_Shot_Smoke2");
+
+		ObjectManager()->Add_Object(effect, { pOwner->Get_Level(),"Enemy_Effect_Layer" });
+	}
+
+	/* Laser */
+	if (IsCrossAnimProgress(0.7f))
+		pOwner->ActiveEyeLaser();
 }
 
 void CSacrificeState_Attack_Charge_U_Loop_Phase2::Enter(CSacrifice* pOwner)
@@ -859,7 +944,16 @@ void CSacrificeState_Attack_Roar_Phase2::Update_Effects(CSacrifice* pOwner)
 		auto pEffectTransform = effect->Get_Component<CTransform>();
 		pEffectTransform->Set_WorldPos(vWorldPosition);
 
+		auto effect2 = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_roar_smoke_up.json")
+			.Build("Sacrifice_Roar_Smoke_Up");
+
+		_vector3 vWorldPosition2 = _vector3::Transform(_vector3(0.f, 4.f, 0.f), worldMatrix);
+		auto pEffectTransform2 = effect2->Get_Component<CTransform>();
+		pEffectTransform2->Set_WorldPos(vWorldPosition2);
+
 		ObjectManager()->Add_Object(effect, { pOwner->Get_Level(),"Effect_Layer" });
+		ObjectManager()->Add_Object(effect2, { pOwner->Get_Level(),"Effect_Layer" });
 
 		CameraManager()->AddImpact(ENUM(CamShakeType::Roar15S), ENUM(CamZoomType::Roar15S), 1.f);
 	}

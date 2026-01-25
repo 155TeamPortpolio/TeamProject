@@ -34,8 +34,13 @@ public:
     void    CaptureSnapshot(OrbitCamSnapshot& out) const;
     void    RestoreSnapshot(const OrbitCamSnapshot& snapshot);
 
+    void    FreezeFor(_float sec) { if (sec > m_freezeRemain) m_freezeRemain = sec; }
     void    SetLockOn(OBJECT_HANDLE handle);
     void    ClearLockOn();
+
+    void    Lock_Input() { m_inputLocked = true; }
+    void    Unlock_Input() { m_inputLocked = false; }
+    _bool   IsInputLocked() const { return m_inputLocked; }
 
     void    SetPivotExternalOffset(const Vector3& offset) { pose.pivotExternalOffset = offset; }
     Vector3 GetPivotExternalOffset() const { return pose.pivotExternalOffset; }
@@ -43,6 +48,11 @@ public:
 
     Vector3 GetCurPivotWorld() const { return pose.curPivot; }
     Vector3 GetBasePivotWorld() const { return GetBasePivotTargetPos(targetHandle) + pose.pivotInternalOffset; }
+
+    _bool   IsDistConstrained() const { return m_distConstrained; }
+    _float  GetProfileOffsetY() const { return profile.offsetY; }
+
+    OBJECT_HANDLE GetTargetHandle() const { return targetHandle; }
 
 private:
     void    ClampTargets();
@@ -69,6 +79,9 @@ private:
 
     _float                          m_curMaxYawSpeedDeg = 720.f;
     _float                          m_curMaxPitchSpeedDeg = 540.f;
+    _float                          m_freezeRemain = 0.f;
+    _bool                           m_distConstrained = false;
+    _bool                           m_inputLocked = false;
 
 public:
     static  COrbitCam* Create();

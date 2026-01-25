@@ -52,6 +52,12 @@ ENGINE_DLL _float Math::Clamp01(_float t)
 	return t;
 }
 
+ENGINE_DLL _float Math::PingPong01(_float t)
+{
+	float x = 1.f - t;
+	return (x < 0.5f) ? (x * 2.f) : (2.f - x * 2.f);
+}
+
 ENGINE_DLL Vector3 Math::SeedPhase(_uint& seed)
 {
 	seed = seed * 1664525u + 1013904223u;

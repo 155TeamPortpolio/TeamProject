@@ -173,10 +173,10 @@ void CSacrificeState_Attack_Phase1::BuildPattern(CSacrifice* pOwner)
 			}
 		}
 	}
-	blackBoard.stateQueue.clear();
-	blackBoard.stateQueue.push_back("Attack05_Phase1");
-	blackBoard.stateQueue.push_back("Attack06_Phase1");
-	blackBoard.stateQueue.push_back("Attack07_Phase1");
+	//blackBoard.stateQueue.clear();
+	//blackBoard.stateQueue.push_back("Attack05_Phase1");
+	//blackBoard.stateQueue.push_back("Attack06_Phase1");
+	//blackBoard.stateQueue.push_back("Attack07_Phase1");
 	
 	blackBoard.isRequestNext = true;
 }
@@ -1147,11 +1147,19 @@ void CSacrificeState_Attack_Turn_Phase1::Update_Effects(CSacrifice* pOwner)
 	{
 		auto pObjectContainer = pOwner->Get_Component<CObjectContainer>();
 
+		_smatrix worldMatrix = pTransform->Get_WorldMatrix();
+		_vector3 vWorldPosition = _vector3::Transform(_vector3(0.f, 0.8f, 0.3f), worldMatrix);
+
+		_quaternion localQuaternion = _quaternion(0.f, 0.f, 0.f, 1.f);
+		_quaternion worldQuaternion = pTransform->Get_QuaternionRotate();
+		localQuaternion *= worldQuaternion;
+
 		auto effect = pObjectContainer->Find_ObjectByName("Sacrifice_Smoke_Slash2");
 		auto pEffectTransform = effect->Get_Component<CTransform>();
 
-		pEffectTransform->Set_Pos(_vector3(0.f, 0.8f, 0.3f));
-		pEffectTransform->Set_Quaternion(_quaternion(0.0f, 0.f, 0.f, 1.f));
+		pEffectTransform->Set_WorldPos(vWorldPosition);
+		pEffectTransform->Set_WorldQuaternion(localQuaternion);
+
 		static_cast<CEffectContainer*>(effect)->Play();
 	}
 }
@@ -1206,13 +1214,20 @@ void CSacrificeState_Attack_Roar_Phase1::Update_Effects(CSacrifice* pOwner)
 
 		_smatrix worldMatrix = pTransform->Get_WorldMatrix();
 		_vector3 vWorldPosition = _vector3::Transform(_vector3(0.f, 1.f, 0.f), worldMatrix);
-
 		auto pEffectTransform = effect->Get_Component<CTransform>();
 		pEffectTransform->Set_WorldPos(vWorldPosition);
 
+		auto effect2 = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_roar_smoke_up.json")
+			.Build("Sacrifice_Roar_Smoke_Up");
+
+		_vector3 vWorldPosition2 = _vector3::Transform(_vector3(0.f, 4.f, 0.f), worldMatrix);
+		auto pEffectTransform2 = effect2->Get_Component<CTransform>();
+		pEffectTransform2->Set_WorldPos(vWorldPosition2);
+
 		ObjectManager()->Add_Object(effect, { pOwner->Get_Level(),"Effect_Layer" });
+		ObjectManager()->Add_Object(effect2, { pOwner->Get_Level(),"Effect_Layer" });
 
 		CameraManager()->AddImpact(ENUM(CamShakeType::UltimateEnd), ENUM(CamZoomType::UltimateEnd), 1.f);
-		//CameraManager()->SetShakeType(ENUM(CamShakeType::Roar1S));
 	}
 }

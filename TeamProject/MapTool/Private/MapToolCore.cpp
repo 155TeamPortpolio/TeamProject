@@ -8,6 +8,7 @@
 #include "EntityObject.h"
 #include "Layer.h"
 #include "BattleObject.h"
+#include "MapToolGui.h"
 
 IMPLEMENT_SINGLETON(CMapToolCore)
 
@@ -102,6 +103,10 @@ LOADED_DATA CMapToolCore::Load_MapData()
 
 			LoadedData.LoadedObjects.push_back(Desc);
 		}
+	}
+	else if (OpenPath.string().find("BattleData") != string::npos)
+	{
+		m_pMapToolGui->Load_BattleData(OpenPath.string());
 	}
 	else
 	{
@@ -202,6 +207,26 @@ void CMapToolCore::Load_WithEntityData()
 
 		LoadedData.LoadedObjects.push_back(Desc);
 	}
+
+	/* BattleData 가 있을 때 */
+	filesystem::path BattlePath = OpenPath;
+
+	pos = filename.find("EntityData");
+	if (pos == string::npos)
+		return;
+
+	filename.replace(pos, strlen("EntityData"), "BattleData");
+	BattlePath.replace_filename(filename);
+
+	pos = filename.find(".Base.1");
+
+	filename.replace(pos, strlen(".Base.1"), "");
+	BattlePath.replace_filename(filename);
+
+	if (!filesystem::exists(BattlePath))
+		return;
+
+	m_pMapToolGui->Load_BattleData(BattlePath.string());
 }
 
 void CMapToolCore::Clear_Layer(MAPOBJ_TYPE eObjType)
@@ -227,6 +252,11 @@ void CMapToolCore::Clear_Layer(MAPOBJ_TYPE eObjType)
 	}
 	m_pGameInstance->Get_GUISystem()->Get_Context()->pSelectedObject = { nullptr };
 
+}
+
+void CMapToolCore::RegisterGuiPanel(CMapToolGui* pGUIPanel)
+{
+	m_pMapToolGui = pGUIPanel;
 }
 
 MAPOBJ_TYPE CMapToolCore::Check_LayerTag(const string& TagLayer)

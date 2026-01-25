@@ -33,7 +33,9 @@ HRESULT CEffectContainer_Edit::Initialize(INIT_DESC* pArg)
 	//__super::Initialize(pArg);
 
 	m_pTransform->Initialize(nullptr);
-	LoadTextureFromDirectory("../Bin/Resource/Texture");
+	LoadTextureFromDirectory("../Bin/Resource/Texture/Diffuse",true);
+	LoadTextureFromDirectory("../Bin/Resource/Texture/Noise");
+	LoadTextureFromDirectory("../Bin/Resource/Texture/Mask");
 	LoadMeshFromDirectory("../Bin/Resource/Mesh");
 	LoadMaterialFromDirectory("../Bin/Resource/Mesh");
 	m_InstanceName = "EffectContainer";
@@ -65,6 +67,22 @@ void CEffectContainer_Edit::Update(_float dt)
 		}
 
 		Get_Component<CObjectContainer>()->UpdateChild(dt);
+	}
+
+	if (m_IsBillBoard)
+	{
+		_vector4 vCamPosition = CameraManager()->Get_CameraPos();
+		_vector3 vCurrPosition = m_pTransform->Get_WorldPos();
+		_vector3 vDir = _vector3(vCamPosition.x, vCamPosition.y, vCamPosition.z) - vCurrPosition;
+		vDir.Normalize();
+
+		if (vDir.Dot(_vector3(0.f, 1.f, 0.f)) >= 0.99f)
+		{
+			vDir = _vector3(0.f, 1.01f, 0.f);
+			vDir.Normalize();
+		}
+
+		m_pTransform->Set_Look(vDir);
 	}
 }
 
@@ -144,9 +162,10 @@ void CEffectContainer_Edit::Import()
 
 		ordered_json EffectData = json::parse(file);
 
-		m_iNumNodes = EffectData.at("node_count").get<_uint>();
-		m_IsLoop = EffectData.at("is_loop").get<_bool>();
-		m_fDuration = EffectData.at("duration").get<_float>();
+		m_IsBillBoard = EffectData.value("is_billboard", false);
+		m_iNumNodes = EffectData.value("node_count", m_iNumNodes);
+		m_IsLoop = EffectData.value("is_loop", m_IsLoop);
+		m_fDuration = EffectData.value("duration", m_fDuration);
 
 		m_Nodes.reserve(m_iNumNodes);
 		for (_uint i = 0; i < m_iNumNodes; ++i)
@@ -211,6 +230,7 @@ void CEffectContainer_Edit::Export()
 
 		ordered_json EffectData;
 		
+		EffectData["is_billboard"] = m_IsBillBoard;
 		EffectData["node_count"] = m_Nodes.size();
 		EffectData["is_loop"] = m_IsLoop;
 		EffectData["duration"] = m_fDuration;
@@ -306,7 +326,7 @@ void CEffectContainer_Edit::RemoveLastNode()
 
 void CEffectContainer_Edit::ContextClear()
 {
-	if (ImGui::Button("Context Clear"))
+	if (ImGui::Button("Context Clear") || InputDevice()->Key_Tap('C'))
 	{
 		m_SelectIndices.clear();
 		m_Context.TextureTags.clear();
@@ -314,7 +334,7 @@ void CEffectContainer_Edit::ContextClear()
 	}
 }
 
-void CEffectContainer_Edit::LoadTextureFromDirectory(const string& dirPath)
+void CEffectContainer_Edit::LoadTextureFromDirectory(const string& dirPath, _bool isSRGB)
 {
 	namespace fs = std::filesystem;
 	ID3D11Device* pDevice = CGameInstance::GetInstance()->Get_Device();
@@ -328,7 +348,7 @@ void CEffectContainer_Edit::LoadTextureFromDirectory(const string& dirPath)
 		string path = entry.path().string();
 		string textureKey = entry.path().filename().string();
 		resource->Add_ResourcePath(textureKey, path);
-		auto tex = resource->Load_Texture(G_GlobalLevelKey, textureKey);
+		auto tex = resource->Load_Texture(G_GlobalLevelKey, textureKey, isSRGB);
 
 		if (!tex)
 		{
@@ -525,6 +545,7 @@ void CEffectContainer_Edit::DisplayMaterial()
 void CEffectContainer_Edit::SetUp_EffectContainer()
 {
 	ImGui::SeparatorText("EffectContainer Setting");
+	ImGui::Checkbox("Is BillBoard", &m_IsBillBoard);
 	ImGui::Checkbox("Is Loop", &m_IsLoop);
 	ImGui::DragFloat("Duration", &m_fDuration);
 }
