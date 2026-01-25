@@ -235,6 +235,14 @@ void CJaneDoe::On_SwitchOut()
 
 void CJaneDoe::On_Ultimate()
 {
+	IHState<CJaneDoe>* pState = dynamic_cast<IHState<CJaneDoe>*>(m_pStateMachine->Get_CurrentState());
+	if (pState)
+	{
+		CStateMachine<CJaneDoe>* pSub = pState->Get_SubStateMachine();
+		if (pSub && pSub->Get_CurrentStateName() == "UltimateAttack")
+			return;
+	}
+
 	__super::On_Ultimate();
 	m_pStateMachine->Set_Int("AttackEntryMode", 3);
 	m_pStateMachine->Set_Trigger("Attack");
@@ -244,19 +252,6 @@ void CJaneDoe::On_Special()
 {
 	if (m_tEnergy.fCurrentEnergy < m_tEnergy.fSpecialEnergy)	return;
 	if (InputDevice()->Key_Tap('E') == false) return;
-
-	m_tEnergy.fCurrentEnergy -= m_tEnergy.fSpecialEnergy;
-	UI_ACTION_DESC desc;
-	desc.eType = UI_ACTION_TYPE::SPECIAL;
-	if (m_tEnergy.fCurrentEnergy >= m_tEnergy.fSpecialEnergy)
-	{
-		desc.eState = UI_ACTION_STATE::AVAILABLE;
-	}
-	else
-	{
-		desc.eState = UI_ACTION_STATE::EXECUTING;
-	}
-	EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
 
 	string strCurrentState = m_pStateMachine->Get_CurrentStateName();
 	if (strCurrentState == "Attack")	// NormalAttack Áß Äµ½½ÇØ¼­ ExAttack

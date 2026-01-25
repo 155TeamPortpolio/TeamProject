@@ -340,7 +340,6 @@
     <ClInclude Include="..\public\JaneDoeState_Run.h" />
     <ClInclude Include="..\public\JaneDoeState_RushAttack.h" />
     <ClInclude Include="..\public\JaneDoeState_SwitchIn.h" />
-    <ClInclude Include="..\public\JaneDoeState_SwitchInExAttack.h" />
     <ClInclude Include="..\public\JaneDoeState_SwitchInParryAid.h" />
     <ClInclude Include="..\public\JaneDoeState_SwitchOut.h" />
     <ClInclude Include="..\public\JaneDoeState_UltimateAttack.h" />
@@ -636,7 +635,6 @@
     <ClCompile Include="..\Private\MapInvisibleWall.cpp" />
     <ClCompile Include="..\Private\Sacrifice_Laser.cpp" />
     <ClCompile Include="..\private\JaneDoeState_SwitchIn.cpp" />
-    <ClCompile Include="..\private\JaneDoeState_SwitchInExAttack.cpp" />
     <ClCompile Include="..\private\JaneDoeState_SwitchInParryAid.cpp" />
     <ClCompile Include="..\private\JaneDoeState_SwitchOut.cpp" />
     <ClCompile Include="..\private\JaneDoeState_SwitchInAttack.cpp" />

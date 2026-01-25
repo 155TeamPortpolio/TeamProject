@@ -76,20 +76,6 @@ void CCharacterAttackCollider::Render_GUI()
 	__super::Render_GUI();
 }
 
-void CCharacterAttackCollider::OnCollisionEnter(CGameObject* pOther)
-{
-
-}
-
-void CCharacterAttackCollider::OnCollisionStay(CGameObject* pOther)
-{
-
-}
-
-void CCharacterAttackCollider::OnCollisionExit(CGameObject* pOther)
-{
-}
-
 void CCharacterAttackCollider::OnTriggerEnter(CGameObject* pOther)
 {
 	auto pCollidable = pOther->Get_Component<ICollidable>();
@@ -103,6 +89,16 @@ void CCharacterAttackCollider::OnTriggerEnter(CGameObject* pOther)
 	{
 		pEnemy->TakeDamage(m_tHitDesc.eDamageType, m_tHitDesc.fDamage);
 		BattleSystem()->GetBattlePlayer()->Add_Gauge(m_tHitDesc.fEnergyCharge, m_tHitDesc.fDecibelCharge);
+		//if (m_tHitDesc.eDamageType == DAMAGE_TYPE::HARD && pEnemy->IsGroggy() && pEnemy->Get_ComboCount() != 0)
+		if (m_tHitDesc.eDamageType == DAMAGE_TYPE::HARD)
+		{
+			auto pCharacter = dynamic_cast<CCharacter*>(Get_Component<CChild>()->Get_Parent());
+			if (pCharacter != nullptr && pCharacter->Is_MainCharacter())
+			{
+				//pEnemy->Decrease_ComboCount();
+				BattleSystem()->GetBattlePlayer()->Request_ComboAttack();
+			}
+		}
 
 		/* Effect Test */
 		_vector3 vWorldPosition = m_pTransform->Get_WorldPos();
@@ -139,6 +135,16 @@ void CCharacterAttackCollider::OnTriggerStay(CGameObject* pOther)
 	{
 		pEnemy->TakeDamage(m_tHitDesc.eDamageType, m_tHitDesc.fDamage);
 		BattleSystem()->GetBattlePlayer()->Add_Gauge(m_tHitDesc.fEnergyCharge, m_tHitDesc.fDecibelCharge);
+		//if (m_tHitDesc.eDamageType == DAMAGE_TYPE::HARD && pEnemy->IsGroggy() && pEnemy->Get_ComboCount() != 0)
+		if (m_tHitDesc.eDamageType == DAMAGE_TYPE::HARD)
+		{
+			auto pCharacter = dynamic_cast<CCharacter*>(Get_Component<CChild>()->Get_Parent());
+			if (pCharacter != nullptr && pCharacter->Is_MainCharacter())
+			{
+				//pEnemy->Decrease_ComboCount();
+				BattleSystem()->GetBattlePlayer()->Request_ComboAttack();
+			}
+		}
 
 		// Camera
 		auto pCharacter = dynamic_cast<CCharacter*>(Get_Component<CChild>()->Get_Parent());

@@ -4,7 +4,6 @@
 #include "Character.h"
 #include "JaneDoe.h"
 #include "JaneDoeState_SwitchInAttack.h"
-#include "JaneDoeState_SwitchInExAttack.h"
 #include "JaneDoeState_SwitchInParryAid.h"
 #include "JaneDoeState_SwitchInNormal.h"
 
@@ -18,12 +17,10 @@ void CJaneDoeState_SwitchIn::Enter(CJaneDoe* pOwner)
         m_pSubStateMachine = CStateMachine<CJaneDoe>::Create();
         m_pSubStateMachine->Register_State("Normal", CJaneDoeState_SwitchInNormal::Create());
         m_pSubStateMachine->Register_State("Attack", CJaneDoeState_SwitchInAttack::Create());
-        m_pSubStateMachine->Register_State("ExAttack", CJaneDoeState_SwitchInExAttack::Create());
         m_pSubStateMachine->Register_State("ParryAid", CJaneDoeState_SwitchInParryAid::Create());
 
         m_pSubStateMachine->Get_State("Normal")->Set_Tag("Normal");
         m_pSubStateMachine->Get_State("Attack")->Set_Tag("Attack");
-        m_pSubStateMachine->Get_State("ExAttack")->Set_Tag("ExAttack");
         m_pSubStateMachine->Get_State("ParryAid")->Set_Tag("ParryAid");
     }
 
@@ -34,9 +31,6 @@ void CJaneDoeState_SwitchIn::Enter(CJaneDoe* pOwner)
         break;
     case CCharacter::SWITCH::ATTACK:
         m_pSubStateMachine->Set_DefaultState("Attack");
-        break;
-    case CCharacter::SWITCH::EXATTACK:
-        m_pSubStateMachine->Set_DefaultState("ExAttack");
         break;
     case CCharacter::SWITCH::PARRYAID:
         m_pSubStateMachine->Set_DefaultState("ParryAid");
