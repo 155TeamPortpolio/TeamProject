@@ -136,7 +136,7 @@ void CUI_DialogueChoice::Update_KeyInput()
     char vkKey = '0';
     for (_int i = 0; i < m_iNumChoices; ++i)
     {
-        if (InputDevice()->Key_Down(vkKey + (i + 1)))
+        if (InputDevice()->Key_Tap(vkKey + (i + 1)))
             Change_Dialogue(i);
     }
 }

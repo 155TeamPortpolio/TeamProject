@@ -37,7 +37,7 @@ HRESULT CAIMaterial::Initialize(const aiMaterial* pAIMaterial, const string& fil
 	return S_OK;
 }
 
-void CAIMaterial::Save_MaterialData(ID3D11DeviceContext* pContext, ofstream& ofs, const string& directory, const string& overrideKey)
+void CAIMaterial::Save_MaterialData(ID3D11DeviceContext* pContext, ofstream& ofs, const string& directory, const string& passKey, const string& overrideKey)
 {
 	MATERIAL_INFO_HEADER infoHead = {};
 
