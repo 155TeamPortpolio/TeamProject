@@ -25,6 +25,7 @@ HRESULT CEffectNode::Initialize(INIT_DESC* pArg)
 	/* Init Node */
 	EFFECT_NODE* pNodeDesc = static_cast<EFFECT_NODE*>(pArg);
 	m_fDuration = pNodeDesc->fDuration;
+	m_fDelayTime = pNodeDesc->fDelayTime;
 	m_fElpasedTime = 0.f;
 	m_IsLoop = pNodeDesc->isLoop;
 
@@ -32,6 +33,12 @@ HRESULT CEffectNode::Initialize(INIT_DESC* pArg)
 		m_IsEffectActive = true;
 
 	return S_OK;
+}
+
+void CEffectNode::Post_EngineUpdate(_float dt)
+{
+	if (m_IsEffectActive)
+		__super::Post_EngineUpdate(dt);
 }
 
 void CEffectNode::Update(_float dt)
