@@ -135,7 +135,7 @@ private:
 private:
 	/* Data */
 	// 몬스터 세팅 테이블(CCT 정보, 각종 Status(HP, 공격력 등))
-	unordered_map<string, MonsterCreationDesc>				m_MonsterCreationTables;
+	
 	// 현재 Stage에 셋팅 된 BattlePoint 정보
 	BATTLE_FIELD_DATA			m_BattleFieldData = {};
 	// 스포너 핸들
