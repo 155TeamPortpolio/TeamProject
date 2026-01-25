@@ -26,6 +26,12 @@ CBattlePlayer::CBattlePlayer()
 {
 }
 
+void CBattlePlayer::Set_Move(_vector3 vPos, _vector4 vRot)
+{
+	m_pCurrentCharacter->Get_Component<CCharacterController>()->Set_Position(vPos);
+	m_pCurrentCharacter->Get_Component<CTransform>()->Rotation(vRot);
+}
+
 OBJECT_HANDLE CBattlePlayer::GetCurCharacterHandle()
 {
 	return m_pCurrentCharacter->Get_Handle(); 
@@ -36,6 +42,7 @@ void CBattlePlayer::SetBattleCharacters(vector<CHARACTER> battleCharacters)
 	for (auto& character : battleCharacters)
 	{
 		auto newCharacter = dynamic_cast<CCharacter*>(CreateBattleCharacter(character));
+		newCharacter->Set_MainCharacter(false);
 		m_BattleCharacters.push_back(newCharacter);
 		m_CharacterHandles.push_back(newCharacter->Get_Handle());
 	}
@@ -177,8 +184,59 @@ void CBattlePlayer::Add_Gauge(_float fEnergy, _float fDecibel)
 	}
 }
 
+void CBattlePlayer::Request_ComboAttack()
+{
+	if (!Can_Switch())
+		return;
+	if (m_bComboSelect)
+		return;
+
+	m_bComboSelect = true;
+	// 타임스케일 2초간 느리게 하기 몬스터, 캐릭터
+	BattleSystem()->StartTimeScale(CBattleSystem::BATTLE_OBJ_TYPE::MONSTER, COMBO_SELECT_DURATION, 0.1f);
+	BattleSystem()->StartTimeScale(CBattleSystem::BATTLE_OBJ_TYPE::PLAYER, COMBO_SELECT_DURATION, 0.1f);
+	// UI 방송
+}
+
+void CBattlePlayer::Execute_ComboAttack(_bool bNext)
+{
+	m_fComboSelectTimer = 0.f;
+	m_bComboSelect = false;
+
+	NotifyCharacterSwitchOut();
+	if (bNext)
+		SwitchToNext();
+	else
+		SwitchToPrev();
+	// 콤보 어택 전용 NotifyCharacterSwitchIn
+	m_pCurrentCharacter->Set_MainCharacter(true);
+	m_pCurrentCharacter->Active_Character();
+	m_pCurrentCharacter->Get_Component<CCharacterController>()->Set_Position(m_vSwitchPosition);
+	m_pCurrentCharacter->Get_Component<CTransform>()->Set_Look(m_vSwitchLook);
+	m_pCurrentCharacter->On_SwitchIn(CCharacter::SWITCH::ATTACK);
+
+	Sync_ActionUI();
+
+	m_fSwitchCooldown = SWITCH_COOLDOWN;
+}
+
+void CBattlePlayer::Cancel_ComboAttack()
+{
+	m_fComboSelectTimer = 0.f;
+	m_bComboSelect = false;
+}
+
 void CBattlePlayer::Update_Input(_float dt)
 {
+	// 콤보 테스트
+	if (InputDevice()->Key_Tap('C'))
+		Request_ComboAttack();
+	if (m_bComboSelect)
+	{
+		Process_ComboSelect(dt);
+		return;
+	}
+
 	m_input.prevDirection = m_input.direction;
 	m_input.previous = m_input.current;
 
@@ -342,6 +400,29 @@ void CBattlePlayer::Process_Interact()
 	if(InputDevice()->Key_Tap('F'))
 	{
 		m_pCurrentCharacter->On_Interact();
+	}
+}
+
+void CBattlePlayer::Process_ComboSelect(_float dt)
+{
+	m_fComboSelectTimer += dt;
+	if (m_fComboSelectTimer >= COMBO_SELECT_DURATION)
+	{
+		Cancel_ComboAttack();
+		return;
+	}
+
+	if (InputDevice()->Mouse_Tap(MOUSE_BTN::LB))
+	{
+		Execute_ComboAttack(true);
+	}
+	else if (InputDevice()->Mouse_Tap(MOUSE_BTN::RB))
+	{
+		Execute_ComboAttack(false);
+	}
+	else if (InputDevice()->Mouse_Tap(MOUSE_BTN::MB))
+	{
+		Cancel_ComboAttack();
 	}
 }
 
