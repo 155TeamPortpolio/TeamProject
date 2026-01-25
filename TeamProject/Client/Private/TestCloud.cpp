@@ -80,14 +80,6 @@ void CTestCloud::Awake()
 	auto instance =Get_Component<CMaterial>()->Get_MaterialInstance(0);
 	instance->Set_Param("g_CloudColor", { &m_vCloudColor, "float3", sizeof(_float3) });
 	instance->Set_Param("g_SkyColor", { &m_vSkyColor, "float3", sizeof(_float3) });
-
-	//=====================Shader Test=========================
-	/*auto RenderSys = CGameInstance::GetInstance()->Get_RenderSystem();
-	auto pDevice = CGameInstance::GetInstance()->Get_Device();
-	auto newTexture = CTexture::Create(pDevice, L"../Bin/Resources/Noise/VX_Noise_XL_07.png","VX_Noise_XL_07.png", true);
-	RenderSys->Add_NoiseTexture("Noise1", newTexture);
-	RenderSys->Apply_Noise({ "Noise1" }, 5.f);
-	NoiseTextures.push_back(newTexture);*/
 }
 
 void CTestCloud::Priority_Update(_float dt)
@@ -108,7 +100,7 @@ void CTestCloud::Late_Update(_float dt)
 
 void CTestCloud::Render_GUI()
 {
-	ImGui::Begin("##EnvDesc");
+	ImGui::Begin("##Cloud");
 	float skyColor[3] = { m_vSkyColor.x, m_vSkyColor.y, m_vSkyColor.z };
 	float cloudColor[3] = { m_vSkyColor.x, m_vSkyColor.y, m_vSkyColor.z };
 	ImGui::SeparatorText("Sky Color");

@@ -1,0 +1,360 @@
+{
+  "TagDataFormat": "Base",
+  "TagArea": "Zero_1_2",
+  "iVersion": 1,
+  "Layers": [
+    {
+      "TagLayer": "PlacedObject_Layer",
+      "Objects": [
+        {
+          "iObjID": 0,
+          "TagModelResourceKey": "Stage_Zero_1_2_Bridgeout.model",
+          "TagMaterialResourceKey": "Stage_Zero_1_2_Bridgeout.mat",
+          "vRight": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "vPos": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 1,
+          "TagModelResourceKey": "Stage_Zero_1_2_Buildingout.model",
+          "TagMaterialResourceKey": "Stage_Zero_1_2_Buildingout.mat",
+          "vRight": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "vPos": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 2,
+          "TagModelResourceKey": "Stage_Zero_1_2_Ceilingout.model",
+          "TagMaterialResourceKey": "Stage_Zero_1_2_Ceilingout.mat",
+          "vRight": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "vPos": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 3,
+          "TagModelResourceKey": "Stage_Zero_1_2_CombineEtherout.model",
+          "TagMaterialResourceKey": "Stage_Zero_1_2_CombineEtherout.mat",
+          "vRight": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "vPos": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 4,
+          "TagModelResourceKey": "Stage_Zero_1_2_Constructionout.model",
+          "TagMaterialResourceKey": "Stage_Zero_1_2_Constructionout.mat",
+          "vRight": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "vPos": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 5,
+          "TagModelResourceKey": "Stage_Zero_1_2_Decalout.model",
+          "TagMaterialResourceKey": "Stage_Zero_1_2_Decalout.mat",
+          "vRight": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "vPos": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 6,
+          "TagModelResourceKey": "Stage_Zero_1_2_Groundout.model",
+          "TagMaterialResourceKey": "Stage_Zero_1_2_Groundout.mat",
+          "vRight": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "vPos": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 7,
+          "TagModelResourceKey": "Stage_Zero_1_2_NAPMeshRootout.model",
+          "TagMaterialResourceKey": "Stage_Zero_1_2_NAPMeshRootout.mat",
+          "vRight": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "vPos": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 8,
+          "TagModelResourceKey": "Stage_Zero_1_2_PathMeshout.model",
+          "TagMaterialResourceKey": "Stage_Zero_1_2_PathMeshout.mat",
+          "vRight": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "vPos": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 9,
+          "TagModelResourceKey": "Stage_Zero_1_2_Propout.model",
+          "TagMaterialResourceKey": "Stage_Zero_1_2_Propout.mat",
+          "vRight": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "vPos": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 10,
+          "TagModelResourceKey": "Stage_Zero_1_2_Stairout.model",
+          "TagMaterialResourceKey": "Stage_Zero_1_2_Stairout.mat",
+          "vRight": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "vPos": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 11,
+          "TagModelResourceKey": "Stage_Zero_1_2_Wallout.model",
+          "TagMaterialResourceKey": "Stage_Zero_1_2_Wallout.mat",
+          "vRight": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "vPos": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        }
+      ]
+    }
+  ]
+}

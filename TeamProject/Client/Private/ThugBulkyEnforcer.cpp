@@ -330,6 +330,14 @@ void CThugBulkyEnforcer::Render_GUI()
 	ImGui::PopID();
 }
 
+void CThugBulkyEnforcer::OnPooledAcquire(INIT_DESC* pArg)
+{
+}
+
+void CThugBulkyEnforcer::OnPooledRelease()
+{
+}
+
 CThugBulkyEnforcer* CThugBulkyEnforcer::Create()
 {
 	CThugBulkyEnforcer* instance = new CThugBulkyEnforcer();

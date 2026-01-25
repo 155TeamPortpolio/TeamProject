@@ -16,7 +16,7 @@ HRESULT CModelData::Initialize(const string& filePath, ID3D11Device* pDevice)
 
 	ifstream ifs(filePath.c_str(), ios::binary);
 	if (!ifs.is_open()) {
-		MSG_BOX("There is No File. :CModelData ");
+ 		MSG_BOX("There is No File. :CModelData ");
 		return E_FAIL;
 	}
 
