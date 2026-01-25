@@ -228,6 +228,7 @@
     <ClInclude Include="..\Public\AnbiState_Walk.h" />
     <ClInclude Include="..\Public\AttackSign.h" />
     <ClInclude Include="..\public\UI_DamageText.h" />
+    <ClInclude Include="..\Public\NineSliceUI.h" />
     <ClInclude Include="..\public\OrbitAutoYawFollowController.h" />
     <ClInclude Include="..\public\BangBooAsk.h" />
     <ClInclude Include="..\public\BangBooAskState_Idle.h" />
@@ -522,6 +523,7 @@
     <ClCompile Include="..\Private\AnbiState_Walk.cpp" />
     <ClCompile Include="..\Private\AttackSign.cpp" />
     <ClCompile Include="..\private\UI_DamageText.cpp" />
+    <ClCompile Include="..\Private\NineSliceUI.cpp" />
     <ClCompile Include="..\private\OrbitAutoYawFollowController.cpp" />
     <ClCompile Include="..\private\BangBooAsk.cpp" />
     <ClCompile Include="..\private\BangBooAskState_Idle.cpp" />

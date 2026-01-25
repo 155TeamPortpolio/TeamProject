@@ -58,7 +58,6 @@ void CMapToolObject::Render_GUI()
 
 	string TagID = "Object ID : " + to_string(m_iObjectIndex);
 	ImGui::Text(TagID.c_str());
-	
 }
 
 void CMapToolObject::Delete_Object()

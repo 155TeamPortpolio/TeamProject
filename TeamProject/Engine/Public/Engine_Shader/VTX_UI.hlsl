@@ -217,6 +217,59 @@ PS_OUT PS_MAIN_MASKPREVIEW(PS_IN In)
     Out.vColor = (vDiffuse * vColor) * MaskPreviewAlpha;
     return Out;
 }
+
+/* 9Slice 변수 */
+float2 vSizePx;     // 사각형 크기 (픽셀)
+float2 vTopLeftPx;  // 사각형의 왼쪽 상단 모서리 (픽셀)
+
+float4 vBorderPx;   // left, right, top, bottom (픽셀)
+
+float4 uvRangeX;    // L0, L1, R0, R1 (CPU에서 계산해서 넘김)
+float4 uvRangeY;    // T0, T1, B0, B1 (CPU에서 계산해서 넘김)
+
+float remap(float x, float inMin, float inMax, float outMin, float outMax)
+{
+    return outMin + (x - inMin) / max((inMax - inMin), 0.0001f) * (outMax - outMin);
+}
+
+float calcU(float x)
+{
+    if (x < vBorderPx.x)
+        return remap(x, 0, vBorderPx.x, uvRangeX.x, uvRangeX.y);
+    else if (x > vSizePx.x - vBorderPx.y)
+        return remap(x, vSizePx.x - vBorderPx.y, vSizePx.x, uvRangeX.z, uvRangeX.w);
+    else
+        return remap(x, vBorderPx.x, vSizePx.x - vBorderPx.y, uvRangeX.y, uvRangeX.z);
+}
+
+float calcV(float y)
+{
+    if (y < vBorderPx.z)
+        return remap(y, 0, vBorderPx.z, uvRangeY.x, uvRangeY.y);
+    else if (y > vSizePx.y - vBorderPx.w)
+        return remap(y, vSizePx.y - vBorderPx.w, vSizePx.y, uvRangeY.z, uvRangeY.w);
+    else
+        return remap(y, vBorderPx.z, vSizePx.y - vBorderPx.w, uvRangeY.y, uvRangeY.z);
+}
+
+PS_OUT PS_MAIN_NINESLICE(PS_IN In)
+{
+    PS_OUT Out;
+    
+    float2 vTexcoord = In.vTexcoord;
+    
+    vTexcoord.x = calcU(In.vPosition.x - vTopLeftPx.x);
+    vTexcoord.y = calcV(In.vPosition.y - vTopLeftPx.y);
+    
+    vector vDiffuse = SpriteTexture.Sample(LinearSampler, vTexcoord);
+    
+    float4 color = vDiffuse * vColor;
+    Out.vColor.rgb = color.rgb * color.a;
+    Out.vColor.a = color.a;
+    
+    return Out;
+}
+
 // -------------------------------------------------------------------------------------
 technique11 DefaultTechnique
 {
@@ -348,5 +401,15 @@ technique11 DefaultTechnique
         VertexShader   = compile vs_5_0 VS_MAIN();
         GeometryShader = compile gs_5_0 GS_MAIN();
         PixelShader    = compile ps_5_0 PS_MAIN_SPRITEANIMATION();
+    }
+
+    pass NineSlice
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_Premultiplied, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader  = compile vs_5_0 VS_MAIN();
+        GeometryShader= compile gs_5_0 GS_MAIN();
+        PixelShader   = compile ps_5_0 PS_MAIN_NINESLICE();
     }
 }
