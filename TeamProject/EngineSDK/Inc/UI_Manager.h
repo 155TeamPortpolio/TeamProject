@@ -31,6 +31,7 @@ private:
 	void Sort_UI();
 	void CleanUp();
 	void Prune_Queues_ByLevel(const string& levelTag);
+	void Release_Subtree_ToPool(CUI_Object* root);
 private:
 	class CGameInstance* m_pGameInstance = { nullptr };
 	unordered_map<string, UIobjects> m_UIObjects;
