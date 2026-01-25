@@ -29,6 +29,32 @@ void CSacrificeState_ChangePhase::Update_Effects(CSacrifice* pOwner)
 {
 	auto pTransform = pOwner->Get_Component<CTransform>();
 
+	/* Change Phase */
+	if (IsCrossAnimProgress(0.01f))
+	{
+		_vector3 vWorldPosition = pTransform->Get_WorldPos();
+		vWorldPosition.y += 0.1f;
+
+		auto effectDown = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_change_phase_down.json")
+			.Position(vWorldPosition)
+			.Build("Sacrifice_Change_Phase_Down");
+
+		auto effectUp = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_change_phase_up.json")
+			.Position(vWorldPosition)
+			.Build("Sacrifice_Change_Phase_Up");
+
+		auto effectCharge = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_change_phase_charge.json")
+			.Position(vWorldPosition)
+			.Build("Sacrifice_Change_Phase_Charge");
+
+		ObjectManager()->Add_Object(effectDown, { pOwner->Get_Level(),"Enemy_Effect_Layer" });
+		ObjectManager()->Add_Object(effectUp, { pOwner->Get_Level(),"Enemy_Effect_Layer" });
+		ObjectManager()->Add_Object(effectCharge, { pOwner->Get_Level(),"Enemy_Effect_Layer" });
+	}
+
 	/* Roar Smoke */
 	if (IsCrossAnimProgress(0.7f))
 	{
