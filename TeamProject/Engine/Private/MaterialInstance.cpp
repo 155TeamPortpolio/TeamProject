@@ -28,7 +28,6 @@ void CMaterialInstance::ApplyData(ID3D11DeviceContext* pContext)
 {
 	/*상수 버퍼*/
 	CShader* pMaterialShader = m_pMaterialData->Get_Shader();
-	pMaterialShader->ResetToDefaults();
 	for (size_t i = 0; i < MAX_TEXTURE_TYPE_VALUE; i++)
 	{
 		string constant = m_pMaterialData->ConvertToConstant(static_cast<TEXTURE_TYPE>(i));
@@ -126,7 +125,7 @@ void CMaterialInstance::Reset_DynamicSlot()
 {
 	//ClearDynamicSlotsBound(m_pMaterialData->Get_Shader());
 	CShader* pShader = m_pMaterialData->Get_Shader();
-
+	pShader->ResetToDefaults();
 }
 void CMaterialInstance::Reset_Textures()
 {
