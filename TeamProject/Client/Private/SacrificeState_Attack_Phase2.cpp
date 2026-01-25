@@ -165,6 +165,7 @@ void CSacrificeState_Attack_Phase2::BuildPattern(CSacrifice* pOwner)
 	blackBoard.stateQueue.push_back("Attack_Charge_U_Start_Phase2");
 	blackBoard.stateQueue.push_back("Attack_Charge_U_Loop_Phase2");
 	blackBoard.stateQueue.push_back("Attack_Charge_U_End_Phase2");
+	blackBoard.stateQueue.push_back("Attack08_Phase2");
 
 	blackBoard.isRequestNext = true;
 }
@@ -509,7 +510,7 @@ void CSacrificeState_Attack_08_Phase2::Update_Weapons(CSacrifice* pOwner)
 		pOwner->ActiveAxe();
 		m_IsAttackStart = true;
 	}
-	
+
 	if (IsCrossAnimProgress(0.85f))
 	{
 		pOwner->DeactiveAxe();
@@ -638,6 +639,43 @@ void CSacrificeState_Attack_08_Phase2::Update_Effects(CSacrifice* pOwner)
 
 		CameraManager()->AddImpact(ENUM(CamShakeType::LandingCrush), ENUM(CamZoomType::LandingCrush), 2.5f);
 	}
+
+	/* Axe Charge */
+	if (IsCrossAnimProgress(0.37f))
+	{
+		auto pTransform = pOwner->Get_Component<CTransform>();
+
+		_vector3 vWorldPosition = _vector3::Transform(_vector3(-0.6f, 0.1f, 2.1f), pTransform->Get_WorldMatrix());
+
+		auto effectDown = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_axe_charge_down.json")
+			.Position(vWorldPosition)
+			.Build("Sacrifice_Axe_Charge_Down");
+
+		auto effectUp = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_axe_charge_up.json")
+			.Position(vWorldPosition)
+			.Build("Sacrifice_Axe_Charge_Up");
+
+		ObjectManager()->Add_Object(effectDown, { pOwner->Get_Level(),"Enemy_Effect_Layer" });
+		ObjectManager()->Add_Object(effectUp, { pOwner->Get_Level(),"Enemy_Effect_Layer" });
+	}
+
+	/* Explode */
+	if (IsCrossAnimProgress(0.67f))
+	{
+		auto pTransform = pOwner->Get_Component<CTransform>();
+
+		_vector3 vWorldPosition = _vector3::Transform(_vector3(-0.6f, 0.1f, 2.1f), pTransform->Get_WorldMatrix());
+
+		auto effectDown = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_axe_explode.json")
+			.Position(vWorldPosition)
+			.Build("Sacrifice_Axe_Charge_Down");
+
+		ObjectManager()->Add_Object(effectDown, { pOwner->Get_Level(),"Enemy_Effect_Layer" });
+	}
+
 }
 
 void CSacrificeState_Attack_Charge_Start_Phase2::Enter(CSacrifice* pOwner)
