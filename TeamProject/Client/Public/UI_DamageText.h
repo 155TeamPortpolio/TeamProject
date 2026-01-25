@@ -1,11 +1,19 @@
 #pragma once
 
 #include "UI_AtlasSprite.h"
+#include "UI_WorldToScreen.h"
 
 NS_BEGIN(Client)
 
-class CUI_DamageText final : public CUI_Object
+class CUI_DamageText final : public CUI_WorldToScreen
 {
+public:
+    struct DAMAGE_DESC : public UI_DESC
+    {
+        Vector3 pos{};
+        _int    damage = 0;
+    };
+
 private:
     CUI_DamageText() {}
     CUI_DamageText(const CUI_DamageText& rhs);
@@ -13,12 +21,13 @@ private:
 
 public:
     HRESULT Initialize_Prototype() override;
-    HRESULT Initialize(INIT_DESC* pArg = {}) override;
+    HRESULT Initialize(INIT_DESC* arg = {}) override;
     void    Update(_float dt) override;
+    void    UI_Active(void* arg = {}) override;
+    void    UI_DeActive(void* arg = {}) override;
 
-public:
-    void Set_DamageValue(_int damageValue);
-    void Set_TextNumber(const string& digits);
+private:
+    void SetDamage(_int damage);
 
 private:
     void Ensure_GlyphCount(_uint count);
@@ -31,32 +40,18 @@ private:
     CUI_AtlasSprite* GetGlyph(_uint i) const { return m_glyphs[i]; }
 
 private:
-    string m_atlasTexKey;
+    _float  m_glyphAspect = 1.f;
 
-    _float m_glyphAspect = 1.f;
-
-    _uint  m_frameCountX = 8;
-    _uint  m_frameCountY = 8;
-
-    _float m_glyphHeightPx = 96.f;
-    _float m_glyphSpacingPx = 2.f;
-
-    _float m_lifeSec = 0.80f;
-    _float m_risePx = 0.f;
-
-    _float m_overlapHold = 0.86f;
-
-    _float m_time = 0.f;
-    _float m_scaleNow = 1.f;
-
+    _float  m_time = 0.f;
     Vector2 m_baseAnchorOffset = Vector2(0.f, 0.f);
+
+    _float3 m_worldPos{};
 
     string m_digits;
 
     _float m_baseTotalW = 1.f;
     vector<Vector2> m_baseOffsets;
 
-private:
     vector<CUI_AtlasSprite*> m_glyphs;
 
 public:

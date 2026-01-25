@@ -167,9 +167,6 @@ void UILoader::Add_Prototype(const string& levelKey)
 
 		{"IconLabel",		&CUI_IconLabel::Create		},
 		{"SceneFrame",		&CUI_SceneFrame::Create		},
-
-		{"AtlasSprite",     &CUI_AtlasSprite::Create    },
-		{"DamageText",      &CUI_DamageText::Create     },
 	};
 
 	for (const Entry& entry : entries)

@@ -11,9 +11,8 @@ public:
         string texKey;
         _uint  frameCountX = 1;
         _uint  frameCountY = 1;
-        _uint  frameIndex = 0;
-
-        _float heightPx = 32.f;
+        _uint  frameIdx    = 0;
+        _float heightPx    = 32.f;
     };
 
 private:
@@ -27,8 +26,8 @@ public:
     void    Update(_float dt) override;
 
 public:
-    void Set_Atlas(const string& textureKey, _uint frameCountX, _uint frameCountY);
-    void Set_FrameIndex(_uint frameIndex);
+    void Set_Atlas(const string& texKey, _uint frameCountX, _uint frameCountY);
+    void Set_FrameIndex(_uint frameIdx);
     void Set_HeightPx(_float heightPx);
 
 private:
@@ -40,7 +39,7 @@ private:
 
     _uint  m_frameCountX = 1;
     _uint  m_frameCountY = 1;
-    _uint  m_frameIndex = 0;
+    _uint  m_frameIdx = 0;
 
     _float m_heightPx = 32.f;
 

@@ -22,7 +22,6 @@ private:
 		ULTIMATEICON1, ULTIMATEICON2, ULTIMATEICON3,
 		CUR_HP_TEXT,   MAX_HP_TEXT,
 		ACTION,
-		DAMAGE_TEXT,
 		END
 	};
 
@@ -37,7 +36,6 @@ private:
 		"ultimateIcon1", "ultimateIcon2", "ultimateIcon3",
 		"curHpText",     "maxHpText",
 		"action",
-		"damageText",
 	};
 
 	inline static constexpr CHILD  ROLE_CHILD[]         = { ROLE1, ROLE2, ROLE3 };
@@ -73,7 +71,6 @@ private:
 	CSprite2D*	    m_pSprites[ENUM(CHILD::END)]     = {};
 	CTextSlot*	    m_ptextSlots[ENUM(CHILD::END)]   = {};
 	CGaugeUI*		m_pGauges[ENUM(CHILD::END)]      = {}; 
-	CUI_DamageText* m_pDamageTexts[ENUM(CHILD::END)] = {};
 
 	static constexpr _int   ROLE_COUNT        = 3;
 	static constexpr _float HPBACK_DELTA      = 5.f;

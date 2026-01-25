@@ -35,8 +35,6 @@ HRESULT CUI_BattleHUD::Initialize(INIT_DESC* pArg)
     Add_PartObject(strLevelKey, "Proto_GameObject_Decibel", "decibel", CHILD::ULTIMATE1, _float2(50.f, 136.f));
     Add_PartObject(strLevelKey, "Proto_GameObject_BattleHUDAction", "action", CHILD::ACTION, _float2(1178.f, 655.f));
 
-    Add_PartObject(strLevelKey, "Proto_GameObject_DamageText", "damageText", CHILD::DAMAGE_TEXT, _float2(600.f, 200.f));
-     
     // ¿Ã∫•∆Æ : UI_PLAYER_STATUS_DESC
     Get_Component<CEventListener>()->Add_Listener<UI_PLAYER_STATUS_DESC>([&](const UI_PLAYER_STATUS_DESC& desc)
         {
@@ -94,7 +92,6 @@ void CUI_BattleHUD::Add_PartObject(const string& strLevelKey, const string& strP
     m_pSprites[child]     = pUI->Get_Component<CSprite2D>();
     m_ptextSlots[child]   = pUI->Get_Component<CTextSlot>();
     m_pGauges[child]      = dynamic_cast<CGaugeUI*>(pUI);
-    m_pDamageTexts[child] = dynamic_cast<CUI_DamageText*>(pUI);
 }
 
 void CUI_BattleHUD::Cache_Children()
@@ -118,7 +115,6 @@ void CUI_BattleHUD::Cache_Children()
         m_pSprites[i]     = pUI->Get_Component<CSprite2D>();
         m_ptextSlots[i]   = pUI->Get_Component<CTextSlot>();
         m_pGauges[i]      = dynamic_cast<CGaugeUI*>(pUI);
-        m_pDamageTexts[i] = dynamic_cast<CUI_DamageText*>(pUI);
     } 
 }
 

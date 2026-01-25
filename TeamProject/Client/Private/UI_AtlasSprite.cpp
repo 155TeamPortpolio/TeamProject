@@ -27,7 +27,7 @@ HRESULT CUI_AtlasSprite::Initialize(INIT_DESC* pArg)
         m_texKey      = desc->texKey;
         m_frameCountX = desc->frameCountX;
         m_frameCountY = desc->frameCountY;
-        m_frameIndex  = desc->frameIndex;
+        m_frameIdx    = desc->frameIdx;
         m_heightPx    = desc->heightPx;
     }
 
@@ -59,9 +59,9 @@ void CUI_AtlasSprite::Set_Atlas(const string& textureKey, _uint frameCountX, _ui
     Apply_Params();
 }
 
-void CUI_AtlasSprite::Set_FrameIndex(_uint frameIndex)
+void CUI_AtlasSprite::Set_FrameIndex(_uint frameIdx)
 {
-    m_frameIndex = frameIndex;
+    m_frameIdx = frameIdx;
     Apply_Params();
 }
 
@@ -77,7 +77,7 @@ void CUI_AtlasSprite::Apply_Params()
 
     pSprite->Set_Param("Col",        {&m_frameCountX, "uint", sizeof(_uint)});
     pSprite->Set_Param("Row",        {&m_frameCountY, "uint", sizeof(_uint)});
-    pSprite->Set_Param("FrameIndex", {&m_frameIndex,  "uint", sizeof(_uint)});
+    pSprite->Set_Param("FrameIndex", {&m_frameIdx,    "uint", sizeof(_uint)});
 }
 
 void CUI_AtlasSprite::Update_SizeByHeight()

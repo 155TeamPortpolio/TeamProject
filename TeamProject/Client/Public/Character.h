@@ -12,6 +12,8 @@ NS_BEGIN(Client)
 template<typename Type>
 class CStateMachine;
 
+class CUI_DamageText;
+
 class CCharacter abstract : public CGameObject
 {
 public:
@@ -202,6 +204,8 @@ private:
     void    Update_Decibel(_float dt);
     void    Update_Invincible(_float dt);
 
+    void    Create_DamageText();
+
 
     class CCharacterAttackCollider* Find_AttackCollider(const string& strName);
 
@@ -227,7 +231,7 @@ protected:
     _quaternion     m_qTargetRot = {};
     _bool           m_bCanRotate = { true };
     _bool           m_bIsRotating = { false };
-    OBJECT_HANDLE   m_TargetHandle;
+    OBJECT_HANDLE   m_TargetHandle;  
     _bool           m_bLockOn = { false };
     // 회피
     _bool           m_bEvadeBuffer = { false };
@@ -263,6 +267,8 @@ protected:
     _float          m_fAttackPower = { 10.f };
     _float          m_fDefense = { 5.f };
     _float          m_fMoveSpeed = { 1.f };
+
+    UI_HANDLE       m_dmgText{};
 
     static constexpr _float     TURNBACK_ANGLE_THRESHOLD = 100.f;
     static constexpr _float     EVADE_COOLDOWN = 1.f;
