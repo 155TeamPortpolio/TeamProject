@@ -164,7 +164,8 @@ MESH_NODE Engine::tagMeshNode::FromJson(nlohmann::ordered_json& json)
 	node.DiffuseTextureTag = json.value("diffuse_texture_tag", "");
 	node.NoiseTextureTag = json.value("noise_texture_tag", "");
 	node.DissolveTextureTag = json.value("dissolve_texture_tag", "");
-	node.MaskTextureTag = json.value("mask_texture_tag", "");
+	node.MaskTextureTagA = json.value("mask_texture_tag", "");
+	node.MaskTextureTagB = json.value("mask_texture_tagB", "");
 	node.DistortionTextureTag = json.value("distortion_texture_tag", "");
 
 	auto offsetPostion = json.value("offset_position", json::array({ 0.f,0.f,0.f }));
@@ -239,7 +240,8 @@ MESH_NODE Engine::tagMeshNode::FromJson(nlohmann::ordered_json& json)
 	node.vNoiseUVSpeed.y = json.at("noise_uvspeed").at("y").get<_float>();
 
 	/* Mask */
-	node.fEnableMask = json.value("enable_mask", 0.f);
+	node.fEnableMaskA = json.value("enable_mask", 0.f);
+	node.fEnableMaskB = json.value("enable_maskB", 0.f);
 	node.fMaskTilling = json.value("mask_tilling", 0.f);
 
 	/* Distortion */
@@ -295,6 +297,7 @@ EFFECT_ASSET Engine::tagEffectAsset::FromJson(nlohmann::ordered_json& json)
 {
 	EFFECT_ASSET Effect{};
 
+	Effect.isBillboard = json.value("is_billboard", Effect.isBillboard);
 	Effect.iNodeCount = json.value("node_count", Effect.iNodeCount);
 	Effect.fDuration = json.value("duration", Effect.fDuration);
 	Effect.isLoop = json.value("is_loop", Effect.isLoop);

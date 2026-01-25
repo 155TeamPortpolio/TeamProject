@@ -50,7 +50,8 @@ HRESULT CMeshNode::Initialize(INIT_DESC* pArg)
 		m_DiffuseTextureTag = pMeshNode->DiffuseTextureTag;
 		m_NoiseTextureTag = pMeshNode->NoiseTextureTag;
 		m_DissolveTextureTag = pMeshNode->DissolveTextureTag;
-		m_MaskTextureTag = pMeshNode->MaskTextureTag;
+		m_MaskTextureTagA = pMeshNode->MaskTextureTagA;
+		m_MaskTextureTagB = pMeshNode->MaskTextureTagB;
 		m_DistortionTextureTag = pMeshNode->DistortionTextureTag;
 
 		/* Offset Transform */
@@ -108,7 +109,8 @@ HRESULT CMeshNode::Initialize(INIT_DESC* pArg)
 		m_NoiseModule.vNoiseUVSpeed = pMeshNode->vNoiseUVSpeed;
 
 		/* Mask */
-		m_MaskModule.fEnableMask = pMeshNode->fEnableMask;
+		m_MaskModule.fEnableMaskA = pMeshNode->fEnableMaskA;
+		m_MaskModule.fEnableMaskB = pMeshNode->fEnableMaskB;
 		m_MaskModule.fMaskTilling = pMeshNode->fMaskTilling;
 
 		/* Distortion */
@@ -150,12 +152,22 @@ HRESULT CMeshNode::Initialize(INIT_DESC* pArg)
 			MSG_BOX("Not exist Dissolve Texture : %s", m_DissolveTextureTag.c_str());
 	}
 
-	if (!m_MaskTextureTag.empty())
+	if (!m_MaskTextureTagA.empty())
 	{
-		auto pMaskTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_MaskTextureTag);
+		auto pMaskTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_MaskTextureTagA);
 
 		if (pMaskTexture)
-			pMaterialInstance->Set_Param("AlphaMaskTexture", { pMaskTexture->Get_SRV(),"Texture2D",0 });
+			pMaterialInstance->Set_Param("AlphaMaskTextureA", { pMaskTexture->Get_SRV(),"Texture2D",0 });
+		else
+			MSG_BOX("Not exist Mask Texture : %s", m_MaskTextureTag.c_str());
+	}
+
+	if (!m_MaskTextureTagB.empty())
+	{
+		auto pMaskTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_MaskTextureTagB);
+
+		if (pMaskTexture)
+			pMaterialInstance->Set_Param("AlphaMaskTextureB", { pMaskTexture->Get_SRV(),"Texture2D",0 });
 		else
 			MSG_BOX("Not exist Mask Texture : %s", m_MaskTextureTag.c_str());
 	}
@@ -371,7 +383,8 @@ void CMeshNode::Bind_Params()
 	pMaterialInstance->Set_Param("ElapsedTime", { &m_fElpasedTime,"float",sizeof(_float) });
 
 	/* Mask */
-	pMaterialInstance->Set_Param("EnableMask", { &m_MaskModule.fEnableMask,"float",sizeof(_float) });
+	pMaterialInstance->Set_Param("EnableMaskA", { &m_MaskModule.fEnableMaskA,"float",sizeof(_float) });
+	pMaterialInstance->Set_Param("EnableMaskB", { &m_MaskModule.fEnableMaskB,"float",sizeof(_float) });
 	pMaterialInstance->Set_Param("MaskTilling", { &m_MaskModule.fMaskTilling,"float",sizeof(_float) });
 
 	/* Distortion */

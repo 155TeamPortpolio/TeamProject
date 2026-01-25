@@ -79,6 +79,7 @@ void CParticleNode_Edit::Render_GUI()
 	//ImGui::Begin("SpriteNode", &isOpen);
 	AddTextures();
 	SetUp_ParticleEffect();
+	CGameObject::Render_GUI();
 
 	ImGui::PopID();
 }
