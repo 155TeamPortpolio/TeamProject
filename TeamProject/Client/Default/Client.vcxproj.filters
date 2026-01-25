@@ -837,6 +837,9 @@
     <Filter Include="02. GameObject\MapObject\99. EntitySpawner">
       <UniqueIdentifier>{8b852d8f-36c2-4c1e-b080-ca2b3222160f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03. Utility\04. BattleSystem\Monster Spawner">
+      <UniqueIdentifier>{0bdcfd9b-76a0-4c91-82f2-9a71e5d819f5}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02. GameObject\UI\03. UIElement\NineSlice">
       <UniqueIdentifier>{2646c162-8883-48f9-b637-d3f38abb755c}</UniqueIdentifier>
     </Filter>
@@ -1576,6 +1579,12 @@
     </ClInclude>
     <ClInclude Include="..\public\DisplayGate.h">
       <Filter>02. GameObject\Camera\99. DisplayGate</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\BattleSystem_Struct.h">
+      <Filter>03. Utility\04. BattleSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\MonsterSpawner.h">
+      <Filter>03. Utility\04. BattleSystem\Monster Spawner</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\CharacterParryCollider.h">
       <Filter>02. GameObject\Object\Player\Character\Collider\ParryCollider</Filter>
@@ -2337,6 +2346,9 @@
     </ClCompile>
     <ClCompile Include="..\private\DisplayGate.cpp">
       <Filter>02. GameObject\Camera\99. DisplayGate</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MonsterSpawner.cpp">
+      <Filter>03. Utility\04. BattleSystem\Monster Spawner</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\CharacterParryCollider.cpp">
       <Filter>02. GameObject\Object\Player\Character\Collider\ParryCollider</Filter>

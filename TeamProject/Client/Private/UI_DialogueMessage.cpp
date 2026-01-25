@@ -120,7 +120,7 @@ void CUI_DialogueMessage::Cache_Children()
 
 void CUI_DialogueMessage::Update_KeyInput()
 {
-    if (InputDevice()->Key_Down(VK_SPACE))
+    if (InputDevice()->Key_Tap(VK_SPACE))
         Change_Dialogue();
 }
 

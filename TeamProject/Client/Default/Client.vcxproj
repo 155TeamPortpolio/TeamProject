@@ -239,6 +239,7 @@
     <ClInclude Include="..\public\BangBooPayState_Idle.h" />
     <ClInclude Include="..\public\BattlePlayer.h" />
     <ClInclude Include="..\public\BattleSystem.h" />
+    <ClInclude Include="..\Public\BattleSystem_Struct.h" />
     <ClInclude Include="..\public\CamDialogueController.h" />
     <ClInclude Include="..\public\CamEventController.h" />
     <ClInclude Include="..\Public\CharacterParryCollider.h" />
@@ -262,6 +263,7 @@
     <ClInclude Include="..\public\Jaeger.h" />
     <ClInclude Include="..\public\JaneDoeState_Hit.h" />
     <ClInclude Include="..\Public\JaneDoeState_Start.h" />
+    <ClInclude Include="..\public\MonsterSpawner.h" />
     <ClInclude Include="..\public\NpcInteractZone.h" />
     <ClInclude Include="..\public\EntitySpawner.h" />
     <ClInclude Include="..\public\OrbitLockOnController.h" />
@@ -557,6 +559,7 @@
     <ClCompile Include="..\private\Jaeger.cpp" />
     <ClCompile Include="..\private\JaneDoeState_Hit.cpp" />
     <ClCompile Include="..\Private\JaneDoeState_Start.cpp" />
+    <ClCompile Include="..\private\MonsterSpawner.cpp" />
     <ClCompile Include="..\private\NpcInteractZone.cpp" />
     <ClCompile Include="..\private\EntitySpawner.cpp" />
     <ClCompile Include="..\private\OrbitLockOnController.cpp" />

@@ -1,5 +1,6 @@
 #pragma once
 #include "Base.h"
+#include "BattleSystem_Struct.h"
 
 NS_BEGIN(Engine)
 class CGameObject;
@@ -97,7 +98,13 @@ public: //getter
 
 public: //setter
 	void	SetActive(_bool is) { m_isActive = is; }
-	void	SpawnMosnter(const string& MonsterProtoTag, _float3 vSpawnPos);
+	
+	/* PrefabIndex는 같은 몬스터 스폰포인트를 사용하지만 다른 몬스터 종류를 사용할 때를 위해 빼놓음. 1xxx,2xxx 등으로 나눠서 MonsterSpawn.csv에 저장된걸 로드함*/
+	void	ReadyBattle(const string& tagArea, _uint iPrefabIndex = 1);
+	
+	void	SpawnMosnter(const string& MonsterProtoTag, _float3 vSpawnPos, _float3 vRot = {});
+	// 보류
+	void	SpawnMosnterFromPool(const string& MonsterProtoTag, _float3 vSpawnPos, _float3 vRot);
 	_bool	ExitBattleObject(BATTLE_OBJ_TYPE eObjType, OBJECT_HANDLE hObject);
 	// 플레이어(캐릭터들) 로직 정해지기 전까지 임시
 	void	SetPlayer(vector<OBJECT_HANDLE> hPlayers);
@@ -126,10 +133,20 @@ private:
 	void	CheckVFX(const _float dt);
 
 private:
-	_bool	m_isActive = { false };
-
+	/* Data */
 	// 몬스터 세팅 테이블(CCT 정보, 각종 Status(HP, 공격력 등))
 	unordered_map<string, MonsterCreationDesc>				m_MonsterCreationTables;
+	// 현재 Stage에 셋팅 된 BattlePoint 정보
+	BATTLE_FIELD_DATA			m_BattleFieldData = {};
+	// 스포너 핸들
+	vector<OBJECT_HANDLE>		m_SpawnerHandles;
+
+	
+
+private:
+	_bool	m_isReady = { false };
+	_bool	m_isActive = { false };
+
 	// BATTLE_OBJ_TYPE 별로 생성된 오브젝트의 핸들 모음
 	unordered_map<BATTLE_OBJ_TYPE, vector<OBJECT_HANDLE>>	m_Handles;
 	// 매 업데이트때 1번씩 생성된 Battle 오브젝트의 정보를 담아둠
