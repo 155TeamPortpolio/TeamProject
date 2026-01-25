@@ -4,46 +4,21 @@
 #include "GameInstance.h"
 #include "ILevelService.h"
 #include "Level.h"
+#include "UI_Pool.h"
 CUI_Manager::CUI_Manager()
 	:m_pGameInstance(CGameInstance::GetInstance())
 {
 	Safe_AddRef(m_pGameInstance);
+	m_pUIPool = CUI_Pool::Create();
 }
 
 CUI_Manager::~CUI_Manager()
 {
-	//Builder::Create_Object().
 }
 
 void CUI_Manager::Pre_EngineUpdate(_float dt)
 {
-
-	for (CUI_Object* obj : DeleteUIs)
-	{
-		if (!obj) continue;
-
-		const _int idx = obj->Get_SystemIndex();
-		if (idx < 0) continue;
-
-		const auto levelKey = obj->Get_SystemLevel();
-
-		auto itLevel = m_UIObjects.find(levelKey);
-		if (itLevel == m_UIObjects.end()) continue;
-
-		auto& vec = itLevel->second;
-		if (idx >= static_cast<_int>(vec.size())) continue;
-
-		// 아직 그 슬롯에 그 객체가 있을 때만 제거
-		if (vec[idx] != obj) continue;
-
-		// 시스템 연결 끊기
-		obj->Set_OnSystem("", -1);
-
-		Safe_Release(vec[idx]);
-		vec[idx] = nullptr;
-	}
-	DeleteUIs.clear();
-
+	CleanUp();
 	m_nowLevelKey = CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey();
 	
 	auto itLevel = m_UIObjects.find(m_nowLevelKey);
@@ -184,7 +159,7 @@ void CUI_Manager::Remove_UIObject(CUI_Object* object)
 
 	const _int systemIndex = object->Get_SystemIndex();
 	if (systemIndex < 0)
-		return;
+		return; /*유아이에 배치된 적 없음*/
 
 	const auto level = object->Get_SystemLevel();
 
@@ -199,13 +174,82 @@ void CUI_Manager::Remove_UIObject(CUI_Object* object)
 	if (vec[systemIndex] != object)
 		return;
 
-	auto it = std::find(DeleteUIs.begin(), DeleteUIs.end(), object);
-	if (it != DeleteUIs.end())
-		return;
+	/*여기까지가 말 안되는 오브젝트가 들어옴*/
 
-	DeleteUIs.push_back(object);
+	if (object->IsFromPool()) {
+		if (m_ReleaseUI_IDs.count(object->Get_ObjectID()))
+			return;
+
+		m_ReleaseUIs.push_back(object);
+		m_ReleaseUI_IDs.insert(object->Get_ObjectID());
+	}
+	else {
+		if (DeleteUI_IDs.count(object->Get_ObjectID()))
+			return;
+
+		DeleteUIs.push_back(object);
+		DeleteUI_IDs.insert(object->Get_ObjectID());
+	}
+	
 }
- 
+
+void CUI_Manager::CleanUp()
+{
+	for (CUI_Object* obj : DeleteUIs)
+	{
+		if (!obj) continue;
+
+		const _int idx = obj->Get_SystemIndex();
+		if (idx < 0) continue;
+
+		const auto levelKey = obj->Get_SystemLevel();
+
+		auto itLevel = m_UIObjects.find(levelKey);
+		if (itLevel == m_UIObjects.end()) continue;
+
+		auto& vec = itLevel->second;
+		if (idx >= static_cast<_int>(vec.size())) continue;
+
+		// 아직 그 슬롯에 그 객체가 있을 때만 제거
+		if (vec[idx] != obj) continue;
+
+		// 시스템 연결 끊기
+		obj->Set_OnSystem("", -1);
+
+		Safe_Release(vec[idx]);
+		vec[idx] = nullptr;
+	}
+	DeleteUIs.clear();
+	DeleteUI_IDs.clear();
+
+	for (CUI_Object* obj : m_ReleaseUIs)
+	{
+		if (!obj) continue;
+
+		const _int idx = obj->Get_SystemIndex();
+		if (idx < 0) continue;
+
+		const auto levelKey = obj->Get_SystemLevel();
+
+		auto itLevel = m_UIObjects.find(levelKey);
+		if (itLevel == m_UIObjects.end()) continue;
+
+		auto& vec = itLevel->second;
+		if (idx >= static_cast<_int>(vec.size())) continue;
+
+		// 아직 그 슬롯에 그 객체가 있을 때만 제거
+		if (vec[idx] != obj) continue;
+
+		// 시스템 연결 끊기
+		obj->Set_OnSystem("", -1);
+		obj->OnPooledRelease();
+		const CLONE_DESC& poolKey = obj->Get_PoolKey();
+		m_pUIPool->Return(poolKey, obj);
+		vec[idx] = nullptr;
+	}
+	m_ReleaseUIs.clear();
+	m_ReleaseUI_IDs.clear();
+}
 
 static vector<CUI_Object*> emptyVec;
 
@@ -276,6 +320,47 @@ CUI_Object* CUI_Manager::Request_UIObject(const UI_HANDLE& handle)
 	return nullptr;
 }
 
+CUI_Object* CUI_Manager::Acquire(const CLONE_DESC& desc, INIT_DESC* pArg)
+{
+	return m_pUIPool->Acquire(desc, pArg);
+}
+
+void CUI_Manager::Prune_Queues_ByLevel(const string& levelTag)
+{
+	auto IsSameLevel = [&](CUI_Object* obj) -> bool
+		{
+			if (!obj) return false;
+			return obj->Get_Level() == levelTag;
+		};
+
+	{
+		vector<CUI_Object*> newList;
+		newList.reserve(m_ReleaseUIs.size());
+
+		for (auto* obj : m_ReleaseUIs)
+		{
+			if (!IsSameLevel(obj))
+				newList.push_back(obj);
+			else
+				m_ReleaseUI_IDs.erase(obj->Get_ObjectID());
+		}
+		m_ReleaseUIs.swap(newList);
+	}
+
+	{
+		vector<CUI_Object*> newList;
+		newList.reserve(DeleteUIs.size());
+
+		for (auto* obj : DeleteUIs)
+		{
+			if (!IsSameLevel(obj))
+				newList.push_back(obj);
+			else
+				DeleteUI_IDs.erase(obj->Get_ObjectID());
+		}
+		DeleteUIs.swap(newList);
+	}
+}
 void CUI_Manager::Sort_UI()
 {
 	m_SortedUIObjects.clear();
@@ -311,6 +396,7 @@ void CUI_Manager::Free()
 		for (auto& UI : pair.second)
 			Safe_Release(UI);
 
+	Safe_Release(m_pUIPool);
 	Safe_Release(m_pGameInstance);
 }
 

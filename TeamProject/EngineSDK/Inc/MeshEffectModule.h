@@ -80,7 +80,8 @@ typedef struct tagNoiseModule
 
 typedef struct tagMaskModule
 {
-	_float fEnableMask{};
+	_float fEnableMaskA{};
+	_float fEnableMaskB{};
 	_float fMaskTilling{};
 }MASK_MODULE;
 

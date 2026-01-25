@@ -15,9 +15,8 @@ public:
     virtual void OnResumeFromOverlay() ;
 
 private:
-    string m_RoomKey = {};
-    _bool m_isPersistent = { false };
     class CMapLoader* m_pLoader = { nullptr };
+
 public:
     static CRoom_Street* Create(const ROOM_DESC& desc);
     virtual void Free();

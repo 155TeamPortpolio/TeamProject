@@ -15,7 +15,7 @@ CUIObjcetBuilder::CUIObjcetBuilder(const CLONE_DESC& cloneDesc)
 		MSG_BOX("Origin Level Tag is Invalidate : Builder");
 	}
 	else {
-		m_CloneDesc = new CLONE_DESC(cloneDesc);
+		m_CloneDesc = cloneDesc;
 	}
 	m_pObjDesc = new UI_DESC;
 
@@ -28,7 +28,6 @@ CUIObjcetBuilder::~CUIObjcetBuilder()
 		delete(pair.second);
 
 	m_CompDesc.clear();
-	Safe_Delete(m_CloneDesc);
 	Safe_Delete(m_pObjDesc);
 
 	Safe_Release(m_pGameInstance);
@@ -36,31 +35,39 @@ CUIObjcetBuilder::~CUIObjcetBuilder()
 
 CUI_Object* CUIObjcetBuilder::Build(const string& instanceKey, _uint* id)
 {
-	if (!m_CloneDesc)
+	if (m_CloneDesc.OriginLevel.empty())
 	{
 		MSG_BOX("CLONE_DESC is missing : CUIObjcetBuilder ");
 		return nullptr;
 	}
-
 
 	m_pObjDesc->InstanceName = instanceKey;
 
 	for (auto& pair : m_CompDesc)
 		m_pObjDesc->CompDesc[pair.first] = pair.second;
 
-	CGameObject* Object = m_pGameInstance->Get_PrototypeMgr()->
-		Clone_Prototype(m_CloneDesc->OriginLevel, m_CloneDesc->protoTag, m_pObjDesc);
-	CUI_Object* instance = dynamic_cast<CUI_Object*>(Object);
+	CUI_Object* instance = nullptr;
 
-	if (!instance) {
-		return nullptr;
+	if (m_isFromPool)
+	{
+		instance = UIManager()->Acquire(m_CloneDesc, m_pObjDesc);
+		if (!instance) 
+			return nullptr;
+		instance->Set_FromPool(true);
+		instance->OnPooledAcquire(m_pObjDesc);
+	}
+	else {
+		auto obj = PrototypeManager()->Clone_Prototype(m_CloneDesc.OriginLevel, m_CloneDesc.protoTag, m_pObjDesc);
+		instance = dynamic_cast<CUI_Object*>(obj);
+		if (!instance) return nullptr;
+		instance->Set_FromPool(false);
+		instance->Awake();
 	}
 
 	if (instance && id) {
 		*id = instance->Get_ObjectID();
 	}
 
-	instance->Awake();
 	return instance;
 }
 
@@ -113,6 +120,12 @@ CUIObjcetBuilder& CUIObjcetBuilder::Add_UIDesc(UI_DESC* pArg)
 	} 
 		
 	m_pObjDesc = pArg;
+	return *this;
+}
+
+CUIObjcetBuilder& CUIObjcetBuilder::FromPool()
+{
+	m_isFromPool = true;
 	return *this;
 }
 

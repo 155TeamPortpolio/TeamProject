@@ -15,6 +15,9 @@
 #include "CharacterAttackCollider.h"
 #include "CharacterParryCollider.h"
 
+#include "UI_DamageText.h"
+#include "UIDirector.h"
+
 
 CCharacter::CCharacter(const CCharacter& rhs)
 	: CGameObject(rhs)
@@ -148,6 +151,11 @@ void CCharacter::Priority_Update(_float dt)
 
 void CCharacter::Update(_float dt)
 {
+	if (InputDevice()->Key_Tap(VK_F3))
+	{
+		Take_Damage(DAMAGE_TYPE::NORMAL, 10.f);
+	}
+
 	m_pAnimator->Update_Animation(dt);
 	m_pCCT->Update(dt);
 	Update_Evade(dt);
@@ -187,6 +195,8 @@ void CCharacter::OnTriggerEnter(CGameObject* pOther)
 			if (pInteract != nullptr)
 			{
 				pInteract->Interact();
+				m_inputInfo = {};
+				Reset_State();
 			}
 		}
 	}
@@ -208,6 +218,8 @@ void CCharacter::OnTriggerStay(CGameObject* pOther)
 		if (pInteract != nullptr)
 		{
 			pInteract->Interact();
+			m_inputInfo = {};
+			Reset_State();
 		}
 	}
 	
@@ -262,8 +274,10 @@ void CCharacter::OnTriggerExit(CGameObject* pOther)
 
 void CCharacter::On_Move(const InputInfo& inputInfo)
 {
-	if (!m_bIsMain)	return;
-
+	if (!m_bIsMain)
+		return;
+	//if (m_bCanInteract)
+	//	return;
 	_bool prevResetMove = m_inputInfo.resetMove;
 	m_inputInfo = inputInfo;
 	m_inputInfo.resetMove = prevResetMove;
@@ -503,8 +517,15 @@ _bool CCharacter::Is_Active_AttackCollider(const string& strName)
 void CCharacter::Take_Damage(DAMAGE_TYPE eType, _float fDamage)
 {
 	if (Is_Invincible()) return;
+
 	m_fCurrentHP -= fDamage;
 	On_Hit(eType);
+
+	CUI_DamageText::DAMAGE_DESC desc{};
+	desc.pos    = m_vHitPos;
+	desc.damage = (_int)fDamage;
+
+	UIDirector()->Request_DamageText(&desc);
 }
 
 _bool CCharacter::Is_OppositeInput() const

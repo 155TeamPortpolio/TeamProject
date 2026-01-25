@@ -609,6 +609,9 @@
     <ClInclude Include="..\Public\SkinningBuffer.h">
       <Filter>01. Utility\06. RenderSystem\PipeLine\Skinning</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UI_Pool.h">
+      <Filter>01. Utility\03. GameObject\Managers\UI_Manager\UI_Pool</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <!-- Filter Definitions -->
@@ -1134,6 +1137,9 @@
     <Filter Include="01. Utility\06. RenderSystem\PipeLine\Skinning">
       <UniqueIdentifier>{b13ef6fd-d622-4e90-a05b-45296d976075}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\03. GameObject\Managers\UI_Manager\UI_Pool">
+      <UniqueIdentifier>{376228d1-7bc6-4481-bc26-53c3b0c92565}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <!-- ClCompile 항목들 - 중복 제거 버전 -->
@@ -1601,6 +1607,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\SkinningBuffer.cpp">
       <Filter>01. Utility\06. RenderSystem\PipeLine\Skinning</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Pool.cpp">
+      <Filter>01. Utility\03. GameObject\Managers\UI_Manager\UI_Pool</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

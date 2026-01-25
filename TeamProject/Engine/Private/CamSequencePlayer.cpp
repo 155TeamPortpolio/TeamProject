@@ -74,32 +74,6 @@ void CCamSequencePlayer::SetSequence(const CamSequenceDesc* seq)
     eval.dirty        = true;
 }
 
-void CCamSequencePlayer::SyncSpaceRefAnimatorTime(_float sampleTime)
-{
-    if (!target.seq) return;
-    if (!apply.spaceRefHandle.isValid()) return;
-
-    const CamBoneAttachDesc& bone = target.seq->boneAttach;
-
-    _bool needSync = false;
-
-    if (target.seq->space == CamSpace::Local)
-        needSync = true;
-
-    if (bone.enabled && bone.usePosBone && !bone.posBoneName.empty())
-        needSync = true;
-
-    if (bone.enabled && bone.useLookAtBone && !bone.lookAtBoneName.empty())
-        needSync = true;
-
-    if (!needSync) return;
-
-    auto refObj = ObjectManager()->Request_Object(apply.spaceRefHandle);
-    auto anim = refObj->Get_Component<CAnimator3D>();
-
-    anim->Set_TimeSec(sampleTime);
-}
-
 void CCamSequencePlayer::Play()
 {
     if (!target.seq) return;
@@ -193,7 +167,6 @@ void CCamSequencePlayer::RebuildIfNeeded()
 void CCamSequencePlayer::ApplyPose(const CamPose& pose)
 {
     const CamSequenceDesc* seq = target.seq;
-    const CamBoneAttachDesc* boneDesc = seq ? &seq->boneAttach : nullptr;
 
     const _bool hasKeys = (seq && !seq->keyframes.empty());
 
@@ -212,22 +185,13 @@ void CCamSequencePlayer::ApplyPose(const CamPose& pose)
 
     Quaternion finalRot = hasKeys ? keyRot : curR;
 
-    Matrix spaceRefRT = Matrix::Identity;
     Quaternion spaceRefR = Quaternion::Identity;
     Vector3 spaceRefT = Vector3::Zero;
     _bool hasSpaceRef = false;
 
-    Matrix posBoneRT = Matrix::Identity;
-    Vector3 posBoneT = Vector3::Zero;
-    _bool hasPosBone = false;
-
-    Matrix lookBoneRT = Matrix::Identity;
-    Vector3 lookBoneT = Vector3::Zero;
-    _bool hasLookBone = false;
-
     const _bool needSpaceRef = (seq && seq->space == CamSpace::Local);
 
-    if ((needSpaceRef || (boneDesc && boneDesc->enabled)) && apply.spaceRefHandle.isValid())
+    if (needSpaceRef && apply.spaceRefHandle.isValid())
     {
         auto refObj = ObjectManager()->Request_Object(apply.spaceRefHandle);
         auto refTf = refObj->Get_Component<CTransform>();
@@ -242,55 +206,14 @@ void CCamSequencePlayer::ApplyPose(const CamPose& pose)
 
         spaceRefR = rr;
         spaceRefT = rt;
-        spaceRefRT = Matrix::CreateFromQuaternion(rr) * Matrix::CreateTranslation(rt);
         hasSpaceRef = true;
-
-        if (boneDesc && boneDesc->enabled && (boneDesc->usePosBone || boneDesc->useLookAtBone))
-        {
-            auto anim = refObj->Get_Component<CAnimator3D>();
-
-            if (boneDesc->usePosBone && !boneDesc->posBoneName.empty())
-            {
-                Matrix bw = Matrix(anim->Get_BoneMatrix(CAnimator3D::BoneSpace::WORLD, boneDesc->posBoneName));
-
-                Vector3 bs{};
-                Vector3 bt{};
-                Quaternion br = Quaternion::Identity;
-                bw.Decompose(bs, br, bt);
-                br.Normalize();
-
-                posBoneRT = Matrix::CreateFromQuaternion(br) * Matrix::CreateTranslation(bt);
-                posBoneT = bt;
-                hasPosBone = true;
-            }
-
-            if (boneDesc->useLookAtBone && !boneDesc->lookAtBoneName.empty())
-            {
-                Matrix bw = Matrix(anim->Get_BoneMatrix(CAnimator3D::BoneSpace::WORLD, boneDesc->lookAtBoneName));
-
-                Vector3 bs{};
-                Vector3 bt{};
-                Quaternion br = Quaternion::Identity;
-                bw.Decompose(bs, br, bt);
-                br.Normalize();
-
-                lookBoneRT = Matrix::CreateFromQuaternion(br) * Matrix::CreateTranslation(bt);
-                lookBoneT = bt;
-                hasLookBone = true;
-            }
-        }
     }
 
     Vector3 basePos = curT;
-
-    if (boneDesc && boneDesc->enabled && boneDesc->usePosBone && hasPosBone)
-        basePos = posBoneT;
-    else if (needSpaceRef && hasSpaceRef)
-        basePos = spaceRefT;
+    if (needSpaceRef && hasSpaceRef) basePos = spaceRefT;
 
     Vector3 offsetWorld = offsetPos;
-
-    if (seq && seq->space == CamSpace::Local && boneDesc && boneDesc->offsetInRefRotSpace && hasSpaceRef)
+    if (needSpaceRef && hasSpaceRef)
     {
         Matrix rM = Matrix::CreateFromQuaternion(spaceRefR);
         offsetWorld = Vector3::Transform(offsetPos, rM);
@@ -298,43 +221,10 @@ void CCamSequencePlayer::ApplyPose(const CamPose& pose)
 
     Vector3 finalPos = basePos + offsetWorld;
 
-    if (boneDesc && boneDesc->enabled && boneDesc->useLookAtBone)
+    if (needSpaceRef && hasKeys && hasSpaceRef)
     {
-        Vector3 lookTarget = finalPos;
-
-        if (hasLookBone) lookTarget = lookBoneT;
-        else if (hasSpaceRef) lookTarget = spaceRefT;
-
-        Vector3 dir = lookTarget - finalPos;
-
-        if (dir.LengthSquared() > 1e-8f)
-        {
-            dir.Normalize();
-
-            Vector3 up(0.f, 1.f, 0.f);
-            if (fabsf(dir.Dot(up)) > 0.98f) up = Vector3(0.f, 0.f, 1.f);
-
-            Matrix lookM = Matrix::CreateWorld(Vector3::Zero, dir, up);
-            Quaternion lookRot = Quaternion::CreateFromRotationMatrix(lookM);
-            lookRot.Normalize();
-
-            finalRot = lookRot;
-
-            if (boneDesc->keepRollFromKey && hasKeys)
-            {
-                Quaternion rollQ = Quaternion::CreateFromAxisAngle(dir, pose.roll);
-                finalRot = rollQ * finalRot;
-                finalRot.Normalize();
-            }
-        }
-    }
-    else
-    {
-        if (seq && seq->space == CamSpace::Local && hasKeys && hasSpaceRef)
-        {
-            finalRot = finalRot * spaceRefR;
-            finalRot.Normalize();
-        }
+        finalRot = finalRot * spaceRefR;
+        finalRot.Normalize();
     }
 
     apply.transform->Set_Pos(_vector3(finalPos.x, finalPos.y, finalPos.z));
@@ -343,7 +233,6 @@ void CCamSequencePlayer::ApplyPose(const CamPose& pose)
     if (apply.cam && hasKeys)
         apply.cam->Set_FOV(pose.fov);
 }
-
 
 _float CCamSequencePlayer::GetPlaybackDuration() const
 {
@@ -357,8 +246,6 @@ _float CCamSequencePlayer::GetPlaybackDuration() const
 
 void CCamSequencePlayer::ApplyAtSampleTime(_float sampleTime)
 {
-    SyncSpaceRefAnimatorTime(sampleTime);
-
     CamPose pose{};
 
     if (!target.seq->keyframes.empty() && eval.evaluator)

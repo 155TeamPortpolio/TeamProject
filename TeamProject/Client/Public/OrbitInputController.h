@@ -9,7 +9,7 @@ class COrbitInputController
 {
 public:
     OrbitInputEvalResult Evaluate(_float dt, const OrbitCamProfile& profile, const OrbitCamInputState& input,_float lockOnWeight,
-        _float maxYawSpeedDeg, _float maxPitchSpeedDeg, COrbitAutoYawFollowController& autoYawCtrl);
+        _float maxYawSpeedDeg, _float maxPitchSpeedDeg, COrbitAutoYawFollowController& autoYawCtrl, _bool inputLocked);
 };
 
 NS_END

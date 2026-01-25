@@ -71,9 +71,7 @@ void COrbitLockOnController::UpdateBlend(_float dt)
         m_blend.active = false;
 
         if (m_blend.entering)
-        {
             m_blend.weight = 1.f;
-        }
         else
         {
             m_blend.weight = 0.f;
@@ -148,7 +146,7 @@ OrbitLockOnEvalResult COrbitLockOnController::Evaluate(_float dt, const OrbitCam
 
     if (profile.lockOnAutoZoom && !out.hasDist)
     {
-        const _float wanted = profile.startDistance + len * profile.lockOnAutoZoomFactor;
+        const _float wanted = len * profile.lockOnAutoZoomFactor;
         const _float clampedDist = clamp(wanted, profile.minDist, profile.maxDist);
 
         if (curTargetDist < clampedDist)

@@ -74,7 +74,7 @@ HRESULT CUIRenderer::Render_CustomTarget()
 			}
 
 			m_pTargetManager->Push_Target(cmd.TargetKey);
-			if (pCurrentTarget->Get_RTV()) pCurrentTarget->Clear();
+			if (pCurrentTarget->Get_RTV() && cmd.bClear) pCurrentTarget->Clear();
 			if (pCurrentTarget->Get_DSV())
 				m_pContext->ClearDepthStencilView(pCurrentTarget->Get_DSV(),
 					D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0);
