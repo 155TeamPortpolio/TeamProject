@@ -22,6 +22,9 @@ public:
     virtual void    Update(_float dt) override;
     virtual void    Late_Update(_float dt) override;
 
+protected:
+    virtual void    Add_DialoguePartner() override;
+
 public:
     static CElectricBoo* Create();
     virtual CGameObject* Clone(INIT_DESC* pArg) override;

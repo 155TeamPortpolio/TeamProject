@@ -840,6 +840,9 @@
     <Filter Include="02. GameObject\Object\Npc\Dialogue\ElectricBoo">
       <UniqueIdentifier>{108374b6-14e8-4ada-9809-798940fc8321}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Npc\Dialogue\ElectricBoo\PairBoo">
+      <UniqueIdentifier>{dbad4b25-cb03-4327-9954-39e24a41bcc9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1631,6 +1634,9 @@
     <ClInclude Include="..\public\ElectricBoo.h">
       <Filter>02. GameObject\Object\Npc\Dialogue\ElectricBoo</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\PairBoo.h">
+      <Filter>02. GameObject\Object\Npc\Dialogue\ElectricBoo\PairBoo</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2382,6 +2388,9 @@
     </ClCompile>
     <ClCompile Include="..\private\ElectricBoo.cpp">
       <Filter>02. GameObject\Object\Npc\Dialogue\ElectricBoo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\PairBoo.cpp">
+      <Filter>02. GameObject\Object\Npc\Dialogue\ElectricBoo\PairBoo</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

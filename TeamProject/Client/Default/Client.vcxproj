@@ -256,6 +256,7 @@
     <ClInclude Include="..\public\OrbitInputController.h" />
     <ClInclude Include="..\public\OrbitPoseSmootherController.h" />
     <ClInclude Include="..\public\OrbitTargetSwitchController.h" />
+    <ClInclude Include="..\public\PairBoo.h" />
     <ClInclude Include="..\Public\Room.h" />
     <ClInclude Include="..\public\Jaeger.h" />
     <ClInclude Include="..\public\JaneDoeState_Hit.h" />
@@ -549,6 +550,7 @@
     <ClCompile Include="..\private\OrbitInputController.cpp" />
     <ClCompile Include="..\private\OrbitPoseSmootherController.cpp" />
     <ClCompile Include="..\private\OrbitTargetSwitchController.cpp" />
+    <ClCompile Include="..\private\PairBoo.cpp" />
     <ClCompile Include="..\Private\Room.cpp" />
     <ClCompile Include="..\private\Jaeger.cpp" />
     <ClCompile Include="..\private\JaneDoeState_Hit.cpp" />

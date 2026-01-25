@@ -10,6 +10,7 @@ protected:
     CDialogueNpc();
     CDialogueNpc(const CDialogueNpc& rhs);
     virtual ~CDialogueNpc() DEFAULT;
+
 public:
     void    Process_Event(const NPC_INTERACT_DESC& desc);
 
@@ -20,6 +21,9 @@ public:
     virtual void    Priority_Update(_float dt) override;
     virtual void    Update(_float dt) override;
     virtual void    Late_Update(_float dt) override;
+
+protected:
+    virtual void    Add_DialoguePartner() PURE;
 
 protected:
     NpcIDDesc             m_DiagloueData;
