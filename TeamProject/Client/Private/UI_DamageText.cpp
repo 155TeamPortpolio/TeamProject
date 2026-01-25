@@ -51,7 +51,7 @@ namespace
 
     // 알파(투명도) 아웃이 digitOutSec 중 얼마를 차지할지 비율(0~1)
     // alphaOutSec = digitOutSec * kAlphaOutSecRatio
-    constexpr _float kAlphaOutSecRatio = 1.f;
+    constexpr _float kAlphaOutSecRatio = 0.8f;
 
     // 스케일 애니메이션의 시작/홀드/끝 값
     // - Start: 처음 팡! 튀어나올 때 크기

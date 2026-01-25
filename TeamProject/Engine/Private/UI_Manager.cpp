@@ -80,6 +80,7 @@ void CUI_Manager::Late_Update(_float dt)
 
 void CUI_Manager::Clear(const string& LevelTag)
 {
+	Prune_Queues_ByLevel(LevelTag);
 	auto iter = m_UIObjects.find(LevelTag);
 	if (iter != m_UIObjects.end())
 	{
@@ -87,6 +88,8 @@ void CUI_Manager::Clear(const string& LevelTag)
 			Safe_Release(UI);
 		iter->second.clear();
 	}
+
+	m_pUIPool->ClearAll();
 }
 
 HRESULT CUI_Manager::Sync_To_Level()
@@ -129,15 +132,13 @@ void CUI_Manager::Add_Object_Recursive(const string& LevelTag, CUI_Object* objec
 
 	for (size_t i = 0; i < map.size(); i++)
 	{
-		/*���͸� ��ȸ�ϸ鼭 �������Ͱ� �ִ��� �˻�*/
 		if (map[i] == nullptr) {
 			ObjectIndex = i;
 			break;
 		}
 	}
 
-	/*���� ID�� ������Ʈ�� ���ٸ�*/
-	if (ObjectIndex == map.size()) /*�������� �߰�*/
+	if (ObjectIndex == map.size())
 		map.push_back(object);
 	else
 		map[ObjectIndex] = object;
@@ -161,7 +162,7 @@ void CUI_Manager::Remove_UIObject(CUI_Object* object)
 
 	const _int systemIndex = object->Get_SystemIndex();
 	if (systemIndex < 0)
-		return; /*�����̿� ��ġ�� �� ����*/
+		return;
 
 	const auto level = object->Get_SystemLevel();
 
@@ -175,8 +176,6 @@ void CUI_Manager::Remove_UIObject(CUI_Object* object)
 
 	if (vec[systemIndex] != object)
 		return;
-
-	/*���������? �� �ȵǴ� ������Ʈ�� ����*/
 
 	if (object->IsFromPool()) {
 		if (m_ReleaseUI_IDs.count(object->Get_ObjectID()))
@@ -239,10 +238,8 @@ void CUI_Manager::CleanUp()
 		auto& vec = itLevel->second;
 		if (idx >= static_cast<_int>(vec.size())) continue;
 
-		// ���� �� ���Կ� �� ��ü�� ���� ���� ����
 		if (vec[idx] != obj) continue;
 
-		// �ý��� ���� ����
 		obj->Set_OnSystem("", -1);
 		obj->OnPooledRelease();
 		const CLONE_DESC& poolKey = obj->Get_PoolKey();
@@ -267,7 +264,6 @@ const vector<CUI_Object*>& CUI_Manager::Get_LevelUI(const string& leveTag)
 
 CUI_Object* CUI_Manager::Request_UIObject(const UI_HANDLE& handle)
 {
-	// ���� �����̸� ����
 	auto itDelete = std::find_if(DeleteUIs.begin(), DeleteUIs.end(),
 		[&](CUI_Object* uiPtr)
 		{
