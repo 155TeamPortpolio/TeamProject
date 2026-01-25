@@ -45,7 +45,7 @@ public:
 	void			Load_EntityInit();
 	void			Set_EntityModel();
 	void			Save_BattleData();
-	void			Load_BattleData(const string& filepath = string{});
+	void			Load_BattleData(const string& filepath = "");
 	void			Select_PlaceType(const string& tagLabel, _bool isShowDetail = true);
 	void			Select_TriggerType();
 	void			Select_BattleDataType();

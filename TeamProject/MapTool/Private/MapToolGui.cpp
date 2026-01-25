@@ -524,7 +524,7 @@ void CMapToolGui::Save_MapData()
     _int    iObjIndex = {};
 
 
-    for (_uint i = 0; i < ENUM(MAPOBJ_TYPE::END); ++i) {
+    for (_uint i = 0; i < ENUM(MAPOBJ_TYPE::TRIGGER); ++i) {
         CLayer* pLayer = m_pGameInstance->Get_ObjectMgr()->Get_Layer({ g_TagMapToolLevel, g_tagMapObjType[i] });
         if (nullptr == pLayer)
             continue;
