@@ -203,11 +203,13 @@ void CStateMachine<Type>::Update(_float dt)
 
 	m_pCurrentState->Update(m_pOwner, dt);
 
-	Update_AnimProgress();
-
 	Check_AnyStateTransitions();
 	if (m_fStateTime == 0.f) return;	// 방금 전환됨
+
 	Check_Transitions();
+	if (m_fStateTime == 0.f) return;
+
+	Update_AnimProgress();
 }
 
 template<typename Type>

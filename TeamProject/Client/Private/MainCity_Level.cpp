@@ -2,8 +2,11 @@
 #include "MainCity_Level.h"
 #include "GameInstance.h"
 #include "Helper_Func.h"
+
+// Room
 #include "FieldSystem.h"
 #include "Room_Street.h"
+#include "Room_Lottery.h"
 
 // Camera
 #include "Camera.h"
@@ -74,6 +77,7 @@ void CMainCity_Level::PreLoad_Level()
 void CMainCity_Level::Ready_Map(const string& LevelTag, const string& AreaTag)
 {
 	FieldSystem()->RegisterRoom(CRoom_Street::Create({ "MainCity" , true }));
+	FieldSystem()->RegisterRoom(CRoom_Lottery::Create({ "Lottery" , false }));
 	FieldSystem()->RequestEnter("MainCity", true);
 }
 

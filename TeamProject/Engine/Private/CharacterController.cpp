@@ -222,6 +222,72 @@ void CCharacterController::Set_CompActive(_bool bActive)
 	}
 }
 
+HRESULT CCharacterController::ReInitialize(COMPONENT_DESC* pArg)
+{
+	CCT_DESC desc;
+	if (pArg)
+	{
+		desc = *static_cast<CCT_DESC*>(pArg);
+		if (desc.bAutoFit)
+			AutoFit(&desc);
+	}
+	else
+	{
+		_float3 vOwnerPos;
+		XMStoreFloat3(&vOwnerPos, m_pOwnerTransform->Dir(STATE::POSITION));
+		desc.vPos = vOwnerPos;
+	}
+
+	// Position
+	Set_Position(XMLoadFloat3(&desc.vPos));
+
+	// Size
+	if (m_fHeight != desc.fHeight || m_fRadius != desc.fRadius)
+		Resize(desc.fHeight, desc.fRadius);
+
+	// Step/Slope
+	if (m_fStepOffset != desc.fStepOffset)
+		Set_StepOffset(desc.fStepOffset);
+
+	if (m_fSlopeLimit != desc.fSlopeLimit)
+		Set_SlopeLimit(desc.fSlopeLimit);
+
+	// Filter
+	if (m_eGroup != desc.eGroup)
+		Set_CollisionGroup(desc.eGroup);
+
+	if (m_iCollisionMask != desc.iCollisionMask)
+		Set_CollisionMask(desc.iCollisionMask);
+
+	// Contact/Rest Offset
+	if (m_fContactOffset != desc.fContactOffset)
+		Set_ContactOffset(desc.fContactOffset);
+
+	if (m_fRestOffset != desc.fRestOffset)
+		Set_RestOffset(desc.fRestOffset);
+
+	// Properties
+	m_fMaxSpeed = desc.fMaxSpeed;
+	m_vColor = desc.vColliderColor;
+
+	// Velocity Reset
+	m_vVelocity = {};
+	m_vPrevVelocity = {};
+	m_bGrounded = false;
+
+	// Collision State Reset
+	m_CurrentCollisions.clear();
+	m_PreviousCollisions.clear();
+
+	// Debug Reset
+	m_bShowDebugRay = false;
+	m_vRayStart = {};
+	m_vRayEnd = {};
+	m_DebugRayHit = {};
+
+	return S_OK;
+}
+
 void CCharacterController::Update(_float dt)
 {
 	if (!m_pController) return;

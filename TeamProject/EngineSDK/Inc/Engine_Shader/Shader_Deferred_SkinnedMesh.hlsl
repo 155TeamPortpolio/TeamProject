@@ -416,7 +416,7 @@ PS_OUT_RESULT PS_MAIN_COMBINED(PS_IN In)
     else
         Out.vResult = float4(vLight.rgb + vLightAmbient.rgb * vDiffuse.rgb * 0.5, vLight.a);
     
-    Out.vResult.rgb += vRimLight.rgb;
+    Out.vResult.rgb += vRimLight.rgb + vMotionBlur.rgb;
     
     float3 specularColor = vLightSpecular.rgb * vLightInfo.g;
     Out.vResult.rgb += specularColor + vBloom.rgb;
