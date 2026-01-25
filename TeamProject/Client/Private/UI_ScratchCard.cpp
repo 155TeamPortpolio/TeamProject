@@ -3,6 +3,7 @@
 
 #include "GameInstance.h"
 #include "ObjectContainer.h"
+#include "Sprite2D.h"
 
 HRESULT CUI_ScratchCard::Initialize_Prototype()
 {
@@ -19,6 +20,8 @@ HRESULT CUI_ScratchCard::Initialize(INIT_DESC* pArg)
 
     Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("scratchCard.json")));
 
+    Cache_RewardSprite();
+
 	return S_OK;
 }
 
@@ -31,6 +34,30 @@ void CUI_ScratchCard::Update(_float dt)
     __super::Update(dt);
 
     Get_Component<CObjectContainer>()->UpdateChild(dt);
+}
+
+void CUI_ScratchCard::UI_Active(void* pArg)
+{
+    Change_RewardTexture(REWARD_TEXTURES[rand() % ENUM(REWARD::END)]);
+}
+
+void CUI_ScratchCard::Cache_RewardSprite()
+{
+    auto pContainer = Get_Component<CObjectContainer>();
+
+    auto pObj = pContainer->Find_Descendant("reward");
+    if (!pObj)
+        return;
+
+    m_pRewardSprite = pObj->Get_Component<CSprite2D>();
+}
+
+void CUI_ScratchCard::Change_RewardTexture(const string& strTextureKey)
+{
+    if (!m_pRewardSprite)
+        return;
+
+    m_pRewardSprite->Change_Texture(0, G_GlobalLevelKey, strTextureKey);
 }
 
 CGameObject* CUI_ScratchCard::Create()

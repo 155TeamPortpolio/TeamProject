@@ -416,7 +416,7 @@
             "textureTag": "ScratchCardRewardIcon01.png"
         },
         {
-            "alive": true,
+            "alive": false,
             "instanceName": "scratch",
             "transform": {
                 "anchor": 0,
