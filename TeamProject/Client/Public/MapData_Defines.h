@@ -75,6 +75,7 @@ namespace Client {
 	// DB 맵 데이터 저장용
 	enum class MAPOBJ_TYPE { PLACED, TRIGGER, INVWALL, ENTITY, END };
 	using MapSlotValue = variant<monostate, _int, _float, _bool, string, _float2, _float3, _float4>;
+
 	typedef struct tagCashedMapObject {
 		_int			DataIndex;
 		string			DataName;
@@ -82,11 +83,11 @@ namespace Client {
 		unordered_map<string, MapSlotValue> SlotValues;
 
 		template<typename T>
-		T Get_SlotValue(const string& SlotTag)
+		const T* Get_SlotValue(const string& SlotTag) const
 		{
 			auto iter = SlotValues.find(SlotTag);
-			if (iter == SlotValues.end()) return T();
-			return get_if<T>(iter->second);
+			if (iter == SlotValues.end()) return nullptr;
+			return std::get_if<T>(&iter->second);
 		}
 	}CASHED_OBJECT;
 
