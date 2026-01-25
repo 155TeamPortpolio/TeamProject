@@ -317,12 +317,12 @@ void CUI_DamageText::Ensure_GlyphCount(_uint count)
     auto container = Get_Component<CObjectContainer>();
     while ((_uint)m_glyphs.size() < count)
     {
-        auto pDesc = new CUI_AtlasSprite::ATLAS_DESC;
-        pDesc->texKey = kAtlasTexKey;
+        auto pDesc         = new CUI_AtlasSprite::ATLAS_DESC;
+        pDesc->texKey      = kAtlasTexKey;
         pDesc->frameCountX = kFrameCountX;
         pDesc->frameCountY = kFrameCountY;
-        pDesc->frameIdx = 0;
-        pDesc->heightPx = kGlyphHeightPx;
+        pDesc->frameIdx    = 0;
+        pDesc->heightPx    = kGlyphHeightPx;
 
         auto builder = Builder::Create_UIObject({G_GlobalLevelKey, "Proto_GameObject_AtlasSprite"});
         builder.Add_UIDesc(pDesc);
