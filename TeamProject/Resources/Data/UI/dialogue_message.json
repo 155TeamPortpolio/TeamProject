@@ -123,16 +123,16 @@
     "children": [
         {
             "alive": true,
-            "instanceName": "Image",
+            "instanceName": "NineSlice",
             "transform": {
-                "anchor": 8,
+                "anchor": 4,
                 "anchorOffset": [
-                    -471.5,
-                    -174.0
+                    -480.0,
+                    20.0
                 ],
                 "size": [
-                    943.0,
-                    174.0
+                    960.0,
+                    192.0
                 ],
                 "scale": [
                     1.0,
@@ -145,16 +145,75 @@
                 "radian": 0.0
             },
             "color": [
-                0.11583012342453003,
-                0.11583012342453003,
-                0.11583012342453003,
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "pass": "NineSlice",
+            "animClips": [],
+            "children": [],
+            "typeTag": "NineSlice",
+            "textureTag": "GalgameBg.png",
+            "nineSlice": {
+                "borderPx": [
+                    50.0,
+                    50.0,
+                    80.0,
+                    80.0
+                ],
+                "uvRangeX": [
+                    0.0,
+                    0.2793295979499817,
+                    0.7206704020500183,
+                    1.0
+                ],
+                "uvRangeY": [
+                    0.0,
+                    0.28985506296157837,
+                    0.7101449370384216,
+                    1.0
+                ],
+                "textureSize": [
+                    179.0,
+                    276.0
+                ]
+            }
+        },
+        {
+            "alive": true,
+            "instanceName": "Image",
+            "transform": {
+                "anchor": 4,
+                "anchorOffset": [
+                    -121.71429443359375,
+                    -11.0
+                ],
+                "size": [
+                    243.4285888671875,
+                    48.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                1.0,
+                1.0,
+                1.0,
                 1.0
             ],
             "pass": "Opaque",
             "animClips": [],
             "children": [],
             "typeTag": "Image",
-            "textureTag": "empty.png"
+            "textureTag": "GalgameTitleBg.png"
         },
         {
             "alive": true,

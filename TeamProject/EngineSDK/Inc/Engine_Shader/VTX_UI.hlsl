@@ -262,6 +262,7 @@ PS_OUT PS_MAIN_NINESLICE(PS_IN In)
     vTexcoord.y = calcV(In.vPosition.y - vTopLeftPx.y);
     
     vector vDiffuse = SpriteTexture.Sample(LinearSampler, vTexcoord);
+    clip(vDiffuse.a - 0.1f);
     
     float4 color = vDiffuse * vColor;
     Out.vColor.rgb = color.rgb * color.a;
