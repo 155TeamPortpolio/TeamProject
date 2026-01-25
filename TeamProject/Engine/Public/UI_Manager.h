@@ -30,6 +30,7 @@ private:
 	void Add_Object_Recursive(const string& LevelTag, class CUI_Object* object);
 	void Sort_UI();
 	void CleanUp();
+	void Prune_Queues_ByLevel(const string& levelTag);
 private:
 	class CGameInstance* m_pGameInstance = { nullptr };
 	unordered_map<string, UIobjects> m_UIObjects;
