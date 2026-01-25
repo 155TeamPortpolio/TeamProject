@@ -578,8 +578,6 @@ void CBattlePlayer::NotifyCharacterSwitchIn()
 	m_pCurrentCharacter->Get_Component<CTransform>()->Set_Look(m_vSwitchLook);
 	m_pCurrentCharacter->Set_TargetHandle(m_TargetHandle);
 
-	Sync_ActionUI();
-
 	if (m_bReserveParry)
 	{
 		m_pCurrentCharacter->On_SwitchIn(CCharacter::SWITCH::PARRYAID);
@@ -628,7 +626,7 @@ void CBattlePlayer::Sync_ActionUI()
 	desc.eType = UI_ACTION_TYPE::ULTIMATE;
 	desc.eState = (m_pCurrentCharacter->Get_CurrentDecibel() >= m_pCurrentCharacter->Get_MaxDecibel())
 		? UI_ACTION_STATE::AVAILABLE
-		: UI_ACTION_STATE::ENABLE;
+		: UI_ACTION_STATE::DISABLE;
 	EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
 }
 
@@ -644,6 +642,7 @@ HRESULT CBattlePlayer::SwitchCharacter(_bool bNext)
 		SwitchToPrev();
 	}
 	NotifyCharacterSwitchIn();
+	Sync_ActionUI();
 	return S_OK;
 }
 
