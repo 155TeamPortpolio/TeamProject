@@ -555,20 +555,20 @@ HRESULT CDataBase::LoadMonsterSpawnData(const string& csvPath)
 	return S_OK;
 }
 
-const CASHED_OBJ_DATA* CDataBase::Get_CashedData(const string& MapTag)
+const CASHED_OBJ_DATA* CDataBase::Get_CashedData(const string& AreaTag)
 {
-	auto iter = m_CashedData.find(MapTag);
+	auto iter = m_CashedData.find(AreaTag);
 	if (iter == m_CashedData.end()) return nullptr;
 	return &iter->second;
 }
 
-void CDataBase::Update_CashedData(const string& MapTag, const CASHED_OBJ_DATA& Data)
+void CDataBase::Update_CashedData(const string& AreaTag, const CASHED_OBJ_DATA& Data)
 {
-	auto iter = m_CashedData.find(MapTag);
+	auto iter = m_CashedData.find(AreaTag);
 	if (iter != m_CashedData.end())
 		iter->second = Data;
 	else
-		m_CashedData.emplace(MapTag, Data);
+		m_CashedData.emplace(AreaTag, Data);
 }
 
 void CDataBase::Clear_CashedData()
