@@ -128,7 +128,6 @@ struct PS_OUT
     vector vDepth : SV_TARGET2;
     vector vMetalic : SV_TARGET3;
     vector vAmbient : SV_Target4;
-    vector vRimLight : SV_Target5;
     vector vLook : SV_Target6;
 };
 
@@ -185,7 +184,6 @@ PS_OUT PS_MAIN(PS_IN In)
     Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / zFar, 0.f, 1.f);
     Out.vAmbient = vAmbient;
     Out.vMetalic = vMetalic;
-    Out.vRimLight = float4(vRimLightColor, fRimLightPower);
     return Out;
 }
 
@@ -239,7 +237,6 @@ PS_OUT PS_BLEND(PS_IN In)
     Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / zFar, 0.f, 1.f);
     Out.vAmbient = vAmbient;
     Out.vMetalic = vMetalic;
-    Out.vRimLight = float4(vRimLightColor, fRimLightPower);
     return Out;
 }
 
