@@ -34,6 +34,8 @@
 #include "EffectContainer.h"
 #include "AttackSign.h"
 #include "Player.h"
+#include "TestCloud.h"
+
 /* UI */
 #include "UI_ScreenFade.h"
 #include "UI_SceneFrame.h"
@@ -85,7 +87,8 @@ HRESULT CMainApp::Initialize()
 	Initialize_GlobalPrototype();
 	Create_GlobalPlayer();
 	Create_GlobalCamObjs();
-	
+	Create_GlobalEnviroment();
+
 	#ifdef  _USING_GUI
 		ImGui::SetCurrentContext(m_pGameInstance->Get_GUISystem()->GetEngineImGuiContext());
 	#endif //  _USING_GUI
@@ -186,6 +189,9 @@ void CMainApp::Initialize_GlobalPrototype()
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Dialogue", CUI_Dialogue::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_DialogueMessage", CUI_DialogueMessage::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_DialogueChoice", CUI_DialogueChoice::Create());
+
+	/*Enviroment*/
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Cloud", CTestCloud::Create());
 }
 
 void CMainApp::Create_GlobalCamObjs()
@@ -249,4 +255,14 @@ void CMainApp::Create_GlobalPlayer()
 	ObjectManager()->Add_Object(Player, { G_GlobalLevelKey, "Player_Layer" });
 
 	ObjectManager()->Remember_Global(ENUM(GLOBAL_ID::Player), Player->Get_Handle(), false);
+}
+
+void CMainApp::Create_GlobalEnviroment()
+{
+	auto Cloud = Builder::Create_Object({ G_GlobalLevelKey, "Proto_GameObject_Cloud" })
+		.Scale(_float3(2.f, 2.f, 2.f))
+		.Build("Cloud");
+	ObjectManager()->Add_Object(Cloud, { G_GlobalLevelKey, "Enviroment_Layer" });
+
+	ObjectManager()->Remember_Global(ENUM(GLOBAL_ID::Cloud), Cloud->Get_Handle(), false);
 }
