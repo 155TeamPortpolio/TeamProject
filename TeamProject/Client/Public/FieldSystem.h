@@ -26,7 +26,7 @@ class CFieldSystem :
 		  else
 			  Set_DayPhase(DayPhase::EarlyMorning);
 	  }
-	  void Set_DayPhase(DayPhase ePhase, _bool bTimer = true);
+	  void Set_DayPhase(DayPhase ePhase);
 	  void Notify_DayPhaseEvent();
   };
 

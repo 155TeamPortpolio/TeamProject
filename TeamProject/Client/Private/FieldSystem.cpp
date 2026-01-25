@@ -4,6 +4,7 @@
 #include "GameObject.h"
 #include "GameInstance.h"
 #include "RoomDirector.h"
+#include "TestCloud.h"
 IMPLEMENT_SINGLETON(CFieldSystem)
 
 CFieldSystem::CFieldSystem()
@@ -78,37 +79,41 @@ void CFieldSystem::Free()
 	Safe_Release(m_pRoomDirector);
 }
 
-void CFieldSystem::DayTimer::Set_DayPhase(DayPhase ePhase, _bool bTimer)
+void CFieldSystem::DayTimer::Set_DayPhase(DayPhase ePhase)
 {
 	m_eDayTime = ePhase;
+	if (m_eDayTime == m_ePreDayTime) return;
 
+	m_ePreDayTime = m_eDayTime;
+
+	auto pCloud = dynamic_cast<CTestCloud*>(ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Cloud)));
 	switch (ePhase)
 	{
 	case Client::DayPhase::EarlyMorning:
-		RenderSystem()->Set_FogDesc({ _float4(0.95f, 0.75f, 0.8f, 1.0f),0.f,0.f, 0.003f, true});
-		if(!bTimer) currentHour = 0.f;
+		RenderSystem()->Set_FogDesc({ _float4(0.95f, 0.75f, 0.8f, 1.0f),0.f,0.f, 0.003f, true });
+		pCloud->Set_CloudInfo(_float3(0.7f, 0.5f, 0.65f), _float3(0.95f, 0.7f, 0.75f) );
+		currentHour = 0.f;
 		break;
 	case Client::DayPhase::Morning:
 		RenderSystem()->Set_FogDesc({ _float4(0.85f, 0.9f, 0.95f, 1.0f),0.f,0.f, 0.0015f, true });
-		if (!bTimer) currentHour = 6.0f;
+		pCloud->Set_CloudInfo(_float3(0.4f, 0.7f, 1.0f), _float3(1.0f, 1.0f, 1.0f));
+		currentHour = 6.0f;
 		break;
 	case Client::DayPhase::Afternoon:
 		RenderSystem()->Set_FogDesc({ _float4(1.0f, 0.55f, 0.45f, 1.0f), 0.f, 0.f, 0.0035f, true });
-		if (!bTimer) currentHour = 12.0f;
+		pCloud->Set_CloudInfo(_float3(0.486f, 0.073f, 0.073f), _float3(1.0f, 0.6f, 0.5f));
+		currentHour = 12.0f;
 		break;
 	case Client::DayPhase::LateNight:
 		RenderSystem()->Set_FogDesc({ _float4(0.25f, 0.3f, 0.45f, 1.0f),0.f,0.f,  0.004f, true });
-		if (!bTimer) currentHour = 18.0f;
+		pCloud->Set_CloudInfo(_float3(0.1f, 0.15f, 0.3f), _float3(0.3f, 0.35f, 0.5f));
+		currentHour = 18.0f;
 		break;
 	default:
 		break;
 	}
 
-	if (m_eDayTime != m_ePreDayTime)
-	{
-		Notify_DayPhaseEvent();
-		m_ePreDayTime = m_eDayTime;
-	}
+	Notify_DayPhaseEvent();
 }
 
 void CFieldSystem::DayTimer::Notify_DayPhaseEvent()

@@ -92,6 +92,9 @@ HRESULT CTestLevel::Awake()
 	m_pPlayer = dynamic_cast<CPlayer*>(ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Player)));
 	m_pPlayer->Set_PlayerType(CPlayer::PLAYER::BATTLE);
 
+	auto pCloud = ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Cloud));
+	pCloud->Set_Alive(true);
+
 	IProtoService* pProto = CGameInstance::GetInstance()->Get_PrototypeMgr();
 	IResourceService* pResource = CGameInstance::GetInstance()->Get_ResourceMgr();
 	auto objMgr = m_pGameInstance->Get_ObjectMgr();
@@ -265,12 +268,6 @@ void CTestLevel::Ready_TestObject()
 	//}
 
 	// =====================TestCloud=========================
-	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestCloud", CTestCloud::Create());
-	auto testCloud = Builder::Create_Object({ "Test_Level", "Proto_GameObject_TestCloud" })
-		.Scale(_float3(2.f, 2.f, 2.f))
-		.Build("Test_Cloud");
-	
-	objMgr->Add_Object(testCloud, { "Test_Level", "Etc_Layer" });
 }
 
 void CTestLevel::Ready_Npc()
