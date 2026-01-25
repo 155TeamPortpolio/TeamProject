@@ -56,6 +56,7 @@
 #include "BangBooAsk.h"
 #include "BangBooDeliver.h"
 #include "Howl.h"
+#include "ElectricBoo.h"
 
 /* UI */
 #include "UIDirector.h"
@@ -343,7 +344,7 @@ void CTestLevel::Ready_Npc()
 	howlCCT.eGroup = COLLISION_GROUP::COMMON;
 	//meowCCT.fBoundingMinY = -0.83f;
 	howlCCT.vPos = { 19.f, 1.5f, -30.f };
-	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Howl", CHowl::Create());
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Howl", CElectricBoo::Create());
 	auto testHowl = Builder::Create_Object({ "Test_Level", "Proto_GameObject_Howl" })
 		.CharacterController(howlCCT)
 		.Build("Test_Howl");
