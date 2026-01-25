@@ -23,6 +23,22 @@
 
 /* --------------------------------------------------------------------------------------------------------------------- */
 
+void Client::Spawner::Register_Prototype(const string& MapDataName, const string& PrototypeTag, function<CGameObject* ()> Create, ENTITY_TYPE EntityType)
+{
+	unordered_map<string, Spawner::OBJ_SPEC>* Table = { nullptr };
+
+	switch (EntityType)
+	{
+	case Client::Spawner::ENTITY_TYPE::NPC:			Table = &s_NPCTable;		break;
+	case Client::Spawner::ENTITY_TYPE::INTERACTABLE:Table = &s_InteractTable;	break;
+	case Client::Spawner::ENTITY_TYPE::ETC:										return;
+	default:																	return;
+	}
+
+	Table->emplace(MapDataName, Spawner::OBJ_SPEC{ PrototypeTag, Create });
+}
+
+
 OBJECT_HANDLE Client::Spawner::Create_Entity(const SPAWNER_DESC& Desc)
 {
 	switch (Desc.iType)
@@ -168,3 +184,4 @@ OBJECT_HANDLE Client::Spawner::Create_ETC(const SPAWNER_DESC& Desc)
 
 	return OBJECT_HANDLE();
 }
+
