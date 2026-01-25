@@ -78,6 +78,39 @@ void CFieldSystem::Free()
 	Safe_Release(m_pRoomDirector);
 }
 
+void CFieldSystem::DayTimer::Set_DayPhase(DayPhase ePhase, _bool bTimer)
+{
+	m_eDayTime = ePhase;
+
+	switch (ePhase)
+	{
+	case Client::DayPhase::EarlyMorning:
+		RenderSystem()->Set_FogDesc({ _float4(0.95f, 0.75f, 0.8f, 1.0f),0.f,0.f, 0.003f, true});
+		if(!bTimer) currentHour = 0.f;
+		break;
+	case Client::DayPhase::Morning:
+		RenderSystem()->Set_FogDesc({ _float4(0.85f, 0.9f, 0.95f, 1.0f),0.f,0.f, 0.0015f, true });
+		if (!bTimer) currentHour = 6.0f;
+		break;
+	case Client::DayPhase::Afternoon:
+		RenderSystem()->Set_FogDesc({ _float4(1.0f, 0.55f, 0.45f, 1.0f), 0.f, 0.f, 0.0035f, true });
+		if (!bTimer) currentHour = 12.0f;
+		break;
+	case Client::DayPhase::LateNight:
+		RenderSystem()->Set_FogDesc({ _float4(0.25f, 0.3f, 0.45f, 1.0f),0.f,0.f,  0.004f, true });
+		if (!bTimer) currentHour = 18.0f;
+		break;
+	default:
+		break;
+	}
+
+	if (m_eDayTime != m_ePreDayTime)
+	{
+		Notify_DayPhaseEvent();
+		m_ePreDayTime = m_eDayTime;
+	}
+}
+
 void CFieldSystem::DayTimer::Notify_DayPhaseEvent()
 {
 	DAYPHASE_DESC desc{};

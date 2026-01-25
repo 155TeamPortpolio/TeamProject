@@ -18,40 +18,15 @@ class CFieldSystem :
 			  currentHour -= 24.f;
 
 		  if (currentHour >= 6.0f && currentHour < 12.0f)
-			  m_eDayTime= DayPhase::Morning;
+			  Set_DayPhase(DayPhase::Morning);
 		  else if (currentHour >= 12.0f && currentHour < 18.0f)
-			  m_eDayTime = DayPhase::Afternoon;
+			  Set_DayPhase(DayPhase::Afternoon);
 		  else if (currentHour >= 18.0f && currentHour < 24.0f)
-			  m_eDayTime= DayPhase::LateNight;
+			  Set_DayPhase(DayPhase::LateNight);
 		  else
-			  m_eDayTime= DayPhase::EarlyMorning;
-
-		  if (m_eDayTime != m_ePreDayTime)
-		  {
-			  Notify_DayPhaseEvent();
-			  m_ePreDayTime = m_eDayTime;
-		  }
+			  Set_DayPhase(DayPhase::EarlyMorning);
 	  }
-	  void Set_DayPhase(DayPhase ePhase) {
-		  m_eDayTime = ePhase;
-		  switch (ePhase)
-		  {
-		  case Client::DayPhase::EarlyMorning:
-			  currentHour = 0.f;
-			  break;
-		  case Client::DayPhase::Morning:
-			  currentHour = 6.0f;
-			  break;
-		  case Client::DayPhase::Afternoon:
-			  currentHour = 12.0f;
-			  break;
-		  case Client::DayPhase::LateNight:
-			  currentHour = 18.0f;
-			  break;
-		  default:
-			  break;
-		  }
-	  }  
+	  void Set_DayPhase(DayPhase ePhase, _bool bTimer = true);
 	  void Notify_DayPhaseEvent();
   };
 
