@@ -114,9 +114,58 @@ PS_OUT_RESULT PS_RIMLIGHT(PS_IN In)
     fRim = pow(fRim, vRimInfo.a);
 
     float3 vRimColor = vRimInfo.rgb * fRim;
+   
+   Out.vResult = float4(vRimColor, 1.f);
 
-    Out.vResult = float4(vRimColor, 1.f);
+    return Out;
+}
 
+PS_OUT_RESULT PS_MOTIONBLUR(PS_IN In)
+{
+    PS_OUT_RESULT Out;
+    
+    float2 stripeUV = In.vTexcoord * float2(1.0f, 3.0f);
+    float stripes = MotionNoiseTexture.Sample(LinearSampler, stripeUV).r;
+    
+    float4 motionBlur;
+    
+    if (stripes > 0.6f)
+    {
+        motionBlur = float4(0, 0, 0, 0);
+        for (int i = -2; i <= 2; i++)
+        {
+            float2 offset = In.vTexcoord + float2(i * 0.003f, 0);
+            motionBlur += MotionBlurTexture.Sample(DefaultSampler, offset);
+        }
+        motionBlur /= 5.0f;
+        
+        float blurAmount = (stripes - 0.6f) / 0.4f;
+        float4 original = MotionBlurTexture.Sample(DefaultSampler, In.vTexcoord);
+        motionBlur = lerp(original, motionBlur, blurAmount);
+    }
+    else
+    {
+        motionBlur = MotionBlurTexture.Sample(DefaultSampler, In.vTexcoord);
+    }
+    
+    if (stripes > 0.6f)
+    {
+        float intensity = (stripes - 0.6f) * 1.5f;
+        motionBlur.rgb *= (1.0f + intensity * 0.5f);
+    }
+    if (stripes > 0.85f)
+    {
+        motionBlur.rgb *= 1.3f;
+    }
+
+    float screenGradient = MotionHeightTexture.Sample(DefaultSampler, In.vTexcoord).r;
+    screenGradient = screenGradient * screenGradient; 
+    
+    float3 darkColor = motionBlur.rgb * 0.05f; 
+    motionBlur.rgb = lerp(darkColor, motionBlur.rgb, screenGradient);
+
+    Out.vResult = float4(motionBlur.rgb, motionBlur.a);
+    
     return Out;
 }
 
@@ -349,6 +398,7 @@ PS_OUT_RESULT PS_MAIN_COMBINED(PS_IN In)
     float fOutLine = NormalTexture.Sample(DefaultSampler, In.vTexcoord).a;
     vector vMetalic = MetalicTexture.Sample(DefaultSampler, In.vTexcoord).a;
     vector vBloom = MeshBloomFinalTexture.Sample(DefaultSampler, In.vTexcoord);
+    vector vMotionBlur = MotionBlurTexture.Sample(PointSampler, In.vTexcoord);
 
     float NdotL = vLightInfo.r;
     float2 vRampCoord = float2(1 - NdotL, 0.5f);
@@ -366,12 +416,14 @@ PS_OUT_RESULT PS_MAIN_COMBINED(PS_IN In)
     else
         Out.vResult = float4(vLight.rgb + vLightAmbient.rgb * vDiffuse.rgb * 0.5, vLight.a);
     
-    float rimIntensity = max(vRamp, 0.5f);
-    Out.vResult.rgb += vRimLight.rgb * rimIntensity;
+    Out.vResult.rgb += vRimLight.rgb;
     
     float3 specularColor = vLightSpecular.rgb * vLightInfo.g;
     Out.vResult.rgb += specularColor + vBloom.rgb;
-
+    float alpha = max(min(vRimLight.a, vMotionBlur.a),vLight.a);
+    
+    Out.vResult.a = alpha;
+    
     return Out;
 }
 
@@ -396,6 +448,16 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_RIMLIGHT();
+    }
+
+    pass MOTIONBLUR
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_MOTIONBLUR();
     }
 
     pass BRIGHT

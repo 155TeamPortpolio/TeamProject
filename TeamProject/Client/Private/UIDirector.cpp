@@ -5,14 +5,14 @@
 #include "UI_Object.h"
 #include "UILoader.h"
 #include "UI_ScreenFade.h"
-#include "UI_BattleHUD.h"
+#include "UI_HUD.h"
 
 IMPLEMENT_SINGLETON(CUIDirector);
 
 void CUIDirector::FadeIn_Screen(_float fDuration)
 {
 	auto it = m_handles.find("screen_fade");
-	if (!it->second.isValid())
+	if (it == m_handles.end() || !it->second.isValid())
 		return;
 	
 	CUI_ScreenFade::FADE_DESC desc = {};
@@ -23,7 +23,7 @@ void CUIDirector::FadeIn_Screen(_float fDuration)
 void CUIDirector::FadeOut_Screen(_float fDuration)
 {
 	auto it = m_handles.find("screen_fade");
-	if (!it->second.isValid())
+	if (it == m_handles.end() || !it->second.isValid())
 		return;
 	
 	CUI_ScreenFade::FADE_DESC desc = {};
@@ -31,21 +31,29 @@ void CUIDirector::FadeOut_Screen(_float fDuration)
 	it->second.Get()->UI_DeActive(&desc);
 }
 
-void CUIDirector::Show_BattleHUD(_bool isFade)
+void CUIDirector::Show_HUD(HUD hud, _bool isFade)
 {
-	auto it = m_handles.find("hud_battle");
-	if (!it->second.isValid())
-		return;
-
-	CUI_BattleHUD::SHOW_DESC desc = {};
-	desc.isFade = isFade;
-	it->second.Get()->UI_Active(&desc);
+	Show_HUD(Get_HUDName(hud), isFade);
 }
 
-void CUIDirector::Hide_BattleHUD()
+void CUIDirector::Hide_HUD(HUD hud)
 {
-	auto it = m_handles.find("hud_battle");
-	if (!it->second.isValid())
+	Hide_HUD(Get_HUDName(hud));
+}
+
+void CUIDirector::Show_SceneFrame()
+{
+	auto it = m_handles.find("scene_frame");
+	if (it == m_handles.end() || !it->second.isValid())
+		return;
+
+	it->second.Get()->UI_Active();
+}
+
+void CUIDirector::Hide_SceneFrame()
+{
+	auto it = m_handles.find("scene_frame");
+	if (it == m_handles.end() || !it->second.isValid())
 		return;
 
 	it->second.Get()->UI_DeActive();
@@ -95,9 +103,6 @@ void CUIDirector::Load_LevelObjects(const string& levelKey)
 			const string instName = obj["instanceName"];
 			const string prefabPath = obj["prefabPath"];
 
-			//CUI_Object* pObj = Builder::Create_UIObject({ levelKey, protoTag })
-			//	.Build(instName);
-
 			auto builder = Builder::Create_UIObject({ key, protoTag });	// 나중에 아마도 대부분 글로벌, 그리고 몇몇개만 레벨별로?
 			if (!prefabPath.empty())
 				builder.Asset(prefabPath);
@@ -128,15 +133,6 @@ void CUIDirector::Load_LevelObjects(const string& levelKey)
 				MSG_BOX("UI Object Already Exists : UI Director");
 		}
 	}
-	//// 화면 전환시 사용할 스크린 페이드 
-	//auto pScreenFade = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_ScreenFade" })
-	//	.Build("screen_fade");
-	//
-	//if (!pScreenFade)
-	//	return;
-	//
-	//UIManager()->Add_UIObject(pScreenFade, levelKey);
-	//m_hScreenFade = pScreenFade->Get_Handle();
 }
 
 void CUIDirector::Load_UILevelData(const string& resourceKey)
@@ -149,6 +145,36 @@ void CUIDirector::Load_UILevelData(const string& resourceKey)
 
 	file >> m_json;
 	file.close();
+}
+
+void CUIDirector::Show_HUD(const string& strInstanceName, _bool isFade)
+{
+	auto it = m_handles.find(strInstanceName);
+	if (it == m_handles.end() || !it->second.isValid())
+		return;
+
+	CUI_HUD::UI_TRANSITION_DESC desc = {};
+	desc.isFade = isFade;
+	it->second.Get()->UI_Active(&desc);
+}
+
+void CUIDirector::Hide_HUD(const string& strInstanceName)
+{
+	auto it = m_handles.find(strInstanceName);
+	if (it == m_handles.end() || !it->second.isValid())
+		return;
+
+	it->second.Get()->UI_DeActive();
+}
+
+string CUIDirector::Get_HUDName(HUD hud)
+{
+	switch (hud)
+	{
+	case HUD::FIELD:		return "hud_field";
+	case HUD::BATTLE:		return "hud_battle";
+	}
+	return "";
 }
 
 void CUIDirector::Free()

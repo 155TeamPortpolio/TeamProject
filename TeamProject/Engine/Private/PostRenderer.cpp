@@ -44,6 +44,9 @@ HRESULT CPostRenderer::Render_HDRBloom()
 		if (fogDesc.IsUse) m_pTargetManager->Bind_Target("Target_Fog", m_pShader, "FinalTexture");
 		else m_pTargetManager->Bind_Target("Target_Final", m_pShader, "FinalTexture");
 
+		/* Effect Combined Texture*/
+		m_pTargetManager->Bind_Target("Target_Combined_Effect", m_pShader, "EffectCombinedTexture");
+
 		Bind_WorldMatrix();
 
 		ID3D11InputLayout* pLayout;
@@ -132,7 +135,6 @@ HRESULT CPostRenderer::Render_Fog()
 
 	m_pTargetManager->Bind_Target("Target_Static_Depth", m_pShader, "StaticDepthTexture");
 	m_pTargetManager->Bind_Target("Target_Skinned_Depth", m_pShader, "SkinnedDepthTexture");
-	m_pTargetManager->Bind_Target("Target_Combined_Effect", m_pShader, "EffectCombinedTexture");
 	m_pTargetManager->Bind_Target("Target_Final", m_pShader, "FinalTexture");
 
 	m_pShader->SetConstantBuffer("FrameBuffer", m_pPipeLine->Get_FrameBuffer());
@@ -161,13 +163,15 @@ HRESULT CPostRenderer::Render_Final()
 	m_pContext->IASetInputLayout(pLayout);
 
 	m_pTargetManager->Bind_Target("Target_Fog", m_pShader, "FinalTexture");
-	//m_pTargetManager->Bind_Target("Target_Distortion_Add", m_pShader, "DistortionTexture");
+	m_pTargetManager->Bind_Target("Target_DistortionAcc", m_pShader, "DistortionCombinedTexture");
 	m_pTargetManager->Bind_Target("Target_Radial", m_pShader, "RadialBloomTexture");
+	m_pTargetManager->Bind_Target("Target_MotionNoise", m_pShader, "MotionBlurTexture");
 	
 	m_pTargetManager->Bind_Target("Target_HDR_BlurY", m_pShader, "HDRBloomFinalTexture");
 	m_pTargetManager->Bind_Target("Target_UI", m_pShader, "UI2DTexture");
 
 	m_pTargetManager->Bind_Target("Target_Combined_SkinnedMesh", m_pShader, "SkinnedCombinedTexture");
+	m_pTargetManager->Bind_Target("Target_Combined_Effect", m_pShader, "EffectCombinedTexture");
 
 	if (m_pAddictiveColor != nullptr)
 	{

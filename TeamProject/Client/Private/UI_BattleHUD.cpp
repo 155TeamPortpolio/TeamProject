@@ -47,6 +47,7 @@ HRESULT CUI_BattleHUD::Initialize(INIT_DESC* pArg)
 
 void CUI_BattleHUD::Awake()
 {
+    Set_Alpha(0.f);
 }
 
 void CUI_BattleHUD::Update(_float dt)
@@ -63,7 +64,7 @@ void CUI_BattleHUD::UI_Active(void* pArg)
     if (!pArg)
         return;
 
-    SHOW_DESC* pDesc = static_cast<SHOW_DESC*>(pArg);
+    UI_TRANSITION_DESC* pDesc = static_cast<UI_TRANSITION_DESC*>(pArg);
     if (pDesc->isFade)
         Set_Animation(0);
     else

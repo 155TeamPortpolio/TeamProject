@@ -7,6 +7,9 @@
 #include "BattleSystem.h"
 #include "PhysicsSystem.h"
 
+/* Component */
+#include "Child.h"
+
 CSacrifice_Laser::CSacrifice_Laser()
 	:CGameObject()
 {
@@ -108,20 +111,20 @@ void CSacrifice_Laser::Update(_float dt)
 		if (PhysicsSystem()->Raycast(rayDesc, output))
 		{
 			vPosition1 = output.vPoint;
-			string name = output.pHitObject->Get_InstanceName();
 		}
 		else
 			vPosition1 = vPosition0 + vDir * 200.f;
 
 		context.vLinePoint0 = vPosition0;
 		context.vLinePoint1 = vPosition1;
+
 	}break;
 	case 1: /* Target */
 	{
 		_vector3 vPosition0 = m_pTransform->Get_WorldPos();
 
 		context.vLinePoint0 = vPosition0;
-		context.vLinePoint1 = vPosition0 + m_vTargetDir * 200.f;
+		context.vLinePoint1 = m_vTargetPos;
 
 	}break;
 	case 2: /* Look */
@@ -177,6 +180,7 @@ void CSacrifice_Laser::Render_GUI()
 	__super::Render_GUI();
 
 	ImGui::Text("Target Pos : %f,%f,%f", m_vTargetPos.x, m_vTargetPos.y, m_vTargetPos.z);
+	ImGui::Text("Target dir : %f,%f,%f", m_vTargetDir.x, m_vTargetDir.y, m_vTargetDir.z);
 }
 
 void CSacrifice_Laser::ActiveLaser(_uint mode)
@@ -188,24 +192,24 @@ void CSacrifice_Laser::ActiveLaser(_uint mode)
 
 	if (1 == m_iLaserMode)
 	{
-		_vector3 vTargetPos{};
-		auto& battleInfos = CBattleSystem::GetInstance()->GetBattleObjects(CBattleSystem::BATTLE_OBJ_TYPE::PLAYER);
-		auto playerHandle = BattleSystem()->GetCurCharacterHandle();
-		/*for (auto& info : battleInfos)
-		{
-			if (info.isOnField)
-			{
-				m_vTargetPos = info.vPos;
-				m_vTargetPos.y += 1.f;
-				break;
-			}
-		}*/
-		_vector3 targetPos = playerHandle.Get()->Get_Component<CTransform>()->Get_WorldPos();
-		m_vTargetPos = targetPos;
-		_vector3 vDir = m_vTargetPos - _vector3(m_pTransform->Get_WorldPos());
+		_vector3 vCurrPosition = m_pTransform->Get_WorldPos();
+
+		_vector3 vDir = Get_Component<CChild>()->Get_Parent()->Get_Component<CTransform>()->Dir(STATE::LOOK);
 		vDir.y = 0.f;
 		vDir.Normalize();
 		m_vTargetDir = vDir;
+
+		PHYSICS_RAY rayDesc{};
+		PHYSICS_RAY_HIT output{};
+		rayDesc.iCollisionMask = ENUM(COLLISION_GROUP::COMMON);
+		rayDesc.vOrigin = vCurrPosition;
+		rayDesc.vDirection = vDir;
+		rayDesc.fMaxDistance = 200.f;
+
+		if (PhysicsSystem()->Raycast(rayDesc, output))
+			m_vTargetPos = output.vPoint;
+		else
+			m_vTargetPos = vCurrPosition + 200.f * vDir;
 	}
 
 	auto pLaser = Get_Component<CObjectContainer>()->Find_ObjectByName("Laser");

@@ -93,6 +93,9 @@ void CCorin::Awake()
 	//m_pAnimator->Initialize_FootIK(&ikDesc);
 
 	Initialize_Stat();
+
+	if(FAILED(Attach_ParryCollider()))
+		return;
 }
 
 void CCorin::Priority_Update(_float dt)
@@ -133,7 +136,6 @@ void CCorin::Render_GUI()
 
 	}
 	ImGui::Separator();
-	ImGui::Text("Parrable Object %d", m_ParryableTargets.size());
 
 }
 

@@ -82,6 +82,7 @@ public:
 	void Set_Anchor(ANCHOR eAnchor) { m_eAnchor = eAnchor; }
 	void Set_AnchorOffset(_float2 vOffset) { m_vAnchorOffset = vOffset; }
 	void Set_AnchorOffsetX(_float fOffset) { m_vAnchorOffset.x = fOffset; }
+	void Set_AnchorOffsetY(_float fOffset) { m_vAnchorOffset.y = fOffset; }
 	void Set_Color(_float4 vColor) { m_vColor = vColor; }
 	void Set_Alpha(_float fAlpha) { m_vColor.w = fAlpha; }
 	void Rotate_Left(_float _radian) { m_fRadian += _radian; }
@@ -135,9 +136,10 @@ public:
 public:
 	void Play_Animation(_float dt);
 	void Set_Animation(_uint iIndex, _bool isLoop = false);
+	void Stop_Animation();
 	_bool Set_LastKeyframeTime(_uint iClipIndex, _float fTime);
 
-	_bool Is_AnimFinished();
+	virtual _bool Is_AnimFinished();
 
 public:
 	virtual void Save(nlohmann::ordered_json& data) {}

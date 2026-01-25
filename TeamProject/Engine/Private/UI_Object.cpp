@@ -74,6 +74,8 @@ void CUI_Object::Post_EngineUpdate(_float dt)
     if (!m_isAlive) return;
 
     Update_UITransform();
+    if (m_eRenderLayer == RENDER_LAYER::None)
+        return;
 
     if (m_eRenderLayer != RENDER_LAYER::CustomOnly) {
 
@@ -86,7 +88,7 @@ void CUI_Object::Post_EngineUpdate(_float dt)
         packet.pSprite2D    = Get_Component<CSprite2D>();
         packet.pWorldMatrix = m_pTransform->Get_WorldMatrix_Ptr();
         packet.pColor       = &m_vColorLinear;
-
+        packet.ObjID        = m_ObjectID;
         _bool isUI     = (packet.pSprite2D != nullptr);
         _bool isValid  = (packet.pSprite2D->IsValid());
         _bool isActive = (packet.pSprite2D->Get_CompActive());
@@ -430,6 +432,13 @@ void CUI_Object::Set_Animation(_uint iIndex, _bool isLoop)
 
     m_iCurrentClipIndex = iIndex;
     m_isBlending = true;
+    m_fBlendTime = 0.f;
+}
+
+void CUI_Object::Stop_Animation()
+{
+    m_iCurrentClipIndex = -1;
+    m_isBlending = false;
     m_fBlendTime = 0.f;
 }
 

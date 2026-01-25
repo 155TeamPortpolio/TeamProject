@@ -20,7 +20,7 @@ public:
     virtual void    Late_Update(_float dt) override;
 
 public:
-    virtual void    Interact() override;
+    virtual void    Interact(CGameObject* pObject = nullptr) override;
     virtual void    OnTriggerEnter(CGameObject* pOther) override;
     virtual void    OnTriggerStay(CGameObject* pOther) override;
     virtual void    OnTriggerExit(CGameObject* pOther) override;

@@ -10,6 +10,7 @@
 #include "CharacterController.h"
 
 #include "BattleSystem.h"
+#include "FieldSystem.h"
 #include "DataBase.h"
 
 /* MapData */
@@ -49,7 +50,7 @@ CScott_Level::CScott_Level(const string& LevelKey)
 
 HRESULT CScott_Level::Initialize()
 {
-	CBattleSystem::GetInstance()->SetActive(true);
+	FieldSystem()->SetActive(true);
 	RenderSystem()->Set_FogDesc({ _float4(0.12f, 0.25f, 0.35f, 1.0f),0.f, 0.f, 0.005f, true });
 
 	return S_OK;
@@ -82,7 +83,7 @@ HRESULT CScott_Level::Awake()
 
 void CScott_Level::Update()
 {
-	
+	FieldSystem()->Update();
 }
 
 HRESULT CScott_Level::Render()

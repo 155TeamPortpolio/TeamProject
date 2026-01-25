@@ -115,4 +115,8 @@ namespace Client {
 		string	MonsterKey = "";
 	}MONSTER_SPAWN_DESC;
 
+	typedef struct tagFieldRoomDesc {
+		string roomKey;
+		_bool persistent = { false };
+	}ROOM_DESC;
 }

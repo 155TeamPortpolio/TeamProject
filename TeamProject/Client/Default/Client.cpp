@@ -28,7 +28,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     UNREFERENCED_PARAMETER(lpCmdLine);
 
 #ifdef _DEBUG
-    _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+   // _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
 
     // 전역 문자열을 초기화합니다.
@@ -75,7 +75,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         timer->Update_Timer("Frame_Timer");
         fTimeAcc += timer->Get_RawDeltaTime("Frame_Timer");
 
-        if (fTimeAcc >= step) {
+        if (fTimeAcc > step) {
             gameInstance->Update_EngineTimer();
             _float dt = gameInstance->Get_EngineDeltaTime();
             mainApp->Update(dt);

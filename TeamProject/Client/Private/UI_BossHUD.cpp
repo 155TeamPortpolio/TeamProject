@@ -56,6 +56,23 @@ void CUI_BossHUD::Update(_float dt)
     Get_Component<CObjectContainer>()->UpdateChild(dt);
 }
 
+void CUI_BossHUD::UI_Active(void* pArg)
+{
+    //if (!pArg)
+    //    return;
+    //
+    //UI_TRANSITION_DESC* pDesc = static_cast<UI_TRANSITION_DESC*>(pArg);
+    //if (pDesc->isFade)
+    //    Set_Animation(0);
+    //else
+    Set_Alpha(1.f);
+}
+
+void CUI_BossHUD::UI_DeActive(void* pArg)
+{
+    Set_Alpha(0.f);
+}
+
 void CUI_BossHUD::Load_Json(const string& resourceKey)
 {
     // JSON 기반 UI 구성 로드

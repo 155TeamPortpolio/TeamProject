@@ -26,7 +26,7 @@ void CUIObject_Tool::Awake()
 
     m_vAnchorOffset = Get_AnchorOffset(m_eAnchor);
 
-    Set_Clickable(true);
+   // Set_Clickable(true);
 }
 
 void CUIObject_Tool::Update(_float dt)
@@ -384,14 +384,16 @@ void CUIObject_Tool::Render_GUI_Color()
     ImGui::ColorEdit4(u8"컬러", reinterpret_cast<_float*>(&m_vColor));
 }
 
-void CUIObject_Tool::Render_GUI_Image(string& strTextureKey)
+_bool CUIObject_Tool::Render_GUI_Image(string& strTextureKey)
 {
+    _bool isDirty = {};
+
     ImGui::SeparatorText(u8"이미지");
     if (ImGui::Button(u8"선택"))
     {
         string filePath = Helper::OpenFile({{"PNG Files", "*.png"}}, "png");
         if (filePath.empty())
-            return;
+            return isDirty;
 
         string fileName = Helper::GetFileNameWithExtension(filePath);
 
@@ -401,6 +403,8 @@ void CUIObject_Tool::Render_GUI_Image(string& strTextureKey)
         ApplySpriteTexture(0, G_GlobalLevelKey, strTextureKey, true);
 
         m_vAnchorOffset = Get_AnchorOffset(m_eAnchor);
+
+        isDirty = true;
     }
 
     auto sprite = Get_Component<CSprite2D>();
@@ -409,6 +413,8 @@ void CUIObject_Tool::Render_GUI_Image(string& strTextureKey)
     const string edited = NormalizeToBasePass(sprite->Get_PassConstant());
     if (edited != m_basePass)
         Set_BasePass(edited);
+
+    return isDirty;
 }
 
 void CUIObject_Tool::ApplySpriteTexture(_uint idx, const string& levelKey, const string& texKey, _bool applyOriginSize)
@@ -418,10 +424,13 @@ void CUIObject_Tool::ApplySpriteTexture(_uint idx, const string& levelKey, const
 
     m_sizeMode = UISizeMode::FHD;
 
-    auto texture = sprite->Get_Texture(idx);
-    auto size    = texture->Get_Size();
+    if (sprite->IsValid())
+    {
+        auto texture = sprite->Get_Texture(idx);
+        auto size    = texture->Get_Size();
 
-    m_sizeFHD = {(float)size.x, (float)size.y};
+        m_sizeFHD = {(float)size.x, (float)size.y};
+    }
 
     if (!applyOriginSize || !Get_OriginTexSize()) return;
     const _float ratio = GetSizeRatio(m_sizeMode);
@@ -525,7 +534,11 @@ void CUIObject_Tool::Render_GUI_SizeBlock()
     if (m_sizeFHD.x == 0.f && m_sizeFHD.y == 0.f)
         m_sizeFHD = {m_vSize.x / curRatio, m_vSize.y / curRatio};
      
-    _uint2 vSize = Get_Component<CSprite2D>()->Get_Texture(0)->Get_Size();
+    auto sprite = Get_Component<CSprite2D>();
+    _uint2 vSize{};
+    if (sprite->IsValid())
+       vSize = sprite->Get_Texture(0)->Get_Size();
+
     float fAspectRatio = vSize.x / max(static_cast<_float>(vSize.y), 1.f);
 
     ImGui::Checkbox(u8"##lock", &m_isAspectRatioLocked);

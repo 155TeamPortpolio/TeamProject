@@ -15,6 +15,7 @@
 #include "UVAnimationUI.h"
 #include "GaugeUI.h"
 #include "MaskUI.h"
+#include "NineSliceUI.h"
 
 CGUIPanel::CGUIPanel(GUI_CONTEXT* pContext)
 	: CBasePanel(pContext)
@@ -48,7 +49,7 @@ void CGUIPanel::Render_GUI()
 {
 	{
 		ImGui::SetNextWindowPos(ImVec2(220.f, 40.f), ImGuiCond_FirstUseEver);
-		ImGui::SetNextWindowSize(ImVec2(200.f, 480.f), ImGuiCond_FirstUseEver);
+		ImGui::SetNextWindowSize(ImVec2(200.f, 520.f), ImGuiCond_FirstUseEver);
 
 		ImGui::Begin("UI Tool");
 
@@ -190,6 +191,11 @@ void CGUIPanel::Render_GUI_CanvasPanel()
 			strType = CMaskUI::m_strTypeTag;
 		}
 
+		if (ImGui::Button(u8"9슬라이스"))
+		{
+			isCreateChild = true;
+			strType = CNineSliceUI::m_strTypeTag;
+		}
 
 		// 자식 생성
 		if (isCreateChild)

@@ -140,6 +140,7 @@ HRESULT CCharacterController::Initialize(COMPONENT_DESC* pArg)
 	pShape->setSimulationFilterData(filterData); // 시뮬레이션용 필터
 	pShape->setQueryFilterData(filterData);      // 레이캐스팅용 필터
 	m_FilterData = filterData;
+	m_QueryFilterData = filterData;
 
 	m_vColor = pDesc->vColliderColor;
 
@@ -190,19 +191,21 @@ void CCharacterController::OnTriggerExit(ICollidable* pOther)
 void CCharacterController::Set_CompActive(_bool bActive)
 {
 	__super::Set_CompActive(bActive);
-	if (!m_pController) return;
-
+	if (!m_pController)
+		return;
 	PxRigidDynamic* pActor = m_pController->getActor();
-	if (!pActor) return;
-
+	if (!pActor)
+		return;
 	PxShape* pShape = nullptr;
 	pActor->getShapes(&pShape, 1);
-	if (!pShape) return;
+	if (!pShape)
+		return;
 
 	if (bActive)
 	{
 		pActor->setActorFlag(PxActorFlag::eDISABLE_SIMULATION, false);
 		m_FilterData.word1 = m_iCollisionMask;
+		m_QueryFilterData.word0 = m_FilterData.word0;
 		m_QueryFilterData.word1 = m_iCollisionMask;
 		pShape->setSimulationFilterData(m_FilterData);
 		pShape->setQueryFilterData(m_FilterData);
@@ -211,6 +214,7 @@ void CCharacterController::Set_CompActive(_bool bActive)
 	{
 		pActor->setActorFlag(PxActorFlag::eDISABLE_SIMULATION, true);
 		m_FilterData.word1 = ENUM(COLLISION_GROUP::COMMON);
+		m_QueryFilterData.word0 = m_FilterData.word0;
 		m_QueryFilterData.word1 = ENUM(COLLISION_GROUP::COMMON);
 		pShape->setSimulationFilterData(m_FilterData);
 		pShape->setQueryFilterData(m_FilterData);
@@ -640,7 +644,8 @@ void CCharacterController::Move(_fvector vDisplacement, _float dt)
 	XMStoreFloat3(&vDisp, vDisplacement);
 	PxVec3 pxDisp(vDisp.x, vDisp.y, vDisp.z);
 
-	m_QueryFilterData.word0 = m_FilterData.word1;
+	m_QueryFilterData.word0 = m_FilterData.word0;  // 그룹
+	m_QueryFilterData.word1 = m_FilterData.word1;  // 마스크
 
 	PxControllerFilters filters;
 	filters.mFilterData = &m_QueryFilterData;

@@ -25,8 +25,10 @@ HRESULT CPrototypeMgr::Sync_To_Level()
 
 	vector<string> LevelList = pLevelMgr->Get_LevelList();
 
-	for (string& name : LevelList)
+	for (string& name : LevelList) {
 		m_Prototypes.emplace(name, PROTOTYPES{});
+		m_Prototypes[name].reserve(100);
+	}
 
 	return S_OK;
 }

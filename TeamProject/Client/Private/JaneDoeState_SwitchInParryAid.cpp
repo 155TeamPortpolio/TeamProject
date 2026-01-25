@@ -5,6 +5,8 @@
 
 void CJaneDoeState_SwitchInParryAid::Enter(CJaneDoe* pOwner)
 {
+    pOwner->Lock_Move();
+    pOwner->Lock_Rotate();
     if (!m_pSubStateMachine)
     {
         m_pSubStateMachine = CStateMachine<CJaneDoe>::Create();
@@ -13,6 +15,9 @@ void CJaneDoeState_SwitchInParryAid::Enter(CJaneDoe* pOwner)
         m_pSubStateMachine->Register_State("L_End", CJaneDoeState_SwitchInParryAid_L_End::Create());
         m_pSubStateMachine->Register_State("H_Loop", CJaneDoeState_SwitchInParryAid_H_Loop::Create());
         m_pSubStateMachine->Register_State("H_End", CJaneDoeState_SwitchInParryAid_H_End::Create());
+
+        m_pSubStateMachine->Get_State("L_End")->Set_Tag("End");
+        m_pSubStateMachine->Get_State("H_End")->Set_Tag("End");
 
         m_pSubStateMachine->Register_Transition("Start", "L_Loop",
             CStateMachine<CJaneDoe>::CONDITION_ANIMATION_GREATER, "", 0.2f);
@@ -32,13 +37,19 @@ void CJaneDoeState_SwitchInParryAid::Update(CJaneDoe* pOwner, _float dt)
     if (m_pSubStateMachine->Get_Trigger("Complete"))
     {
         m_pSubStateMachine->Reset_Trigger("Complete");
-        CStateMachine<CJaneDoe>* pRootFSM = pOwner->Get_StateMachine();
-        pRootFSM->Set_Trigger("ToIdle");
+        IHState<CJaneDoe>* pSwitchIn = Get_ParentState();
+        if (pSwitchIn && pSwitchIn->Get_SubStateMachine())
+        {
+            pSwitchIn->Get_SubStateMachine()->Set_Int("ExitMode", 0);  // Idle·Î
+            pSwitchIn->Get_SubStateMachine()->Set_Trigger("Complete");
+        }
     }
 }
 
 void CJaneDoeState_SwitchInParryAid::Exit(CJaneDoe* pOwner)
 {
+    pOwner->Unlock_Move();
+    pOwner->Unlock_Rotate();
     __super::Exit(pOwner);
 }
 

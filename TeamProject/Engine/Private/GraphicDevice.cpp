@@ -17,7 +17,7 @@ HRESULT CGraphicDevice::Initialize(HWND hWnd, WINMODE isWindowed, _uint iWinSize
 	_uint		iFlag = 0;
 
 #ifdef _DEBUG
-	iFlag = D3D11_CREATE_DEVICE_DEBUG;
+	//iFlag = D3D11_CREATE_DEVICE_DEBUG;
 #endif
 
 

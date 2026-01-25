@@ -59,6 +59,8 @@ public:
 
 	void   Invalidate() { eval.dirty = true; }
 
+	void   SyncSpaceRefAnimatorTime(_float sampleTime);
+
 	void   Play();
 	void   Pause() { playback.playing = false; }
 	void   Stop(_bool resetTime = true);
@@ -82,6 +84,8 @@ public:
 private:
 	void   RebuildIfNeeded();
 	void   ApplyPose(const CamPose& pose);
+	_float GetPlaybackDuration() const;
+	void   ApplyAtSampleTime(_float sampleTime);
 
 public:
 	static CCamSequencePlayer* Create();

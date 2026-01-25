@@ -50,6 +50,14 @@ namespace MapTool {
 	}ENTITY;
 	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ENTITY, iEntityID, tagName, iType, vScale, vRotation, vTranslation);
 
+	typedef struct tagMapEntity
+	{
+		_int		iEntityID = { -1 };
+		string		TagModelKey = {};
+		string		TagMaterialKey = {};
+	}MAP_ENTITY;
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(MAP_ENTITY, TagModelKey, TagMaterialKey);
+
 	typedef struct tagEntityHeader {
 		string		TagDataFormat = {};
 		string		TagArea = {};
@@ -57,6 +65,8 @@ namespace MapTool {
 		vector<ENTITY> Entities;
 	}Entity_Header;
 	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Entity_Header, TagDataFormat, TagArea, iVersion, Entities);
+
+
 
 	/* BattleData */
 	typedef struct tagBattlePointData 

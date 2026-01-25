@@ -37,7 +37,8 @@ void CMaterialInstance::ApplyData(ID3D11DeviceContext* pContext)
 	m_pMaterialData->ApplyData(pContext, m_TextureIndexs);
 	
 	for (auto& Slot : m_DynamicSlots) {
-		pMaterialShader->Bind_Value(Slot.first, Slot.second);
+		SHADER_PARAM tmpParam = Slot.second;
+		pMaterialShader->Bind_Value(Slot.first, tmpParam);
 	}
 
 	pMaterialShader->Apply(Get_PassConstant(), pContext);
@@ -122,26 +123,22 @@ HRESULT CMaterialInstance::Reset_Constant()
 
 void CMaterialInstance::Reset_DynamicSlot()
 {
-	CShader* pShader =m_pMaterialData->Get_Shader();
-	for (auto& pair : m_DynamicSlots)
-	{
-		SHADER_PARAM param = pair.second;
-		param.pData = nullptr;
-		pShader->Bind_Value(pair.first, param);
-	}
+	//ClearDynamicSlotsBound(m_pMaterialData->Get_Shader());
+	CShader* pShader = m_pMaterialData->Get_Shader();
+	pShader->ResetToDefaults();
 }
 void CMaterialInstance::Reset_Textures()
 {
 	CShader* pShader = m_pMaterialData->Get_Shader();
-	for (size_t i = 0; i < MAX_TEXTURE_TYPE_VALUE; i++)
-	{
-		string constant = m_pMaterialData->ConvertToConstant(static_cast<TEXTURE_TYPE>(i));
-		SHADER_PARAM param = {};
-		param.pData = nullptr;
-		param.typeName = "Texture2D";
-
-		pShader->Bind_Value(constant, param);
-	}
+	//for (size_t i = 0; i < MAX_TEXTURE_TYPE_VALUE; i++)
+	//{
+	//	string constant = m_pMaterialData->ConvertToConstant(static_cast<TEXTURE_TYPE>(i));
+	//	SHADER_PARAM param = {};
+	//	param.pData = nullptr;
+	//	param.typeName = "Texture2D";
+	//
+	//	pShader->Bind_Value(constant, param);
+	//}
 }
 
 void CMaterialInstance::ChangeTexture(TEXTURE_TYPE type, _uint index)

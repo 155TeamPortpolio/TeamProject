@@ -49,7 +49,7 @@ CEffectContainer* CEffectBuilder::Build(const string& instanceKey, _uint* id)
 
 	if (m_isFromPool)
 	{
-		instance = ObjectManager()->Acquire(m_CloneDesc);
+		instance = ObjectManager()->Acquire(m_CloneDesc, m_pObjDesc);
 		if (!instance) return nullptr;
 		instance->Set_FromPool(true);
 		instance->OnPooledAcquire(m_pObjDesc);

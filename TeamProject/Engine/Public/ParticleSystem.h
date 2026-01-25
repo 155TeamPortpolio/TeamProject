@@ -188,6 +188,7 @@ private:
 	PARTICLE_SPACE m_eParticleSpace = PARTICLE_SPACE::WORLD;
 	MODULE_MASK m_eModuelMask{};
 	COLOR_MODE m_eColorMode = COLOR_MODE::ADDITIVE;
+	_float2 m_vPivot{ 0.5f,0.5f };
 
 	_float m_fDelayDuration{};
 	_float m_fElapsedTime{};
