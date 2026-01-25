@@ -140,7 +140,7 @@ HRESULT CTestLevel::Awake()
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_EnemyTriggerCollider", CEnemyTriggerCollider::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_ThugAssaulter", CThugAssaulter::Create());
 
-	CBattleSystem::GetInstance()->ReadyBattle("TrainingRoom");
+	CBattleSystem::GetInstance()->ReadyBattle("TrainingRoom", 1);
 	// It will be changed soooooon
 	CBattleSystem::GetInstance()->SetActive(true);
 

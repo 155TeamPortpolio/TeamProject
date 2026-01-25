@@ -8,6 +8,7 @@
 #include "FieldSystem.h"
 #include "Enemy.h"
 #include "MonsterSpawner.h"
+#include "Character.h"
 
 IMPLEMENT_SINGLETON(CBattleSystem)
 
@@ -131,6 +132,21 @@ void CBattleSystem::ReadyBattle(const string& tagArea, _uint iPrefabIndex)
 
 // 플레이어 위치 세팅
 #pragma region Setting Player Position
+	// Player CCT 높이만큼 Y축으로 올려줘야함
+	_float3 vPos = { 
+		m_BattleFieldData.PlayerSpawnPoint.vTranslation[0], 
+		m_BattleFieldData.PlayerSpawnPoint.vTranslation[1] + m_pBattlePlayer->GetCurCharacterHandle().Get()->Get_Component<CCharacterController>()->Get_Height(),
+		m_BattleFieldData.PlayerSpawnPoint.vTranslation[2] 
+	};
+	
+	_float3 vRot = { 
+		m_BattleFieldData.PlayerSpawnPoint.vRotation[0], 
+		m_BattleFieldData.PlayerSpawnPoint.vRotation[1],
+		m_BattleFieldData.PlayerSpawnPoint.vRotation[2]
+	};
+	m_pBattlePlayer->GetCurCharacterHandle().Get()->Get_Component<CCharacterController>()->Get_Height();
+	m_pBattlePlayer->Set_Move(vPos, vRot);
+
 #pragma endregion
 
 // 스포너 세팅
@@ -145,6 +161,8 @@ void CBattleSystem::ReadyBattle(const string& tagArea, _uint iPrefabIndex)
 		ColDesc.bTrigger = true; // 충돌 박스 생성하는 트리거
 		ColDesc.vSize = { SpawnerData.vScale[0], SpawnerData.vScale[1], SpawnerData.vScale[2] };
 		
+		// 추후에 스포너 타입(트리거랑 충돌, 직접 호출 등)이 필요해 보임
+
 		string tagInstanceName = SpawnerData.tagType + to_string(SpawnerData.iIndex);
 		CGameObject* pSpawnerObject = Builder::Create_Object({ G_GlobalLevelKey ,"Proto_GameObject_MonsterSpawner" })
 			.Collider(ColDesc)
@@ -156,6 +174,8 @@ void CBattleSystem::ReadyBattle(const string& tagArea, _uint iPrefabIndex)
 #endif 
 		pObjMgr->Add_Object(pSpawnerObject, { LevelManager()->Get_NowLevelKey(), "Spawner_Layer"});
 
+		// 나중에 밟아서 활성화 되는 스포너 외에 타이밍 제어에 필요한 스포너가 있을 경우,
+		// 핸들로 접근해서 소환시키게 하려고 스포너 핸들 저장해둠
 		m_SpawnerHandles.push_back(pSpawnerObject->Get_Handle());
 
 		// 스포너가 포함하고 있는 몬스터포인트에 매핑된 값들을 찾아서 넣음
@@ -175,9 +195,10 @@ void CBattleSystem::ReadyBattle(const string& tagArea, _uint iPrefabIndex)
 #pragma endregion
 
 // 몬스터 미리 세팅 (오브젝트 풀에 넣어놓기)
-#pragma region Setting Monster
+// 을 의도했으나 일단 그냥 소환하는 방식으로 ㄱㄱ
+#pragma region Setting Monster(X)
 	// 풀에 들어간 몬스터 프로토 태그 저장용
-	vector<string>		AddMonsterList;
+	/*vector<string>		AddMonsterList;
 
 	for (auto& data : *pMonsterSpawnData)
 	{
@@ -216,17 +237,17 @@ void CBattleSystem::ReadyBattle(const string& tagArea, _uint iPrefabIndex)
 		CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(pMonster, { NowLevel, "Enemy_Layer" });
 
 		AddMonsterList.push_back(tagProto);
-	}
+	}*/
 #pragma endregion
 
 // 포탈(끝지점) 세팅
 #pragma region Setting EndPoint
-	// 포탈 만드는 로직?
+	// 포탈 만드는 로직 추가 필요
 #pragma endregion
 
 }
 
-void CBattleSystem::SpawnMosnter(const string& MonsterProtoTag, _float3 vSpawnPos)
+void CBattleSystem::SpawnMosnter(const string& MonsterProtoTag, _float3 vSpawnPos, _float3 vRot)
 {
 	MonsterCreationDesc MonsterTableDesc = CDataBase::GetInstance()->GetMonsterDesc(MonsterProtoTag);
 	if (true == MonsterTableDesc.ProtoTag.empty())
@@ -240,6 +261,11 @@ void CBattleSystem::SpawnMosnter(const string& MonsterProtoTag, _float3 vSpawnPo
 	MonsterCCT.fRadius = MonsterTableDesc.CCT_fRadius;
 	MonsterCCT.vPos = vSpawnPos;
 	MonsterCCT.vPos.y += MonsterCCT.fHeight;
+	
+
+	//_float3 vCorrectionSpawnPos = vSpawnPos;
+	//vCorrectionSpawnPos.y += MonsterCCT.fHeight;
+
 
 	CEnemy::ENEMY_DESC* enemyDesc = new CEnemy::ENEMY_DESC();
 	enemyDesc->iMaxHP = MonsterTableDesc.iMaxHP;
@@ -249,6 +275,7 @@ void CBattleSystem::SpawnMosnter(const string& MonsterProtoTag, _float3 vSpawnPo
 	auto pMonster = Builder::Create_Object({ NowLevel,MonsterTableDesc.ProtoTag })
 		.Add_ObjDesc(enemyDesc)
 		.CharacterController(MonsterCCT)
+		.Rotate(vRot)
 		.Build(MonsterTableDesc.DisplayName);
 
 	if (nullptr == pMonster)
@@ -265,12 +292,22 @@ void CBattleSystem::SpawnMosnterFromPool(const string& MonsterProtoTag, _float3 
 	if (true == MonsterTableDesc.ProtoTag.empty())
 		return;
 
+	_float3 vCorrectionSpawnPos = vSpawnPos;
+	vCorrectionSpawnPos.y += MonsterTableDesc.CCT_fHeight;
+
 	const string NowLevel = CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey();
 	auto pMonster = Builder::Create_Object({ NowLevel, MonsterProtoTag })
-		.Position(vSpawnPos)
+		.Position(vCorrectionSpawnPos)
 		.Rotate(vRot)
 		.FromPool()
 		.Build(MonsterTableDesc.DisplayName);
+
+	if (nullptr == pMonster)
+		return;
+
+	CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(pMonster, { NowLevel, "Enemy_Layer" });
+
+	m_Handles[BATTLE_OBJ_TYPE::MONSTER].push_back(pMonster->Get_Handle());
 }
 
 _bool CBattleSystem::ExitBattleObject(BATTLE_OBJ_TYPE eObjType, OBJECT_HANDLE hObject)
@@ -452,6 +489,10 @@ void CBattleSystem::ClearBattleStage()
 
 	for (auto& Pair : m_BattleObjInfos)
 		Pair.second.clear();
+
+	m_SpawnerHandles.clear();
+	m_BattleFieldData = {};
+	
 }
 
 void CBattleSystem::CheckTimeScale(const _float dt)

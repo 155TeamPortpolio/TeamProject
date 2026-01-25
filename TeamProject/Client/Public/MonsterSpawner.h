@@ -14,6 +14,8 @@ public:
         _float3     vPosition = {};
     }SPAWN_DESC;
 
+    // 추후에 스포너 타입 지정해서 배틀시스템이 호출할 떄, 스포너 트리거랑 충돌할 때 등 나눌 예정
+
 private:
 	CMonsterSpawner();
 	CMonsterSpawner(const CMonsterSpawner& rhs);
@@ -32,12 +34,9 @@ public:
     HRESULT         AddMonsterData(BATTLE_POINT_DATA MonsterPointData, MONSTER_SPAWN_DESC MonsterSpawnData);
 
 private:
-    vector<SPAWN_DESC>   m_SpawnDesc;
-
-    // BattleSystem에서 몬스터 미리 생성해서 풀에 넣어주고
-    // 기본적으로 트리거 밟았을 때, 생성하게 해보기
-    // OntriggerEnter테스트 후
-    // 트리거 오프시키기
+    _bool               m_isUsed = { false };
+    vector<SPAWN_DESC>  m_SpawnDesc;
+    
 
 public:
     static CMonsterSpawner* Create();

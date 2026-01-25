@@ -48,16 +48,16 @@ void CMonsterSpawner::Late_Update(_float dt)
 
 void CMonsterSpawner::OnTriggerEnter(CGameObject* pOther)
 {
+	if (true == m_isUsed)
+		return;
+
 	for (auto& data : m_SpawnDesc)
 	{
 		string tagInstanceName = to_string(data.iSpawnID) + "_" + data.tagProto;
-		BattleSystem()->SpawnMosnterFromPool(data.tagProto, data.vPosition, data.vRotation);
-		//auto pMonster = Builder::Create_Object({ LevelManager()->Get_NowLevelKey(), data.tagProto})
-		//	.Rotate(data.vRotation)
-		//	.Position(data.vPosition)
-		//	.FromPool()
-		//	.Build(tagInstanceName);
+		BattleSystem()->SpawnMosnter(data.tagProto, data.vPosition, data.vRotation);
 	}
+
+	m_isUsed = true;
 }
 
 HRESULT CMonsterSpawner::AddMonsterData(BATTLE_POINT_DATA MonsterPointData, MONSTER_SPAWN_DESC MonsterSpawnData)
