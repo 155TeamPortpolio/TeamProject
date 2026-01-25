@@ -55,14 +55,6 @@ float4 ApplySamplerMode(uint samplerMode,float2 texCoord ,Texture2D sampleTextur
     
 }
 
-float3 BoostBrightColor(float3 c, float boost, float start)
-{
-    float lum = dot(c, float3(0.2126, 0.7152, 0.0722));
-    float t = saturate((lum - start) / (1.0 - start)); // start=0.3~0.6
-    return c * (1.0 + boost * t); // boost=0.3~1.0
-}
-
-
 /*Color*/
 float4 vBaseColor;
 
@@ -93,7 +85,10 @@ float2 NoiseUVSpeed;
 float ElapsedTime;
 
 /*Mask Params*/
-float EnableMask;
+Texture2D AlphaMaskTextureA;
+Texture2D AlphaMaskTextureB;
+float EnableMaskA;
+float EnableMaskB;
 float MaskTilling;
 
 /*Distortion Params*/
@@ -188,8 +183,13 @@ PS_OUT PS_MAIN_DEFAULT(PS_IN In)
     fDissolveAlpha = lerp(1.f, fDissolveAlpha, EnableDissolve);
     
     /* Mask */
-    float fMask = ApplySamplerMode(SamplerMode, In.vTexcoord * MaskTilling, AlphaMaskTexture).r;
-    fMask = lerp(1.f, fMask, EnableMask);
+    float fMaskA = ApplySamplerMode(SamplerMode, In.vTexcoord * MaskTilling, AlphaMaskTextureA).r;
+    fMaskA = lerp(1.f, fMaskA, EnableMaskA);
+    
+    float fMaskB = ApplySamplerMode(SamplerMode, In.vTexcoord * MaskTilling, AlphaMaskTextureB).r;
+    fMaskB = lerp(1.f, fMaskB, EnableMaskB);
+    
+    float fMask = fMaskA * fMaskB;
     
     /* Distortion */
     float2 vDistortionTexcoord = In.vTexcoord * DistortionTilling + ElapsedTime * DistortionUVSpeed;

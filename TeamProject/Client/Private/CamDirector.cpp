@@ -173,6 +173,18 @@ void CCamDirector::UpdateInput(_float dt)
     if (InputDevice()->Key_Tap(VK_F1))
         CameraManager()->Set_MainCam(GetFreeCamComp(), 0.5f);
 
+    //if (InputDevice()->Key_Tap(VK_F2))
+    //{
+    //    StartDialog();
+    //    GetPlayer()->Lock_Input();
+    //}
+
+    //if (InputDevice()->Key_Tap(VK_F3))
+    //{
+    //    EndDialog();
+    //    GetPlayer()->Unlock_Input();
+    //}
+
     if (InputDevice()->Key_Tap(VK_F2))
         CameraManager()->Set_MainCam(GetOrbitCamComp(), 0.5f);
 
