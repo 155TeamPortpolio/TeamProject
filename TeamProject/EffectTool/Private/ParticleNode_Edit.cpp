@@ -38,8 +38,6 @@ HRESULT CParticleNode_Edit::Initialize(INIT_DESC* pArg)
 	CMaterial* pMaterial = Get_Component<CMaterial>();
 	CMaterialInstance* customInstance = CMaterialInstance::Create_Handle("Point_Effect_Base", "Default", pDevice);
 	customInstance->ChangeTexture(TEXTURE_TYPE::DIFFUSE, 0);
-	customInstance->Set_Blended(true);
-
 	pMaterial->Insert_MaterialInstance(customInstance, nullptr);
 
 	auto MaterialDat = customInstance->Get_MaterialData();
@@ -230,10 +228,15 @@ void CParticleNode_Edit::Import(nlohmann::ordered_json& json)
 
 	/* Set Texture */
 	{
-		auto pMaterialData = Get_Component<CMaterial>()->Get_MaterialInstance(0)->Get_MaterialData();
-		pMaterialData->Link_Texture("EffectEdit_Level", m_TextureKey, TEXTURE_TYPE::DIFFUSE);
+		auto pTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_TextureKey, true);
 
-		Get_Component<CMaterial>()->Get_MaterialInstance(0)->ChangeTexture(TEXTURE_TYPE::DIFFUSE, 0);
+		auto pMaterialInstance = Get_Component<CMaterial>()->Get_MaterialInstance(0);
+		pMaterialInstance->Set_Param("DiffuseTexture", { pTexture->Get_SRV(),"Texture2D",0 });
+
+		//auto pMaterialData = Get_Component<CMaterial>()->Get_MaterialInstance(0)->Get_MaterialData();
+		//pMaterialData->Link_Texture(G_GlobalLevelKey, m_TextureKey, TEXTURE_TYPE::DIFFUSE);
+		//
+		//Get_Component<CMaterial>()->Get_MaterialInstance(0)->ChangeTexture(TEXTURE_TYPE::DIFFUSE, 0);
 	}
 
 	_vector3 vPosition(vOffsetPosition[0], vOffsetPosition[1], vOffsetPosition[2]);
@@ -346,11 +349,11 @@ void CParticleNode_Edit::AddTextures()
 	{
 		if (!m_pContext->Textures.empty())
 		{
-			auto pTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_pContext->TextureTags[0]);
+			m_TextureKey = m_pContext->TextureTags[0];
+
+			auto pTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_pContext->TextureTags[0], true);
 			auto pMaterialInstance = Get_Component<CMaterial>()->Get_MaterialInstance(0);
 			pMaterialInstance->Set_Param("DiffuseTexture", { pTexture->Get_SRV(),"Texture2D",0 });
-
-			m_TextureKey = m_pContext->TextureTags[0];
 		}
 	}
 }

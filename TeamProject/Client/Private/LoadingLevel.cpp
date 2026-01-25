@@ -152,6 +152,10 @@ _bool CLoadingLevel::isSRGB(const string& filePath)
 		return true;
 	//if (filePath.find("Effect"))
 	//	return true;
+	const _bool effectFolder = (filePath.find("Effect\\Texture\\Diffuse") != string::npos);
+	if (effectFolder)
+		return true;
+
 	string fileName = filesystem::path(filePath).filename().string();
 
 	const _bool isDiffuse = (fileName.find("_D") != string::npos);
