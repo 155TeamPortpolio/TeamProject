@@ -86,8 +86,13 @@ namespace Client {
 		T Get_SlotValue(const string& SlotTag) const
 		{
 			auto iter = SlotValues.find(SlotTag);
-			if (iter == SlotValues.end()) return nullptr;
-			return *std::get_if<T>(&iter->second);
+			if (iter == SlotValues.end())
+				return nullptr;
+
+			if (auto Data = std::get_if<T>(&iter->second))
+				return *Data;
+			
+			return T{};
 		}
 	}CASHED_OBJECT;
 
