@@ -54,6 +54,17 @@ void CNpcInteractZone::Late_Update(_float dt)
 	Get_Component<CRigidBody>()->Late_Update(dt);
 }
 
+OBJECT_HANDLE CNpcInteractZone::Get_InteractHandle()
+{
+	auto pParent = Get_Component<CChild>()->Get_Parent();
+	if (pParent == nullptr) return OBJECT_HANDLE{};
+
+	auto pNpc = dynamic_cast<CNpc*>(pParent);
+	if (pNpc == nullptr) return OBJECT_HANDLE{};
+
+	return pNpc->Get_Handle();
+}
+
 void CNpcInteractZone::Interact(CGameObject* pObject)
 {
 	auto pParent = Get_Component<CChild>()->Get_Parent();
