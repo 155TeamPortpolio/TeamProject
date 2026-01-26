@@ -160,11 +160,8 @@ void CSacrificeState_Attack_Phase2::BuildPattern(CSacrifice* pOwner)
 	}
 	blackBoard.stateQueue.clear();
 	blackBoard.iPatternCount = 0;
-	blackBoard.stateQueue.push_back("Attack_Charge_Start_Phase2");
-	blackBoard.stateQueue.push_back("Attack_Charge_Loop_Phase2");
-	blackBoard.stateQueue.push_back("Attack_Charge_U_Start_Phase2");
-	blackBoard.stateQueue.push_back("Attack_Charge_U_Loop_Phase2");
-	blackBoard.stateQueue.push_back("Attack_Charge_U_End_Phase2");
+	blackBoard.stateQueue.push_back("Attack08_Phase2");
+	blackBoard.stateQueue.push_back("Attack08_Phase2");
 	blackBoard.stateQueue.push_back("Attack08_Phase2");
 
 	blackBoard.isRequestNext = true;
@@ -662,7 +659,7 @@ void CSacrificeState_Attack_08_Phase2::Update_Effects(CSacrifice* pOwner)
 	}
 
 	/* Explode */
-	if (IsCrossAnimProgress(0.67f))
+	if (IsCrossAnimProgress(0.65f))
 	{
 		auto pTransform = pOwner->Get_Component<CTransform>();
 

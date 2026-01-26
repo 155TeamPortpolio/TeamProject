@@ -62,7 +62,7 @@ HRESULT CEffectEditLevel::Awake()
 		.Build("Main_Camera");
 
 	CGameObject* Grid = Builder::Create_Object({ "EffectEdit_Level" ,"Proto_GameObject_ToolGrid" })
-		.Position({ 0,-10.f,0.f })
+		.Position({ 0,-3.f,0.f })
 		.Scale({500.f,0.f,500.f})
 		.Build("ToolGrid");
 
