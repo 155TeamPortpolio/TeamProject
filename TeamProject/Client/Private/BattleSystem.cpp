@@ -41,6 +41,11 @@ void CBattleSystem::Update()
 
 	CheckVFX(dt);
 	Update_BattleInfo();
+
+	if(InputDevice()->Key_Tap(VK_SHIFT))
+	{
+		StartGimmick(BATTLE_VFX_TYPE::PARRY);
+	}
 }
 
 

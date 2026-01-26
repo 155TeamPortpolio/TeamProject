@@ -15,8 +15,8 @@ void CBattleFXFlow::Initialize_Preset()
 		const _float duration = 1.f;
 		evade.fVFXDuration = duration;
 		evade.fBlurDuration = duration;
-		evade.vStartColor = { 0.f,0.f,0.f };
-		evade.vTargetColor = { -1.f,-1.f,-1.f };
+		evade.vStartColor = { 1.f,1.f,1.f };
+		evade.vTargetColor = { 0.6f,0.6f,0.6f };
 		evade.tPlayerTimeScale = TIME_SCALING({ duration, 0.3f, 0.f, 0.f , EaseType::InOutSine });
 		evade.tMonsterTimeScale = TIME_SCALING({ duration, 0.3f, 0.f, 0.f , EaseType::InOutSine });
 	}
@@ -26,8 +26,6 @@ void CBattleFXFlow::Initialize_Preset()
 		const _float duration = 1.f;
 		Parry.fVFXDuration = duration;
 		Parry.fBlurDuration = duration;
-		Parry.vStartColor = { 0.f,0.f,0.f };
-		Parry.vTargetColor = { -1.f,-1.f,-1.f };
 		Parry.tPlayerTimeScale = TIME_SCALING({ duration, 0.3f, 0.f, 0.f , EaseType::InOutSine });
 		Parry.tMonsterTimeScale = TIME_SCALING({ duration, 0.3f, 0.f, 0.f , EaseType::InOutSine });
 	}
@@ -190,7 +188,7 @@ void CBattleFXFlow::StartVfx_Evade()
 
 			_float normalizedT = 1.f - time01;
 			_float pingpongT = (normalizedT < 0.5f) ? (normalizedT * 2.f) : (2.f - normalizedT * 2.f);
-			_float easeT = Math::ApplyEase(EaseType::InOutSine, pingpongT);
+			_float easeT = Math::ApplyEase(EaseType::OutSine, pingpongT);
 
 			const _float3 target = { 0.1f, 0.3f, 0.3f };
 			_vector startColor = XMLoadFloat3(&preset.vStartColor);
@@ -221,7 +219,6 @@ void CBattleFXFlow::StartVfx_Parry()
 	AddParallelTimeScale(BATTLE_OBJ_TYPE::PLAYER, preset.tPlayerTimeScale);
 	AddParallelTimeScale(BATTLE_OBJ_TYPE::MONSTER, preset.tMonsterTimeScale);
 
-	AddCall([this]() {RenderSystem()->Register_AddictiveColor(&m_BattleVFX.vNowColor); });
 	AddCall([this, preset]() {RenderSystem()->Apply_RadialBlur(preset.fBlurDuration); });
 
 
@@ -249,7 +246,6 @@ void CBattleFXFlow::StartVfx_Parry()
 	);
 
 	AddCall([this, preset]() {
-		RenderSystem()->UnRegister_AddictiveColor();
 		m_BattleVFX.fCurPos = 0.f;
 		m_BattleVFX.vNowColor = {};
 		m_BattleVFX.isRunning = false;
@@ -265,6 +261,11 @@ void CBattleFXFlow::StartVfx_Ultimate()
 	auto& preset = m_BattleVFXData[ENUM(BATTLE_VFX_TYPE::ULTIMATE)];
 	AddParallelTimeScale(BATTLE_OBJ_TYPE::MONSTER, preset.tMonsterTimeScale);
 	AddWait(preset.fVFXDuration);
+	AddCall([this, preset]() {
+		m_BattleVFX.fCurPos = 0.f;
+		m_BattleVFX.vNowColor = {};
+		m_BattleVFX.isRunning = false;
+		});
 	Start(nullptr);
 }
 
