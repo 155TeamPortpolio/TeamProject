@@ -46,6 +46,11 @@ public:
     virtual void    On_Ultimate()              override;
     virtual void    On_Special()               override;
     virtual void    On_Hit(DAMAGE_TYPE eType)  override;
+
+    virtual void    OnDamage()                 override;
+    virtual void    OnPerfectDodge()           override;
+    virtual void    OnDefensiveAssist()        override;
+
 private:
     HRESULT Initialize_StateMachine();
     HRESULT Initialize_States();

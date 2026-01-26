@@ -277,6 +277,22 @@ void CJaneDoe::On_Hit(DAMAGE_TYPE eType)
 	m_pStateMachine->Set_Trigger("ToHit");
 }
 
+void CJaneDoe::OnDamage()
+{
+	// 열광 상태가 아닐때 열광누적
+	// 열광 상태일때 열광 소모
+}
+
+void CJaneDoe::OnPerfectDodge()
+{
+	// 열광 누적
+}
+
+void CJaneDoe::OnDefensiveAssist()
+{
+	// 열광 누적
+}
+
 HRESULT CJaneDoe::Initialize_StateMachine()
 {
 	m_pStateMachine = CStateMachine<CJaneDoe>::Create();
