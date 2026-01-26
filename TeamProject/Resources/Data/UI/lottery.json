@@ -64,7 +64,7 @@
             "children": [
                 {
                     "alive": true,
-                    "instanceName": "btn_back",
+                    "instanceName": "btnBack",
                     "transform": {
                         "anchor": 10,
                         "anchorOffset": [
@@ -288,12 +288,12 @@
             "children": [
                 {
                     "alive": true,
-                    "instanceName": "btn_scratchCard",
+                    "instanceName": "btnScratch",
                     "transform": {
                         "anchor": 6,
                         "anchorOffset": [
-                            -120.0,
-                            0.0
+                            -60.0,
+                            60.0
                         ],
                         "size": [
                             120.0,
@@ -304,8 +304,8 @@
                             1.0
                         ],
                         "pivot": [
-                            0.0,
-                            0.0
+                            0.5,
+                            0.5
                         ],
                         "radian": 0.0
                     },
@@ -316,7 +316,53 @@
                         1.0
                     ],
                     "pass": "Opaque",
-                    "animClips": [],
+                    "animClips": [
+                        {
+                            "duration": 0.10000000149011612,
+                            "keyframes": [
+                                {
+                                    "angle": 0.0,
+                                    "color": [
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "easeType": 0,
+                                    "position": [
+                                        0.0,
+                                        0.0
+                                    ],
+                                    "scale": [
+                                        0.0,
+                                        0.0
+                                    ],
+                                    "time": 0.0
+                                },
+                                {
+                                    "angle": 0.0,
+                                    "color": [
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "easeType": 0,
+                                    "position": [
+                                        0.0,
+                                        0.0
+                                    ],
+                                    "scale": [
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "time": 0.10000000149011612
+                                }
+                            ],
+                            "loop": false,
+                            "name": "appear"
+                        }
+                    ],
                     "children": [],
                     "typeTag": "Button",
                     "textureTag": "BtnTabBG102.png",
@@ -324,7 +370,7 @@
                 },
                 {
                     "alive": true,
-                    "instanceName": "icon_scratchCard",
+                    "instanceName": "iconScratch",
                     "transform": {
                         "anchor": 6,
                         "anchorOffset": [
@@ -352,7 +398,91 @@
                         1.0
                     ],
                     "pass": "Opaque",
-                    "animClips": [],
+                    "animClips": [
+                        {
+                            "duration": 0.4000000059604645,
+                            "keyframes": [
+                                {
+                                    "angle": 13.0,
+                                    "color": [
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "easeType": 7,
+                                    "position": [
+                                        0.0,
+                                        0.0
+                                    ],
+                                    "scale": [
+                                        0.0,
+                                        0.0
+                                    ],
+                                    "time": 0.0
+                                },
+                                {
+                                    "angle": 13.0,
+                                    "color": [
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "easeType": 5,
+                                    "position": [
+                                        0.0,
+                                        0.0
+                                    ],
+                                    "scale": [
+                                        1.0,
+                                        1.2999999523162842
+                                    ],
+                                    "time": 0.15000000596046448
+                                },
+                                {
+                                    "angle": 13.0,
+                                    "color": [
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "easeType": 2,
+                                    "position": [
+                                        0.0,
+                                        0.0
+                                    ],
+                                    "scale": [
+                                        1.399999976158142,
+                                        1.100000023841858
+                                    ],
+                                    "time": 0.30000001192092896
+                                },
+                                {
+                                    "angle": 13.0,
+                                    "color": [
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "easeType": 0,
+                                    "position": [
+                                        0.0,
+                                        0.0
+                                    ],
+                                    "scale": [
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "time": 0.4000000059604645
+                                }
+                            ],
+                            "loop": false,
+                            "name": "appear"
+                        }
+                    ],
                     "children": [],
                     "typeTag": "Image",
                     "textureTag": "ScratchCardIcon.png"
@@ -474,7 +604,7 @@
         },
         {
             "alive": true,
-            "instanceName": "CanvasPanel",
+            "instanceName": "news",
             "transform": {
                 "anchor": 6,
                 "anchorOffset": [
@@ -499,10 +629,56 @@
                 1.0,
                 1.0,
                 1.0,
-                1.0
+                0.0
             ],
             "pass": "Opaque",
-            "animClips": [],
+            "animClips": [
+                {
+                    "duration": 0.10000000149011612,
+                    "keyframes": [
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                0.0
+                            ],
+                            "easeType": 5,
+                            "position": [
+                                100.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 0.0
+                        },
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "easeType": 0,
+                            "position": [
+                                0.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 0.10000000149011612
+                        }
+                    ],
+                    "loop": false,
+                    "name": "appear"
+                }
+            ],
             "children": [
                 {
                     "alive": true,
@@ -705,7 +881,7 @@
                 },
                 {
                     "alive": true,
-                    "instanceName": "btn_refresh",
+                    "instanceName": "btnRefresh",
                     "transform": {
                         "anchor": 5,
                         "anchorOffset": [

@@ -26,9 +26,10 @@ public:
 	virtual void	Awake()							 override;
 	virtual void    Priority_Update(_float dt)       override { __super::Priority_Update(dt); }
 	virtual void    Update(_float dt)			     override;
-	virtual void    Late_Update(_float dt)           override;
+	virtual void    Late_Update(_float dt)           override { __super::Late_Update(dt); }
 	virtual void    Render_GUI()                     override { __super::Render_GUI(); }
 	virtual void	UI_Active(void* pArg)			 override;
+	virtual void	UI_DeActive(void* pArg)			 override;
 
 private:
 	CUI_Object*			m_pBrush = {};
@@ -39,6 +40,8 @@ private:
 	_float4x4   m_ProjMatrix = {};
 
 	_float		m_fThreshold = { -0.1f };
+
+	_bool		m_isClear = {};
 
 private:
 	void Cache_Brush();

@@ -55,11 +55,13 @@ HRESULT CUI_ScratchCard::Initialize(INIT_DESC* pArg)
     XMStoreFloat4x4(&m_ViewMatrix, XMMatrixIdentity());
     XMStoreFloat4x4(&m_ProjMatrix, XMMatrixOrthographicLH(m_vSize.x, m_vSize.y,  0.f, 1.f));
 
+    UI_DeActive(nullptr);
+
 	return S_OK;
 }
 
 void CUI_ScratchCard::Awake()
-{
+{ 
 }
 
 void CUI_ScratchCard::Update(_float dt)
@@ -70,21 +72,26 @@ void CUI_ScratchCard::Update(_float dt)
     m_pBrush->Set_AnchorOffset(InputDevice()->Mouse_Pos() - m_vLeftTop);
 
     Get_Component<CObjectContainer>()->UpdateChild(dt); 
-}
 
-void CUI_ScratchCard::Late_Update(_float dt)
-{
     // 렌더 타겟에 브러쉬로 그림
     RENDER_CUSTOM_COMMAND command = {};
     command.TargetKey = "scratchCard";
-    command.bClear = false;
+    command.bClear = m_isClear;
+    m_isClear = false;
     command.DrawCallback = [this](ID3D11DeviceContext* pContext) { Render_RTBrush(pContext); };
     RenderSystem()->Add_RenderCommand(command, CUSTOMTARGET::UI);
 }
 
 void CUI_ScratchCard::UI_Active(void* pArg)
 {
+    Set_Alive(true);
     Change_RewardTexture(REWARD_TEXTURES[rand() % ENUM(REWARD::END)]);
+    m_isClear = true;
+}
+
+void CUI_ScratchCard::UI_DeActive(void* pArg)
+{
+    Set_Alive(false);
 }
 
 void CUI_ScratchCard::Cache_Brush()
