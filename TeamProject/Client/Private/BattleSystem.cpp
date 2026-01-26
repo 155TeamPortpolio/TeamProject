@@ -230,6 +230,26 @@ void CBattleSystem::ReadyBattle(const string& tagArea, _uint iPrefabIndex)
 
 }
 
+void CBattleSystem::ReadyBattle(const string& tagArea, _uint StageNumber, _uint iPrefabIndex)
+{
+	auto pDatabase = CDataBase::GetInstance();
+	auto CacheData = CDataBase::GetInstance()->Get_CashedData(tagArea);
+
+	if (!CacheData->Battle.HasBattleData)
+		return;
+
+	/*PlayerPos*/
+	CacheData->Battle.PlayerPoint;
+
+	/*MonsterPos*/
+	CacheData->Battle.MonsterPoint;
+	CacheData->Battle.PortalPoint;
+	const vector<MONSTER_SPAWN_DESC>* pMonsterSpawnData = pDatabase->GetMonsterSpawnData(tagArea);
+
+	
+}
+
+
 void CBattleSystem::SetActive(_bool isActive)
 {
 	if (false == isActive) {

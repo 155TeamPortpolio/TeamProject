@@ -6,12 +6,13 @@
 #include "UIDirector.h"
 #include "BattleSystem.h"
 #include "BattlePlayer.h"
+#include "DataBase.h"
 
 CStage::CStage()
 {
 }
 
-void CStage::StageChangeOn(CZero_Level::StageType nextStageType, _int StageID)
+void CStage::StageChangeOn(StageType nextStageType, _int StageID)
 {
 	m_eStageStage = StageState::Outro;
 }
@@ -22,6 +23,8 @@ void CStage::Ready_Map(const string& LevelTag, const string& AreaTag)
 	if (nullptr == pMapLoader)
 		MSG_BOX("Failed to Load MapData!");
 	Safe_Release(pMapLoader);
+
+	const CASHED_OBJ_DATA* datas =  CDataBase::GetInstance()->Get_CashedData(AreaTag);
 }
 
 void CStage::BaseIntro(CZero_Level::StageContext& context)

@@ -23,7 +23,7 @@ public:
 	virtual HRESULT Enter_Stage(CZero_Level::StageContext& context)PURE;
 	virtual HRESULT Exit_Stage(CZero_Level::StageContext& context)PURE;
 
-	virtual void StageChangeOn(CZero_Level::StageType nextStageType, _int StageID);
+	virtual void StageChangeOn(StageType nextStageType, _int StageID);
 
 protected:
 	virtual void Ready_Map(const string& LevelTag, const string& AreaTag);

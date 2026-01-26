@@ -111,7 +111,7 @@ void CZeroStage_Normal::End()
 		RenderSystem()->UnRegister_AddictiveColor();
 		ObjectManager()->Get_Layer({ "Zero_Level","PlacedObject_Layer" })->Clear_Layer();
 		ObjectManager()->Get_Layer({ "Zero_Level","InteractableObject_Layer" })->Clear_Layer();
-		m_pOwnerLevel->ChangeStage(CZero_Level::StageType::Elite, 0);
+		m_pOwnerLevel->ChangeStage(StageType::Elite, 0);
 	}
 }
 

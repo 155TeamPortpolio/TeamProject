@@ -35,6 +35,7 @@ public: //setter
 	void	SetActive(_bool is);
 	/* PrefabIndex는 같은 몬스터 스폰포인트를 사용하지만 다른 몬스터 종류를 사용할 때를 위해 빼놓음. 1xxx,2xxx 등으로 나눠서 MonsterSpawn.csv에 저장된걸 로드함*/
 	void	ReadyBattle(const string& tagArea, _uint iPrefabIndex = 1);
+	void	ReadyBattle(const string& tagArea, _uint StageNumber, _uint iPrefabIndex = 1);
 	
 	void	SpawnMosnter(const string& MonsterProtoTag, _float3 vSpawnPos, _float3 vRot = {});
 	void	SpawnMosnterFromPool(const string& MonsterProtoTag, _float3 vSpawnPos, _float3 vRot);
@@ -59,7 +60,6 @@ public:
 	void	TakeAreaDamage(const _float3& vCenter, _float fRadius, const HitDesc& hitDesc);
 	void	TakeAllDamage(const HitDesc& hitDesc);
 	_bool	ExitBattleObject(BATTLE_OBJ_TYPE eObjType, OBJECT_HANDLE hObject);
-
 public:
 	_bool isMonsterCleared();
 
