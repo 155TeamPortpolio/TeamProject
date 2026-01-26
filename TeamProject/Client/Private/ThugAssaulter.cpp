@@ -52,6 +52,7 @@ HRESULT CThugAssaulter::Initialize_Prototype()
 	pResourceMgr->Add_ResourcePath("ThugAssaulter.model", "../Bin/Resources/Model/skeletal/Enemy/ThugAssaulter/ThugAssaulter.model");
 	pResourceMgr->Add_ResourcePath("Monster_ThugAssaulter_Meta.json", "../Bin/Resources/Model/skeletal/Enemy/ThugAssaulter/Monster_ThugAssaulter_Meta.json");
 
+	return S_OK;
 }
 
 HRESULT CThugAssaulter::Initialize(INIT_DESC* pArg)
