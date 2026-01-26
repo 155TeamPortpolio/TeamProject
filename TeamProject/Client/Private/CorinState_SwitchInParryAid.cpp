@@ -75,14 +75,13 @@ void CCorinState_SwitchInParryAid_L_Loop::Enter(CCorin* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_ParryAid_L")
         .Loop(false)
-        .Speed(1.2f)
+        .Speed(2.f)
         .Apply();
 
-    if (pOwner->Get_ParryHandle().isValid())
+    OBJECT_HANDLE handle = pOwner->Get_ParryHandle();
+    if (handle.isValid())
     {
-        CEnemy* pEnemy = dynamic_cast<CEnemy*>(pOwner->Get_ParryHandle().Get());
-        if (pEnemy)
-            pEnemy->Parried();
+        dynamic_cast<CEnemy*>(handle.Get())->Parried();
     }
 }
 

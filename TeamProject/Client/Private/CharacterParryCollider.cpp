@@ -48,6 +48,7 @@ void CCharacterParryCollider::Awake()
 void CCharacterParryCollider::Priority_Update(_float dt)
 {
 	m_vPrevPos = m_pTransform->Get_Pos();
+	m_ParryableTargets.clear();
 }
 
 void CCharacterParryCollider::Update(_float dt)
@@ -66,22 +67,29 @@ void CCharacterParryCollider::Render_GUI()
 
 void CCharacterParryCollider::OnTriggerEnter(CGameObject* pOther)
 {
-	ICollidable* pCollidable = pOther->Get_Component<ICollidable>();
-	if (!pCollidable) return;
+	if (!dynamic_cast<CEnemy*>(pOther)) return;
+
 	auto pCharacter = dynamic_cast<CCharacter*>(Get_Component<CChild>()->Get_Parent());
-	if (pCharacter->Is_Invincible())	return;
-	
-	m_ParryableTargets.insert(pOther);
+	if (pCharacter->Is_Invincible()) return;
+
+	m_ParryableTargets.push_back(pOther->Get_Handle());
 }
 
 void CCharacterParryCollider::OnTriggerStay(CGameObject* pOther)
 {
-	ICollidable* pCollidable = pOther->Get_Component<ICollidable>();
-	if (!pCollidable) return;
-	auto pCharacter = dynamic_cast<CCharacter*>(Get_Component<CChild>()->Get_Parent());
-	if (pCharacter->Is_Invincible())	return;
+	if (!dynamic_cast<CEnemy*>(pOther)) return;
 
-	m_ParryableTargets.insert(pOther);
+	auto pCharacter = dynamic_cast<CCharacter*>(Get_Component<CChild>()->Get_Parent());
+	if (pCharacter->Is_Invincible()) return;
+
+	// 중복 체크
+	OBJECT_HANDLE handle = pOther->Get_Handle();
+	for (auto& h : m_ParryableTargets)
+	{
+		if (h.hObjID == handle.hObjID)
+			return;
+	}
+	m_ParryableTargets.push_back(handle);
 }
 
 void CCharacterParryCollider::OnTriggerExit(CGameObject* pOther)
@@ -89,7 +97,20 @@ void CCharacterParryCollider::OnTriggerExit(CGameObject* pOther)
 	ICollidable* pCollidable = pOther->Get_Component<ICollidable>();
 	if (!pCollidable) return;
 
-	m_ParryableTargets.erase(pOther);
+}
+
+_bool CCharacterParryCollider::Can_Parry()
+{
+	for (auto it = m_ParryableTargets.begin(); it != m_ParryableTargets.end(); )
+	{
+		OBJECT_HANDLE handle = *it;
+		CEnemy* pEnemy = dynamic_cast<CEnemy*>(handle.Get());
+		if (!handle.isValid() || !handle.isAlive() || !pEnemy || !pEnemy->IsParryEnable())
+			it = m_ParryableTargets.erase(it);
+		else
+			++it;
+	}
+	return !m_ParryableTargets.empty();
 }
 
 CCharacterParryCollider* CCharacterParryCollider::Create()

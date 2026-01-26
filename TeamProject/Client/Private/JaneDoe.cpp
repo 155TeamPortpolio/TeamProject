@@ -296,7 +296,11 @@ void CJaneDoe::Decrease_Passion(_float fStream)
 	m_fPassionStream -= fStream;
 	m_fPassionStream = max(m_fPassionStream, 0.f);
 	if (m_bPassion && m_fPassionStream == 0.f)
+	{
 		m_bPassion = false;
+		m_vRimLightColor = _float3(0.f, 0.f, 0.f);
+		m_fRimLightPower = 0.f;
+	}
 }
 
 void CJaneDoe::Update_MotionBlurQueue()
