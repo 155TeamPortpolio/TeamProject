@@ -94,7 +94,7 @@ void CJaneDoeState_Attack::Update(CJaneDoe* pOwner, _float dt)
         }
     }
 
-    if (pOwner->Get_TargetHandle().isValid())
+    if (pOwner->Get_TargetHandle().isValid() && pOwner->Is_LookTarget())
     {
         auto target = pOwner->Get_TargetHandle().Get();
         _vector3 vLook = target->Get_WorldPos() - pOwner->Get_WorldPos();

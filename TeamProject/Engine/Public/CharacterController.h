@@ -72,7 +72,20 @@ private:
             if (!pA || !pB) return true;
             if (!pA->Get_CompActive() || !pB->Get_CompActive()) return false;
 
-            return true;
+            // CollisionMask 검사 추가
+            PxFilterData filterA = pShapeA->getQueryFilterData();
+            PxFilterData filterB = pShapeB->getQueryFilterData();
+
+            PxU32 groupA = filterA.word0;
+            PxU32 maskA = filterA.word1;
+            PxU32 groupB = filterB.word0;
+            PxU32 maskB = filterB.word1;
+
+            // 양방향 검사
+            _bool bAAllowB = (maskA & groupB) != 0;
+            _bool bBAllowA = (maskB & groupA) != 0;
+
+            return bAAllowB && bBAllowA;
         }
     };
 

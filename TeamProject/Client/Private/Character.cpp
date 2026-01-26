@@ -151,11 +151,6 @@ void CCharacter::Priority_Update(_float dt)
 
 void CCharacter::Update(_float dt)
 {
-	if (InputDevice()->Key_Tap(VK_F3))
-	{
-		Take_Damage(DAMAGE_TYPE::NORMAL, 10.f);
-	}
-
 	m_pAnimator->Update_Animation(dt);
 	m_pCCT->Update(dt);
 	Update_Evade(dt);
