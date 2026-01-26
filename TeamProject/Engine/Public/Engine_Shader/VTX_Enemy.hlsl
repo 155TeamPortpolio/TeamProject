@@ -1,5 +1,6 @@
 #include "Shader_Define.hlsl"
 
+float3 vEmissiveColor;
 float3 vRimLightColor;
 float fRimLightPower;
 vector vOutLineColor;
@@ -8,6 +9,8 @@ float fDissolveProgress;
 float fDissolveTiling;
 float4x4 g_CommandBoneMatrices[512];
 matrix g_worldMatrix;
+
+Texture2D EmissiveNoiseTexture;
 
 struct VS_IN
 {
@@ -229,6 +232,8 @@ PS_OUT PS_MAIN_EMISSIVE(PS_IN In)
     vector vAmbient = AmbientTexture.Sample(DefaultSampler, In.vTexcoord);
     
     float fNoise = NoiseTexture.Sample(LinearSampler, In.vTexcoord * fDissolveTiling).r;
+    float fEmissiveNoise = EmissiveNoiseTexture.Sample(LinearSampler, In.vTexcoord).r;
+    fEmissiveNoise = smoothstep(0.4f, 0.8f, fEmissiveNoise);
     
     if (fNoise < fDissolveProgress)
         discard;
@@ -255,7 +260,7 @@ PS_OUT PS_MAIN_EMISSIVE(PS_IN In)
     Out.vAmbient = vAmbient;
     Out.vMetalic = vMetalic;
     Out.vRimLight = float4(vRimLightColor, fRimLightPower);
-    Out.vEmissive = float4(vMtrlDiffuse.rgb * vAmbient.b, 0.5f);
+    Out.vEmissive = float4(vEmissiveColor, 0.3f);
     return Out;
 }
 
