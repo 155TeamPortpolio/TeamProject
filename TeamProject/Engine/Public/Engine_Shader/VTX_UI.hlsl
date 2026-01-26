@@ -20,6 +20,16 @@ VS_OUT VS_MAIN(VS_IN In)
     return Out;
 }
 
+matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
+
+VS_OUT VS_MAIN_CUSTOM(VS_IN In)
+{
+    VS_OUT Out;
+    Out.vWorldPos = mul(float4(In.vPosition, 1.f), g_WorldMatrix);
+    
+    return Out;
+}
+
 struct GS_IN
 {
     float4 vWorldPos : POSITION;
@@ -63,6 +73,52 @@ void GS_MAIN(point GS_IN In[1], inout TriangleStream<GS_OUT> triStream)
     v[2].vTexcoord = float2(1, 1);
 
     v[3].vPosition = mul(float4(p3, 1.f), matOrthograph);
+    v[3].vTexcoord = float2(0, 1);
+
+    triStream.Append(v[0]);
+    triStream.Append(v[1]);
+    triStream.Append(v[2]);
+    triStream.RestartStrip();
+
+    triStream.Append(v[0]);
+    triStream.Append(v[2]);
+    triStream.Append(v[3]);
+    triStream.RestartStrip();
+}
+
+[maxvertexcount(6)]
+void GS_MAIN_CUSTOM(point GS_IN In[1], inout TriangleStream<GS_OUT> triStream)
+{
+    GS_OUT v[4];
+
+    float3 worldPos = In[0].vWorldPos.xyz;
+    
+    float3 right = normalize(g_WorldMatrix[0].xyz);
+    float3 up = normalize(g_WorldMatrix[1].xyz);
+    float scaleX = length(g_WorldMatrix[0].xyz);
+    float scaleY = length(g_WorldMatrix[1].xyz);
+
+    float3 offsetRight = right * (scaleX * 0.5f);
+    float3 offsetUp = up * (scaleY * 0.5f);
+
+    // 정점 4개 위치 계산 (월드 기준)
+    float3 p0 = worldPos + (-offsetRight + offsetUp);
+    float3 p1 = worldPos + (offsetRight + offsetUp);
+    float3 p2 = worldPos + (offsetRight - offsetUp);
+    float3 p3 = worldPos + (-offsetRight - offsetUp);
+
+    matrix matVP = mul(g_ViewMatrix, g_ProjMatrix);
+    // 직교 투영 사용
+    v[0].vPosition = mul(float4(p0, 1.f), matVP);
+    v[0].vTexcoord = float2(0, 0);
+
+    v[1].vPosition = mul(float4(p1, 1.f), matVP);
+    v[1].vTexcoord = float2(1, 0);
+
+    v[2].vPosition = mul(float4(p2, 1.f), matVP);
+    v[2].vTexcoord = float2(1, 1);
+
+    v[3].vPosition = mul(float4(p3, 1.f), matVP);
     v[3].vTexcoord = float2(0, 1);
 
     triStream.Append(v[0]);
@@ -217,8 +273,11 @@ PS_OUT PS_STENCIL_WRITE_ALPHA(PS_IN In)
     );
 
     vector vDiffuse = SpriteTexture.Sample(LinearSampler, vTexcoord);
-    clip(vDiffuse.a - MaskThreshold);
-
+    if (MaskThreshold > 0)
+        clip(vDiffuse.a - MaskThreshold);           // fThreshold에 양수를 넣으면 그 절대값보다 작은 값을 자름
+    else
+        clip((MaskThreshold * -1.f)  - vDiffuse.a); // fThreshold에 음수를 넣으면 그 절대값보다 큰 값을 자름
+    
     Out.vColor = 1;
     return Out;
 }
@@ -285,6 +344,22 @@ PS_OUT PS_MAIN_NINESLICE(PS_IN In)
     vTexcoord.y = calcV(In.vPosition.y - vTopLeftPx.y);
     
     vector vDiffuse = SpriteTexture.Sample(DefaultSampler, vTexcoord);
+    clip(vDiffuse.a - 0.1f);
+    
+    float4 color = vDiffuse * vColor;
+    Out.vColor.rgb = color.rgb * color.a;
+    Out.vColor.a = color.a;
+    
+    return Out;
+}
+
+PS_OUT PS_MAIN_CUSTOM(PS_IN In)
+{
+    PS_OUT Out;
+    
+    float2 vTexcoord = { In.vTexcoord.x * (1.f - 2.f * vFlip.x) + vFlip.x, In.vTexcoord.y * (1.f - 2.f * vFlip.y) + vFlip.y };
+    
+    vector vDiffuse = SpriteTexture.Sample(LinearSampler, vTexcoord);
     clip(vDiffuse.a - 0.1f);
     
     float4 color = vDiffuse * vColor;
@@ -445,5 +520,15 @@ technique11 DefaultTechnique
         VertexShader   = compile vs_5_0 VS_MAIN();
         GeometryShader = compile gs_5_0 GS_MAIN();
         PixelShader    = compile ps_5_0 PS_MAIN_SPRITEANIMATION_COLORATLAS();
+    }
+    
+    pass OpaqueCustom
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_Premultiplied, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader   = compile vs_5_0 VS_MAIN_CUSTOM();
+        GeometryShader = compile gs_5_0 GS_MAIN_CUSTOM();
+        PixelShader    = compile ps_5_0 PS_MAIN_CUSTOM();
     }
 }

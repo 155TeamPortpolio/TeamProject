@@ -45,6 +45,19 @@ HRESULT CEnemy::Initialize(INIT_DESC* pArg)
 
 	m_tStatus.iMaxHP = m_tStatus.iNowHP = pDesc->iMaxHP;
 
+	switch (m_eEnemyClass)
+	{
+	case Client::CEnemy::ENEMY_CLASS::NORMAL:
+		m_tStatus.iPlayerComboCount = 1;
+		break;
+	case Client::CEnemy::ENEMY_CLASS::ELITE:
+		m_tStatus.iPlayerComboCount = 2;
+		break;
+	case Client::CEnemy::ENEMY_CLASS::BOSS:
+		m_tStatus.iPlayerComboCount = 3;
+		break;
+	}
+
 	return S_OK;
 }
 
@@ -112,8 +125,8 @@ void CEnemy::ComputeTargetingInfo()
 	//_vector3 vDirToTarget = m_tTargetingInfo.vTargetPos - m_tTargetingInfo.vSelfPos;
 
 	m_tTargetingInfo.fDistanceSq = vDirToTarget.LengthSquared();
-	if (m_tTargetingInfo.fDistanceSq <= m_fDetectedRange * m_fDetectedRange)
-		m_tTargetingInfo.isDetected = true;
+	//if (m_tTargetingInfo.fDistanceSq <= m_fDetectedRange * m_fDetectedRange)
+	//	m_tTargetingInfo.isDetected = true;
 
 	// sqrt 계산이 비교적 무거워서 후에 최적화 필요시 아래 식 사용 고려
 	//m_tTargetingInfo.fDistance = (m_tTargetingInfo.fDistanceSq > m_fDetectedRange * m_fDetectedRange) ? 
@@ -410,22 +423,39 @@ void CEnemy::ManageGroggy(const _float dt)
 	{
 		m_tStatus.iGroggyValue = 100;
 		m_tStatus.isGroggy = true;
+		// UI 효과용
+		m_tStatus.isGroggyStay = true;
 	}
 
 	if (true == m_tStatus.isGroggy)
 	{
-		m_fGroggyDecreaseTime += dt;
-
-		if (0.1f <= m_fGroggyDecreaseTime)
+		if (true == m_tStatus.isGroggyStay)
 		{
-			--m_tStatus.iGroggyValue;
-			m_fGroggyDecreaseTime = 0.f;
+			m_tGroggyManage.fGroggyStayTime += dt;
+
+			m_tStatus.iGroggyValue = Helper::Get_Random_Int(1, 99);
+			if (m_tGroggyManage.fGroggyStayTime >= 3.f)
+			{
+				m_tStatus.iGroggyValue = 99;
+				m_tGroggyManage.fGroggyStayTime = 0.f;
+				m_tStatus.isGroggyStay = false;
+			}
 		}
-
-		if (0 > m_tStatus.iGroggyValue)
+		else
 		{
-			m_tStatus.iGroggyValue = 0;
-			m_tStatus.isGroggy = false;
+			m_tGroggyManage.fGroggyDecreaseTime += dt;
+
+			if (0.1f <= m_tGroggyManage.fGroggyDecreaseTime)
+			{
+				--m_tStatus.iGroggyValue;
+				m_tGroggyManage.fGroggyDecreaseTime = 0.f;
+			}
+
+			if (0 > m_tStatus.iGroggyValue)
+			{
+				m_tStatus.iGroggyValue = 0;
+				m_tStatus.isGroggy = false;
+			}
 		}
 	}
 }
@@ -470,7 +500,16 @@ DIR CEnemy::GetDIRToPlayer()
 
 void CEnemy::Parried()
 {
+	if (false == m_isParryEnable)
+		return;
+
 	m_tStatus.iGroggyValue += 15.f;
+}
+
+void CEnemy::UnleashAttack(ATTACK_SIDE eSide, _bool ParryEnable)
+{
+	SetOnAttack(true, eSide);
+	Active_AttackSign(ParryEnable);
 }
 
 void CEnemy::Create_MeshPyramid()
@@ -559,8 +598,13 @@ void CEnemy::Death()
 void CEnemy::SetOnAttack(_bool is, ATTACK_SIDE eSide)
 {
 	m_isOnAttack = is;
+	m_isParryEnable = is;
 
-		
+	// 공격이 끝났을 때,
+	if (false == is)
+	{
+		m_eCurAttackSide = ATTACK_SIDE::NONE;
+	}
 }
 
 void CEnemy::ShowBattleColliderForCheck(_bool is)

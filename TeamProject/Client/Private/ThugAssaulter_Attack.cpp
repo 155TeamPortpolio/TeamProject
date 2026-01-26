@@ -30,7 +30,8 @@ void CThugAssaulter_Attack::Enter(CThugAssaulter* pOwner)
 		iAttackPatternIndex = Helper::Get_Random_Int(1, 4);
 		AttackFromIndex(iAttackPatternIndex);
 	}
-	pOwner->SetOnAttack(true);
+	pOwner->UnleashAttack();
+	//pOwner->SetOnAttack(true);
 	pOwner->CaptureRotateToDir(pOwner->GetTargetingInfo().vDirToTarget);
 }
 
@@ -45,7 +46,7 @@ void CThugAssaulter_Attack::Update(CThugAssaulter* pOwner, _float dt)
 
 void CThugAssaulter_Attack::Exit(CThugAssaulter* pOwner)
 {
-	pOwner->SetOnAttack(false);
+	//pOwner->SetOnAttack(false);
 }
 
 void CThugAssaulter_Attack::Register_States()
@@ -92,6 +93,8 @@ void CThugAssaulter_Attack1::Enter(CThugAssaulter* pOwner)
 	hitdesc.fDamage = 10.f;
 
 	pOwner->SetAutoPlayBattleCollider("Weapon", 0.17f, 0.02f, hitdesc);
+	m_isFinish = false;
+	m_isParryEnable = false;
 }
 
 void CThugAssaulter_Attack1::Update(CThugAssaulter* pOwner, _float dt)
@@ -102,6 +105,14 @@ void CThugAssaulter_Attack1::Update(CThugAssaulter* pOwner, _float dt)
 		vRootBoneMoveDelta,
 		qRot,
 		dt);
+
+	if (false == m_isParryEnable &&
+		m_fAnimProgress >= 0.17f)
+		pOwner->SetParryEnable(false);
+	
+	if (false == m_isFinish &&
+		m_fAnimProgress >= 0.19f)
+		pOwner->SetOnAttack(false);
 }
 
 void CThugAssaulter_Attack1::Exit(CThugAssaulter* pOwner)
@@ -122,6 +133,8 @@ void CThugAssaulter_Attack2::Enter(CThugAssaulter* pOwner)
 	pOwner->SetAutoPlayBattleCollider("Weapon", 0.2f, 0.03f, m_tHitDesc);
 	m_isFirstAttack = false;
 	m_isSecondAttack = false;
+	m_isFinish = false;
+	m_isParryEnable = false;
 }
 
 void CThugAssaulter_Attack2::Update(CThugAssaulter* pOwner, _float dt)
@@ -146,7 +159,13 @@ void CThugAssaulter_Attack2::Update(CThugAssaulter* pOwner, _float dt)
 		m_isSecondAttack = true;
 	}
 
+	if (false == m_isParryEnable && 
+		m_fAnimProgress >= 0.31f)
+		pOwner->SetParryEnable(false);
 
+	if (false == m_isFinish &&
+		m_fAnimProgress >= 0.49f)
+		pOwner->SetOnAttack(false);
 }
 
 void CThugAssaulter_Attack2::Exit(CThugAssaulter* pOwner)
@@ -166,6 +185,8 @@ void CThugAssaulter_Attack3::Enter(CThugAssaulter* pOwner)
 
 	pOwner->SetAutoPlayBattleCollider("Weapon", 0.25f, 0.05f, m_tHitDesc);
 	m_isFirstAttack = false;
+	m_isFinish = false;
+	m_isParryEnable = false;
 }
 
 void CThugAssaulter_Attack3::Update(CThugAssaulter* pOwner, _float dt)
@@ -182,6 +203,12 @@ void CThugAssaulter_Attack3::Update(CThugAssaulter* pOwner, _float dt)
 		pOwner->SetAutoPlayBattleCollider("Weapon", 0.42f, 0.03f, m_tHitDesc);
 		m_isFirstAttack = true;
 	}
+	if (false == m_isParryEnable &&
+		m_fAnimProgress >= 0.25f)
+		pOwner->SetParryEnable(false);
+	if (false == m_isFinish &&
+		m_fAnimProgress >= 0.25f)
+		pOwner->SetOnAttack(false);
 }
 
 void CThugAssaulter_Attack3::Exit(CThugAssaulter* pOwner)
@@ -201,6 +228,8 @@ void CThugAssaulter_Attack4::Enter(CThugAssaulter* pOwner)
 	hitdesc.fDamage = 10.f;
 
 	pOwner->SetAutoPlayBattleCollider("Weapon", 0.23f, 0.35f, hitdesc);
+	m_isFinish = false;
+	m_isParryEnable = false;
 }
 
 void CThugAssaulter_Attack4::Update(CThugAssaulter* pOwner, _float dt)
@@ -211,6 +240,16 @@ void CThugAssaulter_Attack4::Update(CThugAssaulter* pOwner, _float dt)
 		vRootBoneMoveDelta,
 		qRot,
 		dt);
+
+	if (false == m_isParryEnable &&
+		m_fAnimProgress >= 0.23f)
+		pOwner->SetParryEnable(false);
+	
+	if (false == m_isFinish &&
+		m_fAnimProgress >= 0.58f)
+		pOwner->SetOnAttack(false);
+
+
 }
 
 void CThugAssaulter_Attack4::Exit(CThugAssaulter* pOwner)
