@@ -17,18 +17,6 @@ private:
 public:
     CStateMachine<CJaneDoe>* Get_StateMachine() { return m_pStateMachine; }
 
-    void  Set_Passion(_float fPassionGauge) { m_fPassionGauge = fPassionGauge; }
-    _bool Is_Passion() const { return m_eCombatState == COMBATSTATE::PASSION; }
-
-    void  Set_PassionSkill(_bool bAvailable) { m_bPassionSkillAvailable = bAvailable; }
-    _bool Has_PassionSkill() const { return m_bPassionSkillAvailable; }
-
-public:
-    void Process_Passion(_float fPassionGauge);
-    void Process_PassionSkill(_bool bAvailable);
-
-    void Update_MotionBlurQueue();
-
 public:
     virtual HRESULT Initialize_Prototype() override;
     virtual HRESULT Initialize(INIT_DESC* pArg) override;
@@ -51,6 +39,15 @@ public:
     virtual void    OnPerfectDodge()           override;
     virtual void    OnDefensiveAssist()        override;
 
+public:
+    _bool   Is_Passion() const { return m_bPassion; }
+    void    Increase_Passion(_float fStream);
+    void    Decrease_Passion(_float fStream);
+    _bool   Can_Salchow() const { return m_bCanSalchow; }
+    void    Set_Salchow(_bool bSalchow) { m_bCanSalchow = bSalchow; }
+
+    void Update_MotionBlurQueue();
+
 private:
     HRESULT Initialize_StateMachine();
     HRESULT Initialize_States();
@@ -71,10 +68,10 @@ private:
     void         Process_EndState(const string& strCurrentState);
 
 private: /* Passion */
-    COMBATSTATE             m_eCombatState = COMBATSTATE::NORMAL;
-    _bool                   m_bPassionSkillAvailable = false;
-    _float                  m_fPassionGauge = 0.f;
-    static constexpr _float MAX_PASSIONGAUGE = 100.f;
+    _bool                   m_bPassion = false;
+    _float                  m_fPassionStream = 0.f;
+    _bool                   m_bCanSalchow = false;
+    static constexpr _float MAX_PASSIONSTREAM = 100.f;
 
 private:
     CStateMachine<CJaneDoe>* m_pStateMachine = { nullptr };
