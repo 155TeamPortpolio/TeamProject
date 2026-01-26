@@ -161,6 +161,7 @@ void CThugAssaulter::Render_GUI()
 		//ImGui::Checkbox(u8"isLookPlayer", &m_isLookPlayer);
 		ImGui::Checkbox("IsGroggy", &m_tStatus.isGroggy);
 		ImGui::Checkbox("IsOnAttack", &m_isOnAttack);
+		ImGui::Checkbox("IsParryEnable", &m_isParryEnable);
 		ImGui::EndDisabled();
 
 		ImGui::EndChild();

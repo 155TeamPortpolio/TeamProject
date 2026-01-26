@@ -458,7 +458,16 @@ DIR CEnemy::GetDIRToPlayer()
 
 void CEnemy::Parried()
 {
+	if (false == m_isParryEnable)
+		return;
+
 	m_tStatus.iGroggyValue += 15.f;
+}
+
+void CEnemy::UnleashAttack(ATTACK_SIDE eSide, _bool ParryEnable)
+{
+	SetOnAttack(true, eSide);
+	Active_AttackSign(ParryEnable);
 }
 
 void CEnemy::Create_MeshPyramid()
@@ -547,8 +556,13 @@ void CEnemy::Death()
 void CEnemy::SetOnAttack(_bool is, ATTACK_SIDE eSide)
 {
 	m_isOnAttack = is;
+	m_isParryEnable = is;
 
-		
+	// 공격이 끝났을 때,
+	if (false == is)
+	{
+		m_eCurAttackSide = ATTACK_SIDE::NONE;
+	}
 }
 
 void CEnemy::ShowBattleColliderForCheck(_bool is)
