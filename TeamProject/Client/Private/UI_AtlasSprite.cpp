@@ -106,6 +106,8 @@ void CUI_AtlasSprite::Apply_Params()
 {
     auto sprite = Get_Component<CSprite2D>();
 
+    if (!sprite->IsValid()) return;
+
     sprite->Set_Param("Col", {&m_frameCountX, "uint", sizeof(_uint)});
     sprite->Set_Param("Row", {&m_frameCountY, "uint", sizeof(_uint)});
     sprite->Set_Param("FrameIndex", {&m_frameIdx, "uint", sizeof(_uint)});
