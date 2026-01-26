@@ -106,7 +106,7 @@ void CThugAssaulter_Attack1::Update(CThugAssaulter* pOwner, _float dt)
 		qRot,
 		dt);
 
-	if (false == m_isParryEnable;
+	if (false == m_isParryEnable &&
 		m_fAnimProgress >= 0.17f)
 		pOwner->SetParryEnable(false);
 	
@@ -159,7 +159,7 @@ void CThugAssaulter_Attack2::Update(CThugAssaulter* pOwner, _float dt)
 		m_isSecondAttack = true;
 	}
 
-	if (false == m_isParryEnable;
+	if (false == m_isParryEnable && 
 		m_fAnimProgress >= 0.31f)
 		pOwner->SetParryEnable(false);
 
