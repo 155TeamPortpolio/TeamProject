@@ -2,6 +2,7 @@
 #include "JaneDoeState_SwitchInParryAid.h"
 
 #include "JaneDoe.h"
+#include "Enemy.h"
 
 void CJaneDoeState_SwitchInParryAid::Enter(CJaneDoe* pOwner)
 {
@@ -57,7 +58,8 @@ void CJaneDoeState_SwitchInParryAid_Start::Enter(CJaneDoe* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_ParryAid_Start")
         .Loop(false)
-        .Speed(1.2f)
+        .BlendDuration(0.1f)
+        .Speed(2.5f)
         .Apply();
 }
 
@@ -72,8 +74,15 @@ void CJaneDoeState_SwitchInParryAid_L_Loop::Enter(CJaneDoe* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_ParryAid_L")
         .Loop(false)
-        .Speed(1.2f)
+        .BlendDuration(0.1f)
+        .Speed(2.f)
         .Apply();
+
+    OBJECT_HANDLE handle = pOwner->Get_ParryHandle();
+    if (handle.isValid())
+    {
+        dynamic_cast<CEnemy*>(handle.Get())->Parried();
+    }
 }
 
 void CJaneDoeState_SwitchInParryAid_L_Loop::Update(CJaneDoe* pOwner, _float dt)

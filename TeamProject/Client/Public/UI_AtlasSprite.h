@@ -26,6 +26,11 @@ public:
     void    Update(_float dt) override;
 
 public:
+    void Set_ColorAtlas(const string& texKey, _uint frameCountX, _uint frameCountY);
+    void Set_ColorFrameIndex(_uint frameIdx);
+    void Set_UseColorAtlas(_bool enable);
+
+public:
     void Set_Atlas(const string& texKey, _uint frameCountX, _uint frameCountY);
     void Set_FrameIndex(_uint frameIdx);
     void Set_HeightPx(_float heightPx);
@@ -43,10 +48,17 @@ private:
 
     _float m_heightPx = 32.f;
 
+private:
+    _uint  m_useColorAtlas = 0;
+    string m_colorTexKey;
+
+    _uint  m_colorFrameCountX = 1;
+    _uint  m_colorFrameCountY = 1;
+    _uint  m_colorFrameIdx = 0;
+
 public:
     static CGameObject* Create();
     CGameObject* Clone(INIT_DESC* pArg = {}) override;
-    void Free() override;
 };
 
 NS_END

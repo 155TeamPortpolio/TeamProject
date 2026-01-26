@@ -12,8 +12,6 @@ NS_BEGIN(Client)
 template<typename Type>
 class CStateMachine;
 
-class CUI_DamageText;
-
 class CCharacter abstract : public CGameObject
 {
 public:
@@ -161,6 +159,10 @@ public:
     virtual void    On_Special() {} // 개별 구현 
     virtual void    On_Hit(DAMAGE_TYPE eType) {} // 개별 구현
     virtual void    On_Interact();
+    /* 개별 상태 */
+    virtual void    OnDamage() {}               // 데미지를 줬을때
+    virtual void    OnPerfectDodge() {}         // 극한회피 성공시
+    virtual void    OnDefensiveAssist() {}      // 패링지원 성공시
 
 public:
     HRESULT  Attach_AttackCollider(ATTACK_COLLIDER_DESC* pDesc);

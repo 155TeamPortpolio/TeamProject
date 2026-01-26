@@ -21,8 +21,9 @@ HRESULT CMapLoader::Initialize(const string& TagLevel, const string& TagArea, _u
 {
     m_TagLevel = TagLevel;
     m_TagArea = TagArea;
+
     // 맵 베이스 데이터 없으면 로드 불가!
-    if (FAILED(Load_BaseData(TagArea, &m_bHasMapBase, &m_bHasEntityBase)))
+    if (FAILED(Load_BaseData(TagArea, &m_bHasMapBase, &m_bHasEntityBase, &m_bHasBattleData)))
         return E_FAIL;
 
     auto iter = m_MapSlotFormatData.find("Collider");
@@ -50,7 +51,7 @@ void CMapLoader::Update_Load()
     }
 }
 
-HRESULT CMapLoader::Load_BaseData(const string& TagArea, _bool* CheckMapBase, _bool* CheckEntityBase)
+HRESULT CMapLoader::Load_BaseData(const string& TagArea, _bool* CheckMapBase, _bool* CheckEntityBase, _bool* CheckBattleData)
 {
     auto pPackets = CDataBase::GetInstance()->GetMapDataPacket(TagArea);
     if (nullptr == pPackets)
@@ -79,6 +80,11 @@ HRESULT CMapLoader::Load_BaseData(const string& TagArea, _bool* CheckMapBase, _b
             }
             else
                 CacheSlotDataFile("EntityData", packet.TagDataFilePath);
+        }
+        else if ("BattleData" == packet.TagDataFormat)
+        {
+            *CheckBattleData = true;
+            LoadBattleData(&packet);
         }
     }
 
@@ -134,11 +140,9 @@ void CMapLoader::PlaceObjects_Once()
 
     }
 
-    if (!m_bHasEntityBase)
-        return;
-
-    for (auto& EntityData : m_EntityBaseData.Entities)
-        Place_EntityFromLoadData(&EntityData);
+    if (m_bHasEntityBase)
+        for (auto& EntityData : m_EntityBaseData.Entities)
+            Place_EntityFromLoadData(&EntityData);
 
     Update_Database();
 }
@@ -171,6 +175,7 @@ void CMapLoader::Update_Database()
     Data.MapObj = m_MapObjectHandle;
     Data.Trigger = m_TriggerObjectHandle;
     Data.Entity = m_EntityObjectHandle;
+    Data.Battle = m_CashedBattleData;
 
     CDataBase::GetInstance()->Update_CashedData(m_TagArea, Data);
 }
@@ -411,6 +416,36 @@ HRESULT CMapLoader::LoadEntityBaseData(const MapData_Path_Packet* pPacket)
         MSG_BOX("[MapTool] Load Entity Data Failed.\n잘못된 버전입니다.");
         return E_FAIL;
     }
+
+    return S_OK;
+}
+
+HRESULT CMapLoader::LoadBattleData(const MapData_Path_Packet* pPacket)
+{
+    filesystem::path OpenPath = pPacket->TagDataFilePath;
+
+    if (OpenPath.empty())
+        return E_FAIL;
+
+    if (OpenPath.extension().string() != ".json") {
+        MSG_BOX("[MapTool] Load Entity Data Failed.\nJson 파일이 아닙니다.");
+        return E_FAIL;
+    }
+
+    m_BattleData = Helper::LoadJson<BATTLE_FIELD_DATA>(OpenPath.string());
+
+    m_CashedBattleData.HasBattleData = m_bHasBattleData;
+
+    m_CashedBattleData.PlayerPoint.push_back(m_BattleData.PlayerSpawnPoint);
+
+    for (auto& MonsterPoint : m_BattleData.Monsters)
+        m_CashedBattleData.MonsterPoint.push_back(MonsterPoint);
+
+    for (auto& PortalPoint : m_BattleData.EndPoints)
+        m_CashedBattleData.PortalPoint.push_back(PortalPoint);
+
+    for (auto& Spawner : m_BattleData.Spawners)
+        m_CashedBattleData.Spawner.push_back(Spawner);
 
     return S_OK;
 }

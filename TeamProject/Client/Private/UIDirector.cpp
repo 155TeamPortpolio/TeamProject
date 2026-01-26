@@ -63,20 +63,16 @@ void CUIDirector::Hide_SceneFrame()
 void CUIDirector::Request_DamageText(void* pArg)
 {
 	if (!pArg) return;
-	auto desc = static_cast<CUI_DamageText*>(pArg);
+	auto desc = static_cast<CUI_DamageText::DAMAGE_DESC*>(pArg);
 
 	const string levelKey = LevelManager()->Get_NowLevelKey();
 
-	auto dmgText = Builder::Create_UIObject({G_GlobalLevelKey, "Proto_GameObject_DamageText"})
-		.FromPool()
-		.Build("DamageText");
+	auto dmgText = Builder::Create_UIObject({G_GlobalLevelKey, "Proto_GameObject_DamageText"}).FromPool().Build("DamageText");
 
 	dmgText->UI_Active(desc);
 
-	// UI Mgr¿¡ µî·Ï
 	UIManager()->Add_UIObject(dmgText, levelKey);
 }
-
 
 void CUIDirector::Initialize()
 {

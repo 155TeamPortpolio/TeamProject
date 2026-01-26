@@ -76,7 +76,7 @@ void CJaneDoeState_Attack::Update(CJaneDoe* pOwner, _float dt)
         m_pSubStateMachine->Set_Trigger("ToUltimate");
     }
 
-    if (true/*pOwner->Has_PassionSkill()*/)
+    if (pOwner->Can_Salchow())
     {
         if (CGameInstance::GetInstance()->Get_InputDev()->Mouse_Hold(MOUSE_BTN::LB))
         {
@@ -85,7 +85,7 @@ void CJaneDoeState_Attack::Update(CJaneDoe* pOwner, _float dt)
             {
                 m_pSubStateMachine->Set_Trigger("Passion");
                 m_fHoldTime = 0.f;
-                pOwner->Set_PassionSkill(false);
+                pOwner->Set_Salchow(false);
             }
         }
         else

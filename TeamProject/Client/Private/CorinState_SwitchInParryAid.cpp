@@ -30,13 +30,6 @@ void CCorinState_SwitchInParryAid::Enter(CCorin* pOwner)
         m_pSubStateMachine->Set_DefaultState("Start");
     }
 
-    if (pOwner->Get_ParryHandle().isValid())
-    {
-        CEnemy* pEnemy = dynamic_cast<CEnemy*>(pOwner->Get_ParryHandle().Get());
-        if (pEnemy)
-            pEnemy->TakeDamage(DAMAGE_TYPE::HARD, 0.f);
-    }
-
     __super::Enter(pOwner);
 }
 
@@ -67,7 +60,8 @@ void CCorinState_SwitchInParryAid_Start::Enter(CCorin* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_ParryAid_Start")
         .Loop(false)
-        .Speed(1.2f)
+        .BlendDuration(0.1f)
+        .Speed(2.5f)
         .Apply();
 }
 
@@ -82,8 +76,15 @@ void CCorinState_SwitchInParryAid_L_Loop::Enter(CCorin* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_ParryAid_L")
         .Loop(false)
-        .Speed(1.2f)
+        .BlendDuration(0.1f)
+        .Speed(2.f)
         .Apply();
+
+    OBJECT_HANDLE handle = pOwner->Get_ParryHandle();
+    if (handle.isValid())
+    {
+        dynamic_cast<CEnemy*>(handle.Get())->Parried();
+    }
 }
 
 void CCorinState_SwitchInParryAid_L_Loop::Update(CCorin* pOwner, _float dt)

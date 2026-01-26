@@ -10,8 +10,11 @@ class CUI_DamageText final : public CUI_WorldToScreen
 public:
     struct DAMAGE_DESC : public UI_DESC
     {
-        Vector3 pos{};
-        _int    damage = 0;
+        Vector3       pos{};
+        OBJECT_HANDLE followHandle{};
+        Vector3       followOffset{};
+        _int          damage{};
+        _bool         isEnemy{};
     };
 
 private:
@@ -53,6 +56,12 @@ private:
 
     _float m_baseTotalW = 1.f;
     vector<Vector2> m_baseOffsets;
+
+    OBJECT_HANDLE m_followHandle{};
+    Vector3       m_followOffset{};
+    Vector2       m_spawnOffsetPx{};
+
+    _uint m_colorFrameIdx = 0;
 
     vector<CUI_AtlasSprite*> m_glyphs;
 

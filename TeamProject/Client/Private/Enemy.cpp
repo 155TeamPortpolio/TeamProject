@@ -8,6 +8,8 @@
 #include "EnemyAttackCollider.h"
 #include "UI_EnemyStatus.h"
 #include "UI_BossHUD.h"
+#include "UI_DamageText.h"
+#include "UIDirector.h"
 
 /* Component */
 #include "ObjectContainer.h"
@@ -42,6 +44,19 @@ HRESULT CEnemy::Initialize(INIT_DESC* pArg)
 	ENEMY_DESC* pDesc = static_cast<ENEMY_DESC*>(pArg);
 
 	m_tStatus.iMaxHP = m_tStatus.iNowHP = pDesc->iMaxHP;
+
+	switch (m_eEnemyClass)
+	{
+	case Client::CEnemy::ENEMY_CLASS::NORMAL:
+		m_tStatus.iPlayerComboCount = 1;
+		break;
+	case Client::CEnemy::ENEMY_CLASS::ELITE:
+		m_tStatus.iPlayerComboCount = 2;
+		break;
+	case Client::CEnemy::ENEMY_CLASS::BOSS:
+		m_tStatus.iPlayerComboCount = 3;
+		break;
+	}
 
 	return S_OK;
 }
@@ -110,8 +125,8 @@ void CEnemy::ComputeTargetingInfo()
 	//_vector3 vDirToTarget = m_tTargetingInfo.vTargetPos - m_tTargetingInfo.vSelfPos;
 
 	m_tTargetingInfo.fDistanceSq = vDirToTarget.LengthSquared();
-	if (m_tTargetingInfo.fDistanceSq <= m_fDetectedRange * m_fDetectedRange)
-		m_tTargetingInfo.isDetected = true;
+	//if (m_tTargetingInfo.fDistanceSq <= m_fDetectedRange * m_fDetectedRange)
+	//	m_tTargetingInfo.isDetected = true;
 
 	// sqrt 계산이 비교적 무거워서 후에 최적화 필요시 아래 식 사용 고려
 	//m_tTargetingInfo.fDistance = (m_tTargetingInfo.fDistanceSq > m_fDetectedRange * m_fDetectedRange) ? 
@@ -189,6 +204,17 @@ void CEnemy::Active_AttackSign(_bool parryEnable)
 	}
 
 	static_cast<CAttackSign*>(pAttackSign)->Active(IsReallyParryEnable);
+}
+
+void CEnemy::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage)
+{
+	CUI_DamageText::DAMAGE_DESC desc{};
+	desc.damage        = (_int)fDamage;
+	desc.followHandle  = Get_Handle();
+	desc.followOffset  = Vector3(0.f, 1.3f, 0.f);
+	desc.isEnemy       = true;
+
+	UIDirector()->Request_DamageText(&desc);
 }
 
 void CEnemy::Create_UIEnemyStatus(string boneTag)
@@ -398,22 +424,39 @@ void CEnemy::ManageGroggy(const _float dt)
 	{
 		m_tStatus.iGroggyValue = 100;
 		m_tStatus.isGroggy = true;
+		// UI 효과용
+		m_tStatus.isGroggyStay = true;
 	}
 
 	if (true == m_tStatus.isGroggy)
 	{
-		m_fGroggyDecreaseTime += dt;
-
-		if (0.1f <= m_fGroggyDecreaseTime)
+		if (true == m_tStatus.isGroggyStay)
 		{
-			--m_tStatus.iGroggyValue;
-			m_fGroggyDecreaseTime = 0.f;
+			m_tGroggyManage.fGroggyStayTime += dt;
+
+			m_tStatus.iGroggyValue = Helper::Get_Random_Int(1, 99);
+			if (m_tGroggyManage.fGroggyStayTime >= 3.f)
+			{
+				m_tStatus.iGroggyValue = 99;
+				m_tGroggyManage.fGroggyStayTime = 0.f;
+				m_tStatus.isGroggyStay = false;
+			}
 		}
-
-		if (0 > m_tStatus.iGroggyValue)
+		else
 		{
-			m_tStatus.iGroggyValue = 0;
-			m_tStatus.isGroggy = false;
+			m_tGroggyManage.fGroggyDecreaseTime += dt;
+
+			if (0.1f <= m_tGroggyManage.fGroggyDecreaseTime)
+			{
+				--m_tStatus.iGroggyValue;
+				m_tGroggyManage.fGroggyDecreaseTime = 0.f;
+			}
+
+			if (0 > m_tStatus.iGroggyValue)
+			{
+				m_tStatus.iGroggyValue = 0;
+				m_tStatus.isGroggy = false;
+			}
 		}
 	}
 }
