@@ -377,6 +377,9 @@ HRESULT CSkinnedMeshRenderer::Process_MotionBlurQueue()
 {
 	if (m_MotionBlurCommands.empty())
 	{
+		m_pTargetManager->Get_EngineTarget("Target_MotionBlur")->Clear();
+		m_pTargetManager->Get_EngineTarget("Target_MotionHeight")->Clear();
+		m_pTargetManager->Get_EngineTarget("Target_MotionNoise")->Clear();
 		return S_OK;
 	}
 
