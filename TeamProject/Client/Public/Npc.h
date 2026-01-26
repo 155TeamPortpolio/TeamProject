@@ -16,6 +16,7 @@ public:
 public:
     const string&  Get_AnimName() const { return m_strAnimName; }
     const wstring& Get_Name() const { return m_strName; }
+    virtual OBJECT_HANDLE Get_PartnerHandle() { return OBJECT_HANDLE{}; }
 
 public:
     virtual HRESULT Initialize_Prototype() override;

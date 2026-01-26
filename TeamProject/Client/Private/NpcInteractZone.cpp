@@ -8,6 +8,8 @@
 #include "IInteract.h"
 #include "RigidBody.h"
 
+#include "FieldSystem.h"
+
 CNpcInteractZone::CNpcInteractZone()
     :CGameObject()
 {
@@ -73,6 +75,8 @@ void CNpcInteractZone::Interact(CGameObject* pObject)
 	auto pNpc = dynamic_cast<CNpc*>(pParent);
 	if (pNpc == nullptr) return;
 
+	FieldSystem()->SetInteractHandle(pNpc->Get_Handle(), pNpc->Get_PartnerHandle());
+
 	pNpc->Execute();
 }
 
@@ -96,6 +100,7 @@ void CNpcInteractZone::OnTriggerExit(CGameObject* pOther)
 		return;
 
 	Update_UI_Interaction(false);
+	FieldSystem()->ResetInteractHandle();
 }
 
 void CNpcInteractZone::Update_UI_Interaction(_bool bInteract)
