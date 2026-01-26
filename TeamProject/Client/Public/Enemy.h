@@ -19,9 +19,11 @@ public:
         _float  iMaxHP = {};
     }ENEMY_DESC;
 
+    enum class ENEMY_CLASS { NORMAL, ELITE, BOSS };
     enum class ATTACK_SIDE { NONE, LEFT, RIGHT };
-
     enum class BATTLE_COLTYPE { ATTACK, TRIGGER };
+
+  
 protected:
     CEnemy();
     CEnemy(const CEnemy& rhg);
@@ -49,12 +51,16 @@ public:
     MONSTER_STATUS      GetStatus() { return m_tStatus; }
     // 몬스터의 Status 구조체 포인터를 반환
     const MONSTER_STATUS*   GetStatusPtr() const { return &m_tStatus; }
+    // 몬스터 계급
+    ENEMY_CLASS         GetEnemyClass() { return m_eEnemyClass; }
     // Groggy 상태 반환
     _bool               IsGroggy() const { return m_tStatus.isGroggy; }
     // 공격중인지 상태 반환
     _bool               IsOnAttack() const { return m_isOnAttack; }
     // 공격중일 때, 패링 가능할 시 켜져있음
     _bool               IsParryEnable() const { return m_isParryEnable; }
+    // 플레이어가 수행할 수 있는 콤보 카운트의 갯수
+    _int                Get_ComboCount() const { return m_tStatus.iPlayerComboCount; }
 
     /* Setter*/
     // 몬스터 공격 시 attack sign 이펙트 활성화 함수
@@ -74,6 +80,8 @@ public:
     void                UnleashAttack(ATTACK_SIDE eSide = ATTACK_SIDE::NONE, _bool ParryEnable = true);
     // 패링당할 수 있는 상태인지 정하는 함수
     void                SetParryEnable(_bool is) { m_isParryEnable = is; }
+    // 플레이어가 수행할 수 있는 콤보 카운트 내리는 함수
+    void                Decrease_ComboCount() { --m_tStatus.iPlayerComboCount; }
 
 protected:
     // Target(Player->Character)과의 거리 정보 계산
@@ -109,28 +117,30 @@ protected:
 #pragma endregion
 
 protected:
+    ENEMY_CLASS             m_eEnemyClass = { ENEMY_CLASS::NORMAL }; 
     // Status HUD 소멸할때 UI매니저에 보내서 지워야함
     UI_HANDLE               m_hUIEnemyStatus = {};
     // BattleSystem으로 부터 얻어온 Character정보
     vector<BATTLEOBJ_INFO>  m_PlayerCharacterInfos;
     // Target(Player-Character)이 있을 때, Target 사이의 정보 구조체
     TARGETING_INFO          m_tTargetingInfo = {};
-    // 플레이어를 감지하는 사거리 범위(공격용 사거리 혹은 추격용으로 사용)
-    _float                  m_fDetectedRange = { 5.f };
     // 몬스터 스테이터스
     MONSTER_STATUS          m_tStatus = {};
     /* Groggy */
-    _float                  m_fGroggyDecreaseTime = {};
+    GROGGY_MANAGE           m_tGroggyManage = {};
 
     ATTACK_SIDE             m_eCurAttackSide = { ATTACK_SIDE::NONE };
     _bool                   m_isOnAttack = { false };
     _bool                   m_isParryEnable = { false };
 
-
     /* dissolve */
     _float m_fDissolveProgress = 0.f;
     _float m_fDissolveTilling = 1.f;
 
+
+
+    // 플레이어를 감지하는 사거리 범위(공격용 사거리 혹은 추격용으로 사용)
+    //_float                  m_fDetectedRange = { 5.f };
 protected:
     virtual CGameObject* Clone(INIT_DESC* pArg) PURE;
     virtual void Free() override;

@@ -22,6 +22,12 @@ namespace Client {
 	enum class Speaker { Player, Npc, System };
 	enum class DialogueType {Normal, Choice, Quest};
 	enum class DialogueResult {Fail, Running, Success, None};
+
+
+	//------------------- Battle -------------------
+	enum class BATTLE_VFX_TYPE { EVADE,PARRY, SWITCH, END };
+	enum class BATTLE_OBJ_TYPE { PLAYER, MONSTER, ENVOBJECT, END };
+
 }
 
 #endif

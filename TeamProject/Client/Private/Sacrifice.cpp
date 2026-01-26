@@ -68,6 +68,8 @@ HRESULT CSacrifice::Initialize_Prototype()
 
 HRESULT CSacrifice::Initialize(INIT_DESC* pArg)
 {
+	m_eEnemyClass = ENEMY_CLASS::BOSS;
+
 	__super::Initialize(pArg);
 
 	auto pAnimator = Get_Component<CAnimator3D>();
@@ -101,6 +103,7 @@ HRESULT CSacrifice::Initialize(INIT_DESC* pArg)
 		return E_FAIL;
 
 	Create_UIEnemyStatus("Bip001_Spine2");
+
 
 	return S_OK;
 }
