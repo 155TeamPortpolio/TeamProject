@@ -45,7 +45,6 @@ HRESULT CUI_AtlasSprite::Initialize(INIT_DESC* pArg)
     return S_OK;
 }
 
-
 void CUI_AtlasSprite::Update(_float dt)
 {
     __super::Update(dt);
@@ -105,6 +104,8 @@ void CUI_AtlasSprite::Set_UseColorAtlas(_bool enable)
 void CUI_AtlasSprite::Apply_Params()
 {
     auto sprite = Get_Component<CSprite2D>();
+
+    if (!sprite->IsValid()) return;
 
     sprite->Set_Param("Col", {&m_frameCountX, "uint", sizeof(_uint)});
     sprite->Set_Param("Row", {&m_frameCountY, "uint", sizeof(_uint)});
