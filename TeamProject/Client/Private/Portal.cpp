@@ -87,6 +87,11 @@ void CPortal::Interact(CGameObject* pObject)
 	LevelManager()->Request_ChangeLevel(m_NextLevelTag, true);
 }
 
+OBJECT_HANDLE CPortal::Get_InteractHandle()
+{
+	return Get_Handle();
+}
+
 CPortal* CPortal::Create()
 {
 	CPortal* Instance = new CPortal();

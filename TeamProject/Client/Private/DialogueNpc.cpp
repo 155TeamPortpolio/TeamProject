@@ -11,6 +11,8 @@
 #include "FieldCharacter.h"
 #include "FieldSystem.h"
 
+#include "ObjectContainer.h"
+
 CDialogueNpc::CDialogueNpc()
     :CNpc()
 {
@@ -26,6 +28,14 @@ void CDialogueNpc::Process_Event(const NPC_INTERACT_DESC& desc)
     if (desc.strName != m_strName) return;
     m_iCurSequenceID = desc.iCurSequenceID;
     m_iNextSequceID = desc.iNextSequenceID;
+}
+
+OBJECT_HANDLE CDialogueNpc::Get_PartnerHandle()
+{
+    auto pChild = Get_Component<CObjectContainer>()->Find_ObjectByName("Partner");
+    if (pChild == nullptr) return OBJECT_HANDLE{};
+
+    return pChild->Get_Handle();
 }
 
 HRESULT CDialogueNpc::Initialize_Prototype()
