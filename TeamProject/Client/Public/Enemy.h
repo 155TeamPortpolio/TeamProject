@@ -19,6 +19,8 @@ public:
         _float  iMaxHP = {};
     }ENEMY_DESC;
 
+    enum class ATTACK_SIDE { NONE, LEFT, RIGHT };
+
     enum class BATTLE_COLTYPE { ATTACK, TRIGGER };
 protected:
     CEnemy();
@@ -48,9 +50,11 @@ public:
     // 몬스터의 Status 구조체 포인터를 반환
     const MONSTER_STATUS*   GetStatusPtr() const { return &m_tStatus; }
     // Groggy 상태 반환
-    _bool              IsGroggy() const { return m_tStatus.isGroggy; }
+    _bool               IsGroggy() const { return m_tStatus.isGroggy; }
     // 공격중인지 상태 반환
-    _bool              IsOnAttack() const { return m_isOnAttack; }
+    _bool               IsOnAttack() const { return m_isOnAttack; }
+    // 공격중일 때, 패링 가능할 시 켜져있음
+    _bool               IsParryEnable() const { return m_isParryEnable; }
 
     /* Setter*/
     // 몬스터 공격 시 attack sign 이펙트 활성화 함수
@@ -62,7 +66,14 @@ public:
     void                SetAutoPlayBattleCollider(const string& tagBattleCollider, _float fAttackOffsetTime, _float fAttackPlayTime, const HitDesc& hitDesc);
     /* 몬스터가 죽는 시퀀스가 다 끝나고 호출할 것. */
     void                Death();
-    void                SetOnAttack(_bool is) { m_isOnAttack = is; }
+    // 공격중인지 플래그 세팅하는 함수, 끝났을 때, 공격 관련 플래그를 전부 끔(m_isOnAttack, m_isParryEnable)
+    void                SetOnAttack(_bool is, ATTACK_SIDE eSide = ATTACK_SIDE::NONE); 
+    // 패링 당했을 때 플레이어 쪽에서 호출될 함수
+    virtual void        Parried();
+    // 공격 상태 진입 시, AttackSign 켜고 공격 관련 flag를 일괄 처리하는 함수
+    void                UnleashAttack(ATTACK_SIDE eSide = ATTACK_SIDE::NONE, _bool ParryEnable = true);
+    // 패링당할 수 있는 상태인지 정하는 함수
+    void                SetParryEnable(_bool is) { m_isParryEnable = is; }
 
 protected:
     // Target(Player->Character)과의 거리 정보 계산
@@ -78,6 +89,7 @@ protected:
     // 몬스터 Look 기준 플레이어가 어느 방향에 있는지 알려주는 함수
     DIR                 GetDIRToPlayer();
 
+protected:
     // Enemy Status 객체 추가 및 월드 행렬, 본 로컬 행렬 포인터로 전달
     virtual void        Create_UIEnemyStatus(string boneTag);
     virtual void        Create_UIBossHUD();
@@ -94,16 +106,6 @@ protected:
 
     unordered_map<string, _int> m_BattleColliderChildrenIndex;
     AUTO_BATTLECOL      m_tAutoBattleCol = {};
-
-    // For.Debug
-public:
-    void                SetEnterAttackHit(_bool is) { m_isEnterAttackHit = is; }
-    void                SetEnterTriggerHit(_bool is) { m_isEnterTriggerHit = is; }
-protected:
-    void                Render_GUI_ForShowBattleColliderHit();
-protected:
-    _bool               m_isEnterAttackHit = { false };
-    _bool               m_isEnterTriggerHit = { false };
 #pragma endregion
 
 protected:
@@ -118,10 +120,11 @@ protected:
     // 몬스터 스테이터스
     MONSTER_STATUS          m_tStatus = {};
     /* Groggy */
-    //_bool                   m_isGroggy = { false };
     _float                  m_fGroggyDecreaseTime = {};
 
+    ATTACK_SIDE             m_eCurAttackSide = { ATTACK_SIDE::NONE };
     _bool                   m_isOnAttack = { false };
+    _bool                   m_isParryEnable = { false };
 
 
     /* dissolve */

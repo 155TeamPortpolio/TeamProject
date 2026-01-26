@@ -29,6 +29,7 @@
 
 /* Character */
 #include "Player.h"
+#include "OfficeMeow.h"
 
 /* Enemy */
 
@@ -75,7 +76,7 @@ HRESULT CScott_Level::Awake()
 
 	//============== Map ============================
 	Ready_Map("Scott_Level", "Zero_Worksite");
-	//Ready_Npc();
+	Ready_Npc();
 
 	CamDirector()->AutoField();
 
@@ -115,22 +116,24 @@ void CScott_Level::Ready_Npc()
 	auto pProto = PrototypeManager();
 	auto objMgr = ObjectManager();
 
-	CCT_DESC jaegerCCT;
+	/*Npc*/
+	CCT_DESC meowCCT;
 	//meowCCT.eGroup = COLLISION_GROUP::PLAYER;
-	jaegerCCT.iCollisionMask = 0xFFFFFFFF;
+	meowCCT.iCollisionMask = 0xFFFFFFFF;
 	//miyabiCCT.iCollisionMask = 0xFFFFFFFF & ~ENUM(COLLISION_GROUP::COMMON);
-	jaegerCCT.bAutoFit = false;
-	jaegerCCT.fHeight = 1.6f;
-	jaegerCCT.fRadius = 0.4f;
-	jaegerCCT.eGroup = COLLISION_GROUP::COMMON;
-	//jaegerCCT.fBoundingMinY = 0.f;
-	jaegerCCT.vPos = { 2.3f, 1.5f, 20.1f };
-	pProto->Add_ProtoType("Scott_Level", "Proto_GameObject_Jaeger", CJaeger::Create());
-	auto jaeger = Builder::Create_Object({ "Scott_Level", "Proto_GameObject_Jaeger" })
-		.CharacterController(jaegerCCT)
-		.Build("Jaeger");
+	meowCCT.bAutoFit = false;
+	meowCCT.fHeight = 1.6f;
+	meowCCT.fRadius = 0.4f;
+	meowCCT.eGroup = COLLISION_GROUP::COMMON;
+	//meowCCT.fBoundingMinY = -0.83f;
+	meowCCT.vPos = { 0.f, -4.f, 0.f };
+	pProto->Add_ProtoType("Scott_Level", "Proto_GameObject_OfficeMeow", COfficeMeow::Create());
+	auto testMeow = Builder::Create_Object({ "Scott_Level", "Proto_GameObject_OfficeMeow" })
+		.CharacterController(meowCCT)
+		.Rotate(_float3(0.f, 90.f, 0.f))
+		.Build("Test_Meow");
 
-	objMgr->Add_Object(jaeger, { "Scott_Level", "Npc_Layer" });
+	objMgr->Add_Object(testMeow, { "Scott_Level", "Npc_Layer" });
 }
 
 void CScott_Level::Rake_MapResources()

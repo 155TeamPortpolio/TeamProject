@@ -73,23 +73,23 @@ void CUI_AtlasSprite::Set_HeightPx(_float heightPx)
 
 void CUI_AtlasSprite::Apply_Params()
 {
-    auto pSprite = Get_Component<CSprite2D>();
+    auto sprite = Get_Component<CSprite2D>();
 
-    pSprite->Set_Param("Col",        {&m_frameCountX, "uint", sizeof(_uint)});
-    pSprite->Set_Param("Row",        {&m_frameCountY, "uint", sizeof(_uint)});
-    pSprite->Set_Param("FrameIndex", {&m_frameIdx,    "uint", sizeof(_uint)});
+    sprite->Set_Param("Col",        {&m_frameCountX, "uint", sizeof(_uint)});
+    sprite->Set_Param("Row",        {&m_frameCountY, "uint", sizeof(_uint)});
+    sprite->Set_Param("FrameIndex", {&m_frameIdx,    "uint", sizeof(_uint)});
 }
 
 void CUI_AtlasSprite::Update_SizeByHeight()
 {
-    auto pSprite = Get_Component<CSprite2D>();
-    auto pTex    = pSprite->Get_Texture(0);
-
+    auto sprite = Get_Component<CSprite2D>();
+    if (!sprite->IsValid()) return;
+    
+    auto tex    = sprite->Get_Texture(0);
     _float aspect = 1.f;
-
-    if (pTex)
+    if (tex)
     {
-        const _uint2 texSize = pTex->Get_Size();
+        const _uint2 texSize = tex->Get_Size();
         const _float cellW   = texSize.x / max(1u, m_frameCountX);
         const _float cellH   = texSize.y / max(1u, m_frameCountY);
         if (cellH > 0.f) aspect = cellW / cellH;
@@ -118,4 +118,9 @@ CGameObject* CUI_AtlasSprite::Clone(INIT_DESC* pArg)
         Safe_Release(inst);
     }
     return inst;
+}
+
+void CUI_AtlasSprite::Free()
+{
+    __super::Free();
 }

@@ -2,13 +2,8 @@
 #include "Base.h"
 #include "BattleSystem_Struct.h"
 
-NS_BEGIN(Engine)
-class CGameObject;
-NS_END
-
 NS_BEGIN(Client)
 class CBattlePlayer;
-
 enum class BATTLE_VFX_TYPE { EVADE, END };
 
 #pragma region Struct
@@ -83,17 +78,10 @@ public: //getter
 	CBattlePlayer*					GetBattlePlayer() const {return m_pBattlePlayer;}
 	OBJECT_HANDLE					GetCurCharacterHandle() const;
 	_bool							GetActive() { return m_isActive; }
-	/* PLAYER, MONSTER, ENVOBJECT
-	* 현재 BattleSystem에 등록되어있는 오브젝트의 기본적인 정보들을 반환함 (읽기전용) */
 	const vector<BATTLEOBJ_INFO>&	GetBattleObjects(BATTLE_OBJ_TYPE eType) const;
-	/* PLAYER, MONSTER, ENVOBJECT
-	* 현재 BattleSystem에 등록되어있는 오브젝트의 기본적인 정보 컨테이너를 복사반환함 */
-	vector<BATTLEOBJ_INFO>			CopyBattleObjects(BATTLE_OBJ_TYPE eType);
+	vector<BATTLEOBJ_INFO>			CopyBattleObjects(BATTLE_OBJ_TYPE eType);/*복사반환*/
 	_int							GetPlayerParryingCount();
 
-
-	/* 테스트용! 금방 지울예정 - 경인 */
-	vector<TIME_SCALING>* GetTimeScales() { return &m_TimeScaling; }
 
 
 public: //setter
@@ -132,38 +120,31 @@ private:
 	void	CheckTimeScale(const _float dt);
 	void	CheckVFX(const _float dt);
 
-private:
-	/* Data */
-	// 몬스터 세팅 테이블(CCT 정보, 각종 Status(HP, 공격력 등))
-	unordered_map<string, MonsterCreationDesc>				m_MonsterCreationTables;
-	// 현재 Stage에 셋팅 된 BattlePoint 정보
-	BATTLE_FIELD_DATA			m_BattleFieldData = {};
-	// 스포너 핸들
-	vector<OBJECT_HANDLE>		m_SpawnerHandles;
 
-	
+public:
+	vector<TIME_SCALING>* GetTimeScales() { return &m_TimeScaling; }/* 테스트용 */
+
+private:
+	class CBattlePlayer* m_pBattlePlayer = { nullptr };// 배틀 플레이어
+
 
 private:
 	_bool	m_isReady = { false };
 	_bool	m_isActive = { false };
 
-	// BATTLE_OBJ_TYPE 별로 생성된 오브젝트의 핸들 모음
-	unordered_map<BATTLE_OBJ_TYPE, vector<OBJECT_HANDLE>>	m_Handles;
-	// 매 업데이트때 1번씩 생성된 Battle 오브젝트의 정보를 담아둠
-	unordered_map<BATTLE_OBJ_TYPE, vector<BATTLEOBJ_INFO>>	m_BattleObjInfos;
-	// BATTLE_VFX_TYPE 별로 쉐이더 효과 시작 시 필요한 데이터
-	vector<BATTLE_VFX_DATA>		m_BattleVFXData;
-	// BATTLE_OBJ_TYPE 별로 타임 스케일 관리용
-	vector<TIME_SCALING>		m_TimeScaling;
-	//쉐이더 효과 시간 관리용
-	BATTLE_VFX					m_BattleVFX;
-	//vector<BATTLE_VFX>			m_BattleVFX;
+	unordered_map<BATTLE_OBJ_TYPE, vector<OBJECT_HANDLE>>	m_Handles;// BATTLE_OBJ_TYPE 별로 생성된 오브젝트의 핸들 모음
+	unordered_map<BATTLE_OBJ_TYPE, vector<BATTLEOBJ_INFO>>	m_BattleObjInfos;// 매 업데이트때 1번씩 생성된 Battle 오브젝트의 정보를 담아둠
+	vector<BATTLE_VFX_DATA>		m_BattleVFXData;// BATTLE_VFX_TYPE 별로 쉐이더 효과 시작 시 필요한 데이터
+	vector<TIME_SCALING>		m_TimeScaling;// BATTLE_OBJ_TYPE 별로 타임 스케일 관리용
 
+	/**/
+	BATTLE_VFX					m_BattleVFX;//쉐이더 효과 시간 관리용
+	BATTLE_FIELD_DATA			m_BattleFieldData = {};// 현재 Stage에 셋팅 된 BattlePoint 정보
 	const _char* m_LayerTag[2] = { "Model_Layer", "Enemy_Layer" };
 
-	// 배틀 플레이어
-	class CBattlePlayer* m_pBattlePlayer = { nullptr };
-
+private:
+	vector<OBJECT_HANDLE>		m_SpawnerHandles;// 스포너 핸들
+	
 public:
 	virtual void Free() override;
 };

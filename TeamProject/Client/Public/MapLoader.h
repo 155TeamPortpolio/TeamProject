@@ -47,6 +47,7 @@ private:
 
 private:
 	string	m_TagLevel = {};
+	string	m_TagArea = {};
 	vector<string>	m_TagLayers;
 
 	MapData_Header	m_MapBaseData = {};

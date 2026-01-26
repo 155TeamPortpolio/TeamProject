@@ -90,7 +90,7 @@ void CCharacterAttackCollider::OnTriggerEnter(CGameObject* pOther)
 		pEnemy->TakeDamage(m_tHitDesc.eDamageType, m_tHitDesc.fDamage);
 		BattleSystem()->GetBattlePlayer()->Add_Gauge(m_tHitDesc.fEnergyCharge, m_tHitDesc.fDecibelCharge);
 		//if (m_tHitDesc.eDamageType == DAMAGE_TYPE::HARD && pEnemy->IsGroggy() && pEnemy->Get_ComboCount() != 0)
-		if (m_tHitDesc.eDamageType == DAMAGE_TYPE::HARD)
+		if (m_tHitDesc.eDamageType == DAMAGE_TYPE::HARD && pEnemy->IsGroggy())
 		{
 			auto pCharacter = dynamic_cast<CCharacter*>(Get_Component<CChild>()->Get_Parent());
 			if (pCharacter != nullptr && pCharacter->Is_MainCharacter())
@@ -136,7 +136,7 @@ void CCharacterAttackCollider::OnTriggerStay(CGameObject* pOther)
 		pEnemy->TakeDamage(m_tHitDesc.eDamageType, m_tHitDesc.fDamage);
 		BattleSystem()->GetBattlePlayer()->Add_Gauge(m_tHitDesc.fEnergyCharge, m_tHitDesc.fDecibelCharge);
 		//if (m_tHitDesc.eDamageType == DAMAGE_TYPE::HARD && pEnemy->IsGroggy() && pEnemy->Get_ComboCount() != 0)
-		if (m_tHitDesc.eDamageType == DAMAGE_TYPE::HARD)
+		if (m_tHitDesc.eDamageType == DAMAGE_TYPE::HARD && pEnemy->IsGroggy())
 		{
 			auto pCharacter = dynamic_cast<CCharacter*>(Get_Component<CChild>()->Get_Parent());
 			if (pCharacter != nullptr && pCharacter->Is_MainCharacter())

@@ -204,8 +204,6 @@ private:
     void    Update_Decibel(_float dt);
     void    Update_Invincible(_float dt);
 
-    void    Create_DamageText();
-
 
     class CCharacterAttackCollider* Find_AttackCollider(const string& strName);
 
@@ -267,8 +265,6 @@ protected:
     _float          m_fAttackPower = { 10.f };
     _float          m_fDefense = { 5.f };
     _float          m_fMoveSpeed = { 1.f };
-
-    UI_HANDLE       m_dmgText{};
 
     static constexpr _float     TURNBACK_ANGLE_THRESHOLD = 100.f;
     static constexpr _float     EVADE_COOLDOWN = 1.f;

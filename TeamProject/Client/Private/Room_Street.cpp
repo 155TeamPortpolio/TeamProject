@@ -38,7 +38,8 @@ CRoom_Street* CRoom_Street::Create(const ROOM_DESC& desc)
 	return instance;
 }
 
-void CRoom_Street::Free() {
+void CRoom_Street::Free() 
+{
 	__super::Free(); 
 	Safe_Release(m_pLoader);
 }
