@@ -156,10 +156,12 @@ void CThugAssaulter::Render_GUI()
 		ImGui::Text("CaptureDir: %.2f, %.2f, %.2f", m_tRotDir.vDirToLookCapture.x, m_tRotDir.vDirToLookCapture.y, m_tRotDir.vDirToLookCapture.z);
 		ImGui::Text("HP : %d", (_int)m_tStatus.iNowHP);
 		ImGui::Text("Groggy Value : %d", m_tStatus.iGroggyValue);
+		ImGui::Text("Groggy StayTime : %d", m_tGroggyManage.fGroggyStayTime);
 
 		ImGui::BeginDisabled(true);
 		//ImGui::Checkbox(u8"isLookPlayer", &m_isLookPlayer);
 		ImGui::Checkbox("IsGroggy", &m_tStatus.isGroggy);
+		ImGui::Checkbox("ForUI.IsGroggyStay", &m_tStatus.isGroggyStay);
 		ImGui::Checkbox("IsOnAttack", &m_isOnAttack);
 		ImGui::Checkbox("IsParryEnable", &m_isParryEnable);
 		ImGui::EndDisabled();
