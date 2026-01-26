@@ -31,6 +31,12 @@
         },
         
         {
+          "prototypeTag": "Proto_GameObject_Lottery",
+          "instanceName": "lottery",
+          "prefabPath" : ""
+        },
+        
+        {
           "prototypeTag": "Proto_GameObject_ScratchCard",
           "instanceName": "scratchCard",
           "prefabPath" : ""

@@ -38,6 +38,7 @@ void CClickManager::Update(_float dt)
         if (alphaThreshold > 0.f)
         {
             auto pSprite       = pObj->Get_Component<CSprite2D>();
+            if (!pSprite->IsValid()) continue;
             auto pTex          = pSprite->Get_Texture(0);
             if (!pTex) continue;
             const string& key = pTex->Get_Key();

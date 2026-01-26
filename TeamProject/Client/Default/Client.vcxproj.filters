@@ -864,6 +864,9 @@
     <Filter Include="02. GameObject\Object\Enemy\Defiler">
       <UniqueIdentifier>{d747b1f1-f957-472a-b1f0-158922c86c50}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\Lottery">
+      <UniqueIdentifier>{ee6183f6-ec38-4f11-8817-aa5b5ca15997}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1682,6 +1685,9 @@
     <ClInclude Include="CDefiler.h">
       <Filter>02. GameObject\Object\Enemy\Defiler</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UI_Lottery.h">
+      <Filter>02. GameObject\UI\01. 2D\Lottery</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2460,6 +2466,9 @@
     </ClCompile>
     <ClCompile Include="CDefiler.cpp">
       <Filter>02. GameObject\Object\Enemy\Defiler</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Lottery.cpp">
+      <Filter>02. GameObject\UI\01. 2D\Lottery</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

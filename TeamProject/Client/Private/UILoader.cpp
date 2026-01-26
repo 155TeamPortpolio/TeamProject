@@ -39,6 +39,7 @@
 
 #include "UI_IconLabel.h"
 
+#include "UI_Lottery.h"
 #include "UI_ScratchCard.h"
 
 namespace fs = filesystem;
@@ -170,6 +171,7 @@ void UILoader::Add_Prototype(const string& levelKey)
 		{"IconLabel",		&CUI_IconLabel::Create		},
 		{"SceneFrame",		&CUI_SceneFrame::Create		},
 
+		{"Lottery",			&CUI_Lottery::Create		},
 		{"ScratchCard",		&CUI_ScratchCard::Create	},
 	};
 
