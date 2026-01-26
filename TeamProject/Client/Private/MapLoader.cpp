@@ -83,8 +83,8 @@ HRESULT CMapLoader::Load_BaseData(const string& TagArea, _bool* CheckMapBase, _b
         }
         else if ("BattleData" == packet.TagDataFormat)
         {
-            LoadBattleData(&packet);
             *CheckBattleData = true;
+            LoadBattleData(&packet);
         }
     }
 

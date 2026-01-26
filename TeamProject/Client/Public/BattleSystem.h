@@ -1,7 +1,6 @@
 #pragma once
 #include "Base.h"
 #include "MapData_Defines.h"
-#include "BattleSystem_Struct.h"
 #include "BattleFXFlow.h"
 
 NS_BEGIN(Client)
