@@ -23,7 +23,7 @@ HRESULT CMapLoader::Initialize(const string& TagLevel, const string& TagArea, _u
     m_TagArea = TagArea;
 
     // 맵 베이스 데이터 없으면 로드 불가!
-    if (FAILED(Load_BaseData(TagArea, &m_bHasMapBase, &m_bHasEntityBase)))
+    if (FAILED(Load_BaseData(TagArea, &m_bHasMapBase, &m_bHasEntityBase, &m_bHasBattleData)))
         return E_FAIL;
 
     auto iter = m_MapSlotFormatData.find("Collider");
@@ -140,14 +140,9 @@ void CMapLoader::PlaceObjects_Once()
 
     }
 
-    if (!m_bHasEntityBase)
-        return;
-
-    for (auto& EntityData : m_EntityBaseData.Entities)
-        Place_EntityFromLoadData(&EntityData);
-
-
-
+    if (m_bHasEntityBase)
+        for (auto& EntityData : m_EntityBaseData.Entities)
+            Place_EntityFromLoadData(&EntityData);
 
     Update_Database();
 }
@@ -180,6 +175,7 @@ void CMapLoader::Update_Database()
     Data.MapObj = m_MapObjectHandle;
     Data.Trigger = m_TriggerObjectHandle;
     Data.Entity = m_EntityObjectHandle;
+    Data.Battle = m_CashedBattleData;
 
     CDataBase::GetInstance()->Update_CashedData(m_TagArea, Data);
 }
@@ -437,6 +433,19 @@ HRESULT CMapLoader::LoadBattleData(const MapData_Path_Packet* pPacket)
     }
 
     m_BattleData = Helper::LoadJson<BATTLE_FIELD_DATA>(OpenPath.string());
+
+    m_CashedBattleData.HasBattleData = m_bHasBattleData;
+
+    m_CashedBattleData.PlayerPoint.push_back(m_BattleData.PlayerSpawnPoint);
+
+    for (auto& MonsterPoint : m_BattleData.Monsters)
+        m_CashedBattleData.MonsterPoint.push_back(MonsterPoint);
+
+    for (auto& PortalPoint : m_BattleData.EndPoints)
+        m_CashedBattleData.PortalPoint.push_back(PortalPoint);
+
+    for (auto& Spawner : m_BattleData.Spawners)
+        m_CashedBattleData.Spawner.push_back(Spawner);
 
     return S_OK;
 }

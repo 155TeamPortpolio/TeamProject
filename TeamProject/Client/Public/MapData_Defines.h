@@ -126,11 +126,11 @@ namespace Client {
 	}CASHED_OBJECT;
 
 	typedef struct tagCashedBattleData {
-		_bool					HasBattleData = { false };
-		_vector3				PlayerPoint{};
-		vector<_vector3>		MonsterPoint;
-		vector<OBJECT_HANDLE>	ZeroPortal;
-		vector<OBJECT_HANDLE>	Spawner;
+		_bool						HasBattleData = { false };
+		vector<BATTLE_POINT_DATA>	PlayerPoint;
+		vector<BATTLE_POINT_DATA>	MonsterPoint;
+		vector<BATTLE_POINT_DATA>	PortalPoint;
+		vector<BATTLE_POINT_DATA>	Spawner;
 	}CASHED_BATTLE_DATA;
 
 	typedef struct tagCashedData {
