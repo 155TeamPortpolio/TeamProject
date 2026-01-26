@@ -828,6 +828,9 @@
     <Filter Include="02. GameObject\UI\03. UIElement\NineSlice">
       <UniqueIdentifier>{2646c162-8883-48f9-b637-d3f38abb755c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\ScratchCard">
+      <UniqueIdentifier>{da4d3639-e60d-4d45-bd2a-74bd1a13d1e9}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02. GameObject\Object\Enemy\ThugAssaulter\State\Parry">
       <UniqueIdentifier>{d4691cdc-435c-40af-bae7-768659b32872}</UniqueIdentifier>
     </Filter>
@@ -1664,6 +1667,9 @@
     <ClInclude Include="..\Public\NineSliceUI.h">
       <Filter>02. GameObject\UI\03. UIElement\NineSlice</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UI_ScratchCard.h">
+      <Filter>02. GameObject\UI\01. 2D\ScratchCard</Filter>
+    </ClInclude>
     <ClInclude Include="..\public\ThugAssaulter_Parried.h">
       <Filter>02. GameObject\Object\Enemy\ThugAssaulter\State\Parry</Filter>
     </ClInclude>
@@ -2439,6 +2445,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\NineSliceUI.cpp">
       <Filter>02. GameObject\UI\03. UIElement\NineSlice</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_ScratchCard.cpp">
+      <Filter>02. GameObject\UI\01. 2D\ScratchCard</Filter>
     </ClCompile>
     <ClCompile Include="..\private\ThugAssaulter_Parried.cpp">
       <Filter>02. GameObject\Object\Enemy\ThugAssaulter\State\Parry</Filter>
