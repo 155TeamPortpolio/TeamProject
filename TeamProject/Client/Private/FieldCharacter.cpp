@@ -185,7 +185,6 @@ void CFieldCharacter::Process_Interact(CGameObject* pObject)
 
 	if (pInteract != nullptr)
 	{
-		FieldSystem()->SetInteractHandle(pObject->Get_Handle());
 		pInteract->Interact(this);
 	}
 }

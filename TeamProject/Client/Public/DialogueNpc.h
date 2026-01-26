@@ -13,6 +13,7 @@ protected:
 
 public:
     void    Process_Event(const NPC_INTERACT_DESC& desc);
+    virtual OBJECT_HANDLE Get_PartnerHandle() override;
 
 public:
     virtual HRESULT Initialize_Prototype() override;

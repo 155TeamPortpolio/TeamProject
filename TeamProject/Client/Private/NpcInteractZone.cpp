@@ -6,6 +6,9 @@
 
 #include "Npc.h"
 #include "IInteract.h"
+#include "RigidBody.h"
+
+#include "FieldSystem.h"
 
 CNpcInteractZone::CNpcInteractZone()
     :CGameObject()
@@ -22,6 +25,7 @@ HRESULT CNpcInteractZone::Initialize_Prototype()
     __super::Initialize_Prototype();
 
 	Add_Component<CCollider>();
+	Add_Component<CRigidBody>();
 	
     return S_OK;
 }
@@ -49,6 +53,18 @@ void CNpcInteractZone::Update(_float dt)
 
 void CNpcInteractZone::Late_Update(_float dt)
 {
+	Get_Component<CRigidBody>()->Late_Update(dt);
+}
+
+OBJECT_HANDLE CNpcInteractZone::Get_InteractHandle()
+{
+	auto pParent = Get_Component<CChild>()->Get_Parent();
+	if (pParent == nullptr) return OBJECT_HANDLE{};
+
+	auto pNpc = dynamic_cast<CNpc*>(pParent);
+	if (pNpc == nullptr) return OBJECT_HANDLE{};
+
+	return pNpc->Get_Handle();
 }
 
 void CNpcInteractZone::Interact(CGameObject* pObject)
@@ -58,6 +74,8 @@ void CNpcInteractZone::Interact(CGameObject* pObject)
 
 	auto pNpc = dynamic_cast<CNpc*>(pParent);
 	if (pNpc == nullptr) return;
+
+	FieldSystem()->SetInteractHandle(pNpc->Get_Handle(), pNpc->Get_PartnerHandle());
 
 	pNpc->Execute();
 }
@@ -82,6 +100,7 @@ void CNpcInteractZone::OnTriggerExit(CGameObject* pOther)
 		return;
 
 	Update_UI_Interaction(false);
+	FieldSystem()->ResetInteractHandle();
 }
 
 void CNpcInteractZone::Update_UI_Interaction(_bool bInteract)
