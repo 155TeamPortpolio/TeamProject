@@ -52,6 +52,7 @@ HRESULT CThugAssaulter::Initialize_Prototype()
 	pResourceMgr->Add_ResourcePath("ThugAssaulter.model", "../Bin/Resources/Model/skeletal/Enemy/ThugAssaulter/ThugAssaulter.model");
 	pResourceMgr->Add_ResourcePath("Monster_ThugAssaulter_Meta.json", "../Bin/Resources/Model/skeletal/Enemy/ThugAssaulter/Monster_ThugAssaulter_Meta.json");
 
+	return S_OK;
 }
 
 HRESULT CThugAssaulter::Initialize(INIT_DESC* pArg)
@@ -381,6 +382,7 @@ void CThugAssaulter::Free()
 
 void CThugAssaulter::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage)
 {
+	__super::TakeDamage(eDamageType, fDamage);
 	if (0 >= m_tStatus.iNowHP)
 		return;
 
