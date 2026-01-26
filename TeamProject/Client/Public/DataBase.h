@@ -41,8 +41,8 @@ public:
 
 
 public:
-    const CASHED_OBJ_DATA* Get_CashedData(const string& MapTag);
-    void Update_CashedData(const string& MapTag, const CASHED_OBJ_DATA& Data);
+    const CASHED_OBJ_DATA* Get_CashedData(const string& AreaTag);
+    void Update_CashedData(const string& AreaTag, const CASHED_OBJ_DATA& Data);
     void Clear_CashedData();
 
 private:
