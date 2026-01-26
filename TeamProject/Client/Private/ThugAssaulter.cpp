@@ -23,6 +23,7 @@
 #include "ThugAssaulter_Move.h"
 #include "ThugAssaulter_Groggy.h"
 #include "ThugAssaulter_Hit.h"
+#include "ThugAssaulter_Parried.h"
 
 #include "AttackSign.h"
 
@@ -219,6 +220,9 @@ void CThugAssaulter::Render_GUI()
 			if (ImGui::Button("Hit"))
 				TakeDamage(DAMAGE_TYPE::NORMAL, 20.f);
 
+			if (ImGui::Button("Parried"))
+				Parried();
+
 			if (ImGui::Button("Execute"))
 				m_tStatus.iNowHP -= m_tStatus.iMaxHP;
 
@@ -241,7 +245,7 @@ void CThugAssaulter::Render_GUI()
 	m_pStateMachine->Render_GUI();
 #pragma endregion
 
-	if (ImGui::TreeNode("BattleSystem TimeScale Check##TimeScaleCheck"))
+	if (ImGui::TreeNode("BattleSystem Evade VFX##EvadeVFX"))
 	{
 		if (ImGui::Button(u8"회피 효과##BattleSystemVFXEvade"))
 			BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::EVADE);
@@ -303,6 +307,17 @@ void CThugAssaulter::OnPooledAcquire(INIT_DESC* pArg)
 
 void CThugAssaulter::OnPooledRelease()
 {
+}
+
+void CThugAssaulter::Parried()
+{
+	if ("Attack" != m_pStateMachine->Get_CurrentStateName())
+		return;
+
+	__super::Parried();
+
+	m_pStateMachine->Change_State("Parried");
+	SetOnAttack(false, ATTACK_SIDE::NONE);
 }
 
 HRESULT CThugAssaulter::Ready_Children(INIT_DESC* pArg)
@@ -451,6 +466,7 @@ HRESULT CThugAssaulter::Initialize_States()
 	m_pStateMachine->Register_State("Death", CThugAssaulter_Death::Create());
 	m_pStateMachine->Register_State("Groggy", CThugAssaulter_Groggy::Create());
 	m_pStateMachine->Register_State("Hit", CThugAssaulter_Hit::Create());
+	m_pStateMachine->Register_State("Parried", CThugAssaulter_Parried::Create());
 
 	return S_OK;
 }

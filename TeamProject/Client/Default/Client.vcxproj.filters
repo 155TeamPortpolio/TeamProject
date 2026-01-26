@@ -828,6 +828,9 @@
     <Filter Include="02. GameObject\UI\03. UIElement\NineSlice">
       <UniqueIdentifier>{2646c162-8883-48f9-b637-d3f38abb755c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\ThugAssaulter\State\Parry">
+      <UniqueIdentifier>{d4691cdc-435c-40af-bae7-768659b32872}</UniqueIdentifier>
+    </Filter>
     <Filter Include="03. Utility\04. BattleSystem\FX_Battle">
       <UniqueIdentifier>{80b278d6-d073-43f9-b769-b90f4b580861}</UniqueIdentifier>
     </Filter>
@@ -1661,6 +1664,9 @@
     <ClInclude Include="..\Public\NineSliceUI.h">
       <Filter>02. GameObject\UI\03. UIElement\NineSlice</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\ThugAssaulter_Parried.h">
+      <Filter>02. GameObject\Object\Enemy\ThugAssaulter\State\Parry</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\BattleSystem_Struct.h">
       <Filter>03. Utility\04. BattleSystem\Monster Spawner</Filter>
     </ClInclude>
@@ -2433,6 +2439,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\NineSliceUI.cpp">
       <Filter>02. GameObject\UI\03. UIElement\NineSlice</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ThugAssaulter_Parried.cpp">
+      <Filter>02. GameObject\Object\Enemy\ThugAssaulter\State\Parry</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\BattleFXFlow.cpp">
       <Filter>03. Utility\04. BattleSystem\FX_Battle</Filter>
