@@ -30,7 +30,7 @@ HRESULT CBattleMonsterPoint::Initialize(INIT_DESC* pArg)
 	auto pColliderCom = Get_Component<CCollider>();
 
 	pColliderCom->Set_MapToolMode(true);
-	pColliderCom->Set_ColliderColor({ 0.f, 1.f, 1.f, 1.f });
+	pColliderCom->Set_ColliderColor({ .5f, 0.f, 0.f, 1.f });
 
 	m_eBattleType = BATTLE_TYPE::MONSTER;
 

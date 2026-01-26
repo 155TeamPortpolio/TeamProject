@@ -153,6 +153,8 @@ public:
 
 public:
 	void StartVfx_Evade();
+	void StartVfx_Parry();
+	void StartVfx_Ultimate();
 	void SetLayerTimeScale(BATTLE_OBJ_TYPE type, _float scale);
 	void ResetLayerTimeScale(BATTLE_OBJ_TYPE type);
 

@@ -31,14 +31,12 @@ public:
     HRESULT LoadPlayerCreationTable(const string& csvPath);
     HRESULT LoadPlayerLVTable(const string& csvPath);
     HRESULT LoadMonsterCreationTable(const string& csvPath);
+    HRESULT LoadMonsterSpawnData(const string& csvPath);
     HRESULT LoadUICreationTable(const string& csvPath);
     HRESULT LoadMapData(const string& MapDataFolderPath);
     HRESULT LoadNpcIDData(const string& csvPath);
     HRESULT LoadNpcDialogueData(const string& csvPath);
     HRESULT LoadNpcChoiceData(const string& csvPath);
-    HRESULT LoadBattleFieldData(const string& BattleDataFolderPath);
-    HRESULT LoadMonsterSpawnData(const string& csvPath);
-
 
 public:
     const CASHED_OBJ_DATA* Get_CashedData(const string& AreaTag);
