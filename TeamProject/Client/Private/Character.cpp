@@ -151,11 +151,6 @@ void CCharacter::Priority_Update(_float dt)
 
 void CCharacter::Update(_float dt)
 {
-	if (InputDevice()->Key_Tap(VK_F3))
-	{
-		Take_Damage(DAMAGE_TYPE::NORMAL, 10.f);
-	}
-
 	m_pAnimator->Update_Animation(dt);
 	m_pCCT->Update(dt);
 	Update_Evade(dt);
@@ -381,7 +376,7 @@ HRESULT CCharacter::Attach_ParryCollider()
 	COLLIDER_DESC colliderDesc{};
 	colliderDesc.eType = COLLIDER_TYPE::SPHERE;
 	colliderDesc.eGroup = COLLISION_GROUP::PLAYER_ATTACK;
-	colliderDesc.iCollisionMask = ENUM(COLLISION_GROUP::MONSTER_ATTACK);
+	colliderDesc.iCollisionMask = ENUM(COLLISION_GROUP::MONSTER);
 	colliderDesc.bAutoFit = false;
 	colliderDesc.vCenter = { 0.f,0.f,0.f };
 	colliderDesc.vSize = { 5.f,0.f,0.f };
@@ -522,8 +517,10 @@ void CCharacter::Take_Damage(DAMAGE_TYPE eType, _float fDamage)
 	On_Hit(eType);
 
 	CUI_DamageText::DAMAGE_DESC desc{};
-	desc.pos    = m_vHitPos;
-	desc.damage = (_int)fDamage;
+	desc.damage        = (_int)fDamage;
+	desc.followHandle  = Get_Handle();
+	desc.followOffset  = Vector3(0.f, 1.3f, 0.f);
+	desc.isEnemy       = false;
 
 	UIDirector()->Request_DamageText(&desc);
 }
@@ -546,7 +543,6 @@ _bool CCharacter::Is_OppositeInput() const
 
 _bool CCharacter::Can_Parry()
 {
-	// TODO : 패링카운트 체크 추가
 	CCharacterParryCollider* pParry = dynamic_cast<CCharacterParryCollider*>
 		(Get_Component<CObjectContainer>()->Get_Children()[m_iParryColliderIndex]);
 	if (pParry && pParry->Can_Parry())
@@ -646,11 +642,11 @@ OBJECT_HANDLE CCharacter::Calculate_Parry()
 	/* 몬스터의 트리거 콜라이더로 검사. 이후 부모 오브젝트의 Handle 저장 */
 	for (auto iter : pParry->Get_Targets())
 	{
-		_float fDist = (vPos - iter->Get_WorldPos()).Length();
+		_float fDist = (vPos - iter.Get()->Get_WorldPos()).Length();
 		if (fDist >= fMinDist)
 			continue;
 		fMinDist = fDist;
-		targetHandle = iter->Get_Component<CChild>()->Get_Parent()->Get_Handle();
+		targetHandle = iter;
 	}
 
 	_vector3 vAttackPos = {};

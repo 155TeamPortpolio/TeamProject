@@ -8,6 +8,8 @@
 #include "EnemyAttackCollider.h"
 #include "UI_EnemyStatus.h"
 #include "UI_BossHUD.h"
+#include "UI_DamageText.h"
+#include "UIDirector.h"
 
 /* Component */
 #include "ObjectContainer.h"
@@ -202,6 +204,17 @@ void CEnemy::Active_AttackSign(_bool parryEnable)
 	}
 
 	static_cast<CAttackSign*>(pAttackSign)->Active(IsReallyParryEnable);
+}
+
+void CEnemy::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage)
+{
+	CUI_DamageText::DAMAGE_DESC desc{};
+	desc.damage        = (_int)fDamage;
+	desc.followHandle  = Get_Handle();
+	desc.followOffset  = Vector3(0.f, 1.3f, 0.f);
+	desc.isEnemy       = true;
+
+	UIDirector()->Request_DamageText(&desc);
 }
 
 void CEnemy::Create_UIEnemyStatus(string boneTag)

@@ -197,6 +197,7 @@ void CSacrifice::Free()
 
 void CSacrifice::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage)
 {
+	__super::TakeDamage(eDamageType, fDamage);
 	if (0 >= m_tStatus.iNowHP)
 		return;
 

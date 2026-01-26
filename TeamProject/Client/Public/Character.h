@@ -12,8 +12,6 @@ NS_BEGIN(Client)
 template<typename Type>
 class CStateMachine;
 
-class CUI_DamageText;
-
 class CCharacter abstract : public CGameObject
 {
 public:

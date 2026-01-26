@@ -172,6 +172,29 @@ PS_OUT PS_MAIN(PS_IN In)
     return Out;
 }
 
+Texture2D ColorTexture;
+
+uint ColorCol = 1;
+uint ColorRow = 1;
+uint ColorFrameIndex = 0;
+
+PS_OUT PS_MAIN_SPRITEANIMATION_COLORATLAS(PS_IN In)
+{
+    PS_OUT Out;
+
+    float2 uvDigit = CalculateFrameIndex(Col, Row, FrameIndex, In.vTexcoord);
+    vector digit = SpriteTexture.Sample(LinearSampler, uvDigit);
+    clip(digit.a - 0.1f);
+
+    float2 uvColor = CalculateFrameIndex(ColorCol, ColorRow, ColorFrameIndex, In.vTexcoord);
+    vector grad = ColorTexture.Sample(LinearSampler, uvColor);
+
+    float4 color = (digit * grad) * vColor;
+    Out.vColor.rgb = color.rgb * color.a;
+    Out.vColor.a = color.a;
+    return Out;
+}
+
 PS_OUT PS_MAIN_SPRITEANIMATION(PS_IN In)
 {    
     PS_OUT Out;
@@ -489,13 +512,23 @@ technique11 DefaultTechnique
         PixelShader   = compile ps_5_0 PS_MAIN_NINESLICE();
     }
 
+    pass SpriteAnimation_ColorAtlas
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_Premultiplied, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader   = compile vs_5_0 VS_MAIN();
+        GeometryShader = compile gs_5_0 GS_MAIN();
+        PixelShader    = compile ps_5_0 PS_MAIN_SPRITEANIMATION_COLORATLAS();
+    }
+    
     pass OpaqueCustom
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_None, 0);
         SetBlendState(BS_Premultiplied, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-        VertexShader = compile vs_5_0 VS_MAIN_CUSTOM();
+        VertexShader   = compile vs_5_0 VS_MAIN_CUSTOM();
         GeometryShader = compile gs_5_0 GS_MAIN_CUSTOM();
-        PixelShader = compile ps_5_0 PS_MAIN_CUSTOM();
+        PixelShader    = compile ps_5_0 PS_MAIN_CUSTOM();
     }
 }
