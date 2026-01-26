@@ -24,6 +24,7 @@ public:
 	LOADED_DATA			Load_MapData();
 	void				Load_WithEntityData();
 	void				Clear_Layer(MAPOBJ_TYPE eObjType);
+	void				RegisterGuiPanel(class CMapToolGui* pGUIPanel);
 
 
 private:
@@ -37,7 +38,7 @@ private:
 	CGameInstance*		m_pGameInstance = { nullptr };
 
 	MAPTOOL_CONTEXT		m_tMapToolContext = {};
-
+	class CMapToolGui* m_pMapToolGui = { nullptr };
 public:
 	static CMapToolCore* Create();
 	virtual void Free() override;

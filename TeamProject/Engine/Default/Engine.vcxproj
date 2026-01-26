@@ -522,6 +522,7 @@ exit /b 0</Command>
     <ClInclude Include="..\public\UIRenderer.h" />
     <ClInclude Include="..\Public\UI_Manager.h" />
     <ClInclude Include="..\Public\UI_Object.h" />
+    <ClInclude Include="..\Public\UI_Pool.h" />
     <ClInclude Include="..\Public\VIBuffer.h" />
     <ClInclude Include="..\Public\VI_Cube.h" />
     <ClInclude Include="..\Public\VI_InstancePoint.h" />
@@ -678,6 +679,7 @@ exit /b 0</Command>
     <ClCompile Include="..\private\UIRenderer.cpp" />
     <ClCompile Include="..\Private\UI_Manager.cpp" />
     <ClCompile Include="..\Private\UI_Object.cpp" />
+    <ClCompile Include="..\Private\UI_Pool.cpp" />
     <ClCompile Include="..\Private\VIBuffer.cpp" />
     <ClCompile Include="..\Private\VI_Cube.cpp" />
     <ClCompile Include="..\Private\VI_InstancePoint.cpp" />

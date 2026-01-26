@@ -33,7 +33,9 @@ HRESULT CEffectContainer_Edit::Initialize(INIT_DESC* pArg)
 	//__super::Initialize(pArg);
 
 	m_pTransform->Initialize(nullptr);
-	LoadTextureFromDirectory("../Bin/Resource/Texture");
+	LoadTextureFromDirectory("../Bin/Resource/Texture/Diffuse",true);
+	LoadTextureFromDirectory("../Bin/Resource/Texture/Noise");
+	LoadTextureFromDirectory("../Bin/Resource/Texture/Mask");
 	LoadMeshFromDirectory("../Bin/Resource/Mesh");
 	LoadMaterialFromDirectory("../Bin/Resource/Mesh");
 	m_InstanceName = "EffectContainer";
@@ -332,7 +334,7 @@ void CEffectContainer_Edit::ContextClear()
 	}
 }
 
-void CEffectContainer_Edit::LoadTextureFromDirectory(const string& dirPath)
+void CEffectContainer_Edit::LoadTextureFromDirectory(const string& dirPath, _bool isSRGB)
 {
 	namespace fs = std::filesystem;
 	ID3D11Device* pDevice = CGameInstance::GetInstance()->Get_Device();
@@ -346,7 +348,7 @@ void CEffectContainer_Edit::LoadTextureFromDirectory(const string& dirPath)
 		string path = entry.path().string();
 		string textureKey = entry.path().filename().string();
 		resource->Add_ResourcePath(textureKey, path);
-		auto tex = resource->Load_Texture(G_GlobalLevelKey, textureKey);
+		auto tex = resource->Load_Texture(G_GlobalLevelKey, textureKey, isSRGB);
 
 		if (!tex)
 		{
