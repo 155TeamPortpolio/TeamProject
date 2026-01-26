@@ -514,6 +514,8 @@ void CCharacter::Take_Damage(DAMAGE_TYPE eType, _float fDamage)
 	if (Is_Invincible()) return;
 
 	m_fCurrentHP -= fDamage;
+	m_fCurrentHP = max(m_fCurrentHP, 0.f);
+
 	On_Hit(eType);
 
 	CUI_DamageText::DAMAGE_DESC desc{};
