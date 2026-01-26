@@ -34,6 +34,12 @@
           "prototypeTag": "Proto_GameObject_Lottery",
           "instanceName": "lottery",
           "prefabPath" : ""
+        },
+        
+        {
+          "prototypeTag": "Proto_GameObject_ResultBanner",
+          "instanceName": "result_banner",
+          "prefabPath" : ""
         }
       ]
     },

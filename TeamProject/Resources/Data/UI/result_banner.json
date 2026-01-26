@@ -1,0 +1,582 @@
+{
+    "alive": true,
+    "instanceName": "result_banner",
+    "transform": {
+        "anchor": 0,
+        "anchorOffset": [
+            -800.0,
+            -450.0
+        ],
+        "size": [
+            1600.0,
+            900.0
+        ],
+        "scale": [
+            1.0,
+            1.0
+        ],
+        "pivot": [
+            0.0,
+            0.0
+        ],
+        "radian": 0.0
+    },
+    "color": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+    ],
+    "pass": "Opaque",
+    "animClips": [],
+    "children": [
+        {
+            "alive": true,
+            "instanceName": "Image",
+            "transform": {
+                "anchor": 0,
+                "anchorOffset": [
+                    -800.0,
+                    -160.0
+                ],
+                "size": [
+                    1600.0,
+                    320.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "pass": "Opaque",
+            "animClips": [],
+            "children": [],
+            "typeTag": "Image",
+            "textureTag": "empty.png"
+        },
+        {
+            "alive": true,
+            "instanceName": "Mask",
+            "transform": {
+                "anchor": 0,
+                "anchorOffset": [
+                    -800.0,
+                    -160.0
+                ],
+                "size": [
+                    1600.0,
+                    320.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "pass": "UI_StencilWrite",
+            "animClips": [],
+            "children": [],
+            "typeTag": "Mask",
+            "maskTextureKey": "empty.png"
+        },
+        {
+            "alive": true,
+            "instanceName": "UVAnimation",
+            "transform": {
+                "anchor": 0,
+                "anchorOffset": [
+                    -1706.6666259765625,
+                    -298.33331298828125
+                ],
+                "size": [
+                    3413.333251953125,
+                    596.6666259765625
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.1745329201221466
+            },
+            "color": [
+                0.41312742233276367,
+                0.3094468116760254,
+                0.3094468116760254,
+                1.0
+            ],
+            "pass": "UVAnimation_StencilTest",
+            "animClips": [],
+            "children": [],
+            "typeTag": "UVAnimation",
+            "textureTag": "GeneralPageBG2.png",
+            "uvAnimation": {
+                "uvOffsetSpeed": [
+                    0.009999999776482582,
+                    0.0
+                ]
+            }
+        },
+        {
+            "alive": true,
+            "instanceName": "icon",
+            "transform": {
+                "anchor": 0,
+                "anchorOffset": [
+                    -50.0,
+                    -68.0
+                ],
+                "size": [
+                    100.0,
+                    100.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "pass": "Opaque",
+            "animClips": [],
+            "children": [],
+            "typeTag": "Image",
+            "textureTag": "empty.png"
+        },
+        {
+            "alive": true,
+            "instanceName": "Text",
+            "transform": {
+                "anchor": 0,
+                "anchorOffset": [
+                    -1.0,
+                    -97.0
+                ],
+                "size": [
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "pass": "Opaque",
+            "animClips": [],
+            "children": [],
+            "typeTag": "Text",
+            "text": {
+                "content": "획득",
+                "fontTag": "NanumSquareNeo.spritefont",
+                "fontScale": 0.5499998927116394,
+                "outlined": false,
+                "outlineThickness": 1.0,
+                "outlineColor": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "shear": [
+                    0.0,
+                    0.0
+                ],
+                "autoPos": true,
+                "anchor": 0
+            }
+        },
+        {
+            "alive": true,
+            "instanceName": "text1",
+            "transform": {
+                "anchor": 0,
+                "anchorOffset": [
+                    -0.0,
+                    39.0
+                ],
+                "size": [
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "pass": "Opaque",
+            "animClips": [],
+            "children": [],
+            "typeTag": "Text",
+            "text": {
+                "content": "2888",
+                "fontTag": "NanumSquareNeo.spritefont",
+                "fontScale": 0.3499998450279236,
+                "outlined": false,
+                "outlineThickness": 1.0,
+                "outlineColor": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "shear": [
+                    0.0,
+                    0.0
+                ],
+                "autoPos": true,
+                "anchor": 4
+            }
+        },
+        {
+            "alive": true,
+            "instanceName": "text2",
+            "transform": {
+                "anchor": 0,
+                "anchorOffset": [
+                    -1.0,
+                    73.0
+                ],
+                "size": [
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "pass": "Opaque",
+            "animClips": [],
+            "children": [],
+            "typeTag": "Text",
+            "text": {
+                "content": "데니",
+                "fontTag": "NanumSquareNeo.spritefont",
+                "fontScale": 0.39999985694885254,
+                "outlined": false,
+                "outlineThickness": 1.0,
+                "outlineColor": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "shear": [
+                    0.0,
+                    0.0
+                ],
+                "autoPos": true,
+                "anchor": 0
+            }
+        },
+        {
+            "alive": true,
+            "instanceName": "btnOK",
+            "transform": {
+                "anchor": 0,
+                "anchorOffset": [
+                    -101.66699981689453,
+                    138.33299255371094
+                ],
+                "size": [
+                    198.3300018310547,
+                    38.33000183105469
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "pass": "Opaque",
+            "animClips": [],
+            "children": [],
+            "typeTag": "Button",
+            "textureTag": "empty.png",
+            "eventMsgTag": ""
+        },
+        {
+            "alive": true,
+            "instanceName": "NineSlice",
+            "transform": {
+                "anchor": 0,
+                "anchorOffset": [
+                    -107.0,
+                    131.5
+                ],
+                "size": [
+                    223.0,
+                    54.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "pass": "NineSlice",
+            "animClips": [],
+            "children": [],
+            "typeTag": "NineSlice",
+            "textureTag": "MissionGetBg.png",
+            "nineSlice": {
+                "borderPx": [
+                    21.0,
+                    21.0,
+                    0.0,
+                    0.0
+                ],
+                "uvRangeX": [
+                    0.0,
+                    0.44680851697921753,
+                    0.5531914830207825,
+                    1.0
+                ],
+                "uvRangeY": [
+                    0.0,
+                    0.0,
+                    1.0,
+                    1.0
+                ],
+                "textureSize": [
+                    47.0,
+                    47.0
+                ]
+            }
+        },
+        {
+            "alive": true,
+            "instanceName": "NineSlice",
+            "transform": {
+                "anchor": 0,
+                "anchorOffset": [
+                    -119.0,
+                    121.33300018310547
+                ],
+                "size": [
+                    240.0,
+                    74.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "pass": "NineSlice",
+            "animClips": [],
+            "children": [],
+            "typeTag": "NineSlice",
+            "textureTag": "BtnBg.png",
+            "nineSlice": {
+                "borderPx": [
+                    78.0,
+                    32.0,
+                    37.0,
+                    37.0
+                ],
+                "uvRangeX": [
+                    0.0,
+                    0.6499999761581421,
+                    0.7333333492279053,
+                    1.0
+                ],
+                "uvRangeY": [
+                    0.0,
+                    0.4868420958518982,
+                    0.5131579041481018,
+                    1.0
+                ],
+                "textureSize": [
+                    120.0,
+                    76.0
+                ]
+            }
+        },
+        {
+            "alive": true,
+            "instanceName": "Text",
+            "transform": {
+                "anchor": 0,
+                "anchorOffset": [
+                    15.5,
+                    158.0
+                ],
+                "size": [
+                    0.0,
+                    1.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "pass": "Opaque",
+            "animClips": [],
+            "children": [],
+            "typeTag": "Text",
+            "text": {
+                "content": "확인",
+                "fontTag": "NanumSquareNeo.spritefont",
+                "fontScale": 0.5499998927116394,
+                "outlined": false,
+                "outlineThickness": 1.0,
+                "outlineColor": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "shear": [
+                    -0.20000000298023224,
+                    0.0
+                ],
+                "autoPos": true,
+                "anchor": 0
+            }
+        },
+        {
+            "alive": true,
+            "instanceName": "Image",
+            "transform": {
+                "anchor": 0,
+                "anchorOffset": [
+                    -100.0,
+                    140.0
+                ],
+                "size": [
+                    36.0,
+                    36.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                0.0,
+                1.0,
+                0.0,
+                1.0
+            ],
+            "pass": "Opaque",
+            "animClips": [],
+            "children": [],
+            "typeTag": "Image",
+            "textureTag": "IconOK02.png"
+        }
+    ],
+    "typeTag": "CanvasPanel"
+}

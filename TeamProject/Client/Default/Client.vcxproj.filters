@@ -867,6 +867,9 @@
     <Filter Include="02. GameObject\UI\01. 2D\Lottery\ScratchCard">
       <UniqueIdentifier>{da4d3639-e60d-4d45-bd2a-74bd1a13d1e9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\ResultBanner">
+      <UniqueIdentifier>{b0a647aa-0d2d-415b-a90b-f57018145cf1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1688,6 +1691,9 @@
     <ClInclude Include="..\Public\UI_Lottery.h">
       <Filter>02. GameObject\UI\01. 2D\Lottery</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UI_ResultBanner.h">
+      <Filter>02. GameObject\UI\01. 2D\ResultBanner</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2469,6 +2475,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\UI_Lottery.cpp">
       <Filter>02. GameObject\UI\01. 2D\Lottery</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_ResultBanner.cpp">
+      <Filter>02. GameObject\UI\01. 2D\ResultBanner</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -6,6 +6,7 @@
 #include "Shader.h"
 #include "ObjectContainer.h"
 #include "Sprite2D.h"
+#include "UIDirector.h"
 
 HRESULT CUI_ScratchCard::Initialize_Prototype()
 {
@@ -26,7 +27,7 @@ HRESULT CUI_ScratchCard::Initialize(INIT_DESC* pArg)
     // 캐싱 (오브젝트, 컴포넌트)
     Cache_Brush();
     Cache_Reward();
-     
+
     // 렌더타겟 생성
     RenderTargetDesc desc = {};
     desc.Key = "scratchCard";
@@ -66,6 +67,12 @@ void CUI_ScratchCard::Awake()
 
 void CUI_ScratchCard::Update(_float dt)
 {
+    if (InputDevice()->Key_Tap('R'))
+    {
+        UIDirector()->Show_ResultBanner(REWARD_TEXTURES[0], L"결과는", L"이러이러하다");
+        //Set_Alive(false);
+    } 
+        
     __super::Update(dt);
 
     // 브러쉬 자식 객체의 위치를 마우스 위치로
