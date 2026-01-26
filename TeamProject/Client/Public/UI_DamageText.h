@@ -14,6 +14,7 @@ public:
         OBJECT_HANDLE followHandle{};
         Vector3       followOffset{};
         _int          damage{};
+        _bool         isEnemy{};
     };
 
 private:

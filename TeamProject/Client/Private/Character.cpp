@@ -520,6 +520,7 @@ void CCharacter::Take_Damage(DAMAGE_TYPE eType, _float fDamage)
 	desc.damage        = (_int)fDamage;
 	desc.followHandle  = Get_Handle();
 	desc.followOffset  = Vector3(0.f, 1.3f, 0.f);
+	desc.isEnemy       = false;
 
 	UIDirector()->Request_DamageText(&desc);
 }

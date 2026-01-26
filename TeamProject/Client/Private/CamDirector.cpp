@@ -156,10 +156,10 @@ void CCamDirector::UpdateInput(_float dt)
 
     if (InputDevice()->Key_Tap(VK_F2))
         CameraManager()->Set_MainCam(GetOrbitCamComp(), 0.5f);
-
+     
     if (InputDevice()->Key_Down(VK_F3))
         //      RequestSequence("Field/Front");
-        GetCharacter()->Take_Damage(DAMAGE_TYPE::NORMAL, 351.f);   
+        GetCharacter()->Take_Damage(DAMAGE_TYPE::NORMAL, 6256886.f);   
 }
 
 void CCamDirector::AbortSequenceToOrbit(_bool resetTime)

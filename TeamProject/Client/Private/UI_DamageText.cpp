@@ -11,7 +11,7 @@ namespace
     static const string kAtlasTexKey = "DamageText.png";
 
     static const string kColorAtlasTexKey = "DamageTextColor.png";
-    constexpr _uint  kColorIdx_JaneDoe = 3;
+    constexpr _uint  kColorIdx_JaneDoe = 2;
     constexpr _uint  kColorIdx_Corin   = 3;
 
     constexpr _uint  kColorFrameCountX = 8;
@@ -20,93 +20,47 @@ namespace
     constexpr _uint  kFrameCountX = 8;
     constexpr _uint  kFrameCountY = 8;
 
-    // 한 글리프(숫자 한 자리)의 기준 높이(px)
-    // 실제 렌더링 높이는 여기에 스케일(s)을 곱해서 결정됨
-    constexpr _float kGlyphHeightPx = 96.f;
-
-    // 글리프들 사이의 기본 간격(px)
-    // kOverlapHold와 함께 최종 spacing을 계산하는 베이스 값
+    constexpr _float kGlyphHeightPx  = 96.f;
     constexpr _float kGlyphSpacingPx = 2.f;
 
     constexpr _float  kSpawnRadiusPx = 75.f;
     const     Vector3 kDefaultFollowOffset = Vector3(0.f, 1.3f, 0.f);
 
-    // 홀드(중간) 구간에서 글리프가 서로 얼마나 겹치게 할지 비율(0~1)
-    // 1에 가까울수록 겹침이 거의 없고, 작을수록 더 많이 겹침
-    // overlapPx = glyphW * (1 - kOverlapHold)
-    constexpr _float kOverlapHold = 0.3f;
+    constexpr _float kOverlapHold = 0.23f;
 
-    // 전체 생애 동안 위로 떠오르는(상승) 픽셀량
-    // 0이면 상승 모션 없음
     constexpr _float kRisePx = 0.f;
 
-    // 전체 "등장" 구간의 총 시간(초)
-    // 여러 자리일 때 digitInStaggerSec로 각 자리 등장 시작을 분산시키되,
-    // 전체적으로 kInTotalSec 안에 다 들어오게 맞춤
-    constexpr _float kInTotalSec = 0.30f;
-
-    // 등장 후 화면에 유지되는(홀드) 시간(초)
-    constexpr _float kHoldSec = 1.50f;
-
-    // 전체 "퇴장" 구간의 총 시간(초)
-    // 여러 자리일 때 digitOutStaggerSec로 각 자리 퇴장 시작을 분산시키되,
-    // 전체적으로 kOutTotalSec 안에 다 들어오게 맞춤
+    constexpr _float kInTotalSec  = 0.30f;
     constexpr _float kOutTotalSec = 0.30f;
 
-    // 한 자리(글리프)당 인(등장) 애니메이션 지속 시간(초)
-    // 여러 자리일 때 각 자리별 인 애니가 이 시간만큼 진행됨
-    constexpr _float kDigitInSec = 0.20f;
+    constexpr _float kHoldSec = 0.5f;
 
-    // 한 자리(글리프)당 아웃(퇴장) 애니메이션 지속 시간(초)   
+    constexpr _float kDigitInSec  = 0.20f;
     constexpr _float kDigitOutSec = 0.20f;
 
-    // 알파(투명도) 아웃이 digitOutSec 중 얼마를 차지할지 비율(0~1)
-    // alphaOutSec = digitOutSec * kAlphaOutSecRatio
-    constexpr _float kAlphaOutSecRatio = 1.f;
+    constexpr _float kAlphaOutSecRatio = 0.5f;
+    constexpr _float kAlphaInSecRatio  = 0.45f;
 
-    constexpr _float kScaleStart = 1.3f;
-    constexpr _float kScaleHold  = 0.68f;
-    constexpr _float kScaleEnd   = 0.42f;
+    constexpr _float kScaleStart = 2.00f;
+    constexpr _float kScaleHold  = 0.55f;
+    constexpr _float kScaleEnd   = 0.3f;
 
-    constexpr EaseType kScaleEase = EaseType::OutCubic;
-    constexpr EaseType kAlphaInEase = EaseType::InCubic;
+    constexpr EaseType kScaleEase    = EaseType::OutCubic;
+    constexpr EaseType kAlphaInEase  = EaseType::OutCubic;
     constexpr EaseType kAlphaOutEase = EaseType::OutQuad;
 
-    // 자리수(count)에 따라 계산되는 "시간표" 묶음
-    // 여러 자리일 때 각 자리의 시작 시점을 스태거(stagger)로 분산시키기 위해 사용
     struct DamageTextTiming
     {
-        // 각 자리(글리프)별 인 애니 지속 시간
-        _float digitInSec = 0.f;
-
-        // 자리별 인 애니 시작 간격(스태거)
-        // i번째 자리 inStart = i * digitInStaggerSec
-        _float digitInStaggerSec = 0.f;
-
-        // 각 자리(글리프)별 아웃 애니 지속 시간
-        _float digitOutSec = 0.f;
-
-        // 자리별 아웃 애니 시작 간격(스태거)
-        // i번째 자리 outStart = exitStartSec + i * digitOutStaggerSec
-        _float digitOutStaggerSec = 0.f;
-
-        // 퇴장(아웃) 구간이 시작되는 시각(초)
-        // exitStartSec = kInTotalSec + kHoldSec
-        _float exitStartSec = 0.f;
-
-        // 전체 애니 종료 시각(초)
-        // endSec = exitStartSec + kOutTotalSec
-        _float endSec = 0.f;
-
-        // 알파 아웃에 실제로 쓰는 시간(초)
-        // digitOutSec에서 kAlphaOutSecRatio만큼만 사용하도록 잘라 쓴 값
-        _float alphaOutSec = 0.f;
+        _float digitInSec{};
+        _float digitInStaggerSec{};
+        _float digitOutSec{};
+        _float digitOutStaggerSec{};
+        _float exitStartSec{};
+        _float endSec{};
+        _float alphaOutSec{};
+        _float alphaInSec{};
     };
 
-    // 자리수(count)에 맞춰 DamageTextTiming을 계산하는 함수
-    // - 인/아웃 총 시간을 kInTotalSec/kOutTotalSec에 맞추면서
-    //   여러 자리일 때 각 자리 시작을 균등 분산(stagger)함
-    // - 한 자리면 스태거가 0이고, 인/아웃 시간이 총 시간과 동일하게 맞춰짐
     static DamageTextTiming CalcTiming(_uint count)
     {
         DamageTextTiming t{};
@@ -137,6 +91,7 @@ namespace
         t.endSec = t.exitStartSec + kOutTotalSec;
 
         t.alphaOutSec = t.digitOutSec * kAlphaOutSecRatio;
+        t.alphaInSec  = t.digitInSec * kAlphaInSecRatio;
 
         return t;
     }
@@ -219,15 +174,12 @@ void CUI_DamageText::UI_Active(void* arg)
     auto desc = static_cast<DAMAGE_DESC*>(arg);
 
     m_time = 0.f;
-
     m_followHandle = desc->followHandle;
 
     if (m_followHandle.isValid())
     {
         m_followOffset = kDefaultFollowOffset;
-
-        if (desc->followOffset.LengthSquared() > 0.f)
-            m_followOffset = desc->followOffset;
+        if (desc->followOffset.LengthSquared() > 0.f) m_followOffset = desc->followOffset;
 
         m_spawnOffsetPx = RandomInDiscPx(kSpawnRadiusPx);
 
@@ -243,14 +195,18 @@ void CUI_DamageText::UI_Active(void* arg)
         m_worldPos = _float3(desc->pos.x, desc->pos.y, desc->pos.z);
     }
 
-    m_colorFrameIdx = 0;
-
-    switch (CamDirector()->GetCharacterName())
+    if (desc->isEnemy)
     {
-    case CHARACTER::JaneDoe: m_colorFrameIdx = kColorIdx_JaneDoe; break;
-    case CHARACTER::Corin:   m_colorFrameIdx = kColorIdx_Corin;   break;
-    default:                 m_colorFrameIdx = 0;                 break;
+        m_colorFrameIdx = 0;
+        switch (CamDirector()->GetCharacterName())
+        {
+        case CHARACTER::JaneDoe: m_colorFrameIdx = kColorIdx_JaneDoe; break;
+        case CHARACTER::Corin:   m_colorFrameIdx = kColorIdx_Corin;   break;
+        default:                 m_colorFrameIdx = 0;                 break;
+        }
     }
+    else
+        m_colorFrameIdx = 7;
 
     SetRenderLayer(RENDER_LAYER::Default);
     Update_WorldToScreen(m_worldPos);
@@ -260,6 +216,7 @@ void CUI_DamageText::UI_Active(void* arg)
 
     SetDamage(desc->damage);
 }
+
 
 void CUI_DamageText::UI_DeActive(void* arg)
 {
@@ -399,7 +356,7 @@ void CUI_DamageText::Update_Anim(_float dt)
         _float alphaIn = 0.f;
         if (m_time >= inStart)
         {
-            _float u = (m_time - inStart) / t.digitInSec;
+            _float u = (m_time - inStart) / t.alphaInSec;
             u = clamp(u, 0.f, 1.f);
             alphaIn = Math::ApplyEase(kAlphaInEase, u);
         }

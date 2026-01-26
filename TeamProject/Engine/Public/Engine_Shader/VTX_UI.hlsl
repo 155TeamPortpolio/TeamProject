@@ -189,7 +189,7 @@ PS_OUT PS_MAIN_SPRITEANIMATION_COLORATLAS(PS_IN In)
     float2 uvColor = CalculateFrameIndex(ColorCol, ColorRow, ColorFrameIndex, In.vTexcoord);
     vector grad = ColorTexture.Sample(LinearSampler, uvColor);
 
-    vector color = digit * grad;
+    float4 color = (digit * grad) * vColor;
     Out.vColor.rgb = color.rgb * color.a;
     Out.vColor.a = color.a;
     return Out;

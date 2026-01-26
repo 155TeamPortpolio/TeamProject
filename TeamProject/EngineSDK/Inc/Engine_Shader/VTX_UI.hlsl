@@ -189,7 +189,7 @@ PS_OUT PS_MAIN_SPRITEANIMATION_COLORATLAS(PS_IN In)
     float2 uvColor = CalculateFrameIndex(ColorCol, ColorRow, ColorFrameIndex, In.vTexcoord);
     vector grad = ColorTexture.Sample(LinearSampler, uvColor);
 
-    vector color = digit * grad;
+    float4 color = (digit * grad) * vColor;
     Out.vColor.rgb = color.rgb * color.a;
     Out.vColor.a = color.a;
     return Out;
@@ -521,7 +521,7 @@ technique11 DefaultTechnique
         GeometryShader = compile gs_5_0 GS_MAIN();
         PixelShader    = compile ps_5_0 PS_MAIN_SPRITEANIMATION_COLORATLAS();
     }
-
+    
     pass OpaqueCustom
     {
         SetRasterizerState(RS_Default);
