@@ -105,7 +105,7 @@ void CMainApp::Update(const float dt)
 {
 	m_pGameInstance->Update_Engine(dt);
 	CBattleSystem::GetInstance()->Update();
-	CamDirector()->Update(dt);
+	CamDirector()->Update(dt); 
 
 #ifdef NDEBUG
 	m_cursorController.Update(dt);
@@ -132,7 +132,7 @@ void CMainApp::Set_Levels()
 
 	LevelManager()->Set_LoadingLevel("Loading_Level");
 	m_pGameInstance->Notify_LevelSet(); 
-	m_pGameInstance->Get_LevelMgr()->Request_ChangeLevel("Scott_Level", true);
+	m_pGameInstance->Get_LevelMgr()->Request_ChangeLevel("Test_Level", true);
 } 
 
 CMainApp* CMainApp::Create()
