@@ -45,8 +45,10 @@ public:
 	void	SetFieldPlayer(class CFieldPlayer* pFieldPlayer);
 	OBJECT_HANDLE					GetCurCharacterHandle() const;
 
-	void	SetInteractHandle(OBJECT_HANDLE InteractHandle);
+	void	SetInteractHandle(OBJECT_HANDLE InteractHandle, OBJECT_HANDLE InteractPartnerHandle);
+	void	ResetInteractHandle();
 	OBJECT_HANDLE					GetInteractHandle() const;
+	OBJECT_HANDLE					GetInteractPartnerHandle() const;
 
 public:
 	DayPhase Get_DayPhase() const { return m_DayTime.m_eDayTime; }
@@ -68,6 +70,7 @@ private:
 private:
 	DayTimer m_DayTime = {};
 	OBJECT_HANDLE m_InteractHandle;
+	OBJECT_HANDLE m_InteractPartnerHandle;
 
 public:
 	virtual void Free() override;

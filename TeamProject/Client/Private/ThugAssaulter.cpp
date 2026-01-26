@@ -156,11 +156,14 @@ void CThugAssaulter::Render_GUI()
 		ImGui::Text("CaptureDir: %.2f, %.2f, %.2f", m_tRotDir.vDirToLookCapture.x, m_tRotDir.vDirToLookCapture.y, m_tRotDir.vDirToLookCapture.z);
 		ImGui::Text("HP : %d", (_int)m_tStatus.iNowHP);
 		ImGui::Text("Groggy Value : %d", m_tStatus.iGroggyValue);
+		ImGui::Text("Groggy StayTime : %d", m_tGroggyManage.fGroggyStayTime);
 
 		ImGui::BeginDisabled(true);
 		//ImGui::Checkbox(u8"isLookPlayer", &m_isLookPlayer);
 		ImGui::Checkbox("IsGroggy", &m_tStatus.isGroggy);
+		ImGui::Checkbox("ForUI.IsGroggyStay", &m_tStatus.isGroggyStay);
 		ImGui::Checkbox("IsOnAttack", &m_isOnAttack);
+		ImGui::Checkbox("IsParryEnable", &m_isParryEnable);
 		ImGui::EndDisabled();
 
 		ImGui::EndChild();
@@ -253,49 +256,49 @@ void CThugAssaulter::Render_GUI()
 
 		ImGui::TreePop();
 	}
-	// BattleSystem 시간 확인용
-	if (ImGui::TreeNode("BattleSystem TimeScale Check##TimeScaleCheck"))
-	{
-		ImGui::BeginChild("##BattleSystemTimeScaleCheck", ImVec2{ 0, childHeight + textLineHeight * 15.f }, true);
-
-		auto pTimeScales = BattleSystem()->GetTimeScales();
-
-		for (_uint i = 0; i < ENUM(CBattleSystem::BATTLE_OBJ_TYPE::ENVOBJECT); i++)
-		{
-			auto tTimeScale = (*pTimeScales)[i];
-
-			if (i == 0)
-				ImGui::Text("TagLayer : PLAYER");
-			else {
-				ImGui::Separator();
-				ImGui::Text("TagLayer : Monster");
-			}
-
-			ImGui::Text("Scale Value : %.2f", tTimeScale.fScaleValue);
-			ImGui::Text("Duration : %.2f", tTimeScale.fDuration);
-			ImGui::Text("Current Pos : %.2f", tTimeScale.fCurPos);
-
-			ImGui::BeginDisabled(true);
-			string tagCheckBox = "isRunning##" + to_string(i) + "Checkbox";
-			ImGui::Checkbox(tagCheckBox.c_str(), &tTimeScale.isRunning);
-			string tagSlide = to_string(i) + "##Playback";
-			ImGui::SliderFloat(tagSlide.c_str(), &tTimeScale.fCurPos, 0.f, tTimeScale.fDuration, "");
-			ImGui::EndDisabled();
-
-		}
-		ImGui::DragFloat("Scale Value##scalevalue", &m_fTestScaleValue, 0.1f);
-		ImGui::DragFloat("Scale Duration##scaleDuration", &m_fTestScaleDuration, 0.1f);
-
-		if (ImGui::Button("Player TimeScale"))
-			BattleSystem()->StartTimeScale(CBattleSystem::BATTLE_OBJ_TYPE::PLAYER, m_fTestScaleDuration, m_fTestScaleValue, 0.f, 0.f);
-
-		ImGui::SameLine(0.f, 10.f);
-		if (ImGui::Button("Monster TimeScale"))
-			BattleSystem()->StartTimeScale(CBattleSystem::BATTLE_OBJ_TYPE::MONSTER, m_fTestScaleDuration, m_fTestScaleValue, 0.f, 0.f);
-
-		ImGui::EndChild();
-		ImGui::TreePop();
-	}
+	//// BattleSystem 시간 확인용
+	//if (ImGui::TreeNode("BattleSystem TimeScale Check##TimeScaleCheck"))
+	//{
+	//	ImGui::BeginChild("##BattleSystemTimeScaleCheck", ImVec2{ 0, childHeight + textLineHeight * 15.f }, true);
+	//
+	//	auto pTimeScales = BattleSystem()->GetTimeScales();
+	//
+	//	for (_uint i = 0; i < ENUM(CBattleSystem::BATTLE_OBJ_TYPE::ENVOBJECT); i++)
+	//	{
+	//		auto tTimeScale = (*pTimeScales)[i];
+	//
+	//		if (i == 0)
+	//			ImGui::Text("TagLayer : PLAYER");
+	//		else {
+	//			ImGui::Separator();
+	//			ImGui::Text("TagLayer : Monster");
+	//		}
+	//
+	//		ImGui::Text("Scale Value : %.2f", tTimeScale.fScaleValue);
+	//		ImGui::Text("Duration : %.2f", tTimeScale.fDuration);
+	//		ImGui::Text("Current Pos : %.2f", tTimeScale.fCurPos);
+	//
+	//		ImGui::BeginDisabled(true);
+	//		string tagCheckBox = "isRunning##" + to_string(i) + "Checkbox";
+	//		ImGui::Checkbox(tagCheckBox.c_str(), &tTimeScale.isRunning);
+	//		string tagSlide = to_string(i) + "##Playback";
+	//		ImGui::SliderFloat(tagSlide.c_str(), &tTimeScale.fCurPos, 0.f, tTimeScale.fDuration, "");
+	//		ImGui::EndDisabled();
+	//
+	//	}
+	//	ImGui::DragFloat("Scale Value##scalevalue", &m_fTestScaleValue, 0.1f);
+	//	ImGui::DragFloat("Scale Duration##scaleDuration", &m_fTestScaleDuration, 0.1f);
+	//
+	//	if (ImGui::Button("Player TimeScale"))
+	//		BattleSystem()->StartTimeScale(CBattleSystem::BATTLE_OBJ_TYPE::PLAYER, m_fTestScaleDuration, m_fTestScaleValue, 0.f, 0.f);
+	//
+	//	ImGui::SameLine(0.f, 10.f);
+	//	if (ImGui::Button("Monster TimeScale"))
+	//		BattleSystem()->StartTimeScale(CBattleSystem::BATTLE_OBJ_TYPE::MONSTER, m_fTestScaleDuration, m_fTestScaleValue, 0.f, 0.f);
+	//
+	//	ImGui::EndChild();
+	//	ImGui::TreePop();
+	//}
 
 	ImGui::PopID();
 }

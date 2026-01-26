@@ -25,6 +25,7 @@ HRESULT CEnemyNormal::Initialize(INIT_DESC* pArg)
 {
 	__super::Initialize(pArg);
 
+
 	return S_OK;
 }
 

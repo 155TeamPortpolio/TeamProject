@@ -138,6 +138,11 @@ void CZeroPortal::Interact(CGameObject* pObject)
 	m_bIsInteractable = false;
 }
 
+OBJECT_HANDLE CZeroPortal::Get_InteractHandle()
+{
+	return Get_Handle();
+}
+
 void CZeroPortal::Extend(_float dt)
 {
 	_vector3 nowScale  = m_pTransform->Get_Scale();
