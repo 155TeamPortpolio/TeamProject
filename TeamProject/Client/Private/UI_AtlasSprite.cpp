@@ -45,7 +45,6 @@ HRESULT CUI_AtlasSprite::Initialize(INIT_DESC* pArg)
     return S_OK;
 }
 
-
 void CUI_AtlasSprite::Update(_float dt)
 {
     __super::Update(dt);
