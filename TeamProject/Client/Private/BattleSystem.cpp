@@ -93,7 +93,7 @@ void CBattleSystem::ReadyBattle(const string& tagArea, _uint iPrefabIndex)
 		return;
 	}
 
-	m_BattleFieldData = {};
+	m_BattleFieldData = BATTLE_FIELD_DATA{};
 
 	m_BattleFieldData = Helper::LoadJson<BATTLE_FIELD_DATA>(OpenPath.string());
 	if ("BattleData" != m_BattleFieldData.TagDataFormat)
@@ -491,7 +491,7 @@ void CBattleSystem::ClearBattleStage()
 		Pair.second.clear();
 
 	m_SpawnerHandles.clear();
-	m_BattleFieldData = {};
+	m_BattleFieldData = BATTLE_FIELD_DATA{};
 	
 }
 

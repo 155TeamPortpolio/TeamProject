@@ -1667,9 +1667,6 @@
     <ClInclude Include="..\public\ThugAssaulter_Parried.h">
       <Filter>02. GameObject\Object\Enemy\ThugAssaulter\State\Parry</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\BattleSystem_Struct.h">
-      <Filter>03. Utility\04. BattleSystem\Monster Spawner</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\BattleFXFlow.h">
       <Filter>03. Utility\04. BattleSystem\FX_Battle</Filter>
     </ClInclude>

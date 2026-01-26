@@ -381,7 +381,6 @@
     <ClInclude Include="..\public\BangBooPayState_Idle.h" />
     <ClInclude Include="..\public\BattlePlayer.h" />
     <ClInclude Include="..\public\BattleSystem.h" />
-    <ClInclude Include="..\Public\BattleSystem_Struct.h" />
     <ClInclude Include="..\public\CamDialogueController.h" />
     <ClInclude Include="..\public\CamEventController.h" />
     <ClInclude Include="..\Public\CharacterParryCollider.h" />

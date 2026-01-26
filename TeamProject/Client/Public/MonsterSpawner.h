@@ -1,6 +1,6 @@
 #pragma once
 #include "GameObject.h"
-#include "BattleSystem_Struct.h"
+#include "MapData_Defines.h"
 
 NS_BEGIN(Client)
 class CMonsterSpawner final	: public CGameObject

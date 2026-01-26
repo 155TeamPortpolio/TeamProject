@@ -21,6 +21,7 @@ HRESULT CMapLoader::Initialize(const string& TagLevel, const string& TagArea, _u
 {
     m_TagLevel = TagLevel;
     m_TagArea = TagArea;
+
     // 맵 베이스 데이터 없으면 로드 불가!
     if (FAILED(Load_BaseData(TagArea, &m_bHasMapBase, &m_bHasEntityBase)))
         return E_FAIL;
@@ -50,7 +51,7 @@ void CMapLoader::Update_Load()
     }
 }
 
-HRESULT CMapLoader::Load_BaseData(const string& TagArea, _bool* CheckMapBase, _bool* CheckEntityBase)
+HRESULT CMapLoader::Load_BaseData(const string& TagArea, _bool* CheckMapBase, _bool* CheckEntityBase, _bool* CheckBattleData)
 {
     auto pPackets = CDataBase::GetInstance()->GetMapDataPacket(TagArea);
     if (nullptr == pPackets)
@@ -82,13 +83,8 @@ HRESULT CMapLoader::Load_BaseData(const string& TagArea, _bool* CheckMapBase, _b
         }
         else if ("BattleData" == packet.TagDataFormat)
         {
-            if ("Base" == packet.TagSlotFormat)
-            {
-                LoadEntityBaseData(&packet);
-                *CheckEntityBase = true;
-            }
-            else
-                CacheSlotDataFile("EntityData", packet.TagDataFilePath);
+            LoadBattleData(&packet);
+            *CheckBattleData = true;
         }
     }
 
@@ -149,6 +145,9 @@ void CMapLoader::PlaceObjects_Once()
 
     for (auto& EntityData : m_EntityBaseData.Entities)
         Place_EntityFromLoadData(&EntityData);
+
+
+
 
     Update_Database();
 }
@@ -437,14 +436,7 @@ HRESULT CMapLoader::LoadBattleData(const MapData_Path_Packet* pPacket)
         return E_FAIL;
     }
 
-    m_EntityBaseData = Helper::LoadJson<Entity_Header>(OpenPath.string());
-    if (-1 == m_EntityBaseData.iVersion)
-        return E_FAIL;
-
-    if (m_EntityBaseData.iVersion != g_iMapDataVersion) {
-        MSG_BOX("[MapTool] Load Entity Data Failed.\n잘못된 버전입니다.");
-        return E_FAIL;
-    }
+    m_BattleData = Helper::LoadJson<BATTLE_FIELD_DATA>(OpenPath.string());
 
     return S_OK;
 }

@@ -51,8 +51,9 @@ private:
 	string	m_TagArea = {};
 	vector<string>	m_TagLayers;
 
-	MapData_Header	m_MapBaseData = {};
-	Entity_Header	m_EntityBaseData = {};
+	MapData_Header		m_MapBaseData = {};
+	Entity_Header		m_EntityBaseData = {};
+	BATTLE_FIELD_DATA	m_BattleData = {};
 	
 	//SlotFormatData	m_MapSlotFormatData = {};
 	/* Format -> ObjID -> Data

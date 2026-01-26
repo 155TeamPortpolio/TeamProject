@@ -1,6 +1,6 @@
 #pragma once
 #include "Base.h"
-#include "BattleSystem_Struct.h"
+#include "MapData_Defines.h"
 
 NS_BEGIN(Client)
 class CBattlePlayer;
@@ -139,7 +139,7 @@ private:
 
 	/**/
 	BATTLE_VFX					m_BattleVFX;//쉐이더 효과 시간 관리용
-	BATTLE_FIELD_DATA			m_BattleFieldData = {};// 현재 Stage에 셋팅 된 BattlePoint 정보
+	BATTLE_FIELD_DATA			m_BattleFieldData{};// 현재 Stage에 셋팅 된 BattlePoint 정보
 	const _char* m_LayerTag[2] = { "Model_Layer", "Enemy_Layer" };
 
 private:
