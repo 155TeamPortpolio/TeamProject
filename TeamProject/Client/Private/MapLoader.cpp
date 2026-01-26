@@ -80,6 +80,16 @@ HRESULT CMapLoader::Load_BaseData(const string& TagArea, _bool* CheckMapBase, _b
             else
                 CacheSlotDataFile("EntityData", packet.TagDataFilePath);
         }
+        else if ("BattleData" == packet.TagDataFormat)
+        {
+            if ("Base" == packet.TagSlotFormat)
+            {
+                LoadEntityBaseData(&packet);
+                *CheckEntityBase = true;
+            }
+            else
+                CacheSlotDataFile("EntityData", packet.TagDataFilePath);
+        }
     }
 
     return S_OK;
@@ -392,6 +402,30 @@ HRESULT CMapLoader::LoadMapBaseData(const MapData_Path_Packet* pPacket)
 }
 
 HRESULT CMapLoader::LoadEntityBaseData(const MapData_Path_Packet* pPacket)
+{
+    filesystem::path OpenPath = pPacket->TagDataFilePath;
+
+    if (OpenPath.empty())
+        return E_FAIL;
+
+    if (OpenPath.extension().string() != ".json") {
+        MSG_BOX("[MapTool] Load Entity Data Failed.\nJson 파일이 아닙니다.");
+        return E_FAIL;
+    }
+
+    m_EntityBaseData = Helper::LoadJson<Entity_Header>(OpenPath.string());
+    if (-1 == m_EntityBaseData.iVersion)
+        return E_FAIL;
+
+    if (m_EntityBaseData.iVersion != g_iMapDataVersion) {
+        MSG_BOX("[MapTool] Load Entity Data Failed.\n잘못된 버전입니다.");
+        return E_FAIL;
+    }
+
+    return S_OK;
+}
+
+HRESULT CMapLoader::LoadBattleData(const MapData_Path_Packet* pPacket)
 {
     filesystem::path OpenPath = pPacket->TagDataFilePath;
 

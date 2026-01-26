@@ -73,7 +73,7 @@ namespace Client {
 
 
 	// DB 맵 데이터 저장용
-	enum class MAPOBJ_TYPE { PLACED, TRIGGER, INVWALL, ENTITY, END };
+	enum class MAPOBJ_TYPE { PLACED, TRIGGER, INVWALL, ENTITY, BATTLE, END };
 	using MapSlotValue = variant<monostate, _int, _float, _bool, string, _float2, _float3, _float4>;
 
 	typedef struct tagCashedMapObject {
@@ -96,12 +96,21 @@ namespace Client {
 		}
 	}CASHED_OBJECT;
 
+	typedef struct tagCashedBattleData {
+		_bool					HasBattleData = { false };
+		_vector3				PlayerPoint{};
+		vector<_vector3>		MonsterPoint;
+		vector<OBJECT_HANDLE>	ZeroPortal;
+		vector<OBJECT_HANDLE>	Spawner;
+	}CASHED_BATTLE_DATA;
+
 	typedef struct tagCashedData {
 		string MapDataTag;
 		vector<CASHED_OBJECT> MapObj;
 		vector<CASHED_OBJECT> Trigger;
 		vector<CASHED_OBJECT> InvWall;
 		vector<CASHED_OBJECT> Entity;
+		CASHED_BATTLE_DATA	  Battle;
 
 		const vector<CASHED_OBJECT>* Select(MAPOBJ_TYPE eType) const
 		{

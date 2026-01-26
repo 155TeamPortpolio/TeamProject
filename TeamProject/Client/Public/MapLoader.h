@@ -41,6 +41,7 @@ private:
 	MAPOBJ_TYPE		Check_LayerTag(const string& TagLayer);
 	HRESULT			LoadMapBaseData(const MapData_Path_Packet* pPacket);
 	HRESULT			LoadEntityBaseData(const MapData_Path_Packet* pPacket);
+	HRESULT			LoadBattleData(const MapData_Path_Packet* pPacket);
 	HRESULT			CacheSlotDataFile(const string& DataFormat, const string& SlotDataFilePath);
 
 	_bool			isThereFormat(const string& TagSlotFormat);
@@ -52,6 +53,7 @@ private:
 
 	MapData_Header	m_MapBaseData = {};
 	Entity_Header	m_EntityBaseData = {};
+	
 	//SlotFormatData	m_MapSlotFormatData = {};
 	/* Format -> ObjID -> Data
 	unordered_map<Format유형(effect, physics...), unordered_map<오브젝트 ID, vector<(ObjID, 변수명, 값)>>>*/
