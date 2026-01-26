@@ -132,6 +132,57 @@ void GS_MAIN_CUSTOM(point GS_IN In[1], inout TriangleStream<GS_OUT> triStream)
     triStream.RestartStrip();
 }
 
+float ShearK = 0.f;
+
+[maxvertexcount(6)]
+void GS_SHEAR(point GS_IN In[1], inout TriangleStream<GS_OUT> triStream)
+{
+    GS_OUT v[4];
+
+    float3 worldPos = In[0].vWorldPos.xyz;
+
+    float3 right = normalize(ObjectBufferArray[TransformIndex].Transform[0].xyz);
+    float3 up = normalize(ObjectBufferArray[TransformIndex].Transform[1].xyz);
+    float scaleX = length(ObjectBufferArray[TransformIndex].Transform[0].xyz);
+    float scaleY = length(ObjectBufferArray[TransformIndex].Transform[1].xyz);
+
+    float halfW = scaleX * 0.5f;
+    float halfH = scaleY * 0.5f;
+
+    float3 offsetRight = right * halfW;
+    float3 offsetUp = up * halfH;
+
+    float3 shiftTop = right * (ShearK * scaleY);
+    float3 shiftBot = float3(0.f, 0.f, 0.f);
+
+    float3 p0 = worldPos + (-offsetRight + offsetUp) + shiftTop;
+    float3 p1 = worldPos + (offsetRight + offsetUp) + shiftTop;
+    float3 p2 = worldPos + (offsetRight - offsetUp) + shiftBot;
+    float3 p3 = worldPos + (-offsetRight - offsetUp) + shiftBot;
+
+    v[0].vPosition = mul(float4(p0, 1.f), matOrthograph);
+    v[0].vTexcoord = float2(0, 0);
+
+    v[1].vPosition = mul(float4(p1, 1.f), matOrthograph);
+    v[1].vTexcoord = float2(1, 0);
+
+    v[2].vPosition = mul(float4(p2, 1.f), matOrthograph);
+    v[2].vTexcoord = float2(1, 1);
+
+    v[3].vPosition = mul(float4(p3, 1.f), matOrthograph);
+    v[3].vTexcoord = float2(0, 1);
+
+    triStream.Append(v[0]);
+    triStream.Append(v[1]);
+    triStream.Append(v[2]);
+    triStream.RestartStrip();
+
+    triStream.Append(v[0]);
+    triStream.Append(v[2]);
+    triStream.Append(v[3]);
+    triStream.RestartStrip();
+}
+
 uint Col = 1;
 uint Row = 1;
 uint FrameIndex;
@@ -518,7 +569,7 @@ technique11 DefaultTechnique
         SetDepthStencilState(DSS_None, 0);
         SetBlendState(BS_Premultiplied, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader   = compile vs_5_0 VS_MAIN();
-        GeometryShader = compile gs_5_0 GS_MAIN();
+        GeometryShader = compile gs_5_0 GS_SHEAR();
         PixelShader    = compile ps_5_0 PS_MAIN_SPRITEANIMATION_COLORATLAS();
     }
     

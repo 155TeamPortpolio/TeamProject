@@ -39,6 +39,8 @@ HRESULT CUI_AtlasSprite::Initialize(INIT_DESC* pArg)
     m_colorFrameCountY = 1;
     m_colorFrameIdx = 0;
 
+    m_shearK = 0.f;
+
     Update_SizeByHeight();
     Apply_Params();
 
@@ -101,6 +103,12 @@ void CUI_AtlasSprite::Set_UseColorAtlas(_bool enable)
     Apply_Params();
 }
 
+void CUI_AtlasSprite::Set_ShearK(_float k)
+{
+    m_shearK = k;
+    Apply_Params();
+}
+
 void CUI_AtlasSprite::Apply_Params()
 {
     auto sprite = Get_Component<CSprite2D>();
@@ -110,6 +118,7 @@ void CUI_AtlasSprite::Apply_Params()
     sprite->Set_Param("Col", {&m_frameCountX, "uint", sizeof(_uint)});
     sprite->Set_Param("Row", {&m_frameCountY, "uint", sizeof(_uint)});
     sprite->Set_Param("FrameIndex", {&m_frameIdx, "uint", sizeof(_uint)});
+    sprite->Set_Param("ShearK", {&m_shearK, "float", sizeof(_float)});
 
     if (!m_colorTexKey.empty())
     {
