@@ -182,19 +182,18 @@ static const float weights[9] =
     0.0020270270,
     0.0010135135
 };
+
 PS_OUT_RESULT PS_BRIGHT(PS_IN In)
 {
     PS_OUT_RESULT Out;
     
-    float emissive = AmbientTexture.Sample(DefaultSampler, In.vTexcoord).b;
-    float4 vDiffuse = DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
-  
-    float3 vResult = vDiffuse.rgb * emissive;
+    float4 vEmissive = EmissiveTexture.Sample(DefaultSampler, In.vTexcoord);
+
+    if (vEmissive.a < 0.2f) 
+        discard;
     
-    float alpha = 0.f;
-    if (length(vDiffuse.rgb) > 0.f) alpha = 1.f;
+    Out.vResult = vEmissive;
     
-    Out.vResult = float4(vResult, alpha);
     return Out;
 }
 
@@ -203,9 +202,10 @@ PS_OUT_RESULT PS_BLOOM_BLURX(PS_IN In)
     PS_OUT_RESULT Out;
     
     float4 bright = MeshBrightTexture.Sample(DefaultSampler, In.vTexcoord);
+    float fStrength = EmissiveTexture.Sample(DefaultSampler, In.vTexcoord).a;
 
     float3 result = bright.rgb * weights[0];
-    float texelSize = 0.5f / fScreenWidth;
+    float texelSize = fStrength / fScreenWidth;
     
     float4 brightSample;
     for (int i = 1; i < 9; ++i)
@@ -227,9 +227,10 @@ PS_OUT_RESULT PS_BLOOM_BLURY(PS_IN In)
     PS_OUT_RESULT Out;
 
     float4 BlurX = MeshBlurXTexture.Sample(DefaultSampler, In.vTexcoord);
+    float fStrength = EmissiveTexture.Sample(DefaultSampler, In.vTexcoord).a;
     
     float3 result = BlurX.rgb * weights[0];
-    float texelSize = 0.5f / fScreenHeight;
+    float texelSize = fStrength / fScreenHeight;
         
     for (int i = 1; i < 9; ++i)
     {

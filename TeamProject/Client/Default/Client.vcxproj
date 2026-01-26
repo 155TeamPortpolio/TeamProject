@@ -381,7 +381,6 @@
     <ClInclude Include="..\public\BangBooPayState_Idle.h" />
     <ClInclude Include="..\public\BattlePlayer.h" />
     <ClInclude Include="..\public\BattleSystem.h" />
-    <ClInclude Include="..\Public\BattleSystem_Struct.h" />
     <ClInclude Include="..\public\CamDialogueController.h" />
     <ClInclude Include="..\public\CamEventController.h" />
     <ClInclude Include="..\Public\CharacterParryCollider.h" />
@@ -620,6 +619,7 @@
     <ClInclude Include="..\Public\ZeroStage_Elite.h" />
     <ClInclude Include="..\Public\ZeroStage_Normal.h" />
     <ClInclude Include="..\Public\Zero_Level.h" />
+    <ClInclude Include="CDefiler.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Resource.h" />
@@ -929,6 +929,7 @@
     <ClCompile Include="..\Private\ZeroStage_Elite.cpp" />
     <ClCompile Include="..\Private\ZeroStage_Normal.cpp" />
     <ClCompile Include="..\Private\Zero_Level.cpp" />
+    <ClCompile Include="CDefiler.cpp" />
     <ClCompile Include="Client.cpp" />
   </ItemGroup>
   <ItemGroup>

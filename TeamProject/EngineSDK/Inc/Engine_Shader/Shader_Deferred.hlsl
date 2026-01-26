@@ -9,7 +9,6 @@ float   g_Time;
 
 float   g_RadialEaseT;
 float3  g_AddictiveColor;
-float   g_AddictiveStrength = 3.f;
 bool   g_UseAddictiveColor = false;
 float2  g_RadialCenter;
 bool    g_RadialUse = false;
@@ -269,7 +268,7 @@ float4 PS_MAIN_FINAL(PS_IN In) : SV_Target
     if (g_UseAddictiveColor)
     {
         float skinnedAlpha = 1 - SkinnedCombinedTexture.Sample(DefaultSampler, In.vTexcoord).a;
-        float3 tinted = hdrColor.rgb + hdrColor.rgb * g_AddictiveColor * g_AddictiveStrength;
+        float3 tinted = hdrColor.rgb * g_AddictiveColor;
         hdrColor = lerp(hdrColor.rgb, tinted, skinnedAlpha);
     }
     

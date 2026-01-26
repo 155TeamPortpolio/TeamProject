@@ -25,7 +25,7 @@ namespace Client {
 
 
 	//------------------- Battle -------------------
-	enum class BATTLE_VFX_TYPE { EVADE,PARRY, SWITCH, END };
+	enum class BATTLE_VFX_TYPE { EVADE,PARRY, SWITCH,ULTIMATE, END };
 	enum class BATTLE_OBJ_TYPE { PLAYER, MONSTER, ENVOBJECT, END };
 
 }
