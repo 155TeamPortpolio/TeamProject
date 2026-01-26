@@ -20,6 +20,17 @@ void CBattleFXFlow::Initialize_Preset()
 		evade.tPlayerTimeScale = TIME_SCALING({ duration, 0.3f, 0.f, 0.f , EaseType::InOutSine });
 		evade.tMonsterTimeScale = TIME_SCALING({ duration, 0.3f, 0.f, 0.f , EaseType::InOutSine });
 	}
+
+	{
+		auto& Parry = m_BattleVFXData[ENUM(BATTLE_VFX_TYPE::PARRY)];
+		const _float duration = 1.f;
+		Parry.fVFXDuration = duration;
+		Parry.fBlurDuration = duration;
+		Parry.vStartColor = { 0.f,0.f,0.f };
+		Parry.vTargetColor = { -1.f,-1.f,-1.f };
+		Parry.tPlayerTimeScale = TIME_SCALING({ duration, 0.3f, 0.f, 0.f , EaseType::InOutSine });
+		Parry.tMonsterTimeScale = TIME_SCALING({ duration, 0.3f, 0.f, 0.f , EaseType::InOutSine });
+	}
 }
 
 void CBattleFXFlow::Start(function<void()> onEnd)

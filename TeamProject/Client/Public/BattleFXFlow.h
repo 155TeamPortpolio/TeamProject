@@ -120,7 +120,6 @@ public:
 			return clamp(fCurPos / fDuration, 0.f, 1.f);
 		}
 	}BATTLE_VFX;
-
 	typedef struct tagBattleVFXData
 	{
 		_float			fVFXDuration = {};			/* 화면 색 먹이는 시간 */
@@ -166,7 +165,7 @@ private:/*시퀀스 추가 함수*/
 	void AddLerpFloatTo(_float* valuePtr, _float toValue, _float duration, EaseType ease = EaseType::Linear);
 	void AddLerpFloatFromTo(_float* valuePtr, _float fromValue, _float toValue, _float duration, EaseType ease = EaseType::Linear);
 
-	// color3 (_float3)
+	// color3 
 	void AddLerpColor3To(_float3* colorPtr, const _float3& toValue, _float duration, EaseType ease = EaseType::Linear);
 	void AddLerpColor3FromTo(_float3* colorPtr, const _float3& fromValue, const _float3& toValue, _float duration, EaseType ease = EaseType::Linear);
 

@@ -13,6 +13,8 @@ class CBattleSystem final : public CBase
 	DECLARE_SINGLETON(CBattleSystem)
 public:
 	using BATTLE_OBJ_TYPE = ::BATTLE_OBJ_TYPE; /*이전 함수 호출*/
+	using BattleInfo = vector<BATTLEOBJ_INFO>; /*이전 함수 호출*/
+
 private:
 	CBattleSystem();
 	virtual ~CBattleSystem() = default;
@@ -57,8 +59,8 @@ public:
 	_bool isMonsterCleared();
 
 private:
-	void	Update_BattleInfo();
 	void	ClearBattleStage();
+	void	Update_BattleInfo();
 	void	CheckVFX(const _float dt);
 
 private:
@@ -72,19 +74,14 @@ private:
 	class CBattleFXFlow* m_pFXFlow = { nullptr };
 	_float3 m_FXAddColor = {};
 
-
-
-	/*old*/
-	unordered_map<BATTLE_OBJ_TYPE, vector<OBJECT_HANDLE>>	m_Handles;// BATTLE_OBJ_TYPE 별로 생성된 오브젝트의 핸들 모음
-	unordered_map<BATTLE_OBJ_TYPE, vector<BATTLEOBJ_INFO>>	m_BattleObjInfos;// 매 업데이트때 1번씩 생성된 Battle 오브젝트의 정보를 담아둠
-	vector<CBattleFXFlow::TIME_SCALING>		m_TimeScaling;// BATTLE_OBJ_TYPE 별로 타임 스케일 관리용
-
-	/**/
+	unordered_map<BATTLE_OBJ_TYPE, BattleInfo>	m_BattleObjInfos;	// 매 업데이트때 1번씩 생성된 Battle 오브젝트의 정보를 담아둠
+	
+	/*Map 구조 변경 후 재적용 예정*/
 	BATTLE_FIELD_DATA			m_BattleFieldData = {};// 현재 Stage에 셋팅 된 BattlePoint 정보
-
-private:
 	vector<OBJECT_HANDLE>		m_SpawnerHandles;// 스포너 핸들
+private: /*현재 사용 X*/
 	const _char* m_LayerTag[3] = { "Model_Layer", "Enemy_Layer" ,"None"};
+	unordered_map<BATTLE_OBJ_TYPE, vector<OBJECT_HANDLE>>	m_Handles;			// BATTLE_OBJ_TYPE 별로 생성된 오브젝트의 핸들 모음
 
 public:
 	virtual void Free() override;

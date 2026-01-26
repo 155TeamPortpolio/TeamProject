@@ -15,10 +15,14 @@ IMPLEMENT_SINGLETON(CBattleSystem)
 
 CBattleSystem::CBattleSystem()
 {
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_MonsterSpawner", CMonsterSpawner::Create());
+
 	// 빈 값 채우기
 	for (_int i = 0; i < static_cast<_int>(BATTLE_OBJ_TYPE::END); ++i) {
 		auto eType = static_cast<BATTLE_OBJ_TYPE>(i);
-		m_BattleObjInfos.emplace(eType, vector<BATTLEOBJ_INFO>{});
+		vector<BATTLEOBJ_INFO> infos;
+		infos.reserve(10);
+		m_BattleObjInfos.emplace(eType, move(infos));
 	}
 
 	
@@ -122,24 +126,6 @@ void CBattleSystem::ReadyBattle(const string& tagArea, _uint iPrefabIndex)
 	}
 #pragma endregion
 
-// 플레이어 위치 세팅
-#pragma region Setting Player Position
-	// Player CCT 높이만큼 Y축으로 올려줘야함
-	_float3 vPos = { 
-		m_BattleFieldData.PlayerSpawnPoint.vTranslation[0], 
-		m_BattleFieldData.PlayerSpawnPoint.vTranslation[1] + m_pBattlePlayer->GetCurCharacterHandle().Get()->Get_Component<CCharacterController>()->Get_Height(),
-		m_BattleFieldData.PlayerSpawnPoint.vTranslation[2] 
-	};
-	
-	_float3 vRot = { 
-		m_BattleFieldData.PlayerSpawnPoint.vRotation[0], 
-		m_BattleFieldData.PlayerSpawnPoint.vRotation[1],
-		m_BattleFieldData.PlayerSpawnPoint.vRotation[2]
-	};
-	m_pBattlePlayer->GetCurCharacterHandle().Get()->Get_Component<CCharacterController>()->Get_Height();
-	m_pBattlePlayer->Set_Move(vPos, vRot);
-
-#pragma endregion
 
 // 스포너 세팅
 #pragma region Setting Spawner
@@ -243,11 +229,11 @@ void CBattleSystem::SetActive(_bool isActive)
 {
 	if (false == isActive) {
 		m_isActive = false;
-		Battl
+		ClearBattleStage();
 		return;
 	}
 	else {
-
+		m_isActive = true;
 	}
 }
 
@@ -282,8 +268,11 @@ void CBattleSystem::SpawnMosnter(const string& MonsterProtoTag, _float3 vSpawnPo
 
 	CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(pMonster, { NowLevel, "Enemy_Layer" });
 
-	m_Handles[BATTLE_OBJ_TYPE::MONSTER].push_back(pMonster->Get_Handle());
+	BATTLEOBJ_INFO EnemyInfo = {};
+	EnemyInfo.hObject = pMonster->Get_Handle();
+	m_BattleObjInfos[BATTLE_OBJ_TYPE::MONSTER].push_back(EnemyInfo);
 }
+
 void CBattleSystem::SpawnMosnterFromPool(const string& MonsterProtoTag, _float3 vSpawnPos, _float3 vRot)
 {
 	MonsterCreationDesc MonsterTableDesc = CDataBase::GetInstance()->GetMonsterDesc(MonsterProtoTag);
@@ -305,15 +294,28 @@ void CBattleSystem::SpawnMosnterFromPool(const string& MonsterProtoTag, _float3 
 
 	CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(pMonster, { NowLevel, "Enemy_Layer" });
 
-	m_Handles[BATTLE_OBJ_TYPE::MONSTER].push_back(pMonster->Get_Handle());
+	BATTLEOBJ_INFO EnemyInfo = {};
+	EnemyInfo.hObject = pMonster->Get_Handle();
+	m_BattleObjInfos[BATTLE_OBJ_TYPE::MONSTER].push_back(EnemyInfo);
 }
+
 _bool CBattleSystem::ExitBattleObject(BATTLE_OBJ_TYPE eObjType, OBJECT_HANDLE hObject)
 {
-	auto iter = find(m_Handles[eObjType].begin(), m_Handles[eObjType].end(), hObject);
-	if (iter == m_Handles[eObjType].end())
+	auto iter = m_BattleObjInfos.find(eObjType);
+	if(iter == m_BattleObjInfos.end())
 		return false;
 
-	m_Handles[eObjType].erase(iter);
+	auto& handles = iter->second;
+
+	auto hiter = find_if(
+		handles.begin(),
+		handles.end(),
+		[&](BATTLEOBJ_INFO& info){return info.hObject == hObject;});
+
+	if (hiter == handles.end())
+		return false;
+
+	handles.erase(hiter);
 	return true;
 }
 
@@ -321,8 +323,11 @@ void CBattleSystem::SetPlayer(vector<OBJECT_HANDLE> hPlayers)
 {
 	for (auto& hPlayer : hPlayers)
 	{
-		if (hPlayer.isValid())
-			m_Handles[BATTLE_OBJ_TYPE::PLAYER].push_back(hPlayer);
+		if (!hPlayer.isValid()) continue;
+
+		BATTLEOBJ_INFO playerInfo = {};
+		playerInfo.hObject = hPlayer;
+		m_BattleObjInfos[BATTLE_OBJ_TYPE::PLAYER].push_back(playerInfo);
 	}
 }
 
@@ -343,62 +348,60 @@ void CBattleSystem::TakeAreaDamage(const _float3& vCenter, _float fRadius, const
 		if (fDistSq > fRadiusSq)
 			continue;
 
-		auto pEnemy = info.hObject.GetAs<CEnemy>();
+		auto pEnemy = dynamic_cast<CEnemy*>(info.hObject.Get());
 		if (pEnemy)
 			pEnemy->TakeDamage(hitDesc.eDamageType, hitDesc.fDamage);
 	}
 }
+
 void CBattleSystem::TakeAllDamage(const HitDesc& hitDesc)
 {
-	for (auto& handle : m_Handles[BATTLE_OBJ_TYPE::MONSTER])
+	for (auto& info : m_BattleObjInfos[BATTLE_OBJ_TYPE::MONSTER])
 	{
+		auto& handle = info.hObject;
+
 		if (!handle.isValid())
 			continue;
-
-		auto pEnemy = handle.GetAs<CEnemy>();
+		auto pEnemy = dynamic_cast<CEnemy*>(handle.Get());
 		if (pEnemy)
 		{
 			pEnemy->TakeDamage(hitDesc.eDamageType, hitDesc.fDamage);
 		}
 	}
 }
-void CBattleSystem::Update_BattleInfo()
-{
-	for (_int i = 0; i < static_cast<_int>(BATTLE_OBJ_TYPE::END); ++i) {
-		auto eType = static_cast<BATTLE_OBJ_TYPE>(i);
-		m_BattleObjInfos[eType].clear();
-
-		for (size_t j = 0; j < m_Handles[eType].size(); ++j) {
-			auto handle = m_Handles[eType][j];
-			if (false == handle.isValid())
-				continue;
-
-			CGameObject* pObject = m_Handles[eType][j].Get();
-
-			_float4 objWorldPos = pObject->Get_Position();
-
-			BATTLEOBJ_INFO info = {};
-			info.TagInstanceName = m_Handles[eType][j].Get()->Get_InstanceName();
-			info.hObject = m_Handles[eType][j];
-			info.vPos = { objWorldPos.x, objWorldPos.y,objWorldPos.z };
-			info.fRadius = pObject->Get_Component<CCharacterController>()->Get_Radius();
-			info.isOnField = true;
-
-			m_BattleObjInfos[eType].push_back(info);
-		}
-	}
-}
 
 void CBattleSystem::ClearBattleStage()
 {
-	for (auto& Pair : m_Handles) 
+	for (auto& Pair : m_BattleObjInfos) {
+		for (auto info : Pair.second)
+		{
+			info.hObject.Delete();
+			info.Reset();
+		}
 		Pair.second.clear();
-
-	for (auto& Pair : m_BattleObjInfos)
-		Pair.second.clear();
+	}
 
 	m_SpawnerHandles.clear();
 	m_BattleFieldData = {};
+}
+
+void CBattleSystem::Update_BattleInfo()
+{
+ 	for (auto& infovector : m_BattleObjInfos)
+	{
+		for (auto& info : infovector.second)
+		{
+			if (!info.hObject.isValid()) continue;
+
+			CGameObject* pObject = info.hObject.Get();
+			_float4 objWorldPos = pObject->Get_Position();
+			info.TagInstanceName = pObject->Get_InstanceName();
+			info.vPos = { objWorldPos.x, objWorldPos.y,objWorldPos.z };
+			auto* cct = pObject->Get_Component<CCharacterController>();
+			info.fRadius = (cct != nullptr)? cct->Get_Radius():0;
+			info.isOnField = true;
+		}
+	}
 }
 
 _bool CBattleSystem::isMonsterCleared()
