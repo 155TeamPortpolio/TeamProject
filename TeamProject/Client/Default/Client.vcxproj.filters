@@ -864,6 +864,9 @@
     <Filter Include="02. GameObject\UI\03. UIElement\Atlas_Sprite">
       <UniqueIdentifier>{141ad35d-d882-4929-ae9d-00da8a8aaf8e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Defiler">
+      <UniqueIdentifier>{d747b1f1-f957-472a-b1f0-158922c86c50}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1682,6 +1685,9 @@
     <ClInclude Include="..\public\Room_Lottery.h">
       <Filter>03. Utility\06. FieldSystem\Room\03. Lottery</Filter>
     </ClInclude>
+    <ClInclude Include="CDefiler.h">
+      <Filter>02. GameObject\Object\Enemy\Defiler</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2457,6 +2463,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Room_Lottery.cpp">
       <Filter>03. Utility\06. FieldSystem\Room\03. Lottery</Filter>
+    </ClCompile>
+    <ClCompile Include="CDefiler.cpp">
+      <Filter>02. GameObject\Object\Enemy\Defiler</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

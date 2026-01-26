@@ -620,6 +620,7 @@
     <ClInclude Include="..\Public\ZeroStage_Elite.h" />
     <ClInclude Include="..\Public\ZeroStage_Normal.h" />
     <ClInclude Include="..\Public\Zero_Level.h" />
+    <ClInclude Include="CDefiler.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Resource.h" />
@@ -929,6 +930,7 @@
     <ClCompile Include="..\Private\ZeroStage_Elite.cpp" />
     <ClCompile Include="..\Private\ZeroStage_Normal.cpp" />
     <ClCompile Include="..\Private\Zero_Level.cpp" />
+    <ClCompile Include="CDefiler.cpp" />
     <ClCompile Include="Client.cpp" />
   </ItemGroup>
   <ItemGroup>
