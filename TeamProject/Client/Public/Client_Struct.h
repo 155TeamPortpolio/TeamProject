@@ -9,6 +9,13 @@ namespace Client {
 		_bool			isOnField = { false };	// 현재 필드 위에 소환되어 있는지
 		_float3			vPos = {};				// 현재 오브젝트의 위치
 		_float			fRadius = {};			// CCT 로컬 원점으로부터 반지름
+		void Reset() {
+			TagInstanceName.clear();
+			hObject.Reset();
+			isOnField = false;
+			vPos = {};
+			fRadius = { 0.f };
+		}
 	}BATTLEOBJ_INFO;
 
 	struct MonsterCreationDesc {
