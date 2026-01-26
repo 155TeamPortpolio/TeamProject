@@ -38,12 +38,15 @@ private:
 	_float4x4	m_ViewMatrix = {};
 	_float4x4   m_ProjMatrix = {};
 
+	_float		m_fThreshold = { -0.1f };
+
 private:
 	void Cache_Brush();
 	void Cache_Reward();
+
 	void Change_RewardTexture(const string& strTextureKey);
 
-	void Render_Scratch(ID3D11DeviceContext* pContext);
+	void Render_RTBrush(ID3D11DeviceContext* pContext);
 
 public:
 	static  CGameObject* Create();

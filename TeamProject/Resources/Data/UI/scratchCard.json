@@ -444,7 +444,7 @@
                 1.0,
                 1.0
             ],
-            "pass": "Opaque",
+            "pass": "Opaque_StencilTest",
             "animClips": [],
             "children": [],
             "typeTag": "Image",
@@ -509,12 +509,12 @@
             "transform": {
                 "anchor": 5,
                 "anchorOffset": [
-                    30.0,
-                    30.0
+                    0.0,
+                    0.0
                 ],
                 "size": [
-                    60.0,
-                    60.0
+                    50.0,
+                    50.0
                 ],
                 "scale": [
                     1.0,

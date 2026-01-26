@@ -250,8 +250,11 @@ PS_OUT PS_STENCIL_WRITE_ALPHA(PS_IN In)
     );
 
     vector vDiffuse = SpriteTexture.Sample(LinearSampler, vTexcoord);
-    clip(vDiffuse.a - MaskThreshold);
-
+    if (MaskThreshold > 0)
+        clip(vDiffuse.a - MaskThreshold);           // fThreshold에 양수를 넣으면 그 절대값보다 작은 값을 자름
+    else
+        clip((MaskThreshold * -1.f)  - vDiffuse.a); // fThreshold에 음수를 넣으면 그 절대값보다 큰 값을 자름
+    
     Out.vColor = 1;
     return Out;
 }
