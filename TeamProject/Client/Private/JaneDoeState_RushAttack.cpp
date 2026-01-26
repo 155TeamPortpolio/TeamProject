@@ -1,5 +1,8 @@
 #include "pch.h"
 #include "JaneDoeState_RushAttack.h"
+
+#include "BattleSystem.h"
+
 #include "JaneDoe.h"
 #include "EffectContainer.h"
 
@@ -80,7 +83,13 @@ void CJaneDoeState_RushAttack::Update(CJaneDoe* pOwner, _float dt)
         }
         else if (Event.Tag == "RFootStart")
         {
-            pOwner->Begin_AttackCollider("FootWeapon_R", { HIT_TYPE::ONCE, DAMAGE_TYPE::HARD, Helper::Get_Random_Float(20,40), 0, 0 });
+            //pOwner->Begin_AttackCollider("FootWeapon_R", { HIT_TYPE::ONCE, DAMAGE_TYPE::HARD, Helper::Get_Random_Float(20,40), 0, 0 });
+            _vector3 vLook = pOwner->Get_Component<CTransform>()->Dir(STATE::LOOK);
+            _vector3 vPos = pOwner->Get_WorldPos();
+            BattleSystem()->TakeAreaDamage(vPos + vLook *0.5f, 0.5f, HitDesc()
+                .Type(HIT_TYPE::ONCE)
+                .Damage(Helper::Get_Random_Float(20, 40), DAMAGE_TYPE::HARD)
+                );
         }
         else if (Event.Tag == "RFootEnd")
         {
