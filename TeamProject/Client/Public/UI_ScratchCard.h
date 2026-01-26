@@ -26,16 +26,24 @@ public:
 	virtual void	Awake()							 override;
 	virtual void    Priority_Update(_float dt)       override { __super::Priority_Update(dt); }
 	virtual void    Update(_float dt)			     override;
-	virtual void    Late_Update(_float dt)           override { __super::Late_Update(dt); }
+	virtual void    Late_Update(_float dt)           override;
 	virtual void    Render_GUI()                     override { __super::Render_GUI(); }
 	virtual void	UI_Active(void* pArg)			 override;
 
 private:
-	class CSprite2D* m_pRewardSprite = {};
+	CUI_Object*			m_pBrush = {};
+	class CSprite2D*	m_pBrushSprite = {};
+	class CSprite2D*	m_pRewardSprite = {};
+
+	_float4x4	m_ViewMatrix = {};
+	_float4x4   m_ProjMatrix = {};
 
 private:
-	void Cache_RewardSprite();
+	void Cache_Brush();
+	void Cache_Reward();
 	void Change_RewardTexture(const string& strTextureKey);
+
+	void Render_Scratch(ID3D11DeviceContext* pContext);
 
 public:
 	static  CGameObject* Create();

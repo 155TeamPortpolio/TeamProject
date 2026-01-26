@@ -416,7 +416,7 @@
             "textureTag": "ScratchCardRewardIcon01.png"
         },
         {
-            "alive": false,
+            "alive": true,
             "instanceName": "scratch",
             "transform": {
                 "anchor": 0,
@@ -502,6 +502,41 @@
                 "autoPos": true,
                 "anchor": 9
             }
+        },
+        {
+            "alive": true,
+            "instanceName": "brush",
+            "transform": {
+                "anchor": 5,
+                "anchorOffset": [
+                    30.0,
+                    30.0
+                ],
+                "size": [
+                    60.0,
+                    60.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.5,
+                    0.5
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "pass": "Opaque",
+            "animClips": [],
+            "children": [],
+            "typeTag": "Image",
+            "textureTag": "Circle72.png"
         }
     ],
     "typeTag": "CanvasPanel"
