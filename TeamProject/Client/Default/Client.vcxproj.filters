@@ -864,6 +864,12 @@
     <Filter Include="02. GameObject\Object\Enemy\Defiler">
       <UniqueIdentifier>{d747b1f1-f957-472a-b1f0-158922c86c50}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Defiler\State">
+      <UniqueIdentifier>{56ddd761-e593-4b55-8b50-2eac6c8a3311}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Defiler\State\Born">
+      <UniqueIdentifier>{1e1d0a87-3187-4e83-97b3-960b6a21d5df}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1679,8 +1685,14 @@
     <ClInclude Include="..\public\UI_DamageText.h">
       <Filter>02. GameObject\UI\02. 3D\Plane\DamageText</Filter>
     </ClInclude>
-    <ClInclude Include="CDefiler.h">
+    <ClInclude Include="..\Public\Defiler.h">
       <Filter>02. GameObject\Object\Enemy\Defiler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\DefilerState.h">
+      <Filter>02. GameObject\Object\Enemy\Defiler\State</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\DefilerState_Born.h">
+      <Filter>02. GameObject\Object\Enemy\Defiler\State\Born</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2458,8 +2470,11 @@
     <ClCompile Include="..\private\UI_DamageText.cpp">
       <Filter>02. GameObject\UI\02. 3D\Plane\DamageText</Filter>
     </ClCompile>
-    <ClCompile Include="CDefiler.cpp">
+    <ClCompile Include="..\Private\Defiler.cpp">
       <Filter>02. GameObject\Object\Enemy\Defiler</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\DefilerState_Born.cpp">
+      <Filter>02. GameObject\Object\Enemy\Defiler\State\Born</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

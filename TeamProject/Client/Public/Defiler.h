@@ -25,7 +25,10 @@ public:
     void    Render_GUI();
 
 private:
-    //HRESULT Initialize_StateMachine();
+    void Update_States(_float dt);
+
+private:
+    HRESULT Initialize_StateMachine();
     HRESULT Initialize_States();
     HRESULT Initialize_Transitions();
     //HRESULT Create_Colliders();

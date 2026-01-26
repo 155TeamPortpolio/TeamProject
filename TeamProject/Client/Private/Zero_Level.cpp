@@ -25,6 +25,7 @@
 #include "Sacrifice_Orb.h"
 #include "ThugBulkyEnforcer.h"
 #include "ThugAssaulter.h"
+#include "Defiler.h"
 #include "EnemyAttackCollider.h"
 #include "EnemyTriggerCollider.h"
 

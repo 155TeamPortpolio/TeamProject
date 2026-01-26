@@ -46,7 +46,7 @@ public:
 public:
 	void Control_Bone(const string& boneName, _fmatrix BoneMatrix);
 	void Control_BoneByIndex(_uint Index, _fmatrix BoneMatrix);
-	void Hide_MehsByName(const string& name);
+	vector<_uint> Hide_MehsByName(const string& name);
 
 public:
 	virtual void Render_GUI();
