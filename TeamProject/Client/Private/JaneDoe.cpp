@@ -35,42 +35,6 @@ CJaneDoe::CJaneDoe(const CJaneDoe& rhs)
 {
 }
 
-void CJaneDoe::Process_Passion(_float fPassionGauge)
-{
-	m_fPassionGauge = fPassionGauge;
-}
-
-void CJaneDoe::Process_PassionSkill(_bool bAvailable)
-{
-	m_bPassionSkillAvailable = bAvailable;
-}
-
-void CJaneDoe::Update_MotionBlurQueue()
-{
-	++m_iFrameCount;
-	if (m_iFrameCount < FRAMECOUNT)
-		return;
-
-	m_iFrameCount = 0;
-	if (m_BoneMatrices.size() > 5)
-	{
-		m_BoneMatrices.pop_front();
-		m_WorldMatrices.pop_front();
-	}
-
-	auto Model = Get_Component<CSkeletalModel>();
-	vector<vector<_float4x4>> BoneMatrices;
-	BoneMatrices.resize(Model->Get_MeshCount());
-
-	for (_int i = 0; i < Model->Get_MeshCount(); ++i)
-	{
-		BoneMatrices[i] = m_pAnimator->Get_BoneMatrices(i);
-	}
-	_float4x4 worldMatrix = *m_pTransform->Get_WorldMatrix_Ptr(); 
-	m_WorldMatrices.push_back(worldMatrix);
-	m_BoneMatrices.push_back(BoneMatrices);
-}
-
 HRESULT CJaneDoe::Initialize_Prototype()
 {
 	if (FAILED(__super::Initialize_Prototype()))
@@ -163,8 +127,11 @@ void CJaneDoe::Awake()
 
 void CJaneDoe::Priority_Update(_float dt)
 {
-	Update_MotionBlurQueue();
-	Add_PassionMotionBlur();
+	if(m_bPassion)
+	{
+		Update_MotionBlurQueue();
+		Add_PassionMotionBlur();
+	}
 	__super::Priority_Update(dt);
 }
 
@@ -186,6 +153,20 @@ void CJaneDoe::Late_Update(_float dt)
 
 void CJaneDoe::Render_GUI()
 {
+	ImGui::Separator();
+	ImGui::Text("Passion: %s", (m_bPassion ? "ON" : "OFF"));
+	ImGui::Text("Passion Stream : %3.1f", m_fPassionStream);
+	if (!m_bPassion)
+	{
+		if (ImGui::Button("Enter Passion"))
+			Increase_Passion(100.f);
+	}
+	else
+	{
+		if (ImGui::Button("Exit Passion"))
+			Decrease_Passion(100.f);
+	}
+
 	__super::Render_GUI();
 	if (m_pStateMachine)
 	{
@@ -275,6 +256,73 @@ void CJaneDoe::On_Hit(DAMAGE_TYPE eType)
 {
 	m_pStateMachine->Set_Int("HitEntryMode", ENUM(eType));
 	m_pStateMachine->Set_Trigger("ToHit");
+}
+
+void CJaneDoe::OnDamage()
+{
+	// ¿­±¤ »óÅÂ°¡ ¾Æ´Ò¶§ ¿­±¤´©Àû
+	// ¿­±¤ »óÅÂÀÏ¶§ ¿­±¤ ¼Ò¸ð
+	if (!m_bPassion)
+		Increase_Passion(1.f);
+	else
+		Decrease_Passion(1.f);
+}
+
+void CJaneDoe::OnPerfectDodge()
+{
+	// ¿­±¤ ´©Àû
+	Increase_Passion(1.f);
+}
+
+void CJaneDoe::OnDefensiveAssist()
+{
+	// ¿­±¤ ´©Àû
+	Increase_Passion(1.f);
+}
+
+void CJaneDoe::Increase_Passion(_float fStream)
+{
+	m_fPassionStream += fStream;
+	m_fPassionStream = min(m_fPassionStream, MAX_PASSIONSTREAM);
+	if (!m_bPassion && m_fPassionStream == MAX_PASSIONSTREAM)
+	{
+		m_bPassion = true;
+		m_bCanSalchow = true;
+	}
+}
+
+void CJaneDoe::Decrease_Passion(_float fStream)
+{
+	m_fPassionStream -= fStream;
+	m_fPassionStream = max(m_fPassionStream, 0.f);
+	if (m_bPassion && m_fPassionStream == 0.f)
+		m_bPassion = false;
+}
+
+void CJaneDoe::Update_MotionBlurQueue()
+{
+	++m_iFrameCount;
+	if (m_iFrameCount < FRAMECOUNT)
+		return;
+
+	m_iFrameCount = 0;
+	if (m_BoneMatrices.size() > 5)
+	{
+		m_BoneMatrices.pop_front();
+		m_WorldMatrices.pop_front();
+	}
+
+	auto Model = Get_Component<CSkeletalModel>();
+	vector<vector<_float4x4>> BoneMatrices;
+	BoneMatrices.resize(Model->Get_MeshCount());
+
+	for (_int i = 0; i < Model->Get_MeshCount(); ++i)
+	{
+		BoneMatrices[i] = m_pAnimator->Get_BoneMatrices(i);
+	}
+	_float4x4 worldMatrix = *m_pTransform->Get_WorldMatrix_Ptr();
+	m_WorldMatrices.push_back(worldMatrix);
+	m_BoneMatrices.push_back(BoneMatrices);
 }
 
 HRESULT CJaneDoe::Initialize_StateMachine()
