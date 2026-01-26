@@ -327,6 +327,7 @@ void CSacrifice::ChangePhase_SetUp()
 	m_tStatus.iNowHP = m_tStatus.iMaxHP;
 	m_tStatus.iGroggyValue = 0;
 	m_tStatus.isGroggy = false;	
+	m_IsOverDrive = true;
 }
 
 void CSacrifice::Phase1Attack()

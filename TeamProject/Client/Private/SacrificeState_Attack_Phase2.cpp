@@ -158,11 +158,11 @@ void CSacrificeState_Attack_Phase2::BuildPattern(CSacrifice* pOwner)
 			}
 		}
 	}
-	blackBoard.stateQueue.clear();
-	blackBoard.iPatternCount = 0;
-	blackBoard.stateQueue.push_back("Attack08_Phase2");
-	blackBoard.stateQueue.push_back("Attack08_Phase2");
-	blackBoard.stateQueue.push_back("Attack08_Phase2");
+	//blackBoard.stateQueue.clear();
+	//blackBoard.iPatternCount = 0;
+	//blackBoard.stateQueue.push_back("Attack08_Phase2");
+	//blackBoard.stateQueue.push_back("Attack08_Phase2");
+	//blackBoard.stateQueue.push_back("Attack08_Phase2");
 
 	blackBoard.isRequestNext = true;
 }
@@ -973,10 +973,50 @@ void CSacrificeState_OverDrive_Release_Start_Phase2::Update(CSacrifice* pOwner, 
 		if (!blackBoard.stateQueue.empty())
 			blackBoard.isRequestNext = true;
 	}
+
+	Update_Effects(pOwner);
 }
 
 void CSacrificeState_OverDrive_Release_Start_Phase2::Exit(CSacrifice* pOwner)
 {
+}
+
+void CSacrificeState_OverDrive_Release_Start_Phase2::Update_Effects(CSacrifice* pOwner)
+{
+	/* Hit Ground Smoke */
+	if (IsCrossAnimProgress(0.1f))
+	{
+		auto pAnimator = pOwner->Get_Component<CAnimator3D>();
+		auto pTransform = pOwner->Get_Component<CTransform>();
+
+		_vector3 vBonePosition = pAnimator->Get_BonePosition(CAnimator3D::BoneSpace::COMBINED, "Ctr_Eye6");
+		vBonePosition = _vector3::Transform(vBonePosition, pTransform->Get_WorldMatrix());
+		vBonePosition.y -= 0.2f;
+
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("hit_ground_smoke.json")
+			.Position(vBonePosition)
+			.Build("Hit_Ground_Smoke");
+
+		ObjectManager()->Add_Object(pEffect, { pOwner->Get_Level(),"Enemy_Effect_Layer" });
+	}
+
+	/* Hand Charge */
+	if (IsCrossAnimProgress(0.66f))
+	{
+		auto pAnimator = pOwner->Get_Component<CAnimator3D>();
+		auto pTransform = pOwner->Get_Component<CTransform>();
+
+		_vector3 vBonePosition = pAnimator->Get_BonePosition(CAnimator3D::BoneSpace::COMBINED, "Ctr_Eye6");
+		vBonePosition = _vector3::Transform(vBonePosition, pTransform->Get_WorldMatrix());
+
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_overdrive_charge_hand.json")
+			.Position(vBonePosition)
+			.Build("Sacrifice_Overdrive_Charge_Hand");
+
+		ObjectManager()->Add_Object(pEffect, { pOwner->Get_Level(),"Enemy_Effect_Layer" });
+	}
 }
 
 void CSacrificeState_OverDrive_Release_Loop_Phase2::Enter(CSacrifice* pOwner)

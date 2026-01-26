@@ -343,10 +343,30 @@ void CSacrificeHandState_OverDrive_Release_Start_Phase2::Update(CSacrificeHand* 
 		if (!blackBoard.stateQueue.empty())
 			blackBoard.isRequestNext = true;
 	}
+
+	Update_Effects(pOwner);
 }
 
 void CSacrificeHandState_OverDrive_Release_Start_Phase2::Exit(CSacrificeHand* pOwner)
 {
+}
+
+void CSacrificeHandState_OverDrive_Release_Start_Phase2::Update_Effects(CSacrificeHand* pOwner)
+{
+	if (IsCrossAnimProgress(0.18f))
+	{
+		_vector3 vWorldPosition = pOwner->Get_Component<CTransform>()->Get_WorldPos();
+		_vector3 vLook = pOwner->Get_Component<CTransform>()->Dir(STATE::LOOK);
+		vWorldPosition.y += 0.1f;
+
+		auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_hand_overdrive_charge.json")
+			.Position(vWorldPosition)
+			.Build("Sacrifice_Hand_Overdrive_Charge");
+
+		effect->Get_Component<CTransform>()->Set_Look(vLook);
+		ObjectManager()->Add_Object(effect, { "Zero_Level","Enemy_Effect_Layer" });
+	}
 }
 
 void CSacrificeHandState_OverDrive_Release_Loop_Phase2::Enter(CSacrificeHand* pOwner)
