@@ -130,6 +130,7 @@ void CScott_Level::Ready_Npc()
 	pProto->Add_ProtoType("Scott_Level", "Proto_GameObject_OfficeMeow", COfficeMeow::Create());
 	auto testMeow = Builder::Create_Object({ "Scott_Level", "Proto_GameObject_OfficeMeow" })
 		.CharacterController(meowCCT)
+		.Rotate(_float3(0.f, 90.f, 0.f))
 		.Build("Test_Meow");
 
 	objMgr->Add_Object(testMeow, { "Scott_Level", "Npc_Layer" });

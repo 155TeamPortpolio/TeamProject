@@ -2,6 +2,7 @@
 #include "JaneDoeState_SwitchInParryAid.h"
 
 #include "JaneDoe.h"
+#include "Enemy.h"
 
 void CJaneDoeState_SwitchInParryAid::Enter(CJaneDoe* pOwner)
 {
@@ -74,6 +75,13 @@ void CJaneDoeState_SwitchInParryAid_L_Loop::Enter(CJaneDoe* pOwner)
         .Loop(false)
         .Speed(1.2f)
         .Apply();
+
+    if (pOwner->Get_ParryHandle().isValid())
+    {
+        CEnemy* pEnemy = dynamic_cast<CEnemy*>(pOwner->Get_ParryHandle().Get());
+        if (pEnemy)
+            pEnemy->Parried();
+    }
 }
 
 void CJaneDoeState_SwitchInParryAid_L_Loop::Update(CJaneDoe* pOwner, _float dt)

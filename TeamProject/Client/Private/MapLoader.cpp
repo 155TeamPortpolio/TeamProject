@@ -20,7 +20,7 @@ CMapLoader::CMapLoader()
 HRESULT CMapLoader::Initialize(const string& TagLevel, const string& TagArea, _uint iSplitLoadCount)
 {
     m_TagLevel = TagLevel;
-
+    m_TagArea = TagArea;
     // 맵 베이스 데이터 없으면 로드 불가!
     if (FAILED(Load_BaseData(TagArea, &m_bHasMapBase, &m_bHasEntityBase)))
         return E_FAIL;
@@ -172,7 +172,7 @@ void CMapLoader::Update_Database()
     Data.Trigger = m_TriggerObjectHandle;
     Data.Entity = m_EntityObjectHandle;
 
-    CDataBase::GetInstance()->Update_CashedData(m_TagLevel, Data);
+    CDataBase::GetInstance()->Update_CashedData(m_TagArea, Data);
 }
 
 void CMapLoader::Place_PlacedObjectFromLoadData(MapData_Object* pData)

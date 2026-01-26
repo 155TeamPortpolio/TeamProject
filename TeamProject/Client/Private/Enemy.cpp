@@ -43,6 +43,19 @@ HRESULT CEnemy::Initialize(INIT_DESC* pArg)
 
 	m_tStatus.iMaxHP = m_tStatus.iNowHP = pDesc->iMaxHP;
 
+	switch (m_eEnemyClass)
+	{
+	case Client::CEnemy::ENEMY_CLASS::NORMAL:
+		m_tStatus.iPlayerComboCount = 1;
+		break;
+	case Client::CEnemy::ENEMY_CLASS::ELITE:
+		m_tStatus.iPlayerComboCount = 2;
+		break;
+	case Client::CEnemy::ENEMY_CLASS::BOSS:
+		m_tStatus.iPlayerComboCount = 3;
+		break;
+	}
+
 	return S_OK;
 }
 
@@ -110,8 +123,8 @@ void CEnemy::ComputeTargetingInfo()
 	//_vector3 vDirToTarget = m_tTargetingInfo.vTargetPos - m_tTargetingInfo.vSelfPos;
 
 	m_tTargetingInfo.fDistanceSq = vDirToTarget.LengthSquared();
-	if (m_tTargetingInfo.fDistanceSq <= m_fDetectedRange * m_fDetectedRange)
-		m_tTargetingInfo.isDetected = true;
+	//if (m_tTargetingInfo.fDistanceSq <= m_fDetectedRange * m_fDetectedRange)
+	//	m_tTargetingInfo.isDetected = true;
 
 	// sqrt 계산이 비교적 무거워서 후에 최적화 필요시 아래 식 사용 고려
 	//m_tTargetingInfo.fDistance = (m_tTargetingInfo.fDistanceSq > m_fDetectedRange * m_fDetectedRange) ? 
@@ -275,81 +288,82 @@ HRESULT CEnemy::AttachBattleColliderObject(BATTLE_COLLIDER_DESC* pDesc, _bool is
 	rigidbodyDesc.isKinematic = true;
 	rigidbodyDesc.bLockY = true;
 
-#pragma region TriggerCollider
-	if (false == isSeparate)
-	{
-		auto iter = m_BattleColliderChildrenIndex.find("DefaultTriggerCollider");
-
-		// DefaultTriggerCollider가 없을 때 생성
-		if (iter == m_BattleColliderChildrenIndex.end())
-		{
-			COLLIDER_DESC TriggercolliderDesc = {};
-			TriggercolliderDesc.eGroup = COLLISION_GROUP::MONSTER_PARRY;
-			TriggercolliderDesc.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER) | ENUM(COLLISION_GROUP::PLAYER_ATTACK);
-			TriggercolliderDesc.bTrigger = true;
-			TriggercolliderDesc.bAutoFit = false;
-			TriggercolliderDesc.eType = pDesc->eTriggerColliderType;
-			TriggercolliderDesc.vSize = pDesc->vTriggerSize;
-			TriggercolliderDesc.fSizeScale = pDesc->fSizeScale;
-			TriggercolliderDesc.vCenter = {}; //pDesc->vCenter;
-			TriggercolliderDesc.vRotation = pDesc->vRotation;
-
-			string tagTriggerInstance = "DefaultTriggerCollider";
-
-			auto pTriggerCollider = Builder::Create_Object({ tagNowLevel, "Proto_GameObject_EnemyTriggerCollider" })
-				.RigidBody(rigidbodyDesc)
-				.Collider(TriggercolliderDesc)
-				.Build(tagTriggerInstance);
-
-			if (nullptr == pTriggerCollider)
-				return E_FAIL;
-
-			_int iTriggerColliderChildIndex = { -1 };
-			// 뼈에 붙일 때
-			//if (true == pDesc->isAttachBone) {
-			iTriggerColliderChildIndex = pObjectContainer->Add_Child(pTriggerCollider, false);
-			pTriggerCollider->Get_Component<CBoneFollower>()->Link_Bone(pDesc->pOwnerAnimator3D, "RootNode");
-			//}
-			//else
-			//	iTriggerColliderChildIndex = pObjectContainer->Add_Child(pTriggerCollider, true);
-
-			m_BattleColliderChildrenIndex.emplace(tagTriggerInstance, iTriggerColliderChildIndex);
-		}
-	}
-	else
-	{
-		COLLIDER_DESC TriggercolliderDesc = {};
-		TriggercolliderDesc.eGroup = COLLISION_GROUP::MONSTER_PARRY;
-		TriggercolliderDesc.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER) | ENUM(COLLISION_GROUP::PLAYER_ATTACK);
-		TriggercolliderDesc.bTrigger = true;
-		TriggercolliderDesc.bAutoFit = false;
-		TriggercolliderDesc.eType = pDesc->eTriggerColliderType;
-		TriggercolliderDesc.vSize = pDesc->vTriggerSize;
-		TriggercolliderDesc.fSizeScale = pDesc->fSizeScale;
-		TriggercolliderDesc.vCenter = pDesc->vCenter;
-		TriggercolliderDesc.vRotation = pDesc->vRotation;
-
-		string tagTriggerInstance = pDesc->tagName + "_TriggerCollider";
-
-		auto pTriggerCollider = Builder::Create_Object({ tagNowLevel, "Proto_GameObject_EnemyTriggerCollider" })
-			.RigidBody(rigidbodyDesc)
-			.Collider(TriggercolliderDesc)
-			.Build(tagTriggerInstance);
-
-		if (nullptr == pTriggerCollider)
-			return E_FAIL;
-
-		_int iTriggerColliderChildIndex = { -1 };
-		// 뼈에 붙일 때
-		if (true == pDesc->isAttachBone) {
-			iTriggerColliderChildIndex = pObjectContainer->Add_Child(pTriggerCollider, false);
-			pTriggerCollider->Get_Component<CBoneFollower>()->Link_Bone(pDesc->pOwnerAnimator3D, pDesc->tagBone);
-		}
-		else
-			iTriggerColliderChildIndex = pObjectContainer->Add_Child(pTriggerCollider, true);
-
-		m_BattleColliderChildrenIndex.emplace(tagTriggerInstance, iTriggerColliderChildIndex);
-	}
+//트리거 이제안씀
+#pragma region TriggerCollider(X)
+	//if (false == isSeparate)
+	//{
+	//	auto iter = m_BattleColliderChildrenIndex.find("DefaultTriggerCollider");
+	//
+	//	// DefaultTriggerCollider가 없을 때 생성
+	//	if (iter == m_BattleColliderChildrenIndex.end())
+	//	{
+	//		COLLIDER_DESC TriggercolliderDesc = {};
+	//		TriggercolliderDesc.eGroup = COLLISION_GROUP::MONSTER_PARRY;
+	//		TriggercolliderDesc.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER) | ENUM(COLLISION_GROUP::PLAYER_ATTACK);
+	//		TriggercolliderDesc.bTrigger = true;
+	//		TriggercolliderDesc.bAutoFit = false;
+	//		TriggercolliderDesc.eType = pDesc->eTriggerColliderType;
+	//		TriggercolliderDesc.vSize = pDesc->vTriggerSize;
+	//		TriggercolliderDesc.fSizeScale = pDesc->fSizeScale;
+	//		TriggercolliderDesc.vCenter = {}; //pDesc->vCenter;
+	//		TriggercolliderDesc.vRotation = pDesc->vRotation;
+	//
+	//		string tagTriggerInstance = "DefaultTriggerCollider";
+	//
+	//		auto pTriggerCollider = Builder::Create_Object({ tagNowLevel, "Proto_GameObject_EnemyTriggerCollider" })
+	//			.RigidBody(rigidbodyDesc)
+	//			.Collider(TriggercolliderDesc)
+	//			.Build(tagTriggerInstance);
+	//
+	//		if (nullptr == pTriggerCollider)
+	//			return E_FAIL;
+	//
+	//		_int iTriggerColliderChildIndex = { -1 };
+	//		// 뼈에 붙일 때
+	//		//if (true == pDesc->isAttachBone) {
+	//		iTriggerColliderChildIndex = pObjectContainer->Add_Child(pTriggerCollider, false);
+	//		pTriggerCollider->Get_Component<CBoneFollower>()->Link_Bone(pDesc->pOwnerAnimator3D, "RootNode");
+	//		//}
+	//		//else
+	//		//	iTriggerColliderChildIndex = pObjectContainer->Add_Child(pTriggerCollider, true);
+	//
+	//		m_BattleColliderChildrenIndex.emplace(tagTriggerInstance, iTriggerColliderChildIndex);
+	//	}
+	//}
+	//else
+	//{
+	//	COLLIDER_DESC TriggercolliderDesc = {};
+	//	TriggercolliderDesc.eGroup = COLLISION_GROUP::MONSTER_PARRY;
+	//	TriggercolliderDesc.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER) | ENUM(COLLISION_GROUP::PLAYER_ATTACK);
+	//	TriggercolliderDesc.bTrigger = true;
+	//	TriggercolliderDesc.bAutoFit = false;
+	//	TriggercolliderDesc.eType = pDesc->eTriggerColliderType;
+	//	TriggercolliderDesc.vSize = pDesc->vTriggerSize;
+	//	TriggercolliderDesc.fSizeScale = pDesc->fSizeScale;
+	//	TriggercolliderDesc.vCenter = pDesc->vCenter;
+	//	TriggercolliderDesc.vRotation = pDesc->vRotation;
+	//
+	//	string tagTriggerInstance = pDesc->tagName + "_TriggerCollider";
+	//
+	//	auto pTriggerCollider = Builder::Create_Object({ tagNowLevel, "Proto_GameObject_EnemyTriggerCollider" })
+	//		.RigidBody(rigidbodyDesc)
+	//		.Collider(TriggercolliderDesc)
+	//		.Build(tagTriggerInstance);
+	//
+	//	if (nullptr == pTriggerCollider)
+	//		return E_FAIL;
+	//
+	//	_int iTriggerColliderChildIndex = { -1 };
+	//	// 뼈에 붙일 때
+	//	if (true == pDesc->isAttachBone) {
+	//		iTriggerColliderChildIndex = pObjectContainer->Add_Child(pTriggerCollider, false);
+	//		pTriggerCollider->Get_Component<CBoneFollower>()->Link_Bone(pDesc->pOwnerAnimator3D, pDesc->tagBone);
+	//	}
+	//	else
+	//		iTriggerColliderChildIndex = pObjectContainer->Add_Child(pTriggerCollider, true);
+	//
+	//	m_BattleColliderChildrenIndex.emplace(tagTriggerInstance, iTriggerColliderChildIndex);
+	//}
 
 #pragma endregion
 
@@ -397,22 +411,39 @@ void CEnemy::ManageGroggy(const _float dt)
 	{
 		m_tStatus.iGroggyValue = 100;
 		m_tStatus.isGroggy = true;
+		// UI 효과용
+		m_tStatus.isGroggyStay = true;
 	}
 
 	if (true == m_tStatus.isGroggy)
 	{
-		m_fGroggyDecreaseTime += dt;
-
-		if (0.1f <= m_fGroggyDecreaseTime)
+		if (true == m_tStatus.isGroggyStay)
 		{
-			--m_tStatus.iGroggyValue;
-			m_fGroggyDecreaseTime = 0.f;
+			m_tGroggyManage.fGroggyStayTime += dt;
+
+			m_tStatus.iGroggyValue = Helper::Get_Random_Int(1, 99);
+			if (m_tGroggyManage.fGroggyStayTime >= 3.f)
+			{
+				m_tStatus.iGroggyValue = 99;
+				m_tGroggyManage.fGroggyStayTime = 0.f;
+				m_tStatus.isGroggyStay = false;
+			}
 		}
-
-		if (0 > m_tStatus.iGroggyValue)
+		else
 		{
-			m_tStatus.iGroggyValue = 0;
-			m_tStatus.isGroggy = false;
+			m_tGroggyManage.fGroggyDecreaseTime += dt;
+
+			if (0.1f <= m_tGroggyManage.fGroggyDecreaseTime)
+			{
+				--m_tStatus.iGroggyValue;
+				m_tGroggyManage.fGroggyDecreaseTime = 0.f;
+			}
+
+			if (0 > m_tStatus.iGroggyValue)
+			{
+				m_tStatus.iGroggyValue = 0;
+				m_tStatus.isGroggy = false;
+			}
 		}
 	}
 }
@@ -455,6 +486,20 @@ DIR CEnemy::GetDIRToPlayer()
 	return map[isector];
 }
 
+void CEnemy::Parried()
+{
+	if (false == m_isParryEnable)
+		return;
+
+	m_tStatus.iGroggyValue += 15.f;
+}
+
+void CEnemy::UnleashAttack(ATTACK_SIDE eSide, _bool ParryEnable)
+{
+	SetOnAttack(true, eSide);
+	Active_AttackSign(ParryEnable);
+}
+
 void CEnemy::Create_MeshPyramid()
 {
 	auto meshPyramid = Builder::Create_Object({ G_GlobalLevelKey, "Proto_GameObject_MeshPyramid" })
@@ -470,21 +515,21 @@ void CEnemy::SetBattleColliderObject(const string& tagBattleColliderObject, BATT
 
 	if (BATTLE_COLTYPE::ATTACK == eBattleColliderType)
 		tagBattleCol += "_AttackCollider";
-	else
-		tagBattleCol += "_TriggerCollider";
+	//else
+	//	tagBattleCol += "_TriggerCollider";
 
 	auto iter = m_BattleColliderChildrenIndex.find(tagBattleCol);
 	if (iter == m_BattleColliderChildrenIndex.end())
 	{
 		// 트리거 중에 해당되는 이름의 Trigger가 없을경우(만들 때, Separate == false로 했을 때)
-		if (BATTLE_COLTYPE::TRIGGER == eBattleColliderType)
-		{
-			string defaultTriggerCol = "DefaultTriggerCollider";
-			iter = m_BattleColliderChildrenIndex.find(defaultTriggerCol);
-			if (iter == m_BattleColliderChildrenIndex.end())
-				return;
-		}
-		else
+		//if (BATTLE_COLTYPE::TRIGGER == eBattleColliderType)
+		//{
+		//	string defaultTriggerCol = "DefaultTriggerCollider";
+		//	iter = m_BattleColliderChildrenIndex.find(defaultTriggerCol);
+		//	if (iter == m_BattleColliderChildrenIndex.end())
+		//		return;
+		//}
+		//else
 			return;
 	}
 
@@ -506,33 +551,12 @@ void CEnemy::SetBattleColliderObject(const string& tagBattleColliderObject, BATT
 void CEnemy::FinishBattleColliderObject(const string& tagBattleColliderObject)
 {
 	SetBattleColliderObject(tagBattleColliderObject, BATTLE_COLTYPE::ATTACK, false);
-	SetBattleColliderObject(tagBattleColliderObject, BATTLE_COLTYPE::TRIGGER, false);
-
-	/*string tagAttackCol = tagBattleColliderObject + "_AttackCollider";
-	string tagTriggerCol = tagBattleColliderObject + "_TriggerCollider";
-
-	auto iterAttack = m_BattleColliderChildrenIndex.find(tagAttackCol);
-	if (iterAttack == m_BattleColliderChildrenIndex.end())
-		return;
-
-	auto iterTrigger = m_BattleColliderChildrenIndex.find(tagTriggerCol);
-	if (iterTrigger == m_BattleColliderChildrenIndex.end())
-		return;
-
-	const auto children = Get_Component<CObjectContainer>()->Get_Children();
-
-	if (nullptr == children[iterAttack->second] ||
-		nullptr == children[iterTrigger->second])
-		return;
-
-	dynamic_cast<CEnemyAttackCollider*>(children[iterAttack->second])->End_Attack();
-	children[iterAttack->second]->Get_Component<CCollider>()->Set_CompActive(false);
-	children[iterTrigger->second]->Get_Component<CCollider>()->Set_CompActive(false);*/
+	//SetBattleColliderObject(tagBattleColliderObject, BATTLE_COLTYPE::TRIGGER, false);
 }
 
 void CEnemy::SetAutoPlayBattleCollider(const string& tagBattleCollider, _float fAttackOffsetTime, _float fAttackPlayTime, const HitDesc& hitDesc)
 {
-	SetBattleColliderObject(tagBattleCollider, BATTLE_COLTYPE::TRIGGER, true, hitDesc);
+	//SetBattleColliderObject(tagBattleCollider, BATTLE_COLTYPE::TRIGGER, true, hitDesc);
 
 	m_tAutoBattleCol.tHitDesc = hitDesc;
 	m_tAutoBattleCol.tagBattleCollider = tagBattleCollider;
@@ -556,6 +580,18 @@ void CEnemy::Death()
 
 		if (true == m_hUIEnemyStatus.isValid())
 			UIManager()->Remove_UIObject(m_hUIEnemyStatus.Get());
+	}
+}
+
+void CEnemy::SetOnAttack(_bool is, ATTACK_SIDE eSide)
+{
+	m_isOnAttack = is;
+	m_isParryEnable = is;
+
+	// 공격이 끝났을 때,
+	if (false == is)
+	{
+		m_eCurAttackSide = ATTACK_SIDE::NONE;
 	}
 }
 
@@ -608,8 +644,8 @@ _bool CEnemy::IsAliveBattleColliderObject(const string& tagBattleColliderObject,
 
 	if (BATTLE_COLTYPE::ATTACK == eBattleColliderType)
 		tagBattleCol += "_AttackCollider";
-	else
-		tagBattleCol += "_TriggerCollider";
+	//else
+		//tagBattleCol += "_TriggerCollider";
 
 	auto iter = m_BattleColliderChildrenIndex.find(tagBattleCol);
 	if (iter == m_BattleColliderChildrenIndex.end())
@@ -622,13 +658,6 @@ _bool CEnemy::IsAliveBattleColliderObject(const string& tagBattleColliderObject,
 	return pBattleCol->Get_Component<CCollider>()->Get_CompActive();
 }
 
-void CEnemy::Render_GUI_ForShowBattleColliderHit()
-{
-	ImGui::BeginDisabled(true);
-	ImGui::Checkbox(u8"Hit중", &m_isEnterAttackHit);
-	ImGui::Checkbox(u8"회피 및 패링 가능", &m_isEnterTriggerHit);
-	ImGui::EndDisabled();
-}
 
 void CEnemy::Free()
 {

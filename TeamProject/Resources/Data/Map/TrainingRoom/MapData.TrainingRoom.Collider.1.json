@@ -16,7 +16,7 @@
       "TagName": "bCooking",
       "defaultvalue": {
         "type": "Bool",
-        "value": false
+        "value": true
       }
     },
     {
@@ -24,7 +24,7 @@
       "TagName": "bCooking",
       "defaultvalue": {
         "type": "Bool",
-        "value": false
+        "value": true
       }
     }
   ]

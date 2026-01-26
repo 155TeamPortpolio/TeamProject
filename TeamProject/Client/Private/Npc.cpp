@@ -75,6 +75,10 @@ HRESULT CNpc::Add_InteractZone(_float4 vCenter, _float3 vOffset, _float3 vRotate
 
     CObjectContainer* pObjectContainer = Add_Component<CObjectContainer>();
 
+    RIGIDBODY_DESC rigidDesc{};
+    rigidDesc.isKinematic = true;
+    rigidDesc.bEnableGravity = false;
+
     COLLIDER_DESC colliderDesc{};
     colliderDesc.eType = COLLIDER_TYPE::BOX;
     colliderDesc.eGroup = COLLISION_GROUP::INTERACTABLE;
@@ -87,10 +91,11 @@ HRESULT CNpc::Add_InteractZone(_float4 vCenter, _float3 vOffset, _float3 vRotate
     CGameObject* pInteractZone = Builder::Create_Object({ G_GlobalLevelKey, "Proto_GameObject_NpcCollider" })
         .Position(_float3(vCenter.x, vCenter.y,vCenter.z))
         .Rotate(vRotate)
+        .RigidBody(rigidDesc)
         .Collider(colliderDesc)
         .Build("NpcCollider");
 
-    pObjectContainer->Add_Child(pInteractZone, true);
+    pObjectContainer->Add_Child(pInteractZone, false);
 
     return S_OK;
 }

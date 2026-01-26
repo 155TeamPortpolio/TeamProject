@@ -58,6 +58,8 @@ HRESULT CThugBulkyEnforcer::Initialize_Prototype()
 
 HRESULT CThugBulkyEnforcer::Initialize(INIT_DESC* pArg)
 {
+	m_eEnemyClass = ENEMY_CLASS::ELITE;
+
 	__super::Initialize(pArg);
 
 	auto pModel = Get_Component<CSkeletalModel>();
@@ -85,7 +87,6 @@ HRESULT CThugBulkyEnforcer::Initialize(INIT_DESC* pArg)
 #ifdef _USING_GUI
 	CGameInstance::GetInstance()->Get_GUISystem()->Get_Context()->pSelectedObject = this;
 #endif
-
 	return S_OK;
 }
 
@@ -583,7 +584,7 @@ HRESULT CThugBulkyEnforcer::Ready_Rules()
 	m_vIdleTime = { 0.2f, 0.f };
 
 	// Target 감지 범위 (default = 5.f)
-	m_fDetectedRange = 5.f;
+	//m_fDetectedRange = 5.f;
 
 	m_tHysteriesis.fEvadeEnter = 2.f;
 	m_tHysteriesis.fComboEnter = 3.f;

@@ -62,14 +62,26 @@ OBJECT_HANDLE CFieldSystem::GetCurCharacterHandle() const
 		return OBJECT_HANDLE();
 }
 
-void CFieldSystem::SetInteractHandle(OBJECT_HANDLE InteractHandle)
+void CFieldSystem::SetInteractHandle(OBJECT_HANDLE InteractHandle, OBJECT_HANDLE InteractPartnerHandle)
 {
 	m_InteractHandle = InteractHandle;
+	m_InteractPartnerHandle = InteractPartnerHandle;
+}
+
+void CFieldSystem::ResetInteractHandle()
+{
+	m_InteractHandle = OBJECT_HANDLE{};
+	m_InteractPartnerHandle = OBJECT_HANDLE{};
 }
 
 OBJECT_HANDLE CFieldSystem::GetInteractHandle() const
 {
 	return m_InteractHandle;
+}
+
+OBJECT_HANDLE CFieldSystem::GetInteractPartnerHandle() const
+{
+	return m_InteractPartnerHandle;
 }
 
 void CFieldSystem::Free()

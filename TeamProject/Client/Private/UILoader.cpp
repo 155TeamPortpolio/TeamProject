@@ -39,6 +39,8 @@
 
 #include "UI_IconLabel.h"
 
+#include "UI_ScratchCard.h"
+
 namespace fs = filesystem;
 using namespace Helper;
 
@@ -167,6 +169,8 @@ void UILoader::Add_Prototype(const string& levelKey)
 
 		{"IconLabel",		&CUI_IconLabel::Create		},
 		{"SceneFrame",		&CUI_SceneFrame::Create		},
+
+		{"ScratchCard",		&CUI_ScratchCard::Create	},
 	};
 
 	for (const Entry& entry : entries)
