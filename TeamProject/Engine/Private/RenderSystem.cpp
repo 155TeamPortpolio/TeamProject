@@ -98,6 +98,7 @@ HRESULT CRenderSystem::Render()
 	m_pForward->Render_SSAO();
 	m_pForward->Render_LightAcc();
 	m_pForward->Render_MotionBlur();
+	m_pForward->Render_Vanish();
 	m_pForward->Render_RimLight();
 	m_pForward->Render_Combined();
 	m_pForward->Render_Blended(m_pBlendedPass);
@@ -264,6 +265,11 @@ void CRenderSystem::Add_OutLineCommand(const OUTLINE_COMMAND& command)
 void CRenderSystem::Add_MotionBlurCommand(const MOTIONBLUR_COMMAND& command)
 {
 	m_pForward->Add_MotionBlurCommand(command);
+}
+
+void CRenderSystem::Add_VanishNoiseCommand(const VANISHNOISE_COMMAND& command)
+{
+	m_pForward->Add_VanishNoiseCommand(command);
 }
 
 void CRenderSystem::Add_PostProcessCommand(const POST_PROCESS_COMMAND& command)

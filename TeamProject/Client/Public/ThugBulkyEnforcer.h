@@ -34,6 +34,10 @@ public:
 private:
     HRESULT Ready_Children(INIT_DESC* pArg);
 
+private:
+    HRESULT Add_VanishNoise();
+    HRESULT Render_VanishNoise(ID3D11DeviceContext* pContext, _uint index);
+
 public:
     CStateMachine<CThugBulkyEnforcer>* Get_StateMachine() { return m_pStateMachine; }
     ATTACK_BLACK_BOARD& GetBlackBoard() { return m_tAttackBlackBoard; }

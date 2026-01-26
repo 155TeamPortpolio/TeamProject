@@ -120,7 +120,9 @@ Texture2D UI3DTexture : register(t31);
 
 //─────────────Post─────────────
 //==Distortion==
-Texture2D DistortionCombinedTexture : register(t35);
+Texture2D DistortionCombinedTexture : register(t32);
+Texture2D VanishTexture : register(t33);
+Texture2D VanishNoiseTexture : register(t34);
 
 Texture2D MotionDepthTexture : register(t36);
 Texture2D MotionBlurTexture : register(t37);

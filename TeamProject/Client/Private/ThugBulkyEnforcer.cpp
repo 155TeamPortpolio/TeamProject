@@ -4,6 +4,8 @@
 #include "Helper_Func.h"
 #include "GameInstance.h"
 #include "BattleSystem.h"
+#include "Renderer.h"
+#include "Shader.h"
 
 /* Component */
 #include "Material.h"
@@ -50,6 +52,8 @@ HRESULT CThugBulkyEnforcer::Initialize_Prototype()
 	pResourceMgr->Add_ResourcePath("Monster_ThugBulkyEnforcer.mat", "../Bin/Resources/Model/skeletal/Enemy/ThugBulkyEnforcer/Monster_ThugBulkyEnforcer.mat");
 	pResourceMgr->Add_ResourcePath("Monster_ThugBulkyEnforcer.model", "../Bin/Resources/Model/skeletal/Enemy/ThugBulkyEnforcer/Monster_ThugBulkyEnforcer.model");
 	pResourceMgr->Add_ResourcePath("ThugBulkyEnforcer_Meta.json", "../Bin/Resources/Model/skeletal/Enemy/ThugBulkyEnforcer/ThugBulkyEnforcer_Meta.json");
+	
+	pResourceMgr->Add_ResourcePath("Eff_Noise_119.png", "../Bin/Resources/Global/Shader/Eff_Noise_119.png");
 
 	return S_OK;
 
@@ -83,6 +87,10 @@ HRESULT CThugBulkyEnforcer::Initialize(INIT_DESC* pArg)
 	if (FAILED(Initialize_StateMachine()))
 		return E_FAIL;
 
+	//*Shader Texture*
+	auto Texture = ResourceManager()->Load_Texture(G_GlobalLevelKey, "Eff_Noise_119.png");
+	RenderSystem()->Set_NoiseTexture(NOISE_FXTYPE::VANISH, Texture);
+
 	// 임시 확인용
 #ifdef _USING_GUI
 	CGameInstance::GetInstance()->Get_GUISystem()->Get_Context()->pSelectedObject = this;
@@ -98,6 +106,7 @@ void CThugBulkyEnforcer::Awake()
 void CThugBulkyEnforcer::Priority_Update(_float dt)
 {
 	Get_Component<CObjectContainer>()->Priority_UpdateChild(dt);
+	Add_VanishNoise();
 }
 
 void CThugBulkyEnforcer::Update(_float dt)
@@ -419,6 +428,55 @@ HRESULT CThugBulkyEnforcer::Ready_Children(INIT_DESC* pArg)
 	//pObjectContainer->Add_Child(pAttackSign, false);
 	//pAttackSign->Get_Component<CBoneFollower>()->Link_Bone(Get_Component<CAnimator3D>(), "Bip001 Head");
 
+	return S_OK;
+}
+
+HRESULT CThugBulkyEnforcer::Add_VanishNoise()
+{
+	auto Model = Get_Component<CSkeletalModel>();
+	_uint size = sizeof(_float4x4) * Get_Component<CAnimator3D>()->Get_BoneMatrices(CAnimator3D::BoneSpace::COMBINED).size();
+
+	for (_int i = 0; i < Model->Get_MeshCount(); ++i)
+	{
+		if (Model->isDrawable(i) == false) continue;
+
+		vector<_float4x4> BoneMatrix;
+		BoneMatrix = Get_Component<CAnimator3D>()->Get_BoneMatrices(i);
+
+		VANISHNOISE_COMMAND Command =
+		{
+			Get_Component<CMaterial>()->Get_Shader(Model->Get_MaterialIndex(i)),
+			m_pTransform->Get_WorldMatrix_Ptr(),
+			BoneMatrix,
+			"float4x4[]",
+			size ,
+			i,
+			[this](ID3D11DeviceContext* pContext, _uint index) {Render_VanishNoise(pContext,index); }
+		};
+		RenderSystem()->Add_VanishNoiseCommand(Command);
+	}
+	return S_OK;
+}
+
+HRESULT CThugBulkyEnforcer::Render_VanishNoise(ID3D11DeviceContext* pContext, _uint idx)
+{
+	auto RenderSys = RenderSystem()->GetRenderer(RENDERER_TYPE::SKINNED);
+	auto Model = Get_Component<CSkeletalModel>();
+	auto Material = Get_Component<CMaterial>();
+	_int Index = Model->Get_MaterialIndex(idx);
+	auto Shader = Material->Get_Shader(Index);
+	ID3D11InputLayout* pLayout;
+	RenderSys->Get_InputLayout(
+		Model,
+		Shader,
+		idx,
+		"Vanish",
+		&pLayout
+	);
+
+	pContext->IASetInputLayout(pLayout);
+	Shader->Apply("Vanish", pContext);
+	Model->Draw(pContext, idx);
 	return S_OK;
 }
 
