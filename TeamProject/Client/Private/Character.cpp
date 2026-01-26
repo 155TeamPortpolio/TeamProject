@@ -151,11 +151,6 @@ void CCharacter::Priority_Update(_float dt)
 
 void CCharacter::Update(_float dt)
 {
-	if (InputDevice()->Key_Tap(VK_F3))
-	{
-		Take_Damage(DAMAGE_TYPE::NORMAL, 10.f);
-	}
-
 	m_pAnimator->Update_Animation(dt);
 	m_pCCT->Update(dt);
 	Update_Evade(dt);
@@ -516,14 +511,15 @@ _bool CCharacter::Is_Active_AttackCollider(const string& strName)
 
 void CCharacter::Take_Damage(DAMAGE_TYPE eType, _float fDamage)
 {
-	if (Is_Invincible()) return;
+	//if (Is_Invincible()) return;
 
 	m_fCurrentHP -= fDamage;
 	On_Hit(eType);
 
 	CUI_DamageText::DAMAGE_DESC desc{};
-	desc.pos    = m_vHitPos;
-	desc.damage = (_int)fDamage;
+	desc.damage        = (_int)fDamage;
+	desc.followHandle  = Get_Handle();
+	desc.followOffset  = Vector3(0.f, 1.3f, 0.f);
 
 	UIDirector()->Request_DamageText(&desc);
 }

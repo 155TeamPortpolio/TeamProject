@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "UI_DamageText.h"
-
+#include "CamDirector.h"
+// Engine
 #include "ObjectContainer.h"
 #include "GameInstance.h"
 #include "LevelMgr.h"
@@ -8,6 +9,13 @@
 namespace
 {
     static const string kAtlasTexKey = "DamageText.png";
+
+    static const string kColorAtlasTexKey = "DamageTextColor.png";
+    constexpr _uint  kColorIdx_JaneDoe = 3;
+    constexpr _uint  kColorIdx_Corin   = 3;
+
+    constexpr _uint  kColorFrameCountX = 8;
+    constexpr _uint  kColorFrameCountY = 1;
 
     constexpr _uint  kFrameCountX = 8;
     constexpr _uint  kFrameCountY = 8;
@@ -19,6 +27,9 @@ namespace
     // 글리프들 사이의 기본 간격(px)
     // kOverlapHold와 함께 최종 spacing을 계산하는 베이스 값
     constexpr _float kGlyphSpacingPx = 2.f;
+
+    constexpr _float  kSpawnRadiusPx = 75.f;
+    const     Vector3 kDefaultFollowOffset = Vector3(0.f, 1.3f, 0.f);
 
     // 홀드(중간) 구간에서 글리프가 서로 얼마나 겹치게 할지 비율(0~1)
     // 1에 가까울수록 겹침이 거의 없고, 작을수록 더 많이 겹침
@@ -32,7 +43,7 @@ namespace
     // 전체 "등장" 구간의 총 시간(초)
     // 여러 자리일 때 digitInStaggerSec로 각 자리 등장 시작을 분산시키되,
     // 전체적으로 kInTotalSec 안에 다 들어오게 맞춤
-    constexpr _float kInTotalSec = 0.4f;
+    constexpr _float kInTotalSec = 0.30f;
 
     // 등장 후 화면에 유지되는(홀드) 시간(초)
     constexpr _float kHoldSec = 1.50f;
@@ -40,31 +51,23 @@ namespace
     // 전체 "퇴장" 구간의 총 시간(초)
     // 여러 자리일 때 digitOutStaggerSec로 각 자리 퇴장 시작을 분산시키되,
     // 전체적으로 kOutTotalSec 안에 다 들어오게 맞춤
-    constexpr _float kOutTotalSec = 0.40f;
+    constexpr _float kOutTotalSec = 0.30f;
 
     // 한 자리(글리프)당 인(등장) 애니메이션 지속 시간(초)
     // 여러 자리일 때 각 자리별 인 애니가 이 시간만큼 진행됨
     constexpr _float kDigitInSec = 0.20f;
 
-    // 한 자리(글리프)당 아웃(퇴장) 애니메이션 지속 시간(초)
+    // 한 자리(글리프)당 아웃(퇴장) 애니메이션 지속 시간(초)   
     constexpr _float kDigitOutSec = 0.20f;
 
     // 알파(투명도) 아웃이 digitOutSec 중 얼마를 차지할지 비율(0~1)
     // alphaOutSec = digitOutSec * kAlphaOutSecRatio
-    constexpr _float kAlphaOutSecRatio = 0.8f;
+    constexpr _float kAlphaOutSecRatio = 1.f;
 
-    // 스케일 애니메이션의 시작/홀드/끝 값
-    // - Start: 처음 팡! 튀어나올 때 크기
-    // - Hold : 유지 구간에서의 안정 크기
-    // - End  : 사라질 때의 최종 크기
-    constexpr _float kScaleStart = 1.85f;
+    constexpr _float kScaleStart = 1.3f;
     constexpr _float kScaleHold  = 0.68f;
     constexpr _float kScaleEnd   = 0.42f;
 
-    // 스케일/알파에 적용하는 이징 타입
-    // - ScaleEase: 크기 변화에 쓰는 곡선
-    // - AlphaInEase: 등장 알파 곡선
-    // - AlphaOutEase: 퇴장 알파 곡선
     constexpr EaseType kScaleEase = EaseType::OutCubic;
     constexpr EaseType kAlphaInEase = EaseType::InCubic;
     constexpr EaseType kAlphaOutEase = EaseType::OutQuad;
@@ -137,6 +140,14 @@ namespace
 
         return t;
     }
+
+    static Vector2 RandomInDiscPx(_float radius)
+    {
+        const _float r = sqrtf(Helper::Get_Random_Float(0.f, 1.f)) * radius;
+        const _float a = Helper::Get_Random_Float(0.f, 1.f) * XM_2PI;
+
+        return Vector2(cosf(a) * r, sinf(a) * r);
+    }
 }
 
 CUI_DamageText::CUI_DamageText(const CUI_DamageText& rhs) : CUI_WorldToScreen(rhs)
@@ -184,10 +195,18 @@ void CUI_DamageText::Update(_float dt)
 
     if (m_digits.empty()) return;
 
+    if (m_followHandle.isValid())
+    {
+        auto obj = ObjectManager()->Request_Object(m_followHandle);
+        Vector3 p = obj->Get_WorldPos();
+        p += m_followOffset;
+        m_worldPos = _float3(p.x, p.y, p.z);
+    }
+
     Update_WorldToScreen(m_worldPos);
 
     auto base = Get_AnchorOffset();
-    m_baseAnchorOffset = Vector2(base.x, base.y);
+    m_baseAnchorOffset = Vector2(base.x, base.y) + m_spawnOffsetPx;
 
     Update_Anim(dt);
     Apply_LayoutScaled();
@@ -200,13 +219,44 @@ void CUI_DamageText::UI_Active(void* arg)
     auto desc = static_cast<DAMAGE_DESC*>(arg);
 
     m_time = 0.f;
-    m_worldPos = _float3(desc->pos.x, desc->pos.y, desc->pos.z);
+
+    m_followHandle = desc->followHandle;
+
+    if (m_followHandle.isValid())
+    {
+        m_followOffset = kDefaultFollowOffset;
+
+        if (desc->followOffset.LengthSquared() > 0.f)
+            m_followOffset = desc->followOffset;
+
+        m_spawnOffsetPx = RandomInDiscPx(kSpawnRadiusPx);
+
+        auto obj = ObjectManager()->Request_Object(m_followHandle);
+        Vector3 p = obj->Get_WorldPos();
+        p += m_followOffset;
+        m_worldPos = _float3(p.x, p.y, p.z);
+    }
+    else
+    {
+        m_followOffset = Vector3(0.f, 0.f, 0.f);
+        m_spawnOffsetPx = Vector2(0.f, 0.f);
+        m_worldPos = _float3(desc->pos.x, desc->pos.y, desc->pos.z);
+    }
+
+    m_colorFrameIdx = 0;
+
+    switch (CamDirector()->GetCharacterName())
+    {
+    case CHARACTER::JaneDoe: m_colorFrameIdx = kColorIdx_JaneDoe; break;
+    case CHARACTER::Corin:   m_colorFrameIdx = kColorIdx_Corin;   break;
+    default:                 m_colorFrameIdx = 0;                 break;
+    }
 
     SetRenderLayer(RENDER_LAYER::Default);
     Update_WorldToScreen(m_worldPos);
 
     auto base = Get_AnchorOffset();
-    m_baseAnchorOffset = Vector2(base.x, base.y);
+    m_baseAnchorOffset = Vector2(base.x, base.y) + m_spawnOffsetPx;
 
     SetDamage(desc->damage);
 }
@@ -239,6 +289,7 @@ void CUI_DamageText::SetDamage(_int damage)
 
         auto glyph = GetGlyph(i);
         glyph->Set_FrameIndex(frameIndex);
+        glyph->Set_ColorFrameIndex(m_colorFrameIdx);
         glyph->Set_Color(m_vColor);
         glyph->Set_Alpha(0.f);
     }
@@ -254,6 +305,7 @@ void CUI_DamageText::SetDamage(_int damage)
     Rebuild_BaseLayout();
     Apply_LayoutScaled();
 }
+
 
 void CUI_DamageText::Rebuild_BaseLayout()
 {
@@ -375,12 +427,12 @@ void CUI_DamageText::Ensure_GlyphCount(_uint count)
     auto container = Get_Component<CObjectContainer>();
     while ((_uint)m_glyphs.size() < count)
     {
-        auto pDesc         = new CUI_AtlasSprite::ATLAS_DESC;
-        pDesc->texKey      = kAtlasTexKey;
+        auto pDesc = new CUI_AtlasSprite::ATLAS_DESC;
+        pDesc->texKey = kAtlasTexKey;
         pDesc->frameCountX = kFrameCountX;
         pDesc->frameCountY = kFrameCountY;
-        pDesc->frameIdx    = 0;
-        pDesc->heightPx    = kGlyphHeightPx;
+        pDesc->frameIdx = 0;
+        pDesc->heightPx = kGlyphHeightPx;
 
         auto builder = Builder::Create_UIObject({G_GlobalLevelKey, "Proto_GameObject_AtlasSprite"});
         builder.Add_UIDesc(pDesc);
@@ -393,6 +445,8 @@ void CUI_DamageText::Ensure_GlyphCount(_uint count)
 
         glyph->Align_To(ANCHOR::Left | ANCHOR::Top);
         glyph->Set_Pivot({0.f, 0.f});
+
+        glyph->Set_ColorAtlas(kColorAtlasTexKey, kColorFrameCountX, kColorFrameCountY);
     }
 }
 

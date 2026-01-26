@@ -843,9 +843,6 @@
     <Filter Include="02. GameObject\UI\02. 3D\Plane\DamageText">
       <UniqueIdentifier>{4ca6e733-edcb-4ac1-88df-cd51632b53c6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\UI\02. 3D\Plane\DamageText\DamageText">
-      <UniqueIdentifier>{04c4b73f-8429-408a-91c9-5eebde162c6e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="03. Utility\07. UIDirector">
       <UniqueIdentifier>{42edd944-ef6d-4efd-b82d-9cadbc7ddc9f}</UniqueIdentifier>
     </Filter>
@@ -1643,9 +1640,6 @@
     <ClInclude Include="..\public\UI_AtlasSprite.h">
       <Filter>02. GameObject\UI\03. UIElement\Atlas_Sprite</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\UI_DamageText.h">
-      <Filter>02. GameObject\UI\02. 3D\Plane\DamageText\DamageText</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\UI_HUD.h">
       <Filter>02. GameObject\UI\01. 2D\HUD</Filter>
     </ClInclude>
@@ -1675,6 +1669,9 @@
     </ClInclude>
     <ClInclude Include="..\public\Room_Lottery.h">
       <Filter>03. Utility\06. FieldSystem\Room\03. Lottery</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_DamageText.h">
+      <Filter>02. GameObject\UI\02. 3D\Plane\DamageText</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2419,9 +2416,6 @@
     <ClCompile Include="..\private\UI_AtlasSprite.cpp">
       <Filter>02. GameObject\UI\03. UIElement\Atlas_Sprite</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\UI_DamageText.cpp">
-      <Filter>02. GameObject\UI\02. 3D\Plane\DamageText\DamageText</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\UI_HUD.cpp">
       <Filter>02. GameObject\UI\01. 2D\HUD</Filter>
     </ClCompile>
@@ -2448,6 +2442,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Room_Lottery.cpp">
       <Filter>03. Utility\06. FieldSystem\Room\03. Lottery</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_DamageText.cpp">
+      <Filter>02. GameObject\UI\02. 3D\Plane\DamageText</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
