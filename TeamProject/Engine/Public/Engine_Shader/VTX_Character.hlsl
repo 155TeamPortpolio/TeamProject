@@ -231,6 +231,7 @@ PS_OUT PS_MAIN(PS_IN In)
         vMetalic.a = 0.8f;
         Out.vLook = float4(vLookVector.xyz * 0.5f + 0.5f, 1.f);
     }
+    
     if (vAmbient.g < 0.2) vAmbient.g = 1.f;
     vAmbient.b = 0;
     Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / zFar, 0.f, 1.f);

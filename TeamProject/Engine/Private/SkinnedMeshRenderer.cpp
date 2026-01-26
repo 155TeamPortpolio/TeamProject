@@ -150,6 +150,7 @@ HRESULT CSkinnedMeshRenderer::Render_SkinnedMesh_LightAcc()
 	m_pTargetManager->Bind_Target("Target_Skinned_Normal", m_pShader, "NormalTexture");
 	m_pTargetManager->Bind_Target("Target_Skinned_Depth", m_pShader, "DepthTexture");
 	m_pTargetManager->Bind_Target("Target_Skinned_Metalic", m_pShader, "MetalicTexture");
+	m_pTargetManager->Bind_Target("Target_Utility", m_pShader, "FaceDirTexture");
 
 	
 	Bind_WorldMatrix();
@@ -257,9 +258,8 @@ HRESULT CSkinnedMeshRenderer::Ready_Target()
 
 	RenderTargetDesc AmbiDesc = { "Target_Ambient" , DXGI_FORMAT_R16G16B16A16_UNORM , DXGI_FORMAT_D24_UNORM_S8_UINT, _float4(0.0f, 0.0f, 0.0f, 0.0f) ,ViewportDesc.Width, ViewportDesc.Height };
 	m_pTargetManager->Create_Target(AmbiDesc);
-
-	RenderTargetDesc FaceDesc = { "Target_FaceDir" , DXGI_FORMAT_R16G16B16A16_UNORM , DXGI_FORMAT_D24_UNORM_S8_UINT, _float4(0.f, 0.f, 0.f, 0.0f) ,ViewportDesc.Width, ViewportDesc.Height };
-	m_pTargetManager->Create_Target(FaceDesc);
+	RenderTargetDesc UtilityDesc = { "Target_Utility" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT, _float4(0.f, 0.f, 0.f, 0.0f) ,ViewportDesc.Width, ViewportDesc.Height };
+	m_pTargetManager->Create_Target(UtilityDesc);
 
 	RenderTargetDesc MotionBlurDesc = { "Target_MotionBlur" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT, _float4(0.0f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
 	m_pTargetManager->Create_Target(MotionBlurDesc);
@@ -305,7 +305,7 @@ HRESULT CSkinnedMeshRenderer::Ready_MRT()
 		if (FAILED(m_pTargetManager->Add_MRT("MRT_Deferred_Skinned", "Target_Skinned_Metalic"))) return E_FAIL;
 		if (FAILED(m_pTargetManager->Add_MRT("MRT_Deferred_Skinned", "Target_Ambient"))) return E_FAIL;
 		if (FAILED(m_pTargetManager->Add_MRT("MRT_Deferred_Skinned", "Target_RimLight"))) return E_FAIL;
-		if (FAILED(m_pTargetManager->Add_MRT("MRT_Deferred_Skinned", "Target_FaceDir"))) return E_FAIL;
+		if (FAILED(m_pTargetManager->Add_MRT("MRT_Deferred_Skinned", "Target_Utility"))) return E_FAIL;
 	}
 
 	{
