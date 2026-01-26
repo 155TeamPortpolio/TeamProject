@@ -48,7 +48,6 @@ void CCharacterParryCollider::Awake()
 void CCharacterParryCollider::Priority_Update(_float dt)
 {
 	m_vPrevPos = m_pTransform->Get_Pos();
-	m_ParryableTargets.clear();
 }
 
 void CCharacterParryCollider::Update(_float dt)
@@ -58,6 +57,7 @@ void CCharacterParryCollider::Update(_float dt)
 void CCharacterParryCollider::Late_Update(_float dt)
 {
 	Get_Component<CRigidBody>()->Late_Update(dt);
+	m_ParryableTargets.clear();
 }
 
 void CCharacterParryCollider::Render_GUI()
@@ -69,8 +69,8 @@ void CCharacterParryCollider::OnTriggerEnter(CGameObject* pOther)
 {
 	if (!dynamic_cast<CEnemy*>(pOther)) return;
 
-	auto pCharacter = dynamic_cast<CCharacter*>(Get_Component<CChild>()->Get_Parent());
-	if (pCharacter->Is_Invincible()) return;
+	//auto pCharacter = dynamic_cast<CCharacter*>(Get_Component<CChild>()->Get_Parent());
+	//if (pCharacter->Is_Invincible()) return;
 
 	m_ParryableTargets.push_back(pOther->Get_Handle());
 }
@@ -79,8 +79,8 @@ void CCharacterParryCollider::OnTriggerStay(CGameObject* pOther)
 {
 	if (!dynamic_cast<CEnemy*>(pOther)) return;
 
-	auto pCharacter = dynamic_cast<CCharacter*>(Get_Component<CChild>()->Get_Parent());
-	if (pCharacter->Is_Invincible()) return;
+	//auto pCharacter = dynamic_cast<CCharacter*>(Get_Component<CChild>()->Get_Parent());
+	//if (pCharacter->Is_Invincible()) return;
 
 	// 중복 체크
 	OBJECT_HANDLE handle = pOther->Get_Handle();
@@ -105,7 +105,7 @@ _bool CCharacterParryCollider::Can_Parry()
 	{
 		OBJECT_HANDLE handle = *it;
 		CEnemy* pEnemy = dynamic_cast<CEnemy*>(handle.Get());
-		if (!handle.isValid() || !handle.isAlive() || !pEnemy || !pEnemy->IsParryEnable())
+		if (!pEnemy || !pEnemy->IsParryEnable())
 			it = m_ParryableTargets.erase(it);
 		else
 			++it;

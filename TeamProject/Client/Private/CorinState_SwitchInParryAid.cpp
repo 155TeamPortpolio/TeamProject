@@ -60,7 +60,7 @@ void CCorinState_SwitchInParryAid_Start::Enter(CCorin* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_ParryAid_Start")
         .Loop(false)
-        .Speed(1.2f)
+        .Speed(2.f)
         .Apply();
 }
 
