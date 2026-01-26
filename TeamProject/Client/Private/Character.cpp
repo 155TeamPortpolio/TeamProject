@@ -511,7 +511,7 @@ _bool CCharacter::Is_Active_AttackCollider(const string& strName)
 
 void CCharacter::Take_Damage(DAMAGE_TYPE eType, _float fDamage)
 {
-	//if (Is_Invincible()) return;
+	if (Is_Invincible()) return;
 
 	m_fCurrentHP -= fDamage;
 	On_Hit(eType);
