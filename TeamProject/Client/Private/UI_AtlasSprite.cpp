@@ -119,3 +119,8 @@ CGameObject* CUI_AtlasSprite::Clone(INIT_DESC* pArg)
     }
     return inst;
 }
+
+void CUI_AtlasSprite::Free()
+{
+    __super::Free();
+}

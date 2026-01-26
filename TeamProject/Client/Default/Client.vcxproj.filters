@@ -316,9 +316,6 @@
     <Filter Include="02. GameObject\UI">
       <UniqueIdentifier>{55bb7252-7639-4270-b550-e55db163b9f0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\UI\00. UIDirector">
-      <UniqueIdentifier>{42edd944-ef6d-4efd-b82d-9cadbc7ddc9f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchIn">
       <UniqueIdentifier>{b1f53003-7c24-4dfd-8b11-f92265e814c7}</UniqueIdentifier>
     </Filter>
@@ -777,15 +774,6 @@
     <Filter Include="02. GameObject\Object\Player\Character\Collider\AttackCollider">
       <UniqueIdentifier>{8cafc1ce-885d-4894-bbae-9bc579a5da0c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Camera\07. CamDirector">
-      <UniqueIdentifier>{0d1fd986-9b7f-4463-b27c-8cc9eae09a0b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Camera\07. CamDirector\00. CamEventController">
-      <UniqueIdentifier>{e32e2694-55ad-4df0-9498-5b9d07742769}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Camera\07. CamDirector\01. CamDialogueController">
-      <UniqueIdentifier>{9d3b873e-a8e1-46d5-bf26-47096a796f2e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\UI\01. 2D\SceneFrame">
       <UniqueIdentifier>{da2fd65e-9bf7-4fb2-a1b2-95af726ef1a4}</UniqueIdentifier>
     </Filter>
@@ -822,15 +810,6 @@
     <Filter Include="02. GameObject\Camera\04. OrbitCam\05. OrbitPoseSmootherController">
       <UniqueIdentifier>{4b23b083-95ec-4c48-8cb8-297675f8781c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\UI\01. 2D\HUD_Battle\DamageText">
-      <UniqueIdentifier>{4ca6e733-edcb-4ac1-88df-cd51632b53c6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\UI\01. 2D\HUD_Battle\DamageText\Atlas_Sprite">
-      <UniqueIdentifier>{141ad35d-d882-4929-ae9d-00da8a8aaf8e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\UI\01. 2D\HUD_Battle\DamageText\DamageText">
-      <UniqueIdentifier>{04c4b73f-8429-408a-91c9-5eebde162c6e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\Object\Npc\Dialogue">
       <UniqueIdentifier>{0bafe532-d8a7-4715-bb85-07a6f77d204c}</UniqueIdentifier>
     </Filter>
@@ -849,14 +828,38 @@
     <Filter Include="02. GameObject\UI\03. UIElement\NineSlice">
       <UniqueIdentifier>{2646c162-8883-48f9-b637-d3f38abb755c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\ThugAssaulter\State\Parry">
+      <UniqueIdentifier>{d4691cdc-435c-40af-bae7-768659b32872}</UniqueIdentifier>
+    </Filter>
     <Filter Include="03. Utility\04. BattleSystem\FX_Battle">
       <UniqueIdentifier>{80b278d6-d073-43f9-b769-b90f4b580861}</UniqueIdentifier>
- </Filter>
+    </Filter>
     <Filter Include="02. GameObject\Camera\04. OrbitCam\04. OrbitInputController">
       <UniqueIdentifier>{f2b96f4c-58cb-4f92-b00f-2008a29960a0}</UniqueIdentifier>
     </Filter>
     <Filter Include="03. Utility\06. FieldSystem\Room\03. Lottery">
       <UniqueIdentifier>{f458eb41-acf4-446d-a7e3-75ed729e28c0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\02. 3D\Plane\DamageText">
+      <UniqueIdentifier>{4ca6e733-edcb-4ac1-88df-cd51632b53c6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\02. 3D\Plane\DamageText\DamageText">
+      <UniqueIdentifier>{04c4b73f-8429-408a-91c9-5eebde162c6e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\07. UIDirector">
+      <UniqueIdentifier>{42edd944-ef6d-4efd-b82d-9cadbc7ddc9f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\08. CamDirector">
+      <UniqueIdentifier>{0d1fd986-9b7f-4463-b27c-8cc9eae09a0b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\08. CamDirector\00. CamEventController">
+      <UniqueIdentifier>{e32e2694-55ad-4df0-9498-5b9d07742769}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\08. CamDirector\01. CamDialogueController">
+      <UniqueIdentifier>{9d3b873e-a8e1-46d5-bf26-47096a796f2e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\03. UIElement\Atlas_Sprite">
+      <UniqueIdentifier>{141ad35d-d882-4929-ae9d-00da8a8aaf8e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -900,7 +903,7 @@
       <Filter>02. GameObject\Camera\00. CamObject</Filter>
     </ClInclude>
     <ClInclude Include="..\public\CamDirector.h">
-      <Filter>02. GameObject\Camera\07. CamDirector</Filter>
+      <Filter>03. Utility\08. CamDirector</Filter>
     </ClInclude>
     <ClInclude Include="..\public\OrbitCam.h">
       <Filter>02. GameObject\Camera\04. OrbitCam</Filter>
@@ -1038,7 +1041,7 @@
       <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Attack\Phase2</Filter>
     </ClInclude>
     <ClInclude Include="..\public\UIDirector.h">
-      <Filter>02. GameObject\UI\00. UIDirector</Filter>
+      <Filter>03. Utility\07. UIDirector</Filter>
     </ClInclude>
     <ClInclude Include="..\public\UILoader.h">
       <Filter>03. Utility\03. UILoader</Filter>
@@ -1464,7 +1467,7 @@
       <Filter>02. GameObject\Object\Player\Character\Corin\State\Hit</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\CamDirectorData.h">
-      <Filter>02. GameObject\Camera\07. CamDirector</Filter>
+      <Filter>03. Utility\08. CamDirector</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\OrbitCamTypes.h">
       <Filter>02. GameObject\Camera\04. OrbitCam</Filter>
@@ -1599,10 +1602,10 @@
       <Filter>02. GameObject\Object\Player\Character\Collider\ParryCollider</Filter>
     </ClInclude>
     <ClInclude Include="..\public\CamEventController.h">
-      <Filter>02. GameObject\Camera\07. CamDirector\00. CamEventController</Filter>
+      <Filter>03. Utility\08. CamDirector\00. CamEventController</Filter>
     </ClInclude>
     <ClInclude Include="..\public\CamDialogueController.h">
-      <Filter>02. GameObject\Camera\07. CamDirector\01. CamDialogueController</Filter>
+      <Filter>03. Utility\08. CamDirector\01. CamDialogueController</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UI_DialogueMessage.h">
       <Filter>02. GameObject\UI\01. 2D\Dialogue\Message</Filter>
@@ -1638,10 +1641,10 @@
       <Filter>02. GameObject\Camera\04. OrbitCam\05. OrbitPoseSmootherController</Filter>
     </ClInclude>
     <ClInclude Include="..\public\UI_AtlasSprite.h">
-      <Filter>02. GameObject\UI\01. 2D\HUD_Battle\DamageText\Atlas_Sprite</Filter>
+      <Filter>02. GameObject\UI\03. UIElement\Atlas_Sprite</Filter>
     </ClInclude>
     <ClInclude Include="..\public\UI_DamageText.h">
-      <Filter>02. GameObject\UI\01. 2D\HUD_Battle\DamageText\DamageText</Filter>
+      <Filter>02. GameObject\UI\02. 3D\Plane\DamageText\DamageText</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UI_HUD.h">
       <Filter>02. GameObject\UI\01. 2D\HUD</Filter>
@@ -1661,12 +1664,15 @@
     <ClInclude Include="..\Public\NineSliceUI.h">
       <Filter>02. GameObject\UI\03. UIElement\NineSlice</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\ThugAssaulter_Parried.h">
+      <Filter>02. GameObject\Object\Enemy\ThugAssaulter\State\Parry</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\BattleSystem_Struct.h">
       <Filter>03. Utility\04. BattleSystem\Monster Spawner</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\BattleFXFlow.h">
       <Filter>03. Utility\04. BattleSystem\FX_Battle</Filter>
-</ClInclude>
+    </ClInclude>
     <ClInclude Include="..\public\Room_Lottery.h">
       <Filter>03. Utility\06. FieldSystem\Room\03. Lottery</Filter>
     </ClInclude>
@@ -1731,7 +1737,7 @@
       <Filter>02. GameObject\Camera\03. SequenceCam</Filter>
     </ClCompile>
     <ClCompile Include="..\private\CamDirector.cpp">
-      <Filter>02. GameObject\Camera\07. CamDirector</Filter>
+      <Filter>03. Utility\08. CamDirector</Filter>
     </ClCompile>
     <ClCompile Include="..\private\OrbitCam.cpp">
       <Filter>02. GameObject\Camera\04. OrbitCam</Filter>
@@ -1842,7 +1848,7 @@
       <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Attack\Phase2</Filter>
     </ClCompile>
     <ClCompile Include="..\private\UIDirector.cpp">
-      <Filter>02. GameObject\UI\00. UIDirector</Filter>
+      <Filter>03. Utility\07. UIDirector</Filter>
     </ClCompile>
     <ClCompile Include="..\private\UILoader.cpp">
       <Filter>03. Utility\03. UILoader</Filter>
@@ -2375,10 +2381,10 @@
       <Filter>02. GameObject\Object\Player\Character\Collider\ParryCollider</Filter>
     </ClCompile>
     <ClCompile Include="..\private\CamEventController.cpp">
-      <Filter>02. GameObject\Camera\07. CamDirector\00. CamEventController</Filter>
+      <Filter>03. Utility\08. CamDirector\00. CamEventController</Filter>
     </ClCompile>
     <ClCompile Include="..\private\CamDialogueController.cpp">
-      <Filter>02. GameObject\Camera\07. CamDirector\01. CamDialogueController</Filter>
+      <Filter>03. Utility\08. CamDirector\01. CamDialogueController</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UI_DialogueMessage.cpp">
       <Filter>02. GameObject\UI\01. 2D\Dialogue\Message</Filter>
@@ -2411,10 +2417,10 @@
       <Filter>02. GameObject\Camera\04. OrbitCam\05. OrbitPoseSmootherController</Filter>
     </ClCompile>
     <ClCompile Include="..\private\UI_AtlasSprite.cpp">
-      <Filter>02. GameObject\UI\01. 2D\HUD_Battle\DamageText\Atlas_Sprite</Filter>
+      <Filter>02. GameObject\UI\03. UIElement\Atlas_Sprite</Filter>
     </ClCompile>
     <ClCompile Include="..\private\UI_DamageText.cpp">
-      <Filter>02. GameObject\UI\01. 2D\HUD_Battle\DamageText\DamageText</Filter>
+      <Filter>02. GameObject\UI\02. 3D\Plane\DamageText\DamageText</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UI_HUD.cpp">
       <Filter>02. GameObject\UI\01. 2D\HUD</Filter>
@@ -2433,6 +2439,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\NineSliceUI.cpp">
       <Filter>02. GameObject\UI\03. UIElement\NineSlice</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ThugAssaulter_Parried.cpp">
+      <Filter>02. GameObject\Object\Enemy\ThugAssaulter\State\Parry</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\BattleFXFlow.cpp">
       <Filter>03. Utility\04. BattleSystem\FX_Battle</Filter>

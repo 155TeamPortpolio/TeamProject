@@ -35,6 +35,8 @@ private:
     void Rebuild_BaseLayout();
     void Apply_LayoutScaled();
     void Update_Anim(_float dt);
+    void OnPooledAcquire(INIT_DESC* pArg = {}) override {}
+    void OnPooledRelease() override {}
 
     _uint GetDigitFrameIdx(_uint digit) const;
     CUI_AtlasSprite* GetGlyph(_uint i) const { return m_glyphs[i]; }

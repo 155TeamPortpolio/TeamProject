@@ -23,6 +23,7 @@ public:
     virtual void Render_GUI() override;
     virtual void OnPooledAcquire(INIT_DESC* pArg = nullptr) override;
     virtual void OnPooledRelease() override;
+    virtual void Parried() override;
 
 public:
     static CThugAssaulter* Create();

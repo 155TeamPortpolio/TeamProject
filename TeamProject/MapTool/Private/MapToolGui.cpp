@@ -24,6 +24,7 @@ CMapToolGui::CMapToolGui(GUI_CONTEXT* pContext)
 {
     Safe_AddRef(m_pGameInstance);
     Safe_AddRef(m_pMapToolCore);
+    m_pMapToolCore->RegisterGuiPanel(this);
 }
 
 HRESULT CMapToolGui::Initialize()
@@ -176,7 +177,7 @@ void CMapToolGui::Render_GUI()
             m_pMapToolCore->Load_MapData();
         }
         ImGui::SameLine();
-        if (ImGui::Button("LoadWithEntity")) {
+        if (ImGui::Button("LoadOnce")) {
             m_pMapToolCore->Load_WithEntityData();
         }
         ImGui::SameLine();
@@ -523,7 +524,7 @@ void CMapToolGui::Save_MapData()
     _int    iObjIndex = {};
 
 
-    for (_uint i = 0; i < ENUM(MAPOBJ_TYPE::END); ++i) {
+    for (_uint i = 0; i < ENUM(MAPOBJ_TYPE::TRIGGER); ++i) {
         CLayer* pLayer = m_pGameInstance->Get_ObjectMgr()->Get_Layer({ g_TagMapToolLevel, g_tagMapObjType[i] });
         if (nullptr == pLayer)
             continue;
@@ -703,6 +704,217 @@ void CMapToolGui::Save_BattleData()
 
     if (true == HelperMT::ExportJsonFile<BATTLE_FIELD_DATA>(m_BattleData, SavePath))
         m_isShowDataSaveFinish = true;
+}
+
+void CMapToolGui::Load_BattleData(const string& filepath)
+{
+    string Path = filepath;
+
+    if (Path.empty()) {
+
+        filesystem::path OpenPath = Helper::OpenFile_Dialogue();
+
+        if (OpenPath.empty())
+            return;
+
+        if (OpenPath.extension().string() != ".json") {
+            MSG_BOX("[MapTool] Load Map Data Failed.\nJson 파일이 아닙니다.");
+            return;
+        }
+
+        Path = OpenPath.string();
+    }
+
+    m_pGameInstance->Get_GUISystem()->Get_Context()->pSelectedObject = { nullptr };
+    
+    m_BattleData = Helper::LoadJson<BATTLE_FIELD_DATA>(Path);
+
+    m_BattleData.TagDataFormat = "BattleData";
+    m_BattleData.TagArea = m_pMapToolContext->TagArea;
+   
+    //Load PlayerSpawnPoint
+    CLayer* pPlayerLayer = m_pGameInstance->Get_ObjectMgr()->Get_Layer({ g_TagMapToolLevel, g_tagBattleObjType[ENUM(BATTLE_TYPE::PLAYER)] });
+    if (nullptr != pPlayerLayer)
+        pPlayerLayer->Clear_Layer();
+
+    if (m_BattleData.PlayerSpawnPoint.iIndex != -1) {
+        CBattleObject::BATTLE_INIT_DESC* desc = new CBattleObject::BATTLE_INIT_DESC();
+        string tagProto = "Proto_GameObject_BattlePlayerPoint";
+        string tagInstanceName = "BattlePlayerPoint";
+
+        COLLIDER_DESC ColDesc = {};
+        ColDesc.eType = COLLIDER_TYPE::BOX;
+        ColDesc.bTrigger = true; // 충돌 박스 생성하는 트리거
+        ColDesc.vSize = {
+            m_BattleData.PlayerSpawnPoint.vScale[0],
+            m_BattleData.PlayerSpawnPoint.vScale[1],
+            m_BattleData.PlayerSpawnPoint.vScale[2],
+        };
+
+        _float3 vPos = {
+            m_BattleData.PlayerSpawnPoint.vTranslation[0],
+            m_BattleData.PlayerSpawnPoint.vTranslation[1],
+            m_BattleData.PlayerSpawnPoint.vTranslation[2],
+        };
+
+        _float3 vRot = {
+            m_BattleData.PlayerSpawnPoint.vRotation[0],
+            m_BattleData.PlayerSpawnPoint.vRotation[1],
+            m_BattleData.PlayerSpawnPoint.vRotation[2],
+        };
+
+        CGameObject* pStaticObject = Builder::Create_Object({ g_TagMapToolLevel , "Proto_GameObject_BattlePlayerPoint" })
+            .Add_ObjDesc(desc)
+            .Collider(ColDesc)
+            .Position(vPos)
+            .Rotate(vRot)
+            .Build(tagInstanceName);
+
+        pStaticObject->Get_Component<CCollider>()->Set_DebugRender(true);
+
+        ObjectManager()->Add_Object(pStaticObject, { g_TagMapToolLevel, g_tagBattleObjType[ENUM(BATTLE_TYPE::PLAYER)] });
+    }
+
+    //Load MonsterSpawnPoint
+    CLayer* pMonsterLayer = m_pGameInstance->Get_ObjectMgr()->Get_Layer({ g_TagMapToolLevel, g_tagBattleObjType[ENUM(BATTLE_TYPE::MONSTER)] });
+    if (nullptr != pMonsterLayer)
+        pMonsterLayer->Clear_Layer();
+
+    m_iMonsterIndex = m_BattleData.Monsters.size();
+    if (!m_BattleData.Monsters.empty()) {
+        for (auto Monster : m_BattleData.Monsters) {
+            CBattleObject::BATTLE_INIT_DESC* Desc = new CBattleObject::BATTLE_INIT_DESC();
+            string tagProto = "Proto_GameObject_BattleMonsterPoint";
+            string tagInstanceName = "BattleMonsterPoint";
+            Desc->iIndex = Monster.iIndex;
+
+            COLLIDER_DESC ColDesc = {};
+            ColDesc.eType = COLLIDER_TYPE::BOX;
+            ColDesc.bTrigger = true; // 충돌 박스 생성하는 트리거
+            ColDesc.vSize = {
+                Monster.vScale[0],
+                Monster.vScale[1],
+                Monster.vScale[2],
+            };
+
+            _float3 vPos = {
+                Monster.vTranslation[0],
+                Monster.vTranslation[1],
+                Monster.vTranslation[2],
+            };
+
+            _float3 vRot = {
+                Monster.vRotation[0],
+                Monster.vRotation[1],
+                Monster.vRotation[2],
+            };
+
+            CGameObject* pStaticObject = Builder::Create_Object({ g_TagMapToolLevel , "Proto_GameObject_BattleMonsterPoint" })
+                .Add_ObjDesc(Desc)
+                .Collider(ColDesc)
+                .Position(vPos)
+                .Rotate(vRot)
+                .Build(tagInstanceName);
+
+            pStaticObject->Get_Component<CCollider>()->Set_DebugRender(true);
+
+            ObjectManager()->Add_Object(pStaticObject, { g_TagMapToolLevel, g_tagBattleObjType[ENUM(BATTLE_TYPE::MONSTER)] });
+        }
+    }
+
+    //Load SpawnerSpawnPoint
+    CLayer* pSpawnerLayer = m_pGameInstance->Get_ObjectMgr()->Get_Layer({ g_TagMapToolLevel, g_tagBattleObjType[ENUM(BATTLE_TYPE::SPAWNER)] });
+    if (nullptr != pSpawnerLayer)
+        pSpawnerLayer->Clear_Layer();
+
+    m_iSpawnerIndex = m_BattleData.Spawners.size();
+    if (!m_BattleData.Spawners.empty()) {
+        for (auto Spawner : m_BattleData.Spawners) {
+            CBattleObject::BATTLE_INIT_DESC* Desc = new CBattleObject::BATTLE_INIT_DESC();
+            string tagProto = "Proto_GameObject_BattleSpawnerPoint";
+            string tagInstanceName = "BattleSpawnerPoint";
+            Desc->iIndex = Spawner.iIndex;
+
+            COLLIDER_DESC ColDesc = {};
+            ColDesc.eType = COLLIDER_TYPE::BOX;
+            ColDesc.bTrigger = true; // 충돌 박스 생성하는 트리거
+            ColDesc.vSize = {
+                Spawner.vScale[0],
+                Spawner.vScale[1],
+                Spawner.vScale[2],
+            };
+
+            _float3 vPos = {
+                Spawner.vTranslation[0],
+                Spawner.vTranslation[1],
+                Spawner.vTranslation[2],
+            };
+
+            _float3 vRot = {
+                Spawner.vRotation[0],
+                Spawner.vRotation[1],
+                Spawner.vRotation[2],
+            };
+
+            CGameObject* pStaticObject = Builder::Create_Object({ g_TagMapToolLevel , "Proto_GameObject_BattleSpawnerPoint" })
+                .Add_ObjDesc(Desc)
+                .Collider(ColDesc)
+                .Position(vPos)
+                .Rotate(vRot)
+                .Build(tagInstanceName);
+
+            pStaticObject->Get_Component<CCollider>()->Set_DebugRender(true);
+
+            ObjectManager()->Add_Object(pStaticObject, { g_TagMapToolLevel, g_tagBattleObjType[ENUM(BATTLE_TYPE::SPAWNER)] });
+        }
+    }
+
+    //Load EndPortalPoint
+    CLayer* pEndPointLayer = m_pGameInstance->Get_ObjectMgr()->Get_Layer({ g_TagMapToolLevel, g_tagBattleObjType[ENUM(BATTLE_TYPE::ENDPOINT)] });
+    if (nullptr != pEndPointLayer)
+        pEndPointLayer->Clear_Layer();
+
+    m_iEndPointIndex = m_BattleData.EndPoints.size();
+    if (!m_BattleData.EndPoints.empty()) {
+        for (auto EndPoint : m_BattleData.EndPoints) {
+            CBattleObject::BATTLE_INIT_DESC* Desc = new CBattleObject::BATTLE_INIT_DESC();
+            string tagProto = "Proto_GameObject_BattleEndPoint";
+            string tagInstanceName = "BattleEndPoint";
+            Desc->iIndex = EndPoint.iIndex;
+
+            COLLIDER_DESC ColDesc = {};
+            ColDesc.eType = COLLIDER_TYPE::BOX;
+            ColDesc.bTrigger = true; // 충돌 박스 생성하는 트리거
+            ColDesc.vSize = {
+                EndPoint.vScale[0],
+                EndPoint.vScale[1],
+                EndPoint.vScale[2],
+            };
+
+            _float3 vPos = {
+                EndPoint.vTranslation[0],
+                EndPoint.vTranslation[1],
+                EndPoint.vTranslation[2],
+            };
+
+            _float3 vRot = {
+                EndPoint.vRotation[0],
+                EndPoint.vRotation[1],
+                EndPoint.vRotation[2],
+            };
+
+            CGameObject* pStaticObject = Builder::Create_Object({ g_TagMapToolLevel , "Proto_GameObject_BattleEndPoint" })
+                .Add_ObjDesc(Desc)
+                .Collider(ColDesc)
+                .Position(vPos)
+                .Rotate(vRot)
+                .Build(tagInstanceName);
+
+            pStaticObject->Get_Component<CCollider>()->Set_DebugRender(true);
+
+            ObjectManager()->Add_Object(pStaticObject, { g_TagMapToolLevel, g_tagBattleObjType[ENUM(BATTLE_TYPE::ENDPOINT)] });
+        }
+    }
 }
 
 void CMapToolGui::Select_PlaceType(const string& tagLabel, _bool isShowDetail)

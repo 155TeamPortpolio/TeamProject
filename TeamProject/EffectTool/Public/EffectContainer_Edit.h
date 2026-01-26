@@ -57,7 +57,7 @@ private:
     void AddNode();
     void RemoveLastNode();
     void ContextClear();
-    void LoadTextureFromDirectory(const string& dirPath);
+    void LoadTextureFromDirectory(const string& dirPath, _bool isSRGB = false);
     void LoadMeshFromDirectory(const string& dirPath);
     void LoadMaterialFromDirectory(const string& dirPath);
     void DisplayAllTextures();

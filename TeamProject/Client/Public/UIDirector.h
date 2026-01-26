@@ -34,6 +34,8 @@ public:
 	/* 씬 프레임을 화면에서 숨김 (화면 위, 아래에 프레임) */
 	void Hide_SceneFrame();
 
+	void Request_DamageText(void* pArg);
+
 public:
 	/* 모든 레벨에 필요한 공통 데이터 등록 */
 	void Initialize();

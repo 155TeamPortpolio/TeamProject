@@ -55,6 +55,22 @@ void CSacrificeState_ChangePhase::Update_Effects(CSacrifice* pOwner)
 		ObjectManager()->Add_Object(effectCharge, { pOwner->Get_Level(),"Enemy_Effect_Layer" });
 	}
 
+	/* Smoke */
+	if (IsCrossAnimProgress(0.45f))
+	{
+		auto pAnimator = pOwner->Get_Component<CAnimator3D>();
+
+		_vector3 vBonePosition = pAnimator->Get_BonePosition(CAnimator3D::BoneSpace::COMBINED, "Ctr_Eye6");
+		vBonePosition = _vector3::Transform(vBonePosition, pTransform->Get_WorldMatrix());
+
+		auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("hit_ground_smoke.json")
+			.Position(vBonePosition)
+			.Build("Hit_Ground_Smoke");
+
+		ObjectManager()->Add_Object(effect, { pOwner->Get_Level(),"Enemy_Effect_Layer" });
+	}
+
 	/* Roar Smoke */
 	if (IsCrossAnimProgress(0.7f))
 	{
