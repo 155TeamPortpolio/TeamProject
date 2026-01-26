@@ -28,6 +28,12 @@
           "prototypeTag": "Proto_GameObject_Logo",
           "instanceName": "logo",
           "prefabPath" : ""
+        },
+        
+        {
+          "prototypeTag": "Proto_GameObject_ScratchCard",
+          "instanceName": "scratchCard",
+          "prefabPath" : ""
         }
       ]
     },

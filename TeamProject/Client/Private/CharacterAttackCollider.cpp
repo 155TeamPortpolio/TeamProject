@@ -89,14 +89,18 @@ void CCharacterAttackCollider::OnTriggerEnter(CGameObject* pOther)
 	{
 		pEnemy->TakeDamage(m_tHitDesc.eDamageType, m_tHitDesc.fDamage);
 		BattleSystem()->GetBattlePlayer()->Add_Gauge(m_tHitDesc.fEnergyCharge, m_tHitDesc.fDecibelCharge);
-		//if (m_tHitDesc.eDamageType == DAMAGE_TYPE::HARD && pEnemy->IsGroggy() && pEnemy->Get_ComboCount() != 0)
-		if (m_tHitDesc.eDamageType == DAMAGE_TYPE::HARD && pEnemy->IsGroggy())
+		auto pCharacter = dynamic_cast<CCharacter*>(Get_Component<CChild>()->Get_Parent());
+		if (pCharacter != nullptr)
 		{
-			auto pCharacter = dynamic_cast<CCharacter*>(Get_Component<CChild>()->Get_Parent());
-			if (pCharacter != nullptr && pCharacter->Is_MainCharacter())
+			pCharacter->OnDamage();
+			//if (m_tHitDesc.eDamageType == DAMAGE_TYPE::HARD && pEnemy->IsGroggy() && pEnemy->Get_ComboCount() != 0)
+			if (m_tHitDesc.eDamageType == DAMAGE_TYPE::HARD && pEnemy->IsGroggy())
 			{
-				//pEnemy->Decrease_ComboCount();
-				BattleSystem()->GetBattlePlayer()->Request_ComboAttack();
+				if (pCharacter->Is_MainCharacter())
+				{
+					//pEnemy->Decrease_ComboCount();
+					BattleSystem()->GetBattlePlayer()->Request_ComboAttack();
+				}
 			}
 		}
 
@@ -110,7 +114,6 @@ void CCharacterAttackCollider::OnTriggerEnter(CGameObject* pOther)
 		ObjectManager()->Add_Object(pEffect, { pEnemy->Get_Level(),"Effect_Layer" });
 
 		// Camera
-		auto pCharacter = dynamic_cast<CCharacter*>(Get_Component<CChild>()->Get_Parent());
 		if(pCharacter != nullptr && pCharacter->Is_MainCharacter())
 		{
 			//CameraManager()->AddShake(CamShakeType::HitCrit);
@@ -135,19 +138,22 @@ void CCharacterAttackCollider::OnTriggerStay(CGameObject* pOther)
 	{
 		pEnemy->TakeDamage(m_tHitDesc.eDamageType, m_tHitDesc.fDamage);
 		BattleSystem()->GetBattlePlayer()->Add_Gauge(m_tHitDesc.fEnergyCharge, m_tHitDesc.fDecibelCharge);
-		//if (m_tHitDesc.eDamageType == DAMAGE_TYPE::HARD && pEnemy->IsGroggy() && pEnemy->Get_ComboCount() != 0)
-		if (m_tHitDesc.eDamageType == DAMAGE_TYPE::HARD && pEnemy->IsGroggy())
+		auto pCharacter = dynamic_cast<CCharacter*>(Get_Component<CChild>()->Get_Parent());
+		if (pCharacter != nullptr)
 		{
-			auto pCharacter = dynamic_cast<CCharacter*>(Get_Component<CChild>()->Get_Parent());
-			if (pCharacter != nullptr && pCharacter->Is_MainCharacter())
+			pCharacter->OnDamage();
+			//if (m_tHitDesc.eDamageType == DAMAGE_TYPE::HARD && pEnemy->IsGroggy() && pEnemy->Get_ComboCount() != 0)
+			if (m_tHitDesc.eDamageType == DAMAGE_TYPE::HARD && pEnemy->IsGroggy())
 			{
-				//pEnemy->Decrease_ComboCount();
-				BattleSystem()->GetBattlePlayer()->Request_ComboAttack();
+				if (pCharacter->Is_MainCharacter())
+				{
+					//pEnemy->Decrease_ComboCount();
+					BattleSystem()->GetBattlePlayer()->Request_ComboAttack();
+				}
 			}
 		}
 
 		// Camera
-		auto pCharacter = dynamic_cast<CCharacter*>(Get_Component<CChild>()->Get_Parent());
 		if (pCharacter != nullptr && pCharacter->Is_MainCharacter())
 		{
 			CameraManager()->AddImpact(1, 0);
