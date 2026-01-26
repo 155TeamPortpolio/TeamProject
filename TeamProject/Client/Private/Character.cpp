@@ -381,7 +381,7 @@ HRESULT CCharacter::Attach_ParryCollider()
 	COLLIDER_DESC colliderDesc{};
 	colliderDesc.eType = COLLIDER_TYPE::SPHERE;
 	colliderDesc.eGroup = COLLISION_GROUP::PLAYER_ATTACK;
-	colliderDesc.iCollisionMask = ENUM(COLLISION_GROUP::MONSTER_PARRY);
+	colliderDesc.iCollisionMask = ENUM(COLLISION_GROUP::MONSTER_ATTACK);
 	colliderDesc.bAutoFit = false;
 	colliderDesc.vCenter = { 0.f,0.f,0.f };
 	colliderDesc.vSize = { 5.f,0.f,0.f };
