@@ -52,8 +52,7 @@ HRESULT CSkinnedMeshRenderer::Render_SkinnedMesh_Bloom()
 	{
 		if (FAILED(m_pTargetManager->Begin_MRT("MRT_Bright_Skinned"))) return E_FAIL;
 
-		m_pTargetManager->Bind_Target("Target_Ambient", m_pShader, "AmbientTexture");
-		m_pTargetManager->Bind_Target("Target_Skinned_Diffuse", m_pShader, "DiffuseTexture");
+		m_pTargetManager->Bind_Target("Target_Utility", m_pShader, "EmissiveTexture");
 
 		Bind_WorldMatrix();
 
@@ -71,6 +70,7 @@ HRESULT CSkinnedMeshRenderer::Render_SkinnedMesh_Bloom()
 		if (FAILED(m_pTargetManager->Begin_MRT("MRT_Bloom_Skinned_H"))) return E_FAIL;
 
 		m_pTargetManager->Bind_Target("Target_Bright_SkinnedMesh", m_pShader, "MeshBrightTexture");
+		m_pTargetManager->Bind_Target("Target_Utility", m_pShader, "EmissiveTexture");
 
 		Bind_WorldMatrix();
   
@@ -91,7 +91,7 @@ HRESULT CSkinnedMeshRenderer::Render_SkinnedMesh_Bloom()
 		if (FAILED(m_pTargetManager->Begin_MRT("MRT_Bloom_Skinned_V"))) return E_FAIL;
 
 		m_pTargetManager->Bind_Target("Target_BloomBlurX_SkinnedMesh", m_pShader, "MeshBlurXTexture");
-
+		m_pTargetManager->Bind_Target("Target_Utility", m_pShader, "EmissiveTexture");
 		Bind_WorldMatrix();
 
 		ID3D11InputLayout* pLayout;

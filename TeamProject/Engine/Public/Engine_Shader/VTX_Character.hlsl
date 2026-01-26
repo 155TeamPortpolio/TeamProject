@@ -229,7 +229,7 @@ PS_OUT PS_MAIN(PS_IN In)
         vMetalic = LightTexture.Sample(DefaultSampler, In.vTexcoord);
 
         vMetalic.a = 0.8f;
-        Out.vLook = float4(vLookVector.xyz * 0.5f + 0.5f, 1.f);
+        Out.vLook = float4(vLookVector.xyz * 0.5f + 0.5f, 0.f);
     }
     
     if (vAmbient.g < 0.2) vAmbient.g = 1.f;
@@ -238,6 +238,7 @@ PS_OUT PS_MAIN(PS_IN In)
     Out.vAmbient = vAmbient;
     Out.vMetalic = vMetalic;
     Out.vRimLight = float4(vRimLightColor, fRimLightPower);
+    
     return Out;
 }
 
@@ -385,7 +386,7 @@ technique11 DefaultTechnique
 {
     pass Opaque
     {
-        SetRasterizerState(RS_NoCull);
+        SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_WriteStencil,1);
         SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();

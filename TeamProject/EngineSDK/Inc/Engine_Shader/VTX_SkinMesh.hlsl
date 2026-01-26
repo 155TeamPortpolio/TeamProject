@@ -128,7 +128,6 @@ struct PS_OUT
     vector vDepth : SV_TARGET2;
     vector vMetalic : SV_TARGET3;
     vector vAmbient : SV_Target4;
-    vector vLook : SV_Target6;
 };
 
 PS_OUT PS_MAIN(PS_IN In)
@@ -152,34 +151,22 @@ PS_OUT PS_MAIN(PS_IN In)
         discard;
   
     vAmbient.r = 0.f;
-    if(vNormalDesc.a > 0.f)
-    {
-        float3 vNormal;
-        vNormal.xy = vNormalDesc.xy * 2.f - 1.f;
-        vNormal.z = 1.f;
-        float3 T = normalize(In.vTangent);
-        float3 B = normalize(In.vBinormal * -1);
-        float3 N = normalize(In.vNormal.xyz);
 
-        float3x3 WorldMatrix = float3x3(T, B, N);
+    float3 vNormal;
+    vNormal.xy = vNormalDesc.xy * 2.f - 1.f;
+    vNormal.z = 1.f;
+    float3 T = normalize(In.vTangent);
+    float3 B = normalize(In.vBinormal * -1);
+    float3 N = normalize(In.vNormal.xyz);
+
+    float3x3 WorldMatrix = float3x3(T, B, N);
         
-        vNormal = mul(vNormal, WorldMatrix);
-        vMetalic.a = 0.6f;
-        Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, vNormalDesc.z);
-    }
-    else
-    {
-        float3 vNormal = normalize(In.vNormal);
-        Out.vNormal = float4(vNormal * 0.5f + 0.5f, 1.f);
-
-        float3 headRight = normalize(cross(float3(0.f, 1.f, 0.f), vLookVector.xyz));
-
-        vMetalic = LightTexture.Sample(DefaultSampler, In.vTexcoord);
-
-        vMetalic.a = 0.8f;
-        Out.vLook = float4(vLookVector.xyz * 0.5f + 0.5f, 1.f);
-    }
-    if (vAmbient.g < 0.2) vAmbient.g = 1.f;
+    vNormal = mul(vNormal, WorldMatrix);
+    vMetalic.a = 0.6f;
+    Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, vNormalDesc.z);
+ 
+    if (vAmbient.g < 0.2)
+        vAmbient.g = 1.f;
     vAmbient.b = 0;
     Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / zFar, 0.f, 1.f);
     Out.vAmbient = vAmbient;

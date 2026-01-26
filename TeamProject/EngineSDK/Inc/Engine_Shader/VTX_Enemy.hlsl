@@ -173,6 +173,7 @@ PS_OUT PS_MAIN(PS_IN In)
     Out.vAmbient = vAmbient;
     Out.vMetalic = vMetalic;
     Out.vRimLight = float4(vRimLightColor, fRimLightPower);
+    Out.vEmissive = float4(vMtrlDiffuse.rgb * vAmbient.b, 0.5f);
     return Out;
 }
 
@@ -218,6 +219,7 @@ PS_OUT PS_MAIN_EMISSIVE(PS_IN In)
     Out.vAmbient = vAmbient;
     Out.vMetalic = vMetalic;
     Out.vRimLight = float4(vRimLightColor, fRimLightPower);
+    Out.vEmissive = float4(vMtrlDiffuse.rgb * vAmbient.b, 0.5f);
     return Out;
 }
 
