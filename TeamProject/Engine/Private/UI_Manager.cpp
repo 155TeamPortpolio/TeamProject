@@ -81,6 +81,7 @@ void CUI_Manager::Clear(const string& LevelTag)
 	auto iter = m_UIObjects.find(LevelTag);
 	if (iter != m_UIObjects.end())
 	{
+		Prune_Queues_ByLevel(LevelTag);
 		for (auto& UI : iter->second)
 			Safe_Release(UI);
 		iter->second.clear();
@@ -125,6 +126,7 @@ void CUI_Manager::Add_Object_Recursive(const string& LevelTag, CUI_Object* objec
 	auto& map = m_UIObjects.at(LevelTag);
 	_uint ObjectIndex = map.size();
 
+	if(object && object->Get_SystemIndex() == -1){
 	for (size_t i = 0; i < map.size(); i++)
 	{
 		/*벡터를 순회하면서 널포인터가 있는지 검색*/
@@ -141,7 +143,7 @@ void CUI_Manager::Add_Object_Recursive(const string& LevelTag, CUI_Object* objec
 		map[ObjectIndex] = object;
 
 	object->Set_OnSystem(LevelTag, ObjectIndex);
-
+	}
 	auto vector = object->Get_Children();
 
 	if (vector.empty()) return;
@@ -215,22 +217,22 @@ void CUI_Manager::Release_Subtree_ToPool(CUI_Object* root)
 	for (CUI_Object* node : nodes)
 	{
 		if (!node) continue;
-
-		const _int idx = node->Get_SystemIndex();
-		if (idx >= 0)
-		{
-			const auto levelKey = node->Get_SystemLevel();
-			auto itLevel = m_UIObjects.find(levelKey);
-			if (itLevel != m_UIObjects.end())
-			{
-				auto& vec = itLevel->second;
-				if (idx < static_cast<_int>(vec.size()) && vec[idx] == node)
-					vec[idx] = nullptr;
-			}
-		}
-
-		node->Set_OnSystem("", -1);
-
+	
+		//const _int idx = node->Get_SystemIndex();
+		//if (idx >= 0)
+		//{
+		//	const auto levelKey = node->Get_SystemLevel();
+		//	auto itLevel = m_UIObjects.find(levelKey);
+		//	if (itLevel != m_UIObjects.end())
+		//	{
+		//		auto& vec = itLevel->second;
+		//		if (idx < static_cast<_int>(vec.size()) && vec[idx] == node)
+		//			vec[idx] = nullptr;
+		//	}
+		//}
+		//
+		//node->Set_OnSystem("", -1);
+	
 		if (node != root)
 		{
 			node->OnPooledRelease();
@@ -238,6 +240,7 @@ void CUI_Manager::Release_Subtree_ToPool(CUI_Object* root)
 	}
 
 	root->OnPooledRelease();
+	root->Set_OnSystem("", -1);
 	const CLONE_DESC& poolKey = root->Get_PoolKey();
 	m_pUIPool->Return(poolKey, root);
 }

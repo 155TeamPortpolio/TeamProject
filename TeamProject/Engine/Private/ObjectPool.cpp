@@ -6,7 +6,7 @@ CObjectPool::CObjectPool()
 {
 }
 
-CGameObject* CObjectPool::Acquire(const CLONE_DESC& cloneDesc, INIT_DESC* pArg)
+CGameObject* CObjectPool::Acquire(const CLONE_DESC& cloneDesc, INIT_DESC* pArg, _bool& outFirst)
 {
     auto& freeList = m_FreeByProto[cloneDesc.protoTag];
 
@@ -21,6 +21,7 @@ CGameObject* CObjectPool::Acquire(const CLONE_DESC& cloneDesc, INIT_DESC* pArg)
         CGameInstance::GetInstance()->Get_PrototypeMgr()->Clone_Prototype(
             cloneDesc.OriginLevel, cloneDesc.protoTag, pArg);
 
+    outFirst = true;
     newObj->Set_PoolKey(cloneDesc);
 
     return newObj;
