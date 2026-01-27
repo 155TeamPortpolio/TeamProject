@@ -29,6 +29,7 @@ public:
     void Set_ColorAtlas(const string& texKey, _uint frameCountX, _uint frameCountY);
     void Set_ColorFrameIndex(_uint frameIdx);
     void Set_UseColorAtlas(_bool enable);
+    void Set_ShearK(_float k);
 
 public:
     void Set_Atlas(const string& texKey, _uint frameCountX, _uint frameCountY);
@@ -55,6 +56,7 @@ private:
     _uint  m_colorFrameCountX = 1;
     _uint  m_colorFrameCountY = 1;
     _uint  m_colorFrameIdx = 0;
+    _float m_shearK = 0.f;
 
 public:
     static CGameObject* Create();

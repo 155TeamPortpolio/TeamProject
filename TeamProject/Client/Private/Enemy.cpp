@@ -221,7 +221,9 @@ void CEnemy::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage)
 		m_tStatus.iNowHP = 0.f;
 
 	CUI_DamageText::DAMAGE_DESC desc{};
-	desc.damage        = (_int)fTakeDamage;
+	//desc.damage        = (_int)fTakeDamage;
+	_int damage = Helper::Get_Random_Int(1000, 10000); // юс╫ц
+	desc.damage        = damage;
 	desc.followHandle  = Get_Handle();
 	desc.followOffset  = Vector3(0.f, 1.3f, 0.f);
 	desc.isEnemy       = true;
