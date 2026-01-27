@@ -24,8 +24,7 @@ public:
     NpcDialogueDesc         GetNpcDialogueDesc(pair<string, _uint> dialogueID);
     ChoiceDesc              GetNpcChoiceDesc(const string& strName);
     const vector<MapData_Path_Packet>*  GetMapDataPacket(const string& tagArea);
-    const MapData_Path_Packet*          GetBattleFieldDataPacket(const string& tagArea);
-    const vector<MONSTER_SPAWN_DESC>*   GetMonsterSpawnData(const string& tagArea);
+    const EncounterTable*               GetMonsterSpawnData(const string& tagArea, _uint iStageType);
 
 public:
     HRESULT LoadPlayerCreationTable(const string& csvPath);
@@ -56,6 +55,7 @@ private:
 private:
     // 몬스터 세팅 테이블(CCT 정보, 각종 Status(HP, 공격력 등))
     unordered_map<string, MonsterCreationDesc>				m_MonsterCreationTables;
+    unordered_map<string, StageTypeTable>                   m_BattleSpawnData;
     // 플레이어 테이블
     unordered_map<string, PlayerDesc>				        m_PlayerTables;
     unordered_map<_uint, PlayerLVDesc>				        m_PlayerLVTables;
@@ -66,12 +66,11 @@ private:
     map<pair<string, _uint>, NpcDialogueDesc>		        m_DialogueTables;
     unordered_map<string, ChoiceDesc>				        m_DialgoueChoiceTables;
     // BattleField Data
-    unordered_map<string, MapData_Path_Packet>	            m_BattleFieldData;
-    // tagArea >>> vector<MONSTER_SPAWN_DESC>
-    unordered_map<string, vector<MONSTER_SPAWN_DESC>>       m_MonsterSpawnDesc;
+    
 
     //맵 데이터 <-> 런타임 데이터 연결용 (현재 작동중인 레벨에서만)
-    unordered_map<string, CASHED_OBJ_DATA>                  m_CashedData;
+    unordered_map<string, CASHED_OBJ_DATA>  m_CashedData;
+    
 
 public:
     virtual void Free() override;

@@ -24,6 +24,7 @@ public:
     HRESULT Render_RimLight();
     HRESULT Render_SSAO();
     HRESULT Render_OutLine();
+    HRESULT Render_Vanish();
     HRESULT Render_MotionBlur();
     HRESULT Render_Blended(class BlendedPass* pBlendPass);
     HRESULT Render_NonLight(class NonLightPass* pNonLightPass);
@@ -36,6 +37,7 @@ public:
     void SetRimLightMode(RIMLIGHT eMode);
     void Add_OutLineCommand(const OUTLINE_COMMAND& command);
     void Add_MotionBlurCommand(const MOTIONBLUR_COMMAND& command);
+    void Add_VanishNoiseCommand(const VANISHNOISE_COMMAND& command);
 
 private:
     virtual HRESULT Ready_Target() override;

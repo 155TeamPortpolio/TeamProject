@@ -157,6 +157,13 @@ HRESULT CForwardRenderer::Render_OutLine()
 	return S_OK;
 }
 
+HRESULT CForwardRenderer::Render_Vanish()
+{
+	m_pSkinnedRenderer->Process_VanishQueue();
+	m_pSkinnedRenderer->Render_Vanish_Noise();
+	return S_OK;
+}
+
 HRESULT CForwardRenderer::Render_MotionBlur()
 {
 	m_pSkinnedRenderer->Process_MotionBlurQueue();
@@ -242,6 +249,11 @@ void CForwardRenderer::Add_OutLineCommand(const OUTLINE_COMMAND& command)
 void CForwardRenderer::Add_MotionBlurCommand(const MOTIONBLUR_COMMAND& command)
 {
 	m_pSkinnedRenderer->Add_MotionBlurCommand(command);
+}
+
+void CForwardRenderer::Add_VanishNoiseCommand(const VANISHNOISE_COMMAND& command)
+{
+	m_pSkinnedRenderer->Add_VanishNoiseCommand(command);
 }
 
 void CForwardRenderer::Update(_float dt)
