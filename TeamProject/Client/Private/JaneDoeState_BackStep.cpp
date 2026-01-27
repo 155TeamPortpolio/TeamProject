@@ -38,22 +38,9 @@ void CJaneDoeState_BackStep::Update(CJaneDoe* pOwner, _float dt)
     {   
         if (pSubMachine->Get_Bool("Extreme"))
         {
-            if (pOwner->Is_Passion())
-            {
-                // 열광상태 회피반격
-            }
-            else
-            {
-                // 회피반격 : 1단,2단 구분
-                if (m_bEvadeType)
-                {
-                    // 1단
-                }
-                else
-                {
-                    // 2단
-                }
-            }
+            // CounterAttack
+            pSubMachine->Set_Int("ExitMode", 5);
+            pSubMachine->Set_Trigger("Complete");
         }
         else
         {
