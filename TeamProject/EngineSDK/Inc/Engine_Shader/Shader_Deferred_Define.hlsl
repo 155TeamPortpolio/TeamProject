@@ -96,6 +96,7 @@ Texture2D RimLightTexture : register(t5);
 Texture2D RimLightFinalTexture : register(t6);
 Texture2D AmbientTexture : register(t7);
 Texture2D FaceDirTexture : register(t8);
+Texture2D PostInfoTexture : register(t9);
 
 //===StaticMesh===
 Texture2D EmissiveTexture : register(t10);

@@ -98,6 +98,7 @@ HRESULT CRenderSystem::Render()
 	m_pForward->Render_SSAO();
 	m_pForward->Render_LightAcc();
 	m_pForward->Render_MotionBlur();
+	m_pForward->Render_Bloom();
 	m_pForward->Render_Vanish();
 	m_pForward->Render_RimLight();
 	m_pForward->Render_Combined();
@@ -109,7 +110,6 @@ HRESULT CRenderSystem::Render()
 	m_pPost->Render_Fog();
 	m_pPost->Render_HDRBloom();
 	m_pPost->Render_RadialBlur();
-	m_pForward->Render_Bloom();
 	m_pPost->Render_Final();
 
 
@@ -265,11 +265,6 @@ void CRenderSystem::Add_OutLineCommand(const OUTLINE_COMMAND& command)
 void CRenderSystem::Add_MotionBlurCommand(const MOTIONBLUR_COMMAND& command)
 {
 	m_pForward->Add_MotionBlurCommand(command);
-}
-
-void CRenderSystem::Add_VanishNoiseCommand(const VANISHNOISE_COMMAND& command)
-{
-	m_pForward->Add_VanishNoiseCommand(command);
 }
 
 void CRenderSystem::Add_PostProcessCommand(const POST_PROCESS_COMMAND& command)
