@@ -11,6 +11,7 @@
 
 void CJaneDoeState_RushAttack::Enter(CJaneDoe* pOwner)
 {
+    pOwner->Lock_Move();
     if (!m_pSubStateMachine)
     {
         m_pSubStateMachine = CStateMachine<CJaneDoe>::Create();
