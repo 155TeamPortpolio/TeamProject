@@ -24,7 +24,7 @@ public:
 	virtual void Remove_UIObject(class CUI_Object* object);
 	const vector<class CUI_Object*>& Get_LevelUI(const string& leveTag);
 	virtual class CUI_Object* Request_UIObject(const UI_HANDLE& handle) override;
-	virtual class CUI_Object* Acquire(const CLONE_DESC& desc, INIT_DESC* pArg) override;
+	virtual class CUI_Object* Acquire(const CLONE_DESC& desc, INIT_DESC* pArg,_bool& outFirst) override;
 
 private:
 	void Add_Object_Recursive(const string& LevelTag, class CUI_Object* object);

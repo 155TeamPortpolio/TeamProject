@@ -9,7 +9,7 @@ private:
     ~CUI_Pool() DEFAULT;
 
 public:
-    class CUI_Object* Acquire(const CLONE_DESC& cloneDesc, INIT_DESC* pArg);
+    class CUI_Object* Acquire(const CLONE_DESC& cloneDesc, INIT_DESC* pArg, _bool& outFirst);
     void Return(const CLONE_DESC& cloneDesc, CUI_Object* objectPtr);
 
     void ClearAll();                 // 레벨 전환 등에서 전체 비우기

@@ -243,6 +243,17 @@ void CUI_Manager::Release_Subtree_ToPool(CUI_Object* root)
 		}
 	}
 
+	const _int idx = root->Get_SystemIndex();
+	const auto levelKey = root->Get_SystemLevel();
+	auto itLevel = m_UIObjects.find(levelKey);
+	if (itLevel == m_UIObjects.end()) return;
+
+	auto& vec = itLevel->second;
+	if (idx >= static_cast<_int>(vec.size())) return;
+
+	// 아직 그 슬롯에 그 객체가 있을 때만 제거
+	if (vec[idx] != root) return;
+	vec[idx] = nullptr;
 	root->OnPooledRelease();
 	root->Set_OnSystem("", -1);
 	const CLONE_DESC& poolKey = root->Get_PoolKey();
@@ -357,9 +368,9 @@ CUI_Object* CUI_Manager::Request_UIObject(const UI_HANDLE& handle)
 	return nullptr;
 }
 
-CUI_Object* CUI_Manager::Acquire(const CLONE_DESC& desc, INIT_DESC* pArg)
+CUI_Object* CUI_Manager::Acquire(const CLONE_DESC& desc, INIT_DESC* pArg, _bool& outFirst)
 {
-	return m_pUIPool->Acquire(desc, pArg);
+	return m_pUIPool->Acquire(desc, pArg, outFirst);
 }
 
 void CUI_Manager::Prune_Queues_ByLevel(const string& levelTag)
