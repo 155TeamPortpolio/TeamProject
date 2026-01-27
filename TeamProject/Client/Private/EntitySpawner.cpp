@@ -16,6 +16,7 @@
 #include "BangBooDeliver.h"
 #include "Howl.h"
 #include "Jaeger.h"
+#include "ElectricBoo.h"
 
 /* Maptool Type 1 (ETC) */
 #include "Portal.h"
@@ -31,6 +32,7 @@ static unordered_map<string, Spawner::OBJ_SPEC> s_NPCTable =
 	{ "BangBooAsk",		Spawner::OBJ_SPEC{ "Proto_GameObject_BangBooAsk", &CBangBooAsk::Create } },
 	{ "Howl",           Spawner::OBJ_SPEC{ "Proto_GameObject_Howl", &CHowl::Create } },
 	{ "Jaeger",         Spawner::OBJ_SPEC{ "Proto_GameObject_Jaeger", &CJaeger::Create } }
+	{ "ExploreBoo",     Spawner::OBJ_SPEC{ "Proto_GameObject_ExploreBoo", &CElectricBoo::Create } }
 };
 
 /* Maptool Type 1 */
@@ -86,19 +88,25 @@ OBJECT_HANDLE Client::Spawner::Create_NPC(const SPAWNER_DESC& Desc)
 	CCT.eGroup = COLLISION_GROUP::COMMON;
 	CCT.iCollisionMask = 0xFFFFFFFF;
 	CCT.bAutoFit = false;
-	CCT.fHeight = 1.6f;
-	CCT.fRadius = 0.4f;
-	//CCT.vPos = Desc.vTranslation;
-
+	CCT.fHeight = Desc.vScale.y;
+	CCT.fRadius = (Desc.vScale.x + Desc.vScale.z / 2);
+	CCT.vPos = _float3(Desc.vTranslation.x, Desc.vTranslation.y, Desc.vTranslation.z);
+	
 	PrototypeManager()->Add_ProtoType(Desc.tagLevel, NPCTable->second.ProtoTag, NPCTable->second.Create());
 
-	auto Object = Builder::Create_Object({ Desc.tagLevel, NPCTable->second.ProtoTag })
+	CGameObject* Object = Builder::Create_Object({ Desc.tagLevel, NPCTable->second.ProtoTag })
 		.CharacterController(CCT)
 		.Rotate(Desc.vRotation)
 		.Build(Desc.tagName);
 
 	Object->Get_Component<CCharacterController>()->Set_FootPosition(Desc.vTranslation);
-	
+
+	//Optional
+	auto iter = Desc.SlotDataValues.find("NPCSlot");
+	if (iter != Desc.SlotDataValues.end()) {
+		Spawner::Gravity(Object, iter->second);
+	}
+
 	ObjectManager()->Add_Object(Object, { Desc.tagLevel, "NPC_Layer"});
 	return Object->Get_Handle();
 }
@@ -154,7 +162,7 @@ OBJECT_HANDLE Client::Spawner::Create_Interactable(const SPAWNER_DESC& Desc)
 
 	PrototypeManager()->Add_ProtoType(Desc.tagLevel, InteractTable->second.ProtoTag, InteractTable->second.Create());
 
-	auto Object = Builder::Create_Object({ Desc.tagLevel, InteractTable->second.ProtoTag })
+	CGameObject* Object = Builder::Create_Object({ Desc.tagLevel, InteractTable->second.ProtoTag })
 		.Add_ObjDesc(pOBJDesc)
 		.Position(Desc.vTranslation)
 		.Collider(tColDesc)
@@ -192,3 +200,17 @@ OBJECT_HANDLE Client::Spawner::Create_ETC(const SPAWNER_DESC& Desc)
 #pragma endregion
 
 /* --------------------------------------------------------------------------------------------------------------------- */
+
+/* Function */
+
+#pragma region Functions
+void Client::Spawner::Gravity(CGameObject* pGameObject, const vector<FIELD_DATA>& SlotDatas)
+{
+	for (const auto& Data : SlotDatas) {
+		if (Data.TagName == "Gravity") {
+			pGameObject->Get_Component<CCharacterController>()->Set_Gravity(*GetSlotValue<_bool>(Data.defaultvalue));
+			return;
+		}
+	}
+}
+#pragma endregion
