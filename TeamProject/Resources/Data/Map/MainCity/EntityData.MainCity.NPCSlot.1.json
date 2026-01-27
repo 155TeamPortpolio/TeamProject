@@ -1,0 +1,15 @@
+{
+  "TagDataFormat": "NPCSlot",
+  "TagArea": "MainCity",
+  "iVersion": 1,
+  "values": [
+    {
+      "iObjID": 3,
+      "TagName": "Gravity",
+      "defaultvalue": {
+        "type": "bool",
+        "value": false
+      }
+    }
+  ]
+}
