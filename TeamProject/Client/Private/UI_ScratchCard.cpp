@@ -56,7 +56,7 @@ HRESULT CUI_ScratchCard::Initialize(INIT_DESC* pArg)
     XMStoreFloat4x4(&m_ViewMatrix, XMMatrixIdentity());
     XMStoreFloat4x4(&m_ProjMatrix, XMMatrixOrthographicLH(m_vSize.x, m_vSize.y,  0.f, 1.f));
 
-    UI_DeActive(nullptr);
+    Set_Alive(false);
 
 	return S_OK;
 }

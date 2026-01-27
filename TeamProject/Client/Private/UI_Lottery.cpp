@@ -65,6 +65,15 @@ void CUI_Lottery::Cache()
 {
     auto pContainer = Get_Component<CObjectContainer>();
      
+    for (_int i = 0; i < ENUM(CHILD::END); ++i)
+    {
+        auto pObj = pContainer->Find_Descendant(INSTANCENAMES[i]);
+        if (!pObj)
+            continue;
+
+        m_pChildren[i] = dynamic_cast<CUI_Object*>(pObj);
+    }
+
     for (_int i = 0; i < ENUM(BTN::END); ++i)
     {
         auto pObj = pContainer->Find_Descendant(BTN_NAMES[i]);
@@ -77,6 +86,9 @@ void CUI_Lottery::Cache()
 
 void CUI_Lottery::OnClick_Back()
 {
+    Set_ChildAnimation(CHILD::OVERLAY_BACK, 0);
+    Set_ChildAnimation(CHILD::ICON_BACK, 0);
+
     if (Is_ChildAlive(CHILD::SCRATCH))
         Set_ChildUIDeActive(CHILD::SCRATCH);
 }
@@ -106,6 +118,15 @@ void CUI_Lottery::Set_ChildUIDeActive(CHILD child, void* pArg)
         return;
 
     pChild->UI_DeActive(pArg);
+}
+
+void CUI_Lottery::Set_ChildAnimation(CHILD child, _int iIndex)
+{
+    auto pChild = m_pChildren[ENUM(child)];
+    if (!pChild)
+        return;
+
+    pChild->Set_Animation(iIndex);
 }
 
 _bool CUI_Lottery::Is_ChildAlive(CHILD child)

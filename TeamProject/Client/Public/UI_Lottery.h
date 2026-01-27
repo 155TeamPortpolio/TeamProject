@@ -6,8 +6,17 @@ NS_BEGIN(Client)
 class CUI_Lottery final : public CUI_Object
 {
 private:
-	enum class CHILD { SCRATCH, BTN_BACK, BTN_SCRATCH, BTN_REFRESH, ICON_SCRATCH, NEWS, NEWS1, NEWS2, END };
-	inline static const string INSTANCENAMES[ENUM(CHILD::END)] = { "", "btnBack", "btnScratch", "btnRefresh", "iconScratch", "news", "news1", "news2" };
+	enum class CHILD { 
+		BTN_BACK, BTN_SCRATCH, BTN_REFRESH, 
+		OVERLAY_BACK,
+		ICON_BACK, ICON_SCRATCH, 
+		NEWS, NEWS1, NEWS2, 
+		SCRATCH, END };
+	inline static const string INSTANCENAMES[ENUM(CHILD::END)] = { 
+		"btnBack", "btnScratch", "btnRefresh", 
+		"overlayBack",
+		"iconBack", "iconScratch", 
+		"news", "news1", "news2", "" };
 
 	enum class BTN { BTN_BACK, BTN_SCRATCH, BTN_REFRESH, END };
 	inline static const string BTN_NAMES[ENUM(BTN::END)] = { "btnBack", "btnScratch", "btnRefresh" };
@@ -40,6 +49,7 @@ private:
 
 	void Set_ChildUIActive(CHILD child, void* pArg = nullptr);
 	void Set_ChildUIDeActive(CHILD child, void* pArg = nullptr);
+	void Set_ChildAnimation(CHILD child, _int iIndex);
 
 	_bool Is_ChildAlive(CHILD child);
 
