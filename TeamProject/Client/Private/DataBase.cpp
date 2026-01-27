@@ -108,22 +108,15 @@ const vector<MapData_Path_Packet>* CDataBase::GetMapDataPacket(const string& tag
 	return &iter->second;
 }
 
-const MapData_Path_Packet* CDataBase::GetBattleFieldDataPacket(const string& tagArea)
+const EncounterTable* CDataBase::GetMonsterSpawnData(const string& tagArea, _uint iStageType)
 {
-	auto iter = m_BattleFieldData.find(tagArea);
-	if (iter == m_BattleFieldData.end())
-		return nullptr;
+	auto itArea = m_BattleSpawnData.find(tagArea);
+	if (itArea == m_BattleSpawnData.end()) return nullptr;
 
-	return &iter->second;
-}
+	auto itStage = itArea->second.find(iStageType);
+	if (itStage == itArea->second.end()) return nullptr;
 
-const vector<MONSTER_SPAWN_DESC>* CDataBase::GetMonsterSpawnData(const string& tagArea)
-{
-	auto iter = m_MonsterSpawnDesc.find(tagArea);
-	if (iter == m_MonsterSpawnDesc.end())
-		return nullptr;
-
-	return &iter->second;
+	return &itStage->second;
 }
 
 HRESULT CDataBase::LoadPlayerCreationTable(const string& csvPath)
@@ -219,7 +212,7 @@ HRESULT CDataBase::LoadMonsterCreationTable(const string& csvPath)
 	trim_chars = 앞 뒤 공백 제거
 	double_quote_escape = "..." 안의 쉼표 및 따옴표 처리 */
 	io::CSVReader<
-		5,
+		6,
 		io::trim_chars<' ', '\t'>,
 		io::double_quote_escape<',', '"'>
 	>in(csvPath);
@@ -231,15 +224,18 @@ HRESULT CDataBase::LoadMonsterCreationTable(const string& csvPath)
 	in.read_header(
 		io::ignore_extra_column | io::ignore_missing_column,
 		"ProtoTag", "DisplayName",
-		"CCT_fHeight", "CCT_fRadius", "MaxHP"
+		"CCT_fHeight", "CCT_fRadius", "MaxHP",
+		"MonsterID"
 	);
 
 	string	ProtoTag{}, DisplayName{};
 	_float	CCT_fHeight{}, CCT_fRadius{}, MaxHP{};
+	_uint	MonsterID{};
 
 	while (in.read_row(
 		ProtoTag, DisplayName,
-		CCT_fHeight, CCT_fRadius, MaxHP
+		CCT_fHeight, CCT_fRadius, MaxHP,
+		MonsterID
 	))
 	{
 		if (ProtoTag.empty())
@@ -248,7 +244,8 @@ HRESULT CDataBase::LoadMonsterCreationTable(const string& csvPath)
 		MonsterCreationDesc desc = {};
 		desc.ProtoTag = ProtoTag;
 		desc.DisplayName = DisplayName;
-		desc.CCT_fHeight = CCT_fHeight;
+		desc.MonsterID = MonsterID;
+ 		desc.CCT_fHeight = CCT_fHeight;
 		desc.CCT_fRadius = CCT_fRadius;
 		desc.iMaxHP = MaxHP;
 
@@ -269,7 +266,7 @@ HRESULT CDataBase::LoadMonsterSpawnData(const string& csvPath)
 	trim_chars = 앞 뒤 공백 제거
 	double_quote_escape = "..." 안의 쉼표 및 따옴표 처리 */
 	io::CSVReader<
-		4,
+		5,
 		io::trim_chars<' ', '\t'>,
 		io::double_quote_escape<',', '"'>
 	>in(csvPath);
@@ -280,27 +277,34 @@ HRESULT CDataBase::LoadMonsterSpawnData(const string& csvPath)
 	*/
 	in.read_header(
 		io::ignore_extra_column | io::ignore_missing_column,
-		"tagArea", "TableNumber",
-		"MonsterSpawnID", "MonsterKey"
+		"tagArea", "StageType",
+		"Encounter", "MonsterID", "Count"
 	);
 
-	string	tagArea{}, MonsterKey{};
-	_int	TableNumber{}, MonsterSpawnID{};
+	string	tagArea{}, StageType{};
+	_int	Encounter{}, MonsterID{}, Count{};
 
 	while (in.read_row(
-		tagArea, TableNumber,
-		MonsterSpawnID, MonsterKey
+		tagArea, StageType,
+		Encounter, MonsterID, Count
 	))
 	{
 		if (tagArea.empty())
 			continue;
 
-		MONSTER_SPAWN_DESC	MonsterSpawnDesc = {};
+		if (StageType.empty())
+			continue;
+		
+		_uint iStageType{};
+		if (StageType == "Normal")		iStageType = 0;
+		else if (StageType == "Elite")	iStageType = 1;
+		else if (StageType == "Boss")	iStageType = 2;
 
-		MonsterSpawnDesc.MonsterSpawnID = MonsterSpawnID;
-		MonsterSpawnDesc.MonsterKey = MonsterKey;
+		SPAWN_MONSTER_DESC desc{};
+		desc.MonsterID = MonsterID;
+		desc.Count = Count;
 
-		m_MonsterSpawnDesc[tagArea].push_back(MonsterSpawnDesc);
+		m_BattleSpawnData[tagArea][iStageType][Encounter].push_back(desc);
 	}
 
 	return S_OK;

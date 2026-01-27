@@ -13,7 +13,6 @@ private:
 public:
 	void ApplyData(ID3D11DeviceContext* pContext);
 
-
 public:
 	const string& Get_PassConstant();
 	class CShader* Get_Shader();
@@ -44,7 +43,7 @@ public:
 	_uint Get_InstacneID() { return m_MaterialInstance_ID; }
 public:
 	virtual void Render_GUI();
-
+	void TypeCheck(const string& first, SHADER_PARAM& second);
 private:
 	void ClearDynamicSlotsBound(CShader* materialShader);
 
