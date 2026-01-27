@@ -21,6 +21,7 @@ namespace Client {
 	struct MonsterCreationDesc {
 		string	ProtoTag = {};
 		string	DisplayName = {};
+		_uint	MonsterID = {};
 		_float	CCT_fHeight = {};
 		_float	CCT_fRadius = {};
 		_float	iMaxHP = {};
