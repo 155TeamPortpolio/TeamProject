@@ -18,6 +18,7 @@
 #include "BattleSpawnerPoint.h"
 #include "BattleMonsterPoint.h"
 #include "BattleEndPoint.h"
+#include "FreeCam.h"
 
 /* MapTool Gui */
 #include "MapToolGui.h"
@@ -32,7 +33,8 @@ CMapToolLevel::CMapToolLevel(const string& LevelKey)
 HRESULT CMapToolLevel::Initialize()
 {
 	IProtoService* pProto = CGameInstance::GetInstance()->Get_PrototypeMgr();
-	pProto->Add_ProtoType("MapTool_Level", "Proto_GameObject_DefaultCamera", CDefaultCamera::Create());
+	//pProto->Add_ProtoType("MapTool_Level", "Proto_GameObject_DefaultCamera", CDefaultCamera::Create());
+	pProto->Add_ProtoType("MapTool_Level", "Proto_GameObject_FreeCam", CFreeCam::Create());
 	pProto->Add_ProtoType("MapTool_Level", "Proto_GameObject_DummyModel", CDummyModel::Create());
 	pProto->Add_ProtoType("MapTool_Level", "Proto_GameObject_Grid", CGrid::Create());
 	pProto->Add_ProtoType("MapTool_Level", "Proto_GameObject_PlacedObject", CPlacedObject::Create());
@@ -42,7 +44,7 @@ HRESULT CMapToolLevel::Initialize()
 	pProto->Add_ProtoType("MapTool_Level", "Proto_GameObject_BattleSpawnerPoint", CBattleSpawnerPoint::Create());
 	pProto->Add_ProtoType("MapTool_Level", "Proto_GameObject_BattleMonsterPoint", CBattleMonsterPoint::Create());
 	pProto->Add_ProtoType("MapTool_Level", "Proto_GameObject_BattleEndPoint", CBattleEndPoint::Create());
-
+	
 	return S_OK;
 }
 
@@ -78,7 +80,7 @@ HRESULT CMapToolLevel::Ready_MapToolObjects()
 
 	IObjectService* pObjMgr = m_pGameInstance->Get_ObjectMgr();
 	IUI_Service* pUIMgr = m_pGameInstance->Get_UIMgr();
-	CAMERA_DESC desc = {};
+	
 
 	if (FAILED(CGameInstance::GetInstance()->Get_ResourceMgr()->Add_ResourcePath("Test.dds", "../Bin/Test.dds")))
 		return E_FAIL;
@@ -92,7 +94,7 @@ HRESULT CMapToolLevel::Ready_MapToolObjects()
 	DefaultCameraLightDesc.fIntensity = 10.f;
 	
 
-	CGameObject* Camera = Builder::Create_Object({ "MapTool_Level" ,"Proto_GameObject_DefaultCamera" })
+	CGameObject* Camera = Builder::Create_Object({ "MapTool_Level" ,"Proto_GameObject_FreeCam" })
 		.Camera({ (float)g_iWinSizeX / g_iWinSizeY })
 		.Light(DefaultCameraLightDesc)
 		.Position({ 0,3,-3 })
