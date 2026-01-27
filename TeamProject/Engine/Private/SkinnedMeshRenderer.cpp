@@ -95,6 +95,7 @@ HRESULT CSkinnedMeshRenderer::Render_SkinnedMesh_Bloom()
 		m_pTargetManager->Bind_Target("Target_PostInfo", m_pShader, "PostInfoTexture");
 
 		m_pTargetManager->Bind_Target("Target_Skinned_Normal", m_pShader, "NormalTexture");
+		m_pPipeLine->Update_LightBuffer(m_pContext, LightManager()->Get_MainDirectional(), LightManager()->Visible_Lights().size());
 		m_pShader->SetConstantBuffer("LightBuffer", m_pPipeLine->Get_LightBuffer());
 		Bind_WorldMatrix();
 

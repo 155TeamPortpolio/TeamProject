@@ -113,42 +113,6 @@ VS_OUT VS_OUTLINE(VS_IN In)
     return Out;
 }
 
-//VS_OUT VS_VANISH(VS_IN In)
-//{
-//    VS_OUT Out;
-    
-//    float fWeightW = 1.0 - (In.vBlendWeight.x + In.vBlendWeight.y + In.vBlendWeight.z);
-
-//    float4x4 BoneMatrix =
-//        g_CommandBoneMatrices[In.vBlendIndex.x] * In.vBlendWeight.x +
-//        g_CommandBoneMatrices[In.vBlendIndex.y] * In.vBlendWeight.y +
-//        g_CommandBoneMatrices[In.vBlendIndex.z] * In.vBlendWeight.z +
-//        g_CommandBoneMatrices[In.vBlendIndex.w] * fWeightW;
-    
-//    vector vPosition = mul(float4(In.vPosition, 1.f), BoneMatrix);
-//    vector vNormal = mul(float4(In.vNormal, 0.f), BoneMatrix);
-//    vector vTangent = mul(float4(In.vTangent, 0.f), BoneMatrix);
-//    vector vBinormal = mul(float4(In.vBinormal, 0.f), BoneMatrix);
-      
-//    float3 worldPos = mul(vPosition, g_worldMatrix).xyz;
-//    float4 viewPos = mul(float4(worldPos, 1.f), matView);
-//    float4 projPos = mul(viewPos, matProjection);
-        
-//    matrix matrixWV = mul(g_worldMatrix, matView);
-//    matrix matrixWVP = mul(matrixWV, matProjection);
-    
-//    Out.vPosition = projPos;
-    
-//    Out.vTexcoord = In.vTexcoord;
-//    Out.vNormal = normalize(mul(vNormal, g_worldMatrix));
-//    Out.vProjPos = Out.vPosition;
-
-//    Out.vTangent = normalize(mul(vTangent, g_worldMatrix));
-//    Out.vBinormal = normalize(mul(vBinormal, g_worldMatrix));
-
-//    return Out;
-//}
-
 struct PS_IN
 {
     float4 vPosition : SV_POSITION;
@@ -377,16 +341,6 @@ technique11 DefaultTechnique
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_EMISSIVE();
     }
-
-    //pass Vanish
-    //{
-    //    SetRasterizerState(RS_NoCull);
-    //    SetDepthStencilState(DSS_None, 0);
-    //    SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-    //    VertexShader = compile vs_5_0 VS_VANISH();
-    //    GeometryShader = NULL;
-    //    PixelShader = compile ps_5_0 PS_MAIN_EMISSIVE();
-    //}
 
     pass Debug
     {

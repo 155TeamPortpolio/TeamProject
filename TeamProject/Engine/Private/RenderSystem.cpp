@@ -282,6 +282,46 @@ ID3D11ShaderResourceView* CRenderSystem::Get_CustomTargetSRV(const string strTag
 	return pTarget->Get_SRV();
 }
 
+ID3D11Texture2D* CRenderSystem::Get_CustomTargetTexture(const string strTag)
+{
+	CRenderTarget* pTarget = m_pTargetManager->Get_CustomTarget(strTag);
+	if (!pTarget) return nullptr;
+
+	ID3D11ShaderResourceView* pSRV = pTarget->Get_SRV();
+	if (!pSRV) return nullptr;
+
+	ID3D11Resource* pResource = nullptr;
+	pSRV->GetResource(&pResource);
+
+	ID3D11Texture2D* pOriginalTexture = nullptr;
+	HRESULT hr = pResource->QueryInterface(__uuidof(ID3D11Texture2D), (void**)&pOriginalTexture);
+	Safe_Release(pResource);
+
+	if (FAILED(hr)) return nullptr;
+
+	D3D11_TEXTURE2D_DESC desc;
+	pOriginalTexture->GetDesc(&desc);
+
+	desc.Usage = D3D11_USAGE_STAGING;
+	desc.BindFlags = 0;
+	desc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+	desc.MiscFlags = 0;
+
+	ID3D11Texture2D* pStagingTexture = nullptr;
+	hr = m_pDevice->CreateTexture2D(&desc, nullptr, &pStagingTexture);
+	if (FAILED(hr))
+	{
+		Safe_Release(pOriginalTexture);
+		return nullptr;
+	}
+
+	m_pContext->CopyResource(pStagingTexture, pOriginalTexture);
+
+	Safe_Release(pOriginalTexture);
+
+	return pStagingTexture;
+}
+
 ID3D11ShaderResourceView* CRenderSystem::Get_EngineTargetSRV(const string strTag)
 {
 	CRenderTarget* pTarget = m_pTargetManager->Get_EngineTarget(strTag);

@@ -12,7 +12,7 @@ class CLightMgr :
     };
 
     struct LightSlot {
-        _bool alive = false;
+        _bool alive = false; /*이거 지금 안씀*/
         _uint generation = {};
         class CLight* pLight = { nullptr };
         LightState eState = { LightState::NONE };
