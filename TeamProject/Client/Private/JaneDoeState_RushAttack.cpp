@@ -11,6 +11,7 @@
 
 void CJaneDoeState_RushAttack::Enter(CJaneDoe* pOwner)
 {
+    pOwner->Lock_Move();
     if (!m_pSubStateMachine)
     {
         m_pSubStateMachine = CStateMachine<CJaneDoe>::Create();
@@ -164,6 +165,7 @@ void CJaneDoeState_Rush01_End::Enter(CJaneDoe* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_Rush_01_End")
         .Apply();
+    pOwner->Unlock_Move();
 }
 
 void CJaneDoeState_Rush02_Start::Enter(CJaneDoe* pOwner)
@@ -227,6 +229,7 @@ void CJaneDoeState_Rush02_End::Enter(CJaneDoe* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_Rush_02_End")
         .Apply();
+    pOwner->Unlock_Move();
 }
 
 void CJaneDoeState_Rush03_Start::Enter(CJaneDoe* pOwner)
@@ -246,4 +249,5 @@ void CJaneDoeState_Rush03_End::Enter(CJaneDoe* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_Rush_03_End")
         .Apply();
+    pOwner->Unlock_Move();
 }

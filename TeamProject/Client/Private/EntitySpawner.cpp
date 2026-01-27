@@ -130,7 +130,7 @@ OBJECT_HANDLE Client::Spawner::Create_Interactable(const SPAWNER_DESC& Desc)
 	tColDesc.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER);
 	tColDesc.eType = COLLIDER_TYPE::BOX;
 	tColDesc.bAutoFit = false;
-	tColDesc.bTrigger = true; // Ãæµ¹ ¹Ú½º »ý¼ºÇÏ´Â Æ®¸®°Å
+	tColDesc.bTrigger = true; // ï¿½æµ¹ ï¿½Ú½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ Æ®ï¿½ï¿½ï¿½ï¿½
 	tColDesc.vCenter = { 0,0,0 };
 	tColDesc.vSize = Desc.vScale;
 	tColDesc.vRotation = Desc.vRotation;
