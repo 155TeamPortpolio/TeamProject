@@ -45,8 +45,8 @@ public:
     void Render_GUI() override;
 
 private:
-    _int        m_iType = {};
-    CurModel    m_tCurModel;
+    _int                m_iType = {};
+    CurModel            m_tCurModel;
 
 public:
     static CEntityObject* Create();
