@@ -10,15 +10,15 @@ void CJaneDoeState_ExAttack::Enter(CJaneDoe* pOwner)
     {
         m_pSubStateMachine = CStateMachine<CJaneDoe>::Create();
         
-        m_pSubStateMachine->Register_State("Start", CJaneDoeState_ExAttack_Start::Create());
-        m_pSubStateMachine->Register_State("End", CJaneDoeState_ExAttack_End::Create());
+        m_pSubStateMachine->Register_State("ExAttack_Start", CJaneDoeState_ExAttack_Start::Create());
+        m_pSubStateMachine->Register_State("ExAttack_End", CJaneDoeState_ExAttack_End::Create());
 
-        m_pSubStateMachine->Get_State("End")->Set_Tag("End");
+        m_pSubStateMachine->Get_State("ExAttack_End")->Set_Tag("End");
 
-        m_pSubStateMachine->Register_Transition("Start", "End",
+        m_pSubStateMachine->Register_Transition("ExAttack_Start", "ExAttack_End",
             CStateMachine<CJaneDoe>::CONDITION_ANIMATION_END);
 
-        m_pSubStateMachine->Set_DefaultState("Start");
+        m_pSubStateMachine->Set_DefaultState("ExAttack_Start");
     }
 
     CCharacter::EnergyDesc energyDesc = pOwner->Get_EnergyDesc();

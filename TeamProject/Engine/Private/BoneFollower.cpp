@@ -35,7 +35,7 @@ void CBoneFollower::Link_Bone(CAnimator3D* pAnimator, const string& boneName)
 	FollowingBone = boneName;
 }
 
-void CBoneFollower::Sync_Transform(_float dt, CTransform* pTransform)
+void CBoneFollower::Sync_Transform(_float dt, CTransform* pTransform, _bool OnlyPosition)
 {
     if (!m_pMasterAnimator)
         return;
@@ -48,18 +48,17 @@ void CBoneFollower::Sync_Transform(_float dt, CTransform* pTransform)
 
 	_vector S, R, T;
 	XMMatrixDecompose(&S, &R, &T, XMLoadFloat4x4(&boneMatrix));
-	_matrix rotationMatrix = XMMatrixRotationQuaternion(R);
-	_matrix translationMatrix = XMMatrixTranslationFromVector(T);
-
-
-    _matrix matBone = rotationMatrix*translationMatrix;
+	
+	_matrix boneLocal =
+		(OnlyPosition ? XMMatrixIdentity() : XMMatrixRotationQuaternion(R)) *
+		XMMatrixTranslationFromVector(T);
 
 	_float4x4* masterMatrix = m_pMasterTransform->Get_WorldMatrix_Ptr();
     _matrix matMasterWorld = XMLoadFloat4x4(masterMatrix);
 
     _matrix matOffset = XMLoadFloat4x4(&m_Offset);
 
-    _matrix matWorld = matOffset * matBone* matMasterWorld;
+    _matrix matWorld = matOffset * boneLocal * matMasterWorld;
 
     pTransform->TranslateMatrix(matWorld);
 }

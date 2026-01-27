@@ -265,7 +265,23 @@ void CJaneDoe::OnDamage()
 	if (!m_bPassion)
 		Increase_Passion(1.f);
 	else
-		Decrease_Passion(1.f);
+	{
+		// 열광 상태의 살코점프 적중시엔 열광 증가
+		CJaneDoeState_Attack* pAttack = static_cast<CJaneDoeState_Attack*>(
+			m_pStateMachine->Get_CurrentState());
+		if (!pAttack || !pAttack->Get_SubStateMachine())
+			return;
+		string strAttacktype = pAttack->Get_SubStateMachine()->Get_CurrentStateName();
+
+		if (strAttacktype == "BranchAttack")
+		{
+			Increase_Passion(1.f);
+		}
+		else
+		{
+			Decrease_Passion(1.f);
+		}
+	}
 }
 
 void CJaneDoe::OnPerfectDodge()

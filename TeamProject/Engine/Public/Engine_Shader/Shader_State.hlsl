@@ -8,6 +8,14 @@ RasterizerState RS_Default
     FrontCounterClockwise = false;
 };
 
+RasterizerState RS_Command
+{
+    FillMode = Solid;
+    CullMode = NONE;
+    FrontCounterClockwise = false;
+    DepthBias = -50.f; 
+};
+
 RasterizerState RS_CW
 {
     FillMode = Solid;
@@ -157,6 +165,13 @@ DepthStencilState DSS_ReadOnly
 {
     DepthEnable = true;
     DepthWriteMask = zero;
+};
+
+DepthStencilState DSS_Command
+{
+    DepthEnable = true;
+    DepthWriteMask = zero;
+    DepthFunc = less_equal;
 };
 
 BlendState BS_Default

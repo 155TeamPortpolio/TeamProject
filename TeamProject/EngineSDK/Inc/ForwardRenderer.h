@@ -24,6 +24,7 @@ public:
     HRESULT Render_RimLight();
     HRESULT Render_SSAO();
     HRESULT Render_OutLine();
+    HRESULT Render_Vanish();
     HRESULT Render_MotionBlur();
     HRESULT Render_Blended(class BlendedPass* pBlendPass);
     HRESULT Render_NonLight(class NonLightPass* pNonLightPass);
