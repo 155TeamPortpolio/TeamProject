@@ -102,6 +102,12 @@ void CCorinState_Run_End::Enter(CCorin* pOwner)
         .Apply();
 }
 
+void CCorinState_Run_End::Update(CCorin* pOwner, _float dt)
+{
+    pOwner->Process_RootMotion(dt, ENUM(CCharacter::ROOTMOTION_MASK::MOVE) |
+        ENUM(CCharacter::ROOTMOTION_MASK::QUATERNION));
+}
+
 void CCorinState_Run_Turnback::Enter(CCorin* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "TurnBack")
