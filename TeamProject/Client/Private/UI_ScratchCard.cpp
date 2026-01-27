@@ -121,7 +121,9 @@ void CUI_ScratchCard::Cache()
 
     for (_int i = 0; i < ENUM(CHILD::END); ++i)
     {
-        auto pObj = pContainer->Find_Descendant(INSTANCENMAES[i]);
+        auto pObj = pContainer->Find_Descendant(INSTANCENAMAES[i]);
+        if (!pObj)
+            continue;
 
         m_pChildren[i] = dynamic_cast<CUI_Object*>(pObj);
         m_pSprites[i] = pObj->Get_Component<CSprite2D>();

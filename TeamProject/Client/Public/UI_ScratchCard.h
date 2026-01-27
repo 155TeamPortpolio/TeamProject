@@ -14,7 +14,7 @@ private:
 	enum class ANIMATION { APPEAR, DISAPPEAR, IDLE, END };
 
 	enum class CHILD { BRUSH, SCRATCH, REWARD, END };
-	inline static const string INSTANCENMAES[ENUM(CHILD::END)] = { "brush", "scratch", "reward" };
+	inline static const string INSTANCENAMAES[ENUM(CHILD::END)] = { "brush", "scratch", "reward" };
 
 	enum class REWARD { REWARD1, REWARD2, REWARD3, REWARD4, REWARD5, END };
 	inline static const string REWARD_TEXTURES[ENUM(REWARD::END)] = { "ScratchCardRewardIcon01.png", "ScratchCardRewardIcon02.png",

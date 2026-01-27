@@ -7,16 +7,15 @@ class CUI_Lottery final : public CUI_Object
 {
 private:
 	enum class CHILD { 
-		BTN_BACK, BTN_SCRATCH, BTN_REFRESH, 
-		OVERLAY_BACK,
-		ICON_BACK, ICON_SCRATCH, 
-		NEWS, NEWS1, NEWS2, 
-		SCRATCH, END };
+		BTN_BACK, BTN_REFRESH, BTN_SCRATCH,
+		OVERLAY_BACK,OVERLAY_REFRESH,
+		ICON_BACK, ICON_REFRESH, ICON_SCRATCH, 
+		NEWSPAPER, SCRATCH, END };
 	inline static const string INSTANCENAMES[ENUM(CHILD::END)] = { 
-		"btnBack", "btnScratch", "btnRefresh", 
-		"overlayBack",
-		"iconBack", "iconScratch", 
-		"news", "news1", "news2", "" };
+		"btnBack", "btnRefresh", "btnScratch", 
+		"overlayBack", "overlayRefresh",
+		"iconBack", "iconRefresh", "iconScratch", 
+		"", ""};
 
 	enum class BTN { BTN_BACK, BTN_SCRATCH, BTN_REFRESH, END };
 	inline static const string BTN_NAMES[ENUM(BTN::END)] = { "btnBack", "btnScratch", "btnRefresh" };
