@@ -369,7 +369,9 @@
     <ClInclude Include="..\Public\BattleFXFlow.h" />
     <ClInclude Include="..\Public\Defiler.h" />
     <ClInclude Include="..\Public\DefilerState.h" />
+    <ClInclude Include="..\Public\DefilerState_Attack.h" />
     <ClInclude Include="..\Public\DefilerState_Born.h" />
+    <ClInclude Include="..\public\DefilerState_Idle.h" />
     <ClInclude Include="..\public\Room_Lottery.h" />
     <ClInclude Include="..\public\UI_DamageText.h" />
     <ClInclude Include="..\public\DialogueNpc.h" />
@@ -689,7 +691,9 @@
     <ClCompile Include="..\Private\AttackSign.cpp" />
     <ClCompile Include="..\Private\BattleFXFlow.cpp" />
     <ClCompile Include="..\Private\Defiler.cpp" />
+    <ClCompile Include="..\Private\DefilerState_Attack.cpp" />
     <ClCompile Include="..\Private\DefilerState_Born.cpp" />
+    <ClCompile Include="..\private\DefilerState_Idle.cpp" />
     <ClCompile Include="..\private\Room_Lottery.cpp" />
     <ClCompile Include="..\private\UI_DamageText.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='ReleaseDebug|x64'">Disabled</Optimization>

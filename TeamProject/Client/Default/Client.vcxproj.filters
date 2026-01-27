@@ -94,9 +94,6 @@
     <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State">
       <UniqueIdentifier>{65719fdb-c4ae-421f-ae1c-e35ee8ef1f35}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Attack">
-      <UniqueIdentifier>{d2294c59-8513-4a61-8866-98be7b2c0418}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Idle">
       <UniqueIdentifier>{1a82ce21-c2c8-4158-8a06-479033fbf790}</UniqueIdentifier>
     </Filter>
@@ -108,9 +105,6 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Hit">
       <UniqueIdentifier>{82010ee6-5be7-4dc2-b2fe-55411c9442cf}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Attack\Phase1">
-      <UniqueIdentifier>{964c7637-0a29-4115-a3ab-e67539825dbc}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Walk\Phase1">
       <UniqueIdentifier>{a0d42fa8-de6c-4103-8f2b-ce937be8f959}</UniqueIdentifier>
@@ -273,15 +267,6 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Npc\Service\ShopBangBoos\Ask">
       <UniqueIdentifier>{2c23461a-2765-4480-ad3f-f2645e65df1e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchIn\Normal">
-      <UniqueIdentifier>{17ac199c-689b-4292-beb7-f0b1a28e89d3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchIn\Attack">
-      <UniqueIdentifier>{3b25628b-24fb-4600-ba33-add740b3d93e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchIn\ParryAid">
-      <UniqueIdentifier>{4b65cf7d-c3b5-4826-8da1-334e9b9c6ca9}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\Object\Npc\Service\ShopBangBoos\Ask\State">
       <UniqueIdentifier>{ae74ad50-97c1-4208-aed1-096698c72e90}</UniqueIdentifier>
@@ -555,9 +540,6 @@
     <Filter Include="02. GameObject\Camera\99. DisplayGate">
       <UniqueIdentifier>{7cfc1b6e-36c2-4bb1-bb95-56819b1ab3d6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Attack\Phase2">
-      <UniqueIdentifier>{8080e445-1ea3-4f5c-9188-7ec8d37887e4}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\Object\Enemy\Sacrifice_Hand">
       <UniqueIdentifier>{8fba8062-3d01-4a71-a27f-806808b2273d}</UniqueIdentifier>
     </Filter>
@@ -665,8 +647,8 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Enemy\Defiler\State\Born">
       <UniqueIdentifier>{1e1d0a87-3187-4e83-97b3-960b6a21d5df}</UniqueIdentifier>
-        </Filter>
-        <Filter Include="02. GameObject\UI\01. 2D\Lottery">
+    </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\Lottery">
       <UniqueIdentifier>{ee6183f6-ec38-4f11-8817-aa5b5ca15997}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\UI\01. 2D\Lottery\ScratchCard">
@@ -674,7 +656,7 @@
     </Filter>
     <Filter Include="02. GameObject\UI\01. 2D\ResultBanner">
       <UniqueIdentifier>{b0a647aa-0d2d-415b-a90b-f57018145cf1}</UniqueIdentifier>
-  </Filter>
+    </Filter>
     <Filter Include="02. GameObject\Object\Player\Character\00. Collider">
       <UniqueIdentifier>{1487da32-f803-44c2-be56-7687fc06901a}</UniqueIdentifier>
     </Filter>
@@ -869,7 +851,21 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Player\Character\01. JaneDoe\State\Start">
       <UniqueIdentifier>{2cbaf699-675f-4a4b-9bf0-f7322153d7d1}</UniqueIdentifier>
-
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Defiler\State\Attack">
+      <UniqueIdentifier>{4c204a9b-dec6-48bf-9afb-66c998eac1f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Defiler\State\Idle">
+      <UniqueIdentifier>{103ceda5-cc1b-46f3-8969-07428f2f1b4d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Attack">
+      <UniqueIdentifier>{d2294c59-8513-4a61-8866-98be7b2c0418}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Attack\Phase1">
+      <UniqueIdentifier>{964c7637-0a29-4115-a3ab-e67539825dbc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Attack\Phase2">
+      <UniqueIdentifier>{8080e445-1ea3-4f5c-9188-7ec8d37887e4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1701,6 +1697,12 @@
     <ClInclude Include="..\Public\UI_ResultBanner.h">
       <Filter>02. GameObject\UI\01. 2D\ResultBanner</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\DefilerState_Idle.h">
+      <Filter>02. GameObject\Object\Enemy\Defiler\State\Idle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\DefilerState_Attack.h">
+      <Filter>02. GameObject\Object\Enemy\Defiler\State\Attack</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2488,6 +2490,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\UI_ResultBanner.cpp">
       <Filter>02. GameObject\UI\01. 2D\ResultBanner</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\DefilerState_Idle.cpp">
+      <Filter>02. GameObject\Object\Enemy\Defiler\State\Idle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\DefilerState_Attack.cpp">
+      <Filter>02. GameObject\Object\Enemy\Defiler\State\Attack</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -9,6 +9,9 @@ class CStateMachine;
 class CDefiler :
     public CEnemy
 {
+    struct Defiler_Target {
+
+    };
 private:
     CDefiler();
     CDefiler(const CDefiler& rhg);
@@ -25,6 +28,8 @@ public:
     void    Render_GUI();
 
 private:
+    void MoveByRootMotion(_float dt, _float moveScale = 1.f);
+    void RotateToTarget(_float dt, _float rotateSpeed = 1.f);
     void Update_States(_float dt);
 
 private:

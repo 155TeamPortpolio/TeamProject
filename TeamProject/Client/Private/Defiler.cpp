@@ -80,6 +80,8 @@ void CDefiler::Update(_float dt)
 
 	Get_Component<CAnimator3D>()->Update_Animation(dt);
 	Get_Component<CCharacterController>()->Update(dt);
+	MoveByRootMotion(dt);
+	RotateToTarget(dt);
 }
 
 void CDefiler::Late_Update(_float dt)
@@ -107,6 +109,34 @@ CDefiler* CDefiler::Create()
 	}
 
 	return instance;
+}
+
+void CDefiler::MoveByRootMotion(_float dt, _float moveScale)
+{
+	auto pAnimator = Get_Component<CAnimator3D>();
+	auto pCCT = Get_Component<CCharacterController>();
+
+	_vector3 vDeltaMove = pAnimator->Get_RootBoneMoveDelta();
+	_vector4 vDeltaQuat = pAnimator->Get_RootBoneQuatDelta();
+	_vector4 vQuaternion = m_pTransform->Get_QuaternionRotate();
+
+	Get_Component<CTransform>()->Add_Quaternion(vDeltaQuat);
+	pCCT->Move_RootMotion(vDeltaMove * moveScale, vQuaternion, dt);
+}
+
+void CDefiler::RotateToTarget(_float dt, _float rotateSpeed)
+{
+	_vector3 vPosition = m_pTransform->Get_Pos();
+	_vector3 vCurrDir = m_pTransform->Dir(STATE::LOOK);
+	_vector3 vTargetDir = m_tTargetingInfo.vDirToTarget;
+	vCurrDir.Normalize();
+	vTargetDir.Normalize();
+
+	if (vCurrDir.Dot(vTargetDir) >= 0.99f)
+		return;
+
+	vCurrDir = _vector3::Lerp(vCurrDir, vTargetDir, dt * rotateSpeed);
+	m_pTransform->Set_Look(vCurrDir);
 }
 
 void CDefiler::Update_States(_float dt)
@@ -154,9 +184,10 @@ HRESULT CDefiler::Initialize_StateMachine()
 HRESULT CDefiler::Initialize_States()
 {
 	m_pStateMachine->Register_State("Born", CDefilerState_Born::Create());
-	//m_pStateMachine->Register_State("Idle", CSacrificeState_Idle::Create());
+	m_pStateMachine->Register_State("Idle", CDefilerState_Idle::Create());
+	m_pStateMachine->Register_State("Attack", CDefilerState_Attack::Create());
+
 	//m_pStateMachine->Register_State("Walk", CSacrificeState_Walk::Create());
-	//m_pStateMachine->Register_State("Attack", CSacrificeState_Attack::Create());
 	//m_pStateMachine->Register_State("Hit", CSacrificeState_Hit::Create());
 	//m_pStateMachine->Register_State("Evade", CSacrificeState_Evade::Create());
 	//m_pStateMachine->Register_State("Death", CSacrificeState_Death::Create());
@@ -169,28 +200,15 @@ HRESULT CDefiler::Initialize_States()
 
 HRESULT CDefiler::Initialize_Transitions()
 {
+	/* 태어난 후 -> 강제 IDLE*/
 	m_pStateMachine->Register_Transition("Born", "Idle",
 		CStateMachine<CDefiler>::CONDITION_ANIMATION_END);
 
-	/* From Idle */
+	/* IDLE -> ATK or IDLE -> WALK */
 	m_pStateMachine->Register_Transition("Idle", "Attack",
 		CStateMachine<CDefiler>::CONDITION_TRIGGER, "Idle_To_Attack");
 	m_pStateMachine->Register_Transition("Idle", "Walk",
 		CStateMachine<CDefiler>::CONDITION_TRIGGER, "Idle_To_Walk");
-
-	/* From Death */
-	vector<CStateMachine<CDefiler>::CONDITION_INFO> conditions;
-	conditions.push_back({ CStateMachine<CDefiler>::CONDITION_ANIMATION_END });
-	conditions.push_back({ CStateMachine<CDefiler>::CONDITION_TRIGGER,"Change_Phase" });
-	m_pStateMachine->Register_Transition("Death", "ChangePhase", conditions);
-
-	/* From Change Phase */
-	m_pStateMachine->Register_Transition("ChangePhase", "Idle",
-		CStateMachine<CDefiler>::CONDITION_ANIMATION_END);
-
-	/* From Parry */
-	m_pStateMachine->Register_Transition("Parry", "Idle",
-		CStateMachine<CDefiler>::CONDITION_ANIMATION_END);
 
 	return S_OK;
 }

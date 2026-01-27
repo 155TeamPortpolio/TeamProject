@@ -2,8 +2,9 @@
 #include "IHState.h"
 
 NS_BEGIN(Client)
+
 class CDefiler;
-class CDefilerState_Born : public IHState<CDefiler>
+class CDefilerState_Idle : public IHState<CDefiler>
 {
 public:
 	virtual void Enter(CDefiler* pOwner) override;
@@ -11,9 +12,8 @@ public:
 	virtual void Exit(CDefiler* pOwner) override;
 
 public:
-	static CDefilerState_Born* Create() { return new CDefilerState_Born(); }
+	static CDefilerState_Idle* Create() { return new CDefilerState_Idle(); }
 	virtual void Free() override { __super::Free(); }
-
 };
 
 NS_END
