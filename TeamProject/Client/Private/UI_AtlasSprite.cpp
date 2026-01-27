@@ -24,11 +24,11 @@ HRESULT CUI_AtlasSprite::Initialize(INIT_DESC* pArg)
 
     if (desc)
     {
-        m_texKey = desc->texKey;
+        m_texKey      = desc->texKey;
         m_frameCountX = desc->frameCountX;
         m_frameCountY = desc->frameCountY;
-        m_frameIdx = desc->frameIdx;
-        m_heightPx = desc->heightPx;
+        m_frameIdx    = desc->frameIdx;
+        m_heightPx    = desc->heightPx;
     }
 
     if (!m_texKey.empty())
@@ -37,7 +37,7 @@ HRESULT CUI_AtlasSprite::Initialize(INIT_DESC* pArg)
     m_colorTexKey.clear();
     m_colorFrameCountX = 1;
     m_colorFrameCountY = 1;
-    m_colorFrameIdx = 0;
+    m_colorFrameIdx    = 0;
 
     m_shearK = 0.f;
 
@@ -56,7 +56,7 @@ void CUI_AtlasSprite::Update(_float dt)
 
 void CUI_AtlasSprite::Set_Atlas(const string& textureKey, _uint frameCountX, _uint frameCountY)
 {
-    m_texKey = textureKey;
+    m_texKey      = textureKey;
     m_frameCountX = max(1u, frameCountX);
     m_frameCountY = max(1u, frameCountY);
 
@@ -80,7 +80,7 @@ void CUI_AtlasSprite::Set_HeightPx(_float heightPx)
 
 void CUI_AtlasSprite::Set_ColorAtlas(const string& textureKey, _uint frameCountX, _uint frameCountY)
 {
-    m_colorTexKey = textureKey;
+    m_colorTexKey      = textureKey;
     m_colorFrameCountX = max(1u, frameCountX);
     m_colorFrameCountY = max(1u, frameCountY);
 
@@ -115,21 +115,21 @@ void CUI_AtlasSprite::Apply_Params()
 
     if (!sprite->IsValid()) return;
 
-    sprite->Set_Param("Col", {&m_frameCountX, "uint", sizeof(_uint)});
-    sprite->Set_Param("Row", {&m_frameCountY, "uint", sizeof(_uint)});
-    sprite->Set_Param("FrameIndex", {&m_frameIdx, "uint", sizeof(_uint)});
-    sprite->Set_Param("ShearK", {&m_shearK, "float", sizeof(_float)});
+    sprite->Set_Param("Col",        {&m_frameCountX, "uint",  sizeof(_uint)});
+    sprite->Set_Param("Row",        {&m_frameCountY, "uint",  sizeof(_uint)});
+    sprite->Set_Param("FrameIndex", {&m_frameIdx,    "uint",  sizeof(_uint)});
+    sprite->Set_Param("ShearK",     {&m_shearK,      "float", sizeof(_float)});
 
     if (!m_colorTexKey.empty())
     {
-        sprite->Set_Param("ColorCol", {&m_colorFrameCountX, "uint", sizeof(_uint)});
-        sprite->Set_Param("ColorRow", {&m_colorFrameCountY, "uint", sizeof(_uint)});
-        sprite->Set_Param("ColorFrameIndex", {&m_colorFrameIdx, "uint", sizeof(_uint)});
+        sprite->Set_Param("ColorCol",        {&m_colorFrameCountX, "uint", sizeof(_uint)});
+        sprite->Set_Param("ColorRow",        {&m_colorFrameCountY, "uint", sizeof(_uint)});
+        sprite->Set_Param("ColorFrameIndex", {&m_colorFrameIdx,    "uint", sizeof(_uint)});
 
         SHADER_PARAM p{};
         p.typeName = "Texture2D";
-        p.iSize = 0;
-        p.pData = sprite->Get_Texture(1)->Get_SRV();
+        p.iSize    = 0;
+        p.pData    = sprite->Get_Texture(1)->Get_SRV();
         sprite->Set_Param("ColorTexture", p);
     }
 }
@@ -144,8 +144,8 @@ void CUI_AtlasSprite::Update_SizeByHeight()
     if (tex)
     {
         const _uint2 texSize = tex->Get_Size();
-        const _float cellW = texSize.x / max(1u, m_frameCountX);
-        const _float cellH = texSize.y / max(1u, m_frameCountY);
+        const _float cellW   = texSize.x / max(1u, m_frameCountX);
+        const _float cellH   = texSize.y / max(1u, m_frameCountY);
         if (cellH > 0.f) aspect = cellW / cellH;
     }
 
