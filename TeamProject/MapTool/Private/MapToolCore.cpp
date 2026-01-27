@@ -181,52 +181,74 @@ void CMapToolCore::Load_WithEntityData()
 	string filename = entityPath.filename().string();
 
 	size_t pos = filename.find("MapData");
-	if (pos == string::npos)
-		return;
 
-	filename.replace(pos, strlen("MapData"), "EntityData");
-	entityPath.replace_filename(filename);
+	if (pos != string::npos) {
+		filename.replace(pos, strlen("MapData"), "EntityData");
+		entityPath.replace_filename(filename);
 
-	if (!filesystem::exists(entityPath))
-		return;
+		if (filesystem::exists(entityPath)) {
+			Clear_Layer(MAPOBJ_TYPE::ENTITY);
 
-	Clear_Layer(MAPOBJ_TYPE::ENTITY);
+			Entity_Header EntityHeader = Helper::LoadJson<Entity_Header>(entityPath.string());
+			LoadedData.tagDataFormat = "EntityData";
 
-	Entity_Header EntityHeader = Helper::LoadJson<Entity_Header>(entityPath.string());
-	LoadedData.tagDataFormat = "EntityData";
+			m_tMapToolContext.iVersion = EntityHeader.iVersion;
+			m_tMapToolContext.TagArea = EntityHeader.TagArea;
 
-	m_tMapToolContext.iVersion = EntityHeader.iVersion;
-	m_tMapToolContext.TagArea = EntityHeader.TagArea;
+			for (auto& EntityData : EntityHeader.Entities)
+			{
+				Place_EntityObjectFromLoadData(&EntityData);
+				LOADED_OBJECT Desc = {};
+				Desc.iObjIdx = EntityData.iEntityID;
+				Desc.TagModelKey = EntityData.tagName;
 
-	for (auto& EntityData : EntityHeader.Entities)
-	{
-		Place_EntityObjectFromLoadData(&EntityData);
-		LOADED_OBJECT Desc = {};
-		Desc.iObjIdx = EntityData.iEntityID;
-		Desc.TagModelKey = EntityData.tagName;
-
-		LoadedData.LoadedObjects.push_back(Desc);
+				LoadedData.LoadedObjects.push_back(Desc);
+			}
+		}
 	}
 
 	/* BattleData 가 있을 때 */
 	filesystem::path BattlePath = OpenPath;
 
+
+	_bool isEntity = true;
 	pos = filename.find("EntityData");
 	if (pos == string::npos)
-		return;
+		isEntity = false;
 
-	filename.replace(pos, strlen("EntityData"), "BattleData");
-	BattlePath.replace_filename(filename);
+	if (isEntity) {
+		filename.replace(pos, strlen("EntityData"), "BattleData");
+		BattlePath.replace_filename(filename);
 
-	pos = filename.find(".Base.1");
+		pos = filename.find(".Base.1");
 
-	filename.replace(pos, strlen(".Base.1"), "");
-	BattlePath.replace_filename(filename);
+		filename.replace(pos, strlen(".Base.1"), "");
+		BattlePath.replace_filename(filename);
 
-	if (!filesystem::exists(BattlePath))
-		return;
+		if (!filesystem::exists(BattlePath))
+			return;
 
-	m_pMapToolGui->Load_BattleData(BattlePath.string());
+		m_pMapToolGui->Load_BattleData(BattlePath.string());
+	}
+	else {
+		pos = filename.find("MapData");
+		if (pos == string::npos)
+			return;
+
+		filename.replace(pos, strlen("MapData"), "BattleData");
+		BattlePath.replace_filename(filename);
+
+		pos = filename.find(".Base.1");
+
+		filename.replace(pos, strlen(".Base.1"), "");
+		BattlePath.replace_filename(filename);
+
+		if (!filesystem::exists(BattlePath))
+			return;
+
+		m_pMapToolGui->Load_BattleData(BattlePath.string());
+	}
+
 }
 
 void CMapToolCore::Clear_Layer(MAPOBJ_TYPE eObjType)

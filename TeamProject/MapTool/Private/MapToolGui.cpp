@@ -177,7 +177,7 @@ void CMapToolGui::Render_GUI()
             m_pMapToolCore->Load_MapData();
         }
         ImGui::SameLine();
-        if (ImGui::Button("LoadOnce")) {
+        if (ImGui::Button("LoadOnce")) { 
             m_pMapToolCore->Load_WithEntityData();
         }
         ImGui::SameLine();

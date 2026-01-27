@@ -63,6 +63,7 @@ public:
 	virtual void Add_MotionBlurCommand(const MOTIONBLUR_COMMAND& command) override;
 	virtual void Add_PostProcessCommand(const POST_PROCESS_COMMAND& command)override;
 	virtual ID3D11ShaderResourceView* Get_CustomTargetSRV(const string strTag) override;
+	virtual ID3D11Texture2D* Get_CustomTargetTexture(const string strTag) override;
 	virtual ID3D11ShaderResourceView* Get_EngineTargetSRV(const string strTag) override;
 #pragma endregion
 

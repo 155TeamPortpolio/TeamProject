@@ -7,7 +7,7 @@ float4 vMotionBlurColor;
 float fOutLineThickness;
 float fDissolveProgress;
 float fDissolveTiling;
-float4x4 g_OutLineBoneMatrices[512];
+float4x4 g_CommandBoneMatrices[512];
 matrix g_worldMatrix;
 Texture2D MotionBlurNoiseTexture;
 
@@ -82,10 +82,10 @@ VS_OUT VS_OUTLINE(VS_IN In)
     float fWeightW = 1.0 - (In.vBlendWeight.x + In.vBlendWeight.y + In.vBlendWeight.z);
 
     float4x4 BoneMatrix =
-        g_OutLineBoneMatrices[In.vBlendIndex.x] * In.vBlendWeight.x +
-        g_OutLineBoneMatrices[In.vBlendIndex.y] * In.vBlendWeight.y +
-        g_OutLineBoneMatrices[In.vBlendIndex.z] * In.vBlendWeight.z +
-        g_OutLineBoneMatrices[In.vBlendIndex.w] * fWeightW;
+        g_CommandBoneMatrices[In.vBlendIndex.x] * In.vBlendWeight.x +
+        g_CommandBoneMatrices[In.vBlendIndex.y] * In.vBlendWeight.y +
+        g_CommandBoneMatrices[In.vBlendIndex.z] * In.vBlendWeight.z +
+        g_CommandBoneMatrices[In.vBlendIndex.w] * fWeightW;
     
     vector vPosition = mul(float4(In.vPosition, 1.f), BoneMatrix);
     vector vNormal = mul(float4(In.vNormal, 0.f), BoneMatrix);
@@ -131,10 +131,10 @@ VS_MOTIONOUT VS_MOTIONBLUR(VS_IN In)
     float fWeightW = 1.0 - (In.vBlendWeight.x + In.vBlendWeight.y + In.vBlendWeight.z);
 
     float4x4 BoneMatrix =
-        g_OutLineBoneMatrices[In.vBlendIndex.x] * In.vBlendWeight.x +
-        g_OutLineBoneMatrices[In.vBlendIndex.y] * In.vBlendWeight.y +
-        g_OutLineBoneMatrices[In.vBlendIndex.z] * In.vBlendWeight.z +
-        g_OutLineBoneMatrices[In.vBlendIndex.w] * fWeightW;
+        g_CommandBoneMatrices[In.vBlendIndex.x] * In.vBlendWeight.x +
+        g_CommandBoneMatrices[In.vBlendIndex.y] * In.vBlendWeight.y +
+        g_CommandBoneMatrices[In.vBlendIndex.z] * In.vBlendWeight.z +
+        g_CommandBoneMatrices[In.vBlendIndex.w] * fWeightW;
     
     vector vPosition = mul(float4(In.vPosition, 1.f), BoneMatrix);
     vector vNormal = mul(float4(In.vNormal, 0.f), BoneMatrix);
@@ -218,6 +218,7 @@ PS_OUT PS_MAIN(PS_IN In)
         vNormal = mul(vNormal, WorldMatrix);
         vMetalic.a = 0.6f;
         Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, vNormalDesc.z);
+        Out.vLook = float4(0.f, 0.f, 0.f, 0.f);
     }
     else
     {

@@ -206,17 +206,18 @@ void CEnemy::Active_AttackSign(_bool parryEnable)
 	static_cast<CAttackSign*>(pAttackSign)->Active(IsReallyParryEnable);
 }
 
-void CEnemy::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage)
+void CEnemy::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER charaName)
 {
 	_int damage = Helper::Get_Random_Int(1000, 10000);
 
-	CUI_DamageText::DAMAGE_DESC desc{};
+	DAMAGE_DESC desc;
 	desc.damage        = damage;
 	desc.followHandle  = Get_Handle();
 	desc.followOffset  = Vector3(0.f, 1.3f, 0.f);
 	desc.isEnemy       = true;
+	desc.charaName     = charaName;
 
-	UIDirector()->Request_DamageText(&desc);
+	UIDirector()->Request_DamageText(desc);
 }
 
 void CEnemy::Create_UIEnemyStatus(string boneTag)
