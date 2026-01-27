@@ -122,16 +122,7 @@ void CUI_AtlasSprite::Apply_Params()
 {
     auto sprite = Get_Component<CSprite2D>();
 
-    static _bool msgSended = false;
-    if (!sprite->IsValid())
-    {
-        if (!msgSended)
-        {
-            MSG_BOX("Resources/UI/Image/Damage 폴더를 새로 받아주세요!");
-            msgSended = true;
-        }
-        return;
-    }
+    if (!sprite->IsValid()) return;
 
     sprite->Set_Param("Col", {&m_frameCountX, "uint", sizeof(_uint)});
     sprite->Set_Param("Row", {&m_frameCountY, "uint", sizeof(_uint)});

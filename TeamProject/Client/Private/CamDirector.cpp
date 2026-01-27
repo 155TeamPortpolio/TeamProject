@@ -17,6 +17,9 @@
 #include "BattleSystem.h"
 #include "Character.h"
 
+#include "AudioDevice.h"
+#include "AudioSource.h"
+
 namespace
 {
     size_t FindEventKeyIdx(const vector<CamKeyFrame>& keys, const string& eventTag)
