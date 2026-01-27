@@ -125,9 +125,9 @@ void CJaneDoeState_Rush01_Start::Enter(CJaneDoe* pOwner)
 
 void CJaneDoeState_Rush01_Start::Update(CJaneDoe* pOwner, _float dt)
 {
-    //pOwner->Process_RootMotion(dt,
-    //    ENUM(CJaneDoe::ROOTMOTION_MASK::MOVE) |
-    //    ENUM(CJaneDoe::ROOTMOTION_MASK::QUATERNION));
+    pOwner->Process_RootMotion(dt,
+        ENUM(CJaneDoe::ROOTMOTION_MASK::MOVE) |
+        ENUM(CJaneDoe::ROOTMOTION_MASK::QUATERNION));
 
     Update_Effects(pOwner);
 }

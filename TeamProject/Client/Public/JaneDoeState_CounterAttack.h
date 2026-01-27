@@ -23,7 +23,7 @@ class CJaneDoeState_Counter_01 : public IBaseState<CJaneDoe>
 public:
     virtual void Enter(CJaneDoe* pOwner) override;
     virtual void Update(CJaneDoe* pOwner, _float dt) override;
-    virtual void Exit(CJaneDoe* pOwner) override;
+    virtual void Exit(CJaneDoe* pOwner) override {}
 
 public:
     static CJaneDoeState_Counter_01* Create() { return new CJaneDoeState_Counter_01(); }
@@ -35,7 +35,7 @@ class CJaneDoeState_Counter_02 : public IBaseState<CJaneDoe>
 public:
     virtual void Enter(CJaneDoe* pOwner) override;
     virtual void Update(CJaneDoe* pOwner, _float dt) override;
-    virtual void Exit(CJaneDoe* pOwner) override;
+    virtual void Exit(CJaneDoe* pOwner) override {}
 
 public:
     static CJaneDoeState_Counter_02* Create() { return new CJaneDoeState_Counter_02(); }
@@ -47,7 +47,7 @@ class CJaneDoeState_Counter_03 : public IBaseState<CJaneDoe>
 public:
     virtual void Enter(CJaneDoe* pOwner) override;
     virtual void Update(CJaneDoe* pOwner, _float dt) override;
-    virtual void Exit(CJaneDoe* pOwner) override;
+    virtual void Exit(CJaneDoe* pOwner) override {}
 
 public:
     static CJaneDoeState_Counter_03* Create() { return new CJaneDoeState_Counter_03(); }
@@ -59,7 +59,7 @@ class CJaneDoeState_Counter_End : public IBaseState<CJaneDoe>
 public:
     virtual void Enter(CJaneDoe* pOwner) override;
     virtual void Update(CJaneDoe* pOwner, _float dt) override;
-    virtual void Exit(CJaneDoe* pOwner) override;
+    virtual void Exit(CJaneDoe* pOwner) override {}
 
 public:
     static CJaneDoeState_Counter_End* Create() { return new CJaneDoeState_Counter_End(); }

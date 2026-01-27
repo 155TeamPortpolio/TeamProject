@@ -68,6 +68,7 @@ void CJaneDoeState_Evade::Update(CJaneDoe* pOwner, _float dt)
         case 5: // CounterAttack
             pRootFSM->Set_Int("AttackEntryMode", 5);
             pRootFSM->Set_Trigger("Attack");
+            break;
         case 4:
             pRootFSM->Set_Int("IdleEntryMode", 1);
             pRootFSM->Set_Trigger("ToIdle");

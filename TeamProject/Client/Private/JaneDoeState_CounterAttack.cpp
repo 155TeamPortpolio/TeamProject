@@ -32,18 +32,18 @@ void CJaneDoeState_CounterAttack::Enter(CJaneDoe* pOwner)
 	pOwner->Lock_Move();
 	if (pOwner->Is_Passion())
 	{
-		m_pSubStateMachine->Set_DefaultState("Counter_01");
-		m_pSubStateMachine->Set_Int("CounterMode", 1);
+		m_pSubStateMachine->Set_DefaultState("Counter_03");
+		m_pSubStateMachine->Set_Int("CounterMode", 0);
 	}
-	else if (pOwner->Get_EvadeCount() <= 1)
+	else if (pOwner->Get_EvadeCount() % 2 == 0)
 	{
 		m_pSubStateMachine->Set_DefaultState("Counter_02");
-		m_pSubStateMachine->Set_Int("CounterMode", 2);
+		m_pSubStateMachine->Set_Int("CounterMode", 1);
 	}
 	else
 	{
-		m_pSubStateMachine->Set_DefaultState("Counter_03");
-		m_pSubStateMachine->Set_Int("CounterMode", 3);
+		m_pSubStateMachine->Set_DefaultState("Counter_01");
+		m_pSubStateMachine->Set_Int("CounterMode", 2);
 	}
 
 	__super::Enter(pOwner);
@@ -117,10 +117,9 @@ void CJaneDoeState_Counter_01::Enter(CJaneDoe* pOwner)
 
 void CJaneDoeState_Counter_01::Update(CJaneDoe* pOwner, _float dt)
 {
-}
-
-void CJaneDoeState_Counter_01::Exit(CJaneDoe* pOwner)
-{
+	pOwner->Process_RootMotion(dt,
+		ENUM(CJaneDoe::ROOTMOTION_MASK::MOVE) |
+		ENUM(CJaneDoe::ROOTMOTION_MASK::QUATERNION));
 }
 
 void CJaneDoeState_Counter_02::Enter(CJaneDoe* pOwner)
@@ -132,10 +131,9 @@ void CJaneDoeState_Counter_02::Enter(CJaneDoe* pOwner)
 
 void CJaneDoeState_Counter_02::Update(CJaneDoe* pOwner, _float dt)
 {
-}
-
-void CJaneDoeState_Counter_02::Exit(CJaneDoe* pOwner)
-{
+	pOwner->Process_RootMotion(dt,
+		ENUM(CJaneDoe::ROOTMOTION_MASK::MOVE) |
+		ENUM(CJaneDoe::ROOTMOTION_MASK::QUATERNION));
 }
 
 void CJaneDoeState_Counter_03::Enter(CJaneDoe* pOwner)
@@ -147,21 +145,21 @@ void CJaneDoeState_Counter_03::Enter(CJaneDoe* pOwner)
 
 void CJaneDoeState_Counter_03::Update(CJaneDoe* pOwner, _float dt)
 {
-}
-
-void CJaneDoeState_Counter_03::Exit(CJaneDoe* pOwner)
-{
+	pOwner->Process_RootMotion(dt,
+		ENUM(CJaneDoe::ROOTMOTION_MASK::MOVE) |
+		ENUM(CJaneDoe::ROOTMOTION_MASK::QUATERNION));
 }
 
 void CJaneDoeState_Counter_End::Enter(CJaneDoe* pOwner)
 {
 	CJaneDoeState_CounterAttack* pParent = static_cast<CJaneDoeState_CounterAttack*>(m_pParentState);
 	_int iIndex = m_pOwnerStateMachine->Get_Int("CounterMode");
+	m_pOwnerStateMachine->Set_Int("CounterMode", 999);
 	const string arrEndAnims[3] =
 	{
-		pOwner->Get_Name() + "Attack_Counter_01_End",
-		pOwner->Get_Name() + "Attack_Counter_02_End",
 		pOwner->Get_Name() + "Attack_Counter_03_End",
+		pOwner->Get_Name() + "Attack_Counter_02_End",
+		pOwner->Get_Name() + "Attack_Counter_01_End",
 	};
 
 	pOwner->Get_Animator()->Change_Animation(arrEndAnims[iIndex])
@@ -172,8 +170,7 @@ void CJaneDoeState_Counter_End::Enter(CJaneDoe* pOwner)
 
 void CJaneDoeState_Counter_End::Update(CJaneDoe* pOwner, _float dt)
 {
-}
-
-void CJaneDoeState_Counter_End::Exit(CJaneDoe* pOwner)
-{
+	pOwner->Process_RootMotion(dt,
+		ENUM(CJaneDoe::ROOTMOTION_MASK::MOVE) |
+		ENUM(CJaneDoe::ROOTMOTION_MASK::QUATERNION));
 }
