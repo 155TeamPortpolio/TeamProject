@@ -11,8 +11,8 @@ namespace MapTool {
 	static constexpr unsigned int g_iWinSizeY = 900;
 	static constexpr unsigned int g_iMainFrame = 144;
 	static const _char* g_tagMapObjType[] = { 
-		"NONE", "PlacedObject_Layer", "TriggerObject_Layer","EntityData_Layer", "BattleData_Layer", "All_Layer"};
-	enum class MAPOBJ_TYPE { NONE, PLACED, TRIGGER, ENTITY, BATTLE, ALL, END};
+		"NONE", "PlacedObject_Layer", "TriggerObject_Layer","EntityData_Layer", "BattleData_Layer", "Light_Layer", "All_Layer"};
+	enum class MAPOBJ_TYPE { NONE, PLACED, TRIGGER, ENTITY, BATTLE, LIGHT, ALL, END};
 	static const _char* g_tagBattleObjType[] = {
 		"NONE", "Player_Layer", "Spawner_Layer", "Monster_Layer", "EndPoint_Layer"};
 	enum class BATTLE_TYPE { NONE, PLAYER, SPAWNER, MONSTER, ENDPOINT, END};
