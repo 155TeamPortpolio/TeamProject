@@ -33,7 +33,7 @@ namespace
     constexpr _float kInTotalSec  = 0.30f;
     constexpr _float kOutTotalSec = 0.30f;
 
-    constexpr _float kHoldSec = 0.5f;
+    constexpr _float kHoldSec = 1.f;
 
     constexpr _float kDigitInSec  = 0.20f;
     constexpr _float kDigitOutSec = 0.20f;
@@ -450,6 +450,11 @@ void CUI_DamageText::Update_Anim(_float dt)
 
     if (m_time >= t.endSec)
         UI_DeActive();
+}
+
+void CUI_DamageText::OnPooledAcquire(INIT_DESC* pArg)
+{
+    Initialize(pArg);
 }
 
 void CUI_DamageText::Ensure_GlyphCount(_uint count)
