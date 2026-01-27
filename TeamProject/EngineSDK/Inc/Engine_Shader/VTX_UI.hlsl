@@ -229,22 +229,37 @@ uint ColorCol = 1;
 uint ColorRow = 1;
 uint ColorFrameIndex = 0;
 
+float FlashMix = 0.f;
+float ColorMix = 1.f;
+
 PS_OUT PS_MAIN_SPRITEANIMATION_COLORATLAS(PS_IN In)
 {
     PS_OUT Out;
 
     float2 uvDigit = CalculateFrameIndex(Col, Row, FrameIndex, In.vTexcoord);
-    vector digit = SpriteTexture.Sample(LinearSampler, uvDigit);
+    float4 digit = SpriteTexture.Sample(LinearSampler, uvDigit);
     clip(digit.a - 0.1f);
 
     float2 uvColor = CalculateFrameIndex(ColorCol, ColorRow, ColorFrameIndex, In.vTexcoord);
-    vector grad = ColorTexture.Sample(LinearSampler, uvColor);
+    float4 grad = ColorTexture.Sample(LinearSampler, uvColor);
 
-    float4 color = (digit * grad) * vColor;
-    Out.vColor.rgb = color.rgb * color.a;
-    Out.vColor.a = color.a;
+    float cm = saturate(ColorMix);
+    float fm = saturate(FlashMix);
+
+    // ColorMix: grad.rgb를 흰색으로 섞어 grad 영향 약화
+    float3 gradRgb = lerp(float3(1.f, 1.f, 1.f), grad.rgb, cm);
+
+    float3 baseRgb = (digit.rgb * gradRgb) * vColor.rgb;
+    float alpha = (digit.a * grad.a) * vColor.a;
+
+    // FlashMix: 최종 rgb를 흰색으로 당김(알파는 그대로)
+    float3 rgb = lerp(baseRgb, float3(1.f, 1.f, 1.f), fm);
+
+    Out.vColor.rgb = rgb * alpha;
+    Out.vColor.a = alpha;
     return Out;
 }
+
 
 PS_OUT PS_MAIN_SPRITEANIMATION(PS_IN In)
 {    
