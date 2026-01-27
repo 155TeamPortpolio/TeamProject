@@ -39,6 +39,7 @@ void CCorinState_SwitchOut::Exit(CCorin* pOwner)
 
 _bool CCorinState_SwitchOut::Handle_Transition(CCorin* pOwner, const string& strState)
 {
-    if (strState == "Idle")  return true;
+    if (strState == "Idle")
+        return true;
     return false;
 }

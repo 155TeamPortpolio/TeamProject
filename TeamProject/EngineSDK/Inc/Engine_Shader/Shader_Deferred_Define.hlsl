@@ -96,6 +96,7 @@ Texture2D RimLightTexture : register(t5);
 Texture2D RimLightFinalTexture : register(t6);
 Texture2D AmbientTexture : register(t7);
 Texture2D FaceDirTexture : register(t8);
+Texture2D PostInfoTexture : register(t9);
 
 //===StaticMesh===
 Texture2D EmissiveTexture : register(t10);
@@ -120,7 +121,9 @@ Texture2D UI3DTexture : register(t31);
 
 //─────────────Post─────────────
 //==Distortion==
-Texture2D DistortionCombinedTexture : register(t35);
+Texture2D DistortionCombinedTexture : register(t32);
+Texture2D VanishTexture : register(t33);
+Texture2D VanishNoiseTexture : register(t34);
 
 Texture2D MotionDepthTexture : register(t36);
 Texture2D MotionBlurTexture : register(t37);

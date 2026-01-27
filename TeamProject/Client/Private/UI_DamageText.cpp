@@ -111,6 +111,10 @@ namespace
     constexpr _float kDamageScaleMax = 1.35f;
     constexpr _float kDamageScaleMaxDamage = 10000.f;
 
+    constexpr _float kDamageBangBangThreshold = 7000.f;
+    constexpr _float kBangWidthRatio = 1.f;
+    constexpr _float kBangExtraTightPx = 9.f;
+
     static _float CalcDamageScale(_int damage)
     {
         _float u = fabsf((_float)damage) / kDamageScaleMaxDamage;
@@ -213,7 +217,8 @@ void CUI_DamageText::UI_Active(void* arg)
     if (desc->isEnemy)
     {
         m_colorFrameIdx = 0;
-        switch (CamDirector()->GetCharacterName())
+
+        switch (desc->charaName)
         {
         case CHARACTER::JaneDoe: m_colorFrameIdx = kColorIdx_JaneDoe; break;
         case CHARACTER::Corin:   m_colorFrameIdx = kColorIdx_Corin;   break;
@@ -246,6 +251,7 @@ void CUI_DamageText::UI_Active(void* arg)
 }
 
 
+
 void CUI_DamageText::UI_DeActive(void* arg)
 {
     for (_uint i = 0; i < (_uint)m_glyphs.size(); ++i)
@@ -265,14 +271,18 @@ void CUI_DamageText::SetDamage(_int damage)
     m_damageScale = CalcDamageScale(damage);
 
     m_digits = to_string(damage);
+    if (fabsf((_float)damage) >= kDamageBangBangThreshold) m_digits += "!!";
 
     const _uint count = (_uint)m_digits.size();
     Ensure_GlyphCount(count);
 
     for (_uint i = 0; i < count; ++i)
     {
-        const _uint digit = (_uint)(m_digits[i] - '0');
-        const _uint frameIndex = GetDigitFrameIdx(digit);
+        const char ch = m_digits[i];
+
+        _uint frameIndex = 0;
+        if (ch == '!') frameIndex = GetBangFrameIdx();
+        else frameIndex = GetDigitFrameIdx((_uint)(ch - '0'));
 
         auto glyph = GetGlyph(i);
         glyph->Set_FrameIndex(frameIndex);
@@ -284,8 +294,9 @@ void CUI_DamageText::SetDamage(_int damage)
 
     for (_uint i = count; i < (_uint)m_glyphs.size(); ++i)
     {
-        GetGlyph(i)->Set_Alpha(0.f);
-        GetGlyph(i)->Set_ShearK(0.f);
+        auto glyph = GetGlyph(i);
+        glyph->Set_Alpha(0.f);
+        glyph->Set_ShearK(0.f);
     }
 
     {
@@ -304,23 +315,51 @@ void CUI_DamageText::Rebuild_BaseLayout()
     m_baseOffsets.clear();
     m_baseOffsets.resize(count);
 
-    const _float glyphW = kGlyphHeightPx * m_glyphAspect;
+    if (count == 0u)
+    {
+        m_baseTotalW = 1.f;
+        return;
+    }
 
-    const _float overlapPx = glyphW * (1.f - kOverlapHold);
-    const _float spacing = kGlyphSpacingPx - overlapPx;
+    const _float digitW = kGlyphHeightPx * m_glyphAspect;
 
-    _float totalW = glyphW * (_float)count;
-    if (count > 1u) totalW += spacing * (_float)(count - 1u);
+    const _float overlapPx = digitW * (1.f - kOverlapHold);
+    const _float baseSpacing = kGlyphSpacingPx - overlapPx;
+
+    _float totalW = 0.f;
+
+    for (_uint i = 0; i < count; ++i)
+    {
+        totalW += GetCharWidthPx(m_digits[i]);
+
+        if (i + 1u < count)
+        {
+            const char left = m_digits[i];
+            const char right = m_digits[i + 1u];
+            totalW += baseSpacing - GetPairExtraTightPx(left, right);
+        }
+    }
 
     m_baseTotalW = max(1.f, totalW);
 
     _float x = -m_baseTotalW * 0.5f;
     for (_uint i = 0; i < count; ++i)
     {
+        const char ch = m_digits[i];
+        const _float w = GetCharWidthPx(ch);
+
         m_baseOffsets[i] = Vector2(x, 0.f);
-        x += glyphW + spacing;
+
+        x += w;
+
+        if (i + 1u < count)
+        {
+            const char next = m_digits[i + 1u];
+            x += baseSpacing - GetPairExtraTightPx(ch, next);
+        }
     }
 }
+
 
 void CUI_DamageText::Apply_LayoutScaled()
 {
@@ -447,6 +486,28 @@ _uint CUI_DamageText::GetDigitFrameIdx(_uint digit) const
     const _uint rowBottom = (digit >= 8) ? (digit - 8u) : digit;
     const _uint rowTop = (kFrameCountY - 1u) - rowBottom;
     return rowTop * kFrameCountX + col;
+}
+
+_uint CUI_DamageText::GetBangFrameIdx() const
+{
+    const _uint col = 1u;
+    const _uint rowBottom = 2u;
+    const _uint rowTop = (kFrameCountY - 1u) - rowBottom;
+    return rowTop * kFrameCountX + col;
+}
+
+_float CUI_DamageText::GetCharWidthPx(char ch) const
+{
+    const _float digitW = kGlyphHeightPx * m_glyphAspect;
+    if (ch == '!') return digitW * kBangWidthRatio;
+    return digitW;
+}
+
+_float CUI_DamageText::GetPairExtraTightPx(char left, char right) const
+{
+    if (right != '!') return 0.f;
+    if (left == '!') return kBangExtraTightPx;
+    return kBangExtraTightPx * 0.6f;
 }
 
 CGameObject* CUI_DamageText::Create()

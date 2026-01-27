@@ -7,6 +7,11 @@ CRoom_Street::CRoom_Street(const ROOM_DESC& desc)
 {
 }
 
+_uint CRoom_Street::AddRef()
+{
+	return 1;
+}
+
 void CRoom_Street::Enter()
 {
 	m_pLoader = CMapLoader::Create("MainCity_Level", "MainCity");

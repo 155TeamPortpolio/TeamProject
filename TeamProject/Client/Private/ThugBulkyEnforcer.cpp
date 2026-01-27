@@ -4,6 +4,10 @@
 #include "Helper_Func.h"
 #include "GameInstance.h"
 #include "BattleSystem.h"
+#include "Renderer.h"
+#include "Shader.h"
+#include "Texture.h"
+#include "MaterialInstance.h"
 
 /* Component */
 #include "Material.h"
@@ -51,6 +55,8 @@ HRESULT CThugBulkyEnforcer::Initialize_Prototype()
 	pResourceMgr->Add_ResourcePath("Monster_ThugBulkyEnforcer.model", "../Bin/Resources/Model/skeletal/Enemy/ThugBulkyEnforcer/Monster_ThugBulkyEnforcer.model");
 	pResourceMgr->Add_ResourcePath("ThugBulkyEnforcer_Meta.json", "../Bin/Resources/Model/skeletal/Enemy/ThugBulkyEnforcer/ThugBulkyEnforcer_Meta.json");
 
+	pResourceMgr->Add_ResourcePath("Eff_Noise_119.png", "../Bin/Resources/Global/Shader/Eff_Noise_119.png");
+
 	return S_OK;
 
 
@@ -83,6 +89,38 @@ HRESULT CThugBulkyEnforcer::Initialize(INIT_DESC* pArg)
 	if (FAILED(Initialize_StateMachine()))
 		return E_FAIL;
 
+	//*Shader Texture*
+	auto Texture = ResourceManager()->Load_Texture(G_GlobalLevelKey, "Eff_Noise_119.png");
+	RenderSystem()->Set_NoiseTexture(NOISE_FXTYPE::VANISH, Texture);
+
+	m_vEmissiveColor = _float3(1.f, 0.2f, 0.f);
+	m_vRimLightColor = _float3(0.f, 0.f, 0.f);
+	m_fRimLightPower = 0.f;
+	m_fDissolveProgress = 0.f;
+	m_fDissolveTilling = 16.f;
+
+	auto pEmissiveNoiseTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, "enemy_emissive_noise.png");
+	auto pDissolveNoiseTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, "enemy_death_dissolve.png");
+
+	if (pEmissiveNoiseTexture && pDissolveNoiseTexture)
+	{
+		auto& materialInstances = pMaterial->Get_MaterialInstances();
+		for (const auto& instance : materialInstances)
+		{
+			instance->Override_Pass("UseEmissive");
+
+			instance->Set_Param("NoiseTexture", { pDissolveNoiseTexture->Get_SRV(),"Texture2D",0 });
+			instance->Set_Param("EmissiveNoiseTexture", { pEmissiveNoiseTexture->Get_SRV(),"Texture2D",0 });
+
+			instance->Set_Param("vEmissiveColor", { &m_vEmissiveColor,"float3",sizeof(_float3) });
+			instance->Set_Param("vRimLightColor", { &m_vRimLightColor,"float3",sizeof(_float3) });
+			instance->Set_Param("fRimLightPower", { &m_fRimLightPower,"float",sizeof(_float) });
+			instance->Set_Param("fRimLightPower", { &m_fRimLightPower,"float",sizeof(_float) });
+			instance->Set_Param("fDissolveProgress", { &m_fDissolveProgress,"float",sizeof(_float) });
+			instance->Set_Param("fDissolveTilling", { &m_fDissolveTilling,"float",sizeof(_float) });
+		}
+	}
+
 	// 임시 확인용
 #ifdef _USING_GUI
 	CGameInstance::GetInstance()->Get_GUISystem()->Get_Context()->pSelectedObject = this;
@@ -110,6 +148,10 @@ void CThugBulkyEnforcer::Update(_float dt)
 
 	Update_States(dt);
 	m_pStateMachine->Update(dt);
+
+	/* Dissolve Test */
+	if (m_OnDissolve)
+		Update_Dissolve(dt);
 }
 
 void CThugBulkyEnforcer::Late_Update(_float dt)
@@ -135,7 +177,7 @@ void CThugBulkyEnforcer::Render_GUI()
 
 #pragma region State
 	ImGui::SeparatorText("State & BlackBoard");
-	ImGui::BeginChild("##ThugBulkyEnforcerStatus", ImVec2{ 0, childHeight + textLineHeight * 6}, true);
+	ImGui::BeginChild("##ThugBulkyEnforcerStatus", ImVec2{ 0, childHeight + textLineHeight * 6 }, true);
 	ImGui::Text("Current State : %s", m_pStateMachine->Get_CurrentStateName().c_str());
 	ImGui::Text("Current ChildState : %s", m_tAttackBlackBoard.currentStateTag.c_str());
 	ImGui::Text("AttackCombo : %d", m_iAttackCombo);
@@ -163,7 +205,7 @@ void CThugBulkyEnforcer::Render_GUI()
 	auto pCharacter = GetCharacterOnField();
 	if (nullptr != pCharacter) {
 		ImGui::BeginChild("TracePlayer##ThugBulkyEnforcerStatus", ImVec2{ 0, childHeight + textLineHeight * 6.f }, true);
-		
+
 		ImGui::Text("AnimName : %s", Get_Component<CAnimator3D>()->Get_CurAnimName().c_str());
 		ImGui::Text("SelfDir: %.2f, %.2f, %.2f", m_tTargetingInfo.vDirSelfLook.x, m_tTargetingInfo.vDirSelfLook.y, m_tTargetingInfo.vDirSelfLook.z);
 		ImGui::Text("CaptureDir: %.2f, %.2f, %.2f", m_vDirToLookCapture.x, m_vDirToLookCapture.y, m_vDirToLookCapture.z);
@@ -175,8 +217,8 @@ void CThugBulkyEnforcer::Render_GUI()
 		ImGui::Checkbox(u8"회피용 트리거 활성화", &m_isBattleTriggerOn);
 		ImGui::Checkbox(u8"isOnAttack", &m_isOnAttack);
 		ImGui::EndDisabled();
-	
-	ImGui::EndChild();
+
+		ImGui::EndChild();
 	}
 #pragma endregion
 
@@ -189,7 +231,7 @@ void CThugBulkyEnforcer::Render_GUI()
 #pragma endregion
 
 #pragma region CheckState
-	if(ImGui::TreeNode("Test State##ThugBulkyEnforcerTestState")) {
+	if (ImGui::TreeNode("Test State##ThugBulkyEnforcerTestState")) {
 		//ImGui::BeginChild("State##ThugBulkyEnforcerStatus", ImVec2{ 0, childHeight }, true);
 
 		if (ImGui::TreeNode("AttackState##ThugBulkyEnforcerTestState_Attack")) {
@@ -274,7 +316,7 @@ void CThugBulkyEnforcer::Render_GUI()
 			ImGui::TreePop();
 		}
 		if (ImGui::TreeNode("Hit & Groggy##ThugBulkyEnforcerTestHitAndGroggy")) {
-			
+
 			if (ImGui::Button("Increase Groggy value 30"))
 				m_tStatus.iGroggyValue += 30;
 			if (ImGui::Button("Hit")) {
@@ -285,13 +327,13 @@ void CThugBulkyEnforcer::Render_GUI()
 		}
 
 		if (ImGui::TreeNode("Death##ThugBulkyEnforcerTestDeath")) {
-			if (ImGui::Button("Death Front")) 
+			if (ImGui::Button("Death Front"))
 				m_pStateMachine->Change_State("Death");
 			if (ImGui::Button("Death Back")) {
 				m_pStateMachine->Set_Bool("DeathBack", true);
 				m_pStateMachine->Change_State("Death");
 			}
-			
+
 			ImGui::TreePop();
 		}
 
@@ -305,17 +347,17 @@ void CThugBulkyEnforcer::Render_GUI()
 		if (ImGui::Checkbox("SetBattleAlive", &m_isShowBattleColliderObject)) {
 			ShowBattleColliderForCheck(m_isShowBattleColliderObject);
 		}
-		if (ImGui::Button("Weapon_L_AttackCollider")) 
+		if (ImGui::Button("Weapon_L_AttackCollider"))
 			SetBattleColliderObject("Weapon_L", BATTLE_COLTYPE::ATTACK,
 				!IsAliveBattleColliderObject("Weapon_L", BATTLE_COLTYPE::ATTACK), {});
-		if (ImGui::Button("Weapon_R_AttackCollider")) 
+		if (ImGui::Button("Weapon_R_AttackCollider"))
 			SetBattleColliderObject("Weapon_R", BATTLE_COLTYPE::ATTACK,
 				!IsAliveBattleColliderObject("Weapon_R", BATTLE_COLTYPE::ATTACK), {});
-	
-		if (ImGui::Button("Weapon_L_TriggerCollider")) 
+
+		if (ImGui::Button("Weapon_L_TriggerCollider"))
 			SetBattleColliderObject("Weapon_L", BATTLE_COLTYPE::TRIGGER,
 				!IsAliveBattleColliderObject("Weapon_L", BATTLE_COLTYPE::TRIGGER), {});
-		if (ImGui::Button("Weapon_R_TriggerCollider")) 
+		if (ImGui::Button("Weapon_R_TriggerCollider"))
 			SetBattleColliderObject("Weapon_R", BATTLE_COLTYPE::TRIGGER,
 				!IsAliveBattleColliderObject("Weapon_R", BATTLE_COLTYPE::TRIGGER), {});
 		ImGui::TreePop();
@@ -326,6 +368,17 @@ void CThugBulkyEnforcer::Render_GUI()
 	if (ImGui::Button("Open StateMachine"))
 		m_pStateMachine->Set_ShowWindow(true);
 	m_pStateMachine->Render_GUI();
+#pragma endregion
+
+#pragma region Dissolve_Test
+	if (ImGui::Button("Active Dissolve"))
+		m_OnDissolve = true;
+	if (ImGui::Button("Reset Dissolve"))
+	{
+		m_OnDissolve = false;
+		m_fDissolveProgress = 0.f;
+		m_fDissolveElapsedTime = 0.f;
+	}
 #pragma endregion
 
 	ImGui::PopID();
@@ -384,7 +437,7 @@ HRESULT CThugBulkyEnforcer::Ready_Children(INIT_DESC* pArg)
 	WeaponLDesc.vAttackSize = { 1.5f, 0.f, 0.f };
 	WeaponLDesc.vTriggerSize = { 5.f,0.f,0.f };
 
-	if(FAILED(AttachBattleColliderObject(&WeaponLDesc)))
+	if (FAILED(AttachBattleColliderObject(&WeaponLDesc)))
 		return E_FAIL;
 
 	BATTLE_COLLIDER_DESC WeaponRDesc = {};
@@ -463,9 +516,9 @@ void CThugBulkyEnforcer::FinishWeaponCollider()
 	m_isBattleTriggerOn = false;
 }
 
-void CThugBulkyEnforcer::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage)
+void CThugBulkyEnforcer::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER charaName)
 {
-	__super::TakeDamage(eDamageType, fDamage);
+	__super::TakeDamage(eDamageType, fDamage, charaName);
 	if (0 >= m_tStatus.iNowHP)
 		return;
 
@@ -508,7 +561,7 @@ void CThugBulkyEnforcer::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage)
 			.Apply();
 		m_tStatus.iNowHP -= fDamage * 0.7f;
 		m_tStatus.iGroggyValue += 4;
-	}		
+	}
 
 	if (0.f > m_tStatus.iNowHP)
 		m_tStatus.iNowHP = 0.f;
@@ -526,7 +579,7 @@ HRESULT CThugBulkyEnforcer::Initialize_StateMachine()
 
 	if (FAILED(Initialize_Transitions()))
 		return E_FAIL;
-	
+
 	if (FAILED(Ready_Rules()))
 		return E_FAIL;
 
@@ -615,7 +668,7 @@ void CThugBulkyEnforcer::Update_States(_float dt)
 	ManageAttackHistory();
 	CheckDistanceFromPlayer();
 	RotateToPlayer(dt);
-	
+
 	//================================
 	ControlState(dt);
 	//================================
@@ -647,7 +700,7 @@ void CThugBulkyEnforcer::ControlState(const _float dt)
 				m_pStateMachine->Set_Trigger("Idle_To_Chase");
 			}
 			else if ("Attack" == m_pStateMachine->Get_PrevStateName()) {
-				
+
 				// 콤보 사이에 위빙 할지 말지 정하기. 안하면 공격으로 바로 이동
 				if (3 > m_iAttackCombo) {
 					_int iSidestepIndex = Helper::Get_Random_Int(0, 3);
@@ -692,14 +745,14 @@ void CThugBulkyEnforcer::ControlState(const _float dt)
 		}
 	}
 }
-  
+
 void CThugBulkyEnforcer::CheckDistanceFromPlayer()
 {
 	if ("Chase" != m_pStateMachine->Get_CurrentStateName() &&
 		m_tTargetingInfo.fDistance >= m_tHysteriesis.fChaseEnter)
 		m_pStateMachine->Set_Bool("Chase", true);
 
-	
+
 	if (true == m_pStateMachine->Get_Bool("Chase") &&
 		m_tTargetingInfo.fDistance <= m_tHysteriesis.fChaseExit)
 		m_pStateMachine->Set_Bool("Chase", false);
@@ -738,4 +791,15 @@ void CThugBulkyEnforcer::ManageAttackHistory()
 		m_AttackHistory.pop_back();
 }
 
+void CThugBulkyEnforcer::Update_Dissolve(_float dt)
+{
+	if (m_fDissolveElapsedTime < m_fDissolveDuration)
+	{
+		m_fDissolveElapsedTime += dt;
+		_float t = m_fDissolveElapsedTime / m_fDissolveDuration;
 
+		m_fDissolveProgress = Math::ApplyEase(EaseType::Linear, t);
+	}
+	else
+		m_fDissolveProgress = 1.1f;
+}

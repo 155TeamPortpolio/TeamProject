@@ -372,6 +372,8 @@
     <ClInclude Include="..\Public\DefilerState_Attack.h" />
     <ClInclude Include="..\Public\DefilerState_Born.h" />
     <ClInclude Include="..\public\DefilerState_Idle.h" />
+    <ClInclude Include="..\Public\CorinState_CounterAttack.h" />
+    <ClInclude Include="..\Public\JaneDoeState_CounterAttack.h" />
     <ClInclude Include="..\public\Room_Lottery.h" />
     <ClInclude Include="..\public\UI_DamageText.h" />
     <ClInclude Include="..\public\DialogueNpc.h" />
@@ -694,6 +696,8 @@
     <ClCompile Include="..\Private\DefilerState_Attack.cpp" />
     <ClCompile Include="..\Private\DefilerState_Born.cpp" />
     <ClCompile Include="..\private\DefilerState_Idle.cpp" />
+    <ClCompile Include="..\Private\CorinState_CounterAttack.cpp" />
+    <ClCompile Include="..\Private\JaneDoeState_CounterAttack.cpp" />
     <ClCompile Include="..\private\Room_Lottery.cpp" />
     <ClCompile Include="..\private\UI_DamageText.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='ReleaseDebug|x64'">Disabled</Optimization>

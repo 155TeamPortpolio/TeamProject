@@ -867,6 +867,12 @@
     <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Attack\Phase2">
       <UniqueIdentifier>{8080e445-1ea3-4f5c-9188-7ec8d37887e4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\01. JaneDoe\State\Attack\Counter">
+      <UniqueIdentifier>{ce63a969-3465-4278-b8a3-fef985ba087e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\02. Corin\State\Attack\Counter">
+      <UniqueIdentifier>{24cb7830-1cbd-4738-8790-565250b7f7cd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1701,7 +1707,12 @@
       <Filter>02. GameObject\Object\Enemy\Defiler\State\Idle</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\DefilerState_Attack.h">
-      <Filter>02. GameObject\Object\Enemy\Defiler\State\Attack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\JaneDoeState_CounterAttack.h">
+      <Filter>02. GameObject\Object\Player\Character\01. JaneDoe\State\Attack\Counter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CorinState_CounterAttack.h">
+      <Filter>02. GameObject\Object\Player\Character\02. Corin\State\Attack\Counter</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2496,6 +2507,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\DefilerState_Attack.cpp">
       <Filter>02. GameObject\Object\Enemy\Defiler\State\Attack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\JaneDoeState_CounterAttack.cpp">
+      <Filter>02. GameObject\Object\Player\Character\01. JaneDoe\State\Attack\Counter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CorinState_CounterAttack.cpp">
+      <Filter>02. GameObject\Object\Player\Character\02. Corin\State\Attack\Counter</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

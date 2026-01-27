@@ -5,34 +5,42 @@
 #include "CorinState_RushAttack.h"
 #include "CorinState_ExAttack.h"
 #include "CorinState_UltimateAttack.h"
+#include "CorinState_CounterAttack.h"
 #include "Corin.h"
 
 #include "CharacterController.h"
 
+CCorinState_Attack* CCorinState_Attack::Create()
+{
+    auto pInstance = new CCorinState_Attack();
+    pInstance->m_pSubStateMachine = CStateMachine<CCorin>::Create();
+    auto pSubStateMachine = pInstance->Get_SubStateMachine();
+
+    pSubStateMachine->Register_State("NormalAttack", CCorinState_NormalAttack::Create());
+    pSubStateMachine->Register_State("RushAttack", CCorinState_RushAttack::Create());
+    pSubStateMachine->Register_State("ExAttack", CCorinState_ExAttack::Create());
+    pSubStateMachine->Register_State("UltimateAttack", CCorinState_UltimateAttack::Create());
+    pSubStateMachine->Register_State("CounterAttack", CCorinState_CounterAttack::Create());
+
+    pSubStateMachine->Get_State("NormalAttack")->Set_Tag("NormalAttack");
+    pSubStateMachine->Get_State("RushAttack")->Set_Tag("RushAttack");
+    pSubStateMachine->Get_State("ExAttack")->Set_Tag("ExAttack");
+    pSubStateMachine->Get_State("UltimateAttack")->Set_Tag("UltimateAttack");
+    pSubStateMachine->Get_State("CounterAttack")->Set_Tag("CounterAttack");
+
+    pSubStateMachine->Register_Transition("NormalAttack", "ExAttack",
+        CStateMachine<CCorin>::CONDITION_TRIGGER, "ToExAttack");
+
+    pSubStateMachine->Register_AnyStateTransition("UltimateAttack",
+        CStateMachine<CCorin>::CONDITION_TRIGGER, "ToUltimate");
+
+    pSubStateMachine->Set_DefaultState("NormalAttack");
+
+    return pInstance;
+}
+
 void CCorinState_Attack::Enter(CCorin* pOwner)
 {
-    if (!m_pSubStateMachine)
-    {
-        m_pSubStateMachine = CStateMachine<CCorin>::Create();
-        m_pSubStateMachine->Register_State("NormalAttack", CCorinState_NormalAttack::Create());
-        m_pSubStateMachine->Register_State("RushAttack", CCorinState_RushAttack::Create());
-        m_pSubStateMachine->Register_State("ExAttack", CCorinState_ExAttack::Create());
-        m_pSubStateMachine->Register_State("UltimateAttack", CCorinState_UltimateAttack::Create());
-
-        m_pSubStateMachine->Get_State("NormalAttack")->Set_Tag("NormalAttack");
-        m_pSubStateMachine->Get_State("RushAttack")->Set_Tag("RushAttack");
-        m_pSubStateMachine->Get_State("ExAttack")->Set_Tag("ExAttack");
-        m_pSubStateMachine->Get_State("UltimateAttack")->Set_Tag("UltimateAttack");
-
-        m_pSubStateMachine->Register_Transition("NormalAttack", "ExAttack",
-            CStateMachine<CCorin>::CONDITION_TRIGGER, "ToExAttack");
-
-        m_pSubStateMachine->Register_AnyStateTransition("UltimateAttack",
-            CStateMachine<CCorin>::CONDITION_TRIGGER, "ToUltimate");
-
-        m_pSubStateMachine->Set_DefaultState("NormalAttack");
-    }
-
     _int iEntryMode = pOwner->Get_StateMachine()->Get_Int("AttackEntryMode");
     pOwner->Get_StateMachine()->Set_Int("AttackEntryMode", 0);
 
@@ -46,6 +54,9 @@ void CCorinState_Attack::Enter(CCorin* pOwner)
         break;
     case 3:
         m_pSubStateMachine->Set_DefaultState("UltimateAttack");
+        break;
+    case 5:
+        m_pSubStateMachine->Set_DefaultState("CounterAttack");
         break;
     default:
         m_pSubStateMachine->Set_DefaultState("NormalAttack");

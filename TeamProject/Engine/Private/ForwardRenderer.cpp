@@ -157,6 +157,12 @@ HRESULT CForwardRenderer::Render_OutLine()
 	return S_OK;
 }
 
+HRESULT CForwardRenderer::Render_Vanish()
+{
+	m_pSkinnedRenderer->Render_Vanish_Noise();
+	return S_OK;
+}
+
 HRESULT CForwardRenderer::Render_MotionBlur()
 {
 	m_pSkinnedRenderer->Process_MotionBlurQueue();
@@ -215,7 +221,7 @@ HRESULT CForwardRenderer::Render_Combined()
 
 	m_pTargetManager->Bind_Target("Target_Combined_SkinnedMesh", m_pShader, "SkinnedCombinedTexture");
 	m_pTargetManager->Bind_Target("Target_Combined_StaticMesh", m_pShader, "StaticCombinedTexture");
-	m_pTargetManager->Bind_Target("Target_Combined_Effect", m_pShader, "EffectCombinedTexture");
+	m_pTargetManager->Bind_Target("Target_VanishNoise", m_pShader, "VanishNoiseTexture");
 	m_pTargetManager->Bind_Target("Target_DiffuseUI", m_pShader, "UICombinedTexture");
 
 	Bind_WorldMatrix();
@@ -247,6 +253,7 @@ void CForwardRenderer::Add_MotionBlurCommand(const MOTIONBLUR_COMMAND& command)
 void CForwardRenderer::Update(_float dt)
 {
 	m_fStaticUpdateTimer -= dt;
+	m_pSkinnedRenderer->Update(dt);
 }
 
 void CForwardRenderer::SetRimLightMode(RIMLIGHT eMode)

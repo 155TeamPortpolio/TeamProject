@@ -30,6 +30,9 @@ OBJECT_HANDLE Create_Entity(const SPAWNER_DESC& Desc);
 OBJECT_HANDLE Create_NPC(const SPAWNER_DESC& Desc);
 OBJECT_HANDLE Create_Interactable(const SPAWNER_DESC& Desc);
 OBJECT_HANDLE Create_ETC(const SPAWNER_DESC& Desc);
+
+void Gravity(CGameObject* pGameObject,const vector<FIELD_DATA>& SlotDatas);
+
 NS_END
 NS_END
 
