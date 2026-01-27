@@ -8,6 +8,8 @@
 
 void CCorinState_Evade::Enter(CCorin* pOwner)
 {
+    pOwner->Get_StateMachine()->Reset_Trigger("ToMove");
+    pOwner->Get_StateMachine()->Reset_Trigger("ToIdle");
     pOwner->Push_Invincible();
 
     if (!m_pSubStateMachine)
@@ -25,7 +27,9 @@ void CCorinState_Evade::Enter(CCorin* pOwner)
     else
         m_pSubStateMachine->Set_DefaultState("Backstep");
     
+    m_pSubStateMachine->Reset_Trigger("Complete");
     m_pSubStateMachine->Set_Bool("Extreme", false);
+    m_pSubStateMachine->Set_Int("ExitMode", 0);
 
     __super::Enter(pOwner);
 }

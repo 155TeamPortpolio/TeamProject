@@ -49,6 +49,7 @@ public:
    virtual void Add_MotionBlurCommand(const MOTIONBLUR_COMMAND& command) PURE;
    virtual void Add_PostProcessCommand(const POST_PROCESS_COMMAND& command)PURE;
     virtual ID3D11ShaderResourceView* Get_CustomTargetSRV(const string strTag) PURE;
+    virtual ID3D11Texture2D* Get_CustomTargetTexture(const string strTag) PURE;
     virtual ID3D11ShaderResourceView* Get_EngineTargetSRV(const string strTag) PURE;
 #ifdef _USING_GUI
     virtual void Render_GUI() PURE;
