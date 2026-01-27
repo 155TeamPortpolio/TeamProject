@@ -37,6 +37,7 @@ public:
 
 public:
     DEFILER_BLACK_BOARD& GetBlackBoard() { return m_BlackBoard; }
+    CStateMachine<CDefiler>* Get_MainStateMachine() { return m_pStateMachine; }
 private:
     void MoveByRootMotion(_float dt, _float moveScale = 1.f);
     void RotateToTarget(_float dt, _float rotateSpeed = 1.f);

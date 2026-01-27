@@ -16,8 +16,16 @@ void CDefilerState_Idle::Enter(CDefiler* pOwner)
 void CDefilerState_Idle::Update(CDefiler* pOwner, _float dt)
 {
 	__super::Update(pOwner, dt);
+	/* Idle */
+	m_IdleElapsedTime += dt;
+	if (m_IdleElapsedTime >= IdleDuration)
+	{
+		pOwner->Get_MainStateMachine()->Set_Trigger("Idle_To_Attack");
+	}
 }
 
 void CDefilerState_Idle::Exit(CDefiler* pOwner)
 {
+	m_IdleElapsedTime = 0;
+	IdleDuration = 4.f;
 }

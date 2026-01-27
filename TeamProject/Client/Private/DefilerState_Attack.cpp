@@ -8,6 +8,7 @@ CDefilerState_Attack* CDefilerState_Attack::Create()
 	CDefilerState_Attack* pInstance = new CDefilerState_Attack();
 	pInstance->m_pSubStateMachine = CStateMachine<CDefiler>::Create();
 	pInstance->ReadySubState();
+
 	return pInstance;
 }
 
@@ -48,11 +49,28 @@ void CDefilerState_Attack::ReadySubState()
 void CDefilerState_Attack::Enter(CDefiler* pOwner)
 {
 	__super::Enter(pOwner);
+	Build_Pattern(pOwner);
 }
 
 void CDefilerState_Attack::Update(CDefiler* pOwner, _float dt)
 {
 	__super::Update(pOwner, dt);
+	CDefiler::DEFILER_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
+	if (blackBoard.isRequestNext)
+	{
+		blackBoard.isRequestNext = false;
+		blackBoard.isChainOpen = false;
+
+		if (!blackBoard.stateQueue.empty())
+		{
+			string nextStateTag = blackBoard.stateQueue.front();
+			blackBoard.stateQueue.pop_front();
+
+			blackBoard.currentStateTag = nextStateTag;
+			m_pSubStateMachine->Change_State(nextStateTag);
+		}
+	}
+
 }
 
 void CDefilerState_Attack::Exit(CDefiler* pOwner)
@@ -61,6 +79,11 @@ void CDefilerState_Attack::Exit(CDefiler* pOwner)
 
 void CDefilerState_Attack_01_01::Enter(CDefiler* pOwner)
 {
+	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
+	pAnimator->Set_Animation("Monster_IsoldetheDefiler_Ani_Attack_01_01")
+		.Speed(1.f)
+		.Loop(false)
+		.Apply();
 }
 
 void CDefilerState_Attack_01_01::Update(CDefiler* pOwner, _float dt)
@@ -73,6 +96,11 @@ void CDefilerState_Attack_01_01::Exit(CDefiler* pOwner)
 
 void CDefilerState_Attack_01_02::Enter(CDefiler* pOwner)
 {
+	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
+	pAnimator->Set_Animation("Monster_IsoldetheDefiler_Ani_Attack_01_02")
+		.Speed(1.f)
+		.Loop(false)
+		.Apply();
 }
 
 void CDefilerState_Attack_01_02::Update(CDefiler* pOwner, _float dt)
@@ -85,6 +113,11 @@ void CDefilerState_Attack_01_02::Exit(CDefiler* pOwner)
 
 void CDefilerState_Attack_01_01_P2::Enter(CDefiler* pOwner)
 {
+	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
+	pAnimator->Set_Animation("Monster_IsoldetheDefiler_Ani_Attack_01_01_P2")
+		.Speed(1.f)
+		.Loop(false)
+		.Apply();
 }
 
 void CDefilerState_Attack_01_01_P2::Update(CDefiler* pOwner, _float dt)
@@ -97,6 +130,11 @@ void CDefilerState_Attack_01_01_P2::Exit(CDefiler* pOwner)
 
 void CDefilerState_Attack_01_03::Enter(CDefiler* pOwner)
 {
+	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
+	pAnimator->Set_Animation("Monster_IsoldetheDefiler_Ani_Attack_01_03")
+		.Speed(1.f)
+		.Loop(false)
+		.Apply();
 }
 
 void CDefilerState_Attack_01_03::Update(CDefiler* pOwner, _float dt)

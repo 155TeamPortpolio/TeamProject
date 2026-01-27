@@ -11,6 +11,9 @@ public:
 	virtual void Update(CDefiler* pOwner, _float dt) override;
 	virtual void Exit(CDefiler* pOwner) override;
 
+private:
+	_float m_IdleElapsedTime = {};
+	_float IdleDuration = {1.f};
 public:
 	static CDefilerState_Idle* Create() { return new CDefilerState_Idle(); }
 	virtual void Free() override { __super::Free(); }
