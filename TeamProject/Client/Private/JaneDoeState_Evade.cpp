@@ -16,8 +16,9 @@ void CJaneDoeState_Evade::Enter(CJaneDoe* pOwner)
     if (pOwner->Is_Passion())
     {
         m_iMask = pOwner->Get_CCT()->Get_CollisionMask();
-        pOwner->Get_CCT()->Set_CollisionMask(ENUM(COLLISION_GROUP::COMMON));
+        pOwner->Get_CCT()->Set_CollisionMask(m_iMask - ENUM(COLLISION_GROUP::MONSTER));
         pOwner->Set_LookTarget(false);
+        m_pSubStateMachine->Set_Bool("Penetrate", true);
     }
 
     if (!m_pSubStateMachine)
@@ -84,7 +85,7 @@ void CJaneDoeState_Evade::Update(CJaneDoe* pOwner, _float dt)
 
 void CJaneDoeState_Evade::Exit(CJaneDoe* pOwner)
 {
-    if (pOwner->Is_Passion())
+    if (pOwner->Is_Passion() && m_pOwnerStateMachine->Get_Bool("Penetrate"))
     {
         pOwner->Get_CCT()->Set_CollisionMask(m_iMask);
         pOwner->Set_LookTarget(true);

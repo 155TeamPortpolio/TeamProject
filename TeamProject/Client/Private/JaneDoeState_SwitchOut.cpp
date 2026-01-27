@@ -36,3 +36,8 @@ void CJaneDoeState_SwitchOut::Exit(CJaneDoe* pOwner)
     pOwner->Get_StateMachine()->Set_Bool("IsMove", false);
     __super::Exit(pOwner);
 }
+
+_bool CJaneDoeState_SwitchOut::Handle_Transition(CJaneDoe* pOwner)
+{
+    return _bool();
+}
