@@ -438,9 +438,8 @@ void CJaneDoeState_Attack_06::Exit(CJaneDoe* pOwner)
     if(m_pOwnerStateMachine->Get_Bool("Penetrate"))
     {
         pOwner->Get_CCT()->Set_CollisionMask(m_iMask);
-        pOwner->Set_LookTarget(true);
     }
-
+    pOwner->Set_LookTarget(true);
     static_cast<CJaneDoeState_NormalAttack*>(m_pParentState)->Set_ComboIndex(5);
 }
 

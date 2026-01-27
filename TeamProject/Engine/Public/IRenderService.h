@@ -47,9 +47,9 @@ public:
    virtual void Add_RenderCommand(const RENDER_CUSTOM_COMMAND& command, CUSTOMTARGET eCustom) PURE;
    virtual void Add_OutLineCommand(const OUTLINE_COMMAND& command)PURE;
    virtual void Add_MotionBlurCommand(const MOTIONBLUR_COMMAND& command) PURE;
-   virtual void Add_VanishNoiseCommand(const VANISHNOISE_COMMAND& command) PURE;
    virtual void Add_PostProcessCommand(const POST_PROCESS_COMMAND& command)PURE;
     virtual ID3D11ShaderResourceView* Get_CustomTargetSRV(const string strTag) PURE;
+    virtual ID3D11Texture2D* Get_CustomTargetTexture(const string strTag) PURE;
     virtual ID3D11ShaderResourceView* Get_EngineTargetSRV(const string strTag) PURE;
 #ifdef _USING_GUI
     virtual void Render_GUI() PURE;
