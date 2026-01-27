@@ -48,7 +48,7 @@ void CAnimToolPanel::Update_Panel(_float dt)
 			}
 		}
 	}
-
+	return;
 	if (m_pGameInstance->Get_InputDev()->Key_Tap('I')) {
 		if (nullptr != m_pSelectAnimator) {
 			m_pSelectAnimator->Get_DynamicBone_Ptr()->Create_Chain(18);

@@ -17,7 +17,21 @@ public:
         //  _bool isChainOpen = false;  //현재 상태에서 다음으로 진행 가능여부
         //  _bool isEnd = false;
         //  string currentStateTag{};
+
         _bool TraceOn = {};
+        deque<_float> progressQueue; 
+        vector<string> FrameEffect;
+        _bool EndChain = {};
+
+        _float GetProgress() {
+            if (progressQueue.empty())
+                return 0.f;
+            else {
+                _float progress = progressQueue.front();
+                progressQueue.pop_front();
+                return progress;
+            }
+        }
     }DEFILER_BLACK_BOARD;
 
 private:
@@ -42,6 +56,7 @@ private:
     void MoveByRootMotion(_float dt, _float moveScale = 1.f);
     void RotateToTarget(_float dt, _float rotateSpeed = 1.f);
     void Update_States(_float dt);
+    void Route_AnimEvent(CAnimator3D* animator);
 
 private:
     HRESULT Initialize_StateMachine();
@@ -57,7 +72,6 @@ public:
     static CDefiler* Create();
     CGameObject* Clone(INIT_DESC* pArg) override;
     virtual void Free() override;
-
 };
 
 NS_END

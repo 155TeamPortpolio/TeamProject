@@ -76,12 +76,15 @@ void CDefiler::Update(_float dt)
 	__super::Update(dt);
 
 	Update_States(dt);
-	m_pStateMachine->Update(dt);
 
-	Get_Component<CAnimator3D>()->Update_Animation(dt);
+	auto pAnimator = Get_Component<CAnimator3D>();
+	pAnimator->Update_Animation(dt);
+	Route_AnimEvent(pAnimator);
+	
 	Get_Component<CCharacterController>()->Update(dt);
 	MoveByRootMotion(dt);
 	RotateToTarget(dt);
+	m_pStateMachine->Update(dt);
 }
 
 void CDefiler::Late_Update(_float dt)
@@ -142,6 +145,31 @@ void CDefiler::RotateToTarget(_float dt, _float rotateSpeed)
 void CDefiler::Update_States(_float dt)
 {
 	
+}
+
+void CDefiler::Route_AnimEvent(CAnimator3D* animator)
+{
+	m_BlackBoard.EndChain = false;
+	m_BlackBoard.FrameEffect.clear();
+
+	auto Bus = animator->Get_EventBus();
+
+	for (EVENT_INST& instance : Bus)
+	{
+		switch (instance.Type)
+		{
+		case CLIP_EVENT_TYPE::NOTIFY:
+			if (instance.Tag == "ChainEnd")
+				m_BlackBoard.EndChain = true;
+			else
+				m_BlackBoard.EndChain = false;
+			break;
+		case CLIP_EVENT_TYPE::SOUND:
+			break;
+		case CLIP_EVENT_TYPE::EFFECT:
+			break;
+		}
+	}
 }
 
 CGameObject* CDefiler::Clone(INIT_DESC* pArg)
