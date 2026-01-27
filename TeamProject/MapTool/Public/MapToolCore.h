@@ -16,7 +16,7 @@ private:
 	virtual ~CMapToolCore() = default;
 
 public:
-
+	class CMapToolGui*	Get_MapToolGui() { return m_pMapToolGui; }
 	MAPTOOL_CONTEXT*	Get_Context() { return &m_tMapToolContext; }
 	void				Set_AllObjectDebugRender(_bool is);
 
@@ -25,7 +25,7 @@ public:
 	void				Load_WithEntityData();
 	void				Clear_Layer(MAPOBJ_TYPE eObjType);
 	void				RegisterGuiPanel(class CMapToolGui* pGUIPanel);
-
+	
 
 private:
 	MAPOBJ_TYPE		Check_LayerTag(const string& TagLayer);
@@ -38,7 +38,7 @@ private:
 	CGameInstance*		m_pGameInstance = { nullptr };
 
 	MAPTOOL_CONTEXT		m_tMapToolContext = {};
-	class CMapToolGui* m_pMapToolGui = { nullptr };
+	class CMapToolGui*	m_pMapToolGui = { nullptr };
 public:
 	static CMapToolCore* Create();
 	virtual void Free() override;
