@@ -463,9 +463,9 @@ void CThugBulkyEnforcer::FinishWeaponCollider()
 	m_isBattleTriggerOn = false;
 }
 
-void CThugBulkyEnforcer::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage)
+void CThugBulkyEnforcer::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER charaName)
 {
-	__super::TakeDamage(eDamageType, fDamage);
+	__super::TakeDamage(eDamageType, fDamage, charaName);
 	if (0 >= m_tStatus.iNowHP)
 		return;
 
