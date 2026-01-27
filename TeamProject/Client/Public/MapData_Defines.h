@@ -72,8 +72,37 @@ namespace Client {
 	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Entity_Header, TagDataFormat, TagArea, iVersion, Entities);
 
 
+	/* BattleData */
+	typedef struct tagBattlePointData
+	{
+		string		tagType = {};			// Player, Spawner, Monster Point
+		_int		iIndex = { -1 };
+
+		array<_float, 3> vScale = { 0.f, 0.f,  0.f };
+		array<_float, 3> vRotation = { 0.f, 0.f, 0.f };
+		array<_float, 3> vTranslation = { 0.f, 0.f, 0.f };
+	}BATTLE_POINT_DATA;
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(BATTLE_POINT_DATA, tagType, iIndex, vScale, vRotation, vTranslation);
+
+	typedef struct tagBattleSpawnerPointData : public BATTLE_POINT_DATA
+	{
+		vector<_int>		MonsterIndices;
+	}BATTLE_POINT_SPAWNER_DATA;
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(BATTLE_POINT_SPAWNER_DATA, tagType, iIndex, vScale, vRotation, vTranslation, MonsterIndices);
+
+	typedef struct tagBattleFieldData
+	{
+		string	TagDataFormat = "";
+		string	TagArea = "";
+		BATTLE_POINT_DATA					PlayerSpawnPoint = {};
+		vector<BATTLE_POINT_SPAWNER_DATA>	Spawners;
+		vector<BATTLE_POINT_DATA>			Monsters;
+		vector<BATTLE_POINT_DATA>			EndPoints;
+	}BATTLE_FIELD_DATA;
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(BATTLE_FIELD_DATA, TagDataFormat, TagArea, PlayerSpawnPoint, Spawners, Monsters, EndPoints);
+
 	// DB 맵 데이터 저장용
-	enum class MAPOBJ_TYPE { PLACED, TRIGGER, INVWALL, ENTITY, END };
+	enum class MAPOBJ_TYPE { PLACED, TRIGGER, INVWALL, ENTITY, BATTLE, END };
 	using MapSlotValue = variant<monostate, _int, _float, _bool, string, _float2, _float3, _float4>;
 
 	typedef struct tagCashedMapObject {
@@ -86,10 +115,23 @@ namespace Client {
 		T Get_SlotValue(const string& SlotTag) const
 		{
 			auto iter = SlotValues.find(SlotTag);
-			if (iter == SlotValues.end()) return nullptr;
-			return *std::get_if<T>(&iter->second);
+			if (iter == SlotValues.end())
+				return nullptr;
+
+			if (auto Data = std::get_if<T>(&iter->second))
+				return *Data;
+			
+			return T{};
 		}
 	}CASHED_OBJECT;
+
+	typedef struct tagCashedBattleData {
+		_bool						HasBattleData = { false };
+		vector<BATTLE_POINT_DATA>	PlayerPoint;
+		vector<BATTLE_POINT_DATA>	MonsterPoint;
+		vector<BATTLE_POINT_DATA>	PortalPoint;
+		vector<BATTLE_POINT_DATA>	Spawner;
+	}CASHED_BATTLE_DATA;
 
 	typedef struct tagCashedData {
 		string MapDataTag;
@@ -97,6 +139,7 @@ namespace Client {
 		vector<CASHED_OBJECT> Trigger;
 		vector<CASHED_OBJECT> InvWall;
 		vector<CASHED_OBJECT> Entity;
+		CASHED_BATTLE_DATA	  Battle;
 
 		const vector<CASHED_OBJECT>* Select(MAPOBJ_TYPE eType) const
 		{

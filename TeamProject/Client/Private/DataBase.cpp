@@ -15,30 +15,30 @@ CDataBase::CDataBase()
 HRESULT CDataBase::CreateTable()
 {
 	//플레이어
-	if(FAILED(LoadPlayerCreationTable("../../Resources/Data/PlayerTable/PlayerTableCSV.csv"))) 
+	if (FAILED(LoadPlayerCreationTable("../../Resources/Data/PlayerTable/PlayerTableCSV.csv"))) 
 		return E_FAIL;
 	if (FAILED(LoadPlayerLVTable("../../Resources/Data/PlayerTable/PlayerLVCSV.csv")))
 		return E_FAIL;
+
 	//몬스터
 	if (FAILED(LoadMonsterCreationTable("../../Resources/Data/MonsterTable/MonsterTable.csv"))) 
 		return E_FAIL;
+	if (FAILED(LoadMonsterSpawnData("../../Resources/Data/MonsterTable/MonsterSpawn.csv")))
+		return E_FAIL;
+
 	//UI
 	//LoadUICreationTable();
+
 	// 맵
 	if (FAILED(LoadMapData("../../Resources/Data/Map")))
 		return E_FAIL;
+
 	//Npc
 	if (FAILED(LoadNpcDialogueData("../../Resources/Data/Npc/NPC_Dialogue.csv")))
 		return E_FAIL;
 	if (FAILED(LoadNpcChoiceData("../../Resources/Data/Npc/NPC_Choice.csv")))
 		return E_FAIL;
 	if (FAILED(LoadNpcIDData("../../Resources/Data/Npc/Npc_ID.csv")))
-		return E_FAIL;
-
-	// Battle Data
-	if (FAILED(LoadBattleFieldData("../../Resources/Data/Battle")))
-		return E_FAIL;
-	if (FAILED(LoadMonsterSpawnData("../../Resources/Data/Battle/MonsterSpawn.csv")))
 		return E_FAIL;
 
 
@@ -219,7 +219,7 @@ HRESULT CDataBase::LoadMonsterCreationTable(const string& csvPath)
 	trim_chars = 앞 뒤 공백 제거
 	double_quote_escape = "..." 안의 쉼표 및 따옴표 처리 */
 	io::CSVReader<
-		5,
+		6,
 		io::trim_chars<' ', '\t'>,
 		io::double_quote_escape<',', '"'>
 	>in(csvPath);
@@ -231,15 +231,18 @@ HRESULT CDataBase::LoadMonsterCreationTable(const string& csvPath)
 	in.read_header(
 		io::ignore_extra_column | io::ignore_missing_column,
 		"ProtoTag", "DisplayName",
-		"CCT_fHeight", "CCT_fRadius", "MaxHP"
+		"CCT_fHeight", "CCT_fRadius", "MaxHP",
+		"MonsterID"
 	);
 
 	string	ProtoTag{}, DisplayName{};
 	_float	CCT_fHeight{}, CCT_fRadius{}, MaxHP{};
+	_uint	MonsterID{};
 
 	while (in.read_row(
 		ProtoTag, DisplayName,
-		CCT_fHeight, CCT_fRadius, MaxHP
+		CCT_fHeight, CCT_fRadius, MaxHP,
+		MonsterID
 	))
 	{
 		if (ProtoTag.empty())
@@ -248,7 +251,8 @@ HRESULT CDataBase::LoadMonsterCreationTable(const string& csvPath)
 		MonsterCreationDesc desc = {};
 		desc.ProtoTag = ProtoTag;
 		desc.DisplayName = DisplayName;
-		desc.CCT_fHeight = CCT_fHeight;
+		desc.MonsterID = MonsterID;
+ 		desc.CCT_fHeight = CCT_fHeight;
 		desc.CCT_fRadius = CCT_fRadius;
 		desc.iMaxHP = MaxHP;
 
@@ -257,6 +261,50 @@ HRESULT CDataBase::LoadMonsterCreationTable(const string& csvPath)
 			wstring ErrorMsg = L"Duplicate MonsterKey in CSV : " + Helper::ConvertToWideString(ProtoTag);
 			MessageBox(NULL, ErrorMsg.c_str(), L"System Message", MB_OK);
 		}
+	}
+
+	return S_OK;
+}
+
+HRESULT CDataBase::LoadMonsterSpawnData(const string& csvPath)
+{
+	/*
+	column_count = read_header에 넣는 컬럼 수(헤더 개수)
+	trim_chars = 앞 뒤 공백 제거
+	double_quote_escape = "..." 안의 쉼표 및 따옴표 처리 */
+	io::CSVReader<
+		4,
+		io::trim_chars<' ', '\t'>,
+		io::double_quote_escape<',', '"'>
+	>in(csvPath);
+
+	/*
+	헤더 이름으로 매핑(컬럼 순서 바뀌어도 무관)
+	파일에 다른 컬럼이 더 있거나 누락된 컬럼이 있어도 무시함
+	*/
+	in.read_header(
+		io::ignore_extra_column | io::ignore_missing_column,
+		"tagArea", "TableNumber",
+		"MonsterSpawnID", "MonsterKey"
+	);
+
+	string	tagArea{}, MonsterKey{};
+	_int	TableNumber{}, MonsterSpawnID{};
+
+	while (in.read_row(
+		tagArea, TableNumber,
+		MonsterSpawnID, MonsterKey
+	))
+	{
+		if (tagArea.empty())
+			continue;
+
+		MONSTER_SPAWN_DESC	MonsterSpawnDesc = {};
+
+		MonsterSpawnDesc.MonsterSpawnID = MonsterSpawnID;
+		MonsterSpawnDesc.MonsterKey = MonsterKey;
+
+		m_MonsterSpawnDesc[tagArea].push_back(MonsterSpawnDesc);
 	}
 
 	return S_OK;
@@ -276,55 +324,54 @@ HRESULT CDataBase::LoadMapData(const string& MapDataFolderPath)
 		if (entry.is_regular_file() && entry.path().extension() == ".json")
 		{
 			filesystem::path FilePath = entry.path();
-			// ../MapData.MainCity.Base.1.json
-			// ../MapData.MainCity.SlotA.1.json
-			// ../MapData.MainCity.SlotB.1.json
-			// ../MapData.Ocean.Base.1.json
-			// ../MapData.Ocean.SlotA.1.json
-
-			//if (entry.path().filename().string().find("MapData.") != string::npos)
-			//	continue;
 
 			const string stem = FilePath.stem().string();
 			auto tokens = SplitFileName(stem, '.');
 
-			if (tokens.size() < 4)
+
+
+			if (tokens[0] == "MapData" || tokens[0] == "EntityData") {
+				_int iVersion = {};
+				
+				auto [ptr, ec] = std::from_chars(tokens[3].data(), tokens[3].data() + tokens[3].size(), iVersion);
+				if (ec != std::errc{})
+					continue;
+
+				MapData_Path_Packet packet = {};
+				packet.TagDataFormat = tokens[0];
+				packet.TagDataFileKey = FilePath.filename().string();
+				packet.TagDataFilePath = FilePath.string();
+				packet.TagArea = tokens[1];
+				packet.TagSlotFormat = tokens[2];
+				packet.iVersion = iVersion;
+
+				auto& vecPacket = m_MapAreaData[packet.TagArea];
+				auto it = std::find_if(vecPacket.begin(), vecPacket.end(),
+					[&](const MapData_Path_Packet& p) {
+						if (p.TagDataFormat == packet.TagDataFormat)
+							return p.TagSlotFormat == packet.TagSlotFormat;
+						return false;
+					});
+
+				// 버전이 높다면 높은 버전으로 교체
+				if (it == vecPacket.end())
+					vecPacket.push_back(packet);
+				else if (packet.iVersion > it->iVersion)
+					*it = packet;
+
 				continue;
+			}
 
-			if (false == (tokens[0] == "MapData" || tokens[0] == "EntityData"))
+			if (tokens[0] == "BattleData") {
+				MapData_Path_Packet packet = {};
+				packet.TagDataFormat = tokens[0];
+				packet.TagDataFileKey = FilePath.filename().string();
+				packet.TagDataFilePath = FilePath.string();
+				packet.TagArea = tokens[1];
+
+				m_MapAreaData[packet.TagArea].push_back(packet);
 				continue;
-
-			_int iVersion = {};
-			// version을 string -> int로 변환
-			auto [ptr, ec] = std::from_chars(tokens[3].data(), tokens[3].data() + tokens[3].size(), iVersion);
-			if (ec != std::errc{})   // 숫자 파싱 실패
-				continue;
-
-			// 현재 클라이언트 버전보다 높으면 패스
-			//if (iVersion > g_iMapDataVersion)
-			//	continue;
-
-			MapData_Path_Packet packet = {};
-			packet.TagDataFormat = tokens[0];
-			packet.TagDataFileKey = FilePath.filename().string();
-			packet.TagDataFilePath = FilePath.string();
-			packet.TagArea = tokens[1];
-			packet.TagSlotFormat = tokens[2];
-			packet.iVersion = iVersion;
-
-			auto& vecPacket = m_MapAreaData[packet.TagArea];
-			auto it = std::find_if(vecPacket.begin(), vecPacket.end(),
-				[&](const MapData_Path_Packet& p) { 
-					if (p.TagDataFormat == packet.TagDataFormat)
-						return p.TagSlotFormat == packet.TagSlotFormat; 
-					return false;
-				});
-
-			// 버전이 높다면 높은 버전으로 교체
-			if (it == vecPacket.end())
-				vecPacket.push_back(packet);
-			else if (packet.iVersion > it->iVersion)
-				*it = packet;
+			}
 		}
 	}
 
@@ -462,94 +509,6 @@ HRESULT CDataBase::LoadNpcChoiceData(const string& csvPath)
 			std::wstring wErrorMsg(ErrorMsg.begin(), ErrorMsg.end());
 			MessageBox(NULL, wErrorMsg.c_str(), L"System Message", MB_OK);
 		}
-	}
-
-	return S_OK;
-}
-
-HRESULT CDataBase::LoadBattleFieldData(const string& BattleDataFolderPath)
-{
-	Helper::EnsureDirectoryExist(BattleDataFolderPath);
-
-	for (const auto& entry : filesystem::recursive_directory_iterator(BattleDataFolderPath))
-	{
-		if (entry.is_regular_file() && entry.path().extension() == ".json")
-		{
-			filesystem::path FilePath = entry.path();
-			// ../BattleData.Stage1.json
-			// ../BattleData.Stage1.json
-			// ../BattleData.Stage1.json
-			// ../BattleData.Stage2.json
-
-
-			if (entry.path().filename().string().find("BattleData") == string::npos)
-				continue;
-
-			const string stem = FilePath.stem().string();
-			auto tokens = SplitFileName(stem, '.');
-
-			if (tokens.size() != 2)
-				continue;
-
-			//_int iVersion = {};
-			//// version을 string -> int로 변환
-			//auto [ptr, ec] = std::from_chars(tokens[2].data(), tokens[2].data() + tokens[2].size(), iVersion);
-			//if (ec != std::errc{})   // 숫자 파싱 실패
-			//	continue;
-
-			MapData_Path_Packet packet = {};
-			packet.TagDataFormat = tokens[0];
-			packet.TagDataFileKey = FilePath.filename().string();
-			packet.TagDataFilePath = FilePath.string();
-			packet.TagArea = tokens[1];
-			//packet.iVersion = iVersion;			
-
-			m_BattleFieldData[packet.TagArea] = packet;
-		}           
-	}
-
-	return S_OK;
-}
-
-HRESULT CDataBase::LoadMonsterSpawnData(const string& csvPath)
-{
-	/*
-	column_count = read_header에 넣는 컬럼 수(헤더 개수)
-	trim_chars = 앞 뒤 공백 제거
-	double_quote_escape = "..." 안의 쉼표 및 따옴표 처리 */
-	io::CSVReader<
-		4,
-		io::trim_chars<' ', '\t'>,
-		io::double_quote_escape<',', '"'>
-	>in(csvPath);
-
-	/*
-	헤더 이름으로 매핑(컬럼 순서 바뀌어도 무관)
-	파일에 다른 컬럼이 더 있거나 누락된 컬럼이 있어도 무시함
-	*/
-	in.read_header(
-		io::ignore_extra_column | io::ignore_missing_column,
-		"tagArea", "TableNumber",
-		"MonsterSpawnID", "MonsterKey"
-	);
-
-	string	tagArea{}, MonsterKey{};
-	_int	TableNumber{}, MonsterSpawnID{};
-
-	while (in.read_row(
-		tagArea, TableNumber,
-		MonsterSpawnID, MonsterKey
-	))
-	{
-		if (tagArea.empty())
-			continue;
-
-		MONSTER_SPAWN_DESC	MonsterSpawnDesc= {};
-
-		MonsterSpawnDesc.MonsterSpawnID = MonsterSpawnID;
-		MonsterSpawnDesc.MonsterKey = MonsterKey;
-
-		m_MonsterSpawnDesc[tagArea].push_back(MonsterSpawnDesc);
 	}
 
 	return S_OK;

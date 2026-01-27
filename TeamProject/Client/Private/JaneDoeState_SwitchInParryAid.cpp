@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "JaneDoeState_SwitchInParryAid.h"
 
+#include "BattleSystem.h"
+
 #include "JaneDoe.h"
 #include "Enemy.h"
 
@@ -82,6 +84,7 @@ void CJaneDoeState_SwitchInParryAid_L_Loop::Enter(CJaneDoe* pOwner)
     if (handle.isValid())
     {
         dynamic_cast<CEnemy*>(handle.Get())->Parried();
+        BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::PARRY);
     }
 }
 

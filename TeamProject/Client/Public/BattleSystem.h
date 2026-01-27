@@ -1,6 +1,6 @@
 #pragma once
 #include "Base.h"
-#include "BattleSystem_Struct.h"
+#include "MapData_Defines.h"
 #include "BattleFXFlow.h"
 
 NS_BEGIN(Client)
@@ -48,7 +48,12 @@ public: //setter
 public:
 	// 기믹 성공 시 호출 함수(Evade, 지원공격 등)
 	void	StartGimmick(BATTLE_VFX_TYPE eVFXType);
-	void	StartTimeScale(BATTLE_OBJ_TYPE eObjType, _float fDuration, _float fScale, _float fStartLerpTime = 0.f, _float fEndLerpTime = 0.f);
+	void	
+		StartTimeScale(BATTLE_OBJ_TYPE eObjType, 
+			_float fDuration, 
+			_float fScale, 
+			_float fStartLerpTime = 0.f, 
+			_float fEndLerpTime = 0.f);
 
 public:
 	void	TakeAreaDamage(const _float3& vCenter, _float fRadius, const HitDesc& hitDesc);

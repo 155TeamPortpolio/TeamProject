@@ -35,10 +35,11 @@ public:
     CCamera*      GetFreeCamComp()           const { return GetFreeCam()->Get_Component<CCamera>();  }
     CCamera*      GetSeqCamComp()            const { return GetSeqCam()->Get_Component<CCamera>();   }
     CCamera*      GetOrbitCamComp()          const { return GetOrbitCam()->Get_Component<CCamera>(); }
-    CPlayer*      GetPlayer()                const;
-    CCharacter*   GetCharacter()             const;
-    string        GetCharacterStr()          const;
-    OBJECT_HANDLE GetCurHandle()             const;
+    CPlayer*      GetPlayer()                const { return static_cast<CPlayer*>(ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Player))); }
+    CCharacter*   GetCharacter()             const { return static_cast<CCharacter*>(GetCurHandle().Get()); }
+    CHARACTER     GetCharacterName()         const { return GetCharacter()->Get_CharacterName(); }
+    string        GetCharacterStr()          const { return Helper::EnumToString(GetCharacter()->Get_CharacterName()); }
+    OBJECT_HANDLE GetCurHandle()             const { return GetPlayer()->Get_CurCharacterHandle(); }
     
     CCamSequencePlayer* GetSeqPlayer()       const { return GetSeqObj()->Get_Component<CCamSequencePlayer>(); }
 
@@ -72,7 +73,7 @@ private:
     void          AbortSequenceToOrbit(_bool resetTime);
     void          SyncSeqInputLock();
       
-    _bool         IsValid() const;
+    _bool         IsValid() const { return GetPlayer()->Get_CurCharacterHandle().isValid(); }
 
 private:
     CamDirectorSeqMap       m_seqs{};

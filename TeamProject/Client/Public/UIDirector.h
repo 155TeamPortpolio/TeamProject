@@ -6,6 +6,7 @@ class CGameInstance;
 NS_END
 
 NS_BEGIN(Client)
+struct DAMAGE_DESC;
 
 class CUIDirector final : public CBase
 {
@@ -34,7 +35,10 @@ public:
 	/* 씬 프레임을 화면에서 숨김 (화면 위, 아래에 프레임) */
 	void Hide_SceneFrame();
 
-	void Request_DamageText(void* pArg);
+	void Request_DamageText(const DAMAGE_DESC& desc);
+
+	/* 결과 배너를 띄움 */
+	void Show_ResultBanner(const string& strTextureKey, const _wstring& wstrText1, const _wstring& wstrText2);
 
 public:
 	/* 모든 레벨에 필요한 공통 데이터 등록 */
@@ -48,6 +52,9 @@ private:
 	void Show_HUD(const string& strInstanceName, _bool isFade = true);
 	void Hide_HUD(const string& strInstanceName);
 	string Get_HUDName(HUD hud);
+
+	void UI_Active(const string& strInstanceName, void* pArg = nullptr);
+	void UI_DeActive(const string& strInstanceName, void* pArg = nullptr);
 
 private:
 	string								m_levelKey;

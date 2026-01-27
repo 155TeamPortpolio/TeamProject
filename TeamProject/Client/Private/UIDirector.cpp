@@ -7,29 +7,24 @@
 #include "UI_ScreenFade.h"
 #include "UI_HUD.h"
 #include "UI_DamageText.h"
+#include "UI_ResultBanner.h"
 
 IMPLEMENT_SINGLETON(CUIDirector);
 
 void CUIDirector::FadeIn_Screen(_float fDuration)
 {
-	auto it = m_handles.find("screen_fade");
-	if (it == m_handles.end() || !it->second.isValid())
-		return;
-	
 	CUI_ScreenFade::FADE_DESC desc = {};
 	desc.fDuration = fDuration;
-	it->second.Get()->UI_Active(&desc);
+
+	UI_Active("screen_fade", &desc);
 }
 
 void CUIDirector::FadeOut_Screen(_float fDuration)
 {
-	auto it = m_handles.find("screen_fade");
-	if (it == m_handles.end() || !it->second.isValid())
-		return;
-	
 	CUI_ScreenFade::FADE_DESC desc = {};
 	desc.fDuration = fDuration;
-	it->second.Get()->UI_DeActive(&desc);
+
+	UI_DeActive("screen_fade", &desc);
 }
 
 void CUIDirector::Show_HUD(HUD hud, _bool isFade)
@@ -44,39 +39,34 @@ void CUIDirector::Hide_HUD(HUD hud)
 
 void CUIDirector::Show_SceneFrame()
 {
-	auto it = m_handles.find("scene_frame");
-	if (it == m_handles.end() || !it->second.isValid())
-		return;
-
-	it->second.Get()->UI_Active();
+	UI_Active("scene_frame");
 }
 
 void CUIDirector::Hide_SceneFrame()
 {
-	auto it = m_handles.find("scene_frame");
-	if (it == m_handles.end() || !it->second.isValid())
-		return;
-
-	it->second.Get()->UI_DeActive();
+	UI_DeActive("scene_frame");
 }
 
-void CUIDirector::Request_DamageText(void* pArg)
+void CUIDirector::Request_DamageText(const DAMAGE_DESC& desc)
 {
-	if (!pArg) return;
-	auto desc = static_cast<CUI_DamageText*>(pArg);
-
 	const string levelKey = LevelManager()->Get_NowLevelKey();
 
-	auto dmgText = Builder::Create_UIObject({G_GlobalLevelKey, "Proto_GameObject_DamageText"})
-		.FromPool()
-		.Build("DamageText");
+	auto dmgText = Builder::Create_UIObject({G_GlobalLevelKey, "Proto_GameObject_DamageText"}).FromPool().Build("DamageText");
 
-	dmgText->UI_Active(desc);
+	dmgText->UI_Active((void*)&desc);
 
-	// UI Mgr¿¡ µî·Ï
 	UIManager()->Add_UIObject(dmgText, levelKey);
 }
 
+void CUIDirector::Show_ResultBanner(const string& strTextureKey, const _wstring& wstrText1, const _wstring& wstrText2)
+{
+	CUI_ResultBanner::RESULT_DESC desc = {};
+	desc.strTextureKey = strTextureKey;
+	desc.wstrText1 = wstrText1;
+	desc.wstrText2 = wstrText2;
+
+	UI_Active("result_banner", &desc);
+}
 
 void CUIDirector::Initialize()
 {
@@ -194,6 +184,24 @@ string CUIDirector::Get_HUDName(HUD hud)
 	case HUD::BATTLE:		return "hud_battle";
 	}
 	return "";
+}
+
+void CUIDirector::UI_Active(const string& strInstanceName, void* pArg)
+{
+	auto it = m_handles.find(strInstanceName);
+	if (it == m_handles.end() || !it->second.isValid())
+		return;
+
+	it->second.Get()->UI_Active(pArg);
+}
+
+void CUIDirector::UI_DeActive(const string& strInstanceName, void* pArg)
+{
+	auto it = m_handles.find(strInstanceName);
+	if (it == m_handles.end() || !it->second.isValid())
+		return;
+
+	it->second.Get()->UI_DeActive(pArg);
 }
 
 void CUIDirector::Free()
