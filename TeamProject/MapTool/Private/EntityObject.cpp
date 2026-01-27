@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "EntityObject.h"
 #include "GameInstance.h"
+#include "MapToolCore.h"
+#include "MapToolGui.h"
 
 #include "Collider.h"
 #include "ModelData.h"
@@ -15,6 +17,8 @@ CEntityObject::CEntityObject()
 
 CEntityObject::CEntityObject(const CEntityObject& rhs)
 	: CMapToolObject(rhs)
+	, m_tCurModel{rhs.m_tCurModel}
+	, m_iType{ rhs.m_iType }
 {
 }
 
@@ -26,6 +30,7 @@ HRESULT CEntityObject::Initialize_Prototype()
 	Add_Component<CStaticModel>();
 	Add_Component<CMaterial>();
 
+	m_iType = -1;
 	m_tCurModel = { false, "None", "Default.model", "Default.mat" };
 
 	auto pModel = Get_Component<CStaticModel>();
@@ -41,9 +46,11 @@ HRESULT CEntityObject::Initialize(INIT_DESC* pArg)
 	__super::Initialize(pArg);
 	auto pDesc = static_cast<ENTITY_INIT_DESC*>(pArg);
 
-	if(pDesc)
+	if (pDesc)
 		m_iType = pDesc->iType;
-	
+	else
+		m_iType = -1;
+
 	Get_Component<CCollider>()->Set_MapToolMode(true);
 	Get_Component<CCollider>()->Set_ColliderColor(Get_TypeColor());
 
@@ -157,7 +164,7 @@ _vector4 CEntityObject::Get_TypeColor()
 	switch (m_iType)
 	{
 	case 0: TypeColor = _vector4{ 1.f, 1.f, 0.f, 1.f }; break; // NPC : Yellow
-	case 1: TypeColor = _vector4{ 0.f, 1.f, 1.f, 1.f }; break; // ETC : Cyan
+	case 1: TypeColor = _vector4{ 0.f, 1.f, 1.f, 1.f }; break; // INTERACT  : Cyan
 	case 2: TypeColor = _vector4{ 0.5f, 0.f, 0.5f, 1.f }; break; // ETC : Purple
 	default:TypeColor = _vector4{ 0.f, 1.f, 0.f, 1.f }; break; // DEF : Green 
 	}
@@ -178,6 +185,37 @@ void CEntityObject::Render_GUI()
 	if (ImGui::InputInt("##Version", &m_iType)) {
 		Get_Component<CCollider>()->Set_ColliderColor(Get_TypeColor());
 	};
+
+	const auto EntityList = CMapToolCore::GetInstance()->Get_MapToolGui()->Get_EntityModelNames();
+	const auto ModelPaths = CMapToolCore::GetInstance()->Get_MapToolGui()->Get_ModelPathPack();
+
+	if (!EntityList.empty()) {
+		if (ImGui::BeginCombo("Model", m_tCurModel.ModelKey.c_str()))
+		{
+			for (int i = 0; i < EntityList.size(); ++i)
+			{
+				if (ImGui::Selectable(EntityList[i].c_str()))
+				{
+					for (auto Model : EntityList)
+					{
+						for (auto Path : ModelPaths)
+						{
+							if (Path.TagName == EntityList[i]) {
+								Set_EntityModel(Path.TagName, Path.TagModelKey, Path.TagMaterialKey);
+							}
+						}
+					}
+					
+					//CurModelName = EntityList[i];
+					//m_iPickedEntityModelIndex = i;
+				}
+			}
+			ImGui::EndCombo();
+		}
+	}
+
+
+
 	ImGui::Text(Get_TypeName().c_str());
 
 	ImGui::PopID();
