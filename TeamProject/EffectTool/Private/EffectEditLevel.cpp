@@ -94,7 +94,7 @@ HRESULT CEffectEditLevel::Awake()
 	pObjMgr->Add_Object(Effect, { "EffectEdit_Level","Edit_Layer" });
 	pObjMgr->Add_Object(Effect2, { "EffectEdit_Level","Edit_Layer" });
 	pObjMgr->Add_Object(Effect3, { "EffectEdit_Level","Edit_Layer" });
-	pObjMgr->Add_Object(Model, { "EffectEdit_Level","Edit_Layer" });
+	pObjMgr->Add_Object(Model, { "EffectEdit_Level","Model_Layer" });
 	pObjMgr->Add_Object(Light, { "EffectEdit_Level","Light_Layer" });
 	pObjMgr->Add_Object(Camera, { "EffectEdit_Level","Camera_Layer" });
 
