@@ -80,7 +80,7 @@ HRESULT CMonsterSpawner::AddMonsterData(BATTLE_POINT_DATA MonsterPointData, SPAW
 	//
 	//m_SpawnDesc.push_back(desc);
 	//
-	//return S_OK;
+	return S_OK;
 }
 
 CMonsterSpawner* CMonsterSpawner::Create()

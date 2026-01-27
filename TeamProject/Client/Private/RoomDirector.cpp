@@ -41,7 +41,6 @@ bool CRoomDirector::RegisterRoom(class CRoom* pRoom)
 	if (it != m_Rooms.end())
 		return false;
 
-	Safe_AddRef(pRoom);
 	m_Rooms.emplace(key, pRoom);
 	return true;
 }
