@@ -36,6 +36,9 @@ public:
 
 	void Request_DamageText(void* pArg);
 
+	/* 결과 배너를 띄움 */
+	void Show_ResultBanner(const string& strTextureKey, const _wstring& wstrText1, const _wstring& wstrText2);
+
 public:
 	/* 모든 레벨에 필요한 공통 데이터 등록 */
 	void Initialize();
@@ -48,6 +51,9 @@ private:
 	void Show_HUD(const string& strInstanceName, _bool isFade = true);
 	void Hide_HUD(const string& strInstanceName);
 	string Get_HUDName(HUD hud);
+
+	void UI_Active(const string& strInstanceName, void* pArg = nullptr);
+	void UI_DeActive(const string& strInstanceName, void* pArg = nullptr);
 
 private:
 	string								m_levelKey;
