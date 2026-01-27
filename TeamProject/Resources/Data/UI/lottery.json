@@ -873,8 +873,8 @@
                             ],
                             "easeType": 5,
                             "position": [
-                                100.0,
-                                0.0
+                                200.0,
+                                -80.0
                             ],
                             "scale": [
                                 1.0,
@@ -963,7 +963,7 @@
                             0.0,
                             0.0
                         ],
-                        "radian": -0.02617993950843811
+                        "radian": 0.0
                     },
                     "color": [
                         1.0,
@@ -972,7 +972,91 @@
                         1.0
                     ],
                     "pass": "Opaque",
-                    "animClips": [],
+                    "animClips": [
+                        {
+                            "duration": 1.0,
+                            "keyframes": [
+                                {
+                                    "angle": -1.5,
+                                    "color": [
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "easeType": 0,
+                                    "position": [
+                                        0.0,
+                                        0.0
+                                    ],
+                                    "scale": [
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "time": 0.0
+                                },
+                                {
+                                    "angle": -2.5,
+                                    "color": [
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        0.0
+                                    ],
+                                    "easeType": 0,
+                                    "position": [
+                                        80.0,
+                                        0.0
+                                    ],
+                                    "scale": [
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "time": 0.4000000059604645
+                                },
+                                {
+                                    "angle": -2.5,
+                                    "color": [
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        0.0
+                                    ],
+                                    "easeType": 0,
+                                    "position": [
+                                        80.0,
+                                        0.0
+                                    ],
+                                    "scale": [
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "time": 0.6000000238418579
+                                },
+                                {
+                                    "angle": 0.0,
+                                    "color": [
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "easeType": 0,
+                                    "position": [
+                                        0.0,
+                                        0.0
+                                    ],
+                                    "scale": [
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "time": 1.0
+                                }
+                            ],
+                            "loop": false,
+                            "name": "clip0"
+                        }
+                    ],
                     "children": [],
                     "typeTag": "Image",
                     "textureTag": "NewsPage03.png"
@@ -1007,7 +1091,91 @@
                         1.0
                     ],
                     "pass": "Opaque",
-                    "animClips": [],
+                    "animClips": [
+                        {
+                            "duration": 1.0,
+                            "keyframes": [
+                                {
+                                    "angle": -4.0,
+                                    "color": [
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "easeType": 0,
+                                    "position": [
+                                        0.0,
+                                        0.0
+                                    ],
+                                    "scale": [
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "time": 0.0
+                                },
+                                {
+                                    "angle": -6.0,
+                                    "color": [
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        0.0
+                                    ],
+                                    "easeType": 0,
+                                    "position": [
+                                        80.0,
+                                        0.0
+                                    ],
+                                    "scale": [
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "time": 0.4000000059604645
+                                },
+                                {
+                                    "angle": -6.0,
+                                    "color": [
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        0.0
+                                    ],
+                                    "easeType": 0,
+                                    "position": [
+                                        80.0,
+                                        0.0
+                                    ],
+                                    "scale": [
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "time": 0.6000000238418579
+                                },
+                                {
+                                    "angle": -4.0,
+                                    "color": [
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "easeType": 0,
+                                    "position": [
+                                        0.0,
+                                        0.0
+                                    ],
+                                    "scale": [
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "time": 1.0
+                                }
+                            ],
+                            "loop": false,
+                            "name": "clip1"
+                        }
+                    ],
                     "children": [],
                     "typeTag": "Image",
                     "textureTag": "NewsPage01.png"
@@ -1049,7 +1217,7 @@
             "children": [
                 {
                     "alive": true,
-                    "instanceName": "NineSlice",
+                    "instanceName": "btnRefresh",
                     "transform": {
                         "anchor": 5,
                         "anchorOffset": [
@@ -1057,8 +1225,8 @@
                             0.0
                         ],
                         "size": [
-                            119.0,
-                            68.0
+                            72.0,
+                            72.0
                         ],
                         "scale": [
                             1.0,
@@ -1074,13 +1242,49 @@
                         1.0,
                         1.0,
                         1.0,
+                        0.0
+                    ],
+                    "pass": "Opaque",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "Button",
+                    "textureTag": "Circle72.png",
+                    "eventMsgTag": ""
+                },
+                {
+                    "alive": true,
+                    "instanceName": "overlayRefresh",
+                    "transform": {
+                        "anchor": 5,
+                        "anchorOffset": [
+                            0.0,
+                            0.0
+                        ],
+                        "size": [
+                            116.0,
+                            68.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        0.29729729890823364,
+                        0.29729729890823364,
+                        0.29729729890823364,
                         1.0
                     ],
                     "pass": "NineSlice",
                     "animClips": [],
                     "children": [],
                     "typeTag": "NineSlice",
-                    "textureTag": "BtnTabBG102.png",
+                    "textureTag": "Circle72.png",
                     "nineSlice": {
                         "borderPx": [
                             40.0,
@@ -1090,8 +1294,8 @@
                         ],
                         "uvRangeX": [
                             0.0,
-                            0.3921568691730499,
-                            0.6078431606292725,
+                            0.5555555820465088,
+                            0.4444444179534912,
                             1.0
                         ],
                         "uvRangeY": [
@@ -1101,23 +1305,23 @@
                             1.0
                         ],
                         "textureSize": [
-                            102.0,
-                            102.0
+                            72.0,
+                            72.0
                         ]
                     }
                 },
                 {
                     "alive": true,
-                    "instanceName": "btnRefresh",
+                    "instanceName": "iconRefresh",
                     "transform": {
                         "anchor": 5,
                         "anchorOffset": [
-                            23.0,
-                            14.0
+                            16.0,
+                            16.0
                         ],
                         "size": [
-                            38.33333206176758,
-                            38.33333206176758
+                            38.0,
+                            38.0
                         ],
                         "scale": [
                             1.0,
