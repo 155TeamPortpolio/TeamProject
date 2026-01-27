@@ -422,19 +422,24 @@ void CJaneDoeState_Attack_06::Update(CJaneDoe* pOwner, _float dt)
         ENUM(CJaneDoe::ROOTMOTION_MASK::QUATERNION));
 
     Update_Effects(pOwner);
-
+    // 마스크 변경
     if (IsCrossAnimProgress(0.5f))
     {
         m_iMask = pOwner->Get_CCT()->Get_CollisionMask();
-        pOwner->Get_CCT()->Set_CollisionMask(ENUM(COLLISION_GROUP::COMMON));
+        pOwner->Get_CCT()->Set_CollisionMask(m_iMask - ENUM(COLLISION_GROUP::MONSTER));
         pOwner->Set_LookTarget(false);
+        m_pOwnerStateMachine->Set_Bool("Penetrate", true);
     }
 }
 
 void CJaneDoeState_Attack_06::Exit(CJaneDoe* pOwner)
 {
-    pOwner->Get_CCT()->Set_CollisionMask(m_iMask);
-    pOwner->Set_LookTarget(true);
+    // 마스크 복구
+    if(m_pOwnerStateMachine->Get_Bool("Penetrate"))
+    {
+        pOwner->Get_CCT()->Set_CollisionMask(m_iMask);
+        pOwner->Set_LookTarget(true);
+    }
 
     static_cast<CJaneDoeState_NormalAttack*>(m_pParentState)->Set_ComboIndex(5);
 }

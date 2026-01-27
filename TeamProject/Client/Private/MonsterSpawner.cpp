@@ -61,26 +61,26 @@ void CMonsterSpawner::OnTriggerEnter(CGameObject* pOther)
 	m_isUsed = true;
 }
 
-HRESULT CMonsterSpawner::AddMonsterData(BATTLE_POINT_DATA MonsterPointData, MONSTER_SPAWN_DESC MonsterSpawnData)
+HRESULT CMonsterSpawner::AddMonsterData(BATTLE_POINT_DATA MonsterPointData, SPAWN_MONSTER_DESC MonsterSpawnData)
 {
-	if ("MonsterPoint" != MonsterPointData.tagType || true == MonsterSpawnData.MonsterKey.empty())
-		return E_FAIL;
-
-	_int iWithoutTableIndex = MonsterSpawnData.MonsterSpawnID % 1000;
-
-	// 인덱스 정보들이 맞지 않다면 취소
-	if (iWithoutTableIndex != MonsterPointData.iIndex)
-		return E_FAIL;
-
-	SPAWN_DESC desc = {};
-	desc.tagProto = "Proto_GameObject_" + MonsterSpawnData.MonsterKey;
-	desc.iSpawnID = MonsterPointData.iIndex;
-	desc.vRotation = { MonsterPointData.vRotation[0], MonsterPointData.vRotation[1],MonsterPointData.vRotation[2] };
-	desc.vPosition = { MonsterPointData.vTranslation[0], MonsterPointData.vTranslation[1],MonsterPointData.vTranslation[2] };
-
-	m_SpawnDesc.push_back(desc);
-
-	return S_OK;
+	//if ("MonsterPoint" != MonsterPointData.tagType || true == MonsterSpawnData.MonsterID.empty())
+	//	return E_FAIL;
+	//
+	//_int iWithoutTableIndex = MonsterSpawnData.MonsterSpawnID % 1000;
+	//
+	//// 인덱스 정보들이 맞지 않다면 취소
+	//if (iWithoutTableIndex != MonsterPointData.iIndex)
+	//	return E_FAIL;
+	//
+	//SPAWN_DESC desc = {};
+	//desc.tagProto = "Proto_GameObject_" + MonsterSpawnData.MonsterKey;
+	//desc.iSpawnID = MonsterPointData.iIndex;
+	//desc.vRotation = { MonsterPointData.vRotation[0], MonsterPointData.vRotation[1],MonsterPointData.vRotation[2] };
+	//desc.vPosition = { MonsterPointData.vTranslation[0], MonsterPointData.vTranslation[1],MonsterPointData.vTranslation[2] };
+	//
+	//m_SpawnDesc.push_back(desc);
+	//
+	//return S_OK;
 }
 
 CMonsterSpawner* CMonsterSpawner::Create()
