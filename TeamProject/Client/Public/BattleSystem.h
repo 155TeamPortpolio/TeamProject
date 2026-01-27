@@ -69,16 +69,11 @@ private:
 	void	CheckVFX(const _float dt);
 
 private:
-	void StartVfx_Evade();
-
-private:
 	_bool	m_isReady = { false };
 	_bool	m_isActive = { false };
 private:
 	class CBattlePlayer* m_pBattlePlayer = { nullptr };// 배틀 플레이어
 	class CBattleFXFlow* m_pFXFlow = { nullptr };
-	_float3 m_FXAddColor = {};
-
 	unordered_map<BATTLE_OBJ_TYPE, BattleInfo>	m_BattleObjInfos;	// 매 업데이트때 1번씩 생성된 Battle 오브젝트의 정보를 담아둠
 	
 	/*Map 구조 변경 후 재적용 예정*/

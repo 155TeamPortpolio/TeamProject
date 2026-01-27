@@ -9,9 +9,17 @@ class CStateMachine;
 class CDefiler :
     public CEnemy
 {
-    struct Defiler_Target {
+public:
+    typedef struct tagDefilerBlackBoard : public ATTACK_BLACK_BOARD
+    {
+        //  deque<string> stateQueue;
+        //  _bool isRequestNext = false;//다음 상태가 존재 할 때 상태 전환 요청
+        //  _bool isChainOpen = false;  //현재 상태에서 다음으로 진행 가능여부
+        //  _bool isEnd = false;
+        //  string currentStateTag{};
+        _bool TraceOn = {};
+    }DEFILER_BLACK_BOARD;
 
-    };
 private:
     CDefiler();
     CDefiler(const CDefiler& rhg);
@@ -27,6 +35,8 @@ public:
 
     void    Render_GUI();
 
+public:
+    DEFILER_BLACK_BOARD& GetBlackBoard() { return m_BlackBoard; }
 private:
     void MoveByRootMotion(_float dt, _float moveScale = 1.f);
     void RotateToTarget(_float dt, _float rotateSpeed = 1.f);
@@ -40,6 +50,7 @@ private:
 
 private:
     CStateMachine<CDefiler>* m_pStateMachine = { nullptr };
+    DEFILER_BLACK_BOARD m_BlackBoard = {};
 
 public:
     static CDefiler* Create();
