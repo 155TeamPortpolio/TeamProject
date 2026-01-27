@@ -208,8 +208,10 @@ void CEnemy::Active_AttackSign(_bool parryEnable)
 
 void CEnemy::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage)
 {
+	_int damage = Helper::Get_Random_Int(1000, 10000);
+
 	CUI_DamageText::DAMAGE_DESC desc{};
-	desc.damage        = (_int)fDamage;
+	desc.damage        = damage;
 	desc.followHandle  = Get_Handle();
 	desc.followOffset  = Vector3(0.f, 1.3f, 0.f);
 	desc.isEnemy       = true;

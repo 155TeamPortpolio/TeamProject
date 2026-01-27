@@ -87,3 +87,9 @@ void CCorinState_Walk_End::Enter(CCorin* pOwner)
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Run_Start_End")
         .Apply();
 }
+
+void CCorinState_Walk_End::Update(CCorin* pOwner, _float dt)
+{
+    pOwner->Process_RootMotion(dt, ENUM(CCharacter::ROOTMOTION_MASK::MOVE) |
+        ENUM(CCharacter::ROOTMOTION_MASK::QUATERNION));
+}

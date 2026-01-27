@@ -3,21 +3,28 @@
 
 NS_BEGIN(Engine)
 class CSprite2D;
+class CTextSlot;
 NS_END
 
 NS_BEGIN(Client)
 
-class CUI_ScratchCard final : public CUI_Object
+class CUI_ResultBanner final : public CUI_Object
 {
-private:
-	enum class REWARD { REWARD1, REWARD2, REWARD3, REWARD4, REWARD5, END };
-	inline static const string REWARD_TEXTURES[ENUM(REWARD::END)] = { "ScratchCardRewardIcon01.png", "ScratchCardRewardIcon02.png",
-	"ScratchCardRewardIcon03.png", "ScratchCardRewardIcon04.png", "ScratchCardRewardIcon05.png" };
+public:
+	typedef struct tagResultDesc {
+		string strTextureKey = { "empty.png" };
+		wstring wstrText1 = {};
+		wstring wstrText2 = {};
+	}RESULT_DESC;
 
 private:
-	CUI_ScratchCard() {}
-	CUI_ScratchCard(const CUI_ScratchCard& rhs) : CUI_Object(rhs) {}
-	virtual ~CUI_ScratchCard() DEFAULT;
+	enum class TEXT { TEXT1, TEXT2, END }; 
+	inline static const string TEXT_NAMES[ENUM(TEXT::END)] = { "text1", "text2" };
+
+private:
+	CUI_ResultBanner() {}
+	CUI_ResultBanner(const CUI_ResultBanner& rhs) : CUI_Object(rhs) {}
+	virtual ~CUI_ResultBanner() DEFAULT;
 
 public:
 	virtual HRESULT Initialize_Prototype()           override;
@@ -31,24 +38,17 @@ public:
 	virtual void	UI_DeActive(void* pArg)			 override;
 
 private:
-	CUI_Object*			m_pBrush = {};
-	class CSprite2D*	m_pBrushSprite = {};
-	class CSprite2D*	m_pRewardSprite = {};
-
-	_float4x4	m_ViewMatrix = {};
-	_float4x4   m_ProjMatrix = {};
-
-	_float		m_fThreshold = { -0.1f };
-
-	_bool		m_isClear = {};
+	class CButtonUI*	m_pBtnOk = {};
+	class CSprite2D*	m_pSpriteIcon = {};
+	class CTextSlot*	m_pTextSlot[ENUM(TEXT::END)] = {};
 
 private:
-	void Cache_Brush();
-	void Cache_Reward();
+	void Cache();
 
-	void Change_RewardTexture(const string& strTextureKey);
+	void OnClick_OK();
 
-	void Render_RTBrush(ID3D11DeviceContext* pContext);
+	void Set_Text(TEXT text, const _wstring& strText);
+	void Set_Icon(const string& strTextureKey);
 
 public:
 	static  CGameObject* Create();

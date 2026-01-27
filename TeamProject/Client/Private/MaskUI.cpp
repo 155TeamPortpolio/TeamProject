@@ -6,6 +6,7 @@
 HRESULT CMaskUI::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
+
 	return S_OK;
 }
 
@@ -21,9 +22,11 @@ HRESULT CMaskUI::Initialize(INIT_DESC* pArg)
 void CMaskUI::Load(const nlohmann::ordered_json& data)
 {
     __super::Load(data);
-
+     
+    auto pSprite = Get_Component<CSprite2D>();
     const string maskTextureKey = data.value("maskTextureKey", "empty.png");
-    Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, maskTextureKey);
+    pSprite->Change_Texture(0, G_GlobalLevelKey, maskTextureKey);
+    pSprite->Set_Param("MaskThreshold", { &m_fMaskThreshold, "float", sizeof(_float) });
 }
 
 CGameObject* CMaskUI::Create()
