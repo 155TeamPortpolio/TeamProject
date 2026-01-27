@@ -54,16 +54,15 @@ void CCharacterAttackCollider::Awake()
 
 void CCharacterAttackCollider::Priority_Update(_float dt)
 {
+	Get_Component<CBoneFollower>()->Sync_Transform(dt, m_pTransform);
 	m_vPrevPos = m_pTransform->Get_Pos();
 }
 
 void CCharacterAttackCollider::Update(_float dt)
 {
 	m_fTimer += dt;
-
-	Get_Component<CBoneFollower>()->Sync_Transform(dt, m_pTransform);
-	Get_Component<CRigidBody>()->Set_GlobalPos(m_pTransform->Get_Pos(), m_pTransform->Get_QuaternionRotate());
-	Get_Component<CCollider>()->Update(dt);
+	//Get_Component<CRigidBody>()->Set_GlobalPos(m_pTransform->Get_Pos(), m_pTransform->Get_QuaternionRotate());
+	//Get_Component<CCollider>()->Update(dt);
 }
 
 void CCharacterAttackCollider::Late_Update(_float dt)
