@@ -52,6 +52,7 @@ void CJaneDoeState_CounterAttack::Enter(CJaneDoe* pOwner)
 
 void CJaneDoeState_CounterAttack::Update(CJaneDoe* pOwner, _float dt)
 {
+	// TODO : 클립 이벤트 추가
 	for (const auto& Event : pOwner->Get_Component<CAnimator3D>()->Get_EventBus())
 	{
 		if (Event.Type != CLIP_EVENT_TYPE::NOTIFY) continue;
