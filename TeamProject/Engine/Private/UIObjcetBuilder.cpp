@@ -50,11 +50,13 @@ CUI_Object* CUIObjcetBuilder::Build(const string& instanceKey, _uint* id)
 
 	if (m_isFromPool)
 	{
-		instance = UIManager()->Acquire(m_CloneDesc, m_pObjDesc);
+		_bool isFirst = {};
+		instance = UIManager()->Acquire(m_CloneDesc, m_pObjDesc, isFirst);
 		if (!instance) 
 			return nullptr;
 		instance->Set_FromPool(true);
-		instance->OnPooledAcquire(m_pObjDesc);
+		if(!isFirst)
+			instance->OnPooledAcquire(m_pObjDesc);
 	}
 	else {
 		auto obj = PrototypeManager()->Clone_Prototype(m_CloneDesc.OriginLevel, m_CloneDesc.protoTag, m_pObjDesc);
