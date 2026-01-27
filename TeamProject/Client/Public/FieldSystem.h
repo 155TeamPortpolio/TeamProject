@@ -43,7 +43,7 @@ public:
 	
 public:
 	void	SetFieldPlayer(class CFieldPlayer* pFieldPlayer);
-	OBJECT_HANDLE					GetCurCharacterHandle() const;
+	CFieldPlayer*					GetFieldPlayer();
 
 	void	SetInteractHandle(OBJECT_HANDLE InteractHandle, OBJECT_HANDLE InteractPartnerHandle);
 	void	ResetInteractHandle();

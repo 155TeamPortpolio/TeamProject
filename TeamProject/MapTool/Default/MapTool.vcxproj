@@ -306,6 +306,9 @@
     <ClInclude Include="..\public\BattleObject.h" />
     <ClInclude Include="..\public\BattlePlayerPoint.h" />
     <ClInclude Include="..\public\BattleSpawnerPoint.h" />
+    <ClInclude Include="..\public\CamObject.h" />
+    <ClInclude Include="..\public\FreeCam.h" />
+    <ClInclude Include="..\public\LightPoint.h" />
     <ClInclude Include="..\public\DecalObject.h" />
     <ClInclude Include="..\public\DefaultCamera.h" />
     <ClInclude Include="..\public\DefaultPlaneFloor.h" />
@@ -380,6 +383,9 @@
     <ClCompile Include="..\private\BattleObject.cpp" />
     <ClCompile Include="..\private\BattlePlayerPoint.cpp" />
     <ClCompile Include="..\private\BattleSpawnerPoint.cpp" />
+    <ClCompile Include="..\private\CamObject.cpp" />
+    <ClCompile Include="..\private\FreeCam.cpp" />
+    <ClCompile Include="..\private\LightPoint.cpp" />
     <ClCompile Include="..\private\DecalObject.cpp" />
     <ClCompile Include="..\private\EntityObject.cpp" />
     <ClCompile Include="..\private\MapToolAssistant.cpp" />

@@ -1,6 +1,10 @@
 #include "pch.h"
 #include "RoomDirector.h"
 #include "Room.h"
+
+#include "GameInstance.h"
+#include "Player.h"
+
 CRoomDirector::CRoomDirector()
 {
 

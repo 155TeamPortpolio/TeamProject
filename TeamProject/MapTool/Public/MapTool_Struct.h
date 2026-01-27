@@ -66,7 +66,20 @@ namespace MapTool {
 	}Entity_Header;
 	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Entity_Header, TagDataFormat, TagArea, iVersion, Entities);
 
+	typedef struct tagMapLight
+	{
+		_int		iIndex{};
+		LIGHT_DESC	LightDesc;
+	}LIGHT_POSITION;
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(LIGHT_POSITION, iIndex, LightDesc);
 
+	typedef struct tagLightHeader {
+		string		TagDataFormat = {};
+		string		TagArea = {};
+		_int		iVersion = 1;
+		vector<LIGHT_POSITION> Lights;
+	}Light_Header;
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Light_Header, TagDataFormat, TagArea, iVersion, Lights);
 
 	/* BattleData */
 	typedef struct tagBattlePointData 
