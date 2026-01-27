@@ -14,29 +14,18 @@ HRESULT CUI_AtlasSprite::Initialize_Prototype()
 
 HRESULT CUI_AtlasSprite::Initialize(INIT_DESC* pArg)
 {
-    ATLAS_DESC* desc = static_cast<ATLAS_DESC*>(pArg);
-
     __super::Initialize(pArg);
 
     auto sprite = Get_Component<CSprite2D>();
     sprite->Link_Shader(G_GlobalLevelKey, "VTX_UI.hlsl");
     sprite->ChangePass("SpriteAnimation");
 
-    if (desc)
-    {
-        m_texKey      = desc->texKey;
-        m_frameCountX = desc->frameCountX;
-        m_frameCountY = desc->frameCountY;
-        m_frameIdx    = desc->frameIdx;
-        m_heightPx    = desc->heightPx;
-    }
-
     if (!m_texKey.empty())
         sprite->Change_Texture(0, G_GlobalLevelKey, m_texKey);
 
     m_colorTexKey.clear();
-    m_colorFrameCountX = 1;
-    m_colorFrameCountY = 1;
+    m_colorFrameCountX = max(1u, m_colorFrameCountX);
+    m_colorFrameCountY = max(1u, m_colorFrameCountY);
     m_colorFrameIdx    = 0;
 
     m_shearK = 0.f;
@@ -132,7 +121,17 @@ void CUI_AtlasSprite::Set_ColorMix(_float mix)
 void CUI_AtlasSprite::Apply_Params()
 {
     auto sprite = Get_Component<CSprite2D>();
-    if (!sprite->IsValid()) return;
+
+    static _bool msgSended = false;
+    if (!sprite->IsValid())
+    {
+        if (!msgSended)
+        {
+            MSG_BOX("Resources/UI/Image/Damage 폴더를 새로 받아주세요!");
+            msgSended = true;
+        }
+        return;
+    }
 
     sprite->Set_Param("Col", {&m_frameCountX, "uint", sizeof(_uint)});
     sprite->Set_Param("Row", {&m_frameCountY, "uint", sizeof(_uint)});

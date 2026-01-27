@@ -51,6 +51,7 @@ private:
 private:
     _float  m_glyphAspect = 1.f;
     _float  m_time = 0.f;
+    _bool   m_enableRipple = true;
     Vector2 m_baseAnchorOffset = Vector2(0.f, 0.f);
     _float3 m_worldPos{};
     string  m_digits;
@@ -74,6 +75,7 @@ private:
 public:
     static CGameObject* Create();
     CGameObject* Clone(INIT_DESC* pArg = {}) override;
+    void Free() override { __super::Free(); }
 };
 
 NS_END

@@ -5,16 +5,6 @@ NS_BEGIN(Client)
 
 class CUI_AtlasSprite final : public CUI_Object
 {
-public:
-    struct ATLAS_DESC : public UI_DESC
-    {
-        string texKey;
-        _uint  frameCountX = 1;
-        _uint  frameCountY = 1;
-        _uint  frameIdx = 0;
-        _float heightPx = 32.f;
-    };
-
 private:
     CUI_AtlasSprite() {}
     CUI_AtlasSprite(const CUI_AtlasSprite& rhs) : CUI_Object(rhs) {}
@@ -62,6 +52,7 @@ private:
 public:
     static CGameObject* Create();
     CGameObject* Clone(INIT_DESC* pArg = {}) override;
+    void Free() override { __super::Free(); }
 };
 
 NS_END

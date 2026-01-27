@@ -125,15 +125,13 @@ namespace
 
 namespace
 {
-    constexpr _float kRippleAttackSec = 0.06f;
-    constexpr _float kRippleReleaseSec = 0.12f;
-
-    constexpr _float kRippleTauSec = 0.30f;
-    constexpr _float kRippleFreq = 3.2f;
-
-    constexpr _float kRippleAmp = 0.12f;
-
+    constexpr _float kRippleAttackSec     = 0.06f; // Hold 시작 직후에 파동을 얼마나 빨리 “켜는지”
+    constexpr _float kRippleReleaseSec    = 0.10f; // Hold 끝나기 직전에 파동을 얼마나 빨리 “끄는지”.
+    constexpr _float kRippleTauSec        = 0.30f; // 파동이 시간이 지나면서 얼마나 빨리 약해지는지
+    constexpr _float kRippleFreq          = 3.2f;
+    constexpr _float kRippleAmp           = 0.15f;
     constexpr _float kRippleSpeedPxPerSec = 520.f;
+    constexpr _float kRippleChance        = 0.5f;
 }
 
 CUI_DamageText::CUI_DamageText(const CUI_DamageText& rhs) : CUI_WorldToScreen(rhs)
@@ -177,8 +175,6 @@ HRESULT CUI_DamageText::Initialize(INIT_DESC* arg)
 
 void CUI_DamageText::Update(_float dt)
 {
-    //dt *= 0.2f;
-
     __super::Update(dt);
 
     if (m_digits.empty()) return;
@@ -207,6 +203,7 @@ void CUI_DamageText::UI_Active(void* arg)
     DAMAGE_DESC* desc = static_cast<DAMAGE_DESC*>(arg);
 
     m_time = 0.f;
+    m_enableRipple = (Helper::Get_Random_Float(0.f, 1.f) < kRippleChance);
     m_followHandle = desc->followHandle;
 
     m_useColorMix = true;
@@ -286,6 +283,7 @@ void CUI_DamageText::UI_DeActive(void* arg)
     m_baseTotalW = 1.f;
 
     m_time = 0.f;
+    m_enableRipple = true;
 
     UIManager()->Remove_UIObject(this);
 }
@@ -435,7 +433,7 @@ void CUI_DamageText::Apply_LayoutScaled()
         const _float holdStart = inStart + t.digitInSec;
         const _float holdEnd = outStart;
 
-        if (m_time >= holdStart && m_time < holdEnd)
+        if (m_enableRipple && m_time >= holdStart && m_time < holdEnd)
         {
             const _float local = m_time - holdStart;
             const _float holdLen = max(holdEnd - holdStart, 0.001f);
@@ -481,8 +479,6 @@ void CUI_DamageText::Apply_LayoutScaled()
 
     Set_Size(Vector2(m_baseTotalW * m_damageScale, glyphH));
 }
-
-
 
 void CUI_DamageText::Update_Anim(_float dt)
 {
@@ -542,16 +538,7 @@ void CUI_DamageText::Ensure_GlyphCount(_uint count)
     auto container = Get_Component<CObjectContainer>();
     while ((_uint)m_glyphs.size() < count)
     {
-        auto pDesc = new CUI_AtlasSprite::ATLAS_DESC;
-        pDesc->texKey = kAtlasTexKey;
-        pDesc->frameCountX = kFrameCountX;
-        pDesc->frameCountY = kFrameCountY;
-        pDesc->frameIdx = 0;
-        pDesc->heightPx = kGlyphHeightPx;
-
         auto builder = Builder::Create_UIObject({G_GlobalLevelKey, "Proto_GameObject_AtlasSprite"});
-        builder.Add_UIDesc(pDesc);
-
         CUI_Object* obj = builder.Build("damageGlyph" + to_string((_uint)m_glyphs.size()));
         auto glyph = static_cast<CUI_AtlasSprite*>(obj);
 
@@ -561,9 +548,16 @@ void CUI_DamageText::Ensure_GlyphCount(_uint count)
         glyph->Align_To(ANCHOR::Left | ANCHOR::Top);
         glyph->Set_Pivot({0.f, 0.f});
 
+        glyph->Set_Atlas(kAtlasTexKey, kFrameCountX, kFrameCountY);
+        glyph->Set_FrameIndex(0);
+        glyph->Set_HeightPx(kGlyphHeightPx);
+
         glyph->Set_ColorAtlas(kColorAtlasTexKey, kColorFrameCountX, kColorFrameCountY);
         glyph->Set_UseColorAtlas(true);
         glyph->Set_FlashMix(0.f);
+        glyph->Set_ColorMix(1.f);
+        glyph->Set_ShearK(0.f);
+        glyph->Set_Alpha(0.f);
     }
 }
 
