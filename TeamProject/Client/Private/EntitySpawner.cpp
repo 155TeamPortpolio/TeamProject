@@ -88,8 +88,8 @@ OBJECT_HANDLE Client::Spawner::Create_NPC(const SPAWNER_DESC& Desc)
 	CCT.eGroup = COLLISION_GROUP::COMMON;
 	CCT.iCollisionMask = 0xFFFFFFFF;
 	CCT.bAutoFit = false;
-	CCT.fHeight = Desc.vScale.y;
-	CCT.fRadius = (Desc.vScale.x + Desc.vScale.z / 2);
+	CCT.fHeight = Desc.vScale.y / 2.f;
+	CCT.fRadius = (Desc.vScale.x + Desc.vScale.z / 2.f);
 	CCT.vPos = _float3(Desc.vTranslation.x, Desc.vTranslation.y, Desc.vTranslation.z);
 	
 	PrototypeManager()->Add_ProtoType(Desc.tagLevel, NPCTable->second.ProtoTag, NPCTable->second.Create());
