@@ -92,8 +92,8 @@ void CJaneDoeState_Evade::Exit(CJaneDoe* pOwner)
     if (pOwner->Is_Passion() && m_pOwnerStateMachine->Get_Bool("Penetrate"))
     {
         pOwner->Get_CCT()->Set_CollisionMask(m_iMask);
-        pOwner->Set_LookTarget(true);
     }
+    pOwner->Set_LookTarget(true);
     pOwner->Pop_Invincible();
     pOwner->Set_InvincibleTimer(0.5f); // 추가 무적 설정
     __super::Exit(pOwner);

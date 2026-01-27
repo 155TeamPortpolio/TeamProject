@@ -110,6 +110,9 @@ void CJaneDoeState_CounterAttack::Exit(CJaneDoe* pOwner)
 
 void CJaneDoeState_Counter_01::Enter(CJaneDoe* pOwner)
 {
+	pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_Counter_01")
+		.Speed(1.2f)
+		.Apply();
 }
 
 void CJaneDoeState_Counter_01::Update(CJaneDoe* pOwner, _float dt)
@@ -122,6 +125,9 @@ void CJaneDoeState_Counter_01::Exit(CJaneDoe* pOwner)
 
 void CJaneDoeState_Counter_02::Enter(CJaneDoe* pOwner)
 {
+	pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_Counter_02")
+		.Speed(1.2f)
+		.Apply();
 }
 
 void CJaneDoeState_Counter_02::Update(CJaneDoe* pOwner, _float dt)
@@ -134,6 +140,9 @@ void CJaneDoeState_Counter_02::Exit(CJaneDoe* pOwner)
 
 void CJaneDoeState_Counter_03::Enter(CJaneDoe* pOwner)
 {
+	pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_Counter_03")
+		.Speed(1.2f)
+		.Apply();
 }
 
 void CJaneDoeState_Counter_03::Update(CJaneDoe* pOwner, _float dt)
