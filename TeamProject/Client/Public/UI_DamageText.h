@@ -31,8 +31,6 @@ public:
 
 private:
     void SetDamage(_int damage);
-
-private:
     void Ensure_GlyphCount(_uint count);
 
     void Rebuild_BaseLayout();
@@ -61,7 +59,9 @@ private:
     Vector3       m_followOffset{};
     Vector2       m_spawnOffsetPx{};
 
-    _uint m_colorFrameIdx = 0;
+    _uint  m_colorFrameIdx = 0;
+    _float m_damageScale = 1.f;
+    _float m_shearK = 0.f;
 
     vector<CUI_AtlasSprite*> m_glyphs;
 
