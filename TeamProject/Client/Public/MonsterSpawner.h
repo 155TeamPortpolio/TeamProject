@@ -31,7 +31,7 @@ public:
 	virtual void    OnTriggerEnter(CGameObject* pOther) override;
     
 public:
-    HRESULT         AddMonsterData(BATTLE_POINT_DATA MonsterPointData, MONSTER_SPAWN_DESC MonsterSpawnData);
+    HRESULT         AddMonsterData(BATTLE_POINT_DATA MonsterPointData, SPAWN_MONSTER_DESC MonsterSpawnData);
 
 private:
     _bool               m_isUsed = { false };
