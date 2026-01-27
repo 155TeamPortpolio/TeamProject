@@ -10,6 +10,9 @@ NS_BEGIN(Client)
 class CUI_ScratchCard final : public CUI_Object
 {
 private:
+	enum class STATE { INVISIBLE, VISIBLE, END };
+	enum class ANIMATION { APPEAR, DISAPPEAR, IDLE, END };
+
 	enum class REWARD { REWARD1, REWARD2, REWARD3, REWARD4, REWARD5, END };
 	inline static const string REWARD_TEXTURES[ENUM(REWARD::END)] = { "ScratchCardRewardIcon01.png", "ScratchCardRewardIcon02.png",
 	"ScratchCardRewardIcon03.png", "ScratchCardRewardIcon04.png", "ScratchCardRewardIcon05.png" };
@@ -22,7 +25,7 @@ private:
 public:
 	virtual HRESULT Initialize_Prototype()           override;
 	virtual HRESULT Initialize(INIT_DESC* pArg = {}) override;
-	virtual void	Awake()							 override;
+	virtual void	Awake()							 override {}
 	virtual void    Priority_Update(_float dt)       override { __super::Priority_Update(dt); }
 	virtual void    Update(_float dt)			     override;
 	virtual void    Late_Update(_float dt)           override { __super::Late_Update(dt); }
@@ -31,21 +34,23 @@ public:
 	virtual void	UI_DeActive(void* pArg)			 override;
 
 private:
+	STATE				m_eState = { STATE::END };
+
 	CUI_Object*			m_pBrush = {};
 	class CSprite2D*	m_pBrushSprite = {};
 	class CSprite2D*	m_pRewardSprite = {};
 
-	_float4x4	m_ViewMatrix = {};
-	_float4x4   m_ProjMatrix = {};
-
-	_float		m_fThreshold = { -0.1f };
-
-	_bool		m_isClear = {};
+	/* 커스텀 렌더타겟 관련 변수들 */
+	_float4x4			m_ViewMatrix = {};			// 브러쉬 뷰
+	_float4x4			m_ProjMatrix = {};			// 브러쉬 프로젝션
+	_float				m_fThreshold = { -0.1f };	// 브러쉬로 그린 렌더타겟을 마스크로 쓸 때 흑백 반전시키려고
+	_bool				m_isClear = {};				// 렌더타겟 클리어
 
 private:
 	void Cache_Brush();
 	void Cache_Reward();
 
+	void Change_State(STATE eState);
 	void Change_RewardTexture(const string& strTextureKey);
 
 	void Render_RTBrush(ID3D11DeviceContext* pContext);
