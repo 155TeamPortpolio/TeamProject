@@ -6,9 +6,6 @@ NS_BEGIN(Client)
 class CJaneDoe final :
     public CCharacter
 {
-public:
-    enum class COMBATSTATE { NORMAL, PASSION, END };
-
 private:
     CJaneDoe();
     CJaneDoe(const CJaneDoe& rhs);

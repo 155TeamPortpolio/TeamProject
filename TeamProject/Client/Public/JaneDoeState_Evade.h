@@ -10,6 +10,9 @@ public:
     virtual void  Enter(CJaneDoe* pOwner) override;
     virtual void  Update(CJaneDoe* pOwner, _float dt) override;
     virtual void  Exit(CJaneDoe* pOwner) override;
+    
+private:
+    _int    m_iMask = {};
 
 public:
     static CJaneDoeState_Evade* Create() { return new CJaneDoeState_Evade(); }
