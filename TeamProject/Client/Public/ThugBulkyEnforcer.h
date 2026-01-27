@@ -34,6 +34,10 @@ public:
 private:
     HRESULT Ready_Children(INIT_DESC* pArg);
 
+private:
+    HRESULT Add_VanishNoise();
+    HRESULT Render_VanishNoise(ID3D11DeviceContext* pContext, _uint index);
+
 public:
     CStateMachine<CThugBulkyEnforcer>* Get_StateMachine() { return m_pStateMachine; }
     ATTACK_BLACK_BOARD& GetBlackBoard() { return m_tAttackBlackBoard; }
@@ -89,6 +93,15 @@ private:
     /*For.Groggy*/
     //_int                m_iGroggyValue = {};
     //_float              m_fGroggyDecreaseTime = {};
+
+    /* Shader Params */
+    _float3 m_vEmissiveColor{};
+    _float3 m_vRimLightColor{};
+    _float m_fRimLightPower{};
+    _float m_fDissolveElapsedTime{};
+    _float m_fDissolveDuration = 1.2f;
+    _bool m_OnDissolve = false;
+    void Update_Dissolve(_float dt);
 };
 
 NS_END

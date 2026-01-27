@@ -169,6 +169,22 @@ PS_OUT_RESULT PS_MOTIONBLUR(PS_IN In)
     return Out;
 }
 
+PS_OUT_RESULT PS_VANISH(PS_IN In)
+{
+    PS_OUT_RESULT Out;
+    
+    float fNoiseTiling = 20.0f; 
+    float fNoise = VanishNoiseTexture.Sample(LinearSampler, In.vTexcoord * fNoiseTiling).r;
+    float2 vDistortion = float2((fNoise - 0.5f) * 0.1f, 0.f);
+    float2 vDistortedUV = In.vTexcoord + vDistortion;
+    
+    vector vVanish = VanishTexture.Sample(DefaultSampler, vDistortedUV);
+    
+    Out.vResult = vVanish;
+    
+    return Out;
+}
+
 //GaussianBlur
 static const float weights[9] =
 {
@@ -400,6 +416,7 @@ PS_OUT_RESULT PS_MAIN_COMBINED(PS_IN In)
     vector vMetalic = MetalicTexture.Sample(DefaultSampler, In.vTexcoord).a;
     vector vBloom = MeshBloomFinalTexture.Sample(DefaultSampler, In.vTexcoord);
     vector vMotionBlur = MotionBlurTexture.Sample(PointSampler, In.vTexcoord);
+    vector vVanish = VanishNoiseTexture.Sample(PointSampler, In.vTexcoord);
 
     float NdotL = vLightInfo.r;
     float2 vRampCoord = float2(1 - NdotL, 0.5f);
@@ -417,7 +434,7 @@ PS_OUT_RESULT PS_MAIN_COMBINED(PS_IN In)
     else
         Out.vResult = float4(vLight.rgb + vLightAmbient.rgb * vDiffuse.rgb * 0.5, vLight.a);
     
-    Out.vResult.rgb += vRimLight.rgb + vMotionBlur.rgb;
+    Out.vResult.rgb += vRimLight.rgb + vMotionBlur.rgb + vVanish.rgb;
     
     float3 specularColor = vLightSpecular.rgb * vLightInfo.g;
     Out.vResult.rgb += specularColor + vBloom.rgb;
@@ -459,6 +476,16 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MOTIONBLUR();
+    }
+
+    pass VANISHNOISE
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_VANISH();
     }
 
     pass BRIGHT
