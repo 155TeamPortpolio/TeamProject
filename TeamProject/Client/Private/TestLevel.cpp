@@ -45,10 +45,11 @@
 #include "BattlePlayer.h"
 
 /* Enemy */
-#include "ThugBulkyEnforcer.h"
 #include "EnemyAttackCollider.h"
 #include "EnemyTriggerCollider.h"
+#include "ThugBulkyEnforcer.h"
 #include "ThugAssaulter.h"
+#include "ThugPoacher.h"
 
 /*npc*/
 #include "OfficeMeow.h"
@@ -142,6 +143,7 @@ HRESULT CTestLevel::Awake()
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_EnemyAttackCollider", CEnemyAttackCollider::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_EnemyTriggerCollider", CEnemyTriggerCollider::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_ThugAssaulter", CThugAssaulter::Create());
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_ThugPoacher", CThugPoacher::Create());
 
 	CBattleSystem::GetInstance()->ReadyBattle("TrainingRoom", 1);
 	// It will be changed soooooon
@@ -185,6 +187,7 @@ void CTestLevel::Update()
 	}
 
 	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Tap(VK_F7)) {
+		CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_ThugPoacher", { -0.18f, 0.f, -5.f });
 	}
 }
 
