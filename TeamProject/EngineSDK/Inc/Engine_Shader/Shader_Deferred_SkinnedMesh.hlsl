@@ -1,6 +1,7 @@
 #include "Shader_Deferred_Define.hlsl"
 #include "Shader_Shadow.hlsl"
 matrix g_WorldMatrix;
+float g_fTime;
 
 struct VS_IN
 {
@@ -172,10 +173,16 @@ PS_OUT_RESULT PS_MOTIONBLUR(PS_IN In)
 PS_OUT_RESULT PS_VANISH(PS_IN In)
 {
     PS_OUT_RESULT Out;
+   
+    float fNoiseTiling = 10.0f;
     
-    float fNoiseTiling = 20.0f; 
-    float fNoise = VanishNoiseTexture.Sample(LinearSampler, In.vTexcoord * fNoiseTiling).r;
-    float2 vDistortion = float2((fNoise - 0.5f) * 0.1f, 0.f);
+    float fGlitchSpeed = 15.0f;
+    float fTimeStep = floor(g_fTime * fGlitchSpeed);
+    float fGlitch = frac(sin(fTimeStep) * 43758.5453);
+    float2 vScrollOffset = float2((fGlitch - 0.5f) * 0.5f, 0.f);
+    
+    float fNoise = VanishNoiseTexture.Sample(LinearSampler, (In.vTexcoord + vScrollOffset) * fNoiseTiling).r;
+    float2 vDistortion = float2((fNoise - 0.5f) * 0.04f, 0.f);
     float2 vDistortedUV = In.vTexcoord + vDistortion;
     
     vector vVanish = VanishTexture.Sample(DefaultSampler, vDistortedUV);
@@ -238,12 +245,19 @@ PS_OUT_RESULT PS_BLOOM_BLURX(PS_IN In)
     return Out;
 }
 
-PS_OUT_RESULT PS_BLOOM_BLURY(PS_IN In)
+struct PS_OUT_BLOOM
 {
-    PS_OUT_RESULT Out;
+    vector vBloom : SV_TARGET0;
+    vector vVanish : SV_TARGET1;
+};
+
+PS_OUT_BLOOM PS_BLOOM_BLURY(PS_IN In)
+{
+    PS_OUT_BLOOM Out;
 
     float4 BlurX = MeshBlurXTexture.Sample(DefaultSampler, In.vTexcoord);
     float fStrength = EmissiveTexture.Sample(DefaultSampler, In.vTexcoord).a;
+    vector vPost = PostInfoTexture.Sample(DefaultSampler, In.vTexcoord);
     
     float3 result = BlurX.rgb * weights[0];
     float texelSize = fStrength / fScreenHeight;
@@ -255,8 +269,24 @@ PS_OUT_RESULT PS_BLOOM_BLURY(PS_IN In)
         result += MeshBlurXTexture.Sample(DefaultSampler,
                 In.vTexcoord - float2(0, texelSize * i)).rgb * weights[i];
     }
-    Out.vResult = float4(result, BlurX.a);
-
+    Out.vBloom = float4(result, BlurX.a);
+    
+    if (vPost.r < 0.1)
+        discard;
+    
+    vector vNormalDesc = NormalTexture.Sample(DefaultSampler, In.vTexcoord);
+    float3 worldNormal = normalize(vNormalDesc.xyz * 2.f - 1.f);
+    float3 lightDir = normalize(vLightDir.xyz * -1);
+ 
+    float NdotL = dot(worldNormal, lightDir);
+    
+    float fShade = 1.0f;
+    if (NdotL < 0.0f)
+    {
+        fShade = 0.3f;
+    }
+    
+    Out.vVanish = float4(result * fShade, BlurX.a);
     return Out;
 }
 
@@ -416,8 +446,7 @@ PS_OUT_RESULT PS_MAIN_COMBINED(PS_IN In)
     vector vMetalic = MetalicTexture.Sample(DefaultSampler, In.vTexcoord).a;
     vector vBloom = MeshBloomFinalTexture.Sample(DefaultSampler, In.vTexcoord);
     vector vMotionBlur = MotionBlurTexture.Sample(PointSampler, In.vTexcoord);
-    vector vVanish = VanishNoiseTexture.Sample(PointSampler, In.vTexcoord);
-
+    
     float NdotL = vLightInfo.r;
     float2 vRampCoord = float2(1 - NdotL, 0.5f);
     vector vRampSample = RampTexture.Sample(DefaultSampler, vRampCoord);
@@ -434,7 +463,7 @@ PS_OUT_RESULT PS_MAIN_COMBINED(PS_IN In)
     else
         Out.vResult = float4(vLight.rgb + vLightAmbient.rgb * vDiffuse.rgb * 0.5, vLight.a);
     
-    Out.vResult.rgb += vRimLight.rgb + vMotionBlur.rgb + vVanish.rgb;
+    Out.vResult.rgb += vRimLight.rgb + vMotionBlur.rgb;
     
     float3 specularColor = vLightSpecular.rgb * vLightInfo.g;
     Out.vResult.rgb += specularColor + vBloom.rgb;
