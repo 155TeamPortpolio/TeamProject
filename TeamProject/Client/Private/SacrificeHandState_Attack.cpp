@@ -476,7 +476,7 @@ void CSacrificeHandState_OverDrive_Release_Attack01_Phase2::Update_Effects(CSacr
 		_smatrix offsetMatrix = _smatrix::Identity;
 		offsetMatrix.Translation(_vector3(0.f, 0.f, 0.f));
 
-		effect->AttachBone(pAnimator, "Ctr_Hand", offsetMatrix);
+		effect->AttachBone(pAnimator, "Ctr_HSword", offsetMatrix);
 		ObjectManager()->Add_Object(effect, { "Zero_Level","Enemy_Effect_Layer" });
 	}
 }
