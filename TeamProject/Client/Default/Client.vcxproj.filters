@@ -274,15 +274,6 @@
     <Filter Include="02. GameObject\Object\Npc\Service\ShopBangBoos\Ask">
       <UniqueIdentifier>{2c23461a-2765-4480-ad3f-f2645e65df1e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchIn\Normal">
-      <UniqueIdentifier>{17ac199c-689b-4292-beb7-f0b1a28e89d3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchIn\Attack">
-      <UniqueIdentifier>{3b25628b-24fb-4600-ba33-add740b3d93e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchIn\ParryAid">
-      <UniqueIdentifier>{4b65cf7d-c3b5-4826-8da1-334e9b9c6ca9}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\Object\Npc\Service\ShopBangBoos\Ask\State">
       <UniqueIdentifier>{ae74ad50-97c1-4208-aed1-096698c72e90}</UniqueIdentifier>
     </Filter>
@@ -668,7 +659,7 @@
     </Filter>
     <Filter Include="02. GameObject\UI\01. 2D\ResultBanner">
       <UniqueIdentifier>{b0a647aa-0d2d-415b-a90b-f57018145cf1}</UniqueIdentifier>
-  </Filter>
+    </Filter>
     <Filter Include="02. GameObject\Object\Player\Character\00. Collider">
       <UniqueIdentifier>{1487da32-f803-44c2-be56-7687fc06901a}</UniqueIdentifier>
     </Filter>
@@ -863,7 +854,9 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Player\Character\01. JaneDoe\State\Start">
       <UniqueIdentifier>{2cbaf699-675f-4a4b-9bf0-f7322153d7d1}</UniqueIdentifier>
-
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\01. JaneDoe\State\Attack\Counter">
+      <UniqueIdentifier>{ce63a969-3465-4278-b8a3-fef985ba087e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1689,6 +1682,9 @@
     <ClInclude Include="..\Public\UI_ResultBanner.h">
       <Filter>02. GameObject\UI\01. 2D\ResultBanner</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\JaneDoeState_CounterAttack.h">
+      <Filter>02. GameObject\Object\Player\Character\01. JaneDoe\State\Attack\Counter</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2473,6 +2469,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\UI_ResultBanner.cpp">
       <Filter>02. GameObject\UI\01. 2D\ResultBanner</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\JaneDoeState_CounterAttack.cpp">
+      <Filter>02. GameObject\Object\Player\Character\01. JaneDoe\State\Attack\Counter</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
