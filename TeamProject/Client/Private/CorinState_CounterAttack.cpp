@@ -33,18 +33,18 @@ void CCorinState_CounterAttack::Enter(CCorin* pOwner)
 
 void CCorinState_CounterAttack::Update(CCorin* pOwner, _float dt)
 {
-	// TODO : 클립 이벤트 추가
-	for (const auto& Event : pOwner->Get_Component<CAnimator3D>()->Get_EventBus())
+	for (const auto& Event : pOwner->Get_Animator()->Get_EventBus())
 	{
 		if (Event.Type != CLIP_EVENT_TYPE::NOTIFY) continue;
-
-		if (Event.Tag == "LHandStart")
+		if (Event.Tag == "SawInterval")
 		{
-			pOwner->Begin_AttackCollider("HandWeapon_L", { HIT_TYPE::ONCE, DAMAGE_TYPE::HARD, Helper::Get_Random_Float(10,30), 0, 0 });
-		}
-		else if (Event.Tag == "LHandEnd")
-		{
-			pOwner->End_AttackCollider("HandWeapon_L");
+			pOwner->Begin_AttackCollider("Saw",
+				HitDesc()
+				.Type(HIT_TYPE::INTERVAL)
+				.Damage(Helper::Get_Random_Float(5.f, 10.f), DAMAGE_TYPE::NORMAL)
+				.Interval(0.1f)
+				.Charge(5.f, 50.f)
+			);
 		}
 	}
 
@@ -84,6 +84,7 @@ void CCorinState_Counter_Start::Update(CCorin* pOwner, _float dt)
 
 void CCorinState_Counter_Explode::Enter(CCorin* pOwner)
 {
+	pOwner->End_AttackCollider("Saw");
 	pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_Counter_Explode")
 		.Speed(1.5f)
 		.Apply();
