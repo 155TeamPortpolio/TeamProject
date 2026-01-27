@@ -12,6 +12,18 @@ HRESULT CFreeCam::Initialize_Prototype()
 HRESULT CFreeCam::Initialize(INIT_DESC* pArg)
 {
     __super::Initialize(pArg);
+    Add_Component<CLight>();
+    LIGHT_DESC desc{};
+    desc.eType = LIGHT_TYPE::DIRECTIONAL;
+    desc.vLightAmbient = _float4(1.f, 1.f, 1.f, 1.f);
+    desc.vLightDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
+    desc.vLightSpecular = { 1.0f,  1.0f, 1.0f, 1.0f };
+    desc.vLightDirection = _float4(0.f, -1.f, 0.f, 0.f);
+    desc.fLightIntensity = 10.f;
+    desc.vLightPosition = {};
+    desc.fLightRange = {};
+
+    Get_Component<CLight>()->Set_Desc(desc, LIGHT_TYPE::DIRECTIONAL);
     return S_OK;
 }
 
@@ -34,7 +46,10 @@ void CFreeCam::Priority_Update(_float dt)
 
     const _vector3 worldUp{ 0.f, 1.f, 0.f };
 
-    const float speed = m_fSpeed * dt;
+    _float ExtraSpeed = 1.f;
+    if (InputDevice()->Key_Down(VK_SHIFT)) ExtraSpeed += 1.f;
+
+    const float speed = m_fSpeed * dt * ExtraSpeed;
 
     _vector3 move{};
     if (InputDevice()->Key_Down('W')) move += look * speed;
@@ -42,11 +57,9 @@ void CFreeCam::Priority_Update(_float dt)
     if (InputDevice()->Key_Down('D')) move += right * speed;
     if (InputDevice()->Key_Down('A')) move += right * -speed;
 
-    if (InputDevice()->Key_Down(VK_CONTROL))
-    {
-        if (InputDevice()->Key_Down(VK_SPACE)) move += worldUp * speed;
-        if (InputDevice()->Key_Down(VK_SHIFT)) move += worldUp * -speed;
-    }
+    if (InputDevice()->Key_Down(VK_SPACE)) move += worldUp * speed;
+    if (InputDevice()->Key_Down(VK_CONTROL)) move += worldUp * -speed;
+    
 
     if (move.LengthSquared() > 0.f)
         m_pTransform->Translate({ move.x, move.y, move.z, 0.f });

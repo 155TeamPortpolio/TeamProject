@@ -10,6 +10,7 @@
 #include "DefaultCamera.h"
 #include "DummyModel.h"
 #include "Camera.h"
+#include "FreeCam.h"
 #include "Grid.h"
 #include "PlacedObject.h"
 #include "TriggerObject.h"
@@ -18,7 +19,8 @@
 #include "BattleSpawnerPoint.h"
 #include "BattleMonsterPoint.h"
 #include "BattleEndPoint.h"
-#include "FreeCam.h"
+#include "LightPoint.h"
+
 
 /* MapTool Gui */
 #include "MapToolGui.h"
@@ -44,7 +46,7 @@ HRESULT CMapToolLevel::Initialize()
 	pProto->Add_ProtoType("MapTool_Level", "Proto_GameObject_BattleSpawnerPoint", CBattleSpawnerPoint::Create());
 	pProto->Add_ProtoType("MapTool_Level", "Proto_GameObject_BattleMonsterPoint", CBattleMonsterPoint::Create());
 	pProto->Add_ProtoType("MapTool_Level", "Proto_GameObject_BattleEndPoint", CBattleEndPoint::Create());
-	
+	pProto->Add_ProtoType("MapTool_Level", "Proto_GameObject_LightPoint", CLightPoint::Create());
 	return S_OK;
 }
 
@@ -92,7 +94,6 @@ HRESULT CMapToolLevel::Ready_MapToolObjects()
 	DefaultCameraLightDesc.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
 	DefaultCameraLightDesc.vDirection = _float4(0.f, -1.f, 0.f, 0.f);
 	DefaultCameraLightDesc.fIntensity = 10.f;
-	
 
 	CGameObject* Camera = Builder::Create_Object({ "MapTool_Level" ,"Proto_GameObject_FreeCam" })
 		.Camera({ (float)g_iWinSizeX / g_iWinSizeY })

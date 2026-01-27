@@ -108,7 +108,7 @@ void CMapToolGui::Render_GUI()
         fObjhectSettingChild *= 3.f;
         break;
     case MapTool::MAPOBJ_TYPE::ENTITY:
-        fObjhectSettingChild *= 2.5f;
+        fObjhectSettingChild *= 4.f;
         break;
     case MapTool::MAPOBJ_TYPE::BATTLE:
         fObjhectSettingChild *= 4.f;
@@ -414,7 +414,7 @@ void CMapToolGui::Place_Object(PHYSICS_RAY_HIT* pRayHit)
         ColDesc.bTrigger = true; // 충돌 박스 생성하는 트리거
 
         string TagInstanceName = "Light_Object" + to_string(m_iTriggerIndex++);
-        CGameObject* pStaticObject = Builder::Create_Object({ g_TagMapToolLevel ,"Proto_GameObject_LightObject" })
+        CGameObject* pStaticObject = Builder::Create_Object({ g_TagMapToolLevel ,"Proto_GameObject_LightPoint" })
             .Collider(ColDesc)
             .Position(pRayHit->vPoint)
             .Build(TagInstanceName);

@@ -43,6 +43,8 @@ public:
 	void			Save_MapToolEntityData();
 	void			Save_EntityInit();
 	void			Load_EntityInit();
+	const vector<string>& Get_EntityModelNames() { return m_EntityModelPathPackName; }
+	const vector<ModelPathPack>& Get_ModelPathPack() { return m_ModelPathPack; }
 	void			Set_EntityModel();
 	void			Save_BattleData();
 	void			Load_BattleData(const string& filepath = "");
