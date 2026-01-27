@@ -102,7 +102,6 @@ void CDefilerState_Attack_01_01::Enter(CDefiler* pOwner)
 	pAnimator->Change_Animation("Monster_IsoldetheDefiler_Ani_Attack_01_01")
 		.Speed(1.f)
 		.UseFinalLocalPose(true)
-		.StartAt(blackBoard.GetProgress())
 		.Loop(false)
 		.Apply();
 }
