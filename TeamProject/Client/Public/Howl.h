@@ -31,7 +31,8 @@ private:
     HRESULT Initialize_Transitions();
 
 private:
-    void         Update_States(_float dt);
+    void            Update_States(_float dt);
+    virtual void    Success(_uint curSequenceID) override;
 
 private:
     CStateMachine<CHowl>* m_pStateMachine{};

@@ -1,6 +1,10 @@
 #include "pch.h"
 #include "RoomDirector.h"
 #include "Room.h"
+
+#include "GameInstance.h"
+#include "Player.h"
+
 CRoomDirector::CRoomDirector()
 {
 
@@ -41,7 +45,6 @@ bool CRoomDirector::RegisterRoom(class CRoom* pRoom)
 	if (it != m_Rooms.end())
 		return false;
 
-	Safe_AddRef(pRoom);
 	m_Rooms.emplace(key, pRoom);
 	return true;
 }
