@@ -126,23 +126,24 @@ void CUI_Manager::Add_Object_Recursive(const string& LevelTag, CUI_Object* objec
 	auto& map = m_UIObjects.at(LevelTag);
 	_uint ObjectIndex = map.size();
 
-	if(object && object->Get_SystemIndex() == -1){
-	for (size_t i = 0; i < map.size(); i++)
+	if(object && object->Get_SystemIndex() == -1)
 	{
-		/*벡터를 순회하면서 널포인터가 있는지 검색*/
-		if (map[i] == nullptr) {
-			ObjectIndex = i;
-			break;
+		for (size_t i = 0; i < map.size(); i++)
+		{
+			/*벡터를 순회하면서 널포인터가 있는지 검색*/
+			if (map[i] == nullptr) {
+				ObjectIndex = i;
+				break;
+			}
 		}
-	}
 
-	/*같은 ID의 오브젝트가 없다면*/
-	if (ObjectIndex == map.size()) /*마지막에 추가*/
-		map.push_back(object);
-	else
-		map[ObjectIndex] = object;
+		/*같은 ID의 오브젝트가 없다면*/
+		if (ObjectIndex == map.size()) /*마지막에 추가*/
+			map.push_back(object);
+		else
+			map[ObjectIndex] = object;
 
-	object->Set_OnSystem(LevelTag, ObjectIndex);
+		object->Set_OnSystem(LevelTag, ObjectIndex);
 	}
 	auto vector = object->Get_Children();
 
@@ -158,6 +159,9 @@ void CUI_Manager::Add_Object_Recursive(const string& LevelTag, CUI_Object* objec
 void CUI_Manager::Remove_UIObject(CUI_Object* object)
 {
 	if (!object) return;
+	if (!object->Is_Root())
+		return;
+
 	const _int systemIndex = object->Get_SystemIndex();
 	if (systemIndex < 0) return;
 	/*유아이에 배치된 적 없음*/
