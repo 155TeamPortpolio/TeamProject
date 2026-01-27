@@ -1,10 +1,16 @@
 #include "pch.h"
 #include "JaneDoeState_NormalAttack.h"
-#include "JaneDoe.h"
+
+#include "BattleSystem.h"
 #include "GameInstance.h"
+
+#include "BattlePlayer.h"
+#include "JaneDoe.h"
+
 #include "Animator3D.h"
 #include "ObjectContainer.h"
 #include "EffectContainer.h"
+#include "CharacterController.h"
 
 void CJaneDoeState_NormalAttack::Enter(CJaneDoe* pOwner)
 {
@@ -416,10 +422,20 @@ void CJaneDoeState_Attack_06::Update(CJaneDoe* pOwner, _float dt)
         ENUM(CJaneDoe::ROOTMOTION_MASK::QUATERNION));
 
     Update_Effects(pOwner);
+
+    if (IsCrossAnimProgress(0.5f))
+    {
+        m_iMask = pOwner->Get_CCT()->Get_CollisionMask();
+        pOwner->Get_CCT()->Set_CollisionMask(ENUM(COLLISION_GROUP::COMMON));
+        pOwner->Set_LookTarget(false);
+    }
 }
 
 void CJaneDoeState_Attack_06::Exit(CJaneDoe* pOwner)
 {
+    pOwner->Get_CCT()->Set_CollisionMask(m_iMask);
+    pOwner->Set_LookTarget(true);
+
     static_cast<CJaneDoeState_NormalAttack*>(m_pParentState)->Set_ComboIndex(5);
 }
 

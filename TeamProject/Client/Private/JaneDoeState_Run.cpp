@@ -100,6 +100,12 @@ void CJaneDoeState_Run_End::Enter(CJaneDoe* pOwner)
         .Apply();
 }
 
+void CJaneDoeState_Run_End::Update(CJaneDoe* pOwner, _float dt)
+{
+    pOwner->Process_RootMotion(dt, ENUM(CCharacter::ROOTMOTION_MASK::MOVE) |
+        ENUM(CCharacter::ROOTMOTION_MASK::QUATERNION));
+}
+
 void CJaneDoeState_Run_Turnback::Enter(CJaneDoe* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "TurnBack")

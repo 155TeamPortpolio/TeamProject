@@ -416,6 +416,8 @@
     <ClInclude Include="..\public\Portal.h" />
     <ClInclude Include="..\Public\SacrificeState_Groggy_Phase1.h" />
     <ClInclude Include="..\Public\SacrificeState_Groggy_Phase2.h" />
+    <ClInclude Include="..\Public\UI_Lottery.h" />
+    <ClInclude Include="..\Public\UI_ResultBanner.h" />
     <ClInclude Include="..\Public\UI_ScratchCard.h" />
     <ClInclude Include="..\Public\StageFx.h" />
     <ClInclude Include="..\public\ThugAssaulter_Groggy.h" />
@@ -619,6 +621,7 @@
     <ClInclude Include="..\Public\ZeroStage_Elite.h" />
     <ClInclude Include="..\Public\ZeroStage_Normal.h" />
     <ClInclude Include="..\Public\Zero_Level.h" />
+    <ClInclude Include="CDefiler.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Resource.h" />
@@ -732,6 +735,8 @@
     <ClCompile Include="..\private\Portal.cpp" />
     <ClCompile Include="..\Private\SacrificeState_Groggy_Phase1.cpp" />
     <ClCompile Include="..\Private\SacrificeState_Groggy_Phase2.cpp" />
+    <ClCompile Include="..\Private\UI_Lottery.cpp" />
+    <ClCompile Include="..\Private\UI_ResultBanner.cpp" />
     <ClCompile Include="..\Private\UI_ScratchCard.cpp" />
     <ClCompile Include="..\private\ThugAssaulter_Groggy.cpp" />
     <ClCompile Include="..\Private\Belle.cpp" />
@@ -928,6 +933,7 @@
     <ClCompile Include="..\Private\ZeroStage_Elite.cpp" />
     <ClCompile Include="..\Private\ZeroStage_Normal.cpp" />
     <ClCompile Include="..\Private\Zero_Level.cpp" />
+    <ClCompile Include="CDefiler.cpp" />
     <ClCompile Include="Client.cpp" />
   </ItemGroup>
   <ItemGroup>

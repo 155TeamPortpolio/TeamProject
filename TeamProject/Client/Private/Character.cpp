@@ -151,11 +151,6 @@ void CCharacter::Priority_Update(_float dt)
 
 void CCharacter::Update(_float dt)
 {
-	if (InputDevice()->Key_Tap(VK_F3))
-	{
-		Take_Damage(DAMAGE_TYPE::NORMAL, 10.f);
-	}
-
 	m_pAnimator->Update_Animation(dt);
 	m_pCCT->Update(dt);
 	Update_Evade(dt);
@@ -519,11 +514,18 @@ void CCharacter::Take_Damage(DAMAGE_TYPE eType, _float fDamage)
 	if (Is_Invincible()) return;
 
 	m_fCurrentHP -= fDamage;
+	m_fCurrentHP = max(m_fCurrentHP, 0.f);
+
 	On_Hit(eType);
 
+// ----------------------------------------
+	_int damage = Helper::Get_Random_Int(1000.f, 10000.f);
+
 	CUI_DamageText::DAMAGE_DESC desc{};
-	desc.pos    = m_vHitPos;
-	desc.damage = (_int)fDamage;
+	desc.damage        = damage;
+	desc.followHandle  = Get_Handle();
+	desc.followOffset  = Vector3(0.f, 1.3f, 0.f);
+	desc.isEnemy       = false;
 
 	UIDirector()->Request_DamageText(&desc);
 }

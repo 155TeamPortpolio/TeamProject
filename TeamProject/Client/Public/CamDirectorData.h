@@ -3,6 +3,10 @@
 #include "OrbitCam.h"
 #include "FreeCam.h"
 #include "SequenceCam.h"
+#include "Player.h"
+#include "Helper_Func.h"
+#include "Character.h"
+#include "GameInstance.h"
 
 NS_BEGIN(Engine)
 class CCamSequencePlayer; class ICameraService; class IObjectService;
