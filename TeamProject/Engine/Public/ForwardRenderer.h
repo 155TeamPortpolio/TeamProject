@@ -37,7 +37,6 @@ public:
     void SetRimLightMode(RIMLIGHT eMode);
     void Add_OutLineCommand(const OUTLINE_COMMAND& command);
     void Add_MotionBlurCommand(const MOTIONBLUR_COMMAND& command);
-    void Add_VanishNoiseCommand(const VANISHNOISE_COMMAND& command);
 
 private:
     virtual HRESULT Ready_Target() override;
