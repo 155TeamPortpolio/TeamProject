@@ -436,6 +436,7 @@ void CSacrificeHandState_OverDrive_Release_Attack01_Phase2::Enter(CSacrificeHand
 	pOwner->SetAutoPlayBattleCollider("Hand_Sword", 0.f, 0.7f, desc);
 	pOwner->Set_DissolveState(CSacrificeHand::DISSOLVE_STATE::APPEAR, 0.1f);
 	pOwner->SetVisable(true);
+	pOwner->Active_SwordRimLight();
 }
 
 void CSacrificeHandState_OverDrive_Release_Attack01_Phase2::Update(CSacrificeHand* pOwner, _float dt)
@@ -454,10 +455,30 @@ void CSacrificeHandState_OverDrive_Release_Attack01_Phase2::Update(CSacrificeHan
 		pOwner->Set_DissolveState(CSacrificeHand::DISSOLVE_STATE::DISAPPEAR, 0.1f);
 
 	pOwner->Update_Dissolve(dt);
+
+	Update_Effects(pOwner);
 }
 
 void CSacrificeHandState_OverDrive_Release_Attack01_Phase2::Exit(CSacrificeHand* pOwner)
 {
+}
+
+void CSacrificeHandState_OverDrive_Release_Attack01_Phase2::Update_Effects(CSacrificeHand* pOwner)
+{
+	if (IsCrossAnimProgress(0.1f))
+	{
+		auto pAnimator = pOwner->Get_Component<CAnimator3D>();
+
+		auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_hand_attack1.json")
+			.Build("Sacrifice_Hand_Attack1");
+
+		_smatrix offsetMatrix = _smatrix::Identity;
+		offsetMatrix.Translation(_vector3(0.f, 0.f, 0.f));
+
+		effect->AttachBone(pAnimator, "Ctr_Hand", offsetMatrix);
+		ObjectManager()->Add_Object(effect, { "Zero_Level","Enemy_Effect_Layer" });
+	}
 }
 
 void CSacrificeHandState_OverDrive_Release_Attack02_Phase2::Enter(CSacrificeHand* pOwner)
@@ -541,9 +562,9 @@ void CSacrificeHandState_OverDrive_Release_Attack03_Phase2::Update(CSacrificeHan
 		blackBoard.isChainOpen = true;
 		if (!blackBoard.stateQueue.empty())
 			blackBoard.isRequestNext = true;
+
+		pOwner->Deactive_SwordRimLight();
 	}
-
-
 
 	if (IsCrossAnimProgress(0.85f))
 		pOwner->Set_DissolveState(CSacrificeHand::DISSOLVE_STATE::DISAPPEAR, 0.1f);
