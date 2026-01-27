@@ -76,7 +76,7 @@ void CCorinState_UltimateAttack::Exit(CCorin* pOwner)
 
 void CCorinState_UltimateAttack_Start::Enter(CCorin* pOwner)
 {
-    BattleSystem()->StartTimeScale(CBattleSystem::BATTLE_OBJ_TYPE::MONSTER, 2.f, 0.f);
+    BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::ULTIMATE);
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "SwitchIn_Attack_Ex_Start")
         //.Speed(2.f)
         .Apply();

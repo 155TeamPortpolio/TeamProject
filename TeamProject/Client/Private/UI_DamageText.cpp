@@ -11,7 +11,7 @@ namespace
     static const string kAtlasTexKey = "DamageText.png";
 
     static const string kColorAtlasTexKey = "DamageTextColor.png";
-    constexpr _uint  kColorIdx_JaneDoe = 2;
+    constexpr _uint  kColorIdx_JaneDoe = 0;
     constexpr _uint  kColorIdx_Corin   = 3;
 
     constexpr _uint  kColorFrameCountX = 8;
@@ -102,6 +102,21 @@ namespace
         const _float a = Helper::Get_Random_Float(0.f, 1.f) * XM_2PI;
 
         return Vector2(cosf(a) * r, sinf(a) * r);
+    }
+}
+
+namespace
+{
+    constexpr _float kDamageScaleMin = 0.25f;
+    constexpr _float kDamageScaleMax = 1.35f;
+    constexpr _float kDamageScaleMaxDamage = 10000.f;
+
+    static _float CalcDamageScale(_int damage)
+    {
+        _float u = fabsf((_float)damage) / kDamageScaleMaxDamage;
+        u = clamp(u, 0.f, 1.f);
+        u = sqrtf(u);
+        return Math::Lerp(kDamageScaleMin, kDamageScaleMax, u);
     }
 }
 
@@ -208,6 +223,19 @@ void CUI_DamageText::UI_Active(void* arg)
     else
         m_colorFrameIdx = 7;
 
+    m_shearK = 0.f;
+    {
+        const _float chance = 1.f;
+        if (Helper::Get_Random_Float(0.f, 1.f) < chance)
+        {
+            const _float angleMinDeg = 2.f;
+            const _float angleMaxDeg = 10.f;
+            const _float deg = Helper::Get_Random_Float(angleMinDeg, angleMaxDeg);
+            const _float sign = (Helper::Get_Random_Float(0.f, 1.f) < 0.5f) ? -1.f : 1.f;
+            m_shearK = tanf(XMConvertToRadians(deg)) * sign;
+        }
+    }
+
     SetRenderLayer(RENDER_LAYER::Default);
     Update_WorldToScreen(m_worldPos);
 
@@ -234,6 +262,8 @@ void CUI_DamageText::UI_DeActive(void* arg)
 
 void CUI_DamageText::SetDamage(_int damage)
 {
+    m_damageScale = CalcDamageScale(damage);
+
     m_digits = to_string(damage);
 
     const _uint count = (_uint)m_digits.size();
@@ -249,10 +279,14 @@ void CUI_DamageText::SetDamage(_int damage)
         glyph->Set_ColorFrameIndex(m_colorFrameIdx);
         glyph->Set_Color(m_vColor);
         glyph->Set_Alpha(0.f);
+        glyph->Set_ShearK(m_shearK);
     }
 
     for (_uint i = count; i < (_uint)m_glyphs.size(); ++i)
+    {
         GetGlyph(i)->Set_Alpha(0.f);
+        GetGlyph(i)->Set_ShearK(0.f);
+    }
 
     {
         const auto px = GetGlyph(0)->Get_PxSize();
@@ -262,7 +296,6 @@ void CUI_DamageText::SetDamage(_int damage)
     Rebuild_BaseLayout();
     Apply_LayoutScaled();
 }
-
 
 void CUI_DamageText::Rebuild_BaseLayout()
 {
@@ -298,12 +331,13 @@ void CUI_DamageText::Apply_LayoutScaled()
     if (kRisePx > 0.f)
     {
         const _float u = clamp(m_time / t.endSec, 0.f, 1.f);
-        rise = kRisePx * u;
+        rise = (kRisePx * m_damageScale) * u;
     }
 
     Set_AnchorOffset(Vector2(m_baseAnchorOffset.x, m_baseAnchorOffset.y - rise));
 
-    const _float glyphW = kGlyphHeightPx * m_glyphAspect;
+    const _float glyphH = kGlyphHeightPx * m_damageScale;
+    const _float glyphW = glyphH * m_glyphAspect;
 
     for (_uint i = 0; i < count; ++i)
     {
@@ -327,17 +361,17 @@ void CUI_DamageText::Apply_LayoutScaled()
             s = Math::Lerp(kScaleHold, kScaleEnd, u);
         }
 
-        const Vector2 base = m_baseOffsets[i];
+        const Vector2 base = m_baseOffsets[i] * m_damageScale;
 
         const _float dx = (glyphW - glyphW * s) * 0.5f;
-        const _float dy = (kGlyphHeightPx - kGlyphHeightPx * s) * 0.5f;
+        const _float dy = (glyphH - glyphH * s) * 0.5f;
 
         auto glyph = GetGlyph(i);
         glyph->Set_AnchorOffset(Vector2(base.x + dx, base.y + dy));
-        glyph->Set_HeightPx(kGlyphHeightPx * s);
+        glyph->Set_HeightPx(glyphH * s);
     }
 
-    Set_Size(Vector2(m_baseTotalW, kGlyphHeightPx));
+    Set_Size(Vector2(m_baseTotalW * m_damageScale, glyphH));
 }
 
 void CUI_DamageText::Update_Anim(_float dt)

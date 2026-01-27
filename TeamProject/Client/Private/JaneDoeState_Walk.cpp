@@ -83,3 +83,9 @@ void CJaneDoeState_Walk_End::Enter(CJaneDoe* pOwner)
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Walk_End")
         .Apply();
 }
+
+void CJaneDoeState_Walk_End::Update(CJaneDoe* pOwner, _float dt)
+{
+    pOwner->Process_RootMotion(dt, ENUM(CCharacter::ROOTMOTION_MASK::MOVE) |
+        ENUM(CCharacter::ROOTMOTION_MASK::QUATERNION));
+}

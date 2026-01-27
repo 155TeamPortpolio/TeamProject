@@ -447,44 +447,44 @@ HRESULT CJaneDoe::Initialize_Stat()
 HRESULT CJaneDoe::Initialize_Weapon()
 {
 	ATTACK_COLLIDER_DESC HandL_WeaponDesc;
-	HandL_WeaponDesc.eColliderType = COLLIDER_TYPE::BOX;
+	HandL_WeaponDesc.eColliderType = COLLIDER_TYPE::SPHERE;
 	HandL_WeaponDesc.pOwnerAnimator = Get_Component<CAnimator3D>();
 	HandL_WeaponDesc.tagBone = "Ctr_L_HandWpn_F";
 	HandL_WeaponDesc.tagName = "HandWeapon_L";
-	HandL_WeaponDesc.vSize = { 0.3f, 0.1f, 0.1f };
-	HandL_WeaponDesc.vCenter = { 0.1f, 0.f, 0.f };
+	HandL_WeaponDesc.vSize = { 0.3f, 0.f, 0.f };
+	HandL_WeaponDesc.vCenter = { 0.f, 0.f, 0.f };
 	
 	if (FAILED(Attach_AttackCollider(&HandL_WeaponDesc)))
 		return E_FAIL;
 
 	ATTACK_COLLIDER_DESC HandR_WeaponDesc;
-	HandR_WeaponDesc.eColliderType = COLLIDER_TYPE::BOX;
+	HandR_WeaponDesc.eColliderType = COLLIDER_TYPE::SPHERE;
 	HandR_WeaponDesc.pOwnerAnimator = Get_Component<CAnimator3D>();
 	HandR_WeaponDesc.tagBone = "Ctr_R_HandWpn_F";
 	HandR_WeaponDesc.tagName = "HandWeapon_R";
-	HandR_WeaponDesc.vSize = { 0.3f, 0.1f, 0.1f };
-	HandR_WeaponDesc.vCenter = { 0.1f, 0.f, 0.f };
+	HandR_WeaponDesc.vSize = { 0.3f, 0.0f, 0.0f };
+	HandR_WeaponDesc.vCenter = { 0.f, 0.f, 0.f };
 
 	if (FAILED(Attach_AttackCollider(&HandR_WeaponDesc)))
 		return E_FAIL;
 
 	ATTACK_COLLIDER_DESC BootsL_WeaponDesc;
-	BootsL_WeaponDesc.eColliderType = COLLIDER_TYPE::BOX;
+	BootsL_WeaponDesc.eColliderType = COLLIDER_TYPE::SPHERE;
 	BootsL_WeaponDesc.pOwnerAnimator = Get_Component<CAnimator3D>();
 	BootsL_WeaponDesc.tagBone = "Ctr_L_BootsWpn_01";
 	BootsL_WeaponDesc.tagName = "FootWeapon_L";
-	BootsL_WeaponDesc.vSize = { 0.3f, 0.1f, 0.1f };
-	BootsL_WeaponDesc.vCenter = { 0.3f, 0.f, 0.f };
+	BootsL_WeaponDesc.vSize = { 0.5f, 0.0f, 0.0f };
+	BootsL_WeaponDesc.vCenter = { 0.f, 0.f, 0.f };
 	if (FAILED(Attach_AttackCollider(&BootsL_WeaponDesc)))
 		return E_FAIL;
 
 	ATTACK_COLLIDER_DESC BootsR_WeaponDesc;
-	BootsR_WeaponDesc.eColliderType = COLLIDER_TYPE::BOX;
+	BootsR_WeaponDesc.eColliderType = COLLIDER_TYPE::SPHERE;
 	BootsR_WeaponDesc.pOwnerAnimator = Get_Component<CAnimator3D>();
 	BootsR_WeaponDesc.tagBone = "Ctr_R_BootsWpn_01";
 	BootsR_WeaponDesc.tagName = "FootWeapon_R";
-	BootsR_WeaponDesc.vSize = { 0.3f, 0.1f, 0.1f };
-	BootsR_WeaponDesc.vCenter = { 0.3f, 0.f, 0.f };
+	BootsR_WeaponDesc.vSize = { 0.5f, 0.f, 0.f };
+	BootsR_WeaponDesc.vCenter = { 0.f, 0.f, 0.f };
 	if (FAILED(Attach_AttackCollider(&BootsR_WeaponDesc)))
 		return E_FAIL;
 
