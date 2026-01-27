@@ -219,7 +219,7 @@ HRESULT CDataBase::LoadMonsterCreationTable(const string& csvPath)
 	trim_chars = 앞 뒤 공백 제거
 	double_quote_escape = "..." 안의 쉼표 및 따옴표 처리 */
 	io::CSVReader<
-		5,
+		6,
 		io::trim_chars<' ', '\t'>,
 		io::double_quote_escape<',', '"'>
 	>in(csvPath);
@@ -231,15 +231,18 @@ HRESULT CDataBase::LoadMonsterCreationTable(const string& csvPath)
 	in.read_header(
 		io::ignore_extra_column | io::ignore_missing_column,
 		"ProtoTag", "DisplayName",
-		"CCT_fHeight", "CCT_fRadius", "MaxHP"
+		"CCT_fHeight", "CCT_fRadius", "MaxHP",
+		"MonsterID"
 	);
 
 	string	ProtoTag{}, DisplayName{};
 	_float	CCT_fHeight{}, CCT_fRadius{}, MaxHP{};
+	_uint	MonsterID{};
 
 	while (in.read_row(
 		ProtoTag, DisplayName,
-		CCT_fHeight, CCT_fRadius, MaxHP
+		CCT_fHeight, CCT_fRadius, MaxHP,
+		MonsterID
 	))
 	{
 		if (ProtoTag.empty())
@@ -248,7 +251,8 @@ HRESULT CDataBase::LoadMonsterCreationTable(const string& csvPath)
 		MonsterCreationDesc desc = {};
 		desc.ProtoTag = ProtoTag;
 		desc.DisplayName = DisplayName;
-		desc.CCT_fHeight = CCT_fHeight;
+		desc.MonsterID = MonsterID;
+ 		desc.CCT_fHeight = CCT_fHeight;
 		desc.CCT_fRadius = CCT_fRadius;
 		desc.iMaxHP = MaxHP;
 
