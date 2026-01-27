@@ -21,10 +21,13 @@ public:
     HRESULT Render_SkinnedMesh_LightAcc();
     HRESULT Render_SkinnedMesh_Combined();
     HRESULT Render_MotionBlur_Noise();
+    HRESULT Render_Vanish_Noise();
     HRESULT Process_OutLineQueue();
     HRESULT Process_MotionBlurQueue();
+    HRESULT Process_VanishQueue();
     void Add_OutLineCommand(const OUTLINE_COMMAND& command);
     void Add_MotionBlurCommand(const MOTIONBLUR_COMMAND& command);
+    void Add_VanishNoiseCommand(const VANISHNOISE_COMMAND& command);
 
 public:
     void Update(_float dt);
@@ -35,10 +38,11 @@ private:
 
 private:
     RIMLIGHT RimLightMode = RIMLIGHT::RIMLIGHT;
-    vector<OUTLINE_COMMAND> m_OutLineCommands;
-    vector<MOTIONBLUR_COMMAND> m_MotionBlurCommands;
-    _float                  m_fScreenWidth;
-    _float                  m_fScreenHeight;
+    vector<OUTLINE_COMMAND>     m_OutLineCommands;
+    vector<MOTIONBLUR_COMMAND>  m_MotionBlurCommands;
+    vector<VANISHNOISE_COMMAND> m_VanishNoiseCommands;
+    _float                      m_fScreenWidth;
+    _float                      m_fScreenHeight;
 
 public:
     static CSkinnedMeshRenderer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext,
