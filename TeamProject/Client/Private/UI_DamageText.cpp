@@ -49,7 +49,7 @@ namespace
     constexpr EaseType kAlphaOutEase = EaseType::OutQuad;
 
     constexpr _float   kFlashSec = 0.12f;
-    constexpr EaseType kFlashEase = EaseType::InOutSine;
+    constexpr EaseType kFlashEase = EaseType::OutQuad;
 
     struct DamageTextTiming
     {
@@ -123,6 +123,19 @@ namespace
     }
 }
 
+namespace
+{
+    constexpr _float kRippleAttackSec = 0.06f;
+    constexpr _float kRippleReleaseSec = 0.12f;
+
+    constexpr _float kRippleTauSec = 0.30f;
+    constexpr _float kRippleFreq = 3.2f;
+
+    constexpr _float kRippleAmp = 0.12f;
+
+    constexpr _float kRippleSpeedPxPerSec = 520.f;
+}
+
 CUI_DamageText::CUI_DamageText(const CUI_DamageText& rhs) : CUI_WorldToScreen(rhs)
 {
     m_glyphAspect = 1.f;
@@ -164,7 +177,7 @@ HRESULT CUI_DamageText::Initialize(INIT_DESC* arg)
 
 void CUI_DamageText::Update(_float dt)
 {
-   // dt *= 0.1f;
+    //dt *= 0.2f;
 
     __super::Update(dt);
 
@@ -395,6 +408,8 @@ void CUI_DamageText::Apply_LayoutScaled()
     const _float glyphH = kGlyphHeightPx * m_damageScale;
     const _float glyphW = glyphH * m_glyphAspect;
 
+    const _float rippleOriginX = (count > 0u) ? m_baseOffsets[0].x : 0.f;
+
     for (_uint i = 0; i < count; ++i)
     {
         const _float inStart = (_float)i * t.digitInStaggerSec;
@@ -417,6 +432,43 @@ void CUI_DamageText::Apply_LayoutScaled()
             s = Math::Lerp(kScaleHold, kScaleEnd, u);
         }
 
+        const _float holdStart = inStart + t.digitInSec;
+        const _float holdEnd = outStart;
+
+        if (m_time >= holdStart && m_time < holdEnd)
+        {
+            const _float local = m_time - holdStart;
+            const _float holdLen = max(holdEnd - holdStart, 0.001f);
+
+            const _float travelPx = (m_baseOffsets[i].x - rippleOriginX) * m_damageScale;
+            const _float travelDelay = travelPx / kRippleSpeedPxPerSec;
+
+            const _float waveLocal = local - travelDelay;
+
+            if (waveLocal >= 0.f && waveLocal < holdLen)
+            {
+                _float wIn = clamp(waveLocal / kRippleAttackSec, 0.f, 1.f);
+                wIn = wIn * wIn * (3.f - 2.f * wIn);
+
+                _float wOut = clamp((holdLen - waveLocal) / kRippleReleaseSec, 0.f, 1.f);
+                wOut = wOut * wOut * (3.f - 2.f * wOut);
+
+                const _float window = wIn * wOut;
+
+                _float amp = expf(-waveLocal / kRippleTauSec);
+                amp = sqrtf(amp);
+
+                const _float x = (waveLocal * XM_2PI * kRippleFreq);
+
+                _float pulse = (1.f - cosf(x)) * 0.5f;
+                pulse = sqrtf(pulse);
+
+                const _float shrink = kRippleAmp * amp * window * pulse;
+
+                s *= (1.f - shrink);
+            }
+        }
+
         const Vector2 base = m_baseOffsets[i] * m_damageScale;
 
         const _float dx = (glyphW - glyphW * s) * 0.5f;
@@ -429,6 +481,8 @@ void CUI_DamageText::Apply_LayoutScaled()
 
     Set_Size(Vector2(m_baseTotalW * m_damageScale, glyphH));
 }
+
+
 
 void CUI_DamageText::Update_Anim(_float dt)
 {
