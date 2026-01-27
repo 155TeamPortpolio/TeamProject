@@ -37,7 +37,10 @@ void CJaneDoeState_SwitchOut::Exit(CJaneDoe* pOwner)
     __super::Exit(pOwner);
 }
 
-_bool CJaneDoeState_SwitchOut::Handle_Transition(CJaneDoe* pOwner)
+_bool CJaneDoeState_SwitchOut::Handle_Transition(CJaneDoe* pOwner, const string& strState)
 {
-    return _bool();
+    if (strState == "Idle")
+        return true;
+    return false;
 }
+

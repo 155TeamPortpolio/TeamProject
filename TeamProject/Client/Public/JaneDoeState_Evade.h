@@ -12,7 +12,7 @@ public:
     virtual void  Exit(CJaneDoe* pOwner) override;
     
 private:
-    _int    m_iMask = { 0xFFFFFFFF };
+    _uint    m_iMask = { 0xFFFFFFFF };
 
 public:
     static CJaneDoeState_Evade* Create() { return new CJaneDoeState_Evade(); }
