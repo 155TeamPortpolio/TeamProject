@@ -11,13 +11,13 @@ public:
 private:
 	enum class CHILD { 
 		BTN_BACK, BTN_REFRESH, BTN_SCRATCH,
-		OVERLAY_BACK,OVERLAY_REFRESH,
+		OVERLAY, OVERLAY_BACK,OVERLAY_REFRESH,
 		ICON_BACK, ICON_REFRESH, ICON_SCRATCH, 
 		NEWSPAPER, SCRATCH, END };
 
 	inline static const string INSTANCENAMES[ENUM(CHILD::END)] = { 
 		"btnBack", "btnRefresh", "btnScratch", 
-		"overlayBack", "overlayRefresh",
+		"overlay", "overlayBack", "overlayRefresh",
 		"iconBack", "iconRefresh", "iconScratch", 
 		"", ""};
 
@@ -61,6 +61,7 @@ private:
 	void Change_ChildTexture(CHILD child, const string& strTextureKey);
 
 	_bool Is_ChildAlive(CHILD child);
+	_bool Is_ChildAnimationFinished(CHILD child);
 
 public:
 	static  CGameObject* Create();

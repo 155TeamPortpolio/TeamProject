@@ -71,7 +71,7 @@ void CUI_ScratchCard::Update(_float dt)
 {
     // 브러쉬 자식 객체의 위치를 마우스 위치로
     auto pBrush = m_pChildren[ENUM(CHILD::BRUSH)];
-    if(pBrush && InputDevice()->Mouse_Down(MOUSE_BTN::LB))
+    if(pBrush && InputDevice()->Mouse_Hold(MOUSE_BTN::LB))
         pBrush->Set_AnchorOffset(InputDevice()->Mouse_Pos() - m_vLeftTop);
 
     // 스크래치가 ~퍼센트 이상이면 상태 변경
