@@ -119,6 +119,7 @@ namespace Client {
 
 	typedef struct tagSpawnDesc
 	{
+		_int Colony{};
 		_int MonsterID{};
 		_int Count{};
 	}SPAWN_MONSTER_DESC;

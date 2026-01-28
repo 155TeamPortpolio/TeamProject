@@ -20,6 +20,7 @@ public:
     PlayerDesc              GetPlayerDesc(const string& strName);
     PlayerLVDesc            GetLevelDesc(_uint lv);
     MonsterCreationDesc     GetMonsterDesc(const string& strName);
+    MonsterCreationDesc     GetMonsterDesc(_int ColonyIndex, _int MonsterIndex);
     NpcIDDesc               GetNpcIDData(const wstring& strName);
     NpcDialogueDesc         GetNpcDialogueDesc(pair<string, _uint> dialogueID);
     ChoiceDesc              GetNpcChoiceDesc(const string& strName);
@@ -54,7 +55,7 @@ private:
     wstring         StringToWString(const string& str);
 private:
     // 몬스터 세팅 테이블(CCT 정보, 각종 Status(HP, 공격력 등))
-    unordered_map<string, MonsterCreationDesc>				m_MonsterCreationTables;
+    unordered_map<_int, MonsterCreationDesc>				m_MonsterCreationTables;
     unordered_map<string, StageTypeTable>                   m_BattleSpawnData;
     // 플레이어 테이블
     unordered_map<string, PlayerDesc>				        m_PlayerTables;
