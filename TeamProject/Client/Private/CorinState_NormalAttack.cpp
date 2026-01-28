@@ -195,11 +195,11 @@ void CCorinState_Attack_04::Update(CCorin* pOwner, _float dt)
         ENUM(CCorin::ROOTMOTION_MASK::MOVE) |
         ENUM(CCorin::ROOTMOTION_MASK::QUATERNION));
 
-    if (m_fAnimProgress >= 0.22f)
+    if (IsCrossAnimProgress(0.15f))
     {
-        pOwner->Begin_AttackCollider("Saw", { HIT_TYPE::COUNT, DAMAGE_TYPE::NORMAL, 1.f, 0.f, 4 });
+        pOwner->Begin_AttackCollider("Saw", { HIT_TYPE::INTERVAL, DAMAGE_TYPE::NORMAL, 1.f, 0.15f, 0});
     }
-    if (m_fAnimProgress >= 0.46f)
+    if (IsCrossAnimProgress(0.46f))
     {
         pOwner->End_AttackCollider("Saw");
     }

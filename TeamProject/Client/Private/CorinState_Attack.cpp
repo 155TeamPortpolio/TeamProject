@@ -6,6 +6,7 @@
 #include "CorinState_ExAttack.h"
 #include "CorinState_UltimateAttack.h"
 #include "CorinState_CounterAttack.h"
+#include "CorinState_AssaultAttack.h"
 #include "Corin.h"
 
 #include "CharacterController.h"
@@ -21,12 +22,14 @@ CCorinState_Attack* CCorinState_Attack::Create()
     pSubStateMachine->Register_State("ExAttack", CCorinState_ExAttack::Create());
     pSubStateMachine->Register_State("UltimateAttack", CCorinState_UltimateAttack::Create());
     pSubStateMachine->Register_State("CounterAttack", CCorinState_CounterAttack::Create());
+    pSubStateMachine->Register_State("AssaultAttack", CCorinState_AssaultAttack::Create());
 
     pSubStateMachine->Get_State("NormalAttack")->Set_Tag("NormalAttack");
     pSubStateMachine->Get_State("RushAttack")->Set_Tag("RushAttack");
     pSubStateMachine->Get_State("ExAttack")->Set_Tag("ExAttack");
     pSubStateMachine->Get_State("UltimateAttack")->Set_Tag("UltimateAttack");
     pSubStateMachine->Get_State("CounterAttack")->Set_Tag("CounterAttack");
+    pSubStateMachine->Get_State("AssaultAttack")->Set_Tag("AssaultAttack");
 
     pSubStateMachine->Register_Transition("NormalAttack", "ExAttack",
         CStateMachine<CCorin>::CONDITION_TRIGGER, "ToExAttack");
@@ -35,6 +38,9 @@ CCorinState_Attack* CCorinState_Attack::Create()
         CStateMachine<CCorin>::CONDITION_TRIGGER, "ToUltimate");
 
     pSubStateMachine->Register_Transition("CounterAttack", "NormalAttack",
+        CStateMachine<CCorin>::CONDITION_TRIGGER, "ToNormalAttack");
+
+    pSubStateMachine->Register_Transition("AssaultAttack", "NormalAttack",
         CStateMachine<CCorin>::CONDITION_TRIGGER, "ToNormalAttack");
 
     pSubStateMachine->Set_DefaultState("NormalAttack");
@@ -60,6 +66,9 @@ void CCorinState_Attack::Enter(CCorin* pOwner)
         break;
     case 5:
         m_pSubStateMachine->Set_DefaultState("CounterAttack");
+        break;
+    case 6:
+        m_pSubStateMachine->Set_DefaultState("AssaultAttack");
         break;
     default:
         m_pSubStateMachine->Set_DefaultState("NormalAttack");

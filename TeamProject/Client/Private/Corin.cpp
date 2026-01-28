@@ -15,8 +15,10 @@
 #include "CorinState_Attack.h"
 #include "CorinState_NormalAttack.h"
 #include "CorinState_CounterAttack.h"
+#include "CorinState_AssaultAttack.h"
 #include "CorinState_Evade.h"
 #include "CorinState_SwitchIn.h"
+#include "CorinState_SwitchInParryAid.h"
 #include "CorinState_SwitchOut.h"
 #include "CorinState_Hit.h"
 
@@ -238,25 +240,16 @@ void CCorin::Process_AttackInput(const string& strCurrentState)
 
 		string strMoveType = pMove->Get_SubStateMachine()->Get_CurrentStateName();
 
-		if (strMoveType == "Walk")	// Walk -> NormalAttack
-			m_pStateMachine->Set_Int("AttackEntryMode", 0);
-		else if (strMoveType == "Run")
+		if (strMoveType == "Run")
 		{
-			IHState<CCorin>* pRun = dynamic_cast<IHState<CCorin>*>(
+			IHState<CCorin>* pRun = static_cast<IHState<CCorin>*>(
 				pMove->Get_SubStateMachine()->Get_CurrentState());
-			if (pRun && pRun->Get_SubStateMachine())
-			{
-				string strRunTag = pRun->Get_SubStateMachine()->Get_CurrentStateName();
-				if (strRunTag == "End")
-					m_pStateMachine->Set_Int("AttackEntryMode", 0);
-				else
-					m_pStateMachine->Set_Int("AttackEntryMode", 1);
-			}
-			else
+			if (!pRun || !pRun->Get_SubStateMachine())
 				return;
+
+			if (!pRun->Is_EndState())
+				m_pStateMachine->Set_Int("AttackEntryMode", 1);
 		}
-		else
-			return;
 
 		m_pStateMachine->Set_Trigger("Attack");
 	}
@@ -283,12 +276,40 @@ void CCorin::Process_AttackInput(const string& strCurrentState)
 				pAttack->Get_SubStateMachine()->Get_CurrentState());
 			if (!pCounter || !pCounter->Get_SubStateMachine())
 				return;
-			string strCounterState = pCounter->Get_SubStateMachine()->Get_CurrentStateName();
 			// Start나 Explode 중에만 예약 가능
-			if (strCounterState == "Counter_Start" || strCounterState == "Counter_Explode")
+			if (!pCounter->Is_EndState())
 			{
 				pAttack->Get_SubStateMachine()->Set_Int("ComboEntryIndex", 3);
 				pCounter->Get_SubStateMachine()->Set_Bool("ReserveNormal", true);
+			}
+		}
+		else if (strAttackType == "AssaultAttack")
+		{
+			CCorinState_AssaultAttack* pAssault = static_cast<CCorinState_AssaultAttack*>(
+				pAttack->Get_SubStateMachine()->Get_CurrentState());
+			if (!pAssault || !pAssault->Get_SubStateMachine())
+				return;
+			pAttack->Get_SubStateMachine()->Set_Int("ComboEntryIndex", 4);
+			pAssault->Get_SubStateMachine()->Set_Bool("ReserveNormal", true);
+		}
+	}
+	else if (strCurrentState == "SwitchIn")
+	{	// SwitchIn
+		CCorinState_SwitchIn* pSwitchIn = static_cast<CCorinState_SwitchIn*>(
+			m_pStateMachine->Get_CurrentState());
+		if (!pSwitchIn || !pSwitchIn->Get_SubStateMachine())
+			return;
+
+		string strSwitchType = pSwitchIn->Get_SubStateMachine()->Get_CurrentStateName();
+		if (strSwitchType == "ParryAid")
+		{
+			CCorinState_SwitchInParryAid* pParryAid = static_cast<CCorinState_SwitchInParryAid*>(
+				pSwitchIn->Get_SubStateMachine()->Get_CurrentState());
+			if (!pSwitchIn || !pSwitchIn->Get_SubStateMachine())
+				return;
+			if (!pParryAid->Is_EndState())
+			{
+				pParryAid->Get_SubStateMachine()->Set_Bool("ReserveAssaultAid", true);
 			}
 		}
 	}
@@ -484,7 +505,7 @@ HRESULT CCorin::Initialize_Weapon()
 	desc.pOwnerAnimator = Get_Component<CAnimator3D>();
 	desc.tagBone = "Weapon_saw";
 	desc.tagName = "Saw";
-	desc.vSize = { 0.5f, 0.5f, 0.05f };
+	desc.vSize = { 0.7f, 0.7f, 0.2f };
 
 	if (FAILED(Attach_AttackCollider(&desc)))	return E_FAIL;
 

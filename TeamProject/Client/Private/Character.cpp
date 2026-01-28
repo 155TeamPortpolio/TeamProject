@@ -327,6 +327,7 @@ HRESULT CCharacter::Attach_AttackCollider(ATTACK_COLLIDER_DESC* pDesc)
 
 	RIGIDBODY_DESC rigidDesc{};
 	rigidDesc.isKinematic = true;
+	rigidDesc.bCCD = true;
 	rigidDesc.bEnableGravity = false;
 	rigidDesc.bLockX = false;
 	rigidDesc.bLockZ = true;
