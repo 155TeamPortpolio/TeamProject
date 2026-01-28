@@ -8,6 +8,8 @@
 // Components
 #include "CharacterController.h"
 #include "EventListener.h"
+// Interface
+#include "ICamCollidable.h"
 
 void COrbitCam::Awake()
 {
@@ -341,7 +343,35 @@ void COrbitCam::Priority_Update(_float dt)
     ApplyOrbitPose(dt, lockRes);
 }
 
+void COrbitCam::OnTriggerEnter(CGameObject* pOther)
+{
+    if (pOther == nullptr) return;
 
+    auto pCamCollidable = dynamic_cast<ICamCollidable*>(pOther);
+    if (pCamCollidable == nullptr) return;
+
+    pCamCollidable->OnCameraCollision(true);
+}
+
+void COrbitCam::OnTriggerStay(CGameObject* pOther)
+{
+    if (pOther == nullptr) return;
+
+    auto pCamCollidable = dynamic_cast<ICamCollidable*>(pOther);
+    if (pCamCollidable == nullptr) return;
+
+    pCamCollidable->OnCameraCollision(true);
+}
+
+void COrbitCam::OnTriggerExit(CGameObject* pOther)
+{
+    if (pOther == nullptr) return;
+
+    auto pCamCollidable = dynamic_cast<ICamCollidable*>(pOther);
+    if (pCamCollidable == nullptr) return;
+
+    pCamCollidable->OnCameraCollision(false);
+}
 
 void COrbitCam::ClampTargets()
 {

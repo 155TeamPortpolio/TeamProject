@@ -62,7 +62,7 @@ private:
 	_bool				m_isScratchComplete = {};	// 스크래치 완료
 	_float				m_fScratchTimer = {};		// 스크래치 확인 타이머
 	const _float	    m_fScratchDuration = { 1.f }; // 스크래치 확인 시간 간격
-	const _float		m_fScratchRatio = { 0.3f };	// 스크래치 정도
+	const _float		m_fScratchRatio = { 0.4f };	// 스크래치 정도
 
 	/* 결과배너 관련 변수들 */
 	_bool				m_hasShownResult = {};		// 결과 배너를 보여줌
