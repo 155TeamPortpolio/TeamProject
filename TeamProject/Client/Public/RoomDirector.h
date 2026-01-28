@@ -12,6 +12,7 @@ private:
 public:
     HRESULT Initialize();
     void Update();
+
 public:
     _bool RegisterRoom(class CRoom* pRoom);
     _bool RequestEnter(const string& roomKey, _bool overlay = true);

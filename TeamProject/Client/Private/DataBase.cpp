@@ -488,22 +488,22 @@ HRESULT CDataBase::LoadNpcDialogueData(const string& csvPath)
 HRESULT CDataBase::LoadNpcChoiceData(const string& csvPath)
 {
 	io::CSVReader<
-		7,
+		8,
 		io::trim_chars<' ', '\t'>,
 		io::double_quote_escape<',', '"'>
 	>in(csvPath);
 
 	in.read_header(
 		io::ignore_extra_column | io::ignore_missing_column,
-		"ChoiceID", "Text", "Result", "NextID", "NextSequence", "ValueType", "Value"
+		"ChoiceID", "Text", "Result", "NextID", "NextSequence", "ValueType", "ValueName", "Value"
 	);
-	string			ChoiceID, NextID, ValueType;
+	string			ChoiceID, NextID, ValueType, ValueName;
 	string			Text;
 	_int			NextSequence;
 	string			Result;
 	string			Value;
 
-	while (in.read_row(ChoiceID, Text, Result, NextID, NextSequence, ValueType, Value))
+	while (in.read_row(ChoiceID, Text, Result, NextID, NextSequence, ValueType, ValueName, Value))
 	{
 		if (ChoiceID.empty()) continue;
 
@@ -514,7 +514,14 @@ HRESULT CDataBase::LoadNpcChoiceData(const string& csvPath)
 		desc.Next_DialogueID = NextID;
 		desc.Next_SequeceID = NextSequence;
 		desc.ValueType = ValueType;
-		if (ValueType == "int" || ValueType == "Int") desc.Value = stoi(Value);
+		desc.ValueName = ValueName;
+		if (ValueType == "bool") {
+			if (Value == "true" || Value == "TRUE")
+				desc.Value = true;
+			else if (Value == "false" || Value == "FALSE")
+				desc.Value = false;
+		}
+		else if (ValueType == "int" || ValueType == "Int") desc.Value = stoi(Value);
 		else if (ValueType == "float" || ValueType == "Float") desc.Value = stof(Value);
 		else if (ValueType == "string" || ValueType == "String")desc.Value = Value;
 

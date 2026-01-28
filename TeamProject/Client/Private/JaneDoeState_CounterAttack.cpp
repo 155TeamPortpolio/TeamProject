@@ -30,20 +30,21 @@ CJaneDoeState_CounterAttack* CJaneDoeState_CounterAttack::Create()
 void CJaneDoeState_CounterAttack::Enter(CJaneDoe* pOwner)
 {
 	pOwner->Lock_Move();
+	pOwner->Push_Invincible();
 	if (pOwner->Is_Passion())
 	{
 		m_pSubStateMachine->Set_DefaultState("Counter_03");
 		m_pSubStateMachine->Set_Int("CounterMode", 0);
 	}
-	else if (pOwner->Get_EvadeCount() % 2 == 0)
-	{
-		m_pSubStateMachine->Set_DefaultState("Counter_02");
-		m_pSubStateMachine->Set_Int("CounterMode", 1);
-	}
-	else
+	else if (pOwner->Get_EvadeCount() <= 1)
 	{
 		m_pSubStateMachine->Set_DefaultState("Counter_01");
 		m_pSubStateMachine->Set_Int("CounterMode", 2);
+	}
+	else
+	{
+		m_pSubStateMachine->Set_DefaultState("Counter_02");
+		m_pSubStateMachine->Set_Int("CounterMode", 1);
 	}
 
 	__super::Enter(pOwner);
@@ -51,6 +52,7 @@ void CJaneDoeState_CounterAttack::Enter(CJaneDoe* pOwner)
 
 void CJaneDoeState_CounterAttack::Update(CJaneDoe* pOwner, _float dt)
 {
+	// TODO : 클립 이벤트 추가
 	for (const auto& Event : pOwner->Get_Component<CAnimator3D>()->Get_EventBus())
 	{
 		if (Event.Type != CLIP_EVENT_TYPE::NOTIFY) continue;
@@ -105,6 +107,7 @@ void CJaneDoeState_CounterAttack::Update(CJaneDoe* pOwner, _float dt)
 
 void CJaneDoeState_CounterAttack::Exit(CJaneDoe* pOwner)
 {
+	pOwner->Pop_Invincible();
 	__super::Exit(pOwner);
 }
 

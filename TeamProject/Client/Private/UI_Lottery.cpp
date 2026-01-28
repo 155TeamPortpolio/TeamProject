@@ -21,14 +21,21 @@ HRESULT CUI_Lottery::Initialize(INIT_DESC* pArg)
     // JSON ·Îµå
     Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("lottery.json")));
 
-    auto pObj = Builder::Create_UIObject({LevelManager()->Get_NowLevelKey(), "Proto_GameObject_ScratchCard"}).Build("scratchCard");
+    Cache();
+
+    auto pObj = Builder::Create_UIObject({ LevelManager()->Get_NowLevelKey(), "Proto_GameObject_Newspaper" }).Build("newspaper");
+    if (pObj)
+    {
+        Get_Component<CObjectContainer>()->Add_Child(pObj);
+        m_pChildren[ENUM(CHILD::NEWSPAPER)] = pObj;
+    }
+
+    pObj = Builder::Create_UIObject({LevelManager()->Get_NowLevelKey(), "Proto_GameObject_ScratchCard"}).Build("scratchCard");
     if (pObj)
     {
         Get_Component<CObjectContainer>()->Add_Child(pObj);
         m_pChildren[ENUM(CHILD::SCRATCH)] = pObj;
     }
-
-    Cache();
 
     if(m_pButtons[ENUM(BTN::BTN_BACK)])
         m_pButtons[ENUM(BTN::BTN_BACK)]->Set_OnClick([this]() { OnClick_Back(); });
@@ -38,6 +45,8 @@ HRESULT CUI_Lottery::Initialize(INIT_DESC* pArg)
 
     if (m_pButtons[ENUM(BTN::BTN_SCRATCH)])
         m_pButtons[ENUM(BTN::BTN_SCRATCH)]->Set_OnClick([this]() { OnClick_OpenScratch(); });
+
+    UI_Active(nullptr);
 
 	return S_OK;
 }
@@ -59,12 +68,23 @@ void CUI_Lottery::Late_Update(_float dt)
 
 void CUI_Lottery::UI_Active(void* pArg)
 {
+    Set_ChildAnimation(CHILD::ICON_SCRATCH, 0);
+    Set_ChildAnimation(CHILD::NEWSPAPER, 0);
 }
 
 void CUI_Lottery::Cache()
 {
     auto pContainer = Get_Component<CObjectContainer>();
      
+    for (_int i = 0; i < ENUM(CHILD::END); ++i)
+    {
+        auto pObj = pContainer->Find_Descendant(INSTANCENAMES[i]);
+        if (!pObj)
+            continue;
+
+        m_pChildren[i] = dynamic_cast<CUI_Object*>(pObj);
+    }
+
     for (_int i = 0; i < ENUM(BTN::END); ++i)
     {
         auto pObj = pContainer->Find_Descendant(BTN_NAMES[i]);
@@ -77,16 +97,23 @@ void CUI_Lottery::Cache()
 
 void CUI_Lottery::OnClick_Back()
 {
+    Set_ChildAnimation(CHILD::OVERLAY_BACK, 0);
+    Set_ChildAnimation(CHILD::ICON_BACK, 0);
+
     if (Is_ChildAlive(CHILD::SCRATCH))
         Set_ChildUIDeActive(CHILD::SCRATCH);
 }
 
 void CUI_Lottery::OnClick_RefreshNews()
 {
+    Set_ChildAnimation(CHILD::OVERLAY_REFRESH, 0);
+    Set_ChildAnimation(CHILD::ICON_REFRESH, 0);
+
+    Set_ChildUIActive(CHILD::NEWSPAPER);
 }
 
 void CUI_Lottery::OnClick_OpenScratch()
-{
+{ 
     Set_ChildUIActive(CHILD::SCRATCH);
 }
 
@@ -106,6 +133,15 @@ void CUI_Lottery::Set_ChildUIDeActive(CHILD child, void* pArg)
         return;
 
     pChild->UI_DeActive(pArg);
+}
+
+void CUI_Lottery::Set_ChildAnimation(CHILD child, _int iIndex)
+{
+    auto pChild = m_pChildren[ENUM(child)];
+    if (!pChild)
+        return;
+
+    pChild->Set_Animation(iIndex);
 }
 
 _bool CUI_Lottery::Is_ChildAlive(CHILD child)

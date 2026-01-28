@@ -78,7 +78,8 @@ namespace Client {
 		string			Next_DialogueID;
 		_int			Next_SequeceID;
 		string			ValueType;
-		variant<monostate, _int, _float, string> Value;
+		string			ValueName;
+		variant<monostate, _bool, _int, _float, string> Value;
 	};
 
 	typedef struct tagMapDataFilePacket {
