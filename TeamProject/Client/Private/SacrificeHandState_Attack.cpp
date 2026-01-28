@@ -434,6 +434,7 @@ void CSacrificeHandState_OverDrive_Release_Attack01_Phase2::Enter(CSacrificeHand
 
 	HitDesc desc{};
 	pOwner->SetAutoPlayBattleCollider("Hand_Sword", 0.f, 0.7f, desc);
+
 	pOwner->Set_DissolveState(CSacrificeHand::DISSOLVE_STATE::APPEAR, 0.1f);
 	pOwner->SetVisable(true);
 	pOwner->Active_SwordRimLight();
@@ -636,8 +637,30 @@ void CSacrificeHandState_OverDrive_Release_Attack03_Phase2::Update(CSacrificeHan
 		pOwner->Set_DissolveState(CSacrificeHand::DISSOLVE_STATE::DISAPPEAR, 0.1f);
 
 	pOwner->Update_Dissolve(dt);
+	Update_Effects(pOwner);
 }
 
 void CSacrificeHandState_OverDrive_Release_Attack03_Phase2::Exit(CSacrificeHand* pOwner)
 {
+}
+
+void CSacrificeHandState_OverDrive_Release_Attack03_Phase2::Update_Effects(CSacrificeHand* pOwner)
+{
+	/* Flare1 */
+	if (IsCrossAnimProgress(0.21f))
+	{
+		auto pTransform = pOwner->Get_Component<CTransform>();
+
+		_vector3 vWorldPosition = _vector3::Transform(_vector3(0.4f, 0.f, 9.8f), pTransform->Get_WorldMatrix());
+		_vector3 vLook = pTransform->Dir(STATE::LOOK);
+
+		auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_hand_overdrive_attack3_1.json")
+			.Build("Sacrifice_Hand_Overdrive_Attack3_1");
+
+		auto effectTransform = effect->Get_Component<CTransform>();
+		effectTransform->Set_WorldPos(vWorldPosition);
+		effectTransform->Set_Look(vLook);
+		ObjectManager()->Add_Object(effect, { "Zero_Level","Enemy_Effect_Layer" });
+	}
 }

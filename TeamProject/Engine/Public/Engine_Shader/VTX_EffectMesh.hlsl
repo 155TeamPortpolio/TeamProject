@@ -194,6 +194,7 @@ PS_OUT PS_MAIN_DEFAULT(PS_IN In)
     /* Distortion */
     float2 vDistortionTexcoord = In.vTexcoord * DistortionTilling + ElapsedTime * DistortionUVSpeed;
     float2 vDistortion = ApplySamplerMode(SamplerMode, vDistortionTexcoord, DistortionTexture).rg;
+    vDistortion = vDistortion * 2.f - 1.f;
     vDistortion = vDistortion * DistortionStrength * float2(1.f / ScreenWidth, 1.f / ScreenHeight) * EnableDistortion;
     
     float4 vResult = float4(1.f, 1.f, 1.f, 1.f);

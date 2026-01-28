@@ -473,7 +473,7 @@ void CSacrificeState_Attack_08_Phase2::Enter(CSacrifice* pOwner)
 	pOwner->Active_AttackSign();
 	pOwner->SetAutoPlayBattleCollider("Axe", 0.f, 0.4f, hitDesc);
 
-	m_IsAttackStart = false;
+ 	m_IsAttackStart = false;
 	m_IsAttackEnd = false; 
 	m_IsJumpStart = false;
 

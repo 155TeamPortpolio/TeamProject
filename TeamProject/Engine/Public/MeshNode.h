@@ -56,6 +56,7 @@ protected:
     string m_MaskTextureTagA{};
     string m_MaskTextureTagB{};
     string m_DistortionTextureTag{};
+    string m_DistortionMaskTextureTag{};
 
     /*-----Modules-----*/
     TEXTURE_SLOT_MODULE m_TextureSlotModule{};

@@ -170,6 +170,9 @@ public:
 	static CSacrificeHandState_OverDrive_Release_Attack03_Phase2* Create() { return new CSacrificeHandState_OverDrive_Release_Attack03_Phase2(); }
 	virtual void Free() override { __super::Free(); }
 
+private:
+	void Update_Effects(CSacrificeHand* pOwner);
+
 };
 
 
