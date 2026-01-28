@@ -25,6 +25,96 @@ void CStage::Ready_Map(const string& LevelTag, const string& AreaTag)
 	Safe_Release(pMapLoader);
 
 	const CASHED_OBJ_DATA* datas =  CDataBase::GetInstance()->Get_CashedData(AreaTag);
+	if (datas->Battle.HasBattleData) {
+		ReadyPlayerPoint(datas->Battle.PlayerPoint);
+		ReadyMonsterPoint(datas->Battle.MonsterPoint);
+		ReadyPortalPoint(datas->Battle.MonsterPoint);
+		datas->Battle.Spawner; /*보류*/
+	}
+
+	auto& Entity = datas->Entity;
+	for (auto& data : Entity) /*엔티티*/
+	{
+		data.DataName;
+		data.Handle;
+	}
+
+	auto& MapObj = datas->MapObj;
+	for (auto& data : MapObj) /*맵 오브젝트*/
+	{
+		data.DataName;
+		data.Handle;
+	}
+
+	auto& InvisibleWall = datas->InvWall;
+	for (auto& data : InvisibleWall) /*투명 벽 -> 그냥 냅 메쉬*/
+	{
+		data.DataName;
+		data.Handle;
+	}
+
+	auto& Trigger = datas->Trigger;
+	for (auto& data : Trigger) /*투명 벽 -> 그냥 냅 메쉬*/
+	{
+		data.DataName;
+		data.Handle;
+	}
+}
+
+HRESULT CStage::ReadyPlayerPoint(const vector<BATTLE_POINT_DATA>& point)
+{
+	if (point.empty()) {
+		MSG_BOX("No Player Point : CStage ReadyMap");
+		return E_FAIL;
+	}
+
+	for (size_t i = 0; i < point.size(); i++)
+	{
+		BATTLEOBJ_INFO info = {};
+		info.vPos = { point[i].vTranslation[0],point[i].vTranslation[1],point[i].vTranslation[2] };
+		m_Context.player.push_back(move(info));
+	}
+
+	return S_OK;
+}
+
+HRESULT CStage::ReadyPortalPoint(const vector<BATTLE_POINT_DATA>& point)
+{
+	if (point.empty()) {
+		return S_OK;
+	}
+
+	for (size_t i = 0; i < point.size(); i++)
+	{
+		BATTLEOBJ_INFO info = {};
+		info.vPos = { point[i].vTranslation[0],point[i].vTranslation[1],point[i].vTranslation[2] };
+		m_Context.portal.push_back(move(info));
+	}
+
+	return S_OK;
+}
+
+HRESULT CStage::ReadyMonsterPoint(const vector<BATTLE_POINT_DATA>& point)
+{
+	if (point.empty()) {
+		return S_OK;
+	}
+
+	for (size_t i = 0; i < point.size(); i++)
+	{
+		BATTLEOBJ_INFO info = {};
+		info.vPos = { point[i].vTranslation[0],point[i].vTranslation[1],point[i].vTranslation[2] };
+		m_Context.monster.push_back(move(info));
+	}
+	return S_OK;
+}
+
+HRESULT CStage::ReadyMonsterData(const string& LevelTag, const string& AreaTag)
+{
+	auto* datas = CDataBase::GetInstance()->GetMonsterSpawnData(AreaTag,ENUM(m_Context.eStageType));
+	auto iter = *datas->find(m_Context.StageID);
+	if(iter == *datas->end())
+		return E_FAIL;
 }
 
 void CStage::BaseIntro(CZero_Level::StageContext& context)
@@ -62,11 +152,10 @@ void CStage::BaseIntro(CZero_Level::StageContext& context)
 		}
 
 		m_introFlow.EndSequence(seqId);
-	}	
+	}
 
 	m_introFlow.Start();
 }
-
 void CStage::BossIntro(CZero_Level::StageContext& context)
 {
 	if (!m_introFlowBuilt)
@@ -79,7 +168,7 @@ void CStage::BossIntro(CZero_Level::StageContext& context)
 		m_introFlow.AddOnce(seqId, [context]() {
 			//BattleSystem()->GetBattlePlayer()->QuestStart();
 			CamDirector()->StartBattleIntro(CamSeqType::BattleIntro);
-			
+
 			});
 		m_introFlow.AddWaitUntil(seqId, []()
 			{
@@ -101,7 +190,6 @@ void CStage::BaseOutro()
 	}
 
 	m_outroFlow.Start();
-
 }
 
 void CStage::Free()

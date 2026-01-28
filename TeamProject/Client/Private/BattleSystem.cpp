@@ -245,7 +245,7 @@ void CBattleSystem::ReadyBattle(const string& tagArea, _uint StageNumber, _uint 
 	/*MonsterPos*/
 	CacheData->Battle.MonsterPoint;
 	CacheData->Battle.PortalPoint;
-	const vector<MONSTER_SPAWN_DESC>* pMonsterSpawnData = pDatabase->GetMonsterSpawnData(tagArea);
+	//const vector<MONSTER_SPAWN_DESC>* pMonsterSpawnData = pDatabase->GetMonsterSpawnData(tagArea);
 
 	
 }
