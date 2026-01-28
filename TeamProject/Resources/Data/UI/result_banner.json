@@ -5,19 +5,19 @@
         "anchor": 0,
         "anchorOffset": [
             -800.0,
-            -450.0
+            0.0
         ],
         "size": [
             1600.0,
-            900.0
+            320.0
         ],
         "scale": [
             1.0,
-            1.0
+            0.800000011920929
         ],
         "pivot": [
             0.0,
-            0.0
+            0.5
         ],
         "radian": 0.0
     },
@@ -25,10 +25,120 @@
         1.0,
         1.0,
         1.0,
-        1.0
+        0.0
     ],
     "pass": "Opaque",
-    "animClips": [],
+    "animClips": [
+        {
+            "duration": 0.07999999821186066,
+            "keyframes": [
+                {
+                    "angle": 0.0,
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        0.0
+                    ],
+                    "easeType": 7,
+                    "position": [
+                        0.0,
+                        40.0
+                    ],
+                    "scale": [
+                        1.0,
+                        0.6000000238418579
+                    ],
+                    "time": 0.0
+                },
+                {
+                    "angle": 0.0,
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "easeType": 0,
+                    "position": [
+                        0.0,
+                        0.0
+                    ],
+                    "scale": [
+                        1.0,
+                        1.0
+                    ],
+                    "time": 0.07999999821186066
+                }
+            ],
+            "loop": false,
+            "name": "appear"
+        },
+        {
+            "duration": 0.20000000298023224,
+            "keyframes": [
+                {
+                    "angle": 0.0,
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "easeType": 5,
+                    "position": [
+                        0.0,
+                        0.0
+                    ],
+                    "scale": [
+                        1.0,
+                        1.0
+                    ],
+                    "time": 0.0
+                },
+                {
+                    "angle": 0.0,
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "easeType": 0,
+                    "position": [
+                        0.0,
+                        0.0
+                    ],
+                    "scale": [
+                        1.0,
+                        1.0
+                    ],
+                    "time": 0.10000000149011612
+                },
+                {
+                    "angle": 0.0,
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        0.0
+                    ],
+                    "easeType": 0,
+                    "position": [
+                        0.0,
+                        0.0
+                    ],
+                    "scale": [
+                        1.0,
+                        0.800000011920929
+                    ],
+                    "time": 0.20000000298023224
+                }
+            ],
+            "loop": false,
+            "name": "disappear"
+        }
+    ],
     "children": [
         {
             "alive": true,
@@ -124,9 +234,9 @@
                 "radian": 0.1745329201221466
             },
             "color": [
-                0.0784313753247261,
-                0.0784313753247261,
-                0.0784313753247261,
+                0.11764705926179886,
+                0.11764705926179886,
+                0.11764705926179886,
                 1.0
             ],
             "pass": "UVAnimation_StencilTest",
@@ -143,16 +253,336 @@
         },
         {
             "alive": true,
-            "instanceName": "icon",
+            "instanceName": "CanvasPanel",
             "transform": {
                 "anchor": 0,
                 "anchorOffset": [
-                    -50.0,
-                    -68.0
+                    -800.0,
+                    -10.0
                 ],
                 "size": [
-                    100.0,
-                    100.0
+                    1600.0,
+                    200.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.5
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "pass": "Opaque",
+            "animClips": [
+                {
+                    "duration": 2.0,
+                    "keyframes": [
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                0.0
+                            ],
+                            "easeType": 7,
+                            "position": [
+                                0.0,
+                                40.0
+                            ],
+                            "scale": [
+                                1.0,
+                                0.6000000238418579
+                            ],
+                            "time": 0.0
+                        },
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "easeType": 0,
+                            "position": [
+                                0.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 2.0
+                        }
+                    ],
+                    "loop": false,
+                    "name": "appear"
+                },
+                {
+                    "duration": 0.20000000298023224,
+                    "keyframes": [
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "easeType": 5,
+                            "position": [
+                                0.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 0.0
+                        },
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                0.0
+                            ],
+                            "easeType": 0,
+                            "position": [
+                                0.0,
+                                200.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 0.20000000298023224
+                        }
+                    ],
+                    "loop": false,
+                    "name": "disappear"
+                }
+            ],
+            "children": [
+                {
+                    "alive": true,
+                    "instanceName": "icon",
+                    "transform": {
+                        "anchor": 0,
+                        "anchorOffset": [
+                            -50.0,
+                            -6.0
+                        ],
+                        "size": [
+                            100.0,
+                            100.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.5
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "pass": "Opaque",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "Image",
+                    "textureTag": "empty.png"
+                },
+                {
+                    "alive": true,
+                    "instanceName": "Text",
+                    "transform": {
+                        "anchor": 4,
+                        "anchorOffset": [
+                            0.0,
+                            0.0
+                        ],
+                        "size": [
+                            0.0,
+                            0.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.5
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "pass": "Opaque",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "Text",
+                    "text": {
+                        "content": "획득",
+                        "fontTag": "NanumSquareNeo.spritefont",
+                        "fontScale": 0.5499998927116394,
+                        "outlined": false,
+                        "outlineThickness": 1.0,
+                        "outlineColor": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                        ],
+                        "shear": [
+                            0.0,
+                            0.0
+                        ],
+                        "autoPos": true,
+                        "anchor": 4
+                    }
+                },
+                {
+                    "alive": true,
+                    "instanceName": "text1",
+                    "transform": {
+                        "anchor": 8,
+                        "anchorOffset": [
+                            0.0,
+                            -28.0
+                        ],
+                        "size": [
+                            0.0,
+                            0.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.5
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "pass": "Opaque",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "Text",
+                    "text": {
+                        "content": "2888",
+                        "fontTag": "NanumSquareNeo.spritefont",
+                        "fontScale": 0.3499998450279236,
+                        "outlined": false,
+                        "outlineThickness": 1.0,
+                        "outlineColor": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                        ],
+                        "shear": [
+                            0.0,
+                            0.0
+                        ],
+                        "autoPos": true,
+                        "anchor": 8
+                    }
+                },
+                {
+                    "alive": true,
+                    "instanceName": "text2",
+                    "transform": {
+                        "anchor": 8,
+                        "anchorOffset": [
+                            0.0,
+                            0.0
+                        ],
+                        "size": [
+                            0.0,
+                            0.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.5
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "pass": "Opaque",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "Text",
+                    "text": {
+                        "content": "데니",
+                        "fontTag": "NanumSquareNeo.spritefont",
+                        "fontScale": 0.39999985694885254,
+                        "outlined": false,
+                        "outlineThickness": 1.0,
+                        "outlineColor": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                        ],
+                        "shear": [
+                            0.0,
+                            0.0
+                        ],
+                        "autoPos": true,
+                        "anchor": 8
+                    }
+                }
+            ],
+            "typeTag": "CanvasPanel"
+        },
+        {
+            "alive": true,
+            "instanceName": "CanvasPanel",
+            "transform": {
+                "anchor": 0,
+                "anchorOffset": [
+                    -800.0,
+                    131.99998474121094
+                ],
+                "size": [
+                    1600.0,
+                    60.0
                 ],
                 "scale": [
                     1.0,
@@ -171,411 +601,486 @@
                 1.0
             ],
             "pass": "Opaque",
-            "animClips": [],
-            "children": [],
-            "typeTag": "Image",
-            "textureTag": "empty.png"
-        },
-        {
-            "alive": true,
-            "instanceName": "Text",
-            "transform": {
-                "anchor": 0,
-                "anchorOffset": [
-                    -1.0,
-                    -97.0
-                ],
-                "size": [
-                    0.0,
-                    0.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0
-                ],
-                "pivot": [
-                    0.0,
-                    0.0
-                ],
-                "radian": 0.0
-            },
-            "color": [
-                1.0,
-                1.0,
-                1.0,
-                1.0
+            "animClips": [
+                {
+                    "duration": 2.0,
+                    "keyframes": [
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                0.0
+                            ],
+                            "easeType": 7,
+                            "position": [
+                                0.0,
+                                40.0
+                            ],
+                            "scale": [
+                                1.0,
+                                0.6000000238418579
+                            ],
+                            "time": 0.0
+                        },
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "easeType": 0,
+                            "position": [
+                                0.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 2.0
+                        }
+                    ],
+                    "loop": false,
+                    "name": "appear"
+                },
+                {
+                    "duration": 0.20000000298023224,
+                    "keyframes": [
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "easeType": 5,
+                            "position": [
+                                0.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 0.0
+                        },
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                0.0
+                            ],
+                            "easeType": 0,
+                            "position": [
+                                0.0,
+                                200.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 0.20000000298023224
+                        }
+                    ],
+                    "loop": false,
+                    "name": "disappear"
+                }
             ],
-            "pass": "Opaque",
-            "animClips": [],
-            "children": [],
-            "typeTag": "Text",
-            "text": {
-                "content": "획득",
-                "fontTag": "NanumSquareNeo.spritefont",
-                "fontScale": 0.5499998927116394,
-                "outlined": false,
-                "outlineThickness": 1.0,
-                "outlineColor": [
-                    0.0,
-                    0.0,
-                    0.0,
-                    1.0
-                ],
-                "shear": [
-                    0.0,
-                    0.0
-                ],
-                "autoPos": true,
-                "anchor": 0
-            }
-        },
-        {
-            "alive": true,
-            "instanceName": "text1",
-            "transform": {
-                "anchor": 0,
-                "anchorOffset": [
-                    -0.0,
-                    39.0
-                ],
-                "size": [
-                    0.0,
-                    0.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0
-                ],
-                "pivot": [
-                    0.0,
-                    0.0
-                ],
-                "radian": 0.0
-            },
-            "color": [
-                1.0,
-                1.0,
-                1.0,
-                1.0
+            "children": [
+                {
+                    "alive": true,
+                    "instanceName": "btnOK",
+                    "transform": {
+                        "anchor": 0,
+                        "anchorOffset": [
+                            -97.66500091552734,
+                            -19.165000915527344
+                        ],
+                        "size": [
+                            195.3300018310547,
+                            38.33000183105469
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        0.0
+                    ],
+                    "pass": "Opaque",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "Button",
+                    "textureTag": "empty.png",
+                    "eventMsgTag": ""
+                },
+                {
+                    "alive": true,
+                    "instanceName": "NineSlice",
+                    "transform": {
+                        "anchor": 0,
+                        "anchorOffset": [
+                            -111.5,
+                            -26.999996185302734
+                        ],
+                        "size": [
+                            223.0,
+                            54.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "pass": "NineSlice",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "NineSlice",
+                    "textureTag": "MissionGetBg.png",
+                    "nineSlice": {
+                        "borderPx": [
+                            21.0,
+                            21.0,
+                            0.0,
+                            0.0
+                        ],
+                        "uvRangeX": [
+                            0.0,
+                            0.44680851697921753,
+                            0.5531914830207825,
+                            1.0
+                        ],
+                        "uvRangeY": [
+                            0.0,
+                            0.0,
+                            1.0,
+                            1.0
+                        ],
+                        "textureSize": [
+                            47.0,
+                            47.0
+                        ]
+                    }
+                },
+                {
+                    "alive": true,
+                    "instanceName": "NineSlice",
+                    "transform": {
+                        "anchor": 0,
+                        "anchorOffset": [
+                            -120.0,
+                            -37.0
+                        ],
+                        "size": [
+                            240.0,
+                            74.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "pass": "NineSlice",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "NineSlice",
+                    "textureTag": "BtnBg.png",
+                    "nineSlice": {
+                        "borderPx": [
+                            78.0,
+                            32.0,
+                            37.0,
+                            37.0
+                        ],
+                        "uvRangeX": [
+                            0.0,
+                            0.6499999761581421,
+                            0.7333333492279053,
+                            1.0
+                        ],
+                        "uvRangeY": [
+                            0.0,
+                            0.4868420958518982,
+                            0.5131579041481018,
+                            1.0
+                        ],
+                        "textureSize": [
+                            120.0,
+                            76.0
+                        ]
+                    }
+                },
+                {
+                    "alive": true,
+                    "instanceName": "overlayOK",
+                    "transform": {
+                        "anchor": 0,
+                        "anchorOffset": [
+                            -120.0,
+                            -37.0
+                        ],
+                        "size": [
+                            240.0,
+                            74.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        0.6509804129600525,
+                        0.7568627595901489,
+                        0.0,
+                        0.0
+                    ],
+                    "pass": "NineSlice",
+                    "animClips": [
+                        {
+                            "duration": 0.15000000596046448,
+                            "keyframes": [
+                                {
+                                    "angle": 0.0,
+                                    "color": [
+                                        0.6509804129600525,
+                                        0.7568627595901489,
+                                        0.0,
+                                        1.0
+                                    ],
+                                    "easeType": 0,
+                                    "position": [
+                                        0.0,
+                                        0.0
+                                    ],
+                                    "scale": [
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "time": 0.0
+                                },
+                                {
+                                    "angle": 0.0,
+                                    "color": [
+                                        0.6509804129600525,
+                                        0.7568627595901489,
+                                        0.0,
+                                        0.0
+                                    ],
+                                    "easeType": 0,
+                                    "position": [
+                                        0.0,
+                                        0.0
+                                    ],
+                                    "scale": [
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "time": 0.05000000074505806
+                                },
+                                {
+                                    "angle": 0.0,
+                                    "color": [
+                                        0.6509804129600525,
+                                        0.7568627595901489,
+                                        0.0,
+                                        1.0
+                                    ],
+                                    "easeType": 0,
+                                    "position": [
+                                        0.0,
+                                        0.0
+                                    ],
+                                    "scale": [
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "time": 0.10000000149011612
+                                },
+                                {
+                                    "angle": 0.0,
+                                    "color": [
+                                        0.6509804129600525,
+                                        0.7568627595901489,
+                                        0.0,
+                                        0.0
+                                    ],
+                                    "easeType": 0,
+                                    "position": [
+                                        0.0,
+                                        0.0
+                                    ],
+                                    "scale": [
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "time": 0.15000000596046448
+                                }
+                            ],
+                            "loop": false,
+                            "name": "clip0"
+                        }
+                    ],
+                    "children": [],
+                    "typeTag": "NineSlice",
+                    "textureTag": "Circle72.png",
+                    "nineSlice": {
+                        "borderPx": [
+                            35.0,
+                            35.0,
+                            0.0,
+                            0.0
+                        ],
+                        "uvRangeX": [
+                            0.0,
+                            0.4861111044883728,
+                            0.5138888955116272,
+                            1.0
+                        ],
+                        "uvRangeY": [
+                            0.0,
+                            0.0,
+                            1.0,
+                            1.0
+                        ],
+                        "textureSize": [
+                            72.0,
+                            72.0
+                        ]
+                    }
+                },
+                {
+                    "alive": true,
+                    "instanceName": "textOK",
+                    "transform": {
+                        "anchor": 0,
+                        "anchorOffset": [
+                            -0.0,
+                            -0.5
+                        ],
+                        "size": [
+                            0.0,
+                            1.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "pass": "Opaque",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "Text",
+                    "text": {
+                        "content": "확인",
+                        "fontTag": "NanumSquareNeo.spritefont",
+                        "fontScale": 0.5499998927116394,
+                        "outlined": false,
+                        "outlineThickness": 1.0,
+                        "outlineColor": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                        ],
+                        "shear": [
+                            -0.20000000298023224,
+                            0.0
+                        ],
+                        "autoPos": true,
+                        "anchor": 1
+                    }
+                },
+                {
+                    "alive": true,
+                    "instanceName": "iconOK",
+                    "transform": {
+                        "anchor": 0,
+                        "anchorOffset": [
+                            -101.0,
+                            -18.0
+                        ],
+                        "size": [
+                            36.0,
+                            36.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        0.0,
+                        0.800000011920929,
+                        0.054901961237192154,
+                        1.0
+                    ],
+                    "pass": "Opaque",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "Image",
+                    "textureTag": "IconOK02.png"
+                }
             ],
-            "pass": "Opaque",
-            "animClips": [],
-            "children": [],
-            "typeTag": "Text",
-            "text": {
-                "content": "2888",
-                "fontTag": "NanumSquareNeo.spritefont",
-                "fontScale": 0.3499998450279236,
-                "outlined": false,
-                "outlineThickness": 1.0,
-                "outlineColor": [
-                    0.0,
-                    0.0,
-                    0.0,
-                    1.0
-                ],
-                "shear": [
-                    0.0,
-                    0.0
-                ],
-                "autoPos": true,
-                "anchor": 4
-            }
-        },
-        {
-            "alive": true,
-            "instanceName": "text2",
-            "transform": {
-                "anchor": 0,
-                "anchorOffset": [
-                    -1.0,
-                    73.0
-                ],
-                "size": [
-                    0.0,
-                    0.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0
-                ],
-                "pivot": [
-                    0.0,
-                    0.0
-                ],
-                "radian": 0.0
-            },
-            "color": [
-                1.0,
-                1.0,
-                1.0,
-                1.0
-            ],
-            "pass": "Opaque",
-            "animClips": [],
-            "children": [],
-            "typeTag": "Text",
-            "text": {
-                "content": "데니",
-                "fontTag": "NanumSquareNeo.spritefont",
-                "fontScale": 0.39999985694885254,
-                "outlined": false,
-                "outlineThickness": 1.0,
-                "outlineColor": [
-                    0.0,
-                    0.0,
-                    0.0,
-                    1.0
-                ],
-                "shear": [
-                    0.0,
-                    0.0
-                ],
-                "autoPos": true,
-                "anchor": 0
-            }
-        },
-        {
-            "alive": true,
-            "instanceName": "btnOK",
-            "transform": {
-                "anchor": 0,
-                "anchorOffset": [
-                    -101.66699981689453,
-                    138.33299255371094
-                ],
-                "size": [
-                    198.3300018310547,
-                    38.33000183105469
-                ],
-                "scale": [
-                    1.0,
-                    1.0
-                ],
-                "pivot": [
-                    0.0,
-                    0.0
-                ],
-                "radian": 0.0
-            },
-            "color": [
-                1.0,
-                1.0,
-                1.0,
-                1.0
-            ],
-            "pass": "Opaque",
-            "animClips": [],
-            "children": [],
-            "typeTag": "Button",
-            "textureTag": "empty.png",
-            "eventMsgTag": ""
-        },
-        {
-            "alive": true,
-            "instanceName": "NineSlice",
-            "transform": {
-                "anchor": 0,
-                "anchorOffset": [
-                    -107.0,
-                    131.5
-                ],
-                "size": [
-                    223.0,
-                    54.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0
-                ],
-                "pivot": [
-                    0.0,
-                    0.0
-                ],
-                "radian": 0.0
-            },
-            "color": [
-                0.0,
-                0.0,
-                0.0,
-                1.0
-            ],
-            "pass": "NineSlice",
-            "animClips": [],
-            "children": [],
-            "typeTag": "NineSlice",
-            "textureTag": "MissionGetBg.png",
-            "nineSlice": {
-                "borderPx": [
-                    21.0,
-                    21.0,
-                    0.0,
-                    0.0
-                ],
-                "uvRangeX": [
-                    0.0,
-                    0.44680851697921753,
-                    0.5531914830207825,
-                    1.0
-                ],
-                "uvRangeY": [
-                    0.0,
-                    0.0,
-                    1.0,
-                    1.0
-                ],
-                "textureSize": [
-                    47.0,
-                    47.0
-                ]
-            }
-        },
-        {
-            "alive": true,
-            "instanceName": "NineSlice",
-            "transform": {
-                "anchor": 0,
-                "anchorOffset": [
-                    -119.0,
-                    121.33300018310547
-                ],
-                "size": [
-                    240.0,
-                    74.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0
-                ],
-                "pivot": [
-                    0.0,
-                    0.0
-                ],
-                "radian": 0.0
-            },
-            "color": [
-                1.0,
-                1.0,
-                1.0,
-                1.0
-            ],
-            "pass": "NineSlice",
-            "animClips": [],
-            "children": [],
-            "typeTag": "NineSlice",
-            "textureTag": "BtnBg.png",
-            "nineSlice": {
-                "borderPx": [
-                    78.0,
-                    32.0,
-                    37.0,
-                    37.0
-                ],
-                "uvRangeX": [
-                    0.0,
-                    0.6499999761581421,
-                    0.7333333492279053,
-                    1.0
-                ],
-                "uvRangeY": [
-                    0.0,
-                    0.4868420958518982,
-                    0.5131579041481018,
-                    1.0
-                ],
-                "textureSize": [
-                    120.0,
-                    76.0
-                ]
-            }
-        },
-        {
-            "alive": true,
-            "instanceName": "Text",
-            "transform": {
-                "anchor": 0,
-                "anchorOffset": [
-                    15.5,
-                    158.0
-                ],
-                "size": [
-                    0.0,
-                    1.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0
-                ],
-                "pivot": [
-                    0.0,
-                    0.0
-                ],
-                "radian": 0.0
-            },
-            "color": [
-                1.0,
-                1.0,
-                1.0,
-                1.0
-            ],
-            "pass": "Opaque",
-            "animClips": [],
-            "children": [],
-            "typeTag": "Text",
-            "text": {
-                "content": "확인",
-                "fontTag": "NanumSquareNeo.spritefont",
-                "fontScale": 0.5499998927116394,
-                "outlined": false,
-                "outlineThickness": 1.0,
-                "outlineColor": [
-                    0.0,
-                    0.0,
-                    0.0,
-                    1.0
-                ],
-                "shear": [
-                    -0.20000000298023224,
-                    0.0
-                ],
-                "autoPos": true,
-                "anchor": 0
-            }
-        },
-        {
-            "alive": true,
-            "instanceName": "Image",
-            "transform": {
-                "anchor": 0,
-                "anchorOffset": [
-                    -100.0,
-                    140.0
-                ],
-                "size": [
-                    36.0,
-                    36.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0
-                ],
-                "pivot": [
-                    0.0,
-                    0.0
-                ],
-                "radian": 0.0
-            },
-            "color": [
-                0.0,
-                1.0,
-                0.0,
-                1.0
-            ],
-            "pass": "Opaque",
-            "animClips": [],
-            "children": [],
-            "typeTag": "Image",
-            "textureTag": "IconOK02.png"
+            "typeTag": "CanvasPanel"
         }
     ],
     "typeTag": "CanvasPanel"

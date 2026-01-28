@@ -35,7 +35,7 @@ private:
     void  Rebuild_BaseLayout();
     void  Apply_LayoutScaled();
     void  Update_Anim(_float dt);
-    void  OnPooledAcquire(INIT_DESC* pArg = {}) override {}
+    void  OnPooledAcquire(INIT_DESC* pArg = {}) override;
     void  OnPooledRelease() override {}
 
     _uint GetDigitFrameIdx(_uint digit) const;

@@ -866,6 +866,9 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Attack\Phase2">
       <UniqueIdentifier>{8080e445-1ea3-4f5c-9188-7ec8d37887e4}</UniqueIdentifier>
+  </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\Lottery\Newspaper">
+      <UniqueIdentifier>{9a0e4d8d-22f9-486a-bb13-701b03645d0c}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\Object\Player\Character\01. JaneDoe\State\Attack\Counter">
       <UniqueIdentifier>{ce63a969-3465-4278-b8a3-fef985ba087e}</UniqueIdentifier>
@@ -1708,6 +1711,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\DefilerState_Attack.h">
     </ClInclude>
+    <ClInclude Include="..\Public\UI_Newspaper.h">
+      <Filter>02. GameObject\UI\01. 2D\Lottery\Newspaper</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\JaneDoeState_CounterAttack.h">
       <Filter>02. GameObject\Object\Player\Character\01. JaneDoe\State\Attack\Counter</Filter>
     </ClInclude>
@@ -2507,6 +2513,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\DefilerState_Attack.cpp">
       <Filter>02. GameObject\Object\Enemy\Defiler\State\Attack</Filter>
+  </ClCompile>
+    <ClCompile Include="..\Private\UI_Newspaper.cpp">
+      <Filter>02. GameObject\UI\01. 2D\Lottery\Newspaper</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\JaneDoeState_CounterAttack.cpp">
       <Filter>02. GameObject\Object\Player\Character\01. JaneDoe\State\Attack\Counter</Filter>
