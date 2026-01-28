@@ -37,6 +37,7 @@ public:
 private:
     void Apply_Params();
     void Update_SizeByHeight();
+    void OnPooledAcquire(INIT_DESC* pArg = {}) override;
 
 private:
     string m_texKey{};
