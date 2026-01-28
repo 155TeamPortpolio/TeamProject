@@ -85,7 +85,7 @@ OBJECT_HANDLE Client::Spawner::Create_NPC(const SPAWNER_DESC& Desc)
 
 	CCT_DESC CCT; 
 
-	CCT.eGroup = COLLISION_GROUP::COMMON;
+	CCT.eGroup = COLLISION_GROUP::INTERACTABLE;
 	CCT.iCollisionMask = 0xFFFFFFFF;
 	CCT.bAutoFit = false;
 	CCT.fRadius = (Desc.vScale.x +Desc.vScale.z) * 0.25f;

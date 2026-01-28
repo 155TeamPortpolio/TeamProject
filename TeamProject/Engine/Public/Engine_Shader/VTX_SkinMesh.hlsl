@@ -6,6 +6,7 @@ vector vOutLineColor;
 float fOutLineThickness;
 float fDissolveProgress;
 float fDissolveTiling;
+float fCameraFadeAlpha;
 float4x4 g_CommandBoneMatrices[512];
 matrix g_worldMatrix;
 
@@ -214,6 +215,52 @@ PS_OUT PS_BLEND(PS_IN In)
     return Out;
 }
 
+PS_OUT PS_TRANSPARENTNOISE(PS_IN In)
+{
+    PS_OUT Out;
+    
+    vector vMtrlDiffuse = DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
+    if (vMtrlDiffuse.a < 0.2)
+        discard;
+    
+    float2 screenUV = In.vPosition.xy / 512.0;
+    
+    float fNoise = DitheringTexture.Sample(PointSampler, screenUV).r;
+    
+    if (fNoise > fCameraFadeAlpha)
+        discard;
+    
+    Out.vDiffuse = vMtrlDiffuse;
+  
+    vector vNormalDesc = NormalTexture.Sample(DefaultSampler, In.vTexcoord);
+    vector vMetalic = MetalnessTexture.Sample(DefaultSampler, In.vTexcoord);
+    vector vAmbient = AmbientTexture.Sample(DefaultSampler, In.vTexcoord);
+    
+    vAmbient.r = 0.f;
+    float3 vNormal;
+    vNormal.xy = vNormalDesc.xy * 2.f - 1.f;
+    vNormal.z = 1.f;
+    
+    float3 T = normalize(In.vTangent);
+    float3 B = normalize(In.vBinormal * -1);
+    float3 N = normalize(In.vNormal.xyz);
+    float3x3 WorldMatrix = float3x3(T, B, N);
+        
+    vNormal = mul(vNormal, WorldMatrix);
+    vMetalic.a = 0.6f;
+    Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, vNormalDesc.z);
+ 
+    if (vAmbient.g < 0.2)
+        vAmbient.g = 1.f;
+    vAmbient.b = 0;
+    
+    Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / zFar, 0.f, 1.f);
+    Out.vAmbient = vAmbient;
+    Out.vMetalic = vMetalic;
+    
+    return Out;
+}
+
 PS_OUT PS_OUTLINE(PS_IN In)
 {
     PS_OUT Out;
@@ -323,6 +370,17 @@ technique11 DefaultTechnique
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_BLEND();
     }
+
+    pass TransparentNoise
+    {
+        SetRasterizerState(RS_NoCull);
+        SetDepthStencilState(DSS_WriteStencil, 1);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_TRANSPARENTNOISE();
+    }
+
     pass Debug
     {
         SetRasterizerState(RS_Default);
