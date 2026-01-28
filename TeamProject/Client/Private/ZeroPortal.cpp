@@ -134,7 +134,7 @@ void CZeroPortal::Interact(CGameObject* pObject)
 	if (!m_bIsInteractable)
 		return;
 
-	m_pTargetStage->StageChangeOn(CZero_Level::StageType::Boss, 0);
+	m_pTargetStage->StageChangeOn(StageType::Boss, 0);
 	m_bIsInteractable = false;
 }
 
