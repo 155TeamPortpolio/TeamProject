@@ -18,6 +18,8 @@ public:
     _bool RequestEnter(const string& roomKey, _bool overlay = true);
     _bool RequestExitTop();
 
+    HRESULT ClearRooms();
+
 public:
     const vector<string>& GetActiveRoomStack() const;
     

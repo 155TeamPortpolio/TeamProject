@@ -67,6 +67,8 @@ HRESULT CServiceNpc::Initialize(INIT_DESC* pArg)
 
 void CServiceNpc::Awake()
 {
+	__super::Awake();
+
 	m_DiagloueData = CDataBase::GetInstance()->GetNpcIDData(m_strName);
 	Add_NameIndicator();
 }

@@ -57,7 +57,6 @@ void CUI_DecibelText::Update(_float dt)
 void CUI_DecibelText::Ready_PartObjects()
 {
     auto pGameInstance = CGameInstance::GetInstance();
-    const auto& strLevelKey = pGameInstance->Get_LevelMgr()->Get_NowLevelKey();
     auto pContainer = Get_Component<CObjectContainer>();
 
     for (_int i = 0; i < ENUM(CHILD::END); ++i)
@@ -66,7 +65,7 @@ void CUI_DecibelText::Ready_PartObjects()
         if (i == ENUM(CHILD::TEXTS))
             strPrototypeTag = "Proto_GameObject_Text";
 
-        CUI_Object* pObj = Builder::Create_UIObject({ strLevelKey, strPrototypeTag })
+        CUI_Object* pObj = Builder::Create_UIObject({ G_GlobalLevelKey, strPrototypeTag })
             .Build("decibelText" + to_string(i));
 
         if (!pObj)

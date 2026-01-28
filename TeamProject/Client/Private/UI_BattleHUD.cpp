@@ -31,9 +31,8 @@ HRESULT CUI_BattleHUD::Initialize(INIT_DESC* pArg)
     Cache_Children();
 
     // 클라이언트에서 만든 ui 자식으로 추가 (추가하면서 캐싱함)
-    const string& strLevelKey = LevelManager()->Get_NowLevelKey();
-    Add_PartObject(strLevelKey, "Proto_GameObject_Decibel", "decibel", CHILD::ULTIMATE1, _float2(50.f, 136.f));
-    Add_PartObject(strLevelKey, "Proto_GameObject_BattleHUDAction", "action", CHILD::ACTION, _float2(1178.f, 655.f));
+    Add_PartObject(G_GlobalLevelKey, "Proto_GameObject_Decibel", "decibel", CHILD::ULTIMATE1, _float2(50.f, 136.f));
+    Add_PartObject(G_GlobalLevelKey, "Proto_GameObject_BattleHUDAction", "action", CHILD::ACTION, _float2(1178.f, 655.f));
 
     // 이벤트 : UI_PLAYER_STATUS_DESC
     Get_Component<CEventListener>()->Add_Listener<UI_PLAYER_STATUS_DESC>([&](const UI_PLAYER_STATUS_DESC& desc)
