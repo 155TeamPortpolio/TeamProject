@@ -374,7 +374,7 @@ _float3 CAnimator3D::Get_RootBoneMoveDelta() const
 {
 	for (auto& Layer : m_AnimLayers)
 		if (Layer.BaseLayer)
-			return Layer.vRootMoveDelta;
+			return Layer.vOutRootMoveDelta;
 
 	return _float3();
 }
@@ -383,7 +383,7 @@ _float4 CAnimator3D::Get_RootBoneQuatDelta() const
 {
 	for (auto& Layer : m_AnimLayers)
 		if (Layer.BaseLayer)
-			return Layer.vRootQuatDelta;
+			return Layer.vOutRootQuatDelta;
 
 	return Quaternion::Identity;
 }
@@ -1057,7 +1057,7 @@ void CAnimator3D::Animation_Run(ANIM_LAYER& Layer, _float dt)
 				//Layer.vRootMoveDelta = _vector3::Zero;
 				//Layer.vRootQuatDelta = _quaternion::Identity;
 				Layer.bJumpedAnim = false;
-				Layer.bWrapped = false;
+				//Layer.bWrapped = false;
 			}
 			else {
 				Compute_RootMoveDelta(Layer, vCurRootPos);
@@ -1136,7 +1136,7 @@ void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
 				//Layer.vRootMoveDelta = _vector3::Zero;
 				//Layer.vRootQuatDelta = _quaternion::Identity;
 				Layer.bJumpedAnim = false;
-				Layer.bWrapped = false;
+				//Layer.bWrapped = false;
 			}
 			else {
 				Compute_RootMoveDelta(Layer, vCurRootPos);
@@ -1229,7 +1229,7 @@ void CAnimator3D::Compute_RootMoveDelta(ANIM_LAYER& Layer, _vector3& curPos)
 		Layer.vRootMoveDelta = curPos - Layer.vPrevRootPos;
 
 	//PreTransform
-	Layer.vRootMoveDelta = XMVector4Transform(Layer.vRootMoveDelta, m_PreTransform);
+	Layer.vOutRootMoveDelta = XMVector4Transform(Layer.vRootMoveDelta, m_PreTransform);
 }
 
 void CAnimator3D::Compute_RootQuatDelta(ANIM_LAYER& Layer, _vector4& curQuat)
@@ -1251,7 +1251,8 @@ void CAnimator3D::Compute_RootQuatDelta(ANIM_LAYER& Layer, _vector4& curQuat)
 		)
 		);
 
-	XMStoreFloat4(&Layer.vRootQuatDelta, quatDeltaOut);
+	//PreTransform
+	XMStoreFloat4(&Layer.vOutRootQuatDelta, quatDeltaOut);
 }
 
 void CAnimator3D::Compute_ClipConvert(ANIM_LAYER& Layer, _float dt)

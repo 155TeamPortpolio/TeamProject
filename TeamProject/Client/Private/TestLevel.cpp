@@ -148,8 +148,8 @@ HRESULT CTestLevel::Awake()
 	CBattleSystem::GetInstance()->SetActive(true);
 
 	//====================Test=================
-	Ready_TestObject();
-	Ready_Npc();
+	//Ready_TestObject();
+	//Ready_Npc();
 
 	CamDirector()->StartBattleIntro(CamSeqType::BattleIntro);
 	CUIDirector::GetInstance()->Show_SceneFrame();

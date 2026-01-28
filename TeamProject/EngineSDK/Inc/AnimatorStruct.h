@@ -38,6 +38,9 @@ typedef struct AnimationLayer {
     _vector3            vRootMoveDelta{};                       //이동값
     _quaternion         vRootQuatDelta{ _quaternion::Identity };//회전값
 
+    _vector3            vOutRootMoveDelta{};                       //이동값
+    _quaternion         vOutRootQuatDelta{ _quaternion::Identity };//회전값
+
     //모션본 (애니매이션의 움직임을 담당하는 본)
     _int    iMotionBoneIndex = { -1 };
     AXIS    eExtractMoveAxis = { AXIS::NONE }; //움직임을 뺄 축
