@@ -204,7 +204,6 @@ protected://애니매이션 체크
     Matrix Calc_MatrixBlend(const _float4x4& base, const _float4x4& target, _float weight);
     Matrix Calc_MatrixAdditive(const _float4x4& base, const _float4x4& target, const _float4x4& ref,  _float weight);
 
-
 protected:
     //애니매이션 연산
     void Animation_Run(ANIM_LAYER& Layer, _float dt);

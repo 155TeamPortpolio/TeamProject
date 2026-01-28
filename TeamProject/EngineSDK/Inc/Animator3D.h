@@ -204,7 +204,6 @@ protected://애니매이션 체크
     Matrix Calc_MatrixBlend(const _float4x4& base, const _float4x4& target, _float weight);
     Matrix Calc_MatrixAdditive(const _float4x4& base, const _float4x4& target, const _float4x4& ref,  _float weight);
 
-
 protected:
     //애니매이션 연산
     void Animation_Run(ANIM_LAYER& Layer, _float dt);
@@ -215,6 +214,7 @@ protected:
     void Check_ReservedSpeeds(ANIM_LAYER& Layer);
     void Compute_RootMoveDelta(ANIM_LAYER& Layer, _vector3& curPos);
     void Compute_RootQuatDelta(ANIM_LAYER& Layer, _vector4& curQuat);
+    void Compute_ClipConvert(ANIM_LAYER& Layer, _float dt);
     void Extract_MotionBone(ANIM_LAYER& Layer);
 
     //레이어 연산

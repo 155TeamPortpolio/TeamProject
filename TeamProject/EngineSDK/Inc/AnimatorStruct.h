@@ -29,7 +29,7 @@ typedef struct AnimationLayer {
     //---------- 베이스 레이어 속성
     //루트본 델타값 (베이스 레이어만, 실질적인 움직임을 담당하는 본)
     _bool               bWrapped = { false };
-    _bool               bIgnoreCalcRootDelta = { false };
+    _bool               bJumpedAnim = { false };
     _int                iRootBoneIndex = { -1 }; //루트 본 
     _vector3            vRootEndPos{};                          //그 클립의 제일마지막 루트위치
     _quaternion         vRootEndQuat{ _quaternion::Identity };  //그 클립의 제일마지막 루트회전값

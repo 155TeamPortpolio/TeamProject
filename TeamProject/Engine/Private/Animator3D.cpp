@@ -1032,7 +1032,7 @@ void CAnimator3D::Animation_Run(ANIM_LAYER& Layer, _float dt)
 	Layer.fCurrentTrackPosition = nowClip->TranslateAnimateMatrix(
 		Layer.LocalMatrices, Layer.fCurrentTrackPosition,
 		playSpeed, Layer.bLoop, Layer.fEndAt, Layer.fStartAt,
-		&Layer.bWrapped,
+		&Layer.bWrapped, &Layer.bJumpedAnim,
 		&Layer.bisFinished,
 		&Layer.fProgress,
 		m_EventBus);
@@ -1052,8 +1052,17 @@ void CAnimator3D::Animation_Run(ANIM_LAYER& Layer, _float dt)
 			_vector3 vCurRootPos = T;
 			_vector4 vCurRootQuat = R;
 
-			Compute_RootMoveDelta(Layer, vCurRootPos);
-			Compute_RootQuatDelta(Layer, vCurRootQuat);
+			if (Layer.bJumpedAnim)
+			{
+				//Layer.vRootMoveDelta = _vector3::Zero;
+				//Layer.vRootQuatDelta = _quaternion::Identity;
+				Layer.bJumpedAnim = false;
+				Layer.bWrapped = false;
+			}
+			else {
+				Compute_RootMoveDelta(Layer, vCurRootPos);
+				Compute_RootQuatDelta(Layer, vCurRootQuat);
+			}
 
 			//다음 프레임 대비
 			Layer.vPrevRootPos = vCurRootPos;
@@ -1091,7 +1100,7 @@ void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
 		Layer.fCurrentTrackPosition = nowClip->TranslateAnimateMatrix(
 			Layer.LocalMatrices, Layer.fCurrentTrackPosition,
 			playSpeed, Layer.bLoop, Layer.fEndAt, Layer.fStartAt,
-			&Layer.bWrapped,
+			&Layer.bWrapped, &Layer.bJumpedAnim,
 			&Layer.bisFinished,
 			nullptr,
 			m_EventBus);
@@ -1101,7 +1110,7 @@ void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
 		Layer.fBlendTrackPosition = nextClip->TranslateAnimateMatrix(
 			Layer.BlendMatrices, Layer.fBlendTrackPosition,
 			playSpeed, Layer.bLoop, Layer.fEndAt, Layer.fStartAt,
-			&Layer.bWrapped,
+			&Layer.bWrapped, &Layer.bJumpedAnim,
 			&Layer.bisFinished,
 			&Layer.fProgress,
 			m_EventBus);
@@ -1122,8 +1131,17 @@ void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
 			Vector3 vCurRootPos = T;
 			Vector4 vCurRootQuat = R;
 
-			Compute_RootMoveDelta(Layer, vCurRootPos);
-			Compute_RootQuatDelta(Layer, vCurRootQuat);
+			if (Layer.bJumpedAnim)
+			{
+				//Layer.vRootMoveDelta = _vector3::Zero;
+				//Layer.vRootQuatDelta = _quaternion::Identity;
+				Layer.bJumpedAnim = false;
+				Layer.bWrapped = false;
+			}
+			else {
+				Compute_RootMoveDelta(Layer, vCurRootPos);
+				Compute_RootQuatDelta(Layer, vCurRootQuat);
+			}
 
 			//다음 프레임 대비
 			Layer.vPrevRootPos = vCurRootPos;
