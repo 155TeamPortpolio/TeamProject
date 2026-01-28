@@ -61,6 +61,7 @@ private:
 	void Change_ChildTexture(CHILD child, const string& strTextureKey);
 
 	_bool Is_ChildAlive(CHILD child);
+	_bool Is_ChildAnimationFinished(CHILD child);
 
 public:
 	static  CGameObject* Create();

@@ -72,6 +72,9 @@ void CUI_Lottery::Update(_float dt)
 	__super::Update(dt);
 
     Get_Component<CObjectContainer>()->UpdateChild(dt);
+
+    if(Is_ChildAnimationFinished(CHILD::ICON_SCRATCH))
+        Set_ChildAnimation(CHILD::ICON_SCRATCH, 1);
 }
 
 void CUI_Lottery::Late_Update(_float dt)
@@ -205,6 +208,15 @@ _bool CUI_Lottery::Is_ChildAlive(CHILD child)
         return false;
 
     return pChild->Is_Alive();
+}
+
+_bool CUI_Lottery::Is_ChildAnimationFinished(CHILD child)
+{
+    auto pChild = m_pChildren[ENUM(child)];
+    if (!pChild)
+        return false;
+
+    return pChild->Is_AnimFinished();
 }
 
 CGameObject* CUI_Lottery::Create()
