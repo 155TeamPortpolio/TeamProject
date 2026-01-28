@@ -1676,9 +1676,6 @@
     <ClInclude Include="..\public\UI_DamageText.h">
       <Filter>02. GameObject\UI\02. 3D\Plane\DamageText</Filter>
     </ClInclude>
-    <ClInclude Include="CDefiler.h">
-      <Filter>02. GameObject\Object\Enemy\Defiler</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\UI_Lottery.h">
       <Filter>02. GameObject\UI\01. 2D\Lottery</Filter>
     </ClInclude>
@@ -1696,7 +1693,7 @@
     </ClInclude>
     <ClInclude Include="..\Public\ZeroStage_Normal.h">
       <Filter>01. Level\04. Zero\Stage_Normal</Filter>
-   </ClInclude>
+    </ClInclude>
     <ClInclude Include="..\Public\IInteract.h">
       <Filter>03. Utility\09. Interface</Filter>
     </ClInclude>
@@ -2478,9 +2475,6 @@
     </ClCompile>
     <ClCompile Include="..\private\UI_DamageText.cpp">
       <Filter>02. GameObject\UI\02. 3D\Plane\DamageText</Filter>
-    </ClCompile>
-    <ClCompile Include="CDefiler.cpp">
-      <Filter>02. GameObject\Object\Enemy\Defiler</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UI_Lottery.cpp">
       <Filter>02. GameObject\UI\01. 2D\Lottery</Filter>
