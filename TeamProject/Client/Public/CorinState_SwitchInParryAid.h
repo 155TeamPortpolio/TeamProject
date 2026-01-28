@@ -13,7 +13,7 @@ public:
     virtual void Exit(CCorin* pOwner) override;
 
 public:
-    static CCorinState_SwitchInParryAid* Create() { return new CCorinState_SwitchInParryAid(); }
+    static CCorinState_SwitchInParryAid* Create();
     virtual void Free() override { __super::Free(); }
 };
 
