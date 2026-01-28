@@ -164,6 +164,7 @@ void CHowl::Update_States(_float dt)
 void CHowl::Success(_uint curSequenceID)
 {
 	FieldSystem()->RequestEnter("Lottery", true);
+	
 }
 
 CHowl* CHowl::Create()
