@@ -4,6 +4,7 @@
 #include "OrbitCamTypes.h"
 
 NS_BEGIN(Client)
+class ICamCollidable;
 
 class COrbitCam final : public CCamObject
 {
@@ -49,9 +50,10 @@ public:
 
     OBJECT_HANDLE GetTarget() const { return m_target; }
 
-    virtual void OnTriggerEnter(CGameObject* pOther) override;
-    virtual void OnTriggerStay(CGameObject* pOther) override;
-    virtual void OnTriggerExit(CGameObject* pOther) override;
+public:
+    void OnTriggerEnter(CGameObject* obj) override;
+    void OnTriggerStay(CGameObject* obj)  override;
+    void OnTriggerExit(CGameObject* obj)  override;
 
 private:
     void    ClampTargets();
@@ -131,6 +133,8 @@ private:
     _float  m_freeze           = 0.f;
     _bool   m_hitDist          = false;
     _bool   m_lockInput        = false;
+
+    unordered_map<ICamCollidable*, _int> m_camOcclusionRefCount;
 
 public:
     static  COrbitCam* Create();

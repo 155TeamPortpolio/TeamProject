@@ -12,8 +12,7 @@
 
 void COrbitCam::Awake()
 {
-    auto cc = Get_Component<Engine::CCharacterController>();
-
+    auto cc = Get_Component<CCharacterController>();
     cc->Resize(0.2f, 0.2f);
     cc->Set_GravityEnabled(false);
     cc->Set_StepOffset(0.f);
@@ -26,7 +25,7 @@ void COrbitCam::Awake()
 HRESULT COrbitCam::Initialize_Prototype()
 {
     __super::Initialize_Prototype();
-    Add_Component<Engine::CCharacterController>();
+    Add_Component<CCharacterController>();
     Add_Component<CEventListener>();
 
     m_pose.rotGoalDeg = Vector2(0.f, m_prof.startPitchDeg);
@@ -161,7 +160,7 @@ void COrbitCam::RestoreSnapshot(const OrbitSnapshot& s)
 
     SyncPivot();
 
-    auto cc = Get_Component<Engine::CCharacterController>();
+    auto cc = Get_Component<CCharacterController>();
 
     const float yawRad = XMConvertToRadians(m_pose.rotCurDeg.x);
     const float pitchRad = XMConvertToRadians(m_pose.rotCurDeg.y);
@@ -185,7 +184,7 @@ void COrbitCam::SyncFromCurTransform()
 {
     SyncPivot();
 
-    auto cc = Get_Component<Engine::CCharacterController>();
+    auto cc = Get_Component<CCharacterController>();
     const PxExtendedVec3& p = cc->Get_Controller()->getPosition();
     const Vector3 camPos((float)p.x, (float)p.y, (float)p.z);
 
@@ -211,7 +210,7 @@ void COrbitCam::SyncFromCurTransform()
 
 void COrbitCam::SnapFromCamPose(const Vector3& pos, const Quaternion& rot)
 {
-    auto cc = Get_Component<Engine::CCharacterController>();
+    auto cc = Get_Component<CCharacterController>();
     cc->Set_Position(Vector4(pos.x, pos.y, pos.z, 1.f));
 
     Vector3 footWorld{};
@@ -291,11 +290,10 @@ void COrbitCam::ApplyAutoYaw(_float dt, const OrbitLockEval& lockRes)
 
 void COrbitCam::ApplyCollide(_float dt)
 {
-    auto cc = Get_Component<Engine::CCharacterController>();
+    auto cc = Get_Component<CCharacterController>();
     auto scene = PhysicsSystem()->Get_Scene();
 
-    const OrbitCollideEval res =
-        EvalCollideDist(dt, m_prof, scene, cc, m_pose.pivotGoalWorld, m_pose.distWanted, m_pose.rotCurDeg, m_pose.rotGoalDeg, m_pose.distGoal);
+    const OrbitCollideEval res = EvalCollideDist(dt, m_prof, scene, cc, m_pose.pivotGoalWorld, m_pose.distWanted, m_pose.rotCurDeg, m_pose.rotGoalDeg, m_pose.distGoal);
 
     m_hitDist = res.hit;
 
@@ -328,35 +326,46 @@ void COrbitCam::Priority_Update(_float dt)
     ApplyPose(dt, lockRes);
 }
 
-void COrbitCam::OnTriggerEnter(CGameObject* pOther)
+void COrbitCam::OnTriggerEnter(CGameObject* obj)
 {
-    if (pOther == nullptr) return;
+    auto cam = dynamic_cast<ICamCollidable*>(obj);
+    if (!cam) return;
 
-    auto pCamCollidable = dynamic_cast<ICamCollidable*>(pOther);
-    if (pCamCollidable == nullptr) return;
+    auto& count = m_camOcclusionRefCount[cam];
+    count++;
 
-    pCamCollidable->OnCameraCollision(true);
+    if (count == 1)
+        cam->OnCameraCollision(true);
 }
 
-void COrbitCam::OnTriggerStay(CGameObject* pOther)
+void COrbitCam::OnTriggerStay(CGameObject* obj)
 {
-    if (pOther == nullptr) return;
+    auto cam = dynamic_cast<ICamCollidable*>(obj);
+    if (!cam) return;
 
-    auto pCamCollidable = dynamic_cast<ICamCollidable*>(pOther);
-    if (pCamCollidable == nullptr) return;
+    auto it = m_camOcclusionRefCount.find(cam);
+    if (it != m_camOcclusionRefCount.end()) return;
 
-    pCamCollidable->OnCameraCollision(true);
+    m_camOcclusionRefCount[cam] = 1;
+    cam->OnCameraCollision(true);
 }
 
-void COrbitCam::OnTriggerExit(CGameObject* pOther)
+void COrbitCam::OnTriggerExit(CGameObject* obj)
 {
-    if (pOther == nullptr) return;
+    auto cam = dynamic_cast<ICamCollidable*>(obj);
+    if (!cam) return;
 
-    auto pCamCollidable = dynamic_cast<ICamCollidable*>(pOther);
-    if (pCamCollidable == nullptr) return;
+    auto it = m_camOcclusionRefCount.find(cam);
+    if (it == m_camOcclusionRefCount.end()) return;
 
-    pCamCollidable->OnCameraCollision(false);
+    it->second--;
+
+    if (it->second > 0) return;
+
+    m_camOcclusionRefCount.erase(it);
+    cam->OnCameraCollision(false);
 }
+
 
 void COrbitCam::ClampTargets()
 {
@@ -388,7 +397,7 @@ void COrbitCam::ApplyPose(_float dt, const OrbitLockEval& lockRes)
     const Vector3 backDir = Vector3::Transform(Vector3(0.f, 0.f, -1.f), q);
     const Vector3 camPos = pivot + backDir * dist;
 
-    auto cc = Get_Component<Engine::CCharacterController>();
+    auto cc = Get_Component<CCharacterController>();
     cc->Set_Position(Vector4(camPos.x, camPos.y, camPos.z, 1.f));
 
     Vector3 lookAt = pivot;
@@ -401,7 +410,7 @@ void COrbitCam::ApplyPose(_float dt, const OrbitLockEval& lockRes)
 Vector3 COrbitCam::GetFoot() const
 {
     auto obj = ObjectManager()->Request_Object(m_target);
-    auto cc = obj->Get_Component<Engine::CCharacterController>();
+    auto cc = obj->Get_Component<CCharacterController>();
 
     const Vector4 foot4 = cc->Get_FootPosition();
     return Vector3(foot4.x, foot4.y, foot4.z);
@@ -410,7 +419,7 @@ Vector3 COrbitCam::GetFoot() const
 Vector3 COrbitCam::GetBasePivotTargetPos(OBJECT_HANDLE h) const
 {
     auto obj = ObjectManager()->Request_Object(h);
-    auto cc = obj->Get_Component<Engine::CCharacterController>();
+    auto cc = obj->Get_Component<CCharacterController>();
 
     const Vector4 foot4 = cc->Get_FootPosition();
     const Vector3 foot{foot4.x, foot4.y, foot4.z};
@@ -594,7 +603,7 @@ _float COrbitCam::CalcAllowDist(const OrbitProfile& prof, PxScene* scene, Engine
     PxQueryFilterData filterData;
     filterData.flags = PxQueryFlag::eSTATIC | PxQueryFlag::ePREFILTER;
 
-    CRaycastFilterCallback filterCallback(camCC->Get_CollisionMask(), false);
+    CRaycastFilterCallback filterCallback(ENUM(COLLISION_GROUP::COMMON), false);
 
     _float minAllowed = distWanted;
 
@@ -628,6 +637,7 @@ _float COrbitCam::CalcAllowDist(const OrbitProfile& prof, PxScene* scene, Engine
 
     return minAllowed;
 }
+
 
 void COrbitCam::SmoothPose(_float dt)
 {

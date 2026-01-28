@@ -41,7 +41,7 @@ namespace
     constexpr _float kAlphaOutSecRatio = 0.5f;
     constexpr _float kAlphaInSecRatio  = 0.45f;
 
-    constexpr _float kScaleStart = 2.00f;
+    constexpr _float kScaleStart = 1.75f;
     constexpr _float kScaleHold  = 0.55f;
     constexpr _float kScaleEnd   = 0.3f;
 
