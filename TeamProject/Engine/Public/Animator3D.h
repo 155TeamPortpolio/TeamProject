@@ -209,6 +209,14 @@ protected:
     //애니매이션 연산
     void Animation_Run(ANIM_LAYER& Layer, _float dt);
     void Animation_Convert(ANIM_LAYER& Layer, _float dt);
+
+    //연산용 함수들
+    _float Compute_PlaySpeed(ANIM_LAYER& Layer, _float dt);
+    void Check_ReservedSpeeds(ANIM_LAYER& Layer);
+    void Compute_RootMoveDelta(ANIM_LAYER& Layer, _vector3& curPos);
+    void Compute_RootQuatDelta(ANIM_LAYER& Layer, _vector4& curQuat);
+    void Extract_MotionBone(ANIM_LAYER& Layer);
+
     //레이어 연산
     void Layer_Base(const ANIM_LAYER& Layer);
     void Layer_Override(const ANIM_LAYER& Layer);

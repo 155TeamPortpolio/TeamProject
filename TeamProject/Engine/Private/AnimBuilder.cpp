@@ -63,6 +63,7 @@ HRESULT SetAnimBuild::Apply()
 	Layer.bLoop = m_bLoop;
 	Layer.fEndAt = m_fEndAt;
 	Layer.fStartAt = m_fStartAt;
+	Layer.bIgnoreCalcRootDelta = true;
 	Layer.fAnimSpeed = m_fSpeed;
 	Layer.bPause = m_bPause;
 

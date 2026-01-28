@@ -102,6 +102,7 @@ protected:
     //Ω√¿€, ≥°
     _float   m_fStartAt = { 0.f };
     _float   m_fEndAt = { 1.f };
+    _bool    m_bIgnoreCalcRootDelta = { false };
     //∏ÿ√„
     _bool    m_bPause = false;
     //»∏¿¸∫∏∞£ ≤Ù±‚
