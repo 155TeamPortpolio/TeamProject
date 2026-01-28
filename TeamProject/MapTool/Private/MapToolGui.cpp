@@ -410,7 +410,7 @@ void CMapToolGui::Place_Object(PHYSICS_RAY_HIT* pRayHit)
     case MAPOBJ_TYPE::LIGHT:
     {
         COLLIDER_DESC ColDesc = {};
-        ColDesc.eType = m_TriggerTransform.eType;
+        ColDesc.eType = COLLIDER_TYPE::SPHERE;
         ColDesc.bTrigger = true; // 충돌 박스 생성하는 트리거
 
         string TagInstanceName = "Light_Object" + to_string(m_iTriggerIndex++);

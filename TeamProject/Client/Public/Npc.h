@@ -1,9 +1,10 @@
 #pragma once
 #include "GameObject.h"
+#include "ICamCollidable.h"
 
 NS_BEGIN(Client)
 class CNpc abstract:
-    public CGameObject
+    public CGameObject, public ICamCollidable
 {
 protected:
     CNpc();
@@ -19,8 +20,12 @@ public:
     virtual OBJECT_HANDLE Get_PartnerHandle() { return OBJECT_HANDLE{}; }
 
 public:
+    virtual void OnCameraCollision(_bool isColliding) override;
+
+public:
     virtual HRESULT Initialize_Prototype() override;
     virtual HRESULT Initialize(INIT_DESC* pArg) override;
+    virtual void    Awake() override;
     virtual void    Priority_Update(_float dt) override;
     virtual void    Update(_float dt) override;
     virtual void    Late_Update(_float dt) override;
@@ -34,6 +39,7 @@ protected:
 protected:
     string m_strAnimName = "";
     wstring m_strName = TEXT("");
+    _float m_fCamFadeAlpha = 0.f;
 
 public:
     virtual CGameObject* Clone(INIT_DESC* pArg) PURE;

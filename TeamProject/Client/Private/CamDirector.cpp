@@ -132,8 +132,8 @@ void CCamDirector::StartBattleIntro(CamSeqType type)
 {
     AutoTarget();
     RequestSequence(type);
-    //UIDirector()->Hide_HUD(CUIDirector::HUD::BATTLE);
-    //UIDirector()->Show_SceneFrame();
+    UIDirector()->Hide_HUD(CUIDirector::HUD::BATTLE);
+    UIDirector()->Show_SceneFrame();
 }
 
 string CCamDirector::ResolveSeqKey(CamSeqType type) const
@@ -150,7 +150,6 @@ string CCamDirector::ResolveSeqKey(CamSeqType type) const
 
 void CCamDirector::UpdateInput(_float dt)
 {
-
     if (InputDevice()->Key_Tap(VK_F1))
         CameraManager()->Set_MainCam(GetFreeCamComp(), 0.5f);
 
@@ -160,8 +159,8 @@ void CCamDirector::UpdateInput(_float dt)
     const _int damage = Helper::Get_Random_Int(1000, 10000);
 
     if (InputDevice()->Key_Down(VK_F3))
-        //      RequestSequence("Field/Front");
-        GetCharacter()->Take_Damage(DAMAGE_TYPE::NORMAL, damage);
+              RequestSequence("Field/Front");
+        //GetCharacter()->Take_Damage(DAMAGE_TYPE::NORMAL, damage);
 }
 
 void CCamDirector::AbortSequenceToOrbit(_bool resetTime)

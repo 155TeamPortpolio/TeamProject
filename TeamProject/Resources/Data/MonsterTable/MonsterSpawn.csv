@@ -1,6 +1,6 @@
-tagArea,StageType,Encounter,MonsterID,Count
-Zero_1_1,Normal,0,1100,2
-Zero_1_1,Normal,0,1100,2
-Zero_1_1,Elite,0,1100,2
-Zero_1_1,Elite,0,1101,1
-Zero_1_1,Elite,0,1200,1
+tagArea,StageType,Encounter,Colony,MonsterID,Count
+Zero_1_1,Normal,0,1,200,2
+Zero_1_1,Normal,0,1,200,2
+Zero_1_1,Elite,0,1,100,2
+Zero_1_1,Elite,0,1,101,1
+Zero_1_1,Elite,0,1,200,1
