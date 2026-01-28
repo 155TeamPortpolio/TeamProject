@@ -14,6 +14,7 @@
 #include "CorinState_Move.h"
 #include "CorinState_Attack.h"
 #include "CorinState_NormalAttack.h"
+#include "CorinState_CounterAttack.h"
 #include "CorinState_Evade.h"
 #include "CorinState_SwitchIn.h"
 #include "CorinState_SwitchOut.h"
@@ -266,14 +267,30 @@ void CCorin::Process_AttackInput(const string& strCurrentState)
 		if (!pAttack || !pAttack->Get_SubStateMachine())
 			return;
 
-		if (pAttack->Get_SubStateMachine()->Get_CurrentStateName() != "NormalAttack")
-			return;
+		string strAttackType = pAttack->Get_SubStateMachine()->Get_CurrentStateName();
 
-		CCorinState_NormalAttack* pNormal = static_cast<CCorinState_NormalAttack*>(
-			pAttack->Get_SubStateMachine()->Get_State("NormalAttack"));
-		// NormalAttack : Combo
-		if (pNormal && pNormal->Get_SubStateMachine())
-			pNormal->Get_SubStateMachine()->Set_Trigger("NextCombo");
+		if (strAttackType == "NormalAttack")
+		{
+			CCorinState_NormalAttack* pNormal = static_cast<CCorinState_NormalAttack*>(
+				pAttack->Get_SubStateMachine()->Get_State("NormalAttack"));
+			// NormalAttack : Combo
+			if (pNormal && pNormal->Get_SubStateMachine())
+				pNormal->Get_SubStateMachine()->Set_Trigger("NextCombo");
+		}
+		else if (strAttackType == "CounterAttack")
+		{
+			CCorinState_CounterAttack* pCounter = static_cast<CCorinState_CounterAttack*>(
+				pAttack->Get_SubStateMachine()->Get_CurrentState());
+			if (!pCounter || !pCounter->Get_SubStateMachine())
+				return;
+			string strCounterState = pCounter->Get_SubStateMachine()->Get_CurrentStateName();
+			// Start나 Explode 중에만 예약 가능
+			if (strCounterState == "Counter_Start" || strCounterState == "Counter_Explode")
+			{
+				pAttack->Get_SubStateMachine()->Set_Int("ComboEntryIndex", 3);
+				pCounter->Get_SubStateMachine()->Set_Bool("ReserveNormal", true);
+			}
+		}
 	}
 }
 

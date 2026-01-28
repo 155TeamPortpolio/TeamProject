@@ -34,6 +34,9 @@ CCorinState_Attack* CCorinState_Attack::Create()
     pSubStateMachine->Register_AnyStateTransition("UltimateAttack",
         CStateMachine<CCorin>::CONDITION_TRIGGER, "ToUltimate");
 
+    pSubStateMachine->Register_Transition("CounterAttack", "NormalAttack",
+        CStateMachine<CCorin>::CONDITION_TRIGGER, "ToNormalAttack");
+
     pSubStateMachine->Set_DefaultState("NormalAttack");
 
     return pInstance;

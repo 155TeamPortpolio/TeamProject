@@ -20,7 +20,7 @@ private:
     _uint m_iComboIndex = 0;
 
 public:
-    static CCorinState_NormalAttack* Create() { return new CCorinState_NormalAttack(); }
+    static CCorinState_NormalAttack* Create();
     virtual void Free() override { __super::Free(); }
 };
 
