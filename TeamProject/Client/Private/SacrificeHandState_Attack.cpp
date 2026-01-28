@@ -589,6 +589,24 @@ void CSacrificeHandState_OverDrive_Release_Attack02_Phase2::Update_Effects(CSacr
 		ObjectManager()->Add_Object(effectUp, { "Zero_Level","Enemy_Effect_Layer" });
 		ObjectManager()->Add_Object(effectDown, { "Zero_Level","Enemy_Effect_Layer" });
 	}
+
+	/* Hit Ground Flare */
+	if (IsCrossAnimProgress(0.76f))
+	{
+		auto pTransform = pOwner->Get_Component<CTransform>();
+
+		_vector3 vWorldPosition = _vector3::Transform(_vector3(0.f, 0.f, 38.4f), pTransform->Get_WorldMatrix());
+		_vector3 vLook = pTransform->Dir(STATE::LOOK);
+
+		auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_hand_overdrive_attack2_flare.json")
+			.Build("Sacrifice_Hand_Overdrive_Attack2_Flare");
+
+		auto effectTransform = effect->Get_Component<CTransform>();
+		effectTransform->Set_WorldPos(vWorldPosition);
+		effectTransform->Set_Look(vLook);
+		ObjectManager()->Add_Object(effect, { "Zero_Level","Enemy_Effect_Layer" });
+	}
 }
 
 void CSacrificeHandState_OverDrive_Release_Attack03_Phase2::Enter(CSacrificeHand* pOwner)
