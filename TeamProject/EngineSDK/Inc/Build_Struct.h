@@ -63,8 +63,9 @@ namespace Engine {
 
 	typedef struct RigidBodyinitDesc : public COMPONENT_DESC {
 		_bool	isKinematic = false;      // Transform 제어 vs 물리 제어
+		_bool   bCCD = false;			  // 연속 충돌 감지
 		_bool	bEnableGravity = true;    // 중력 적용
-		_float  fMass = 1.0f;            // 질량
+		_float  fMass = 1.0f;             // 질량
 		_bool	bLockX = true;
 		_bool	bLockY = false;
 		_bool	bLockZ = true;

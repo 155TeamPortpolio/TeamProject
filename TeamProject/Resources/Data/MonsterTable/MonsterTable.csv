@@ -1,6 +1,5 @@
 ProtoTag,DisplayName,CCT_fHeight,CCT_fRadius,MaxHP,MonsterID
-Proto_GameObject_ThugBulkyEnforcer,ThugBulky,1.28,0.45,200,1200
+Proto_GameObject_ThugBulkyEnforcer,ThugBulky,1.28,0.55,200,1200
 Proto_GameObject_Sacrifice,Sacrifice,1.6,0.8,1000,300
-Proto_GameObject_ThugAssaulter,ThugAssaulter,1.28,0.35,200,1100
-Proto_GameObject_ThugPoacher,ThugPoacher,1.28,0.35,200,1101
-Proto_GameObject_Defiler,Defiler,1.28,0.35,200,1101
+Proto_GameObject_ThugAssaulter,ThugAssaulter,1.28,0.55,200,1100
+Proto_GameObject_ThugPoacher,ThugPoacher,1.28,0.55,200,1101

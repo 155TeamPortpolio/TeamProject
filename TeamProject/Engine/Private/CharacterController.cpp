@@ -679,8 +679,9 @@ void CCharacterController::Stop_Movement()
 
 void CCharacterController::Set_CollisionMask(_uint iMask)
 {
-	m_iCollisionMask = iMask;  // 부모 멤버 동기화
+	m_iCollisionMask = iMask;
 	m_FilterData.word1 = iMask;
+	m_QueryFilterData.word1 = iMask;
 
 	PxShape* pShape;
 	m_pController->getActor()->getShapes(&pShape, 1);
@@ -695,6 +696,7 @@ void CCharacterController::Set_CollisionGroup(COLLISION_GROUP eGroup)
 {
 	m_eGroup = eGroup;
 	m_FilterData.word0 = ENUM(eGroup);
+	m_QueryFilterData.word0 = ENUM(eGroup);
 
 	PxShape* pShape;
 	m_pController->getActor()->getShapes(&pShape, 1);
@@ -711,11 +713,8 @@ void CCharacterController::Move(_fvector vDisplacement, _float dt)
 	XMStoreFloat3(&vDisp, vDisplacement);
 	PxVec3 pxDisp(vDisp.x, vDisp.y, vDisp.z);
 
-	m_QueryFilterData.word0 = m_FilterData.word0;  // 그룹
-	m_QueryFilterData.word1 = m_FilterData.word1;  // 마스크
-
 	PxControllerFilters filters;
-	filters.mFilterData = &m_QueryFilterData;
+	filters.mFilterData = &m_FilterData;
 	filters.mFilterCallback = m_pQueryFilter;
 	filters.mFilterFlags = PxQueryFlag::eSTATIC | PxQueryFlag::eDYNAMIC | PxQueryFlag::ePREFILTER;
 	filters.mCCTFilterCallback = m_pCCTFilter;  // CCT 간 필터 추가
