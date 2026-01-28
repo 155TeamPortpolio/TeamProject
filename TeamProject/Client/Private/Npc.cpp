@@ -64,6 +64,7 @@ void CNpc::Awake()
     auto& materialInstances = pMaterial->Get_MaterialInstances();
     auto DitheringTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, "Eff_Noise_032.png");
 
+    if (DitheringTexture == nullptr) return;
     for (const auto& Instance : materialInstances)
     {
         Instance->Set_Param("DitheringTexture", { DitheringTexture->Get_SRV(),"Texture2D",0 });

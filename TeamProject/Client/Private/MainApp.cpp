@@ -37,9 +37,37 @@
 #include "TestCloud.h"
 
 /* UI */
+#include "ButtonUI.h"
+#include "CanvasPanel.h"
+#include "GaugeUI.h"
+#include "ImageUI.h"
+#include "MaskUI.h"
+#include "NineSliceUI.h"
+#include "SpriteAnimationUI.h"
+#include "TextUI.h"
+#include "UVAnimationUI.h"
+
+#include "UI_Logo.h"
+#include "UI_Loading.h"
 #include "UI_ScreenFade.h"
 #include "UI_SceneFrame.h"
+
+#include "UI_BattleHUD.h"
+#include "UI_Decibel.h"
+#include "UI_DecibelKanji.h"
+#include "UI_DecibelDigits.h"
+#include "UI_DecibelPts.h"
+#include "UI_DecibelText.h"
+#include "UI_BattleHUDAction.h"
+#include "UI_PrimaryAction.h"
+#include "UI_EvadeAction.h"
+#include "UI_SpecialAction.h"
+#include "UI_SwitchAction.h"
+#include "UI_UltimateAction.h"
+#include "UI_FieldHUD.h"
+#include "UI_BossHUD.h" 
 #include "UI_EnemyStatus.h"
+
 #include "UI_MeshPyramid.h"
 #include "UI_MeshBillboard.h"
 
@@ -48,6 +76,10 @@
 #include "UI_Dialogue.h" 
 #include "UI_DialogueMessage.h"
 #include "UI_DialogueChoice.h"
+#include "UI_Lottery.h"
+#include "UI_ScratchCard.h"
+#include "UI_Newspaper.h"
+#include "UI_ResultBanner.h"
 
 #include "UI_AtlasSprite.h"
 #include "UI_DamageText.h"
@@ -132,7 +164,7 @@ void CMainApp::Set_Levels()
 
 	LevelManager()->Set_LoadingLevel("Loading_Level");
 	m_pGameInstance->Notify_LevelSet(); 
-	m_pGameInstance->Get_LevelMgr()->Request_ChangeLevel("MainCity_Level", true);
+	m_pGameInstance->Get_LevelMgr()->Request_ChangeLevel("Test_Level", true);
 } 
 
 CMainApp* CMainApp::Create()
@@ -182,16 +214,55 @@ void CMainApp::Initialize_GlobalPrototype()
 	/*Player*/
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Player", CPlayer::Create());
 	/* UI */
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Button", CButtonUI::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_CanvasPanel", CCanvasPanel::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Gauge", CGaugeUI::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Image", CImageUI::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_SpriteAnimation", CSpriteAnimationUI::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Text", CTextUI::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_UVAnimation", CUVAnimationUI::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Mask", CMaskUI::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_NineSlice", CNineSliceUI::Create());
+
+	ResourceManager()->Add_ResourcePath("empty.png", "../Bin/Resources/Global/UI/Image/empty.png");
+	ResourceManager()->Add_ResourcePath("Run2.png", "../Bin/Resources/Global/UI/Image/Loading/Run2.png");
+	ResourceManager()->Add_ResourcePath("LoadingText.png", "../Bin/Resources/Global/UI/Image/Loading/LoadingText.png");
+
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Logo", CUI_Logo::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Loading", CUI_Loading::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_ScreenFade", CUI_ScreenFade::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_SceneFrame", CUI_SceneFrame::Create());
+
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_BattleHUD", CUI_BattleHUD::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Decibel", CUI_Decibel::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_DecibelKanji", CUI_DecibelKanji::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_DecibelDigits", CUI_DecibelDigits::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_DecibelPts", CUI_DecibelPts::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_DecibelText", CUI_DecibelText::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_BattleHUDAction", CUI_BattleHUDAction::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_PrimaryAction", CUI_PrimaryAction::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_EvadeAction", CUI_EvadeAction::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_SpecialAction", CUI_SpecialAction::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_SwitchAction", CUI_SwitchAction::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_UltimateAction", CUI_UltimateAction::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_FieldHUD", CUI_FieldHUD::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_BossHUD", CUI_BossHUD::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_EnemyStatus", CUI_EnemyStatus::Create());
+
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_MeshPyramid", CUI_MeshPyramid::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_MeshBillboard", CUI_MeshBillboard::Create());
+
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_IconLabel", CUI_IconLabel::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_NameIndicator", CUI_NameIndicator::Create());
+
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Dialogue", CUI_Dialogue::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_DialogueMessage", CUI_DialogueMessage::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_DialogueChoice", CUI_DialogueChoice::Create());
+
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Lottery", CUI_Lottery::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_ScratchCard", CUI_ScratchCard::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Newspaper", CUI_Newspaper::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_ResultBanner", CUI_ResultBanner::Create());
 
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_AtlasSprite", CUI_AtlasSprite::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_DamageText",  CUI_DamageText::Create());

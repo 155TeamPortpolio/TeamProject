@@ -27,7 +27,7 @@ HRESULT CUI_Lottery::Initialize(INIT_DESC* pArg)
 
     Cache();
 
-    auto pObj = Builder::Create_UIObject({ LevelManager()->Get_NowLevelKey(), "Proto_GameObject_Newspaper" }).Build("newspaper");
+    auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_Newspaper" }).Build("newspaper");
     if (pObj)
     {
         Get_Component<CObjectContainer>()->Add_Child(pObj);
@@ -38,7 +38,7 @@ HRESULT CUI_Lottery::Initialize(INIT_DESC* pArg)
     CUI_ScratchCard::SCRATCH_DESC* pDesc = new CUI_ScratchCard::SCRATCH_DESC;
     pDesc->pState = &m_iState;
     pDesc->onScratchCompleted = [this]() { Change_State(STATE::USED); };
-    pObj = Builder::Create_UIObject({LevelManager()->Get_NowLevelKey(), "Proto_GameObject_ScratchCard"})
+    pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_ScratchCard"})
         .Add_UIDesc(pDesc)
         .Build("scratchCard");
     if (pObj)

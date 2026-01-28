@@ -537,8 +537,7 @@ void CUI_Object::Load(const nlohmann::ordered_json& data)
             string strTypeTag = childJson.value("typeTag", "");
             if (strTypeTag.empty()) continue;
 
-            const string& strCurrentLevelKey = CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey();
-            CUI_Object* pChildObj = Builder::Create_UIObject({strCurrentLevelKey, "Proto_GameObject_" + strTypeTag}).Build(strTypeTag);
+            CUI_Object* pChildObj = Builder::Create_UIObject({G_GlobalLevelKey, "Proto_GameObject_" + strTypeTag}).Build(strTypeTag);
 
             if (!pChildObj) continue;
 
