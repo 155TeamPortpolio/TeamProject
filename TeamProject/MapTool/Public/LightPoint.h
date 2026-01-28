@@ -21,11 +21,7 @@ public:
     virtual void Export_ObjectData(void* pDesc) override;
 
 public:
-    void Render_GUI() override;
-
-private:
-    LIGHT_TYPE m_LightType = { LIGHT_TYPE::POINT };
-    LIGHT_DESC m_LightDesc{};
+    void Render_GUI() override;  
 
 public:
     static CLightPoint* Create();
