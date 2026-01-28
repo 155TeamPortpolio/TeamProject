@@ -3,7 +3,11 @@
 
 #include "GameInstance.h"
 #include "ObjectContainer.h"
+#include "Sprite2D.h"
 #include "ButtonUI.h"
+#include "UI_ScratchCard.h"
+
+#include "FieldSystem.h"
 
 HRESULT CUI_Lottery::Initialize_Prototype()
 {
@@ -30,7 +34,12 @@ HRESULT CUI_Lottery::Initialize(INIT_DESC* pArg)
         m_pChildren[ENUM(CHILD::NEWSPAPER)] = pObj;
     }
 
-    pObj = Builder::Create_UIObject({LevelManager()->Get_NowLevelKey(), "Proto_GameObject_ScratchCard"}).Build("scratchCard");
+    CUI_ScratchCard::SCRATCH_DESC* pDesc = new CUI_ScratchCard::SCRATCH_DESC;
+    pDesc->pState = &m_iState;
+    pDesc->onScratchCompleted = [this]() { Change_State(STATE::USED); };
+    pObj = Builder::Create_UIObject({LevelManager()->Get_NowLevelKey(), "Proto_GameObject_ScratchCard"})
+        .Add_UIDesc(pDesc)
+        .Build("scratchCard");
     if (pObj)
     {
         Get_Component<CObjectContainer>()->Add_Child(pObj);
@@ -46,7 +55,9 @@ HRESULT CUI_Lottery::Initialize(INIT_DESC* pArg)
     if (m_pButtons[ENUM(BTN::BTN_SCRATCH)])
         m_pButtons[ENUM(BTN::BTN_SCRATCH)]->Set_OnClick([this]() { OnClick_OpenScratch(); });
 
-    UI_Active(nullptr);
+    Change_State(STATE::READY);
+
+    Set_Alive(false);
 
 	return S_OK;
 }
@@ -68,8 +79,14 @@ void CUI_Lottery::Late_Update(_float dt)
 
 void CUI_Lottery::UI_Active(void* pArg)
 {
+    Set_Alive(true);
     Set_ChildAnimation(CHILD::ICON_SCRATCH, 0);
     Set_ChildAnimation(CHILD::NEWSPAPER, 0);
+}
+
+void CUI_Lottery::UI_DeActive(void* pArg)
+{
+    Set_Alive(false);
 }
 
 void CUI_Lottery::Cache()
@@ -95,6 +112,23 @@ void CUI_Lottery::Cache()
     }
 }
 
+void CUI_Lottery::Change_State(STATE eState)
+{
+    if (m_iState == static_cast<_uint>(eState))
+        return;
+
+    m_iState = static_cast<_uint>(eState);
+    switch (m_iState)
+    {
+    case STATE::READY:
+        Change_ChildTexture(CHILD::ICON_SCRATCH, "ScratchCardIcon.png");
+        break;
+    case STATE::USED:
+        Change_ChildTexture(CHILD::ICON_SCRATCH, "ScratchCardIconReceived.png");
+        break;
+    }
+}
+
 void CUI_Lottery::OnClick_Back()
 {
     Set_ChildAnimation(CHILD::OVERLAY_BACK, 0);
@@ -102,6 +136,8 @@ void CUI_Lottery::OnClick_Back()
 
     if (Is_ChildAlive(CHILD::SCRATCH))
         Set_ChildUIDeActive(CHILD::SCRATCH);
+    else
+        FieldSystem()->RequestExitTop();
 }
 
 void CUI_Lottery::OnClick_RefreshNews()
@@ -113,7 +149,7 @@ void CUI_Lottery::OnClick_RefreshNews()
 }
 
 void CUI_Lottery::OnClick_OpenScratch()
-{ 
+{
     Set_ChildUIActive(CHILD::SCRATCH);
 }
 
@@ -142,6 +178,19 @@ void CUI_Lottery::Set_ChildAnimation(CHILD child, _int iIndex)
         return;
 
     pChild->Set_Animation(iIndex);
+}
+
+void CUI_Lottery::Change_ChildTexture(CHILD child, const string& strTextureKey)
+{
+    auto pChild = m_pChildren[ENUM(child)];
+    if (!pChild)
+        return;
+
+    auto pSprite = pChild->Get_Component<CSprite2D>();
+    if (!pSprite)
+        return;
+
+    pSprite->Change_Texture(0, G_GlobalLevelKey, strTextureKey);
 }
 
 _bool CUI_Lottery::Is_ChildAlive(CHILD child)
