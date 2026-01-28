@@ -269,9 +269,9 @@ CGameObject* CObjectMgr::Request_Object(const OBJECT_HANDLE& handle)
 }
 
 
-CGameObject* CObjectMgr::Acquire(const CLONE_DESC& desc,INIT_DESC* pArg)
+CGameObject* CObjectMgr::Acquire(const CLONE_DESC& desc,INIT_DESC* pArg,_bool& outFirst)
 {
-	return m_pObjectPool->Acquire(desc,pArg);
+	return m_pObjectPool->Acquire(desc,pArg,outFirst);
 }
 
 void CObjectMgr::Prune_Queues_ByLevel(const string& levelTag)
@@ -360,6 +360,8 @@ void CObjectMgr::Release_Subtree_ToPool(CGameObject* root)
 	const CLONE_DESC& poolKey = root->Get_PoolKey();
 	m_pObjectPool->Return(poolKey, root);
 }
+
+
 void CObjectMgr::Set_LevelTimeScale(string LevelTag, _float scale)
 {
 	auto iter = m_Layers.find(LevelTag);
