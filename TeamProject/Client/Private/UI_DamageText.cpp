@@ -57,14 +57,13 @@ namespace
     constexpr _float kBangWidthRatio          = 1.f;
     constexpr _float kBangExtraTightPx        = 9.f;
 
-
     constexpr _float kRippleAttackSec     = 0.06f;
     constexpr _float kRippleReleaseSec    = 0.10f;
     constexpr _float kRippleTauSec        = 0.30f;
     constexpr _float kRippleFreq          = 3.2f;
-    constexpr _float kRippleAmp           = 0.15f;
-    constexpr _float kRippleSpeedPxPerSec = 520.f;
-    constexpr _float kRippleChance        = 0.5f;
+    constexpr _float kRippleAmp           = 0.12f;
+    constexpr _float kRippleSpeedPxPerSec = 360.f;
+    constexpr _float kRippleChance        = 1.f;
 
     struct DamageTextTiming
     {
