@@ -4,6 +4,7 @@
 #include  "FieldSystem.h"
 #include "GameInstance.h"
 #include "CamDirector.h"
+#include "UIDirector.h"
 
 #include "FieldPlayer.h"
 
@@ -18,6 +19,8 @@ void CRoom_Lottery::Enter()
 
 	CamDirector()->SetSpaceRef(FieldSystem()->GetInteractHandle());
 	CamDirector()->RequestSequence("Field/Howl");
+	UIDirector()->Hide_HUD(CUIDirector::HUD::FIELD);
+	UIDirector()->Show_Lottery();
 
 	//camera in
 }
@@ -27,7 +30,9 @@ void CRoom_Lottery::Exit()
 	FieldSystem()->GetFieldPlayer()->UnLock_Input();
 
 	CamDirector()->SetSpaceRef(CamDirector()->GetCurHandle());
-	CamDirector()->RequestSequence("Field/Front");
+	CamDirector()->RequestSequence("Field/Back");
+	UIDirector()->Show_HUD(CUIDirector::HUD::FIELD);
+	UIDirector()->Hide_Lottery();
 }
 
 void CRoom_Lottery::Update()
