@@ -27,7 +27,7 @@ void CRoom_Lottery::Exit()
 	FieldSystem()->GetFieldPlayer()->UnLock_Input();
 
 	CamDirector()->SetSpaceRef(CamDirector()->GetCurHandle());
-	CamDirector()->RequestSequence("Field/Front");
+	CamDirector()->RequestSequence("Field/Back");
 }
 
 void CRoom_Lottery::Update()
