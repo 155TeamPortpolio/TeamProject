@@ -855,6 +855,9 @@
     <Filter Include="02. GameObject\Object\Player\Character\01. JaneDoe\State\Start">
       <UniqueIdentifier>{2cbaf699-675f-4a4b-9bf0-f7322153d7d1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\Lottery\Newspaper">
+      <UniqueIdentifier>{9a0e4d8d-22f9-486a-bb13-701b03645d0c}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02. GameObject\Object\Player\Character\01. JaneDoe\State\Attack\Counter">
       <UniqueIdentifier>{ce63a969-3465-4278-b8a3-fef985ba087e}</UniqueIdentifier>
     </Filter>
@@ -1685,6 +1688,9 @@
     <ClInclude Include="..\Public\UI_ResultBanner.h">
       <Filter>02. GameObject\UI\01. 2D\ResultBanner</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UI_Newspaper.h">
+      <Filter>02. GameObject\UI\01. 2D\Lottery\Newspaper</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\JaneDoeState_CounterAttack.h">
       <Filter>02. GameObject\Object\Player\Character\01. JaneDoe\State\Attack\Counter</Filter>
     </ClInclude>
@@ -2475,6 +2481,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\UI_ResultBanner.cpp">
       <Filter>02. GameObject\UI\01. 2D\ResultBanner</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Newspaper.cpp">
+      <Filter>02. GameObject\UI\01. 2D\Lottery\Newspaper</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\JaneDoeState_CounterAttack.cpp">
       <Filter>02. GameObject\Object\Player\Character\01. JaneDoe\State\Attack\Counter</Filter>
