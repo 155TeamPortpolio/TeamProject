@@ -246,8 +246,6 @@ void CBattleSystem::ReadyBattle(const string& tagArea, _uint StageNumber, _uint 
 	CacheData->Battle.MonsterPoint;
 	CacheData->Battle.PortalPoint;
 	//const vector<MONSTER_SPAWN_DESC>* pMonsterSpawnData = pDatabase->GetMonsterSpawnData(tagArea);
-
-	
 }
 
 
@@ -263,12 +261,13 @@ void CBattleSystem::SetActive(_bool isActive)
 	}
 }
 
+/*지금 싸우려는 애들->*/
+
 void CBattleSystem::SpawnMosnter(const string& MonsterProtoTag, _float3 vSpawnPos, _float3 vRot)
 {
 	MonsterCreationDesc MonsterTableDesc = CDataBase::GetInstance()->GetMonsterDesc(MonsterProtoTag);
 	if (true == MonsterTableDesc.ProtoTag.empty())
 		return;
-
 	CCT_DESC MonsterCCT;
 	MonsterCCT.eGroup = COLLISION_GROUP::MONSTER;
 	MonsterCCT.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER) | ENUM(COLLISION_GROUP::COMMON) | ENUM(COLLISION_GROUP::PLAYER_ATTACK);
@@ -345,6 +344,18 @@ _bool CBattleSystem::ExitBattleObject(BATTLE_OBJ_TYPE eObjType, OBJECT_HANDLE hO
 	return true;
 }
 
+void CBattleSystem::EnterBattleObject(BATTLE_OBJ_TYPE eObjType, OBJECT_HANDLE hObject)
+{
+	auto iter = m_BattleObjInfos.find(eObjType);
+	if (iter == m_BattleObjInfos.end())
+		return;
+
+	auto& handles = iter->second;
+	BATTLEOBJ_INFO info = {};
+	info.hObject = hObject;
+	handles.push_back(info);
+}
+
 void CBattleSystem::SetPlayer(vector<OBJECT_HANDLE> hPlayers)
 {
 	for (auto& hPlayer : hPlayers)
@@ -399,9 +410,10 @@ void CBattleSystem::TakeAllDamage(const HitDesc& hitDesc)
 void CBattleSystem::ClearBattleStage()
 {
 	for (auto& Pair : m_BattleObjInfos) {
+		if (Pair.first == BATTLE_OBJ_TYPE::PLAYER)
+			continue;
 		for (auto info : Pair.second)
 		{
-			info.hObject.Delete();
 			info.Reset();
 		}
 		Pair.second.clear();

@@ -57,13 +57,14 @@ void CZeroStage_Normal::Update()
 
 HRESULT CZeroStage_Normal::Ready_Stage(CZero_Level::StageContext& context)
 {
-	Ready_Map("Zero_Level", "Zero_1_1");
 	return S_OK;
 }
 
 HRESULT CZeroStage_Normal::Enter_Stage(CZero_Level::StageContext& context)
 {
+	m_Context.StageID = 0;
 	Ready_Map("Zero_Level", "Zero_1_1");
+	Reserve_Enemy("Zero_Level");
 	m_eStageStage = StageState::Entrance;
 	m_PlayerHandle = context.hPlayer;
 	BaseIntro(context);
@@ -79,10 +80,7 @@ void CZeroStage_Normal::Intro()
 {
 	if (m_introFlow.IsDoneAll())
 	{
-		CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_ThugAssaulter", { -13.f, -5.f,34.f });
-		CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_ThugAssaulter", { -1.f, -5.f,38.f });
-		CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_ThugAssaulter", { -12.f, -5.f,34.f });
-
+		Active_Enemy();
 		CBattleSystem::GetInstance()->SetActive(true);
 		m_eStageStage = StageState::BattleStart;
 	}

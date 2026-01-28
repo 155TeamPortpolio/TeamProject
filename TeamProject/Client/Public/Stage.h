@@ -10,13 +10,23 @@ class CStage :
 {
 protected:
 	enum class StageState {None,Entrance,BattleStart,BattleEnd,Outro,End};
+	struct Combined_MonsterData
+	{
+		struct creation {
+			MonsterCreationDesc creationInfo;
+			_int Count = {};
+		};
+		vector<creation> CreationData;
+		vector<_float3>	 SpawnPoint;
+	};
+
 	struct StageContext{
+
 		StageType eStageType;
 		_int StageID = { -1 };
-		vector<BATTLEOBJ_INFO> player;
-		vector<BATTLEOBJ_INFO> monster;
-		vector<BATTLEOBJ_INFO> portal;
+		Combined_MonsterData combindeData = {};
 	};
+
 protected:
     CStage();
     ~CStage() DEFAULT;
@@ -34,7 +44,8 @@ public:
 
 protected:
 	virtual void Ready_Map(const string& LevelTag, const string& AreaTag);
-
+	virtual void Reserve_Enemy(const string& LevelTag);
+	virtual void Active_Enemy();
 protected:
 	void BaseIntro(CZero_Level::StageContext& context);
 	void BossIntro(CZero_Level::StageContext& context);
@@ -60,6 +71,10 @@ protected:
 	_bool m_outroFlowBuilt = false;
 
 	StageContext m_Context;
+	Combined_MonsterData m_MonsterData = {};
+
+	vector<class CGameObject*> m_pMonsters;
+
 protected:
 
 public:

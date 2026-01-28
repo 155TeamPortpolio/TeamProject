@@ -60,6 +60,8 @@ public:
 	void	TakeAreaDamage(const _float3& vCenter, _float fRadius, const HitDesc& hitDesc);
 	void	TakeAllDamage(const HitDesc& hitDesc);
 	_bool	ExitBattleObject(BATTLE_OBJ_TYPE eObjType, OBJECT_HANDLE hObject);
+	void	EnterBattleObject(BATTLE_OBJ_TYPE eObjType, OBJECT_HANDLE hObject);
+
 public:
 	_bool isMonsterCleared();
 

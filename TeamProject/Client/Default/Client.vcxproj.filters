@@ -1529,9 +1529,6 @@
     <ClInclude Include="..\Public\MapInvisibleWall.h">
       <Filter>02. GameObject\MapObject\03. MapInvisibleWall</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\ZeroStage_Normal.h">
-      <Filter>01. Level\04. Zero\Stage_Normal</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\ThugAssaulter_Hit.h">
       <Filter>02. GameObject\Object\Enemy\ThugAssaulter\State\Hit</Filter>
     </ClInclude>
@@ -1696,6 +1693,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\CorinState_CounterAttack.h">
       <Filter>02. GameObject\Object\Player\Character\02. Corin\State\Attack\Counter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ZeroStage_Normal.h">
+      <Filter>01. Level\04. Zero\Stage_Normal</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
