@@ -1,12 +1,36 @@
 #pragma once
 
-#include "OrbitLockOnData.h"
-
 NS_BEGIN(Engine)
-class CGameObject;
+class CGameObject; 
 NS_END
 
 NS_BEGIN(Client)
+
+struct OrbitLockOnState
+{
+    _bool         active = false;
+    OBJECT_HANDLE handle{};
+    _float        savedTargetDist = 0.f;
+};
+
+struct OrbitLockOnBlendState
+{
+    _bool    active = false;
+    _bool    entering = true;
+    _float   elapsed = 0.f;
+    _float   duration = 0.f;
+    EaseType ease = EaseType::InOutSine;
+    _float   weight = 0.f;
+};
+
+struct OrbitLockOnEvalResult
+{
+    _float   weight = 0.f;
+    _float   yawAddDeg = 0.f;
+    _bool    hasDist = false;
+    _float   dist = 0.f;
+    Vector3  focusPos{};
+};
 
 struct OrbitAutoYawFollowState
 {
@@ -31,24 +55,12 @@ struct OrbitTargetSwitchState
     Vector3 holdPivotWorld{};
 };
 
-struct OrbitTargetSwitchSnapshot
-{
-    OrbitTargetSwitchState state{};
-};
-
-struct OrbitAutoYawFollowSnapshot
-{
-    OrbitAutoYawFollowState state{};
-};
-
 struct OrbitInputEvalResult
 {
     _float yawDeltaDeg = 0.f;
     _float pitchDeltaDeg = 0.f;
     _float zoomDelta = 0.f;
 };
-
-// ----------------------------------------------------------------------
 
 struct OrbitCamPoseState
 {
@@ -67,31 +79,31 @@ struct OrbitCamInputState
 {
     _float sensitivityX = 0.1f;
     _float sensitivityY = 0.08f;
-    _float zoomSpeed    = 1.0f;
+    _float zoomSpeed = 1.0f;
 };
 
 struct OrbitCamProfile
 {
     _float   minDist = 0.7f;
     _float   maxDist = 6.f;
-             
+
     _float   pitchMin = -40.f;
     _float   pitchMax = 50.f;
-             
+
     _float   rotSmoothSpeed = 14.f;
     _float   distSmoothSpeed = 12.f;
     _float   pivotSmoothSpeed = 12.f;
-             
+
     _float   offsetY = 0.f;
-             
+
     _float   startDistance = 4.8f;
     _float   startPitchDeg = -20.f;
     _float   startHeightOffset = 0.85f;
-             
+
     _bool    useAutoYawFollow = true;
     _float   autoYawFollowSpeed = 0.4f;
     _float   autoYawFollowDelay = 0.6f;
-             
+
     _float   collisionZoomInSpeed = 12.f;
     _float   collisionZoomOutSpeed = 6.f;
 
@@ -99,11 +111,11 @@ struct OrbitCamProfile
     EaseType targetSwitchEase = EaseType::OutCubic;
 
     _float   lockOnYawSpeed = 22.f;
-             
+
     _float   lockOnFocusNear = 0.35f;
     _float   lockOnFocusFar = 0.70f;
     _float   lockOnFocusDist = 2.5f;
-             
+
     _bool    lockOnAutoZoom = true;
     _float   lockOnAutoZoomFactor = 0.35f;
 
@@ -114,18 +126,19 @@ struct OrbitCamProfile
 
     _float   maxYawSpeedDeg = 720.f;
     _float   maxPitchSpeedDeg = 540.f;
-             
+
     _float   maxYawSpeedDegWhenColliding = 200.f;
     _float   maxPitchSpeedDegWhenColliding = 180.f;
 };
 
 struct OrbitCamSnapshot
 {
-    OrbitCamPoseState           pose{};
-    OrbitLockOnSnapshot         lockOn{};
-    OrbitAutoYawFollowSnapshot  autoYawFollow{};
-    OrbitTargetSwitchSnapshot   targetSwitch{};
-    OBJECT_HANDLE               targetHandle{};
+    OrbitCamPoseState        pose{};
+    OrbitLockOnState         lockOn{};
+    OrbitLockOnBlendState    lockOnBlend{};
+    OrbitAutoYawFollowState  autoYaw{};
+    OrbitTargetSwitchState   targetSwitch{};
+    OBJECT_HANDLE            targetHandle{};
 };
 
 NS_END
