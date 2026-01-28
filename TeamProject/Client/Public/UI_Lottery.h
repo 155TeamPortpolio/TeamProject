@@ -38,6 +38,7 @@ public:
 	virtual void    Late_Update(_float dt)           override;
 	virtual void    Render_GUI()                     override { __super::Render_GUI(); }
 	virtual void	UI_Active(void* pArg)			 override;
+	virtual void	UI_DeActive(void* pArg)			 override;
 
 private:
 	_uint			m_iState = { STATE::END };

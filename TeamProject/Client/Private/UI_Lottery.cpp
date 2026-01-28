@@ -7,6 +7,8 @@
 #include "ButtonUI.h"
 #include "UI_ScratchCard.h"
 
+#include "FieldSystem.h"
+
 HRESULT CUI_Lottery::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
@@ -55,7 +57,7 @@ HRESULT CUI_Lottery::Initialize(INIT_DESC* pArg)
 
     Change_State(STATE::READY);
 
-    UI_Active(nullptr);
+    Set_Alive(false);
 
 	return S_OK;
 }
@@ -77,8 +79,14 @@ void CUI_Lottery::Late_Update(_float dt)
 
 void CUI_Lottery::UI_Active(void* pArg)
 {
+    Set_Alive(true);
     Set_ChildAnimation(CHILD::ICON_SCRATCH, 0);
     Set_ChildAnimation(CHILD::NEWSPAPER, 0);
+}
+
+void CUI_Lottery::UI_DeActive(void* pArg)
+{
+    Set_Alive(false);
 }
 
 void CUI_Lottery::Cache()
@@ -128,6 +136,8 @@ void CUI_Lottery::OnClick_Back()
 
     if (Is_ChildAlive(CHILD::SCRATCH))
         Set_ChildUIDeActive(CHILD::SCRATCH);
+    else
+        FieldSystem()->RequestExitTop();
 }
 
 void CUI_Lottery::OnClick_RefreshNews()
