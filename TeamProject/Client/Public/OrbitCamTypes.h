@@ -1,144 +1,148 @@
 #pragma once
 
 NS_BEGIN(Engine)
-class CGameObject; 
+class CGameObject; class CCharacterController;
 NS_END
 
 NS_BEGIN(Client)
 
-struct OrbitLockOnState
+struct OrbitLockState
 {
-    _bool         active = false;
     OBJECT_HANDLE handle{};
-    _float        savedTargetDist = 0.f;
+    _bool         active    = false;
+    _float        savedDist = 0.f;
 };
 
-struct OrbitLockOnBlendState
+struct OrbitBlendState
 {
-    _bool    active = false;
+    _bool    active   = false;
     _bool    entering = true;
-    _float   elapsed = 0.f;
+    _float   elapsed  = 0.f;
     _float   duration = 0.f;
-    EaseType ease = EaseType::InOutSine;
-    _float   weight = 0.f;
+    EaseType ease     = EaseType::InOutSine;
+    _float   weight   = 0.f;
 };
 
-struct OrbitLockOnEvalResult
+struct OrbitLockEval
 {
-    _float   weight = 0.f;
+    _float   weight    = 0.f;
     _float   yawAddDeg = 0.f;
-    _bool    hasDist = false;
-    _float   dist = 0.f;
+    _bool    hasDist   = false;
+    _float   dist      = 0.f;
     Vector3  focusPos{};
 };
 
-struct OrbitAutoYawFollowState
+struct OrbitAutoYaw
 {
-    _float  holdTimer = 0.f;
-    Vector3 prevFoot{};
+    Vector3 prevFootWorld{};
+    _float  holdTimer   = 0.f;
     _bool   hasPrevFoot = false;
 };
 
-struct OrbitCollisionDistEvalResult
+struct OrbitCollideEval
 {
     _float allowedDist = 0.f;
-    _float goalDist = 0.f;
-    _bool  constrained = false;
-    _float maxYawSpeedDeg = 0.f;
-    _float maxPitchSpeedDeg = 0.f;
+    _float goalDist    = 0.f;
+    _bool  hit         = false;
+
+    _float yawDeltaCapDeg = 0.f;
+    _float pitchDeltaCapDeg = 0.f;
 };
 
-struct OrbitTargetSwitchState
+struct OrbitSwitch
 {
-    _bool   active = false;
+    _bool   active  = false;
     _float  elapsed = 0.f;
     Vector3 holdPivotWorld{};
 };
 
-struct OrbitInputEvalResult
+struct OrbitInputEval
 {
-    _float yawDeltaDeg = 0.f;
+    _float yawDeltaDeg   = 0.f;
     _float pitchDeltaDeg = 0.f;
-    _float zoomDelta = 0.f;
+    _float zoomDelta     = 0.f;
 };
 
-struct OrbitCamPoseState
+struct OrbitPose
 {
-    Vector2 targetRotDeg{};
-    Vector2 curRotDeg{};
-    _float  wantDist{};
-    _float  goalDist{};
-    _float  curDist{};
-    Vector3 targetPivot{};
-    Vector3 curPivot{};
+    Vector2 rotGoalDeg{};
+    Vector2 rotCurDeg{};
+
+    _float  distWanted = 0.f;
+    _float  distGoal   = 0.f;
+    _float  distCur    = 0.f;
+
+    Vector3 pivotGoalWorld{};
+    Vector3 pivotCurWorld{};
+
     Vector3 pivotInternalOffset{};
     Vector3 pivotExternalOffset{};
 };
 
-struct OrbitCamInputState
+struct OrbitInput
 {
-    _float sensitivityX = 0.1f;
-    _float sensitivityY = 0.08f;
+    _float sensX     = 0.1f;
+    _float sensY     = 0.08f;
     _float zoomSpeed = 1.0f;
 };
 
-struct OrbitCamProfile
+struct OrbitProfile
 {
-    _float   minDist = 0.7f;
-    _float   maxDist = 6.f;
+    _float distMin = 0.7f;
+    _float distMax = 6.f;
 
-    _float   pitchMin = -40.f;
-    _float   pitchMax = 50.f;
+    _float pitchLimitMinDeg = -40.f;
+    _float pitchLimitMaxDeg = 50.f;
 
-    _float   rotSmoothSpeed = 14.f;
-    _float   distSmoothSpeed = 12.f;
-    _float   pivotSmoothSpeed = 12.f;
+    _float rotSmooth   = 14.f;
+    _float distSmooth  = 12.f;
+    _float pivotSmooth = 12.f;
 
-    _float   offsetY = 0.f;
+    _float offsetY     = 0.f;
 
-    _float   startDistance = 4.8f;
-    _float   startPitchDeg = -20.f;
-    _float   startHeightOffset = 0.85f;
+    _float startDist     = 4.8f;
+    _float startPitchDeg = -20.f;
+    _float startHeight   = 0.85f;
 
-    _bool    useAutoYawFollow = true;
-    _float   autoYawFollowSpeed = 0.4f;
-    _float   autoYawFollowDelay = 0.6f;
+    _bool  autoYaw      = true;
+    _float autoYawSpeed = 0.4f;
+    _float autoYawDelay = 0.6f;
 
-    _float   collisionZoomInSpeed = 12.f;
-    _float   collisionZoomOutSpeed = 6.f;
+    _float zoomInCollide  = 12.f;
+    _float zoomOutCollide = 6.f;
 
-    _float   targetSwitchBlendSec = 1.f;
-    EaseType targetSwitchEase = EaseType::OutCubic;
+    _float switchBlendSec = 1.f;
+    EaseType switchEase   = EaseType::OutCubic;
 
-    _float   lockOnYawSpeed = 22.f;
+    _float lockYawSpeed = 22.f;
 
-    _float   lockOnFocusNear = 0.35f;
-    _float   lockOnFocusFar = 0.70f;
-    _float   lockOnFocusDist = 2.5f;
+    _float lockFocusNear = 0.35f;
+    _float lockFocusFar  = 0.70f;
+    _float lockFocusDist = 2.5f;
 
-    _bool    lockOnAutoZoom = true;
-    _float   lockOnAutoZoomFactor = 0.35f;
+    _bool  lockAutoZoom = true;
+    _float lockAutoZoomFactor = 0.35f;
 
-    _float   lockOnBlendInSec = 0.5f;
-    _float   lockOnBlendOutSec = 0.5f;
-    EaseType lockOnBlendInEase = EaseType::InOutSine;
-    EaseType lockOnBlendOutEase = EaseType::InOutSine;
+    _float lockBlendIn = 0.5f;
+    _float lockBlendOut = 0.5f;
+    EaseType lockBlendInEase = EaseType::InOutSine;
+    EaseType lockBlendOutEase = EaseType::InOutSine;
 
-    _float   maxYawSpeedDeg = 720.f;
-    _float   maxPitchSpeedDeg = 540.f;
+    _float yawDeltaCapDeg = 720.f;
+    _float pitchDeltaCapDeg = 540.f;
 
-    _float   maxYawSpeedDegWhenColliding = 200.f;
-    _float   maxPitchSpeedDegWhenColliding = 180.f;
+    _float yawHitDeltaCapDeg = 200.f;
+    _float pitchHitDeltaCapDeg = 180.f;
 };
 
-struct OrbitCamSnapshot
+struct OrbitSnapshot
 {
-    OrbitCamPoseState        pose{};
-    OrbitLockOnState         lockOn{};
-    OrbitLockOnBlendState    lockOnBlend{};
-    OrbitAutoYawFollowState  autoYaw{};
-    OrbitTargetSwitchState   targetSwitch{};
-    OBJECT_HANDLE            targetHandle{};
+    OrbitPose       pose{};
+    OrbitLockState  lock{};
+    OrbitBlendState lockBlend{};
+    OrbitAutoYaw    autoYaw{};
+    OrbitSwitch     sw{};
+    OBJECT_HANDLE   target{};
 };
 
 NS_END

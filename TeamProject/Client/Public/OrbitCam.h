@@ -3,10 +3,6 @@
 #include "CamObject.h"
 #include "OrbitCamTypes.h"
 
-NS_BEGIN(Engine)
-class CCharacterController;
-NS_END
-
 NS_BEGIN(Client)
 
 class COrbitCam final : public CCamObject
@@ -23,108 +19,114 @@ public:
     void    Priority_Update(_float dt)  override;
 
 public:
-    void    SetTarget(OBJECT_HANDLE handle);
+    void    SetTarget(OBJECT_HANDLE h);
     void    ClearTarget();
 
     void    SyncFromCurTransform();
-    void    SnapFromCamPose(const Vector3& camPos, const Quaternion& camRot);
+    void    SnapFromCamPose(const Vector3& pos, const Quaternion& rot);
 
-    void    CaptureSnapshot(OrbitCamSnapshot& out) const;
-    void    RestoreSnapshot(const OrbitCamSnapshot& snapshot);
+    void    CaptureSnapshot(OrbitSnapshot& out) const;
+    void    RestoreSnapshot(const OrbitSnapshot& s);
 
-    void    FreezeFor(_float sec) { if (sec > m_freezeRemain) m_freezeRemain = sec; }
+    void    FreezeFor(_float sec) { if (sec > m_freeze) m_freeze = sec; }
 
-    void    SetLockOn(OBJECT_HANDLE handle);
+    void    SetLockOn(OBJECT_HANDLE h);
     void    ClearLockOn();
 
-    void    Lock_Input() { m_inputLocked = true; }
-    void    Unlock_Input() { m_inputLocked = false; }
-    _bool   IsInputLocked() const { return m_inputLocked; }
+    void    Lock_Input() { m_lockInput = true; }
+    void    Unlock_Input() { m_lockInput = false; }
+    _bool   IsInputLocked() const { return m_lockInput; }
 
-    void    SetPivotExternalOffset(const Vector3& offset) { pose.pivotExternalOffset = offset; }
-    Vector3 GetPivotExternalOffset() const { return pose.pivotExternalOffset; }
-    void    ClearPivotExternalOffset() { pose.pivotExternalOffset = Vector3::Zero; }
+    void    SetPivotExt(const Vector3& off) { m_pose.pivotExternalOffset = off; }
+    Vector3 GetPivotExt() const { return m_pose.pivotExternalOffset; }
+    void    ClearPivotExt() { m_pose.pivotExternalOffset = Vector3::Zero; }
 
-    Vector3 GetCurPivotWorld() const { return pose.curPivot; }
-    Vector3 GetBasePivotWorld() const { return GetBasePivotTargetPos(targetHandle) + pose.pivotInternalOffset; }
+    Vector3 GetPivot() const { return m_pose.pivotCurWorld; }
+    Vector3 GetBasePivot() const { return GetBasePivotTargetPos(m_target) + m_pose.pivotInternalOffset; }
 
-    _bool   IsDistConstrained() const { return m_distConstrained; }
-    _float  GetProfileOffsetY() const { return profile.offsetY; }
+    _bool   IsDistHit() const { return m_hitDist; }
+    _float  GetOffsetY() const { return m_prof.offsetY; }
 
-    OBJECT_HANDLE GetTargetHandle() const { return targetHandle; }
+    OBJECT_HANDLE GetTarget() const { return m_target; }
 
 private:
     void    ClampTargets();
 
-    Vector3 GetPivotPos()       const { return pose.curPivot; }
+    Vector3 GetPivotPos() const { return m_pose.pivotCurWorld; }
     Vector3 GetPivotTargetPos() const;
-    float   GetEffectiveDist()  const;
-    void    ApplyOrbitPose(_float dt, const OrbitLockOnEvalResult& lockRes);
+    float   GetDist() const;
+    void    ApplyPose(_float dt, const OrbitLockEval& lockRes);
 
-    Vector3 GetTargetFootPos() const;
-    Vector3 GetBasePivotTargetPos(OBJECT_HANDLE handle) const;
-
-private:
-    void    AutoYaw_OnTargetChanged();
-    void    AutoYaw_OnManualInput();
-    _float  AutoYaw_EvaluateYawAddDeg(_float dt, const Vector3& footWorld, const Vector3& camLookWorld, const Vector3& camRightWorld, _float curTargetYawDeg);
+    Vector3 GetFoot() const;
+    Vector3 GetBasePivotTargetPos(OBJECT_HANDLE h) const;
 
 private:
-    void    TargetSwitch_Reset();
-    _bool   TargetSwitch_IsActive() const { return m_targetSwitch.active; }
-    void    TargetSwitch_BeginSwitch(const Vector3& holdPivotWorld);
-    Vector3 TargetSwitch_EvaluateInternalOffset(_float dt, const Vector3& basePivotNow);
+    void    AutoYaw_OnTarget();
+    void    AutoYaw_OnInput();
+    _float  EvalAutoYaw(_float dt, const Vector3& foot, const Vector3& camLook, const Vector3& camRight, _float curYawDeg);
 
 private:
-    OrbitInputEvalResult Input_Evaluate(_float dt, _float lockOnWeight);
+    void    Switch_Reset();
+    _bool   Switch_Active() const { return m_switch.active; }
+    void    Switch_Begin(const Vector3& holdPivot);
+    Vector3 Switch_EvalOffset(_float dt, const Vector3& basePivotNow);
 
 private:
-    OrbitCollisionDistEvalResult CollisionDist_Evaluate(_float dt, const OrbitCamProfile& profile, class PxScene* scene, CCharacterController* camCC,
-        const Vector3& pivotWorld, _float wantDist, const Vector2& curRotDeg, const Vector2& targetRotDeg, _float curGoalDist);
-    _float  CollisionDist_ComputeAllowedDist(const OrbitCamProfile& profile, class PxScene* scene, CCharacterController* camCC,
-        const Vector3& pivotWorld, _float wantDist, const Vector2& curRotDeg, const Vector2& targetRotDeg);
+    OrbitInputEval   EvalInput(_float dt, _float lockW);
+    OrbitCollideEval EvalCollideDist(_float dt, const OrbitProfile& prof, class PxScene* scene, CCharacterController* camCC,
+        const Vector3& pivotWorld, _float distWanted, const Vector2& rotCurDeg, const Vector2& rotGoalDeg, _float distGoal);
+    _float           CalcAllowDist(const OrbitProfile& prof, class PxScene* scene, CCharacterController* camCC,
+        const Vector3& pivotWorld, _float distWanted, const Vector2& rotCurDeg, const Vector2& rotGoalDeg);
+    void             SmoothPose(_float dt);
 
 private:
-    void    PoseSmoother_Smooth(_float dt);
+    void          Lock_Reset();
+    _bool         Lock_Active() const { return m_lock.active; }
+    _bool         Lock_On()     const { return m_lock.active || m_lockBlend.active; }
+    OBJECT_HANDLE Lock_Handle() const { return m_lock.handle; }
+    _float        Lock_Weight() const { return m_lockBlend.weight; }
+    void          Lock_Enter(OBJECT_HANDLE h, _float curDist);
+    void          Lock_Switch(OBJECT_HANDLE h) { m_lock.handle = h; }
+    void          Lock_Exit();
+    void          Lock_Clear();         
+    void          Lock_BlendStart(_bool entering);
+    void          Lock_BlendUpdate(_float dt);
+
+    OrbitLockEval EvalLock(_float dt, _float curYawDeg, _float curDist);
 
 private:
-    void    LockOn_Reset();
-    _bool   LockOn_IsActive() const { return m_lockState.active; }
-    _bool   LockOn_IsBlending() const { return m_lockBlend.active; }
-    _bool   LockOn_IsActiveOrBlending() const { return m_lockState.active || m_lockBlend.active; }
-    OBJECT_HANDLE LockOn_GetHandle() const { return m_lockState.handle; }
-    _float  LockOn_GetWeight() const { return m_lockBlend.weight; }
-
-    void    LockOn_Enter(OBJECT_HANDLE handle, _float curTargetDist);
-    void    LockOn_Switch(OBJECT_HANDLE handle) { m_lockState.handle = handle; }
-    void    LockOn_BeginExit();
-    void    LockOn_ForceClear();
-
-    void    LockOn_StartBlend(_bool entering);
-    void    LockOn_UpdateBlend(_float dt);
-
-    OrbitLockOnEvalResult LockOn_Evaluate(_float dt, _float curTargetYawDeg, _float curTargetDist);
+    _bool         SkipUpdate(_float dt);
+    void          UpdateSwitch(_float dt);
+    void          ApplyInput(_float dt);
+    OrbitLockEval ApplyLock(_float dt);
+    void          ApplyAutoYaw(_float dt, const OrbitLockEval& lockRes);
+    void          ApplyCollide(_float dt);
 
 private:
-    OrbitCamPoseState          pose{};
-    OrbitCamInputState         input{};
-    OrbitCamProfile            profile{};
+    void    SyncPivot();
+    void    CalcRotDeg(const Vector3& lookDir, Vector2& outRotDeg) const;
+    void    GetBasePivot(const OBJECT_HANDLE& h, Vector3& outFootWorld, Vector3& outBasePivotWorld) const;
+    void    SnapPose(const Vector3& camPos, const Quaternion& camRot, const Vector3& basePivotWorld);
 
-    OrbitLockOnState           m_lockState{};
-    OrbitLockOnBlendState      m_lockBlend{};
-    Vector3                    m_lockFocusPos{};
-    _bool                      m_lockHasFocusPos = false;
+private:
+    OrbitPose     m_pose{};
+    OrbitInput    m_input{};
+    OrbitProfile  m_prof{};
 
-    OrbitAutoYawFollowState    m_autoYaw{};
-    OrbitTargetSwitchState     m_targetSwitch{};
+    OrbitLockState   m_lock{};
+    OrbitBlendState  m_lockBlend{};
+    Vector3          m_lockFocus{};
+    _bool            m_hasLockFocus = false;
 
-    OBJECT_HANDLE              targetHandle{};
+    OrbitAutoYaw  m_autoYaw{};
+    OrbitSwitch   m_switch{};
+    OBJECT_HANDLE m_target{};
 
-    _float                     m_curMaxYawSpeedDeg = 720.f;
-    _float                     m_curMaxPitchSpeedDeg = 540.f;
-    _float                     m_freezeRemain = 0.f;
-    _bool                      m_distConstrained = false;
-    _bool                      m_inputLocked = false;
+    _float  m_yawDeltaCapDeg   = 720.f;
+    _float  m_pitchDeltaCapDeg = 540.f;
+    _float  m_freeze           = 0.f;
+    _bool   m_hitDist          = false;
+    _bool   m_lockInput        = false;
 
 public:
     static  COrbitCam* Create();
