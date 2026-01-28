@@ -7,6 +7,7 @@
 #include "ObjectContainer.h"
 #include "Sprite2D.h"
 #include "UIDirector.h"
+#include "UI_Lottery.h"
 
 HRESULT CUI_ScratchCard::Initialize_Prototype()
 {
@@ -19,6 +20,10 @@ HRESULT CUI_ScratchCard::Initialize_Prototype()
 
 HRESULT CUI_ScratchCard::Initialize(INIT_DESC* pArg)
 {
+    SCRATCH_DESC* pDesc = static_cast<SCRATCH_DESC*>(pArg);
+    m_pState = pDesc->pState;
+    m_onScratchCompleted = pDesc->onScratchCompleted;
+
     __super::Initialize(pArg);
 
     // JSON 로드
@@ -71,15 +76,19 @@ void CUI_ScratchCard::Update(_float dt)
 
     // 스크래치가 ~퍼센트 이상이면 상태 변경
     if (!m_isScratchComplete && Check_Scratch(dt))
+    {
         m_isScratchComplete = true;
+        if (m_onScratchCompleted)
+            m_onScratchCompleted(); 
+    } 
 
     // 스크래치가 완료되고, 결과를 한 번 보여줌
     if(m_isScratchComplete && !m_hasShownResult)
-    {
+    { 
         m_fResultWaitTime += dt;
         
         if (m_fResultWaitTime >= m_fResultWaitDuration)
-        {
+        { 
             UIDirector()->Show_ResultBanner(REWARD_TEXTURES[0], L"1234", L"보상 아이템 이름");
             m_hasShownResult = true;
         }
@@ -107,7 +116,8 @@ void CUI_ScratchCard::UI_Active(void* pArg)
 {
     Change_State(STATE::VISIBLE);
 
-    Reset();
+    if(*m_pState == CUI_Lottery::STATE::READY)
+        Reset();
 }
 
 void CUI_ScratchCard::UI_DeActive(void* pArg)
