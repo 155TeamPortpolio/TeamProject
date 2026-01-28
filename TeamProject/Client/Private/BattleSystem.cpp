@@ -368,11 +368,6 @@ void CBattleSystem::SetPlayer(vector<OBJECT_HANDLE> hPlayers)
 	}
 }
 
-void CBattleSystem::SetBattleCharacters(vector<CHARACTER> battleCharacters)
-{
-	m_pBattlePlayer->SetBattleCharacters(battleCharacters);
-}
-
 void CBattleSystem::TakeAreaDamage(const _float3& vCenter, _float fRadius, const HitDesc& hitDesc)
 {
 	_float fRadiusSq = fRadius * fRadius;
@@ -419,7 +414,6 @@ void CBattleSystem::ClearBattleStage()
 		Pair.second.clear();
 	}
 
-	m_SpawnerHandles.clear();
 	m_BattleFieldData = {};
 }
 

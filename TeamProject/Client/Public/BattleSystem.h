@@ -43,14 +43,12 @@ public: //setter
 
 	// 플레이어(캐릭터들) 로직 정해지기 전까지 임시
 	void	SetPlayer(vector<OBJECT_HANDLE> hPlayers);
-	void	SetBattleCharacters(vector<CHARACTER> battleCharacters);
 	void	SetBattlePlayer(class CBattlePlayer* pBattlePlayer) { m_pBattlePlayer = pBattlePlayer; }
 
 public:
 	// 기믹 성공 시 호출 함수(Evade, 지원공격 등)
 	void	StartGimmick(BATTLE_VFX_TYPE eVFXType);
-	void	
-		StartTimeScale(BATTLE_OBJ_TYPE eObjType, 
+	void	StartTimeScale(BATTLE_OBJ_TYPE eObjType, 
 			_float fDuration, 
 			_float fScale, 
 			_float fStartLerpTime = 0.f, 
