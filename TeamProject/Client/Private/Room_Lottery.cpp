@@ -15,22 +15,26 @@ CRoom_Lottery::CRoom_Lottery(const ROOM_DESC& desc)
 
 void CRoom_Lottery::Enter()
 {
-	FieldSystem()->GetFieldPlayer()->Lock_Input();
+	auto pFieldPlayer = FieldSystem()->GetFieldPlayer();
+	pFieldPlayer->Lock_Input();
+	pFieldPlayer->DeActive_Field();
 
 	CamDirector()->SetSpaceRef(FieldSystem()->GetInteractHandle());
 	CamDirector()->RequestSequence("Field/Howl");
+
 	UIDirector()->Hide_HUD(CUIDirector::HUD::FIELD);
 	UIDirector()->Show_Lottery();
-
-	//camera in
 }
 
 void CRoom_Lottery::Exit()
 {
-	FieldSystem()->GetFieldPlayer()->UnLock_Input();
+	auto pFieldPlayer = FieldSystem()->GetFieldPlayer();
+	pFieldPlayer->UnLock_Input();
+	pFieldPlayer->Active_Field();
 
 	CamDirector()->SetSpaceRef(CamDirector()->GetCurHandle());
 	CamDirector()->RequestSequence("Field/Back");
+	
 	UIDirector()->Show_HUD(CUIDirector::HUD::FIELD);
 	UIDirector()->Hide_Lottery();
 }
