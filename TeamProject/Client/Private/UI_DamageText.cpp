@@ -41,7 +41,7 @@ namespace
     constexpr _float kAlphaOutSecRatio = 0.5f;
     constexpr _float kAlphaInSecRatio  = 0.45f;
 
-    constexpr _float kScaleStart = 1.75f;
+    constexpr _float kScaleStart = 1.3f;
     constexpr _float kScaleHold  = 0.55f;
     constexpr _float kScaleEnd   = 0.3f;
 
@@ -249,8 +249,6 @@ void CUI_DamageText::UI_Active(void* arg)
 
     SetDamage(desc->damage);
 }
-
-
 
 void CUI_DamageText::UI_DeActive(void* arg)
 {
