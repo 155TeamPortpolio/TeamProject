@@ -22,7 +22,7 @@ public:
 	virtual void    Render_GUI()                     override { __super::Render_GUI(); }
 
 private:
-	CUI_Object*		m_pChildren[ENUM(CHILD::END)];
+	CUI_Object*		m_pChildren[ENUM(CHILD::END)] = {};
 
 	const _float2	m_vOffset = { 91.f, 116.f };
 

@@ -57,8 +57,8 @@ HRESULT CUI_MeshPyramid::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
 
-	ResourceManager()->Add_ResourcePath("pyramid.model", "../bin/Resources/UI/Model/UI_3DPyramid/pyramid.model");
-	ResourceManager()->Add_ResourcePath("pyramid.mat", "../bin/Resources/UI/Model/UI_3DPyramid/pyramid.mat");
+	ResourceManager()->Add_ResourcePath("pyramid.model", "../bin/Resources/Global/UI/Model/UI_3DPyramid/pyramid.model");
+	ResourceManager()->Add_ResourcePath("pyramid.mat", "../bin/Resources/Global/UI/Model/UI_3DPyramid/pyramid.mat");
 	Add_Component<CStaticModel>()->Link_Model(G_GlobalLevelKey, "pyramid.model");
 	Add_Component<CMaterial>()->Link_Material(G_GlobalLevelKey, "pyramid.mat");
 
