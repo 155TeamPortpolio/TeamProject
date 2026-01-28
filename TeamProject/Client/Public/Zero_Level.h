@@ -10,7 +10,6 @@ class CCamDirector;
 class CZero_Level : public CLevel
 {
 public:
-	enum class StageType {Normal, Elite, Boss};
 	typedef struct tagStageContext {
 		_bool isFirstIn = {};
 		StageType eStageType;
