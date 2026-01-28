@@ -62,6 +62,8 @@ HRESULT CDialogueNpc::Initialize(INIT_DESC* pArg)
 
 void CDialogueNpc::Awake()
 {
+    __super::Awake();
+
     m_DiagloueData = CDataBase::GetInstance()->GetNpcIDData(m_strName);
     Add_NameIndicator();
 }

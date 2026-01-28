@@ -54,6 +54,10 @@ public:
 
     OBJECT_HANDLE GetTargetHandle() const { return targetHandle; }
 
+    virtual void OnTriggerEnter(CGameObject* pOther) override;
+    virtual void OnTriggerStay(CGameObject* pOther) override;
+    virtual void OnTriggerExit(CGameObject* pOther) override;
+
 private:
     void    ClampTargets();
 

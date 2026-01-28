@@ -159,8 +159,8 @@ void CCamDirector::UpdateInput(_float dt)
     const _int damage = Helper::Get_Random_Int(1000, 10000);
 
     if (InputDevice()->Key_Down(VK_F3))
-        //      RequestSequence("Field/Front");
-        GetCharacter()->Take_Damage(DAMAGE_TYPE::NORMAL, damage);
+              RequestSequence("Field/Front");
+        //GetCharacter()->Take_Damage(DAMAGE_TYPE::NORMAL, damage);
 }
 
 void CCamDirector::AbortSequenceToOrbit(_bool resetTime)
