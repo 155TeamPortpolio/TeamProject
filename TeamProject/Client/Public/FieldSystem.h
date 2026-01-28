@@ -38,7 +38,7 @@ public:
 	void Update();
 
 public:
-	void	SetActive(_bool is) { m_isActive = is; }
+	void	SetActive(_bool is);
 	_bool	IsActive() const { return m_isActive; }
 	
 public:
