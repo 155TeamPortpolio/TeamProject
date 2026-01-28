@@ -65,9 +65,21 @@ PlayerLVDesc CDataBase::GetLevelDesc(_uint lv)
 
 MonsterCreationDesc CDataBase::GetMonsterDesc(const string& strName)
 {
-	auto iter = m_MonsterCreationTables.find(strName);
-	if (iter == m_MonsterCreationTables.end())
-		return MonsterCreationDesc{};
+	for (auto& Table : m_MonsterCreationTables) {
+		if (Table.second.ProtoTag == strName)
+			return Table.second;
+	}
+
+	return MonsterCreationDesc{};
+}
+
+MonsterCreationDesc CDataBase::GetMonsterDesc(_int ColonyIndex, _int MonsterID)
+{
+	_int FindIndex = ColonyIndex * 1000 + MonsterID;
+
+	auto iter = m_MonsterCreationTables.find(FindIndex);
+	if(iter == m_MonsterCreationTables.end())
+		return MonsterCreationDesc();
 
 	return iter->second;
 }
@@ -249,7 +261,7 @@ HRESULT CDataBase::LoadMonsterCreationTable(const string& csvPath)
 		desc.CCT_fRadius = CCT_fRadius;
 		desc.iMaxHP = MaxHP;
 
-		auto [iter, inserted] = m_MonsterCreationTables.emplace(desc.ProtoTag, move(desc));
+		auto [iter, inserted] = m_MonsterCreationTables.emplace(desc.MonsterID, move(desc));
 		if (false == inserted) {
 			wstring ErrorMsg = L"Duplicate MonsterKey in CSV : " + Helper::ConvertToWideString(ProtoTag);
 			MessageBox(NULL, ErrorMsg.c_str(), L"System Message", MB_OK);
@@ -266,7 +278,7 @@ HRESULT CDataBase::LoadMonsterSpawnData(const string& csvPath)
 	trim_chars = 앞 뒤 공백 제거
 	double_quote_escape = "..." 안의 쉼표 및 따옴표 처리 */
 	io::CSVReader<
-		5,
+		6,
 		io::trim_chars<' ', '\t'>,
 		io::double_quote_escape<',', '"'>
 	>in(csvPath);
@@ -278,15 +290,18 @@ HRESULT CDataBase::LoadMonsterSpawnData(const string& csvPath)
 	in.read_header(
 		io::ignore_extra_column | io::ignore_missing_column,
 		"tagArea", "StageType",
-		"Encounter", "MonsterID", "Count"
+		"Encounter",
+		"Colony", "MonsterID", "Count"
 	);
 
 	string	tagArea{}, StageType{};
-	_int	Encounter{}, MonsterID{}, Count{};
+	_int	Encounter{};
+	_int	Colony{}, MonsterID{}, Count{};
 
 	while (in.read_row(
 		tagArea, StageType,
-		Encounter, MonsterID, Count
+		Encounter,
+		Colony, MonsterID, Count
 	))
 	{
 		if (tagArea.empty())
@@ -301,6 +316,7 @@ HRESULT CDataBase::LoadMonsterSpawnData(const string& csvPath)
 		else if (StageType == "Boss")	iStageType = 2;
 
 		SPAWN_MONSTER_DESC desc{};
+		desc.Colony = Colony;
 		desc.MonsterID = MonsterID;
 		desc.Count = Count;
 
