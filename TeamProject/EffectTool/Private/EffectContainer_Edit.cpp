@@ -57,9 +57,6 @@ void CEffectContainer_Edit::Priority_Update(_float dt)
 void CEffectContainer_Edit::Update(_float dt)
 {
     //__super::Update(dt);
-	auto pBoneFollwer = Get_Component<CBoneFollower>();
-	if (pBoneFollwer)
-		pBoneFollwer->Sync_Transform(dt, m_pTransform, m_IsOnlyPosition);
 
 	if (m_IsLoop)
 		Get_Component<CObjectContainer>()->UpdateChild(dt);
@@ -74,6 +71,11 @@ void CEffectContainer_Edit::Update(_float dt)
 
 		Get_Component<CObjectContainer>()->UpdateChild(dt);
 	}
+
+
+	auto pBoneFollwer = Get_Component<CBoneFollower>();
+	if (pBoneFollwer)
+		pBoneFollwer->Sync_Transform(dt, m_pTransform, m_IsOnlyPosition);
 
 	if (m_IsBillBoard)
 	{
@@ -90,6 +92,7 @@ void CEffectContainer_Edit::Update(_float dt)
 
 		m_pTransform->Set_Look(vDir);
 	}
+
 }
 
 void CEffectContainer_Edit::Late_Update(_float dt)

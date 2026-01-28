@@ -156,7 +156,7 @@ public:
 
 private:
 	void Rotate_ToTarget(CSacrificeHand* pOwner, _float dt);
-
+	void Update_Effects(CSacrificeHand* pOwner);
 };
 
 class CSacrificeHandState_OverDrive_Release_Attack03_Phase2 : public IHState<CSacrificeHand>

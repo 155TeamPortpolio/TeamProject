@@ -526,6 +526,7 @@ void CSacrificeHandState_OverDrive_Release_Attack02_Phase2::Update(CSacrificeHan
 		pOwner->Set_DissolveState(CSacrificeHand::DISSOLVE_STATE::DISAPPEAR, 0.1f);
 
 	pOwner->Update_Dissolve(dt);
+	Update_Effects(pOwner);
 }
 
 void CSacrificeHandState_OverDrive_Release_Attack02_Phase2::Exit(CSacrificeHand* pOwner)
@@ -551,6 +552,43 @@ void CSacrificeHandState_OverDrive_Release_Attack02_Phase2::Rotate_ToTarget(CSac
 
 	_vector3 vDir = _vector3::Lerp(vCurrDir, vTargetDir, dt * 30.f);
 	pTransform->Set_Look(vDir);
+}
+
+void CSacrificeHandState_OverDrive_Release_Attack02_Phase2::Update_Effects(CSacrificeHand* pOwner)
+{
+	if (IsCrossAnimProgress(0.01f))
+	{
+		auto pAnimator = pOwner->Get_Component<CAnimator3D>();
+
+		auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_hand_overdrive_attack2_light.json")
+			.Build("Sacrifice_Hand_Overdrive_Attack2_Light");
+
+		effect->AttachBone(pAnimator, "Ctr_HSword");
+
+		ObjectManager()->Add_Object(effect, { "Zero_Level","Enemy_Effect_Layer" });
+	}
+
+	/* Hand Up, Down */
+	if (IsCrossAnimProgress(0.25f))
+	{
+		auto pTransform = pOwner->Get_Component<CTransform>();
+
+		_vector3 vWorldPosition = _vector3::Transform(_vector3(0.f, 16.f, 6.f), pTransform->Get_WorldMatrix());
+		auto effectUp = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_hand_overdrive_attack2_up.json")
+			.Position(vWorldPosition)
+			.Build("Sacrifice_Hand_Overdrive_Attack2_Up");
+
+		vWorldPosition = pTransform->Get_WorldPos();
+		auto effectDown = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_hand_overdrive_attack2_down.json")
+			.Position(vWorldPosition)
+			.Build("Sacrifice_Hand_Overdrive_Attack2_Down");
+
+		ObjectManager()->Add_Object(effectUp, { "Zero_Level","Enemy_Effect_Layer" });
+		ObjectManager()->Add_Object(effectDown, { "Zero_Level","Enemy_Effect_Layer" });
+	}
 }
 
 void CSacrificeHandState_OverDrive_Release_Attack03_Phase2::Enter(CSacrificeHand* pOwner)
