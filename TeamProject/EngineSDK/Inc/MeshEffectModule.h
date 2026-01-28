@@ -92,3 +92,12 @@ typedef struct tagDistortionModule
 	_float fDistortionTilling{};
 	_float2 vDistortionUVSpeed{};
 }DISTORTION_MODULE;
+
+typedef struct tagGradientModule
+{
+	enum class GRADIENT_MODE :_uint { GRAY_SCALE, UV_X, UV_Y, LIFE_TIME, END };
+
+	_float fEnableGradient{};
+	GRADIENT_MODE eGradientMode = GRADIENT_MODE::GRAY_SCALE;
+
+}GRADIENT_MODULE;

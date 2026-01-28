@@ -119,6 +119,7 @@ void CMeshNode_Edit::Import(nlohmann::ordered_json& json)
 	m_MaskTextureTagA = json.value("mask_texture_tag", "");
 	m_MaskTextureTagB = json.value("mask_texture_tagB", "");
 	m_DistortionTextureTag = json.value("distortion_texture_tag", "");
+	m_GradientTextureTag = json.value("gradient_texture_tag", "");
 
 	/* Texture Slot Module */
 	m_TextureSlotModule.eSamplerMode = static_cast<TEXTURE_SLOT_MODULE::SAMPLER_MODE>(json.value("sampler_mode", 0));
@@ -196,6 +197,10 @@ void CMeshNode_Edit::Import(nlohmann::ordered_json& json)
 	auto distortionUVSpeed = json.value("distortion_uvspeed", json::array({ 0.f,0.f }));
 	m_DistortionModule.vDistortionUVSpeed = _float2(distortionUVSpeed[0], distortionUVSpeed[1]);
 
+	/* Gradient Module */
+	m_GradientModule.fEnableGradient = json.value("enable_gradient", 0.f);
+	m_GradientModule.eGradientMode = static_cast<GRADIENT_MODULE::GRADIENT_MODE>(json.value("gradient_mode", 0));
+
 	{
 		m_SetMaterial = true;
 
@@ -240,6 +245,12 @@ void CMeshNode_Edit::Import(nlohmann::ordered_json& json)
 			pMaterialInstance->Set_Param("DistortionTexture", { pDistortionTexture->Get_SRV(),"Texture2D",0 });
 		}
 
+		if (!m_GradientTextureTag.empty())
+		{
+			auto pGradientTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_GradientTextureTag);
+			pMaterialInstance->Set_Param("GradientTexture", { pGradientTexture->Get_SRV(),"Texture2D",0 });
+		}
+
 		m_SetMaterial = true;
 	}
 
@@ -279,6 +290,7 @@ void CMeshNode_Edit::Export(nlohmann::ordered_json& json)
 		{"mask_texture_tag",m_MaskTextureTagA},
 		{"mask_texture_tagB",m_MaskTextureTagB},
 		{"distortion_texture_tag",m_DistortionTextureTag},
+		{"gradient_texture_tag",m_GradientTextureTag},
 
 		/* Offset Transform */
 		{"offset_position",json::array({vOffsetPosition.x,vOffsetPosition.y,vOffsetPosition.z})},
@@ -350,7 +362,11 @@ void CMeshNode_Edit::Export(nlohmann::ordered_json& json)
 		{"enable_distortion", m_DistortionModule.fEnableDistortion},
 		{"distortion_strength", m_DistortionModule.fDistortionStrength},
 		{"distortion_tilling",m_DistortionModule.fDistortionTilling},
-		{"distortion_uvspeed",json::array({m_DistortionModule.vDistortionUVSpeed.x,m_DistortionModule.vDistortionUVSpeed.y})}
+		{"distortion_uvspeed",json::array({m_DistortionModule.vDistortionUVSpeed.x,m_DistortionModule.vDistortionUVSpeed.y})},
+
+		/* Gradient */
+		{"enable_gradient",m_GradientModule.fEnableGradient},
+		{"gradient_mode",ENUM(m_GradientModule.eGradientMode)}
 	};
 }
 
@@ -425,70 +441,6 @@ void CMeshNode_Edit::SetMesh()
 	}
 }
 
-_bool CMeshNode_Edit::ChangeEaseType(EaseType& ioValue, EaseType shownValue)
-{
-	_bool changed = false;
-
-	auto Pick = [&](EaseType v)
-		{
-			const bool selected = (shownValue == v);
-			if (ImGui::Selectable(Helper::EnumLabel<EaseType>(v), selected))
-			{
-				ioValue = v;
-				changed = true;
-			}
-			if (selected) ImGui::SetItemDefaultFocus();
-		};
-
-	Pick(EaseType::None);
-
-	ImGui::SeparatorText("A. Stable");
-	Pick(EaseType::InOutSine);
-	Pick(EaseType::OutCubic);
-	Pick(EaseType::InOutCubic);
-	Pick(EaseType::OutSine);
-	Pick(EaseType::InOutQuad);
-
-	ImGui::SeparatorText("B. Ease In");
-	Pick(EaseType::InSine);
-	Pick(EaseType::InCubic);
-	Pick(EaseType::InQuad);
-	Pick(EaseType::InCirc);
-
-	ImGui::SeparatorText("C. Settle / Stop");
-	Pick(EaseType::InOutCirc);
-	Pick(EaseType::OutCirc);
-	Pick(EaseType::OutQuad);
-
-	ImGui::SeparatorText("D. Strong");
-	Pick(EaseType::InQuart);
-	Pick(EaseType::InQuint);
-	Pick(EaseType::InOutQuart);
-	Pick(EaseType::OutQuart);
-	Pick(EaseType::InOutQuint);
-	Pick(EaseType::OutQuint);
-
-	ImGui::SeparatorText("E. Extreme");
-	Pick(EaseType::InOutExpo);
-	Pick(EaseType::OutExpo);
-	Pick(EaseType::InExpo);
-
-	ImGui::SeparatorText("F. Overshoot");
-	Pick(EaseType::OutBack);
-	Pick(EaseType::InOutBack);
-	Pick(EaseType::InBack);
-
-	ImGui::SeparatorText("G. Special");
-	Pick(EaseType::OutElastic);
-	Pick(EaseType::InOutElastic);
-	Pick(EaseType::InElastic);
-	Pick(EaseType::OutBounce);
-	Pick(EaseType::InOutBounce);
-	Pick(EaseType::InBounce);
-
-	return changed;
-}
-
 void CMeshNode_Edit::SetUp_MeshEffect()
 {
 	_bool isDirty = false;
@@ -511,6 +463,8 @@ void CMeshNode_Edit::SetUp_MeshEffect()
 		Add_Texture(EFFECT_TEXTURE_TYPE::MASK_B);
 	if (ImGui::Button("Add Distortion Texture"))
 		Add_Texture(EFFECT_TEXTURE_TYPE::DISTORTION);
+	if (ImGui::Button("Add Gradient Texture"))
+		Add_Texture(EFFECT_TEXTURE_TYPE::GRADIENT);
 
 	if (ImGui::CollapsingHeader("Texture Slot Module"))
 	{
@@ -635,6 +589,15 @@ void CMeshNode_Edit::SetUp_MeshEffect()
 		ImGui::DragFloat("Distortion Tilling", &m_DistortionModule.fDistortionTilling);
 		ImGui::DragFloat2("Distortion UVSpeed", &m_DistortionModule.vDistortionUVSpeed.x);
 	}
+
+	if (ImGui::CollapsingHeader("Gradient Module"))
+	{
+		_bool enableGradient = m_GradientModule.fEnableGradient > 0.5f ? 1.f : 0.f;
+		if (ImGui::Checkbox("Enable Gradient", &enableGradient))
+			m_GradientModule.fEnableGradient = enableGradient ? 1.f : 0.f;
+
+		Helper::DrawEnumCombo("Gradient Mode", m_GradientModule.eGradientMode, 100.f);
+	}
 }
 
 void CMeshNode_Edit::Add_Texture(EFFECT_TEXTURE_TYPE type)
@@ -687,6 +650,14 @@ void CMeshNode_Edit::Add_Texture(EFFECT_TEXTURE_TYPE type)
 
 			auto pDistortionTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_DistortionTextureTag);
 			pMaterialInstance->Set_Param("DistortionTexture", { pDistortionTexture->Get_SRV(),"Texture2D",0 });
+		}break;
+		case EFFECT_TEXTURE_TYPE::GRADIENT:
+		{
+			m_GradientTextureTag = m_pContext->TextureTags[0];
+
+			auto pGradientTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_GradientTextureTag);
+			pMaterialInstance->Set_Param("GradientTexture", { pGradientTexture->Get_SRV(),"Texture2D",0 });
+
 		}break;
 		default:
 			break;
