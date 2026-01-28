@@ -32,6 +32,7 @@ HRESULT CUI_Lottery::Initialize(INIT_DESC* pArg)
     {
         Get_Component<CObjectContainer>()->Add_Child(pObj);
         m_pChildren[ENUM(CHILD::NEWSPAPER)] = pObj;
+        Get_Component<CObjectContainer>()->Set_Order_First(pObj);
     }
 
     CUI_ScratchCard::SCRATCH_DESC* pDesc = new CUI_ScratchCard::SCRATCH_DESC;
@@ -134,8 +135,11 @@ void CUI_Lottery::OnClick_Back()
     Set_ChildAnimation(CHILD::OVERLAY_BACK, 0);
     Set_ChildAnimation(CHILD::ICON_BACK, 0);
 
-    if (Is_ChildAlive(CHILD::SCRATCH))
+    if (Is_ChildAlive(CHILD::SCRATCH)) 
+    {
+        Set_ChildAnimation(CHILD::OVERLAY, 1);
         Set_ChildUIDeActive(CHILD::SCRATCH);
+    }
     else
         FieldSystem()->RequestExitTop();
 }
@@ -150,6 +154,7 @@ void CUI_Lottery::OnClick_RefreshNews()
 
 void CUI_Lottery::OnClick_OpenScratch()
 {
+    Set_ChildAnimation(CHILD::OVERLAY, 0);
     Set_ChildUIActive(CHILD::SCRATCH);
 }
 
