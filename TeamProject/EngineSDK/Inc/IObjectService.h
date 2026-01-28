@@ -19,7 +19,7 @@ public:
 	virtual void Remove_Object(class CGameObject* object) PURE;
 	virtual void Change_Layer(const LAYER_DESC& SrcLayer, class CGameObject* object, const LAYER_DESC& DstLayer) PURE;
 	virtual class CGameObject* Request_Object(const OBJECT_HANDLE& handle) PURE;
-	virtual class CGameObject* Acquire(const CLONE_DESC& desc,INIT_DESC* pArg) PURE;
+	virtual class CGameObject* Acquire(const CLONE_DESC& desc, INIT_DESC* pArg, _bool& outFirst) PURE;
 
 	virtual const unordered_map<string, class CLayer*>& Get_LevelLayer(const string& LevelTag)PURE;
 	virtual  CLayer* Get_Layer(const LAYER_DESC& SrcLayer) PURE;

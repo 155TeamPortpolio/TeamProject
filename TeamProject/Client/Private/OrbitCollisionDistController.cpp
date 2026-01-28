@@ -54,7 +54,7 @@ _float COrbitCollisionDistController::ComputeAllowedDist(const OrbitCamProfile& 
     PxSphereGeometry geom(camRadius);
 
     PxQueryFilterData filterData;
-    filterData.flags = PxQueryFlag::eSTATIC | PxQueryFlag::ePREFILTER;
+    filterData.flags =/* PxQueryFlag::eSTATIC |*/ PxQueryFlag::ePREFILTER;
 
     CRaycastFilterCallback filterCallback(camCC->Get_CollisionMask(), false);
 

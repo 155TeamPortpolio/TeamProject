@@ -82,6 +82,28 @@
           "prefabPath" : ""
         }
       ]
+    },
+
+    "MainCity_Level": {
+      "objects": [
+        {
+          "prototypeTag": "Proto_GameObject_FieldHUD",
+          "instanceName": "hud_field",
+          "prefabPath" : ""
+        },
+        
+        {
+          "prototypeTag": "Proto_GameObject_Lottery",
+          "instanceName": "lottery",
+          "prefabPath" : ""
+        },
+        
+        {
+          "prototypeTag": "Proto_GameObject_ResultBanner",
+          "instanceName": "result_banner",
+          "prefabPath" : ""
+        }
+      ]
     }
   }
 }

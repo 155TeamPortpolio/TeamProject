@@ -152,6 +152,11 @@ void CUI_AtlasSprite::Update_SizeByHeight()
     Set_Size({m_heightPx * aspect, m_heightPx});
 }
 
+void CUI_AtlasSprite::OnPooledAcquire(INIT_DESC* pArg)
+{
+    Initialize(pArg);
+}
+
 CGameObject* CUI_AtlasSprite::Create()
 {
     auto inst = new CUI_AtlasSprite();

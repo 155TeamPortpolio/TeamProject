@@ -150,7 +150,6 @@ string CCamDirector::ResolveSeqKey(CamSeqType type) const
 
 void CCamDirector::UpdateInput(_float dt)
 {
-
     if (InputDevice()->Key_Tap(VK_F1))
         CameraManager()->Set_MainCam(GetFreeCamComp(), 0.5f);
 

@@ -8,7 +8,7 @@ CUI_Pool::CUI_Pool()
 {
 }
 
-CUI_Object* CUI_Pool::Acquire(const CLONE_DESC& cloneDesc, INIT_DESC* pArg)
+CUI_Object* CUI_Pool::Acquire(const CLONE_DESC& cloneDesc, INIT_DESC* pArg, _bool& outFirst)
 {
     auto& freeList = m_FreeByProto[cloneDesc.protoTag];
 
@@ -23,7 +23,7 @@ CUI_Object* CUI_Pool::Acquire(const CLONE_DESC& cloneDesc, INIT_DESC* pArg)
         PrototypeManager()->Clone_Prototype(
             cloneDesc.OriginLevel, cloneDesc.protoTag, pArg);
     CUI_Object* UIObj = dynamic_cast<CUI_Object*>(newObj);
-
+    outFirst = true;
     UIObj->Set_PoolKey(cloneDesc);
 
     return UIObj;

@@ -39,7 +39,7 @@ HRESULT CPhysicsSystem::Initialize()
     if (!m_pFoundation) return E_FAIL;
 
     // PVD (Visual Debugger) 설정
-#ifdef _DEBUG 
+#ifdef _PHYSICS_DEBUG 
     // PVD 생성
     m_pPvd = PxCreatePvd(*m_pFoundation);
     // PVD 연결 (로컬호스트, 포트 5425, 타임아웃 10ms)
@@ -80,7 +80,7 @@ HRESULT CPhysicsSystem::Initialize()
     sceneDesc.flags |= PxSceneFlag::eENABLE_STABILIZATION;
     sceneDesc.ccdMaxPasses = 4;
     sceneDesc.bounceThresholdVelocity = 0.2f * 9.81f;  // 중력 기반
-#ifdef _DEBUG
+#ifdef _PHYSICS_DEBUG
     // 디버그 모드일 때 씬 정보를 PVD로 전송
     if (m_pPvd->isConnected())
     {
@@ -95,7 +95,7 @@ HRESULT CPhysicsSystem::Initialize()
     m_pScene = m_pPhysics->createScene(sceneDesc);
     if (!m_pScene) return E_FAIL;
 
-#ifdef _DEBUG
+#ifdef _PHYSICS_DEBUG
     // Scene의 PVD 플래그
     PxPvdSceneClient* pvdClient = m_pScene->getScenePvdClient();
     if (pvdClient)

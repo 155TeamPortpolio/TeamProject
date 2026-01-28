@@ -37,6 +37,9 @@ public:
 
 	void Request_DamageText(const DAMAGE_DESC& desc);
 
+	void Show_Lottery();
+	void Hide_Lottery();
+
 	/* 결과 배너를 띄움 */
 	void Show_ResultBanner(const string& strTextureKey, const _wstring& wstrText1, const _wstring& wstrText2);
 

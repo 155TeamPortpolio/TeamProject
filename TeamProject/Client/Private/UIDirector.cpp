@@ -58,6 +58,16 @@ void CUIDirector::Request_DamageText(const DAMAGE_DESC& desc)
 	UIManager()->Add_UIObject(dmgText, levelKey);
 }
 
+void CUIDirector::Show_Lottery()
+{
+	UI_Active("lottery");
+}
+
+void CUIDirector::Hide_Lottery()
+{
+	UI_DeActive("lottery");
+}
+
 void CUIDirector::Show_ResultBanner(const string& strTextureKey, const _wstring& wstrText1, const _wstring& wstrText2)
 {
 	CUI_ResultBanner::RESULT_DESC desc = {};
