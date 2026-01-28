@@ -223,6 +223,11 @@ void CStage::BossIntro(CZero_Level::StageContext& context)
 				//return !CamDirector()->IsPlaying(CamSeqType::ZeroIntro);
 				return !CamDirector()->IsPlaying(CamSeqType::BattleIntro);
 			});
+		m_introFlow.AddOnce(seqId, [context]() {if (context.isFirstIn)
+		{
+			CUIDirector::GetInstance()->Show_HUD(CUIDirector::HUD::BATTLE);
+		}
+			});
 		m_introFlow.EndSequence(seqId);
 	}
 

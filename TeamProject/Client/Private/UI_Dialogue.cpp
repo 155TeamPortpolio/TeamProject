@@ -42,6 +42,7 @@ void CUI_Dialogue::Change_Dialogue()
 
 void CUI_Dialogue::Change_Dialogue(ChoiceDesc desc)
 {
+    m_tChoiceDesc = desc;
     // 선택 결과가 대화 종료를 의미하는 경우
     if (desc.Next_SequeceID == 0)
     {
@@ -127,12 +128,16 @@ void CUI_Dialogue::Update(_float dt)
         Is_ChildAnimFinished(CHILD::MESSAGE) && 
         Is_ChildAnimFinished(CHILD::CHOICE))
     {
+        Set_Alive(false);
+
+        // choice 결과가 room 이 true 면 언락, 필드 hud 띄우기 아무것도 하지 않기
+        if (Is_RoomChoiceTrue())
+            return;
+
         // 플레이어 입력 언락
         if (auto pPlayer = dynamic_cast<CPlayer*>(ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Player))))
            pPlayer->Unlock_Input();
-        CUIDirector::GetInstance()->Show_HUD(CUIDirector::HUD::FIELD);
-        CUIDirector::GetInstance()->Show_HUD(CUIDirector::HUD::BATTLE);
-        Set_Alive(false);
+        CUIDirector::GetInstance()->Show_HUD(CUIDirector::HUD::FIELD); 
         return;
     } 
 
@@ -164,6 +169,17 @@ void CUI_Dialogue::Bind_EventListener()
             if (auto pPlayer = dynamic_cast<CPlayer*>(ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Player))))
                 pPlayer->Lock_Input();
         });
+}
+
+_bool CUI_Dialogue::Is_RoomChoiceTrue() const
+{
+    if (m_tChoiceDesc.ValueName != "Room")
+        return false;
+
+    if (auto pValue = get_if<_bool>(&m_tChoiceDesc.Value))
+        return *pValue;
+
+    return false;
 }
 
 void CUI_Dialogue::Open_Dialogue(const string& strNewSequenceID, _uint iNewSequenceID)
