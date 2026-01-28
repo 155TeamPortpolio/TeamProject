@@ -50,10 +50,7 @@ public:
             
 public:           
     _uint         RequestSequence(const string& key);
-    _uint         RequestSequence(const string& key, const CamSequenceRequestDesc& req);
-    _uint         RequestSequence(const string& key, _float blendInSec, _bool resetTime, _float blendOutSec);
     _uint         RequestSequence(CamSeqType type);
-    _uint         RequestSequence(CamSeqType type, const CamSequenceRequestDesc& req);
     
     _bool         IsPlaying(const string& key)       const;
     _bool         IsPlaying(CamSeqType type)         const;
@@ -74,6 +71,9 @@ private:
     void          SyncSeqInputLock();
       
     _bool         IsValid() const { return GetPlayer()->Get_CurCharacterHandle().isValid(); }
+    _uint         RequestSequence(const string& key, const CamSequenceRequestDesc& req);
+    _uint         RequestSequence(const string& key, _float blendInSec, _bool resetTime, _float blendOutSec);
+    _uint         RequestSequence(CamSeqType type, const CamSequenceRequestDesc& req);
 
 private:
     CamDirectorSeqMap       m_seqs{};
