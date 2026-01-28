@@ -4,52 +4,63 @@
 #include "GameInstance.h"
 #include "Animator3D.h"
 
+CCorinState_NormalAttack* CCorinState_NormalAttack::Create()
+{
+    auto pInstance = new CCorinState_NormalAttack();
+    pInstance->m_pSubStateMachine = CStateMachine<CCorin>::Create();
+    auto pSubStateMachine = pInstance->Get_SubStateMachine();
+
+    pSubStateMachine->Register_State("Attack_01", CCorinState_Attack_01::Create());
+    pSubStateMachine->Register_State("Attack_02", CCorinState_Attack_02::Create());
+    pSubStateMachine->Register_State("Attack_03", CCorinState_Attack_03::Create());
+    pSubStateMachine->Register_State("Attack_04", CCorinState_Attack_04::Create());
+    pSubStateMachine->Register_State("Attack_05", CCorinState_Attack_05::Create());
+    pSubStateMachine->Register_State("Attack_End", CCorinState_Attack_End::Create());
+
+    pSubStateMachine->Get_State("Attack_End")->Set_Tag("End");
+
+    // 콤보 전이: Trigger + AnimEnd : 애니매이션중 마우스가 눌렸고 애니매이션이 끝나면 다음 재생
+    vector<CStateMachine<CCorin>::CONDITION_INFO> comboConditions;
+    comboConditions.push_back({ CStateMachine<CCorin>::CONDITION_TRIGGER, "NextCombo", 0.f });
+    comboConditions.push_back({ CStateMachine<CCorin>::CONDITION_ANIMATION_END, "", 0.f });
+
+    pSubStateMachine->Register_Transition("Attack_01", "Attack_02", comboConditions);
+    pSubStateMachine->Register_Transition("Attack_02", "Attack_03", comboConditions);
+    pSubStateMachine->Register_Transition("Attack_03", "Attack_04", comboConditions);
+    pSubStateMachine->Register_Transition("Attack_04", "Attack_05", comboConditions);
+
+    // End 전이
+    pSubStateMachine->Register_Transition("Attack_01", "Attack_End",
+        CStateMachine<CCorin>::CONDITION_ANIMATION_END);
+    pSubStateMachine->Register_Transition("Attack_02", "Attack_End",
+        CStateMachine<CCorin>::CONDITION_ANIMATION_END);
+    pSubStateMachine->Register_Transition("Attack_03", "Attack_End",
+        CStateMachine<CCorin>::CONDITION_ANIMATION_END);
+    pSubStateMachine->Register_Transition("Attack_04", "Attack_End",
+        CStateMachine<CCorin>::CONDITION_ANIMATION_END);
+    pSubStateMachine->Register_Transition("Attack_05", "Attack_End",
+        CStateMachine<CCorin>::CONDITION_ANIMATION_END);
+
+    pSubStateMachine->Set_DefaultState("Attack_01");
+
+    return pInstance;
+}
+
 void CCorinState_NormalAttack::Enter(CCorin* pOwner)
 {
     pOwner->Lock_Move();
     m_iComboIndex = 0;
 
-    if (!m_pSubStateMachine)
-    {
-        m_pSubStateMachine = CStateMachine<CCorin>::Create();
+    // 부모 상태머신에서 진입 인덱스 가져오기
+    _int iEntryIndex = m_pParentState->Get_SubStateMachine()->Get_Int("ComboEntryIndex");
+    m_pParentState->Get_SubStateMachine()->Set_Int("ComboEntryIndex", 0);
 
-        m_pSubStateMachine->Register_State("Attack_01", CCorinState_Attack_01::Create());
-        m_pSubStateMachine->Register_State("Attack_02", CCorinState_Attack_02::Create());
-        m_pSubStateMachine->Register_State("Attack_03", CCorinState_Attack_03::Create());
-        m_pSubStateMachine->Register_State("Attack_04", CCorinState_Attack_04::Create());
-        m_pSubStateMachine->Register_State("Attack_05", CCorinState_Attack_05::Create());
-        m_pSubStateMachine->Register_State("Attack_End", CCorinState_Attack_End::Create());
+    m_iComboIndex = iEntryIndex;
+    const string arrEntryStates[5] = {
+        "Attack_01", "Attack_02", "Attack_03", "Attack_04", "Attack_05"
+    };
+    m_pSubStateMachine->Set_DefaultState(arrEntryStates[iEntryIndex]);
 
-        m_pSubStateMachine->Get_State("Attack_End")->Set_Tag("End");
-
-
-        // 콤보 전이: Trigger + AnimEnd : 애니매이션중 마우스가 눌렸고 애니매이션이 끝나면 다음 재생
-        vector<CStateMachine<CCorin>::CONDITION_INFO> comboConditions;
-        comboConditions.push_back({ CStateMachine<CCorin>::CONDITION_TRIGGER, "NextCombo", 0.f });
-        comboConditions.push_back({ CStateMachine<CCorin>::CONDITION_ANIMATION_END, "", 0.f });
-
-        m_pSubStateMachine->Register_Transition("Attack_01", "Attack_02", comboConditions);
-        m_pSubStateMachine->Register_Transition("Attack_02", "Attack_03", comboConditions);
-        m_pSubStateMachine->Register_Transition("Attack_03", "Attack_04", comboConditions);
-        m_pSubStateMachine->Register_Transition("Attack_04", "Attack_05", comboConditions);
-
-
-        // End 전이
-        m_pSubStateMachine->Register_Transition("Attack_01", "Attack_End",
-            CStateMachine<CCorin>::CONDITION_ANIMATION_END);
-        m_pSubStateMachine->Register_Transition("Attack_02", "Attack_End",
-            CStateMachine<CCorin>::CONDITION_ANIMATION_END);
-        m_pSubStateMachine->Register_Transition("Attack_03", "Attack_End",
-            CStateMachine<CCorin>::CONDITION_ANIMATION_END);
-        m_pSubStateMachine->Register_Transition("Attack_04", "Attack_End",
-            CStateMachine<CCorin>::CONDITION_ANIMATION_END);
-        m_pSubStateMachine->Register_Transition("Attack_05", "Attack_End",
-            CStateMachine<CCorin>::CONDITION_ANIMATION_END);
-
-        m_pSubStateMachine->Set_DefaultState("Attack_01");
-    }
-
-    // 트리거 초기화
     m_pSubStateMachine->Reset_Trigger("NextCombo");
     __super::Enter(pOwner);
 }
@@ -184,11 +195,11 @@ void CCorinState_Attack_04::Update(CCorin* pOwner, _float dt)
         ENUM(CCorin::ROOTMOTION_MASK::MOVE) |
         ENUM(CCorin::ROOTMOTION_MASK::QUATERNION));
 
-    if (m_fAnimProgress >= 0.22f)
+    if (IsCrossAnimProgress(0.15f))
     {
-        pOwner->Begin_AttackCollider("Saw", { HIT_TYPE::COUNT, DAMAGE_TYPE::NORMAL, 1.f, 0.f, 4 });
+        pOwner->Begin_AttackCollider("Saw", { HIT_TYPE::INTERVAL, DAMAGE_TYPE::NORMAL, 1.f, 0.15f, 0});
     }
-    if (m_fAnimProgress >= 0.46f)
+    if (IsCrossAnimProgress(0.46f))
     {
         pOwner->End_AttackCollider("Saw");
     }

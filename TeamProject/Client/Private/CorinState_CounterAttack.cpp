@@ -21,6 +21,8 @@ CCorinState_CounterAttack* CCorinState_CounterAttack::Create()
 
 	pSubStateMachine->Set_DefaultState("Counter_Start");
 
+	pSubStateMachine->Set_Bool("ReserveNormal", false);
+
 	return pInstance;
 }
 
@@ -48,6 +50,16 @@ void CCorinState_CounterAttack::Update(CCorin* pOwner, _float dt)
 		}
 	}
 
+	// Explode 종료 시 NormalAttack 연계 체크
+	if (m_pSubStateMachine->Get_CurrentStateName() == "Counter_Explode" &&
+		m_pSubStateMachine->Get_Bool("ReserveNormal") &&
+		Is_AnimEnd())
+	{
+		m_pSubStateMachine->Set_Bool("ReserveNormal", false);
+		m_pParentState->Get_SubStateMachine()->Set_Trigger("ToNormalAttack");
+		return;
+	}
+
 	auto pCorinState = pOwner->Get_StateMachine();
 	if (pCorinState->Get_Bool("OutReserve"))
 	{
@@ -65,6 +77,7 @@ void CCorinState_CounterAttack::Update(CCorin* pOwner, _float dt)
 void CCorinState_CounterAttack::Exit(CCorin* pOwner)
 {
 	pOwner->Pop_Invincible();
+	pOwner->Unlock_Move();
 	__super::Exit(pOwner);
 }
 

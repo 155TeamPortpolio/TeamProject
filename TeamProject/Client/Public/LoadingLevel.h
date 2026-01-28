@@ -23,11 +23,12 @@ private:
     CGameInstance* m_pGameInstance{}; 
     _float m_leastTime = { 0.f };
 private:
-    void PreLoadLevel();
+    void PreLoadLevel(const string& levelKey);
     ResourceType CheckResourceType(const string& filePath,const string& fileName);
     _bool isSRGB(const string& filePath);
     _bool isEffect(const string& filePath);
     _bool isAnim(const string& filePath);
+
 private:
     string m_NextLevel = {};
     unordered_map<ResourceType, queue<PreloadKey>> m_LoadQue;
@@ -35,6 +36,7 @@ private:
 public:
     static CLoadingLevel* Create(const string& LevelKey);
     virtual void Free() override;
+    static _bool m_bGlobal;
 };
 
 NS_END

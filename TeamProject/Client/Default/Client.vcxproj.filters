@@ -846,6 +846,9 @@
     <Filter Include="02. GameObject\Object\Player\Character\02. Corin\State\Attack\Counter">
       <UniqueIdentifier>{24cb7830-1cbd-4738-8790-565250b7f7cd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\02. Corin\State\Attack\Assault">
+      <UniqueIdentifier>{c16121b5-d212-452e-93ac-5ce0eaf47543}</UniqueIdentifier>
+    </Filter>
     <Filter Include="03. Utility\09. Interface">
       <UniqueIdentifier>{51900e22-1c4e-4ebd-b4f6-2e6da8fde730}</UniqueIdentifier>
     </Filter>
@@ -1511,9 +1514,6 @@
     <ClInclude Include="..\Public\MapInvisibleWall.h">
       <Filter>02. GameObject\MapObject\03. MapInvisibleWall</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\ZeroStage_Normal.h">
-      <Filter>01. Level\04. Zero\Stage_Normal</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\ThugAssaulter_Hit.h">
       <Filter>02. GameObject\Object\Enemy\ThugAssaulter\State\Hit</Filter>
     </ClInclude>
@@ -1640,9 +1640,6 @@
     <ClInclude Include="..\public\UI_DamageText.h">
       <Filter>02. GameObject\UI\02. 3D\Plane\DamageText</Filter>
     </ClInclude>
-    <ClInclude Include="CDefiler.h">
-      <Filter>02. GameObject\Object\Enemy\Defiler</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\UI_Lottery.h">
       <Filter>02. GameObject\UI\01. 2D\Lottery</Filter>
     </ClInclude>
@@ -1657,6 +1654,12 @@
     </ClInclude>
     <ClInclude Include="..\Public\CorinState_CounterAttack.h">
       <Filter>02. GameObject\Object\Player\Character\02. Corin\State\Attack\Counter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CorinState_AssaultAttack.h">
+      <Filter>02. GameObject\Object\Player\Character\02. Corin\State\Attack\Assault</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ZeroStage_Normal.h">
+      <Filter>01. Level\04. Zero\Stage_Normal</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\IInteract.h">
       <Filter>03. Utility\09. Interface</Filter>
@@ -2422,9 +2425,6 @@
     <ClCompile Include="..\private\UI_DamageText.cpp">
       <Filter>02. GameObject\UI\02. 3D\Plane\DamageText</Filter>
     </ClCompile>
-    <ClCompile Include="CDefiler.cpp">
-      <Filter>02. GameObject\Object\Enemy\Defiler</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\UI_Lottery.cpp">
       <Filter>02. GameObject\UI\01. 2D\Lottery</Filter>
     </ClCompile>
@@ -2439,6 +2439,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\CorinState_CounterAttack.cpp">
       <Filter>02. GameObject\Object\Player\Character\02. Corin\State\Attack\Counter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CorinState_AssaultAttack.cpp">
+      <Filter>02. GameObject\Object\Player\Character\02. Corin\State\Attack\Assault</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
