@@ -154,7 +154,7 @@ HRESULT CTestLevel::Awake()
 	Ready_Npc();
 
 	CamDirector()->StartBattleIntro(CamSeqType::BattleIntro);
-	CUIDirector::GetInstance()->Show_SceneFrame();
+	//CUIDirector::GetInstance()->Show_SceneFrame();
 	CUIDirector::GetInstance()->Show_HUD(CUIDirector::HUD::BATTLE);
 	//GameInstance()->Set_EngineTimeScale(0.05f);
 

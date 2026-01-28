@@ -23,6 +23,15 @@ void CFieldSystem::Update()
 		m_pRoomDirector->Update();
 }
 
+void CFieldSystem::SetActive(_bool is)
+{
+	if (is == false)
+	{
+		m_pRoomDirector->ClearRooms();
+	}
+	m_isActive = is;
+}
+
 void CFieldSystem::SetFieldPlayer(CFieldPlayer* pFieldPlayer)
 {
 	if (pFieldPlayer)

@@ -9,6 +9,12 @@ NS_BEGIN(Client)
 
 class CUI_ScratchCard final : public CUI_Object
 {
+public:
+	typedef struct tagScratchDesc : public UI_DESC{
+		const _uint* pState = {};
+		function<void()>	onScratchCompleted = {};
+	}SCRATCH_DESC;
+
 private:
 	enum class STATE { INVISIBLE, VISIBLE, END };
 	enum class ANIMATION { APPEAR, DISAPPEAR, IDLE, END };
@@ -39,6 +45,10 @@ public:
 private:
 	STATE				m_eState = { STATE::END };
 
+	/* 부모 (UI_Lottery)의 상태와 콜백함수 */
+	const _uint*		m_pState = {};
+	function<void()>	m_onScratchCompleted = {};	// 부모의 used state로 대체해도 될 것 같음
+
 	CUI_Object*			m_pChildren[ENUM(CHILD::END)] = {};
 	class CSprite2D*	m_pSprites[ENUM(CHILD::END)] = {};
 
@@ -52,12 +62,12 @@ private:
 	_bool				m_isScratchComplete = {};	// 스크래치 완료
 	_float				m_fScratchTimer = {};		// 스크래치 확인 타이머
 	const _float	    m_fScratchDuration = { 1.f }; // 스크래치 확인 시간 간격
-	const _float		m_fScratchRatio = { 0.3f };	// 스크래치 정도
+	const _float		m_fScratchRatio = { 0.4f };	// 스크래치 정도
 
 	/* 결과배너 관련 변수들 */
 	_bool				m_hasShownResult = {};		// 결과 배너를 보여줌
 	_float				m_fResultWaitTime = {};		// 결과 배너 타이머
-	const _float		m_fResultWaitDuration = { 1.f };	// 결과 배너 몇 초 후에
+	const _float		m_fResultWaitDuration = { 1.f };	// 결과 배너 몇 초 후에	 
 
 private:
 	void Cache();

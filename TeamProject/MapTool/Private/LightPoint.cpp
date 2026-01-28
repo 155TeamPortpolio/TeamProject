@@ -31,10 +31,6 @@ HRESULT CLightPoint::Initialize_Prototype()
 	auto pMaterial = Get_Component<CMaterial>();
 	pMaterial->Link_Material(G_GlobalLevelKey, "Default.mat");
 
-	Get_Component<CTransform>()->Scale({0.3f, 0.3f, 0.3f});
-	Get_Component<CCollider>()->Set_ColliderColor({1.f, 1.f, 1.f, 1.f});
-	Get_Component<CLight>()->Set_Desc(m_LightDesc, m_LightType);
-
 	return S_OK;
 }
 
@@ -43,6 +39,13 @@ HRESULT CLightPoint::Initialize(INIT_DESC* pArg)
 	__super::Initialize(pArg);
 
 	Get_Component<CCollider>()->Set_MapToolMode(true);
+	Get_Component<CTransform>()->Scale({ 0.3f, 0.3f, 0.3f });
+	Get_Component<CCollider>()->Set_Size({ 0.3f, 0.3f, 0.3f });
+	Get_Component<CCollider>()->Set_ColliderColor({ 1.f, 1.f, 1.f, 1.f });
+
+	LIGHT_DESC Desc;
+
+	Get_Component<CLight>()->Set_Desc(Desc, Desc.eType);
 
 	return S_OK;
 }

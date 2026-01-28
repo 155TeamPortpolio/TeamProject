@@ -47,26 +47,24 @@ void CUI_Decibel::Update(_float dt)
 
 void CUI_Decibel::Ready_PartObjects()
 {
-    const string& strLevelKey = CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey();\
-
     CUI_DecibelPts::PTS_DESC* pPts = new CUI_DecibelPts::PTS_DESC;
     pPts->pColor = &m_vColor;
-    Attach_Child(strLevelKey, "Proto_GameObject_DecibelPts", "decibelPts", pPts,CHILD::PTS);
+    Attach_Child(G_GlobalLevelKey, "Proto_GameObject_DecibelPts", "decibelPts", pPts,CHILD::PTS);
 
     CUI_DecibelText::TEXT_DESC* pText = new CUI_DecibelText::TEXT_DESC;
     pText->pState = &m_iState;
     pText->pColor = &m_vColor;
-    Attach_Child(strLevelKey, "Proto_GameObject_DecibelText", "decibelText", pText, CHILD::TEXTS);
+    Attach_Child(G_GlobalLevelKey, "Proto_GameObject_DecibelText", "decibelText", pText, CHILD::TEXTS);
 
     CUI_DecibelDigits::DIGITS_DESC* pDigits = new CUI_DecibelDigits::DIGITS_DESC;
     pDigits->pDecibel = &m_fDecibel;
     pDigits->pColor = &m_vColor;
-    Attach_Child(strLevelKey, "Proto_GameObject_DecibelDigits", "decibelDigits", pDigits, CHILD::DIGITS);
+    Attach_Child(G_GlobalLevelKey, "Proto_GameObject_DecibelDigits", "decibelDigits", pDigits, CHILD::DIGITS);
 
     CUI_DecibelKanji::KANJI_DESC* pKanji = new CUI_DecibelKanji::KANJI_DESC;
     pKanji->pState = &m_iState;
     pKanji->pColor = &m_vColor;
-    Attach_Child(strLevelKey, "Proto_GameObject_DecibelKanji", "decibelKanji", pKanji, CHILD::KANJI);
+    Attach_Child(G_GlobalLevelKey, "Proto_GameObject_DecibelKanji", "decibelKanji", pKanji, CHILD::KANJI);
 }
 
 void CUI_Decibel::Set_Decibel(_float fDecibel)

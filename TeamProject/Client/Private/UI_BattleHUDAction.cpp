@@ -37,13 +37,12 @@ void CUI_BattleHUDAction::Update(_float dt)
 void CUI_BattleHUDAction::Ready_PartObjects()
 {
     auto pContainer = Get_Component<CObjectContainer>();
-    const string& strLevelKey = CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey();
 
-    Attach_Child(strLevelKey, "Proto_GameObject_PrimaryAction", "primary", CHILD::PRIMARY, _float2(0.f, m_vOffset.y));
-    Attach_Child(strLevelKey, "Proto_GameObject_EvadeAction", "evade", CHILD::EVADE, m_vOffset);
-    Attach_Child(strLevelKey, "Proto_GameObject_SpecialAction", "special", CHILD::SPECIAL, _float2(m_vOffset.x * 2.f, m_vOffset.y));
-    Attach_Child(strLevelKey, "Proto_GameObject_SwitchAction", "switch", CHILD::SWITCH, _float2(m_vOffset.x * 3.f, m_vOffset.y));
-    Attach_Child(strLevelKey, "Proto_GameObject_UltimateAction", "ultimate", CHILD::ULTIMATE, _float2(m_vOffset.x * 3.f, 0.f));
+    Attach_Child(G_GlobalLevelKey, "Proto_GameObject_PrimaryAction", "primary", CHILD::PRIMARY, _float2(0.f, m_vOffset.y));
+    Attach_Child(G_GlobalLevelKey, "Proto_GameObject_EvadeAction", "evade", CHILD::EVADE, m_vOffset);
+    Attach_Child(G_GlobalLevelKey, "Proto_GameObject_SpecialAction", "special", CHILD::SPECIAL, _float2(m_vOffset.x * 2.f, m_vOffset.y));
+    Attach_Child(G_GlobalLevelKey, "Proto_GameObject_SwitchAction", "switch", CHILD::SWITCH, _float2(m_vOffset.x * 3.f, m_vOffset.y));
+    Attach_Child(G_GlobalLevelKey, "Proto_GameObject_UltimateAction", "ultimate", CHILD::ULTIMATE, _float2(m_vOffset.x * 3.f, 0.f));
 }
 
 void CUI_BattleHUDAction::Bind_EventListener()

@@ -99,6 +99,17 @@ bool CRoomDirector::RequestExitTop()
 	return true;
 }
 
+HRESULT CRoomDirector::ClearRooms()
+{
+	for (auto& pair : m_Rooms)
+		Safe_Release(pair.second);
+	m_Rooms.clear();
+	m_ActiveStacks.clear();
+	m_pendingEnterKey.clear();
+
+	return S_OK;
+}
+
 const vector<string>& CRoomDirector::GetActiveRoomStack() const
 {
 	return m_ActiveStacks;

@@ -58,6 +58,16 @@ void CUIDirector::Request_DamageText(const DAMAGE_DESC& desc)
 	UIManager()->Add_UIObject(dmgText, levelKey);
 }
 
+void CUIDirector::Show_Lottery()
+{
+	UI_Active("lottery");
+}
+
+void CUIDirector::Hide_Lottery()
+{
+	UI_DeActive("lottery");
+}
+
 void CUIDirector::Show_ResultBanner(const string& strTextureKey, const _wstring& wstrText1, const _wstring& wstrText2)
 {
 	CUI_ResultBanner::RESULT_DESC desc = {};
@@ -112,7 +122,7 @@ void CUIDirector::Load_LevelObjects(const string& levelKey)
 			const string instName = obj["instanceName"];
 			const string prefabPath = obj["prefabPath"];
 
-			auto builder = Builder::Create_UIObject({ key, protoTag });	// 나중에 아마도 대부분 글로벌, 그리고 몇몇개만 레벨별로?
+			auto builder = Builder::Create_UIObject({ G_GlobalLevelKey, protoTag });	// 나중에 아마도 대부분 글로벌, 그리고 몇몇개만 레벨별로?
 			if (!prefabPath.empty())
 				builder.Asset(prefabPath);
 
