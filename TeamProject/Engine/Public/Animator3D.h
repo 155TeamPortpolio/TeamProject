@@ -215,6 +215,7 @@ protected:
     void Check_ReservedSpeeds(ANIM_LAYER& Layer);
     void Compute_RootMoveDelta(ANIM_LAYER& Layer, _vector3& curPos);
     void Compute_RootQuatDelta(ANIM_LAYER& Layer, _vector4& curQuat);
+    void Compute_ClipConvert(ANIM_LAYER& Layer, _float dt);
     void Extract_MotionBone(ANIM_LAYER& Layer);
 
     //레이어 연산

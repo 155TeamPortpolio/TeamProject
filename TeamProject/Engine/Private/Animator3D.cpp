@@ -1144,26 +1144,7 @@ void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
 	}
 
 	//Animation Blend
-	Layer.fBlendElapsed += dt;
-	_float fBlendWeight = Math::ApplyEase(Layer.eBlendEaseType, Layer.fBlendElapsed / Layer.fBlendDuration);
-
-	for (_uint i = 0; i < m_pData->Get_BoneCount(); ++i)
-		Layer.FinalLocalMatrices[i] = Calc_MatrixBlend(Layer.LocalMatrices[i], Layer.BlendMatrices[i], fBlendWeight);
-
-	//Convert End
-	if (Layer.fBlendDuration < Layer.fBlendElapsed) {
-		Layer.bBlending = false;
-		Layer.bKeepTrackPos = false;
-		Layer.bIgnoreRotation = false;
-
-		Layer.iClipIndex = Layer.iNextClipIndex;
-		Layer.iNextClipIndex = -1;
-		Layer.fCurrentTrackPosition = Layer.fBlendTrackPosition;
-		Layer.fBlendElapsed = 0.f;
-		Layer.fBlendDuration = 0.f;
-
-		Layer.LocalMatrices = Layer.FinalLocalMatrices;			
-	}
+	Compute_ClipConvert(Layer, dt);
 }
 
 _float CAnimator3D::Compute_PlaySpeed(ANIM_LAYER& Layer, _float dt)
@@ -1253,6 +1234,30 @@ void CAnimator3D::Compute_RootQuatDelta(ANIM_LAYER& Layer, _vector4& curQuat)
 		);
 
 	XMStoreFloat4(&Layer.vRootQuatDelta, quatDeltaOut);
+}
+
+void CAnimator3D::Compute_ClipConvert(ANIM_LAYER& Layer, _float dt)
+{
+	Layer.fBlendElapsed += dt;
+	_float fBlendWeight = Math::ApplyEase(Layer.eBlendEaseType, Layer.fBlendElapsed / Layer.fBlendDuration);
+
+	for (_uint i = 0; i < m_pData->Get_BoneCount(); ++i)
+		Layer.FinalLocalMatrices[i] = Calc_MatrixBlend(Layer.LocalMatrices[i], Layer.BlendMatrices[i], fBlendWeight);
+
+	//Convert End
+	if (Layer.fBlendDuration < Layer.fBlendElapsed) {
+		Layer.bBlending = false;
+		Layer.bKeepTrackPos = false;
+		Layer.bIgnoreRotation = false;
+
+		Layer.iClipIndex = Layer.iNextClipIndex;
+		Layer.iNextClipIndex = -1;
+		Layer.fCurrentTrackPosition = Layer.fBlendTrackPosition;
+		Layer.fBlendElapsed = 0.f;
+		Layer.fBlendDuration = 0.f;
+
+		Layer.LocalMatrices = Layer.FinalLocalMatrices;
+	}
 }
 
 void CAnimator3D::Extract_MotionBone(ANIM_LAYER& Layer)
@@ -1471,6 +1476,7 @@ void CAnimator3D::BuildDynamicBone()
 		}
 	}
 }
+
 #pragma region GUI
 void CAnimator3D::Render_GUI()
 {
@@ -1644,6 +1650,9 @@ void CAnimator3D::GUI_SelectAnim()
 	ImGui::EndChild();
 }
 
+#pragma endregion
+
+#pragma region IKBone
 void CAnimator3D::Update_IK(_float dt)
 {
 	for (auto& chain : m_IKChains)
