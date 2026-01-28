@@ -88,8 +88,9 @@ OBJECT_HANDLE Client::Spawner::Create_NPC(const SPAWNER_DESC& Desc)
 	CCT.eGroup = COLLISION_GROUP::COMMON;
 	CCT.iCollisionMask = 0xFFFFFFFF;
 	CCT.bAutoFit = false;
-	CCT.fHeight = Desc.vScale.y / 2.f;
-	CCT.fRadius = (Desc.vScale.x + Desc.vScale.z / 2.f);
+	CCT.fRadius = (Desc.vScale.x +Desc.vScale.z) * 0.25f;
+	CCT.fHeight = (Desc.vScale.y * 0.5f) - CCT.fRadius;
+	
 	CCT.vPos = _float3(Desc.vTranslation.x, Desc.vTranslation.y, Desc.vTranslation.z);
 	
 	PrototypeManager()->Add_ProtoType(Desc.tagLevel, NPCTable->second.ProtoTag, NPCTable->second.Create());
@@ -100,7 +101,7 @@ OBJECT_HANDLE Client::Spawner::Create_NPC(const SPAWNER_DESC& Desc)
 		.Build(Desc.tagName);
 
 	Object->Get_Component<CCharacterController>()->Set_FootPosition(Desc.vTranslation);
-
+	
 	//Optional
 	auto iter = Desc.SlotDataValues.find("NPCSlot");
 	if (iter != Desc.SlotDataValues.end()) {
