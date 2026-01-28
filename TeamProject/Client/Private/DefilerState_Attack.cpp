@@ -12,18 +12,37 @@ CDefilerState_Attack* CDefilerState_Attack::Create()
 	return pInstance;
 }
 
-void CDefilerState_Attack::Build_Pattern(CDefiler* pOwner)
+void CDefilerState_Attack::Build_Pattern(CDefiler* pOwner, _int Type)
 {
 	CDefiler::DEFILER_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
 	TARGETING_INFO& targetInfo = pOwner->GetTargetingInfo();
 	blackBoard.stateQueue.clear();
+
+	switch (Type)
+	{
+	case 0 :
 	{
 		blackBoard.stateQueue.push_back("Attack01_01");
 		blackBoard.progressQueue.push_back(0.18);
 		blackBoard.stateQueue.push_back("Attack01_02");
+		break;
 	}
+	case 1 :
+	{
+		blackBoard.stateQueue.push_back("Attack01_03");
+		break;
+	}
+	case 2 :
+	{
+		blackBoard.stateQueue.push_back("Attack01_01_P2");
+		break;
+	}
+	default:
+		break;
+	}
+	
 
-	//blackBoard.stateQueue.push_back("Attack01_03");
+	//
 	//blackBoard.stateQueue.push_back("Attack02");
 	//blackBoard.stateQueue.push_back("Attack03");
 	//blackBoard.stateQueue.push_back("Attack04");
@@ -67,17 +86,20 @@ void CDefilerState_Attack::ReadySubState()
 void CDefilerState_Attack::Enter(CDefiler* pOwner)
 {
 	__super::Enter(pOwner);
-	Build_Pattern(pOwner);
+	Build_Pattern(pOwner, m_pattern);
+	m_pattern++;
+	m_pattern = clamp(m_pattern, 0, m_maxPattern);
 }
 
 void CDefilerState_Attack::Update(CDefiler* pOwner, _float dt)
 {
 	__super::Update(pOwner, dt);
+
 	CDefiler::DEFILER_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
 	if (blackBoard.isRequestNext)
 	{
-		blackBoard.isRequestNext = false;
-		blackBoard.isChainOpen = false;
+		blackBoard.isRequestNext = false;	/*다음 연계 콤보가 있는가*/
+		blackBoard.isChainOpen = false;		/*다음 상태로 전환이 가능한가*/
 
 		if (!blackBoard.stateQueue.empty())
 		{
@@ -88,7 +110,10 @@ void CDefilerState_Attack::Update(CDefiler* pOwner, _float dt)
 			m_pSubStateMachine->Change_State(nextStateTag);
 		}
 	}
-
+	if (blackBoard.isChainOpen && blackBoard.stateQueue.empty())
+	{
+		pOwner->Get_MainStateMachine()->Set_Trigger("Idle");
+	}
 }
 
 void CDefilerState_Attack::Exit(CDefiler* pOwner)
@@ -154,6 +179,9 @@ void CDefilerState_Attack_01_02::Exit(CDefiler* pOwner)
 
 void CDefilerState_Attack_01_01_P2::Enter(CDefiler* pOwner)
 {
+
+	CDefiler::DEFILER_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
+	blackBoard.OnTarget();
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("Monster_IsoldetheDefiler_Ani_Attack_01_01_P2")
 		.Speed(1.f)

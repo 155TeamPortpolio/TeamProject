@@ -6,10 +6,13 @@
 #include "Animator3D.h"
 #include "Material.h"
 #include "CharacterController.h"
+#include "ObjectContainer.h"
+#include "EffectContainer.h"
 
 #include "StateMachine.h"
 #include "DefilerState.h"
 
+#include "Engine_Math.h"
 CDefiler::CDefiler()
 	:CEnemy()
 {
@@ -27,6 +30,7 @@ HRESULT CDefiler::Initialize_Prototype()
 	Add_Component<CSkeletalModel>();
 	Add_Component<CMaterial>();
 	Add_Component<CCharacterController>();
+	Add_Component<CObjectContainer>();
 
 	auto pResource = CGameInstance::GetInstance()->Get_ResourceMgr();
 	Get_Component<CSkeletalModel>()->Link_Model(G_GlobalLevelKey, "Defiler_Isolde.model");
@@ -38,8 +42,10 @@ HRESULT CDefiler::Initialize_Prototype()
 HRESULT CDefiler::Initialize(INIT_DESC* pArg)
 {
 	__super::Initialize(pArg);
+
 	m_eEnemyClass = ENEMY_CLASS::BOSS;
 	vector<_uint> ProMeshes = Get_Component<CSkeletalModel>()->Hide_MehsByName("Pro");
+
 
 	auto pAnimator = Get_Component<CAnimator3D>();
 	pAnimator->LinkAnimate_Model(G_GlobalLevelKey, "Defiler_Isolde.model");
@@ -56,10 +62,12 @@ HRESULT CDefiler::Initialize(INIT_DESC* pArg)
 	//if (FAILED(Create_Colliders()))
 	//	return E_FAIL;
 
+	if (FAILED(Initialize_Effects()))
+		return E_FAIL;
 
 	Create_UIEnemyStatus("Bip001_Spine2");
 	Create_UIBossHUD();
-
+	 
 	return S_OK;
 }
 
@@ -82,8 +90,8 @@ void CDefiler::Update(_float dt)
 	Route_AnimEvent(pAnimator);
 	
 	Get_Component<CCharacterController>()->Update(dt);
-	MoveByRootMotion(dt);
-	RotateToTarget(dt);
+	MoveByTraceMode(dt);
+	//RotateToTarget(dt);
 	m_pStateMachine->Update(dt);
 }
 
@@ -113,18 +121,86 @@ CDefiler* CDefiler::Create()
 
 	return instance;
 }
-
-void CDefiler::MoveByRootMotion(_float dt, _float moveScale)
+void CDefiler::MoveByTraceMode(_float dt, _float moveScale)
 {
-	auto pAnimator = Get_Component<CAnimator3D>();
-	auto pCCT = Get_Component<CCharacterController>();
+	auto* animator = Get_Component<CAnimator3D>();
+	auto* characterController = Get_Component<CCharacterController>();
+	auto* transform = Get_Component<CTransform>();
+	if (!animator || !characterController || !transform)
+		return;
 
-	_vector3 vDeltaMove = pAnimator->Get_RootBoneMoveDelta();
-	_vector4 vDeltaQuat = pAnimator->Get_RootBoneQuatDelta();
-	_vector4 vQuaternion = m_pTransform->Get_QuaternionRotate();
+	TraceType traceType = m_BlackBoard.eTraceType;
 
-	Get_Component<CTransform>()->Add_Quaternion(vDeltaQuat);
-	pCCT->Move_RootMotion(vDeltaMove * moveScale, vQuaternion, dt);
+	_vector3 rootDeltaMove = animator->Get_RootBoneMoveDelta();
+	_vector4 rootDeltaQuat = animator->Get_RootBoneQuatDelta();
+
+	_vector4 currentFacingQuat = transform->Get_QuaternionRotate();
+
+	_vector3 animMoveWorld(0.f, 0.f, 0.f);
+	_vector4 appliedQuat(0.f, 0.f, 0.f, 1.f);
+
+	switch (traceType)
+	{
+	case TraceType::TRACE:
+		appliedQuat = rootDeltaQuat;
+		animMoveWorld = Math::RotateVectorByQuaternion(rootDeltaMove, currentFacingQuat) * moveScale;
+		break;
+
+	case TraceType::ONTARGET:
+		appliedQuat = rootDeltaQuat; // 회전만 원하면
+		animMoveWorld = _vector3(0.f, 0.f, 0.f);
+		break;
+
+	default:
+		appliedQuat = _vector4(0.f, 0.f, 0.f, 1.f);
+		animMoveWorld = _vector3(0.f, 0.f, 0.f);
+		break;
+	}
+
+	// 여기서 "추가 이동" 계산
+	_vector3 intentMoveWorld = CalcIntentMoveWorld(dt, traceType);
+
+	// 최종 이동 = 루트모션 + 의도 이동
+	_vector3 finalMoveWorld = animMoveWorld + intentMoveWorld;
+
+	transform->Add_Quaternion(appliedQuat);
+	characterController->Move_RootMotion(finalMoveWorld, currentFacingQuat, dt);
+}
+
+_vector3 CDefiler::CalcIntentMoveWorld(
+	_float dt,
+	TraceType traceType,
+	const _vector3& animMoveWorld,
+	const _vector3& selfPos,
+	const _vector3& targetPos) const
+{
+	if (traceType != TraceType::TRACE)
+		return _vector3(0.f, 0.f, 0.f);
+
+	// 애니 이동 먼저 반영된 "예상 위치"
+	_vector3 predictedPos = selfPos + animMoveWorld;
+
+	_vector3 toTarget = targetPos - predictedPos;
+	toTarget.y = 0.f;
+
+	float lengthSq = toTarget.x * toTarget.x + toTarget.z * toTarget.z;
+	if (lengthSq < 1e-6f)
+		return _vector3(0.f, 0.f, 0.f);
+
+	float length = sqrtf(lengthSq);
+	_vector3 dir = toTarget / length;
+
+	const float desiredDistance = 10.f;
+
+	// predicted 기준으로 이미 안쪽이면(이미 너무 가까움/지나침) -> 추가 이동 금지
+	float over = length - desiredDistance;
+	if (over <= 0.f)
+		return _vector3(0.f, 0.f, 0.f);
+
+	const float extraSpeed = 2.5f;
+	float moveAmount = min(over, extraSpeed * dt);
+
+	return dir * moveAmount;
 }
 
 void CDefiler::RotateToTarget(_float dt, _float rotateSpeed)
@@ -167,6 +243,8 @@ void CDefiler::Route_AnimEvent(CAnimator3D* animator)
 		case CLIP_EVENT_TYPE::SOUND:
 			break;
 		case CLIP_EVENT_TYPE::EFFECT:
+			if (instance.Tag == "AttackSign")
+				Active_AttackSign(true);
 			break;
 		}
 	}
@@ -235,8 +313,71 @@ HRESULT CDefiler::Initialize_Transitions()
 	/* IDLE -> ATK or IDLE -> WALK */
 	m_pStateMachine->Register_Transition("Idle", "Attack",
 		CStateMachine<CDefiler>::CONDITION_TRIGGER, "Idle_To_Attack");
+
+	// Attack
+	m_pStateMachine->Register_AnyStateTransition("Idle",
+		CStateMachine<CDefiler>::CONDITION_TRIGGER, "Idle");
+
 	m_pStateMachine->Register_Transition("Idle", "Walk",
 		CStateMachine<CDefiler>::CONDITION_TRIGGER, "Idle_To_Walk");
+
+	return S_OK;
+}
+
+
+HRESULT CDefiler::Initialize_Effects()
+{
+	auto pObjectContainer = Get_Component<CObjectContainer>();
+	Create_AttackSign("Ctr_M_Weapon_01");
+	/* Sword Slash */
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_sword_slash.json")
+			.Build("Sacrifice_Sword_Slash");
+
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+
+	/* Axe Slash1 */
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_axe_slash.json")
+			.Build("Sacrifice_Axe_Slash1");
+
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+
+	/* Axe Slash2 */
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_axe_slash2.json")
+			.Build("Sacrifice_Axe_Slash2");
+
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+
+	/* Smoke Slash1 */
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_smoke_slash.json")
+			.Build("Sacrifice_Smoke_Slash1");
+
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+
+	/* Smoke Slash2 */
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_smoke_slash2.json")
+			.Build("Sacrifice_Smoke_Slash2");
+
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
 
 	return S_OK;
 }

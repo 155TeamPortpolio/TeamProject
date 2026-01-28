@@ -15,8 +15,12 @@ public:
 	static CDefilerState_Attack* Create();
 	virtual void Free() override { __super::Free(); }
 private:
-	void Build_Pattern(CDefiler* pOwner);
+	void Build_Pattern(CDefiler* pOwner, _int Type);
 	void ReadySubState();
+
+private:
+	_int m_pattern = {0};
+	_int m_maxPattern = {2};
 };
 
 class CDefilerState_Attack_01_01 : public IHState<CDefiler>

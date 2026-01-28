@@ -866,7 +866,7 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Attack\Phase2">
       <UniqueIdentifier>{8080e445-1ea3-4f5c-9188-7ec8d37887e4}</UniqueIdentifier>
-  </Filter>
+    </Filter>
     <Filter Include="02. GameObject\UI\01. 2D\Lottery\Newspaper">
       <UniqueIdentifier>{9a0e4d8d-22f9-486a-bb13-701b03645d0c}</UniqueIdentifier>
     </Filter>
@@ -1709,8 +1709,6 @@
     <ClInclude Include="..\public\DefilerState_Idle.h">
       <Filter>02. GameObject\Object\Enemy\Defiler\State\Idle</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\DefilerState_Attack.h">
-    </ClInclude>
     <ClInclude Include="..\Public\UI_Newspaper.h">
       <Filter>02. GameObject\UI\01. 2D\Lottery\Newspaper</Filter>
     </ClInclude>
@@ -1719,6 +1717,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\CorinState_CounterAttack.h">
       <Filter>02. GameObject\Object\Player\Character\02. Corin\State\Attack\Counter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\DefilerState_Attack.h">
+      <Filter>02. GameObject\Object\Enemy\Defiler\State\Attack</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2513,7 +2514,7 @@
     </ClCompile>
     <ClCompile Include="..\Private\DefilerState_Attack.cpp">
       <Filter>02. GameObject\Object\Enemy\Defiler\State\Attack</Filter>
-  </ClCompile>
+    </ClCompile>
     <ClCompile Include="..\Private\UI_Newspaper.cpp">
       <Filter>02. GameObject\UI\01. 2D\Lottery\Newspaper</Filter>
     </ClCompile>

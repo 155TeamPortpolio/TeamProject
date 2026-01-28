@@ -10,6 +10,7 @@ class CDefiler :
     public CEnemy
 {
 public:
+    enum class TraceType {TRACE, ONTARGET, NONE};
     typedef struct tagDefilerBlackBoard : public ATTACK_BLACK_BOARD
     {
         //  deque<string> stateQueue;
@@ -18,7 +19,7 @@ public:
         //  _bool isEnd = false;
         //  string currentStateTag{};
 
-        _bool TraceOn = {};
+        TraceType eTraceType = {};
         deque<_float> progressQueue; 
         vector<string> FrameEffect;
         _bool EndChain = {};
@@ -32,6 +33,9 @@ public:
                 return progress;
             }
         }
+        void OnTarget() { eTraceType == TraceType::ONTARGET; }
+        void OnTrace() { eTraceType == TraceType::TRACE; }
+        void NoneTrace() { eTraceType == TraceType::NONE; }
     }DEFILER_BLACK_BOARD;
 
 private:
@@ -53,7 +57,8 @@ public:
     DEFILER_BLACK_BOARD& GetBlackBoard() { return m_BlackBoard; }
     CStateMachine<CDefiler>* Get_MainStateMachine() { return m_pStateMachine; }
 private:
-    void MoveByRootMotion(_float dt, _float moveScale = 1.f);
+    void MoveByTraceMode(_float dt, _float moveScale = 1.f);
+    _vector3 CalcIntentMoveWorld(_float dt, TraceType traceType, const _vector3& animMoveWorld, const _vector3& selfPos, const _vector3& targetPos) const;
     void RotateToTarget(_float dt, _float rotateSpeed = 1.f);
     void Update_States(_float dt);
     void Route_AnimEvent(CAnimator3D* animator);
@@ -62,6 +67,7 @@ private:
     HRESULT Initialize_StateMachine();
     HRESULT Initialize_States();
     HRESULT Initialize_Transitions();
+    HRESULT Initialize_Effects();
     //HRESULT Create_Colliders();
 
 private:
