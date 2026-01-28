@@ -39,7 +39,10 @@
 
 #include "UI_IconLabel.h"
 
+#include "UI_Lottery.h"
 #include "UI_ScratchCard.h"
+#include "UI_ResultBanner.h"
+#include "UI_Newspaper.h"
 
 namespace fs = filesystem;
 using namespace Helper;
@@ -170,7 +173,11 @@ void UILoader::Add_Prototype(const string& levelKey)
 		{"IconLabel",		&CUI_IconLabel::Create		},
 		{"SceneFrame",		&CUI_SceneFrame::Create		},
 
+		{"Lottery",			&CUI_Lottery::Create		},
 		{"ScratchCard",		&CUI_ScratchCard::Create	},
+		{"Newspaper",		&CUI_Newspaper::Create		},
+
+		{"ResultBanner",	&CUI_ResultBanner::Create	},
 	};
 
 	for (const Entry& entry : entries)

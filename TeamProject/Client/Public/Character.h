@@ -12,8 +12,6 @@ NS_BEGIN(Client)
 template<typename Type>
 class CStateMachine;
 
-class CUI_DamageText;
-
 class CCharacter abstract : public CGameObject
 {
 public:
@@ -77,7 +75,6 @@ public:
     // HP
     _float  Get_HP() const { return m_fCurrentHP; }
     _float  Get_MaxHP() const { return m_fMaxHP; }
-    void    Set_HP(_float fHp) { m_fCurrentHP = fHp; }
     void    Set_MaxHP(_float fMaxHp) { m_fMaxHP = fMaxHp; }
     // 특수 스킬
     const EnergyDesc& Get_EnergyDesc() const { return m_tEnergy; }
@@ -131,7 +128,7 @@ public:
     void    DeActive_Character();
 
     void   Set_Speed(_float fSpeed) { m_fMoveSpeed = fSpeed; }
-    _float Get_Speed() const { return m_fMoveSpeed; }
+    _float Get_Speed() const { return m_fMoveSpeed; } 
 
 public:
     void Process_RootMotion(_float dt, const ROOTMOTION_DESC& desc);

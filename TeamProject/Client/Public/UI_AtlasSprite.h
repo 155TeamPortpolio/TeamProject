@@ -11,8 +11,8 @@ public:
         string texKey;
         _uint  frameCountX = 1;
         _uint  frameCountY = 1;
-        _uint  frameIdx    = 0;
-        _float heightPx    = 32.f;
+        _uint  frameIdx = 0;
+        _float heightPx = 32.f;
     };
 
 private:
@@ -26,6 +26,10 @@ public:
     void    Update(_float dt) override;
 
 public:
+    void Set_ColorAtlas(const string& texKey, _uint frameCountX, _uint frameCountY);
+    void Set_ColorFrameIndex(_uint frameIdx);
+    void Set_UseColorAtlas(_bool enable);
+    void Set_ShearK(_float k);
     void Set_Atlas(const string& texKey, _uint frameCountX, _uint frameCountY);
     void Set_FrameIndex(_uint frameIdx);
     void Set_HeightPx(_float heightPx);
@@ -33,20 +37,25 @@ public:
 private:
     void Apply_Params();
     void Update_SizeByHeight();
+    void OnPooledAcquire(INIT_DESC* pArg = {}) override;
 
 private:
-    string m_texKey;
+    string m_texKey{};
+    _uint  m_frameCountX{};
+    _uint  m_frameCountY{};
+    _uint  m_frameIdx{};
+    _float m_heightPx{};
 
-    _uint  m_frameCountX = 1;
-    _uint  m_frameCountY = 1;
-    _uint  m_frameIdx = 0;
-
-    _float m_heightPx = 32.f;
+    _uint  m_useColorAtlas{};
+    string m_colorTexKey{};
+    _uint  m_colorFrameCountX{};
+    _uint  m_colorFrameCountY{};
+    _uint  m_colorFrameIdx{};
+    _float m_shearK{};
 
 public:
     static CGameObject* Create();
     CGameObject* Clone(INIT_DESC* pArg = {}) override;
-    void Free() override;
 };
 
 NS_END

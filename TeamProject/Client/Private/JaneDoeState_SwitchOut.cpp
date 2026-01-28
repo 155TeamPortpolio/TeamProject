@@ -12,6 +12,12 @@ void CJaneDoeState_SwitchOut::Enter(CJaneDoe* pOwner)
 
 void CJaneDoeState_SwitchOut::Update(CJaneDoe* pOwner, _float dt)
 {
+    if(pOwner->Is_MainCharacter())
+    {
+        pOwner->Get_StateMachine()->Set_Trigger("ToIdle");
+        return;
+    }
+
     if (m_fAnimProgress >= 0.3f)
         pOwner->Update_DissolveProgress(dt * 5.f);
 
@@ -30,3 +36,11 @@ void CJaneDoeState_SwitchOut::Exit(CJaneDoe* pOwner)
     pOwner->Get_StateMachine()->Set_Bool("IsMove", false);
     __super::Exit(pOwner);
 }
+
+_bool CJaneDoeState_SwitchOut::Handle_Transition(CJaneDoe* pOwner, const string& strState)
+{
+    if (strState == "Idle")
+        return true;
+    return false;
+}
+

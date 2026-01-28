@@ -6,42 +6,51 @@
 #include "JaneDoeState_ExAttack.h"
 #include "JaneDoeState_UltimateAttack.h"
 #include "JaneDoeState_BranchAttack.h"
+#include "JaneDoeState_CounterAttack.h"
 #include "JaneDoe.h"
 
 #include "CharacterController.h"
 #include "BattleSystem.h"
 
+CJaneDoeState_Attack* CJaneDoeState_Attack::Create()
+{
+    auto pInstance = new CJaneDoeState_Attack();
+    pInstance->m_pSubStateMachine = CStateMachine<CJaneDoe>::Create();
+    auto pSubStateMachine = pInstance->Get_SubStateMachine();
+
+    pSubStateMachine->Register_State("NormalAttack", CJaneDoeState_NormalAttack::Create());
+    pSubStateMachine->Register_State("RushAttack", CJaneDoeState_RushAttack::Create());
+    pSubStateMachine->Register_State("ExAttack", CJaneDoeState_ExAttack::Create());
+    pSubStateMachine->Register_State("UltimateAttack", CJaneDoeState_UltimateAttack::Create());
+    pSubStateMachine->Register_State("BranchAttack", CJaneDoeState_BranchAttack::Create());
+    pSubStateMachine->Register_State("CounterAttack", CJaneDoeState_CounterAttack::Create());
+
+    pSubStateMachine->Get_State("NormalAttack")->Set_Tag("NormalAttack");
+    pSubStateMachine->Get_State("RushAttack")->Set_Tag("RushAttack");
+    pSubStateMachine->Get_State("ExAttack")->Set_Tag("ExAttack");
+    pSubStateMachine->Get_State("UltimateAttack")->Set_Tag("UltimateAttack");
+    pSubStateMachine->Get_State("BranchAttack")->Set_Tag("BranchAttack");
+    pSubStateMachine->Get_State("CounterAttack")->Set_Tag("CounterAttack");
+
+    pSubStateMachine->Register_Transition("NormalAttack", "BranchAttack",
+        CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "Salchow");
+
+    pSubStateMachine->Register_Transition("NormalAttack", "ExAttack",
+        CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "ToExAttack");
+
+    pSubStateMachine->Register_AnyStateTransition("UltimateAttack",
+        CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "ToUltimate");
+
+    pSubStateMachine->Set_DefaultState("NormalAttack");
+
+    return pInstance;
+}
+
 void CJaneDoeState_Attack::Enter(CJaneDoe* pOwner)
 {
-    if (!m_pSubStateMachine)
-    {
-        m_pSubStateMachine = CStateMachine<CJaneDoe>::Create();
-        m_pSubStateMachine->Register_State("NormalAttack", CJaneDoeState_NormalAttack::Create());
-        m_pSubStateMachine->Register_State("RushAttack", CJaneDoeState_RushAttack::Create());
-        m_pSubStateMachine->Register_State("ExAttack", CJaneDoeState_ExAttack::Create());
-        m_pSubStateMachine->Register_State("UltimateAttack", CJaneDoeState_UltimateAttack::Create());
-        m_pSubStateMachine->Register_State("BranchAttack", CJaneDoeState_BranchAttack::Create());
-
-        m_pSubStateMachine->Get_State("NormalAttack")->Set_Tag("NormalAttack");
-        m_pSubStateMachine->Get_State("RushAttack")->Set_Tag("RushAttack");
-        m_pSubStateMachine->Get_State("ExAttack")->Set_Tag("ExAttack");
-        m_pSubStateMachine->Get_State("UltimateAttack")->Set_Tag("UltimateAttack");
-        m_pSubStateMachine->Get_State("BranchAttack")->Set_Tag("BranchAttack");
-
-        m_pSubStateMachine->Register_Transition("NormalAttack", "BranchAttack",
-            CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "Passion");
-        
-        m_pSubStateMachine->Register_Transition("NormalAttack", "ExAttack",
-            CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "ToExAttack");
-        
-        m_pSubStateMachine->Register_AnyStateTransition("UltimateAttack",
-            CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "ToUltimate");
-
-        m_pSubStateMachine->Set_DefaultState("NormalAttack");
-    }
     _int iEntryMode = pOwner->Get_StateMachine()->Get_Int("AttackEntryMode");
     pOwner->Get_StateMachine()->Set_Int("AttackEntryMode", 0);
-    m_pSubStateMachine->Reset_Trigger("Passion");
+    m_pSubStateMachine->Reset_Trigger("Salchow");
 
     switch (iEntryMode)
     {
@@ -56,6 +65,9 @@ void CJaneDoeState_Attack::Enter(CJaneDoe* pOwner)
         break;
     case 4:
         m_pSubStateMachine->Set_DefaultState("BranchAttack");
+        break;
+    case 5:
+        m_pSubStateMachine->Set_DefaultState("CounterAttack");
         break;
     default:
         m_pSubStateMachine->Set_DefaultState("NormalAttack");
@@ -83,7 +95,7 @@ void CJaneDoeState_Attack::Update(CJaneDoe* pOwner, _float dt)
             m_fHoldTime += dt;
             if (m_fHoldTime >= 0.3f)
             {
-                m_pSubStateMachine->Set_Trigger("Passion");
+                m_pSubStateMachine->Set_Trigger("Salchow");
                 m_fHoldTime = 0.f;
                 pOwner->Set_Salchow(false);
             }
@@ -94,7 +106,7 @@ void CJaneDoeState_Attack::Update(CJaneDoe* pOwner, _float dt)
         }
     }
 
-    if (pOwner->Get_TargetHandle().isValid())
+    if (pOwner->Get_TargetHandle().isValid() && pOwner->Is_LookTarget())
     {
         auto target = pOwner->Get_TargetHandle().Get();
         _vector3 vLook = target->Get_WorldPos() - pOwner->Get_WorldPos();

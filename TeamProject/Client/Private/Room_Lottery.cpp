@@ -1,6 +1,11 @@
 #include "pch.h"
 #include "Room_Lottery.h"
 
+#include  "FieldSystem.h"
+#include "GameInstance.h"
+
+#include "FieldPlayer.h"
+
 CRoom_Lottery::CRoom_Lottery(const ROOM_DESC& desc)
 	:CRoom(desc)
 {
@@ -8,12 +13,14 @@ CRoom_Lottery::CRoom_Lottery(const ROOM_DESC& desc)
 
 void CRoom_Lottery::Enter()
 {
+	FieldSystem()->GetFieldPlayer()->Lock_Input();
 	//camera in
 }
 
 void CRoom_Lottery::Exit()
 {
-	//camera out
+	FieldSystem()->GetFieldPlayer()->UnLock_Input();
+	//camera out		
 }
 
 void CRoom_Lottery::Update()

@@ -6,26 +6,37 @@
 #include "CorinState_Dash.h"
 #include "CorinState_Backstep.h"
 
+CCorinState_Evade* CCorinState_Evade::Create()
+{
+    auto pInstance = new CCorinState_Evade();
+    pInstance->m_pSubStateMachine = CStateMachine<CCorin>::Create();
+    auto pSubStateMachine = pInstance->Get_SubStateMachine();
+
+    pSubStateMachine->Register_State("Dash", CCorinState_Dash::Create());
+    pSubStateMachine->Register_State("Backstep", CCorinState_Backstep::Create());
+
+    pSubStateMachine->Get_State("Dash")->Set_Tag("Dash");
+    pSubStateMachine->Get_State("Backstep")->Set_Tag("Backstep");
+
+    pSubStateMachine->Set_DefaultState("Backstep");
+
+    return pInstance;
+}
+
 void CCorinState_Evade::Enter(CCorin* pOwner)
 {
+    pOwner->Get_StateMachine()->Reset_Trigger("ToMove");
+    pOwner->Get_StateMachine()->Reset_Trigger("ToIdle");
     pOwner->Push_Invincible();
-
-    if (!m_pSubStateMachine)
-    {
-        m_pSubStateMachine = CStateMachine<CCorin>::Create();
-        m_pSubStateMachine->Register_State("Dash", CCorinState_Dash::Create());
-        m_pSubStateMachine->Register_State("Backstep", CCorinState_Backstep::Create());
-
-        m_pSubStateMachine->Get_State("Dash")->Set_Tag("Dash");
-        m_pSubStateMachine->Get_State("Backstep")->Set_Tag("Backstep");
-    }
 
     if (pOwner->Is_Move())
         m_pSubStateMachine->Set_DefaultState("Dash");
     else
         m_pSubStateMachine->Set_DefaultState("Backstep");
     
+    m_pSubStateMachine->Reset_Trigger("Complete");
     m_pSubStateMachine->Set_Bool("Extreme", false);
+    m_pSubStateMachine->Set_Int("ExitMode", 0);
 
     __super::Enter(pOwner);
 }
@@ -51,6 +62,10 @@ void CCorinState_Evade::Update(CCorin* pOwner, _float dt)
         
         switch (iExitMode)
         {
+        case 5: // CounterAttack
+            pRootFSM->Set_Int("AttackEntryMode", 5);
+            pRootFSM->Set_Trigger("Attack");
+            break;
         case 4:
             pRootFSM->Set_Int("IdleEntryMode", 1);
             pRootFSM->Set_Trigger("ToIdle");

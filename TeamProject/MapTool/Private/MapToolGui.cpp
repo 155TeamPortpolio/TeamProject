@@ -108,7 +108,7 @@ void CMapToolGui::Render_GUI()
         fObjhectSettingChild *= 3.f;
         break;
     case MapTool::MAPOBJ_TYPE::ENTITY:
-        fObjhectSettingChild *= 2.5f;
+        fObjhectSettingChild *= 4.f;
         break;
     case MapTool::MAPOBJ_TYPE::BATTLE:
         fObjhectSettingChild *= 4.f;
@@ -177,7 +177,7 @@ void CMapToolGui::Render_GUI()
             m_pMapToolCore->Load_MapData();
         }
         ImGui::SameLine();
-        if (ImGui::Button("LoadOnce")) {
+        if (ImGui::Button("LoadOnce")) { 
             m_pMapToolCore->Load_WithEntityData();
         }
         ImGui::SameLine();
@@ -405,6 +405,23 @@ void CMapToolGui::Place_Object(PHYSICS_RAY_HIT* pRayHit)
     case MAPOBJ_TYPE::BATTLE:
     {
         Place_BattleData(pRayHit);
+        break;
+    }
+    case MAPOBJ_TYPE::LIGHT:
+    {
+        COLLIDER_DESC ColDesc = {};
+        ColDesc.eType = m_TriggerTransform.eType;
+        ColDesc.bTrigger = true; // 충돌 박스 생성하는 트리거
+
+        string TagInstanceName = "Light_Object" + to_string(m_iTriggerIndex++);
+        CGameObject* pStaticObject = Builder::Create_Object({ g_TagMapToolLevel ,"Proto_GameObject_LightPoint" })
+            .Collider(ColDesc)
+            .Position(pRayHit->vPoint)
+            .Build(TagInstanceName);
+
+        pStaticObject->Get_Component<CCollider>()->Set_DebugRender(m_pMapToolContext->isAllDebugRender);
+
+        pObjMgr->Add_Object(pStaticObject, { g_TagMapToolLevel, g_tagMapObjType[ENUM(MAPOBJ_TYPE::LIGHT)] });
         break;
     }
     case MAPOBJ_TYPE::ALL:

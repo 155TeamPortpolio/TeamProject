@@ -116,6 +116,9 @@ public:
     virtual void Free() override { __super::Free(); }
 
 private:
+    _uint m_iMask = { 0xFFFFFFFF }; // 충돌마스크 복구용
+
+private:
     void Update_Effects(CJaneDoe* pOwner);
 
 };

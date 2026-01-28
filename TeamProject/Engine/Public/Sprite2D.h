@@ -40,6 +40,7 @@ public:
 public:
     _bool IsValid();
     void  Render_GUI();
+    void  TypeCheck(const std::string& slotName, SHADER_PARAM& param);
 
 public:
     _float Get_AspectRatio();

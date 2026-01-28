@@ -12,6 +12,12 @@ void CCorinState_SwitchOut::Enter(CCorin* pOwner)
 
 void CCorinState_SwitchOut::Update(CCorin* pOwner, _float dt)
 {
+    if (pOwner->Is_MainCharacter())
+    {
+        pOwner->Get_StateMachine()->Set_Trigger("ToIdle");
+        return;
+    }
+
     if (m_fAnimProgress >= 0.3f)
         pOwner->Update_DissolveProgress(dt * 5.f);
 
@@ -33,6 +39,7 @@ void CCorinState_SwitchOut::Exit(CCorin* pOwner)
 
 _bool CCorinState_SwitchOut::Handle_Transition(CCorin* pOwner, const string& strState)
 {
-    if (strState == "Idle")  return true;
+    if (strState == "Idle")
+        return true;
     return false;
 }

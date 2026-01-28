@@ -44,7 +44,7 @@ class CJaneDoeState_Walk_End : public IBaseState<CJaneDoe>
 {
 public:
     virtual void Enter(CJaneDoe* pOwner) override;
-    virtual void Update(CJaneDoe* pOwner, _float dt) override {}
+    virtual void Update(CJaneDoe* pOwner, _float dt) override;
     virtual void Exit(CJaneDoe* pOwner) override {}
 
 public:

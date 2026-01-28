@@ -21,6 +21,7 @@ namespace Client {
 	struct MonsterCreationDesc {
 		string	ProtoTag = {};
 		string	DisplayName = {};
+		_uint	MonsterID = {};
 		_float	CCT_fHeight = {};
 		_float	CCT_fRadius = {};
 		_float	iMaxHP = {};
@@ -116,11 +117,13 @@ namespace Client {
 		_bool isDelay = {};
 	}GAUGE_DELAY_DESC;
 
-	typedef struct tagBattlePointMappingData
+	typedef struct tagSpawnDesc
 	{
-		_int	MonsterSpawnID = { -1 };
-		string	MonsterKey = "";
-	}MONSTER_SPAWN_DESC;
+		_int MonsterID{};
+		_int Count{};
+	}SPAWN_MONSTER_DESC;
+	using EncounterTable = unordered_map<_int, vector<SPAWN_MONSTER_DESC>>;
+	using StageTypeTable = unordered_map<_int, EncounterTable>;
 
 	typedef struct tagFieldRoomDesc {
 		string roomKey;

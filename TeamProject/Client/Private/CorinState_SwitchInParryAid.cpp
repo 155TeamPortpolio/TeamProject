@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "CorinState_SwitchInParryAid.h"
 
+#include "BattleSystem.h"
+
 #include "Corin.h"
 #include "Enemy.h"
 
@@ -84,6 +86,7 @@ void CCorinState_SwitchInParryAid_L_Loop::Enter(CCorin* pOwner)
     if (handle.isValid())
     {
         dynamic_cast<CEnemy*>(handle.Get())->Parried();
+        BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::PARRY);
     }
 }
 

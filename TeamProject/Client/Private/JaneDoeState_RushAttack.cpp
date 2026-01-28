@@ -1,5 +1,8 @@
 #include "pch.h"
 #include "JaneDoeState_RushAttack.h"
+
+#include "BattleSystem.h"
+
 #include "JaneDoe.h"
 #include "EffectContainer.h"
 
@@ -8,6 +11,7 @@
 
 void CJaneDoeState_RushAttack::Enter(CJaneDoe* pOwner)
 {
+    pOwner->Lock_Move();
     if (!m_pSubStateMachine)
     {
         m_pSubStateMachine = CStateMachine<CJaneDoe>::Create();
@@ -80,7 +84,13 @@ void CJaneDoeState_RushAttack::Update(CJaneDoe* pOwner, _float dt)
         }
         else if (Event.Tag == "RFootStart")
         {
-            pOwner->Begin_AttackCollider("FootWeapon_R", { HIT_TYPE::ONCE, DAMAGE_TYPE::HARD, Helper::Get_Random_Float(20,40), 0, 0 });
+            //pOwner->Begin_AttackCollider("FootWeapon_R", { HIT_TYPE::ONCE, DAMAGE_TYPE::HARD, Helper::Get_Random_Float(20,40), 0, 0 });
+            _vector3 vLook = pOwner->Get_Component<CTransform>()->Dir(STATE::LOOK);
+            _vector3 vPos = pOwner->Get_WorldPos();
+            BattleSystem()->TakeAreaDamage(vPos + vLook *0.5f, 0.5f, HitDesc()
+                .Type(HIT_TYPE::ONCE)
+                .Damage(Helper::Get_Random_Float(20, 40), DAMAGE_TYPE::HARD)
+                );
         }
         else if (Event.Tag == "RFootEnd")
         {
@@ -155,6 +165,7 @@ void CJaneDoeState_Rush01_End::Enter(CJaneDoe* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_Rush_01_End")
         .Apply();
+    pOwner->Unlock_Move();
 }
 
 void CJaneDoeState_Rush02_Start::Enter(CJaneDoe* pOwner)
@@ -218,6 +229,7 @@ void CJaneDoeState_Rush02_End::Enter(CJaneDoe* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_Rush_02_End")
         .Apply();
+    pOwner->Unlock_Move();
 }
 
 void CJaneDoeState_Rush03_Start::Enter(CJaneDoe* pOwner)
@@ -237,4 +249,5 @@ void CJaneDoeState_Rush03_End::Enter(CJaneDoe* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_Rush_03_End")
         .Apply();
+    pOwner->Unlock_Move();
 }

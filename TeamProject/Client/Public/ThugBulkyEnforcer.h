@@ -50,7 +50,7 @@ public:
     void                                FinishWeaponCollider();
     void                                SetBattleTriggerColliderOn(_bool is) { m_isBattleTriggerOn = is; }
     void                                SetBattleAttackColliderOn(_bool is) { m_isBattleAttackOn = is; }
-    virtual void                        TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage) override;
+    virtual void                        TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER charaName = CHARACTER::END) override;
 
 private:
     HRESULT Initialize_StateMachine();
@@ -89,6 +89,15 @@ private:
     /*For.Groggy*/
     //_int                m_iGroggyValue = {};
     //_float              m_fGroggyDecreaseTime = {};
+
+    /* Shader Params */
+    _float3 m_vEmissiveColor{};
+    _float3 m_vRimLightColor{};
+    _float m_fRimLightPower{};
+    _float m_fDissolveElapsedTime{};
+    _float m_fDissolveDuration = 1.2f;
+    _bool m_OnDissolve = false;
+    void Update_Dissolve(_float dt);
 };
 
 NS_END

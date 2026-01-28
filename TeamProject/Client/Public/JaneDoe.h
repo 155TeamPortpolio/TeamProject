@@ -6,9 +6,6 @@ NS_BEGIN(Client)
 class CJaneDoe final :
     public CCharacter
 {
-public:
-    enum class COMBATSTATE { NORMAL, PASSION, END };
-
 private:
     CJaneDoe();
     CJaneDoe(const CJaneDoe& rhs);
@@ -16,6 +13,8 @@ private:
 
 public:
     CStateMachine<CJaneDoe>* Get_StateMachine() { return m_pStateMachine; }
+    _bool   Is_LookTarget() const { return m_bLookTarget; }
+    void    Set_LookTarget(_bool bLook) { m_bLookTarget = bLook; }
 
 public:
     virtual HRESULT Initialize_Prototype() override;
@@ -75,6 +74,8 @@ private: /* Passion */
 
 private:
     CStateMachine<CJaneDoe>* m_pStateMachine = { nullptr };
+    _bool   m_bLookTarget = true;
+
     deque<vector<vector<_float4x4>>>        m_BoneMatrices;
     deque<_float4x4>                        m_WorldMatrices;
 

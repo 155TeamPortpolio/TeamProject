@@ -148,49 +148,20 @@ string CCamDirector::ResolveSeqKey(CamSeqType type) const
     return key;
 }
 
-CPlayer* CCamDirector::GetPlayer() const
-{
-    return static_cast<CPlayer*>(ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Player)));
-}
-
-CCharacter* CCamDirector::GetCharacter() const
-{
-    return static_cast<CCharacter*>(GetCurHandle().Get());
-}
-
-string CCamDirector::GetCharacterStr() const
-{
-    return Helper::EnumToString(GetCharacter()->Get_CharacterName());
-}
-
-OBJECT_HANDLE CCamDirector::GetCurHandle() const
-{
-    return GetPlayer()->Get_CurCharacterHandle();
-}
-
 void CCamDirector::UpdateInput(_float dt)
 {
+
     if (InputDevice()->Key_Tap(VK_F1))
         CameraManager()->Set_MainCam(GetFreeCamComp(), 0.5f);
 
-    //if (InputDevice()->Key_Tap(VK_F2))
-    //{
-    //    StartDialog();
-    //    GetPlayer()->Lock_Input();
-    //}
-
-    //if (InputDevice()->Key_Tap(VK_F3))
-    //{
-    //    EndDialog();
-    //    GetPlayer()->Unlock_Input();
-    //}
-
     if (InputDevice()->Key_Tap(VK_F2))
         CameraManager()->Set_MainCam(GetOrbitCamComp(), 0.5f);
+     
+    const _int damage = Helper::Get_Random_Int(1000, 10000);
 
-    if (InputDevice()->Key_Tap(VK_F3))
-         RequestSequence("Field/Front");
-       // RequestSequence("Field/Front", 0.f, true, 0.f);
+    if (InputDevice()->Key_Down(VK_F3))
+        //      RequestSequence("Field/Front");
+        GetCharacter()->Take_Damage(DAMAGE_TYPE::NORMAL, damage);
 }
 
 void CCamDirector::AbortSequenceToOrbit(_bool resetTime)
@@ -407,14 +378,8 @@ _bool CCamDirector::StopRequest(_uint handle, _float blendOutSec, _bool resetTim
     return ok;
 }
 
-
 void CCamDirector::StopAll(_float blendOutSec)
 {
     if (!m_playing.active) return;
     StopRequest(m_playing.handle, blendOutSec, true);
-}
-
-_bool CCamDirector::IsValid() const
-{
-    return GetPlayer()->Get_CurCharacterHandle().isValid();
 }

@@ -33,7 +33,7 @@ namespace Engine
 	enum class RENDER_LAYER { Default, CustomOnly, Both, None };
 	enum class POSTPROCESS { MRT_Bloom, MRT_Distortion, MRT_RimLight, END};
 	enum class RIMLIGHT {OUTLINE, BACKLIGHT, RIMLIGHT, END};
-	enum class NOISE_FXTYPE { MOTIONBLUR, END };
+	enum class NOISE_FXTYPE { MOTIONBLUR, VANISH, END };
 	enum class CUSTOMTARGET { EFFECT, UI, ETC, END };
 	enum class ANCHOR : unsigned int {
 		Center = 0,
