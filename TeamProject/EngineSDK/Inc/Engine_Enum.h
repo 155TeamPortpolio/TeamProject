@@ -25,6 +25,7 @@ namespace Engine
 		MONSTER_PARRY = 1<<5,
 		CAMERA = 1<<6,
 		INTERACTABLE = 1<<7,
+		GROUND = 1<<8,
 		END = 1<<31 
 	};
 	enum class SOUND_GROUP { BGM, SFX, UI, TALK, ENV,END };

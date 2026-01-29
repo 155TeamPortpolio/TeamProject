@@ -205,6 +205,12 @@ void CMapLoader::Place_PlacedObjectFromLoadData(MapData_Object* pData)
                     ColliderDesc.bCooking = *bCooking;
                     ColliderDesc.strModelKey = Desc->TagModelKey;
                 }
+
+                if (physicsData.TagName == "isGround" && physicsData.defaultvalue.type == SLOT_DATA_TYPE::Bool) {
+                    auto isGround = GetSlotValue<_bool>(physicsData.defaultvalue);
+                    if(isGround)
+                        ColliderDesc.eGroup = COLLISION_GROUP::GROUND;
+                }
             }
         }
 
