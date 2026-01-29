@@ -18,6 +18,8 @@ public:
     HRESULT Initialize(INIT_DESC* pArg) override;
     void    Awake()                     override;
     void    Priority_Update(_float dt)  override;
+    void    Update(_float dt)           override;
+    void    Late_Update(_float dt)      override;
 
 public:
     void    SetTarget(OBJECT_HANDLE h);
@@ -79,6 +81,7 @@ private:
     _float           CalcAllowDist(const OrbitProfile& prof, class PxScene* scene, CCharacterController* camCC,
         const Vector3& pivotWorld, _float distWanted, const Vector2& rotCurDeg, const Vector2& rotGoalDeg);
     void             SmoothPose(_float dt);
+    void             UpdateOccluderTrigger(const Vector3& pivotWorld, const Vector3& camWorld);
 
 private:
     void          Lock_Reset();
@@ -133,6 +136,7 @@ private:
     _bool   m_lockInput        = false;
 
     OrbitPivotStabilizer m_pivotStab{};
+    OBJECT_HANDLE        m_occluderTrigger{};
 
 public:
     static  COrbitCam* Create();

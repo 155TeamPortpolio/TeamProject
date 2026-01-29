@@ -1,14 +1,15 @@
 #include "pch.h"
 #include "OrbitCam.h"
-
+#include "OrbitCamCollider.h"
+#include "ICamCollidable.h"
+// Engine
 #include "GameInstance.h"
 #include "Character.h"
 #include "Helper_Func.h"
 #include "PhysicsSystem.h"
 #include "CharacterController.h"
 #include "EventListener.h"
-// Interface
-#include "ICamCollidable.h"
+#include "ObjectContainer.h"
 
 namespace
 {
@@ -28,10 +29,23 @@ namespace
         float a = 1.f - expf(-dt / max(tau, 0.0001f));
         return clamp(a, 0.f, 1.f);
     }
-
     Vector3 LerpVec(const Vector3& a, const Vector3& b, float t)
     {
         return a + (b - a) * t;
+    }
+    Quaternion MakeLookRotation(const Vector3& forward)
+    {
+        Vector3 f = forward;
+        f.Normalize();
+
+        Vector3 up = Vector3::Up;
+        if (fabsf(f.Dot(up)) > 0.98f) up = Vector3::Right;
+
+        Matrix m = Matrix::CreateWorld(Vector3::Zero, f, up);
+
+        Quaternion q = Quaternion::CreateFromRotationMatrix(m);
+        q.Normalize();
+        return q;
     }
 }
 
@@ -52,6 +66,7 @@ HRESULT COrbitCam::Initialize_Prototype()
     __super::Initialize_Prototype();
     Add_Component<CCharacterController>();
     Add_Component<CEventListener>();
+    Add_Component<CObjectContainer>();
 
     m_pose.rotGoalDeg = Vector2(0.f, m_prof.startPitchDeg);
     m_pose.rotCurDeg = m_pose.rotGoalDeg;
@@ -78,13 +93,36 @@ HRESULT COrbitCam::Initialize(INIT_DESC* pArg)
 {
     __super::Initialize(pArg);
 
-    auto event = Get_Component<CEventListener>();
-    event->Add_Listener<TARGET_LOCK_DESC>([&](TARGET_LOCK_DESC desc)
+    Get_Component<CEventListener>()->Add_Listener<TARGET_LOCK_DESC>([&](TARGET_LOCK_DESC desc)
         {
             if (!desc.tHandle.isValid()) return;
             if (desc.bLock) SetLockOn(desc.tHandle);
             else ClearLockOn();
         });
+
+    PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_OrbitCamCollider", COrbitCamCollider::Create());
+
+    RIGIDBODY_DESC rb{};
+    rb.isKinematic    = true;
+    rb.bEnableGravity = false;
+
+    COLLIDER_DESC col{};
+    col.eType          = COLLIDER_TYPE::BOX;
+    col.eGroup         = COLLISION_GROUP::CAMERA;
+    col.iCollisionMask = ENUM(COLLISION_GROUP::INTERACTABLE);
+    col.bAutoFit       = false;
+    col.bTrigger       = true;
+    col.vCenter        = _float3(0.f, 0.f, 0.f);
+    col.vSize          = _float3(1.f,1.f,1.f);
+
+    CGameObject* occluder = Builder::Create_Object({G_GlobalLevelKey, "Proto_GameObject_OrbitCamCollider"})
+        .RigidBody(rb)
+        .Collider(col)
+        .Build("OrbitCamCollider");
+
+    m_occluderTrigger = occluder->Get_Handle();
+
+    Get_Component<CObjectContainer>()->Add_Child(occluder, false);
 
     return S_OK;
 }
@@ -340,6 +378,8 @@ void COrbitCam::ApplyCollide(_float dt)
 
 void COrbitCam::Priority_Update(_float dt)
 {
+    Get_Component<CObjectContainer>()->Priority_UpdateChild(dt);
+
     if (SkipUpdate(dt)) return;
 
     UpdateSwitch(dt);
@@ -399,6 +439,15 @@ void COrbitCam::Priority_Update(_float dt)
     ApplyPose(dt, lockRes);
 }
 
+void COrbitCam::Update(_float dt)
+{
+    Get_Component<CObjectContainer>()->UpdateChild(dt);
+}
+
+void COrbitCam::Late_Update(_float dt)
+{
+    Get_Component<CObjectContainer>()->Late_UpdateChild(dt);
+}
 
 void COrbitCam::ClampTargets()
 {
@@ -435,6 +484,8 @@ void COrbitCam::ApplyPose(_float dt, const OrbitLockEval& lockRes)
 
     m_pTransform->Set_WorldPos(Vector4(camPos.x, camPos.y, camPos.z, 1.f));
 
+    UpdateOccluderTrigger(pivot, camPos);
+
     if (lockRes.weight > 0.f)
     {
         Vector3 lookAt = Vector3::Lerp(pivot, lockRes.focusPos, lockRes.weight);
@@ -444,6 +495,7 @@ void COrbitCam::ApplyPose(_float dt, const OrbitLockEval& lockRes)
 
     m_pTransform->Set_WorldQuaternion(XMVectorSet(q.x, q.y, q.z, q.w));
 }
+
 
 
 Vector3 COrbitCam::GetFoot() const
@@ -687,6 +739,53 @@ void COrbitCam::SmoothPose(_float dt)
     m_pose.pivotCurWorld = m_pose.pivotCurWorld + (m_pose.pivotGoalWorld - m_pose.pivotCurWorld) * pivotA;
 }
 
+void COrbitCam::UpdateOccluderTrigger(const Vector3& pivotWorld, const Vector3& camWorld)
+{
+    if (!m_occluderTrigger.isValid()) return;
+
+    auto obj = ObjectManager()->Request_Object(m_occluderTrigger);
+    if (!obj) return;
+
+    auto tr = obj->Get_Component<CTransform>();
+    if (!tr) return;
+
+    constexpr float kStartPad = 0.25f;
+    constexpr float kEndPad = 0.15f;
+
+    constexpr float kWidth = 0.7f;
+    constexpr float kHeight = 0.7f;
+
+    constexpr float kMinLen = 0.05f;
+
+    Vector3 dir = camWorld - pivotWorld;
+    float dist = dir.Length();
+    if (dist <= 0.001f) return;
+
+    dir /= dist;
+
+    Vector3 a = pivotWorld + dir * kStartPad;
+    Vector3 b = camWorld - dir * kEndPad;
+
+    Vector3 ab = b - a;
+    float len = ab.Length();
+
+    if (len < kMinLen)
+    {
+        len = kMinLen;
+        b = a + dir * len;
+    }
+
+    Vector3 mid = (a + b) * 0.5f;
+
+    Quaternion rot = MakeLookRotation(dir);
+
+    tr->Set_WorldPos(Vector4(mid.x, mid.y, mid.z, 1.f));
+    tr->Set_WorldQuaternion(XMVectorSet(rot.x, rot.y, rot.z, rot.w));
+
+    tr->Scale(Vector3(kWidth, kHeight, len));
+}
+
+
 void COrbitCam::Lock_Reset()
 {
     m_lock = {};
@@ -833,7 +932,8 @@ void COrbitCam::Lock_BlendStart(_bool entering)
         m_lockBlend.weight = 1.f;
     }
 
-    if (m_lockBlend.duration <= 0.f) m_lockBlend.duration = 0.0001f;
+    if (m_lockBlend.duration <= 0.f)
+        m_lockBlend.duration = 0.0001f;
 }
 
 void COrbitCam::SyncPivot()
@@ -942,7 +1042,6 @@ Vector3 COrbitCam::PivotStab_Eval(_float dt, const Vector3& rawPivot)
 
     return m_pivotStab.filteredPivot;
 }
-
 
 COrbitCam* COrbitCam::Create()
 {
