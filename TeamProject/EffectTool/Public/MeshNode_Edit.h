@@ -12,7 +12,7 @@ public:
         CEffectContainer_Edit::EFFECT_EDIT_CONTEXT* pContext = nullptr;
     }MESH_NODE_EDIT_DESC;
 
-    enum class EFFECT_TEXTURE_TYPE { DIFFUSE, NOISE, DISSOLVE, MASK_A, MASK_B, DISTORTION, END };
+    enum class EFFECT_TEXTURE_TYPE { DIFFUSE, NOISE, DISSOLVE, MASK_A, MASK_B, DISTORTION, GRADIENT, END };
 private:
     CMeshNode_Edit();
     CMeshNode_Edit(const CMeshNode_Edit& rhs);
@@ -43,7 +43,6 @@ private:
 
     void SetMaterial();
     void SetMesh();
-    _bool ChangeEaseType(EaseType& ioValue, EaseType shownValue);
     void SetUp_MeshEffect();
     void Add_Texture(EFFECT_TEXTURE_TYPE type);
 

@@ -15,7 +15,7 @@ public:
     virtual _bool Handle_Transition(CCorin* pOwner, const string& strState) override;
 
 public:
-    static CCorinState_SwitchIn* Create() { return new CCorinState_SwitchIn(); }
+    static CCorinState_SwitchIn* Create();
     virtual void Free() override { __super::Free(); }
 };
 

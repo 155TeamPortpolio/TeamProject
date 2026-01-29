@@ -33,7 +33,7 @@ HRESULT CToolMap::Initialize(INIT_DESC* pArg)
 {
 	__super::Initialize(pArg);
 
-	m_pTransform->Set_Pos(_vector3(0.f, -5.f, 0.f));
+	m_pTransform->Set_Pos(_vector3(0.f, -3.f, 0.f));
 	return S_OK;
 }
 

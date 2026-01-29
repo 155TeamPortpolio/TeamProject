@@ -95,6 +95,9 @@ public:
 	static CSacrificeHandState_OverDrive_Release_Start_Phase2* Create() { return new CSacrificeHandState_OverDrive_Release_Start_Phase2(); }
 	virtual void Free() override { __super::Free(); }
 
+private:
+	void Update_Effects(CSacrificeHand* pOwner);
+
 };
 
 class CSacrificeHandState_OverDrive_Release_Loop_Phase2 : public IHState<CSacrificeHand>
@@ -108,6 +111,7 @@ public:
 	static CSacrificeHandState_OverDrive_Release_Loop_Phase2* Create() { return new CSacrificeHandState_OverDrive_Release_Loop_Phase2(); }
 	virtual void Free() override { __super::Free(); }
 
+private:
 };
 
 class CSacrificeHandState_OverDrive_Release_End_Phase2 : public IHState<CSacrificeHand>
@@ -134,6 +138,9 @@ public:
 	static CSacrificeHandState_OverDrive_Release_Attack01_Phase2* Create() { return new CSacrificeHandState_OverDrive_Release_Attack01_Phase2(); }
 	virtual void Free() override { __super::Free(); }
 
+private:
+	void Update_Effects(CSacrificeHand* pOwner);
+
 };
 
 class CSacrificeHandState_OverDrive_Release_Attack02_Phase2 : public IHState<CSacrificeHand>
@@ -149,7 +156,7 @@ public:
 
 private:
 	void Rotate_ToTarget(CSacrificeHand* pOwner, _float dt);
-
+	void Update_Effects(CSacrificeHand* pOwner);
 };
 
 class CSacrificeHandState_OverDrive_Release_Attack03_Phase2 : public IHState<CSacrificeHand>
@@ -162,6 +169,9 @@ public:
 public:
 	static CSacrificeHandState_OverDrive_Release_Attack03_Phase2* Create() { return new CSacrificeHandState_OverDrive_Release_Attack03_Phase2(); }
 	virtual void Free() override { __super::Free(); }
+
+private:
+	void Update_Effects(CSacrificeHand* pOwner);
 
 };
 
