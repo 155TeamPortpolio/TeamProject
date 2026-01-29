@@ -103,6 +103,9 @@
     <Filter Include="04. AIResource\AIModelData\AISkeleton\AIDynamicBone">
       <UniqueIdentifier>{5defc8e5-6fc3-4b7c-ae90-a2bcbbe25fe1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. Obj\05. Adjuster">
+      <UniqueIdentifier>{c6e3746c-343e-4127-8b5f-df70e8249bd0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Image Include="ModelEditor.ico">
@@ -262,6 +265,9 @@
     <ClInclude Include="..\Public\AIDynamicBone.h">
       <Filter>04. AIResource\AIModelData\AISkeleton\AIDynamicBone</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\MaterialAdjust.h">
+      <Filter>02. Obj\05. Adjuster</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModelEditor.cpp">
@@ -380,6 +386,9 @@
     </ClCompile>
     <ClCompile Include="..\Public\AIDynamicBone.cpp">
       <Filter>04. AIResource\AIModelData\AISkeleton\AIDynamicBone</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MaterialAdjust.cpp">
+      <Filter>02. Obj\05. Adjuster</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
