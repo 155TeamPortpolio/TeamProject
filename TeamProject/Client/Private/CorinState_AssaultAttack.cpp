@@ -52,7 +52,7 @@ void CCorinState_AssaultAttack::Update(CCorin* pOwner, _float dt)
 				HitDesc()
 				.Type(HIT_TYPE::INTERVAL)
 				.Damage(Helper::Get_Random_Float(5.f, 10.f), DAMAGE_TYPE::NORMAL)
-				.Interval(0.1f)
+				.Interval(0.05f)
 				.Charge(5.f, 50.f)
 			);
 		}
