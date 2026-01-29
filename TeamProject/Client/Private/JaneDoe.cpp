@@ -41,12 +41,12 @@ HRESULT CJaneDoe::Initialize_Prototype()
 		return E_FAIL;
 
 	auto pRcsMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
-	pRcsMgr->Add_ResourcePath("JaneDoeModel.model",
-		"../Bin/Resources/Global/BattleCharacter/JaneDoe/JaneDoeModel.model");
-	pRcsMgr->Add_ResourcePath("JaneDoe.mat",
-		"../Bin/Resources/Global/BattleCharacter/JaneDoe/JaneDoe.mat");
-	pRcsMgr->Add_ResourcePath("JaneDoe_Meta.json",
-		"../Bin/Resources/Global/BattleCharacter/JaneDoe/JaneDoe_Meta.json");
+	//pRcsMgr->Add_ResourcePath("JaneDoeModel.model",
+	//	"../Bin/Resources/Global/BattleCharacter/JaneDoe/JaneDoeModel.model");
+	//pRcsMgr->Add_ResourcePath("JaneDoe.mat",
+	//	"../Bin/Resources/Global/BattleCharacter/JaneDoe/JaneDoe.mat");
+	//pRcsMgr->Add_ResourcePath("JaneDoe_Meta.json",
+	//	"../Bin/Resources/Global/BattleCharacter/JaneDoe/JaneDoe_Meta.json");
 
 	Get_Component<CModel>()->Link_Model(G_GlobalLevelKey, "JaneDoeModel.model");
 	Get_Component<CMaterial>()->Link_Material(G_GlobalLevelKey, "JaneDoe.mat");

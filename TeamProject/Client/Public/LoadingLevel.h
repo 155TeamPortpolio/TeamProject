@@ -24,6 +24,7 @@ private:
     _float m_leastTime = { 0.f };
 private:
     void PreLoadLevel(const string& levelKey);
+    void PreLoadForTestLevel();
     ResourceType CheckResourceType(const string& filePath,const string& fileName);
     _bool isSRGB(const string& filePath);
     _bool isEffect(const string& filePath);
