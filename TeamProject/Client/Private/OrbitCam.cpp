@@ -100,29 +100,7 @@ HRESULT COrbitCam::Initialize(INIT_DESC* pArg)
             else ClearLockOn();
         });
 
-    PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_OrbitCamCollider", COrbitCamCollider::Create());
-
-    RIGIDBODY_DESC rb{};
-    rb.isKinematic    = true;
-    rb.bEnableGravity = false;
-
-    COLLIDER_DESC col{};
-    col.eType          = COLLIDER_TYPE::BOX;
-    col.eGroup         = COLLISION_GROUP::CAMERA;
-    col.iCollisionMask = ENUM(COLLISION_GROUP::INTERACTABLE);
-    col.bAutoFit       = false;
-    col.bTrigger       = true;
-    col.vCenter        = _float3(0.f, 0.f, 0.f);
-    col.vSize          = _float3(1.f,1.f,1.f);
-
-    CGameObject* occluder = Builder::Create_Object({G_GlobalLevelKey, "Proto_GameObject_OrbitCamCollider"})
-        .RigidBody(rb)
-        .Collider(col)
-        .Build("OrbitCamCollider");
-
-    m_occluderTrigger = occluder->Get_Handle();
-
-    Get_Component<CObjectContainer>()->Add_Child(occluder, false);
+    Create_OrbitCollider();
 
     return S_OK;
 }
@@ -1041,6 +1019,32 @@ Vector3 COrbitCam::PivotStab_Eval(_float dt, const Vector3& rawPivot)
     m_pivotStab.filteredPivot = LerpVec(m_pivotStab.filteredPivot, rawPivot, aPos);
 
     return m_pivotStab.filteredPivot;
+}
+
+void COrbitCam::Create_OrbitCollider()
+{
+    PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_OrbitCamCollider", COrbitCamCollider::Create());
+
+    RIGIDBODY_DESC rb{};
+    rb.isKinematic = true;
+    rb.bEnableGravity = false;
+
+    COLLIDER_DESC col{};
+    col.eType = COLLIDER_TYPE::SPHERE;
+    col.eGroup = COLLISION_GROUP::CAMERA;
+    col.iCollisionMask = ENUM(COLLISION_GROUP::INTERACTABLE);
+    col.bAutoFit = false;
+    col.bTrigger = true;
+    col.vCenter = _float3(0.f, 0.f, 0.f);
+    col.vSize = _float3(1.f, 1.f, 1.f);
+
+    CGameObject* occluder = Builder::Create_Object({G_GlobalLevelKey, "Proto_GameObject_OrbitCamCollider"})
+        .RigidBody(rb)
+        .Collider(col)
+        .Build("OrbitCamCollider");
+
+    m_occluderTrigger = occluder->Get_Handle();
+    Get_Component<CObjectContainer>()->Add_Child(occluder, false);
 }
 
 COrbitCam* COrbitCam::Create()
