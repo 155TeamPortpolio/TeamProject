@@ -73,7 +73,7 @@ void CSirChop::Awake()
 
 	__super::Awake();
 
-	m_pTransform->Scale(_float3(1.2f, 1.2f, 1.2f));
+	//m_pTransform->Scale(_float3(1.2f, 1.2f, 1.2f));
 	Add_InteractZone(Get_Position(), _float3(0.f, 0.f, 1.2f), Get_WorldRotation());
 }
 
