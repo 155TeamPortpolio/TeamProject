@@ -489,6 +489,7 @@ namespace Engine
 		string MaskTextureTagA{};
 		string MaskTextureTagB{};
 		string DistortionTextureTag{};
+		string GradientTextureTag{};
 
 		_float3 vOffsetPosition{};
 		_float4 vOffsetQuaternion{};
@@ -551,6 +552,10 @@ namespace Engine
 		_float fDistortionStrength{};
 		_float fDistortionTilling{};
 		_float2 vDistortionUVSpeed{};
+
+		/* Gradient */
+		_float fEnableGradient{};
+		_uint iGradientMode{};
 
 		static tagMeshNode FromJson(nlohmann::ordered_json& json);
 	}MESH_NODE;

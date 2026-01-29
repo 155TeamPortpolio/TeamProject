@@ -519,8 +519,8 @@ CGameObject* CBattlePlayer::CreateBattleCharacter(CHARACTER character)
 	characterCCT.iCollisionMask = 0xFFFFFFFF;
 	//characterCCT.iCollisionMask = 0xFFFFFFFF & ~ENUM(COLLISION_GROUP::COMMON);
 	characterCCT.bAutoFit = false;
-	characterCCT.fHeight = 1.15f;
-	characterCCT.fRadius = 0.6f;
+	characterCCT.fHeight = 1.13;
+	characterCCT.fRadius = 0.3f;
 	characterCCT.eGroup = COLLISION_GROUP::PLAYER;
 	//characterCCT.fBoundingMinY = -0.88f;
 	characterCCT.vPos = { 0.f, 1.5f, 0.f };
@@ -538,8 +538,8 @@ CGameObject* CBattlePlayer::CreateBattleCharacter(CHARACTER character)
 	}
 	case CHARACTER::Corin:
 	{
-		characterCCT.fHeight = 0.75f;
-		characterCCT.fRadius = 0.6f;
+		characterCCT.fHeight = 0.73f;
+		characterCCT.fRadius = 0.27f;
 		auto Corin = Builder::Create_Object({ G_GlobalLevelKey, "Proto_GameObject_Corin" })
 			.Position(_float3(3.f, 0.f, 0.f))
 			.CharacterController(characterCCT)

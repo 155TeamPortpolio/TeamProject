@@ -7,6 +7,7 @@
 #include "JaneDoeState_UltimateAttack.h"
 #include "JaneDoeState_BranchAttack.h"
 #include "JaneDoeState_CounterAttack.h"
+#include "JaneDoeState_AssaultAttack.h"
 #include "JaneDoe.h"
 
 #include "CharacterController.h"
@@ -24,6 +25,7 @@ CJaneDoeState_Attack* CJaneDoeState_Attack::Create()
     pSubStateMachine->Register_State("UltimateAttack", CJaneDoeState_UltimateAttack::Create());
     pSubStateMachine->Register_State("BranchAttack", CJaneDoeState_BranchAttack::Create());
     pSubStateMachine->Register_State("CounterAttack", CJaneDoeState_CounterAttack::Create());
+    pSubStateMachine->Register_State("AssaultAttack", CJaneDoeState_AssaultAttack::Create());
 
     pSubStateMachine->Get_State("NormalAttack")->Set_Tag("NormalAttack");
     pSubStateMachine->Get_State("RushAttack")->Set_Tag("RushAttack");
@@ -31,6 +33,7 @@ CJaneDoeState_Attack* CJaneDoeState_Attack::Create()
     pSubStateMachine->Get_State("UltimateAttack")->Set_Tag("UltimateAttack");
     pSubStateMachine->Get_State("BranchAttack")->Set_Tag("BranchAttack");
     pSubStateMachine->Get_State("CounterAttack")->Set_Tag("CounterAttack");
+    pSubStateMachine->Get_State("AssaultAttack")->Set_Tag("AssaultAttack");
 
     pSubStateMachine->Register_Transition("NormalAttack", "BranchAttack",
         CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "Salchow");
@@ -68,6 +71,9 @@ void CJaneDoeState_Attack::Enter(CJaneDoe* pOwner)
         break;
     case 5:
         m_pSubStateMachine->Set_DefaultState("CounterAttack");
+        break;
+    case 6:
+        m_pSubStateMachine->Set_DefaultState("AssaultAttack");
         break;
     default:
         m_pSubStateMachine->Set_DefaultState("NormalAttack");
@@ -122,6 +128,7 @@ void CJaneDoeState_Attack::Update(CJaneDoe* pOwner, _float dt)
 void CJaneDoeState_Attack::Exit(CJaneDoe* pOwner)
 {
     pOwner->End_AllAttackColliders();
+    pOwner->Unlock_Move();
     __super::Exit(pOwner);
 }
 

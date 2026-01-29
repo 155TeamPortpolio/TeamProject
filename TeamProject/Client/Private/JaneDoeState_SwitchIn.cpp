@@ -7,22 +7,27 @@
 #include "JaneDoeState_SwitchInParryAid.h"
 #include "JaneDoeState_SwitchInNormal.h"
 
+CJaneDoeState_SwitchIn* CJaneDoeState_SwitchIn::Create()
+{
+    auto pInstance = new CJaneDoeState_SwitchIn();
+    pInstance->m_pSubStateMachine = CStateMachine<CJaneDoe>::Create();
+    auto pSubStateMachine = pInstance->Get_SubStateMachine();
+
+    pSubStateMachine->Register_State("Normal", CJaneDoeState_SwitchInNormal::Create());
+    pSubStateMachine->Register_State("Attack", CJaneDoeState_SwitchInAttack::Create());
+    pSubStateMachine->Register_State("ParryAid", CJaneDoeState_SwitchInParryAid::Create());
+
+    pSubStateMachine->Get_State("Normal")->Set_Tag("Normal");
+    pSubStateMachine->Get_State("Attack")->Set_Tag("Attack");
+    pSubStateMachine->Get_State("ParryAid")->Set_Tag("ParryAid");
+
+    return pInstance;
+}
+
 void CJaneDoeState_SwitchIn::Enter(CJaneDoe* pOwner)
 {
-    //pOwner->Active_Character();
     pOwner->Push_Invincible();
     pOwner->Unlock_Move();
-    if (!m_pSubStateMachine)
-    {
-        m_pSubStateMachine = CStateMachine<CJaneDoe>::Create();
-        m_pSubStateMachine->Register_State("Normal", CJaneDoeState_SwitchInNormal::Create());
-        m_pSubStateMachine->Register_State("Attack", CJaneDoeState_SwitchInAttack::Create());
-        m_pSubStateMachine->Register_State("ParryAid", CJaneDoeState_SwitchInParryAid::Create());
-
-        m_pSubStateMachine->Get_State("Normal")->Set_Tag("Normal");
-        m_pSubStateMachine->Get_State("Attack")->Set_Tag("Attack");
-        m_pSubStateMachine->Get_State("ParryAid")->Set_Tag("ParryAid");
-    }
 
     switch (pOwner->Get_Switch())
     {
