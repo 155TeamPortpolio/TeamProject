@@ -40,14 +40,6 @@ HRESULT CJaneDoe::Initialize_Prototype()
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
 
-	auto pRcsMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
-	//pRcsMgr->Add_ResourcePath("JaneDoeModel.model",
-	//	"../Bin/Resources/Global/BattleCharacter/JaneDoe/JaneDoeModel.model");
-	//pRcsMgr->Add_ResourcePath("JaneDoe.mat",
-	//	"../Bin/Resources/Global/BattleCharacter/JaneDoe/JaneDoe.mat");
-	//pRcsMgr->Add_ResourcePath("JaneDoe_Meta.json",
-	//	"../Bin/Resources/Global/BattleCharacter/JaneDoe/JaneDoe_Meta.json");
-
 	Get_Component<CModel>()->Link_Model(G_GlobalLevelKey, "JaneDoeModel.model");
 	Get_Component<CMaterial>()->Link_Material(G_GlobalLevelKey, "JaneDoe.mat");
 
@@ -76,7 +68,6 @@ HRESULT CJaneDoe::Initialize_Prototype()
 		ResourceManager()->Add_ResourcePath("JaneDoe_Sting0.mat", "../Bin/Resources/Effect/Model/JaneDoe_Sting0/JaneDoe_Sting0.mat");
 	}
 
-	ResourceManager()->Add_ResourcePath("Eff_Noise_045.png", "../Bin/Resources/Global/BattleCharacter/JaneDoe/Eff_Noise_045.png");
 	return S_OK;
 }
 
@@ -463,23 +454,23 @@ HRESULT CJaneDoe::Initialize_Stat()
 HRESULT CJaneDoe::Initialize_Weapon()
 {
 	ATTACK_COLLIDER_DESC HandL_WeaponDesc;
-	HandL_WeaponDesc.eColliderType = COLLIDER_TYPE::SPHERE;
+	HandL_WeaponDesc.eColliderType = COLLIDER_TYPE::BOX;
 	HandL_WeaponDesc.pOwnerAnimator = Get_Component<CAnimator3D>();
 	HandL_WeaponDesc.tagBone = "Ctr_L_HandWpn_F";
 	HandL_WeaponDesc.tagName = "HandWeapon_L";
-	HandL_WeaponDesc.vSize = { 0.3f, 0.f, 0.f };
-	HandL_WeaponDesc.vCenter = { 0.f, 0.f, 0.f };
+	HandL_WeaponDesc.vSize = { 0.6f, 0.3f, 0.3f };
+	HandL_WeaponDesc.vCenter = { 0.2f, 0.f, 0.f };
 	
 	if (FAILED(Attach_AttackCollider(&HandL_WeaponDesc)))
 		return E_FAIL;
 
 	ATTACK_COLLIDER_DESC HandR_WeaponDesc;
-	HandR_WeaponDesc.eColliderType = COLLIDER_TYPE::SPHERE;
+	HandR_WeaponDesc.eColliderType = COLLIDER_TYPE::BOX;
 	HandR_WeaponDesc.pOwnerAnimator = Get_Component<CAnimator3D>();
 	HandR_WeaponDesc.tagBone = "Ctr_R_HandWpn_F";
 	HandR_WeaponDesc.tagName = "HandWeapon_R";
-	HandR_WeaponDesc.vSize = { 0.3f, 0.0f, 0.0f };
-	HandR_WeaponDesc.vCenter = { 0.f, 0.f, 0.f };
+	HandR_WeaponDesc.vSize = { 0.6f, 0.3f, 0.3f };
+	HandR_WeaponDesc.vCenter = { 0.2f, 0.f, 0.f };
 
 	if (FAILED(Attach_AttackCollider(&HandR_WeaponDesc)))
 		return E_FAIL;

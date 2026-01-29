@@ -40,14 +40,6 @@ HRESULT CCorin::Initialize_Prototype()
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
 
-	auto pRcsMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
-	pRcsMgr->Add_ResourcePath("Corin.model",
-		"../Bin/Resources/Global/BattleCharacter/Corin/Corin.model");
-	pRcsMgr->Add_ResourcePath("Corin.mat",
-		"../Bin/Resources/Global/BattleCharacter/Corin/Corin.mat");
-	pRcsMgr->Add_ResourcePath("Avatar_Female_Size01_Corin_Meta.json",
-		"../Bin/Resources/Global/BattleCharacter/Corin/Avatar_Female_Size01_Corin_Meta.json");
-
 	Get_Component<CModel>()->Link_Model(G_GlobalLevelKey, "Corin.model");
 	Get_Component<CMaterial>()->Link_Material(G_GlobalLevelKey, "Corin.mat");
 	return S_OK;
