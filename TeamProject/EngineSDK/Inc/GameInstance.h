@@ -1,6 +1,7 @@
   #pragma once
 #include "Base.h"
 #include "Engine_Service.h"
+#include "RunTimeBucket.h"
 
 NS_BEGIN(Engine)
 
@@ -58,7 +59,7 @@ public:
 	class IPhysicsService* Get_PhysicsSystem() { return m_pPhysicsSystem; }
 	class CEventSystem* Get_EventSystem() { return m_pEventSystem; }
 	class CClickManager* Get_ClickMgr() { return m_pClickManager; }
-
+	CRunTimeBucket& Get_RuntimeBucket() { return m_RuntimeBucket; }
 private:
 	class IGraphicService* m_pGraphicDevice = { nullptr };
 	class ITimeService* m_pTimeManager = { nullptr };
@@ -86,6 +87,8 @@ private:
 	ID3D11DeviceContext* m_pDeviceContext = { nullptr };
 	RECT m_ClientRect = {};
 	_uint m_totalFrameCount = {};
+	CRunTimeBucket m_RuntimeBucket;
+
 public:
 	virtual void Free() override;
 
@@ -113,5 +116,6 @@ inline auto* CollisionSystem() { return CGameInstance::GetInstance()->Get_Collis
 inline auto* PhysicsSystem() { return CGameInstance::GetInstance()->Get_PhysicsSystem(); }
 inline auto* FontSystem() { return CGameInstance::GetInstance()->Get_FontSystem(); }
 inline auto* EventSystem() { return CGameInstance::GetInstance()->Get_EventSystem(); }
+inline auto& RuntimeBucket() { return CGameInstance::GetInstance()->Get_RuntimeBucket(); }
 
 NS_END
