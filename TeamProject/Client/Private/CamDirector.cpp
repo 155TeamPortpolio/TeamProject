@@ -76,6 +76,8 @@ void CCamDirector::AutoField()
 {
     AutoTarget();
     RequestSequence("Field/Front");
+
+    //GameInstance()->Set_EngineTimeScale(0.25f);
 }
 
 void CCamDirector::Update(_float dt)
@@ -158,8 +160,8 @@ void CCamDirector::UpdateInput(_float dt)
      
     const _int damage = Helper::Get_Random_Int(1000, 10000);
 
-    if (InputDevice()->Key_Down(VK_F3))
-              RequestSequence("Field/Front");
+    if (InputDevice()->Key_Tap(VK_F3))
+           RequestSequence("Field/Front");
         //GetCharacter()->Take_Damage(DAMAGE_TYPE::NORMAL, damage);
 }
 

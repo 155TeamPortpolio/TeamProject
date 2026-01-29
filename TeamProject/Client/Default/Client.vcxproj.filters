@@ -481,9 +481,6 @@
     <Filter Include="02. GameObject\UI\03. UIElement\NineSlice">
       <UniqueIdentifier>{2646c162-8883-48f9-b637-d3f38abb755c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\UI\01. 2D\ScratchCard">
-      <UniqueIdentifier>{da4d3639-e60d-4d45-bd2a-74bd1a13d1e9}</UniqueIdentifier>
-    </Filter>
     <Filter Include="03. Utility\04. BattleSystem\FX_Battle">
       <UniqueIdentifier>{80b278d6-d073-43f9-b769-b90f4b580861}</UniqueIdentifier>
     </Filter>
@@ -940,11 +937,38 @@
     <Filter Include="03. Utility\09. Interface">
       <UniqueIdentifier>{51900e22-1c4e-4ebd-b4f6-2e6da8fde730}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Npc\Service\SirChop">
+      <UniqueIdentifier>{d2a50a8e-9e0b-42f2-a758-62374a5c7f8b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\Ramen">
+      <UniqueIdentifier>{e1dc0083-3a9a-44a0-95b1-74202bf40893}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\Ramen\Menu">
+      <UniqueIdentifier>{1602a1c7-49cb-4a40-92fb-8418454d1276}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Camera\04. OrbitCam\OrbitCamCollider">
+      <UniqueIdentifier>{bb6ef566-7828-4054-a05e-14d7b79b3b20}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02. GameObject\Object\Enemy\Defiler">
       <UniqueIdentifier>{47071186-1492-4dc2-877a-9f00d3ad73ea}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\Object\Player\Character\01. JaneDoe\State\Attack\Assault">
       <UniqueIdentifier>{0d434bd4-69a2-4b9c-9b46-5b5569ef933d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Boss\Defiler\State">
+      <UniqueIdentifier>{538d12ba-ff39-42c3-8992-74003aa40ae2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Boss\Defiler\State\Attack">
+      <UniqueIdentifier>{fc276ecd-fa69-4783-935a-50f83632cc34}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Boss\Defiler\State\Born">
+      <UniqueIdentifier>{0623da2f-8096-4aea-8848-45682ac2f6bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Boss\Defiler\State\Idle">
+      <UniqueIdentifier>{d5b04047-e78b-49f4-aca1-616bbfd9634a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\06. FieldSystem\Room\04. Noodle">
+      <UniqueIdentifier>{810c5f63-0a50-441a-b876-0b38ab52f72c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1788,13 +1812,35 @@
     <ClInclude Include="..\Public\ICamCollidable.h">
       <Filter>03. Utility\09. Interface</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Defiler.h" />
-    <ClInclude Include="..\Public\DefilerState.h" />
-    <ClInclude Include="..\Public\DefilerState_Attack.h" />
-    <ClInclude Include="..\Public\DefilerState_Born.h" />
-    <ClInclude Include="..\public\DefilerState_Idle.h" />
-    <ClInclude Include="..\Public\JaneDoeState_AssaultAttack.h">
-      <Filter>02. GameObject\Object\Player\Character\01. JaneDoe\State\Attack\Assault</Filter>
+    <ClInclude Include="..\public\SirChop.h">
+      <Filter>02. GameObject\Object\Npc\Service\SirChop</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Ramen.h">
+      <Filter>02. GameObject\UI\01. 2D\Ramen</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_RamenMenu.h">
+      <Filter>02. GameObject\UI\01. 2D\Ramen\Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\OrbitCamCollider.h">
+      <Filter>02. GameObject\Camera\04. OrbitCam\OrbitCamCollider</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Defiler.h">
+      <Filter>02. GameObject\Object\Enemy\Boss\Defiler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\DefilerState.h">
+      <Filter>02. GameObject\Object\Enemy\Boss\Defiler\State</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\DefilerState_Attack.h">
+      <Filter>02. GameObject\Object\Enemy\Boss\Defiler\State\Attack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\DefilerState_Born.h">
+      <Filter>02. GameObject\Object\Enemy\Boss\Defiler\State\Born</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\DefilerState_Idle.h">
+      <Filter>02. GameObject\Object\Enemy\Boss\Defiler\State\Idle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Room_Noodle.h">
+      <Filter>03. Utility\06. FieldSystem\Room\04. Noodle</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2602,12 +2648,32 @@
     <ClCompile Include="..\Private\CorinState_AssaultAttack.cpp">
       <Filter>02. GameObject\Object\Player\Character\02. Corin\State\Attack\Assault</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Defiler.cpp" />
-    <ClCompile Include="..\Private\DefilerState_Attack.cpp" />
-    <ClCompile Include="..\Private\DefilerState_Born.cpp" />
-    <ClCompile Include="..\Private\DefilerState_Idle.cpp" />
-    <ClCompile Include="..\Private\JaneDoeState_AssaultAttack.cpp">
-      <Filter>02. GameObject\Object\Player\Character\01. JaneDoe\State\Attack\Assault</Filter>
+    <ClCompile Include="..\private\SirChop.cpp">
+      <Filter>02. GameObject\Object\Npc\Service\SirChop</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Ramen.cpp">
+      <Filter>02. GameObject\UI\01. 2D\Ramen</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_RamenMenu.cpp">
+      <Filter>02. GameObject\UI\01. 2D\Ramen\Menu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\OrbitCamCollider.cpp">
+      <Filter>02. GameObject\Camera\04. OrbitCam\OrbitCamCollider</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Defiler.cpp">
+      <Filter>02. GameObject\Object\Enemy\Boss\Defiler</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\DefilerState_Attack.cpp">
+      <Filter>02. GameObject\Object\Enemy\Boss\Defiler\State\Attack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\DefilerState_Born.cpp">
+      <Filter>02. GameObject\Object\Enemy\Boss\Defiler\State\Born</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\DefilerState_Idle.cpp">
+      <Filter>02. GameObject\Object\Enemy\Boss\Defiler\State\Idle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Room_Noodle.cpp">
+      <Filter>03. Utility\06. FieldSystem\Room\04. Noodle</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

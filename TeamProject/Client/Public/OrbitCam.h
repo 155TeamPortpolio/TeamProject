@@ -18,6 +18,8 @@ public:
     HRESULT Initialize(INIT_DESC* pArg) override;
     void    Awake()                     override;
     void    Priority_Update(_float dt)  override;
+    void    Update(_float dt)           override;
+    void    Late_Update(_float dt)      override;
 
 public:
     void    SetTarget(OBJECT_HANDLE h);
@@ -50,11 +52,6 @@ public:
 
     OBJECT_HANDLE GetTarget() const { return m_target; }
 
-public:
-    void OnTriggerEnter(CGameObject* obj) override;
-    void OnTriggerStay(CGameObject* obj)  override;
-    void OnTriggerExit(CGameObject* obj)  override;
-
 private:
     void    ClampTargets();
 
@@ -68,11 +65,11 @@ private:
 
 private:
     void    AutoYaw_OnTarget();
-    void    AutoYaw_OnInput();
+    void    AutoYaw_OnInput() { m_autoYaw.holdTimer = m_prof.autoYawDelay; }
     _float  EvalAutoYaw(_float dt, const Vector3& foot, const Vector3& camLook, const Vector3& camRight, _float curYawDeg);
 
 private:
-    void    Switch_Reset();
+    void    Switch_Reset() { m_switch = {}; }
     _bool   Switch_Active() const { return m_switch.active; }
     void    Switch_Begin(const Vector3& holdPivot);
     Vector3 Switch_EvalOffset(_float dt, const Vector3& basePivotNow);
@@ -84,6 +81,7 @@ private:
     _float           CalcAllowDist(const OrbitProfile& prof, class PxScene* scene, CCharacterController* camCC,
         const Vector3& pivotWorld, _float distWanted, const Vector2& rotCurDeg, const Vector2& rotGoalDeg);
     void             SmoothPose(_float dt);
+    void             UpdateOccluderTrigger(const Vector3& pivotWorld, const Vector3& camWorld);
 
 private:
     void          Lock_Reset();
@@ -93,8 +91,7 @@ private:
     _float        Lock_Weight() const { return m_lockBlend.weight; }
     void          Lock_Enter(OBJECT_HANDLE h, _float curDist);
     void          Lock_Switch(OBJECT_HANDLE h) { m_lock.handle = h; }
-    void          Lock_Exit();
-    void          Lock_Clear();         
+    void          Lock_Exit();      
     void          Lock_BlendStart(_bool entering);
     void          Lock_BlendUpdate(_float dt);
 
@@ -114,6 +111,9 @@ private:
     void    GetBasePivot(const OBJECT_HANDLE& h, Vector3& outFootWorld, Vector3& outBasePivotWorld) const;
     void    SnapPose(const Vector3& camPos, const Quaternion& camRot, const Vector3& basePivotWorld);
 
+    void    PivotStab_Reset(const Vector3& pivot);
+    Vector3 PivotStab_Eval(_float dt, const Vector3& rawPivot);
+
 private:
     OrbitPose     m_pose{};
     OrbitInput    m_input{};
@@ -123,6 +123,7 @@ private:
     OrbitBlendState  m_lockBlend{};
     Vector3          m_lockFocus{};
     _bool            m_hasLockFocus = false;
+
 
     OrbitAutoYaw  m_autoYaw{};
     OrbitSwitch   m_switch{};
@@ -134,7 +135,8 @@ private:
     _bool   m_hitDist          = false;
     _bool   m_lockInput        = false;
 
-    unordered_map<ICamCollidable*, _int> m_camOcclusionRefCount;
+    OrbitPivotStabilizer m_pivotStab{};
+    OBJECT_HANDLE        m_occluderTrigger{};
 
 public:
     static  COrbitCam* Create();
