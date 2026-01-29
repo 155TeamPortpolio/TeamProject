@@ -66,18 +66,25 @@ HRESULT CSacrificeHand::Initialize(INIT_DESC* pArg)
 void CSacrificeHand::Awake()
 {
 	m_fDissolveTilling = 5.f;
+	m_vRimLightColor = _float3(1.f, 0.f, 0.f);
+	m_fRimLightPower = 0.f;
 
 	auto pMaterial = Get_Component<CMaterial>();
 	auto& materialInstances = pMaterial->Get_MaterialInstances();
 	auto dissolveTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, "Dissolve.png");
 
-	for (const auto& instance : materialInstances)
+	for (_uint i = 0; i < materialInstances.size(); ++i)
 	{
-		instance->Set_Param("NoiseTexture", { dissolveTexture->Get_SRV(),"Texture2D",0 });
-		instance->Set_Param("vRimLightColor", { &m_vRimLightColor,"float3",sizeof(_float3) });
-		instance->Set_Param("fRimLightPower", { &m_fRimLightPower,"float",sizeof(_float) });
-		instance->Set_Param("fDissolveProgress", { &m_fDissolveProgress,"float",sizeof(_float) });
-		instance->Set_Param("fDissolveTiling", { &m_fDissolveTilling,"float",sizeof(_float) });
+		/* Ä®¸¸ ¸²¶óÀÌÆ® ¸ÔÀ½ */
+		if (2 == i)
+			materialInstances[i]->Set_Param("fRimLightPower", { &m_fSwordRimLightPower,"float",sizeof(_float) });
+		else
+			materialInstances[i]->Set_Param("fRimLightPower", { &m_fRimLightPower,"float",sizeof(_float) });
+
+		materialInstances[i]->Set_Param("NoiseTexture", { dissolveTexture->Get_SRV(),"Texture2D",0 });
+		materialInstances[i]->Set_Param("vRimLightColor", { &m_vRimLightColor,"float3",sizeof(_float3) });
+		materialInstances[i]->Set_Param("fDissolveProgress", { &m_fDissolveProgress,"float",sizeof(_float) });
+		materialInstances[i]->Set_Param("fDissolveTiling", { &m_fDissolveTilling,"float",sizeof(_float) });
 	}
 }
 
@@ -194,7 +201,7 @@ void CSacrificeHand::Set_DissolveState(DISSOLVE_STATE state, _float duration)
 	m_fDissolveElapsedTime = 0.f;
 
 	if (DISSOLVE_STATE::APPEAR == state)
-		m_fDissolveProgress = 1.f;
+		m_fDissolveProgress = 1.1f;
 	else
 		m_fDissolveProgress = 0.f;
 }
