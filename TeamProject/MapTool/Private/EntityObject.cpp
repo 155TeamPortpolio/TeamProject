@@ -217,9 +217,18 @@ void CEntityObject::Render_GUI()
 		}
 	}
 
+	_vector3 Scale = Get_Component<CTransform>()->Get_Scale();
+	_float fScale[3] = { Scale.x,Scale.y,Scale.z };
+	ImGui::DragFloat3("Scale", fScale, 0.01f, -100.f, 100.f, "%.2f");
+	Get_Component<CTransform>()->Scale({ fScale[0], fScale[1] ,fScale[2] });
 
+	_vector3 ColSize = Get_Component<CCollider>()->Get_Size();
+	_float fColSize[3] = { ColSize.x,ColSize.y,ColSize.z };
+	ImGui::DragFloat3("ColSize", fColSize, 0.01f, -100.f, 100.f, "%.2f");
+	Get_Component<CCollider>()->Set_Size({ fColSize[0], fColSize[1] ,fColSize[2] });
 
-	ImGui::Text(Get_TypeName().c_str());
+	string ModelType = " ModelType : " + Get_TypeName();
+	ImGui::Text(ModelType.c_str());
 
 	ImGui::PopID();
 }
