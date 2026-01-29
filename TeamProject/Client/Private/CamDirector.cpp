@@ -3,6 +3,7 @@
 #include "GameInstance.h"
 #include "GameObject.h"
 #include "Helper_Func.h"
+#include "FieldSystem.h"
 #include "UIDirector.h"
 // Camera
 #include "SequenceCam.h"
@@ -161,7 +162,11 @@ void CCamDirector::UpdateInput(_float dt)
     const _int damage = Helper::Get_Random_Int(1000, 10000);
 
     if (InputDevice()->Key_Tap(VK_F3))
-           RequestSequence("Field/Front");
+    {
+        SetSpaceRef(FieldSystem()->GetInteractHandle());
+        RequestSequence("Field/Noodle");
+    }
+        //RequestSequence("Field/Front");
         //GetCharacter()->Take_Damage(DAMAGE_TYPE::NORMAL, damage);
 }
 

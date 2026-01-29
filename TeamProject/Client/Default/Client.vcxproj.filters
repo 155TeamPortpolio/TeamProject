@@ -1038,15 +1038,12 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Npc\Service\SirChop">
       <UniqueIdentifier>{d2a50a8e-9e0b-42f2-a758-62374a5c7f8b}</UniqueIdentifier>
-          </Filter>
+    </Filter>
     <Filter Include="02. GameObject\UI\01. 2D\Ramen">
       <UniqueIdentifier>{e1dc0083-3a9a-44a0-95b1-74202bf40893}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\UI\01. 2D\Ramen\Menu">
       <UniqueIdentifier>{1602a1c7-49cb-4a40-92fb-8418454d1276}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Camera\04. OrbitCam\OrbitCamCollider">
-      <UniqueIdentifier>{bb6ef566-7828-4054-a05e-14d7b79b3b20}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\Object\Enemy\Defiler">
       <UniqueIdentifier>{47071186-1492-4dc2-877a-9f00d3ad73ea}</UniqueIdentifier>
@@ -1062,6 +1059,9 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Enemy\Boss\Defiler\State\Idle">
       <UniqueIdentifier>{d5b04047-e78b-49f4-aca1-616bbfd9634a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Camera\04. OrbitCam\01. OrbitCamCollider">
+      <UniqueIdentifier>{bb6ef566-7828-4054-a05e-14d7b79b3b20}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1907,7 +1907,7 @@
     </ClInclude>
     <ClInclude Include="..\public\SirChop.h">
       <Filter>02. GameObject\Object\Npc\Service\SirChop</Filter>
-        </ClInclude>
+    </ClInclude>
     <ClInclude Include="..\Public\UI_Ramen.h">
       <Filter>02. GameObject\UI\01. 2D\Ramen</Filter>
     </ClInclude>
@@ -1915,7 +1915,7 @@
       <Filter>02. GameObject\UI\01. 2D\Ramen\Menu</Filter>
     </ClInclude>
     <ClInclude Include="..\public\OrbitCamCollider.h">
-      <Filter>02. GameObject\Camera\04. OrbitCam\OrbitCamCollider</Filter>
+      <Filter>02. GameObject\Camera\04. OrbitCam\01. OrbitCamCollider</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Defiler.h">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler</Filter>
@@ -2740,7 +2740,7 @@
     </ClCompile>
     <ClCompile Include="..\private\SirChop.cpp">
       <Filter>02. GameObject\Object\Npc\Service\SirChop</Filter>
-          </ClCompile>
+    </ClCompile>
     <ClCompile Include="..\Private\UI_Ramen.cpp">
       <Filter>02. GameObject\UI\01. 2D\Ramen</Filter>
     </ClCompile>
@@ -2748,7 +2748,7 @@
       <Filter>02. GameObject\UI\01. 2D\Ramen\Menu</Filter>
     </ClCompile>
     <ClCompile Include="..\private\OrbitCamCollider.cpp">
-      <Filter>02. GameObject\Camera\04. OrbitCam\OrbitCamCollider</Filter>
+      <Filter>02. GameObject\Camera\04. OrbitCam\01. OrbitCamCollider</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Defiler.cpp">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler</Filter>
