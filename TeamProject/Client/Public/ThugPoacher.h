@@ -44,7 +44,7 @@ public:
 
     /* Setter */
     void            Idle() { m_isIdle = true; }
-    virtual void    TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage) override;
+    virtual void    TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER charaName = CHARACTER::END) override;
     void            ShootArrow();
 
 private:
