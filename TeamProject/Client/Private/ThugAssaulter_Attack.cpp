@@ -85,7 +85,7 @@ void CThugAssaulter_Attack1::Enter(CThugAssaulter* pOwner)
 {
 	pOwner->Get_Component<CAnimator3D>()->Change_Animation("ThugAssaulter_Ani_Attack_01")
 		.Apply();
-	pOwner->Active_AttackSign();
+	//pOwner->Active_AttackSign();
 
 	HitDesc hitdesc = {};
 	hitdesc.eDamageType = DAMAGE_TYPE::NORMAL;
@@ -124,7 +124,7 @@ void CThugAssaulter_Attack2::Enter(CThugAssaulter* pOwner)
 {
 	pOwner->Get_Component<CAnimator3D>()->Change_Animation("ThugAssaulter_Ani_Attack_02")
 		.Apply();
-	pOwner->Active_AttackSign();
+	//pOwner->Active_AttackSign();
 	
 	m_tHitDesc.eDamageType = DAMAGE_TYPE::NORMAL;
 	m_tHitDesc.eHitType = HIT_TYPE::ONCE;
@@ -177,7 +177,7 @@ void CThugAssaulter_Attack3::Enter(CThugAssaulter* pOwner)
 {
 	pOwner->Get_Component<CAnimator3D>()->Change_Animation("ThugAssaulter_Ani_Attack_03")
 		.Apply();
-	pOwner->Active_AttackSign();
+	//pOwner->Active_AttackSign();
 
 	m_tHitDesc.eDamageType = DAMAGE_TYPE::NORMAL;
 	m_tHitDesc.eHitType = HIT_TYPE::ONCE;
@@ -220,7 +220,7 @@ void CThugAssaulter_Attack4::Enter(CThugAssaulter* pOwner)
 {
 	pOwner->Get_Component<CAnimator3D>()->Change_Animation("ThugAssaulter_Ani_Attack_04")
 		.Apply();
-	pOwner->Active_AttackSign();
+	//pOwner->Active_AttackSign();
 
 	HitDesc hitdesc = {};
 	hitdesc.eDamageType = DAMAGE_TYPE::NORMAL;

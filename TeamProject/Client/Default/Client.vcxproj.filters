@@ -88,45 +88,6 @@
     <Filter Include="02. GameObject\Object\Enemy">
       <UniqueIdentifier>{b66aa194-a926-4d74-9e5d-a9dc4d525f95}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\Sacrifice">
-      <UniqueIdentifier>{b06ccc39-b937-4f62-bedc-a89a9cb7edf8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State">
-      <UniqueIdentifier>{65719fdb-c4ae-421f-ae1c-e35ee8ef1f35}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Attack">
-      <UniqueIdentifier>{d2294c59-8513-4a61-8866-98be7b2c0418}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Idle">
-      <UniqueIdentifier>{1a82ce21-c2c8-4158-8a06-479033fbf790}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Walk">
-      <UniqueIdentifier>{339582cb-f3e3-4bd9-a20e-6c8779f9e417}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Born">
-      <UniqueIdentifier>{c1cb0e5a-8a4e-40f3-b1e6-91462a7c29cb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Hit">
-      <UniqueIdentifier>{82010ee6-5be7-4dc2-b2fe-55411c9442cf}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Attack\Phase1">
-      <UniqueIdentifier>{964c7637-0a29-4115-a3ab-e67539825dbc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Walk\Phase1">
-      <UniqueIdentifier>{a0d42fa8-de6c-4103-8f2b-ce937be8f959}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Walk\Phase2">
-      <UniqueIdentifier>{860138ee-fd87-40e9-a69f-db72f7236676}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Evade">
-      <UniqueIdentifier>{1f8f9abe-ec4a-48eb-8296-cd0ffc5e4589}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Evade\Phase2">
-      <UniqueIdentifier>{3baf88b9-da5e-4713-9eb3-f5b702528d02}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Evade\Phase1">
-      <UniqueIdentifier>{8bd7fbf8-b451-46fb-bc1b-63d0d0a4cb52}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\Object\TestCloud">
       <UniqueIdentifier>{25fda550-74fc-4087-a876-d429ed1ca86e}</UniqueIdentifier>
     </Filter>
@@ -148,47 +109,89 @@
     <Filter Include="02. GameObject\Object\Player\Character">
       <UniqueIdentifier>{eeb033b4-780f-4eeb-930b-50f8ab6baf67}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\ThugBulkyEnforcer">
-      <UniqueIdentifier>{9ecf22bd-6ec3-4d22-b39a-bc4242f18996}</UniqueIdentifier>
+    <Filter Include="02. GameObject\Object\Player\Character\Miyabi">
+      <UniqueIdentifier>{f1da9023-8152-4d5f-a7dc-5ffc3950a500}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\ThugBulkyEnforcer\State">
-      <UniqueIdentifier>{64c2622e-0b47-49ba-bc7e-57b653fe58a2}</UniqueIdentifier>
+    <Filter Include="02. GameObject\Object\Player\Character\Miyabi\State">
+      <UniqueIdentifier>{c6366ece-2c84-438e-90c7-8a3fcceea1da}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Move">
-      <UniqueIdentifier>{0fb2fde1-7e61-4c17-ad5b-dafa2cef7fc6}</UniqueIdentifier>
+    <Filter Include="02. GameObject\Object\Player\Character\Miyabi\State\Idle">
+      <UniqueIdentifier>{0e2be414-c839-48b9-ae2a-3ec0a387a47b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Idle">
-      <UniqueIdentifier>{2d607a9a-fd47-4b46-94fc-9f05d30521e1}</UniqueIdentifier>
+    <Filter Include="02. GameObject\Object\Player\Character\Miyabi\State\Attack">
+      <UniqueIdentifier>{30a2b6c6-b7dc-4baf-a8ad-c43cc5e2c1fc}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Born">
-      <UniqueIdentifier>{63ed3993-86eb-4107-8f07-e9924da6d1af}</UniqueIdentifier>
+    <Filter Include="02. GameObject\Object\Player\Character\Miyabi\State\Attack\Normal">
+      <UniqueIdentifier>{29853f99-a5fc-4258-b970-1b22da0e452b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Attack">
-      <UniqueIdentifier>{88a8a2e8-e306-40ca-8395-0fc3b5fad5bd}</UniqueIdentifier>
+    <Filter Include="02. GameObject\Object\Player\Character\Miyabi\State\Attack\Charge">
+      <UniqueIdentifier>{1bbdb708-2ec2-4e3c-877e-bca753a23843}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Miyabi\State\Move">
+      <UniqueIdentifier>{434eb16a-3d33-4884-be7d-002d61e150c6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Miyabi\State\Move\Walk">
+      <UniqueIdentifier>{5622f48f-6acc-4b8f-9937-5793c4b0237b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Miyabi\State\Move\Run">
+      <UniqueIdentifier>{d4841ea4-4d18-48a2-a3e4-59f14bf25a74}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Anbi">
+      <UniqueIdentifier>{15fd906f-39ec-473b-adfa-7de7028bbd2e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Anbi\State">
+      <UniqueIdentifier>{dfac9681-7662-4fbe-9a33-6b8c0c1f4523}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Anbi\State\Idle">
+      <UniqueIdentifier>{bbb3b02e-8215-4c3e-949e-477f2aebc93a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Anbi\State\Move">
+      <UniqueIdentifier>{dd07b2d6-97a0-4174-96bd-a393455c7ffe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Anbi\State\Move\Run">
+      <UniqueIdentifier>{9d80b005-b1ae-40ed-8a50-737a1e4773fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Anbi\State\Move\Walk">
+      <UniqueIdentifier>{163eb66f-f792-4771-9edc-bc73c07c6a7f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Anbi\State\Attack">
+      <UniqueIdentifier>{f9d7254f-2a79-45a1-98d8-f09062b2b873}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Anbi\State\Attack\Normal">
+      <UniqueIdentifier>{423c7918-5f74-4f2d-a48d-88523bd6c9fe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Corin">
+      <UniqueIdentifier>{ee07f61e-61a1-42ab-bfcc-20cf8147b123}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Corin\State">
+      <UniqueIdentifier>{21c81c17-9dfd-4c09-8d83-5fb14ae316d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Idle">
+      <UniqueIdentifier>{7093ab03-2b34-47af-945d-34a78e349620}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Move">
+      <UniqueIdentifier>{2b4d6055-a07d-4723-a793-dae75c760383}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Move\Walk">
+      <UniqueIdentifier>{6066750f-d26d-4dcc-b9cb-95ff0891b101}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Move\Run">
+      <UniqueIdentifier>{88626d5b-dbf8-4f03-8ef2-2f7cae50254a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Attack">
+      <UniqueIdentifier>{c267d6c9-393b-43c1-9ef4-beee8a23263e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Attack\Normal">
+      <UniqueIdentifier>{884362e5-20d7-4daa-9187-9c9149289f96}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\Object\TestPlane">
       <UniqueIdentifier>{1bb9fb41-6674-49a3-9da6-bd39a0ff8454}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Parry">
-      <UniqueIdentifier>{b5d49ec4-f1e8-4445-9812-e3047fe53695}</UniqueIdentifier>
+    <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Evade">
+      <UniqueIdentifier>{d03f6fe2-9042-45dc-ab55-125859fa9c22}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Parry\Phase1">
-      <UniqueIdentifier>{2a109206-ead3-44ef-b633-cd03e33507d9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Parry\Phase2">
-      <UniqueIdentifier>{3c8998bd-98ee-4cad-8976-9938d3c05a55}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Hit\Phase1">
-      <UniqueIdentifier>{b50a1706-7716-416e-b556-536d12216321}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Hit\Phase2">
-      <UniqueIdentifier>{3d74b083-6d12-4923-8093-4086952edfd9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Death">
-      <UniqueIdentifier>{d3e2ed07-89f7-4d84-ad7a-697fced4917b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\ChangePhase">
-      <UniqueIdentifier>{dabff24d-6d9c-4cdd-94e8-db0017cbbf65}</UniqueIdentifier>
+    <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Evade\Dash">
+      <UniqueIdentifier>{c7ee365b-fe3f-4577-a882-c30dab07300f}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\Camera\05. ShadowCam">
       <UniqueIdentifier>{54711cba-0d76-43fd-b108-03e7250725a9}</UniqueIdentifier>
@@ -202,9 +205,6 @@
     <Filter Include="03. Utility\04. BattleSystem">
       <UniqueIdentifier>{b180e495-0af6-48a7-9aa3-dd8d6b302e10}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Chase">
-      <UniqueIdentifier>{554e8518-5554-4620-9031-ace06e5b45b3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\Effect">
       <UniqueIdentifier>{5ed6b41d-6c27-48c7-8c25-a26c610b028e}</UniqueIdentifier>
     </Filter>
@@ -216,15 +216,6 @@
     </Filter>
     <Filter Include="03. Utility\05. DataBase">
       <UniqueIdentifier>{63a6de62-07b4-44f0-a0b6-7c116f8319b7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\Sacrifice\Sacrifice_Laser">
-      <UniqueIdentifier>{1e80cf8b-3c80-481d-a79c-f8493cb8d192}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Groggy">
-      <UniqueIdentifier>{53d0665b-37f7-4401-8a18-08aa3a171864}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Death">
-      <UniqueIdentifier>{4e479452-37df-462b-be77-f24a8066c872}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\UI">
       <UniqueIdentifier>{55bb7252-7639-4270-b550-e55db163b9f0}</UniqueIdentifier>
@@ -286,9 +277,6 @@
     <Filter Include="02. GameObject\MapObject\03. MapInvisibleWall">
       <UniqueIdentifier>{b312b594-fbbd-4c58-99ff-ef3b7b832dfe}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\Sacrifice\Sacrifice_Orb">
-      <UniqueIdentifier>{68fc2704-df5f-4515-afc4-be9016f4d9a1}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. Level\02. MainCity">
       <UniqueIdentifier>{5c06b70c-30b5-443f-8830-698352a45197}</UniqueIdentifier>
     </Filter>
@@ -306,33 +294,6 @@
     </Filter>
     <Filter Include="01. Level\04. Zero\Stage_Boss">
       <UniqueIdentifier>{0311033b-83a6-4978-8774-ad77717efc65}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\Normal Enemy">
-      <UniqueIdentifier>{59940dfa-0539-4aed-8091-bbfb2c81fd85}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\ThugAssaulter">
-      <UniqueIdentifier>{ead5c6a6-c6b3-4863-8252-1087ac356fe2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\ThugAssaulter\State">
-      <UniqueIdentifier>{363845a6-6a88-4924-8e1c-bd0a4a149b44}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\ThugAssaulter\State\Attack">
-      <UniqueIdentifier>{abb524ed-2c1c-4ee3-a153-412d36dfcfa1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\ThugAssaulter\State\Idle">
-      <UniqueIdentifier>{21747306-27d7-4f7d-bde8-efd319a1a8a7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\ThugAssaulter\State\Chase">
-      <UniqueIdentifier>{e6c6de73-02c6-42d7-8153-18e718d3a3f8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\ThugAssaulter\State\Death">
-      <UniqueIdentifier>{84c88dc1-d0ca-435f-b169-c93e9d9b4d26}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\ThugAssaulter\State\Move">
-      <UniqueIdentifier>{18837b31-1d54-4a22-b260-0568c769732d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\ThugAssaulter\State\Born">
-      <UniqueIdentifier>{7acebaff-3db4-49e9-bb04-e1cd603c6990}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\UI\01. 2D">
       <UniqueIdentifier>{a8dddc7e-270d-4335-a33f-3d602851fad8}</UniqueIdentifier>
@@ -382,9 +343,6 @@
     <Filter Include="02. GameObject\UI\02. 3D\Plane\IconLabel">
       <UniqueIdentifier>{3e2a37e2-c5e9-4d9d-b5ff-033ee76f6b0f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\ThugAssaulter\State\Groggy">
-      <UniqueIdentifier>{77154f48-3ac1-4475-8c76-d190607033f2}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. Level\04. Zero\Stage_Normal\ZeroStage_1_1">
       <UniqueIdentifier>{31799f7e-c42c-4ec3-9e5e-e5a6f39f378c}</UniqueIdentifier>
     </Filter>
@@ -418,8 +376,11 @@
     <Filter Include="02. GameObject\UI\02. 3D\Plane\EnemyStatus">
       <UniqueIdentifier>{168323c4-d264-4f01-9868-adf2a0a0376d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\ThugAssaulter\State\HitAirborne">
-      <UniqueIdentifier>{3d2e029f-4d71-43ec-b8b7-23a2b2d37ade}</UniqueIdentifier>
+    <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Hit">
+      <UniqueIdentifier>{3b693345-701c-445b-bd6d-d4b327e101f1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Attack\Ex">
+      <UniqueIdentifier>{a9950fa8-5297-46a6-a3df-8f280c177142}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\Object\Interactable">
       <UniqueIdentifier>{196f5788-8586-4eb4-8224-8d7762629947}</UniqueIdentifier>
@@ -433,14 +394,8 @@
     <Filter Include="02. GameObject\UI\02. 3D\Mesh\UI_MeshPyramid">
       <UniqueIdentifier>{24b1d39d-8f09-4dfa-9e14-05a0d492a803}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Groggy">
-      <UniqueIdentifier>{fe64c87d-b23d-4725-bdd1-3b9d2c8dbbbd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Groggy\Phase1">
-      <UniqueIdentifier>{4cf40d05-c921-4e36-a3d2-8fd32437073f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Groggy\Phase2">
-      <UniqueIdentifier>{39d34e5c-e90f-42e5-8ab2-9a7718897258}</UniqueIdentifier>
+    <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Attack\Ultimate">
+      <UniqueIdentifier>{d8c05f91-7f1a-489f-a675-4a4178a2694d}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\UI\01. 2D\HUD_Field">
       <UniqueIdentifier>{67a92256-8431-4efd-a556-ed70b96c93e3}</UniqueIdentifier>
@@ -487,6 +442,9 @@
     <Filter Include="02. GameObject\Object\Interactable\ZeroPortal">
       <UniqueIdentifier>{178b3764-628b-48ca-8cb2-36ae8c8f8dbd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Camera\04. OrbitCam\00. LockOnController">
+      <UniqueIdentifier>{ab87437a-0803-4974-b6ba-72bdda89f83e}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02. GameObject\Object\Enemy\ThugAssaulter\State\Hit">
       <UniqueIdentifier>{ee380fa9-e341-4ac3-a59e-18404a3b9ff5}</UniqueIdentifier>
     </Filter>
@@ -496,13 +454,8 @@
     <Filter Include="01. Level\04. Zero\StageFX">
       <UniqueIdentifier>{33438fca-4c48-4f14-b7da-99d59fbd7f51}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Hit">
-    </Filter>
     <Filter Include="02. GameObject\UI\01. 2D\ScreenFade">
       <UniqueIdentifier>{4df49a7d-2281-4c98-b765-1a9115005f18}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Hit">
-      <UniqueIdentifier>{08855f1c-eef5-461f-9c1c-f6d5844ec678}</UniqueIdentifier>
     </Filter>
     <Filter Include="00. MainApp\00. CursorController">
       <UniqueIdentifier>{5e864d76-8135-44f8-b744-bd0c5b16cda6}</UniqueIdentifier>
@@ -543,23 +496,14 @@
     <Filter Include="02. GameObject\Camera\99. DisplayGate">
       <UniqueIdentifier>{7cfc1b6e-36c2-4bb1-bb95-56819b1ab3d6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Attack\Phase2">
-      <UniqueIdentifier>{8080e445-1ea3-4f5c-9188-7ec8d37887e4}</UniqueIdentifier>
+    <Filter Include="02. GameObject\Object\Player\Character\Collider">
+      <UniqueIdentifier>{1487da32-f803-44c2-be56-7687fc06901a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\Sacrifice_Hand">
-      <UniqueIdentifier>{8fba8062-3d01-4a71-a27f-806808b2273d}</UniqueIdentifier>
+    <Filter Include="02. GameObject\Object\Player\Character\Collider\ParryCollider">
+      <UniqueIdentifier>{9e151b16-ea22-445d-a015-cc45152d933a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\Sacrifice_Hand\State">
-      <UniqueIdentifier>{a7a195e0-0693-4efe-b00e-6aa09c326087}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\Sacrifice_Hand\State\Idle">
-      <UniqueIdentifier>{a674fc3d-8b1d-4da5-acd9-95c30ef10018}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\Sacrifice_Hand\State\Attack">
-      <UniqueIdentifier>{b0a4c5a3-595b-4977-8989-5129a6639450}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\Sacrifice_Hand\State\Hit">
-      <UniqueIdentifier>{9c64e158-5809-4bdf-b0bc-b248f585b1f3}</UniqueIdentifier>
+    <Filter Include="02. GameObject\Object\Player\Character\Collider\AttackCollider">
+      <UniqueIdentifier>{8cafc1ce-885d-4894-bbae-9bc579a5da0c}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\UI\01. 2D\SceneFrame">
       <UniqueIdentifier>{da2fd65e-9bf7-4fb2-a1b2-95af726ef1a4}</UniqueIdentifier>
@@ -603,8 +547,8 @@
     <Filter Include="02. GameObject\UI\03. UIElement\NineSlice">
       <UniqueIdentifier>{2646c162-8883-48f9-b637-d3f38abb755c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\ThugAssaulter\State\Parry">
-      <UniqueIdentifier>{d4691cdc-435c-40af-bae7-768659b32872}</UniqueIdentifier>
+    <Filter Include="02. GameObject\UI\01. 2D\ScratchCard">
+      <UniqueIdentifier>{da4d3639-e60d-4d45-bd2a-74bd1a13d1e9}</UniqueIdentifier>
     </Filter>
     <Filter Include="03. Utility\04. BattleSystem\FX_Battle">
       <UniqueIdentifier>{80b278d6-d073-43f9-b769-b90f4b580861}</UniqueIdentifier>
@@ -630,8 +574,206 @@
     <Filter Include="02. GameObject\UI\03. UIElement\Atlas_Sprite">
       <UniqueIdentifier>{141ad35d-d882-4929-ae9d-00da8a8aaf8e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\Defiler">
+    <Filter Include="02. GameObject\Object\Enemy\Elite">
+      <UniqueIdentifier>{21dae367-151b-4fb9-b659-203b4b863f0c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Elite\ThugBulkyEnforcer">
+      <UniqueIdentifier>{9ecf22bd-6ec3-4d22-b39a-bc4242f18996}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Elite\ThugBulkyEnforcer\State">
+      <UniqueIdentifier>{64c2622e-0b47-49ba-bc7e-57b653fe58a2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Elite\ThugBulkyEnforcer\State\Move">
+      <UniqueIdentifier>{0fb2fde1-7e61-4c17-ad5b-dafa2cef7fc6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Elite\ThugBulkyEnforcer\State\Idle">
+      <UniqueIdentifier>{2d607a9a-fd47-4b46-94fc-9f05d30521e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Elite\ThugBulkyEnforcer\State\Born">
+      <UniqueIdentifier>{63ed3993-86eb-4107-8f07-e9924da6d1af}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Elite\ThugBulkyEnforcer\State\Attack">
+      <UniqueIdentifier>{88a8a2e8-e306-40ca-8395-0fc3b5fad5bd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Elite\ThugBulkyEnforcer\State\Chase">
+      <UniqueIdentifier>{554e8518-5554-4620-9031-ace06e5b45b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Elite\ThugBulkyEnforcer\State\Groggy">
+      <UniqueIdentifier>{53d0665b-37f7-4401-8a18-08aa3a171864}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Elite\ThugBulkyEnforcer\State\Death">
+      <UniqueIdentifier>{4e479452-37df-462b-be77-f24a8066c872}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Elite\ThugBulkyEnforcer\State\Hit">
+      <UniqueIdentifier>{0a9f4c1e-7d5f-4c7c-b2a1-5f0b6c7e9c11}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Boss">
+      <UniqueIdentifier>{5fa13ff0-9cfd-4099-bf60-5bd865d7c823}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Boss\Sacrifice">
+      <UniqueIdentifier>{b06ccc39-b937-4f62-bedc-a89a9cb7edf8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Boss\Sacrifice\State">
+      <UniqueIdentifier>{65719fdb-c4ae-421f-ae1c-e35ee8ef1f35}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Boss\Sacrifice\State\Attack">
+      <UniqueIdentifier>{d2294c59-8513-4a61-8866-98be7b2c0418}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Boss\Sacrifice\State\Attack\Phase1">
+      <UniqueIdentifier>{964c7637-0a29-4115-a3ab-e67539825dbc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Boss\Sacrifice\State\Attack\Phase2">
+      <UniqueIdentifier>{8080e445-1ea3-4f5c-9188-7ec8d37887e4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Boss\Sacrifice\State\Idle">
+      <UniqueIdentifier>{1a82ce21-c2c8-4158-8a06-479033fbf790}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Boss\Sacrifice\State\Walk">
+      <UniqueIdentifier>{339582cb-f3e3-4bd9-a20e-6c8779f9e417}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Boss\Sacrifice\State\Walk\Phase1">
+      <UniqueIdentifier>{a0d42fa8-de6c-4103-8f2b-ce937be8f959}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Boss\Sacrifice\State\Walk\Phase2">
+      <UniqueIdentifier>{860138ee-fd87-40e9-a69f-db72f7236676}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Boss\Sacrifice\State\Born">
+      <UniqueIdentifier>{c1cb0e5a-8a4e-40f3-b1e6-91462a7c29cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Boss\Sacrifice\State\Hit">
+      <UniqueIdentifier>{82010ee6-5be7-4dc2-b2fe-55411c9442cf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Boss\Sacrifice\State\Hit\Phase1">
+      <UniqueIdentifier>{b50a1706-7716-416e-b556-536d12216321}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Boss\Sacrifice\State\Hit\Phase2">
+      <UniqueIdentifier>{3d74b083-6d12-4923-8093-4086952edfd9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Boss\Sacrifice\State\Evade">
+      <UniqueIdentifier>{1f8f9abe-ec4a-48eb-8296-cd0ffc5e4589}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Boss\Sacrifice\State\Evade\Phase2">
+      <UniqueIdentifier>{3baf88b9-da5e-4713-9eb3-f5b702528d02}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Boss\Sacrifice\State\Evade\Phase1">
+      <UniqueIdentifier>{8bd7fbf8-b451-46fb-bc1b-63d0d0a4cb52}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Boss\Sacrifice\State\Parry">
+      <UniqueIdentifier>{b5d49ec4-f1e8-4445-9812-e3047fe53695}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Boss\Sacrifice\State\Parry\Phase1">
+      <UniqueIdentifier>{2a109206-ead3-44ef-b633-cd03e33507d9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Boss\Sacrifice\State\Parry\Phase2">
+      <UniqueIdentifier>{3c8998bd-98ee-4cad-8976-9938d3c05a55}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Boss\Sacrifice\State\Death">
+      <UniqueIdentifier>{d3e2ed07-89f7-4d84-ad7a-697fced4917b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Boss\Sacrifice\State\ChangePhase">
+      <UniqueIdentifier>{dabff24d-6d9c-4cdd-94e8-db0017cbbf65}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Boss\Sacrifice\State\Groggy">
+      <UniqueIdentifier>{fe64c87d-b23d-4725-bdd1-3b9d2c8dbbbd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Boss\Sacrifice\State\Groggy\Phase1">
+      <UniqueIdentifier>{4cf40d05-c921-4e36-a3d2-8fd32437073f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Boss\Sacrifice\State\Groggy\Phase2">
+      <UniqueIdentifier>{39d34e5c-e90f-42e5-8ab2-9a7718897258}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Boss\Sacrifice\Sacrifice_Laser">
+      <UniqueIdentifier>{1e80cf8b-3c80-481d-a79c-f8493cb8d192}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Boss\Sacrifice\Sacrifice_Orb">
+      <UniqueIdentifier>{68fc2704-df5f-4515-afc4-be9016f4d9a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Boss\Sacrifice_Hand">
+      <UniqueIdentifier>{8fba8062-3d01-4a71-a27f-806808b2273d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Boss\Sacrifice_Hand\State">
+      <UniqueIdentifier>{a7a195e0-0693-4efe-b00e-6aa09c326087}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Boss\Sacrifice_Hand\State\Idle">
+      <UniqueIdentifier>{a674fc3d-8b1d-4da5-acd9-95c30ef10018}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Boss\Sacrifice_Hand\State\Attack">
+      <UniqueIdentifier>{b0a4c5a3-595b-4977-8989-5129a6639450}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Boss\Sacrifice_Hand\State\Hit">
+      <UniqueIdentifier>{9c64e158-5809-4bdf-b0bc-b248f585b1f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Boss\Defiler">
       <UniqueIdentifier>{d747b1f1-f957-472a-b1f0-158922c86c50}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal">
+      <UniqueIdentifier>{59940dfa-0539-4aed-8091-bbfb2c81fd85}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\ThugAssaulter">
+      <UniqueIdentifier>{ead5c6a6-c6b3-4863-8252-1087ac356fe2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\ThugAssaulter\State">
+      <UniqueIdentifier>{363845a6-6a88-4924-8e1c-bd0a4a149b44}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\ThugAssaulter\State\Attack">
+      <UniqueIdentifier>{abb524ed-2c1c-4ee3-a153-412d36dfcfa1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\ThugAssaulter\State\Idle">
+      <UniqueIdentifier>{21747306-27d7-4f7d-bde8-efd319a1a8a7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\ThugAssaulter\State\Chase">
+      <UniqueIdentifier>{e6c6de73-02c6-42d7-8153-18e718d3a3f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\ThugAssaulter\State\Death">
+      <UniqueIdentifier>{84c88dc1-d0ca-435f-b169-c93e9d9b4d26}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\ThugAssaulter\State\Move">
+      <UniqueIdentifier>{18837b31-1d54-4a22-b260-0568c769732d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\ThugAssaulter\State\Born">
+      <UniqueIdentifier>{7acebaff-3db4-49e9-bb04-e1cd603c6990}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\ThugAssaulter\State\Groggy">
+      <UniqueIdentifier>{77154f48-3ac1-4475-8c76-d190607033f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\ThugAssaulter\State\HitAirborne">
+      <UniqueIdentifier>{3d2e029f-4d71-43ec-b8b7-23a2b2d37ade}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\ThugAssaulter\State\Hit">
+      <UniqueIdentifier>{ee380fa9-e341-4ac3-a59e-18404a3b9ff5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\ThugAssaulter\State\Parry">
+      <UniqueIdentifier>{d4691cdc-435c-40af-bae7-768659b32872}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\ThugPoacher">
+      <UniqueIdentifier>{0abc43df-84e8-4ea5-948d-bf290c86964c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\ThugPoacher\State">
+      <UniqueIdentifier>{5f43694f-df23-41a3-be0f-93930a4d37d5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\ThugPoacher\State\Attack">
+      <UniqueIdentifier>{8717601c-bfed-45e2-8139-8b56e66f7587}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\ThugPoacher\State\Born">
+      <UniqueIdentifier>{8e98f65e-7630-4e15-a9a7-c78135fd9796}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\ThugPoacher\State\Death">
+      <UniqueIdentifier>{bdb4adbf-4716-4e27-b3fd-2edad46b30d1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\ThugPoacher\State\Groggy">
+      <UniqueIdentifier>{eeac4f6c-0cf8-4835-94b6-97c5fc4b1fcb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\ThugPoacher\State\Hit">
+      <UniqueIdentifier>{1b519530-8c30-4fa2-b727-15d495d8bdd4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\ThugPoacher\State\Idle">
+      <UniqueIdentifier>{dba4a588-7b93-4e1f-a55e-199858370663}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\ThugPoacher\State\Move">
+      <UniqueIdentifier>{b872013b-cd13-486b-a166-38530db8606c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\ThugPoacher\State\Chase">
+      <UniqueIdentifier>{d053cd27-dd7d-42ce-be16-1c3867eae403}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\UI\01. 2D\Lottery">
       <UniqueIdentifier>{ee6183f6-ec38-4f11-8817-aa5b5ca15997}</UniqueIdentifier>
@@ -837,6 +979,9 @@
     <Filter Include="02. GameObject\Object\Player\Character\01. JaneDoe\State\Start">
       <UniqueIdentifier>{2cbaf699-675f-4a4b-9bf0-f7322153d7d1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\ThugPoacher\Arrow">
+      <UniqueIdentifier>{ce8c9adf-be17-446e-8fd1-e59cf0703c4c}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02. GameObject\UI\01. 2D\Lottery\Newspaper">
       <UniqueIdentifier>{9a0e4d8d-22f9-486a-bb13-701b03645d0c}</UniqueIdentifier>
     </Filter>
@@ -996,22 +1141,22 @@
       <Filter>02. GameObject\Object\Enemy</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Sacrifice.h">
-      <Filter>02. GameObject\Object\Enemy\Sacrifice</Filter>
+      <Filter>02. GameObject\Object\Enemy\Boss\Sacrifice</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\SacrificeState_Idle.h">
-      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Idle</Filter>
+      <Filter>02. GameObject\Object\Enemy\Boss\Sacrifice\State\Idle</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\SacrificeState_Attack.h">
-      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Attack</Filter>
+      <Filter>02. GameObject\Object\Enemy\Boss\Sacrifice\State\Attack</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\SacrificeState_Born.h">
-      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Born</Filter>
+      <Filter>02. GameObject\Object\Enemy\Boss\Sacrifice\State\Born</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\SacrificeState_Hit.h">
-      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Hit</Filter>
+      <Filter>02. GameObject\Object\Enemy\Boss\Sacrifice\State\Hit</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\SacrificeHand.h">
-      <Filter>02. GameObject\Object\Enemy\Sacrifice_Hand</Filter>
+      <Filter>02. GameObject\Object\Enemy\Boss\Sacrifice_Hand</Filter>
     </ClInclude>
     <ClInclude Include="..\public\SequenceCam.h">
       <Filter>02. GameObject\Camera\03. SequenceCam</Filter>
@@ -1026,10 +1171,10 @@
       <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Attack\Normal</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\SacrificeState_Attack_Phase1.h">
-      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Attack\Phase1</Filter>
+      <Filter>02. GameObject\Object\Enemy\Boss\Sacrifice\State\Attack\Phase1</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\SacrificeState_Attack_Phase2.h">
-      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Attack\Phase2</Filter>
+      <Filter>02. GameObject\Object\Enemy\Boss\Sacrifice\State\Attack\Phase2</Filter>
     </ClInclude>
     <ClInclude Include="..\public\UIDirector.h">
       <Filter>03. Utility\07. UIDirector</Filter>
@@ -1044,37 +1189,37 @@
       <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Move\Run</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\SacrificeState_Walk_Phase1.h">
-      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Walk\Phase1</Filter>
+      <Filter>02. GameObject\Object\Enemy\Boss\Sacrifice\State\Walk\Phase1</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\SacrificeState_Evade.h">
-      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Evade</Filter>
+      <Filter>02. GameObject\Object\Enemy\Boss\Sacrifice\State\Evade</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\SacrificeState_Evade_Phase1.h">
-      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Evade\Phase1</Filter>
+      <Filter>02. GameObject\Object\Enemy\Boss\Sacrifice\State\Evade\Phase1</Filter>
     </ClInclude>
     <ClInclude Include="..\public\TestCloud.h">
       <Filter>02. GameObject\Object\TestCloud</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\SacrificeState_Walk.h">
-      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Walk</Filter>
+      <Filter>02. GameObject\Object\Enemy\Boss\Sacrifice\State\Walk</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\SacrificeHandState_Idle.h">
-      <Filter>02. GameObject\Object\Enemy\Sacrifice_Hand\State\Idle</Filter>
+      <Filter>02. GameObject\Object\Enemy\Boss\Sacrifice_Hand\State\Idle</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\SacrificeHandState_Attack.h">
-      <Filter>02. GameObject\Object\Enemy\Sacrifice_Hand\State\Attack</Filter>
+      <Filter>02. GameObject\Object\Enemy\Boss\Sacrifice_Hand\State\Attack</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\SacrificeHandState_Hit.h">
-      <Filter>02. GameObject\Object\Enemy\Sacrifice_Hand\State\Hit</Filter>
+      <Filter>02. GameObject\Object\Enemy\Boss\Sacrifice_Hand\State\Hit</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Event_Struct.h">
       <Filter>02. GameObject\UI</Filter>
     </ClInclude>
     <ClInclude Include="..\public\ThugBulkyEnforcer.h">
-      <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer</Filter>
+      <Filter>02. GameObject\Object\Enemy\Elite\ThugBulkyEnforcer</Filter>
     </ClInclude>
     <ClInclude Include="..\public\ThugBulkyEnforcer_Idle.h">
-      <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Idle</Filter>
+      <Filter>02. GameObject\Object\Enemy\Elite\ThugBulkyEnforcer\State\Idle</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Anbi.h">
       <Filter>02. GameObject\Object\Player\Character\99. Anbi</Filter>
@@ -1098,13 +1243,13 @@
       <Filter>02. GameObject\Object\Player\Character\99. Anbi\State\Attack\Normal</Filter>
     </ClInclude>
     <ClInclude Include="..\public\ThugBulkyEnforcer_Attack.h">
-      <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Attack</Filter>
+      <Filter>02. GameObject\Object\Enemy\Elite\ThugBulkyEnforcer\State\Attack</Filter>
     </ClInclude>
     <ClInclude Include="..\public\ThugBulkyEnforcer_Born.h">
-      <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Born</Filter>
+      <Filter>02. GameObject\Object\Enemy\Elite\ThugBulkyEnforcer\State\Born</Filter>
     </ClInclude>
     <ClInclude Include="..\public\ThugBulkyEnforcer_Move.h">
-      <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Move</Filter>
+      <Filter>02. GameObject\Object\Enemy\Elite\ThugBulkyEnforcer\State\Move</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Corin.h">
       <Filter>02. GameObject\Object\Player\Character\02. Corin</Filter>
@@ -1134,31 +1279,31 @@
       <Filter>02. GameObject\Object\TestPlane</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\SacrificeState_Parry.h">
-      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Parry</Filter>
+      <Filter>02. GameObject\Object\Enemy\Boss\Sacrifice\State\Parry</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\SacrificeState_Parry_Phase1.h">
-      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Parry\Phase1</Filter>
+      <Filter>02. GameObject\Object\Enemy\Boss\Sacrifice\State\Parry\Phase1</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\SacrificeState_Parry_Phase2.h">
-      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Parry\Phase2</Filter>
+      <Filter>02. GameObject\Object\Enemy\Boss\Sacrifice\State\Parry\Phase2</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\SacrificeState_Hit_Phase1.h">
-      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Hit\Phase1</Filter>
+      <Filter>02. GameObject\Object\Enemy\Boss\Sacrifice\State\Hit\Phase1</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\SacrificeState_Hit_Phase2.h">
-      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Hit\Phase2</Filter>
+      <Filter>02. GameObject\Object\Enemy\Boss\Sacrifice\State\Hit\Phase2</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\SacrificeState_Evade_Phase2.h">
-      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Evade\Phase2</Filter>
+      <Filter>02. GameObject\Object\Enemy\Boss\Sacrifice\State\Evade\Phase2</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\SacrificeState_Death.h">
-      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Death</Filter>
+      <Filter>02. GameObject\Object\Enemy\Boss\Sacrifice\State\Death</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\SacrificeState_Walk_Phase2.h">
-      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Walk\Phase2</Filter>
+      <Filter>02. GameObject\Object\Enemy\Boss\Sacrifice\State\Walk\Phase2</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\SacrificeState_ChangePhase.h">
-      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\ChangePhase</Filter>
+      <Filter>02. GameObject\Object\Enemy\Boss\Sacrifice\State\ChangePhase</Filter>
     </ClInclude>
     <ClInclude Include="..\public\ShadowCam.h">
       <Filter>02. GameObject\Camera\05. ShadowCam</Filter>
@@ -1236,7 +1381,7 @@
       <Filter>02. GameObject\UI\01. 2D\HUD_Battle\Decibel\Digits</Filter>
     </ClInclude>
     <ClInclude Include="..\public\ThugBulkyEnforcer_Chase.h">
-      <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Chase</Filter>
+      <Filter>02. GameObject\Object\Enemy\Elite\ThugBulkyEnforcer\State\Chase</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\AttackSign.h">
       <Filter>02. GameObject\Effect\AttackSign</Filter>
@@ -1251,13 +1396,13 @@
       <Filter>03. Utility\05. DataBase</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Sacrifice_Laser.h">
-      <Filter>02. GameObject\Object\Enemy\Sacrifice\Sacrifice_Laser</Filter>
+      <Filter>02. GameObject\Object\Enemy\Boss\Sacrifice\Sacrifice_Laser</Filter>
     </ClInclude>
     <ClInclude Include="..\public\ThugBulkyEnforcer_Groggy.h">
-      <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Groggy</Filter>
+      <Filter>02. GameObject\Object\Enemy\Elite\ThugBulkyEnforcer\State\Groggy</Filter>
     </ClInclude>
     <ClInclude Include="..\public\ThugBulkyEnforcer_Death.h">
-      <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Death</Filter>
+      <Filter>02. GameObject\Object\Enemy\Elite\ThugBulkyEnforcer\State\Death</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Client_Enum.h">
       <Filter>99. Defines</Filter>
@@ -1356,7 +1501,7 @@
       <Filter>02. GameObject\UI\01. 2D\HUD_Battle\Action\Switch</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Sacrifice_Orb.h">
-      <Filter>02. GameObject\Object\Enemy\Sacrifice\Sacrifice_Orb</Filter>
+      <Filter>02. GameObject\Object\Enemy\Boss\Sacrifice\Sacrifice_Orb</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UI_UltimateAction.h">
       <Filter>02. GameObject\UI\01. 2D\HUD_Battle\Action\Ultimate</Filter>
@@ -1370,29 +1515,26 @@
     <ClInclude Include="..\Public\Zero_Level.h">
       <Filter>01. Level\04. Zero</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\EnemyNormal.h">
-      <Filter>02. GameObject\Object\Enemy\Normal Enemy</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\ThugAssaulter.h">
-      <Filter>02. GameObject\Object\Enemy\ThugAssaulter</Filter>
+      <Filter>02. GameObject\Object\Enemy\Normal\ThugAssaulter</Filter>
     </ClInclude>
     <ClInclude Include="..\public\ThugAssaulter_Attack.h">
-      <Filter>02. GameObject\Object\Enemy\ThugAssaulter\State\Attack</Filter>
+      <Filter>02. GameObject\Object\Enemy\Normal\ThugAssaulter\State\Attack</Filter>
     </ClInclude>
     <ClInclude Include="..\public\ThugAssaulter_Idle.h">
-      <Filter>02. GameObject\Object\Enemy\ThugAssaulter\State\Idle</Filter>
+      <Filter>02. GameObject\Object\Enemy\Normal\ThugAssaulter\State\Idle</Filter>
     </ClInclude>
     <ClInclude Include="..\public\ThugAssaulter_Chase.h">
-      <Filter>02. GameObject\Object\Enemy\ThugAssaulter\State\Chase</Filter>
+      <Filter>02. GameObject\Object\Enemy\Normal\ThugAssaulter\State\Chase</Filter>
     </ClInclude>
     <ClInclude Include="..\public\ThugAssaulter_Death.h">
-      <Filter>02. GameObject\Object\Enemy\ThugAssaulter\State\Death</Filter>
+      <Filter>02. GameObject\Object\Enemy\Normal\ThugAssaulter\State\Death</Filter>
     </ClInclude>
     <ClInclude Include="..\public\ThugAssaulter_Move.h">
-      <Filter>02. GameObject\Object\Enemy\ThugAssaulter\State\Move</Filter>
+      <Filter>02. GameObject\Object\Enemy\Normal\ThugAssaulter\State\Move</Filter>
     </ClInclude>
     <ClInclude Include="..\public\ThugAssaulter_Born.h">
-      <Filter>02. GameObject\Object\Enemy\ThugAssaulter\State\Born</Filter>
+      <Filter>02. GameObject\Object\Enemy\Normal\ThugAssaulter\State\Born</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Enemy_Struct.h">
       <Filter>02. GameObject\Object\Enemy</Filter>
@@ -1425,7 +1567,7 @@
       <Filter>01. Level\04. Zero\Stage_Normal\ZeroStage_1_1</Filter>
     </ClInclude>
     <ClInclude Include="..\public\ThugAssaulter_Groggy.h">
-      <Filter>02. GameObject\Object\Enemy\ThugAssaulter\State\Groggy</Filter>
+      <Filter>02. GameObject\Object\Enemy\Normal\ThugAssaulter\State\Groggy</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\FieldSystem.h">
       <Filter>03. Utility\06. FieldSystem</Filter>
@@ -1467,7 +1609,7 @@
       <Filter>02. GameObject\Object\Player\Character\02. Corin\State\Attack\Ex</Filter>
     </ClInclude>
     <ClInclude Include="..\public\ThugAssaulter_HitAirborne.h">
-      <Filter>02. GameObject\Object\Enemy\ThugAssaulter\State\HitAirborne</Filter>
+      <Filter>02. GameObject\Object\Enemy\Normal\ThugAssaulter\State\HitAirborne</Filter>
     </ClInclude>
     <ClInclude Include="..\public\JaneDoeState_Hit.h">
       <Filter>02. GameObject\Object\Player\Character\01. JaneDoe\State\Hit</Filter>
@@ -1485,16 +1627,16 @@
       <Filter>02. GameObject\Object\Player\Character\02. Corin\State\Attack\Ultimate</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\SacrificeState_Groggy.h">
-      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Groggy</Filter>
+      <Filter>02. GameObject\Object\Enemy\Boss\Sacrifice\State\Groggy</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\CorinState_SwitchInParryAid.h">
       <Filter>02. GameObject\Object\Player\Character\02. Corin\State\Switch\SwitchIn\ParryAid</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\SacrificeState_Groggy_Phase1.h">
-      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Groggy\Phase1</Filter>
+      <Filter>02. GameObject\Object\Enemy\Boss\Sacrifice\State\Groggy\Phase1</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\SacrificeState_Groggy_Phase2.h">
-      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Groggy\Phase2</Filter>
+      <Filter>02. GameObject\Object\Enemy\Boss\Sacrifice\State\Groggy\Phase2</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UI_BattleHUD.h">
       <Filter>02. GameObject\UI\01. 2D\HUD_Battle</Filter>
@@ -1515,13 +1657,13 @@
       <Filter>02. GameObject\MapObject\03. MapInvisibleWall</Filter>
     </ClInclude>
     <ClInclude Include="..\public\ThugAssaulter_Hit.h">
-      <Filter>02. GameObject\Object\Enemy\ThugAssaulter\State\Hit</Filter>
+      <Filter>02. GameObject\Object\Enemy\Normal\ThugAssaulter\State\Hit</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UI_ScreenFade.h">
       <Filter>02. GameObject\UI\01. 2D\ScreenFade</Filter>
     </ClInclude>
     <ClInclude Include="..\public\ThugBulkyEnforcer_Hit.h">
-      <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Hit</Filter>
+      <Filter>02. GameObject\Object\Enemy\Elite\ThugBulkyEnforcer\State\Hit</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\ZeroStage_Elite.h">
       <Filter>01. Level\04. Zero\Stage_Elite</Filter>
@@ -1629,7 +1771,7 @@
       <Filter>02. GameObject\UI\01. 2D\Lottery\ScratchCard</Filter>
     </ClInclude>
     <ClInclude Include="..\public\ThugAssaulter_Parried.h">
-      <Filter>02. GameObject\Object\Enemy\ThugAssaulter\State\Parry</Filter>
+      <Filter>02. GameObject\Object\Enemy\Normal\ThugAssaulter\State\Parry</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\BattleFXFlow.h">
       <Filter>03. Utility\04. BattleSystem\FX_Battle</Filter>
@@ -1640,11 +1782,47 @@
     <ClInclude Include="..\public\UI_DamageText.h">
       <Filter>02. GameObject\UI\02. 3D\Plane\DamageText</Filter>
     </ClInclude>
+    <ClInclude Include="CDefiler.h">
+      <Filter>02. GameObject\Object\Enemy\Boss\Defiler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ThugPoacher.h">
+      <Filter>02. GameObject\Object\Enemy\Normal\ThugPoacher</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ThugPoacher_Attack.h">
+      <Filter>02. GameObject\Object\Enemy\Normal\ThugPoacher\State\Attack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ThugPoacher_Born.h">
+      <Filter>02. GameObject\Object\Enemy\Normal\ThugPoacher\State\Born</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ThugPoacher_Death.h">
+      <Filter>02. GameObject\Object\Enemy\Normal\ThugPoacher\State\Death</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ThugPoacher_Groggy.h">
+      <Filter>02. GameObject\Object\Enemy\Normal\ThugPoacher\State\Groggy</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ThugPoacher_Hit.h">
+      <Filter>02. GameObject\Object\Enemy\Normal\ThugPoacher\State\Hit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ThugPoacher_Idle.h">
+      <Filter>02. GameObject\Object\Enemy\Normal\ThugPoacher\State\Idle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ThugPoacher_Move.h">
+      <Filter>02. GameObject\Object\Enemy\Normal\ThugPoacher\State\Move</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ThugPoacher_Chase.h">
+      <Filter>02. GameObject\Object\Enemy\Normal\ThugPoacher\State\Chase</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\UI_Lottery.h">
       <Filter>02. GameObject\UI\01. 2D\Lottery</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UI_ResultBanner.h">
       <Filter>02. GameObject\UI\01. 2D\ResultBanner</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\EnemyNormal.h">
+      <Filter>02. GameObject\Object\Enemy\Normal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ThugPoacher_Arrow.h">
+      <Filter>02. GameObject\Object\Enemy\Normal\ThugPoacher\Arrow</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UI_Newspaper.h">
       <Filter>02. GameObject\UI\01. 2D\Lottery\Newspaper</Filter>
@@ -1809,22 +1987,22 @@
       <Filter>02. GameObject\Object\Enemy</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Sacrifice.cpp">
-      <Filter>02. GameObject\Object\Enemy\Sacrifice</Filter>
+      <Filter>02. GameObject\Object\Enemy\Boss\Sacrifice</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\SacrificeState_Idle.cpp">
-      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Idle</Filter>
+      <Filter>02. GameObject\Object\Enemy\Boss\Sacrifice\State\Idle</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\SacrificeState_Walk.cpp">
-      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Walk</Filter>
+      <Filter>02. GameObject\Object\Enemy\Boss\Sacrifice\State\Walk</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\SacrificeState_Born.cpp">
-      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Born</Filter>
+      <Filter>02. GameObject\Object\Enemy\Boss\Sacrifice\State\Born</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\SacrificeState_Hit.cpp">
-      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Hit</Filter>
+      <Filter>02. GameObject\Object\Enemy\Boss\Sacrifice\State\Hit</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\SacrificeHand.cpp">
-      <Filter>02. GameObject\Object\Enemy\Sacrifice_Hand</Filter>
+      <Filter>02. GameObject\Object\Enemy\Boss\Sacrifice_Hand</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\MiyabiState_ChargeAttack.cpp">
       <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Attack\Charge</Filter>
@@ -1833,10 +2011,10 @@
       <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Attack\Normal</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\SacrificeState_Attack_Phase1.cpp">
-      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Attack\Phase1</Filter>
+      <Filter>02. GameObject\Object\Enemy\Boss\Sacrifice\State\Attack\Phase1</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\SacrificeState_Attack_Phase2.cpp">
-      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Attack\Phase2</Filter>
+      <Filter>02. GameObject\Object\Enemy\Boss\Sacrifice\State\Attack\Phase2</Filter>
     </ClCompile>
     <ClCompile Include="..\private\UIDirector.cpp">
       <Filter>03. Utility\07. UIDirector</Filter>
@@ -1854,31 +2032,31 @@
       <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Move\Run</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\SacrificeState_Walk_Phase1.cpp">
-      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Walk\Phase1</Filter>
+      <Filter>02. GameObject\Object\Enemy\Boss\Sacrifice\State\Walk\Phase1</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\SacrificeState_Evade.cpp">
-      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Evade</Filter>
+      <Filter>02. GameObject\Object\Enemy\Boss\Sacrifice\State\Evade</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\SacrificeState_Evade_Phase1.cpp">
-      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Evade\Phase1</Filter>
+      <Filter>02. GameObject\Object\Enemy\Boss\Sacrifice\State\Evade\Phase1</Filter>
     </ClCompile>
     <ClCompile Include="..\private\TestCloud.cpp">
       <Filter>02. GameObject\Object\TestCloud</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\SacrificeHandState_Idle.cpp">
-      <Filter>02. GameObject\Object\Enemy\Sacrifice_Hand\State\Idle</Filter>
+      <Filter>02. GameObject\Object\Enemy\Boss\Sacrifice_Hand\State\Idle</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\SacrificeHandState_Attack.cpp">
-      <Filter>02. GameObject\Object\Enemy\Sacrifice_Hand\State\Attack</Filter>
+      <Filter>02. GameObject\Object\Enemy\Boss\Sacrifice_Hand\State\Attack</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\SacrificeHandState_Hit.cpp">
-      <Filter>02. GameObject\Object\Enemy\Sacrifice_Hand\State\Hit</Filter>
+      <Filter>02. GameObject\Object\Enemy\Boss\Sacrifice_Hand\State\Hit</Filter>
     </ClCompile>
     <ClCompile Include="..\private\ThugBulkyEnforcer.cpp">
-      <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer</Filter>
+      <Filter>02. GameObject\Object\Enemy\Elite\ThugBulkyEnforcer</Filter>
     </ClCompile>
     <ClCompile Include="..\private\ThugBulkyEnforcer_Idle.cpp">
-      <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Idle</Filter>
+      <Filter>02. GameObject\Object\Enemy\Elite\ThugBulkyEnforcer\State\Idle</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Anbi.cpp">
       <Filter>02. GameObject\Object\Player\Character\99. Anbi</Filter>
@@ -1902,16 +2080,16 @@
       <Filter>02. GameObject\Object\Player\Character\99. Anbi\State\Attack\Normal</Filter>
     </ClCompile>
     <ClCompile Include="..\private\ThugBulkyEnforcer_Attack.cpp">
-      <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Attack</Filter>
+      <Filter>02. GameObject\Object\Enemy\Elite\ThugBulkyEnforcer\State\Attack</Filter>
     </ClCompile>
     <ClCompile Include="..\private\ThugBulkyEnforcer_Born.cpp">
-      <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Born</Filter>
+      <Filter>02. GameObject\Object\Enemy\Elite\ThugBulkyEnforcer\State\Born</Filter>
     </ClCompile>
     <ClCompile Include="..\private\ThugBulkyEnforcer_Move.cpp">
-      <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Move</Filter>
+      <Filter>02. GameObject\Object\Enemy\Elite\ThugBulkyEnforcer\State\Move</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\SacrificeState_Attack.cpp">
-      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Attack</Filter>
+      <Filter>02. GameObject\Object\Enemy\Boss\Sacrifice\State\Attack</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Corin.cpp">
       <Filter>02. GameObject\Object\Player\Character\02. Corin</Filter>
@@ -1938,31 +2116,31 @@
       <Filter>02. GameObject\Object\TestPlane</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\SacrificeState_Parry.cpp">
-      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Parry</Filter>
+      <Filter>02. GameObject\Object\Enemy\Boss\Sacrifice\State\Parry</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\SacrificeState_Parry_Phase1.cpp">
-      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Parry\Phase1</Filter>
+      <Filter>02. GameObject\Object\Enemy\Boss\Sacrifice\State\Parry\Phase1</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\SacrificeState_Parry_Phase2.cpp">
-      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Parry\Phase2</Filter>
+      <Filter>02. GameObject\Object\Enemy\Boss\Sacrifice\State\Parry\Phase2</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\SacrificeState_Hit_Phase1.cpp">
-      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Hit\Phase1</Filter>
+      <Filter>02. GameObject\Object\Enemy\Boss\Sacrifice\State\Hit\Phase1</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\SacrificeState_Hit_Phase2.cpp">
-      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Hit\Phase2</Filter>
+      <Filter>02. GameObject\Object\Enemy\Boss\Sacrifice\State\Hit\Phase2</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\SacrificeState_Evade_Phase2.cpp">
-      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Evade\Phase2</Filter>
+      <Filter>02. GameObject\Object\Enemy\Boss\Sacrifice\State\Evade\Phase2</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\SacrificeState_Death.cpp">
-      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Death</Filter>
+      <Filter>02. GameObject\Object\Enemy\Boss\Sacrifice\State\Death</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\SacrificeState_Walk_Phase2.cpp">
-      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Walk\Phase2</Filter>
+      <Filter>02. GameObject\Object\Enemy\Boss\Sacrifice\State\Walk\Phase2</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\SacrificeState_ChangePhase.cpp">
-      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\ChangePhase</Filter>
+      <Filter>02. GameObject\Object\Enemy\Boss\Sacrifice\State\ChangePhase</Filter>
     </ClCompile>
     <ClCompile Include="..\private\ShadowCam.cpp">
       <Filter>02. GameObject\Camera\05. ShadowCam</Filter>
@@ -2052,16 +2230,16 @@
       <Filter>03. Utility\05. DataBase</Filter>
     </ClCompile>
     <ClCompile Include="..\private\ThugBulkyEnforcer_Chase.cpp">
-      <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Chase</Filter>
+      <Filter>02. GameObject\Object\Enemy\Elite\ThugBulkyEnforcer\State\Chase</Filter>
     </ClCompile>
     <ClCompile Include="..\private\ThugBulkyEnforcer_Groggy.cpp">
-      <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Groggy</Filter>
+      <Filter>02. GameObject\Object\Enemy\Elite\ThugBulkyEnforcer\State\Groggy</Filter>
     </ClCompile>
     <ClCompile Include="..\private\ThugBulkyEnforcer_Death.cpp">
-      <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Death</Filter>
+      <Filter>02. GameObject\Object\Enemy\Elite\ThugBulkyEnforcer\State\Death</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Sacrifice_Laser.cpp">
-      <Filter>02. GameObject\Object\Enemy\Sacrifice\Sacrifice_Laser</Filter>
+      <Filter>02. GameObject\Object\Enemy\Boss\Sacrifice\Sacrifice_Laser</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UI_DecibelPts.cpp">
       <Filter>02. GameObject\UI\01. 2D\HUD_Battle\Decibel\Points</Filter>
@@ -2160,7 +2338,7 @@
       <Filter>02. GameObject\MapObject\03. MapInvisibleWall</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Sacrifice_Orb.cpp">
-      <Filter>02. GameObject\Object\Enemy\Sacrifice\Sacrifice_Orb</Filter>
+      <Filter>02. GameObject\Object\Enemy\Boss\Sacrifice\Sacrifice_Orb</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UI_UltimateAction.cpp">
       <Filter>02. GameObject\UI\01. 2D\HUD_Battle\Action\Ultimate</Filter>
@@ -2174,29 +2352,26 @@
     <ClCompile Include="..\Private\Zero_Level.cpp">
       <Filter>01. Level\04. Zero</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\EnemyNormal.cpp">
-      <Filter>02. GameObject\Object\Enemy\Normal Enemy</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\ThugAssaulter.cpp">
-      <Filter>02. GameObject\Object\Enemy\ThugAssaulter</Filter>
+      <Filter>02. GameObject\Object\Enemy\Normal\ThugAssaulter</Filter>
     </ClCompile>
     <ClCompile Include="..\private\ThugAssaulter_Attack.cpp">
-      <Filter>02. GameObject\Object\Enemy\ThugAssaulter\State\Attack</Filter>
+      <Filter>02. GameObject\Object\Enemy\Normal\ThugAssaulter\State\Attack</Filter>
     </ClCompile>
     <ClCompile Include="..\private\ThugAssaulter_Idle.cpp">
-      <Filter>02. GameObject\Object\Enemy\ThugAssaulter\State\Idle</Filter>
+      <Filter>02. GameObject\Object\Enemy\Normal\ThugAssaulter\State\Idle</Filter>
     </ClCompile>
     <ClCompile Include="..\private\ThugAssaulter_Chase.cpp">
-      <Filter>02. GameObject\Object\Enemy\ThugAssaulter\State\Chase</Filter>
+      <Filter>02. GameObject\Object\Enemy\Normal\ThugAssaulter\State\Chase</Filter>
     </ClCompile>
     <ClCompile Include="..\private\ThugAssaulter_Death.cpp">
-      <Filter>02. GameObject\Object\Enemy\ThugAssaulter\State\Death</Filter>
+      <Filter>02. GameObject\Object\Enemy\Normal\ThugAssaulter\State\Death</Filter>
     </ClCompile>
     <ClCompile Include="..\private\ThugAssaulter_Move.cpp">
-      <Filter>02. GameObject\Object\Enemy\ThugAssaulter\State\Move</Filter>
+      <Filter>02. GameObject\Object\Enemy\Normal\ThugAssaulter\State\Move</Filter>
     </ClCompile>
     <ClCompile Include="..\private\ThugAssaulter_Born.cpp">
-      <Filter>02. GameObject\Object\Enemy\ThugAssaulter\State\Born</Filter>
+      <Filter>02. GameObject\Object\Enemy\Normal\ThugAssaulter\State\Born</Filter>
     </ClCompile>
     <ClCompile Include="..\private\JaneDoeState_ExAttack.cpp">
       <Filter>02. GameObject\Object\Player\Character\01. JaneDoe\State\Attack\Ex</Filter>
@@ -2259,10 +2434,10 @@
       <Filter>02. GameObject\Object\Player\Character\02. Corin\State\Attack\Ex</Filter>
     </ClCompile>
     <ClCompile Include="..\private\ThugAssaulter_Groggy.cpp">
-      <Filter>02. GameObject\Object\Enemy\ThugAssaulter\State\Groggy</Filter>
+      <Filter>02. GameObject\Object\Enemy\Normal\ThugAssaulter\State\Groggy</Filter>
     </ClCompile>
     <ClCompile Include="..\private\ThugAssaulter_HitAirborne.cpp">
-      <Filter>02. GameObject\Object\Enemy\ThugAssaulter\State\HitAirborne</Filter>
+      <Filter>02. GameObject\Object\Enemy\Normal\ThugAssaulter\State\HitAirborne</Filter>
     </ClCompile>
     <ClCompile Include="..\private\JaneDoeState_Hit.cpp">
       <Filter>02. GameObject\Object\Player\Character\01. JaneDoe\State\Hit</Filter>
@@ -2274,7 +2449,7 @@
       <Filter>02. GameObject\Object\Player\Character\02. Corin\State\Attack\Ultimate</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\SacrificeState_Groggy.cpp">
-      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Groggy</Filter>
+      <Filter>02. GameObject\Object\Enemy\Boss\Sacrifice\State\Groggy</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Interactable.cpp" />
     <ClCompile Include="..\private\Portal.cpp" />
@@ -2288,10 +2463,10 @@
       <Filter>02. GameObject\Object\Interactable</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\SacrificeState_Groggy_Phase1.cpp">
-      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Groggy\Phase1</Filter>
+      <Filter>02. GameObject\Object\Enemy\Boss\Sacrifice\State\Groggy\Phase1</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\SacrificeState_Groggy_Phase2.cpp">
-      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Groggy\Phase2</Filter>
+      <Filter>02. GameObject\Object\Enemy\Boss\Sacrifice\State\Groggy\Phase2</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UI_BattleHUD.cpp">
       <Filter>02. GameObject\UI\01. 2D\HUD_Battle</Filter>
@@ -2309,13 +2484,13 @@
       <Filter>01. Level\04. Zero\Stage_Normal</Filter>
     </ClCompile>
     <ClCompile Include="..\private\ThugAssaulter_Hit.cpp">
-      <Filter>02. GameObject\Object\Enemy\ThugAssaulter\State\Hit</Filter>
+      <Filter>02. GameObject\Object\Enemy\Normal\ThugAssaulter\State\Hit</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UI_ScreenFade.cpp">
       <Filter>02. GameObject\UI\01. 2D\ScreenFade</Filter>
     </ClCompile>
     <ClCompile Include="..\private\ThugBulkyEnforcer_Hit.cpp">
-      <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Hit</Filter>
+      <Filter>02. GameObject\Object\Enemy\Elite\ThugBulkyEnforcer\State\Hit</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\ZeroStage_Elite.cpp">
       <Filter>01. Level\04. Zero\Stage_Elite</Filter>
@@ -2414,7 +2589,7 @@
       <Filter>02. GameObject\UI\01. 2D\Lottery\ScratchCard</Filter>
     </ClCompile>
     <ClCompile Include="..\private\ThugAssaulter_Parried.cpp">
-      <Filter>02. GameObject\Object\Enemy\ThugAssaulter\State\Parry</Filter>
+      <Filter>02. GameObject\Object\Enemy\Normal\ThugAssaulter\State\Parry</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\BattleFXFlow.cpp">
       <Filter>03. Utility\04. BattleSystem\FX_Battle</Filter>
@@ -2425,11 +2600,47 @@
     <ClCompile Include="..\private\UI_DamageText.cpp">
       <Filter>02. GameObject\UI\02. 3D\Plane\DamageText</Filter>
     </ClCompile>
+    <ClCompile Include="CDefiler.cpp">
+      <Filter>02. GameObject\Object\Enemy\Boss\Defiler</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ThugPoacher.cpp">
+      <Filter>02. GameObject\Object\Enemy\Normal\ThugPoacher</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ThugPoacher_Attack.cpp">
+      <Filter>02. GameObject\Object\Enemy\Normal\ThugPoacher\State\Attack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ThugPoacher_Born.cpp">
+      <Filter>02. GameObject\Object\Enemy\Normal\ThugPoacher\State\Born</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ThugPoacher_Death.cpp">
+      <Filter>02. GameObject\Object\Enemy\Normal\ThugPoacher\State\Death</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ThugPoacher_Groggy.cpp">
+      <Filter>02. GameObject\Object\Enemy\Normal\ThugPoacher\State\Groggy</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ThugPoacher_Hit.cpp">
+      <Filter>02. GameObject\Object\Enemy\Normal\ThugPoacher\State\Hit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ThugPoacher_Idle.cpp">
+      <Filter>02. GameObject\Object\Enemy\Normal\ThugPoacher\State\Idle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ThugPoacher_Move.cpp">
+      <Filter>02. GameObject\Object\Enemy\Normal\ThugPoacher\State\Move</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ThugPoacher_Chase.cpp">
+      <Filter>02. GameObject\Object\Enemy\Normal\ThugPoacher\State\Chase</Filter>
+    </ClCompile>
     <ClCompile Include="..\Private\UI_Lottery.cpp">
       <Filter>02. GameObject\UI\01. 2D\Lottery</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UI_ResultBanner.cpp">
       <Filter>02. GameObject\UI\01. 2D\ResultBanner</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\EnemyNormal.cpp">
+      <Filter>02. GameObject\Object\Enemy\Normal</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ThugPoacher_Arrow.cpp">
+      <Filter>02. GameObject\Object\Enemy\Normal\ThugPoacher\Arrow</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UI_Newspaper.cpp">
       <Filter>02. GameObject\UI\01. 2D\Lottery\Newspaper</Filter>
