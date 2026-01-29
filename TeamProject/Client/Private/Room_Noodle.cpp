@@ -5,6 +5,7 @@
 #include "GameInstance.h"
 
 #include "FieldPlayer.h"
+#include "CamDirector.h"
 
 CRoom_Noodle::CRoom_Noodle(const ROOM_DESC& desc)
 	:CRoom(desc)
@@ -17,6 +18,8 @@ void CRoom_Noodle::Enter()
 	pFieldPlayer->Lock_Input();
 	pFieldPlayer->DeActive_Field();
 
+	CamDirector()->SetSpaceRef(FieldSystem()->GetInteractHandle());
+	CamDirector()->RequestSequence("Field/Noodle");
 }
 
 void CRoom_Noodle::Exit()
@@ -24,6 +27,9 @@ void CRoom_Noodle::Exit()
 	auto pFieldPlayer = FieldSystem()->GetFieldPlayer();
 	pFieldPlayer->UnLock_Input();
 	pFieldPlayer->Active_Field();
+	
+	CamDirector()->AutoTarget();
+	CamDirector()->RequestSequence("Field/Back");
 }
 
 void CRoom_Noodle::Update()

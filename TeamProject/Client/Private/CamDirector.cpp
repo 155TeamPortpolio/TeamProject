@@ -78,6 +78,10 @@ void CCamDirector::AutoField()
     AutoTarget();
     RequestSequence("Field/Front");
 
+    static constexpr _float rad = XMConvertToRadians(90.f);
+    GetCharacter()->Get_Component<CCharacterController>()->Set_Position({5.f, 1.f, 0.f});
+    GetCharacter()->Get_Component<CTransform>()->Rotate(Vector3{0.f, rad, 0.f});
+
     //GameInstance()->Set_EngineTimeScale(0.25f);
 }
 
@@ -163,11 +167,8 @@ void CCamDirector::UpdateInput(_float dt)
 
     if (InputDevice()->Key_Tap(VK_F3))
     {
-        SetSpaceRef(FieldSystem()->GetInteractHandle());
-        RequestSequence("Field/Noodle");
+        GetCharacter()->Get_Component<CCharacterController>()->Set_Position({5.f, 1.f, 0.f});
     }
-        //RequestSequence("Field/Front");
-        //GetCharacter()->Take_Damage(DAMAGE_TYPE::NORMAL, damage);
 }
 
 void CCamDirector::AbortSequenceToOrbit(_bool resetTime)
