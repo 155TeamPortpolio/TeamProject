@@ -4,7 +4,10 @@
 #include "Helper_Func.h"
 #include "GameInstance.h"
 #include "BattleSystem.h"
+
+/* Child */
 #include "AttackSign.h"
+#include "ThugPoacher_Arrow.h"
 
 /* Component */
 #include "Material.h"
@@ -49,7 +52,8 @@ HRESULT CThugPoacher::Initialize_Prototype()
 	pResourceMgr->Add_ResourcePath("ThugPoacher.mat", "../Bin/Resources/Model/skeletal/Enemy/ThugPoacher/ThugPoacher.mat");
 	pResourceMgr->Add_ResourcePath("ThugPoacher.model", "../Bin/Resources/Model/skeletal/Enemy/ThugPoacher/ThugPoacher.model");
 	pResourceMgr->Add_ResourcePath("ThugPoacher_Meta.json", "../Bin/Resources/Model/skeletal/Enemy/ThugPoacher/ThugPoacher_Meta.json");
-
+	
+	
 	return S_OK;
 }
 
@@ -129,6 +133,104 @@ void CThugPoacher::Render_GUI()
 	}
 #pragma endregion
 
+
+#pragma region Status
+	ImGui::SeparatorText("Status");
+	auto pCharacter = GetCharacterOnField();
+	if (nullptr != pCharacter) {
+		ImGui::BeginChild("TracePlayer##ThugAssaulterStatus", ImVec2{ 0, childHeight + textLineHeight * 4.f }, true);
+
+		ImGui::Text("AnimName : %s", Get_Component<CAnimator3D>()->Get_CurAnimName().c_str());
+		ImGui::Text("SelfDir: %.2f, %.2f, %.2f", m_tTargetingInfo.vDirSelfLook.x, m_tTargetingInfo.vDirSelfLook.y, m_tTargetingInfo.vDirSelfLook.z);
+		ImGui::Text("CaptureDir: %.2f, %.2f, %.2f", m_tRotDir.vDirToLookCapture.x, m_tRotDir.vDirToLookCapture.y, m_tRotDir.vDirToLookCapture.z);
+		ImGui::Text("HP : %d", (_int)m_tStatus.iNowHP);
+		ImGui::Text("Groggy Value : %d", m_tStatus.iGroggyValue);
+		ImGui::Text("Groggy StayTime : %d", m_tGroggyManage.fGroggyStayTime);
+
+		ImGui::BeginDisabled(true);
+		//ImGui::Checkbox(u8"isLookPlayer", &m_isLookPlayer);
+		ImGui::Checkbox("IsGroggy", &m_tStatus.isGroggy);
+		ImGui::Checkbox("ForUI.IsGroggyStay", &m_tStatus.isGroggyStay);
+		ImGui::Checkbox("IsOnAttack", &m_isOnAttack);
+		ImGui::EndDisabled();
+
+		ImGui::EndChild();
+	}
+#pragma endregion
+
+#pragma region TargetInfo
+	Render_GUI_ForTargetInfo();
+#pragma endregion
+
+#pragma region CheckState
+	if (ImGui::TreeNode("Test State##ThugAssaulterCheckState")) {
+		//ImGui::BeginChild("State##ThugBulkyEnforcerStatus", ImVec2{ 0, childHeight }, true);
+
+		if (ImGui::TreeNode("AttackState##ThugAssaulterTestState_Attack"))
+		{
+			if (ImGui::Button(u8"1. Attack01"))
+			{
+				m_pStateMachine->Set_Int("AttackPattern", 1);
+				m_pStateMachine->Set_Trigger("Idle_To_Attack");
+			}
+			if (ImGui::Button(u8"2. Attack02"))
+			{
+				m_pStateMachine->Set_Int("AttackPattern", 2);
+				m_pStateMachine->Set_Trigger("Idle_To_Attack");
+			}
+			if (ImGui::Button(u8"3. Attack03"))
+			{
+				m_pStateMachine->Set_Int("AttackPattern", 3);
+				m_pStateMachine->Set_Trigger("Idle_To_Attack");
+			}
+			ImGui::TreePop();
+		}
+		if (ImGui::TreeNode("Death##ThugAssaulterTestDeath"))
+		{
+			if (ImGui::Button("Death Front"))
+				m_pStateMachine->Change_State("Death");
+
+			if (ImGui::Button("Death Back"))
+			{
+				m_pStateMachine->Set_Bool("DeathBack", true);
+				m_pStateMachine->Change_State("Death");
+			}
+
+			ImGui::TreePop();
+		}
+		if (ImGui::TreeNode("Groggy&Hit##ThugAssaulterTestGroggy&Hit"))
+		{
+			if (ImGui::Button("Increase Groggy value 30"))
+				m_tStatus.iGroggyValue += 30;
+
+			if (ImGui::Button("Hit"))
+				TakeDamage(DAMAGE_TYPE::NORMAL, 20.f);
+
+			if (ImGui::Button("Parried"))
+				Parried();
+
+			if (ImGui::Button("Execute"))
+				m_tStatus.iNowHP -= m_tStatus.iMaxHP;
+
+
+
+			ImGui::TreePop();
+		}
+
+		ImGui::TreePop();
+	}
+#pragma endregion
+
+#pragma region AutoPattern
+	ImGui::Checkbox("Auto Pattern", &m_isAutoPatternPlay);
+#pragma endregion
+
+	if (ImGui::Button("ShootArrow##ShootArrow"))
+	{
+		ShootArrow();
+	}
+
+
 	ImGui::PopID();
 }
 
@@ -154,23 +256,53 @@ void CThugPoacher::Parried()
 
 HRESULT CThugPoacher::Ready_Children(INIT_DESC* pArg)
 {
-	BATTLE_COLLIDER_DESC WeaponDesc = {};
-
-	WeaponDesc.tagName = "Weapon";
-	WeaponDesc.isAttachBone = true;
-	WeaponDesc.tagBone = "Bip_ThugAssaulter_Weapon";
-	WeaponDesc.pOwnerAnimator3D = Get_Component<CAnimator3D>();
-	WeaponDesc.eAttackColliderType = COLLIDER_TYPE::BOX;
-	WeaponDesc.vCenter = { 0.f, 0.f,-0.7f };
-	WeaponDesc.vAttackSize = { 0.2f, 0.2f, 1.1f };
-	WeaponDesc.vTriggerSize = { 4.f,0.f,0.f };
-
-	if (FAILED(AttachBattleColliderObject(&WeaponDesc)))
-		return E_FAIL;
-
 	Create_AttackSign("Bip001_Head");
 	Create_UIEnemyStatus("Bip001_Spine2");
 	Create_MeshPyramid();
+	
+	Ready_Arrows(3);
+
+	return S_OK;
+}
+
+HRESULT CThugPoacher::Ready_Arrows(_uint iNum)
+{
+	if (1 > iNum)
+		return E_FAIL;
+
+	string tagNowLevel = LevelManager()->Get_NowLevelKey();
+	auto pObjectContainer = Get_Component<CObjectContainer>();
+
+	_float4x4* pWeaponBone = Get_Component<CAnimator3D>()->Get_BoneMatrixPtr(CAnimator3D::BoneSpace::COMBINED, "CrossbowD_01");
+	if (nullptr == pWeaponBone)
+		return E_FAIL;
+	for (_uint i = 0; i < iNum; ++i)
+	{
+		string tagInstanceName = "Arrow" + to_string(i);
+
+		CThugPoacher_Arrow::ARROW_DESC* pDesc = new CThugPoacher_Arrow::ARROW_DESC();
+		pDesc->pWeapon = pWeaponBone;
+
+		COLLIDER_DESC ArrowColDesc = {};
+		ArrowColDesc.eGroup = COLLISION_GROUP::MONSTER;
+		ArrowColDesc.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER) | ENUM(COLLISION_GROUP::COMMON) | ENUM(COLLISION_GROUP::PLAYER_ATTACK);
+		ArrowColDesc.bTrigger = true;
+		ArrowColDesc.bAutoFit = false;
+		ArrowColDesc.eType = COLLIDER_TYPE::SPHERE;
+		ArrowColDesc.vSize = { 0.2f, 0.f, 0.f };
+
+		auto pArrow = Builder::Create_Object({ tagNowLevel , "Proto_GameObject_ThugPoacher_Arrow" })
+			.Add_ObjDesc(pDesc)
+			.Collider(ArrowColDesc)
+			.Build(tagInstanceName);
+
+		if (nullptr == pArrow)
+			continue;
+
+		_int iChildIndex = pObjectContainer->Add_Child(pArrow, false);
+
+		m_ArrowsChildIndices.push_back(iChildIndex);
+	}
 
 	return S_OK;
 }
@@ -238,6 +370,23 @@ void CThugPoacher::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage)
 	}
 }
 
+void CThugPoacher::ShootArrow()
+{
+	auto pObjectContainerCom = Get_Component<CObjectContainer>();
+	for (auto& index : m_ArrowsChildIndices)
+	{
+		auto pArrow = dynamic_cast<CThugPoacher_Arrow*>(pObjectContainerCom->Get_ChildByOrder(index));
+		if (nullptr == pArrow)
+			continue;
+
+		if (false == pArrow->Is_Alive())
+		{
+			pArrow->ShootArrow();
+			return;
+		}
+	}
+}
+
 /* For.State Machine */
 HRESULT CThugPoacher::Initialize_StateMachine()
 {
@@ -302,11 +451,11 @@ HRESULT CThugPoacher::Ready_Rules()
 	// x = Idle에서 다음 상태로 넘어가는 쿨타임, y = dt 더한 타이머용
 	m_vIdleTime = { 1.f, 0.f };
 
-	//m_tHysteriesis.fEvadeEnter = 2.f;
-	//m_tHysteriesis.fComboEnter = 3.f;
-	//m_tHysteriesis.fComboExit = 4.f;
-	//m_tHysteriesis.fChaseEnter = 7.f;
-	//m_tHysteriesis.fChaseExit = 5.f;
+	m_tHysteriesis.fEvadeEnter = 3.f;
+	m_tHysteriesis.fComboEnter = 3.5f;
+	m_tHysteriesis.fComboExit = 4.5f;
+	m_tHysteriesis.fChaseEnter = 7.f;
+	m_tHysteriesis.fChaseExit = 5.f;
 
 	return S_OK;
 }

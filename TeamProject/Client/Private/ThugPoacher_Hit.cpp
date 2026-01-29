@@ -125,7 +125,7 @@ void CThugPoacher_Hit_Knock::Exit(CThugPoacher* pOwner)
 /*============================================================================*/
 void CThugPoacher_Hit_H_Front::Enter(CThugPoacher* pOwner)
 {
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("ThugPoacher_Ani_Hit_Knock")
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("ThugPoacher_Ani_Hit_H_Front")
 		.Apply();
 }
 
@@ -140,7 +140,7 @@ void CThugPoacher_Hit_H_Front::Exit(CThugPoacher* pOwner)
 /*============================================================================*/
 void CThugPoacher_Hit_H_Back::Enter(CThugPoacher* pOwner)
 {
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("ThugPoacher_Ani_Hit_Knock")
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("ThugPoacher_Ani_Hit_H_Back")
 		.Apply();
 }
 
@@ -155,7 +155,7 @@ void CThugPoacher_Hit_H_Back::Exit(CThugPoacher* pOwner)
 /*============================================================================*/
 void CThugPoacher_Hit_L_Back_Down::Enter(CThugPoacher* pOwner)
 {
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("ThugPoacher_Ani_Hit_Knock")
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("ThugPoacher_Ani_Hit_L_Back_Down")
 		.Apply();
 }
 
@@ -170,7 +170,7 @@ void CThugPoacher_Hit_L_Back_Down::Exit(CThugPoacher* pOwner)
 /*============================================================================*/
 void CThugPoacher_Hit_L_Back_Up::Enter(CThugPoacher* pOwner)
 {
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("ThugPoacher_Ani_Hit_Knock")
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("ThugPoacher_Ani_Hit_L_Back_Up")
 		.Apply();
 }
 
@@ -185,7 +185,7 @@ void CThugPoacher_Hit_L_Back_Up::Exit(CThugPoacher* pOwner)
 /*============================================================================*/
 void CThugPoacher_Hit_L_Back_Left::Enter(CThugPoacher* pOwner)
 {
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("ThugPoacher_Ani_Hit_Knock")
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("ThugPoacher_Ani_Hit_L_Back_Left")
 		.Apply();
 }
 
@@ -200,7 +200,7 @@ void CThugPoacher_Hit_L_Back_Left::Exit(CThugPoacher* pOwner)
 /*============================================================================*/
 void CThugPoacher_Hit_L_Back_Right::Enter(CThugPoacher* pOwner)
 {
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("ThugPoacher_Ani_Hit_Knock")
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("ThugPoacher_Ani_Hit_L_Back_Right")
 		.Apply();
 }
 
@@ -215,7 +215,7 @@ void CThugPoacher_Hit_L_Back_Right::Exit(CThugPoacher* pOwner)
 /*============================================================================*/
 void CThugPoacher_Hit_L_Front_Down::Enter(CThugPoacher* pOwner)
 {
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("ThugPoacher_Ani_Hit_Knock")
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("ThugPoacher_Ani_Hit_L_Front_Down")
 		.Apply();
 }
 
@@ -230,7 +230,7 @@ void CThugPoacher_Hit_L_Front_Down::Exit(CThugPoacher* pOwner)
 /*============================================================================*/
 void CThugPoacher_Hit_L_Front_Up::Enter(CThugPoacher* pOwner)
 {
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("ThugPoacher_Ani_Hit_Knock")
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("ThugPoacher_Ani_Hit_L_Front_Up")
 		.Apply();
 }
 
@@ -245,7 +245,7 @@ void CThugPoacher_Hit_L_Front_Up::Exit(CThugPoacher* pOwner)
 /*============================================================================*/
 void CThugPoacher_Hit_L_Front_Left::Enter(CThugPoacher* pOwner)
 {
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("ThugPoacher_Ani_Hit_Knock")
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("ThugPoacher_Ani_Hit_L_Front_Left")
 		.Apply();
 }
 
@@ -260,7 +260,7 @@ void CThugPoacher_Hit_L_Front_Left::Exit(CThugPoacher* pOwner)
 /*============================================================================*/
 void CThugPoacher_Hit_L_Front_Right::Enter(CThugPoacher* pOwner)
 {
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("ThugPoacher_Ani_Hit_Knock")
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("ThugPoacher_Ani_Hit_L_Front_Right")
 		.Apply();
 }
 

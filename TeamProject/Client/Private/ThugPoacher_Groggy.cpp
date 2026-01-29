@@ -52,7 +52,7 @@ void CThugPoacher_Groggy::Exit(CThugPoacher* pOwner)
 /*============================================================================*/
 void CThugPoacher_Stun_Start::Enter(CThugPoacher* pOwner)
 {
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("ThugAssaulter_Ani_Debuff_Stun_Start")
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("ThugPoacher_Ani_Debuff_Stun_Start")
 		.Apply();
 }
 
@@ -67,7 +67,7 @@ void CThugPoacher_Stun_Start::Exit(CThugPoacher* pOwner)
 /*============================================================================*/
 void CThugPoacher_Stun_Loop::Enter(CThugPoacher* pOwner)
 {
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("ThugAssaulter_Ani_Debuff_Stun_Start")
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("ThugPoacher_Ani_Debuff_Stun_Loop")
 		.Loop(true)
 		.Apply();
 }
@@ -83,7 +83,7 @@ void CThugPoacher_Stun_Loop::Exit(CThugPoacher* pOwner)
 /*============================================================================*/
 void CThugPoacher_Stun_End::Enter(CThugPoacher* pOwner)
 {
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("ThugAssaulter_Ani_Debuff_Stun_Start")
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("ThugPoacher_Ani_Debuff_Stun_End")
 		.Apply();
 }
 

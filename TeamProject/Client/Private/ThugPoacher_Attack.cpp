@@ -22,16 +22,29 @@ void CThugPoacher_Attack::Enter(CThugPoacher* pOwner)
 	if (nullptr == pStateMachine)
 		return;
 
+	auto hysteriesis = pOwner->GetHysteriesis();
+	auto targetinginfo = pOwner->GetTargetingInfo();
+
 	_int iAttackPatternIndex = pStateMachine->Get_Int("AttackPattern");
 	if (0 != iAttackPatternIndex) {
 		pStateMachine->Set_Int("AttackPattern", 0);
 		AttackFromIndex(iAttackPatternIndex);
 	}
 	else {
-		iAttackPatternIndex = Helper::Get_Random_Int(1, 3);
+		//iAttackPatternIndex = Helper::Get_Random_Int(1, 3);
+		
+		if (targetinginfo.fDistance <= hysteriesis.fComboEnter)
+			iAttackPatternIndex = 2;		// 뒷 구르기 후 한 발 공격
+		else
+		{
+			_int i = Helper::Get_Random_Int(0, 2);
+			if (i == 0)
+				iAttackPatternIndex = 3;	// 한 발 공격
+			else
+				iAttackPatternIndex = 1;	// 세 발 공격
+		}
 		AttackFromIndex(iAttackPatternIndex);
 	}
-	pOwner->UnleashAttack(CEnemy::ATTACK_SIDE::NONE, false);
 	pOwner->CaptureRotateToDir(pOwner->GetTargetingInfo().vDirToTarget);
 }
 
@@ -40,11 +53,39 @@ void CThugPoacher_Attack::Update(CThugPoacher* pOwner, _float dt)
 	_vector3 vRootBoneMoveDelta = pOwner->Get_Component<CAnimator3D>()->Get_RootBoneMoveDelta();
 	_quaternion qRot = pOwner->Get_Component<CTransform>()->Get_QuaternionRotate();
 	pOwner->Get_Component<CCharacterController>()->Move_RootMotion(
-		-vRootBoneMoveDelta,
+		vRootBoneMoveDelta,
 		qRot,
 		dt);
 
 	__super::Update(pOwner, dt);
+
+
+	for (const auto& Event : pOwner->Get_Component<CAnimator3D>()->Get_EventBus())
+	{
+		switch (Event.Type)
+		{
+		case Engine::CLIP_EVENT_TYPE::NOTIFY:
+		{
+			if (Event.Tag == "UnleashAttack")
+				pOwner->UnleashAttack(CEnemy::ATTACK_SIDE::NONE, false);
+			else if (Event.Tag == "Shoot")
+			{
+				pOwner->CaptureRotateToDir(pOwner->GetTargetingInfo().vDirToTarget);
+				pOwner->ShootArrow();
+			}
+			else if (Event.Tag == "FinishAll")
+				pOwner->SetOnAttack(false);
+
+			break;
+		}
+		case Engine::CLIP_EVENT_TYPE::EFFECT:
+			break;
+		case Engine::CLIP_EVENT_TYPE::SOUND:
+			break;
+		default:
+			break;
+		}
+	}
 
 	if (m_fAnimProgress >= 0.99f)
 		pOwner->Idle();

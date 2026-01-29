@@ -5,7 +5,7 @@ NS_BEGIN(Client)
 
 template<typename Type>
 class CStateMachine;
-
+class CThugPoacher_Arrow;
 class CThugPoacher final : public CEnemyNormal
 {
 private:
@@ -26,21 +26,26 @@ public:
     virtual void Parried() override;
 
 public:
-    static CThugPoacher* Create();
+    static CThugPoacher* Create(); 
     CGameObject* Clone(INIT_DESC* pArg) override;
     virtual void Free() override;
 
 private:
     HRESULT Ready_Children(INIT_DESC* pArg);
+    HRESULT Ready_Arrows(_uint iNum = 1);
+
+private:
+    vector<_int>     m_ArrowsChildIndices;
 
 public:
     /* Getter */
-    CStateMachine<CThugPoacher>* GetStateMachine() const { return m_pStateMachine; }
-    const HYSTERIESIS& GetHysteriesis() const { return m_tHysteriesis; }
+    CStateMachine<CThugPoacher>*    GetStateMachine() const { return m_pStateMachine; }
+    HYSTERIESIS                     GetHysteriesis() const { return m_tHysteriesis; }
 
     /* Setter */
-    void                            Idle() { m_isIdle = true; }
-    virtual void                    TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage) override;
+    void            Idle() { m_isIdle = true; }
+    virtual void    TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage) override;
+    void            ShootArrow();
 
 private:
     HRESULT Initialize_StateMachine();

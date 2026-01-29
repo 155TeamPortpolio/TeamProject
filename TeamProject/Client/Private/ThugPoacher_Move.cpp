@@ -22,17 +22,15 @@ void CThugPoacher_Move::Enter(CThugPoacher* pOwner)
 
 	_int iMovePatternIndex = {};
 
-	if (-1 != pOwner->GetStateMachine()->Get_Int("MovePattern")) {
+	if (0 != pOwner->GetStateMachine()->Get_Int("MovePattern")) {
 		iMovePatternIndex = pOwner->GetStateMachine()->Get_Int("MovePattern");
-		pOwner->GetStateMachine()->Set_Int("MovePattern", -1);
+		pOwner->GetStateMachine()->Set_Int("MovePattern", 0);
 	}
 	else {
 		auto hysteriesis = pOwner->GetHysteriesis();
 		_float fDistance = pOwner->GetTargetingInfo().fDistance;
 		if (hysteriesis.fEvadeEnter >= fDistance)
-			iMovePatternIndex = MOVEINDEX::Walk_Back;
-		else if (hysteriesis.fComboExit <= fDistance)
-			iMovePatternIndex = MOVEINDEX::Walk_Front;
+			iMovePatternIndex = MOVEINDEX::Evade;
 		else
 			iMovePatternIndex = Helper::Get_Random_Int(3, 7);
 	}
@@ -215,7 +213,7 @@ void CThugPoacher_Walk_RF_LFoot::Exit(CThugPoacher* pOwner)
 /*============================================================================*/
 void CThugPoacher_Walk_Evade::Enter(CThugPoacher* pOwner)
 {
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("Monster_ThugAssaulter_Ani_Walk_F")
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("ThugPoacher_Ani_Evade")
 		.Apply();
 }
 

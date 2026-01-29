@@ -7,8 +7,8 @@ namespace CameraTool
 {
     inline unsigned int WinX = 12560u;
     inline unsigned int WinY = 11360u;
-    static constexpr unsigned int FrameRate = 144u;
-    inline float aspect = 2560.f / 1360.f;
+    static constexpr unsigned int FrameRate = 44u;
+    inline float aspect = 12560.f / 11360.f;
 }
 
 extern HWND      g_hWnd;

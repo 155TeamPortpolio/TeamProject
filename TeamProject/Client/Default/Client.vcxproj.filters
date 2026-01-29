@@ -183,24 +183,6 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Attack\Normal">
       <UniqueIdentifier>{884362e5-20d7-4daa-9187-9c9149289f96}</UniqueIdentifier>
-	</Filter>
-	<Filter Include="02. GameObject\Object\Enemy\ThugBulkyEnforcer">
-      <UniqueIdentifier>{9ecf22bd-6ec3-4d22-b39a-bc4242f18996}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\ThugBulkyEnforcer\State">
-      <UniqueIdentifier>{64c2622e-0b47-49ba-bc7e-57b653fe58a2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Move">
-      <UniqueIdentifier>{0fb2fde1-7e61-4c17-ad5b-dafa2cef7fc6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Idle">
-      <UniqueIdentifier>{2d607a9a-fd47-4b46-94fc-9f05d30521e1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Born">
-      <UniqueIdentifier>{63ed3993-86eb-4107-8f07-e9924da6d1af}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Attack">
-      <UniqueIdentifier>{88a8a2e8-e306-40ca-8395-0fc3b5fad5bd}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\Object\TestPlane">
       <UniqueIdentifier>{1bb9fb41-6674-49a3-9da6-bd39a0ff8454}</UniqueIdentifier>
@@ -210,27 +192,6 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Evade\Dash">
       <UniqueIdentifier>{c7ee365b-fe3f-4577-a882-c30dab07300f}</UniqueIdentifier>
-	</Filter>
-	<Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Parry">
-      <UniqueIdentifier>{b5d49ec4-f1e8-4445-9812-e3047fe53695}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Parry\Phase1">
-      <UniqueIdentifier>{2a109206-ead3-44ef-b633-cd03e33507d9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Parry\Phase2">
-      <UniqueIdentifier>{3c8998bd-98ee-4cad-8976-9938d3c05a55}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Hit\Phase1">
-      <UniqueIdentifier>{b50a1706-7716-416e-b556-536d12216321}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Hit\Phase2">
-      <UniqueIdentifier>{3d74b083-6d12-4923-8093-4086952edfd9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Death">
-      <UniqueIdentifier>{d3e2ed07-89f7-4d84-ad7a-697fced4917b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\ChangePhase">
-      <UniqueIdentifier>{dabff24d-6d9c-4cdd-94e8-db0017cbbf65}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\Camera\05. ShadowCam">
       <UniqueIdentifier>{54711cba-0d76-43fd-b108-03e7250725a9}</UniqueIdentifier>
@@ -304,15 +265,6 @@
     <Filter Include="02. GameObject\Object\Npc\Service\ShopBangBoos\Ask">
       <UniqueIdentifier>{2c23461a-2765-4480-ad3f-f2645e65df1e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchIn\Normal">
-      <UniqueIdentifier>{17ac199c-689b-4292-beb7-f0b1a28e89d3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchIn\Attack">
-      <UniqueIdentifier>{3b25628b-24fb-4600-ba33-add740b3d93e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchIn\ParryAid">
-      <UniqueIdentifier>{4b65cf7d-c3b5-4826-8da1-334e9b9c6ca9}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\Object\Npc\Service\ShopBangBoos\Ask\State">
       <UniqueIdentifier>{ae74ad50-97c1-4208-aed1-096698c72e90}</UniqueIdentifier>
     </Filter>
@@ -342,42 +294,6 @@
     </Filter>
     <Filter Include="01. Level\04. Zero\Stage_Boss">
       <UniqueIdentifier>{0311033b-83a6-4978-8774-ad77717efc65}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Attack\Ex">
-      <UniqueIdentifier>{06deeb01-99d7-4481-ad85-781283a743fe}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Attack\Ultimate">
-      <UniqueIdentifier>{326635e2-7f00-483f-94bf-563eacfe15d1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Attack\Branch">
-      <UniqueIdentifier>{d798bf56-f080-4a83-85b8-8b18fca9b929}</UniqueIdentifier>
-	</Filter>
-	<Filter Include="02. GameObject\Object\Enemy\Normal Enemy">
-      <UniqueIdentifier>{59940dfa-0539-4aed-8091-bbfb2c81fd85}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\ThugAssaulter">
-      <UniqueIdentifier>{ead5c6a6-c6b3-4863-8252-1087ac356fe2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\ThugAssaulter\State">
-      <UniqueIdentifier>{363845a6-6a88-4924-8e1c-bd0a4a149b44}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\ThugAssaulter\State\Attack">
-      <UniqueIdentifier>{abb524ed-2c1c-4ee3-a153-412d36dfcfa1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\ThugAssaulter\State\Idle">
-      <UniqueIdentifier>{21747306-27d7-4f7d-bde8-efd319a1a8a7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\ThugAssaulter\State\Chase">
-      <UniqueIdentifier>{e6c6de73-02c6-42d7-8153-18e718d3a3f8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\ThugAssaulter\State\Death">
-      <UniqueIdentifier>{84c88dc1-d0ca-435f-b169-c93e9d9b4d26}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\ThugAssaulter\State\Move">
-      <UniqueIdentifier>{18837b31-1d54-4a22-b260-0568c769732d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\ThugAssaulter\State\Born">
-      <UniqueIdentifier>{7acebaff-3db4-49e9-bb04-e1cd603c6990}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\UI\01. 2D">
       <UniqueIdentifier>{a8dddc7e-270d-4335-a33f-3d602851fad8}</UniqueIdentifier>
@@ -466,12 +382,6 @@
     <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Attack\Ex">
       <UniqueIdentifier>{a9950fa8-5297-46a6-a3df-8f280c177142}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Hit">
-      <UniqueIdentifier>{bd89193b-a932-4e90-abda-3a4bff8cb617}</UniqueIdentifier>
-	</Filter>
-	<Filter Include="02. GameObject\Object\Enemy\ThugAssaulter\State\HitAirborne">
-      <UniqueIdentifier>{3d2e029f-4d71-43ec-b8b7-23a2b2d37ade}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\Object\Interactable">
       <UniqueIdentifier>{196f5788-8586-4eb4-8224-8d7762629947}</UniqueIdentifier>
     </Filter>
@@ -486,15 +396,6 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Attack\Ultimate">
       <UniqueIdentifier>{d8c05f91-7f1a-489f-a675-4a4178a2694d}</UniqueIdentifier>
-	</Filter>
-	<Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Groggy">
-      <UniqueIdentifier>{fe64c87d-b23d-4725-bdd1-3b9d2c8dbbbd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Groggy\Phase1">
-      <UniqueIdentifier>{4cf40d05-c921-4e36-a3d2-8fd32437073f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Groggy\Phase2">
-      <UniqueIdentifier>{39d34e5c-e90f-42e5-8ab2-9a7718897258}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\UI\01. 2D\HUD_Field">
       <UniqueIdentifier>{67a92256-8431-4efd-a556-ed70b96c93e3}</UniqueIdentifier>
@@ -600,24 +501,6 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Player\Character\Collider\AttackCollider">
       <UniqueIdentifier>{8cafc1ce-885d-4894-bbae-9bc579a5da0c}</UniqueIdentifier>
-	</Filter>
-	<Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Attack\Phase2">
-      <UniqueIdentifier>{8080e445-1ea3-4f5c-9188-7ec8d37887e4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\Sacrifice_Hand">
-      <UniqueIdentifier>{8fba8062-3d01-4a71-a27f-806808b2273d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\Sacrifice_Hand\State">
-      <UniqueIdentifier>{a7a195e0-0693-4efe-b00e-6aa09c326087}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\Sacrifice_Hand\State\Idle">
-      <UniqueIdentifier>{a674fc3d-8b1d-4da5-acd9-95c30ef10018}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\Sacrifice_Hand\State\Attack">
-      <UniqueIdentifier>{b0a4c5a3-595b-4977-8989-5129a6639450}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\Sacrifice_Hand\State\Hit">
-      <UniqueIdentifier>{9c64e158-5809-4bdf-b0bc-b248f585b1f3}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\UI\01. 2D\SceneFrame">
       <UniqueIdentifier>{da2fd65e-9bf7-4fb2-a1b2-95af726ef1a4}</UniqueIdentifier>
@@ -675,9 +558,6 @@
     </Filter>
     <Filter Include="02. GameObject\UI\01. 2D\ScratchCard">
       <UniqueIdentifier>{da4d3639-e60d-4d45-bd2a-74bd1a13d1e9}</UniqueIdentifier>
-	</Filter>
-	<Filter Include="02. GameObject\Object\Enemy\ThugAssaulter\State\Parry">
-      <UniqueIdentifier>{d4691cdc-435c-40af-bae7-768659b32872}</UniqueIdentifier>
     </Filter>
     <Filter Include="03. Utility\04. BattleSystem\FX_Battle">
       <UniqueIdentifier>{80b278d6-d073-43f9-b769-b90f4b580861}</UniqueIdentifier>
@@ -736,10 +616,10 @@
     <Filter Include="02. GameObject\Object\Enemy\Elite\ThugBulkyEnforcer\State\Death">
       <UniqueIdentifier>{4e479452-37df-462b-be77-f24a8066c872}</UniqueIdentifier>
     </Filter>
-	<Filter Include="02. GameObject\Object\Enemy\Elite\ThugBulkyEnforcer\State\Hit">
-	  <UniqueIdentifier>{0a9f4c1e-7d5f-4c7c-b2a1-5f0b6c7e9c11}</UniqueIdentifier>
-	</Filter>    
-	<Filter Include="02. GameObject\Object\Enemy\Boss">
+    <Filter Include="02. GameObject\Object\Enemy\Elite\ThugBulkyEnforcer\State\Hit">
+      <UniqueIdentifier>{0a9f4c1e-7d5f-4c7c-b2a1-5f0b6c7e9c11}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Boss">
       <UniqueIdentifier>{5fa13ff0-9cfd-4099-bf60-5bd865d7c823}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\Object\Enemy\Boss\Sacrifice">
@@ -906,8 +786,8 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Enemy\Normal\ThugPoacher\State\Chase">
       <UniqueIdentifier>{d053cd27-dd7d-42ce-be16-1c3867eae403}</UniqueIdentifier>
-	</Filter>
-	<Filter Include="02. GameObject\UI\01. 2D\Lottery">
+    </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\Lottery">
       <UniqueIdentifier>{ee6183f6-ec38-4f11-8817-aa5b5ca15997}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\UI\01. 2D\Lottery\ScratchCard">
@@ -1110,6 +990,9 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Player\Character\01. JaneDoe\State\Start">
       <UniqueIdentifier>{2cbaf699-675f-4a4b-9bf0-f7322153d7d1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\ThugPoacher\Arrow">
+      <UniqueIdentifier>{ce8c9adf-be17-446e-8fd1-e59cf0703c4c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1926,9 +1809,6 @@
     <ClInclude Include="CDefiler.h">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\EnemyNormal.h">
-      <Filter>02. GameObject\Object\Enemy\Normal</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\ThugPoacher.h">
       <Filter>02. GameObject\Object\Enemy\Normal\ThugPoacher</Filter>
     </ClInclude>
@@ -1961,6 +1841,12 @@
     </ClInclude>
     <ClInclude Include="..\Public\UI_ResultBanner.h">
       <Filter>02. GameObject\UI\01. 2D\ResultBanner</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\EnemyNormal.h">
+      <Filter>02. GameObject\Object\Enemy\Normal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ThugPoacher_Arrow.h">
+      <Filter>02. GameObject\Object\Enemy\Normal\ThugPoacher\Arrow</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2738,9 +2624,6 @@
     <ClCompile Include="CDefiler.cpp">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\EnemyNormal.cpp">
-      <Filter>02. GameObject\Object\Enemy\Normal</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\ThugPoacher.cpp">
       <Filter>02. GameObject\Object\Enemy\Normal\ThugPoacher</Filter>
     </ClCompile>
@@ -2773,6 +2656,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\UI_ResultBanner.cpp">
       <Filter>02. GameObject\UI\01. 2D\ResultBanner</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\EnemyNormal.cpp">
+      <Filter>02. GameObject\Object\Enemy\Normal</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ThugPoacher_Arrow.cpp">
+      <Filter>02. GameObject\Object\Enemy\Normal\ThugPoacher\Arrow</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
