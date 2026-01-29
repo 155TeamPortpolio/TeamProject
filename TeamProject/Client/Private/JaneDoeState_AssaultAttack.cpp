@@ -1,5 +1,8 @@
 #include "pch.h"
 #include "JaneDoeState_AssaultAttack.h"
+
+#include "BattleSystem.h"
+
 #include "JaneDoe.h"
 
 CJaneDoeState_AssaultAttack* CJaneDoeState_AssaultAttack::Create()
@@ -34,6 +37,37 @@ void CJaneDoeState_AssaultAttack::Enter(CJaneDoe* pOwner)
 void CJaneDoeState_AssaultAttack::Update(CJaneDoe* pOwner, _float dt)
 {
 	// 타격 이벤트
+	for (const auto& Event : pOwner->Get_Component<CAnimator3D>()->Get_EventBus())
+	{
+		if (Event.Type != CLIP_EVENT_TYPE::NOTIFY) continue;
+
+		if (Event.Tag == "AreaAttack")
+		{
+			_vector3 vLook = pOwner->Get_Component<CTransform>()->Dir(STATE::LOOK);
+			_vector3 vPos = pOwner->Get_WorldPos();
+			BattleSystem()->TakeAreaDamage(vPos + vLook * 2.f, 2.f, HitDesc()
+				.Type(HIT_TYPE::ONCE)
+				.Damage(Helper::Get_Random_Float(10, 20), DAMAGE_TYPE::NORMAL)
+			);
+		}
+		else if (Event.Tag == "LFootStart")
+		{
+			pOwner->Begin_AttackCollider("FootWeapon_L", { HIT_TYPE::ONCE, DAMAGE_TYPE::NORMAL, Helper::Get_Random_Float(10,20), 0, 0 });
+		}
+		else if (Event.Tag == "LFootEnd")
+		{
+			pOwner->End_AttackCollider("FootWeapon_L");
+		}
+		else if (Event.Tag == "RFootStart")
+		{
+			pOwner->Begin_AttackCollider("FootWeapon_R", { HIT_TYPE::ONCE, DAMAGE_TYPE::NORMAL, Helper::Get_Random_Float(10,20), 0, 0 });
+		}
+		else if (Event.Tag == "RFootEnd")
+		{
+			pOwner->End_AttackCollider("FootWeapon_R");
+		}
+	}
+
 	auto pJaneDoeState = pOwner->Get_StateMachine();
 	if (pJaneDoeState->Get_Bool("OutReserve"))
 	{
@@ -58,7 +92,8 @@ void CJaneDoeState_AssaultAttack::Exit(CJaneDoe* pOwner)
 void CJaneDoeState_Assault_Start::Enter(CJaneDoe* pOwner)
 {
 	pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_AssaultAid")
-		.Speed(1.2f)
+		.Speed(1.5f)
+		.ReserveSpeed(0.f, 0.6f, 1.f, EaseType::InCubic)
 		.ReserveSpeed(0.6f, 0.99f, 2.f, EaseType::OutQuart)
 		.Apply();
 }
