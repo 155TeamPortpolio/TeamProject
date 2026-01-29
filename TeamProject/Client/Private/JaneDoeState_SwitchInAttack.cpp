@@ -3,22 +3,27 @@
 
 #include "JaneDoe.h"
 
+CJaneDoeState_SwitchInAttack* CJaneDoeState_SwitchInAttack::Create()
+{
+    auto pInstance = new CJaneDoeState_SwitchInAttack();
+    pInstance->m_pSubStateMachine = CStateMachine<CJaneDoe>::Create();
+    auto pSubStateMachine = pInstance->Get_SubStateMachine();
+
+    pSubStateMachine->Register_State("SwitchInAttack_Start", CJaneDoeState_SwitchInAttack_Start::Create());
+    pSubStateMachine->Register_State("SwitchInAttack_End", CJaneDoeState_SwitchInAttack_End::Create());
+
+    pSubStateMachine->Get_State("SwitchInAttack_End")->Set_Tag("End");
+
+    pSubStateMachine->Register_Transition("SwitchInAttack_Start", "SwitchInAttack_End",
+        CStateMachine<CJaneDoe>::CONDITION_ANIMATION_END);
+
+    pSubStateMachine->Set_DefaultState("SwitchInAttack_Start");
+
+    return pInstance;
+}
+
 void CJaneDoeState_SwitchInAttack::Enter(CJaneDoe* pOwner)
 {
-    if (!m_pSubStateMachine)
-    {
-        m_pSubStateMachine = CStateMachine<CJaneDoe>::Create();
-        m_pSubStateMachine->Register_State("Start", CJaneDoeState_SwitchInAttack_Start::Create());
-        m_pSubStateMachine->Register_State("End", CJaneDoeState_SwitchInAttack_End::Create());
-
-        m_pSubStateMachine->Get_State("End")->Set_Tag("End");
-
-        m_pSubStateMachine->Register_Transition("Start", "End",
-            CStateMachine<CJaneDoe>::CONDITION_ANIMATION_END);
-
-        m_pSubStateMachine->Set_DefaultState("Start");
-    }
-
     __super::Enter(pOwner);
 }
 
@@ -29,8 +34,12 @@ void CJaneDoeState_SwitchInAttack::Update(CJaneDoe* pOwner, _float dt)
     if (m_pSubStateMachine->Get_Trigger("Complete"))
     {
         m_pSubStateMachine->Reset_Trigger("Complete");
-        CStateMachine<CJaneDoe>* pRootFSM = pOwner->Get_StateMachine();
-        pRootFSM->Set_Trigger("ToIdle");
+        IHState<CJaneDoe>* pSwitchIn = Get_ParentState();
+        if (pSwitchIn && pSwitchIn->Get_SubStateMachine())
+        {
+            pSwitchIn->Get_SubStateMachine()->Set_Int("ExitMode", 0);  // Idle·Î
+            pSwitchIn->Get_SubStateMachine()->Set_Trigger("Complete");
+        }
     }
 }
 

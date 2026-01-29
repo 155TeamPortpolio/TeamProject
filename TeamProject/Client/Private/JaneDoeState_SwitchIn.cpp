@@ -13,13 +13,13 @@ CJaneDoeState_SwitchIn* CJaneDoeState_SwitchIn::Create()
     pInstance->m_pSubStateMachine = CStateMachine<CJaneDoe>::Create();
     auto pSubStateMachine = pInstance->Get_SubStateMachine();
 
-    pSubStateMachine->Register_State("Normal", CJaneDoeState_SwitchInNormal::Create());
-    pSubStateMachine->Register_State("Attack", CJaneDoeState_SwitchInAttack::Create());
-    pSubStateMachine->Register_State("ParryAid", CJaneDoeState_SwitchInParryAid::Create());
+    pSubStateMachine->Register_State("SwitchInNormal", CJaneDoeState_SwitchInNormal::Create());
+    pSubStateMachine->Register_State("SwitchInAttack", CJaneDoeState_SwitchInAttack::Create());
+    pSubStateMachine->Register_State("SwitchInParryAid", CJaneDoeState_SwitchInParryAid::Create());
 
-    pSubStateMachine->Get_State("Normal")->Set_Tag("Normal");
-    pSubStateMachine->Get_State("Attack")->Set_Tag("Attack");
-    pSubStateMachine->Get_State("ParryAid")->Set_Tag("ParryAid");
+    pSubStateMachine->Get_State("SwitchInNormal")->Set_Tag("Normal");
+    pSubStateMachine->Get_State("SwitchInAttack")->Set_Tag("Attack");
+    pSubStateMachine->Get_State("SwitchInParryAid")->Set_Tag("ParryAid");
 
     return pInstance;
 }
@@ -32,13 +32,13 @@ void CJaneDoeState_SwitchIn::Enter(CJaneDoe* pOwner)
     switch (pOwner->Get_Switch())
     {
     case CCharacter::SWITCH::NORMAL:
-        m_pSubStateMachine->Set_DefaultState("Normal");
+        m_pSubStateMachine->Set_DefaultState("SwitchInNormal");
         break;
     case CCharacter::SWITCH::ATTACK:
-        m_pSubStateMachine->Set_DefaultState("Attack");
+        m_pSubStateMachine->Set_DefaultState("SwitchInAttack");
         break;
     case CCharacter::SWITCH::PARRYAID:
-        m_pSubStateMachine->Set_DefaultState("ParryAid");
+        m_pSubStateMachine->Set_DefaultState("SwitchInParryAid");
         break;
     }
 
@@ -87,7 +87,13 @@ void CJaneDoeState_SwitchIn::Exit(CJaneDoe* pOwner)
 
 _bool CJaneDoeState_SwitchIn::Handle_Transition(CJaneDoe* pOwner, const string& strState)
 {
-    if (m_pSubStateMachine->Get_CurrentStateName() == "ParryAid")
+    if (m_pSubStateMachine->Get_CurrentStateName() == "SwitchInParryAid")
+    {
+        IHState<CJaneDoe>* pState = dynamic_cast<IHState<CJaneDoe>*>(m_pSubStateMachine->Get_CurrentState());
+        if (pState->Get_SubStateMachine()->Get_CurrentState()->Get_Tag() != "End")
+            return false;
+    }
+    else if (m_pSubStateMachine->Get_CurrentStateName() == "SwitchInAttack")
     {
         IHState<CJaneDoe>* pState = dynamic_cast<IHState<CJaneDoe>*>(m_pSubStateMachine->Get_CurrentState());
         if (pState->Get_SubStateMachine()->Get_CurrentState()->Get_Tag() != "End")

@@ -3,22 +3,27 @@
 
 #include "Corin.h"
 
+CCorinState_SwitchInAttack* CCorinState_SwitchInAttack::Create()
+{
+    auto pInstance = new CCorinState_SwitchInAttack();
+    pInstance->m_pSubStateMachine = CStateMachine<CCorin>::Create();
+    auto pSubStateMachine = pInstance->Get_SubStateMachine();
+
+    pSubStateMachine->Register_State("SwitchInAttack_Start", CCorinState_SwitchInAttack_Start::Create());
+    pSubStateMachine->Register_State("SwitchInAttack_End", CCorinState_SwitchInAttack_End::Create());
+
+    pSubStateMachine->Get_State("SwitchInAttack_End")->Set_Tag("End");
+
+    pSubStateMachine->Register_Transition("SwitchInAttack_Start", "SwitchInAttack_End",
+        CStateMachine<CCorin>::CONDITION_ANIMATION_END);
+
+    pSubStateMachine->Set_DefaultState("SwitchInAttack_Start");
+
+    return pInstance;
+}
+
 void CCorinState_SwitchInAttack::Enter(CCorin* pOwner)
 {
-    if (!m_pSubStateMachine)
-    {
-        m_pSubStateMachine = CStateMachine<CCorin>::Create();
-        m_pSubStateMachine->Register_State("Start", CCorinState_SwitchInAttack_Start::Create());
-        m_pSubStateMachine->Register_State("End", CCorinState_SwitchInAttack_End::Create());
-
-        m_pSubStateMachine->Get_State("End")->Set_Tag("End");
-
-        m_pSubStateMachine->Register_Transition("Start", "End",
-            CStateMachine<CCorin>::CONDITION_ANIMATION_END);
-
-        m_pSubStateMachine->Set_DefaultState("Start");
-    }
-
     __super::Enter(pOwner);
 }
 
@@ -29,8 +34,12 @@ void CCorinState_SwitchInAttack::Update(CCorin* pOwner, _float dt)
     if (m_pSubStateMachine->Get_Trigger("Complete"))
     {
         m_pSubStateMachine->Reset_Trigger("Complete");
-        CStateMachine<CCorin>* pRootFSM = pOwner->Get_StateMachine();
-        pRootFSM->Set_Trigger("ToIdle");
+        IHState<CCorin>* pSwitchIn = Get_ParentState();
+        if (pSwitchIn && pSwitchIn->Get_SubStateMachine())
+        {
+            pSwitchIn->Get_SubStateMachine()->Set_Int("ExitMode", 0);  // Idle·Î
+            pSwitchIn->Get_SubStateMachine()->Set_Trigger("Complete");
+        }
     }
 }
 
@@ -49,7 +58,9 @@ void CCorinState_SwitchInAttack_Start::Enter(CCorin* pOwner)
 
 void CCorinState_SwitchInAttack_Start::Update(CCorin* pOwner, _float dt)
 {
-    pOwner->Process_RootMotion(dt);
+    pOwner->Process_RootMotion(dt,
+        ENUM(CCorin::ROOTMOTION_MASK::MOVE) |
+        ENUM(CCorin::ROOTMOTION_MASK::QUATERNION));
 }
 
 void CCorinState_SwitchInAttack_End::Enter(CCorin* pOwner)
@@ -62,7 +73,9 @@ void CCorinState_SwitchInAttack_End::Enter(CCorin* pOwner)
 
 void CCorinState_SwitchInAttack_End::Update(CCorin* pOwner, _float dt)
 {
-    pOwner->Process_RootMotion(dt);
+    pOwner->Process_RootMotion(dt,
+        ENUM(CCorin::ROOTMOTION_MASK::MOVE) |
+        ENUM(CCorin::ROOTMOTION_MASK::QUATERNION));
 
     IHState<CCorin>* pSwitch = Get_ParentState();
     if (!pSwitch || !pSwitch->Get_SubStateMachine()) return;

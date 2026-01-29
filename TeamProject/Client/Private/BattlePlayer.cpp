@@ -194,8 +194,7 @@ void CBattlePlayer::Request_ComboAttack()
 
 	m_bComboSelect = true;
 	// 타임스케일 2초간 느리게 하기 몬스터, 캐릭터
-	BattleSystem()->StartTimeScale(CBattleSystem::BATTLE_OBJ_TYPE::MONSTER, COMBO_SELECT_DURATION, 0.1f);
-	BattleSystem()->StartTimeScale(CBattleSystem::BATTLE_OBJ_TYPE::PLAYER, COMBO_SELECT_DURATION, 0.1f);
+	BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::SWITCH);
 	// UI 방송
 }
 
