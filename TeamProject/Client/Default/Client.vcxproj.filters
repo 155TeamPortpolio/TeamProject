@@ -852,6 +852,12 @@
     <Filter Include="03. Utility\09. Interface">
       <UniqueIdentifier>{51900e22-1c4e-4ebd-b4f6-2e6da8fde730}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\Ramen">
+      <UniqueIdentifier>{e1dc0083-3a9a-44a0-95b1-74202bf40893}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\Ramen\Menu">
+      <UniqueIdentifier>{1602a1c7-49cb-4a40-92fb-8418454d1276}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1667,6 +1673,12 @@
     <ClInclude Include="..\Public\ICamCollidable.h">
       <Filter>03. Utility\09. Interface</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UI_Ramen.h">
+      <Filter>02. GameObject\UI\01. 2D\Ramen</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_RamenMenu.h">
+      <Filter>02. GameObject\UI\01. 2D\Ramen\Menu</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2442,6 +2454,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\CorinState_AssaultAttack.cpp">
       <Filter>02. GameObject\Object\Player\Character\02. Corin\State\Attack\Assault</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Ramen.cpp">
+      <Filter>02. GameObject\UI\01. 2D\Ramen</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_RamenMenu.cpp">
+      <Filter>02. GameObject\UI\01. 2D\Ramen\Menu</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
