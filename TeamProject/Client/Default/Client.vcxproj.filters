@@ -1036,6 +1036,9 @@
     <Filter Include="03. Utility\09. Interface">
       <UniqueIdentifier>{51900e22-1c4e-4ebd-b4f6-2e6da8fde730}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Npc\Service\SirChop">
+      <UniqueIdentifier>{d2a50a8e-9e0b-42f2-a758-62374a5c7f8b}</UniqueIdentifier>
+          </Filter>
     <Filter Include="02. GameObject\UI\01. 2D\Ramen">
       <UniqueIdentifier>{e1dc0083-3a9a-44a0-95b1-74202bf40893}</UniqueIdentifier>
     </Filter>
@@ -1902,6 +1905,9 @@
     <ClInclude Include="..\Public\ICamCollidable.h">
       <Filter>03. Utility\09. Interface</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\SirChop.h">
+      <Filter>02. GameObject\Object\Npc\Service\SirChop</Filter>
+        </ClInclude>
     <ClInclude Include="..\Public\UI_Ramen.h">
       <Filter>02. GameObject\UI\01. 2D\Ramen</Filter>
     </ClInclude>
@@ -2732,6 +2738,9 @@
     <ClCompile Include="..\Private\CorinState_AssaultAttack.cpp">
       <Filter>02. GameObject\Object\Player\Character\02. Corin\State\Attack\Assault</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\SirChop.cpp">
+      <Filter>02. GameObject\Object\Npc\Service\SirChop</Filter>
+          </ClCompile>
     <ClCompile Include="..\Private\UI_Ramen.cpp">
       <Filter>02. GameObject\UI\01. 2D\Ramen</Filter>
     </ClCompile>
