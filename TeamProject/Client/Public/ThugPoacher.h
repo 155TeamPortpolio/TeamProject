@@ -2,17 +2,16 @@
 #include "EnemyNormal.h"
 
 NS_BEGIN(Client)
-class CCharacter;
 
 template<typename Type>
-class CStateMachine; 
-
-class CThugAssaulter final : public CEnemyNormal
+class CStateMachine;
+class CThugPoacher_Arrow;
+class CThugPoacher final : public CEnemyNormal
 {
 private:
-    CThugAssaulter();
-    CThugAssaulter(const CThugAssaulter& rhg);
-    virtual ~CThugAssaulter() = default;
+    CThugPoacher();
+    CThugPoacher(const CThugPoacher& rhg);
+    virtual ~CThugPoacher() = default;
 
 public:
     HRESULT Initialize_Prototype()override;
@@ -27,21 +26,26 @@ public:
     virtual void Parried() override;
 
 public:
-    static CThugAssaulter* Create();
+    static CThugPoacher* Create(); 
     CGameObject* Clone(INIT_DESC* pArg) override;
     virtual void Free() override;
 
 private:
     HRESULT Ready_Children(INIT_DESC* pArg);
+    HRESULT Ready_Arrows(_uint iNum = 1);
+
+private:
+    vector<_int>     m_ArrowsChildIndices;
 
 public:
     /* Getter */
-    CStateMachine<CThugAssaulter>*  GetStateMachine() const { return m_pStateMachine; }
-    const HYSTERIESIS&              GetHysteriesis() const { return m_tHysteriesis; }
+    CStateMachine<CThugPoacher>*    GetStateMachine() const { return m_pStateMachine; }
+    HYSTERIESIS                     GetHysteriesis() const { return m_tHysteriesis; }
 
     /* Setter */
-    void                            Idle() { m_isIdle = true; }
-    virtual void                    TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER charaName = CHARACTER::END) override;
+    void            Idle() { m_isIdle = true; }
+    virtual void    TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage) override;
+    void            ShootArrow();
 
 private:
     HRESULT Initialize_StateMachine();
@@ -53,21 +57,15 @@ private:
     void CheckDistanceFromPlayer();
 
 private:
-    CStateMachine<CThugAssaulter>* m_pStateMachine = { nullptr };
+    CStateMachine<CThugPoacher>* m_pStateMachine = { nullptr };
     ATTACK_BLACK_BOARD  m_tAttackBlackBoard = {};
     HYSTERIESIS         m_tHysteriesis = {};
 
-    _bool               m_isAutoPatternPlay = { true }; 
+    _bool               m_isAutoPatternPlay = { true };
 
     /*For.Idle*/
     _bool               m_isIdle = { false };
     _float2             m_vIdleTime = {};
-
-
-
-    // 배틀시스템 확인용 지워야함
-    _float              m_fTestScaleDuration = {};
-    _float              m_fTestScaleValue = {1.f};
 
 };
 
