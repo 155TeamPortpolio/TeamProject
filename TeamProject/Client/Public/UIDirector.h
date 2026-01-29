@@ -6,6 +6,7 @@ class CGameInstance;
 NS_END
 
 NS_BEGIN(Client)
+struct DAMAGE_DESC;
 
 class CUIDirector final : public CBase
 {
@@ -34,7 +35,10 @@ public:
 	/* 씬 프레임을 화면에서 숨김 (화면 위, 아래에 프레임) */
 	void Hide_SceneFrame();
 
-	void Request_DamageText(void* pArg);
+	void Request_DamageText(const DAMAGE_DESC& desc);
+
+	void Show_Lottery();
+	void Hide_Lottery();
 
 	/* 결과 배너를 띄움 */
 	void Show_ResultBanner(const string& strTextureKey, const _wstring& wstrText1, const _wstring& wstrText2);

@@ -85,6 +85,18 @@
     <Filter Include="03. MapTool System\SlotFieldGui">
       <UniqueIdentifier>{7c030cdd-12e6-4235-af0f-e901f91843ac}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. Object\MapTool Object\Light Point">
+      <UniqueIdentifier>{32910233-04a6-4ecf-bca9-94b9e0a9ccfe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Object\Cam">
+      <UniqueIdentifier>{2c6279f7-4b17-4f40-8a2b-496d042c1056}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Object\Cam\CamObject">
+      <UniqueIdentifier>{6f9e7f50-2ac2-4833-b0a5-8bbc3a87ea07}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Object\Cam\FreeCam">
+      <UniqueIdentifier>{b3542ded-bf57-438d-96b4-fb7851c34193}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -189,6 +201,15 @@
     <ClInclude Include="..\public\BattleEndPoint.h">
       <Filter>02. Object\MapTool Object\Battle Object\BattleEndPoint</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\LightPoint.h">
+      <Filter>02. Object\MapTool Object\Light Point</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\CamObject.h">
+      <Filter>02. Object\Cam\CamObject</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\FreeCam.h">
+      <Filter>02. Object\Cam\FreeCam</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -288,6 +309,15 @@
     </ClCompile>
     <ClCompile Include="..\private\BattleEndPoint.cpp">
       <Filter>02. Object\MapTool Object\Battle Object\BattleEndPoint</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\LightPoint.cpp">
+      <Filter>02. Object\MapTool Object\Light Point</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CamObject.cpp">
+      <Filter>02. Object\Cam\CamObject</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\FreeCam.cpp">
+      <Filter>02. Object\Cam\FreeCam</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

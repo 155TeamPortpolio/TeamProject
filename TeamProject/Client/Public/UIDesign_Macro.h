@@ -3,6 +3,7 @@
 namespace Client {
 
 #define UI_WHITE			_float4(1.f, 1.f, 1.f, 1.f)
+#define UI_BLACK			_float4(0.f, 0.f, 0.f, 1.f)
 #define UI_TRANSPARENT		_float4()
 
 #define UI_GRAY_DARKEST		_float4(0.0275f, 0.0275f, 0.0275f, 1.f) // #070707

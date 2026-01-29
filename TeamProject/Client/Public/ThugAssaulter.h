@@ -2,9 +2,10 @@
 #include "EnemyNormal.h"
 
 NS_BEGIN(Client)
+class CCharacter;
 
 template<typename Type>
-class CStateMachine;
+class CStateMachine; 
 
 class CThugAssaulter final : public CEnemyNormal
 {
@@ -40,7 +41,7 @@ public:
 
     /* Setter */
     void                            Idle() { m_isIdle = true; }
-    virtual void                    TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage) override;
+    virtual void                    TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER charaName = CHARACTER::END) override;
 
 private:
     HRESULT Initialize_StateMachine();

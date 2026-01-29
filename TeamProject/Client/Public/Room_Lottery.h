@@ -18,7 +18,7 @@ public:
 
 public:
     static CRoom_Lottery* Create(const ROOM_DESC& desc);
-    virtual void Free();
+    virtual void Free() override;
 };
 
 NS_END

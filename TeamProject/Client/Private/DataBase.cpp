@@ -65,9 +65,21 @@ PlayerLVDesc CDataBase::GetLevelDesc(_uint lv)
 
 MonsterCreationDesc CDataBase::GetMonsterDesc(const string& strName)
 {
-	auto iter = m_MonsterCreationTables.find(strName);
-	if (iter == m_MonsterCreationTables.end())
-		return MonsterCreationDesc{};
+	for (auto& Table : m_MonsterCreationTables) {
+		if (Table.second.ProtoTag == strName)
+			return Table.second;
+	}
+
+	return MonsterCreationDesc{};
+}
+
+MonsterCreationDesc CDataBase::GetMonsterDesc(_int ColonyIndex, _int MonsterID)
+{
+	_int FindIndex = ColonyIndex * 1000 + MonsterID;
+
+	auto iter = m_MonsterCreationTables.find(FindIndex);
+	if(iter == m_MonsterCreationTables.end())
+		return MonsterCreationDesc();
 
 	return iter->second;
 }
@@ -108,22 +120,15 @@ const vector<MapData_Path_Packet>* CDataBase::GetMapDataPacket(const string& tag
 	return &iter->second;
 }
 
-const MapData_Path_Packet* CDataBase::GetBattleFieldDataPacket(const string& tagArea)
+const EncounterTable* CDataBase::GetMonsterSpawnData(const string& tagArea, _uint iStageType)
 {
-	auto iter = m_BattleFieldData.find(tagArea);
-	if (iter == m_BattleFieldData.end())
-		return nullptr;
+	auto itArea = m_BattleSpawnData.find(tagArea);
+	if (itArea == m_BattleSpawnData.end()) return nullptr;
 
-	return &iter->second;
-}
+	auto itStage = itArea->second.find(iStageType);
+	if (itStage == itArea->second.end()) return nullptr;
 
-const vector<MONSTER_SPAWN_DESC>* CDataBase::GetMonsterSpawnData(const string& tagArea)
-{
-	auto iter = m_MonsterSpawnDesc.find(tagArea);
-	if (iter == m_MonsterSpawnDesc.end())
-		return nullptr;
-
-	return &iter->second;
+	return &itStage->second;
 }
 
 HRESULT CDataBase::LoadPlayerCreationTable(const string& csvPath)
@@ -256,7 +261,7 @@ HRESULT CDataBase::LoadMonsterCreationTable(const string& csvPath)
 		desc.CCT_fRadius = CCT_fRadius;
 		desc.iMaxHP = MaxHP;
 
-		auto [iter, inserted] = m_MonsterCreationTables.emplace(desc.ProtoTag, move(desc));
+		auto [iter, inserted] = m_MonsterCreationTables.emplace(desc.MonsterID, move(desc));
 		if (false == inserted) {
 			wstring ErrorMsg = L"Duplicate MonsterKey in CSV : " + Helper::ConvertToWideString(ProtoTag);
 			MessageBox(NULL, ErrorMsg.c_str(), L"System Message", MB_OK);
@@ -273,7 +278,7 @@ HRESULT CDataBase::LoadMonsterSpawnData(const string& csvPath)
 	trim_chars = 앞 뒤 공백 제거
 	double_quote_escape = "..." 안의 쉼표 및 따옴표 처리 */
 	io::CSVReader<
-		4,
+		6,
 		io::trim_chars<' ', '\t'>,
 		io::double_quote_escape<',', '"'>
 	>in(csvPath);
@@ -284,27 +289,38 @@ HRESULT CDataBase::LoadMonsterSpawnData(const string& csvPath)
 	*/
 	in.read_header(
 		io::ignore_extra_column | io::ignore_missing_column,
-		"tagArea", "TableNumber",
-		"MonsterSpawnID", "MonsterKey"
+		"tagArea", "StageType",
+		"Encounter",
+		"Colony", "MonsterID", "Count"
 	);
 
-	string	tagArea{}, MonsterKey{};
-	_int	TableNumber{}, MonsterSpawnID{};
+	string	tagArea{}, StageType{};
+	_int	Encounter{};
+	_int	Colony{}, MonsterID{}, Count{};
 
 	while (in.read_row(
-		tagArea, TableNumber,
-		MonsterSpawnID, MonsterKey
+		tagArea, StageType,
+		Encounter,
+		Colony, MonsterID, Count
 	))
 	{
 		if (tagArea.empty())
 			continue;
 
-		MONSTER_SPAWN_DESC	MonsterSpawnDesc = {};
+		if (StageType.empty())
+			continue;
+		
+		_uint iStageType{};
+		if (StageType == "Normal")		iStageType = 0;
+		else if (StageType == "Elite")	iStageType = 1;
+		else if (StageType == "Boss")	iStageType = 2;
 
-		MonsterSpawnDesc.MonsterSpawnID = MonsterSpawnID;
-		MonsterSpawnDesc.MonsterKey = MonsterKey;
+		SPAWN_MONSTER_DESC desc{};
+		desc.Colony = Colony;
+		desc.MonsterID = MonsterID;
+		desc.Count = Count;
 
-		m_MonsterSpawnDesc[tagArea].push_back(MonsterSpawnDesc);
+		m_BattleSpawnData[tagArea][iStageType][Encounter].push_back(desc);
 	}
 
 	return S_OK;
@@ -472,22 +488,22 @@ HRESULT CDataBase::LoadNpcDialogueData(const string& csvPath)
 HRESULT CDataBase::LoadNpcChoiceData(const string& csvPath)
 {
 	io::CSVReader<
-		7,
+		8,
 		io::trim_chars<' ', '\t'>,
 		io::double_quote_escape<',', '"'>
 	>in(csvPath);
 
 	in.read_header(
 		io::ignore_extra_column | io::ignore_missing_column,
-		"ChoiceID", "Text", "Result", "NextID", "NextSequence", "ValueType", "Value"
+		"ChoiceID", "Text", "Result", "NextID", "NextSequence", "ValueType", "ValueName", "Value"
 	);
-	string			ChoiceID, NextID, ValueType;
+	string			ChoiceID, NextID, ValueType, ValueName;
 	string			Text;
 	_int			NextSequence;
 	string			Result;
 	string			Value;
 
-	while (in.read_row(ChoiceID, Text, Result, NextID, NextSequence, ValueType, Value))
+	while (in.read_row(ChoiceID, Text, Result, NextID, NextSequence, ValueType, ValueName, Value))
 	{
 		if (ChoiceID.empty()) continue;
 
@@ -498,7 +514,14 @@ HRESULT CDataBase::LoadNpcChoiceData(const string& csvPath)
 		desc.Next_DialogueID = NextID;
 		desc.Next_SequeceID = NextSequence;
 		desc.ValueType = ValueType;
-		if (ValueType == "int" || ValueType == "Int") desc.Value = stoi(Value);
+		desc.ValueName = ValueName;
+		if (ValueType == "bool") {
+			if (Value == "true" || Value == "TRUE")
+				desc.Value = true;
+			else if (Value == "false" || Value == "FALSE")
+				desc.Value = false;
+		}
+		else if (ValueType == "int" || ValueType == "Int") desc.Value = stoi(Value);
 		else if (ValueType == "float" || ValueType == "Float") desc.Value = stof(Value);
 		else if (ValueType == "string" || ValueType == "String")desc.Value = Value;
 

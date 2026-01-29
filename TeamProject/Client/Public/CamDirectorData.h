@@ -82,7 +82,7 @@ struct CamDirectorPlayingState
     Vector3          prevCamPos{};
     Quaternion       prevCamRot = Quaternion::Identity;
 
-    OrbitCamSnapshot prevOrbit{};
+    OrbitSnapshot    prevOrbit{};
 };
 
 using CamDirectorSeqMap     = unordered_map<string, CamDirectorSeqEntry>;

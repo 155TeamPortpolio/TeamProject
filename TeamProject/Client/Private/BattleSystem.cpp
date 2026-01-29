@@ -78,45 +78,46 @@ void CBattleSystem::ReadyBattle(const string& tagArea, _uint iPrefabIndex)
 	auto pObjMgr = ObjectManager();
 
 #pragma region  BattleData Load
-	const auto pBattleDataPacket = pDataBase->GetBattleFieldDataPacket(tagArea);
-	
-	if (nullptr == pBattleDataPacket)
-		return;
-
-	filesystem::path OpenPath = pBattleDataPacket->TagDataFilePath;
-
-	if (OpenPath.empty())
-		return;
-
-	if (OpenPath.extension().string() != ".json") 
-	{
-		MSG_BOX("[BattleSystem] Load BattleData Failed.\nJson 파일이 아닙니다.");
-		return;
-	}
-
-	m_BattleFieldData = BATTLE_FIELD_DATA{};
-
-	m_BattleFieldData = Helper::LoadJson<BATTLE_FIELD_DATA>(OpenPath.string());
-	if ("BattleData" != m_BattleFieldData.TagDataFormat)
-		return;
+	//const auto pBattleDataPacket = pDataBase->GetBattleFieldDataPacket(tagArea);
+	//
+	//if (nullptr == pBattleDataPacket)
+	//	return;
+	//
+	//filesystem::path OpenPath = pBattleDataPacket->TagDataFilePath;
+	//
+	//if (OpenPath.empty())
+	//	return;
+	//
+	//if (OpenPath.extension().string() != ".json") 
+	//{
+	//	MSG_BOX("[BattleSystem] Load BattleData Failed.\nJson 파일이 아닙니다.");
+	//	return;
+	//}
+	//
+	//m_BattleFieldData = BATTLE_FIELD_DATA{};
+	//
+	//m_BattleFieldData = Helper::LoadJson<BATTLE_FIELD_DATA>(OpenPath.string());
+	//if ("BattleData" != m_BattleFieldData.TagDataFormat)
+	//	return;
 #pragma endregion
 
 #pragma region MonsterSpawn Data Load
-	const vector<MONSTER_SPAWN_DESC>* pMonsterSpawnData = pDataBase->GetMonsterSpawnData(tagArea);
-	
-	if (nullptr == pMonsterSpawnData)
-		return;
+	//const vector<SPAWN_MONSTER_DESC>* pMonsterSpawnData = pDataBase->GetMonsterSpawnData(tagArea);
+	//const EncounterTable* pMonsterSpawnData = pDataBase->GetMonsterSpawnData(tagArea)
 
-	unordered_map<_int, MONSTER_SPAWN_DESC> MonsterSpawnDataContainer;
-	for (auto& SpawnData : *pMonsterSpawnData)
-	{
-		// 천 단위 == 몬스터 매핑 테이블 인덱스
-		_uint version = SpawnData.MonsterSpawnID / 1000;
-		_uint MonsterSpawnIndex = SpawnData.MonsterSpawnID % 1000;
-		if (iPrefabIndex == version)
-			MonsterSpawnDataContainer.emplace(MonsterSpawnIndex, SpawnData);
-			//m_MonsterSpawnData.push_back(SpawnData);
-	}
+	//if (nullptr == pMonsterSpawnData)
+	//	return;
+	//
+	//unordered_map<_int, SPAWN_MONSTER_DESC> MonsterSpawnDataContainer;
+	//for (auto& SpawnData : *pMonsterSpawnData)
+	//{
+	//	// 천 단위 == 몬스터 매핑 테이블 인덱스
+	//	_uint version = SpawnData.MonsterID / 1000;
+	//	_uint MonsterSpawnIndex = SpawnData.MonsterSpawnID % 1000;
+	//	if (iPrefabIndex == version)
+	//		MonsterSpawnDataContainer.emplace(MonsterSpawnIndex, SpawnData);
+	//		//m_MonsterSpawnData.push_back(SpawnData);
+	//}
 #pragma endregion
 	
 // 몬스터 스폰 포인트용 데이터 정리
@@ -133,49 +134,49 @@ void CBattleSystem::ReadyBattle(const string& tagArea, _uint iPrefabIndex)
 
 
 // 스포너 세팅
-#pragma region Setting Spawner
-	for (auto& SpawnerData : m_BattleFieldData.Spawners)
-	{
-		if ("SpawnerPoint" != SpawnerData.tagType)
-			continue;
-
-		COLLIDER_DESC ColDesc = {};
-		ColDesc.eType = COLLIDER_TYPE::BOX;
-		ColDesc.bTrigger = true; // 충돌 박스 생성하는 트리거
-		ColDesc.vSize = { SpawnerData.vScale[0], SpawnerData.vScale[1], SpawnerData.vScale[2] };
-		
-		// 추후에 스포너 타입(트리거랑 충돌, 직접 호출 등)이 필요해 보임
-
-		string tagInstanceName = SpawnerData.tagType + to_string(SpawnerData.iIndex);
-		CGameObject* pSpawnerObject = Builder::Create_Object({ G_GlobalLevelKey ,"Proto_GameObject_MonsterSpawner" })
-			.Collider(ColDesc)
-			.Position({ SpawnerData.vTranslation[0], SpawnerData.vTranslation[1], SpawnerData.vTranslation[2] })
-			.Build(tagInstanceName);
-
-#ifdef _USING_GUI
-		pSpawnerObject->Get_Component<CCollider>()->Set_DebugRender(true);
-#endif 
-		pObjMgr->Add_Object(pSpawnerObject, { LevelManager()->Get_NowLevelKey(), "Spawner_Layer"});
-
-		// 나중에 밟아서 활성화 되는 스포너 외에 타이밍 제어에 필요한 스포너가 있을 경우,
-		// 핸들로 접근해서 소환시키게 하려고 스포너 핸들 저장해둠
-		m_SpawnerHandles.push_back(pSpawnerObject->Get_Handle());
-
-		// 스포너가 포함하고 있는 몬스터포인트에 매핑된 값들을 찾아서 넣음
-		for (size_t i = 0;  i < SpawnerData.MonsterIndices.size();  i++)
-		{
-			auto SpawnDataiter = MonsterSpawnDataContainer.find(SpawnerData.MonsterIndices[i]);
-			if (SpawnDataiter == MonsterSpawnDataContainer.end())
-				continue;
-
-			auto PointDataiter = MonsterPointDataContainer.find(SpawnerData.MonsterIndices[i]);
-			if (PointDataiter == MonsterPointDataContainer.end())
-				continue;
-
-			static_cast<CMonsterSpawner*>(pSpawnerObject)->AddMonsterData(PointDataiter->second, SpawnDataiter->second);
-		}
-	}
-#pragma endregion
+//#pragma region Setting Spawner
+//	for (auto& SpawnerData : m_BattleFieldData.Spawners)
+//	{
+//		if ("SpawnerPoint" != SpawnerData.tagType)
+//			continue;
+//
+//		COLLIDER_DESC ColDesc = {};
+//		ColDesc.eType = COLLIDER_TYPE::BOX;
+//		ColDesc.bTrigger = true; // 충돌 박스 생성하는 트리거
+//		ColDesc.vSize = { SpawnerData.vScale[0], SpawnerData.vScale[1], SpawnerData.vScale[2] };
+//		
+//		// 추후에 스포너 타입(트리거랑 충돌, 직접 호출 등)이 필요해 보임
+//
+//		string tagInstanceName = SpawnerData.tagType + to_string(SpawnerData.iIndex);
+//		CGameObject* pSpawnerObject = Builder::Create_Object({ G_GlobalLevelKey ,"Proto_GameObject_MonsterSpawner" })
+//			.Collider(ColDesc)
+//			.Position({ SpawnerData.vTranslation[0], SpawnerData.vTranslation[1], SpawnerData.vTranslation[2] })
+//			.Build(tagInstanceName);
+//
+//#ifdef _USING_GUI
+//		pSpawnerObject->Get_Component<CCollider>()->Set_DebugRender(true);
+//#endif 
+//		pObjMgr->Add_Object(pSpawnerObject, { LevelManager()->Get_NowLevelKey(), "Spawner_Layer"});
+//
+//		// 나중에 밟아서 활성화 되는 스포너 외에 타이밍 제어에 필요한 스포너가 있을 경우,
+//		// 핸들로 접근해서 소환시키게 하려고 스포너 핸들 저장해둠
+//		m_SpawnerHandles.push_back(pSpawnerObject->Get_Handle());
+//
+//		// 스포너가 포함하고 있는 몬스터포인트에 매핑된 값들을 찾아서 넣음
+//		for (size_t i = 0;  i < SpawnerData.MonsterIndices.size();  i++)
+//		{
+//			auto SpawnDataiter = MonsterSpawnDataContainer.find(SpawnerData.MonsterIndices[i]);
+//			if (SpawnDataiter == MonsterSpawnDataContainer.end())
+//				continue;
+//
+//			auto PointDataiter = MonsterPointDataContainer.find(SpawnerData.MonsterIndices[i]);
+//			if (PointDataiter == MonsterPointDataContainer.end())
+//				continue;
+//
+//			static_cast<CMonsterSpawner*>(pSpawnerObject)->AddMonsterData(PointDataiter->second, SpawnDataiter->second);
+//		}
+//	}
+//#pragma endregion
 
 // 몬스터 미리 세팅 (오브젝트 풀에 넣어놓기)
 // 을 의도했으나 일단 그냥 소환하는 방식으로 ㄱㄱ
@@ -230,6 +231,24 @@ void CBattleSystem::ReadyBattle(const string& tagArea, _uint iPrefabIndex)
 
 }
 
+void CBattleSystem::ReadyBattle(const string& tagArea, _uint StageNumber, _uint iPrefabIndex)
+{
+	auto pDatabase = CDataBase::GetInstance();
+	auto CacheData = CDataBase::GetInstance()->Get_CashedData(tagArea);
+
+	if (!CacheData->Battle.HasBattleData)
+		return;
+
+	/*PlayerPos*/
+	CacheData->Battle.PlayerPoint;
+
+	/*MonsterPos*/
+	CacheData->Battle.MonsterPoint;
+	CacheData->Battle.PortalPoint;
+	//const vector<MONSTER_SPAWN_DESC>* pMonsterSpawnData = pDatabase->GetMonsterSpawnData(tagArea);
+}
+
+
 void CBattleSystem::SetActive(_bool isActive)
 {
 	if (false == isActive) {
@@ -242,12 +261,13 @@ void CBattleSystem::SetActive(_bool isActive)
 	}
 }
 
+/*지금 싸우려는 애들->*/
+
 void CBattleSystem::SpawnMosnter(const string& MonsterProtoTag, _float3 vSpawnPos, _float3 vRot)
 {
 	MonsterCreationDesc MonsterTableDesc = CDataBase::GetInstance()->GetMonsterDesc(MonsterProtoTag);
 	if (true == MonsterTableDesc.ProtoTag.empty())
 		return;
-
 	CCT_DESC MonsterCCT;
 	MonsterCCT.eGroup = COLLISION_GROUP::MONSTER;
 	MonsterCCT.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER) | ENUM(COLLISION_GROUP::COMMON) | ENUM(COLLISION_GROUP::PLAYER_ATTACK);
@@ -324,6 +344,18 @@ _bool CBattleSystem::ExitBattleObject(BATTLE_OBJ_TYPE eObjType, OBJECT_HANDLE hO
 	return true;
 }
 
+void CBattleSystem::EnterBattleObject(BATTLE_OBJ_TYPE eObjType, OBJECT_HANDLE hObject)
+{
+	auto iter = m_BattleObjInfos.find(eObjType);
+	if (iter == m_BattleObjInfos.end())
+		return;
+
+	auto& handles = iter->second;
+	BATTLEOBJ_INFO info = {};
+	info.hObject = hObject;
+	handles.push_back(info);
+}
+
 void CBattleSystem::SetPlayer(vector<OBJECT_HANDLE> hPlayers)
 {
 	for (auto& hPlayer : hPlayers)
@@ -334,11 +366,6 @@ void CBattleSystem::SetPlayer(vector<OBJECT_HANDLE> hPlayers)
 		playerInfo.hObject = hPlayer;
 		m_BattleObjInfos[BATTLE_OBJ_TYPE::PLAYER].push_back(playerInfo);
 	}
-}
-
-void CBattleSystem::SetBattleCharacters(vector<CHARACTER> battleCharacters)
-{
-	m_pBattlePlayer->SetBattleCharacters(battleCharacters);
 }
 
 void CBattleSystem::TakeAreaDamage(const _float3& vCenter, _float fRadius, const HitDesc& hitDesc)
@@ -378,15 +405,15 @@ void CBattleSystem::TakeAllDamage(const HitDesc& hitDesc)
 void CBattleSystem::ClearBattleStage()
 {
 	for (auto& Pair : m_BattleObjInfos) {
+		if (Pair.first == BATTLE_OBJ_TYPE::PLAYER)
+			continue;
 		for (auto info : Pair.second)
 		{
-			info.hObject.Delete();
 			info.Reset();
 		}
 		Pair.second.clear();
 	}
 
-	m_SpawnerHandles.clear();
 	m_BattleFieldData = {};
 }
 

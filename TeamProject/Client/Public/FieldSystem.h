@@ -38,12 +38,12 @@ public:
 	void Update();
 
 public:
-	void	SetActive(_bool is) { m_isActive = is; }
+	void	SetActive(_bool is);
 	_bool	IsActive() const { return m_isActive; }
 	
 public:
 	void	SetFieldPlayer(class CFieldPlayer* pFieldPlayer);
-	OBJECT_HANDLE					GetCurCharacterHandle() const;
+	CFieldPlayer*					GetFieldPlayer();
 
 	void	SetInteractHandle(OBJECT_HANDLE InteractHandle, OBJECT_HANDLE InteractPartnerHandle);
 	void	ResetInteractHandle();

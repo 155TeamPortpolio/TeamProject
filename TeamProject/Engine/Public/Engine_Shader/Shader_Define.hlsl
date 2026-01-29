@@ -92,6 +92,7 @@ Texture2D NoiseTexture : register(t17);
 Texture2D DissolveTexture : register(t18);
 Texture2D AlphaMaskTexture : register(t19);
 Texture2D DistortionTexture : register(t20);
+Texture2D DitheringTexture : register(t21);
 
 // 式式式式式式式式式式式式式  SRV 式式式式式式式式式式式式式
 StructuredBuffer<BoneMatrix> g_BoneMatrices : register(t30);

@@ -206,7 +206,7 @@ void CEnemy::Active_AttackSign(_bool parryEnable)
 	static_cast<CAttackSign*>(pAttackSign)->Active(IsReallyParryEnable);
 }
 
-void CEnemy::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage)
+void CEnemy::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER charaName)
 {
 	_float fTakeDamage = fDamage;
 	
@@ -227,8 +227,9 @@ void CEnemy::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage)
 	desc.followHandle  = Get_Handle();
 	desc.followOffset  = Vector3(0.f, 1.3f, 0.f);
 	desc.isEnemy       = true;
+	desc.charaName     = charaName;
 
-	UIDirector()->Request_DamageText(&desc);
+	UIDirector()->Request_DamageText(desc);
 }
 
 void CEnemy::Create_UIEnemyStatus(string boneTag)
@@ -273,7 +274,7 @@ void CEnemy::Create_UIBossHUD()
 
 	// BossHUD UI »ý¼º
 	const string& strLevelKey = LevelManager()->Get_NowLevelKey();
-	auto pBossHUD = Builder::Create_UIObject({ strLevelKey,"Proto_GameObject_BossHUD" })
+	auto pBossHUD = Builder::Create_UIObject({ G_GlobalLevelKey,"Proto_GameObject_BossHUD" })
 		.Add_UIDesc(pDesc)
 		.Build("bossHUD");
 

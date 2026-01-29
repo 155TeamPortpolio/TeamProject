@@ -23,6 +23,15 @@ void CFieldSystem::Update()
 		m_pRoomDirector->Update();
 }
 
+void CFieldSystem::SetActive(_bool is)
+{
+	if (is == false)
+	{
+		m_pRoomDirector->ClearRooms();
+	}
+	m_isActive = is;
+}
+
 void CFieldSystem::SetFieldPlayer(CFieldPlayer* pFieldPlayer)
 {
 	if (pFieldPlayer)
@@ -53,13 +62,9 @@ _bool CFieldSystem::RequestExitTop()
 	return m_pRoomDirector->RequestExitTop();
 }
 
-/*isValid 체크 필요!*/
-OBJECT_HANDLE CFieldSystem::GetCurCharacterHandle() const
+CFieldPlayer* CFieldSystem::GetFieldPlayer()
 {
-	if (m_pFieldPlayer)
-		return m_pFieldPlayer->GetCurCharacterHandle();
-	else
-		return OBJECT_HANDLE();
+	return m_pFieldPlayer;
 }
 
 void CFieldSystem::SetInteractHandle(OBJECT_HANDLE InteractHandle, OBJECT_HANDLE InteractPartnerHandle)

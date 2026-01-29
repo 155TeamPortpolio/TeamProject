@@ -445,6 +445,9 @@
     <Filter Include="02. GameObject\Camera\04. OrbitCam\00. LockOnController">
       <UniqueIdentifier>{ab87437a-0803-4974-b6ba-72bdda89f83e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\ThugAssaulter\State\Hit">
+      <UniqueIdentifier>{ee380fa9-e341-4ac3-a59e-18404a3b9ff5}</UniqueIdentifier>
+    </Filter>
     <Filter Include="01. Level\04. Zero\Stage_Super">
       <UniqueIdentifier>{2d99fd31-8614-425b-a72e-b5c437bc2fc3}</UniqueIdentifier>
     </Filter>
@@ -523,20 +526,8 @@
     <Filter Include="02. GameObject\UI\01. 2D\Dialogue\Choice">
       <UniqueIdentifier>{db39c0af-f5db-4ad1-aad6-444af6dc0543}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Camera\04. OrbitCam\02. CollisionDistanceController">
-      <UniqueIdentifier>{d86fe13b-8dc2-4d4e-ad78-30a6472350fb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Camera\04. OrbitCam\03. TargetSwitchController">
-      <UniqueIdentifier>{616212e1-403f-4164-857c-042c45688a4d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\UI\01. 2D\HUD">
       <UniqueIdentifier>{39c59546-1cd0-4e05-a3ab-b3d83bf8d308}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Camera\04. OrbitCam\01. OrbitAutoYawFollowController">
-      <UniqueIdentifier>{6b953709-9881-461d-9361-1c9d4a1baf80}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Camera\04. OrbitCam\05. OrbitPoseSmootherController">
-      <UniqueIdentifier>{4b23b083-95ec-4c48-8cb8-297675f8781c}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\Object\Npc\Dialogue">
       <UniqueIdentifier>{0bafe532-d8a7-4715-bb85-07a6f77d204c}</UniqueIdentifier>
@@ -561,9 +552,6 @@
     </Filter>
     <Filter Include="03. Utility\04. BattleSystem\FX_Battle">
       <UniqueIdentifier>{80b278d6-d073-43f9-b769-b90f4b580861}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Camera\04. OrbitCam\04. OrbitInputController">
-      <UniqueIdentifier>{f2b96f4c-58cb-4f92-b00f-2008a29960a0}</UniqueIdentifier>
     </Filter>
     <Filter Include="03. Utility\06. FieldSystem\Room\03. Lottery">
       <UniqueIdentifier>{f458eb41-acf4-446d-a7e3-75ed729e28c0}</UniqueIdentifier>
@@ -993,6 +981,21 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Enemy\Normal\ThugPoacher\Arrow">
       <UniqueIdentifier>{ce8c9adf-be17-446e-8fd1-e59cf0703c4c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\Lottery\Newspaper">
+      <UniqueIdentifier>{9a0e4d8d-22f9-486a-bb13-701b03645d0c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\01. JaneDoe\State\Attack\Counter">
+      <UniqueIdentifier>{ce63a969-3465-4278-b8a3-fef985ba087e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\02. Corin\State\Attack\Counter">
+      <UniqueIdentifier>{24cb7830-1cbd-4738-8790-565250b7f7cd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\02. Corin\State\Attack\Assault">
+      <UniqueIdentifier>{c16121b5-d212-452e-93ac-5ce0eaf47543}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\09. Interface">
+      <UniqueIdentifier>{51900e22-1c4e-4ebd-b4f6-2e6da8fde730}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1650,14 +1653,8 @@
     <ClInclude Include="..\Public\ZeroPortal.h">
       <Filter>02. GameObject\Object\Interactable\ZeroPortal</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\OrbitLockOnData.h">
-      <Filter>02. GameObject\Camera\04. OrbitCam\00. LockOnController</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\MapInvisibleWall.h">
       <Filter>02. GameObject\MapObject\03. MapInvisibleWall</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\ZeroStage_Normal.h">
-      <Filter>01. Level\04. Zero\Stage_Normal</Filter>
     </ClInclude>
     <ClInclude Include="..\public\ThugAssaulter_Hit.h">
       <Filter>02. GameObject\Object\Enemy\Normal\ThugAssaulter\State\Hit</Filter>
@@ -1704,9 +1701,6 @@
     <ClInclude Include="..\Public\ZeroStage_Normal.h">
       <Filter>01. Level\04. Zero\Stage_Normal</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\IInteract.h">
-      <Filter>02. GameObject\Object\Interactable</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\UI_NameIndicator.h">
       <Filter>02. GameObject\UI\02. 3D\Plane\NameIndicator</Filter>
     </ClInclude>
@@ -1718,9 +1712,6 @@
     </ClInclude>
     <ClInclude Include="..\Public\UI_Dialogue.h">
       <Filter>02. GameObject\UI\01. 2D\Dialogue</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\OrbitLockOnController.h">
-      <Filter>02. GameObject\Camera\04. OrbitCam\00. LockOnController</Filter>
     </ClInclude>
     <ClInclude Include="..\public\DisplayGate.h">
       <Filter>02. GameObject\Camera\99. DisplayGate</Filter>
@@ -1754,21 +1745,6 @@
     </ClInclude>
     <ClInclude Include="..\Public\Room_Street.h">
       <Filter>03. Utility\06. FieldSystem\Room\02. Street</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\OrbitAutoYawFollowController.h">
-      <Filter>02. GameObject\Camera\04. OrbitCam\01. OrbitAutoYawFollowController</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\OrbitCollisionDistController.h">
-      <Filter>02. GameObject\Camera\04. OrbitCam\02. CollisionDistanceController</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\OrbitTargetSwitchController.h">
-      <Filter>02. GameObject\Camera\04. OrbitCam\03. TargetSwitchController</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\OrbitInputController.h">
-      <Filter>02. GameObject\Camera\04. OrbitCam\04. OrbitInputController</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\OrbitPoseSmootherController.h">
-      <Filter>02. GameObject\Camera\04. OrbitCam\05. OrbitPoseSmootherController</Filter>
     </ClInclude>
     <ClInclude Include="..\public\UI_AtlasSprite.h">
       <Filter>02. GameObject\UI\03. UIElement\Atlas_Sprite</Filter>
@@ -1847,6 +1823,27 @@
     </ClInclude>
     <ClInclude Include="..\public\ThugPoacher_Arrow.h">
       <Filter>02. GameObject\Object\Enemy\Normal\ThugPoacher\Arrow</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Newspaper.h">
+      <Filter>02. GameObject\UI\01. 2D\Lottery\Newspaper</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\JaneDoeState_CounterAttack.h">
+      <Filter>02. GameObject\Object\Player\Character\01. JaneDoe\State\Attack\Counter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CorinState_CounterAttack.h">
+      <Filter>02. GameObject\Object\Player\Character\02. Corin\State\Attack\Counter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CorinState_AssaultAttack.h">
+      <Filter>02. GameObject\Object\Player\Character\02. Corin\State\Attack\Assault</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ZeroStage_Normal.h">
+      <Filter>01. Level\04. Zero\Stage_Normal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\IInteract.h">
+      <Filter>03. Utility\09. Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ICamCollidable.h">
+      <Filter>03. Utility\09. Interface</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2483,9 +2480,6 @@
     <ClCompile Include="..\Private\ZeroPortal.cpp">
       <Filter>02. GameObject\Object\Interactable\ZeroPortal</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\OrbitLockOnController.cpp">
-      <Filter>02. GameObject\Camera\04. OrbitCam\00. LockOnController</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\ZeroStage_Normal.cpp">
       <Filter>01. Level\04. Zero\Stage_Normal</Filter>
     </ClCompile>
@@ -2570,21 +2564,6 @@
     <ClCompile Include="..\Private\Room_Street.cpp">
       <Filter>03. Utility\06. FieldSystem\Room\02. Street</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\OrbitAutoYawFollowController.cpp">
-      <Filter>02. GameObject\Camera\04. OrbitCam\01. OrbitAutoYawFollowController</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\OrbitCollisionDistController.cpp">
-      <Filter>02. GameObject\Camera\04. OrbitCam\02. CollisionDistanceController</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\OrbitTargetSwitchController.cpp">
-      <Filter>02. GameObject\Camera\04. OrbitCam\03. TargetSwitchController</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\OrbitInputController.cpp">
-      <Filter>02. GameObject\Camera\04. OrbitCam\04. OrbitInputController</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\OrbitPoseSmootherController.cpp">
-      <Filter>02. GameObject\Camera\04. OrbitCam\05. OrbitPoseSmootherController</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\UI_AtlasSprite.cpp">
       <Filter>02. GameObject\UI\03. UIElement\Atlas_Sprite</Filter>
     </ClCompile>
@@ -2662,6 +2641,18 @@
     </ClCompile>
     <ClCompile Include="..\private\ThugPoacher_Arrow.cpp">
       <Filter>02. GameObject\Object\Enemy\Normal\ThugPoacher\Arrow</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Newspaper.cpp">
+      <Filter>02. GameObject\UI\01. 2D\Lottery\Newspaper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\JaneDoeState_CounterAttack.cpp">
+      <Filter>02. GameObject\Object\Player\Character\01. JaneDoe\State\Attack\Counter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CorinState_CounterAttack.cpp">
+      <Filter>02. GameObject\Object\Player\Character\02. Corin\State\Attack\Counter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CorinState_AssaultAttack.cpp">
+      <Filter>02. GameObject\Object\Player\Character\02. Corin\State\Attack\Assault</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

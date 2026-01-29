@@ -80,15 +80,18 @@ void CCharacterAttackCollider::OnTriggerEnter(CGameObject* pOther)
 	auto pCollidable = pOther->Get_Component<ICollidable>();
 	if (pCollidable && (pCollidable->Get_Group() != COLLISION_GROUP::MONSTER))
 		return;
+
 	if (!Try_Hit(pOther))
+	{
 		return;
+	}
 
 	auto pEnemy = dynamic_cast<CEnemy*>(pOther);
 	if (nullptr != pEnemy)
 	{
-		pEnemy->TakeDamage(m_tHitDesc.eDamageType, m_tHitDesc.fDamage);
-		BattleSystem()->GetBattlePlayer()->Add_Gauge(m_tHitDesc.fEnergyCharge, m_tHitDesc.fDecibelCharge);
 		auto pCharacter = dynamic_cast<CCharacter*>(Get_Component<CChild>()->Get_Parent());
+		pEnemy->TakeDamage(m_tHitDesc.eDamageType, m_tHitDesc.fDamage, pCharacter->Get_CharacterName());
+		BattleSystem()->GetBattlePlayer()->Add_Gauge(m_tHitDesc.fEnergyCharge, m_tHitDesc.fDecibelCharge);
 		if (pCharacter != nullptr)
 		{
 			pCharacter->OnDamage();
@@ -128,15 +131,18 @@ void CCharacterAttackCollider::OnTriggerStay(CGameObject* pOther)
 	auto pCollidable = pOther->Get_Component<ICollidable>();
 	if (pCollidable && (pCollidable->Get_Group() != COLLISION_GROUP::MONSTER))
 		return;
+
 	if (!Try_Hit(pOther))
+	{
 		return;
+	}
 	
 	auto pEnemy = dynamic_cast<CEnemy*>(pOther);
 	if (nullptr != pEnemy)
 	{
-		pEnemy->TakeDamage(m_tHitDesc.eDamageType, m_tHitDesc.fDamage);
-		BattleSystem()->GetBattlePlayer()->Add_Gauge(m_tHitDesc.fEnergyCharge, m_tHitDesc.fDecibelCharge);
 		auto pCharacter = dynamic_cast<CCharacter*>(Get_Component<CChild>()->Get_Parent());
+		pEnemy->TakeDamage(m_tHitDesc.eDamageType, m_tHitDesc.fDamage, pCharacter->Get_CharacterName());
+		BattleSystem()->GetBattlePlayer()->Add_Gauge(m_tHitDesc.fEnergyCharge, m_tHitDesc.fDecibelCharge);
 		if (pCharacter != nullptr)
 		{
 			pCharacter->OnDamage();
@@ -186,12 +192,10 @@ _bool CCharacterAttackCollider::Try_Hit(CGameObject* pTarget)
 		if (record.iHitCount >= 1)
 			return false;
 		break;
-
 	case HIT_TYPE::INTERVAL:
-		if (m_fTimer - record.fLastHitTime < m_tHitDesc.fInterval)
+		if (record.iHitCount > 0 && m_fTimer - record.fLastHitTime < m_tHitDesc.fInterval)
 			return false;
 		break;
-
 	case HIT_TYPE::COUNT:
 		if (record.iHitCount >= m_tHitDesc.iMaxCount)
 			return false;

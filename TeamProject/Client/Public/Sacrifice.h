@@ -40,7 +40,7 @@ public:
     virtual void Free() override;
 
 public:
-    void TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage);
+    void TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER charaName = CHARACTER::END) override;
 
 public:
     /* For State Machine */

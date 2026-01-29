@@ -39,6 +39,12 @@ _int CLightMgr::Register_Light(CLight* Light, _int Index)
 			/*활성 컴포넌트라면 액티브 아니면 인액티브*/
 			m_LightSlots[i].eState = (Light->Get_CompActive() ? LightState::ACTIVE : LightState::INACTIVE);
 			m_LightSlots[i].descSnapShot = Light->SnapShot_Desc();
+			if (m_MainDirectional == -1 &&
+				m_LightSlots[i].eState == LightState::ACTIVE &&
+				m_LightSlots[i].descSnapShot.eType == LIGHT_TYPE::DIRECTIONAL)
+			{
+				m_MainDirectional = i;
+			}
 			return static_cast<_int>(i);
 		}
 	}
@@ -50,6 +56,16 @@ _int CLightMgr::Register_Light(CLight* Light, _int Index)
 	slot.eState = (Light->Get_CompActive() ? LightState::ACTIVE : LightState::INACTIVE);
 	slot.generation = 1;
 	slot.descSnapShot = Light->SnapShot_Desc();
+
+	/*메인 없고, 살아 있고, 디렉셔널이라면*/
+	if (m_MainDirectional == -1
+		&& slot.eState == LightState::ACTIVE
+		&& slot.descSnapShot.eType == LIGHT_TYPE::DIRECTIONAL
+		)
+	{
+		m_MainDirectional = m_LightSlots.size();
+	}
+
 	m_LightSlots.push_back(slot);
 	return static_cast<_int>(m_LightSlots.size() - 1);
 }
@@ -66,6 +82,10 @@ void CLightMgr::UnRegister_Light(CLight* Light, _int Index)
 		m_LightSlots[Index].pLight = nullptr;
 		m_LightSlots[Index].eState = LightState::DEAD;
 	}
+
+	if (Index == m_MainDirectional) {
+		m_MainDirectional = -1;
+	}
 }
 
 void CLightMgr::DeActive_Light(CLight* Light, _int Index)
@@ -80,6 +100,10 @@ void CLightMgr::DeActive_Light(CLight* Light, _int Index)
 
 	else {
 		m_LightSlots[Index].eState = LightState::INACTIVE;
+	}
+
+	if (Index == m_MainDirectional) {
+		m_MainDirectional = -1;
 	}
 }
 
@@ -117,6 +141,27 @@ vector<LIGHT_DESC> CLightMgr::Visible_Lights()
 	return lights;
 }
 
+void CLightMgr::SetMain(CLight* Light, _int Index)
+{
+	if(!Light)
+		return;
+	if (m_LightSlots.size() <= Index || 0 > Index)
+		return;
+	if (Light->SnapShot_Desc().eType != LIGHT_TYPE::DIRECTIONAL)
+		return;
+
+	m_MainDirectional = Index;
+}
+
+LIGHT_DESC CLightMgr::Get_MainDirectional()
+{
+	CleanUp();
+	if (m_MainDirectional > 0)
+		return m_LightSlots[m_MainDirectional].descSnapShot;
+
+	return LIGHT_DESC();
+}
+
 void CLightMgr::CleanUp()
 {
 	for (auto& light : m_LightSlots) {
@@ -129,6 +174,16 @@ void CLightMgr::CleanUp()
 			light.pLight = nullptr;
 			light.eState = LightState::DEAD;
 			light.generation++; /*죽을 때만 세대 교체*/
+		}
+
+	}
+	if (m_MainDirectional > 0) {
+		if (m_LightSlots[m_MainDirectional].eState == LightState::DEAD) {
+			m_MainDirectional = -1;
+			for (_int i = 0; i < m_LightSlots.size(); ++i) {
+				if (m_LightSlots[i].eState == LightState::ACTIVE && m_LightSlots[i].descSnapShot.eType == LIGHT_TYPE::DIRECTIONAL)
+					m_MainDirectional = i;
+			}
 		}
 	}
 }

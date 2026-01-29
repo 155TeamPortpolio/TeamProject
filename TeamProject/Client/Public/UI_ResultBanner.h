@@ -18,7 +18,12 @@ public:
 	}RESULT_DESC;
 
 private:
-	enum class TEXT { TEXT1, TEXT2, END }; 
+	enum class STATE { INVISIBLE, VISIBLE, END };
+
+	enum class CHILD { OVERLAY_OK, TEXT_OK, ICON_OK, END };
+	inline static const string INSTANCENAMES[ENUM(CHILD::END)] = { "overlayOK", "textOK", "iconOK" };
+
+	enum class TEXT { TEXT1, TEXT2, END };
 	inline static const string TEXT_NAMES[ENUM(TEXT::END)] = { "text1", "text2" };
 
 private:
@@ -29,7 +34,7 @@ private:
 public:
 	virtual HRESULT Initialize_Prototype()           override;
 	virtual HRESULT Initialize(INIT_DESC* pArg = {}) override;
-	virtual void	Awake()							 override;
+	virtual void	Awake()							 override {}
 	virtual void    Priority_Update(_float dt)       override { __super::Priority_Update(dt); }
 	virtual void    Update(_float dt)			     override;
 	virtual void    Late_Update(_float dt)           override { __super::Late_Update(dt); }
@@ -38,6 +43,9 @@ public:
 	virtual void	UI_DeActive(void* pArg)			 override;
 
 private:
+	STATE				m_eState = { STATE::END };
+
+	CUI_Object*			m_pChildren[ENUM(CHILD::END)] = {};
 	class CButtonUI*	m_pBtnOk = {};
 	class CSprite2D*	m_pSpriteIcon = {};
 	class CTextSlot*	m_pTextSlot[ENUM(TEXT::END)] = {};
@@ -45,10 +53,12 @@ private:
 private:
 	void Cache();
 
-	void OnClick_OK();
+	void Change_State(STATE eState);
 
+	void Set_ChildColor(CHILD child, _float4 vColor);
+	void Set_ChildAnimation(CHILD child, _int iIndex);
 	void Set_Text(TEXT text, const _wstring& strText);
-	void Set_Icon(const string& strTextureKey);
+	void Change_IconTexture(const string& strTextureKey);
 
 public:
 	static  CGameObject* Create();

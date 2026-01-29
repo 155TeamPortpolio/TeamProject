@@ -128,7 +128,7 @@ public:
     void    DeActive_Character();
 
     void   Set_Speed(_float fSpeed) { m_fMoveSpeed = fSpeed; }
-    _float Get_Speed() const { return m_fMoveSpeed; }
+    _float Get_Speed() const { return m_fMoveSpeed; } 
 
 public:
     void Process_RootMotion(_float dt, const ROOTMOTION_DESC& desc);

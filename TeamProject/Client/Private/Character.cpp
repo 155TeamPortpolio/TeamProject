@@ -327,6 +327,7 @@ HRESULT CCharacter::Attach_AttackCollider(ATTACK_COLLIDER_DESC* pDesc)
 
 	RIGIDBODY_DESC rigidDesc{};
 	rigidDesc.isKinematic = true;
+	rigidDesc.bCCD = true;
 	rigidDesc.bEnableGravity = false;
 	rigidDesc.bLockX = false;
 	rigidDesc.bLockZ = true;
@@ -511,23 +512,24 @@ _bool CCharacter::Is_Active_AttackCollider(const string& strName)
 
 void CCharacter::Take_Damage(DAMAGE_TYPE eType, _float fDamage)
 {
+	{
+		_int damage = Helper::Get_Random_Int(1000.f, 10000.f);
+
+		DAMAGE_DESC desc{};
+		desc.damage = damage;
+		desc.followHandle = Get_Handle();
+		desc.followOffset = Vector3(0.f, 1.3f, 0.f);
+		desc.isEnemy = false;
+
+		UIDirector()->Request_DamageText(desc);
+	}
+
 	if (Is_Invincible()) return;
 
 	m_fCurrentHP -= fDamage;
 	m_fCurrentHP = max(m_fCurrentHP, 0.f);
 
 	On_Hit(eType);
-
-// ----------------------------------------
-	_int damage = Helper::Get_Random_Int(1000.f, 10000.f);
-
-	CUI_DamageText::DAMAGE_DESC desc{};
-	desc.damage        = damage;
-	desc.followHandle  = Get_Handle();
-	desc.followOffset  = Vector3(0.f, 1.3f, 0.f);
-	desc.isEnemy       = false;
-
-	UIDirector()->Request_DamageText(&desc);
 }
 
 _bool CCharacter::Is_OppositeInput() const

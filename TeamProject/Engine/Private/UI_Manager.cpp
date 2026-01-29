@@ -81,6 +81,7 @@ void CUI_Manager::Clear(const string& LevelTag)
 	auto iter = m_UIObjects.find(LevelTag);
 	if (iter != m_UIObjects.end())
 	{
+		Prune_Queues_ByLevel(LevelTag);
 		for (auto& UI : iter->second)
 			Safe_Release(UI);
 		iter->second.clear();
@@ -125,23 +126,25 @@ void CUI_Manager::Add_Object_Recursive(const string& LevelTag, CUI_Object* objec
 	auto& map = m_UIObjects.at(LevelTag);
 	_uint ObjectIndex = map.size();
 
-	for (size_t i = 0; i < map.size(); i++)
+	if(object && object->Get_SystemIndex() == -1)
 	{
-		/*벡터를 순회하면서 널포인터가 있는지 검색*/
-		if (map[i] == nullptr) {
-			ObjectIndex = i;
-			break;
+		for (size_t i = 0; i < map.size(); i++)
+		{
+			/*벡터를 순회하면서 널포인터가 있는지 검색*/
+			if (map[i] == nullptr) {
+				ObjectIndex = i;
+				break;
+			}
 		}
+
+		/*같은 ID의 오브젝트가 없다면*/
+		if (ObjectIndex == map.size()) /*마지막에 추가*/
+			map.push_back(object);
+		else
+			map[ObjectIndex] = object;
+
+		object->Set_OnSystem(LevelTag, ObjectIndex);
 	}
-
-	/*같은 ID의 오브젝트가 없다면*/
-	if (ObjectIndex == map.size()) /*마지막에 추가*/
-		map.push_back(object);
-	else
-		map[ObjectIndex] = object;
-
-	object->Set_OnSystem(LevelTag, ObjectIndex);
-
 	auto vector = object->Get_Children();
 
 	if (vector.empty()) return;
@@ -156,6 +159,9 @@ void CUI_Manager::Add_Object_Recursive(const string& LevelTag, CUI_Object* objec
 void CUI_Manager::Remove_UIObject(CUI_Object* object)
 {
 	if (!object) return;
+	if (!object->Is_Root())
+		return;
+
 	const _int systemIndex = object->Get_SystemIndex();
 	if (systemIndex < 0) return;
 	/*유아이에 배치된 적 없음*/
@@ -215,29 +221,41 @@ void CUI_Manager::Release_Subtree_ToPool(CUI_Object* root)
 	for (CUI_Object* node : nodes)
 	{
 		if (!node) continue;
-
-		const _int idx = node->Get_SystemIndex();
-		if (idx >= 0)
-		{
-			const auto levelKey = node->Get_SystemLevel();
-			auto itLevel = m_UIObjects.find(levelKey);
-			if (itLevel != m_UIObjects.end())
-			{
-				auto& vec = itLevel->second;
-				if (idx < static_cast<_int>(vec.size()) && vec[idx] == node)
-					vec[idx] = nullptr;
-			}
-		}
-
-		node->Set_OnSystem("", -1);
-
+	
+		//const _int idx = node->Get_SystemIndex();
+		//if (idx >= 0)
+		//{
+		//	const auto levelKey = node->Get_SystemLevel();
+		//	auto itLevel = m_UIObjects.find(levelKey);
+		//	if (itLevel != m_UIObjects.end())
+		//	{
+		//		auto& vec = itLevel->second;
+		//		if (idx < static_cast<_int>(vec.size()) && vec[idx] == node)
+		//			vec[idx] = nullptr;
+		//	}
+		//}
+		//
+		//node->Set_OnSystem("", -1);
+	
 		if (node != root)
 		{
 			node->OnPooledRelease();
 		}
 	}
 
+	const _int idx = root->Get_SystemIndex();
+	const auto levelKey = root->Get_SystemLevel();
+	auto itLevel = m_UIObjects.find(levelKey);
+	if (itLevel == m_UIObjects.end()) return;
+
+	auto& vec = itLevel->second;
+	if (idx >= static_cast<_int>(vec.size())) return;
+
+	// 아직 그 슬롯에 그 객체가 있을 때만 제거
+	if (vec[idx] != root) return;
+	vec[idx] = nullptr;
 	root->OnPooledRelease();
+	root->Set_OnSystem("", -1);
 	const CLONE_DESC& poolKey = root->Get_PoolKey();
 	m_pUIPool->Return(poolKey, root);
 }
@@ -350,9 +368,9 @@ CUI_Object* CUI_Manager::Request_UIObject(const UI_HANDLE& handle)
 	return nullptr;
 }
 
-CUI_Object* CUI_Manager::Acquire(const CLONE_DESC& desc, INIT_DESC* pArg)
+CUI_Object* CUI_Manager::Acquire(const CLONE_DESC& desc, INIT_DESC* pArg, _bool& outFirst)
 {
-	return m_pUIPool->Acquire(desc, pArg);
+	return m_pUIPool->Acquire(desc, pArg, outFirst);
 }
 
 void CUI_Manager::Prune_Queues_ByLevel(const string& levelTag)

@@ -29,10 +29,14 @@ CHowl::CHowl(const CHowl& rhs)
 
 void CHowl::Execute()
 {
-	UI_DIALOGUE_REQUEST_DESC desc;
-	desc.strDialogueID = m_DiagloueData.StartDialogueID;
-	desc.iSequenceID = m_iNextSequceID;
-	EventSystem()->Broadcast<UI_DIALOGUE_REQUEST_DESC>({ desc });
+	if (CFieldSystem::GetInstance()->Get_DayPhase() == DayPhase::LateNight)
+	{
+		UI_DIALOGUE_REQUEST_DESC desc;
+		desc.strDialogueID = m_DiagloueData.StartDialogueID;
+		desc.iSequenceID = m_iNextSequceID;
+		EventSystem()->Broadcast<UI_DIALOGUE_REQUEST_DESC>({ desc });
+	}
+	else Process_Event({ TEXT("아우"),0,0,DialogueResult::Success });
 }
 
 HRESULT CHowl::Initialize_Prototype()
@@ -155,6 +159,12 @@ void CHowl::Update_States(_float dt)
 		if (CFieldSystem::GetInstance()->Get_DayPhase() != DayPhase::LateNight)
 			m_pStateMachine->Set_Trigger("ToIdle");
 	}
+}
+
+void CHowl::Success(_uint curSequenceID)
+{
+	FieldSystem()->RequestEnter("Lottery", true);
+	
 }
 
 CHowl* CHowl::Create()

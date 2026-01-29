@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "UI_AtlasSprite.h"
-// Engine
 #include "Sprite2D.h"
 #include "Texture.h"
 #include "ObjectContainer.h"
@@ -34,12 +33,15 @@ HRESULT CUI_AtlasSprite::Initialize(INIT_DESC* pArg)
     if (!m_texKey.empty())
         sprite->Change_Texture(0, G_GlobalLevelKey, m_texKey);
 
+    m_useColorAtlas = 0u;
     m_colorTexKey.clear();
     m_colorFrameCountX = 1;
     m_colorFrameCountY = 1;
     m_colorFrameIdx = 0;
 
     m_shearK = 0.f;
+    m_flashMix = 0.f;
+    m_colorMix = 1.f;
 
     Update_SizeByHeight();
     Apply_Params();
@@ -80,6 +82,8 @@ void CUI_AtlasSprite::Set_HeightPx(_float heightPx)
 
 void CUI_AtlasSprite::Set_ColorAtlas(const string& textureKey, _uint frameCountX, _uint frameCountY)
 {
+    m_useColorAtlas = 1u;
+
     m_colorTexKey = textureKey;
     m_colorFrameCountX = max(1u, frameCountX);
     m_colorFrameCountY = max(1u, frameCountY);
@@ -100,6 +104,11 @@ void CUI_AtlasSprite::Set_ColorFrameIndex(_uint frameIdx)
 void CUI_AtlasSprite::Set_UseColorAtlas(_bool enable)
 {
     m_useColorAtlas = enable ? 1u : 0u;
+
+    auto sprite = Get_Component<CSprite2D>();
+    if (m_useColorAtlas && !m_colorTexKey.empty()) sprite->ChangePass("SpriteAnimation_ColorAtlas");
+    else sprite->ChangePass("SpriteAnimation");
+
     Apply_Params();
 }
 
@@ -109,10 +118,21 @@ void CUI_AtlasSprite::Set_ShearK(_float k)
     Apply_Params();
 }
 
+void CUI_AtlasSprite::Set_FlashMix(_float mix)
+{
+    m_flashMix = mix;
+    Apply_Params();
+}
+
+void CUI_AtlasSprite::Set_ColorMix(_float mix)
+{
+    m_colorMix = mix;
+    Apply_Params();
+}
+
 void CUI_AtlasSprite::Apply_Params()
 {
     auto sprite = Get_Component<CSprite2D>();
-
     if (!sprite->IsValid()) return;
 
     sprite->Set_Param("Col", {&m_frameCountX, "uint", sizeof(_uint)});
@@ -120,11 +140,13 @@ void CUI_AtlasSprite::Apply_Params()
     sprite->Set_Param("FrameIndex", {&m_frameIdx, "uint", sizeof(_uint)});
     sprite->Set_Param("ShearK", {&m_shearK, "float", sizeof(_float)});
 
-    if (!m_colorTexKey.empty())
+    if (m_useColorAtlas && !m_colorTexKey.empty())
     {
         sprite->Set_Param("ColorCol", {&m_colorFrameCountX, "uint", sizeof(_uint)});
         sprite->Set_Param("ColorRow", {&m_colorFrameCountY, "uint", sizeof(_uint)});
         sprite->Set_Param("ColorFrameIndex", {&m_colorFrameIdx, "uint", sizeof(_uint)});
+        sprite->Set_Param("FlashMix", {&m_flashMix, "float", sizeof(_float)});
+        sprite->Set_Param("ColorMix", {&m_colorMix, "float", sizeof(_float)});
 
         SHADER_PARAM p{};
         p.typeName = "Texture2D";
@@ -141,6 +163,7 @@ void CUI_AtlasSprite::Update_SizeByHeight()
 
     auto tex = sprite->Get_Texture(0);
     _float aspect = 1.f;
+
     if (tex)
     {
         const _uint2 texSize = tex->Get_Size();
@@ -149,7 +172,12 @@ void CUI_AtlasSprite::Update_SizeByHeight()
         if (cellH > 0.f) aspect = cellW / cellH;
     }
 
-    Set_Size({m_heightPx * aspect, m_heightPx});
+    Set_Size({_float(m_heightPx * aspect), m_heightPx});
+}
+
+void CUI_AtlasSprite::OnPooledAcquire(INIT_DESC* pArg)
+{
+    Initialize(pArg);
 }
 
 CGameObject* CUI_AtlasSprite::Create()

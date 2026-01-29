@@ -12,10 +12,13 @@ private:
 public:
     HRESULT Initialize();
     void Update();
+
 public:
     _bool RegisterRoom(class CRoom* pRoom);
     _bool RequestEnter(const string& roomKey, _bool overlay = true);
     _bool RequestExitTop();
+
+    HRESULT ClearRooms();
 
 public:
     const vector<string>& GetActiveRoomStack() const;

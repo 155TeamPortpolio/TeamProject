@@ -9,6 +9,7 @@ private:
     ~CRoom_Street() DEFAULT;
 
 public:
+    virtual _uint AddRef() override;
     virtual void Enter() ;
     virtual void Exit() ;
     virtual void Update() ;
@@ -19,7 +20,7 @@ private:
 
 public:
     static CRoom_Street* Create(const ROOM_DESC& desc);
-    virtual void Free();
+    virtual void Free() override;
 };
 
 NS_END

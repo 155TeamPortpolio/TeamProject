@@ -36,11 +36,10 @@ void CUI_DecibelPts::Update(_float dt)
 void CUI_DecibelPts::Ready_PartObjects()
 {
     auto pContainer = Get_Component<CObjectContainer>();
-    const string& strLevelKey = LevelManager()->Get_NowLevelKey();
 
     for (_int i = 0; i < ENUM(CHILD::END); ++i)
     {
-        CUI_Object* pObj = Builder::Create_UIObject({ strLevelKey, "Proto_GameObject_Image" })
+        CUI_Object* pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_Image" })
             .Build("decibelKanji" + to_string(i));
         if (!pObj)
             continue;

@@ -7,6 +7,7 @@
 #include "ObjectContainer.h"
 #include "Sprite2D.h"
 #include "UIDirector.h"
+#include "UI_Lottery.h"
 
 HRESULT CUI_ScratchCard::Initialize_Prototype()
 {
@@ -19,14 +20,23 @@ HRESULT CUI_ScratchCard::Initialize_Prototype()
 
 HRESULT CUI_ScratchCard::Initialize(INIT_DESC* pArg)
 {
+    SCRATCH_DESC* pDesc = static_cast<SCRATCH_DESC*>(pArg);
+    m_pState = pDesc->pState;
+    m_onScratchCompleted = pDesc->onScratchCompleted;
+
     __super::Initialize(pArg);
 
     // JSON 로드
     Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("scratchCard.json")));
 
     // 캐싱 (오브젝트, 컴포넌트)
-    Cache_Brush();
-    Cache_Reward();
+    Cache();
+
+    // 셰이더, 패스 설정
+    auto pSprite = Get_Component<CSprite2D>();
+    pSprite->Link_Shader(G_GlobalLevelKey, "VTX_UI.hlsl");
+    pSprite->ChangePass("UI_StencilWrite");
+    pSprite->Set_Param("MaskThreshold", { &m_fThreshold, "float", sizeof(_float) });
 
     // 렌더타겟 생성
     RenderTargetDesc desc = {};
@@ -35,12 +45,6 @@ HRESULT CUI_ScratchCard::Initialize(INIT_DESC* pArg)
     desc.Height = m_vSize.y;
     RenderSystem()->Create_RenderTarget(desc);
 
-    // 셰이더, 패스 설정
-    auto pSprite = Get_Component<CSprite2D>();
-    pSprite->Link_Shader(G_GlobalLevelKey, "VTX_UI.hlsl");
-    pSprite->ChangePass("UI_StencilWrite");
-    pSprite->Set_Param("MaskThreshold", { &m_fThreshold, "float", sizeof(_float) });
-    
     // 렌더타겟에 SRV 바인딩
     SHADER_PARAM param = {};
     auto pSRV = RenderSystem()->Get_CustomTargetSRV("scratchCard");
@@ -50,35 +54,54 @@ HRESULT CUI_ScratchCard::Initialize(INIT_DESC* pArg)
     pSprite->Set_Param("SpriteTexture", param);
 
     // 브러쉬 렌더 레이어 커스텀으로
-    m_pBrush->SetRenderLayer(RENDER_LAYER::CustomOnly);
+    auto pBrush = m_pChildren[ENUM(CHILD::BRUSH)];
+    if(pBrush)
+        pBrush->SetRenderLayer(RENDER_LAYER::CustomOnly);
 
     // 뷰, 프로젝션 행렬 구성
     XMStoreFloat4x4(&m_ViewMatrix, XMMatrixIdentity());
-    XMStoreFloat4x4(&m_ProjMatrix, XMMatrixOrthographicLH(m_vSize.x, m_vSize.y,  0.f, 1.f));
+    XMStoreFloat4x4(&m_ProjMatrix, XMMatrixOrthographicLH(m_vSize.x, m_vSize.y, 0.f, 1.f));
 
-    UI_DeActive(nullptr);
+    Set_Alive(false);
 
-	return S_OK;
-}
-
-void CUI_ScratchCard::Awake()
-{ 
+    return S_OK;
 }
 
 void CUI_ScratchCard::Update(_float dt)
 {
-    if (InputDevice()->Key_Tap('R'))
-    {
-        UIDirector()->Show_ResultBanner(REWARD_TEXTURES[0], L"결과는", L"이러이러하다");
-        //Set_Alive(false);
-    } 
-        
-    __super::Update(dt);
-
     // 브러쉬 자식 객체의 위치를 마우스 위치로
-    m_pBrush->Set_AnchorOffset(InputDevice()->Mouse_Pos() - m_vLeftTop);
+    auto pBrush = m_pChildren[ENUM(CHILD::BRUSH)];
+    if(pBrush && InputDevice()->Mouse_Hold(MOUSE_BTN::LB))
+        pBrush->Set_AnchorOffset(InputDevice()->Mouse_Pos() - m_vLeftTop);
 
+    // 스크래치가 ~퍼센트 이상이면 상태 변경
+    if (!m_isScratchComplete && Check_Scratch(dt))
+    {
+        m_isScratchComplete = true;
+        if (m_onScratchCompleted)
+            m_onScratchCompleted(); 
+    } 
+
+    // 스크래치가 완료되고, 결과를 한 번 보여줌
+    if(m_isScratchComplete && !m_hasShownResult)
+    { 
+        m_fResultWaitTime += dt;
+        
+        if (m_fResultWaitTime >= m_fResultWaitDuration)
+        { 
+            UIDirector()->Show_ResultBanner(REWARD_TEXTURES[0], L"1234", L"보상 아이템 이름");
+            m_hasShownResult = true;
+        }
+    }
+
+    __super::Update(dt);
     Get_Component<CObjectContainer>()->UpdateChild(dt); 
+
+    if (m_eState == STATE::VISIBLE && Is_AnimFinished())
+        Set_Animation(ENUM(ANIMATION::IDLE));
+
+    if (m_eState == STATE::INVISIBLE && Is_AnimFinished())
+        Set_Alive(false);
 
     // 렌더 타겟에 브러쉬로 그림
     RENDER_CUSTOM_COMMAND command = {};
@@ -91,63 +114,140 @@ void CUI_ScratchCard::Update(_float dt)
 
 void CUI_ScratchCard::UI_Active(void* pArg)
 {
-    Set_Alive(true);
-    Change_RewardTexture(REWARD_TEXTURES[rand() % ENUM(REWARD::END)]);
-    m_isClear = true;
+    Change_State(STATE::VISIBLE);
+
+    if(*m_pState == CUI_Lottery::STATE::READY)
+        Reset();
 }
 
 void CUI_ScratchCard::UI_DeActive(void* pArg)
 {
-    Set_Alive(false);
+    Change_State(STATE::INVISIBLE);
 }
 
-void CUI_ScratchCard::Cache_Brush()
+void CUI_ScratchCard::Cache()
 {
     auto pContainer = Get_Component<CObjectContainer>();
 
-    auto pObj = pContainer->Find_Descendant("brush");
-    if (!pObj)
-        return;
+    for (_int i = 0; i < ENUM(CHILD::END); ++i)
+    {
+        auto pObj = pContainer->Find_Descendant(INSTANCENAMAES[i]);
+        if (!pObj)
+            continue;
 
-    m_pBrush = dynamic_cast<CUI_Object*>(pObj);
-    m_pBrushSprite = pObj->Get_Component<CSprite2D>();
+        m_pChildren[i] = dynamic_cast<CUI_Object*>(pObj);
+        m_pSprites[i] = pObj->Get_Component<CSprite2D>();
+    }
 }
 
-void CUI_ScratchCard::Cache_Reward()
+_bool CUI_ScratchCard::Check_Scratch(_float dt)
 {
-    auto pContainer = Get_Component<CObjectContainer>();
+    m_fScratchTimer += dt;
 
-    auto pObj = pContainer->Find_Descendant("reward");
-    if (!pObj)
+    if (m_fScratchTimer < m_fScratchDuration)
+        return false;
+
+    m_fScratchTimer = 0.f;
+    return Calculate_ScratchRatio() >= m_fScratchRatio;
+}
+
+_float CUI_ScratchCard::Calculate_ScratchRatio()
+{
+    auto pContext = GameInstance()->Get_Context();
+    auto pTexture = RenderSystem()->Get_CustomTargetTexture("scratchCard");
+
+    D3D11_TEXTURE2D_DESC desc = {};
+    pTexture->GetDesc(&desc);
+
+    D3D11_MAPPED_SUBRESOURCE mapped = {};
+    pContext->Map(pTexture, 0, D3D11_MAP_READ, 0, &mapped);
+    BYTE* pData = (BYTE*)mapped.pData;
+    _uint rowPitch = mapped.RowPitch;
+
+    _uint iWhiteCount = {};
+    _uint iTotalCount = desc.Width * desc.Height;
+
+    for (_uint j = 0; j < desc.Height; ++j)
+    {
+        BYTE* pRow = pData + j * rowPitch;
+
+        for (_uint i = 0; i < desc.Width; ++i)
+        {
+            BYTE* pPixel = pRow + i * 4;
+
+            if (pPixel[0] >= 200.f)
+                ++iWhiteCount;
+        }
+    }
+
+    pContext->Unmap(pTexture, 0);
+    Safe_Release(pTexture);
+
+    return iWhiteCount / static_cast<_float>(iTotalCount);
+}
+
+void CUI_ScratchCard::Change_State(STATE eState)
+{
+    if (m_eState == eState)
         return;
 
-    m_pRewardSprite = pObj->Get_Component<CSprite2D>();
+    m_eState = eState;
+    switch (eState)
+    {
+    case STATE::INVISIBLE:
+        Set_Animation(ENUM(ANIMATION::DISAPPEAR));
+        break;
+    case STATE::VISIBLE:
+        Set_Alive(true);
+        Set_Animation(ENUM(ANIMATION::APPEAR));
+        break;
+    }
 }
 
 void CUI_ScratchCard::Change_RewardTexture(const string& strTextureKey)
 {
-    if (!m_pRewardSprite)
+    if (!m_pSprites[ENUM(CHILD::REWARD)])
         return;
 
-    m_pRewardSprite->Change_Texture(0, G_GlobalLevelKey, strTextureKey);
+    m_pSprites[ENUM(CHILD::REWARD)]->Change_Texture(0, G_GlobalLevelKey, strTextureKey);
+}
+
+void CUI_ScratchCard::Reset()
+{
+    m_isClear = true;
+    m_isScratchComplete = false;
+    m_hasShownResult = false;
+    Change_RewardTexture(REWARD_TEXTURES[rand() % ENUM(REWARD::END)]); 
 }
 
 void CUI_ScratchCard::Render_RTBrush(ID3D11DeviceContext* pContext)
 { 
-    // 브러쉬를 렌더 타겟에 그림
-    auto pBrushShader = m_pBrushSprite->Get_Shader();
+    CHILD child = (m_isScratchComplete)? CHILD::SCRATCH : CHILD::BRUSH;
+
+    Render_RT(child, pContext);
+}
+
+void CUI_ScratchCard::Render_RT(CHILD child, ID3D11DeviceContext* pContext)
+{
+    auto pChild = m_pChildren[ENUM(child)];
+    auto pSprite = m_pSprites[ENUM(child)];
+
+    if (!pChild || !pSprite)
+        return;
+
+    auto pBrushShader = pSprite->Get_Shader();
 
     ID3D11InputLayout* pLayout;
-    RenderSystem()->GetRenderer(RENDERER_TYPE::UI)->Get_BufferInputLayout(m_pBrushSprite->Get_Buffer(), pBrushShader, "OpaqueCustom", &pLayout);
+    RenderSystem()->GetRenderer(RENDERER_TYPE::UI)->Get_BufferInputLayout(pSprite->Get_Buffer(), pBrushShader, "OpaqueCustom", &pLayout);
     pContext->IASetInputLayout(pLayout);
-    m_pBrushSprite->Set_Param("g_WorldMatrix", { m_pBrush->Get_Component<CTransform>()->Get_WorldMatrix_Ptr(), "matrix", sizeof(_float4x4)});
-    m_pBrushSprite->Set_Param("g_ViewMatrix", { &m_ViewMatrix, "matrix", sizeof(_float4x4) });
-    m_pBrushSprite->Set_Param("g_ProjMatrix", { &m_ProjMatrix, "matrix", sizeof(_float4x4) });
-    m_pBrushSprite->Apply_Shader(pContext);
-    m_pBrushSprite->Set_Param("vColor", { &m_vColor, "float4", sizeof(_float4) });
+    pSprite->Set_Param("g_WorldMatrix", { pChild->Get_Component<CTransform>()->Get_WorldMatrix_Ptr(), "matrix", sizeof(_float4x4) });
+    pSprite->Set_Param("g_ViewMatrix", { &m_ViewMatrix, "matrix", sizeof(_float4x4) });
+    pSprite->Set_Param("g_ProjMatrix", { &m_ProjMatrix, "matrix", sizeof(_float4x4) });
+    pSprite->Apply_Shader(pContext);
+    pSprite->Set_Param("vColor", { &m_vColor, "float4", sizeof(_float4) });
 
     pBrushShader->Apply("OpaqueCustom", pContext);
-    m_pBrushSprite->Draw_Sprite(pContext);
+    pSprite->Draw_Sprite(pContext);
 }
 
 CGameObject* CUI_ScratchCard::Create()
@@ -170,4 +270,9 @@ CGameObject* CUI_ScratchCard::Clone(INIT_DESC* pArg)
         Safe_Release(pInstance);
     }
     return pInstance;
+}
+
+void CUI_ScratchCard::Free()
+{
+    __super::Free();
 }

@@ -200,9 +200,9 @@ PS_OUT_BACKBUFFER PS_MAIN_COMBINED(PS_IN In)
     
     vector vSkinned = SkinnedCombinedTexture.Sample(DefaultSampler, In.vTexcoord);
     vector vStatic = StaticCombinedTexture.Sample(DefaultSampler, In.vTexcoord);
-    //vector vEffect = EffectCombinedTexture.Sample(DefaultSampler, In.vTexcoord);
     vector vUI = UICombinedTexture.Sample(DefaultSampler, In.vTexcoord);
-     
+    vector vVanish = VanishNoiseTexture.Sample(DefaultSampler, In.vTexcoord);
+
     float4 vStaticDepth = StaticDepthTexture.Sample(DefaultSampler, In.vTexcoord);
     float4 vSkinnedDepth = SkinnedDepthTexture.Sample(DefaultSampler, In.vTexcoord);
     
@@ -241,7 +241,7 @@ PS_OUT_BACKBUFFER PS_MAIN_COMBINED(PS_IN In)
         resultAlpha = 0;
     }
     
-    result.rgb = lerp(result.rgb, vUI.rgb, vUI.a);
+    result.rgb = lerp(result.rgb + vVanish.rgb, vUI.rgb, vUI.a);
     float alpha = max(vUI.a,resultAlpha);
     Out.vBackBuffer = float4(result.rgb, alpha);
     
