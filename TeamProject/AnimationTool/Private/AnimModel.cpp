@@ -79,7 +79,7 @@ void CAnimModel::Update(_float dt)
 		_quaternion dq = pAnimator->Get_RootBoneQuatDelta(); // 반환 타입이 XMFLOAT4라고 가정
 		//m_pTransform->(dq);
 		m_pTransform->Add_Quaternion(dq);
-	}s
+	}
 }
 
 void CAnimModel::Late_Update(_float dt)
