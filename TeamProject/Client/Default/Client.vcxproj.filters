@@ -1842,6 +1842,9 @@
     <ClInclude Include="..\public\Room_Noodle.h">
       <Filter>03. Utility\06. FieldSystem\Room\04. Noodle</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\JaneDoeState_AssaultAttack.h">
+      <Filter>02. GameObject\Object\Player\Character\01. JaneDoe\State\Attack\Assault</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2674,6 +2677,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Room_Noodle.cpp">
       <Filter>03. Utility\06. FieldSystem\Room\04. Noodle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\JaneDoeState_AssaultAttack.cpp">
+      <Filter>02. GameObject\Object\Player\Character\01. JaneDoe\State\Attack\Assault</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
