@@ -16,6 +16,7 @@
 #include "BangBooDeliver.h"
 #include "Howl.h"
 #include "Jaeger.h"
+#include "SirChop.h"
 #include "ElectricBoo.h"
 
 /* Maptool Type 1 (ETC) */
@@ -32,7 +33,8 @@ static unordered_map<string, Spawner::OBJ_SPEC> s_NPCTable =
 	{ "BangBooAsk",		Spawner::OBJ_SPEC{ "Proto_GameObject_BangBooAsk", &CBangBooAsk::Create } },
 	{ "Howl",           Spawner::OBJ_SPEC{ "Proto_GameObject_Howl", &CHowl::Create } },
 	{ "Jaeger",         Spawner::OBJ_SPEC{ "Proto_GameObject_Jaeger", &CJaeger::Create } },
-	{ "ExploreBoo",     Spawner::OBJ_SPEC{ "Proto_GameObject_ExploreBoo", &CElectricBoo::Create } }
+	{ "ExploreBoo",     Spawner::OBJ_SPEC{ "Proto_GameObject_ExploreBoo", &CElectricBoo::Create } },
+	{ "Sirchop",     Spawner::OBJ_SPEC{ "Proto_GameObject_Sirchop", &CSirChop::Create } }
 };
 
 /* Maptool Type 1 */
