@@ -118,7 +118,7 @@ SlotValue CSlotFieldGui::MakeDefaultValue(SLOT_DATA_TYPE eType)
         return XMFLOAT4{ 0.f, 0.f, 0.f, 0.f };
     }
 
-    return _int(0);
+    return SlotValue{};
 }
 
 string CSlotFieldGui::MakeNewID()
