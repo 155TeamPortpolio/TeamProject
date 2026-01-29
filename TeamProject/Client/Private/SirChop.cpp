@@ -29,6 +29,7 @@ void CSirChop::Execute()
    //desc.strDialogueID = m_DiagloueData.StartDialogueID;
    //desc.iSequenceID = m_iNextSequceID;
    //EventSystem()->Broadcast<UI_DIALOGUE_REQUEST_DESC>({ desc });
+	Process_Event({ TEXT("ÃÝÆÛ ´ëÀå"),0,0,DialogueResult::Success });
 }
 
 HRESULT CSirChop::Initialize_Prototype()
@@ -93,7 +94,7 @@ void CSirChop::Late_Update(_float dt)
 
 void CSirChop::Success(_uint curSequenceID)
 {
-	//FieldSystem()->RequestEnter("Noodle", true);
+	FieldSystem()->RequestEnter("Noodle", true);
 }
 
 CSirChop* CSirChop::Create()

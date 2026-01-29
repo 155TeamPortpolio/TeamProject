@@ -1038,7 +1038,7 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Npc\Service\SirChop">
       <UniqueIdentifier>{d2a50a8e-9e0b-42f2-a758-62374a5c7f8b}</UniqueIdentifier>
-          </Filter>
+    </Filter>
     <Filter Include="02. GameObject\UI\01. 2D\Ramen">
       <UniqueIdentifier>{e1dc0083-3a9a-44a0-95b1-74202bf40893}</UniqueIdentifier>
     </Filter>
@@ -1062,6 +1062,9 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Enemy\Boss\Defiler\State\Idle">
       <UniqueIdentifier>{d5b04047-e78b-49f4-aca1-616bbfd9634a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\06. FieldSystem\Room\04. Noodle">
+      <UniqueIdentifier>{810c5f63-0a50-441a-b876-0b38ab52f72c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1907,7 +1910,7 @@
     </ClInclude>
     <ClInclude Include="..\public\SirChop.h">
       <Filter>02. GameObject\Object\Npc\Service\SirChop</Filter>
-        </ClInclude>
+    </ClInclude>
     <ClInclude Include="..\Public\UI_Ramen.h">
       <Filter>02. GameObject\UI\01. 2D\Ramen</Filter>
     </ClInclude>
@@ -1931,6 +1934,9 @@
     </ClInclude>
     <ClInclude Include="..\public\DefilerState_Idle.h">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler\State\Idle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Room_Noodle.h">
+      <Filter>03. Utility\06. FieldSystem\Room\04. Noodle</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2740,7 +2746,7 @@
     </ClCompile>
     <ClCompile Include="..\private\SirChop.cpp">
       <Filter>02. GameObject\Object\Npc\Service\SirChop</Filter>
-          </ClCompile>
+    </ClCompile>
     <ClCompile Include="..\Private\UI_Ramen.cpp">
       <Filter>02. GameObject\UI\01. 2D\Ramen</Filter>
     </ClCompile>
@@ -2761,6 +2767,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\DefilerState_Idle.cpp">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler\State\Idle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Room_Noodle.cpp">
+      <Filter>03. Utility\06. FieldSystem\Room\04. Noodle</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
