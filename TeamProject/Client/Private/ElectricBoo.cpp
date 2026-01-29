@@ -101,7 +101,7 @@ void CElectricBoo::Add_DialoguePartner()
 	pairBooCCT.bAutoFit = false;
 	pairBooCCT.fHeight = Get_Component<CCharacterController>()->Get_Height();
 	pairBooCCT.fRadius = 0.4f;
-	pairBooCCT.eGroup = COLLISION_GROUP::COMMON;
+	pairBooCCT.eGroup = COLLISION_GROUP::INTERACTABLE;
 	_float4 Pos = Get_Position();
 	pairBooCCT.vPos = { Pos.x - 0.6f, Pos.y, Pos.z - 0.4f };
 

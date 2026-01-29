@@ -1,7 +1,6 @@
 #include "pch.h"
 #include "UI_DamageText.h"
 #include "CamDirector.h"
-// Engine
 #include "ObjectContainer.h"
 #include "GameInstance.h"
 #include "LevelMgr.h"
@@ -9,10 +8,10 @@
 namespace
 {
     static const string kAtlasTexKey = "DamageText.png";
-
     static const string kColorAtlasTexKey = "DamageTextColor.png";
+
     constexpr _uint  kColorIdx_JaneDoe = 0;
-    constexpr _uint  kColorIdx_Corin   = 3;
+    constexpr _uint  kColorIdx_Corin = 3;
 
     constexpr _uint  kColorFrameCountX = 8;
     constexpr _uint  kColorFrameCountY = 1;
@@ -20,20 +19,18 @@ namespace
     constexpr _uint  kFrameCountX = 8;
     constexpr _uint  kFrameCountY = 8;
 
-    constexpr _float kGlyphHeightPx  = 96.f;
+    constexpr _float kGlyphHeightPx = 96.f;
     constexpr _float kGlyphSpacingPx = 2.f;
 
     constexpr _float  kSpawnRadiusPx = 75.f;
     const     Vector3 kDefaultFollowOffset = Vector3(0.f, 1.3f, 0.f);
 
     constexpr _float kOverlapHold = 0.23f;
-
     constexpr _float kRisePx = 0.f;
 
     constexpr _float kInTotalSec  = 0.30f;
     constexpr _float kOutTotalSec = 0.30f;
-
-    constexpr _float kHoldSec = 1.f;
+    constexpr _float kHoldSec     = 1.f;
 
     constexpr _float kDigitInSec  = 0.20f;
     constexpr _float kDigitOutSec = 0.20f;
@@ -41,13 +38,32 @@ namespace
     constexpr _float kAlphaOutSecRatio = 0.5f;
     constexpr _float kAlphaInSecRatio  = 0.45f;
 
-    constexpr _float kScaleStart = 2.00f;
+    constexpr _float kScaleStart = 1.3f;
     constexpr _float kScaleHold  = 0.55f;
     constexpr _float kScaleEnd   = 0.3f;
 
     constexpr EaseType kScaleEase    = EaseType::OutCubic;
     constexpr EaseType kAlphaInEase  = EaseType::OutCubic;
     constexpr EaseType kAlphaOutEase = EaseType::OutQuad;
+
+    constexpr _float   kFlashSec  = 0.12f;
+    constexpr EaseType kFlashEase = EaseType::OutQuad;
+
+    constexpr _float kDamageScaleMin = 0.25f;
+    constexpr _float kDamageScaleMax = 1.35f;
+    constexpr _float kDamageScaleMaxDamage = 10000.f;
+
+    constexpr _float kDamageBangBangThreshold = 7000.f;
+    constexpr _float kBangWidthRatio          = 1.f;
+    constexpr _float kBangExtraTightPx        = 9.f;
+
+    constexpr _float kRippleAttackSec     = 0.06f;
+    constexpr _float kRippleReleaseSec    = 0.10f;
+    constexpr _float kRippleTauSec        = 0.30f;
+    constexpr _float kRippleFreq          = 3.2f;
+    constexpr _float kRippleAmp           = 0.12f;
+    constexpr _float kRippleSpeedPxPerSec = 360.f;
+    constexpr _float kRippleChance        = 1.f;
 
     struct DamageTextTiming
     {
@@ -91,7 +107,7 @@ namespace
         t.endSec = t.exitStartSec + kOutTotalSec;
 
         t.alphaOutSec = t.digitOutSec * kAlphaOutSecRatio;
-        t.alphaInSec  = t.digitInSec * kAlphaInSecRatio;
+        t.alphaInSec = t.digitInSec * kAlphaInSecRatio;
 
         return t;
     }
@@ -100,20 +116,8 @@ namespace
     {
         const _float r = sqrtf(Helper::Get_Random_Float(0.f, 1.f)) * radius;
         const _float a = Helper::Get_Random_Float(0.f, 1.f) * XM_2PI;
-
         return Vector2(cosf(a) * r, sinf(a) * r);
     }
-}
-
-namespace
-{
-    constexpr _float kDamageScaleMin = 0.25f;
-    constexpr _float kDamageScaleMax = 1.35f;
-    constexpr _float kDamageScaleMaxDamage = 10000.f;
-
-    constexpr _float kDamageBangBangThreshold = 7000.f;
-    constexpr _float kBangWidthRatio = 1.f;
-    constexpr _float kBangExtraTightPx = 9.f;
 
     static _float CalcDamageScale(_int damage)
     {
@@ -128,6 +132,7 @@ CUI_DamageText::CUI_DamageText(const CUI_DamageText& rhs) : CUI_WorldToScreen(rh
 {
     m_glyphAspect = 1.f;
     m_time = 0.f;
+    m_enableRipple = true;
     m_baseAnchorOffset = Vector2(0.f, 0.f);
 
     m_digits.clear();
@@ -152,11 +157,15 @@ HRESULT CUI_DamageText::Initialize(INIT_DESC* arg)
     m_glyphs.clear();
 
     m_time = 0.f;
+    m_enableRipple = true;
     m_glyphAspect = 1.f;
     m_worldPos = _float3(0.f, 0.f, 0.f);
 
     auto base = Get_AnchorOffset();
     m_baseAnchorOffset = Vector2(base.x, base.y);
+
+    m_useColorMix = true;
+    m_colorMix = 1.f;
 
     Set_Color(_float4(1.f, 1.f, 1.f, 1.f));
 
@@ -193,7 +202,17 @@ void CUI_DamageText::UI_Active(void* arg)
     auto desc = static_cast<DAMAGE_DESC*>(arg);
 
     m_time = 0.f;
+    m_enableRipple = (Helper::Get_Random_Float(0.f, 1.f) < kRippleChance);
+
     m_followHandle = desc->followHandle;
+
+    m_useColorMix = true;
+    m_colorMix = 1.f;
+    if (desc)
+    {
+        m_useColorMix = desc->useColorMix;
+        m_colorMix = desc->colorMix;
+    }
 
     if (m_followHandle.isValid())
     {
@@ -225,8 +244,7 @@ void CUI_DamageText::UI_Active(void* arg)
         default:                 m_colorFrameIdx = 0;                 break;
         }
     }
-    else
-        m_colorFrameIdx = 7;
+    else m_colorFrameIdx = 7;
 
     m_shearK = 0.f;
     {
@@ -250,18 +268,22 @@ void CUI_DamageText::UI_Active(void* arg)
     SetDamage(desc->damage);
 }
 
-
-
 void CUI_DamageText::UI_DeActive(void* arg)
 {
     for (_uint i = 0; i < (_uint)m_glyphs.size(); ++i)
-        GetGlyph(i)->Set_Alpha(0.f);
+    {
+        auto g = GetGlyph(i);
+        g->Set_FlashMix(0.f);
+        g->Set_ColorMix(1.f);
+        g->Set_Alpha(0.f);
+    }
 
     m_digits.clear();
     m_baseOffsets.clear();
     m_baseTotalW = 1.f;
 
     m_time = 0.f;
+    m_enableRipple = true;
 
     UIManager()->Remove_UIObject(this);
 }
@@ -275,6 +297,8 @@ void CUI_DamageText::SetDamage(_int damage)
 
     const _uint count = (_uint)m_digits.size();
     Ensure_GlyphCount(count);
+
+    const _float appliedColorMix = m_useColorMix ? m_colorMix : 1.f;
 
     for (_uint i = 0; i < count; ++i)
     {
@@ -290,11 +314,15 @@ void CUI_DamageText::SetDamage(_int damage)
         glyph->Set_Color(m_vColor);
         glyph->Set_Alpha(0.f);
         glyph->Set_ShearK(m_shearK);
+        glyph->Set_FlashMix(1.f);
+        glyph->Set_ColorMix(appliedColorMix);
     }
 
     for (_uint i = count; i < (_uint)m_glyphs.size(); ++i)
     {
         auto glyph = GetGlyph(i);
+        glyph->Set_FlashMix(0.f);
+        glyph->Set_ColorMix(1.f);
         glyph->Set_Alpha(0.f);
         glyph->Set_ShearK(0.f);
     }
@@ -360,7 +388,6 @@ void CUI_DamageText::Rebuild_BaseLayout()
     }
 }
 
-
 void CUI_DamageText::Apply_LayoutScaled()
 {
     const _uint count = (_uint)m_digits.size();
@@ -377,6 +404,8 @@ void CUI_DamageText::Apply_LayoutScaled()
 
     const _float glyphH = kGlyphHeightPx * m_damageScale;
     const _float glyphW = glyphH * m_glyphAspect;
+
+    const _float rippleOriginX = (count > 0u) ? m_baseOffsets[0].x : 0.f;
 
     for (_uint i = 0; i < count; ++i)
     {
@@ -398,6 +427,43 @@ void CUI_DamageText::Apply_LayoutScaled()
             u = clamp(u, 0.f, 1.f);
             u = Math::ApplyEase(kScaleEase, u);
             s = Math::Lerp(kScaleHold, kScaleEnd, u);
+        }
+
+        const _float holdStart = inStart + t.digitInSec;
+        const _float holdEnd = outStart;
+
+        if (m_enableRipple && m_time >= holdStart && m_time < holdEnd)
+        {
+            const _float local = m_time - holdStart;
+            const _float holdLen = max(holdEnd - holdStart, 0.001f);
+
+            const _float travelPx = (m_baseOffsets[i].x - rippleOriginX) * m_damageScale;
+            const _float travelDelay = travelPx / kRippleSpeedPxPerSec;
+
+            const _float waveLocal = local - travelDelay;
+
+            if (waveLocal >= 0.f && waveLocal < holdLen)
+            {
+                _float wIn = clamp(waveLocal / kRippleAttackSec, 0.f, 1.f);
+                wIn = wIn * wIn * (3.f - 2.f * wIn);
+
+                _float wOut = clamp((holdLen - waveLocal) / kRippleReleaseSec, 0.f, 1.f);
+                wOut = wOut * wOut * (3.f - 2.f * wOut);
+
+                const _float window = wIn * wOut;
+
+                _float amp = expf(-waveLocal / kRippleTauSec);
+                amp = sqrtf(amp);
+
+                const _float x = (waveLocal * XM_2PI * kRippleFreq);
+
+                _float pulse = (1.f - cosf(x)) * 0.5f;
+                pulse = sqrtf(pulse);
+
+                const _float shrink = kRippleAmp * amp * window * pulse;
+
+                s *= (1.f - shrink);
+            }
         }
 
         const Vector2 base = m_baseOffsets[i] * m_damageScale;
@@ -445,11 +511,25 @@ void CUI_DamageText::Update_Anim(_float dt)
         }
 
         const _float alpha = clamp(alphaIn * alphaOut, 0.f, 1.f);
-        GetGlyph(i)->Set_Alpha(alpha * m_vColor.w);
+
+        _float flashMix = 0.f;
+        {
+            const _float local = m_time - inStart;
+            if (local >= 0.f && local < kFlashSec)
+            {
+                _float u = local / kFlashSec;
+                u = clamp(u, 0.f, 1.f);
+                u = Math::ApplyEase(kFlashEase, u);
+                flashMix = 1.f - u;
+            }
+        }
+
+        auto glyph = GetGlyph(i);
+        glyph->Set_FlashMix(flashMix);
+        glyph->Set_Alpha(alpha * m_vColor.w);
     }
 
-    if (m_time >= t.endSec)
-        UI_DeActive();
+    if (m_time >= t.endSec) UI_DeActive();
 }
 
 void CUI_DamageText::OnPooledAcquire(INIT_DESC* pArg)
@@ -482,6 +562,11 @@ void CUI_DamageText::Ensure_GlyphCount(_uint count)
         glyph->Set_Pivot({0.f, 0.f});
 
         glyph->Set_ColorAtlas(kColorAtlasTexKey, kColorFrameCountX, kColorFrameCountY);
+        glyph->Set_UseColorAtlas(true);
+        glyph->Set_FlashMix(0.f);
+        glyph->Set_ColorMix(1.f);
+        glyph->Set_ShearK(0.f);
+        glyph->Set_Alpha(0.f);
     }
 }
 

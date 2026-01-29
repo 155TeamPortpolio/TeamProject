@@ -29,7 +29,11 @@ public:
     void Set_ColorAtlas(const string& texKey, _uint frameCountX, _uint frameCountY);
     void Set_ColorFrameIndex(_uint frameIdx);
     void Set_UseColorAtlas(_bool enable);
+
     void Set_ShearK(_float k);
+    void Set_FlashMix(_float mix);
+    void Set_ColorMix(_float mix);
+
     void Set_Atlas(const string& texKey, _uint frameCountX, _uint frameCountY);
     void Set_FrameIndex(_uint frameIdx);
     void Set_HeightPx(_float heightPx);
@@ -51,7 +55,10 @@ private:
     _uint  m_colorFrameCountX{};
     _uint  m_colorFrameCountY{};
     _uint  m_colorFrameIdx{};
+
     _float m_shearK{};
+    _float m_flashMix{};
+    _float m_colorMix{};
 
 public:
     static CGameObject* Create();
