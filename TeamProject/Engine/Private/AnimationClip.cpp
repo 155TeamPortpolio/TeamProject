@@ -52,7 +52,6 @@ _float CAnimationClip::TranslateAnimateMatrix(vector<_float4x4>& transfomationMa
 	*isAnimEnd = false;
 
 	if (isLoop) {
-		*isWarpped = false;
 		if (RealTrackPosition > EndTime) {
 			_float StartTime = fStartAt * m_fDuration;
 			RealTrackPosition -= EndTime - StartTime;

@@ -29,18 +29,18 @@ HRESULT SetAnimBuild::Apply()
 		//	m_pOwner->m_pAnimClips[Layer.iClipIndex]->Sample_KeyFrameByBoneIndex(Layer.iRootBoneIndex, m_fStartAt,
 		//		nullptr, &Layer.vPrevRootQuat, &Layer.vPrevRootPos);
 		//}
-		//
-		////애니매이션 루프시 마지막 엔드프레임이 1인지 구분
-		//if (m_fEndAt == 1.f) {
-		//	Layer.vRootEndPos = m_pOwner->m_pAnimClips[m_iClipIndex]
-		//		->Get_EndKeyFrameByBoneIndex(Layer.iRootBoneIndex).vTranslation;
-		//	Layer.vRootEndQuat = m_pOwner->m_pAnimClips[m_iClipIndex]
-		//		->Get_EndKeyFrameByBoneIndex(Layer.iRootBoneIndex).vRotation;
-		//}
-		//else {
-		//	m_pOwner->m_pAnimClips[Layer.iClipIndex]->Sample_KeyFrameByBoneIndex(Layer.iRootBoneIndex, m_fEndAt,
-		//		nullptr, &Layer.vRootEndQuat, &Layer.vRootEndPos);
-		//}
+				
+		//애니매이션 루프시 마지막 엔드프레임이 1인지 구분
+		if (fabs(m_fEndAt - 1.f) < 0.0001f) {
+			Layer.vRootEndPos = m_pOwner->m_pAnimClips[m_iClipIndex]
+				->Get_EndKeyFrameByBoneIndex(Layer.iRootBoneIndex).vTranslation;
+			Layer.vRootEndQuat = m_pOwner->m_pAnimClips[m_iClipIndex]
+				->Get_EndKeyFrameByBoneIndex(Layer.iRootBoneIndex).vRotation;
+		}
+		else {
+			m_pOwner->m_pAnimClips[m_iClipIndex]->Sample_KeyFrameByBoneIndex(Layer.iRootBoneIndex, m_fEndAt,
+				nullptr, &Layer.vRootEndQuat, &Layer.vRootEndPos);
+		}
 
 		Layer.vMotionEndPos = m_pOwner->m_pAnimClips[m_iClipIndex]
 			->Get_EndKeyFrameByBoneIndex(Layer.iMotionBoneIndex).vTranslation;
@@ -102,17 +102,17 @@ HRESULT ChangeAnimBuild::Apply()
 		//		nullptr, &Layer.vPrevRootQuat, &Layer.vPrevRootPos);
 		//}
 		//
-		////애니매이션 루프시 마지막 엔드프레임이 1인지 구분
-		//if (m_fEndAt == 1.f) {
-		//	Layer.vRootEndPos = m_pOwner->m_pAnimClips[m_iClipIndex]
-		//		->Get_EndKeyFrameByBoneIndex(Layer.iRootBoneIndex).vTranslation;
-		//	Layer.vRootEndQuat = m_pOwner->m_pAnimClips[m_iClipIndex]
-		//		->Get_EndKeyFrameByBoneIndex(Layer.iRootBoneIndex).vRotation;
-		//}
-		//else {
-		//	m_pOwner->m_pAnimClips[m_iClipIndex]->Sample_KeyFrameByBoneIndex(Layer.iRootBoneIndex, m_fEndAt,
-		//		nullptr, &Layer.vRootEndQuat, &Layer.vRootEndPos);
-		//}
+		//애니매이션 루프시 마지막 엔드프레임이 1인지 구분
+		if (fabs(m_fEndAt - 1.f) < 0.0001f) {
+			Layer.vRootEndPos = m_pOwner->m_pAnimClips[m_iClipIndex]
+				->Get_EndKeyFrameByBoneIndex(Layer.iRootBoneIndex).vTranslation;
+			Layer.vRootEndQuat = m_pOwner->m_pAnimClips[m_iClipIndex]
+				->Get_EndKeyFrameByBoneIndex(Layer.iRootBoneIndex).vRotation;
+		}
+		else {
+			m_pOwner->m_pAnimClips[m_iClipIndex]->Sample_KeyFrameByBoneIndex(Layer.iRootBoneIndex, m_fEndAt,
+				nullptr, &Layer.vRootEndQuat, &Layer.vRootEndPos);
+		}
 
 		Layer.vMotionEndPos = m_pOwner->m_pAnimClips[m_iClipIndex]
 			->Get_EndKeyFrameByBoneIndex(Layer.iMotionBoneIndex).vTranslation;

@@ -179,7 +179,6 @@ void CAnimator3D::Update_Animation(_float dt)
 	}
 	else /* If Not Exist DynamicBone */
 		m_FinalMatrices = m_CombinedMatrices;
-
 }
 
 SetAnimBuild CAnimator3D::Set_Animation(AnimArg ClipArg)
@@ -1052,17 +1051,20 @@ void CAnimator3D::Animation_Run(ANIM_LAYER& Layer, _float dt)
 			_vector3 vCurRootPos = T;
 			_vector4 vCurRootQuat = R;
 
-			if (Layer.bJumpedAnim)
-			{
-				//Layer.vRootMoveDelta = _vector3::Zero;
-				//Layer.vRootQuatDelta = _quaternion::Identity;
-				Layer.bJumpedAnim = false;
-				//Layer.bWrapped = false;
-			}
-			else {
-				Compute_RootMoveDelta(Layer, vCurRootPos);
-				Compute_RootQuatDelta(Layer, vCurRootQuat);
-			}
+			//if (Layer.bJumpedAnim)
+			//{
+			//	//Layer.vRootMoveDelta = _vector3::Zero;
+			//	//Layer.vRootQuatDelta = _quaternion::Identity;
+			//	Layer.bJumpedAnim = false;
+			//	//Layer.bWrapped = false;
+			//}
+			//else {
+			//	Compute_RootMoveDelta(Layer, vCurRootPos);
+			//	Compute_RootQuatDelta(Layer, vCurRootQuat);
+			//}
+
+			Compute_RootMoveDelta(Layer, vCurRootPos);
+			Compute_RootQuatDelta(Layer, vCurRootQuat);
 
 			//다음 프레임 대비
 			Layer.vPrevRootPos = vCurRootPos;
@@ -1133,8 +1135,8 @@ void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
 
 			if (Layer.bJumpedAnim)
 			{
-				//Layer.vRootMoveDelta = _vector3::Zero;
-				//Layer.vRootQuatDelta = _quaternion::Identity;
+				//6Layer.vRootMoveDelta = _vector3::Zero;
+				//6Layer.vRootQuatDelta = _quaternion::Identity;
 				Layer.bJumpedAnim = false;
 				//Layer.bWrapped = false;
 			}
