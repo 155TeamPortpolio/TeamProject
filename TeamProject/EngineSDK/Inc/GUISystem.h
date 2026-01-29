@@ -41,6 +41,7 @@ private:
 private:
     void Render_DebugBtn();
     void Render_CollisionBtn();
+    void Render_TimeScaleBtn();
 
 private:
     bool m_bActiveGUI = {true};
