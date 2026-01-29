@@ -87,21 +87,47 @@ void CStaticModel::SetDrawable(_uint Index, _bool isDraw)
     m_DrawableMeshes[Index] = isDraw;
 }
 
-void CStaticModel::Hide_MehsByName(const string& name)
+
+vector<_uint> CStaticModel::Hide_MehsByName(const string& name)
 {
-     _int index = m_pData->Find_MeshIndex(name);
+    vector<_uint> result = m_pData->Find_MeshesIndex(name);
 
-    if (index == -1)
-        return;
+    if (result.empty())
+        return result;
 
-    else
-        m_DrawableMeshes[index] = false;
+    else {
+        for (size_t i = 0; i < result.size(); i++)
+        {
+            m_DrawableMeshes[result[i]] = false;
+        }
+    }
+
+    return result;
 }
+
+vector<_uint> CStaticModel::Show_MehsByName(const string& name)
+{
+    vector<_uint> result = m_pData->Find_MeshesIndex(name);
+
+    if (result.empty())
+        return result;
+
+    else {
+        for (size_t i = 0; i < result.size(); i++)
+        {
+            m_DrawableMeshes[result[i]] = true;
+        }
+    }
+
+    return result;
+}
+
 _int CStaticModel::Get_MeshIndexByName(const string& name)
 {
     _int index = m_pData->Find_MeshIndex(name);
         return index;
 }
+
 MINMAX_BOX CStaticModel::Get_LocalBoundingBox()
 {
     return m_pData->Get_LocalBoundingBox();

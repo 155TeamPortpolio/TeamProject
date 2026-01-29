@@ -76,7 +76,7 @@ HRESULT CScott_Level::Awake()
 
 	//============== Map ============================
 	Ready_Map("Scott_Level", "Zero_Worksite");
-	Ready_Npc();
+	//Ready_Npc();
 
 	CamDirector()->AutoField();
 

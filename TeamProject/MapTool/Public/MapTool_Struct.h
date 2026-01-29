@@ -47,8 +47,9 @@ namespace MapTool {
 		array<_float, 3> vScale = { 0.f, 0.f, 0.f };
 		array<_float, 3> vRotation = { 0.f, 0.f, 0.f };
 		array<_float, 3> vTranslation= { 0.f, 0.f, 0.f };
+		array<_float, 3> vColSize = { 0.f, 0.f, 0.f };
 	}ENTITY;
-	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ENTITY, iEntityID, tagName, iType, vScale, vRotation, vTranslation);
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ENTITY, iEntityID, tagName, iType, vScale, vRotation, vTranslation, vColSize);
 
 	typedef struct tagMapEntity
 	{

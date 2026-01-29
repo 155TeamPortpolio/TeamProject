@@ -6,6 +6,7 @@
 
 #include "FieldPlayer.h"
 #include "CamDirector.h"
+#include "Npc.h"
 
 CRoom_Noodle::CRoom_Noodle(const ROOM_DESC& desc)
 	:CRoom(desc)
@@ -28,6 +29,9 @@ void CRoom_Noodle::Exit()
 	pFieldPlayer->UnLock_Input();
 	pFieldPlayer->Active_Field();
 	
+	auto NpcHandle = FieldSystem()->GetInteractHandle();
+	if (NpcHandle.isValid()) dynamic_cast<CNpc*>(NpcHandle.Get())->Reset(); 
+
 	CamDirector()->AutoTarget();
 	CamDirector()->RequestSequence("Field/Back");
 }
