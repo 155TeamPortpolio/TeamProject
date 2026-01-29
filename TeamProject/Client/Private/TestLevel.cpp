@@ -191,8 +191,10 @@ void CTestLevel::Update()
 	}
 
 	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Tap(VK_F7)) {
-		CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_Defiler", { -0.18f, 0.f,5.f });
 		CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_ThugPoacher", { -0.18f, 0.f, 7.f });
+	}
+	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Tap(VK_F8)) {
+		CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_Defiler", { -0.18f, 0.f,5.f });
 	}
 }
 
