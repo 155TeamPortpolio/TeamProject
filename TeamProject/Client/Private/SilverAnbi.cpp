@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "SilverAnbi.h"
 
 #include "GameInstance.h"
@@ -41,8 +41,7 @@ HRESULT CSilverAnbi::Initialize_Prototype()
 	auto pMaterial = Get_Component<CMaterial>();
 	pMaterial->Link_Material(G_GlobalLevelKey, "Avatar_Female_Size02_SilverAnby_Model_WithRootKeeperout.mat");
 
-	pModel->SetDrawable(7, false);
-	pModel->SetDrawable(8, false);
+	pModel->Hide_MehsByName("Weapon");
 	return S_OK;
 }
 
@@ -59,10 +58,9 @@ void CSilverAnbi::Awake()
 	auto pAnimator = Get_Component<CAnimator3D>();
 	pAnimator->LinkAnimate_Model(G_GlobalLevelKey, "Avatar_Female_Size02_SilverAnby_Model_WithRootKeeperout.model");
 	pAnimator->Link_MetaData(G_GlobalLevelKey, "Avatar_Female_Size02_SilverAnby_Meta.json");
-	pAnimator->Set_MotionBone(13); //Bip001
 
 	m_strAnimName = "Avatar_Female_Size02_SilverAnby_Ani_";
-	m_strName = L"11ȣ";
+	m_strName = L"11호";
 
 	pAnimator->Set_Animation(Get_AnimName() + "MainCity_Stand_Idle_02_Loop")
 		.Loop(true)

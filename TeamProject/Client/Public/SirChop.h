@@ -15,6 +15,7 @@ private:
 
 public:
     virtual void    Execute() override;
+    virtual void    Reset() override;
 
 public:
     virtual HRESULT Initialize_Prototype() override;
