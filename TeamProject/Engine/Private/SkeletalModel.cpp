@@ -238,15 +238,21 @@ void CSkeletalModel::Control_BoneByIndex(_uint Index, _fmatrix BoneMatrix)
 	m_bDirty = true;
 }
 
-void CSkeletalModel::Hide_MehsByName(const string& name)
+vector<_uint> CSkeletalModel::Hide_MehsByName(const string& name)
 {
-	_int index = m_pData->Find_MeshIndex(name);
+	vector<_uint> result = m_pData->Find_MeshesIndex(name);
 
-	if (index == -1)
-		return;
+	if (result.empty())
+		return result;
 
-	else
-		m_DrawableMeshes[index] = false;
+	else {
+		for (size_t i = 0; i < result.size(); i++)
+		{
+			m_DrawableMeshes[result[i]] = false;
+		}
+	}
+
+	return result;
 }
 void CSkeletalModel::Render_GUI()
 {
