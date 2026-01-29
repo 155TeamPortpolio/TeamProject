@@ -80,8 +80,11 @@ void CCharacterAttackCollider::OnTriggerEnter(CGameObject* pOther)
 	auto pCollidable = pOther->Get_Component<ICollidable>();
 	if (pCollidable && (pCollidable->Get_Group() != COLLISION_GROUP::MONSTER))
 		return;
+
 	if (!Try_Hit(pOther))
+	{
 		return;
+	}
 
 	auto pEnemy = dynamic_cast<CEnemy*>(pOther);
 	if (nullptr != pEnemy)
@@ -128,8 +131,11 @@ void CCharacterAttackCollider::OnTriggerStay(CGameObject* pOther)
 	auto pCollidable = pOther->Get_Component<ICollidable>();
 	if (pCollidable && (pCollidable->Get_Group() != COLLISION_GROUP::MONSTER))
 		return;
+
 	if (!Try_Hit(pOther))
+	{
 		return;
+	}
 	
 	auto pEnemy = dynamic_cast<CEnemy*>(pOther);
 	if (nullptr != pEnemy)
@@ -186,12 +192,10 @@ _bool CCharacterAttackCollider::Try_Hit(CGameObject* pTarget)
 		if (record.iHitCount >= 1)
 			return false;
 		break;
-
 	case HIT_TYPE::INTERVAL:
-		if (m_fTimer - record.fLastHitTime < m_tHitDesc.fInterval)
+		if (record.iHitCount > 0 && m_fTimer - record.fLastHitTime < m_tHitDesc.fInterval)
 			return false;
 		break;
-
 	case HIT_TYPE::COUNT:
 		if (record.iHitCount >= m_tHitDesc.iMaxCount)
 			return false;

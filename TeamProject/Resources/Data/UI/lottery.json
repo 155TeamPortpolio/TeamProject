@@ -912,10 +912,10 @@
             "alive": true,
             "instanceName": "overlay",
             "transform": {
-                "anchor": 5,
+                "anchor": 0,
                 "anchorOffset": [
-                    0.0,
-                    0.0
+                    -800.0,
+                    -450.0
                 ],
                 "size": [
                     1600.0,
@@ -932,9 +932,9 @@
                 "radian": 0.0
             },
             "color": [
-                0.0,
-                0.0,
-                0.0,
+                1.0,
+                1.0,
+                1.0,
                 0.0
             ],
             "pass": "Opaque",
@@ -945,12 +945,12 @@
                         {
                             "angle": 0.0,
                             "color": [
-                                0.0,
-                                0.0,
-                                0.0,
+                                1.0,
+                                1.0,
+                                1.0,
                                 0.0
                             ],
-                            "easeType": 0,
+                            "easeType": 7,
                             "position": [
                                 0.0,
                                 0.0
@@ -964,10 +964,10 @@
                         {
                             "angle": 0.0,
                             "color": [
-                                0.0,
-                                0.0,
-                                0.0,
-                                0.8627451062202454
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
                             ],
                             "easeType": 0,
                             "position": [
@@ -978,11 +978,11 @@
                                 1.0,
                                 1.0
                             ],
-                            "time": 0.20000000298023224
+                            "time": 0.5
                         }
                     ],
                     "loop": false,
-                    "name": "appear"
+                    "name": "clip0"
                 },
                 {
                     "duration": 0.20000000298023224,
@@ -990,12 +990,12 @@
                         {
                             "angle": 0.0,
                             "color": [
-                                0.0,
-                                0.0,
-                                0.0,
-                                0.8627451062202454
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
                             ],
-                            "easeType": 0,
+                            "easeType": 5,
                             "position": [
                                 0.0,
                                 0.0
@@ -1009,9 +1009,9 @@
                         {
                             "angle": 0.0,
                             "color": [
-                                0.0,
-                                0.0,
-                                0.0,
+                                1.0,
+                                1.0,
+                                1.0,
                                 0.0
                             ],
                             "easeType": 0,
@@ -1023,16 +1023,86 @@
                                 1.0,
                                 1.0
                             ],
-                            "time": 0.20000000298023224
+                            "time": 0.5
                         }
                     ],
                     "loop": false,
-                    "name": "disappear"
+                    "name": "clip1"
                 }
             ],
-            "children": [],
-            "typeTag": "Image",
-            "textureTag": "empty.png"
+            "children": [
+                {
+                    "alive": true,
+                    "instanceName": "Image",
+                    "transform": {
+                        "anchor": 0,
+                        "anchorOffset": [
+                            -800.0,
+                            -450.0
+                        ],
+                        "size": [
+                            1600.0,
+                            900.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.8627451062202454
+                    ],
+                    "pass": "Opaque",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "Image",
+                    "textureTag": "empty.png"
+                },
+                {
+                    "alive": true,
+                    "instanceName": "Image",
+                    "transform": {
+                        "anchor": 0,
+                        "anchorOffset": [
+                            -800.0,
+                            -450.0
+                        ],
+                        "size": [
+                            1600.0,
+                            900.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        0.3137255012989044,
+                        0.3137255012989044,
+                        0.3137255012989044,
+                        0.3921568691730499
+                    ],
+                    "pass": "Opaque",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "Image",
+                    "textureTag": "patternStripe.png"
+                }
+            ],
+            "typeTag": "CanvasPanel"
         },
         {
             "alive": true,

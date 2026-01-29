@@ -1,6 +1,8 @@
 #pragma once
 #include "Base.h"
 
+NS_BEGIN(Client)
+
 class IInteract
 {
 protected:
@@ -11,3 +13,4 @@ public:
     virtual OBJECT_HANDLE Get_InteractHandle() PURE;
 };
 
+NS_END

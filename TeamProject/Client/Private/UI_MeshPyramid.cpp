@@ -16,9 +16,6 @@
 
 namespace
 {
-    constexpr float PI = 3.14159265359f;
-    constexpr float TWO_PI = 6.28318530718f;
-
     float ExpAlpha(float speed, float dt)
     {
         float a = 1.f - expf(-speed * dt);
@@ -27,8 +24,8 @@ namespace
 
     float WrapRad(float rad)
     {
-        while (rad > PI) rad -= TWO_PI;
-        while (rad < -PI) rad += TWO_PI;
+        while (rad > XM_PI) rad -= XM_2PI;
+        while (rad < -XM_PI) rad += XM_2PI;
         return rad;
     }
 
@@ -72,15 +69,15 @@ HRESULT CUI_MeshPyramid::Initialize(INIT_DESC* arg)
 {
     __super::Initialize(arg);
 
-    alpha = cfg.baseColorAlpha.w;
-    color = Vector3(cfg.baseColorAlpha.x, cfg.baseColorAlpha.y, cfg.baseColorAlpha.z);
+    m_alpha = m_cfg.baseColorAlpha.w;
+    m_color = Vector3(m_cfg.baseColorAlpha.x, m_cfg.baseColorAlpha.y, m_cfg.baseColorAlpha.z);
 
     auto mtrl = Get_Component<CMaterial>();
     auto mtrlInsts = mtrl->Get_MaterialInstances();
     for (auto& inst : mtrlInsts)
     {
-        inst->Set_Param("color", {&color, "float3", sizeof(_float3)});
-        inst->Set_Param("alpha", {&alpha, "float", sizeof(_float)});
+        inst->Set_Param("color", {&m_color, "float3", sizeof(_float3)});
+        inst->Set_Param("alpha", {&m_alpha, "float", sizeof(_float)});
     }
 
     m_pTransform->Scale({0.05f, 0.1f, 0.05f});
@@ -94,33 +91,33 @@ HRESULT CUI_MeshPyramid::Initialize(INIT_DESC* arg)
 
 void CUI_MeshPyramid::Update(_float dt)
 {
-    if (!IsOnScreen(cfg.onScreenMarginPx))
+    if (!IsOnScreen(m_cfg.onScreenMarginPx))
     {
-        rt.fadeT += dt / cfg.fadeInDur;
-        if (rt.fadeT > 1.f) rt.fadeT = 1.f;
+        m_rt.fadeT += dt / m_cfg.fadeInDur;
+        if (m_rt.fadeT > 1.f) m_rt.fadeT = 1.f;
     }
     else
     {
-        rt.fadeT -= dt / cfg.fadeOutDur;
-        if (rt.fadeT < 0.f) rt.fadeT = 0.f;
+        m_rt.fadeT -= dt / m_cfg.fadeOutDur;
+        if (m_rt.fadeT < 0.f) m_rt.fadeT = 0.f;
     }
 
-    const float eased = Math::ApplyEase(EaseType::InOutSine, rt.fadeT);
-    alpha = cfg.baseColorAlpha.w * eased;
+    const float eased = Math::ApplyEase(EaseType::InOutSine, m_rt.fadeT);
+    m_alpha = m_cfg.baseColorAlpha.w * eased;
 
     //rt.isAlert = IsAlert();
 
-    if (!rt.isAlert)
+    if (!m_rt.isAlert)
     {
-        color = cfg.gray;
-        rt.alertBlinkT = 0.f;
+        m_color = m_cfg.gray;
+        m_rt.alertBlinkT = 0.f;
     }
     else
     {
-        rt.alertBlinkT += dt;
-        const float period = cfg.blinkSec > 0.f ? cfg.blinkSec : 0.0001f;
-        const int phase = (int)(rt.alertBlinkT / period);
-        color = (phase & 1) ? cfg.red : cfg.gray;
+        m_rt.alertBlinkT += dt;
+        const float period = m_cfg.blinkSec > 0.f ? m_cfg.blinkSec : 0.0001f;
+        const int phase = (int)(m_rt.alertBlinkT / period);
+        m_color = (phase & 1) ? m_cfg.red : m_cfg.gray;
     }
 
     auto parentObj = Get_Component<CChild>()->Get_Parent();
@@ -138,77 +135,77 @@ void CUI_MeshPyramid::Update(_float dt)
     Vector2 footXZ(foot.x, foot.z);
     Vector2 targetXZ(targetPos3.x, targetPos3.z);
 
-    if (!rt.hasLastFootXZ)
+    if (!m_rt.hasLastFootXZ)
     {
-        rt.lastFootXZ = footXZ;
-        rt.hasLastFootXZ = true;
+        m_rt.lastFootXZ = footXZ;
+        m_rt.hasLastFootXZ = true;
     }
     else
     {
-        rt.lastFootXZ = MoveTowardsVec2(rt.lastFootXZ, footXZ, cfg.maxFootStepPerFrame);
+        m_rt.lastFootXZ = MoveTowardsVec2(m_rt.lastFootXZ, footXZ, m_cfg.maxFootStepPerFrame);
     }
 
-    if (!rt.hasLastTargetXZ)
+    if (!m_rt.hasLastTargetXZ)
     {
-        rt.lastTargetXZ = targetXZ;
-        rt.hasLastTargetXZ = true;
+        m_rt.lastTargetXZ = targetXZ;
+        m_rt.hasLastTargetXZ = true;
     }
     else
     {
-        rt.lastTargetXZ = MoveTowardsVec2(rt.lastTargetXZ, targetXZ, cfg.maxTargetStepPerFrame);
+        m_rt.lastTargetXZ = MoveTowardsVec2(m_rt.lastTargetXZ, targetXZ, m_cfg.maxTargetStepPerFrame);
     }
 
-    const Vector3 stableFoot(rt.lastFootXZ.x, foot.y, rt.lastFootXZ.y);
-    const Vector3 stableTarget(rt.lastTargetXZ.x, targetPos3.y, rt.lastTargetXZ.y);
+    const Vector3 stableFoot(m_rt.lastFootXZ.x, foot.y, m_rt.lastFootXZ.y);
+    const Vector3 stableTarget(m_rt.lastTargetXZ.x, targetPos3.y, m_rt.lastTargetXZ.y);
 
     Vector3 dir = stableTarget - stableFoot;
     dir.y = 0.f;
 
     const float dirLen = dir.Length();
 
-    if (dirLen >= cfg.minDirLen)
+    if (dirLen >= m_cfg.minDirLen)
     {
         dir /= dirLen;
-        rt.lastDirXZ = dir;
-        rt.hasLastDir = true;
+        m_rt.lastDirXZ = dir;
+        m_rt.hasLastDir = true;
     }
     else
     {
-        if (rt.hasLastDir) dir = rt.lastDirXZ;
-        else dir = DirFromYaw(rt.hasLastYaw ? rt.lastYawRad : 0.f);
+        if (m_rt.hasLastDir) dir = m_rt.lastDirXZ;
+        else dir = DirFromYaw(m_rt.hasLastYaw ? m_rt.lastYawRad : 0.f);
     }
 
-    const Vector3 rawPos = stableFoot + dir * cfg.ringRadius + Vector3(0.f, cfg.yOffset, 0.f);
+    const Vector3 rawPos = stableFoot + dir * m_cfg.ringRadius + Vector3(0.f, m_cfg.yOffset, 0.f);
     const float rawYawRad = atan2f(dir.x, dir.z);
 
-    if (!rt.hasLastYaw)
+    if (!m_rt.hasLastYaw)
     {
-        rt.lastYawRad = rawYawRad;
-        rt.hasLastYaw = true;
+        m_rt.lastYawRad = rawYawRad;
+        m_rt.hasLastYaw = true;
     }
     else
     {
-        const float a = ExpAlpha(cfg.yawSmoothSpeed, dt);
-        const float delta = WrapRad(rawYawRad - rt.lastYawRad);
-        rt.lastYawRad = WrapRad(rt.lastYawRad + delta * a);
+        const float a = ExpAlpha(m_cfg.yawSmoothSpeed, dt);
+        const float delta = WrapRad(rawYawRad - m_rt.lastYawRad);
+        m_rt.lastYawRad = WrapRad(m_rt.lastYawRad + delta * a);
     }
 
-    if (!rt.hasSmoothPos)
+    if (!m_rt.hasSmoothPos)
     {
-        rt.smoothPos = rawPos;
-        rt.hasSmoothPos = true;
+        m_rt.smoothPos = rawPos;
+        m_rt.hasSmoothPos = true;
     }
     else
     {
-        const float a = ExpAlpha(cfg.posSmoothSpeed, dt);
-        Vector3 nextPos = Vector3::Lerp(rt.smoothPos, rawPos, a);
-        rt.smoothPos = MoveTowardsVec3(rt.smoothPos, nextPos, cfg.maxPosStepPerFrame);
+        const float a = ExpAlpha(m_cfg.posSmoothSpeed, dt);
+        Vector3 nextPos = Vector3::Lerp(m_rt.smoothPos, rawPos, a);
+        m_rt.smoothPos = MoveTowardsVec3(m_rt.smoothPos, nextPos, m_cfg.maxPosStepPerFrame);
     }
 
     auto tf = Get_Component<CTransform>();
-    tf->Set_WorldPos(Vector4(rt.smoothPos.x, rt.smoothPos.y, rt.smoothPos.z, 1.f));
+    tf->Set_WorldPos(Vector4(m_rt.smoothPos.x, m_rt.smoothPos.y, m_rt.smoothPos.z, 1.f));
 
-    const Quaternion q = Quaternion::CreateFromYawPitchRoll(rt.lastYawRad, cfg.basePitchRad, 0.f);
+    const Quaternion q = Quaternion::CreateFromYawPitchRoll(m_rt.lastYawRad, m_cfg.basePitchRad, 0.f);
     tf->Set_WorldQuaternion(Vector4(q.x, q.y, q.z, q.w));
 }
 

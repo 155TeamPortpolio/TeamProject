@@ -13,6 +13,9 @@ struct DAMAGE_DESC : public UI_DESC
     _int          damage{};
     CHARACTER     charaName{};
     _bool         isEnemy{};
+
+    _bool         useColorMix = true;
+    _float        colorMix = 1.f;
 };
 
 class CUI_DamageText final : public CUI_WorldToScreen
@@ -48,6 +51,8 @@ private:
 private:
     _float  m_glyphAspect = 1.f;
     _float  m_time = 0.f;
+    _bool   m_enableRipple = true;
+
     Vector2 m_baseAnchorOffset = Vector2(0.f, 0.f);
     _float3 m_worldPos{};
     string  m_digits;
@@ -61,6 +66,9 @@ private:
     _uint  m_colorFrameIdx = 0;
     _float m_damageScale = 1.f;
     _float m_shearK = 0.f;
+
+    _bool  m_useColorMix = true;
+    _float m_colorMix = 1.f;
 
     vector<CUI_AtlasSprite*> m_glyphs;
 

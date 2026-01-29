@@ -7,6 +7,8 @@
 /* UI */
 #include "UIDirector.h"
 
+_bool CLoadingLevel::m_bGlobal = { false };
+
 CLoadingLevel::CLoadingLevel(const string& LevelKey)
 	:CLevel(LevelKey),
 	m_pGameInstance{ CGameInstance::GetInstance() }
@@ -27,12 +29,16 @@ HRESULT CLoadingLevel::Awake()
 
 	auto transDesc = CGameInstance::GetInstance()->Get_LevelMgr()->Get_TransitionDesc();
 	m_NextLevel=transDesc.nextLevelKey;
-	PreLoadLevel();
+	PreLoadLevel(m_NextLevel);
+	if (!m_bGlobal)
+	{
+		PreLoadLevel("Global_Level");
+		m_bGlobal = true;
+	}
 	return S_OK;
 }
 void CLoadingLevel::Update()
 {
-	
 	m_leastTime += GameInstance()->Get_EngineDeltaTime();
 
 	/*쓰레드에게 미리 넣어둔 요청 큐를 펌핑 하는 작업 - 로드한다는 뜻!*/
@@ -55,9 +61,18 @@ HRESULT CLoadingLevel::Render()
 	return S_OK;
 }
 
-void CLoadingLevel::PreLoadLevel()
+void CLoadingLevel::PreLoadLevel(const string& levelKey)
 {
-	const string clientPath = "../Bin/Resources";
+	string LevelKey = levelKey;
+
+	const std::string suffix = "_Level";
+	if (LevelKey.size() >= suffix.size() &&
+		LevelKey.compare(LevelKey.size() - suffix.size(), suffix.size(), suffix) == 0)
+	{
+		LevelKey.erase(LevelKey.size() - suffix.size());
+	}
+
+	const string clientPath = "../Bin/Resources/"+ LevelKey;
 	filesystem::path directory = clientPath;
 
 	error_code ec;

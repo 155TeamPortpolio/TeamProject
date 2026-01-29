@@ -17,13 +17,13 @@ namespace
         _bool   valid = false;
     };
 
-    PivotSample SamplePivots(OBJECT_HANDLE handle, _float offsetY, _float faceYOffsetMul)
+    PivotSample SamplePivots(OBJECT_HANDLE h, _float offsetY, _float faceYOffsetMul)
     {
         PivotSample s{};
 
-        if (!handle.isValid()) return s;
+        if (!h.isValid()) return s;
 
-        auto obj = ObjectManager()->Request_Object(handle);
+        auto obj = ObjectManager()->Request_Object(h);
         if (!obj) return s;
 
         auto cc = obj->Get_Component<CCharacterController>();
@@ -58,197 +58,197 @@ namespace
 
 void CCamDialogueController::Reset()
 {
-    holding = false;
-    blending = false;
-    restoring = false;
+    hold = false;
+    blend = false;
+    restore = false;
 
-    savedFov = 0.f;
-    holdFov = 30.f;
+    fovSaved = 0.f;
+    fovHold = 30.f;
 
-    partnerHandle.Reset();
+    partner.Reset();
 
-    time = 0.f;
-    dur = 0.5f;
+    blendTime = 0.f;
+    blendDur = 0.5f;
 
-    fromFov = 0.f;
-    toFov = 0.f;
+    fovFrom = 0.f;
+    fovTo = 0.f;
 
-    fromPivotWorld = Vector3::Zero;
-    toPivotWorld = Vector3::Zero;
+    pivotFrom = Vector3::Zero;
+    pivotTo = Vector3::Zero;
 
-    blendInit = false;
+    hasBlendInit = false;
 
     ease = EaseType::InOutSine;
 
-    maxPivotOffset = 0.8f;
+    maxPivotOff = 0.8f;
     faceYOffsetMul = 0.85f;
 }
 
-void CCamDialogueController::Begin(_float targetFov, _float blendSec)
+void CCamDialogueController::Begin(_float fovHold, _float blendSec)
 {
-    holdFov = targetFov;
+    this->fovHold = fovHold;
 
-    holding = true;
-    restoring = false;
+    hold = true;
+    restore = false;
 
-    blending = true;
-    time = 0.f;
-    dur = blendSec > 0.f ? blendSec : 0.f;
+    blend = true;
+    blendTime = 0.f;
+    blendDur = blendSec > 0.f ? blendSec : 0.f;
 
-    fromFov = 0.f;
-    toFov = 0.f;
+    fovFrom = 0.f;
+    fovTo = 0.f;
 
-    fromPivotWorld = Vector3::Zero;
-    toPivotWorld = Vector3::Zero;
+    pivotFrom = Vector3::Zero;
+    pivotTo = Vector3::Zero;
 
-    blendInit = false;
+    hasBlendInit = false;
 
-    partnerHandle = FieldSystem()->GetInteractHandle();
+    partner = FieldSystem()->GetInteractHandle();
 }
 
 void CCamDialogueController::End(_float blendSec)
 {
-    holding = false;
-    restoring = true;
+    hold = false;
+    restore = true;
 
-    blending = true;
-    time = 0.f;
-    dur = blendSec > 0.f ? blendSec : 0.f;
+    blend = true;
+    blendTime = 0.f;
+    blendDur = blendSec > 0.f ? blendSec : 0.f;
 
-    fromFov = 0.f;
-    toFov = 0.f;
+    fovFrom = 0.f;
+    fovTo = 0.f;
 
-    fromPivotWorld = Vector3::Zero;
-    toPivotWorld = Vector3::Zero;
+    pivotFrom = Vector3::Zero;
+    pivotTo = Vector3::Zero;
 
-    blendInit = false;
+    hasBlendInit = false;
 }
 
 void CCamDialogueController::Update(_float dt, CCamera* cam, COrbitCam* orbit, CTransform* focusTr)
 {
-    if (!holding && !blending) return;
+    if (!hold && !blend) return;
 
     const _float curFov = cam->Get_FOV();
 
-    if ((holding || restoring) && savedFov == 0.f) savedFov = curFov;
+    if ((hold || restore) && fovSaved == 0.f) fovSaved = curFov;
 
-    if (holding && !partnerHandle.isValid())
-        partnerHandle = FieldSystem()->GetInteractHandle();
+    if (hold && !partner.isValid())
+        partner = FieldSystem()->GetInteractHandle();
 
-    const _float offsetY = orbit->GetProfileOffsetY();
+    const _float offsetY = orbit->GetOffsetY();
 
-    const PivotSample me = SamplePivots(orbit->GetTargetHandle(), offsetY, faceYOffsetMul);
+    const PivotSample me = SamplePivots(orbit->GetTarget(), offsetY, faceYOffsetMul);
     if (!me.valid) return;
 
-    const PivotSample partner = SamplePivots(partnerHandle, offsetY, faceYOffsetMul);
+    const PivotSample other = SamplePivots(partner, offsetY, faceYOffsetMul);
 
     Vector3 basePivot = me.basePivot;
     Vector3 desiredPivot = basePivot;
 
-    if (partner.valid)
+    if (other.valid)
     {
         const Vector3 midXZ = Vector3(
-            (me.facePivot.x + partner.facePivot.x) * 0.5f,
+            (me.facePivot.x + other.facePivot.x) * 0.5f,
             0.f,
-            (me.facePivot.z + partner.facePivot.z) * 0.5f
+            (me.facePivot.z + other.facePivot.z) * 0.5f
         );
 
-        const _float midY = (me.facePivot.y + partner.facePivot.y) * 0.5f;
+        const _float midY = (me.facePivot.y + other.facePivot.y) * 0.5f;
 
         desiredPivot = Vector3(midXZ.x, midY, midXZ.z);
     }
 
     {
-        const Vector3 rawOffset = desiredPivot - basePivot;
-        desiredPivot = basePivot + ClampOffset(rawOffset, maxPivotOffset);
+        const Vector3 rawOff = desiredPivot - basePivot;
+        desiredPivot = basePivot + ClampOffset(rawOff, maxPivotOff);
     }
 
-    _float desiredHoldFov = holdFov;
+    _float desiredHoldFov = this->fovHold;
 
-    if (orbit->IsDistConstrained())
+    if (orbit->IsDistHit())
     {
-        desiredHoldFov = savedFov;
+        desiredHoldFov = fovSaved;
         desiredPivot = basePivot;
     }
 
-    if (blending && !blendInit)
+    if (blend && !hasBlendInit)
     {
-        fromFov = curFov;
-        toFov = restoring ? savedFov : desiredHoldFov;
+        fovFrom = curFov;
+        fovTo = restore ? fovSaved : desiredHoldFov;
 
-        fromPivotWorld = orbit->GetCurPivotWorld();
-        toPivotWorld = restoring ? basePivot : desiredPivot;
+        pivotFrom = orbit->GetPivot();
+        pivotTo = restore ? basePivot : desiredPivot;
 
-        time = 0.f;
-        blendInit = true;
+        blendTime = 0.f;
+        hasBlendInit = true;
     }
 
     _float outFov = curFov;
-    Vector3 outPivotWorld = orbit->GetCurPivotWorld();
+    Vector3 outPivot = orbit->GetPivot();
 
-    if (blending)
+    if (blend)
     {
-        if (dur <= 0.f)
+        if (blendDur <= 0.f)
         {
-            outFov = restoring ? savedFov : desiredHoldFov;
-            outPivotWorld = restoring ? basePivot : desiredPivot;
-            blending = false;
+            outFov = restore ? fovSaved : desiredHoldFov;
+            outPivot = restore ? basePivot : desiredPivot;
+            blend = false;
         }
         else
         {
-            time += dt;
+            blendTime += dt;
 
-            _float rawT = time / dur;
+            _float rawT = blendTime / blendDur;
             if (rawT >= 1.f)
             {
                 rawT = 1.f;
-                blending = false;
+                blend = false;
             }
 
             const _float t = Math::ApplyEase(ease, clamp(rawT, 0.f, 1.f));
 
-            const _float endFov = restoring ? savedFov : toFov;
-            const Vector3 endPivot = restoring ? basePivot : toPivotWorld;
+            const _float endFov = restore ? fovSaved : fovTo;
+            const Vector3 endPivot = restore ? basePivot : pivotTo;
 
-            outFov = fromFov + (endFov - fromFov) * t;
-            outPivotWorld = Vector3::Lerp(fromPivotWorld, endPivot, t);
+            outFov = fovFrom + (endFov - fovFrom) * t;
+            outPivot = Vector3::Lerp(pivotFrom, endPivot, t);
         }
     }
     else
     {
-        if (holding)
+        if (hold)
         {
             outFov = desiredHoldFov;
-            outPivotWorld = desiredPivot;
+            outPivot = desiredPivot;
         }
         else
         {
-            outFov = savedFov;
-            outPivotWorld = basePivot;
+            outFov = fovSaved;
+            outPivot = basePivot;
         }
     }
 
     cam->Set_FOV(outFov);
 
-    orbit->SetPivotExternalOffset(outPivotWorld - basePivot);
+    orbit->SetPivotExt(outPivot - basePivot);
 
-    if (!blending && restoring)
+    if (!blend && restore)
     {
-        orbit->ClearPivotExternalOffset();
+        orbit->ClearPivotExt();
 
-        restoring = false;
-        holding = false;
+        restore = false;
+        hold = false;
 
-        savedFov = 0.f;
+        fovSaved = 0.f;
 
-        fromFov = 0.f;
-        toFov = 0.f;
+        fovFrom = 0.f;
+        fovTo = 0.f;
 
-        fromPivotWorld = Vector3::Zero;
-        toPivotWorld = Vector3::Zero;
+        pivotFrom = Vector3::Zero;
+        pivotTo = Vector3::Zero;
 
-        blendInit = false;
+        hasBlendInit = false;
 
-        partnerHandle.Reset();
+        partner.Reset();
     }
 }
