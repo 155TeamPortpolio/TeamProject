@@ -25,10 +25,7 @@ void CFieldSystem::Update()
 
 void CFieldSystem::SetActive(_bool is)
 {
-	if (is == false)
-	{
-		m_pRoomDirector->ClearRooms();
-	}
+	if (is == false) m_pRoomDirector->ClearRooms();
 	m_isActive = is;
 }
 

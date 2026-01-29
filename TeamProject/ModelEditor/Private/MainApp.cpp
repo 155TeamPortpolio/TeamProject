@@ -11,6 +11,7 @@
 #include "EditModel.h"
 #include "BinaryModel.h"
 #include "EditorSystem.h"
+#include "MaterialAdjust.h"
 
 CMainApp::CMainApp()
 {
@@ -80,6 +81,7 @@ void CMainApp::ReadyBase()
 	pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_EditCamera", CFreeCam::Create());
 	pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_EditModel", CEditModel::Create());
 	pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_BinaryModel", CBinaryModel::Create());
+	pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_MaterialAdjust", CMaterialAdjust::Create());
 
 	m_pSystem = CEditorSystem::GetInstance();
 

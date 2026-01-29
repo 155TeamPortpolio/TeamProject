@@ -328,6 +328,7 @@ void CSacrifice::ChangePhase_SetUp()
 	m_tStatus.iNowHP = m_tStatus.iMaxHP;
 	m_tStatus.iGroggyValue = 0;
 	m_tStatus.isGroggy = false;	
+	m_IsOverDrive = true;
 }
 
 void CSacrifice::Phase1Attack()
@@ -385,11 +386,11 @@ void CSacrifice::OverDrive_Attack1()
 	static_cast<CSacrificeHand*>(pHand)->OverDrive_Attack1();
 
 	_vector3 vPosition = m_pTransform->Get_WorldPos();
-	_vector4 vQuaternion = m_pTransform->Get_QuaternionRotate();
+	_vector3 vLook = m_pTransform->Dir(STATE::LOOK);
 
 	auto pHandTransform = pHand->Get_Component<CTransform>();
 	pHandTransform->Set_Pos(vPosition);
-	pHandTransform->Set_Quaternion(vQuaternion);
+	pHandTransform->Set_Look(vLook);
 }
 
 void CSacrifice::OverDrive_Attack2()
@@ -398,11 +399,11 @@ void CSacrifice::OverDrive_Attack2()
 	static_cast<CSacrificeHand*>(pHand)->OverDrive_Attack2();
 
 	_vector3 vPosition = m_pTransform->Get_WorldPos();
-	_vector4 vQuaternion = m_pTransform->Get_QuaternionRotate();
+	_vector3 vLook = m_pTransform->Dir(STATE::LOOK);
 
 	auto pHandTransform = pHand->Get_Component<CTransform>();
 	pHandTransform->Set_Pos(vPosition);
-	pHandTransform->Set_Quaternion(vQuaternion);
+	pHandTransform->Set_Look(vLook);
 }
 
 void CSacrifice::OverDrive_Attack3()
@@ -411,11 +412,11 @@ void CSacrifice::OverDrive_Attack3()
 	static_cast<CSacrificeHand*>(pHand)->OverDrive_Attack3();
 
 	_vector3 vPosition = m_pTransform->Get_WorldPos();
-	_vector4 vQuaternion = m_pTransform->Get_QuaternionRotate();
+	_vector3 vLook = m_pTransform->Dir(STATE::LOOK);
 
 	auto pHandTransform = pHand->Get_Component<CTransform>();
 	pHandTransform->Set_Pos(vPosition);
-	pHandTransform->Set_Quaternion(vQuaternion);
+	pHandTransform->Set_Look(vLook);
 }
 
 void CSacrifice::ActiveLaser(_uint mode)
@@ -587,7 +588,7 @@ HRESULT CSacrifice::Create_Colliders()
 		RightArmDesc.isAttachBone = true;
 		RightArmDesc.tagBone = "Skn_R_Hand";
 		RightArmDesc.pOwnerAnimator3D = pAnimator;
-		RightArmDesc.vAttackSize = _float3{1.f,1.f,1.f};
+		RightArmDesc.vAttackSize = _float3{2.f,2.f,2.f};
 		RightArmDesc.vTriggerSize = _float3{ 3.f,2.f,3.f };
 	
 		if (FAILED(AttachBattleColliderObject(&RightArmDesc)))

@@ -375,9 +375,11 @@
     <ClInclude Include="..\Public\CorinState_AssaultAttack.h" />
     <ClInclude Include="..\Public\CorinState_CounterAttack.h" />
     <ClInclude Include="..\Public\ICamCollidable.h" />
+    <ClInclude Include="..\Public\JaneDoeState_AssaultAttack.h" />
     <ClInclude Include="..\Public\JaneDoeState_CounterAttack.h" />
     <ClInclude Include="..\public\OrbitCamCollider.h" />
     <ClInclude Include="..\public\Room_Lottery.h" />
+    <ClInclude Include="..\public\Room_Noodle.h" />
     <ClInclude Include="..\public\ThugPoacher.h" />
     <ClInclude Include="..\public\ThugPoacher_Arrow.h" />
     <ClInclude Include="..\public\ThugPoacher_Attack.h" />
@@ -388,6 +390,7 @@
     <ClInclude Include="..\public\ThugPoacher_Hit.h" />
     <ClInclude Include="..\public\ThugPoacher_Idle.h" />
     <ClInclude Include="..\public\ThugPoacher_Move.h" />
+    <ClInclude Include="..\public\SirChop.h" />
     <ClInclude Include="..\public\UI_DamageText.h" />
     <ClInclude Include="..\public\DialogueNpc.h" />
     <ClInclude Include="..\public\ElectricBoo.h" />
@@ -707,9 +710,11 @@
     <ClCompile Include="..\Private\DefilerState_Attack.cpp" />
     <ClCompile Include="..\Private\DefilerState_Born.cpp" />
     <ClCompile Include="..\Private\DefilerState_Idle.cpp" />
+    <ClCompile Include="..\Private\JaneDoeState_AssaultAttack.cpp" />
     <ClCompile Include="..\Private\JaneDoeState_CounterAttack.cpp" />
     <ClCompile Include="..\private\OrbitCamCollider.cpp" />
     <ClCompile Include="..\private\Room_Lottery.cpp" />
+    <ClCompile Include="..\private\Room_Noodle.cpp" />
     <ClCompile Include="..\private\ThugPoacher.cpp" />
     <ClCompile Include="..\private\ThugPoacher_Arrow.cpp" />
     <ClCompile Include="..\private\ThugPoacher_Attack.cpp" />
@@ -720,6 +725,7 @@
     <ClCompile Include="..\private\ThugPoacher_Hit.cpp" />
     <ClCompile Include="..\private\ThugPoacher_Idle.cpp" />
     <ClCompile Include="..\private\ThugPoacher_Move.cpp" />
+    <ClCompile Include="..\private\SirChop.cpp" />
     <ClCompile Include="..\private\UI_DamageText.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='ReleaseDebug|x64'">Disabled</Optimization>
       <Optimization Condition="'$(Configuration)|$(Platform)'=='EngineDebug|x64'">Disabled</Optimization>

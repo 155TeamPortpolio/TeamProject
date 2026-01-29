@@ -10,6 +10,9 @@
 #include "ObjectContainer.h"
 #include "Helper_Func.h"
 #include "IEditable.h"
+#include "Layer.h"
+#include "BoneFollower.h"
+#include "Animator3D.h"
 
 CEffectContainer_Edit::CEffectContainer_Edit()
     :CEffectContainer()
@@ -69,6 +72,11 @@ void CEffectContainer_Edit::Update(_float dt)
 		Get_Component<CObjectContainer>()->UpdateChild(dt);
 	}
 
+
+	auto pBoneFollwer = Get_Component<CBoneFollower>();
+	if (pBoneFollwer)
+		pBoneFollwer->Sync_Transform(dt, m_pTransform, m_IsOnlyPosition);
+
 	if (m_IsBillBoard)
 	{
 		_vector4 vCamPosition = CameraManager()->Get_CameraPos();
@@ -84,6 +92,7 @@ void CEffectContainer_Edit::Update(_float dt)
 
 		m_pTransform->Set_Look(vDir);
 	}
+
 }
 
 void CEffectContainer_Edit::Late_Update(_float dt)
@@ -102,6 +111,7 @@ void CEffectContainer_Edit::Render_GUI()
 	Export();
 	Play();
     AddNode();
+	AttachToModel();
 	RemoveLastNode();
 
     CGameObject::Render_GUI();
@@ -265,6 +275,54 @@ void CEffectContainer_Edit::Play()
 
 		for (auto& node : m_Nodes)
 			node->Play();
+	}
+}
+
+void CEffectContainer_Edit::AttachToModel()
+{
+	if (ImGui::Button("Attach Bone"))
+		m_OpenAttachBonePopup = true;
+
+	if (m_OpenAttachBonePopup)
+	{
+		ImGui::OpenPopup("Attach To Bone");
+		m_OpenAttachBonePopup = false;
+	}
+
+	_bool open = true;
+	if (ImGui::BeginPopupModal("Attach To Bone", &open, ImGuiWindowFlags_AlwaysAutoResize))
+	{
+		ImGui::Text("Bone Name");
+		ImGui::InputText("##BoneName", m_BoneNameBuf, IM_ARRAYSIZE(m_BoneNameBuf));
+		ImGui::Spacing();
+
+		if (ImGui::Button("OK", ImVec2(120, 0)))
+		{
+			m_PendingBoneName = m_BoneNameBuf; // È®Á¤
+			ImGui::CloseCurrentPopup();
+
+			auto pModelObject = ObjectManager()->Get_Layer({ "EffectEdit_Level","Model_Layer" })->Get_AllObject().back();
+			auto pAnimator = pModelObject->Get_Component<CAnimator3D>();
+
+			if (!pAnimator)
+			{
+				MSG_BOX("Missing Animator");
+				return;
+			}
+
+			auto pBoneFollower = Add_Component<CBoneFollower>();
+			pBoneFollower->Initialize(nullptr);
+			pBoneFollower->Link_Bone(pAnimator, m_PendingBoneName);
+		}
+		ImGui::SameLine();
+
+		if (ImGui::Button("Cancel", ImVec2(120, 0)))
+		{
+			m_BoneNameBuf[0] = '\0';
+			ImGui::CloseCurrentPopup();
+		}
+
+		ImGui::EndPopup();
 	}
 }
 
@@ -548,4 +606,24 @@ void CEffectContainer_Edit::SetUp_EffectContainer()
 	ImGui::Checkbox("Is BillBoard", &m_IsBillBoard);
 	ImGui::Checkbox("Is Loop", &m_IsLoop);
 	ImGui::DragFloat("Duration", &m_fDuration);
+	
+	auto pBoneFollower = Get_Component<CBoneFollower>();
+	if (pBoneFollower)
+	{
+		ImGui::Checkbox("Only Position", &m_IsOnlyPosition);
+
+		_bool isDirty = false;
+		isDirty |= ImGui::DragFloat3("Bone Offset Position", &m_vBoneOffsetPosition.x);
+		isDirty |= ImGui::DragFloat3("Bone Offset Rotation", &m_vBoneOffsetRotation.x);
+
+		if (isDirty)
+		{
+			_matrix transMat = XMMatrixTranslation(m_vBoneOffsetPosition.x, m_vBoneOffsetPosition.y, m_vBoneOffsetPosition.z);
+			_matrix rotMat = XMMatrixRotationRollPitchYaw(m_vBoneOffsetRotation.x, m_vBoneOffsetRotation.y, m_vBoneOffsetRotation.z);
+			
+			_matrix offsetMatrix = rotMat * transMat;
+			
+			pBoneFollower->Set_Offset(offsetMatrix);
+		}
+	}
 }

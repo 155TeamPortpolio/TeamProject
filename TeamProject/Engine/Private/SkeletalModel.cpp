@@ -254,6 +254,22 @@ vector<_uint> CSkeletalModel::Hide_MehsByName(const string& name)
 
 	return result;
 }
+vector<_uint> CSkeletalModel::Show_MehsByName(const string& name)
+{
+	vector<_uint> result = m_pData->Find_MeshesIndex(name);
+
+	if (result.empty())
+		return result;
+
+	else {
+		for (size_t i = 0; i < result.size(); i++)
+		{
+			m_DrawableMeshes[result[i]] = true;
+		}
+	}
+
+	return result;
+}
 void CSkeletalModel::Render_GUI()
 {
 	ImGui::SeparatorText("Skeletal Model");

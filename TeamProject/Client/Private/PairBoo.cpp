@@ -65,6 +65,7 @@ void CPairBoo::Awake()
 		.Apply();
 
 	Add_NameIndicator();
+	__super::Awake();
 }
 
 void CPairBoo::Priority_Update(_float dt)

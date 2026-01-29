@@ -113,6 +113,7 @@ private:
 
     void    PivotStab_Reset(const Vector3& pivot);
     Vector3 PivotStab_Eval(_float dt, const Vector3& rawPivot);
+    void    Create_OrbitCollider();
 
 private:
     OrbitPose     m_pose{};

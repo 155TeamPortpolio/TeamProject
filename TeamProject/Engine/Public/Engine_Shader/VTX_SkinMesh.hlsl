@@ -223,8 +223,7 @@ PS_OUT PS_TRANSPARENTNOISE(PS_IN In)
     if (vMtrlDiffuse.a < 0.2)
         discard;
     
-    float2 screenUV = In.vPosition.xy / 512.0;
-    
+    float2 screenUV = (In.vPosition.xy / 512.0) * 40.0; 
     float fNoise = DitheringTexture.Sample(PointSampler, screenUV).r;
     
     if (fNoise > fCameraFadeAlpha)

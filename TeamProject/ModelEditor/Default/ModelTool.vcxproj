@@ -76,6 +76,7 @@
     <ClInclude Include="..\Public\MainApp.h" />
     <ClInclude Include="..\Public\EditModel.h" />
     <ClInclude Include="..\Public\MapParseLevel.h" />
+    <ClInclude Include="..\Public\MaterialAdjust.h" />
     <ClInclude Include="..\Public\ModelEditLevel.h" />
     <ClInclude Include="..\Public\ModelEditor_BoneData.h" />
     <ClInclude Include="..\Public\ModelEditor_Defines.h" />
@@ -125,6 +126,7 @@
     <ClCompile Include="..\private\FreeCam.cpp" />
     <ClCompile Include="..\Private\MainApp.cpp" />
     <ClCompile Include="..\Private\MapParseLevel.cpp" />
+    <ClCompile Include="..\Private\MaterialAdjust.cpp" />
     <ClCompile Include="..\Private\ModelEditLevel.cpp" />
     <ClCompile Include="..\Private\ModelHelper.cpp" />
     <ClCompile Include="..\Private\pch.cpp" />

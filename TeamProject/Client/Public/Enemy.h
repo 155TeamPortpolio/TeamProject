@@ -99,7 +99,7 @@ protected:
     void                Create_MeshPyramid();
 
 #pragma region BattleCollider
-protected:
+public:
     void                SetBattleColliderObject(const string& tagBattleColliderObject, BATTLE_COLTYPE eBattleColliderType, _bool is, const HitDesc& hitdesc = {});
     void                FinishBattleColliderObject(const string& tagBattleColliderObject);
     void                ShowBattleColliderForCheck(_bool is);
@@ -107,8 +107,10 @@ protected:
 
     _bool               IsAliveBattleColliderObject(const string& tagBattleColliderObject, BATTLE_COLTYPE eBattleColliderType);
 
+protected:
     unordered_map<string, _int> m_BattleColliderChildrenIndex;
     AUTO_BATTLECOL      m_tAutoBattleCol = {};
+
 #pragma endregion
 
 protected:

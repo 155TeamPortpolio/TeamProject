@@ -167,7 +167,7 @@ void CMainApp::Set_Levels()
 
 	LevelManager()->Set_LoadingLevel("Loading_Level");
 	m_pGameInstance->Notify_LevelSet(); 
-	m_pGameInstance->Get_LevelMgr()->Request_ChangeLevel("Scott_Level", false);
+	m_pGameInstance->Get_LevelMgr()->Request_ChangeLevel("MainCity_Level", true);
 } 
 
 CMainApp* CMainApp::Create()
@@ -274,6 +274,7 @@ void CMainApp::Initialize_GlobalPrototype()
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_DamageText",  CUI_DamageText::Create());
 	/*Enviroment*/
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Cloud", CTestCloud::Create());
+
 }
 
 void CMainApp::Create_GlobalCamObjs()

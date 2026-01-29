@@ -32,6 +32,8 @@ HRESULT CMaterialData::Initialize(const string& levelKey, ifstream& ifs, const s
 
 	m_DefaultMaterialConstant = infoHeader.materialConstant;
 	m_passConstant = infoHeader.passConstant;
+	if (m_passConstant != "Opaque")
+		int i = 10;
 	m_MaterialKey = infoHeader.materialDataKey;
 
 	Link_Shader(levelKey, infoHeader.ShaderKey);

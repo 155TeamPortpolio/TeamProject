@@ -8,17 +8,14 @@
 HRESULT COrbitCamCollider::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
-
 	Add_Component<CRigidBody>();
 	Add_Component<CCollider>();
-
 	return S_OK;
 }
 
 HRESULT COrbitCamCollider::Initialize(INIT_DESC* arg)
 {
 	__super::Initialize(arg);
-
 	return S_OK;
 }
 
