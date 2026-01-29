@@ -739,9 +739,6 @@
     <Filter Include="02. GameObject\Object\Enemy\Boss\Defiler">
       <UniqueIdentifier>{d747b1f1-f957-472a-b1f0-158922c86c50}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\Defiler\State\Born">
-      <UniqueIdentifier>{1e1d0a87-3187-4e83-97b3-960b6a21d5df}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\Object\Enemy\Normal">
       <UniqueIdentifier>{59940dfa-0539-4aed-8091-bbfb2c81fd85}</UniqueIdentifier>
     </Filter>
@@ -1015,12 +1012,6 @@
     <Filter Include="02. GameObject\Object\Player\Character\01. JaneDoe\State\Start">
       <UniqueIdentifier>{2cbaf699-675f-4a4b-9bf0-f7322153d7d1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\Defiler\State\Attack">
-      <UniqueIdentifier>{4c204a9b-dec6-48bf-9afb-66c998eac1f8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\Defiler\State\Idle">
-      <UniqueIdentifier>{103ceda5-cc1b-46f3-8969-07428f2f1b4d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Attack">
       <UniqueIdentifier>{d2294c59-8513-4a61-8866-98be7b2c0418}</UniqueIdentifier>
     </Filter>
@@ -1053,6 +1044,18 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Enemy\Defiler">
       <UniqueIdentifier>{47071186-1492-4dc2-877a-9f00d3ad73ea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Boss\Defiler\State">
+      <UniqueIdentifier>{538d12ba-ff39-42c3-8992-74003aa40ae2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Boss\Defiler\State\Attack">
+      <UniqueIdentifier>{fc276ecd-fa69-4783-935a-50f83632cc34}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Boss\Defiler\State\Born">
+      <UniqueIdentifier>{0623da2f-8096-4aea-8848-45682ac2f6bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Boss\Defiler\State\Idle">
+      <UniqueIdentifier>{d5b04047-e78b-49f4-aca1-616bbfd9634a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1836,9 +1839,6 @@
     <ClInclude Include="..\public\UI_DamageText.h">
       <Filter>02. GameObject\UI\02. 3D\Plane\DamageText</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\DefilerState_Born.h">
-      <Filter>02. GameObject\Object\Enemy\Defiler\State\Born</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\ThugPoacher.h">
       <Filter>02. GameObject\Object\Enemy\Normal\ThugPoacher</Filter>
     </ClInclude>
@@ -1872,9 +1872,6 @@
     <ClInclude Include="..\Public\UI_ResultBanner.h">
       <Filter>02. GameObject\UI\01. 2D\ResultBanner</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\DefilerState_Idle.h">
-      <Filter>02. GameObject\Object\Enemy\Defiler\State\Idle</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\EnemyNormal.h">
       <Filter>02. GameObject\Object\Enemy\Normal</Filter>
     </ClInclude>
@@ -1889,9 +1886,6 @@
     </ClInclude>
     <ClInclude Include="..\Public\CorinState_CounterAttack.h">
       <Filter>02. GameObject\Object\Player\Character\02. Corin\State\Attack\Counter</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\DefilerState_Attack.h">
-      <Filter>02. GameObject\Object\Enemy\Defiler\State\Attack</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\CorinState_AssaultAttack.h">
       <Filter>02. GameObject\Object\Player\Character\02. Corin\State\Attack\Assault</Filter>
@@ -1908,9 +1902,23 @@
     <ClInclude Include="..\public\SirChop.h">
       <Filter>02. GameObject\Object\Npc\Service\SirChop</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Defiler.h" />
-    </ClInclude>
     <ClInclude Include="..\Public\DefilerState.h" />
+        </ClInclude>
+    <ClInclude Include="..\Public\Defiler.h">
+      <Filter>02. GameObject\Object\Enemy\Boss\Defiler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\DefilerState.h">
+      <Filter>02. GameObject\Object\Enemy\Boss\Defiler\State</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\DefilerState_Attack.h">
+      <Filter>02. GameObject\Object\Enemy\Boss\Defiler\State\Attack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\DefilerState_Born.h">
+      <Filter>02. GameObject\Object\Enemy\Boss\Defiler\State\Born</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\DefilerState_Idle.h">
+      <Filter>02. GameObject\Object\Enemy\Boss\Defiler\State\Idle</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2719,16 +2727,18 @@
     </ClCompile>
     <ClCompile Include="..\private\SirChop.cpp">
       <Filter>02. GameObject\Object\Npc\Service\SirChop</Filter>
+          </ClCompile>
+    <ClCompile Include="..\Private\Defiler.cpp">
+      <Filter>02. GameObject\Object\Enemy\Boss\Defiler</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\DefilerState_Attack.cpp">
-      <Filter>02. GameObject\Object\Enemy\Defiler\State\Attack</Filter>
+      <Filter>02. GameObject\Object\Enemy\Boss\Defiler\State\Attack</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\DefilerState_Born.cpp">
-      <Filter>02. GameObject\Object\Enemy\Defiler\State\Born</Filter>
+      <Filter>02. GameObject\Object\Enemy\Boss\Defiler\State\Born</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\DefilerState_Idle.cpp">
-      <Filter>02. GameObject\Object\Enemy\Defiler\State\Idle</Filter>
+      <Filter>02. GameObject\Object\Enemy\Boss\Defiler\State\Idle</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Defiler.cpp" />
   </ItemGroup>
 </Project>
