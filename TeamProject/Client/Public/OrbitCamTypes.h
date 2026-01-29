@@ -145,4 +145,19 @@ struct OrbitSnapshot
     OBJECT_HANDLE   target{};
 };
 
+struct OrbitPivotStabilizer
+{
+    Vector3 lastRawPivot{};
+    Vector3 rawVel{};
+    _bool   hasLast = false;
+
+    Vector3 filteredPivot{};
+    Vector3 filteredVel{};
+
+    _float  rawTau = 0.06f;
+    _float  velTau = 0.10f;
+    _float  outlierDist = 0.25f;
+    _float  outlierVel = 7.0f;
+};
+
 NS_END

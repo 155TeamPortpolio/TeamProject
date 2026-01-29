@@ -215,7 +215,7 @@ void CTextUI::Render_GUI_Text()
     ImGui::SeparatorText(u8"¿Ü°û¼±");
     _bool isChanged = {};
     isChanged |= ImGui::Checkbox(u8"##¿Ü°û¼±", &m_isOutlined);
-    isChanged |= ImGui::DragFloat(u8"±½±â", &m_fOutlineThickness, 0.1f, 0.f, 2.f, "%.2f", ImGuiSliderFlags_AlwaysClamp);
+    isChanged |= ImGui::DragFloat(u8"±½±â", &m_fOutlineThickness, 0.1f, 0.f, 10.f, "%.2f", ImGuiSliderFlags_AlwaysClamp);
     isChanged |= ImGui::ColorEdit4(u8"ÄÃ·¯", reinterpret_cast<_float*>(&m_vOutlineColor));
 
     if (isChanged)

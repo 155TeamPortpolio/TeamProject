@@ -340,6 +340,21 @@ ENGINE_DLL _float Math::EaseInBounce(_float t)
 	return 1.f - OutBounceLocal(1.f - t);
 }
 
+ENGINE_DLL _vector3 Math::RotateVectorByQuaternion(const _vector3& vec, const _vector4& quat)
+{
+	// vec: (x,y,z), quat: (x,y,z,w)
+	XMVECTOR v = XMVectorSet(vec.x, vec.y, vec.z, 0.f);
+	XMVECTOR q = XMVectorSet(quat.x, quat.y, quat.z, quat.w);
+
+	XMVECTOR r = XMVector3Rotate(v, q);
+
+	_vector3 out;
+	out.x = XMVectorGetX(r);
+	out.y = XMVectorGetY(r);
+	out.z = XMVectorGetZ(r);
+	return out;
+}
+
 ENGINE_DLL _float Math::EaseInOutBounce(_float t)
 {
 	if (t < 0.5f)

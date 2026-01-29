@@ -57,7 +57,7 @@ private:
     ATTACK_BLACK_BOARD  m_tAttackBlackBoard = {};
     HYSTERIESIS         m_tHysteriesis = {};
 
-    _bool               m_isAutoPatternPlay = { true };
+    _bool               m_isAutoPatternPlay = { true }; 
 
     /*For.Idle*/
     _bool               m_isIdle = { false };

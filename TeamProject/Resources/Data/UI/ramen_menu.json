@@ -1,0 +1,642 @@
+{
+    "alive": true,
+    "instanceName": "ramen_menu",
+    "transform": {
+        "anchor": 5,
+        "anchorOffset": [
+            0.0,
+            0.0
+        ],
+        "size": [
+            149.0,
+            210.0
+        ],
+        "scale": [
+            1.0,
+            1.0
+        ],
+        "pivot": [
+            0.5,
+            0.5
+        ],
+        "radian": 0.0
+    },
+    "color": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+    ],
+    "pass": "Opaque",
+    "animClips": [
+        {
+            "duration": 1.0,
+            "keyframes": [
+                {
+                    "angle": 0.0,
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "easeType": 2,
+                    "position": [
+                        0.0,
+                        0.0
+                    ],
+                    "scale": [
+                        1.0,
+                        1.0
+                    ],
+                    "time": 0.0
+                },
+                {
+                    "angle": 0.0,
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "easeType": 0,
+                    "position": [
+                        0.0,
+                        -20.0
+                    ],
+                    "scale": [
+                        1.0,
+                        1.0
+                    ],
+                    "time": 0.20000000298023224
+                }
+            ],
+            "loop": false,
+            "name": "clip0"
+        },
+        {
+            "duration": 0.20000000298023224,
+            "keyframes": [
+                {
+                    "angle": 0.0,
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "easeType": 2,
+                    "position": [
+                        0.0,
+                        -20.0
+                    ],
+                    "scale": [
+                        1.0,
+                        1.0
+                    ],
+                    "time": 0.0
+                },
+                {
+                    "angle": 0.0,
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "easeType": 0,
+                    "position": [
+                        0.0,
+                        0.0
+                    ],
+                    "scale": [
+                        1.0,
+                        1.0
+                    ],
+                    "time": 0.20000000298023224
+                }
+            ],
+            "loop": false,
+            "name": "clip1"
+        }
+    ],
+    "children": [
+        {
+            "alive": true,
+            "instanceName": "overlay",
+            "transform": {
+                "anchor": 0,
+                "anchorOffset": [
+                    -75.0,
+                    -105.0
+                ],
+                "size": [
+                    149.0,
+                    210.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                0.772549033164978,
+                0.7647058963775635,
+                0.0117647061124444,
+                1.0
+            ],
+            "pass": "NineSlice",
+            "animClips": [],
+            "children": [],
+            "typeTag": "NineSlice",
+            "textureTag": "Circle36_Jc.png",
+            "nineSlice": {
+                "borderPx": [
+                    18.0,
+                    18.0,
+                    18.0,
+                    18.0
+                ],
+                "uvRangeX": [
+                    0.0,
+                    0.44999998807907104,
+                    0.550000011920929,
+                    1.0
+                ],
+                "uvRangeY": [
+                    0.0,
+                    0.44999998807907104,
+                    0.550000011920929,
+                    1.0
+                ],
+                "textureSize": [
+                    40.0,
+                    40.0
+                ]
+            }
+        },
+        {
+            "alive": true,
+            "instanceName": "button",
+            "transform": {
+                "anchor": 0,
+                "anchorOffset": [
+                    -70.5,
+                    -101.0
+                ],
+                "size": [
+                    141.0,
+                    202.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "pass": "Opaque",
+            "animClips": [],
+            "children": [],
+            "typeTag": "Button",
+            "textureTag": "RamenBg1.png",
+            "eventMsgTag": ""
+        },
+        {
+            "alive": true,
+            "instanceName": "ramen",
+            "transform": {
+                "anchor": 5,
+                "anchorOffset": [
+                    0.0,
+                    0.0
+                ],
+                "size": [
+                    150.0,
+                    210.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "pass": "Opaque",
+            "animClips": [],
+            "children": [
+                {
+                    "alive": true,
+                    "instanceName": "name",
+                    "transform": {
+                        "anchor": 4,
+                        "anchorOffset": [
+                            -0.0,
+                            20.0
+                        ],
+                        "size": [
+                            0.0,
+                            0.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "pass": "Opaque",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "Text",
+                    "text": {
+                        "content": "흰 그릇: 해물라면",
+                        "fontTag": "NanumSquareNeo.spritefont",
+                        "fontScale": 0.29999983310699463,
+                        "outlined": false,
+                        "outlineThickness": 1.0,
+                        "outlineColor": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                        ],
+                        "shear": [
+                            0.0,
+                            0.0
+                        ],
+                        "autoPos": true,
+                        "anchor": 0
+                    }
+                },
+                {
+                    "alive": true,
+                    "instanceName": "iconMenu",
+                    "transform": {
+                        "anchor": 0,
+                        "anchorOffset": [
+                            -76.0,
+                            -82.0
+                        ],
+                        "size": [
+                            152.0,
+                            152.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "pass": "Opaque",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "Image",
+                    "textureTag": "IconRamen01.png"
+                },
+                {
+                    "alive": true,
+                    "instanceName": "Image",
+                    "transform": {
+                        "anchor": 9,
+                        "anchorOffset": [
+                            37.0,
+                            -32.0
+                        ],
+                        "size": [
+                            22.0,
+                            22.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "pass": "Opaque",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "Image",
+                    "textureTag": "IconCoin.png"
+                },
+                {
+                    "alive": true,
+                    "instanceName": "price",
+                    "transform": {
+                        "anchor": 8,
+                        "anchorOffset": [
+                            -16.0,
+                            -22.0
+                        ],
+                        "size": [
+                            0.0,
+                            0.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "pass": "Opaque",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "Text",
+                    "text": {
+                        "content": "2500",
+                        "fontTag": "NanumSquareNeo.spritefont",
+                        "fontScale": 0.39999985694885254,
+                        "outlined": false,
+                        "outlineThickness": 1.0,
+                        "outlineColor": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                        ],
+                        "shear": [
+                            0.0,
+                            0.0
+                        ],
+                        "autoPos": true,
+                        "anchor": 1
+                    }
+                },
+                {
+                    "alive": true,
+                    "instanceName": "attribute",
+                    "transform": {
+                        "anchor": 10,
+                        "anchorOffset": [
+                            -42.0,
+                            -75.0
+                        ],
+                        "size": [
+                            34.0,
+                            34.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "pass": "Opaque",
+                    "animClips": [],
+                    "children": [
+                        {
+                            "alive": true,
+                            "instanceName": "bg",
+                            "transform": {
+                                "anchor": 0,
+                                "anchorOffset": [
+                                    -17.0,
+                                    -17.0
+                                ],
+                                "size": [
+                                    34.0,
+                                    34.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ],
+                            "pass": "Opaque",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "Image",
+                            "textureTag": "Circle36_Jc.png"
+                        },
+                        {
+                            "alive": true,
+                            "instanceName": "iconAttribute1",
+                            "transform": {
+                                "anchor": 0,
+                                "anchorOffset": [
+                                    -12.0,
+                                    -12.0
+                                ],
+                                "size": [
+                                    24.0,
+                                    24.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "pass": "Opaque",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "Image",
+                            "textureTag": "IconIce.png"
+                        }
+                    ],
+                    "typeTag": "CanvasPanel"
+                },
+                {
+                    "alive": true,
+                    "instanceName": "attribute",
+                    "transform": {
+                        "anchor": 10,
+                        "anchorOffset": [
+                            -76.0,
+                            -75.0
+                        ],
+                        "size": [
+                            34.0,
+                            34.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "pass": "Opaque",
+                    "animClips": [],
+                    "children": [
+                        {
+                            "alive": true,
+                            "instanceName": "bg",
+                            "transform": {
+                                "anchor": 0,
+                                "anchorOffset": [
+                                    -17.0,
+                                    -17.0
+                                ],
+                                "size": [
+                                    34.0,
+                                    34.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ],
+                            "pass": "Opaque",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "Image",
+                            "textureTag": "Circle36_Jc.png"
+                        },
+                        {
+                            "alive": true,
+                            "instanceName": "iconAttribute2",
+                            "transform": {
+                                "anchor": 0,
+                                "anchorOffset": [
+                                    -12.0,
+                                    -12.0
+                                ],
+                                "size": [
+                                    24.0,
+                                    24.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "pass": "Opaque",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "Image",
+                            "textureTag": "IconIce.png"
+                        }
+                    ],
+                    "typeTag": "CanvasPanel"
+                }
+            ],
+            "typeTag": "CanvasPanel"
+        }
+    ],
+    "typeTag": "CanvasPanel"
+}

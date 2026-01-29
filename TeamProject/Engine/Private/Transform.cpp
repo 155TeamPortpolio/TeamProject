@@ -368,7 +368,7 @@ void CTransform::LookAt(_fvector vAt)
 	vRotmat.r[1] = vUp;
 	vRotmat.r[2] = vLookDir;
 
-	_vector vQuaternion = XMQuaternionRotationMatrix(vRotmat);
+	_vector vQuaternion = XMQuaternionNormalize(XMQuaternionRotationMatrix(vRotmat));
 	XMStoreFloat4(&m_qRotation, vQuaternion);
 
 	MarkDirty();
@@ -386,7 +386,7 @@ void CTransform::Set_Look(_fvector vAt)
 	vRotmat.r[1] = vUp;
 	vRotmat.r[2] = vLookDir;
 
-	_vector vQuaternion = XMQuaternionRotationMatrix(vRotmat);
+	_vector vQuaternion = XMQuaternionNormalize(XMQuaternionRotationMatrix(vRotmat));
 	XMStoreFloat4(&m_qRotation, vQuaternion);
 
 	MarkDirty();

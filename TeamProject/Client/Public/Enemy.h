@@ -22,7 +22,6 @@ public:
     enum class ENEMY_CLASS { NORMAL, ELITE, BOSS };
     enum class ATTACK_SIDE { NONE, LEFT, RIGHT };
     enum class BATTLE_COLTYPE { ATTACK, TRIGGER };
-
   
 protected:
     CEnemy();
@@ -36,10 +35,6 @@ public:
     virtual void    Priority_Update(_float dt) override {};
     virtual void    Update(_float dt) override;
     virtual void    Late_Update(_float dt) override;
-
-    virtual void    OnPooledAcquire(INIT_DESC* pArg = nullptr) {}	// 풀에서 꺼낼 때
-    virtual void    OnPooledRelease() {}							// 풀로 돌아갈 때
-
 
 public:
     /* Getter */

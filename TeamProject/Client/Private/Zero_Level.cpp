@@ -25,6 +25,7 @@
 #include "Sacrifice_Orb.h"
 #include "ThugBulkyEnforcer.h"
 #include "ThugAssaulter.h"
+#include "Defiler.h"
 #include "EnemyAttackCollider.h"
 #include "EnemyTriggerCollider.h"
 
@@ -84,7 +85,8 @@ HRESULT CZero_Level::Initialize()
 	m_StageContainer.emplace(StageType::Elite, CZeroStage_Elite::Create(this));
 
 	m_Context.isFirstIn = true;
-	ChangeStage(StageType::Boss, 1);
+
+	ChangeStage(StageType::Normal, 0);
 	m_Context.isFirstIn = false;
 	//m_Context.pNowStage->Ready_Stage(m_Context);
 
