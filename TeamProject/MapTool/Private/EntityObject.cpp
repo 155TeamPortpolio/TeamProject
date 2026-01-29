@@ -82,13 +82,16 @@ void CEntityObject::Export_ObjectData(void* pDesc)
 	pEntityDesc->tagName = m_InstanceName;
 	pEntityDesc->iType = m_iType;
 
-	_float3 vSize = Get_Component<CCollider>()->Get_Size();
+	_float3 vScale; XMStoreFloat3(&vScale, Get_Component<CTransform>()->Get_Pos());
 	_float4 qRotation; XMStoreFloat4(&qRotation, Get_Component<CTransform>()->Get_QuaternionRotate());
 	_vector3 vEulerRotation = _quaternion(qRotation).ToEuler();
 	_float3 vPosition; XMStoreFloat3(&vPosition, Get_Component<CTransform>()->Get_Pos());
-	pEntityDesc->vScale = { vSize.x, vSize.y, vSize.z };
+	_float3 vColSize = Get_Component<CCollider>()->Get_Size();
+
+	pEntityDesc->vScale = { vScale.x, vScale.y, vScale.z };
 	pEntityDesc->vRotation = { vEulerRotation.x, vEulerRotation.y, vEulerRotation.z };
 	pEntityDesc->vTranslation = { vPosition.x, vPosition.y, vPosition.z };
+	pEntityDesc->vColSize = { vColSize.x, vColSize.y, vColSize.z };
 }
 
 void CEntityObject::Set_EntityModel(const string& ModelTag, const string& ModelKeyTag, const string& MaterialKeyTag)

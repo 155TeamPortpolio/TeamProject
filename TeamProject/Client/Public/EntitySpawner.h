@@ -13,6 +13,7 @@ typedef struct tagEntitySpawnerDesc {
 	_float3 vScale{};
 	_float3 vRotation{};
 	_float3 vTranslation{};
+	_float3 vColSize{};
 	unordered_map<string, vector<FIELD_DATA>> SlotDataValues;
 }SPAWNER_DESC;
 
