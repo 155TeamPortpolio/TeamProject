@@ -139,6 +139,18 @@ _int CModelData::Find_MeshIndex(const string& name)
 	return -1;
 }
 
+vector<_uint> CModelData::Find_MeshesIndex(const string& name)
+{
+	vector<_uint> result;
+	for (size_t i = 0; i < m_Meshes.size(); i++)
+	{
+		if (m_Meshes[i]->Get_Key().find(name) != string::npos) {
+			result.push_back(i);
+		}
+	}
+	return result;
+}
+
 void CModelData::Render_GUI()
 {
 	if (m_pSkeleton)

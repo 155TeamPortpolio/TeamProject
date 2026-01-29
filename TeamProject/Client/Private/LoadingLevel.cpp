@@ -33,6 +33,7 @@ HRESULT CLoadingLevel::Awake()
 	if (!m_bGlobal)
 	{
 		PreLoadLevel("Global_Level");
+		PreLoadForTestLevel();
 		m_bGlobal = true;
 	}
 	return S_OK;
@@ -129,6 +130,67 @@ void CLoadingLevel::PreLoadLevel(const string& levelKey)
 		}
 	}
 
+}
+
+void CLoadingLevel::PreLoadForTestLevel()
+{
+	
+
+	const string clientPath = "../Bin/Resources";
+	filesystem::path directory = clientPath;
+
+	error_code ec;
+	if (!filesystem::exists(directory, ec) || ec) return;
+	if (!filesystem::is_directory(directory, ec) || ec) return;
+
+	auto* resourceManager = ResourceManager();
+	if (!resourceManager) return;
+
+	// (선택) 이전에 남아있던 큐가 있으면 비우기
+	// for (auto& q : m_LoadQue) while (!q.empty()) q.pop();
+
+	filesystem::recursive_directory_iterator iter(
+		directory,
+		filesystem::directory_options::skip_permission_denied,
+		ec
+	);
+	filesystem::recursive_directory_iterator endIter;
+
+	for (; iter != endIter; iter.increment(ec))
+	{
+		if (ec) { ec.clear(); continue; }
+
+		const auto& entry = *iter;
+
+		if (!entry.is_regular_file(ec) || ec) { ec.clear(); continue; }
+
+		const filesystem::path filePathObj = entry.path();
+		const string filePath = filePathObj.string();
+		const string fileName = filePathObj.filename().string();
+
+		resourceManager->Add_ResourcePath(fileName, filePath);
+
+		const ResourceType type = CheckResourceType(filePath, fileName);
+		if (type == ResourceType::None)
+			continue;
+
+		PreloadKey key{};
+		key.type = type;
+		key.levelKey = "Test_Level";
+		key.resourceKey = fileName;
+		key.options.isSRGB = isSRGB(filePath);
+
+		m_LoadQue[type].push(key);
+	}
+
+	for (auto& queuePerType : m_LoadQue)
+	{
+		while (!queuePerType.second.empty())
+		{
+			resourceManager->RequestPreload(queuePerType.second.front());
+			queuePerType.second.pop();
+		}
+	}
 }
 
 
