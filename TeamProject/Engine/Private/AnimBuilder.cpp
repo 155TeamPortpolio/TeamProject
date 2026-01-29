@@ -131,6 +131,7 @@ HRESULT ChangeAnimBuild::Apply()
 	//애니매이션 기본
 	Layer.bLoop = m_bLoop;	
 	Layer.bWrapped = false;
+	Layer.bNoRootMoveDelta = m_bNoRootMoveDelta;
 	Layer.fEndAt = m_fEndAt;
 	Layer.fStartAt = m_fStartAt;
 	Layer.bJumpedAnim = true;

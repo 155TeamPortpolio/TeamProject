@@ -1051,20 +1051,20 @@ void CAnimator3D::Animation_Run(ANIM_LAYER& Layer, _float dt)
 			_vector3 vCurRootPos = T;
 			_vector4 vCurRootQuat = R;
 
-			//if (Layer.bJumpedAnim)
-			//{
-			//	//Layer.vRootMoveDelta = _vector3::Zero;
-			//	//Layer.vRootQuatDelta = _quaternion::Identity;
-			//	Layer.bJumpedAnim = false;
-			//	//Layer.bWrapped = false;
-			//}
-			//else {
-			//	Compute_RootMoveDelta(Layer, vCurRootPos);
-			//	Compute_RootQuatDelta(Layer, vCurRootQuat);
-			//}
+			if (Layer.bJumpedAnim)
+			{
+				Layer.vRootMoveDelta = _vector3::Zero;
+				Layer.vRootQuatDelta = _quaternion::Identity;
+				Layer.bJumpedAnim = false;
+				//Layer.bWrapped = false;
+			}
+			else {
+				Compute_RootMoveDelta(Layer, vCurRootPos);
+				Compute_RootQuatDelta(Layer, vCurRootQuat);
+			}
 
-			Compute_RootMoveDelta(Layer, vCurRootPos);
-			Compute_RootQuatDelta(Layer, vCurRootQuat);
+			//Compute_RootMoveDelta(Layer, vCurRootPos);
+			//Compute_RootQuatDelta(Layer, vCurRootQuat);
 
 			//다음 프레임 대비
 			Layer.vPrevRootPos = vCurRootPos;
@@ -1135,8 +1135,8 @@ void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
 
 			if (Layer.bJumpedAnim)
 			{
-				//6Layer.vRootMoveDelta = _vector3::Zero;
-				//6Layer.vRootQuatDelta = _quaternion::Identity;
+				Layer.vRootMoveDelta = _vector3::Zero;
+				Layer.vRootQuatDelta = _quaternion::Identity;
 				Layer.bJumpedAnim = false;
 				//Layer.bWrapped = false;
 			}
@@ -1223,15 +1223,23 @@ void CAnimator3D::Check_ReservedSpeeds(ANIM_LAYER& Layer)
 void CAnimator3D::Compute_RootMoveDelta(ANIM_LAYER& Layer, _vector3& curPos)
 {
 	if (Layer.bWrapped) { //Roop 
-		_vector3 vStartPos = m_pAnimClips[Layer.iClipIndex]->Get_StartKeyFrameByBoneIndex(Layer.iRootBoneIndex).vTranslation;
+		_vector3 vStartPos;
+
+		if (Layer.fStartAt == 0.f)
+			vStartPos = m_pAnimClips[Layer.iClipIndex]->Get_StartKeyFrameByBoneIndex(Layer.iRootBoneIndex).vTranslation;
+		else
+			m_pAnimClips[Layer.iClipIndex]->Sample_KeyFrameByBoneIndex(Layer.iRootBoneIndex, Layer.fStartAt, nullptr, nullptr, &vStartPos);
+
 		Layer.vRootMoveDelta = (Layer.vRootEndPos - Layer.vPrevRootPos) + (curPos - vStartPos);
-		Layer.bWrapped = false;
 	}
 	else
 		Layer.vRootMoveDelta = curPos - Layer.vPrevRootPos;
 
 	//PreTransform
 	Layer.vOutRootMoveDelta = XMVector4Transform(Layer.vRootMoveDelta, m_PreTransform);
+
+	if (Layer.bNoRootMoveDelta)
+		Layer.vOutRootMoveDelta = _vector3{};
 }
 
 void CAnimator3D::Compute_RootQuatDelta(ANIM_LAYER& Layer, _vector4& curQuat)
@@ -1268,6 +1276,7 @@ void CAnimator3D::Compute_ClipConvert(ANIM_LAYER& Layer, _float dt)
 	//Convert End
 	if (Layer.fBlendDuration < Layer.fBlendElapsed) {
 		Layer.bBlending = false;
+		Layer.bNoRootMoveDelta = false;
 		Layer.bKeepTrackPos = false;
 		Layer.bIgnoreRotation = false;
 
