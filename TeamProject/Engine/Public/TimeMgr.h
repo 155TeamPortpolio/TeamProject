@@ -19,6 +19,7 @@ public:
     _float Get_RawDeltaTime(const string& timerID,_bool raw = false);
     _float Get_RawTotalTime(const string& timerID);
     void Set_TimeScale(const string& timerID,_float scale);
+    _float Get_TimeScale(const string& timerID);
   
 private:
     CTimer* Find_Timer(const string& timerID);

@@ -31,6 +31,7 @@ public:
 	void Update_EngineTimer();
 	_float Get_EngineDeltaTime();
 	void Set_EngineTimeScale(_float fScale);
+	_float Get_EngineTimeScale();
 
 public:
 	ID3D11Device* Get_Device() { return m_pDevice; };
