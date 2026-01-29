@@ -18,6 +18,7 @@
 #include "Jaeger.h"
 #include "SirChop.h"
 #include "ElectricBoo.h"
+#include "SilverAnbi.h"
 
 /* Maptool Type 1 (ETC) */
 #include "Portal.h"
@@ -34,7 +35,8 @@ static unordered_map<string, Spawner::OBJ_SPEC> s_NPCTable =
 	{ "Howl",           Spawner::OBJ_SPEC{ "Proto_GameObject_Howl", &CHowl::Create } },
 	{ "Jaeger",         Spawner::OBJ_SPEC{ "Proto_GameObject_Jaeger", &CJaeger::Create } },
 	{ "ExploreBoo",     Spawner::OBJ_SPEC{ "Proto_GameObject_ExploreBoo", &CElectricBoo::Create } },
-	{ "Sirchop",     Spawner::OBJ_SPEC{ "Proto_GameObject_Sirchop", &CSirChop::Create } }
+	{ "Sirchop",     Spawner::OBJ_SPEC{ "Proto_GameObject_Sirchop", &CSirChop::Create } },
+	{ "SilverAnbi",     Spawner::OBJ_SPEC{ "Proto_GameObject_SilverAnbi", &CSilverAnbi::Create } }
 };
 
 /* Maptool Type 1 */

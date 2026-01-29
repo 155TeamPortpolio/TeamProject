@@ -970,6 +970,12 @@
     <Filter Include="03. Utility\06. FieldSystem\Room\04. Noodle">
       <UniqueIdentifier>{810c5f63-0a50-441a-b876-0b38ab52f72c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03. Utility\06. FieldSystem\Room\04. Noodle">
+      <UniqueIdentifier>{810c5f63-0a50-441a-b876-0b38ab52f72c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Npc\Service\SilverAnbi">
+      <UniqueIdentifier>{1fb6f464-481c-4f28-9d2c-18957cf84b87}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1845,6 +1851,9 @@
     <ClInclude Include="..\Public\JaneDoeState_AssaultAttack.h">
       <Filter>02. GameObject\Object\Player\Character\01. JaneDoe\State\Attack\Assault</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\SilverAnbi.h">
+      <Filter>02. GameObject\Object\Npc\Service\SilverAnbi</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2680,6 +2689,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\JaneDoeState_AssaultAttack.cpp">
       <Filter>02. GameObject\Object\Player\Character\01. JaneDoe\State\Attack\Assault</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\SilverAnbi.cpp">
+      <Filter>02. GameObject\Object\Npc\Service\SilverAnbi</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

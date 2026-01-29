@@ -19,7 +19,7 @@ struct VS_IN
     float3 vBinormal : BINORMAL;
     uint4 vBlendIndex : BLENDINDEX;
     float4 vBlendWeight : BLENDWEIGHT;
-};
+}; w
 
 struct VS_OUT
 {
