@@ -852,6 +852,9 @@
     <Filter Include="03. Utility\09. Interface">
       <UniqueIdentifier>{51900e22-1c4e-4ebd-b4f6-2e6da8fde730}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Camera\04. OrbitCam\OrbitCamCollider">
+      <UniqueIdentifier>{bb6ef566-7828-4054-a05e-14d7b79b3b20}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1667,6 +1670,9 @@
     <ClInclude Include="..\Public\ICamCollidable.h">
       <Filter>03. Utility\09. Interface</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\OrbitCamCollider.h">
+      <Filter>02. GameObject\Camera\04. OrbitCam\OrbitCamCollider</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2442,6 +2448,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\CorinState_AssaultAttack.cpp">
       <Filter>02. GameObject\Object\Player\Character\02. Corin\State\Attack\Assault</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\OrbitCamCollider.cpp">
+      <Filter>02. GameObject\Camera\04. OrbitCam\OrbitCamCollider</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
