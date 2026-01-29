@@ -4,6 +4,12 @@ matrix g_WorldMatrix;
 float BloomScreenWidth;
 float BloomScreenHeight;
 
+float RimStrength = 0.3; // 0~ 몇
+float RimEdgeScale = 20; // 120~300 추천
+float RimEdgePower = 2.5; // 1.5~2.5
+float RimSampleOffset = 2; // 1~3 (픽셀 단위)
+float RimBloomMul = 1; // 1~3
+
 BlendState BS_OITComposite
 {
     BlendEnable[0] = true;
@@ -84,6 +90,55 @@ PS_OUT_COMPOSITE PS_MAIN_COMPOSITE(PS_IN In)    //여기서 가중치 합성 후 원래 타�
     float3 vBloomColor = (fBloomAlpha > fElipson) ? (vBloomEffectDesc.rgb / fBloomAlpha) : 0.f;
     Out.vBloomEffect = float4(vBloomColor * fOutAlpha, fOutAlpha);
     
+    /* RimLight */
+    float eps = 1e-6;
+
+// inside mask
+    float mask = saturate(1.0 - fRevealage);
+
+    float2 texel = float2(1.0 / BloomScreenWidth, 1.0 / BloomScreenHeight);
+
+// ---- band thickness in pixels (outline band itself) ----
+    float BandPx = 1.0; // 1~4 추천
+
+    float2 o1 = float2(texel.x, 0) * BandPx;
+    float2 o2 = float2(0, texel.y) * BandPx;
+
+// erosion (shrink)
+    float m0 = mask;
+    float mL = saturate(1.0 - RevealageTexture.Sample(LinearSampler, In.vTexcoord - o1).r);
+    float mR = saturate(1.0 - RevealageTexture.Sample(LinearSampler, In.vTexcoord + o1).r);
+    float mD = saturate(1.0 - RevealageTexture.Sample(LinearSampler, In.vTexcoord - o2).r);
+    float mU = saturate(1.0 - RevealageTexture.Sample(LinearSampler, In.vTexcoord + o2).r);
+
+// diagonals (추가!)
+    float mDL = saturate(1.0 - RevealageTexture.Sample(LinearSampler, In.vTexcoord - o1 - o2).r);
+    float mDR = saturate(1.0 - RevealageTexture.Sample(LinearSampler, In.vTexcoord + o1 - o2).r);
+    float mUL = saturate(1.0 - RevealageTexture.Sample(LinearSampler, In.vTexcoord - o1 + o2).r);
+    float mUR = saturate(1.0 - RevealageTexture.Sample(LinearSampler, In.vTexcoord + o1 + o2).r);
+
+// 8-neighborhood erosion
+    float eroded = min(m0, min(min(mL, mR), min(mD, mU)));
+    eroded = min(eroded, min(min(mDL, mDR), min(mUL, mUR)));
+    
+// band = only boundary ring (interior becomes 0)
+    float band = saturate(mask - eroded);
+
+// tiny AA  (band 기준으로 하는게 더 안정적이라 이쪽 추천)
+    float bw = max(fwidth(band), eps);
+    band = smoothstep(0.0, bw * 2.0, band);
+
+// ===== glow color =====
+    float3 glowColor = RimLightAccTexture.Sample(LinearSampler, In.vTexcoord).rgb;
+
+// add strength
+    float GlowAdd = 2.0; // LDR: 0.2~3 / HDR: 1~10
+    float3 glow = glowColor * band * RimStrength * GlowAdd;
+
+// ----------------------------------------------------
+// A) Straight alpha 파이프라인이면 (일반적인 Out.vDiffuse)
+// ----------------------------------------------------
+    Out.vDiffuseEffect.rgb += glow;
     return Out;
 }
 

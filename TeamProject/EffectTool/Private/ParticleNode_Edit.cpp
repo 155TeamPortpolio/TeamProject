@@ -367,6 +367,15 @@ void CParticleNode_Edit::SetUp_ParticleEffect()
 	ImGui::DragFloat("Delay Time", &m_fDelayTime);
 	ImGui::DragFloat("Duration", &m_fDuration);
 
+	{
+		_float rimLightColor[3] = { m_vRimLightColor.x,m_vRimLightColor.y,m_vRimLightColor.z };
+
+		if (ImGui::ColorEdit3("RimLight Color", rimLightColor))
+		{
+			m_vRimLightColor = _float3(rimLightColor[0], rimLightColor[1], rimLightColor[2]);
+			isDirty = true;
+		}
+	}
 	isDirty |= ImGui::DragFloat2("Pivot", &m_vPivot.x);
 	isDirty |= ImGui::DragInt("RGB Mask Mode", reinterpret_cast<_int*>(&m_iRGBMaskMode));
 	isDirty |= Helper::DrawEnumCombo("Color Mode", m_eColorMode, 100.f);
@@ -448,6 +457,7 @@ void CParticleNode_Edit::SetUp_ParticleEffect()
 
 		PARTICLE_NODE node{};
 
+		node.vRimLightColor = m_vRimLightColor;
 		node.vPivot = m_vPivot;
 		node.iRGBMaskMode = m_iRGBMaskMode;
 		node.SpawnShape = ENUM(m_eSpawnShape);

@@ -66,6 +66,9 @@ PARTICLE_NODE Engine::tagParticleNode::FromJson(nlohmann::ordered_json& json)
 	node.vOffsetPosition = _float3(offsetPostion[0], offsetPostion[1], offsetPostion[2]);
 	node.vOffsetQuaternion = _float4(offsetQuaternion[0], offsetQuaternion[1], offsetQuaternion[2], offsetQuaternion[3]);
 
+	auto rimLight = json.value("rimlight_color", json::array({ 0.f,0.f,0.f }));
+	node.vRimLightColor = _float3(rimLight[0], rimLight[1], rimLight[2]);
+
 	auto pivot = json.value("pivot", json::array({ 0.5f,0.5f }));
 	node.vPivot = _float2(pivot[0], pivot[1]);
 	node.iRGBMaskMode = json.value("rgb_mask", node.iRGBMaskMode);

@@ -280,6 +280,7 @@ void CParticleSystem::ApplyPending()
 	if (m_iMaxSpawnParticleCount != m_PendingChanged.iMaxSpawnParticleCount)
 		CreateStructuredBuffers(m_PendingChanged.iMaxSpawnParticleCount);
 
+	m_vRimLightColor = m_PendingChanged.vRimLightColor;
 	m_vPivot = m_PendingChanged.vPivot;
 	m_iRGBMaskMode = m_PendingChanged.iRGBMaskMode;
 	m_eModuelMask = static_cast<MODULE_MASK>(m_PendingChanged.iModuleMask);
@@ -340,6 +341,8 @@ void CParticleSystem::ApplyPending()
 	customInstance->Set_Param("ColorMode", { &m_eColorMode,"uint",sizeof(_uint) });
 
 	customInstance->Set_Param("Pivot", { &m_vPivot,"float2",sizeof(_float2) });
+
+	customInstance->Set_Param("RimLightColor", { &m_vRimLightColor, "float3",sizeof(_float3) });
 
 	m_IsChanged = false;
 }
