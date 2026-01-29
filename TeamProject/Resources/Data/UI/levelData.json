@@ -102,6 +102,12 @@
           "prototypeTag": "Proto_GameObject_ResultBanner",
           "instanceName": "result_banner",
           "prefabPath" : ""
+        },
+        
+        {
+          "prototypeTag": "Proto_GameObject_Ramen",
+          "instanceName": "ramen",
+          "prefabPath" : ""
         }
       ]
     }

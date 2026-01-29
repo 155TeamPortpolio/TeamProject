@@ -186,7 +186,7 @@ private:
     PxMaterial*              m_pMaterial = { nullptr };
     PxFilterData             m_FilterData = {};
     PxFilterData             m_QueryFilterData = {};
-    CCCTQueryFilter*         m_pQueryFilter = { nullptr };
+CCCTQueryFilter*         m_pQueryFilter = { nullptr };
     CCCTFilterCallback*      m_pCCTFilter = { nullptr };
     _bool                    m_bGrounded = { false };
     _bool                    m_bGravityEnabled = { true };
