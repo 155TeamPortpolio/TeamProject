@@ -21,6 +21,7 @@
 #include "JaneDoeState_Move.h"
 #include "JaneDoeState_Attack.h"
 #include "JaneDoeState_SwitchIn.h"
+#include "JaneDoeState_SwitchInParryAid.h"
 #include "JaneDoeState_SwitchOut.h"
 #include "JaneDoeState_NormalAttack.h"
 #include "JaneDoeState_Hit.h"
@@ -719,7 +720,26 @@ void CJaneDoe::Process_AttackInput(const string& strCurrentState)
 		if (pNormal && pNormal->Get_SubStateMachine())
 			pNormal->Get_SubStateMachine()->Set_Trigger("NextCombo");
 	}
+	else if (strCurrentState == "SwitchIn")
+	{	// SwitchIn
+		CJaneDoeState_SwitchIn* pSwitchIn = static_cast<CJaneDoeState_SwitchIn*>(
+			m_pStateMachine->Get_CurrentState());
+		if (!pSwitchIn || !pSwitchIn->Get_SubStateMachine())
+			return;
 
+		string strSwitchType = pSwitchIn->Get_SubStateMachine()->Get_CurrentStateName();
+		if (strSwitchType == "ParryAid")
+		{
+			CJaneDoeState_SwitchInParryAid* pParryAid = static_cast<CJaneDoeState_SwitchInParryAid*>(
+				pSwitchIn->Get_SubStateMachine()->Get_CurrentState());
+			if (!pSwitchIn || !pSwitchIn->Get_SubStateMachine())
+				return;
+			if (!pParryAid->Is_EndState())
+			{
+				pParryAid->Get_SubStateMachine()->Set_Bool("ReserveAssaultAid", true);
+			}
+		}
+	}
 }
 
 void CJaneDoe::Process_EndState(const string& strCurrentState)
