@@ -57,6 +57,8 @@ private:
     Matrix testMat;
     _vector3 testVector;
 
+    _float m_fMoveSpeed = 0.f;
+
 public:
     static CAnimModel* Create();
     CGameObject* Clone(INIT_DESC* pArg) override;
