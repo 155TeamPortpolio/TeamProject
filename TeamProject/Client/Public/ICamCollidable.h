@@ -1,6 +1,8 @@
 #pragma once
 #include "Base.h"
 
+NS_BEGIN(Client)
+
 class ICamCollidable
 {
 protected:
@@ -10,3 +12,4 @@ public:
     virtual void OnCameraCollision(_bool isColliding) PURE;
 };
 
+NS_END
