@@ -1063,6 +1063,9 @@
     <Filter Include="02. GameObject\Camera\04. OrbitCam\01. OrbitCamCollider">
       <UniqueIdentifier>{bb6ef566-7828-4054-a05e-14d7b79b3b20}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03. Utility\06. FieldSystem\Room\04. Noodle">
+      <UniqueIdentifier>{810c5f63-0a50-441a-b876-0b38ab52f72c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1932,6 +1935,9 @@
     <ClInclude Include="..\public\DefilerState_Idle.h">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler\State\Idle</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Room_Noodle.h">
+      <Filter>03. Utility\06. FieldSystem\Room\04. Noodle</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2761,6 +2767,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\DefilerState_Idle.cpp">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler\State\Idle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Room_Noodle.cpp">
+      <Filter>03. Utility\06. FieldSystem\Room\04. Noodle</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
