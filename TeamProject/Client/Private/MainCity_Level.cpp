@@ -7,6 +7,7 @@
 #include "FieldSystem.h"
 #include "Room_Street.h"
 #include "Room_Lottery.h"
+#include "Room_Noodle.h"
 
 // Camera
 #include "Camera.h"
@@ -78,6 +79,7 @@ void CMainCity_Level::Ready_Map(const string& LevelTag, const string& AreaTag)
 {
 	FieldSystem()->RegisterRoom(CRoom_Street::Create({ "MainCity" , true }));
 	FieldSystem()->RegisterRoom(CRoom_Lottery::Create({ "Lottery" , false }));
+	FieldSystem()->RegisterRoom(CRoom_Noodle::Create({ "Noodle" , false }));
 	FieldSystem()->RequestEnter("MainCity", true);
 }
 
