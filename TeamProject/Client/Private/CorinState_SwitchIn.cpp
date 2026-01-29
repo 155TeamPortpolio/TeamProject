@@ -7,22 +7,27 @@
 #include "CorinState_SwitchInAttack.h"
 #include "CorinState_SwitchInParryAid.h"
 
+CCorinState_SwitchIn* CCorinState_SwitchIn::Create()
+{
+    auto pInstance = new CCorinState_SwitchIn();
+    pInstance->m_pSubStateMachine = CStateMachine<CCorin>::Create();
+    auto pSubStateMachine = pInstance->Get_SubStateMachine();
+
+    pSubStateMachine->Register_State("Normal", CCorinState_SwitchInNormal::Create());
+    pSubStateMachine->Register_State("Attack", CCorinState_SwitchInAttack::Create());
+    pSubStateMachine->Register_State("ParryAid", CCorinState_SwitchInParryAid::Create());
+
+    pSubStateMachine->Get_State("Normal")->Set_Tag("Normal");
+    pSubStateMachine->Get_State("Attack")->Set_Tag("Attack");
+    pSubStateMachine->Get_State("ParryAid")->Set_Tag("ParryAid");
+
+    return pInstance;
+}
+
 void CCorinState_SwitchIn::Enter(CCorin* pOwner)
 {
-    //pOwner->Active_Character();
     pOwner->Push_Invincible();
     pOwner->Unlock_Move();
-    if (!m_pSubStateMachine)
-    {
-        m_pSubStateMachine = CStateMachine<CCorin>::Create();
-        m_pSubStateMachine->Register_State("Normal", CCorinState_SwitchInNormal::Create());
-        m_pSubStateMachine->Register_State("Attack", CCorinState_SwitchInAttack::Create());
-        m_pSubStateMachine->Register_State("ParryAid", CCorinState_SwitchInParryAid::Create());
-
-        m_pSubStateMachine->Get_State("Normal")->Set_Tag("Normal");
-        m_pSubStateMachine->Get_State("Attack")->Set_Tag("Attack");
-        m_pSubStateMachine->Get_State("ParryAid")->Set_Tag("ParryAid");
-    }
 
     switch (pOwner->Get_Switch())
     {

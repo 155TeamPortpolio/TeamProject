@@ -142,89 +142,8 @@
     <Filter Include="02. GameObject\Object\Player\Character">
       <UniqueIdentifier>{eeb033b4-780f-4eeb-930b-50f8ab6baf67}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Object\Player\Character\Miyabi">
-      <UniqueIdentifier>{f1da9023-8152-4d5f-a7dc-5ffc3950a500}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Player\Character\Miyabi\State">
-      <UniqueIdentifier>{c6366ece-2c84-438e-90c7-8a3fcceea1da}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Player\Character\Miyabi\State\Idle">
-      <UniqueIdentifier>{0e2be414-c839-48b9-ae2a-3ec0a387a47b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Player\Character\Miyabi\State\Attack">
-      <UniqueIdentifier>{30a2b6c6-b7dc-4baf-a8ad-c43cc5e2c1fc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Player\Character\Miyabi\State\Attack\Normal">
-      <UniqueIdentifier>{29853f99-a5fc-4258-b970-1b22da0e452b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Player\Character\Miyabi\State\Attack\Charge">
-      <UniqueIdentifier>{1bbdb708-2ec2-4e3c-877e-bca753a23843}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Player\Character\Miyabi\State\Move">
-      <UniqueIdentifier>{434eb16a-3d33-4884-be7d-002d61e150c6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Player\Character\Miyabi\State\Move\Walk">
-      <UniqueIdentifier>{5622f48f-6acc-4b8f-9937-5793c4b0237b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Player\Character\Miyabi\State\Move\Run">
-      <UniqueIdentifier>{d4841ea4-4d18-48a2-a3e4-59f14bf25a74}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Player\Character\Anbi">
-      <UniqueIdentifier>{15fd906f-39ec-473b-adfa-7de7028bbd2e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Player\Character\Anbi\State">
-      <UniqueIdentifier>{dfac9681-7662-4fbe-9a33-6b8c0c1f4523}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Player\Character\Anbi\State\Idle">
-      <UniqueIdentifier>{bbb3b02e-8215-4c3e-949e-477f2aebc93a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Player\Character\Anbi\State\Move">
-      <UniqueIdentifier>{dd07b2d6-97a0-4174-96bd-a393455c7ffe}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Player\Character\Anbi\State\Move\Run">
-      <UniqueIdentifier>{9d80b005-b1ae-40ed-8a50-737a1e4773fd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Player\Character\Anbi\State\Move\Walk">
-      <UniqueIdentifier>{163eb66f-f792-4771-9edc-bc73c07c6a7f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Player\Character\Anbi\State\Attack">
-      <UniqueIdentifier>{f9d7254f-2a79-45a1-98d8-f09062b2b873}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Player\Character\Anbi\State\Attack\Normal">
-      <UniqueIdentifier>{423c7918-5f74-4f2d-a48d-88523bd6c9fe}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Player\Character\Corin">
-      <UniqueIdentifier>{ee07f61e-61a1-42ab-bfcc-20cf8147b123}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Player\Character\Corin\State">
-      <UniqueIdentifier>{21c81c17-9dfd-4c09-8d83-5fb14ae316d2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Idle">
-      <UniqueIdentifier>{7093ab03-2b34-47af-945d-34a78e349620}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Move">
-      <UniqueIdentifier>{2b4d6055-a07d-4723-a793-dae75c760383}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Move\Walk">
-      <UniqueIdentifier>{6066750f-d26d-4dcc-b9cb-95ff0891b101}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Move\Run">
-      <UniqueIdentifier>{88626d5b-dbf8-4f03-8ef2-2f7cae50254a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Attack">
-      <UniqueIdentifier>{c267d6c9-393b-43c1-9ef4-beee8a23263e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Attack\Normal">
-      <UniqueIdentifier>{884362e5-20d7-4daa-9187-9c9149289f96}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\Object\TestPlane">
       <UniqueIdentifier>{1bb9fb41-6674-49a3-9da6-bd39a0ff8454}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Evade">
-      <UniqueIdentifier>{d03f6fe2-9042-45dc-ab55-125859fa9c22}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Evade\Dash">
-      <UniqueIdentifier>{c7ee365b-fe3f-4577-a882-c30dab07300f}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\Camera\05. ShadowCam">
       <UniqueIdentifier>{54711cba-0d76-43fd-b108-03e7250725a9}</UniqueIdentifier>
@@ -409,12 +328,6 @@
     <Filter Include="02. GameObject\UI\02. 3D\Plane\EnemyStatus">
       <UniqueIdentifier>{168323c4-d264-4f01-9868-adf2a0a0376d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Hit">
-      <UniqueIdentifier>{3b693345-701c-445b-bd6d-d4b327e101f1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Attack\Ex">
-      <UniqueIdentifier>{a9950fa8-5297-46a6-a3df-8f280c177142}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\Object\Interactable">
       <UniqueIdentifier>{196f5788-8586-4eb4-8224-8d7762629947}</UniqueIdentifier>
     </Filter>
@@ -426,9 +339,6 @@
     </Filter>
     <Filter Include="02. GameObject\UI\02. 3D\Mesh\UI_MeshPyramid">
       <UniqueIdentifier>{24b1d39d-8f09-4dfa-9e14-05a0d492a803}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Attack\Ultimate">
-      <UniqueIdentifier>{d8c05f91-7f1a-489f-a675-4a4178a2694d}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\UI\01. 2D\HUD_Field">
       <UniqueIdentifier>{67a92256-8431-4efd-a556-ed70b96c93e3}</UniqueIdentifier>
@@ -528,15 +438,6 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Enemy\Sacrifice_Hand">
       <UniqueIdentifier>{8fba8062-3d01-4a71-a27f-806808b2273d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Player\Character\Collider">
-      <UniqueIdentifier>{1487da32-f803-44c2-be56-7687fc06901a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Player\Character\Collider\ParryCollider">
-      <UniqueIdentifier>{9e151b16-ea22-445d-a015-cc45152d933a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Player\Character\Collider\AttackCollider">
-      <UniqueIdentifier>{8cafc1ce-885d-4894-bbae-9bc579a5da0c}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\UI\01. 2D\SceneFrame">
       <UniqueIdentifier>{da2fd65e-9bf7-4fb2-a1b2-95af726ef1a4}</UniqueIdentifier>
@@ -1038,7 +939,7 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Npc\Service\SirChop">
       <UniqueIdentifier>{d2a50a8e-9e0b-42f2-a758-62374a5c7f8b}</UniqueIdentifier>
-          </Filter>
+    </Filter>
     <Filter Include="02. GameObject\UI\01. 2D\Ramen">
       <UniqueIdentifier>{e1dc0083-3a9a-44a0-95b1-74202bf40893}</UniqueIdentifier>
     </Filter>
@@ -1051,6 +952,9 @@
     <Filter Include="02. GameObject\Object\Enemy\Defiler">
       <UniqueIdentifier>{47071186-1492-4dc2-877a-9f00d3ad73ea}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\01. JaneDoe\State\Attack\Assault">
+      <UniqueIdentifier>{0d434bd4-69a2-4b9c-9b46-5b5569ef933d}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02. GameObject\Object\Enemy\Boss\Defiler\State">
       <UniqueIdentifier>{538d12ba-ff39-42c3-8992-74003aa40ae2}</UniqueIdentifier>
     </Filter>
@@ -1062,6 +966,9 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Enemy\Boss\Defiler\State\Idle">
       <UniqueIdentifier>{d5b04047-e78b-49f4-aca1-616bbfd9634a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\06. FieldSystem\Room\04. Noodle">
+      <UniqueIdentifier>{810c5f63-0a50-441a-b876-0b38ab52f72c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1907,7 +1814,7 @@
     </ClInclude>
     <ClInclude Include="..\public\SirChop.h">
       <Filter>02. GameObject\Object\Npc\Service\SirChop</Filter>
-        </ClInclude>
+    </ClInclude>
     <ClInclude Include="..\Public\UI_Ramen.h">
       <Filter>02. GameObject\UI\01. 2D\Ramen</Filter>
     </ClInclude>
@@ -1931,6 +1838,12 @@
     </ClInclude>
     <ClInclude Include="..\public\DefilerState_Idle.h">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler\State\Idle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Room_Noodle.h">
+      <Filter>03. Utility\06. FieldSystem\Room\04. Noodle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\JaneDoeState_AssaultAttack.h">
+      <Filter>02. GameObject\Object\Player\Character\01. JaneDoe\State\Attack\Assault</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2740,7 +2653,7 @@
     </ClCompile>
     <ClCompile Include="..\private\SirChop.cpp">
       <Filter>02. GameObject\Object\Npc\Service\SirChop</Filter>
-          </ClCompile>
+    </ClCompile>
     <ClCompile Include="..\Private\UI_Ramen.cpp">
       <Filter>02. GameObject\UI\01. 2D\Ramen</Filter>
     </ClCompile>
@@ -2761,6 +2674,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\DefilerState_Idle.cpp">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler\State\Idle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Room_Noodle.cpp">
+      <Filter>03. Utility\06. FieldSystem\Room\04. Noodle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\JaneDoeState_AssaultAttack.cpp">
+      <Filter>02. GameObject\Object\Player\Character\01. JaneDoe\State\Attack\Assault</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
