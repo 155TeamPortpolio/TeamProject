@@ -278,6 +278,15 @@ protected:
     vector<IK_CHAIN> m_IKChains;
 
     string m_animFilter;
+
+    struct debugonly {
+        _int clip;
+        _vector3 vPos;
+        _bool Wrap;
+    };
+
+    _bool       bPausePush;
+    deque<debugonly> debugMove;
 public:
     static CAnimator3D* Create();
     virtual CComponent* Clone();

@@ -179,6 +179,7 @@ void CAnimator3D::Update_Animation(_float dt)
 	}
 	else /* If Not Exist DynamicBone */
 		m_FinalMatrices = m_CombinedMatrices;
+
 }
 
 SetAnimBuild CAnimator3D::Set_Animation(AnimArg ClipArg)
@@ -1051,21 +1052,18 @@ void CAnimator3D::Animation_Run(ANIM_LAYER& Layer, _float dt)
 			_vector3 vCurRootPos = T;
 			_vector4 vCurRootQuat = R;
 
-			//if (Layer.bJumpedAnim)
-			//{
-			//	//Layer.vRootMoveDelta = _vector3::Zero;
-			//	//Layer.vRootQuatDelta = _quaternion::Identity;
-			//	Layer.bJumpedAnim = false;
-			//	//Layer.bWrapped = false;
-			//}
-			//else {
-			//	Compute_RootMoveDelta(Layer, vCurRootPos);
-			//	Compute_RootQuatDelta(Layer, vCurRootQuat);
-			//}
-
-			Compute_RootMoveDelta(Layer, vCurRootPos);
-			Compute_RootQuatDelta(Layer, vCurRootQuat);
-
+			if (Layer.bJumpedAnim)
+			{
+				Layer.vRootMoveDelta = _vector3::Zero;
+				Layer.vRootQuatDelta = _quaternion::Identity;
+				Layer.bJumpedAnim = false;
+				//Layer.bWrapped = false;
+			}
+			else {
+				Compute_RootMoveDelta(Layer, vCurRootPos);
+				Compute_RootQuatDelta(Layer, vCurRootQuat);
+			}
+			 
 			//다음 프레임 대비
 			Layer.vPrevRootPos = vCurRootPos;
 			Layer.vPrevRootQuat = vCurRootQuat;
@@ -1135,8 +1133,8 @@ void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
 
 			if (Layer.bJumpedAnim)
 			{
-				//6Layer.vRootMoveDelta = _vector3::Zero;
-				//6Layer.vRootQuatDelta = _quaternion::Identity;
+				Layer.vRootMoveDelta = _vector3::Zero;
+				Layer.vRootQuatDelta = _quaternion::Identity;
 				Layer.bJumpedAnim = false;
 				//Layer.bWrapped = false;
 			}
@@ -1223,9 +1221,14 @@ void CAnimator3D::Check_ReservedSpeeds(ANIM_LAYER& Layer)
 void CAnimator3D::Compute_RootMoveDelta(ANIM_LAYER& Layer, _vector3& curPos)
 {
 	if (Layer.bWrapped) { //Roop 
-		_vector3 vStartPos = m_pAnimClips[Layer.iClipIndex]->Get_StartKeyFrameByBoneIndex(Layer.iRootBoneIndex).vTranslation;
+		_vector3 vStartPos;
+
+		if (Layer.fStartAt == 0.f)
+			vStartPos = m_pAnimClips[Layer.iClipIndex]->Get_StartKeyFrameByBoneIndex(Layer.iRootBoneIndex).vTranslation;
+		else 
+			m_pAnimClips[Layer.iClipIndex]->Sample_KeyFrameByBoneIndex(Layer.iRootBoneIndex, Layer.fStartAt, nullptr, nullptr, &vStartPos);
+
 		Layer.vRootMoveDelta = (Layer.vRootEndPos - Layer.vPrevRootPos) + (curPos - vStartPos);
-		Layer.bWrapped = false;
 	}
 	else
 		Layer.vRootMoveDelta = curPos - Layer.vPrevRootPos;
@@ -1543,6 +1546,33 @@ void CAnimator3D::Render_GUI()
 
 	if (m_pDynamicBone)
 		m_pDynamicBone->Render_GUI();
+
+	/*------*/
+
+	debugonly debug{};
+	debug.clip = Get_CurAnimIndex();
+	debug.vPos = Get_RootBoneMoveDelta();
+	debug.Wrap = m_AnimLayers[0].bWrapped;
+
+	if (ImGui::Button("pause"))
+	{
+		bPausePush = !bPausePush;
+	}
+	if(bPausePush)
+		debugMove.push_back(debug);
+
+	if (debugMove.size() >= 30)
+		debugMove.pop_front();
+	
+	if (m_pOwner->Get_InstanceName() != "Belle")
+		return;
+
+	for (auto& d : debugMove)
+	{
+		ImGui::Text("Clip:%d Wrap:%d  (%.5f %.5f %.5f)",
+			d.clip, d.Wrap,
+			d.vPos.x, d.vPos.y, d.vPos.z);
+	}
 }
 
 void CAnimator3D::GUI_ShowLayerInfo()

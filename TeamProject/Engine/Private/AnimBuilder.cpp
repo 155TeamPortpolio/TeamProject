@@ -18,17 +18,17 @@ HRESULT SetAnimBuild::Apply()
 
 	//베이스 레이어일 경우 마지막 키프레임 위치, 회전을 갖고옴
 	if (Layer.BaseLayer) {
-		////애니매이션 시작 포지션이 1인지 구분
-		//if (m_fStartAt == 0.f) {
-		//	Layer.vPrevRootPos = m_pOwner->m_pAnimClips[m_iClipIndex]
-		//		->Get_StartKeyFrameByBoneIndex(Layer.iRootBoneIndex).vTranslation;
-		//	Layer.vPrevRootQuat = m_pOwner->m_pAnimClips[m_iClipIndex]
-		//		->Get_StartKeyFrameByBoneIndex(Layer.iRootBoneIndex).vRotation;
-		//}
-		//else {
-		//	m_pOwner->m_pAnimClips[Layer.iClipIndex]->Sample_KeyFrameByBoneIndex(Layer.iRootBoneIndex, m_fStartAt,
-		//		nullptr, &Layer.vPrevRootQuat, &Layer.vPrevRootPos);
-		//}
+		//애니매이션 시작 포지션이 1인지 구분
+		if (m_fStartAt == 0.f) {
+			Layer.vPrevRootPos = m_pOwner->m_pAnimClips[m_iClipIndex]
+				->Get_StartKeyFrameByBoneIndex(Layer.iRootBoneIndex).vTranslation;
+			Layer.vPrevRootQuat = m_pOwner->m_pAnimClips[m_iClipIndex]
+				->Get_StartKeyFrameByBoneIndex(Layer.iRootBoneIndex).vRotation;
+		}
+		else {
+			m_pOwner->m_pAnimClips[Layer.iClipIndex]->Sample_KeyFrameByBoneIndex(Layer.iRootBoneIndex, m_fStartAt,
+				nullptr, &Layer.vPrevRootQuat, &Layer.vPrevRootPos);
+		}
 				
 		//애니매이션 루프시 마지막 엔드프레임이 1인지 구분
 		if (fabs(m_fEndAt - 1.f) < 0.0001f) {
@@ -91,17 +91,16 @@ HRESULT ChangeAnimBuild::Apply()
 	//베이스 레이어일 경우 마지막 키프레임 위치, 회전을 갖고옴
 	if (Layer.BaseLayer) {
 		////애니매이션 시작 포지션이 1인지 구분
-		//if (m_fStartAt == 0.f) {
-		//	Layer.vPrevRootPos = m_pOwner->m_pAnimClips[m_iClipIndex]
-		//		->Get_StartKeyFrameByBoneIndex(Layer.iRootBoneIndex).vTranslation;
-		//	Layer.vPrevRootQuat = m_pOwner->m_pAnimClips[m_iClipIndex]
-		//		->Get_StartKeyFrameByBoneIndex(Layer.iRootBoneIndex).vRotation;
-		//}
-		//else {
-		//	m_pOwner->m_pAnimClips[m_iClipIndex]->Sample_KeyFrameByBoneIndex(Layer.iRootBoneIndex, m_fStartAt,
-		//		nullptr, &Layer.vPrevRootQuat, &Layer.vPrevRootPos);
-		//}
-		//
+		if (m_fStartAt == 0.f) {
+			Layer.vPrevRootPos = m_pOwner->m_pAnimClips[m_iClipIndex]
+				->Get_StartKeyFrameByBoneIndex(Layer.iRootBoneIndex).vTranslation;
+			Layer.vPrevRootQuat = m_pOwner->m_pAnimClips[m_iClipIndex]
+				->Get_StartKeyFrameByBoneIndex(Layer.iRootBoneIndex).vRotation;
+		}
+		else {
+			m_pOwner->m_pAnimClips[m_iClipIndex]->Sample_KeyFrameByBoneIndex(Layer.iRootBoneIndex, m_fStartAt,
+				nullptr, &Layer.vPrevRootQuat, &Layer.vPrevRootPos);
+		}
 		//애니매이션 루프시 마지막 엔드프레임이 1인지 구분
 		if (fabs(m_fEndAt - 1.f) < 0.0001f) {
 			Layer.vRootEndPos = m_pOwner->m_pAnimClips[m_iClipIndex]
