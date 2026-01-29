@@ -373,7 +373,7 @@ vector<CMaterialData*>* CResourceMgr::GetOrLoad_MaterialData(
 	vector<CMaterialData*> container;
 	container.reserve(header.MaterialDataCount);
 
-	const string baseFilePath = MakePath(header.materialFileKey);
+	const string baseFilePath = MakePath(fileKey);
 	const string directory = filesystem::path(baseFilePath).parent_path().string() + "/";
 
 	for (size_t i = 0; i < header.MaterialDataCount; ++i)
