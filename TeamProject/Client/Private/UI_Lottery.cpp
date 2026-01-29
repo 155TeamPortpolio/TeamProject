@@ -27,17 +27,18 @@ HRESULT CUI_Lottery::Initialize(INIT_DESC* pArg)
 
     Cache();
 
-    auto pObj = Builder::Create_UIObject({ LevelManager()->Get_NowLevelKey(), "Proto_GameObject_Newspaper" }).Build("newspaper");
+    auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_Newspaper" }).Build("newspaper");
     if (pObj)
     {
         Get_Component<CObjectContainer>()->Add_Child(pObj);
         m_pChildren[ENUM(CHILD::NEWSPAPER)] = pObj;
+        Get_Component<CObjectContainer>()->Set_Order_First(pObj);
     }
 
     CUI_ScratchCard::SCRATCH_DESC* pDesc = new CUI_ScratchCard::SCRATCH_DESC;
     pDesc->pState = &m_iState;
     pDesc->onScratchCompleted = [this]() { Change_State(STATE::USED); };
-    pObj = Builder::Create_UIObject({LevelManager()->Get_NowLevelKey(), "Proto_GameObject_ScratchCard"})
+    pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_ScratchCard"})
         .Add_UIDesc(pDesc)
         .Build("scratchCard");
     if (pObj)
@@ -71,6 +72,9 @@ void CUI_Lottery::Update(_float dt)
 	__super::Update(dt);
 
     Get_Component<CObjectContainer>()->UpdateChild(dt);
+
+    if(Is_ChildAnimationFinished(CHILD::ICON_SCRATCH))
+        Set_ChildAnimation(CHILD::ICON_SCRATCH, 1);
 }
 
 void CUI_Lottery::Late_Update(_float dt)
@@ -134,8 +138,11 @@ void CUI_Lottery::OnClick_Back()
     Set_ChildAnimation(CHILD::OVERLAY_BACK, 0);
     Set_ChildAnimation(CHILD::ICON_BACK, 0);
 
-    if (Is_ChildAlive(CHILD::SCRATCH))
+    if (Is_ChildAlive(CHILD::SCRATCH)) 
+    {
+        Set_ChildAnimation(CHILD::OVERLAY, 1);
         Set_ChildUIDeActive(CHILD::SCRATCH);
+    }
     else
         FieldSystem()->RequestExitTop();
 }
@@ -150,6 +157,7 @@ void CUI_Lottery::OnClick_RefreshNews()
 
 void CUI_Lottery::OnClick_OpenScratch()
 {
+    Set_ChildAnimation(CHILD::OVERLAY, 0);
     Set_ChildUIActive(CHILD::SCRATCH);
 }
 
@@ -200,6 +208,15 @@ _bool CUI_Lottery::Is_ChildAlive(CHILD child)
         return false;
 
     return pChild->Is_Alive();
+}
+
+_bool CUI_Lottery::Is_ChildAnimationFinished(CHILD child)
+{
+    auto pChild = m_pChildren[ENUM(child)];
+    if (!pChild)
+        return false;
+
+    return pChild->Is_AnimFinished();
 }
 
 CGameObject* CUI_Lottery::Create()

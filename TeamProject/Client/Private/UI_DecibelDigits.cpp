@@ -59,11 +59,10 @@ void CUI_DecibelDigits::Update(_float dt)
 void CUI_DecibelDigits::Ready_PartObjects()
 {
     auto pContainer = Get_Component<CObjectContainer>();
-    const string& strLevelKey = CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey();
 
     for (_int i = 0; i < ENUM(CHILD::END); ++i)
     {
-        CUI_Object* pObj = Builder::Create_UIObject({ strLevelKey, "Proto_GameObject_Image" })
+        CUI_Object* pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_Image" })
             .Build("decibelDigits" + to_string(i));
         if (!pObj)
             continue;

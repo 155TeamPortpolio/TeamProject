@@ -8,6 +8,10 @@
 #include "CharacterController.h"
 #include "ObjectContainer.h"
 
+#include "Material.h"
+#include "MaterialInstance.h"
+#include "Texture.h"
+
 CNpc::CNpc()
 {
 }
@@ -15,6 +19,30 @@ CNpc::CNpc()
 CNpc::CNpc(const CNpc& rhs)
     :CGameObject(rhs)
 {
+}
+
+void CNpc::OnCameraCollision(_bool isColliding)
+{
+    auto pMaterial = Get_Component<CMaterial>();
+    auto& materialInstances = pMaterial->Get_MaterialInstances();
+
+    if (isColliding)
+    {
+        for (const auto& instance : materialInstances)
+        {
+            instance->Override_Pass("TransparentNoise");
+            m_fCamFadeAlpha = 0.6f;
+        }
+    }
+    if (isColliding == false)
+    {
+
+        for (const auto& instance : materialInstances)
+        {
+            instance->Reset_Pass();
+            m_fCamFadeAlpha = 0.0f;
+        }
+    }
 }
 
 HRESULT CNpc::Initialize_Prototype()
@@ -27,8 +55,21 @@ HRESULT CNpc::Initialize_Prototype()
 HRESULT CNpc::Initialize(INIT_DESC* pArg)
 {
     __super::Initialize(pArg);
-
     return S_OK;
+}
+
+void CNpc::Awake()
+{
+    auto pMaterial = Get_Component<CMaterial>();
+    auto& materialInstances = pMaterial->Get_MaterialInstances();
+    auto DitheringTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, "Eff_Noise_032.png");
+
+    if (DitheringTexture == nullptr) return;
+    for (const auto& Instance : materialInstances)
+    {
+        Instance->Set_Param("DitheringTexture", { DitheringTexture->Get_SRV(),"Texture2D",0 });
+        pMaterial->Add_MaterialData(Instance, "fCameraFadeAlpha", { &m_fCamFadeAlpha, "float", sizeof(_float) });
+    }
 }
 
 void CNpc::Priority_Update(_float dt)

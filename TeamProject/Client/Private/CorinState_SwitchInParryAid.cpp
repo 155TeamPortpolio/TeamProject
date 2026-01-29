@@ -8,30 +8,36 @@
 
 #include "CharacterController.h"
 
+CCorinState_SwitchInParryAid* CCorinState_SwitchInParryAid::Create()
+{
+    auto pInstance = new CCorinState_SwitchInParryAid();
+    pInstance->m_pSubStateMachine = CStateMachine<CCorin>::Create();
+    auto pSubStateMachine = pInstance->Get_SubStateMachine();
+
+    pSubStateMachine->Register_State("ParryAid_Start", CCorinState_SwitchInParryAid_Start::Create());
+    pSubStateMachine->Register_State("L_Loop", CCorinState_SwitchInParryAid_L_Loop::Create());
+    pSubStateMachine->Register_State("L_End", CCorinState_SwitchInParryAid_L_End::Create());
+    pSubStateMachine->Register_State("H_Loop", CCorinState_SwitchInParryAid_H_Loop::Create());
+    pSubStateMachine->Register_State("H_End", CCorinState_SwitchInParryAid_H_End::Create());
+
+    pSubStateMachine->Get_State("L_End")->Set_Tag("End");
+    pSubStateMachine->Get_State("H_End")->Set_Tag("End");
+
+    pSubStateMachine->Register_Transition("ParryAid_Start", "L_Loop",
+        CStateMachine<CCorin>::CONDITION_ANIMATION_GREATER, "", 0.4f);
+    pSubStateMachine->Register_Transition("L_Loop", "L_End",
+        CStateMachine<CCorin>::CONDITION_ANIMATION_END);
+
+    pSubStateMachine->Set_DefaultState("ParryAid_Start");
+
+    pSubStateMachine->Set_Bool("ReserveAssaultAid", false);
+    return pInstance;
+}
+
 void CCorinState_SwitchInParryAid::Enter(CCorin* pOwner)
 {
     pOwner->Lock_Move();
     pOwner->Lock_Rotate();
-    if (!m_pSubStateMachine)
-    {
-        m_pSubStateMachine = CStateMachine<CCorin>::Create();
-        m_pSubStateMachine->Register_State("Start", CCorinState_SwitchInParryAid_Start::Create());
-        m_pSubStateMachine->Register_State("L_Loop", CCorinState_SwitchInParryAid_L_Loop::Create());
-        m_pSubStateMachine->Register_State("L_End", CCorinState_SwitchInParryAid_L_End::Create());
-        m_pSubStateMachine->Register_State("H_Loop", CCorinState_SwitchInParryAid_H_Loop::Create());
-        m_pSubStateMachine->Register_State("H_End", CCorinState_SwitchInParryAid_H_End::Create());
-
-        m_pSubStateMachine->Get_State("L_End")->Set_Tag("End");
-        m_pSubStateMachine->Get_State("H_End")->Set_Tag("End");
-
-        m_pSubStateMachine->Register_Transition("Start", "L_Loop",
-            CStateMachine<CCorin>::CONDITION_ANIMATION_GREATER, "", 0.4f);
-        m_pSubStateMachine->Register_Transition("L_Loop", "L_End",
-            CStateMachine<CCorin>::CONDITION_ANIMATION_END);
-
-        m_pSubStateMachine->Set_DefaultState("Start");
-    }
-
     __super::Enter(pOwner);
 }
 
@@ -107,6 +113,12 @@ void CCorinState_SwitchInParryAid_L_End::Enter(CCorin* pOwner)
 
 void CCorinState_SwitchInParryAid_L_End::Update(CCorin* pOwner, _float dt)
 {
+    if (m_pOwnerStateMachine->Get_Bool("ReserveAssaultAid"))
+    {
+        pOwner->Get_StateMachine()->Set_Trigger("Attack");
+        pOwner->Get_StateMachine()->Set_Int("AttackEntryMode", 6);
+    }
+
     pOwner->Process_RootMotion(dt);
 
     IHState<CCorin>* pSwitch = Get_ParentState();

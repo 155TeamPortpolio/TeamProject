@@ -99,14 +99,14 @@ void CElectricBoo::Add_DialoguePartner()
 	CCT_DESC pairBooCCT;
 	pairBooCCT.iCollisionMask = 0xFFFFFFFF;
 	pairBooCCT.bAutoFit = false;
-	pairBooCCT.fHeight = 1.f;
+	pairBooCCT.fHeight = Get_Component<CCharacterController>()->Get_Height();
 	pairBooCCT.fRadius = 0.4f;
-	pairBooCCT.eGroup = COLLISION_GROUP::COMMON;
+	pairBooCCT.eGroup = COLLISION_GROUP::INTERACTABLE;
 	_float4 Pos = Get_Position();
-	pairBooCCT.vPos = { Pos.x - 1.2f, Pos.y, Pos.z };
+	pairBooCCT.vPos = { Pos.x - 0.6f, Pos.y, Pos.z - 0.4f };
 
 	auto pTransform = Get_Component<CTransform>();
-	pTransform->LookAt(Vector4(Pos.x - 1.2f, Pos.y, Pos.z, 1.f));
+	pTransform->LookAt(Vector4(Pos.x - 0.6f, Pos.y, Pos.z - 0.4f, 1.f));
 
 	CGameObject* pPairBoo = Builder::Create_Object({ G_GlobalLevelKey, "Proto_GameObject_PairBoo" })
 		.CharacterController(pairBooCCT)

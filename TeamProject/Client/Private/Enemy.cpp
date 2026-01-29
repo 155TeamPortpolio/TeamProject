@@ -262,7 +262,7 @@ void CEnemy::Create_UIBossHUD()
 
 	// BossHUD UI »ý¼º
 	const string& strLevelKey = LevelManager()->Get_NowLevelKey();
-	auto pBossHUD = Builder::Create_UIObject({ strLevelKey,"Proto_GameObject_BossHUD" })
+	auto pBossHUD = Builder::Create_UIObject({ G_GlobalLevelKey,"Proto_GameObject_BossHUD" })
 		.Add_UIDesc(pDesc)
 		.Build("bossHUD");
 

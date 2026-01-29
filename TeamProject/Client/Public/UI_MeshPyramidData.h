@@ -24,7 +24,7 @@ struct UI_MeshPyramidConfig
     float ringRadius = 1.0f;
     float yOffset = 0.03f;
 
-    float basePitchRad = 3.14159265359f * 0.5f;
+    float basePitchRad = XM_PI * 0.5f;
 
     float minDirLen = 0.02f;
 
