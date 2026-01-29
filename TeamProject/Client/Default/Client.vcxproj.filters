@@ -1041,6 +1041,9 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Npc\Service\SirChop">
       <UniqueIdentifier>{d2a50a8e-9e0b-42f2-a758-62374a5c7f8b}</UniqueIdentifier>
+          </Filter>
+    <Filter Include="02. GameObject\Camera\04. OrbitCam\OrbitCamCollider">
+      <UniqueIdentifier>{bb6ef566-7828-4054-a05e-14d7b79b3b20}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\Object\Enemy\Defiler">
       <UniqueIdentifier>{47071186-1492-4dc2-877a-9f00d3ad73ea}</UniqueIdentifier>
@@ -1901,9 +1904,10 @@
     </ClInclude>
     <ClInclude Include="..\public\SirChop.h">
       <Filter>02. GameObject\Object\Npc\Service\SirChop</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\DefilerState.h" />
         </ClInclude>
+    <ClInclude Include="..\public\OrbitCamCollider.h">
+      <Filter>02. GameObject\Camera\04. OrbitCam\OrbitCamCollider</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\Defiler.h">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler</Filter>
     </ClInclude>
@@ -2728,6 +2732,9 @@
     <ClCompile Include="..\private\SirChop.cpp">
       <Filter>02. GameObject\Object\Npc\Service\SirChop</Filter>
           </ClCompile>
+    <ClCompile Include="..\private\OrbitCamCollider.cpp">
+      <Filter>02. GameObject\Camera\04. OrbitCam\OrbitCamCollider</Filter>
+    </ClCompile>
     <ClCompile Include="..\Private\Defiler.cpp">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler</Filter>
     </ClCompile>
