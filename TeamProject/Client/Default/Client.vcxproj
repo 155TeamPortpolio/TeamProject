@@ -697,6 +697,10 @@
     <ClCompile Include="..\Private\BattleFXFlow.cpp" />
     <ClCompile Include="..\Private\CorinState_AssaultAttack.cpp" />
     <ClCompile Include="..\Private\CorinState_CounterAttack.cpp" />
+    <ClCompile Include="..\Private\Defiler.cpp" />
+    <ClCompile Include="..\Private\DefilerState_Attack.cpp" />
+    <ClCompile Include="..\Private\DefilerState_Born.cpp" />
+    <ClCompile Include="..\Private\DefilerState_Idle.cpp" />
     <ClCompile Include="..\Private\JaneDoeState_CounterAttack.cpp" />
     <ClCompile Include="..\private\Room_Lottery.cpp" />
     <ClCompile Include="..\private\UI_DamageText.cpp">

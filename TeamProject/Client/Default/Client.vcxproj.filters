@@ -1718,7 +1718,6 @@
     <ClInclude Include="..\Public\CorinState_CounterAttack.h">
       <Filter>02. GameObject\Object\Player\Character\02. Corin\State\Attack\Counter</Filter>
     </ClInclude>
-
     <ClInclude Include="..\Public\DefilerState_Attack.h">
       <Filter>02. GameObject\Object\Enemy\Defiler\State\Attack</Filter>
     </ClInclude>
@@ -2510,23 +2509,11 @@
     <ClCompile Include="..\private\UI_DamageText.cpp">
       <Filter>02. GameObject\UI\02. 3D\Plane\DamageText</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Defiler.cpp">
-      <Filter>02. GameObject\Object\Enemy\Defiler</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\DefilerState_Born.cpp">
-      <Filter>02. GameObject\Object\Enemy\Defiler\State\Born</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\UI_Lottery.cpp">
       <Filter>02. GameObject\UI\01. 2D\Lottery</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UI_ResultBanner.cpp">
       <Filter>02. GameObject\UI\01. 2D\ResultBanner</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\DefilerState_Idle.cpp">
-      <Filter>02. GameObject\Object\Enemy\Defiler\State\Idle</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\DefilerState_Attack.cpp">
-      <Filter>02. GameObject\Object\Enemy\Defiler\State\Attack</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UI_Newspaper.cpp">
       <Filter>02. GameObject\UI\01. 2D\Lottery\Newspaper</Filter>
@@ -2539,6 +2526,18 @@
     </ClCompile>
     <ClCompile Include="..\Private\CorinState_AssaultAttack.cpp">
       <Filter>02. GameObject\Object\Player\Character\02. Corin\State\Attack\Assault</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Defiler.cpp">
+      <Filter>02. GameObject\Object\Enemy\Defiler</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\DefilerState_Attack.cpp">
+      <Filter>02. GameObject\Object\Enemy\Defiler\State\Attack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\DefilerState_Born.cpp">
+      <Filter>02. GameObject\Object\Enemy\Defiler\State\Born</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\DefilerState_Idle.cpp">
+      <Filter>02. GameObject\Object\Enemy\Defiler\State\Idle</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

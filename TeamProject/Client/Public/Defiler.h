@@ -18,24 +18,32 @@ public:
         //  _bool isChainOpen = false;  //현재 상태에서 다음으로 진행 가능여부
         //  _bool isEnd = false;
         //  string currentStateTag{};
+        _int pattern = { 0 };
 
         TraceType eTraceType = {};
         deque<_float> progressQueue; 
-        vector<string> FrameEffect;
+        _float currentStartProgress = 0.f;
         _bool EndChain = {};
 
-        _float GetProgress() {
-            if (progressQueue.empty())
-                return 0.f;
-            else {
-                _float progress = progressQueue.front();
+        void OnTarget() { eTraceType = TraceType::ONTARGET; }
+        void OnTrace() { eTraceType = TraceType::TRACE; }
+        void NoneTrace() { eTraceType = TraceType::NONE; }
+        _float PopStartProgress()
+        {
+            _float progress = 0.f;
+            if (!progressQueue.empty())
+            {
+                progress = progressQueue.front();
                 progressQueue.pop_front();
-                return progress;
             }
+            return progress;
         }
-        void OnTarget() { eTraceType == TraceType::ONTARGET; }
-        void OnTrace() { eTraceType == TraceType::TRACE; }
-        void NoneTrace() { eTraceType == TraceType::NONE; }
+        _bool ConsumeChain() {
+            _bool prevChain = EndChain;
+            EndChain = false;
+            return prevChain;
+        }
+
     }DEFILER_BLACK_BOARD;
 
 private:
@@ -56,9 +64,9 @@ public:
 public:
     DEFILER_BLACK_BOARD& GetBlackBoard() { return m_BlackBoard; }
     CStateMachine<CDefiler>* Get_MainStateMachine() { return m_pStateMachine; }
+
 private:
     void MoveByTraceMode(_float dt, _float moveScale = 1.f);
-    _vector3 CalcIntentMoveWorld(_float dt, TraceType traceType, const _vector3& animMoveWorld, const _vector3& selfPos, const _vector3& targetPos) const;
     void RotateToTarget(_float dt, _float rotateSpeed = 1.f);
     void Update_States(_float dt);
     void Route_AnimEvent(CAnimator3D* animator);

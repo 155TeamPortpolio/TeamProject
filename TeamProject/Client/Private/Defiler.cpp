@@ -33,8 +33,8 @@ HRESULT CDefiler::Initialize_Prototype()
 	Add_Component<CObjectContainer>();
 
 	auto pResource = CGameInstance::GetInstance()->Get_ResourceMgr();
-	Get_Component<CSkeletalModel>()->Link_Model(G_GlobalLevelKey, "Defiler_Isolde.model");
-	Get_Component<CMaterial>()->Link_Material(G_GlobalLevelKey, "Defiler_Isolde.mat");
+	Get_Component<CSkeletalModel>()->Link_Model("Zero_Level", "Defiler_Isolde.model");
+	Get_Component<CMaterial>()->Link_Material("Zero_Level", "Defiler_Isolde.mat");
 
 	return S_OK;
 }
@@ -91,7 +91,7 @@ void CDefiler::Update(_float dt)
 	
 	Get_Component<CCharacterController>()->Update(dt);
 	MoveByTraceMode(dt);
-	//RotateToTarget(dt);
+	RotateToTarget(dt,2.f);
 	m_pStateMachine->Update(dt);
 }
 
@@ -102,11 +102,8 @@ void CDefiler::Late_Update(_float dt)
 
 void CDefiler::Render_GUI()
 {
+	ImGui::InputInt("Pattern number", &m_BlackBoard.pattern);
 	__super::Render_GUI();
-
-	Render_GUI_ForTargetInfo();
-	m_pStateMachine->Render_GUI();
-	ImGui::Text("Current State : %s", m_pStateMachine->Get_CurrentStateName().c_str());
 }
 
 CDefiler* CDefiler::Create()
@@ -121,87 +118,53 @@ CDefiler* CDefiler::Create()
 
 	return instance;
 }
+
 void CDefiler::MoveByTraceMode(_float dt, _float moveScale)
 {
 	auto* animator = Get_Component<CAnimator3D>();
-	auto* characterController = Get_Component<CCharacterController>();
 	auto* transform = Get_Component<CTransform>();
-	if (!animator || !characterController || !transform)
+	auto* controller = Get_Component<CCharacterController>();
+	if (!animator || !transform || !controller || dt <= 0.f)
 		return;
 
-	TraceType traceType = m_BlackBoard.eTraceType;
+	/*델타*/
+	const _vector3 rootDeltaLocal = animator->Get_RootBoneMoveDelta() * moveScale;
+	const _quaternion rootQuatLocal = animator->Get_RootBoneQuatDelta();
 
-	_vector3 rootDeltaMove = animator->Get_RootBoneMoveDelta();
-	_vector4 rootDeltaQuat = animator->Get_RootBoneQuatDelta();
+	const _vector3 nowPos = transform->Get_WorldPos();
+	const _vector3 targetPos = m_tTargetingInfo.vTargetPos;
 
-	_vector4 currentFacingQuat = transform->Get_QuaternionRotate();
-
-	_vector3 animMoveWorld(0.f, 0.f, 0.f);
-	_vector4 appliedQuat(0.f, 0.f, 0.f, 1.f);
-
-	switch (traceType)
-	{
-	case TraceType::TRACE:
-		appliedQuat = rootDeltaQuat;
-		animMoveWorld = Math::RotateVectorByQuaternion(rootDeltaMove, currentFacingQuat) * moveScale;
-		break;
-
-	case TraceType::ONTARGET:
-		appliedQuat = rootDeltaQuat; // 회전만 원하면
-		animMoveWorld = _vector3(0.f, 0.f, 0.f);
-		break;
-
-	default:
-		appliedQuat = _vector4(0.f, 0.f, 0.f, 1.f);
-		animMoveWorld = _vector3(0.f, 0.f, 0.f);
-		break;
-	}
-
-	// 여기서 "추가 이동" 계산
-	_vector3 intentMoveWorld = CalcIntentMoveWorld(dt, traceType);
-
-	// 최종 이동 = 루트모션 + 의도 이동
-	_vector3 finalMoveWorld = animMoveWorld + intentMoveWorld;
-
-	transform->Add_Quaternion(appliedQuat);
-	characterController->Move_RootMotion(finalMoveWorld, currentFacingQuat, dt);
-}
-
-_vector3 CDefiler::CalcIntentMoveWorld(
-	_float dt,
-	TraceType traceType,
-	const _vector3& animMoveWorld,
-	const _vector3& selfPos,
-	const _vector3& targetPos) const
-{
-	if (traceType != TraceType::TRACE)
-		return _vector3(0.f, 0.f, 0.f);
-
-	// 애니 이동 먼저 반영된 "예상 위치"
-	_vector3 predictedPos = selfPos + animMoveWorld;
-
-	_vector3 toTarget = targetPos - predictedPos;
+	_vector3 toTarget = targetPos - nowPos;
 	toTarget.y = 0.f;
 
-	float lengthSq = toTarget.x * toTarget.x + toTarget.z * toTarget.z;
-	if (lengthSq < 1e-6f)
-		return _vector3(0.f, 0.f, 0.f);
+	const _float distToTarget = toTarget.Length();
+	if (distToTarget <= 1e-4f)
+		return;
 
-	float length = sqrtf(lengthSq);
-	_vector3 dir = toTarget / length;
+	const _vector3 dirToTarget = toTarget / distToTarget;
+	const _vector3 localForward = _vector3(0.f, 0.f, 1.f);
 
-	const float desiredDistance = 10.f;
+	// 루트모션의 전/후 성분(부호 유지)
+	_vector3 rootDeltaH = rootDeltaLocal;
+	rootDeltaH.y = 0.f;
 
-	// predicted 기준으로 이미 안쪽이면(이미 너무 가까움/지나침) -> 추가 이동 금지
-	float over = length - desiredDistance;
-	if (over <= 0.f)
-		return _vector3(0.f, 0.f, 0.f);
+	const _float forwardAmount = rootDeltaH.Dot(localForward); // +면 전진, -면 후진
 
-	const float extraSpeed = 2.5f;
-	float moveAmount = min(over, extraSpeed * dt);
+	// 타겟 방향으로 전/후만 반영
+	_float moveLenSigned = forwardAmount;
 
-	return dir * moveAmount;
+	// 타겟을 지나치지 않게 클램프(전진일 때만 보통 필요)
+	if (moveLenSigned > 0.f && moveLenSigned > distToTarget)
+		moveLenSigned = distToTarget;
+
+	const _vector3 moveWorld = dirToTarget * moveLenSigned;
+	const _vector3 velocityWorld = moveWorld / dt;
+
+	controller->Move_Velocity(velocityWorld, dt);
+	m_pTransform->Add_Quaternion(rootQuatLocal);
 }
+
+
 
 void CDefiler::RotateToTarget(_float dt, _float rotateSpeed)
 {
@@ -226,7 +189,6 @@ void CDefiler::Update_States(_float dt)
 void CDefiler::Route_AnimEvent(CAnimator3D* animator)
 {
 	m_BlackBoard.EndChain = false;
-	m_BlackBoard.FrameEffect.clear();
 
 	auto Bus = animator->Get_EventBus();
 
@@ -243,8 +205,10 @@ void CDefiler::Route_AnimEvent(CAnimator3D* animator)
 		case CLIP_EVENT_TYPE::SOUND:
 			break;
 		case CLIP_EVENT_TYPE::EFFECT:
-			if (instance.Tag == "AttackSign")
+			if (instance.Tag == "AttackSign_Parry")
 				Active_AttackSign(true);
+			else if (instance.Tag == "AttackSign_Evade")
+				Active_AttackSign(false);
 			break;
 		}
 	}

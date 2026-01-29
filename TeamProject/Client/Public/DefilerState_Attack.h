@@ -14,16 +14,18 @@ public:
 public:
 	static CDefilerState_Attack* Create();
 	virtual void Free() override { __super::Free(); }
+protected:
+	void ComboTransition(CDefiler* pOwner);
+
 private:
 	void Build_Pattern(CDefiler* pOwner, _int Type);
 	void ReadySubState();
 
 private:
-	_int m_pattern = {0};
-	_int m_maxPattern = {2};
+	_int m_maxPattern = {12};
 };
 
-class CDefilerState_Attack_01_01 : public IHState<CDefiler>
+class CDefilerState_Attack_01_01 : public CDefilerState_Attack
 {
 public:
 	virtual void Enter(CDefiler* pOwner) override;
@@ -35,7 +37,7 @@ public:
 	virtual void Free() override { __super::Free(); }
 };
 
-class CDefilerState_Attack_01_02 : public IHState<CDefiler>
+class CDefilerState_Attack_01_02 : public CDefilerState_Attack
 {
 public:
 	virtual void Enter(CDefiler* pOwner) override;
@@ -47,7 +49,7 @@ public:
 	virtual void Free() override { __super::Free(); }
 };
 
-class CDefilerState_Attack_01_01_P2 : public IHState<CDefiler>
+class CDefilerState_Attack_01_01_P2 : public CDefilerState_Attack
 {
 public:
 	virtual void Enter(CDefiler* pOwner) override;
@@ -59,7 +61,7 @@ public:
 	virtual void Free() override { __super::Free(); }
 };
 
-class CDefilerState_Attack_01_03 : public IHState<CDefiler>
+class CDefilerState_Attack_01_03 : public CDefilerState_Attack
 {
 public:
 	virtual void Enter(CDefiler* pOwner) override;
@@ -71,7 +73,7 @@ public:
 	virtual void Free() override { __super::Free(); }
 };
 
-class CDefilerState_Attack_02 : public IHState<CDefiler>
+class CDefilerState_Attack_02 : public CDefilerState_Attack
 {
 public:
 	virtual void Enter(CDefiler* pOwner) override;
@@ -81,9 +83,11 @@ public:
 public:
 	static CDefilerState_Attack_02* Create() { return new CDefilerState_Attack_02(); }
 	virtual void Free() override { __super::Free(); }
+
+
 };
 
-class CDefilerState_Attack_03 : public IHState<CDefiler>
+class CDefilerState_Attack_03 : public CDefilerState_Attack
 {
 public:
 	virtual void Enter(CDefiler* pOwner) override;
@@ -95,7 +99,7 @@ public:
 	virtual void Free() override { __super::Free(); }
 };
 
-class CDefilerState_Attack_04 : public IHState<CDefiler>
+class CDefilerState_Attack_04 : public CDefilerState_Attack
 {
 public:
 	virtual void Enter(CDefiler* pOwner) override;
@@ -107,7 +111,7 @@ public:
 	virtual void Free() override { __super::Free(); }
 };
 
-class CDefilerState_Attack_05 : public IHState<CDefiler>
+class CDefilerState_Attack_05 : public CDefilerState_Attack
 {
 public:
 	virtual void Enter(CDefiler* pOwner) override;
@@ -119,7 +123,7 @@ public:
 	virtual void Free() override { __super::Free(); }
 };
 
-class CDefilerState_Attack_06 : public IHState<CDefiler>
+class CDefilerState_Attack_06 : public CDefilerState_Attack
 {
 public:
 	virtual void Enter(CDefiler* pOwner) override;
@@ -131,7 +135,7 @@ public:
 	virtual void Free() override { __super::Free(); }
 };
 
-class CDefilerState_Attack_07 : public IHState<CDefiler>
+class CDefilerState_Attack_07 : public CDefilerState_Attack
 {
 public:
 	virtual void Enter(CDefiler* pOwner) override;
@@ -143,7 +147,7 @@ public:
 	virtual void Free() override { __super::Free(); }
 };
 
-class CDefilerState_Attack_08_01_Start : public IHState<CDefiler>
+class CDefilerState_Attack_08_01_Start : public CDefilerState_Attack
 {
 public:
 	virtual void Enter(CDefiler* pOwner) override;
@@ -155,7 +159,7 @@ public:
 	virtual void Free() override { __super::Free(); }
 };
 
-class CDefilerState_Attack_08_01_Loop : public IHState<CDefiler>
+class CDefilerState_Attack_08_01_Loop : public CDefilerState_Attack
 {
 public:
 	virtual void Enter(CDefiler* pOwner) override;
@@ -167,7 +171,7 @@ public:
 	virtual void Free() override { __super::Free(); }
 };
 
-class CDefilerState_Attack_08_01_End : public IHState<CDefiler>
+class CDefilerState_Attack_08_01_End : public CDefilerState_Attack
 {
 public:
 	virtual void Enter(CDefiler* pOwner) override;
@@ -179,7 +183,7 @@ public:
 	virtual void Free() override { __super::Free(); }
 };
 
-class CDefilerState_Attack_08_02 : public IHState<CDefiler>
+class CDefilerState_Attack_08_02 : public CDefilerState_Attack
 {
 public:
 	virtual void Enter(CDefiler* pOwner) override;
@@ -191,7 +195,7 @@ public:
 	virtual void Free() override { __super::Free(); }
 };
 
-class CDefilerState_Attack_09_Start : public IHState<CDefiler>
+class CDefilerState_Attack_09_Start : public CDefilerState_Attack
 {
 public:
 	virtual void Enter(CDefiler* pOwner) override;
@@ -203,7 +207,7 @@ public:
 	virtual void Free() override { __super::Free(); }
 };
 
-class CDefilerState_Attack_09_Loop : public IHState<CDefiler>
+class CDefilerState_Attack_09_Loop : public CDefilerState_Attack
 {
 public:
 	virtual void Enter(CDefiler* pOwner) override;
@@ -215,7 +219,7 @@ public:
 	virtual void Free() override { __super::Free(); }
 };
 
-class CDefilerState_Attack_09_End : public IHState<CDefiler>
+class CDefilerState_Attack_09_End : public CDefilerState_Attack
 {
 public:
 	virtual void Enter(CDefiler* pOwner) override;
@@ -227,7 +231,7 @@ public:
 	virtual void Free() override { __super::Free(); }
 };
 
-class CDefilerState_Attack_Grab : public IHState<CDefiler>
+class CDefilerState_Attack_Grab : public CDefilerState_Attack
 {
 public:
 	virtual void Enter(CDefiler* pOwner) override;
@@ -239,7 +243,7 @@ public:
 	virtual void Free() override { __super::Free(); }
 };
 
-class CDefilerState_Attack_Summon: public IHState<CDefiler>
+class CDefilerState_Attack_Summon:  public CDefilerState_Attack
 {
 public:
 	virtual void Enter(CDefiler* pOwner) override;
