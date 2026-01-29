@@ -9,7 +9,6 @@ float ScreenWidth;
 float ScreenHeight;
 
 /* Texture */
-Texture2D GradientTexture;
 #define NONE  0
 #define SHAPE_MASK 1
 #define EMISSION  2
@@ -56,7 +55,7 @@ float4 ApplySamplerMode(uint samplerMode,float2 texCoord ,Texture2D sampleTextur
     
 }
 
-float3 ApplyGradientMode(uint gradientMode, float grayMask, float2 texcoord)
+float3 ApplyGradientMode(uint gradientMode, float grayMask, float2 texcoord, Texture2D gradientTexture)
 {
     float3 vResult;
     float2 vTexcoord;
@@ -66,30 +65,34 @@ float3 ApplyGradientMode(uint gradientMode, float grayMask, float2 texcoord)
         grayMask = saturate(grayMask);
         vTexcoord = float2(grayMask, 0.5f);
         
-        vResult = GradientTexture.Sample(LinearClampSampler, vTexcoord).rgb;
+        vResult = gradientTexture.Sample(LinearClampSampler, vTexcoord).rgb;
     }
     else if(1 == gradientMode) /* UV x*/
     {
         vTexcoord = float2(texcoord.x, 0.5f);
         
-        vResult = GradientTexture.Sample(LinearClampSampler, vTexcoord).rgb;
+        vResult = gradientTexture.Sample(LinearClampSampler, vTexcoord).rgb;
     }
     else if(2 == gradientMode) /* UV y*/
     {
         vTexcoord = float2(texcoord.y, 0.5f);
         
-        vResult = GradientTexture.Sample(LinearClampSampler, vTexcoord).rgb;
+        vResult = gradientTexture.Sample(LinearClampSampler, vTexcoord).rgb;
     }
     else /* Life Time */
     {
         float t = saturate(Progress);
         vTexcoord = float2(t, 0.5f);
         
-        vResult = GradientTexture.Sample(LinearClampSampler, vTexcoord).rgb;
+        vResult = gradientTexture.Sample(LinearClampSampler, vTexcoord).rgb;
     }
     
     return vResult;
 }
+
+/*Gradient Params*/
+float EnableGradient;
+uint GradientMode; //0 : GrayScale, 1 : UV, 2 : LIFE_TIME
 
 /*Color*/
 float4 vBaseColor;
@@ -133,9 +136,7 @@ float DistortionStrength;
 float DistortionTilling;
 float DistortionUVSpeed;
 
-/*Gradient Params*/
-float EnableGradient;
-uint GradientMode; //0 : GrayScale, 1 : UV, 2 : LIFE_TIME
+
 
 struct VS_IN
 {
@@ -273,11 +274,10 @@ PS_OUT PS_MAIN_DEFAULT(PS_IN In)
     float fAlpha = vResult.a * fDissolveAlpha * fMask;
     
     /* Gradient */
-    if (EnableGradient > 0.5f)
-    {
-        float3 vGradientColor = ApplyGradientMode(GradientMode, fAlpha, In.vTexcoord);
-        vColor = ApplyColorMode(ColorMode, float4(vColor, 1.f), float4(vGradientColor, 1.f)).rgb;
-    }
+    float3 vGradientColor = ApplyGradientMode(GradientMode, fAlpha, In.vTexcoord, GradientTexture);
+    vGradientColor = ApplyColorMode(ColorMode, float4(vColor, 1.f), float4(vGradientColor, 1.f)).rgb;
+    vColor = lerp(vColor, vGradientColor, EnableGradient);
+ 
     
     /* 깊이 기반 가중치 생성 */
     float fLinearZ = In.vViewPosition.z;

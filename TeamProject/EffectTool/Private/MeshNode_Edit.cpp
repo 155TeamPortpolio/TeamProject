@@ -581,7 +581,7 @@ void CMeshNode_Edit::SetUp_MeshEffect()
 
 	if (ImGui::CollapsingHeader("Distortion Module"))
 	{
-		_bool enableDistortion = m_DistortionModule.fEnableDistortion > 0.5f ? 1.f : 0.f;
+		_bool enableDistortion = m_DistortionModule.fEnableDistortion > 0.5f ? true : false;
 		if (ImGui::Checkbox("Enable Distortion", &enableDistortion))
 			m_DistortionModule.fEnableDistortion = enableDistortion ? 1.f : 0.f;
 
@@ -592,9 +592,12 @@ void CMeshNode_Edit::SetUp_MeshEffect()
 
 	if (ImGui::CollapsingHeader("Gradient Module"))
 	{
-		_bool enableGradient = m_GradientModule.fEnableGradient > 0.5f ? 1.f : 0.f;
+		_bool enableGradient = m_GradientModule.fEnableGradient > 0.5f ? true : false;
 		if (ImGui::Checkbox("Enable Gradient", &enableGradient))
+		{
 			m_GradientModule.fEnableGradient = enableGradient ? 1.f : 0.f;
+		}
+		ImGui::Text("%lf", m_GradientModule.fEnableGradient);
 
 		Helper::DrawEnumCombo("Gradient Mode", m_GradientModule.eGradientMode, 100.f);
 	}
@@ -657,7 +660,6 @@ void CMeshNode_Edit::Add_Texture(EFFECT_TEXTURE_TYPE type)
 
 			auto pGradientTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_GradientTextureTag);
 			pMaterialInstance->Set_Param("GradientTexture", { pGradientTexture->Get_SRV(),"Texture2D",0 });
-
 		}break;
 		default:
 			break;
