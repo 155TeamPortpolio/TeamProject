@@ -588,7 +588,7 @@ HRESULT CSacrifice::Create_Colliders()
 		RightArmDesc.isAttachBone = true;
 		RightArmDesc.tagBone = "Skn_R_Hand";
 		RightArmDesc.pOwnerAnimator3D = pAnimator;
-		RightArmDesc.vAttackSize = _float3{1.f,1.f,1.f};
+		RightArmDesc.vAttackSize = _float3{2.f,2.f,2.f};
 		RightArmDesc.vTriggerSize = _float3{ 3.f,2.f,3.f };
 	
 		if (FAILED(AttachBattleColliderObject(&RightArmDesc)))
