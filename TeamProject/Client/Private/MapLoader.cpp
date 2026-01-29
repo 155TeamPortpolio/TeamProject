@@ -338,7 +338,8 @@ void CMapLoader::Place_EntityFromLoadData(ENTITY_INIT* pData)
     SpawnerDesc.vScale = { pData->vScale[0], pData->vScale[1] ,pData->vScale[2] };
     SpawnerDesc.vRotation = { pData->vRotation[0], pData->vRotation[1] ,pData->vRotation[2] };
     SpawnerDesc.vTranslation = { pData->vTranslation[0], pData->vTranslation[1] ,pData->vTranslation[2] };
-    
+    SpawnerDesc.vColSize = { pData->vColSize[0], pData->vColSize[1] ,pData->vColSize[2] };
+
     for (auto& tSlotData : m_EntitySlotFormatData) {
         // 일단 데이터 다 때려넣기
         for (auto& FieldData : tSlotData.second[pData->iEntityID])

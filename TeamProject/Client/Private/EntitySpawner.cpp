@@ -90,8 +90,8 @@ OBJECT_HANDLE Client::Spawner::Create_NPC(const SPAWNER_DESC& Desc)
 	CCT.eGroup = COLLISION_GROUP::INTERACTABLE;
 	CCT.iCollisionMask = 0xFFFFFFFF;
 	CCT.bAutoFit = false;
-	CCT.fRadius = (Desc.vScale.x +Desc.vScale.z) * 0.25f;
-	CCT.fHeight = (Desc.vScale.y * 0.5f) - CCT.fRadius;
+	CCT.fRadius = (Desc.vColSize.x +Desc.vColSize.z) * 0.25f;
+	CCT.fHeight = (Desc.vColSize.y * 0.5f) - CCT.fRadius;
 	
 	CCT.vPos = _float3(Desc.vTranslation.x, Desc.vTranslation.y, Desc.vTranslation.z);
 	
@@ -100,6 +100,7 @@ OBJECT_HANDLE Client::Spawner::Create_NPC(const SPAWNER_DESC& Desc)
 	CGameObject* Object = Builder::Create_Object({ Desc.tagLevel, NPCTable->second.ProtoTag })
 		.CharacterController(CCT)
 		.Rotate(Desc.vRotation)
+		.Scale(Desc.vScale)
 		.Build(Desc.tagName);
 
 	Object->Get_Component<CCharacterController>()->Set_FootPosition(Desc.vTranslation);
@@ -135,7 +136,7 @@ OBJECT_HANDLE Client::Spawner::Create_Interactable(const SPAWNER_DESC& Desc)
 	tColDesc.bAutoFit = false;
 	tColDesc.bTrigger = true; // �浹 �ڽ� �����ϴ� Ʈ����
 	tColDesc.vCenter = { 0,0,0 };
-	tColDesc.vSize = Desc.vScale;
+	tColDesc.vSize = Desc.vRotation;
 	tColDesc.vRotation = Desc.vRotation;
 
 #pragma region Exception
