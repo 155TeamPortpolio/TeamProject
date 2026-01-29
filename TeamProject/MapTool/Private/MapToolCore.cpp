@@ -384,8 +384,7 @@ void CMapToolCore::Place_EntityObjectFromLoadData(ENTITY* pData)
 	ColDesc.eType = COLLIDER_TYPE::BOX;
 	ColDesc.bAutoFit = false;
 	ColDesc.bTrigger = true; // 충돌 박스 생성하는 트리거
-	ColDesc.vSize = { pData->vScale[0], pData->vScale[1], pData->vScale[2] };
-
+	ColDesc.vSize = { pData->vColSize[0], pData->vColSize[1], pData->vColSize[2] };
 	CEntityObject::ENTITY_INIT_DESC* pDesc = new CEntityObject::ENTITY_INIT_DESC();
 	pDesc->iType = pData->iType;
 
@@ -394,6 +393,7 @@ void CMapToolCore::Place_EntityObjectFromLoadData(ENTITY* pData)
 		.Add_ObjDesc(pDesc)
 		.Collider(ColDesc)
 		.Rotate({ pData->vRotation[0], pData->vRotation[1], pData->vRotation[2] })
+		.Scale({ pData->vScale[0], pData->vScale[1], pData->vScale[2] })
 		.Position({ pData->vTranslation[0], pData->vTranslation[1], pData->vTranslation[2] })
 		.Build(TagInstanceName);
 
