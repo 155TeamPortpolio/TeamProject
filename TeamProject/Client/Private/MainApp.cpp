@@ -164,7 +164,7 @@ void CMainApp::Set_Levels()
 
 	LevelManager()->Set_LoadingLevel("Loading_Level");
 	m_pGameInstance->Notify_LevelSet(); 
-	m_pGameInstance->Get_LevelMgr()->Request_ChangeLevel("Test_Level", true);
+	m_pGameInstance->Get_LevelMgr()->Request_ChangeLevel("Scott_Level", false);
 } 
 
 CMainApp* CMainApp::Create()
@@ -272,8 +272,6 @@ void CMainApp::Initialize_GlobalPrototype()
 
 void CMainApp::Create_GlobalCamObjs()
 {
-	auto& camDirector = *CCamDirector::GetInstance();
-
 	constexpr _float aspect = static_cast<_float>(g_iWinSizeX) / static_cast<_float>(g_iWinSizeY);
 	const string camLayer   = "Camera_Layer";
 
@@ -289,7 +287,7 @@ void CMainApp::Create_GlobalCamObjs()
 
 	CCT_DESC desc;
 	desc.eGroup = COLLISION_GROUP::CAMERA;
-	desc.iCollisionMask = ENUM(COLLISION_GROUP::COMMON) | ENUM(COLLISION_GROUP::INTERACTABLE);
+	//desc.iCollisionMask = ENUM(COLLISION_GROUP::COMMON) | ENUM(COLLISION_GROUP::INTERACTABLE);
 
 	auto orbitCam = Builder::Create_Object({G_GlobalLevelKey, "Proto_GameObject_OrbitCam"})
 		.Camera(aspect)
@@ -312,11 +310,11 @@ void CMainApp::Create_GlobalCamObjs()
 	ObjectManager()->Remember_Global(ENUM(GLOBAL_ID::SeqCam)  ,  seqCam->Get_Handle(),    true);
 	ObjectManager()->Remember_Global(ENUM(GLOBAL_ID::ShadowCam), shadowCam->Get_Handle(), true);
 
-	camDirector.SetCam(CamType::Sequence, seqCam->Get_Handle());
-	camDirector.SetCam(CamType::Free,     freeCam->Get_Handle());
-	camDirector.SetCam(CamType::Orbit,    orbitCam->Get_Handle());
+	CamDirector()->SetCam(CamType::Sequence, seqCam->Get_Handle());
+	CamDirector()->SetCam(CamType::Free,     freeCam->Get_Handle());
+	CamDirector()->SetCam(CamType::Orbit,    orbitCam->Get_Handle());
 
-	camDirector.SetReturnCam(CamType::Orbit);
+	CamDirector()->SetReturnCam(CamType::Orbit);
 
 	CameraManager()->Set_MainCam(orbitCam->Get_Component<CCamera>());
 	CameraManager()->Set_ShadowCam(shadowCam->Get_Component<CCamera>());
