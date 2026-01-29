@@ -45,6 +45,7 @@ HRESULT CSirChop::Initialize_Prototype()
 	auto pMaterial = Get_Component<CMaterial>();
 	pMaterial->Link_Material(G_GlobalLevelKey, "NPC_SirChop_Modelout.mat");
 
+
 	return S_OK;
 }
 
@@ -62,15 +63,16 @@ void CSirChop::Awake()
 	pAnimator->LinkAnimate_Model(G_GlobalLevelKey, "NPC_SirChop_Modelout.model");
 	pAnimator->Link_MetaData(G_GlobalLevelKey, "NPC_Male_SirChop_Meta.json");
 
-	m_strAnimName = "NPC_Male_SirChop_Ani_InStore01";
+	m_strAnimName = "NPC_Male_SirChop_Ani_";
 	m_strName = L"ÃÝÆÛ ´ëÀå";
 
-	pAnimator->Set_Animation(Get_AnimName() + "InStore01")
+	pAnimator->Set_Animation(Get_AnimName() + "Idle_01")
 		.Loop(true)
 		.Apply();
 
 	__super::Awake();
 
+	m_pTransform->Scale(_float3(1.2f, 1.2f, 1.2f));
 	Add_InteractZone(Get_Position(), _float3(0.f, 0.f, 1.2f), Get_WorldRotation());
 }
 
