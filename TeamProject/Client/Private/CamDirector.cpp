@@ -204,12 +204,12 @@ void CCamDirector::SyncSeqInputLock()
 
 void CCamDirector::StartDialog()
 {
-    m_dialogue.Begin(35.f, 0.5f);
+    //m_dialogue.Begin(35.f, 0.5f);
 }
 
 void CCamDirector::EndDialog()
 {
-    m_dialogue.End(0.5f);
+    //m_dialogue.End(0.5f);
 }
 
 void CCamDirector::UpdatePlayer()
