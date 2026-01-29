@@ -229,9 +229,6 @@
     <Filter Include="02. GameObject\MapObject\03. MapInvisibleWall">
       <UniqueIdentifier>{b312b594-fbbd-4c58-99ff-ef3b7b832dfe}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Level\02. MainCity">
-      <UniqueIdentifier>{5c06b70c-30b5-443f-8830-698352a45197}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. Level\03. Scott">
       <UniqueIdentifier>{03ec8d80-58c9-41e7-aaed-48aa852601f5}</UniqueIdentifier>
     </Filter>
@@ -969,6 +966,9 @@
     </Filter>
     <Filter Include="03. Utility\06. FieldSystem\Room\04. Noodle">
       <UniqueIdentifier>{810c5f63-0a50-441a-b876-0b38ab52f72c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Level\02. MainCity">
+      <UniqueIdentifier>{5c06b70c-30b5-443f-8830-698352a45197}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1821,7 +1821,7 @@
     <ClInclude Include="..\Public\UI_RamenMenu.h">
       <Filter>02. GameObject\UI\01. 2D\Ramen\Menu</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\OrbitCamCollider.h">
+    <ClInclude Include="..\public\CamOcclusionTracker.h">
       <Filter>02. GameObject\Camera\04. OrbitCam\01. OrbitCamCollider</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Defiler.h">
@@ -1907,9 +1907,6 @@
     </ClCompile>
     <ClCompile Include="..\private\CamDirector.cpp">
       <Filter>03. Utility\08. CamDirector</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\OrbitCam.cpp">
-      <Filter>02. GameObject\Camera\04. OrbitCam</Filter>
     </ClCompile>
     <ClCompile Include="..\private\MapFloorObject.cpp">
       <Filter>02. GameObject\MapObject\01. MapFloorObject</Filter>
@@ -2660,7 +2657,7 @@
     <ClCompile Include="..\Private\UI_RamenMenu.cpp">
       <Filter>02. GameObject\UI\01. 2D\Ramen\Menu</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\OrbitCamCollider.cpp">
+    <ClCompile Include="..\private\CamOcclusionTracker.cpp">
       <Filter>02. GameObject\Camera\04. OrbitCam\01. OrbitCamCollider</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Defiler.cpp">
@@ -2680,6 +2677,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\JaneDoeState_AssaultAttack.cpp">
       <Filter>02. GameObject\Object\Player\Character\01. JaneDoe\State\Attack\Assault</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\OrbitCam.cpp">
+      <Filter>02. GameObject\Camera\04. OrbitCam</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

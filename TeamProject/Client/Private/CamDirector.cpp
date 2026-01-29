@@ -77,11 +77,7 @@ void CCamDirector::AutoField()
 {
     AutoTarget();
     RequestSequence("Field/Front");
-
-    //static constexpr _float rad = XMConvertToRadians(90.f);
-    //GetCharacter()->Get_Component<CCharacterController>()->Set_Position({5.f, 1.f, 0.f});
-    //GetCharacter()->Get_Component<CTransform>()->Rotate(Vector3{0.f, rad, 0.f});
-    //GameInstance()->Set_EngineTimeScale(0.25f);
+    //GameInstance()->Set_EngineTimeScale(0.01f);
 }
 
 void CCamDirector::Update(_float dt)

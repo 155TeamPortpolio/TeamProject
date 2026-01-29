@@ -20,7 +20,7 @@ public:
     virtual OBJECT_HANDLE Get_PartnerHandle() { return OBJECT_HANDLE{}; }
 
 public:
-    virtual void OnCameraCollision(_bool isColliding) override;
+    virtual void OnCameraCollision(const CamOcclusionHit& hit) override;
 
 public:
     virtual HRESULT Initialize_Prototype() override;

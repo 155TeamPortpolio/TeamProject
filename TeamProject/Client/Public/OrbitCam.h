@@ -2,6 +2,7 @@
 
 #include "CamObject.h"
 #include "OrbitCamTypes.h"
+#include "CamOcclusionTracker.h"
 
 NS_BEGIN(Client)
 class ICamCollidable;
@@ -18,8 +19,8 @@ public:
     HRESULT Initialize(INIT_DESC* pArg) override;
     void    Awake()                     override;
     void    Priority_Update(_float dt)  override;
-    void    Update(_float dt)           override;
-    void    Late_Update(_float dt)      override;
+    void    Update(_float dt)           override{}
+    void    Late_Update(_float dt)      override{}
 
 public:
     void    SetTarget(OBJECT_HANDLE h);
@@ -52,6 +53,8 @@ public:
 
     OBJECT_HANDLE GetTarget() const { return m_target; }
 
+    void    EvalOcclusion();
+
 private:
     void    ClampTargets();
 
@@ -81,7 +84,6 @@ private:
     _float           CalcAllowDist(const OrbitProfile& prof, class PxScene* scene, CCharacterController* camCC,
         const Vector3& pivotWorld, _float distWanted, const Vector2& rotCurDeg, const Vector2& rotGoalDeg);
     void             SmoothPose(_float dt);
-    void             UpdateOccluderTrigger(const Vector3& pivotWorld, const Vector3& camWorld);
 
 private:
     void          Lock_Reset();
@@ -113,7 +115,6 @@ private:
 
     void    PivotStab_Reset(const Vector3& pivot);
     Vector3 PivotStab_Eval(_float dt, const Vector3& rawPivot);
-    void    Create_OrbitCollider();
 
 private:
     OrbitPose     m_pose{};
@@ -124,7 +125,6 @@ private:
     OrbitBlendState  m_lockBlend{};
     Vector3          m_lockFocus{};
     _bool            m_hasLockFocus = false;
-
 
     OrbitAutoYaw  m_autoYaw{};
     OrbitSwitch   m_switch{};
@@ -137,7 +137,7 @@ private:
     _bool   m_lockInput        = false;
 
     OrbitPivotStabilizer m_pivotStab{};
-    OBJECT_HANDLE        m_occluderTrigger{};
+    CCamOcclusionTracker m_occlusion{};
 
 public:
     static  COrbitCam* Create();
