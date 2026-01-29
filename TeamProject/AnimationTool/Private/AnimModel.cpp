@@ -75,11 +75,11 @@ void CAnimModel::Priority_Update(_float dt)
 void CAnimModel::Update(_float dt)
 {
 	if (auto pAnimator = Get_Component<CAnimator3D>()) {
-		//m_pTransform->Translate(_vector3(pAnimator->Get_RootBoneMoveDelta() * 0.5f));
+		m_pTransform->Translate(_vector3(pAnimator->Get_RootBoneMoveDelta() * m_fMoveSpeed));
 		_quaternion dq = pAnimator->Get_RootBoneQuatDelta(); // 반환 타입이 XMFLOAT4라고 가정
 		//m_pTransform->(dq);
 		m_pTransform->Add_Quaternion(dq);
-	}
+	}s
 }
 
 void CAnimModel::Late_Update(_float dt)
@@ -91,6 +91,8 @@ void CAnimModel::Render_GUI()
 	float childWidth = ImGui::GetContentRegionAvail().x;
 	const float textLineHeight = ImGui::GetTextLineHeightWithSpacing();
 	const float childHeight = (textLineHeight + 2) + (ImGui::GetStyle().WindowPadding.y * 2);
+
+	ImGui::DragFloat("MoveSpeed", &m_fMoveSpeed, 0.001f, 0.f, 100.f);
 
 	//Load Resource
 	GUI_LoadResource(childHeight);
