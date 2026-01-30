@@ -976,6 +976,9 @@
     <Filter Include="02. GameObject\Object\Npc\Service\SilverAnbi">
       <UniqueIdentifier>{1fb6f464-481c-4f28-9d2c-18957cf84b87}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\MapObject\04. MapLightPoint">
+      <UniqueIdentifier>{bcb87281-6365-4b0d-8885-6097aa3bf376}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1854,6 +1857,9 @@
     <ClInclude Include="..\public\SilverAnbi.h">
       <Filter>02. GameObject\Object\Npc\Service\SilverAnbi</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\MapLightPoint.h">
+      <Filter>02. GameObject\MapObject\04. MapLightPoint</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2692,6 +2698,9 @@
     </ClCompile>
     <ClCompile Include="..\private\SilverAnbi.cpp">
       <Filter>02. GameObject\Object\Npc\Service\SilverAnbi</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MapLightPoint.cpp">
+      <Filter>02. GameObject\MapObject\04. MapLightPoint</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
