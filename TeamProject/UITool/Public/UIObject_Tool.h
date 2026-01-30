@@ -78,16 +78,10 @@ protected:
 	_int	   m_iClipIndex = { -1 };
 
 protected:
-	string         m_colorTextureKey     = "empty.png";
-	UIColorTexMode m_colorTexMode        = UIColorTexMode::None;
-	_float         m_colorTexMix         = 1.f;
-	_uint          m_colorTexModeU       = 0;
-	_float         m_recolorThreshold    = 0.06f;
-	_float         m_recolorSoftness     = 0.04f;    
-	_uint          m_recolorUseKeyColorU = 0;
-	_float3        m_recolorKeyColor     = {0.f, 0.f, 0.f};
-	_float         m_recolorKeyTolerance = 0.06f;
-	_uint          m_recolorInvertMaskU  = 0;
+	string         m_colorTextureKey = "empty.png";
+	UIColorTexMode m_colorTexMode = UIColorTexMode::None;
+	_float         m_colorTexMix = 1.f;
+	_uint          m_colorTexModeU = 0;
 
 public:
 	virtual void Free() { __super::Free(); }

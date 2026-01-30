@@ -18,18 +18,13 @@ HRESULT CUIObject_Tool::Initialize(INIT_DESC* pArg)
     sprite->Add_Texture(G_GlobalLevelKey, "empty.png");
 
     m_colorTexModeU = (_uint)m_colorTexMode;
-    sprite->Set_Param("ColorTexMode",        {&m_colorTexModeU,       "uint",   sizeof(_uint)});
-    sprite->Set_Param("ColorTexMix",         {&m_colorTexMix,         "float",  sizeof(_float)});
-    sprite->Set_Param("RecolorThreshold",    {&m_recolorThreshold,    "float",  sizeof(_float)});
-    sprite->Set_Param("RecolorSoftness",     {&m_recolorSoftness,     "float",  sizeof(_float)});
-    sprite->Set_Param("RecolorUseKeyColor",  {&m_recolorUseKeyColorU, "uint",   sizeof(_uint)});
-    sprite->Set_Param("RecolorKeyColor",     {&m_recolorKeyColor,     "float3", sizeof(_float3)});
-    sprite->Set_Param("RecolorKeyTolerance", {&m_recolorKeyTolerance, "float",  sizeof(_float)});
-    sprite->Set_Param("RecolorInvertMask",   {&m_recolorInvertMaskU,  "uint",   sizeof(_uint)});
+    sprite->Set_Param("ColorTexMode", {&m_colorTexModeU, "uint", sizeof(_uint)});
+    sprite->Set_Param("ColorTexMix", {&m_colorTexMix, "float", sizeof(_float)});
 
     GUISystem()->Get_Context()->pSelectedObject = this;
     return S_OK;
 }
+
 
 void CUIObject_Tool::Awake()
 {
@@ -101,7 +96,6 @@ void CUIObject_Tool::Remove_SelfFromParent()
 void CUIObject_Tool::Save(nlohmann::ordered_json& data)
 {
     data["alive"] = m_isAlive;
-
     data["instanceName"] = m_InstanceName;
 
     auto& transformJson = data["transform"];
@@ -115,6 +109,11 @@ void CUIObject_Tool::Save(nlohmann::ordered_json& data)
     data["color"] = {m_vColor.x, m_vColor.y, m_vColor.z, m_vColor.w};
 
     data["pass"] = Get_Component<CSprite2D>()->Get_PassConstant();
+
+    m_colorTexModeU = (_uint)m_colorTexMode;
+    data["colorTexKey"] = m_colorTextureKey;
+    data["colorTexMode"] = m_colorTexModeU;
+    data["colorTexMix"] = m_colorTexMix;
 
     auto& animClipsJson = data["animClips"];
     animClipsJson = json::array();
@@ -168,6 +167,18 @@ void CUIObject_Tool::Load(const nlohmann::ordered_json& data)
 
     m_basePass = NormalizeToBasePass(pass);
     m_useMask = (pass != m_basePass);
+
+    m_colorTextureKey = data.value("colorTexKey", string("empty.png"));
+    m_colorTexModeU = (_uint)data.value("colorTexMode", 0u);
+    m_colorTexMix = (_float)data.value("colorTexMix", 1.f);
+
+    m_colorTexMode = (UIColorTexMode)m_colorTexModeU;
+
+    auto sprite = Get_Component<CSprite2D>();
+    sprite->Change_Texture(1, G_GlobalLevelKey, m_colorTextureKey);
+
+    sprite->Set_Param("ColorTexMode", {&m_colorTexModeU, "uint", sizeof(_uint)});
+    sprite->Set_Param("ColorTexMix", {&m_colorTexMix, "float", sizeof(_float)});
 }
 
 void CUIObject_Tool::Render_GUI_Property()
@@ -395,6 +406,9 @@ void CUIObject_Tool::Render_GUI_Color()
 
     bool dirty = false;
 
+    if (ImGui::ColorEdit4(u8"##ColorPick", reinterpret_cast<_float*>(&m_vColor)))
+        dirty = true;
+
     const float panelW = ImGui::GetContentRegionAvail().x;
     const float labelW = clamp(panelW * 0.38f, 90.f, 150.f);
     const float rightPad = 10.f;
@@ -411,49 +425,6 @@ void CUIObject_Tool::Render_GUI_Color()
 
             widget();
         };
-
-    Row(u8"컬러", [&]
-        {
-            _float* c = reinterpret_cast<_float*>(&m_vColor);
-
-            ImGuiColorEditFlags flags = ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_AlphaBar | ImGuiColorEditFlags_AlphaPreviewHalf;
-            if (ImGui::ColorEdit4(u8"##Pick", c, flags))
-                dirty = true;
-
-            int rgba[4] = {
-                (int)(c[0] * 255.f + 0.5f),
-                (int)(c[1] * 255.f + 0.5f),
-                (int)(c[2] * 255.f + 0.5f),
-                (int)(c[3] * 255.f + 0.5f)
-            };
-
-            ImGui::SameLine(0.f, 10.f);
-
-            float avail = ImGui::GetContentRegionAvail().x;
-            float eachW = (avail - 18.f) / 4.f;
-            eachW = clamp(eachW, 38.f, 54.f);
-
-            bool changed = false;
-
-            ImGui::PushItemWidth(eachW);
-            if (ImGui::DragInt(u8"##R", &rgba[0], 1.f, 0, 255, "%d", ImGuiSliderFlags_AlwaysClamp)) changed = true;
-            ImGui::SameLine(0.f, 6.f);
-            if (ImGui::DragInt(u8"##G", &rgba[1], 1.f, 0, 255, "%d", ImGuiSliderFlags_AlwaysClamp)) changed = true;
-            ImGui::SameLine(0.f, 6.f);
-            if (ImGui::DragInt(u8"##B", &rgba[2], 1.f, 0, 255, "%d", ImGuiSliderFlags_AlwaysClamp)) changed = true;
-            ImGui::SameLine(0.f, 6.f);
-            if (ImGui::DragInt(u8"##A", &rgba[3], 1.f, 0, 255, "%d", ImGuiSliderFlags_AlwaysClamp)) changed = true;
-            ImGui::PopItemWidth();
-
-            if (changed)
-            {
-                c[0] = rgba[0] / 255.f;
-                c[1] = rgba[1] / 255.f;
-                c[2] = rgba[2] / 255.f;
-                c[3] = rgba[3] / 255.f;
-                dirty = true;
-            }
-        });
 
     static const char* kModes[] = {"None", "Replace", "Multiply"};
     int mode = (int)m_colorTexMode;
@@ -523,7 +494,7 @@ void CUIObject_Tool::Render_GUI_Color()
 
     Row(u8"Mix", [&]
         {
-            float w =  min(120.f, ImGui::GetContentRegionAvail().x - rightPad);
+            float w = min(120.f, ImGui::GetContentRegionAvail().x - rightPad);
             if (w < 90.f) w = 90.f;
             ImGui::SetNextItemWidth(w);
 
@@ -532,59 +503,6 @@ void CUIObject_Tool::Render_GUI_Color()
         });
 
     ImGui::Spacing();
-    if (ImGui::CollapsingHeader(u8"Recolor Mask", ImGuiTreeNodeFlags_DefaultOpen))
-    {
-        Row(u8"어두움 제외", [&]
-            {
-                if (ImGui::DragFloat(u8"##Thr", &m_recolorThreshold, 0.001f, 0.f, 1.f, "%.3f", ImGuiSliderFlags_AlwaysClamp))
-                    dirty = true;
-            });
-
-        Row(u8"경계 Softness", [&]
-            {
-                if (ImGui::DragFloat(u8"##Soft", &m_recolorSoftness, 0.001f, 0.f, 1.f, "%.3f", ImGuiSliderFlags_AlwaysClamp))
-                    dirty = true;
-            });
-
-        bool useKey = (m_recolorUseKeyColorU != 0);
-        Row(u8"키컬러 제외", [&]
-            {
-                if (ImGui::Checkbox(u8"##UseKey", &useKey))
-                {
-                    m_recolorUseKeyColorU = useKey ? 1u : 0u;
-                    dirty = true;
-                }
-            });
-
-        if (m_recolorUseKeyColorU != 0)
-        {
-            ImGui::Indent(12.f);
-
-            Row(u8"키컬러", [&]
-                {
-                    if (ImGui::ColorEdit3(u8"##Key", reinterpret_cast<_float*>(&m_recolorKeyColor)))
-                        dirty = true;
-                });
-
-            Row(u8"Tolerance", [&]
-                {
-                    if (ImGui::DragFloat(u8"##KeyTol", &m_recolorKeyTolerance, 0.001f, 0.f, 1.f, "%.3f", ImGuiSliderFlags_AlwaysClamp))
-                        dirty = true;
-                });
-
-            ImGui::Unindent(12.f);
-        }
-
-        bool invert = (m_recolorInvertMaskU != 0);
-        Row(u8"마스크 반전", [&]
-            {
-                if (ImGui::Checkbox(u8"##Inv", &invert))
-                {
-                    m_recolorInvertMaskU = invert ? 1u : 0u;
-                    dirty = true;
-                }
-            });
-    }
 
     ImGui::EndChild();
     ImGui::PopStyleVar(2);
@@ -597,16 +515,7 @@ void CUIObject_Tool::Render_GUI_Color()
     m_colorTexModeU = (_uint)m_colorTexMode;
     sprite->Set_Param("ColorTexMode", {&m_colorTexModeU, "uint", sizeof(_uint)});
     sprite->Set_Param("ColorTexMix", {&m_colorTexMix, "float", sizeof(_float)});
-
-    sprite->Set_Param("RecolorThreshold", {&m_recolorThreshold, "float", sizeof(_float)});
-    sprite->Set_Param("RecolorSoftness", {&m_recolorSoftness, "float", sizeof(_float)});
-    sprite->Set_Param("RecolorUseKeyColor", {&m_recolorUseKeyColorU, "uint", sizeof(_uint)});
-    sprite->Set_Param("RecolorKeyColor", {&m_recolorKeyColor, "float3", sizeof(_float3)});
-    sprite->Set_Param("RecolorKeyTolerance", {&m_recolorKeyTolerance, "float", sizeof(_float)});
-    sprite->Set_Param("RecolorInvertMask", {&m_recolorInvertMaskU, "uint", sizeof(_uint)});
 }
-
-
 
 _bool CUIObject_Tool::Render_GUI_Image(string& strTextureKey)
 {
