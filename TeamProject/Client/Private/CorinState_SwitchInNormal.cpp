@@ -18,7 +18,8 @@ void CCorinState_SwitchInNormal::Update(CCorin* pOwner, _float dt)
     IHState<CCorin>* pSwitch = Get_ParentState();
     if (!pSwitch || !pSwitch->Get_SubStateMachine()) return;
 
-    pOwner->Process_RootMotion(dt);
+    pOwner->Process_RootMotion(dt, ENUM(CCorin::ROOTMOTION_MASK::MOVE) |
+        ENUM(CCorin::ROOTMOTION_MASK::QUATERNION));
 
     if (pOwner->Is_Attack())
     {

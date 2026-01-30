@@ -12,13 +12,19 @@ HRESULT CUIObject_Tool::Initialize(INIT_DESC* pArg)
 {
     __super::Initialize(pArg);
 
-    Get_Component<CSprite2D>()->Set_Param("vColor", {&m_vColorLinear, "float4", sizeof(_float4)});
+    auto sprite = Get_Component<CSprite2D>();
 
-    // GUI Inspector 창에 띄움
-    CGameInstance::GetInstance()->Get_GUISystem()->Get_Context()->pSelectedObject = this;
+    sprite->Set_Param("vColor", {&m_vColorLinear, "float4", sizeof(_float4)});
+    sprite->Add_Texture(G_GlobalLevelKey, "empty.png");
 
+    m_colorTexModeU = (_uint)m_colorTexMode;
+    sprite->Set_Param("ColorTexMode", {&m_colorTexModeU, "uint", sizeof(_uint)});
+    sprite->Set_Param("ColorTexMix", {&m_colorTexMix, "float", sizeof(_float)});
+
+    GUISystem()->Get_Context()->pSelectedObject = this;
     return S_OK;
 }
+
 
 void CUIObject_Tool::Awake()
 {
@@ -90,7 +96,6 @@ void CUIObject_Tool::Remove_SelfFromParent()
 void CUIObject_Tool::Save(nlohmann::ordered_json& data)
 {
     data["alive"] = m_isAlive;
-
     data["instanceName"] = m_InstanceName;
 
     auto& transformJson = data["transform"];
@@ -104,6 +109,11 @@ void CUIObject_Tool::Save(nlohmann::ordered_json& data)
     data["color"] = {m_vColor.x, m_vColor.y, m_vColor.z, m_vColor.w};
 
     data["pass"] = Get_Component<CSprite2D>()->Get_PassConstant();
+
+    m_colorTexModeU = (_uint)m_colorTexMode;
+    data["colorTexKey"] = m_colorTextureKey;
+    data["colorTexMode"] = m_colorTexModeU;
+    data["colorTexMix"] = m_colorTexMix;
 
     auto& animClipsJson = data["animClips"];
     animClipsJson = json::array();
@@ -157,6 +167,18 @@ void CUIObject_Tool::Load(const nlohmann::ordered_json& data)
 
     m_basePass = NormalizeToBasePass(pass);
     m_useMask = (pass != m_basePass);
+
+    m_colorTextureKey = data.value("colorTexKey", string("empty.png"));
+    m_colorTexModeU = (_uint)data.value("colorTexMode", 0u);
+    m_colorTexMix = (_float)data.value("colorTexMix", 1.f);
+
+    m_colorTexMode = (UIColorTexMode)m_colorTexModeU;
+
+    auto sprite = Get_Component<CSprite2D>();
+    sprite->Change_Texture(1, G_GlobalLevelKey, m_colorTextureKey);
+
+    sprite->Set_Param("ColorTexMode", {&m_colorTexModeU, "uint", sizeof(_uint)});
+    sprite->Set_Param("ColorTexMix", {&m_colorTexMix, "float", sizeof(_float)});
 }
 
 void CUIObject_Tool::Render_GUI_Property()
@@ -381,7 +403,118 @@ void CUIObject_Tool::Render_GUI_Animation()
 void CUIObject_Tool::Render_GUI_Color()
 {
     ImGui::SeparatorText(u8"컬러");
-    ImGui::ColorEdit4(u8"컬러", reinterpret_cast<_float*>(&m_vColor));
+
+    bool dirty = false;
+
+    if (ImGui::ColorEdit4(u8"##ColorPick", reinterpret_cast<_float*>(&m_vColor)))
+        dirty = true;
+
+    const float panelW = ImGui::GetContentRegionAvail().x;
+    const float labelW = clamp(panelW * 0.38f, 90.f, 150.f);
+    const float rightPad = 10.f;
+
+    auto Row = [&](const char* label, auto&& widget)
+        {
+            ImGui::AlignTextToFramePadding();
+            ImGui::TextUnformatted(label);
+            ImGui::SameLine(labelW);
+
+            float w = ImGui::GetContentRegionAvail().x - rightPad;
+            if (w < 60.f) w = 60.f;
+            ImGui::SetNextItemWidth(w);
+
+            widget();
+        };
+
+    static const char* kModes[] = {"None", "Replace", "Multiply"};
+    int mode = (int)m_colorTexMode;
+
+    Row(u8"컬러 텍스처", [&]
+        {
+            float w = min(140.f, ImGui::GetContentRegionAvail().x - rightPad);
+            if (w < 80.f) w = 80.f;
+            ImGui::SetNextItemWidth(w);
+
+            if (ImGui::Combo(u8"##ColorTexMode", &mode, kModes, IM_ARRAYSIZE(kModes)))
+            {
+                m_colorTexMode = (UIColorTexMode)mode;
+                dirty = true;
+            }
+        });
+
+    if (m_colorTexMode == UIColorTexMode::None)
+    {
+        if (dirty)
+        {
+            auto sprite = Get_Component<CSprite2D>();
+            m_colorTexModeU = (_uint)m_colorTexMode;
+            sprite->Set_Param("ColorTexMode", {&m_colorTexModeU, "uint", sizeof(_uint)});
+            sprite->Set_Param("ColorTexMix", {&m_colorTexMix, "float", sizeof(_float)});
+        }
+        return;
+    }
+
+    ImGui::Spacing();
+
+    ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 6.f);
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(10.f, 10.f));
+    ImGui::BeginChild("##ColorTexCard", ImVec2(0.f, 0.f), true, ImGuiWindowFlags_None);
+
+    ImGui::SeparatorText(u8"텍스처");
+
+    Row(u8"텍스처", [&]
+        {
+            if (ImGui::Button(u8"선택", ImVec2(64.f, 0.f)))
+            {
+                string filePath = Helper::OpenFile({{"PNG Files", "*.png"}}, "png");
+                if (!filePath.empty())
+                {
+                    string fileName = Helper::GetFileNameWithExtension(filePath);
+                    CGameInstance::GetInstance()->Get_ResourceMgr()->Add_ResourcePath(fileName, filePath);
+
+                    m_colorTextureKey = fileName;
+
+                    auto sprite = Get_Component<CSprite2D>();
+                    sprite->Change_Texture(1, G_GlobalLevelKey, m_colorTextureKey);
+
+                    dirty = true;
+                }
+            }
+
+            ImGui::SameLine(0.f, 8.f);
+
+            string view = m_colorTextureKey.empty() ? string("(none)") : m_colorTextureKey;
+            if (!m_colorTextureKey.empty() && view.size() > 24)
+                view = view.substr(0, 21) + "...";
+
+            ImGui::TextDisabled("%s", view.c_str());
+            if (!m_colorTextureKey.empty() && ImGui::IsItemHovered())
+                ImGui::SetTooltip("%s", m_colorTextureKey.c_str());
+        });
+
+    Row(u8"Mix", [&]
+        {
+            float w = min(120.f, ImGui::GetContentRegionAvail().x - rightPad);
+            if (w < 90.f) w = 90.f;
+            ImGui::SetNextItemWidth(w);
+
+            if (ImGui::DragFloat(u8"##Mix", &m_colorTexMix, 0.01f, 0.f, 1.f, "%.2f", ImGuiSliderFlags_AlwaysClamp))
+                dirty = true;
+        });
+
+    ImGui::Spacing();
+
+    ImGui::EndChild();
+    ImGui::PopStyleVar(2);
+
+    if (!dirty)
+        return;
+
+    auto sprite = Get_Component<CSprite2D>();
+
+    m_colorTexModeU = (_uint)m_colorTexMode;
+    sprite->Set_Param("ColorTexMode", {&m_colorTexModeU, "uint", sizeof(_uint)});
+    sprite->Set_Param("ColorTexMix", {&m_colorTexMix, "float", sizeof(_float)});
 }
 
 _bool CUIObject_Tool::Render_GUI_Image(string& strTextureKey)

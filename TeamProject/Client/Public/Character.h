@@ -96,6 +96,7 @@ public:
     void        Set_ResetMove(_bool bReset) { m_inputInfo.resetMove = bReset; }
     _bool       Is_Move() const { return m_inputInfo.direction.LengthSquared() > 0.01f; }
     _bool       Is_Move_Buffer() const { return m_inputInfo.direction.LengthSquared() > 0.01f || m_inputInfo.bufferTimer > 0.f; }
+    void        Reset_InputInfo() { m_inputInfo = {}; }
     _bool       Can_Move() const { return m_bCanMove; }
     void        Lock_Move() { m_bCanMove = false; }
     void        Unlock_Move() { m_bCanMove = true; }
@@ -116,6 +117,7 @@ public:
     void        Set_Switch(SWITCH eType) { m_eSwitchType = eType; }
     _bool       Is_MainCharacter() const { return m_bIsMain; }
     void        Set_MainCharacter(_bool bMain) { m_bIsMain = bMain; }
+    _bool       Can_SwitchIn() const;
 
     void        Update_DissolveProgress(_float dt); /*dissolve*/
 

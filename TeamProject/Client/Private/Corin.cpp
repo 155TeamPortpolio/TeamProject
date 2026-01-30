@@ -161,9 +161,19 @@ void CCorin::On_SwitchOut()
 	if (m_pStateMachine->Get_CurrentStateName() == "Attack")
 	{
 		m_pStateMachine->Set_Bool("OutReserve", true);
+		return;
 	}
-	else
-		m_pStateMachine->Set_Trigger("SwitchOut");
+	else if (m_pStateMachine->Get_CurrentStateName() == "SwitchIn")
+	{
+		IHState<CCorin>* pState = dynamic_cast<IHState<CCorin>*>(m_pStateMachine->Get_CurrentState());
+		CStateMachine<CCorin>* pSub = pState->Get_SubStateMachine();
+		if (pSub && pSub->Get_CurrentStateName() != "SwitchInNormal")
+		{
+			m_pStateMachine->Set_Bool("OutReserve", true);
+			return;
+		}
+	}
+	m_pStateMachine->Set_Trigger("SwitchOut");
 }
 
 void CCorin::On_Ultimate()
