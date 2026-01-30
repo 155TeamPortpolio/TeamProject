@@ -226,6 +226,12 @@ void CParticleSystem::Simulation_Particle(_float dt)
 void CParticleSystem::Reset()
 {
 	m_fSpawnAcc = 0.f;
+	m_IsPause = false;
+}
+
+void CParticleSystem::Pause()
+{
+	m_IsPause = true;
 }
 
 HRESULT CParticleSystem::Bind_Buffer(ID3D11DeviceContext* pContext)
@@ -473,6 +479,9 @@ void CParticleSystem::ReadAliveOutCount()
 }
 void CParticleSystem::SpawnParticles(_float dt)
 {
+	if (m_IsPause)
+		return;
+
 	m_SpawnList.clear();
 
 	if (m_iBurstCount > 0) /*Use Burst*/
@@ -535,6 +544,9 @@ void CParticleSystem::ResetAliveOut()
 
 void CParticleSystem::UploadSpawnIn()
 {
+	if (m_IsPause)
+		return;
+
 	ID3D11DeviceContext* pContext = CGameInstance::GetInstance()->Get_Context();
 
 	_uint iSpawnCount = m_SpawnList.size();

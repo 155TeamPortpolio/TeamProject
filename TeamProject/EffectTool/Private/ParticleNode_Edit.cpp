@@ -94,6 +94,7 @@ void CParticleNode_Edit::Play()
 
 	PARTICLE_NODE node{};
 
+	node.vRimLightColor = m_vRimLightColor;
 	node.vPivot = m_vPivot;
 	node.iRGBMaskMode = m_iRGBMaskMode;
 	node.iColorMode = ENUM(m_eColorMode);
@@ -151,7 +152,9 @@ void CParticleNode_Edit::Import(nlohmann::ordered_json& json)
 	auto vOffsetPosition = json.value("offset_position", json::array({ 0.f,0.f,0.f }));
 	auto vOffsetQuaternion = json.value("offset_quaternion", json::array({ 0.f,0.f,0.f,1.f }));
 
+	auto rimLightColor = json.value("rimlight_color", json::array({ 0.f,0.f,0.f }));
 	auto pivot = json.value("pivot", json::array({ 0.5f,0.5f }));
+	m_vRimLightColor = _float3(rimLightColor[0], rimLightColor[1], rimLightColor[2]);
 	m_vPivot = _float2(pivot[0], pivot[1]);
 	m_iRGBMaskMode = json.value("rgb_mask", m_iRGBMaskMode);
 	m_eColorMode = static_cast<CParticleSystem::COLOR_MODE>(json.at("color_mode").get<_uint>());
@@ -261,6 +264,7 @@ void CParticleNode_Edit::Export(nlohmann::ordered_json& json)
 		{"offset_position",json::array({vOffsetPosition.x,vOffsetPosition.y,vOffsetPosition.z})},
 		{"offset_quaternion",json::array({vOffsetQuaternion.x,vOffsetQuaternion.y,vOffsetQuaternion.z,vOffsetQuaternion.w})},
 
+		{"rimlight_color",json::array({m_vRimLightColor.x,m_vRimLightColor.y,m_vRimLightColor.z})},
 		{"pivot",json::array({m_vPivot.x,m_vPivot.y})},
 		{"rgb_mask",m_iRGBMaskMode},
 		{"color_mode",ENUM(m_eColorMode)},

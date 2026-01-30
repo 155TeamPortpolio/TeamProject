@@ -48,6 +48,10 @@ public:
 
     void Idle();
 
+    /* Bubble */
+    void Active_Bubble();
+    void Deactive_Bubble();
+
     /* Dissolve */
     void Set_DissolveState(DISSOLVE_STATE state, _float duration);
     DISSOLVE_STATE Get_DissolveState()const { return m_eDissolveState; }

@@ -159,6 +159,7 @@ public:
 	void SetParticleParams(PARTICLE_NODE particleDesc);
 	void Simulation_Particle(_float dt);
 	void Reset();
+	void Pause();
 
 public:
 	virtual void Render_GUI() override;
@@ -180,6 +181,7 @@ private:
 	_uint m_iMaxInstancesCount{};
 	_bool isDrawing = { true };
 
+	_bool m_IsPause = false;
 	_bool m_IsChanged = false;
 	PARTICLE_NODE m_PendingChanged{};
 
