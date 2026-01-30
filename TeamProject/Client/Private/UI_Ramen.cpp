@@ -61,7 +61,10 @@ void CUI_Ramen::Late_Update(_float dt)
 
 void CUI_Ramen::UI_Active(void* pArg)
 {
-    Set_Alive(true);
+    Set_Alive(true); 
+    m_pSelectedMenu = nullptr;
+    for (auto& pMenu : m_pMenus)
+        pMenu->UI_DeActive();
 }
 
 void CUI_Ramen::UI_DeActive(void* pArg)
