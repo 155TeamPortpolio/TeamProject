@@ -103,18 +103,26 @@ void CFieldPlayer::Reset_State(_float dt)
 
 void CFieldPlayer::Update_Input(_float dt)
 {
-	if (!m_pCurrentCharacter || m_bLockInput) return;
+	if (!m_pCurrentCharacter) return;
 	Update_Movement(dt);
 	Update_Interact(dt);
 }
 
 void CFieldPlayer::Update_Interact(_float dt)
 {
+	if (m_bLockInput) return;
 	if (InputDevice()->Key_Tap('F')) m_pCurrentCharacter->On_Interact();
 }
 
 void CFieldPlayer::Update_Movement(_float dt)
 {
+	if (m_bLockInput)
+	{
+		m_input = {};
+		Process_Movement(dt);
+		return;
+	}
+
 	m_input.prevDirection = m_input.direction;
 	m_input.previous = m_input.current;
 
