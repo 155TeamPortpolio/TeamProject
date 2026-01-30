@@ -1,17 +1,21 @@
 #include "pch.h"
 #include "MapLightPoint.h"
+#include "Collider.h"
 #include "Light.h"
 
 CMapLightPoint::CMapLightPoint()
+	: CMapObject()
 {
 }
 
 CMapLightPoint::CMapLightPoint(const CMapLightPoint& rhs)
+	: CMapObject(rhs)
 {
 }
 
 HRESULT CMapLightPoint::Initialize_Prototype()
 {
+	__super::Initialize_Prototype();
 	Add_Component<CCollider>();
 	Add_Component<CLight>();
 	return S_OK;
@@ -20,23 +24,6 @@ HRESULT CMapLightPoint::Initialize_Prototype()
 HRESULT CMapLightPoint::Initialize(INIT_DESC* pArg)
 {
 	__super::Initialize(pArg);
-
-	Get_Component<CCollider>()->Set_MapToolMode(true);
-	Get_Component<CTransform>()->Scale({ 0.3f, 0.3f, 0.3f });
-	Get_Component<CCollider>()->Set_Size({ 0.3f, 0.3f, 0.3f });
-	Get_Component<CCollider>()->Set_ColliderColor({ 1.f, 1.f, 1.f, 1.f });
-
-	LIGHT_DESC LightDesc{};
-	if (MAP_LIGHTPOINT_DESC* pDesc = static_cast<MAP_LIGHTPOINT_DESC*>(pArg)) {
-		LightDesc.vOffsetPosition = pDesc->DescJson.vOffsetPosition;
-		LightDesc.vLightDiffuse = pDesc->DescJson.vLightDiffuse;
-		LightDesc.vLightAmbient = pDesc->DescJson.vLightAmbient;
-		LightDesc.vLightSpecular = pDesc->DescJson.vLightSpecular;
-		LightDesc.fLightRange = pDesc->DescJson.fLightRange;
-		LightDesc.fLightIntensity = pDesc->DescJson.fLightIntensity;
-	}
-
-	Get_Component<CLight>()->Set_Desc(LightDesc, LIGHT_TYPE::POINT);
 
 	return S_OK;
 }
@@ -64,6 +51,7 @@ void CMapLightPoint::Export_ObjectData(void* pDesc)
 
 void CMapLightPoint::Render_GUI()
 {
+	__super::Render_GUI();
 }
 
 CMapLightPoint* CMapLightPoint::Create()

@@ -14,7 +14,7 @@
 #include "EntitySpawner.h"
 
 CMapLoader::CMapLoader()
-    : m_TagLayers{ "PlacedObject_Layer", "TriggerObject_Layer", "InvWall_Layer, Entity_Layer, Battle_Layer, LightPoint_Layer"}
+    : m_TagLayers{ "PlacedObject_Layer", "TriggerObject_Layer", "InvWall_Layer", "Entity_Layer", "Battle_Layer", "LightPoint_Layer"}
 {
 }
 
@@ -379,10 +379,20 @@ void CMapLoader::Place_LightFromLoadData(MAP_LIGHT* pData)
 
     COLLIDER_DESC ColDesc = {};
     ColDesc.eType = COLLIDER_TYPE::SPHERE;
-    ColDesc.bTrigger = false; // 충돌 박스 생성하는 트리거
+    ColDesc.bTrigger = true;
     ColDesc.vCenter = { pData->LightDesc.vOffsetPosition.x ,pData->LightDesc.vOffsetPosition.y, pData->LightDesc.vOffsetPosition.z };
     ColDesc.vSize = { pData->LightDesc.fLightRange, pData->LightDesc.fLightRange, pData->LightDesc.fLightRange };
+    ColDesc.vColliderColor = { pData->LightDesc.vLightDiffuse.x, pData->LightDesc.vLightDiffuse.y ,pData->LightDesc.vLightDiffuse.z };
 
+    LIGHT_INIT_DESC LightDesc{};
+    LightDesc.eType      = LIGHT_TYPE::POINT;
+    LightDesc.vPosition  = pData->LightDesc.vOffsetPosition;
+    LightDesc.vDiffuse   = pData->LightDesc.vLightDiffuse;
+    LightDesc.vAmbient   = pData->LightDesc.vLightAmbient;
+    LightDesc.vSpecular  = pData->LightDesc.vLightSpecular;
+    LightDesc.fRange     = pData->LightDesc.fLightRange;
+    LightDesc.fIntensity = pData->LightDesc.fLightIntensity;
+    
     for (auto& tSlotData : m_MapSlotFormatData) {
         // 일단 데이터 다 때려넣기
         for (auto& FieldData : tSlotData.second[pData->iIndex])
@@ -392,6 +402,7 @@ void CMapLoader::Place_LightFromLoadData(MAP_LIGHT* pData)
     CGameObject* pLightPoint = Builder::Create_Object({ G_GlobalLevelKey ,"Proto_GameObject_MapLightPoint" })
         .Add_ObjDesc(Desc)
         .Collider(ColDesc)
+        .Light(LightDesc)
         .Position({ pData->vTranslation[0], pData->vTranslation[1], pData->vTranslation[2] })
         .Build("LightPoint" + to_string(pData->iIndex));
 
