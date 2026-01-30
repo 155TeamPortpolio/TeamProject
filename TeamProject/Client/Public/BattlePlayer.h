@@ -56,7 +56,7 @@ private:
 public:
     void            Set_Move(_vector3 vPos, _vector3 vRot);
     OBJECT_HANDLE   GetCurCharacterHandle();
-    HRESULT         SwitchCharacter(_bool bNext = true);
+    HRESULT         SwitchCharacter(_int iTargetIndex);
     void            SetBattleCharacters(vector<CHARACTER> battleCharacters);
     _int            GetParryingCount() const { return m_iParryingCount; }
     OBJECT_HANDLE   GetTargetHandle() const { return m_TargetHandle; }
@@ -97,6 +97,8 @@ private:
     void    Process_ComboSelect(_float dt);
 
     _bool   Can_Switch() const;
+    _bool   Can_SwitchTo(_uint iIndex) const;
+    _int    Find_SwitchIndex(_bool bNext) const;
     _bool   Can_Input() const { return !m_bLockInput; }
     void    Update_Target();
     void    Update_Status();
@@ -104,8 +106,6 @@ private:
 private:
     HRESULT      Initialize_CharacterPrototype();
     CGameObject* CreateBattleCharacter(CHARACTER character);
-    void         SwitchToNext();
-    void         SwitchToPrev();
     void         NotifyCharacterSwitchIn();
     void         NotifyCharacterSwitchOut();
     void         Sync_ActionUI();

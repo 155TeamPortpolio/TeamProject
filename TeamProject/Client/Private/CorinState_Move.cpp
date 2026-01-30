@@ -28,11 +28,11 @@ void CCorinState_Move::Enter(CCorin* pOwner)
 
     switch (iEntryMode)
     {
-    case 2:
+    case 2: // Run Loop
         m_pSubStateMachine->Set_DefaultState("Run");
         m_pSubStateMachine->Set_Int("RunEntryMode", 0);
         break;
-    case 1:
+    case 1: //  Run End
         m_pSubStateMachine->Set_DefaultState("Run");
         m_pSubStateMachine->Set_Int("RunEntryMode", 1);
         break;

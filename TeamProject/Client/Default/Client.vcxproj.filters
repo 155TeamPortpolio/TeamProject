@@ -229,9 +229,6 @@
     <Filter Include="02. GameObject\MapObject\03. MapInvisibleWall">
       <UniqueIdentifier>{b312b594-fbbd-4c58-99ff-ef3b7b832dfe}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Level\02. MainCity">
-      <UniqueIdentifier>{5c06b70c-30b5-443f-8830-698352a45197}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. Level\03. Scott">
       <UniqueIdentifier>{03ec8d80-58c9-41e7-aaed-48aa852601f5}</UniqueIdentifier>
     </Filter>
@@ -970,11 +967,32 @@
     <Filter Include="03. Utility\06. FieldSystem\Room\04. Noodle">
       <UniqueIdentifier>{810c5f63-0a50-441a-b876-0b38ab52f72c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Level\02. MainCity">
+      <UniqueIdentifier>{5c06b70c-30b5-443f-8830-698352a45197}</UniqueIdentifier>
+    </Filter>
     <Filter Include="03. Utility\06. FieldSystem\Room\04. Noodle">
       <UniqueIdentifier>{810c5f63-0a50-441a-b876-0b38ab52f72c}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\Object\Npc\Service\SilverAnbi">
       <UniqueIdentifier>{1fb6f464-481c-4f28-9d2c-18957cf84b87}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Level\05. Gacha">
+      <UniqueIdentifier>{fa9bd871-fe4c-4859-8b99-9123ce93fc2d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Gacha">
+      <UniqueIdentifier>{858b15a4-6c43-48b1-893b-d5dc3866306a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Gacha\GachaProps">
+      <UniqueIdentifier>{7ec38089-0a6d-43d6-81a7-6c4da68b14d7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Gacha\GachaProps\GachaStage">
+      <UniqueIdentifier>{c950310b-daa0-484f-9aae-3510aa25187f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Gacha\GachaProps\GachaTV">
+      <UniqueIdentifier>{2385cbba-e7f8-45bf-bcf6-a509b7e8c8a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Gacha\GachaProps\GachaBack">
+      <UniqueIdentifier>{e5c0363c-6e7d-497f-a9a3-598931dd3e38}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1827,7 +1845,7 @@
     <ClInclude Include="..\Public\UI_RamenMenu.h">
       <Filter>02. GameObject\UI\01. 2D\Ramen\Menu</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\OrbitCamCollider.h">
+    <ClInclude Include="..\public\CamOcclusionTracker.h">
       <Filter>02. GameObject\Camera\04. OrbitCam\01. OrbitCamCollider</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Defiler.h">
@@ -1853,6 +1871,21 @@
     </ClInclude>
     <ClInclude Include="..\public\SilverAnbi.h">
       <Filter>02. GameObject\Object\Npc\Service\SilverAnbi</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Gacha_Level.h">
+      <Filter>01. Level\05. Gacha</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\GachaTV.h">
+      <Filter>02. GameObject\Object\Gacha\GachaProps\GachaTV</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\GachaStage.h">
+      <Filter>02. GameObject\Object\Gacha\GachaProps\GachaStage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\GachaBack.h">
+      <Filter>02. GameObject\Object\Gacha\GachaProps\GachaBack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\GachaProps.h">
+      <Filter>02. GameObject\Object\Gacha\GachaProps</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1916,9 +1949,6 @@
     </ClCompile>
     <ClCompile Include="..\private\CamDirector.cpp">
       <Filter>03. Utility\08. CamDirector</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\OrbitCam.cpp">
-      <Filter>02. GameObject\Camera\04. OrbitCam</Filter>
     </ClCompile>
     <ClCompile Include="..\private\MapFloorObject.cpp">
       <Filter>02. GameObject\MapObject\01. MapFloorObject</Filter>
@@ -2669,7 +2699,7 @@
     <ClCompile Include="..\Private\UI_RamenMenu.cpp">
       <Filter>02. GameObject\UI\01. 2D\Ramen\Menu</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\OrbitCamCollider.cpp">
+    <ClCompile Include="..\private\CamOcclusionTracker.cpp">
       <Filter>02. GameObject\Camera\04. OrbitCam\01. OrbitCamCollider</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Defiler.cpp">
@@ -2690,8 +2720,26 @@
     <ClCompile Include="..\Private\JaneDoeState_AssaultAttack.cpp">
       <Filter>02. GameObject\Object\Player\Character\01. JaneDoe\State\Attack\Assault</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\OrbitCam.cpp">
+      <Filter>02. GameObject\Camera\04. OrbitCam</Filter>
+    </ClCompile>
     <ClCompile Include="..\private\SilverAnbi.cpp">
       <Filter>02. GameObject\Object\Npc\Service\SilverAnbi</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Gacha_Level.cpp">
+      <Filter>01. Level\05. Gacha</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\GachaTV.cpp">
+      <Filter>02. GameObject\Object\Gacha\GachaProps\GachaTV</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\GachaStage.cpp">
+      <Filter>02. GameObject\Object\Gacha\GachaProps\GachaStage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\GachaBack.cpp">
+      <Filter>02. GameObject\Object\Gacha\GachaProps\GachaBack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\GachaProps.cpp">
+      <Filter>02. GameObject\Object\Gacha\GachaProps</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
