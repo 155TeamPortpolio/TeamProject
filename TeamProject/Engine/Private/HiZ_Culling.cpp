@@ -590,26 +590,28 @@ _bool CHiZ_Culling::BuildOcclusionInput(
 	_float maxY = 0.0f;
 
 	_float objMinDepth01 = 1.0f;  // �ʱⰪ�� 1�� (�ָ�)
+	_float objMinViewZ = FLT_MAX;
 	_bool anyValid = false;
 	_uint validCount = 0;
 
 	const _float nearMargin = 1e-5f;
 	const _float clipMargin = 1e-6f;
+	const _float occMaxDistance = min(zFar * 0.90f, 2000.0f); // 필요시 튜닝
 
 	for (int cornerIndex = 0; cornerIndex < 8; ++cornerIndex)
 	{
 		const _vector worldPos = XMLoadFloat3(&corners[cornerIndex]);
 
-		// viewZ üũ (��/����� �ڴ� ����)
 		const _vector viewPos = XMVector3TransformCoord(worldPos, viewMatrix);
 		const _float viewZ = XMVectorGetZ(viewPos);
 		if (viewZ <= nearMargin)
-			continue; // << ������ return false ���µ�, ������ "�ڳ� �ϳ�"�� ����
+			continue;
+
+		objMinViewZ = min(objMinViewZ, viewZ); // << 추가
 
 		const _float depth01 = Clamp01(viewZ / zFar);
 		objMinDepth01 = min(objMinDepth01, depth01);
 
-		// clip -> ndc
 		const _vector clip = XMVector4Transform(XMVectorSetW(worldPos, 1.0f), viewProjMatrix);
 		const _float clipW = XMVectorGetW(clip);
 		if (clipW <= clipMargin)
@@ -631,9 +633,13 @@ _bool CHiZ_Culling::BuildOcclusionInput(
 		++validCount;
 	}
 
-	// ��ȿ �ڳʰ� �ʹ� ������(ī�޶� ��/Ŭ�� ����) �׳� ������Ѷ�
-	// => �ø� �Է��� ������ ����
 	if (!anyValid || validCount < 2)
+		return false;
+
+	if (objMinViewZ == FLT_MAX || objMinViewZ >= occMaxDistance)
+		return false;
+
+	if ((flags & OCCL_FLAG_RISK_FLAT_OR_HUGE) != 0u)
 		return false;
 
 	// ����/�ø�

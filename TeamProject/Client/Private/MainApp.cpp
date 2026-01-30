@@ -9,6 +9,7 @@
 #include "MainCity_Level.h"
 #include "Scott_Level.h"
 #include "Zero_Level.h"
+#include "Gacha_Level.h"
 
 #include "UIDirector.h"
 #include "DataBase.h"
@@ -166,6 +167,7 @@ void CMainApp::Set_Levels()
 	LevelManager()->Register_Level("MainCity_Level", []()->CLevel* {return CMainCity_Level::Create("MainCity_Level"); });
 	LevelManager()->Register_Level("Scott_Level",    []()->CLevel* {return CScott_Level::Create("Scott_Level"); });
 	LevelManager()->Register_Level("Zero_Level",     []()->CLevel* {return CZero_Level::Create("Zero_Level"); });
+	LevelManager()->Register_Level("Gacha_Level",     []()->CLevel* {return CGacha_Level::Create("Gacha_Level"); });
 
 	LevelManager()->Set_LoadingLevel("Loading_Level");
 	m_pGameInstance->Notify_LevelSet(); 
@@ -297,7 +299,7 @@ void CMainApp::Create_GlobalCamObjs()
 
 	CCT_DESC desc;
 	desc.eGroup = COLLISION_GROUP::CAMERA;
-	//desc.iCollisionMask = ENUM(COLLISION_GROUP::COMMON) | ENUM(COLLISION_GROUP::INTERACTABLE);
+	desc.iCollisionMask = ENUM(COLLISION_GROUP::COMMON) | ENUM(COLLISION_GROUP::INTERACTABLE);
 
 	auto orbitCam = Builder::Create_Object({G_GlobalLevelKey, "Proto_GameObject_OrbitCam"})
 		.Camera(aspect)

@@ -29,6 +29,11 @@ CCharacter::CCharacter(const CCharacter& rhs)
 {
 }
 
+_bool CCharacter::Can_SwitchIn() const
+{
+	return !m_pCCT->Get_CompActive();
+}
+
 void CCharacter::Update_DissolveProgress(_float dt)
 {
 	m_fDissolveProgress += dt;
@@ -60,6 +65,7 @@ void CCharacter::Process_RootMotion(_float dt, const ROOTMOTION_DESC& desc)
 
 	if ((desc.iModeMask & ENUM(ROOTMOTION_MASK::QUATERNION)) != 0)
 	{
+		m_bIsRotating = false; // 루트모션 회전 사용시 수동 회전 비활성화
 		if (desc.fRotateWeight >= 0.99f) pTransform->Add_Quaternion(vQuatDelta);
 		else if (desc.fRotateWeight > 0.01f)
 		{
@@ -271,8 +277,8 @@ void CCharacter::On_Move(const InputInfo& inputInfo)
 {
 	if (!m_bIsMain)
 		return;
-	//if (m_bCanInteract)
-	//	return;
+	if (m_bCanInteract)
+		return;
 	_bool prevResetMove = m_inputInfo.resetMove;
 	m_inputInfo = inputInfo;
 	m_inputInfo.resetMove = prevResetMove;
@@ -562,7 +568,7 @@ _bool CCharacter::Can_Parry()
 void CCharacter::Update_Rotation(_float dt)
 {
 	if (!m_bCanRotate)	return;
-	_float fSpeed = 20.f;
+	_float fSpeed = 10.f;
 	if (m_qCurrentRot.Dot(m_qTargetRot) > 0.99f)
 	{
 		m_pTransform->Set_Quaternion(m_qTargetRot);

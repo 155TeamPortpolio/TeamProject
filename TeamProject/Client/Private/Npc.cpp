@@ -21,27 +21,27 @@ CNpc::CNpc(const CNpc& rhs)
 {
 }
 
-void CNpc::OnCameraCollision(_bool isColliding)
+void CNpc::OnCameraCollision(const CamOcclusionHit& hit)
 {
     auto pMaterial = Get_Component<CMaterial>();
     auto& materialInstances = pMaterial->Get_MaterialInstances();
 
-    if (isColliding)
+    if (hit.phase == CamOcclusionPhase::Enter)
     {
         for (const auto& instance : materialInstances)
-        {
             instance->Override_Pass("TransparentNoise");
-            m_fCamFadeAlpha = 0.6f;
-        }
-    }
-    if (isColliding == false)
-    {
 
+        m_fCamFadeAlpha = 0.6f;
+        return;
+    }
+
+    if (hit.phase == CamOcclusionPhase::Exit)
+    {
         for (const auto& instance : materialInstances)
-        {
             instance->Reset_Pass();
-            m_fCamFadeAlpha = 0.0f;
-        }
+
+        m_fCamFadeAlpha = 0.0f;
+        return;
     }
 }
 
