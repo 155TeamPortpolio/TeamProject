@@ -43,6 +43,7 @@ void CBattlePlayer::SetBattleCharacters(vector<CHARACTER> battleCharacters)
 	{
 		auto newCharacter = dynamic_cast<CCharacter*>(CreateBattleCharacter(character));
 		newCharacter->Set_MainCharacter(false);
+		newCharacter->DeActive_Character();
 		m_BattleCharacters.push_back(newCharacter);
 		m_CharacterHandles.push_back(newCharacter->Get_Handle());
 	}
@@ -51,6 +52,7 @@ void CBattlePlayer::SetBattleCharacters(vector<CHARACTER> battleCharacters)
 	m_pCurrentCharacter = m_BattleCharacters[m_iCurrentIndex];
 	m_pCurrentCharacter->SetRenderLayer(RENDER_LAYER::Default);
 	m_pCurrentCharacter->Set_MainCharacter(true);
+	m_pCurrentCharacter->Active_Character();
 
 	CBattleSystem::GetInstance()->SetPlayer(m_CharacterHandles);
 }
