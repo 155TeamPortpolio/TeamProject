@@ -627,7 +627,98 @@
                 1.0
             ],
             "pass": "Opaque",
-            "animClips": [],
+            "animClips": [
+                {
+                    "duration": 1.0,
+                    "keyframes": [
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                0.0
+                            ],
+                            "easeType": 29,
+                            "position": [
+                                0.0,
+                                40.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 0.0
+                        },
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "easeType": 0,
+                            "position": [
+                                0.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 0.4000000059604645
+                        }
+                    ],
+                    "loop": false,
+                    "name": "appear"
+                },
+                {
+                    "duration": 0.20000000298023224,
+                    "keyframes": [
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "easeType": 0,
+                            "position": [
+                                0.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 0.0
+                        },
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                0.0
+                            ],
+                            "easeType": 0,
+                            "position": [
+                                0.0,
+                                100.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 0.20000000298023224
+                        }
+                    ],
+                    "loop": false,
+                    "name": "disappear"
+                }
+            ],
             "children": [
                 {
                     "alive": true,
@@ -749,7 +840,7 @@
                 },
                 {
                     "alive": true,
-                    "instanceName": "orderIcon",
+                    "instanceName": "iconOrder",
                     "transform": {
                         "anchor": 1,
                         "anchorOffset": [
@@ -784,7 +875,7 @@
                 },
                 {
                     "alive": true,
-                    "instanceName": "orderText",
+                    "instanceName": "textOrder",
                     "transform": {
                         "anchor": 0,
                         "anchorOffset": [
@@ -812,7 +903,72 @@
                         1.0
                     ],
                     "pass": "Opaque",
-                    "animClips": [],
+                    "animClips": [
+                        {
+                            "duration": 0.15000000596046448,
+                            "keyframes": [
+                                {
+                                    "angle": 0.0,
+                                    "color": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ],
+                                    "easeType": 0,
+                                    "position": [
+                                        0.0,
+                                        0.0
+                                    ],
+                                    "scale": [
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "time": 0.0
+                                },
+                                {
+                                    "angle": 0.0,
+                                    "color": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ],
+                                    "easeType": 0,
+                                    "position": [
+                                        0.0,
+                                        0.0
+                                    ],
+                                    "scale": [
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "time": 0.14000000059604645
+                                },
+                                {
+                                    "angle": 0.0,
+                                    "color": [
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "easeType": 0,
+                                    "position": [
+                                        0.0,
+                                        0.0
+                                    ],
+                                    "scale": [
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "time": 0.15000000596046448
+                                }
+                            ],
+                            "loop": false,
+                            "name": "clip0"
+                        }
+                    ],
                     "children": [],
                     "typeTag": "Text",
                     "text": {
@@ -837,7 +993,7 @@
                 },
                 {
                     "alive": true,
-                    "instanceName": "orderDisable",
+                    "instanceName": "disableOrder",
                     "transform": {
                         "anchor": 1,
                         "anchorOffset": [
@@ -865,7 +1021,60 @@
                         0.8627451062202454
                     ],
                     "pass": "NineSlice",
-                    "animClips": [],
+                    "animClips": [
+                        {
+                            "duration": 0.10000000149011612,
+                            "keyframes": [
+                                {
+                                    "angle": 0.0,
+                                    "color": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        0.8627451062202454
+                                    ],
+                                    "easeType": 0,
+                                    "position": [
+                                        0.0,
+                                        0.0
+                                    ],
+                                    "scale": [
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "time": 0.0
+                                }
+                            ],
+                            "loop": false,
+                            "name": "clip0"
+                        },
+                        {
+                            "duration": 0.10000000149011612,
+                            "keyframes": [
+                                {
+                                    "angle": 0.0,
+                                    "color": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        0.0
+                                    ],
+                                    "easeType": 0,
+                                    "position": [
+                                        0.0,
+                                        0.0
+                                    ],
+                                    "scale": [
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "time": 0.0
+                                }
+                            ],
+                            "loop": false,
+                            "name": "clip1"
+                        }
+                    ],
                     "children": [],
                     "typeTag": "NineSlice",
                     "textureTag": "Circle52.png",
@@ -896,7 +1105,7 @@
                 },
                 {
                     "alive": true,
-                    "instanceName": "orderOverlay",
+                    "instanceName": "clickOrder",
                     "transform": {
                         "anchor": 1,
                         "anchorOffset": [
@@ -926,7 +1135,7 @@
                     "pass": "NineSlice",
                     "animClips": [
                         {
-                            "duration": 0.20000000298023224,
+                            "duration": 0.15000000596046448,
                             "keyframes": [
                                 {
                                     "angle": 0.0,
@@ -983,7 +1192,7 @@
                                         1.0,
                                         1.0
                                     ],
-                                    "time": 0.19499999284744263
+                                    "time": 0.14000000059604645
                                 },
                                 {
                                     "angle": 0.0,
@@ -1002,7 +1211,7 @@
                                         1.0,
                                         1.0
                                     ],
-                                    "time": 0.20000000298023224
+                                    "time": 0.15000000596046448
                                 }
                             ],
                             "loop": false,
@@ -1081,7 +1290,7 @@
                 },
                 {
                     "alive": true,
-                    "instanceName": "priceText",
+                    "instanceName": "textPrice",
                     "transform": {
                         "anchor": 1,
                         "anchorOffset": [
@@ -1131,6 +1340,42 @@
                         "autoPos": true,
                         "anchor": 1
                     }
+                },
+                {
+                    "alive": true,
+                    "instanceName": "btnOrder",
+                    "transform": {
+                        "anchor": 0,
+                        "anchorOffset": [
+                            -130.0,
+                            -26.0
+                        ],
+                        "size": [
+                            260.0,
+                            52.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        0.0
+                    ],
+                    "pass": "Opaque",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "Button",
+                    "textureTag": "empty.png",
+                    "eventMsgTag": ""
                 }
             ],
             "typeTag": "CanvasPanel"

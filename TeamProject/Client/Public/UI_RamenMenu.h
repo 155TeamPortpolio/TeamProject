@@ -13,7 +13,7 @@ class CUI_RamenMenu final : public CUI_Object
 public:
 	typedef struct tagRamenMenuDesc : public UI_DESC {
 		RAMEN_DESC		tRamenDesc = {};
-		function<void(CUI_Object* pObj)>	onSelect = {};
+		function<void(CUI_Object* pObj, _int iPrice)>	onSelect = {};
 	}RAMENMENU_DESC;
 
 private:
@@ -57,7 +57,7 @@ public:
 
 private:
 	RAMEN_DESC		m_tRamenDesc = {};
-	function<void(CUI_Object* pObj)>	m_onSelect = {};
+	function<void(CUI_Object* pObj, _int iPrice)>	m_onSelect = {};
 
 	class CUI_Object*	m_pChildren[ENUM(CHILD::END)] = {};
 	class CTextSlot*	m_pTexts[ENUM(TEXTSLOT::END)] = {};
