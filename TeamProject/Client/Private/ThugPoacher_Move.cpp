@@ -56,7 +56,6 @@ void CThugPoacher_Move::Exit(CThugPoacher* pOwner)
 {
 }
 
-
 void CThugPoacher_Move::Register_States()
 {
 	m_pSubStateMachine->Register_State("Walk_Front", CThugPoacher_Walk_Front::Create());
