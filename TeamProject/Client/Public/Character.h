@@ -117,6 +117,7 @@ public:
     void        Set_Switch(SWITCH eType) { m_eSwitchType = eType; }
     _bool       Is_MainCharacter() const { return m_bIsMain; }
     void        Set_MainCharacter(_bool bMain) { m_bIsMain = bMain; }
+    _bool       Can_SwitchIn() const;
 
     void        Update_DissolveProgress(_float dt); /*dissolve*/
 
