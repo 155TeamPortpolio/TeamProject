@@ -344,9 +344,10 @@ HRESULT CDataBase::LoadMapData(const string& MapDataFolderPath)
 			const string stem = FilePath.stem().string();
 			auto tokens = SplitFileName(stem, '.');
 
+			if (find(begin(MAP_DATA_TAGS), end(MAP_DATA_TAGS), tokens[0]) != end(MAP_DATA_TAGS)) {
+				if (tokens[0] == "BattleData")
+					continue;
 
-
-			if (tokens[0] == "MapData" || tokens[0] == "EntityData") {
 				_int iVersion = {};
 				
 				auto [ptr, ec] = std::from_chars(tokens[3].data(), tokens[3].data() + tokens[3].size(), iVersion);

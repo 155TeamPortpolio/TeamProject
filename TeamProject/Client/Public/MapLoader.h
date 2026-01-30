@@ -64,11 +64,11 @@ private:
 	_bool m_hasColliderData = {};
 
 	/*--------------------------------------------------------------------*/
-	_bool			m_bHasMapBase{}, m_bHasEntityBase{}, m_bHasBattleData{}, m_bHasLightData{};
+	_bool			m_bHasMapBase{}, m_bHasEntityBase{}, m_bHasBattleData{}, m_bHasLightBase{};
 	MapData_Header		m_MapBaseData = {};
 	Entity_Header		m_EntityBaseData = {};
 	BATTLE_FIELD_DATA	m_BattleData = {};
-	Light_Header		m_LightData = {};
+	Light_Header		m_LightBaseData = {};
 
 	vector<CACHED_OBJECT>	m_MapObjectHandle;
 	vector<CACHED_OBJECT>	m_TriggerObjectHandle;

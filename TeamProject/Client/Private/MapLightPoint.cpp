@@ -12,6 +12,7 @@ CMapLightPoint::CMapLightPoint(const CMapLightPoint& rhs)
 
 HRESULT CMapLightPoint::Initialize_Prototype()
 {
+	Add_Component<CCollider>();
 	Add_Component<CLight>();
 	return S_OK;
 }
@@ -24,7 +25,6 @@ HRESULT CMapLightPoint::Initialize(INIT_DESC* pArg)
 	Get_Component<CTransform>()->Scale({ 0.3f, 0.3f, 0.3f });
 	Get_Component<CCollider>()->Set_Size({ 0.3f, 0.3f, 0.3f });
 	Get_Component<CCollider>()->Set_ColliderColor({ 1.f, 1.f, 1.f, 1.f });
-
 
 	LIGHT_DESC LightDesc{};
 	if (MAP_LIGHTPOINT_DESC* pDesc = static_cast<MAP_LIGHTPOINT_DESC*>(pArg)) {

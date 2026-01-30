@@ -14,7 +14,7 @@
 #include "EntitySpawner.h"
 
 CMapLoader::CMapLoader()
-    : m_TagLayers{ "PlacedObject_Layer", "TriggerObject_Layer" }
+    : m_TagLayers{ "PlacedObject_Layer", "TriggerObject_Layer", "InvWall_Layer, Entity_Layer, Battle_Layer, LightPoint_Layer"}
 {
 }
 
@@ -65,8 +65,8 @@ HRESULT CMapLoader::Load_BaseData(const string& TagArea)
         {
             if ("Base" == packet.TagSlotFormat)
             {
-                LoadMapBaseData(&packet);
                 m_bHasMapBase = true;
+                LoadMapBaseData(&packet);
             }
             else
                 CacheSlotDataFile("MapData", packet.TagDataFilePath);
@@ -76,8 +76,8 @@ HRESULT CMapLoader::Load_BaseData(const string& TagArea)
         {
             if ("Base" == packet.TagSlotFormat)
             {
+                m_bHasEntityBase = true;
                 LoadEntityBaseData(&packet);
-                m_hasColliderData = true;
             }
             else
                 CacheSlotDataFile("EntityData", packet.TagDataFilePath);
@@ -88,7 +88,7 @@ HRESULT CMapLoader::Load_BaseData(const string& TagArea)
             LoadBattleData(&packet);
         }
         else if ("LightData") {
-            m_bHasLightData = true;
+            m_bHasLightBase = true;
             LoadLightData(&packet);
         }
     }
@@ -142,15 +142,14 @@ void CMapLoader::PlaceObjects_Once()
                 break;
             }
         }
-
     }
 
     if (m_bHasEntityBase)
         for (auto& EntityData : m_EntityBaseData.Entities)
             Place_EntityFromLoadData(&EntityData);
 
-    if (m_bHasLightData)
-        for (auto& LightData : m_LightData.Lights)
+    if (m_bHasLightBase)
+        for (auto& LightData : m_LightBaseData.Lights)
             Place_LightFromLoadData(&LightData);
 
     Update_Database();
@@ -319,8 +318,7 @@ void CMapLoader::Place_TriggerObjectFromLoadData(MapData_Object* pData)
 
     pStaticObject->Get_Component<CCollider>()->Set_DebugRender(true);
 
-    IObjectService* pObjMgr = CGameInstance::GetInstance()->Get_ObjectMgr();
-    pObjMgr->Add_Object(pStaticObject, { m_TagLevel, m_TagLayers[ENUM(MAPOBJ_TYPE::TRIGGER)] });
+    ObjectManager()->Add_Object(pStaticObject, {m_TagLevel, m_TagLayers[ENUM(MAPOBJ_TYPE::TRIGGER)]});
 
     /* 캐싱용 데이터 */
     CACHED_OBJECT OBJ;
@@ -379,7 +377,11 @@ void CMapLoader::Place_LightFromLoadData(MAP_LIGHT* pData)
     CMapLightPoint::MAP_LIGHTPOINT_DESC* Desc = new CMapLightPoint::MAP_LIGHTPOINT_DESC;
     Desc->DescJson = pData->LightDesc;
 
-
+    COLLIDER_DESC ColDesc = {};
+    ColDesc.eType = COLLIDER_TYPE::SPHERE;
+    ColDesc.bTrigger = false; // 충돌 박스 생성하는 트리거
+    ColDesc.vCenter = { pData->LightDesc.vOffsetPosition.x ,pData->LightDesc.vOffsetPosition.y, pData->LightDesc.vOffsetPosition.z };
+    ColDesc.vSize = { pData->LightDesc.fLightRange, pData->LightDesc.fLightRange, pData->LightDesc.fLightRange };
 
     for (auto& tSlotData : m_MapSlotFormatData) {
         // 일단 데이터 다 때려넣기
@@ -387,12 +389,15 @@ void CMapLoader::Place_LightFromLoadData(MAP_LIGHT* pData)
             Desc->SlotDataValues[tSlotData.first].push_back(FieldData);
     }
 
-    CGameObject* pLightPoint = Builder::Create_Object({ G_GlobalLevelKey ,"Proto_GameObject_MapTriggerObject" })
+    CGameObject* pLightPoint = Builder::Create_Object({ G_GlobalLevelKey ,"Proto_GameObject_MapLightPoint" })
         .Add_ObjDesc(Desc)
+        .Collider(ColDesc)
         .Position({ pData->vTranslation[0], pData->vTranslation[1], pData->vTranslation[2] })
         .Build("LightPoint" + to_string(pData->iIndex));
 
     pLightPoint->Get_Component<CCollider>()->Set_DebugRender(true);
+
+    ObjectManager()->Add_Object(pLightPoint, { m_TagLevel, m_TagLayers[ENUM(MAPOBJ_TYPE::LIGHT)]});
 
     /* 캐싱용 데이터 */
     CACHED_OBJECT OBJ;
@@ -506,7 +511,7 @@ HRESULT CMapLoader::LoadLightData(const MapData_Path_Packet* pPacket)
         return E_FAIL;
     }
 
-    m_EntityBaseData = Helper::LoadJson<Entity_Header>(OpenPath.string());
+    m_LightBaseData = Helper::LoadJson<Light_Header>(OpenPath.string());
     if (-1 == m_EntityBaseData.iVersion)
         return E_FAIL;
 

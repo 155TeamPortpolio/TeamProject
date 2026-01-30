@@ -23,9 +23,11 @@
 #include "ShadowCam.h"
 #include "CamLoader.h"
 
+// Map
 #include "MapPlacedObject.h"
 #include "MapTriggerObject.h"
 #include "MapInvisibleWall.h"
+#include "MapLightPoint.h"
 
 #include "SpriteNode.h"
 #include "MeshNode.h"
@@ -200,6 +202,7 @@ void CMainApp::Initialize_GlobalPrototype()
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_MapPlacedObject", CMapPlacedObject::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_MapTriggerObject", CMapTriggerObject::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_MapInvisibleWall", CMapInvisibleWall::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_MapLightPoint", CMapLightPoint::Create());
 
 	// Camera
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_OrbitCam",    COrbitCam::Create());
