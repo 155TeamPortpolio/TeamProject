@@ -27,7 +27,6 @@ CCorinState_SwitchIn* CCorinState_SwitchIn::Create()
 void CCorinState_SwitchIn::Enter(CCorin* pOwner)
 {
     pOwner->Push_Invincible();
-    pOwner->Unlock_Move();
 
     switch (pOwner->Get_Switch())
     {
@@ -51,6 +50,17 @@ void CCorinState_SwitchIn::Enter(CCorin* pOwner)
 void CCorinState_SwitchIn::Update(CCorin* pOwner, _float dt)
 {
     __super::Update(pOwner, dt);
+
+    auto pCorinState = pOwner->Get_StateMachine();
+    if (pCorinState->Get_Bool("OutReserve"))
+    {
+        if (m_pSubStateMachine->Get_CurrentState()->Get_Tag() == "End" ||
+            Is_AnimEnd())
+        {
+            pCorinState->Set_Trigger("SwitchOut");
+            pCorinState->Set_Bool("OutReserve", false);
+        }
+    }
 
     if (m_pSubStateMachine->Get_Trigger("Complete"))
     {

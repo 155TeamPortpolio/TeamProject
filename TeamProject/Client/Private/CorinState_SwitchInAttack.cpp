@@ -26,15 +26,7 @@ void CCorinState_SwitchInAttack::Enter(CCorin* pOwner)
 {
     pOwner->Push_Invincible();
     pOwner->Lock_Move();
-    if (pOwner->Get_TargetHandle().isValid())
-    {
-        auto target = pOwner->Get_TargetHandle().Get();
-        _vector3 vLook = target->Get_WorldPos() - pOwner->Get_WorldPos();
-        vLook.y = 0;
-        vLook.Normalize();
-        pOwner->Get_Component<CTransform>()->Set_Look(vLook);
-        pOwner->Rotate(vLook);
-    }
+
     __super::Enter(pOwner);
 }
 
@@ -47,7 +39,23 @@ void CCorinState_SwitchInAttack::Update(CCorin* pOwner, _float dt)
         vLook.y = 0;
         vLook.Normalize();
         pOwner->Get_Component<CTransform>()->Set_Look(vLook);
-        pOwner->Rotate(vLook);
+    }
+
+    for (const auto& Event : pOwner->Get_Component<CAnimator3D>()->Get_EventBus())
+    {
+        if (Event.Type != CLIP_EVENT_TYPE::NOTIFY) continue;
+        if (Event.Tag == "SawInterval")
+        {
+            pOwner->Begin_AttackCollider("Saw", HitDesc()
+                .Type(HIT_TYPE::INTERVAL)
+                .Damage(1.f, DAMAGE_TYPE::NORMAL)
+                .Interval(0.07f)
+            );
+        }
+        else if (Event.Tag == "SawEnd")
+        {
+            pOwner->End_AttackCollider("Saw");
+        }
     }
 
     if (m_pSubStateMachine->Get_Trigger("Complete"))
@@ -60,6 +68,7 @@ void CCorinState_SwitchInAttack::Update(CCorin* pOwner, _float dt)
             pSwitchIn->Get_SubStateMachine()->Set_Trigger("Complete");
         }
     }
+
     __super::Update(pOwner, dt);
 }
 

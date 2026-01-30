@@ -271,8 +271,8 @@ void CCharacter::On_Move(const InputInfo& inputInfo)
 {
 	if (!m_bIsMain)
 		return;
-	//if (m_bCanInteract)
-	//	return;
+	if (m_bCanInteract)
+		return;
 	_bool prevResetMove = m_inputInfo.resetMove;
 	m_inputInfo = inputInfo;
 	m_inputInfo.resetMove = prevResetMove;

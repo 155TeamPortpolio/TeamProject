@@ -594,7 +594,7 @@ void CBattlePlayer::NotifyCharacterSwitchOut()
 	m_vSwitchLook = m_pCurrentCharacter->Get_Component<CTransform>()->Dir(STATE::LOOK);
 	m_vSwitchPosition = m_pCurrentCharacter->Get_Component<CCharacterController>()->Get_FootPosition()
 		+ XMVectorScale(vRight, 0.5f)
-		- XMVectorScale(m_vSwitchLook, 6.f)
+		- XMVectorScale(m_vSwitchLook, 1.f)
 		+ XMVectorSet(0.f, 1.f, 0.f, 0.f);
 
 	if (m_pCurrentCharacter->Can_Parry())

@@ -27,7 +27,6 @@ CJaneDoeState_SwitchIn* CJaneDoeState_SwitchIn::Create()
 void CJaneDoeState_SwitchIn::Enter(CJaneDoe* pOwner)
 {
     pOwner->Push_Invincible();
-    pOwner->Unlock_Move();
 
     switch (pOwner->Get_Switch())
     {
@@ -51,6 +50,17 @@ void CJaneDoeState_SwitchIn::Enter(CJaneDoe* pOwner)
 void CJaneDoeState_SwitchIn::Update(CJaneDoe* pOwner, _float dt)
 {
     __super::Update(pOwner, dt);
+
+    auto pJaneDoeState = pOwner->Get_StateMachine();
+    if (pJaneDoeState->Get_Bool("OutReserve"))
+    {
+        if (m_pSubStateMachine->Get_CurrentState()->Get_Tag() == "End" ||
+            Is_AnimEnd())
+        {
+            pJaneDoeState->Set_Trigger("SwitchOut");
+            pJaneDoeState->Set_Bool("OutReserve", false);
+        }
+    }
 
     if (m_pSubStateMachine->Get_Trigger("Complete"))
     {

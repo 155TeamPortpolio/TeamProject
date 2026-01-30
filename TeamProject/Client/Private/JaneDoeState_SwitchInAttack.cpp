@@ -28,15 +28,7 @@ void CJaneDoeState_SwitchInAttack::Enter(CJaneDoe* pOwner)
 {
     pOwner->Push_Invincible();
     pOwner->Lock_Move();
-    if (pOwner->Get_TargetHandle().isValid())
-    {
-        auto target = pOwner->Get_TargetHandle().Get();
-        _vector3 vLook = target->Get_WorldPos() - pOwner->Get_WorldPos();
-        vLook.y = 0;
-        vLook.Normalize();
-        pOwner->Get_Component<CTransform>()->Set_Look(vLook);
-        pOwner->Rotate(vLook);
-    }
+
     __super::Enter(pOwner);
 }
 
@@ -49,7 +41,6 @@ void CJaneDoeState_SwitchInAttack::Update(CJaneDoe* pOwner, _float dt)
         vLook.y = 0;
         vLook.Normalize();
         pOwner->Get_Component<CTransform>()->Set_Look(vLook);
-        pOwner->Rotate(vLook);
     }
 
     for (const auto& Event : pOwner->Get_Component<CAnimator3D>()->Get_EventBus())
