@@ -24,12 +24,42 @@ CJaneDoeState_SwitchInAttack* CJaneDoeState_SwitchInAttack::Create()
 
 void CJaneDoeState_SwitchInAttack::Enter(CJaneDoe* pOwner)
 {
+    pOwner->Push_Invincible();
+    pOwner->Lock_Move();
+    if (pOwner->Get_TargetHandle().isValid())
+    {
+        auto target = pOwner->Get_TargetHandle().Get();
+        _vector3 vLook = target->Get_WorldPos() - pOwner->Get_WorldPos();
+        vLook.y = 0;
+        vLook.Normalize();
+        pOwner->Get_Component<CTransform>()->Set_Look(vLook);
+        pOwner->Rotate(vLook);
+    }
     __super::Enter(pOwner);
 }
 
 void CJaneDoeState_SwitchInAttack::Update(CJaneDoe* pOwner, _float dt)
 {
-    __super::Update(pOwner, dt);
+    if (pOwner->Get_TargetHandle().isValid())
+    {
+        auto target = pOwner->Get_TargetHandle().Get();
+        _vector3 vLook = target->Get_WorldPos() - pOwner->Get_WorldPos();
+        vLook.y = 0;
+        vLook.Normalize();
+        pOwner->Get_Component<CTransform>()->Set_Look(vLook);
+        pOwner->Rotate(vLook);
+    }
+
+    auto pJaneDoeState = pOwner->Get_StateMachine();
+    if (pJaneDoeState->Get_Bool("OutReserve"))
+    {
+        if (m_pSubStateMachine->Get_CurrentState()->Get_Tag() == "End" ||
+            Is_AnimEnd())
+        {
+            pJaneDoeState->Set_Trigger("SwitchOut");
+            pJaneDoeState->Set_Bool("OutReserve", false);
+        }
+    }
 
     if (m_pSubStateMachine->Get_Trigger("Complete"))
     {
@@ -41,10 +71,14 @@ void CJaneDoeState_SwitchInAttack::Update(CJaneDoe* pOwner, _float dt)
             pSwitchIn->Get_SubStateMachine()->Set_Trigger("Complete");
         }
     }
+
+    __super::Update(pOwner, dt);
 }
 
 void CJaneDoeState_SwitchInAttack::Exit(CJaneDoe* pOwner)
 {
+    pOwner->Pop_Invincible();
+    pOwner->Unlock_Move();
     __super::Exit(pOwner);
 }
 
@@ -58,7 +92,9 @@ void CJaneDoeState_SwitchInAttack_Start::Enter(CJaneDoe* pOwner)
 
 void CJaneDoeState_SwitchInAttack_Start::Update(CJaneDoe* pOwner, _float dt)
 {
-    pOwner->Process_RootMotion(dt);
+    pOwner->Process_RootMotion(dt,
+        ENUM(CJaneDoe::ROOTMOTION_MASK::MOVE) |
+        ENUM(CJaneDoe::ROOTMOTION_MASK::QUATERNION));
 }
 
 void CJaneDoeState_SwitchInAttack_End::Enter(CJaneDoe* pOwner)
@@ -71,7 +107,9 @@ void CJaneDoeState_SwitchInAttack_End::Enter(CJaneDoe* pOwner)
 
 void CJaneDoeState_SwitchInAttack_End::Update(CJaneDoe* pOwner, _float dt)
 {
-    pOwner->Process_RootMotion(dt);
+    pOwner->Process_RootMotion(dt,
+        ENUM(CJaneDoe::ROOTMOTION_MASK::MOVE) |
+        ENUM(CJaneDoe::ROOTMOTION_MASK::QUATERNION));
 
     IHState<CJaneDoe>* pSwitch = Get_ParentState();
     if (!pSwitch || !pSwitch->Get_SubStateMachine()) return;

@@ -200,9 +200,6 @@ void CBattlePlayer::Request_ComboAttack()
 
 void CBattlePlayer::Execute_ComboAttack(_bool bNext)
 {
-	m_fComboSelectTimer = 0.f;
-	m_bComboSelect = false;
-
 	NotifyCharacterSwitchOut();
 	if (bNext)
 		SwitchToNext();
@@ -218,6 +215,9 @@ void CBattlePlayer::Execute_ComboAttack(_bool bNext)
 	Sync_ActionUI();
 
 	m_fSwitchCooldown = SWITCH_COOLDOWN;
+
+	m_fComboSelectTimer = 0.f;
+	m_bComboSelect = false;
 }
 
 void CBattlePlayer::Cancel_ComboAttack()
@@ -603,6 +603,12 @@ void CBattlePlayer::NotifyCharacterSwitchOut()
 		m_ParryHandle = m_pCurrentCharacter->Calculate_Parry();
 		m_vSwitchPosition = _vector4{ m_pCurrentCharacter->Get_ParryPos() };
 		m_vSwitchLook = _vector4{ m_pCurrentCharacter->Get_ParryLook() };
+	}
+	else if (m_bComboSelect)
+	{
+		m_vSwitchPosition = m_pCurrentCharacter->Get_Component<CCharacterController>()->Get_FootPosition()
+			+ XMVectorScale(vRight, 0.5f)
+			+ XMVectorSet(0.f, 1.f, 0.f, 0.f);
 	}
 
 	m_pCurrentCharacter->Set_MainCharacter(false);

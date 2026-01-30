@@ -24,12 +24,31 @@ CCorinState_SwitchInAttack* CCorinState_SwitchInAttack::Create()
 
 void CCorinState_SwitchInAttack::Enter(CCorin* pOwner)
 {
+    pOwner->Push_Invincible();
+    pOwner->Lock_Move();
+    if (pOwner->Get_TargetHandle().isValid())
+    {
+        auto target = pOwner->Get_TargetHandle().Get();
+        _vector3 vLook = target->Get_WorldPos() - pOwner->Get_WorldPos();
+        vLook.y = 0;
+        vLook.Normalize();
+        pOwner->Get_Component<CTransform>()->Set_Look(vLook);
+        pOwner->Rotate(vLook);
+    }
     __super::Enter(pOwner);
 }
 
 void CCorinState_SwitchInAttack::Update(CCorin* pOwner, _float dt)
 {
-    __super::Update(pOwner, dt);
+    if (pOwner->Get_TargetHandle().isValid())
+    {
+        auto target = pOwner->Get_TargetHandle().Get();
+        _vector3 vLook = target->Get_WorldPos() - pOwner->Get_WorldPos();
+        vLook.y = 0;
+        vLook.Normalize();
+        pOwner->Get_Component<CTransform>()->Set_Look(vLook);
+        pOwner->Rotate(vLook);
+    }
 
     if (m_pSubStateMachine->Get_Trigger("Complete"))
     {
@@ -41,10 +60,13 @@ void CCorinState_SwitchInAttack::Update(CCorin* pOwner, _float dt)
             pSwitchIn->Get_SubStateMachine()->Set_Trigger("Complete");
         }
     }
+    __super::Update(pOwner, dt);
 }
 
 void CCorinState_SwitchInAttack::Exit(CCorin* pOwner)
 {
+    pOwner->Pop_Invincible();
+    pOwner->Unlock_Move();
     __super::Exit(pOwner);
 }
 
