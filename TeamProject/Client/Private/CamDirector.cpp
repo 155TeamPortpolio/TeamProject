@@ -5,6 +5,7 @@
 #include "Helper_Func.h"
 #include "FieldSystem.h"
 #include "UIDirector.h"
+#include "DisplayGate.h"
 // Camera
 #include "SequenceCam.h"
 #include "OrbitCam.h"
@@ -77,7 +78,7 @@ void CCamDirector::AutoField()
 {
     AutoTarget();
     RequestSequence("Field/Front");
-    //GameInstance()->Set_EngineTimeScale(0.01f);
+    //GameInstance()->Set_EngineTimeScale(0.01f)
 }
 
 void CCamDirector::Update(_float dt)

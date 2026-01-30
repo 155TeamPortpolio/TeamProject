@@ -16,7 +16,14 @@ HRESULT CImageUI::Initialize(INIT_DESC* pArg)
 {
     __super::Initialize(pArg);
 
-    Get_Component<CSprite2D>()->Link_Shader(G_GlobalLevelKey, "VTX_UI.hlsl");
+    auto sprite = Get_Component<CSprite2D>();
+
+    sprite->Link_Shader(G_GlobalLevelKey, "VTX_UI.hlsl");
+
+    //sprite->Add_Texture(G_GlobalLevelKey, "empty.png");
+
+    sprite->Set_Param("ColorTexMode", {&m_colorTexModeU, "uint", sizeof(_uint)});
+    sprite->Set_Param("ColorTexMix", {&m_colorTexMix, "float", sizeof(_float)});
 
     return S_OK;
 }
