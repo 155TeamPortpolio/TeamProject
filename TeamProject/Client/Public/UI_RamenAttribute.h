@@ -1,20 +1,35 @@
 #pragma once
 #include "UI_Object.h"
 
+NS_BEGIN(Engine)
+class CSprite2D;
+NS_END
+
 NS_BEGIN(Client)
 
-class CUI_Ramen final : public CUI_Object
+class CUI_RamenAttribute final : public CUI_Object
 {
-private:
-	inline static const _int MAX_MENU_COUNT = 9;
-
-private:
-	CUI_Ramen() {}
-	CUI_Ramen(const CUI_Ramen& rhs) : CUI_Object(rhs) {}
-	virtual ~CUI_Ramen() DEFAULT;
-
 public:
-	void Select_Menu(CUI_Object* pSelected);
+	typedef struct tagAttributeDesc : public UI_DESC {
+		string strAttributeID;
+	}ATTRIBUTE_DESC;
+
+private:
+	inline static const unordered_map<string, string> ICON_TEXTURES = {
+		{"atk", "IconATK.png"},
+		{"max_hp", "IconMaxHP.png"},
+		{"dmg_ether", "IconEther.png"},
+		{"dmg_fire", "IconFire.png"},
+		{"dmg_ice", "IconIce.png"}, 
+		{"dmg_physical", "IconPhysDmg.png"},  
+		{"dmg_thunder", "IconThunder.png"}, 
+		{"dmg_to_boss", "IconToBossDmg.png"},
+	};
+
+private:
+	CUI_RamenAttribute() {}
+	CUI_RamenAttribute(const CUI_RamenAttribute& rhs) : CUI_Object(rhs) {}
+	virtual ~CUI_RamenAttribute() DEFAULT;
 
 public:
 	virtual HRESULT Initialize_Prototype()           override;
@@ -28,12 +43,7 @@ public:
 	virtual void	UI_DeActive(void* pArg)			 override;
 
 private:
-	CUI_Object*		m_pMenus[MAX_MENU_COUNT] = {};
-	CUI_Object*		m_pSelectedMenu = {};
-
-private:
-	void Create_ButtonBack();
-	void Create_Menus();
+	class CSprite2D* m_pIconSprite = {};
 
 public:
 	static  CGameObject* Create();

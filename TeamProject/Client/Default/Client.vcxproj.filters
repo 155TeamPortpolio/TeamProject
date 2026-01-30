@@ -979,6 +979,9 @@
     <Filter Include="02. GameObject\UI\01. 2D\ButtonBack">
       <UniqueIdentifier>{97c4cc33-5194-4f2e-954a-7234d9714dbb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\Ramen\Attribute">
+      <UniqueIdentifier>{07fca487-bd7e-40a2-8e75-7b49fe25f31b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1860,6 +1863,9 @@
     <ClInclude Include="..\Public\UI_ButtonBack.h">
       <Filter>02. GameObject\UI\01. 2D\ButtonBack</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UI_RamenAttribute.h">
+      <Filter>02. GameObject\UI\01. 2D\Ramen\Attribute</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2701,6 +2707,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\UI_ButtonBack.cpp">
       <Filter>02. GameObject\UI\01. 2D\ButtonBack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_RamenAttribute.cpp">
+      <Filter>02. GameObject\UI\01. 2D\Ramen\Attribute</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

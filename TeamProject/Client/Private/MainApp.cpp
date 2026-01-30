@@ -87,6 +87,7 @@
 
 #include "UI_Ramen.h"
 #include "UI_RamenMenu.h"
+#include "UI_RamenAttribute.h"
 
 #include "UI_AtlasSprite.h"
 #include "UI_DamageText.h"
@@ -275,6 +276,7 @@ void CMainApp::Initialize_GlobalPrototype()
 
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Ramen", CUI_Ramen::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_RamenMenu", CUI_RamenMenu::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_RamenAttribute", CUI_RamenAttribute::Create());
 
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_AtlasSprite", CUI_AtlasSprite::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_DamageText",  CUI_DamageText::Create());

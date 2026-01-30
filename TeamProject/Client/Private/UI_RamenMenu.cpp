@@ -7,6 +7,7 @@
 #include "TextSlot.h"
 #include "ButtonUI.h"
 #include "UI_Ramen.h"
+#include "UI_RamenAttribute.h"
 
 HRESULT CUI_RamenMenu::Initialize_Prototype()
 {
@@ -27,6 +28,7 @@ HRESULT CUI_RamenMenu::Initialize(INIT_DESC* pArg)
 
     Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("ramen_menu.json")));
     Cache();
+    Create_Attributes();
 
     if (m_pButton)
         m_pButton->Set_OnClick([this]() {
@@ -63,13 +65,13 @@ void CUI_RamenMenu::Late_Update(_float dt)
 void CUI_RamenMenu::UI_Active(void* pArg)
 {
     Set_Animation(0);
-    Set_ChildAlive(CHILD::ACTIVE, true);
+    Set_ChildAlpha(CHILD::ACTIVE, 1.f);
 }
 
 void CUI_RamenMenu::UI_DeActive(void* pArg)
 {
     Set_Animation(1);
-    Set_ChildAlive(CHILD::ACTIVE, false);
+    Set_ChildAlpha(CHILD::ACTIVE, 0.f);
 }
 
 void CUI_RamenMenu::Cache()
@@ -103,6 +105,27 @@ void CUI_RamenMenu::Cache()
     }
 }
 
+void CUI_RamenMenu::Create_Attributes()
+{
+    _int iIndex = {};
+
+    for (auto& attribute: m_tRamenDesc.attributes)
+    {
+        CUI_RamenAttribute::ATTRIBUTE_DESC* pDesc = new CUI_RamenAttribute::ATTRIBUTE_DESC;
+        pDesc->strAttributeID = attribute.strAttributeID;
+
+        auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_RamenAttribute" })
+            .Add_UIDesc(pDesc)
+            .Build("attribute");
+
+        if (!pObj)
+            return;
+
+        pObj->Add_AnchorOffsetX( (m_tRamenDesc.attributes.size() - ++iIndex) * - 36.f);
+        Get_Component<CObjectContainer>()->Add_Child(pObj);
+    } 
+}
+
 void CUI_RamenMenu::Set_ChildAlive(CHILD child, _bool isAlive)
 {
     auto pChild = m_pChildren[ENUM(child)];
@@ -110,6 +133,15 @@ void CUI_RamenMenu::Set_ChildAlive(CHILD child, _bool isAlive)
         return;
 
     pChild->Set_Alive(isAlive);
+}
+
+void CUI_RamenMenu::Set_ChildAlpha(CHILD child, _float fAlpha)
+{
+    auto pChild = m_pChildren[ENUM(child)];
+    if (!pChild)
+        return;
+
+    pChild->Set_Alpha(fAlpha);
 }
 
 void CUI_RamenMenu::Set_ChildTexture(CHILD child, const string& strTextureKey)

@@ -1,0 +1,105 @@
+{
+    "alive": true,
+    "instanceName": "ramen_attribute",
+    "transform": {
+        "anchor": 10,
+        "anchorOffset": [
+            -42.0,
+            -75.0
+        ],
+        "size": [
+            34.0,
+            34.0
+        ],
+        "scale": [
+            1.0,
+            1.0
+        ],
+        "pivot": [
+            0.0,
+            0.0
+        ],
+        "radian": 0.0
+    },
+    "color": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+    ],
+    "pass": "Opaque",
+    "animClips": [],
+    "children": [
+        {
+            "alive": true,
+            "instanceName": "bg",
+            "transform": {
+                "anchor": 0,
+                "anchorOffset": [
+                    -17.0,
+                    -17.0
+                ],
+                "size": [
+                    34.0,
+                    34.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "pass": "Opaque",
+            "animClips": [],
+            "children": [],
+            "typeTag": "Image",
+            "textureTag": "Circle36_Jc.png"
+        },
+        {
+            "alive": true,
+            "instanceName": "icon",
+            "transform": {
+                "anchor": 0,
+                "anchorOffset": [
+                    -12.0,
+                    -12.0
+                ],
+                "size": [
+                    24.0,
+                    24.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "pass": "Opaque",
+            "animClips": [],
+            "children": [],
+            "typeTag": "Image",
+            "textureTag": "IconMaxHP.png"
+        }
+    ],
+    "typeTag": "CanvasPanel"
+}

@@ -39,7 +39,6 @@ HRESULT CUI_Ramen::Initialize(INIT_DESC* pArg)
     Create_ButtonBack();
     Create_Menus();
 
-
     Set_Alive(false);
 
 	return S_OK;
@@ -112,10 +111,6 @@ void CUI_Ramen::Create_Menus()
         pContainer->Add_Child(pMenu);
         m_pMenus[i] = pMenu;
     }
-}
-
-void CUI_Ramen::OnClick_Back()
-{
 }
 
 CGameObject* CUI_Ramen::Create()

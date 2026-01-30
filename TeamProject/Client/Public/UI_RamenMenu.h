@@ -32,7 +32,7 @@ private:
 		{"ramen_white_seafood", "IconRamen06.png"},
 		{"ramen_black_mushroom", "IconRamen07.png"},
 		{"ramen_black_smoked_chashu", "IconRamen08.png"},
-		{"ramen_black_redpepper_chicken", "IconRamen09png"},
+		{"ramen_black_redpepper_chicken", "IconRamen09.png"},
 		{"ramen_black_greenpepper_chicken", "IconRamen10.png"},
 		{"ramen_black_cold_seafood", "IconRamen11.png"},
 		{"ramen_black_bibim", "IconRamen12.png"},
@@ -65,8 +65,10 @@ private:
 
 private:
 	void Cache();
+	void Create_Attributes();
 
 	void Set_ChildAlive(CHILD child, _bool isAlive);
+	void Set_ChildAlpha(CHILD child, _float fAlpha);
 	void Set_ChildTexture(CHILD child, const string& strTextureKey);
 	void Set_Text(TEXTSLOT text, const _wstring& strText);
 
