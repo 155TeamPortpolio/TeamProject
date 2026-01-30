@@ -6,6 +6,55 @@
 #include "IAudioService.h"
 #include "GameObject.h"
 #include "Transform.h"
+
+CAudioSource::SlotBuilder CAudioSource::Slot(const string& slotKey)
+{
+	auto iter = m_Audios.find(slotKey);
+	if (iter != m_Audios.end())
+	{
+		return SlotBuilder(*this, iter->second);
+	}
+	AUDIO_SLOT slot{};
+	return SlotBuilder(*this,slot);
+}
+
+CAudioSource::AUDIO_SLOT& CAudioSource::SlotBuilder::Play()
+{
+	if (!ownerSlot.pSound)
+		return ownerSlot;
+	_float now = CGameInstance::GetInstance()->Get_TimeMgr()->Get_TotalTime("Audio_Timer");
+	if (now - ownerSlot.lastPlayTime < 0.05f) 
+		return ownerSlot;
+	ownerSlot.lastPlayTime = now;
+	AUDIO_PACKET packet{};
+	packet.ppChannelToUpdate = &ownerSlot.pChanel;
+	packet.pSound = ownerSlot.pSound;
+	packet.isInfinite = ownerSlot.isInfinite;
+	packet.isPaused = ownerSlot.isPaused;
+	packet.is3DAttribute = ownerSlot.is3DAttribute;
+	packet.fVolume = ownerSlot.fVolume;
+	packet.iLoopCount = ownerSlot.iLoopCount; 
+	packet.eGroup = ownerSlot.eGroup;
+	
+	if (ownerSlot.isInfinite)
+	{
+		packet.iLoopCount = -1;
+		packet.isInfinite = true;
+	}
+	else
+	{
+		packet.iLoopCount = ownerSlot.iLoopCount;
+		packet.isInfinite = false;
+	}
+
+	packet.isPaused = ownerSlot.isPaused;
+	_vector3 pos = ownerRef.m_pTransform->Get_WorldPos();
+	packet.vPosition = { pos.x, pos.y, pos.z };
+	AudioDevice()->Play(packet);
+
+	return ownerSlot;
+}
+
 CAudioSource::CAudioSource()
 	:m_pAudioDevice(CGameInstance::GetInstance()->Get_AudioDev())
 {
@@ -34,24 +83,17 @@ HRESULT CAudioSource::Initialize(COMPONENT_DESC* pArg)
 	return S_OK;
 }
 
-HRESULT CAudioSource::Add_Slot(const string& levelTag, const string& SoundKey, const string& slotKey, bool isLoop, SOUND_GROUP eGroup)
+HRESULT CAudioSource::Add_Slot(const string& levelTag, const string& SoundKey)
 {
-	if (m_Audios.count(SoundKey)) {
-		return E_FAIL;
-	};
-
-	IResourceService* pService = CGameInstance::GetInstance()->Get_ResourceMgr();
 	AUDIO_SLOT audioSlot = {};
-	audioSlot.pSound = pService->Load_Sound(levelTag, SoundKey);
-	audioSlot.isInfinite = isLoop;
-	audioSlot.eGroup = eGroup;
+	audioSlot.pSound = ResourceManager()->Load_Sound(levelTag, SoundKey);
 
 	if (!audioSlot.pSound)
 		return E_FAIL;
 
 	Safe_AddRef(audioSlot.pSound);
 
-	auto [it, inserted] = m_Audios.emplace(slotKey.empty() ? SoundKey : slotKey, audioSlot);
+	auto [it, inserted] = m_Audios.emplace(SoundKey, audioSlot);
 	if (!inserted)
 	{
 		MSG_BOX("There is Same Key Audio : CAudioSource");
@@ -60,29 +102,67 @@ HRESULT CAudioSource::Add_Slot(const string& levelTag, const string& SoundKey, c
 	}
 
 	return S_OK;
-
 }
 
-HRESULT CAudioSource::Add_Slot(const string& levelTag, const string& SoundKey, const string& slotKey, bool isLoop, SOUND_GROUP eGroup, _float sound)
+HRESULT CAudioSource::SoundFolder(const string& levelTag, const string& SoundFolder, const string& extension)
 {
-	IResourceService* pService = CGameInstance::GetInstance()->Get_ResourceMgr();
-	AUDIO_SLOT audioSlot = {};
-	audioSlot.pSound = pService->Load_Sound(levelTag, SoundKey);
-	audioSlot.isInfinite = isLoop;
-	audioSlot.eGroup = eGroup;
-	audioSlot.fVolume = sound;
-
-	if (!audioSlot.pSound)
+	filesystem::path folderPath = filesystem::path(SoundFolder);
+	error_code errorCode;
+	if (!filesystem::exists(folderPath, errorCode) || errorCode)
 		return E_FAIL;
 
-	Safe_AddRef(audioSlot.pSound);
+	if (!filesystem::is_directory(folderPath, errorCode) || errorCode)
+		return E_FAIL;
 
-	auto [it, inserted] = m_Audios.emplace(slotKey.empty() ? SoundKey : slotKey, audioSlot);
-	if (!inserted)
+	auto IsAudioExtension = [extension](const filesystem::path& filePath) -> bool
+		{
+			string extension = filePath.extension().string();
+			transform(extension.begin(), extension.end(), extension.begin(),
+				[](unsigned char ch) { return static_cast<char>(std::tolower(ch)); });
+			return (extension == extension);
+		};
+
+	unordered_set<string> slotKeyUsed;
+	const filesystem::directory_options iterOptions =
+		filesystem::directory_options::skip_permission_denied;
+
+	for (filesystem::directory_iterator iter(folderPath, iterOptions, errorCode);
+		iter != filesystem::directory_iterator();iter.increment(errorCode))
 	{
-		MSG_BOX("There is Same Key Audio : CAudioSource");
-		Safe_Release(audioSlot.pSound);
-		return E_FAIL;
+		if (errorCode)
+		{
+			errorCode.clear();
+			continue;
+		}
+
+		const filesystem::directory_entry& entry = *iter;
+
+		if (!entry.is_regular_file(errorCode) || errorCode)
+		{
+			errorCode.clear();
+			continue;
+		}
+
+		const filesystem::path& filePath = entry.path();
+		if (!IsAudioExtension(filePath))
+			continue;
+
+		string soundKey = filePath.filename().string();
+		if (!slotKeyUsed.insert(soundKey).second)
+		{
+			int suffixIndex = 2;
+			string uniqueSlotKey;
+			do
+			{
+				uniqueSlotKey = soundKey + "_" + to_string(suffixIndex++);
+			} 
+			while (!slotKeyUsed.insert(uniqueSlotKey).second);
+			soundKey = uniqueSlotKey;
+		}
+
+		const HRESULT addResult =Add_Slot(levelTag, soundKey);
+		if (FAILED(addResult))
+			continue;
 	}
 
 	return S_OK;
@@ -237,36 +317,6 @@ void CAudioSource::Play(const string& SoundKey)
 
 	XMStoreFloat4(&m_vPos, m_pTransform->Get_Pos());
 	packet.vPosition = { m_vPos.x, m_vPos.y, m_vPos.z };
-
-	m_pAudioDevice->Play(packet);
-}
-void CAudioSource::PlayOnce(const string& slotKey)
-{
-	_float now = CGameInstance::GetInstance()->Get_TimeMgr()->Get_TotalTime("Audio_Timer");
-
-	auto it = m_Audios.find(slotKey);
-	if (it == m_Audios.end()) return;
-
-	AUDIO_SLOT& slot = it->second;
-
-	// 최소 간격 (예: 0.04~0.07 사이 한 번 정도)
-	float minInterval = 0.05f;
-	if (now - slot.lastPlayTime < minInterval)
-		return;
-
-	slot.lastPlayTime = now;
-
-	// 이전 채널 stop 안 함! (그냥 자연스럽게 tail 남게)
-	// if (slot.pChanel) { slot.pChanel->stop(); ... } 이런 거 제거
-
-	// 새로 재생
-	AUDIO_PACKET packet{};
-	packet.ppChannelToUpdate = &slot.pChanel;
-	packet.pSound = slot.pSound;
-	packet.is3DAttribute = false;
-	packet.fVolume = slot.fVolume;
-	packet.iLoopCount = 0;
-	packet.eGroup = slot.eGroup;
 
 	m_pAudioDevice->Play(packet);
 }

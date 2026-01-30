@@ -8,6 +8,7 @@
 #include "CharacterController.h"
 #include "ObjectContainer.h"
 #include "EffectContainer.h"
+#include "AudioSource.h"
 
 #include "StateMachine.h"
 #include "DefilerState.h"
@@ -31,10 +32,12 @@ HRESULT CDefiler::Initialize_Prototype()
 	Add_Component<CMaterial>();
 	Add_Component<CCharacterController>();
 	Add_Component<CObjectContainer>();
+	Add_Component<CAudioSource>();
 
 	auto pResource = CGameInstance::GetInstance()->Get_ResourceMgr();
 	Get_Component<CSkeletalModel>()->Link_Model("Zero_Level", "Defiler_Isolde.model");
 	Get_Component<CMaterial>()->Link_Material("Zero_Level", "Defiler_Isolde.mat");
+	Get_Component<CAudioSource>()->SoundFolder(G_GlobalLevelKey, "../Bin/Resources/Global/Sound");
 
 	return S_OK;
 }
@@ -93,6 +96,9 @@ void CDefiler::Update(_float dt)
 	MoveByTraceMode(dt);
 	RotateToTarget(dt,2.f);
 	m_pStateMachine->Update(dt);
+
+	if(InputDevice()->Key_Tap(VK_SPACE))
+		Get_Component<CAudioSource>()->Slot("SoundBank_SFX_0_91.wav").Play();
 }
 
 void CDefiler::Late_Update(_float dt)
