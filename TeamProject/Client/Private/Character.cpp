@@ -29,6 +29,11 @@ CCharacter::CCharacter(const CCharacter& rhs)
 {
 }
 
+_bool CCharacter::Can_SwitchIn() const
+{
+	return !m_pCCT->Get_CompActive();
+}
+
 void CCharacter::Update_DissolveProgress(_float dt)
 {
 	m_fDissolveProgress += dt;

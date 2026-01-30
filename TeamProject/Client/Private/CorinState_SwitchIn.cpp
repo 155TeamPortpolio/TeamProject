@@ -41,6 +41,10 @@ void CCorinState_SwitchIn::Enter(CCorin* pOwner)
         break;
     }
 
+    pOwner->Get_StateMachine()->Reset_Trigger("ToIdle");
+    pOwner->Get_StateMachine()->Reset_Trigger("ResetState");
+    pOwner->Reset_InputInfo();
+
     m_pSubStateMachine->Reset_Trigger("Complete");
     m_pSubStateMachine->Set_Int("ExitMode", 0);
 
@@ -75,6 +79,7 @@ void CCorinState_SwitchIn::Update(CCorin* pOwner, _float dt)
         {
         case 1:
             pRootFSM->Set_Trigger("ToMove");
+            pRootFSM->Set_Int("MoveEntryMode", 2);
             break;
         case 2:
             pRootFSM->Set_Trigger("Attack");
