@@ -1,4 +1,4 @@
-#include "pch.h"
+Ôªø#include "pch.h"
 #include "SirChop.h"
 
 #include "GameInstance.h"
@@ -25,11 +25,20 @@ CSirChop::CSirChop(const CSirChop& rhs)
 
 void CSirChop::Execute()
 {
-   //UI_DIALOGUE_REQUEST_DESC desc;
-   //desc.strDialogueID = m_DiagloueData.StartDialogueID;
-   //desc.iSequenceID = m_iNextSequceID;
-   //EventSystem()->Broadcast<UI_DIALOGUE_REQUEST_DESC>({ desc });
-	Process_Event({ TEXT("√›∆€ ¥Î¿Â"),0,0,DialogueResult::Success });
+	Process_Event({ TEXT("Ïµ∏Ìçº ÎåÄÏû•"),0,0,DialogueResult::Success });
+
+	auto pAnimator = Get_Component<CAnimator3D>();
+	pAnimator->Set_Animation(Get_AnimName() + "InStore02")
+		.Loop(true)
+		.Apply();
+}
+
+void CSirChop::Reset()
+{
+	auto pAnimator = Get_Component<CAnimator3D>();
+	pAnimator->Set_Animation(Get_AnimName() + "Idle_01")
+		.Loop(true)
+		.Apply();
 }
 
 HRESULT CSirChop::Initialize_Prototype()
@@ -46,6 +55,7 @@ HRESULT CSirChop::Initialize_Prototype()
 	auto pMaterial = Get_Component<CMaterial>();
 	pMaterial->Link_Material(G_GlobalLevelKey, "NPC_SirChop_Modelout.mat");
 
+	pModel->Hide_MehsByName("Noodle");
 
 	return S_OK;
 }
@@ -65,7 +75,7 @@ void CSirChop::Awake()
 	pAnimator->Link_MetaData(G_GlobalLevelKey, "NPC_Male_SirChop_Meta.json");
 
 	m_strAnimName = "NPC_Male_SirChop_Ani_";
-	m_strName = L"√›∆€ ¥Î¿Â";
+	m_strName = L"Ïµ∏Ìçº ÎåÄÏû•";
 
 	pAnimator->Set_Animation(Get_AnimName() + "Idle_01")
 		.Loop(true)
@@ -73,8 +83,7 @@ void CSirChop::Awake()
 
 	__super::Awake();
 
-	//m_pTransform->Scale(_float3(1.2f, 1.2f, 1.2f));
-	Add_InteractZone(Get_Position(), _float3(0.f, 0.f, 1.2f), Get_WorldRotation());
+	Add_InteractZone(Get_Position(), _float3(0.f, 0.f, 2.f), Get_WorldRotation(), _float3(2.5f,1.f,1.f));
 }
 
 void CSirChop::Priority_Update(_float dt)

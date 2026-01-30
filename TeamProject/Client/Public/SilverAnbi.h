@@ -2,20 +2,18 @@
 #include "ServiceNpc.h"
 
 NS_BEGIN(Client)
-
 template<typename Type>
 class CStateMachine;
-class CSirChop :
+class CSilverAnbi :
     public CServiceNpc
 {
 private:
-    CSirChop();
-    CSirChop(const CSirChop& rhs);
-    virtual ~CSirChop() DEFAULT;
+    CSilverAnbi();
+    CSilverAnbi(const CSilverAnbi& rhs);
+    virtual ~CSilverAnbi() DEFAULT;
 
 public:
     virtual void    Execute() override;
-    virtual void    Reset() override;
 
 public:
     virtual HRESULT Initialize_Prototype() override;
@@ -25,11 +23,8 @@ public:
     virtual void    Update(_float dt) override;
     virtual void    Late_Update(_float dt) override;
 
-private:
-    virtual void    Success(_uint curSequenceID) override;
-
 public:
-    static CSirChop* Create();
+    static CSilverAnbi* Create();
     virtual CGameObject* Clone(INIT_DESC* pArg) override;
     virtual void Free() override;
 };
