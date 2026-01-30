@@ -9,6 +9,7 @@
 #include "DataBase.h"
 #include "MapPlacedObject.h"
 #include "MapTriggerObject.h"
+#include "MapLightPoint.h"
 
 #include "EntitySpawner.h"
 
@@ -23,7 +24,7 @@ HRESULT CMapLoader::Initialize(const string& TagLevel, const string& TagArea, _u
     m_TagArea = TagArea;
 
     // 맵 베이스 데이터 없으면 로드 불가!
-    if (FAILED(Load_BaseData(TagArea, &m_bHasMapBase, &m_bHasEntityBase, &m_bHasBattleData)))
+    if (FAILED(Load_BaseData(TagArea)))
         return E_FAIL;
 
     auto iter = m_MapSlotFormatData.find("Collider");
@@ -51,7 +52,7 @@ void CMapLoader::Update_Load()
     }
 }
 
-HRESULT CMapLoader::Load_BaseData(const string& TagArea, _bool* CheckMapBase, _bool* CheckEntityBase, _bool* CheckBattleData)
+HRESULT CMapLoader::Load_BaseData(const string& TagArea)
 {
     auto pPackets = CDataBase::GetInstance()->GetMapDataPacket(TagArea);
     if (nullptr == pPackets)
@@ -65,7 +66,7 @@ HRESULT CMapLoader::Load_BaseData(const string& TagArea, _bool* CheckMapBase, _b
             if ("Base" == packet.TagSlotFormat)
             {
                 LoadMapBaseData(&packet);
-                *CheckMapBase = true;
+                m_bHasMapBase = true;
             }
             else
                 CacheSlotDataFile("MapData", packet.TagDataFilePath);
@@ -76,15 +77,19 @@ HRESULT CMapLoader::Load_BaseData(const string& TagArea, _bool* CheckMapBase, _b
             if ("Base" == packet.TagSlotFormat)
             {
                 LoadEntityBaseData(&packet);
-                *CheckEntityBase = true;
+                m_hasColliderData = true;
             }
             else
                 CacheSlotDataFile("EntityData", packet.TagDataFilePath);
         }
         else if ("BattleData" == packet.TagDataFormat)
         {
-            *CheckBattleData = true;
+            m_bHasBattleData = true;
             LoadBattleData(&packet);
+        }
+        else if ("LightData") {
+            m_bHasLightData = true;
+            LoadLightData(&packet);
         }
     }
 
@@ -144,6 +149,10 @@ void CMapLoader::PlaceObjects_Once()
         for (auto& EntityData : m_EntityBaseData.Entities)
             Place_EntityFromLoadData(&EntityData);
 
+    if (m_bHasLightData)
+        for (auto& LightData : m_LightData.Lights)
+            Place_LightFromLoadData(&LightData);
+
     Update_Database();
 }
 
@@ -157,9 +166,10 @@ _bool CMapLoader::PlaceObjects_Split()
 
     switch (Job.Type)
     {
-    case MAPOBJ_TYPE::PLACED:   Place_PlacedObjectFromLoadData(static_cast<MapData_Object*>(Job.pData)); break;
-    case MAPOBJ_TYPE::TRIGGER:  Place_TriggerObjectFromLoadData(static_cast<MapData_Object*>(Job.pData)); break;
-    case MAPOBJ_TYPE::ENTITY:   Place_EntityFromLoadData(static_cast<ENTITY_INIT*>(Job.pData)); break;
+    case MAPOBJ_TYPE::PLACED:   Place_PlacedObjectFromLoadData(static_cast<MapData_Object*>(Job.pData));    break;
+    case MAPOBJ_TYPE::TRIGGER:  Place_TriggerObjectFromLoadData(static_cast<MapData_Object*>(Job.pData));   break;
+    case MAPOBJ_TYPE::ENTITY:   Place_EntityFromLoadData(static_cast<ENTITY_INIT*>(Job.pData));             break;
+    case MAPOBJ_TYPE::LIGHT:    Place_LightFromLoadData(static_cast<MAP_LIGHT*>(Job.pData));                break;
     default: break;
     }
 
@@ -175,7 +185,8 @@ void CMapLoader::Update_Database()
     Data.MapObj = m_MapObjectHandle;
     Data.Trigger = m_TriggerObjectHandle;
     Data.Entity = m_EntityObjectHandle;
-    Data.Battle = m_CashedBattleData;
+    Data.Battle = m_CachedBattleData;
+    Data.Light = m_LightPointHandle;
 
     CDataBase::GetInstance()->Update_CashedData(m_TagArea, Data);
 }
@@ -245,7 +256,7 @@ void CMapLoader::Place_PlacedObjectFromLoadData(MapData_Object* pData)
     pObjMgr->Add_Object(pStaticObject, { m_TagLevel, m_TagLayers[ENUM(MAPOBJ_TYPE::PLACED)] });
 
     /* 캐싱용 데이터 */
-    CASHED_OBJECT OBJ;
+    CACHED_OBJECT OBJ;
     OBJ.DataIndex = pData->iObjID;
     OBJ.DataName = pData->TagModelResourceKey;
     OBJ.Handle = pStaticObject->Get_Handle();
@@ -312,7 +323,7 @@ void CMapLoader::Place_TriggerObjectFromLoadData(MapData_Object* pData)
     pObjMgr->Add_Object(pStaticObject, { m_TagLevel, m_TagLayers[ENUM(MAPOBJ_TYPE::TRIGGER)] });
 
     /* 캐싱용 데이터 */
-    CASHED_OBJECT OBJ;
+    CACHED_OBJECT OBJ;
     OBJ.DataIndex = pData->iObjID;
     OBJ.DataName = pData->TagModelResourceKey;
     OBJ.Handle = pStaticObject->Get_Handle();
@@ -347,7 +358,7 @@ void CMapLoader::Place_EntityFromLoadData(ENTITY_INIT* pData)
     }
 
     /* 캐싱용 데이터 */
-    CASHED_OBJECT OBJ;
+    CACHED_OBJECT OBJ;
     OBJ.DataIndex = pData->iEntityID;
     OBJ.DataName = pData->tagName;
     OBJ.Handle = Spawner::Create_Entity(SpawnerDesc);
@@ -358,6 +369,38 @@ void CMapLoader::Place_EntityFromLoadData(ENTITY_INIT* pData)
     }
     
     m_EntityObjectHandle.push_back(OBJ);
+}
+
+void CMapLoader::Place_LightFromLoadData(MAP_LIGHT* pData)
+{
+    if (nullptr == pData)
+        return;
+
+    CMapLightPoint::MAP_LIGHTPOINT_DESC* Desc = new CMapLightPoint::MAP_LIGHTPOINT_DESC;
+    Desc->DescJson = pData->LightDesc;
+
+
+
+    for (auto& tSlotData : m_MapSlotFormatData) {
+        // 일단 데이터 다 때려넣기
+        for (auto& FieldData : tSlotData.second[pData->iIndex])
+            Desc->SlotDataValues[tSlotData.first].push_back(FieldData);
+    }
+
+    CGameObject* pLightPoint = Builder::Create_Object({ G_GlobalLevelKey ,"Proto_GameObject_MapTriggerObject" })
+        .Add_ObjDesc(Desc)
+        .Position({ pData->vTranslation[0], pData->vTranslation[1], pData->vTranslation[2] })
+        .Build("LightPoint" + to_string(pData->iIndex));
+
+    pLightPoint->Get_Component<CCollider>()->Set_DebugRender(true);
+
+    /* 캐싱용 데이터 */
+    CACHED_OBJECT OBJ;
+    OBJ.DataIndex = pData->iIndex;
+    OBJ.DataName = "LightPoint" + to_string(pData->iIndex);
+    OBJ.Handle = pLightPoint->Get_Handle();
+
+    m_LightPointHandle.push_back(OBJ);
 }
 
 MAPOBJ_TYPE CMapLoader::Check_LayerTag(const string& TagLayer)
@@ -435,26 +478,57 @@ HRESULT CMapLoader::LoadBattleData(const MapData_Path_Packet* pPacket)
 
     m_BattleData = Helper::LoadJson<BATTLE_FIELD_DATA>(OpenPath.string());
 
-    m_CashedBattleData.HasBattleData = m_bHasBattleData;
+    m_CachedBattleData.HasBattleData = m_bHasBattleData;
 
-    m_CashedBattleData.PlayerPoint.push_back(m_BattleData.PlayerSpawnPoint);
+    m_CachedBattleData.PlayerPoint.push_back(m_BattleData.PlayerSpawnPoint);
 
     for (auto& MonsterPoint : m_BattleData.Monsters)
-        m_CashedBattleData.MonsterPoint.push_back(MonsterPoint);
+        m_CachedBattleData.MonsterPoint.push_back(MonsterPoint);
 
     for (auto& PortalPoint : m_BattleData.EndPoints)
-        m_CashedBattleData.PortalPoint.push_back(PortalPoint);
+        m_CachedBattleData.PortalPoint.push_back(PortalPoint);
 
     for (auto& Spawner : m_BattleData.Spawners)
-        m_CashedBattleData.Spawner.push_back(Spawner);
+        m_CachedBattleData.Spawner.push_back(Spawner);
+
+    return S_OK;
+}
+
+HRESULT CMapLoader::LoadLightData(const MapData_Path_Packet* pPacket)
+{
+    filesystem::path OpenPath = pPacket->TagDataFilePath;
+
+    if (OpenPath.empty())
+        return E_FAIL;
+
+    if (OpenPath.extension().string() != ".json") {
+        MSG_BOX("[MapTool] Load Entity Data Failed.\nJson 파일이 아닙니다.");
+        return E_FAIL;
+    }
+
+    m_EntityBaseData = Helper::LoadJson<Entity_Header>(OpenPath.string());
+    if (-1 == m_EntityBaseData.iVersion)
+        return E_FAIL;
+
+    if (m_EntityBaseData.iVersion != g_iMapDataVersion) {
+        MSG_BOX("[MapTool] Load Entity Data Failed.\n잘못된 버전입니다.");
+        return E_FAIL;
+    }
 
     return S_OK;
 }
 
 HRESULT CMapLoader::CacheSlotDataFile(const string& DataFormat, const string& SlotDataFilePath)
 {
-    if (false == ("MapData" == DataFormat || "EntityData" == DataFormat))
-        return E_FAIL;
+    vector<string> DataTags = {
+        "MapData",
+        "EntityData",
+        "BattleData",
+        "LightData"
+    };
+    
+    if(find(DataTags.begin(), DataTags.end(), DataFormat) == DataTags.end())
+        return E_FAIL;        
 
     ifstream ifs(SlotDataFilePath);
     if (false == ifs.is_open())
@@ -475,15 +549,26 @@ HRESULT CMapLoader::CacheSlotDataFile(const string& DataFormat, const string& Sl
     if (nullptr == values || false == values->is_array())
         return S_OK; // 빈 값으로 채우고 나가기 (터짐 방지)
 
-    ObjFieldMap& perObj = "MapData" == DataFormat ?
-        m_MapSlotFormatData[TagSlotFormat] : m_EntitySlotFormatData[TagSlotFormat];
+    ObjFieldMap* perObj = nullptr;
+
+    if (DataFormat == "MapData") {
+        perObj = &m_MapSlotFormatData[TagSlotFormat];
+    }
+    else if (DataFormat == "EntityData") {
+        perObj = &m_EntitySlotFormatData[TagSlotFormat];
+    }
+    else if (DataFormat == "LightData") {
+        perObj = &m_LightSlotFormatData[TagSlotFormat];
+    }
+    else
+        return E_FAIL;
 
     for (const auto& elem : *values) {
         FIELD_DATA FieldData = {};
         if (false == TryParseFieldData(elem, FieldData))
             continue; // row 깨지면 무시하고 넘김
 
-        perObj[FieldData.iObjID].push_back(move(FieldData));
+        (*perObj)[FieldData.iObjID].push_back(move(FieldData));
     }
 
     return S_OK;

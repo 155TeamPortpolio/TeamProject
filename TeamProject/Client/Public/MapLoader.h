@@ -28,7 +28,7 @@ public:
 	optional<T> Get_EntitySlotDataValue(const string& TagFormat, _uint iEntityIndex, const string& TagName);
 
 private:
-	HRESULT			Load_BaseData(const string& TagArea, _bool* CheckMapBase, _bool* CheckEntityBase, _bool* CheckBattleData);
+	HRESULT			Load_BaseData(const string& TagArea);
 	void			Set_LoadingQueue();
 	void			PlaceObjects_Once();
 	_bool			PlaceObjects_Split();
@@ -38,10 +38,14 @@ private:
 	void			Place_PlacedObjectFromLoadData(MapData_Object* pData);
 	void			Place_TriggerObjectFromLoadData(MapData_Object* pData);
 	void			Place_EntityFromLoadData(ENTITY_INIT* pData);
+	void			Place_LightFromLoadData(MAP_LIGHT* pData);
 	MAPOBJ_TYPE		Check_LayerTag(const string& TagLayer);
+
 	HRESULT			LoadMapBaseData(const MapData_Path_Packet* pPacket);
 	HRESULT			LoadEntityBaseData(const MapData_Path_Packet* pPacket);
 	HRESULT			LoadBattleData(const MapData_Path_Packet* pPacket);
+	HRESULT			LoadLightData(const MapData_Path_Packet* pPacket);
+
 	HRESULT			CacheSlotDataFile(const string& DataFormat, const string& SlotDataFilePath);
 
 	_bool			isThereFormat(const string& TagSlotFormat);
@@ -56,19 +60,21 @@ private:
 	unordered_map<Format유형(effect, physics...), unordered_map<오브젝트 ID, vector<(ObjID, 변수명, 값)>>>*/
 	unordered_map<string, unordered_map<_int, vector<FIELD_DATA>>>	m_MapSlotFormatData;
 	unordered_map<string, unordered_map<_int, vector<FIELD_DATA>>>	m_EntitySlotFormatData;
+	unordered_map<string, unordered_map<_int, vector<FIELD_DATA>>>	m_LightSlotFormatData;
 	_bool m_hasColliderData = {};
 
 	/*--------------------------------------------------------------------*/
-	_bool			m_bHasMapBase{}, m_bHasEntityBase{}, m_bHasBattleData{};
+	_bool			m_bHasMapBase{}, m_bHasEntityBase{}, m_bHasBattleData{}, m_bHasLightData{};
 	MapData_Header		m_MapBaseData = {};
 	Entity_Header		m_EntityBaseData = {};
 	BATTLE_FIELD_DATA	m_BattleData = {};
+	Light_Header		m_LightData = {};
 
-
-	vector<CASHED_OBJECT>	m_MapObjectHandle;
-	vector<CASHED_OBJECT>	m_TriggerObjectHandle;
-	vector<CASHED_OBJECT>	m_EntityObjectHandle;
-	CASHED_BATTLE_DATA		m_CashedBattleData;
+	vector<CACHED_OBJECT>	m_MapObjectHandle;
+	vector<CACHED_OBJECT>	m_TriggerObjectHandle;
+	vector<CACHED_OBJECT>	m_EntityObjectHandle;
+	vector<CACHED_OBJECT>	m_LightPointHandle;
+	CACHED_BATTLE_DATA		m_CachedBattleData;
 
 	queue<LoadingQueue>		m_LoadingQueue;
 	
