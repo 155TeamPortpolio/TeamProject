@@ -72,15 +72,8 @@ private:
     SACRIFICE_HAND_BLACK_BOARD m_AttackBlackBoard{};
 
     /* Material Params */
-    _float3 m_vRimLightColor{};
-    _float m_fRimLightPower{};
-    _float m_fSwordRimLightPower{};
-    _float m_fDissolveProgress{};
-    _float m_fDissolveTilling{};
-
     _bool m_IsOnDissolve = false;
-    _float m_fDissolveDuration{};
-    _float m_fDissolveElapsedTime{};
+    _float m_fSwordRimLightPower{};
     DISSOLVE_STATE m_eDissolveState = DISSOLVE_STATE::NONE;
 };
 NS_END

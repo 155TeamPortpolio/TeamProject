@@ -2,6 +2,7 @@
 #include "Enemy.h"
 #include "GameInstance.h"
 #include "BattleSystem.h"
+#include "Texture.h"
 
 /* Object */
 #include "AttackSign.h" 
@@ -63,15 +64,30 @@ HRESULT CEnemy::Initialize(INIT_DESC* pArg)
 
 void CEnemy::Awake()
 {
+	m_fDeathSqueneDuration = 0.9f;
+	m_fDeathSquenceElapsedTime = 0.f;
+
+	/* Bind Material Params */
+	m_fUseVanish = 0.f;
+	m_vEmissiveColor = _float3{ 0.f,0.f,0.f };
+	m_vRimLightColor = _float3{ 0.f,0.f,0.f };
+	m_fRimLightPower = 0.f;
 	m_fDissolveProgress = 0.f;
-	m_fDissolveTilling = 1.f;
+	m_fDissolveTilling = 0.8f;
 
 	auto pMaterial = Get_Component<CMaterial>();
 	auto& materialInstances = pMaterial->Get_MaterialInstances();
-	auto dissolveTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, "Dissolve.png");
+	auto emissiveNoise = ResourceManager()->Load_Texture(G_GlobalLevelKey, "Eff_Noise_119.png");
+	auto dissolveTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, "Eff_Noise_119.png");
 
 	for (const auto& instance : materialInstances)
 	{
+		instance->Set_Param("EmissiveNoiseTexture", { emissiveNoise->Get_SRV(),"Texture2D",0 });
+		instance->Set_Param("NoiseTexture", { dissolveTexture->Get_SRV(),"Texture2D",0 });
+		instance->Set_Param("fUseVanish", { &m_fUseVanish,"float",sizeof(_float) });
+		instance->Set_Param("vEmissiveColor", { &m_vEmissiveColor,"float3",sizeof(_float3) });
+		instance->Set_Param("vRimLightColor", { &m_vRimLightColor,"float3",sizeof(_float3) });
+		instance->Set_Param("fRimLightPower", { &m_fRimLightPower,"float",sizeof(_float) });
 		instance->Set_Param("fDissolveProgress", {&m_fDissolveProgress, "float", sizeof(_float)});
 		instance->Set_Param("fDissolveTiling", {&m_fDissolveTilling, "float", sizeof(_float)});
 	}
@@ -101,6 +117,23 @@ BATTLEOBJ_INFO* CEnemy::GetCharacterOnField()
 			return &info;
 	}
 	return nullptr;
+}
+
+void CEnemy::Update_DeathSquence(_float dt)
+{
+	if (m_fDeathSquenceElapsedTime < m_fDeathSqueneDuration)
+	{
+		m_fDeathSquenceElapsedTime += dt;
+
+		_float t = m_fDeathSquenceElapsedTime / m_fDeathSqueneDuration;
+		_vector3 vStartColor(0.2f, 0.1f, 0.f);
+		_vector3 vEndColor(0.8f, 0.4f, 0.f);
+
+		m_vEmissiveColor = _vector3::Lerp(vStartColor, vEndColor, Math::ApplyEase(EaseType::OutSine, t));
+		m_fDissolveProgress = Math::ApplyEase(EaseType::Linear, t);
+	}
+	else
+		m_fDissolveProgress = 1.1f;
 }
 
 void CEnemy::ComputeTargetingInfo()
