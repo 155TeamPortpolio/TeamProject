@@ -202,6 +202,10 @@ void CJaneDoe::On_SwitchOut()
 	{
 		m_pStateMachine->Set_Bool("OutReserve", true);
 	}
+	else if (m_pStateMachine->Get_CurrentStateName() == "SwitchIn")
+	{
+		m_pStateMachine->Set_Bool("OutReserve", true);
+	}
 	else
 		m_pStateMachine->Set_Trigger("SwitchOut");
 }
