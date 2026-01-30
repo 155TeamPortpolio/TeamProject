@@ -9,7 +9,7 @@ namespace Client {
 	static constexpr unsigned int g_iWinSizeY = 900;
 	//static constexpr unsigned int g_iWinSizeX = 2560;
 	//static constexpr unsigned int g_iWinSizeY = 1440;
-	static constexpr unsigned int g_iMainFrame = 165;
+	static constexpr unsigned int g_iMainFrame = 60;
 	static int	g_iMapDataVersion = { 1 };
 }
 
