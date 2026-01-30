@@ -22,6 +22,7 @@
 
 /* UI */
 #include "UIDirector.h"
+#include "Layer.h"
 
 CMainCity_Level::CMainCity_Level(const string& LevelKey)
 	:CLevel(LevelKey),
@@ -56,6 +57,9 @@ HRESULT CMainCity_Level::Awake()
 
 	CamDirector()->AutoField();
 	FieldSystem()->SetActive(true);
+	//ObjectManager()->Get_Layer({"MainCity_Level", "PlacedObject_Layer"})->Set_RenderState(false);
+	//auto layer = ObjectManager()->Get_Layer({"MainCity_Level", "PlacedObject_Layer"});
+
 
 	return S_OK;
 }
@@ -63,6 +67,8 @@ HRESULT CMainCity_Level::Awake()
 void CMainCity_Level::Update()
 {
 	FieldSystem()->Update();
+	auto layer = ObjectManager()->Get_Layer({"MainCity_Level","PlacedObject_Layer"});
+	//layer->Set_RenderState(false);
 }
 
 HRESULT CMainCity_Level::Render()

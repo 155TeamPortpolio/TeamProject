@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "ImageUI.h"
-
+// Engine
 #include "Sprite2D.h"
 #include "GameInstance.h"
 #include "ObjectContainer.h"
@@ -16,7 +16,14 @@ HRESULT CImageUI::Initialize(INIT_DESC* pArg)
 {
     __super::Initialize(pArg);
 
-    Get_Component<CSprite2D>()->Link_Shader(G_GlobalLevelKey, "VTX_UI.hlsl");
+    auto sprite = Get_Component<CSprite2D>();
+
+    sprite->Link_Shader(G_GlobalLevelKey, "VTX_UI.hlsl");
+
+    //sprite->Add_Texture(G_GlobalLevelKey, "empty.png");
+
+    sprite->Set_Param("ColorTexMode", {&m_colorTexModeU, "uint", sizeof(_uint)});
+    sprite->Set_Param("ColorTexMix", {&m_colorTexMix, "float", sizeof(_float)});
 
     return S_OK;
 }
@@ -25,7 +32,18 @@ void CImageUI::Load(const nlohmann::ordered_json& data)
 {
     __super::Load(data);
 
-    Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, data.value("textureTag", ""));
+    auto sprite = Get_Component<CSprite2D>();
+
+    sprite->Change_Texture(0, G_GlobalLevelKey, data.value("textureTag", ""));
+
+    m_colorTextureKey = data.value("colorTexKey", string("empty.png"));
+    m_colorTexModeU = (_uint)data.value("colorTexMode", 0u);
+    m_colorTexMix = (_float)data.value("colorTexMix", 1.f);
+
+    sprite->Set_Param("ColorTexMode", {&m_colorTexModeU, "uint", sizeof(_uint)});
+    sprite->Set_Param("ColorTexMix", {&m_colorTexMix, "float", sizeof(_float)});
+
+    sprite->Change_Texture(1, G_GlobalLevelKey, m_colorTextureKey);
 }
 
 CGameObject* CImageUI::Create()
