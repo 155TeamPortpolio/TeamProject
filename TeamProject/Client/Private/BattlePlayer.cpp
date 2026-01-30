@@ -202,12 +202,19 @@ void CBattlePlayer::Request_ComboAttack()
 
 void CBattlePlayer::Execute_ComboAttack(_bool bNext)
 {
+	_int iTargetIndex = Find_SwitchIndex(bNext);
+	if (iTargetIndex == -1)
+	{
+		Cancel_ComboAttack();
+		return;
+	}
+
 	NotifyCharacterSwitchOut();
-	if (bNext)
-		SwitchToNext();
-	else
-		SwitchToPrev();
-	// 콤보 어택 전용 NotifyCharacterSwitchIn
+
+	swap(m_BattleCharacters[0], m_BattleCharacters[iTargetIndex]);
+	m_pCurrentCharacter = m_BattleCharacters[0];
+
+	// 콤보 어택 전용 SwitchIn
 	m_pCurrentCharacter->Set_MainCharacter(true);
 	m_pCurrentCharacter->Active_Character();
 	m_pCurrentCharacter->Get_Component<CCharacterController>()->Set_Position(m_vSwitchPosition);
@@ -218,7 +225,6 @@ void CBattlePlayer::Execute_ComboAttack(_bool bNext)
 	Sync_ActionUI();
 
 	m_fSwitchCooldown = SWITCH_COOLDOWN;
-
 	m_fComboSelectTimer = 0.f;
 	m_bComboSelect = false;
 }
@@ -368,11 +374,20 @@ void CBattlePlayer::Process_Switch()
 	{
 		if (Can_Switch())
 		{
-			desc.eState = UI_ACTION_STATE::EXECUTING;
-			SwitchCharacter(m_bSwitchNext);
-			m_iParryingCount--;
-			if (m_iParryingCount == 0) m_iParryingCount = 6;
-			m_fSwitchCooldown = SWITCH_COOLDOWN;
+			_int iTargetIndex = Find_SwitchIndex(m_bSwitchNext);
+			if (iTargetIndex != -1)
+			{
+				desc.eState = UI_ACTION_STATE::EXECUTING;
+				SwitchCharacter(iTargetIndex);
+				m_iParryingCount--;
+				if (m_iParryingCount == 0) m_iParryingCount = 6;
+				m_fSwitchCooldown = SWITCH_COOLDOWN;
+			}
+			//desc.eState = UI_ACTION_STATE::EXECUTING;
+			//SwitchCharacter(m_bSwitchNext);
+			//m_iParryingCount--;
+			//if (m_iParryingCount == 0) m_iParryingCount = 6;
+			//m_fSwitchCooldown = SWITCH_COOLDOWN;
 		}
 	}
 	desc.fFillAmount = m_iParryingCount / 6.f;
@@ -433,7 +448,45 @@ _bool CBattlePlayer::Can_Switch() const
 {
 	if (m_fSwitchCooldown > 0.f) return false;
 	if (m_BattleCharacters.size() <= 1) return false;
-	return true;
+	if (m_pCurrentCharacter->Can_SwitchIn()) return false;  // 메인이 비활성화면 교체 불가
+
+	// 교체 가능한 캐릭터가 하나라도 있는지 확인
+	return Find_SwitchIndex(true) != -1 || Find_SwitchIndex(false) != -1;
+}
+
+_bool CBattlePlayer::Can_SwitchTo(_uint iIndex) const
+{
+	if (iIndex >= m_BattleCharacters.size()) return false;
+	if (iIndex == 0) return false;  // 현재 캐릭터(인덱스 0)로는 교체 불가
+
+	return m_BattleCharacters[iIndex]->Can_SwitchIn();
+}
+
+_int CBattlePlayer::Find_SwitchIndex(_bool bNext) const
+{
+	if (m_BattleCharacters.size() <= 1) return -1;
+
+	// 2명일 경우 인덱스 1만 확인
+	if (m_BattleCharacters.size() == 2)
+	{
+		return Can_SwitchTo(1) ? 1 : -1;
+	}
+
+	// 3명일 경우 방향에 따라 우선순위 결정
+	// Next: 인덱스 1 우선, Prev: 인덱스 2(마지막) 우선
+	if (bNext)
+	{
+		if (Can_SwitchTo(1)) return 1;
+		if (Can_SwitchTo(2)) return 2;
+	}
+	else
+	{
+		_uint iLastIndex = (_uint)m_BattleCharacters.size() - 1;
+		if (Can_SwitchTo(iLastIndex)) return iLastIndex;
+		if (Can_SwitchTo(1)) return 1;
+	}
+
+	return -1;
 }
 
 void CBattlePlayer::Update_Target()
@@ -553,18 +606,6 @@ CGameObject* CBattlePlayer::CreateBattleCharacter(CHARACTER character)
 	return nullptr;
 }
 
-void CBattlePlayer::SwitchToNext()
-{
-	swap(m_BattleCharacters[0], m_BattleCharacters[1]);
-	m_pCurrentCharacter = m_BattleCharacters[0];
-}
-
-void CBattlePlayer::SwitchToPrev()
-{
-	swap(m_BattleCharacters[0], m_BattleCharacters[m_BattleCharacters.size() - 1]);
-	m_pCurrentCharacter = m_BattleCharacters[0];
-}
-
 HRESULT CBattlePlayer::ClearCharacters()
 {
 	m_BattleCharacters.clear();
@@ -596,9 +637,9 @@ void CBattlePlayer::NotifyCharacterSwitchOut()
 	auto vRight = m_pCurrentCharacter->Get_Component<CTransform>()->Dir(STATE::RIGHT);
 	m_vSwitchLook = m_pCurrentCharacter->Get_Component<CTransform>()->Dir(STATE::LOOK);
 	m_vSwitchPosition = m_pCurrentCharacter->Get_Component<CCharacterController>()->Get_FootPosition()
-		+ XMVectorScale(vRight, 0.5f)
-		- XMVectorScale(m_vSwitchLook, 1.f)
-		+ XMVectorSet(0.f, 1.f, 0.f, 0.f);
+		+ XMVectorScale(vRight, 0.7f)
+		- XMVectorScale(m_vSwitchLook, 1.5f)
+		+ XMVectorSet(0.f, 0.5f, 0.f, 0.f);
 
 	if (m_pCurrentCharacter->Can_Parry())
 	{
@@ -639,17 +680,16 @@ void CBattlePlayer::Sync_ActionUI()
 	EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
 }
 
-HRESULT CBattlePlayer::SwitchCharacter(_bool bNext)
+HRESULT CBattlePlayer::SwitchCharacter(_int iTargetIndex)
 {
+	if (iTargetIndex < 0 || iTargetIndex >= (_int)m_BattleCharacters.size())
+		return E_FAIL;
+
 	NotifyCharacterSwitchOut();
-	if (bNext)
-	{
-		SwitchToNext();
-	}
-	else
-	{
-		SwitchToPrev();
-	}
+
+	swap(m_BattleCharacters[0], m_BattleCharacters[iTargetIndex]);
+	m_pCurrentCharacter = m_BattleCharacters[0];
+
 	NotifyCharacterSwitchIn();
 	Sync_ActionUI();
 	return S_OK;
