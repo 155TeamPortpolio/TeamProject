@@ -516,7 +516,7 @@ HRESULT CJaneDoe::Initialize_Effects()
 	/* Normal Slash0 */
 	{
 		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
-			.Asset("janedoe_normal1_slash_no_mask.json")
+			.Asset("janedoe_normal1_slash.json")
 			.Build("JaneDoe_Normal_Slash0");
 
 		pEffect->Stop();
@@ -526,7 +526,7 @@ HRESULT CJaneDoe::Initialize_Effects()
 	/* Normal Slash1 */
 	{
 		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
-			.Asset("janedoe_normal1_slash_no_mask.json")
+			.Asset("janedoe_normal1_slash.json")
 			.Build("JaneDoe_Normal_Slash1");
 
 		pEffect->Stop();
@@ -536,7 +536,7 @@ HRESULT CJaneDoe::Initialize_Effects()
 	/* Normal Slash2 */
 	{
 		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
-			.Asset("janedoe_normal1_slash_no_mask.json")
+			.Asset("janedoe_normal1_slash.json")
 			.Build("JaneDoe_Normal_Slash2");
 
 		pEffect->Stop();
@@ -546,7 +546,7 @@ HRESULT CJaneDoe::Initialize_Effects()
 	/* Normal Slash3 */
 	{
 		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
-			.Asset("janedoe_normal1_slash_no_mask.json")
+			.Asset("janedoe_normal1_slash.json")
 			.Build("JaneDoe_Normal_Slash3");
 
 		pEffect->Stop();
@@ -556,7 +556,7 @@ HRESULT CJaneDoe::Initialize_Effects()
 	/* Normal Slash4 */
 	{
 		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
-			.Asset("janedoe_normal1_slash_no_mask.json")
+			.Asset("janedoe_normal1_slash.json")
 			.Build("JaneDoe_Normal_Slash4");
 
 		pEffect->Stop();
