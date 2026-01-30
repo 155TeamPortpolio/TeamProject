@@ -210,6 +210,7 @@ void CBattlePlayer::Execute_ComboAttack(_bool bNext)
 	m_pCurrentCharacter->Active_Character();
 	m_pCurrentCharacter->Get_Component<CCharacterController>()->Set_Position(m_vSwitchPosition);
 	m_pCurrentCharacter->Get_Component<CTransform>()->Set_Look(m_vSwitchLook);
+	m_pCurrentCharacter->Set_TargetHandle(m_TargetHandle);
 	m_pCurrentCharacter->On_SwitchIn(CCharacter::SWITCH::ATTACK);
 
 	Sync_ActionUI();
