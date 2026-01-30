@@ -83,7 +83,7 @@ void CSirChop::Awake()
 
 	__super::Awake();
 
-	Add_InteractZone(Get_Position(), _float3(0.f, 0.f, 2.5f), Get_WorldRotation(), _float3(2.f,1.f,1.f));
+	Add_InteractZone(Get_Position(), _float3(0.f, 0.f, 2.f), Get_WorldRotation(), _float3(2.5f,1.f,1.f));
 }
 
 void CSirChop::Priority_Update(_float dt)

@@ -90,6 +90,24 @@ typedef struct AnimationLayer {
 
     //보간을 다한 최종 매트릭스
     vector<_float4x4> FinalLocalMatrices = {};
+    
+    //기능함수
+    _bool isEndLayerBlended() {
+        if (BaseLayer)
+            return false;
+
+        if (fLayerWeight <= 0.f)
+            return true;
+
+        if (fLayerWeightDuration < 0.f)
+            return false;
+
+        if (fLayerWeightElapsed >= fLayerWeightDuration)
+            return true;
+    
+        return false;
+    }
+
 }ANIM_LAYER;
 
 NS_END

@@ -1389,9 +1389,9 @@ void CAnimator3D::Update_Layers(_float dt)
 
 	for (auto& Layer : m_AnimLayers) {
 		if (Layer.bPause) continue;
-		if (Layer.fLayerWeight <= 0) continue;
 		if (-1 == Layer.iClipIndex) continue;
-	
+		if (Layer.isEndLayerBlended()) continue;
+
 		if (Layer.bBlending)
 			Animation_Convert(Layer, dt);
 		else
@@ -1404,15 +1404,17 @@ void CAnimator3D::Update_Layers(_float dt)
 void CAnimator3D::BuildLocal(_float dt)
 {
 	for (auto& Layer : m_AnimLayers) {
-		if (Layer.fLayerWeight <= 0) continue;
+		if (Layer.isEndLayerBlended()) continue;
 
-		if (EaseType::None != Layer.eLayerEaseType) {
-			_float Ease = 0.f;
-			Layer.fLayerWeightElapsed += dt;
+		if (0.f <= Layer.fLayerWeightDuration) {
+			if (EaseType::None != Layer.eLayerEaseType) {
+				_float Ease = 0.f;
+				Layer.fLayerWeightElapsed += dt;
 
-			_float t = min(Layer.fLayerWeightElapsed / Layer.fLayerWeightDuration, 1.f);
-			Ease = Math::ApplyEase(Layer.eLayerEaseType, t);
-			Layer.fLayerWeight = Math::Lerp(Layer.fLayerWeight, Layer.fTargetLayerWeight, Ease);
+				_float t = min(Layer.fLayerWeightElapsed / Layer.fLayerWeightDuration, 1.f);
+				Ease = Math::ApplyEase(Layer.eLayerEaseType, t);
+				Layer.fLayerWeight = Math::Lerp(Layer.fLayerWeight, Layer.fTargetLayerWeight, Ease);
+			}
 		}
 
 		switch (Layer.eLayerType)

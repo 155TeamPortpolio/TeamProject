@@ -105,4 +105,5 @@ void CMainCity_Level::Free()
 	__super::Free();
 	FieldSystem()->SetActive(false);
 	m_pGameInstance->DestroyInstance();
+	m_pPlayer->Clear_Characters();
 }

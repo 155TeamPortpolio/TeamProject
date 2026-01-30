@@ -102,15 +102,16 @@ void CJaneDoeState_Run_End::Enter(CJaneDoe* pOwner)
 
 void CJaneDoeState_Run_End::Update(CJaneDoe* pOwner, _float dt)
 {
-    pOwner->Process_RootMotion(dt, ENUM(CCharacter::ROOTMOTION_MASK::MOVE) |
+    pOwner->Process_RootMotion(dt, 
+        ENUM(CCharacter::ROOTMOTION_MASK::MOVE) |
         ENUM(CCharacter::ROOTMOTION_MASK::QUATERNION));
 }
 
 void CJaneDoeState_Run_Turnback::Enter(CJaneDoe* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "TurnBack")
-        .Speed(1.5f)
-        .EndAt(0.33f)
+        .Speed(1.f)
+        .EndAt(0.35f)
         .Apply();
     pOwner->Reset_InputBuffer();
     pOwner->Set_ResetMove(true);
@@ -118,18 +119,18 @@ void CJaneDoeState_Run_Turnback::Enter(CJaneDoe* pOwner)
 
 void CJaneDoeState_Run_Turnback::Update(CJaneDoe* pOwner, _float dt)
 {
-    _vector3 vInputDir = pOwner->Get_InputDir();
-    if (vInputDir.Length() > 0.01f)
-    {
-        vInputDir.Normalize();
-        pOwner->Rotate(vInputDir);
-    }
+    CCharacter::ROOTMOTION_DESC desc;
+    desc.fMoveWeight = 1.f;
+    desc.iModeMask = ENUM(CCharacter::ROOTMOTION_MASK::MOVE) |
+        ENUM(CCharacter::ROOTMOTION_MASK::QUATERNION);
+    pOwner->Process_RootMotion(dt, desc);
+
     if (Is_AnimEnd() && pOwner->Is_Move())
     {
         IHState<CJaneDoe>* pRunState = Get_ParentState();
         if (pRunState && pRunState->Get_SubStateMachine())
         {
-            pRunState->Get_SubStateMachine()->Set_Float("TurnbackCooldown", 1.f);
+            pRunState->Get_SubStateMachine()->Set_Float("TurnbackCooldown", 0.3f);
             pRunState->Get_SubStateMachine()->Set_Trigger("ToLoop");
         }
     }

@@ -2,10 +2,10 @@
 #include "Base.h"
 
 NS_BEGIN(Engine)
-static constexpr _uint kFrameBuffered =8;
-static constexpr _uint readLatency =7;
-static constexpr _uint hideAfter = 3;
-static constexpr _uint showAfter = 2;
+static constexpr _uint kFrameBuffered =4;
+static constexpr _uint readLatency =3;
+static constexpr _uint hideAfter = 8;
+static constexpr _uint showAfter = 1;
 
 class CHiZ_Culling :
     public CBase

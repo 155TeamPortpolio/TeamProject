@@ -7,25 +7,20 @@ class CFieldSystem :
   DECLARE_SINGLETON(CFieldSystem)
 
   struct DayTimer {
-	  DayPhase m_eDayTime = { DayPhase::EarlyMorning };
-	  DayPhase m_ePreDayTime = { DayPhase::LateNight };
+	  DayPhase DayTime = { DayPhase::EarlyMorning };
+	  DayPhase PreDayTime = { DayPhase::LateNight };
 	  _float currentHour = { 0.f };
 	  _float timeScale = {0.2f};
-	  void Update_Timer(_float dt) {
-		  currentHour += dt * timeScale;
 
-		  if (currentHour > 24.f)
-			  currentHour -= 24.f;
+	  _bool IsTransition = false;
+	  _float TransitionTime = 0.f;
+	  _float TransitionDuration = 2.0f;
 
-		  if (currentHour >= 6.0f && currentHour < 12.0f)
-			  Set_DayPhase(DayPhase::Morning);
-		  else if (currentHour >= 12.0f && currentHour < 18.0f)
-			  Set_DayPhase(DayPhase::Afternoon);
-		  else if (currentHour >= 18.0f && currentHour < 24.0f)
-			  Set_DayPhase(DayPhase::LateNight);
-		  else
-			  Set_DayPhase(DayPhase::EarlyMorning);
-	  }
+	  FOG_DESC StartFog{}, TargetFog{};
+	  CLOUD_DESC StartCloud{}, TargetCloud{};
+
+	  void Update_Timer(_float dt);
+	  void Update_Transition(_float dt);
 	  void Set_DayPhase(DayPhase ePhase);
 	  void Notify_DayPhaseEvent();
   };
@@ -51,7 +46,7 @@ public:
 	OBJECT_HANDLE					GetInteractPartnerHandle() const;
 
 public:
-	DayPhase Get_DayPhase() const { return m_DayTime.m_eDayTime; }
+	DayPhase Get_DayPhase() const { return m_DayTime.DayTime; }
 	void Set_DayPahse(DayPhase ePhase) { m_DayTime.Set_DayPhase(ePhase); }
 
 public:
