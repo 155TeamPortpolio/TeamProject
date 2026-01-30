@@ -1,11 +1,11 @@
 #include "pch.h"
-#include "UI_RamenAttribute.h"
+#include "UI_RamenAttributeIcon.h"
 
 #include "GameInstance.h"
 #include "ObjectContainer.h"
 #include "Sprite2D.h"
 
-HRESULT CUI_RamenAttribute::Initialize_Prototype()
+HRESULT CUI_RamenAttributeIcon::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
 
@@ -14,7 +14,7 @@ HRESULT CUI_RamenAttribute::Initialize_Prototype()
 	return S_OK;
 }
 
-HRESULT CUI_RamenAttribute::Initialize(INIT_DESC* pArg)
+HRESULT CUI_RamenAttributeIcon::Initialize(INIT_DESC* pArg)
 {
     ATTRIBUTE_DESC* pDesc = static_cast<ATTRIBUTE_DESC*>(pArg);
 
@@ -37,46 +37,46 @@ HRESULT CUI_RamenAttribute::Initialize(INIT_DESC* pArg)
 	return S_OK;
 }
 
-void CUI_RamenAttribute::Awake()
+void CUI_RamenAttributeIcon::Awake()
 {
 }
 
-void CUI_RamenAttribute::Update(_float dt)
+void CUI_RamenAttributeIcon::Update(_float dt)
 {
 	__super::Update(dt);
 
 	Get_Component<CObjectContainer>()->UpdateChild(dt);
 }
 
-void CUI_RamenAttribute::Late_Update(_float dt)
+void CUI_RamenAttributeIcon::Late_Update(_float dt)
 {
 }
 
-void CUI_RamenAttribute::UI_Active(void* pArg)
+void CUI_RamenAttributeIcon::UI_Active(void* pArg)
 {
 }
 
-void CUI_RamenAttribute::UI_DeActive(void* pArg)
+void CUI_RamenAttributeIcon::UI_DeActive(void* pArg)
 {
 }
 
-CGameObject* CUI_RamenAttribute::Create()
+CGameObject* CUI_RamenAttributeIcon::Create()
 {
-    CUI_RamenAttribute* pInstance = new CUI_RamenAttribute();
+    CUI_RamenAttributeIcon* pInstance = new CUI_RamenAttributeIcon();
     if (FAILED(pInstance->Initialize_Prototype()))
     {
-        MSG_BOX("Failed to Create : CUI_RamenAttribute");
+        MSG_BOX("Failed to Create : CUI_RamenAttributeIcon");
         Safe_Release(pInstance);
     }
     return pInstance;
 }
 
-CGameObject* CUI_RamenAttribute::Clone(INIT_DESC* pArg)
+CGameObject* CUI_RamenAttributeIcon::Clone(INIT_DESC* pArg)
 {
-    CUI_RamenAttribute* pInstance = new CUI_RamenAttribute(*this);
+    CUI_RamenAttributeIcon* pInstance = new CUI_RamenAttributeIcon(*this);
     if (FAILED(pInstance->Initialize(pArg)))
     {
-        MSG_BOX("Failed to Clone : CUI_RamenAttribute");
+        MSG_BOX("Failed to Clone : CUI_RamenAttributeIcon");
         Safe_Release(pInstance);
     }
     return pInstance;

@@ -67,7 +67,7 @@ private:
 
 private:
 	void Cache();
-	void Create_Attributes();
+	void Create_AttributeIcons();
 
 	void Set_ChildAlive(CHILD child, _bool isAlive);
 	void Set_ChildAlpha(CHILD child, _float fAlpha);

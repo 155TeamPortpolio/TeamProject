@@ -437,7 +437,7 @@
     <ClInclude Include="..\Public\UI_Lottery.h" />
     <ClInclude Include="..\Public\UI_Newspaper.h" />
     <ClInclude Include="..\Public\UI_Ramen.h" />
-    <ClInclude Include="..\Public\UI_RamenAttribute.h" />
+    <ClInclude Include="..\Public\UI_RamenAttributeIcon.h" />
     <ClInclude Include="..\Public\UI_RamenMenu.h" />
     <ClInclude Include="..\Public\UI_ResultBanner.h" />
     <ClInclude Include="..\Public\UI_ScratchCard.h" />
@@ -776,7 +776,7 @@
     <ClCompile Include="..\Private\UI_Lottery.cpp" />
     <ClCompile Include="..\Private\UI_Newspaper.cpp" />
     <ClCompile Include="..\Private\UI_Ramen.cpp" />
-    <ClCompile Include="..\Private\UI_RamenAttribute.cpp" />
+    <ClCompile Include="..\Private\UI_RamenAttributeIcon.cpp" />
     <ClCompile Include="..\Private\UI_RamenMenu.cpp" />
     <ClCompile Include="..\Private\UI_ResultBanner.cpp" />
     <ClCompile Include="..\Private\UI_ScratchCard.cpp" />

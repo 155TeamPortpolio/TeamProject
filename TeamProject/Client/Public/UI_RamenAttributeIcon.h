@@ -7,7 +7,7 @@ NS_END
 
 NS_BEGIN(Client)
 
-class CUI_RamenAttribute final : public CUI_Object
+class CUI_RamenAttributeIcon final : public CUI_Object
 {
 public:
 	typedef struct tagAttributeDesc : public UI_DESC {
@@ -27,9 +27,9 @@ private:
 	};
 
 private:
-	CUI_RamenAttribute() {}
-	CUI_RamenAttribute(const CUI_RamenAttribute& rhs) : CUI_Object(rhs) {}
-	virtual ~CUI_RamenAttribute() DEFAULT;
+	CUI_RamenAttributeIcon() {}
+	CUI_RamenAttributeIcon(const CUI_RamenAttributeIcon& rhs) : CUI_Object(rhs) {}
+	virtual ~CUI_RamenAttributeIcon() DEFAULT;
 
 public:
 	virtual HRESULT Initialize_Prototype()           override;

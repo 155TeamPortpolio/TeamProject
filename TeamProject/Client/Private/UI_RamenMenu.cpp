@@ -7,7 +7,7 @@
 #include "TextSlot.h"
 #include "ButtonUI.h"
 #include "UI_Ramen.h"
-#include "UI_RamenAttribute.h"
+#include "UI_RamenAttributeIcon.h"
 
 HRESULT CUI_RamenMenu::Initialize_Prototype()
 {
@@ -28,7 +28,7 @@ HRESULT CUI_RamenMenu::Initialize(INIT_DESC* pArg)
 
     Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("ramen_menu.json")));
     Cache();
-    Create_Attributes();
+    Create_AttributeIcons();
 
     if (m_pButton)
         m_pButton->Set_OnClick([this]() {
@@ -109,23 +109,23 @@ void CUI_RamenMenu::Cache()
     }
 }
 
-void CUI_RamenMenu::Create_Attributes()
+void CUI_RamenMenu::Create_AttributeIcons()
 {
     _int iIndex = {};
 
     for (auto& attribute: m_tRamenDesc.attributes)
     {
-        CUI_RamenAttribute::ATTRIBUTE_DESC* pDesc = new CUI_RamenAttribute::ATTRIBUTE_DESC;
+        CUI_RamenAttributeIcon::ATTRIBUTE_DESC* pDesc = new CUI_RamenAttributeIcon::ATTRIBUTE_DESC;
         pDesc->strAttributeID = attribute.strAttributeID;
 
-        auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_RamenAttribute" })
+        auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_RamenAttributeIcon" })
             .Add_UIDesc(pDesc)
-            .Build("attribute");
+            .Build("attributeIcon");
 
         if (!pObj)
             return;
 
-        pObj->Add_AnchorOffsetX( (m_tRamenDesc.attributes.size() - ++iIndex) * - 36.f);
+        pObj->Add_AnchorOffsetX( (m_tRamenDesc.attributes.size() - ++iIndex) * - 34.f);
         Get_Component<CObjectContainer>()->Add_Child(pObj);
         m_Attributes.push_back(pObj);
     } 
