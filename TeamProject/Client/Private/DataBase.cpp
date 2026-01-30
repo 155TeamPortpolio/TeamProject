@@ -143,6 +143,21 @@ RAMEN_DESC CDataBase::GetRamenDesc(const string& strName)
 	return iter->second;
 }
 
+vector<const RAMEN_DESC*> CDataBase::GetRamenTable()
+{
+	vector<const RAMEN_DESC*> result;
+	for (const auto& ramen : m_RamenTables)
+		result.push_back(&ramen.second);
+
+	sort(result.begin(), result.end(),
+		[](const RAMEN_DESC* a, const RAMEN_DESC* b)
+		{
+			return a->iOrder < b->iOrder;
+		});
+
+	return result;
+}
+
 HRESULT CDataBase::LoadPlayerCreationTable(const string& csvPath)
 {
 	/*
@@ -552,29 +567,31 @@ HRESULT CDataBase::LoadNpcChoiceData(const string& csvPath)
 HRESULT CDataBase::LoadRamenData(const string& csvPath)
 {
 	io::CSVReader<
-		10,
+		11,
 		io::trim_chars<' ', '\t'>,
 		io::double_quote_escape<',', '"'>
 	>in(csvPath);
 	
 	in.read_header(
 		io::ignore_extra_column | io::ignore_missing_column,
-		"ID", "Name", "Price", "AttributeCount", "AttributetID1", "AttributeName1", "AttributeValue1", "AttributetID2", "AttributeName2", "AttributeValue2"
+		"ID", "Name", "Price", "Order", "AttributeCount", "AttributetID1", "AttributeName1", "AttributeValue1", "AttributetID2", "AttributeName2", "AttributeValue2"
 	);
 	string			strID;
 	string			strName;
 	string			strPrice;
+	string			strOrder;
 	string			strAttributeCount;
 	string			strAttributeID1, strAttributeName1, strAttributeValue1;
 	string			strAttributeID2, strAttributeName2, strAttributeValue2;
 	
-	while (in.read_row(strID, strName, strPrice, strAttributeCount, strAttributeID1, strAttributeName1, strAttributeValue1, strAttributeID2, strAttributeName2, strAttributeValue2))
+	while (in.read_row(strID, strName, strPrice, strOrder, strAttributeCount, strAttributeID1, strAttributeName1, strAttributeValue1, strAttributeID2, strAttributeName2, strAttributeValue2))
 	{
 		if (strID.empty()) continue;
 	
 		RAMEN_DESC desc = {};
-		desc.strName = Helper::ConvertToWideString(strName);
+		desc.strName = StringToWString(strName);
 		desc.iPrice = strPrice.empty()? 0 : stoi(strPrice);
+		desc.iOrder = strOrder.empty() ? 999 : stoi(strOrder);
 
 		_int iAttributeCount = strAttributeCount.empty() ? 0 : stoi(strAttributeCount);  
 		desc.attributes.reserve(iAttributeCount);

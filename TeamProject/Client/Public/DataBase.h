@@ -27,6 +27,7 @@ public:
     const vector<MapData_Path_Packet>*  GetMapDataPacket(const string& tagArea);
     const EncounterTable*               GetMonsterSpawnData(const string& tagArea, _uint iStageType);
     RAMEN_DESC              GetRamenDesc(const string& strName);
+    vector<const RAMEN_DESC*> GetRamenTable();
 
 public:
     HRESULT LoadPlayerCreationTable(const string& csvPath);
