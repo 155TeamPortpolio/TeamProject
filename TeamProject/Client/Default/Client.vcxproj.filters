@@ -958,6 +958,12 @@
     <Filter Include="02. GameObject\Object\Enemy\Normal\EtherClayMore\State\Move">
       <UniqueIdentifier>{88748695-877d-4ee3-b4ec-98dd770e4549}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03. Utility\11. Gui_Panel">
+      <UniqueIdentifier>{3e01fbb6-36a4-4470-a580-447caf0cfcc5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\11. Gui_Panel\00. MonsterSpawnPanel">
+      <UniqueIdentifier>{baab1bb3-30ce-4b98-8c82-4df607affe62}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1863,6 +1869,9 @@
     <ClInclude Include="..\public\Claymore_Move.h">
       <Filter>02. GameObject\Object\Enemy\Normal\EtherClayMore\State\Move</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\MonsterSpawnConsole.h">
+      <Filter>03. Utility\11. Gui_Panel\00. MonsterSpawnPanel</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2728,6 +2737,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Claymore_Move.cpp">
       <Filter>02. GameObject\Object\Enemy\Normal\EtherClayMore\State\Move</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MonsterSpawnConsole.cpp">
+      <Filter>03. Utility\11. Gui_Panel\00. MonsterSpawnPanel</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

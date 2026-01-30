@@ -386,6 +386,7 @@
     <ClInclude Include="..\Public\ICamCollidable.h" />
     <ClInclude Include="..\Public\JaneDoeState_AssaultAttack.h" />
     <ClInclude Include="..\Public\JaneDoeState_CounterAttack.h" />
+    <ClInclude Include="..\public\MonsterSpawnConsole.h" />
     <ClInclude Include="..\public\OrbitCamCollider.h" />
     <ClInclude Include="..\public\Room_Lottery.h" />
     <ClInclude Include="..\public\Room_Noodle.h" />
@@ -731,6 +732,7 @@
     <ClCompile Include="..\Private\DefilerState_Idle.cpp" />
     <ClCompile Include="..\Private\JaneDoeState_AssaultAttack.cpp" />
     <ClCompile Include="..\Private\JaneDoeState_CounterAttack.cpp" />
+    <ClCompile Include="..\private\MonsterSpawnConsole.cpp" />
     <ClCompile Include="..\private\OrbitCamCollider.cpp" />
     <ClCompile Include="..\private\Room_Lottery.cpp" />
     <ClCompile Include="..\private\Room_Noodle.cpp" />

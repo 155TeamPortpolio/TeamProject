@@ -48,10 +48,9 @@ HRESULT CClaymore::Initialize_Prototype()
 	Add_Component<CCharacterController>();
 
 	auto pResourceMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
-	pResourceMgr->Add_ResourcePath("ThugPoacher.mat", "../Bin/Resources/Model/skeletal/Enemy/ThugPoacher/ThugPoacher.mat");
-	pResourceMgr->Add_ResourcePath("ThugPoacher.model", "../Bin/Resources/Model/skeletal/Enemy/ThugPoacher/ThugPoacher.model");
-	pResourceMgr->Add_ResourcePath("ThugPoacher_Meta.json", "../Bin/Resources/Model/skeletal/Enemy/ThugPoacher/ThugPoacher_Meta.json");
-
+	pResourceMgr->Add_ResourcePath("Claymore.mat", "../Bin/Resources/Model/skeletal/Enemy/Claymore/Claymore.mat");
+	pResourceMgr->Add_ResourcePath("Claymore.model", "../Bin/Resources/Model/skeletal/Enemy/Claymore/Claymore.model");
+	pResourceMgr->Add_ResourcePath("Monster_Claymore_Meta.json", "../Bin/Resources/Model/skeletal/Enemy/Claymore/Monster_Claymore_Meta.json");
 
 	return S_OK;
 }
@@ -63,14 +62,14 @@ HRESULT CClaymore::Initialize(INIT_DESC* pArg)
 	//m_pTransform->Scale({ 0.01f,0.01f,0.01f });
 
 	auto pModel = Get_Component<CSkeletalModel>();
-	pModel->Link_Model(G_GlobalLevelKey, "ThugPoacher.model");
+	pModel->Link_Model(G_GlobalLevelKey, "Claymore.model");
 
 	auto pMaterial = Get_Component<CMaterial>();
-	pMaterial->Link_Material(G_GlobalLevelKey, "ThugPoacher.mat");
+	pMaterial->Link_Material(G_GlobalLevelKey, "Claymore.mat");
 
 	auto pAnimator = Get_Component<CAnimator3D>();
-	pAnimator->LinkAnimate_Model(G_GlobalLevelKey, "ThugPoacher.model");
-	pAnimator->Link_MetaData(G_GlobalLevelKey, "ThugPoacher_Meta.json");
+	pAnimator->LinkAnimate_Model(G_GlobalLevelKey, "Claymore.model");
+	pAnimator->Link_MetaData(G_GlobalLevelKey, "Monster_Claymore_Meta.json");
 	pAnimator->Set_ExtractMotionboneMovement(AXIS::X | AXIS::Z);
 	pAnimator->Resize_Layer(2);
 	pAnimator->Set_LayerType(ANIM_LAYER_STATE::ADDITIVE, 1);
@@ -80,11 +79,6 @@ HRESULT CClaymore::Initialize(INIT_DESC* pArg)
 
 	if (FAILED(Initialize_StateMachine()))
 		return E_FAIL;
-
-	// 임시 확인용
-#ifdef _USING_GUI
-	CGameInstance::GetInstance()->Get_GUISystem()->Get_Context()->pSelectedObject = this;
-#endif // _USING_GUI
 
 	return S_OK;
 }
