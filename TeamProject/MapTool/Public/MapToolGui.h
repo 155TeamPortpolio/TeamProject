@@ -67,6 +67,8 @@ private:
 	class CMapToolAssistant* m_pAssistant = { nullptr };
 	MAPTOOL_CONTEXT* m_pMapToolContext = { nullptr };
 
+	_bool m_bOpenSlotField = false;
+
 	// Physics Ray
 	PHYSICS_RAY	m_PhysicsRay = {};
 	_float3		m_vRayHitPos = {};

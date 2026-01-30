@@ -128,6 +128,11 @@ LOADED_DATA CMapToolCore::Load_MapData()
 		for (auto& LightData : LightHeader.Lights)
 		{
 			Place_LightPointFromLoadData(&LightData);
+			LOADED_OBJECT Desc = {};
+			Desc.iObjIdx = LightData.iIndex;
+			Desc.TagModelKey = LoadedData.tagDataFormat + to_string(LightData.iIndex);
+
+			LoadedData.LoadedObjects.push_back(Desc);
 		}
 	}
 	else
@@ -198,8 +203,14 @@ void CMapToolCore::Load_WithEntityData()
 		}
 	}
 
-	/* Entity가 있을 때 */
-	filesystem::path entityPath = OpenPath;
+	LoadEntity(OpenPath, LoadedData);
+	LoadBattle(OpenPath, LoadedData);
+	LoadLight(OpenPath, LoadedData);
+}
+
+void CMapToolCore::LoadEntity(const filesystem::path& BasePath, LOADED_DATA& LoadedData)
+{
+	filesystem::path entityPath = BasePath;
 	string filename = entityPath.filename().string();
 
 	size_t pos = filename.find("MapData");
@@ -228,49 +239,62 @@ void CMapToolCore::Load_WithEntityData()
 			}
 		}
 	}
+}
 
-	/* BattleData 가 있을 때 */
-	filesystem::path BattlePath = OpenPath;
+void CMapToolCore::LoadBattle(const filesystem::path& BasePath, LOADED_DATA& LoadedData)
+{
+	filesystem::path BattlePath = BasePath;
+	string filename = BattlePath.filename().string();
 
-
-	_bool isEntity = true;
-	pos = filename.find("EntityData");
+	size_t pos = filename.find("MapData");
 	if (pos == string::npos)
-		isEntity = false;
+		return;
 
-	if (isEntity) {
-		filename.replace(pos, strlen("EntityData"), "BattleData");
-		BattlePath.replace_filename(filename);
+	filename.replace(pos, strlen("MapData"), "BattleData");
+	BattlePath.replace_filename(filename);
 
-		pos = filename.find(".Base.1");
+	pos = filename.find(".Base.1");
 
-		filename.replace(pos, strlen(".Base.1"), "");
-		BattlePath.replace_filename(filename);
+	filename.replace(pos, strlen(".Base.1"), "");
+	BattlePath.replace_filename(filename);
 
-		if (!filesystem::exists(BattlePath))
-			return;
+	if (!filesystem::exists(BattlePath))
+		return;
 
-		m_pMapToolGui->Load_BattleData(BattlePath.string());
+	m_pMapToolGui->Load_BattleData(BattlePath.string());
+}
+
+void CMapToolCore::LoadLight(const filesystem::path& BasePath, LOADED_DATA& LoadedData)
+{
+	filesystem::path lightPath = BasePath;
+	string filename = lightPath.filename().string();
+
+	size_t pos = filename.find("MapData");
+
+	if (pos != string::npos) {
+		filename.replace(pos, strlen("MapData"), "LightData");
+		lightPath.replace_filename(filename);
+
+		if (filesystem::exists(lightPath)) {
+			Clear_Layer(MAPOBJ_TYPE::LIGHT);
+
+			Light_Header LightHeader = Helper::LoadJson<Light_Header>(lightPath.string());
+			LoadedData.tagDataFormat = "LightData";
+
+			m_tMapToolContext.iVersion = LightHeader.iVersion;
+			m_tMapToolContext.TagArea = LightHeader.TagArea;
+
+			for (auto& LightData : LightHeader.Lights)
+			{
+				Place_LightPointFromLoadData(&LightData);
+				LOADED_OBJECT Desc = {};
+				Desc.iObjIdx = LightData.iIndex;
+				Desc.TagModelKey = "Light_Point" + to_string(LightData.iIndex);
+
+				LoadedData.LoadedObjects.push_back(Desc);
+			}
+		}
 	}
-	else {
-		pos = filename.find("MapData");
-		if (pos == string::npos)
-			return;
-
-		filename.replace(pos, strlen("MapData"), "BattleData");
-		BattlePath.replace_filename(filename);
-
-		pos = filename.find(".Base.1");
-
-		filename.replace(pos, strlen(".Base.1"), "");
-		BattlePath.replace_filename(filename);
-
-		if (!filesystem::exists(BattlePath))
-			return;
-
-		m_pMapToolGui->Load_BattleData(BattlePath.string());
-	}
-
 }
 
 void CMapToolCore::Clear_Layer(MAPOBJ_TYPE eObjType)

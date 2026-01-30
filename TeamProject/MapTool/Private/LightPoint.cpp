@@ -109,11 +109,11 @@ void CLightPoint::Render_GUI()
 	ImGui::Text("Type : %s", typeNames[static_cast<_int>(eType)]);
 
 	ImGui::Text("Range");
-	ImGui::DragFloat("##Range", &m_LightDesc.fLightRange, 1.0f, 0.0f, 1000.0f, "%.1f");
+	ImGui::DragFloat("##Range", &m_LightDesc.fLightRange, 0.01f, 0.0f, 1000.0f, "%.2f");
 	Get_Component<CCollider>()->Set_Size({ m_LightDesc.fLightRange, m_LightDesc.fLightRange, m_LightDesc.fLightRange });
 
 	ImGui::Text("Intensity");
-	ImGui::DragFloat("##Intensity", &m_LightDesc.fLightIntensity, 0.5f, 0.0f, 10.0f, "%.1f");
+	ImGui::DragFloat("##Intensity", &m_LightDesc.fLightIntensity, 0.01f, 0.0f, 100.0f, "%.2f");
 
 	ImGui::Text("Diffuse");
 	ImGui::ColorEdit3("Diffuse", &m_LightDesc.vLightDiffuse.x);

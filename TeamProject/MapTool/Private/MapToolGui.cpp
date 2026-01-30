@@ -193,7 +193,8 @@ void CMapToolGui::Render_GUI()
 
     if (ImGui::TreeNode("Slot Data")) {
         if (ImGui::Button("Open Slot Field")) {
-            m_pSlotFieldGui->Set_isOpen(true);
+            m_pSlotFieldGui->Set_isOpen(m_bOpenSlotField);
+            m_bOpenSlotField = !m_bOpenSlotField;
         }
 
         ImGui::TreePop();
