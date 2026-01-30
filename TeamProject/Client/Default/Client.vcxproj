@@ -374,6 +374,11 @@
     <ClInclude Include="..\public\DefilerState_Idle.h" />
     <ClInclude Include="..\Public\CorinState_AssaultAttack.h" />
     <ClInclude Include="..\Public\CorinState_CounterAttack.h" />
+    <ClInclude Include="..\public\GachaBack.h" />
+    <ClInclude Include="..\public\GachaProps.h" />
+    <ClInclude Include="..\public\GachaStage.h" />
+    <ClInclude Include="..\public\GachaTV.h" />
+    <ClInclude Include="..\public\Gacha_Level.h" />
     <ClInclude Include="..\Public\ICamCollidable.h" />
     <ClInclude Include="..\Public\JaneDoeState_AssaultAttack.h" />
     <ClInclude Include="..\Public\JaneDoeState_CounterAttack.h" />
@@ -711,6 +716,11 @@
     <ClCompile Include="..\Private\DefilerState_Attack.cpp" />
     <ClCompile Include="..\Private\DefilerState_Born.cpp" />
     <ClCompile Include="..\Private\DefilerState_Idle.cpp" />
+    <ClCompile Include="..\private\GachaBack.cpp" />
+    <ClCompile Include="..\private\GachaProps.cpp" />
+    <ClCompile Include="..\private\GachaStage.cpp" />
+    <ClCompile Include="..\private\GachaTV.cpp" />
+    <ClCompile Include="..\private\Gacha_Level.cpp" />
     <ClCompile Include="..\Private\JaneDoeState_AssaultAttack.cpp" />
     <ClCompile Include="..\Private\JaneDoeState_CounterAttack.cpp" />
     <ClCompile Include="..\private\CamOcclusionTracker.cpp" />
