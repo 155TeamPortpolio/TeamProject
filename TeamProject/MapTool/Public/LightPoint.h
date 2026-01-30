@@ -23,6 +23,9 @@ public:
 public:
     void Render_GUI() override;  
 
+private:
+    LIGHT_DESC m_LightDesc;
+
 public:
     static CLightPoint* Create();
     CGameObject* Clone(INIT_DESC* pArg) override;

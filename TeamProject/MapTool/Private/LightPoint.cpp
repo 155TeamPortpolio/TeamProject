@@ -43,9 +43,9 @@ HRESULT CLightPoint::Initialize(INIT_DESC* pArg)
 	Get_Component<CCollider>()->Set_Size({ 0.3f, 0.3f, 0.3f });
 	Get_Component<CCollider>()->Set_ColliderColor({ 1.f, 1.f, 1.f, 1.f });
 
-	LIGHT_DESC Desc;
+	m_LightDesc.eType = LIGHT_TYPE::POINT;
 
-	Get_Component<CLight>()->Set_Desc(Desc, Desc.eType);
+	Get_Component<CLight>()->Set_Desc(m_LightDesc, m_LightDesc.eType);
 
 	return S_OK;
 }
@@ -109,12 +109,35 @@ void CLightPoint::Render_GUI()
 
 	__super::Render_GUI();
 
-	ImGui::InputText("##TriggerName", &m_InstanceName);
+	_vector3 Pos = Get_Component<CTransform>()->Get_Pos();
+	_float fPos[3] = { Pos.x,Pos.y,Pos.z };
+	ImGui::DragFloat3("Pos", fPos, 0.01f, -100.f, 100.f, "%.2f");
+	Get_Component<CTransform>()->Set_Pos({ fPos[0], fPos[1] ,fPos[2] });
 
-	string TagModelKey = "Trigger Key : " + m_InstanceName;
-	ImGui::Text(TagModelKey.c_str());
+	LIGHT_TYPE eType = m_LightDesc.eType;
 
+	const char* typeNames[] = { "Directional", "Point", "Spot" };
+	ImGui::Text("Type : %s", typeNames[static_cast<_int>(eType)]);
 
+	ImGui::Text("Range");
+	ImGui::DragFloat("##Range", &m_LightDesc.fLightRange, 1.0f, 0.0f, 1000.0f, "%.1f");
+	Get_Component<CCollider>()->Set_Size({ m_LightDesc.fLightRange, m_LightDesc.fLightRange, m_LightDesc.fLightRange });
+
+	ImGui::Text("Intensity");
+	ImGui::DragFloat("##Intensity", &m_LightDesc.fLightIntensity, 0.5f, 0.0f, 10.0f, "%.1f");
+
+	ImGui::Text("Diffuse");
+	ImGui::ColorEdit3("Diffuse", &m_LightDesc.vLightDiffuse.x);
+	ImGui::Text("Ambient");
+	ImGui::ColorEdit3("Ambient", &m_LightDesc.vLightAmbient.x);
+	ImGui::Text("Specular");
+	ImGui::ColorEdit3("Specular", &m_LightDesc.vLightSpecular.x);
+
+	ImGui::DragFloat3("Offset", &m_LightDesc.vOffsetPosition.x, 0.1f);
+	Get_Component<CCollider>()->Set_Center({ m_LightDesc.vOffsetPosition.x, m_LightDesc.vOffsetPosition.y, m_LightDesc.vOffsetPosition.z });
+
+	Get_Component<CLight>()->Set_Desc(m_LightDesc, m_LightDesc.eType);
+	
 	ImGui::PopID();
 }
 
