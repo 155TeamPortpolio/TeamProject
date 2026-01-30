@@ -31,17 +31,18 @@ void CShadowCam::Awake()
 	camera->Set_ProjType(CamProjType::Orthographic);
 
 	auto transform = Get_Component<CTransform>();
+    transform->Set_Pos(_float4(100.f, 50.f, 0.f, 1.f));
 	transform->LookAt(XMVectorSet(0.f, 0.f, 0.f, 1.f));
 
 	_vector LightDir = transform->Dir(STATE::LOOK);
 	LIGHT_DESC desc{};
 	desc.vLightPosition  = {};
 	desc.fLightRange     = {};
-	desc.fLightIntensity = 1.f;
+	desc.fLightIntensity = 0.7f;
 	XMStoreFloat4(&desc.vLightDirection, LightDir);
-	desc.vLightDiffuse   = { 1.0f,  1.0f, 1.0f, 1.0f };
-	desc.vLightAmbient   = { 0.6f,  0.6f, 0.6f, 1.0f };
-	desc.vLightSpecular  = { 1.0f,  1.0f, 1.0f, 1.0f };
+	desc.vLightDiffuse   = { 1.0f, 0.7f, 0.5f, 1.0f };
+	desc.vLightAmbient   = { 0.5f, 0.4f, 0.5f, 1.0f };
+	desc.vLightSpecular  = { 1.0f, 0.8f, 0.6f, 1.0f };
 	Get_Component<CLight>()->Set_Desc(desc, LIGHT_TYPE::DIRECTIONAL);
 }
 
