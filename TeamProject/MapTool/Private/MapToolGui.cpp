@@ -15,6 +15,7 @@
 #include "BattleObject.h"
 #include "BattleSpawnerPoint.h"
 #include "EntityObject.h"
+#include "LightPoint.h"
 
 CMapToolGui::CMapToolGui(GUI_CONTEXT* pContext)
     : CBasePanel(pContext)
@@ -163,8 +164,10 @@ void CMapToolGui::Render_GUI()
             case MapTool::MAPOBJ_TYPE::BATTLE:
                 Save_BattleData();
                 break;
+            case MapTool::MAPOBJ_TYPE::LIGHT:
+                Save_LightData();
+                break;
             }
-            
         }
 
         if (m_isShowDataSaveFinish) {
@@ -413,7 +416,7 @@ void CMapToolGui::Place_Object(PHYSICS_RAY_HIT* pRayHit)
         ColDesc.eType = COLLIDER_TYPE::SPHERE;
         ColDesc.bTrigger = true; // 충돌 박스 생성하는 트리거
 
-        string TagInstanceName = "Light_Object" + to_string(m_iTriggerIndex++);
+        string TagInstanceName = "LightPoint" + to_string(m_iTriggerIndex++);
         CGameObject* pStaticObject = Builder::Create_Object({ g_TagMapToolLevel ,"Proto_GameObject_LightPoint" })
             .Collider(ColDesc)
             .Position(pRayHit->vPoint)
@@ -617,49 +620,6 @@ void CMapToolGui::Save_EntityData()
     Save_EntityInit();
 }
 
-void CMapToolGui::Save_MapToolEntityData()
-{
-    CLayer* pLayer = m_pGameInstance->Get_ObjectMgr()->Get_Layer({ g_TagMapToolLevel, g_tagMapObjType[ENUM(MAPOBJ_TYPE::ENTITY)] });
-    if (!pLayer) return;
-
-    string TagFileName = "EntityData." + m_pMapToolContext->TagArea + "." + m_EntityData.TagDataFormat + "." + std::to_string(m_MapData.iVersion);
-    string SavePath = "../Bin/Data/NewEntityData/" + HelperMT::MakeTimestampFileName(TagFileName, ".json");
-
-    if (true == HelperMT::ExportJsonFile<Entity_Header>(m_EntityData, SavePath))
-        m_isShowDataSaveFinish = true;
-}
-
-void CMapToolGui::Save_EntityInit()
-{
-    Helper::SaveJson<unordered_map<string, string>>(m_iniModelName, "../Bin/Resources/Model/Entity/ModelIni.json");
-}
-
-void CMapToolGui::Load_EntityInit()
-{
-    auto LoadData = Helper::LoadJson<unordered_map<string, string>>("../Bin/Resources/Model/Entity/ModelIni.json");
-
-    for (auto Data : LoadData)
-        m_iniModelName.emplace(Data.first, Data.second);
-}
-
-void CMapToolGui::Set_EntityModel()
-{
-    CLayer* pLayer = m_pGameInstance->Get_ObjectMgr()->Get_Layer({ g_TagMapToolLevel, g_tagMapObjType[ENUM(MAPOBJ_TYPE::ENTITY)] });
-    if (!pLayer) return;
-
-    for (auto& pObjects : pLayer->Get_AllObject())
-    {
-        CEntityObject* pEntity = dynamic_cast<CEntityObject*>(pObjects);
-
-        auto iter = m_iniModelName.find(pEntity->Get_InstanceName());
-        if (iter == m_iniModelName.end() || iter->second.empty())
-            continue;
-
-
-        pEntity->Set_EntityModel(pEntity->Get_InstanceName(), iter->second + ".model", iter->second + ".mat");
-    }
-}
-
 void CMapToolGui::Save_BattleData()
 {
     m_BattleData = {};
@@ -667,7 +627,7 @@ void CMapToolGui::Save_BattleData()
     m_BattleData.TagDataFormat = "BattleData";
     m_BattleData.TagArea = m_pMapToolContext->TagArea;
     //m_BattleData.iTableIndex = m_iBattleTableIndex;
- 
+
     CLayer* pPlayerLayer = m_pGameInstance->Get_ObjectMgr()->Get_Layer(
         { g_TagMapToolLevel, g_tagBattleObjType[ENUM(BATTLE_TYPE::PLAYER)] });
     if (nullptr != pPlayerLayer)
@@ -720,6 +680,37 @@ void CMapToolGui::Save_BattleData()
     string SavePath = "../Bin/Data/NewBattleData/" + HelperMT::MakeTimestampFileName(TagFileName, ".json");
 
     if (true == HelperMT::ExportJsonFile<BATTLE_FIELD_DATA>(m_BattleData, SavePath))
+        m_isShowDataSaveFinish = true;
+}
+
+void CMapToolGui::Save_LightData()
+{
+    m_LightData = {};
+
+    m_LightData.iVersion = m_pMapToolContext->iVersion;
+    m_LightData.TagArea = m_pMapToolContext->TagArea;
+    m_LightData.TagDataFormat = "Base";
+
+    _int    iLightIndex = {};
+
+    CLayer* pLayer = m_pGameInstance->Get_ObjectMgr()->Get_Layer({ g_TagMapToolLevel, g_tagMapObjType[ENUM(MAPOBJ_TYPE::LIGHT)] });
+    if (nullptr == pLayer)
+        return;
+
+    for (auto& pObject : pLayer->Get_AllObject())
+    {
+        MAP_LIGHT MapLightDesc = {};
+
+        static_cast<CLightPoint*>(pObject)->Export_ObjectData(&MapLightDesc);
+        MapLightDesc.iIndex = iLightIndex++;
+        m_LightData.Lights.push_back(MapLightDesc);
+    }
+
+    // 버전 없어도 될거같은데
+    string TagFileName = "LightData." + m_pMapToolContext->TagArea + "." + m_LightData.TagDataFormat + "." + std::to_string(m_MapData.iVersion);
+    string SavePath = "../Bin/Data/NewLightData/" + HelperMT::MakeTimestampFileName(TagFileName, ".json");
+
+    if (true == HelperMT::ExportJsonFile<Light_Header>(m_LightData, SavePath))
         m_isShowDataSaveFinish = true;
 }
 
@@ -1129,6 +1120,37 @@ void CMapToolGui::Setting_SelectType()
         
         break;
     }
+}
+
+void CMapToolGui::Set_EntityModel()
+{
+    CLayer* pLayer = m_pGameInstance->Get_ObjectMgr()->Get_Layer({ g_TagMapToolLevel, g_tagMapObjType[ENUM(MAPOBJ_TYPE::ENTITY)] });
+    if (!pLayer) return;
+
+    for (auto& pObjects : pLayer->Get_AllObject())
+    {
+        CEntityObject* pEntity = dynamic_cast<CEntityObject*>(pObjects);
+
+        auto iter = m_iniModelName.find(pEntity->Get_InstanceName());
+        if (iter == m_iniModelName.end() || iter->second.empty())
+            continue;
+
+
+        pEntity->Set_EntityModel(pEntity->Get_InstanceName(), iter->second + ".model", iter->second + ".mat");
+    }
+}
+
+void CMapToolGui::Save_EntityInit()
+{
+    Helper::SaveJson<unordered_map<string, string>>(m_iniModelName, "../Bin/Resources/Model/Entity/ModelIni.json");
+}
+
+void CMapToolGui::Load_EntityInit()
+{
+    auto LoadData = Helper::LoadJson<unordered_map<string, string>>("../Bin/Resources/Model/Entity/ModelIni.json");
+
+    for (auto Data : LoadData)
+        m_iniModelName.emplace(Data.first, Data.second);
 }
 
 void CMapToolGui::Render_ClearLayer()

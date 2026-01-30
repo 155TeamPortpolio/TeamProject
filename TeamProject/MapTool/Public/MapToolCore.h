@@ -32,7 +32,7 @@ private:
 	void			Place_PlacedObjectFromLoadData(MapData_Object* pData);
 	void			Place_TriggerObjectFromLoadData(MapData_Object* pData);
 	void			Place_EntityObjectFromLoadData(ENTITY* pData);
-
+	void			Place_LightPointFromLoadData(MAP_LIGHT* pData);
 
 private:
 	CGameInstance*		m_pGameInstance = { nullptr };

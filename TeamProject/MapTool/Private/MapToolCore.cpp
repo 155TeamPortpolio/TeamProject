@@ -9,6 +9,7 @@
 #include "Layer.h"
 #include "BattleObject.h"
 #include "MapToolGui.h"
+#include "LightPoint.h"
 
 IMPLEMENT_SINGLETON(CMapToolCore)
 
@@ -107,6 +108,27 @@ LOADED_DATA CMapToolCore::Load_MapData()
 	else if (OpenPath.string().find("BattleData") != string::npos)
 	{
 		m_pMapToolGui->Load_BattleData(OpenPath.string());
+	}
+	else if (OpenPath.string().find("LightData") != string::npos)
+	{
+		Light_Header LightHeader = Helper::LoadJson<Light_Header>(OpenPath.string());
+
+		if ("Base" != LightHeader.TagDataFormat)
+		{
+			MSG_BOX("[MapTool] Load Entity Data Failed.\nBaseData가 아닙니다.");
+			return {};
+		}
+
+		Clear_Layer(MAPOBJ_TYPE::LIGHT);
+
+		LoadedData.tagDataFormat = "LightData";
+		m_tMapToolContext.iVersion = LightHeader.iVersion;
+		m_tMapToolContext.TagArea = LightHeader.TagArea;
+
+		for (auto& LightData : LightHeader.Lights)
+		{
+			Place_LightPointFromLoadData(&LightData);
+		}
 	}
 	else
 	{
@@ -400,6 +422,28 @@ void CMapToolCore::Place_EntityObjectFromLoadData(ENTITY* pData)
 	pStaticObject->Get_Component<CCollider>()->Set_DebugRender(true);
 
 	ObjectManager()->Add_Object(pStaticObject, {g_TagMapToolLevel, g_tagMapObjType[ENUM(MAPOBJ_TYPE::ENTITY)]});
+}
+
+void CMapToolCore::Place_LightPointFromLoadData(MAP_LIGHT* pData)
+{
+	COLLIDER_DESC ColDesc = {};
+	ColDesc.eType = COLLIDER_TYPE::SPHERE;
+	ColDesc.bTrigger = true; // 충돌 박스 생성하는 트리거
+
+	CLightPoint::LIGHT_INIT_DESC* pDesc = new CLightPoint::LIGHT_INIT_DESC();
+	
+	string Name = "LightPoint" + to_string(pData->iIndex);
+	pDesc->DescJson = pData->LightDesc;
+
+	CGameObject* pStaticObject = Builder::Create_Object({ g_TagMapToolLevel ,"Proto_GameObject_LightPoint" })
+		.Add_ObjDesc(pDesc)
+		.Collider(ColDesc)
+		.Position({ pData->vTranslation[0], pData->vTranslation[1], pData->vTranslation[2] })
+		.Build(Name);
+
+	pStaticObject->Get_Component<CCollider>()->Set_DebugRender(true);
+
+	ObjectManager()->Add_Object(pStaticObject, { g_TagMapToolLevel, g_tagMapObjType[ENUM(MAPOBJ_TYPE::LIGHT)] });
 }
 
 void CMapToolCore::Set_AllObjectDebugRender(_bool is)
