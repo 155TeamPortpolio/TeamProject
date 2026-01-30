@@ -574,7 +574,7 @@ HRESULT CDataBase::LoadRamenData(const string& csvPath)
 	
 	in.read_header(
 		io::ignore_extra_column | io::ignore_missing_column,
-		"ID", "Name", "Price", "Order", "AttributeCount", "AttributetID1", "AttributeName1", "AttributeValue1", "AttributetID2", "AttributeName2", "AttributeValue2"
+		"ID", "Name", "Price", "Order", "AttributeCount", "AttributeID1", "AttributeName1", "AttributeValue1", "AttributeID2", "AttributeName2", "AttributeValue2"
 	);
 	string			strID;
 	string			strName;
@@ -589,6 +589,7 @@ HRESULT CDataBase::LoadRamenData(const string& csvPath)
 		if (strID.empty()) continue;
 	
 		RAMEN_DESC desc = {};
+		desc.strID = strID;
 		desc.strName = StringToWString(strName);
 		desc.iPrice = strPrice.empty()? 0 : stoi(strPrice);
 		desc.iOrder = strOrder.empty() ? 999 : stoi(strOrder);

@@ -4,6 +4,7 @@
 #include "GameInstance.h"
 #include "ObjectContainer.h"
 #include "UI_RamenMenu.h"
+#include "DataBase.h"
 
 void CUI_Ramen::Select_Menu(CUI_Object* pSelected)
 {
@@ -34,7 +35,7 @@ HRESULT CUI_Ramen::Initialize(INIT_DESC* pArg)
 
     Create_Menus();
 
-    Set_Alive(false);
+    //Set_Alive(false);
 
 	return S_OK;
 }
@@ -68,11 +69,15 @@ void CUI_Ramen::Create_Menus()
     const _float fCenterY = 784.f;
     _float fCenterIndex = (MAX_MENU_COUNT - 1) * 0.5f;
 
+    auto vecRamenTable = CDataBase::GetInstance()->GetRamenTable();
+    _int iMenuCount = min(MAX_MENU_COUNT, vecRamenTable.size());
+
     auto pContainer = Get_Component<CObjectContainer>();
-    for (_int i = 0; i < MAX_MENU_COUNT; ++i)
+    for (_int i = 0; i < iMenuCount; ++i)
     {
         CUI_RamenMenu::RAMENMENU_DESC* pDesc = new CUI_RamenMenu::RAMENMENU_DESC;
         pDesc->onSelect = [this](CUI_Object* pSelected) { Select_Menu(pSelected); };
+        pDesc->tRamenDesc = *vecRamenTable[i];
 
         auto pMenu = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_RamenMenu" })
             .Add_UIDesc(pDesc)
