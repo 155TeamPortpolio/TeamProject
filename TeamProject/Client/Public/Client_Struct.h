@@ -145,4 +145,9 @@ namespace Client {
 		_int	iOrder;
 		vector<RAMEN_ATTRIBUTE> attributes;
 	}RAMEN_DESC;
+	
+	typedef struct tagCloudDesc {
+		_float3 skyColor = {};
+		_float3 cloudColor = {};
+	}CLOUD_DESC;
 }

@@ -56,33 +56,78 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     MSG msg;
     ZeroMemory(&msg, sizeof(MSG));
 
-    _float      fTimeAcc = {};
-    _bool Break = false;
-    const float step = 1.f / g_iMainFrame;
-    while (true) {
-        while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
-            if (msg.message == WM_QUIT) {
-                Break = true;
-            }
+   _float      fTimeAcc = {};
+   _bool Break = false;
+   const float step = 1.f / g_iMainFrame;
+   while (true) {
+       while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
+           if (msg.message == WM_QUIT) {
+               Break = true;
+           }
+   
+           TranslateMessage(&msg);
+           DispatchMessage(&msg);
+       }
+       if (Break) {
+           break;
+       }
+   
+       timer->Update_Timer("Frame_Timer");
+       fTimeAcc += timer->Get_RawDeltaTime("Frame_Timer");
+   
+       if (fTimeAcc > step) {
+           gameInstance->Update_EngineTimer();
+           _float dt = gameInstance->Get_EngineDeltaTime();
+           mainApp->Update(dt);
+           mainApp->Render();
+           fTimeAcc = 0.f;
+       }
+   }
 
-            TranslateMessage(&msg);
-            DispatchMessage(&msg);
-        }
-        if (Break) {
-            break;
-        }
-
-        timer->Update_Timer("Frame_Timer");
-        fTimeAcc += timer->Get_RawDeltaTime("Frame_Timer");
-
-        if (fTimeAcc > step) {
-            gameInstance->Update_EngineTimer();
-            _float dt = gameInstance->Get_EngineDeltaTime();
-            mainApp->Update(dt);
-            mainApp->Render();
-            fTimeAcc = 0.f;
-        }
-    }
+   //   _float timeAccumulator = 0.f;
+   //   _bool isBreak = false;
+   //   const _float fixedStep = 1.f / g_iMainFrame;
+   //   const _float maxCatchUpTime = fixedStep * 2.f;
+   //   const _int maxSubSteps = 5;
+   //   
+   //   while (true)
+   //   {
+   //       while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
+   //       {
+   //           if (msg.message == WM_QUIT)
+   //               isBreak = true;
+   //   
+   //           TranslateMessage(&msg);
+   //           DispatchMessage(&msg);
+   //       }
+   //       if (isBreak)
+   //           break;
+   //   
+   //       // 1) 엔진 타이머를 "유일한" 시간 소스로 사용
+   //       gameInstance->Update_EngineTimer();
+   //       _float rawDeltaTime = gameInstance->Get_EngineDeltaTime(); // 가능하면 Raw/Unsmoothed가 있으면 그걸 권장
+   //   
+   //       if (rawDeltaTime > 0.1f)
+   //           rawDeltaTime = 0.1f;
+   //   
+   //       timeAccumulator += rawDeltaTime;
+   //       if (timeAccumulator > maxCatchUpTime)
+   //           timeAccumulator = maxCatchUpTime;
+   //   
+   //       _bool didSimulate = false;
+   //   
+   //       _int subStepCount = 0;
+   //       while (timeAccumulator >= fixedStep && subStepCount < maxSubSteps)
+   //       {
+   //           mainApp->Update(fixedStep);
+   //           timeAccumulator -= fixedStep;
+   //           ++subStepCount;
+   //           didSimulate = true;
+   //       }
+   //       float alpha = (fixedStep > 0.f) ? (timeAccumulator / fixedStep) : 0.f;
+   //       mainApp->Render(alpha, didSimulate);
+   //     
+   //   }
 
     Safe_Release(timer);
     gameInstance->DestroyInstance();

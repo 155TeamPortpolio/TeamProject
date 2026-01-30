@@ -14,7 +14,7 @@ public:
     virtual void Exit(CCorin* pOwner) override;
 
 public:
-    static CCorinState_SwitchInAttack* Create() { return new CCorinState_SwitchInAttack(); }
+    static CCorinState_SwitchInAttack* Create();
     virtual void Free() override { __super::Free(); }
 };
 
