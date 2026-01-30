@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "JaneDoeState_SwitchInAttack.h"
 
+#include "BattleSystem.h"
+
 #include "JaneDoe.h"
 
 CJaneDoeState_SwitchInAttack* CJaneDoeState_SwitchInAttack::Create()
@@ -48,6 +50,20 @@ void CJaneDoeState_SwitchInAttack::Update(CJaneDoe* pOwner, _float dt)
         vLook.Normalize();
         pOwner->Get_Component<CTransform>()->Set_Look(vLook);
         pOwner->Rotate(vLook);
+    }
+
+    for (const auto& Event : pOwner->Get_Component<CAnimator3D>()->Get_EventBus())
+    {
+        if (Event.Type != CLIP_EVENT_TYPE::NOTIFY) continue;
+        if (Event.Tag == "AreaAttack")
+        {
+            _vector3 vLook = pOwner->Get_Component<CTransform>()->Dir(STATE::LOOK);
+            _vector3 vPos = pOwner->Get_WorldPos();
+            BattleSystem()->TakeAreaDamage(vPos + vLook * 4.f, 8.f, HitDesc()
+                .Type(HIT_TYPE::ONCE)
+                .Damage(Helper::Get_Random_Float(1, 2), DAMAGE_TYPE::NORMAL)
+            );
+        }
     }
 
     auto pJaneDoeState = pOwner->Get_StateMachine();
