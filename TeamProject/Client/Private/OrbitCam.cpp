@@ -613,8 +613,6 @@ _float COrbitCam::EvalAutoYaw(_float dt, const Vector3& foot, const Vector3& cam
     return deltaYawDeg * a;
 }
 
-
-
 void COrbitCam::Switch_Begin(const Vector3& holdPivotWorld)
 {
     m_switch.active = true;

@@ -196,6 +196,48 @@ float4 vColor;
 
 float2 vFlip;
 
+uint ColorTexMode = 0;
+float ColorTexMix = 1.f;
+
+float RecolorThreshold = 0.06f;
+float RecolorSoftness = 0.04f;
+
+uint RecolorUseKeyColor = 0;
+float3 RecolorKeyColor = float3(0.f, 0.f, 0.f);
+float RecolorKeyTolerance = 0.06f;
+
+uint RecolorInvertMask = 0;
+
+float3 ApplyColorTexture(float3 baseRgb, float2 uv)
+{
+    if (ColorTexMode == 0)
+        return baseRgb;
+
+    float3 c = ColorTexture.Sample(LinearSampler, uv).rgb;
+    float m = saturate(ColorTexMix);
+
+    float lum = dot(baseRgb, float3(0.299f, 0.587f, 0.114f));
+    float maskByLum = smoothstep(RecolorThreshold, RecolorThreshold + RecolorSoftness, lum);
+
+    float maskByKey = 1.f;
+    if (RecolorUseKeyColor != 0)
+    {
+        float dist = length(baseRgb - RecolorKeyColor);
+        maskByKey = smoothstep(RecolorKeyTolerance, RecolorKeyTolerance * 1.5f, dist);
+    }
+
+    float mask = maskByLum * maskByKey;
+    if (RecolorInvertMask != 0)
+        mask = 1.f - mask;
+
+    float t = m * mask;
+
+    if (ColorTexMode == 1)
+        return lerp(baseRgb, c, t);
+
+    return lerp(baseRgb, baseRgb * c, t);
+}
+
 struct PS_IN
 {
     float4 vPosition : SV_POSITION;
@@ -210,20 +252,24 @@ struct PS_OUT
 PS_OUT PS_MAIN(PS_IN In)
 {
     PS_OUT Out;
-    
-    float2 vTexcoord = { In.vTexcoord.x * (1.f - 2.f * vFlip.x) + vFlip.x, In.vTexcoord.y * (1.f - 2.f * vFlip.y) + vFlip.y };
-    
-    vector vDiffuse = SpriteTexture.Sample(LinearSampler, vTexcoord);
-    //clip(vDiffuse.a - 0.1f);
-    
-    float4 color = vDiffuse * vColor;
+
+    float2 uv = float2(
+        In.vTexcoord.x * (1.f - 2.f * vFlip.x) + vFlip.x,
+        In.vTexcoord.y * (1.f - 2.f * vFlip.y) + vFlip.y
+    );
+
+    float4 tex = SpriteTexture.Sample(LinearSampler, uv);
+    //clip(tex.a - 0.1f);
+
+    float3 rgb = ApplyColorTexture(tex.rgb, uv);
+
+    float4 color = float4(rgb, tex.a) * vColor;
+
     Out.vColor.rgb = color.rgb * color.a;
     Out.vColor.a = color.a;
-    
+
     return Out;
 }
-
-Texture2D ColorTexture;
 
 uint ColorCol = 1;
 uint ColorRow = 1;
@@ -261,66 +307,83 @@ PS_OUT PS_MAIN_SPRITEANIMATION_COLORATLAS(PS_IN In)
 PS_OUT PS_MAIN_SPRITEANIMATION(PS_IN In)
 {    
     PS_OUT Out;
-    
-    vector vDiffuse = SpriteTexture.Sample(LinearSampler, CalculateFrameIndex(Col, Row, FrameIndex, In.vTexcoord));
-    clip(vDiffuse.a - 0.1f);
-    
-    float4 color = vDiffuse * vColor;
+
+    float2 uv = CalculateFrameIndex(Col, Row, FrameIndex, In.vTexcoord);
+    float4 tex = SpriteTexture.Sample(LinearSampler, uv);
+    clip(tex.a - 0.1f);
+
+    float3 rgb = ApplyColorTexture(tex.rgb, uv);
+
+    float4 color = float4(rgb, tex.a) * vColor;
+
     Out.vColor.rgb = color.rgb * color.a;
     Out.vColor.a = color.a;
-    
+
     return Out;
 }
 
 PS_OUT PS_MAIN_UVANIMATION(PS_IN In)
 {
     PS_OUT Out;
-    
-    vector vDiffuse = SpriteTexture.Sample(LinearSampler, In.vTexcoord + UVOffset);
-    clip(vDiffuse.a - 0.1f);
-    
-    float4 color = vDiffuse * vColor;
+
+    float2 uv = In.vTexcoord + UVOffset;
+    float4 tex = SpriteTexture.Sample(LinearSampler, uv);
+    clip(tex.a - 0.1f);
+
+    float3 rgb = ApplyColorTexture(tex.rgb, uv);
+
+    float4 color = float4(rgb, tex.a) * vColor;
+
     Out.vColor.rgb = color.rgb * color.a;
     Out.vColor.a = color.a;
-    
+
     return Out;
 }
 
 PS_OUT PS_MAIN_LINEARFILL(PS_IN In)
 {
     PS_OUT Out;
-    
-    float2 vTexcoord = { In.vTexcoord.x * (1.f - 2.f * Direction) + Direction, In.vTexcoord.y };
-    vector vDiffuse = SpriteTexture.Sample(LinearSampler, In.vTexcoord);
-    clip(vDiffuse.a - 0.1f);
-    
-    clip(FillAmount - vTexcoord.x);
-    
-    float4 color = vDiffuse * vColor;
+
+    float2 uvClip = float2(In.vTexcoord.x * (1.f - 2.f * Direction) + Direction, In.vTexcoord.y);
+
+    float2 uv = In.vTexcoord;
+    float4 tex = SpriteTexture.Sample(LinearSampler, uv);
+    clip(tex.a - 0.1f);
+
+    clip(FillAmount - uvClip.x);
+
+    float3 rgb = ApplyColorTexture(tex.rgb, uv);
+
+    float4 color = float4(rgb, tex.a) * vColor;
+
     Out.vColor.rgb = color.rgb * color.a;
     Out.vColor.a = color.a;
-    
+
     return Out;
 }
 
 PS_OUT PS_MAIN_RADIALFILL(PS_IN In)
 {
     PS_OUT Out;
-    
-    vector vDiffuse = SpriteTexture.Sample(LinearSampler, In.vTexcoord);
-    clip(vDiffuse.a - 0.1f);
-    
+
+    float2 uv = In.vTexcoord;
+    float4 tex = SpriteTexture.Sample(LinearSampler, uv);
+    clip(tex.a - 0.1f);
+
     float2 vTexcoord = In.vTexcoord - 0.5f;
-    float  fAngle    = atan2(vTexcoord.y, vTexcoord.x);
-    fAngle = fAngle / (PI * 2.f) + 0.5f; // 0 ~ 1로 정규화
+    float fAngle = atan2(vTexcoord.y, vTexcoord.x);
+    fAngle = fAngle / (PI * 2.f) + 0.5f;
     fAngle = (1.f - Direction) - frac(fAngle - 0.25f) * (Direction * -2.f + 1.f);
-    
+
     clip(FillAmount - fAngle);
-    
-    float4 color = vDiffuse * vColor;
+
+    float3 rgb = ApplyColorTexture(tex.rgb, uv);
+
+    float4 color = float4(rgb, tex.a) * vColor;
+
     Out.vColor.rgb = color.rgb * color.a;
     Out.vColor.a = color.a;
-    
+
     return Out;
 }
 // ---------------------------------------------------------------------------------------
@@ -400,35 +463,44 @@ float calcV(float y)
 PS_OUT PS_MAIN_NINESLICE(PS_IN In)
 {
     PS_OUT Out;
-    
-    float2 vTexcoord = In.vTexcoord;
-    
-    vTexcoord.x = calcU(In.vPosition.x - vTopLeftPx.x);
-    vTexcoord.y = calcV(In.vPosition.y - vTopLeftPx.y);
-    
-    vector vDiffuse = SpriteTexture.Sample(DefaultSampler, vTexcoord);
-    clip(vDiffuse.a - 0.1f);
-    
-    float4 color = vDiffuse * vColor;
+
+    float2 uv = In.vTexcoord;
+
+    uv.x = calcU(In.vPosition.x - vTopLeftPx.x);
+    uv.y = calcV(In.vPosition.y - vTopLeftPx.y);
+
+    float4 tex = SpriteTexture.Sample(DefaultSampler, uv);
+    clip(tex.a - 0.1f);
+
+    float3 rgb = ApplyColorTexture(tex.rgb, uv);
+
+    float4 color = float4(rgb, tex.a) * vColor;
+
     Out.vColor.rgb = color.rgb * color.a;
     Out.vColor.a = color.a;
-    
+
     return Out;
 }
 
 PS_OUT PS_MAIN_CUSTOM(PS_IN In)
 {
     PS_OUT Out;
-    
-    float2 vTexcoord = { In.vTexcoord.x * (1.f - 2.f * vFlip.x) + vFlip.x, In.vTexcoord.y * (1.f - 2.f * vFlip.y) + vFlip.y };
-    
-    vector vDiffuse = SpriteTexture.Sample(LinearSampler, vTexcoord);
-    clip(vDiffuse.a - 0.1f);
-    
-    float4 color = vDiffuse * vColor;
+
+    float2 uv = float2(
+        In.vTexcoord.x * (1.f - 2.f * vFlip.x) + vFlip.x,
+        In.vTexcoord.y * (1.f - 2.f * vFlip.y) + vFlip.y
+    );
+
+    float4 tex = SpriteTexture.Sample(LinearSampler, uv);
+    clip(tex.a - 0.1f);
+
+    float3 rgb = ApplyColorTexture(tex.rgb, uv);
+
+    float4 color = float4(rgb, tex.a) * vColor;
+
     Out.vColor.rgb = color.rgb * color.a;
     Out.vColor.a = color.a;
-    
+
     return Out;
 }
 

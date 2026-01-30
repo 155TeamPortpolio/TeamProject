@@ -12,11 +12,22 @@ HRESULT CUIObject_Tool::Initialize(INIT_DESC* pArg)
 {
     __super::Initialize(pArg);
 
-    Get_Component<CSprite2D>()->Set_Param("vColor", {&m_vColorLinear, "float4", sizeof(_float4)});
+    auto sprite = Get_Component<CSprite2D>();
 
-    // GUI Inspector 창에 띄움
-    CGameInstance::GetInstance()->Get_GUISystem()->Get_Context()->pSelectedObject = this;
+    sprite->Set_Param("vColor", {&m_vColorLinear, "float4", sizeof(_float4)});
+    sprite->Add_Texture(G_GlobalLevelKey, "empty.png");
 
+    m_colorTexModeU = (_uint)m_colorTexMode;
+    sprite->Set_Param("ColorTexMode",        {&m_colorTexModeU,       "uint",   sizeof(_uint)});
+    sprite->Set_Param("ColorTexMix",         {&m_colorTexMix,         "float",  sizeof(_float)});
+    sprite->Set_Param("RecolorThreshold",    {&m_recolorThreshold,    "float",  sizeof(_float)});
+    sprite->Set_Param("RecolorSoftness",     {&m_recolorSoftness,     "float",  sizeof(_float)});
+    sprite->Set_Param("RecolorUseKeyColor",  {&m_recolorUseKeyColorU, "uint",   sizeof(_uint)});
+    sprite->Set_Param("RecolorKeyColor",     {&m_recolorKeyColor,     "float3", sizeof(_float3)});
+    sprite->Set_Param("RecolorKeyTolerance", {&m_recolorKeyTolerance, "float",  sizeof(_float)});
+    sprite->Set_Param("RecolorInvertMask",   {&m_recolorInvertMaskU,  "uint",   sizeof(_uint)});
+
+    GUISystem()->Get_Context()->pSelectedObject = this;
     return S_OK;
 }
 
@@ -381,8 +392,221 @@ void CUIObject_Tool::Render_GUI_Animation()
 void CUIObject_Tool::Render_GUI_Color()
 {
     ImGui::SeparatorText(u8"컬러");
-    ImGui::ColorEdit4(u8"컬러", reinterpret_cast<_float*>(&m_vColor));
+
+    bool dirty = false;
+
+    const float panelW = ImGui::GetContentRegionAvail().x;
+    const float labelW = clamp(panelW * 0.38f, 90.f, 150.f);
+    const float rightPad = 10.f;
+
+    auto Row = [&](const char* label, auto&& widget)
+        {
+            ImGui::AlignTextToFramePadding();
+            ImGui::TextUnformatted(label);
+            ImGui::SameLine(labelW);
+
+            float w = ImGui::GetContentRegionAvail().x - rightPad;
+            if (w < 60.f) w = 60.f;
+            ImGui::SetNextItemWidth(w);
+
+            widget();
+        };
+
+    Row(u8"컬러", [&]
+        {
+            _float* c = reinterpret_cast<_float*>(&m_vColor);
+
+            ImGuiColorEditFlags flags = ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_AlphaBar | ImGuiColorEditFlags_AlphaPreviewHalf;
+            if (ImGui::ColorEdit4(u8"##Pick", c, flags))
+                dirty = true;
+
+            int rgba[4] = {
+                (int)(c[0] * 255.f + 0.5f),
+                (int)(c[1] * 255.f + 0.5f),
+                (int)(c[2] * 255.f + 0.5f),
+                (int)(c[3] * 255.f + 0.5f)
+            };
+
+            ImGui::SameLine(0.f, 10.f);
+
+            float avail = ImGui::GetContentRegionAvail().x;
+            float eachW = (avail - 18.f) / 4.f;
+            eachW = clamp(eachW, 38.f, 54.f);
+
+            bool changed = false;
+
+            ImGui::PushItemWidth(eachW);
+            if (ImGui::DragInt(u8"##R", &rgba[0], 1.f, 0, 255, "%d", ImGuiSliderFlags_AlwaysClamp)) changed = true;
+            ImGui::SameLine(0.f, 6.f);
+            if (ImGui::DragInt(u8"##G", &rgba[1], 1.f, 0, 255, "%d", ImGuiSliderFlags_AlwaysClamp)) changed = true;
+            ImGui::SameLine(0.f, 6.f);
+            if (ImGui::DragInt(u8"##B", &rgba[2], 1.f, 0, 255, "%d", ImGuiSliderFlags_AlwaysClamp)) changed = true;
+            ImGui::SameLine(0.f, 6.f);
+            if (ImGui::DragInt(u8"##A", &rgba[3], 1.f, 0, 255, "%d", ImGuiSliderFlags_AlwaysClamp)) changed = true;
+            ImGui::PopItemWidth();
+
+            if (changed)
+            {
+                c[0] = rgba[0] / 255.f;
+                c[1] = rgba[1] / 255.f;
+                c[2] = rgba[2] / 255.f;
+                c[3] = rgba[3] / 255.f;
+                dirty = true;
+            }
+        });
+
+    static const char* kModes[] = {"None", "Replace", "Multiply"};
+    int mode = (int)m_colorTexMode;
+
+    Row(u8"컬러 텍스처", [&]
+        {
+            float w = min(140.f, ImGui::GetContentRegionAvail().x - rightPad);
+            if (w < 80.f) w = 80.f;
+            ImGui::SetNextItemWidth(w);
+
+            if (ImGui::Combo(u8"##ColorTexMode", &mode, kModes, IM_ARRAYSIZE(kModes)))
+            {
+                m_colorTexMode = (UIColorTexMode)mode;
+                dirty = true;
+            }
+        });
+
+    if (m_colorTexMode == UIColorTexMode::None)
+    {
+        if (dirty)
+        {
+            auto sprite = Get_Component<CSprite2D>();
+            m_colorTexModeU = (_uint)m_colorTexMode;
+            sprite->Set_Param("ColorTexMode", {&m_colorTexModeU, "uint", sizeof(_uint)});
+            sprite->Set_Param("ColorTexMix", {&m_colorTexMix, "float", sizeof(_float)});
+        }
+        return;
+    }
+
+    ImGui::Spacing();
+
+    ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 6.f);
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(10.f, 10.f));
+    ImGui::BeginChild("##ColorTexCard", ImVec2(0.f, 0.f), true, ImGuiWindowFlags_None);
+
+    ImGui::SeparatorText(u8"텍스처");
+
+    Row(u8"텍스처", [&]
+        {
+            if (ImGui::Button(u8"선택", ImVec2(64.f, 0.f)))
+            {
+                string filePath = Helper::OpenFile({{"PNG Files", "*.png"}}, "png");
+                if (!filePath.empty())
+                {
+                    string fileName = Helper::GetFileNameWithExtension(filePath);
+                    CGameInstance::GetInstance()->Get_ResourceMgr()->Add_ResourcePath(fileName, filePath);
+
+                    m_colorTextureKey = fileName;
+
+                    auto sprite = Get_Component<CSprite2D>();
+                    sprite->Change_Texture(1, G_GlobalLevelKey, m_colorTextureKey);
+
+                    dirty = true;
+                }
+            }
+
+            ImGui::SameLine(0.f, 8.f);
+
+            string view = m_colorTextureKey.empty() ? string("(none)") : m_colorTextureKey;
+            if (!m_colorTextureKey.empty() && view.size() > 24)
+                view = view.substr(0, 21) + "...";
+
+            ImGui::TextDisabled("%s", view.c_str());
+            if (!m_colorTextureKey.empty() && ImGui::IsItemHovered())
+                ImGui::SetTooltip("%s", m_colorTextureKey.c_str());
+        });
+
+    Row(u8"Mix", [&]
+        {
+            float w =  min(120.f, ImGui::GetContentRegionAvail().x - rightPad);
+            if (w < 90.f) w = 90.f;
+            ImGui::SetNextItemWidth(w);
+
+            if (ImGui::DragFloat(u8"##Mix", &m_colorTexMix, 0.01f, 0.f, 1.f, "%.2f", ImGuiSliderFlags_AlwaysClamp))
+                dirty = true;
+        });
+
+    ImGui::Spacing();
+    if (ImGui::CollapsingHeader(u8"Recolor Mask", ImGuiTreeNodeFlags_DefaultOpen))
+    {
+        Row(u8"어두움 제외", [&]
+            {
+                if (ImGui::DragFloat(u8"##Thr", &m_recolorThreshold, 0.001f, 0.f, 1.f, "%.3f", ImGuiSliderFlags_AlwaysClamp))
+                    dirty = true;
+            });
+
+        Row(u8"경계 Softness", [&]
+            {
+                if (ImGui::DragFloat(u8"##Soft", &m_recolorSoftness, 0.001f, 0.f, 1.f, "%.3f", ImGuiSliderFlags_AlwaysClamp))
+                    dirty = true;
+            });
+
+        bool useKey = (m_recolorUseKeyColorU != 0);
+        Row(u8"키컬러 제외", [&]
+            {
+                if (ImGui::Checkbox(u8"##UseKey", &useKey))
+                {
+                    m_recolorUseKeyColorU = useKey ? 1u : 0u;
+                    dirty = true;
+                }
+            });
+
+        if (m_recolorUseKeyColorU != 0)
+        {
+            ImGui::Indent(12.f);
+
+            Row(u8"키컬러", [&]
+                {
+                    if (ImGui::ColorEdit3(u8"##Key", reinterpret_cast<_float*>(&m_recolorKeyColor)))
+                        dirty = true;
+                });
+
+            Row(u8"Tolerance", [&]
+                {
+                    if (ImGui::DragFloat(u8"##KeyTol", &m_recolorKeyTolerance, 0.001f, 0.f, 1.f, "%.3f", ImGuiSliderFlags_AlwaysClamp))
+                        dirty = true;
+                });
+
+            ImGui::Unindent(12.f);
+        }
+
+        bool invert = (m_recolorInvertMaskU != 0);
+        Row(u8"마스크 반전", [&]
+            {
+                if (ImGui::Checkbox(u8"##Inv", &invert))
+                {
+                    m_recolorInvertMaskU = invert ? 1u : 0u;
+                    dirty = true;
+                }
+            });
+    }
+
+    ImGui::EndChild();
+    ImGui::PopStyleVar(2);
+
+    if (!dirty)
+        return;
+
+    auto sprite = Get_Component<CSprite2D>();
+
+    m_colorTexModeU = (_uint)m_colorTexMode;
+    sprite->Set_Param("ColorTexMode", {&m_colorTexModeU, "uint", sizeof(_uint)});
+    sprite->Set_Param("ColorTexMix", {&m_colorTexMix, "float", sizeof(_float)});
+
+    sprite->Set_Param("RecolorThreshold", {&m_recolorThreshold, "float", sizeof(_float)});
+    sprite->Set_Param("RecolorSoftness", {&m_recolorSoftness, "float", sizeof(_float)});
+    sprite->Set_Param("RecolorUseKeyColor", {&m_recolorUseKeyColorU, "uint", sizeof(_uint)});
+    sprite->Set_Param("RecolorKeyColor", {&m_recolorKeyColor, "float3", sizeof(_float3)});
+    sprite->Set_Param("RecolorKeyTolerance", {&m_recolorKeyTolerance, "float", sizeof(_float)});
+    sprite->Set_Param("RecolorInvertMask", {&m_recolorInvertMaskU, "uint", sizeof(_uint)});
 }
+
+
 
 _bool CUIObject_Tool::Render_GUI_Image(string& strTextureKey)
 {

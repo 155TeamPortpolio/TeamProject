@@ -88,7 +88,7 @@ private:
 private:
     void          Lock_Reset();
     _bool         Lock_Active() const { return m_lock.active; }
-    _bool         Lock_On()     const { return m_lock.active || m_lockBlend.active; }
+    _bool         Lock_On()     const { return m_lock.active || m_lockBlend.active; } 
     OBJECT_HANDLE Lock_Handle() const { return m_lock.handle; }
     _float        Lock_Weight() const { return m_lockBlend.weight; }
     void          Lock_Enter(OBJECT_HANDLE h, _float curDist);
