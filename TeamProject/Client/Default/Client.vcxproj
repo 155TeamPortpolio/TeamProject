@@ -392,6 +392,7 @@
     <ClInclude Include="..\public\ThugPoacher_Idle.h" />
     <ClInclude Include="..\public\ThugPoacher_Move.h" />
     <ClInclude Include="..\public\SirChop.h" />
+    <ClInclude Include="..\Public\UI_ButtonBack.h" />
     <ClInclude Include="..\public\UI_DamageText.h" />
     <ClInclude Include="..\public\DialogueNpc.h" />
     <ClInclude Include="..\public\ElectricBoo.h" />
@@ -728,6 +729,7 @@
     <ClCompile Include="..\private\ThugPoacher_Idle.cpp" />
     <ClCompile Include="..\private\ThugPoacher_Move.cpp" />
     <ClCompile Include="..\private\SirChop.cpp" />
+    <ClCompile Include="..\Private\UI_ButtonBack.cpp" />
     <ClCompile Include="..\private\UI_DamageText.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='ReleaseDebug|x64'">Disabled</Optimization>
       <Optimization Condition="'$(Configuration)|$(Platform)'=='EngineDebug|x64'">Disabled</Optimization>

@@ -6,12 +6,7 @@ NS_BEGIN(Client)
 class CUI_Ramen final : public CUI_Object
 {
 private:
-	enum CHILD { BTN_BACK, END };
-	inline static const string INSTANCENAMES[ENUM(CHILD::END)] = { "" };
-	inline static const _int MAX_MENU_COUNT = 4;
-
-	enum class BTN { BTN_BACK, BTN_ORDER, END };
-	inline static const string BTN_NAMES[ENUM(BTN::END)] = { "btnBack", "btnOrder" };
+	inline static const _int MAX_MENU_COUNT = 7;
 
 private:
 	CUI_Ramen() {}
@@ -36,10 +31,8 @@ private:
 	CUI_Object*		m_pMenus[MAX_MENU_COUNT] = {};
 	CUI_Object*		m_pSelectedMenu = {};
 
-	class CButtonUI* m_pButtons[ENUM(BTN::END)] = {};
-
 private:
-	void Cache();
+	void Create_ButtonBack();
 	void Create_Menus();
 
 	void OnClick_Back();

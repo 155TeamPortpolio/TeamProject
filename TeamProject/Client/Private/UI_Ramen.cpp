@@ -4,6 +4,7 @@
 #include "GameInstance.h" 
 #include "ObjectContainer.h"
 #include "ButtonUI.h"
+#include "UI_ButtonBack.h"
 #include "UI_RamenMenu.h"  
 
 #include "DataBase.h"
@@ -35,11 +36,9 @@ HRESULT CUI_Ramen::Initialize(INIT_DESC* pArg)
     __super::Initialize(pArg);
 
     Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("ramen.json")));
-    Cache();
+    Create_ButtonBack();
     Create_Menus();
 
-    if (m_pButtons[ENUM(BTN::BTN_BACK)])
-        m_pButtons[ENUM(BTN::BTN_BACK)]->Set_OnClick([this]() { OnClick_Back(); });
 
     Set_Alive(false);
 
@@ -71,18 +70,19 @@ void CUI_Ramen::UI_DeActive(void* pArg)
     Set_Alive(false);
 }
 
-void CUI_Ramen::Cache()
+void CUI_Ramen::Create_ButtonBack()
 {
+    CUI_ButtonBack::BUTTON_DESC* pDesc = new CUI_ButtonBack::BUTTON_DESC;
+
     auto pContainer = Get_Component<CObjectContainer>();
+    auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_ButtonBack" })
+        .Add_UIDesc(pDesc)
+        .Build("buttonBack");
 
-    for (_int i = 0; i < ENUM(BTN::END); ++i)
-    {
-        auto pObj = pContainer->Find_Descendant(BTN_NAMES[i]);
-        if (!pObj)
-            continue;
+    if (!pObj)
+        return;
 
-        m_pButtons[i] = dynamic_cast<CButtonUI*>(pObj);
-    }
+    pContainer->Add_Child(pObj);
 }
 
 void CUI_Ramen::Create_Menus()
@@ -103,7 +103,7 @@ void CUI_Ramen::Create_Menus()
 
         auto pMenu = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_RamenMenu" })
             .Add_UIDesc(pDesc)
-            .Build("menu");
+            .Build("menu" + to_string(i));
 
         if (!pMenu)
             continue;
@@ -116,7 +116,6 @@ void CUI_Ramen::Create_Menus()
 
 void CUI_Ramen::OnClick_Back()
 {
-    FieldSystem()->RequestExitTop();
 }
 
 CGameObject* CUI_Ramen::Create()
