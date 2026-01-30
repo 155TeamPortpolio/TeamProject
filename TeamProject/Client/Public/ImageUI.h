@@ -21,6 +21,11 @@ public:
 public:
 	virtual void Load(const nlohmann::ordered_json& data) override;
 
+private:
+	string         m_colorTextureKey = "empty.png";
+	_float         m_colorTexMix     = 1.f;
+	_uint          m_colorTexModeU   = 0;
+
 public:
 	static  CGameObject* Create();
 	virtual CGameObject* Clone(INIT_DESC* pArg = {}) override;
