@@ -131,4 +131,9 @@ namespace Client {
 		string roomKey;
 		_bool persistent = { false };
 	}ROOM_DESC;
+
+	typedef struct tagCloudDesc {
+		_float3 skyColor = {};
+		_float3 cloudColor = {};
+	}CLOUD_DESC;
 }

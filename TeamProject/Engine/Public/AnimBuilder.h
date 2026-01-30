@@ -195,6 +195,12 @@ public:
         return *this;
     }
 
+    //애니매이션 보간중 이동델타를 제외할것인지
+    ChangeAnimBuild& NoRootMoveDelta(_bool bNoRootMoveDelta) {
+        m_bNoRootMoveDelta = bNoRootMoveDelta;
+        return *this;
+    }
+
 protected:
     CAnimator3D* m_pOwner = nullptr;
     _int m_iLayerIndex = -1;
