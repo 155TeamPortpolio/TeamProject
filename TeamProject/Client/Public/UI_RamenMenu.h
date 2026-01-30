@@ -63,11 +63,13 @@ private:
 	class CTextSlot*	m_pTexts[ENUM(TEXTSLOT::END)] = {};
 	class CButtonUI*	m_pButton = {};
 
-	vector<CUI_Object*> m_Attributes;
+	vector<CUI_Object*> m_AttributeIcons;
+	CUI_Object* m_pAttributeText = {};
 
 private:
 	void Cache();
 	void Create_AttributeIcons();
+	void Create_AttributeText();
 
 	void Set_ChildAlive(CHILD child, _bool isAlive);
 	void Set_ChildAlpha(CHILD child, _float fAlpha);

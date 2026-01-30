@@ -982,6 +982,9 @@
     <Filter Include="02. GameObject\UI\01. 2D\Ramen\AttributeIcon">
       <UniqueIdentifier>{07fca487-bd7e-40a2-8e75-7b49fe25f31b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\Ramen\AttributeText">
+      <UniqueIdentifier>{f0281968-7296-48e8-82fd-78db5b7603ed}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1866,6 +1869,9 @@
     <ClInclude Include="..\Public\UI_RamenAttributeIcon.h">
       <Filter>02. GameObject\UI\01. 2D\Ramen\AttributeIcon</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UI_RamenAttributeText.h">
+      <Filter>02. GameObject\UI\01. 2D\Ramen\AttributeText</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2710,6 +2716,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\UI_RamenAttributeIcon.cpp">
       <Filter>02. GameObject\UI\01. 2D\Ramen\AttributeIcon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_RamenAttributeText.cpp">
+      <Filter>02. GameObject\UI\01. 2D\Ramen\AttributeText</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

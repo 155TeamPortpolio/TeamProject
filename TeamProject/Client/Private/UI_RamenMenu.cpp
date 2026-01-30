@@ -8,6 +8,7 @@
 #include "ButtonUI.h"
 #include "UI_Ramen.h"
 #include "UI_RamenAttributeIcon.h"
+#include "UI_RamenAttributeText.h"
 
 HRESULT CUI_RamenMenu::Initialize_Prototype()
 {
@@ -29,6 +30,7 @@ HRESULT CUI_RamenMenu::Initialize(INIT_DESC* pArg)
     Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("ramen_menu.json")));
     Cache();
     Create_AttributeIcons();
+    Create_AttributeText();
 
     if (m_pButton)
         m_pButton->Set_OnClick([this]() {
@@ -66,16 +68,18 @@ void CUI_RamenMenu::UI_Active(void* pArg)
 {
     Set_Animation(0);
     Set_ChildAlpha(CHILD::ACTIVE, 1.f);
-    for (auto& pAttribute : m_Attributes)
-        pAttribute->Set_Alive(false);
+    m_pAttributeText->Set_Alive(true);
+    for (auto& pAttributeIcon: m_AttributeIcons)
+        pAttributeIcon->Set_Alive(false);
 }
 
 void CUI_RamenMenu::UI_DeActive(void* pArg)
 {
     Set_Animation(1);
     Set_ChildAlpha(CHILD::ACTIVE, 0.f);
-    for (auto& pAttribute : m_Attributes)
-        pAttribute->Set_Alive(true);
+    m_pAttributeText->Set_Alive(false);
+    for (auto& pAttributeIcon : m_AttributeIcons)
+        pAttributeIcon->Set_Alive(true);
 }
 
 void CUI_RamenMenu::Cache()
@@ -127,8 +131,25 @@ void CUI_RamenMenu::Create_AttributeIcons()
 
         pObj->Add_AnchorOffsetX( (m_tRamenDesc.attributes.size() - ++iIndex) * - 34.f);
         Get_Component<CObjectContainer>()->Add_Child(pObj);
-        m_Attributes.push_back(pObj);
+        m_AttributeIcons.push_back(pObj);
     } 
+}
+
+void CUI_RamenMenu::Create_AttributeText()
+{
+    CUI_RamenAttributeText::ATTRIBUTE_DESC* pDesc = new CUI_RamenAttributeText::ATTRIBUTE_DESC;
+    for (auto& attribute : m_tRamenDesc.attributes)
+        pDesc->attributes.push_back(attribute);
+
+     auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_RamenAttributeText" })
+         .Add_UIDesc(pDesc)
+         .Build("attributeText");
+
+     if (!pObj)
+         return;
+
+     Get_Component<CObjectContainer>()->Add_Child(pObj);
+     m_pAttributeText = pObj;
 }
 
 void CUI_RamenMenu::Set_ChildAlive(CHILD child, _bool isAlive)

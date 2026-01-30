@@ -430,7 +430,7 @@
                 1.0,
                 1.0,
                 1.0,
-                0.0
+                1.0
             ],
             "pass": "Opaque",
             "animClips": [],
@@ -528,118 +528,6 @@
                     "children": [],
                     "typeTag": "Image",
                     "textureTag": "RamenBg1.png"
-                },
-                {
-                    "alive": true,
-                    "instanceName": "NineSlice",
-                    "transform": {
-                        "anchor": 0,
-                        "anchorOffset": [
-                            -62.0,
-                            -24.0
-                        ],
-                        "size": [
-                            124.0,
-                            48.0
-                        ],
-                        "scale": [
-                            1.0,
-                            1.0
-                        ],
-                        "pivot": [
-                            0.0,
-                            0.0
-                        ],
-                        "radian": 0.0
-                    },
-                    "color": [
-                        0.10810810327529907,
-                        0.10810810327529907,
-                        0.10810810327529907,
-                        1.0
-                    ],
-                    "pass": "NineSlice",
-                    "animClips": [],
-                    "children": [],
-                    "typeTag": "NineSlice",
-                    "textureTag": "Circle22.png",
-                    "nineSlice": {
-                        "borderPx": [
-                            11.0,
-                            11.0,
-                            11.0,
-                            11.0
-                        ],
-                        "uvRangeX": [
-                            0.0,
-                            0.5,
-                            0.5,
-                            1.0
-                        ],
-                        "uvRangeY": [
-                            0.0,
-                            0.5,
-                            0.5,
-                            1.0
-                        ],
-                        "textureSize": [
-                            22.0,
-                            22.0
-                        ]
-                    }
-                },
-                {
-                    "alive": true,
-                    "instanceName": "Text",
-                    "transform": {
-                        "anchor": 0,
-                        "anchorOffset": [
-                            0.0,
-                            0.0
-                        ],
-                        "size": [
-                            0.0,
-                            0.0
-                        ],
-                        "scale": [
-                            1.0,
-                            1.0
-                        ],
-                        "pivot": [
-                            0.0,
-                            0.0
-                        ],
-                        "radian": 0.0
-                    },
-                    "color": [
-                        1.0,
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "pass": "Opaque",
-                    "animClips": [],
-                    "children": [],
-                    "typeTag": "Text",
-                    "text": {
-                        "content": "물리 피해+30%",
-                        "fontTag": "NanumSquareNeo.spritefont",
-                        "fontScale": 0.3499998450279236,
-                        "outlined": false,
-                        "outlineThickness": 1.0,
-                        "outlineColor": [
-                            0.0,
-                            0.0,
-                            0.0,
-                            1.0
-                        ],
-                        "shear": [
-                            0.0,
-                            0.0
-                        ],
-                        "autoPos": true,
-                        "anchor": 0
-                    }
                 }
             ],
             "typeTag": "CanvasPanel"
