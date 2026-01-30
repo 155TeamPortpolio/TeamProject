@@ -79,6 +79,7 @@
 #include "UI_Dialogue.h" 
 #include "UI_DialogueMessage.h"
 #include "UI_DialogueChoice.h"
+
 #include "UI_Lottery.h"
 #include "UI_ScratchCard.h"
 #include "UI_Newspaper.h"

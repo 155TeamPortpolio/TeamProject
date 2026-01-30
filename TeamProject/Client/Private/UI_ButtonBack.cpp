@@ -47,8 +47,8 @@ void CUI_ButtonBack::Update(_float dt)
         Is_ChildAnimationFinished(CHILD::OVERLAY) &&
         Is_ChildAnimationFinished(CHILD::ICON))
     {
-        if (m_onClick)
-            m_onClick();
+        if (m_OnClick)
+            m_OnClick();
         else
             FieldSystem()->RequestExitTop();
 

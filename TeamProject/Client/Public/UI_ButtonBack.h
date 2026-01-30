@@ -31,7 +31,6 @@ public:
 private:
 	_bool m_isClicked = {};
 	CUI_Object* m_pChildren[ENUM(CHILD::END)] = {};
-	function<void()> m_onClick = {}; 
 
 private:
 	void Cache_Children();
