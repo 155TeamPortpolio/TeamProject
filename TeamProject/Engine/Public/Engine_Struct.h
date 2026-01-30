@@ -489,6 +489,7 @@ namespace Engine
 		string MaskTextureTagA{};
 		string MaskTextureTagB{};
 		string DistortionTextureTag{};
+		string DistortionMaskTextureTag{};
 		string GradientTextureTag{};
 
 		_float3 vOffsetPosition{};
@@ -548,6 +549,8 @@ namespace Engine
 		_float fMaskTilling{};
 
 		/* Distortion */
+		_bool useDiffuseAlpha = true;
+		_bool useDistortionMask = false;
 		_float fEnableDistortion{};
 		_float fDistortionStrength{};
 		_float fDistortionTilling{};

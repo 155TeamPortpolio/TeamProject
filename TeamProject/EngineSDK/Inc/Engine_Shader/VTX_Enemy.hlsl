@@ -180,7 +180,7 @@ PS_OUT PS_MAIN(PS_IN In)
     Out.vAmbient = vAmbient;
     Out.vMetalic = vMetalic;
     Out.vRimLight = float4(vRimLightColor, fRimLightPower);
-    Out.vEmissive = float4(vMtrlDiffuse.rgb, 1.f);
+    Out.vEmissive = float4(vEmissiveColor, 1.f);
     Out.vPostInfo = float4(fUseVanish, 0.f, 0.f, 0.f);
     
     return Out;

@@ -131,6 +131,9 @@ float EnableMaskB;
 float MaskTilling;
 
 /*Distortion Params*/
+Texture2D DistortionMaskTexture;
+bool UseDiffuseAlpha;
+bool UseDistortionMask;
 float EnableDistortion;
 float DistortionStrength;
 float DistortionTilling;
@@ -226,21 +229,12 @@ PS_OUT PS_MAIN_DEFAULT(PS_IN In)
     
     /* Mask */
     float fMaskA = ApplySamplerMode(SamplerMode, In.vTexcoord * MaskTilling, AlphaMaskTextureA).r;
-    fMaskA = lerp(1.f, fMaskA, EnableMaskA);
-    
     float fMaskB = ApplySamplerMode(SamplerMode, In.vTexcoord * MaskTilling, AlphaMaskTextureB).r;
+    fMaskA = lerp(1.f, fMaskA, EnableMaskA);
     fMaskB = lerp(1.f, fMaskB, EnableMaskB);
-    
     float fMask = fMaskA * fMaskB;
     
-    /* Distortion */
-    float2 vDistortionTexcoord = In.vTexcoord * DistortionTilling + ElapsedTime * DistortionUVSpeed;
-    float2 vDistortion = ApplySamplerMode(SamplerMode, vDistortionTexcoord, DistortionTexture).rg;
-    vDistortion = vDistortion * 2.f - 1.f;
-    vDistortion = vDistortion * DistortionStrength * float2(1.f / ScreenWidth, 1.f / ScreenHeight) * EnableDistortion;
-    
     float4 vResult = float4(1.f, 1.f, 1.f, 1.f);
-    
     if (MainUsage == 0)  //as color mode
     {
         vResult = ApplyColorMode(ColorMode, vDiffuse, vBaseColor);
@@ -273,6 +267,21 @@ PS_OUT PS_MAIN_DEFAULT(PS_IN In)
     
     float3 vColor = vResult.rgb;
     float fAlpha = vResult.a * fDissolveAlpha * fMask;
+    float fDistortionMask = 0.f;
+    if(UseDiffuseAlpha)
+    {
+        fDistortionMask = fAlpha;
+        if(UseDistortionMask)
+            fDistortionMask *= DistortionMaskTexture.Sample(LinearSampler, In.vTexcoord).r;
+    }
+    else if(UseDistortionMask)
+        fDistortionMask = DistortionMaskTexture.Sample(LinearSampler, In.vTexcoord).r;
+    
+    /* Distortion */
+    float2 vDistortionTexcoord = In.vTexcoord * DistortionTilling + ElapsedTime * DistortionUVSpeed;
+    float2 vDistortion = ApplySamplerMode(SamplerMode, vDistortionTexcoord, DistortionTexture).rg;
+    vDistortion = vDistortion * 2.f - 1.f;
+    vDistortion = vDistortion * DistortionStrength * float2(1.f / ScreenWidth, 1.f / ScreenHeight) * EnableDistortion * vBaseColor.a * fDistortionMask;
     
     /* Gradient */
     float3 vGradientColor = ApplyGradientMode(GradientMode, fAlpha, In.vTexcoord, GradientTexture);
@@ -291,7 +300,7 @@ PS_OUT PS_MAIN_DEFAULT(PS_IN In)
     Out.vBloomAcc.a = fAlpha;
     Out.vBloomInfo = float4(0.f, 1.5f, 0.f, 0.f);
     Out.vRevealage = float4(fAlpha, fAlpha, fAlpha, fAlpha);
-    Out.vDistortionAcc = float4(vDistortion * fAlpha, 0.f, fAlpha);
+    Out.vDistortionAcc = float4(vDistortion * fWeight, 0.f, fWeight);
     Out.vRimLightAcc = float4(0.f, 0.f, 0.f, 0.f);
     
     return Out;

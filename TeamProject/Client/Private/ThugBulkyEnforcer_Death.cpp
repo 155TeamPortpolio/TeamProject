@@ -37,7 +37,7 @@ void CThugBulkyEnforcer_Death::Update(CThugBulkyEnforcer* pOwner, _float dt)
 	if (IsCrossAnimProgress(0.4f))
 	{
 		_vector3 vWorldPosition = pOwner->Get_Component<CTransform>()->Get_WorldPos();
-		vWorldPosition.y += 0.5f;
+		vWorldPosition.y += 1.5f;
 
 		auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
 			.Asset("enemy_dead.json")

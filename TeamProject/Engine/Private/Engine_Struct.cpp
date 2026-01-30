@@ -170,6 +170,7 @@ MESH_NODE Engine::tagMeshNode::FromJson(nlohmann::ordered_json& json)
 	node.MaskTextureTagA = json.value("mask_texture_tag", "");
 	node.MaskTextureTagB = json.value("mask_texture_tagB", "");
 	node.DistortionTextureTag = json.value("distortion_texture_tag", "");
+	node.DistortionMaskTextureTag = json.value("distortion_mask_texture_tag", "");
 	node.GradientTextureTag = json.value("gradient_texture_tag", "");
 
 	auto offsetPostion = json.value("offset_position", json::array({ 0.f,0.f,0.f }));
@@ -249,6 +250,8 @@ MESH_NODE Engine::tagMeshNode::FromJson(nlohmann::ordered_json& json)
 	node.fMaskTilling = json.value("mask_tilling", 0.f);
 
 	/* Distortion */
+	node.useDiffuseAlpha = json.value("use_diffuse_alpha", true);
+	node.useDistortionMask = json.value("use_distortion_mask", false);
 	node.fEnableDistortion = json.value("enable_distortion", 0.f);
 	node.fDistortionStrength = json.value("distortion_strength", 0.f);
 	node.fDistortionTilling = json.value("distortion_tilling", 0.f);
