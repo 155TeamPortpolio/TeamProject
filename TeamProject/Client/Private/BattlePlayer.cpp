@@ -43,6 +43,7 @@ void CBattlePlayer::SetBattleCharacters(vector<CHARACTER> battleCharacters)
 	{
 		auto newCharacter = dynamic_cast<CCharacter*>(CreateBattleCharacter(character));
 		newCharacter->Set_MainCharacter(false);
+		newCharacter->DeActive_Character();
 		m_BattleCharacters.push_back(newCharacter);
 		m_CharacterHandles.push_back(newCharacter->Get_Handle());
 	}
@@ -51,6 +52,7 @@ void CBattlePlayer::SetBattleCharacters(vector<CHARACTER> battleCharacters)
 	m_pCurrentCharacter = m_BattleCharacters[m_iCurrentIndex];
 	m_pCurrentCharacter->SetRenderLayer(RENDER_LAYER::Default);
 	m_pCurrentCharacter->Set_MainCharacter(true);
+	m_pCurrentCharacter->Active_Character();
 
 	CBattleSystem::GetInstance()->SetPlayer(m_CharacterHandles);
 }
@@ -194,16 +196,12 @@ void CBattlePlayer::Request_ComboAttack()
 
 	m_bComboSelect = true;
 	// 타임스케일 2초간 느리게 하기 몬스터, 캐릭터
-	BattleSystem()->StartTimeScale(CBattleSystem::BATTLE_OBJ_TYPE::MONSTER, COMBO_SELECT_DURATION, 0.1f);
-	BattleSystem()->StartTimeScale(CBattleSystem::BATTLE_OBJ_TYPE::PLAYER, COMBO_SELECT_DURATION, 0.1f);
+	BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::SWITCH);
 	// UI 방송
 }
 
 void CBattlePlayer::Execute_ComboAttack(_bool bNext)
 {
-	m_fComboSelectTimer = 0.f;
-	m_bComboSelect = false;
-
 	NotifyCharacterSwitchOut();
 	if (bNext)
 		SwitchToNext();
@@ -214,11 +212,15 @@ void CBattlePlayer::Execute_ComboAttack(_bool bNext)
 	m_pCurrentCharacter->Active_Character();
 	m_pCurrentCharacter->Get_Component<CCharacterController>()->Set_Position(m_vSwitchPosition);
 	m_pCurrentCharacter->Get_Component<CTransform>()->Set_Look(m_vSwitchLook);
+	m_pCurrentCharacter->Set_TargetHandle(m_TargetHandle);
 	m_pCurrentCharacter->On_SwitchIn(CCharacter::SWITCH::ATTACK);
 
 	Sync_ActionUI();
 
 	m_fSwitchCooldown = SWITCH_COOLDOWN;
+
+	m_fComboSelectTimer = 0.f;
+	m_bComboSelect = false;
 }
 
 void CBattlePlayer::Cancel_ComboAttack()
@@ -595,7 +597,7 @@ void CBattlePlayer::NotifyCharacterSwitchOut()
 	m_vSwitchLook = m_pCurrentCharacter->Get_Component<CTransform>()->Dir(STATE::LOOK);
 	m_vSwitchPosition = m_pCurrentCharacter->Get_Component<CCharacterController>()->Get_FootPosition()
 		+ XMVectorScale(vRight, 0.5f)
-		- XMVectorScale(m_vSwitchLook, 6.f)
+		- XMVectorScale(m_vSwitchLook, 1.f)
 		+ XMVectorSet(0.f, 1.f, 0.f, 0.f);
 
 	if (m_pCurrentCharacter->Can_Parry())
@@ -604,6 +606,12 @@ void CBattlePlayer::NotifyCharacterSwitchOut()
 		m_ParryHandle = m_pCurrentCharacter->Calculate_Parry();
 		m_vSwitchPosition = _vector4{ m_pCurrentCharacter->Get_ParryPos() };
 		m_vSwitchLook = _vector4{ m_pCurrentCharacter->Get_ParryLook() };
+	}
+	else if (m_bComboSelect)
+	{
+		m_vSwitchPosition = m_pCurrentCharacter->Get_Component<CCharacterController>()->Get_FootPosition()
+			+ XMVectorScale(vRight, 0.5f)
+			+ XMVectorSet(0.f, 1.f, 0.f, 0.f);
 	}
 
 	m_pCurrentCharacter->Set_MainCharacter(false);
