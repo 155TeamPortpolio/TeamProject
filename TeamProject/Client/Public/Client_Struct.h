@@ -131,4 +131,16 @@ namespace Client {
 		string roomKey;
 		_bool persistent = { false };
 	}ROOM_DESC;
+
+	typedef struct tagRamenAttributeDesc {
+		string	strAttributeID;
+		wstring strAttributeName;
+		_int	iAttributeValue;
+	}RAMEN_ATTRIBUTE;
+
+	typedef struct tagRamenDesc	{
+		wstring strName;
+		_int	iPrice;
+		vector<RAMEN_ATTRIBUTE> attributes;
+	}RAMEN_DESC;
 }
