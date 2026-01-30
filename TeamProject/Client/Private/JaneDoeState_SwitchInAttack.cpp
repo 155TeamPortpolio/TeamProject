@@ -102,7 +102,9 @@ void CJaneDoeState_SwitchInAttack_Start::Enter(CJaneDoe* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "SwitchIn_Attack")
         .Loop(false)
-        .Speed(1.2f)
+        .Speed(1.f)
+        .ReserveSpeed(0.6f, 0.8f, 0.5f, EaseType::OutBack)
+        .ReserveSpeed(0.8f, 1.f, 1.f, EaseType::OutQuint)
         .Apply();
 }
 
