@@ -66,12 +66,16 @@ void CUI_RamenMenu::UI_Active(void* pArg)
 {
     Set_Animation(0);
     Set_ChildAlpha(CHILD::ACTIVE, 1.f);
+    for (auto& pAttribute : m_Attributes)
+        pAttribute->Set_Alive(false);
 }
 
 void CUI_RamenMenu::UI_DeActive(void* pArg)
 {
     Set_Animation(1);
     Set_ChildAlpha(CHILD::ACTIVE, 0.f);
+    for (auto& pAttribute : m_Attributes)
+        pAttribute->Set_Alive(true);
 }
 
 void CUI_RamenMenu::Cache()
@@ -123,6 +127,7 @@ void CUI_RamenMenu::Create_Attributes()
 
         pObj->Add_AnchorOffsetX( (m_tRamenDesc.attributes.size() - ++iIndex) * - 36.f);
         Get_Component<CObjectContainer>()->Add_Child(pObj);
+        m_Attributes.push_back(pObj);
     } 
 }
 

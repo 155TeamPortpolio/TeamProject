@@ -63,6 +63,8 @@ private:
 	class CTextSlot*	m_pTexts[ENUM(TEXTSLOT::END)] = {};
 	class CButtonUI*	m_pButton = {};
 
+	vector<CUI_Object*> m_Attributes;
+
 private:
 	void Cache();
 	void Create_Attributes();
