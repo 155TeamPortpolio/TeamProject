@@ -66,11 +66,22 @@ HRESULT CMapPlacedObject::Initialize(INIT_DESC* pArg)
 #pragma endregion
 	__super::Initialize(pArg);
 
-	auto iter = pObjDesc->SlotDataValues.find("Effect");
-	if (iter != pObjDesc->SlotDataValues.end()) {
+	auto ColGroup_iter = pObjDesc->SlotDataValues.find("ColliderGroup");
+	if (ColGroup_iter != pObjDesc->SlotDataValues.end()) {
+		for (auto& tFieldData : ColGroup_iter->second) {
+			if (tFieldData.TagName == "Ground") {
+				_bool isGround = *GetSlotValue<_bool>(tFieldData.defaultvalue);
+				if (isGround)
+					Get_Component<CCollider>()->Set_CollisionGroup(COLLISION_GROUP::GROUND);
+			}
+		}
+	}
+	
+	auto Eff_iter = pObjDesc->SlotDataValues.find("Effect");
+	if (Eff_iter != pObjDesc->SlotDataValues.end()) {
 		string TagAsset = {};
 		_float3 vPosition = {};
-		for (auto& tFieldData : iter->second) {
+		for (auto& tFieldData : Eff_iter->second) {
 			if (tFieldData.TagName == "AssetKey") {
 				auto TagValueAssetKey = GetSlotValue<string>(tFieldData.defaultvalue);
 				TagAsset = *TagValueAssetKey;

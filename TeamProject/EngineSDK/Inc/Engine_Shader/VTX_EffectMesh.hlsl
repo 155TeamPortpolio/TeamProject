@@ -55,6 +55,45 @@ float4 ApplySamplerMode(uint samplerMode,float2 texCoord ,Texture2D sampleTextur
     
 }
 
+float3 ApplyGradientMode(uint gradientMode, float grayMask, float2 texcoord, Texture2D gradientTexture)
+{
+    float3 vResult;
+    float2 vTexcoord;
+    
+    if(0 == gradientMode) /* Gray Scale */
+    {
+        grayMask = saturate(grayMask);
+        vTexcoord = float2(grayMask, 0.5f);
+        
+        vResult = gradientTexture.Sample(LinearClampSampler, vTexcoord).rgb;
+    }
+    else if(1 == gradientMode) /* UV x*/
+    {
+        vTexcoord = float2(texcoord.x, 0.5f);
+        
+        vResult = gradientTexture.Sample(LinearClampSampler, vTexcoord).rgb;
+    }
+    else if(2 == gradientMode) /* UV y*/
+    {
+        vTexcoord = float2(texcoord.y, 0.5f);
+        
+        vResult = gradientTexture.Sample(LinearClampSampler, vTexcoord).rgb;
+    }
+    else /* Life Time */
+    {
+        float t = saturate(Progress);
+        vTexcoord = float2(t, 0.5f);
+        
+        vResult = gradientTexture.Sample(LinearClampSampler, vTexcoord).rgb;
+    }
+    
+    return vResult;
+}
+
+/*Gradient Params*/
+float EnableGradient;
+uint GradientMode; //0 : GrayScale, 1 : UV, 2 : LIFE_TIME
+
 /*Color*/
 float4 vBaseColor;
 
@@ -96,6 +135,8 @@ float EnableDistortion;
 float DistortionStrength;
 float DistortionTilling;
 float DistortionUVSpeed;
+
+
 
 struct VS_IN
 {
@@ -194,6 +235,7 @@ PS_OUT PS_MAIN_DEFAULT(PS_IN In)
     /* Distortion */
     float2 vDistortionTexcoord = In.vTexcoord * DistortionTilling + ElapsedTime * DistortionUVSpeed;
     float2 vDistortion = ApplySamplerMode(SamplerMode, vDistortionTexcoord, DistortionTexture).rg;
+    vDistortion = vDistortion * 2.f - 1.f;
     vDistortion = vDistortion * DistortionStrength * float2(1.f / ScreenWidth, 1.f / ScreenHeight) * EnableDistortion;
     
     float4 vResult = float4(1.f, 1.f, 1.f, 1.f);
@@ -230,6 +272,12 @@ PS_OUT PS_MAIN_DEFAULT(PS_IN In)
     
     float3 vColor = vResult.rgb;
     float fAlpha = vResult.a * fDissolveAlpha * fMask;
+    
+    /* Gradient */
+    float3 vGradientColor = ApplyGradientMode(GradientMode, fAlpha, In.vTexcoord, GradientTexture);
+    vGradientColor = ApplyColorMode(ColorMode, float4(vColor, 1.f), float4(vGradientColor, 1.f)).rgb;
+    vColor = lerp(vColor, vGradientColor, EnableGradient);
+ 
     
     /* 깊이 기반 가중치 생성 */
     float fLinearZ = In.vViewPosition.z;

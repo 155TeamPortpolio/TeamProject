@@ -50,9 +50,18 @@ private:
     vector<_int> m_SelectIndices;
     EFFECT_EDIT_CONTEXT m_Context{};
 
+    /* For Edit */
+    _bool m_OpenAttachBonePopup = false;
+    _char m_BoneNameBuf[128] = ""; // 입력 버퍼
+    string m_PendingBoneName; // 확정된 본 이름 (OK 눌렀을 때)
+
+    _float3 m_vBoneOffsetPosition{};
+    _float3 m_vBoneOffsetRotation{};
+
     void Import();
     void Export();
     void Play();
+    void AttachToModel();
     void ReloadDirectory();
     void AddNode();
     void RemoveLastNode();

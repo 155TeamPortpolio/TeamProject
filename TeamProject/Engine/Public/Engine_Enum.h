@@ -6,6 +6,12 @@ namespace Engine
 	enum class KEY_STATE { NONE_KEY, TAP, HOLD, AWAY };
 	enum class MOUSE_BTN { LB, RB, MB };
 	enum class WINMODE { FULL, WIN, END };
+	enum class PersistScope{
+		Session = 0,   // 실행 중만
+		Profile,       // 옵션/계정 공용
+		SaveSlot,      // 진행/월드
+		END
+	};
 
 	enum class LEVEL_STATE { INITIAL, REQUEST, LOADING, LOADED, STABLE };
 
@@ -25,6 +31,7 @@ namespace Engine
 		MONSTER_PARRY = 1<<5,
 		CAMERA = 1<<6,
 		INTERACTABLE = 1<<7,
+		GROUND = 1<<8,
 		END = 1<<31 
 	};
 	enum class SOUND_GROUP { BGM, SFX, UI, TALK, ENV,END };

@@ -16,7 +16,9 @@
 #include "BangBooDeliver.h"
 #include "Howl.h"
 #include "Jaeger.h"
+#include "SirChop.h"
 #include "ElectricBoo.h"
+#include "SilverAnbi.h"
 
 /* Maptool Type 1 (ETC) */
 #include "Portal.h"
@@ -32,7 +34,9 @@ static unordered_map<string, Spawner::OBJ_SPEC> s_NPCTable =
 	{ "BangBooAsk",		Spawner::OBJ_SPEC{ "Proto_GameObject_BangBooAsk", &CBangBooAsk::Create } },
 	{ "Howl",           Spawner::OBJ_SPEC{ "Proto_GameObject_Howl", &CHowl::Create } },
 	{ "Jaeger",         Spawner::OBJ_SPEC{ "Proto_GameObject_Jaeger", &CJaeger::Create } },
-	{ "ExploreBoo",     Spawner::OBJ_SPEC{ "Proto_GameObject_ExploreBoo", &CElectricBoo::Create } }
+	{ "ExploreBoo",     Spawner::OBJ_SPEC{ "Proto_GameObject_ExploreBoo", &CElectricBoo::Create } },
+	{ "Sirchop",     Spawner::OBJ_SPEC{ "Proto_GameObject_Sirchop", &CSirChop::Create } },
+	{ "SilverAnbi",     Spawner::OBJ_SPEC{ "Proto_GameObject_SilverAnbi", &CSilverAnbi::Create } }
 };
 
 /* Maptool Type 1 */
@@ -88,8 +92,8 @@ OBJECT_HANDLE Client::Spawner::Create_NPC(const SPAWNER_DESC& Desc)
 	CCT.eGroup = COLLISION_GROUP::INTERACTABLE;
 	CCT.iCollisionMask = 0xFFFFFFFF;
 	CCT.bAutoFit = false;
-	CCT.fRadius = (Desc.vScale.x +Desc.vScale.z) * 0.25f;
-	CCT.fHeight = (Desc.vScale.y * 0.5f) - CCT.fRadius;
+	CCT.fRadius = (Desc.vColSize.x +Desc.vColSize.z) * 0.25f;
+	CCT.fHeight = (Desc.vColSize.y * 0.5f) - CCT.fRadius;
 	
 	CCT.vPos = _float3(Desc.vTranslation.x, Desc.vTranslation.y, Desc.vTranslation.z);
 	
@@ -98,6 +102,7 @@ OBJECT_HANDLE Client::Spawner::Create_NPC(const SPAWNER_DESC& Desc)
 	CGameObject* Object = Builder::Create_Object({ Desc.tagLevel, NPCTable->second.ProtoTag })
 		.CharacterController(CCT)
 		.Rotate(Desc.vRotation)
+		.Scale(Desc.vScale)
 		.Build(Desc.tagName);
 
 	Object->Get_Component<CCharacterController>()->Set_FootPosition(Desc.vTranslation);
@@ -133,7 +138,7 @@ OBJECT_HANDLE Client::Spawner::Create_Interactable(const SPAWNER_DESC& Desc)
 	tColDesc.bAutoFit = false;
 	tColDesc.bTrigger = true; // �浹 �ڽ� �����ϴ� Ʈ����
 	tColDesc.vCenter = { 0,0,0 };
-	tColDesc.vSize = Desc.vScale;
+	tColDesc.vSize = Desc.vRotation;
 	tColDesc.vRotation = Desc.vRotation;
 
 #pragma region Exception

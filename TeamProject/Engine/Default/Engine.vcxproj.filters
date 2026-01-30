@@ -612,6 +612,9 @@
     <ClInclude Include="..\Public\UI_Pool.h">
       <Filter>01. Utility\03. GameObject\Managers\UI_Manager\UI_Pool</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\RunTimeBucket.h">
+      <Filter>01. Utility\00. GameInstance\RunTimeBucket</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <!-- Filter Definitions -->
@@ -1140,6 +1143,9 @@
     <Filter Include="01. Utility\03. GameObject\Managers\UI_Manager\UI_Pool">
       <UniqueIdentifier>{376228d1-7bc6-4481-bc26-53c3b0c92565}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\00. GameInstance\RunTimeBucket">
+      <UniqueIdentifier>{cfdd51a7-8fb7-4228-b654-14c8411a2abd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <!-- ClCompile 항목들 - 중복 제거 버전 -->
@@ -1610,6 +1616,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\UI_Pool.cpp">
       <Filter>01. Utility\03. GameObject\Managers\UI_Manager\UI_Pool</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\RunTimeBucket.cpp">
+      <Filter>01. Utility\00. GameInstance\RunTimeBucket</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

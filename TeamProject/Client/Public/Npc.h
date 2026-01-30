@@ -13,6 +13,7 @@ protected:
 
 public:
     virtual void    Execute() {};
+    virtual void    Reset() {};
 
 public:
     const string&  Get_AnimName() const { return m_strAnimName; }

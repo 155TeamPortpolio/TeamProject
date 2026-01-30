@@ -6,30 +6,36 @@
 #include "JaneDoe.h"
 #include "Enemy.h"
 
+CJaneDoeState_SwitchInParryAid* CJaneDoeState_SwitchInParryAid::Create()
+{
+    auto pInstance = new CJaneDoeState_SwitchInParryAid();
+    pInstance->m_pSubStateMachine = CStateMachine<CJaneDoe>::Create();
+    auto pSubStateMachine = pInstance->Get_SubStateMachine();
+
+    pSubStateMachine->Register_State("ParryAid_Start", CJaneDoeState_SwitchInParryAid_Start::Create());
+    pSubStateMachine->Register_State("L_Loop", CJaneDoeState_SwitchInParryAid_L_Loop::Create());
+    pSubStateMachine->Register_State("L_End", CJaneDoeState_SwitchInParryAid_L_End::Create());
+    pSubStateMachine->Register_State("H_Loop", CJaneDoeState_SwitchInParryAid_H_Loop::Create());
+    pSubStateMachine->Register_State("H_End", CJaneDoeState_SwitchInParryAid_H_End::Create());
+
+    pSubStateMachine->Get_State("L_End")->Set_Tag("End");
+    pSubStateMachine->Get_State("H_End")->Set_Tag("End");
+
+    pSubStateMachine->Register_Transition("ParryAid_Start", "L_Loop",
+        CStateMachine<CJaneDoe>::CONDITION_ANIMATION_GREATER, "", 0.4f);
+    pSubStateMachine->Register_Transition("L_Loop", "L_End",
+        CStateMachine<CJaneDoe>::CONDITION_ANIMATION_END);
+
+    pSubStateMachine->Set_DefaultState("ParryAid_Start");
+
+    pSubStateMachine->Set_Bool("ReserveAssaultAid", false);
+    return pInstance;
+}
+
 void CJaneDoeState_SwitchInParryAid::Enter(CJaneDoe* pOwner)
 {
     pOwner->Lock_Move();
     pOwner->Lock_Rotate();
-    if (!m_pSubStateMachine)
-    {
-        m_pSubStateMachine = CStateMachine<CJaneDoe>::Create();
-        m_pSubStateMachine->Register_State("Start", CJaneDoeState_SwitchInParryAid_Start::Create());
-        m_pSubStateMachine->Register_State("L_Loop", CJaneDoeState_SwitchInParryAid_L_Loop::Create());
-        m_pSubStateMachine->Register_State("L_End", CJaneDoeState_SwitchInParryAid_L_End::Create());
-        m_pSubStateMachine->Register_State("H_Loop", CJaneDoeState_SwitchInParryAid_H_Loop::Create());
-        m_pSubStateMachine->Register_State("H_End", CJaneDoeState_SwitchInParryAid_H_End::Create());
-
-        m_pSubStateMachine->Get_State("L_End")->Set_Tag("End");
-        m_pSubStateMachine->Get_State("H_End")->Set_Tag("End");
-
-        m_pSubStateMachine->Register_Transition("Start", "L_Loop",
-            CStateMachine<CJaneDoe>::CONDITION_ANIMATION_GREATER, "", 0.2f);
-        m_pSubStateMachine->Register_Transition("L_Loop", "L_End",
-            CStateMachine<CJaneDoe>::CONDITION_ANIMATION_END);
-
-        m_pSubStateMachine->Set_DefaultState("Start");
-    }
-
     __super::Enter(pOwner);
 }
 
@@ -105,6 +111,12 @@ void CJaneDoeState_SwitchInParryAid_L_End::Enter(CJaneDoe* pOwner)
 
 void CJaneDoeState_SwitchInParryAid_L_End::Update(CJaneDoe* pOwner, _float dt)
 {
+    if (m_pOwnerStateMachine->Get_Bool("ReserveAssaultAid"))
+    {
+        pOwner->Get_StateMachine()->Set_Trigger("Attack");
+        pOwner->Get_StateMachine()->Set_Int("AttackEntryMode", 6);
+    }
+
     pOwner->Process_RootMotion(dt);
 
     IHState<CJaneDoe>* pSwitch = Get_ParentState();

@@ -68,7 +68,7 @@ void CBelleState_Run_Loop::Enter(CBelle* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_AnimName() + "Ani_MainCity_Run_Loop")
         .Loop(true)
-        .EndAt(0.96)
+        .EndAt(0.953)
         .Apply();
 }
 

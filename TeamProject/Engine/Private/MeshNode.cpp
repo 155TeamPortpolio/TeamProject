@@ -53,6 +53,7 @@ HRESULT CMeshNode::Initialize(INIT_DESC* pArg)
 		m_MaskTextureTagA = pMeshNode->MaskTextureTagA;
 		m_MaskTextureTagB = pMeshNode->MaskTextureTagB;
 		m_DistortionTextureTag = pMeshNode->DistortionTextureTag;
+		m_GradientTextureTag = pMeshNode->GradientTextureTag;
 
 		/* Offset Transform */
 		_vector3 vPosition = pMeshNode->vOffsetPosition;
@@ -118,73 +119,18 @@ HRESULT CMeshNode::Initialize(INIT_DESC* pArg)
 		m_DistortionModule.fDistortionStrength = pMeshNode->fDistortionStrength;
 		m_DistortionModule.fDistortionTilling = pMeshNode->fDistortionTilling;
 		m_DistortionModule.vDistortionUVSpeed = pMeshNode->vDistortionUVSpeed;
+
+		/* Gradient */
+		m_GradientModule.fEnableGradient = pMeshNode->fEnableGradient;
+		m_GradientModule.eGradientMode = static_cast<GRADIENT_MODULE::GRADIENT_MODE>(pMeshNode->iGradientMode);
+
 	}
-
-	auto pMaterialInstance = pMaterial->Get_MaterialInstance(0);
-	auto pMaterialData = pMaterialInstance->Get_MaterialData();
-
-	if (!m_DiffuseTextureTag.empty())
-	{
-		auto pDiffuseTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_DiffuseTextureTag);
-
-		if (pDiffuseTexture)
-			pMaterialInstance->Set_Param("DiffuseTexture", { pDiffuseTexture->Get_SRV(),"Texture2D",0 });
-		else
-			MSG_BOX("Not exist Diffuse Texture : %s", m_DiffuseTextureTag.c_str());
-	}
-
-	if (!m_NoiseTextureTag.empty())
-	{
-		auto pNoiseTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_NoiseTextureTag);
-		if(pNoiseTexture)
-			pMaterialInstance->Set_Param("NoiseTexture", { pNoiseTexture->Get_SRV(),"Texture2D",0 });
-		else
-			MSG_BOX("Not exist Noise Texture : %s", m_NoiseTextureTag.c_str());
-	}
-
-	if (!m_DissolveTextureTag.empty())
-	{
-		auto pDissolveTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_DissolveTextureTag);
-
-		if (pDissolveTexture)
-			pMaterialInstance->Set_Param("DissolveTexture", { pDissolveTexture->Get_SRV(),"Texture2D",0 });
-		else
-			MSG_BOX("Not exist Dissolve Texture : %s", m_DissolveTextureTag.c_str());
-	}
-
-	if (!m_MaskTextureTagA.empty())
-	{
-		auto pMaskTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_MaskTextureTagA);
-
-		if (pMaskTexture)
-			pMaterialInstance->Set_Param("AlphaMaskTextureA", { pMaskTexture->Get_SRV(),"Texture2D",0 });
-		else
-			MSG_BOX("Not exist Mask Texture : %s", m_MaskTextureTag.c_str());
-	}
-
-	if (!m_MaskTextureTagB.empty())
-	{
-		auto pMaskTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_MaskTextureTagB);
-
-		if (pMaskTexture)
-			pMaterialInstance->Set_Param("AlphaMaskTextureB", { pMaskTexture->Get_SRV(),"Texture2D",0 });
-		else
-			MSG_BOX("Not exist Mask Texture : %s", m_MaskTextureTag.c_str());
-	}
-
-	if (!m_DistortionTextureTag.empty())
-	{
-		auto pDistortionTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_DistortionTextureTag);
-
-		if (pDistortionTexture)
-			pMaterialInstance->Set_Param("DistortionTexture", { pDistortionTexture->Get_SRV(), "Texture2D",0 });
-		else
-			MSG_BOX("Not exist Distortion Texture : %s", m_DistortionTextureTag.c_str());
-	}
-
+	Bind_Textures();
+	
 	_float2 screenSize = CGameInstance::GetInstance()->Get_ClientSize();
 	m_fScreenWidth = screenSize.x;
 	m_fScreenHeight = screenSize.y;
+
 	return S_OK;
 }
 
@@ -260,6 +206,82 @@ CGameObject* CMeshNode::Clone(INIT_DESC* pArg)
 void CMeshNode::Free()
 {
 	__super::Free();
+}
+
+void CMeshNode::Bind_Textures()
+{
+	auto pMaterial = Get_Component<CMaterial>();
+	auto pMaterialInstance = pMaterial->Get_MaterialInstance(0);
+	auto pMaterialData = pMaterialInstance->Get_MaterialData();
+
+	if (!m_DiffuseTextureTag.empty())
+	{
+		auto pDiffuseTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_DiffuseTextureTag);
+
+		if (pDiffuseTexture)
+			pMaterialInstance->Set_Param("DiffuseTexture", { pDiffuseTexture->Get_SRV(),"Texture2D",0 });
+		else
+			MSG_BOX("Not exist Diffuse Texture : %s", m_DiffuseTextureTag.c_str());
+	}
+
+	if (!m_NoiseTextureTag.empty())
+	{
+		auto pNoiseTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_NoiseTextureTag);
+		if (pNoiseTexture)
+			pMaterialInstance->Set_Param("NoiseTexture", { pNoiseTexture->Get_SRV(),"Texture2D",0 });
+		else
+			MSG_BOX("Not exist Noise Texture : %s", m_NoiseTextureTag.c_str());
+	}
+
+	if (!m_DissolveTextureTag.empty())
+	{
+		auto pDissolveTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_DissolveTextureTag);
+
+		if (pDissolveTexture)
+			pMaterialInstance->Set_Param("DissolveTexture", { pDissolveTexture->Get_SRV(),"Texture2D",0 });
+		else
+			MSG_BOX("Not exist Dissolve Texture : %s", m_DissolveTextureTag.c_str());
+	}
+
+	if (!m_MaskTextureTagA.empty())
+	{
+		auto pMaskTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_MaskTextureTagA);
+
+		if (pMaskTexture)
+			pMaterialInstance->Set_Param("AlphaMaskTextureA", { pMaskTexture->Get_SRV(),"Texture2D",0 });
+		else
+			MSG_BOX("Not exist Mask Texture : %s", m_MaskTextureTag.c_str());
+	}
+
+	if (!m_MaskTextureTagB.empty())
+	{
+		auto pMaskTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_MaskTextureTagB);
+
+		if (pMaskTexture)
+			pMaterialInstance->Set_Param("AlphaMaskTextureB", { pMaskTexture->Get_SRV(),"Texture2D",0 });
+		else
+			MSG_BOX("Not exist Mask Texture : %s", m_MaskTextureTag.c_str());
+	}
+
+	if (!m_DistortionTextureTag.empty())
+	{
+		auto pDistortionTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_DistortionTextureTag);
+
+		if (pDistortionTexture)
+			pMaterialInstance->Set_Param("DistortionTexture", { pDistortionTexture->Get_SRV(), "Texture2D",0 });
+		else
+			MSG_BOX("Not exist Distortion Texture : %s", m_DistortionTextureTag.c_str());
+	}
+
+	if (!m_GradientTextureTag.empty())
+	{
+		auto pGradientTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_GradientTextureTag);
+		
+		if (pGradientTexture)
+			pMaterialInstance->Set_Param("GradientTexture", { pGradientTexture->Get_SRV(),"Texture2D",0 });
+		else
+			MSG_BOX("Not exist Gradient Texture %s", m_GradientTextureTag.c_str());
+	}
 }
 
 void CMeshNode::Reset()
@@ -339,6 +361,10 @@ void CMeshNode::Update_DistortionModule(_float dt)
 {
 }
 
+void CMeshNode::Update_GradientModule(_float dt)
+{
+}
+
 void CMeshNode::Bind_Params()
 {
 	auto pMaterialInstance = Get_Component<CMaterial>()->Get_MaterialInstance(0);
@@ -392,4 +418,8 @@ void CMeshNode::Bind_Params()
 	pMaterialInstance->Set_Param("DistortionStrength", { &m_DistortionModule.fDistortionStrength,"float",sizeof(_float) });
 	pMaterialInstance->Set_Param("DistortionTilling", { &m_DistortionModule.fDistortionTilling,"float",sizeof(_float) });
 	pMaterialInstance->Set_Param("DistortionUVSpeed", { &m_DistortionModule.vDistortionUVSpeed,"float2",sizeof(_float2) });
+
+	/* Gradient */
+	pMaterialInstance->Set_Param("EnableGradient", { &m_GradientModule.fEnableGradient,"float",sizeof(_float) });
+	pMaterialInstance->Set_Param("GradientMode", { &m_GradientModule.eGradientMode,"uint",sizeof(_uint) });
 }

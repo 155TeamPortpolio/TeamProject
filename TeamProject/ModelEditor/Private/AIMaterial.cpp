@@ -42,7 +42,11 @@ void CAIMaterial::Save_MaterialData(ID3D11DeviceContext* pContext, ofstream& ofs
 	MATERIAL_INFO_HEADER infoHead = {};
 
 	strcpy_s(infoHead.materialDataKey, sizeof(infoHead.materialDataKey), m_MaterialKey.c_str());
-	strcpy_s(infoHead.passConstant, sizeof(infoHead.passConstant), m_passConstant.c_str());
+	if (passKey.empty())
+		strcpy_s(infoHead.passConstant, sizeof(infoHead.passConstant), m_passConstant.c_str());
+	else {
+		strcpy_s(infoHead.passConstant, sizeof(infoHead.passConstant), passKey.c_str());
+	}
 	if (overrideKey.empty() && m_pShader)
 		strcpy_s(infoHead.ShaderKey, sizeof(infoHead.ShaderKey), m_pShader->Get_Key().c_str());
 	else {

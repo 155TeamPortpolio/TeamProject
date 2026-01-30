@@ -96,6 +96,11 @@ void CGameInstance::Set_EngineTimeScale(_float fScale)
 	m_pTimeManager->Set_TimeScale(G_EngineTimerID, fScale);
 }
 
+_float CGameInstance::Get_EngineTimeScale()
+{
+	return m_pTimeManager->Get_TimeScale(G_EngineTimerID);
+}
+
 void CGameInstance::Clear_LevelResource(const string& levelKey)
 {
 	if (levelKey.empty()) return;

@@ -343,10 +343,30 @@ void CSacrificeHandState_OverDrive_Release_Start_Phase2::Update(CSacrificeHand* 
 		if (!blackBoard.stateQueue.empty())
 			blackBoard.isRequestNext = true;
 	}
+
+	Update_Effects(pOwner);
 }
 
 void CSacrificeHandState_OverDrive_Release_Start_Phase2::Exit(CSacrificeHand* pOwner)
 {
+}
+
+void CSacrificeHandState_OverDrive_Release_Start_Phase2::Update_Effects(CSacrificeHand* pOwner)
+{
+	if (IsCrossAnimProgress(0.18f))
+	{
+		_vector3 vWorldPosition = pOwner->Get_Component<CTransform>()->Get_WorldPos();
+		_vector3 vLook = pOwner->Get_Component<CTransform>()->Dir(STATE::LOOK);
+		vWorldPosition.y += 0.1f;
+
+		auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_hand_overdrive_charge.json")
+			.Position(vWorldPosition)
+			.Build("Sacrifice_Hand_Overdrive_Charge");
+
+		effect->Get_Component<CTransform>()->Set_Look(vLook);
+		ObjectManager()->Add_Object(effect, { "Zero_Level","Enemy_Effect_Layer" });
+	}
 }
 
 void CSacrificeHandState_OverDrive_Release_Loop_Phase2::Enter(CSacrificeHand* pOwner)
@@ -414,8 +434,10 @@ void CSacrificeHandState_OverDrive_Release_Attack01_Phase2::Enter(CSacrificeHand
 
 	HitDesc desc{};
 	pOwner->SetAutoPlayBattleCollider("Hand_Sword", 0.f, 0.7f, desc);
+
 	pOwner->Set_DissolveState(CSacrificeHand::DISSOLVE_STATE::APPEAR, 0.1f);
 	pOwner->SetVisable(true);
+	pOwner->Active_SwordRimLight();
 }
 
 void CSacrificeHandState_OverDrive_Release_Attack01_Phase2::Update(CSacrificeHand* pOwner, _float dt)
@@ -434,10 +456,45 @@ void CSacrificeHandState_OverDrive_Release_Attack01_Phase2::Update(CSacrificeHan
 		pOwner->Set_DissolveState(CSacrificeHand::DISSOLVE_STATE::DISAPPEAR, 0.1f);
 
 	pOwner->Update_Dissolve(dt);
+
+	Update_Effects(pOwner);
 }
 
 void CSacrificeHandState_OverDrive_Release_Attack01_Phase2::Exit(CSacrificeHand* pOwner)
 {
+}
+
+void CSacrificeHandState_OverDrive_Release_Attack01_Phase2::Update_Effects(CSacrificeHand* pOwner)
+{
+	/* Slash1 */
+	if (IsCrossAnimProgress(0.3f))
+	{
+		auto pAnimator = pOwner->Get_Component<CAnimator3D>();
+
+		auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_hand_overdrive_attack1_1.json")
+			.Build("Sacrifice_Hand_Attack1");
+
+		_smatrix offsetMatrix = _smatrix::Identity;
+		offsetMatrix.Translation(_vector3(20.f, -1.f, 0.f));
+		effect->AttachBone(pAnimator, "Ctr_HSword", offsetMatrix);
+		ObjectManager()->Add_Object(effect, { "Zero_Level","Enemy_Effect_Layer" });
+	}
+
+	/* Slash2 */
+	if (IsCrossAnimProgress(0.57f))
+	{
+		auto pAnimator = pOwner->Get_Component<CAnimator3D>();
+
+		auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_hand_overdrive_attack1_2.json")
+			.Build("Sacrifice_Hand_Attack1");
+
+		_smatrix offsetMatrix = _smatrix::Identity;
+		offsetMatrix.Translation(_vector3(20.f, -1.f, 0.f));
+		effect->AttachBone(pAnimator, "Ctr_HSword", offsetMatrix);
+		ObjectManager()->Add_Object(effect, { "Zero_Level","Enemy_Effect_Layer" });
+	}
 }
 
 void CSacrificeHandState_OverDrive_Release_Attack02_Phase2::Enter(CSacrificeHand* pOwner)
@@ -470,6 +527,7 @@ void CSacrificeHandState_OverDrive_Release_Attack02_Phase2::Update(CSacrificeHan
 		pOwner->Set_DissolveState(CSacrificeHand::DISSOLVE_STATE::DISAPPEAR, 0.1f);
 
 	pOwner->Update_Dissolve(dt);
+	Update_Effects(pOwner);
 }
 
 void CSacrificeHandState_OverDrive_Release_Attack02_Phase2::Exit(CSacrificeHand* pOwner)
@@ -486,20 +544,70 @@ void CSacrificeHandState_OverDrive_Release_Attack02_Phase2::Rotate_ToTarget(CSac
 	_vector3 vTargetDir(0.f, 0.f, 1.f);
 	_vector3 vCurrDir = pTransform->Dir(STATE::LOOK);
 
-	for (const auto& info : infos)
-	{
-		if (info.isOnField)
-		{
-			vTargetPosition = info.vPos;
-			break;
-		}
-	}
+	auto playerHandle = BattleSystem()->GetCurCharacterHandle();
+	vTargetPosition = playerHandle.Get()->Get_Component<CTransform>()->Get_WorldPos();
+
 	vTargetDir = vTargetPosition - vCurrPosition;
 	vTargetDir.y = 0.f;
 	vTargetDir.Normalize();
 
 	_vector3 vDir = _vector3::Lerp(vCurrDir, vTargetDir, dt * 30.f);
 	pTransform->Set_Look(vDir);
+}
+
+void CSacrificeHandState_OverDrive_Release_Attack02_Phase2::Update_Effects(CSacrificeHand* pOwner)
+{
+	if (IsCrossAnimProgress(0.01f))
+	{
+		auto pAnimator = pOwner->Get_Component<CAnimator3D>();
+
+		auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_hand_overdrive_attack2_light.json")
+			.Build("Sacrifice_Hand_Overdrive_Attack2_Light");
+
+		effect->AttachBone(pAnimator, "Ctr_HSword");
+
+		ObjectManager()->Add_Object(effect, { "Zero_Level","Enemy_Effect_Layer" });
+	}
+
+	/* Hand Up, Down */
+	if (IsCrossAnimProgress(0.25f))
+	{
+		auto pTransform = pOwner->Get_Component<CTransform>();
+
+		_vector3 vWorldPosition = _vector3::Transform(_vector3(0.f, 16.f, 6.f), pTransform->Get_WorldMatrix());
+		auto effectUp = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_hand_overdrive_attack2_up.json")
+			.Position(vWorldPosition)
+			.Build("Sacrifice_Hand_Overdrive_Attack2_Up");
+
+		vWorldPosition = pTransform->Get_WorldPos();
+		auto effectDown = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_hand_overdrive_attack2_down.json")
+			.Position(vWorldPosition)
+			.Build("Sacrifice_Hand_Overdrive_Attack2_Down");
+
+		ObjectManager()->Add_Object(effectUp, { "Zero_Level","Enemy_Effect_Layer" });
+		ObjectManager()->Add_Object(effectDown, { "Zero_Level","Enemy_Effect_Layer" });
+	}
+
+	/* Hit Ground Flare */
+	if (IsCrossAnimProgress(0.76f))
+	{
+		auto pTransform = pOwner->Get_Component<CTransform>();
+
+		_vector3 vWorldPosition = _vector3::Transform(_vector3(0.f, 0.f, 38.4f), pTransform->Get_WorldMatrix());
+		_vector3 vLook = pTransform->Dir(STATE::LOOK);
+
+		auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_hand_overdrive_attack2_flare.json")
+			.Build("Sacrifice_Hand_Overdrive_Attack2_Flare");
+
+		auto effectTransform = effect->Get_Component<CTransform>();
+		effectTransform->Set_WorldPos(vWorldPosition);
+		effectTransform->Set_Look(vLook);
+		ObjectManager()->Add_Object(effect, { "Zero_Level","Enemy_Effect_Layer" });
+	}
 }
 
 void CSacrificeHandState_OverDrive_Release_Attack03_Phase2::Enter(CSacrificeHand* pOwner)
@@ -521,16 +629,74 @@ void CSacrificeHandState_OverDrive_Release_Attack03_Phase2::Update(CSacrificeHan
 		blackBoard.isChainOpen = true;
 		if (!blackBoard.stateQueue.empty())
 			blackBoard.isRequestNext = true;
+
+		pOwner->Deactive_SwordRimLight();
 	}
-
-
 
 	if (IsCrossAnimProgress(0.85f))
 		pOwner->Set_DissolveState(CSacrificeHand::DISSOLVE_STATE::DISAPPEAR, 0.1f);
 
 	pOwner->Update_Dissolve(dt);
+	Update_Effects(pOwner);
 }
 
 void CSacrificeHandState_OverDrive_Release_Attack03_Phase2::Exit(CSacrificeHand* pOwner)
 {
+}
+
+void CSacrificeHandState_OverDrive_Release_Attack03_Phase2::Update_Effects(CSacrificeHand* pOwner)
+{
+	/* Flare1 */
+	if (IsCrossAnimProgress(0.21f))
+	{
+		auto pTransform = pOwner->Get_Component<CTransform>();
+
+		_vector3 vWorldPosition = _vector3::Transform(_vector3(0.4f, 0.f, 9.8f), pTransform->Get_WorldMatrix());
+		_vector3 vLook = pTransform->Dir(STATE::LOOK);
+
+		auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_hand_overdrive_attack3_1.json")
+			.Build("Sacrifice_Hand_Overdrive_Attack3_1");
+
+		auto effectTransform = effect->Get_Component<CTransform>();
+		effectTransform->Set_WorldPos(vWorldPosition);
+		effectTransform->Set_Look(vLook);
+		ObjectManager()->Add_Object(effect, { "Zero_Level","Enemy_Effect_Layer" });
+	}
+
+	/* Charge */
+	if (IsCrossAnimProgress(0.23f))
+	{
+		auto pTransform = pOwner->Get_Component<CTransform>();
+
+		_vector3 vWorldPosition = _vector3::Transform(_vector3(0.4f, 0.f, 9.8f), pTransform->Get_WorldMatrix());
+		_vector3 vLook = pTransform->Dir(STATE::LOOK);
+
+		auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_hand_overdrive_attack3_2.json")
+			.Build("Sacrifice_Hand_Overdrive_Attack3_2");
+
+		auto effectTransform = effect->Get_Component<CTransform>();
+		effectTransform->Set_WorldPos(vWorldPosition);
+		effectTransform->Set_Look(vLook);
+		ObjectManager()->Add_Object(effect, { "Zero_Level","Enemy_Effect_Layer" });
+	}
+
+	/* Flare2 */
+	if (IsCrossAnimProgress(0.59f))
+	{
+		auto pTransform = pOwner->Get_Component<CTransform>();
+
+		_vector3 vWorldPosition = _vector3::Transform(_vector3(0.4f, 0.f, 9.8f), pTransform->Get_WorldMatrix());
+		_vector3 vLook = pTransform->Dir(STATE::LOOK);
+
+		auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_hand_overdrive_attack3_1.json")
+			.Build("Sacrifice_Hand_Overdrive_Attack3_1");
+
+		auto effectTransform = effect->Get_Component<CTransform>();
+		effectTransform->Set_WorldPos(vWorldPosition);
+		effectTransform->Set_Look(vLook);
+		ObjectManager()->Add_Object(effect, { "Zero_Level","Enemy_Effect_Layer" });
+	}
 }

@@ -82,13 +82,16 @@ void CEntityObject::Export_ObjectData(void* pDesc)
 	pEntityDesc->tagName = m_InstanceName;
 	pEntityDesc->iType = m_iType;
 
-	_float3 vSize = Get_Component<CCollider>()->Get_Size();
+	_float3 vScale; XMStoreFloat3(&vScale, Get_Component<CTransform>()->Get_Pos());
 	_float4 qRotation; XMStoreFloat4(&qRotation, Get_Component<CTransform>()->Get_QuaternionRotate());
 	_vector3 vEulerRotation = _quaternion(qRotation).ToEuler();
 	_float3 vPosition; XMStoreFloat3(&vPosition, Get_Component<CTransform>()->Get_Pos());
-	pEntityDesc->vScale = { vSize.x, vSize.y, vSize.z };
+	_float3 vColSize = Get_Component<CCollider>()->Get_Size();
+
+	pEntityDesc->vScale = { vScale.x, vScale.y, vScale.z };
 	pEntityDesc->vRotation = { vEulerRotation.x, vEulerRotation.y, vEulerRotation.z };
 	pEntityDesc->vTranslation = { vPosition.x, vPosition.y, vPosition.z };
+	pEntityDesc->vColSize = { vColSize.x, vColSize.y, vColSize.z };
 }
 
 void CEntityObject::Set_EntityModel(const string& ModelTag, const string& ModelKeyTag, const string& MaterialKeyTag)
@@ -214,9 +217,18 @@ void CEntityObject::Render_GUI()
 		}
 	}
 
+	_vector3 Scale = Get_Component<CTransform>()->Get_Scale();
+	_float fScale[3] = { Scale.x,Scale.y,Scale.z };
+	ImGui::DragFloat3("Scale", fScale, 0.01f, -100.f, 100.f, "%.2f");
+	Get_Component<CTransform>()->Scale({ fScale[0], fScale[1] ,fScale[2] });
 
+	_vector3 ColSize = Get_Component<CCollider>()->Get_Size();
+	_float fColSize[3] = { ColSize.x,ColSize.y,ColSize.z };
+	ImGui::DragFloat3("ColSize", fColSize, 0.01f, -100.f, 100.f, "%.2f");
+	Get_Component<CCollider>()->Set_Size({ fColSize[0], fColSize[1] ,fColSize[2] });
 
-	ImGui::Text(Get_TypeName().c_str());
+	string ModelType = " ModelType : " + Get_TypeName();
+	ImGui::Text(ModelType.c_str());
 
 	ImGui::PopID();
 }
