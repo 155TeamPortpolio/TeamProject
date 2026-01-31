@@ -25,13 +25,13 @@ HRESULT CBelle::Initialize_Prototype()
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
 
-	auto pRcsMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
-	pRcsMgr->Add_ResourcePath("Belle.model",
-		"../Bin/Resources/Global/FieldCharacter/Belle/Belle.model");
-	pRcsMgr->Add_ResourcePath("Belle.mat",
-		"../Bin/Resources/Global/FieldCharacter/Belle/Belle.mat");
-	pRcsMgr->Add_ResourcePath("Avatar_Female_Size02_Belle_Suibianguan_Meta.json",
-		"../Bin/Resources/Global/FieldCharacter/Belle/Avatar_Female_Size02_Belle_Suibianguan_Meta.json");
+	//auto pRcsMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
+	//pRcsMgr->Add_ResourcePath("Belle.model",
+	//	"../Bin/Resources/Global/FieldCharacter/Belle/Belle.model");
+	//pRcsMgr->Add_ResourcePath("Belle.mat",
+	//	"../Bin/Resources/Global/FieldCharacter/Belle/Belle.mat");
+	//pRcsMgr->Add_ResourcePath("Avatar_Female_Size02_Belle_Suibianguan_Meta.json",
+	//	"../Bin/Resources/Global/FieldCharacter/Belle/Avatar_Female_Size02_Belle_Suibianguan_Meta.json")
 
 	Get_Component<CModel>()->Link_Model(G_GlobalLevelKey, "Belle.model");
 	Get_Component<CMaterial>()->Link_Material(G_GlobalLevelKey, "Belle.mat");
@@ -53,8 +53,8 @@ void CBelle::Awake()
 {
 	__super::Awake();
 
-	m_pAnimator->LinkAnimate_Model("Test_Level", "Belle.model");
-	m_pAnimator->Link_MetaData("Test_Level", "Avatar_Female_Size02_Belle_Suibianguan_Meta.json");
+	m_pAnimator->LinkAnimate_Model(G_GlobalLevelKey, "Belle.model");
+	m_pAnimator->Link_MetaData(G_GlobalLevelKey, "Avatar_Female_Size02_Belle_Suibianguan_Meta.json");
 	m_strAnimName = "Avatar_Female_Size02_Belle_";
 	m_strName = "Belle";
 
