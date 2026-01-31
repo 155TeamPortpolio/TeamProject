@@ -114,7 +114,7 @@ public:
     void        Set_EvadeMax(_uint iMax) { m_iEvadeMax = iMax; }
     void        Reset_Interact() { m_bCanInteract = false; }
     void        Reserve_ComboAttack() { m_bReserveCombo = true; }
-    _bool       Is_ReserveCombo() const { m_bReserveCombo; }
+    _bool       Is_ReserveCombo() const { return m_bReserveCombo; }
 
     SWITCH      Get_Switch() const { return m_eSwitchType; }
     void        Set_Switch(SWITCH eType) { m_eSwitchType = eType; }
