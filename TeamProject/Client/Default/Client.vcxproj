@@ -452,6 +452,7 @@
     <ClInclude Include="..\public\Portal.h" />
     <ClInclude Include="..\Public\SacrificeState_Groggy_Phase1.h" />
     <ClInclude Include="..\Public\SacrificeState_Groggy_Phase2.h" />
+    <ClInclude Include="..\Public\UI_IconButton.h" />
     <ClInclude Include="..\Public\UI_Lottery.h" />
     <ClInclude Include="..\Public\UI_Newspaper.h" />
     <ClInclude Include="..\Public\UI_Ramen.h" />
@@ -811,6 +812,7 @@
     <ClCompile Include="..\private\Portal.cpp" />
     <ClCompile Include="..\Private\SacrificeState_Groggy_Phase1.cpp" />
     <ClCompile Include="..\Private\SacrificeState_Groggy_Phase2.cpp" />
+    <ClCompile Include="..\Private\UI_IconButton.cpp" />
     <ClCompile Include="..\Private\UI_Lottery.cpp" />
     <ClCompile Include="..\Private\UI_Newspaper.cpp" />
     <ClCompile Include="..\Private\UI_Ramen.cpp" />
