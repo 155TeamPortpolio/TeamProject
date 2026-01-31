@@ -936,7 +936,7 @@
     </Filter>
     <Filter Include="02. GameObject\UI\01. 2D\Ramen\AttributeText">
       <UniqueIdentifier>{f0281968-7296-48e8-82fd-78db5b7603ed}</UniqueIdentifier>
- </Filter>
+    </Filter>
     <Filter Include="02. GameObject\Object\Enemy\Normal\EtherClayMore">
       <UniqueIdentifier>{2e91f17b-8838-42a5-8a0a-feb4f0c6e2fd}</UniqueIdentifier>
     </Filter>
@@ -1848,9 +1848,6 @@
     <ClInclude Include="..\Public\Defiler.h">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\DefilerState.h">
-      <Filter>02. GameObject\Object\Enemy\Boss\Defiler\State</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\DefilerState_Attack.h">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler\State\Attack</Filter>
     </ClInclude>
@@ -1922,6 +1919,9 @@
     </ClInclude>
     <ClInclude Include="..\public\GachaProps.h">
       <Filter>02. GameObject\Object\Gacha\GachaProps</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Defiler_Control.h">
+      <Filter>02. GameObject\Object\Enemy\Boss\Defiler</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

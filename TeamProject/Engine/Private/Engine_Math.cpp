@@ -355,6 +355,36 @@ ENGINE_DLL _vector3 Math::RotateVectorByQuaternion(const _vector3& vec, const _v
 	return out;
 }
 
+ENGINE_DLL _vector3 Math::DampVector( _vector3 curDir,  _vector3 targetDir, _float dt, _float dampSpeed)
+{
+	curDir.y = 0.f;
+	targetDir.y = 0.f;
+
+	if (curDir.Length() <= 1e-6f)
+		return targetDir;
+	if (targetDir.Length() <= 1e-6f)
+		return curDir;
+
+	curDir.Normalize();
+	targetDir.Normalize();
+
+	// 완전 반대(-1) 근처면 lerp가 0으로 가서 튐 -> 그냥 타겟으로 스냅(또는 유지)
+	const _float dot = curDir.Dot(targetDir);
+	if (dot < -0.999f)
+		return targetDir;
+
+	const _float t = 1.f - expf(-dampSpeed * dt);
+
+	_vector3 blended = curDir * (1.f - t) + targetDir * t;
+	blended.y = 0.f;
+
+	if (blended.Length() <= 1e-6f)
+		return targetDir;
+
+	blended.Normalize();
+	return blended;
+}
+
 ENGINE_DLL _float Math::EaseInOutBounce(_float t)
 {
 	if (t < 0.5f)
