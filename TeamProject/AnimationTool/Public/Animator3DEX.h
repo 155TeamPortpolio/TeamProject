@@ -24,10 +24,17 @@ public:
     virtual void Render_GUI() override;
     virtual void Update_Animation(_float fTrackPosition) override;
     Matrix Get_PreTransform() { return m_PreTransform; }
+    HRESULT Link_MetaData(const string& LevelKey, const string& MetaClipKey);
 
 public:
+    void Create_Clips();
     vector<CAnimationClip*>* Get_Clips();
     vector<ANIM_LAYER>& Get_AnimLayers();
+
+
+public:
+    string& Get_AnimPath() { return m_AnimPath; }
+    string m_AnimPath{};
 
 public:
     static CAnimator3DEX* Create();

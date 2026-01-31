@@ -1,0 +1,485 @@
+{
+  "AnimPath" : "../Bin/Resources/Zero/Enemy/Defiler_Isolde/Anim/",
+  "PreTransform": {
+    "_11": -0.009999999776482582,
+    "_12": 0.0,
+    "_13": 0.0,
+    "_14": 0.0,
+    "_21": 0.0,
+    "_22": 0.009999999776482582,
+    "_23": 0.0,
+    "_24": 0.0,
+    "_31": 0.0,
+    "_32": 0.0,
+    "_33": -0.009999999776482582,
+    "_34": 0.0,
+    "_41": 0.0,
+    "_42": 0.0,
+    "_43": 0.0,
+    "_44": 1.0
+  },
+  "Clips": [
+    {
+      "ClipTag": "Monster_IsoldetheDefiler_Ani_Attack_01_01",
+      "Events": [
+        {
+          "EventTime": 0.5125406384468079,
+          "EventType": "Effect",
+          "EventTag": "AttackSign_Parry"
+        },
+        {
+          "EventTime": 0.8483430743217468,
+          "EventType": "Notify",
+          "EventTag": "AttackColliderOn"
+        },
+        {
+          "EventTime": 0.9577301144599915,
+          "EventType": "Notify",
+          "EventTag": "AttackColliderOff"
+        },
+        {
+          "EventTime": 1.2725145816802979,
+          "EventType": "Notify",
+          "EventTag": "AttackColliderOn"
+        },
+        {
+          "EventTime": 1.458298921585083,
+          "EventType": "Notify",
+          "EventTag": "AttackColliderOff"
+        },
+        {
+          "EventTime": 1.864587426185608,
+          "EventType": "Notify",
+          "EventTag": "ChainEnd"
+        }
+      ]
+    },
+    {
+      "ClipTag": "Monster_IsoldetheDefiler_Ani_Attack_01_01_P2",
+      "Events": [
+        {
+          "EventTime": 1.0233917236328125,
+          "EventType": "Notify",
+          "EventTag": "AttackColliderOn"
+        },
+        {
+          "EventTime": 0.7634827494621277,
+          "EventType": "Effect",
+          "EventTag": "AttackSign_Parry"
+        },
+        {
+          "EventTime": 1.1208575963974,
+          "EventType": "Notify",
+          "EventTag": "AttackColliderOff"
+        },
+        {
+          "EventTime": 1.2670564651489258,
+          "EventType": "Effect",
+          "EventTag": "AttackSign_Parry"
+        },
+        {
+          "EventTime": 1.4619882106781006,
+          "EventType": "Notify",
+          "EventTag": "AttackColliderOn"
+        },
+        {
+          "EventTime": 1.5594542026519775,
+          "EventType": "Notify",
+          "EventTag": "AttackColliderOff"
+        },
+        {
+          "EventTime": 1.9818062782287598,
+          "EventType": "Effect",
+          "EventTag": "AttackSign_Parry"
+        },
+        {
+          "EventTime": 2.3716697692871094,
+          "EventType": "Notify",
+          "EventTag": "AttackColliderOn"
+        },
+        {
+          "EventTime": 2.4691357612609863,
+          "EventType": "Notify",
+          "EventTag": "AttackColliderOff"
+        },
+        {
+          "EventTime": 2.7452890872955322,
+          "EventType": "Effect",
+          "EventTag": "AttackSign_Parry"
+        },
+        {
+          "EventTime": 2.9889538288116455,
+          "EventType": "Notify",
+          "EventTag": "AttackColliderOn"
+        },
+        {
+          "EventTime": 3.0539309978485107,
+          "EventType": "Notify",
+          "EventTag": "AttackColliderOff"
+        },
+        {
+          "EventTime": 3.4113059043884277,
+          "EventType": "Effect",
+          "EventTag": "AttackSign_Parry"
+        },
+        {
+          "EventTime": 3.7686808109283447,
+          "EventType": "Notify",
+          "EventTag": "AttackColliderOn"
+        },
+        {
+          "EventTime": 3.833658218383789,
+          "EventType": "Notify",
+          "EventTag": "AttackColliderOff"
+        },
+        {
+          "EventTime": 4.369720458984375,
+          "EventType": "Effect",
+          "EventTag": "AttackSign_Parry"
+        },
+        {
+          "EventTime": 5.181936264038086,
+          "EventType": "Notify",
+          "EventTag": "AttackColliderOn"
+        },
+        {
+          "EventTime": 5.717998504638672,
+          "EventType": "Notify",
+          "EventTag": "AttackColliderOff"
+        }
+      ]
+    },
+    {
+      "ClipTag": "Monster_IsoldetheDefiler_Ani_Attack_01_02",
+      "Events": [
+        {
+          "EventTime": 0.7610136270523071,
+          "EventType": "Notify",
+          "EventTag": "ChainStart"
+        },
+        {
+          "EventTime": 0.7610136270523071,
+          "EventType": "Effect",
+          "EventTag": "AttackSign_Parry"
+        },
+        {
+          "EventTime": 1.4031188488006592,
+          "EventType": "Notify",
+          "EventTag": "AttackColliderOn"
+        },
+        {
+          "EventTime": 1.5695905685424805,
+          "EventType": "Notify",
+          "EventTag": "AttackColliderOff"
+        }
+      ]
+    },
+    {
+      "ClipTag": "Monster_IsoldetheDefiler_Ani_Attack_01_03",
+      "Events": [
+        {
+          "EventTime": 0.5204678177833557,
+          "EventType": "Effect",
+          "EventTag": "AttackSign_Evade"
+        },
+        {
+          "EventTime": 0.8790123462677002,
+          "EventType": "Notify",
+          "EventTag": "AttackColliderOn"
+        },
+        {
+          "EventTime": 1.0178037881851196,
+          "EventType": "Notify",
+          "EventTag": "AttackColliderOff"
+        },
+        {
+          "EventTime": 1.156595230102539,
+          "EventType": "Notify",
+          "EventTag": "ThrowWeapon"
+        },
+        {
+          "EventTime": 2.6833009719848633,
+          "EventType": "Effect",
+          "EventTag": "AttackSign_Evade"
+        },
+        {
+          "EventTime": 2.972449541091919,
+          "EventType": "Effect",
+          "EventTag": "AttackSign_Parry"
+        },
+        {
+          "EventTime": 1.7464587688446045,
+          "EventType": "Effect",
+          "EventTag": "AttackSign_Evade"
+        }
+      ]
+    },
+    {
+      "ClipTag": "Monster_IsoldetheDefiler_Ani_Attack_02",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_IsoldetheDefiler_Ani_Attack_03",
+      "Events": [
+        {
+          "EventTime": 0.5401559472084045,
+          "EventType": "Effect",
+          "EventTag": "AttackSign_Parry"
+        },
+        {
+          "EventTime": 1.6204677820205688,
+          "EventType": "Notify",
+          "EventTag": "AttackColliderOn"
+        },
+        {
+          "EventTime": 2.0799999237060547,
+          "EventType": "Notify",
+          "EventTag": "AttackColliderOff"
+        },
+        {
+          "EventTime": 2.054710865020752,
+          "EventType": "Notify",
+          "EventTag": "CamShake"
+        }
+      ]
+    },
+    {
+      "ClipTag": "Monster_IsoldetheDefiler_Ani_Attack_04",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_IsoldetheDefiler_Ani_Attack_05",
+      "Events": [
+        {
+          "EventTime": 0.7599740028381348,
+          "EventType": "Effect",
+          "EventTag": "AttackSign_Evade"
+        }
+      ]
+    },
+    {
+      "ClipTag": "Monster_IsoldetheDefiler_Ani_Attack_06",
+      "Events": [
+        {
+          "EventTime": 0.6361273527145386,
+          "EventType": "Effect",
+          "EventTag": "AttackSign_Evade"
+        },
+        {
+          "EventTime": 2.052945375442505,
+          "EventType": "Effect",
+          "EventTag": "AttackSign_Evade"
+        },
+        {
+          "EventTime": 3.319999933242798,
+          "EventType": "Effect",
+          "EventTag": "AttackSign_Evade"
+        }
+      ]
+    },
+    {
+      "ClipTag": "Monster_IsoldetheDefiler_Ani_Attack_07",
+      "Events": [
+        {
+          "EventTime": 2.2923977375030518,
+          "EventType": "Effect",
+          "EventTag": "AttackSign_Parry"
+        },
+        {
+          "EventTime": 2.885964870452881,
+          "EventType": "Effect",
+          "EventTag": "AttackSign_Parry"
+        },
+        {
+          "EventTime": 4.093567371368408,
+          "EventType": "Effect",
+          "EventTag": "AttackSign_Parry"
+        },
+        {
+          "EventTime": 4.80994176864624,
+          "EventType": "Effect",
+          "EventTag": "AttackSign_Parry"
+        },
+        {
+          "EventTime": 5.8947367668151855,
+          "EventType": "Effect",
+          "EventTag": "AttackSign_Parry"
+        }
+      ]
+    },
+    {
+      "ClipTag": "Monster_IsoldetheDefiler_Ani_Attack_08_01_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_IsoldetheDefiler_Ani_Attack_08_01_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_IsoldetheDefiler_Ani_Attack_08_01_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_IsoldetheDefiler_Ani_Attack_08_02",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_IsoldetheDefiler_Ani_Attack_09_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_IsoldetheDefiler_Ani_Attack_09_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_IsoldetheDefiler_Ani_Attack_09_Start",
+      "Events": [
+        {
+          "EventTime": 0.0,
+          "EventType": "Notify",
+          "EventTag": "TsunamiStart"
+        }
+      ]
+    },
+    {
+      "ClipTag": "Monster_IsoldetheDefiler_Ani_Attack_Grab_01",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_IsoldetheDefiler_Ani_Attack_Summon",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_IsoldetheDefiler_Ani_Born",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_IsoldetheDefiler_Ani_Death_Back",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_IsoldetheDefiler_Ani_Death_Front",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_IsoldetheDefiler_Ani_Death_Stay",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_IsoldetheDefiler_Ani_Debuff_Stun_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_IsoldetheDefiler_Ani_Debuff_Stun_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_IsoldetheDefiler_Ani_Debuff_Stun_Start_Back",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_IsoldetheDefiler_Ani_Debuff_Stun_Start_Front",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_IsoldetheDefiler_Ani_EtherBarrier",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_IsoldetheDefiler_Ani_Evade",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_IsoldetheDefiler_Ani_Evade_Left",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_IsoldetheDefiler_Ani_Evade_Right",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_IsoldetheDefiler_Ani_Hit_H_Back",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_IsoldetheDefiler_Ani_Hit_H_Front",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_IsoldetheDefiler_Ani_Hit_Stay",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_IsoldetheDefiler_Ani_Idle_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_IsoldetheDefiler_Ani_Ignite_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_IsoldetheDefiler_Ani_ParryAid",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_IsoldetheDefiler_Ani_ParryAid_01",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_IsoldetheDefiler_Ani_ParryAid_Attack_01_01",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_IsoldetheDefiler_Ani_ParryAid_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_IsoldetheDefiler_Ani_ParryAid_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_IsoldetheDefiler_Ani_Run_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_IsoldetheDefiler_Ani_Run_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_IsoldetheDefiler_Ani_Run_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_IsoldetheDefiler_Ani_Stun_Hit_L_Front_Down",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_IsoldetheDefiler_Ani_Stun_Hit_L_Front_Left",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_IsoldetheDefiler_Ani_Stun_Hit_L_Front_Right",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_IsoldetheDefiler_Ani_Stun_Hit_L_Front_Up",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_IsoldetheDefiler_Ani_Walk_B_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_IsoldetheDefiler_Ani_Walk_F_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_IsoldetheDefiler_Ani_Walk_L_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_IsoldetheDefiler_Ani_Walk_R_LoopIsoldetheDefiler_Ani_Walk_R_Loop",
+      "Events": []
+    }
+  ]
+}

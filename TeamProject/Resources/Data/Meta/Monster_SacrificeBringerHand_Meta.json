@@ -1,0 +1,241 @@
+{
+  "AnimPath" : "../Bin/Resources/Zero/Enemy/Sacrifice/Hand/Anim/",
+  "PreTransform": {
+    "_11": -0.009999999776482582,
+    "_12": 0.0,
+    "_13": 0.0,
+    "_14": 0.0,
+    "_21": 0.0,
+    "_22": 0.009999999776482582,
+    "_23": 0.0,
+    "_24": 0.0,
+    "_31": 0.0,
+    "_32": 0.0,
+    "_33": -0.009999999776482582,
+    "_34": 0.0,
+    "_41": 0.0,
+    "_42": 0.0,
+    "_43": 0.0,
+    "_44": 1.0
+  },
+  "Clips": [
+    {
+      "ClipTag": "SacrificeBringerHand_Ani_Born",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_SacrificeBringerHand_Ani_P2_OverDrive_Charge_Break",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_SacrificeBringerHand_Ani_P2_OverDrive_Charge_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_SacrificeBringerHand_Ani_P2_OverDrive_Charge_Start_New",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_SacrificeBringerHand_Ani_P2_OverDrive_Release_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_SacrificeBringer_Ani_P2_OverDrive_Release_Attack01",
+      "Events": [
+        {
+          "EventTime": 0.01,
+          "EventType": "Notify",
+          "EventTag": "Start_Bubble"
+        },
+        {
+          "EventTime": 1.4208627939224243,
+          "EventType": "Notify",
+          "EventTag": "Start_Collider"
+        },
+        {
+          "EventTime": 3.3038485050201416,
+          "EventType": "Notify",
+          "EventTag": "End_Collider"
+        },
+        {
+          "EventTime": 3.546985387802124,
+          "EventType": "Notify",
+          "EventTag": "End_Bubble"
+        }
+      ]
+    },
+    {
+      "ClipTag": "Monster_SacrificeBringer_Ani_P2_OverDrive_Release_Attack02",
+      "Events": [
+        {
+          "EventTime": 0.01,
+          "EventType": "Notify",
+          "EventTag": "Start_Bubble"
+        },
+        {
+          "EventTime": 3.536466598510742,
+          "EventType": "Notify",
+          "EventTag": "Start_Collider"
+        },
+        {
+          "EventTime": 3.9793448448181152,
+          "EventType": "Notify",
+          "EventTag": "End_Collider"
+        },
+        {
+          "EventTime": 4.330170154571533,
+          "EventType": "Notify",
+          "EventTag": "End_Bubble"
+        }
+      ]
+    },
+    {
+      "ClipTag": "Monster_SacrificeBringer_Ani_P2_OverDrive_Release_Attack03",
+      "Events": [
+        {
+          "EventTime": 0.01,
+          "EventType": "Notify",
+          "EventTag": "Start_Bubble"
+        },
+        {
+          "EventTime": 3.410917282104492,
+          "EventType": "Notify",
+          "EventTag": "End_Bubble"
+        }
+      ]
+    },
+    {
+      "ClipTag": "SacrificeBringerHand_Ani_Attack_01",
+      "Events": []
+    },
+    {
+      "ClipTag": "SacrificeBringerHand_Ani_Attack_02",
+      "Events": []
+    },
+    {
+      "ClipTag": "SacrificeBringerHand_Ani_Attack_03",
+      "Events": []
+    },
+    {
+      "ClipTag": "SacrificeBringerHand_Ani_Attack_04",
+      "Events": []
+    },
+    {
+      "ClipTag": "SacrificeBringerHand_Ani_Attack_05",
+      "Events": []
+    },
+    {
+      "ClipTag": "SacrificeBringerHand_Ani_Attack_06",
+      "Events": []
+    },
+    {
+      "ClipTag": "SacrificeBringerHand_Ani_Born_Air",
+      "Events": []
+    },
+    {
+      "ClipTag": "SacrificeBringerHand_Ani_Death",
+      "Events": []
+    },
+    {
+      "ClipTag": "SacrificeBringerHand_Ani_Hide",
+      "Events": []
+    },
+    {
+      "ClipTag": "SacrificeBringerHand_Ani_Hide_Air",
+      "Events": []
+    },
+    {
+      "ClipTag": "SacrificeBringerHand_Ani_Hit_H",
+      "Events": []
+    },
+    {
+      "ClipTag": "SacrificeBringerHand_Ani_Hit_L",
+      "Events": []
+    },
+    {
+      "ClipTag": "SacrificeBringerHand_Ani_Idle_Air",
+      "Events": []
+    },
+    {
+      "ClipTag": "SacrificeBringerHand_Ani_Idle_Ground01",
+      "Events": []
+    },
+    {
+      "ClipTag": "SacrificeBringerHand_Ani_Idle_Ground02",
+      "Events": []
+    },
+    {
+      "ClipTag": "SacrificeBringerHand_Ani_P1_Attack_04_2",
+      "Events": []
+    },
+    {
+      "ClipTag": "SacrificeBringerHand_Ani_P1_Attack_10",
+      "Events": [
+        {
+          "EventTime": 0.01,
+          "EventType": "Notify",
+          "EventTag": "Start_Bubble"
+        },
+        {
+          "EventTime": 0.9145044684410095,
+          "EventType": "Notify",
+          "EventTag": "Start_Collider"
+        },
+        {
+          "EventTime": 1.1231968402862549,
+          "EventType": "Notify",
+          "EventTag": "End_Collider"
+        }
+      ]
+    },
+    {
+      "ClipTag": "SacrificeBringerHand_Ani_P1_Attack_11",
+      "Events": [
+        {
+          "EventTime": 0.7225412130355835,
+          "EventType": "Notify",
+          "EventTag": "Start_Collider"
+        },
+        {
+          "EventTime": 1.0109100341796875,
+          "EventType": "Notify",
+          "EventTag": "End_Collider"
+        },
+        {
+          "EventTime": 1.3322014808654785,
+          "EventType": "Notify",
+          "EventTag": "End_Bubble"
+        }
+      ]
+    },
+    {
+      "ClipTag": "SacrificeBringerHand_Ani_P1_Attack_12",
+      "Events": [
+        {
+          "EventTime": 0.77334064245224,
+          "EventType": "Notify",
+          "EventTag": "Start_Bubble"
+        },
+        {
+          "EventTime": 1.5637426376342773,
+          "EventType": "Notify",
+          "EventTag": "Start_Collider"
+        },
+        {
+          "EventTime": 1.9372433423995972,
+          "EventType": "Notify",
+          "EventTag": "End_Collider"
+        },
+        {
+          "EventTime": 2.0385963916778564,
+          "EventType": "Notify",
+          "EventTag": "End_Bubble"
+        }
+      ]
+    },
+    {
+      "ClipTag": "SacrificeBringerHand_Ani_Roar",
+      "Events": []
+    }
+  ]
+}

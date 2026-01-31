@@ -2,6 +2,7 @@
 #include "Corin.h"
 #include "GameInstance.h"
 #include "BattleSystem.h"
+#include "BattlePlayer.h"
 
 #include "Material.h"
 
@@ -63,18 +64,14 @@ void CCorin::Awake()
 
 	m_pAnimator->LinkAnimate_Model(G_GlobalLevelKey, "Corin.model");
 	m_pAnimator->Link_MetaData(G_GlobalLevelKey, "Avatar_Female_Size01_Corin_Meta.json");
-
-	//m_pAnimator->Set_MotionBone(12);
 	m_pAnimator->Set_ExtractMotionboneMovement(AXIS::X | AXIS::Z);
-
-	//*name change*
 	m_strAnimName = "Avatar_Female_Size01_Corin_Ani_";
-	m_strName = "Corin";
-	m_eCharacterName = CHARACTER::Corin;
 	m_pAnimator->Set_Animation(Get_Name() + "Idle")
 		.Loop(true)
 		.Apply();
-	m_pCCT->Set_GravityEnabled(true);
+
+	m_strName = "Corin";
+	m_eCharacterName = CHARACTER::Corin;
 
 	//m_pAnimator->Initialize_HumanoidRig();
 	//CFootIK::FOOTIK_DESC ikDesc;
@@ -88,6 +85,8 @@ void CCorin::Awake()
 	//m_pAnimator->Initialize_FootIK(&ikDesc);
 
 	Initialize_Stat();
+	m_fCurrentHP = 300.f;
+	m_tEnergy.fCurrentEnergy = 75;
 
 	if(FAILED(Attach_ParryCollider()))
 		return;
@@ -100,7 +99,6 @@ void CCorin::Priority_Update(_float dt)
 
 void CCorin::Update(_float dt)
 {
-	//Update_Input(dt);
 	if(!m_bTest)
 	{
 		Update_States();
@@ -112,7 +110,6 @@ void CCorin::Update(_float dt)
 void CCorin::Late_Update(_float dt)
 {
 	__super::Late_Update(dt);
-	//Get_Component<CAnimator3D>()->Change_Speed(0.1f);
 }
 
 void CCorin::Render_GUI()
@@ -155,9 +152,7 @@ void CCorin::On_SwitchIn(SWITCH eType)
 
 void CCorin::On_SwitchOut()
 {
-	Push_Invincible();
-	Lock_Move();
-	Stop_Rotation();
+	__super::On_SwitchOut();
 	if (m_pStateMachine->Get_CurrentStateName() == "Attack")
 	{
 		m_pStateMachine->Set_Bool("OutReserve", true);
@@ -214,6 +209,19 @@ void CCorin::Update_States()
 {
 	if (!Is_MainCharacter()) return;
 	if (!m_pCCT->Get_CompActive()) return;
+
+	for (const auto& Event : Get_Animator()->Get_EventBus())
+	{
+		if (Event.Type != CLIP_EVENT_TYPE::NOTIFY) continue;
+		if (Event.Tag == "CheckCombo")
+		{
+			if (m_bReserveCombo)
+			{
+				m_bReserveCombo = false;
+				BattleSystem()->GetBattlePlayer()->Request_ComboAttack();
+			}
+		}
+	}
 
 	m_pStateMachine->Set_Bool("IsMove", Is_Move_Buffer());
 	
@@ -303,7 +311,7 @@ void CCorin::Process_AttackInput(const string& strCurrentState)
 			return;
 
 		string strSwitchType = pSwitchIn->Get_SubStateMachine()->Get_CurrentStateName();
-		if (strSwitchType == "ParryAid")
+		if (strSwitchType == "SwitchInParryAid")
 		{
 			CCorinState_SwitchInParryAid* pParryAid = static_cast<CCorinState_SwitchInParryAid*>(
 				pSwitchIn->Get_SubStateMachine()->Get_CurrentState());
@@ -488,15 +496,13 @@ HRESULT CCorin::Initialize_Transitions()
 HRESULT CCorin::Initialize_Stat()
 {
 	auto Desc = CDataBase::GetInstance()->GetPlayerDesc(m_strName);
+
+	m_fMaxHP = Desc.MaxHP;
+	m_fAttackPower = Desc.Attack;
+	m_fDefense = Desc.Defend;
 	m_tEnergy.fSpecialEnergy = Desc.SpecialAttack;
-
-	auto LVDesc = CDataBase::GetInstance()->GetLevelDesc(m_iCurrentLevel);
-	m_fMaxHP = LVDesc.MaxHP;
-	m_fCurrentHP = m_fMaxHP;
-	m_fDefense = LVDesc.Defend;
-	m_fAttackPower = LVDesc.Attack;
-
 	Set_EvadeMax(2);
+
 	return S_OK;
 }
 
