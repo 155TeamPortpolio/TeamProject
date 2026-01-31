@@ -1,0 +1,302 @@
+{
+  "PreTransform": {
+    "_11": -0.009999999776482582,
+    "_12": 0.0,
+    "_13": 0.0,
+    "_14": 0.0,
+    "_21": 0.0,
+    "_22": 0.009999999776482582,
+    "_23": 0.0,
+    "_24": 0.0,
+    "_31": 0.0,
+    "_32": 0.0,
+    "_33": -0.009999999776482582,
+    "_34": 0.0,
+    "_41": 0.0,
+    "_42": 0.0,
+    "_43": 0.0,
+    "_44": 1.0
+  },
+  "Clips": [
+    {
+      "ClipTag": "ThugAssaulter_Ani_Attack_01",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugAssaulter_Ani_Attack_02",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugAssaulter_Ani_Attack_03",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugAssaulter_Ani_Attack_04",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugAssaulter_Ani_Born",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugAssaulter_Ani_Death_Back",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugAssaulter_Ani_Death_Front",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugAssaulter_Ani_Death_Stay",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugAssaulter_Ani_Debuff_Stun_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugAssaulter_Ani_Debuff_Stun_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugAssaulter_Ani_Debuff_Stun_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugAssaulter_Ani_Evade",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugAssaulter_Ani_Galgame_Happy_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugAssaulter_Ani_Galgame_Happy_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugAssaulter_Ani_Galgame_Happy_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugAssaulter_Ani_Galgame_Idle",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugAssaulter_Ani_Galgame_Sad_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugAssaulter_Ani_Galgame_Sad_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugAssaulter_Ani_Galgame_Sad_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugAssaulter_Ani_Hit_H_Back",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugAssaulter_Ani_Hit_H_Front",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugAssaulter_Ani_Hit_Knock",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugAssaulter_Ani_Hit_L_Back_Down",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugAssaulter_Ani_Hit_L_Back_Left",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugAssaulter_Ani_Hit_L_Back_Right",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugAssaulter_Ani_Hit_L_Back_Up",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugAssaulter_Ani_Hit_L_Front_Down",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugAssaulter_Ani_Hit_L_Front_Left",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugAssaulter_Ani_Hit_L_Front_Right",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugAssaulter_Ani_Hit_L_Front_Up",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugAssaulter_Ani_Hit_Shake",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugAssaulter_Ani_Hit_Sky_Fly_Back_OnGround",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugAssaulter_Ani_Hit_Sky_Fly_Back_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugAssaulter_Ani_Hit_Sky_Fly_Front_OnGround",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugAssaulter_Ani_Hit_Sky_Fly_Front_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugAssaulter_Ani_Hit_Sky_Fly_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugAssaulter_Ani_Hit_Sky_InAir_OnGround",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugAssaulter_Ani_Hit_Sky_InAir_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugAssaulter_Ani_Hit_Sky_Knock_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugAssaulter_Ani_Hit_Sky_Knock_OnGround",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugAssaulter_Ani_Hit_Sky_Knock_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugAssaulter_Ani_Hit_Sky_Throw_High_Back_OnGround",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugAssaulter_Ani_Hit_Sky_Throw_High_Back_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugAssaulter_Ani_Hit_Sky_Throw_High_Front_OnGround",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugAssaulter_Ani_Hit_Sky_Throw_High_Front_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugAssaulter_Ani_Hit_Sky_Throw_Loop_Back",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugAssaulter_Ani_Hit_Sky_Throw_Loop_Front",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugAssaulter_Ani_Hit_Sky_Throw_Low_Back_OnGround",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugAssaulter_Ani_Hit_Sky_Throw_Low_Back_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugAssaulter_Ani_Hit_Sky_Throw_Low_Front_OnGround",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugAssaulter_Ani_Hit_Sky_Throw_Low_Front_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugAssaulter_Ani_Hit_Stay",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugAssaulter_Ani_Idle",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugAssaulter_Ani_Ignite",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugAssaulter_Ani_Ignite_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugAssaulter_Ani_MainCity_Stand_Idle01",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugAssaulter_Ani_MainCity_Stand_Idle02",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugAssaulter_Ani_MainCity_Stand_Idle03",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugAssaulter_Ani_MainCity_Stand_Idle04",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugAssaulter_Ani_MainCity_Stand_Sad_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugAssaulter_Ani_Run_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugAssaulter_Ani_Run_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugAssaulter_Ani_Run_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_ThugAssaulter_Ani_Walk_B",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_ThugAssaulter_Ani_Walk_F",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugAssaulter_Ani_Walk_FL_LFoot",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugAssaulter_Ani_Walk_FR_LFoot",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_ThugAssaulter_Ani_Walk_L",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugAssaulter_Ani_Walk_LF_RFoot",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_ThugAssaulter_Ani_Walk_R",
+      "Events": []
+    }
+  ]
+}
