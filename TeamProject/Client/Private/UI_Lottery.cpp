@@ -172,6 +172,9 @@ void CUI_Lottery::OnClick_Back()
 
 void CUI_Lottery::OnClick_RefreshNews()
 {
+    if (Is_ChildAlive(CHILD::SCRATCH))
+        return;
+
     Set_ChildAnimation(CHILD::OVERLAY_REFRESH, 0);
     Set_ChildAnimation(CHILD::ICON_REFRESH, 0);
 
@@ -180,6 +183,9 @@ void CUI_Lottery::OnClick_RefreshNews()
 
 void CUI_Lottery::OnClick_OpenScratch()
 {
+    if (Is_ChildAlive(CHILD::SCRATCH))
+        return;
+
     Set_ChildAnimation(CHILD::OVERLAY, 0);
     Set_ChildUIActive(CHILD::SCRATCH);
 }

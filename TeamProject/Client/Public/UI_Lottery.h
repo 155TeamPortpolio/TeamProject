@@ -6,6 +6,7 @@ NS_BEGIN(Client)
 class CUI_Lottery final : public CUI_Object
 {
 public:
+	/* 복권 사용 완료 상태 */
 	enum STATE { READY, USED, END };
 
 private:
