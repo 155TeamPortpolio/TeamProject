@@ -68,6 +68,16 @@ void CUIDirector::Hide_Lottery()
 	UI_DeActive("lottery");
 }
 
+void CUIDirector::Show_Ramen()
+{
+	UI_Active("ramen");
+}
+
+void CUIDirector::Hide_Ramen()
+{
+	UI_DeActive("ramen");
+}
+
 void CUIDirector::Show_ResultBanner(const string& strTextureKey, const _wstring& wstrText1, const _wstring& wstrText2)
 {
 	CUI_ResultBanner::RESULT_DESC desc = {};

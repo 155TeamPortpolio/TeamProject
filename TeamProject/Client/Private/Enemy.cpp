@@ -45,6 +45,9 @@ HRESULT CEnemy::Initialize(INIT_DESC* pArg)
 	ENEMY_DESC* pDesc = static_cast<ENEMY_DESC*>(pArg);
 
 	m_tStatus.iMaxHP = m_tStatus.iNowHP = pDesc->iMaxHP;
+#ifdef _USING_GUI
+	m_isUseInspector = pDesc->isUseInspector;
+#endif
 
 	switch (m_eEnemyClass)
 	{
@@ -91,6 +94,11 @@ void CEnemy::Awake()
 		instance->Set_Param("fDissolveProgress", {&m_fDissolveProgress, "float", sizeof(_float)});
 		instance->Set_Param("fDissolveTiling", {&m_fDissolveTilling, "float", sizeof(_float)});
 	}
+
+#ifdef _USING_GUI
+	if (m_isUseInspector)
+		CGameInstance::GetInstance()->Get_GUISystem()->Get_Context()->pSelectedObject = this;
+#endif // _USING_GUI
 }
 
 void CEnemy::Update(_float dt)

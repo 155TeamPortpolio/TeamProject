@@ -17,6 +17,7 @@ public:
     typedef struct tagEnemyCreateDesc : public Engine::GAMEOBJECT_DESC 
     {
         _float  iMaxHP = {};
+        _bool   isUseInspector = { false };
     }ENEMY_DESC;
 
     enum class ENEMY_CLASS { NORMAL, ELITE, BOSS };
@@ -147,6 +148,11 @@ protected:
     _float m_fDeathSquenceElapsedTime{};
     _float m_fDeathSqueneDuration{};
     vector<_float3> m_EmissiveColors;
+#ifdef _USING_GUI
+    _bool m_isUseInspector = { false };
+#endif // _USING_GUI
+
+
 
     // 플레이어를 감지하는 사거리 범위(공격용 사거리 혹은 추격용으로 사용)
     //_float                  m_fDetectedRange = { 5.f };
