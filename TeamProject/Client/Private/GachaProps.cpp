@@ -9,6 +9,7 @@
 #include "GachaBack.h"
 #include "GachaTV.h"
 #include "GachaStage.h"
+#include "GachaResult.h"
 
 CGachaProps::CGachaProps()
     :CGameObject()
@@ -25,8 +26,6 @@ HRESULT CGachaProps::Initialize_Prototype()
     if (FAILED(__super::Initialize_Prototype()))
         return E_FAIL;
 
-    Add_Component<CStaticModel>();
-    Add_Component<CMaterial>();
     Add_Component<CObjectContainer>();
 
     return S_OK;
@@ -34,6 +33,9 @@ HRESULT CGachaProps::Initialize_Prototype()
 
 HRESULT CGachaProps::Initialize(INIT_DESC* pArg)
 {
+    if (FAILED(__super::Initialize(pArg)))
+        return E_FAIL;
+
     if (FAILED(Initialize_GlobalPrototype())) 
         return E_FAIL;
 
@@ -65,12 +67,10 @@ void CGachaProps::Late_Update(_float dt)
 
 HRESULT CGachaProps::Initialize_GlobalPrototype()
 {
-    if (FAILED(PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_GachaBack", CGachaBack::Create())))
-        return E_FAIL;
-    if (FAILED(PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_GachaTV", CGachaTV::Create())))
-        return E_FAIL;
-    if (FAILED(PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_GachaStage", CGachaStage::Create())))
-        return E_FAIL;
+    PrototypeManager()->Add_ProtoType("Gacha_Level", "Proto_GameObject_GachaBack", CGachaBack::Create());
+    PrototypeManager()->Add_ProtoType("Gacha_Level", "Proto_GameObject_GachaTV", CGachaTV::Create());
+    PrototypeManager()->Add_ProtoType("Gacha_Level", "Proto_GameObject_GachaStage", CGachaStage::Create());
+    PrototypeManager()->Add_ProtoType("Gacha_Level", "Proto_GameObject_GachaResult", CGachaResult::Create());
     return S_OK;
 }
 
@@ -84,23 +84,32 @@ void CGachaProps::Add_GachaProps()
     colliderDesc.bAutoFit = true;
     colliderDesc.bTrigger = true;
 
-    CGameObject* gachaBack = Builder::Create_Object({ G_GlobalLevelKey, "Proto_GameObject_GachaBack" })
+    CGameObject* gachaBack = Builder::Create_Object({ "Gacha_Level", "Proto_GameObject_GachaBack" })
         .Collider(colliderDesc)
-        .Build("GachaLayer");
+        .Build("Back");
 
     pObjectContainer->Add_Child(gachaBack, true);
 
-    CGameObject* gachaTV = Builder::Create_Object({ G_GlobalLevelKey, "Proto_GameObject_GachaTV" })
+    CGameObject* gachaTV = Builder::Create_Object({ "Gacha_Level", "Proto_GameObject_GachaTV" })
         .Collider(colliderDesc)
-        .Build("GachaLayer");
+        .Build("TV");
 
     pObjectContainer->Add_Child(gachaTV, true);
 
-    CGameObject* gachaStage = Builder::Create_Object({ G_GlobalLevelKey, "Proto_GameObject_GachaStage" })
+    CGameObject* gachaStage = Builder::Create_Object({ "Gacha_Level", "Proto_GameObject_GachaStage" })
         .Collider(colliderDesc)
-        .Build("GachaLayer");
+        .Build("Stage");
 
     pObjectContainer->Add_Child(gachaStage, true);
+
+    CGameObject* gachaResult = Builder::Create_Object({ "Gacha_Level", "Proto_GameObject_GachaResult" })
+        .Collider(colliderDesc)
+        .Position(_float3(0.f, 1.45f, -1.5f))
+        .Scale(_float3(2.f,2.f,2.f))
+        .Build("Result");
+    gachaResult->Get_Component<CTransform>()->Set_Quaternion(_vector4(-0.10, 0.80, -0.28, 0.52));
+    
+    pObjectContainer->Add_Child(gachaResult, true);
 }
 
 CGachaProps* CGachaProps::Create()

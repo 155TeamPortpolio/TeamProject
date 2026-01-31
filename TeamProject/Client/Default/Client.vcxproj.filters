@@ -1015,6 +1015,12 @@
     <Filter Include="02. GameObject\UI\01. 2D\Ramen\ResultBanner">
       <UniqueIdentifier>{35f2592b-a494-4afd-8bf7-bd4eec385301}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Gacha\GachaProps\GachaResult">
+      <UniqueIdentifier>{5b3fe7e7-f877-4cae-bf66-a57e17b1b328}</UniqueIdentifier>
+          </Filter>
+    <Filter Include="02. GameObject\MapObject\04. MapLightPoint">
+      <UniqueIdentifier>{8f98ed95-123b-4c72-b0bb-bcf3efb5405b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1872,9 +1878,6 @@
     <ClInclude Include="..\Public\Defiler.h">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\DefilerState.h">
-      <Filter>02. GameObject\Object\Enemy\Boss\Defiler\State</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\DefilerState_Attack.h">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler\State\Attack</Filter>
     </ClInclude>
@@ -1955,6 +1958,15 @@
     </ClInclude>
     <ClInclude Include="..\public\GachaProps.h">
       <Filter>02. GameObject\Object\Gacha\GachaProps</Filter>
+   </ClInclude>
+    <ClInclude Include="..\public\GachaResult.h">
+      <Filter>02. GameObject\Object\Gacha\GachaProps\GachaResult</Filter>
+	</ClInclude>
+    <ClInclude Include="..\Public\Defiler_Control.h">
+      <Filter>02. GameObject\Object\Enemy\Boss\Defiler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\MapLightPoint.h">
+      <Filter>02. GameObject\MapObject\04. MapLightPoint</Filter>
     </ClInclude>
     <ClInclude Include="..\public\MapLightPoint.h" />
     <ClInclude Include="..\Public\UI_IconButton.h">
@@ -2883,6 +2895,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\UI_RamenResultBanner.cpp">
       <Filter>02. GameObject\UI\01. 2D\Ramen\ResultBanner</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\GachaResult.cpp">
+      <Filter>02. GameObject\Object\Gacha\GachaProps\GachaResult</Filter>
+	</ClCompile>
+    <ClCompile Include="..\private\MapLightPoint.cpp">
+      <Filter>02. GameObject\MapObject\04. MapLightPoint</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

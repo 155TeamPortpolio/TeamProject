@@ -17,8 +17,6 @@ HRESULT CDataBase::CreateTable()
 	//플레이어
 	if (FAILED(LoadPlayerCreationTable("../../Resources/Data/PlayerTable/PlayerTableCSV.csv"))) 
 		return E_FAIL;
-	if (FAILED(LoadPlayerLVTable("../../Resources/Data/PlayerTable/PlayerLVCSV.csv")))
-		return E_FAIL;
 
 	//몬스터
 	if (FAILED(LoadMonsterCreationTable("../../Resources/Data/MonsterTable/MonsterTable.csv"))) 
@@ -45,6 +43,9 @@ HRESULT CDataBase::CreateTable()
 	if (FAILED(LoadRamenData("../../Resources/Data/Shop/Shop_Ramen.csv")))
 		return E_FAIL;
 
+	if (FAILED(LoadWeaponData("../../Resources/Data/Gacha/WeaponID.csv")))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -53,15 +54,6 @@ PlayerDesc CDataBase::GetPlayerDesc(const string& strName)
 	auto iter = m_PlayerTables.find(strName);
 	if (iter == m_PlayerTables.end())
 		return PlayerDesc{};
-
-	return iter->second;
-}
-
-PlayerLVDesc CDataBase::GetLevelDesc(_uint lv)
-{
-	auto iter = m_PlayerLVTables.find(lv);
-	if (iter == m_PlayerLVTables.end())
-		return PlayerLVDesc{};
 
 	return iter->second;
 }
@@ -158,6 +150,15 @@ vector<const RAMEN_DESC*> CDataBase::GetRamenTable()
 	return result;
 }
 
+WEAPON_DESC CDataBase::GetWeaponDesc(_int WeaponID)
+{
+	auto iter = m_WeaponTables.find(WeaponID);
+	if (iter == m_WeaponTables.end())
+		return WEAPON_DESC{};
+
+	return iter->second;
+}
+
 HRESULT CDataBase::LoadPlayerCreationTable(const string& csvPath)
 {
 	/*
@@ -165,7 +166,7 @@ HRESULT CDataBase::LoadPlayerCreationTable(const string& csvPath)
 		trim_chars = 앞 뒤 공백 제거
 		double_quote_escape = "..." 안의 쉼표 및 따옴표 처리 */
 	io::CSVReader<
-		5,
+		6,
 		io::trim_chars<' ', '\t'>,
 		io::double_quote_escape<',', '"'>
 	>in(csvPath);
@@ -176,67 +177,29 @@ HRESULT CDataBase::LoadPlayerCreationTable(const string& csvPath)
 	*/
 	in.read_header(
 		io::ignore_extra_column | io::ignore_missing_column,
-		"Name", "LV",
-		"SpecialAttack", "ExType", "Ultimate"
+		"Name", "HP", "Attack", "Defend",
+		"SpecialAttack", "Ultimate"
 	);
 
-	string	Name{}, ExType{};
-	_uint	LV{};
-	_float	SpecialAttack{}, Ultimate{};
+	string	Name{};
+	_float	HP{}, Attack{}, Defend{}, SpecialAttack{}, Ultimate{};
 
-	while (in.read_row(Name, LV, SpecialAttack, ExType, Ultimate))
+	while (in.read_row(Name, HP, Attack, Defend, SpecialAttack, Ultimate))
 	{
 		if (Name.empty()) continue;
 
 		PlayerDesc desc = {};
 		desc.strPlayerName = Name;
-		desc.LV = LV;
+		desc.MaxHP = HP;
+		desc.Attack = Attack;
+		desc.Defend = Defend;
 		desc.SpecialAttack = SpecialAttack;
-		desc.ExType = ExType;
 		desc.Ultimate = Ultimate;
 
 		auto [iter, inserted] = m_PlayerTables.emplace(desc.strPlayerName, move(desc));
 		if (false == inserted) 
 		{
 			wstring ErrorMsg = L"Duplicate PlayerKey in CSV : " + Helper::ConvertToWideString(Name);
-			MessageBox(NULL, ErrorMsg.c_str(), L"System Message", MB_OK);
-		}
-	}
-
-	return S_OK;
-}
-
-HRESULT CDataBase::LoadPlayerLVTable(const string& csvPath)
-{
-	io::CSVReader<
-		4,
-		io::trim_chars<' ', '\t'>,
-		io::double_quote_escape<',', '"'>
-	>in(csvPath);
-
-	in.read_header(
-		io::ignore_extra_column | io::ignore_missing_column,
-		"LV",
-		"HP", "Attack", "Defend"
-	);
-
-	_uint	LV{};
-	_float	HP{}, Attack{}, Defend{};
-
-	while (in.read_row(LV, HP, Attack, Defend))
-	{
-		if (LV <= 0) continue;
-
-		PlayerLVDesc desc = {};
-		desc.LV = LV;
-		desc.MaxHP = HP;
-		desc.Attack = Attack;
-		desc.Defend = Defend;
-
-		auto [iter, inserted] = m_PlayerLVTables.emplace(desc.LV, move(desc));
-		if (false == inserted) 
-		{
-			wstring ErrorMsg = L"Duplicate PlayerLVKey in CSV : " + to_wstring(LV);
 			MessageBox(NULL, ErrorMsg.c_str(), L"System Message", MB_OK);
 		}
 	}
@@ -622,6 +585,43 @@ HRESULT CDataBase::LoadRamenData(const string& csvPath)
 	return S_OK;
 }
 
+HRESULT CDataBase::LoadWeaponData(const string& csvPath)
+{
+	io::CSVReader<
+		5,
+		io::trim_chars<' ', '\t'>,
+		io::double_quote_escape<',', '"'>
+	>in(csvPath);
+
+	in.read_header(
+		io::ignore_extra_column | io::ignore_missing_column,
+		"ID", "Grade", "Model", "Mat", "Texture"
+	);
+	string			Grade, Model, Material, Texture;
+	_int			ID;
+
+	while (in.read_row(ID, Grade, Model, Material,Texture))
+	{
+		if (ID == -1) continue;
+
+		WEAPON_DESC desc = {};
+		desc.ID = ID;
+		desc.Grade = StringToGachaGrade(Grade);
+		desc.strModel = Model;
+		desc.strMaterial = Material;
+		desc.strTexture = Texture;
+
+		auto [iter, inserted] = m_WeaponTables.emplace(desc.ID, move(desc));
+		if (false == inserted)
+		{
+			wstring ErrorMsg = L"Duplicate WeaponKey in CSV : " + desc.ID;
+			MessageBox(NULL, ErrorMsg.c_str(), L"System Message", MB_OK);
+		}
+	}
+
+	return S_OK;
+}
+
 const CASHED_OBJ_DATA* CDataBase::Get_CashedData(const string& AreaTag)
 {
 	auto iter = m_CashedData.find(AreaTag);
@@ -693,6 +693,15 @@ Speaker CDataBase::StringToSpeaker(const string& str)
 	if (str == "Player") return Speaker::Player;
 
 	return Speaker::Npc;
+}
+
+GachaGrade CDataBase::StringToGachaGrade(const string& str)
+{
+	if (str == "S") return GachaGrade::S;
+	if (str == "A") return GachaGrade::A;
+	if (str == "B") return GachaGrade::B;
+
+	return GachaGrade::B;
 }
 
 wstring CDataBase::StringToWString(const string& str)
