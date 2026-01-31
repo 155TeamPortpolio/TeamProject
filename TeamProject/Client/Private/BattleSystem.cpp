@@ -279,6 +279,7 @@ void CBattleSystem::SpawnMosnter(const string& MonsterProtoTag, _float3 vSpawnPo
 	
 	CEnemy::ENEMY_DESC* enemyDesc = new CEnemy::ENEMY_DESC();
 	enemyDesc->iMaxHP = MonsterTableDesc.iMaxHP;
+	enemyDesc->isUseInspector = m_isUseInspector;
 
 	const string NowLevel = CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey();
 

@@ -1,0 +1,14 @@
+ID,Name,Price,Order,AttributeCount,AttributeID1,AttributeName1,AttributeValue1,AttributeID2,AttributeName2,AttributeValue2
+ramen_white_veggie,흰 그릇: 야채라면,1800,1,1,atk,공격력,30,,,
+ramen_white_zucchini,흰 그릇: 호박라면,2500,2,2,max_hp,HP,15,dmg_physical,물리 피해,15
+ramen_white_fried_chashu,흰 그릇: 차슈 튀김라면,2500,3,2,max_hp,HP,15,dmg_ether,에테르 피해,15
+ramen_white_redpepper_meat,흰 그릇: 홍고추\n고기라면,2500,4,2,max_hp,HP,15,dmg_fire,불 속성 피해,15
+ramen_white_greenpepper_meat,흰 그릇: 청고추\n고기라면,2500,5,2,max_hp,HP,15,dmg_thunder,전기 속성 피해,15
+ramen_white_seafood,흰 그릇: 해물라면,2500,6,2,max_hp,HP,15,dmg_ice,얼음 속성 피해,15
+ramen_black_mushroom,검은 그릇: 버섯라면,5000,7,1,dmg_physical,물리 피해,30,,,
+ramen_black_smoked_chashu,검은 그릇: 훈제\n차슈라면,5000,8,1,dmg_ether,에테르 피해,30,,,
+ramen_black_redpepper_chicken,검은 그릇: 홍고추\n닭육수라면,5000,9,1,dmg_fire,불 속성 피해,30,,,
+ramen_black_greenpepper_chicken,검은 그릇: 청고추\n닭육수라면,5000,10,1,dmg_thunder,전기 속성 피해,30,,,
+ramen_black_cold_seafood,검은 그릇: 해물\n냉라면,5000,11,1,dmg_ice,얼음 속성 피해,30,,,
+ramen_black_bibim,검은 그릇: 비빔면,5000,12,1,max_hp,HP,30,,,
+rmane_black_bone,검은 그릇: 뼈라면,5000,13,1,dmg_to_boss,보스 적에게 주는 피해,30,,,

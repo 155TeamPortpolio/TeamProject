@@ -98,7 +98,10 @@ void CParticleNode::Play()
 
 void CParticleNode::Stop()
 {
-	m_IsEffectActive = false;
+	if (m_IsLoop)
+		Get_Component<CParticleSystem>()->Pause();
+	else
+		m_IsEffectActive = false;
 }
 
 CParticleNode* CParticleNode::Create()

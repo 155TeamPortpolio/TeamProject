@@ -79,6 +79,14 @@ private:
 	/*Map 구조 변경 후 재적용 예정*/
 	BATTLE_FIELD_DATA			m_BattleFieldData = {};// 현재 Stage에 셋팅 된 BattlePoint 정보
 	vector<OBJECT_HANDLE>		m_SpawnerHandles;// 스포너 핸들
+
+private:
+	_bool	m_isUseInspector = { false };
+
+public:
+	_bool	IsUseInspector() { return m_isUseInspector; }
+	void	SetUseInspector(_bool is) { m_isUseInspector = is; }
+
 private: /*현재 사용 X*/
 	const _char* m_LayerTag[3] = { "Model_Layer", "Enemy_Layer" ,"None"};
 	unordered_map<BATTLE_OBJ_TYPE, vector<OBJECT_HANDLE>>	m_Handles;			// BATTLE_OBJ_TYPE 별로 생성된 오브젝트의 핸들 모음

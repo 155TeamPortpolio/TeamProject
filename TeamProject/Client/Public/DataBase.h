@@ -26,6 +26,8 @@ public:
     ChoiceDesc              GetNpcChoiceDesc(const string& strName);
     const vector<MapData_Path_Packet>*  GetMapDataPacket(const string& tagArea);
     const EncounterTable*               GetMonsterSpawnData(const string& tagArea, _uint iStageType);
+    RAMEN_DESC              GetRamenDesc(const string& strName);
+    vector<const RAMEN_DESC*> GetRamenTable();
 
 public:
     HRESULT LoadPlayerCreationTable(const string& csvPath);
@@ -37,6 +39,7 @@ public:
     HRESULT LoadNpcIDData(const string& csvPath);
     HRESULT LoadNpcDialogueData(const string& csvPath);
     HRESULT LoadNpcChoiceData(const string& csvPath);
+    HRESULT LoadRamenData(const string& csvPath);
 
 public:
     const CASHED_OBJ_DATA* Get_CashedData(const string& AreaTag);
@@ -72,6 +75,7 @@ private:
     //맵 데이터 <-> 런타임 데이터 연결용 (현재 작동중인 레벨에서만)
     unordered_map<string, CASHED_OBJ_DATA>  m_CashedData;
     
+    unordered_map<string, RAMEN_DESC>                      m_RamenTables;
 
 public:
     virtual void Free() override;
