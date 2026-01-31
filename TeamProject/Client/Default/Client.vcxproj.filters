@@ -1953,6 +1953,7 @@
     <ClInclude Include="..\public\MapLightPoint.h" />
     <ClInclude Include="..\public\UI_Gangta.h">
       <Filter>02. GameObject\UI\02. 3D\Plane\Gangta</Filter>
+    </ClInclude>
     <ClInclude Include="..\public\MapLightPoint.h">
       <Filter>02. GameObject\MapObject\04. MapLightPoint</Filter>
     </ClInclude>
