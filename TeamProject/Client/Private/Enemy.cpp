@@ -67,6 +67,10 @@ HRESULT CEnemy::Initialize(INIT_DESC* pArg)
 
 void CEnemy::Awake()
 {
+	//*Shader Texture*
+	auto Texture = ResourceManager()->Load_Texture(G_GlobalLevelKey, "Eff_Noise_119.png");
+	RenderSystem()->Set_NoiseTexture(NOISE_FXTYPE::VANISH, Texture);
+
 	m_fDeathSqueneDuration = 0.9f;
 	m_fDeathSquenceElapsedTime = 0.f;
 
@@ -138,7 +142,7 @@ void CEnemy::Update_DeathSquence(_float dt)
 		_vector3 vStartColor(0.2f, 0.1f, 0.f);
 		_vector3 vEndColor(0.7f, 0.2f, 0.f);
 
-		m_fEmissiveStrength = Math::Lerp(0.f, 1.f, Math::ApplyEase(EaseType::InExpo, t));
+		m_fEmissiveStrength = Math::Lerp(0.f, 1.f, Math::ApplyEase(EaseType::OutQuint, t));
 		m_vEmissiveColor = _vector3::Lerp(vStartColor, vEndColor, Math::ApplyEase(EaseType::OutSine, t));
 		m_fDissolveProgress = Math::ApplyEase(EaseType::Linear, t);
 

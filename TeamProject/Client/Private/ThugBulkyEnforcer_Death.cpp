@@ -45,10 +45,8 @@ void CThugBulkyEnforcer_Death::Update(CThugBulkyEnforcer* pOwner, _float dt)
 			.Build("Enemy_Dead");
 
 		ObjectManager()->Add_Object(effect, { pOwner->Get_Level(),"Enemy_Effect_Layer" });
-	}
-
-	if (m_fAnimProgress > 0.99f)
 		pOwner->Death();
+	}
 }
 
 void CThugBulkyEnforcer_Death::Exit(CThugBulkyEnforcer* pOwner)
