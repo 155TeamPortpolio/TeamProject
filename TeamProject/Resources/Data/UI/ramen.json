@@ -242,457 +242,6 @@
         },
         {
             "alive": true,
-            "instanceName": "back",
-            "transform": {
-                "anchor": 0,
-                "anchorOffset": [
-                    -800.0,
-                    -450.0
-                ],
-                "size": [
-                    132.0,
-                    68.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0
-                ],
-                "pivot": [
-                    0.0,
-                    0.0
-                ],
-                "radian": 0.0
-            },
-            "color": [
-                1.0,
-                1.0,
-                1.0,
-                1.0
-            ],
-            "pass": "Opaque",
-            "animClips": [],
-            "children": [
-                {
-                    "alive": true,
-                    "instanceName": "btnBack",
-                    "transform": {
-                        "anchor": 10,
-                        "anchorOffset": [
-                            -78.0,
-                            -52.0
-                        ],
-                        "size": [
-                            78.0,
-                            52.0
-                        ],
-                        "scale": [
-                            1.0,
-                            1.0
-                        ],
-                        "pivot": [
-                            0.0,
-                            0.0
-                        ],
-                        "radian": 0.0
-                    },
-                    "color": [
-                        1.0,
-                        0.8117647171020508,
-                        0.0,
-                        0.0
-                    ],
-                    "pass": "Opaque",
-                    "animClips": [],
-                    "children": [],
-                    "typeTag": "Button",
-                    "textureTag": "BtnSpecialBG01.png",
-                    "eventMsgTag": ""
-                },
-                {
-                    "alive": true,
-                    "instanceName": "NineSlice",
-                    "transform": {
-                        "anchor": 10,
-                        "anchorOffset": [
-                            -78.0,
-                            -52.0
-                        ],
-                        "size": [
-                            78.0,
-                            52.0
-                        ],
-                        "scale": [
-                            1.0,
-                            1.0
-                        ],
-                        "pivot": [
-                            0.0,
-                            0.0
-                        ],
-                        "radian": 0.0
-                    },
-                    "color": [
-                        0.0,
-                        0.0,
-                        0.0,
-                        1.0
-                    ],
-                    "pass": "NineSlice",
-                    "animClips": [],
-                    "children": [],
-                    "typeTag": "NineSlice",
-                    "textureTag": "BtnSpecialBG01.png",
-                    "nineSlice": {
-                        "borderPx": [
-                            22.0,
-                            20.0,
-                            0.0,
-                            0.0
-                        ],
-                        "uvRangeX": [
-                            0.0,
-                            0.4680851101875305,
-                            0.5744680762290955,
-                            1.0
-                        ],
-                        "uvRangeY": [
-                            0.0,
-                            0.0,
-                            1.0,
-                            1.0
-                        ],
-                        "textureSize": [
-                            47.0,
-                            39.0
-                        ]
-                    }
-                },
-                {
-                    "alive": true,
-                    "instanceName": "NineSlice",
-                    "transform": {
-                        "anchor": 10,
-                        "anchorOffset": [
-                            -75.0,
-                            -49.0
-                        ],
-                        "size": [
-                            72.0,
-                            46.0
-                        ],
-                        "scale": [
-                            1.0,
-                            1.0
-                        ],
-                        "pivot": [
-                            0.0,
-                            0.0
-                        ],
-                        "radian": 0.0
-                    },
-                    "color": [
-                        1.0,
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "pass": "NineSlice",
-                    "animClips": [],
-                    "children": [],
-                    "typeTag": "NineSlice",
-                    "textureTag": "BtnExitOutline01.png",
-                    "nineSlice": {
-                        "borderPx": [
-                            20.0,
-                            18.0,
-                            0.0,
-                            0.0
-                        ],
-                        "uvRangeX": [
-                            0.0,
-                            0.4545454680919647,
-                            0.5909091234207153,
-                            1.0
-                        ],
-                        "uvRangeY": [
-                            0.0,
-                            0.0,
-                            1.0,
-                            1.0
-                        ],
-                        "textureSize": [
-                            44.0,
-                            37.0
-                        ]
-                    }
-                },
-                {
-                    "alive": true,
-                    "instanceName": "overlayBack",
-                    "transform": {
-                        "anchor": 10,
-                        "anchorOffset": [
-                            -80.0,
-                            -54.0
-                        ],
-                        "size": [
-                            82.0,
-                            56.0
-                        ],
-                        "scale": [
-                            1.0,
-                            1.0
-                        ],
-                        "pivot": [
-                            0.0,
-                            0.0
-                        ],
-                        "radian": 0.0
-                    },
-                    "color": [
-                        0.9411764740943909,
-                        0.8509804010391235,
-                        0.003921568859368563,
-                        0.0
-                    ],
-                    "pass": "NineSlice",
-                    "animClips": [
-                        {
-                            "duration": 0.15000000596046448,
-                            "keyframes": [
-                                {
-                                    "angle": 0.0,
-                                    "color": [
-                                        0.9411764740943909,
-                                        0.8509804010391235,
-                                        0.003921568859368563,
-                                        1.0
-                                    ],
-                                    "easeType": 4,
-                                    "position": [
-                                        0.0,
-                                        0.0
-                                    ],
-                                    "scale": [
-                                        1.0,
-                                        1.0
-                                    ],
-                                    "time": 0.0
-                                },
-                                {
-                                    "angle": 0.0,
-                                    "color": [
-                                        0.9411764740943909,
-                                        0.8509804010391235,
-                                        0.003921568859368563,
-                                        0.0
-                                    ],
-                                    "easeType": 4,
-                                    "position": [
-                                        0.0,
-                                        0.0
-                                    ],
-                                    "scale": [
-                                        1.0,
-                                        1.0
-                                    ],
-                                    "time": 0.05000000074505806
-                                },
-                                {
-                                    "angle": 0.0,
-                                    "color": [
-                                        0.9411764740943909,
-                                        0.8509804010391235,
-                                        0.003921568859368563,
-                                        1.0
-                                    ],
-                                    "easeType": 4,
-                                    "position": [
-                                        0.0,
-                                        0.0
-                                    ],
-                                    "scale": [
-                                        1.0,
-                                        1.0
-                                    ],
-                                    "time": 0.10000000149011612
-                                },
-                                {
-                                    "angle": 0.0,
-                                    "color": [
-                                        0.9411764740943909,
-                                        0.8509804010391235,
-                                        0.003921568859368563,
-                                        0.0
-                                    ],
-                                    "easeType": 0,
-                                    "position": [
-                                        0.0,
-                                        0.0
-                                    ],
-                                    "scale": [
-                                        1.0,
-                                        1.0
-                                    ],
-                                    "time": 0.15000000596046448
-                                }
-                            ],
-                            "loop": false,
-                            "name": "clip0"
-                        }
-                    ],
-                    "children": [],
-                    "typeTag": "NineSlice",
-                    "textureTag": "BtnSpecialBG01.png",
-                    "nineSlice": {
-                        "borderPx": [
-                            22.0,
-                            20.0,
-                            0.0,
-                            0.0
-                        ],
-                        "uvRangeX": [
-                            0.0,
-                            0.4680851101875305,
-                            0.5744680762290955,
-                            1.0
-                        ],
-                        "uvRangeY": [
-                            0.0,
-                            0.0,
-                            1.0,
-                            1.0
-                        ],
-                        "textureSize": [
-                            47.0,
-                            39.0
-                        ]
-                    }
-                },
-                {
-                    "alive": true,
-                    "instanceName": "iconBack",
-                    "transform": {
-                        "anchor": 10,
-                        "anchorOffset": [
-                            -52.0,
-                            -38.0
-                        ],
-                        "size": [
-                            29.052631378173828,
-                            24.0
-                        ],
-                        "scale": [
-                            1.0,
-                            1.0
-                        ],
-                        "pivot": [
-                            0.0,
-                            0.0
-                        ],
-                        "radian": 0.0
-                    },
-                    "color": [
-                        1.0,
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "pass": "Opaque",
-                    "animClips": [
-                        {
-                            "duration": 0.15000000596046448,
-                            "keyframes": [
-                                {
-                                    "angle": 0.0,
-                                    "color": [
-                                        0.0,
-                                        0.0,
-                                        0.0,
-                                        1.0
-                                    ],
-                                    "easeType": 4,
-                                    "position": [
-                                        0.0,
-                                        0.0
-                                    ],
-                                    "scale": [
-                                        1.0,
-                                        1.0
-                                    ],
-                                    "time": 0.0
-                                },
-                                {
-                                    "angle": 0.0,
-                                    "color": [
-                                        1.0,
-                                        1.0,
-                                        1.0,
-                                        1.0
-                                    ],
-                                    "easeType": 4,
-                                    "position": [
-                                        0.0,
-                                        0.0
-                                    ],
-                                    "scale": [
-                                        1.0,
-                                        1.0
-                                    ],
-                                    "time": 0.05000000074505806
-                                },
-                                {
-                                    "angle": 0.0,
-                                    "color": [
-                                        0.0,
-                                        0.0,
-                                        0.0,
-                                        1.0
-                                    ],
-                                    "easeType": 4,
-                                    "position": [
-                                        0.0,
-                                        0.0
-                                    ],
-                                    "scale": [
-                                        1.0,
-                                        1.0
-                                    ],
-                                    "time": 0.10000000149011612
-                                },
-                                {
-                                    "angle": 0.0,
-                                    "color": [
-                                        1.0,
-                                        1.0,
-                                        1.0,
-                                        1.0
-                                    ],
-                                    "easeType": 0,
-                                    "position": [
-                                        0.0,
-                                        0.0
-                                    ],
-                                    "scale": [
-                                        1.0,
-                                        1.0
-                                    ],
-                                    "time": 0.15000000596046448
-                                }
-                            ],
-                            "loop": false,
-                            "name": "clip1"
-                        }
-                    ],
-                    "children": [],
-                    "typeTag": "Image",
-                    "textureTag": "IconExit.png"
-                }
-            ],
-            "typeTag": "CanvasPanel"
-        },
-        {
-            "alive": true,
             "instanceName": "CanvasPanel",
             "transform": {
                 "anchor": 5,
@@ -1078,7 +627,98 @@
                 1.0
             ],
             "pass": "Opaque",
-            "animClips": [],
+            "animClips": [
+                {
+                    "duration": 1.0,
+                    "keyframes": [
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                0.0
+                            ],
+                            "easeType": 29,
+                            "position": [
+                                0.0,
+                                40.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 0.0
+                        },
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "easeType": 0,
+                            "position": [
+                                0.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 0.4000000059604645
+                        }
+                    ],
+                    "loop": false,
+                    "name": "appear"
+                },
+                {
+                    "duration": 0.20000000298023224,
+                    "keyframes": [
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "easeType": 0,
+                            "position": [
+                                0.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 0.0
+                        },
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                0.0
+                            ],
+                            "easeType": 0,
+                            "position": [
+                                0.0,
+                                100.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 0.20000000298023224
+                        }
+                    ],
+                    "loop": false,
+                    "name": "disappear"
+                }
+            ],
             "children": [
                 {
                     "alive": true,
@@ -1200,7 +840,7 @@
                 },
                 {
                     "alive": true,
-                    "instanceName": "orderIcon",
+                    "instanceName": "iconOrder",
                     "transform": {
                         "anchor": 1,
                         "anchorOffset": [
@@ -1235,7 +875,7 @@
                 },
                 {
                     "alive": true,
-                    "instanceName": "orderText",
+                    "instanceName": "textOrder",
                     "transform": {
                         "anchor": 0,
                         "anchorOffset": [
@@ -1263,7 +903,72 @@
                         1.0
                     ],
                     "pass": "Opaque",
-                    "animClips": [],
+                    "animClips": [
+                        {
+                            "duration": 0.15000000596046448,
+                            "keyframes": [
+                                {
+                                    "angle": 0.0,
+                                    "color": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ],
+                                    "easeType": 0,
+                                    "position": [
+                                        0.0,
+                                        0.0
+                                    ],
+                                    "scale": [
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "time": 0.0
+                                },
+                                {
+                                    "angle": 0.0,
+                                    "color": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ],
+                                    "easeType": 0,
+                                    "position": [
+                                        0.0,
+                                        0.0
+                                    ],
+                                    "scale": [
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "time": 0.14000000059604645
+                                },
+                                {
+                                    "angle": 0.0,
+                                    "color": [
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "easeType": 0,
+                                    "position": [
+                                        0.0,
+                                        0.0
+                                    ],
+                                    "scale": [
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "time": 0.15000000596046448
+                                }
+                            ],
+                            "loop": false,
+                            "name": "clip0"
+                        }
+                    ],
                     "children": [],
                     "typeTag": "Text",
                     "text": {
@@ -1288,7 +993,7 @@
                 },
                 {
                     "alive": true,
-                    "instanceName": "orderDisable",
+                    "instanceName": "disableOrder",
                     "transform": {
                         "anchor": 1,
                         "anchorOffset": [
@@ -1316,7 +1021,60 @@
                         0.8627451062202454
                     ],
                     "pass": "NineSlice",
-                    "animClips": [],
+                    "animClips": [
+                        {
+                            "duration": 0.10000000149011612,
+                            "keyframes": [
+                                {
+                                    "angle": 0.0,
+                                    "color": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        0.8627451062202454
+                                    ],
+                                    "easeType": 0,
+                                    "position": [
+                                        0.0,
+                                        0.0
+                                    ],
+                                    "scale": [
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "time": 0.0
+                                }
+                            ],
+                            "loop": false,
+                            "name": "clip0"
+                        },
+                        {
+                            "duration": 0.10000000149011612,
+                            "keyframes": [
+                                {
+                                    "angle": 0.0,
+                                    "color": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        0.0
+                                    ],
+                                    "easeType": 0,
+                                    "position": [
+                                        0.0,
+                                        0.0
+                                    ],
+                                    "scale": [
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "time": 0.0
+                                }
+                            ],
+                            "loop": false,
+                            "name": "clip1"
+                        }
+                    ],
                     "children": [],
                     "typeTag": "NineSlice",
                     "textureTag": "Circle52.png",
@@ -1347,7 +1105,7 @@
                 },
                 {
                     "alive": true,
-                    "instanceName": "orderOverlay",
+                    "instanceName": "clickOrder",
                     "transform": {
                         "anchor": 1,
                         "anchorOffset": [
@@ -1377,7 +1135,7 @@
                     "pass": "NineSlice",
                     "animClips": [
                         {
-                            "duration": 0.20000000298023224,
+                            "duration": 0.15000000596046448,
                             "keyframes": [
                                 {
                                     "angle": 0.0,
@@ -1434,7 +1192,7 @@
                                         1.0,
                                         1.0
                                     ],
-                                    "time": 0.19499999284744263
+                                    "time": 0.14000000059604645
                                 },
                                 {
                                     "angle": 0.0,
@@ -1453,7 +1211,7 @@
                                         1.0,
                                         1.0
                                     ],
-                                    "time": 0.20000000298023224
+                                    "time": 0.15000000596046448
                                 }
                             ],
                             "loop": false,
@@ -1532,7 +1290,7 @@
                 },
                 {
                     "alive": true,
-                    "instanceName": "priceText",
+                    "instanceName": "textPrice",
                     "transform": {
                         "anchor": 1,
                         "anchorOffset": [
@@ -1582,6 +1340,42 @@
                         "autoPos": true,
                         "anchor": 1
                     }
+                },
+                {
+                    "alive": true,
+                    "instanceName": "btnOrder",
+                    "transform": {
+                        "anchor": 0,
+                        "anchorOffset": [
+                            -130.0,
+                            -26.0
+                        ],
+                        "size": [
+                            260.0,
+                            52.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        0.0
+                    ],
+                    "pass": "Opaque",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "Button",
+                    "textureTag": "empty.png",
+                    "eventMsgTag": ""
                 }
             ],
             "typeTag": "CanvasPanel"
