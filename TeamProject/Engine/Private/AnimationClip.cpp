@@ -11,7 +11,7 @@ HRESULT CAnimationClip::Initialize(const string& animationPath)
 {
 	ifstream ifs(animationPath.c_str(), ios::binary);
 
-	if (!ifs.is_open()) {
+ 	if (!ifs.is_open()) {
 		string msg = "Anim Add Failed path: " + animationPath + "\n";
 		OutputDebugStringA(msg.c_str());
 		return E_FAIL;

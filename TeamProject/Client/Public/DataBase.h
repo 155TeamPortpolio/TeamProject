@@ -18,7 +18,6 @@ public:
 
 public:
     PlayerDesc              GetPlayerDesc(const string& strName);
-    PlayerLVDesc            GetLevelDesc(_uint lv);
     MonsterCreationDesc     GetMonsterDesc(const string& strName);
     MonsterCreationDesc     GetMonsterDesc(_int ColonyIndex, _int MonsterIndex);
     NpcIDDesc               GetNpcIDData(const wstring& strName);
@@ -31,7 +30,6 @@ public:
 
 public:
     HRESULT LoadPlayerCreationTable(const string& csvPath);
-    HRESULT LoadPlayerLVTable(const string& csvPath);
     HRESULT LoadMonsterCreationTable(const string& csvPath);
     HRESULT LoadMonsterSpawnData(const string& csvPath);
     HRESULT LoadUICreationTable(const string& csvPath);
@@ -62,7 +60,6 @@ private:
     unordered_map<string, StageTypeTable>                   m_BattleSpawnData;
     // 플레이어 테이블
     unordered_map<string, PlayerDesc>				        m_PlayerTables;
-    unordered_map<_uint, PlayerLVDesc>				        m_PlayerLVTables;
     // 지형별로 묶어놓은 맵 데이터 경로
     unordered_map<string, vector<MapData_Path_Packet>>	    m_MapAreaData;
     //NpcData

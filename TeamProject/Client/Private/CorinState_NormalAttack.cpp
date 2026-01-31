@@ -106,13 +106,25 @@ void CCorinState_Attack_01::Update(CCorin* pOwner, _float dt)
         ENUM(CCorin::ROOTMOTION_MASK::MOVE) |
         ENUM(CCorin::ROOTMOTION_MASK::QUATERNION));
 
-    if (m_fAnimProgress >= 0.37f)
+    for (const auto& Event : pOwner->Get_Animator()->Get_EventBus())
     {
-        pOwner->Begin_AttackCollider("Saw", { HIT_TYPE::COUNT, DAMAGE_TYPE::NORMAL, 1.f, 0.f,4 });
-    }
-    if (m_fAnimProgress >= 0.45f)
-    {
-        pOwner->End_AttackCollider("Saw");
+        if (Event.Type != CLIP_EVENT_TYPE::NOTIFY) continue;
+        if (Event.Tag == "SawCount")
+        {
+            pOwner->Begin_AttackCollider("Saw",
+                HitDesc()
+                .Type(HIT_TYPE::COUNT)
+                .Damage(pOwner->Get_AttackPower() * 0.82f * Helper::Get_Random_Float(1.f, 1.5f)
+                    , DAMAGE_TYPE::NORMAL)
+                .Interval(0.05f)
+                .MaxCount(4)
+                .Charge(1.f, 10.f)
+            );
+        }
+        else if (Event.Tag == "SawEnd")
+        {
+            pOwner->End_AttackCollider("Saw");
+        }
     }
 }
 
@@ -136,13 +148,25 @@ void CCorinState_Attack_02::Update(CCorin* pOwner, _float dt)
         ENUM(CCorin::ROOTMOTION_MASK::MOVE) |
         ENUM(CCorin::ROOTMOTION_MASK::QUATERNION));
 
-    if (m_fAnimProgress >= 0.25f)
+    for (const auto& Event : pOwner->Get_Animator()->Get_EventBus())
     {
-        pOwner->Begin_AttackCollider("Saw", { HIT_TYPE::COUNT, DAMAGE_TYPE::NORMAL, 1.f,0.f, 4 });
-    }
-    if (m_fAnimProgress >= 0.35f)
-    {
-        pOwner->End_AttackCollider("Saw");
+        if (Event.Type != CLIP_EVENT_TYPE::NOTIFY) continue;
+        if (Event.Tag == "SawCount")
+        {
+            pOwner->Begin_AttackCollider("Saw",
+                HitDesc()
+                .Type(HIT_TYPE::COUNT)
+                .Damage(pOwner->Get_AttackPower() * 0.766f * Helper::Get_Random_Float(1.f, 1.5f)
+                    , DAMAGE_TYPE::NORMAL)
+                .Interval(0.05f)
+                .MaxCount(4)
+                .Charge(1.f, 10.f)
+            );
+        }
+        else if (Event.Tag == "SawEnd")
+        {
+            pOwner->End_AttackCollider("Saw");
+        }
     }
 }
 
@@ -165,13 +189,24 @@ void CCorinState_Attack_03::Update(CCorin* pOwner, _float dt)
         ENUM(CCorin::ROOTMOTION_MASK::MOVE) |
         ENUM(CCorin::ROOTMOTION_MASK::QUATERNION));
 
-    if (m_fAnimProgress >= 0.5f)
+    for (const auto& Event : pOwner->Get_Animator()->Get_EventBus())
     {
-        pOwner->Begin_AttackCollider("Saw", { HIT_TYPE::COUNT, DAMAGE_TYPE::NORMAL, 1.f, 0.15f, 7 });
-    }
-    if (m_fAnimProgress >= 0.99f)
-    {
-        pOwner->End_AttackCollider("Saw");
+        if (Event.Type != CLIP_EVENT_TYPE::NOTIFY) continue;
+        if (Event.Tag == "SawInterval")
+        {
+            pOwner->Begin_AttackCollider("Saw",
+                HitDesc()
+                .Type(HIT_TYPE::INTERVAL)
+                .Damage(pOwner->Get_AttackPower() * 1.792f * Helper::Get_Random_Float(1.f, 1.5f)
+                    , DAMAGE_TYPE::NORMAL)
+                .Interval(0.05f)
+                .Charge(1.f, 10.f)
+            );
+        }
+        else if (Event.Tag == "SawEnd")
+        {
+            pOwner->End_AttackCollider("Saw");
+        }
     }
 }
 
@@ -195,13 +230,24 @@ void CCorinState_Attack_04::Update(CCorin* pOwner, _float dt)
         ENUM(CCorin::ROOTMOTION_MASK::MOVE) |
         ENUM(CCorin::ROOTMOTION_MASK::QUATERNION));
 
-    if (IsCrossAnimProgress(0.15f))
+    for (const auto& Event : pOwner->Get_Animator()->Get_EventBus())
     {
-        pOwner->Begin_AttackCollider("Saw", { HIT_TYPE::INTERVAL, DAMAGE_TYPE::NORMAL, 1.f, 0.15f, 0});
-    }
-    if (IsCrossAnimProgress(0.46f))
-    {
-        pOwner->End_AttackCollider("Saw");
+        if (Event.Type != CLIP_EVENT_TYPE::NOTIFY) continue;
+        if (Event.Tag == "SawInterval")
+        {
+            pOwner->Begin_AttackCollider("Saw",
+                HitDesc()
+                .Type(HIT_TYPE::INTERVAL)
+                .Damage(pOwner->Get_AttackPower() * 2.334f * Helper::Get_Random_Float(1.f, 1.5f)
+                    , DAMAGE_TYPE::NORMAL)
+                .Interval(0.05f)
+                .Charge(1.f, 10.f)
+            );
+        }
+        else if (Event.Tag == "SawEnd")
+        {
+            pOwner->End_AttackCollider("Saw");
+        }
     }
 }
 
@@ -223,20 +269,25 @@ void CCorinState_Attack_05::Update(CCorin* pOwner, _float dt)
     pOwner->Process_RootMotion(dt,
         ENUM(CCorin::ROOTMOTION_MASK::MOVE) |
         ENUM(CCorin::ROOTMOTION_MASK::QUATERNION));
-    if (m_fAnimProgress >= 0.4f)
+
+    for (const auto& Event : pOwner->Get_Animator()->Get_EventBus())
     {
-        pOwner->Begin_AttackCollider("Saw",
-            HitDesc()
-            .Type(HIT_TYPE::COUNT)
-            .Damage(10.f, DAMAGE_TYPE::NORMAL)
-            .Interval(0.15f)
-            .MaxCount(7)
-            .Charge(10.f, 100.f)
-        );
-    }
-    if (m_fAnimProgress >= 0.99f)
-    {
-        pOwner->End_AttackCollider("Saw");
+        if (Event.Type != CLIP_EVENT_TYPE::NOTIFY) continue;
+        if (Event.Tag == "SawInterval")
+        {
+            pOwner->Begin_AttackCollider("Saw",
+                HitDesc()
+                .Type(HIT_TYPE::INTERVAL)
+                .Damage(pOwner->Get_AttackPower() * 4.212f * Helper::Get_Random_Float(1.f, 1.5f)
+                    , DAMAGE_TYPE::HARD)
+                .Interval(0.05f)
+                .Charge(1.f, 10.f)
+            );
+        }
+        else if (Event.Tag == "SawEnd")
+        {
+            pOwner->End_AttackCollider("Saw");
+        }
     }
 }
 
