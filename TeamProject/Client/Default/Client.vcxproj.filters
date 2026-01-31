@@ -1012,6 +1012,9 @@
     <Filter Include="02. GameObject\UI\01. 2D\Ramen\Video">
       <UniqueIdentifier>{b889dc11-5cd6-4213-a0d9-2e21246b6767}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\Ramen\ResultBanner">
+      <UniqueIdentifier>{35f2592b-a494-4afd-8bf7-bd4eec385301}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1963,6 +1966,9 @@
     <ClInclude Include="..\Public\UI_RamenVideo.h">
       <Filter>02. GameObject\UI\01. 2D\Ramen\Video</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UI_RamenResultBanner.h">
+      <Filter>02. GameObject\UI\01. 2D\Ramen\ResultBanner</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2874,6 +2880,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\UI_RamenVideo.cpp">
       <Filter>02. GameObject\UI\01. 2D\Ramen\Video</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_RamenResultBanner.cpp">
+      <Filter>02. GameObject\UI\01. 2D\Ramen\ResultBanner</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

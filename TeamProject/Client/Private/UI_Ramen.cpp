@@ -9,6 +9,7 @@
 #include "UI_RamenMenu.h"  
 #include "UI_RamenOrderBanner.h"
 #include "UI_RamenVideo.h"
+#include "UI_RamenResultBanner.h"
 
 #include "DataBase.h"
 #include "FieldSystem.h"
@@ -25,7 +26,8 @@ void CUI_Ramen::Select_Menu(CUI_Object* pSelected, _int iPrice, wstring strMenu)
     m_pSelectedMenu->UI_Active(nullptr);
 
     Set_TextPrice(m_iMoney, iPrice);
-    m_strMenu = strMenu;
+    replace(strMenu.begin(), strMenu.end(), L'\n', L' ');
+    m_strMenu = strMenu; 
 }
 
 HRESULT CUI_Ramen::Initialize_Prototype()
@@ -46,6 +48,7 @@ HRESULT CUI_Ramen::Initialize(INIT_DESC* pArg)
     Create_Menus();
     Create_OrderBanner();
     Create_Video();
+    Create_ResultBanner();
 
     Cache();
 
@@ -165,6 +168,22 @@ void CUI_Ramen::Create_Video()
     m_pVideo = pObj;
 }
 
+void CUI_Ramen::Create_ResultBanner()
+{
+    CUI_RamenResultBanner::RESULT_BANNER_DESC* pDesc = new CUI_RamenResultBanner::RESULT_BANNER_DESC;
+    pDesc->onClickConfirm = [this]() { OnClick_ResultConfirm();  };
+
+    auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_RamenResultBanner" })
+        .Add_UIDesc(pDesc)
+        .Build("resultBanner");
+
+    if (!pObj)
+        return;
+
+    Get_Component<CObjectContainer>()->Add_Child(pObj);
+    m_pResultBanner = pObj;
+}
+
 void CUI_Ramen::Cache()
 {
     auto pContainer = Get_Component<CObjectContainer>();
@@ -216,6 +235,16 @@ void CUI_Ramen::OnClick_OrderComfirm()
 }
 
 void CUI_Ramen::OnVideoFinished()
+{
+    if (m_pResultBanner)
+    {
+        CUI_RamenResultBanner::ACTIVE_DESC desc = {};
+        desc.strMenu = m_strMenu;
+        m_pResultBanner->UI_Active(&desc);
+    } 
+}
+
+void CUI_Ramen::OnClick_ResultConfirm()
 {
 }
 

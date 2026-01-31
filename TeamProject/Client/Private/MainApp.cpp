@@ -95,6 +95,7 @@
 #include "UI_RamenAttributeText.h"
 #include "UI_RamenOrderBanner.h"
 #include "UI_RamenVideo.h"
+#include "UI_RamenResultBanner.h"
 
 #include "UI_AtlasSprite.h"
 #include "UI_DamageText.h"
@@ -291,6 +292,7 @@ void CMainApp::Initialize_GlobalPrototype()
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_RamenAttributeText", CUI_RamenAttributeText::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_RamenOrderBanner", CUI_RamenOrderBanner::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_RamenVideo", CUI_RamenVideo::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_RamenResultBanner", CUI_RamenResultBanner::Create());
 
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_AtlasSprite", CUI_AtlasSprite::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_DamageText",  CUI_DamageText::Create());

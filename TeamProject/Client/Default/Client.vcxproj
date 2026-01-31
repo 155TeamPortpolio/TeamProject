@@ -460,6 +460,7 @@
     <ClInclude Include="..\Public\UI_RamenAttributeText.h" />
     <ClInclude Include="..\Public\UI_RamenMenu.h" />
     <ClInclude Include="..\Public\UI_RamenOrderBanner.h" />
+    <ClInclude Include="..\Public\UI_RamenResultBanner.h" />
     <ClInclude Include="..\Public\UI_RamenVideo.h" />
     <ClInclude Include="..\Public\UI_ResultBanner.h" />
     <ClInclude Include="..\Public\UI_ScratchCard.h" />
@@ -822,6 +823,7 @@
     <ClCompile Include="..\Private\UI_RamenAttributeText.cpp" />
     <ClCompile Include="..\Private\UI_RamenMenu.cpp" />
     <ClCompile Include="..\Private\UI_RamenOrderBanner.cpp" />
+    <ClCompile Include="..\Private\UI_RamenResultBanner.cpp" />
     <ClCompile Include="..\Private\UI_RamenVideo.cpp" />
     <ClCompile Include="..\Private\UI_ResultBanner.cpp" />
     <ClCompile Include="..\Private\UI_ScratchCard.cpp" />

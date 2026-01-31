@@ -39,6 +39,7 @@ private:
 	CUI_Object*		m_pSelectedMenu = {};
 	CUI_Object*		m_pOrderBanner = {};
 	CUI_Object*		m_pVideo = {};
+	CUI_Object*		m_pResultBanner = {};
 
 	CUI_Object* m_pChildren[ENUM(CHILD::END)] = {};
 	class CTextSlot* m_pTextPrice = {};
@@ -56,12 +57,14 @@ private:
 	void Create_Menus();
 	void Create_OrderBanner();
 	void Create_Video();
+	void Create_ResultBanner();
 
 	void Cache();
 
 	void OnClick_Order();
 	void OnClick_OrderComfirm();
 	void OnVideoFinished();
+	void OnClick_ResultConfirm();
 
 	void Set_TextPrice(_int iMoney, _int iPrice);
 	void Update_Affordable();
