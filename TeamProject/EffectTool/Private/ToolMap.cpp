@@ -20,8 +20,8 @@ HRESULT CToolMap::Initialize_Prototype()
 	auto pModel = Add_Component<CStaticModel>();
 	auto pMaterial = Add_Component<CMaterial>();
 	
-	ResourceManager()->Add_ResourcePath("Meshout.model", "../Bin/Resource/Map/Meshout.model");
-	ResourceManager()->Add_ResourcePath("Meshout.mat", "../Bin/Resource/Map/Meshout.mat");
+	ResourceManager()->Add_ResourcePath("Meshout.model", "../Bin/Resources/Map/Meshout.model");
+	ResourceManager()->Add_ResourcePath("Meshout.mat", "../Bin/Resources/Map/Meshout.mat");
 
 	pModel->Link_Model(G_GlobalLevelKey, "Meshout.model");
 	pMaterial->Link_Material(G_GlobalLevelKey, "Meshout.mat");

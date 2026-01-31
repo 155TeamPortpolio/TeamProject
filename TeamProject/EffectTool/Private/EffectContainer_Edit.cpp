@@ -36,11 +36,11 @@ HRESULT CEffectContainer_Edit::Initialize(INIT_DESC* pArg)
 	//__super::Initialize(pArg);
 
 	m_pTransform->Initialize(nullptr);
-	LoadTextureFromDirectory("../Bin/Resource/Texture/Diffuse",true);
-	LoadTextureFromDirectory("../Bin/Resource/Texture/Noise");
-	LoadTextureFromDirectory("../Bin/Resource/Texture/Mask");
-	LoadMeshFromDirectory("../Bin/Resource/Mesh");
-	LoadMaterialFromDirectory("../Bin/Resource/Mesh");
+	LoadTextureFromDirectory("../Bin/Resources/Texture/Diffuse",true);
+	LoadTextureFromDirectory("../Bin/Resources/Texture/Noise");
+	LoadTextureFromDirectory("../Bin/Resources/Texture/Mask");
+	LoadMeshFromDirectory("../Bin/Resources/Mesh");
+	LoadMaterialFromDirectory("../Bin/Resources/Mesh");
 	m_InstanceName = "EffectContainer";
 
 	return S_OK;

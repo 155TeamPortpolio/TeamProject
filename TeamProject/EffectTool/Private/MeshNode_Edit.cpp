@@ -251,7 +251,7 @@ void CMeshNode_Edit::Import(nlohmann::ordered_json& json)
 		if (!m_DistortionMaskTextureTag.empty())
 		{
 			auto pDistortionMaskTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_DistortionMaskTextureTag);
-			pMaterialInstance->Set_Param("DistortionTexture", { pDistortionMaskTexture->Get_SRV(),"Texture2D",0 });
+			pMaterialInstance->Set_Param("DistortionMaskTexture", { pDistortionMaskTexture->Get_SRV(),"Texture2D",0 });
 		}
 
 		if (!m_GradientTextureTag.empty())
