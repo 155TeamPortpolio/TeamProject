@@ -34,6 +34,9 @@ HRESULT CGachaProps::Initialize_Prototype()
 
 HRESULT CGachaProps::Initialize(INIT_DESC* pArg)
 {
+    if (FAILED(__super::Initialize(pArg)))
+        return E_FAIL;
+
     if (FAILED(Initialize_GlobalPrototype())) 
         return E_FAIL;
 
@@ -65,12 +68,9 @@ void CGachaProps::Late_Update(_float dt)
 
 HRESULT CGachaProps::Initialize_GlobalPrototype()
 {
-    if (FAILED(PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_GachaBack", CGachaBack::Create())))
-        return E_FAIL;
-    if (FAILED(PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_GachaTV", CGachaTV::Create())))
-        return E_FAIL;
-    if (FAILED(PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_GachaStage", CGachaStage::Create())))
-        return E_FAIL;
+    PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_GachaBack", CGachaBack::Create());
+    PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_GachaTV", CGachaTV::Create());
+    PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_GachaStage", CGachaStage::Create());
     return S_OK;
 }
 

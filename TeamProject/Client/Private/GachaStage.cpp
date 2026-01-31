@@ -31,6 +31,9 @@ HRESULT CGachaStage::Initialize_Prototype()
 
 HRESULT CGachaStage::Initialize(INIT_DESC* pArg)
 {
+	if (FAILED(__super::Initialize(pArg)))
+		return E_FAIL;
+
     return S_OK; 
 }
 
