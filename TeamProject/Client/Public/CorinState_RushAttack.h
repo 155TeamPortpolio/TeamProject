@@ -13,7 +13,7 @@ public:
     virtual void Exit(CCorin* pOwner) override;
 
 public:
-    static CCorinState_RushAttack* Create() { return new CCorinState_RushAttack(); }
+    static CCorinState_RushAttack* Create();
     virtual void Free() override { __super::Free(); }
 };
 
