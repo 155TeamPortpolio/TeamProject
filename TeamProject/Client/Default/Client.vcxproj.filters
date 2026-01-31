@@ -931,7 +931,6 @@
     <Filter Include="03. Utility\10. VideoDecoder">
       <UniqueIdentifier>{842cbfe9-dc9e-47db-9dfe-d0e21c570f36}</UniqueIdentifier>
     </Filter>
-    </Filter>
     <Filter Include="03. Utility\10. VideoDecoder\TestDecoder">
       <UniqueIdentifier>{ba575301-2bcb-4856-9d5a-de24b105c7b3}</UniqueIdentifier>
     </Filter>
@@ -1885,7 +1884,6 @@
     <ClInclude Include="..\Public\TestDecoder.h">
       <Filter>03. Utility\10. VideoDecoder\TestDecoder</Filter>
     </ClInclude>
-    </ClInclude>
     <ClInclude Include="..\Public\VideoPanel.h">
       <Filter>03. Utility\10. VideoDecoder\VideoPanel</Filter>
     </ClInclude>
@@ -2787,7 +2785,6 @@
     </ClCompile>
     <ClCompile Include="..\Private\TestDecoder.cpp">
       <Filter>03. Utility\10. VideoDecoder\TestDecoder</Filter>
-    </ClCompile>
     </ClCompile>
     <ClCompile Include="..\Private\VideoPanel.cpp">
       <Filter>03. Utility\10. VideoDecoder\VideoPanel</Filter>
