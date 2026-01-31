@@ -1143,6 +1143,7 @@ exit /b 0</Command>
     <FxCompile Include="..\Public\Engine_Shader\VTX_Enemy.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_InstancePoint.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_Mesh.hlsl" />
+    <FxCompile Include="..\Public\Engine_Shader\VTX_MetaBall.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_NorTex.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_PlaneGrid.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_Point.hlsl" />

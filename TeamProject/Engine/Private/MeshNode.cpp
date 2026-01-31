@@ -53,6 +53,7 @@ HRESULT CMeshNode::Initialize(INIT_DESC* pArg)
 		m_MaskTextureTagA = pMeshNode->MaskTextureTagA;
 		m_MaskTextureTagB = pMeshNode->MaskTextureTagB;
 		m_DistortionTextureTag = pMeshNode->DistortionTextureTag;
+		m_DistortionMaskTextureTag = pMeshNode->DistortionMaskTextureTag;
 		m_GradientTextureTag = pMeshNode->GradientTextureTag;
 
 		/* Offset Transform */
@@ -115,6 +116,8 @@ HRESULT CMeshNode::Initialize(INIT_DESC* pArg)
 		m_MaskModule.fMaskTilling = pMeshNode->fMaskTilling;
 
 		/* Distortion */
+		m_DistortionModule.useDiffuseAlpha = pMeshNode->useDiffuseAlpha;
+		m_DistortionModule.useDistortionMask = pMeshNode->useDistortionMask;
 		m_DistortionModule.fEnableDistortion = pMeshNode->fEnableDistortion;
 		m_DistortionModule.fDistortionStrength = pMeshNode->fDistortionStrength;
 		m_DistortionModule.fDistortionTilling = pMeshNode->fDistortionTilling;
@@ -273,6 +276,16 @@ void CMeshNode::Bind_Textures()
 			MSG_BOX("Not exist Distortion Texture : %s", m_DistortionTextureTag.c_str());
 	}
 
+	if (!m_DistortionMaskTextureTag.empty())
+	{
+		auto pDistortionMaskTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_DistortionMaskTextureTag);
+
+		if (pDistortionMaskTexture)
+			pMaterialInstance->Set_Param("DistortionMaskTexture", { pDistortionMaskTexture->Get_SRV(),"Texture2D",0 });
+		else
+			MSG_BOX("Not exist Distortion Mask Texture : %s", m_DistortionMaskTextureTag.c_str());
+	}
+
 	if (!m_GradientTextureTag.empty())
 	{
 		auto pGradientTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_GradientTextureTag);
@@ -414,6 +427,8 @@ void CMeshNode::Bind_Params()
 	pMaterialInstance->Set_Param("MaskTilling", { &m_MaskModule.fMaskTilling,"float",sizeof(_float) });
 
 	/* Distortion */
+	pMaterialInstance->Set_Param("UseDiffuseAlpha", { &m_DistortionModule.useDiffuseAlpha,"bool",sizeof(_bool) });
+	pMaterialInstance->Set_Param("UseDistortionMask", { &m_DistortionModule.useDistortionMask,"bool",sizeof(_bool) });
 	pMaterialInstance->Set_Param("EnableDistortion", { &m_DistortionModule.fEnableDistortion,"float",sizeof(_float) });
 	pMaterialInstance->Set_Param("DistortionStrength", { &m_DistortionModule.fDistortionStrength,"float",sizeof(_float) });
 	pMaterialInstance->Set_Param("DistortionTilling", { &m_DistortionModule.fDistortionTilling,"float",sizeof(_float) });
