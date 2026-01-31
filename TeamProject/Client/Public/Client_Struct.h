@@ -132,6 +132,20 @@ namespace Client {
 		_bool persistent = { false };
 	}ROOM_DESC;
 
+	typedef struct tagRamenAttributeDesc {
+		string	strAttributeID;
+		wstring strAttributeName;
+		_int	iAttributeValue;
+	}RAMEN_ATTRIBUTE;
+
+	typedef struct tagRamenDesc	{
+		string	strID;
+		wstring strName;
+		_int	iPrice;
+		_int	iOrder;
+		vector<RAMEN_ATTRIBUTE> attributes;
+	}RAMEN_DESC;
+	
 	typedef struct tagCloudDesc {
 		_float3 skyColor = {};
 		_float3 cloudColor = {};

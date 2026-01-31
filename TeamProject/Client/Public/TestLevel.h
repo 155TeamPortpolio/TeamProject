@@ -24,6 +24,9 @@ private:
     void Rake_MapResources();
     void Ready_TestObject();
 	void Ready_Npc();
+#ifdef  _USING_GUI
+	HRESULT	Ready_MonsterSpawnConsole();
+#endif  
 
 public:
 	static void PreLoad_Level();

@@ -57,7 +57,7 @@ public:
 
     HRESULT               Clear_Character();
 
-    void            Lock_Input() { m_bLockInput = true; }
+    void            Lock_Input() { m_bLockInput = true; };
     void            UnLock_Input() { m_bLockInput = false; }
 
 public:

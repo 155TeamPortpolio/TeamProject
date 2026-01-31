@@ -7,6 +7,7 @@
 #include "FieldPlayer.h"
 #include "CamDirector.h"
 #include "Npc.h"
+#include "UIDirector.h"
 
 CRoom_Noodle::CRoom_Noodle(const ROOM_DESC& desc)
 	:CRoom(desc)
@@ -21,6 +22,9 @@ void CRoom_Noodle::Enter()
 
 	CamDirector()->SetSpaceRef(FieldSystem()->GetInteractHandle());
 	CamDirector()->RequestSequence("Field/Noodle");
+
+	UIDirector()->Hide_HUD(CUIDirector::HUD::FIELD);
+	UIDirector()->Show_Ramen();
 }
 
 void CRoom_Noodle::Exit()
@@ -34,6 +38,9 @@ void CRoom_Noodle::Exit()
 
 	CamDirector()->AutoTarget();
 	CamDirector()->RequestSequence("Field/Back");
+
+	UIDirector()->Show_HUD(CUIDirector::HUD::FIELD);
+	UIDirector()->Hide_Ramen();
 }
 
 void CRoom_Noodle::Update()

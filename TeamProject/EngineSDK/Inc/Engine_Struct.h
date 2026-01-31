@@ -426,7 +426,7 @@ namespace Engine
 
 		_float3 vOffsetPosition{};
 		_float4 vOffsetQuaternion{};
-
+		_float3 vRimLightColor{};
 		_float2 vPivot{ 0.5f,0.5f };
 		_uint iRGBMaskMode{};
 		_uint iModuleMask{};
@@ -489,6 +489,7 @@ namespace Engine
 		string MaskTextureTagA{};
 		string MaskTextureTagB{};
 		string DistortionTextureTag{};
+		string DistortionMaskTextureTag{};
 		string GradientTextureTag{};
 
 		_float3 vOffsetPosition{};
@@ -548,6 +549,8 @@ namespace Engine
 		_float fMaskTilling{};
 
 		/* Distortion */
+		_bool useDiffuseAlpha = true;
+		_bool useDistortionMask = false;
 		_float fEnableDistortion{};
 		_float fDistortionStrength{};
 		_float fDistortionTilling{};
@@ -599,33 +602,36 @@ namespace Engine
 		static tagEffectAsset FromJson(nlohmann::ordered_json& json);
 	}EFFECT_ASSET;
 
-	typedef struct ENGINE_DLL tagObjectHandle {
-		string Level = {};
-		string Layer = {};
-		_uint hObjID = {};
+	typedef struct ENGINE_DLL tagObjectHandle
+	{
+		string Level{};
+		string Layer{};
+		_uint  hObjID{};
 
 		_bool isValid();
+		_bool isValid() const;
+
 		void Reset();
-		class CGameObject* Get();
+		CGameObject* Get();
+		CGameObject* Get() const;
+
 		void Delete();
 		void Set_Alive(_bool alive);
 		_bool isAlive();
-		_bool operator==(const tagObjectHandle& rhs) {
-			if (isValid())
-				return hObjID == rhs.hObjID;
-			else
-				return false;
-		}
-		_bool operator !=(const tagObjectHandle& rhs) {
-			return hObjID != rhs.hObjID;
-		}
-		tagObjectHandle& operator= (const tagObjectHandle& rhs) {
-			Level = rhs.Level;
-			Layer = rhs.Layer;
+
+		_bool operator==(const tagObjectHandle& rhs) const { return hObjID == rhs.hObjID; }
+		_bool operator!=(const tagObjectHandle& rhs) const { return hObjID != rhs.hObjID; }
+
+		tagObjectHandle& operator=(const tagObjectHandle& rhs)
+		{
+			Level  = rhs.Level;
+			Layer  = rhs.Layer;
 			hObjID = rhs.hObjID;
 			return *this;
 		}
-		class CGameObject* operator()() { return Get(); }
+
+		CGameObject* operator()() const { return Get(); }
+
 		template<typename TObject>
 		TObject* GetAs() const
 		{
@@ -636,7 +642,7 @@ namespace Engine
 			return dynamic_cast<TObject*>(objectPtr);
 		}
 
-	}OBJECT_HANDLE;
+	} OBJECT_HANDLE;
 
 	typedef struct ENGINE_DLL tagUIHandle {
 		string Level = {};

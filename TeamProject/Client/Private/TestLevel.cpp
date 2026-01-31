@@ -12,6 +12,7 @@
 #include "BattleSystem.h"
 #include "FieldSystem.h"
 #include "DataBase.h"
+#include "MonsterSpawnConsole.h"
 
 // Camera
 #include "Camera.h"
@@ -52,6 +53,7 @@
 #include "Defiler.h"
 #include "ThugPoacher.h"
 #include "ThugPoacher_Arrow.h"
+#include "Claymore.h"
 
 /*npc*/
 #include "OfficeMeow.h"
@@ -149,6 +151,7 @@ HRESULT CTestLevel::Awake()
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Defiler", CDefiler::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_ThugPoacher", CThugPoacher::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_ThugPoacher_Arrow", CThugPoacher_Arrow::Create());
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Claymore", CClaymore::Create());
 
 	CBattleSystem::GetInstance()->ReadyBattle("TrainingRoom", 1);
 	// It will be changed soooooon
@@ -163,9 +166,10 @@ HRESULT CTestLevel::Awake()
 	CUIDirector::GetInstance()->Show_HUD(CUIDirector::HUD::BATTLE);
 	//GameInstance()->Set_EngineTimeScale(0.05f);
 
-	PrototypeManager()->Add_ProtoType("Test_Level", "Test_Video", CTestVideo::Create());
-	//auto testVideo = Builder::Create_UIObject({ "Test_Level", "Test_Video" }).Build("Test_Video");
-	//UIManager()->Add_UIObject(testVideo, "Test_Level");
+#ifdef  _USING_GUI
+	Ready_MonsterSpawnConsole();
+#endif
+
 	return S_OK;
 }
 
@@ -187,19 +191,19 @@ void CTestLevel::Update()
 	}
 	
 	// [`] 
-	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Tap(VK_OEM_3)) {
-		CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_ThugBulkyEnforcer", { -0.18f, 0.f,1.59f });
-	}	
-	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Tap(VK_F6)) {
-		CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_ThugAssaulter", { -0.18f, 0.f,5.f });
-	}
-
-	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Tap(VK_F7)) {
-		CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_ThugPoacher", { -0.18f, 0.f, 7.f });
-	}
-	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Tap(VK_F8)) {
-		CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_Defiler", { -0.18f, 0.f,5.f });
-	}
+	//if (CGameInstance::GetInstance()->Get_InputDev()->Key_Tap(VK_OEM_3)) {
+	//	CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_ThugBulkyEnforcer", { -0.18f, 0.f,1.59f });
+	//}	
+	//if (CGameInstance::GetInstance()->Get_InputDev()->Key_Tap(VK_F6)) {
+	//	CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_ThugAssaulter", { -0.18f, 0.f,5.f });
+	//}
+	//
+	//if (CGameInstance::GetInstance()->Get_InputDev()->Key_Tap(VK_F7)) {
+	//	CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_ThugPoacher", { -0.18f, 0.f, 7.f });
+	//}
+	//if (CGameInstance::GetInstance()->Get_InputDev()->Key_Tap(VK_F8)) {
+	//	CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_Defiler", { -0.18f, 0.f,5.f });
+	//}
 }
 
 void CTestLevel::Ready_Map(const string& LevelTag, const string& AreaTag)
@@ -360,6 +364,21 @@ void CTestLevel::Ready_Npc()
 
 	objMgr->Add_Object(testHowl, { "Test_Level", "Npc_Layer" });
 }
+
+#ifdef  _USING_GUI
+HRESULT CTestLevel::Ready_MonsterSpawnConsole()
+{
+	auto pGuiSystem = m_pGameInstance->Get_GUISystem();
+
+	CMonsterSpawnConsole* pConsole = CMonsterSpawnConsole::Create(pGuiSystem->Get_Context());
+	if (nullptr == pConsole)
+		return E_FAIL;
+
+	pGuiSystem->Register_Panel(pConsole); 
+	
+	return S_OK;
+}
+#endif
 
 HRESULT CTestLevel::Render()
 {

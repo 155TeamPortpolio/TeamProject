@@ -14,7 +14,7 @@ public:
     virtual void Exit(CJaneDoe* pOwner) override;
 
 public:
-    static CJaneDoeState_SwitchInAttack* Create() { return new CJaneDoeState_SwitchInAttack(); }
+    static CJaneDoeState_SwitchInAttack* Create();
     virtual void Free() override { __super::Free(); }
 };
 

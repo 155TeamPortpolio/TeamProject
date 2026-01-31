@@ -46,9 +46,7 @@ public:
 public:
     _bool         Register(const string& key, const fs::path& path);
     _bool         Register(const string& key, const fs::path& path, const CamSequenceRequestDesc& defaultReq);
-    void          UnRegister(const string& key);
-            
-public:           
+    void          UnRegister(const string& key);         
     _uint         RequestSequence(const string& key);
     _uint         RequestSequence(CamSeqType type);
     

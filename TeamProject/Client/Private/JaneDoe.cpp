@@ -201,9 +201,19 @@ void CJaneDoe::On_SwitchOut()
 	if (m_pStateMachine->Get_CurrentStateName() == "Attack")
 	{
 		m_pStateMachine->Set_Bool("OutReserve", true);
+		return;
 	}
-	else
-		m_pStateMachine->Set_Trigger("SwitchOut");
+	else if (m_pStateMachine->Get_CurrentStateName() == "SwitchIn")
+	{
+		IHState<CJaneDoe>* pState = dynamic_cast<IHState<CJaneDoe>*>(m_pStateMachine->Get_CurrentState());
+		CStateMachine<CJaneDoe>* pSub = pState->Get_SubStateMachine();
+		if (pSub && pSub->Get_CurrentStateName() != "SwitchInNormal")
+		{
+			m_pStateMachine->Set_Bool("OutReserve", true);
+			return;
+		}
+	}
+	m_pStateMachine->Set_Trigger("SwitchOut");
 }
 
 void CJaneDoe::On_Ultimate()

@@ -118,9 +118,6 @@ void CSacrificeHandState_Attack_01_Phase1::Enter(CSacrificeHand* pOwner)
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Set_Animation("SacrificeBringerHand_Ani_P1_Attack_10").Loop(false).Speed(1.2f).Apply();
 
-	HitDesc hitDesc{};
-	pOwner->SetAutoPlayBattleCollider("Hand", 0.f, 0.6f, hitDesc);
-
 	pOwner->Set_DissolveState(CSacrificeHand::DISSOLVE_STATE::APPEAR, 0.1f);
 	pOwner->SetVisable(true);
 }
@@ -134,6 +131,30 @@ void CSacrificeHandState_Attack_01_Phase1::Update(CSacrificeHand* pOwner, _float
 		blackBoard.isChainOpen = true;
 		if (!blackBoard.stateQueue.empty())
 			blackBoard.isRequestNext = true;
+	}
+
+	for (const auto& Event : pOwner->Get_Component<CAnimator3D>()->Get_EventBus())
+	{
+		if (Event.Type != CLIP_EVENT_TYPE::NOTIFY) continue;
+
+		if (Event.Tag == "Start_Bubble")
+		{
+			pOwner->Active_Bubble();
+			//pOwner->UnleashAttack();
+		}
+		if (Event.Tag == "Start_Collider")
+		{
+			HitDesc hitDesc{};
+			pOwner->SetBattleColliderObject("Hand", CEnemy::BATTLE_COLTYPE::ATTACK, true, hitDesc);
+		}
+		if (Event.Tag == "End_Collider")
+			pOwner->SetBattleColliderObject("Hand", CEnemy::BATTLE_COLTYPE::ATTACK, false);
+		if (Event.Tag == "End_Bubble")
+		{
+			pOwner->Deactive_Bubble();
+			//pOwner->SetOnAttack(false);
+			//pOwner->SetParryEnable(false);
+		}
 	}
 
 	pOwner->Update_Dissolve(dt);
@@ -162,9 +183,6 @@ void CSacrificeHandState_Attack_02_Phase1::Enter(CSacrificeHand* pOwner)
 {
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("SacrificeBringerHand_Ani_P1_Attack_11").Loop(false).Speed(1.2f).Apply();
-
-	HitDesc hitDesc{};
-	pOwner->SetAutoPlayBattleCollider("Hand", 0.f, 0.6f, hitDesc);
 }
 
 void CSacrificeHandState_Attack_02_Phase1::Update(CSacrificeHand* pOwner, _float dt)
@@ -179,6 +197,30 @@ void CSacrificeHandState_Attack_02_Phase1::Update(CSacrificeHand* pOwner, _float
 		blackBoard.isChainOpen = true;
 		if (!blackBoard.stateQueue.empty())
 			blackBoard.isRequestNext = true;
+	}
+
+	for (const auto& Event : pOwner->Get_Component<CAnimator3D>()->Get_EventBus())
+	{
+		if (Event.Type != CLIP_EVENT_TYPE::NOTIFY) continue;
+
+		if (Event.Tag == "Start_Bubble")
+		{
+			pOwner->Active_Bubble();
+			//pOwner->UnleashAttack();
+		}
+		if (Event.Tag == "Start_Collider")
+		{
+			HitDesc hitDesc{};
+			pOwner->SetBattleColliderObject("Hand", CEnemy::BATTLE_COLTYPE::ATTACK, true, hitDesc);
+		}
+		if (Event.Tag == "End_Collider")
+			pOwner->SetBattleColliderObject("Hand", CEnemy::BATTLE_COLTYPE::ATTACK, false);
+		if (Event.Tag == "End_Bubble")
+		{
+			pOwner->Deactive_Bubble();
+			//pOwner->SetOnAttack(false);
+			//pOwner->SetParryEnable(false);
+		}
 	}
 
 	if (IsCrossAnimProgress(0.15f))
@@ -223,10 +265,6 @@ void CSacrificeHandState_Attack_03_Phase1::Enter(CSacrificeHand* pOwner)
 	pTrasform->Set_Look(vDir);
 	pTrasform->Set_Pos(vTargetPosition - vDir * 16.f);
 
-
-	HitDesc hitDesc{};
-	pOwner->SetAutoPlayBattleCollider("Hand", 0.f, 0.6f, hitDesc);
-
 	pOwner->Set_DissolveState(CSacrificeHand::DISSOLVE_STATE::NONE, 0.f);
 	m_IsActiveHand = false;
 }
@@ -246,6 +284,30 @@ void CSacrificeHandState_Attack_03_Phase1::Update(CSacrificeHand* pOwner, _float
 		blackBoard.isChainOpen = true;
 		if (!blackBoard.stateQueue.empty())
 			blackBoard.isRequestNext = true;
+	}
+
+	for (const auto& Event : pOwner->Get_Component<CAnimator3D>()->Get_EventBus())
+	{
+		if (Event.Type != CLIP_EVENT_TYPE::NOTIFY) continue;
+
+		if (Event.Tag == "Start_Bubble")
+		{
+			pOwner->Active_Bubble();
+			//pOwner->UnleashAttack();
+		}
+		if (Event.Tag == "Start_Collider")
+		{
+			HitDesc hitDesc{};
+			pOwner->SetBattleColliderObject("Hand", CEnemy::BATTLE_COLTYPE::ATTACK, true, hitDesc);
+		}
+		if (Event.Tag == "End_Collider")
+			pOwner->SetBattleColliderObject("Hand", CEnemy::BATTLE_COLTYPE::ATTACK, false);
+		if (Event.Tag == "End_Bubble")
+		{
+			pOwner->Deactive_Bubble();
+			//pOwner->SetOnAttack(false);
+			//pOwner->SetParryEnable(false);
+		}
 	}
 
 	if (IsCrossAnimProgress(0.55f))
@@ -432,9 +494,6 @@ void CSacrificeHandState_OverDrive_Release_Attack01_Phase2::Enter(CSacrificeHand
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Set_Animation("Monster_SacrificeBringer_Ani_P2_OverDrive_Release_Attack01").Loop(false).Speed(1.2f).Apply();
 
-	HitDesc desc{};
-	pOwner->SetAutoPlayBattleCollider("Hand_Sword", 0.f, 0.7f, desc);
-
 	pOwner->Set_DissolveState(CSacrificeHand::DISSOLVE_STATE::APPEAR, 0.1f);
 	pOwner->SetVisable(true);
 	pOwner->Active_SwordRimLight();
@@ -452,9 +511,32 @@ void CSacrificeHandState_OverDrive_Release_Attack01_Phase2::Update(CSacrificeHan
 			blackBoard.isRequestNext = true;
 	}
 
+	for (const auto& Event : pOwner->Get_Component<CAnimator3D>()->Get_EventBus())
+	{
+		if (Event.Type != CLIP_EVENT_TYPE::NOTIFY) continue;
+
+		if (Event.Tag == "Start_Bubble")
+		{
+			pOwner->Active_Bubble();
+			//pOwner->UnleashAttack();
+		}
+		if (Event.Tag == "Start_Collider")
+		{
+			HitDesc hitDesc{};
+			pOwner->SetBattleColliderObject("Hand_Sword", CEnemy::BATTLE_COLTYPE::ATTACK, true, hitDesc);
+		}
+		if (Event.Tag == "End_Collider")
+			pOwner->SetBattleColliderObject("Hand_Sword", CEnemy::BATTLE_COLTYPE::ATTACK, false);
+		if (Event.Tag == "End_Bubble")
+		{
+			pOwner->Deactive_Bubble();
+			//pOwner->SetOnAttack(false);
+			//pOwner->SetParryEnable(false);
+		}
+	}
+
 	if (IsCrossAnimProgress(0.85f))
 		pOwner->Set_DissolveState(CSacrificeHand::DISSOLVE_STATE::DISAPPEAR, 0.1f);
-
 	pOwner->Update_Dissolve(dt);
 
 	Update_Effects(pOwner);
@@ -502,8 +584,6 @@ void CSacrificeHandState_OverDrive_Release_Attack02_Phase2::Enter(CSacrificeHand
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Set_Animation("Monster_SacrificeBringer_Ani_P2_OverDrive_Release_Attack02").Loop(false).Speed(1.2f).Apply();
 
-	HitDesc desc{};
-	pOwner->SetAutoPlayBattleCollider("Hand_Sword", 0.f, 0.9f, desc);
 	pOwner->Set_DissolveState(CSacrificeHand::DISSOLVE_STATE::APPEAR, 0.1f);
 	pOwner->SetVisable(true);
 }
@@ -518,6 +598,30 @@ void CSacrificeHandState_OverDrive_Release_Attack02_Phase2::Update(CSacrificeHan
 		blackBoard.isChainOpen = true;
 		if (!blackBoard.stateQueue.empty())
 			blackBoard.isRequestNext = true;
+	}
+
+	for (const auto& Event : pOwner->Get_Component<CAnimator3D>()->Get_EventBus())
+	{
+		if (Event.Type != CLIP_EVENT_TYPE::NOTIFY) continue;
+
+		if (Event.Tag == "Start_Bubble")
+		{
+			pOwner->Active_Bubble();
+			//pOwner->UnleashAttack();
+		}
+		if (Event.Tag == "Start_Collider")
+		{
+			HitDesc hitDesc{};
+			pOwner->SetBattleColliderObject("Hand_Sword", CEnemy::BATTLE_COLTYPE::ATTACK, true, hitDesc);
+		}
+		if (Event.Tag == "End_Collider")
+			pOwner->SetBattleColliderObject("Hand_Sword", CEnemy::BATTLE_COLTYPE::ATTACK, false);
+		if (Event.Tag == "End_Bubble")
+		{
+			pOwner->Deactive_Bubble();
+			//pOwner->SetOnAttack(false);
+			//pOwner->SetParryEnable(false);
+		}
 	}
 
 	if (m_fAnimProgress < 0.3f)
@@ -631,6 +735,30 @@ void CSacrificeHandState_OverDrive_Release_Attack03_Phase2::Update(CSacrificeHan
 			blackBoard.isRequestNext = true;
 
 		pOwner->Deactive_SwordRimLight();
+	}
+
+	for (const auto& Event : pOwner->Get_Component<CAnimator3D>()->Get_EventBus())
+	{
+		if (Event.Type != CLIP_EVENT_TYPE::NOTIFY) continue;
+
+		if (Event.Tag == "Start_Bubble")
+		{
+			pOwner->Active_Bubble();
+			//pOwner->UnleashAttack();
+		}
+		if (Event.Tag == "Start_Collider")
+		{
+			HitDesc hitDesc{};
+			pOwner->SetBattleColliderObject("Hand_Sword", CEnemy::BATTLE_COLTYPE::ATTACK, true, hitDesc);
+		}
+		if (Event.Tag == "End_Collider")
+			pOwner->SetBattleColliderObject("Hand_Sword", CEnemy::BATTLE_COLTYPE::ATTACK, false);
+		if (Event.Tag == "End_Bubble")
+		{
+			pOwner->Deactive_Bubble();
+			//pOwner->SetOnAttack(false);
+			//pOwner->SetParryEnable(false);
+		}
 	}
 
 	if (IsCrossAnimProgress(0.85f))
