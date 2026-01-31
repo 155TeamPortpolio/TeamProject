@@ -174,11 +174,11 @@ void CMainApp::Set_Levels()
 	LevelManager()->Register_Level("MainCity_Level", []()->CLevel* {return CMainCity_Level::Create("MainCity_Level"); });
 	LevelManager()->Register_Level("Scott_Level",    []()->CLevel* {return CScott_Level::Create("Scott_Level"); });
 	LevelManager()->Register_Level("Zero_Level",     []()->CLevel* {return CZero_Level::Create("Zero_Level"); });
-	LevelManager()->Register_Level("Gacha_Level",     []()->CLevel* {return CGacha_Level::Create("Gacha_Level"); });
+	LevelManager()->Register_Level("Gacha_Level",    []()->CLevel* {return CGacha_Level::Create("Gacha_Level"); });
 
 	LevelManager()->Set_LoadingLevel("Loading_Level");
 	m_pGameInstance->Notify_LevelSet(); 
-	m_pGameInstance->Get_LevelMgr()->Request_ChangeLevel("Scott_Level", true);
+	m_pGameInstance->Get_LevelMgr()->Request_ChangeLevel("Test_Level", true);
 } 
 
 CMainApp* CMainApp::Create()

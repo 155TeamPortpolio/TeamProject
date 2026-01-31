@@ -1,6 +1,9 @@
 #include "pch.h"
 #include "JaneDoe.h"
 #include "GameInstance.h"
+#include "BattleSystem.h"
+#include "BattlePlayer.h"
+
 #include "DataBase.h"
 #include "EffectContainer.h"
 
@@ -95,23 +98,21 @@ void CJaneDoe::Awake()
 
 	m_pAnimator->LinkAnimate_Model(G_GlobalLevelKey, "JaneDoeModel.model");
 	m_pAnimator->Link_MetaData(G_GlobalLevelKey, "JaneDoe_Meta.json");
-
-	//m_pAnimator->Set_MotionBone(262);
 	m_pAnimator->Set_ExtractMotionboneMovement(AXIS::X | AXIS::Z);
-
 	m_strAnimName = "Avatar_Female_Size03_JaneDoe_Ani_";
-	m_strName = "JaneDoe";
-	m_eCharacterName = CHARACTER::JaneDoe;
 	m_pAnimator->Set_Animation(Get_Name() + "Idle")
 		.Loop(true)
 		.Apply();
-	m_pCCT->Set_GravityEnabled(true);
+
+	m_strName = "JaneDoe";
+	m_eCharacterName = CHARACTER::JaneDoe;
 
 	Initialize_Stat();
+	m_fCurrentHP = 300.f;
+	m_tEnergy.fCurrentEnergy = 75;
 
 	if (FAILED(Attach_ParryCollider()))
 		return;
-	m_tEnergy.fCurrentEnergy = 120;
 
 	auto Texture = ResourceManager()->Load_Texture(G_GlobalLevelKey, "Eff_Noise_045.png");
 	RenderSystem()->Set_NoiseTexture(NOISE_FXTYPE::MOTIONBLUR, Texture);
@@ -129,7 +130,6 @@ void CJaneDoe::Priority_Update(_float dt)
 
 void CJaneDoe::Update(_float dt)
 {
-	//Update_Input(dt);
 	if (!m_bTest)
 	{
 		Update_States();
@@ -195,9 +195,7 @@ void CJaneDoe::On_SwitchIn(SWITCH eType)
 
 void CJaneDoe::On_SwitchOut()
 {
-	Push_Invincible();
-	Lock_Move();
-	Stop_Rotation();
+	__super::On_SwitchOut();
 	if (m_pStateMachine->Get_CurrentStateName() == "Attack")
 	{
 		m_pStateMachine->Set_Bool("OutReserve", true);
@@ -450,15 +448,12 @@ HRESULT CJaneDoe::Initialize_Transitions()
 HRESULT CJaneDoe::Initialize_Stat()
 {
 	auto Desc = CDataBase::GetInstance()->GetPlayerDesc(m_strName);
+	m_fMaxHP = Desc.MaxHP;
+	m_fAttackPower = Desc.Attack;
+	m_fDefense = Desc.Defend;
 	m_tEnergy.fSpecialEnergy = Desc.SpecialAttack;
-
-	auto LVDesc = CDataBase::GetInstance()->GetLevelDesc(m_iCurrentLevel);
-	m_fMaxHP = LVDesc.MaxHP;
-	m_fCurrentHP = m_fMaxHP;
-	m_fDefense = LVDesc.Defend;
-	m_fAttackPower = LVDesc.Attack;
-	
 	Set_EvadeMax(3);
+
 	return S_OK;
 }
 
@@ -737,6 +732,19 @@ void CJaneDoe::Update_States()
 	if (!Is_MainCharacter()) return;
 	if (!m_pCCT->Get_CompActive()) return;
 
+	for (const auto& Event : Get_Animator()->Get_EventBus())
+	{
+		if (Event.Type != CLIP_EVENT_TYPE::NOTIFY) continue;
+		if (Event.Tag == "CheckCombo")
+		{
+			if (m_bReserveCombo)
+			{
+				m_bReserveCombo = false;
+				BattleSystem()->GetBattlePlayer()->Request_ComboAttack();
+			}
+		}
+	}
+
 	m_pStateMachine->Set_Bool("IsMove", Is_Move_Buffer());
 
 	Process_EndState(m_pStateMachine->Get_CurrentStateName());
@@ -806,7 +814,7 @@ void CJaneDoe::Process_AttackInput(const string& strCurrentState)
 			return;
 
 		string strSwitchType = pSwitchIn->Get_SubStateMachine()->Get_CurrentStateName();
-		if (strSwitchType == "ParryAid")
+		if (strSwitchType == "SwitchInParryAid")
 		{
 			CJaneDoeState_SwitchInParryAid* pParryAid = static_cast<CJaneDoeState_SwitchInParryAid*>(
 				pSwitchIn->Get_SubStateMachine()->Get_CurrentState());
