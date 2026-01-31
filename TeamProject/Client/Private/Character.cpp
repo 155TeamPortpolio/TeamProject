@@ -304,6 +304,13 @@ void CCharacter::On_Evade()
 	m_bIsEvade = true;
 }
 
+void CCharacter::On_SwitchOut()
+{
+	Push_Invincible();
+	Lock_Move();
+	Stop_Rotation();
+}
+
 void CCharacter::On_Ultimate()
 {
 	UI_ACTION_DESC desc;
@@ -419,6 +426,17 @@ void CCharacter::Stop_Rotation()
 {
 	m_bIsRotating = false;
 	m_qTargetRot = m_pTransform->Get_QuaternionRotate();
+}
+
+void CCharacter::Look_Target()
+{
+	if (!m_TargetHandle.isValid()) return;
+
+	auto target = m_TargetHandle.Get();
+	_vector3 vLook = target->Get_WorldPos() - Get_WorldPos();
+	vLook.y = 0;
+	vLook.Normalize();
+	Get_Component<CTransform>()->Set_Look(vLook);
 }
 
 

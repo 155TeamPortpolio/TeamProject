@@ -195,9 +195,7 @@ void CJaneDoe::On_SwitchIn(SWITCH eType)
 
 void CJaneDoe::On_SwitchOut()
 {
-	Push_Invincible();
-	Lock_Move();
-	Stop_Rotation();
+	__super::On_SwitchOut();
 	if (m_pStateMachine->Get_CurrentStateName() == "Attack")
 	{
 		m_pStateMachine->Set_Bool("OutReserve", true);
@@ -738,7 +736,7 @@ void CJaneDoe::Process_AttackInput(const string& strCurrentState)
 			return;
 
 		string strSwitchType = pSwitchIn->Get_SubStateMachine()->Get_CurrentStateName();
-		if (strSwitchType == "ParryAid")
+		if (strSwitchType == "SwitchInParryAid")
 		{
 			CJaneDoeState_SwitchInParryAid* pParryAid = static_cast<CJaneDoeState_SwitchInParryAid*>(
 				pSwitchIn->Get_SubStateMachine()->Get_CurrentState());

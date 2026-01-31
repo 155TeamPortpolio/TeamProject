@@ -155,7 +155,7 @@ public:
     virtual void    On_Attack();
     virtual void    On_Evade();
     virtual void    On_SwitchIn(SWITCH eType) {}
-    virtual void    On_SwitchOut() {}
+    virtual void    On_SwitchOut();
     virtual void    On_Ultimate();
     virtual void    On_Special() {} // 개별 구현 
     virtual void    On_Hit(DAMAGE_TYPE eType) {} // 개별 구현
@@ -170,6 +170,7 @@ public:
     HRESULT  Attach_ParryCollider();
     void     Rotate(_vector3 vDirection);
     void     Stop_Rotation();
+    void     Look_Target();
     _bool    Is_OppositeInput() const;
     
     _bool             Can_Parry();
