@@ -48,7 +48,7 @@ private:
 	_bool			m_isAffordable = {};
 
 private: 
-	void Create_ButtonBack();
+	void Create_BackButton();
 	void Create_Menus();
 	void Cache();
 

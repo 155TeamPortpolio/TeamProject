@@ -940,9 +940,6 @@
     <Filter Include="02. GameObject\Object\TestUI">
       <UniqueIdentifier>{b91a27c1-4713-4ef5-94df-7ee719c4d4ed}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\UI\01. 2D\ButtonBack">
-      <UniqueIdentifier>{97c4cc33-5194-4f2e-954a-7234d9714dbb}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\UI\01. 2D\Ramen\AttributeIcon">
       <UniqueIdentifier>{07fca487-bd7e-40a2-8e75-7b49fe25f31b}</UniqueIdentifier>
     </Filter>
@@ -1002,6 +999,9 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Gacha\GachaProps\GachaBack">
       <UniqueIdentifier>{e5c0363c-6e7d-497f-a9a3-598931dd3e38}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\BackButton">
+      <UniqueIdentifier>{97c4cc33-5194-4f2e-954a-7234d9714dbb}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1890,8 +1890,8 @@
     <ClInclude Include="..\Public\TestVideo.h">
       <Filter>02. GameObject\Object\TestUI</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\UI_ButtonBack.h">
-      <Filter>02. GameObject\UI\01. 2D\ButtonBack</Filter>
+    <ClInclude Include="..\Public\UI_BackButton.h">
+      <Filter>02. GameObject\UI\01. 2D\BackButton</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UI_RamenAttributeIcon.h">
       <Filter>02. GameObject\UI\01. 2D\Ramen\AttributeIcon</Filter>
@@ -1944,6 +1944,7 @@
     <ClInclude Include="..\public\GachaProps.h">
       <Filter>02. GameObject\Object\Gacha\GachaProps</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\MapLightPoint.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2792,8 +2793,8 @@
     <ClCompile Include="..\Private\TestVideo.cpp">
       <Filter>02. GameObject\Object\TestUI</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\UI_ButtonBack.cpp">
-      <Filter>02. GameObject\UI\01. 2D\ButtonBack</Filter>
+    <ClCompile Include="..\Private\UI_BackButton.cpp">
+      <Filter>02. GameObject\UI\01. 2D\BackButton</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UI_RamenAttributeIcon.cpp">
       <Filter>02. GameObject\UI\01. 2D\Ramen\AttributeIcon</Filter>
@@ -2846,5 +2847,6 @@
     <ClCompile Include="..\private\GachaProps.cpp">
       <Filter>02. GameObject\Object\Gacha\GachaProps</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\MapLightPoint.cpp" />
   </ItemGroup>
 </Project>

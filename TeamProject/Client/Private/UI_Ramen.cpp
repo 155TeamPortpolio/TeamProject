@@ -5,7 +5,7 @@
 #include "ObjectContainer.h"
 #include "TextSlot.h"
 #include "ButtonUI.h"
-#include "UI_ButtonBack.h"
+#include "UI_BackButton.h"
 #include "UI_RamenMenu.h"  
 
 #include "DataBase.h"
@@ -39,7 +39,7 @@ HRESULT CUI_Ramen::Initialize(INIT_DESC* pArg)
     __super::Initialize(pArg);
 
     Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("ramen.json")));
-    Create_ButtonBack();
+    Create_BackButton();
     Create_Menus();
     Cache();
 
@@ -83,12 +83,12 @@ void CUI_Ramen::UI_DeActive(void* pArg)
     Set_Alive(false);
 }
 
-void CUI_Ramen::Create_ButtonBack()
+void CUI_Ramen::Create_BackButton()
 {
-    CUI_ButtonBack::BUTTON_DESC* pDesc = new CUI_ButtonBack::BUTTON_DESC;
+    CUI_BackButton::BUTTON_DESC* pDesc = new CUI_BackButton::BUTTON_DESC;
 
     auto pContainer = Get_Component<CObjectContainer>();
-    auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_ButtonBack" })
+    auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_BackButton" })
         .Add_UIDesc(pDesc)
         .Build("buttonBack");
 
