@@ -1,5 +1,5 @@
 {
-  "AnimPath" : "../bin/Resources/Global/FieldCharacter/Belle/Anim/",
+  "AnimPath" : "../Bin/Resources/Global/FieldCharacter/Belle/Anim/",
   "PreTransform": {
     "_11": -0.009999999776482582,
     "_12": 0.0,
