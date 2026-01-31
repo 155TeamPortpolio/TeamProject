@@ -3,15 +3,21 @@
 #include "Json_Inc/json.hpp"
 
 namespace Client {
-	/* Map Data */
 	enum class SLOT_DATA_TYPE { Int, Float, Bool, String, Float2, Float3, Float4, END };
-
 	struct SlotValue {
 		SLOT_DATA_TYPE type = SLOT_DATA_TYPE::END;
-		//variant<monostate, int64_t, double, bool, string, XMFLOAT3> value;
 		variant<monostate, _int, _float, _bool, string, _float2, _float3, _float4> value;
 	};
 
+	static constexpr const char* MAP_DATA_TAGS[] = {
+		"MapData",
+		"EntityData",
+		"BattleData",
+		"LightData"
+	};
+
+	/* Map Data */
+	#pragma region MapData
 	typedef struct tagMapObjectData {
 		_int		iObjID = { -1 };
 		std::string TagModelResourceKey = {};
@@ -37,7 +43,7 @@ namespace Client {
 	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(MapData_Header, TagDataFormat, iVersion, Layers);
 
 	typedef struct tagFieldDataDef {
-		_int			iObjID = { -1 };
+ 		_int			iObjID = { -1 };
 		std::string		TagName = {};
 		SlotValue		defaultvalue; // { "type" : "value" }형식으로 받음
 	}FIELD_DATA;
@@ -49,9 +55,10 @@ namespace Client {
 		vector<FIELD_DATA> values;
 	}MapData_Slot_Header;
 	//NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(MapData_Slot_Header, TagDataFormat, iVersion, values);
-
+#pragma endregion
 
 	/* Entity Data */
+	#pragma region EntityData
 	typedef struct tagEntityInitDesc
 	{
 		_int		iEntityID = { -1 };
@@ -62,7 +69,7 @@ namespace Client {
 		array<_float, 3> vTranslation = { 0.f, 0.f, 0.f };
 		array<_float, 3> vColSize = { 0.f, 0.f, 0.f };
 	}ENTITY_INIT;
-	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ENTITY_INIT, iEntityID, tagName, iType, vScale, vRotation, vColSize, vTranslation);
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ENTITY_INIT, iEntityID, tagName, iType, vScale, vRotation, vTranslation, vColSize);
 
 	typedef struct tagEntityHeader {
 		string		TagDataFormat = {};
@@ -71,9 +78,10 @@ namespace Client {
 		vector<ENTITY_INIT> Entities;
 	}Entity_Header;
 	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Entity_Header, TagDataFormat, TagArea, iVersion, Entities);
-
+#pragma endregion
 
 	/* BattleData */
+	#pragma region BattleData
 	typedef struct tagBattlePointData
 	{
 		string		tagType = {};			// Player, Spawner, Monster Point
@@ -101,12 +109,43 @@ namespace Client {
 		vector<BATTLE_POINT_DATA>			EndPoints;
 	}BATTLE_FIELD_DATA;
 	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(BATTLE_FIELD_DATA, TagDataFormat, TagArea, PlayerSpawnPoint, Spawners, Monsters, EndPoints);
+#pragma endregion
 
-	// DB 맵 데이터 저장용
-	enum class MAPOBJ_TYPE { PLACED, TRIGGER, INVWALL, ENTITY, BATTLE, END };
+	/* Light Data */
+	#pragma region LightData
+	typedef struct tagLightJsonDesc {
+		_float4 vOffsetPosition = {};
+		_float4	vLightDiffuse = {};
+		_float4	vLightAmbient = {};
+		_float4	vLightSpecular = {};
+		_float	fLightRange = {};
+		_float	fLightIntensity = {};
+	}LIGHT_DESC_JSON;
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(LIGHT_DESC_JSON, vOffsetPosition, vLightDiffuse, vLightAmbient, vLightSpecular, fLightRange, fLightIntensity);
+
+	typedef struct tagMapLight
+	{
+		_int			 iIndex{};
+		string			 TagArea = {};
+		LIGHT_DESC_JSON	 LightDesc;
+		array<_float, 3> vTranslation = { 0.f, 0.f, 0.f };
+	}MAP_LIGHT;
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(MAP_LIGHT, iIndex, LightDesc, vTranslation);
+
+	typedef struct tagLightHeader {
+		string		TagDataFormat = {};
+		string		TagArea = {};
+		_int		iVersion = 1;
+		vector<MAP_LIGHT> Lights;
+	}Light_Header;
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Light_Header, TagDataFormat, TagArea, iVersion, Lights);
+#pragma endregion 
+
+	/* Runtime CacheData */
+	enum class MAPOBJ_TYPE { PLACED, TRIGGER, INVWALL, ENTITY, BATTLE, LIGHT, END };
 	using MapSlotValue = variant<monostate, _int, _float, _bool, string, _float2, _float3, _float4>;
 
-	typedef struct tagCashedMapObject {
+	typedef struct tagCachedMapObject {
 		_int			DataIndex;
 		string			DataName;
 		OBJECT_HANDLE	Handle;
@@ -124,25 +163,27 @@ namespace Client {
 			
 			return T{};
 		}
-	}CASHED_OBJECT;
+	}CACHED_OBJECT;
 
-	typedef struct tagCashedBattleData {
+	typedef struct tagCachedBattleData {
 		_bool						HasBattleData = { false };
 		vector<BATTLE_POINT_DATA>	PlayerPoint;
 		vector<BATTLE_POINT_DATA>	MonsterPoint;
 		vector<BATTLE_POINT_DATA>	PortalPoint;
 		vector<BATTLE_POINT_DATA>	Spawner;
-	}CASHED_BATTLE_DATA;
+	}CACHED_BATTLE_DATA;
 
 	typedef struct tagCashedData {
 		string MapDataTag;
-		vector<CASHED_OBJECT> MapObj;
-		vector<CASHED_OBJECT> Trigger;
-		vector<CASHED_OBJECT> InvWall;
-		vector<CASHED_OBJECT> Entity;
-		CASHED_BATTLE_DATA	  Battle;
+		vector<CACHED_OBJECT> MapObj;
+		vector<CACHED_OBJECT> Trigger;
+		vector<CACHED_OBJECT> InvWall;
+		vector<CACHED_OBJECT> Entity;
+		vector<CACHED_OBJECT> Light;
 
-		const vector<CASHED_OBJECT>* Select(MAPOBJ_TYPE eType) const
+		CACHED_BATTLE_DATA	  Battle;
+
+		const vector<CACHED_OBJECT>* Select(MAPOBJ_TYPE eType) const
 		{
 			switch (eType)
 			{
@@ -154,18 +195,18 @@ namespace Client {
 			}
 		}
 
-		const CASHED_OBJECT* GetDataByVectorIndex(_uint i, MAPOBJ_TYPE eType) const
+		const CACHED_OBJECT* GetDataByVectorIndex(_uint i, MAPOBJ_TYPE eType) const
 		{
-			const vector<CASHED_OBJECT>* Data = Select(eType);
+			const vector<CACHED_OBJECT>* Data = Select(eType);
 			if (!Data) return nullptr;
 			
 			if (!Data || Data->size() <= i) return nullptr;
 			return &(*Data)[i];
 		}
 
-		const CASHED_OBJECT* GetDataByDataIndex(_uint i, MAPOBJ_TYPE eType) const
+		const CACHED_OBJECT* GetDataByDataIndex(_uint i, MAPOBJ_TYPE eType) const
 		{
-			const vector<CASHED_OBJECT>* Data = Select(eType);
+			const vector<CACHED_OBJECT>* Data = Select(eType);
 			if (!Data) return nullptr;
 			
 			for (const auto& iter : *Data)
@@ -174,9 +215,9 @@ namespace Client {
 			return nullptr;
 		}
 
-		const CASHED_OBJECT* GetDataByDataName(const string& NameTag, MAPOBJ_TYPE eType) const
+		const CACHED_OBJECT* GetDataByDataName(const string& NameTag, MAPOBJ_TYPE eType) const
 		{
-			const vector<CASHED_OBJECT>* Data = Select(eType);
+			const vector<CACHED_OBJECT>* Data = Select(eType);
 			if (!Data) return nullptr;
 
 			for (const auto& iter : *Data)
