@@ -5,6 +5,7 @@
 #include "CamEvaluator.h"
 #include "Transform.h"
 #include "Camera.h"
+#include "VideoPlayer.h"
 
 NS_BEGIN(Engine)
 class CCamPosPerSegmentEvaluator; class CCamRotPerSegmentEvaluator; class CCamFovPerSegmentEvaluator;
@@ -61,6 +62,7 @@ public:
 
 	void   Play();
 	void   Pause() { playback.playing = false; }
+	
 	void   Stop(_bool resetTime = true);
 
 	bool   IsPlaying() const { return playback.playing; }

@@ -391,6 +391,18 @@ PS_OUT PS_MAIN_MASKPREVIEW(PS_IN In)
     return Out;
 }
 
+PS_OUT PS_VIDEOPLAY(PS_IN In)
+{
+    PS_OUT Out;
+    vector vDiffuse = SpriteTexture.Sample(PointSampler, In.vTexcoord);
+   
+    float4 color = vDiffuse * vColor;
+    Out.vColor.rgb = color.rgb * color.a;
+    Out.vColor.a = color.a;
+    
+    return Out;
+}
+
 /* 9Slice 변수 */
 float2 vSizePx;     // 사각형 크기 (픽셀)
 float2 vTopLeftPx;  // 사각형의 왼쪽 상단 모서리 (픽셀)
@@ -621,5 +633,14 @@ technique11 DefaultTechnique
         VertexShader   = compile vs_5_0 VS_MAIN_CUSTOM();
         GeometryShader = compile gs_5_0 GS_MAIN_CUSTOM();
         PixelShader    = compile ps_5_0 PS_MAIN_CUSTOM();
+    }
+    pass VideoPlay
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_Premultiplied, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader   = compile vs_5_0 VS_MAIN();
+        GeometryShader = compile gs_5_0 GS_MAIN();
+        PixelShader = compile ps_5_0    PS_VIDEOPLAY();
     }
 }
