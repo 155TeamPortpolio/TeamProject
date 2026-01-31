@@ -88,6 +88,18 @@
     <ClInclude Include="..\public\JaneDoe.h">
       <Filter>03. Obj\99. Character\01. JaneDoe</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\GachaProps.h">
+      <Filter>03. Obj\99. Character\02. GachaProps</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\GachaBack.h">
+      <Filter>03. Obj\99. Character\02. GachaProps\00. GachaBack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\GachaStage.h">
+      <Filter>03. Obj\99. Character\02. GachaProps\01. GachaStage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\GachaTV.h">
+      <Filter>03. Obj\99. Character\02. GachaProps\02. GachaTV</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CameraTool.ico">
@@ -148,6 +160,18 @@
     </Filter>
     <Filter Include="01. Level\00. FirstLevel">
       <UniqueIdentifier>{e1559102-528c-4204-9823-cea2ba202453}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Obj\99. Character\02. GachaProps">
+      <UniqueIdentifier>{8600e8c5-8c32-437c-92f6-01a96a8fd6f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Obj\99. Character\02. GachaProps\00. GachaBack">
+      <UniqueIdentifier>{0db4e8bb-4dfc-40a4-a1ef-e27246b7d40e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Obj\99. Character\02. GachaProps\01. GachaStage">
+      <UniqueIdentifier>{453ff93b-0f81-4856-885e-5be76eca9e75}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Obj\99. Character\02. GachaProps\02. GachaTV">
+      <UniqueIdentifier>{71f969ab-b30b-4631-bfe3-e73835531377}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -216,6 +240,18 @@
     </ClCompile>
     <ClCompile Include="..\private\JaneDoe.cpp">
       <Filter>03. Obj\99. Character\01. JaneDoe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\GachaProps.cpp">
+      <Filter>03. Obj\99. Character\02. GachaProps</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\GachaBack.cpp">
+      <Filter>03. Obj\99. Character\02. GachaProps\00. GachaBack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\GachaStage.cpp">
+      <Filter>03. Obj\99. Character\02. GachaProps\01. GachaStage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\GachaTV.cpp">
+      <Filter>03. Obj\99. Character\02. GachaProps\02. GachaTV</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

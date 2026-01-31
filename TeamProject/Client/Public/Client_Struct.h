@@ -33,17 +33,11 @@ namespace Client {
 
 	struct PlayerDesc {
 		string	strPlayerName = {};
-		_uint	LV = {};
-		_float	SpecialAttack = {};
-		string	ExType = {};
-		_float	Ultimate = {};
-	};
-
-	struct PlayerLVDesc {
-		_uint	LV = {};
 		_float	MaxHP = {};
 		_float	Attack = {};
 		_float	Defend = {};
+		_float	SpecialAttack = {};
+		_float	Ultimate = {};
 	};
 
 	struct NpcIDDesc {
@@ -145,6 +139,14 @@ namespace Client {
 		_int	iOrder;
 		vector<RAMEN_ATTRIBUTE> attributes;
 	}RAMEN_DESC;
+
+	typedef struct tagWeaponDesc {
+		_int		ID;
+		GachaGrade	Grade;
+		string		strModel;
+		string		strMaterial;
+		string		strTexture;
+	}WEAPON_DESC;
 	
 	typedef struct tagCloudDesc {
 		_float3 skyColor = {};
