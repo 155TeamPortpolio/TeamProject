@@ -309,6 +309,7 @@ void CCharacter::On_SwitchOut()
 	Push_Invincible();
 	Lock_Move();
 	Stop_Rotation();
+	m_bReserveCombo = false;
 }
 
 void CCharacter::On_Ultimate()

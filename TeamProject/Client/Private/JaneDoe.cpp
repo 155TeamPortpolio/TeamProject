@@ -1,6 +1,9 @@
 #include "pch.h"
 #include "JaneDoe.h"
 #include "GameInstance.h"
+#include "BattleSystem.h"
+#include "BattlePlayer.h"
+
 #include "DataBase.h"
 #include "EffectContainer.h"
 
@@ -660,6 +663,19 @@ void CJaneDoe::Update_States()
 {
 	if (!Is_MainCharacter()) return;
 	if (!m_pCCT->Get_CompActive()) return;
+
+	for (const auto& Event : Get_Animator()->Get_EventBus())
+	{
+		if (Event.Type != CLIP_EVENT_TYPE::NOTIFY) continue;
+		if (Event.Tag == "CheckCombo")
+		{
+			if (m_bReserveCombo)
+			{
+				m_bReserveCombo = false;
+				BattleSystem()->GetBattlePlayer()->Request_ComboAttack();
+			}
+		}
+	}
 
 	m_pStateMachine->Set_Bool("IsMove", Is_Move_Buffer());
 

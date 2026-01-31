@@ -76,6 +76,7 @@ public:
     _float  Get_HP() const { return m_fCurrentHP; }
     _float  Get_MaxHP() const { return m_fMaxHP; }
     void    Set_MaxHP(_float fMaxHp) { m_fMaxHP = fMaxHp; }
+    _float  Get_AttackPower() const { return m_fAttackPower; }
     // 특수 스킬
     const EnergyDesc& Get_EnergyDesc() const { return m_tEnergy; }
     void    Set_EnergyDesc(EnergyDesc desc) { m_tEnergy = desc; }
@@ -112,6 +113,8 @@ public:
     _uint       Get_EvadeCount() const { return m_iEvadeCount; }
     void        Set_EvadeMax(_uint iMax) { m_iEvadeMax = iMax; }
     void        Reset_Interact() { m_bCanInteract = false; }
+    void        Reserve_ComboAttack() { m_bReserveCombo = true; }
+    _bool       Is_ReserveCombo() const { m_bReserveCombo; }
 
     SWITCH      Get_Switch() const { return m_eSwitchType; }
     void        Set_Switch(SWITCH eType) { m_eSwitchType = eType; }
@@ -221,6 +224,9 @@ protected:
     // HP
     _float          m_fMaxHP = { 100.f };
     _float          m_fCurrentHP = { 100.f };
+    // Attack & Defense
+    _float          m_fAttackPower = { 10.f };
+    _float          m_fDefense = { 5.f };
     // 상태 + 이동/회전
     InputInfo       m_inputInfo;
     _bool           m_bIsMain = { false };
@@ -234,6 +240,7 @@ protected:
     _bool           m_bIsRotating = { false };
     OBJECT_HANDLE   m_TargetHandle;  
     _bool           m_bLockOn = { false };
+    _bool           m_bReserveCombo = { false };
     // 회피
     _bool           m_bEvadeBuffer = { false };
     _uint           m_iEvadeMax = 2;
@@ -265,8 +272,7 @@ protected:
     // 테스트
     _bool           m_bTest = { false };
     // 미사용?
-    _float          m_fAttackPower = { 10.f };
-    _float          m_fDefense = { 5.f };
+
     _float          m_fMoveSpeed = { 1.f };
 
     static constexpr _float     TURNBACK_ANGLE_THRESHOLD = 100.f;

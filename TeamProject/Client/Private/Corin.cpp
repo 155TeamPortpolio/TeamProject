@@ -2,6 +2,7 @@
 #include "Corin.h"
 #include "GameInstance.h"
 #include "BattleSystem.h"
+#include "BattlePlayer.h"
 
 #include "Material.h"
 
@@ -98,7 +99,6 @@ void CCorin::Priority_Update(_float dt)
 
 void CCorin::Update(_float dt)
 {
-	//Update_Input(dt);
 	if(!m_bTest)
 	{
 		Update_States();
@@ -110,7 +110,6 @@ void CCorin::Update(_float dt)
 void CCorin::Late_Update(_float dt)
 {
 	__super::Late_Update(dt);
-	//Get_Component<CAnimator3D>()->Change_Speed(0.1f);
 }
 
 void CCorin::Render_GUI()
@@ -210,6 +209,19 @@ void CCorin::Update_States()
 {
 	if (!Is_MainCharacter()) return;
 	if (!m_pCCT->Get_CompActive()) return;
+
+	for (const auto& Event : Get_Animator()->Get_EventBus())
+	{
+		if (Event.Type != CLIP_EVENT_TYPE::NOTIFY) continue;
+		if (Event.Tag == "CheckCombo")
+		{
+			if (m_bReserveCombo)
+			{
+				m_bReserveCombo = false;
+				BattleSystem()->GetBattlePlayer()->Request_ComboAttack();
+			}
+		}
+	}
 
 	m_pStateMachine->Set_Bool("IsMove", Is_Move_Buffer());
 	
