@@ -86,15 +86,7 @@ void CCorinState_Attack::Update(CCorin* pOwner, _float dt)
         m_pSubStateMachine->Set_Trigger("ToUltimate");
     }
 
-    if (pOwner->Get_TargetHandle().isValid())
-    {
-        auto target = pOwner->Get_TargetHandle().Get();
-        _vector3 vLook = target->Get_WorldPos() - pOwner->Get_WorldPos();
-        vLook.y = 0;
-        vLook.Normalize();
-        pOwner->Get_Component<CTransform>()->Set_Look(vLook);
-        pOwner->Rotate(vLook);
-    }
+    pOwner->Look_Target();
     __super::Update(pOwner, dt);
 }
 

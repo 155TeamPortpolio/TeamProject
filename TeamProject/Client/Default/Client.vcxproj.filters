@@ -1006,6 +1006,9 @@
     <Filter Include="02. GameObject\UI\02. 3D\Plane\Gangta">
       <UniqueIdentifier>{93712aaf-87f8-46e7-8d80-8d430b09aa6f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\MapObject\04. MapLightPoint">
+      <UniqueIdentifier>{8f98ed95-123b-4c72-b0bb-bcf3efb5405b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1950,6 +1953,8 @@
     <ClInclude Include="..\public\MapLightPoint.h" />
     <ClInclude Include="..\public\UI_Gangta.h">
       <Filter>02. GameObject\UI\02. 3D\Plane\Gangta</Filter>
+    <ClInclude Include="..\public\MapLightPoint.h">
+      <Filter>02. GameObject\MapObject\04. MapLightPoint</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2856,6 +2861,9 @@
     <ClCompile Include="..\private\MapLightPoint.cpp" />
     <ClCompile Include="..\private\UI_Gangta.cpp">
       <Filter>02. GameObject\UI\02. 3D\Plane\Gangta</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MapLightPoint.cpp">
+      <Filter>02. GameObject\MapObject\04. MapLightPoint</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
