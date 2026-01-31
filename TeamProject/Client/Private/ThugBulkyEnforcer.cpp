@@ -93,40 +93,19 @@ HRESULT CThugBulkyEnforcer::Initialize(INIT_DESC* pArg)
 	auto Texture = ResourceManager()->Load_Texture(G_GlobalLevelKey, "Eff_Noise_119.png");
 	RenderSystem()->Set_NoiseTexture(NOISE_FXTYPE::VANISH, Texture);
 
-	m_vEmissiveColor = _float3(1.f, 0.2f, 0.f);
-	m_vRimLightColor = _float3(0.f, 0.f, 0.f);
-	m_fRimLightPower = 0.f;
-	m_fDissolveProgress = 0.f;
-	m_fDissolveTilling = 16.f;
-
-	auto pEmissiveNoiseTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, "enemy_emissive_noise.png");
-	auto pDissolveNoiseTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, "enemy_death_dissolve.png");
-
-	if (pEmissiveNoiseTexture && pDissolveNoiseTexture)
-	{
-		auto& materialInstances = pMaterial->Get_MaterialInstances();
-		for (const auto& instance : materialInstances)
-		{
-			instance->Override_Pass("UseEmissive");
-
-			instance->Set_Param("NoiseTexture", { pDissolveNoiseTexture->Get_SRV(),"Texture2D",0 });
-			instance->Set_Param("EmissiveNoiseTexture", { pEmissiveNoiseTexture->Get_SRV(),"Texture2D",0 });
-
-			instance->Set_Param("vEmissiveColor", { &m_vEmissiveColor,"float3",sizeof(_float3) });
-			instance->Set_Param("vRimLightColor", { &m_vRimLightColor,"float3",sizeof(_float3) });
-			instance->Set_Param("fRimLightPower", { &m_fRimLightPower,"float",sizeof(_float) });
-			instance->Set_Param("fRimLightPower", { &m_fRimLightPower,"float",sizeof(_float) });
-			instance->Set_Param("fDissolveProgress", { &m_fDissolveProgress,"float",sizeof(_float) });
-			instance->Set_Param("fDissolveTilling", { &m_fDissolveTilling,"float",sizeof(_float) });
-		}
-	}
- 
+	// 임시 확인용
+#ifdef _USING_GUI
+	CGameInstance::GetInstance()->Get_GUISystem()->Get_Context()->pSelectedObject = this;
+#endif
 	return S_OK;
 }
 
 void CThugBulkyEnforcer::Awake()
 {
 	__super::Awake();
+
+	//RenderSystem()->Set_GlitchDesc({ 1.f, 0.01f });
+	//GlitchSpeed, GlitchStrength - Default: 15.f, 0.04f
 }
 
 void CThugBulkyEnforcer::Priority_Update(_float dt)
@@ -144,10 +123,6 @@ void CThugBulkyEnforcer::Update(_float dt)
 
 	Update_States(dt);
 	m_pStateMachine->Update(dt);
-
-	/* Dissolve Test */
-	if (m_OnDissolve)
-		Update_Dissolve(dt);
 }
 
 void CThugBulkyEnforcer::Late_Update(_float dt)
@@ -364,17 +339,6 @@ void CThugBulkyEnforcer::Render_GUI()
 	if (ImGui::Button("Open StateMachine"))
 		m_pStateMachine->Set_ShowWindow(true);
 	m_pStateMachine->Render_GUI();
-#pragma endregion
-
-#pragma region Dissolve_Test
-	if (ImGui::Button("Active Dissolve"))
-		m_OnDissolve = true;
-	if (ImGui::Button("Reset Dissolve"))
-	{
-		m_OnDissolve = false;
-		m_fDissolveProgress = 0.f;
-		m_fDissolveElapsedTime = 0.f;
-	}
 #pragma endregion
 
 	ImGui::PopID();
@@ -785,17 +749,4 @@ void CThugBulkyEnforcer::ManageAttackHistory()
 	_uint iSize = static_cast<_uint>(m_AttackHistory.size());
 	if (5 <= iSize)
 		m_AttackHistory.pop_back();
-}
-
-void CThugBulkyEnforcer::Update_Dissolve(_float dt)
-{
-	if (m_fDissolveElapsedTime < m_fDissolveDuration)
-	{
-		m_fDissolveElapsedTime += dt;
-		_float t = m_fDissolveElapsedTime / m_fDissolveDuration;
-
-		m_fDissolveProgress = Math::ApplyEase(EaseType::Linear, t);
-	}
-	else
-		m_fDissolveProgress = 1.1f;
 }

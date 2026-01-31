@@ -15,6 +15,9 @@ public:
     CRenderer* GetRenderer(RENDERER_TYPE eType);
 
 public:
+    void Set_GlitchDesc(GLITCH_DESC desc);
+
+public:
     HRESULT Render_Priority(class PriorityPass* pPriorityPass);
     HRESULT Render_StaticShadow(class StaticShadowPass* pShadowPass, _bool clear = false);
     HRESULT Render_SkinnedShadow(class SkinnedShadowPass* pShadowPass, _bool clear = false);

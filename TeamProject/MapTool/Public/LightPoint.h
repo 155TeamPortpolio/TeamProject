@@ -1,10 +1,17 @@
 #pragma once
 #include "MapToolObject.h"
+#include "MapTool_Struct.h"
 
 NS_BEGIN(MapTool)
 class CLightPoint :
     public CMapToolObject
 {
+public:
+    typedef struct tagLightPointCreateDesc : public CMapToolObject::MAPTOOL_OBJECT_DESC
+    {
+        LIGHT_DESC_JSON DescJson = {};
+    }LIGHT_INIT_DESC;
+
 private:
     CLightPoint();
     CLightPoint(const CLightPoint& rhs);
@@ -22,6 +29,9 @@ public:
 
 public:
     void Render_GUI() override;  
+
+private:
+    LIGHT_DESC m_LightDesc;
 
 public:
     static CLightPoint* Create();

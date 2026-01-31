@@ -9,6 +9,7 @@
 #include "Layer.h"
 #include "BattleObject.h"
 #include "MapToolGui.h"
+#include "LightPoint.h"
 
 IMPLEMENT_SINGLETON(CMapToolCore)
 
@@ -108,6 +109,32 @@ LOADED_DATA CMapToolCore::Load_MapData()
 	{
 		m_pMapToolGui->Load_BattleData(OpenPath.string());
 	}
+	else if (OpenPath.string().find("LightData") != string::npos)
+	{
+		Light_Header LightHeader = Helper::LoadJson<Light_Header>(OpenPath.string());
+
+		if ("Base" != LightHeader.TagDataFormat)
+		{
+			MSG_BOX("[MapTool] Load Entity Data Failed.\nBaseData가 아닙니다.");
+			return {};
+		}
+
+		Clear_Layer(MAPOBJ_TYPE::LIGHT);
+
+		LoadedData.tagDataFormat = "LightData";
+		m_tMapToolContext.iVersion = LightHeader.iVersion;
+		m_tMapToolContext.TagArea = LightHeader.TagArea;
+
+		for (auto& LightData : LightHeader.Lights)
+		{
+			Place_LightPointFromLoadData(&LightData);
+			LOADED_OBJECT Desc = {};
+			Desc.iObjIdx = LightData.iIndex;
+			Desc.TagModelKey = LoadedData.tagDataFormat + to_string(LightData.iIndex);
+
+			LoadedData.LoadedObjects.push_back(Desc);
+		}
+	}
 	else
 	{
 		MSG_BOX("[MapTool] Load Data Failed.\n일치하는 DataFormat이 없습니다.");
@@ -176,8 +203,14 @@ void CMapToolCore::Load_WithEntityData()
 		}
 	}
 
-	/* Entity가 있을 때 */
-	filesystem::path entityPath = OpenPath;
+	LoadEntity(OpenPath, LoadedData);
+	LoadBattle(OpenPath, LoadedData);
+	LoadLight(OpenPath, LoadedData);
+}
+
+void CMapToolCore::LoadEntity(const filesystem::path& BasePath, LOADED_DATA& LoadedData)
+{
+	filesystem::path entityPath = BasePath;
 	string filename = entityPath.filename().string();
 
 	size_t pos = filename.find("MapData");
@@ -206,49 +239,62 @@ void CMapToolCore::Load_WithEntityData()
 			}
 		}
 	}
+}
 
-	/* BattleData 가 있을 때 */
-	filesystem::path BattlePath = OpenPath;
+void CMapToolCore::LoadBattle(const filesystem::path& BasePath, LOADED_DATA& LoadedData)
+{
+	filesystem::path BattlePath = BasePath;
+	string filename = BattlePath.filename().string();
 
-
-	_bool isEntity = true;
-	pos = filename.find("EntityData");
+	size_t pos = filename.find("MapData");
 	if (pos == string::npos)
-		isEntity = false;
+		return;
 
-	if (isEntity) {
-		filename.replace(pos, strlen("EntityData"), "BattleData");
-		BattlePath.replace_filename(filename);
+	filename.replace(pos, strlen("MapData"), "BattleData");
+	BattlePath.replace_filename(filename);
 
-		pos = filename.find(".Base.1");
+	pos = filename.find(".Base.1");
 
-		filename.replace(pos, strlen(".Base.1"), "");
-		BattlePath.replace_filename(filename);
+	filename.replace(pos, strlen(".Base.1"), "");
+	BattlePath.replace_filename(filename);
 
-		if (!filesystem::exists(BattlePath))
-			return;
+	if (!filesystem::exists(BattlePath))
+		return;
 
-		m_pMapToolGui->Load_BattleData(BattlePath.string());
+	m_pMapToolGui->Load_BattleData(BattlePath.string());
+}
+
+void CMapToolCore::LoadLight(const filesystem::path& BasePath, LOADED_DATA& LoadedData)
+{
+	filesystem::path lightPath = BasePath;
+	string filename = lightPath.filename().string();
+
+	size_t pos = filename.find("MapData");
+
+	if (pos != string::npos) {
+		filename.replace(pos, strlen("MapData"), "LightData");
+		lightPath.replace_filename(filename);
+
+		if (filesystem::exists(lightPath)) {
+			Clear_Layer(MAPOBJ_TYPE::LIGHT);
+
+			Light_Header LightHeader = Helper::LoadJson<Light_Header>(lightPath.string());
+			LoadedData.tagDataFormat = "LightData";
+
+			m_tMapToolContext.iVersion = LightHeader.iVersion;
+			m_tMapToolContext.TagArea = LightHeader.TagArea;
+
+			for (auto& LightData : LightHeader.Lights)
+			{
+				Place_LightPointFromLoadData(&LightData);
+				LOADED_OBJECT Desc = {};
+				Desc.iObjIdx = LightData.iIndex;
+				Desc.TagModelKey = "Light_Point" + to_string(LightData.iIndex);
+
+				LoadedData.LoadedObjects.push_back(Desc);
+			}
+		}
 	}
-	else {
-		pos = filename.find("MapData");
-		if (pos == string::npos)
-			return;
-
-		filename.replace(pos, strlen("MapData"), "BattleData");
-		BattlePath.replace_filename(filename);
-
-		pos = filename.find(".Base.1");
-
-		filename.replace(pos, strlen(".Base.1"), "");
-		BattlePath.replace_filename(filename);
-
-		if (!filesystem::exists(BattlePath))
-			return;
-
-		m_pMapToolGui->Load_BattleData(BattlePath.string());
-	}
-
 }
 
 void CMapToolCore::Clear_Layer(MAPOBJ_TYPE eObjType)
@@ -400,6 +446,28 @@ void CMapToolCore::Place_EntityObjectFromLoadData(ENTITY* pData)
 	pStaticObject->Get_Component<CCollider>()->Set_DebugRender(true);
 
 	ObjectManager()->Add_Object(pStaticObject, {g_TagMapToolLevel, g_tagMapObjType[ENUM(MAPOBJ_TYPE::ENTITY)]});
+}
+
+void CMapToolCore::Place_LightPointFromLoadData(MAP_LIGHT* pData)
+{
+	COLLIDER_DESC ColDesc = {};
+	ColDesc.eType = COLLIDER_TYPE::SPHERE;
+	ColDesc.bTrigger = true; // 충돌 박스 생성하는 트리거
+
+	CLightPoint::LIGHT_INIT_DESC* pDesc = new CLightPoint::LIGHT_INIT_DESC();
+	
+	string Name = "LightPoint" + to_string(pData->iIndex);
+	pDesc->DescJson = pData->LightDesc;
+
+	CGameObject* pStaticObject = Builder::Create_Object({ g_TagMapToolLevel ,"Proto_GameObject_LightPoint" })
+		.Add_ObjDesc(pDesc)
+		.Collider(ColDesc)
+		.Position({ pData->vTranslation[0], pData->vTranslation[1], pData->vTranslation[2] })
+		.Build(Name);
+
+	pStaticObject->Get_Component<CCollider>()->Set_DebugRender(true);
+
+	ObjectManager()->Add_Object(pStaticObject, { g_TagMapToolLevel, g_tagMapObjType[ENUM(MAPOBJ_TYPE::LIGHT)] });
 }
 
 void CMapToolCore::Set_AllObjectDebugRender(_bool is)

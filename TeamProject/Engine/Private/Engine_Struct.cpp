@@ -75,6 +75,9 @@ PARTICLE_NODE Engine::tagParticleNode::FromJson(nlohmann::ordered_json& json)
 	node.vOffsetPosition = _float3(offsetPostion[0], offsetPostion[1], offsetPostion[2]);
 	node.vOffsetQuaternion = _float4(offsetQuaternion[0], offsetQuaternion[1], offsetQuaternion[2], offsetQuaternion[3]);
 
+	auto rimLight = json.value("rimlight_color", json::array({ 0.f,0.f,0.f }));
+	node.vRimLightColor = _float3(rimLight[0], rimLight[1], rimLight[2]);
+
 	auto pivot = json.value("pivot", json::array({ 0.5f,0.5f }));
 	node.vPivot = _float2(pivot[0], pivot[1]);
 	node.iRGBMaskMode = json.value("rgb_mask", node.iRGBMaskMode);
@@ -176,6 +179,7 @@ MESH_NODE Engine::tagMeshNode::FromJson(nlohmann::ordered_json& json)
 	node.MaskTextureTagA = json.value("mask_texture_tag", "");
 	node.MaskTextureTagB = json.value("mask_texture_tagB", "");
 	node.DistortionTextureTag = json.value("distortion_texture_tag", "");
+	node.DistortionMaskTextureTag = json.value("distortion_mask_texture_tag", "");
 	node.GradientTextureTag = json.value("gradient_texture_tag", "");
 
 	auto offsetPostion = json.value("offset_position", json::array({ 0.f,0.f,0.f }));
@@ -255,6 +259,8 @@ MESH_NODE Engine::tagMeshNode::FromJson(nlohmann::ordered_json& json)
 	node.fMaskTilling = json.value("mask_tilling", 0.f);
 
 	/* Distortion */
+	node.useDiffuseAlpha = json.value("use_diffuse_alpha", true);
+	node.useDistortionMask = json.value("use_distortion_mask", false);
 	node.fEnableDistortion = json.value("enable_distortion", 0.f);
 	node.fDistortionStrength = json.value("distortion_strength", 0.f);
 	node.fDistortionTilling = json.value("distortion_tilling", 0.f);
