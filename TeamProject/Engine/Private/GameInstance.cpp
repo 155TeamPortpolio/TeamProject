@@ -21,6 +21,7 @@
 #include "EventSystem.h"
 #include "Level.h"
 #include "ClickManager.h"
+#include "ThreadPool.h"
 
 IMPLEMENT_SINGLETON(CGameInstance)
 
@@ -59,8 +60,8 @@ _bool CGameInstance::Init_Engine(const ENGINE_DESC& engine)
 	m_pFontSystem = CFontSystem::Create(m_pDevice, m_pDeviceContext);
 	m_pEventSystem = CEventSystem::Create();
 	m_pClickManager = CClickManager::Create(engine.hWnd);
-
-
+	m_pThreadPool = CThreadPool::Create();
+	m_pVideoService = CVideoService::Create(m_pThreadPool, m_pDevice, m_pDeviceContext);
 #if defined _USING_GUI
 	m_pGuiSystem = CGUISystem::Create(engine, m_pDevice, m_pDeviceContext);
 #endif
@@ -159,7 +160,7 @@ void CGameInstance::Update_Engine(_float dt)
 	m_pCollisionSystem->Late_Update(dt);
 #endif // USINPHYSICS
 	/*엔진 제어 업데이트 -> 렌더 패킷 제출용*/
-
+	m_pVideoService->Tick(dt); 
 	m_pInputDevice->Update();
 	m_pObjectManager->Post_EngineUpdate(realDt);
 	m_pUIManager->Post_EngineUpdate(realDt);
@@ -190,6 +191,8 @@ void CGameInstance::Release_Engine()
 	Safe_Release(m_pPhysicsSystem);
 	Safe_Release(m_pEventSystem);
 	Safe_Release(m_pClickManager);
+	Safe_Release(m_pThreadPool);
+	Safe_Release(m_pVideoService);
 
 	DestroyInstance();
 }

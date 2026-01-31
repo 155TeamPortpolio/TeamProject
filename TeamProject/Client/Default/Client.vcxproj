@@ -397,6 +397,8 @@
     <ClInclude Include="..\public\Room_Lottery.h" />
     <ClInclude Include="..\public\Room_Noodle.h" />
     <ClInclude Include="..\public\SilverAnbi.h" />
+    <ClInclude Include="..\Public\TestDecoder.h" />
+    <ClInclude Include="..\Public\TestVideo.h" />
     <ClInclude Include="..\public\ThugPoacher.h" />
     <ClInclude Include="..\public\ThugPoacher_Arrow.h" />
     <ClInclude Include="..\public\ThugPoacher_Attack.h" />
@@ -654,6 +656,7 @@
     <ClInclude Include="..\Public\UI_UltimateAction.h" />
     <ClInclude Include="..\Public\UVAnimationUI.h" />
     <ClInclude Include="..\public\JaneDoe.h" />
+    <ClInclude Include="..\Public\VideoPanel.h" />
     <ClInclude Include="..\Public\ZeroPortal.h" />
     <ClInclude Include="..\public\ZeroStage_1_1.h" />
     <ClInclude Include="..\Public\ZeroStage_Boss.h" />
@@ -752,6 +755,8 @@
     <ClCompile Include="..\private\Room_Lottery.cpp" />
     <ClCompile Include="..\private\Room_Noodle.cpp" />
     <ClCompile Include="..\private\SilverAnbi.cpp" />
+    <ClCompile Include="..\Private\TestDecoder.cpp" />
+    <ClCompile Include="..\Private\TestVideo.cpp" />
     <ClCompile Include="..\private\ThugPoacher.cpp" />
     <ClCompile Include="..\private\ThugPoacher_Arrow.cpp" />
     <ClCompile Include="..\private\ThugPoacher_Attack.cpp" />
@@ -1003,6 +1008,7 @@
     <ClCompile Include="..\Private\UI_UltimateAction.cpp" />
     <ClCompile Include="..\Private\UVAnimationUI.cpp" />
     <ClCompile Include="..\private\JaneDoe.cpp" />
+    <ClCompile Include="..\Private\VideoPanel.cpp" />
     <ClCompile Include="..\Private\ZeroPortal.cpp" />
     <ClCompile Include="..\private\ZeroStage_1_1.cpp" />
     <ClCompile Include="..\Private\ZeroStage_Boss.cpp" />
