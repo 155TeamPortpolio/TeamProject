@@ -10,6 +10,11 @@ namespace Engine
 		_float	fogDensity = 0.002f;
 		_bool	IsUse = false;
 	}FOG_DESC;
+
+	typedef struct tagGlitchDesc {
+		_float	glitchSpeed = 15.f;
+		_float  glitchStrength = 0.04f;
+	}GLITCH_DESC;
 }
 
 #endif
