@@ -18,6 +18,9 @@ HRESULT CUI_RamenOrderBanner::Initialize_Prototype()
 
 HRESULT CUI_RamenOrderBanner::Initialize(INIT_DESC* pArg)
 {
+    ORDER_BANNER_DESC* pDesc = static_cast<ORDER_BANNER_DESC*>(pArg);
+    m_OnClick = pDesc->onOrderComfirm;
+
 	__super::Initialize();
 
 	Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("ramen_order_banner.json")));
@@ -37,7 +40,7 @@ void CUI_RamenOrderBanner::Awake()
 }
 
 void CUI_RamenOrderBanner::Update(_float dt)
-{
+{ 
     __super::Update(dt);
 
     Get_Component<CObjectContainer>()->UpdateChild(dt);
@@ -53,7 +56,7 @@ void CUI_RamenOrderBanner::UI_Active(void* pArg)
     wstring strMenu = L"";
     if (pArg)
     {
-        ORDER_DESC* pDesc = static_cast<ORDER_DESC*>(pArg);
+        ACTIVE_DESC* pDesc = static_cast<ACTIVE_DESC*>(pArg);
         strMenu = pDesc->strMenu;
         replace(strMenu.begin(), strMenu.end(), L'\n', L' ');
     }
@@ -138,6 +141,9 @@ void CUI_RamenOrderBanner::OnClick_Cancel()
 
 void CUI_RamenOrderBanner::OnClick_Confirm()
 {
+    UI_DeActive();
+    if (m_OnClick)
+        m_OnClick();
 }
 
 CGameObject* CUI_RamenOrderBanner::Create()

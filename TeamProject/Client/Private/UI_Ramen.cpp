@@ -44,6 +44,7 @@ HRESULT CUI_Ramen::Initialize(INIT_DESC* pArg)
     Create_BackButton();
     Create_Menus();
     Create_OrderBanner();
+    Create_Video();
 
     Cache();
 
@@ -133,15 +134,30 @@ void CUI_Ramen::Create_Menus()
 
 void CUI_Ramen::Create_OrderBanner()
 {
-    auto pContainer = Get_Component<CObjectContainer>();
+    CUI_RamenOrderBanner::ORDER_BANNER_DESC* pDesc = new CUI_RamenOrderBanner::ORDER_BANNER_DESC;
+    pDesc->onOrderComfirm = [this]() { OnClick_OrderComfirm();  };
+
     auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_RamenOrderBanner" })
+        .Add_UIDesc(pDesc)
         .Build("orderBanner");
 
     if (!pObj)
         return;
 
-    pContainer->Add_Child(pObj);
+    Get_Component<CObjectContainer>()->Add_Child(pObj);
     m_pOrderBanner = pObj;
+}
+
+void CUI_Ramen::Create_Video()
+{
+    auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_RamenVideo" })
+        .Build("video");
+
+    if (!pObj)
+        return;
+
+    Get_Component<CObjectContainer>()->Add_Child(pObj);
+    m_pVideo = pObj;
 }
 
 void CUI_Ramen::Cache()
@@ -177,7 +193,7 @@ void CUI_Ramen::OnClick_Order()
         Set_ChildAnimation(CHILD::CLICK_ORDER, 0);
         if (m_pOrderBanner)
         {
-            CUI_RamenOrderBanner::ORDER_DESC desc = {};
+            CUI_RamenOrderBanner::ACTIVE_DESC desc = {};
             desc.strMenu = m_strMenu;
             m_pOrderBanner->UI_Active(&desc);
         } 
@@ -186,6 +202,12 @@ void CUI_Ramen::OnClick_Order()
     {
         MSG_BOX("구매 불가능!");
     }    
+}
+
+void CUI_Ramen::OnClick_OrderComfirm()
+{
+    if (m_pVideo)
+        m_pVideo->UI_Active();
 }
 
 void CUI_Ramen::Set_TextPrice(_int iMoney, _int iPrice)

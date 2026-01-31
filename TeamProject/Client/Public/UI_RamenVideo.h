@@ -2,29 +2,18 @@
 #include "UI_Object.h"
 
 NS_BEGIN(Engine)
-class CTextSlot;
+class CVideoPlayer;
+class CMFVideoDecoderBackend;
 NS_END
 
 NS_BEGIN(Client)
 
-class CUI_RamenOrderBanner final : public CUI_Object
+class CUI_RamenVideo final : public CUI_Object
 {
-public:
-	typedef struct tagOrderBannerDesc : public UI_DESC {
-		function<void()>	onOrderComfirm = {};
-	}ORDER_BANNER_DESC;
-
-	typedef struct tagActiveDesc {
-		wstring strMenu = {}; 
-	}ACTIVE_DESC;
-
 private:
-	enum class STATE { INVISIBLE, VISIBLE, END };
-
-private:
-	CUI_RamenOrderBanner() {}
-	CUI_RamenOrderBanner(const CUI_RamenOrderBanner& rhs) : CUI_Object(rhs) {}
-	virtual ~CUI_RamenOrderBanner() DEFAULT;
+	CUI_RamenVideo() {}
+	CUI_RamenVideo(const CUI_RamenVideo& rhs) : CUI_Object(rhs) {}
+	virtual ~CUI_RamenVideo() DEFAULT;
 
 public:
 	virtual HRESULT Initialize_Prototype()           override;
@@ -38,22 +27,15 @@ public:
 	virtual void	UI_DeActive(void* pArg = nullptr) override;
 
 private:
-	STATE			m_eState = { STATE::END };
-	class CTextSlot* m_pLabelTextSlot = { };
-
-private:
-	void Create_CancelButton();
-	void Create_ConfirmButton();
-	void Cache();
-
-	void Change_State(STATE eSate);
-	void OnClick_Cancel();
-	void OnClick_Confirm();
+	CVideoPlayer* m_pPlayer = { nullptr };
+	CMFVideoDecoderBackend* m_pDecoder = { nullptr };
+	_uint64 m_startTimeSec = 0.0;
+	_uint m_PlayerID = {};
 
 public:
 	static  CGameObject* Create();
 	virtual CGameObject* Clone(INIT_DESC* pArg = {}) override;
-	virtual void Free() { __super::Free(); }
+	virtual void Free() override;
 };
 
 NS_END
