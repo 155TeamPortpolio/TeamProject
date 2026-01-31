@@ -6,15 +6,22 @@
 #include "Sprite2D.h"
 #include "MFVideoDecoderBackend.h"
 
+#include "UI_IconButton.h"
+
 HRESULT CUI_RamenVideo::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
+
+    Add_Component<CObjectContainer>();
 
 	return S_OK;
 }
 
 HRESULT CUI_RamenVideo::Initialize(INIT_DESC* pArg)
 {
+    VIDEO_DESC* pDesc = static_cast<VIDEO_DESC*>(pArg);
+    m_OnClick = pDesc->onVideoFinished;
+
 	__super::Initialize(pArg);
 
     /*비디오를 읽는 디코더를 우선 생성*/
@@ -37,6 +44,10 @@ HRESULT CUI_RamenVideo::Initialize(INIT_DESC* pArg)
     Get_Component<CSprite2D>()->ChangePass("VideoPlay");
     m_vSize = { 1600 ,900 };
 
+    Create_SkipButton();
+
+    Set_Alive(false);
+
 	return S_OK;
 }
 
@@ -50,18 +61,46 @@ void CUI_RamenVideo::Update(_float dt)
 
     Get_Component<CSprite2D>()->Set_Param("SpriteTexture", { m_pPlayer->GetSRV(),"Texture2D",0 });
 
+    Get_Component<CObjectContainer>()->UpdateChild(dt);
+
     if (m_pPlayer->GetState() == VIDEO_PLAY_STATE::Ended)
-        Set_Alive(false);
+        Off();
 }
 
 void CUI_RamenVideo::UI_Active(void* pArg)
 {
     /*재생 / 디코딩 시작*/
+    Set_Alive(true);
     m_pPlayer->Play(); 
 }
 
 void CUI_RamenVideo::UI_DeActive(void* pArg)
 {
+}
+
+void CUI_RamenVideo::Create_SkipButton()
+{
+    CUI_IconButton::BUTTON_DESC* pDesc = new CUI_IconButton::BUTTON_DESC;
+    pDesc->onClick = [this]() { Off(); };
+    pDesc->strLabel = L"건너뛰기";
+    pDesc->strTextureKey = "IconSkip.png";
+    auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_IconButton" })
+        .Add_UIDesc(pDesc)
+        .Build("buttonSkip");
+
+    if (!pObj)
+        return;
+
+    pObj->Set_Anchor(ANCHOR::Right | ANCHOR::Top);
+    pObj->Set_AnchorOffset({ - 140.f, 111.f });
+    Get_Component<CObjectContainer>()->Add_Child(pObj);
+}
+
+void CUI_RamenVideo::Off()
+{
+    Set_Alive(false);
+    if (m_OnClick)
+        m_OnClick();
 }
 
 CGameObject* CUI_RamenVideo::Create()

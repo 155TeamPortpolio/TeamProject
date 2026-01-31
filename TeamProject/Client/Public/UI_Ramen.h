@@ -61,6 +61,7 @@ private:
 
 	void OnClick_Order();
 	void OnClick_OrderComfirm();
+	void OnVideoFinished();
 
 	void Set_TextPrice(_int iMoney, _int iPrice);
 	void Update_Affordable();

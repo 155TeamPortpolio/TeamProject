@@ -10,6 +10,11 @@ NS_BEGIN(Client)
 
 class CUI_RamenVideo final : public CUI_Object
 {
+public:
+	typedef struct tagVideoDesc : public UI_DESC {
+		function<void()>	onVideoFinished = {};
+	}VIDEO_DESC;
+
 private:
 	CUI_RamenVideo() {}
 	CUI_RamenVideo(const CUI_RamenVideo& rhs) : CUI_Object(rhs) {}
@@ -31,6 +36,11 @@ private:
 	CMFVideoDecoderBackend* m_pDecoder = { nullptr };
 	_uint64 m_startTimeSec = 0.0;
 	_uint m_PlayerID = {};
+
+private:
+	void Create_SkipButton();
+
+	void Off();
 
 public:
 	static  CGameObject* Create();

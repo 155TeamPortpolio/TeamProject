@@ -8,6 +8,7 @@
 #include "UI_BackButton.h"
 #include "UI_RamenMenu.h"  
 #include "UI_RamenOrderBanner.h"
+#include "UI_RamenVideo.h"
 
 #include "DataBase.h"
 #include "FieldSystem.h"
@@ -150,7 +151,11 @@ void CUI_Ramen::Create_OrderBanner()
 
 void CUI_Ramen::Create_Video()
 {
+    CUI_RamenVideo::VIDEO_DESC* pDesc = new  CUI_RamenVideo::VIDEO_DESC;
+    pDesc->onVideoFinished = [this]() { OnVideoFinished();  };
+
     auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_RamenVideo" })
+        .Add_UIDesc(pDesc)
         .Build("video");
 
     if (!pObj)
@@ -208,6 +213,10 @@ void CUI_Ramen::OnClick_OrderComfirm()
 {
     if (m_pVideo)
         m_pVideo->UI_Active();
+}
+
+void CUI_Ramen::OnVideoFinished()
+{
 }
 
 void CUI_Ramen::Set_TextPrice(_int iMoney, _int iPrice)
