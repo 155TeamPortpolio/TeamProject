@@ -5,6 +5,8 @@
 #include "ObjectContainer.h"
 #include "TextSlot.h"
 
+#include "UI_IconButton.h"
+
 HRESULT CUI_RamenOrderBanner::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
@@ -21,7 +23,11 @@ HRESULT CUI_RamenOrderBanner::Initialize(INIT_DESC* pArg)
 	Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("ramen_order_banner.json")));
     Cache();
 
-    UI_DeActive();
+    Create_CancelButton();
+    Create_ConfirmButton();
+
+    Change_State(STATE::INVISIBLE);
+    Set_Alive(false); 
 
 	return S_OK;
 }
@@ -35,11 +41,14 @@ void CUI_RamenOrderBanner::Update(_float dt)
     __super::Update(dt);
 
     Get_Component<CObjectContainer>()->UpdateChild(dt);
+
+    if (m_eState == STATE::INVISIBLE && Is_AnimFinished())
+        Set_Alive(false);
 }
 
 void CUI_RamenOrderBanner::UI_Active(void* pArg)
 {
-    Set_Alive(true);
+    Change_State(STATE::VISIBLE);
 
     wstring strMenu = L"";
     if (pArg)
@@ -54,7 +63,41 @@ void CUI_RamenOrderBanner::UI_Active(void* pArg)
 
 void CUI_RamenOrderBanner::UI_DeActive(void* pArg)
 {
-    Set_Alive(false);
+    Change_State(STATE::INVISIBLE);
+}
+
+void CUI_RamenOrderBanner::Create_CancelButton()
+{
+    CUI_IconButton::BUTTON_DESC* pDesc = new CUI_IconButton::BUTTON_DESC;
+    pDesc->onClick = [this]() { OnClick_Cancel(); };
+    pDesc->strLabel = L"취소";
+    pDesc->strTextureKey = "IconCancel.png"; 
+    auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_IconButton" })
+        .Add_UIDesc(pDesc)
+        .Build("buttonCancel");
+
+    if (!pObj)
+        return;
+
+    pObj->Add_AnchorOffsetX(-136.f);
+    Get_Component<CObjectContainer>()->Add_Child(pObj);
+}
+
+void CUI_RamenOrderBanner::Create_ConfirmButton()
+{
+    CUI_IconButton::BUTTON_DESC* pDesc = new CUI_IconButton::BUTTON_DESC;
+    pDesc->onClick = [this]() { OnClick_Confirm(); };
+    pDesc->strLabel = L"확인";
+    pDesc->strTextureKey = "IconOK.png";
+    auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_IconButton" })
+        .Add_UIDesc(pDesc)
+        .Build("buttonOK");
+
+    if (!pObj)
+        return;
+
+    pObj->Add_AnchorOffsetX(136.f);
+    Get_Component<CObjectContainer>()->Add_Child(pObj);
 }
 
 void CUI_RamenOrderBanner::Cache()
@@ -68,6 +111,33 @@ void CUI_RamenOrderBanner::Cache()
 
         m_pLabelTextSlot = pObj->Get_Component<CTextSlot>();
     }
+}
+
+void CUI_RamenOrderBanner::Change_State(STATE eState)
+{
+    if (m_eState == eState)
+        return;
+
+    m_eState = eState;
+    switch (eState)
+    {
+    case STATE::INVISIBLE:
+        Set_Animation(1);
+        break;
+    case STATE::VISIBLE:
+        Set_Alive(true); 
+        Set_Animation(0);
+        break;
+    }
+}
+
+void CUI_RamenOrderBanner::OnClick_Cancel()
+{
+    UI_DeActive();
+}
+
+void CUI_RamenOrderBanner::OnClick_Confirm()
+{
 }
 
 CGameObject* CUI_RamenOrderBanner::Create()

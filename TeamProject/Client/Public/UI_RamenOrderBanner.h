@@ -11,8 +11,11 @@ class CUI_RamenOrderBanner final : public CUI_Object
 {
 public:
 	typedef struct tagOrderDesc {
-		wstring strMenu = {};
+		wstring strMenu = {}; 
 	}ORDER_DESC;
+
+private:
+	enum class STATE { INVISIBLE, VISIBLE, END };
 
 private:
 	CUI_RamenOrderBanner() {}
@@ -31,10 +34,17 @@ public:
 	virtual void	UI_DeActive(void* pArg = nullptr) override;
 
 private:
+	STATE			m_eState = { STATE::END };
 	class CTextSlot* m_pLabelTextSlot = { };
 
 private:
+	void Create_CancelButton();
+	void Create_ConfirmButton();
 	void Cache();
+
+	void Change_State(STATE eSate);
+	void OnClick_Cancel();
+	void OnClick_Confirm();
 
 public:
 	static  CGameObject* Create();

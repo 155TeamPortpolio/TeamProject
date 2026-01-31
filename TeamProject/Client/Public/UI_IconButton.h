@@ -8,8 +8,8 @@ class CUI_IconButton final : public CUI_Object
 public:
 	typedef struct tagButtonDesc : public UI_DESC {
 		function<void()> onClick = { nullptr };
-		string strTextureKey = "empty.png";
 		wstring strLabel = L"¶óº§";
+		string strTextureKey = "empty.png"; 
 	}BUTTON_DESC;
 
 private:
