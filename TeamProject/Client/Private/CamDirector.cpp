@@ -127,8 +127,7 @@ void CCamDirector::Update(_float dt)
     if (IsValid())
         m_dialogue.Update(dt, GetOrbitCamComp(), GetOrbitCam(), GetCharacter()->Get_Component<CTransform>());
 
-    if (!m_playing.active)
-        UpdateInput(dt);
+     UpdateInput(dt);
 }
 
 void CCamDirector::StartBattleIntro(CamSeqType type)
@@ -154,18 +153,21 @@ string CCamDirector::ResolveSeqKey(CamSeqType type) const
 void CCamDirector::UpdateInput(_float dt)
 {
     if (InputDevice()->Key_Tap(VK_F1))
+    {
+        if (m_playing.active) AbortSequenceToOrbit(true);
         CameraManager()->Set_MainCam(GetFreeCamComp(), 0.5f);
+    }
 
     if (InputDevice()->Key_Tap(VK_F2))
+    {
+        if (m_playing.active) AbortSequenceToOrbit(true);
         CameraManager()->Set_MainCam(GetOrbitCamComp(), 0.5f);
-     
-    const _int damage = Helper::Get_Random_Int(1000, 10000);
+    }
+
+    if (m_playing.active) return;
 
     if (InputDevice()->Key_Tap(VK_F3))
-    {
-        RequestSequence("Field/Front");
-        //GetCharacter()->Get_Component<CCharacterController>()->Set_Position({5.f, 1.f, 0.f});
-    }
+        RequestSequence("Gacha/StartPos");
 }
 
 void CCamDirector::AbortSequenceToOrbit(_bool resetTime)
