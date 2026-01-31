@@ -93,7 +93,7 @@ _bool CVideoPlayer::EnsureGpuTexture(_uint width, _uint height)
     textureDesc.ArraySize = 1;
 
     // CPU 버퍼가 BGRA라고 가정 (MF RGB32도 보통 BGRA)
-    textureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+    textureDesc.Format = DXGI_FORMAT_R8G8B8A8_TYPELESS;
 
     textureDesc.SampleDesc.Count = 1;
     textureDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -104,10 +104,9 @@ _bool CVideoPlayer::EnsureGpuTexture(_uint width, _uint height)
         return false;
 
     D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
-    srvDesc.Format = textureDesc.Format;
     srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
     srvDesc.Texture2D.MipLevels = 1;
-
+    srvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
     HRESULT hrSrv = m_pDevice->CreateShaderResourceView(m_pTexture, &srvDesc, &m_pSRV);
     if (FAILED(hrSrv))
         return false;

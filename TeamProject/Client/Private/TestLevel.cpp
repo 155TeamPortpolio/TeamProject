@@ -63,6 +63,7 @@
 
 /* UI */
 #include "UIDirector.h"
+#include "TestVideo.h"
 
 /* Interactable */
 #include "Portal.h"
@@ -162,6 +163,9 @@ HRESULT CTestLevel::Awake()
 	CUIDirector::GetInstance()->Show_HUD(CUIDirector::HUD::BATTLE);
 	//GameInstance()->Set_EngineTimeScale(0.05f);
 
+	PrototypeManager()->Add_ProtoType("Test_Level", "Test_Video", CTestVideo::Create());
+	//auto testVideo = Builder::Create_UIObject({ "Test_Level", "Test_Video" }).Build("Test_Video");
+	//UIManager()->Add_UIObject(testVideo, "Test_Level");
 	return S_OK;
 }
 
