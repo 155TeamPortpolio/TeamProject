@@ -104,11 +104,11 @@ void CGachaProps::Add_GachaProps()
 
     CGameObject* gachaResult = Builder::Create_Object({ "Gacha_Level", "Proto_GameObject_GachaResult" })
         .Collider(colliderDesc)
-        .Position(_float3(0.f, 1.3f, -1.5f))
+        .Position(_float3(0.f, 1.45f, -1.5f))
         .Scale(_float3(2.f,2.f,2.f))
-        .Rotate(_float3(0.25f, 2.2f, -0.3f))
         .Build("Result");
-
+    gachaResult->Get_Component<CTransform>()->Set_Quaternion(_vector4(-0.10, 0.80, -0.28, 0.52));
+    
     pObjectContainer->Add_Child(gachaResult, true);
 }
 
