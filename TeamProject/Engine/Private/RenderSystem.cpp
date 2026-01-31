@@ -142,6 +142,11 @@ void CRenderSystem::Set_FogDesc(FOG_DESC desc)
 	m_pPost->Set_FogDesc(desc);
 }
 
+void CRenderSystem::Set_GlitchDesc(GLITCH_DESC desc)
+{
+	m_pForward->Set_GlitchDesc(desc);
+}
+
 void CRenderSystem::Update(_float dt)
 {
 	m_pForward->Update(dt);

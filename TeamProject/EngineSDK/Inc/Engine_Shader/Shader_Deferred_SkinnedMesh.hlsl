@@ -3,6 +3,9 @@
 matrix g_WorldMatrix;
 float g_fTime;
 
+float g_GlitchSpeed;
+float g_GlitchStrength;
+
 struct VS_IN
 {
     float3 vPosition : POSITION;
@@ -176,13 +179,13 @@ PS_OUT_RESULT PS_VANISH(PS_IN In)
    
     float fNoiseTiling = 10.0f;
     
-    float fGlitchSpeed = 15.0f;
+    float fGlitchSpeed = g_GlitchSpeed;
     float fTimeStep = floor(g_fTime * fGlitchSpeed);
     float fGlitch = frac(sin(fTimeStep) * 43758.5453);
-    float2 vScrollOffset = float2((fGlitch - 0.5f) * 0.5f, 0.f);
+    float2 vScrollOffset = float2((fGlitch - 0.5f) * 0.5, 0.f);
     
     float fNoise = VanishNoiseTexture.Sample(LinearSampler, (In.vTexcoord + vScrollOffset) * fNoiseTiling).r;
-    float2 vDistortion = float2((fNoise - 0.5f) * 0.04f, 0.f);
+    float2 vDistortion = float2((fNoise - 0.5f) * g_GlitchStrength, 0.f);
     float2 vDistortedUV = In.vTexcoord + vDistortion;
     
     vector vVanish = VanishTexture.Sample(DefaultSampler, vDistortedUV);

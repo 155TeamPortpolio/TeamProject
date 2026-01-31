@@ -103,6 +103,9 @@ HRESULT CThugBulkyEnforcer::Initialize(INIT_DESC* pArg)
 void CThugBulkyEnforcer::Awake()
 {
 	__super::Awake();
+
+	//RenderSystem()->Set_GlitchDesc({ 1.f, 0.01f });
+	//GlitchSpeed, GlitchStrength - Default: 15.f, 0.04f
 }
 
 void CThugBulkyEnforcer::Priority_Update(_float dt)
