@@ -167,7 +167,7 @@ void CCamDirector::UpdateInput(_float dt)
     if (m_playing.active) return;
 
     if (InputDevice()->Key_Tap(VK_F3))
-        RequestSequence("Gacha/StartPos");
+        RequestSequence("Gacha/StartIntro");
 }
 
 void CCamDirector::AbortSequenceToOrbit(_bool resetTime)

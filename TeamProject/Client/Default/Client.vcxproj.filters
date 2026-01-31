@@ -1003,6 +1003,9 @@
     <Filter Include="02. GameObject\Object\Gacha\GachaProps\GachaBack">
       <UniqueIdentifier>{e5c0363c-6e7d-497f-a9a3-598931dd3e38}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\UI\02. 3D\Plane\Gangta">
+      <UniqueIdentifier>{93712aaf-87f8-46e7-8d80-8d430b09aa6f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1944,6 +1947,10 @@
     <ClInclude Include="..\public\GachaProps.h">
       <Filter>02. GameObject\Object\Gacha\GachaProps</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\MapLightPoint.h" />
+    <ClInclude Include="..\public\UI_Gangta.h">
+      <Filter>02. GameObject\UI\02. 3D\Plane\Gangta</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2845,6 +2852,10 @@
     </ClCompile>
     <ClCompile Include="..\private\GachaProps.cpp">
       <Filter>02. GameObject\Object\Gacha\GachaProps</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MapLightPoint.cpp" />
+    <ClCompile Include="..\private\UI_Gangta.cpp">
+      <Filter>02. GameObject\UI\02. 3D\Plane\Gangta</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

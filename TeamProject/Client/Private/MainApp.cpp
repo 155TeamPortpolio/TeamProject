@@ -95,6 +95,7 @@
 
 #include "UI_AtlasSprite.h"
 #include "UI_DamageText.h"
+#include "UI_Gangta.h"
 
 CMainApp::CMainApp()
 {
@@ -288,6 +289,7 @@ void CMainApp::Initialize_GlobalPrototype()
 
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_AtlasSprite", CUI_AtlasSprite::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_DamageText",  CUI_DamageText::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Gangta",      CUI_Gangta::Create());
 	/*Enviroment*/
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Cloud", CTestCloud::Create());
 

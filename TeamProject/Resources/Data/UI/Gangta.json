@@ -1,0 +1,141 @@
+{
+    "alive": true,
+    "instanceName": "Gangta_Star",
+    "transform": {
+        "anchor": 5,
+        "anchorOffset": [
+            0.0,
+            0.0
+        ],
+        "size": [
+            1600.0,
+            900.0
+        ],
+        "scale": [
+            1.0,
+            1.0
+        ],
+        "pivot": [
+            0.0,
+            0.0
+        ],
+        "radian": 0.0
+    },
+    "color": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+    ],
+    "pass": "Opaque",
+    "colorTexKey": "empty.png",
+    "colorTexMode": 0,
+    "colorTexMix": 1.0,
+    "animClips": [],
+    "children": [
+        {
+            "alive": true,
+            "instanceName": "Gangta_Star",
+            "transform": {
+                "anchor": 0,
+                "anchorOffset": [
+                    -41.666664123535156,
+                    -41.666664123535156
+                ],
+                "size": [
+                    83.33332824707031,
+                    83.33332824707031
+                ],
+                "scale": [
+                    1.5,
+                    1.5
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "pass": "Opaque",
+            "colorTexKey": "empty.png",
+            "colorTexMode": 0,
+            "colorTexMix": 1.0,
+            "animClips": [
+                {
+                    "duration": 1.0,
+                    "keyframes": [
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "easeType": 0,
+                            "position": [
+                                0.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 0.0
+                        },
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "easeType": 0,
+                            "position": [
+                                10.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.5,
+                                1.5
+                            ],
+                            "time": 0.20000000298023224
+                        },
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "easeType": 0,
+                            "position": [
+                                20.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.5,
+                                1.5
+                            ],
+                            "time": 1.0
+                        }
+                    ],
+                    "loop": true,
+                    "name": "clip0"
+                }
+            ],
+            "children": [],
+            "typeTag": "Image",
+            "textureTag": "Gangta_Star.png"
+        }
+    ],
+    "typeTag": "CanvasPanel"
+}
