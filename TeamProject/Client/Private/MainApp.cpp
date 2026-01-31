@@ -76,9 +76,13 @@
 
 #include "UI_IconLabel.h" 
 #include "UI_NameIndicator.h"
+
+#include "UI_ButtonBack.h"
+
 #include "UI_Dialogue.h" 
 #include "UI_DialogueMessage.h"
 #include "UI_DialogueChoice.h"
+
 #include "UI_Lottery.h"
 #include "UI_ScratchCard.h"
 #include "UI_Newspaper.h"
@@ -86,6 +90,8 @@
 
 #include "UI_Ramen.h"
 #include "UI_RamenMenu.h"
+#include "UI_RamenAttributeIcon.h"
+#include "UI_RamenAttributeText.h"
 
 #include "UI_AtlasSprite.h"
 #include "UI_DamageText.h"
@@ -263,6 +269,8 @@ void CMainApp::Initialize_GlobalPrototype()
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_IconLabel", CUI_IconLabel::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_NameIndicator", CUI_NameIndicator::Create());
 
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_ButtonBack", CUI_ButtonBack::Create());
+
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Dialogue", CUI_Dialogue::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_DialogueMessage", CUI_DialogueMessage::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_DialogueChoice", CUI_DialogueChoice::Create());
@@ -274,6 +282,8 @@ void CMainApp::Initialize_GlobalPrototype()
 
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Ramen", CUI_Ramen::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_RamenMenu", CUI_RamenMenu::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_RamenAttributeIcon", CUI_RamenAttributeIcon::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_RamenAttributeText", CUI_RamenAttributeText::Create());
 
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_AtlasSprite", CUI_AtlasSprite::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_DamageText",  CUI_DamageText::Create());

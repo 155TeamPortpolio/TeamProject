@@ -11,6 +11,7 @@ uint Row;
 uint ColorMode;
 uint RGBMask;
 float2 Pivot;
+float3 RimLightColor;
 
 struct VS_IN
 {
@@ -189,6 +190,7 @@ struct PS_OUT
     float4 vBloomInfo : SV_Target2;
     float4 vRevealage : SV_Target3;
     float4 vDistortionAcc : SV_Target4;
+    float4 vRimLightAcc : SV_Target5;
 };
 
 PS_OUT PS_MAIN(PS_IN In)
@@ -206,7 +208,7 @@ PS_OUT PS_MAIN(PS_IN In)
     float3 vColor = vResult.rgb;
     float fAlpha = vResult.a;
     
-    if(1 == RGBMask)
+    if (1 == RGBMask)
     {
         float fColorMask = max(vColorDesc.b, max(vColorDesc.r, vColorDesc.g));
         fAlpha *= fColorMask;
@@ -234,6 +236,7 @@ PS_OUT PS_MAIN(PS_IN In)
     Out.vBloomInfo = float4(0.f, 1.5f, 0.f, 0.f);
     Out.vRevealage = float4(fAlpha, fAlpha, fAlpha, fAlpha);
     Out.vDistortionAcc = float4(0.f, 0.f, 0.f, 0.f);
+    Out.vRimLightAcc = float4(RimLightColor * fAlpha, fAlpha);
     
     return Out;
 }

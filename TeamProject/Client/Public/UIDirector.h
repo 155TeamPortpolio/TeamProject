@@ -39,6 +39,8 @@ public:
 
 	void Show_Lottery();
 	void Hide_Lottery();
+	void Show_Ramen();
+	void Hide_Ramen();
 
 	/* 결과 배너를 띄움 */
 	void Show_ResultBanner(const string& strTextureKey, const _wstring& wstrText1, const _wstring& wstrText2);

@@ -86,7 +86,7 @@ HRESULT CZero_Level::Initialize()
 
 	m_Context.isFirstIn = true;
 
-	ChangeStage(StageType::Normal, 0);
+	ChangeStage(StageType::Boss, 0);
 	m_Context.isFirstIn = false;
 	//m_Context.pNowStage->Ready_Stage(m_Context);
 

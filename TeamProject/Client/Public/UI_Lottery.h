@@ -10,19 +10,19 @@ public:
 
 private:
 	enum class CHILD { 
-		BTN_BACK, BTN_REFRESH, BTN_SCRATCH,
-		OVERLAY, OVERLAY_BACK,OVERLAY_REFRESH,
-		ICON_BACK, ICON_REFRESH, ICON_SCRATCH, 
+		BTN_REFRESH, BTN_SCRATCH,
+		OVERLAY, OVERLAY_REFRESH,
+		ICON_REFRESH, ICON_SCRATCH, 
 		NEWSPAPER, SCRATCH, END };
 
 	inline static const string INSTANCENAMES[ENUM(CHILD::END)] = { 
-		"btnBack", "btnRefresh", "btnScratch", 
-		"overlay", "overlayBack", "overlayRefresh",
-		"iconBack", "iconRefresh", "iconScratch", 
+		"btnRefresh", "btnScratch", 
+		"overlay", "overlayRefresh",
+		"iconRefresh", "iconScratch", 
 		"", ""};
 
-	enum class BTN { BTN_BACK, BTN_SCRATCH, BTN_REFRESH, END };
-	inline static const string BTN_NAMES[ENUM(BTN::END)] = { "btnBack", "btnScratch", "btnRefresh" };
+	enum class BTN { BTN_SCRATCH, BTN_REFRESH, END };
+	inline static const string BTN_NAMES[ENUM(BTN::END)] = { "btnScratch", "btnRefresh" };
 
 private:
 	CUI_Lottery() {}
@@ -47,7 +47,10 @@ private:
 	class CButtonUI* m_pButtons[ENUM(BTN::END)] = {};
 
 private:
-	void Cache();
+	void Cache(); 
+	void Create_Newspaper();
+	void Create_ScratchCard();
+	void Create_ButtonBack();
 
 	void Change_State(STATE eState);
 

@@ -3,11 +3,15 @@
 #include "GameInstance.h"
 #include "Texture.h"
 
+/* Object */
+#include "EffectContainer.h"
+
 /* Component */
 #include "SkeletalModel.h"
 #include "Material.h"
 #include "MaterialInstance.h"
 #include "MaterialData.h"
+#include "ObjectContainer.h"
 #include "Animator3D.h"
 
 /* State */
@@ -53,6 +57,18 @@ HRESULT CSacrificeHand::Initialize(INIT_DESC* pArg)
 	auto pAnimator = Get_Component<CAnimator3D>();
 	pAnimator->LinkAnimate_Model(G_GlobalLevelKey, "Monster_SacrificeBringerHand.model");
 	pAnimator->Link_MetaData(G_GlobalLevelKey, "Monster_SacrificeBringerHand_Meta.json");
+
+	/* Hand Bubble */
+	auto pObjectContainer = Get_Component<CObjectContainer>();
+	auto pBubble = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+		.Asset("sacrifice_hand_bubble.json")
+		.Build("Sacrifice_Hand_Bubble");
+	//pBubble->Stop();
+	pObjectContainer->Add_Child(pBubble,false);
+
+	_smatrix offsetMatrix = _smatrix::Identity;
+	offsetMatrix.Translation(_vector3(-4.f, 0.f, 0.f));
+	pBubble->AttachBone(pAnimator, "Ctr_Main", offsetMatrix);
 
 	if (FAILED(Initialize_StateMachine()))
 		return E_FAIL;
@@ -192,6 +208,20 @@ void CSacrificeHand::Idle()
 {
 	m_pStateMachine->Change_State("Idle");
 	SetVisable(false);
+}
+
+void CSacrificeHand::Active_Bubble()
+{
+	auto pObjectContainer = Get_Component<CObjectContainer>();
+	auto pBubble = pObjectContainer->Find_ObjectByName("Sacrifice_Hand_Bubble");
+	static_cast<CEffectContainer*>(pBubble)->Play();
+}
+
+void CSacrificeHand::Deactive_Bubble()
+{
+	auto pObjectContainer = Get_Component<CObjectContainer>();
+	auto pBubble = pObjectContainer->Find_ObjectByName("Sacrifice_Hand_Bubble");
+	static_cast<CEffectContainer*>(pBubble)->Stop();
 }
 
 void CSacrificeHand::Set_DissolveState(DISSOLVE_STATE state, _float duration)

@@ -7,6 +7,8 @@
 #include "TextSlot.h"
 #include "ButtonUI.h"
 #include "UI_Ramen.h"
+#include "UI_RamenAttributeIcon.h"
+#include "UI_RamenAttributeText.h"
 
 HRESULT CUI_RamenMenu::Initialize_Prototype()
 {
@@ -21,24 +23,26 @@ HRESULT CUI_RamenMenu::Initialize(INIT_DESC* pArg)
 {
     RAMENMENU_DESC* pDesc = static_cast<RAMENMENU_DESC*>(pArg);
     m_onSelect = pDesc->onSelect;
+    m_tRamenDesc = pDesc->tRamenDesc;
 
     __super::Initialize(pArg);
 
     Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("ramen_menu.json")));
     Cache();
-
-    auto pSprite = m_pSprites[ENUM(SPRITE::BUTTON)];
-    if (pSprite)
-    {
-        pSprite->Change_Texture(0, G_GlobalLevelKey, "RamenBg0.png");
-        pSprite->Change_Texture(1, G_GlobalLevelKey, "RamenBg1.png");
-    }
+    Create_AttributeIcons();
+    Create_AttributeText();
 
     if (m_pButton)
         m_pButton->Set_OnClick([this]() {
         if (m_onSelect)
-            m_onSelect(this);
+            m_onSelect(this, m_tRamenDesc.iPrice);
             });
+
+    Set_Text(TEXTSLOT::NAME, m_tRamenDesc.strName);
+    Set_Text(TEXTSLOT::PRICE, Helper::ConvertToWideString(to_string(m_tRamenDesc.iPrice)));
+    auto iter = ICON_MENU_TEXTURES.find(m_tRamenDesc.strID);
+    if (iter != ICON_MENU_TEXTURES.end())
+        Set_ChildTexture(CHILD::ICON_MENU, iter->second);
 
     UI_DeActive(nullptr);
 
@@ -63,31 +67,35 @@ void CUI_RamenMenu::Late_Update(_float dt)
 void CUI_RamenMenu::UI_Active(void* pArg)
 {
     Set_Animation(0);
-    Change_Sprite(SPRITE::BUTTON, 1);
-    if (m_pOverlay) m_pOverlay->Set_Alive(true);
+    Set_ChildAlpha(CHILD::ACTIVE, 1.f);
+    m_pAttributeText->Set_Alive(true);
+    for (auto& pAttributeIcon: m_AttributeIcons)
+        pAttributeIcon->Set_Alive(false);
 }
 
 void CUI_RamenMenu::UI_DeActive(void* pArg)
 {
     Set_Animation(1);
-    Change_Sprite(SPRITE::BUTTON, 0);
-    if (m_pOverlay) m_pOverlay->Set_Alive(false);
+    Set_ChildAlpha(CHILD::ACTIVE, 0.f);
+    m_pAttributeText->Set_Alive(false);
+    for (auto& pAttributeIcon : m_AttributeIcons)
+        pAttributeIcon->Set_Alive(true);
 }
 
 void CUI_RamenMenu::Cache()
 {
     auto pContainer = Get_Component<CObjectContainer>();
 
-    for (_int i = 0; i < ENUM(SPRITE::END); ++i)
+    for (_int i = 0; i < ENUM(CHILD::END); ++i)
     {
-        auto pObj = pContainer->Find_Descendant(SPRITE_INSTANCENAMES[i]);
+        auto pObj = pContainer->Find_Descendant(INSTANCENAMES[i]);
         if (!pObj)
             continue;
 
-        m_pSprites[i] = pObj->Get_Component<CSprite2D>();
+        m_pChildren[i] = dynamic_cast<CUI_Object*>(pObj);
     }
 
-    for (_int i = 0; i < ENUM(TEXT::END); ++i)
+    for (_int i = 0; i < ENUM(TEXTSLOT::END); ++i)
     {
         auto pObj = pContainer->Find_Descendant(TEXT_INSTANCENAMES[i]);
         if (!pObj)
@@ -102,26 +110,80 @@ void CUI_RamenMenu::Cache()
             return;
 
         m_pButton = dynamic_cast<CButtonUI*>(pObj);
-    } 
-
-    {
-        auto pObj = pContainer->Find_Descendant("overlay");
-        if (!pObj)
-            return;
-        m_pOverlay = dynamic_cast<CUI_Object*>(pObj);
     }
 }
 
-void CUI_RamenMenu::Change_Sprite(SPRITE sprite, _uint iIndex)
+void CUI_RamenMenu::Create_AttributeIcons()
 {
-    auto pSprite = m_pSprites[ENUM(sprite)];
+    _int iIndex = {};
+
+    for (auto& attribute: m_tRamenDesc.attributes)
+    {
+        CUI_RamenAttributeIcon::ATTRIBUTE_DESC* pDesc = new CUI_RamenAttributeIcon::ATTRIBUTE_DESC;
+        pDesc->strAttributeID = attribute.strAttributeID;
+
+        auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_RamenAttributeIcon" })
+            .Add_UIDesc(pDesc)
+            .Build("attributeIcon");
+
+        if (!pObj)
+            return;
+
+        pObj->Add_AnchorOffsetX( (m_tRamenDesc.attributes.size() - ++iIndex) * - 34.f);
+        Get_Component<CObjectContainer>()->Add_Child(pObj);
+        m_AttributeIcons.push_back(pObj);
+    } 
+}
+
+void CUI_RamenMenu::Create_AttributeText()
+{
+    CUI_RamenAttributeText::ATTRIBUTE_DESC* pDesc = new CUI_RamenAttributeText::ATTRIBUTE_DESC;
+    for (auto& attribute : m_tRamenDesc.attributes)
+        pDesc->attributes.push_back(attribute);
+
+     auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_RamenAttributeText" })
+         .Add_UIDesc(pDesc)
+         .Build("attributeText");
+
+     if (!pObj)
+         return;
+
+     Get_Component<CObjectContainer>()->Add_Child(pObj);
+     m_pAttributeText = pObj;
+}
+
+void CUI_RamenMenu::Set_ChildAlive(CHILD child, _bool isAlive)
+{
+    auto pChild = m_pChildren[ENUM(child)];
+    if (!pChild)
+        return;
+
+    pChild->Set_Alive(isAlive);
+}
+
+void CUI_RamenMenu::Set_ChildAlpha(CHILD child, _float fAlpha)
+{
+    auto pChild = m_pChildren[ENUM(child)];
+    if (!pChild)
+        return;
+
+    pChild->Set_Alpha(fAlpha);
+}
+
+void CUI_RamenMenu::Set_ChildTexture(CHILD child, const string& strTextureKey)
+{
+    auto pChild = m_pChildren[ENUM(child)];
+    if (!pChild)
+        return;
+
+    auto pSprite = pChild->Get_Component<CSprite2D>();
     if (!pSprite)
         return;
 
-    pSprite->ChangeSprite(iIndex);
+    pSprite->Change_Texture(0, G_GlobalLevelKey, strTextureKey);
 }
 
-void CUI_RamenMenu::Set_Text(TEXT text, const _wstring& strText)
+void CUI_RamenMenu::Set_Text(TEXTSLOT text, const _wstring& strText)
 {
     auto pText = m_pTexts[ENUM(text)];
     if (!pText)
