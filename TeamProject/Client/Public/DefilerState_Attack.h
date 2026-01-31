@@ -1,5 +1,6 @@
 #pragma once
 #include "IHState.h"
+#include "Defiler_Control.h"
 
 NS_BEGIN(Client)
 
@@ -252,6 +253,18 @@ public:
 
 public:
 	static CDefilerState_Attack_Summon* Create() { return new CDefilerState_Attack_Summon(); }
+	virtual void Free() override { __super::Free(); }
+};
+
+class CDefilerState_Attack_Evade:  public CDefilerState_Attack
+{
+public:
+	virtual void Enter(CDefiler* pOwner) override;
+	virtual void Update(CDefiler* pOwner, _float dt) override;
+	virtual void Exit(CDefiler* pOwner) override;
+
+public:
+	static CDefilerState_Attack_Evade* Create() { return new CDefilerState_Attack_Evade(); }
 	virtual void Free() override { __super::Free(); }
 };
 

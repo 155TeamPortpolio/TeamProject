@@ -1005,6 +1005,9 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Gacha\GachaProps\GachaResult">
       <UniqueIdentifier>{5b3fe7e7-f877-4cae-bf66-a57e17b1b328}</UniqueIdentifier>
+          </Filter>
+    <Filter Include="02. GameObject\MapObject\04. MapLightPoint">
+      <UniqueIdentifier>{8f98ed95-123b-4c72-b0bb-bcf3efb5405b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1863,9 +1866,6 @@
     <ClInclude Include="..\Public\Defiler.h">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\DefilerState.h">
-      <Filter>02. GameObject\Object\Enemy\Boss\Defiler\State</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\DefilerState_Attack.h">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler\State\Attack</Filter>
     </ClInclude>
@@ -1948,8 +1948,14 @@
       <Filter>02. GameObject\Object\Gacha\GachaProps</Filter>
     </ClInclude>
     <ClInclude Include="..\public\MapLightPoint.h" />
+        </ClInclude>
     <ClInclude Include="..\public\GachaResult.h">
       <Filter>02. GameObject\Object\Gacha\GachaProps\GachaResult</Filter>
+    <ClInclude Include="..\Public\Defiler_Control.h">
+      <Filter>02. GameObject\Object\Enemy\Boss\Defiler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\MapLightPoint.h">
+      <Filter>02. GameObject\MapObject\04. MapLightPoint</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2854,8 +2860,11 @@
       <Filter>02. GameObject\Object\Gacha\GachaProps</Filter>
     </ClCompile>
     <ClCompile Include="..\private\MapLightPoint.cpp" />
+        </ClCompile>
     <ClCompile Include="..\private\GachaResult.cpp">
       <Filter>02. GameObject\Object\Gacha\GachaProps\GachaResult</Filter>
+    <ClCompile Include="..\private\MapLightPoint.cpp">
+      <Filter>02. GameObject\MapObject\04. MapLightPoint</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

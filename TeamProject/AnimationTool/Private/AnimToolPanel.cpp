@@ -650,6 +650,7 @@ void CAnimToolPanel::Save_Event()
 	string MetaPath = m_pGameInstance->Get_ResourceMgr()->Get_ResourcePath(ClipKey);
 
 	ANIM_META tMeta{};
+	tMeta.AnimPath = m_pSelectAnimator->Get_AnimPath();
 	tMeta.PreTransform = m_pSelectAnimator->Get_PreTransform();
 	tMeta.Clips = m_AnimClip;
 
