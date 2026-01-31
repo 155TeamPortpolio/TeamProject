@@ -308,16 +308,13 @@ PS_OUT_RESULT PS_MAIN_COMBINED(PS_IN In)
     float ssao = SSAOFinalTexture.Sample(DefaultSampler, In.vTexcoord).r;
     
     float NdotL = vLightInfo.r;
-    float2 vRampCoord = float2(1 - NdotL, 0.5f);
-    vector vRampSample = RampTexture.Sample(DefaultSampler, vRampCoord);
-    float vRamp = lerp(0.4f, 1.0f, vRampSample.g);
     
     float shadowValue = vLightInfo.b;
     shadowValue = saturate(shadowValue * 0.7f + 0.3f);
     
     float3 vAmbient = vLightAmbient.rgb * vDiffuse.rgb * ssao * shadowValue;
     vAmbient = max(vAmbient, vDiffuse.rgb * vLightAmbient.rgb * 0.05);
-    float4 vResult = float4(vLight.rgb * vRamp + vAmbient, vDiffuse.a);
+    float4 vResult = float4(vLight.rgb + vAmbient, vDiffuse.a);
     
     float3 specularColor = vLightSpecular.rgb * vLightInfo.g;
     vResult.rgb += specularColor + vBloom.rgb;
@@ -373,7 +370,7 @@ technique11 DefaultTechnique
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_None, 0);
-        SetBlendState(BS_Additive, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        SetBlendState(BS_Additive_MaxAlpha, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_DIRECTIONAL();
@@ -383,7 +380,7 @@ technique11 DefaultTechnique
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_None, 0);
-        SetBlendState(BS_Additive, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        SetBlendState(BS_Additive_MaxAlpha, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_POINT();
