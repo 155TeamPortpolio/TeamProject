@@ -7,12 +7,14 @@ class CUI_IconButton final : public CUI_Object
 {
 public:
 	typedef struct tagButtonDesc : public UI_DESC {
-		function<void()> onClick = {};
+		function<void()> onClick = { nullptr };
+		string strTextureKey = "empty.png";
+		wstring strLabel = L"¶óº§";
 	}BUTTON_DESC;
 
 private:
-	enum class CHILD { BUTTON, OVERLAY, ICON, END };
-	inline static const string INSTANCENAMES[ENUM(CHILD::END)] = { "button", "overlay", "icon" };
+	enum class CHILD { BUTTON, OVERLAY, ICON, LABEL, END };
+	inline static const string INSTANCENAMES[ENUM(CHILD::END)] = { "button", "overlay", "icon", "label" };
 
 private:
 	CUI_IconButton() {}

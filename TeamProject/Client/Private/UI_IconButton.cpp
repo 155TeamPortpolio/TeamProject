@@ -3,6 +3,8 @@
 
 #include "GameInstance.h"
 #include "ObjectContainer.h"
+#include "Sprite2D.h"
+#include "TextSlot.h"
 
 HRESULT CUI_IconButton::Initialize_Prototype()
 {
@@ -15,12 +17,28 @@ HRESULT CUI_IconButton::Initialize_Prototype()
 
 HRESULT CUI_IconButton::Initialize(INIT_DESC* pArg)
 {
-    BUTTON_DESC* pDesc = static_cast<BUTTON_DESC*>(pArg);
-    m_OnClick = pDesc->onClick;
-
     __super::Initialize(pArg);
     Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("button_icon.json")));
     Cache_Children();
+
+    if (!pArg)
+        return S_OK;
+
+    CUI_IconButton::BUTTON_DESC* pDesc = dynamic_cast<CUI_IconButton::BUTTON_DESC*>(pArg);
+    if (!pDesc)
+        return S_OK;
+
+    m_OnClick = pDesc->onClick;
+
+    auto pIcon = m_pChildren[ENUM(CHILD::ICON)];
+    if (pIcon)
+        if (auto pSprite = pIcon->Get_Component<CSprite2D>())
+            pSprite->Change_Texture(0, G_GlobalLevelKey, pDesc->strTextureKey);
+
+    auto pText = m_pChildren[ENUM(CHILD::LABEL)];
+    if (pText)
+        if (auto pTextSlot = pText->Get_Component<CTextSlot>())
+            pTextSlot->Set_Text(pDesc->strLabel);
 
     auto pButton = m_pChildren[ENUM(CHILD::BUTTON)];
     if (pButton)
@@ -28,6 +46,7 @@ HRESULT CUI_IconButton::Initialize(INIT_DESC* pArg)
         m_isClicked = true;
         Set_ChildAnimation(CHILD::OVERLAY, 0);
         Set_ChildAnimation(CHILD::ICON, 0);
+        Set_ChildAnimation(CHILD::LABEL, 0);
             });
 
     return S_OK;

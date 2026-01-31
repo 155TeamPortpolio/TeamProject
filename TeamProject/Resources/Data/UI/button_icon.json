@@ -580,7 +580,7 @@
         },
         {
             "alive": true,
-            "instanceName": "text",
+            "instanceName": "label",
             "transform": {
                 "anchor": 0,
                 "anchorOffset": [
