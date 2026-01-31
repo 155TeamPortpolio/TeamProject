@@ -1946,11 +1946,10 @@
     </ClInclude>
     <ClInclude Include="..\public\GachaProps.h">
       <Filter>02. GameObject\Object\Gacha\GachaProps</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\MapLightPoint.h" />
-        </ClInclude>
+   </ClInclude>
     <ClInclude Include="..\public\GachaResult.h">
       <Filter>02. GameObject\Object\Gacha\GachaProps\GachaResult</Filter>
+	</ClInclude>
     <ClInclude Include="..\Public\Defiler_Control.h">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler</Filter>
     </ClInclude>
@@ -2859,10 +2858,9 @@
     <ClCompile Include="..\private\GachaProps.cpp">
       <Filter>02. GameObject\Object\Gacha\GachaProps</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\MapLightPoint.cpp" />
-        </ClCompile>
     <ClCompile Include="..\private\GachaResult.cpp">
       <Filter>02. GameObject\Object\Gacha\GachaProps\GachaResult</Filter>
+	</ClCompile>
     <ClCompile Include="..\private\MapLightPoint.cpp">
       <Filter>02. GameObject\MapObject\04. MapLightPoint</Filter>
     </ClCompile>
