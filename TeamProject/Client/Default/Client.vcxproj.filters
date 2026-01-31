@@ -1863,9 +1863,6 @@
     <ClInclude Include="..\Public\Defiler.h">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\DefilerState.h">
-      <Filter>02. GameObject\Object\Enemy\Boss\Defiler\State</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\DefilerState_Attack.h">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler\State\Attack</Filter>
     </ClInclude>
@@ -1946,6 +1943,9 @@
     </ClInclude>
     <ClInclude Include="..\public\GachaProps.h">
       <Filter>02. GameObject\Object\Gacha\GachaProps</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Defiler_Control.h">
+      <Filter>02. GameObject\Object\Enemy\Boss\Defiler</Filter>
     </ClInclude>
     <ClInclude Include="..\public\MapLightPoint.h">
       <Filter>02. GameObject\MapObject\04. MapLightPoint</Filter>

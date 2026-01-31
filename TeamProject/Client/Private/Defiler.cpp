@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "Defiler.h"
 #include "GameInstance.h"
+#include "BattleSystem.h"
 
 #include "SkeletalModel.h"
 #include "Animator3D.h"
@@ -10,7 +11,7 @@
 #include "EffectContainer.h"
 
 #include "StateMachine.h"
-#include "DefilerState.h"
+#include "Defiler_Control.h"
 
 #include "Engine_Math.h"
 CDefiler::CDefiler()
@@ -45,7 +46,7 @@ HRESULT CDefiler::Initialize(INIT_DESC* pArg)
 
 	m_eEnemyClass = ENEMY_CLASS::BOSS;
 	vector<_uint> ProMeshes = Get_Component<CSkeletalModel>()->Hide_MehsByName("Pro");
-
+	vector<_uint> WeaponMeshes = Get_Component<CSkeletalModel>()->Show_MehsByName("Weapon");
 
 	auto pAnimator = Get_Component<CAnimator3D>();
 	pAnimator->LinkAnimate_Model(G_GlobalLevelKey, "Defiler_Isolde.model");
@@ -58,7 +59,7 @@ HRESULT CDefiler::Initialize(INIT_DESC* pArg)
 
 	if (FAILED(Initialize_StateMachine()))
 		return E_FAIL;
-	
+
 	//if (FAILED(Create_Colliders()))
 	//	return E_FAIL;
 
@@ -67,7 +68,7 @@ HRESULT CDefiler::Initialize(INIT_DESC* pArg)
 
 	Create_UIEnemyStatus("Bip001_Spine2");
 	Create_UIBossHUD();
-	 
+
 	return S_OK;
 }
 
@@ -81,18 +82,25 @@ void CDefiler::Priority_Update(_float dt)
 
 void CDefiler::Update(_float dt)
 {
-	__super::Update(dt);
+	ManageGroggy(dt);
 
+	if (!m_BlackBoard.LockTarget) {
+		m_PlayerCharacterInfos.clear();
+		m_PlayerCharacterInfos = BattleSystem()->GetBattleObjects(CBattleSystem::BATTLE_OBJ_TYPE::PLAYER);
+		ComputeTargetingInfo();
+	}
 	Update_States(dt);
 
 	auto pAnimator = Get_Component<CAnimator3D>();
 	pAnimator->Update_Animation(dt);
 	Route_AnimEvent(pAnimator);
-	
+
 	Get_Component<CCharacterController>()->Update(dt);
 	MoveByTraceMode(dt);
-	RotateToTarget(dt,2.f);
+	RotateToTarget(dt, 4.f);
 	m_pStateMachine->Update(dt);
+
+	Get_Component<CObjectContainer>()->UpdateChild(dt);
 }
 
 void CDefiler::Late_Update(_float dt)
@@ -102,7 +110,11 @@ void CDefiler::Late_Update(_float dt)
 
 void CDefiler::Render_GUI()
 {
-	ImGui::InputInt("Pattern number", &m_BlackBoard.pattern);
+	ImGui::InputInt("Pattern number", &m_BlackBoard.patternIndex);
+	for (auto pattern : m_BlackBoard.patternTransition)
+	{
+		ImGui::Text(pattern.nextPattern.c_str());
+	}
 	__super::Render_GUI();
 }
 
@@ -119,18 +131,49 @@ CDefiler* CDefiler::Create()
 	return instance;
 }
 
+void CDefiler::Change_CollisionMask(_uint iMask)
+{
+	_uint Mask = Get_Component<CCharacterController>()->Get_CollisionMask();
+	Get_Component<CCharacterController>()->Set_CollisionMask(Mask - iMask);
+}
+
+void CDefiler::Release_CollisionMask()
+{
+	Get_Component<CCharacterController>()->Set_CollisionMask(m_BaseMask);
+}
+
 void CDefiler::MoveByTraceMode(_float dt, _float moveScale)
 {
+	if (m_passDampTime > 0.f)
+		m_passDampTime = max(0.f, m_passDampTime - dt);
+
 	auto* animator = Get_Component<CAnimator3D>();
 	auto* transform = Get_Component<CTransform>();
 	auto* controller = Get_Component<CCharacterController>();
+
 	if (!animator || !transform || !controller || dt <= 0.f)
 		return;
 
-	/*델타*/
-	const _vector3 rootDeltaLocal = animator->Get_RootBoneMoveDelta() * moveScale;
+	const TraceFlag traceFlags = m_BlackBoard.eTraceFlag;
+	const _bool stopAtTarget = HasFlag(traceFlags, TraceFlag::StopAtTarget);
+	const _bool allowThrough = HasFlag(traceFlags, TraceFlag::AllowThroughTarget);
+	const _bool ignoreTarget = HasFlag(traceFlags, TraceFlag::IgnoreTarget);
+
+	const _vector3    rootDeltaLocal = animator->Get_RootBoneMoveDelta() * moveScale;
 	const _quaternion rootQuatLocal = animator->Get_RootBoneQuatDelta();
 
+	_vector3 rootDeltaH = rootDeltaLocal;
+	rootDeltaH.y = 0.f;
+
+	if (ignoreTarget)
+	{
+		const _vector3 velocityWorld = rootDeltaH / dt;
+		controller->Move_Velocity(velocityWorld, dt);
+		m_pTransform->Add_Quaternion(rootQuatLocal);
+		return;
+	}
+
+	// 타겟 벡터
 	const _vector3 nowPos = transform->Get_WorldPos();
 	const _vector3 targetPos = m_tTargetingInfo.vTargetPos;
 
@@ -138,32 +181,91 @@ void CDefiler::MoveByTraceMode(_float dt, _float moveScale)
 	toTarget.y = 0.f;
 
 	const _float distToTarget = toTarget.Length();
-	if (distToTarget <= 1e-4f)
+	if (distToTarget <= 1e-6f)
 		return;
 
 	const _vector3 dirToTarget = toTarget / distToTarget;
-	const _vector3 localForward = _vector3(0.f, 0.f, 1.f);
+	const _float lockDist = 2.f;
+	if (distToTarget <= lockDist && stopAtTarget && !allowThrough)
+	{
+		m_BlackBoard.CurrentDir = dirToTarget;
+		m_pTransform->Add_Quaternion(rootQuatLocal);
+		return;
+	}
 
-	// 루트모션의 전/후 성분(부호 유지)
-	_vector3 rootDeltaH = rootDeltaLocal;
-	rootDeltaH.y = 0.f;
+	{
+		m_BlackBoard.CurrentDir.y = 0.f;
+		if (m_BlackBoard.CurrentDir.Length() <= 1e-6f)
+			m_BlackBoard.CurrentDir = dirToTarget;
+		else
+			m_BlackBoard.CurrentDir.Normalize();
 
-	const _float forwardAmount = rootDeltaH.Dot(localForward); // +면 전진, -면 후진
+		const _float unlockDist = 5.f;
 
-	// 타겟 방향으로 전/후만 반영
-	_float moveLenSigned = forwardAmount;
+		if (allowThrough)
+		{
+			if (!m_bDirLockedNear)
+			{
+				if (distToTarget <= lockDist)
+					m_bDirLockedNear = true;
+			}
+			else
+			{
+				if (distToTarget >= unlockDist)
+					m_bDirLockedNear = false;
+			}
 
-	// 타겟을 지나치지 않게 클램프(전진일 때만 보통 필요)
-	if (moveLenSigned > 0.f && moveLenSigned > distToTarget)
-		moveLenSigned = distToTarget;
+			if (!m_bDirLockedNear)
+			{
+				const _float dampSpeed = 50.f;
+				const _float align = m_BlackBoard.CurrentDir.Dot(dirToTarget);
+				const _bool blockFlip = (allowThrough && m_passDampTime > 0.f); // "지나간 직후" 구간만
+				if (!blockFlip || align > 0.f)
+					m_BlackBoard.CurrentDir = Math::DampVector(m_BlackBoard.CurrentDir, dirToTarget, dt, dampSpeed);
+			}
+		}
+		else
+		{
+			m_bDirLockedNear = false;
+			m_BlackBoard.CurrentDir = dirToTarget;
+		}
 
-	const _vector3 moveWorld = dirToTarget * moveLenSigned;
-	const _vector3 velocityWorld = moveWorld / dt;
+		m_BlackBoard.CurrentDir.y = 0.f;
+		if (m_BlackBoard.CurrentDir.Length() > 1e-6f)
+			m_BlackBoard.CurrentDir.Normalize();
+		else
+			m_BlackBoard.CurrentDir = dirToTarget;
+	}
+
+	const _vector3 localForward(0.f, 0.f, 1.f);
+	_float moveLenSigned = rootDeltaH.Dot(localForward);
+
+	if (moveLenSigned > 0.f && stopAtTarget && !allowThrough)
+		moveLenSigned = min(moveLenSigned, distToTarget);
+
+	const _vector3 moveWorld = m_BlackBoard.CurrentDir * moveLenSigned;
+
+	const _float passed = m_BlackBoard.CurrentDir.Dot(dirToTarget);
+	const _bool hasPassedTarget = (passed < 0.f);
+
+	if (allowThrough && hasPassedTarget && m_passDampTime <= 0.f)
+		m_passDampTime = 0.2f;
+
+	_float distScale = 1.f;
+
+	if (moveLenSigned > 0.f)
+	{
+		if (allowThrough && m_passDampTime > 0.f)
+			distScale = 0.4f;
+		else
+			distScale = 1.f + distToTarget * 1.2f; 
+	}
+
+	const _vector3 velocityWorld = (moveWorld / dt) * distScale;
 
 	controller->Move_Velocity(velocityWorld, dt);
 	m_pTransform->Add_Quaternion(rootQuatLocal);
 }
-
 
 
 void CDefiler::RotateToTarget(_float dt, _float rotateSpeed)
@@ -183,12 +285,11 @@ void CDefiler::RotateToTarget(_float dt, _float rotateSpeed)
 
 void CDefiler::Update_States(_float dt)
 {
-	
+
 }
 
 void CDefiler::Route_AnimEvent(CAnimator3D* animator)
 {
-	m_BlackBoard.EndChain = false;
 
 	auto Bus = animator->Get_EventBus();
 
@@ -197,18 +298,12 @@ void CDefiler::Route_AnimEvent(CAnimator3D* animator)
 		switch (instance.Type)
 		{
 		case CLIP_EVENT_TYPE::NOTIFY:
-			if (instance.Tag == "ChainEnd")
-				m_BlackBoard.EndChain = true;
-			else
-				m_BlackBoard.EndChain = false;
-			break;
-		case CLIP_EVENT_TYPE::SOUND:
-			break;
-		case CLIP_EVENT_TYPE::EFFECT:
-			if (instance.Tag == "AttackSign_Parry")
+			if (instance.Tag == "AttackStart")
 				Active_AttackSign(true);
-			else if (instance.Tag == "AttackSign_Evade")
-				Active_AttackSign(false);
+			else if (instance.Tag == "TargetLockOn")
+				m_BlackBoard.LockTarget = true;
+			else if (instance.Tag == "TargetLockOff")
+				m_BlackBoard.LockTarget = false;
 			break;
 		}
 	}
@@ -292,7 +387,7 @@ HRESULT CDefiler::Initialize_Transitions()
 HRESULT CDefiler::Initialize_Effects()
 {
 	auto pObjectContainer = Get_Component<CObjectContainer>();
-	Create_AttackSign("Ctr_M_Weapon_01");
+	Create_AttackSign("Bip001_Head");
 	/* Sword Slash */
 	{
 		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })

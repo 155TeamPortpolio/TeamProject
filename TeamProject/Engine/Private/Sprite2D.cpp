@@ -577,6 +577,8 @@ void CSprite2D::Free()
 	Safe_Release(m_pPoint);
 	Safe_Release(m_pShader);
 
-	for (auto& texture : m_pTextures)
-		Safe_Release(texture);
+    for (auto& texture : m_pTextures) {
+        if(texture->Get_SRV())
+		    Safe_Release(texture);
+    }
 }
