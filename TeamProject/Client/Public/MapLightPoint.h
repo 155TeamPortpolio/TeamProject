@@ -1,40 +1,41 @@
 #pragma once
-#include "MapToolObject.h"
-#include "MapTool_Struct.h"
+#include "MapObject.h"
 
-NS_BEGIN(MapTool)
-class CLightPoint :
-    public CMapToolObject
+NS_BEGIN(Client)
+class CMapLightPoint :
+    public CMapObject
 {
 public:
-    typedef struct tagLightPointCreateDesc : public CMapToolObject::MAPTOOL_OBJECT_DESC
+    typedef struct tagMapLightPoint : public CMapObject::MAPOBJ_DESC
     {
         LIGHT_DESC_JSON DescJson = {};
-    }LIGHT_INIT_DESC;
+    }MAP_LIGHTPOINT_DESC;
 
 private:
-    CLightPoint();
-    CLightPoint(const CLightPoint& rhs);
-    virtual ~CLightPoint() DEFAULT;
+    CMapLightPoint();
+    CMapLightPoint(const CMapLightPoint& rhs);
+    virtual ~CMapLightPoint() DEFAULT;
 
 public:
     HRESULT Initialize_Prototype() override;
     HRESULT Initialize(INIT_DESC* pArg) override;
     void Awake() override;
     void Priority_Update(_float dt) override;
-    void Update(_float dt) override;
+    void Update(_float dt) override; 
     void Late_Update(_float dt) override;
 
     virtual void Export_ObjectData(void* pDesc) override;
 
+
 public:
-    void Render_GUI() override;  
+    void Render_GUI() override;
 
 private:
-    LIGHT_DESC m_LightDesc;
+    string  m_TagModelKey = {};
+    string  m_TagMaterialKey = {};
 
 public:
-    static CLightPoint* Create();
+    static CMapLightPoint* Create();
     CGameObject* Clone(INIT_DESC* pArg) override;
     virtual void Free();
 };
