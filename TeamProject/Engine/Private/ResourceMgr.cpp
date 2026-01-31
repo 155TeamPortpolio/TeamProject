@@ -501,6 +501,9 @@ ANIMATION_META CResourceMgr::Load_MetaClip(const string& levelTag, const string&
 	size_t end = animDir.find('/', pos);
 	string LevelTag = animDir.substr(pos, end - pos) + "_Level";
 	
+	if (!levelTag.empty())
+		LevelTag = levelTag;
+
 	int index = ValidLevel(LevelTag);
 	if (index == -1) {
 		MSG_BOX("Wrong Level Tag. : Load_AnimClip");
