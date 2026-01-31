@@ -88,6 +88,7 @@ void CEnemy::Awake()
 		instance->Set_Param("EmissiveNoiseTexture", { emissiveNoise->Get_SRV(),"Texture2D",0 });
 		instance->Set_Param("NoiseTexture", { dissolveTexture->Get_SRV(),"Texture2D",0 });
 		instance->Set_Param("fUseVanish", { &m_fUseVanish,"float",sizeof(_float) });
+		instance->Set_Param("fEmissiveStrength", { &m_fEmissiveStrength, "float", sizeof(_float) });
 		instance->Set_Param("vEmissiveColor", { &m_vEmissiveColor,"float3",sizeof(_float3) });
 		instance->Set_Param("vRimLightColor", { &m_vRimLightColor,"float3",sizeof(_float3) });
 		instance->Set_Param("fRimLightPower", { &m_fRimLightPower,"float",sizeof(_float) });
@@ -135,10 +136,19 @@ void CEnemy::Update_DeathSquence(_float dt)
 
 		_float t = m_fDeathSquenceElapsedTime / m_fDeathSqueneDuration;
 		_vector3 vStartColor(0.2f, 0.1f, 0.f);
-		_vector3 vEndColor(0.8f, 0.4f, 0.f);
+		_vector3 vEndColor(0.7f, 0.2f, 0.f);
 
+		m_fEmissiveStrength = Math::Lerp(0.f, 1.f, Math::ApplyEase(EaseType::InExpo, t));
 		m_vEmissiveColor = _vector3::Lerp(vStartColor, vEndColor, Math::ApplyEase(EaseType::OutSine, t));
 		m_fDissolveProgress = Math::ApplyEase(EaseType::Linear, t);
+
+		_float glitchSpeed{}, glitchStrength{};
+		glitchSpeed = Math::Lerp(0.f, 50.f, Math::ApplyEase(EaseType::InQuad, t));
+		glitchStrength = Math::Lerp(0.01f, 0.1f, Math::ApplyEase(EaseType::InQuad, t));
+		RenderSystem()->Set_GlitchDesc({ glitchSpeed,glitchStrength });
+
+		//RenderSystem()->Set_GlitchDesc({ 1.f, 0.01f });
+		//GlitchSpeed, GlitchStrength - Default: 15.f, 0.04f
 	}
 	else
 		m_fDissolveProgress = 1.1f;

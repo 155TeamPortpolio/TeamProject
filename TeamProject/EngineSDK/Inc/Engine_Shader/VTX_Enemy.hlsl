@@ -1,6 +1,7 @@
 #include "Shader_Define.hlsl"
 
 float fUseVanish;
+float fEmissiveStrength;
 float3 vEmissiveColor;
 float3 vRimLightColor;
 float fRimLightPower;
@@ -207,7 +208,9 @@ PS_OUT PS_MAIN_EMISSIVE(PS_IN In)
         discard;
   
     vAmbient.r = 0.f;
-  
+    
+    float3 vEmissive = lerp(vMtrlDiffuse.rgb * 0.8f, vEmissiveColor, fEmissiveStrength);
+    
     float3 vNormal;
     vNormal.xy = vNormalDesc.xy * 2.f - 1.f;
     vNormal.z = 1.f;
@@ -228,7 +231,7 @@ PS_OUT PS_MAIN_EMISSIVE(PS_IN In)
     Out.vAmbient = vAmbient;
     Out.vMetalic = vMetalic;
     Out.vRimLight = float4(vRimLightColor, fRimLightPower);
-    Out.vEmissive = float4(vEmissiveColor, 1.f);
+    Out.vEmissive = float4(vEmissive, 1.f);
     Out.vPostInfo = float4(1.f, 0.f, 0.f, 0.f);
     return Out;
 }
