@@ -95,23 +95,21 @@ void CJaneDoe::Awake()
 
 	m_pAnimator->LinkAnimate_Model(G_GlobalLevelKey, "JaneDoeModel.model");
 	m_pAnimator->Link_MetaData(G_GlobalLevelKey, "JaneDoe_Meta.json");
-
-	//m_pAnimator->Set_MotionBone(262);
 	m_pAnimator->Set_ExtractMotionboneMovement(AXIS::X | AXIS::Z);
-
 	m_strAnimName = "Avatar_Female_Size03_JaneDoe_Ani_";
-	m_strName = "JaneDoe";
-	m_eCharacterName = CHARACTER::JaneDoe;
 	m_pAnimator->Set_Animation(Get_Name() + "Idle")
 		.Loop(true)
 		.Apply();
-	m_pCCT->Set_GravityEnabled(true);
+
+	m_strName = "JaneDoe";
+	m_eCharacterName = CHARACTER::JaneDoe;
 
 	Initialize_Stat();
+	m_fCurrentHP = 300.f;
+	m_tEnergy.fCurrentEnergy = 75;
 
 	if (FAILED(Attach_ParryCollider()))
 		return;
-	m_tEnergy.fCurrentEnergy = 120;
 
 	auto Texture = ResourceManager()->Load_Texture(G_GlobalLevelKey, "Eff_Noise_045.png");
 	RenderSystem()->Set_NoiseTexture(NOISE_FXTYPE::MOTIONBLUR, Texture);
@@ -129,7 +127,6 @@ void CJaneDoe::Priority_Update(_float dt)
 
 void CJaneDoe::Update(_float dt)
 {
-	//Update_Input(dt);
 	if (!m_bTest)
 	{
 		Update_States();
@@ -448,15 +445,12 @@ HRESULT CJaneDoe::Initialize_Transitions()
 HRESULT CJaneDoe::Initialize_Stat()
 {
 	auto Desc = CDataBase::GetInstance()->GetPlayerDesc(m_strName);
+	m_fMaxHP = Desc.MaxHP;
+	m_fAttackPower = Desc.Attack;
+	m_fDefense = Desc.Defend;
 	m_tEnergy.fSpecialEnergy = Desc.SpecialAttack;
-
-	auto LVDesc = CDataBase::GetInstance()->GetLevelDesc(m_iCurrentLevel);
-	m_fMaxHP = LVDesc.MaxHP;
-	m_fCurrentHP = m_fMaxHP;
-	m_fDefense = LVDesc.Defend;
-	m_fAttackPower = LVDesc.Attack;
-	
 	Set_EvadeMax(3);
+
 	return S_OK;
 }
 

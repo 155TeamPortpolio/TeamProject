@@ -63,18 +63,14 @@ void CCorin::Awake()
 
 	m_pAnimator->LinkAnimate_Model(G_GlobalLevelKey, "Corin.model");
 	m_pAnimator->Link_MetaData(G_GlobalLevelKey, "Avatar_Female_Size01_Corin_Meta.json");
-
-	//m_pAnimator->Set_MotionBone(12);
 	m_pAnimator->Set_ExtractMotionboneMovement(AXIS::X | AXIS::Z);
-
-	//*name change*
 	m_strAnimName = "Avatar_Female_Size01_Corin_Ani_";
-	m_strName = "Corin";
-	m_eCharacterName = CHARACTER::Corin;
 	m_pAnimator->Set_Animation(Get_Name() + "Idle")
 		.Loop(true)
 		.Apply();
-	m_pCCT->Set_GravityEnabled(true);
+
+	m_strName = "Corin";
+	m_eCharacterName = CHARACTER::Corin;
 
 	//m_pAnimator->Initialize_HumanoidRig();
 	//CFootIK::FOOTIK_DESC ikDesc;
@@ -88,6 +84,8 @@ void CCorin::Awake()
 	//m_pAnimator->Initialize_FootIK(&ikDesc);
 
 	Initialize_Stat();
+	m_fCurrentHP = 300.f;
+	m_tEnergy.fCurrentEnergy = 75;
 
 	if(FAILED(Attach_ParryCollider()))
 		return;
@@ -486,15 +484,13 @@ HRESULT CCorin::Initialize_Transitions()
 HRESULT CCorin::Initialize_Stat()
 {
 	auto Desc = CDataBase::GetInstance()->GetPlayerDesc(m_strName);
+
+	m_fMaxHP = Desc.MaxHP;
+	m_fAttackPower = Desc.Attack;
+	m_fDefense = Desc.Defend;
 	m_tEnergy.fSpecialEnergy = Desc.SpecialAttack;
-
-	auto LVDesc = CDataBase::GetInstance()->GetLevelDesc(m_iCurrentLevel);
-	m_fMaxHP = LVDesc.MaxHP;
-	m_fCurrentHP = m_fMaxHP;
-	m_fDefense = LVDesc.Defend;
-	m_fAttackPower = LVDesc.Attack;
-
 	Set_EvadeMax(2);
+
 	return S_OK;
 }
 

@@ -217,7 +217,6 @@ protected:
     string                      m_strAnimName = "";   // For Animator
     string                      m_strName = "";       // 
     CHARACTER                   m_eCharacterName = { CHARACTER::JaneDoe };
-    _uint                       m_iCurrentLevel = { 1 };
     unordered_map<string, _int> m_AttackColliderIndex;
     // HP
     _float          m_fMaxHP = { 100.f };
