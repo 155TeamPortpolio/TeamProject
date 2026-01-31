@@ -615,6 +615,21 @@
     <ClInclude Include="..\Public\RunTimeBucket.h">
       <Filter>01. Utility\00. GameInstance\RunTimeBucket</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\VideoService.h">
+      <Filter>01. Utility\16. VideoPlayer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\IVideoDecoderBackend.h">
+      <Filter>01. Utility\16. VideoPlayer\VideoDecoder</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\FrameQueue.h">
+      <Filter>01. Utility\16. VideoPlayer\FrameQueue</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\VideoPlayer.h">
+      <Filter>01. Utility\16. VideoPlayer\VideoPlayer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MFVideoDecoderBackend.h">
+      <Filter>01. Utility\16. VideoPlayer\VideoDecoder\MFVDecoder</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <!-- Filter Definitions -->
@@ -1146,6 +1161,21 @@
     <Filter Include="01. Utility\00. GameInstance\RunTimeBucket">
       <UniqueIdentifier>{cfdd51a7-8fb7-4228-b654-14c8411a2abd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\16. VideoPlayer">
+      <UniqueIdentifier>{344a11af-e601-4f2a-bee2-b4b36cd23726}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\16. VideoPlayer\VideoDecoder">
+      <UniqueIdentifier>{bfbe393d-95a7-4941-9854-a8d439ec4028}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\16. VideoPlayer\FrameQueue">
+      <UniqueIdentifier>{0a0db5a7-52bc-4159-abb0-60e483a64d09}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\16. VideoPlayer\VideoPlayer">
+      <UniqueIdentifier>{66f4c454-a9f9-4bbb-a20e-e24de3eaa88f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\16. VideoPlayer\VideoDecoder\MFVDecoder">
+      <UniqueIdentifier>{9d5747a9-5d8d-4e4f-b01f-c43939605bfa}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <!-- ClCompile 항목들 - 중복 제거 버전 -->
@@ -1620,6 +1650,21 @@
     <ClCompile Include="..\Private\RunTimeBucket.cpp">
       <Filter>01. Utility\00. GameInstance\RunTimeBucket</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\VideoService.cpp">
+      <Filter>01. Utility\16. VideoPlayer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\IVideoDecoderBackend.cpp">
+      <Filter>01. Utility\16. VideoPlayer\VideoDecoder</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\FrameQueue.cpp">
+      <Filter>01. Utility\16. VideoPlayer\FrameQueue</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\VideoPlayer.cpp">
+      <Filter>01. Utility\16. VideoPlayer\VideoPlayer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MFVideoDecoderBackend.cpp">
+      <Filter>01. Utility\16. VideoPlayer\VideoDecoder\MFVDecoder</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <!-- Shader Files -->
@@ -1738,6 +1783,9 @@
       <Filter>98. BasicShader\Mesh</Filter>
     </FxCompile>
     <FxCompile Include="..\Public\Engine_Shader\VTX_Portal.hlsl">
+      <Filter>98. BasicShader\Etc</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\VTX_MetaBall.hlsl">
       <Filter>98. BasicShader\Etc</Filter>
     </FxCompile>
   </ItemGroup>

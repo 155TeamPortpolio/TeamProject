@@ -426,7 +426,7 @@ namespace Engine
 
 		_float3 vOffsetPosition{};
 		_float4 vOffsetQuaternion{};
-
+		_float3 vRimLightColor{};
 		_float2 vPivot{ 0.5f,0.5f };
 		_uint iRGBMaskMode{};
 		_uint iModuleMask{};
@@ -489,6 +489,7 @@ namespace Engine
 		string MaskTextureTagA{};
 		string MaskTextureTagB{};
 		string DistortionTextureTag{};
+		string DistortionMaskTextureTag{};
 		string GradientTextureTag{};
 
 		_float3 vOffsetPosition{};
@@ -548,6 +549,8 @@ namespace Engine
 		_float fMaskTilling{};
 
 		/* Distortion */
+		_bool useDiffuseAlpha = true;
+		_bool useDistortionMask = false;
 		_float fEnableDistortion{};
 		_float fDistortionStrength{};
 		_float fDistortionTilling{};

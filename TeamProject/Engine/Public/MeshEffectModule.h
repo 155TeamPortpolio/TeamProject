@@ -87,6 +87,8 @@ typedef struct tagMaskModule
 
 typedef struct tagDistortionModule
 {
+	_bool useDiffuseAlpha = true;
+	_bool useDistortionMask = false;
 	_float fEnableDistortion{};
 	_float fDistortionStrength{};
 	_float fDistortionTilling{};

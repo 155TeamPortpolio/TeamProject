@@ -79,6 +79,10 @@ public:
     // 플레이어가 수행할 수 있는 콤보 카운트 내리는 함수
     void                Decrease_ComboCount() { --m_tStatus.iPlayerComboCount; }
 
+    // 몬스터 사망 연출용, 머터리얼 파라미터 업데이트
+    void Active_Vanish() { m_fUseVanish = 1.f; }
+    virtual void Update_DeathSquence(_float dt);
+
 protected:
     // Target(Player->Character)과의 거리 정보 계산
     void                ComputeTargetingInfo();
@@ -131,10 +135,19 @@ protected:
     _bool                   m_isOnAttack = { false };
     _bool                   m_isParryEnable = { false };
 
-    /* dissolve */
+    /* Shader Params */
+    _float m_fUseVanish{};
+    _float3 m_vEmissiveColor{};
+    _float3 m_vRimLightColor{};
+    _float m_fRimLightPower{};
     _float m_fDissolveProgress = 0.f;
     _float m_fDissolveTilling = 1.f;
+    _float m_fDissolveElapsedTime{};
+    _float m_fDissolveDuration{};
 
+    _float m_fDeathSquenceElapsedTime{};
+    _float m_fDeathSqueneDuration{};
+    vector<_float3> m_EmissiveColors;
 #ifdef _USING_GUI
     _bool m_isUseInspector = { false };
 #endif // _USING_GUI

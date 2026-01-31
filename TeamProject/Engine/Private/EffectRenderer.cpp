@@ -52,9 +52,12 @@ HRESULT CEffectRenderer::Render_Effect(EffectPass* pEffectPass, ParticlePass* pP
 		m_pShader->SetConstantBuffer("FrameBuffer", m_pPipeLine->Get_FrameBuffer());
 		m_pShader->Bind_Value("g_WorldMatrix", WorldMat);
 		
+		m_pShader->Bind_Value("BloomScreenWidth", { &m_fBloomScreenWidth, "float", sizeof(_float) });
+		m_pShader->Bind_Value("BloomScreenHeight", { &m_fBloomScreenHeight, "float", sizeof(_float) });
 		m_pTargetManager->Bind_Target("Target_DiffuseEffectAcc", m_pShader, "EffectAccTexture");
 		m_pTargetManager->Bind_Target("Target_BloomEffectAcc", m_pShader, "EffectBloomAccTextutre");
 		m_pTargetManager->Bind_Target("Target_Revealage", m_pShader, "RevealageTexture");
+		m_pTargetManager->Bind_Target("Target_RimLightAcc", m_pShader, "RimLightAccTexture");
 		
 		ID3D11InputLayout* pLayout = nullptr;
 		Get_BufferInputLayout(m_pVIBuffer, m_pShader, "Composite", &pLayout);
@@ -197,6 +200,9 @@ HRESULT CEffectRenderer::Ready_Target()
 	RenderTargetDesc DistortionAccDesc = { "Target_DistortionAcc",DXGI_FORMAT_R16G16B16A16_FLOAT, DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.f,0.f,0.f,0.f), ViewportDesc.Width,ViewportDesc.Height };
 	m_pTargetManager->Create_Target(DistortionAccDesc);
 
+	RenderTargetDesc RimLightAccDesc = { "Target_RimLightAcc",DXGI_FORMAT_R16G16B16A16_FLOAT, DXGI_FORMAT_D24_UNORM_S8_UINT, _float4(0.f,0.f,0.f,0.f),ViewportDesc.Width,ViewportDesc.Height };
+	m_pTargetManager->Create_Target(RimLightAccDesc);
+
 	RenderTargetDesc DiffuseDesc = { "Target_DiffuseEffect" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(1.f, 1.f, 1.f, 1.f) ,ViewportDesc.Width, ViewportDesc.Height };
 	m_pTargetManager->Create_Target(DiffuseDesc);
 
@@ -227,6 +233,8 @@ HRESULT CEffectRenderer::Ready_MRT()
 		if (FAILED(m_pTargetManager->Add_MRT("MRT_WeightOIT", "Target_Revealage")))
 			return E_FAIL;
 		if (FAILED(m_pTargetManager->Add_MRT("MRT_WeightOIT", "Target_DistortionAcc")))
+			return E_FAIL;
+		if (FAILED(m_pTargetManager->Add_MRT("MRT_WeightOIT", "Target_RimLightAcc")))
 			return E_FAIL;
 	}
 
