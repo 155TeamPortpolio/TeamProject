@@ -17,6 +17,7 @@ public:
     typedef struct tagEnemyCreateDesc : public Engine::GAMEOBJECT_DESC 
     {
         _float  iMaxHP = {};
+        _bool   isUseInspector = { false };
     }ENEMY_DESC;
 
     enum class ENEMY_CLASS { NORMAL, ELITE, BOSS };
@@ -31,7 +32,7 @@ protected:
 public:
     virtual HRESULT Initialize_Prototype() override;
     virtual HRESULT Initialize(INIT_DESC* pArg) override;
-    virtual void Awake()override;
+    virtual void    Awake()override;
     virtual void    Priority_Update(_float dt) override {};
     virtual void    Update(_float dt) override;
     virtual void    Late_Update(_float dt) override;
@@ -133,6 +134,10 @@ protected:
     /* dissolve */
     _float m_fDissolveProgress = 0.f;
     _float m_fDissolveTilling = 1.f;
+
+#ifdef _USING_GUI
+    _bool m_isUseInspector = { false };
+#endif // _USING_GUI
 
 
 

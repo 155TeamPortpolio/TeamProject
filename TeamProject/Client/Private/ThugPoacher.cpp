@@ -82,11 +82,6 @@ HRESULT CThugPoacher::Initialize(INIT_DESC* pArg)
 	if (FAILED(Initialize_StateMachine()))
 		return E_FAIL;
 
-	// 임시 확인용
-#ifdef _USING_GUI
-	CGameInstance::GetInstance()->Get_GUISystem()->Get_Context()->pSelectedObject = this;
-#endif // _USING_GUI
-
 	return S_OK;
 }
 
@@ -517,11 +512,11 @@ void CThugPoacher::ControlState(const _float dt)
 
 void CThugPoacher::CheckDistanceFromPlayer()
 {
-	//if ("Chase" != m_pStateMachine->Get_CurrentStateName() &&
-	//	m_tTargetingInfo.fDistance >= m_tHysteriesis.fChaseEnter)
-	//	m_pStateMachine->Set_Bool("Chase", true);
+	if ("Chase" != m_pStateMachine->Get_CurrentStateName() &&
+		m_tTargetingInfo.fDistance >= m_tHysteriesis.fChaseEnter)
+		m_pStateMachine->Set_Bool("Chase", true);
 	
-	//if (true == m_pStateMachine->Get_Bool("Chase") &&
-	//	m_tTargetingInfo.fDistance <= m_tHysteriesis.fChaseExit)
-	//	m_pStateMachine->Set_Bool("Chase", false);
+	if (true == m_pStateMachine->Get_Bool("Chase") &&
+		m_tTargetingInfo.fDistance <= m_tHysteriesis.fChaseExit)
+		m_pStateMachine->Set_Bool("Chase", false);
 }
