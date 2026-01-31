@@ -45,6 +45,11 @@ CRenderer* CForwardRenderer::GetRenderer(RENDERER_TYPE eType)
 	return nullptr;
 }
 
+void CForwardRenderer::Set_GlitchDesc(GLITCH_DESC desc)
+{
+	m_pSkinnedRenderer->Set_GlitchDesc(desc);
+}
+
 HRESULT CForwardRenderer::Render_Priority(PriorityPass* pPriorityPass)
 {
 	
