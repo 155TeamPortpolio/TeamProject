@@ -36,8 +36,8 @@ HRESULT CGachaStage::Initialize(INIT_DESC* pArg)
 
 void CGachaStage::Awake()
 {
-	auto pModel = Add_Component<CStaticModel>();
-	auto pMaterial = Add_Component<CMaterial>();
+	auto pModel = Get_Component<CStaticModel>();
+	auto pMaterial = Get_Component<CMaterial>();
 
 	pModel->Link_Model("Gacha_Level", "GachaStage_Bangbooout.model");
 	pMaterial->Link_Material("Gacha_Level", "GachaStage_Bangbooout.mat");
