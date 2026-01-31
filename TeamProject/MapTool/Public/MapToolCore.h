@@ -22,7 +22,12 @@ public:
 
 public:
 	LOADED_DATA			Load_MapData();
+	
 	void				Load_WithEntityData();
+	void				LoadEntity(const filesystem::path& BasePath, LOADED_DATA& LoadedData);
+	void				LoadBattle(const filesystem::path& BasePath, LOADED_DATA& LoadedData);
+	void				LoadLight(const filesystem::path& BasePath, LOADED_DATA& LoadedData);
+
 	void				Clear_Layer(MAPOBJ_TYPE eObjType);
 	void				RegisterGuiPanel(class CMapToolGui* pGUIPanel);
 	
@@ -32,7 +37,7 @@ private:
 	void			Place_PlacedObjectFromLoadData(MapData_Object* pData);
 	void			Place_TriggerObjectFromLoadData(MapData_Object* pData);
 	void			Place_EntityObjectFromLoadData(ENTITY* pData);
-
+	void			Place_LightPointFromLoadData(MAP_LIGHT* pData);
 
 private:
 	CGameInstance*		m_pGameInstance = { nullptr };

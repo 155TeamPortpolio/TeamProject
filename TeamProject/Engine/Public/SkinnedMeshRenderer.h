@@ -13,6 +13,7 @@ private:
 
 public:
     void Set_RimLightMode(RIMLIGHT eMode) { RimLightMode = eMode; }
+    void Set_GlitchDesc(GLITCH_DESC desc) { m_GlitchDesc = desc; };
 
 public:
     HRESULT Render_SkinnedMesh(class SkinnedOpaquePass* pOpaquePass);
@@ -38,6 +39,7 @@ private:
     RIMLIGHT RimLightMode = RIMLIGHT::RIMLIGHT;
     vector<OUTLINE_COMMAND>     m_OutLineCommands;
     vector<MOTIONBLUR_COMMAND>  m_MotionBlurCommands;
+    GLITCH_DESC m_GlitchDesc = {};
 
 private:
     _float                      m_fScreenWidth;

@@ -65,6 +65,7 @@
 
 /* UI */
 #include "UIDirector.h"
+#include "TestVideo.h"
 
 /* Interactable */
 #include "Portal.h"

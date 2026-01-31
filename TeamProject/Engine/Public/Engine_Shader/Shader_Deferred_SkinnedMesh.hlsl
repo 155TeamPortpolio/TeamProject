@@ -3,6 +3,9 @@
 matrix g_WorldMatrix;
 float g_fTime;
 
+float g_GlitchSpeed;
+float g_GlitchStrength;
+
 struct VS_IN
 {
     float3 vPosition : POSITION;
@@ -176,13 +179,13 @@ PS_OUT_RESULT PS_VANISH(PS_IN In)
    
     float fNoiseTiling = 10.0f;
     
-    float fGlitchSpeed = 15.0f;
+    float fGlitchSpeed = g_GlitchSpeed;
     float fTimeStep = floor(g_fTime * fGlitchSpeed);
     float fGlitch = frac(sin(fTimeStep) * 43758.5453);
-    float2 vScrollOffset = float2((fGlitch - 0.5f) * 0.5f, 0.f);
+    float2 vScrollOffset = float2((fGlitch - 0.5f) * 0.5, 0.f);
     
     float fNoise = VanishNoiseTexture.Sample(LinearSampler, (In.vTexcoord + vScrollOffset) * fNoiseTiling).r;
-    float2 vDistortion = float2((fNoise - 0.5f) * 0.04f, 0.f);
+    float2 vDistortion = float2((fNoise - 0.5f) * g_GlitchStrength, 0.f);
     float2 vDistortedUV = In.vTexcoord + vDistortion;
     
     vector vVanish = VanishTexture.Sample(DefaultSampler, vDistortedUV);
@@ -387,16 +390,6 @@ PS_OUT_LIGHT PS_MAIN_POINT(PS_IN In)
     vector vDiffuse = DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
     vector vMetalicDesc = MetalicTexture.Sample(DefaultSampler, In.vTexcoord);
     
-    if(vMetalicDesc.a > 0.7f)
-    {
-        float alpha = 0.f;
-        if (length(vDiffuse.rgb) > 0.f)
-            alpha = 1.f;
-        Out.vLight = float4(0.f, 0.f, 0.f, alpha);
-        Out.vLightInfo = float4(0.f, 0.f, 0.f, 0.f);
-        return Out;
-    }
-    
     float3 worldNormal = normalize(vNormalDesc.xyz * 2.f - 1.f);
     
     float roughness = vMetalicDesc.r;
@@ -414,21 +407,30 @@ PS_OUT_LIGHT PS_MAIN_POINT(PS_IN In)
     vWorldPos = vWorldPos * fViewZ;
     vWorldPos = mul(vWorldPos, matProjectionInverse);
     vWorldPos = mul(vWorldPos, matViewInverse);
-    
     float3 lightDir = normalize(vLightPos.xyz - vWorldPos.xyz);
     float3 viewDir = normalize(vCamPosition.xyz - vWorldPos.xyz);
     
     float NdotL = dot(worldNormal, lightDir) * 0.5f + 0.5f;
+    
+    if(vMetalicDesc.a > 0.7f)
+    {
+        float alpha = 0.f;
+        if (length(vDiffuse.rgb) > 0.1f)
+            alpha = 1.f;
+        Out.vLight = float4(0.f, 0.f, 0.f, alpha);
+        Out.vLightInfo = float4(NdotL, 0.f, 0.f, 0.f);
+        return Out;
+    }
     
     float3 PBR = CalculatePointLight
     (vDiffuse.rgb, worldNormal, metalic, roughness, vWorldPos.xyz, viewDir, lightDir, vLightDiffuse.rgb,
     fLightIntensity, vLightPos.xyz, fLightRange, 1.0f);
     
     float alpha = 0.f;
-    if (length(vDiffuse.rgb) > 0.f)
+    if (length(vDiffuse.rgb) > 0.1f)
         alpha = 1.f;
     Out.vLight = float4(PBR * vNormalDesc.a, alpha);
-    Out.vLightInfo = float4(0.f, 0.f, 0.f, 0.f);
+    Out.vLightInfo = float4(NdotL, 0.f, 0.f, 0.f);
     
     return Out;
 }
@@ -448,9 +450,6 @@ PS_OUT_RESULT PS_MAIN_COMBINED(PS_IN In)
     vector vMotionBlur = MotionBlurTexture.Sample(PointSampler, In.vTexcoord);
     
     float NdotL = vLightInfo.r;
-    float2 vRampCoord = float2(1 - NdotL, 0.5f);
-    vector vRampSample = RampTexture.Sample(DefaultSampler, vRampCoord);
-    float vRamp = lerp(0.1f, 1.0f, vRampSample.g);
     
     float shadowValue = vLightInfo.b;
     shadowValue = saturate(shadowValue * 0.7f + 0.3f);
@@ -551,7 +550,7 @@ technique11 DefaultTechnique
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_None, 0);
-        SetBlendState(BS_Additive, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        SetBlendState(BS_Additive_MaxAlpha, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_DIRECTIONAL();
@@ -561,7 +560,7 @@ technique11 DefaultTechnique
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_None, 0);
-        SetBlendState(BS_Additive, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        SetBlendState(BS_Additive_MaxAlpha, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_POINT();
