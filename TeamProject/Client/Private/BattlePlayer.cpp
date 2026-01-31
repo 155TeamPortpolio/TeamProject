@@ -201,7 +201,7 @@ void CBattlePlayer::Add_Gauge(_float fEnergy, _float fDecibel)
         CCharacter::EnergyDesc tEnergy = pCharacter->Get_EnergyDesc();
         _float fCurrentDecibel = pCharacter->Get_CurrentDecibel();
 
-        // ÇöÀç È°¼º Ä³¸¯ÅÍ´Â 100%, ´ë±â Ä³¸¯ÅÍ´Â 10%¸¸ È¹µæ
+        // í˜„ìž¬ í™œì„± ìºë¦­í„°ëŠ” 100%, ëŒ€ê¸° ìºë¦­í„°ëŠ” 10%ë§Œ íšë“
         if (i == m_iCurrentIndex)
         {
             tEnergy.fCurrentEnergy += fEnergy;
@@ -231,9 +231,9 @@ void CBattlePlayer::Request_ComboAttack()
         return;
 
     m_bComboSelect = true;
-    // Å¸ÀÓ½ºÄÉÀÏ 2ÃÊ°£ ´À¸®°Ô ÇÏ±â ¸ó½ºÅÍ, Ä³¸¯ÅÍ
+    // íƒ€ìž„ìŠ¤ì¼€ì¼ 2ì´ˆê°„ ëŠë¦¬ê²Œ í•˜ê¸° ëª¬ìŠ¤í„°, ìºë¦­í„°
     BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::SWITCH);
-    // UI ¹æ¼Û
+    // UI ë°©ì†¡
 }
 
 void CBattlePlayer::Execute_ComboAttack(_bool bNext)
@@ -250,7 +250,7 @@ void CBattlePlayer::Execute_ComboAttack(_bool bNext)
     swap(m_BattleCharacters[0], m_BattleCharacters[iTargetIndex]);
     m_pCurrentCharacter = m_BattleCharacters[0];
 
-    // ÄÞº¸ ¾îÅÃ Àü¿ë SwitchIn
+    // ì½¤ë³´ ì–´íƒ ì „ìš© SwitchIn
     m_pCurrentCharacter->Set_MainCharacter(true);
     m_pCurrentCharacter->Active_Character();
     m_pCurrentCharacter->Get_Component<CCharacterController>()->Set_Position(m_vSwitchPosition);
@@ -273,7 +273,7 @@ void CBattlePlayer::Cancel_ComboAttack()
 
 void CBattlePlayer::Update_Input(_float dt)
 {
-    // ÄÞº¸ Å×½ºÆ®
+    // ì½¤ë³´ í…ŒìŠ¤íŠ¸
     if (InputDevice()->Key_Tap('C'))
         Request_ComboAttack();
     if (m_bComboSelect)
@@ -318,7 +318,7 @@ void CBattlePlayer::Update_Input(_float dt)
         }
     }
 
-    // Ä«¸Þ¶ó ±âÁØ ÀÌµ¿ ¹æÇâ °è»ê
+    // ì¹´ë©”ë¼ ê¸°ì¤€ ì´ë™ ë°©í–¥ ê³„ì‚°
     m_input.direction = {};
     if (!key.IsZero())
     {
@@ -343,7 +343,7 @@ void CBattlePlayer::Update_Input(_float dt)
     Process_Energy();
     Process_Interact();
 
-    // ¶ô¿Â Åä±Û
+    // ë½ì˜¨ í† ê¸€
     if (InputDevice()->Mouse_Tap(MOUSE_BTN::MB) && m_fLockOnCooldown <= 0.f)
     {
         m_bLockOn = !m_bLockOn;
@@ -506,7 +506,7 @@ void CBattlePlayer::NotifyCharacterSwitchOut()
         - XMVectorScale(m_vSwitchLook, 1.5f)
         + XMVectorSet(0.f, 0.5f, 0.f, 0.f);
 
-    // ÆÐ¸µ °¡´É »óÅÂ¸é ÆÐ¸µ À§Ä¡·Î ÀüÈ¯
+    // íŒ¨ë§ ê°€ëŠ¥ ìƒíƒœë©´ íŒ¨ë§ ìœ„ì¹˜ë¡œ ì „í™˜
     if (m_pCurrentCharacter->Can_Parry())
     {
         m_bReserveParry = true;
@@ -530,16 +530,16 @@ _bool CBattlePlayer::Can_Switch() const
 {
     if (m_fSwitchCooldown > 0.f) return false;
     if (m_BattleCharacters.size() <= 1) return false;
-    if (m_pCurrentCharacter->Can_SwitchIn()) return false;  // ¸ÞÀÎÀÌ ºñÈ°¼ºÈ­¸é ±³Ã¼ ºÒ°¡
+    if (m_pCurrentCharacter->Can_SwitchIn()) return false;  // ë©”ì¸ì´ ë¹„í™œì„±í™”ë©´ êµì²´ ë¶ˆê°€
 
-    // ±³Ã¼ °¡´ÉÇÑ Ä³¸¯ÅÍ°¡ ÇÏ³ª¶óµµ ÀÖ´ÂÁö È®ÀÎ
+    // êµì²´ ê°€ëŠ¥í•œ ìºë¦­í„°ê°€ í•˜ë‚˜ë¼ë„ ìžˆëŠ”ì§€ í™•ì¸
     return Find_SwitchIndex(true) != -1 || Find_SwitchIndex(false) != -1;
 }
 
 _bool CBattlePlayer::Can_SwitchTo(_uint iIndex) const
 {
     if (iIndex >= m_BattleCharacters.size()) return false;
-    if (iIndex == 0) return false;  // ÇöÀç Ä³¸¯ÅÍ(ÀÎµ¦½º 0)·Î´Â ±³Ã¼ ºÒ°¡
+    if (iIndex == 0) return false;  // í˜„ìž¬ ìºë¦­í„°(ì¸ë±ìŠ¤ 0)ë¡œëŠ” êµì²´ ë¶ˆê°€
 
     return m_BattleCharacters[iIndex]->Can_SwitchIn();
 }
@@ -548,13 +548,13 @@ _int CBattlePlayer::Find_SwitchIndex(_bool bNext) const
 {
     if (m_BattleCharacters.size() <= 1) return -1;
 
-    // 2¸íÀÏ °æ¿ì ÀÎµ¦½º 1¸¸ È®ÀÎ
+    // 2ëª…ì¼ ê²½ìš° ì¸ë±ìŠ¤ 1ë§Œ í™•ì¸
     if (m_BattleCharacters.size() == 2)
     {
         return Can_SwitchTo(1) ? 1 : -1;
     }
 
-    // 3¸íÀÏ °æ¿ì ¹æÇâ¿¡ µû¶ó ¿ì¼±¼øÀ§ °áÁ¤
+    // 3ëª…ì¼ ê²½ìš° ë°©í–¥ì— ë”°ë¼ ìš°ì„ ìˆœìœ„ ê²°ì •
     if (bNext)
     {
         if (Can_SwitchTo(1)) return 1;
@@ -572,7 +572,7 @@ _int CBattlePlayer::Find_SwitchIndex(_bool bNext) const
 
 void CBattlePlayer::Update_Target()
 {
-    // ÇöÀç Å¸°ÙÀÌ À¯È¿ÇÏ°í »ç°Å¸® ³»¸é À¯Áö
+    // í˜„ìž¬ íƒ€ê²Ÿì´ ìœ íš¨í•˜ê³  ì‚¬ê±°ë¦¬ ë‚´ë©´ ìœ ì§€
     if (m_TargetHandle.isValid())
     {
         _float fMaxDistance = (m_TargetHandle.Get()->Get_Tag() == "Boss")
@@ -584,7 +584,7 @@ void CBattlePlayer::Update_Target()
             return;
     }
 
-    // °¡Àå °¡±î¿î ¸ó½ºÅÍ Å½»ö
+    // ê°€ìž¥ ê°€ê¹Œìš´ ëª¬ìŠ¤í„° íƒìƒ‰
     auto Monsters = CBattleSystem::GetInstance()->GetBattleObjects(CBattleSystem::BATTLE_OBJ_TYPE::MONSTER);
     _float fminDistance = FLT_MAX;
 
