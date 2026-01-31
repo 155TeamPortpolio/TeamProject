@@ -140,6 +140,7 @@ HRESULT CMainApp::Initialize()
 
 	m_cursorController.Initialize();
 
+
 	return S_OK;
 }
 
