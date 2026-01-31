@@ -93,7 +93,6 @@
 
 #include "UI_AtlasSprite.h"
 #include "UI_DamageText.h"
-#include "VideoPanel.h"
 
 CMainApp::CMainApp()
 {
@@ -142,7 +141,6 @@ HRESULT CMainApp::Initialize()
 	m_cursorController.Initialize();
 
 
-	GUISystem()->Register_Panel(CVideoPanel::Create(GUISystem()->Get_Context()));
 	return S_OK;
 }
 
