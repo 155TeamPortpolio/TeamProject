@@ -1006,6 +1006,9 @@
     <Filter Include="02. GameObject\UI\01. 2D\IconButton">
       <UniqueIdentifier>{1a076b26-13b0-4095-afa9-73b1f59561df}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\Ramen\OrderBanner">
+      <UniqueIdentifier>{5b1e11eb-ac0b-4f7d-a685-d2d8256c8b8d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1951,6 +1954,9 @@
     <ClInclude Include="..\Public\UI_IconButton.h">
       <Filter>02. GameObject\UI\01. 2D\IconButton</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UI_RamenOrderBanner.h">
+      <Filter>02. GameObject\UI\01. 2D\Ramen\OrderBanner</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2856,6 +2862,9 @@
     <ClCompile Include="..\private\MapLightPoint.cpp" />
     <ClCompile Include="..\Private\UI_IconButton.cpp">
       <Filter>02. GameObject\UI\01. 2D\IconButton</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_RamenOrderBanner.cpp">
+      <Filter>02. GameObject\UI\01. 2D\Ramen\OrderBanner</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

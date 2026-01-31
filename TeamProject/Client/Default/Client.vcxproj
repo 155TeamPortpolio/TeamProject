@@ -459,6 +459,7 @@
     <ClInclude Include="..\Public\UI_RamenAttributeIcon.h" />
     <ClInclude Include="..\Public\UI_RamenAttributeText.h" />
     <ClInclude Include="..\Public\UI_RamenMenu.h" />
+    <ClInclude Include="..\Public\UI_RamenOrderBanner.h" />
     <ClInclude Include="..\Public\UI_ResultBanner.h" />
     <ClInclude Include="..\Public\UI_ScratchCard.h" />
     <ClInclude Include="..\Public\StageFx.h" />
@@ -819,6 +820,7 @@
     <ClCompile Include="..\Private\UI_RamenAttributeIcon.cpp" />
     <ClCompile Include="..\Private\UI_RamenAttributeText.cpp" />
     <ClCompile Include="..\Private\UI_RamenMenu.cpp" />
+    <ClCompile Include="..\Private\UI_RamenOrderBanner.cpp" />
     <ClCompile Include="..\Private\UI_ResultBanner.cpp" />
     <ClCompile Include="..\Private\UI_ScratchCard.cpp" />
     <ClCompile Include="..\private\ThugAssaulter_Groggy.cpp" />

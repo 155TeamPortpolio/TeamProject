@@ -21,7 +21,7 @@ private:
 	virtual ~CUI_Ramen() DEFAULT;
 
 public:
-	void Select_Menu(CUI_Object* pSelected, _int iPrice);
+	void Select_Menu(CUI_Object* pSelected, _int iPrice, wstring strMenu);
 
 public:
 	virtual HRESULT Initialize_Prototype()           override;
@@ -37,6 +37,7 @@ public:
 private:
 	CUI_Object*		m_pMenus[MAX_MENU_COUNT] = {};
 	CUI_Object*		m_pSelectedMenu = {};
+	CUI_Object*		m_pOrderBanner = {};
 
 	CUI_Object* m_pChildren[ENUM(CHILD::END)] = {};
 	class CTextSlot* m_pTextPrice = {};
@@ -47,9 +48,12 @@ private:
 
 	_bool			m_isAffordable = {};
 
+	wstring			m_strMenu = {};
+
 private: 
 	void Create_BackButton();
 	void Create_Menus();
+	void Create_OrderBanner();
 	void Cache();
 
 	void OnClick_Order();
