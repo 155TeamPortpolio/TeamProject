@@ -69,6 +69,9 @@ HRESULT CPlayer::Initialize(INIT_DESC* pArg)
 
 void CPlayer::Awake()
 {
+	//First Setting Denny
+	_uint Denny = 10000;
+	RuntimeBucket().Int64.Set(PersistScope::SaveSlot, "Denny", Denny);
 }
 
 void CPlayer::Priority_Update(_float dt)
