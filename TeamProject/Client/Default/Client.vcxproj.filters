@@ -976,6 +976,18 @@
     <Filter Include="02. GameObject\Object\Npc\Service\SilverAnbi">
       <UniqueIdentifier>{1fb6f464-481c-4f28-9d2c-18957cf84b87}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03. Utility\10. VideoDecoder">
+      <UniqueIdentifier>{842cbfe9-dc9e-47db-9dfe-d0e21c570f36}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\10. VideoDecoder\TestDecoder">
+      <UniqueIdentifier>{ba575301-2bcb-4856-9d5a-de24b105c7b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\10. VideoDecoder\VideoPanel">
+      <UniqueIdentifier>{cda206a5-0c6c-4143-93c8-4bffe9105136}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\TestUI">
+      <UniqueIdentifier>{b91a27c1-4713-4ef5-94df-7ee719c4d4ed}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1854,6 +1866,15 @@
     <ClInclude Include="..\public\SilverAnbi.h">
       <Filter>02. GameObject\Object\Npc\Service\SilverAnbi</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\TestDecoder.h">
+      <Filter>03. Utility\10. VideoDecoder\TestDecoder</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\VideoPanel.h">
+      <Filter>03. Utility\10. VideoDecoder\VideoPanel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\TestVideo.h">
+      <Filter>02. GameObject\Object\TestUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2692,6 +2713,15 @@
     </ClCompile>
     <ClCompile Include="..\private\SilverAnbi.cpp">
       <Filter>02. GameObject\Object\Npc\Service\SilverAnbi</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\TestDecoder.cpp">
+      <Filter>03. Utility\10. VideoDecoder\TestDecoder</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\VideoPanel.cpp">
+      <Filter>03. Utility\10. VideoDecoder\VideoPanel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\TestVideo.cpp">
+      <Filter>02. GameObject\Object\TestUI</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
