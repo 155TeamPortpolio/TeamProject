@@ -136,9 +136,9 @@ OBJECT_HANDLE Client::Spawner::Create_Interactable(const SPAWNER_DESC& Desc)
 	tColDesc.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER);
 	tColDesc.eType = COLLIDER_TYPE::BOX;
 	tColDesc.bAutoFit = false;
-	tColDesc.bTrigger = true; // �浹 �ڽ� �����ϴ� Ʈ����
+	tColDesc.bTrigger = true;
 	tColDesc.vCenter = { 0,0,0 };
-	tColDesc.vSize = Desc.vRotation;
+	tColDesc.vSize = Desc.vColSize;
 	tColDesc.vRotation = Desc.vRotation;
 
 #pragma region Exception
@@ -172,6 +172,7 @@ OBJECT_HANDLE Client::Spawner::Create_Interactable(const SPAWNER_DESC& Desc)
 		.Add_ObjDesc(pOBJDesc)
 		.Position(Desc.vTranslation)
 		.Collider(tColDesc)
+		.Scale(Desc.vScale)
 		.Build(Desc.tagLevel);
 
 	ObjectManager()->Add_Object(Object, { Desc.tagLevel, "InteractableObject_Layer" });

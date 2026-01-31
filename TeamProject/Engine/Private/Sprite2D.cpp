@@ -116,12 +116,14 @@ HRESULT CSprite2D::Change_Texture(_uint idx, const string& levelKey, const strin
 		Add_Texture(levelKey, texKey);
 	else
 	{
-		if (m_pTextures[idx])
-			Safe_Release(m_pTextures[idx]);
-
+        // 새로운 텍스쳐가 없으면 기존 텍스쳐 유지
 		auto tex = CGameInstance::GetInstance()->Get_ResourceMgr()->Load_Texture(levelKey, texKey, true);
 		if (!tex)
 			return E_FAIL;
+         
+        // 새로운 텍스쳐가 있으면 기존 텍스쳐 삭제
+        if (m_pTextures[idx])
+            Safe_Release(m_pTextures[idx]);
 
 		m_pTextures[idx] = tex;
 		Safe_AddRef(tex);

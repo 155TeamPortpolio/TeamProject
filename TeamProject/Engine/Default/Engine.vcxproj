@@ -377,7 +377,7 @@ exit /b 0</Command>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>Engine_Defines.h</PrecompiledHeaderFile>
-      <AdditionalOptions>/wd4005 /wd4251 /wd4819 /wd4267 /wd4244 /wd4172 /wd4018 /wd4838 /wd4305 /wd4101 /wd4129 /wd4715 /wd4067 /Zo %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/wd4005 /wd4251 /wd4819 /wd4267 /wd4244 /wd4172 /wd4018 /wd4838 /wd4305 /wd4101 /wd4129 /wd4715 /wd4067 /wd 4002 /Zo %(AdditionalOptions)</AdditionalOptions>
       <Optimization>MaxSpeed</Optimization>
     </ClCompile>
     <Link>
@@ -619,14 +619,17 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\EventSystem.h" />
     <ClInclude Include="..\Public\FootIK.h" />
     <ClInclude Include="..\public\ForwardRenderer.h" />
+    <ClInclude Include="..\Public\FrameQueue.h" />
     <ClInclude Include="..\Public\HiZ_Culling.h" />
     <ClInclude Include="..\Public\Humanoid.h" />
     <ClInclude Include="..\Public\ICamEvaluator.h" />
     <ClInclude Include="..\Public\IInputService.h" />
     <ClInclude Include="..\Public\IKSolver.h" />
+    <ClInclude Include="..\Public\IVideoDecoderBackend.h" />
     <ClInclude Include="..\Public\LifeTimeColor.h" />
     <ClInclude Include="..\Public\MeshEffectModule.h" />
     <ClInclude Include="..\Public\MeshSection.h" />
+    <ClInclude Include="..\Public\MFVideoDecoderBackend.h" />
     <ClInclude Include="..\Public\Noise.h" />
     <ClInclude Include="..\Public\LifeTimeSize.h" />
     <ClInclude Include="..\Public\LifeTimeVelocity.h" />
@@ -744,6 +747,8 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\UI_Object.h" />
     <ClInclude Include="..\Public\UI_Pool.h" />
     <ClInclude Include="..\Public\VIBuffer.h" />
+    <ClInclude Include="..\Public\VideoPlayer.h" />
+    <ClInclude Include="..\Public\VideoService.h" />
     <ClInclude Include="..\Public\VI_Cube.h" />
     <ClInclude Include="..\Public\VI_InstancePoint.h" />
     <ClInclude Include="..\Public\VI_Plane.h" />
@@ -815,8 +820,11 @@ exit /b 0</Command>
     <ClCompile Include="..\Private\EventSystem.cpp" />
     <ClCompile Include="..\Private\FootIK.cpp" />
     <ClCompile Include="..\private\ForwardRenderer.cpp" />
+    <ClCompile Include="..\Private\FrameQueue.cpp" />
     <ClCompile Include="..\Private\HiZ_Culling.cpp" />
+    <ClCompile Include="..\Private\IVideoDecoderBackend.cpp" />
     <ClCompile Include="..\Private\LifeTimeColor.cpp" />
+    <ClCompile Include="..\Private\MFVideoDecoderBackend.cpp" />
     <ClCompile Include="..\Private\Noise.cpp" />
     <ClCompile Include="..\Private\LifeTimeSize.cpp" />
     <ClCompile Include="..\Private\LifeTimeVelocity.cpp" />
@@ -906,6 +914,8 @@ exit /b 0</Command>
     <ClCompile Include="..\Private\UI_Object.cpp" />
     <ClCompile Include="..\Private\UI_Pool.cpp" />
     <ClCompile Include="..\Private\VIBuffer.cpp" />
+    <ClCompile Include="..\Private\VideoPlayer.cpp" />
+    <ClCompile Include="..\Private\VideoService.cpp" />
     <ClCompile Include="..\Private\VI_Cube.cpp" />
     <ClCompile Include="..\Private\VI_InstancePoint.cpp" />
     <ClCompile Include="..\Private\VI_Plane.cpp" />

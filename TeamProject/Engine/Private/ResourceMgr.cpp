@@ -36,7 +36,7 @@ CResourceMgr::CResourceMgr(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 HRESULT CResourceMgr::Initiallize()
 {
-	m_pPreloader = CPreloadScheduler::Create(CThreadPool::Create());
+	m_pPreloader = CPreloadScheduler::Create(ThreadPool());
 	Init_PreLoader();
 	return S_OK;
 }

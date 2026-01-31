@@ -5,6 +5,7 @@
 CPreloadScheduler::CPreloadScheduler(CThreadPool* pThreadPool)
     :m_threadPool(pThreadPool)
 {
+    Safe_AddRef(pThreadPool);
 }
 
 CPreloadScheduler::~CPreloadScheduler()
