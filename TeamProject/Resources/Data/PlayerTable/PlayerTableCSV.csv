@@ -1,8 +1,8 @@
 Name,HP,Attack,Defend,SpecialAttack,Ultimate
-JaneDoe,626,127,49,60,3000
-Corin,561,116,49,80,3000
+JaneDoe,626,1.27,49,60,3000
+Corin,561,1.16,49,80,3000
 Alice,,,,10,3000
-Miyabi,617,127,49,10,3000
+Miyabi,617,1.27,49,10,3000
 Yuzuha,,,,10,3000
 ZhenZhen,,,,10,3000
 Qingyi,,,,10,3000
