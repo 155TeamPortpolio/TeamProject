@@ -106,6 +106,64 @@ PS_OUT PS_MAIN(PS_IN In)
     Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / zFar, linearDepth, 1.f);
     Out.vMetalic = float4(vMetalic.rgb, 0.3f);
     Out.vEmissive = float4(vMtrlDiffuse.rgb * vMetalic.b * 1.f, vMetalic.a);
+    Out.fEmissiveInfo = float2(0.f, 1.f);
+    return Out;
+}
+
+PS_OUT PS_TV(PS_IN In)
+{
+    PS_OUT Out;
+    
+    bool isScreen = (
+    In.vTexcoord.x >= 0.65 && In.vTexcoord.y >= 0.65);
+    
+    vector vMtrlDiffuse = DiffuseTexture.Sample(LinearSampler, In.vTexcoord);
+    if (vMtrlDiffuse.a < 0.2)
+    {
+        discard;
+    }
+    
+    float linearDepth = saturate(In.viewZ / zFar);
+    vector vNormalDesc = NormalTexture.Sample(DefaultSampler, In.vTexcoord);
+    vector vMetalic = MetalnessTexture.Sample(DefaultSampler, In.vTexcoord);
+    
+    if (isScreen)
+    {
+        vector vScreenColor = float4(1.f, 1.f, 1.f, 1.f);
+        Out.vDiffuse = vScreenColor;
+        Out.vEmissive = float4(vScreenColor.rgb * 2.0f, 1.0f);
+        Out.vMetalic = float4(0.0f, 0.0f, 0.0f, 0.0f);
+    }
+    else
+    {
+        Out.vDiffuse = vMtrlDiffuse;
+        Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / zFar, linearDepth, 1.f);
+        Out.vMetalic = float4(vMetalic.rgb, 0.3f);
+        Out.vEmissive = float4(vMtrlDiffuse.rgb * vMetalic.b * 1.f, vMetalic.a);
+    }
+    
+    if (vNormalDesc.a > 0.2f)
+    {
+        float3 vNormal;
+        vNormal.x = vNormalDesc.y * 2.f - 1.f;
+        vNormal.y = vNormalDesc.z * 2.f - 1.f;
+        vNormal.z = 1.f;
+        float3 T = normalize(In.vTangent);
+        float3 B = normalize(In.vBinormal * -1);
+        float3 N = normalize(In.vNormal.xyz);
+
+        float3x3 WorldMatrix = float3x3(T, B, N);
+        
+        vNormal = mul(vNormal, WorldMatrix);
+    
+        Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 1.f);
+    }
+    else
+    {
+        float3 vNormal = normalize(In.vNormal);
+        Out.vNormal = float4(vNormal * 0.5f + 0.5f, 1.f);
+    }
+    
     Out.fEmissiveInfo = float2(0.f, 2.f);
     return Out;
 }
@@ -191,6 +249,15 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN();
+    }
+    pass TV
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_TV();
     }
     pass Debug
     {
