@@ -28,6 +28,7 @@ public:
     const EncounterTable*               GetMonsterSpawnData(const string& tagArea, _uint iStageType);
     RAMEN_DESC              GetRamenDesc(const string& strName);
     vector<const RAMEN_DESC*> GetRamenTable();
+    WEAPON_DESC             GetWeaponDesc(_int WeaponID);
 
 public:
     HRESULT LoadPlayerCreationTable(const string& csvPath);
@@ -40,6 +41,7 @@ public:
     HRESULT LoadNpcDialogueData(const string& csvPath);
     HRESULT LoadNpcChoiceData(const string& csvPath);
     HRESULT LoadRamenData(const string& csvPath);
+    HRESULT LoadWeaponData(const string& csvPath);
 
 public:
     const CASHED_OBJ_DATA* Get_CashedData(const string& AreaTag);
@@ -55,6 +57,7 @@ private:
     DialogueType    StringToDialogueType(const string& str);
     DialogueResult  StringToDialogueResult(const string& str);
     Speaker         StringToSpeaker(const string& str);
+    GachaGrade      StringToGachaGrade(const string& str);
     wstring         StringToWString(const string& str);
 private:
     // 몬스터 세팅 테이블(CCT 정보, 각종 Status(HP, 공격력 등))
@@ -69,13 +72,14 @@ private:
     unordered_map<wstring, NpcIDDesc>                       m_NpcIDTables;
     map<pair<string, _uint>, NpcDialogueDesc>		        m_DialogueTables;
     unordered_map<string, ChoiceDesc>				        m_DialgoueChoiceTables;
+    //FieldData
+    unordered_map<_int, WEAPON_DESC>                       m_WeaponTables;
+    unordered_map<string, RAMEN_DESC>                      m_RamenTables;
     // BattleField Data
     
-
     //맵 데이터 <-> 런타임 데이터 연결용 (현재 작동중인 레벨에서만)
     unordered_map<string, CASHED_OBJ_DATA>  m_CashedData;
     
-    unordered_map<string, RAMEN_DESC>                      m_RamenTables;
 
 public:
     virtual void Free() override;

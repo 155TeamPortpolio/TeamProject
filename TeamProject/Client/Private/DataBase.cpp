@@ -45,6 +45,9 @@ HRESULT CDataBase::CreateTable()
 	if (FAILED(LoadRamenData("../../Resources/Data/Shop/Shop_Ramen.csv")))
 		return E_FAIL;
 
+	if (FAILED(LoadWeaponData("../../Resources/Data/Gacha/WeaponID.csv")))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -156,6 +159,15 @@ vector<const RAMEN_DESC*> CDataBase::GetRamenTable()
 		});
 
 	return result;
+}
+
+WEAPON_DESC CDataBase::GetWeaponDesc(_int WeaponID)
+{
+	auto iter = m_WeaponTables.find(WeaponID);
+	if (iter == m_WeaponTables.end())
+		return WEAPON_DESC{};
+
+	return iter->second;
 }
 
 HRESULT CDataBase::LoadPlayerCreationTable(const string& csvPath)
@@ -622,6 +634,43 @@ HRESULT CDataBase::LoadRamenData(const string& csvPath)
 	return S_OK;
 }
 
+HRESULT CDataBase::LoadWeaponData(const string& csvPath)
+{
+	io::CSVReader<
+		5,
+		io::trim_chars<' ', '\t'>,
+		io::double_quote_escape<',', '"'>
+	>in(csvPath);
+
+	in.read_header(
+		io::ignore_extra_column | io::ignore_missing_column,
+		"ID", "Grade", "Model", "Mat", "Texture"
+	);
+	string			Grade, Model, Material, Texture;
+	_int			ID;
+
+	while (in.read_row(ID, Grade, Model, Material,Texture))
+	{
+		if (ID == -1) continue;
+
+		WEAPON_DESC desc = {};
+		desc.ID = ID;
+		desc.Grade = StringToGachaGrade(Grade);
+		desc.strModel = Model;
+		desc.strMaterial = Material;
+		desc.strTexture = Texture;
+
+		auto [iter, inserted] = m_WeaponTables.emplace(desc.ID, move(desc));
+		if (false == inserted)
+		{
+			wstring ErrorMsg = L"Duplicate WeaponKey in CSV : " + desc.ID;
+			MessageBox(NULL, ErrorMsg.c_str(), L"System Message", MB_OK);
+		}
+	}
+
+	return S_OK;
+}
+
 const CASHED_OBJ_DATA* CDataBase::Get_CashedData(const string& AreaTag)
 {
 	auto iter = m_CashedData.find(AreaTag);
@@ -693,6 +742,15 @@ Speaker CDataBase::StringToSpeaker(const string& str)
 	if (str == "Player") return Speaker::Player;
 
 	return Speaker::Npc;
+}
+
+GachaGrade CDataBase::StringToGachaGrade(const string& str)
+{
+	if (str == "S") return GachaGrade::S;
+	if (str == "A") return GachaGrade::A;
+	if (str == "B") return GachaGrade::B;
+
+	return GachaGrade::B;
 }
 
 wstring CDataBase::StringToWString(const string& str)

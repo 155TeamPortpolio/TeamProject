@@ -22,7 +22,7 @@ namespace Client {
 	enum class Speaker { Player, Npc, System };
 	enum class DialogueType {Normal, Choice, Quest};
 	enum class DialogueResult {Fail, Running, Success, None};
-
+	enum class GachaGrade { S, A, B };
 
 	//------------------- Battle -------------------
 	enum class StageType { Normal, Elite, Boss, End };
