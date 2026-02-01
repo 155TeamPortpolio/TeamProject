@@ -64,7 +64,7 @@ private:
 	_bool m_hasColliderData = {};
 
 	/*--------------------------------------------------------------------*/
-	_bool			m_bHasMapBase{}, m_bHasEntityBase{}, m_bHasBattleData{}, m_bHasLightBase{};
+	_bool				m_bHasMapBase{}, m_bHasEntityBase{}, m_bHasBattleData{}, m_bHasLightBase{};
 	MapData_Header		m_MapBaseData = {};
 	Entity_Header		m_EntityBaseData = {};
 	BATTLE_FIELD_DATA	m_BattleData = {};
