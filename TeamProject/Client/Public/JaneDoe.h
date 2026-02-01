@@ -54,8 +54,11 @@ private:
     HRESULT Initialize_Stat();
     HRESULT Initialize_Weapon();
 
-    /* 이펙트 생성 */
+    /* Effect */
     HRESULT Initialize_Effects();
+
+public:
+    void Play_Effect(const string& effectTag, _fvector offsetPosition, _fvector offsetQuaternion, _bool syncTransform = true);
 
 private:
     HRESULT Add_PassionMotionBlur();
