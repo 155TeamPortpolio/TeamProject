@@ -3,13 +3,13 @@
 
 NS_BEGIN(Client)
 
-class CGachaTV :
+class CGachaStageScreen :
     public CGameObject
 {
 private:
-    CGachaTV();
-    CGachaTV(const CGachaTV& rhs);
-    virtual ~CGachaTV() DEFAULT;
+    CGachaStageScreen();
+    CGachaStageScreen(const CGachaStageScreen& rhs);
+    virtual ~CGachaStageScreen() DEFAULT;
 
 public:
     virtual HRESULT Initialize_Prototype()      override;
@@ -20,10 +20,15 @@ public:
     virtual void    Late_Update(_float dt)      override;
 
 private:
-    void Add_TVScreen();
+    _int    m_iCol = 8;
+    _int    m_iRow = 5;
+    _int    m_iCurrentFrameIndex = 0;
+    _int    m_iMaxFrameIndex = 34;
+    _float  m_fElapsedTime = 0.f;
+    _float  m_fFrameDuration = 0.02f;
 
 public:
-    static CGachaTV* Create();
+    static CGachaStageScreen* Create();
     virtual CGameObject* Clone(INIT_DESC* pArg) override;
     virtual void Free() override;
 };

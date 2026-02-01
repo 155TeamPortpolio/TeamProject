@@ -4,12 +4,15 @@
 #include "Camera.h"
 #include "CamDirector.h"
 #include "OrbitCam.h"
+#include "ShadowCam.h"
 /* MapData */
 #include "MapLoader.h"
 /* UI */
 #include "UIDirector.h"
 /*GachaObject*/
 #include "GachaProps.h"
+/*Component*/
+#include "Light.h"
 
 CGacha_Level::CGacha_Level(const string& LevelKey)
 	:CLevel(LevelKey),
@@ -28,6 +31,15 @@ HRESULT CGacha_Level::Awake()
 {
 	auto pCloud = ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Cloud));
 	pCloud->Set_Alive(false);
+
+	auto pShadowCam = ObjectManager()->Find_Global(ENUM(GLOBAL_ID::ShadowCam));
+	LIGHT_DESC lightDesc = {};
+	lightDesc.vLightPosition = _float4(-50.f, 50.f, 0.f, 1.f);
+	lightDesc.vLightDiffuse = _float4(0.f, 0.3f, 1.f, 1.f);
+	lightDesc.vLightAmbient = _float4(1.f, 1.f, 1.f, 1.f);
+	lightDesc.vLightSpecular = _float4(0.f, 0.f, 0.f, 1.f);
+	lightDesc.fLightIntensity = 1.f;
+	pShadowCam->Get_Component<CLight>()->Set_Desc(lightDesc, LIGHT_TYPE::DIRECTIONAL);
 
 	Ready_GachaObjects();
 	CamDirector()->SetSpaceRef(m_GachaHandle);
