@@ -98,6 +98,15 @@ void CCharacter::Late_Update(_float dt)
     Get_Component<CObjectContainer>()->Late_UpdateChild(dt);
 }
 
+void CCharacter::Render_GUI()
+{
+    ImGui::Separator();
+    ImGui::Text("HP : %3.2f / %3.2f", m_fCurrentHP, m_fMaxHP);
+    ImGui::Text("AttackPower : %2.2f", m_fAttackPower);
+
+    __super::Render_GUI();
+}
+
 void CCharacter::OnTriggerEnter(CGameObject* pOther)
 {
     ICollidable* pCollidable = pOther->Get_Component<ICollidable>();

@@ -86,6 +86,7 @@ void CCorinState_NormalAttack::Update(CCorin* pOwner, _float dt)
 
 void CCorinState_NormalAttack::Exit(CCorin* pOwner)
 {
+    pOwner->Reset_ReserveCombo();
     __super::Exit(pOwner);
 }
 

@@ -376,6 +376,7 @@
     <ClInclude Include="..\public\Claymore_Hit.h" />
     <ClInclude Include="..\public\Claymore_Idle.h" />
     <ClInclude Include="..\public\Claymore_Move.h" />
+    <ClInclude Include="..\public\Claymore_Parried.h" />
     <ClInclude Include="..\Public\Defiler.h" />
     <ClInclude Include="..\Public\Defiler_Control.h" />
     <ClInclude Include="..\Public\DefilerState_Attack.h" />
@@ -389,6 +390,7 @@
     <ClInclude Include="..\public\GachaTV.h" />
     <ClInclude Include="..\public\GachaResult.h" />
     <ClInclude Include="..\public\Gacha_Level.h" />
+    <ClInclude Include="..\public\UI_Gangta.h" />
     <ClInclude Include="..\Public\ICamCollidable.h" />
     <ClInclude Include="..\Public\JaneDoeState_AssaultAttack.h" />
     <ClInclude Include="..\Public\JaneDoeState_CounterAttack.h" />
@@ -742,6 +744,7 @@
     <ClCompile Include="..\private\Claymore_Hit.cpp" />
     <ClCompile Include="..\private\Claymore_Idle.cpp" />
     <ClCompile Include="..\private\Claymore_Move.cpp" />
+    <ClCompile Include="..\private\Claymore_Parried.cpp" />
     <ClCompile Include="..\Private\CorinState_AssaultAttack.cpp" />
     <ClCompile Include="..\Private\CorinState_CounterAttack.cpp" />
     <ClCompile Include="..\Private\Defiler.cpp" />
@@ -754,6 +757,7 @@
     <ClCompile Include="..\private\GachaTV.cpp" />
     <ClCompile Include="..\private\GachaResult.cpp" />
     <ClCompile Include="..\private\Gacha_Level.cpp" />
+    <ClCompile Include="..\private\UI_Gangta.cpp" />
     <ClCompile Include="..\Private\JaneDoeState_AssaultAttack.cpp" />
     <ClCompile Include="..\Private\JaneDoeState_CounterAttack.cpp" />
     <ClCompile Include="..\private\MapLightPoint.cpp" />

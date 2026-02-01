@@ -19,6 +19,8 @@
 #include "Material.h"
 #include "MaterialInstance.h"
 
+#include "CharacterController.h"
+
 CEnemy::CEnemy()
 	:CGameObject()
 {
@@ -166,6 +168,7 @@ void CEnemy::ComputeTargetingInfo()
 
 	m_tTargetingInfo = {};
 
+	//m_tTargetingInfo.vTargetPos = pTargetInfo->hObject.Get()->Get_Component<CCharacterController>()->get;
 	m_tTargetingInfo.vTargetPos = pTargetInfo->vPos;
 	m_tTargetingInfo.vSelfPos = m_pTransform->Get_Pos();
 	m_tTargetingInfo.vDirSelfLook = m_pTransform->Dir(Engine::STATE::LOOK);
@@ -650,31 +653,33 @@ void CEnemy::SetAutoPlayBattleCollider(const string& tagBattleCollider, _float f
 	m_tAutoBattleCol.vAttackColLifeTime = { fAttackPlayTime, 0.f };
 }
 
+void CEnemy::RequestRemoveOnDeathToBattleSystem()
+{
+	BattleSystem()->ExitBattleObject(CBattleSystem::BATTLE_OBJ_TYPE::MONSTER, this->Get_Handle());
+}
+
 void CEnemy::Death()
 {
-	if (BattleSystem()->ExitBattleObject(CBattleSystem::BATTLE_OBJ_TYPE::MONSTER, this->Get_Handle()))
-	{
-		ObjectManager()->Remove_Object(this);
+	ObjectManager()->Remove_Object(this);
 #ifdef _USING_GUI
-		auto pSelectedObject = GUISystem()->Get_Context()->pSelectedObject;
-		if (nullptr != pSelectedObject &&
-			this == pSelectedObject)
-			GUISystem()->Get_Context()->pSelectedObject = nullptr;
+	auto pSelectedObject = GUISystem()->Get_Context()->pSelectedObject;
+	if (nullptr != pSelectedObject &&
+		this == pSelectedObject)
+		GUISystem()->Get_Context()->pSelectedObject = nullptr;
 #endif // _USING_GUI
 
-		if (true == m_hUIEnemyStatus.isValid())
-			UIManager()->Remove_UIObject(m_hUIEnemyStatus.Get());
-	}
+	if (true == m_hUIEnemyStatus.isValid())
+		UIManager()->Remove_UIObject(m_hUIEnemyStatus.Get());
 }
 
 void CEnemy::SetOnAttack(_bool is, ATTACK_SIDE eSide)
 {
 	m_isOnAttack = is;
-	m_isParryEnable = is;
 
 	// 공격이 끝났을 때,
 	if (false == is)
 	{
+		m_isParryEnable = is;
 		m_eCurAttackSide = ATTACK_SIDE::NONE;
 	}
 }

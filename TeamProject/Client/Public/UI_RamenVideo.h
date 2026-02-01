@@ -40,7 +40,7 @@ private:
 private:
 	void Create_SkipButton();
 
-	void Off();
+	void OnVideoExit();
 
 public:
 	static  CGameObject* Create();

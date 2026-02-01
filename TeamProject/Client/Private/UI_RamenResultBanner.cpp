@@ -19,7 +19,7 @@ HRESULT CUI_RamenResultBanner::Initialize_Prototype()
 HRESULT CUI_RamenResultBanner::Initialize(INIT_DESC* pArg)
 {
     RESULT_BANNER_DESC* pDesc = static_cast<RESULT_BANNER_DESC*>(pArg);
-    //m_OnClick = pDesc->onClickConfirm;
+    m_OnClick = pDesc->onClickConfirm;
 
     __super::Initialize();
 
@@ -27,6 +27,7 @@ HRESULT CUI_RamenResultBanner::Initialize(INIT_DESC* pArg)
     Cache();
 
     Create_ConfirmButton();
+    Create_AttrTexts();
 
     Change_State(STATE::INVISIBLE);
     Set_Alive(false);
@@ -52,8 +53,33 @@ void CUI_RamenResultBanner::UI_Active(void* pArg)
 {
     Change_State(STATE::VISIBLE);
 
-    ACTIVE_DESC* pDesc = static_cast<ACTIVE_DESC*>(pArg);
-    Set_Text(TEXTSLOT::LABEL1, L"[" + pDesc->strMenu + L"] 효과 발동");
+    if (!pArg)
+        return;
+
+    ACTIVE_DESC* pDesc = static_cast<ACTIVE_DESC*>(pArg); 
+    if (m_pLabelTextSlot)
+    {
+        wstring strMenu = pDesc->strMenu;
+        replace(strMenu.begin(), strMenu.end(), L'\n', L' ');
+        m_pLabelTextSlot->Set_Text(L"[" + strMenu + L"] 효과 발동");
+    } 
+     
+    const _int iStartIndex = ENUM(ATTR::LABEL) + 1;
+
+    for (_int i = iStartIndex; i < ENUM(ATTR::END); ++i)
+        m_pAttrTextSlots[i]->Set_Text(L"");
+
+    _int iIndex = iStartIndex;
+    for (auto& pAttribute : pDesc->attributes)
+    {
+        if (iIndex >= ENUM(ATTR::END))
+            return;
+
+        m_pAttrTextSlots[iIndex++]->Set_Text(pAttribute.strAttributeName);
+        m_pAttrTextSlots[iIndex++]->Set_Text(Helper::ConvertToWideString("+" + to_string(pAttribute.iAttributeValue) + "% "));
+    }
+
+    Refresh_Layout();
 }
 
 void CUI_RamenResultBanner::UI_DeActive(void* pArg)
@@ -63,16 +89,11 @@ void CUI_RamenResultBanner::UI_DeActive(void* pArg)
 
 void CUI_RamenResultBanner::Cache()
 {
-    auto pContainer = Get_Component<CObjectContainer>();
+    auto pObj = Get_Component<CObjectContainer>()->Find_Descendant("label");
+    if (!pObj)
+        return;
 
-    for (_int i = 0; i < ENUM(TEXTSLOT::END); ++i)
-    {
-        auto pObj = pContainer->Find_Descendant(INSTANCENAMES[i]);
-        if (!pObj)
-            continue;
-
-        m_pTextSlots[i] = pObj->Get_Component<CTextSlot>();
-    } 
+    m_pLabelTextSlot = pObj->Get_Component<CTextSlot>();
 }
 
 void CUI_RamenResultBanner::Create_ConfirmButton()
@@ -89,6 +110,39 @@ void CUI_RamenResultBanner::Create_ConfirmButton()
         return;
 
     Get_Component<CObjectContainer>()->Add_Child(pObj);
+}
+
+void CUI_RamenResultBanner::Create_AttrTexts()
+{
+    auto pContainer = Get_Component<CObjectContainer>();
+
+    for (_int i = 0; i < ENUM(ATTR::END); ++i)
+        Create_AttrText(&m_pAttrObjects[i], &m_pAttrTextSlots[i], (i == ENUM(ATTR::VALUE1) || i == ENUM(ATTR::VALUE2) || i == ENUM(ATTR::VALUE3)));
+}
+
+void CUI_RamenResultBanner::Create_AttrText(CUI_Object** ppOutObj, class CTextSlot** ppOutTextSlot, _bool isHighlighted)
+{
+    auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_Text" }).Build("attr");
+    if (!pObj)
+        return;
+
+    Get_Component<CObjectContainer>()->Add_Child(pObj);
+    if(ppOutObj)
+        *ppOutObj = pObj;
+    pObj->Set_Anchor(ANCHOR::Center);
+    pObj->Set_AnchorOffset({ 0.f, -20.f });
+    if (isHighlighted)
+        pObj->Set_Color(Helper::HexToColor("#FBAF2A"));
+    else
+        pObj->Set_Color(Helper::HexToColor("#B2B2B2FF"));
+
+    auto pTextSlot = pObj->Get_Component<CTextSlot>();
+    if(ppOutTextSlot)
+        *ppOutTextSlot = pTextSlot;
+    pTextSlot->Set_Font("NanumSquareNeo.spritefont");
+    pTextSlot->Set_Text(L"획득 효과: ");
+    pTextSlot->Set_Size(0.42f);
+    pTextSlot->Enable_AutoPos(ANCHOR::Center);
 }
 
 void CUI_RamenResultBanner::Change_State(STATE eState)
@@ -116,13 +170,26 @@ void CUI_RamenResultBanner::OnClick_Confirm()
         m_OnClick();
 }
 
-void CUI_RamenResultBanner::Set_Text(TEXTSLOT textSlot, const _wstring& strText)
+void CUI_RamenResultBanner::Refresh_Layout()
 {
-    auto pTextSlot = m_pTextSlots[ENUM(textSlot)];
-    if (!pTextSlot)
-        return;
+    _float fTotalWidth = {};
+    for (_int i = 0; i < ENUM(ATTR::END); ++i)
+    {
+        auto pTextSlot = m_pAttrTextSlots[i];
+        _float2 vTextSize = pTextSlot->Get_TextSize()* pTextSlot->Get_Scale();
+        fTotalWidth += vTextSize.x;
+    }
 
-    pTextSlot->Set_Text(strText);
+    _float fCurX = -fTotalWidth * 0.5f;
+    for (_int i = 0; i < ENUM(ATTR::END); ++i)
+    {
+        auto pObj = m_pAttrObjects[i];
+        auto pTextSlot = m_pAttrTextSlots[i];
+
+        _float2 vTextSize = pTextSlot->Get_TextSize() * pTextSlot->Get_Scale();
+        pObj->Set_AnchorOffsetX(fCurX + vTextSize.x * 0.5f);
+        fCurX += vTextSize.x;
+    }
 }
 
 CGameObject* CUI_RamenResultBanner::Create()

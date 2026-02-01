@@ -12,54 +12,56 @@
 #include "EffectContainer.h"
 #include "CharacterController.h"
 
+CJaneDoeState_NormalAttack* CJaneDoeState_NormalAttack::Create()
+{
+    auto pInstance = new CJaneDoeState_NormalAttack();
+    pInstance->m_pSubStateMachine = CStateMachine<CJaneDoe>::Create();
+    auto pSubStateMachine = pInstance->Get_SubStateMachine();
+
+    pSubStateMachine->Register_State("Attack_01", CJaneDoeState_Attack_01::Create());
+    pSubStateMachine->Register_State("Attack_02", CJaneDoeState_Attack_02::Create());
+    pSubStateMachine->Register_State("Attack_03", CJaneDoeState_Attack_03::Create());
+    pSubStateMachine->Register_State("Attack_04", CJaneDoeState_Attack_04::Create());
+    pSubStateMachine->Register_State("Attack_05", CJaneDoeState_Attack_05::Create());
+    pSubStateMachine->Register_State("Attack_06", CJaneDoeState_Attack_06::Create());
+    pSubStateMachine->Register_State("Attack_End", CJaneDoeState_Attack_End::Create());
+
+    pSubStateMachine->Get_State("Attack_End")->Set_Tag("End");
+
+    // 콤보 전이: Trigger + AnimEnd : 애니매이션중 마우스가 눌렸고 애니매이션이 끝나면 다음 재생
+    vector<CStateMachine<CJaneDoe>::CONDITION_INFO> comboConditions;
+    comboConditions.push_back({ CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "NextCombo", 0.f });
+    comboConditions.push_back({ CStateMachine<CJaneDoe>::CONDITION_ANIMATION_GREATER, "", 0.6f });
+
+    pSubStateMachine->Register_Transition("Attack_01", "Attack_02", comboConditions);
+    pSubStateMachine->Register_Transition("Attack_02", "Attack_03", comboConditions);
+    pSubStateMachine->Register_Transition("Attack_03", "Attack_04", comboConditions);
+    pSubStateMachine->Register_Transition("Attack_04", "Attack_05", comboConditions);
+    pSubStateMachine->Register_Transition("Attack_05", "Attack_06", comboConditions);
+
+    // End 전이
+    pSubStateMachine->Register_Transition("Attack_01", "Attack_End",
+        CStateMachine<CJaneDoe>::CONDITION_ANIMATION_END);
+    pSubStateMachine->Register_Transition("Attack_02", "Attack_End",
+        CStateMachine<CJaneDoe>::CONDITION_ANIMATION_END);
+    pSubStateMachine->Register_Transition("Attack_03", "Attack_End",
+        CStateMachine<CJaneDoe>::CONDITION_ANIMATION_END);
+    pSubStateMachine->Register_Transition("Attack_04", "Attack_End",
+        CStateMachine<CJaneDoe>::CONDITION_ANIMATION_END);
+    pSubStateMachine->Register_Transition("Attack_05", "Attack_End",
+        CStateMachine<CJaneDoe>::CONDITION_ANIMATION_END);
+    pSubStateMachine->Register_Transition("Attack_06", "Attack_End",
+        CStateMachine<CJaneDoe>::CONDITION_ANIMATION_END);
+
+    pSubStateMachine->Set_DefaultState("Attack_01");
+
+    return pInstance;
+}
+
 void CJaneDoeState_NormalAttack::Enter(CJaneDoe* pOwner)
 {
     pOwner->Lock_Move();
     m_iComboIndex = 0;
-
-    if (!m_pSubStateMachine)
-    {
-        m_pSubStateMachine = CStateMachine<CJaneDoe>::Create();
-
-        m_pSubStateMachine->Register_State("Attack_01", CJaneDoeState_Attack_01::Create());
-        m_pSubStateMachine->Register_State("Attack_02", CJaneDoeState_Attack_02::Create());
-        m_pSubStateMachine->Register_State("Attack_03", CJaneDoeState_Attack_03::Create());
-        m_pSubStateMachine->Register_State("Attack_04", CJaneDoeState_Attack_04::Create());
-        m_pSubStateMachine->Register_State("Attack_05", CJaneDoeState_Attack_05::Create());
-        m_pSubStateMachine->Register_State("Attack_06", CJaneDoeState_Attack_06::Create());
-        m_pSubStateMachine->Register_State("Attack_End", CJaneDoeState_Attack_End::Create());
-
-        m_pSubStateMachine->Get_State("Attack_End")->Set_Tag("End");
-
-
-        // 콤보 전이: Trigger + AnimEnd : 애니매이션중 마우스가 눌렸고 애니매이션이 끝나면 다음 재생
-        vector<CStateMachine<CJaneDoe>::CONDITION_INFO> comboConditions;
-        comboConditions.push_back({ CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "NextCombo", 0.f });
-        comboConditions.push_back({ CStateMachine<CJaneDoe>::CONDITION_ANIMATION_GREATER, "", 0.6f });
-
-        m_pSubStateMachine->Register_Transition("Attack_01", "Attack_02", comboConditions);
-        m_pSubStateMachine->Register_Transition("Attack_02", "Attack_03", comboConditions);
-        m_pSubStateMachine->Register_Transition("Attack_03", "Attack_04", comboConditions);
-        m_pSubStateMachine->Register_Transition("Attack_04", "Attack_05", comboConditions);
-        m_pSubStateMachine->Register_Transition("Attack_05", "Attack_06", comboConditions);
-
-
-        // End 전이
-        m_pSubStateMachine->Register_Transition("Attack_01", "Attack_End",
-            CStateMachine<CJaneDoe>::CONDITION_ANIMATION_END);
-        m_pSubStateMachine->Register_Transition("Attack_02", "Attack_End",
-            CStateMachine<CJaneDoe>::CONDITION_ANIMATION_END);
-        m_pSubStateMachine->Register_Transition("Attack_03", "Attack_End",
-            CStateMachine<CJaneDoe>::CONDITION_ANIMATION_END);
-        m_pSubStateMachine->Register_Transition("Attack_04", "Attack_End",
-            CStateMachine<CJaneDoe>::CONDITION_ANIMATION_END);
-        m_pSubStateMachine->Register_Transition("Attack_05", "Attack_End",
-            CStateMachine<CJaneDoe>::CONDITION_ANIMATION_END);
-        m_pSubStateMachine->Register_Transition("Attack_06", "Attack_End",
-            CStateMachine<CJaneDoe>::CONDITION_ANIMATION_END);
-
-        m_pSubStateMachine->Set_DefaultState("Attack_01");
-    }
 
     // 트리거 초기화
     m_pSubStateMachine->Reset_Trigger("NextCombo");
@@ -70,44 +72,6 @@ void CJaneDoeState_NormalAttack::Update(CJaneDoe* pOwner, _float dt)
 {
     if (CGameInstance::GetInstance()->Get_InputDev()->Mouse_Tap(MOUSE_BTN::LB))
         m_pSubStateMachine->Set_Trigger("NextCombo");
-
-    for (const auto& Event : pOwner->Get_Component<CAnimator3D>()->Get_EventBus())
-    {
-        if (Event.Type != CLIP_EVENT_TYPE::NOTIFY) continue;
-
-        if (Event.Tag == "LHandStart")
-        {
-            pOwner->Begin_AttackCollider("HandWeapon_L", {HIT_TYPE::ONCE, DAMAGE_TYPE::NORMAL, Helper::Get_Random_Float(10,30), 0, 0});
-        }
-        else if (Event.Tag == "LHandEnd")
-        {
-            pOwner->End_AttackCollider("HandWeapon_L");
-        }
-        else if (Event.Tag == "RHandStart")
-        {
-            pOwner->Begin_AttackCollider("HandWeapon_R", { HIT_TYPE::ONCE, DAMAGE_TYPE::NORMAL, Helper::Get_Random_Float(10,30), 0, 0 });
-        }
-        else if (Event.Tag == "RHandEnd")
-        {
-            pOwner->End_AttackCollider("HandWeapon_R");
-        }
-        else if (Event.Tag == "LFootStart")
-        {
-            pOwner->Begin_AttackCollider("FootWeapon_L", { HIT_TYPE::ONCE, DAMAGE_TYPE::NORMAL, Helper::Get_Random_Float(20,40), 0, 0 });
-        }
-        else if (Event.Tag == "LFootEnd")
-        {
-            pOwner->End_AttackCollider("FootWeapon_L");
-        }
-        else if (Event.Tag == "RFootStart")
-        {
-            pOwner->Begin_AttackCollider("FootWeapon_R", { HIT_TYPE::ONCE, DAMAGE_TYPE::NORMAL, Helper::Get_Random_Float(20,40), 0, 0 });
-        }
-        else if (Event.Tag == "RFootEnd")
-        {
-            pOwner->End_AttackCollider("FootWeapon_R");
-        }
-    }
 
     auto pJaneDoeState = pOwner->Get_StateMachine();
     if (pJaneDoeState->Get_Bool("OutReserve"))
@@ -125,6 +89,7 @@ void CJaneDoeState_NormalAttack::Update(CJaneDoe* pOwner, _float dt)
 
 void CJaneDoeState_NormalAttack::Exit(CJaneDoe* pOwner)
 {
+    pOwner->Reset_ReserveCombo();
     __super::Exit(pOwner);
 }
 
@@ -142,6 +107,24 @@ void CJaneDoeState_Attack_01::Update(CJaneDoe* pOwner, _float dt)
     pOwner->Process_RootMotion(dt,
         ENUM(CJaneDoe::ROOTMOTION_MASK::MOVE) |
         ENUM(CJaneDoe::ROOTMOTION_MASK::QUATERNION));
+
+    for (const auto& Event : pOwner->Get_Component<CAnimator3D>()->Get_EventBus())
+    {
+        if (Event.Type != CLIP_EVENT_TYPE::NOTIFY) continue;
+
+        if (Event.Tag == "RHandStart")
+        {
+            pOwner->Begin_AttackCollider("HandWeapon_R", HitDesc()
+                .Type(HIT_TYPE::ONCE)
+                .Damage(pOwner->Get_AttackPower() * 0.361f * Helper::Get_Random_Float(1.f, 1.5f)
+                    , DAMAGE_TYPE::NORMAL)
+            );
+        }
+        else if (Event.Tag == "RHandEnd")
+        {
+            pOwner->End_AttackCollider("HandWeapon_R");
+        }
+    }
 
     Update_Effects(pOwner);
 }
@@ -180,6 +163,48 @@ void CJaneDoeState_Attack_02::Update(CJaneDoe* pOwner, _float dt)
     pOwner->Process_RootMotion(dt,
         ENUM(CJaneDoe::ROOTMOTION_MASK::MOVE) |
         ENUM(CJaneDoe::ROOTMOTION_MASK::QUATERNION));
+
+    for (const auto& Event : pOwner->Get_Component<CAnimator3D>()->Get_EventBus())
+    {
+        if (Event.Type != CLIP_EVENT_TYPE::NOTIFY) continue;
+
+        if (Event.Tag == "LHandStart")
+        {
+            pOwner->Begin_AttackCollider("HandWeapon_L", HitDesc()
+                .Type(HIT_TYPE::ONCE)
+                .Damage(pOwner->Get_AttackPower() * 0.623f * Helper::Get_Random_Float(1.f, 1.5f)
+                    , DAMAGE_TYPE::NORMAL)
+            );
+        }
+        else if (Event.Tag == "LHandEnd")
+        {
+            pOwner->End_AttackCollider("HandWeapon_L");
+        }
+        else if (Event.Tag == "RHandStart")
+        {
+            pOwner->Begin_AttackCollider("HandWeapon_R", HitDesc()
+                .Type(HIT_TYPE::ONCE)
+                .Damage(pOwner->Get_AttackPower() * 0.623f * Helper::Get_Random_Float(1.f, 1.5f)
+                    , DAMAGE_TYPE::NORMAL)
+            );
+        }
+        else if (Event.Tag == "RHandEnd")
+        {
+            pOwner->End_AttackCollider("HandWeapon_R");
+        }
+        else if (Event.Tag == "LFootStart")
+        {
+            pOwner->Begin_AttackCollider("FootWeapon_L", HitDesc()
+                .Type(HIT_TYPE::ONCE)
+                .Damage(pOwner->Get_AttackPower() * 0.623f * Helper::Get_Random_Float(1.f, 1.5f)
+                    , DAMAGE_TYPE::NORMAL)
+            );
+        }
+        else if (Event.Tag == "LFootEnd")
+        {
+            pOwner->End_AttackCollider("FootWeapon_L");
+        }
+    }
 
     Update_Effects(pOwner);
 }
@@ -232,6 +257,36 @@ void CJaneDoeState_Attack_03::Update(CJaneDoe* pOwner, _float dt)
         ENUM(CJaneDoe::ROOTMOTION_MASK::MOVE) |
         ENUM(CJaneDoe::ROOTMOTION_MASK::QUATERNION));
 
+    for (const auto& Event : pOwner->Get_Component<CAnimator3D>()->Get_EventBus())
+    {
+        if (Event.Type != CLIP_EVENT_TYPE::NOTIFY) continue;
+
+        if (Event.Tag == "LHandStart")
+        {
+            pOwner->Begin_AttackCollider("HandWeapon_L", HitDesc()
+                .Type(HIT_TYPE::ONCE)
+                .Damage(pOwner->Get_AttackPower() * 0.835f * Helper::Get_Random_Float(1.f, 1.5f)
+                    , DAMAGE_TYPE::NORMAL)
+            );
+        }
+        else if (Event.Tag == "LHandEnd")
+        {
+            pOwner->End_AttackCollider("HandWeapon_L");
+        }
+        else if (Event.Tag == "RHandStart")
+        {
+            pOwner->Begin_AttackCollider("HandWeapon_R", HitDesc()
+                .Type(HIT_TYPE::ONCE)
+                .Damage(pOwner->Get_AttackPower() * 0.835f * Helper::Get_Random_Float(1.f, 1.5f)
+                    , DAMAGE_TYPE::NORMAL)
+            );
+        }
+        else if (Event.Tag == "RHandEnd")
+        {
+            pOwner->End_AttackCollider("HandWeapon_R");
+        }
+    }
+
     Update_Effects(pOwner);
 }
 
@@ -282,6 +337,60 @@ void CJaneDoeState_Attack_04::Update(CJaneDoe* pOwner, _float dt)
     pOwner->Process_RootMotion(dt,
         ENUM(CJaneDoe::ROOTMOTION_MASK::MOVE) |
         ENUM(CJaneDoe::ROOTMOTION_MASK::QUATERNION));
+
+    for (const auto& Event : pOwner->Get_Component<CAnimator3D>()->Get_EventBus())
+    {
+        if (Event.Type != CLIP_EVENT_TYPE::NOTIFY) continue;
+
+        if (Event.Tag == "LHandStart")
+        {
+            pOwner->Begin_AttackCollider("HandWeapon_L", HitDesc()
+                .Type(HIT_TYPE::ONCE)
+                .Damage(pOwner->Get_AttackPower() * 1.634f * Helper::Get_Random_Float(1.f, 1.5f)
+                    , DAMAGE_TYPE::NORMAL)
+            );
+        }
+        else if (Event.Tag == "LHandEnd")
+        {
+            pOwner->End_AttackCollider("HandWeapon_L");
+        }
+        else if (Event.Tag == "RHandStart")
+        {
+            pOwner->Begin_AttackCollider("HandWeapon_R", HitDesc()
+                .Type(HIT_TYPE::ONCE)
+                .Damage(pOwner->Get_AttackPower() * 1.634f * Helper::Get_Random_Float(1.f, 1.5f)
+                    , DAMAGE_TYPE::NORMAL)
+            );
+        }
+        else if (Event.Tag == "RHandEnd")
+        {
+            pOwner->End_AttackCollider("HandWeapon_R");
+        }
+        else if (Event.Tag == "LFootStart")
+        {
+            pOwner->Begin_AttackCollider("FootWeapon_L", HitDesc()
+                .Type(HIT_TYPE::ONCE)
+                .Damage(pOwner->Get_AttackPower() * 1.634f * Helper::Get_Random_Float(1.f, 1.5f)
+                    , DAMAGE_TYPE::NORMAL)
+            );
+        }
+        else if (Event.Tag == "LFootEnd")
+        {
+            pOwner->End_AttackCollider("FootWeapon_L");
+        }
+        else if (Event.Tag == "RFootStart")
+        {
+            pOwner->Begin_AttackCollider("FootWeapon_R", HitDesc()
+                .Type(HIT_TYPE::ONCE)
+                .Damage(pOwner->Get_AttackPower() * 1.634f * Helper::Get_Random_Float(1.f, 1.5f)
+                    , DAMAGE_TYPE::NORMAL)
+            );
+        }
+        else if (Event.Tag == "RFootEnd")
+        {
+            pOwner->End_AttackCollider("FootWeapon_R");
+        }
+    }
 
     Update_Effects(pOwner);
 }
@@ -373,6 +482,36 @@ void CJaneDoeState_Attack_05::Update(CJaneDoe* pOwner, _float dt)
         ENUM(CJaneDoe::ROOTMOTION_MASK::MOVE) |
         ENUM(CJaneDoe::ROOTMOTION_MASK::QUATERNION));
 
+    for (const auto& Event : pOwner->Get_Component<CAnimator3D>()->Get_EventBus())
+    {
+        if (Event.Type != CLIP_EVENT_TYPE::NOTIFY) continue;
+
+        if (Event.Tag == "LHandStart")
+        {
+            pOwner->Begin_AttackCollider("HandWeapon_L", HitDesc()
+                .Type(HIT_TYPE::ONCE)
+                .Damage(pOwner->Get_AttackPower() * 0.988f * Helper::Get_Random_Float(1.f, 1.5f)
+                    , DAMAGE_TYPE::NORMAL)
+            );
+        }
+        else if (Event.Tag == "LHandEnd")
+        {
+            pOwner->End_AttackCollider("HandWeapon_L");
+        }
+        else if (Event.Tag == "LFootStart")
+        {
+            pOwner->Begin_AttackCollider("FootWeapon_L", HitDesc()
+                .Type(HIT_TYPE::ONCE)
+                .Damage(pOwner->Get_AttackPower() * 0.988f * Helper::Get_Random_Float(1.f, 1.5f)
+                    , DAMAGE_TYPE::NORMAL)
+            );
+        }
+        else if (Event.Tag == "LFootEnd")
+        {
+            pOwner->End_AttackCollider("FootWeapon_L");
+        }
+    }
+
     Update_Effects(pOwner);
 }
 
@@ -420,6 +559,48 @@ void CJaneDoeState_Attack_06::Update(CJaneDoe* pOwner, _float dt)
     pOwner->Process_RootMotion(dt,
         ENUM(CJaneDoe::ROOTMOTION_MASK::MOVE) |
         ENUM(CJaneDoe::ROOTMOTION_MASK::QUATERNION));
+
+    for (const auto& Event : pOwner->Get_Component<CAnimator3D>()->Get_EventBus())
+    {
+        if (Event.Type != CLIP_EVENT_TYPE::NOTIFY) continue;
+
+        if (Event.Tag == "RHandStart")
+        {
+            pOwner->Begin_AttackCollider("HandWeapon_R", HitDesc()
+                .Type(HIT_TYPE::ONCE)
+                .Damage(pOwner->Get_AttackPower() * 2.913f * Helper::Get_Random_Float(1.f, 1.5f)
+                    , DAMAGE_TYPE::HARD)
+            );
+        }
+        else if (Event.Tag == "RHandEnd")
+        {
+            pOwner->End_AttackCollider("HandWeapon_R");
+        }
+        else if (Event.Tag == "LFootStart")
+        {
+            pOwner->Begin_AttackCollider("FootWeapon_L", HitDesc()
+                .Type(HIT_TYPE::ONCE)
+                .Damage(pOwner->Get_AttackPower() * 2.913f * Helper::Get_Random_Float(1.f, 1.5f)
+                    , DAMAGE_TYPE::HARD)
+            );
+        }
+        else if (Event.Tag == "LFootEnd")
+        {
+            pOwner->End_AttackCollider("FootWeapon_L");
+        }
+        else if (Event.Tag == "RFootStart")
+        {
+            pOwner->Begin_AttackCollider("FootWeapon_R", HitDesc()
+                .Type(HIT_TYPE::ONCE)
+                .Damage(pOwner->Get_AttackPower() * 2.913f * Helper::Get_Random_Float(1.f, 1.5f)
+                    , DAMAGE_TYPE::HARD)
+            );
+        }
+        else if (Event.Tag == "RFootEnd")
+        {
+            pOwner->End_AttackCollider("FootWeapon_R");
+        }
+    }
 
     Update_Effects(pOwner);
     // 마스크 변경

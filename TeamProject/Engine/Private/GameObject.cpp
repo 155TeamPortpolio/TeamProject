@@ -227,7 +227,15 @@ void CGameObject::RenderHierarchy(CGameObject*& SelectedObject, bool isSelected)
 	ImGui::PopID();
 
 }
-
+_bool CGameObject::Is_Root() {
+	if (CChild* pChild = Get_Component<CChild>()) {
+		m_isRootObject = false;
+	}
+	else {
+		m_isRootObject = true;
+	}
+	return m_isRootObject;
+}
 void CGameObject::Set_Layer(CLayer* pLayer)
 {
 	m_pLayer = pLayer;

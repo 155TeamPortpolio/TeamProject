@@ -1000,6 +1000,13 @@
     <Filter Include="02. GameObject\Object\Gacha\GachaProps\GachaBack">
       <UniqueIdentifier>{e5c0363c-6e7d-497f-a9a3-598931dd3e38}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\EtherClayMore\State\Parry">
+      <UniqueIdentifier>{3654afe4-97aa-4a58-9ad0-1c8974d7bd98}</UniqueIdentifier>
+   </Filter>
+    <Filter Include="02. GameObject\UI\02. 3D\Plane\Gangta">
+      <UniqueIdentifier>{93712aaf-87f8-46e7-8d80-8d430b09aa6f}</UniqueIdentifier>
+
+    </Filter>
     <Filter Include="02. GameObject\UI\01. 2D\BackButton">
       <UniqueIdentifier>{97c4cc33-5194-4f2e-954a-7234d9714dbb}</UniqueIdentifier>
     </Filter>
@@ -1968,6 +1975,10 @@
     <ClInclude Include="..\Public\Defiler_Control.h">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\MapLightPoint.h" />
+    <ClInclude Include="..\public\UI_Gangta.h">
+      <Filter>02. GameObject\UI\02. 3D\Plane\Gangta</Filter>
+    </ClInclude>
     <ClInclude Include="..\public\MapLightPoint.h">
       <Filter>02. GameObject\MapObject\04. MapLightPoint</Filter>
     </ClInclude>
@@ -1986,6 +1997,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\UI_LotteryResultBanner.h">
       <Filter>02. GameObject\UI\01. 2D\Lottery\ResultBanner</Filter>
+  </ClInclude>
+    <ClInclude Include="..\public\Claymore_Parried.h">
+      <Filter>02. GameObject\Object\Enemy\Normal\EtherClayMore\State\Parry</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2889,7 +2903,13 @@
     <ClCompile Include="..\private\GachaProps.cpp">
       <Filter>02. GameObject\Object\Gacha\GachaProps</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\Claymore_Parried.cpp">
+      <Filter>02. GameObject\Object\Enemy\Normal\EtherClayMore\State\Parry</Filter>
+    </ClCompile>
     <ClCompile Include="..\private\MapLightPoint.cpp" />
+    <ClCompile Include="..\private\UI_Gangta.cpp">
+      <Filter>02. GameObject\UI\02. 3D\Plane\Gangta</Filter>
+    </ClCompile>
     <ClCompile Include="..\Private\UI_IconButton.cpp">
       <Filter>02. GameObject\UI\01. 2D\IconButton</Filter>
     </ClCompile>

@@ -627,7 +627,10 @@ void CThugBulkyEnforcer::ControlState(const _float dt)
 {
 	if ("Death" != m_pStateMachine->Get_CurrentStateName() &&
 		0 >= m_tStatus.iNowHP)
+	{
+		RequestRemoveOnDeathToBattleSystem();
 		m_pStateMachine->Change_State("Death");
+	}
 
 	if ("Death" != m_pStateMachine->Get_CurrentStateName() &&
 		"Groggy" != m_pStateMachine->Get_CurrentStateName() &&

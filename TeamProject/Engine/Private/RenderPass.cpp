@@ -43,7 +43,8 @@ void RenderPass::BindConstant(ID3D11DeviceContext* pContext, CModel* pModel, CMa
 	pCurShader->Bind_Value("g_BoneMatrices", SkinningMatricedParam);
 
 	ID3D11InputLayout* pLayout;
-	pRenderer->Get_InputLayout(pModel, pCurShader, DrawIndex, pMaterial->GetPassConstant(MaterialIndex), &pLayout);
+	HRESULT hr =		pRenderer->Get_InputLayout(pModel, pCurShader, DrawIndex, pMaterial->GetPassConstant(MaterialIndex), &pLayout);
+	if(SUCCEEDED(hr))
 	pContext->IASetInputLayout(pLayout);
 }
 
@@ -61,8 +62,8 @@ void RenderPass::BindConstant(ID3D11DeviceContext* pContext, CSprite2D* pSprite,
 	pCurShader->Bind_Value("ObjectBufferArray", ObjectMaticedParam);
 
 	ID3D11InputLayout* pLayout;
-	pRenderer->Get_BufferInputLayout(pSprite->Get_Buffer(), pCurShader, passConstant, &pLayout);
-	pContext->IASetInputLayout(pLayout);
+	HRESULT hr = pRenderer->Get_BufferInputLayout(pSprite->Get_Buffer(), pCurShader, passConstant, &pLayout);
+	if (SUCCEEDED(hr))pContext->IASetInputLayout(pLayout);
 }
 
 

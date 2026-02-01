@@ -33,6 +33,9 @@ void CBoneFollower::Link_Bone(CAnimator3D* pAnimator, const string& boneName)
 	m_pMasterAnimator = pAnimator;
 	m_pMasterTransform = m_pMasterAnimator->Get_Owner()->Get_Component<CTransform>();
 	FollowingBone = boneName;
+
+	Safe_AddRef(m_pMasterAnimator);
+	Safe_AddRef(m_pMasterTransform);
 }
 
 void CBoneFollower::Sync_Transform(_float dt, CTransform* pTransform, _bool OnlyPosition)
@@ -94,4 +97,7 @@ CComponent* CBoneFollower::Clone()
 void CBoneFollower::Free()
 {
 	__super::Free();
+
+	Safe_Release(m_pMasterAnimator);
+	Safe_Release(m_pMasterTransform);
 }
