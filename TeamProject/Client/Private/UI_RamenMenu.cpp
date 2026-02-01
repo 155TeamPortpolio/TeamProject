@@ -68,7 +68,7 @@ void CUI_RamenMenu::UI_Active(void* pArg)
 {
     Set_Animation(0);
     Set_ChildAlpha(CHILD::ACTIVE, 1.f);
-    m_pAttributeText->Set_Alive(true);
+    m_pAttributeText->UI_Active();
     for (auto& pAttributeIcon: m_AttributeIcons)
         pAttributeIcon->Set_Alive(false);
 }
@@ -77,7 +77,7 @@ void CUI_RamenMenu::UI_DeActive(void* pArg)
 {
     Set_Animation(1);
     Set_ChildAlpha(CHILD::ACTIVE, 0.f);
-    m_pAttributeText->Set_Alive(false);
+    m_pAttributeText->UI_DeActive();
     for (auto& pAttributeIcon : m_AttributeIcons)
         pAttributeIcon->Set_Alive(true);
 }

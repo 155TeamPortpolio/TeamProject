@@ -97,10 +97,12 @@ void CUI_RamenAttributeText::Late_Update(_float dt)
 
 void CUI_RamenAttributeText::UI_Active(void* pArg)
 {
+    Set_Alpha(1.f);
 }
 
 void CUI_RamenAttributeText::UI_DeActive(void* pArg)
 {
+    Set_Alpha(0.f);
 }
 
 CGameObject* CUI_RamenAttributeText::Create()
