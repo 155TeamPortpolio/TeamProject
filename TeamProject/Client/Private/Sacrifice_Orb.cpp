@@ -10,6 +10,7 @@
 
 /* Component */
 #include "ObjectContainer.h"
+#include "CharacterController.h"
 #include "RigidBody.h"
 #include "Collider.h"
 
@@ -110,15 +111,24 @@ void CSacrifice_Orb::Render_GUI()
 
 void CSacrifice_Orb::OnTriggerEnter(CGameObject* pOther)
 {
-	ObjectManager()->Remove_Object(this); 
+	auto pCollidable = pOther->Get_Component<ICollidable>();
+	COLLISION_GROUP otherGroup = pCollidable->Get_Group();
 
-	_vector3 vPosition = m_pTransform->Get_WorldPos();
-	auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
-		.Asset("sacrifice_orb_explode.json")
-		.Position(vPosition)
-		.Build("Sacrifice_Orb_Explode");
+	if (COLLISION_GROUP::PLAYER_ATTACK == otherGroup || COLLISION_GROUP::PLAYER == otherGroup)
+	{
+		ObjectManager()->Remove_Object(this);
 
-	ObjectManager()->Add_Object(effect, { Get_Level(),"Enemy_Effect_Layer" });
+		_vector3 vPosition = m_pTransform->Get_WorldPos();
+		auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_orb_explode.json")
+			.Position(vPosition)
+			.Build("Sacrifice_Orb_Explode");
+
+		ObjectManager()->Add_Object(effect, { Get_Level(),"Enemy_Effect_Layer" });
+	}
+	else
+		int a = 1;
+	
 }
 
 CSacrifice_Orb* CSacrifice_Orb::Create()

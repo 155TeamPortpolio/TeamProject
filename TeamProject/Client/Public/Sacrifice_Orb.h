@@ -21,7 +21,7 @@ public:
 
 public:
     void OnTriggerEnter(CGameObject* pOther) override;
-    void TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER charaName = CHARACTER::END) override;
+
 public:
     static CSacrifice_Orb* Create();
     CGameObject* Clone(INIT_DESC* pArg) override;

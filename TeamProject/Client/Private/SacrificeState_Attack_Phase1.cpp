@@ -605,17 +605,6 @@ void CSacrificeState_Attack_05_Phase1::Update_Effects(CSacrifice* pOwner)
 	/* Orb1 */
 	if (IsCrossAnimProgress(0.3f))
 	{
-		COLLIDER_DESC colliderDesc = {};
-		colliderDesc.eGroup = COLLISION_GROUP::MONSTER;
-		colliderDesc.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER) + ENUM(COLLISION_GROUP::PLAYER_ATTACK);
-		colliderDesc.bTrigger = true;
-		colliderDesc.bAutoFit = false;
-		colliderDesc.eType = COLLIDER_TYPE::SPHERE;
-		colliderDesc.vSize = _float3{ 3.f,3.f,3.f };
-		colliderDesc.fSizeScale = 1.f;
-		colliderDesc.vCenter = _float3{ 0.f,0.f,0.f };
-		colliderDesc.vRotation = _float3{ 0.f,0.f,0.f };
-
 		auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 		auto pTransform = pOwner->Get_Component<CTransform>();
 
@@ -642,13 +631,24 @@ void CSacrificeState_Attack_05_Phase1::Update_Effects(CSacrifice* pOwner)
 		_vector3 vDir = vTargetPosition - vBonePosition;
 		vDir.Normalize();
 
+		COLLIDER_DESC colliderDesc = {};
+		colliderDesc.eGroup = COLLISION_GROUP::MONSTER;
+		colliderDesc.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER_ATTACK);
+		colliderDesc.bTrigger = true;
+		colliderDesc.bAutoFit = false;
+		colliderDesc.eType = COLLIDER_TYPE::SPHERE;
+		colliderDesc.vSize = _float3{ 1.f,1.f,1.f };
+		colliderDesc.fSizeScale = 1.f;
+		colliderDesc.vCenter = _float3{ 0.f,0.f,0.f };
+		colliderDesc.vRotation = _float3{ 0.f,0.f,0.f };
+
 		auto pOrb = Builder::Create_Object({ "Zero_Level","Proto_GameObject_SacrificeOrb"})
 			.Position(vBonePosition)
 			.Collider(colliderDesc)
 			.Build("SacrificeOrb");
 
 		pOrb->Get_Component<CTransform>()->Set_Look(vDir);
-		ObjectManager()->Add_Object(pOrb, { pOwner->Get_Level(),"Effect_Layer" });
+		ObjectManager()->Add_Object(pOrb, { pOwner->Get_Level(),"Enemy_Layer" });
 	}
 
 	/* Orb2 */
@@ -656,11 +656,11 @@ void CSacrificeState_Attack_05_Phase1::Update_Effects(CSacrifice* pOwner)
 	{
 		COLLIDER_DESC colliderDesc = {};
 		colliderDesc.eGroup = COLLISION_GROUP::MONSTER;
-		colliderDesc.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER) + ENUM(COLLISION_GROUP::PLAYER_ATTACK);
+		colliderDesc.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER_ATTACK);
 		colliderDesc.bTrigger = true;
 		colliderDesc.bAutoFit = false;
 		colliderDesc.eType = COLLIDER_TYPE::SPHERE;
-		colliderDesc.vSize = _float3{ 3.f,3.f,3.f };
+		colliderDesc.vSize = _float3{ 1.f,1.f,1.f };
 		colliderDesc.fSizeScale = 1.f;
 		colliderDesc.vCenter = _float3{ 0.f,0.f,0.f };
 		colliderDesc.vRotation = _float3{ 0.f,0.f,0.f };
@@ -697,7 +697,7 @@ void CSacrificeState_Attack_05_Phase1::Update_Effects(CSacrifice* pOwner)
 			.Build("SacrificeOrb");
 
 		pOrb->Get_Component<CTransform>()->Set_Look(vDir);
-		ObjectManager()->Add_Object(pOrb, { pOwner->Get_Level(),"Effect_Layer" });
+		ObjectManager()->Add_Object(pOrb, { pOwner->Get_Level(),"Enemy_Layer" });
 	}
 
 	/* Laser */
