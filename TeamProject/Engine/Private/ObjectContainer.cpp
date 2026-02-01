@@ -599,12 +599,10 @@ void CObjectContainer::Free()
 	__super::Free();
 	if (m_ChildrenObjects.empty()) return;
 
-	for (auto& child : m_ChildrenObjects) {
-		if (child)
-			child->Get_Component<CChild>()->Dettach_Parent();
-		Safe_Release(child);
+	for (size_t i = 0; i < m_ChildrenObjects.size(); i++)
+	{
+		Destroy_Child(i);
 	}
-
 	m_ChildrenObjects.clear();
 	m_ChildrensName.clear();
 	m_IndexByID.clear();

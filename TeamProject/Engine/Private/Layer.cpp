@@ -50,7 +50,7 @@ void CLayer::Post_EngineUpdate(_float dt)
 	if (!m_isRender) return;
 	dt *= m_LayerTimeScale;
 	for (auto& pGameObject : m_GameObjects)
-		if (pGameObject && pGameObject->Is_Alive() && pGameObject->Is_Alive() && pGameObject->Is_Root())
+		if (pGameObject && pGameObject->Is_Alive() && pGameObject->Is_Root())
 			pGameObject->Post_EngineUpdate(dt);
 }
 
@@ -153,7 +153,7 @@ CGameObject* CLayer::Find_ObjectByID(_uint ObjectID)
 void CLayer::Clear_Layer()
 {
 	for (auto& pGameObject : m_GameObjects)
-		Safe_Release(pGameObject);
+		if(pGameObject)Safe_Release(pGameObject);
 
 	vector<CGameObject*> emptyVec;
 	unordered_map<_uint, _uint> emptyMap;
@@ -178,9 +178,7 @@ void CLayer::Free()
 {
 	__super::Free();
 
-	for (auto& pGameObject : m_GameObjects)
-		Safe_Release(pGameObject);
-
+	Clear_Layer();
 	m_GameObjects.clear();
 	m_IndexByID.clear();
 }

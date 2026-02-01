@@ -60,16 +60,17 @@ void CObjectMgr::Late_Update(_float dt)
 	}
 	m_ReleaseObjs.clear();
 	m_ReleaseIDs.clear();
-
-	for (auto pObject : m_DeleteObjs)
-	{
-		_uint ObjectID = pObject->Get_ObjectID();
-		pObject->Get_Layer()->Remove_GameObject(ObjectID);
-		pObject->Set_Layer(nullptr);
-	}
+	auto snap = m_DeleteObjs;
 
 	m_DeleteObjs.clear();
 	m_DeleteIDs.clear();
+	for (auto pObject : snap)
+	{
+		_uint ObjectID = pObject->Get_ObjectID();
+		pObject->Get_Layer()->Remove_GameObject(ObjectID);
+		//Safe_Release(pObject);
+	}
+
 }
 
 void CObjectMgr::Add_Object(CGameObject* object, const LAYER_DESC& layer)
@@ -123,6 +124,7 @@ void CObjectMgr::Remove_Object(CGameObject* object)
 {
 	if (!object)
 		return;
+
 	if (object->IsFromPool())
 	{
 		auto it = find(m_ReleaseObjs.begin(), m_ReleaseObjs.end(), object);
@@ -137,7 +139,6 @@ void CObjectMgr::Remove_Object(CGameObject* object)
 		auto it = find(m_DeleteObjs.begin(), m_DeleteObjs.end(), object);
 		if (it != m_DeleteObjs.end())
 			return;
-
 		m_DeleteObjs.push_back(object);
 		m_DeleteIDs.insert(object->Get_ObjectID());
 	}
@@ -186,6 +187,8 @@ void CObjectMgr::Clear(const string& LevelTag)
 	for (auto& pair : m_Layers[LevelTag]) {
 		Safe_Release(pair.second);
 	}
+	m_DeleteObjs.clear();
+	m_DeleteIDs.clear();
 	m_pObjectPool->ClearAll();
 	m_Layers[LevelTag].clear();
 }
