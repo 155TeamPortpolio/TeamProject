@@ -35,7 +35,7 @@ HRESULT CUI_RamenMenu::Initialize(INIT_DESC* pArg)
     if (m_pButton)
         m_pButton->Set_OnClick([this]() {
         if (m_onSelect)
-            m_onSelect(this, m_tRamenDesc.iPrice);
+            m_onSelect(this, m_tRamenDesc.iPrice, m_tRamenDesc.strName);
             });
 
     Set_Text(TEXTSLOT::NAME, m_tRamenDesc.strName);

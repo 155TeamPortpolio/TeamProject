@@ -1,12 +1,12 @@
 #include "pch.h"
-#include "UI_ButtonBack.h"
+#include "UI_BackButton.h"
 
 #include "GameInstance.h"
 #include "ObjectContainer.h"
 
 #include "FieldSystem.h"
 
-HRESULT CUI_ButtonBack::Initialize_Prototype()
+HRESULT CUI_BackButton::Initialize_Prototype()
 {
     __super::Initialize_Prototype();
 
@@ -15,7 +15,7 @@ HRESULT CUI_ButtonBack::Initialize_Prototype()
 	return S_OK;
 }
 
-HRESULT CUI_ButtonBack::Initialize(INIT_DESC* pArg)
+HRESULT CUI_BackButton::Initialize(INIT_DESC* pArg)
 {
     BUTTON_DESC* pDesc = static_cast<BUTTON_DESC*>(pArg);
     m_OnClick = pDesc->onClick;
@@ -35,11 +35,11 @@ HRESULT CUI_ButtonBack::Initialize(INIT_DESC* pArg)
 	return S_OK;
 }
 
-void CUI_ButtonBack::Awake()
+void CUI_BackButton::Awake()
 {
 }
 
-void CUI_ButtonBack::Update(_float dt)
+void CUI_BackButton::Update(_float dt)
 {
     __super::Update(dt);
 
@@ -58,7 +58,7 @@ void CUI_ButtonBack::Update(_float dt)
     Get_Component<CObjectContainer>()->UpdateChild(dt);
 }
 
-void CUI_ButtonBack::Cache_Children()
+void CUI_BackButton::Cache_Children()
 {
     auto pContainer = Get_Component<CObjectContainer>();
 
@@ -72,7 +72,7 @@ void CUI_ButtonBack::Cache_Children()
     }
 }
 
-void CUI_ButtonBack::Set_ChildAnimation(CHILD child, _int iIndex)
+void CUI_BackButton::Set_ChildAnimation(CHILD child, _int iIndex)
 {
     auto pChild = m_pChildren[ENUM(child)];
     if (!pChild)
@@ -81,7 +81,7 @@ void CUI_ButtonBack::Set_ChildAnimation(CHILD child, _int iIndex)
     pChild->Set_Animation(iIndex);
 }
 
-_bool CUI_ButtonBack::Is_ChildAnimationFinished(CHILD child)
+_bool CUI_BackButton::Is_ChildAnimationFinished(CHILD child)
 {
     auto pChild = m_pChildren[ENUM(child)];
     if (!pChild)
@@ -90,23 +90,23 @@ _bool CUI_ButtonBack::Is_ChildAnimationFinished(CHILD child)
     return pChild->Is_AnimFinished();
 }
 
-CGameObject* CUI_ButtonBack::Create()
+CGameObject* CUI_BackButton::Create()
 {
-    CUI_ButtonBack* pInstance = new CUI_ButtonBack();
+    CUI_BackButton* pInstance = new CUI_BackButton();
     if (FAILED(pInstance->Initialize_Prototype()))
     {
-        MSG_BOX("Failed to Create : CUI_ButtonBack");
+        MSG_BOX("Failed to Create : CUI_BackButton");
         Safe_Release(pInstance);
     }
     return pInstance;
 }
 
-CGameObject* CUI_ButtonBack::Clone(INIT_DESC* pArg)
+CGameObject* CUI_BackButton::Clone(INIT_DESC* pArg)
 {
-    CUI_ButtonBack* pInstance = new CUI_ButtonBack(*this);
+    CUI_BackButton* pInstance = new CUI_BackButton(*this);
     if (FAILED(pInstance->Initialize(pArg)))
     {
-        MSG_BOX("Failed to Clone : CUI_ButtonBack");
+        MSG_BOX("Failed to Clone : CUI_BackButton");
         Safe_Release(pInstance);
     }
     return pInstance;

@@ -6,7 +6,7 @@
 #include "Sprite2D.h"
 #include "ButtonUI.h" 
 #include "UI_ScratchCard.h"
-#include "UI_ButtonBack.h"
+#include "UI_BackButton.h"
 
 #include "FieldSystem.h"
 
@@ -29,7 +29,7 @@ HRESULT CUI_Lottery::Initialize(INIT_DESC* pArg)
 
     Create_Newspaper();
     Create_ScratchCard();
-    Create_ButtonBack();
+    Create_BackButton();
 
     if (m_pButtons[ENUM(BTN::BTN_REFRESH)])
         m_pButtons[ENUM(BTN::BTN_REFRESH)]->Set_OnClick([this]() { OnClick_RefreshNews(); });
@@ -103,13 +103,13 @@ void CUI_Lottery::Create_ScratchCard()
     m_pChildren[ENUM(CHILD::SCRATCH)] = pObj;
 }
 
-void CUI_Lottery::Create_ButtonBack()
+void CUI_Lottery::Create_BackButton()
 {
-    CUI_ButtonBack::BUTTON_DESC* pDesc = new CUI_ButtonBack::BUTTON_DESC;
+    CUI_BackButton::BUTTON_DESC* pDesc = new CUI_BackButton::BUTTON_DESC;
     pDesc->onClick = [this]() { OnClick_Back(); };
 
     auto pContainer = Get_Component<CObjectContainer>();
-    auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_ButtonBack" })
+    auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_BackButton" })
         .Add_UIDesc(pDesc)
         .Build("buttonBack");
 

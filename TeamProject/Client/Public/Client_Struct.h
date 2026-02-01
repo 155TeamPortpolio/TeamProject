@@ -139,6 +139,14 @@ namespace Client {
 		_int	iOrder;
 		vector<RAMEN_ATTRIBUTE> attributes;
 	}RAMEN_DESC;
+
+	typedef struct tagWeaponDesc {
+		_int		ID;
+		GachaGrade	Grade;
+		string		strModel;
+		string		strMaterial;
+		string		strTexture;
+	}WEAPON_DESC;
 	
 	typedef struct tagCloudDesc {
 		_float3 skyColor = {};
