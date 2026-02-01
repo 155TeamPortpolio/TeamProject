@@ -174,9 +174,7 @@ void CSacrificeState_Attack_Phase1::BuildPattern(CSacrifice* pOwner)
 		}
 	}
 	blackBoard.stateQueue.clear();
-	blackBoard.stateQueue.push_back("Attack10_Phase1");
-	blackBoard.stateQueue.push_back("Attack11_Phase1");
-	blackBoard.stateQueue.push_back("Attack12_Phase1");
+	blackBoard.stateQueue.push_back("Attack05_Phase1");
 
 	blackBoard.isRequestNext = true;
 }
@@ -608,12 +606,12 @@ void CSacrificeState_Attack_05_Phase1::Update_Effects(CSacrifice* pOwner)
 	if (IsCrossAnimProgress(0.3f))
 	{
 		COLLIDER_DESC colliderDesc = {};
-		colliderDesc.eGroup = COLLISION_GROUP::MONSTER_ATTACK;
-		colliderDesc.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER);
+		colliderDesc.eGroup = COLLISION_GROUP::MONSTER;
+		colliderDesc.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER) + ENUM(COLLISION_GROUP::PLAYER_ATTACK);
 		colliderDesc.bTrigger = true;
 		colliderDesc.bAutoFit = false;
 		colliderDesc.eType = COLLIDER_TYPE::SPHERE;
-		colliderDesc.vSize = _float3{ 2.f,2.f,2.f };
+		colliderDesc.vSize = _float3{ 3.f,3.f,3.f };
 		colliderDesc.fSizeScale = 1.f;
 		colliderDesc.vCenter = _float3{ 0.f,0.f,0.f };
 		colliderDesc.vRotation = _float3{ 0.f,0.f,0.f };
@@ -657,12 +655,12 @@ void CSacrificeState_Attack_05_Phase1::Update_Effects(CSacrifice* pOwner)
 	if (IsCrossAnimProgress(0.35f))
 	{
 		COLLIDER_DESC colliderDesc = {};
-		colliderDesc.eGroup = COLLISION_GROUP::MONSTER_ATTACK;
-		colliderDesc.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER);
+		colliderDesc.eGroup = COLLISION_GROUP::MONSTER;
+		colliderDesc.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER) + ENUM(COLLISION_GROUP::PLAYER_ATTACK);
 		colliderDesc.bTrigger = true;
 		colliderDesc.bAutoFit = false;
 		colliderDesc.eType = COLLIDER_TYPE::SPHERE;
-		colliderDesc.vSize = _float3{ 2.f,2.f,2.f };
+		colliderDesc.vSize = _float3{ 3.f,3.f,3.f };
 		colliderDesc.fSizeScale = 1.f;
 		colliderDesc.vCenter = _float3{ 0.f,0.f,0.f };
 		colliderDesc.vRotation = _float3{ 0.f,0.f,0.f };
