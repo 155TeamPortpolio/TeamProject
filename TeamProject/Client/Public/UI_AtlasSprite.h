@@ -1,8 +1,8 @@
 #pragma once
 
 #include "UI_Object.h"
-NS_BEGIN(Client)
 
+NS_BEGIN(Client)
 class CUI_AtlasSprite final : public CUI_Object
 {
 public:
@@ -64,5 +64,4 @@ public:
     static CGameObject* Create();
     CGameObject* Clone(INIT_DESC* pArg = {}) override;
 };
-
 NS_END

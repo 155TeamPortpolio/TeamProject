@@ -43,7 +43,8 @@ static unordered_map<string, Spawner::OBJ_SPEC> s_NPCTable =
 static unordered_map<string, Spawner::OBJ_SPEC> s_InteractTable =
 {
 	{ "Portal",     Spawner::OBJ_SPEC{ "Proto_GameObject_Portal", &CPortal::Create }},
-	{ "ZeroPortal", Spawner::OBJ_SPEC{ "Proto_GameObject_ZeroPortal", &CZeroPortal::Create }}
+	{ "ZeroPortal", Spawner::OBJ_SPEC{ "Proto_GameObject_ZeroPortal", &CZeroPortal::Create }},
+	{ "Invwall",	Spawner::OBJ_SPEC{ "Proto_GameObject_Invwall", &CZeroPortal::Create } }
 };
 #pragma endregion
 
@@ -58,6 +59,7 @@ void Client::Spawner::Register_Prototype(const string& MapDataName, const string
 	case Client::Spawner::ENTITY_TYPE::NPC:			Table = &s_NPCTable;		break;
 	case Client::Spawner::ENTITY_TYPE::INTERACTABLE:Table = &s_InteractTable;	break;
 	case Client::Spawner::ENTITY_TYPE::ETC:										return;
+	case Client::Spawner::ENTITY_TYPE::INVWALL:									return;
 	default:																	return;
 	}
 
@@ -72,6 +74,7 @@ OBJECT_HANDLE Client::Spawner::Create_Entity(const SPAWNER_DESC& Desc)
 	case 0:	return Create_NPC(Desc);			break;
 	case 1:	return Create_Interactable(Desc);	break;
 	case 2:	return Create_ETC(Desc);			break;
+	case 3: return Create_Invwall(Desc);		break;
 	default:return OBJECT_HANDLE();				break;
 	}
 }
@@ -173,7 +176,7 @@ OBJECT_HANDLE Client::Spawner::Create_Interactable(const SPAWNER_DESC& Desc)
 		.Position(Desc.vTranslation)
 		.Collider(tColDesc)
 		.Scale(Desc.vScale)
-		.Build(Desc.tagLevel);
+		.Build(Desc.tagName);
 
 	ObjectManager()->Add_Object(Object, { Desc.tagLevel, "InteractableObject_Layer" });
 	return Object->Get_Handle();
@@ -206,6 +209,32 @@ OBJECT_HANDLE Client::Spawner::Create_ETC(const SPAWNER_DESC& Desc)
 }
 #pragma endregion
 
+
+/* Maptool Type 3 */
+#pragma region Entity3(Invwall)
+OBJECT_HANDLE Client::Spawner::Create_Invwall(const SPAWNER_DESC& Desc)
+{
+	COLLIDER_DESC tColDesc{};
+
+	tColDesc.eGroup = COLLISION_GROUP::COMMON;
+	tColDesc.iCollisionMask = 0xFFFFFFFF;
+	tColDesc.eType = COLLIDER_TYPE::BOX;
+	tColDesc.bAutoFit = false;
+	tColDesc.bTrigger = false;
+	tColDesc.vCenter = { 0,0,0 };
+	tColDesc.vSize = Desc.vColSize;
+	tColDesc.vRotation = Desc.vRotation;
+
+	CGameObject* Object = Builder::Create_Object({ G_GlobalLevelKey, "Proto_GameObject_MapInvisibleWall" })
+		.Position(Desc.vTranslation)
+		.Collider(tColDesc)
+		.Build(Desc.tagName);
+
+	ObjectManager()->Add_Object(Object, { Desc.tagLevel, "InvisibleWall_Layer" });
+	return Object->Get_Handle();
+}
+
+
 /* --------------------------------------------------------------------------------------------------------------------- */
 
 /* Function */
@@ -221,3 +250,4 @@ void Client::Spawner::Gravity(CGameObject* pGameObject, const vector<FIELD_DATA>
 	}
 }
 #pragma endregion
+

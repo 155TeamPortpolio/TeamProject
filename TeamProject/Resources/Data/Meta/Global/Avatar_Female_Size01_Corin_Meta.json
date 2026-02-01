@@ -1,5 +1,5 @@
 {
-  "AnimPath" : "../Bin/Resources/Global/BattleCharacter/Corin/Anim/",
+  "AnimPath": "../Bin/Resources/Global/BattleCharacter/Corin/Anim/",
   "PreTransform": {
     "_11": -0.009999999776482582,
     "_12": 0.0,
@@ -58,7 +58,7 @@
           "EventTag": "SawInterval"
         },
         {
-          "EventTime": 0.9900000095367432,
+          "EventTime": 1.550102710723877,
           "EventType": "Notify",
           "EventTag": "SawEnd"
         }
@@ -66,7 +66,13 @@
     },
     {
       "ClipTag": "Avatar_Female_Size01_Corin_Ani_AssaultAid_End",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.0404808335006237,
+          "EventType": "Notify",
+          "EventTag": "CheckCombo"
+        }
+      ]
     },
     {
       "ClipTag": "Avatar_Female_Size01_Corin_Ani_Attack_Branch_01",
@@ -127,7 +133,13 @@
     },
     {
       "ClipTag": "Avatar_Female_Size01_Corin_Ani_Attack_Branch_02_Explode",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.2619883120059967,
+          "EventType": "Notify",
+          "EventTag": "CheckCombo"
+        }
+      ]
     },
     {
       "ClipTag": "Avatar_Female_Size01_Corin_Ani_Attack_Branch_03_Loop",
@@ -169,7 +181,13 @@
     },
     {
       "ClipTag": "Avatar_Female_Size01_Corin_Ani_Attack_Counter_Explode",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.20064978301525116,
+          "EventType": "Notify",
+          "EventTag": "CheckCombo"
+        }
+      ]
     },
     {
       "ClipTag": "Avatar_Female_Size01_Corin_Ani_Attack_Normal_01",
@@ -261,6 +279,11 @@
         },
         {
           "EventTime": 1.5213775634765625,
+          "EventType": "Notify",
+          "EventTag": "CheckCombo"
+        },
+        {
+          "EventTime": 1.4825210571289063,
           "EventType": "Notify",
           "EventTag": "SawEnd"
         }

@@ -52,6 +52,53 @@ void CCorinState_ExAttack::Enter(CCorin* pOwner)
 
 void CCorinState_ExAttack::Update(CCorin* pOwner, _float dt)
 {
+    _float fOnceRatio;
+    _float fIntervalRatio;
+    if (!m_pOwnerStateMachine->Get_Bool("Enhanced"))
+    {
+        fOnceRatio = 0.667f;
+        fIntervalRatio = 0.375f;
+    }
+    else
+    {
+        fOnceRatio = 3.451f;
+        fIntervalRatio = 3.451f;
+    }
+
+    for (const auto& Event : pOwner->Get_Animator()->Get_EventBus())
+    {
+        if (Event.Type != CLIP_EVENT_TYPE::NOTIFY) continue;
+        if (Event.Tag == "SawOnce")
+        {
+            pOwner->Begin_AttackCollider("Saw",
+                HitDesc()
+                .Type(HIT_TYPE::ONCE)
+                .Damage(pOwner->Get_AttackPower() * fOnceRatio * Helper::Get_Random_Float(1.0f, 1.5f)
+                    , DAMAGE_TYPE::NORMAL)
+                .Charge(0.f, 100.f)
+            );
+        }
+        else if (Event.Tag == "SawInterval")
+        {
+            pOwner->Begin_AttackCollider("Saw",
+                HitDesc()
+                .Type(HIT_TYPE::INTERVAL)
+                .Damage(pOwner->Get_AttackPower() * fIntervalRatio * Helper::Get_Random_Float(1.0f, 1.5f)
+                    , DAMAGE_TYPE::HARD)
+                .Interval(0.1f)
+                .Charge(0.f, 50.f)
+            );
+        }
+        else if (Event.Tag == "SawEnd")
+        {
+            pOwner->End_AttackCollider("Saw");
+        }
+        else if (Event.Tag == "PopInvincible")
+        {
+            pOwner->Pop_Invincible();
+        }
+    }
+
     if (!m_pSubStateMachine->Get_Bool("ExFinished"))
     {
         string strCurrentState = m_pSubStateMachine->Get_CurrentStateName();
@@ -93,6 +140,7 @@ void CCorinState_ExAttack::Update(CCorin* pOwner, _float dt)
 
 void CCorinState_ExAttack::Exit(CCorin* pOwner)
 {
+    pOwner->Reset_ReserveCombo();
     pOwner->Set_SpecialEnergy(80.f);
     pOwner->Get_StateMachine()->Set_Bool("Resistance", false);
 
@@ -138,53 +186,6 @@ void CCorinState_ExAttack_Start::Update(CCorin* pOwner, _float dt)
     pOwner->Process_RootMotion(dt,
         ENUM(CCorin::ROOTMOTION_MASK::MOVE) |
         ENUM(CCorin::ROOTMOTION_MASK::QUATERNION));
-    
-    _float fOnceRatio;
-    _float fIntervalRatio;
-    if (!m_pOwnerStateMachine->Get_Bool("Enhanced"))
-    {
-        fOnceRatio = 0.667f;
-        fIntervalRatio = 0.375f;
-    }
-    else
-    {
-        fOnceRatio = 3.451f;
-        fIntervalRatio = 3.451f;
-    }
-
-    for (const auto& Event : pOwner->Get_Animator()->Get_EventBus())
-    {
-        if (Event.Type != CLIP_EVENT_TYPE::NOTIFY) continue;
-        if (Event.Tag == "SawOnce")
-        {
-            pOwner->Begin_AttackCollider("Saw", 
-                HitDesc()
-                .Type(HIT_TYPE::ONCE)
-                .Damage(pOwner->Get_AttackPower() * fOnceRatio * Helper::Get_Random_Float(1.0f, 1.5f)
-                    , DAMAGE_TYPE::NORMAL)
-                .Charge(0.f,100.f)
-                );
-        }
-        else if (Event.Tag == "SawInterval")
-        {
-            pOwner->Begin_AttackCollider("Saw",
-                HitDesc()
-                .Type(HIT_TYPE::INTERVAL)
-                .Damage(pOwner->Get_AttackPower() * fIntervalRatio * Helper::Get_Random_Float(1.0f, 1.5f)
-                    , DAMAGE_TYPE::HARD)
-                .Interval(0.1f)
-                .Charge(0.f, 50.f)
-            );
-        }
-        else if (Event.Tag == "SawEnd")
-        {
-            pOwner->End_AttackCollider("Saw");
-        }
-        else if (Event.Tag == "PopInvincible")
-        {
-            pOwner->Pop_Invincible();
-        }
-    }
 }
 
 void CCorinState_ExAttack_Loop::Enter(CCorin* pOwner)
