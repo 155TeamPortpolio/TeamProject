@@ -1,8 +1,8 @@
 #pragma once
-#include "GameObject.h"
+#include "Enemy.h"
 
 NS_BEGIN(Client)
-class CSacrifice_Orb : public CGameObject
+class CSacrifice_Orb : public CEnemy
 {
 private:
     CSacrifice_Orb();
@@ -27,8 +27,10 @@ public:
     CGameObject* Clone(INIT_DESC* pArg) override;
     void Free() override;
 
+
 private:
     void ChaseTarget();
+    HRESULT Create_Colliders();
 
     _float m_fSpeed{};
     _float3 vTargetPos{};
