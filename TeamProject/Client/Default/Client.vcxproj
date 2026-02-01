@@ -411,7 +411,7 @@
     <ClInclude Include="..\public\ThugPoacher_Idle.h" />
     <ClInclude Include="..\public\ThugPoacher_Move.h" />
     <ClInclude Include="..\public\SirChop.h" />
-    <ClInclude Include="..\Public\UI_ButtonBack.h" />
+    <ClInclude Include="..\Public\UI_BackButton.h" />
     <ClInclude Include="..\public\UI_DamageText.h" />
     <ClInclude Include="..\public\DialogueNpc.h" />
     <ClInclude Include="..\public\ElectricBoo.h" />
@@ -453,12 +453,16 @@
     <ClInclude Include="..\public\Portal.h" />
     <ClInclude Include="..\Public\SacrificeState_Groggy_Phase1.h" />
     <ClInclude Include="..\Public\SacrificeState_Groggy_Phase2.h" />
+    <ClInclude Include="..\Public\UI_IconButton.h" />
     <ClInclude Include="..\Public\UI_Lottery.h" />
     <ClInclude Include="..\Public\UI_Newspaper.h" />
     <ClInclude Include="..\Public\UI_Ramen.h" />
     <ClInclude Include="..\Public\UI_RamenAttributeIcon.h" />
     <ClInclude Include="..\Public\UI_RamenAttributeText.h" />
     <ClInclude Include="..\Public\UI_RamenMenu.h" />
+    <ClInclude Include="..\Public\UI_RamenOrderBanner.h" />
+    <ClInclude Include="..\Public\UI_RamenResultBanner.h" />
+    <ClInclude Include="..\Public\UI_RamenVideo.h" />
     <ClInclude Include="..\Public\UI_ResultBanner.h" />
     <ClInclude Include="..\Public\UI_ScratchCard.h" />
     <ClInclude Include="..\Public\StageFx.h" />
@@ -770,7 +774,7 @@
     <ClCompile Include="..\private\ThugPoacher_Idle.cpp" />
     <ClCompile Include="..\private\ThugPoacher_Move.cpp" />
     <ClCompile Include="..\private\SirChop.cpp" />
-    <ClCompile Include="..\Private\UI_ButtonBack.cpp" />
+    <ClCompile Include="..\Private\UI_BackButton.cpp" />
     <ClCompile Include="..\private\UI_DamageText.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='ReleaseDebug|x64'">Disabled</Optimization>
       <Optimization Condition="'$(Configuration)|$(Platform)'=='EngineDebug|x64'">Disabled</Optimization>
@@ -813,12 +817,16 @@
     <ClCompile Include="..\private\Portal.cpp" />
     <ClCompile Include="..\Private\SacrificeState_Groggy_Phase1.cpp" />
     <ClCompile Include="..\Private\SacrificeState_Groggy_Phase2.cpp" />
+    <ClCompile Include="..\Private\UI_IconButton.cpp" />
     <ClCompile Include="..\Private\UI_Lottery.cpp" />
     <ClCompile Include="..\Private\UI_Newspaper.cpp" />
     <ClCompile Include="..\Private\UI_Ramen.cpp" />
     <ClCompile Include="..\Private\UI_RamenAttributeIcon.cpp" />
     <ClCompile Include="..\Private\UI_RamenAttributeText.cpp" />
     <ClCompile Include="..\Private\UI_RamenMenu.cpp" />
+    <ClCompile Include="..\Private\UI_RamenOrderBanner.cpp" />
+    <ClCompile Include="..\Private\UI_RamenResultBanner.cpp" />
+    <ClCompile Include="..\Private\UI_RamenVideo.cpp" />
     <ClCompile Include="..\Private\UI_ResultBanner.cpp" />
     <ClCompile Include="..\Private\UI_ScratchCard.cpp" />
     <ClCompile Include="..\private\ThugAssaulter_Groggy.cpp" />

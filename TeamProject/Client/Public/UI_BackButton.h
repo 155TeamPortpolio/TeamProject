@@ -3,7 +3,7 @@
 
 NS_BEGIN(Client)
 
-class CUI_ButtonBack final : public CUI_Object
+class CUI_BackButton final : public CUI_Object
 {
 public:
 	typedef struct tagButtonDesc : public UI_DESC{
@@ -15,9 +15,9 @@ private:
 	inline static const string INSTANCENAMES[ENUM(CHILD::END)] = { "button", "overlay", "icon" };
 
 private:
-	CUI_ButtonBack() {}
-	CUI_ButtonBack(const CUI_ButtonBack& rhs) : CUI_Object(rhs) {}
-	virtual ~CUI_ButtonBack() DEFAULT;
+	CUI_BackButton() {}
+	CUI_BackButton(const CUI_BackButton& rhs) : CUI_Object(rhs) {}
+	virtual ~CUI_BackButton() DEFAULT;
 
 public:
 	virtual HRESULT Initialize_Prototype()           override;

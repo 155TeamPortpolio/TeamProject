@@ -5,13 +5,16 @@
 #include "ObjectContainer.h"
 #include "TextSlot.h"
 #include "ButtonUI.h"
-#include "UI_ButtonBack.h"
+#include "UI_BackButton.h"
 #include "UI_RamenMenu.h"  
+#include "UI_RamenOrderBanner.h"
+#include "UI_RamenVideo.h"
+#include "UI_RamenResultBanner.h"
 
 #include "DataBase.h"
 #include "FieldSystem.h"
 
-void CUI_Ramen::Select_Menu(CUI_Object* pSelected, _int iPrice)
+void CUI_Ramen::Select_Menu(CUI_Object* pSelected, _int iPrice, wstring strMenu)
 {
     if (m_pSelectedMenu == pSelected || !pSelected)
         return;
@@ -23,6 +26,8 @@ void CUI_Ramen::Select_Menu(CUI_Object* pSelected, _int iPrice)
     m_pSelectedMenu->UI_Active(nullptr);
 
     Set_TextPrice(m_iMoney, iPrice);
+    replace(strMenu.begin(), strMenu.end(), L'\n', L' ');
+    m_strMenu = strMenu; 
 }
 
 HRESULT CUI_Ramen::Initialize_Prototype()
@@ -39,8 +44,12 @@ HRESULT CUI_Ramen::Initialize(INIT_DESC* pArg)
     __super::Initialize(pArg);
 
     Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("ramen.json")));
-    Create_ButtonBack();
+    Create_BackButton();
     Create_Menus();
+    Create_OrderBanner();
+    Create_Video();
+    Create_ResultBanner();
+
     Cache();
 
     if (m_pButtonOrder)
@@ -83,12 +92,12 @@ void CUI_Ramen::UI_DeActive(void* pArg)
     Set_Alive(false);
 }
 
-void CUI_Ramen::Create_ButtonBack()
+void CUI_Ramen::Create_BackButton()
 {
-    CUI_ButtonBack::BUTTON_DESC* pDesc = new CUI_ButtonBack::BUTTON_DESC;
+    CUI_BackButton::BUTTON_DESC* pDesc = new CUI_BackButton::BUTTON_DESC;
 
     auto pContainer = Get_Component<CObjectContainer>();
-    auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_ButtonBack" })
+    auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_BackButton" })
         .Add_UIDesc(pDesc)
         .Build("buttonBack");
 
@@ -111,7 +120,7 @@ void CUI_Ramen::Create_Menus()
     for (_int i = 0; i < iMenuCount; ++i)
     {
         CUI_RamenMenu::RAMENMENU_DESC* pDesc = new CUI_RamenMenu::RAMENMENU_DESC;
-        pDesc->onSelect = [this](CUI_Object* pSelected, _int iPrice) { Select_Menu(pSelected, iPrice); };
+        pDesc->onSelect = [this](CUI_Object* pSelected, _int iPrice, wstring strMenu) { Select_Menu(pSelected, iPrice, strMenu); };
         pDesc->tRamenDesc = *vecRamenTable[i];
 
         auto pMenu = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_RamenMenu" })
@@ -125,6 +134,54 @@ void CUI_Ramen::Create_Menus()
         pContainer->Add_Child(pMenu);
         m_pMenus[i] = pMenu;
     }
+}
+
+void CUI_Ramen::Create_OrderBanner()
+{
+    CUI_RamenOrderBanner::ORDER_BANNER_DESC* pDesc = new CUI_RamenOrderBanner::ORDER_BANNER_DESC;
+    pDesc->onOrderComfirm = [this]() { OnClick_OrderComfirm();  };
+
+    auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_RamenOrderBanner" })
+        .Add_UIDesc(pDesc)
+        .Build("orderBanner");
+
+    if (!pObj)
+        return;
+
+    Get_Component<CObjectContainer>()->Add_Child(pObj);
+    m_pOrderBanner = pObj;
+}
+
+void CUI_Ramen::Create_Video()
+{
+    CUI_RamenVideo::VIDEO_DESC* pDesc = new  CUI_RamenVideo::VIDEO_DESC;
+    pDesc->onVideoFinished = [this]() { OnVideoFinished();  };
+
+    auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_RamenVideo" })
+        .Add_UIDesc(pDesc)
+        .Build("video");
+
+    if (!pObj)
+        return;
+
+    Get_Component<CObjectContainer>()->Add_Child(pObj);
+    m_pVideo = pObj;
+}
+
+void CUI_Ramen::Create_ResultBanner()
+{
+    CUI_RamenResultBanner::RESULT_BANNER_DESC* pDesc = new CUI_RamenResultBanner::RESULT_BANNER_DESC;
+    pDesc->onClickConfirm = [this]() { OnClick_ResultConfirm();  };
+
+    auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_RamenResultBanner" })
+        .Add_UIDesc(pDesc)
+        .Build("resultBanner");
+
+    if (!pObj)
+        return;
+
+    Get_Component<CObjectContainer>()->Add_Child(pObj);
+    m_pResultBanner = pObj;
 }
 
 void CUI_Ramen::Cache()
@@ -158,11 +215,37 @@ void CUI_Ramen::OnClick_Order()
     {
         Set_ChildAnimation(CHILD::TEXT_ORDER, 0);
         Set_ChildAnimation(CHILD::CLICK_ORDER, 0);
+        if (m_pOrderBanner)
+        {
+            CUI_RamenOrderBanner::ACTIVE_DESC desc = {};
+            desc.strMenu = m_strMenu;
+            m_pOrderBanner->UI_Active(&desc);
+        } 
     }
     else
     {
         MSG_BOX("구매 불가능!");
     }    
+}
+
+void CUI_Ramen::OnClick_OrderComfirm()
+{
+    if (m_pVideo)
+        m_pVideo->UI_Active();
+}
+
+void CUI_Ramen::OnVideoFinished()
+{
+    if (m_pResultBanner)
+    {
+        CUI_RamenResultBanner::ACTIVE_DESC desc = {};
+        desc.strMenu = m_strMenu;
+        m_pResultBanner->UI_Active(&desc);
+    } 
+}
+
+void CUI_Ramen::OnClick_ResultConfirm()
+{
 }
 
 void CUI_Ramen::Set_TextPrice(_int iMoney, _int iPrice)
