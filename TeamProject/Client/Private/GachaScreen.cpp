@@ -46,7 +46,8 @@ void CGachaScreen::Awake()
 {
 	auto pMaterial = Get_Component<CMaterial>();
 
-	CTexture* pTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, "Gacha_A_Loop_Clip.png");
+	CTexture* pTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, "Gacha_A_Loop.png");
+	if (pTexture == nullptr) return;
 
 	auto pMaterialInstances = pMaterial->Get_MaterialInstances();
 	for (auto& instance : pMaterialInstances)

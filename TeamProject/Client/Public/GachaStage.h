@@ -23,7 +23,7 @@ public:
     virtual void    Late_Update(_float dt)      override;
 
 private:
-    void Add_StageScreen();
+    void    Add_StageScreen();
 
 public:
     static CGachaStage* Create();
