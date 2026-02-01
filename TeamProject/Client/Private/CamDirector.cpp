@@ -6,6 +6,7 @@
 #include "FieldSystem.h"
 #include "UIDirector.h"
 #include "DisplayGate.h"
+#include "UI_Gangta.h"
 // Camera
 #include "SequenceCam.h"
 #include "OrbitCam.h"
@@ -167,7 +168,12 @@ void CCamDirector::UpdateInput(_float dt)
     if (m_playing.active) return;
 
     if (InputDevice()->Key_Tap(VK_F3))
-        RequestSequence("Gacha/StartIntro");
+    {
+        auto builder = Builder::Create_UIObject({G_GlobalLevelKey, "Proto_GameObject_Gangta"});
+        auto obj = builder.Build("Gangta");
+
+        UIManager()->Add_UIObject(obj, G_GlobalLevelKey);
+    }
 }
 
 void CCamDirector::AbortSequenceToOrbit(_bool resetTime)

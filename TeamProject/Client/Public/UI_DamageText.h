@@ -26,11 +26,11 @@ private:
     virtual ~CUI_DamageText() DEFAULT;
 
 public:
-    HRESULT Initialize_Prototype() override;
+    HRESULT Initialize_Prototype()          override;
     HRESULT Initialize(INIT_DESC* arg = {}) override;
-    void    Update(_float dt) override;
-    void    UI_Active(void* arg = {}) override;
-    void    UI_DeActive(void* arg = {}) override;
+    void    Update(_float dt)               override;
+    void    UI_Active(void* arg = {})       override;
+    void    UI_DeActive(void* arg = {})     override;
 
 private:
     void  SetDamage(_int damage);

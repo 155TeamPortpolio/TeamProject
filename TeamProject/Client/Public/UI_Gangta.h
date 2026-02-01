@@ -3,7 +3,6 @@
 #include "UI_WorldToScreen.h"
 
 NS_BEGIN(Client)
-
 class CUI_Gangta final : public CUI_WorldToScreen
 {
 private:
@@ -24,5 +23,4 @@ public:
 	static CUI_Gangta* Create();
 	CGameObject* Clone(INIT_DESC* pArg = {}) override;
 };
-
 NS_END
