@@ -1,5 +1,5 @@
 {
-  "AnimPath" : "../bin/Resources/Global/BattleCharacter/JaneDoe/Anim/",
+  "AnimPath": "../bin/Resources/Global/BattleCharacter/JaneDoe/Anim/",
   "PreTransform": {
     "_11": -0.009999999776482582,
     "_12": 0.0,
@@ -18,7 +18,7 @@
     "_43": 0.0,
     "_44": 1.0
   },
- "Clips": [
+  "Clips": [
     {
       "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Attack_AssaultAid",
       "Events": [
@@ -61,6 +61,11 @@
           "EventTime": 0.6800000071525574,
           "EventType": "Notify",
           "EventTag": "AreaAttack"
+        },
+        {
+          "EventTime": 0.707602322101593,
+          "EventType": "Notify",
+          "EventTag": "CheckCombo"
         }
       ]
     },
@@ -109,6 +114,11 @@
           "EventTime": 1.0058479309082031,
           "EventType": "Notify",
           "EventTag": "RFootEnd"
+        },
+        {
+          "EventTime": 0.6118908524513245,
+          "EventType": "Notify",
+          "EventTag": "CheckCombo"
         }
       ]
     },
@@ -160,6 +170,11 @@
           "EventTime": 0.5337881445884705,
           "EventType": "Notify",
           "EventTag": "RHandEnd"
+        },
+        {
+          "EventTime": 0.5378167033195496,
+          "EventType": "Notify",
+          "EventTag": "CheckCombo"
         }
       ]
     },
@@ -189,6 +204,11 @@
           "EventTime": 0.7415205240249634,
           "EventType": "Notify",
           "EventTag": "LFootEnd"
+        },
+        {
+          "EventTime": 0.7508772015571594,
+          "EventType": "Notify",
+          "EventTag": "CheckCombo"
         }
       ]
     },
@@ -248,6 +268,11 @@
           "EventTime": 0.6304093599319458,
           "EventType": "Notify",
           "EventTag": "LFootEnd"
+        },
+        {
+          "EventTime": 0.6495126485824585,
+          "EventType": "Notify",
+          "EventTag": "CheckCombo"
         }
       ]
     },
@@ -277,6 +302,11 @@
           "EventTime": 1.2293696403503418,
           "EventType": "Notify",
           "EventTag": "RFootEnd"
+        },
+        {
+          "EventTime": 0.8326185345649719,
+          "EventType": "Notify",
+          "EventTag": "CheckCombo"
         }
       ]
     },
@@ -493,6 +523,11 @@
           "EventTime": 0.8608187437057495,
           "EventType": "Notify",
           "EventTag": "RFootEnd"
+        },
+        {
+          "EventTime": 0.877193033695221,
+          "EventType": "Notify",
+          "EventTag": "CheckCombo"
         }
       ]
     },
