@@ -1028,6 +1028,12 @@
     <Filter Include="02. GameObject\MapObject\04. MapLightPoint">
       <UniqueIdentifier>{8f98ed95-123b-4c72-b0bb-bcf3efb5405b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Gacha\GachaProps\GachaTV\GachaScreen">
+      <UniqueIdentifier>{6c7a64fc-1a0e-4b5a-9d58-467e698d12fe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Gacha\GachaProps\GachaStage\GachaStageScreen">
+      <UniqueIdentifier>{b8d737d6-f5b7-45c0-a88f-8d51ef7e3b49}</UniqueIdentifier>
+          </Filter>
     <Filter Include="02. GameObject\UI\01. 2D\Lottery\ResultBanner">
       <UniqueIdentifier>{e04f041f-17af-4539-a63b-f9ab0f594352}</UniqueIdentifier>
     </Filter>
@@ -1975,14 +1981,18 @@
     <ClInclude Include="..\Public\Defiler_Control.h">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\MapLightPoint.h" />
     <ClInclude Include="..\public\UI_Gangta.h">
       <Filter>02. GameObject\UI\02. 3D\Plane\Gangta</Filter>
     </ClInclude>
     <ClInclude Include="..\public\MapLightPoint.h">
       <Filter>02. GameObject\MapObject\04. MapLightPoint</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\MapLightPoint.h" />
+    <ClInclude Include="..\public\GachaScreen.h">
+      <Filter>02. GameObject\Object\Gacha\GachaProps\GachaTV\GachaScreen</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\GachaStageScreen.h">
+      <Filter>02. GameObject\Object\Gacha\GachaProps\GachaStage\GachaStageScreen</Filter>
+          </ClInclude>
     <ClInclude Include="..\Public\UI_IconButton.h">
       <Filter>02. GameObject\UI\01. 2D\IconButton</Filter>
     </ClInclude>
@@ -2928,6 +2938,12 @@
     <ClCompile Include="..\private\MapLightPoint.cpp">
       <Filter>02. GameObject\MapObject\04. MapLightPoint</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\GachaScreen.cpp">
+      <Filter>02. GameObject\Object\Gacha\GachaProps\GachaTV\GachaScreen</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\GachaStageScreen.cpp">
+      <Filter>02. GameObject\Object\Gacha\GachaProps\GachaStage\GachaStageScreen</Filter>
+          </ClCompile>
     <ClCompile Include="..\Private\UI_LotteryResultBanner.cpp">
       <Filter>02. GameObject\UI\01. 2D\Lottery\ResultBanner</Filter>
     </ClCompile>
