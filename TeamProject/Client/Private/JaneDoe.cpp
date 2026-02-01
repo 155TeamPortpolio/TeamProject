@@ -600,7 +600,75 @@ HRESULT CJaneDoe::Initialize_Effects()
 		pObjectContainer->Add_Child(pEffect);
 	}
 
+	/* Ex Slash0 */
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("janedoe_ex_slash.json")
+			.Build("JaneDoe_Ex_Slash0");
+
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect);
+	}
+
+	/* Ex Slash1 */
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("janedoe_ex_slash.json")
+			.Build("JaneDoe_Ex_Slash1");
+
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect);
+	}
+
+	/* Ex Slash2 */
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("janedoe_ex_slash.json")
+			.Build("JaneDoe_Ex_Slash2");
+
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect);
+	}
+
+	/* Ex Slash3 */
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("janedoe_ex_slash.json")
+			.Build("JaneDoe_Ex_Slash3");
+
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect);
+	}
+
 	return S_OK;
+}
+
+void CJaneDoe::Play_Effect(const string& effectTag, _fvector offsetPosition, _fvector offsetQuaternion, _bool syncTransform)
+{
+	auto pEffect = Get_Component<CObjectContainer>()->Find_ObjectByName(effectTag);
+	if (!pEffect)
+		return;
+
+	auto pEffectTransform = pEffect->Get_Component<CTransform>();
+	if (syncTransform)
+	{
+		pEffectTransform->Set_Pos(_vector3(offsetPosition));
+		pEffectTransform->Set_Quaternion(offsetQuaternion);
+	}
+	else
+	{
+		_smatrix worldMatrix = m_pTransform->Get_WorldMatrix();
+		_quaternion worldQuaternion = m_pTransform->Get_QuaternionRotate();
+
+		_vector3 vWorldPosition = _vector3::Transform(offsetPosition, worldMatrix);
+		_quaternion localQuaternion(offsetQuaternion);
+		localQuaternion *= worldQuaternion;
+		
+		pEffectTransform->Set_WorldPos(vWorldPosition);
+		pEffectTransform->Set_WorldQuaternion(localQuaternion);
+	}
+
+	static_cast<CEffectContainer*>(pEffect)->Play();
 }
 
 HRESULT CJaneDoe::Add_PassionMotionBlur()

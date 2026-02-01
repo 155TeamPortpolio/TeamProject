@@ -753,7 +753,7 @@ CComponent* CCollider::Clone()
 
 void CCollider::Free()
 {
-	CGameInstance::GetInstance()->Get_CollisionSystem()->UnRegisterCollidable(this, -1);
+	CGameInstance::GetInstance()->Get_CollisionSystem()->UnRegisterCollidable(this, m_iSlotIndex);
 
 	if (m_pStaticActor)
 	{

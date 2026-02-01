@@ -138,6 +138,7 @@ protected:
     /* Shader Params */
     _float m_fUseVanish{};
     _float3 m_vEmissiveColor{};
+    _float m_fEmissiveStrength{};
     _float3 m_vRimLightColor{};
     _float m_fRimLightPower{};
     _float m_fDissolveProgress = 0.f;
