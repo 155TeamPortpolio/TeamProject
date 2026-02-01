@@ -112,15 +112,8 @@ void CJaneDoeState_Attack::Update(CJaneDoe* pOwner, _float dt)
         }
     }
 
-    if (pOwner->Get_TargetHandle().isValid() && pOwner->Is_LookTarget())
-    {
-        auto target = pOwner->Get_TargetHandle().Get();
-        _vector3 vLook = target->Get_WorldPos() - pOwner->Get_WorldPos();
-        vLook.y = 0;
-        vLook.Normalize();
-        pOwner->Get_Component<CTransform>()->Set_Look(vLook);
-        pOwner->Rotate(vLook);
-    }
+    if (pOwner->Is_LookTarget())
+        pOwner->Look_Target();
 
     __super::Update(pOwner, dt);
 }

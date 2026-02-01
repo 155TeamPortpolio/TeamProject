@@ -89,10 +89,6 @@ HRESULT CThugBulkyEnforcer::Initialize(INIT_DESC* pArg)
 	if (FAILED(Initialize_StateMachine()))
 		return E_FAIL;
 
-	//*Shader Texture*
-	auto Texture = ResourceManager()->Load_Texture(G_GlobalLevelKey, "Eff_Noise_119.png");
-	RenderSystem()->Set_NoiseTexture(NOISE_FXTYPE::VANISH, Texture);
- 
 	return S_OK;
 }
 

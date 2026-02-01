@@ -142,7 +142,7 @@ void CSacrificeState_Attack_Phase2::BuildPattern(CSacrifice* pOwner)
 			}break;
 			case 2:
 			{
-				blackBoard.stateQueue.push_back("Attack03_Phase2");
+				//blackBoard.stateQueue.push_back("Attack03_Phase2");
 			}break;
 			case 3:
 			{
@@ -189,13 +189,13 @@ void CSacrificeState_Attack_01_Phase2::Update(CSacrifice* pOwner, _float dt)
 	}
 
 	CSacrifice::SACRIFICE_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
-	if (m_fAnimProgress >= 0.8f)
+	if (m_fAnimProgress >= 0.6f)
 	{
 		blackBoard.isChainOpen = true;
 		if (!blackBoard.stateQueue.empty())
 			blackBoard.isRequestNext = true;
 
-		pOwner->DeactiveWhip();
+		//pOwner->DeactiveWhip();
 	}
 
 	for (const auto& Event : pOwner->Get_Component<CAnimator3D>()->Get_EventBus())

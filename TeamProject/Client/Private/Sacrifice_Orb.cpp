@@ -10,25 +10,25 @@
 
 /* Component */
 #include "ObjectContainer.h"
+#include "CharacterController.h"
 #include "RigidBody.h"
 #include "Collider.h"
 
 CSacrifice_Orb::CSacrifice_Orb()
-	:CGameObject()
+	:CEnemy()
 {
 }
 
 CSacrifice_Orb::CSacrifice_Orb(const CSacrifice_Orb& rhg)
-	:CGameObject(rhg)
+	:CEnemy(rhg)
 {
 }
 
 HRESULT CSacrifice_Orb::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
-	Add_Component<CObjectContainer>();
-	Add_Component<CRigidBody>();
 	Add_Component<CCollider>();
+	Add_Component<CRigidBody>();
 	return S_OK;
 }
 
@@ -46,7 +46,13 @@ HRESULT CSacrifice_Orb::Initialize(INIT_DESC* pArg)
 	auto pObjectContainer = Get_Component<CObjectContainer>();
 	pObjectContainer->Add_Child(pOrb);
 
-	m_fSpeed = 70.f;
+	m_fSpeed = 20.f;
+	SetOnAttack(true);
+	SetParryEnable(true);
+	
+	if (FAILED(Create_Colliders()))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -77,7 +83,7 @@ void CSacrifice_Orb::Update(_float dt)
 		vTargetDir.y = 0.f;
 		vTargetDir.Normalize();
 
-		vTargetDir = _vector3::Lerp(vCurrDir, vTargetDir, dt * 30.f);
+		vTargetDir = _vector3::Lerp(vCurrDir, vTargetDir, dt * 10.f);
 		m_pTransform->Set_Look(vTargetDir);
 		m_pTransform->Translate(vTargetDir * m_fSpeed * dt);
 	}
@@ -91,6 +97,7 @@ void CSacrifice_Orb::Update(_float dt)
 
 void CSacrifice_Orb::Late_Update(_float dt)
 {
+	Get_Component<CObjectContainer>()->Late_UpdateChild(dt);
 	Get_Component<CRigidBody>()->Late_Update(dt);
 }
 
@@ -104,15 +111,24 @@ void CSacrifice_Orb::Render_GUI()
 
 void CSacrifice_Orb::OnTriggerEnter(CGameObject* pOther)
 {
-	ObjectManager()->Remove_Object(this); 
+	auto pCollidable = pOther->Get_Component<ICollidable>();
+	COLLISION_GROUP otherGroup = pCollidable->Get_Group();
 
-	_vector3 vPosition = m_pTransform->Get_WorldPos();
-	auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
-		.Asset("sacrifice_orb_explode.json")
-		.Position(vPosition)
-		.Build("Sacrifice_Orb_Explode");
+	if (COLLISION_GROUP::PLAYER_ATTACK == otherGroup || COLLISION_GROUP::PLAYER == otherGroup)
+	{
+		ObjectManager()->Remove_Object(this);
 
-	ObjectManager()->Add_Object(effect, { Get_Level(),"Enemy_Effect_Layer" });
+		_vector3 vPosition = m_pTransform->Get_WorldPos();
+		auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_orb_explode.json")
+			.Position(vPosition)
+			.Build("Sacrifice_Orb_Explode");
+
+		ObjectManager()->Add_Object(effect, { Get_Level(),"Enemy_Effect_Layer" });
+	}
+	else
+		int a = 1;
+	
 }
 
 CSacrifice_Orb* CSacrifice_Orb::Create()
@@ -148,4 +164,26 @@ void CSacrifice_Orb::Free()
 void CSacrifice_Orb::ChaseTarget()
 {
 
+}
+
+HRESULT CSacrifice_Orb::Create_Colliders()
+{
+	auto pObjectContainer = Get_Component<CObjectContainer>();
+
+	/* Orb */
+	{
+		BATTLE_COLLIDER_DESC colliderDesc{};
+
+		colliderDesc.tagName = "Orb";
+		colliderDesc.isAttachBone = false;
+		colliderDesc.vAttackSize = _float3{ 1.f,1.f,1.f };
+
+		if (FAILED(AttachBattleColliderObject(&colliderDesc)))
+			return E_FAIL;
+	}
+
+	HitDesc hitDesc{};
+	SetBattleColliderObject("Orb", BATTLE_COLTYPE::ATTACK, true, hitDesc);
+
+	return S_OK;
 }
