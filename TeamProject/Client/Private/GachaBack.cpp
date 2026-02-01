@@ -32,6 +32,9 @@ HRESULT CGachaBack::Initialize_Prototype()
 
 HRESULT CGachaBack::Initialize(INIT_DESC* pArg)
 {
+	if (FAILED(__super::Initialize(pArg)))
+		return E_FAIL;
+
     return S_OK;
 }
 

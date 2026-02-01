@@ -318,6 +318,10 @@ void CTransform::Render_GUI()
 	ImGui::TextColored(ImVec4(1.f, 1.f, 1.f, 1.f), "Rotation");
 	ImGui::InputFloat4("##Rotation", reinterpret_cast<float*>(&m_qRotation), "%.2f", ImGuiInputTextFlags_ReadOnly);
 
+	ImGui::Separator();
+	ImGui::TextColored(ImVec4(1.f, 1.f, 1.f, 1.f), "Euler(Radian)");
+	ImGui::InputFloat3("##EularRotation", reinterpret_cast<float*>(&m_EularRotation), "%.4f", ImGuiInputTextFlags_ReadOnly);
+
 	_float rad = XMConvertToRadians(90);
 	// X
 	ImGui::TextColored(ImVec4(1.f, 1.f, 1.f, 1.f), "Rotate X");
@@ -415,7 +419,53 @@ void CTransform::Update_Transform()
 	_matrix matScale = XMMatrixScaling(m_vScale.x, m_vScale.y, m_vScale.z);
 
 	_vector vQuaternion = XMLoadFloat4(&m_qRotation);
+	vQuaternion = XMQuaternionNormalize(vQuaternion);
+
 	_matrix matRot = XMMatrixRotationQuaternion(vQuaternion);
+
+#ifdef _USING_GUI
+	{
+		// 회전행렬 성분 꺼내기
+		DirectX::XMFLOAT4X4 rotM;
+		XMStoreFloat4x4(&rotM, matRot);
+
+		// DirectXMath row-major 저장 기준에서:
+		// r00 r01 r02
+		// r10 r11 r12
+		// r20 r21 r22
+		const float r00 = rotM._11, r01 = rotM._12, r02 = rotM._13;
+		const float r10 = rotM._21, r11 = rotM._22, r12 = rotM._23;
+		const float r20 = rotM._31, r21 = rotM._32, r22 = rotM._33;
+
+		// (Y) yaw, (X) pitch, (Z) roll 로 뽑는 한 가지 표준 조합
+		// pitch = asin(-r20)
+		float pitch = asinf(std::clamp(-r20, -1.0f, 1.0f));
+
+		float yaw = 0.0f;
+		float roll = 0.0f;
+
+		// cos(pitch) ~ 0 근처면(=gimbal) yaw/roll이 섞이므로 안전 처리
+		const float cosPitch = cosf(pitch);
+		if (fabsf(cosPitch) > 1e-5f)
+		{
+			// yaw   = atan2(r10, r00)
+			// roll  = atan2(r21, r22)
+			yaw = atan2f(r10, r00);
+			roll = atan2f(r21, r22);
+		}
+		else
+		{
+			// gimbal 근처: roll을 0으로 두고 yaw를 다른 조합으로
+			roll = 0.0f;
+			// yaw = atan2(-r01, r11) 같은 형태로 대체 (케이스에 따라 선택)
+			yaw = atan2f(-r01, r11);
+		}
+
+		m_EularRotation.x = yaw;   // Yaw (Y축 회전)
+		m_EularRotation.y = pitch; // Pitch (X축 회전)
+		m_EularRotation.z = roll;  // Roll (Z축 회전)
+	}
+#endif // _USING_GUI
 
 	_matrix matPos = XMMatrixTranslation(m_vPosition.x, m_vPosition.y, m_vPosition.z);
 
@@ -424,7 +474,6 @@ void CTransform::Update_Transform()
 	XMStoreFloat4x4(&m_LocalMatrix, LocalMatrix);
 
 	_matrix combined;
-
 	if (m_pParentTransform) {
 		combined = XMLoadFloat4x4(&m_LocalMatrix) * XMLoadFloat4x4(m_pParentTransform->Get_WorldMatrix_Ptr());
 		XMStoreFloat4x4(&m_WorldMatrix, combined);
@@ -440,6 +489,7 @@ void CTransform::Update_Transform()
 	if (m_pParentTransform)
 		m_ParentVersionCounter = m_pParentTransform->m_VersionCounter;
 }
+
 
 _bool CTransform::Check_Dirty()
 {
