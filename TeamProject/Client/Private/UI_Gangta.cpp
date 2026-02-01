@@ -14,9 +14,7 @@ HRESULT CUI_Gangta::Initialize_Prototype()
 HRESULT CUI_Gangta::Initialize(INIT_DESC* arg)
 {
 	__super::Initialize(arg);
-
     Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("Gangta.json")));
-
 	return S_OK;
 }
 
