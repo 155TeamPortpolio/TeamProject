@@ -304,6 +304,7 @@ void CJaneDoe::Increase_Passion(_float fStream)
 	{
 		m_bPassion = true;
 		m_bCanSalchow = true;
+		m_fAttackPower *= 1.25f;
 	}
 }
 
@@ -316,6 +317,7 @@ void CJaneDoe::Decrease_Passion(_float fStream)
 		m_bPassion = false;
 		m_vRimLightColor = _float3(0.f, 0.f, 0.f);
 		m_fRimLightPower = 0.f;
+		m_fAttackPower /= 1.25f;
 	}
 }
 

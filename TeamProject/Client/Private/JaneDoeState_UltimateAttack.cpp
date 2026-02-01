@@ -101,7 +101,11 @@ void CJaneDoeState_UltimateAttack_Loop::Update(CJaneDoe* pOwner, _float dt)
         if (m_fDamageTimer >= m_fDamageInterval)
         {
             m_fDamageTimer -= m_fDamageInterval;
-            BattleSystem()->TakeAllDamage({ HIT_TYPE::ONCE, DAMAGE_TYPE::ULTIMATE, 10.f, 0, 0 });
+            BattleSystem()->TakeAllDamage(HitDesc()
+                .Type(HIT_TYPE::ONCE)
+                .Damage(pOwner->Get_AttackPower() * 14.706f * Helper::Get_Random_Float(1.f, 1.5f)
+                    , DAMAGE_TYPE::ULTIMATE)
+            );
         }
     }
 }

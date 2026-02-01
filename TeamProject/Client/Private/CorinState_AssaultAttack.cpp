@@ -81,6 +81,7 @@ void CCorinState_AssaultAttack::Update(CCorin* pOwner, _float dt)
 
 void CCorinState_AssaultAttack::Exit(CCorin* pOwner)
 {
+	pOwner->Reset_ReserveCombo();
 	pOwner->Pop_Invincible();
 	pOwner->Unlock_Move();
 	__super::Exit(pOwner);

@@ -93,8 +93,8 @@ namespace Client {
 		_float      fDamage = 0.f;
 		_float      fInterval = 0.f;
 		_uint       iMaxCount = 1;
-		_float      fEnergyCharge = 10.f;
-		_float      fDecibelCharge = 100.f;
+		_float      fEnergyCharge = 1.f;
+		_float      fDecibelCharge = 10.f;
 
 		HitDesc& Type(HIT_TYPE e) { eHitType = e; return *this; }
 		HitDesc& Damage(_float f, DAMAGE_TYPE e = DAMAGE_TYPE::NORMAL) { fDamage = f; eDamageType = e; return *this; }
