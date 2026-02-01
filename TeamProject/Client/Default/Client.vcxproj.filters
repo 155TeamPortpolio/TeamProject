@@ -948,7 +948,7 @@
     </Filter>
     <Filter Include="02. GameObject\UI\01. 2D\Ramen\AttributeText">
       <UniqueIdentifier>{f0281968-7296-48e8-82fd-78db5b7603ed}</UniqueIdentifier>
- </Filter>
+    </Filter>
     <Filter Include="02. GameObject\Object\Enemy\Normal\EtherClayMore">
       <UniqueIdentifier>{2e91f17b-8838-42a5-8a0a-feb4f0c6e2fd}</UniqueIdentifier>
     </Filter>
@@ -1002,6 +1002,9 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Gacha\GachaProps\GachaBack">
       <UniqueIdentifier>{e5c0363c-6e7d-497f-a9a3-598931dd3e38}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\EtherClayMore\State\Parry">
+      <UniqueIdentifier>{3654afe4-97aa-4a58-9ad0-1c8974d7bd98}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1944,6 +1947,9 @@
     <ClInclude Include="..\public\GachaProps.h">
       <Filter>02. GameObject\Object\Gacha\GachaProps</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Claymore_Parried.h">
+      <Filter>02. GameObject\Object\Enemy\Normal\EtherClayMore\State\Parry</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2845,6 +2851,9 @@
     </ClCompile>
     <ClCompile Include="..\private\GachaProps.cpp">
       <Filter>02. GameObject\Object\Gacha\GachaProps</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Claymore_Parried.cpp">
+      <Filter>02. GameObject\Object\Enemy\Normal\EtherClayMore\State\Parry</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

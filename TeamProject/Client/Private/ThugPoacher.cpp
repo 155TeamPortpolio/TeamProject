@@ -178,6 +178,11 @@ void CThugPoacher::Render_GUI()
 				m_pStateMachine->Set_Int("AttackPattern", 3);
 				m_pStateMachine->Set_Trigger("Idle_To_Attack");
 			}
+			if (ImGui::Button(u8"4. Attack04"))
+			{
+				m_pStateMachine->Set_Int("AttackPattern", 4);
+				m_pStateMachine->Set_Trigger("Idle_To_Attack");
+			}
 			ImGui::TreePop();
 		}
 		if (ImGui::TreeNode("Death##ThugAssaulterTestDeath"))
@@ -200,9 +205,6 @@ void CThugPoacher::Render_GUI()
 
 			if (ImGui::Button("Hit"))
 				TakeDamage(DAMAGE_TYPE::NORMAL, 20.f);
-
-			if (ImGui::Button("Parried"))
-				Parried();
 
 			if (ImGui::Button("Execute"))
 				m_tStatus.iNowHP -= m_tStatus.iMaxHP;
@@ -240,13 +242,6 @@ void CThugPoacher::OnPooledRelease()
 
 void CThugPoacher::Parried()
 {
-	/*if ("Attack" != m_pStateMachine->Get_CurrentStateName())
-		return;
-
-	__super::Parried();
-
-	m_pStateMachine->Change_State("Parried");
-	SetOnAttack(false, ATTACK_SIDE::NONE); */
 }
 
 HRESULT CThugPoacher::Ready_Children(INIT_DESC* pArg)
@@ -479,7 +474,10 @@ void CThugPoacher::ControlState(const _float dt)
 {
 	if ("Death" != m_pStateMachine->Get_CurrentStateName() &&
 		0 >= m_tStatus.iNowHP)
+	{
+		RequestRemoveOnDeathToBattleSystem();
 		m_pStateMachine->Change_State("Death");
+	}
 
 	if ("Death" != m_pStateMachine->Get_CurrentStateName() &&
 		"Groggy" != m_pStateMachine->Get_CurrentStateName() &&
