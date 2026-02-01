@@ -106,22 +106,22 @@ void CJaneDoeState_ExAttack_Start::Update(CJaneDoe* pOwner, _float dt)
 void CJaneDoeState_ExAttack_Start::Update_Effects(CJaneDoe* pOwner)
 {
     if (IsCrossAnimProgress(0.17f))
-        pOwner->Play_Effect("JaneDoe_Ex_Slash0", _vector3(0.f, 1.3f, 0.f), _quaternion(0.09f, 0.7f, 0.09f, 0.7f));
+        pOwner->Play_Effect("JaneDoe_Ex_Slash0", _vector3(0.f, 1.3f, 0.f), _quaternion(0.64f, 0.29f, 0.64f, 0.29f));
 
     if (IsCrossAnimProgress(0.24f))
-        pOwner->Play_Effect("JaneDoe_Ex_Slash1", _vector3(0.f, 2.f, 0.f), _quaternion(0.09f, 0.7f, 0.09f, 0.7f));
+        pOwner->Play_Effect("JaneDoe_Ex_Slash1", _vector3(0.f, 2.f, 0.f), _quaternion(0.64f, 0.29f, 0.64f, 0.29f));
 
     if (IsCrossAnimProgress(0.31f))
-        pOwner->Play_Effect("JaneDoe_Ex_Slash2", _vector3(0.f, 2.4f, 0.f), _quaternion(0.09f, 0.7f, 0.09f, 0.7f));
+        pOwner->Play_Effect("JaneDoe_Ex_Slash2", _vector3(0.f, 2.4f, 0.f), _quaternion(0.64f, 0.29f, 0.64f, 0.29f));
 
     if (IsCrossAnimProgress(0.38f))
-        pOwner->Play_Effect("JaneDoe_Ex_Slash3", _vector3(0.f, 2.4f, 0.f), _quaternion(0.09f, 0.7f, 0.09f, 0.7f));
+        pOwner->Play_Effect("JaneDoe_Ex_Slash3", _vector3(0.f, 2.4f, 0.f), _quaternion(0.64f, 0.29f, 0.64f, 0.29f));
 
     if (IsCrossAnimProgress(0.5f))
         pOwner->Play_Effect("JaneDoe_Sting", _vector3(0.4f, 2.3f, -3.f), _quaternion(0.2f, 0.f, 0.f, 0.98f), false);
 
     if (IsCrossAnimProgress(0.52f))
-        pOwner->Play_Effect("JaneDoe_Normal_Slash0",_vector3(0.2f,0.5f,0.3f),_quaternion(-0.34f,0.77f,-0.54f,-0.03f));
+        pOwner->Play_Effect("JaneDoe_Normal_Slash0",_vector3(0.2f,0.5f,0.3f),_quaternion(0.59f,0.56f,-0.43f,0.39f));
 }
 
 void CJaneDoeState_ExAttack_End::Enter(CJaneDoe* pOwner)

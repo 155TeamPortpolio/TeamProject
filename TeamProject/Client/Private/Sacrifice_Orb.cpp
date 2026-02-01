@@ -46,7 +46,7 @@ HRESULT CSacrifice_Orb::Initialize(INIT_DESC* pArg)
 	auto pObjectContainer = Get_Component<CObjectContainer>();
 	pObjectContainer->Add_Child(pOrb);
 
-	m_fSpeed = 20.f;
+	m_fSpeed = 60.f;
 	SetOnAttack(true);
 	SetParryEnable(true);
 	
@@ -83,7 +83,7 @@ void CSacrifice_Orb::Update(_float dt)
 		vTargetDir.y = 0.f;
 		vTargetDir.Normalize();
 
-		vTargetDir = _vector3::Lerp(vCurrDir, vTargetDir, dt * 10.f);
+		vTargetDir = _vector3::Lerp(vCurrDir, vTargetDir, dt * 5.f);
 		m_pTransform->Set_Look(vTargetDir);
 		m_pTransform->Translate(vTargetDir * m_fSpeed * dt);
 	}
@@ -109,12 +109,12 @@ void CSacrifice_Orb::Render_GUI()
 	ImGui::Text("pos %f,%f,%f", velo.x, velo.y, velo.z);
 }
 
-void CSacrifice_Orb::OnTriggerEnter(CGameObject* pOther)
+void CSacrifice_Orb::OnCollisionEnter(CGameObject* pOther)
 {
 	auto pCollidable = pOther->Get_Component<ICollidable>();
 	COLLISION_GROUP otherGroup = pCollidable->Get_Group();
 
-	if (COLLISION_GROUP::PLAYER_ATTACK == otherGroup || COLLISION_GROUP::PLAYER == otherGroup)
+	if (COLLISION_GROUP::COMMON == otherGroup)
 	{
 		ObjectManager()->Remove_Object(this);
 

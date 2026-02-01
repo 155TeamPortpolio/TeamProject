@@ -4,6 +4,7 @@
 #include "ResourceMgr.h"
 #include "Helper_Func.h"
 #include "Texture.h"
+#include "BattleSystem.h"
 
 /* Object */
 #include "SacrificeHand.h"
@@ -245,7 +246,8 @@ void CSacrifice::RotateToTarget(_float dt, _float rotateSpeed)
 {
 	_vector3 vPosition = m_pTransform->Get_Pos();
 	_vector3 vCurrDir = m_pTransform->Dir(STATE::LOOK);
-	_vector3 vTargetDir = m_tTargetingInfo.vDirToTarget;
+	_vector3 vTargetPosition = BattleSystem()->GetCurCharacterHandle().Get()->Get_Component<CTransform>()->Get_WorldPos();
+	_vector3 vTargetDir = vTargetPosition - vPosition;
 	vCurrDir.Normalize();
 	vTargetDir.Normalize();
 
@@ -253,6 +255,7 @@ void CSacrifice::RotateToTarget(_float dt, _float rotateSpeed)
 		return;
 
 	vCurrDir = _vector3::Lerp(vCurrDir, vTargetDir, dt * rotateSpeed);
+	vCurrDir.Normalize();
 	m_pTransform->Set_Look(vCurrDir);
 }
 
