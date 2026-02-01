@@ -485,8 +485,28 @@ CTexture* CResourceMgr::Load_Texture(const string& levelTag, const string& textu
 ANIMATION_META CResourceMgr::Load_MetaClip(const string& levelTag, const string& MetaKey)
 {
 	//const string metaPath = Get_ResourcePath(MetaKey);
-	string metaPath = "../../Resources/Data/Meta/" + MetaKey;
-	ANIM_META MetaData = Helper::LoadJson<ANIM_META>(metaPath);
+	string metaPath = "../../Resources/Data/Meta/";
+	string foundPath;
+
+	for (const auto& entry : filesystem::directory_iterator(metaPath))
+	{
+		if (!entry.is_directory())
+			continue;
+
+		filesystem::path candidate = entry.path() / MetaKey;
+		if (filesystem::exists(candidate))
+		{
+			foundPath = candidate.string();
+			break;
+		}
+	}
+
+	if (metaPath.empty())
+	{
+		return {};
+	}
+
+	ANIM_META MetaData = Helper::LoadJson<ANIM_META>(foundPath);
 	
 	ANIMATION_META Meta;
 	const string animDir = MetaData.AnimPath;
