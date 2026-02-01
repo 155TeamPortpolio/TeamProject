@@ -1005,9 +1005,15 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Gacha\GachaProps\GachaResult">
       <UniqueIdentifier>{5b3fe7e7-f877-4cae-bf66-a57e17b1b328}</UniqueIdentifier>
-          </Filter>
+    </Filter>
     <Filter Include="02. GameObject\MapObject\04. MapLightPoint">
       <UniqueIdentifier>{8f98ed95-123b-4c72-b0bb-bcf3efb5405b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Gacha\GachaProps\GachaTV\GachaScreen">
+      <UniqueIdentifier>{6c7a64fc-1a0e-4b5a-9d58-467e698d12fe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Gacha\GachaProps\GachaStage\GachaStageScreen">
+      <UniqueIdentifier>{b8d737d6-f5b7-45c0-a88f-8d51ef7e3b49}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1946,15 +1952,21 @@
     </ClInclude>
     <ClInclude Include="..\public\GachaProps.h">
       <Filter>02. GameObject\Object\Gacha\GachaProps</Filter>
-   </ClInclude>
+    </ClInclude>
     <ClInclude Include="..\public\GachaResult.h">
       <Filter>02. GameObject\Object\Gacha\GachaProps\GachaResult</Filter>
-	</ClInclude>
+    </ClInclude>
     <ClInclude Include="..\Public\Defiler_Control.h">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler</Filter>
     </ClInclude>
     <ClInclude Include="..\public\MapLightPoint.h">
       <Filter>02. GameObject\MapObject\04. MapLightPoint</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\GachaScreen.h">
+      <Filter>02. GameObject\Object\Gacha\GachaProps\GachaTV\GachaScreen</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\GachaStageScreen.h">
+      <Filter>02. GameObject\Object\Gacha\GachaProps\GachaStage\GachaStageScreen</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2860,9 +2872,15 @@
     </ClCompile>
     <ClCompile Include="..\private\GachaResult.cpp">
       <Filter>02. GameObject\Object\Gacha\GachaProps\GachaResult</Filter>
-	</ClCompile>
+    </ClCompile>
     <ClCompile Include="..\private\MapLightPoint.cpp">
       <Filter>02. GameObject\MapObject\04. MapLightPoint</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\GachaScreen.cpp">
+      <Filter>02. GameObject\Object\Gacha\GachaProps\GachaTV\GachaScreen</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\GachaStageScreen.cpp">
+      <Filter>02. GameObject\Object\Gacha\GachaProps\GachaStage\GachaStageScreen</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

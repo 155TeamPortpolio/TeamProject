@@ -3,16 +3,13 @@
 
 NS_BEGIN(Client)
 
-class CGachaStage :
+class CGachaScreen :
     public CGameObject
 {
-public:
-    enum class STAGE { BANGBOO, AVATAR, END };
-
 private:
-    CGachaStage();
-    CGachaStage(const CGachaStage& rhs);
-    virtual ~CGachaStage() DEFAULT;
+    CGachaScreen();
+    CGachaScreen(const CGachaScreen& rhs);
+    virtual ~CGachaScreen() DEFAULT;
 
 public:
     virtual HRESULT Initialize_Prototype()      override;
@@ -22,11 +19,8 @@ public:
     virtual void    Update(_float dt)           override;
     virtual void    Late_Update(_float dt)      override;
 
-private:
-    void Add_StageScreen();
-
 public:
-    static CGachaStage* Create();
+    static CGachaScreen* Create();
     virtual CGameObject* Clone(INIT_DESC* pArg) override;
     virtual void Free() override;
 };
