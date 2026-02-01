@@ -226,6 +226,7 @@ void CUI_Ramen::OnClick_OrderComfirm()
 
     m_iMoney -= m_tRamenDesc.iPrice;
     RuntimeBucket().Int64.Set(PersistScope::SaveSlot, strFieldPlayerKey, m_iMoney);
+    RuntimeBucket().String.Set(PersistScope::SaveSlot, "RamenID", m_tRamenDesc.strID);
 }
 
 void CUI_Ramen::OnVideoFinished()
