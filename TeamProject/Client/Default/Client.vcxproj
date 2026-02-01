@@ -376,6 +376,7 @@
     <ClInclude Include="..\public\Claymore_Hit.h" />
     <ClInclude Include="..\public\Claymore_Idle.h" />
     <ClInclude Include="..\public\Claymore_Move.h" />
+    <ClInclude Include="..\public\Claymore_Parried.h" />
     <ClInclude Include="..\Public\Defiler.h" />
     <ClInclude Include="..\Public\Defiler_Control.h" />
     <ClInclude Include="..\Public\DefilerState_Attack.h" />
@@ -456,6 +457,7 @@
     <ClInclude Include="..\Public\SacrificeState_Groggy_Phase2.h" />
     <ClInclude Include="..\Public\UI_IconButton.h" />
     <ClInclude Include="..\Public\UI_Lottery.h" />
+    <ClInclude Include="..\Public\UI_LotteryResultBanner.h" />
     <ClInclude Include="..\Public\UI_Newspaper.h" />
     <ClInclude Include="..\Public\UI_Ramen.h" />
     <ClInclude Include="..\Public\UI_RamenAttributeIcon.h" />
@@ -742,6 +744,7 @@
     <ClCompile Include="..\private\Claymore_Hit.cpp" />
     <ClCompile Include="..\private\Claymore_Idle.cpp" />
     <ClCompile Include="..\private\Claymore_Move.cpp" />
+    <ClCompile Include="..\private\Claymore_Parried.cpp" />
     <ClCompile Include="..\Private\CorinState_AssaultAttack.cpp" />
     <ClCompile Include="..\Private\CorinState_CounterAttack.cpp" />
     <ClCompile Include="..\Private\Defiler.cpp" />
@@ -821,6 +824,7 @@
     <ClCompile Include="..\Private\SacrificeState_Groggy_Phase2.cpp" />
     <ClCompile Include="..\Private\UI_IconButton.cpp" />
     <ClCompile Include="..\Private\UI_Lottery.cpp" />
+    <ClCompile Include="..\Private\UI_LotteryResultBanner.cpp" />
     <ClCompile Include="..\Private\UI_Newspaper.cpp" />
     <ClCompile Include="..\Private\UI_Ramen.cpp" />
     <ClCompile Include="..\Private\UI_RamenAttributeIcon.cpp" />

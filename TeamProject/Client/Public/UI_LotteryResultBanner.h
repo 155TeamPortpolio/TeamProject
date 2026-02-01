@@ -7,27 +7,23 @@ NS_END
 
 NS_BEGIN(Client)
 
-class CUI_RamenResultBanner final : public CUI_Object
+class CUI_LotteryResultBanner final : public CUI_Object
 {
 public:
-	typedef struct tagResultBanner : public UI_DESC {
-		function<void()>	onClickConfirm = {};
-	}RESULT_BANNER_DESC;
-
-	typedef struct tagActiveDesc {
-		wstring strMenu = {};
-		vector<RAMEN_ATTRIBUTE> attributes;
-	}ACTIVE_DESC;
+	typedef struct tagResultDesc {
+		_int iDenny = {};
+	}RESULT_DESC;
 
 private:
-	enum class ATTR { LABEL, NAME1, VALUE1, NAME2, VALUE2, NAME3, VALUE3, END };
+	enum class TEXTSLOT { DENY, END };
+	inline static const string INSTANCENAMES[ENUM(TEXTSLOT::END)] = { "deny" };
 
 	enum class STATE { INVISIBLE, VISIBLE, END };
 
 private:
-	CUI_RamenResultBanner() {}
-	CUI_RamenResultBanner(const CUI_RamenResultBanner& rhs) : CUI_Object(rhs) {}
-	virtual ~CUI_RamenResultBanner() DEFAULT;
+	CUI_LotteryResultBanner() {}
+	CUI_LotteryResultBanner(const CUI_LotteryResultBanner& rhs) : CUI_Object(rhs) {}
+	virtual ~CUI_LotteryResultBanner() DEFAULT;
 
 public:
 	virtual HRESULT Initialize_Prototype()           override;
@@ -43,22 +39,16 @@ public:
 private:
 	STATE			m_eState = { STATE::END };
 
-	class CTextSlot* m_pLabelTextSlot = {};
-
-	class CUI_Object* m_pAttrObjects[ENUM(ATTR::END)] = {};
-	class CTextSlot* m_pAttrTextSlots[ENUM(ATTR::END)] = {};
+	class CTextSlot* m_pTextSlots[ENUM(TEXTSLOT::END)] = {};
 
 private:
 	void Cache();
 	void Create_ConfirmButton();
-	void Create_AttrTexts();
-
-	void Create_AttrText(CUI_Object** ppOutObj, class CTextSlot** ppOutTextSlot, _bool isHighlighted = false);
 
 	void Change_State(STATE eSate);
 	void OnClick_Confirm();
 
-	void Refresh_Layout();
+	void Set_Text(TEXTSLOT textSlot, const _wstring& strText);
 
 public:
 	static  CGameObject* Create();

@@ -219,6 +219,8 @@ void CMapToolGui::RakeResources()
 
     HelperMT::EnsureDirectoryExists(openpath);
 
+    m_EntityModelPathPackName.push_back("Default");
+
     auto pRcsMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
     for (const auto& entry : filesystem::recursive_directory_iterator(openpath))
     {
@@ -1133,7 +1135,7 @@ void CMapToolGui::Set_EntityModel()
         CEntityObject* pEntity = dynamic_cast<CEntityObject*>(pObjects);
 
         auto iter = m_iniModelName.find(pEntity->Get_InstanceName());
-        if (iter == m_iniModelName.end() || iter->second.empty())
+        if (iter == m_iniModelName.end() || iter->second.empty() || iter->second == "None")
             continue;
 
 

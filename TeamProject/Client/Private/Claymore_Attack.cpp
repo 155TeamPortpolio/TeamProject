@@ -15,6 +15,10 @@ void CClaymore_Attack::Enter(CClaymore* pOwner)
 		Register_Transitions();
 
 		__super::Enter(pOwner);
+
+		m_HitDesc.eDamageType = DAMAGE_TYPE::NORMAL;
+		m_HitDesc.eHitType = HIT_TYPE::ONCE;
+		m_HitDesc.fDamage = 10.f;
 	}
 
 	auto pStateMachine = pOwner->GetStateMachine();
@@ -30,14 +34,22 @@ void CClaymore_Attack::Enter(CClaymore* pOwner)
 		AttackFromIndex(iAttackPatternIndex);
 	}
 	else {
-		//iAttackPatternIndex = Helper::Get_Random_Int(1, 3);
-
-		if (targetinginfo.fDistance <= hysteriesis.fComboEnter)
-			iAttackPatternIndex = 2;		// 뒷 구르기 후 한 발 공격
+		// 돌진 공격 빼고
+		if (targetinginfo.fDistance <= hysteriesis.fComboExit)
+		{
+			while (iAttackPatternIndex == 3 || iAttackPatternIndex == 0)
+				iAttackPatternIndex = Helper::Get_Random_Int(1, 4);
+		}
+		else if (targetinginfo.fDistance < hysteriesis.fChaseEnter)
+		{
+			// 멀 때, 돌진공격
+			iAttackPatternIndex = 3;
+		}
 		else
 		{
-			_int iAttackPatternIndex = Helper::Get_Random_Int(1, 5);
-			
+			// 너무멀면 다음행동
+			pOwner->Idle();
+			return;
 		}
 		AttackFromIndex(iAttackPatternIndex);
 	}
@@ -64,13 +76,13 @@ void CClaymore_Attack::Update(CClaymore* pOwner, _float dt)
 		case Engine::CLIP_EVENT_TYPE::NOTIFY:
 		{
 			if (Event.Tag == "UnleashAttack")
-				pOwner->UnleashAttack(CEnemy::ATTACK_SIDE::NONE, false);
-		/*	else if (Event.Tag == "Attack")
-			{
-			}*/
+				pOwner->UnleashAttack(CEnemy::ATTACK_SIDE::NONE, true);
+			else if (Event.Tag == "TurnOnAttackCol")
+				pOwner->SetBattleColliderObject("Weapon", CEnemy::BATTLE_COLTYPE::ATTACK, true, m_HitDesc);
+			else if (Event.Tag == "TurnOffAttackCol")
+				pOwner->SetBattleColliderObject("Weapon", CEnemy::BATTLE_COLTYPE::ATTACK, false);
 			else if (Event.Tag == "FinishAll")
 				pOwner->SetOnAttack(false);
-
 			break;
 		}
 		case Engine::CLIP_EVENT_TYPE::EFFECT:
@@ -94,11 +106,11 @@ void CClaymore_Attack::Register_States()
 {
 	m_pSubStateMachine->Register_State("Attack01", CClaymore_Attack1::Create());
 	m_pSubStateMachine->Register_State("Attack02", CClaymore_Attack2::Create());
-	m_pSubStateMachine->Register_State("Attack02b", CClaymore_Attack2b::Create());
+	//m_pSubStateMachine->Register_State("Attack02b", CClaymore_Attack2b::Create());
 	m_pSubStateMachine->Register_State("Attack03", CClaymore_Attack3::Create());
 	m_pSubStateMachine->Register_State("Attack03_End", CClaymore_Attack3_End::Create());
 	m_pSubStateMachine->Register_State("Attack04", CClaymore_Attack4::Create());
-	m_pSubStateMachine->Register_State("Attack05", CClaymore_Attack5::Create());
+	//m_pSubStateMachine->Register_State("Attack05", CClaymore_Attack5::Create());
 }
 
 void CClaymore_Attack::Register_Transitions()
@@ -120,9 +132,6 @@ void CClaymore_Attack::AttackFromIndex(_int iMoveIndex)
 		break;
 	case 4:
 		m_pSubStateMachine->Change_State("Attack04");
-		break;
-	case 5:
-		m_pSubStateMachine->Change_State("Attack05");
 		break;
 	}
 }
@@ -181,6 +190,8 @@ void CClaymore_Attack3::Enter(CClaymore* pOwner)
 
 void CClaymore_Attack3::Update(CClaymore* pOwner, _float dt)
 {
+	if (3.f >= pOwner->GetTargetingInfo().fDistance)
+		m_pOwnerStateMachine->Change_State("Attack03_End");
 }
 
 void CClaymore_Attack3::Exit(CClaymore* pOwner)

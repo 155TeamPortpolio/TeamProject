@@ -77,7 +77,7 @@ public:
 	_quaternion Get_WorldQuat();
 	_vector3 Get_WorldRotation();
 	/*----------------------------------------*/
- 	_bool Is_Root() { return m_isRootObject; };
+	_bool Is_Root();
 	const vector<CGameObject*> Get_Children();
 
 public:
