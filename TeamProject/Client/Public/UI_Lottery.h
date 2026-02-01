@@ -25,6 +25,8 @@ private:
 	enum class BTN { BTN_SCRATCH, BTN_REFRESH, END };
 	inline static const string BTN_NAMES[ENUM(BTN::END)] = { "btnScratch", "btnRefresh" };
 
+	// ¶Ë(12888) °­¾ÆÁö(8888) °í±â(5888) °³¹ä(2888) »À´Ù±¸(888)
+
 private:
 	CUI_Lottery() {}
 	CUI_Lottery(const CUI_Lottery& rhs) : CUI_Object(rhs) {}
@@ -46,18 +48,22 @@ private:
 
 	CUI_Object*		m_pChildren[ENUM(CHILD::END)] = {};
 	class CButtonUI* m_pButtons[ENUM(BTN::END)] = {};
+	CUI_Object* m_pResultBanner = {};
 
 private:
 	void Cache(); 
 	void Create_Newspaper();
 	void Create_ScratchCard();
 	void Create_BackButton();
+	void Create_ResultBanner();
 
 	void Change_State(STATE eState);
 
 	void OnClick_Back();
 	void OnClick_RefreshNews();
 	void OnClick_OpenScratch(); 
+
+	void OnScratch_Complete();
 
 	void Set_ChildUIActive(CHILD child, void* pArg = nullptr);
 	void Set_ChildUIDeActive(CHILD child, void* pArg = nullptr);

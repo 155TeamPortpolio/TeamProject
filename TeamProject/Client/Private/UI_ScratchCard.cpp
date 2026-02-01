@@ -6,7 +6,6 @@
 #include "Shader.h"
 #include "ObjectContainer.h"
 #include "Sprite2D.h"
-#include "UIDirector.h"
 #include "UI_Lottery.h"
 
 HRESULT CUI_ScratchCard::Initialize_Prototype()
@@ -88,10 +87,7 @@ void CUI_ScratchCard::Update(_float dt)
         m_fResultWaitTime += dt;
         
         if (m_fResultWaitTime >= m_fResultWaitDuration)
-        { 
-            UIDirector()->Show_ResultBanner(REWARD_TEXTURES[0], L"1234", L"보상 아이템 이름");
             m_hasShownResult = true;
-        }
     }
 
     __super::Update(dt);
