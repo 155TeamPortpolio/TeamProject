@@ -20,7 +20,7 @@ HRESULT CUI_ScratchCard::Initialize_Prototype()
 HRESULT CUI_ScratchCard::Initialize(INIT_DESC* pArg)
 {
     SCRATCH_DESC* pDesc = static_cast<SCRATCH_DESC*>(pArg);
-    m_pState = pDesc->pState;
+    m_pParentState = pDesc->pParentState;
     m_onScratchCompleted = pDesc->onScratchCompleted;
 
     __super::Initialize(pArg);
@@ -111,9 +111,14 @@ void CUI_ScratchCard::Update(_float dt)
 void CUI_ScratchCard::UI_Active(void* pArg)
 {
     Change_State(STATE::VISIBLE);
+    
+    ACTIVE_DESC* pDesc = static_cast<ACTIVE_DESC*>(pArg);
 
-    if(*m_pState == CUI_Lottery::STATE::READY)
+    if (*m_pParentState == CUI_Lottery::STATE::READY)
+    {
         Reset();
+        Change_RewardTexture(pDesc->strTextureKey);
+    } 
 }
 
 void CUI_ScratchCard::UI_DeActive(void* pArg)
@@ -212,8 +217,7 @@ void CUI_ScratchCard::Reset()
 {
     m_isClear = true;
     m_isScratchComplete = false;
-    m_hasShownResult = false;
-    Change_RewardTexture(REWARD_TEXTURES[rand() % ENUM(REWARD::END)]); 
+    m_hasShownResult = false; 
 }
 
 void CUI_ScratchCard::Render_RTBrush(ID3D11DeviceContext* pContext)

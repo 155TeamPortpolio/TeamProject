@@ -69,6 +69,7 @@ void CUI_Lottery::UI_Active(void* pArg)
     Set_Alive(true);
     Set_ChildAnimation(CHILD::ICON_SCRATCH, 0);
     Set_ChildAnimation(CHILD::NEWSPAPER, 0);
+    m_iReward = rand() % ENUM(REWARD::END);
 }
 
 void CUI_Lottery::UI_DeActive(void* pArg)
@@ -91,7 +92,7 @@ void CUI_Lottery::Create_Newspaper()
 void CUI_Lottery::Create_ScratchCard()
 {
     CUI_ScratchCard::SCRATCH_DESC* pDesc = new CUI_ScratchCard::SCRATCH_DESC;
-    pDesc->pState = &m_iState;
+    pDesc->pParentState = &m_iState;
     pDesc->onScratchCompleted = [this]() { OnScratch_Complete(); };
 
     auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_ScratchCard" })
@@ -200,16 +201,28 @@ void CUI_Lottery::OnClick_OpenScratch()
         return;
 
     Set_ChildAnimation(CHILD::OVERLAY, 0);
-    Set_ChildUIActive(CHILD::SCRATCH);
+
+    CUI_ScratchCard::ACTIVE_DESC desc = {};
+    desc.strTextureKey = (m_iReward < ENUM(REWARD::END)) ? REWARD_TEXTURES[m_iReward] : REWARD_TEXTURES[0];
+    Set_ChildUIActive(CHILD::SCRATCH, &desc);
 }
 
 void CUI_Lottery::OnScratch_Complete()
 {
     Change_State(STATE::USED);
+
+    _uint iDennyReward = (m_iReward < ENUM(REWARD::END)) ? REWARD_DENY[m_iReward] : 0;
+
+    _uint iDenny = {};
+    RuntimeBucket().Int64.TryGet(PersistScope::SaveSlot, "Denny", iDenny);
+
+    iDenny += iDennyReward;
+    RuntimeBucket().Int64.Set(PersistScope::SaveSlot, "Denny", iDenny);
+
     if (m_pResultBanner)
     {
         CUI_LotteryResultBanner::RESULT_DESC desc = {};
-        desc.iDenny = { 88 };
+        desc.iDenny = iDennyReward;
         m_pResultBanner->UI_Active(&desc);
     } 
 }

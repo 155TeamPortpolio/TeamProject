@@ -25,7 +25,11 @@ private:
 	enum class BTN { BTN_SCRATCH, BTN_REFRESH, END };
 	inline static const string BTN_NAMES[ENUM(BTN::END)] = { "btnScratch", "btnRefresh" };
 
-	// ¶Ë(12888) °­¾ÆÁö(8888) °í±â(5888) °³¹ä(2888) »À´Ù±¸(888)
+	// »Àµû±¸(888) / °³¹ä(2888) / °í±â(5888) / °­¾ÆÁö(8888) / È²±Ý¶Ë(12888)
+	enum class REWARD { REWARD1, REWARD2, REWARD3, REWARD4, REWARD5, END };
+	inline static const string REWARD_TEXTURES[ENUM(REWARD::END)] = { "ScratchCardRewardIcon01.png", "ScratchCardRewardIcon02.png",
+	"ScratchCardRewardIcon03.png", "ScratchCardRewardIcon04.png", "ScratchCardRewardIcon05.png" };
+	inline static const _uint REWARD_DENY[ENUM(REWARD::END)] = { 888, 2888, 5888, 8888, 12888 };
 
 private:
 	CUI_Lottery() {}
@@ -45,6 +49,7 @@ public:
 
 private:
 	_uint			m_iState = { STATE::END };
+	_uint			m_iReward = ENUM(REWARD::END);
 
 	CUI_Object*		m_pChildren[ENUM(CHILD::END)] = {};
 	class CButtonUI* m_pButtons[ENUM(BTN::END)] = {};

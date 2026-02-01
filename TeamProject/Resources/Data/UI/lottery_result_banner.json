@@ -870,11 +870,11 @@
                         "anchor": 0,
                         "anchorOffset": [
                             -45.0,
-                            -45.0
+                            -35.0
                         ],
                         "size": [
                             90.0,
-                            90.0
+                            80.0
                         ],
                         "scale": [
                             1.0,
@@ -936,7 +936,7 @@
                         ],
                         "size": [
                             90.0,
-                            72.0
+                            82.0
                         ],
                         "scale": [
                             1.0,
@@ -989,16 +989,16 @@
                 },
                 {
                     "alive": true,
-                    "instanceName": "Image",
+                    "instanceName": "SpriteAnimation",
                     "transform": {
                         "anchor": 0,
                         "anchorOffset": [
-                            -39.0,
-                            -42.0
+                            -43.0,
+                            -43.0
                         ],
                         "size": [
-                            78.0,
-                            78.0
+                            86.0,
+                            86.0
                         ],
                         "scale": [
                             1.0,
@@ -1016,14 +1016,21 @@
                         1.0,
                         1.0
                     ],
-                    "pass": "Opaque_StencilTest",
+                    "pass": "SpriteAnimation",
                     "colorTexKey": "empty.png",
                     "colorTexMode": 0,
                     "colorTexMix": 1.0,
                     "animClips": [],
                     "children": [],
-                    "typeTag": "Image",
-                    "textureTag": "IconCoin.png"
+                    "typeTag": "SpriteAnimation",
+                    "textureTag": "ItemBubble_IconCoin.png",
+                    "spriteAnimation": {
+                        "loop": true,
+                        "frameCountX": 9,
+                        "frameCountY": 9,
+                        "frameCountTotal": 81,
+                        "frameSpeed": 30.0
+                    }
                 },
                 {
                     "alive": true,
@@ -1031,11 +1038,11 @@
                     "transform": {
                         "anchor": 0,
                         "anchorOffset": [
-                            -33.66699981689453,
-                            22.0
+                            -30.165000915527344,
+                            32.5
                         ],
                         "size": [
-                            65.33000183105469,
+                            60.33000183105469,
                             5.0
                         ],
                         "scale": [
@@ -1069,12 +1076,12 @@
                     "transform": {
                         "anchor": 0,
                         "anchorOffset": [
-                            -41.666664123535156,
-                            27.0
+                            -31.165000915527344,
+                            37.0
                         ],
                         "size": [
-                            83.33332824707031,
-                            14.329999923706055
+                            62.33000183105469,
+                            4.0
                         ],
                         "scale": [
                             1.0,
