@@ -6,6 +6,7 @@
 #include "FieldSystem.h"
 #include "UIDirector.h"
 #include "DisplayGate.h"
+#include "UI_Gangta.h"
 // Camera
 #include "SequenceCam.h"
 #include "OrbitCam.h"
@@ -79,6 +80,12 @@ void CCamDirector::AutoField()
     AutoTarget();
     RequestSequence("Field/Front");
     //GameInstance()->Set_EngineTimeScale(0.01f)
+
+    CMonitorGate gate;
+    if (gate.Pass())
+        RenderSystem()->SetOn(false);
+
+    /*UIManager()->Add_UIObject(Builder::Create_UIObject({G_GlobalLevelKey, "Proto_GameObject_Gangta"}).Build("Gangta"), G_GlobalLevelKey);*/
 }
 
 void CCamDirector::Update(_float dt)
@@ -167,7 +174,14 @@ void CCamDirector::UpdateInput(_float dt)
     if (m_playing.active) return;
 
     if (InputDevice()->Key_Tap(VK_F3))
-        RequestSequence("Gacha/StartPos");
+    {
+       // RequestSequence("Gacha/StartIntro");
+        //UIManager()->Add_UIObject(Builder::Create_UIObject({G_GlobalLevelKey, "Proto_GameObject_Gangta"}).Build("Gangta"), G_GlobalLevelKey);
+        auto obj = Builder::Create_UIObject({G_GlobalLevelKey, "Proto_GameObject_Gangta"}).Build("Gangta");
+        UIManager()->Add_UIObject(obj, LevelManager()->Get_NowLevelKey());
+
+        static_cast<CUI_Gangta*>(obj)->UI_Active({});
+    }
 }
 
 void CCamDirector::AbortSequenceToOrbit(_bool resetTime)

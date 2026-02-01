@@ -10,12 +10,12 @@ private:
     virtual ~JaneDoe() DEFAULT;
 
 public:
-    virtual HRESULT Initialize_Prototype()      override;
-    virtual HRESULT Initialize(INIT_DESC* pArg) override;
-    virtual void    Awake()                     override;
-    virtual void    Priority_Update(_float dt)  override {}
-    virtual void    Update(_float dt)           override;
-    virtual void    Late_Update(_float dt)      override {}
+    HRESULT Initialize_Prototype()      override;
+    HRESULT Initialize(INIT_DESC* pArg) override;
+    void    Awake()                     override;
+    void    Priority_Update(_float dt)  override {}
+    void    Update(_float dt)           override;
+    void    Late_Update(_float dt)      override {}
 
 public:
     static JaneDoe* Create();
