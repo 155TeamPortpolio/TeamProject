@@ -23,8 +23,6 @@ HRESULT CUI_Gangta::Initialize(INIT_DESC* arg)
 
 void CUI_Gangta::Update(_float dt)
 {
-    //dt *= 0.01f;
-
     __super::Update(dt);
 
     Get_Component<CObjectContainer>()->UpdateChild(dt);
@@ -35,10 +33,16 @@ void CUI_Gangta::Update(_float dt)
 
 void CUI_Gangta::UI_Active(void* arg)
 {
-    Set_ChildAnim(CHILD::GANG_IN, 0);
-    Set_ChildAnim(CHILD::GANG_OUT, 0);
-    //Set_ChildAnim(CHILD::TA_IN, 0);
-    //Set_ChildAnim(CHILD::TA_OUT, 0);
+    Set_ChildAnim(CHILD::GANG_IN,         0);
+    Set_ChildAnim(CHILD::GANG_OUT,        0);
+    Set_ChildAnim(CHILD::TA_IN,           0);
+    Set_ChildAnim(CHILD::TA_OUT,          0);
+    Set_ChildAnim(CHILD::GANG_OUTLINE,    0);
+    Set_ChildAnim(CHILD::TA_OUTLINE,      0);
+    Set_ChildAnim(CHILD::FACTORY_IN_01,    0);
+    Set_ChildAnim(CHILD::FACTORY_IN_02,    0);
+    Set_ChildAnim(CHILD::FACTORY_OUT_01,   0);
+    Set_ChildAnim(CHILD::FACTORY_OUT_02,   0);
 }
 
 void CUI_Gangta::UI_DeActive(void* arg)
@@ -48,12 +52,18 @@ void CUI_Gangta::UI_DeActive(void* arg)
 
 _bool CUI_Gangta::Is_AnimFinished()
 {
-    _bool anim1 = Is_ChildAnimFinished(CHILD::GANG_OUT);
-    _bool anim2 = Is_ChildAnimFinished(CHILD::GANG_IN);
-    //_bool anim3 = Is_ChildAnimFinished(CHILD::TA_OUT);
-    //_bool anim4 = Is_ChildAnimFinished(CHILD::TA_IN);
+    _bool anim1  = Is_ChildAnimFinished(CHILD::GANG_OUT);
+    _bool anim2  = Is_ChildAnimFinished(CHILD::GANG_IN);
+    _bool anim3  = Is_ChildAnimFinished(CHILD::TA_OUT);
+    _bool anim4  = Is_ChildAnimFinished(CHILD::TA_IN);
+    _bool anim5  = Is_ChildAnimFinished(CHILD::GANG_OUTLINE);
+    _bool anim6  = Is_ChildAnimFinished(CHILD::TA_OUTLINE);
+    _bool anim7  = Is_ChildAnimFinished(CHILD::FACTORY_IN_01);
+    _bool anim8  = Is_ChildAnimFinished(CHILD::FACTORY_IN_02);
+    _bool anim9  = Is_ChildAnimFinished(CHILD::FACTORY_OUT_01);
+    _bool anim10 = Is_ChildAnimFinished(CHILD::FACTORY_OUT_02);
 
-    return anim1 && anim2;
+    return anim1 && anim2 && anim3 && anim4 && anim5 && anim6 && anim7 && anim8 && anim9 && anim10;
 }
 
 void CUI_Gangta::Cache_Children()

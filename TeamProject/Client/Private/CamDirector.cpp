@@ -289,7 +289,7 @@ _bool CCamDirector::IsPlaying(const string& key) const
     if (m_playing.key != key)   return false;
     if (m_playing.pendingStart) return true;
 
-    return GetSeqObj()->Get_Component<CCamSequencePlayer>()->IsPlaying();
+    return GetSeqPlayer()->IsPlaying();
 }
 
 _bool CCamDirector::IsPlaying(CamSeqType type) const

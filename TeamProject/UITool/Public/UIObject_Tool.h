@@ -83,6 +83,10 @@ protected:
 	_float         m_colorTexMix = 1.f;
 	_uint          m_colorTexModeU = 0;
 
+	_float m_timelineTime;
+	_bool  m_timelineDragging;
+	_bool  m_timelineResumePlay;
+
 public:
 	virtual void Free() { __super::Free(); }
 };

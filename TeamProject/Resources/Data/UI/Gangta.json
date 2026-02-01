@@ -68,7 +68,7 @@
             "colorTexMix": 1.0,
             "animClips": [
                 {
-                    "duration": 10.0,
+                    "duration": 0.09000000357627869,
                     "keyframes": [
                         {
                             "angle": 0.0,
@@ -106,7 +106,7 @@
                                 1.0,
                                 1.0
                             ],
-                            "time": 2.0
+                            "time": 0.019999999552965164
                         },
                         {
                             "angle": 0.0,
@@ -118,14 +118,14 @@
                             ],
                             "easeType": 0,
                             "position": [
-                                30.0,
+                                60.0,
                                 0.0
                             ],
                             "scale": [
                                 1.0,
                                 1.0
                             ],
-                            "time": 8.0
+                            "time": 0.07999999821186066
                         },
                         {
                             "angle": 0.0,
@@ -133,18 +133,18 @@
                                 1.0,
                                 1.0,
                                 1.0,
-                                1.0
+                                0.0
                             ],
                             "easeType": 0,
                             "position": [
-                                0.0,
+                                60.0,
                                 0.0
                             ],
                             "scale": [
                                 1.0,
                                 1.0
                             ],
-                            "time": 9.0
+                            "time": 0.09000000357627869
                         }
                     ],
                     "loop": false,
@@ -190,7 +190,7 @@
             "colorTexMix": 1.0,
             "animClips": [
                 {
-                    "duration": 10.0,
+                    "duration": 0.09000000357627869,
                     "keyframes": [
                         {
                             "angle": 0.0,
@@ -228,7 +228,7 @@
                                 1.0,
                                 1.0
                             ],
-                            "time": 2.0
+                            "time": 0.019999999552965164
                         },
                         {
                             "angle": 0.0,
@@ -240,14 +240,14 @@
                             ],
                             "easeType": 0,
                             "position": [
-                                30.0,
+                                60.0,
                                 0.0
                             ],
                             "scale": [
                                 1.0,
                                 1.0
                             ],
-                            "time": 8.0
+                            "time": 0.07999999821186066
                         },
                         {
                             "angle": 0.0,
@@ -255,21 +255,21 @@
                                 1.0,
                                 1.0,
                                 1.0,
-                                1.0
+                                0.0
                             ],
                             "easeType": 0,
                             "position": [
-                                0.0,
+                                60.0,
                                 0.0
                             ],
                             "scale": [
                                 1.0,
                                 1.0
                             ],
-                            "time": 9.0
+                            "time": 0.09000000357627869
                         }
                     ],
-                    "loop": true,
+                    "loop": false,
                     "name": "clip0"
                 }
             ],
@@ -283,7 +283,7 @@
             "transform": {
                 "anchor": 0,
                 "anchorOffset": [
-                    -13.0,
+                    -25.0,
                     -53.33333206176758
                 ],
                 "size": [
@@ -310,23 +310,869 @@
             "colorTexKey": "empty.png",
             "colorTexMode": 0,
             "colorTexMix": 1.0,
-            "animClips": [],
+            "animClips": [
+                {
+                    "duration": 0.09000000357627869,
+                    "keyframes": [
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                0.0
+                            ],
+                            "easeType": 0,
+                            "position": [
+                                0.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 0.0
+                        },
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                0.0
+                            ],
+                            "easeType": 0,
+                            "position": [
+                                0.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 0.019999999552965164
+                        },
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "easeType": 0,
+                            "position": [
+                                0.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 0.029999999329447746
+                        },
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "easeType": 0,
+                            "position": [
+                                0.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 0.05000000074505806
+                        },
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "easeType": 0,
+                            "position": [
+                                30.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 0.07999999821186066
+                        },
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                0.0
+                            ],
+                            "easeType": 0,
+                            "position": [
+                                30.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 0.09000000357627869
+                        }
+                    ],
+                    "loop": false,
+                    "name": "clip0"
+                }
+            ],
             "children": [],
             "typeTag": "Image",
             "textureTag": "ta_alpha.png"
         },
         {
-            "alive": false,
+            "alive": true,
             "instanceName": "Ta_In",
             "transform": {
                 "anchor": 0,
                 "anchorOffset": [
-                    -13.0,
+                    -25.0,
                     -53.33333206176758
                 ],
                 "size": [
                     53.33333206176758,
                     53.33333206176758
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                0.9904763698577881
+            ],
+            "pass": "Opaque",
+            "colorTexKey": "Eff_Assault_LC_26.png",
+            "colorTexMode": 1,
+            "colorTexMix": 1.0,
+            "animClips": [
+                {
+                    "duration": 0.09000000357627869,
+                    "keyframes": [
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                0.0
+                            ],
+                            "easeType": 0,
+                            "position": [
+                                0.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 0.0
+                        },
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                0.0
+                            ],
+                            "easeType": 0,
+                            "position": [
+                                0.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 0.019999999552965164
+                        },
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                0.0
+                            ],
+                            "easeType": 0,
+                            "position": [
+                                0.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 0.029999999329447746
+                        },
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                0.0
+                            ],
+                            "easeType": 0,
+                            "position": [
+                                0.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 0.05000000074505806
+                        },
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "easeType": 0,
+                            "position": [
+                                30.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 0.07999999821186066
+                        },
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                0.0
+                            ],
+                            "easeType": 0,
+                            "position": [
+                                30.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 0.09000000357627869
+                        }
+                    ],
+                    "loop": false,
+                    "name": "clip0"
+                }
+            ],
+            "children": [],
+            "typeTag": "Image",
+            "textureTag": "Eff_SpecialDamageText_091_HZW_05.png"
+        },
+        {
+            "alive": true,
+            "instanceName": "Gang_Outline",
+            "transform": {
+                "anchor": 0,
+                "anchorOffset": [
+                    30.0,
+                    -26.66666603088379
+                ],
+                "size": [
+                    53.33000183105469,
+                    53.33333206176758
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.5,
+                    0.5
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "pass": "Opaque",
+            "colorTexKey": "empty.png",
+            "colorTexMode": 0,
+            "colorTexMix": 1.0,
+            "animClips": [
+                {
+                    "duration": 1.4800000190734863,
+                    "keyframes": [
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                0.0
+                            ],
+                            "easeType": 0,
+                            "position": [
+                                0.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 0.07999999821186066
+                        },
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "easeType": 0,
+                            "position": [
+                                0.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 0.09000000357627869
+                        },
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "easeType": 0,
+                            "position": [
+                                -25.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 0.11999999731779099
+                        },
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "easeType": 0,
+                            "position": [
+                                -20.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 0.15000000596046448
+                        },
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "easeType": 0,
+                            "position": [
+                                -20.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 1.4600000381469727
+                        },
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                0.0
+                            ],
+                            "easeType": 0,
+                            "position": [
+                                -20.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 1.4800000190734863
+                        }
+                    ],
+                    "loop": false,
+                    "name": "clip1"
+                }
+            ],
+            "children": [],
+            "typeTag": "Image",
+            "textureTag": "Eff_Assault_LC_35.png"
+        },
+        {
+            "alive": true,
+            "instanceName": "Ta_Outline",
+            "transform": {
+                "anchor": 0,
+                "anchorOffset": [
+                    30.0,
+                    -26.66666603088379
+                ],
+                "size": [
+                    53.33000183105469,
+                    53.33333206176758
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.5,
+                    0.5
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "pass": "Opaque",
+            "colorTexKey": "empty.png",
+            "colorTexMode": 0,
+            "colorTexMix": 1.0,
+            "animClips": [
+                {
+                    "duration": 1.5,
+                    "keyframes": [
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                0.0
+                            ],
+                            "easeType": 0,
+                            "position": [
+                                0.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 0.07999999821186066
+                        },
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "easeType": 0,
+                            "position": [
+                                0.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 0.09000000357627869
+                        },
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "easeType": 0,
+                            "position": [
+                                25.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 0.11999999731779099
+                        },
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "easeType": 0,
+                            "position": [
+                                20.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 0.15000000596046448
+                        },
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "easeType": 0,
+                            "position": [
+                                20.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 1.4800000190734863
+                        },
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                0.0
+                            ],
+                            "easeType": 0,
+                            "position": [
+                                20.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 1.5
+                        }
+                    ],
+                    "loop": false,
+                    "name": "clip0"
+                }
+            ],
+            "children": [],
+            "typeTag": "Image",
+            "textureTag": "Eff_Assault_LC_36.png"
+        },
+        {
+            "alive": true,
+            "instanceName": "Factory_Out_01",
+            "transform": {
+                "anchor": 0,
+                "anchorOffset": [
+                    40.0,
+                    -65.0
+                ],
+                "size": [
+                    80.0,
+                    80.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "pass": "Opaque",
+            "colorTexKey": "Eff_Assault_LC_12.png",
+            "colorTexMode": 0,
+            "colorTexMix": 0.0,
+            "animClips": [
+                {
+                    "duration": 1.5199999809265137,
+                    "keyframes": [
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                0.0
+                            ],
+                            "easeType": 0,
+                            "position": [
+                                0.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 0.14000000059604645
+                        },
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "easeType": 0,
+                            "position": [
+                                0.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 0.15000000596046448
+                        },
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "easeType": 0,
+                            "position": [
+                                0.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 1.5
+                        },
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                0.0
+                            ],
+                            "easeType": 0,
+                            "position": [
+                                0.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 1.5199999809265137
+                        }
+                    ],
+                    "loop": false,
+                    "name": "clip0"
+                }
+            ],
+            "children": [],
+            "typeTag": "Image",
+            "textureTag": "Eff_Assault_LC_12.png"
+        },
+        {
+            "alive": true,
+            "instanceName": "Factory_Out_02",
+            "transform": {
+                "anchor": 0,
+                "anchorOffset": [
+                    60.0,
+                    -65.0
+                ],
+                "size": [
+                    80.0,
+                    80.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "pass": "Opaque",
+            "colorTexKey": "empty.png",
+            "colorTexMode": 0,
+            "colorTexMix": 1.0,
+            "animClips": [
+                {
+                    "duration": 1.5399999618530273,
+                    "keyframes": [
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                0.0
+                            ],
+                            "easeType": 0,
+                            "position": [
+                                0.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 0.15000000596046448
+                        },
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "easeType": 0,
+                            "position": [
+                                0.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 0.1599999964237213
+                        },
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "easeType": 0,
+                            "position": [
+                                0.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 1.5199999809265137
+                        },
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                0.0
+                            ],
+                            "easeType": 0,
+                            "position": [
+                                0.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 1.5399999618530273
+                        }
+                    ],
+                    "loop": false,
+                    "name": "clip1"
+                }
+            ],
+            "children": [],
+            "typeTag": "Image",
+            "textureTag": "Eff_Assault_LC_12.png"
+        },
+        {
+            "alive": true,
+            "instanceName": "Factory_In_01",
+            "transform": {
+                "anchor": 0,
+                "anchorOffset": [
+                    39.0,
+                    -65.0
+                ],
+                "size": [
+                    80.0,
+                    80.0
                 ],
                 "scale": [
                     1.0,
@@ -348,23 +1194,107 @@
             "colorTexKey": "Eff_Assault_LC_26.png",
             "colorTexMode": 1,
             "colorTexMix": 1.0,
-            "animClips": [],
+            "animClips": [
+                {
+                    "duration": 1.5199999809265137,
+                    "keyframes": [
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                0.0
+                            ],
+                            "easeType": 0,
+                            "position": [
+                                0.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 0.15000000596046448
+                        },
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "easeType": 0,
+                            "position": [
+                                0.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 0.17000000178813934
+                        },
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "easeType": 0,
+                            "position": [
+                                0.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 1.5
+                        },
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                0.0
+                            ],
+                            "easeType": 0,
+                            "position": [
+                                0.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 1.5199999809265137
+                        }
+                    ],
+                    "loop": false,
+                    "name": "clip0"
+                }
+            ],
             "children": [],
             "typeTag": "Image",
-            "textureTag": "Eff_SpecialDamageText_091_HZW_05.png"
+            "textureTag": "Eff_Assault_LC_White.png"
         },
         {
-            "alive": false,
-            "instanceName": "Gang_Outline",
+            "alive": true,
+            "instanceName": "Factory_In_02",
             "transform": {
                 "anchor": 0,
                 "anchorOffset": [
-                    127.66699981689453,
-                    -53.33333206176758
+                    59.0,
+                    -65.0
                 ],
                 "size": [
-                    53.33333206176758,
-                    53.33333206176758
+                    80.0,
+                    80.0
                 ],
                 "scale": [
                     1.0,
@@ -383,203 +1313,97 @@
                 1.0
             ],
             "pass": "Opaque",
-            "colorTexKey": "empty.png",
-            "colorTexMode": 0,
+            "colorTexKey": "Eff_Assault_LC_26.png",
+            "colorTexMode": 1,
             "colorTexMix": 1.0,
-            "animClips": [],
-            "children": [],
-            "typeTag": "Image",
-            "textureTag": "Eff_Assault_LC_35.png"
-        },
-        {
-            "alive": false,
-            "instanceName": "Ta_Outline",
-            "transform": {
-                "anchor": 0,
-                "anchorOffset": [
-                    168.66700744628906,
-                    -53.33333206176758
-                ],
-                "size": [
-                    53.33333206176758,
-                    53.33333206176758
-                ],
-                "scale": [
-                    1.0,
-                    1.0
-                ],
-                "pivot": [
-                    0.0,
-                    0.0
-                ],
-                "radian": 0.0
-            },
-            "color": [
-                1.0,
-                1.0,
-                1.0,
-                1.0
+            "animClips": [
+                {
+                    "duration": 1.5399999618530273,
+                    "keyframes": [
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                0.0
+                            ],
+                            "easeType": 0,
+                            "position": [
+                                0.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 0.1599999964237213
+                        },
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "easeType": 0,
+                            "position": [
+                                0.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 0.18000000715255737
+                        },
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "easeType": 0,
+                            "position": [
+                                0.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 1.5199999809265137
+                        },
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                0.0
+                            ],
+                            "easeType": 0,
+                            "position": [
+                                0.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 1.5399999618530273
+                        }
+                    ],
+                    "loop": false,
+                    "name": "clip1"
+                }
             ],
-            "pass": "Opaque",
-            "colorTexKey": "empty.png",
-            "colorTexMode": 0,
-            "colorTexMix": 1.0,
-            "animClips": [],
             "children": [],
             "typeTag": "Image",
-            "textureTag": "Eff_Assault_LC_36.png"
-        },
-        {
-            "alive": false,
-            "instanceName": "Factory_Outline_01",
-            "transform": {
-                "anchor": 0,
-                "anchorOffset": [
-                    15.666999816894531,
-                    -70.33300018310547
-                ],
-                "size": [
-                    70.0,
-                    70.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0
-                ],
-                "pivot": [
-                    0.0,
-                    0.0
-                ],
-                "radian": 0.0
-            },
-            "color": [
-                1.0,
-                1.0,
-                1.0,
-                1.0
-            ],
-            "pass": "Opaque",
-            "colorTexKey": "empty.png",
-            "colorTexMode": 0,
-            "colorTexMix": 1.0,
-            "animClips": [],
-            "children": [],
-            "typeTag": "Image",
-            "textureTag": "Eff_Assault_LC_12.png"
-        },
-        {
-            "alive": false,
-            "instanceName": "Factory_Outline_02",
-            "transform": {
-                "anchor": 0,
-                "anchorOffset": [
-                    38.66699981689453,
-                    -70.33300018310547
-                ],
-                "size": [
-                    70.0,
-                    70.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0
-                ],
-                "pivot": [
-                    0.0,
-                    0.0
-                ],
-                "radian": 0.0
-            },
-            "color": [
-                1.0,
-                1.0,
-                1.0,
-                1.0
-            ],
-            "pass": "Opaque",
-            "colorTexKey": "empty.png",
-            "colorTexMode": 0,
-            "colorTexMix": 1.0,
-            "animClips": [],
-            "children": [],
-            "typeTag": "Image",
-            "textureTag": "Eff_Assault_LC_12.png"
-        },
-        {
-            "alive": false,
-            "instanceName": "Factory_01",
-            "transform": {
-                "anchor": 0,
-                "anchorOffset": [
-                    199.66700744628906,
-                    -58.33300018310547
-                ],
-                "size": [
-                    60.0,
-                    60.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0
-                ],
-                "pivot": [
-                    0.0,
-                    0.0
-                ],
-                "radian": 0.0
-            },
-            "color": [
-                1.0,
-                1.0,
-                1.0,
-                1.0
-            ],
-            "pass": "Opaque",
-            "colorTexKey": "empty.png",
-            "colorTexMode": 0,
-            "colorTexMix": 1.0,
-            "animClips": [],
-            "children": [],
-            "typeTag": "Image",
-            "textureTag": "Eff_Assault_LC_32.png"
-        },
-        {
-            "alive": false,
-            "instanceName": "Factory_02",
-            "transform": {
-                "anchor": 0,
-                "anchorOffset": [
-                    218.66700744628906,
-                    -58.33300018310547
-                ],
-                "size": [
-                    60.0,
-                    60.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0
-                ],
-                "pivot": [
-                    0.0,
-                    0.0
-                ],
-                "radian": 0.0
-            },
-            "color": [
-                1.0,
-                1.0,
-                1.0,
-                1.0
-            ],
-            "pass": "Opaque",
-            "colorTexKey": "empty.png",
-            "colorTexMode": 0,
-            "colorTexMix": 1.0,
-            "animClips": [],
-            "children": [],
-            "typeTag": "Image",
-            "textureTag": "Eff_Assault_LC_32.png"
+            "textureTag": "Eff_Assault_LC_White.png"
         }
     ],
     "typeTag": "CanvasPanel"

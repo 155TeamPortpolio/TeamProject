@@ -6,10 +6,13 @@ NS_BEGIN(Client)
 class CUI_Gangta final : public CUI_WorldToScreen
 {
 private:
-	enum CHILD { GANG_OUT, GANG_IN, TA_OUT, TA_IN, END };
+	enum CHILD { GANG_OUT, GANG_IN, TA_OUT, TA_IN, GANG_OUTLINE, TA_OUTLINE, FACTORY_OUT_01, FACTORY_OUT_02,
+		FACTORY_IN_01, FACTORY_IN_02, END };
 	inline static const string CHILD_INSTNAMES[ENUM(CHILD::END)] = 
 	{
-		"Gang_Out", "Gang_In", "Ta_Out", "Ta_In"
+		"Gang_Out", "Gang_In", "Ta_Out", "Ta_In", "Gang_Outline", "Ta_Outline",
+		"Factory_Out_01", "Factory_Out_02",
+		"Factory_In_01", "Factory_In_02",
 	};
 
 private:
@@ -34,7 +37,6 @@ private:
 
 private:
 	CUI_Object* m_children[ENUM(CHILD::END)]{};
-	
 
 public:
 	static CUI_Gangta* Create();
