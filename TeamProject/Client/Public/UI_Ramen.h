@@ -65,6 +65,8 @@ private:
 	void OnVideoFinished();
 	void OnClick_ResultConfirm();
 
+	void Reset();
+
 	void Set_TextPrice();
 	void Update_Affordable();
 

@@ -78,12 +78,7 @@ void CUI_Ramen::UI_Active(void* pArg)
 {
     Set_Alive(true); 
     Set_ChildAnimation(CHILD::ORDER, 0);
-    m_pSelectedMenu = nullptr;
-    for (auto& pMenu : m_pMenus)
-        pMenu->UI_DeActive();
-    RuntimeBucket().Int64.TryGet(PersistScope::SaveSlot, strFieldPlayerKey, m_iMoney);
-    Set_TextPrice();
-    Update_Affordable();
+    Reset();
 }
 
 void CUI_Ramen::UI_DeActive(void* pArg)
@@ -211,21 +206,17 @@ void CUI_Ramen::Cache()
 
 void CUI_Ramen::OnClick_Order()
 {
-    if (m_isAffordable)
+    if (!m_isAffordable)
+        return;
+
+    Set_ChildAnimation(CHILD::TEXT_ORDER, 0);
+    Set_ChildAnimation(CHILD::CLICK_ORDER, 0);
+    if (m_pOrderBanner)
     {
-        Set_ChildAnimation(CHILD::TEXT_ORDER, 0);
-        Set_ChildAnimation(CHILD::CLICK_ORDER, 0);
-        if (m_pOrderBanner)
-        {
-            CUI_RamenOrderBanner::ACTIVE_DESC desc = {};
-            desc.strMenu = m_tRamenDesc.strName;
-            m_pOrderBanner->UI_Active(&desc);
-        } 
-    }
-    else
-    {
-        MSG_BOX("구매 불가능!");
-    }    
+        CUI_RamenOrderBanner::ACTIVE_DESC desc = {};
+        desc.strMenu = m_tRamenDesc.strName;
+        m_pOrderBanner->UI_Active(&desc);
+    } 
 }
 
 void CUI_Ramen::OnClick_OrderComfirm()
@@ -239,18 +230,29 @@ void CUI_Ramen::OnClick_OrderComfirm()
 
 void CUI_Ramen::OnVideoFinished()
 {
-    UI_Active();
-
     if (m_pResultBanner)
     {
         CUI_RamenResultBanner::ACTIVE_DESC desc = {};
         desc.strMenu = m_tRamenDesc.strName;
+        desc.attributes = m_tRamenDesc.attributes;
         m_pResultBanner->UI_Active(&desc);
     }     
 }
 
 void CUI_Ramen::OnClick_ResultConfirm()
 {
+    Reset();
+}
+
+void CUI_Ramen::Reset()
+{
+    m_pSelectedMenu = nullptr;
+    m_tRamenDesc = {};
+    for (auto& pMenu : m_pMenus)
+        pMenu->UI_DeActive();
+    RuntimeBucket().Int64.TryGet(PersistScope::SaveSlot, strFieldPlayerKey, m_iMoney);
+    Set_TextPrice();
+    Update_Affordable();
 }
 
 void CUI_Ramen::Set_TextPrice()

@@ -448,7 +448,7 @@
         },
         {
             "alive": true,
-            "instanceName": "label1",
+            "instanceName": "label",
             "transform": {
                 "anchor": 0,
                 "anchorOffset": [
@@ -504,16 +504,16 @@
         },
         {
             "alive": true,
-            "instanceName": "label2",
+            "instanceName": "Image",
             "transform": {
                 "anchor": 0,
                 "anchorOffset": [
-                    0.0,
-                    -20.0
+                    -124.0,
+                    20.0
                 ],
                 "size": [
-                    0.0,
-                    0.0
+                    20.0,
+                    20.0
                 ],
                 "scale": [
                     1.0,
@@ -537,26 +537,8 @@
             "colorTexMix": 1.0,
             "animClips": [],
             "children": [],
-            "typeTag": "Text",
-            "text": {
-                "content": "획득 효과: 공격력+30",
-                "fontTag": "NanumSquareNeo.spritefont",
-                "fontScale": 0.4499998688697815,
-                "outlined": false,
-                "outlineThickness": 1.0,
-                "outlineColor": [
-                    0.0,
-                    0.0,
-                    0.0,
-                    1.0
-                ],
-                "shear": [
-                    0.0,
-                    0.0
-                ],
-                "autoPos": true,
-                "anchor": 0
-            }
+            "typeTag": "Image",
+            "textureTag": "IconInfo03.png"
         },
         {
             "alive": true,
@@ -564,7 +546,7 @@
             "transform": {
                 "anchor": 0,
                 "anchorOffset": [
-                    0.0,
+                    16.0,
                     30.0
                 ],
                 "size": [
@@ -597,7 +579,7 @@
             "text": {
                 "content": "전투 콘텐츠    회 동안 효과 지속",
                 "fontTag": "NanumSquareNeo.spritefont",
-                "fontScale": 0.4499998092651367,
+                "fontScale": 0.39999979734420776,
                 "outlined": false,
                 "outlineThickness": 1.0,
                 "outlineColor": [
@@ -620,7 +602,7 @@
             "transform": {
                 "anchor": 0,
                 "anchorOffset": [
-                    -22.0,
+                    -4.0,
                     30.0
                 ],
                 "size": [
@@ -653,7 +635,7 @@
             "text": {
                 "content": "3",
                 "fontTag": "NanumSquareNeo.spritefont",
-                "fontScale": 0.4499998688697815,
+                "fontScale": 0.39999985694885254,
                 "outlined": false,
                 "outlineThickness": 1.0,
                 "outlineColor": [
