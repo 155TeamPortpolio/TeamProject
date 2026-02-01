@@ -1028,6 +1028,9 @@
     <Filter Include="02. GameObject\MapObject\04. MapLightPoint">
       <UniqueIdentifier>{8f98ed95-123b-4c72-b0bb-bcf3efb5405b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\Lottery\ResultBanner">
+      <UniqueIdentifier>{e04f041f-17af-4539-a63b-f9ab0f594352}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1965,10 +1968,10 @@
     </ClInclude>
     <ClInclude Include="..\public\GachaProps.h">
       <Filter>02. GameObject\Object\Gacha\GachaProps</Filter>
-   </ClInclude>
+    </ClInclude>
     <ClInclude Include="..\public\GachaResult.h">
       <Filter>02. GameObject\Object\Gacha\GachaProps\GachaResult</Filter>
-	</ClInclude>
+    </ClInclude>
     <ClInclude Include="..\Public\Defiler_Control.h">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler</Filter>
     </ClInclude>
@@ -1992,6 +1995,9 @@
     <ClInclude Include="..\Public\UI_RamenResultBanner.h">
       <Filter>02. GameObject\UI\01. 2D\Ramen\ResultBanner</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UI_LotteryResultBanner.h">
+      <Filter>02. GameObject\UI\01. 2D\Lottery\ResultBanner</Filter>
+  </ClInclude>
     <ClInclude Include="..\public\Claymore_Parried.h">
       <Filter>02. GameObject\Object\Enemy\Normal\EtherClayMore\State\Parry</Filter>
     </ClInclude>
@@ -2918,9 +2924,12 @@
     </ClCompile>
     <ClCompile Include="..\private\GachaResult.cpp">
       <Filter>02. GameObject\Object\Gacha\GachaProps\GachaResult</Filter>
-	</ClCompile>
+    </ClCompile>
     <ClCompile Include="..\private\MapLightPoint.cpp">
       <Filter>02. GameObject\MapObject\04. MapLightPoint</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_LotteryResultBanner.cpp">
+      <Filter>02. GameObject\UI\01. 2D\Lottery\ResultBanner</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
