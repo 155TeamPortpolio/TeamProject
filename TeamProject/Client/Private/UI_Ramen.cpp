@@ -227,6 +227,9 @@ void CUI_Ramen::OnClick_OrderComfirm()
     m_iMoney -= m_tRamenDesc.iPrice;
     RuntimeBucket().Int64.Set(PersistScope::SaveSlot, strFieldPlayerKey, m_iMoney);
     RuntimeBucket().String.Set(PersistScope::SaveSlot, "RamenID", m_tRamenDesc.strID);
+
+    for (auto& pMenu : m_pMenus)
+        pMenu->UI_DeActive();
 }
 
 void CUI_Ramen::OnVideoFinished()
@@ -249,8 +252,6 @@ void CUI_Ramen::Reset()
 {
     m_pSelectedMenu = nullptr;
     m_tRamenDesc = {};
-    for (auto& pMenu : m_pMenus)
-        pMenu->UI_DeActive();
     RuntimeBucket().Int64.TryGet(PersistScope::SaveSlot, strFieldPlayerKey, m_iMoney);
     Set_TextPrice();
     Update_Affordable();
