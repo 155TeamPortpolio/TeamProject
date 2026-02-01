@@ -113,7 +113,7 @@ void CLayer::Remove_GameObject(_uint ObjectID)
 	const _uint removeIdx = iter->second; //삭제해야할 오브젝트 인덱스
 	const _uint lastIdx = static_cast<_uint>(m_GameObjects.size() - 1); //마지막 친구
 
-	if (auto pRemove = m_GameObjects[removeIdx])
+	if (auto& pRemove = m_GameObjects[removeIdx])
 	{
 		pRemove->Set_Layer(nullptr);
 		Safe_Release(pRemove); //일단 지움
