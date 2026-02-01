@@ -1,0 +1,586 @@
+{
+    "alive": true,
+    "instanceName": "Gangta",
+    "transform": {
+        "anchor": 5,
+        "anchorOffset": [
+            0.0,
+            0.0
+        ],
+        "size": [
+            1600.0,
+            900.0
+        ],
+        "scale": [
+            1.0,
+            1.0
+        ],
+        "pivot": [
+            0.0,
+            0.0
+        ],
+        "radian": 0.0
+    },
+    "color": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+    ],
+    "pass": "Opaque",
+    "colorTexKey": "empty.png",
+    "colorTexMode": 0,
+    "colorTexMix": 1.0,
+    "animClips": [],
+    "children": [
+        {
+            "alive": true,
+            "instanceName": "Gang_Out",
+            "transform": {
+                "anchor": 0,
+                "anchorOffset": [
+                    -53.33333206176758,
+                    -53.33333206176758
+                ],
+                "size": [
+                    53.33333206176758,
+                    53.33333206176758
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "pass": "Opaque",
+            "colorTexKey": "empty.png",
+            "colorTexMode": 0,
+            "colorTexMix": 1.0,
+            "animClips": [
+                {
+                    "duration": 10.0,
+                    "keyframes": [
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "easeType": 0,
+                            "position": [
+                                0.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 0.0
+                        },
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "easeType": 0,
+                            "position": [
+                                0.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 2.0
+                        },
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "easeType": 0,
+                            "position": [
+                                30.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 8.0
+                        },
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "easeType": 0,
+                            "position": [
+                                0.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 9.0
+                        }
+                    ],
+                    "loop": false,
+                    "name": "Gang_Move"
+                }
+            ],
+            "children": [],
+            "typeTag": "Image",
+            "textureTag": "Gang_alpha.png"
+        },
+        {
+            "alive": true,
+            "instanceName": "Gang_In",
+            "transform": {
+                "anchor": 0,
+                "anchorOffset": [
+                    -53.33333206176758,
+                    -53.33333206176758
+                ],
+                "size": [
+                    53.33333206176758,
+                    53.33333206176758
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "pass": "Opaque",
+            "colorTexKey": "Eff_Assault_LC_26.png",
+            "colorTexMode": 1,
+            "colorTexMix": 1.0,
+            "animClips": [
+                {
+                    "duration": 10.0,
+                    "keyframes": [
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                0.0
+                            ],
+                            "easeType": 2,
+                            "position": [
+                                0.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 0.0
+                        },
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "easeType": 0,
+                            "position": [
+                                0.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 2.0
+                        },
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "easeType": 0,
+                            "position": [
+                                30.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 8.0
+                        },
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "easeType": 0,
+                            "position": [
+                                0.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 9.0
+                        }
+                    ],
+                    "loop": true,
+                    "name": "clip0"
+                }
+            ],
+            "children": [],
+            "typeTag": "Image",
+            "textureTag": "Eff_SpecialDamageText_090_HZW_05.png"
+        },
+        {
+            "alive": true,
+            "instanceName": "Ta_Out",
+            "transform": {
+                "anchor": 0,
+                "anchorOffset": [
+                    -13.0,
+                    -53.33333206176758
+                ],
+                "size": [
+                    53.33333206176758,
+                    53.33333206176758
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "pass": "Opaque",
+            "colorTexKey": "empty.png",
+            "colorTexMode": 0,
+            "colorTexMix": 1.0,
+            "animClips": [],
+            "children": [],
+            "typeTag": "Image",
+            "textureTag": "ta_alpha.png"
+        },
+        {
+            "alive": false,
+            "instanceName": "Ta_In",
+            "transform": {
+                "anchor": 0,
+                "anchorOffset": [
+                    -13.0,
+                    -53.33333206176758
+                ],
+                "size": [
+                    53.33333206176758,
+                    53.33333206176758
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "pass": "Opaque",
+            "colorTexKey": "Eff_Assault_LC_26.png",
+            "colorTexMode": 1,
+            "colorTexMix": 1.0,
+            "animClips": [],
+            "children": [],
+            "typeTag": "Image",
+            "textureTag": "Eff_SpecialDamageText_091_HZW_05.png"
+        },
+        {
+            "alive": false,
+            "instanceName": "Gang_Outline",
+            "transform": {
+                "anchor": 0,
+                "anchorOffset": [
+                    127.66699981689453,
+                    -53.33333206176758
+                ],
+                "size": [
+                    53.33333206176758,
+                    53.33333206176758
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "pass": "Opaque",
+            "colorTexKey": "empty.png",
+            "colorTexMode": 0,
+            "colorTexMix": 1.0,
+            "animClips": [],
+            "children": [],
+            "typeTag": "Image",
+            "textureTag": "Eff_Assault_LC_35.png"
+        },
+        {
+            "alive": false,
+            "instanceName": "Ta_Outline",
+            "transform": {
+                "anchor": 0,
+                "anchorOffset": [
+                    168.66700744628906,
+                    -53.33333206176758
+                ],
+                "size": [
+                    53.33333206176758,
+                    53.33333206176758
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "pass": "Opaque",
+            "colorTexKey": "empty.png",
+            "colorTexMode": 0,
+            "colorTexMix": 1.0,
+            "animClips": [],
+            "children": [],
+            "typeTag": "Image",
+            "textureTag": "Eff_Assault_LC_36.png"
+        },
+        {
+            "alive": false,
+            "instanceName": "Factory_Outline_01",
+            "transform": {
+                "anchor": 0,
+                "anchorOffset": [
+                    15.666999816894531,
+                    -70.33300018310547
+                ],
+                "size": [
+                    70.0,
+                    70.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "pass": "Opaque",
+            "colorTexKey": "empty.png",
+            "colorTexMode": 0,
+            "colorTexMix": 1.0,
+            "animClips": [],
+            "children": [],
+            "typeTag": "Image",
+            "textureTag": "Eff_Assault_LC_12.png"
+        },
+        {
+            "alive": false,
+            "instanceName": "Factory_Outline_02",
+            "transform": {
+                "anchor": 0,
+                "anchorOffset": [
+                    38.66699981689453,
+                    -70.33300018310547
+                ],
+                "size": [
+                    70.0,
+                    70.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "pass": "Opaque",
+            "colorTexKey": "empty.png",
+            "colorTexMode": 0,
+            "colorTexMix": 1.0,
+            "animClips": [],
+            "children": [],
+            "typeTag": "Image",
+            "textureTag": "Eff_Assault_LC_12.png"
+        },
+        {
+            "alive": false,
+            "instanceName": "Factory_01",
+            "transform": {
+                "anchor": 0,
+                "anchorOffset": [
+                    199.66700744628906,
+                    -58.33300018310547
+                ],
+                "size": [
+                    60.0,
+                    60.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "pass": "Opaque",
+            "colorTexKey": "empty.png",
+            "colorTexMode": 0,
+            "colorTexMix": 1.0,
+            "animClips": [],
+            "children": [],
+            "typeTag": "Image",
+            "textureTag": "Eff_Assault_LC_32.png"
+        },
+        {
+            "alive": false,
+            "instanceName": "Factory_02",
+            "transform": {
+                "anchor": 0,
+                "anchorOffset": [
+                    218.66700744628906,
+                    -58.33300018310547
+                ],
+                "size": [
+                    60.0,
+                    60.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "pass": "Opaque",
+            "colorTexKey": "empty.png",
+            "colorTexMode": 0,
+            "colorTexMix": 1.0,
+            "animClips": [],
+            "children": [],
+            "typeTag": "Image",
+            "textureTag": "Eff_Assault_LC_32.png"
+        }
+    ],
+    "typeTag": "CanvasPanel"
+}

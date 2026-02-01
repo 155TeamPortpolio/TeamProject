@@ -82,7 +82,7 @@ void CEntityObject::Export_ObjectData(void* pDesc)
 	pEntityDesc->tagName = m_InstanceName;
 	pEntityDesc->iType = m_iType;
 
-	_float3 vScale; XMStoreFloat3(&vScale, Get_Component<CTransform>()->Get_Pos());
+	_float3 vScale; XMStoreFloat3(&vScale, Get_Component<CTransform>()->Get_Scale());
 	_float4 qRotation; XMStoreFloat4(&qRotation, Get_Component<CTransform>()->Get_QuaternionRotate());
 	_vector3 vEulerRotation = _quaternion(qRotation).ToEuler();
 	_float3 vPosition; XMStoreFloat3(&vPosition, Get_Component<CTransform>()->Get_Pos());
@@ -129,9 +129,10 @@ string CEntityObject::Get_TypeName()
 
 	switch (m_iType)
 	{
-	case 0: Typename = "NPC"; break;
-	case 1: Typename = "Interact"; break;
-	case 2: Typename = "ETC"; break;
+	case 0: Typename = "NPC";		break;
+	case 1: Typename = "Interact";	break;
+	case 2: Typename = "ETC";		break;
+	case 3: Typename = "Invwall";	break;
 	default:
 		break;
 	}
@@ -141,35 +142,15 @@ string CEntityObject::Get_TypeName()
 
 _vector4 CEntityObject::Get_TypeColor()
 {
-
-	/*
-	White		= {1.f, 1.f, 1.f, 1.f};
-	Black		= {0.f, 0.f, 0.f, 1.f};
-	Red			= {1.f, 0.f, 0.f, 1.f};
-	Green		= {0.f, 1.f, 0.f, 1.f};
-	Blue		= {0.f, 0.f, 1.f, 1.f};
-	Yellow		= {1.f, 1.f, 0.f, 1.f};
-	Cyan		= {0.f, 1.f, 1.f, 1.f};
-	Magenta		= {1.f, 0.f, 1.f, 1.f};
-	Orange		= {1.f, 0.5f, 0.f, 1.f};
-	Purple		= {0.5f, 0.f, 0.5f, 1.f};
-	Pink		= {1.f, 0.75f, 0.8f, 1.f};
-	Lime		= {0.5f, 1.f, 0.f, 1.f};
-	Teal		= {0.f, 0.5f, 0.5f, 1.f};
-	Navy		= {0.f, 0.f, 0.5f, 1.f};
-	Olive		= {0.5f, 0.5f, 0.f, 1.f};
-	Maroon		= {0.5f, 0.f, 0.f, 1.f};
-	SkyBlue		= {0.4f, 0.7f, 1.f, 1.f};
-	LightGray	= {0.8f, 0.8f, 0.8f, 1.f};
-	*/
 	_vector4 TypeColor;
 	
 	switch (m_iType)
 	{
-	case 0: TypeColor = _vector4{ 1.f, 1.f, 0.f, 1.f }; break; // NPC : Yellow
-	case 1: TypeColor = _vector4{ 0.f, 1.f, 1.f, 1.f }; break; // INTERACT  : Cyan
-	case 2: TypeColor = _vector4{ 0.5f, 0.f, 0.5f, 1.f }; break; // ETC : Purple
-	default:TypeColor = _vector4{ 0.f, 1.f, 0.f, 1.f }; break; // DEF : Green 
+	case 0: TypeColor = _vector4{ 1.f, 1.f, 0.f, 1.f };		break; // NPC : Yellow
+	case 1: TypeColor = _vector4{ 0.f, 1.f, 1.f, 1.f };		break; // INTERACT  : Cyan
+	case 2: TypeColor = _vector4{ 0.5f, 0.f, 0.5f, 1.f };	break; // ETC : Purple
+	case 3: TypeColor = _vector4{ 0.0f, 0.f, 1.f, 1.f };	break; // INVWALL : Blue
+	default:TypeColor = _vector4{ 0.f, 1.f, 0.f, 1.f };		break; // DEF : Green 
 	}
 
 	return TypeColor;
@@ -187,6 +168,9 @@ void CEntityObject::Render_GUI()
 
 	if (ImGui::InputInt("##Version", &m_iType)) {
 		Get_Component<CCollider>()->Set_ColliderColor(Get_TypeColor());
+
+		if (m_iType == 3 && m_InstanceName != "Invwall")
+			m_InstanceName = "Invwall";
 	};
 
 	const auto EntityList = CMapToolCore::GetInstance()->Get_MapToolGui()->Get_EntityModelNames();
@@ -208,9 +192,6 @@ void CEntityObject::Render_GUI()
 							}
 						}
 					}
-					
-					//CurModelName = EntityList[i];
-					//m_iPickedEntityModelIndex = i;
 				}
 			}
 			ImGui::EndCombo();
