@@ -73,6 +73,7 @@ public:
     virtual void    Priority_Update(_float dt) override;
     virtual void    Update(_float dt) override;
     virtual void    Late_Update(_float dt) override;
+    virtual void    Render_GUI() override;
 
     virtual void    OnTriggerEnter(CGameObject* pOther) override;
     virtual void    OnTriggerStay(CGameObject* pOher) override;
