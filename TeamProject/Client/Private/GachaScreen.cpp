@@ -3,7 +3,12 @@
 
 #include "StaticModel.h"
 #include "Material.h"
+#include "MaterialInstance.h"
 #include "Child.h"
+
+#include "GameInstance.h"
+#include "Shader.h"
+#include "Texture.h"
 
 CGachaScreen::CGachaScreen()
 	:CGameObject()
@@ -39,6 +44,18 @@ HRESULT CGachaScreen::Initialize(INIT_DESC* pArg)
 
 void CGachaScreen::Awake()
 {
+	auto pMaterial = Get_Component<CMaterial>();
+
+	CTexture* pTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, "Gacha_A_Loop_Clip.png");
+
+	auto pMaterialInstances = pMaterial->Get_MaterialInstances();
+	for (auto& instance : pMaterialInstances)
+	{
+		instance->Set_Param("DiffuseTexture", { pTexture->Get_SRV(), "Texture2D", 0});
+		instance->Set_Param("FrameIndex", { &m_iCurrentFrameIndex, "int", sizeof(_int)});
+		instance->Set_Param("Col", { &m_iCol, "int", sizeof(_int)});
+		instance->Set_Param("Row", { &m_iRow, "int", sizeof(_int)});
+	}
 }
 
 void CGachaScreen::Priority_Update(_float dt)
@@ -47,6 +64,14 @@ void CGachaScreen::Priority_Update(_float dt)
 
 void CGachaScreen::Update(_float dt)
 {
+	m_fElapsedTime += dt;
+	if (m_fElapsedTime > m_fFrameDuration)
+	{
+		++m_iCurrentFrameIndex;
+		m_fElapsedTime = 0.f;
+		if (m_iCurrentFrameIndex >= m_iMaxFrameIndex)
+			m_iCurrentFrameIndex = 0;
+	}
 }
 
 void CGachaScreen::Late_Update(_float dt)

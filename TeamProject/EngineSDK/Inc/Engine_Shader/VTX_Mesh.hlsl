@@ -3,6 +3,10 @@
 float3 vRimLightColor;
 float fRimLightPower;
 
+int FrameIndex;
+int Col;
+int Row;
+
 struct VS_IN
 {
     float3 vPosition : POSITION;
@@ -114,14 +118,14 @@ PS_OUT PS_TV(PS_IN In)
 {
     PS_OUT Out;
     
-    vector vMtrlDiffuse = DiffuseTexture.Sample(LinearSampler, In.vTexcoord);
-    
+    float2 TVTexcoord = CalculateFrameIndex(Col, Row, FrameIndex, In.vTexcoord);
+    vector vMtrlDiffuse = DiffuseTexture.Sample(DefaultSampler, TVTexcoord);
     if (vMtrlDiffuse.a < 0.2)
     {
         discard;
     }
     vector vMetalic = MetalnessTexture.Sample(DefaultSampler, In.vTexcoord);
-    Out.vDiffuse = vMtrlDiffuse;
+    Out.vDiffuse = float4(vMtrlDiffuse.rgb, 1.f);
     
     float3 vNormal = normalize(In.vNormal);
     Out.vNormal = float4(vNormal * 0.5f + 0.5f, 1.f);
@@ -207,6 +211,15 @@ technique11 DefaultTechnique
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN();
     }  
+    pass NoCull
+    {
+        SetRasterizerState(RS_NoCull);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_MAIN();
+    }
     pass Blend
     {
         SetRasterizerState(RS_NoCull);
