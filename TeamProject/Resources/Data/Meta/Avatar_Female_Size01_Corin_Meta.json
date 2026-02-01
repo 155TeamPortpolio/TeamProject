@@ -1,0 +1,509 @@
+{
+  "AnimPath" : "../Bin/Resources/Global/BattleCharacter/Corin/Anim/",
+  "PreTransform": {
+    "_11": -0.009999999776482582,
+    "_12": 0.0,
+    "_13": 0.0,
+    "_14": 0.0,
+    "_21": 0.0,
+    "_22": 0.009999999776482582,
+    "_23": 0.0,
+    "_24": 0.0,
+    "_31": 0.0,
+    "_32": 0.0,
+    "_33": -0.009999999776482582,
+    "_34": 0.0,
+    "_41": 0.0,
+    "_42": 0.0,
+    "_43": 0.0,
+    "_44": 1.0
+  },
+  "Clips": [
+    {
+      "ClipTag": "Avatar_Female_Size01_Corin_Ani_AssaultAid",
+      "Events": [
+        {
+          "EventTime": 0.1205328106880188,
+          "EventType": "Notify",
+          "EventTag": "SawInterval"
+        },
+        {
+          "EventTime": 0.18940870463848114,
+          "EventType": "Notify",
+          "EventTag": "SawEnd"
+        },
+        {
+          "EventTime": 0.3547108471393585,
+          "EventType": "Notify",
+          "EventTag": "SawInterval"
+        },
+        {
+          "EventTime": 0.41999998688697815,
+          "EventType": "Notify",
+          "EventTag": "SawEnd"
+        },
+        {
+          "EventTime": 0.5578947067260742,
+          "EventType": "Notify",
+          "EventTag": "SawInterval"
+        },
+        {
+          "EventTime": 0.6061078906059265,
+          "EventType": "Notify",
+          "EventTag": "SawEnd"
+        },
+        {
+          "EventTime": 0.8609486222267151,
+          "EventType": "Notify",
+          "EventTag": "SawInterval"
+        },
+        {
+          "EventTime": 0.9900000095367432,
+          "EventType": "Notify",
+          "EventTag": "SawEnd"
+        }
+      ]
+    },
+    {
+      "ClipTag": "Avatar_Female_Size01_Corin_Ani_AssaultAid_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size01_Corin_Ani_Attack_Branch_01",
+      "Events": [
+        {
+          "EventTime": 0.6362573504447937,
+          "EventType": "Notify",
+          "EventTag": "SawOnce"
+        },
+        {
+          "EventTime": 1.0007797479629517,
+          "EventType": "Notify",
+          "EventTag": "SawEnd"
+        },
+        {
+          "EventTime": 1.0140351057052612,
+          "EventType": "Notify",
+          "EventTag": "SawInterval"
+        }
+      ]
+    },
+    {
+      "ClipTag": "Avatar_Female_Size01_Corin_Ani_Attack_Branch_01_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size01_Corin_Ani_Attack_Branch_01_Explode",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size01_Corin_Ani_Attack_Branch_02",
+      "Events": [
+        {
+          "EventTime": 0.6366999745368958,
+          "EventType": "Notify",
+          "EventTag": "SawOnce"
+        },
+        {
+          "EventTime": 0.9900000095367432,
+          "EventType": "Notify",
+          "EventTag": "SawEnd"
+        },
+        {
+          "EventTime": 1.0,
+          "EventType": "Notify",
+          "EventTag": "SawInterval"
+        },
+        {
+          "EventTime": 1.0099999904632568,
+          "EventType": "Notify",
+          "EventTag": "PopInvincible"
+        }
+      ]
+    },
+    {
+      "ClipTag": "Avatar_Female_Size01_Corin_Ani_Attack_Branch_02_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size01_Corin_Ani_Attack_Branch_02_Explode",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size01_Corin_Ani_Attack_Branch_03_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size01_Corin_Ani_Attack_Branch_03_Shake",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size01_Corin_Ani_Attack_Branch_03_Walk_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size01_Corin_Ani_Attack_Branch_03_Walk_Shake",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size01_Corin_Ani_Attack_Branch_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size01_Corin_Ani_Attack_Branch_Walk",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size01_Corin_Ani_Attack_Counter",
+      "Events": [
+        {
+          "EventTime": 0.24756334722042084,
+          "EventType": "Notify",
+          "EventTag": "SawInterval"
+        }
+      ]
+    },
+    {
+      "ClipTag": "Avatar_Female_Size01_Corin_Ani_Attack_Counter_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size01_Corin_Ani_Attack_Counter_Explode",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size01_Corin_Ani_Attack_Normal_01",
+      "Events": [
+        {
+          "EventTime": 0.3526315689086914,
+          "EventType": "Notify",
+          "EventTag": "SawCount"
+        },
+        {
+          "EventTime": 0.42456138134002686,
+          "EventType": "Notify",
+          "EventTag": "SawEnd"
+        }
+      ]
+    },
+    {
+      "ClipTag": "Avatar_Female_Size01_Corin_Ani_Attack_Normal_01_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size01_Corin_Ani_Attack_Normal_02",
+      "Events": [
+        {
+          "EventTime": 0.2323586791753769,
+          "EventType": "Notify",
+          "EventTag": "SawCount"
+        },
+        {
+          "EventTime": 0.30097466707229614,
+          "EventType": "Notify",
+          "EventTag": "SawEnd"
+        }
+      ]
+    },
+    {
+      "ClipTag": "Avatar_Female_Size01_Corin_Ani_Attack_Normal_02_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size01_Corin_Ani_Attack_Normal_03",
+      "Events": [
+        {
+          "EventTime": 0.6793372631072998,
+          "EventType": "Notify",
+          "EventTag": "SawInterval"
+        },
+        {
+          "EventTime": 1.350682258605957,
+          "EventType": "Notify",
+          "EventTag": "SawEnd"
+        }
+      ]
+    },
+    {
+      "ClipTag": "Avatar_Female_Size01_Corin_Ani_Attack_Normal_03_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size01_Corin_Ani_Attack_Normal_03_Explode",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size01_Corin_Ani_Attack_Normal_04",
+      "Events": [
+        {
+          "EventTime": 0.3187134265899658,
+          "EventType": "Notify",
+          "EventTag": "SawInterval"
+        },
+        {
+          "EventTime": 0.7397660613059998,
+          "EventType": "Notify",
+          "EventTag": "SawEnd"
+        }
+      ]
+    },
+    {
+      "ClipTag": "Avatar_Female_Size01_Corin_Ani_Attack_Normal_04_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size01_Corin_Ani_Attack_Normal_05",
+      "Events": [
+        {
+          "EventTime": 0.5858349204063416,
+          "EventType": "Notify",
+          "EventTag": "SawInterval"
+        },
+        {
+          "EventTime": 1.5213775634765625,
+          "EventType": "Notify",
+          "EventTag": "SawEnd"
+        }
+      ]
+    },
+    {
+      "ClipTag": "Avatar_Female_Size01_Corin_Ani_Attack_Normal_05_B",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size01_Corin_Ani_Attack_Normal_05_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size01_Corin_Ani_Attack_ParryAid_H",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size01_Corin_Ani_Attack_ParryAid_H_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size01_Corin_Ani_Attack_ParryAid_L",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size01_Corin_Ani_Attack_ParryAid_L_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size01_Corin_Ani_Attack_ParryAid_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size01_Corin_Ani_Attack_Rush",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size01_Corin_Ani_Attack_Rush_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size01_Corin_Ani_Attack_Rush_Enhance",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size01_Corin_Ani_Attack_Rush_Enhance_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size01_Corin_Ani_Attack_Rush_Enhance_Explode",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size01_Corin_Ani_Attack_Rush_Enhance_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size01_Corin_Ani_Attack_Rush_Enhance_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size01_Corin_Ani_Attack_Rush_Explode",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size01_Corin_Ani_Die",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size01_Corin_Ani_Evade_Back",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size01_Corin_Ani_Evade_Front",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size01_Corin_Ani_Hit_H_Back",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size01_Corin_Ani_Hit_H_Front",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size01_Corin_Ani_Hit_L_Back",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size01_Corin_Ani_Hit_L_Front",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size01_Corin_Ani_Hit_Shake",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size01_Corin_Ani_HitFly_Back",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size01_Corin_Ani_HitFly_Front",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size01_Corin_Ani_Idle",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size01_Corin_Ani_Idle_AFK",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size01_Corin_Ani_LevelSwitch",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size01_Corin_Ani_QuestStart",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size01_Corin_Ani_Revive_01",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size01_Corin_Ani_Revive_02",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size01_Corin_Ani_Revive_03",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size01_Corin_Ani_Revive_04",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size01_Corin_Ani_Run",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size01_Corin_Ani_Run_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size01_Corin_Ani_Run_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size01_Corin_Ani_Run_Start_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size01_Corin_Ani_SiwtchIn_Normal",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size01_Corin_Ani_SwitchIn_Attack",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size01_Corin_Ani_SwitchIn_Attack_02",
+      "Events": [
+        {
+          "EventTime": 0.683040976524353,
+          "EventType": "Notify",
+          "EventTag": "SawInterval"
+        },
+        {
+          "EventTime": 1.1810916662216187,
+          "EventType": "Notify",
+          "EventTag": "SawEnd"
+        }
+      ]
+    },
+    {
+      "ClipTag": "Avatar_Female_Size01_Corin_Ani_SwitchIn_Attack_02_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size01_Corin_Ani_SwitchIn_Attack_02_Explode",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size01_Corin_Ani_SwitchIn_Attack_02_Explode_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size01_Corin_Ani_SwitchIn_Attack_02_Landed",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size01_Corin_Ani_SwitchIn_Attack_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size01_Corin_Ani_SwitchIn_Attack_Ex",
+      "Events": [
+        {
+          "EventTime": 0.4093567132949829,
+          "EventType": "Notify",
+          "EventTag": "SawStart"
+        },
+        {
+          "EventTime": 0.916179358959198,
+          "EventType": "Notify",
+          "EventTag": "SawEnd"
+        },
+        {
+          "EventTime": 1.3918129205703735,
+          "EventType": "Notify",
+          "EventTag": "SawStart"
+        }
+      ]
+    },
+    {
+      "ClipTag": "Avatar_Female_Size01_Corin_Ani_SwitchIn_Attack_Ex_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size01_Corin_Ani_SwitchIn_Attack_Ex_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size01_Corin_Ani_SwitchOut_Normal",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size01_Corin_Ani_Taunt",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size01_Corin_Ani_TurnBack",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size01_Corin_Ani_Walk",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size01_Corin_Ani_Walk_Start",
+      "Events": []
+    }
+  ]
+}

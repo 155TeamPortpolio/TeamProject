@@ -31,7 +31,9 @@ HRESULT CGacha_Level::Awake()
 
 	Ready_GachaObjects();
 	CamDirector()->SetSpaceRef(m_GachaHandle);
-
+	//CamDirector()->RequestSequence("Gacha/StartPos");
+	//CamDirector()->RequestSequence("Gacha/TestPos");
+	CamDirector()->RequestSequence("Gacha/StartIntro");
 	return S_OK;
 }
 

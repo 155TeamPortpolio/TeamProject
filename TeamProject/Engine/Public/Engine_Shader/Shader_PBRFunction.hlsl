@@ -136,7 +136,7 @@ float3 view, float3 light, float3 lightcolor, float lightIntensity, float3 light
     
     float attenuation = 1.0 / (1.0 + 0.09 * distance + 0.032 * distance * distance);
     float rangeFactor = max(0.0, 1.0 - (distance / lightrange));
-   // attenuation *= rangeFactor * rangeFactor;
+    attenuation *= rangeFactor * rangeFactor;
     
     float3 Luminance = CalculatePBR(albedo, normal, metalic, roughness, view, lightdir,
                                   lightcolor, lightIntensity * attenuation);

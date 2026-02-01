@@ -1,5 +1,8 @@
 #include "Animator3DEX.h"
 #include "AnimationClip.h"
+#include "GameInstance.h"
+#include "Helper_Func.h"
+#include "ModelData.h"
 
 CAnimator3DEX::CAnimator3DEX()
 {
@@ -53,6 +56,62 @@ void CAnimator3DEX::Update_Animation(_float dt)
 	//}
 	//
 	//BuildBone();
+}
+
+HRESULT CAnimator3DEX::Link_MetaData(const string& LevelKey, const string& MetaClipKey)
+{
+	string metaPath = "../../Resources/Data/Meta/" + MetaClipKey;
+	ANIM_META MetaData = Helper::LoadJson<ANIM_META>(metaPath);
+
+	ANIMATION_META Meta;
+
+	string AnimPath = MetaData.AnimPath;
+	if (AnimPath.rfind("../", 0) == 0)
+		AnimPath.erase(0, 3);
+
+	const string animDir = "../../Client/" + AnimPath;
+	Meta.PreTransform = MetaData.PreTransform;
+	Meta.pClips.reserve(MetaData.Clips.size());
+
+
+	for (auto& DataClip : MetaData.Clips)
+	{
+		string animPath = animDir + DataClip.ClipTag + ".anim";
+		CAnimationClip* pClip = CAnimationClip::Create(animPath);
+
+		if (!DataClip.Events.empty())
+			pClip->Set_Events(DataClip.Events);
+
+		if (pClip)
+			Meta.pClips.push_back(pClip);
+	}
+
+	if (Meta.pClips.empty()) {
+		string msg = "Anim Add Failed: " + MetaClipKey + "\n";
+		OutputDebugStringA(msg.c_str());
+		return E_FAIL;
+	}
+
+	m_AnimPath = MetaData.AnimPath;
+	m_PreTransform = Meta.PreTransform;
+	m_pAnimClips = Meta.pClips;
+
+
+	Resize_Layer(1);
+	//0번 레이어는 베이스레이어, Layer.BaseLayer는 웬만하면 건들지 말것
+	m_AnimLayers[0].BaseLayer = true;
+	m_AnimLayers[0].eLayerType = ANIM_LAYER_STATE::BASE;
+	m_AnimLayers[0].fLayerWeight = 1.f;
+	m_AnimLayers[0].iRootBoneIndex = m_pData->Find_BoneIndexByName("Root");
+
+	BuildBone();
+	m_TPose = m_CombinedMatrices;
+
+	return S_OK;
+}
+
+void CAnimator3DEX::Create_Clips()
+{
 }
 
 vector<class CAnimationClip*>* CAnimator3DEX::Get_Clips()

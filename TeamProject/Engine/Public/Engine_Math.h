@@ -68,4 +68,6 @@ namespace Math
 
 
 	ENGINE_DLL _vector3 RotateVectorByQuaternion(const _vector3& vec, const _vector4& quat);//방향을 쿼터니언만큼 회전
+	ENGINE_DLL _vector3 DampVector(_vector3 curDir, _vector3 targetDir, _float dt, _float dampSpeed);
+	
 }

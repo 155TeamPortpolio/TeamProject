@@ -186,10 +186,11 @@ private:
     PxMaterial*              m_pMaterial = { nullptr };
     PxFilterData             m_FilterData = {};
     PxFilterData             m_QueryFilterData = {};
-CCCTQueryFilter*         m_pQueryFilter = { nullptr };
+    CCCTQueryFilter*         m_pQueryFilter = { nullptr };
     CCCTFilterCallback*      m_pCCTFilter = { nullptr };
     _bool                    m_bGrounded = { false };
     _bool                    m_bGravityEnabled = { true };
+    _vector3                 m_vRootMotion = {};
     _vector3                 m_vVelocity = { 0.f, 0.f, 0.f };
     _vector3                 m_vPrevVelocity = { 0.f, 0.f, 0.f };
     _float                   m_fHeight = { 0.f };

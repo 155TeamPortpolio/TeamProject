@@ -86,11 +86,11 @@ void CAnimToolPanel::Update_Panel(_float dt)
 		if (nullptr != m_pSelectAnimator) {
 			m_pSelectAnimator->Resize_Layer(2);
 			m_pSelectAnimator->Set_LayerType(ANIM_LAYER_STATE::ADDITIVE, 1);
-			//m_pSelectAnimator->Set_MotionBone(12);
+			m_pSelectAnimator->Set_MotionBone(12);
 			//m_pSelectAnimator->Set_StartBone(24, 1);
-			m_pSelectAnimator->Set_Animation(1, 105)
-				.LayerBlend(1.f, 1.f, -1.f, EaseType::Linear)
-				.Loop(true)
+			m_pSelectAnimator->Set_Animation(1, 76)
+				.LayerBlend(1.f, 0.f, 1.f, EaseType::Linear)
+				.Loop(false)
 				.Apply();
 		}
 	}
@@ -650,6 +650,7 @@ void CAnimToolPanel::Save_Event()
 	string MetaPath = m_pGameInstance->Get_ResourceMgr()->Get_ResourcePath(ClipKey);
 
 	ANIM_META tMeta{};
+	tMeta.AnimPath = m_pSelectAnimator->Get_AnimPath();
 	tMeta.PreTransform = m_pSelectAnimator->Get_PreTransform();
 	tMeta.Clips = m_AnimClip;
 

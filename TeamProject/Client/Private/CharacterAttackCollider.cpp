@@ -97,10 +97,10 @@ void CCharacterAttackCollider::OnTriggerEnter(CGameObject* pOther)
 			pCharacter->OnDamage();
 			if (m_tHitDesc.eDamageType == DAMAGE_TYPE::HARD && pEnemy->IsGroggy() && pEnemy->Get_ComboCount() != 0)
 			{
-				if (pCharacter->Is_MainCharacter())
+				if (pCharacter->Is_MainCharacter() && !pCharacter->Is_ReserveCombo())
 				{
 					pEnemy->Decrease_ComboCount();
-					BattleSystem()->GetBattlePlayer()->Request_ComboAttack();
+					pCharacter->Reserve_ComboAttack();
 				}
 			}
 		}
@@ -151,7 +151,7 @@ void CCharacterAttackCollider::OnTriggerStay(CGameObject* pOther)
 				if (pCharacter->Is_MainCharacter())
 				{
 					pEnemy->Decrease_ComboCount();
-					BattleSystem()->GetBattlePlayer()->Request_ComboAttack();
+					pCharacter->Reserve_ComboAttack();
 				}
 			}
 		}

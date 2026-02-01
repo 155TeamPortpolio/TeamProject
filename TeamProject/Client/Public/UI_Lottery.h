@@ -51,7 +51,7 @@ private:
 	void Cache(); 
 	void Create_Newspaper();
 	void Create_ScratchCard();
-	void Create_ButtonBack();
+	void Create_BackButton();
 
 	void Change_State(STATE eState);
 
