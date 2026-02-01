@@ -386,7 +386,9 @@
     <ClInclude Include="..\Public\CorinState_CounterAttack.h" />
     <ClInclude Include="..\public\GachaBack.h" />
     <ClInclude Include="..\public\GachaProps.h" />
+    <ClInclude Include="..\public\GachaScreen.h" />
     <ClInclude Include="..\public\GachaStage.h" />
+    <ClInclude Include="..\public\GachaStageScreen.h" />
     <ClInclude Include="..\public\GachaTV.h" />
     <ClInclude Include="..\public\GachaResult.h" />
     <ClInclude Include="..\public\Gacha_Level.h" />
@@ -753,7 +755,9 @@
     <ClCompile Include="..\Private\DefilerState_Idle.cpp" />
     <ClCompile Include="..\private\GachaBack.cpp" />
     <ClCompile Include="..\private\GachaProps.cpp" />
+    <ClCompile Include="..\private\GachaScreen.cpp" />
     <ClCompile Include="..\private\GachaStage.cpp" />
+    <ClCompile Include="..\private\GachaStageScreen.cpp" />
     <ClCompile Include="..\private\GachaTV.cpp" />
     <ClCompile Include="..\private\GachaResult.cpp" />
     <ClCompile Include="..\private\Gacha_Level.cpp" />

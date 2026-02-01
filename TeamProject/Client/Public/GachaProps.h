@@ -20,7 +20,7 @@ public:
     virtual void    Late_Update(_float dt)      override;
 
 private:
-    HRESULT Initialize_GlobalPrototype();
+    HRESULT Initialize_GachaPrototype();
     void Add_GachaProps();
 
 public:
