@@ -15,12 +15,12 @@ public:
 	}RESULT_BANNER_DESC;
 
 	typedef struct tagActiveDesc {
-		wstring	strMenu = {};
+		wstring strMenu = {};
+		vector<RAMEN_ATTRIBUTE> attributes;
 	}ACTIVE_DESC;
 
 private:
-	enum class TEXTSLOT { LABEL1, LABEL2, END };
-	inline static const string INSTANCENAMES[ENUM(TEXTSLOT::END)] = { "label1", "label2" };
+	enum class ATTR { LABEL, NAME1, VALUE1, NAME2, VALUE2, NAME3, VALUE3, END };
 
 	enum class STATE { INVISIBLE, VISIBLE, END };
 
@@ -43,16 +43,22 @@ public:
 private:
 	STATE			m_eState = { STATE::END };
 
-	class CTextSlot* m_pTextSlots[ENUM(TEXTSLOT::END)] = {};
+	class CTextSlot* m_pLabelTextSlot = {};
+
+	class CUI_Object* m_pAttrObjects[ENUM(ATTR::END)] = {};
+	class CTextSlot* m_pAttrTextSlots[ENUM(ATTR::END)] = {};
 
 private:
 	void Cache();
 	void Create_ConfirmButton();
+	void Create_AttrTexts();
+
+	void Create_AttrText(CUI_Object** ppOutObj, class CTextSlot** ppOutTextSlot, _bool isHighlighted = false);
 
 	void Change_State(STATE eSate);
 	void OnClick_Confirm();
 
-	void Set_Text(TEXTSLOT textSlot, const _wstring& strText);
+	void Refresh_Layout();
 
 public:
 	static  CGameObject* Create();

@@ -135,7 +135,7 @@ namespace Client {
 	typedef struct tagRamenDesc	{
 		string	strID;
 		wstring strName;
-		_int	iPrice;
+		_uint	iPrice;
 		_int	iOrder;
 		vector<RAMEN_ATTRIBUTE> attributes;
 	}RAMEN_DESC;
