@@ -52,8 +52,13 @@ void CUI_RamenResultBanner::UI_Active(void* pArg)
 {
     Change_State(STATE::VISIBLE);
 
+    if (!pArg)
+        return;
+
     ACTIVE_DESC* pDesc = static_cast<ACTIVE_DESC*>(pArg);
-    Set_Text(TEXTSLOT::LABEL1, L"[" + pDesc->strMenu + L"] 효과 발동");
+    wstring strMenu = pDesc->strMenu;
+    replace(strMenu.begin(), strMenu.end(), L'\n', L' ');
+    Set_Text(TEXTSLOT::LABEL1, L"[" + strMenu + L"] 효과 발동");
 }
 
 void CUI_RamenResultBanner::UI_DeActive(void* pArg)
