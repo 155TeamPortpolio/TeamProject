@@ -26,6 +26,7 @@
 #include "Claymore_Idle.h"
 #include "Claymore_Move.h"
 #include "Claymore_Chase.h"
+#include "Claymore_Parried.h"
 
 CClaymore::CClaymore()
 	: CEnemyNormal()
@@ -234,7 +235,7 @@ void CClaymore::OnPooledRelease()
 
 void CClaymore::Parried()
 {
-	if ("Attack" != m_pStateMachine->Get_CurrentStateName())
+	if ("Attack" != m_pStateMachine->Get_CurrentStateName() || false == m_isParryEnable)
 		return;
 
 	__super::Parried();
@@ -245,6 +246,19 @@ void CClaymore::Parried()
 
 HRESULT CClaymore::Ready_Children(INIT_DESC* pArg)
 {
+	BATTLE_COLLIDER_DESC WeaponDesc = {};
+
+	WeaponDesc.tagName = "Weapon";
+	WeaponDesc.isAttachBone = true;
+	WeaponDesc.tagBone = "Bip001_L_Forearm";
+	WeaponDesc.pOwnerAnimator3D = Get_Component<CAnimator3D>();
+	WeaponDesc.eAttackColliderType = COLLIDER_TYPE::BOX;
+	WeaponDesc.vCenter = { 0.8f, 0.f, 0.f };
+	WeaponDesc.vAttackSize = { 1.8f, 0.3f, 0.3f };
+
+	if (FAILED(AttachBattleColliderObject(&WeaponDesc)))
+		return E_FAIL;
+
 	Create_AttackSign("Bip001_Head");
 	Create_UIEnemyStatus("Bip001_Spine2");
 	Create_MeshPyramid();
@@ -295,7 +309,7 @@ void CClaymore::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER ch
 
 	if ("Groggy" == m_pStateMachine->Get_CurrentStateName())
 	{
-		Get_Component<CAnimator3D>()->Set_Animation(1, "ThugPoacher_Ani_Hit_Knock")
+		Get_Component<CAnimator3D>()->Set_Animation(1, "Claymore_Ani_Hit_Stay")
 			.LayerBlend(1.f, 0.f, 1.f, EaseType::Linear)
 			.Loop(false)
 			.Apply();
@@ -308,7 +322,7 @@ void CClaymore::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER ch
 	}
 	else
 	{
-		Get_Component<CAnimator3D>()->Set_Animation(1, "ThugPoacher_Ani_Hit_Stay")
+		Get_Component<CAnimator3D>()->Set_Animation(1, "Claymore_Ani_Hit_Stay")
 			.LayerBlend(1.f, 0.f, 1.f, EaseType::Linear)
 			.Loop(false)
 			.Apply();
@@ -334,7 +348,7 @@ HRESULT CClaymore::Initialize_StateMachine()
 	m_pStateMachine->Set_DefaultState("Born");
 	m_pStateMachine->Initialize(this);
 
-	Get_Component<CAnimator3D>()->Set_Animation("ThugAssaulter_Ani_Born")
+	Get_Component<CAnimator3D>()->Set_Animation("Monster_Claymore_Ani_Born")
 		.Apply();
 
 	return S_OK;
@@ -350,6 +364,7 @@ HRESULT CClaymore::Initialize_States()
 	m_pStateMachine->Register_State("Death", CClaymore_Death::Create());
 	m_pStateMachine->Register_State("Groggy", CClaymore_Groggy::Create());
 	m_pStateMachine->Register_State("Hit", CClaymore_Hit::Create());
+	m_pStateMachine->Register_State("Parried", CClaymore_Parried::Create());
 
 	return S_OK;
 }
@@ -379,8 +394,8 @@ HRESULT CClaymore::Ready_Rules()
 	// x = Idle에서 다음 상태로 넘어가는 쿨타임, y = dt 더한 타이머용
 	m_vIdleTime = { 1.f, 0.f };
 
-	m_tHysteriesis.fEvadeEnter = 3.f;
-	m_tHysteriesis.fComboEnter = 3.5f;
+	m_tHysteriesis.fEvadeEnter = 2.f;
+	m_tHysteriesis.fComboEnter = 3.f;
 	m_tHysteriesis.fComboExit = 4.5f;
 	m_tHysteriesis.fChaseEnter = 7.f;
 	m_tHysteriesis.fChaseExit = 5.f;
@@ -412,7 +427,10 @@ void CClaymore::ControlState(const _float dt)
 {
 	if ("Death" != m_pStateMachine->Get_CurrentStateName() &&
 		0 >= m_tStatus.iNowHP)
+	{
+		RequestRemoveOnDeathToBattleSystem();
 		m_pStateMachine->Change_State("Death");
+	}
 
 	if ("Death" != m_pStateMachine->Get_CurrentStateName() &&
 		"Groggy" != m_pStateMachine->Get_CurrentStateName() &&
