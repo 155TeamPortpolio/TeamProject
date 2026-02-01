@@ -134,6 +134,7 @@ public: // 상태
     void        Set_EvadeMax(_uint iMax) { m_iEvadeMax = iMax; }
     void        Reset_Interact() { m_bCanInteract = false; }
     void        Reserve_ComboAttack() { m_bReserveCombo = true; }
+    void        Reset_ReserveCombo() { m_bReserveCombo = false; }
     _bool       Is_ReserveCombo() const { return m_bReserveCombo; }
 
 public: // 캐릭터 전환
