@@ -21,6 +21,10 @@ HRESULT CUIObject_Tool::Initialize(INIT_DESC* pArg)
     sprite->Set_Param("ColorTexMode", {&m_colorTexModeU, "uint", sizeof(_uint)});
     sprite->Set_Param("ColorTexMix", {&m_colorTexMix, "float", sizeof(_float)});
 
+    sprite->Set_Param("ColorUVUse", {&m_colorUVUseU, "uint", sizeof(_uint)});
+    sprite->Set_Param("ColorUVOffset", {&m_colorUVOffset, "float2", sizeof(Vector2)});
+    sprite->Set_Param("ColorUVScale", {&m_colorUVScale, "float2", sizeof(Vector2)});
+
     GUISystem()->Get_Context()->pSelectedObject = this;
     return S_OK;
 }
@@ -40,6 +44,17 @@ void CUIObject_Tool::Update(_float dt)
     __super::Update(dt);
 
     KeyInput_ReorderChildren();
+
+    if (m_colorUVAutoScroll && m_colorUVUseU != 0)
+    {
+        m_colorUVOffset += m_colorUVSpeed * dt;
+
+        m_colorUVOffset.x -= floorf(m_colorUVOffset.x);
+        m_colorUVOffset.y -= floorf(m_colorUVOffset.y);
+
+        auto sprite = Get_Component<CSprite2D>();
+        sprite->Set_Param("ColorUVOffset", {&m_colorUVOffset, "float2", sizeof(Vector2)});
+    }
 }
 
 void CUIObject_Tool::Render_GUI()
@@ -115,6 +130,12 @@ void CUIObject_Tool::Save(nlohmann::ordered_json& data)
     data["colorTexMode"] = m_colorTexModeU;
     data["colorTexMix"] = m_colorTexMix;
 
+    data["colorUVUse"] = m_colorUVUseU;
+    data["colorUVOffset"] = {m_colorUVOffset.x, m_colorUVOffset.y};
+    data["colorUVScale"] = {m_colorUVScale.x, m_colorUVScale.y};
+    data["colorUVAutoScroll"] = m_colorUVAutoScroll;
+    data["colorUVSpeed"] = {m_colorUVSpeed.x, m_colorUVSpeed.y};
+
     auto& animClipsJson = data["animClips"];
     animClipsJson = json::array();
     for (const auto& clip : m_AnimClips)
@@ -174,11 +195,32 @@ void CUIObject_Tool::Load(const nlohmann::ordered_json& data)
 
     m_colorTexMode = (UIColorTexMode)m_colorTexModeU;
 
+    m_colorUVUseU = (_uint)data.value("colorUVUse", 0u);
+    if (data.contains("colorUVOffset"))
+    {
+        m_colorUVOffset.x = (_float)data["colorUVOffset"][0];
+        m_colorUVOffset.y = (_float)data["colorUVOffset"][1];
+    }
+    if (data.contains("colorUVScale"))
+    {
+        m_colorUVScale.x = (_float)data["colorUVScale"][0];
+        m_colorUVScale.y = (_float)data["colorUVScale"][1];
+    }
+    m_colorUVAutoScroll = (_bool)data.value("colorUVAutoScroll", false);
+    if (data.contains("colorUVSpeed"))
+    {
+        m_colorUVSpeed.x = (_float)data["colorUVSpeed"][0];
+        m_colorUVSpeed.y = (_float)data["colorUVSpeed"][1];
+    }
+
     auto sprite = Get_Component<CSprite2D>();
     sprite->Change_Texture(1, G_GlobalLevelKey, m_colorTextureKey);
 
     sprite->Set_Param("ColorTexMode", {&m_colorTexModeU, "uint", sizeof(_uint)});
     sprite->Set_Param("ColorTexMix", {&m_colorTexMix, "float", sizeof(_float)});
+    sprite->Set_Param("ColorUVUse", {&m_colorUVUseU, "uint", sizeof(_uint)});
+    sprite->Set_Param("ColorUVOffset", {&m_colorUVOffset, "float2", sizeof(Vector2)});
+    sprite->Set_Param("ColorUVScale", {&m_colorUVScale, "float2", sizeof(Vector2)});
 }
 
 void CUIObject_Tool::Render_GUI_Property()
@@ -585,6 +627,50 @@ void CUIObject_Tool::Render_GUI_Color()
         });
 
     ImGui::Spacing();
+    ImGui::SeparatorText(u8"UV");
+
+    Row(u8"»ç¿ë", [&]
+        {
+            bool use = (m_colorUVUseU != 0);
+            if (ImGui::Checkbox(u8"##ColorUVUse", &use))
+            {
+                m_colorUVUseU = use ? 1u : 0u;
+                dirty = true;
+            }
+        });
+
+    ImGui::BeginDisabled(m_colorUVUseU == 0);
+
+    Row(u8"Offset", [&]
+        {
+            if (ImGui::DragFloat2(u8"##ColorUVOffset", reinterpret_cast<_float*>(&m_colorUVOffset), 0.01f, -10.f, 10.f, "%.3f"))
+                dirty = true;
+        });
+
+    Row(u8"Scale", [&]
+        {
+            if (ImGui::DragFloat2(u8"##ColorUVScale", reinterpret_cast<_float*>(&m_colorUVScale), 0.01f, 0.01f, 50.f, "%.3f"))
+                dirty = true;
+        });
+
+    Row(u8"AutoScroll", [&]
+        {
+            if (ImGui::Checkbox(u8"##ColorUVAutoScroll", &m_colorUVAutoScroll))
+                dirty = true;
+        });
+
+    ImGui::BeginDisabled(!m_colorUVAutoScroll);
+
+    Row(u8"Speed", [&]
+        {
+            if (ImGui::DragFloat2(u8"##ColorUVSpeed", reinterpret_cast<_float*>(&m_colorUVSpeed), 0.01f, -10.f, 10.f, "%.3f"))
+                dirty = true;
+        });
+
+    ImGui::EndDisabled();
+    ImGui::EndDisabled();
+
+    ImGui::Spacing();
 
     ImGui::EndChild();
     ImGui::PopStyleVar(2);
@@ -597,7 +683,13 @@ void CUIObject_Tool::Render_GUI_Color()
     m_colorTexModeU = (_uint)m_colorTexMode;
     sprite->Set_Param("ColorTexMode", {&m_colorTexModeU, "uint", sizeof(_uint)});
     sprite->Set_Param("ColorTexMix", {&m_colorTexMix, "float", sizeof(_float)});
+
+    sprite->Set_Param("ColorUVUse", {&m_colorUVUseU, "uint", sizeof(_uint)});
+    sprite->Set_Param("ColorUVOffset", {&m_colorUVOffset, "float2", sizeof(Vector2)});
+    sprite->Set_Param("ColorUVScale", {&m_colorUVScale, "float2", sizeof(Vector2)});
 }
+
+
 
 _bool CUIObject_Tool::Render_GUI_Image(string& strTextureKey)
 {

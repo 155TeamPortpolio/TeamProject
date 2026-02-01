@@ -202,12 +202,25 @@ float ColorTexMix = 1.f;
 float RecolorThreshold = 0.1f;
 float RecolorSoftness = 0.3f;
 
+float2 ColorUVOffset = float2(0.f, 0.f);
+float2 ColorUVScale = float2(1.f, 1.f);
+uint ColorUVUse = 0;
+
 float3 ApplyColorTexture(float3 baseRgb, float2 uv)
 {
     if (ColorTexMode == 0)
         return baseRgb;
 
-    float3 c = ColorTexture.Sample(LinearSampler, uv).rgb;
+    float2 uvC = uv;
+
+    if (ColorUVUse != 0)
+    {
+        uvC = (uvC - 0.5f) * ColorUVScale + 0.5f; 
+        uvC += ColorUVOffset; 
+    }
+
+    float3 c = ColorTexture.Sample(LinearSampler, uvC).rgb;
+
     float m = saturate(ColorTexMix);
 
     float lum = dot(baseRgb, float3(0.299f, 0.587f, 0.114f));
@@ -269,6 +282,15 @@ PS_OUT PS_MAIN_SPRITEANIMATION_COLORATLAS(PS_IN In)
     clip(digit.a - 0.1f);
 
     float2 uvColor = CalculateFrameIndex(ColorCol, ColorRow, ColorFrameIndex, In.vTexcoord);
+
+    if (ColorUVUse != 0)
+    {
+        float2 frameSize = float2(1.0f / ColorCol, 1.0f / ColorRow);
+        float2 localOffset = ColorUVOffset * frameSize;
+        float2 center = uvColor;
+        uvColor += localOffset;
+    }
+
     float4 grad = ColorTexture.Sample(LinearSampler, uvColor);
 
     float cm = saturate(ColorMix);
