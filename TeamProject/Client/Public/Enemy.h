@@ -66,6 +66,8 @@ public:
     /* 트리거 콜라이더를 바로 키고, AttackOffsetTime 뒤에 Attack 콜라이더를
     AttackPlayTime만큼 키고 트리거와 Attack콜라이더를 종료함*/
     void                SetAutoPlayBattleCollider(const string& tagBattleCollider, _float fAttackOffsetTime, _float fAttackPlayTime, const HitDesc& hitDesc);
+    /* BattleSystem에 본인 핸들 지워달라고 요청하는 함수. Death 상태 진입 시 호출할 것*/
+    void                RequestRemoveOnDeathToBattleSystem();
     /* 몬스터가 죽는 시퀀스가 다 끝나고 호출할 것. */
     void                Death();
     // 공격중인지 플래그 세팅하는 함수, 끝났을 때, 공격 관련 플래그를 전부 끔(m_isOnAttack, m_isParryEnable)
@@ -138,6 +140,7 @@ protected:
     /* Shader Params */
     _float m_fUseVanish{};
     _float3 m_vEmissiveColor{};
+    _float m_fEmissiveStrength{};
     _float3 m_vRimLightColor{};
     _float m_fRimLightPower{};
     _float m_fDissolveProgress = 0.f;

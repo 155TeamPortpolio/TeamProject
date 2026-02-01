@@ -207,7 +207,7 @@ ResourceType CLoadingLevel::CheckResourceType(const string& filePath,const strin
 	if (ext == ".png" || ext == ".jpg" || ext == ".jpeg" || ext == ".dds" || ext == ".bmp" )
 		return ResourceType::Texture;
 
-	if (ext == ".model" )
+	if (ext == ".model")
 		return ResourceType::Model;
 
 	if (ext == ".mat")

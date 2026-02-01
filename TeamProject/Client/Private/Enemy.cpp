@@ -19,6 +19,8 @@
 #include "Material.h"
 #include "MaterialInstance.h"
 
+#include "CharacterController.h"
+
 CEnemy::CEnemy()
 	:CGameObject()
 {
@@ -67,6 +69,10 @@ HRESULT CEnemy::Initialize(INIT_DESC* pArg)
 
 void CEnemy::Awake()
 {
+	//*Shader Texture*
+	auto Texture = ResourceManager()->Load_Texture(G_GlobalLevelKey, "Eff_Noise_119.png");
+	RenderSystem()->Set_NoiseTexture(NOISE_FXTYPE::VANISH, Texture);
+
 	m_fDeathSqueneDuration = 0.9f;
 	m_fDeathSquenceElapsedTime = 0.f;
 
@@ -88,6 +94,7 @@ void CEnemy::Awake()
 		instance->Set_Param("EmissiveNoiseTexture", { emissiveNoise->Get_SRV(),"Texture2D",0 });
 		instance->Set_Param("NoiseTexture", { dissolveTexture->Get_SRV(),"Texture2D",0 });
 		instance->Set_Param("fUseVanish", { &m_fUseVanish,"float",sizeof(_float) });
+		instance->Set_Param("fEmissiveStrength", { &m_fEmissiveStrength, "float", sizeof(_float) });
 		instance->Set_Param("vEmissiveColor", { &m_vEmissiveColor,"float3",sizeof(_float3) });
 		instance->Set_Param("vRimLightColor", { &m_vRimLightColor,"float3",sizeof(_float3) });
 		instance->Set_Param("fRimLightPower", { &m_fRimLightPower,"float",sizeof(_float) });
@@ -135,10 +142,19 @@ void CEnemy::Update_DeathSquence(_float dt)
 
 		_float t = m_fDeathSquenceElapsedTime / m_fDeathSqueneDuration;
 		_vector3 vStartColor(0.2f, 0.1f, 0.f);
-		_vector3 vEndColor(0.8f, 0.4f, 0.f);
+		_vector3 vEndColor(0.7f, 0.2f, 0.f);
 
+		m_fEmissiveStrength = Math::Lerp(0.f, 1.f, Math::ApplyEase(EaseType::OutQuint, t));
 		m_vEmissiveColor = _vector3::Lerp(vStartColor, vEndColor, Math::ApplyEase(EaseType::OutSine, t));
 		m_fDissolveProgress = Math::ApplyEase(EaseType::Linear, t);
+
+		_float glitchSpeed{}, glitchStrength{};
+		glitchSpeed = Math::Lerp(0.f, 50.f, Math::ApplyEase(EaseType::InQuad, t));
+		glitchStrength = Math::Lerp(0.01f, 0.1f, Math::ApplyEase(EaseType::InQuad, t));
+		RenderSystem()->Set_GlitchDesc({ glitchSpeed,glitchStrength });
+
+		//RenderSystem()->Set_GlitchDesc({ 1.f, 0.01f });
+		//GlitchSpeed, GlitchStrength - Default: 15.f, 0.04f
 	}
 	else
 		m_fDissolveProgress = 1.1f;
@@ -152,6 +168,7 @@ void CEnemy::ComputeTargetingInfo()
 
 	m_tTargetingInfo = {};
 
+	//m_tTargetingInfo.vTargetPos = pTargetInfo->hObject.Get()->Get_Component<CCharacterController>()->get;
 	m_tTargetingInfo.vTargetPos = pTargetInfo->vPos;
 	m_tTargetingInfo.vSelfPos = m_pTransform->Get_Pos();
 	m_tTargetingInfo.vDirSelfLook = m_pTransform->Dir(Engine::STATE::LOOK);
@@ -636,31 +653,33 @@ void CEnemy::SetAutoPlayBattleCollider(const string& tagBattleCollider, _float f
 	m_tAutoBattleCol.vAttackColLifeTime = { fAttackPlayTime, 0.f };
 }
 
+void CEnemy::RequestRemoveOnDeathToBattleSystem()
+{
+	BattleSystem()->ExitBattleObject(CBattleSystem::BATTLE_OBJ_TYPE::MONSTER, this->Get_Handle());
+}
+
 void CEnemy::Death()
 {
-	if (BattleSystem()->ExitBattleObject(CBattleSystem::BATTLE_OBJ_TYPE::MONSTER, this->Get_Handle()))
-	{
-		ObjectManager()->Remove_Object(this);
+	ObjectManager()->Remove_Object(this);
 #ifdef _USING_GUI
-		auto pSelectedObject = GUISystem()->Get_Context()->pSelectedObject;
-		if (nullptr != pSelectedObject &&
-			this == pSelectedObject)
-			GUISystem()->Get_Context()->pSelectedObject = nullptr;
+	auto pSelectedObject = GUISystem()->Get_Context()->pSelectedObject;
+	if (nullptr != pSelectedObject &&
+		this == pSelectedObject)
+		GUISystem()->Get_Context()->pSelectedObject = nullptr;
 #endif // _USING_GUI
 
-		if (true == m_hUIEnemyStatus.isValid())
-			UIManager()->Remove_UIObject(m_hUIEnemyStatus.Get());
-	}
+	if (true == m_hUIEnemyStatus.isValid())
+		UIManager()->Remove_UIObject(m_hUIEnemyStatus.Get());
 }
 
 void CEnemy::SetOnAttack(_bool is, ATTACK_SIDE eSide)
 {
 	m_isOnAttack = is;
-	m_isParryEnable = is;
 
 	// 공격이 끝났을 때,
 	if (false == is)
 	{
+		m_isParryEnable = is;
 		m_eCurAttackSide = ATTACK_SIDE::NONE;
 	}
 }

@@ -36,7 +36,12 @@ void CJaneDoeState_BranchAttack::Update(CJaneDoe* pOwner, _float dt)
 
         if (Event.Tag == "LFootStart")
         {
-            pOwner->Begin_AttackCollider("FootWeapon_L", { HIT_TYPE::INTERVAL, DAMAGE_TYPE::HARD, Helper::Get_Random_Float(30,60), 0.05f, 0 });
+            pOwner->Begin_AttackCollider("FootWeapon_L", HitDesc()
+                .Type(HIT_TYPE::INTERVAL)
+                .Damage(pOwner->Get_AttackPower() * 3.008f * Helper::Get_Random_Float(1.f, 1.5f)
+                    , DAMAGE_TYPE::HARD)
+                .Interval(0.05f)
+            );
         }
         else if (Event.Tag == "LFootEnd")
         {
@@ -44,7 +49,12 @@ void CJaneDoeState_BranchAttack::Update(CJaneDoe* pOwner, _float dt)
         }
         else if (Event.Tag == "RFootStart")
         {
-            pOwner->Begin_AttackCollider("FootWeapon_R", { HIT_TYPE::INTERVAL, DAMAGE_TYPE::HARD, Helper::Get_Random_Float(30,60), 0.05f, 0 });
+            pOwner->Begin_AttackCollider("FootWeapon_R", HitDesc()
+                .Type(HIT_TYPE::INTERVAL)
+                .Damage(pOwner->Get_AttackPower() * 3.008f * Helper::Get_Random_Float(1.f, 1.5f)
+                    , DAMAGE_TYPE::HARD)
+                .Interval(0.05f)
+            );
         }
         else if (Event.Tag == "RFootEnd")
         {
@@ -67,6 +77,7 @@ void CJaneDoeState_BranchAttack::Update(CJaneDoe* pOwner, _float dt)
 
 void CJaneDoeState_BranchAttack::Exit(CJaneDoe* pOwner)
 {
+    pOwner->Reset_ReserveCombo();
     __super::Exit(pOwner);
 }
 

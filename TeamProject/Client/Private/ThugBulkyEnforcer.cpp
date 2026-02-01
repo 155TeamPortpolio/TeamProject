@@ -89,23 +89,12 @@ HRESULT CThugBulkyEnforcer::Initialize(INIT_DESC* pArg)
 	if (FAILED(Initialize_StateMachine()))
 		return E_FAIL;
 
-	//*Shader Texture*
-	auto Texture = ResourceManager()->Load_Texture(G_GlobalLevelKey, "Eff_Noise_119.png");
-	RenderSystem()->Set_NoiseTexture(NOISE_FXTYPE::VANISH, Texture);
-
-	// 임시 확인용
-#ifdef _USING_GUI
-	CGameInstance::GetInstance()->Get_GUISystem()->Get_Context()->pSelectedObject = this;
-#endif
 	return S_OK;
 }
 
 void CThugBulkyEnforcer::Awake()
 {
 	__super::Awake();
-
-	//RenderSystem()->Set_GlitchDesc({ 1.f, 0.01f });
-	//GlitchSpeed, GlitchStrength - Default: 15.f, 0.04f
 }
 
 void CThugBulkyEnforcer::Priority_Update(_float dt)
@@ -638,7 +627,10 @@ void CThugBulkyEnforcer::ControlState(const _float dt)
 {
 	if ("Death" != m_pStateMachine->Get_CurrentStateName() &&
 		0 >= m_tStatus.iNowHP)
+	{
+		RequestRemoveOnDeathToBattleSystem();
 		m_pStateMachine->Change_State("Death");
+	}
 
 	if ("Death" != m_pStateMachine->Get_CurrentStateName() &&
 		"Groggy" != m_pStateMachine->Get_CurrentStateName() &&

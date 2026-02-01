@@ -86,6 +86,8 @@ void CUI_Manager::Clear(const string& LevelTag)
 			Safe_Release(UI);
 		iter->second.clear();
 	}
+	DeleteUIs.clear();
+	DeleteUI_IDs.clear();
 }
 
 HRESULT CUI_Manager::Sync_To_Level()

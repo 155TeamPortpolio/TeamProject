@@ -6,7 +6,8 @@
 #include "Sprite2D.h"
 #include "ButtonUI.h" 
 #include "UI_ScratchCard.h"
-#include "UI_ButtonBack.h"
+#include "UI_BackButton.h"
+#include "UI_LotteryResultBanner.h"
 
 #include "FieldSystem.h"
 
@@ -29,7 +30,8 @@ HRESULT CUI_Lottery::Initialize(INIT_DESC* pArg)
 
     Create_Newspaper();
     Create_ScratchCard();
-    Create_ButtonBack();
+    Create_BackButton();
+    Create_ResultBanner();
 
     if (m_pButtons[ENUM(BTN::BTN_REFRESH)])
         m_pButtons[ENUM(BTN::BTN_REFRESH)]->Set_OnClick([this]() { OnClick_RefreshNews(); });
@@ -67,6 +69,7 @@ void CUI_Lottery::UI_Active(void* pArg)
     Set_Alive(true);
     Set_ChildAnimation(CHILD::ICON_SCRATCH, 0);
     Set_ChildAnimation(CHILD::NEWSPAPER, 0);
+    m_iReward = rand() % ENUM(REWARD::END);
 }
 
 void CUI_Lottery::UI_DeActive(void* pArg)
@@ -89,8 +92,8 @@ void CUI_Lottery::Create_Newspaper()
 void CUI_Lottery::Create_ScratchCard()
 {
     CUI_ScratchCard::SCRATCH_DESC* pDesc = new CUI_ScratchCard::SCRATCH_DESC;
-    pDesc->pState = &m_iState;
-    pDesc->onScratchCompleted = [this]() { Change_State(STATE::USED); };
+    pDesc->pParentState = &m_iState;
+    pDesc->onScratchCompleted = [this]() { OnScratch_Complete(); };
 
     auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_ScratchCard" })
         .Add_UIDesc(pDesc)
@@ -103,20 +106,31 @@ void CUI_Lottery::Create_ScratchCard()
     m_pChildren[ENUM(CHILD::SCRATCH)] = pObj;
 }
 
-void CUI_Lottery::Create_ButtonBack()
+void CUI_Lottery::Create_BackButton()
 {
-    CUI_ButtonBack::BUTTON_DESC* pDesc = new CUI_ButtonBack::BUTTON_DESC;
+    CUI_BackButton::BUTTON_DESC* pDesc = new CUI_BackButton::BUTTON_DESC;
     pDesc->onClick = [this]() { OnClick_Back(); };
 
-    auto pContainer = Get_Component<CObjectContainer>();
-    auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_ButtonBack" })
+    auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_BackButton" })
         .Add_UIDesc(pDesc)
         .Build("buttonBack");
 
     if (!pObj)
         return;
 
-    pContainer->Add_Child(pObj);
+    Get_Component<CObjectContainer>()->Add_Child(pObj); 
+}
+
+void CUI_Lottery::Create_ResultBanner()
+{
+    auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_LotteryResultBanner" })
+        .Build("resultBanner");
+
+    if (!pObj)
+        return;
+
+    Get_Component<CObjectContainer>()->Add_Child(pObj);
+    m_pResultBanner = pObj;
 }
 
 void CUI_Lottery::Cache()
@@ -172,6 +186,9 @@ void CUI_Lottery::OnClick_Back()
 
 void CUI_Lottery::OnClick_RefreshNews()
 {
+    if (Is_ChildAlive(CHILD::SCRATCH))
+        return;
+
     Set_ChildAnimation(CHILD::OVERLAY_REFRESH, 0);
     Set_ChildAnimation(CHILD::ICON_REFRESH, 0);
 
@@ -180,8 +197,34 @@ void CUI_Lottery::OnClick_RefreshNews()
 
 void CUI_Lottery::OnClick_OpenScratch()
 {
+    if (Is_ChildAlive(CHILD::SCRATCH))
+        return;
+
     Set_ChildAnimation(CHILD::OVERLAY, 0);
-    Set_ChildUIActive(CHILD::SCRATCH);
+
+    CUI_ScratchCard::ACTIVE_DESC desc = {};
+    desc.strTextureKey = (m_iReward < ENUM(REWARD::END)) ? REWARD_TEXTURES[m_iReward] : REWARD_TEXTURES[0];
+    Set_ChildUIActive(CHILD::SCRATCH, &desc);
+}
+
+void CUI_Lottery::OnScratch_Complete()
+{
+    Change_State(STATE::USED);
+
+    _uint iDennyReward = (m_iReward < ENUM(REWARD::END)) ? REWARD_DENY[m_iReward] : 0;
+
+    _uint iDenny = {};
+    RuntimeBucket().Int64.TryGet(PersistScope::SaveSlot, "Denny", iDenny);
+
+    iDenny += iDennyReward;
+    RuntimeBucket().Int64.Set(PersistScope::SaveSlot, "Denny", iDenny);
+
+    if (m_pResultBanner)
+    {
+        CUI_LotteryResultBanner::RESULT_DESC desc = {};
+        desc.iDenny = iDennyReward;
+        m_pResultBanner->UI_Active(&desc);
+    } 
 }
 
 void CUI_Lottery::Set_ChildUIActive(CHILD child, void* pArg)

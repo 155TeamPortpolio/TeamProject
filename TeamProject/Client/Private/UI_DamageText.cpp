@@ -5,6 +5,8 @@
 #include "GameInstance.h"
 #include "LevelMgr.h"
 
+#include "UI_Gangta.h"
+
 namespace
 {
     static const string kAtlasTexKey = "DamageText.png";
