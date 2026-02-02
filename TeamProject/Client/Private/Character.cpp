@@ -197,6 +197,7 @@ _bool CCharacter::Can_SwitchIn() const
 void CCharacter::Active_Character()
 {
     m_pCCT->Set_CompActive(true);
+    Active_ParryCollider(true);
     SetRenderLayer(RENDER_LAYER::Default);
     m_fDissolveProgress = 0.f;
 }
@@ -204,6 +205,7 @@ void CCharacter::Active_Character()
 void CCharacter::DeActive_Character()
 {
     m_pCCT->Set_CompActive(false);
+    Active_ParryCollider(false);
     SetRenderLayer(RENDER_LAYER::None);
     m_fDissolveProgress = 0.f;
     m_iInvincibleCount = 0;
@@ -527,6 +529,16 @@ HRESULT CCharacter::Attach_ParryCollider()
     m_iParryColliderIndex = pObjectContainer->Add_Child(pParryCollider, true);
 
     return S_OK;
+}
+
+void CCharacter::Active_ParryCollider(_bool bActive)
+{
+    CCharacterParryCollider* pCollider = static_cast<CCharacterParryCollider*>(
+        Get_Component<CObjectContainer>()->Get_Children()[m_iParryColliderIndex]);
+    if (nullptr == pCollider)
+        return;
+
+    pCollider->Get_Component<CCollider>()->Set_CompActive(bActive);
 }
 
 void CCharacter::Active_AttackCollider(const string& strName, _bool bActive)
