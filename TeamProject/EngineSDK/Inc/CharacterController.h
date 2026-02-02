@@ -40,6 +40,10 @@ private:
             if (!bIAllowOther || !bOtherAllowMe)
                 return PxQueryHitType::eNONE;
 
+            const PxRigidDynamic* pDynamic = actor->is<PxRigidDynamic>();
+            if (pDynamic && (pDynamic->getRigidBodyFlags() & PxRigidBodyFlag::eKINEMATIC))
+                return PxQueryHitType::eTOUCH;
+
             return PxQueryHitType::eBLOCK;
         }
 

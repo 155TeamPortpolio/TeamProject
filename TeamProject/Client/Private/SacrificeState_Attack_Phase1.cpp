@@ -633,7 +633,7 @@ void CSacrificeState_Attack_05_Phase1::Update_Effects(CSacrifice* pOwner)
 
 		COLLIDER_DESC colliderDesc = {};
 		colliderDesc.eGroup = COLLISION_GROUP::MONSTER;
-		colliderDesc.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER_ATTACK) + ENUM(COLLISION_GROUP::PLAYER) + ENUM(COLLISION_GROUP::COMMON);
+		//colliderDesc.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER_ATTACK) + ENUM(COLLISION_GROUP::PLAYER) + ENUM(COLLISION_GROUP::COMMON);
 		colliderDesc.bTrigger = false;
 		colliderDesc.bAutoFit = false;
 		colliderDesc.eType = COLLIDER_TYPE::SPHERE;
@@ -683,7 +683,7 @@ void CSacrificeState_Attack_05_Phase1::Update_Effects(CSacrifice* pOwner)
 
 		COLLIDER_DESC colliderDesc = {};
 		colliderDesc.eGroup = COLLISION_GROUP::MONSTER;
-		colliderDesc.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER_ATTACK) + ENUM(COLLISION_GROUP::PLAYER) + ENUM(COLLISION_GROUP::COMMON);
+		//colliderDesc.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER_ATTACK) + ENUM(COLLISION_GROUP::PLAYER) + ENUM(COLLISION_GROUP::COMMON);
 		colliderDesc.bTrigger = false;
 		colliderDesc.bAutoFit = false;
 		colliderDesc.eType = COLLIDER_TYPE::SPHERE;

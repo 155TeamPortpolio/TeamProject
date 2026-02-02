@@ -38,6 +38,7 @@ HRESULT CSacrifice_Orb::Initialize(INIT_DESC* pArg)
 
 	auto pRigidBody = Get_Component<CRigidBody>();
 	pRigidBody->Set_Kinematic(true);
+	pRigidBody->Set_Mass(0.001f);
 	 
 	auto pOrb = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
 		.Asset("sacrifice_orb.json")
@@ -46,7 +47,7 @@ HRESULT CSacrifice_Orb::Initialize(INIT_DESC* pArg)
 	auto pObjectContainer = Get_Component<CObjectContainer>();
 	pObjectContainer->Add_Child(pOrb);
 
-	m_fSpeed = 60.f;
+	m_fSpeed = 80.f;
 	SetOnAttack(true);
 	SetParryEnable(true);
 	
@@ -86,6 +87,32 @@ void CSacrifice_Orb::Update(_float dt)
 		vTargetDir = _vector3::Lerp(vCurrDir, vTargetDir, dt * 5.f);
 		m_pTransform->Set_Look(vTargetDir);
 		m_pTransform->Translate(vTargetDir * m_fSpeed * dt);
+
+		PHYSICS_RAY ray{};
+		PHYSICS_RAY_HIT rayHit{};
+
+		ray.vOrigin = vCurrPosition;
+		ray.vDirection = vTargetDir;
+		ray.iCollisionMask = ENUM(COLLISION_GROUP::COMMON);
+		
+		/* Hit Wall */
+		if (PhysicsSystem()->Raycast(ray, rayHit))
+		{
+			if (rayHit.fDistance < 1.f)
+			{
+				ObjectManager()->Remove_Object(this);
+
+				_vector3 vPosition = m_pTransform->Get_WorldPos();
+				auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+					.Asset("sacrifice_orb_explode.json")
+					.Position(vPosition)
+					.Build("Sacrifice_Orb_Explode");
+
+				ObjectManager()->Add_Object(effect, { Get_Level(),"Enemy_Effect_Layer" });
+
+				m_IsHit = true;
+			}
+		}
 	}
 
 	auto pObjectContainer = Get_Component<CObjectContainer>();
@@ -114,7 +141,7 @@ void CSacrifice_Orb::OnCollisionEnter(CGameObject* pOther)
 	auto pCollidable = pOther->Get_Component<ICollidable>();
 	COLLISION_GROUP otherGroup = pCollidable->Get_Group();
 
-	if (COLLISION_GROUP::COMMON == otherGroup)
+	if (COLLISION_GROUP::PLAYER == otherGroup)
 	{
 		ObjectManager()->Remove_Object(this);
 
@@ -126,9 +153,6 @@ void CSacrifice_Orb::OnCollisionEnter(CGameObject* pOther)
 
 		ObjectManager()->Add_Object(effect, { Get_Level(),"Enemy_Effect_Layer" });
 	}
-	else
-		int a = 1;
-	
 }
 
 CSacrifice_Orb* CSacrifice_Orb::Create()
