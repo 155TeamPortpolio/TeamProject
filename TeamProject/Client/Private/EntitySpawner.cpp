@@ -35,7 +35,7 @@ static unordered_map<string, Spawner::OBJ_SPEC> s_NPCTable =
 	{ "Howl",           Spawner::OBJ_SPEC{ "Proto_GameObject_Howl", &CHowl::Create } },
 	{ "Jaeger",         Spawner::OBJ_SPEC{ "Proto_GameObject_Jaeger", &CJaeger::Create } },
 	{ "ExploreBoo",     Spawner::OBJ_SPEC{ "Proto_GameObject_ExploreBoo", &CElectricBoo::Create } },
-	{ "Sirchop",     Spawner::OBJ_SPEC{ "Proto_GameObject_Sirchop", &CSirChop::Create } },
+	{ "Sirchop",		Spawner::OBJ_SPEC{ "Proto_GameObject_Sirchop", &CSirChop::Create } },
 	{ "SilverAnbi",     Spawner::OBJ_SPEC{ "Proto_GameObject_SilverAnbi", &CSilverAnbi::Create } }
 };
 
@@ -81,7 +81,7 @@ OBJECT_HANDLE Client::Spawner::Create_Entity(const SPAWNER_DESC& Desc)
 
 /* --------------------------------------------------------------------------------------------------------------------- */
 
-/* Maptool Type 0 */
+/* Maptool Type 0 (NPC) */
 #pragma region Entity0(NPC)
 OBJECT_HANDLE Client::Spawner::Create_NPC(const SPAWNER_DESC& Desc)
 {
@@ -108,6 +108,7 @@ OBJECT_HANDLE Client::Spawner::Create_NPC(const SPAWNER_DESC& Desc)
 		.Scale(Desc.vScale)
 		.Build(Desc.tagName);
 
+
 	Object->Get_Component<CCharacterController>()->Set_FootPosition(Desc.vTranslation);
 	
 	//Optional
@@ -123,7 +124,7 @@ OBJECT_HANDLE Client::Spawner::Create_NPC(const SPAWNER_DESC& Desc)
 
 /* --------------------------------------------------------------------------------------------------------------------- */
 
-/* Maptool Type 1 */
+/* Maptool Type 1 (Interactable) */
 #pragma region Entity1(Interactable)
 OBJECT_HANDLE Client::Spawner::Create_Interactable(const SPAWNER_DESC& Desc)
 {
@@ -185,7 +186,7 @@ OBJECT_HANDLE Client::Spawner::Create_Interactable(const SPAWNER_DESC& Desc)
 
 /* --------------------------------------------------------------------------------------------------------------------- */
 
-/* Maptool Type 2 */
+/* Maptool Type 2 (ETC) */
 #pragma region Entity2(ETC)
 OBJECT_HANDLE Client::Spawner::Create_ETC(const SPAWNER_DESC& Desc)
 {
@@ -210,7 +211,7 @@ OBJECT_HANDLE Client::Spawner::Create_ETC(const SPAWNER_DESC& Desc)
 #pragma endregion
 
 
-/* Maptool Type 3 */
+/* Maptool Type 3 (Invwall) */
 #pragma region Entity3(Invwall)
 OBJECT_HANDLE Client::Spawner::Create_Invwall(const SPAWNER_DESC& Desc)
 {

@@ -4,8 +4,8 @@
 
 
 namespace ModelEdit {
-	inline unsigned int g_iWinSizeX = 2560;
-	inline unsigned int g_iWinSizeY = 1360;
+	inline unsigned int g_iWinSizeX = 1600;
+    inline unsigned int g_iWinSizeY = 900;
 	inline unsigned int g_iMainFrame = 144;
 }
 
