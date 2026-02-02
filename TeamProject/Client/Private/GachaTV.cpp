@@ -19,7 +19,7 @@ CGachaTV::CGachaTV(const CGachaTV& rhs)
 {
 }
 
-HRESULT CGachaTV::Initialize_Prototype()
+HRESULT CGachaTV::Initialize_Prototype(vector<WEAPON_DESC>* Desc)
 {
     if (FAILED(__super::Initialize_Prototype()))
         return E_FAIL;
@@ -29,6 +29,8 @@ HRESULT CGachaTV::Initialize_Prototype()
 
 	pModel->Link_Model("Gacha_Level", "TVNoScreen.model");
 	pMaterial->Link_Material("Gacha_Level", "TVBlender1.mat");
+
+	m_pResultDesc = Desc;
 
     return S_OK;
 }
@@ -83,10 +85,10 @@ void CGachaTV::Add_TVScreen()
 	pObjectContainer->Add_Child(gachaScreen, true);
 }
  
-CGachaTV* CGachaTV::Create()
+CGachaTV* CGachaTV::Create(vector<WEAPON_DESC>* Desc)
 {
 	CGachaTV* Instance = new CGachaTV();
-	if (FAILED(Instance->Initialize_Prototype()))
+	if (FAILED(Instance->Initialize_Prototype(Desc)))
 	{
 		Safe_Release(Instance);
 		return nullptr;

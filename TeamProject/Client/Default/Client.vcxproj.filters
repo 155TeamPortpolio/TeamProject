@@ -1015,9 +1015,6 @@
     <Filter Include="02. GameObject\UI\01. 2D\Ramen\ResultBanner">
       <UniqueIdentifier>{35f2592b-a494-4afd-8bf7-bd4eec385301}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Object\Gacha\GachaProps\GachaResult">
-      <UniqueIdentifier>{5b3fe7e7-f877-4cae-bf66-a57e17b1b328}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\MapObject\04. MapLightPoint">
       <UniqueIdentifier>{8f98ed95-123b-4c72-b0bb-bcf3efb5405b}</UniqueIdentifier>
     </Filter>
@@ -1080,6 +1077,8 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Player\Character\03. Miyabi\State\Attack\Counter">
       <UniqueIdentifier>{d9ac1b8b-2607-430f-88a4-8175f6bdcf55}</UniqueIdentifier>
+    <Filter Include="02. GameObject\Object\Gacha\GachaProps\GachaStage\GachaResult">
+      <UniqueIdentifier>{5b3fe7e7-f877-4cae-bf66-a57e17b1b328}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -2017,7 +2016,7 @@
       <Filter>02. GameObject\Object\Gacha\GachaProps</Filter>
     </ClInclude>
     <ClInclude Include="..\public\GachaResult.h">
-      <Filter>02. GameObject\Object\Gacha\GachaProps\GachaResult</Filter>
+      <Filter>02. GameObject\Object\Gacha\GachaProps\GachaStage\GachaResult</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Defiler_Control.h">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler</Filter>
@@ -3001,7 +3000,7 @@
       <Filter>02. GameObject\UI\01. 2D\Ramen\ResultBanner</Filter>
     </ClCompile>
     <ClCompile Include="..\private\GachaResult.cpp">
-      <Filter>02. GameObject\Object\Gacha\GachaProps\GachaResult</Filter>
+      <Filter>02. GameObject\Object\Gacha\GachaProps\GachaStage\GachaResult</Filter>
     </ClCompile>
     <ClCompile Include="..\private\MapLightPoint.cpp">
       <Filter>02. GameObject\MapObject\04. MapLightPoint</Filter>
