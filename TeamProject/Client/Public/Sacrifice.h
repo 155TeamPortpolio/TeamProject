@@ -41,6 +41,7 @@ public:
 
 public:
     void TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER charaName = CHARACTER::END) override;
+    void Parried() override;
 
 public:
     /* For State Machine */
