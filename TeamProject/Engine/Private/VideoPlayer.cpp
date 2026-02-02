@@ -45,10 +45,6 @@ void CVideoPlayer::Play()
 
     if (prev == VIDEO_PLAY_STATE::Ended)
     {
-<<<<<<< Updated upstream
-        RequestReplay();
-        return;
-=======
         auto decoder = VideoService()->Get_OwnDecoder(m_ID);
         {
             lock_guard<mutex> lock(m_mutex);
@@ -60,7 +56,6 @@ void CVideoPlayer::Play()
         {
             decoder->ReOpen();  
         }
->>>>>>> Stashed changes
     }
 
     m_state.store(VIDEO_PLAY_STATE::Playing, std::memory_order_release);
