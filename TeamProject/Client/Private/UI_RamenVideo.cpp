@@ -63,7 +63,7 @@ void CUI_RamenVideo::Update(_float dt)
 
     Get_Component<CObjectContainer>()->UpdateChild(dt);
 
-    if (m_pPlayer->GetState() == VIDEO_PLAY_STATE::Ended)
+    if (InputDevice()->Key_Down('P'))//m_pPlayer->GetState() == VIDEO_PLAY_STATE::Ended)
         OnVideoExit();
 }
 
@@ -76,6 +76,8 @@ void CUI_RamenVideo::UI_Active(void* pArg)
 
 void CUI_RamenVideo::UI_DeActive(void* pArg)
 {
+    Set_Alive(false);
+    m_pPlayer->Stop();
 }
 
 void CUI_RamenVideo::Create_SkipButton()
@@ -98,7 +100,7 @@ void CUI_RamenVideo::Create_SkipButton()
 
 void CUI_RamenVideo::OnVideoExit()
 {
-    Set_Alive(false);
+    UI_DeActive(); 
     if (m_OnClick)
         m_OnClick();
 }
