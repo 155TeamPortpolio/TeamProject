@@ -13,7 +13,7 @@ public:
     virtual void Exit(CJaneDoe* pOwner) override;
 
 public:
-    static CJaneDoeState_Run* Create() { return new CJaneDoeState_Run(); }
+    static CJaneDoeState_Run* Create();
     virtual void Free() override { __super::Free(); }
 };
 
