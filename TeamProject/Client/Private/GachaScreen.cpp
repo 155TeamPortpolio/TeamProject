@@ -31,6 +31,7 @@ HRESULT CGachaScreen::Initialize_Prototype()
     pModel->Link_Model("Gacha_Level", "TVScreen1.model");
     pMaterial->Link_Material("Gacha_Level", "TVScreen1.mat");
 
+	pModel->Get_MeshCount();
     return S_OK;
 }
 
@@ -45,17 +46,18 @@ HRESULT CGachaScreen::Initialize(INIT_DESC* pArg)
 void CGachaScreen::Awake()
 {
 	auto pMaterial = Get_Component<CMaterial>();
-
-	CTexture* pTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, "Gacha_A_Loop.png");
-	if (pTexture == nullptr) return;
-
 	auto pMaterialInstances = pMaterial->Get_MaterialInstances();
+
+	m_Cols.resize(m_iMeshCounts);
+	m_Rows.resize(m_iMeshCounts);
+	m_CurrentFrameIndexs.resize(m_iMeshCounts);
+
+	_int idx = 0;
 	for (auto& instance : pMaterialInstances)
 	{
-		instance->Set_Param("DiffuseTexture", { pTexture->Get_SRV(), "Texture2D", 0});
-		instance->Set_Param("FrameIndex", { &m_iCurrentFrameIndex, "int", sizeof(_int)});
-		instance->Set_Param("Col", { &m_iCol, "int", sizeof(_int)});
-		instance->Set_Param("Row", { &m_iRow, "int", sizeof(_int)});
+		instance->Set_Param("FrameIndex", { &m_CurrentFrameIndexs[idx], "int", sizeof(_int)});
+		instance->Set_Param("Col", { &m_Cols[idx], "int", sizeof(_int)});
+		instance->Set_Param("Row", { &m_Rows[idx++], "int", sizeof(_int)});
 	}
 }
 
@@ -68,10 +70,13 @@ void CGachaScreen::Update(_float dt)
 	m_fElapsedTime += dt;
 	if (m_fElapsedTime > m_fFrameDuration)
 	{
-		++m_iCurrentFrameIndex;
-		m_fElapsedTime = 0.f;
-		if (m_iCurrentFrameIndex >= m_iMaxFrameIndex)
-			m_iCurrentFrameIndex = 0;
+		for (_int i = 0; i < m_iMeshCounts; ++i)
+		{
+			++m_CurrentFrameIndexs[i];
+			m_fElapsedTime = 0.f;
+			if (m_CurrentFrameIndexs[i] >= m_MaxFrameIndexs[i])
+				m_CurrentFrameIndexs[i] = 0;
+		}
 	}
 }
 

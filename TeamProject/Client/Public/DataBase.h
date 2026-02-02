@@ -28,6 +28,7 @@ public:
     RAMEN_DESC              GetRamenDesc(const string& strName);
     vector<const RAMEN_DESC*> GetRamenTable();
     WEAPON_DESC             GetWeaponDesc(_int WeaponID);
+    TV_DESC                 GetTVDesc(const string& strName);
 
 public:
     HRESULT LoadPlayerCreationTable(const string& csvPath);
@@ -40,6 +41,7 @@ public:
     HRESULT LoadNpcChoiceData(const string& csvPath);
     HRESULT LoadRamenData(const string& csvPath);
     HRESULT LoadWeaponData(const string& csvPath);
+    HRESULT LoadTVData(const string& csvPath);
 
 public:
     const CASHED_OBJ_DATA* Get_CashedData(const string& AreaTag);
@@ -70,8 +72,9 @@ private:
     map<pair<string, _uint>, NpcDialogueDesc>		        m_DialogueTables;
     unordered_map<string, ChoiceDesc>				        m_DialgoueChoiceTables;
     //FieldData
-    unordered_map<_int, WEAPON_DESC>                       m_WeaponTables;
-    unordered_map<string, RAMEN_DESC>                      m_RamenTables;
+    unordered_map<_int, WEAPON_DESC>                        m_WeaponTables;
+    unordered_map<string, RAMEN_DESC>                       m_RamenTables;
+    unordered_map<string, TV_DESC>                          m_TVTables;
     // BattleField Data
     
     //맵 데이터 <-> 런타임 데이터 연결용 (현재 작동중인 레벨에서만)

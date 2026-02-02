@@ -31,6 +31,7 @@ HRESULT CDataBase::CreateTable()
 	if (FAILED(LoadMapData("../../Resources/Data/Map")))
 		return E_FAIL;
 
+	/*Field*/
 	//Npc
 	if (FAILED(LoadNpcDialogueData("../../Resources/Data/Npc/NPC_Dialogue.csv")))
 		return E_FAIL;
@@ -42,8 +43,10 @@ HRESULT CDataBase::CreateTable()
 	//Shop
 	if (FAILED(LoadRamenData("../../Resources/Data/Shop/Shop_Ramen.csv")))
 		return E_FAIL;
-
+	//Gacha
 	if (FAILED(LoadWeaponData("../../Resources/Data/Gacha/WeaponID.csv")))
+		return E_FAIL;
+	if (FAILED(LoadTVData("../../Resources/Data/Gacha/TVImage.csv")))
 		return E_FAIL;
 
 	return S_OK;
@@ -155,6 +158,15 @@ WEAPON_DESC CDataBase::GetWeaponDesc(_int WeaponID)
 	auto iter = m_WeaponTables.find(WeaponID);
 	if (iter == m_WeaponTables.end())
 		return WEAPON_DESC{};
+
+	return iter->second;
+}
+
+TV_DESC CDataBase::GetTVDesc(const string& strName)
+{
+	auto iter = m_TVTables.find(strName);
+	if (iter == m_TVTables.end())
+		return TV_DESC{};
 
 	return iter->second;
 }
@@ -615,6 +627,42 @@ HRESULT CDataBase::LoadWeaponData(const string& csvPath)
 		if (false == inserted)
 		{
 			wstring ErrorMsg = L"Duplicate WeaponKey in CSV : " + desc.ID;
+			MessageBox(NULL, ErrorMsg.c_str(), L"System Message", MB_OK);
+		}
+	}
+
+	return S_OK;
+}
+
+HRESULT CDataBase::LoadTVData(const string& csvPath)
+{
+	io::CSVReader<
+		4,
+		io::trim_chars<' ', '\t'>,
+		io::double_quote_escape<',', '"'>
+	>in(csvPath);
+
+	in.read_header(
+		io::ignore_extra_column | io::ignore_missing_column,
+		"Name", "Col", "Row", "MaxFrame"
+	);
+	string			Name;
+	_int			Col, Row, MaxFrame;
+
+	while (in.read_row(Name, Col, Row, MaxFrame))
+	{
+		if (Name.empty()) continue;
+
+		TV_DESC desc = {};
+		desc.strName = Name;
+		desc.Col = Col;
+		desc.Row = Row;
+		desc.MaxFrame = MaxFrame;
+
+		auto [iter, inserted] = m_TVTables.emplace(desc.strName, move(desc));
+		if (false == inserted)
+		{
+			wstring ErrorMsg = L"Duplicate TVkey in CSV : " + Helper::ConvertToWideString(desc.strName);
 			MessageBox(NULL, ErrorMsg.c_str(), L"System Message", MB_OK);
 		}
 	}
