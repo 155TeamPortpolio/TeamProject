@@ -20,10 +20,10 @@ void CUI_Ramen::Select_Menu(CUI_Object* pSelected, const RAMEN_DESC& tRamenDesc)
         return;
 
     if (m_pSelectedMenu)
-        m_pSelectedMenu->UI_DeActive(nullptr);
+        m_pSelectedMenu->UI_DeActive();
 
     m_pSelectedMenu = pSelected;
-    m_pSelectedMenu->UI_Active(nullptr);
+    m_pSelectedMenu->UI_Active();
 
     m_tRamenDesc = tRamenDesc;
     Set_TextPrice();
@@ -255,6 +255,8 @@ void CUI_Ramen::Reset()
     RuntimeBucket().Int64.TryGet(PersistScope::SaveSlot, strFieldPlayerKey, m_iMoney);
     Set_TextPrice();
     Update_Affordable();
+    for (auto& pMenu : m_pMenus)    // 이러면 들어갈 때랑 그리고 영상 끝났을 때도 애니메이션 재생됨
+        pMenu->UI_DeActive();
 }
 
 void CUI_Ramen::Set_TextPrice()
