@@ -120,6 +120,7 @@ void CJaneDoeState_RushAttack::Exit(CJaneDoe* pOwner)
 void CJaneDoeState_Rush01_Start::Enter(CJaneDoe* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_Rush_01")
+        .ReserveSpeed(0.6f, 1.f, 2.f, EaseType::OutQuint)
         .Apply();
 }
 

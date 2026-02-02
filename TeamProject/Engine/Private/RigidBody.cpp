@@ -438,10 +438,11 @@ void CRigidBody::Update_RigidBody()
 		_vector vScale, vRot, vTrans;
 		XMMatrixDecompose(&vScale, &vRot, &vTrans, worldMat);
 
-		//m_pActor->setKinematicTarget(PxTransform(ToPxVec3(vPos), ToPxQuat(vRot)));
 		PxRigidDynamic* pDynamic = m_pActor->is<PxRigidDynamic>();
 		if (pDynamic)
-			pDynamic->setGlobalPose(PxTransform(ToPxVec3(vPos), ToPxQuat(vRot)));
+			pDynamic->setKinematicTarget(PxTransform(ToPxVec3(vPos), ToPxQuat(vRot)));
+		//if (pDynamic)
+		//	pDynamic->setGlobalPose(PxTransform(ToPxVec3(vPos), ToPxQuat(vRot)));
 	}
 	else				// Physics -> Transform
 	{

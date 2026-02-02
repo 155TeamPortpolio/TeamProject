@@ -5,32 +5,37 @@
 #include "JaneDoeState_Move.h"
 #include "CharacterController.h"
 
+CJaneDoeState_Run* CJaneDoeState_Run::Create()
+{
+    auto pInstance = new CJaneDoeState_Run();
+    pInstance->m_pSubStateMachine = CStateMachine<CJaneDoe>::Create();
+    auto pSubStateMachine = pInstance->Get_SubStateMachine();
+
+    pSubStateMachine->Register_State("Loop", CJaneDoeState_Run_Loop::Create());
+    pSubStateMachine->Register_State("End", CJaneDoeState_Run_End::Create());
+    pSubStateMachine->Register_State("Turnback", CJaneDoeState_Run_Turnback::Create());
+
+    pSubStateMachine->Get_State("End")->Set_Tag("End");
+
+    pSubStateMachine->Register_Transition("Loop", "End",
+        CStateMachine<CJaneDoe>::CONDITION_BOOL_FALSE, "IsMove");
+    // 반대 방향 입력
+    pSubStateMachine->Register_Transition("Loop", "Turnback",
+        CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "ToTurnback");
+    // Turnback -> End: 입력 없음
+    pSubStateMachine->Register_Transition("Turnback", "End",
+        CStateMachine<CJaneDoe>::CONDITION_BOOL_FALSE, "IsMove");
+    // Turnback -> Loop: 애니메이션 끝 + 입력 유지
+    pSubStateMachine->Register_Transition("Turnback", "Loop",
+        CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "ToLoop");
+
+    pSubStateMachine->Set_DefaultState("Loop");
+
+    return pInstance;
+}
+
 void CJaneDoeState_Run::Enter(CJaneDoe* pOwner)
 {
-    if (!m_pSubStateMachine)
-    {
-        m_pSubStateMachine = CStateMachine<CJaneDoe>::Create();
-        m_pSubStateMachine->Register_State("Loop", CJaneDoeState_Run_Loop::Create());
-        m_pSubStateMachine->Register_State("End", CJaneDoeState_Run_End::Create());
-        m_pSubStateMachine->Register_State("Turnback", CJaneDoeState_Run_Turnback::Create());
-
-        m_pSubStateMachine->Get_State("End")->Set_Tag("End");
-
-        m_pSubStateMachine->Register_Transition("Loop", "End",
-            CStateMachine<CJaneDoe>::CONDITION_BOOL_FALSE, "IsMove");
-        // 반대 방향 입력
-        m_pSubStateMachine->Register_Transition("Loop", "Turnback",
-            CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "ToTurnback");
-        // Turnback -> End: 입력 없음
-        m_pSubStateMachine->Register_Transition("Turnback", "End",
-            CStateMachine<CJaneDoe>::CONDITION_BOOL_FALSE, "IsMove");
-        // Turnback -> Loop: 애니메이션 끝 + 입력 유지
-        m_pSubStateMachine->Register_Transition("Turnback", "Loop",
-            CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "ToLoop");
-
-        m_pSubStateMachine->Set_DefaultState("Loop");
-    }
-
     IHState<CJaneDoe>* pMoveState = Get_ParentState();
     _int iRunEntryMode = 0;
     if (pMoveState && pMoveState->Get_SubStateMachine())

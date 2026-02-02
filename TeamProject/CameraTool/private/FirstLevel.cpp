@@ -25,14 +25,11 @@ HRESULT CFirstLevel::Awake()
 		.Scale({50.f, 1.f, 50.f})
 		.Build("Grid");
 
-	auto corin = Builder::Create_Object({G_GlobalLevelKey, "Proto_Corin"})
-		.Build("Corin");
+	auto corin = Builder::Create_Object({G_GlobalLevelKey, "Proto_Corin"}).Build("Corin");
 
-	auto janeDoe = Builder::Create_Object({G_GlobalLevelKey, "Proto_JaneDoe"})
-		.Build("JaneDoe");
+	auto janeDoe = Builder::Create_Object({G_GlobalLevelKey, "Proto_JaneDoe"}).Build("JaneDoe");
 
-	auto gacha = Builder::Create_Object({G_GlobalLevelKey, "Proto_Gacha"})
-		.Build("Gacha");
+	auto gacha = Builder::Create_Object({G_GlobalLevelKey, "Proto_Gacha"}).Build("Gacha");
 
 
 	OBJ->Add_Object(freeCam,   {G_GlobalLevelKey, "Camera_Layer"});

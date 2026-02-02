@@ -40,8 +40,6 @@ private:
 private:
 	void Create_SkipButton();
 
-	void OnVideoExit();
-
 public:
 	static  CGameObject* Create();
 	virtual CGameObject* Clone(INIT_DESC* pArg = {}) override;

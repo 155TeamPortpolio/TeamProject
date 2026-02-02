@@ -15,6 +15,7 @@
 #include "CharacterParryCollider.h"
 #include "Corin.h"
 #include "JaneDoe.h"
+#include "Miyabi.h"
 
 #include "Camera.h"
 
@@ -27,7 +28,7 @@ HRESULT CBattlePlayer::Initialize()
     CBattleSystem::GetInstance()->SetBattlePlayer(this);
     Initialize_CharacterPrototype();
 
-    vector<CHARACTER> BattleCharacters = { CHARACTER::JaneDoe, CHARACTER::Corin };
+    vector<CHARACTER> BattleCharacters = { CHARACTER::JaneDoe, CHARACTER::Corin, CHARACTER::Miyabi };
     SetBattleCharacters(BattleCharacters);
 
     UI_ACTION_PRIMARY_DESC desc;
@@ -171,7 +172,10 @@ HRESULT CBattlePlayer::SwitchCharacter(_int iTargetIndex)
 
     NotifyCharacterSwitchOut();
 
-    swap(m_BattleCharacters[0], m_BattleCharacters[iTargetIndex]);
+    rotate(m_BattleCharacters.begin(),
+        m_BattleCharacters.begin() + iTargetIndex,
+        m_BattleCharacters.end());
+
     m_pCurrentCharacter = m_BattleCharacters[0];
 
     NotifyCharacterSwitchIn();
@@ -247,7 +251,9 @@ void CBattlePlayer::Execute_ComboAttack(_bool bNext)
 
     NotifyCharacterSwitchOut();
 
-    swap(m_BattleCharacters[0], m_BattleCharacters[iTargetIndex]);
+    rotate(m_BattleCharacters.begin(),
+        m_BattleCharacters.begin() + iTargetIndex,
+        m_BattleCharacters.end());
     m_pCurrentCharacter = m_BattleCharacters[0];
 
     // 콤보 어택 전용 SwitchIn
@@ -655,6 +661,8 @@ HRESULT CBattlePlayer::Initialize_CharacterPrototype()
         return E_FAIL;
     if (FAILED(pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_JaneDoe", CJaneDoe::Create())))
         return E_FAIL;
+    if (FAILED(pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Miyabi", CMiyabi::Create())))
+        return E_FAIL;
     if (FAILED(pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_CharacterAttackCollider", CCharacterAttackCollider::Create())))
         return E_FAIL;
     if (FAILED(pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_CharacterParryCollider", CCharacterParryCollider::Create())))
@@ -671,7 +679,6 @@ CGameObject* CBattlePlayer::CreateBattleCharacter(CHARACTER character)
     characterCCT.bAutoFit = false;
     characterCCT.fHeight = 1.13;
     characterCCT.fRadius = 0.3f;
-    characterCCT.eGroup = COLLISION_GROUP::PLAYER;
     characterCCT.vPos = { 0.f, 1.5f, 0.f };
 
     switch (character)
@@ -695,6 +702,15 @@ CGameObject* CBattlePlayer::CreateBattleCharacter(CHARACTER character)
             .Build("Corin");
         ObjectManager()->Add_Object(Corin, { LevelManager()->Get_NowLevelKey(), "Model_Layer" });
         return Corin;
+    }
+    case CHARACTER::Miyabi:
+    {
+        auto Miyabi = Builder::Create_Object({ G_GlobalLevelKey , "Proto_GameObject_Miyabi" })
+            .Position(_float3(3.f, 0.f, 0.f))
+            .CharacterController(characterCCT)
+            .Build("Miyabi");
+        ObjectManager()->Add_Object(Miyabi, { LevelManager()->Get_NowLevelKey(), "Model_Layer" });
+        return Miyabi;
     }
     }
 
