@@ -1,6 +1,8 @@
 #include "Engine_Defines.h"
 #include "VideoPlayer.h"
 #include "IVideoDecoderBackend.h"
+#include "VideoService.h"
+#include "GameInstance.h"
 
 CVideoPlayer::CVideoPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
     : m_pDevice(pDevice)
@@ -27,7 +29,6 @@ void CVideoPlayer::Close()
     {
         lock_guard<mutex> lock(m_mutex);
         m_state.store(VIDEO_PLAY_STATE::Closed, std::memory_order_release);
-        m_frameQueue.Clear();
         m_playPtsMs = 0;
     }
 
@@ -44,7 +45,22 @@ void CVideoPlayer::Play()
 
     if (prev == VIDEO_PLAY_STATE::Ended)
     {
+<<<<<<< Updated upstream
         RequestReplay();
+        return;
+=======
+        auto decoder = VideoService()->Get_OwnDecoder(m_ID);
+        {
+            lock_guard<mutex> lock(m_mutex);
+            m_playPtsMs = 0;
+            m_frameQueue.Clear();
+        }
+
+        if (decoder)
+        {
+            decoder->ReOpen();  
+        }
+>>>>>>> Stashed changes
     }
 
     m_state.store(VIDEO_PLAY_STATE::Playing, std::memory_order_release);
@@ -59,7 +75,6 @@ void CVideoPlayer::Stop()
 {
     lock_guard<mutex> lock(m_mutex);
     m_state.store(VIDEO_PLAY_STATE::Ended, std::memory_order_release);
-    m_frameQueue.Clear();
     m_playPtsMs = 0;
 }
 
@@ -83,9 +98,22 @@ void CVideoPlayer::PumpPresent(_uint64 nowPts)
 
     {
         lock_guard<mutex> lock(m_mutex);
+        bool popped = m_frameQueue.PopLatestNotAfter(nowPts, pickedFrame);
 
-        if (!m_frameQueue.PopLatestNotAfter(nowPts, pickedFrame))
-            return;
+        if (!popped)
+        {
+            // ★ 처음 시작 / 리플레이 직후 보정
+            if (m_presentCount.load(std::memory_order_relaxed) == 0)
+            {
+                if (!m_frameQueue.PopOldest(pickedFrame))
+                    return;
+            }
+            else
+            {
+                return;
+            }
+        }
+
     }
 
     m_presentCount.fetch_add(1, std::memory_order_relaxed);

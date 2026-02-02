@@ -32,12 +32,12 @@ void JaneDoe::Awake()
 	const string metaKey   = "JaneDoe_Meta.json";
 	const string idleClip  = "JaneDoe_Ani_Idle";
 
-	RES->Add_ResourcePath(modelKey, "../bin/Resources/JaneDoe/JaneDoeModel.model");
-	RES->Add_ResourcePath(matKey,   "../bin/Resources/JaneDoe/JaneDoe.mat");
-	RES->Add_ResourcePath(metaKey,  "../bin/Resources/JaneDoe/JaneDoe_Meta.json");
+	RES->Add_ResourcePath(modelKey, "../bin/Resources/Global/BattleCharacter/JaneDoe/JaneDoeModel.model");
+	RES->Add_ResourcePath(matKey,   "../bin/Resources/Global/BattleCharacter/JaneDoe/JaneDoe.mat");
+	RES->Add_ResourcePath(metaKey,  "JaneDoe_Meta.json");
 
 	Get_Component<CSkeletalModel>()->Link_Model(G_GlobalLevelKey, modelKey);
-	Get_Component<CMaterial>()->Link_Material(G_GlobalLevelKey, matKey);
+	Get_Component<CMaterial>()->Link_Material(G_GlobalLevelKey,   matKey);
 
 	auto anim = Get_Component<CAnimator3D>();
 	anim->LinkAnimate_Model(G_GlobalLevelKey, modelKey);

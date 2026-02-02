@@ -16,6 +16,7 @@ public:
 
 public:
     bool Open(const std::string& filePath) override;
+    bool ReOpen() override;
     void Close() override;
 
     void SetLoop(bool loop) override;
@@ -37,7 +38,7 @@ private:
 
 private:
     Microsoft::WRL::ComPtr<IMFSourceReader> m_reader;
-
+    string m_lastFilePath = {};
     bool m_isOpened = false;
     bool m_isLoop = false;
 

@@ -27,7 +27,7 @@ public:
     CVideoPlayer* GetPlayer(_uint playerId);
     void DestroyPlayer(_uint playerId);
     void StartDecode(_uint playerId);
-
+    IVideoDecoderBackend* Get_OwnDecoder(_uint playerId);
 private:
     void DecodeLoop(_uint playerId);
 

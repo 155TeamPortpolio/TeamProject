@@ -94,6 +94,17 @@ HRESULT CMaterialData::Set_MaterialConstantBuffer(ID3D11Buffer* pCBuffer)
 	return m_pShader->SetConstantBuffer("MaterialBuffer",pCBuffer);
 }
 
+_bool CMaterialData::Get_Texture(TEXTURE_TYPE eType, _uint index, CTexture*& outPtr)
+{
+	if (m_Textures[eType].size() <= index) {
+		return false;
+	}
+	else {
+		outPtr = m_Textures[eType][index];
+		return true;
+	}
+}
+
 _bool CMaterialData::Has_Texture(TEXTURE_TYPE eType)
 {
 	auto it = m_Textures.find(eType);
