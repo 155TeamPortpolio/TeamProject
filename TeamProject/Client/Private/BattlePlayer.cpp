@@ -172,7 +172,10 @@ HRESULT CBattlePlayer::SwitchCharacter(_int iTargetIndex)
 
     NotifyCharacterSwitchOut();
 
-    swap(m_BattleCharacters[0], m_BattleCharacters[iTargetIndex]);
+    rotate(m_BattleCharacters.begin(),
+        m_BattleCharacters.begin() + iTargetIndex,
+        m_BattleCharacters.end());
+
     m_pCurrentCharacter = m_BattleCharacters[0];
 
     NotifyCharacterSwitchIn();
@@ -248,7 +251,9 @@ void CBattlePlayer::Execute_ComboAttack(_bool bNext)
 
     NotifyCharacterSwitchOut();
 
-    swap(m_BattleCharacters[0], m_BattleCharacters[iTargetIndex]);
+    rotate(m_BattleCharacters.begin(),
+        m_BattleCharacters.begin() + iTargetIndex,
+        m_BattleCharacters.end());
     m_pCurrentCharacter = m_BattleCharacters[0];
 
     // 콤보 어택 전용 SwitchIn
