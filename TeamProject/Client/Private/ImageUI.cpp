@@ -19,13 +19,13 @@ HRESULT CImageUI::Initialize(INIT_DESC* pArg)
 
     sprite->Link_Shader(G_GlobalLevelKey, "VTX_UI.hlsl");
     sprite->Add_Texture(G_GlobalLevelKey, "empty.png");
+     
+    sprite->Set_Param("ColorTexMode",  {&m_colorTexModeU, "uint",   sizeof(_uint)});
+    sprite->Set_Param("ColorTexMix",   {&m_colorTexMix,   "float",  sizeof(_float)});
 
-    sprite->Set_Param("ColorTexMode", {&m_colorTexModeU, "uint", sizeof(_uint)});
-    sprite->Set_Param("ColorTexMix", {&m_colorTexMix, "float", sizeof(_float)});
-
-    sprite->Set_Param("ColorUVUse", {&m_colorUVUseU, "uint", sizeof(_uint)});
+    sprite->Set_Param("ColorUVUse",    {&m_colorUVUseU,   "uint",   sizeof(_uint)});
     sprite->Set_Param("ColorUVOffset", {&m_colorUVOffset, "float2", sizeof(Vector2)});
-    sprite->Set_Param("ColorUVScale", {&m_colorUVScale, "float2", sizeof(Vector2)});
+    sprite->Set_Param("ColorUVScale",  {&m_colorUVScale,  "float2", sizeof(Vector2)});
 
     return S_OK;
 }
@@ -48,10 +48,10 @@ void CImageUI::Load(const nlohmann::ordered_json& data)
     sprite->Change_Texture(0, G_GlobalLevelKey, data.value("textureTag", ""));
 
     m_colorTextureKey = data.value("colorTexKey", string("empty.png"));
-    m_colorTexModeU = (_uint)data.value("colorTexMode", 0u);
-    m_colorTexMix = (_float)data.value("colorTexMix", 1.f);
+    m_colorTexModeU  = (_uint)data.value("colorTexMode", 0u);
+    m_colorTexMix    = (_float)data.value("colorTexMix", 1.f);
 
-    m_colorUVUseU = (_uint)data.value("colorUVUse", 0u);
+    m_colorUVUseU    = (_uint)data.value("colorUVUse", 0u);
 
     if (data.contains("colorUVOffset"))
     {
@@ -75,12 +75,12 @@ void CImageUI::Load(const nlohmann::ordered_json& data)
 
     sprite->Change_Texture(1, G_GlobalLevelKey, m_colorTextureKey);
 
-    sprite->Set_Param("ColorTexMode", {&m_colorTexModeU, "uint", sizeof(_uint)});
-    sprite->Set_Param("ColorTexMix", {&m_colorTexMix, "float", sizeof(_float)});
+    sprite->Set_Param("ColorTexMode",  {&m_colorTexModeU, "uint",   sizeof(_uint)});
+    sprite->Set_Param("ColorTexMix",   {&m_colorTexMix,   "float",  sizeof(_float)});
 
-    sprite->Set_Param("ColorUVUse", {&m_colorUVUseU, "uint", sizeof(_uint)});
+    sprite->Set_Param("ColorUVUse",    {&m_colorUVUseU,   "uint",   sizeof(_uint)});
     sprite->Set_Param("ColorUVOffset", {&m_colorUVOffset, "float2", sizeof(Vector2)});
-    sprite->Set_Param("ColorUVScale", {&m_colorUVScale, "float2", sizeof(Vector2)});
+    sprite->Set_Param("ColorUVScale",  {&m_colorUVScale,  "float2", sizeof(Vector2)});
 }
 
 CGameObject* CImageUI::Create()

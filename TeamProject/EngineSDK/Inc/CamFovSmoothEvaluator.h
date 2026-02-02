@@ -19,7 +19,6 @@ private:
 
 public:
 	static CCamFovSmoothEvaluator* Create() { return new CCamFovSmoothEvaluator(); }
-	virtual void Free() override { __super::Free(); }
 };
 
 NS_END

@@ -30,7 +30,6 @@ private:
 
 public:
     static CCamPosOrbitArcEvaluator* Create() { return new CCamPosOrbitArcEvaluator(); }
-    virtual void Free() override { __super::Free(); }
 };
 
 NS_END
