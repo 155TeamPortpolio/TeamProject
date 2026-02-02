@@ -13,6 +13,8 @@
 #include "GachaProps.h"
 /*Component*/
 #include "Light.h"
+/*DataBase*/
+#include "DataBase.h"
 
 CGacha_Level::CGacha_Level(const string& LevelKey)
 	:CLevel(LevelKey),
@@ -46,11 +48,22 @@ HRESULT CGacha_Level::Awake()
 	// Camera
 	CamDirector()->SetSpaceRef(m_GachaHandle);
 	CamDirector()->RequestSequence("Gacha/StartIntro");
+
 	return S_OK;
 }
 
 void CGacha_Level::Update()
 {
+	//юс╫ц
+	if(InputDevice()->Mouse_Tap(MOUSE_BTN::LB))
+	{
+		CamDirector()->AbortSequenceToOrbit(true);
+		CamDirector()->RequestSequence("Gacha/Spin");
+
+		++m_iIndex;
+		if (m_iIndex >= m_iMaxIndex)
+			m_iIndex = 0;
+	}
 }
 
 HRESULT CGacha_Level::Render()
@@ -61,10 +74,12 @@ HRESULT CGacha_Level::Render()
 
 void CGacha_Level::Ready_GachaObjects()
 {
+	m_ResultDesc = CDataBase::GetInstance()->GetGachaResults(9);
+
 	auto pProto = PrototypeManager();
 	auto objMgr = ObjectManager();
 
-	pProto->Add_ProtoType("Gacha_Level", "Proto_GameObject_GachaProps", CGachaProps::Create());
+	pProto->Add_ProtoType("Gacha_Level", "Proto_GameObject_GachaProps", CGachaProps::Create(&m_ResultDesc, &m_iIndex));
 	auto gachaProps = Builder::Create_Object({ "Gacha_Level", "Proto_GameObject_GachaProps" })
 		.Build("GachaProps");
 
