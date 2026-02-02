@@ -343,7 +343,6 @@ void CDefiler::Controll_Attack(AtkEvent& event)
 	HitDesc.fDamage = 0.f;
 	HitDesc.fInterval = 0.f;
 	HitDesc.iMaxCount = 1;
-	m_BlackBoard.LockTarget = event.OnOff;
 	SetBattleColliderObject(event.targetBone, CEnemy::BATTLE_COLTYPE::ATTACK, event.OnOff, HitDesc);
 }
 

@@ -1,6 +1,6 @@
 {
-    "AnimPath" : "../Bin/Resources/Zero/Enemy/Defiler_Isolde/Anim/",
-"PreTransform": {
+  "AnimPath": "../Bin/Resources/Zero/Enemy/Defiler_Isolde/Anim/",
+  "PreTransform": {
     "_11": -0.009999999776482582,
     "_12": 0.0,
     "_13": 0.0,
@@ -46,6 +46,26 @@
           "EventTime": 1.458298921585083,
           "EventType": "Notify",
           "EventTag": "AttackColliderOff_Weapon"
+        },
+        {
+          "EventTime": 0.7953216433525085,
+          "EventType": "Notify",
+          "EventTag": "TargetLockOn"
+        },
+        {
+          "EventTime": 1.0074074268341064,
+          "EventType": "Notify",
+          "EventTag": "TargetLockOff"
+        },
+        {
+          "EventTime": 1.263677716255188,
+          "EventType": "Notify",
+          "EventTag": "TargetLockOn"
+        },
+        {
+          "EventTime": 1.263677716255188,
+          "EventType": "Notify",
+          "EventTag": "TargetLockOff"
         }
       ]
     },
@@ -141,6 +161,16 @@
           "EventTime": 5.717998504638672,
           "EventType": "Notify",
           "EventTag": "AttackColliderOff_Weapon"
+        },
+        {
+          "EventTime": 0.9909031391143799,
+          "EventType": "Notify",
+          "EventTag": "TargetLockOn"
+        },
+        {
+          "EventTime": 1.2200000286102295,
+          "EventType": "Notify",
+          "EventTag": "TargetLockOff"
         }
       ]
     },
