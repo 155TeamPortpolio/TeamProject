@@ -48,7 +48,7 @@ private:
 	inline static constexpr CHILD  ULTIMATE_CHILD[]     = { ULTIMATE1, ULTIMATE2, ULTIMATE3 };
 	inline static constexpr CHILD  ULTIMATEICON_CHILD[] = { ULTIMATEICON1, ULTIMATEICON2, ULTIMATEICON3 };
 
-	inline static const string ICONTEXTURES[ENUM(CHARACTER::END)] = { "IconRoleGeneral24.png", "IconRoleGeneral09.png" };
+	inline static const string ICONTEXTURES[ENUM(CHARACTER::END)] = { "IconRoleGeneral24.png", "IconRoleGeneral09.png", "IconRoleGeneral13.png" };
 
 private:
 	CUI_BattleHUD() {}

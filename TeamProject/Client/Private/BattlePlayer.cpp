@@ -31,15 +31,27 @@ HRESULT CBattlePlayer::Initialize()
     vector<CHARACTER> BattleCharacters = { CHARACTER::JaneDoe, CHARACTER::Corin, CHARACTER::Miyabi };
     SetBattleCharacters(BattleCharacters);
 
+    return S_OK;
+}
+
+void CBattlePlayer::Awake()
+{
     UI_ACTION_PRIMARY_DESC desc;
     desc.eMode = UI_ACTION_PRIMARY_MODE::ATTACK;
     EventSystem()->Broadcast<UI_ACTION_PRIMARY_DESC>({ desc });
 
-    return S_OK;
+    UI_PLAYER_INIT_DESC initdesc;
+    initdesc.iCount = 3;
+    EventSystem()->Broadcast<UI_PLAYER_INIT_DESC>({ initdesc });
+
+    m_bAwaked = true;
 }
 
 void CBattlePlayer::Priority_Update(_float dt)
 {
+    if (!m_bAwaked)
+        Awake();
+
     if (m_pCurrentCharacter == nullptr)
         return;
 
@@ -280,8 +292,8 @@ void CBattlePlayer::Cancel_ComboAttack()
 void CBattlePlayer::Update_Input(_float dt)
 {
     // 콤보 테스트
-    if (InputDevice()->Key_Tap('C'))
-        Request_ComboAttack();
+    //if (InputDevice()->Key_Tap('G'))
+    //    Request_ComboAttack();
     if (m_bComboSelect)
     {
         Process_ComboSelect(dt);
@@ -415,11 +427,13 @@ void CBattlePlayer::Process_Switch()
     desc.eType = UI_ACTION_TYPE::SWITCH;
     desc.eState = Can_Switch() ? UI_ACTION_STATE::AVAILABLE : desc.eState = UI_ACTION_STATE::ENABLE;
 
-    if (InputDevice()->Key_Tap(VK_SPACE))
+    _bool bForward = InputDevice()->Key_Tap(VK_SPACE);
+    _bool bBackward = InputDevice()->Key_Tap('C');
+    if (bForward || bBackward)
     {
         if (Can_Switch())
         {
-            _int iTargetIndex = Find_SwitchIndex(m_bSwitchNext);
+            _int iTargetIndex = Find_SwitchIndex(bForward);
             if (iTargetIndex != -1)
             {
                 desc.eState = UI_ACTION_STATE::EXECUTING;
