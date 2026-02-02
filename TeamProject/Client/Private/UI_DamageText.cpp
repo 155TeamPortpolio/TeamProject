@@ -268,6 +268,20 @@ void CUI_DamageText::UI_Active(void* arg)
     m_baseAnchorOffset = Vector2(base.x, base.y) + m_spawnOffsetPx;
 
     SetDamage(desc->damage);
+
+
+    {
+        static _uint s_idx = 0;
+
+        auto builder = Builder::Create_UIObject({G_GlobalLevelKey, "Proto_GameObject_Gangta"});
+        auto ui = builder.Build("Gangta_Test_" + to_string(s_idx++));
+        auto gangta = static_cast<CUI_Gangta*>(ui);
+
+        gangta->Set_AnchorOffset(Vector2(m_vLeftTop.x - 14.f, m_vLeftTop.y - 14.f));
+
+        UIManager()->Add_UIObject(gangta, LevelManager()->Get_NowLevelKey());
+        gangta->UI_Active({});
+    }
 }
 
 void CUI_DamageText::UI_DeActive(void* arg)
