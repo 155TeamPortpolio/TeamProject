@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "JaneDoe.h"
+
 #include "GameInstance.h"
 #include "BattleSystem.h"
 #include "BattlePlayer.h"
@@ -7,6 +8,9 @@
 #include "DataBase.h"
 #include "EffectContainer.h"
 
+#include "Renderer.h"
+#include "Shader.h"
+#include "Texture.h"
 #include "Material.h"
 #include "MaterialInstance.h"
 
@@ -14,9 +18,6 @@
 #include "Animator3D.h"
 #include "CharacterController.h"
 #include "ObjectContainer.h"
-#include "Renderer.h"
-#include "Shader.h"
-#include "Texture.h"
 
 #include "StateMachine.h"
 #include "JaneDoeState_Start.h"
