@@ -1033,6 +1033,24 @@
     <Filter Include="03. Utility\11. Gui_Panel\01. VideoPanel">
       <UniqueIdentifier>{cda206a5-0c6c-4143-93c8-4bffe9105136}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\03. Miyabi\State\Switch">
+      <UniqueIdentifier>{00f18c7d-1578-4f15-8fa7-d24202c297bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\03. Miyabi\State\Switch\SwitchIn">
+      <UniqueIdentifier>{f9b3242e-46a2-4e79-8b52-c2f469b72738}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\03. Miyabi\State\Switch\SwitchOut">
+      <UniqueIdentifier>{19d9f525-2017-457e-9a67-04c85c58a2ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\03. Miyabi\State\Switch\SwitchIn\Normal">
+      <UniqueIdentifier>{c639c3e2-b520-4ec2-8723-bcaf94d32d92}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\03. Miyabi\State\Switch\SwitchIn\Attack">
+      <UniqueIdentifier>{a81dda07-1f82-4fa6-9825-3d3fac2e27de}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\03. Miyabi\State\Switch\SwitchIn\ParryAid">
+      <UniqueIdentifier>{d03d57fc-20a6-409f-824d-63c9da2e17c6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -2004,6 +2022,21 @@
     <ClInclude Include="..\public\Claymore_Parried.h">
       <Filter>02. GameObject\Object\Enemy\Normal\EtherClayMore\State\Parry</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\MiyabiState_SwitchOut.h">
+      <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Switch\SwitchOut</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MiyabiState_SwitchIn.h">
+      <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Switch\SwitchIn</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MiyabiState_SwitchInNormal.h">
+      <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Switch\SwitchIn\Normal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MiyabiState_SwitchInParryAid.h">
+      <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Switch\SwitchIn\ParryAid</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MiyabiState_SwitchInAttack.h">
+      <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Switch\SwitchIn\Attack</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2936,6 +2969,21 @@
     </ClCompile>
     <ClCompile Include="..\Private\UI_LotteryResultBanner.cpp">
       <Filter>02. GameObject\UI\01. 2D\Lottery\ResultBanner</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MiyabiState_SwitchOut.cpp">
+      <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Switch\SwitchOut</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MiyabiState_SwitchIn.cpp">
+      <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Switch\SwitchIn</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MiyabiState_SwitchInNormal.cpp">
+      <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Switch\SwitchIn\Normal</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MiyabiState_SwitchInParryAid.cpp">
+      <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Switch\SwitchIn\ParryAid</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MiyabiState_SwitchInAttack.cpp">
+      <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Switch\SwitchIn\Attack</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
