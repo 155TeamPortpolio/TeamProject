@@ -129,10 +129,11 @@ string CEntityObject::Get_TypeName()
 
 	switch (m_iType)
 	{
-	case 0: Typename = "NPC";		break;
-	case 1: Typename = "Interact";	break;
-	case 2: Typename = "ETC";		break;
-	case 3: Typename = "Invwall";	break;
+	case 0: Typename = "NPC";			break;
+	case 1: Typename = "Interact";		break;
+	case 2: Typename = "AmbientActor";	break;
+	case 3: Typename = "Invwall";		break;
+	case 4: Typename = "ETC";			break;
 	default:
 		break;
 	}
@@ -148,8 +149,9 @@ _vector4 CEntityObject::Get_TypeColor()
 	{
 	case 0: TypeColor = _vector4{ 1.f, 1.f, 0.f, 1.f };		break; // NPC : Yellow
 	case 1: TypeColor = _vector4{ 0.f, 1.f, 1.f, 1.f };		break; // INTERACT  : Cyan
-	case 2: TypeColor = _vector4{ 0.5f, 0.f, 0.5f, 1.f };	break; // ETC : Purple
-	case 3: TypeColor = _vector4{ 0.0f, 0.f, 1.f, 1.f };	break; // INVWALL : Blue
+	case 2: TypeColor = _vector4{ 1.f, 0.5f, 0.f, 1.f };	break; // AMBIENTACTOR  : Orange
+	case 3: TypeColor = _vector4{ 0.f, 0.f, 1.f, 1.f };		break; // INVWALL : Blue
+	case 4: TypeColor = _vector4{ 0.5f, 0.f, 0.5f, 1.f };	break; // ETC : Purple
 	default:TypeColor = _vector4{ 0.f, 1.f, 0.f, 1.f };		break; // DEF : Green 
 	}
 

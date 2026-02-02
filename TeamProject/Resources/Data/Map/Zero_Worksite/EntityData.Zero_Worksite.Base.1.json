@@ -15,7 +15,7 @@
     {
       "iEntityID": 1,
       "tagName": "PlayerSpawn",
-      "iType": 2,
+      "iType": 4,
       "vScale": [1.0, 1.0, 1.0],
       "vRotation": [-0.0, 0.0, 0.0],
       "vTranslation": [-0.2900068759918213, -4.8303070068359375, -7.91743803024292],
