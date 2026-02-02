@@ -39,6 +39,7 @@ typedef struct tagDefilerBlackBoard
     /*움직임 패턴*/
     TraceFlag eTraceFlag = {};
     _bool LockTarget = {};
+    _bool RotateLock = {};
     _vector3 CurrentDir = _vector3(0.f, 0.f, 1.f); 
 
     /*패턴*/

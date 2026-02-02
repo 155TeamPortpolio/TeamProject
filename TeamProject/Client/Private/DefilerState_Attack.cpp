@@ -371,7 +371,7 @@ void CDefilerState_Attack_06::Exit(CDefiler* pOwner)
 void CDefilerState_Attack_07::Enter(CDefiler* pOwner)
 {
 	DEFILER_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
-	blackBoard.TraceType_OnTarget();
+	blackBoard.TraceType_OnlyAnim();
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("Monster_IsoldetheDefiler_Ani_Attack_07")
 		.StartAt(blackBoard.reservedPattern.animStartProgress)
@@ -392,7 +392,7 @@ void CDefilerState_Attack_07::Exit(CDefiler* pOwner)
 void CDefilerState_Attack_08_01_Start::Enter(CDefiler* pOwner)
 {
 	DEFILER_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
-	blackBoard.TraceType_OnTarget();
+	blackBoard.TraceType_OnlyAnim();
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("Monster_IsoldetheDefiler_Ani_Attack_08_01_Start")
 		.StartAt(blackBoard.reservedPattern.animStartProgress)
@@ -413,7 +413,6 @@ void CDefilerState_Attack_08_01_Start::Exit(CDefiler* pOwner)
 void CDefilerState_Attack_08_01_Loop::Enter(CDefiler* pOwner)
 {
 	DEFILER_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
-	blackBoard.TraceType_OnTarget();
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("Monster_IsoldetheDefiler_Ani_Attack_08_01_Loop")
 		.StartAt(blackBoard.reservedPattern.animStartProgress)
@@ -434,7 +433,6 @@ void CDefilerState_Attack_08_01_Loop::Exit(CDefiler* pOwner)
 void CDefilerState_Attack_08_01_End::Enter(CDefiler* pOwner)
 {
 	DEFILER_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
-	blackBoard.TraceType_OnTarget();
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("Monster_IsoldetheDefiler_Ani_Attack_08_01_End")
 		.StartAt(blackBoard.reservedPattern.animStartProgress)
@@ -455,7 +453,7 @@ void CDefilerState_Attack_08_01_End::Exit(CDefiler* pOwner)
 void CDefilerState_Attack_08_02::Enter(CDefiler* pOwner)
 {
 	DEFILER_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
-	blackBoard.TraceType_OnTarget();
+	blackBoard.TraceType_OnlyAnim();
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("Monster_IsoldetheDefiler_Ani_Attack_08_02")
 		.StartAt(blackBoard.reservedPattern.animStartProgress)
@@ -476,7 +474,6 @@ void CDefilerState_Attack_08_02::Exit(CDefiler* pOwner)
 void CDefilerState_Attack_09_Start::Enter(CDefiler* pOwner)
 {
 	DEFILER_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
-	blackBoard.TraceType_OnTarget();
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("Monster_IsoldetheDefiler_Ani_Attack_09_Start")
 		.StartAt(blackBoard.reservedPattern.animStartProgress)
@@ -497,7 +494,6 @@ void CDefilerState_Attack_09_Start::Exit(CDefiler* pOwner)
 void CDefilerState_Attack_09_Loop::Enter(CDefiler* pOwner)
 {
 	DEFILER_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
-	blackBoard.TraceType_OnTarget();
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("Monster_IsoldetheDefiler_Ani_Attack_09_Loop")
 		.StartAt(blackBoard.reservedPattern.animStartProgress)
@@ -518,7 +514,7 @@ void CDefilerState_Attack_09_Loop::Exit(CDefiler* pOwner)
 void CDefilerState_Attack_09_End::Enter(CDefiler* pOwner)
 {
 	DEFILER_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
-	blackBoard.TraceType_OnTarget();
+	blackBoard.TraceType_OnlyAnim();
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("Monster_IsoldetheDefiler_Ani_Attack_09_End")
 		.StartAt(blackBoard.reservedPattern.animStartProgress)
@@ -539,7 +535,7 @@ void CDefilerState_Attack_09_End::Exit(CDefiler* pOwner)
 void CDefilerState_Attack_Grab::Enter(CDefiler* pOwner)
 {
 	DEFILER_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
-	blackBoard.TraceType_OnTarget();
+	blackBoard.TraceType_OnlyAnim();
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("Monster_IsoldetheDefiler_Ani_Attack_Grab_01")
 		.StartAt(blackBoard.reservedPattern.animStartProgress)
@@ -560,7 +556,7 @@ void CDefilerState_Attack_Grab::Exit(CDefiler* pOwner)
 void CDefilerState_Attack_Summon::Enter(CDefiler* pOwner)
 {
 	DEFILER_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
-	blackBoard.TraceType_OnTarget();
+	blackBoard.TraceType_OnlyAnim();
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("Monster_IsoldetheDefiler_Ani_Attack_Summon")
 		.StartAt(blackBoard.reservedPattern.animStartProgress)

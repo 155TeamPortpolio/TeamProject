@@ -60,8 +60,8 @@ HRESULT CDefiler::Initialize(INIT_DESC* pArg)
 	if (FAILED(Initialize_StateMachine()))
 		return E_FAIL;
 
-	//if (FAILED(Create_Colliders()))
-	//	return E_FAIL;
+	if (FAILED(Create_Colliders()))
+		return E_FAIL;
 
 	if (FAILED(Initialize_Effects()))
 		return E_FAIL;
@@ -159,9 +159,10 @@ void CDefiler::MoveByTraceMode(_float dt, _float moveScale)
 	const _bool allowThrough = HasFlag(traceFlags, TraceFlag::AllowThroughTarget);
 	const _bool ignoreTarget = HasFlag(traceFlags, TraceFlag::IgnoreTarget);
 
-	const _vector3    rootDeltaLocal = animator->Get_RootBoneMoveDelta() * moveScale;
+	const _vector3    rootDeltaLocal = animator->Get_RootBoneMoveDelta();
 	const _quaternion rootQuatLocal = animator->Get_RootBoneQuatDelta();
 
+	/*이동량(y제외)*/
 	_vector3 rootDeltaH = rootDeltaLocal;
 	rootDeltaH.y = 0.f;
 
@@ -238,6 +239,7 @@ void CDefiler::MoveByTraceMode(_float dt, _float moveScale)
 	}
 
 	const _vector3 localForward(0.f, 0.f, 1.f);
+	/*루트 모션의 전방 진행량*/
 	_float moveLenSigned = rootDeltaH.Dot(localForward);
 
 	if (moveLenSigned > 0.f && stopAtTarget && !allowThrough)
@@ -261,15 +263,18 @@ void CDefiler::MoveByTraceMode(_float dt, _float moveScale)
 			distScale = 1.f + distToTarget * 1.2f; 
 	}
 
-	const _vector3 velocityWorld = (moveWorld / dt) * distScale;
-
-	controller->Move_Velocity(velocityWorld, dt);
-	m_pTransform->Add_Quaternion(rootQuatLocal);
+	const _vector3 velocityWorld = (moveWorld) * distScale;
+	controller->Move_RootMotion(velocityWorld, rootQuatLocal, dt);
+	//	controller->Move_Velocity(velocityWorld, dt);
+	//	m_pTransform->Add_Quaternion(rootQuatLocal);
 }
 
 
 void CDefiler::RotateToTarget(_float dt, _float rotateSpeed)
 {
+	if (m_BlackBoard.RotateLock)
+		return;
+
 	_vector3 vPosition = m_pTransform->Get_Pos();
 	_vector3 vCurrDir = m_pTransform->Dir(STATE::LOOK);
 	_vector3 vTargetDir = m_tTargetingInfo.vDirToTarget;
@@ -295,6 +300,7 @@ void CDefiler::Route_AnimEvent(CAnimator3D* animator)
 
 	for (EVENT_INST& instance : Bus)
 	{
+		AtkEvent evt;
 		switch (instance.Type)
 		{
 		case CLIP_EVENT_TYPE::NOTIFY:
@@ -304,9 +310,41 @@ void CDefiler::Route_AnimEvent(CAnimator3D* animator)
 				m_BlackBoard.LockTarget = true;
 			else if (instance.Tag == "TargetLockOff")
 				m_BlackBoard.LockTarget = false;
+			else if (ExtractAfterEventPrefix(instance.Tag,"AttackCollider", evt))
+				Controll_Attack(evt);
 			break;
 		}
 	}
+}
+
+_bool CDefiler::ExtractAfterEventPrefix(const string& event, const string& prefix, AtkEvent& outResult)
+{
+	if (event.rfind(prefix, 0) != 0)
+		return false;
+
+	const size_t underbarPos = event.find('_');
+	if (underbarPos == string::npos)
+		return false;
+
+	// 앞부분: AttackColliderOn / AttackColliderOff
+	const string OnOff	  =	event.substr(0, underbarPos);
+	const string BoneDesc = event.substr(underbarPos + 1);
+
+	outResult.OnOff = (OnOff == "AttackColliderOn");
+	outResult.targetBone = BoneDesc;
+	return true;
+}
+
+void CDefiler::Controll_Attack(AtkEvent& event)
+{
+	HitDesc		HitDesc = {};
+	HitDesc.eHitType = HIT_TYPE::ONCE;
+	HitDesc.eDamageType = DAMAGE_TYPE::NORMAL;
+	HitDesc.fDamage = 0.f;
+	HitDesc.fInterval = 0.f;
+	HitDesc.iMaxCount = 1;
+	m_BlackBoard.LockTarget = event.OnOff;
+	SetBattleColliderObject(event.targetBone, CEnemy::BATTLE_COLTYPE::ATTACK, event.OnOff, HitDesc);
 }
 
 CGameObject* CDefiler::Clone(INIT_DESC* pArg)
@@ -388,6 +426,7 @@ HRESULT CDefiler::Initialize_Effects()
 {
 	auto pObjectContainer = Get_Component<CObjectContainer>();
 	Create_AttackSign("Bip001_Head");
+
 	/* Sword Slash */
 	{
 		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
@@ -436,6 +475,45 @@ HRESULT CDefiler::Initialize_Effects()
 
 		pEffect->Stop();
 		pObjectContainer->Add_Child(pEffect, false);
+	}
+
+	return S_OK;
+}
+
+
+HRESULT CDefiler::Create_Colliders()
+{
+	auto pObjectContainer = Get_Component<CObjectContainer>();
+	auto pAnimator = Get_Component<CAnimator3D>();
+
+	/* Weapon */
+	{
+		BATTLE_COLLIDER_DESC WeaponDesc{};
+
+		WeaponDesc.tagName = "Weapon";
+		WeaponDesc.isAttachBone = true;
+		WeaponDesc.tagBone = "Ctr_M_Weapon_01";
+		WeaponDesc.pOwnerAnimator3D = pAnimator;
+		WeaponDesc.eAttackColliderType = COLLIDER_TYPE::BOX;
+		WeaponDesc.vAttackSize = _float3{ 3.5f,1.5f,0.5f };
+
+		if (FAILED(AttachBattleColliderObject(&WeaponDesc)))
+			return E_FAIL;
+	}
+
+	/* Tail */
+	{
+		BATTLE_COLLIDER_DESC WeaponDesc{};
+
+		WeaponDesc.tagName = "Tail";
+		WeaponDesc.isAttachBone = true;
+		WeaponDesc.tagBone = "Ctr_M_Tail_011";
+		WeaponDesc.pOwnerAnimator3D = pAnimator;
+		WeaponDesc.eAttackColliderType = COLLIDER_TYPE::SPHERE;
+		WeaponDesc.vAttackSize = _float3{ 2.f,2.f,2.f };
+
+		if (FAILED(AttachBattleColliderObject(&WeaponDesc)))
+			return E_FAIL;
 	}
 
 	return S_OK;

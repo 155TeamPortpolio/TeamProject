@@ -11,7 +11,10 @@ class CDefiler :
     public CEnemy
 {
 public:
-    
+    struct AtkEvent {
+        _bool OnOff = { false };
+        string targetBone = {};
+    };
 
 private:
     CDefiler();
@@ -35,18 +38,21 @@ public:
 public:
     void Change_CollisionMask(_uint iMask = ENUM(COLLISION_GROUP::PLAYER));
     void Release_CollisionMask();
+
 private:
     void MoveByTraceMode(_float dt, _float moveScale = 1.f);
     void RotateToTarget(_float dt, _float rotateSpeed = 1.f);
     void Update_States(_float dt);
     void Route_AnimEvent(CAnimator3D* animator);
-    _vector3 NormalizeXZ(const _vector3& vec, const _vector3& fallback);
+    _bool ExtractAfterEventPrefix(const string& event, const string& prefix, AtkEvent& outResult);
+    void Controll_Attack(AtkEvent& event);
+
 private:
     HRESULT Initialize_StateMachine();
     HRESULT Initialize_States();
     HRESULT Initialize_Transitions();
     HRESULT Initialize_Effects();
-    //HRESULT Create_Colliders();
+    HRESULT Create_Colliders();
 
 private:
     CStateMachine<CDefiler>* m_pStateMachine = { nullptr };
