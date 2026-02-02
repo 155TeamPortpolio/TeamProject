@@ -722,7 +722,7 @@ _float COrbitCam::CalcAllowDist(const OrbitProfile& prof, PxScene* scene, Engine
     PxQueryFilterData filterData;
     filterData.flags = PxQueryFlag::eSTATIC | PxQueryFlag::ePREFILTER;
 
-    CRaycastFilterCallback filterCallback(ENUM(COLLISION_GROUP::COMMON), false);
+    CRaycastFilterCallback filterCallback(ENUM(COLLISION_GROUP::COMMON) + ENUM(COLLISION_GROUP::GROUND), false);
 
     _float minAllowed = distWanted;
 
@@ -943,7 +943,7 @@ void COrbitCam::CalcRotDeg(const Vector3& lookDir, Vector2& outRotDeg) const
 void COrbitCam::GetBasePivot(const OBJECT_HANDLE& h, Vector3& outFootWorld, Vector3& outBasePivotWorld) const
 {
     auto obj = ObjectManager()->Request_Object(h);
-    auto cc = obj->Get_Component<Engine::CCharacterController>();
+    auto cc = obj->Get_Component<CCharacterController>();
 
     const Vector4 foot4 = cc->Get_FootPosition();
     outFootWorld = Vector3(foot4.x, foot4.y, foot4.z);
