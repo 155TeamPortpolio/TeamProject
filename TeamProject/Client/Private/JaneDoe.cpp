@@ -159,7 +159,6 @@ void CJaneDoe::Render_GUI()
 			Decrease_Passion(100.f);
 	}
 
-	__super::Render_GUI();
 	if (m_pStateMachine)
 	{
 		ImGui::Separator();
@@ -172,6 +171,8 @@ void CJaneDoe::Render_GUI()
 		m_pStateMachine->Render_GUI();
 
 	}
+
+	__super::Render_GUI();
 }
 
 void CJaneDoe::Reset_State()
@@ -304,6 +305,7 @@ void CJaneDoe::Increase_Passion(_float fStream)
 	{
 		m_bPassion = true;
 		m_bCanSalchow = true;
+		m_fAttackPower *= 1.25f;
 	}
 }
 
@@ -316,6 +318,7 @@ void CJaneDoe::Decrease_Passion(_float fStream)
 		m_bPassion = false;
 		m_vRimLightColor = _float3(0.f, 0.f, 0.f);
 		m_fRimLightPower = 0.f;
+		m_fAttackPower /= 1.25f;
 	}
 }
 
@@ -453,6 +456,32 @@ HRESULT CJaneDoe::Initialize_Stat()
 	m_fDefense = Desc.Defend;
 	m_tEnergy.fSpecialEnergy = Desc.SpecialAttack;
 	Set_EvadeMax(3);
+
+	// 추가 버프 적용
+	string outID;
+	RuntimeBucket().String.TryGet(PersistScope::SaveSlot, "RamenID", outID);
+	if (!outID.empty())
+	{
+		auto Ramen = CDataBase::GetInstance()->GetRamenDesc(outID);
+		for (auto attribute : Ramen.attributes)
+		{
+			string attID = attribute.strAttributeID;
+			if (attID == "atk")
+			{
+				m_fAttackPower += attribute.iAttributeValue * 0.01f;
+			}
+			else if (attID == "max_hp")
+			{
+				m_fMaxHP += attribute.iAttributeValue;
+			}
+			else if (attID == "dmg_physical")
+			{
+				m_fAttackPower += attribute.iAttributeValue * 0.01f;
+			}
+			else
+				continue;
+		}
+	}
 
 	return S_OK;
 }

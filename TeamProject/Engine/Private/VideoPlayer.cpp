@@ -1,5 +1,6 @@
 #include "Engine_Defines.h"
 #include "VideoPlayer.h"
+#include "IVideoDecoderBackend.h"
 
 CVideoPlayer::CVideoPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
     : m_pDevice(pDevice)
@@ -12,7 +13,10 @@ CVideoPlayer::CVideoPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 bool CVideoPlayer::Open(const VIDEO_PLAYER_DESC& desc)
 {
+    lock_guard<mutex> lock(m_mutex);
+
     m_desc = desc;
+    m_playPtsMs = 0;
     m_state.store(VIDEO_PLAY_STATE::Ready, std::memory_order_release);
     m_frameQueue.Clear();
     return true;
@@ -20,9 +24,13 @@ bool CVideoPlayer::Open(const VIDEO_PLAYER_DESC& desc)
 
 void CVideoPlayer::Close()
 {
-    m_state.store(VIDEO_PLAY_STATE::Closed, std::memory_order_release);
+    {
+        lock_guard<mutex> lock(m_mutex);
+        m_state.store(VIDEO_PLAY_STATE::Closed, std::memory_order_release);
+        m_frameQueue.Clear();
+        m_playPtsMs = 0;
+    }
 
-    m_frameQueue.Clear();
     Safe_Release(m_pSRV);
     Safe_Release(m_pTexture);
 
@@ -32,6 +40,14 @@ void CVideoPlayer::Close()
 
 void CVideoPlayer::Play()
 {
+    const VIDEO_PLAY_STATE prev = m_state.load(std::memory_order_acquire);
+
+    if (prev == VIDEO_PLAY_STATE::Ended)
+    {
+        RequestReplay();
+        return;
+    }
+
     m_state.store(VIDEO_PLAY_STATE::Playing, std::memory_order_release);
 }
 
@@ -42,8 +58,10 @@ void CVideoPlayer::Pause()
 
 void CVideoPlayer::Stop()
 {
+    lock_guard<mutex> lock(m_mutex);
     m_state.store(VIDEO_PLAY_STATE::Ended, std::memory_order_release);
     m_frameQueue.Clear();
+    m_playPtsMs = 0;
 }
 
 void CVideoPlayer::PushDecodedFrame(VIDEO_FRAME_CPU&& frame)
@@ -52,17 +70,24 @@ void CVideoPlayer::PushDecodedFrame(VIDEO_FRAME_CPU&& frame)
         return;
 
     m_pushCount.fetch_add(1, std::memory_order_relaxed);
+
+    lock_guard<mutex> lock(m_mutex);
     m_frameQueue.PushDropOldest(std::move(frame));
 }
 
 void CVideoPlayer::PumpPresent(_uint64 nowPts)
 {
-    if(m_state.load(std::memory_order_acquire) != VIDEO_PLAY_STATE::Playing)
+    if (m_state.load(std::memory_order_acquire) != VIDEO_PLAY_STATE::Playing)
         return;
 
     VIDEO_FRAME_CPU pickedFrame;
-    if (!m_frameQueue.PopLatestNotAfter(nowPts, pickedFrame))
-        return;
+
+    {
+        lock_guard<mutex> lock(m_mutex);
+
+        if (!m_frameQueue.PopLatestNotAfter(nowPts, pickedFrame))
+            return;
+    }
 
     m_presentCount.fetch_add(1, std::memory_order_relaxed);
 
@@ -70,8 +95,7 @@ void CVideoPlayer::PumpPresent(_uint64 nowPts)
         return;
 
     const UINT rowPitch = (UINT)pickedFrame.width * 4;
-    m_pContext->UpdateSubresource(
-        m_pTexture, 0, nullptr,
+    m_pContext->UpdateSubresource(m_pTexture, 0, nullptr,
         pickedFrame.rgba.data(), rowPitch, 0);
 }
 
@@ -116,9 +140,26 @@ _bool CVideoPlayer::EnsureGpuTexture(_uint width, _uint height)
 
 void CVideoPlayer::SkipToEnd()
 {
-    // 지금은 큐 비우고 ended로
+    lock_guard<mutex> lock(m_mutex);
     m_frameQueue.Clear();
     m_state.store(VIDEO_PLAY_STATE::Ended, std::memory_order_release);
+}
+
+void CVideoPlayer::Replay()
+{
+    lock_guard<mutex> lock(m_mutex);
+
+    m_playPtsMs = 0;
+    m_frameQueue.Clear();
+
+    // 재생 시작
+    m_state.store(VIDEO_PLAY_STATE::Playing, std::memory_order_release);
+}
+
+void CVideoPlayer::SetDecoder(IVideoDecoderBackend* decoder)
+{
+    lock_guard<mutex> lock(m_mutex);
+    m_decoder = decoder;
 }
 
 //void CVideoPlayer::PumpPresent(_uint64 nowPts)
@@ -181,6 +222,7 @@ void CVideoPlayer::AdvanceClock(_float dt)
     if (dt < 0.f) dt = 0.f;
     const float clampedDt = (dt > 0.1f) ? 0.1f : dt;
 
+    lock_guard<mutex> lock(m_mutex);
     m_playPtsMs += (uint64_t)(clampedDt * 1000.0f + 0.5f);
 }
 

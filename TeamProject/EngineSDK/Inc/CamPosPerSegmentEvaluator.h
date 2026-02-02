@@ -28,6 +28,7 @@ private:
     ICamPosEvaluator*          evalBSpline{};
     ICamPosEvaluator*          evalHermite{};
     ICamPosEvaluator*          evalOrbitArc{};
+    ICamPosEvaluator*          evalOrbitSpin{};
 
 public:
     static CCamPosPerSegmentEvaluator* Create() { return new CCamPosPerSegmentEvaluator(); }

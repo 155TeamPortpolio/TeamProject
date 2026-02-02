@@ -22,6 +22,9 @@ public:
     virtual void    Update(_float dt)           override;
     virtual void    Late_Update(_float dt)      override;
 
+private:
+    void    Add_StageScreen();
+
 public:
     static CGachaStage* Create();
     virtual CGameObject* Clone(INIT_DESC* pArg) override;

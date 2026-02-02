@@ -14,7 +14,7 @@
 #include "DataBase.h"
 #include "FieldSystem.h"
 
-void CUI_Ramen::Select_Menu(CUI_Object* pSelected, _int iPrice, wstring strMenu)
+void CUI_Ramen::Select_Menu(CUI_Object* pSelected, const RAMEN_DESC& tRamenDesc)
 {
     if (m_pSelectedMenu == pSelected || !pSelected)
         return;
@@ -25,9 +25,8 @@ void CUI_Ramen::Select_Menu(CUI_Object* pSelected, _int iPrice, wstring strMenu)
     m_pSelectedMenu = pSelected;
     m_pSelectedMenu->UI_Active(nullptr);
 
-    Set_TextPrice(m_iMoney, iPrice);
-    replace(strMenu.begin(), strMenu.end(), L'\n', L' ');
-    m_strMenu = strMenu; 
+    m_tRamenDesc = tRamenDesc;
+    Set_TextPrice();
 }
 
 HRESULT CUI_Ramen::Initialize_Prototype()
@@ -44,19 +43,18 @@ HRESULT CUI_Ramen::Initialize(INIT_DESC* pArg)
     __super::Initialize(pArg);
 
     Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("ramen.json")));
+    Cache();
+
     Create_BackButton();
     Create_Menus();
     Create_OrderBanner();
     Create_Video();
     Create_ResultBanner();
 
-    Cache();
-
     if (m_pButtonOrder)
         m_pButtonOrder->Set_OnClick([this]() { OnClick_Order(); });
 
     Set_Alive(false);
-    Set_TextPrice(12345, 0);
 
 	return S_OK;
 }
@@ -80,10 +78,7 @@ void CUI_Ramen::UI_Active(void* pArg)
 {
     Set_Alive(true); 
     Set_ChildAnimation(CHILD::ORDER, 0);
-    m_pSelectedMenu = nullptr;
-    for (auto& pMenu : m_pMenus)
-        pMenu->UI_DeActive();
-    Update_Affordable();
+    Reset();
 }
 
 void CUI_Ramen::UI_DeActive(void* pArg)
@@ -120,7 +115,7 @@ void CUI_Ramen::Create_Menus()
     for (_int i = 0; i < iMenuCount; ++i)
     {
         CUI_RamenMenu::RAMENMENU_DESC* pDesc = new CUI_RamenMenu::RAMENMENU_DESC;
-        pDesc->onSelect = [this](CUI_Object* pSelected, _int iPrice, wstring strMenu) { Select_Menu(pSelected, iPrice, strMenu); };
+        pDesc->onSelect = [this](CUI_Object* pSelected, const RAMEN_DESC& tRamenDesc) { Select_Menu(pSelected, tRamenDesc); };
         pDesc->tRamenDesc = *vecRamenTable[i];
 
         auto pMenu = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_RamenMenu" })
@@ -211,27 +206,30 @@ void CUI_Ramen::Cache()
 
 void CUI_Ramen::OnClick_Order()
 {
-    if (m_isAffordable)
+    if (!m_isAffordable)
+        return;
+
+    Set_ChildAnimation(CHILD::TEXT_ORDER, 0);
+    Set_ChildAnimation(CHILD::CLICK_ORDER, 0);
+    if (m_pOrderBanner)
     {
-        Set_ChildAnimation(CHILD::TEXT_ORDER, 0);
-        Set_ChildAnimation(CHILD::CLICK_ORDER, 0);
-        if (m_pOrderBanner)
-        {
-            CUI_RamenOrderBanner::ACTIVE_DESC desc = {};
-            desc.strMenu = m_strMenu;
-            m_pOrderBanner->UI_Active(&desc);
-        } 
-    }
-    else
-    {
-        MSG_BOX("구매 불가능!");
-    }    
+        CUI_RamenOrderBanner::ACTIVE_DESC desc = {};
+        desc.strMenu = m_tRamenDesc.strName;
+        m_pOrderBanner->UI_Active(&desc);
+    } 
 }
 
 void CUI_Ramen::OnClick_OrderComfirm()
 {
     if (m_pVideo)
         m_pVideo->UI_Active();
+
+    m_iMoney -= m_tRamenDesc.iPrice;
+    RuntimeBucket().Int64.Set(PersistScope::SaveSlot, strFieldPlayerKey, m_iMoney);
+    RuntimeBucket().String.Set(PersistScope::SaveSlot, "RamenID", m_tRamenDesc.strID);
+
+    for (auto& pMenu : m_pMenus)
+        pMenu->UI_DeActive();
 }
 
 void CUI_Ramen::OnVideoFinished()
@@ -239,27 +237,38 @@ void CUI_Ramen::OnVideoFinished()
     if (m_pResultBanner)
     {
         CUI_RamenResultBanner::ACTIVE_DESC desc = {};
-        desc.strMenu = m_strMenu;
+        desc.strMenu = m_tRamenDesc.strName;
+        desc.attributes = m_tRamenDesc.attributes;
         m_pResultBanner->UI_Active(&desc);
-    } 
+    }     
 }
 
 void CUI_Ramen::OnClick_ResultConfirm()
 {
+    Reset();
 }
 
-void CUI_Ramen::Set_TextPrice(_int iMoney, _int iPrice)
+void CUI_Ramen::Reset()
 {
-    m_iMoney = iMoney;
-    m_iPrice = iPrice;
-
-    m_pTextPrice->Set_Text(Helper::ConvertToWideString(to_string(m_iMoney) + "/" + to_string(iPrice)));
+    m_pSelectedMenu = nullptr;
+    m_tRamenDesc = {};
+    RuntimeBucket().Int64.TryGet(PersistScope::SaveSlot, strFieldPlayerKey, m_iMoney);
+    Set_TextPrice();
     Update_Affordable();
+}
+
+void CUI_Ramen::Set_TextPrice()
+{
+    if (!m_pTextPrice)
+        return;
+
+    m_pTextPrice->Set_Text(Helper::ConvertToWideString(to_string(m_iMoney) + "/" + to_string(m_tRamenDesc.iPrice)));
+    Update_Affordable();    // 여기서 불리는게 맞을까..
 }
 
 void CUI_Ramen::Update_Affordable()
 {
-    if (m_iMoney >= m_iPrice && m_pSelectedMenu)
+    if (m_iMoney >= m_tRamenDesc.iPrice && m_pSelectedMenu)
     {
         m_isAffordable = true;
         Set_ChildAnimation(CHILD::DISABLE_ORDER, 1);

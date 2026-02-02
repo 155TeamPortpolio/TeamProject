@@ -6,6 +6,7 @@
 #include "FieldSystem.h"
 #include "UIDirector.h"
 #include "DisplayGate.h"
+#include "UI_Gangta.h"
 // Camera
 #include "SequenceCam.h"
 #include "OrbitCam.h"
@@ -78,7 +79,10 @@ void CCamDirector::AutoField()
 {
     AutoTarget();
     RequestSequence("Field/Front");
-    //GameInstance()->Set_EngineTimeScale(0.01f)
+
+    CMonitorGate gate;
+    if (gate.Pass())
+        RenderSystem()->SetOn(false);
 }
 
 void CCamDirector::Update(_float dt)
@@ -167,7 +171,9 @@ void CCamDirector::UpdateInput(_float dt)
     if (m_playing.active) return;
 
     if (InputDevice()->Key_Tap(VK_F3))
-        RequestSequence("Gacha/StartPos");
+    {
+        CamDirector()->RequestSequence("Gacha/Spin");
+    }
 }
 
 void CCamDirector::AbortSequenceToOrbit(_bool resetTime)
@@ -275,7 +281,7 @@ _bool CCamDirector::IsPlaying(const string& key) const
     if (m_playing.key != key)   return false;
     if (m_playing.pendingStart) return true;
 
-    return GetSeqObj()->Get_Component<CCamSequencePlayer>()->IsPlaying();
+    return GetSeqPlayer()->IsPlaying();
 }
 
 _bool CCamDirector::IsPlaying(CamSeqType type) const

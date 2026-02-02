@@ -20,7 +20,7 @@ public:
     void Render_GUI()override;
 
 public:
-    void OnTriggerEnter(CGameObject* pOther) override;
+    void OnCollisionEnter(CGameObject* pOther) override;
 
 public:
     static CSacrifice_Orb* Create();

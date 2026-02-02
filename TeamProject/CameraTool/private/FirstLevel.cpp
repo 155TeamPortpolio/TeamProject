@@ -2,12 +2,9 @@
 #include "FirstLevel.h"
 #include "FreeCam.h"
 #include "Grid.h"
-
 #include "Corin.h"
 #include "JaneDoe.h"
-
 #include "GachaProps.h"
-
 #include "CamPanel.h"
 
 HRESULT CFirstLevel::Awake()

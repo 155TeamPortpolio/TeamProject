@@ -83,7 +83,6 @@ void CBelleState_Run_Loop::Update(CBelle* pOwner, _float dt)
         if (Event.Tag == "L" || Event.Tag == "R")
             static_cast<CBelleState_Run*>(m_pParentState)->Set_LastFoot(Event.Tag);
     }
-    pOwner->Process_RootMotion(dt);
 }
 
 void CBelleState_Run_End::Enter(CBelle* pOwner)

@@ -1,5 +1,5 @@
 {
-  "AnimPath" : "../bin/Resources/Global/BattleCharacter/JaneDoe/Anim/",
+  "AnimPath": "../bin/Resources/Global/BattleCharacter/JaneDoe/Anim/",
   "PreTransform": {
     "_11": -0.009999999776482582,
     "_12": 0.0,
@@ -21,7 +21,53 @@
   "Clips": [
     {
       "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Attack_AssaultAid",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.12007797509431839,
+          "EventType": "Notify",
+          "EventTag": "RFootStart"
+        },
+        {
+          "EventTime": 0.19298246502876282,
+          "EventType": "Notify",
+          "EventTag": "RFootEnd"
+        },
+        {
+          "EventTime": 0.274463951587677,
+          "EventType": "Notify",
+          "EventTag": "LFootStart"
+        },
+        {
+          "EventTime": 0.4502924084663391,
+          "EventType": "Notify",
+          "EventTag": "LFootEnd"
+        },
+        {
+          "EventTime": 0.5875243544578552,
+          "EventType": "Notify",
+          "EventTag": "AreaAttack"
+        },
+        {
+          "EventTime": 0.6261208653450012,
+          "EventType": "Notify",
+          "EventTag": "AreaAttack"
+        },
+        {
+          "EventTime": 0.6561403274536133,
+          "EventType": "Notify",
+          "EventTag": "AreaAttack"
+        },
+        {
+          "EventTime": 0.6800000071525574,
+          "EventType": "Notify",
+          "EventTag": "AreaAttack"
+        },
+        {
+          "EventTime": 0.707602322101593,
+          "EventType": "Notify",
+          "EventTag": "CheckCombo"
+        }
+      ]
     },
     {
       "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Attack_AssaultAid_End",
@@ -68,6 +114,11 @@
           "EventTime": 1.0058479309082031,
           "EventType": "Notify",
           "EventTag": "RFootEnd"
+        },
+        {
+          "EventTime": 0.6118908524513245,
+          "EventType": "Notify",
+          "EventTag": "CheckCombo"
         }
       ]
     },
@@ -119,6 +170,11 @@
           "EventTime": 0.5337881445884705,
           "EventType": "Notify",
           "EventTag": "RHandEnd"
+        },
+        {
+          "EventTime": 0.5378167033195496,
+          "EventType": "Notify",
+          "EventTag": "CheckCombo"
         }
       ]
     },
@@ -148,6 +204,11 @@
           "EventTime": 0.7415205240249634,
           "EventType": "Notify",
           "EventTag": "LFootEnd"
+        },
+        {
+          "EventTime": 0.7508772015571594,
+          "EventType": "Notify",
+          "EventTag": "CheckCombo"
         }
       ]
     },
@@ -207,6 +268,11 @@
           "EventTime": 0.6304093599319458,
           "EventType": "Notify",
           "EventTag": "LFootEnd"
+        },
+        {
+          "EventTime": 0.6495126485824585,
+          "EventType": "Notify",
+          "EventTag": "CheckCombo"
         }
       ]
     },
@@ -236,6 +302,11 @@
           "EventTime": 1.2293696403503418,
           "EventType": "Notify",
           "EventTag": "RFootEnd"
+        },
+        {
+          "EventTime": 0.8326185345649719,
+          "EventType": "Notify",
+          "EventTag": "CheckCombo"
         }
       ]
     },
@@ -452,6 +523,11 @@
           "EventTime": 0.8608187437057495,
           "EventType": "Notify",
           "EventTag": "RFootEnd"
+        },
+        {
+          "EventTime": 0.877193033695221,
+          "EventType": "Notify",
+          "EventTag": "CheckCombo"
         }
       ]
     },
@@ -702,7 +778,78 @@
     },
     {
       "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_SwitchIn_Attack",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.39298245310783386,
+          "EventType": "Notify",
+          "EventTag": "AreaAttack"
+        },
+        {
+          "EventTime": 0.4366471767425537,
+          "EventType": "Notify",
+          "EventTag": "AreaAttack"
+        },
+        {
+          "EventTime": 0.5421702265739441,
+          "EventType": "Notify",
+          "EventTag": "AreaAttack"
+        },
+        {
+          "EventTime": 0.5712800621986389,
+          "EventType": "Notify",
+          "EventTag": "AreaAttack"
+        },
+        {
+          "EventTime": 0.6513320803642273,
+          "EventType": "Notify",
+          "EventTag": "AreaAttack"
+        },
+        {
+          "EventTime": 0.669525682926178,
+          "EventType": "Notify",
+          "EventTag": "AreaAttack"
+        },
+        {
+          "EventTime": 0.7568551301956177,
+          "EventType": "Notify",
+          "EventTag": "AreaAttack"
+        },
+        {
+          "EventTime": 0.7859649062156677,
+          "EventType": "Notify",
+          "EventTag": "AreaAttack"
+        },
+        {
+          "EventTime": 0.8623781800270081,
+          "EventType": "Notify",
+          "EventTag": "AreaAttack"
+        },
+        {
+          "EventTime": 1.0006496906280518,
+          "EventType": "Notify",
+          "EventTag": "AreaAttack"
+        },
+        {
+          "EventTime": 1.0333982706069946,
+          "EventType": "Notify",
+          "EventTag": "AreaAttack"
+        },
+        {
+          "EventTime": 1.0661468505859375,
+          "EventType": "Notify",
+          "EventTag": "AreaAttack"
+        },
+        {
+          "EventTime": 1.0988954305648804,
+          "EventType": "Notify",
+          "EventTag": "AreaAttack"
+        },
+        {
+          "EventTime": 1.1643924713134766,
+          "EventType": "Notify",
+          "EventTag": "AreaAttack"
+        }
+      ]
     },
     {
       "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_SwitchIn_Attack_End",

@@ -8,9 +8,9 @@ public:
     void SetMinWidth(int px)  { m_minWidth  = px; }
     void SetMinHeight(int px) { m_minHeight = px; }
 
-    bool Pass(HWND hWnd) const
+    bool Pass() const
     {
-        HMONITOR hMon = MonitorFromWindow(hWnd, MONITOR_DEFAULTTONEAREST);
+        HMONITOR hMon = MonitorFromWindow(g_hWnd, MONITOR_DEFAULTTONEAREST);
 
         MONITORINFO mi{};
         mi.cbSize = sizeof(mi);

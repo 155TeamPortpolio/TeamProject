@@ -42,7 +42,7 @@ HRESULT CUI_RamenVideo::Initialize(INIT_DESC* pArg)
     /*아래는 셰이더. 리니어로 샘플링하면 색번짐 생김, 포인트 샘플로로*/
     Get_Component<CSprite2D>()->Link_Shader(G_GlobalLevelKey, "VTX_UI.hlsl");
     Get_Component<CSprite2D>()->ChangePass("VideoPlay");
-    m_vSize = { 1600 ,900 };
+    m_vSize = { m_WinSize };
 
     Create_SkipButton();
 
@@ -64,7 +64,7 @@ void CUI_RamenVideo::Update(_float dt)
     Get_Component<CObjectContainer>()->UpdateChild(dt);
 
     if (m_pPlayer->GetState() == VIDEO_PLAY_STATE::Ended)
-        Off();
+        OnVideoExit();
 }
 
 void CUI_RamenVideo::UI_Active(void* pArg)
@@ -81,7 +81,7 @@ void CUI_RamenVideo::UI_DeActive(void* pArg)
 void CUI_RamenVideo::Create_SkipButton()
 {
     CUI_IconButton::BUTTON_DESC* pDesc = new CUI_IconButton::BUTTON_DESC;
-    pDesc->onClick = [this]() { Off(); };
+    pDesc->onClick = [this]() { OnVideoExit(); m_pPlayer->SkipToEnd(); };
     pDesc->strLabel = L"건너뛰기";
     pDesc->strTextureKey = "IconSkip.png";
     auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_IconButton" })
@@ -96,7 +96,7 @@ void CUI_RamenVideo::Create_SkipButton()
     Get_Component<CObjectContainer>()->Add_Child(pObj);
 }
 
-void CUI_RamenVideo::Off()
+void CUI_RamenVideo::OnVideoExit()
 {
     Set_Alive(false);
     if (m_OnClick)

@@ -23,7 +23,6 @@ private:
 
 public:
 	static CCamRotSlerpEvaluator* Create() { return new CCamRotSlerpEvaluator(); }
-	virtual void Free() override { __super::Free(); }
 };
 
 NS_END

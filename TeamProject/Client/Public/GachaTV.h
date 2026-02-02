@@ -19,6 +19,9 @@ public:
     virtual void    Update(_float dt)           override;
     virtual void    Late_Update(_float dt)      override;
 
+private:
+    void Add_TVScreen();
+
 public:
     static CGachaTV* Create();
     virtual CGameObject* Clone(INIT_DESC* pArg) override;

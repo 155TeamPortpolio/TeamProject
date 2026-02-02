@@ -19,7 +19,6 @@ private:
 
 public:
 	static CCamFovLinearEvaluator* Create() { return new CCamFovLinearEvaluator(); }
-	virtual void Free() override { __super::Free(); }
 };
 
 NS_END

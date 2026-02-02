@@ -11,9 +11,13 @@ class CUI_ScratchCard final : public CUI_Object
 {
 public:
 	typedef struct tagScratchDesc : public UI_DESC{
-		const _uint* pState = {};
+		const _uint* pParentState = {};
 		function<void()>	onScratchCompleted = {};
 	}SCRATCH_DESC;
+
+	typedef struct tagActiveDesc {
+		string strTextureKey = {};
+	}ACTIVE_DESC;
 
 private:
 	enum class STATE { INVISIBLE, VISIBLE, END };
@@ -21,10 +25,6 @@ private:
 
 	enum class CHILD { BRUSH, SCRATCH, REWARD, END };
 	inline static const string INSTANCENAMAES[ENUM(CHILD::END)] = { "brush", "scratch", "reward" };
-
-	enum class REWARD { REWARD1, REWARD2, REWARD3, REWARD4, REWARD5, END };
-	inline static const string REWARD_TEXTURES[ENUM(REWARD::END)] = { "ScratchCardRewardIcon01.png", "ScratchCardRewardIcon02.png",
-	"ScratchCardRewardIcon03.png", "ScratchCardRewardIcon04.png", "ScratchCardRewardIcon05.png" };
 
 private:
 	CUI_ScratchCard() {}
@@ -43,10 +43,10 @@ public:
 	virtual void	UI_DeActive(void* pArg)			 override;
 
 private:
-	STATE				m_eState = { STATE::END };
+	STATE				m_eState = { STATE::END }; 
 
 	/* 부모 (UI_Lottery)의 상태와 콜백함수 */
-	const _uint*		m_pState = {};
+	const _uint*		m_pParentState = {};
 	function<void()>	m_onScratchCompleted = {};	// 부모의 used state로 대체해도 될 것 같음
 
 	CUI_Object*			m_pChildren[ENUM(CHILD::END)] = {};

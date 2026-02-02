@@ -91,6 +91,9 @@ void CSacrifice_Laser::Update(_float dt)
 	auto pEffectContainer = Get_Component<CObjectContainer>()->Find_ObjectByName("Laser");
 	CEffectContainer::EFFECT_CONTAINER_CONTEXT& context = static_cast<CEffectContainer*>(pEffectContainer)->GetEffectContext();
 
+	if (!m_IsOnTarget && 1 == m_iLaserMode)
+		Set_TargetPosition();
+
 	switch (m_iLaserMode)
 	{
 	case 0: /* Turn */
@@ -157,7 +160,6 @@ void CSacrifice_Laser::Update(_float dt)
 
 	auto pLaserHitPoint = Get_Component<CObjectContainer>()->Find_ObjectByName("LaserHitPoint");
 	pLaserHitPoint->Get_Component<CTransform>()->Set_Pos(context.vLinePoint1);
-	Get_Component<CObjectContainer>()->UpdateChild(dt);
 
 	if (m_IsPendingDeactive)
 	{
@@ -168,6 +170,8 @@ void CSacrifice_Laser::Update(_float dt)
 			m_IsPendingDeactive = false;
 		}
 	}
+
+	Get_Component<CObjectContainer>()->UpdateChild(dt);
 }
 
 void CSacrifice_Laser::Late_Update(_float dt)
@@ -188,29 +192,8 @@ void CSacrifice_Laser::ActiveLaser(_uint mode)
 	Get_Component<CBoneFollower>()->Sync_Transform(0.f, m_pTransform);
 	m_IsPendingDeactive = false;
 	m_isAlive = true;
+	m_IsOnTarget = false;
 	m_iLaserMode = mode;
-
-	if (1 == m_iLaserMode)
-	{
-		_vector3 vCurrPosition = m_pTransform->Get_WorldPos();
-
-		_vector3 vDir = Get_Component<CChild>()->Get_Parent()->Get_Component<CTransform>()->Dir(STATE::LOOK);
-		vDir.y = 0.f;
-		vDir.Normalize();
-		m_vTargetDir = vDir;
-
-		PHYSICS_RAY rayDesc{};
-		PHYSICS_RAY_HIT output{};
-		rayDesc.iCollisionMask = ENUM(COLLISION_GROUP::COMMON);
-		rayDesc.vOrigin = vCurrPosition;
-		rayDesc.vDirection = vDir;
-		rayDesc.fMaxDistance = 200.f;
-
-		if (PhysicsSystem()->Raycast(rayDesc, output))
-			m_vTargetPos = output.vPoint;
-		else
-			m_vTargetPos = vCurrPosition + 200.f * vDir;
-	}
 
 	auto pLaser = Get_Component<CObjectContainer>()->Find_ObjectByName("Laser");
 	static_cast<CEffectContainer*>(pLaser)->Play();
@@ -267,4 +250,52 @@ void CSacrifice_Laser::Free()
 {
 	__super::Free();
 
+}
+
+void CSacrifice_Laser::Set_TargetPosition()
+{
+	_vector3 vDir{ 0.f,0.f,1.f };
+
+	_vector3 vCurrPosition = m_pTransform->Get_WorldPos();
+	_vector3 vTargetPosition = BattleSystem()->GetCurCharacterHandle().Get()->Get_Component<CTransform>()->Get_WorldPos();
+	_vector3 vTargetDir = vTargetPosition - vCurrPosition;
+	vTargetDir.y = 0.f;
+
+	_vector3 vLook = Get_Component<CChild>()->Get_Parent()->Get_Component<CTransform>()->Dir(STATE::LOOK);
+	vLook.y = 0.f;
+	vLook.Normalize();
+
+	if (vTargetDir.Length() >= 0.01f)
+	{
+		vTargetDir.Normalize();
+
+		_float dot = clamp(vLook.Dot(vTargetDir), -1.f, 1.f);
+		_float crossY = vLook.x * vTargetDir.z - vLook.z * vTargetDir.x;
+		_float yawDelta = atan2f(crossY, dot);
+		yawDelta = clamp(yawDelta, XMConvertToRadians(-20.f), XMConvertToRadians(20.f));
+
+		_float c = cosf(yawDelta);
+		_float s = sinf(yawDelta);
+
+		vDir.x = vLook.x * c - vLook.z * s;
+		vDir.y = 0.f;
+		vDir.z = vLook.x * s + vLook.z * c;
+		vDir.Normalize();
+	}
+
+	m_vTargetDir = vDir;
+
+	PHYSICS_RAY rayDesc{};
+	PHYSICS_RAY_HIT output{};
+	rayDesc.iCollisionMask = ENUM(COLLISION_GROUP::COMMON);
+	rayDesc.vOrigin = vCurrPosition;
+	rayDesc.vDirection = m_vTargetDir;
+	rayDesc.fMaxDistance = 200.f;
+
+	if (PhysicsSystem()->Raycast(rayDesc, output))
+		m_vTargetPos = output.vPoint;
+	else
+		m_vTargetPos = vCurrPosition + 200.f * vDir;
+
+	m_IsOnTarget = true;
 }

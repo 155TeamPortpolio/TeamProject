@@ -256,6 +256,7 @@
       <AdditionalIncludeDirectories>./;../Public;../../EngineSDK/Inc;</AdditionalIncludeDirectories>
       <AdditionalOptions>/Zo %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

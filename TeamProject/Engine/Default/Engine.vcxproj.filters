@@ -630,6 +630,12 @@
     <ClInclude Include="..\Public\MFVideoDecoderBackend.h">
       <Filter>01. Utility\16. VideoPlayer\VideoDecoder\MFVDecoder</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\CamPosOrbitSpinEvaluator.h">
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\01. CamPosEvaluator\06. OrbitSpin</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\OrbitSpinData.h">
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\01. CamPosEvaluator\06. OrbitSpin</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <!-- Filter Definitions -->
@@ -1176,6 +1182,9 @@
     <Filter Include="01. Utility\16. VideoPlayer\VideoDecoder\MFVDecoder">
       <UniqueIdentifier>{9d5747a9-5d8d-4e4f-b01f-c43939605bfa}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\04. Components\20. CamSequencePlayer\01. CamPosEvaluator\06. OrbitSpin">
+      <UniqueIdentifier>{1c88ead6-b51f-4598-83cc-49243672b3ff}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <!-- ClCompile 항목들 - 중복 제거 버전 -->
@@ -1664,6 +1673,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\MFVideoDecoderBackend.cpp">
       <Filter>01. Utility\16. VideoPlayer\VideoDecoder\MFVDecoder</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CamPosOrbitSpinEvaluator.cpp">
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\01. CamPosEvaluator\06. OrbitSpin</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

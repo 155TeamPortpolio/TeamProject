@@ -7,7 +7,7 @@ namespace
 {
     float WrapPi(float a)
     {
-        while (a >  XM_PI)  a -= XM_2PI;
+        while (a >  XM_PI) a -= XM_2PI;
         while (a < -XM_PI) a += XM_2PI;
         return a;
     }
