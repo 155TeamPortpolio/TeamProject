@@ -25,6 +25,16 @@ void CFrameQueue::PushDropOldest(VIDEO_FRAME_CPU&& frame)
 	m_queue.emplace_back(move(frame));
 }
 
+_bool CFrameQueue::PopOldest(VIDEO_FRAME_CPU& out)
+{
+    if (m_queue.empty())
+        return false;
+
+    out = std::move(m_queue.front());
+    m_queue.pop_front();
+    return true;
+}
+
 uint64_t CFrameQueue::GetPtsMs(const VIDEO_FRAME_CPU& frame)
 {
     return (std::uint64_t)frame.PresentTime;
