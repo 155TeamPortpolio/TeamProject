@@ -41,6 +41,8 @@ public:
 	_bool isValid();
 	void SetBlendIf_AlphaDiffuse(AlphaCheckLevel level, const string& pass);
 	_uint Get_InstacneID() { return m_MaterialInstance_ID; }
+	_bool GetMaterialTextureKey(TEXTURE_TYPE type, _uint index, string& outKey);
+
 public:
 	virtual void Render_GUI();
 	void TypeCheck(const string& first, SHADER_PARAM& second);
