@@ -1017,9 +1017,39 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Gacha\GachaProps\GachaResult">
       <UniqueIdentifier>{5b3fe7e7-f877-4cae-bf66-a57e17b1b328}</UniqueIdentifier>
-          </Filter>
+    </Filter>
     <Filter Include="02. GameObject\MapObject\04. MapLightPoint">
       <UniqueIdentifier>{8f98ed95-123b-4c72-b0bb-bcf3efb5405b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\EtherCyclops">
+      <UniqueIdentifier>{0ff727ca-27db-4332-8293-d5d66e81c545}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\EtherCyclops\State">
+      <UniqueIdentifier>{30049c97-c041-4ccd-ab13-35683e9b20cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\EtherCyclops\State\Attack">
+      <UniqueIdentifier>{be9088f1-b9e1-4850-a38b-81bf25934519}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\EtherCyclops\State\Born">
+      <UniqueIdentifier>{ba818e80-3875-48e5-9761-b85e8d43484c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\EtherCyclops\State\Chase">
+      <UniqueIdentifier>{d94d4145-2efc-4268-bb3b-342eeb038e6a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\EtherCyclops\State\Death">
+      <UniqueIdentifier>{f3e28410-7af3-4b0c-a235-d25ed662a5f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\EtherCyclops\State\Groggy">
+      <UniqueIdentifier>{7d034347-c2b6-4dd8-a1b4-33a1bcc8c54f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\EtherCyclops\State\Hit">
+      <UniqueIdentifier>{98baea88-7e7d-457c-ba98-002ce9cb7112}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\EtherCyclops\State\Idle">
+      <UniqueIdentifier>{c1004aa9-3dce-49e6-a557-e127080f7931}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\EtherCyclops\State\Move">
+      <UniqueIdentifier>{ddc25e66-a5c8-49a5-8031-c9b69098be3b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1958,10 +1988,10 @@
     </ClInclude>
     <ClInclude Include="..\public\GachaProps.h">
       <Filter>02. GameObject\Object\Gacha\GachaProps</Filter>
-   </ClInclude>
+    </ClInclude>
     <ClInclude Include="..\public\GachaResult.h">
       <Filter>02. GameObject\Object\Gacha\GachaProps\GachaResult</Filter>
-	</ClInclude>
+    </ClInclude>
     <ClInclude Include="..\Public\Defiler_Control.h">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler</Filter>
     </ClInclude>
@@ -1980,6 +2010,33 @@
     </ClInclude>
     <ClInclude Include="..\Public\UI_RamenResultBanner.h">
       <Filter>02. GameObject\UI\01. 2D\Ramen\ResultBanner</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Cyclops.h">
+      <Filter>02. GameObject\Object\Enemy\Normal\EtherCyclops</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Cyclops_Born.h">
+      <Filter>02. GameObject\Object\Enemy\Normal\EtherCyclops\State\Born</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Cyclops_Death.h">
+      <Filter>02. GameObject\Object\Enemy\Normal\EtherCyclops\State\Death</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Cyclops_Groggy.h">
+      <Filter>02. GameObject\Object\Enemy\Normal\EtherCyclops\State\Groggy</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Cyclops_Hit.h">
+      <Filter>02. GameObject\Object\Enemy\Normal\EtherCyclops\State\Hit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Cyclops_Idle.h">
+      <Filter>02. GameObject\Object\Enemy\Normal\EtherCyclops\State\Idle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Cyclops_Move.h">
+      <Filter>02. GameObject\Object\Enemy\Normal\EtherCyclops\State\Move</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Cyclops_Attack.h">
+      <Filter>02. GameObject\Object\Enemy\Normal\EtherCyclops\State\Attack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Cyclops_Chase.h">
+      <Filter>02. GameObject\Object\Enemy\Normal\EtherCyclops\State\Chase</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2898,9 +2955,36 @@
     </ClCompile>
     <ClCompile Include="..\private\GachaResult.cpp">
       <Filter>02. GameObject\Object\Gacha\GachaProps\GachaResult</Filter>
-	</ClCompile>
+    </ClCompile>
     <ClCompile Include="..\private\MapLightPoint.cpp">
       <Filter>02. GameObject\MapObject\04. MapLightPoint</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Cyclops.cpp">
+      <Filter>02. GameObject\Object\Enemy\Normal\EtherCyclops</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Cyclops_Born.cpp">
+      <Filter>02. GameObject\Object\Enemy\Normal\EtherCyclops\State\Born</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Cyclops_Death.cpp">
+      <Filter>02. GameObject\Object\Enemy\Normal\EtherCyclops\State\Death</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Cyclops_Groggy.cpp">
+      <Filter>02. GameObject\Object\Enemy\Normal\EtherCyclops\State\Groggy</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Cyclops_Hit.cpp">
+      <Filter>02. GameObject\Object\Enemy\Normal\EtherCyclops\State\Hit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Cyclops_Idle.cpp">
+      <Filter>02. GameObject\Object\Enemy\Normal\EtherCyclops\State\Idle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Cyclops_Move.cpp">
+      <Filter>02. GameObject\Object\Enemy\Normal\EtherCyclops\State\Move</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Cyclops_Attack.cpp">
+      <Filter>02. GameObject\Object\Enemy\Normal\EtherCyclops\State\Attack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Cyclops_Chase.cpp">
+      <Filter>02. GameObject\Object\Enemy\Normal\EtherCyclops\State\Chase</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
