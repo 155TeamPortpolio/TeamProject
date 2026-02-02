@@ -22,7 +22,7 @@ typedef struct tagOBJSpec {
 	function<CGameObject* ()> Create;
 }OBJ_SPEC;
 
-enum class ENTITY_TYPE { NPC, INTERACTABLE, ETC, INVWALL };
+enum class ENTITY_TYPE { NPC, INTERACTABLE, ENTITY, INVWALL, ETC };
 
 //임시용으로 콜백함수받음 나중에없앨것
 void Register_Prototype(const string& MapDataName, const string& PrototypeTag, function<CGameObject*()> Create, ENTITY_TYPE EntityaType);
