@@ -70,6 +70,7 @@ void CUI_RamenVideo::Update(_float dt)
 void CUI_RamenVideo::UI_Active(void* pArg)
 {
     Set_Alive(true);
+    VideoService()->StartDecode(m_PlayerID);
     m_pPlayer->Play(); 
 }
 
