@@ -29,6 +29,7 @@ public:
     vector<const RAMEN_DESC*> GetRamenTable();
     WEAPON_DESC             GetWeaponDesc(_int WeaponID);
     TV_DESC                 GetTVDesc(const string& strName);
+    vector<WEAPON_DESC>     GetGachaResults(_int WeaponNum);
 
 public:
     HRESULT LoadPlayerCreationTable(const string& csvPath);

@@ -171,6 +171,34 @@ TV_DESC CDataBase::GetTVDesc(const string& strName)
 	return iter->second;
 }
 
+vector<WEAPON_DESC> CDataBase::GetGachaResults(_int WeaponNum)
+{
+	vector<WEAPON_DESC> Results(10);
+
+	if (WeaponNum <= 0 || WeaponNum > 10 || m_WeaponTables.empty())
+		return Results;
+
+	vector<_int> weaponKeys;
+	for (const auto& pair : m_WeaponTables)
+		weaponKeys.push_back(pair.first);
+
+	random_device rd;
+	mt19937 gen(rd());
+	uniform_int_distribution<_int> weaponDist(0, weaponKeys.size() - 1);
+
+	vector<_int> positions(10);
+	iota(positions.begin(), positions.end(), 0);
+	shuffle(positions.begin(), positions.end(), gen);
+
+	for (_int i = 0; i < WeaponNum; ++i)
+	{
+		_int randomIdx = weaponDist(gen);
+		Results[positions[i]] = m_WeaponTables[weaponKeys[randomIdx]];
+	}
+
+	return Results;
+}
+
 HRESULT CDataBase::LoadPlayerCreationTable(const string& csvPath)
 {
 	/*

@@ -29,6 +29,8 @@ namespace Client {
 	enum class BATTLE_VFX_TYPE { EVADE,PARRY, SWITCH,ULTIMATE, END };
 	enum class BATTLE_OBJ_TYPE { PLAYER, MONSTER, ENVOBJECT, END };
 
+	//------------------- Gacha --------------------
+	enum class GACHA_STAGE { BANGBOO, AVATAR, END };
 }
 
 #endif
