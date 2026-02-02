@@ -146,6 +146,7 @@ void CGachaStageScreen::ResetMaterialInstances(vector<_int> ScreenIndex)
 		pMaterialInstances[idx]->Set_Param("Row", { &m_Rows[idx], "int", sizeof(_int) });
 
 		string strTexture;
+		pMaterialInstances[idx]->ChangeTexture(TEXTURE_TYPE::DIFFUSE, ScreenIndex[idx]);
 		pMaterialInstances[idx]->GetMaterialTextureKey(TEXTURE_TYPE::DIFFUSE, ScreenIndex[idx], strTexture);
 		TV_DESC Desc = CDataBase::GetInstance()->GetTVDesc(strTexture);
 		m_Cols[idx] = Desc.Col;
