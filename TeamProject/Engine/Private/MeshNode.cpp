@@ -133,7 +133,6 @@ HRESULT CMeshNode::Initialize(INIT_DESC* pArg)
 	_float2 screenSize = CGameInstance::GetInstance()->Get_ClientSize();
 	m_fScreenWidth = screenSize.x;
 	m_fScreenHeight = screenSize.y;
-
 	return S_OK;
 }
 
@@ -166,6 +165,11 @@ void CMeshNode::Update(_float dt)
 
 void CMeshNode::Late_Update(_float dt)
 {
+}
+
+void CMeshNode::Render_GUI()
+{
+	__super::Render_GUI();
 }
 
 void CMeshNode::Play()

@@ -21,6 +21,7 @@ public:
     void Priority_Update(_float dt) override;
     void Update(_float dt) override;
     void Late_Update(_float dt) override;
+    void Render_GUI()override;
 
 public:
     void Play() override;

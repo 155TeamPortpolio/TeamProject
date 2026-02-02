@@ -75,7 +75,7 @@ void CFieldCharacter::Process_RootMotion(_float dt, const ROOTMOTION_DESC& desc)
 
 void CFieldCharacter::Process_RootMotion(_float dt, _uint iModeMask)
 {
-	ROOTMOTION_DESC desc;
+	ROOTMOTION_DESC desc{};
 	desc.iModeMask = iModeMask;
 	Process_RootMotion(dt, desc);
 }
