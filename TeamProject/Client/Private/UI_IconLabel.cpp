@@ -7,9 +7,7 @@
 HRESULT CUI_IconLabel::Initialize_Prototype()
 {
     __super::Initialize_Prototype();
-
     Add_Component<CObjectContainer>();
-
     return S_OK;
 }
 

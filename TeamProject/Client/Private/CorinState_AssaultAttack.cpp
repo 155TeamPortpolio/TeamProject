@@ -56,7 +56,6 @@ void CCorinState_AssaultAttack::Update(CCorin* pOwner, _float dt)
 				.Damage(pOwner->Get_AttackPower() * 5.475f * Helper::Get_Random_Float(1.f,1.5f)
 					, DAMAGE_TYPE::HARD)
 				.Interval(0.05f)
-				.Charge(5.f, 50.f)
 			);
 		}
 		else if (Event.Tag == "SawEnd")
@@ -81,6 +80,7 @@ void CCorinState_AssaultAttack::Update(CCorin* pOwner, _float dt)
 
 void CCorinState_AssaultAttack::Exit(CCorin* pOwner)
 {
+	pOwner->Reset_ReserveCombo();
 	pOwner->Pop_Invincible();
 	pOwner->Unlock_Move();
 	__super::Exit(pOwner);

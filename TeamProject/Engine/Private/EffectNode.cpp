@@ -32,6 +32,8 @@ HRESULT CEffectNode::Initialize(INIT_DESC* pArg)
 	if (m_IsLoop)
 		m_IsEffectActive = true;
 
+	m_isRootObject = false;
+
 	return S_OK;
 }
 

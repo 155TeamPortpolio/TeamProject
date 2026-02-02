@@ -8,8 +8,8 @@ HRESULT CGachaTV::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
 
-	auto hr1 = RES->Add_ResourcePath("GachaStage_Televisonout.model", "../bin/Resources/Gacha/Television/GachaStage_Televisonout.model");
-	auto hr2 = RES->Add_ResourcePath("GachaStage_Televisonout.mat",   "../bin/Resources/Gacha/Television/GachaStage_Televisonout.mat");
+	RES->Add_ResourcePath("GachaStage_Televisonout.model", "../bin/Resources/Gacha/Television/GachaStage_Televisonout.model");
+	RES->Add_ResourcePath("GachaStage_Televisonout.mat",   "../bin/Resources/Gacha/Television/GachaStage_Televisonout.mat");
 
 	Add_Component<CStaticModel>();
 	Add_Component<CMaterial>();

@@ -590,6 +590,7 @@ void CBattlePlayer::Update_Target()
 
     for (auto& monster : Monsters)
     {
+        if (!monster.hObject.isValid())  continue;
         _vector3 vToMonster = monster.vPos - m_pCurrentCharacter->Get_WorldPos();
         _float fDistance = vToMonster.Length();
 

@@ -20,7 +20,7 @@ private:
     _uint m_iComboIndex = 0;
 
 public:
-    static CJaneDoeState_NormalAttack* Create() { return new CJaneDoeState_NormalAttack(); }
+    static CJaneDoeState_NormalAttack* Create();
     virtual void Free() override { __super::Free(); }
 };
 

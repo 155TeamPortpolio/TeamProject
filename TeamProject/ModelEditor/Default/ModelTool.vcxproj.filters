@@ -265,7 +265,7 @@
     <ClInclude Include="..\Public\AIDynamicBone.h">
       <Filter>04. AIResource\AIModelData\AISkeleton\AIDynamicBone</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\MaterialAdjust.h">
+    <ClInclude Include="..\Public\Adjuster.h">
       <Filter>02. Obj\05. Adjuster</Filter>
     </ClInclude>
   </ItemGroup>
@@ -387,7 +387,7 @@
     <ClCompile Include="..\Public\AIDynamicBone.cpp">
       <Filter>04. AIResource\AIModelData\AISkeleton\AIDynamicBone</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\MaterialAdjust.cpp">
+    <ClCompile Include="..\Private\Adjuster.cpp">
       <Filter>02. Obj\05. Adjuster</Filter>
     </ClCompile>
   </ItemGroup>

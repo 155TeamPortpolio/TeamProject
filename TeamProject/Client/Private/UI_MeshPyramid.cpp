@@ -119,8 +119,10 @@ void CUI_MeshPyramid::Update(_float dt)
         const int phase = (int)(m_rt.alertBlinkT / period);
         m_color = (phase & 1) ? m_cfg.red : m_cfg.gray;
     }
-
-    auto parentObj = Get_Component<CChild>()->Get_Parent();
+    auto child = Get_Component<CChild>();
+    if (!child)
+        return;
+    auto parentObj = child->Get_Parent();
 
     OBJECT_HANDLE hChar = BattleSystem()->GetCurCharacterHandle();
     auto charObj = ObjectManager()->Request_Object(hChar);
@@ -211,6 +213,9 @@ void CUI_MeshPyramid::Update(_float dt)
 
 _bool CUI_MeshPyramid::IsOnScreen(_float marginPx)
 {
+    if (!Get_Component<CChild>())
+        return false;
+
     auto parent = Get_Component<CChild>()->Get_Parent();
     if (!parent) return false;
 

@@ -3,7 +3,6 @@
 #include <windows.h>
 #include <d3d11.h>
 
-
 namespace Client {
 	static constexpr unsigned int g_iWinSizeX = 1600;
 	static constexpr unsigned int g_iWinSizeY = 900;
