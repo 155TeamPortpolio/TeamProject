@@ -602,6 +602,8 @@ void CAIMesh::Render_GUI()
 		ImGui::Text("Dirty: vertex buffer needs update");
 	}
 }
+
+
 void CAIMesh::Update_SkinBuffer()
 {
 	if (!m_pVB) return;

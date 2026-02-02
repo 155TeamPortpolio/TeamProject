@@ -48,3 +48,48 @@ struct MaterialFile
     MATERIAL_FILE_HEADER header;
     vector<MaterialInfo> materials;
 };
+
+static bool HasExtension(const string& path, const char* ext)
+{
+    return std::filesystem::path(path).extension() == ext;
+}
+
+struct MeshView
+{
+    string meshName;
+    _int materialIndex = -1;
+    _uint verticesCount = 0;
+    _uint indicesCount = 0;
+
+    MaterialInfo* linkedMaterial = nullptr;
+
+    std::streamoff meshHeaderOffset = 0;   // 파일에서 MESH_INFO_HEADER 시작 위치
+    MESH_INFO_HEADER meshHeaderRaw{};      // 읽어온 원본 헤더(수정 후 다시 써도 됨)
+};
+
+// 안전한 c-string 복사 (헤더가 char 배열이면)
+template<size_t N>
+static void CopyCStr(char(&dst)[N], const string& src)
+{
+    memset(dst, 0, N);
+#ifdef _MSC_VER
+    strncpy_s(dst, src.c_str(), N - 1);
+#else
+    strncpy(dst, src.c_str(), N - 1);
+#endif
+}
+
+struct CombinedAsset
+{
+    string modelPath;
+    string materialPath;
+
+    MODEL_FILE_HEADER modelHeader{};
+    vector<MeshView> meshes;
+
+    MaterialFile materialFile{};
+
+    bool loadedModel = false;
+    bool loadedMaterial = false;
+    bool reverseMeshOrder = false; // "역순" 필요하면 true
+};
