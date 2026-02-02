@@ -45,7 +45,7 @@ HRESULT CGacha_Level::Awake()
 
 	// Camera
 	CamDirector()->SetSpaceRef(m_GachaHandle);
-	CamDirector()->RequestSequence("Gacha/StartIntro");
+	CamDirector()->RequestSequence("Gacha/Down");
 	return S_OK;
 }
 

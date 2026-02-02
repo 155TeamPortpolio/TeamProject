@@ -172,14 +172,14 @@ void CCamDirector::UpdateInput(_float dt)
 
     if (InputDevice()->Key_Tap(VK_F3))
     {
-        if      (levelKey == "Gacha_Level") RequestSequence("Gacha/Spin");
+        if      (levelKey == "Gacha_Level") RequestSequence("Gacha/Spin_Half");
         else if (levelKey == "Test_Level")  RequestSequence(CamSeqType::BattleIntro);
         else if (levelKey == "Zero_Level")  RequestSequence(CamSeqType::ZeroIntro);
     }
 
     if (InputDevice()->Key_Tap(VK_F4))
     {
-        if (levelKey == "Gacha_Level") RequestSequence("Gacha/StartIntro");
+        if (levelKey == "Gacha_Level") RequestSequence("Gacha/Spin");
     }
 }
 
