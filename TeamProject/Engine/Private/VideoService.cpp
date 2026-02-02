@@ -2,6 +2,7 @@
 #include "VideoService.h"
 #include "ThreadPool.h"
 #include <mfapi.h>
+#include "VideoPlayer.h"
 
 CVideoService::CVideoService()
 {
@@ -178,16 +179,44 @@ void CVideoService::DecodeLoop(_uint playerId)
 
 void CVideoService::Tick(_float dt)
 {
-    lock_guard<mutex> lockGuard(m_mutex);
-    for (auto& pair : m_VideoPlayers)
+    vector<pair<_uint, CVideoPlayer*>> players;
+    players.reserve(m_VideoPlayers.size());
+
     {
+        lock_guard<mutex> lockGuard(m_mutex);
+        for (auto& pair : m_VideoPlayers)
+            players.push_back(pair);
+    }
+
+    for (auto& pair : players)
+    {
+        const _uint playerId = pair.first;
         CVideoPlayer* playerPtr = pair.second;
         if (!playerPtr) continue;
+
+        // replay 처리에서만 컨텍스트를 다시 서비스 락으로 조회
+        if (playerPtr->ConsumeReplayRequest())
+        {
+            IVideoDecoderBackend* decoderPtr = nullptr;
+
+            {
+                lock_guard<mutex> lockGuard(m_mutex);
+                auto ctxIt = m_VideoContexts.find(playerId);
+                if (ctxIt != m_VideoContexts.end())
+                    decoderPtr = ctxIt->second.pDecoder;
+            }
+
+            if (decoderPtr)
+                decoderPtr->SeekSeconds(0.0f);
+
+            playerPtr->Replay();
+        }
 
         playerPtr->AdvanceClock(dt);
         playerPtr->PumpPresent(playerPtr->GetClockMs());
     }
 }
+
 
 void CVideoService::TickPresent(_uint64 nowPts)
 {

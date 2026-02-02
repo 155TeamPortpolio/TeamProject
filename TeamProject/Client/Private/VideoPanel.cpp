@@ -53,6 +53,11 @@ void CVideoPanel::Render_GUI()
         ImVec2(0, 0),
         ImVec2(1, 1)
     );
+    if (ImGui::Button("Play")) { m_pPlayer->Play(); };
+    if (ImGui::Button("Stop")) {m_pPlayer->Stop();};
+    if (ImGui::Button("Replay")) {m_pPlayer->Replay();};
+    if (ImGui::Button("Skip")) {m_pPlayer->SkipToEnd();};
+
 }
 
 void CVideoPanel::Update_Panel(_float dt)

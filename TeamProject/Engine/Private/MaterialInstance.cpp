@@ -3,6 +3,8 @@
 #include "MaterialData.h"
 #include "Shader.h"
 #include "GUIUtil.h"
+#include "Texture.h"
+
 _uint CMaterialInstance::Next_ID = 0;
 
 CMaterialInstance::CMaterialInstance(CMaterialData* pData, ID3D11Device* pDevice)
@@ -164,6 +166,18 @@ void CMaterialInstance::SetBlendIf_AlphaDiffuse(AlphaCheckLevel level, const str
 	m_IsBlended= isAlpha;
 	if (isAlpha)
 		override_Pass = pass;
+}
+
+_bool CMaterialInstance::GetMaterialTextureKey(TEXTURE_TYPE type, _uint index, string& outKey)
+{
+    CTexture* pTexture = { nullptr };
+    _bool indexIn = m_pMaterialData->Get_Texture(type, index, pTexture);
+
+    if(!indexIn || nullptr == pTexture)
+        return false;
+
+    outKey = filesystem::path(pTexture->Get_Key()).filename().string();
+    return true;
 }
 
 void CMaterialInstance::Render_GUI()
