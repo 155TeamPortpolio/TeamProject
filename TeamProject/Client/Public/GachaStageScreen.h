@@ -20,12 +20,14 @@ public:
     virtual void    Late_Update(_float dt)      override;
 
 private:
-    _int    m_iCol = 8;
-    _int    m_iRow = 5;
-    _int    m_iCurrentFrameIndex = 0;
-    _int    m_iMaxFrameIndex = 34;
+    vector<_int>    m_Cols = { 4 };
+    vector<_int>    m_Rows = { 8 };
+    vector<_int>    m_CurrentFrameIndexs = { 0 };
+    vector<_int>    m_MaxFrameIndexs = { 28 };
     _float  m_fElapsedTime = 0.f;
     _float  m_fFrameDuration = 0.02f;
+
+    _int            m_iMaterialInstanceCounts;
 
 public:
     static CGachaStageScreen* Create();

@@ -47,8 +47,8 @@ void CGachaStage::Awake()
 	auto pModel = Get_Component<CStaticModel>();
 	auto pMaterial = Get_Component<CMaterial>();
 
-	//pModel->Link_Model("Gacha_Level", "BangBooNoScreen1.model");
-	//pMaterial->Link_Material("Gacha_Level", "BangBooNoScreen1.mat");
+	pModel->Link_Model("Gacha_Level", "BangBooNoScreen1.model");
+	pMaterial->Link_Material("Gacha_Level", "BangBooNoScreen1.mat");
 
 	pModel->Hide_MehsByName("0023_GachaStage_Prop_TV_04_mesh0023");
 }

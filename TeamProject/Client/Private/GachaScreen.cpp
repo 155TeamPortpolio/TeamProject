@@ -9,6 +9,7 @@
 #include "GameInstance.h"
 #include "Shader.h"
 #include "Texture.h"
+#include "DataBase.h"
 
 CGachaScreen::CGachaScreen()
 	:CGameObject()
@@ -30,8 +31,6 @@ HRESULT CGachaScreen::Initialize_Prototype()
 
     pModel->Link_Model("Gacha_Level", "TVScreen1.model");
     pMaterial->Link_Material("Gacha_Level", "TVScreen1.mat");
-
-	pModel->Get_MeshCount();
     return S_OK;
 }
 
@@ -48,16 +47,26 @@ void CGachaScreen::Awake()
 	auto pMaterial = Get_Component<CMaterial>();
 	auto pMaterialInstances = pMaterial->Get_MaterialInstances();
 
+	auto pModel = Get_Component<CModel>();
+	m_iMeshCounts = pModel->Get_MeshCount();
+
 	m_Cols.resize(m_iMeshCounts);
 	m_Rows.resize(m_iMeshCounts);
 	m_CurrentFrameIndexs.resize(m_iMeshCounts);
+	m_MaxFrameIndexs.resize(m_iMeshCounts);
 
-	_int idx = 0;
-	for (auto& instance : pMaterialInstances)
+	for (_int idx = 0; idx <m_iMeshCounts; ++idx)
 	{
-		instance->Set_Param("FrameIndex", { &m_CurrentFrameIndexs[idx], "int", sizeof(_int)});
-		instance->Set_Param("Col", { &m_Cols[idx], "int", sizeof(_int)});
-		instance->Set_Param("Row", { &m_Rows[idx++], "int", sizeof(_int)});
+		pMaterialInstances[idx]->Set_Param("FrameIndex", { &m_CurrentFrameIndexs[idx], "int", sizeof(_int)});
+		pMaterialInstances[idx]->Set_Param("Col", { &m_Cols[idx], "int", sizeof(_int)});
+		pMaterialInstances[idx]->Set_Param("Row", { &m_Rows[idx], "int", sizeof(_int)});
+
+		string strTexture;
+		pMaterialInstances[idx]->GetMaterialTextureKey(TEXTURE_TYPE::DIFFUSE, 0, strTexture);
+		TV_DESC Desc = CDataBase::GetInstance()->GetTVDesc(strTexture);
+		m_Cols[idx] = Desc.Col;
+		m_Rows[idx] = Desc.Row;
+		m_MaxFrameIndexs[idx] = Desc.MaxFrame;
 	}
 }
 
@@ -73,10 +82,10 @@ void CGachaScreen::Update(_float dt)
 		for (_int i = 0; i < m_iMeshCounts; ++i)
 		{
 			++m_CurrentFrameIndexs[i];
-			m_fElapsedTime = 0.f;
 			if (m_CurrentFrameIndexs[i] >= m_MaxFrameIndexs[i])
 				m_CurrentFrameIndexs[i] = 0;
 		}
+		m_fElapsedTime = 0.f;
 	}
 }
 
