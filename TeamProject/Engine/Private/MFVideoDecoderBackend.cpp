@@ -138,7 +138,7 @@ bool CMFVideoDecoderBackend::Open(const std::string& filePath)
     std::wstring widePath = ConvertUtf8ToWide(filePath);
     if (widePath.empty())
         return false;
-
+    m_lastFilePath = filePath;
     Microsoft::WRL::ComPtr<IMFAttributes> attributes;
     HRESULT result = MFCreateAttributes(attributes.GetAddressOf(), 8);
     if (FAILED(result))
@@ -178,12 +178,20 @@ bool CMFVideoDecoderBackend::Open(const std::string& filePath)
     return true;
 }
 
+bool CMFVideoDecoderBackend::ReOpen()
+{
+    if (m_lastFilePath.empty())
+        return false;
+
+    Close();
+    return Open(m_lastFilePath);
+}
+
 void CMFVideoDecoderBackend::Close()
 {
     m_reader.Reset();
 
     m_isOpened = false;
-    m_isLoop = false;
 
     m_firstPtsMs = UINT64_MAX;
     m_width = 0;
@@ -317,8 +325,11 @@ bool CMFVideoDecoderBackend::SeekSeconds(float seconds)
 
     const HRESULT hr = m_reader->SetCurrentPosition(GUID_NULL, positionVar);
     PropVariantClear(&positionVar);
+    if (FAILED(hr))
+        return false;
 
-    return SUCCEEDED(hr);
+    m_reader->Flush(MF_SOURCE_READER_FIRST_VIDEO_STREAM);
+    return true;
 }
 
 bool CMFVideoDecoderBackend::DecodeNextRGBA(

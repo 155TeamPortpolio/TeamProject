@@ -3,6 +3,7 @@
 
 #include "GameInstance.h"
 #include "ObjectContainer.h"
+#include "EventListener.h"
 #include "Sprite2D.h"
 #include "ButtonUI.h" 
 #include "UI_ScratchCard.h"
@@ -16,6 +17,7 @@ HRESULT CUI_Lottery::Initialize_Prototype()
 	__super::Initialize_Prototype();
 
     Add_Component<CObjectContainer>();
+    Add_Component<CEventListener>();
 
 	return S_OK;
 }
@@ -43,6 +45,15 @@ HRESULT CUI_Lottery::Initialize(INIT_DESC* pArg)
 
     Set_Alive(false);
 
+    // ¿Ã∫•∆Æ : DAYPHASE_DESC
+    Get_Component<CEventListener>()->Add_Listener<DAYPHASE_DESC>([&](const DAYPHASE_DESC& desc)
+        {
+            if (desc.dayPhase != DayPhase::EarlyMorning)
+                return;
+
+            Change_State(STATE::READY);
+        });
+
 	return S_OK;
 }
 
@@ -69,7 +80,8 @@ void CUI_Lottery::UI_Active(void* pArg)
     Set_Alive(true);
     Set_ChildAnimation(CHILD::ICON_SCRATCH, 0);
     Set_ChildAnimation(CHILD::NEWSPAPER, 0);
-    m_iReward = rand() % ENUM(REWARD::END);
+    if(m_iState == STATE::READY)
+        m_iReward = rand() % ENUM(REWARD::END);
 }
 
 void CUI_Lottery::UI_DeActive(void* pArg)

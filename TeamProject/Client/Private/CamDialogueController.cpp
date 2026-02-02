@@ -158,10 +158,8 @@ void CCamDialogueController::Update(_float dt, CCamera* cam, COrbitCam* orbit, C
         desiredPivot = Vector3(midXZ.x, midY, midXZ.z);
     }
 
-    {
-        const Vector3 rawOff = desiredPivot - basePivot;
-        desiredPivot = basePivot + ClampOffset(rawOff, maxPivotOff);
-    }
+    const Vector3 rawOff = desiredPivot - basePivot;
+    desiredPivot = basePivot + ClampOffset(rawOff, maxPivotOff);
 
     _float desiredHoldFov = this->fovHold;
 

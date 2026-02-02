@@ -38,6 +38,7 @@ public:
     void SetDecoder(class IVideoDecoderBackend* decoder);
     void RequestReplay(){ m_replayRequested.store(true, std::memory_order_release);}
     bool ConsumeReplayRequest(){return m_replayRequested.exchange(false, std::memory_order_acq_rel); }
+
 public:
     ID3D11ShaderResourceView* GetSRV() const;
     VIDEO_PLAY_STATE GetState() const;
@@ -53,6 +54,7 @@ public:
     _bool IsQueueFullSoft() ;
     void AdvanceClock(_float dt);
     uint64_t GetClockMs() const;
+    void SetID(_uint ID) { m_ID; }
 
 private:
     _bool EnsureGpuTexture(_uint width, _uint height);
@@ -76,7 +78,7 @@ private:
 
     _uint m_width = 0;
     _uint m_height = 0;
-
+    _uint m_ID = {};
 public:
     atomic<uint64_t> m_pushCount{ 0 };
     atomic<uint64_t> m_presentCount{ 0 };

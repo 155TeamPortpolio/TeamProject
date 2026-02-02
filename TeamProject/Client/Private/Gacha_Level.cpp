@@ -42,9 +42,9 @@ HRESULT CGacha_Level::Awake()
 	pShadowCam->Get_Component<CLight>()->Set_Desc(lightDesc, LIGHT_TYPE::DIRECTIONAL);
 
 	Ready_GachaObjects();
+
+	// Camera
 	CamDirector()->SetSpaceRef(m_GachaHandle);
-	//CamDirector()->RequestSequence("Gacha/StartPos");
-	//CamDirector()->RequestSequence("Gacha/TestPos");
 	CamDirector()->RequestSequence("Gacha/StartIntro");
 	return S_OK;
 }
