@@ -6,15 +6,17 @@
 #include "JaneDoe.h"
 #include "GachaProps.h"
 #include "CamPanel.h"
+#include "Unagi.h"
 
 HRESULT CFirstLevel::Awake()
 {
 	PROTO->Add_ProtoType(G_GlobalLevelKey, "Proto_FreeCam", CFreeCam::Create());
-	PROTO->Add_ProtoType(G_GlobalLevelKey, "Proto_Grid",    CGrid::Create());
-	PROTO->Add_ProtoType(G_GlobalLevelKey, "Proto_Corin",   Corin::Create());
+	PROTO->Add_ProtoType(G_GlobalLevelKey, "Proto_Grid", CGrid::Create());
+	PROTO->Add_ProtoType(G_GlobalLevelKey, "Proto_Corin", Corin::Create());
 	PROTO->Add_ProtoType(G_GlobalLevelKey, "Proto_JaneDoe", JaneDoe::Create());
+	PROTO->Add_ProtoType(G_GlobalLevelKey, "Proto_Miyabi", Unagi::Create());
 
-	PROTO->Add_ProtoType(G_GlobalLevelKey, "Proto_Gacha",   CGachaProps::Create());
+	PROTO->Add_ProtoType(G_GlobalLevelKey, "Proto_Gacha", CGachaProps::Create());
 
 	auto freeCam = Builder::Create_Object({G_GlobalLevelKey, "Proto_FreeCam"})
 		.Camera(aspect)
@@ -29,23 +31,27 @@ HRESULT CFirstLevel::Awake()
 
 	auto janeDoe = Builder::Create_Object({G_GlobalLevelKey, "Proto_JaneDoe"}).Build("JaneDoe");
 
+	auto miyabi = Builder::Create_Object({G_GlobalLevelKey, "Proto_Miyabi"}).Build("Miyabi");
+
 	auto gacha = Builder::Create_Object({G_GlobalLevelKey, "Proto_Gacha"}).Build("Gacha");
 
 
 	OBJ->Add_Object(freeCam,   {G_GlobalLevelKey, "Camera_Layer"});
 	OBJ->Add_Object(corin,     {G_GlobalLevelKey, "Model_Layer" });
 	OBJ->Add_Object(janeDoe,   {G_GlobalLevelKey, "Model_Layer" });
-	OBJ->Add_Object(gacha,     {G_GlobalLevelKey, "Gacha_Layer"});
+	OBJ->Add_Object(miyabi,    {G_GlobalLevelKey, "Model_Layer" });
+	//OBJ->Add_Object(gacha,     {G_GlobalLevelKey, "Gacha_Layer" });
 	//OBJ->Add_Object(demoGrid,  {G_GlobalLevelKey, "Grid_Layer"});
 
 	CAM->Set_MainCam(freeCam->Get_Component<CCamera>());
 		
-	OBJECT_HANDLE corinHandle = corin->Get_Handle();
-	OBJECT_HANDLE janeHandle = janeDoe->Get_Handle();
+	auto corinHandle  = corin->Get_Handle();
+	auto janeHandle   = janeDoe->Get_Handle();
+	auto miyabiHandle = miyabi->Get_Handle();
 
 	auto camPanel = CCamPanel::Create(GUISystem()->Get_Context());
 	camPanel->SetCaptureTarget(static_cast<CCamObj*>(freeCam));
-	camPanel->SetSpaceRefCandidates({corinHandle, janeHandle});
+	camPanel->SetSpaceRefCandidates({corinHandle, janeHandle, miyabiHandle});
 	camPanel->SetSpaceReference(janeHandle);
 	GUISystem()->Register_Panel(camPanel);
 
