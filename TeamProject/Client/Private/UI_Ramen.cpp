@@ -79,6 +79,8 @@ void CUI_Ramen::UI_Active(void* pArg)
     Set_Alive(true); 
     Set_ChildAnimation(CHILD::ORDER, 0);
     Reset();
+    for (auto& pMenu : m_pMenus)
+        pMenu->UI_DeActive();
 }
 
 void CUI_Ramen::UI_DeActive(void* pArg)
@@ -255,8 +257,6 @@ void CUI_Ramen::Reset()
     RuntimeBucket().Int64.TryGet(PersistScope::SaveSlot, strFieldPlayerKey, m_iMoney);
     Set_TextPrice();
     Update_Affordable();
-    for (auto& pMenu : m_pMenus)    // 이러면 들어갈 때랑 그리고 영상 끝났을 때도 애니메이션 재생됨
-        pMenu->UI_DeActive();
 }
 
 void CUI_Ramen::Set_TextPrice()
