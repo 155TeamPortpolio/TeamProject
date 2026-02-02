@@ -45,7 +45,6 @@ void CVideoPlayer::Play()
     if (prev == VIDEO_PLAY_STATE::Ended)
     {
         RequestReplay();
-        return;
     }
 
     m_state.store(VIDEO_PLAY_STATE::Playing, std::memory_order_release);
