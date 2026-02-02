@@ -1,5 +1,6 @@
 #pragma once
 #include "OrbitArcData.h"
+#include "OrbitSpinData.h"
 #include "Engine_math.h"
 
 NS_BEGIN(Engine)
@@ -53,6 +54,7 @@ struct CamSequenceDesc
 
 	EaseType            segmentEase = EaseType::None;
 	CamOrbitArcDesc     orbitArc{};
+	CamOrbitSpinDesc    orbitSpin{};
 
 	CamSpace            space = CamSpace::World;
 

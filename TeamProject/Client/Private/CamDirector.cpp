@@ -79,13 +79,10 @@ void CCamDirector::AutoField()
 {
     AutoTarget();
     RequestSequence("Field/Front");
-    //GameInstance()->Set_EngineTimeScale(0.01f)
 
     CMonitorGate gate;
     if (gate.Pass())
         RenderSystem()->SetOn(false);
-
-    /*UIManager()->Add_UIObject(Builder::Create_UIObject({G_GlobalLevelKey, "Proto_GameObject_Gangta"}).Build("Gangta"), G_GlobalLevelKey);*/
 }
 
 void CCamDirector::Update(_float dt)
@@ -175,12 +172,7 @@ void CCamDirector::UpdateInput(_float dt)
 
     if (InputDevice()->Key_Tap(VK_F3))
     {
-       // RequestSequence("Gacha/StartIntro");
-        //UIManager()->Add_UIObject(Builder::Create_UIObject({G_GlobalLevelKey, "Proto_GameObject_Gangta"}).Build("Gangta"), G_GlobalLevelKey);
-        auto obj = Builder::Create_UIObject({G_GlobalLevelKey, "Proto_GameObject_Gangta"}).Build("Gangta");
-        UIManager()->Add_UIObject(obj, LevelManager()->Get_NowLevelKey());
-
-        static_cast<CUI_Gangta*>(obj)->UI_Active({});
+        CamDirector()->RequestSequence("Gacha/Spin");
     }
 }
 
@@ -289,7 +281,7 @@ _bool CCamDirector::IsPlaying(const string& key) const
     if (m_playing.key != key)   return false;
     if (m_playing.pendingStart) return true;
 
-    return GetSeqObj()->Get_Component<CCamSequencePlayer>()->IsPlaying();
+    return GetSeqPlayer()->IsPlaying();
 }
 
 _bool CCamDirector::IsPlaying(CamSeqType type) const

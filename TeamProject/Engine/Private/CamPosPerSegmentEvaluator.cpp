@@ -6,6 +6,7 @@
 #include "CamPosBSplineEvaluator.h"
 #include "CamPosHermiteEvaluator.h"
 #include "CamPosOrbitArcEvaulator.h"
+#include "CamPosOrbitSpinEvaluator.h"
 
 bool CCamPosPerSegmentEvaluator::Build(const vector<CamKeyFrame>& keys)
 {
@@ -19,6 +20,7 @@ bool CCamPosPerSegmentEvaluator::Build(const vector<CamKeyFrame>& keys)
     Safe_Release(evalBSpline);
     Safe_Release(evalHermite);
     Safe_Release(evalOrbitArc);
+    Safe_Release(evalOrbitSpin);
 
     evalLinear      = CCamPosLinearEvaluator::Create();
     evalCatmull     = CCamPosCatmullRomEvaluator::Create();
@@ -26,8 +28,10 @@ bool CCamPosPerSegmentEvaluator::Build(const vector<CamKeyFrame>& keys)
     evalBSpline     = CCamPosBSplineEvaluator::Create();
     evalHermite     = CCamPosHermiteEvaluator::Create();
     evalOrbitArc    = CCamPosOrbitArcEvaluator::Create();
+    evalOrbitSpin   = CCamPosOrbitSpinEvaluator::Create();
 
     static_cast<CCamPosOrbitArcEvaluator*>(evalOrbitArc)->SetOrbitDesc(&seq->orbitArc);
+    static_cast<CCamPosOrbitSpinEvaluator*>(evalOrbitSpin)->SetOrbitDesc(&seq->orbitSpin);
 
     bool ok = true;
     ok &= evalLinear->Build(keys);
@@ -36,6 +40,7 @@ bool CCamPosPerSegmentEvaluator::Build(const vector<CamKeyFrame>& keys)
     ok &= evalBSpline->Build(keys);
     ok &= evalHermite->Build(keys);
     ok &= evalOrbitArc->Build(keys);
+    ok &= evalOrbitSpin->Build(keys);
 
     return ok;
 }
@@ -87,6 +92,9 @@ _vector3 CCamPosPerSegmentEvaluator::Evaluate(_float time) const
 
     case CamPosInterp::OrbitArc:
         return evalOrbitArc ? evalOrbitArc->Evaluate(time) : (evalLinear ? evalLinear->Evaluate(time) : keys[(size_t)i].pos);
+
+    case CamPosInterp::OrbitSpin:
+        return evalOrbitSpin ? evalOrbitSpin->Evaluate(time) : (evalLinear ? evalLinear->Evaluate(time) : keys[(size_t)i].pos);
     }
 
     return evalLinear ? evalLinear->Evaluate(time) : keys[(size_t)i].pos;
@@ -113,5 +121,6 @@ void CCamPosPerSegmentEvaluator::Free()
     Safe_Release(evalBSpline);
     Safe_Release(evalHermite);
     Safe_Release(evalOrbitArc);
+    Safe_Release(evalOrbitSpin);
     __super::Free();
 }

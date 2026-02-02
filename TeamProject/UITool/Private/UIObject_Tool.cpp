@@ -21,6 +21,10 @@ HRESULT CUIObject_Tool::Initialize(INIT_DESC* pArg)
     sprite->Set_Param("ColorTexMode", {&m_colorTexModeU, "uint", sizeof(_uint)});
     sprite->Set_Param("ColorTexMix", {&m_colorTexMix, "float", sizeof(_float)});
 
+    sprite->Set_Param("ColorUVUse", {&m_colorUVUseU, "uint", sizeof(_uint)});
+    sprite->Set_Param("ColorUVOffset", {&m_colorUVOffset, "float2", sizeof(Vector2)});
+    sprite->Set_Param("ColorUVScale", {&m_colorUVScale, "float2", sizeof(Vector2)});
+
     GUISystem()->Get_Context()->pSelectedObject = this;
     return S_OK;
 }
@@ -40,6 +44,17 @@ void CUIObject_Tool::Update(_float dt)
     __super::Update(dt);
 
     KeyInput_ReorderChildren();
+
+    if (m_colorUVAutoScroll && m_colorUVUseU != 0)
+    {
+        m_colorUVOffset += m_colorUVSpeed * dt;
+
+        m_colorUVOffset.x -= floorf(m_colorUVOffset.x);
+        m_colorUVOffset.y -= floorf(m_colorUVOffset.y);
+
+        auto sprite = Get_Component<CSprite2D>();
+        sprite->Set_Param("ColorUVOffset", {&m_colorUVOffset, "float2", sizeof(Vector2)});
+    }
 }
 
 void CUIObject_Tool::Render_GUI()
@@ -115,6 +130,12 @@ void CUIObject_Tool::Save(nlohmann::ordered_json& data)
     data["colorTexMode"] = m_colorTexModeU;
     data["colorTexMix"] = m_colorTexMix;
 
+    data["colorUVUse"] = m_colorUVUseU;
+    data["colorUVOffset"] = {m_colorUVOffset.x, m_colorUVOffset.y};
+    data["colorUVScale"] = {m_colorUVScale.x, m_colorUVScale.y};
+    data["colorUVAutoScroll"] = m_colorUVAutoScroll;
+    data["colorUVSpeed"] = {m_colorUVSpeed.x, m_colorUVSpeed.y};
+
     auto& animClipsJson = data["animClips"];
     animClipsJson = json::array();
     for (const auto& clip : m_AnimClips)
@@ -174,11 +195,32 @@ void CUIObject_Tool::Load(const nlohmann::ordered_json& data)
 
     m_colorTexMode = (UIColorTexMode)m_colorTexModeU;
 
+    m_colorUVUseU = (_uint)data.value("colorUVUse", 0u);
+    if (data.contains("colorUVOffset"))
+    {
+        m_colorUVOffset.x = (_float)data["colorUVOffset"][0];
+        m_colorUVOffset.y = (_float)data["colorUVOffset"][1];
+    }
+    if (data.contains("colorUVScale"))
+    {
+        m_colorUVScale.x = (_float)data["colorUVScale"][0];
+        m_colorUVScale.y = (_float)data["colorUVScale"][1];
+    }
+    m_colorUVAutoScroll = (_bool)data.value("colorUVAutoScroll", false);
+    if (data.contains("colorUVSpeed"))
+    {
+        m_colorUVSpeed.x = (_float)data["colorUVSpeed"][0];
+        m_colorUVSpeed.y = (_float)data["colorUVSpeed"][1];
+    }
+
     auto sprite = Get_Component<CSprite2D>();
     sprite->Change_Texture(1, G_GlobalLevelKey, m_colorTextureKey);
 
     sprite->Set_Param("ColorTexMode", {&m_colorTexModeU, "uint", sizeof(_uint)});
     sprite->Set_Param("ColorTexMix", {&m_colorTexMix, "float", sizeof(_float)});
+    sprite->Set_Param("ColorUVUse", {&m_colorUVUseU, "uint", sizeof(_uint)});
+    sprite->Set_Param("ColorUVOffset", {&m_colorUVOffset, "float2", sizeof(Vector2)});
+    sprite->Set_Param("ColorUVScale", {&m_colorUVScale, "float2", sizeof(Vector2)});
 }
 
 void CUIObject_Tool::Render_GUI_Property()
@@ -275,7 +317,6 @@ void CUIObject_Tool::Render_GUI_Animation()
 {
     ImGui::SeparatorText(u8"애니메이션");
 
-    // 클립 추가
     {
         ImGui::AlignTextToFramePadding();
         ImGui::Text((u8"클립 (" + to_string(m_AnimClips.size()) + ")").c_str());
@@ -291,23 +332,20 @@ void CUIObject_Tool::Render_GUI_Animation()
         {
             m_AnimClips.pop_back();
             iCount--;
-        } 
+        }
         ImGui::EndDisabled();
-    } 
+    }
 
-    // 애니메이션 클립이 없으면 리턴
     if (m_AnimClips.empty())
         return;
 
-    // 클립 선택
     string strCombined;
     for (_int i = 0; i < m_AnimClips.size(); ++i)
         strCombined += m_AnimClips[i].strName + '\0';
     strCombined += '\0';
-    
+
     ImGui::Combo(u8"클립", &m_iClipIndex, strCombined.c_str());
-    
-    // 클립 선택 없으면 리턴
+
     if (-1 == m_iClipIndex)
         return;
 
@@ -327,23 +365,111 @@ void CUIObject_Tool::Render_GUI_Animation()
 
         UI_ANIM_CLIP& clip = m_AnimClips[m_iClipIndex];
 
-        // 재생, 정지 
         ImGui::SeparatorText(u8"재생");
         ImGui::BeginDisabled(clip.keyframes.empty());
         if (ImGui::Button(m_isBlending ? u8"정지" : u8"재생"))
         {
             m_isBlending = !m_isBlending;
             if (m_isBlending)
-                Set_Animation(m_iClipIndex, &clip.isLoop);
+                Set_Animation(m_iClipIndex, clip.isLoop);
             else
                 m_isBlending = false;
         }
         ImGui::EndDisabled();
         ImGui::SameLine();
         if (m_isBlending)   ImGui::TextColored(ImVec4(0.2f, 1.f, 0.2f, 1.f), u8"● Playing");
-        else                ImGui::TextColored(ImVec4(1.f, 0.3f, 0.3f, 1.f), u8"■ Stopped"); 
+        else                ImGui::TextColored(ImVec4(1.f, 0.3f, 0.3f, 1.f), u8"■ Stopped");
 
-        // 선택한 클립 편집
+        {
+            const _float duration = max(clip.fDuration, 0.0001f);
+
+            if (m_isBlending && !m_timelineDragging)
+                m_timelineTime = clamp(m_fBlendTime, 0.f, duration);
+
+            _float curTime = m_isBlending ? clamp(m_fBlendTime, 0.f, duration) : clamp(m_timelineTime, 0.f, duration);
+
+            const float w = ImGui::GetContentRegionAvail().x;
+            const float h = 34.f;
+
+            ImVec2 p0 = ImGui::GetCursorScreenPos();
+            ImVec2 p1 = ImVec2(p0.x + w, p0.y + h);
+
+            ImGui::InvisibleButton("##timeline", ImVec2(w, h));
+            const bool hovered = ImGui::IsItemHovered();
+            const bool active = ImGui::IsItemActive();
+
+            auto draw = ImGui::GetWindowDrawList();
+            const ImU32 colBg = ImGui::GetColorU32(ImGuiCol_FrameBg);
+            const ImU32 colBd = ImGui::GetColorU32(ImGuiCol_Border);
+            const ImU32 colTick = ImGui::GetColorU32(ImGuiCol_TextDisabled);
+            const ImU32 colHead = ImGui::GetColorU32(ImGuiCol_SliderGrabActive);
+
+            draw->AddRectFilled(p0, p1, colBg, 6.f);
+            draw->AddRect(p0, p1, colBd, 6.f);
+
+            for (auto& kf : clip.keyframes)
+            {
+                float x = p0.x + (kf.fTime / duration) * w;
+                draw->AddLine(ImVec2(x, p0.y + 4.f), ImVec2(x, p1.y - 4.f), colTick);
+            }
+
+            float headX = p0.x + (curTime / duration) * w;
+            draw->AddLine(ImVec2(headX, p0.y + 2.f), ImVec2(headX, p1.y - 2.f), colHead, 2.f);
+
+            bool changed = false;
+
+            if (hovered && ImGui::IsMouseClicked(0))
+            {
+                m_timelineDragging = true;
+                m_timelineResumePlay = m_isBlending;
+                m_isBlending = false;
+            }
+
+            if (m_timelineDragging)
+            {
+                float mx = ImGui::GetIO().MousePos.x;
+                mx = clamp(mx, p0.x, p1.x);
+                curTime = (mx - p0.x) / w * duration;
+                changed = true;
+
+                if (!ImGui::IsMouseDown(0))
+                {
+                    m_timelineDragging = false;
+                    if (m_timelineResumePlay)
+                    {
+                        m_isBlending = true;
+                        m_fBlendTime = curTime;
+                    }
+                }
+            }
+
+            if (changed)
+            {
+                m_timelineTime = curTime;
+
+                const bool prevBlending = m_isBlending;
+                if (!prevBlending)
+                {
+                    m_isBlending = true;
+                    Set_Animation(m_iClipIndex, clip.isLoop);
+                    m_fBlendTime = curTime;
+                    Play_Animation(0.f);
+                    m_isBlending = false;
+                }
+            }
+
+            ImGui::TextDisabled("t %.3f / %.3f", curTime, duration);
+
+            if (hovered)
+            {
+                float mx = clamp(ImGui::GetIO().MousePos.x, p0.x, p1.x);
+                _float hoverTime = (mx - p0.x) / w * duration;
+                ImGui::SetTooltip("t %.3f", hoverTime);
+            }
+
+            ImGui::Spacing();
+        }
+
         ImGui::SeparatorText(u8"기본 속성 편집");
         char szBuffer[256] = {};
         strcpy_s(szBuffer, clip.strName.c_str());
@@ -352,7 +478,6 @@ void CUIObject_Tool::Render_GUI_Animation()
         ImGui::InputFloat(u8"길이", &clip.fDuration);
         ImGui::Checkbox(u8"루프", &clip.isLoop);
 
-        // 키프레임 추가
         ImGui::SeparatorText((u8"키프레임 ( " + to_string(clip.keyframes.size()) + " )").c_str());
         if (ImGui::Button(u8"추가 +"))
         {
@@ -365,11 +490,10 @@ void CUIObject_Tool::Render_GUI_Animation()
         ImGui::SameLine();
         if (ImGui::Button(u8"삭제 -"))
         {
-            if(!clip.keyframes.empty())
+            if (!clip.keyframes.empty())
                 clip.keyframes.pop_back();
         }
 
-        // 키프레임 편집 
         ImGui::Separator();
         int idx = 0;
         for (auto& keyframe : clip.keyframes)
@@ -397,7 +521,7 @@ void CUIObject_Tool::Render_GUI_Animation()
 
         ImGui::EndChild();
         ImGui::EndPopup();
-    } 
+    }
 }
 
 void CUIObject_Tool::Render_GUI_Color()
@@ -503,6 +627,50 @@ void CUIObject_Tool::Render_GUI_Color()
         });
 
     ImGui::Spacing();
+    ImGui::SeparatorText(u8"UV");
+
+    Row(u8"사용", [&]
+        {
+            bool use = (m_colorUVUseU != 0);
+            if (ImGui::Checkbox(u8"##ColorUVUse", &use))
+            {
+                m_colorUVUseU = use ? 1u : 0u;
+                dirty = true;
+            }
+        });
+
+    ImGui::BeginDisabled(m_colorUVUseU == 0);
+
+    Row(u8"Offset", [&]
+        {
+            if (ImGui::DragFloat2(u8"##ColorUVOffset", reinterpret_cast<_float*>(&m_colorUVOffset), 0.01f, -10.f, 10.f, "%.3f"))
+                dirty = true;
+        });
+
+    Row(u8"Scale", [&]
+        {
+            if (ImGui::DragFloat2(u8"##ColorUVScale", reinterpret_cast<_float*>(&m_colorUVScale), 0.01f, 0.01f, 50.f, "%.3f"))
+                dirty = true;
+        });
+
+    Row(u8"AutoScroll", [&]
+        {
+            if (ImGui::Checkbox(u8"##ColorUVAutoScroll", &m_colorUVAutoScroll))
+                dirty = true;
+        });
+
+    ImGui::BeginDisabled(!m_colorUVAutoScroll);
+
+    Row(u8"Speed", [&]
+        {
+            if (ImGui::DragFloat2(u8"##ColorUVSpeed", reinterpret_cast<_float*>(&m_colorUVSpeed), 0.01f, -10.f, 10.f, "%.3f"))
+                dirty = true;
+        });
+
+    ImGui::EndDisabled();
+    ImGui::EndDisabled();
+
+    ImGui::Spacing();
 
     ImGui::EndChild();
     ImGui::PopStyleVar(2);
@@ -515,7 +683,13 @@ void CUIObject_Tool::Render_GUI_Color()
     m_colorTexModeU = (_uint)m_colorTexMode;
     sprite->Set_Param("ColorTexMode", {&m_colorTexModeU, "uint", sizeof(_uint)});
     sprite->Set_Param("ColorTexMix", {&m_colorTexMix, "float", sizeof(_float)});
+
+    sprite->Set_Param("ColorUVUse", {&m_colorUVUseU, "uint", sizeof(_uint)});
+    sprite->Set_Param("ColorUVOffset", {&m_colorUVOffset, "float2", sizeof(Vector2)});
+    sprite->Set_Param("ColorUVScale", {&m_colorUVScale, "float2", sizeof(Vector2)});
 }
+
+
 
 _bool CUIObject_Tool::Render_GUI_Image(string& strTextureKey)
 {

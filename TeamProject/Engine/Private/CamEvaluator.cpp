@@ -1,6 +1,24 @@
 #include "Engine_Defines.h"
 #include "CamEvaluator.h"
 
+namespace
+{
+	Quaternion MakeLookRotation(const _vector3& forward, const _vector3& up)
+	{
+		_vector3 f = forward;
+		_vector3 u = up;
+
+		f.Normalize();
+		u.Normalize();
+
+		Matrix m = Matrix::CreateWorld(_vector3::Zero, -f, u);
+
+		Quaternion q = Quaternion::CreateFromRotationMatrix(m);
+		q.Normalize();
+		return q;
+	}
+}
+
 bool CCamEvaluator::Build(const CamSequenceDesc& _seqDesc)
 {
 	seqDesc = &_seqDesc;
@@ -50,12 +68,61 @@ bool CCamEvaluator::Build(const CamSequenceDesc& _seqDesc)
 CamPose CCamEvaluator::Evaluate(float time) const
 {
 	CamPose pose{};
-	pose.pos = posEval->Evaluate(time);
-	pose.rot = rotEval->Evaluate(time);
+	pose.pos  = posEval->Evaluate(time);
+	pose.rot  = rotEval->Evaluate(time);
 	pose.roll = rotEval->GetLastRoll();
-	pose.fov = fovEval->Evaluate(time);
+	pose.fov  = fovEval->Evaluate(time);
+
+	if (!seqDesc) return pose;
+	if (cachedKeys.size() < 2) return pose;
+
+	float t = time;
+	if (t <= cachedKeys.front().time) t = cachedKeys.front().time;
+	if (t >= cachedKeys.back().time)  t = cachedKeys.back().time;
+
+	const CamKeySegment seg = CamUtil::FindKeySegment(cachedKeys, t);
+	const _uint i = seg.segmentIdx;
+
+	CamPosInterp posMode = seqDesc->posInterp;
+	if (i < (_uint)cachedKeys.size())
+	{
+		const CamKeyFrame& k0 = cachedKeys[(size_t)i];
+		if (k0.useCustomInterp) posMode = k0.outPosInterp;
+	}
+
+	_bool orbit = false;
+	_vector3 center{};
+
+	//if (posMode == CamPosInterp::OrbitArc && seqDesc->orbitArc.enabled)
+	//{
+	//	orbit = true;
+	//	center = seqDesc->orbitArc.center;
+	//}
+	if (posMode == CamPosInterp::OrbitSpin && seqDesc->orbitSpin.enabled)
+	{
+		orbit = true;
+		center = seqDesc->orbitSpin.center;
+	}
+
+	if (orbit)
+	{
+		Vector3 p(pose.pos.x, pose.pos.y, pose.pos.z);
+		Vector3 c(center.x, center.y, center.z);
+
+		Vector3 look = c - p;
+
+		if (look.LengthSquared() > 1e-8f)
+		{
+			look.Normalize();
+
+			pose.rot = MakeLookRotation(_vector3(look.x, look.y, look.z), _vector3(0.f, 1.f, 0.f));
+			pose.rot.Normalize();
+		}
+	}
+
 	return pose;
 }
+
 
 _float CCamEvaluator::RemapTimeBySegmentEasing(float t) const
 {
