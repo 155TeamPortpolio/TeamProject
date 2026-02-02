@@ -75,6 +75,12 @@ HRESULT CEffectEditLevel::Awake()
 	CGameObject* Effect3 = Builder::Create_Object({ "EffectEdit_Level","Proto_GameObject_EffectContainer" })
 		.Build("EffectContainer");
 
+	CGameObject* Effect4 = Builder::Create_Object({ "EffectEdit_Level","Proto_GameObject_EffectContainer" })
+		.Build("EffectContainer");
+
+	CGameObject* Effect5 = Builder::Create_Object({ "EffectEdit_Level","Proto_GameObject_EffectContainer" })
+		.Build("EffectContainer");
+
 	CGameObject* Model = Builder::Create_Object({ "EffectEdit_Level","Proto_GameObject_ToolModel" })
 		.Build("Model");
 	
@@ -94,6 +100,8 @@ HRESULT CEffectEditLevel::Awake()
 	pObjMgr->Add_Object(Effect, { "EffectEdit_Level","Edit_Layer" });
 	pObjMgr->Add_Object(Effect2, { "EffectEdit_Level","Edit_Layer" });
 	pObjMgr->Add_Object(Effect3, { "EffectEdit_Level","Edit_Layer" });
+	pObjMgr->Add_Object(Effect4, { "EffectEdit_Level","Edit_Layer" });
+	pObjMgr->Add_Object(Effect5, { "EffectEdit_Level","Edit_Layer" });
 	pObjMgr->Add_Object(Model, { "EffectEdit_Level","Model_Layer" });
 	pObjMgr->Add_Object(Light, { "EffectEdit_Level","Light_Layer" });
 	pObjMgr->Add_Object(Camera, { "EffectEdit_Level","Camera_Layer" });

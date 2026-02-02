@@ -38,7 +38,7 @@ HRESULT CSacrifice_Orb::Initialize(INIT_DESC* pArg)
 
 	auto pRigidBody = Get_Component<CRigidBody>();
 	pRigidBody->Set_Kinematic(true);
-	pRigidBody->Set_Mass(0.001f);
+	pRigidBody->Set_Mass(0.000001f);
 	 
 	auto pOrb = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
 		.Asset("sacrifice_orb.json")
@@ -51,8 +51,8 @@ HRESULT CSacrifice_Orb::Initialize(INIT_DESC* pArg)
 	SetOnAttack(true);
 	SetParryEnable(true);
 	
-	if (FAILED(Create_Colliders()))
-		return E_FAIL;
+	//if (FAILED(Create_Colliders()))
+	//	return E_FAIL;
 
 	return S_OK;
 }
@@ -152,6 +152,13 @@ void CSacrifice_Orb::OnCollisionEnter(CGameObject* pOther)
 			.Build("Sacrifice_Orb_Explode");
 
 		ObjectManager()->Add_Object(effect, { Get_Level(),"Enemy_Effect_Layer" });
+
+		auto pPlayer = dynamic_cast<CCharacter*>(pOther);
+		if (pPlayer)
+		{
+			pPlayer->Take_Damage(DAMAGE_TYPE::NORMAL, 10);
+			CameraManager()->AddImpact(1, 0);
+		}
 	}
 }
 

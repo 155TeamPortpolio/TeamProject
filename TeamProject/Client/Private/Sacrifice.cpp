@@ -242,6 +242,13 @@ void CSacrifice::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER c
 	}
 }
 
+void CSacrifice::Parried()
+{
+	__super::Parried();
+
+	m_pStateMachine->Change_State("Parry");
+}
+
 void CSacrifice::RotateToTarget(_float dt, _float rotateSpeed)
 {
 	_vector3 vPosition = m_pTransform->Get_Pos();

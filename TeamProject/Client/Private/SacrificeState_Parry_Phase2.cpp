@@ -14,6 +14,19 @@ void CSacrificeState_Parry_Phase2::Enter(CSacrifice* pOwner)
 		__super::Enter(pOwner);
 	}
 
+	switch (pOwner->Get_AttackSide())
+	{
+	case CEnemy::ATTACK_SIDE::LEFT:
+	{
+		m_pSubStateMachine->Change_State("Parry_L_Phase2");
+	}break;
+	case CEnemy::ATTACK_SIDE::RIGHT:
+	{
+		m_pSubStateMachine->Change_State("Parry_R_Phase2");
+	}break;
+	default:
+		break;
+	}
 }
 
 void CSacrificeState_Parry_Phase2::Update(CSacrifice* pOwner, _float dt)
