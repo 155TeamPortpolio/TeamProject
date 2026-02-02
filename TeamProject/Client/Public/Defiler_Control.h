@@ -36,10 +36,9 @@ typedef struct tagDefilerBlackBoard
     _bool isRequestNext = false;//다음 상태가 존재 할 때 상태 전환 요청
     _bool isChainOpen = false;  //현재 상태에서 다음으로 진행 가능여부
     
-    /*움직임 패턴*/
+    /*움직임*/
     TraceFlag eTraceFlag = {};
     _bool LockTarget = {};
-    _bool RotateLock = {};
     _vector3 CurrentDir = _vector3(0.f, 0.f, 1.f); 
 
     /*패턴*/
@@ -67,3 +66,43 @@ typedef struct tagDefilerBlackBoard
         eTraceFlag =TraceFlag::None;
     }
 }DEFILER_BLACK_BOARD;
+
+
+struct DefilerAttackType {
+    string AtkBone    = {"Weapon"};
+    string AtkEvade   = {"Evade" };
+    string AtkPower   = {"Hard"  };
+    _bool  OnOff      = { false  };
+};
+
+static const unordered_map<string, DefilerAttackType> DefilerAtkData = 
+{
+    {"A_Type_On",{"Weapon","Parry","Normal",true}}  ,{"A_Type_Off",{"Weapon","Parry","Normal",false}},
+    {"B_Type_On",{"Weapon","Evade","Normal",true}}  ,{"B_Type_Off",{"Weapon","Evade","Normal",false}},
+    {"C_Type_On",{"Weapon","Parry","Hard",true}}    ,{"C_Type_Off",{"Weapon","Parry","Hard",false}},
+    {"D_Type_On",{"Weapon","Evade","Hard",true}}    ,{"D_Type_Off",{"Weapon","Evade","Hard",false}},
+    {"E_Type_On",{"Tail","Parry","Normal",true}}    ,{"E_Type_Off",{"Tail","Parry","Normal",false}},
+    {"F_Type_On",{"Tail","Evade","Normal",true}}    ,{"F_Type_Off",{"Tail","Evade","Normal",false}},
+    {"G_Type_On",{"Tail","Parry","Hard",true}}      ,{"G_Type_Off",{"Tail","Parry","Hard",false}},
+    {"H_Type_On",{"Tail","Evade","Hard",true}}      ,{"H_Type_Off",{"Tail","Evade","Hard",false}},
+};
+
+
+struct DefilerDissolve {
+    enum DISSOLVE_STATE { DISAPPEAR, APPEAR, NONE, END };
+    DISSOLVE_STATE eDissolveState = NONE;
+    _float fDissolveDuration = 2.f;
+    _float fDissolveElapsedTime = 0.f;
+    _float fDissolveProgress = 0.f;
+
+    void Set_DissolveState(DISSOLVE_STATE state, _float duration)
+    {
+        eDissolveState = state;
+        fDissolveDuration = duration;
+        fDissolveElapsedTime = 0.f;
+        fDissolveProgress = 0.f;
+    }
+    _bool isComplete() {
+        return fDissolveElapsedTime >= fDissolveDuration;
+    }
+};

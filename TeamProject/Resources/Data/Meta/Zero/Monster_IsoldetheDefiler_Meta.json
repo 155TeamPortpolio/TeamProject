@@ -25,32 +25,22 @@
         {
           "EventTime": 0.5125406384468079,
           "EventType": "Notify",
-          "EventTag": "AttackStart"
-        },
-        {
-          "EventTime": 0.8483430743217468,
-          "EventType": "Notify",
-          "EventTag": "AttackColliderOn_Weapon"
-        },
-        {
-          "EventTime": 0.9577301144599915,
-          "EventType": "Notify",
-          "EventTag": "AttackColliderOff_Weapon"
-        },
-        {
-          "EventTime": 1.2725145816802979,
-          "EventType": "Notify",
-          "EventTag": "AttackColliderOn_Weapon"
-        },
-        {
-          "EventTime": 1.458298921585083,
-          "EventType": "Notify",
-          "EventTag": "AttackColliderOff_Weapon"
+          "EventTag": "ParrySign"
         },
         {
           "EventTime": 0.7953216433525085,
           "EventType": "Notify",
           "EventTag": "TargetLockOn"
+        },
+        {
+          "EventTime": 0.8483430743217468,
+          "EventType": "Notify",
+          "EventTag": "A_Type_On"
+        },
+        {
+          "EventTime": 0.9577301144599915,
+          "EventType": "Notify",
+          "EventTag": "A_Type_Off"
         },
         {
           "EventTime": 1.0074074268341064,
@@ -66,6 +56,16 @@
           "EventTime": 1.263677716255188,
           "EventType": "Notify",
           "EventTag": "TargetLockOff"
+        },
+        {
+          "EventTime": 1.2725145816802979,
+          "EventType": "Notify",
+          "EventTag": "A_Type_On"
+        },
+        {
+          "EventTime": 1.458298921585083,
+          "EventType": "Notify",
+          "EventTag": "A_Type_Off"
         }
       ]
     },
@@ -73,94 +73,9 @@
       "ClipTag": "Monster_IsoldetheDefiler_Ani_Attack_01_01_P2",
       "Events": [
         {
-          "EventTime": 1.0233917236328125,
-          "EventType": "Notify",
-          "EventTag": "AttackColliderOn_Weapon"
-        },
-        {
           "EventTime": 0.7634827494621277,
           "EventType": "Notify",
-          "EventTag": "AttackStart"
-        },
-        {
-          "EventTime": 1.1208575963974,
-          "EventType": "Notify",
-          "EventTag": "AttackColliderOff_Weapon"
-        },
-        {
-          "EventTime": 1.2670564651489258,
-          "EventType": "Notify",
-          "EventTag": "AttackStart"
-        },
-        {
-          "EventTime": 1.4619882106781006,
-          "EventType": "Notify",
-          "EventTag": "AttackColliderOn_Weapon"
-        },
-        {
-          "EventTime": 1.5594542026519775,
-          "EventType": "Notify",
-          "EventTag": "AttackColliderOff_Weapon_Weapon"
-        },
-        {
-          "EventTime": 1.9818062782287598,
-          "EventType": "Notify",
-          "EventTag": "AttackStart"
-        },
-        {
-          "EventTime": 2.3716697692871094,
-          "EventType": "Notify",
-          "EventTag": "AttackColliderOn_Weapon"
-        },
-        {
-          "EventTime": 2.4691357612609863,
-          "EventType": "Notify",
-          "EventTag": "AttackColliderOff_Weapon"
-        },
-        {
-          "EventTime": 2.7452890872955322,
-          "EventType": "Notify",
-          "EventTag": "AttackStart"
-        },
-        {
-          "EventTime": 2.9889538288116455,
-          "EventType": "Notify",
-          "EventTag": "AttackColliderOn_Weapon"
-        },
-        {
-          "EventTime": 3.0539309978485107,
-          "EventType": "Notify",
-          "EventTag": "AttackColliderOff_Weapon"
-        },
-        {
-          "EventTime": 3.4113059043884277,
-          "EventType": "Notify",
-          "EventTag": "AttackStart"
-        },
-        {
-          "EventTime": 3.7686808109283447,
-          "EventType": "Notify",
-          "EventTag": "AttackColliderOn_Weapon"
-        },
-        {
-          "EventTime": 3.833658218383789,
-          "EventType": "Notify",
-          "EventTag": "AttackColliderOff_Weapon"
-        },
-        {
-          "EventTime": 4.369720458984375,
-          "EventType": "Notify",
-          "EventTag": "AttackStart"
-        },
-        {
-          "EventTime": 5.181936264038086,
-          "EventType": "Notify",
-          "EventTag": "AttackColliderOn_Weapon"
-        },
-        {
-          "EventTime": 5.717998504638672,
-          "EventType": "Notify",
-          "EventTag": "AttackColliderOff_Weapon"
+          "EventTag": "ParrySign"
         },
         {
           "EventTime": 0.9909031391143799,
@@ -168,7 +83,142 @@
           "EventTag": "TargetLockOn"
         },
         {
-          "EventTime": 1.2200000286102295,
+          "EventTime": 1.0233917236328125,
+          "EventType": "Notify",
+          "EventTag": "A_Type_On"
+        },
+        {
+          "EventTime": 1.1208575963974,
+          "EventType": "Notify",
+          "EventTag": "A_Type_Off"
+        },
+        {
+          "EventTime": 1.1799999475479126,
+          "EventType": "Notify",
+          "EventTag": "TargetLockOff"
+        },
+        {
+          "EventTime": 1.2670564651489258,
+          "EventType": "Notify",
+          "EventTag": "ParrySign"
+        },
+        {
+          "EventTime": 1.3320337533950806,
+          "EventType": "Notify",
+          "EventTag": "TargetLockOn"
+        },
+        {
+          "EventTime": 1.4619882106781006,
+          "EventType": "Notify",
+          "EventTag": "A_Type_On"
+        },
+        {
+          "EventTime": 1.5594542026519775,
+          "EventType": "Notify",
+          "EventTag": "A_Type_Off"
+        },
+        {
+          "EventTime": 1.656920075416565,
+          "EventType": "Notify",
+          "EventTag": "TargetLockOff"
+        },
+        {
+          "EventTime": 1.9818062782287598,
+          "EventType": "Notify",
+          "EventTag": "ParrySign"
+        },
+        {
+          "EventTime": 2.1767380237579346,
+          "EventType": "Notify",
+          "EventTag": "TargetLockOn"
+        },
+        {
+          "EventTime": 2.3716697692871094,
+          "EventType": "Notify",
+          "EventTag": "A_Type_On"
+        },
+        {
+          "EventTime": 2.4691357612609863,
+          "EventType": "Notify",
+          "EventTag": "A_Type_Off"
+        },
+        {
+          "EventTime": 2.549999952316284,
+          "EventType": "Notify",
+          "EventTag": "TargetLockOff"
+        },
+        {
+          "EventTime": 2.7452890872955322,
+          "EventType": "Notify",
+          "EventTag": "ParrySign"
+        },
+        {
+          "EventTime": 2.842755079269409,
+          "EventType": "Notify",
+          "EventTag": "TargetLockOn"
+        },
+        {
+          "EventTime": 2.9889538288116455,
+          "EventType": "Notify",
+          "EventTag": "A_Type_On"
+        },
+        {
+          "EventTime": 3.0539309978485107,
+          "EventType": "Notify",
+          "EventTag": "A_Type_Off"
+        },
+        {
+          "EventTime": 3.118908405303955,
+          "EventType": "Notify",
+          "EventTag": "TargetLockOff"
+        },
+        {
+          "EventTime": 3.4113059043884277,
+          "EventType": "Notify",
+          "EventTag": "ParrySign"
+        },
+        {
+          "EventTime": 3.736191987991333,
+          "EventType": "Notify",
+          "EventTag": "TargetLockOn"
+        },
+        {
+          "EventTime": 3.7686808109283447,
+          "EventType": "Notify",
+          "EventTag": "A_Type_On"
+        },
+        {
+          "EventTime": 3.833658218383789,
+          "EventType": "Notify",
+          "EventTag": "A_Type_Off"
+        },
+        {
+          "EventTime": 4.077322959899902,
+          "EventType": "Notify",
+          "EventTag": "TargetLockOff"
+        },
+        {
+          "EventTime": 4.369720458984375,
+          "EventType": "Notify",
+          "EventTag": "ParrySign"
+        },
+        {
+          "EventTime": 4.532163619995117,
+          "EventType": "Notify",
+          "EventTag": "TargetLockOn"
+        },
+        {
+          "EventTime": 5.181936264038086,
+          "EventType": "Notify",
+          "EventTag": "A_Type_On"
+        },
+        {
+          "EventTime": 5.717998504638672,
+          "EventType": "Notify",
+          "EventTag": "A_Type_Off"
+        },
+        {
+          "EventTime": 6.432748317718506,
           "EventType": "Notify",
           "EventTag": "TargetLockOff"
         }
@@ -180,17 +230,27 @@
         {
           "EventTime": 0.7610136270523071,
           "EventType": "Notify",
-          "EventTag": "AttackStart"
+          "EventTag": "ParrySign"
+        },
+        {
+          "EventTime": 1.3634827136993408,
+          "EventType": "Notify",
+          "EventTag": "TargetLockOn"
         },
         {
           "EventTime": 1.4031188488006592,
           "EventType": "Notify",
-          "EventTag": "AttackColliderOn_Weapon"
+          "EventTag": "A_Type_On"
         },
         {
           "EventTime": 1.5695905685424805,
           "EventType": "Notify",
-          "EventTag": "AttackColliderOff_Weapon"
+          "EventTag": "A_Type_Off"
+        },
+        {
+          "EventTime": 2.100714683532715,
+          "EventType": "Notify",
+          "EventTag": "TargetLockOff"
         }
       ]
     },
@@ -200,37 +260,77 @@
         {
           "EventTime": 0.5204678177833557,
           "EventType": "Notify",
-          "EventTag": "AttackStart"
+          "EventTag": "ParrySign"
         },
         {
           "EventTime": 0.8790123462677002,
           "EventType": "Notify",
-          "EventTag": "AttackColliderOn_Weapon"
+          "EventTag": "A_Type_On"
         },
         {
           "EventTime": 1.0178037881851196,
           "EventType": "Notify",
-          "EventTag": "AttackColliderOff_Weapon"
+          "EventTag": "A_Type_Off"
         },
         {
           "EventTime": 1.156595230102539,
           "EventType": "Notify",
-          "EventTag": "ThrowWeapon"
-        },
-        {
-          "EventTime": 2.6833009719848633,
-          "EventType": "Notify",
-          "EventTag": "AttackStart"
-        },
-        {
-          "EventTime": 2.972449541091919,
-          "EventType": "Notify",
-          "EventTag": "AttackStart"
+          "EventTag": "A_Type_On"
         },
         {
           "EventTime": 1.7464587688446045,
           "EventType": "Notify",
-          "EventTag": "AttackStart"
+          "EventTag": "EvadeSign"
+        },
+        {
+          "EventTime": 2.058739423751831,
+          "EventType": "Notify",
+          "EventTag": "TargetLockOn"
+        },
+        {
+          "EventTime": 2.0999999046325684,
+          "EventType": "Notify",
+          "EventTag": "E_Type_On"
+        },
+        {
+          "EventTime": 2.428849935531616,
+          "EventType": "Notify",
+          "EventTag": "E_Type_Off"
+        },
+        {
+          "EventTime": 2.440415859222412,
+          "EventType": "Notify",
+          "EventTag": "TargetLockOff"
+        },
+        {
+          "EventTime": 2.729564666748047,
+          "EventType": "Notify",
+          "EventTag": "A_Type_Off"
+        },
+        {
+          "EventTime": 2.972449541091919,
+          "EventType": "Notify",
+          "EventTag": "ParrySign"
+        },
+        {
+          "EventTime": 3.259999990463257,
+          "EventType": "Notify",
+          "EventTag": "TargetLockOn"
+        },
+        {
+          "EventTime": 3.2615983486175537,
+          "EventType": "Notify",
+          "EventTag": "A_Type_On"
+        },
+        {
+          "EventTime": 3.504483461380005,
+          "EventType": "Notify",
+          "EventTag": "A_Type_Off"
+        },
+        {
+          "EventTime": 4.823001861572266,
+          "EventType": "Notify",
+          "EventTag": "TargetLockOff"
         }
       ]
     },
@@ -240,52 +340,107 @@
         {
           "EventTime": 0.5728394985198975,
           "EventType": "Notify",
-          "EventTag": "AttackStart"
+          "EventTag": "ParrySign"
         },
         {
           "EventTime": 0.949707567691803,
           "EventType": "Notify",
-          "EventTag": "AttackColliderOn_Weapon"
+          "EventTag": "A_Type_On"
         },
         {
           "EventTime": 1.070305347442627,
           "EventType": "Notify",
-          "EventTag": "AttackColliderOff_Weapon"
+          "EventTag": "A_Type_Off"
         },
         {
           "EventTime": 1.2964261770248413,
           "EventType": "Notify",
-          "EventTag": "AttackStart"
+          "EventTag": "ParrySign"
         },
         {
           "EventTime": 1.409999966621399,
           "EventType": "Notify",
-          "EventTag": "AttackColliderOn_Weapon"
+          "EventTag": "A_Type_On"
         },
         {
           "EventTime": 1.6399999856948853,
           "EventType": "Notify",
-          "EventTag": "AttackColliderOff_Weapon"
-        },
-        {
-          "EventTime": 2.0049381256103516,
-          "EventType": "Notify",
-          "EventTag": "AttackColliderOn_Weapon"
-        },
-        {
-          "EventTime": 2.140000104904175,
-          "EventType": "Notify",
-          "EventTag": "AttackColliderOff_Weapon"
+          "EventTag": "A_Type_Off"
         },
         {
           "EventTime": 1.8843404054641724,
           "EventType": "Notify",
-          "EventTag": "AttackStart"
+          "EventTag": "ParrySign"
+        },
+        {
+          "EventTime": 2.0049381256103516,
+          "EventType": "Notify",
+          "EventTag": "A_Type_On"
+        },
+        {
+          "EventTime": 2.140000104904175,
+          "EventType": "Notify",
+          "EventTag": "A_Type_Off"
+        },
+        {
+          "EventTime": 2.240000009536743,
+          "EventType": "Notify",
+          "EventTag": "ParrySign"
+        },
+        {
+          "EventTime": 2.3299999237060547,
+          "EventType": "Notify",
+          "EventTag": "A_Type_On"
+        },
+        {
+          "EventTime": 2.4000000953674316,
+          "EventType": "Notify",
+          "EventTag": "A_Type_Off"
+        },
+        {
+          "EventTime": 2.5325534343719482,
+          "EventType": "Notify",
+          "EventTag": "ParrySign"
+        },
+        {
+          "EventTime": 2.609999895095825,
+          "EventType": "Notify",
+          "EventTag": "A_Type_On"
+        },
+        {
+          "EventTime": 2.680000066757202,
+          "EventType": "Notify",
+          "EventTag": "A_Type_Off"
+        },
+        {
+          "EventTime": 2.8399999141693115,
+          "EventType": "Notify",
+          "EventTag": "ParrySign"
+        },
+        {
+          "EventTime": 2.940000057220459,
+          "EventType": "Notify",
+          "EventTag": "A_Type_On"
+        },
+        {
+          "EventTime": 3.0199999809265137,
+          "EventType": "Notify",
+          "EventTag": "A_Type_Off"
         },
         {
           "EventTime": 3.5877840518951416,
           "EventType": "Notify",
-          "EventTag": "AttackStart"
+          "EventTag": "ParrySign"
+        },
+        {
+          "EventTime": 3.880000114440918,
+          "EventType": "Notify",
+          "EventTag": "A_Type_On"
+        },
+        {
+          "EventTime": 4.055100917816162,
+          "EventType": "Notify",
+          "EventTag": "A_Type_Off"
         }
       ]
     },
@@ -295,22 +450,32 @@
         {
           "EventTime": 0.5401559472084045,
           "EventType": "Notify",
-          "EventTag": "AttackStart"
+          "EventTag": "ParrySign"
+        },
+        {
+          "EventTime": 1.143859624862671,
+          "EventType": "Notify",
+          "EventTag": "TargetLockOn"
         },
         {
           "EventTime": 1.6204677820205688,
           "EventType": "Notify",
-          "EventTag": "AttackColliderOn_Weapon"
-        },
-        {
-          "EventTime": 2.0799999237060547,
-          "EventType": "Notify",
-          "EventTag": "AttackColliderOff_Weapon"
+          "EventTag": "A_Type_On"
         },
         {
           "EventTime": 2.054710865020752,
           "EventType": "Notify",
           "EventTag": "CamShake"
+        },
+        {
+          "EventTime": 2.0799999237060547,
+          "EventType": "Notify",
+          "EventTag": "A_Type_Off"
+        },
+        {
+          "EventTime": 2.7431447505950928,
+          "EventType": "Notify",
+          "EventTag": "TargetLockOff"
         }
       ]
     },
@@ -320,7 +485,27 @@
         {
           "EventTime": 1.4934372901916504,
           "EventType": "Notify",
-          "EventTag": "AttackStart"
+          "EventTag": "ParrySign"
+        },
+        {
+          "EventTime": 1.5348155498504639,
+          "EventType": "Notify",
+          "EventTag": "TargetLockOn"
+        },
+        {
+          "EventTime": 1.8910980224609375,
+          "EventType": "Notify",
+          "EventTag": "A_Type_On"
+        },
+        {
+          "EventTime": 2.7482781410217285,
+          "EventType": "Notify",
+          "EventTag": "TargetLockOff"
+        },
+        {
+          "EventTime": 2.2887587547302246,
+          "EventType": "Notify",
+          "EventTag": "A_Type_Off"
         }
       ]
     },
@@ -328,14 +513,24 @@
       "ClipTag": "Monster_IsoldetheDefiler_Ani_Attack_05",
       "Events": [
         {
-          "EventTime": 0.7599740028381348,
-          "EventType": "Notify",
-          "EventTag": "AttackStart"
-        },
-        {
           "EventTime": 0.7543859481811523,
           "EventType": "Notify",
           "EventTag": "TargetLockOn"
+        },
+        {
+          "EventTime": 0.7599740028381348,
+          "EventType": "Notify",
+          "EventTag": "ParrySign"
+        },
+        {
+          "EventTime": 0.9276152849197388,
+          "EventType": "Notify",
+          "EventTag": "A_Type_On"
+        },
+        {
+          "EventTime": 1.190000057220459,
+          "EventType": "Notify",
+          "EventTag": "A_Type_Off"
         },
         {
           "EventTime": 1.590000033378601,
@@ -350,17 +545,17 @@
         {
           "EventTime": 0.6361273527145386,
           "EventType": "Notify",
-          "EventTag": "AttackStart"
+          "EventTag": "EvadeSign"
         },
         {
           "EventTime": 2.052945375442505,
           "EventType": "Notify",
-          "EventTag": "AttackStart"
+          "EventTag": "EvadeSign"
         },
         {
           "EventTime": 3.319999933242798,
           "EventType": "Notify",
-          "EventTag": "AttackStart"
+          "EventTag": "EvadeSign"
         }
       ]
     },
@@ -370,27 +565,27 @@
         {
           "EventTime": 2.2923977375030518,
           "EventType": "Notify",
-          "EventTag": "AttackStart"
+          "EventTag": "ParrySign"
         },
         {
           "EventTime": 2.885964870452881,
           "EventType": "Notify",
-          "EventTag": "AttackStart"
+          "EventTag": "ParrySign"
         },
         {
           "EventTime": 4.093567371368408,
           "EventType": "Notify",
-          "EventTag": "AttackStart"
+          "EventTag": "ParrySign"
         },
         {
           "EventTime": 4.80994176864624,
           "EventType": "Notify",
-          "EventTag": "AttackStart"
+          "EventTag": "ParrySign"
         },
         {
           "EventTime": 5.8947367668151855,
           "EventType": "Notify",
-          "EventTag": "AttackStart"
+          "EventTag": "ParrySign"
         }
       ]
     },
