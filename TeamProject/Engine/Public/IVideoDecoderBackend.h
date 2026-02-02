@@ -9,6 +9,7 @@ public:
     virtual ~IVideoDecoderBackend() = default;
 public:
     virtual _bool Open(const string& filePath)  PURE;
+    virtual _bool ReOpen()                      PURE;
     virtual void Close()                        PURE;
     virtual void SetLoop(_bool loop)            PURE;
     virtual _bool DecodeNextRGBA(
@@ -17,6 +18,6 @@ public:
         _uint& outHeight,
         _uint64& outPts,
         _bool& outEnded)                        PURE;
-    virtual void SeekSeconds(_float seconds)    PURE;
+    virtual _bool SeekSeconds(_float seconds)    PURE;
 };
 NS_END

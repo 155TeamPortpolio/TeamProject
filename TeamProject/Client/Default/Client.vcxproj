@@ -402,7 +402,6 @@
     <ClInclude Include="..\public\Room_Lottery.h" />
     <ClInclude Include="..\public\Room_Noodle.h" />
     <ClInclude Include="..\public\SilverAnbi.h" />
-    <ClInclude Include="..\Public\TestDecoder.h" />
     <ClInclude Include="..\Public\TestVideo.h" />
     <ClInclude Include="..\public\ThugPoacher.h" />
     <ClInclude Include="..\public\ThugPoacher_Arrow.h" />
@@ -770,7 +769,6 @@
     <ClCompile Include="..\private\Room_Lottery.cpp" />
     <ClCompile Include="..\private\Room_Noodle.cpp" />
     <ClCompile Include="..\private\SilverAnbi.cpp" />
-    <ClCompile Include="..\Private\TestDecoder.cpp" />
     <ClCompile Include="..\Private\TestVideo.cpp" />
     <ClCompile Include="..\private\ThugPoacher.cpp" />
     <ClCompile Include="..\private\ThugPoacher_Arrow.cpp" />

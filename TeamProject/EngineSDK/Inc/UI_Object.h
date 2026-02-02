@@ -95,6 +95,7 @@ public:
 	_float2 Get_RectTopLeft_Screen();
 	_float2 Get_CombinedScale() { return m_vCombinedScale; }
 	_float2 Get_AnchorOffset() { return m_vAnchorOffset; }
+	Vector2 Get_Scale() const { return m_vScale; }
 
 	// Screen anchors
 	_float2 LT(_float x = 0.f, _float y = 0.f) { return Get_Point_Screen({ 0.f,   0.f }, x, y); }

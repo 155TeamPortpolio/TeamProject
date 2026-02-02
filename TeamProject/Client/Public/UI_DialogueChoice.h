@@ -55,6 +55,8 @@ private:
 
 	_uint				m_iNumChoices = {};
 	ChoiceDesc			m_pChoiceDesc[3] = {};
+	
+	_bool				m_isChosen = {};
 
 private:
 	void Cache_Children();

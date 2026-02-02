@@ -60,8 +60,7 @@ void CAnimator3DEX::Update_Animation(_float dt)
 
 HRESULT CAnimator3DEX::Link_MetaData(const string& LevelKey, const string& MetaClipKey)
 {
-	string metaPath = "../../Resources/Data/Meta/" + MetaClipKey;
-	ANIM_META MetaData = Helper::LoadJson<ANIM_META>(metaPath);
+	ANIM_META MetaData = Helper::LoadJson<ANIM_META>(ResourceManager()->Get_ResourcePath(MetaClipKey));
 
 	ANIMATION_META Meta;
 

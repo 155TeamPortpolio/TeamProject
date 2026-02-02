@@ -16,10 +16,11 @@ public:
 
 public:
     bool Open(const std::string& filePath) override;
+    bool ReOpen() override;
     void Close() override;
 
     void SetLoop(bool loop) override;
-    void SeekSeconds(float seconds) override;
+    _bool SeekSeconds(float seconds) override;
 
     bool DecodeNextRGBA(
         std::vector<std::uint8_t>& outRgba,
@@ -37,7 +38,7 @@ private:
 
 private:
     Microsoft::WRL::ComPtr<IMFSourceReader> m_reader;
-
+    string m_lastFilePath = {};
     bool m_isOpened = false;
     bool m_isLoop = false;
 
