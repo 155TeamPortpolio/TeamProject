@@ -17,6 +17,6 @@ public:
         _uint& outHeight,
         _uint64& outPts,
         _bool& outEnded)                        PURE;
-    virtual void SeekSeconds(_float seconds)    PURE;
+    virtual _bool SeekSeconds(_float seconds)    PURE;
 };
 NS_END

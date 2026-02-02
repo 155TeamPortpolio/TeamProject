@@ -19,7 +19,7 @@ public:
     void Close() override;
 
     void SetLoop(bool loop) override;
-    void SeekSeconds(float seconds) override;
+    _bool SeekSeconds(float seconds) override;
 
     bool DecodeNextRGBA(
         std::vector<std::uint8_t>& outRgba,

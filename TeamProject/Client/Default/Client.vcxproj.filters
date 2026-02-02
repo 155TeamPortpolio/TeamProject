@@ -931,12 +931,6 @@
     <Filter Include="03. Utility\10. VideoDecoder">
       <UniqueIdentifier>{842cbfe9-dc9e-47db-9dfe-d0e21c570f36}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03. Utility\10. VideoDecoder\TestDecoder">
-      <UniqueIdentifier>{ba575301-2bcb-4856-9d5a-de24b105c7b3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03. Utility\10. VideoDecoder\VideoPanel">
-      <UniqueIdentifier>{cda206a5-0c6c-4143-93c8-4bffe9105136}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\Object\TestUI">
       <UniqueIdentifier>{b91a27c1-4713-4ef5-94df-7ee719c4d4ed}</UniqueIdentifier>
     </Filter>
@@ -1002,10 +996,9 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Enemy\Normal\EtherClayMore\State\Parry">
       <UniqueIdentifier>{3654afe4-97aa-4a58-9ad0-1c8974d7bd98}</UniqueIdentifier>
-   </Filter>
+    </Filter>
     <Filter Include="02. GameObject\UI\02. 3D\Plane\Gangta">
       <UniqueIdentifier>{93712aaf-87f8-46e7-8d80-8d430b09aa6f}</UniqueIdentifier>
-
     </Filter>
     <Filter Include="02. GameObject\UI\01. 2D\BackButton">
       <UniqueIdentifier>{97c4cc33-5194-4f2e-954a-7234d9714dbb}</UniqueIdentifier>
@@ -1033,9 +1026,12 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Gacha\GachaProps\GachaStage\GachaStageScreen">
       <UniqueIdentifier>{b8d737d6-f5b7-45c0-a88f-8d51ef7e3b49}</UniqueIdentifier>
-          </Filter>
+    </Filter>
     <Filter Include="02. GameObject\UI\01. 2D\Lottery\ResultBanner">
       <UniqueIdentifier>{e04f041f-17af-4539-a63b-f9ab0f594352}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\11. Gui_Panel\01. VideoPanel">
+      <UniqueIdentifier>{cda206a5-0c6c-4143-93c8-4bffe9105136}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1912,11 +1908,8 @@
     <ClInclude Include="..\public\SilverAnbi.h">
       <Filter>02. GameObject\Object\Npc\Service\SilverAnbi</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\TestDecoder.h">
-      <Filter>03. Utility\10. VideoDecoder\TestDecoder</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\VideoPanel.h">
-      <Filter>03. Utility\10. VideoDecoder\VideoPanel</Filter>
+      <Filter>03. Utility\11. Gui_Panel\01. VideoPanel</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\TestVideo.h">
       <Filter>02. GameObject\Object\TestUI</Filter>
@@ -1992,7 +1985,7 @@
     </ClInclude>
     <ClInclude Include="..\public\GachaStageScreen.h">
       <Filter>02. GameObject\Object\Gacha\GachaProps\GachaStage\GachaStageScreen</Filter>
-          </ClInclude>
+    </ClInclude>
     <ClInclude Include="..\Public\UI_IconButton.h">
       <Filter>02. GameObject\UI\01. 2D\IconButton</Filter>
     </ClInclude>
@@ -2007,7 +2000,7 @@
     </ClInclude>
     <ClInclude Include="..\Public\UI_LotteryResultBanner.h">
       <Filter>02. GameObject\UI\01. 2D\Lottery\ResultBanner</Filter>
-  </ClInclude>
+    </ClInclude>
     <ClInclude Include="..\public\Claymore_Parried.h">
       <Filter>02. GameObject\Object\Enemy\Normal\EtherClayMore\State\Parry</Filter>
     </ClInclude>
@@ -2850,11 +2843,8 @@
     <ClCompile Include="..\private\SilverAnbi.cpp">
       <Filter>02. GameObject\Object\Npc\Service\SilverAnbi</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\TestDecoder.cpp">
-      <Filter>03. Utility\10. VideoDecoder\TestDecoder</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\VideoPanel.cpp">
-      <Filter>03. Utility\10. VideoDecoder\VideoPanel</Filter>
+      <Filter>03. Utility\11. Gui_Panel\01. VideoPanel</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\TestVideo.cpp">
       <Filter>02. GameObject\Object\TestUI</Filter>
@@ -2943,7 +2933,7 @@
     </ClCompile>
     <ClCompile Include="..\private\GachaStageScreen.cpp">
       <Filter>02. GameObject\Object\Gacha\GachaProps\GachaStage\GachaStageScreen</Filter>
-          </ClCompile>
+    </ClCompile>
     <ClCompile Include="..\Private\UI_LotteryResultBanner.cpp">
       <Filter>02. GameObject\UI\01. 2D\Lottery\ResultBanner</Filter>
     </ClCompile>
