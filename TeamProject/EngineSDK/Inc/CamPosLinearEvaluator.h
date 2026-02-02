@@ -19,7 +19,6 @@ private:
 
 public:
 	static CCamPosLinearEvaluator* Create() { return new CCamPosLinearEvaluator(); }
-	virtual void Free() override { __super::Free(); }
 };
 
 NS_END
