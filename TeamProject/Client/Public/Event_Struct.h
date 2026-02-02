@@ -20,11 +20,10 @@ typedef struct tagUIPlayerStatusDesc {
 	// EX 관련 값 추가 필요
 }UI_PLAYER_STATUS_DESC;
 
-/* UI로 전달되는 캐릭터 순서를 정의하는 구조체 */
-typedef struct tagUICharacterOrder {
-	_uint				iCount = {};
-	array<CHARACTER, 3>	characters = {};
-}UI_CHARACTER_ORDER;
+/* UI로 전달되는 배틀 플레이어 초기 정보 구조체 : player 몇 명인지 */
+typedef struct tagUIPlayerInitDesc {
+	_uint			iCount = {};
+}UI_PLAYER_INIT_DESC;
 #pragma endregion
 
 #pragma region BattleHUD_Action
