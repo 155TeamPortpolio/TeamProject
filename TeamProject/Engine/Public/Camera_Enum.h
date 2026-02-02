@@ -3,7 +3,7 @@
 NS_BEGIN(Engine)
 enum class CamPosInterp
 {
-	Linear, CatmullRom, Centripetal, BSpline, Hermite, Hold, OrbitArc
+	Linear, CatmullRom, Centripetal, BSpline, Hermite, Hold, OrbitArc, OrbitSpin
 };
 enum class CamRotInterp
 {

@@ -28,13 +28,13 @@ void Corin::Awake()
 	__super::Awake();
 
 	const string modelKey = "Corin.model";
-	const string matKey = "Corin.mat";
-	const string metaKey = "Avatar_Female_Size01_Corin_Meta.json";
+	const string matKey   = "Corin.mat";
+	const string metaKey  = "Avatar_Female_Size01_Corin_Meta.json";
 	const string idleClip = "Avatar_Female_Size01_Corin_Ani_QuestStart";
 
-	RES->Add_ResourcePath(modelKey, "../bin/Resources/Corin/Corin.model");
-	RES->Add_ResourcePath(matKey, "../bin/Resources/Corin/Corin.mat");
-	RES->Add_ResourcePath(metaKey, "../bin/Resources/Corin/Avatar_Female_Size01_Corin_Meta.json");
+	RES->Add_ResourcePath(modelKey, "../bin/Resources/Global/BattleCharacter/Corin/Corin.model");
+	RES->Add_ResourcePath(matKey,   "../bin/Resources/Global/BattleCharacter/Corin/Corin.mat");
+	RES->Add_ResourcePath(metaKey,  "Avatar_Female_Size01_Corin_Meta.json");
 
 	Get_Component<CSkeletalModel>()->Link_Model(G_GlobalLevelKey, modelKey);
 	Get_Component<CMaterial>()->Link_Material(G_GlobalLevelKey, matKey);
