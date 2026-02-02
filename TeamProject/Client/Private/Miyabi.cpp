@@ -149,6 +149,18 @@ void CMiyabi::Render_GUI()
 //	Model->Draw(pContext, idx);
 //}
 
+void CMiyabi::Increase_Frost(_uint iFrost)
+{
+	m_iFrost += iFrost;
+	m_iFrost = min(m_iFrost, MAX_FROST);
+}
+
+void CMiyabi::Decrease_Frost(_uint iFrost)
+{
+	m_iFrost -= iFrost;
+	m_iFrost = max(m_iFrost, 0.f);
+}
+
 void CMiyabi::Reset_State()
 {
 	m_pStateMachine->Set_Trigger("ResetState");
@@ -269,6 +281,7 @@ HRESULT CMiyabi::Initialize_StateMachine()
 
 HRESULT CMiyabi::Initialize_States()
 {
+	//m_pStateMachine->Register_State("Start", CMiyabiState_Start::Create());
 	m_pStateMachine->Register_State("Idle", CMiyabiState_Idle::Create());
 	m_pStateMachine->Register_State("Move", CMiyabiState_Move::Create());
 	m_pStateMachine->Register_State("Attack", CMiyabiState_Attack::Create());

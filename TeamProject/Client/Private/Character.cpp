@@ -626,7 +626,7 @@ void CCharacter::Update_Rotation(_float dt)
 {
     if (!m_bCanRotate) return;
 
-    _float fSpeed = 10.f;
+    _float fSpeed = 8.f;
     if (m_qCurrentRot.Dot(m_qTargetRot) > 0.99f)
     {
         m_pTransform->Set_Quaternion(m_qTargetRot);

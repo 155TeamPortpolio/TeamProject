@@ -1051,6 +1051,36 @@
     <Filter Include="02. GameObject\Object\Player\Character\03. Miyabi\State\Switch\SwitchIn\ParryAid">
       <UniqueIdentifier>{d03d57fc-20a6-409f-824d-63c9da2e17c6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\03. Miyabi\State\Hit">
+      <UniqueIdentifier>{566cce30-943c-47f0-9f16-2fa00b17d5df}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\03. Miyabi\State\Evade">
+      <UniqueIdentifier>{949b653c-c2ce-43e5-9cee-157aa92a9536}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\03. Miyabi\State\Start">
+      <UniqueIdentifier>{88d4988e-9e4a-492d-b43b-b916fe869a2c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\03. Miyabi\State\Evade\BackStep">
+      <UniqueIdentifier>{a59daa08-587e-4adc-b060-2550c68fde9f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\03. Miyabi\State\Evade\Dash">
+      <UniqueIdentifier>{789ca6cf-fcf2-41ea-9964-b8df9868fed4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\03. Miyabi\State\Attack\Assault">
+      <UniqueIdentifier>{5ae64fa1-8a49-42e7-ae55-aaea1e851701}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\03. Miyabi\State\Attack\Ex">
+      <UniqueIdentifier>{0af3f443-1274-426d-ac9b-9ba09debe8ce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\03. Miyabi\State\Attack\Rush">
+      <UniqueIdentifier>{e7186920-859d-43d9-876f-01e1b1b231cf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\03. Miyabi\State\Attack\Ultimate">
+      <UniqueIdentifier>{410c597b-c7a4-4407-8c4c-ea65a3c1a478}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\03. Miyabi\State\Attack\Counter">
+      <UniqueIdentifier>{d9ac1b8b-2607-430f-88a4-8175f6bdcf55}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -2037,6 +2067,21 @@
     <ClInclude Include="..\Public\MiyabiState_SwitchInAttack.h">
       <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Switch\SwitchIn\Attack</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\MiyabiState_Start.h">
+      <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Start</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MiyabiState_Evade.h">
+      <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Evade</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MiyabiState_Dash.h">
+      <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Evade\Dash</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MiyabiState_BackStep.h">
+      <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Evade\BackStep</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MiyabiState_Hit.h">
+      <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Hit</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2984,6 +3029,21 @@
     </ClCompile>
     <ClCompile Include="..\Private\MiyabiState_SwitchInAttack.cpp">
       <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Switch\SwitchIn\Attack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MiyabiState_Start.cpp">
+      <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Start</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MiyabiState_Evade.cpp">
+      <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Evade</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MiyabiState_Dash.cpp">
+      <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Evade\Dash</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MiyabiState_BackStep.cpp">
+      <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Evade\BackStep</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MiyabiState_Hit.cpp">
+      <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Hit</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
