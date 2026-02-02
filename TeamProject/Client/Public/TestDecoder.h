@@ -41,10 +41,10 @@ public:
         m_isLoop = loop;
     }
 
-    void SeekSeconds(float seconds) override
+    _bool SeekSeconds(float seconds) override
     {
         if (!m_isOpened)
-            return;
+            return false;
 
         if (seconds < 0.f)
             seconds = 0.f;

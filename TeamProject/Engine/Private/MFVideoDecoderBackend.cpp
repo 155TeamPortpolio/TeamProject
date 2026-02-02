@@ -298,26 +298,27 @@ bool CMFVideoDecoderBackend::QuerySizeFromCurrentType()
     return (m_width > 0 && m_height > 0);
 }
 
-void CMFVideoDecoderBackend::SeekSeconds(float seconds)
+bool CMFVideoDecoderBackend::SeekSeconds(float seconds)
 {
     if (!m_isOpened || !m_reader)
-        return;
+        return false;
 
     if (seconds < 0.0f)
         seconds = 0.0f;
 
-    // seek 이후 PTS 기준점은 다시 잡는 게 안전
     m_firstPtsMs = UINT64_MAX;
 
-    LONGLONG targetHns = (LONGLONG)(seconds * 10000000.0f); // sec -> 100ns
+    const LONGLONG targetHns = (LONGLONG)(seconds * 10000000.0f);
 
     PROPVARIANT positionVar;
     PropVariantInit(&positionVar);
     positionVar.vt = VT_I8;
     positionVar.hVal.QuadPart = targetHns;
 
-    m_reader->SetCurrentPosition(GUID_NULL, positionVar);
+    const HRESULT hr = m_reader->SetCurrentPosition(GUID_NULL, positionVar);
     PropVariantClear(&positionVar);
+
+    return SUCCEEDED(hr);
 }
 
 bool CMFVideoDecoderBackend::DecodeNextRGBA(

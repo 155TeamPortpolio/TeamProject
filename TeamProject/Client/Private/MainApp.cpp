@@ -100,6 +100,7 @@
 #include "UI_AtlasSprite.h"
 #include "UI_DamageText.h"
 #include "UI_Gangta.h"
+#include "VideoPanel.h"
 
 CMainApp::CMainApp()
 {
@@ -143,10 +144,10 @@ HRESULT CMainApp::Initialize()
 
 	#ifdef  _USING_GUI
 		ImGui::SetCurrentContext(m_pGameInstance->Get_GUISystem()->GetEngineImGuiContext());
+		//GUISystem()->Register_Panel(CVideoPanel::Create(GUISystem()->Get_Context()));
 	#endif //  _USING_GUI
 
 	m_cursorController.Initialize();
-
 
 	return S_OK;
 }
@@ -184,6 +185,8 @@ void CMainApp::Set_Levels()
 	LevelManager()->Set_LoadingLevel("Loading_Level");
 	m_pGameInstance->Notify_LevelSet(); 
 	m_pGameInstance->Get_LevelMgr()->Request_ChangeLevel("Scott_Level", true);
+
+
 } 
 
 CMainApp* CMainApp::Create()
