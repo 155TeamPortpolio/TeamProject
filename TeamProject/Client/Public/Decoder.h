@@ -12,7 +12,7 @@ public:
     bool Open(const string& filePath) override;
     void Close() override;
     void SetLoop(bool loop) override;
-    void SeekSeconds(float seconds) override;
+    _bool SeekSeconds(float seconds) override;
     bool DecodeNextRGBA(
         vector<uint8_t>& outRgba,
         _uint& outWidth,

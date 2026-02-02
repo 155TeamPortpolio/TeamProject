@@ -41,6 +41,14 @@ private:
     void DrawMaterialPane(float width, float height);
     int GetSelectedMeshMaterialIndex() const;
     void DrawDetailPane(float width, float height);
+    void DrawAddTexturePopup(MaterialInfo& mat);
+    void OpenAddTexturePopup_Default();
+    void OpenAddTexturePopup_Browse();
+    string MakeTextureKeyRelativeToMaterial(const string& absolutePath) const;
+    void RegisterTexturePathForKey(const string& textureKey, const string& absolutePath);
+    int EnsureTextureType(MaterialInfo& mat, Engine::TEXTURE_TYPE type);
+    int AddTextureEntry(MaterialInfo& mat, int typeIndex, const string& textureKey);
+    bool IsTextureKeyExistsInType(const MaterialInfo& mat, Engine::TEXTURE_TYPE type, const string& textureKey) const;
     void DrawSplitter(const char* id, bool isVertical, float& size, float minSize, float maxSize);
 
 private:
@@ -113,6 +121,12 @@ private:
 
     bool m_RequestScrollToMaterial = false;
     int  m_ScrollToMaterialIndex = -1;
+    // Add Texture UI state
+    bool m_OpenAddTexPopup = false;
+    int  m_AddTexTypeId = (int)Engine::TEXTURE_TYPE::DIFFUSE;
+    char m_AddTexKeyBuf[260] = "";
+    bool m_AddTexAutoSelect = true;          // 만들자마자 선택
+    bool m_AddTexAllowDuplicateKey = false;  // 기본 false
 
 private:
     // ---- Selection ----

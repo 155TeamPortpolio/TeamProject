@@ -1313,11 +1313,13 @@ int CAdjuster::GetSelectedMeshMaterialIndex() const
     const MeshView& meshView = m_Combined.meshes[(size_t)m_SelectedMesh];
     return meshView.materialIndex;
 }
-
 void CAdjuster::DrawDetailPane(float width, float height)
 {
     ImGui::BeginChild("##DetailPane", ImVec2(width, height), true);
     ImGui::SeparatorText("Detail");
+
+    const float total = ImGui::GetContentRegionAvail().x;
+    const float leftWidth = max(360.0f, total * 0.58f);
 
     if (!m_Combined.loadedMaterial || m_Combined.materialFile.materials.empty())
     {
@@ -1331,7 +1333,7 @@ void CAdjuster::DrawDetailPane(float width, float height)
 
     MaterialInfo& mat = m_Combined.materialFile.materials[m_SelectedMaterial];
 
-    // Material header edit
+    // ---- Material header ----
     ImGui::Text("Material Index: %d", (int)m_SelectedMaterial);
     ImGui::InputText("Material Key", mat.header.materialDataKey, IM_ARRAYSIZE(mat.header.materialDataKey));
     ImGui::InputText("Shader Key", mat.header.ShaderKey, IM_ARRAYSIZE(mat.header.ShaderKey));
@@ -1339,91 +1341,81 @@ void CAdjuster::DrawDetailPane(float width, float height)
 
     ImGui::Separator();
 
-    // Mapping relationship view (material -> mesh list)
-    if (m_Combined.loadedModel && (int)m_SelectedMaterial < (int)m_MappingCache.meshesByMaterial.size())
-    {
-        const int matIndex = (int)m_SelectedMaterial;
-        const auto& meshList = m_MappingCache.meshesByMaterial[(size_t)matIndex];
-
-        ImGui::SeparatorText("Mapped Meshes");
-        ImGui::Text("Use Count: %d", (matIndex >= 0 && matIndex < (int)m_MappingCache.useCount.size())
-            ? m_MappingCache.useCount[(size_t)matIndex] : 0);
-
-        ImGui::BeginChild("##MappedMeshes", ImVec2(0, 120.0f), true);
-        if (meshList.empty())
-        {
-            ImGui::TextDisabled("No meshes mapped to this material.");
-        }
-        else
-        {
-            for (int meshIndex : meshList)
-            {
-                if (meshIndex < 0 || meshIndex >= (int)m_Combined.meshes.size())
-                    continue;
-
-                const bool isSelectedMesh = (m_SelectedMesh == meshIndex);
-                if (ImGui::Selectable(m_Combined.meshes[(size_t)meshIndex].meshName.c_str(), isSelectedMesh))
-                {
-                    m_SelectedMesh = meshIndex;
-                    RequestScrollToMesh(meshIndex);
-                }
-            }
-        }
-        ImGui::EndChild();
-
-        ImGui::Spacing();
-    }
-
-    // Texture section (기존 로직 유지)
-    ImGui::SetNextItemWidth(-1);
-    ImGui::InputTextWithHint("##texFilter", "Search texture key...", m_TexFilter, sizeof(m_TexFilter));
-    ImGui::Spacing();
-
-    const float total = ImGui::GetContentRegionAvail().x;
-    const float leftWidth = max(340.0f, total * 0.50f);
-
+    // ---- Left : Texture list ----
     ImGui::BeginChild("##TexListPane", ImVec2(leftWidth, 0), true);
     ImGui::SeparatorText("Textures");
 
+    // Toolbar row: Filter | Add | Browse | options
+    {
+        const float rowWidth = ImGui::GetContentRegionAvail().x;
+
+        // Filter
+        ImGui::SetNextItemWidth(rowWidth - 330.0f); // 버튼 영역 확보 (대충)
+        ImGui::InputTextWithHint("##texFilter", "Search texture key...", m_TexFilter, sizeof(m_TexFilter));
+
+        ImGui::SameLine();
+
+        if (ImGui::Button("Add", ImVec2(60.0f, 0.0f)))
+            OpenAddTexturePopup_Default();
+
+        ImGui::SameLine();
+
+        if (ImGui::Button("Browse...", ImVec2(90.0f, 0.0f)))
+            OpenAddTexturePopup_Browse();
+
+        ImGui::SameLine();
+        ImGui::Checkbox("Auto", &m_AddTexAutoSelect);
+
+        ImGui::SameLine();
+        ImGui::Checkbox("Dup", &m_AddTexAllowDuplicateKey);
+    }
+
+    DrawAddTexturePopup(mat);
+    ImGui::Separator();
+
+    // Types / textures
     for (size_t typeIdx = 0; typeIdx < mat.textureTypes.size(); ++typeIdx)
     {
         TextureFile& texFile = mat.textureTypes[typeIdx];
 
-        string typeName = ConvertToConstant((TEXTURE_TYPE)texFile.header.typeID);
-        string nodeLabel = typeName + "  (" + to_string(texFile.header.TextureCount) + ")##Type" + to_string(typeIdx);
+        const string typeName = ConvertToConstant((TEXTURE_TYPE)texFile.header.typeID);
+        const string nodeLabel = typeName + "  (" + to_string(texFile.header.TextureCount) + ")##Type" + to_string(typeIdx);
 
-        if (ImGui::TreeNode(nodeLabel.c_str()))
+        if (!ImGui::TreeNode(nodeLabel.c_str()))
+            continue;
+
+        for (size_t texIdx = 0; texIdx < texFile.textures.size(); ++texIdx)
         {
-            for (size_t texIdx = 0; texIdx < texFile.textures.size(); ++texIdx)
+            TextureInfo& info = texFile.textures[texIdx];
+            const string texKey = FixedCharToString(info.header.TextureKey, IM_ARRAYSIZE(info.header.TextureKey));
+
+            if (m_TexFilter[0] != '\0')
             {
-                TextureInfo& info = texFile.textures[texIdx];
-                string texKey = FixedCharToString(info.header.TextureKey, IM_ARRAYSIZE(info.header.TextureKey));
-
-                if (m_TexFilter[0] != '\0')
-                {
-                    if (Helper::ToLower(texKey).find(Helper::ToLower(string(m_TexFilter))) == string::npos)
-                        continue;
-                }
-
-                bool isSelected = (m_SelectedType == typeIdx && m_SelectedTexture == texIdx);
-
-                ImGui::PushID((int)(typeIdx * 100000 + texIdx));
-                if (ImGui::Selectable(texKey.c_str(), isSelected))
-                {
-                    m_SelectedType = typeIdx;
-                    m_SelectedTexture = texIdx;
-                    UpdatePreviewTextureIfNeeded();
-                }
-                ImGui::PopID();
+                const string filterLower = Helper::ToLower(string(m_TexFilter));
+                if (Helper::ToLower(texKey).find(filterLower) == string::npos)
+                    continue;
             }
-            ImGui::TreePop();
+
+            const bool isSelected = (m_SelectedType == typeIdx && m_SelectedTexture == texIdx);
+
+            ImGui::PushID((int)(typeIdx * 100000 + texIdx));
+            if (ImGui::Selectable(texKey.c_str(), isSelected))
+            {
+                m_SelectedType = typeIdx;
+                m_SelectedTexture = texIdx;
+                UpdatePreviewTextureIfNeeded();
+            }
+            ImGui::PopID();
         }
+
+        ImGui::TreePop();
     }
 
     ImGui::EndChild();
 
     ImGui::SameLine();
 
+    // ---- Right : Preview / Edit ----
     ImGui::BeginChild("##TexDetailPane", ImVec2(0, 0), true);
     ImGui::SeparatorText("Preview / Edit");
 
@@ -1433,13 +1425,15 @@ void CAdjuster::DrawDetailPane(float width, float height)
         if (m_SelectedTexture < texFile.textures.size())
         {
             TextureInfo& tex = texFile.textures[m_SelectedTexture];
-            string texKey = FixedCharToString(tex.header.TextureKey, IM_ARRAYSIZE(tex.header.TextureKey));
+            const string texKey = FixedCharToString(tex.header.TextureKey, IM_ARRAYSIZE(tex.header.TextureKey));
 
             ImGui::Text("Selected: %s", texKey.c_str());
 
             UpdatePreviewTextureIfNeeded();
 
-            ImVec2 previewSize(320, 320);
+            // 프리뷰 크기 축소
+            const float previewSide = 256.0f; // 320 -> 256
+            ImVec2 previewSize(previewSide, previewSide);
 
             if (m_PreviewTex && m_PreviewTex->Get_SRV())
             {
@@ -1448,7 +1442,7 @@ void CAdjuster::DrawDetailPane(float width, float height)
             else
             {
                 ImGui::BeginChild("##NoPreview", previewSize, true);
-                ImGui::TextDisabled("No preview texture (load failed or SRV null).");
+                ImGui::TextDisabled("No preview texture.");
                 ImGui::EndChild();
             }
 
@@ -1473,11 +1467,10 @@ void CAdjuster::DrawDetailPane(float width, float height)
                 CopyToFixedChar(tex.header.TextureKey, IM_ARRAYSIZE(tex.header.TextureKey), string(m_TexRenameBuf));
                 RebuildMaterialCounts();
                 m_PreviewTexKey.clear();
-                UpdatePreviewTextureIfNeeded();
             }
 
             ImGui::SameLine();
-            if (ImGui::Button("Delete Texture"))
+            if (ImGui::Button("Delete"))
                 ImGui::OpenPopup("Confirm Delete Texture");
 
             if (ImGui::BeginPopupModal("Confirm Delete Texture", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
@@ -1489,12 +1482,10 @@ void CAdjuster::DrawDetailPane(float width, float height)
                 {
                     Texture_DeleteSelected();
                     TextureType_RemoveIfEmpty();
-
                     m_PreviewTexKey.clear();
-                    if (m_PreviewTex) Safe_Release(m_PreviewTex);
-
                     ImGui::CloseCurrentPopup();
                 }
+
                 ImGui::SameLine();
                 if (ImGui::Button("Cancel", ImVec2(120, 0)))
                     ImGui::CloseCurrentPopup();
@@ -1515,8 +1506,189 @@ void CAdjuster::DrawDetailPane(float width, float height)
     ImGui::EndChild();
     ImGui::EndChild();
 }
+void CAdjuster::DrawAddTexturePopup(MaterialInfo& mat)
+{
+    if (!ImGui::BeginPopupModal("##AddTexturePopup", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+        return;
 
-// -------------------- Constants --------------------
+    ImGui::TextUnformatted("Add Texture Entry");
+    ImGui::Separator();
+
+    Engine::TEXTURE_TYPE selectedType = (Engine::TEXTURE_TYPE)m_AddTexTypeId;
+
+    ImGui::TextUnformatted("Type");
+    ImGui::SetNextItemWidth(-1);
+    if (ImGui::BeginCombo("##AddTexType", ConvertToConstant(selectedType).c_str()))
+    {
+        for (Engine::TEXTURE_TYPE type : g_TextureTypeList)
+        {
+            const bool isSel = (type == selectedType);
+            const string label = ConvertToConstant(type);
+            if (ImGui::Selectable(label.c_str(), isSel))
+                m_AddTexTypeId = (int)type;
+            if (isSel) ImGui::SetItemDefaultFocus();
+        }
+        ImGui::EndCombo();
+    }
+
+    ImGui::Spacing();
+    ImGui::TextUnformatted("TextureKey");
+    ImGui::SetNextItemWidth(-1);
+    ImGui::InputTextWithHint("##AddTexKey", "ex) T_MyDiffuse.dds", m_AddTexKeyBuf, sizeof(m_AddTexKeyBuf));
+
+    const string newKey = string(m_AddTexKeyBuf);
+    const bool isEmptyKey = newKey.empty();
+
+    const bool isDupInType = (!isEmptyKey)
+        ? IsTextureKeyExistsInType(mat, (Engine::TEXTURE_TYPE)m_AddTexTypeId, newKey)
+        : false;
+
+    const bool canCreate = (!isEmptyKey && (m_AddTexAllowDuplicateKey || !isDupInType));
+
+    if (isEmptyKey)
+        ImGui::TextDisabled("Key is empty.");
+    else if (isDupInType && !m_AddTexAllowDuplicateKey)
+        ImGui::TextDisabled("Duplicate key in same type.");
+
+    ImGui::Separator();
+
+    // 버튼 라인
+    if (!canCreate) ImGui::BeginDisabled(true);
+    if (ImGui::Button("Create", ImVec2(120, 0)))
+    {
+        const int createdTypeIndex = EnsureTextureType(mat, (Engine::TEXTURE_TYPE)m_AddTexTypeId);
+        const int createdTexIndex = AddTextureEntry(mat, createdTypeIndex, newKey);
+
+        RebuildMaterialCounts();
+        m_PreviewTexKey.clear();
+
+        if (m_AddTexAutoSelect)
+        {
+            m_SelectedType = (size_t)createdTypeIndex;
+            m_SelectedTexture = (size_t)createdTexIndex;
+            UpdatePreviewTextureIfNeeded();
+        }
+
+        memset(m_AddTexKeyBuf, 0, sizeof(m_AddTexKeyBuf));
+        ImGui::CloseCurrentPopup();
+    }
+    if (!canCreate) ImGui::EndDisabled();
+
+    ImGui::SameLine();
+    if (ImGui::Button("Cancel", ImVec2(120, 0)))
+        ImGui::CloseCurrentPopup();
+
+    ImGui::EndPopup();
+}
+
+void CAdjuster::OpenAddTexturePopup_Default()
+{
+    // 기본: 키 입력만 하게
+    if (m_AddTexKeyBuf[0] == '\0')
+        CopyToFixedChar(m_AddTexKeyBuf, sizeof(m_AddTexKeyBuf), "T_");
+
+    ImGui::OpenPopup("##AddTexturePopup");
+}
+
+void CAdjuster::OpenAddTexturePopup_Browse()
+{
+    // 파일 선택 -> 키 자동 세팅
+    const string picked = Helper::OpenFile_Dialogue(); // 네 기존 함수
+    if (!picked.empty())
+    {
+        const string relKey = MakeTextureKeyRelativeToMaterial(picked);
+        CopyToFixedChar(m_AddTexKeyBuf, sizeof(m_AddTexKeyBuf), relKey);
+
+        RegisterTexturePathForKey(relKey, picked);
+        ImGui::OpenPopup("##AddTexturePopup");
+    }
+}
+
+string CAdjuster::MakeTextureKeyRelativeToMaterial(const string& absolutePath) const
+{
+    if (absolutePath.empty())
+        return {};
+
+    filesystem::path pickedPath = filesystem::path(absolutePath);
+
+    // materialPath가 있으면 그 폴더 기준 상대경로를 우선
+    if (!m_Combined.materialPath.empty())
+    {
+        filesystem::path matDir = filesystem::path(m_Combined.materialPath).parent_path();
+
+        std::error_code err;
+        filesystem::path rel = filesystem::relative(pickedPath, matDir, err);
+        if (!err)
+        {
+            // 상대경로를 key로 (구분자는 '/'로 통일 추천)
+            string relStr = rel.generic_string();
+            return relStr;
+        }
+    }
+
+    // fallback: 파일명만
+    return pickedPath.filename().string();
+}
+
+void CAdjuster::RegisterTexturePathForKey(const string& textureKey, const string& absolutePath)
+{
+    if (textureKey.empty() || absolutePath.empty())
+        return;
+
+    ResourceManager()->Add_ResourcePath(textureKey, absolutePath);
+}
+
+int CAdjuster::EnsureTextureType(MaterialInfo& mat, Engine::TEXTURE_TYPE type)
+{
+    const int typeId = (int)type;
+
+    for (int typeIndex = 0; typeIndex < (int)mat.textureTypes.size(); ++typeIndex)
+    {
+        TextureFile& texFile = mat.textureTypes[(size_t)typeIndex];
+        if ((int)texFile.header.typeID == typeId)
+            return typeIndex;
+    }
+
+    TextureFile newType = {};
+    newType.header.typeID = (uint32_t)typeId;
+    newType.header.TextureCount = 0;
+
+    mat.textureTypes.push_back(newType);
+    return (int)mat.textureTypes.size() - 1;
+}
+int CAdjuster::AddTextureEntry(MaterialInfo& mat, int typeIndex, const string& textureKey)
+{
+    if (typeIndex < 0 || typeIndex >= (int)mat.textureTypes.size())
+        return -1;
+
+    TextureFile& texFile = mat.textureTypes[(size_t)typeIndex];
+
+    TextureInfo newTex = {};
+    CopyToFixedChar(newTex.header.TextureKey, IM_ARRAYSIZE(newTex.header.TextureKey), textureKey);
+
+    texFile.textures.push_back(newTex);
+    return (int)texFile.textures.size() - 1;
+}
+
+bool CAdjuster::IsTextureKeyExistsInType(const MaterialInfo& mat, Engine::TEXTURE_TYPE type, const string& textureKey) const
+{
+    const int typeId = (int)type;
+
+    for (const TextureFile& texFile : mat.textureTypes)
+    {
+        if ((int)texFile.header.typeID != typeId)
+            continue;
+
+        for (const TextureInfo& tex : texFile.textures)
+        {
+            const string key = FixedCharToString(tex.header.TextureKey, IM_ARRAYSIZE(tex.header.TextureKey));
+            if (key == textureKey)
+                return true;
+        }
+        return false;
+    }
+    return false;
+}
 
 string CAdjuster::ConvertToConstant(TEXTURE_TYPE type)
 {

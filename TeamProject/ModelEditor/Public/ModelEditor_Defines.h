@@ -93,3 +93,21 @@ struct CombinedAsset
     bool loadedMaterial = false;
     bool reverseMeshOrder = false; // "역순" 필요하면 true
 };
+
+static const Engine::TEXTURE_TYPE g_TextureTypeList[] =
+{
+    Engine::TEXTURE_TYPE::DIFFUSE,
+    Engine::TEXTURE_TYPE::SPECULAR,
+    Engine::TEXTURE_TYPE::AMBIENT,
+    Engine::TEXTURE_TYPE::EMISSIVE,
+    Engine::TEXTURE_TYPE::NORMALS,
+    Engine::TEXTURE_TYPE::OPACITY,
+    Engine::TEXTURE_TYPE::NOISE,
+    Engine::TEXTURE_TYPE::DISSOLVE,
+    Engine::TEXTURE_TYPE::DISTORTION,
+    Engine::TEXTURE_TYPE::ALPHA_MASK,
+    Engine::TEXTURE_TYPE::BASE_COLOR,
+    Engine::TEXTURE_TYPE::METALNESS,
+    Engine::TEXTURE_TYPE::AMBIENT_OCCLUSION,
+    Engine::TEXTURE_TYPE::GLTF_METALLIC_ROUGHNESS,
+};
