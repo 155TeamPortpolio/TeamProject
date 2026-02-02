@@ -602,6 +602,7 @@ _bool CCharacter::Is_Active_AttackCollider(const string& strName)
 
 void CCharacter::Take_Damage(DAMAGE_TYPE eType, _float fDamage)
 {
+    if (Is_Invincible()) return;
     {
         _int damage = Helper::Get_Random_Int(1000.f, 10000.f);
 
@@ -613,9 +614,6 @@ void CCharacter::Take_Damage(DAMAGE_TYPE eType, _float fDamage)
 
         UIDirector()->Request_DamageText(desc);
     }
-
-    if (Is_Invincible()) return;
-
     m_fCurrentHP -= fDamage;
     m_fCurrentHP = max(m_fCurrentHP, 0.f);
 

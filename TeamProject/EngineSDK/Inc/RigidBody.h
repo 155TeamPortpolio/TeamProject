@@ -49,6 +49,8 @@ public:
 	void	 Put_ToSleep();
 	_bool	 Is_Sleeping();
 
+	void	 Set_CCD(_bool bEnable);
+
 private:
 	void	 Update_RigidBody();
 	void	 Update_Inertia();
