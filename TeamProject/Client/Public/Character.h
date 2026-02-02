@@ -202,6 +202,7 @@ public: // 회피
 public: // 공격 & 패링 콜라이더
     HRESULT  Attach_AttackCollider(ATTACK_COLLIDER_DESC* pDesc);
     HRESULT  Attach_ParryCollider();
+    void     Active_ParryCollider(_bool bActive);
     void     Active_AttackCollider(const string& strName, _bool bActive);
     void     Begin_AttackCollider(const string& strName, const HitDesc& hitdesc);
     void     End_AttackCollider(const string& strName);
