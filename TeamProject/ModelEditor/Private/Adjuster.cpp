@@ -1467,7 +1467,6 @@ void CAdjuster::DrawDetailPane(float width, float height)
                 CopyToFixedChar(tex.header.TextureKey, IM_ARRAYSIZE(tex.header.TextureKey), string(m_TexRenameBuf));
                 RebuildMaterialCounts();
                 m_PreviewTexKey.clear();
-                UpdatePreviewTextureIfNeeded();
             }
 
             ImGui::SameLine();
@@ -1483,12 +1482,10 @@ void CAdjuster::DrawDetailPane(float width, float height)
                 {
                     Texture_DeleteSelected();
                     TextureType_RemoveIfEmpty();
-
                     m_PreviewTexKey.clear();
-                    if (m_PreviewTex) Safe_Release(m_PreviewTex);
-
                     ImGui::CloseCurrentPopup();
                 }
+
                 ImGui::SameLine();
                 if (ImGui::Button("Cancel", ImVec2(120, 0)))
                     ImGui::CloseCurrentPopup();
