@@ -295,6 +295,52 @@ PS_OUT_LIGHT PS_MAIN_POINT(PS_IN In)
     
     return Out;
 }
+PS_OUT_LIGHT PS_MAIN_SPOTLIGHT(PS_IN In)
+{
+    PS_OUT_LIGHT Out;
+
+    vector vNormalDesc = NormalTexture.Sample(DefaultSampler, In.vTexcoord);
+    vector vDepthDesc = DepthTexture.Sample(DefaultSampler, In.vTexcoord);
+    vector vDiffuse = DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
+    vector vMetalicDesc = MetalicTexture.Sample(DefaultSampler, In.vTexcoord);
+
+    float3 worldNormal = normalize(vNormalDesc.xyz * 2.f - 1.f);
+
+    float roughness = vMetalicDesc.r;
+    float metalic = vMetalicDesc.g;
+
+    float fViewZ = vDepthDesc.y * zFar;
+
+    vector vWorldPos;
+    vWorldPos.x = In.vTexcoord.x * 2.f - 1.f;
+    vWorldPos.y = In.vTexcoord.y * -2.f + 1.f;
+    vWorldPos.z = vDepthDesc.x;
+    vWorldPos.w = 1.f;
+
+    vWorldPos = vWorldPos * fViewZ;
+    vWorldPos = mul(vWorldPos, matProjectionInverse);
+    vWorldPos = mul(vWorldPos, matViewInverse);
+
+    float3 lightDir = normalize(vLightPos.xyz - vWorldPos.xyz);
+    float3 viewDir = normalize(vCamPosition.xyz - vWorldPos.xyz);
+
+    float NdotL = saturate(dot(worldNormal, lightDir));
+
+    float3 PBR = CalculateSpotLight(
+        vDiffuse.rgb, worldNormal, metalic, roughness, vWorldPos.xyz,
+        viewDir,
+        vLightDiffuse.rgb, fLightIntensity,
+        vLightPos.xyz, fLightRange,
+        normalize(vLightDir.xyz), // 라이트 전방
+        fInnerCos, fOuterCos,
+        1.0f // shadowFactor (일단 1)
+    );
+
+    Out.vLight = float4(PBR * vNormalDesc.a, vDiffuse.a);
+    Out.vLightInfo = float4(NdotL, 0.f, 0.f, 0.f);
+
+    return Out;
+}
 
 PS_OUT_RESULT PS_MAIN_COMBINED(PS_IN In)
 {
@@ -384,6 +430,16 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_POINT();
+    }
+
+    pass SPOTLIGHT
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_Additive_MaxAlpha, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_MAIN_SPOTLIGHT();
     }
 
     pass COMBINED
