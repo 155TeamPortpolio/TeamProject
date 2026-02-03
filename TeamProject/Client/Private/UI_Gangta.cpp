@@ -55,7 +55,7 @@ HRESULT CUI_Gangta::Initialize(INIT_DESC* arg)
 
 void CUI_Gangta::Update(_float dt)
 {
-   /// dt *= 0.05f;
+    dt *= 1.f;
 
     __super::Update(dt);
 

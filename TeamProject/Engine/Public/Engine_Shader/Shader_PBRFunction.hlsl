@@ -144,6 +144,49 @@ float3 view, float3 light, float3 lightcolor, float lightIntensity, float3 light
     return Luminance * shadowFactor;
 }
 
+float3 CalculateSpotLight(
+    float3 albedo, float3 normal, float metalic, float roughness, float3 worldPos,
+    float3 viewDir,
+    float3 lightcolor, float lightIntensity,
+    float3 lightposition, float lightrange,
+    float3 lightdirection, // 라이트 전방(라이트->씬) 방향
+    float innerCos, float outerCos,
+    float shadowFactor
+)
+{
+    // 픽셀 -> 라이트 (PBR 내부에서 쓰는 L)
+    float3 toLight = lightposition - worldPos;
+    float distance = length(toLight);
+    float safeDist = max(distance, 1e-6);
+    float3 L = toLight / safeDist;
+
+    // --- 거리 감쇠: 네 PointLight와 동일한 감쇠 모델 ---
+    float attenuation = 1.0 / (1.0 + 0.09 * distance + 0.032 * distance * distance);
+    float rangeFactor = max(0.0, 1.0 - (distance / max(lightrange, 1e-6)));
+    attenuation *= rangeFactor * rangeFactor;
+
+    // --- 스포트(콘) 감쇠 ---
+    float3 lightFwd = normalize(lightdirection); // 라이트 전방
+    float3 lightToPixel = (worldPos - lightposition) / safeDist; // 라이트->픽셀
+
+    float spotCos = dot(lightFwd, lightToPixel);
+
+    // innerCos > outerCos (half-angle cos) 가정
+    float denom = max(innerCos - outerCos, 1e-6);
+    float t = saturate((spotCos - outerCos) / denom);
+
+    float spotAtt = t * t; // 가장자리 부드럽게
+    attenuation *= spotAtt;
+
+    float3 luminance = CalculatePBR(
+        albedo, normal, metalic, roughness,
+        viewDir, L,
+        lightcolor, lightIntensity * attenuation
+    );
+
+    return luminance * shadowFactor;
+}
+
 
 /*
 === PBR 핵심 개념 요약 ===

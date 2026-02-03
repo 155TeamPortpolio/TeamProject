@@ -61,10 +61,10 @@ cbuffer LightBuffer : register(b9)
     vector vLightDiffuse;
     vector vLightAmbient;
     vector vLightSpecular;
-    float fLightRange;
-    float fLightIntensity;
-    int iLightSize;
-    float LightPadding;
+    float  fLightRange;
+    float  fLightIntensity;
+    float  fInnerCos;
+    float  fOuterCos;
 }
 
 cbuffer SSAOBuffer : register(b10)

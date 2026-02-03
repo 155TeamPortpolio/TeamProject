@@ -111,10 +111,10 @@ namespace MapTool {
 		string	TagDataFormat = "";
 		string	TagArea = "";
 
-		BATTLE_POINT_DATA			PlayerSpawnPoint = {};
+		vector<BATTLE_POINT_DATA>			PlayerSpawnPoint = {};
 		vector<BATTLE_POINT_SPAWNER_DATA>	Spawners;
-		vector<BATTLE_POINT_DATA>	Monsters;
-		vector<BATTLE_POINT_DATA>	EndPoints;
+		vector<BATTLE_POINT_DATA>			Monsters;
+		vector<BATTLE_POINT_DATA>			EndPoints;
 	}BATTLE_FIELD_DATA;
 	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(BATTLE_FIELD_DATA, TagDataFormat, TagArea, PlayerSpawnPoint, Spawners, Monsters, EndPoints);
 

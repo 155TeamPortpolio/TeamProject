@@ -49,25 +49,22 @@ HRESULT CThugPoacher::Initialize_Prototype()
 	Add_Component<CCharacterController>();
 
 	auto pResourceMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
-	pResourceMgr->Add_ResourcePath("ThugPoacher.mat", "../Bin/Resources/Model/skeletal/Enemy/ThugPoacher/ThugPoacher.mat");
-	pResourceMgr->Add_ResourcePath("ThugPoacher.model", "../Bin/Resources/Model/skeletal/Enemy/ThugPoacher/ThugPoacher.model");
-	pResourceMgr->Add_ResourcePath("ThugPoacher_Meta.json", "../Bin/Resources/Model/skeletal/Enemy/ThugPoacher/ThugPoacher_Meta.json");
+	pResourceMgr->Add_ResourcePath("ThugPoacher.mat", "../Bin/Resources/Zero/Enemy/ThugPoacher/ThugPoacher.mat");
+	pResourceMgr->Add_ResourcePath("ThugPoacher.model", "../Bin/Resources/Zero/Enemy/ThugPoacher/ThugPoacher.model");
+	//pResourceMgr->Add_ResourcePath("ThugPoacher_Meta.json", "../Bin/Resources/Model/skeletal/Enemy/ThugPoacher/ThugPoacher_Meta.json");
 	
-	
+	auto pModel = Get_Component<CSkeletalModel>();
+	pModel->Link_Model(G_GlobalLevelKey, "ThugPoacher.model");
+
+	auto pMaterial = Get_Component<CMaterial>();
+	pMaterial->Link_Material(G_GlobalLevelKey, "ThugPoacher.mat");
+
 	return S_OK;
 }
 
 HRESULT CThugPoacher::Initialize(INIT_DESC* pArg)
 {
 	__super::Initialize(pArg);
-
-	//m_pTransform->Scale({ 0.01f,0.01f,0.01f });
-
-	auto pModel = Get_Component<CSkeletalModel>();
-	pModel->Link_Model(G_GlobalLevelKey, "ThugPoacher.model");
-
-	auto pMaterial = Get_Component<CMaterial>();
-	pMaterial->Link_Material(G_GlobalLevelKey, "ThugPoacher.mat");
 
 	auto pAnimator = Get_Component<CAnimator3D>();
 	pAnimator->LinkAnimate_Model(G_GlobalLevelKey, "ThugPoacher.model");

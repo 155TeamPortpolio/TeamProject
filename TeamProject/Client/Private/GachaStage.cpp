@@ -16,11 +16,19 @@ CGachaStage::CGachaStage()
 }
 
 CGachaStage::CGachaStage(const CGachaStage& rhs)
-    :CGameObject(rhs), m_pResultDesc(rhs.m_pResultDesc), m_pIndex(rhs.m_pIndex)
+    :CGameObject(rhs), m_pResultDesc(rhs.m_pResultDesc)
 {
 }
 
-HRESULT CGachaStage::Initialize_Prototype(vector<WEAPON_DESC>* Desc, _int* Index)
+void CGachaStage::PlayStageSpin(_int index)
+{
+	if (m_iIndex == index) return;
+	m_iIndex = index;
+
+	Update_StageEnviroment(m_iIndex);
+}
+
+HRESULT CGachaStage::Initialize_Prototype(vector<WEAPON_DESC>* Desc)
 {
     if (FAILED(__super::Initialize_Prototype()))
         return E_FAIL;
@@ -32,7 +40,6 @@ HRESULT CGachaStage::Initialize_Prototype(vector<WEAPON_DESC>* Desc, _int* Index
 	pMaterial->Link_Material("Gacha_Level", "AvatarScreen1out.mat");
 
 	m_pResultDesc = Desc;
-	m_pIndex = Index;
 
     return S_OK;
 }
@@ -60,8 +67,6 @@ void CGachaStage::Update(_float dt)
 {
 	CObjectContainer* pObjectContainer = Get_Component<CObjectContainer>();
 	pObjectContainer->UpdateChild(dt);
-
-	Update_StageEnviroment();
 }
 
 void CGachaStage::Late_Update(_float dt)
@@ -96,7 +101,7 @@ void CGachaStage::Add_StageScreen()
 		.Position(_float3(0.f, 1.45f, -1.5f))
 		.Scale(_float3(2.f, 2.f, 2.f))
 		.Build("Result");
-	gachaResult->Get_Component<CTransform>()->Set_Quaternion(_vector4(-0.10, 0.80, -0.28, 0.52));
+	gachaResult->Get_Component<CTransform>()->Set_Quaternion(_vector4(-0.03, 0.96, -0.11, 0.24));
 
 	m_pResult = dynamic_cast<CGachaResult*>(gachaResult);
 
@@ -122,29 +127,27 @@ void CGachaStage::Set_Stage(GACHA_STAGE eStage)
 	}
 }
 
-void CGachaStage::Update_StageEnviroment()
+void CGachaStage::Update_StageEnviroment(_int index)
 {
-	if (m_iPreIndex == *m_pIndex) return;
-	m_iPreIndex = *m_pIndex;
-
-	WEAPON_DESC CurrentDesc = (*m_pResultDesc)[m_iPreIndex];
+	WEAPON_DESC CurrentDesc = (*m_pResultDesc)[index];
 	if (CurrentDesc.Grade == GachaGrade::S)
 	{
-		//m_pScreen->SetScreen(GACHA_STAGE::AVATAR, CurrentDesc.Grade);
-		//Set_Stage(GACHA_STAGE::AVATAR);
+		m_pScreen->SetScreen(GACHA_STAGE::AVATAR, CurrentDesc.Grade);
+		Set_Stage(GACHA_STAGE::AVATAR);
 	}
 	else
 	{
-		//m_pScreen->SetScreen(GACHA_STAGE::BANGBOO, CurrentDesc.Grade);
-		//Set_Stage(GACHA_STAGE::BANGBOO);
-		//m_pResult->SetResult(CurrentDesc.strModel, CurrentDesc.strMaterial);
+		m_pScreen->SetScreen(GACHA_STAGE::BANGBOO, CurrentDesc.Grade);
+		Set_Stage(GACHA_STAGE::BANGBOO);
+		m_pResult->SetResult(CurrentDesc.strModel, CurrentDesc.strMaterial,
+			_float4(CurrentDesc.RotX,CurrentDesc.RotY,CurrentDesc.RotZ, CurrentDesc.RotW));
 	}
 }
 
-CGachaStage* CGachaStage::Create(vector<WEAPON_DESC>* Desc, _int* Index)
+CGachaStage* CGachaStage::Create(vector<WEAPON_DESC>* Desc)
 {
 	CGachaStage* Instance = new CGachaStage();
-	if (FAILED(Instance->Initialize_Prototype(Desc, Index)))
+	if (FAILED(Instance->Initialize_Prototype(Desc)))
 	{
 		Safe_Release(Instance);
 		return nullptr;

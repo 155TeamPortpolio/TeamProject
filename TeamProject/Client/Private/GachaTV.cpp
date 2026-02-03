@@ -15,8 +15,18 @@ CGachaTV::CGachaTV()
 }
 
 CGachaTV::CGachaTV(const CGachaTV& rhs)
-    :CGameObject(rhs)
+    :CGameObject(rhs), m_pResultDesc(rhs.m_pResultDesc)
 {
+}
+
+void CGachaTV::PlayTVSequence()
+{
+	m_pScreen->PlayTVSequence(m_pResultDesc);
+}
+
+void CGachaTV::SetupInitialTVSequence()
+{
+	m_pScreen->SetupInitialTVSequence(m_pResultDesc);
 }
 
 HRESULT CGachaTV::Initialize_Prototype(vector<WEAPON_DESC>* Desc)
@@ -83,6 +93,8 @@ void CGachaTV::Add_TVScreen()
 		.Build("Screen");
 
 	pObjectContainer->Add_Child(gachaScreen, true);
+
+	m_pScreen = dynamic_cast<CGachaScreen*>(gachaScreen);
 }
  
 CGachaTV* CGachaTV::Create(vector<WEAPON_DESC>* Desc)

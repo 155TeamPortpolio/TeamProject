@@ -527,6 +527,64 @@
             -1.1713989973068237,
             1.0
           ]
+        },
+        {
+          "iObjID": 18,
+          "TagModelResourceKey": "Zero_Prop_CampLight_03.model",
+          "TagMaterialResourceKey": "Zero_Prop_CampLight_03.mat",
+          "vRight": [
+            1.0,
+            0.0,
+            -1.7285346984863281e-06,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            1.7285346984863281e-06,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "vPos": [
+            28.29754066467285,
+            10.840991973876953,
+            17.022172927856445,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 19,
+          "TagModelResourceKey": "Zero_Prop_CampLight_03.model",
+          "TagMaterialResourceKey": "Zero_Prop_CampLight_03.mat",
+          "vRight": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "vPos": [
+            15.943381309509277,
+            10.690990447998047,
+            -28.713266372680664,
+            1.0
+          ]
         }
       ]
     }

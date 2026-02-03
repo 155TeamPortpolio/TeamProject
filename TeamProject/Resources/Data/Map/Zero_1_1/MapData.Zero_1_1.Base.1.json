@@ -384,69 +384,6 @@
           ]
         }
       ]
-    },
-    {
-      "TagLayer": "TriggerObject_Layer",
-      "Objects": [
-        {
-          "iObjID": 13,
-          "TagModelResourceKey": "SpawnPoint",
-          "TagMaterialResourceKey": "BOX",
-          "vRight": [
-            0.0,
-            0.0,
-            0.0,
-            0.0
-          ],
-          "vUp": [
-            1.0,
-            1.0,
-            1.0,
-            0.0
-          ],
-          "vLook": [
-            0.0,
-            0.0,
-            0.0,
-            0.0
-          ],
-          "vPos": [
-            0.9141786098480225,
-            -2.8393983840942383,
-            -0.812414824962616,
-            0.0
-          ]
-        },
-        {
-          "iObjID": 14,
-          "TagModelResourceKey": "ZeroPortal",
-          "TagMaterialResourceKey": "BOX",
-          "vRight": [
-            0.0,
-            0.0,
-            0.0,
-            0.0
-          ],
-          "vUp": [
-            3.0,
-            3.0,
-            3.0,
-            0.0
-          ],
-          "vLook": [
-            0.0,
-            0.0,
-            0.0,
-            0.0
-          ],
-          "vPos": [
-            10.554683685302734,
-            -3.0870156288146973,
-            35.91820526123047,
-            0.0
-          ]
-        }
-      ]
     }
   ]
 }

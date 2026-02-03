@@ -11,6 +11,7 @@
 #include "SequenceCam.h"
 #include "OrbitCam.h"
 #include "FreeCam.h"
+#include "CamDebugInput.h"
 // Component
 #include "CharacterController.h"
 #include "CamSequencePlayer.h"
@@ -138,8 +139,6 @@ void CCamDirector::StartBattleIntro(CamSeqType type)
 {
     AutoTarget();
     RequestSequence(type);
-    UIDirector()->Hide_HUD(CUIDirector::HUD::BATTLE);
-    UIDirector()->Show_SceneFrame();
 }
 
 string CCamDirector::ResolveSeqKey(CamSeqType type) const
@@ -156,31 +155,7 @@ string CCamDirector::ResolveSeqKey(CamSeqType type) const
 
 void CCamDirector::UpdateInput(_float dt)
 {
-    const auto& levelKey = LevelManager()->Get_NowLevelKey();
-
-    if (InputDevice()->Key_Tap(VK_F1))
-    {
-        if (m_playing.active) AbortSequenceToOrbit(true);
-        CameraManager()->Set_MainCam(GetFreeCamComp(), 0.5f);
-    }
-
-    if (InputDevice()->Key_Tap(VK_F2))
-    {
-        if (m_playing.active) AbortSequenceToOrbit(true);
-        CameraManager()->Set_MainCam(GetOrbitCamComp(), 0.5f);
-    }
-
-    if (InputDevice()->Key_Tap(VK_F3))
-    {
-        if      (levelKey == "Gacha_Level") RequestSequence("Gacha/Spin");
-        else if (levelKey == "Test_Level")  RequestSequence(CamSeqType::BattleIntro);
-        else if (levelKey == "Zero_Level")  RequestSequence(CamSeqType::ZeroIntro);
-    }
-
-    if (InputDevice()->Key_Tap(VK_F4))
-    {
-        if (levelKey == "Gacha_Level") RequestSequence("Gacha/StartIntro");
-    }
+    CamDebugInput::UpdateInput(dt);
 }
 
 void CCamDirector::AbortSequenceToOrbit(_bool resetTime)
@@ -261,25 +236,9 @@ _uint CCamDirector::RequestSequence(const string& key)
     return RequestSequence(key, entry.defaultReq);
 }
 
-_uint CCamDirector::RequestSequence(const string& key, _float blendInSec, _bool resetTime, _float blendOutSec)
-{
-    CamSequenceRequestDesc req{};
-    req.blendInSec = blendInSec;
-    req.blendOutSec = blendOutSec;
-    req.resetTime = resetTime;
-    req.returnMode = CamReturnMode::SnapToEnd;
-    req.returnCamType = m_returnCamType;
-    return RequestSequence(key, req);
-}
-
 _uint CCamDirector::RequestSequence(CamSeqType type)
 {
     return RequestSequence(ResolveSeqKey(type));
-}
-
-_uint CCamDirector::RequestSequence(CamSeqType type, const CamSequenceRequestDesc& req)
-{
-    return RequestSequence(ResolveSeqKey(type), req);
 }
 
 _bool CCamDirector::IsPlaying(const string& key) const
@@ -314,13 +273,13 @@ _uint CCamDirector::RequestSequence(const string& key, const CamSequenceRequestD
     CamType resolvedReturnCamType = req.returnCamType;
     if (resolvedReturnCamType == CamType::None) resolvedReturnCamType = m_returnCamType;
 
+    auto seqPlayer = GetSeqPlayer();
+    auto seqCam = GetSeqCamComp();
+
     if (!m_playing.active)
     {
         if (req.returnMode == CamReturnMode::RestorePrev && resolvedReturnCamType == CamType::Orbit)
             GetOrbitCam()->CaptureSnapshot(m_playing.prevOrbit);
-
-        auto seqPlayer = GetSeqPlayer();
-        auto seqCam = GetSeqCamComp();
 
         seqPlayer->SetSequence(&entry.seqDesc);
 
@@ -354,10 +313,7 @@ _uint CCamDirector::RequestSequence(const string& key, const CamSequenceRequestD
 
         return handle;
     }
-
     {
-        auto seqPlayer = GetSeqPlayer();
-
         seqPlayer->SetApplyEnabled(false);
         seqPlayer->Stop(false);
 

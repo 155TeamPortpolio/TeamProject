@@ -49,9 +49,15 @@ HRESULT CClaymore::Initialize_Prototype()
 	Add_Component<CCharacterController>();
 
 	auto pResourceMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
-	pResourceMgr->Add_ResourcePath("Claymore.mat", "../Bin/Resources/Model/skeletal/Enemy/Claymore/Claymore.mat");
-	pResourceMgr->Add_ResourcePath("Claymore.model", "../Bin/Resources/Model/skeletal/Enemy/Claymore/Claymore.model");
-	pResourceMgr->Add_ResourcePath("Monster_Claymore_Meta.json", "../Bin/Resources/Model/skeletal/Enemy/Claymore/Monster_Claymore_Meta.json");
+	pResourceMgr->Add_ResourcePath("Claymore.mat", "../Bin/Resources/Zero/Enemy/Claymore/Claymore.mat");
+	pResourceMgr->Add_ResourcePath("Claymore.model", "../Bin/Resources/Zero/Enemy/Claymore/Claymore.model");
+	//pResourceMgr->Add_ResourcePath("Monster_Claymore_Meta.json", "../../Resources/Data/Meta/Zero/Monster_Claymore_Meta.json");
+
+	auto pModel = Get_Component<CSkeletalModel>();
+	pModel->Link_Model(G_GlobalLevelKey, "Claymore.model");
+
+	auto pMaterial = Get_Component<CMaterial>();
+	pMaterial->Link_Material(G_GlobalLevelKey, "Claymore.mat");
 
 	return S_OK;
 }
@@ -59,14 +65,6 @@ HRESULT CClaymore::Initialize_Prototype()
 HRESULT CClaymore::Initialize(INIT_DESC* pArg)
 {
 	__super::Initialize(pArg);
-
-	//m_pTransform->Scale({ 0.01f,0.01f,0.01f });
-
-	auto pModel = Get_Component<CSkeletalModel>();
-	pModel->Link_Model(G_GlobalLevelKey, "Claymore.model");
-
-	auto pMaterial = Get_Component<CMaterial>();
-	pMaterial->Link_Material(G_GlobalLevelKey, "Claymore.mat");
 
 	auto pAnimator = Get_Component<CAnimator3D>();
 	pAnimator->LinkAnimate_Model(G_GlobalLevelKey, "Claymore.model");

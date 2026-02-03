@@ -193,11 +193,12 @@ public: // 회전
     _bool    Is_OppositeInput() const;
 
 public: // 회피
-    _bool    Can_Evade() const;
+    _bool    Can_Evade();
     void     Use_Evade();
     void     Buffer_Evade() { m_bEvadeBuffer = true; }
     _bool    Use_EvadeBuffer();
     _bool    Can_Ultimate();
+    _bool    Is_Perfect();
 
 public: // 공격 & 패링 콜라이더
     HRESULT  Attach_AttackCollider(ATTACK_COLLIDER_DESC* pDesc);
@@ -212,6 +213,9 @@ public: // 공격 & 패링 콜라이더
 public: // 피격
     void     Take_Damage(DAMAGE_TYPE eType, _float fDamage);
     _vector3 Get_HitTargetPos() const { return m_vHitPos; }
+
+public: // 이펙트
+    void Play_Effect(const string& effectTag, _fvector offsetPosition, _fvector offsetQuaternion, _bool syncTransform = true);
 
 private:
     void    Update_Rotation(_float dt);

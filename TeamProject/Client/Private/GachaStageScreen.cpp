@@ -48,7 +48,15 @@ void CGachaStageScreen::SetScreen(GACHA_STAGE eStage, GachaGrade eGrade)
 	{
 		pModel->Link_Model("Gacha_Level", "Screen1.model");
 		pMaterial->Link_Material("Gacha_Level", "Screen1.mat");
-		//ResetMaterialInstances({});
+		ResetMaterialInstances({
+			0,
+			0,
+			Helper::Get_Random_Int(0,1),
+			Helper::Get_Random_Int(0,1),
+			0,
+			0,
+			0
+			});
 	}
 }
 
@@ -62,9 +70,6 @@ HRESULT CGachaStageScreen::Initialize_Prototype()
 
     pModel->Link_Model("Gacha_Level", "BangBooScreen2.model");
     pMaterial->Link_Material("Gacha_Level", "BangBooScreen2.mat");
-
-    //pModel->Link_Model("Gacha_Level", "Screen1.model");
-    //pMaterial->Link_Material("Gacha_Level", "Screen1.mat");
 
     return S_OK;
 }
@@ -146,6 +151,7 @@ void CGachaStageScreen::ResetMaterialInstances(vector<_int> ScreenIndex)
 		pMaterialInstances[idx]->Set_Param("Row", { &m_Rows[idx], "int", sizeof(_int) });
 
 		string strTexture;
+		pMaterialInstances[idx]->ChangeTexture(TEXTURE_TYPE::DIFFUSE, ScreenIndex[idx]);
 		pMaterialInstances[idx]->GetMaterialTextureKey(TEXTURE_TYPE::DIFFUSE, ScreenIndex[idx], strTexture);
 		TV_DESC Desc = CDataBase::GetInstance()->GetTVDesc(strTexture);
 		m_Cols[idx] = Desc.Col;

@@ -8,6 +8,7 @@
 #include "BattlePlayer.h"
 #include "DataBase.h"
 #include "Enemy.h"
+#include "Character.h"
 
 CStage::CStage()
 {
@@ -88,7 +89,6 @@ void CStage::Reserve_Enemy(const string& LevelTag)
 			auto pMonster = Builder::Create_Object({ "Zero_Level",data[i].creationInfo.ProtoTag })
 				.Add_ObjDesc(enemyDesc)
 				.CharacterController(MonsterCCT)
-				.FromPool()
 				.Build(data[i].creationInfo.DisplayName);
 
 			if (pMonster) {
@@ -109,12 +109,29 @@ void CStage::Active_Enemy()
 	}
 }
 
+void CStage::Active_Player(PlayerPoint pointType)
+{
+	if (!m_PlayerHandle.isValid())
+		return;
+
+	_vector4 point = m_PlayerPoint[ENUM(pointType)];
+	
+	auto character = m_PlayerHandle.GetAs<CCharacter>();
+}
+
 HRESULT CStage::ReadyPlayerPoint(const vector<BATTLE_POINT_DATA>& point)
 {
 	if (point.empty()) {
 		MSG_BOX("No Player Point : CStage ReadyMap");
 		return E_FAIL;
 	}
+
+	for (size_t i = 0; i < point.size(); i++)
+	{
+		auto arr = point[i].vTranslation;
+		m_PlayerPoint[i] = { arr[0], arr[1], arr[2], arr[3]};
+	}
+
 	return S_OK;
 }
 
@@ -179,6 +196,9 @@ void CStage::BaseIntro(CZero_Level::StageContext& context)
 			{
 				BattleSystem()->GetBattlePlayer()->QuestStart();
 				CamDirector()->StartBattleIntro(CamSeqType::ZeroIntro);
+
+				UIDirector()->Hide_HUD(CUIDirector::HUD::BATTLE);
+				UIDirector()->Show_SceneFrame();
 			}
 				});
 			m_introFlow.AddWaitUntil(seqId, []()
@@ -217,16 +237,17 @@ void CStage::BossIntro(CZero_Level::StageContext& context)
 			//BattleSystem()->GetBattlePlayer()->QuestStart();
 			CamDirector()->StartBattleIntro(CamSeqType::BattleIntro);
 
+			UIDirector()->Hide_HUD(CUIDirector::HUD::BATTLE);
+			UIDirector()->Show_SceneFrame();
 			});
 		m_introFlow.AddWaitUntil(seqId, []()
 			{
 				//return !CamDirector()->IsPlaying(CamSeqType::ZeroIntro);
 				return !CamDirector()->IsPlaying(CamSeqType::BattleIntro);
 			});
-		m_introFlow.AddOnce(seqId, [context]() {if (context.isFirstIn)
-		{
-			CUIDirector::GetInstance()->Show_HUD(CUIDirector::HUD::BATTLE);
-		}
+		m_introFlow.AddOnce(seqId, [context]()
+			{
+				CUIDirector::GetInstance()->Show_HUD(CUIDirector::HUD::BATTLE);
 			});
 		m_introFlow.EndSequence(seqId);
 	}

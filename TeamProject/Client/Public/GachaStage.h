@@ -12,7 +12,10 @@ private:
     virtual ~CGachaStage() DEFAULT;
 
 public:
-    virtual HRESULT Initialize_Prototype(vector<WEAPON_DESC>* Desc, _int* Index);
+    void    PlayStageSpin(_int index);
+
+public:
+    virtual HRESULT Initialize_Prototype(vector<WEAPON_DESC>* Desc);
     virtual HRESULT Initialize(INIT_DESC* pArg) override;
     virtual void    Awake()                     override;
     virtual void    Priority_Update(_float dt)  override;
@@ -21,7 +24,7 @@ public:
 
 private:
     void    Add_StageScreen();
-    void    Update_StageEnviroment();
+    void    Update_StageEnviroment(_int index);
     void    Set_Stage(GACHA_STAGE eStage);
 
 private:
@@ -30,12 +33,12 @@ private:
     
 private:    
     vector<WEAPON_DESC>*    m_pResultDesc = nullptr;
-    _int*                   m_pIndex = nullptr;
-    _int                    m_iPreIndex = -1;
     GACHA_STAGE             m_eStage = GACHA_STAGE::BANGBOO;
 
+    _int                    m_iIndex = -1;
+
 public:
-    static CGachaStage* Create(vector<WEAPON_DESC>* Desc, _int* Index);
+    static CGachaStage* Create(vector<WEAPON_DESC>* Desc);
     virtual CGameObject* Clone(INIT_DESC* pArg) override;
     virtual void Free() override;
 };
