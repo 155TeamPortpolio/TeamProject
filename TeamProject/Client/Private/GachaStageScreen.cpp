@@ -48,7 +48,15 @@ void CGachaStageScreen::SetScreen(GACHA_STAGE eStage, GachaGrade eGrade)
 	{
 		pModel->Link_Model("Gacha_Level", "Screen1.model");
 		pMaterial->Link_Material("Gacha_Level", "Screen1.mat");
-		//ResetMaterialInstances({});
+		ResetMaterialInstances({
+			0,
+			0,
+			Helper::Get_Random_Int(0,1),
+			Helper::Get_Random_Int(0,1),
+			0,
+			0,
+			0
+			});
 	}
 }
 
@@ -62,9 +70,6 @@ HRESULT CGachaStageScreen::Initialize_Prototype()
 
     pModel->Link_Model("Gacha_Level", "BangBooScreen2.model");
     pMaterial->Link_Material("Gacha_Level", "BangBooScreen2.mat");
-
-    //pModel->Link_Model("Gacha_Level", "Screen1.model");
-    //pMaterial->Link_Material("Gacha_Level", "Screen1.mat");
 
     return S_OK;
 }
