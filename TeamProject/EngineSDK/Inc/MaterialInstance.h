@@ -42,6 +42,7 @@ public:
 	void SetBlendIf_AlphaDiffuse(AlphaCheckLevel level, const string& pass);
 	_uint Get_InstacneID() { return m_MaterialInstance_ID; }
 	_bool GetMaterialTextureKey(TEXTURE_TYPE type, _uint index, string& outKey);
+	class CTexture* GetBindedTexture(TEXTURE_TYPE type);
 
 public:
 	virtual void Render_GUI();
