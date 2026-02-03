@@ -117,7 +117,7 @@ HRESULT CZeroStage_Boss::Enter_Stage(CZero_Level::StageContext& context)
 	m_eStageStage = StageState::Entrance;
 	m_PlayerHandle = context.hPlayer;
 
-	CamDirector()->GetCharacter()->Get_Component<CCharacterController>()->Set_Position({});
+	CamDirector()->GetCharacter()->Get_Component<CCharacterController>()->Set_Position({0.f, 1.f, 0.f});
 
 	BossIntro(context);
 	return S_OK;

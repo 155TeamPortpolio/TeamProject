@@ -3,7 +3,9 @@
 // Engine
 #include "GameInstance.h"
 #include "CamDirector.h"
+// Client
 #include "UI_Gangta.h"
+#include "UI_Seoriyeol.h"
 
 void CamDebugInput::UpdateInput(_float dt)
 {
@@ -31,11 +33,15 @@ void CamDebugInput::UpdateInput(_float dt)
     if (InputDevice()->Key_Tap(VK_F4))
     {
        // if (levelKey == "Gacha_Level") CamDirector()->RequestSequence("Gacha/Spin");
-        if (levelKey == "Gacha_Level")
+        if (levelKey == "Gacha_Level" || levelKey == "Zero_Level")
         {
-            auto obj = Builder::Create_UIObject({G_GlobalLevelKey, "Proto_GameObject_Gangta"}).Build("Gangta");
+            //auto obj = Builder::Create_UIObject({G_GlobalLevelKey, "Proto_GameObject_Gangta"}).Build("Gangta");
+            //UIManager()->Add_UIObject(obj, LevelManager()->Get_NowLevelKey());
+            //static_cast<CUI_Gangta*>(obj)->UI_Active({});
+
+            auto obj = Builder::Create_UIObject({G_GlobalLevelKey, "Proto_GameObject_Seoriyeol"}).Build("Seoriyeol");
             UIManager()->Add_UIObject(obj, LevelManager()->Get_NowLevelKey());
-            static_cast<CUI_Gangta*>(obj)->UI_Active({});
+            static_cast<CUI_Seoriyeol*>(obj)->UI_Active({});
         }
     }
 

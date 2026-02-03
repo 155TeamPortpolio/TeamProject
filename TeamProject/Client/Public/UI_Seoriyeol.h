@@ -9,10 +9,23 @@ class CUI_Seoriyeol final : public CUI_WorldToScreen
 private:
 	enum CHILD
 	{
-		ONE, END
+		SEO_IN_1,     SEO_IN_2,
+		RI_IN_1,      RI_IN_2,
+		YEOL_IN_1,    YEOL_IN_2,
+		FACTORY_1,    FACTORY_2,   FACTORY_3, FACTORY_4,
+		SPRITEANIM_1, SPRITEANIM_2,
+		ICE, 
+		END
 	};
 
-	inline static const string CHILD_INSTNAMES[ENUM(CHILD::END)] = {};
+	inline static const string CHILD_INSTNAMES[ENUM(CHILD::END)] =  {
+		"Seo_In_1",     "Seo_In_2", 
+		"Ri_In_1",      "Ri_In_2",
+		"Yeol_In_1",    "Yeol_In_2",
+		"Factory_1",    "Factory_2",   "Factory_3",  "Factory_4", 
+		"SpriteAnim_1", "SpriteAnim_2",
+		"Ice"
+	};
 
 private:
 	CUI_Seoriyeol() {}
