@@ -214,6 +214,9 @@ public: // 피격
     void     Take_Damage(DAMAGE_TYPE eType, _float fDamage);
     _vector3 Get_HitTargetPos() const { return m_vHitPos; }
 
+public: // 이펙트
+    void Play_Effect(const string& effectTag, _fvector offsetPosition, _fvector offsetQuaternion, _bool syncTransform = true);
+
 private:
     void    Update_Rotation(_float dt);
     void    Update_Evade(_float dt);

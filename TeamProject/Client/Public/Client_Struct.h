@@ -146,6 +146,10 @@ namespace Client {
 		string		strModel;
 		string		strMaterial;
 		string		strTexture;
+		_float		RotX;
+		_float		RotY;
+		_float		RotZ;
+		_float		RotW;
 	}WEAPON_DESC;
 
 	typedef struct tagTVDesc {

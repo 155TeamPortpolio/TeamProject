@@ -317,34 +317,6 @@ void CJaneDoe::OnDefensiveAssist()
     Increase_Passion(1.f);
 }
 
-void CJaneDoe::Play_Effect(const string& effectTag, _fvector offsetPosition, _fvector offsetQuaternion, _bool syncTransform)
-{
-    auto pEffect = Get_Component<CObjectContainer>()->Find_ObjectByName(effectTag);
-    if (!pEffect)
-        return;
-
-    auto pEffectTransform = pEffect->Get_Component<CTransform>();
-    if (syncTransform)
-    {
-        pEffectTransform->Set_Pos(_vector3(offsetPosition));
-        pEffectTransform->Set_Quaternion(offsetQuaternion);
-    }
-    else
-    {
-        _smatrix worldMatrix = m_pTransform->Get_WorldMatrix();
-        _quaternion worldQuaternion = m_pTransform->Get_QuaternionRotate();
-
-        _vector3 vWorldPosition = _vector3::Transform(offsetPosition, worldMatrix);
-        _quaternion localQuaternion(offsetQuaternion);
-        localQuaternion *= worldQuaternion;
-
-        pEffectTransform->Set_WorldPos(vWorldPosition);
-        pEffectTransform->Set_WorldQuaternion(localQuaternion);
-    }
-
-    static_cast<CEffectContainer*>(pEffect)->Play();
-}
-
 void CJaneDoe::Update_MotionBlurQueue()
 {
     ++m_iFrameCount;
@@ -656,6 +628,65 @@ HRESULT CJaneDoe::Initialize_Effects()
         auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
             .Asset("janedoe_ex_slash.json")
             .Build("JaneDoe_Ex_Slash3");
+        pEffect->Stop();
+        pObjectContainer->Add_Child(pEffect);
+    }
+
+    // Ultimate Slash0
+    {
+        auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+            .Asset("janedoe_ultimate_slash0.json")
+            .Build("JaneDoe_Ultimate_Slash0_0");
+        pEffect->Stop();
+        pObjectContainer->Add_Child(pEffect);
+    }
+    {
+        auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+            .Asset("janedoe_ultimate_slash0.json")
+            .Build("JaneDoe_Ultimate_Slash0_1");
+        pEffect->Stop();
+        pObjectContainer->Add_Child(pEffect);
+    }
+    {
+        auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+            .Asset("janedoe_ultimate_slash0.json")
+            .Build("JaneDoe_Ultimate_Slash0_2");
+        pEffect->Stop();
+        pObjectContainer->Add_Child(pEffect);
+    }
+
+    // Ultimate Slash1
+    {
+        auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+            .Asset("janedoe_ultimate_slash1.json")
+            .Build("JaneDoe_Ultimate_Slash1_0");
+        pEffect->Stop();
+        pObjectContainer->Add_Child(pEffect);
+    }
+
+    // Ultimate Slash2
+    {
+        auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+            .Asset("janedoe_ultimate_slash2.json")
+            .Build("JaneDoe_Ultimate_Slash2_0");
+        pEffect->Stop();
+        pObjectContainer->Add_Child(pEffect);
+    }
+
+    // Ultimate Slash3
+    {
+        auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+            .Asset("janedoe_ultimate_slash3.json")
+            .Build("JaneDoe_Ultimate_Slash3_0");
+        pEffect->Stop();
+        pObjectContainer->Add_Child(pEffect);
+    }
+
+    // Ultimate Slash4
+    {
+        auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+            .Asset("janedoe_ultimate_slash4.json")
+            .Build("JaneDoe_Ultimate_Slash4_0");
         pEffect->Stop();
         pObjectContainer->Add_Child(pEffect);
     }

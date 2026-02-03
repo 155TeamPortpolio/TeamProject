@@ -36,6 +36,10 @@ public:
 public:
     static CCorinState_Attack_01* Create() { return new CCorinState_Attack_01(); }
     virtual void Free() override { __super::Free(); }
+
+private:
+    void Update_Effects(CCorin* pOwner);
+
 };
 
 class CCorinState_Attack_02 : public IBaseState<CCorin>
@@ -48,6 +52,10 @@ public:
 public:
     static CCorinState_Attack_02* Create() { return new CCorinState_Attack_02(); }
     virtual void Free() override { __super::Free(); }
+
+private:
+    void Update_Effects(CCorin* pOwner);
+
 };
 
 class CCorinState_Attack_03 : public IBaseState<CCorin>
@@ -60,6 +68,10 @@ public:
 public:
     static CCorinState_Attack_03* Create() { return new CCorinState_Attack_03(); }
     virtual void Free() override { __super::Free(); }
+
+private:
+    void Update_Effects(CCorin* pOwner);
+
 };
 
 class CCorinState_Attack_04 : public IBaseState<CCorin>
@@ -72,6 +84,10 @@ public:
 public:
     static CCorinState_Attack_04* Create() { return new CCorinState_Attack_04(); }
     virtual void Free() override { __super::Free(); }
+
+private:
+    void Update_Effects(CCorin* pOwner);
+
 };
 
 class CCorinState_Attack_05 : public IBaseState<CCorin>
@@ -84,6 +100,10 @@ public:
 public:
     static CCorinState_Attack_05* Create() { return new CCorinState_Attack_05(); }
     virtual void Free() override { __super::Free(); }
+
+private:
+    void Update_Effects(CCorin* pOwner);
+
 };
 
 class CCorinState_Attack_End : public IBaseState<CCorin>
