@@ -5,6 +5,11 @@
 #include "Animator3D.h"
 #include "SkeletalModel.h"
 #include "CharacterController.h"
+#include "EventListener.h"
+#include "DataBase.h"
+
+#include "FieldCharacter.h"
+#include "FieldSystem.h"
 
 CServiceNpc::CServiceNpc()
 	:CNpc()
@@ -16,6 +21,27 @@ CServiceNpc::CServiceNpc(const CServiceNpc& rhs)
 {
 }
 
+void CServiceNpc::Process_Event(const NPC_INTERACT_DESC& desc)
+{
+	if (desc.strName != m_strName) return;
+	m_iCurSequenceID = desc.iCurSequenceID;
+	m_iNextSequceID = desc.iNextSequenceID;
+	switch (desc.eResult)
+	{
+	case DialogueResult::Success:
+		Success(m_iCurSequenceID);
+		break;
+	case DialogueResult::Running:
+		Running(m_iCurSequenceID);
+		break;
+	case DialogueResult::Fail:
+		Fail(m_iCurSequenceID);
+		break;
+	case DialogueResult::None:
+		break;
+	}
+}
+
 HRESULT CServiceNpc::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
@@ -23,6 +49,7 @@ HRESULT CServiceNpc::Initialize_Prototype()
 	Add_Component<CSkeletalModel>();
 	Add_Component<CMaterial>();
 	Add_Component<CCharacterController>();
+	Add_Component<CEventListener>();
 
 	return S_OK;
 }
@@ -31,11 +58,19 @@ HRESULT CServiceNpc::Initialize(INIT_DESC* pArg)
 {
 	__super::Initialize(pArg);
 
+	Get_Component<CEventListener>()->Add_Listener<NPC_INTERACT_DESC>([&](const NPC_INTERACT_DESC& desc)
+		{
+			Process_Event(desc);
+		});
 	return S_OK;
 }
 
 void CServiceNpc::Awake()
 {
+	__super::Awake();
+
+	m_DiagloueData = CDataBase::GetInstance()->GetNpcIDData(m_strName);
+	Add_NameIndicator();
 }
 
 void CServiceNpc::Priority_Update(_float dt)

@@ -191,12 +191,10 @@ MINMAX_BOX CSkeletalModel::Get_LocalBoundingBox()
 MINMAX_BOX CSkeletalModel::Get_WorldBoundingBox()
 {
 	MINMAX_BOX wordlBox = m_pData->Get_LocalBoundingBox();
-	_float4x4* pWorldMat = m_pOwner->Get_Component<CTransform>()->Get_WorldMatrix_Ptr();
-	XMStoreFloat3(&wordlBox.vMin, XMVector3TransformCoord(XMLoadFloat3(&wordlBox.vMin), XMLoadFloat4x4(pWorldMat)));
-	XMStoreFloat3(&wordlBox.vMax, XMVector3TransformCoord(XMLoadFloat3(&wordlBox.vMax), XMLoadFloat4x4(pWorldMat)));
+	_float4x4 pWorldMat = m_pOwner->Get_Component<CTransform>()->Get_WorldMatrix();
+	wordlBox.TransformBox_8Corner(pWorldMat);
 	return wordlBox;
 }
-
 vector<MINMAX_BOX> CSkeletalModel::Get_MeshBoundingBoxes()
 {
 	vector<MINMAX_BOX> boxes;
@@ -240,15 +238,37 @@ void CSkeletalModel::Control_BoneByIndex(_uint Index, _fmatrix BoneMatrix)
 	m_bDirty = true;
 }
 
-void CSkeletalModel::Hide_MehsByName(const string& name)
+vector<_uint> CSkeletalModel::Hide_MehsByName(const string& name)
 {
-	_int index = m_pData->Find_MeshIndex(name);
+	vector<_uint> result = m_pData->Find_MeshesIndex(name);
 
-	if (index == -1)
-		return;
+	if (result.empty())
+		return result;
 
-	else
-		m_DrawableMeshes[index] = false;
+	else {
+		for (size_t i = 0; i < result.size(); i++)
+		{
+			m_DrawableMeshes[result[i]] = false;
+		}
+	}
+
+	return result;
+}
+vector<_uint> CSkeletalModel::Show_MehsByName(const string& name)
+{
+	vector<_uint> result = m_pData->Find_MeshesIndex(name);
+
+	if (result.empty())
+		return result;
+
+	else {
+		for (size_t i = 0; i < result.size(); i++)
+		{
+			m_DrawableMeshes[result[i]] = true;
+		}
+	}
+
+	return result;
 }
 void CSkeletalModel::Render_GUI()
 {

@@ -2,12 +2,15 @@
 
 float3 vRimLightColor;
 float fRimLightPower;
-vector vOutLineColor;
+float4 vOutLineColor;
+float4 vMotionBlurColor;
 float fOutLineThickness;
 float fDissolveProgress;
 float fDissolveTiling;
-float4x4 g_OutLineBoneMatrices[512];
+float4x4 g_CommandBoneMatrices[512];
 matrix g_worldMatrix;
+Texture2D MotionBlurNoiseTexture;
+float fCameraFadeAlpha;
 
 struct VS_IN
 {
@@ -80,10 +83,10 @@ VS_OUT VS_OUTLINE(VS_IN In)
     float fWeightW = 1.0 - (In.vBlendWeight.x + In.vBlendWeight.y + In.vBlendWeight.z);
 
     float4x4 BoneMatrix =
-        g_OutLineBoneMatrices[In.vBlendIndex.x] * In.vBlendWeight.x +
-        g_OutLineBoneMatrices[In.vBlendIndex.y] * In.vBlendWeight.y +
-        g_OutLineBoneMatrices[In.vBlendIndex.z] * In.vBlendWeight.z +
-        g_OutLineBoneMatrices[In.vBlendIndex.w] * fWeightW;
+        g_CommandBoneMatrices[In.vBlendIndex.x] * In.vBlendWeight.x +
+        g_CommandBoneMatrices[In.vBlendIndex.y] * In.vBlendWeight.y +
+        g_CommandBoneMatrices[In.vBlendIndex.z] * In.vBlendWeight.z +
+        g_CommandBoneMatrices[In.vBlendIndex.w] * fWeightW;
     
     vector vPosition = mul(float4(In.vPosition, 1.f), BoneMatrix);
     vector vNormal = mul(float4(In.vNormal, 0.f), BoneMatrix);
@@ -98,6 +101,55 @@ VS_OUT VS_OUTLINE(VS_IN In)
     float4 viewPos = mul(float4(worldPos, 1.f), matView);
     float4 projPos = mul(viewPos, matProjection);
 
+    Out.vPosition = projPos;
+    
+    Out.vTexcoord = In.vTexcoord;
+    Out.vNormal = normalize(mul(vNormal, g_worldMatrix));
+    Out.vProjPos = Out.vPosition;
+
+    Out.vTangent = normalize(mul(vTangent, g_worldMatrix));
+    Out.vBinormal = normalize(mul(vBinormal, g_worldMatrix));
+
+    return Out;
+}
+
+struct VS_MOTIONOUT
+{
+    float4 vPosition : SV_POSITION;
+    float4 vNormal : NORMAL;
+    float2 vTexcoord : TEXCOORD0;
+    float4 vProjPos : TEXCOORD1;
+    float viewZ : TEXCOORD2;
+    float3 vTangent : TANGENT;
+    float3 vBinormal : BINORMAL;
+    float vWorldHeight : TEXCOORD3;
+};
+
+VS_MOTIONOUT VS_MOTIONBLUR(VS_IN In)
+{
+    VS_MOTIONOUT Out;
+    
+    float fWeightW = 1.0 - (In.vBlendWeight.x + In.vBlendWeight.y + In.vBlendWeight.z);
+
+    float4x4 BoneMatrix =
+        g_CommandBoneMatrices[In.vBlendIndex.x] * In.vBlendWeight.x +
+        g_CommandBoneMatrices[In.vBlendIndex.y] * In.vBlendWeight.y +
+        g_CommandBoneMatrices[In.vBlendIndex.z] * In.vBlendWeight.z +
+        g_CommandBoneMatrices[In.vBlendIndex.w] * fWeightW;
+    
+    vector vPosition = mul(float4(In.vPosition, 1.f), BoneMatrix);
+    vector vNormal = mul(float4(In.vNormal, 0.f), BoneMatrix);
+    vector vTangent = mul(float4(In.vTangent, 0.f), BoneMatrix);
+    vector vBinormal = mul(float4(In.vBinormal, 0.f), BoneMatrix);
+      
+    float3 worldPos = mul(vPosition, g_worldMatrix).xyz;
+    float4 viewPos = mul(float4(worldPos, 1.f), matView);
+    float4 projPos = mul(viewPos, matProjection);
+        
+    matrix matrixWV = mul(g_worldMatrix, matView);
+    matrix matrixWVP = mul(matrixWV, matProjection);
+    
+    Out.vWorldHeight = worldPos.y;
     Out.vPosition = projPos;
     
     Out.vTexcoord = In.vTexcoord;
@@ -127,9 +179,9 @@ struct PS_OUT
     vector vNormal : SV_TARGET1;
     vector vDepth : SV_TARGET2;
     vector vMetalic : SV_TARGET3;
-    vector vAmbient : SV_Target4;
-    vector vRimLight : SV_Target5;
-    vector vLook : SV_Target6;
+    vector vAmbient : SV_TARGET4;
+    vector vRimLight : SV_TARGET5;
+    vector vLook : SV_TARGET6;
 };
 
 PS_OUT PS_MAIN(PS_IN In)
@@ -167,6 +219,7 @@ PS_OUT PS_MAIN(PS_IN In)
         vNormal = mul(vNormal, WorldMatrix);
         vMetalic.a = 0.6f;
         Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, vNormalDesc.z);
+        Out.vLook = float4(0.f, 0.f, 0.f, 0.f);
     }
     else
     {
@@ -178,14 +231,75 @@ PS_OUT PS_MAIN(PS_IN In)
         vMetalic = LightTexture.Sample(DefaultSampler, In.vTexcoord);
 
         vMetalic.a = 0.8f;
-        Out.vLook = float4(vLookVector.xyz * 0.5f + 0.5f, 1.f);
+        Out.vLook = float4(vLookVector.xyz * 0.5f + 0.5f, 0.f);
     }
+    
     if (vAmbient.g < 0.2) vAmbient.g = 1.f;
     vAmbient.b = 0;
     Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / zFar, 0.f, 1.f);
     Out.vAmbient = vAmbient;
     Out.vMetalic = vMetalic;
     Out.vRimLight = float4(vRimLightColor, fRimLightPower);
+    
+    return Out;
+}
+
+PS_OUT PS_TRANSPARENTNOISE(PS_IN In)
+{
+    PS_OUT Out;
+    
+    vector vMtrlDiffuse = DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
+    if (vMtrlDiffuse.a < 0.2)
+        discard;
+    
+    float2 screenUV = (In.vPosition.xy / 512.0) * 40.0;
+    float fNoise = DitheringTexture.Sample(PointSampler, screenUV).r;
+    
+    if (fNoise > fCameraFadeAlpha)
+        discard;
+    
+    Out.vDiffuse = vMtrlDiffuse;
+    vector vNormalDesc = NormalTexture.Sample(DefaultSampler, In.vTexcoord);
+    vector vMetalic = MetalnessTexture.Sample(DefaultSampler, In.vTexcoord);
+    vector vAmbient = AmbientTexture.Sample(DefaultSampler, In.vTexcoord);
+ 
+    vAmbient.r = 0.f;
+    if (vNormalDesc.a > 0.f)
+    {
+        float3 vNormal;
+        vNormal.xy = vNormalDesc.xy * 2.f - 1.f;
+        vNormal.z = 1.f;
+        float3 T = normalize(In.vTangent);
+        float3 B = normalize(In.vBinormal * -1);
+        float3 N = normalize(In.vNormal.xyz);
+
+        float3x3 WorldMatrix = float3x3(T, B, N);
+        
+        vNormal = mul(vNormal, WorldMatrix);
+        vMetalic.a = 0.6f;
+        Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, vNormalDesc.z);
+        Out.vLook = float4(0.f, 0.f, 0.f, 0.f);
+    }
+    else
+    {
+        float3 vNormal = normalize(In.vNormal);
+        Out.vNormal = float4(vNormal * 0.5f + 0.5f, 1.f);
+
+        float3 headRight = normalize(cross(float3(0.f, 1.f, 0.f), vLookVector.xyz));
+
+        vMetalic = LightTexture.Sample(DefaultSampler, In.vTexcoord);
+
+        vMetalic.a = 0.8f;
+        Out.vLook = float4(vLookVector.xyz * 0.5f + 0.5f, 0.f);
+    }
+    if (vAmbient.g < 0.2)
+        vAmbient.g = 1.f;
+    vAmbient.b = 0;
+    
+    Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / zFar, 0.f, 1.f);
+    Out.vAmbient = vAmbient;
+    Out.vMetalic = vMetalic;
+    
     return Out;
 }
 
@@ -194,6 +308,58 @@ PS_OUT PS_OUTLINE(PS_IN In)
     PS_OUT Out;
     
     Out.vDiffuse = vOutLineColor;
+    
+    return Out;
+}
+
+struct PS_MOTIONIN
+{
+    float4 vPosition : SV_POSITION;
+    float4 vNormal : NORMAL;
+    float2 vTexcoord : TEXCOORD0;
+    float4 vProjPos : TEXCOORD1;
+    float viewZ : TEXCOORD2;
+    float3 vTangent : TANGENT;
+    float3 vBinormal : BINORMAL;
+    float vWorldHeight : TEXCOORD3;
+};
+
+struct PS_MOTIONOUT
+{
+    float4 vDiffuse : SV_TARGET0;
+    float4 vRimLight : SV_TARGET1;
+    float4 vNormal : SV_TARGET2;
+    float4 vDepth : SV_TARGET3;
+    float fHeight : SV_TARGET4;
+};
+
+PS_MOTIONOUT PS_MOTIONBLUR(PS_MOTIONIN In)
+{
+    PS_MOTIONOUT Out;
+    
+    float4 color = vMotionBlurColor;    
+    
+    float heightNormalized = saturate((In.vWorldHeight - 0.0f) / 2.0f);
+    heightNormalized = 1.0f - heightNormalized;
+    Out.vDiffuse = color * DiffuseTexture.Sample(DefaultSampler, In.vTexcoord).a;
+    Out.fHeight = heightNormalized;
+    
+    vector vNormalDesc = NormalTexture.Sample(DefaultSampler, In.vTexcoord);
+
+    float3 vNormal;
+    vNormal.xy = vNormalDesc.xy * 2.f - 1.f;
+    vNormal.z = 1.f;
+    float3 T = normalize(In.vTangent);
+    float3 B = normalize(In.vBinormal * -1);
+    float3 N = normalize(In.vNormal.xyz);
+
+    float3x3 WorldMatrix = float3x3(T, B, N);
+    vNormal = mul(vNormal, WorldMatrix);
+    Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, vNormalDesc.z);
+    
+    Out.vRimLight = float4(vRimLightColor, fRimLightPower);
+    Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / zFar, 0.f, 1.f);
+ 
     return Out;
 }
 
@@ -281,12 +447,22 @@ technique11 DefaultTechnique
 {
     pass Opaque
     {
-        SetRasterizerState(RS_NoCull);
+        SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_WriteStencil,1);
         SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN();
+    }
+
+    pass TransparentNoise
+    {
+        SetRasterizerState(RS_NoCull);
+        SetDepthStencilState(DSS_WriteStencil, 1);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_TRANSPARENTNOISE();
     }
 
     pass Debug
@@ -298,6 +474,7 @@ technique11 DefaultTechnique
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_DEBUG();
     }
+
     pass Shadow
     {
         SetRasterizerState(RS_Shadow);
@@ -309,14 +486,25 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_MAIN_SHADOW();
     }
 
+    pass MotionBlur
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_MotionStencil, 0);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MOTIONBLUR();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_MOTIONBLUR();
+    }
+
     pass OutLine
     {
         SetRasterizerState(RS_CullFront);
         SetDepthStencilState(DSS_OutlineStencil, 1);
-        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_OUTLINE();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_OUTLINE();
     }
+
 }
 

@@ -35,7 +35,12 @@ HRESULT CMeshNode_Edit::Initialize(INIT_DESC* pArg)
 	pModel->Set_RenderType(RENDER_PASS_TYPE::RENDER_EFFECT);
 	pModel->ShadowCast(false);
 
+	m_pTransform->Initialize(nullptr);
 	m_InstanceName = "MeshNode";
+
+	_float2 screenSize = CGameInstance::GetInstance()->Get_ClientSize();
+	m_fScreenWidth = screenSize.x;
+	m_fScreenHeight = screenSize.y;
 
 	return S_OK;
 }
@@ -111,6 +116,11 @@ void CMeshNode_Edit::Import(nlohmann::ordered_json& json)
 	m_DiffuseTextureTag = json.value("diffuse_texture_tag", "");
 	m_DissolveTextureTag = json.value("dissolve_texture_tag", "");
 	m_NoiseTextureTag = json.value("noise_texture_tag", "");
+	m_MaskTextureTagA = json.value("mask_texture_tag", "");
+	m_MaskTextureTagB = json.value("mask_texture_tagB", "");
+	m_DistortionTextureTag = json.value("distortion_texture_tag", "");
+	m_DistortionMaskTextureTag = json.value("distortion_mask_texture_tag", "");
+	m_GradientTextureTag = json.value("gradient_texture_tag", "");
 
 	/* Texture Slot Module */
 	m_TextureSlotModule.eSamplerMode = static_cast<TEXTURE_SLOT_MODULE::SAMPLER_MODE>(json.value("sampler_mode", 0));
@@ -166,6 +176,8 @@ void CMeshNode_Edit::Import(nlohmann::ordered_json& json)
 
 	/* Bloom Module */
 	m_BloomModule.fIntensity = json.value("bloom_intensity", 1.f);
+	m_BloomModule.fSoftness = json.value("bloom_softness", m_BloomModule.fSoftness);
+	m_BloomModule.fThreshold = json.value("bloom_threshold", m_BloomModule.fThreshold);
 
 	/* Noise Module */
 	m_NoiseModule.fEnableNoise = json.value("enable_noise", 0.f);
@@ -173,6 +185,24 @@ void CMeshNode_Edit::Import(nlohmann::ordered_json& json)
 	m_NoiseModule.fNoiseTilling = json.value("noise_tilling", 0.f);
 	m_NoiseModule.vNoiseUVSpeed.x = json.at("noise_uvspeed").at("x").get<_float>();
 	m_NoiseModule.vNoiseUVSpeed.y = json.at("noise_uvspeed").at("y").get<_float>();
+
+	/* Mask Module */
+	m_MaskModule.fEnableMaskA = json.value("enable_mask", 0.f);
+	m_MaskModule.fEnableMaskB = json.value("enable_maskB", 0.f);
+	m_MaskModule.fMaskTilling = json.value("mask_tilling", 0.f);
+
+	/* Distortion Module */
+	m_DistortionModule.useDiffuseAlpha = json.value("use_diffuse_alpha", true);
+	m_DistortionModule.useDistortionMask = json.value("use_distortion_mask", false);
+	m_DistortionModule.fEnableDistortion = json.value("enable_distortion", 0.f);
+	m_DistortionModule.fDistortionStrength = json.value("distortion_strength", 0.f);
+	m_DistortionModule.fDistortionTilling = json.value("distortion_tilling", 0.f);
+	auto distortionUVSpeed = json.value("distortion_uvspeed", json::array({ 0.f,0.f }));
+	m_DistortionModule.vDistortionUVSpeed = _float2(distortionUVSpeed[0], distortionUVSpeed[1]);
+
+	/* Gradient Module */
+	m_GradientModule.fEnableGradient = json.value("enable_gradient", 0.f);
+	m_GradientModule.eGradientMode = static_cast<GRADIENT_MODULE::GRADIENT_MODE>(json.value("gradient_mode", 0));
 
 	{
 		m_SetMaterial = true;
@@ -198,6 +228,36 @@ void CMeshNode_Edit::Import(nlohmann::ordered_json& json)
 		{
 			auto pDissolveTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_DissolveTextureTag);
 			pMaterialInstance->Set_Param("DissolveTexture", { pDissolveTexture->Get_SRV(),"Texture2D",0 });
+		}
+
+		if (!m_MaskTextureTagA.empty())
+		{
+			auto pMaskTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_MaskTextureTagA);
+			pMaterialInstance->Set_Param("AlphaMaskTextureA", { pMaskTexture->Get_SRV(),"Texture2D",0 });
+		}
+		
+		if (!m_MaskTextureTagB.empty())
+		{
+			auto pMaskTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_MaskTextureTagB);
+			pMaterialInstance->Set_Param("AlphaMaskTextureB", { pMaskTexture->Get_SRV(),"Texture2D",0 });
+		}
+
+		if (!m_DistortionTextureTag.empty())
+		{
+			auto pDistortionTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_DistortionTextureTag);
+			pMaterialInstance->Set_Param("DistortionTexture", { pDistortionTexture->Get_SRV(),"Texture2D",0 });
+		}
+
+		if (!m_DistortionMaskTextureTag.empty())
+		{
+			auto pDistortionMaskTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_DistortionMaskTextureTag);
+			pMaterialInstance->Set_Param("DistortionMaskTexture", { pDistortionMaskTexture->Get_SRV(),"Texture2D",0 });
+		}
+
+		if (!m_GradientTextureTag.empty())
+		{
+			auto pGradientTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_GradientTextureTag);
+			pMaterialInstance->Set_Param("GradientTexture", { pGradientTexture->Get_SRV(),"Texture2D",0 });
 		}
 
 		m_SetMaterial = true;
@@ -236,6 +296,11 @@ void CMeshNode_Edit::Export(nlohmann::ordered_json& json)
 		{"diffuse_texture_tag",m_DiffuseTextureTag},
 		{"dissolve_texture_tag",m_DissolveTextureTag},
 		{"noise_texture_tag",m_NoiseTextureTag},
+		{"mask_texture_tag",m_MaskTextureTagA},
+		{"mask_texture_tagB",m_MaskTextureTagB},
+		{"distortion_texture_tag",m_DistortionTextureTag},
+		{"distortion_mask_texture_tag",m_DistortionMaskTextureTag},
+		{"gradient_texture_tag",m_GradientTextureTag},
 
 		/* Offset Transform */
 		{"offset_position",json::array({vOffsetPosition.x,vOffsetPosition.y,vOffsetPosition.z})},
@@ -289,12 +354,31 @@ void CMeshNode_Edit::Export(nlohmann::ordered_json& json)
 
 		/* Bloom */
 		{"bloom_intensity",m_BloomModule.fIntensity},
+		{"bloom_threshold",m_BloomModule.fThreshold},
+		{"bloom_softness",m_BloomModule.fSoftness},
 
 		/* Noise */
 		{"enable_noise",m_NoiseModule.fEnableNoise},
 		{"noise_strength",m_NoiseModule.fNoiseStrength},
 		{"noise_tilling",m_NoiseModule.fNoiseTilling},
-		{"noise_uvspeed",{{"x",m_NoiseModule.vNoiseUVSpeed.x},{"y",m_NoiseModule.vNoiseUVSpeed.y}}}
+		{"noise_uvspeed",{{"x",m_NoiseModule.vNoiseUVSpeed.x},{"y",m_NoiseModule.vNoiseUVSpeed.y}}},
+
+		/* Mask */
+		{"enable_mask",m_MaskModule.fEnableMaskA},
+		{"enable_maskB",m_MaskModule.fEnableMaskB},
+		{"mask_tilling",m_MaskModule.fMaskTilling},
+
+		/* Distortion */
+		{"use_diffuse_alpha",m_DistortionModule.useDiffuseAlpha},
+		{"use_distortion_mask",m_DistortionModule.useDistortionMask},
+		{"enable_distortion", m_DistortionModule.fEnableDistortion},
+		{"distortion_strength", m_DistortionModule.fDistortionStrength},
+		{"distortion_tilling",m_DistortionModule.fDistortionTilling},
+		{"distortion_uvspeed",json::array({m_DistortionModule.vDistortionUVSpeed.x,m_DistortionModule.vDistortionUVSpeed.y})},
+
+		/* Gradient */
+		{"enable_gradient",m_GradientModule.fEnableGradient},
+		{"gradient_mode",ENUM(m_GradientModule.eGradientMode)}
 	};
 }
 
@@ -369,70 +453,6 @@ void CMeshNode_Edit::SetMesh()
 	}
 }
 
-_bool CMeshNode_Edit::ChangeEaseType(EaseType& ioValue, EaseType shownValue)
-{
-	_bool changed = false;
-
-	auto Pick = [&](EaseType v)
-		{
-			const bool selected = (shownValue == v);
-			if (ImGui::Selectable(Helper::EnumLabel<EaseType>(v), selected))
-			{
-				ioValue = v;
-				changed = true;
-			}
-			if (selected) ImGui::SetItemDefaultFocus();
-		};
-
-	Pick(EaseType::None);
-
-	ImGui::SeparatorText("A. Stable");
-	Pick(EaseType::InOutSine);
-	Pick(EaseType::OutCubic);
-	Pick(EaseType::InOutCubic);
-	Pick(EaseType::OutSine);
-	Pick(EaseType::InOutQuad);
-
-	ImGui::SeparatorText("B. Ease In");
-	Pick(EaseType::InSine);
-	Pick(EaseType::InCubic);
-	Pick(EaseType::InQuad);
-	Pick(EaseType::InCirc);
-
-	ImGui::SeparatorText("C. Settle / Stop");
-	Pick(EaseType::InOutCirc);
-	Pick(EaseType::OutCirc);
-	Pick(EaseType::OutQuad);
-
-	ImGui::SeparatorText("D. Strong");
-	Pick(EaseType::InQuart);
-	Pick(EaseType::InQuint);
-	Pick(EaseType::InOutQuart);
-	Pick(EaseType::OutQuart);
-	Pick(EaseType::InOutQuint);
-	Pick(EaseType::OutQuint);
-
-	ImGui::SeparatorText("E. Extreme");
-	Pick(EaseType::InOutExpo);
-	Pick(EaseType::OutExpo);
-	Pick(EaseType::InExpo);
-
-	ImGui::SeparatorText("F. Overshoot");
-	Pick(EaseType::OutBack);
-	Pick(EaseType::InOutBack);
-	Pick(EaseType::InBack);
-
-	ImGui::SeparatorText("G. Special");
-	Pick(EaseType::OutElastic);
-	Pick(EaseType::InOutElastic);
-	Pick(EaseType::InElastic);
-	Pick(EaseType::OutBounce);
-	Pick(EaseType::InOutBounce);
-	Pick(EaseType::InBounce);
-
-	return changed;
-}
-
 void CMeshNode_Edit::SetUp_MeshEffect()
 {
 	_bool isDirty = false;
@@ -444,11 +464,21 @@ void CMeshNode_Edit::SetUp_MeshEffect()
 	ImGui::DragFloat("Duration", &m_fDuration);
 
 	if (ImGui::Button("Add Diffuse Texture"))
-		Add_Texture(TEXTURE_TYPE::DIFFUSE);
+		Add_Texture(EFFECT_TEXTURE_TYPE::DIFFUSE);
 	if (ImGui::Button("Add Noise Texture"))
-		Add_Texture(TEXTURE_TYPE::NOISE);
+		Add_Texture(EFFECT_TEXTURE_TYPE::NOISE);
 	if (ImGui::Button("Add Dissolve Texture"))
-		Add_Texture(TEXTURE_TYPE::DISSOLVE);
+		Add_Texture(EFFECT_TEXTURE_TYPE::DISSOLVE);
+	if (ImGui::Button("Add MaskA Texture"))
+		Add_Texture(EFFECT_TEXTURE_TYPE::MASK_A);
+	if (ImGui::Button("Add MaskB Texture"))
+		Add_Texture(EFFECT_TEXTURE_TYPE::MASK_B);
+	if (ImGui::Button("Add Distortion Texture"))
+		Add_Texture(EFFECT_TEXTURE_TYPE::DISTORTION);
+	if (ImGui::Button("Add Distortion Mask Texture"))
+		Add_Texture(EFFECT_TEXTURE_TYPE::DISTORTION_MASK);
+	if (ImGui::Button("Add Gradient Texture"))
+		Add_Texture(EFFECT_TEXTURE_TYPE::GRADIENT);
 
 	if (ImGui::CollapsingHeader("Texture Slot Module"))
 	{
@@ -460,7 +490,7 @@ void CMeshNode_Edit::SetUp_MeshEffect()
 
 		if (TEXTURE_SLOT_MODULE::MAIN_USAGE::AS_COLOR == m_TextureSlotModule.eMainUsage)
 		{
-			static _bool useRGBMask = false;
+			_bool useRGBMask = m_TextureSlotModule.iRGBMask > 0 ? true : false;
 
 			ImGui::DragInt("Color Mode", reinterpret_cast<_int*>(&m_TextureSlotModule.iColorMode));
 			ImGui::Checkbox("RGB Mask", &useRGBMask);
@@ -522,7 +552,7 @@ void CMeshNode_Edit::SetUp_MeshEffect()
 
 	if (ImGui::CollapsingHeader("Dissolve Module"))
 	{
-		static _bool enableDissolve = false;
+		_bool enableDissolve = m_DissolveModule.fEnableDissolve > 0.5f ? true : false;
 		if (ImGui::Checkbox("Enable Dissolve", &enableDissolve))
 			m_DissolveModule.fEnableDissolve = enableDissolve ? 1.f : 0.f;
 
@@ -535,11 +565,13 @@ void CMeshNode_Edit::SetUp_MeshEffect()
 	if (ImGui::CollapsingHeader("Bloom Module"))
 	{
 		ImGui::DragFloat("Bloom Intensity", &m_BloomModule.fIntensity);
+		ImGui::DragFloat("Bloom Threshold", &m_BloomModule.fThreshold);
+		ImGui::DragFloat("Bloom Softness", &m_BloomModule.fSoftness);
 	}
 
 	if (ImGui::CollapsingHeader("Noise Module"))
 	{
-		static _bool enableNoise = false;
+		_bool enableNoise = m_NoiseModule.fEnableNoise > 0.5f ? true : false;
 		if (ImGui::Checkbox("Enable Noise", &enableNoise))
 			m_NoiseModule.fEnableNoise = enableNoise ? 1.f : 0.f;
 
@@ -547,9 +579,47 @@ void CMeshNode_Edit::SetUp_MeshEffect()
 		ImGui::DragFloat("Noise Tilling", &m_NoiseModule.fNoiseTilling);
 		ImGui::DragFloat2("Noise UVSpeed", &m_NoiseModule.vNoiseUVSpeed.x);
 	}
+
+	if (ImGui::CollapsingHeader("Mask Module"))
+	{
+		_bool enableMaskA = m_MaskModule.fEnableMaskA > 0.5f ? true : false;
+		_bool enableMaskB = m_MaskModule.fEnableMaskB > 0.5f ? true : false;
+
+		if (ImGui::Checkbox("Enable MaskA", &enableMaskA))
+			m_MaskModule.fEnableMaskA = enableMaskA ? 1.f : 0.f;
+		if(ImGui::Checkbox("Enable MaskB",&enableMaskB))
+			m_MaskModule.fEnableMaskB = enableMaskB ? 1.f : 0.f;
+
+		ImGui::DragFloat("Mask Tilling", &m_MaskModule.fMaskTilling);
+	}
+
+	if (ImGui::CollapsingHeader("Distortion Module"))
+	{
+		_bool enableDistortion = m_DistortionModule.fEnableDistortion > 0.5f ? true : false;
+		if (ImGui::Checkbox("Enable Distortion", &enableDistortion))
+			m_DistortionModule.fEnableDistortion = enableDistortion ? 1.f : 0.f;
+
+		ImGui::Checkbox("Use Diffuse Alpha", &m_DistortionModule.useDiffuseAlpha);
+		ImGui::Checkbox("Use Distortion Mask", & m_DistortionModule.useDistortionMask);
+		ImGui::DragFloat("Distortion Strength", &m_DistortionModule.fDistortionStrength);
+		ImGui::DragFloat("Distortion Tilling", &m_DistortionModule.fDistortionTilling);
+		ImGui::DragFloat2("Distortion UVSpeed", &m_DistortionModule.vDistortionUVSpeed.x);
+	}
+
+	if (ImGui::CollapsingHeader("Gradient Module"))
+	{
+		_bool enableGradient = m_GradientModule.fEnableGradient > 0.5f ? true : false;
+		if (ImGui::Checkbox("Enable Gradient", &enableGradient))
+		{
+			m_GradientModule.fEnableGradient = enableGradient ? 1.f : 0.f;
+		}
+		ImGui::Text("%lf", m_GradientModule.fEnableGradient);
+
+		Helper::DrawEnumCombo("Gradient Mode", m_GradientModule.eGradientMode, 100.f);
+	}
 }
 
-void CMeshNode_Edit::Add_Texture(TEXTURE_TYPE type)
+void CMeshNode_Edit::Add_Texture(EFFECT_TEXTURE_TYPE type)
 {
 
 	if (!m_pContext->Textures.empty())
@@ -558,26 +628,61 @@ void CMeshNode_Edit::Add_Texture(TEXTURE_TYPE type)
 
 		switch (type)
 		{
-		case Engine::TEXTURE_TYPE::DIFFUSE:
+		case EFFECT_TEXTURE_TYPE::DIFFUSE:
 		{
 			m_DiffuseTextureTag = m_pContext->TextureTags[0];
 
 			auto pDiffuseTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_DiffuseTextureTag);
 			pMaterialInstance->Set_Param("DiffuseTexture", { pDiffuseTexture->Get_SRV(),"Texture2D",0 });
 		}break;
-		case Engine::TEXTURE_TYPE::NOISE:
+		case EFFECT_TEXTURE_TYPE::NOISE:
 		{
 			m_NoiseTextureTag = m_pContext->TextureTags[0];
 
 			auto pNoiseTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_NoiseTextureTag);
 			pMaterialInstance->Set_Param("NoiseTexture", { pNoiseTexture->Get_SRV(),"Texture2D",0 });
 		}break;
-		case Engine::TEXTURE_TYPE::DISSOLVE:
+		case EFFECT_TEXTURE_TYPE::DISSOLVE:
 		{
 			m_DissolveTextureTag = m_pContext->TextureTags[0];
 
 			auto pDissolveTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_DissolveTextureTag);
 			pMaterialInstance->Set_Param("DissolveTexture", { pDissolveTexture->Get_SRV(),"Texture2D",0 });
+		}break;
+		case EFFECT_TEXTURE_TYPE::MASK_A:
+		{
+			m_MaskTextureTagA = m_pContext->TextureTags[0];
+
+			auto pMaskTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_MaskTextureTagA);
+			pMaterialInstance->Set_Param("AlphaMaskTextureA", { pMaskTexture->Get_SRV(),"Texture2D",0 });
+		}break;
+		case EFFECT_TEXTURE_TYPE::MASK_B:
+		{
+			m_MaskTextureTagB = m_pContext->TextureTags[0];
+
+			auto pMaskTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_MaskTextureTagB);
+			pMaterialInstance->Set_Param("AlphaMaskTextureB", { pMaskTexture->Get_SRV(),"Texture2D",0 });
+		}break;
+		case EFFECT_TEXTURE_TYPE::DISTORTION:
+		{
+			m_DistortionTextureTag = m_pContext->TextureTags[0];
+
+			auto pDistortionTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_DistortionTextureTag);
+			pMaterialInstance->Set_Param("DistortionTexture", { pDistortionTexture->Get_SRV(),"Texture2D",0 });
+		}break;
+		case EFFECT_TEXTURE_TYPE::DISTORTION_MASK:
+		{
+			m_DistortionMaskTextureTag = m_pContext->TextureTags[0];
+
+			auto pDistortionMaskTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_DistortionMaskTextureTag);
+			pMaterialInstance->Set_Param("DistortionMaskTexture", { pDistortionMaskTexture->Get_SRV(),"Texture2D",0 });
+		}break;
+		case EFFECT_TEXTURE_TYPE::GRADIENT:
+		{
+			m_GradientTextureTag = m_pContext->TextureTags[0];
+
+			auto pGradientTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_GradientTextureTag);
+			pMaterialInstance->Set_Param("GradientTexture", { pGradientTexture->Get_SRV(),"Texture2D",0 });
 		}break;
 		default:
 			break;

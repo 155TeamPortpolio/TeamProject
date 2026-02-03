@@ -21,8 +21,13 @@
 #include "EventSystem.h"
 #include "Level.h"
 #include "ClickManager.h"
+#include "ThreadPool.h"
 
 IMPLEMENT_SINGLETON(CGameInstance)
+
+#ifdef _USING_GUI
+ImgUiFrameProfiler g_Profiler;
+#endif
 
 CGameInstance::CGameInstance()
 {
@@ -55,14 +60,17 @@ _bool CGameInstance::Init_Engine(const ENGINE_DESC& engine)
 	m_pFontSystem = CFontSystem::Create(m_pDevice, m_pDeviceContext);
 	m_pEventSystem = CEventSystem::Create();
 	m_pClickManager = CClickManager::Create(engine.hWnd);
-
-
+	m_pThreadPool = CThreadPool::Create();
+	m_pVideoService = CVideoService::Create(m_pThreadPool, m_pDevice, m_pDeviceContext);
 #if defined _USING_GUI
 	m_pGuiSystem = CGUISystem::Create(engine, m_pDevice, m_pDeviceContext);
 #endif
 
 	m_pTimeManager->Add_Timer(G_EngineTimerID);
 	Notify_LevelSet();
+#ifdef _USING_GUI
+	g_Profiler.Initialize();
+#endif // #ifdef _USING_GUI
 	return TRUE;
 }
 
@@ -89,6 +97,11 @@ void CGameInstance::Set_EngineTimeScale(_float fScale)
 	m_pTimeManager->Set_TimeScale(G_EngineTimerID, fScale);
 }
 
+_float CGameInstance::Get_EngineTimeScale()
+{
+	return m_pTimeManager->Get_TimeScale(G_EngineTimerID);
+}
+
 void CGameInstance::Clear_LevelResource(const string& levelKey)
 {
 	if (levelKey.empty()) return;
@@ -107,10 +120,13 @@ void CGameInstance::Clear_LevelResource(const string& levelKey)
 
 void CGameInstance::Update_Engine(_float dt)
 {
+#ifdef _USING_GUI
+	g_Profiler.BeginFrame(m_totalFrameCount);
+#endif // #ifdef _USING_GUI
+
 	_float realDt = m_pTimeManager->Get_RawDeltaTime(G_EngineTimerID);
 
 	m_totalFrameCount++;
-
 
 	/*엔진 제어 업데이트 -> 동기화용*/
 	m_pObjectManager->Pre_EngineUpdate(realDt);
@@ -136,6 +152,7 @@ void CGameInstance::Update_Engine(_float dt)
 #if defined _USING_GUI
 	m_pGuiSystem->Update(realDt);
 #endif
+
 	m_pObjectManager->Late_Update(dt);
 	m_pUIManager->Late_Update(realDt);
 #ifdef USINGPHYSICS
@@ -143,17 +160,19 @@ void CGameInstance::Update_Engine(_float dt)
 	m_pCollisionSystem->Late_Update(dt);
 #endif // USINPHYSICS
 	/*엔진 제어 업데이트 -> 렌더 패킷 제출용*/
-	m_pInputDevice->Update(); 
+	m_pVideoService->Tick(dt); 
+	m_pInputDevice->Update();
 	m_pObjectManager->Post_EngineUpdate(realDt);
 	m_pUIManager->Post_EngineUpdate(realDt);
 	m_pClickManager->Update(realDt);
+
 }
 
 void CGameInstance::Release_Engine()
 {
 	/*Managers*/
 	Safe_Release(m_pTimeManager);
-	
+
 	Safe_Release(m_pLevelManager);
 	Safe_Release(m_pPrototypeManager);
 	Safe_Release(m_pObjectManager);
@@ -172,6 +191,8 @@ void CGameInstance::Release_Engine()
 	Safe_Release(m_pPhysicsSystem);
 	Safe_Release(m_pEventSystem);
 	Safe_Release(m_pClickManager);
+	Safe_Release(m_pThreadPool);
+	Safe_Release(m_pVideoService);
 
 	DestroyInstance();
 }
@@ -190,8 +211,8 @@ _bool CGameInstance::HandleMessage(HWND hWnd, UINT message, WPARAM wParam, LPARA
 #if defined _USING_GUI
 	if (m_pGuiSystem)
 	{
-		_bool MessageCapture=m_pGuiSystem->Set_ProcHandler(hWnd, message, wParam, lParam);
-		if(MessageCapture)
+		_bool MessageCapture = m_pGuiSystem->Set_ProcHandler(hWnd, message, wParam, lParam);
+		if (MessageCapture)
 			return true;	// GUI에서 메시지를 먹었으면 여기서 끝
 	}
 #endif
@@ -213,7 +234,7 @@ _bool CGameInstance::HandleMessage(HWND hWnd, UINT message, WPARAM wParam, LPARA
 
 	case WM_INPUT:
 		if (m_pInputDevice)
-				m_pInputDevice->Process_Input(lParam);
+			m_pInputDevice->Process_Input(lParam);
 		return true;
 
 	case WM_SIZE:
@@ -247,6 +268,9 @@ HRESULT CGameInstance::Draw()
 
 HRESULT CGameInstance::Draw_End()
 {
+#ifdef _USING_GUI
+	g_Profiler.EndFrame();
+#endif // #ifdef _USING_GUI
 	m_pGraphicDevice->Present();
 	return S_OK;
 }

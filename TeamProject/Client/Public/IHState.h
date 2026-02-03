@@ -46,8 +46,22 @@ void IHState<Type>::Enter(Type* pOwner)
     {
         if (!m_bSubInitialized)
         {
+            // 루트 상태머신 찾기
+            CStateMachine<Type>* pRoot = nullptr;
+            _uint iDepth = 1;
+
+            if (this->m_pOwnerStateMachine)
+            {
+                pRoot = this->m_pOwnerStateMachine->Get_RootStateMachine();
+                if (!pRoot)
+                    pRoot = this->m_pOwnerStateMachine;
+                iDepth = this->m_pOwnerStateMachine->Get_HierarchyDepth() + 1;
+            }
+
+            m_pSubStateMachine->Set_RootStateMachine(pRoot, iDepth);
+
             for (auto& pair : m_pSubStateMachine->Get_States())
-            {   // 서브 상태들에 부모 상태 설정
+            {
                 if (pair.second)
                     pair.second->Set_ParentState(this);
             }

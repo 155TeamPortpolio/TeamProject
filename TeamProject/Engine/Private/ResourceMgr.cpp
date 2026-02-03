@@ -36,7 +36,7 @@ CResourceMgr::CResourceMgr(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 HRESULT CResourceMgr::Initiallize()
 {
-	m_pPreloader = CPreloadScheduler::Create(CThreadPool::Create());
+	m_pPreloader = CPreloadScheduler::Create(ThreadPool());
 	Init_PreLoader();
 	return S_OK;
 }
@@ -284,7 +284,7 @@ void CResourceMgr::Init_PreLoader()
 			if (!model)
 			{
 				errorMessage = "Load_Model failed: " + key.resourceKey;
-				return false;
+				return false; 
 			}
 			return true;
 		});
@@ -373,7 +373,7 @@ vector<CMaterialData*>* CResourceMgr::GetOrLoad_MaterialData(
 	vector<CMaterialData*> container;
 	container.reserve(header.MaterialDataCount);
 
-	const string baseFilePath = MakePath(header.materialFileKey);
+	const string baseFilePath = MakePath(fileKey);
 	const string directory = filesystem::path(baseFilePath).parent_path().string() + "/";
 
 	for (size_t i = 0; i < header.MaterialDataCount; ++i)
@@ -484,7 +484,47 @@ CTexture* CResourceMgr::Load_Texture(const string& levelTag, const string& textu
 
 ANIMATION_META CResourceMgr::Load_MetaClip(const string& levelTag, const string& MetaKey)
 {
-	int index = ValidLevel(levelTag);
+	//const string metaPath = Get_ResourcePath(MetaKey);
+	string metaPath = "../../Resources/Data/Meta/";
+	string foundPath;
+
+	for (const auto& entry : filesystem::directory_iterator(metaPath))
+	{
+		if (!entry.is_directory())
+			continue;
+
+		filesystem::path candidate = entry.path() / MetaKey;
+		if (filesystem::exists(candidate))
+		{
+			foundPath = candidate.string();
+			break;
+		}
+	}
+
+	if (metaPath.empty())
+	{
+		return {};
+	}
+
+	ANIM_META MetaData = Helper::LoadJson<ANIM_META>(foundPath);
+	
+	ANIMATION_META Meta;
+	const string animDir = MetaData.AnimPath;
+	Meta.PreTransform = MetaData.PreTransform;
+	Meta.pClips.reserve(MetaData.Clips.size());
+
+	if (animDir.empty()) return{};
+	const string key = "Resources/";
+	size_t pos = animDir.find(key);
+
+	pos += key.length();
+	size_t end = animDir.find('/', pos);
+	string LevelTag = animDir.substr(pos, end - pos) + "_Level";
+	
+	if (!levelTag.empty())
+		LevelTag = levelTag;
+
+	int index = ValidLevel(LevelTag);
 	if (index == -1) {
 		MSG_BOX("Wrong Level Tag. : Load_AnimClip");
 		return ANIMATION_META();
@@ -498,18 +538,9 @@ ANIMATION_META CResourceMgr::Load_MetaClip(const string& levelTag, const string&
 			return it->second;
 	}
 
-	const string metaPath = Get_ResourcePath(MetaKey);
-	const string animDir = filesystem::path(metaPath).parent_path().string();
-
-	ANIM_META MetaData = Helper::LoadJson<ANIM_META>(metaPath);
-
-	ANIMATION_META Meta;
-	Meta.PreTransform = MetaData.PreTransform;
-	Meta.pClips.reserve(MetaData.Clips.size());
-
-	for (auto& DataClip : MetaData.Clips) {
-
-		string animPath = animDir + "\\Anim\\" + DataClip.ClipTag + ".anim";
+	for (auto& DataClip : MetaData.Clips)
+	{
+		string animPath = animDir + DataClip.ClipTag + ".anim";
 		CAnimationClip* pClip = CAnimationClip::Create(animPath);
 
 		if (!DataClip.Events.empty())

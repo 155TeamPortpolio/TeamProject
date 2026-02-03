@@ -1,17 +1,15 @@
-#pragma once
+ï»¿#pragma once
 
 NS_BEGIN(Client)
 
 #pragma region BattleHUD_Stat
-
 // ---------- Battle HUD : Stat ----------
-
 typedef struct tagUIStatusValue {
 	_float			fCurValue = {};
 	_float			fMaxValue = {};
 }UI_STATUS_VALUE;
 
-/* UI·Î Àü´ŞµÇ´Â »óÅÂ Á¤º¸¸¦ Á¤ÀÇÇÏ´Â ±¸Á¶Ã¼ : playerÀÇ status ÀÏ°ı */
+/* UIë¡œ ì „ë‹¬ë˜ëŠ” ìƒíƒœ ì •ë³´ë¥¼ ì •ì˜í•˜ëŠ” êµ¬ì¡°ì²´ : playerì˜ status ì¼ê´„ */
 typedef struct tagUIPlayerStatusDesc {
 	UI_STATUS_OWNER eOwner = {};
 	CHARACTER		eCharacter = {};
@@ -19,30 +17,27 @@ typedef struct tagUIPlayerStatusDesc {
 	UI_STATUS_VALUE special = {};
 	UI_STATUS_VALUE ultimate = {};
 	_float specialThreshold = {};
-	// EX °ü·Ã °ª Ãß°¡ ÇÊ¿ä
+	// EX ê´€ë ¨ ê°’ ì¶”ê°€ í•„ìš”
 }UI_PLAYER_STATUS_DESC;
 
-/* UI·Î Àü´ŞµÇ´Â Ä³¸¯ÅÍ ¼ø¼­¸¦ Á¤ÀÇÇÏ´Â ±¸Á¶Ã¼ */
-typedef struct tagUICharacterOrder {
-	_uint				iCount = {};
-	array<CHARACTER, 3>	characters = {};
-}UI_CHARACTER_ORDER;
+/* UIë¡œ ì „ë‹¬ë˜ëŠ” ë°°í‹€ í”Œë ˆì´ì–´ ì´ˆê¸° ì •ë³´ êµ¬ì¡°ì²´ : player ëª‡ ëª…ì¸ì§€ */
+typedef struct tagUIPlayerInitDesc {
+	_uint			iCount = {};
+}UI_PLAYER_INIT_DESC;
 #pragma endregion
 
 #pragma region BattleHUD_Action
-
 // ---------- Battle HUD : Action ----------
-
-/* UI·Î Àü´ŞµÇ´Â ¾×¼Ç »óÅÂ Á¤º¸¸¦ Á¤ÀÇÇÏ´Â ±¸Á¶Ã¼ */
+/* UIë¡œ ì „ë‹¬ë˜ëŠ” ì•¡ì…˜ ìƒíƒœ ì •ë³´ë¥¼ ì •ì˜í•˜ëŠ” êµ¬ì¡°ì²´ */
 typedef struct tagUIActionDesc {
-	UI_ACTION_TYPE		eType = {};			// ¾×¼Ç Á¾·ù (all, primary, evade, special, switch, ultimate)
-	UI_ACTION_STATE		eState = {};		// ¾×¼Ç ÇöÀç »óÅÂ (dissable, enable, available, execute)
-	_float				fFillAmount = {};	// ÁøÇàµµ (0 ~ 1)
+	UI_ACTION_TYPE		eType = {};			// ì•¡ì…˜ ì¢…ë¥˜ (all, primary, evade, special, switch, ultimate)
+	UI_ACTION_STATE		eState = {};		// ì•¡ì…˜ í˜„ì¬ ìƒíƒœ (dissable, enable, available, execute)
+	_float				fFillAmount = {};	// ì§„í–‰ë„ (0 ~ 1)
 }UI_ACTION_DESC;
 
-/* UI·Î Àü´ŞµÇ´Â primary ¾×¼Ç ¸ğµå Á¤º¸¸¦ Á¤ÀÇÇÏ´Â ±¸Á¶Ã¼*/
+/* UIë¡œ ì „ë‹¬ë˜ëŠ” primary ì•¡ì…˜ ëª¨ë“œ ì •ë³´ë¥¼ ì •ì˜í•˜ëŠ” êµ¬ì¡°ì²´*/
 typedef struct tagUIActionPrimaryDesc {
-	UI_ACTION_PRIMARY_MODE eMode = {};		// ÇöÀç primaryÀÇ ¾×¼Ç ¸ğµå (attack, interact)
+	UI_ACTION_PRIMARY_MODE eMode = {};		// í˜„ì¬ primaryì˜ ì•¡ì…˜ ëª¨ë“œ (attack, interact)
 }UI_ACTION_PRIMARY_DESC;
 #pragma endregion
 
@@ -62,5 +57,35 @@ typedef struct tagStageChangedDesc {
 
 #pragma endregion
 
+#pragma region FieldDayPhase
+typedef struct tagDayPhaseDesc {
+	DayPhase dayPhase;
+}DAYPHASE_DESC;
+
+#pragma endregion
+
+#pragma region Interactable & Dialogue
+// ---------- UI : Interactable ----------
+/* ì¸í„°ë™ì…˜ ê°€ëŠ¥ ë²”ìœ„ ì§„ì…/ì´íƒˆ ì‹œ UIì— ëŒ€ìƒ ì´ë¦„ê³¼ ìƒí˜¸ì‘ìš© ê°€ëŠ¥ ì—¬ë¶€ë¥¼ ì „ë‹¬ */
+typedef struct tagUIInteractableDesc{
+	wstring strName = {};
+	_bool isInteractable = {};
+}UI_INTERACTABLE_DESC;
+
+// ---------- UI : Dialogue ----------
+/* ì¸í„°ë™ì…˜ í‚¤ ì…ë ¥ ì‹œ ì‹¤í–‰í•  ëŒ€í™”(Dialogue)ì™€ ì‹œí€€ìŠ¤ë¥¼ UIì— ìš”ì²­ */
+typedef struct tagUIDialogueRequestDesc {
+	string strDialogueID = {};
+	_uint iSequenceID = {};
+}UI_DIALOGUE_REQUEST_DESC;
+
+//-----------Npc : ì‹¤í–‰í•¨ìˆ˜ ---------------
+typedef struct tagNpcInteractDesc {
+	wstring strName = {};
+	_uint iCurSequenceID = {};
+	_uint iNextSequenceID = {};
+	DialogueResult eResult = {};
+}NPC_INTERACT_DESC;
+#pragma endregion
 
 NS_END

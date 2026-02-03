@@ -5,15 +5,20 @@
 
 void CCorinState_SwitchOut::Enter(CCorin* pOwner)
 {
-    pOwner->Lock_Move();
-    pOwner->Stop_Rotation();
-    pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "SwitchOut_Normal")
+    pOwner->Get_StateMachine()->Reset_Trigger("ToIdle");
+    pOwner->Get_Animator()->Set_Animation(pOwner->Get_Name() + "SwitchOut_Normal")
         .Loop(false)
         .Apply();
 }
 
 void CCorinState_SwitchOut::Update(CCorin* pOwner, _float dt)
 {
+    if (pOwner->Is_MainCharacter())
+    {
+        pOwner->Get_StateMachine()->Set_Trigger("ToIdle");
+        return;
+    }
+
     if (m_fAnimProgress >= 0.3f)
         pOwner->Update_DissolveProgress(dt * 5.f);
 
@@ -22,12 +27,20 @@ void CCorinState_SwitchOut::Update(CCorin* pOwner, _float dt)
 
     if (m_fAnimProgress >= 0.6f)
     {
-        pOwner->Reset_DissolveProgress();
+        pOwner->DeActive_Character();
         pOwner->Get_StateMachine()->Set_Trigger("ToIdle");
     }
 }
 
 void CCorinState_SwitchOut::Exit(CCorin* pOwner)
 {
+    pOwner->Get_StateMachine()->Set_Bool("IsMove", false);
     __super::Exit(pOwner);
+}
+
+_bool CCorinState_SwitchOut::Handle_Transition(CCorin* pOwner, const string& strState)
+{
+    if (strState == "Idle")
+        return true;
+    return false;
 }

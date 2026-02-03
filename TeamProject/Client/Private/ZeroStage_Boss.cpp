@@ -78,6 +78,32 @@ HRESULT CZeroStage_Boss::Awake()
 
 void CZeroStage_Boss::Update()
 {
+
+
+	float dt = TimeManager()->Get_RawDeltaTime(G_EngineTimerID);
+	m_fStageTime += dt;
+
+	switch (m_eStageStage)
+	{
+	case Client::CStage::StageState::Entrance:
+		m_introFlow.Tick(dt);
+		Intro();
+		break;
+	case Client::CStage::StageState::BattleStart:
+		Battle();
+		break;
+	case Client::CStage::StageState::BattleEnd:
+		break;
+	case Client::CStage::StageState::Outro:
+		Outro();
+		break;
+	case Client::CStage::StageState::End:
+		m_outroFlow.Tick(dt);
+		End();
+		break;
+	default:
+		break;
+	}
 }
 
 HRESULT CZeroStage_Boss::Ready_Stage(CZero_Level::StageContext& context)
@@ -90,7 +116,7 @@ HRESULT CZeroStage_Boss::Enter_Stage(CZero_Level::StageContext& context)
 	Ready_Map("Zero_Level", "Zero_Boss1");
 	m_eStageStage = StageState::Entrance;
 	m_PlayerHandle = context.hPlayer;
-	BaseIntro(context);
+	BossIntro(context);
 	return S_OK;
 }
 
@@ -98,6 +124,45 @@ HRESULT CZeroStage_Boss::Exit_Stage(CZero_Level::StageContext& context)
 {
 	ObjectManager()->Get_Layer({ "Zero_Level","PlacedObject_Layer" })->Clear_Layer();
 	return S_OK;
+}
+
+void CZeroStage_Boss::Intro()
+{
+	if (m_introFlow.IsDoneAll())
+	{
+		CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_Sacrifice", {_vector3(-2.f, 1.f, 21.f)});
+		CBattleSystem::GetInstance()->SetActive(true);
+		m_eStageStage = StageState::BattleStart;
+	}
+}
+
+void CZeroStage_Boss::Battle()
+{
+	_bool isBattleEnd = CBattleSystem::GetInstance()->isMonsterCleared();
+	if (isBattleEnd) {
+		m_eStageStage = StageState::BattleEnd;
+		CBattleSystem::GetInstance()->SetActive(false);
+		STAGE_CHANGED_DESC Stage_End = { this };
+		EventSystem()->Broadcast<STAGE_CHANGED_DESC>(Stage_End);
+	}
+}
+
+
+void CZeroStage_Boss::Outro()
+{
+	BaseOutro();
+	m_outroFlow.Start();
+	m_eStageStage = StageState::End;
+}
+
+void CZeroStage_Boss::End()
+{
+	if (m_outroFlow.IsDoneAll()) {
+		RenderSystem()->UnRegister_AddictiveColor();
+		ObjectManager()->Get_Layer({ "Zero_Level","PlacedObject_Layer" })->Clear_Layer();
+		ObjectManager()->Get_Layer({ "Zero_Level","InteractableObject_Layer" })->Clear_Layer();
+		m_pOwnerLevel->ChangeStage(StageType::Boss, 0);
+	}
 }
 
 CZeroStage_Boss* CZeroStage_Boss::Create( CZero_Level* pOwnerLevel)

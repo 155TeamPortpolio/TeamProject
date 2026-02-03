@@ -69,10 +69,9 @@ void CAnimToolPanel::Update_Panel(_float dt)
 
 	if (m_pGameInstance->Get_InputDev()->Key_Tap('U')) {
 		if (nullptr != m_pSelectAnimator) {
-			m_pSelectAnimator->Change_Animation(66)
+			m_pSelectAnimator->Change_Animation(2)
 				.Loop(false)
-				.StartAt(0.3f)
-				.EndAt(0.8f)
+				.StartAt(0.18f)
 				.Apply();
 		}
 	}
@@ -651,6 +650,7 @@ void CAnimToolPanel::Save_Event()
 	string MetaPath = m_pGameInstance->Get_ResourceMgr()->Get_ResourcePath(ClipKey);
 
 	ANIM_META tMeta{};
+	tMeta.AnimPath = m_pSelectAnimator->Get_AnimPath();
 	tMeta.PreTransform = m_pSelectAnimator->Get_PreTransform();
 	tMeta.Clips = m_AnimClip;
 

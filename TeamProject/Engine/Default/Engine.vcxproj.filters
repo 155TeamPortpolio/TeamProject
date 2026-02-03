@@ -439,22 +439,22 @@
       <Filter>01. Utility\06. RenderSystem\RenderTarget\Manager</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Renderer.h">
-      <Filter>01. Utility\06. RenderSystem\Renderer</Filter>
+      <Filter>01. Utility\06. RenderSystem\RenderPass\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="..\public\ForwardRenderer.h">
-      <Filter>01. Utility\06. RenderSystem\Renderer\Forward</Filter>
+      <Filter>01. Utility\06. RenderSystem\RenderPass\Renderer\Forward</Filter>
     </ClInclude>
     <ClInclude Include="..\public\StaticMeshRenderer.h">
-      <Filter>01. Utility\06. RenderSystem\Renderer\Forward\StaticMesh</Filter>
+      <Filter>01. Utility\06. RenderSystem\RenderPass\Renderer\Forward\StaticMesh</Filter>
     </ClInclude>
     <ClInclude Include="..\public\SkinnedMeshRenderer.h">
-      <Filter>01. Utility\06. RenderSystem\Renderer\Forward\SkinnedMesh</Filter>
+      <Filter>01. Utility\06. RenderSystem\RenderPass\Renderer\Forward\SkinnedMesh</Filter>
     </ClInclude>
     <ClInclude Include="..\public\PostRenderer.h">
-      <Filter>01. Utility\06. RenderSystem\Renderer\Post</Filter>
+      <Filter>01. Utility\06. RenderSystem\RenderPass\Renderer\Post</Filter>
     </ClInclude>
     <ClInclude Include="..\public\EffectRenderer.h">
-      <Filter>01. Utility\06. RenderSystem\Renderer\Sub\Effect</Filter>
+      <Filter>01. Utility\06. RenderSystem\RenderPass\Renderer\Sub\Effect</Filter>
     </ClInclude>
     <!-- 01. Utility\07~14 Systems -->
     <ClInclude Include="..\Public\LightMgr.h">
@@ -544,7 +544,7 @@
       <Filter>99. Defines</Filter>
     </ClInclude>
     <ClInclude Include="..\public\UIRenderer.h">
-      <Filter>01. Utility\06. RenderSystem\Renderer\Sub\UI</Filter>
+      <Filter>01. Utility\06. RenderSystem\RenderPass\Renderer\Sub\UI</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\ThirdPartyCsv.h">
       <Filter>99. Defines</Filter>
@@ -585,23 +585,56 @@
     <ClInclude Include="..\Public\IInputService.h">
       <Filter>01. Utility\98. Services</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\ShakeController.h">
-      <Filter>01. Utility\07. CameraManager\ShakeController</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\CameraMgr.h">
       <Filter>01. Utility\07. CameraManager</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\EnvPanel.h">
       <Filter>00. System\02. Gui\GUI_Panel\EnvPanel</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\ZoomController.h">
-      <Filter>01. Utility\07. CameraManager\ZoomController</Filter>
+    <ClInclude Include="..\public\CamFXControllers.h">
+      <Filter>01. Utility\07. CameraManager\CamFXControllers</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\ShakeControllerData.h">
-      <Filter>01. Utility\07. CameraManager\ShakeController</Filter>
+    <ClInclude Include="..\Public\CamFXData.h">
+      <Filter>01. Utility\07. CameraManager\CamFXControllers</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\ZoomControllerData.h">
-      <Filter>01. Utility\07. CameraManager\ZoomController</Filter>
+    <ClInclude Include="..\Public\MeshSection.h">
+      <Filter>01. Utility\05. Resources\03. ModelData\Mesh\Section</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\StaticBathcer.h">
+      <Filter>01. Utility\06. RenderSystem\RenderPass\StaticBatcher</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CellBatcher.h">
+      <Filter>01. Utility\06. RenderSystem\RenderPass\StaticBatcher</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\SkinningBuffer.h">
+      <Filter>01. Utility\06. RenderSystem\PipeLine\Skinning</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Pool.h">
+      <Filter>01. Utility\03. GameObject\Managers\UI_Manager\UI_Pool</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\RunTimeBucket.h">
+      <Filter>01. Utility\00. GameInstance\RunTimeBucket</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\VideoService.h">
+      <Filter>01. Utility\16. VideoPlayer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\IVideoDecoderBackend.h">
+      <Filter>01. Utility\16. VideoPlayer\VideoDecoder</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\FrameQueue.h">
+      <Filter>01. Utility\16. VideoPlayer\FrameQueue</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\VideoPlayer.h">
+      <Filter>01. Utility\16. VideoPlayer\VideoPlayer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MFVideoDecoderBackend.h">
+      <Filter>01. Utility\16. VideoPlayer\VideoDecoder\MFVDecoder</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\CamPosOrbitSpinEvaluator.h">
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\01. CamPosEvaluator\06. OrbitSpin</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\OrbitSpinData.h">
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\01. CamPosEvaluator\06. OrbitSpin</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -818,30 +851,6 @@
     </Filter>
     <Filter Include="01. Utility\06. RenderSystem\RenderPass">
       <UniqueIdentifier>{93d2fe97-017d-4bf0-8d44-479397e756d3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Utility\06. RenderSystem\Renderer">
-      <UniqueIdentifier>{3bb6f406-ad77-4896-a825-ecb33365a24b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Utility\06. RenderSystem\Renderer\Forward">
-      <UniqueIdentifier>{d07ca1cf-f099-45a3-8079-5d48aa1231f2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Utility\06. RenderSystem\Renderer\Forward\StaticMesh">
-      <UniqueIdentifier>{3399e2a4-5cf9-432a-ba40-e2ffb3a055d4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Utility\06. RenderSystem\Renderer\Forward\SkinnedMesh">
-      <UniqueIdentifier>{670bb359-f507-4bc6-b88d-704ea5a7b37d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Utility\06. RenderSystem\Renderer\Post">
-      <UniqueIdentifier>{ad75717a-5ba0-4d76-955a-31788a101f9c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Utility\06. RenderSystem\Renderer\Sub">
-      <UniqueIdentifier>{d06d10a8-d1f8-4aa2-9844-99b3c7525215}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Utility\06. RenderSystem\Renderer\Sub\Effect">
-      <UniqueIdentifier>{16665c44-ae1f-468f-96fa-d751804f685f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Utility\06. RenderSystem\Renderer\Sub\UI">
-      <UniqueIdentifier>{f3a221f7-b0ac-45a0-97db-98e951bc6a32}</UniqueIdentifier>
     </Filter>
     <Filter Include="01. Utility\07. CameraManager">
       <UniqueIdentifier>{f01bcb6b-de12-4966-85a7-81edbd40a0ad}</UniqueIdentifier>
@@ -1095,9 +1104,6 @@
     <Filter Include="99. Defines\AnimationLayout">
       <UniqueIdentifier>{08d4aef7-fcc3-432b-a822-f966d04565ac}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Utility\07. CameraManager\ShakeController">
-      <UniqueIdentifier>{225219f8-d4c9-4dab-9fe7-4ae38e2de98b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="00. System\02. Gui\GUI_Panel\EnvPanel">
       <UniqueIdentifier>{8b442149-c628-41be-8ecc-533ff36b2e28}</UniqueIdentifier>
     </Filter>
@@ -1119,8 +1125,65 @@
     <Filter Include="98. BasicShader\UI">
       <UniqueIdentifier>{344ee409-7a31-4dc3-9741-3c5131d36b7a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Utility\07. CameraManager\ZoomController">
-      <UniqueIdentifier>{e6a96919-8c00-4dcf-bf8d-56535eb3a99d}</UniqueIdentifier>
+    <Filter Include="01. Utility\07. CameraManager\CamFXControllers">
+      <UniqueIdentifier>{f00f7d2f-c57c-47bf-9d75-ffa2c952a3f6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\05. Resources\03. ModelData\Mesh\Section">
+      <UniqueIdentifier>{5532d0ff-12ea-4619-87ce-53057caa7081}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\06. RenderSystem\RenderPass\StaticBatcher">
+      <UniqueIdentifier>{240c392d-3b5b-4570-b94d-edb80e7ec869}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\06. RenderSystem\RenderPass\Renderer">
+      <UniqueIdentifier>{3bb6f406-ad77-4896-a825-ecb33365a24b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\06. RenderSystem\RenderPass\Renderer\Forward">
+      <UniqueIdentifier>{d07ca1cf-f099-45a3-8079-5d48aa1231f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\06. RenderSystem\RenderPass\Renderer\Forward\StaticMesh">
+      <UniqueIdentifier>{3399e2a4-5cf9-432a-ba40-e2ffb3a055d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\06. RenderSystem\RenderPass\Renderer\Forward\SkinnedMesh">
+      <UniqueIdentifier>{670bb359-f507-4bc6-b88d-704ea5a7b37d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\06. RenderSystem\RenderPass\Renderer\Post">
+      <UniqueIdentifier>{ad75717a-5ba0-4d76-955a-31788a101f9c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\06. RenderSystem\RenderPass\Renderer\Sub">
+      <UniqueIdentifier>{d06d10a8-d1f8-4aa2-9844-99b3c7525215}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\06. RenderSystem\RenderPass\Renderer\Sub\Effect">
+      <UniqueIdentifier>{16665c44-ae1f-468f-96fa-d751804f685f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\06. RenderSystem\RenderPass\Renderer\Sub\UI">
+      <UniqueIdentifier>{f3a221f7-b0ac-45a0-97db-98e951bc6a32}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\06. RenderSystem\PipeLine\Skinning">
+      <UniqueIdentifier>{b13ef6fd-d622-4e90-a05b-45296d976075}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. GameObject\Managers\UI_Manager\UI_Pool">
+      <UniqueIdentifier>{376228d1-7bc6-4481-bc26-53c3b0c92565}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\00. GameInstance\RunTimeBucket">
+      <UniqueIdentifier>{cfdd51a7-8fb7-4228-b654-14c8411a2abd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\16. VideoPlayer">
+      <UniqueIdentifier>{344a11af-e601-4f2a-bee2-b4b36cd23726}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\16. VideoPlayer\VideoDecoder">
+      <UniqueIdentifier>{bfbe393d-95a7-4941-9854-a8d439ec4028}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\16. VideoPlayer\FrameQueue">
+      <UniqueIdentifier>{0a0db5a7-52bc-4159-abb0-60e483a64d09}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\16. VideoPlayer\VideoPlayer">
+      <UniqueIdentifier>{66f4c454-a9f9-4bbb-a20e-e24de3eaa88f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\16. VideoPlayer\VideoDecoder\MFVDecoder">
+      <UniqueIdentifier>{9d5747a9-5d8d-4e4f-b01f-c43939605bfa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\20. CamSequencePlayer\01. CamPosEvaluator\06. OrbitSpin">
+      <UniqueIdentifier>{1c88ead6-b51f-4598-83cc-49243672b3ff}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1495,25 +1558,25 @@
       <Filter>01. Utility\06. RenderSystem\RenderTarget\Manager</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Renderer.cpp">
-      <Filter>01. Utility\06. RenderSystem\Renderer</Filter>
+      <Filter>01. Utility\06. RenderSystem\RenderPass\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="..\private\ForwardRenderer.cpp">
-      <Filter>01. Utility\06. RenderSystem\Renderer\Forward</Filter>
+      <Filter>01. Utility\06. RenderSystem\RenderPass\Renderer\Forward</Filter>
     </ClCompile>
     <ClCompile Include="..\private\StaticMeshRenderer.cpp">
-      <Filter>01. Utility\06. RenderSystem\Renderer\Forward\StaticMesh</Filter>
+      <Filter>01. Utility\06. RenderSystem\RenderPass\Renderer\Forward\StaticMesh</Filter>
     </ClCompile>
     <ClCompile Include="..\private\SkinnedMeshRenderer.cpp">
-      <Filter>01. Utility\06. RenderSystem\Renderer\Forward\SkinnedMesh</Filter>
+      <Filter>01. Utility\06. RenderSystem\RenderPass\Renderer\Forward\SkinnedMesh</Filter>
     </ClCompile>
     <ClCompile Include="..\private\PostRenderer.cpp">
-      <Filter>01. Utility\06. RenderSystem\Renderer\Post</Filter>
+      <Filter>01. Utility\06. RenderSystem\RenderPass\Renderer\Post</Filter>
     </ClCompile>
     <ClCompile Include="..\private\EffectRenderer.cpp">
-      <Filter>01. Utility\06. RenderSystem\Renderer\Sub\Effect</Filter>
+      <Filter>01. Utility\06. RenderSystem\RenderPass\Renderer\Sub\Effect</Filter>
     </ClCompile>
     <ClCompile Include="..\private\UIRenderer.cpp">
-      <Filter>01. Utility\06. RenderSystem\Renderer\Sub\UI</Filter>
+      <Filter>01. Utility\06. RenderSystem\RenderPass\Renderer\Sub\UI</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\CameraMgr.cpp">
       <Filter>01. Utility\07. CameraManager</Filter>
@@ -1578,14 +1641,41 @@
     <ClCompile Include="..\Private\AnimBuilder.cpp">
       <Filter>01. Utility\04. Components\06. Animator3D\AnimBuilder</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\ShakeController.cpp">
-      <Filter>01. Utility\07. CameraManager\ShakeController</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\EnvPanel.cpp">
       <Filter>00. System\02. Gui\GUI_Panel\EnvPanel</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\ZoomController.cpp">
-      <Filter>01. Utility\07. CameraManager\ZoomController</Filter>
+    <ClCompile Include="..\private\CamFXControllers.cpp">
+      <Filter>01. Utility\07. CameraManager\CamFXControllers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CellBatcher.cpp">
+      <Filter>01. Utility\06. RenderSystem\RenderPass\StaticBatcher</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\SkinningBuffer.cpp">
+      <Filter>01. Utility\06. RenderSystem\PipeLine\Skinning</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Pool.cpp">
+      <Filter>01. Utility\03. GameObject\Managers\UI_Manager\UI_Pool</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\RunTimeBucket.cpp">
+      <Filter>01. Utility\00. GameInstance\RunTimeBucket</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\VideoService.cpp">
+      <Filter>01. Utility\16. VideoPlayer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\IVideoDecoderBackend.cpp">
+      <Filter>01. Utility\16. VideoPlayer\VideoDecoder</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\FrameQueue.cpp">
+      <Filter>01. Utility\16. VideoPlayer\FrameQueue</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\VideoPlayer.cpp">
+      <Filter>01. Utility\16. VideoPlayer\VideoPlayer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MFVideoDecoderBackend.cpp">
+      <Filter>01. Utility\16. VideoPlayer\VideoDecoder\MFVDecoder</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CamPosOrbitSpinEvaluator.cpp">
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\01. CamPosEvaluator\06. OrbitSpin</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1705,6 +1795,9 @@
       <Filter>98. BasicShader\Mesh</Filter>
     </FxCompile>
     <FxCompile Include="..\Public\Engine_Shader\VTX_Portal.hlsl">
+      <Filter>98. BasicShader\Etc</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\VTX_MetaBall.hlsl">
       <Filter>98. BasicShader\Etc</Filter>
     </FxCompile>
   </ItemGroup>

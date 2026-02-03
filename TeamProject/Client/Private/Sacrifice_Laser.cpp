@@ -7,6 +7,9 @@
 #include "BattleSystem.h"
 #include "PhysicsSystem.h"
 
+/* Component */
+#include "Child.h"
+
 CSacrifice_Laser::CSacrifice_Laser()
 	:CGameObject()
 {
@@ -25,7 +28,7 @@ HRESULT CSacrifice_Laser::Initialize_Prototype()
 
 	/* Effect Asset */
 	ResourceManager()->Add_ResourcePath("laser_start.json", "../Bin/Resources/Effect/Data/laser_start.json");
-	ResourceManager()->Add_ResourcePath("laser3.json", "../Bin/Resources/Effect/Data/laser3.json");
+	ResourceManager()->Add_ResourcePath("laser4.json", "../Bin/Resources/Effect/Data/laser4.json");
 	ResourceManager()->Add_ResourcePath("laser_hit_point.json", "../Bin/Resources/Effect/Data/laser_hit_point.json");
 
 	/* Textures */
@@ -34,6 +37,7 @@ HRESULT CSacrifice_Laser::Initialize_Prototype()
 	ResourceManager()->Add_ResourcePath("Eff_Disorder_UU_23.png", "../Bin/Resources/Effect/Texture/Eff_Disorder_UU_23.png");
 	ResourceManager()->Add_ResourcePath("lightning6.png", "../Bin/Resources/Effect/Texture/lightning6.png");
 	ResourceManager()->Add_ResourcePath("Eff_Flare_085.png", "../Bin/Resources/Effect/Texture/Eff_Flare_085.png");
+	ResourceManager()->Add_ResourcePath("Flare_UU_02.png", "../Bin/Resources/Effect/Texture/Flare_UU_02.png");
 	ResourceManager()->Add_ResourcePath("Flare_UU_02.png", "../Bin/Resources/Effect/Texture/Flare_UU_02.png");
 
 	return S_OK;
@@ -56,7 +60,7 @@ HRESULT CSacrifice_Laser::Initialize(INIT_DESC* pArg)
 		.Build("LaserHitPoint");
 
 	_smatrix offsetMatrix = _smatrix::Identity;
-	offsetMatrix.Translation(_vector3(0.5f, 0.2f, 0.f));
+	offsetMatrix.Translation(_vector3(0.8f, 0.f, 0.f));
 
 	auto pBoneFollower = Get_Component<CBoneFollower>();
 	pBoneFollower->Set_Offset(offsetMatrix);
@@ -87,6 +91,9 @@ void CSacrifice_Laser::Update(_float dt)
 	auto pEffectContainer = Get_Component<CObjectContainer>()->Find_ObjectByName("Laser");
 	CEffectContainer::EFFECT_CONTAINER_CONTEXT& context = static_cast<CEffectContainer*>(pEffectContainer)->GetEffectContext();
 
+	if (!m_IsOnTarget && 1 == m_iLaserMode)
+		Set_TargetPosition();
+
 	switch (m_iLaserMode)
 	{
 	case 0: /* Turn */
@@ -107,20 +114,20 @@ void CSacrifice_Laser::Update(_float dt)
 		if (PhysicsSystem()->Raycast(rayDesc, output))
 		{
 			vPosition1 = output.vPoint;
-			string name = output.pHitObject->Get_InstanceName();
 		}
 		else
 			vPosition1 = vPosition0 + vDir * 200.f;
 
 		context.vLinePoint0 = vPosition0;
 		context.vLinePoint1 = vPosition1;
+
 	}break;
 	case 1: /* Target */
 	{
 		_vector3 vPosition0 = m_pTransform->Get_WorldPos();
 
 		context.vLinePoint0 = vPosition0;
-		context.vLinePoint1 = vPosition0 + m_vTargetDir * 200.f;
+		context.vLinePoint1 = m_vTargetPos;
 
 	}break;
 	case 2: /* Look */
@@ -153,7 +160,6 @@ void CSacrifice_Laser::Update(_float dt)
 
 	auto pLaserHitPoint = Get_Component<CObjectContainer>()->Find_ObjectByName("LaserHitPoint");
 	pLaserHitPoint->Get_Component<CTransform>()->Set_Pos(context.vLinePoint1);
-	Get_Component<CObjectContainer>()->UpdateChild(dt);
 
 	if (m_IsPendingDeactive)
 	{
@@ -164,6 +170,8 @@ void CSacrifice_Laser::Update(_float dt)
 			m_IsPendingDeactive = false;
 		}
 	}
+
+	Get_Component<CObjectContainer>()->UpdateChild(dt);
 }
 
 void CSacrifice_Laser::Late_Update(_float dt)
@@ -176,6 +184,7 @@ void CSacrifice_Laser::Render_GUI()
 	__super::Render_GUI();
 
 	ImGui::Text("Target Pos : %f,%f,%f", m_vTargetPos.x, m_vTargetPos.y, m_vTargetPos.z);
+	ImGui::Text("Target dir : %f,%f,%f", m_vTargetDir.x, m_vTargetDir.y, m_vTargetDir.z);
 }
 
 void CSacrifice_Laser::ActiveLaser(_uint mode)
@@ -183,27 +192,8 @@ void CSacrifice_Laser::ActiveLaser(_uint mode)
 	Get_Component<CBoneFollower>()->Sync_Transform(0.f, m_pTransform);
 	m_IsPendingDeactive = false;
 	m_isAlive = true;
+	m_IsOnTarget = false;
 	m_iLaserMode = mode;
-
-	if (1 == m_iLaserMode)
-	{
-		_vector3 vTargetPos{};
-		auto& battleInfos = CBattleSystem::GetInstance()->GetBattleObjects(CBattleSystem::BATTLE_OBJ_TYPE::PLAYER);
-		for (auto& info : battleInfos)
-		{
-			if (info.isOnField)
-			{
-				m_vTargetPos = info.vPos;
-				m_vTargetPos.y += 1.f;
-				break;
-			}
-		}
-
-		_vector3 vDir = m_vTargetPos - _vector3(m_pTransform->Get_WorldPos());
-		vDir.y = 0.f;
-		vDir.Normalize();
-		m_vTargetDir = vDir;
-	}
 
 	auto pLaser = Get_Component<CObjectContainer>()->Find_ObjectByName("Laser");
 	static_cast<CEffectContainer*>(pLaser)->Play();
@@ -260,4 +250,52 @@ void CSacrifice_Laser::Free()
 {
 	__super::Free();
 
+}
+
+void CSacrifice_Laser::Set_TargetPosition()
+{
+	_vector3 vDir{ 0.f,0.f,1.f };
+
+	_vector3 vCurrPosition = m_pTransform->Get_WorldPos();
+	_vector3 vTargetPosition = BattleSystem()->GetCurCharacterHandle().Get()->Get_Component<CTransform>()->Get_WorldPos();
+	_vector3 vTargetDir = vTargetPosition - vCurrPosition;
+	vTargetDir.y = 0.f;
+
+	_vector3 vLook = Get_Component<CChild>()->Get_Parent()->Get_Component<CTransform>()->Dir(STATE::LOOK);
+	vLook.y = 0.f;
+	vLook.Normalize();
+
+	if (vTargetDir.Length() >= 0.01f)
+	{
+		vTargetDir.Normalize();
+
+		_float dot = clamp(vLook.Dot(vTargetDir), -1.f, 1.f);
+		_float crossY = vLook.x * vTargetDir.z - vLook.z * vTargetDir.x;
+		_float yawDelta = atan2f(crossY, dot);
+		yawDelta = clamp(yawDelta, XMConvertToRadians(-20.f), XMConvertToRadians(20.f));
+
+		_float c = cosf(yawDelta);
+		_float s = sinf(yawDelta);
+
+		vDir.x = vLook.x * c - vLook.z * s;
+		vDir.y = 0.f;
+		vDir.z = vLook.x * s + vLook.z * c;
+		vDir.Normalize();
+	}
+
+	m_vTargetDir = vDir;
+
+	PHYSICS_RAY rayDesc{};
+	PHYSICS_RAY_HIT output{};
+	rayDesc.iCollisionMask = ENUM(COLLISION_GROUP::COMMON);
+	rayDesc.vOrigin = vCurrPosition;
+	rayDesc.vDirection = m_vTargetDir;
+	rayDesc.fMaxDistance = 200.f;
+
+	if (PhysicsSystem()->Raycast(rayDesc, output))
+		m_vTargetPos = output.vPoint;
+	else
+		m_vTargetPos = vCurrPosition + 200.f * vDir;
+
+	m_IsOnTarget = true;
 }

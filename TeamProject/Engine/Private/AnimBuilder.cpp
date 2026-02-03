@@ -18,27 +18,27 @@ HRESULT SetAnimBuild::Apply()
 
 	//베이스 레이어일 경우 마지막 키프레임 위치, 회전을 갖고옴
 	if (Layer.BaseLayer) {
-		//애니매이션 시작 포지션이 1인지 구분
-		if (m_fStartAt == 0.f) {
-			Layer.vPrevRootPos = m_pOwner->m_pAnimClips[m_iClipIndex]
-				->Get_StartKeyFrameByBoneIndex(Layer.iRootBoneIndex).vTranslation;
-			Layer.vPrevRootQuat = m_pOwner->m_pAnimClips[m_iClipIndex]
-				->Get_StartKeyFrameByBoneIndex(Layer.iRootBoneIndex).vRotation;
-		}
-		else {
-			m_pOwner->m_pAnimClips[Layer.iClipIndex]->Sample_KeyFrameByBoneIndex(Layer.iRootBoneIndex, m_fStartAt,
-				nullptr, &Layer.vPrevRootQuat, &Layer.vPrevRootPos);
-		}
-
+		////애니매이션 시작 포지션이 1인지 구분
+		//if (m_fStartAt == 0.f) {
+		//	Layer.vPrevRootPos = m_pOwner->m_pAnimClips[m_iClipIndex]
+		//		->Get_StartKeyFrameByBoneIndex(Layer.iRootBoneIndex).vTranslation;
+		//	Layer.vPrevRootQuat = m_pOwner->m_pAnimClips[m_iClipIndex]
+		//		->Get_StartKeyFrameByBoneIndex(Layer.iRootBoneIndex).vRotation;
+		//}
+		//else {
+		//	m_pOwner->m_pAnimClips[Layer.iClipIndex]->Sample_KeyFrameByBoneIndex(Layer.iRootBoneIndex, m_fStartAt,
+		//		nullptr, &Layer.vPrevRootQuat, &Layer.vPrevRootPos);
+		//}
+				
 		//애니매이션 루프시 마지막 엔드프레임이 1인지 구분
-		if (m_fEndAt == 1.f) {
+		if (fabs(m_fEndAt - 1.f) < 0.0001f) {
 			Layer.vRootEndPos = m_pOwner->m_pAnimClips[m_iClipIndex]
 				->Get_EndKeyFrameByBoneIndex(Layer.iRootBoneIndex).vTranslation;
 			Layer.vRootEndQuat = m_pOwner->m_pAnimClips[m_iClipIndex]
 				->Get_EndKeyFrameByBoneIndex(Layer.iRootBoneIndex).vRotation;
 		}
 		else {
-			m_pOwner->m_pAnimClips[Layer.iClipIndex]->Sample_KeyFrameByBoneIndex(Layer.iRootBoneIndex, m_fEndAt,
+			m_pOwner->m_pAnimClips[m_iClipIndex]->Sample_KeyFrameByBoneIndex(Layer.iRootBoneIndex, m_fEndAt,
 				nullptr, &Layer.vRootEndQuat, &Layer.vRootEndPos);
 		}
 
@@ -57,12 +57,14 @@ HRESULT SetAnimBuild::Apply()
 			m_pOwner->m_pAnimClips[m_iClipIndex]->TranslateAnimateMatrixFromDurationNoEvent(m_pOwner->m_BasePose, 0.f);
 	}
 
-	Layer.fCurrentTrackPosition = m_fStartAt * m_pOwner->Get_CurAnimDuration();
+	Layer.fCurrentTrackPosition = m_fStartAt * m_pOwner->m_pAnimClips[m_iClipIndex]->Get_Duration();
 
 	//애니매이션 기본
 	Layer.bLoop = m_bLoop;
+	Layer.bWrapped = false;
 	Layer.fEndAt = m_fEndAt;
 	Layer.fStartAt = m_fStartAt;
+	Layer.bJumpedAnim = true;
 	Layer.fAnimSpeed = m_fSpeed;
 	Layer.bPause = m_bPause;
 
@@ -88,20 +90,20 @@ HRESULT ChangeAnimBuild::Apply()
 
 	//베이스 레이어일 경우 마지막 키프레임 위치, 회전을 갖고옴
 	if (Layer.BaseLayer) {
-		//애니매이션 시작 포지션이 1인지 구분
-		if (m_fStartAt == 0.f) {
-			Layer.vPrevRootPos = m_pOwner->m_pAnimClips[m_iClipIndex]
-				->Get_StartKeyFrameByBoneIndex(Layer.iRootBoneIndex).vTranslation;
-			Layer.vPrevRootQuat = m_pOwner->m_pAnimClips[m_iClipIndex]
-				->Get_StartKeyFrameByBoneIndex(Layer.iRootBoneIndex).vRotation;
-		}
-		else {
-			m_pOwner->m_pAnimClips[m_iClipIndex]->Sample_KeyFrameByBoneIndex(Layer.iRootBoneIndex, m_fStartAt,
-				nullptr, &Layer.vPrevRootQuat, &Layer.vPrevRootPos);
-		}
-
+		////애니매이션 시작 포지션이 1인지 구분
+		//if (m_fStartAt == 0.f) {
+		//	Layer.vPrevRootPos = m_pOwner->m_pAnimClips[m_iClipIndex]
+		//		->Get_StartKeyFrameByBoneIndex(Layer.iRootBoneIndex).vTranslation;
+		//	Layer.vPrevRootQuat = m_pOwner->m_pAnimClips[m_iClipIndex]
+		//		->Get_StartKeyFrameByBoneIndex(Layer.iRootBoneIndex).vRotation;
+		//}
+		//else {
+		//	m_pOwner->m_pAnimClips[m_iClipIndex]->Sample_KeyFrameByBoneIndex(Layer.iRootBoneIndex, m_fStartAt,
+		//		nullptr, &Layer.vPrevRootQuat, &Layer.vPrevRootPos);
+		//}
+		//
 		//애니매이션 루프시 마지막 엔드프레임이 1인지 구분
-		if (m_fEndAt == 1.f) {
+		if (fabs(m_fEndAt - 1.f) < 0.0001f) {
 			Layer.vRootEndPos = m_pOwner->m_pAnimClips[m_iClipIndex]
 				->Get_EndKeyFrameByBoneIndex(Layer.iRootBoneIndex).vTranslation;
 			Layer.vRootEndQuat = m_pOwner->m_pAnimClips[m_iClipIndex]
@@ -128,8 +130,11 @@ HRESULT ChangeAnimBuild::Apply()
 
 	//애니매이션 기본
 	Layer.bLoop = m_bLoop;	
+	Layer.bWrapped = false;
+	Layer.bNoRootMoveDelta = m_bNoRootMoveDelta;
 	Layer.fEndAt = m_fEndAt;
 	Layer.fStartAt = m_fStartAt;
+	Layer.bJumpedAnim = true;
 	Layer.fAnimSpeed = m_fSpeed;
 	Layer.bPause = m_bPause;
 
@@ -170,7 +175,7 @@ HRESULT ChangeAnimBuild::Apply()
 	Layer.bUpdate_NewClip = m_bUpdate_NewClip;
 	Layer.bIgnoreRotation = m_bIgnoreRotation;
 	Layer.iNextClipIndex = m_iClipIndex;
-	Layer.fBlendTrackPosition = m_fStartAt * m_fBlendDuration;
+	Layer.fBlendTrackPosition = m_fStartAt * m_pOwner->m_pAnimClips[m_iClipIndex]->Get_Duration();
 	Layer.fBlendElapsed = 0.f;
 	Layer.fBlendDuration = m_fBlendDuration;
 	Layer.eBlendEaseType = m_eBlendEaseType;

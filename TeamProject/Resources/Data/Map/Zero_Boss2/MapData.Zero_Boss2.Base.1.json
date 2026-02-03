@@ -1,0 +1,157 @@
+{
+  "TagDataFormat": "Base",
+  "TagArea": "Zero_Boss2",
+  "iVersion": 1,
+  "Layers": [
+    {
+      "TagLayer": "PlacedObject_Layer",
+      "Objects": [
+        {
+          "iObjID": 0,
+          "TagModelResourceKey": "Zero_Stage_Boss2_Cardout.model",
+          "TagMaterialResourceKey": "Zero_Stage_Boss2_Cardout.mat",
+          "vRight": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "vPos": [
+            0.0,
+            -5.0,
+            0.0,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 1,
+          "TagModelResourceKey": "Zero_Stage_Boss2_Decalout.model",
+          "TagMaterialResourceKey": "Zero_Stage_Boss2_Decalout.mat",
+          "vRight": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "vPos": [
+            -0.0002565995673649013,
+            -5.0,
+            -2.927112340927124,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 2,
+          "TagModelResourceKey": "Zero_Stage_Boss2_Groundout.model",
+          "TagMaterialResourceKey": "Zero_Stage_Boss2_Groundout.mat",
+          "vRight": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "vPos": [
+            0.0,
+            -5.0,
+            0.0,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 3,
+          "TagModelResourceKey": "Zero_Stage_Boss2_Propout.model",
+          "TagMaterialResourceKey": "Zero_Stage_Boss2_Propout.mat",
+          "vRight": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "vPos": [
+            0.0,
+            -5.0,
+            0.0,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 4,
+          "TagModelResourceKey": "Zero_Stage_Boss2_NAPMeshRootout.model",
+          "TagMaterialResourceKey": "Zero_Stage_Boss2_NAPMeshRootout.mat",
+          "vRight": [
+            0.9999986290931702,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            0.9999986290931702,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "vPos": [
+            0.0,
+            -5.0,
+            0.0,
+            1.0
+          ]
+        }
+      ]
+    }
+  ]
+}

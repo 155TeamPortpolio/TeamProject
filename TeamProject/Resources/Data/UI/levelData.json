@@ -1,5 +1,27 @@
 {
   "levels": {
+    "Global_Level": {
+      "objects": [
+        {
+          "prototypeTag": "Proto_GameObject_ScreenFade",
+          "instanceName": "screen_fade",
+          "prefabPath" : ""
+        },
+        
+        {
+          "prototypeTag": "Proto_GameObject_Dialogue",
+          "instanceName": "dialogue",
+          "prefabPath" : ""
+        },
+        
+        {
+          "prototypeTag": "Proto_GameObject_SceneFrame",
+          "instanceName": "scene_frame",
+          "prefabPath" : ""
+        }
+      ]
+    },
+
     "Logo_Level": {
       "objects": [
         {
@@ -24,7 +46,7 @@
       "objects": [ 
         {
           "prototypeTag": "Proto_GameObject_BattleHUD",
-          "instanceName": "battleHUD",
+          "instanceName": "hud_battle",
           "prefabPath" : ""
         }
       ]
@@ -34,7 +56,7 @@
       "objects": [ 
         {
           "prototypeTag": "Proto_GameObject_BattleHUD",
-          "instanceName": "battleHUD",
+          "instanceName": "hud_battle",
           "prefabPath" : ""
         }
       ]
@@ -44,7 +66,29 @@
       "objects": [ 
         {
           "prototypeTag": "Proto_GameObject_FieldHUD",
-          "instanceName": "fieldHUD",
+          "instanceName": "hud_field",
+          "prefabPath" : ""
+        }
+      ]
+    },
+
+    "MainCity_Level": {
+      "objects": [
+        {
+          "prototypeTag": "Proto_GameObject_FieldHUD",
+          "instanceName": "hud_field",
+          "prefabPath" : ""
+        },
+        
+        {
+          "prototypeTag": "Proto_GameObject_Lottery",
+          "instanceName": "lottery",
+          "prefabPath" : ""
+        },
+        
+        {
+          "prototypeTag": "Proto_GameObject_Ramen",
+          "instanceName": "ramen",
           "prefabPath" : ""
         }
       ]

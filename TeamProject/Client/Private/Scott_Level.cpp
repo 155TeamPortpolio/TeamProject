@@ -10,6 +10,7 @@
 #include "CharacterController.h"
 
 #include "BattleSystem.h"
+#include "FieldSystem.h"
 #include "DataBase.h"
 
 /* MapData */
@@ -23,8 +24,12 @@
 #include "EffectContainer.h"
 #include "AttackSign.h"
 
+// Camera
+#include "CamDirector.h"
+
 /* Character */
 #include "Player.h"
+#include "OfficeMeow.h"
 
 /* Enemy */
 
@@ -35,6 +40,8 @@
 /* Interactable */
 #include "Portal.h"
 
+#include "Jaeger.h"
+
 CScott_Level::CScott_Level(const string& LevelKey)
 	:CLevel(LevelKey),
 	m_pGameInstance{ CGameInstance::GetInstance() }
@@ -44,9 +51,7 @@ CScott_Level::CScott_Level(const string& LevelKey)
 
 HRESULT CScott_Level::Initialize()
 {
-	CBattleSystem::GetInstance()->SetActive(true);
-	RenderSystem()->Set_FogDesc({ _float4(0.12f, 0.25f, 0.35f, 1.0f),0.f, 0.f, 0.005f, true });
-
+	FieldSystem()->SetActive(true);
 	return S_OK;
 }
 
@@ -54,6 +59,9 @@ HRESULT CScott_Level::Awake()
 {
 	m_pPlayer = dynamic_cast<CPlayer*>(ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Player)));
 	m_pPlayer->Set_PlayerType(CPlayer::PLAYER::FIELD);
+
+	auto pCloud = ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Cloud));
+	pCloud->Set_Alive(true);
 
 	IProtoService* pProto = CGameInstance::GetInstance()->Get_PrototypeMgr();
 	IResourceService* pResource = CGameInstance::GetInstance()->Get_ResourceMgr();
@@ -68,14 +76,16 @@ HRESULT CScott_Level::Awake()
 
 	//============== Map ============================
 	Ready_Map("Scott_Level", "Zero_Worksite");
-	
+	//Ready_Npc();
+
+	CamDirector()->AutoField();
 
 	return S_OK;
 }
 
 void CScott_Level::Update()
 {
-	
+	FieldSystem()->Update();
 }
 
 HRESULT CScott_Level::Render()
@@ -90,9 +100,6 @@ void CScott_Level::PreLoad_Level()
 
 void CScott_Level::Ready_Map(const string& LevelTag, const string& AreaTag)
 {
-	//// Ready MapObject key and path to ResourceMgr 
-	Rake_MapResources();
-
 	//Map Loader Logic is going to Change
 	CMapLoader* pMapLoader = CMapLoader::Create(LevelTag, AreaTag);
 	if (nullptr == pMapLoader)
@@ -101,24 +108,29 @@ void CScott_Level::Ready_Map(const string& LevelTag, const string& AreaTag)
 	Safe_Release(pMapLoader);
 }
 
-void CScott_Level::Rake_MapResources()
+void CScott_Level::Ready_Npc()
 {
-	filesystem::path MapDataFolderPath = "../Bin/Resources/MapData/Model/";
-	Helper::EnsureDirectoryExist(MapDataFolderPath);
+	auto pProto = PrototypeManager();
+	auto objMgr = ObjectManager();
 
-	auto pRcsMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
-	for (const auto& entry : filesystem::recursive_directory_iterator(MapDataFolderPath))
-	{
-		if (entry.is_regular_file() && entry.path().extension() == ".model")
-		{
-			filesystem::path ModelPath = entry.path();
-			filesystem::path MaterialPath = ModelPath;
-			MaterialPath.replace_extension(".mat");
+	/*Npc*/
+	CCT_DESC meowCCT;
+	//meowCCT.eGroup = COLLISION_GROUP::PLAYER;
+	meowCCT.iCollisionMask = 0xFFFFFFFF;
+	//miyabiCCT.iCollisionMask = 0xFFFFFFFF & ~ENUM(COLLISION_GROUP::COMMON);
+	meowCCT.bAutoFit = false;
+	meowCCT.fHeight = 1.6f;
+	meowCCT.fRadius = 0.4f;
+	meowCCT.eGroup = COLLISION_GROUP::COMMON;
+	//meowCCT.fBoundingMinY = -0.83f;
+	meowCCT.vPos = { 0.f, -4.f, 0.f };
+	pProto->Add_ProtoType("Scott_Level", "Proto_GameObject_OfficeMeow", COfficeMeow::Create());
+	auto testMeow = Builder::Create_Object({ "Scott_Level", "Proto_GameObject_OfficeMeow" })
+		.CharacterController(meowCCT)
+		.Rotate(_float3(0.f, 90.f, 0.f))
+		.Build("Test_Meow");
 
-			pRcsMgr->Add_ResourcePath(ModelPath.filename().string(), ModelPath.string());
-			pRcsMgr->Add_ResourcePath(MaterialPath.filename().string(), MaterialPath.string());
-		}
-	}
+	objMgr->Add_Object(testMeow, { "Scott_Level", "Npc_Layer" });
 }
 
 CScott_Level* CScott_Level::Create(const string& LevelKey)
@@ -135,7 +147,6 @@ CScott_Level* CScott_Level::Create(const string& LevelKey)
 void CScott_Level::Free()
 {
 	__super::Free();
-	CBattleSystem::GetInstance()->DestroyInstance();
 	m_pGameInstance->DestroyInstance();
 	m_pPlayer->Clear_Characters();
 }

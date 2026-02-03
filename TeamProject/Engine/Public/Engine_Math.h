@@ -14,8 +14,10 @@ namespace Math
 	ENGINE_DLL _float     Rand01(_uint& s);
 	ENGINE_DLL _float     SmoothStep01(_float t);
 	ENGINE_DLL _float     Clamp01(_float t);
+	ENGINE_DLL _float     PingPong01(_float t);
 	ENGINE_DLL Vector3    SeedPhase(_uint& seed);
-	 
+	ENGINE_DLL _float     MoveTowards(_float cur, _float target, _float maxDelta);
+
 	ENGINE_DLL _float   ApplyEase(EaseType type, _float t);
 
 	// Easing 보간 (Camera 추천 순위 1~30)  (중복 없음)
@@ -63,4 +65,9 @@ namespace Math
 	ENGINE_DLL _float EaseOutBounce(_float t);    // 28. EaseOutBounce:   끝에서 통통 튐(UI/오브젝트용, 카메라는 드묾)
 	ENGINE_DLL _float EaseInOutBounce(_float t);  // 29. EaseInOutBounce: 중간 포함 바운스(카메라엔 거의 비추천)
 	ENGINE_DLL _float EaseInBounce(_float t);     // 30. EaseInBounce:    시작이 바운스(특수 연출)
+
+
+	ENGINE_DLL _vector3 RotateVectorByQuaternion(const _vector3& vec, const _vector4& quat);//방향을 쿼터니언만큼 회전
+	ENGINE_DLL _vector3 DampVector(_vector3 curDir, _vector3 targetDir, _float dt, _float dampSpeed);
+	
 }

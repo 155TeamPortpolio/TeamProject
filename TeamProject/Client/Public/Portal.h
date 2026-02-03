@@ -1,10 +1,11 @@
 #pragma once
 #include "Interactable.h"
+#include "IInteract.h"
 
 NS_BEGIN(Client)
 
 class CPortal final :
-    public CInteractable
+    public CInteractable, public IInteract
 {
 public:
     typedef struct tagPortalDesc : public Engine::GAMEOBJECT_DESC {
@@ -28,8 +29,8 @@ public:
     virtual void    OnTriggerStay(CGameObject* pOher)   override;
     virtual void    OnTriggerExit(CGameObject* pOther)  override;
 
-    virtual void    Interact() override;
-
+    virtual void                Interact(CGameObject* pObject = nullptr) override;
+    virtual OBJECT_HANDLE       Get_InteractHandle() override;
 private:
     string m_NextLevelTag{};
 

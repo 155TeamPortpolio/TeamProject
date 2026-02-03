@@ -52,50 +52,102 @@ HRESULT CRigidBody::Initialize(COMPONENT_DESC* pArg)
 	PxScene* pScene = m_pPhysicsSystem->Get_Scene();
 	if (!pPhysics || !pScene) return E_FAIL;
 
+	RIGIDBODY_DESC desc;
 	if (pArg)
-	{
-		RIGIDBODY_DESC* pDesc = static_cast<RIGIDBODY_DESC*>(pArg);
-		m_bKinematic = pDesc->isKinematic;
-		m_bGravity = pDesc->bEnableGravity;
-		m_fMass = pDesc->fMass;
-		m_bLockX = pDesc->bLockX;
-		m_bLockY = pDesc->bLockY;
-		m_bLockZ = pDesc->bLockZ;
-		m_fLinearDamping = pDesc->fLinearDamping;
-		m_fAngularDamping = pDesc->fAngularDamping;
-	}
+		desc = *static_cast<RIGIDBODY_DESC*>(pArg);
 
-	// 초기 위치
+	m_bKinematic = desc.isKinematic;
+	m_bGravity = desc.bEnableGravity;
+	m_fMass = desc.fMass;
+	m_bLockX = desc.bLockX;
+	m_bLockY = desc.bLockY;
+	m_bLockZ = desc.bLockZ;
+	m_fLinearDamping = desc.fLinearDamping;
+	m_fAngularDamping = desc.fAngularDamping;
+
 	_vector vPos = m_pOwnerTransform->Get_WorldPos();
 	_smatrix mWorldMat = m_pOwnerTransform->Get_WorldMatrix();
 	_vector vScale, vRot, vTrans;
 	XMMatrixDecompose(&vScale, &vRot, &vTrans, mWorldMat);
-	PxTransform initialPose(ToPxVec3(vPos), ToPxQuat(vRot));
 
+	PxTransform initialPose(ToPxVec3(vPos), ToPxQuat(vRot));
 	m_pActor = pPhysics->createRigidDynamic(initialPose);
 	if (!m_pActor) return E_FAIL;
-	
+
 	m_pActor->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, m_bKinematic);
 	m_pActor->setActorFlag(PxActorFlag::eDISABLE_GRAVITY, !m_bGravity);
 	m_pActor->setMass(m_fMass);
 	m_pActor->setLinearDamping(m_fLinearDamping);
 	m_pActor->setAngularDamping(m_fAngularDamping);
-
 	m_pActor->setRigidDynamicLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_X, m_bLockX);
 	m_pActor->setRigidDynamicLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y, m_bLockY);
 	m_pActor->setRigidDynamicLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z, m_bLockZ);
 	m_pActor->setSolverIterationCounts(8, 4);
-	if (!m_bKinematic)
+
+	if (!m_bKinematic && desc.bCCD)
 	{
 		m_pActor->setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, true);
 		m_pActor->setMinCCDAdvanceCoefficient(0.15f);
 	}
 
 	m_pActor->setMaxDepenetrationVelocity(1.0f);
-
 	m_pActor->setActorFlag(PxActorFlag::eSEND_SLEEP_NOTIFIES, true);
 	m_pActor->userData = m_pOwner;
+
 	pScene->addActor(*m_pActor);
+
+	return S_OK;
+}
+
+HRESULT CRigidBody::ReInitialize(COMPONENT_DESC* pArg)
+{
+	RIGIDBODY_DESC desc;
+	if (pArg)
+		desc = *static_cast<RIGIDBODY_DESC*>(pArg);
+
+	// Pose
+	_vector vPos = m_pOwnerTransform->Get_WorldPos();
+	_smatrix mWorldMat = m_pOwnerTransform->Get_WorldMatrix();
+	_vector vScale, vRot, vTrans;
+	XMMatrixDecompose(&vScale, &vRot, &vTrans, mWorldMat);
+
+	PxTransform pose(ToPxVec3(vPos), ToPxQuat(vRot));
+	m_pActor->setGlobalPose(pose);
+
+	// Velocity Reset
+	PxRigidDynamic* pDynamic = m_pActor->is<PxRigidDynamic>();
+	if (pDynamic)
+	{
+		pDynamic->setLinearVelocity(PxVec3(0.f));
+		pDynamic->setAngularVelocity(PxVec3(0.f));
+	}
+
+	// Kinematic
+	if (m_bKinematic != desc.isKinematic)
+		Set_Kinematic(desc.isKinematic);
+
+	// Gravity
+	if (m_bGravity != desc.bEnableGravity)
+		Set_Gravity(desc.bEnableGravity);
+
+	// Mass
+	if (m_fMass != desc.fMass)
+		Set_Mass(desc.fMass);
+
+	// Damping
+	if (m_fLinearDamping != desc.fLinearDamping)
+		Set_LinearDamping(desc.fLinearDamping);
+
+	if (m_fAngularDamping != desc.fAngularDamping)
+		Set_AngularDamping(desc.fAngularDamping);
+
+	// Rotation Lock
+	if (m_bLockX != desc.bLockX || m_bLockY != desc.bLockY || m_bLockZ != desc.bLockZ)
+		Set_RotationLock(desc.bLockX, desc.bLockY, desc.bLockZ);
+
+	// Wake Up
+	if (pDynamic && pDynamic->isSleeping())
+		pDynamic->wakeUp();
 
 	return S_OK;
 }
@@ -375,6 +427,13 @@ _bool CRigidBody::Is_Sleeping()
 	return false;
 }
 
+void CRigidBody::Set_CCD(_bool bEnable)
+{
+	PxRigidDynamic* pDynamic = m_pActor->is<PxRigidDynamic>();
+	if (pDynamic)
+		pDynamic->setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, bEnable);
+}
+
 void CRigidBody::Update_RigidBody()
 {
 	if (!m_pActor) return;
@@ -386,13 +445,17 @@ void CRigidBody::Update_RigidBody()
 		_vector vScale, vRot, vTrans;
 		XMMatrixDecompose(&vScale, &vRot, &vTrans, worldMat);
 
-		m_pActor->setKinematicTarget(PxTransform(ToPxVec3(vPos), ToPxQuat(vRot)));
+		PxRigidDynamic* pDynamic = m_pActor->is<PxRigidDynamic>();
+		if (pDynamic)
+			pDynamic->setKinematicTarget(PxTransform(ToPxVec3(vPos), ToPxQuat(vRot)));
+		//if (pDynamic)
+		//	pDynamic->setGlobalPose(PxTransform(ToPxVec3(vPos), ToPxQuat(vRot)));
 	}
 	else				// Physics -> Transform
 	{
 		PxTransform globalPose = m_pActor->getGlobalPose();
 		m_pOwnerTransform->Set_WorldPos(ToDxVec(globalPose.p));
-		m_pOwnerTransform->Set_WorldQuaternion(ToDxQuat(globalPose.q));
+		//m_pOwnerTransform->Set_WorldQuaternion(ToDxQuat(globalPose.q));
 	}
 }
 

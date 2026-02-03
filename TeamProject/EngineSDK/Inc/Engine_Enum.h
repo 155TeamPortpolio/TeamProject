@@ -6,6 +6,12 @@ namespace Engine
 	enum class KEY_STATE { NONE_KEY, TAP, HOLD, AWAY };
 	enum class MOUSE_BTN { LB, RB, MB };
 	enum class WINMODE { FULL, WIN, END };
+	enum class PersistScope{
+		Session = 0,   // 실행 중만
+		Profile,       // 옵션/계정 공용
+		SaveSlot,      // 진행/월드
+		END
+	};
 
 	enum class LEVEL_STATE { INITIAL, REQUEST, LOADING, LOADED, STABLE };
 
@@ -24,15 +30,17 @@ namespace Engine
 		MONSTER_ATTACK = 1<<4,
 		MONSTER_PARRY = 1<<5,
 		CAMERA = 1<<6,
-		INTERACABLE = 1<<7,
+		INTERACTABLE = 1<<7,
+		GROUND = 1<<8,
 		END = 1<<31 
 	};
 	enum class SOUND_GROUP { BGM, SFX, UI, TALK, ENV,END };
 	enum class RENDER_PASS_TYPE { PRIORITY, RENDER_OPAQUE, NONLIGHT_OPAQUE, RENDER_EFFECT, RENDER_3DUI  };
-	enum class RENDERER_TYPE {FORWARD, POST, EFFECT, UI};
+	enum class RENDERER_TYPE {SKINNED, STATIC, FORWARD, POST, EFFECT, UI};
 	enum class RENDER_LAYER { Default, CustomOnly, Both, None };
 	enum class POSTPROCESS { MRT_Bloom, MRT_Distortion, MRT_RimLight, END};
 	enum class RIMLIGHT {OUTLINE, BACKLIGHT, RIMLIGHT, END};
+	enum class NOISE_FXTYPE { MOTIONBLUR, VANISH, END };
 	enum class CUSTOMTARGET { EFFECT, UI, ETC, END };
 	enum class ANCHOR : unsigned int {
 		Center = 0,
@@ -94,7 +102,9 @@ namespace Engine
         GLTF_METALLIC_ROUGHNESS = 27,
 		NOISE = 28,
 		DISSOLVE = 29,
-		END = 30
+		ALPHA_MASK = 30,
+		DISTORTION = 31,
+		END = 32
 	};
 
 	/* Effect */
@@ -121,7 +131,15 @@ namespace Engine
 	};
 
 	enum class AlphaCheckLevel { None = 0, Fast = 1, Hint = 2, Precise = 3 };
-
+	enum class VIDEO_PLAY_STATE
+	{
+		Closed,
+		Ready,
+		Playing,
+		Paused,
+		Ended,
+		Error
+	};
 }
 #endif // Engine_Enum_h__
 

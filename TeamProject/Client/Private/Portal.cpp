@@ -46,7 +46,6 @@ void CPortal::Priority_Update(_float dt)
 void CPortal::Update(_float dt)
 {
 	Get_Component<CCollider>()->Update(dt);
-	Interact();
 }
 
 void CPortal::Late_Update(_float dt)
@@ -79,15 +78,18 @@ void CPortal::OnTriggerExit(CGameObject* pOther)
 	m_bIsInteractable = false;
 }
 
-void CPortal::Interact()
+void CPortal::Interact(CGameObject* pObject)
 {
 	if (!m_bIsInteractable)
 		return;
-	
-	if (InputDevice()->Key_Down('F')) {
-		LevelManager()->Set_LoadingLevel("Loading_Level");
-		LevelManager()->Request_ChangeLevel(m_NextLevelTag, true);
-	}
+
+	LevelManager()->Set_LoadingLevel("Loading_Level");
+	LevelManager()->Request_ChangeLevel(m_NextLevelTag, true);
+}
+
+OBJECT_HANDLE CPortal::Get_InteractHandle()
+{
+	return Get_Handle();
 }
 
 CPortal* CPortal::Create()

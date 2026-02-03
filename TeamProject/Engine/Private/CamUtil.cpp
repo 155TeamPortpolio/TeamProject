@@ -7,10 +7,12 @@ namespace
     enum class CamVersion : _uint
     {
         V1 = 1u,
+        V2 = 2u,
+        V3 = 3u,
     };
 
-    constexpr _uint kCamMagic   = 0x43414D53u;
-    constexpr _uint kCamVersion = static_cast<_uint>(CamVersion::V1);
+    constexpr _uint kCamMagic = 0x43414D53u;
+    constexpr _uint kCamVersion = static_cast<_uint>(CamVersion::V3);
 }
 
 CamKeySegment CamUtil::FindKeySegment(const vector<CamKeyFrame>& keyframes, float time)
@@ -216,7 +218,9 @@ bool CamUtil::Save(const filesystem::path& path, const CamSequenceDesc& seq, str
     WriteData(outFile, static_cast<_uint>(seq.fovInterp));
 
     WriteData(outFile, static_cast<_uint>(seq.segmentEase));
+
     WriteData(outFile, seq.orbitArc);
+    WriteData(outFile, seq.orbitSpin);
 
     const _uint keyCount = static_cast<_uint>(seq.keyframes.size());
     WriteData(outFile, keyCount);
@@ -247,6 +251,8 @@ bool CamUtil::Save(const filesystem::path& path, const CamSequenceDesc& seq, str
 
         WriteData(outFile, (uint8_t)(k.useCustomEase ? 1u : 0u));
         WriteData(outFile, static_cast<_uint>(k.outEase));
+
+        WriteString(outFile, k.eventTag);
     }
 
     outFile.flush();
@@ -294,7 +300,7 @@ bool CamUtil::Load(const filesystem::path& path, CamSequenceDesc& outSeq, string
         return false;
     }
 
-    if (version != kCamVersion)
+    if (version < static_cast<_uint>(CamVersion::V1) || version > kCamVersion)
     {
         SetErr("Unsupported version: " + to_string(static_cast<unsigned long>(version)));
         return false;
@@ -325,7 +331,6 @@ bool CamUtil::Load(const filesystem::path& path, CamSequenceDesc& outSeq, string
     if (!ReadData(inFile, fovInterp)) { SetErr("Read fovInterp failed"); return false; }
 
     if (!ReadData(inFile, segmentEase)) { SetErr("Read segmentEase failed"); return false; }
-    if (!ReadData(inFile, outSeq.orbitArc)) { SetErr("Read orbitArc failed"); return false; }
 
     outSeq.projType = static_cast<CamProjType>(projType);
     outSeq.playbackMode = static_cast<CamPlaybackMode>(playbackMode);
@@ -337,6 +342,24 @@ bool CamUtil::Load(const filesystem::path& path, CamSequenceDesc& outSeq, string
     outSeq.fovInterp = static_cast<CamFovInterp>(fovInterp);
 
     outSeq.segmentEase = static_cast<EaseType>(segmentEase);
+
+    if (version >= static_cast<_uint>(CamVersion::V2))
+    {
+        if (!ReadData(inFile, outSeq.orbitArc)) { SetErr("Read orbitArc failed"); return false; }
+    }
+    else
+    {
+        outSeq.orbitArc = {};
+    }
+
+    if (version >= static_cast<_uint>(CamVersion::V3))
+    {
+        if (!ReadData(inFile, outSeq.orbitSpin)) { SetErr("Read orbitSpin failed"); return false; }
+    }
+    else
+    {
+        outSeq.orbitSpin = {};
+    }
 
     _uint keyCount = 0;
     if (!ReadData(inFile, keyCount))
@@ -389,6 +412,15 @@ bool CamUtil::Load(const filesystem::path& path, CamSequenceDesc& outSeq, string
 
         k.useCustomEase = (useCustomEase != 0);
         k.outEase = static_cast<EaseType>(outEase);
+
+        if (version >= static_cast<_uint>(CamVersion::V2))
+        {
+            if (!ReadString(inFile, k.eventTag)) { SetErr("Read eventTag failed"); return false; }
+        }
+        else
+        {
+            k.eventTag.clear();
+        }
     }
 
     if (!inFile)

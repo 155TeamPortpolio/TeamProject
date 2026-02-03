@@ -18,6 +18,7 @@
 #include "UVAnimationUI.h"
 #include "GaugeUI.h"
 #include "MaskUI.h"
+#include "NineSliceUI.h"
 
 vector<string> CUITool_Level::m_strFontKeys;
 vector<const _char*> CUITool_Level::m_szFontKeys;
@@ -143,21 +144,23 @@ HRESULT CUITool_Level::Ready_UIObjects()
 {
 	IProtoService* pProto = m_pGameInstance->Get_PrototypeMgr();
 
-	pProto->Add_ProtoType("UITool_Level", "Proto_GameObject_" + CCanvasPanel::m_strTypeTag, CCanvasPanel::Create());
+	pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_" + CCanvasPanel::m_strTypeTag, CCanvasPanel::Create());
 
-	pProto->Add_ProtoType("UITool_Level", "Proto_GameObject_" + CImageUI::m_strTypeTag, CImageUI::Create());
+	pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_" + CImageUI::m_strTypeTag, CImageUI::Create());
 
-	pProto->Add_ProtoType("UITool_Level", "Proto_GameObject_" + CTextUI::m_strTypeTag, CTextUI::Create());
+	pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_" + CTextUI::m_strTypeTag, CTextUI::Create());
 
-	pProto->Add_ProtoType("UITool_Level", "Proto_GameObject_" + CButtonUI::m_strTypeTag, CButtonUI::Create());
+	pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_" + CButtonUI::m_strTypeTag, CButtonUI::Create());
 
-	pProto->Add_ProtoType("UITool_Level", "Proto_GameObject_" + CSpriteAnimationUI::m_strTypeTag, CSpriteAnimationUI::Create());
+	pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_" + CSpriteAnimationUI::m_strTypeTag, CSpriteAnimationUI::Create());
 
-	pProto->Add_ProtoType("UITool_Level", "Proto_GameObject_" + CUVAnimationUI::m_strTypeTag, CUVAnimationUI::Create());
+	pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_" + CUVAnimationUI::m_strTypeTag, CUVAnimationUI::Create());
 
-	pProto->Add_ProtoType("UITool_Level", "Proto_GameObject_" + CGaugeUI::m_strTypeTag, CGaugeUI::Create());
+	pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_" + CGaugeUI::m_strTypeTag, CGaugeUI::Create());
 
-	pProto->Add_ProtoType("UITool_Level", "Proto_GameObject_" + CMaskUI::m_strTypeTag, CMaskUI::Create());
+	pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_" + CMaskUI::m_strTypeTag, CMaskUI::Create());
+
+	pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_" + CNineSliceUI::m_strTypeTag, CNineSliceUI::Create());
 
 	return S_OK;
 }

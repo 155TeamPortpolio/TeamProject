@@ -20,6 +20,7 @@ public:
 public:																
 	HRESULT	 Initialize_Prototype() override;
 	HRESULT	 Initialize(COMPONENT_DESC* pArg) override;
+	HRESULT  ReInitialize(COMPONENT_DESC* pArg);
 	void	 Late_Update(_float dt);
 	void	 Render_GUI();
 
@@ -47,6 +48,8 @@ public:
 	void	 Wake_Up();
 	void	 Put_ToSleep();
 	_bool	 Is_Sleeping();
+
+	void	 Set_CCD(_bool bEnable);
 
 private:
 	void	 Update_RigidBody();

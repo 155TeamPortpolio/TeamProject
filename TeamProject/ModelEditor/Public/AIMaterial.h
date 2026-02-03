@@ -12,7 +12,7 @@ private:
 public:
     virtual HRESULT Initialize(const aiMaterial* pAIMaterial, const string& fileDirectory);
 public:
-    void Save_MaterialData(ID3D11DeviceContext* pContext, ofstream& ofs, const string& directory, const string& overrideKey = {});
+    void Save_MaterialData(ID3D11DeviceContext* pContext, ofstream& ofs, const string& directory, const string& passKey, const string& overrideKey = {});
     void Render_GUI(vector<_uint>& TextureIndexes) override;
     void LinkShader(const string& shader);
 

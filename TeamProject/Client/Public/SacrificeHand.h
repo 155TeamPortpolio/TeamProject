@@ -48,10 +48,18 @@ public:
 
     void Idle();
 
+    /* Bubble */
+    void Active_Bubble();
+    void Deactive_Bubble();
+
     /* Dissolve */
     void Set_DissolveState(DISSOLVE_STATE state, _float duration);
     DISSOLVE_STATE Get_DissolveState()const { return m_eDissolveState; }
     void Update_Dissolve(_float dt);
+
+    /* RimLight */
+    void Active_SwordRimLight() { m_fSwordRimLightPower = 2.f; }
+    void Deactive_SwordRimLight() { m_fSwordRimLightPower = 0.f; }
 
 private:
     HRESULT Initialize_StateMachine();
@@ -64,14 +72,8 @@ private:
     SACRIFICE_HAND_BLACK_BOARD m_AttackBlackBoard{};
 
     /* Material Params */
-    _float3 m_vRimLightColor{};
-    _float m_fRimLightPower{};
-    _float m_fDissolveProgress{};
-    _float m_fDissolveTilling{};
-
     _bool m_IsOnDissolve = false;
-    _float m_fDissolveDuration{};
-    _float m_fDissolveElapsedTime{};
+    _float m_fSwordRimLightPower{};
     DISSOLVE_STATE m_eDissolveState = DISSOLVE_STATE::NONE;
 };
 NS_END

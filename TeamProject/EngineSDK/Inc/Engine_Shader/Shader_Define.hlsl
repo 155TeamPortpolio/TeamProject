@@ -90,13 +90,18 @@ Texture2D DiffuseRoughnessTexture : register(t15);
 Texture2D AmbientOcclusionTexture : register(t16);
 Texture2D NoiseTexture : register(t17);
 Texture2D DissolveTexture : register(t18);
+Texture2D AlphaMaskTexture : register(t19);
+Texture2D DistortionTexture : register(t20);
+Texture2D DitheringTexture : register(t21);
+Texture2D GradientTexture : register(t22);
 
+// 式式式式式式式式式式式式式  Sprite 式式式式式式式式式式式式式
+Texture2D ColorTexture  : register(t27);
+Texture2D MaskTexture   : register(t28);
+Texture2D SpriteTexture : register(t29);
 
 // 式式式式式式式式式式式式式  SRV 式式式式式式式式式式式式式
 StructuredBuffer<BoneMatrix> g_BoneMatrices : register(t30);
 StructuredBuffer<TransfomMatrix> ObjectBufferArray : register(t31);
 
-// 式式式式式式式式式式式式式  Sprite 式式式式式式式式式式式式式
-Texture2D SpriteTexture : register(t29);
-Texture2D MaskTexture   : register(t28);
 #endif // __SHADER_DEFINE_HLSL__

@@ -75,7 +75,7 @@ void CAnimModel::Priority_Update(_float dt)
 void CAnimModel::Update(_float dt)
 {
 	if (auto pAnimator = Get_Component<CAnimator3D>()) {
-		//m_pTransform->Translate(_vector3(pAnimator->Get_RootBoneMoveDelta() * 0.5f));
+		m_pTransform->Translate(_vector3(pAnimator->Get_RootBoneMoveDelta() * m_fMoveSpeed));
 		_quaternion dq = pAnimator->Get_RootBoneQuatDelta(); // 반환 타입이 XMFLOAT4라고 가정
 		//m_pTransform->(dq);
 		m_pTransform->Add_Quaternion(dq);
@@ -91,6 +91,8 @@ void CAnimModel::Render_GUI()
 	float childWidth = ImGui::GetContentRegionAvail().x;
 	const float textLineHeight = ImGui::GetTextLineHeightWithSpacing();
 	const float childHeight = (textLineHeight + 2) + (ImGui::GetStyle().WindowPadding.y * 2);
+
+	ImGui::DragFloat("MoveSpeed", &m_fMoveSpeed, 0.001f, 0.f, 100.f);
 
 	//Load Resource
 	GUI_LoadResource(childHeight);
@@ -118,6 +120,14 @@ void CAnimModel::GUI_LoadResource(_float fChildHeight)
 
 	ImGui::SeparatorText("Model & Material Load");
 	ImGui::BeginChild("##Loaded Data", ImVec2{ 0, fChildHeight }, true);
+
+	if (ImGui::Button("NewModelMat")) {
+		Load_NewModelMat();
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("NewMeta")) {
+		Load_NewMeta();
+	}
 
 	if (ImGui::Button("Once Load")) {
 		Load_ModelOnce();
@@ -186,6 +196,65 @@ void CAnimModel::GUI_SetModel(_float fChildHeight)
 	ImGui::EndChild();
 }
 
+void CAnimModel::Load_NewModelMat()
+{
+	vector<string> files = Helper::OpenMultiFiles();
+	if (files.size() != 2)
+		return;
+
+	Clear_Model();
+	for (const auto& path : files)
+	{
+		string ext = std::filesystem::path(path).extension().string();
+		string name = std::filesystem::path(path).stem().string() + ext;
+
+		if (".model" == ext) {
+			if (SUCCEEDED(CGameInstance::GetInstance()->Get_ResourceMgr()->Add_ResourcePath(name, path))) {
+				Add_Component<CSkeletalModel>();
+				Get_Component<CSkeletalModel>()->Link_Model("AnimationEdit_Level", name);
+				m_CurModelTag = name;
+			}
+		}
+		else if (".mat" == ext) {
+			if (SUCCEEDED(CGameInstance::GetInstance()->Get_ResourceMgr()->Add_ResourcePath(name, path))) {
+				Add_Component<CMaterial>();
+				Get_Component<CMaterial>()->Link_Material("AnimationEdit_Level", name);
+				m_CurMaterialTag = name;
+			}
+		}
+	}
+}
+
+void CAnimModel::Load_NewMeta()
+{
+	Remove_Component<CAnimator3DEX>();
+	Remove_Component<CAnimator3D>();
+
+	auto ResMgr = m_pGameInstance->Get_ResourceMgr();
+
+	string metaPath = Helper::OpenFile_Dialogue();
+	string metaTag = Helper::GetFileNameWithExtension(metaPath);
+
+	if ("" == metaTag || string::npos == metaTag.find("_Meta.json"))
+		return;
+
+	ResMgr->Add_ResourcePath(metaTag, metaPath);
+
+	CAnimator3DEX* pInstance = CAnimator3DEX::Create();
+	pInstance->Set_Owner(this);
+
+	m_Components.emplace(type_index(typeid(CAnimator3DEX)), pInstance);
+	m_Components.emplace(type_index(typeid(CAnimator3D)), pInstance);
+
+	pInstance->LinkAnimate_Model("AnimationEdit_Level", m_CurModelTag);
+	pInstance->Link_MetaData("AnimationEdit_Level", metaTag);
+
+	m_pAnimToolPanel->Setting_NewClip();
+	m_pAnimToolPanel->Setting_MetaFilePath(metaPath);
+
+	Safe_AddRef(pInstance);
+}
+
 void CAnimModel::Load_ModelOnce()
 {
 	vector<string> files = Helper::OpenMultiFiles();
@@ -201,27 +270,6 @@ void CAnimModel::Load_ModelOnce()
 		std::filesystem::path p(pathStr);
 		string ext = p.extension().string();
 		string stem = p.stem().string();
-
-		// 기준 이름 설정
-		if (baseName.empty())
-			baseName = stem;
-		else if (baseName != stem) {
-			if (ext == ".json") {
-				size_t pos = stem.find("_Meta");
-				if (pos == string::npos)
-					return;
-
-				if (baseName != stem.substr(0, pos))
-					return;
-			}
-			else {
-				if (baseName != stem) {
-					size_t pos = baseName.find(stem);
-					if (pos == string::npos)
-						return;
-				}
-			}
-		}
 
 		if (ext == ".model")
 		{

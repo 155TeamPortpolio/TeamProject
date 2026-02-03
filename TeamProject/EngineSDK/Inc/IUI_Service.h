@@ -19,6 +19,7 @@ public:
 	virtual void Remove_UIObject(class CUI_Object* object)PURE;
 	virtual const vector<class CUI_Object*>& Get_LevelUI(const string& leveTag) PURE;
 	virtual class CUI_Object* Request_UIObject(const UI_HANDLE& handle) PURE;
+	virtual class CUI_Object* Acquire(const CLONE_DESC& desc, INIT_DESC* pArg, _bool& outFirst) PURE;
 
 };
 NS_END

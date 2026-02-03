@@ -74,19 +74,21 @@ void CUI_Object::Post_EngineUpdate(_float dt)
     if (!m_isAlive) return;
 
     Update_UITransform();
+    if (m_eRenderLayer == RENDER_LAYER::None)
+        return;
 
     if (m_eRenderLayer != RENDER_LAYER::CustomOnly) {
 
         m_vColorLinear.x = powf(m_vColor.x, 2.2f);
         m_vColorLinear.y = powf(m_vColor.y, 2.2f);
         m_vColorLinear.z = powf(m_vColor.z, 2.2f);
-        m_vColorLinear.w = m_vCombinedAlpha;        // m_vCombinedAlpha = 부모 알파 * 내 알파
+        m_vColorLinear.w = m_fCombinedAlpha;        // m_vCombinedAlpha = 부모 알파 * 내 알파
 
         SPRITE_PACKET packet;
         packet.pSprite2D    = Get_Component<CSprite2D>();
         packet.pWorldMatrix = m_pTransform->Get_WorldMatrix_Ptr();
         packet.pColor       = &m_vColorLinear;
-
+        packet.ObjID        = m_ObjectID;
         _bool isUI     = (packet.pSprite2D != nullptr);
         _bool isValid  = (packet.pSprite2D->IsValid());
         _bool isActive = (packet.pSprite2D->Get_CompActive());
@@ -250,12 +252,12 @@ void CUI_Object::Update_UITransform()
         {
             parentScale  = pParentUI->Get_CombinedScale();
             parentRadian = pParentUI->m_fRadian;
-            parentAlpha  = pParentUI->m_vCombinedAlpha;
+            parentAlpha  = pParentUI->m_fCombinedAlpha;
         }
     }
 
     m_vCombinedScale = parentScale * m_vScale;  // 콤바인드 스케일 = 부모 스케일 * 내 스케일
-    m_vCombinedAlpha = parentAlpha * m_vColor.w;    // 콤바인드 알파 = 부모의 콤바인드 알파 * 내 알파
+    m_fCombinedAlpha = parentAlpha * m_vColor.w;    // 콤바인드 알파 = 부모의 콤바인드 알파 * 내 알파
 
     _float2 sizePx = { m_vSize.x * m_vCombinedScale.x, m_vSize.y * m_vCombinedScale.y };    // 사이즈 * 콤바인드 스케일
 
@@ -433,6 +435,13 @@ void CUI_Object::Set_Animation(_uint iIndex, _bool isLoop)
     m_fBlendTime = 0.f;
 }
 
+void CUI_Object::Stop_Animation()
+{
+    m_iCurrentClipIndex = -1;
+    m_isBlending = false;
+    m_fBlendTime = 0.f;
+}
+
 _bool CUI_Object::Set_LastKeyframeTime(_uint iClipIndex, _float fTime)
 {
     if (iClipIndex >= m_AnimClips.size())
@@ -528,8 +537,7 @@ void CUI_Object::Load(const nlohmann::ordered_json& data)
             string strTypeTag = childJson.value("typeTag", "");
             if (strTypeTag.empty()) continue;
 
-            const string& strCurrentLevelKey = CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey();
-            CUI_Object* pChildObj = Builder::Create_UIObject({strCurrentLevelKey, "Proto_GameObject_" + strTypeTag}).Build(strTypeTag);
+            CUI_Object* pChildObj = Builder::Create_UIObject({G_GlobalLevelKey, "Proto_GameObject_" + strTypeTag}).Build(strTypeTag);
 
             if (!pChildObj) continue;
 

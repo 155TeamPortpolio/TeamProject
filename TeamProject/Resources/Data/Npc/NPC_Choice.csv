@@ -1,0 +1,7 @@
+ChoiceID,Text,Result,NextID,NextSequence,ValueType,ValueName,Value
+Choice_001,깨우자!,Success,,0,bool,Room,TRUE
+Choice_002,그만두자...,Fail,,0,,,
+Choice_003,전초기지 밖으로 데려다주세요,Success,,0,,,
+Choice_004,감사하지만 됐어요,Fail,,0,,,
+Choice_005,보여주세요!,Success,,1,,,
+Choice_006,괜찮아요...,Fail,,0,,,

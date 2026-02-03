@@ -181,10 +181,11 @@ void CGUISystem::Render_GUI()
 	Render_CollisionBtn();
 #ifdef _USING_GUI
 	CGameInstance::GetInstance()->Get_RenderSystem()->Render_GUI();
+	//g_Profiler.RenderImGui();
 #endif // _USING_GUI
 
 	Render_DebugBtn();
-
+	Render_TimeScaleBtn();
 	GUI_End();
 }
 
@@ -243,6 +244,7 @@ void CGUISystem::Test()
 
 void CGUISystem::Render_DebugBtn()
 {
+	ImGui::SetNextWindowPos(ImVec2(500, 5), ImGuiCond_Always);
 	ImGui::Begin("##Render_Debug_View",nullptr, ImGuiWindowFlags_NoTitleBar |
 		ImGuiWindowFlags_NoResize |
 		ImGuiWindowFlags_NoMove |
@@ -277,6 +279,56 @@ void CGUISystem::Render_CollisionBtn()
 		CollisionSystem()->Render_GUI();
 	ImGui::End();
 }
+
+void CGUISystem::Render_TimeScaleBtn()
+{
+	const ImGuiIO& imguiIo = ImGui::GetIO();
+
+	const float margin = 10.0f;
+	const ImVec2 windowPos(imguiIo.DisplaySize.x - margin, margin);
+	const ImVec2 windowPivot(1.0f, 0.0f);
+	ImGui::SetNextWindowPos(windowPos, ImGuiCond_Always, windowPivot);
+
+	// 미니 카드 스타일
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 8.0f);
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(10.0f, 8.0f));
+	ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 7.0f);
+	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(8.0f, 5.0f));
+	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(8.0f, 6.0f));
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+
+	ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.05f, 0.05f, 0.05f, 0.55f));
+	ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.18f, 0.18f, 0.18f, 0.75f));
+	ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0.22f, 0.22f, 0.22f, 0.85f));
+	ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(0.26f, 0.26f, 0.26f, 0.95f));
+
+	ImGui::Begin("##TimeScaleMini", nullptr,
+		ImGuiWindowFlags_NoTitleBar |
+		ImGuiWindowFlags_NoResize |
+		ImGuiWindowFlags_NoMove |
+		ImGuiWindowFlags_NoScrollbar |
+		ImGuiWindowFlags_NoSavedSettings |
+		ImGuiWindowFlags_AlwaysAutoResize);
+
+	_float timeScale = GameInstance()->Get_EngineTimeScale();
+	float timeScaleUi = static_cast<float>(timeScale);
+
+	ImGui::AlignTextToFramePadding();
+	ImGui::TextUnformatted("TS");
+	ImGui::SameLine();
+
+	ImGui::SetNextItemWidth(120.0f);
+	if (ImGui::DragFloat("##ts", &timeScaleUi, 0.05f, 0.0f, 3.0f, "%.2f"))
+	{
+		GameInstance()->Set_EngineTimeScale(static_cast<_float>(timeScaleUi));
+	}
+
+	ImGui::End();
+
+	ImGui::PopStyleColor(4);
+	ImGui::PopStyleVar(6);
+}
+
 
 CGUISystem* CGUISystem::Create(const ENGINE_DESC& engine, ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {

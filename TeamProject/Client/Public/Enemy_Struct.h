@@ -74,5 +74,14 @@ namespace Client
         _float      iMaxHP = { 100.f };
         _float      iNowHP = iMaxHP;
         _int        iGroggyValue = {};
+        _bool       isGroggy = {};
+        _bool       isGroggyStay = { false }; // ForUI
+        _int        iPlayerComboCount = {};
     }MONSTER_STATUS;
+    
+    typedef struct tagGroggyManage
+    {
+        _float  fGroggyDecreaseTime = {};
+        _float  fGroggyStayTime = {};
+    }GROGGY_MANAGE;
 }

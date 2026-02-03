@@ -57,6 +57,9 @@ public:
 
     HRESULT               Clear_Character();
 
+    void            Lock_Input() { m_bLockInput = true; };
+    void            UnLock_Input() { m_bLockInput = false; }
+
 public:
     HRESULT Initialize();
     void Priority_Update(_float dt);
@@ -67,8 +70,11 @@ private:
     HRESULT                     Initialize_CharacterPrototype();
     class CFieldCharacter*      Create_Character();
 
-
+private:
+    void    Reset_State(_float dt);
     void    Update_Input(_float dt);
+    void    Update_Interact(_float dt);
+    void    Update_Movement(_float dt);
     void    Process_Movement(_float dt);
 
 private:
@@ -77,6 +83,7 @@ private:
 private:
     InputState   m_input;
     static constexpr _float KEY_BUFFER_TIME = 0.1f;
+    _bool        m_bLockInput = false;
 
 public:
     static CFieldPlayer* Create();

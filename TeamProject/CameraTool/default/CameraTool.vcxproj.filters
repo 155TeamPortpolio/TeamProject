@@ -13,9 +13,6 @@
     <ClInclude Include="CameraTool.h">
       <Filter>99. Etc\99. Useless</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Unagi.h">
-      <Filter>03. Obj\02. Unagi</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\DebugCamData.h">
       <Filter>03. Obj\00. CamObject</Filter>
     </ClInclude>
@@ -82,6 +79,27 @@
     <ClInclude Include="..\public\CamPanelData.h">
       <Filter>02. Panel\00. CamPanel</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\AnimGUIController.h">
+      <Filter>03. Obj\04. AnimGUIController</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Corin.h">
+      <Filter>03. Obj\99. Character\00. Corin</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\JaneDoe.h">
+      <Filter>03. Obj\99. Character\01. JaneDoe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\GachaProps.h">
+      <Filter>03. Obj\99. Character\02. GachaProps</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\GachaBack.h">
+      <Filter>03. Obj\99. Character\02. GachaProps\00. GachaBack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\GachaStage.h">
+      <Filter>03. Obj\99. Character\02. GachaProps\01. GachaStage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\GachaTV.h">
+      <Filter>03. Obj\99. Character\02. GachaProps\02. GachaTV</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CameraTool.ico">
@@ -101,9 +119,6 @@
     <Filter Include="00. MainApp">
       <UniqueIdentifier>{9a3f9319-269b-4291-8bb3-dce222ee11bd}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Level">
-      <UniqueIdentifier>{20e23329-6f20-4755-9042-ed22a12b154b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. Panel">
       <UniqueIdentifier>{88917ba0-ce9d-4e56-8054-510ce309742f}</UniqueIdentifier>
     </Filter>
@@ -119,23 +134,44 @@
     <Filter Include="03. Obj\01. FreeCam">
       <UniqueIdentifier>{b4764ff6-58dc-4996-b9bf-21c3d4a9f756}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03. Obj\02. Unagi">
-      <UniqueIdentifier>{eef41651-0e8b-45c5-9d8c-d8deaf8027d2}</UniqueIdentifier>
-    </Filter>
     <Filter Include="03. Obj\03. Grid">
       <UniqueIdentifier>{84f15bf7-4f1a-4438-aad4-dad5e84bf49d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Level\00. FirstLevel">
-      <UniqueIdentifier>{e1559102-528c-4204-9823-cea2ba202453}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. Panel\00. CamPanel">
       <UniqueIdentifier>{4223fa56-42b5-4389-a1b8-76b42e1dcf5b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. Panel\01. RecPanel">
-      <UniqueIdentifier>{c1393735-3ce0-4fdb-b7f5-814ddb76c2f0}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. Panel\00. CamPanel\CamPanelUtil">
       <UniqueIdentifier>{6971a1bb-6f0a-401e-826b-0f48029fd767}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Obj\04. AnimGUIController">
+      <UniqueIdentifier>{29ef44ea-1ebe-44cd-914b-eef3fc21755e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Obj\99. Character">
+      <UniqueIdentifier>{75ae5de2-a71e-437a-90dd-457e202e8679}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Obj\99. Character\00. Corin">
+      <UniqueIdentifier>{67c90c1b-0340-403a-80ee-1b99913ffe70}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Obj\99. Character\01. JaneDoe">
+      <UniqueIdentifier>{b5f6a366-bf0e-419b-a8d8-5ab7e6318143}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Level">
+      <UniqueIdentifier>{20e23329-6f20-4755-9042-ed22a12b154b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Level\00. FirstLevel">
+      <UniqueIdentifier>{e1559102-528c-4204-9823-cea2ba202453}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Obj\99. Character\02. GachaProps">
+      <UniqueIdentifier>{8600e8c5-8c32-437c-92f6-01a96a8fd6f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Obj\99. Character\02. GachaProps\00. GachaBack">
+      <UniqueIdentifier>{0db4e8bb-4dfc-40a4-a1ef-e27246b7d40e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Obj\99. Character\02. GachaProps\01. GachaStage">
+      <UniqueIdentifier>{453ff93b-0f81-4856-885e-5be76eca9e75}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Obj\99. Character\02. GachaProps\02. GachaTV">
+      <UniqueIdentifier>{71f969ab-b30b-4631-bfe3-e73835531377}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -144,9 +180,6 @@
     </ClCompile>
     <ClCompile Include="..\private\MainApp.cpp">
       <Filter>00. MainApp</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Unagi.cpp">
-      <Filter>03. Obj\02. Unagi</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Grid.cpp">
       <Filter>03. Obj\03. Grid</Filter>
@@ -198,6 +231,27 @@
     </ClCompile>
     <ClCompile Include="..\private\CamPanel.cpp">
       <Filter>02. Panel\00. CamPanel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\AnimGUIController.cpp">
+      <Filter>03. Obj\04. AnimGUIController</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Corin.cpp">
+      <Filter>03. Obj\99. Character\00. Corin</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\JaneDoe.cpp">
+      <Filter>03. Obj\99. Character\01. JaneDoe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\GachaProps.cpp">
+      <Filter>03. Obj\99. Character\02. GachaProps</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\GachaBack.cpp">
+      <Filter>03. Obj\99. Character\02. GachaProps\00. GachaBack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\GachaStage.cpp">
+      <Filter>03. Obj\99. Character\02. GachaProps\01. GachaStage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\GachaTV.cpp">
+      <Filter>03. Obj\99. Character\02. GachaProps\02. GachaTV</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

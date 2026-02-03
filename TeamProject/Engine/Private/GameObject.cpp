@@ -84,7 +84,7 @@ HRESULT CGameObject::Initialize_Prototype()
 
 HRESULT CGameObject::Initialize(INIT_DESC* pArg)
 {
-	if (!m_pTransform) {
+ 	if (!m_pTransform) {
 		m_pTransform = Add_Component<CTransform>();
 		Safe_AddRef(m_pTransform);
 	}
@@ -227,7 +227,15 @@ void CGameObject::RenderHierarchy(CGameObject*& SelectedObject, bool isSelected)
 	ImGui::PopID();
 
 }
-
+_bool CGameObject::Is_Root() {
+	if (CChild* pChild = Get_Component<CChild>()) {
+		m_isRootObject = false;
+	}
+	else {
+		m_isRootObject = true;
+	}
+	return m_isRootObject;
+}
 void CGameObject::Set_Layer(CLayer* pLayer)
 {
 	m_pLayer = pLayer;
@@ -300,6 +308,11 @@ _quaternion CGameObject::Get_WorldQuat()
 	return quat;
 }
 
+_vector3 CGameObject::Get_WorldRotation()
+{
+	return _quaternion(m_pTransform->Get_QuaternionRotate()).ToEuler();
+}
+
 HRESULT CGameObject::Make_OpaquePacket()
 {
 	OPAQUE_PACKET packet;
@@ -359,6 +372,7 @@ HRESULT CGameObject::Make_OpaquePacket()
 			Make_3DUIPacket(packet);
 
 		 if (packet.pModel->doShadowCast()) {
+
 			 if (packet.pMaterial->isValid(packet.MaterialIndex))
 			 {
 				 if (packet.bSkinning)
@@ -384,6 +398,7 @@ HRESULT CGameObject::Make_BlendedPacket(OPAQUE_PACKET packet)
 	newPacket.pPayLoad = packet.pPayLoad;
 	newPacket.pWorldMatrix = packet.pWorldMatrix;
 	newPacket.ObjID = m_ObjectID;
+
 	//float3 toObj = objWorldPos - cameraPos;
 	//float dist = dot(toObj, cameraForward);
 
@@ -459,7 +474,7 @@ HRESULT CGameObject::Make_EffectPacket(OPAQUE_PACKET packet)
 	newPacket.pWorldMatrix = packet.pWorldMatrix;
 	//float3 toObj = objWorldPos - cameraPos;
 	//float dist = dot(toObj, cameraForward);
-	packet.ObjID = m_ObjectID;
+	newPacket.ObjID = m_ObjectID;
 
 	const _float4x4* viewInverseMat = CGameInstance::GetInstance()->Get_CameraMgr()->Get_InversedViewMatrix();
 	_matrix viewInverse = XMLoadFloat4x4(viewInverseMat);

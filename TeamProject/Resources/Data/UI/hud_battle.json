@@ -227,7 +227,7 @@
                                 "anchor": 5,
                                 "anchorOffset": [
                                     0.0,
-                                    0.0
+                                    2.0
                                 ],
                                 "size": [
                                     68.0,
@@ -262,7 +262,7 @@
                                 "anchor": 6,
                                 "anchorOffset": [
                                     -82.0,
-                                    0.0
+                                    2.0
                                 ],
                                 "size": [
                                     82.0,
@@ -297,7 +297,7 @@
                                 "anchor": 6,
                                 "anchorOffset": [
                                     -82.0,
-                                    0.0
+                                    2.0
                                 ],
                                 "size": [
                                     82.0,
@@ -337,7 +337,7 @@
                                 "anchor": 6,
                                 "anchorOffset": [
                                     -82.0,
-                                    0.0
+                                    2.0
                                 ],
                                 "size": [
                                     82.0,
@@ -377,7 +377,7 @@
                                 "anchor": 6,
                                 "anchorOffset": [
                                     -88.0,
-                                    15.0
+                                    16.0
                                 ],
                                 "size": [
                                     27.0,
@@ -412,7 +412,7 @@
                                 "anchor": 6,
                                 "anchorOffset": [
                                     -88.0,
-                                    15.0
+                                    16.0
                                 ],
                                 "size": [
                                     27.0,
@@ -452,7 +452,7 @@
                                 "anchor": 0,
                                 "anchorOffset": [
                                     2.0,
-                                    8.0
+                                    9.0
                                 ],
                                 "size": [
                                     18.0,
@@ -571,7 +571,7 @@
                                 "anchor": 6,
                                 "anchorOffset": [
                                     -55.0,
-                                    15.0
+                                    16.0
                                 ],
                                 "size": [
                                     48.0,
@@ -606,7 +606,7 @@
                                 "anchor": 6,
                                 "anchorOffset": [
                                     -55.0,
-                                    15.0
+                                    16.0
                                 ],
                                 "size": [
                                     48.0,
@@ -646,7 +646,7 @@
                                 "anchor": 6,
                                 "anchorOffset": [
                                     -60.0,
-                                    15.0
+                                    16.0
                                 ],
                                 "size": [
                                     58.0,
@@ -786,7 +786,7 @@
                                 "anchor": 5,
                                 "anchorOffset": [
                                     0.0,
-                                    0.0
+                                    2.0
                                 ],
                                 "size": [
                                     68.0,
@@ -821,7 +821,7 @@
                                 "anchor": 6,
                                 "anchorOffset": [
                                     -82.0,
-                                    0.0
+                                    2.0
                                 ],
                                 "size": [
                                     82.0,
@@ -856,7 +856,7 @@
                                 "anchor": 6,
                                 "anchorOffset": [
                                     -82.0,
-                                    0.0
+                                    2.0
                                 ],
                                 "size": [
                                     82.0,
@@ -896,7 +896,7 @@
                                 "anchor": 6,
                                 "anchorOffset": [
                                     -82.0,
-                                    0.0
+                                    2.0
                                 ],
                                 "size": [
                                     82.0,
@@ -936,7 +936,7 @@
                                 "anchor": 6,
                                 "anchorOffset": [
                                     -88.0,
-                                    15.0
+                                    16.0
                                 ],
                                 "size": [
                                     27.0,
@@ -971,7 +971,7 @@
                                 "anchor": 6,
                                 "anchorOffset": [
                                     -88.0,
-                                    15.0
+                                    16.0
                                 ],
                                 "size": [
                                     27.0,
@@ -1011,7 +1011,7 @@
                                 "anchor": 0,
                                 "anchorOffset": [
                                     3.0,
-                                    8.0
+                                    9.0
                                 ],
                                 "size": [
                                     18.0,
@@ -1130,7 +1130,7 @@
                                 "anchor": 6,
                                 "anchorOffset": [
                                     -55.0,
-                                    15.0
+                                    16.0
                                 ],
                                 "size": [
                                     48.0,
@@ -1165,7 +1165,7 @@
                                 "anchor": 6,
                                 "anchorOffset": [
                                     -55.0,
-                                    15.0
+                                    16.0
                                 ],
                                 "size": [
                                     48.0,
@@ -1205,7 +1205,7 @@
                                 "anchor": 6,
                                 "anchorOffset": [
                                     -60.0,
-                                    15.0
+                                    16.0
                                 ],
                                 "size": [
                                     58.0,
@@ -1345,7 +1345,7 @@
                                 "anchor": 5,
                                 "anchorOffset": [
                                     0.0,
-                                    0.0
+                                    2.0
                                 ],
                                 "size": [
                                     115.3125,
@@ -1380,7 +1380,7 @@
                                 "anchor": 6,
                                 "anchorOffset": [
                                     -261.0,
-                                    0.0
+                                    2.0
                                 ],
                                 "size": [
                                     261.0,
@@ -1415,7 +1415,7 @@
                                 "anchor": 6,
                                 "anchorOffset": [
                                     -261.0,
-                                    0.0
+                                    2.0
                                 ],
                                 "size": [
                                     261.0,
@@ -1455,7 +1455,7 @@
                                 "anchor": 6,
                                 "anchorOffset": [
                                     -261.0,
-                                    0.0
+                                    2.0
                                 ],
                                 "size": [
                                     261.0,
@@ -1492,14 +1492,14 @@
                             "alive": true,
                             "instanceName": "curHpText",
                             "transform": {
-                                "anchor": 5,
+                                "anchor": 9,
                                 "anchorOffset": [
-                                    104.0,
-                                    28.0
+                                    110.0,
+                                    -5.5
                                 ],
                                 "size": [
-                                    32.09999084472656,
-                                    15.612496376037598
+                                    0.0,
+                                    0.0
                                 ],
                                 "scale": [
                                     1.0,
@@ -1522,7 +1522,7 @@
                             "children": [],
                             "typeTag": "Text",
                             "text": {
-                                "content": "19155",
+                                "content": "00000",
                                 "fontTag": "Impact.spritefont",
                                 "fontScale": 0.2999999225139618,
                                 "outlined": false,
@@ -1536,21 +1536,23 @@
                                 "shear": [
                                     -0.4000000059604645,
                                     0.0
-                                ]
+                                ],
+                                "autoPos": true,
+                                "anchor": 1
                             }
                         },
                         {
                             "alive": true,
                             "instanceName": "text",
                             "transform": {
-                                "anchor": 5,
+                                "anchor": 9,
                                 "anchorOffset": [
-                                    142.0,
-                                    28.0
+                                    146.0,
+                                    -5.5
                                 ],
                                 "size": [
-                                    7.199997901916504,
-                                    15.612496376037598
+                                    0.0,
+                                    0.0
                                 ],
                                 "scale": [
                                     1.0,
@@ -1587,21 +1589,23 @@
                                 "shear": [
                                     -0.20000000298023224,
                                     0.0
-                                ]
+                                ],
+                                "autoPos": true,
+                                "anchor": 1
                             }
                         },
                         {
                             "alive": true,
                             "instanceName": "maxHpText",
                             "transform": {
-                                "anchor": 5,
+                                "anchor": 9,
                                 "anchorOffset": [
-                                    146.0,
-                                    28.0
+                                    152.0,
+                                    -5.5
                                 ],
                                 "size": [
-                                    32.09999084472656,
-                                    15.612496376037598
+                                    0.0,
+                                    0.0
                                 ],
                                 "scale": [
                                     1.0,
@@ -1624,7 +1628,7 @@
                             "children": [],
                             "typeTag": "Text",
                             "text": {
-                                "content": "19155",
+                                "content": "00000",
                                 "fontTag": "Impact.spritefont",
                                 "fontScale": 0.2999999225139618,
                                 "outlined": false,
@@ -1638,7 +1642,9 @@
                                 "shear": [
                                     -0.4000000059604645,
                                     0.0
-                                ]
+                                ],
+                                "autoPos": true,
+                                "anchor": 1
                             }
                         },
                         {
@@ -1648,7 +1654,7 @@
                                 "anchor": 6,
                                 "anchorOffset": [
                                     -160.0,
-                                    15.0
+                                    16.0
                                 ],
                                 "size": [
                                     150.0,
@@ -1683,7 +1689,7 @@
                                 "anchor": 6,
                                 "anchorOffset": [
                                     -160.0,
-                                    15.0
+                                    16.0
                                 ],
                                 "size": [
                                     150.0,
@@ -1723,7 +1729,7 @@
                                 "anchor": 6,
                                 "anchorOffset": [
                                     -165.0,
-                                    15.0
+                                    16.0
                                 ],
                                 "size": [
                                     160.0,

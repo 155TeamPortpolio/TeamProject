@@ -5,6 +5,9 @@
 #include "Sacrifice.h"
 #include "Child.h"
 #include "EffectContainer.h"
+#include "BattleSystem.h"
+
+#include "CamDirector.h"
 
 void CSacrificeHandState_Attack::Enter(CSacrificeHand* pOwner)
 {
@@ -115,9 +118,6 @@ void CSacrificeHandState_Attack_01_Phase1::Enter(CSacrificeHand* pOwner)
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Set_Animation("SacrificeBringerHand_Ani_P1_Attack_10").Loop(false).Speed(1.2f).Apply();
 
-	HitDesc hitDesc{};
-	pOwner->SetAutoPlayBattleCollider("Hand", 0.f, 0.6f, hitDesc);
-
 	pOwner->Set_DissolveState(CSacrificeHand::DISSOLVE_STATE::APPEAR, 0.1f);
 	pOwner->SetVisable(true);
 }
@@ -133,6 +133,30 @@ void CSacrificeHandState_Attack_01_Phase1::Update(CSacrificeHand* pOwner, _float
 			blackBoard.isRequestNext = true;
 	}
 
+	for (const auto& Event : pOwner->Get_Component<CAnimator3D>()->Get_EventBus())
+	{
+		if (Event.Type != CLIP_EVENT_TYPE::NOTIFY) continue;
+
+		if (Event.Tag == "Start_Bubble")
+		{
+			pOwner->Active_Bubble();
+			//pOwner->UnleashAttack();
+		}
+		if (Event.Tag == "Start_Collider")
+		{
+			HitDesc hitDesc{};
+			pOwner->SetBattleColliderObject("Hand", CEnemy::BATTLE_COLTYPE::ATTACK, true, hitDesc);
+		}
+		if (Event.Tag == "End_Collider")
+			pOwner->SetBattleColliderObject("Hand", CEnemy::BATTLE_COLTYPE::ATTACK, false);
+		if (Event.Tag == "End_Bubble")
+		{
+			pOwner->Deactive_Bubble();
+			//pOwner->SetOnAttack(false);
+			//pOwner->SetParryEnable(false);
+		}
+	}
+
 	pOwner->Update_Dissolve(dt);
 	Update_Effects(pOwner);
 }
@@ -143,7 +167,7 @@ void CSacrificeHandState_Attack_01_Phase1::Exit(CSacrificeHand* pOwner)
 
 void CSacrificeHandState_Attack_01_Phase1::Update_Effects(CSacrificeHand* pOwner)
 {
-	if (IsCrossAnimProgress(0.12f))
+	if (IsCrossAnimProgress(0.15f))
 	{
 		auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
 			.Asset("sacrifice_hand_smoke_trail.json")
@@ -159,27 +183,44 @@ void CSacrificeHandState_Attack_02_Phase1::Enter(CSacrificeHand* pOwner)
 {
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("SacrificeBringerHand_Ani_P1_Attack_11").Loop(false).Speed(1.2f).Apply();
-
-	HitDesc hitDesc{};
-	pOwner->SetAutoPlayBattleCollider("Hand", 0.f, 0.6f, hitDesc);
-	m_IsActiveHand = true;
 }
 
 void CSacrificeHandState_Attack_02_Phase1::Update(CSacrificeHand* pOwner, _float dt)
 {
 	ATTACK_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
 
-	if (m_IsActiveHand && m_fAnimProgress >= 0.2f)
-	{
+	if (IsCrossAnimProgress(0.2f))
 		pOwner->SetVisable(false);
-		m_IsActiveHand = false;
-	}
 
 	if (m_fAnimProgress >= 0.3)
 	{
 		blackBoard.isChainOpen = true;
 		if (!blackBoard.stateQueue.empty())
 			blackBoard.isRequestNext = true;
+	}
+
+	for (const auto& Event : pOwner->Get_Component<CAnimator3D>()->Get_EventBus())
+	{
+		if (Event.Type != CLIP_EVENT_TYPE::NOTIFY) continue;
+
+		if (Event.Tag == "Start_Bubble")
+		{
+			pOwner->Active_Bubble();
+			//pOwner->UnleashAttack();
+		}
+		if (Event.Tag == "Start_Collider")
+		{
+			HitDesc hitDesc{};
+			pOwner->SetBattleColliderObject("Hand", CEnemy::BATTLE_COLTYPE::ATTACK, true, hitDesc);
+		}
+		if (Event.Tag == "End_Collider")
+			pOwner->SetBattleColliderObject("Hand", CEnemy::BATTLE_COLTYPE::ATTACK, false);
+		if (Event.Tag == "End_Bubble")
+		{
+			pOwner->Deactive_Bubble();
+			//pOwner->SetOnAttack(false);
+			//pOwner->SetParryEnable(false);
+		}
 	}
 
 	if (IsCrossAnimProgress(0.15f))
@@ -195,7 +236,7 @@ void CSacrificeHandState_Attack_02_Phase1::Exit(CSacrificeHand* pOwner)
 
 void CSacrificeHandState_Attack_02_Phase1::Update_Effects(CSacrificeHand* pOwner)
 {
-	if (IsCrossAnimProgress(0.1f))
+	if (IsCrossAnimProgress(0.12f))
 	{
 		auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
 			.Asset("sacrifice_hand_smoke_trail.json")
@@ -224,10 +265,6 @@ void CSacrificeHandState_Attack_03_Phase1::Enter(CSacrificeHand* pOwner)
 	pTrasform->Set_Look(vDir);
 	pTrasform->Set_Pos(vTargetPosition - vDir * 16.f);
 
-
-	HitDesc hitDesc{};
-	pOwner->SetAutoPlayBattleCollider("Hand", 0.f, 0.6f, hitDesc);
-
 	pOwner->Set_DissolveState(CSacrificeHand::DISSOLVE_STATE::NONE, 0.f);
 	m_IsActiveHand = false;
 }
@@ -247,6 +284,30 @@ void CSacrificeHandState_Attack_03_Phase1::Update(CSacrificeHand* pOwner, _float
 		blackBoard.isChainOpen = true;
 		if (!blackBoard.stateQueue.empty())
 			blackBoard.isRequestNext = true;
+	}
+
+	for (const auto& Event : pOwner->Get_Component<CAnimator3D>()->Get_EventBus())
+	{
+		if (Event.Type != CLIP_EVENT_TYPE::NOTIFY) continue;
+
+		if (Event.Tag == "Start_Bubble")
+		{
+			pOwner->Active_Bubble();
+			//pOwner->UnleashAttack();
+		}
+		if (Event.Tag == "Start_Collider")
+		{
+			HitDesc hitDesc{};
+			pOwner->SetBattleColliderObject("Hand", CEnemy::BATTLE_COLTYPE::ATTACK, true, hitDesc);
+		}
+		if (Event.Tag == "End_Collider")
+			pOwner->SetBattleColliderObject("Hand", CEnemy::BATTLE_COLTYPE::ATTACK, false);
+		if (Event.Tag == "End_Bubble")
+		{
+			pOwner->Deactive_Bubble();
+			//pOwner->SetOnAttack(false);
+			//pOwner->SetParryEnable(false);
+		}
 	}
 
 	if (IsCrossAnimProgress(0.55f))
@@ -272,6 +333,25 @@ void CSacrificeHandState_Attack_03_Phase1::Update_Effects(CSacrificeHand* pOwner
 			.Build("HandGroundUp");
 
 		ObjectManager()->Add_Object(effect, { "Zero_Level","Effect_Layer" });
+	}
+
+	/* Hit Ground Smoke */
+	if (IsCrossAnimProgress(0.41f))
+	{
+		auto pAnimator = pOwner->Get_Component<CAnimator3D>();
+		auto pTransform = pOwner->Get_Component<CTransform>();
+
+		_vector3 vBonePosition = pAnimator->Get_BonePosition(CAnimator3D::BoneSpace::COMBINED, "Eye01_A1");
+		vBonePosition = _vector3::Transform(vBonePosition, pTransform->Get_WorldMatrix());
+		//vBonePosition.y -= 0.2f;
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("hit_ground_smoke_strong.json")
+			.Position(vBonePosition)
+			.Build("Smoke");
+
+		ObjectManager()->Add_Object(pEffect, { "Zero_Level","Effect_Layer"});
+
+		CameraManager()->AddImpact(ENUM(CamShakeType::ExplosionBig), ENUM(CamZoomType::ExplosionBig), 1.6f);
 	}
 }
 
@@ -310,7 +390,7 @@ void CSacrificeHandState_OverDrive_Release_Start_Phase2::Enter(CSacrificeHand* p
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Set_Animation("Monster_SacrificeBringerHand_Ani_P2_OverDrive_Charge_Start_New").Loop(false).Speed(1.2f).Apply();
 
-
+	pOwner->Set_DissolveState(CSacrificeHand::DISSOLVE_STATE::NONE, 0.f);
 	pOwner->SetVisable(true);
 }
 
@@ -326,17 +406,37 @@ void CSacrificeHandState_OverDrive_Release_Start_Phase2::Update(CSacrificeHand* 
 			blackBoard.isRequestNext = true;
 	}
 
-
+	Update_Effects(pOwner);
 }
 
 void CSacrificeHandState_OverDrive_Release_Start_Phase2::Exit(CSacrificeHand* pOwner)
 {
 }
 
+void CSacrificeHandState_OverDrive_Release_Start_Phase2::Update_Effects(CSacrificeHand* pOwner)
+{
+	if (IsCrossAnimProgress(0.18f))
+	{
+		_vector3 vWorldPosition = pOwner->Get_Component<CTransform>()->Get_WorldPos();
+		_vector3 vLook = pOwner->Get_Component<CTransform>()->Dir(STATE::LOOK);
+		vWorldPosition.y += 0.1f;
+
+		auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_hand_overdrive_charge.json")
+			.Position(vWorldPosition)
+			.Build("Sacrifice_Hand_Overdrive_Charge");
+
+		effect->Get_Component<CTransform>()->Set_Look(vLook);
+		ObjectManager()->Add_Object(effect, { "Zero_Level","Enemy_Effect_Layer" });
+	}
+}
+
 void CSacrificeHandState_OverDrive_Release_Loop_Phase2::Enter(CSacrificeHand* pOwner)
 {
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("Monster_SacrificeBringerHand_Ani_P2_OverDrive_Charge_Loop").Loop(true).Speed(1.2f).Apply();
+
+	pOwner->Set_DissolveState(CSacrificeHand::DISSOLVE_STATE::NONE, 0.f);
 }
 
 void CSacrificeHandState_OverDrive_Release_Loop_Phase2::Update(CSacrificeHand* pOwner, _float dt)
@@ -349,6 +449,11 @@ void CSacrificeHandState_OverDrive_Release_Loop_Phase2::Update(CSacrificeHand* p
 		if (!blackBoard.stateQueue.empty())
 			blackBoard.isRequestNext = true;
 	}
+
+	if (CSacrificeHand::DISSOLVE_STATE::NONE == pOwner->Get_DissolveState() && m_fStateTime >= 3.2f)
+		pOwner->Set_DissolveState(CSacrificeHand::DISSOLVE_STATE::DISAPPEAR, 0.1f);
+
+	pOwner->Update_Dissolve(dt);
 }
 
 void CSacrificeHandState_OverDrive_Release_Loop_Phase2::Exit(CSacrificeHand* pOwner)
@@ -359,6 +464,7 @@ void CSacrificeHandState_OverDrive_Release_End_Phase2::Enter(CSacrificeHand* pOw
 {
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Set_Animation("Monster_SacrificeBringerHand_Ani_P2_OverDrive_Release_Start").Loop(false).Speed(1.2f).Apply();
+
 }
 
 void CSacrificeHandState_OverDrive_Release_End_Phase2::Update(CSacrificeHand* pOwner, _float dt)
@@ -372,6 +478,11 @@ void CSacrificeHandState_OverDrive_Release_End_Phase2::Update(CSacrificeHand* pO
 		if (!blackBoard.stateQueue.empty())
 			blackBoard.isRequestNext = true;
 	}
+
+	if (IsCrossAnimProgress(0.7f))
+		pOwner->Set_DissolveState(CSacrificeHand::DISSOLVE_STATE::DISAPPEAR, 0.2f);
+
+	pOwner->Update_Dissolve(dt);
 }
 
 void CSacrificeHandState_OverDrive_Release_End_Phase2::Exit(CSacrificeHand* pOwner)
@@ -383,10 +494,9 @@ void CSacrificeHandState_OverDrive_Release_Attack01_Phase2::Enter(CSacrificeHand
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Set_Animation("Monster_SacrificeBringer_Ani_P2_OverDrive_Release_Attack01").Loop(false).Speed(1.2f).Apply();
 
-	HitDesc desc{};
-	pOwner->SetAutoPlayBattleCollider("Hand_Sword", 0.f, 0.7f, desc);
 	pOwner->Set_DissolveState(CSacrificeHand::DISSOLVE_STATE::APPEAR, 0.1f);
 	pOwner->SetVisable(true);
+	pOwner->Active_SwordRimLight();
 }
 
 void CSacrificeHandState_OverDrive_Release_Attack01_Phase2::Update(CSacrificeHand* pOwner, _float dt)
@@ -399,18 +509,74 @@ void CSacrificeHandState_OverDrive_Release_Attack01_Phase2::Update(CSacrificeHan
 		blackBoard.isChainOpen = true;
 		if (!blackBoard.stateQueue.empty())
 			blackBoard.isRequestNext = true;
+	}
 
-		pOwner->SetVisable(false);
+	for (const auto& Event : pOwner->Get_Component<CAnimator3D>()->Get_EventBus())
+	{
+		if (Event.Type != CLIP_EVENT_TYPE::NOTIFY) continue;
+
+		if (Event.Tag == "Start_Bubble")
+		{
+			pOwner->Active_Bubble();
+			//pOwner->UnleashAttack();
+		}
+		if (Event.Tag == "Start_Collider")
+		{
+			HitDesc hitDesc{};
+			pOwner->SetBattleColliderObject("Hand_Sword", CEnemy::BATTLE_COLTYPE::ATTACK, true, hitDesc);
+		}
+		if (Event.Tag == "End_Collider")
+			pOwner->SetBattleColliderObject("Hand_Sword", CEnemy::BATTLE_COLTYPE::ATTACK, false);
+		if (Event.Tag == "End_Bubble")
+		{
+			pOwner->Deactive_Bubble();
+			//pOwner->SetOnAttack(false);
+			//pOwner->SetParryEnable(false);
+		}
 	}
 
 	if (IsCrossAnimProgress(0.85f))
 		pOwner->Set_DissolveState(CSacrificeHand::DISSOLVE_STATE::DISAPPEAR, 0.1f);
-
 	pOwner->Update_Dissolve(dt);
+
+	Update_Effects(pOwner);
 }
 
 void CSacrificeHandState_OverDrive_Release_Attack01_Phase2::Exit(CSacrificeHand* pOwner)
 {
+}
+
+void CSacrificeHandState_OverDrive_Release_Attack01_Phase2::Update_Effects(CSacrificeHand* pOwner)
+{
+	/* Slash1 */
+	if (IsCrossAnimProgress(0.3f))
+	{
+		auto pAnimator = pOwner->Get_Component<CAnimator3D>();
+
+		auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_hand_overdrive_attack1_1.json")
+			.Build("Sacrifice_Hand_Attack1");
+
+		_smatrix offsetMatrix = _smatrix::Identity;
+		offsetMatrix.Translation(_vector3(20.f, -1.f, 0.f));
+		effect->AttachBone(pAnimator, "Ctr_HSword", offsetMatrix);
+		ObjectManager()->Add_Object(effect, { "Zero_Level","Enemy_Effect_Layer" });
+	}
+
+	/* Slash2 */
+	if (IsCrossAnimProgress(0.57f))
+	{
+		auto pAnimator = pOwner->Get_Component<CAnimator3D>();
+
+		auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_hand_overdrive_attack1_2.json")
+			.Build("Sacrifice_Hand_Attack1");
+
+		_smatrix offsetMatrix = _smatrix::Identity;
+		offsetMatrix.Translation(_vector3(20.f, -1.f, 0.f));
+		effect->AttachBone(pAnimator, "Ctr_HSword", offsetMatrix);
+		ObjectManager()->Add_Object(effect, { "Zero_Level","Enemy_Effect_Layer" });
+	}
 }
 
 void CSacrificeHandState_OverDrive_Release_Attack02_Phase2::Enter(CSacrificeHand* pOwner)
@@ -418,8 +584,6 @@ void CSacrificeHandState_OverDrive_Release_Attack02_Phase2::Enter(CSacrificeHand
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Set_Animation("Monster_SacrificeBringer_Ani_P2_OverDrive_Release_Attack02").Loop(false).Speed(1.2f).Apply();
 
-	HitDesc desc{};
-	pOwner->SetAutoPlayBattleCollider("Hand_Sword", 0.f, 0.9f, desc);
 	pOwner->Set_DissolveState(CSacrificeHand::DISSOLVE_STATE::APPEAR, 0.1f);
 	pOwner->SetVisable(true);
 }
@@ -434,18 +598,120 @@ void CSacrificeHandState_OverDrive_Release_Attack02_Phase2::Update(CSacrificeHan
 		blackBoard.isChainOpen = true;
 		if (!blackBoard.stateQueue.empty())
 			blackBoard.isRequestNext = true;
-
-		pOwner->SetVisable(false);
 	}
+
+	for (const auto& Event : pOwner->Get_Component<CAnimator3D>()->Get_EventBus())
+	{
+		if (Event.Type != CLIP_EVENT_TYPE::NOTIFY) continue;
+
+		if (Event.Tag == "Start_Bubble")
+		{
+			pOwner->Active_Bubble();
+			//pOwner->UnleashAttack();
+		}
+		if (Event.Tag == "Start_Collider")
+		{
+			HitDesc hitDesc{};
+			pOwner->SetBattleColliderObject("Hand_Sword", CEnemy::BATTLE_COLTYPE::ATTACK, true, hitDesc);
+		}
+		if (Event.Tag == "End_Collider")
+			pOwner->SetBattleColliderObject("Hand_Sword", CEnemy::BATTLE_COLTYPE::ATTACK, false);
+		if (Event.Tag == "End_Bubble")
+		{
+			pOwner->Deactive_Bubble();
+			//pOwner->SetOnAttack(false);
+			//pOwner->SetParryEnable(false);
+		}
+	}
+
+	if (m_fAnimProgress < 0.3f)
+		Rotate_ToTarget(pOwner, dt);
 
 	if (IsCrossAnimProgress(0.85f))
 		pOwner->Set_DissolveState(CSacrificeHand::DISSOLVE_STATE::DISAPPEAR, 0.1f);
 
 	pOwner->Update_Dissolve(dt);
+	Update_Effects(pOwner);
 }
 
 void CSacrificeHandState_OverDrive_Release_Attack02_Phase2::Exit(CSacrificeHand* pOwner)
 {
+}
+
+void CSacrificeHandState_OverDrive_Release_Attack02_Phase2::Rotate_ToTarget(CSacrificeHand* pOwner, _float dt)
+{
+	auto pTransform = pOwner->Get_Component<CTransform>();
+
+	auto& infos = BattleSystem()->GetBattleObjects(CBattleSystem::BATTLE_OBJ_TYPE::PLAYER);
+	_vector3 vTargetPosition(0.f, 0.f, 0.f);
+	_vector3 vCurrPosition = pTransform->Get_WorldPos();
+	_vector3 vTargetDir(0.f, 0.f, 1.f);
+	_vector3 vCurrDir = pTransform->Dir(STATE::LOOK);
+
+	auto playerHandle = BattleSystem()->GetCurCharacterHandle();
+	vTargetPosition = playerHandle.Get()->Get_Component<CTransform>()->Get_WorldPos();
+
+	vTargetDir = vTargetPosition - vCurrPosition;
+	vTargetDir.y = 0.f;
+	vTargetDir.Normalize();
+
+	_vector3 vDir = _vector3::Lerp(vCurrDir, vTargetDir, dt * 30.f);
+	pTransform->Set_Look(vDir);
+}
+
+void CSacrificeHandState_OverDrive_Release_Attack02_Phase2::Update_Effects(CSacrificeHand* pOwner)
+{
+	if (IsCrossAnimProgress(0.01f))
+	{
+		auto pAnimator = pOwner->Get_Component<CAnimator3D>();
+
+		auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_hand_overdrive_attack2_light.json")
+			.Build("Sacrifice_Hand_Overdrive_Attack2_Light");
+
+		effect->AttachBone(pAnimator, "Ctr_HSword");
+
+		ObjectManager()->Add_Object(effect, { "Zero_Level","Enemy_Effect_Layer" });
+	}
+
+	/* Hand Up, Down */
+	if (IsCrossAnimProgress(0.25f))
+	{
+		auto pTransform = pOwner->Get_Component<CTransform>();
+
+		_vector3 vWorldPosition = _vector3::Transform(_vector3(0.f, 16.f, 6.f), pTransform->Get_WorldMatrix());
+		auto effectUp = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_hand_overdrive_attack2_up.json")
+			.Position(vWorldPosition)
+			.Build("Sacrifice_Hand_Overdrive_Attack2_Up");
+
+		vWorldPosition = pTransform->Get_WorldPos();
+		auto effectDown = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_hand_overdrive_attack2_down.json")
+			.Position(vWorldPosition)
+			.Build("Sacrifice_Hand_Overdrive_Attack2_Down");
+
+		ObjectManager()->Add_Object(effectUp, { "Zero_Level","Enemy_Effect_Layer" });
+		ObjectManager()->Add_Object(effectDown, { "Zero_Level","Enemy_Effect_Layer" });
+	}
+
+	/* Hit Ground Flare */
+	if (IsCrossAnimProgress(0.76f))
+	{
+		auto pTransform = pOwner->Get_Component<CTransform>();
+
+		_vector3 vWorldPosition = _vector3::Transform(_vector3(0.f, 0.f, 38.4f), pTransform->Get_WorldMatrix());
+		_vector3 vLook = pTransform->Dir(STATE::LOOK);
+
+		auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_hand_overdrive_attack2_flare.json")
+			.Build("Sacrifice_Hand_Overdrive_Attack2_Flare");
+
+		auto effectTransform = effect->Get_Component<CTransform>();
+		effectTransform->Set_WorldPos(vWorldPosition);
+		effectTransform->Set_Look(vLook);
+		ObjectManager()->Add_Object(effect, { "Zero_Level","Enemy_Effect_Layer" });
+	}
 }
 
 void CSacrificeHandState_OverDrive_Release_Attack03_Phase2::Enter(CSacrificeHand* pOwner)
@@ -468,15 +734,97 @@ void CSacrificeHandState_OverDrive_Release_Attack03_Phase2::Update(CSacrificeHan
 		if (!blackBoard.stateQueue.empty())
 			blackBoard.isRequestNext = true;
 
-		pOwner->SetVisable(false);
+		pOwner->Deactive_SwordRimLight();
+	}
+
+	for (const auto& Event : pOwner->Get_Component<CAnimator3D>()->Get_EventBus())
+	{
+		if (Event.Type != CLIP_EVENT_TYPE::NOTIFY) continue;
+
+		if (Event.Tag == "Start_Bubble")
+		{
+			pOwner->Active_Bubble();
+			//pOwner->UnleashAttack();
+		}
+		if (Event.Tag == "Start_Collider")
+		{
+			HitDesc hitDesc{};
+			pOwner->SetBattleColliderObject("Hand_Sword", CEnemy::BATTLE_COLTYPE::ATTACK, true, hitDesc);
+		}
+		if (Event.Tag == "End_Collider")
+			pOwner->SetBattleColliderObject("Hand_Sword", CEnemy::BATTLE_COLTYPE::ATTACK, false);
+		if (Event.Tag == "End_Bubble")
+		{
+			pOwner->Deactive_Bubble();
+			//pOwner->SetOnAttack(false);
+			//pOwner->SetParryEnable(false);
+		}
 	}
 
 	if (IsCrossAnimProgress(0.85f))
 		pOwner->Set_DissolveState(CSacrificeHand::DISSOLVE_STATE::DISAPPEAR, 0.1f);
 
 	pOwner->Update_Dissolve(dt);
+	Update_Effects(pOwner);
 }
 
 void CSacrificeHandState_OverDrive_Release_Attack03_Phase2::Exit(CSacrificeHand* pOwner)
 {
+}
+
+void CSacrificeHandState_OverDrive_Release_Attack03_Phase2::Update_Effects(CSacrificeHand* pOwner)
+{
+	/* Flare1 */
+	if (IsCrossAnimProgress(0.21f))
+	{
+		auto pTransform = pOwner->Get_Component<CTransform>();
+
+		_vector3 vWorldPosition = _vector3::Transform(_vector3(0.4f, 0.f, 9.8f), pTransform->Get_WorldMatrix());
+		_vector3 vLook = pTransform->Dir(STATE::LOOK);
+
+		auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_hand_overdrive_attack3_1.json")
+			.Build("Sacrifice_Hand_Overdrive_Attack3_1");
+
+		auto effectTransform = effect->Get_Component<CTransform>();
+		effectTransform->Set_WorldPos(vWorldPosition);
+		effectTransform->Set_Look(vLook);
+		ObjectManager()->Add_Object(effect, { "Zero_Level","Enemy_Effect_Layer" });
+	}
+
+	/* Charge */
+	if (IsCrossAnimProgress(0.23f))
+	{
+		auto pTransform = pOwner->Get_Component<CTransform>();
+
+		_vector3 vWorldPosition = _vector3::Transform(_vector3(0.4f, 0.f, 9.8f), pTransform->Get_WorldMatrix());
+		_vector3 vLook = pTransform->Dir(STATE::LOOK);
+
+		auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_hand_overdrive_attack3_2.json")
+			.Build("Sacrifice_Hand_Overdrive_Attack3_2");
+
+		auto effectTransform = effect->Get_Component<CTransform>();
+		effectTransform->Set_WorldPos(vWorldPosition);
+		effectTransform->Set_Look(vLook);
+		ObjectManager()->Add_Object(effect, { "Zero_Level","Enemy_Effect_Layer" });
+	}
+
+	/* Flare2 */
+	if (IsCrossAnimProgress(0.59f))
+	{
+		auto pTransform = pOwner->Get_Component<CTransform>();
+
+		_vector3 vWorldPosition = _vector3::Transform(_vector3(0.4f, 0.f, 9.8f), pTransform->Get_WorldMatrix());
+		_vector3 vLook = pTransform->Dir(STATE::LOOK);
+
+		auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_hand_overdrive_attack3_1.json")
+			.Build("Sacrifice_Hand_Overdrive_Attack3_1");
+
+		auto effectTransform = effect->Get_Component<CTransform>();
+		effectTransform->Set_WorldPos(vWorldPosition);
+		effectTransform->Set_Look(vLook);
+		ObjectManager()->Add_Object(effect, { "Zero_Level","Enemy_Effect_Layer" });
+	}
 }

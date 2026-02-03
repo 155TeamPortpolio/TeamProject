@@ -20,7 +20,7 @@ private:
     _uint m_iComboIndex = 0;
 
 public:
-    static CJaneDoeState_NormalAttack* Create() { return new CJaneDoeState_NormalAttack(); }
+    static CJaneDoeState_NormalAttack* Create();
     virtual void Free() override { __super::Free(); }
 };
 
@@ -114,6 +114,9 @@ public:
 public:
     static CJaneDoeState_Attack_06* Create() { return new CJaneDoeState_Attack_06(); }
     virtual void Free() override { __super::Free(); }
+
+private:
+    _uint m_iMask = { 0xFFFFFFFF }; // 충돌마스크 복구용
 
 private:
     void Update_Effects(CJaneDoe* pOwner);

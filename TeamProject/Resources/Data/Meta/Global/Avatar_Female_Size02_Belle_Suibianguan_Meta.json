@@ -1,0 +1,516 @@
+{
+  "AnimPath" : "../Bin/Resources/Global/FieldCharacter/Belle/Anim/",
+  "PreTransform": {
+    "_11": -0.009999999776482582,
+    "_12": 0.0,
+    "_13": 0.0,
+    "_14": 0.0,
+    "_21": 0.0,
+    "_22": 0.009999999776482582,
+    "_23": 0.0,
+    "_24": 0.0,
+    "_31": 0.0,
+    "_32": 0.0,
+    "_33": -0.009999999776482582,
+    "_34": 0.0,
+    "_41": 0.0,
+    "_42": 0.0,
+    "_43": 0.0,
+    "_44": 1.0
+  },
+  "Clips": [
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Ani_MainCity_Excited_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Ani_MainCity_Gesture_01",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Ani_MainCity_Hooky_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Ani_MainCity_Idle",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Ani_MainCity_Idle_Comfort01",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Ani_MainCity_Login_Sofa_A",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Ani_MainCity_Nod",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Ani_MainCity_Playphone_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Ani_MainCity_Playphone_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Ani_MainCity_Playphone_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Ani_MainCity_PlayWithGameDevice",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Ani_MainCity_PressHauling_Left_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Ani_MainCity_PressHauling_Right_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Ani_MainCity_Run_End_L",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Ani_MainCity_Run_End_R",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Ani_MainCity_Run_Loop",
+      "Events": [
+        {
+          "EventTime": 0.0,
+          "EventType": "Notify",
+          "EventTag": "R"
+        },
+        {
+          "EventTime": 0.14463937282562256,
+          "EventType": "Notify",
+          "EventTag": "L"
+        },
+        {
+          "EventTime": 0.4639376103878021,
+          "EventType": "Notify",
+          "EventTag": "R"
+        }
+      ]
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Ani_MainCity_Run_Start",
+      "Events": [
+        {
+          "EventTime": 0.042460788041353226,
+          "EventType": "Notify",
+          "EventTag": "R"
+        },
+        {
+          "EventTime": 0.4048459231853485,
+          "EventType": "Notify",
+          "EventTag": "L"
+        },
+        {
+          "EventTime": 0.706099808216095,
+          "EventType": "Notify",
+          "EventTag": "R"
+        },
+        {
+          "EventTime": 1.019445538520813,
+          "EventType": "Notify",
+          "EventTag": "L"
+        },
+        {
+          "EventTime": 1.3300515413284302,
+          "EventType": "Notify",
+          "EventTag": "R"
+        }
+      ]
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Ani_MainCity_Run_Start_90_L",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Ani_MainCity_Run_Start_180_L",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Ani_MainCity_Run_Start_180_R",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Ani_MainCity_Run_Start_End_R",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Ani_MainCity_Run_TurnBack",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Ani_MainCity_RunToWalk",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Ani_MainCity_Selfie__Emotion01",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Ani_MainCity_Selfie__Emotion01_High",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Ani_MainCity_Selfie__Emotion01_HighPose",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Ani_MainCity_Selfie__Emotion01_Low",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Ani_MainCity_Selfie__Emotion01_LowPose",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Ani_MainCity_Selfie__Emotion01Pose",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Ani_MainCity_Selfie__Emotion02",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Ani_MainCity_Selfie__Emotion02_High",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Ani_MainCity_Selfie__Emotion02_HighPose",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Ani_MainCity_Selfie__Emotion02_Low",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Ani_MainCity_Selfie__Emotion02_LowPose",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Ani_MainCity_Selfie__Emotion02Pose",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Ani_MainCity_Selfie__Emotion03",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Ani_MainCity_Selfie__Emotion03_High",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Ani_MainCity_Selfie__Emotion03_HighPose",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Ani_MainCity_Selfie__Emotion03_Low",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Ani_MainCity_Selfie__Emotion03_LowPose",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Ani_MainCity_Selfie__Emotion03Pose",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Ani_MainCity_Selfie__Emotion04",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Ani_MainCity_Selfie__Emotion04_High",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Ani_MainCity_Selfie__Emotion04_Low",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Ani_MainCity_Selfie__Emotion06",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Ani_MainCity_Selfie__Emotion06_High",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Ani_MainCity_Selfie__Emotion06_Low",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Ani_MainCity_Selfie_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Ani_MainCity_Selfie_LoopPose",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Ani_MainCity_Selfie_LoopPose_High",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Ani_MainCity_Selfie_LoopPose_Low",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Ani_MainCity_Selfie_Walk_End_01",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Ani_MainCity_Selfie_Walk_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Ani_MainCity_ShakeHead",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Ani_MainCity_Sit_OvernightSofa01",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Ani_MainCity_TakePhoto_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Ani_MainCity_TakePhoto_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Ani_MainCity_TurnAround_45_L",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Ani_MainCity_TurnAround_180_L",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Ani_MainCity_Walk_End_02_L",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Ani_MainCity_Walk_End_02_R",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Cam_MainCity_FishingCatch",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Suibianguan_Ani_MainCity_Fishing_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Suibianguan_Ani_MainCity_Gesture_01",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Suibianguan_Ani_MainCity_Hauling_Right_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Suibianguan_Ani_MainCity_Hooky_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Suibianguan_Ani_MainCity_Hooky_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Suibianguan_Ani_MainCity_Idle_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Suibianguan_Ani_MainCity_Nod",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Suibianguan_Ani_MainCity_Playphone_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Suibianguan_Ani_MainCity_Playphone_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Suibianguan_Ani_MainCity_Playphone_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Suibianguan_Ani_MainCity_PlayWithGameDevice_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Suibianguan_Ani_MainCity_PlayWithPhone_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Suibianguan_Ani_MainCity_PressHauling_Left_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Suibianguan_Ani_MainCity_Run_End_L",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Suibianguan_Ani_MainCity_Run_End_R",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Suibianguan_Ani_MainCity_Run_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Suibianguan_Ani_MainCity_Selfie__Emotion01",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Suibianguan_Ani_MainCity_Selfie__Emotion01_High",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Suibianguan_Ani_MainCity_Selfie__Emotion02",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Suibianguan_Ani_MainCity_Selfie__Emotion02_High",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Suibianguan_Ani_MainCity_Selfie__Emotion02_Low",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Suibianguan_Ani_MainCity_Selfie__Emotion03",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Suibianguan_Ani_MainCity_Selfie__Emotion03_High",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Suibianguan_Ani_MainCity_Selfie__Emotion03_Low",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Suibianguan_Ani_MainCity_Selfie__Emotion04",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Suibianguan_Ani_MainCity_Selfie__Emotion04_High",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Suibianguan_Ani_MainCity_Selfie__Emotion04_Low",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Suibianguan_Ani_MainCity_Selfie__Emotion05",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Suibianguan_Ani_MainCity_Selfie__Emotion05_Low",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Suibianguan_Ani_MainCity_Selfie_Loop_High",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Suibianguan_Ani_MainCity_Selfie_Loop_Low",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Suibianguan_Ani_MainCity_SensoryPose_01",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Suibianguan_Ani_MainCity_SensoryPose_02",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Suibianguan_Ani_MainCity_SensoryPose_04",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Suibianguan_Ani_MainCity_SensoryPose_05",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Suibianguan_Ani_MainCity_SitThinking_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Suibianguan_Ani_MainCity_Walk_End_02_L",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Suibianguan_Ani_MainCity_Walk_End_02_R",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Suibianguan_Ani_MainCity_Walk_End_L",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Suibianguan_Ani_MainCity_Walk_End_R",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Suibianguan_Ani_MainCity_Walk_Loop",
+      "Events": [
+        {
+          "EventTime": 0.14240746200084686,
+          "EventType": "Notify",
+          "EventTag": "R"
+        },
+        {
+          "EventTime": 0.6892511248588562,
+          "EventType": "Notify",
+          "EventTag": "L"
+        }
+      ]
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Suibianguan_Ani_MainCity_Walk_Start",
+      "Events": [
+        {
+          "EventTime": 0.0,
+          "EventType": "Notify",
+          "EventTag": "L"
+        },
+        {
+          "EventTime": 0.6474334001541138,
+          "EventType": "Notify",
+          "EventTag": "R"
+        },
+        {
+          "EventTime": 1.1635478734970093,
+          "EventType": "Notify",
+          "EventTag": "L"
+        }
+      ]
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Suibianguan_Ani_MainCity_Work_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Belle_Ani_MainCity_Sprint",
+      "Events": []
+    }
+  ]
+}

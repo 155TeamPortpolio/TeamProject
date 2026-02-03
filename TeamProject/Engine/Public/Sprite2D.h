@@ -40,9 +40,11 @@ public:
 public:
     _bool IsValid();
     void  Render_GUI();
+    void  TypeCheck(const std::string& slotName, SHADER_PARAM& param);
 
 public:
     _float Get_AspectRatio();
+    _uint2 Get_TextureSize();
 
 private:
     _uint  m_iDrawIndex   = {};

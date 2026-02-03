@@ -1,0 +1,15 @@
+{
+  "TagDataFormat": "NPCSlot",
+  "TagArea": "Zero_Worksite",
+  "iVersion": 1,
+  "values": [
+    {
+      "iObjID": 1,
+      "TagName": "Gravity",
+      "defaultvalue": {
+        "type": "Bool",
+        "value": false
+      }
+    }
+  ]
+}

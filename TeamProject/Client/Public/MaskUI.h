@@ -22,6 +22,9 @@ public:
 public:
 	virtual void    Load(const nlohmann::ordered_json& data) override;
 
+private:
+	_float m_fMaskThreshold = { 0.1f };
+
 public:
 	static  CGameObject* Create();
 	virtual CGameObject* Clone(INIT_DESC* pArg = {}) override;

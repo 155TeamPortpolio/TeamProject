@@ -39,6 +39,7 @@ public:
 		vector<CONDITION_INFO> Conditions;	// 다중조건(AND)
 		_float fExitTime = 1.f;
 		_bool  bExit = false;
+		_int   iPriority = { 0 };
 	}TRANSITION_INFO;
 
 	typedef struct StateTransitionRecord
@@ -48,6 +49,7 @@ public:
 		_float fTimestamp = { 0.f };        // 게임 시간 기준
 		_float fPrevStateTime = { 0.f };    // 이전 상태에서 머문 시간
 		string strTriggerReason;  // 어떤 조건으로 전환되었는지
+		_uint  iDepth = { 0 };
 	}STATE_RECORD;
 
 public:
@@ -72,7 +74,7 @@ public:
 		const vector<CONDITION_INFO>& Conditions,
 		_bool bExit = false, _float fExitTime = 1.f);				// 다중 조건
 	HRESULT Register_AnyStateTransition(const string& strTo,
-		TRANSITION_CONDITION eCondition, const string& strParam);	// 단일
+		TRANSITION_CONDITION eCondition, const string& strParam, _int iPriority = 0); // 단일
 	HRESULT Register_AnyStateTransition(const string& strTo,
 		const vector<CONDITION_INFO>& Conditions);					// 다중
 
@@ -101,12 +103,21 @@ public:
 	_float			  Get_StateTime() const { return m_fStateTime; }
 	const unordered_map<string, IBaseState<Type>*>& Get_States() const { return m_States; }
 
+	void    Set_RootStateMachine(CStateMachine<Type>* pRoot, _uint iDepth)
+	{
+		m_pRootStateMachine = pRoot;
+		m_iHierarchyDepth = iDepth;
+	}
+	CStateMachine<Type>* Get_RootStateMachine() { return m_pRootStateMachine; }
+	_uint   Get_HierarchyDepth() const { return m_iHierarchyDepth; }
+
 private:
 	void    Update_AnimProgress();
 	void	Update_AnimProgress_Recursive(IBaseState<Type>* pState, _float fProgress);
 	void    Check_Transitions();
 	void    Check_AnyStateTransitions();
 	_bool   Check_Transition(const TRANSITION_INFO& transition);
+	void	Reset_Progress_Recursive(IBaseState<Type>* pState);
 
 	void	Render_Info();
 	void	Render_Animation();
@@ -121,6 +132,7 @@ private:
 	_bool	Evaluate_SingleCondition(const CONDITION_INFO& condition);
 	_bool	Evaluate_Condition(const TRANSITION_INFO& transition);
 	void	Record_Transition(const string& strFrom, const string& strTo, const string& strReason, _float fPrevStateTime);
+	string  ConditiontoString(const CONDITION_INFO& cond);
 
 private:
 	Type*									 m_pOwner = { nullptr };
@@ -133,8 +145,11 @@ private:
 	string                                   m_strCurrentState = "";
 	string                                   m_strDefaultState = "";
 	_float                                   m_fStateTime = 0.f;
+	CStateMachine<Type>*					 m_pRootStateMachine = { nullptr };
+	_uint                                    m_iHierarchyDepth = { 0 };
 	// Render_GUI
 	deque<STATE_RECORD>						 m_History = {};
+	_bool                                    m_bNewHistoryAdded = { false };
 	_uint									 m_iMaxHistory = 20;
 	_float									 m_fTotalTime = 0.f;
 	_bool									 m_bShowWindow = false;
@@ -188,11 +203,13 @@ void CStateMachine<Type>::Update(_float dt)
 
 	m_pCurrentState->Update(m_pOwner, dt);
 
-	Update_AnimProgress();
-
 	Check_AnyStateTransitions();
 	if (m_fStateTime == 0.f) return;	// 방금 전환됨
+
 	Check_Transitions();
+	if (m_fStateTime == 0.f) return;
+
+	Update_AnimProgress();
 }
 
 template<typename Type>
@@ -280,6 +297,7 @@ HRESULT CStateMachine<Type>::Register_State(const string& strState, IBaseState<T
 		return E_FAIL;
 
 	pState->Set_StateName(strState);
+	pState->Set_OwnerStateMachine(this);
 	m_States[strState] = pState;
 
  	return S_OK;
@@ -365,7 +383,7 @@ HRESULT CStateMachine<Type>::Register_Transition(const string& strFrom, const st
 
 template<typename Type>
 HRESULT CStateMachine<Type>::Register_AnyStateTransition(const string& strTo,
-	TRANSITION_CONDITION eCondition, const string& strParam)
+	TRANSITION_CONDITION eCondition, const string& strParam, _int iPriority)
 {
 	if (strTo.empty())
 		return E_FAIL;
@@ -373,6 +391,7 @@ HRESULT CStateMachine<Type>::Register_AnyStateTransition(const string& strTo,
 	TRANSITION_INFO transition;
 	transition.strFromState = "AnyState";
 	transition.strToState = strTo;
+	transition.iPriority = iPriority;
 
 	if (eCondition != CONDITION_NONE)
 	{
@@ -406,37 +425,32 @@ HRESULT CStateMachine<Type>::Register_AnyStateTransition(const string& strTo, co
 template<typename Type>
 void CStateMachine<Type>::Change_State(const string& strState)
 {
-	auto iter = m_States.find(strState);
-	if (iter == m_States.end())
-		return;
-	// 변경될 상태로 넘어가도 되는지 확인
-	if (m_pCurrentState && !m_pCurrentState->Handle_Transition(m_pOwner, strState))
-		return;
+    auto iter = m_States.find(strState);
+    if (iter == m_States.end())
+        return;
 
-	if (m_pCurrentState)
-	{
-		string strReason = "Manual";
-		Record_Transition(m_strCurrentState, strState, strReason, m_fStateTime);
-	}
+    if (m_pCurrentState && !m_pCurrentState->Handle_Transition(m_pOwner, strState))
+        return;
 
-	if (m_pCurrentState)
-	{
-		m_pCurrentState->Begin_Transition(m_pOwner, strState);
-		m_pCurrentState->Exit(m_pOwner);
-	}
+    if (m_pCurrentState)
+    {
+        m_pCurrentState->Begin_Transition(m_pOwner, strState);
+        m_pCurrentState->Exit(m_pOwner);
+    }
 
-	string strPrevState = m_strCurrentState;
-	m_strPrevState = m_strCurrentState;
+    string strPrevState = m_strCurrentState;
+    m_strPrevState = m_strCurrentState;
 
-	m_pCurrentState = iter->second;
-	m_strCurrentState = strState;
-	m_fStateTime = 0.f;
-	m_pCurrentState->m_fStateTime = 0.f;
-	m_pCurrentState->m_fAnimProgress = 0.f;
+    m_pCurrentState = iter->second;
+    m_strCurrentState = strState;
+    m_fStateTime = 0.f;
 
-	m_pCurrentState->Enter(m_pOwner);
-	m_pCurrentState->End_Transition(m_pOwner, strPrevState);
+	Reset_Progress_Recursive(m_pCurrentState);
+
+    m_pCurrentState->Enter(m_pOwner);
+    m_pCurrentState->End_Transition(m_pOwner, strPrevState);
 }
+
 
 template<typename Type>
 void CStateMachine<Type>::Set_DefaultState(const string& strState)
@@ -454,11 +468,15 @@ void CStateMachine<Type>::Check_Transitions()
 
 		if (Check_Transition(transition))
 		{
+			string strReason = Get_Condition(transition);
+
 			for (auto& condition : transition.Conditions)
-			{	// 트리거 소모
+			{
 				if (condition.eCondition == CONDITION_TRIGGER)
 					Reset_Trigger(condition.strParameter);
 			}
+
+			Record_Transition(m_strCurrentState, transition.strToState, strReason, m_fStateTime);
 			Change_State(transition.strToState);
 			return;
 		}
@@ -468,6 +486,9 @@ void CStateMachine<Type>::Check_Transitions()
 template<typename Type>
 void CStateMachine<Type>::Check_AnyStateTransitions()
 {
+	const TRANSITION_INFO* pBestTransition = nullptr;
+	vector<const TRANSITION_INFO*> MetTransitions;
+
 	for (auto& transition : m_AnyStateTransitions)
 	{
 		if (transition.strToState == m_strCurrentState)
@@ -475,15 +496,29 @@ void CStateMachine<Type>::Check_AnyStateTransitions()
 
 		if (Check_Transition(transition))
 		{
-			for (auto& condition : transition.Conditions)
-			{	// 트리거 소모
-				if (condition.eCondition == CONDITION_TRIGGER)
-					Reset_Trigger(condition.strParameter);
-			}
-			Change_State(transition.strToState);
-			return;
+			MetTransitions.push_back(&transition);
+
+			if (!pBestTransition || transition.iPriority > pBestTransition->iPriority)
+				pBestTransition = &transition;
 		}
 	}
+
+	if (!pBestTransition)
+		return;
+
+	string strReason = Get_Condition(*pBestTransition);
+
+	for (auto* pTransition : MetTransitions)
+	{
+		for (auto& condition : pTransition->Conditions)
+		{
+			if (condition.eCondition == CONDITION_TRIGGER)
+				Reset_Trigger(condition.strParameter);
+		}
+	}
+
+	Record_Transition(m_strCurrentState, pBestTransition->strToState, strReason, m_fStateTime);
+	Change_State(pBestTransition->strToState);
 }
 
 template<typename Type>
@@ -510,14 +545,59 @@ _bool CStateMachine<Type>::Check_Transition(const TRANSITION_INFO& transition)
 	return true;
 }
 
+template<typename Type>
+void CStateMachine<Type>::Reset_Progress_Recursive(IBaseState<Type>* pState)
+{
+	if (!pState)
+		return;
+
+	pState->m_fStateTime = 0.f;
+	pState->m_fAnimProgress = 0.f;
+	pState->m_fPrevAnimProgress = 0.f;
+	pState->m_IsAnimProgressUpdate = false;
+
+	// 서브 상태머신이 있으면 그 안의 모든 상태도 리셋
+	IHState<Type>* pHState = dynamic_cast<IHState<Type>*>(pState);
+	if (pHState && pHState->Has_SubStateMachine())
+	{
+		auto pSubFSM = pHState->Get_SubStateMachine();
+		if (pSubFSM)
+		{
+			for (auto& pair : pSubFSM->Get_States())
+				Reset_Progress_Recursive(pair.second);
+		}
+	}
+}
+
 #pragma region RENDER
 template<typename Type>
 void CStateMachine<Type>::Render_Info()
 {
-	ImGui::Text("Current State: %s", m_strCurrentState.c_str());
-	ImGui::Text("Default State: %s", m_strDefaultState.c_str());
+	// 현재 상태 전체 경로 표시
+	string strFullPath = m_strCurrentState;
+	CStateMachine<Type>* pSubFSM = nullptr;
+
+	IHState<Type>* pHState = dynamic_cast<IHState<Type>*>(m_pCurrentState);
+	if (pHState && pHState->Has_SubStateMachine())
+		pSubFSM = pHState->Get_SubStateMachine();
+
+	while (pSubFSM && pSubFSM->Get_CurrentState())
+	{
+		strFullPath += " > " + pSubFSM->Get_CurrentStateName();
+
+		IHState<Type>* pSubHState = dynamic_cast<IHState<Type>*>(pSubFSM->Get_CurrentState());
+		if (pSubHState && pSubHState->Has_SubStateMachine())
+			pSubFSM = pSubHState->Get_SubStateMachine();
+		else
+			pSubFSM = nullptr;
+	}
+
+	ImGui::TextColored(ImVec4(0.4f, 0.8f, 1.f, 1.f), "Current: %s", strFullPath.c_str());
+	ImGui::Text("Previous: %s", m_strPrevState.c_str());
+	ImGui::Text("Default: %s", m_strDefaultState.c_str());
 	ImGui::Text("State Time: %.2f", m_fStateTime);
 	ImGui::Text("Total Time: %.2f", m_fTotalTime);
+	ImGui::Text("Hierarchy Depth: %d", m_iHierarchyDepth);
 	ImGui::Separator();
 }
 
@@ -528,9 +608,10 @@ void CStateMachine<Type>::Render_Animation()
 		return;
 
 	_float fProgress = m_pCurrentState->Get_AnimProgress();
+	_float fPrevProgress = m_pCurrentState->m_fPrevAnimProgress;
 
 	ImGui::ProgressBar(fProgress, ImVec2(-1, 0));
-	ImGui::Text("Progress: %.1f%%", fProgress * 100.f);
+	ImGui::Text("Progress: %.3f (Prev: %.3f)", fProgress, fPrevProgress);
 	ImGui::Text("AnimEnd: %s", m_pCurrentState->Is_AnimEnd() ? "TRUE" : "FALSE");
 }
 
@@ -611,14 +692,30 @@ void CStateMachine<Type>::Render_Transition()
 		ImVec4 color = bCanTransit ? ImVec4(0.2f, 1.f, 0.2f, 1.f) : ImVec4(0.6f, 0.6f, 0.6f, 1.f);
 
 		ImGui::TextColored(color, "-> %s", transition.strToState.c_str());
-		ImGui::SameLine();
-		ImGui::TextColored(ImVec4(0.7f, 0.7f, 0.7f, 1.f),
-			"[%s]", Get_Condition(transition).c_str());
+
+		if (transition.Conditions.size() > 1)
+		{
+			ImGui::Indent();
+			for (auto& cond : transition.Conditions)
+			{
+				_bool bSingleMet = Evaluate_SingleCondition(cond);
+				ImVec4 condColor = bSingleMet ? ImVec4(0.2f, 1.f, 0.2f, 1.f) : ImVec4(1.f, 0.3f, 0.3f, 1.f);
+				ImGui::TextColored(condColor, "[%s] %s",
+					bSingleMet ? "O" : "X",
+					ConditiontoString(cond).c_str());
+			}
+			ImGui::Unindent();
+		}
+		else
+		{
+			ImGui::SameLine();
+			ImGui::TextColored(ImVec4(0.7f, 0.7f, 0.7f, 1.f),
+				"[%s]", Get_Condition(transition).c_str());
+		}
 
 		if (transition.bExit)
 		{
-			ImGui::SameLine();
-			ImGui::Text("(Exit: %.0f%%/%.0f%%)",
+			ImGui::Text("  (Exit: %.0f%%/%.0f%%)",
 				m_pCurrentState->Get_AnimProgress() * 100.f,
 				transition.fExitTime * 100.f);
 		}
@@ -634,9 +731,30 @@ void CStateMachine<Type>::Render_Transition()
 		_bool bConditionMet = Evaluate_Condition(transition);
 		ImVec4 color = bConditionMet ? ImVec4(1.f, 1.f, 0.f, 1.f) : ImVec4(0.5f, 0.5f, 0.5f, 1.f);
 
-		ImGui::TextColored(color, "-> %s [%s]",
-			transition.strToState.c_str(),
-			Get_Condition(transition).c_str());
+		if (transition.iPriority != 0)
+			ImGui::TextColored(color, "-> %s [P:%d]", transition.strToState.c_str(), transition.iPriority);
+		else
+			ImGui::TextColored(color, "-> %s", transition.strToState.c_str());
+
+		if (transition.Conditions.size() > 1)
+		{
+			ImGui::Indent();
+			for (auto& cond : transition.Conditions)
+			{
+				_bool bSingleMet = Evaluate_SingleCondition(cond);
+				ImVec4 condColor = bSingleMet ? ImVec4(0.2f, 1.f, 0.2f, 1.f) : ImVec4(1.f, 0.3f, 0.3f, 1.f);
+				ImGui::TextColored(condColor, "[%s] %s",
+					bSingleMet ? "O" : "X",
+					ConditiontoString(cond).c_str());
+			}
+			ImGui::Unindent();
+		}
+		else
+		{
+			ImGui::SameLine();
+			ImGui::TextColored(ImVec4(0.7f, 0.7f, 0.7f, 1.f),
+				"[%s]", Get_Condition(transition).c_str());
+		}
 	}
 }
 
@@ -652,20 +770,62 @@ void CStateMachine<Type>::Render_History()
 		return;
 	}
 
-	for (auto it = m_History.rbegin(); it != m_History.rend(); ++it)
+	// Clear 버튼
+	if (ImGui::Button("Clear History"))
+		m_History.clear();
+	ImGui::SameLine();
+	ImGui::Text("(%d / %d)", (_int)m_History.size(), m_iMaxHistory);
+
+	ImGui::BeginChild("##HistoryScroll", ImVec2(0, 250), true);
+
+	for (auto it = m_History.begin(); it != m_History.end(); ++it)
 	{
-		ImGui::Text("[%.2fs] %s -> %s",
-			it->fTimestamp,
-			it->strFromState.c_str(),
-			it->strToState.c_str());
+		// 깊이에 따른 색상 구분
+		ImVec4 depthColor;
+		switch (it->iDepth)
+		{
+		case 0: depthColor = ImVec4(1.f, 1.f, 1.f, 1.f); break;
+		case 1: depthColor = ImVec4(0.8f, 0.9f, 1.f, 1.f); break;
+		case 2: depthColor = ImVec4(0.7f, 0.8f, 0.95f, 1.f); break;
+		default: depthColor = ImVec4(0.6f, 0.7f, 0.9f, 1.f); break;
+		}
+
+		// 깊이에 따른 들여쓰기
+		if (it->iDepth > 0)
+		{
+			string strIndent(it->iDepth * 2, ' ');
+			strIndent += "L ";
+			ImGui::TextColored(ImVec4(0.4f, 0.4f, 0.4f, 1.f), "%s", strIndent.c_str());
+			ImGui::SameLine();
+		}
+
+		ImGui::TextColored(ImVec4(0.5f, 0.5f, 0.5f, 1.f), "[%6.2fs]", it->fTimestamp);
 		ImGui::SameLine();
-		ImGui::TextColored(ImVec4(0.5f, 0.8f, 0.5f, 1.f),
-			"(%.2fs, %s)", it->fPrevStateTime, it->strTriggerReason.c_str());
+
+		ImGui::TextColored(ImVec4(1.f, 0.6f, 0.2f, 1.f), "%s", it->strFromState.c_str());
+		ImGui::SameLine();
+		ImGui::TextColored(depthColor, "->");
+		ImGui::SameLine();
+		ImGui::TextColored(ImVec4(0.2f, 1.f, 0.2f, 1.f), "%s", it->strToState.c_str());
+
+		ImGui::SameLine();
+		ImGui::TextColored(ImVec4(0.4f, 0.6f, 0.8f, 1.f), "(%.2fs)", it->fPrevStateTime);
+		ImGui::SameLine();
+		ImGui::TextColored(ImVec4(0.9f, 0.9f, 0.3f, 1.f), "[%s]", it->strTriggerReason.c_str());
 	}
+
+	// 새 기록이 추가됐을 때만 자동 스크롤 : OFF 
+	if (m_bNewHistoryAdded)
+	{
+		//ImGui::SetScrollHereY(1.f);
+		m_bNewHistoryAdded = false;
+	}
+
+	ImGui::EndChild();
 }
 
 template<typename Type>
-inline void CStateMachine<Type>::Render_StateGraph()
+void CStateMachine<Type>::Render_StateGraph()
 {
 	if (!ImGui::CollapsingHeader("State Graph"))
 		return;
@@ -775,34 +935,124 @@ void CStateMachine<Type>::Render_Hierarchy(IBaseState<Type>* pState, _uint iDept
 	if (!pState)
 		return;
 
-	_bool bIsCurrent = (pState->Get_StateName() == m_strCurrentState);
-
-	if (bIsCurrent)
-		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.2f, 1.f, 0.2f, 1.f));
+	_bool bIsActivePath = false;
+	if (pState->Get_StateName() == m_strCurrentState)
+	{
+		bIsActivePath = true;
+	}
+	else
+	{
+		IHState<Type>* pParent = pState->Get_ParentState();
+		if (pParent && pParent->Has_SubStateMachine())
+		{
+			auto pParentFSM = pParent->Get_SubStateMachine();
+			if (pParentFSM->Get_CurrentStateName() == pState->Get_StateName())
+				bIsActivePath = true;
+		}
+	}
 
 	IHState<Type>* pHState = dynamic_cast<IHState<Type>*>(pState);
+	_bool bHasSubFSM = pHState && pHState->Has_SubStateMachine();
 
-	if (pHState && pHState->Has_SubStateMachine())
+	if (bIsActivePath)
+		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.2f, 1.f, 0.2f, 1.f));
+
+	if (bHasSubFSM)
 	{
-		if (ImGui::TreeNode(pState->Get_StateName().c_str()))
+		ImGuiTreeNodeFlags flags = bIsActivePath ? ImGuiTreeNodeFlags_DefaultOpen : 0;
+
+		if (ImGui::TreeNodeEx(pState->Get_StateName().c_str(), flags))
 		{
+			if (bIsActivePath)
+				ImGui::PopStyleColor();
+
 			auto pSubFSM = pHState->Get_SubStateMachine();
-			ImGui::TextColored(ImVec4(0.7f, 0.7f, 0.7f, 1.f),
-				"Current: %s", pSubFSM->Get_CurrentStateName().c_str());
+
+			string strSubPath = pSubFSM->Get_CurrentStateName();
+			CStateMachine<Type>* pDeepSub = nullptr;
+
+			IHState<Type>* pSubCurrent = dynamic_cast<IHState<Type>*>(pSubFSM->Get_CurrentState());
+			if (pSubCurrent && pSubCurrent->Has_SubStateMachine())
+				pDeepSub = pSubCurrent->Get_SubStateMachine();
+
+			while (pDeepSub && pDeepSub->Get_CurrentState())
+			{
+				strSubPath += " > " + pDeepSub->Get_CurrentStateName();
+				IHState<Type>* pDeepState = dynamic_cast<IHState<Type>*>(pDeepSub->Get_CurrentState());
+				if (pDeepState && pDeepState->Has_SubStateMachine())
+					pDeepSub = pDeepState->Get_SubStateMachine();
+				else
+					pDeepSub = nullptr;
+			}
+
+			ImGui::TextColored(ImVec4(0.4f, 0.8f, 1.f, 1.f), "Active: %s", strSubPath.c_str());
+			ImGui::TextColored(ImVec4(0.7f, 0.7f, 0.7f, 1.f), "Time: %.2fs  Anim: %.0f%%",
+				pSubFSM->Get_StateTime(),
+				pSubFSM->Get_CurrentState()->Get_AnimProgress() * 100.f);
+
+			auto& subParams = pSubFSM->m_Parameters;
+			if (!subParams.empty())
+			{
+				if (ImGui::TreeNode("Parameters"))
+				{
+					for (auto& pair : subParams)
+					{
+						switch (pair.second.Get_Type())
+						{
+						case CStateParameter::PARAM_BOOL:
+							ImGui::TextColored(
+								pair.second.Get_Bool() ? ImVec4(0.f, 1.f, 0.f, 1.f) : ImVec4(1.f, 0.3f, 0.3f, 1.f),
+								"%s: %s", pair.first.c_str(), pair.second.Get_Bool() ? "true" : "false");
+							break;
+						case CStateParameter::PARAM_TRIGGER:
+							ImGui::TextColored(
+								pair.second.Get_Trigger() ? ImVec4(1.f, 1.f, 0.f, 1.f) : ImVec4(0.5f, 0.5f, 0.5f, 1.f),
+								"%s: %s", pair.first.c_str(), pair.second.Get_Trigger() ? "ACTIVE" : "idle");
+							break;
+						case CStateParameter::PARAM_INT:
+							ImGui::Text("%s: %d", pair.first.c_str(), pair.second.Get_Int());
+							break;
+						case CStateParameter::PARAM_FLOAT:
+							ImGui::Text("%s: %.2f", pair.first.c_str(), pair.second.Get_Float());
+							break;
+						}
+					}
+					ImGui::TreePop();
+				}
+			}
+
+			ImGui::Separator();
 
 			for (auto& pair : pSubFSM->Get_States())
 				Render_Hierarchy(pair.second, iDepth + 1);
 
 			ImGui::TreePop();
+
+			if (bIsActivePath)
+				ImGui::SetScrollHereY(0.5f);
+
+			return;
 		}
+
+		if (bIsActivePath)
+			ImGui::PopStyleColor();
 	}
 	else
 	{
-		ImGui::BulletText("%s", pState->Get_StateName().c_str());
+		if (bIsActivePath)
+		{
+			ImGui::BulletText("%s (%.2fs, %.0f%%)",
+				pState->Get_StateName().c_str(),
+				pState->Get_StateTime(),
+				pState->Get_AnimProgress() * 100.f);
+			ImGui::SetScrollHereY(0.5f);
+			ImGui::PopStyleColor();
+		}
+		else
+		{
+			ImGui::BulletText("%s", pState->Get_StateName().c_str());
+		}
 	}
-
-	if (bIsCurrent)
-		ImGui::PopStyleColor();
 }
 
 template<typename Type>
@@ -931,23 +1181,55 @@ _bool CStateMachine<Type>::Evaluate_Condition(const TRANSITION_INFO& transition)
 template<typename Type>
 void CStateMachine<Type>::Record_Transition(const string& strFrom, const string& strTo, const string& strReason, _float fPrevStateTime)
 {
+	// 루트가 있으면 루트에 기록 위임
+	if (m_pRootStateMachine)
+	{
+		m_pRootStateMachine->Record_Transition(strFrom, strTo, strReason, fPrevStateTime);
+		return;
+	}
+
+	// 루트 상태머신에서 실제 기록
 	StateTransitionRecord record;
-	record.strFromState = strFrom;
-	record.strToState = strTo;
 	record.fTimestamp = m_fTotalTime;
 	record.fPrevStateTime = fPrevStateTime;
+	record.strFromState = strFrom;
+	record.strToState = strTo;
 	record.strTriggerReason = strReason;
-
-	IHState<Type>* pFromHState = dynamic_cast<IHState<Type>*>(Get_State(strFrom));
-	if (pFromHState && pFromHState->Get_ParentState())
-		record.strTriggerReason = pFromHState->Get_ParentState()->Get_StateName() + "::" + strReason;
-	else
-		record.strTriggerReason = strReason;
+	record.iDepth = m_iHierarchyDepth;
 
 	m_History.push_back(record);
 
 	if (m_History.size() > m_iMaxHistory)
 		m_History.pop_front();
+
+	m_bNewHistoryAdded = true;
+}
+
+template<typename Type>
+string CStateMachine<Type>::ConditiontoString(const CONDITION_INFO& cond)
+{
+	switch (cond.eCondition)
+	{
+	case CONDITION_NONE:
+		return "None";
+	case CONDITION_ANIMATION_END:
+		return "AnimEnd";
+	case CONDITION_ANIMATION_GREATER:
+		return "Anim > " + to_string(cond.fTimer);
+	case CONDITION_ANIMATION_LESS:
+		return "Anim < " + to_string(cond.fTimer);
+	case CONDITION_TIME_GREATER:
+		return "Time > " + to_string(cond.fTimer);
+	case CONDITION_TIME_LESS:
+		return "Time < " + to_string(cond.fTimer);
+	case CONDITION_BOOL_TRUE:
+		return cond.strParameter + " == true";
+	case CONDITION_BOOL_FALSE:
+		return cond.strParameter + " == false";
+	case CONDITION_TRIGGER:
+		return "Trigger: " + cond.strParameter;
+	}
+	return "Unknown";
 }
 
 template<typename Type>

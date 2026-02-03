@@ -7,32 +7,37 @@
 
 #include "CharacterController.h"
 
+CCorinState_Move* CCorinState_Move::Create()
+{
+    auto pInstance = new CCorinState_Move();
+    pInstance->m_pSubStateMachine = CStateMachine<CCorin>::Create();
+    auto pSubStateMachine = pInstance->Get_SubStateMachine();
+
+    pSubStateMachine->Register_State("Walk", CCorinState_Walk::Create());
+    pSubStateMachine->Register_State("Run", CCorinState_Run::Create());
+
+    pSubStateMachine->Register_Transition("Walk", "Run",
+        CStateMachine<CCorin>::CONDITION_TRIGGER, "ToRun");
+    pSubStateMachine->Register_Transition("Run", "Walk",
+        CStateMachine<CCorin>::CONDITION_TRIGGER, "ToWalk");
+
+    pSubStateMachine->Set_DefaultState("Walk");
+
+    return pInstance;
+}
+
 void CCorinState_Move::Enter(CCorin* pOwner)
 {
-    if (!m_pSubStateMachine)
-    {
-        m_pSubStateMachine = CStateMachine<CCorin>::Create();
-        m_pSubStateMachine->Register_State("Walk", CCorinState_Walk::Create());
-        m_pSubStateMachine->Register_State("Run", CCorinState_Run::Create());
-       
-        m_pSubStateMachine->Register_Transition("Walk", "Run",
-            CStateMachine<CCorin>::CONDITION_TRIGGER, "ToRun");
-        m_pSubStateMachine->Register_Transition("Run", "Walk",
-            CStateMachine<CCorin>::CONDITION_TRIGGER, "ToWalk");
-
-        m_pSubStateMachine->Set_DefaultState("Walk");
-    }
-
     _int iEntryMode = pOwner->Get_StateMachine()->Get_Int("MoveEntryMode");
     pOwner->Get_StateMachine()->Set_Int("MoveEntryMode", 0);
 
     switch (iEntryMode)
     {
-    case 2:
+    case 2: // Run Loop
         m_pSubStateMachine->Set_DefaultState("Run");
         m_pSubStateMachine->Set_Int("RunEntryMode", 0);
         break;
-    case 1:
+    case 1: //  Run End
         m_pSubStateMachine->Set_DefaultState("Run");
         m_pSubStateMachine->Set_Int("RunEntryMode", 1);
         break;

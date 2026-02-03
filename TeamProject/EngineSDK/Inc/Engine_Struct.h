@@ -215,7 +215,59 @@ namespace Engine
 			XMStoreFloat3(&newBox.vMax, XMVector3TransformCoord(min, world));
 			return newBox;
 		}
+		void ExpandBox(const _float3& p)
+		{
+			vMin.x = min(vMin.x, p.x); vMin.y = min(vMin.y, p.y); vMin.z = min(vMin.z, p.z);
+			vMax.x = max(vMax.x, p.x); vMax.y = max(vMax.y, p.y); vMax.z = max(vMax.z, p.z);
+		}
+
+		tagMinMaxBoxInfo TransformBox_8Corner(const _float4x4& worldMat)
+		{
+			tagMinMaxBoxInfo outBox{};
+			outBox.vMin = { FLT_MAX, FLT_MAX, FLT_MAX };
+			outBox.vMax = { -FLT_MAX, -FLT_MAX, -FLT_MAX };
+
+			_matrix matTransform = XMLoadFloat4x4(&worldMat);
+
+			const _float3 corners[8] =
+			{
+				{ vMin.x, vMin.y, vMin.z },
+				{ vMax.x, vMin.y, vMin.z },
+				{ vMin.x, vMax.y, vMin.z },
+				{ vMax.x, vMax.y, vMin.z },
+
+				{ vMin.x, vMin.y, vMax.z },
+				{ vMax.x, vMin.y, vMax.z },
+				{ vMin.x, vMax.y, vMax.z },
+				{ vMax.x, vMax.y, vMax.z },
+			};
+
+			for (int cornerIndex = 0; cornerIndex < 8; ++cornerIndex)
+			{
+				_vector vCorner = XMVectorSet(
+					corners[cornerIndex].x,
+					corners[cornerIndex].y,
+					corners[cornerIndex].z,
+					1.0f);
+
+				_vector vWorld = XMVector3TransformCoord(vCorner, matTransform);
+
+				_float3 worldPoint{};
+				XMStoreFloat3(&worldPoint, vWorld);
+
+				outBox.vMin.x = min(outBox.vMin.x, worldPoint.x);
+				outBox.vMin.y = min(outBox.vMin.y, worldPoint.y);
+				outBox.vMin.z = min(outBox.vMin.z, worldPoint.z);
+
+				outBox.vMax.x = max(outBox.vMax.x, worldPoint.x);
+				outBox.vMax.y = max(outBox.vMax.y, worldPoint.y);
+				outBox.vMax.z = max(outBox.vMax.z, worldPoint.z);
+			}
+
+			return outBox;
+		}
 	}MINMAX_BOX;
+
 
 	/*RayInfo*/
 	typedef struct tagRayInfo {
@@ -374,8 +426,8 @@ namespace Engine
 
 		_float3 vOffsetPosition{};
 		_float4 vOffsetQuaternion{};
-
-		//_bool isLoop = false; 부모 구조체에서 루프 제어함
+		_float3 vRimLightColor{};
+		_float2 vPivot{ 0.5f,0.5f };
 		_uint iRGBMaskMode{};
 		_uint iModuleMask{};
 		_uint iColorMode{};
@@ -434,6 +486,11 @@ namespace Engine
 		string DiffuseTextureTag{};
 		string NoiseTextureTag{};
 		string DissolveTextureTag{};
+		string MaskTextureTagA{};
+		string MaskTextureTagB{};
+		string DistortionTextureTag{};
+		string DistortionMaskTextureTag{};
+		string GradientTextureTag{};
 
 		_float3 vOffsetPosition{};
 		_float4 vOffsetQuaternion{};
@@ -477,12 +534,31 @@ namespace Engine
 
 		/* Bloom */
 		_float fBloomIntensity{};
+		_float fBloomThreshold{};
+		_float fBloomSoftness{};
 
 		/* Noise */
 		_float fEnableNoise{};
 		_float fNoiseStrength{};
 		_float fNoiseTilling{};
 		_float2 vNoiseUVSpeed{};
+
+		/* Mask */
+		_float fEnableMaskA{};
+		_float fEnableMaskB{};
+		_float fMaskTilling{};
+
+		/* Distortion */
+		_bool useDiffuseAlpha = true;
+		_bool useDistortionMask = false;
+		_float fEnableDistortion{};
+		_float fDistortionStrength{};
+		_float fDistortionTilling{};
+		_float2 vDistortionUVSpeed{};
+
+		/* Gradient */
+		_float fEnableGradient{};
+		_uint iGradientMode{};
 
 		static tagMeshNode FromJson(nlohmann::ordered_json& json);
 	}MESH_NODE;
@@ -517,6 +593,7 @@ namespace Engine
 
 	typedef struct tagEffectAsset : public INIT_DESC
 	{
+		_bool isBillboard = false;
 		_uint iNodeCount{};
 		_float fDuration{};
 		_bool isLoop = false;
@@ -525,31 +602,36 @@ namespace Engine
 		static tagEffectAsset FromJson(nlohmann::ordered_json& json);
 	}EFFECT_ASSET;
 
-	typedef struct ENGINE_DLL tagObjectHandle {
-		string Level = {};
-		string Layer = {};
-		_uint hObjID = {};
+	typedef struct ENGINE_DLL tagObjectHandle
+	{
+		string Level{};
+		string Layer{};
+		_uint  hObjID{};
 
 		_bool isValid();
+		_bool isValid() const;
+
 		void Reset();
-		class CGameObject* Get();
+		CGameObject* Get();
+		CGameObject* Get() const;
+
 		void Delete();
-		_bool operator==(const tagObjectHandle& rhs) {
-			if (isValid())
-				return hObjID == rhs.hObjID;
-			else
-				return false;
-		}
-		_bool operator !=(const tagObjectHandle& rhs) {
-			return hObjID != rhs.hObjID;
-		}
-		tagObjectHandle& operator= (const tagObjectHandle& rhs) {
-			Level = rhs.Level;
-			Layer = rhs.Layer;
+		void Set_Alive(_bool alive);
+		_bool isAlive();
+
+		_bool operator==(const tagObjectHandle& rhs) const { return hObjID == rhs.hObjID; }
+		_bool operator!=(const tagObjectHandle& rhs) const { return hObjID != rhs.hObjID; }
+
+		tagObjectHandle& operator=(const tagObjectHandle& rhs)
+		{
+			Level  = rhs.Level;
+			Layer  = rhs.Layer;
 			hObjID = rhs.hObjID;
 			return *this;
 		}
-		class CGameObject* operator()() { return Get(); }
+
+		CGameObject* operator()() const { return Get(); }
+
 		template<typename TObject>
 		TObject* GetAs() const
 		{
@@ -560,7 +642,7 @@ namespace Engine
 			return dynamic_cast<TObject*>(objectPtr);
 		}
 
-	}OBJECT_HANDLE;
+	} OBJECT_HANDLE;
 
 	typedef struct ENGINE_DLL tagUIHandle {
 		string Level = {};

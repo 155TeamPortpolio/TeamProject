@@ -1,32 +1,41 @@
 #include "pch.h"
 #include "CorinState_UltimateAttack.h"
+
+#include "BattleSystem.h"
+#include "CamDirector.h"
+
 #include "Corin.h"
 
-#include "CamDirector.h"
+CCorinState_UltimateAttack* CCorinState_UltimateAttack::Create()
+{
+    auto pInstance = new CCorinState_UltimateAttack();
+    pInstance->m_pSubStateMachine = CStateMachine<CCorin>::Create();
+    auto pSubStateMachine = pInstance->Get_SubStateMachine();
+
+
+    pSubStateMachine->Register_State("Ultimate_Start", CCorinState_UltimateAttack_Start::Create());
+    pSubStateMachine->Register_State("Ultimate_Loop", CCorinState_UltimateAttack_Loop::Create());
+    pSubStateMachine->Register_State("Ultimate_End", CCorinState_UltimateAttack_End::Create());
+
+    pSubStateMachine->Get_State("Ultimate_End")->Set_Tag("End");
+
+    pSubStateMachine->Register_Transition("Ultimate_Start", "Ultimate_Loop",
+        CStateMachine<CCorin>::CONDITION_ANIMATION_END);
+    pSubStateMachine->Register_Transition("Ultimate_Loop", "Ultimate_End",
+        CStateMachine<CCorin>::CONDITION_ANIMATION_END);
+
+    pSubStateMachine->Set_DefaultState("Ultimate_Start");
+
+    return pInstance;
+}
 
 void CCorinState_UltimateAttack::Enter(CCorin* pOwner)
 {
     pOwner->Push_Invincible();
     pOwner->Lock_Move();
-
-    if (!m_pSubStateMachine)
-    {
-        m_pSubStateMachine = CStateMachine<CCorin>::Create();
-
-        m_pSubStateMachine->Register_State("Start", CCorinState_UltimateAttack_Start::Create());
-        m_pSubStateMachine->Register_State("Loop", CCorinState_UltimateAttack_Loop::Create());
-        m_pSubStateMachine->Register_State("End", CCorinState_UltimateAttack_End::Create());
-
-        m_pSubStateMachine->Get_State("End")->Set_Tag("End");
-
-        m_pSubStateMachine->Register_Transition("Start", "Loop",
-            CStateMachine<CCorin>::CONDITION_ANIMATION_END);
-        m_pSubStateMachine->Register_Transition("Loop", "End",
-            CStateMachine<CCorin>::CONDITION_ANIMATION_END);
-
-        m_pSubStateMachine->Set_DefaultState("Start");
-    }
     __super::Enter(pOwner);
+
+    CamDirector()->RequestSequence(CamSeqType::Ultimate);
 }
 
 void CCorinState_UltimateAttack::Update(CCorin* pOwner, _float dt)
@@ -36,13 +45,31 @@ void CCorinState_UltimateAttack::Update(CCorin* pOwner, _float dt)
         if (Event.Type != CLIP_EVENT_TYPE::NOTIFY) continue;
         if (Event.Tag == "SawStart")
         {
-            pOwner->Begin_AttackCollider("Saw", { HIT_TYPE::INTERVAL, DAMAGE_TYPE::NORMAL, Helper::Get_Random_Float(20,40), 0.f });
+            pOwner->Begin_AttackCollider("Saw",
+                HitDesc()
+                .Type(HIT_TYPE::INTERVAL)
+                .Damage(pOwner->Get_AttackPower() * 20.288f * Helper::Get_Random_Float(1.f, 1.5f)
+                    , DAMAGE_TYPE::ULTIMATE)
+                .Interval(0.1f)
+                .Charge(10.f, 0.f)
+            );
         }
         else if(Event.Tag == "SawEnd")
         {
             pOwner->End_AttackCollider("Saw");
         }
     }
+
+    auto pCorinState = pOwner->Get_StateMachine();
+    if (pCorinState->Get_Bool("OutReserve"))
+    {
+        if (m_pSubStateMachine->Get_CurrentStateName() == "End")
+        {
+            pCorinState->Set_Trigger("SwitchOut");
+            pCorinState->Set_Bool("OutReserve", false);
+        }
+    }
+
     __super::Update(pOwner, dt);
 }
 
@@ -54,6 +81,7 @@ void CCorinState_UltimateAttack::Exit(CCorin* pOwner)
 
 void CCorinState_UltimateAttack_Start::Enter(CCorin* pOwner)
 {
+    BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::ULTIMATE);
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "SwitchIn_Attack_Ex_Start")
         //.Speed(2.f)
         .Apply();
@@ -64,6 +92,10 @@ void CCorinState_UltimateAttack_Start::Update(CCorin* pOwner, _float dt)
     pOwner->Process_RootMotion(dt,
         ENUM(CCorin::ROOTMOTION_MASK::MOVE) |
         ENUM(CCorin::ROOTMOTION_MASK::QUATERNION));
+}
+
+void CCorinState_UltimateAttack_Start::Exit(CCorin* pOwner)
+{
 }
 
 void CCorinState_UltimateAttack_Loop::Enter(CCorin* pOwner)
@@ -87,7 +119,6 @@ void CCorinState_UltimateAttack_End::Enter(CCorin* pOwner)
         .EndAt(0.85f)
         .Apply();
 
-    pOwner->Pop_Invincible();
     pOwner->Unlock_Move();
 }
 

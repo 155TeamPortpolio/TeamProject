@@ -32,6 +32,8 @@ HRESULT CMaterialData::Initialize(const string& levelKey, ifstream& ifs, const s
 
 	m_DefaultMaterialConstant = infoHeader.materialConstant;
 	m_passConstant = infoHeader.passConstant;
+	if (m_passConstant != "Opaque")
+		int i = 10;
 	m_MaterialKey = infoHeader.materialDataKey;
 
 	Link_Shader(levelKey, infoHeader.ShaderKey);
@@ -90,6 +92,17 @@ void CMaterialData::ApplyData(ID3D11DeviceContext* pContext, const vector<_uint>
 HRESULT CMaterialData::Set_MaterialConstantBuffer(ID3D11Buffer* pCBuffer)
 {
 	return m_pShader->SetConstantBuffer("MaterialBuffer",pCBuffer);
+}
+
+_bool CMaterialData::Get_Texture(TEXTURE_TYPE eType, _uint index, CTexture*& outPtr)
+{
+	if (m_Textures[eType].size() <= index) {
+		return false;
+	}
+	else {
+		outPtr = m_Textures[eType][index];
+		return true;
+	}
 }
 
 _bool CMaterialData::Has_Texture(TEXTURE_TYPE eType)
@@ -291,6 +304,13 @@ string CMaterialData::ConvertToConstant(TEXTURE_TYPE eType)
 
 	case Engine::TEXTURE_TYPE::DISSOLVE:
 		return "DissolveTexture";
+
+	case Engine::TEXTURE_TYPE::ALPHA_MASK:
+		return "AlphaMaskTexture";
+
+	case Engine::TEXTURE_TYPE::DISTORTION:
+		return "DistortionTexture";
+
 	default:
 		break;
 	}

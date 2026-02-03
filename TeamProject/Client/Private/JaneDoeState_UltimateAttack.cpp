@@ -16,36 +16,49 @@ void CJaneDoeState_UltimateAttack::Enter(CJaneDoe* pOwner)
     {
         m_pSubStateMachine = CStateMachine<CJaneDoe>::Create();
 
-        m_pSubStateMachine->Register_State("Start", CJaneDoeState_UltimateAttack_Start::Create());
-        m_pSubStateMachine->Register_State("Loop", CJaneDoeState_UltimateAttack_Loop::Create());
-        m_pSubStateMachine->Register_State("End", CJaneDoeState_UltimateAttack_End::Create());
+        m_pSubStateMachine->Register_State("UltimateAttack_Start", CJaneDoeState_UltimateAttack_Start::Create());
+        m_pSubStateMachine->Register_State("UltimateAttack_Loop", CJaneDoeState_UltimateAttack_Loop::Create());
+        m_pSubStateMachine->Register_State("UltimateAttack_End", CJaneDoeState_UltimateAttack_End::Create());
 
-        m_pSubStateMachine->Get_State("End")->Set_Tag("End");
+        m_pSubStateMachine->Get_State("UltimateAttack_End")->Set_Tag("End");
 
-        m_pSubStateMachine->Register_Transition("Start", "Loop",
+        m_pSubStateMachine->Register_Transition("UltimateAttack_Start", "UltimateAttack_Loop",
             CStateMachine<CJaneDoe>::CONDITION_ANIMATION_END);
-        m_pSubStateMachine->Register_Transition("Loop", "End",
+        m_pSubStateMachine->Register_Transition("UltimateAttack_Loop", "UltimateAttack_End",
             CStateMachine<CJaneDoe>::CONDITION_ANIMATION_END);
 
-        m_pSubStateMachine->Set_DefaultState("Start");
+        m_pSubStateMachine->Set_DefaultState("UltimateAttack_Start");
     }
     __super::Enter(pOwner);
 
-    CCamDirector::GetInstance()->RequestSequence("Ultimate/Jane_Ultimate");
+    CCamDirector::GetInstance()->RequestSequence(CamSeqType::Ultimate);
 }
 
 void CJaneDoeState_UltimateAttack::Update(CJaneDoe* pOwner, _float dt)
 {
+    auto pJaneDoeState = pOwner->Get_StateMachine();
+    if (pJaneDoeState->Get_Bool("OutReserve"))
+    {
+        if (m_pSubStateMachine->Get_CurrentState()->Get_Tag() == "End" &&
+            Is_AnimEnd())
+        {
+            pJaneDoeState->Set_Trigger("SwitchOut");
+            pJaneDoeState->Set_Bool("OutReserve", false);
+        }
+    }
     __super::Update(pOwner, dt);
 }
 
 void CJaneDoeState_UltimateAttack::Exit(CJaneDoe* pOwner)
 {
+    pOwner->Pop_Invincible();
     __super::Exit(pOwner);
 }
 
 void CJaneDoeState_UltimateAttack_Start::Enter(CJaneDoe* pOwner)
 {
+    //BattleSystem()->StartTimeScale(CBattleSystem::BATTLE_OBJ_TYPE::MONSTER, 2.4f, 0.f);
+    BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::ULTIMATE);
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "SwitchIn_Attack_Ex_Start")
         //.Speed(2.f)
         .Apply();
@@ -88,7 +101,11 @@ void CJaneDoeState_UltimateAttack_Loop::Update(CJaneDoe* pOwner, _float dt)
         if (m_fDamageTimer >= m_fDamageInterval)
         {
             m_fDamageTimer -= m_fDamageInterval;
-            BattleSystem()->TakeAllDamage({ HIT_TYPE::ONCE, DAMAGE_TYPE::ULTIMATE, 10.f, 0, 0 });
+            BattleSystem()->TakeAllDamage(HitDesc()
+                .Type(HIT_TYPE::ONCE)
+                .Damage(pOwner->Get_AttackPower() * 14.706f * Helper::Get_Random_Float(1.f, 1.5f)
+                    , DAMAGE_TYPE::ULTIMATE)
+            );
         }
     }
 }
@@ -102,10 +119,9 @@ void CJaneDoeState_UltimateAttack_Loop::Exit(CJaneDoe* pOwner)
 void CJaneDoeState_UltimateAttack_End::Enter(CJaneDoe* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "SwitchIn_Attack_Ex_End")
-        //.Speed(2.f)
+        .EndAt(0.3f)
         .Apply();
 
-    pOwner->Pop_Invincible();
     pOwner->Unlock_Move();
 }
 

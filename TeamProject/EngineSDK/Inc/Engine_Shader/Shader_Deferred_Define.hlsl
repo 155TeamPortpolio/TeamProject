@@ -83,7 +83,7 @@ cbuffer SSAOKernel : register(b11)
 struct BoneMatrix{matrix BoneMat;};
 struct TransfomMatrix{matrix Transform;};
 
-// ¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡ Forward ¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ Forward â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 //===Common===
 Texture2D DiffuseTexture : register(t0);
 Texture2D NormalTexture : register(t1);
@@ -96,6 +96,7 @@ Texture2D RimLightTexture : register(t5);
 Texture2D RimLightFinalTexture : register(t6);
 Texture2D AmbientTexture : register(t7);
 Texture2D FaceDirTexture : register(t8);
+Texture2D PostInfoTexture : register(t9);
 
 //===StaticMesh===
 Texture2D EmissiveTexture : register(t10);
@@ -108,17 +109,28 @@ Texture2D SSAOFinalTexture : register(t13);
 Texture2D LightTexture : register(t15);
 Texture2D LightInfoTexture : register(t16);
 
-//¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡Effect¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡
+//â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€Effectâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 Texture2D EffectTexture : register(t20);
 Texture2D EffectAccTexture : register(t21);
 Texture2D EffectBloomAccTextutre : register(t22);
 Texture2D RevealageTexture : register(t23);
+Texture2D RimLightAccTexture : register(t24);
 
-//¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡UI¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡
+//â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€UIâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 Texture2D UI2DTexture : register(t30);
 Texture2D UI3DTexture : register(t31);
 
-//¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡Post¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡
+//â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€Postâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+//==Distortion==
+Texture2D DistortionCombinedTexture : register(t32);
+Texture2D VanishTexture : register(t33);
+Texture2D VanishNoiseTexture : register(t34);
+
+Texture2D MotionDepthTexture : register(t36);
+Texture2D MotionBlurTexture : register(t37);
+Texture2D MotionHeightTexture : register(t38);
+Texture2D MotionNoiseTexture : register(t39);
+
 //===Bloom===
 Texture2D EffectBrightTexture : register(t40);
 Texture2D EffectBloomInfo : register(t41);
@@ -151,20 +163,20 @@ Texture2D EffectCombinedTexture : register(t63);
 
 Texture2D FinalTexture : register(t65);
 
-// ¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡  ETC ¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€  ETC â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 Texture2DArray StaticShadowMapArray : register(t70);
 Texture2DArray SkinnedShadowMapArray : register(t71);
 Texture2D RampTexture : register(t72);
 
-// ¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡  SRV ¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€  SRV â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 StructuredBuffer<BoneMatrix> g_BoneMatrices : register(t75);
 StructuredBuffer<TransfomMatrix> ObjectBufferArray : register(t76);
 
-// ¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡  Sprite ¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€  Sprite â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 Texture2D SpriteTexture : register(t80);
 
 
-// ¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡  Shadow ¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€  Shadow â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 SamplerComparisonState ShadowSampler : register(s10);
 
 

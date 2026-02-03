@@ -23,6 +23,8 @@ public:
     void    Update(_float dt) override;
     void    Late_Update(_float dt) override;
     virtual void Render_GUI() override;
+    virtual void OnPooledAcquire(INIT_DESC* pArg = nullptr) override;
+    virtual void OnPooledRelease() override;
 
 public:
     static CThugBulkyEnforcer* Create();
@@ -48,7 +50,7 @@ public:
     void                                FinishWeaponCollider();
     void                                SetBattleTriggerColliderOn(_bool is) { m_isBattleTriggerOn = is; }
     void                                SetBattleAttackColliderOn(_bool is) { m_isBattleAttackOn = is; }
-    virtual void                        TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage) override;
+    virtual void                        TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER charaName = CHARACTER::END) override;
 
 private:
     HRESULT Initialize_StateMachine();
@@ -87,6 +89,7 @@ private:
     /*For.Groggy*/
     //_int                m_iGroggyValue = {};
     //_float              m_fGroggyDecreaseTime = {};
+
 };
 
 NS_END

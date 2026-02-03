@@ -29,6 +29,10 @@ public:
 public:
     static CJaneDoeState_Rush01_Start* Create() { return new CJaneDoeState_Rush01_Start(); }
     virtual void Free() override { __super::Free(); }
+
+private:
+    void Update_Effects(CJaneDoe* pOwner);
+
 };
 
 class CJaneDoeState_Rush01_End final
@@ -55,6 +59,10 @@ public:
 public:
     static CJaneDoeState_Rush02_Start* Create() { return new CJaneDoeState_Rush02_Start(); }
     virtual void Free() override { __super::Free(); }
+
+private:
+    void Update_Effects(CJaneDoe* pOwner);
+
 };
 
 class CJaneDoeState_Rush02_End final

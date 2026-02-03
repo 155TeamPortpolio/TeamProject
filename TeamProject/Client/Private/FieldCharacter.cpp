@@ -9,6 +9,8 @@
 #include "Material.h"
 #include "ObjectContainer.h"
 
+#include "IInteract.h"
+#include "FieldSystem.h"
 
 CFieldCharacter::CFieldCharacter(const CFieldCharacter& rhs)
 	:CGameObject(rhs)
@@ -73,7 +75,7 @@ void CFieldCharacter::Process_RootMotion(_float dt, const ROOTMOTION_DESC& desc)
 
 void CFieldCharacter::Process_RootMotion(_float dt, _uint iModeMask)
 {
-	ROOTMOTION_DESC desc;
+	ROOTMOTION_DESC desc{};
 	desc.iModeMask = iModeMask;
 	Process_RootMotion(dt, desc);
 }
@@ -135,14 +137,24 @@ void CFieldCharacter::OnCollisionExit(CGameObject* pOther)
 
 void CFieldCharacter::OnTriggerEnter(CGameObject* pOther)
 {
+	if (m_bCanInteract == false) return;
+	Process_Interact(pOther);
 }
 
-void CFieldCharacter::OnTriggerStay(CGameObject* pOher)
+void CFieldCharacter::OnTriggerStay(CGameObject* pOther)
 {
+	if (m_bCanInteract == false) return;
+	Process_Interact(pOther);
 }
 
 void CFieldCharacter::OnTriggerExit(CGameObject* pOther)
 {
+
+}
+
+void CFieldCharacter::Reset_State()
+{
+	m_bCanInteract = false;
 }
 
 void CFieldCharacter::On_Move(const InputInfo& inputInfo)
@@ -162,20 +174,16 @@ void CFieldCharacter::On_Move(const InputInfo& inputInfo)
 	}
 }
 
-_bool CFieldCharacter::Is_OppositeInput() const
+void CFieldCharacter::On_Interact()
 {
-	if (m_inputInfo.curMoveX == 0 && m_inputInfo.curMoveZ == 0) return false;
-	if (m_inputInfo.prevMoveX == 0 && m_inputInfo.prevMoveZ == 0) return false;
+	m_bCanInteract = true;
+}
 
-	_vector2 vPrev((_float)m_inputInfo.prevMoveX, (_float)m_inputInfo.prevMoveZ);
-	_vector2 vCur((_float)m_inputInfo.curMoveX, (_float)m_inputInfo.curMoveZ);
-	vPrev.Normalize();
-	vCur.Normalize();
+void CFieldCharacter::Process_Interact(CGameObject* pObject)
+{
+	auto pInteract = dynamic_cast<IInteract*>(pObject);
 
-	_float fDot = vPrev.Dot(vCur);
-	_float fAngle = XMConvertToDegrees(acosf(fDot));
-
-	return fAngle >= TURNBACK_ANGLE_THRESHOLD;
+	if (pInteract) pInteract->Interact(this);
 }
 
 void CFieldCharacter::Update_Rotation(_float dt)

@@ -38,12 +38,7 @@ public:
 	virtual _uint Get_StaticVerticesCount() { return m_iVerticesCount; }
 	virtual _uint Get_SkinnedVerticesCount() { return m_iVerticesCount; }
 	_float4x4 Get_MeshOffset(_uint boneIndex);
-
-public:
-	 HRESULT Render_Island(ID3D11DeviceContext* pContext, _uint islandIndex);
-
-private:
-	void Build_Island();
+	const unordered_map<_uint, _float4x4>& Get_MeshOffsetBones() { return m_MeshOffset; };
 
 public:
 	void Create_BoneMinMax(class CSkeleton* pSkeleton);

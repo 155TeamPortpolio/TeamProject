@@ -13,6 +13,7 @@ private:
 
 public:
     void Set_RimLightMode(RIMLIGHT eMode) { RimLightMode = eMode; }
+    void Set_GlitchDesc(GLITCH_DESC desc) { m_GlitchDesc = desc; };
 
 public:
     HRESULT Render_SkinnedMesh(class SkinnedOpaquePass* pOpaquePass);
@@ -20,8 +21,13 @@ public:
     HRESULT Render_RimLight();
     HRESULT Render_SkinnedMesh_LightAcc();
     HRESULT Render_SkinnedMesh_Combined();
+    HRESULT Render_MotionBlur_Noise();
+    HRESULT Render_Vanish_Noise();
     HRESULT Process_OutLineQueue();
+    HRESULT Process_MotionBlurQueue();
     void Add_OutLineCommand(const OUTLINE_COMMAND& command);
+    void Add_MotionBlurCommand(const MOTIONBLUR_COMMAND& command);
+
 public:
     void Update(_float dt);
 
@@ -30,10 +36,15 @@ private:
     virtual HRESULT Ready_MRT() override;
 
 private:
-    RIMLIGHT RimLightMode = RIMLIGHT::OUTLINE;
-    vector<OUTLINE_COMMAND> m_OutLineCommands;
-    _float                  m_fScreenWidth;
-    _float                  m_fScreenHeight;
+    RIMLIGHT RimLightMode = RIMLIGHT::RIMLIGHT;
+    vector<OUTLINE_COMMAND>     m_OutLineCommands;
+    vector<MOTIONBLUR_COMMAND>  m_MotionBlurCommands;
+    GLITCH_DESC m_GlitchDesc = {};
+
+private:
+    _float                      m_fScreenWidth;
+    _float                      m_fScreenHeight;
+    _float                      m_fTime = {};
 
 public:
     static CSkinnedMeshRenderer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext,

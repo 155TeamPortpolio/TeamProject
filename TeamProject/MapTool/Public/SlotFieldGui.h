@@ -43,10 +43,10 @@ private:
 	SlotValue&		EnsureValue(_int iObjIndex, const FIELD_DATA_DEFINE& Tab);
 
 	/* Data */
-	void					LoadBaseMapData();
-	void					to_json(MTjson& j, const SlotValue& value);
-	void					from_json(const MTjson& j, SlotValue& v);
-	void					SaveSlotData();
+	void			LoadBaseData();
+	void			to_json(MTjson& j, const SlotValue& value);
+	void			from_json(const MTjson& j, SlotValue& v);
+	void			SaveSlotData();
 
 
 private: 
@@ -58,10 +58,10 @@ private:
 
 private:
 	/* Data */
-	vector<LOADED_OBJECT>		m_LoadedObjects;		// 로드 된 오브젝트 목록
-	vector<FIELD_DATA_DEFINE>	m_FieldPrefabDefs;		// 미리 저장된 Prefab
-	vector<FIELD_DATA_DEFINE>	m_DraftTabs;			// A칸 편집용 Draft(행)
-	vector<FIELD_DATA_DEFINE>	m_AppliedTabs;			// Apply 후 확정된 탭
+	LOADED_DATA					m_LoadedData;		// 로드 된 데이터
+	vector<FIELD_DATA_DEFINE>	m_FieldPrefabDefs;	// 미리 저장된 Prefab
+	vector<FIELD_DATA_DEFINE>	m_DraftTabs;		// A칸 편집용 Draft(행)
+	vector<FIELD_DATA_DEFINE>	m_AppliedTabs;		// Apply 후 확정된 탭
 
 	vector<unordered_map<string, SlotValue>>	m_ObjUserValue;
 

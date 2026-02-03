@@ -10,9 +10,16 @@ class CSacrifice final :
     public CEnemy
 {
 public:
+    typedef struct tagSacrificeBlackBoard : public ATTACK_BLACK_BOARD
+    {
+        _uint iPatternCount{};
+    }SACRIFICE_BLACK_BOARD;
+
+public:
     enum class PHASE { PHASE1, PHASE2, END };
     enum class PARTS { ICE, WEAPON_SWORD, WEAPON_AXE, WEAPON_WHIP, END };
     enum class DISSOLVE_STATE { DISAPPEAR, APPEAR, NONE, END };
+
 private:
     CSacrifice();
     CSacrifice(const CSacrifice& rhg);
@@ -33,7 +40,8 @@ public:
     virtual void Free() override;
 
 public:
-    void TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage);
+    void TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER charaName = CHARACTER::END) override;
+    void Parried() override;
 
 public:
     /* For State Machine */
@@ -58,7 +66,7 @@ public:
     void Evade();
     void ChangePhase();
 
-    ATTACK_BLACK_BOARD& GetBlackBoard() { return m_AttackBlackBoard; }
+    SACRIFICE_BLACK_BOARD& GetBlackBoard() { return m_AttackBlackBoard; }
     PHASE GetCurrPhase()const { return m_eCurrPhase; }
     void ChangePhase_SetUp();
 
@@ -81,6 +89,10 @@ public:
     DISSOLVE_STATE Get_DissolveState()const { return m_eDissolveState; }
     void Update_Dissolve(_float dt);
 
+    /* RimLight */
+    void Set_RimLightColor(_float3 color) { m_vRimLightColor = color; }
+
+    /* Hit Blend */
     void Set_HitBlendable(_bool hitBlend) { m_IsHitBlendable = hitBlend; }
     void Set_Hitable(_bool hit) { m_IsHitable = hit; }
 
@@ -90,12 +102,13 @@ private:
     HRESULT Initialize_StateMachine();
     HRESULT Initialize_States();
     HRESULT Initialize_Transitions();
+    HRESULT Initialize_Effects();
     void Update_States(_float dt);
 
 private:
     CStateMachine<CSacrifice>* m_pStateMachine{};
     vector<_uint> m_PartMeshIndices;
-    ATTACK_BLACK_BOARD m_AttackBlackBoard{};
+    SACRIFICE_BLACK_BOARD m_AttackBlackBoard{};
     _bool m_RequestIdle = false;
 
     _float m_fIdleElasedTime{};
@@ -110,14 +123,7 @@ private:
     _uint m_iHandID{};
 
     /* Material Params */
-    _float3 m_vRimLightColor{};
-    _float m_fRimLightPower{};
-    _float m_fDissolveProgress{};
-    _float m_fDissolveTilling{};
-
     _bool m_IsOnDissolve = false;
-    _float m_fDissolveDuration{};
-    _float m_fDissolveElapsedTime{};
     DISSOLVE_STATE m_eDissolveState = DISSOLVE_STATE::NONE;
 
     /* Battle Params */

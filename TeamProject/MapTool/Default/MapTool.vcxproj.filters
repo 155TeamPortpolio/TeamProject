@@ -52,9 +52,6 @@
     <Filter Include="03. MapTool System\MapToolGui">
       <UniqueIdentifier>{d7d994b2-905f-4cfe-8cf2-0ce25e9cca1a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03. MapTool System\SlotFieldGui">
-      <UniqueIdentifier>{7c030cdd-12e6-4235-af0f-e901f91843ac}</UniqueIdentifier>
-    </Filter>
     <Filter Include="03. MapTool System\00. MapToolCore">
       <UniqueIdentifier>{a8b4769b-6ec7-4997-8b77-72d1dec39669}</UniqueIdentifier>
     </Filter>
@@ -66,6 +63,39 @@
     </Filter>
     <Filter Include="02. Object\MapTool Object\Trigger Object">
       <UniqueIdentifier>{482d9679-a300-492c-b307-31deb48303cd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Object\MapTool Object\Entity Object">
+      <UniqueIdentifier>{43f3e07c-4a88-47cb-b928-cc7a869be20f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Object\MapTool Object\Battle Object">
+      <UniqueIdentifier>{051565c7-1d58-4a30-a71a-af7a903f64b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Object\MapTool Object\Battle Object\BattlePlayerPoint">
+      <UniqueIdentifier>{7b2789c1-2d3c-4fdd-ac1a-f69c255ab439}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Object\MapTool Object\Battle Object\BattleSpawnerPoint">
+      <UniqueIdentifier>{a7d3bcb8-ea27-4d59-8343-d51646a350a0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Object\MapTool Object\Battle Object\BattleMonsterPoint">
+      <UniqueIdentifier>{4bbebc49-5dd5-4cd8-be54-ce1b049933ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Object\MapTool Object\Battle Object\BattleEndPoint">
+      <UniqueIdentifier>{3a20cff6-dba3-4ea4-b3c1-0c308081dedf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. MapTool System\SlotFieldGui">
+      <UniqueIdentifier>{7c030cdd-12e6-4235-af0f-e901f91843ac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Object\MapTool Object\Light Point">
+      <UniqueIdentifier>{32910233-04a6-4ecf-bca9-94b9e0a9ccfe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Object\Cam">
+      <UniqueIdentifier>{2c6279f7-4b17-4f40-8a2b-496d042c1056}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Object\Cam\CamObject">
+      <UniqueIdentifier>{6f9e7f50-2ac2-4833-b0a5-8bbc3a87ea07}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Object\Cam\FreeCam">
+      <UniqueIdentifier>{b3542ded-bf57-438d-96b4-fb7851c34193}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -153,6 +183,33 @@
     <ClInclude Include="..\public\TriggerObject.h">
       <Filter>02. Object\MapTool Object\Trigger Object</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\EntityObject.h">
+      <Filter>02. Object\MapTool Object\Entity Object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\BattleObject.h">
+      <Filter>02. Object\MapTool Object\Battle Object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\BattlePlayerPoint.h">
+      <Filter>02. Object\MapTool Object\Battle Object\BattlePlayerPoint</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\BattleSpawnerPoint.h">
+      <Filter>02. Object\MapTool Object\Battle Object\BattleSpawnerPoint</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\BattleMonsterPoint.h">
+      <Filter>02. Object\MapTool Object\Battle Object\BattleMonsterPoint</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\BattleEndPoint.h">
+      <Filter>02. Object\MapTool Object\Battle Object\BattleEndPoint</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\LightPoint.h">
+      <Filter>02. Object\MapTool Object\Light Point</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\CamObject.h">
+      <Filter>02. Object\Cam\CamObject</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\FreeCam.h">
+      <Filter>02. Object\Cam\FreeCam</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -234,6 +291,33 @@
     </ClCompile>
     <ClCompile Include="..\private\TriggerObject.cpp">
       <Filter>02. Object\MapTool Object\Trigger Object</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\EntityObject.cpp">
+      <Filter>02. Object\MapTool Object\Entity Object</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BattleObject.cpp">
+      <Filter>02. Object\MapTool Object\Battle Object</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BattlePlayerPoint.cpp">
+      <Filter>02. Object\MapTool Object\Battle Object\BattlePlayerPoint</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BattleSpawnerPoint.cpp">
+      <Filter>02. Object\MapTool Object\Battle Object\BattleSpawnerPoint</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BattleMonsterPoint.cpp">
+      <Filter>02. Object\MapTool Object\Battle Object\BattleMonsterPoint</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BattleEndPoint.cpp">
+      <Filter>02. Object\MapTool Object\Battle Object\BattleEndPoint</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\LightPoint.cpp">
+      <Filter>02. Object\MapTool Object\Light Point</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CamObject.cpp">
+      <Filter>02. Object\Cam\CamObject</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\FreeCam.cpp">
+      <Filter>02. Object\Cam\FreeCam</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -78,7 +78,28 @@ typedef struct tagNoiseModule
 	_float2 vNoiseUVSpeed{};
 }NOISE_MODULE;
 
+typedef struct tagMaskModule
+{
+	_float fEnableMaskA{};
+	_float fEnableMaskB{};
+	_float fMaskTilling{};
+}MASK_MODULE;
+
 typedef struct tagDistortionModule
 {
-
+	_bool useDiffuseAlpha = true;
+	_bool useDistortionMask = false;
+	_float fEnableDistortion{};
+	_float fDistortionStrength{};
+	_float fDistortionTilling{};
+	_float2 vDistortionUVSpeed{};
 }DISTORTION_MODULE;
+
+typedef struct tagGradientModule
+{
+	enum class GRADIENT_MODE :_uint { GRAY_SCALE, UV_X, UV_Y, LIFE_TIME, END };
+
+	_float fEnableGradient{};
+	GRADIENT_MODE eGradientMode = GRADIENT_MODE::GRAY_SCALE;
+
+}GRADIENT_MODULE;

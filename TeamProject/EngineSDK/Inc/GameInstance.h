@@ -1,7 +1,8 @@
   #pragma once
 #include "Base.h"
 #include "Engine_Service.h"
-
+#include "RunTimeBucket.h"
+#include "ThreadPool.h"
 NS_BEGIN(Engine)
 
 class ENGINE_DLL CGameInstance :
@@ -30,6 +31,7 @@ public:
 	void Update_EngineTimer();
 	_float Get_EngineDeltaTime();
 	void Set_EngineTimeScale(_float fScale);
+	_float Get_EngineTimeScale();
 
 public:
 	ID3D11Device* Get_Device() { return m_pDevice; };
@@ -58,7 +60,6 @@ public:
 	class IPhysicsService* Get_PhysicsSystem() { return m_pPhysicsSystem; }
 	class CEventSystem* Get_EventSystem() { return m_pEventSystem; }
 	class CClickManager* Get_ClickMgr() { return m_pClickManager; }
-
 private:
 	class IGraphicService* m_pGraphicDevice = { nullptr };
 	class ITimeService* m_pTimeManager = { nullptr };
@@ -86,6 +87,16 @@ private:
 	ID3D11DeviceContext* m_pDeviceContext = { nullptr };
 	RECT m_ClientRect = {};
 	_uint m_totalFrameCount = {};
+
+public:
+	CRunTimeBucket& Get_RuntimeBucket() { return m_RuntimeBucket; }
+	CThreadPool* Get_ThreadPool() { return m_pThreadPool; }
+	CVideoService* Get_VideoService() { return m_pVideoService; }
+
+private:
+	CRunTimeBucket m_RuntimeBucket;
+	CThreadPool* m_pThreadPool = { nullptr };
+	CVideoService* m_pVideoService = { nullptr };
 public:
 	virtual void Free() override;
 
@@ -113,5 +124,8 @@ inline auto* CollisionSystem() { return CGameInstance::GetInstance()->Get_Collis
 inline auto* PhysicsSystem() { return CGameInstance::GetInstance()->Get_PhysicsSystem(); }
 inline auto* FontSystem() { return CGameInstance::GetInstance()->Get_FontSystem(); }
 inline auto* EventSystem() { return CGameInstance::GetInstance()->Get_EventSystem(); }
+inline auto& RuntimeBucket() { return CGameInstance::GetInstance()->Get_RuntimeBucket(); }
+inline auto* ThreadPool() { return CGameInstance::GetInstance()->Get_ThreadPool(); }
+inline auto* VideoService() { return CGameInstance::GetInstance()->Get_VideoService(); }
 
 NS_END

@@ -15,6 +15,7 @@
 #include "MeshNode_Edit.h"
 #include "TrailNode_Edit.h"
 #include "ToolModel.h"
+#include "ToolMap.h"
 
 
 CEffectEditLevel::CEffectEditLevel(const string& LevelKey)
@@ -43,6 +44,7 @@ HRESULT CEffectEditLevel::Awake()
 	pProto->Add_ProtoType("EffectEdit_Level", "Proto_GameObject_ToolLight", CToolLight::Create());
 	pProto->Add_ProtoType("EffectEdit_Level", "Proto_GameObject_ToolGrid", CToolGrid::Create());
 	pProto->Add_ProtoType("EffectEdit_Level", "Proto_GameObject_ToolModel", CToolModel::Create());
+	pProto->Add_ProtoType("EffectEdit_Level", "Proto_GameObject_ToolMap", CToolMap::Create());
 
 	//pResource->Add_ResourcePath("test.json", "../Bin/Resource/Data/test.json");
 	//pResource->Load_EffectAsset(G_GlobalLevelKey, "test.json");
@@ -60,7 +62,7 @@ HRESULT CEffectEditLevel::Awake()
 		.Build("Main_Camera");
 
 	CGameObject* Grid = Builder::Create_Object({ "EffectEdit_Level" ,"Proto_GameObject_ToolGrid" })
-		.Position({ 0,-10.f,0.f })
+		.Position({ 0,-3.f,0.f })
 		.Scale({500.f,0.f,500.f})
 		.Build("ToolGrid");
 
@@ -73,8 +75,17 @@ HRESULT CEffectEditLevel::Awake()
 	CGameObject* Effect3 = Builder::Create_Object({ "EffectEdit_Level","Proto_GameObject_EffectContainer" })
 		.Build("EffectContainer");
 
+	CGameObject* Effect4 = Builder::Create_Object({ "EffectEdit_Level","Proto_GameObject_EffectContainer" })
+		.Build("EffectContainer");
+
+	CGameObject* Effect5 = Builder::Create_Object({ "EffectEdit_Level","Proto_GameObject_EffectContainer" })
+		.Build("EffectContainer");
+
 	CGameObject* Model = Builder::Create_Object({ "EffectEdit_Level","Proto_GameObject_ToolModel" })
 		.Build("Model");
+	
+	CGameObject* Map = Builder::Create_Object({ "EffectEdit_Level","Proto_GameObject_ToolMap" })
+		.Build("Map");
 
 	LIGHT_INIT_DESC LightDesc{};
 	LightDesc.eType = LIGHT_TYPE::DIRECTIONAL;
@@ -84,11 +95,14 @@ HRESULT CEffectEditLevel::Awake()
 		.Light(LightDesc)
 		.Build("Tool_Light");
 	  
+	pObjMgr->Add_Object(Map, { "EffectEdit_Level","Map_Layer" });
 	pObjMgr->Add_Object(Grid, { "EffectEdit_Level","Grid_Layer" });
 	pObjMgr->Add_Object(Effect, { "EffectEdit_Level","Edit_Layer" });
 	pObjMgr->Add_Object(Effect2, { "EffectEdit_Level","Edit_Layer" });
 	pObjMgr->Add_Object(Effect3, { "EffectEdit_Level","Edit_Layer" });
-	pObjMgr->Add_Object(Model, { "EffectEdit_Level","Edit_Layer" });
+	pObjMgr->Add_Object(Effect4, { "EffectEdit_Level","Edit_Layer" });
+	pObjMgr->Add_Object(Effect5, { "EffectEdit_Level","Edit_Layer" });
+	pObjMgr->Add_Object(Model, { "EffectEdit_Level","Model_Layer" });
 	pObjMgr->Add_Object(Light, { "EffectEdit_Level","Light_Layer" });
 	pObjMgr->Add_Object(Camera, { "EffectEdit_Level","Camera_Layer" });
 

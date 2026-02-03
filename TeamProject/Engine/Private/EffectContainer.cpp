@@ -33,6 +33,7 @@ HRESULT CEffectContainer::Initialize(INIT_DESC* pArg)
 	EFFECT_DESC* pDesc = static_cast<EFFECT_DESC*>(pArg);
 
 	EFFECT_ASSET pAsset = pResource->Load_EffectAsset(G_GlobalLevelKey, pDesc->EffectAssetKey);
+	m_IsBillBoard = pAsset.isBillboard;
 	m_fDuration = pAsset.fDuration;
 	m_IsLoop = pAsset.isLoop;
 	m_iNumNodes = pAsset.Nodes.size();
@@ -86,7 +87,7 @@ void CEffectContainer::Update(_float dt)
 	/* Bone Follwer´Â ¿ÜºÎ¿¡¼­ ºÎÂøÇØÁÜ */
 	auto pBoneFollwer = Get_Component<CBoneFollower>();
 	if (pBoneFollwer)
-		pBoneFollwer->Sync_Transform(dt, m_pTransform);
+		pBoneFollwer->Sync_Transform(dt, m_pTransform, m_IsOnlyPosition);
 
 	if (m_IsLoop)
 		Get_Component<CObjectContainer>()->UpdateChild(dt);
@@ -101,6 +102,16 @@ void CEffectContainer::Update(_float dt)
 		}
 
 		Get_Component<CObjectContainer>()->UpdateChild(dt);
+	}
+
+	if (m_IsBillBoard)
+	{
+		_vector4 vCamPosition = CameraManager()->Get_CameraPos();
+		_vector3 vCurrPosition = m_pTransform->Get_WorldPos();
+		_vector3 vDir = _vector3(vCamPosition.x, vCamPosition.y, vCamPosition.z) - vCurrPosition;
+		vDir.Normalize();
+
+		m_pTransform->Set_Look(vDir);
 	}
 
 }
@@ -120,11 +131,16 @@ void CEffectContainer::SetLinePoints(_float3 point0, _float3 point1)
 	m_EffectContext.vLinePoint1 = point1;
 }
 
-void CEffectContainer::AttachBone(CAnimator3D* pAnimator, const string& boneTag, _fmatrix offsetMatrix)
+void CEffectContainer::AttachBone(CAnimator3D* pAnimator, const string& boneTag, _fmatrix offsetMatrix, _bool onlyPosition)
 {
-	auto boneFollwer = Add_Component<CBoneFollower>();
+	auto boneFollwer = Get_Component<CBoneFollower>();
+
+	if (!boneFollwer)
+		boneFollwer = Add_Component<CBoneFollower>();
+
 	if (boneFollwer)
 	{
+		m_IsOnlyPosition = onlyPosition;
 		boneFollwer->Initialize(nullptr);
 		boneFollwer->Link_Bone(pAnimator, boneTag);
 		boneFollwer->Set_Offset(offsetMatrix);

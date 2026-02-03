@@ -118,6 +118,7 @@ void CMaterial::ResetMaterial(_uint Index)
 {
 	if (Index >= m_MaterialInstances.size()) return;
 	m_MaterialInstances[Index]->Reset_DynamicSlot();
+	m_MaterialInstances[Index]->Reset_Textures();
 }
 
 const string& CMaterial::GetPassConstant(_uint subsetIndex)
@@ -180,14 +181,15 @@ void CMaterial::Render_GUI()
 	ImGui::SeparatorText("Material");
 	float childWidth = ImGui::GetContentRegionAvail().x;
 	const float textLineHeight = ImGui::GetTextLineHeightWithSpacing();
-	const float childHeight = (m_MaterialInstances.size() * 2) + (ImGui::GetStyle().WindowPadding.y * 4);
+	const float childHeight = (m_MaterialInstances.size() * 2) + 
+		(ImGui::GetStyle().WindowPadding.y * 4);
 	
 	if(ImGui::Button("Material Tabs")) {
 		m_bMaterialTabOpen = true;
 	}
 	
 	if(m_bMaterialTabOpen){
-		ImGui::SetNextWindowSize(ImVec2(500, 400), ImGuiCond_FirstUseEver);
+		ImGui::SetNextWindowSize(ImVec2(800, 400), ImGuiCond_FirstUseEver);
 		if (ImGui::Begin("Materials", &m_bMaterialTabOpen, ImGuiWindowFlags_NoCollapse))
 		{
 		if (ImGui::BeginTabBar("##MaterialTabs"))

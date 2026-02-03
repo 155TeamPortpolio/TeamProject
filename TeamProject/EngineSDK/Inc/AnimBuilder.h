@@ -102,6 +102,7 @@ protected:
     //시작, 끝
     _float   m_fStartAt = { 0.f };
     _float   m_fEndAt = { 1.f };
+    _bool    m_bJumpedAnim = { false };
     //멈춤
     _bool    m_bPause = false;
     //회전보간 끄기
@@ -150,6 +151,13 @@ public:
     HRESULT Apply();
     //---------- 애니매이션 블랜드 속성
 
+    //시작 비율 (0 ~ 1)
+    ChangeAnimBuild& StartAt(_float fStart, _bool NoRootMoveDelta = true) {
+        m_fStartAt = clamp(fStart, 0.f, 1.f);
+        m_bNoRootMoveDelta = NoRootMoveDelta;
+        return *this;
+    }
+
     //애니매이션 전환시간
     ChangeAnimBuild& BlendDuration(_float fDuration) {
         m_fBlendDuration = fDuration;
@@ -187,12 +195,19 @@ public:
         return *this;
     }
 
+    //애니매이션 보간중 이동델타를 제외할것인지
+    ChangeAnimBuild& NoRootMoveDelta(_bool bNoRootMoveDelta) {
+        m_bNoRootMoveDelta = bNoRootMoveDelta;
+        return *this;
+    }
+
 protected:
     CAnimator3D* m_pOwner = nullptr;
     _int m_iLayerIndex = -1;
     _int m_iClipIndex = -1;
 
     //클립 블랜드
+    _bool       m_bNoRootMoveDelta = { false };
     _float      m_fBlendDuration = { 0.2f };
     _bool       m_bKeepTrackPos = { false };
     _bool       m_bUpdate_PrevClip = { false };

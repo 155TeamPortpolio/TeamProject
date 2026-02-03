@@ -39,12 +39,12 @@ HRESULT CPhysicsSystem::Initialize()
     if (!m_pFoundation) return E_FAIL;
 
     // PVD (Visual Debugger) 설정
-#ifdef _DEBUG 
+#ifdef _PHYSICS_DEBUG 
     // PVD 생성
     m_pPvd = PxCreatePvd(*m_pFoundation);
     // PVD 연결 (로컬호스트, 포트 5425, 타임아웃 10ms)
     PxPvdTransport* transport = PxDefaultPvdSocketTransportCreate("127.0.0.1", 5425, 10);
-    m_pPvd->connect(*transport, PxPvdInstrumentationFlag::eALL);
+    m_pPvd->connect(*transport, PxPvdInstrumentationFlag::eDEBUG);
     if (m_pPvd->isConnected())
     {
         // 연결 성공 로그
@@ -80,7 +80,7 @@ HRESULT CPhysicsSystem::Initialize()
     sceneDesc.flags |= PxSceneFlag::eENABLE_STABILIZATION;
     sceneDesc.ccdMaxPasses = 4;
     sceneDesc.bounceThresholdVelocity = 0.2f * 9.81f;  // 중력 기반
-#ifdef _DEBUG
+#ifdef _PHYSICS_DEBUG
     // 디버그 모드일 때 씬 정보를 PVD로 전송
     if (m_pPvd->isConnected())
     {
@@ -95,14 +95,14 @@ HRESULT CPhysicsSystem::Initialize()
     m_pScene = m_pPhysics->createScene(sceneDesc);
     if (!m_pScene) return E_FAIL;
 
-#ifdef _DEBUG
+#ifdef _PHYSICS_DEBUG
     // Scene의 PVD 플래그
     PxPvdSceneClient* pvdClient = m_pScene->getScenePvdClient();
     if (pvdClient)
     {
-        pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_CONSTRAINTS, true);
-        pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_SCENEQUERIES, true);
-        pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_CONTACTS, true);
+        pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_CONSTRAINTS, false);
+        pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_SCENEQUERIES, false);
+        pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_CONTACTS, false);
     }
     m_pScene->setVisualizationParameter(PxVisualizationParameter::eSCALE, 1.0f);
     m_pScene->setVisualizationParameter(PxVisualizationParameter::eCOLLISION_SHAPES, 1.0f);
@@ -153,22 +153,65 @@ _bool CPhysicsSystem::Raycast(const PHYSICS_RAY& desc, PHYSICS_RAY_HIT& outHit)
     PxVec3 direction(desc.vDirection.x, desc.vDirection.y, desc.vDirection.z);
     direction.normalize();
 
-    PxRaycastBuffer hit;
     PxQueryFilterData filterData;
     filterData.flags = PxQueryFlag::eSTATIC | PxQueryFlag::eDYNAMIC | PxQueryFlag::ePREFILTER;
 
     CRaycastFilterCallback filterCallback(desc.iCollisionMask, desc.bQueryTrigger);
 
-    _bool bResult = m_pScene->raycast(origin, direction, desc.fMaxDistance, hit,
-        PxHitFlag::eDEFAULT, filterData, &filterCallback);
-
-    if (bResult && hit.hasBlock)
+    if (desc.bQueryTrigger)
     {
-        Setup_RayHitInfo(hit.block, outHit);
-        return true;
-    }
+        // 트리거 쿼리 : Touch 버퍼 사용
+        const PxU32 bufferSize = 32;
+        PxRaycastHit hitBuffer[bufferSize];
+        PxRaycastBuffer hit(hitBuffer, bufferSize);
 
-    return false;
+        m_pScene->raycast(origin, direction, desc.fMaxDistance, hit,
+            PxHitFlag::eDEFAULT, filterData, &filterCallback);
+
+        // Block, Touch
+        PxRaycastHit closestHit;
+        _float closestDist = FLT_MAX;
+        _bool bFound = false;
+
+        if (hit.hasBlock && hit.block.distance < closestDist)
+        {
+            closestHit = hit.block;
+            closestDist = hit.block.distance;
+            bFound = true;
+        }
+
+        for (PxU32 i = 0; i < hit.getNbTouches(); ++i)
+        {
+            const PxRaycastHit& touch = hit.getTouch(i);
+            if (touch.distance < closestDist)
+            {
+                closestHit = touch;
+                closestDist = touch.distance;
+                bFound = true;
+            }
+        }
+
+        if (bFound)
+        {
+            Setup_RayHitInfo(closestHit, outHit);
+            return true;
+        }
+        return false;
+    }
+    else
+    {
+        // 일반 쿼리
+        PxRaycastBuffer hit;
+        _bool bResult = m_pScene->raycast(origin, direction, desc.fMaxDistance, hit,
+            PxHitFlag::eDEFAULT, filterData, &filterCallback);
+
+        if (bResult && hit.hasBlock)
+        {
+            Setup_RayHitInfo(hit.block, outHit);
+            return true;
+        }
+        return false;
+    }
 }
 
 _bool CPhysicsSystem::Raycast_Multiple(const PHYSICS_RAY& desc, PHYSICS_RAY_HITS& outHits)

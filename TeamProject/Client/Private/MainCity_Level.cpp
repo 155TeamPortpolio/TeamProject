@@ -3,6 +3,12 @@
 #include "GameInstance.h"
 #include "Helper_Func.h"
 
+// Room
+#include "FieldSystem.h"
+#include "Room_Street.h"
+#include "Room_Lottery.h"
+#include "Room_Noodle.h"
+
 // Camera
 #include "Camera.h"
 #include "CamDirector.h"
@@ -11,11 +17,12 @@
 
 /* MapData */
 #include "MapLoader.h"
-#include "MapPlacedObject.h"
-#include "MapTriggerObject.h"
+
+#include "Player.h"
 
 /* UI */
 #include "UIDirector.h"
+#include "Layer.h"
 
 CMainCity_Level::CMainCity_Level(const string& LevelKey)
 	:CLevel(LevelKey),
@@ -32,19 +39,36 @@ HRESULT CMainCity_Level::Initialize()
 
 HRESULT CMainCity_Level::Awake()
 {
-	//============== Map ============================
-	PrototypeManager()->Add_ProtoType("MainCity_Level", "Proto_GameObject_MapPlacedObject", CMapPlacedObject::Create());
-	PrototypeManager()->Add_ProtoType("MainCity_Level", "Proto_GameObject_MapTriggerObject", CMapTriggerObject::Create());
+	m_pPlayer = dynamic_cast<CPlayer*>(ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Player)));
+	m_pPlayer->Set_PlayerType(CPlayer::PLAYER::FIELD);
 
-	//============== Map ============================
-	ReadyMap();
-	CUIDirector::GetInstance()->Load_LevelObjects("MainCity_Level");
+	auto pCloud = ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Cloud));
+	pCloud->Set_Alive(true);
+
+	IProtoService* pProto = CGameInstance::GetInstance()->Get_PrototypeMgr();
+	IResourceService* pResource = CGameInstance::GetInstance()->Get_ResourceMgr();
+	auto objMgr = m_pGameInstance->Get_ObjectMgr();
+
+	//==================== UI ===============
+	auto uiDirector = CUIDirector::GetInstance();
+	uiDirector->Load_LevelObjects("MainCity_Level");
+
+	Ready_Map("MainCity_Level", "MainCity");
+
+	CamDirector()->AutoField();
+	FieldSystem()->SetActive(true);
+	//ObjectManager()->Get_Layer({"MainCity_Level", "PlacedObject_Layer"})->Set_RenderState(false);
+	//auto layer = ObjectManager()->Get_Layer({"MainCity_Level", "PlacedObject_Layer"});
+
+
 	return S_OK;
 }
 
 void CMainCity_Level::Update()
 {
-	
+	FieldSystem()->Update();
+	auto layer = ObjectManager()->Get_Layer({"MainCity_Level","PlacedObject_Layer"});
+	//layer->Set_RenderState(false);
 }
 
 HRESULT CMainCity_Level::Render()
@@ -55,14 +79,14 @@ HRESULT CMainCity_Level::Render()
 
 void CMainCity_Level::PreLoad_Level()
 {
-	}
+}
 
-void CMainCity_Level::ReadyMap()
+void CMainCity_Level::Ready_Map(const string& LevelTag, const string& AreaTag)
 {
-	//CMapLoader* pMapLoader = CMapLoader::Create(m_LevelKey, m_pMapDataCloud, "TrainingRoom");
-	//if (nullptr == pMapLoader)
-	//	MSG_BOX("Failed to Load MapData!");
-	//Safe_Release(pMapLoader);
+	FieldSystem()->RegisterRoom(CRoom_Street::Create({ "MainCity" , true }));
+	FieldSystem()->RegisterRoom(CRoom_Lottery::Create({ "Lottery" , false }));
+	FieldSystem()->RegisterRoom(CRoom_Noodle::Create({ "Noodle" , false }));
+	FieldSystem()->RequestEnter("MainCity", true);
 }
 
 CMainCity_Level* CMainCity_Level::Create(const string& LevelKey)
@@ -79,5 +103,7 @@ CMainCity_Level* CMainCity_Level::Create(const string& LevelKey)
 void CMainCity_Level::Free()
 {
 	__super::Free();
+	FieldSystem()->SetActive(false);
 	m_pGameInstance->DestroyInstance();
+	m_pPlayer->Clear_Characters();
 }

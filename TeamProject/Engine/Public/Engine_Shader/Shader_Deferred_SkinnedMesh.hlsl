@@ -1,6 +1,10 @@
 #include "Shader_Deferred_Define.hlsl"
 #include "Shader_Shadow.hlsl"
 matrix g_WorldMatrix;
+float g_fTime;
+
+float g_GlitchSpeed;
+float g_GlitchStrength;
 
 struct VS_IN
 {
@@ -114,9 +118,80 @@ PS_OUT_RESULT PS_RIMLIGHT(PS_IN In)
     fRim = pow(fRim, vRimInfo.a);
 
     float3 vRimColor = vRimInfo.rgb * fRim;
+   
+   Out.vResult = float4(vRimColor, 1.f);
 
-    Out.vResult = float4(vRimColor, 1.f);
+    return Out;
+}
 
+PS_OUT_RESULT PS_MOTIONBLUR(PS_IN In)
+{
+    PS_OUT_RESULT Out;
+    
+    float2 stripeUV = In.vTexcoord * float2(1.0f, 3.0f);
+    float stripes = MotionNoiseTexture.Sample(LinearSampler, stripeUV).r;
+    
+    float4 motionBlur;
+    
+    if (stripes > 0.6f)
+    {
+        motionBlur = float4(0, 0, 0, 0);
+        for (int i = -2; i <= 2; i++)
+        {
+            float2 offset = In.vTexcoord + float2(i * 0.003f, 0);
+            motionBlur += MotionBlurTexture.Sample(DefaultSampler, offset);
+        }
+        motionBlur /= 5.0f;
+        
+        float blurAmount = (stripes - 0.6f) / 0.4f;
+        float4 original = MotionBlurTexture.Sample(DefaultSampler, In.vTexcoord);
+        motionBlur = lerp(original, motionBlur, blurAmount);
+    }
+    else
+    {
+        motionBlur = MotionBlurTexture.Sample(DefaultSampler, In.vTexcoord);
+    }
+    
+    if (stripes > 0.6f)
+    {
+        float intensity = (stripes - 0.6f) * 1.5f;
+        motionBlur.rgb *= (1.0f + intensity * 0.5f);
+    }
+    if (stripes > 0.85f)
+    {
+        motionBlur.rgb *= 1.3f;
+    }
+
+    float screenGradient = MotionHeightTexture.Sample(DefaultSampler, In.vTexcoord).r;
+    screenGradient = screenGradient * screenGradient; 
+    
+    float3 darkColor = motionBlur.rgb * 0.05f; 
+    motionBlur.rgb = lerp(darkColor, motionBlur.rgb, screenGradient);
+
+    Out.vResult = float4(motionBlur.rgb, motionBlur.a);
+    
+    return Out;
+}
+
+PS_OUT_RESULT PS_VANISH(PS_IN In)
+{
+    PS_OUT_RESULT Out;
+   
+    float fNoiseTiling = 10.0f;
+    
+    float fGlitchSpeed = g_GlitchSpeed;
+    float fTimeStep = floor(g_fTime * fGlitchSpeed);
+    float fGlitch = frac(sin(fTimeStep) * 43758.5453);
+    float2 vScrollOffset = float2((fGlitch - 0.5f) * 0.5, 0.f);
+    
+    float fNoise = VanishNoiseTexture.Sample(LinearSampler, (In.vTexcoord + vScrollOffset) * fNoiseTiling).r;
+    float2 vDistortion = float2((fNoise - 0.5f) * g_GlitchStrength, 0.f);
+    float2 vDistortedUV = In.vTexcoord + vDistortion;
+    
+    vector vVanish = VanishTexture.Sample(DefaultSampler, vDistortedUV);
+    
+    Out.vResult = vVanish;
+    
     return Out;
 }
 
@@ -133,19 +208,18 @@ static const float weights[9] =
     0.0020270270,
     0.0010135135
 };
+
 PS_OUT_RESULT PS_BRIGHT(PS_IN In)
 {
     PS_OUT_RESULT Out;
     
-    float emissive = AmbientTexture.Sample(DefaultSampler, In.vTexcoord).b;
-    float4 vDiffuse = DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
-  
-    float3 vResult = vDiffuse.rgb * emissive;
+    float4 vEmissive = EmissiveTexture.Sample(DefaultSampler, In.vTexcoord);
+
+    if (vEmissive.a < 0.2f) 
+        discard;
     
-    float alpha = 0.f;
-    if (length(vDiffuse.rgb) > 0.f) alpha = 1.f;
+    Out.vResult = vEmissive;
     
-    Out.vResult = float4(vResult, alpha);
     return Out;
 }
 
@@ -154,9 +228,10 @@ PS_OUT_RESULT PS_BLOOM_BLURX(PS_IN In)
     PS_OUT_RESULT Out;
     
     float4 bright = MeshBrightTexture.Sample(DefaultSampler, In.vTexcoord);
+    float fStrength = EmissiveTexture.Sample(DefaultSampler, In.vTexcoord).a;
 
     float3 result = bright.rgb * weights[0];
-    float texelSize = 0.5f / fScreenWidth;
+    float texelSize = fStrength / fScreenWidth;
     
     float4 brightSample;
     for (int i = 1; i < 9; ++i)
@@ -173,14 +248,22 @@ PS_OUT_RESULT PS_BLOOM_BLURX(PS_IN In)
     return Out;
 }
 
-PS_OUT_RESULT PS_BLOOM_BLURY(PS_IN In)
+struct PS_OUT_BLOOM
 {
-    PS_OUT_RESULT Out;
+    vector vBloom : SV_TARGET0;
+    vector vVanish : SV_TARGET1;
+};
+
+PS_OUT_BLOOM PS_BLOOM_BLURY(PS_IN In)
+{
+    PS_OUT_BLOOM Out;
 
     float4 BlurX = MeshBlurXTexture.Sample(DefaultSampler, In.vTexcoord);
+    float fStrength = EmissiveTexture.Sample(DefaultSampler, In.vTexcoord).a;
+    vector vPost = PostInfoTexture.Sample(DefaultSampler, In.vTexcoord);
     
     float3 result = BlurX.rgb * weights[0];
-    float texelSize = 0.5f / fScreenHeight;
+    float texelSize = fStrength / fScreenHeight;
         
     for (int i = 1; i < 9; ++i)
     {
@@ -189,8 +272,24 @@ PS_OUT_RESULT PS_BLOOM_BLURY(PS_IN In)
         result += MeshBlurXTexture.Sample(DefaultSampler,
                 In.vTexcoord - float2(0, texelSize * i)).rgb * weights[i];
     }
-    Out.vResult = float4(result, BlurX.a);
-
+    Out.vBloom = float4(result, BlurX.a);
+    
+    if (vPost.r < 0.1)
+        discard;
+    
+    vector vNormalDesc = NormalTexture.Sample(DefaultSampler, In.vTexcoord);
+    float3 worldNormal = normalize(vNormalDesc.xyz * 2.f - 1.f);
+    float3 lightDir = normalize(vLightDir.xyz * -1);
+ 
+    float NdotL = dot(worldNormal, lightDir);
+    
+    float fShade = 1.0f;
+    if (NdotL < 0.0f)
+    {
+        fShade = 0.3f;
+    }
+    
+    Out.vVanish = float4(result * fShade, BlurX.a);
     return Out;
 }
 
@@ -291,16 +390,6 @@ PS_OUT_LIGHT PS_MAIN_POINT(PS_IN In)
     vector vDiffuse = DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
     vector vMetalicDesc = MetalicTexture.Sample(DefaultSampler, In.vTexcoord);
     
-    if(vMetalicDesc.a > 0.7f)
-    {
-        float alpha = 0.f;
-        if (length(vDiffuse.rgb) > 0.f)
-            alpha = 1.f;
-        Out.vLight = float4(0.f, 0.f, 0.f, alpha);
-        Out.vLightInfo = float4(0.f, 0.f, 0.f, 0.f);
-        return Out;
-    }
-    
     float3 worldNormal = normalize(vNormalDesc.xyz * 2.f - 1.f);
     
     float roughness = vMetalicDesc.r;
@@ -318,21 +407,30 @@ PS_OUT_LIGHT PS_MAIN_POINT(PS_IN In)
     vWorldPos = vWorldPos * fViewZ;
     vWorldPos = mul(vWorldPos, matProjectionInverse);
     vWorldPos = mul(vWorldPos, matViewInverse);
-    
     float3 lightDir = normalize(vLightPos.xyz - vWorldPos.xyz);
     float3 viewDir = normalize(vCamPosition.xyz - vWorldPos.xyz);
     
     float NdotL = dot(worldNormal, lightDir) * 0.5f + 0.5f;
+    
+    if(vMetalicDesc.a > 0.7f)
+    {
+        float alpha = 0.f;
+        if (length(vDiffuse.rgb) > 0.1f)
+            alpha = 1.f;
+        Out.vLight = float4(0.f, 0.f, 0.f, alpha);
+        Out.vLightInfo = float4(NdotL, 0.f, 0.f, 0.f);
+        return Out;
+    }
     
     float3 PBR = CalculatePointLight
     (vDiffuse.rgb, worldNormal, metalic, roughness, vWorldPos.xyz, viewDir, lightDir, vLightDiffuse.rgb,
     fLightIntensity, vLightPos.xyz, fLightRange, 1.0f);
     
     float alpha = 0.f;
-    if (length(vDiffuse.rgb) > 0.f)
+    if (length(vDiffuse.rgb) > 0.1f)
         alpha = 1.f;
     Out.vLight = float4(PBR * vNormalDesc.a, alpha);
-    Out.vLightInfo = float4(0.f, 0.f, 0.f, 0.f);
+    Out.vLightInfo = float4(NdotL, 0.f, 0.f, 0.f);
     
     return Out;
 }
@@ -349,11 +447,9 @@ PS_OUT_RESULT PS_MAIN_COMBINED(PS_IN In)
     float fOutLine = NormalTexture.Sample(DefaultSampler, In.vTexcoord).a;
     vector vMetalic = MetalicTexture.Sample(DefaultSampler, In.vTexcoord).a;
     vector vBloom = MeshBloomFinalTexture.Sample(DefaultSampler, In.vTexcoord);
-
+    vector vMotionBlur = MotionBlurTexture.Sample(PointSampler, In.vTexcoord);
+    
     float NdotL = vLightInfo.r;
-    float2 vRampCoord = float2(1 - NdotL, 0.5f);
-    vector vRampSample = RampTexture.Sample(DefaultSampler, vRampCoord);
-    float vRamp = lerp(0.1f, 1.0f, vRampSample.g);
     
     float shadowValue = vLightInfo.b;
     shadowValue = saturate(shadowValue * 0.7f + 0.3f);
@@ -366,12 +462,14 @@ PS_OUT_RESULT PS_MAIN_COMBINED(PS_IN In)
     else
         Out.vResult = float4(vLight.rgb + vLightAmbient.rgb * vDiffuse.rgb * 0.5, vLight.a);
     
-    float rimIntensity = max(vRamp, 0.5f);
-    Out.vResult.rgb += vRimLight.rgb * rimIntensity;
+    Out.vResult.rgb += vRimLight.rgb + vMotionBlur.rgb;
     
     float3 specularColor = vLightSpecular.rgb * vLightInfo.g;
     Out.vResult.rgb += specularColor + vBloom.rgb;
-
+    float alpha = max(min(vRimLight.a, vMotionBlur.a),vLight.a);
+    
+    Out.vResult.a = alpha;
+    
     return Out;
 }
 
@@ -396,6 +494,26 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_RIMLIGHT();
+    }
+
+    pass MOTIONBLUR
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_MOTIONBLUR();
+    }
+
+    pass VANISHNOISE
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_VANISH();
     }
 
     pass BRIGHT
@@ -432,7 +550,7 @@ technique11 DefaultTechnique
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_None, 0);
-        SetBlendState(BS_Additive, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        SetBlendState(BS_Additive_MaxAlpha, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_DIRECTIONAL();
@@ -442,7 +560,7 @@ technique11 DefaultTechnique
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_None, 0);
-        SetBlendState(BS_Additive, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        SetBlendState(BS_Additive_MaxAlpha, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_POINT();

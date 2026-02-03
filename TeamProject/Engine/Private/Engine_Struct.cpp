@@ -5,31 +5,40 @@
 
 _bool Engine::tagObjectHandle::isValid()
 {
-	CGameObject* pObj = CGameInstance::GetInstance()->Get_ObjectMgr()->Request_Object({ Level,Layer,hObjID });
-	if (pObj) {
-		if (Level.empty()) Level = pObj->Get_LayerDesc().LevelTag;
-		if (Layer.empty()) Layer = pObj->Get_LayerDesc().LayerTag;
-		return true;
-	}
-	return false;
+	auto obj = ObjectManager()->Request_Object({Level, Layer, hObjID});
+	if (!obj) return false;
+
+	if (Level.empty()) Level = obj->Get_LayerDesc().LevelTag;
+	if (Layer.empty()) Layer = obj->Get_LayerDesc().LayerTag;
+	return true;
 }
+
+_bool Engine::tagObjectHandle::isValid() const
+{
+	return ObjectManager()->Request_Object({Level, Layer, hObjID}) != nullptr;
+}
+
+CGameObject* Engine::tagObjectHandle::Get()
+{
+	auto obj = ObjectManager()->Request_Object({Level, Layer, hObjID});
+	if (!obj) return nullptr;
+
+	if (Level.empty()) Level = obj->Get_LayerDesc().LevelTag;
+	if (Layer.empty()) Layer = obj->Get_LayerDesc().LayerTag;
+	return obj;
+}
+
+CGameObject* Engine::tagObjectHandle::Get() const
+{
+	return ObjectManager()->Request_Object({Level, Layer, hObjID});
+}
+
 void Engine::tagObjectHandle::Reset()
 {
 	Level.clear();
 	Layer.clear();
 	hObjID = 0;
 	return;
-}
-
-CGameObject* Engine::tagObjectHandle::Get()
-{
-	CGameObject* pObj = CGameInstance::GetInstance()->Get_ObjectMgr()->Request_Object({ Level,Layer,hObjID });
-
-	if (pObj) {
-		if (Level.empty()) Level = pObj->Get_LayerDesc().LevelTag;
-		if (Layer.empty()) Layer = pObj->Get_LayerDesc().LayerTag;
-	}
-	return pObj;
 }
 
 void Engine::tagObjectHandle::Delete()
@@ -43,6 +52,19 @@ void Engine::tagObjectHandle::Delete()
 	Reset();
 }
 
+void Engine::tagObjectHandle::Set_Alive(_bool alive)
+{
+	if (auto pObj = Get())
+		pObj->Set_Alive(alive);
+}
+
+_bool Engine::tagObjectHandle::isAlive()
+{
+	if (auto pObj = Get())
+		return pObj->Is_Alive();
+	return false;
+}
+
 PARTICLE_NODE Engine::tagParticleNode::FromJson(nlohmann::ordered_json& json)
 {
 	PARTICLE_NODE node{};
@@ -53,6 +75,11 @@ PARTICLE_NODE Engine::tagParticleNode::FromJson(nlohmann::ordered_json& json)
 	node.vOffsetPosition = _float3(offsetPostion[0], offsetPostion[1], offsetPostion[2]);
 	node.vOffsetQuaternion = _float4(offsetQuaternion[0], offsetQuaternion[1], offsetQuaternion[2], offsetQuaternion[3]);
 
+	auto rimLight = json.value("rimlight_color", json::array({ 0.f,0.f,0.f }));
+	node.vRimLightColor = _float3(rimLight[0], rimLight[1], rimLight[2]);
+
+	auto pivot = json.value("pivot", json::array({ 0.5f,0.5f }));
+	node.vPivot = _float2(pivot[0], pivot[1]);
 	node.iRGBMaskMode = json.value("rgb_mask", node.iRGBMaskMode);
 	node.iModuleMask = json.value("module_mask", node.iModuleMask);
 	node.iColorMode = json.value("color_mode", node.iColorMode);
@@ -149,6 +176,11 @@ MESH_NODE Engine::tagMeshNode::FromJson(nlohmann::ordered_json& json)
 	node.DiffuseTextureTag = json.value("diffuse_texture_tag", "");
 	node.NoiseTextureTag = json.value("noise_texture_tag", "");
 	node.DissolveTextureTag = json.value("dissolve_texture_tag", "");
+	node.MaskTextureTagA = json.value("mask_texture_tag", "");
+	node.MaskTextureTagB = json.value("mask_texture_tagB", "");
+	node.DistortionTextureTag = json.value("distortion_texture_tag", "");
+	node.DistortionMaskTextureTag = json.value("distortion_mask_texture_tag", "");
+	node.GradientTextureTag = json.value("gradient_texture_tag", "");
 
 	auto offsetPostion = json.value("offset_position", json::array({ 0.f,0.f,0.f }));
 	auto offsetQuaternion = json.value("offset_quaternion", json::array({ 0.f,0.f,0.f,1.f }));
@@ -211,6 +243,8 @@ MESH_NODE Engine::tagMeshNode::FromJson(nlohmann::ordered_json& json)
 
 	/* Bloom */
 	node.fBloomIntensity = json.value("bloom_intensity", 0.f);
+	node.fBloomThreshold = json.value("bloom_threshold", 0.f);
+	node.fBloomSoftness = json.value("bloom_softness", 0.f);
 
 	/* Noise */
 	node.fEnableNoise = json.value("enable_noise", 0.f);
@@ -218,6 +252,24 @@ MESH_NODE Engine::tagMeshNode::FromJson(nlohmann::ordered_json& json)
 	node.fNoiseTilling = json.value("noise_tilling", 0.f);
 	node.vNoiseUVSpeed.x = json.at("noise_uvspeed").at("x").get<_float>();
 	node.vNoiseUVSpeed.y = json.at("noise_uvspeed").at("y").get<_float>();
+
+	/* Mask */
+	node.fEnableMaskA = json.value("enable_mask", 0.f);
+	node.fEnableMaskB = json.value("enable_maskB", 0.f);
+	node.fMaskTilling = json.value("mask_tilling", 0.f);
+
+	/* Distortion */
+	node.useDiffuseAlpha = json.value("use_diffuse_alpha", true);
+	node.useDistortionMask = json.value("use_distortion_mask", false);
+	node.fEnableDistortion = json.value("enable_distortion", 0.f);
+	node.fDistortionStrength = json.value("distortion_strength", 0.f);
+	node.fDistortionTilling = json.value("distortion_tilling", 0.f);
+	auto distortionUVSpeed = json.value("distortion_uvspeed", json::array({ 0.f,0.f }));
+	node.vDistortionUVSpeed = _float2(distortionUVSpeed[0], distortionUVSpeed[1]);
+
+	/* Gradient */
+	node.fEnableGradient = json.value("enable_gradient", 0.f);
+	node.iGradientMode = json.value("gradient_mode", 0);
 
 	return node;
 }
@@ -240,6 +292,7 @@ TRAIL_NODE Engine::tagTrailNode::FromJson(nlohmann::ordered_json& json)
 	
 	node.vUVSpeed.x = json.at("uv_speed").at("x").get<_float>();
 	node.vUVSpeed.y = json.at("uv_speed").at("y").get<_float>();
+	node.fTile = json.value("tile", 0.f);
 	
 	node.vStartColor.x = json.at("start_color").at("x").get<_float>();
 	node.vStartColor.y = json.at("start_color").at("y").get<_float>();
@@ -264,6 +317,7 @@ EFFECT_ASSET Engine::tagEffectAsset::FromJson(nlohmann::ordered_json& json)
 {
 	EFFECT_ASSET Effect{};
 
+	Effect.isBillboard = json.value("is_billboard", Effect.isBillboard);
 	Effect.iNodeCount = json.value("node_count", Effect.iNodeCount);
 	Effect.fDuration = json.value("duration", Effect.fDuration);
 	Effect.isLoop = json.value("is_loop", Effect.isLoop);

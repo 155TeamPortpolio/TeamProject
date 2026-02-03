@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "BangBooDeliver.h"
 
 #include "GameInstance.h"
@@ -28,9 +28,9 @@ HRESULT CBangBooDeliver::Initialize_Prototype()
 	__super::Initialize_Prototype();
 
 	auto pResource = ResourceManager();
-	pResource->Add_ResourcePath("CashierBangbooDeliver.model", "../Bin/Resources/Model/skeletal/NPC/141BangBoo/Deliver/CashierBangbooDeliver.model");
-	pResource->Add_ResourcePath("CashierBangbooDeliver.mat", "../Bin/Resources/Model/skeletal/NPC/141BangBoo/Deliver/CashierBangbooDeliver.mat");
-	pResource->Add_ResourcePath("NPC_Special_CashierBangboo_Deliver_Meta.json", "../Bin/Resources/Model/skeletal/NPC/141BangBoo/Deliver/NPC_Special_CashierBangboo_Deliver_Meta.json");
+	pResource->Add_ResourcePath("CashierBangbooDeliver.model", "../Bin/Resources/Global/NPC/141BangBoo/Deliver/CashierBangbooDeliver.model");
+	pResource->Add_ResourcePath("CashierBangbooDeliver.mat", "../Bin/Resources/Global/NPC/141BangBoo/Deliver/CashierBangbooDeliver.mat");
+	pResource->Add_ResourcePath("NPC_Special_CashierBangboo_Deliver_Meta.json", "../Bin/Resources/Global/NPC/141BangBoo/Deliver/NPC_Special_CashierBangboo_Deliver_Meta.json");
 
 	auto pModel = Get_Component<CSkeletalModel>();
 	pModel->Link_Model(G_GlobalLevelKey, "CashierBangbooDeliver.model");
@@ -59,11 +59,13 @@ void CBangBooDeliver::Awake()
 	pAnimator->Set_MotionBone(13); //Bip001
 
 	m_strAnimName = "NPC_CashierBangbooDeliver_Ani_";
-	m_strName = "Deliver";
+	m_strName = L"잔돈";
 
 	pAnimator->Set_Animation(Get_AnimName() + "Idle_Start")
 		.Loop(false)
 		.Apply();
+
+	__super::Awake();
 }
 
 void CBangBooDeliver::Priority_Update(_float dt)

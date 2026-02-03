@@ -47,6 +47,8 @@ private:
     string m_TexturePath{};
 
     /*Main Params*/
+    _float3 m_vRimLightColor{};
+    _float2 m_vPivot{ 0.5f,0.5f };
     _uint m_iRGBMaskMode{};
     CParticleSystem::SPAWN_SHAPE m_eSpawnShape{};
     CParticleSystem::COLOR_MODE m_eColorMode{};

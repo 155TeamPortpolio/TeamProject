@@ -100,6 +100,15 @@ public://애니매이터 데이터
     _bool Get_isPause(_uint LayerIndex = 0);
     //
     class CModelData* Get_ModelData() { return m_pData; }
+
+    // ------------------------------------------
+    _int   Get_AnimClipCount() const;
+    string Get_AnimClipName(_uint clipIndex) const;
+    _float Get_TimeSec();
+    _float Get_DurationSec();
+    void   Set_TimeSec(_float timeSec);
+
+
     /*----- Setter -----*/
     
     //모션본 직접설정
@@ -195,11 +204,19 @@ protected://애니매이션 체크
     Matrix Calc_MatrixBlend(const _float4x4& base, const _float4x4& target, _float weight);
     Matrix Calc_MatrixAdditive(const _float4x4& base, const _float4x4& target, const _float4x4& ref,  _float weight);
 
-
 protected:
     //애니매이션 연산
     void Animation_Run(ANIM_LAYER& Layer, _float dt);
     void Animation_Convert(ANIM_LAYER& Layer, _float dt);
+
+    //연산용 함수들
+    _float Compute_PlaySpeed(ANIM_LAYER& Layer, _float dt);
+    void Check_ReservedSpeeds(ANIM_LAYER& Layer);
+    void Compute_RootMoveDelta(ANIM_LAYER& Layer, _vector3& curPos);
+    void Compute_RootQuatDelta(ANIM_LAYER& Layer, _vector4& curQuat);
+    void Compute_ClipConvert(ANIM_LAYER& Layer, _float dt);
+    void Extract_MotionBone(ANIM_LAYER& Layer);
+
     //레이어 연산
     void Layer_Base(const ANIM_LAYER& Layer);
     void Layer_Override(const ANIM_LAYER& Layer);

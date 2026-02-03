@@ -1,13 +1,18 @@
 #include "Shader_Define.hlsl"
 
+float fUseVanish;
+float fEmissiveStrength;
+float3 vEmissiveColor;
 float3 vRimLightColor;
 float fRimLightPower;
 vector vOutLineColor;
 float fOutLineThickness;
 float fDissolveProgress;
 float fDissolveTiling;
-float4x4 g_OutLineBoneMatrices[512];
+float4x4 g_CommandBoneMatrices[512];
 matrix g_worldMatrix;
+
+Texture2D EmissiveNoiseTexture;
 
 struct VS_IN
 {
@@ -80,10 +85,10 @@ VS_OUT VS_OUTLINE(VS_IN In)
     float fWeightW = 1.0 - (In.vBlendWeight.x + In.vBlendWeight.y + In.vBlendWeight.z);
 
     float4x4 BoneMatrix =
-        g_OutLineBoneMatrices[In.vBlendIndex.x] * In.vBlendWeight.x +
-        g_OutLineBoneMatrices[In.vBlendIndex.y] * In.vBlendWeight.y +
-        g_OutLineBoneMatrices[In.vBlendIndex.z] * In.vBlendWeight.z +
-        g_OutLineBoneMatrices[In.vBlendIndex.w] * fWeightW;
+        g_CommandBoneMatrices[In.vBlendIndex.x] * In.vBlendWeight.x +
+        g_CommandBoneMatrices[In.vBlendIndex.y] * In.vBlendWeight.y +
+        g_CommandBoneMatrices[In.vBlendIndex.z] * In.vBlendWeight.z +
+        g_CommandBoneMatrices[In.vBlendIndex.w] * fWeightW;
     
     vector vPosition = mul(float4(In.vPosition, 1.f), BoneMatrix);
     vector vNormal = mul(float4(In.vNormal, 0.f), BoneMatrix);
@@ -129,7 +134,8 @@ struct PS_OUT
     vector vMetalic : SV_TARGET3;
     vector vAmbient : SV_Target4;
     vector vRimLight : SV_Target5;
-    vector vLook : SV_Target6;
+    vector vEmissive : SV_TARGET6;
+    vector vPostInfo : SV_TARGET7;
 };
 
 PS_OUT PS_MAIN(PS_IN In)
@@ -142,49 +148,91 @@ PS_OUT PS_MAIN(PS_IN In)
         discard;
     }
     Out.vDiffuse = vMtrlDiffuse;
-  
+    // die - emissive
+    
     vector vNormalDesc = NormalTexture.Sample(DefaultSampler, In.vTexcoord);
     vector vMetalic = MetalnessTexture.Sample(DefaultSampler, In.vTexcoord);
     vector vAmbient = AmbientTexture.Sample(DefaultSampler, In.vTexcoord);
     
     float fNoise = NoiseTexture.Sample(LinearSampler, In.vTexcoord * fDissolveTiling).r;
-    
     if (fNoise < fDissolveProgress)
         discard;
   
     vAmbient.r = 0.f;
-    if(vNormalDesc.a > 0.f)
-    {
-        float3 vNormal;
-        vNormal.xy = vNormalDesc.xy * 2.f - 1.f;
-        vNormal.z = 1.f;
-        float3 T = normalize(In.vTangent);
-        float3 B = normalize(In.vBinormal * -1);
-        float3 N = normalize(In.vNormal.xyz);
+    
+    float3 vEmissive = lerp(vMtrlDiffuse.rgb * 0.05f, vEmissiveColor, fEmissiveStrength);
+    
+    float3 vNormal;
+    vNormal.xy = vNormalDesc.xy * 2.f - 1.f;
+    vNormal.z = 1.f;
+    float3 T = normalize(In.vTangent);
+    float3 B = normalize(In.vBinormal * -1);
+    float3 N = normalize(In.vNormal.xyz);
 
-        float3x3 WorldMatrix = float3x3(T, B, N);
+    float3x3 WorldMatrix = float3x3(T, B, N);
         
-        vNormal = mul(vNormal, WorldMatrix);
-        vMetalic.a = 0.6f;
-        Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, vNormalDesc.z);
-    }
-    else
-    {
-        float3 vNormal = normalize(In.vNormal);
-        Out.vNormal = float4(vNormal * 0.5f + 0.5f, 1.f);
-
-        float3 headRight = normalize(cross(float3(0.f, 1.f, 0.f), vLookVector.xyz));
-
-        vMetalic = LightTexture.Sample(DefaultSampler, In.vTexcoord);
-
-        vMetalic.a = 0.8f;
-        Out.vLook = float4(vLookVector.xyz * 0.5f + 0.5f, 1.f);
-    }
-    if (vAmbient.g < 0.2) vAmbient.g = 1.f;
+    vNormal = mul(vNormal, WorldMatrix);
+    vMetalic.a = 0.6f;
+    
+    Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, vNormalDesc.z);
+   
+    if (vAmbient.g < 0.2)
+        vAmbient.g = 1.f;
     Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / zFar, 0.f, 1.f);
     Out.vAmbient = vAmbient;
     Out.vMetalic = vMetalic;
     Out.vRimLight = float4(vRimLightColor, fRimLightPower);
+    Out.vEmissive = float4(vEmissive, 1.f);
+    Out.vPostInfo = float4(fUseVanish, 0.f, 0.f, 0.f);
+    return Out;
+}
+
+PS_OUT PS_MAIN_EMISSIVE(PS_IN In)
+{
+    PS_OUT Out;
+    
+    vector vMtrlDiffuse = DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
+    if (vMtrlDiffuse.a < 0.2)
+    {
+        discard;
+    }
+    Out.vDiffuse = vMtrlDiffuse;
+    // die - emissive
+    
+    vector vNormalDesc = NormalTexture.Sample(DefaultSampler, In.vTexcoord);
+    vector vMetalic = MetalnessTexture.Sample(DefaultSampler, In.vTexcoord);
+    vector vAmbient = AmbientTexture.Sample(DefaultSampler, In.vTexcoord);
+    
+    float fNoise = NoiseTexture.Sample(LinearSampler, In.vTexcoord * fDissolveTiling).r;
+    if (fNoise < fDissolveProgress)
+        discard;
+  
+    vAmbient.r = 0.f;
+    
+    float3 vEmissive = lerp(vMtrlDiffuse.rgb * 0.8f, vEmissiveColor, fEmissiveStrength);
+    
+    float3 vNormal;
+    vNormal.xy = vNormalDesc.xy * 2.f - 1.f;
+    vNormal.z = 1.f;
+    float3 T = normalize(In.vTangent);
+    float3 B = normalize(In.vBinormal * -1);
+    float3 N = normalize(In.vNormal.xyz);
+
+    float3x3 WorldMatrix = float3x3(T, B, N);
+        
+    vNormal = mul(vNormal, WorldMatrix);
+    vMetalic.a = 0.6f;
+    
+    Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, vNormalDesc.z);
+   
+    if (vAmbient.g < 0.2)
+        vAmbient.g = 1.f;
+    Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / zFar, 0.f, 1.f);
+    Out.vAmbient = vAmbient;
+    Out.vMetalic = vMetalic;
+    Out.vRimLight = float4(vRimLightColor, fRimLightPower);
+    Out.vEmissive = float4(vEmissive, fEmissiveStrength);
+    Out.vPostInfo = float4(1.f, 0.f, 0.f, 0.f);
     return Out;
 }
 
@@ -281,11 +329,21 @@ technique11 DefaultTechnique
     pass Opaque
     {
         SetRasterizerState(RS_NoCull);
-        SetDepthStencilState(DSS_WriteStencil,1);
+        SetDepthStencilState(DSS_Default, 0);
         SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN();
+    }
+
+    pass UseEmissive
+    {
+        SetRasterizerState(RS_NoCull);
+        SetDepthStencilState(DSS_WriteStencil, 1);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_MAIN_EMISSIVE();
     }
 
     pass Debug

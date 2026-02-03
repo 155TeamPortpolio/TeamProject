@@ -6,8 +6,6 @@
 #include "EventListener.h"
 #include "GaugeUI.h"
 
-const string CUI_UltimateAction::INSTANCENAMES[ENUM(CHILD::END)] = { "group1", "bg", "uv", "group2", "black", "star", "star1", "star2", "star3", "blink", "q" };
-
 HRESULT CUI_UltimateAction::Initialize_Prototype()
 {
     __super::Initialize_Prototype();
@@ -22,68 +20,18 @@ HRESULT CUI_UltimateAction::Initialize(INIT_DESC* pArg)
 {
     __super::Initialize(pArg);
 
-    auto pResourceMgr = CGameInstance::GetInstance()->GetInstance()->Get_ResourceMgr();
-    const string& filePath = pResourceMgr->Get_ResourcePath("hud_battle_ultimateAction.json");
-    Load(Helper::LoadJson<nlohmann::ordered_json>(filePath));
+    Load_Json("hud_battle_ultimateAction.json");
+    Cache_Children();
+    Bind_EventListener();
 
-    for (_int i = 0; i < ENUM(CHILD::END); ++i)
-        m_hChildren[i] = Get_DescendantHandle(INSTANCENAMES[i]);
-
-    // 모드 변경 이벤트
-    Get_Component<CEventListener>()->Add_Listener<UI_ACTION_PRIMARY_DESC>([&](const UI_ACTION_PRIMARY_DESC& desc)
-        {
-            Set_InteractState(INTERACT_STATE::DISABLE);
-        });
-
-    // 액션 이벤트
-    Get_Component<CEventListener>()->Add_Listener<UI_ACTION_DESC>([&](const UI_ACTION_DESC& desc)
-        {
-            if (desc.eType != UI_ACTION_TYPE::ULTIMATE)
-                return;
-
-            if (desc.eState == UI_ACTION_STATE::DISABLE)
-                Set_InteractState(INTERACT_STATE::DISABLE);
-            else if (desc.eState == UI_ACTION_STATE::AVAILABLE)
-                Execute(); 
-            else if (desc.eState == UI_ACTION_STATE::EXECUTING)
-            {
-                Set_InteractState(INTERACT_STATE::DISABLE);
-                Set_Animation(CHILD::BLINK, 0);
-            } 
-        });
+    Apply_DisableVisual();
 
     return S_OK;
 }
 
 void CUI_UltimateAction::Update(_float dt)
 {
-    if (!m_isVisualInitialized)
-        m_isVisualInitialized = Apply_DisableVisual();
-
-    // 이벤트 테스트 코드
-    //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('M'))
-    //{
-    //    UI_ACTION_DESC desc = {};
-    //    desc.eType = UI_ACTION_TYPE::ULTIMATE;
-    //    desc.eState = UI_ACTION_STATE::DISABLE;
-    //    EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
-    //}
-    //
-    //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('N'))
-    //{
-    //    UI_ACTION_DESC desc = {};
-    //    desc.eType = UI_ACTION_TYPE::ULTIMATE;
-    //    desc.eState = UI_ACTION_STATE::ENABLE;
-    //    EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
-    //}
-    //
-    //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('B'))
-    //{
-    //    UI_ACTION_DESC desc = {};
-    //    desc.eType = UI_ACTION_TYPE::ULTIMATE;
-    //    desc.eState = UI_ACTION_STATE::EXECUTING;
-    //    EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
-    //}
+    __super::Update(dt);
 
     Get_Component<CObjectContainer>()->UpdateChild(dt);
 }
@@ -96,6 +44,67 @@ void CUI_UltimateAction::UI_Active(void* pArg)
 void CUI_UltimateAction::UI_DeActive(void* pArg)
 {
     Set_InteractState(INTERACT_STATE::DISABLE);
+}
+
+void CUI_UltimateAction::Load_Json(const string& resourceKey)
+{
+    // json 로드
+    auto pResourceMgr = CGameInstance::GetInstance()->GetInstance()->Get_ResourceMgr();
+    const string& filePath = pResourceMgr->Get_ResourcePath(resourceKey);
+    Load(Helper::LoadJson<nlohmann::ordered_json>(filePath));
+}
+
+void CUI_UltimateAction::Cache_Children()
+{
+    auto pContainer = Get_Component<CObjectContainer>();
+
+    // 자식 UI 오브젝트 포인터를 배열에 캐싱
+    for (_int i = 0; i < ENUM(CHILD::END); ++i)
+    {
+        const string& strInstanceName = INSTANCENAMES[i];
+        if (strInstanceName.empty())
+            continue;
+
+        auto pObj = pContainer->Find_Descendant(strInstanceName);
+        if (!pObj)
+            continue;
+
+        m_pChildren[i] = dynamic_cast<CUI_Object*>(pObj);
+    }
+}
+
+void CUI_UltimateAction::Bind_EventListener()
+{
+    // 모드 변경 이벤트
+    Get_Component<CEventListener>()->Add_Listener<UI_ACTION_PRIMARY_DESC>([&](const UI_ACTION_PRIMARY_DESC& desc)
+        {
+            if (m_eMode == desc.eMode)
+                return;
+
+            m_eMode = desc.eMode;
+
+            Set_InteractState(INTERACT_STATE::DISABLE);
+        });
+
+    // 액션 이벤트
+    Get_Component<CEventListener>()->Add_Listener<UI_ACTION_DESC>([&](const UI_ACTION_DESC& desc)
+        {
+            if (m_eMode == UI_ACTION_PRIMARY_MODE::INTERACT)
+                return;
+
+            if (desc.eType != UI_ACTION_TYPE::ULTIMATE)
+                return;
+
+            if (desc.eState == UI_ACTION_STATE::DISABLE)
+                Set_InteractState(INTERACT_STATE::DISABLE);
+            else if (desc.eState == UI_ACTION_STATE::AVAILABLE)
+                Execute();
+            else if (desc.eState == UI_ACTION_STATE::EXECUTING)
+            {
+                Set_InteractState(INTERACT_STATE::DISABLE);
+                Set_ChildAnimation(CHILD::BLINK, 0);
+            }
+        });
 }
 
 void CUI_UltimateAction::Set_InteractState(INTERACT_STATE state)
@@ -111,13 +120,13 @@ void CUI_UltimateAction::Execute()
 
     m_interactState = INTERACT_STATE::ENABLE;
     Refresh_Visual();
-    Set_Animation(CHILD::GROUP1, 0);
-    Set_Animation(CHILD::GROUP2, 0);
-    Set_Animation(CHILD::BLACK, 0);
-    Set_Animation(CHILD::STAR, 0);
-    Set_Animation(CHILD::STAR1, 0);
-    Set_Animation(CHILD::STAR2, 0);
-    Set_Animation(CHILD::STAR3, 0);
+    Set_ChildAnimation(CHILD::GROUP1, 0);
+    Set_ChildAnimation(CHILD::GROUP2, 0);
+    Set_ChildAnimation(CHILD::BLACK, 0);
+    Set_ChildAnimation(CHILD::STAR, 0);
+    Set_ChildAnimation(CHILD::STAR1, 0);
+    Set_ChildAnimation(CHILD::STAR2, 0);
+    Set_ChildAnimation(CHILD::STAR3, 0);
 }
 
 void CUI_UltimateAction::Refresh_Visual()
@@ -131,37 +140,42 @@ void CUI_UltimateAction::Refresh_Visual()
     Apply_EnableVisual();
 }
 
-_bool CUI_UltimateAction::Apply_DisableVisual()
+void CUI_UltimateAction::Apply_DisableVisual()
 {
-    _bool isApplied = { false };
-
-    isApplied |= Set_Color(CHILD::BG, UI_GRAY_MEDIUM);
-    isApplied |= Set_Color(CHILD::Q, UI_GRAY_LIGHTEST);
-    isApplied |= Set_Alive(CHILD::UV, false);
-
-    return isApplied;
+    Set_ChildAlive(CHILD::UV, false);
+    Set_ChildColor(CHILD::BG, UI_GRAY_MEDIUM);
+    Set_ChildColor(CHILD::Q, UI_GRAY_LIGHTEST); 
 }
 
 void CUI_UltimateAction::Apply_EnableVisual()
 {
-    Set_Color(CHILD::BG, UI_GRAY_DARKEST);
-    Set_Color(CHILD::Q, UI_WHITE);
-    Set_Alive(CHILD::UV, true);
+    Set_ChildAlive(CHILD::UV, true);
+    Set_ChildColor(CHILD::BG, UI_GRAY_DARKEST);
+    Set_ChildColor(CHILD::Q, UI_WHITE); 
 }
 
-_bool CUI_UltimateAction::Set_Alive(CHILD child, _bool isAlive)
+void CUI_UltimateAction::Set_ChildAlive(CHILD child, _bool isAlive)
 {
-    return ForChild(child, [isAlive](CUI_Object* ui) { ui->Set_Alive(isAlive); });
+    if (!m_pChildren[ENUM(child)])
+        return;
+
+    m_pChildren[ENUM(child)]->Set_Alive(isAlive);
 }
 
-_bool CUI_UltimateAction::Set_Color(CHILD child, _float4 vColor)
+void CUI_UltimateAction::Set_ChildColor(CHILD child, _float4 vColor)
 {
-    return ForChild(child, [vColor](CUI_Object* ui) { ui->Set_Color(vColor); });
+    if (!m_pChildren[ENUM(child)])
+        return;
+
+    m_pChildren[ENUM(child)]->Set_Color(vColor);
 }
 
-_bool CUI_UltimateAction::Set_Animation(CHILD child, _int iIndex)
+void CUI_UltimateAction::Set_ChildAnimation(CHILD child, _int iIndex)
 {
-    return ForChild(child, [iIndex](CUI_Object* ui) { ui->Set_Animation(iIndex); });
+    if (!m_pChildren[ENUM(child)])
+        return;
+
+    m_pChildren[ENUM(child)]->Set_Animation(iIndex);
 }
 
 CGameObject* CUI_UltimateAction::Create()

@@ -1,10 +1,11 @@
 #pragma once
 #include "Interactable.h"
+#include "IInteract.h"
 
 NS_BEGIN(Client)
 
 class CZeroPortal final :
-    public CInteractable
+    public CInteractable, public IInteract
 {
 public:
     typedef struct tagZeroPortalDesc : public Engine::GAMEOBJECT_DESC {
@@ -28,13 +29,23 @@ public:
     virtual void    OnTriggerStay(CGameObject* pOher)   override;
     virtual void    OnTriggerExit(CGameObject* pOther)  override;
 
-    virtual void    Interact() override;
+    virtual void                Interact(CGameObject* pObject = nullptr) override;
+    virtual OBJECT_HANDLE       Get_InteractHandle() override;
+
+private:
+    void Extend(_float dt);
+    void Contract(_float dt);
 
 private:
     _bool  m_bVisible = { false };
     string m_NextMapTag{};
     _float m_Time = {};
     class CStage* m_pTargetStage = { nullptr };
+
+private:
+    _float m_fDuration = .5f;
+    _float m_fElapsedTime = 0.f;
+    _vector3 m_vTargetSize = {2.f,2.f,2.f};
 public:
     static CZeroPortal* Create();
     virtual CGameObject* Clone(INIT_DESC* pArg) override;

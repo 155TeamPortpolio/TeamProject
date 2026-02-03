@@ -17,6 +17,7 @@ namespace Engine
 
 	typedef		signed int					_int;
 	typedef		unsigned int				_uint;
+	typedef		unsigned long long			_uint64;
 
 	typedef		signed long					_long;
 	typedef		unsigned long				_ulong;
@@ -56,8 +57,8 @@ namespace Engine
 	using LEVEL_CREATOR = function<class CLevel* ()>;
 	static const string G_GlobalLevelKey = "Global_Level";
 	static const string G_EngineTimerID = "Engine_Timer";
-	static constexpr _uint g_iMaxNumBones = 5000000;
-	static constexpr _uint g_iMaxTransform = 50000;
+	static constexpr _uint g_iMaxNumBones = 15000;
+	static constexpr _uint g_iMaxTransform = 15000;
 	static constexpr _uint g_iMaxLightss = 46;
 	static constexpr _uint MAX_TEXTURE_TYPE_VALUE = static_cast<_uint>(TEXTURE_TYPE::END);
 	static constexpr _uint g_iMaxNumInstances = 3000;

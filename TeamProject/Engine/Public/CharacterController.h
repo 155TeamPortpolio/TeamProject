@@ -23,8 +23,10 @@ private:
                 return PxQueryHitType::eBLOCK;
 
             // Shape에서 직접 QueryFilterData 가져오기
-            // (filterData 인자는 mFilterData가 전달되므로 사용하지 않음)
             PxFilterData shapeFilterData = shape->getQueryFilterData();
+
+            if (shapeFilterData.word1 == 0)
+                return PxQueryHitType::eNONE;
 
             PxU32 myGroup = m_pFilterData->word0;
             PxU32 myMask = m_pFilterData->word1;
@@ -50,6 +52,41 @@ private:
 
     private:
         PxFilterData* m_pFilterData = nullptr;
+    };
+    // CCT간 물리충돌 필터처리
+    class CCCTFilterCallback : public PxControllerFilterCallback
+    {
+    public:
+        virtual bool filter(const PxController& a, const PxController& b) override
+        {
+            PxShape* pShapeA = nullptr;
+            PxShape* pShapeB = nullptr;
+            a.getActor()->getShapes(&pShapeA, 1);
+            b.getActor()->getShapes(&pShapeB, 1);
+
+            if (!pShapeA || !pShapeB) return true;
+
+            CCharacterController* pA = static_cast<CCharacterController*>(pShapeA->userData);
+            CCharacterController* pB = static_cast<CCharacterController*>(pShapeB->userData);
+
+            if (!pA || !pB) return true;
+            if (!pA->Get_CompActive() || !pB->Get_CompActive()) return false;
+
+            // CollisionMask 검사 추가
+            PxFilterData filterA = pShapeA->getQueryFilterData();
+            PxFilterData filterB = pShapeB->getQueryFilterData();
+
+            PxU32 groupA = filterA.word0;
+            PxU32 maskA = filterA.word1;
+            PxU32 groupB = filterB.word0;
+            PxU32 maskB = filterB.word1;
+
+            // 양방향 검사
+            _bool bAAllowB = (maskA & groupB) != 0;
+            _bool bBAllowA = (maskB & groupA) != 0;
+
+            return bAAllowB && bBAllowA;
+        }
     };
 
 private:
@@ -82,6 +119,10 @@ public:
     virtual void    OnTriggerEnter(ICollidable* pOther) override;
     virtual void    OnTriggerStay(ICollidable* pOther) override;
     virtual void    OnTriggerExit(ICollidable* pOthter) override;
+
+    virtual void    Set_CompActive(_bool bActive) override;
+   
+    HRESULT         ReInitialize(COMPONENT_DESC* pArg);
 
     void            Update(_float dt);
     void            Late_Update(_float dt);
@@ -146,8 +187,10 @@ private:
     PxFilterData             m_FilterData = {};
     PxFilterData             m_QueryFilterData = {};
     CCCTQueryFilter*         m_pQueryFilter = { nullptr };
+    CCCTFilterCallback*      m_pCCTFilter = { nullptr };
     _bool                    m_bGrounded = { false };
     _bool                    m_bGravityEnabled = { true };
+    _vector3                 m_vRootMotion = {};
     _vector3                 m_vVelocity = { 0.f, 0.f, 0.f };
     _vector3                 m_vPrevVelocity = { 0.f, 0.f, 0.f };
     _float                   m_fHeight = { 0.f };

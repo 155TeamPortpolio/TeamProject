@@ -21,6 +21,25 @@ HRESULT CObjectMgr::Initialize()
 
 void CObjectMgr::Pre_EngineUpdate(_float dt)
 {
+
+	for (auto pObject : m_ReleaseObjs)
+	{
+		if (!pObject) continue;
+		Release_Subtree_ToPool(pObject);
+	}
+	m_ReleaseObjs.clear();
+	m_ReleaseIDs.clear();
+	auto snap = m_DeleteObjs;
+
+	m_DeleteObjs.clear();
+	m_DeleteIDs.clear();
+	for (auto pObject : snap)
+	{
+		_uint ObjectID = pObject->Get_ObjectID();
+		pObject->Get_Layer()->Remove_GameObject(ObjectID);
+		//Safe_Release(pObject);
+	}
+
 	for (auto& pair : m_Layers)
 		for (auto& layers : pair.second)
 			layers.second->Pre_EngineUpdate(dt);
@@ -53,28 +72,7 @@ void CObjectMgr::Late_Update(_float dt)
 		for (auto& layers : pair.second)
 			layers.second->Late_Update(dt);
 
-	for (auto pObject : m_ReleaseObjs)
-	{
-		_uint ObjectID = pObject->Get_ObjectID();
-		pObject->Get_Layer()->Pop_GameObject(ObjectID);
-		pObject->Set_Layer(nullptr);
-		pObject->OnPooledRelease();
-		const CLONE_DESC& poolKey = pObject->Get_PoolKey();
 
-		m_pObjectPool->Return(poolKey, pObject);
-	}
-	m_ReleaseObjs.clear();
-	m_ReleaseIDs.clear();
-
-	for (auto pObject : m_DeleteObjs)
-	{
-		_uint ObjectID = pObject->Get_ObjectID();
-		pObject->Get_Layer()->Remove_GameObject(ObjectID);
-		pObject->Set_Layer(nullptr);
-	}
-
-	m_DeleteObjs.clear();
-	m_DeleteIDs.clear();
 }
 
 void CObjectMgr::Add_Object(CGameObject* object, const LAYER_DESC& layer)
@@ -128,6 +126,7 @@ void CObjectMgr::Remove_Object(CGameObject* object)
 {
 	if (!object)
 		return;
+
 	if (object->IsFromPool())
 	{
 		auto it = find(m_ReleaseObjs.begin(), m_ReleaseObjs.end(), object);
@@ -142,7 +141,6 @@ void CObjectMgr::Remove_Object(CGameObject* object)
 		auto it = find(m_DeleteObjs.begin(), m_DeleteObjs.end(), object);
 		if (it != m_DeleteObjs.end())
 			return;
-
 		m_DeleteObjs.push_back(object);
 		m_DeleteIDs.insert(object->Get_ObjectID());
 	}
@@ -191,6 +189,8 @@ void CObjectMgr::Clear(const string& LevelTag)
 	for (auto& pair : m_Layers[LevelTag]) {
 		Safe_Release(pair.second);
 	}
+	m_DeleteObjs.clear();
+	m_DeleteIDs.clear();
 	m_pObjectPool->ClearAll();
 	m_Layers[LevelTag].clear();
 }
@@ -206,8 +206,10 @@ HRESULT CObjectMgr::Sync_To_Level()
 
 	vector<string> LevelList = pLevelMgr->Get_LevelList();
 
-	for (string& name : LevelList)
+	for (string& name : LevelList) {
 		m_Layers.emplace(name, LAYERS{});
+		m_Layers[name].reserve(10);
+	}
 
 	return S_OK;
 }
@@ -272,9 +274,9 @@ CGameObject* CObjectMgr::Request_Object(const OBJECT_HANDLE& handle)
 }
 
 
-CGameObject* CObjectMgr::Acquire(const CLONE_DESC& desc)
+CGameObject* CObjectMgr::Acquire(const CLONE_DESC& desc,INIT_DESC* pArg,_bool& outFirst)
 {
-	return m_pObjectPool->Acquire(desc);
+	return m_pObjectPool->Acquire(desc,pArg,outFirst);
 }
 
 void CObjectMgr::Prune_Queues_ByLevel(const string& levelTag)
@@ -313,6 +315,57 @@ void CObjectMgr::Prune_Queues_ByLevel(const string& levelTag)
 		m_DeleteObjs.swap(newList);
 	}
 }
+
+void CObjectMgr::Release_Subtree_ToPool(CGameObject* root)
+{
+	if (!root) return;
+
+	vector<CGameObject*> nodes;
+	nodes.reserve(32);
+
+	vector<CGameObject*> stack;
+	stack.reserve(32);
+	stack.push_back(root);
+
+	while (!stack.empty())
+	{
+		CGameObject* node = stack.back();
+		stack.pop_back();
+		if (!node) continue;
+
+		nodes.push_back(node);
+
+		auto children = node->Get_Children();
+		for (auto* child : children)
+		{
+			if (child) stack.push_back(child);
+		}
+	}
+
+	for (CGameObject* node : nodes)
+	{
+		if (!node) continue;
+
+		CLayer* layerPtr = node->Get_Layer();
+		if (layerPtr)
+		{
+			const _uint id = node->Get_ObjectID();
+			layerPtr->Pop_GameObject(id);
+			node->Set_Layer(nullptr);
+		}
+	}
+
+	for (CGameObject* node : nodes)
+	{
+		if (!node || node == root) continue;
+		node->OnPooledRelease(); // 없으면 생략 가능
+	}
+
+	root->OnPooledRelease();
+	const CLONE_DESC& poolKey = root->Get_PoolKey();
+	m_pObjectPool->Return(poolKey, root);
+}
+
 
 void CObjectMgr::Set_LevelTimeScale(string LevelTag, _float scale)
 {

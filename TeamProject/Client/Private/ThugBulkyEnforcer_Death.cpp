@@ -2,6 +2,8 @@
 #include "ThugBulkyEnforcer_Attack.h"
 #include "ThugBulkyEnforcer.h"
 #include "Helper_Func.h"
+#include "GameInstance.h"
+#include "EffectContainer.h"
 
 #include "Animator3D.h"
 #include "CharacterController.h"
@@ -24,14 +26,27 @@ void CThugBulkyEnforcer_Death::Enter(CThugBulkyEnforcer* pOwner)
 	else
 		m_pSubStateMachine->Change_State("DeathFront");
 
+	pOwner->Active_Vanish();
 }
 
 void CThugBulkyEnforcer_Death::Update(CThugBulkyEnforcer* pOwner, _float dt)
 {
 	__super::Update(pOwner, dt);
 
-	if (m_fAnimProgress > 0.99f)
+	pOwner->Update_DeathSquence(dt);
+	if (IsCrossAnimProgress(0.4f))
+	{
+		_vector3 vWorldPosition = pOwner->Get_Component<CTransform>()->Get_WorldPos();
+		vWorldPosition.y += 1.f;
+
+		auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("enemy_dead.json")
+			.Position(vWorldPosition)
+			.Build("Enemy_Dead");
+
+		ObjectManager()->Add_Object(effect, { pOwner->Get_Level(),"Enemy_Effect_Layer" });
 		pOwner->Death();
+	}
 }
 
 void CThugBulkyEnforcer_Death::Exit(CThugBulkyEnforcer* pOwner)

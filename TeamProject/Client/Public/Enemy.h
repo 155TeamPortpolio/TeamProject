@@ -1,13 +1,13 @@
 #pragma once
 #include "GameObject.h"
 #include "Enemy_Struct.h"
+#include "Character.h"
 
 NS_BEGIN(Engine)
 class CAnimator3D;
 NS_END
 
 NS_BEGIN(Client)
-
 enum class DIR {F, FR, R, BR, B, BL, L, FL};
 
 class CEnemy abstract :
@@ -17,9 +17,13 @@ public:
     typedef struct tagEnemyCreateDesc : public Engine::GAMEOBJECT_DESC 
     {
         _float  iMaxHP = {};
+        _bool   isUseInspector = { false };
     }ENEMY_DESC;
 
+    enum class ENEMY_CLASS { NORMAL, ELITE, BOSS };
+    enum class ATTACK_SIDE { NONE, LEFT, RIGHT };
     enum class BATTLE_COLTYPE { ATTACK, TRIGGER };
+  
 protected:
     CEnemy();
     CEnemy(const CEnemy& rhg);
@@ -28,13 +32,10 @@ protected:
 public:
     virtual HRESULT Initialize_Prototype() override;
     virtual HRESULT Initialize(INIT_DESC* pArg) override;
+    virtual void    Awake()override;
     virtual void    Priority_Update(_float dt) override {};
     virtual void    Update(_float dt) override;
     virtual void    Late_Update(_float dt) override;
-
-    virtual void    OnPooledAcquire(INIT_DESC* pArg = nullptr) {}	// 풀에서 꺼낼 때
-    virtual void    OnPooledRelease() {}							// 풀로 돌아갈 때
-
 
 public:
     /* Getter */
@@ -46,22 +47,45 @@ public:
     MONSTER_STATUS      GetStatus() { return m_tStatus; }
     // 몬스터의 Status 구조체 포인터를 반환
     const MONSTER_STATUS*   GetStatusPtr() const { return &m_tStatus; }
+    // 몬스터 계급
+    ENEMY_CLASS         GetEnemyClass() { return m_eEnemyClass; }
     // Groggy 상태 반환
-    _bool              IsGroggy() const { return m_isGroggy; }
+    _bool               IsGroggy() const { return m_tStatus.isGroggy; }
     // 공격중인지 상태 반환
-    _bool              IsOnAttack() const { return m_isOnAttack; }
+    _bool               IsOnAttack() const { return m_isOnAttack; }
+    // 공격중일 때, 패링 가능할 시 켜져있음
+    _bool               IsParryEnable() const { return m_isParryEnable; }
+    // 플레이어가 수행할 수 있는 콤보 카운트의 갯수
+    _int                Get_ComboCount() const { return m_tStatus.iPlayerComboCount; }
+    // Attack Side 반환
+    ATTACK_SIDE Get_AttackSide()const { return m_eCurAttackSide; }
 
     /* Setter*/
     // 몬스터 공격 시 attack sign 이펙트 활성화 함수
     virtual void        Active_AttackSign(_bool parryEnable = true);
-    // 플레이어 무기에서 몬스터한테 데미지 입힐 때 호출 될 함수
-    virtual void        TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage) {};
+    // 플레이어 무기에서 몬스터한테 데미지 입힐 때 호출 될 함 수
+    virtual void        TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER charaName = CHARACTER::END);
     /* 트리거 콜라이더를 바로 키고, AttackOffsetTime 뒤에 Attack 콜라이더를
     AttackPlayTime만큼 키고 트리거와 Attack콜라이더를 종료함*/
     void                SetAutoPlayBattleCollider(const string& tagBattleCollider, _float fAttackOffsetTime, _float fAttackPlayTime, const HitDesc& hitDesc);
+    /* BattleSystem에 본인 핸들 지워달라고 요청하는 함수. Death 상태 진입 시 호출할 것*/
+    void                RequestRemoveOnDeathToBattleSystem();
     /* 몬스터가 죽는 시퀀스가 다 끝나고 호출할 것. */
     void                Death();
-    void                SetOnAttack(_bool is) { m_isOnAttack = is; }
+    // 공격중인지 플래그 세팅하는 함수, 끝났을 때, 공격 관련 플래그를 전부 끔(m_isOnAttack, m_isParryEnable)
+    void                SetOnAttack(_bool is, ATTACK_SIDE eSide = ATTACK_SIDE::NONE); 
+    // 패링 당했을 때 플레이어 쪽에서 호출될 함수
+    virtual void        Parried();
+    // 공격 상태 진입 시, AttackSign 켜고 공격 관련 flag를 일괄 처리하는 함수
+    void                UnleashAttack(ATTACK_SIDE eSide = ATTACK_SIDE::NONE, _bool ParryEnable = true);
+    // 패링당할 수 있는 상태인지 정하는 함수
+    void                SetParryEnable(_bool is) { m_isParryEnable = is; }
+    // 플레이어가 수행할 수 있는 콤보 카운트 내리는 함수
+    void                Decrease_ComboCount() { --m_tStatus.iPlayerComboCount; }
+
+    // 몬스터 사망 연출용, 머터리얼 파라미터 업데이트
+    void Active_Vanish() { m_fUseVanish = 1.f; }
+    virtual void Update_DeathSquence(_float dt);
 
 protected:
     // Target(Player->Character)과의 거리 정보 계산
@@ -77,13 +101,14 @@ protected:
     // 몬스터 Look 기준 플레이어가 어느 방향에 있는지 알려주는 함수
     DIR                 GetDIRToPlayer();
 
+protected:
     // Enemy Status 객체 추가 및 월드 행렬, 본 로컬 행렬 포인터로 전달
     virtual void        Create_UIEnemyStatus(string boneTag);
     virtual void        Create_UIBossHUD();
     void                Create_MeshPyramid();
 
 #pragma region BattleCollider
-protected:
+public:
     void                SetBattleColliderObject(const string& tagBattleColliderObject, BATTLE_COLTYPE eBattleColliderType, _bool is, const HitDesc& hitdesc = {});
     void                FinishBattleColliderObject(const string& tagBattleColliderObject);
     void                ShowBattleColliderForCheck(_bool is);
@@ -91,38 +116,51 @@ protected:
 
     _bool               IsAliveBattleColliderObject(const string& tagBattleColliderObject, BATTLE_COLTYPE eBattleColliderType);
 
+protected:
     unordered_map<string, _int> m_BattleColliderChildrenIndex;
     AUTO_BATTLECOL      m_tAutoBattleCol = {};
 
-    // For.Debug
-public:
-    void                SetEnterAttackHit(_bool is) { m_isEnterAttackHit = is; }
-    void                SetEnterTriggerHit(_bool is) { m_isEnterTriggerHit = is; }
-protected:
-    void                Render_GUI_ForShowBattleColliderHit();
-protected:
-    _bool               m_isEnterAttackHit = { false };
-    _bool               m_isEnterTriggerHit = { false };
 #pragma endregion
 
 protected:
+    ENEMY_CLASS             m_eEnemyClass = { ENEMY_CLASS::NORMAL }; 
     // Status HUD 소멸할때 UI매니저에 보내서 지워야함
     UI_HANDLE               m_hUIEnemyStatus = {};
     // BattleSystem으로 부터 얻어온 Character정보
     vector<BATTLEOBJ_INFO>  m_PlayerCharacterInfos;
     // Target(Player-Character)이 있을 때, Target 사이의 정보 구조체
     TARGETING_INFO          m_tTargetingInfo = {};
-    // 플레이어를 감지하는 사거리 범위(공격용 사거리 혹은 추격용으로 사용)
-    _float                  m_fDetectedRange = { 5.f };
     // 몬스터 스테이터스
     MONSTER_STATUS          m_tStatus = {};
     /* Groggy */
-    _bool                   m_isGroggy = { false };
-    _float                  m_fGroggyDecreaseTime = {};
+    GROGGY_MANAGE           m_tGroggyManage = {};
 
+    ATTACK_SIDE             m_eCurAttackSide = { ATTACK_SIDE::NONE };
     _bool                   m_isOnAttack = { false };
+    _bool                   m_isParryEnable = { false };
+
+    /* Shader Params */
+    _float m_fUseVanish{};
+    _float3 m_vEmissiveColor{};
+    _float m_fEmissiveStrength{};
+    _float3 m_vRimLightColor{};
+    _float m_fRimLightPower{};
+    _float m_fDissolveProgress = 0.f;
+    _float m_fDissolveTilling = 1.f;
+    _float m_fDissolveElapsedTime{};
+    _float m_fDissolveDuration{};
+
+    _float m_fDeathSquenceElapsedTime{};
+    _float m_fDeathSqueneDuration{};
+    vector<_float3> m_EmissiveColors;
+#ifdef _USING_GUI
+    _bool m_isUseInspector = { false };
+#endif // _USING_GUI
 
 
+
+    // 플레이어를 감지하는 사거리 범위(공격용 사거리 혹은 추격용으로 사용)
+    //_float                  m_fDetectedRange = { 5.f };
 protected:
     virtual CGameObject* Clone(INIT_DESC* pArg) PURE;
     virtual void Free() override;

@@ -3,6 +3,10 @@
 #include "OrbitCam.h"
 #include "FreeCam.h"
 #include "SequenceCam.h"
+#include "Player.h"
+#include "Helper_Func.h"
+#include "Character.h"
+#include "GameInstance.h"
 
 NS_BEGIN(Engine)
 class CCamSequencePlayer; class ICameraService; class IObjectService;
@@ -10,11 +14,38 @@ NS_END
 
 NS_BEGIN(Client)
 namespace fs = filesystem;
+class CBattlePlayer; class CFieldCharacter; class CPlayer; class CCharacter; class CBattlePlayer;
 
-class CBattlePlayer; class CFieldCharacter; class CPlayer; 
-
-enum class CamType { None, Free, Orbit, Sequence, End };
+enum class CamType       { None, Free, Orbit, Sequence, End };
 enum class CamReturnMode { None, SnapToEnd, RestorePrev };
+enum class CamSeqType    { BattleIntro, ZeroIntro, Ultimate, End };
+enum class CamEventType  { IntroFinished };
+
+enum class CamShakeType
+{
+    TapSoft, HitLight, HitNormal, HitHeavy, HitCrit,
+    ExplosionSmall, ExplosionBig, ExplosionHuge, ExplosionMega,
+    LandingLight, LandingHeavy, LandingCrush,
+    Dash, Dodge, SprintStep,
+    Parry, GuardBreak, Knockback, Stun,
+    UltimateStart, UltimateImpact, UltimateEnd,
+    EarthquakeShort, EarthquakeLong,
+    Roar1S, Roar15S, Roar2S, Roar25S, Roar4S,
+    End
+};
+
+enum class CamZoomType
+{
+    TapSoft, HitLight, HitNormal, HitHeavy, HitCrit,
+    ExplosionSmall, ExplosionBig, ExplosionHuge, ExplosionMega,
+    LandingLight, LandingHeavy, LandingCrush,
+    Dash, Dodge, SprintStep,
+    Parry, GuardBreak, Knockback, Stun,
+    UltimateStart, UltimateImpact, UltimateEnd,
+    EarthquakeShort, EarthquakeLong,
+    Roar1S, Roar15S, Roar2S, Roar25S, Roar4S,
+    End
+};
 
 struct CamSequenceRequestDesc
 {
@@ -51,7 +82,7 @@ struct CamDirectorPlayingState
     Vector3          prevCamPos{};
     Quaternion       prevCamRot = Quaternion::Identity;
 
-    OrbitCamSnapshot prevOrbit{};
+    OrbitSnapshot    prevOrbit{};
 };
 
 using CamDirectorSeqMap     = unordered_map<string, CamDirectorSeqEntry>;

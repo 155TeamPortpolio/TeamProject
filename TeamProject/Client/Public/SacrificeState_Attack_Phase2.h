@@ -90,6 +90,8 @@ public:
 	static CSacrificeState_Attack_05_Phase2* Create() { return new CSacrificeState_Attack_05_Phase2(); }
 	virtual void Free() override { __super::Free(); }
 
+private:
+	void Update_Effects(CSacrifice* pOwner);
 };
 
 class CSacrificeState_Attack_05_1_Phase2 : public IHState<CSacrifice>
@@ -102,6 +104,9 @@ public:
 public:
 	static CSacrificeState_Attack_05_1_Phase2* Create() { return new CSacrificeState_Attack_05_1_Phase2(); }
 	virtual void Free() override { __super::Free(); }
+
+private:
+	void Update_Effects(CSacrifice* pOwner);
 
 };
 
@@ -140,6 +145,9 @@ public:
 	static CSacrificeState_Attack_Charge_Start_Phase2* Create() { return new CSacrificeState_Attack_Charge_Start_Phase2(); }
 	virtual void Free() override { __super::Free(); }
 
+private:
+	void Update_Effects(CSacrifice* pOwner);
+
 };
 
 class CSacrificeState_Attack_Charge_Loop_Phase2 : public IHState<CSacrifice>
@@ -168,6 +176,9 @@ public:
 public:
 	static CSacrificeState_Attack_Charge_U_Start_Phase2* Create() { return new CSacrificeState_Attack_Charge_U_Start_Phase2(); }
 	virtual void Free() override { __super::Free(); }
+
+private:
+	void Update_Effects(CSacrifice* pOwner);
 
 };
 
@@ -208,6 +219,9 @@ public:
 	static CSacrificeState_Attack_Roar_Phase2* Create() { return new CSacrificeState_Attack_Roar_Phase2(); }
 	virtual void Free() override { __super::Free(); }
 
+private:
+	void Update_Effects(CSacrifice* pOwner);
+
 };
 
 class CSacrificeState_OverDrive_Release_Start_Phase2 : public IHState<CSacrifice>
@@ -220,6 +234,9 @@ public:
 public:
 	static CSacrificeState_OverDrive_Release_Start_Phase2* Create() { return new CSacrificeState_OverDrive_Release_Start_Phase2(); }
 	virtual void Free() override { __super::Free(); }
+
+private:
+	void Update_Effects(CSacrifice* pOwner);
 
 };
 

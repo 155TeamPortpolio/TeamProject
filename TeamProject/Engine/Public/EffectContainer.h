@@ -28,7 +28,7 @@ public:
 public:
 	EFFECT_CONTAINER_CONTEXT& GetEffectContext();
 	void SetLinePoints(_float3 point0, _float3 point1);
-	void AttachBone(class CAnimator3D* pAnimator, const string& boneTag, _fmatrix offsetMatrix = _smatrix::Identity);
+	void AttachBone(class CAnimator3D* pAnimator, const string& boneTag, _fmatrix offsetMatrix = _smatrix::Identity, _bool onlyPosition = false);
 
 public:
 	void Play();
@@ -41,6 +41,7 @@ public:
 	virtual void Free();
 
 protected:
+	_bool m_IsBillBoard = false;
 	_bool m_IsLoop = false;
 	_float m_fDuration{};
 	_float m_fElapsedTime{};
@@ -48,5 +49,7 @@ protected:
 	EFFECT_CONTAINER_CONTEXT m_EffectContext{};
 	vector<class CEffectNode*> m_Nodes;
 
+	/* Attach Bone */
+	_bool m_IsOnlyPosition = false;
 };
 NS_END

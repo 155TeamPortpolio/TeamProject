@@ -1,9 +1,7 @@
 #pragma once
 
 #include "ICameraService.h"
-#include "Camera.h"
-#include "ShakeController.h"
-#include "ZoomController.h"
+#include "CamFXControllers.h"
 
 NS_BEGIN(Engine)
 
@@ -31,35 +29,39 @@ public:
     void     Clear(_float blendTime = 0.25f)                  override;
 
 public:
+    void     RegisterShakePresets(const CamShakePreset* presets, _uint count) override { m_shake.RegisterPresets(presets, count); }
+    void     RegisterZoomPresets(const CamZoomPreset* presets, _uint count)   override { m_zoom.RegisterPresets(presets, count); }
+
+public:
     void     SetShake(_float ampDeg, _float freq, _float dur, _float fadeOutSec = 0.f) override { m_shake.Set(ampDeg, freq, dur, fadeOutSec); }
     void     AddShake(_float ampDeg, _float freq, _float dur, _float fadeOutSec = 0.f) override { m_shake.Add(ampDeg, freq, dur, fadeOutSec); }
     void     ClearShake(_float fadeOutSec = 0.f)                                       override { m_shake.Clear(fadeOutSec); }
 
 public:
-    void     SetZoomPunch(_float amountDeg, _float attackSec = 0.02f, _float outSec = 0.1f) override { m_zoom.SetPunch(amountDeg, attackSec, outSec); }
-    void     AddZoomPunch(_float amountDeg, _float attackSec = 0.02f, _float outSec = 0.1f) override { m_zoom.AddPunch(amountDeg, attackSec, outSec); }
-    void     ClearZoom(_float fadeOutSec = 0.f) override { m_zoom.Clear(fadeOutSec); }
+    void     SetZoomPunch(_float amountDeg, _float attackSec = 0.020f, _float releaseSec = 0.100f) override { m_zoom.SetPunch(amountDeg, attackSec, releaseSec); }
+    void     AddZoomPunch(_float amountDeg, _float attackSec = 0.020f, _float releaseSec = 0.100f) override { m_zoom.AddPunch(amountDeg, attackSec, releaseSec); }
+    void     ClearZoom(_float fadeOutSec = 0.f)                                                         override { m_zoom.Clear(fadeOutSec); }
 
 public:
-    void     SetShake(CamShakeType type, _float strength = 1.f) override { m_shake.Set(type, strength); }
-    void     AddShake(CamShakeType type, _float strength = 1.f) override { m_shake.Add(type, strength); }
+    void     SetShakeType(_uint type, _float strength = 1.f) override { m_shake.Set(type, strength); }
+    void     AddShakeType(_uint type, _float strength = 1.f) override { m_shake.Add(type, strength); }
 
-    void     SetZoom(CamZoomType type, _float strength = 1.f)   override { m_zoom.Set(type, strength); }
-    void     AddZoom(CamZoomType type, _float strength = 1.f)   override { m_zoom.Add(type, strength); }
+    void     SetZoomType(_uint type, _float strength = 1.f)   override { m_zoom.Set(type, strength); }
+    void     AddZoomType(_uint type, _float strength = 1.f)   override { m_zoom.Add(type, strength); }
 
-    void     AddImpact(CamShakeType shakeType, CamZoomType zoomType, _float strength = 1.f) override;
-    void     AddImpact(_uint shakeType = 0u, _uint zoomType = ENUM(CamZoomType::End), _float strength = 1.f) override;
-;
+    void     AddImpact(_uint shakeType = 0u, _uint zoomType = 0u, _float strength = 1.f) override;
+
+public:
     Lens     Get_Lens()       const override;
     Lens     Get_ShadowLens() const override;
 
 public:
-    const Matrix* Get_ViewMatrix()               override { return &main.view; }
-    const Matrix* Get_ProjMatrix()               override { return &main.proj; }
-    const Matrix* Get_InversedViewMatrix()       override { return &main.invView; }
-    const Matrix* Get_InversedProjMatrix()       override { return &main.invProj; }
-    const Vector4 Get_CameraPos()                override { return main.pos; }
-    const _float  Get_Far()                      override { return main.farZ; }
+    const Matrix* Get_ViewMatrix()         override { return &main.view; }
+    const Matrix* Get_ProjMatrix()         override { return &main.proj; }
+    const Matrix* Get_InversedViewMatrix() override { return &main.invView; }
+    const Matrix* Get_InversedProjMatrix() override { return &main.invProj; }
+    const Vector4 Get_CameraPos()          override { return main.pos; }
+    const _float  Get_Far()                override { return main.farZ; }
 
     const Matrix* Get_ShadowViewMatrix()         override { return &shadow.view; }
     const Matrix* Get_ShadowProjMatrix()         override { return &shadow.proj; }
@@ -152,5 +154,6 @@ public:
     static CCameraMgr* Create() { return new CCameraMgr(); }
     void Free() override;
 };
+
 
 NS_END

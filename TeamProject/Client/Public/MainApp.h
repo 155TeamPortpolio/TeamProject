@@ -1,4 +1,4 @@
-#pragma once
+ #pragma once
 #include "Base.h"
 
 #include "CursorController.h"
@@ -36,5 +36,6 @@ private:
 	void Initialize_GlobalPrototype();
 	void Create_GlobalCamObjs();
 	void Create_GlobalPlayer();
+	void Create_GlobalEnviroment();
 };
 

@@ -538,20 +538,23 @@ _bool CHiZ_Culling::BuildOcclusionInput(
 	_uint indexInList,
 	OcclusionInput& outInput)
 {
+	MINMAX_BOX World = localAabbMinMax;
+	World = World.TransformBox_8Corner(Matrix(worldMatrix));
+
 	XMFLOAT3 size{
-		localAabbMinMax.vMax.x - localAabbMinMax.vMin.x,
-		localAabbMinMax.vMax.y - localAabbMinMax.vMin.y,
-		localAabbMinMax.vMax.z - localAabbMinMax.vMin.z
+		World.vMax.x - World.vMin.x,
+		World.vMax.y - World.vMin.y,
+		World.vMax.z - World.vMin.z
 	};
 	XMFLOAT3 center{
-		(localAabbMinMax.vMin.x + localAabbMinMax.vMax.x) * 0.5f,
-		(localAabbMinMax.vMin.y + localAabbMinMax.vMax.y) * 0.5f,
-		(localAabbMinMax.vMin.z + localAabbMinMax.vMax.z) * 0.5f
+		(World.vMin.x + World.vMax.x) * 0.5f,
+		(World.vMin.y + World.vMax.y) * 0.5f,
+		(World.vMin.z + World.vMax.z) * 0.5f
 	};
 	XMFLOAT3 extents{
-		(localAabbMinMax.vMax.x - localAabbMinMax.vMin.x) * 0.5f,
-		(localAabbMinMax.vMax.y - localAabbMinMax.vMin.y) * 0.5f,
-		(localAabbMinMax.vMax.z - localAabbMinMax.vMin.z) * 0.5f
+		(World.vMax.x - World.vMin.x) * 0.5f,
+		(World.vMax.y - World.vMin.y) * 0.5f,
+		(World.vMax.z - World.vMin.z) * 0.5f
 	};
 
 	_float maxAxis = max(size.x, max(size.y, size.z));
@@ -572,9 +575,7 @@ _bool CHiZ_Culling::BuildOcclusionInput(
 			flags |= OCCL_FLAG_RISK_GROUNDCONTACT;
 	}
 
-	BoundingBox localAabb(center, extents);
-	BoundingBox worldAabb;
-	localAabb.Transform(worldAabb, worldMatrix);
+	BoundingBox worldAabb(center, extents);
 
 	XMFLOAT3 corners[8];
 	worldAabb.GetCorners(corners);
@@ -589,26 +590,28 @@ _bool CHiZ_Culling::BuildOcclusionInput(
 	_float maxY = 0.0f;
 
 	_float objMinDepth01 = 1.0f;  // �ʱⰪ�� 1�� (�ָ�)
+	_float objMinViewZ = FLT_MAX;
 	_bool anyValid = false;
 	_uint validCount = 0;
 
 	const _float nearMargin = 1e-5f;
 	const _float clipMargin = 1e-6f;
+	const _float occMaxDistance = min(zFar * 0.90f, 2000.0f); // 필요시 튜닝
 
 	for (int cornerIndex = 0; cornerIndex < 8; ++cornerIndex)
 	{
 		const _vector worldPos = XMLoadFloat3(&corners[cornerIndex]);
 
-		// viewZ üũ (��/����� �ڴ� ����)
 		const _vector viewPos = XMVector3TransformCoord(worldPos, viewMatrix);
 		const _float viewZ = XMVectorGetZ(viewPos);
 		if (viewZ <= nearMargin)
-			continue; // << ������ return false ���µ�, ������ "�ڳ� �ϳ�"�� ����
+			continue;
+
+		objMinViewZ = min(objMinViewZ, viewZ); // << 추가
 
 		const _float depth01 = Clamp01(viewZ / zFar);
 		objMinDepth01 = min(objMinDepth01, depth01);
 
-		// clip -> ndc
 		const _vector clip = XMVector4Transform(XMVectorSetW(worldPos, 1.0f), viewProjMatrix);
 		const _float clipW = XMVectorGetW(clip);
 		if (clipW <= clipMargin)
@@ -630,9 +633,13 @@ _bool CHiZ_Culling::BuildOcclusionInput(
 		++validCount;
 	}
 
-	// ��ȿ �ڳʰ� �ʹ� ������(ī�޶� ��/Ŭ�� ����) �׳� ������Ѷ�
-	// => �ø� �Է��� ������ ����
 	if (!anyValid || validCount < 2)
+		return false;
+
+	if (objMinViewZ == FLT_MAX || objMinViewZ >= occMaxDistance)
+		return false;
+
+	if ((flags & OCCL_FLAG_RISK_FLAT_OR_HUGE) != 0u)
 		return false;
 
 	// ����/�ø�

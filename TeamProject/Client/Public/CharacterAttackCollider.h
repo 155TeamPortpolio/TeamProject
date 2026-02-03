@@ -18,16 +18,14 @@ public:
     void            Update(_float dt) override;
     void            Late_Update(_float dt) override;
     virtual void    Render_GUI() override;
-    virtual void    OnCollisionEnter(CGameObject* pOther) override;
-    virtual void    OnCollisionStay(CGameObject* pOther) override;
-    virtual void    OnCollisionExit(CGameObject* pOther) override;
     virtual void    OnTriggerEnter(CGameObject* pOther) override;
     virtual void    OnTriggerStay(CGameObject* pOther) override;
     virtual void    OnTriggerExit(CGameObject* pOther) override;
 
 public:
-    void Begin_Attack(const HitDesc& hitdesc);
-    void End_Attack();
+    _vector3    Get_PrevPos() { return m_vPrevPos; }
+    void        Begin_Attack(const HitDesc& hitdesc);
+    void        End_Attack();
 
 private:
     _bool   Try_Hit(CGameObject* pTarget);
@@ -42,6 +40,7 @@ private:
     HitDesc m_tHitDesc{};
     _float  m_fTimer = {};
 
+    _vector3 m_vPrevPos;
 
 public:
     static CCharacterAttackCollider* Create();

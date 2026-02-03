@@ -45,6 +45,23 @@ void CUI_FieldHUD::Update(_float dt)
     Get_Component<CObjectContainer>()->UpdateChild(dt);
 }
 
+void CUI_FieldHUD::UI_Active(void* pArg)
+{
+    if (!pArg)
+        return;
+
+    //UI_TRANSITION_DESC* pDesc = static_cast<UI_TRANSITION_DESC*>(pArg);
+    //if (pDesc->isFade)
+    //    Set_Animation(0);
+    //else
+    Set_Alpha(1.f);
+}
+
+void CUI_FieldHUD::UI_DeActive(void* pArg)
+{
+    Set_Alpha(0.f);
+}
+
 void CUI_FieldHUD::Ready_PartObjects()
 {
     //Add_PartObject("Proto_GameObject_FieldHUDAction", "action", &m_handles[ENUM(Child::ACTION)], _float2(1178.f, 655.f));

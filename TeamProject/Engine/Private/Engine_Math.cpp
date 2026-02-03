@@ -52,6 +52,12 @@ ENGINE_DLL _float Math::Clamp01(_float t)
 	return t;
 }
 
+ENGINE_DLL _float Math::PingPong01(_float t)
+{
+	float x = 1.f - t;
+	return (x < 0.5f) ? (x * 2.f) : (2.f - x * 2.f);
+}
+
 ENGINE_DLL Vector3 Math::SeedPhase(_uint& seed)
 {
 	seed = seed * 1664525u + 1013904223u;
@@ -64,6 +70,13 @@ ENGINE_DLL Vector3 Math::SeedPhase(_uint& seed)
 	const _float c = (seed & 1023u) * (6.28318530718f / 1023.f);
 
 	return {a, b, c};
+}
+
+ENGINE_DLL _float Math::MoveTowards(_float cur, _float target, _float maxDelta)
+{
+	const _float d = target - cur;
+	if (fabsf(d) <= maxDelta) return target;
+	return cur + (d > 0.f ? maxDelta : -maxDelta);
 }
 
 ENGINE_DLL _float Math::ApplyEase(EaseType type, _float t)
@@ -325,6 +338,51 @@ ENGINE_DLL _float Math::EaseOutBounce(_float t)
 ENGINE_DLL _float Math::EaseInBounce(_float t)
 {
 	return 1.f - OutBounceLocal(1.f - t);
+}
+
+ENGINE_DLL _vector3 Math::RotateVectorByQuaternion(const _vector3& vec, const _vector4& quat)
+{
+	// vec: (x,y,z), quat: (x,y,z,w)
+	XMVECTOR v = XMVectorSet(vec.x, vec.y, vec.z, 0.f);
+	XMVECTOR q = XMVectorSet(quat.x, quat.y, quat.z, quat.w);
+
+	XMVECTOR r = XMVector3Rotate(v, q);
+
+	_vector3 out;
+	out.x = XMVectorGetX(r);
+	out.y = XMVectorGetY(r);
+	out.z = XMVectorGetZ(r);
+	return out;
+}
+
+ENGINE_DLL _vector3 Math::DampVector( _vector3 curDir,  _vector3 targetDir, _float dt, _float dampSpeed)
+{
+	curDir.y = 0.f;
+	targetDir.y = 0.f;
+
+	if (curDir.Length() <= 1e-6f)
+		return targetDir;
+	if (targetDir.Length() <= 1e-6f)
+		return curDir;
+
+	curDir.Normalize();
+	targetDir.Normalize();
+
+	// 완전 반대(-1) 근처면 lerp가 0으로 가서 튐 -> 그냥 타겟으로 스냅(또는 유지)
+	const _float dot = curDir.Dot(targetDir);
+	if (dot < -0.999f)
+		return targetDir;
+
+	const _float t = 1.f - expf(-dampSpeed * dt);
+
+	_vector3 blended = curDir * (1.f - t) + targetDir * t;
+	blended.y = 0.f;
+
+	if (blended.Length() <= 1e-6f)
+		return targetDir;
+
+	blended.Normalize();
+	return blended;
 }
 
 ENGINE_DLL _float Math::EaseInOutBounce(_float t)

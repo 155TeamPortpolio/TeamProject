@@ -1,13 +1,17 @@
-#include "pch.h"
+      #include "pch.h"
 #include "SacrificeHand.h"
 #include "GameInstance.h"
 #include "Texture.h"
+
+/* Object */
+#include "EffectContainer.h"
 
 /* Component */
 #include "SkeletalModel.h"
 #include "Material.h"
 #include "MaterialInstance.h"
 #include "MaterialData.h"
+#include "ObjectContainer.h"
 #include "Animator3D.h"
 
 /* State */
@@ -54,6 +58,18 @@ HRESULT CSacrificeHand::Initialize(INIT_DESC* pArg)
 	pAnimator->LinkAnimate_Model(G_GlobalLevelKey, "Monster_SacrificeBringerHand.model");
 	pAnimator->Link_MetaData(G_GlobalLevelKey, "Monster_SacrificeBringerHand_Meta.json");
 
+	/* Hand Bubble */
+	auto pObjectContainer = Get_Component<CObjectContainer>();
+	auto pBubble = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+		.Asset("sacrifice_hand_bubble.json")
+		.Build("Sacrifice_Hand_Bubble");
+	//pBubble->Stop();
+	pObjectContainer->Add_Child(pBubble,false);
+
+	_smatrix offsetMatrix = _smatrix::Identity;
+	offsetMatrix.Translation(_vector3(-4.f, 0.f, 0.f));
+	pBubble->AttachBone(pAnimator, "Ctr_Main", offsetMatrix);
+
 	if (FAILED(Initialize_StateMachine()))
 		return E_FAIL;
 
@@ -66,18 +82,25 @@ HRESULT CSacrificeHand::Initialize(INIT_DESC* pArg)
 void CSacrificeHand::Awake()
 {
 	m_fDissolveTilling = 5.f;
+	m_vRimLightColor = _float3(1.f, 0.f, 0.f);
+	m_fRimLightPower = 0.f;
 
 	auto pMaterial = Get_Component<CMaterial>();
 	auto& materialInstances = pMaterial->Get_MaterialInstances();
 	auto dissolveTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, "Dissolve.png");
 
-	for (const auto& instance : materialInstances)
+	for (_uint i = 0; i < materialInstances.size(); ++i)
 	{
-		instance->Set_Param("NoiseTexture", { dissolveTexture->Get_SRV(),"Texture2D",0 });
-		instance->Set_Param("vRimLightColor", { &m_vRimLightColor,"float3",sizeof(_float3) });
-		instance->Set_Param("fRimLightPower", { &m_fRimLightPower,"float",sizeof(_float) });
-		instance->Set_Param("fDissolveProgress", { &m_fDissolveProgress,"float",sizeof(_float) });
-		instance->Set_Param("fDissolveTiling", { &m_fDissolveTilling,"float",sizeof(_float) });
+		/* Ä®¸¸ ¸²¶óÀÌÆ® ¸ÔÀ½ */
+		if (2 == i)
+			materialInstances[i]->Set_Param("fRimLightPower", { &m_fSwordRimLightPower,"float",sizeof(_float) });
+		else
+			materialInstances[i]->Set_Param("fRimLightPower", { &m_fRimLightPower,"float",sizeof(_float) });
+
+		materialInstances[i]->Set_Param("NoiseTexture", { dissolveTexture->Get_SRV(),"Texture2D",0 });
+		materialInstances[i]->Set_Param("vRimLightColor", { &m_vRimLightColor,"float3",sizeof(_float3) });
+		materialInstances[i]->Set_Param("fDissolveProgress", { &m_fDissolveProgress,"float",sizeof(_float) });
+		materialInstances[i]->Set_Param("fDissolveTiling", { &m_fDissolveTilling,"float",sizeof(_float) });
 	}
 }
 
@@ -87,10 +110,10 @@ void CSacrificeHand::Priority_Update(_float dt)
 
 void CSacrificeHand::Update(_float dt)
 {
-	Get_Component<CAnimator3D>()->Update_Animation(dt);
-	m_pStateMachine->Update(dt);
-
 	__super::Update(dt);
+
+	m_pStateMachine->Update(dt);
+	Get_Component<CAnimator3D>()->Update_Animation(dt);
 }
 
 void CSacrificeHand::Late_Update(_float dt)
@@ -133,8 +156,6 @@ void CSacrificeHand::Free()
 void CSacrificeHand::Phase1Attack()
 {
 	m_isAlive = true;
-	SetVisable(true);
-
 	m_AttackBlackBoard.eCurrPattern = PATTERN::PHASE1;
 	m_pStateMachine->Change_State("Attack");
 }
@@ -142,8 +163,6 @@ void CSacrificeHand::Phase1Attack()
 void CSacrificeHand::Phase2Attack()
 {
 	m_isAlive = true;
-	SetVisable(true);
-
 	m_AttackBlackBoard.eCurrPattern = PATTERN::PHASE2;
 	m_pStateMachine->Change_State("Attack");
 }
@@ -151,8 +170,6 @@ void CSacrificeHand::Phase2Attack()
 void CSacrificeHand::OverDrive_Start()
 {
 	m_isAlive = true;
-	SetVisable(true);
-
 	m_AttackBlackBoard.eCurrPattern = PATTERN::OVER_DRIVE_START;
 	m_pStateMachine->Change_State("Attack");
 }
@@ -160,8 +177,6 @@ void CSacrificeHand::OverDrive_Start()
 void CSacrificeHand::OverDrive_Attack1()
 {
 	m_isAlive = true;
-	SetVisable(true);
-
 	m_AttackBlackBoard.eCurrPattern = PATTERN::OVER_DRIVE_ATTACK01;
 	m_pStateMachine->Change_State("Attack");
 }
@@ -169,8 +184,6 @@ void CSacrificeHand::OverDrive_Attack1()
 void CSacrificeHand::OverDrive_Attack2()
 {
 	m_isAlive = true;
-	SetVisable(true);
-
 	m_AttackBlackBoard.eCurrPattern = PATTERN::OVER_DRIVE_ATTACK02;
 	m_pStateMachine->Change_State("Attack");
 }
@@ -178,8 +191,6 @@ void CSacrificeHand::OverDrive_Attack2()
 void CSacrificeHand::OverDrive_Attack3()
 {
 	m_isAlive = true;
-	SetVisable(true);
-
 	m_AttackBlackBoard.eCurrPattern = PATTERN::OVER_DRIVE_ATTACK03;
 	m_pStateMachine->Change_State("Attack");
 }
@@ -189,22 +200,28 @@ void CSacrificeHand::SetVisable(_bool isActive)
 	auto pModel = Get_Component<CSkeletalModel>();
 	_uint iMeshCount = pModel->Get_MeshCount();
 
-	if (isActive)
-	{
-		for (_uint i = 0; i < iMeshCount; ++i)
-			pModel->SetDrawable(i, true);
-	}
-	else
-	{
-		for (_uint i = 0; i < iMeshCount; ++i)
-			pModel->SetDrawable(i, false);
-	}
+	for (_uint i = 0; i < iMeshCount; ++i)
+		pModel->SetDrawable(i, isActive);
 }
 
 void CSacrificeHand::Idle()
 {
 	m_pStateMachine->Change_State("Idle");
 	SetVisable(false);
+}
+
+void CSacrificeHand::Active_Bubble()
+{
+	auto pObjectContainer = Get_Component<CObjectContainer>();
+	auto pBubble = pObjectContainer->Find_ObjectByName("Sacrifice_Hand_Bubble");
+	static_cast<CEffectContainer*>(pBubble)->Play();
+}
+
+void CSacrificeHand::Deactive_Bubble()
+{
+	auto pObjectContainer = Get_Component<CObjectContainer>();
+	auto pBubble = pObjectContainer->Find_ObjectByName("Sacrifice_Hand_Bubble");
+	static_cast<CEffectContainer*>(pBubble)->Stop();
 }
 
 void CSacrificeHand::Set_DissolveState(DISSOLVE_STATE state, _float duration)
@@ -214,7 +231,7 @@ void CSacrificeHand::Set_DissolveState(DISSOLVE_STATE state, _float duration)
 	m_fDissolveElapsedTime = 0.f;
 
 	if (DISSOLVE_STATE::APPEAR == state)
-		m_fDissolveProgress = 1.f;
+		m_fDissolveProgress = 1.1f;
 	else
 		m_fDissolveProgress = 0.f;
 }

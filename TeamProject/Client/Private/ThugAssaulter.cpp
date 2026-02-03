@@ -23,6 +23,7 @@
 #include "ThugAssaulter_Move.h"
 #include "ThugAssaulter_Groggy.h"
 #include "ThugAssaulter_Hit.h"
+#include "ThugAssaulter_Parried.h"
 
 #include "AttackSign.h"
 
@@ -51,6 +52,7 @@ HRESULT CThugAssaulter::Initialize_Prototype()
 	pResourceMgr->Add_ResourcePath("ThugAssaulter.model", "../Bin/Resources/Model/skeletal/Enemy/ThugAssaulter/ThugAssaulter.model");
 	pResourceMgr->Add_ResourcePath("Monster_ThugAssaulter_Meta.json", "../Bin/Resources/Model/skeletal/Enemy/ThugAssaulter/Monster_ThugAssaulter_Meta.json");
 
+	return S_OK;
 }
 
 HRESULT CThugAssaulter::Initialize(INIT_DESC* pArg)
@@ -79,14 +81,12 @@ HRESULT CThugAssaulter::Initialize(INIT_DESC* pArg)
 	if (FAILED(Initialize_StateMachine()))
 		return E_FAIL;
 
-	// 임시 확인용
-	CGameInstance::GetInstance()->Get_GUISystem()->Get_Context()->pSelectedObject = this;
-
 	return S_OK;
 }
 
 void CThugAssaulter::Awake()
 {
+	__super::Awake();
 }
 
 void CThugAssaulter::Priority_Update(_float dt)
@@ -151,11 +151,14 @@ void CThugAssaulter::Render_GUI()
 		ImGui::Text("CaptureDir: %.2f, %.2f, %.2f", m_tRotDir.vDirToLookCapture.x, m_tRotDir.vDirToLookCapture.y, m_tRotDir.vDirToLookCapture.z);
 		ImGui::Text("HP : %d", (_int)m_tStatus.iNowHP);
 		ImGui::Text("Groggy Value : %d", m_tStatus.iGroggyValue);
+		ImGui::Text("Groggy StayTime : %d", m_tGroggyManage.fGroggyStayTime);
 
 		ImGui::BeginDisabled(true);
 		//ImGui::Checkbox(u8"isLookPlayer", &m_isLookPlayer);
-		ImGui::Checkbox("IsGroggy", &m_isGroggy);
+		ImGui::Checkbox("IsGroggy", &m_tStatus.isGroggy);
+		ImGui::Checkbox("ForUI.IsGroggyStay", &m_tStatus.isGroggyStay);
 		ImGui::Checkbox("IsOnAttack", &m_isOnAttack);
+		ImGui::Checkbox("IsParryEnable", &m_isParryEnable);
 		ImGui::EndDisabled();
 
 		ImGui::EndChild();
@@ -215,6 +218,9 @@ void CThugAssaulter::Render_GUI()
 			if (ImGui::Button("Hit"))
 				TakeDamage(DAMAGE_TYPE::NORMAL, 20.f);
 
+			if (ImGui::Button("Parried"))
+				Parried();
+
 			if (ImGui::Button("Execute"))
 				m_tStatus.iNowHP -= m_tStatus.iMaxHP;
 
@@ -237,7 +243,7 @@ void CThugAssaulter::Render_GUI()
 	m_pStateMachine->Render_GUI();
 #pragma endregion
 
-	if (ImGui::TreeNode("BattleSystem TimeScale Check##TimeScaleCheck"))
+	if (ImGui::TreeNode("BattleSystem Evade VFX##EvadeVFX"))
 	{
 		if (ImGui::Button(u8"회피 효과##BattleSystemVFXEvade"))
 			BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::EVADE);
@@ -245,59 +251,71 @@ void CThugAssaulter::Render_GUI()
 
 		ImGui::TreePop();
 	}
-	// BattleSystem 시간 확인용
-	if (ImGui::TreeNode("BattleSystem TimeScale Check##TimeScaleCheck"))
-	{
-		ImGui::BeginChild("##BattleSystemTimeScaleCheck", ImVec2{ 0, childHeight + textLineHeight * 15.f }, true);
-
-		auto pTimeScales = BattleSystem()->GetTimeScales();
-
-		for (_uint i = 0; i < ENUM(CBattleSystem::BATTLE_OBJ_TYPE::ENVOBJECT); i++)
-		{
-			auto tTimeScale = (*pTimeScales)[i];
-
-			if (i == 0)
-				ImGui::Text("TagLayer : PLAYER");
-			else {
-				ImGui::Separator();
-				ImGui::Text("TagLayer : Monster");
-			}
-
-			ImGui::Text("Scale Value : %.2f", tTimeScale.fScaleValue);
-			ImGui::Text("Duration : %.2f", tTimeScale.fDuration);
-			ImGui::Text("Current Pos : %.2f", tTimeScale.fCurPos);
-
-			ImGui::BeginDisabled(true);
-			string tagCheckBox = "isRunning##" + to_string(i) + "Checkbox";
-			ImGui::Checkbox(tagCheckBox.c_str(), &tTimeScale.isRunning);
-			string tagSlide = to_string(i) + "##Playback";
-			ImGui::SliderFloat(tagSlide.c_str(), &tTimeScale.fCurPos, 0.f, tTimeScale.fDuration, "");
-			ImGui::EndDisabled();
-
-		}
-		ImGui::DragFloat("Scale Value##scalevalue", &m_fTestScaleValue, 0.1f);
-		ImGui::DragFloat("Scale Duration##scaleDuration", &m_fTestScaleDuration, 0.1f);
-
-		if (ImGui::Button("Player TimeScale"))
-			BattleSystem()->StartTimeScale(CBattleSystem::BATTLE_OBJ_TYPE::PLAYER, m_fTestScaleDuration, m_fTestScaleValue, 0.f, 0.f);
-
-		ImGui::SameLine(0.f, 10.f);
-		if (ImGui::Button("Monster TimeScale"))
-			BattleSystem()->StartTimeScale(CBattleSystem::BATTLE_OBJ_TYPE::MONSTER, m_fTestScaleDuration, m_fTestScaleValue, 0.f, 0.f);
-
-		ImGui::EndChild();
-		ImGui::TreePop();
-	}
+	//// BattleSystem 시간 확인용
+	//if (ImGui::TreeNode("BattleSystem TimeScale Check##TimeScaleCheck"))
+	//{
+	//	ImGui::BeginChild("##BattleSystemTimeScaleCheck", ImVec2{ 0, childHeight + textLineHeight * 15.f }, true);
+	//
+	//	auto pTimeScales = BattleSystem()->GetTimeScales();
+	//
+	//	for (_uint i = 0; i < ENUM(CBattleSystem::BATTLE_OBJ_TYPE::ENVOBJECT); i++)
+	//	{
+	//		auto tTimeScale = (*pTimeScales)[i];
+	//
+	//		if (i == 0)
+	//			ImGui::Text("TagLayer : PLAYER");
+	//		else {
+	//			ImGui::Separator();
+	//			ImGui::Text("TagLayer : Monster");
+	//		}
+	//
+	//		ImGui::Text("Scale Value : %.2f", tTimeScale.fScaleValue);
+	//		ImGui::Text("Duration : %.2f", tTimeScale.fDuration);
+	//		ImGui::Text("Current Pos : %.2f", tTimeScale.fCurPos);
+	//
+	//		ImGui::BeginDisabled(true);
+	//		string tagCheckBox = "isRunning##" + to_string(i) + "Checkbox";
+	//		ImGui::Checkbox(tagCheckBox.c_str(), &tTimeScale.isRunning);
+	//		string tagSlide = to_string(i) + "##Playback";
+	//		ImGui::SliderFloat(tagSlide.c_str(), &tTimeScale.fCurPos, 0.f, tTimeScale.fDuration, "");
+	//		ImGui::EndDisabled();
+	//
+	//	}
+	//	ImGui::DragFloat("Scale Value##scalevalue", &m_fTestScaleValue, 0.1f);
+	//	ImGui::DragFloat("Scale Duration##scaleDuration", &m_fTestScaleDuration, 0.1f);
+	//
+	//	if (ImGui::Button("Player TimeScale"))
+	//		BattleSystem()->StartTimeScale(CBattleSystem::BATTLE_OBJ_TYPE::PLAYER, m_fTestScaleDuration, m_fTestScaleValue, 0.f, 0.f);
+	//
+	//	ImGui::SameLine(0.f, 10.f);
+	//	if (ImGui::Button("Monster TimeScale"))
+	//		BattleSystem()->StartTimeScale(CBattleSystem::BATTLE_OBJ_TYPE::MONSTER, m_fTestScaleDuration, m_fTestScaleValue, 0.f, 0.f);
+	//
+	//	ImGui::EndChild();
+	//	ImGui::TreePop();
+	//}
 
 	ImGui::PopID();
 }
 
 void CThugAssaulter::OnPooledAcquire(INIT_DESC* pArg)
 {
+	Initialize(pArg);
 }
 
 void CThugAssaulter::OnPooledRelease()
 {
+}
+
+void CThugAssaulter::Parried()
+{
+	if ("Attack" != m_pStateMachine->Get_CurrentStateName() || false == m_isParryEnable)
+		return;
+
+	__super::Parried();
+
+	m_pStateMachine->Change_State("Parried");
+	SetOnAttack(false, ATTACK_SIDE::NONE);
 }
 
 HRESULT CThugAssaulter::Ready_Children(INIT_DESC* pArg)
@@ -356,8 +374,9 @@ void CThugAssaulter::Free()
 	Safe_Release(m_pStateMachine);
 }
 
-void CThugAssaulter::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage)
+void CThugAssaulter::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER charaName)
 {
+	__super::TakeDamage(eDamageType, fDamage, charaName);
 	if (0 >= m_tStatus.iNowHP)
 		return;
 
@@ -388,7 +407,7 @@ void CThugAssaulter::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage)
 			.Loop(false)
 			.Apply();
 
-		m_tStatus.iNowHP -= fDamage * 1.5f;
+		m_tStatus.iNowHP -= fDamage * 1.2f; // 1.5f
 	}
 	else if ("Idle" == m_pStateMachine->Get_CurrentStateName())
 	{
@@ -403,8 +422,8 @@ void CThugAssaulter::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage)
 			.Loop(false)
 			.Apply();
 
-		m_tStatus.iNowHP -= fDamage;
-		m_tStatus.iGroggyValue += 16;
+		m_tStatus.iNowHP -= fDamage * 0.7f;
+		m_tStatus.iGroggyValue += 4;
 	}
 
 	if (0.f > m_tStatus.iNowHP)
@@ -446,6 +465,7 @@ HRESULT CThugAssaulter::Initialize_States()
 	m_pStateMachine->Register_State("Death", CThugAssaulter_Death::Create());
 	m_pStateMachine->Register_State("Groggy", CThugAssaulter_Groggy::Create());
 	m_pStateMachine->Register_State("Hit", CThugAssaulter_Hit::Create());
+	m_pStateMachine->Register_State("Parried", CThugAssaulter_Parried::Create());
 
 	return S_OK;
 }
@@ -511,11 +531,14 @@ void CThugAssaulter::ControlState(const _float dt)
 {
 	if ("Death" != m_pStateMachine->Get_CurrentStateName() &&
 		0 >= m_tStatus.iNowHP)
+	{
+		RequestRemoveOnDeathToBattleSystem();
 		m_pStateMachine->Change_State("Death");
+	}
 
 	if ("Death" != m_pStateMachine->Get_CurrentStateName() &&
 		"Groggy" != m_pStateMachine->Get_CurrentStateName() &&
-		true == m_isGroggy)
+		true == m_tStatus.isGroggy)
 		m_pStateMachine->Change_State("Groggy");
 
 

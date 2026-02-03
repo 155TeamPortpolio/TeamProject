@@ -34,6 +34,8 @@ private: //GUI Func
     void GUI_SetModel(_float fChildHeight);
 
 private: //Model Logic
+    void Load_NewModelMat();
+    void Load_NewMeta();
     void Load_ModelOnce();
     void Load_Resource();
     void Set_Model(string ModelTag, string MaterialTag);
@@ -56,6 +58,8 @@ private:
 
     Matrix testMat;
     _vector3 testVector;
+
+    _float m_fMoveSpeed = 0.f;
 
 public:
     static CAnimModel* Create();

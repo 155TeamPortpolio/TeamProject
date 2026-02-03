@@ -5,6 +5,7 @@
 #include "SkeletalModel.h"
 #include "GameInstance.h"
 #include "EffectContainer.h"
+#include "CamDirector.h"
 
 void CSacrificeState_Born::Enter(CSacrifice* pOwner)
 {
@@ -43,25 +44,59 @@ void CSacrificeState_Born_Phase1::Enter(CSacrifice* pOwner)
 
 void CSacrificeState_Born_Phase1::Update(CSacrifice* pOwner, _float dt)
 {
-	if (IsCrossAnimProgress(0.07f))
-	{
-		_vector3 vPosition = pOwner->Get_Component<CTransform>()->Get_Pos();
-		vPosition.y += 0.5f;
-	
-		auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
-			.Asset("spawn_smoke.json")
-			.Position(vPosition)
-			.Build("SpawnSmoke");
-	
-		CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(effect, { "Test_Level","Effect_Layer" });
-	
-		m_IsEffectSpawn = true;
-	}
-
+	Update_Effects(pOwner);
 }
 
 void CSacrificeState_Born_Phase1::Exit(CSacrifice* pOwner)
 {
+}
+
+void CSacrificeState_Born_Phase1::Update_Effects(CSacrifice* pOwner)
+{
+	auto pTransform = pOwner->Get_Component<CTransform>();
+
+	if (IsCrossAnimProgress(0.07f))
+	{
+		_vector3 vPosition = pOwner->Get_Component<CTransform>()->Get_Pos();
+		vPosition.y += 0.5f;
+
+		auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("spawn_smoke.json")
+			.Position(vPosition)
+			.Build("SpawnSmoke");
+
+		CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(effect, { "Test_Level","Effect_Layer" });
+		CameraManager()->AddImpact(ENUM(CamShakeType::ExplosionBig),ENUM(CamZoomType::ExplosionBig), 2.f);
+
+		m_IsEffectSpawn = true;
+	}
+
+	/* Roar Smoke */
+	if (IsCrossAnimProgress(0.38f))
+	{
+		auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_roar_smoke_down.json")
+			.Build("Sacrifice_Roar_Smoke_Down");
+
+		_smatrix worldMatrix = pTransform->Get_WorldMatrix();
+		_vector3 vWorldPosition = _vector3::Transform(_vector3(0.f, 1.f, 0.f), worldMatrix);
+
+		auto pEffectTransform = effect->Get_Component<CTransform>();
+		pEffectTransform->Set_WorldPos(vWorldPosition);
+
+		auto effect2 = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_roar_smoke_up.json")
+			.Build("Sacrifice_Roar_Smoke_Up");
+
+		_vector3 vWorldPosition2 = _vector3::Transform(_vector3(0.f, 4.f, 0.f), worldMatrix);
+		auto pEffectTransform2 = effect2->Get_Component<CTransform>();
+		pEffectTransform2->Set_WorldPos(vWorldPosition2);
+
+		ObjectManager()->Add_Object(effect, { pOwner->Get_Level(),"Effect_Layer" });
+		ObjectManager()->Add_Object(effect2, { pOwner->Get_Level(),"Effect_Layer" });
+		
+		CameraManager()->AddImpact(ENUM(CamShakeType::Roar25S), ENUM(CamZoomType::Roar25S));
+	}
 }
 
 void CSacrificeState_Born_Phase2::Enter(CSacrifice* pOwner)

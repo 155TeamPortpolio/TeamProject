@@ -64,10 +64,12 @@ CGameObject* CGameObjectBuilder::Build(const string& instanceKey, _uint* id)
 	CGameObject* instance = nullptr;
 	if (m_isFromPool)
 	{
-		instance = ObjectManager()->Acquire(m_CloneDesc);
+		_bool first = {};
+		instance = ObjectManager()->Acquire(m_CloneDesc, m_pObjDesc, first);
 		if (!instance) return nullptr;
 		instance->Set_FromPool(true);
-		instance->OnPooledAcquire(m_pObjDesc);
+		if(!first)
+			instance->OnPooledAcquire(m_pObjDesc);
 	}
 	else{
 		instance = m_pGameInstance->Get_PrototypeMgr()->Clone_Prototype(

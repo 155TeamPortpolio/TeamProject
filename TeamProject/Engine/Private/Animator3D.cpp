@@ -179,7 +179,6 @@ void CAnimator3D::Update_Animation(_float dt)
 	}
 	else /* If Not Exist DynamicBone */
 		m_FinalMatrices = m_CombinedMatrices;
-
 }
 
 SetAnimBuild CAnimator3D::Set_Animation(AnimArg ClipArg)
@@ -374,7 +373,7 @@ _float3 CAnimator3D::Get_RootBoneMoveDelta() const
 {
 	for (auto& Layer : m_AnimLayers)
 		if (Layer.BaseLayer)
-			return Layer.vRootMoveDelta;
+			return Layer.vOutRootMoveDelta;
 
 	return _float3();
 }
@@ -383,7 +382,7 @@ _float4 CAnimator3D::Get_RootBoneQuatDelta() const
 {
 	for (auto& Layer : m_AnimLayers)
 		if (Layer.BaseLayer)
-			return Layer.vRootQuatDelta;
+			return Layer.vOutRootQuatDelta;
 
 	return Quaternion::Identity;
 }
@@ -435,6 +434,74 @@ _bool CAnimator3D::Get_isPause(_uint LayerIndex)
 	if (!isExistLayer(LayerIndex)) return true;
 
 	return m_AnimLayers[LayerIndex].bPause;
+}
+
+_int CAnimator3D::Get_AnimClipCount() const
+{
+	return (_int)m_pAnimClips.size();
+}
+
+string CAnimator3D::Get_AnimClipName(_uint clipIndex) const
+{
+	if (clipIndex >= m_pAnimClips.size()) return "";
+	return m_pAnimClips[clipIndex]->Get_Name();
+}
+
+_float CAnimator3D::Get_TimeSec()
+{
+	if (m_AnimLayers.empty()) return 0.f;
+
+	auto& layer = m_AnimLayers[0];
+	return layer.bBlending ? layer.fBlendTrackPosition : layer.fCurrentTrackPosition;
+}
+
+_float CAnimator3D::Get_DurationSec()
+{
+	const _int cur = Get_CurAnimIndex(0);
+	if (cur < 0) return 0.f;
+
+	return m_pAnimClips[(size_t)cur]->Get_Duration();
+}
+
+void CAnimator3D::Set_TimeSec(_float timeSec)
+{
+	if (m_AnimLayers.empty()) return;
+
+	const _int cur = Get_CurAnimIndex(0);
+	if (cur < 0) return;
+
+	const _float dur = m_pAnimClips[(size_t)cur]->Get_Duration();
+
+	if (timeSec < 0.f) timeSec = 0.f;
+	if (dur > 0.f && timeSec > dur) timeSec = dur;
+
+	auto& layer = m_AnimLayers[0];
+
+	layer.fCurrentTrackPosition = timeSec;
+	layer.fBlendTrackPosition = timeSec;
+	layer.fPrevTrackPosition = timeSec;
+
+	const _bool wasPause = layer.bPause;
+
+	const _vector3    prevRootPos = layer.vPrevRootPos;
+	const _float4     prevRootQuat = layer.vPrevRootQuat;
+	const _vector3    prevMovePos = layer.vPrevMotionBonePos;
+	const _float3     prevMoveDelta = layer.vRootMoveDelta;
+	const _float4     prevQuatDelta = layer.vRootQuatDelta;
+	const _bool       prevWrapped = layer.bWrapped;
+
+	layer.bPause = false;
+	Update_Animation(0.f);
+	layer.bPause = wasPause;
+
+	layer.vPrevRootPos = prevRootPos;
+	layer.vPrevRootQuat = prevRootQuat;
+	layer.vPrevMotionBonePos = prevMovePos;
+	layer.vRootMoveDelta = prevMoveDelta;
+	layer.vRootQuatDelta = prevQuatDelta;
+	layer.bWrapped = prevWrapped;
+
+	Clear_Events();
 }
 
 void CAnimator3D::Set_MotionBone(_int MoveBoneIndex)
@@ -958,6 +1025,150 @@ void CAnimator3D::Animation_Run(ANIM_LAYER& Layer, _float dt)
 	//Update Animation
 	auto& nowClip = m_pAnimClips[Layer.iClipIndex];
 
+	_float playSpeed = Compute_PlaySpeed(Layer, dt);
+
+	//Update TrackPos
+	Layer.fCurrentTrackPosition = nowClip->TranslateAnimateMatrix(
+		Layer.LocalMatrices, Layer.fCurrentTrackPosition,
+		playSpeed, Layer.bLoop, Layer.fEndAt, Layer.fStartAt,
+		&Layer.bWrapped, &Layer.bJumpedAnim,
+		&Layer.bisFinished,
+		&Layer.fProgress,
+		m_EventBus);
+
+	//Reserved Animation Speed
+	Check_ReservedSpeeds(Layer);
+
+	//Bone Extracter
+	if (Layer.BaseLayer) {
+		//Extract RootBone
+		if (-1 != Layer.iRootBoneIndex) {
+			Matrix RootMat = Layer.LocalMatrices[Layer.iRootBoneIndex];
+
+			_vector S, R, T;
+			XMMatrixDecompose(&S, &R, &T, RootMat);
+
+			_vector3 vCurRootPos = T;
+			_vector4 vCurRootQuat = R;
+
+			if (Layer.bJumpedAnim)
+			{
+				Layer.vRootMoveDelta = _vector3::Zero;
+				Layer.vRootQuatDelta = _quaternion::Identity;
+				Layer.bJumpedAnim = false;
+				//Layer.bWrapped = false;
+			}
+			else {
+				Compute_RootMoveDelta(Layer, vCurRootPos);
+				Compute_RootQuatDelta(Layer, vCurRootQuat);
+			}
+
+			//Compute_RootMoveDelta(Layer, vCurRootPos);
+			//Compute_RootQuatDelta(Layer, vCurRootQuat);
+
+			//다음 프레임 대비
+			Layer.vPrevRootPos = vCurRootPos;
+			Layer.vPrevRootQuat = vCurRootQuat;
+
+			//Extract Movebone
+			Extract_MotionBone(Layer);
+		}
+
+		//Extract MoveBone
+		//if (-1 != Layer.iMotionBoneIndex) {
+		//	_float4x4& mat = Layer.LocalMatrices[Layer.iMotionBoneIndex];
+		//
+		//	Layer.vPrevMotionBonePos = _vector3(mat._41, mat._42, mat._43);
+		//	if (hasAxis(Layer.eExtractMoveAxis, AXIS::X)) mat._41 = 0.f;
+		//	if (hasAxis(Layer.eExtractMoveAxis, AXIS::Y)) mat._42 = 0.f;
+		//	if (hasAxis(Layer.eExtractMoveAxis, AXIS::Z)) mat._43 = 0.f;
+		//}
+	}
+}	
+/*-----------------*/
+/*Convert Animation*/
+/*-----------------*/
+void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
+{
+	if (-1 == Layer.iClipIndex) return;
+
+	auto& nowClip = m_pAnimClips[Layer.iClipIndex];
+	auto& nextClip = m_pAnimClips[Layer.iNextClipIndex];
+
+	_float playSpeed = Compute_PlaySpeed(Layer, dt);
+
+	//Update TrackPos
+	if (Layer.bUpdate_PrevClip) {
+		Layer.fCurrentTrackPosition = nowClip->TranslateAnimateMatrix(
+			Layer.LocalMatrices, Layer.fCurrentTrackPosition,
+			playSpeed, Layer.bLoop, Layer.fEndAt, Layer.fStartAt,
+			&Layer.bWrapped, &Layer.bJumpedAnim,
+			&Layer.bisFinished,
+			nullptr,
+			m_EventBus);
+	}
+
+	if (Layer.bUpdate_NewClip) {
+		Layer.fBlendTrackPosition = nextClip->TranslateAnimateMatrix(
+			Layer.BlendMatrices, Layer.fBlendTrackPosition,
+			playSpeed, Layer.bLoop, Layer.fEndAt, Layer.fStartAt,
+			&Layer.bWrapped, &Layer.bJumpedAnim,
+			&Layer.bisFinished,
+			&Layer.fProgress,
+			m_EventBus);
+	}
+
+	//Reserved Speed
+	Check_ReservedSpeeds(Layer);
+
+	//Bone Extracter
+	if (Layer.BaseLayer) {
+		//Extract RootBone
+		if (-1 != Layer.iRootBoneIndex) {
+			Matrix RootMat = Layer.BlendMatrices[Layer.iRootBoneIndex];
+
+			_vector S, R, T;
+			XMMatrixDecompose(&S, &R, &T, RootMat);
+
+			Vector3 vCurRootPos = T;
+			Vector4 vCurRootQuat = R;
+
+			if (Layer.bJumpedAnim)
+			{
+				Layer.vRootMoveDelta = _vector3::Zero;
+				Layer.vRootQuatDelta = _quaternion::Identity;
+				Layer.bJumpedAnim = false;
+				//Layer.bWrapped = false;
+			}
+			else {
+				Compute_RootMoveDelta(Layer, vCurRootPos);
+				Compute_RootQuatDelta(Layer, vCurRootQuat);
+			}
+
+			//다음 프레임 대비
+			Layer.vPrevRootPos = vCurRootPos;
+			Layer.vPrevRootQuat = vCurRootQuat;
+
+			Extract_MotionBone(Layer);
+		}
+
+		//Extract MoveBone
+		//if (-1 != Layer.iMotionBoneIndex) {
+		//	_float4x4& mat = Layer.BlendMatrices[Layer.iMotionBoneIndex];
+		//
+		//	Layer.vPrevMotionBonePos = _float3(mat._41, mat._42, mat._43);
+		//	if (hasAxis(Layer.eExtractMoveAxis, AXIS::X)) mat._41 = 0.f;
+		//	if (hasAxis(Layer.eExtractMoveAxis, AXIS::Y)) mat._42 = 0.f;
+		//	if (hasAxis(Layer.eExtractMoveAxis, AXIS::Z)) mat._43 = 0.f;
+		//}
+	}
+
+	//Animation Blend
+	Compute_ClipConvert(Layer, dt);
+}
+
+_float CAnimator3D::Compute_PlaySpeed(ANIM_LAYER& Layer, _float dt)
+{
 	Layer.fAppliedAnimSpeed = Layer.fAnimSpeed;
 
 	//Calc Animation Speed
@@ -990,183 +1201,11 @@ void CAnimator3D::Animation_Run(ANIM_LAYER& Layer, _float dt)
 		}
 	}
 
-	_float playSpeed = dt * Layer.fAppliedAnimSpeed;
+	return dt * Layer.fAppliedAnimSpeed;
+}
 
-	//Update TrackPos
-	Layer.fCurrentTrackPosition = nowClip->TranslateAnimateMatrix(
-		Layer.LocalMatrices, Layer.fCurrentTrackPosition,
-		playSpeed, Layer.bLoop, Layer.fEndAt, Layer.fStartAt,
-		&Layer.bWrapped,
-		&Layer.bisFinished,
-		&Layer.fProgress,
-		m_EventBus);
-
-	//Reserved Animation Speed
-	if (!Layer.ReservedSpeeds.empty() && Layer.fProgress > Layer.ReservedSpeeds.front().Start) {
-		auto Reserve = Layer.ReservedSpeeds.front();
-		Layer.fStartProgress = Reserve.Start;
-		Layer.fEndProgress = Reserve.End;
-		Layer.fTargetSpeed = Reserve.TargetSpeed;
-		Layer.ePlayEaseType = Reserve.Ease;
-		
-		Layer.fAnimSpeed = Layer.fAppliedAnimSpeed;
-		
-		Layer.ReservedSpeeds.pop();
-		Layer.isUpdateByTime = true;
-	}
-
-	//Bone Extracter
-	if (Layer.BaseLayer) {
-		//Extract RootBone
-		if (-1 != Layer.iRootBoneIndex) {
-			Matrix RootMat = Layer.LocalMatrices[Layer.iRootBoneIndex];
-
-			_vector S, R, T;
-			XMMatrixDecompose(&S, &R, &T, RootMat);
-
-			_vector3 vCurRootPos = T;
-			_vector4 vCurRootQuat = R;
-
-			if (Layer.bWrapped) { //Roop 
-				_vector3 vStartPos;
-				if (Layer.fStartAt == 0.f)
-					vStartPos = m_pAnimClips[Layer.iClipIndex]->Get_StartKeyFrameByBoneIndex(Layer.iRootBoneIndex).vTranslation;
-				else
-					m_pAnimClips[Layer.iClipIndex]->Sample_KeyFrameByBoneIndex(Layer.iRootBoneIndex, Layer.fStartAt, nullptr, nullptr, &vStartPos);
-
-				Layer.vRootMoveDelta = (Layer.vRootEndPos - Layer.vPrevRootPos) + (vCurRootPos - vStartPos);
-				Layer.bWrapped = false;
-			}
-			else 
-				Layer.vRootMoveDelta = vCurRootPos - Layer.vPrevRootPos;
-
-			_vector quatDeltaLocal =
-				XMQuaternionNormalize(XMQuaternionMultiply(
-					vCurRootQuat, XMQuaternionInverse(Layer.vPrevRootQuat)));
-
-			// --- 위치(점) 변환: w = 1 ---
-			_vector pos = XMVectorSet(Layer.vRootMoveDelta.x, Layer.vRootMoveDelta.y, Layer.vRootMoveDelta.z, 1.0f);
-			_vector posT = XMVector4Transform(pos, m_PreTransform);
-
-			Vector3 vPosOut;
-			vPosOut.x = XMVectorGetX(posT);
-			vPosOut.y = XMVectorGetY(posT);
-			vPosOut.z = XMVectorGetZ(posT);
-			Layer.vRootMoveDelta = vPosOut;
-
-			// --- 회전(컨주게이션) ---
-			_vector qCur = quatDeltaLocal;
-			//프리트랜스폼 이동값 제거
-			_matrix pRot = m_PreTransform;
-			pRot.r[3] = XMVectorSet(0, 0, 0, 1);
-			//프리트랜스폼 회전 매트릭스 생성
-			_vector qP = XMQuaternionRotationMatrix(pRot);
-			//실질적으로 사용할 수 있는 회전델타로 변환 
-			_vector quatDeltaOut =
-				XMQuaternionNormalize(XMQuaternionMultiply(
-						qP,
-						XMQuaternionMultiply(quatDeltaLocal, XMQuaternionInverse(qP))
-					)
-				);
-			XMStoreFloat4(&Layer.vRootQuatDelta, quatDeltaOut);
-
-			//다음 프레임 대비
-			Layer.vPrevRootPos = vCurRootPos;
-			Layer.vPrevRootQuat = vCurRootQuat;
-
-			//Extract Movebone
-			if (-1 != Layer.iMotionBoneIndex) {
-				Matrix MotionMat = Layer.LocalMatrices[Layer.iMotionBoneIndex];
-				MotionMat.Translation(MotionMat.Translation() - vCurRootPos);
-
-				// 회전 상쇄: 모션본에서 루트의 "현재 회전" 제거
-				_vector invCurRootQuat = XMQuaternionInverse(vCurRootQuat);
-				_matrix invCurRootRot = XMMatrixRotationQuaternion(invCurRootQuat);
-
-				// 곱 순서는 엔진 규약에 따라 둘 중 하나가 맞음
-				MotionMat = MotionMat * invCurRootRot;
-				// 상쇄한 매트릭스 저장
-				Layer.LocalMatrices[Layer.iMotionBoneIndex] = MotionMat;
-			}
-		}
-
-		//Extract MoveBone
-		if (-1 != Layer.iMotionBoneIndex) {
-			_float4x4& mat = Layer.LocalMatrices[Layer.iMotionBoneIndex];
-
-			Layer.vPrevMotionBonePos = _vector3(mat._41, mat._42, mat._43);
-			if (hasAxis(Layer.eExtractMoveAxis, AXIS::X)) mat._41 = 0.f;
-			if (hasAxis(Layer.eExtractMoveAxis, AXIS::Y)) mat._42 = 0.f;
-			if (hasAxis(Layer.eExtractMoveAxis, AXIS::Z)) mat._43 = 0.f;
-		}
-	}
-}	
-/*-----------------*/
-/*Convert Animation*/
-/*-----------------*/
-void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
+void CAnimator3D::Check_ReservedSpeeds(ANIM_LAYER& Layer)
 {
-	if (-1 == Layer.iClipIndex) return;
-
-	auto& nowClip = m_pAnimClips[Layer.iClipIndex];
-	auto& nextClip = m_pAnimClips[Layer.iNextClipIndex];
-
-	//Calc Animation Speed;
-	Layer.fAppliedAnimSpeed = Layer.fAnimSpeed;
-
-	if (EaseType::None != Layer.ePlayEaseType) {
-		if (Layer.isUpdateByTime) {
-			//Change speed by time
-			Layer.fEaseElapsed += dt;
-
-			_float t = min(Layer.fEaseElapsed / Layer.fEaseDuration, 1.f);
-			_float Ease = Math::ApplyEase(Layer.ePlayEaseType, t);
-			Layer.fAppliedAnimSpeed = Math::Lerp(Layer.fAnimSpeed, Layer.fTargetSpeed, Ease);
-
-			if (1.f <= t) {
-				Layer.fAnimSpeed = Layer.fAppliedAnimSpeed;
-				Layer.ePlayEaseType = EaseType::None;
-			}
-		}
-		else {
-			//Change speed by Progress
-			_float percent = (Layer.fProgress - Layer.fStartProgress) / (Layer.fEndProgress - Layer.fStartProgress);
-			_float t = min(percent, 1.f);
-			_float Ease = Math::ApplyEase(Layer.ePlayEaseType, t);
-			Layer.fAppliedAnimSpeed = Math::Lerp(Layer.fAnimSpeed, Layer.fTargetSpeed, Ease);
-
-			if (1.f <= t) {
-				Layer.fAnimSpeed = Layer.fAppliedAnimSpeed;
-				Layer.ePlayEaseType = EaseType::None;
-				Layer.isUpdateByTime = false;
-			}
-		}
-	}
-
-	_float playSpeed = dt * Layer.fAppliedAnimSpeed;
-
-	//Update TrackPos
-	if (Layer.bUpdate_PrevClip) {
-		Layer.fCurrentTrackPosition = nowClip->TranslateAnimateMatrix(
-			Layer.LocalMatrices, Layer.fCurrentTrackPosition,
-			playSpeed, Layer.bLoop, Layer.fEndAt, Layer.fStartAt,
-			&Layer.bWrapped,
-			&Layer.bisFinished,
-			nullptr,
-			m_EventBus);
-	}
-
-	if (Layer.bUpdate_NewClip) {
-		Layer.fBlendTrackPosition = nextClip->TranslateAnimateMatrix(
-			Layer.BlendMatrices, Layer.fBlendTrackPosition,
-			playSpeed, Layer.bLoop, Layer.fEndAt, Layer.fStartAt,
-			&Layer.bWrapped,
-			&Layer.bisFinished,
-			&Layer.fProgress,
-			m_EventBus);
-	}
-
-	//Reserved Speed
 	if (!Layer.ReservedSpeeds.empty() && Layer.fProgress > Layer.ReservedSpeeds.front().Start) {
 		auto Reserve = Layer.ReservedSpeeds.front();
 		Layer.fStartProgress = Reserve.Start;
@@ -1179,95 +1218,55 @@ void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
 		Layer.ReservedSpeeds.pop();
 		Layer.isUpdateByTime = true;
 	}
+}
 
-	//Bone Extracter
-	if (Layer.BaseLayer) {
-		//Extract RootBone
-		if (-1 != Layer.iRootBoneIndex) {
-			Matrix RootMat = Layer.BlendMatrices[Layer.iRootBoneIndex];
+void CAnimator3D::Compute_RootMoveDelta(ANIM_LAYER& Layer, _vector3& curPos)
+{
+	if (Layer.bWrapped) { //Roop 
+		_vector3 vStartPos;
 
-			_vector S, R, T;
-			XMMatrixDecompose(&S, &R, &T, RootMat);
+		if (Layer.fStartAt == 0.f)
+			vStartPos = m_pAnimClips[Layer.iClipIndex]->Get_StartKeyFrameByBoneIndex(Layer.iRootBoneIndex).vTranslation;
+		else
+			m_pAnimClips[Layer.iClipIndex]->Sample_KeyFrameByBoneIndex(Layer.iRootBoneIndex, Layer.fStartAt, nullptr, nullptr, &vStartPos);
 
-			Vector3 vCurRootPos = T;
-			Vector4 vCurRootQuat = R;
-
-			if (Layer.bWrapped) { //Roop 
-				_vector3 vStartPos;
-				if (Layer.fStartAt == 0.f)
-					vStartPos = m_pAnimClips[Layer.iClipIndex]->Get_StartKeyFrameByBoneIndex(Layer.iRootBoneIndex).vTranslation;
-				else
-					m_pAnimClips[Layer.iClipIndex]->Sample_KeyFrameByBoneIndex(Layer.iRootBoneIndex, Layer.fStartAt, nullptr, nullptr, &vStartPos);
-
-
-				Layer.vRootMoveDelta = (Layer.vRootEndPos - Layer.vPrevRootPos) + (vCurRootPos - vStartPos);
-				Layer.bWrapped = false;
-			}
-			else
-				Layer.vRootMoveDelta = vCurRootPos - Layer.vPrevRootPos;
-
-			_vector quatDeltaLocal =
-				XMQuaternionNormalize(XMQuaternionMultiply(
-					vCurRootQuat, XMQuaternionInverse(Layer.vPrevRootQuat)));
-
-			// --- 위치(점) 변환: w = 1 ---
-			_vector pos = XMVectorSet(Layer.vRootMoveDelta.x, Layer.vRootMoveDelta.y, Layer.vRootMoveDelta.z, 1.0f);
-			_vector posT = XMVector4Transform(pos, m_PreTransform);
-
-			Vector3 vPosOut;
-			vPosOut.x = XMVectorGetX(posT);
-			vPosOut.y = XMVectorGetY(posT);
-			vPosOut.z = XMVectorGetZ(posT);
-			Layer.vRootMoveDelta = vPosOut;
-
-			// --- 회전(컨주게이션) ---
-			_vector qCur = quatDeltaLocal;
-			//프리트랜스폼 이동값 제거
-			_matrix pRot = m_PreTransform;
-			pRot.r[3] = XMVectorSet(0, 0, 0, 1);
-			//프리트랜스폼 회전 매트릭스 생성
-			_vector qP = XMQuaternionRotationMatrix(pRot);
-			//실질적으로 사용할 수 있는 회전델타로 변환 
-			_vector quatDeltaOut =
-				XMQuaternionNormalize(XMQuaternionMultiply(
-					qP,
-					XMQuaternionMultiply(quatDeltaLocal, XMQuaternionInverse(qP))
-				)
-				);
-			XMStoreFloat4(&Layer.vRootQuatDelta, quatDeltaOut);
-
-			//다음 프레임 대비
-			Layer.vPrevRootPos = vCurRootPos;
-			Layer.vPrevRootQuat = vCurRootQuat;
-
-			//Extract Movebone
-			if (-1 != Layer.iMotionBoneIndex) {
-				Matrix MotionMat = Layer.LocalMatrices[Layer.iMotionBoneIndex];
-				MotionMat.Translation(MotionMat.Translation() - vCurRootPos);
-
-				// 회전 상쇄: 모션본에서 루트의 "현재 회전" 제거
-				_vector invCurRootQuat = XMQuaternionInverse(vCurRootQuat);
-				_matrix invCurRootRot = XMMatrixRotationQuaternion(invCurRootQuat);
-
-				// 곱 순서는 엔진 규약에 따라 둘 중 하나가 맞음
-				MotionMat = MotionMat * invCurRootRot;
-				// 상쇄한 매트릭스 저장
-				Layer.LocalMatrices[Layer.iMotionBoneIndex] = MotionMat;
-			}
-		}
-
-		//Extract MoveBone
-		if (-1 != Layer.iMotionBoneIndex) {
-			_float4x4& mat = Layer.BlendMatrices[Layer.iMotionBoneIndex];
-
-			Layer.vPrevMotionBonePos = _float3(mat._41, mat._42, mat._43);
-			if (hasAxis(Layer.eExtractMoveAxis, AXIS::X)) mat._41 = 0.f;
-			if (hasAxis(Layer.eExtractMoveAxis, AXIS::Y)) mat._42 = 0.f;
-			if (hasAxis(Layer.eExtractMoveAxis, AXIS::Z)) mat._43 = 0.f;
-		}
+		Layer.vRootMoveDelta = (Layer.vRootEndPos - Layer.vPrevRootPos) + (curPos - vStartPos);
 	}
+	else
+		Layer.vRootMoveDelta = curPos - Layer.vPrevRootPos;
 
-	//Animation Blend
+	//PreTransform
+	Layer.vOutRootMoveDelta = XMVector4Transform(Layer.vRootMoveDelta, m_PreTransform);
+
+	if (Layer.bNoRootMoveDelta)
+		Layer.vOutRootMoveDelta = _vector3{};
+}
+
+void CAnimator3D::Compute_RootQuatDelta(ANIM_LAYER& Layer, _vector4& curQuat)
+{
+	_quaternion quatDeltaLocal = XMQuaternionNormalize(XMQuaternionMultiply(curQuat, XMQuaternionInverse(Layer.vPrevRootQuat)));
+
+	//프리트랜스폼 이동값 제거
+	Matrix pRot = m_PreTransform;
+	pRot.Translation(_vector3::Zero);
+
+	//프리트랜스폼 회전 매트릭스 생성
+	_quaternion qP = _quaternion::CreateFromRotationMatrix(pRot);
+
+	//실질적으로 사용할 수 있는 회전델타로 변환 
+	_vector quatDeltaOut =
+		XMQuaternionNormalize(XMQuaternionMultiply(
+			qP,
+			XMQuaternionMultiply(quatDeltaLocal, XMQuaternionInverse(qP))
+		)
+		);
+
+	//PreTransform
+	XMStoreFloat4(&Layer.vOutRootQuatDelta, quatDeltaOut);
+}
+
+void CAnimator3D::Compute_ClipConvert(ANIM_LAYER& Layer, _float dt)
+{
 	Layer.fBlendElapsed += dt;
 	_float fBlendWeight = Math::ApplyEase(Layer.eBlendEaseType, Layer.fBlendElapsed / Layer.fBlendDuration);
 
@@ -1277,6 +1276,7 @@ void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
 	//Convert End
 	if (Layer.fBlendDuration < Layer.fBlendElapsed) {
 		Layer.bBlending = false;
+		Layer.bNoRootMoveDelta = false;
 		Layer.bKeepTrackPos = false;
 		Layer.bIgnoreRotation = false;
 
@@ -1286,7 +1286,24 @@ void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
 		Layer.fBlendElapsed = 0.f;
 		Layer.fBlendDuration = 0.f;
 
-		Layer.LocalMatrices = Layer.FinalLocalMatrices;			
+		Layer.LocalMatrices = Layer.FinalLocalMatrices;
+	}
+}
+
+void CAnimator3D::Extract_MotionBone(ANIM_LAYER& Layer)
+{
+	if (-1 != Layer.iMotionBoneIndex) {
+		Matrix MotionMat = Layer.LocalMatrices[Layer.iMotionBoneIndex];
+		MotionMat.Translation(MotionMat.Translation() - Layer.vPrevRootPos);
+
+		// 회전 상쇄: 모션본에서 루트의 "현재 회전" 제거
+		_vector invCurRootQuat = XMQuaternionInverse(Layer.vPrevRootQuat);
+		_matrix invCurRootRot = XMMatrixRotationQuaternion(invCurRootQuat);
+
+		// 곱 순서는 엔진 규약에 따라 둘 중 하나가 맞음
+		MotionMat = MotionMat * invCurRootRot;
+		// 상쇄한 매트릭스 저장
+		Layer.LocalMatrices[Layer.iMotionBoneIndex] = MotionMat;
 	}
 }
 
@@ -1372,9 +1389,9 @@ void CAnimator3D::Update_Layers(_float dt)
 
 	for (auto& Layer : m_AnimLayers) {
 		if (Layer.bPause) continue;
-		if (Layer.fLayerWeight <= 0) continue;
 		if (-1 == Layer.iClipIndex) continue;
-	
+		if (Layer.isEndLayerBlended()) continue;
+
 		if (Layer.bBlending)
 			Animation_Convert(Layer, dt);
 		else
@@ -1387,15 +1404,17 @@ void CAnimator3D::Update_Layers(_float dt)
 void CAnimator3D::BuildLocal(_float dt)
 {
 	for (auto& Layer : m_AnimLayers) {
-		if (Layer.fLayerWeight <= 0) continue;
+		if (Layer.isEndLayerBlended()) continue;
 
-		if (EaseType::None != Layer.eLayerEaseType) {
-			_float Ease = 0.f;
-			Layer.fLayerWeightElapsed += dt;
+		if (0.f <= Layer.fLayerWeightDuration) {
+			if (EaseType::None != Layer.eLayerEaseType) {
+				_float Ease = 0.f;
+				Layer.fLayerWeightElapsed += dt;
 
-			_float t = min(Layer.fLayerWeightElapsed / Layer.fLayerWeightDuration, 1.f);
-			Ease = Math::ApplyEase(Layer.eLayerEaseType, t);
-			Layer.fLayerWeight = Math::Lerp(Layer.fLayerWeight, Layer.fTargetLayerWeight, Ease);
+				_float t = min(Layer.fLayerWeightElapsed / Layer.fLayerWeightDuration, 1.f);
+				Ease = Math::ApplyEase(Layer.eLayerEaseType, t);
+				Layer.fLayerWeight = Math::Lerp(Layer.fLayerWeight, Layer.fTargetLayerWeight, Ease);
+			}
 		}
 
 		switch (Layer.eLayerType)
@@ -1489,6 +1508,7 @@ void CAnimator3D::BuildDynamicBone()
 		}
 	}
 }
+
 #pragma region GUI
 void CAnimator3D::Render_GUI()
 {
@@ -1662,6 +1682,9 @@ void CAnimator3D::GUI_SelectAnim()
 	ImGui::EndChild();
 }
 
+#pragma endregion
+
+#pragma region IKBone
 void CAnimator3D::Update_IK(_float dt)
 {
 	for (auto& chain : m_IKChains)

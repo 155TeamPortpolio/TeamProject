@@ -36,11 +36,26 @@ HRESULT CForwardRenderer::Initialize(CTarget_Manager* pTargetManager, CPipeLine*
 	return S_OK;
 }
 
+CRenderer* CForwardRenderer::GetRenderer(RENDERER_TYPE eType)
+{
+	if (eType == RENDERER_TYPE::STATIC)
+		return dynamic_cast<CRenderer*>(m_pStaticRenderer);
+	if (eType == RENDERER_TYPE::SKINNED)
+		return dynamic_cast<CRenderer*>(m_pSkinnedRenderer);
+	return nullptr;
+}
+
+void CForwardRenderer::Set_GlitchDesc(GLITCH_DESC desc)
+{
+	m_pSkinnedRenderer->Set_GlitchDesc(desc);
+}
+
 HRESULT CForwardRenderer::Render_Priority(PriorityPass* pPriorityPass)
 {
+	
 	m_pPipeLine->Update_FrameBuffer(m_pContext);
 	m_pPipeLine->Update_Frustum();
-
+	
 	if (FAILED(m_pTargetManager->Begin_MRT("MRT_Final"))) return E_FAIL;
 	pPriorityPass->Execute(m_pContext, this);
 
@@ -147,6 +162,19 @@ HRESULT CForwardRenderer::Render_OutLine()
 	return S_OK;
 }
 
+HRESULT CForwardRenderer::Render_Vanish()
+{
+	m_pSkinnedRenderer->Render_Vanish_Noise();
+	return S_OK;
+}
+
+HRESULT CForwardRenderer::Render_MotionBlur()
+{
+	m_pSkinnedRenderer->Process_MotionBlurQueue();
+	m_pSkinnedRenderer->Render_MotionBlur_Noise();
+	return S_OK;
+}
+
 HRESULT CForwardRenderer::Render_Blended(BlendedPass* pBlendPass)
 {
 	ID3D11DepthStencilView* pDeferredDSV =
@@ -170,7 +198,7 @@ HRESULT CForwardRenderer::Render_NonLight(NonLightPass* pNonLightPass)
 {
 	ID3D11DepthStencilView* pDeferredDSV =
 		m_pTargetManager->Get_MTR_DSV("MRT_Deferred_Skinned");
-
+	
 	ID3D11RenderTargetView* pPrevRTV = { nullptr };
 	ID3D11DepthStencilView* pPrevDSV = { nullptr };
 	m_pContext->OMGetRenderTargets(1, &pPrevRTV, &pPrevDSV);
@@ -178,7 +206,7 @@ HRESULT CForwardRenderer::Render_NonLight(NonLightPass* pNonLightPass)
 	pNonLightPass->Execute(m_pContext, this);
 	ID3D11RenderTargetView* pRTVs[8] = { pPrevRTV };
 	m_pContext->OMSetRenderTargets(8, pRTVs, pPrevDSV);
-
+	
 	Safe_Release(pPrevRTV);
 	Safe_Release(pPrevDSV);
 
@@ -198,7 +226,7 @@ HRESULT CForwardRenderer::Render_Combined()
 
 	m_pTargetManager->Bind_Target("Target_Combined_SkinnedMesh", m_pShader, "SkinnedCombinedTexture");
 	m_pTargetManager->Bind_Target("Target_Combined_StaticMesh", m_pShader, "StaticCombinedTexture");
-	m_pTargetManager->Bind_Target("Target_Combined_Effect", m_pShader, "EffectCombinedTexture");
+	m_pTargetManager->Bind_Target("Target_VanishNoise", m_pShader, "VanishNoiseTexture");
 	m_pTargetManager->Bind_Target("Target_DiffuseUI", m_pShader, "UICombinedTexture");
 
 	Bind_WorldMatrix();
@@ -222,9 +250,15 @@ void CForwardRenderer::Add_OutLineCommand(const OUTLINE_COMMAND& command)
 	m_pSkinnedRenderer->Add_OutLineCommand(command);
 }
 
+void CForwardRenderer::Add_MotionBlurCommand(const MOTIONBLUR_COMMAND& command)
+{
+	m_pSkinnedRenderer->Add_MotionBlurCommand(command);
+}
+
 void CForwardRenderer::Update(_float dt)
 {
 	m_fStaticUpdateTimer -= dt;
+	m_pSkinnedRenderer->Update(dt);
 }
 
 void CForwardRenderer::SetRimLightMode(RIMLIGHT eMode)

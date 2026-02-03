@@ -69,6 +69,9 @@ HRESULT CPlayer::Initialize(INIT_DESC* pArg)
 
 void CPlayer::Awake()
 {
+	//First Setting Denny
+	_uint Denny = 10000;
+	RuntimeBucket().Int64.Set(PersistScope::SaveSlot, "Denny", Denny);
 }
 
 void CPlayer::Priority_Update(_float dt)
@@ -93,6 +96,28 @@ void CPlayer::Late_Update(_float dt)
 
 	if (m_ePlayerType == PLAYER::BATTLE) m_pBattlePlayer->Late_Update(dt);
 	else m_pFieldPlayer->Late_Update(dt);
+}
+
+void CPlayer::Lock_Input()
+{
+	if (m_ePlayerType == PLAYER::END) return;
+
+	if (m_ePlayerType == PLAYER::BATTLE) 
+		m_pBattlePlayer->Lock_Input();
+
+	if (m_ePlayerType == PLAYER::FIELD)
+		m_pFieldPlayer->Lock_Input();
+}
+
+void CPlayer::Unlock_Input()
+{
+	if (m_ePlayerType == PLAYER::END) return;
+
+	if (m_ePlayerType == PLAYER::BATTLE)
+		m_pBattlePlayer->UnLock_Input();
+
+	if (m_ePlayerType == PLAYER::FIELD)
+		m_pFieldPlayer->UnLock_Input();
 }
 
 void CPlayer::Render_GUI()

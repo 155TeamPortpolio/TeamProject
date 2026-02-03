@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "OfficeMeow.h"
 
 #include "GameInstance.h"
@@ -25,14 +25,22 @@ COfficeMeow::COfficeMeow(const COfficeMeow& rhs)
 {
 }
 
+void COfficeMeow::Execute()
+{
+	UI_DIALOGUE_REQUEST_DESC desc;
+	desc.strDialogueID = m_DiagloueData.StartDialogueID;
+	desc.iSequenceID = m_iNextSequceID;
+	EventSystem()->Broadcast<UI_DIALOGUE_REQUEST_DESC>({ desc });
+}
+
 HRESULT COfficeMeow::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
 
 	auto pResource = ResourceManager();
-	pResource->Add_ResourcePath("NPC_OfficerMeowji.model", "../Bin/Resources/Model/skeletal/NPC/OfficeMeowji/NPC_OfficerMeowji.model");
-	pResource->Add_ResourcePath("NPC_OfficerMeowji.mat", "../Bin/Resources/Model/skeletal/NPC/OfficeMeowji/NPC_OfficerMeowji.mat");
-	pResource->Add_ResourcePath("NPC_Male_OfficerMeowji_Meta.json", "../Bin/Resources/Model/skeletal/NPC/OfficeMeowji/NPC_Male_OfficerMeowji_Meta.json");
+	pResource->Add_ResourcePath("NPC_OfficerMeowji.model", "../Bin/Resources/Global/NPC/OfficeMeowji/NPC_OfficerMeowji.model");
+	pResource->Add_ResourcePath("NPC_OfficerMeowji.mat", "../Bin/Resources/Global/NPC/OfficeMeowji/NPC_OfficerMeowji.mat");
+	pResource->Add_ResourcePath("NPC_Male_OfficerMeowji_Meta.json", "../Bin/Resources/Global/NPC/OfficeMeowji/NPC_Male_OfficerMeowji_Meta.json");
 	
 	auto pModel = Get_Component<CSkeletalModel>();
 	pModel->Link_Model(G_GlobalLevelKey, "NPC_OfficerMeowji.model");
@@ -61,11 +69,15 @@ void COfficeMeow::Awake()
 	pAnimator->Set_MotionBone(13); //Bip001
 
 	m_strAnimName = "NPC_Male_OfficerMeowji_Ani_MainCity_Stand_";
-	m_strName = "OfficerMeow";
+	m_strName = L"냥냥이 치안관";
 
 	pAnimator->Set_Animation(Get_AnimName() + "Idle01")
 		.Loop(true)
 		.Apply();
+
+	__super::Awake();
+
+	Add_InteractZone(Get_Position(), _float3(0.f, 0.f, 1.1f), Get_WorldRotation(), _float3(1.5f, 2.f, 1.5f));
 }
 
 void COfficeMeow::Priority_Update(_float dt)

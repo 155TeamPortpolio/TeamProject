@@ -24,19 +24,20 @@ public:
 
 	tagUIKeyframe(_float _fTime = 0.f) : fTime(_fTime) {}
 	tagUIKeyframe(_float _fTime, _float2 _vScale, _float _fAngle, _float2 _vPosition, _float4 _vColor, EaseType _easeType) :
-		fTime(_fTime), vScale(_vScale), fAngle(_fAngle), vPosition(_vPosition), vColor(_vColor), easeType(_easeType) {}
-	}UI_KEYFRAME;
+		fTime(_fTime), vScale(_vScale), fAngle(_fAngle), vPosition(_vPosition), vColor(_vColor), easeType(_easeType) {
+}
+}UI_KEYFRAME;
 
-	typedef struct tagUIAnimationClip {
-		string		strName;
-		_bool		isLoop = {};
-		_float		fDuration = { 1.f };
-	
-		vector<UI_KEYFRAME>	keyframes;
+typedef struct tagUIAnimationClip {
+	string		strName;
+	_bool		isLoop = {};
+	_float		fDuration = { 1.f };
 
-		tagUIAnimationClip() {}
-		tagUIAnimationClip(string _strName) : strName(_strName) {}
-	}UI_ANIM_CLIP;
+	vector<UI_KEYFRAME>	keyframes;
+
+	tagUIAnimationClip() {}
+	tagUIAnimationClip(string _strName) : strName(_strName) {}
+}UI_ANIM_CLIP;
 
 protected:
 	CUI_Object() {}
@@ -59,11 +60,16 @@ public:
 	virtual void UI_Active(void* pArg = nullptr) {};
 	virtual void UI_DeActive(void* pArg = nullptr) {};
 
-	virtual void Enter_Hover() {}
-	virtual void Exit_Hover() {}
-	virtual void OnClick() {}
+	virtual void Enter_Hover() { if (m_EnterHover) m_EnterHover(); }
+	virtual void Exit_Hover() { if (m_ExitHover) m_ExitHover(); }
+	virtual void OnClick() { if (m_OnClick) m_OnClick(); }
 
-	void Set_Size(_float2 size) { m_vSize= size; } 
+	void Set_EnterHover(function<void()> func) { m_EnterHover = move(func); }
+	void Set_EnterExit(function<void()> func) { m_ExitHover = move(func); }
+	void Set_OnClick(function<void()> func) { m_OnClick = move(func); }
+
+	void Set_Scale(Vector2 scale) { m_vScale = scale; }
+	void Set_Size(_float2 size) { m_vSize = size; }
 	_bool Size_To(_fvector size, _float Speed);
 	_bool Move_To(_fvector size, _float Speed);
 	_bool Rotate_To(_float rad, _float Speed);
@@ -77,14 +83,19 @@ public:
 	void Set_Anchor(ANCHOR eAnchor) { m_eAnchor = eAnchor; }
 	void Set_AnchorOffset(_float2 vOffset) { m_vAnchorOffset = vOffset; }
 	void Set_AnchorOffsetX(_float fOffset) { m_vAnchorOffset.x = fOffset; }
+	void Set_AnchorOffsetY(_float fOffset) { m_vAnchorOffset.y = fOffset; }
+	void Add_AnchorOffsetX(_float fOffset) { m_vAnchorOffset.x += fOffset; }
+	void Add_AnchorOffsetY(_float fOffset) { m_vAnchorOffset.y += fOffset; }
 	void Set_Color(_float4 vColor) { m_vColor = vColor; }
+	void Set_Alpha(_float fAlpha) { m_vColor.w = fAlpha; }
 	void Rotate_Left(_float _radian) { m_fRadian += _radian; }
 	/*Get Size*/
 	_float2 Get_PxSize() { return m_vSize * m_vScale; }
 	_float2 Half_PxSize() { return Get_PxSize() * 0.5f; }
-	_float2 Get_RectTopLeft_Screen() ;
+	_float2 Get_RectTopLeft_Screen();
 	_float2 Get_CombinedScale() { return m_vCombinedScale; }
 	_float2 Get_AnchorOffset() { return m_vAnchorOffset; }
+	Vector2 Get_Scale() const { return m_vScale; }
 
 	// Screen anchors
 	_float2 LT(_float x = 0.f, _float y = 0.f) { return Get_Point_Screen({ 0.f,   0.f }, x, y); }
@@ -127,11 +138,12 @@ public:
 	_bool Is_Clickable() { return m_isClickable; }
 
 public:
-	void Play_Animation(_float dt);					
+	void Play_Animation(_float dt);
 	void Set_Animation(_uint iIndex, _bool isLoop = false);
+	void Stop_Animation();
 	_bool Set_LastKeyframeTime(_uint iClipIndex, _float fTime);
 
-	_bool Is_AnimFinished();
+	virtual _bool Is_AnimFinished();
 
 public:
 	virtual void Save(nlohmann::ordered_json& data) {}
@@ -155,7 +167,7 @@ protected:
 	_float2 m_vAnchorOffset = {};
 	/*스크린 기준의 오프셋*/
 	_float2 m_vScreenOffset = {};
-	ANCHOR m_eAnchor = ANCHOR::Left|ANCHOR::Top; 
+	ANCHOR m_eAnchor = ANCHOR::Left | ANCHOR::Top;
 
 	/*픽셀 상의 크기*/
 	_float2 m_vSize = {};
@@ -169,7 +181,7 @@ protected:
 	_float2 m_vCombinedScale = {};
 
 	/*트랜스폼 기준점 - 내부 좌표 기준 : 0~1, 0~1 */
-	_float2 m_vPivot= {};
+	_float2 m_vPivot = {};
 
 	_float m_fRadian = {};
 	_float m_Zpriority = {0.f};
@@ -183,12 +195,12 @@ protected:
 	/*셰이더로 전달되는 컬러 (m_vColor를 감마 2.2 보정하여 Linear Space로 변환한 값)*/
 	Vector4 m_vColorLinear{};
 	/*부모 알파와 자신의 알파를 곱한 최종 알파 값*/
-	_float m_vCombinedAlpha = { 1.f };
+	_float m_fCombinedAlpha = { 1.f };
 
 	/*애니메이션*/
 	_bool m_isBlending = {};
 	_float m_fBlendTime = {};
-	_float m_fBlendDuration = {}; 
+	_float m_fBlendDuration = {};
 
 	vector<UI_ANIM_CLIP> m_AnimClips;
 	_int m_iCurrentClipIndex = { -1 };
@@ -199,6 +211,10 @@ protected:
 
 	/*월드 좌표계에 고정된 UI의 기준 위치 (World-Space Anchor)*/
 	_float3 m_vWorldPos = {};
+
+	function<void()> m_EnterHover = {};
+	function<void()> m_ExitHover = {};
+	function<void()> m_OnClick = {};
 
 public:
 	virtual void Free() override;

@@ -1,6 +1,6 @@
 #pragma once
 #include "OrbitArcData.h"
-
+#include "OrbitSpinData.h"
 #include "Engine_math.h"
 
 NS_BEGIN(Engine)
@@ -8,8 +8,9 @@ NS_BEGIN(Engine)
 struct CamPose
 {
 	_vector3   pos{};
-	Quaternion rot = Quaternion::Identity;
-	float      fov = 60.f;
+	Quaternion rot  = Quaternion::Identity;
+	float      fov  = 60.f;
+	float      roll = 0.f;
 };
 struct CamBlendState
 {
@@ -22,7 +23,7 @@ struct CamBlendState
 };
 struct CamKeyFrame 
 {
-	_uint        keyId{}; // "배열이 재정렬/삭제/병합돼도 같은 키를 계속 가리키기 위한 고유 식별자"
+	_uint        keyId{}; 
 	_float       time{};
 			     
 	_vector3     pos{};
@@ -37,25 +38,29 @@ struct CamKeyFrame
 
 	_bool        useCustomEase   = false;
 	EaseType     outEase         = EaseType::None;
+
+	string       eventTag;
 };
-struct CamSequenceDesc // 하나의 카메라 시퀀스(컷씬/연출)를 정의하는 전체 프리셋 데이터.
-{                      // 어떤 타입/리그의 카메라인지와, 그 스퀀스를 구성하는 키프레임/마커 목록을 가짐.
-	string              name; 
-					    
-	CamProjType         projType     = CamProjType::Perspective;
-					    
+struct CamSequenceDesc 
+{ 
+	string              name;
+
+	CamProjType         projType = CamProjType::Perspective;
 	CamPlaybackMode     playbackMode = CamPlaybackMode::Once;
-					    
-	CamPosInterp        posInterp    = CamPosInterp::Linear;
-	CamRotInterp        rotInterp    = CamRotInterp::Slerp;
-	CamFovInterp        fovInterp    = CamFovInterp::Linear;
 
-	EaseType            segmentEase  = EaseType::None;
+	CamPosInterp        posInterp = CamPosInterp::Linear;
+	CamRotInterp        rotInterp = CamRotInterp::Slerp;
+	CamFovInterp        fovInterp = CamFovInterp::Linear;
+
+	EaseType            segmentEase = EaseType::None;
 	CamOrbitArcDesc     orbitArc{};
+	CamOrbitSpinDesc    orbitSpin{};
 
-	CamSpace            space        = CamSpace::World;
+	CamSpace            space = CamSpace::World;
 
 	vector<CamKeyFrame> keyframes;
+
+	float               refAnimDurSec = 0.f;
 
 	float GetDuration() const
 	{
@@ -70,4 +75,5 @@ struct CamKeySegment
 	_uint  segmentIdx = 0;
 	_float normalizedTime = 0.f;
 };
+
 NS_END

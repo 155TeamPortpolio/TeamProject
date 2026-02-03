@@ -2,8 +2,8 @@
 #define Client_Enum_h__
 
 namespace Client {
-	enum class GLOBAL_ID : _uint { FreeCam, OrbitCam, SeqCam, ShadowCam, Player };
-	enum class CHARACTER { JaneDoe, Corin, END };
+	enum class GLOBAL_ID : _uint { FreeCam, OrbitCam, SeqCam, ShadowCam, Player, Cloud };
+	enum class CHARACTER { JaneDoe, Corin, Miyabi, END };
 
 	/* UI */
 	// ---------- Battle HUD : Stat ----------
@@ -12,10 +12,25 @@ namespace Client {
 	// ---------- Battle HUD : Action ----------
 	enum class UI_ACTION_TYPE { ALL, PRIMARY, EVADE, EVADEPERFECT, SPECIAL, SWITCH, ULTIMATE, END };
 	enum UI_ACTION_STATE { DISABLE, ENABLE, AVAILABLE, EXECUTING };
-	enum class UI_ACTION_PRIMARY_MODE { ATTACK, INTERACT };
+	enum class UI_ACTION_PRIMARY_MODE { ATTACK, INTERACT, END };
 
 	enum class HIT_TYPE { ONCE, INTERVAL, COUNT };
 	enum class DAMAGE_TYPE {NORMAL, HARD, AIRBORNE, ULTIMATE};
+
+	//------------------- Field -------------------
+	enum class DayPhase {EarlyMorning,Morning,Afternoon,LateNight,Any};
+	enum class Speaker { Player, Npc, System };
+	enum class DialogueType {Normal, Choice, Quest};
+	enum class DialogueResult {Fail, Running, Success, None};
+	enum class GachaGrade { S, A, B };
+
+	//------------------- Battle -------------------
+	enum class StageType { Normal, Elite, Boss, End };
+	enum class BATTLE_VFX_TYPE { EVADE,PARRY, SWITCH,ULTIMATE, END };
+	enum class BATTLE_OBJ_TYPE { PLAYER, MONSTER, ENVOBJECT, END };
+
+	//------------------- Gacha --------------------
+	enum class GACHA_STAGE { BANGBOO, AVATAR, END };
 }
 
 #endif

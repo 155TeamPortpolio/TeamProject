@@ -12,7 +12,6 @@ protected:
     HRESULT Initialize(class CTarget_Manager* pTargetManager, class CPipeLine* pPipeLine);
 
 public:
-	HRESULT Create_RenderTarget(const RenderTargetDesc& desc);
 	ID3D11ShaderResourceView* Get_CustomTargetSRV(const string strTag);
 	ID3D11ShaderResourceView* Get_EngineTargetSRV(const string strTag);
 
