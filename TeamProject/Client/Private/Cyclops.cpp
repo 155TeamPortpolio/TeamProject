@@ -48,9 +48,15 @@ HRESULT CCyclops::Initialize_Prototype()
 	Add_Component<CCharacterController>();
 
 	auto pResourceMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
-	pResourceMgr->Add_ResourcePath("Cyclops.mat", "../Bin/Resources/Model/skeletal/Enemy/Cyclops/Cyclops.mat");
-	pResourceMgr->Add_ResourcePath("Cyclops.model", "../Bin/Resources/Model/skeletal/Enemy/Cyclops/Cyclops.model");
-	pResourceMgr->Add_ResourcePath("Monster_Cyclops_Meta.json", "../Bin/Resources/Model/skeletal/Enemy/Cyclops/Monster_Cyclops_Meta.json");
+	pResourceMgr->Add_ResourcePath("Cyclops.mat", "../Bin/Resources/Zero/Enemy/Cyclops/Cyclops.mat");
+	pResourceMgr->Add_ResourcePath("Cyclops.model", "../Bin/Resources/Zero/Enemy/Cyclops/Cyclops.model");
+	//pResourceMgr->Add_ResourcePath("Monster_Cyclops_Meta.json", "../Bin/Resources/Zero/Enemy/Cyclops/Monster_Cyclops_Meta.json");
+
+	auto pModel = Get_Component<CSkeletalModel>();
+	pModel->Link_Model(G_GlobalLevelKey, "Cyclops.model");
+
+	auto pMaterial = Get_Component<CMaterial>();
+	pMaterial->Link_Material(G_GlobalLevelKey, "Cyclops.mat");
 
 	return S_OK;
 }
@@ -58,14 +64,6 @@ HRESULT CCyclops::Initialize_Prototype()
 HRESULT CCyclops::Initialize(INIT_DESC* pArg)
 {
 	__super::Initialize(pArg);
-
-	//m_pTransform->Scale({ 0.01f,0.01f,0.01f });
-
-	auto pModel = Get_Component<CSkeletalModel>();
-	pModel->Link_Model(G_GlobalLevelKey, "Cyclops.model");
-
-	auto pMaterial = Get_Component<CMaterial>();
-	pMaterial->Link_Material(G_GlobalLevelKey, "Cyclops.mat");
 
 	auto pAnimator = Get_Component<CAnimator3D>();
 	pAnimator->LinkAnimate_Model(G_GlobalLevelKey, "Cyclops.model");
@@ -176,6 +174,11 @@ void CCyclops::Render_GUI()
 				m_pStateMachine->Set_Int("AttackPattern", 3);
 				m_pStateMachine->Set_Trigger("Idle_To_Attack");
 			}
+			if (ImGui::Button(u8"4. Attack04"))
+			{
+				m_pStateMachine->Set_Int("AttackPattern", 4);
+				m_pStateMachine->Set_Trigger("Idle_To_Attack");
+			}
 			ImGui::TreePop();
 		}
 		if (ImGui::TreeNode("Death##ThugAssaulterTestDeath"))
@@ -202,11 +205,6 @@ void CCyclops::Render_GUI()
 			if (ImGui::Button("Parried"))
 				Parried();
 
-			if (ImGui::Button("Execute"))
-				m_tStatus.iNowHP -= m_tStatus.iMaxHP;
-
-
-
 			ImGui::TreePop();
 		}
 
@@ -218,7 +216,11 @@ void CCyclops::Render_GUI()
 	ImGui::Checkbox("Auto Pattern", &m_isAutoPatternPlay);
 #pragma endregion
 
+	if (ImGui::Button("Execute"))
+		m_tStatus.iNowHP -= m_tStatus.iMaxHP;
 
+	if (ImGui::Button("Groggy"))
+		m_tStatus.iGroggyValue += 100;
 
 	ImGui::PopID();
 }
@@ -295,7 +297,7 @@ void CCyclops::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER cha
 
 	if ("Groggy" == m_pStateMachine->Get_CurrentStateName())
 	{
-		Get_Component<CAnimator3D>()->Set_Animation(1, "ThugPoacher_Ani_Hit_Knock")
+		Get_Component<CAnimator3D>()->Set_Animation(1, "Cyclops_Ani_Hit_Knock")
 			.LayerBlend(1.f, 0.f, 1.f, EaseType::Linear)
 			.Loop(false)
 			.Apply();
@@ -308,7 +310,7 @@ void CCyclops::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER cha
 	}
 	else
 	{
-		Get_Component<CAnimator3D>()->Set_Animation(1, "ThugPoacher_Ani_Hit_Stay")
+		Get_Component<CAnimator3D>()->Set_Animation(1, "Cyclops_Ani_Hit_Stay")
 			.LayerBlend(1.f, 0.f, 1.f, EaseType::Linear)
 			.Loop(false)
 			.Apply();
@@ -334,7 +336,7 @@ HRESULT CCyclops::Initialize_StateMachine()
 	m_pStateMachine->Set_DefaultState("Born");
 	m_pStateMachine->Initialize(this);
 
-	Get_Component<CAnimator3D>()->Set_Animation("ThugAssaulter_Ani_Born")
+	Get_Component<CAnimator3D>()->Set_Animation("Monster_Cyclops_Ani_Born")
 		.Apply();
 
 	return S_OK;
@@ -412,7 +414,10 @@ void CCyclops::ControlState(const _float dt)
 {
 	if ("Death" != m_pStateMachine->Get_CurrentStateName() &&
 		0 >= m_tStatus.iNowHP)
+	{
+		RequestRemoveOnDeathToBattleSystem();
 		m_pStateMachine->Change_State("Death");
+	}
 
 	if ("Death" != m_pStateMachine->Get_CurrentStateName() &&
 		"Groggy" != m_pStateMachine->Get_CurrentStateName() &&
@@ -452,4 +457,4 @@ void CCyclops::CheckDistanceFromPlayer()
 	if (true == m_pStateMachine->Get_Bool("Chase") &&
 		m_tTargetingInfo.fDistance <= m_tHysteriesis.fChaseExit)
 		m_pStateMachine->Set_Bool("Chase", false);
-}
+} 

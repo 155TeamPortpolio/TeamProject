@@ -65,9 +65,33 @@ void CCyclops_Attack::Update(CCyclops* pOwner, _float dt)
 		{
 			if (Event.Tag == "UnleashAttack")
 				pOwner->UnleashAttack(CEnemy::ATTACK_SIDE::NONE, false);
-		/*	else if (Event.Tag == "Attack")
+			else if (Event.Tag == "UnleashAttackParry_false")
 			{
-			}*/
+			}
+			else if (Event.Tag == "UnleashAttackParry_true")
+			{
+			}
+			else if (Event.Tag == "TurnOnAttackCol")
+			{
+			}
+			else if (Event.Tag == "TurnOffAttackCol")
+			{
+			}
+			else if (Event.Tag == "Shoot")
+			{
+			}
+			else if (Event.Tag == "SpitOnce")
+			{
+			}
+			else if (Event.Tag == "SpitThreeTimes1")
+			{
+			}
+			else if (Event.Tag == "SpitThreeTimes2")
+			{
+			}
+			else if (Event.Tag == "SpitThreeTimes3")
+			{
+			}
 			else if (Event.Tag == "FinishAll")
 				pOwner->SetOnAttack(false);
 
