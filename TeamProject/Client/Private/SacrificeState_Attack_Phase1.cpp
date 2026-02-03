@@ -143,7 +143,7 @@ void CSacrificeState_Attack_Phase1::BuildPattern(CSacrifice* pOwner)
 		}
 		else
 		{
-			_uint iRandIndex = Helper::Get_Random_Int(0, 3);
+			_uint iRandIndex = Helper::Get_Random_Int(0, 2);
 			switch (iRandIndex)
 			{
 			case 0:

@@ -225,6 +225,8 @@ void CCorinState_Attack_03::Update(CCorin* pOwner, _float dt)
             pOwner->End_AttackCollider("Saw");
         }
     }
+
+    Update_Effects(pOwner);
 }
 
 void CCorinState_Attack_03::Exit(CCorin* pOwner)
