@@ -168,18 +168,30 @@ void CCamDirector::UpdateInput(_float dt)
     {
         if (m_playing.active) AbortSequenceToOrbit(true);
         CameraManager()->Set_MainCam(GetOrbitCamComp(), 0.5f);
+        //if (levelKey == "Gacha_Level") RequestSequence("Gacha/Down");
     }
 
     if (InputDevice()->Key_Tap(VK_F3))
     {
-        if      (levelKey == "Gacha_Level") RequestSequence("Gacha/Spin");
+        if      (levelKey == "Gacha_Level") RequestSequence("Gacha/Spin_Half");
         else if (levelKey == "Test_Level")  RequestSequence(CamSeqType::BattleIntro);
         else if (levelKey == "Zero_Level")  RequestSequence(CamSeqType::ZeroIntro);
     }
 
     if (InputDevice()->Key_Tap(VK_F4))
     {
-        if (levelKey == "Gacha_Level") RequestSequence("Gacha/StartIntro");
+        if (levelKey == "Gacha_Level") RequestSequence("Gacha/Spin");
+    }
+
+    if (IsFinished(CamEventType::SpinFinished) || IsFinished(CamEventType::SpinHalfFinished))
+    {
+        CameraManager()->SetZoomType(ENUM(CamZoomType::GachaShake), 1.5f);
+        //CameraManager()->SetShakeType(ENUM(CamShakeType::EarthquakeShort), 1.2f);
+        //CameraManager()->AddShakeAxisWave(0x4, 3.0f, 3.0f, 1.2f, 0.0f, EaseType::None, EaseType::OutCubic);
+       // CameraManager()->AddShakeAxisWave(CamShakeAxis::Roll, 3.0f, 3.0f, 1.2f, 0.0f, EaseType::None, EaseType::OutCubic);
+        CameraManager()->AddShakeAxisWave(CamShakeAxis::Roll,  3.f,  4.0f, 0.8f, 0.1f, EaseType::InQuad, EaseType::InOutQuad);
+        CameraManager()->AddShakeAxisWave(CamShakeAxis::Yaw,   1.4f, 3.0f, 0.6f, 0.1f, EaseType::InQuad, EaseType::InOutQuad);
+        CameraManager()->AddShakeAxisWave(CamShakeAxis::Pitch, 1.f,  2.5f, 0.4f, 0.1f, EaseType::InQuad, EaseType::InOutQuad);
     }
 }
 
