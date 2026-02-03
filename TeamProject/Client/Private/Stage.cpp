@@ -115,6 +115,13 @@ HRESULT CStage::ReadyPlayerPoint(const vector<BATTLE_POINT_DATA>& point)
 		MSG_BOX("No Player Point : CStage ReadyMap");
 		return E_FAIL;
 	}
+
+	for (size_t i = 0; i < point.size(); i++)
+	{
+		auto arr = point[i].vTranslation;
+		m_PlayerPoint[i] = { arr[0], arr[1], arr[2], arr[3]};
+	}
+
 	return S_OK;
 }
 
