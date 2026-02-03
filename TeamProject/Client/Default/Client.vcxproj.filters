@@ -1077,6 +1077,7 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Player\Character\03. Miyabi\State\Attack\Counter">
       <UniqueIdentifier>{d9ac1b8b-2607-430f-88a4-8175f6bdcf55}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02. GameObject\Object\Gacha\GachaProps\GachaStage\GachaResult">
       <UniqueIdentifier>{5b3fe7e7-f877-4cae-bf66-a57e17b1b328}</UniqueIdentifier>
     </Filter>
