@@ -20,10 +20,10 @@ void CUI_Ramen::Select_Menu(CUI_Object* pSelected, const RAMEN_DESC& tRamenDesc)
         return;
 
     if (m_pSelectedMenu)
-        m_pSelectedMenu->UI_DeActive(nullptr);
+        m_pSelectedMenu->UI_DeActive();
 
     m_pSelectedMenu = pSelected;
-    m_pSelectedMenu->UI_Active(nullptr);
+    m_pSelectedMenu->UI_Active();
 
     m_tRamenDesc = tRamenDesc;
     Set_TextPrice();
@@ -79,6 +79,8 @@ void CUI_Ramen::UI_Active(void* pArg)
     Set_Alive(true); 
     Set_ChildAnimation(CHILD::ORDER, 0);
     Reset();
+    for (auto& pMenu : m_pMenus)
+        pMenu->UI_DeActive();
 }
 
 void CUI_Ramen::UI_DeActive(void* pArg)

@@ -16,7 +16,7 @@ public:
 	virtual void  Exit(CCorin* pOwner) override;
 
 public:
-	static CCorinState_Move* Create() { return new CCorinState_Move(); }
+	static CCorinState_Move* Create();
 	virtual void Free() override { __super::Free(); }
 };
 

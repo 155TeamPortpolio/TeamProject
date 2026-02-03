@@ -61,6 +61,7 @@ HRESULT CZero_Level::Initialize()
 
 	auto pCloud = ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Cloud));
 	pCloud->Set_Alive(false);
+
 	/* Cloud */
 	//PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_TestCloud", CTestCloud::Create());
 	//auto testCloud = Builder::Create_Object({ "Zero_Level", "Proto_GameObject_TestCloud" })
@@ -86,7 +87,7 @@ HRESULT CZero_Level::Initialize()
 
 	m_Context.isFirstIn = true;
 
-	ChangeStage(StageType::Boss, 0);
+	ChangeStage(StageType::Normal, 0);
 	m_Context.isFirstIn = false;
 	//m_Context.pNowStage->Ready_Stage(m_Context);
 

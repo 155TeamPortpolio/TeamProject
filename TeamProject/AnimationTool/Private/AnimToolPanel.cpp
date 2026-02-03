@@ -420,7 +420,8 @@ void CAnimToolPanel::Draw_TimelineUI(float duration, float& ioTime, const char* 
 		float hoverTime = local01 * endT;
 
 		ImGui::BeginTooltip();
-		ImGui::Text("t = %.2fs", m_pSelectAnimator->Get_AnimLayers()[0].fProgress);
+		if(m_pSelectAnimator)
+			ImGui::Text("t = %.2fs", m_pSelectAnimator->Get_AnimLayers()[0].fProgress);
 		ImGui::EndTooltip();
 
 		dl->AddLine(ImVec2(barPos.x + barSize.x * local01, barPos.y), ImVec2(barPos.x + barSize.x * local01, barPos.y + barSize.y), colHot, 1.5f);

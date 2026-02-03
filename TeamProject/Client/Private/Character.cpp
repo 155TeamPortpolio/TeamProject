@@ -197,6 +197,7 @@ _bool CCharacter::Can_SwitchIn() const
 void CCharacter::Active_Character()
 {
     m_pCCT->Set_CompActive(true);
+    Active_ParryCollider(true);
     SetRenderLayer(RENDER_LAYER::Default);
     m_fDissolveProgress = 0.f;
 }
@@ -204,6 +205,7 @@ void CCharacter::Active_Character()
 void CCharacter::DeActive_Character()
 {
     m_pCCT->Set_CompActive(false);
+    Active_ParryCollider(false);
     SetRenderLayer(RENDER_LAYER::None);
     m_fDissolveProgress = 0.f;
     m_iInvincibleCount = 0;
@@ -234,7 +236,7 @@ OBJECT_HANDLE CCharacter::Calculate_Parry()
     _float fMinDist = FLT_MAX;
 
     // 몬스터의 트리거 콜라이더로 검사. 이후 부모 오브젝트의 Handle 저장
-    for (auto iter : pParry->Get_Targets())
+    for (auto iter : pParry->Get_ParryTargets())
     {
         _float fDist = (vPos - iter.Get()->Get_WorldPos()).Length();
         if (fDist >= fMinDist)
@@ -413,9 +415,10 @@ _bool CCharacter::Is_OppositeInput() const
     return fAngle >= TURNBACK_ANGLE_THRESHOLD;
 }
 
-_bool CCharacter::Can_Evade() const
+_bool CCharacter::Can_Evade()
 {
-    if (m_fEvadeCooldown > 0.f) return false;
+    if (m_fEvadeCooldown > 0.f)
+        return false;
     return true;
 }
 
@@ -448,6 +451,15 @@ _bool CCharacter::Can_Ultimate()
     return false;
 }
 
+_bool CCharacter::Is_Perfect()
+{
+    CCharacterParryCollider* pParry = dynamic_cast<CCharacterParryCollider*>
+        (Get_Component<CObjectContainer>()->Get_Children()[m_iParryColliderIndex]);
+    if (pParry && pParry->Can_Perfect())
+        return true;
+    return false;
+}
+
 HRESULT CCharacter::Attach_AttackCollider(ATTACK_COLLIDER_DESC* pDesc)
 {
     CObjectContainer* pObjectContainer = Get_Component<CObjectContainer>();
@@ -468,7 +480,7 @@ HRESULT CCharacter::Attach_AttackCollider(ATTACK_COLLIDER_DESC* pDesc)
     COLLIDER_DESC colliderDesc{};
     colliderDesc.eType = pDesc->eColliderType;
     colliderDesc.eGroup = COLLISION_GROUP::PLAYER_ATTACK;
-    colliderDesc.iCollisionMask = ENUM(COLLISION_GROUP::MONSTER);
+    colliderDesc.iCollisionMask = ENUM(COLLISION_GROUP::MONSTER) | ENUM(COLLISION_GROUP::MONSTER_ATTACK);
     colliderDesc.bAutoFit = false;
     colliderDesc.vCenter = pDesc->vCenter;
     colliderDesc.vSize = pDesc->vSize;
@@ -527,6 +539,16 @@ HRESULT CCharacter::Attach_ParryCollider()
     m_iParryColliderIndex = pObjectContainer->Add_Child(pParryCollider, true);
 
     return S_OK;
+}
+
+void CCharacter::Active_ParryCollider(_bool bActive)
+{
+    CCharacterParryCollider* pCollider = static_cast<CCharacterParryCollider*>(
+        Get_Component<CObjectContainer>()->Get_Children()[m_iParryColliderIndex]);
+    if (nullptr == pCollider)
+        return;
+
+    pCollider->Get_Component<CCollider>()->Set_CompActive(bActive);
 }
 
 void CCharacter::Active_AttackCollider(const string& strName, _bool bActive)
@@ -590,6 +612,7 @@ _bool CCharacter::Is_Active_AttackCollider(const string& strName)
 
 void CCharacter::Take_Damage(DAMAGE_TYPE eType, _float fDamage)
 {
+    if (Is_Invincible()) return;
     {
         _int damage = Helper::Get_Random_Int(1000.f, 10000.f);
 
@@ -601,9 +624,6 @@ void CCharacter::Take_Damage(DAMAGE_TYPE eType, _float fDamage)
 
         UIDirector()->Request_DamageText(desc);
     }
-
-    if (Is_Invincible()) return;
-
     m_fCurrentHP -= fDamage;
     m_fCurrentHP = max(m_fCurrentHP, 0.f);
 
@@ -614,7 +634,7 @@ void CCharacter::Update_Rotation(_float dt)
 {
     if (!m_bCanRotate) return;
 
-    _float fSpeed = 10.f;
+    _float fSpeed = 8.f;
     if (m_qCurrentRot.Dot(m_qTargetRot) > 0.99f)
     {
         m_pTransform->Set_Quaternion(m_qTargetRot);

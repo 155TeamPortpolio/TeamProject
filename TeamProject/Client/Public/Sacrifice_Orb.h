@@ -32,6 +32,7 @@ private:
     void ChaseTarget();
     HRESULT Create_Colliders();
 
+    _bool m_IsHit = false;
     _float m_fSpeed{};
     _float3 vTargetPos{};
 };

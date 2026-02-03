@@ -8,6 +8,7 @@
 #include "Material.h"
 
 #include "GachaStageScreen.h"
+#include "GachaResult.h"
 
 CGachaStage::CGachaStage()
     :CGameObject()
@@ -15,11 +16,19 @@ CGachaStage::CGachaStage()
 }
 
 CGachaStage::CGachaStage(const CGachaStage& rhs)
-    :CGameObject(rhs)
+    :CGameObject(rhs), m_pResultDesc(rhs.m_pResultDesc)
 {
 }
 
-HRESULT CGachaStage::Initialize_Prototype()
+void CGachaStage::PlayStageSpin(_int index)
+{
+	if (m_iIndex == index) return;
+	m_iIndex = index;
+
+	Update_StageEnviroment(m_iIndex);
+}
+
+HRESULT CGachaStage::Initialize_Prototype(vector<WEAPON_DESC>* Desc)
 {
     if (FAILED(__super::Initialize_Prototype()))
         return E_FAIL;
@@ -29,6 +38,8 @@ HRESULT CGachaStage::Initialize_Prototype()
 
 	pModel->Link_Model("Gacha_Level", "AvatarScreen1out.model");
 	pMaterial->Link_Material("Gacha_Level", "AvatarScreen1out.mat");
+
+	m_pResultDesc = Desc;
 
     return S_OK;
 }
@@ -44,13 +55,6 @@ HRESULT CGachaStage::Initialize(INIT_DESC* pArg)
 
 void CGachaStage::Awake()
 {
-	auto pModel = Get_Component<CStaticModel>();
-	auto pMaterial = Get_Component<CMaterial>();
-
-	//pModel->Link_Model("Gacha_Level", "BangBooNoScreen1.model");
-	//pMaterial->Link_Material("Gacha_Level", "BangBooNoScreen1.mat");
-
-	pModel->Hide_MehsByName("0023_GachaStage_Prop_TV_04_mesh0023");
 }
 
 void CGachaStage::Priority_Update(_float dt)
@@ -74,6 +78,7 @@ void CGachaStage::Late_Update(_float dt)
 void CGachaStage::Add_StageScreen()
 {
 	PrototypeManager()->Add_ProtoType("Gacha_Level", "Proto_GameObject_GachaStageScreen", CGachaStageScreen::Create());
+	PrototypeManager()->Add_ProtoType("Gacha_Level", "Proto_GameObject_GachaResult", CGachaResult::Create());
 
 	auto pObjectContainer = Add_Component<CObjectContainer>();
 	COLLIDER_DESC colliderDesc{};
@@ -87,13 +92,62 @@ void CGachaStage::Add_StageScreen()
 		.Collider(colliderDesc)
 		.Build("Screen");
 
+	m_pScreen = dynamic_cast<CGachaStageScreen*>(gachaStageScreen);
+
 	pObjectContainer->Add_Child(gachaStageScreen, true);
+
+	CGameObject* gachaResult = Builder::Create_Object({ "Gacha_Level", "Proto_GameObject_GachaResult" })
+		.Collider(colliderDesc)
+		.Position(_float3(0.f, 1.45f, -1.5f))
+		.Scale(_float3(2.f, 2.f, 2.f))
+		.Build("Result");
+	gachaResult->Get_Component<CTransform>()->Set_Quaternion(_vector4(-0.03, 0.96, -0.11, 0.24));
+
+	m_pResult = dynamic_cast<CGachaResult*>(gachaResult);
+
+	pObjectContainer->Add_Child(gachaResult, true);
 }
 
-CGachaStage* CGachaStage::Create()
+void CGachaStage::Set_Stage(GACHA_STAGE eStage)
+{
+	auto pModel = Get_Component<CStaticModel>();
+	auto pMaterial = Get_Component<CMaterial>();
+
+	if (eStage == GACHA_STAGE::AVATAR)
+	{
+		pModel->Link_Model("Gacha_Level", "AvatarScreen1out.model");
+		pMaterial->Link_Material("Gacha_Level", "AvatarScreen1out.mat");
+	}
+	else
+	{
+		pModel->Link_Model("Gacha_Level", "BangBooNoScreen1.model");
+		pMaterial->Link_Material("Gacha_Level", "BangBooNoScreen1.mat");
+
+		pModel->Hide_MehsByName("0023_GachaStage_Prop_TV_04_mesh0023");
+	}
+}
+
+void CGachaStage::Update_StageEnviroment(_int index)
+{
+	WEAPON_DESC CurrentDesc = (*m_pResultDesc)[index];
+	if (CurrentDesc.Grade == GachaGrade::S)
+	{
+		m_pScreen->SetScreen(GACHA_STAGE::AVATAR, CurrentDesc.Grade);
+		Set_Stage(GACHA_STAGE::AVATAR);
+	}
+	else
+	{
+		m_pScreen->SetScreen(GACHA_STAGE::BANGBOO, CurrentDesc.Grade);
+		Set_Stage(GACHA_STAGE::BANGBOO);
+		m_pResult->SetResult(CurrentDesc.strModel, CurrentDesc.strMaterial,
+			_float4(CurrentDesc.RotX,CurrentDesc.RotY,CurrentDesc.RotZ, CurrentDesc.RotW));
+	}
+}
+
+CGachaStage* CGachaStage::Create(vector<WEAPON_DESC>* Desc)
 {
 	CGachaStage* Instance = new CGachaStage();
-	if (FAILED(Instance->Initialize_Prototype()))
+	if (FAILED(Instance->Initialize_Prototype(Desc)))
 	{
 		Safe_Release(Instance);
 		return nullptr;

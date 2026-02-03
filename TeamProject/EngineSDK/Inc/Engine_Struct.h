@@ -32,17 +32,31 @@ namespace Engine
 	}INIT_DESC;
 
 	/* Light Desc struct*/
+	/* Light Desc struct*/
 	typedef struct tagLightDesc {
 		union { _float4 vLightPosition;  _float4 vOffsetPosition; };
-		_float4		vLightDirection = { 0,-1,0,0 };
-		_float4		vLightDiffuse = {};
-		_float4		vLightAmbient = {};
-		_float4		vLightSpecular = {};
-		_float			fLightRange = {};
-		_float			fLightIntensity = { 3.f };
-		_float2		lightPadding = {};
-		LIGHT_TYPE eType = { LIGHT_TYPE::DIRECTIONAL };
-	}LIGHT_DESC;
+
+		_float4 vLightDirection = { 0,-1,0,0 };
+
+		_float4 vLightDiffuse = {};
+		_float4 vLightAmbient = {};
+		_float4 vLightSpecular = {};
+
+		_float  fLightRange = 15.f;
+		_float  fLightIntensity = 3.f;
+
+		_float  fInnerCos = 0.95f; 
+		_float  fOuterCos = 0.85f; 
+
+		LIGHT_TYPE eType = LIGHT_TYPE::DIRECTIONAL;
+		_uint3      pad0 = {}; 
+
+		static tagLightDesc SpotSet();
+		static tagLightDesc PointSet();
+		static tagLightDesc DirectionSet();
+		void SetSpotDegree(_float innerDeg, _float outerDeg);
+	} LIGHT_DESC;
+
 
 	/*File Info Desc*/
 	/*Model*/

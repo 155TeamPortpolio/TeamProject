@@ -13,6 +13,8 @@
 #include "GachaProps.h"
 /*Component*/
 #include "Light.h"
+/*DataBase*/
+#include "DataBase.h"
 
 CGacha_Level::CGacha_Level(const string& LevelKey)
 	:CLevel(LevelKey),
@@ -42,15 +44,25 @@ HRESULT CGacha_Level::Awake()
 	pShadowCam->Get_Component<CLight>()->Set_Desc(lightDesc, LIGHT_TYPE::DIRECTIONAL);
 
 	Ready_GachaObjects();
+
+	// Camera
 	CamDirector()->SetSpaceRef(m_GachaHandle);
-	//CamDirector()->RequestSequence("Gacha/StartPos");
-	//CamDirector()->RequestSequence("Gacha/TestPos");
-	CamDirector()->RequestSequence("Gacha/StartIntro");
+	CamDirector()->RequestSequence("Gacha/Down");
+
+	m_pGachaProps->SetupInitialSequence();
 	return S_OK;
 }
 
 void CGacha_Level::Update()
 {
+	if (InputDevice()->Key_Tap(VK_SPACE))
+	{
+		if (m_iIndex == -1) CamDirector()->RequestSequence("Gacha/Spin_Half");
+		else CamDirector()->RequestSequence("Gacha/Spin");
+		++m_iIndex;
+		if (m_iIndex >= m_iMaxIndex) m_iIndex = 0;
+	}
+	Update_CamTime();
 }
 
 HRESULT CGacha_Level::Render()
@@ -61,16 +73,38 @@ HRESULT CGacha_Level::Render()
 
 void CGacha_Level::Ready_GachaObjects()
 {
+	m_ResultDesc = CDataBase::GetInstance()->GetGachaResults(9);
+
 	auto pProto = PrototypeManager();
 	auto objMgr = ObjectManager();
 
-	pProto->Add_ProtoType("Gacha_Level", "Proto_GameObject_GachaProps", CGachaProps::Create());
+	pProto->Add_ProtoType("Gacha_Level", "Proto_GameObject_GachaProps", CGachaProps::Create(&m_ResultDesc));
 	auto gachaProps = Builder::Create_Object({ "Gacha_Level", "Proto_GameObject_GachaProps" })
 		.Build("GachaProps");
 
 	objMgr->Add_Object(gachaProps, { "Gacha_Level", "Gacha_Layer" });
 
 	m_GachaHandle = gachaProps->Get_Handle();
+	m_pGachaProps = dynamic_cast<CGachaProps*>(gachaProps);
+}
+
+void CGacha_Level::Update_CamTime()
+{
+	if (CamDirector()->GetCurSeqName() == "Gacha/Down")
+	{
+		if (CamDirector()->GetTime() >= 2.2f)
+			m_pGachaProps->PlayTVSequence();
+	}
+	else if (CamDirector()->GetCurSeqName() == "Gacha/Spin_Half")
+	{
+		if (CamDirector()->GetSeqPlayer()->GetTime() >= 0.7f)
+			m_pGachaProps->PlayStageSpin(m_iIndex);
+	}
+	else if (CamDirector()->GetCurSeqName() == "Gacha/Spin")
+	{
+		if (CamDirector()->GetSeqPlayer()->GetTime() >= 1.f)
+			m_pGachaProps->PlayStageSpin(m_iIndex);
+	}
 }
 
 CGacha_Level* CGacha_Level::Create(const string& LevelKey)

@@ -32,17 +32,20 @@ public:
 	void Reset_Textures();
 
 public:
-	vector<_uint>& Get_TextureIndex() { return m_TextureIndexs; }
 	void ChangeTexture(TEXTURE_TYPE type, _uint index);
 	void Set_Blended(_bool blend) { m_IsBlended = blend; };
+	void SetBlendIf_AlphaDiffuse(AlphaCheckLevel level, const string& pass);
 	_bool IsBlened() { return m_IsBlended; }
+
 	void Set_OutLine(_bool outline) { m_IsUseOutLine = outline; }
 	_bool IsUseOutLine() { return m_IsUseOutLine; }
 	_bool isValid();
-	void SetBlendIf_AlphaDiffuse(AlphaCheckLevel level, const string& pass);
 	_uint Get_InstacneID() { return m_MaterialInstance_ID; }
-	_bool GetMaterialTextureKey(TEXTURE_TYPE type, _uint index, string& outKey);
 
+	_bool GetMaterialTextureKey(TEXTURE_TYPE type, _uint index, string& outKey);
+	class CTexture* GetBindedTexture(TEXTURE_TYPE type);
+	vector<_uint>& Get_TextureIndex() { return m_TextureIndexs; }
+	_uint Get_BindedIndex(TEXTURE_TYPE type);
 public:
 	virtual void Render_GUI();
 	void TypeCheck(const string& first, SHADER_PARAM& second);

@@ -1,0 +1,79 @@
+#include "pch.h"
+#include "MiyabiState_Dash.h"
+#include "Miyabi.h"
+
+#include "MiyabiState_Evade.h"
+#include "CharacterController.h"
+
+void CMiyabiState_Dash::Enter(CMiyabi* pOwner)
+{
+    pOwner->Use_Evade();
+    //if (pOwner->Is_Passion())
+    //{
+    //    pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Evade_Front_03")
+    //        .Speed(1.f)
+    //        .Apply();
+    //}
+    //else
+    //{
+    //    m_bEvadeType = !m_bEvadeType;
+
+    //    string strEvade = m_bEvadeType ? "Evade_Front_01" : "Evade_Front_02";
+    //    pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + strEvade)
+    //        .Speed(1.f)
+    //        .Apply();
+    //}
+
+    _vector3 vDir = pOwner->Get_InputDir();
+    if (vDir.Length() > 0.01f)
+        pOwner->Rotate(vDir);
+}
+
+void CMiyabiState_Dash::Update(CMiyabi* pOwner, _float dt)
+{
+    IHState<CMiyabi>* pEvade = Get_ParentState();
+    if (!pEvade || !pEvade->Get_SubStateMachine()) return;
+    auto pSubMachine = pEvade->Get_SubStateMachine();
+
+    pOwner->Process_RootMotion(dt);
+
+    if (pOwner->Is_Attack())
+    {
+        if (pSubMachine->Get_Bool("Extreme"))
+        {
+            // CounterAttack
+            pSubMachine->Set_Int("ExitMode", 5);
+            pSubMachine->Set_Trigger("Complete");
+        }
+        else
+        {
+            // RushAttack
+            pSubMachine->Set_Int("ExitMode", 3);
+            pSubMachine->Set_Trigger("Complete");
+        }
+        return;
+    }
+
+    if (m_fAnimProgress >= 0.15f)
+    {
+        if (pOwner->Can_Evade() && pOwner->Use_EvadeBuffer())
+        {   // Idle -> Evade
+            pSubMachine->Set_Int("ExitMode", 4);
+            pSubMachine->Set_Trigger("Complete");
+            return;
+        }
+
+        if (pOwner->Is_Move())
+        {
+            pSubMachine->Set_Int("ExitMode", 2);
+            pSubMachine->Set_Trigger("Complete");
+            return;
+        }
+    }
+
+    if (m_fAnimProgress >= 0.7f)
+    {   // Idle
+        pSubMachine->Set_Int("ExitMode", 0);
+        pSubMachine->Set_Trigger("Complete");
+    }
+}

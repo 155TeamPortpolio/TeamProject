@@ -54,13 +54,13 @@ _bool CCamera::Lerp_FOV(_float dst, _float dt)
 
 CCamera* CCamera::Create()
 {
-	CCamera* instance = new CCamera();
-	if (FAILED(instance->Initialize_Prototype()))
+	auto inst = new CCamera();
+	if (FAILED(inst->Initialize_Prototype()))
 	{
 		MSG_BOX("Camera Create Failed : CCamera");
-		Safe_Release(instance);
+		Safe_Release(inst);
 	}
-	return instance;
+	return inst;
 }
 
 void CCamera::Render_GUI()

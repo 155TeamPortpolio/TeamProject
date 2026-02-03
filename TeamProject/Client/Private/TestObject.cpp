@@ -34,31 +34,31 @@ CTestObject::CTestObject(const CTestObject& rhs)
 
 HRESULT CTestObject::Initialize_Prototype()
 {
-	__super::Initialize_Prototype();
-	Add_Component<CSkeletalModel>();
-	Add_Component<CAnimator3D>();
-	Add_Component<CMaterial>();
-	Add_Component<CObjectContainer>();
-	//Add_Component<CRigidBody>();
-	//Add_Component<CCollider>();
-	Add_Component<CCharacterController>();
-
-	auto pRcsMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
-
-	/*파일명과 키값은 일치*/
-	pRcsMgr->Add_ResourcePath("Avatar_Female_Size02_Unagi.model",
-		"../Bin/Resources/Model/skeletal/Miyabi/Avatar_Female_Size02_Unagi.model");
-	pRcsMgr->Add_ResourcePath("Avatar_Female_Size02_Unagi.mat",
-		"../Bin/Resources/Model/skeletal/Miyabi/Avatar_Female_Size02_Unagi.mat");
-	//pRcsMgr->Add_ResourcePath("Avatar_Female_Size02_Unagi_Meta.json",
-//	"../Bin/Resources/Model/skeletal/Miyabi/Anim/Avatar_Female_Size02_Unagi_Meta.json");
-	pRcsMgr->Add_ResourcePath("Avatar_Female_Size02_Unagi_Meta.json",
-		"../Bin/Resources/Model/skeletal/Miyabi/Avatar_Female_Size02_Unagi_Meta.json");
-
-
-	Get_Component<CModel>()->Link_Model("Test_Level", "Avatar_Female_Size02_Unagi.model");
-	Get_Component<CMaterial>()->Link_Material("Test_Level", "Avatar_Female_Size02_Unagi.mat");
-	Add_Component<CAudioSource>();
+//	__super::Initialize_Prototype();
+//	Add_Component<CSkeletalModel>();
+//	Add_Component<CAnimator3D>();
+//	Add_Component<CMaterial>();
+//	Add_Component<CObjectContainer>();
+//	//Add_Component<CRigidBody>();
+//	//Add_Component<CCollider>();
+//	Add_Component<CCharacterController>();
+//
+//	auto pRcsMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
+//
+//	/*파일명과 키값은 일치*/
+//	pRcsMgr->Add_ResourcePath("Avatar_Female_Size02_Unagi.model",
+//		"../Bin/Resources/Model/skeletal/Miyabi/Avatar_Female_Size02_Unagi.model");
+//	pRcsMgr->Add_ResourcePath("Avatar_Female_Size02_Unagi.mat",
+//		"../Bin/Resources/Model/skeletal/Miyabi/Avatar_Female_Size02_Unagi.mat");
+//	//pRcsMgr->Add_ResourcePath("Avatar_Female_Size02_Unagi_Meta.json",
+////	"../Bin/Resources/Model/skeletal/Miyabi/Anim/Avatar_Female_Size02_Unagi_Meta.json");
+//	pRcsMgr->Add_ResourcePath("Avatar_Female_Size02_Unagi_Meta.json",
+//		"../Bin/Resources/Model/skeletal/Miyabi/Avatar_Female_Size02_Unagi_Meta.json");
+//
+//
+//	Get_Component<CModel>()->Link_Model("Test_Level", "Avatar_Female_Size02_Unagi.model");
+//	Get_Component<CMaterial>()->Link_Material("Test_Level", "Avatar_Female_Size02_Unagi.mat");
+//	Add_Component<CAudioSource>();
 
 	return S_OK;
 }
@@ -122,13 +122,13 @@ HRESULT CTestObject::Initialize_State()
 
 void CTestObject::Awake()
 {
-	Get_Component<CAnimator3D>()->LinkAnimate_Model("Test_Level", "Avatar_Female_Size02_Unagi.model");
-	Get_Component<CAnimator3D>()->Link_MetaData("Test_Level", "Avatar_Female_Size02_Unagi_Meta.json");
-	Get_Component<CAnimator3D>()->Set_Animation(0, 3);
-	//Get_Component<CAnimator3D>()->Set_ExtractBoneMovement(7); // << SharkBoo는 7번본이움직임
+	//Get_Component<CAnimator3D>()->LinkAnimate_Model("Test_Level", "Avatar_Female_Size02_Unagi.model");
+	//Get_Component<CAnimator3D>()->Link_MetaData("Test_Level", "Avatar_Female_Size02_Unagi_Meta.json");
+	//Get_Component<CAnimator3D>()->Set_Animation(0, 3);
+	////Get_Component<CAnimator3D>()->Set_ExtractBoneMovement(7); // << SharkBoo는 7번본이움직임
 
-	Get_Component<CCharacterController>()->Set_GravityEnabled(true);
-	Get_Component<CCharacterController>()->Set_Position({0.f, 1.f, 0.f});
+	//Get_Component<CCharacterController>()->Set_GravityEnabled(true);
+	//Get_Component<CCharacterController>()->Set_Position({0.f, 1.f, 0.f});
 }
 
 void CTestObject::Priority_Update(_float dt)

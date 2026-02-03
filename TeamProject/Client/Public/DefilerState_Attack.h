@@ -258,11 +258,14 @@ public:
 
 class CDefilerState_Attack_Evade:  public CDefilerState_Attack
 {
+	enum EvadeState {EVADE_IN,EVADE_OUT};
 public:
 	virtual void Enter(CDefiler* pOwner) override;
 	virtual void Update(CDefiler* pOwner, _float dt) override;
 	virtual void Exit(CDefiler* pOwner) override;
 
+private:
+	EvadeState m_eState = { EVADE_IN };
 public:
 	static CDefilerState_Attack_Evade* Create() { return new CDefilerState_Attack_Evade(); }
 	virtual void Free() override { __super::Free(); }

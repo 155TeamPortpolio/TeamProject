@@ -10,6 +10,7 @@ NS_BEGIN(Client)
 class CCamDirector final : public CBase
 {
     DECLARE_SINGLETON(CCamDirector)
+    using SeqPlayer = CCamSequencePlayer;
 private:
     CCamDirector() {}
     virtual ~CCamDirector() DEFAULT;
@@ -40,8 +41,9 @@ public:
     CHARACTER     GetCharacterName()         const { return GetCharacter()->Get_CharacterName(); }
     string        GetCharacterStr()          const { return Helper::EnumToString(GetCharacter()->Get_CharacterName()); }
     OBJECT_HANDLE GetCurHandle()             const { return GetPlayer()->Get_CurCharacterHandle(); }
-    
-    CCamSequencePlayer* GetSeqPlayer()       const { return GetSeqObj()->Get_Component<CCamSequencePlayer>(); }
+    _float        GetTime()                  const { return GetSeqPlayer()->GetTime(); }
+    const string& GetCurSeqName()            const { return m_playing.active ? m_playing.key : kEmpty; }
+    SeqPlayer*    GetSeqPlayer()             const { return GetSeqObj()->Get_Component<CCamSequencePlayer>(); }
 
 public:
     _bool         Register(const string& key, const fs::path& path);
@@ -60,18 +62,16 @@ public:
     void          StartBattleIntro(CamSeqType type);
     void          StartDialog();
     void          EndDialog();
+    void          AbortSequenceToOrbit(_bool resetTime);
 
 private:
     string        ResolveSeqKey(CamSeqType type) const;
     void          UpdatePlayer();
     void          UpdateInput(_float dt);
-    void          AbortSequenceToOrbit(_bool resetTime);
     void          SyncSeqInputLock();
       
     _bool         IsValid() const { return GetPlayer()->Get_CurCharacterHandle().isValid(); }
     _uint         RequestSequence(const string& key, const CamSequenceRequestDesc& req);
-    _uint         RequestSequence(const string& key, _float blendInSec, _bool resetTime, _float blendOutSec);
-    _uint         RequestSequence(CamSeqType type, const CamSequenceRequestDesc& req);
 
 private:
     CamDirectorSeqMap       m_seqs{};
@@ -89,6 +89,8 @@ private:
     _bool                   m_lastEndedValid = false;
     string                  m_lastEndedKey{};
     _bool                   m_seqInputLocked = false;
+
+    inline static const string kEmpty{};
 }; 
 
 inline auto* CamDirector() { return CCamDirector::GetInstance(); }

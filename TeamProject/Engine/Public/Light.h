@@ -9,18 +9,21 @@ private:
 	CLight(const CLight& rhs);
 	virtual ~CLight() DEFAULT;
 public:
-public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(COMPONENT_DESC* pArg) override;
-
 public:
 	void Render_GUI();
 	void Set_Desc(const LIGHT_DESC& desc, LIGHT_TYPE eType);
+	void Set_Desc(const LIGHT_DESC& desc);
 	_float4 Get_Position();
 	LIGHT_DESC SnapShot_Desc();
 
 public:
 	void Set_CompActive(_bool bActive) override;
+
+private:
+	void NormalizeDir(_float4& dir);
+	void GetSpotConeDegrees(const LIGHT_DESC& desc, float& innerDeg, float& outerDeg);
 
 private:
 	_int m_ID = {-1};
