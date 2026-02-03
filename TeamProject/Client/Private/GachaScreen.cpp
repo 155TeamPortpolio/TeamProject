@@ -55,7 +55,7 @@ void CGachaScreen::Awake()
 	m_CurrentFrameIndexs.resize(m_iMeshCounts);
 	m_MaxFrameIndexs.resize(m_iMeshCounts);
 
-	for (_int idx = 0; idx <m_iMeshCounts; ++idx)
+	for (_int idx = 0; idx < pMaterialInstances.size(); ++idx)
 	{
 		pMaterialInstances[idx]->Set_Param("FrameIndex", { &m_CurrentFrameIndexs[idx], "int", sizeof(_int)});
 		pMaterialInstances[idx]->Set_Param("Col", { &m_Cols[idx], "int", sizeof(_int)});
