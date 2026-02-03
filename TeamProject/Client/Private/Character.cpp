@@ -480,7 +480,7 @@ HRESULT CCharacter::Attach_AttackCollider(ATTACK_COLLIDER_DESC* pDesc)
     COLLIDER_DESC colliderDesc{};
     colliderDesc.eType = pDesc->eColliderType;
     colliderDesc.eGroup = COLLISION_GROUP::PLAYER_ATTACK;
-    colliderDesc.iCollisionMask = ENUM(COLLISION_GROUP::MONSTER);
+    colliderDesc.iCollisionMask = ENUM(COLLISION_GROUP::MONSTER) | ENUM(COLLISION_GROUP::MONSTER_ATTACK);
     colliderDesc.bAutoFit = false;
     colliderDesc.vCenter = pDesc->vCenter;
     colliderDesc.vSize = pDesc->vSize;
