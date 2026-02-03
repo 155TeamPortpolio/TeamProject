@@ -89,6 +89,10 @@ public:
 public:
     static CJaneDoeState_Rush03_Start* Create() { return new CJaneDoeState_Rush03_Start(); }
     virtual void Free() override { __super::Free(); }
+
+private:
+    void Update_Effects(CJaneDoe* pOwner);
+
 };
 
 class CJaneDoeState_Rush03_End final
