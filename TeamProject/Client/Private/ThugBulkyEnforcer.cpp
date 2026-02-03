@@ -51,15 +51,19 @@ HRESULT CThugBulkyEnforcer::Initialize_Prototype()
 	Add_Component<CCharacterController>();
 
 	auto pResourceMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
-	pResourceMgr->Add_ResourcePath("Monster_ThugBulkyEnforcer.mat", "../Bin/Resources/Model/skeletal/Enemy/ThugBulkyEnforcer/Monster_ThugBulkyEnforcer.mat");
-	pResourceMgr->Add_ResourcePath("Monster_ThugBulkyEnforcer.model", "../Bin/Resources/Model/skeletal/Enemy/ThugBulkyEnforcer/Monster_ThugBulkyEnforcer.model");
-	pResourceMgr->Add_ResourcePath("ThugBulkyEnforcer_Meta.json", "../Bin/Resources/Model/skeletal/Enemy/ThugBulkyEnforcer/ThugBulkyEnforcer_Meta.json");
+	pResourceMgr->Add_ResourcePath("Monster_ThugBulkyEnforcer.mat", "../Bin/Resources/Zero/Enemy/ThugBulkyEnforcer/Monster_ThugBulkyEnforcer.mat");
+	pResourceMgr->Add_ResourcePath("Monster_ThugBulkyEnforcer.model", "../Bin/Resources/Zero/Enemy/ThugBulkyEnforcer/Monster_ThugBulkyEnforcer.model");
+	//pResourceMgr->Add_ResourcePath("ThugBulkyEnforcer_Meta.json", "../Bin/Resources/Zero/Enemy/ThugBulkyEnforcer/ThugBulkyEnforcer_Meta.json");
+
+	auto pModel = Get_Component<CSkeletalModel>();
+	pModel->Link_Model(G_GlobalLevelKey, "Monster_ThugBulkyEnforcer.model");
+
+	auto pMaterial = Get_Component<CMaterial>();
+	pMaterial->Link_Material(G_GlobalLevelKey, "Monster_ThugBulkyEnforcer.mat");
 
 	pResourceMgr->Add_ResourcePath("Eff_Noise_119.png", "../Bin/Resources/Global/Shader/Eff_Noise_119.png");
-
+	
 	return S_OK;
-
-
 }
 
 HRESULT CThugBulkyEnforcer::Initialize(INIT_DESC* pArg)
@@ -68,16 +72,9 @@ HRESULT CThugBulkyEnforcer::Initialize(INIT_DESC* pArg)
 
 	__super::Initialize(pArg);
 
-	auto pModel = Get_Component<CSkeletalModel>();
-	pModel->Link_Model(G_GlobalLevelKey, "Monster_ThugBulkyEnforcer.model");
-
-	auto pMaterial = Get_Component<CMaterial>();
-	pMaterial->Link_Material(G_GlobalLevelKey, "Monster_ThugBulkyEnforcer.mat");
-
 	auto pAnimator = Get_Component<CAnimator3D>();
 	pAnimator->LinkAnimate_Model(G_GlobalLevelKey, "Monster_ThugBulkyEnforcer.model");
 	pAnimator->Link_MetaData(G_GlobalLevelKey, "ThugBulkyEnforcer_Meta.json");
-	//pAnimator->Set_MotionBone(3);	//Bip001
 	pAnimator->Set_ExtractMotionboneMovement(AXIS::X | AXIS::Z);
 	pAnimator->Resize_Layer(2);
 	for (size_t i = 1; i < 2; i++)
