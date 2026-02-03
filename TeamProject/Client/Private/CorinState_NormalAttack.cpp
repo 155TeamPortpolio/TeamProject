@@ -127,11 +127,19 @@ void CCorinState_Attack_01::Update(CCorin* pOwner, _float dt)
             pOwner->End_AttackCollider("Saw");
         }
     }
+
+    Update_Effects(pOwner);
 }
 
 void CCorinState_Attack_01::Exit(CCorin* pOwner)
 {
     static_cast<CCorinState_NormalAttack*>(m_pParentState)->Set_ComboIndex(0);
+}
+
+void CCorinState_Attack_01::Update_Effects(CCorin* pOwner)
+{
+    if (IsCrossAnimProgress(0.4f))
+        pOwner->Play_Effect("Corin_Normal_Slash0", _vector3(0.2f, 0.5f, 0.2f), _quaternion(0.75f, -0.11f, 0.05f, -0.65f));
 }
 
 void CCorinState_Attack_02::Enter(CCorin* pOwner)
@@ -169,11 +177,19 @@ void CCorinState_Attack_02::Update(CCorin* pOwner, _float dt)
             pOwner->End_AttackCollider("Saw");
         }
     }
+
+    Update_Effects(pOwner);
 }
 
 void CCorinState_Attack_02::Exit(CCorin* pOwner)
 {
     static_cast<CCorinState_NormalAttack*>(m_pParentState)->Set_ComboIndex(1);
+}
+
+void CCorinState_Attack_02::Update_Effects(CCorin* pOwner)
+{
+    if (IsCrossAnimProgress(0.27f))
+        pOwner->Play_Effect("Corin_Normal_Slash0", _vector3(0.f, 1.f, 0.f), _quaternion(0.64f, 0.f, 0.74f, 0.19f));
 }
 
 void CCorinState_Attack_03::Enter(CCorin* pOwner)
@@ -209,11 +225,19 @@ void CCorinState_Attack_03::Update(CCorin* pOwner, _float dt)
             pOwner->End_AttackCollider("Saw");
         }
     }
+
+    Update_Effects(pOwner);
 }
 
 void CCorinState_Attack_03::Exit(CCorin* pOwner)
 {
     static_cast<CCorinState_NormalAttack*>(m_pParentState)->Set_ComboIndex(2);
+}
+
+void CCorinState_Attack_03::Update_Effects(CCorin* pOwner)
+{
+    if (IsCrossAnimProgress(0.41f))
+        pOwner->Play_Effect("Corin_Sting0", _vector3(0.3f, 0.7f, 0.7f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
 }
 
 void CCorinState_Attack_04::Enter(CCorin* pOwner)
@@ -250,11 +274,22 @@ void CCorinState_Attack_04::Update(CCorin* pOwner, _float dt)
             pOwner->End_AttackCollider("Saw");
         }
     }
+
+    Update_Effects(pOwner);
 }
 
 void CCorinState_Attack_04::Exit(CCorin* pOwner)
 {
     static_cast<CCorinState_NormalAttack*>(m_pParentState)->Set_ComboIndex(3);
+}
+
+void CCorinState_Attack_04::Update_Effects(CCorin* pOwner)
+{
+    if (IsCrossAnimProgress(0.16f))
+        pOwner->Play_Effect("Corin_Normal_Slash0", _vector3(-0.1f, 0.5f, 0.1f), _quaternion(0.13f, 0.7f, 0.69f, -0.09f));
+
+    if (IsCrossAnimProgress(0.46f))
+        pOwner->Play_Effect("Corin_Normal_Slash1", _vector3(0.1f, 1.1f, -0.1f), _quaternion(0.72f, 0.f, -0.63f, -0.29f));
 }
 
 void CCorinState_Attack_05::Enter(CCorin* pOwner)
@@ -295,6 +330,10 @@ void CCorinState_Attack_05::Update(CCorin* pOwner, _float dt)
 void CCorinState_Attack_05::Exit(CCorin* pOwner)
 {
     static_cast<CCorinState_NormalAttack*>(m_pParentState)->Set_ComboIndex(4);
+}
+
+void CCorinState_Attack_05::Update_Effects(CCorin* pOwner)
+{
 }
 
 void CCorinState_Attack_End::Enter(CCorin* pOwner)

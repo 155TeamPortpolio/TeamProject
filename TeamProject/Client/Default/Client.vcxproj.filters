@@ -1119,6 +1119,9 @@
     <Filter Include="03. Utility\08. CamDirector\02. CamDebugInput">
       <UniqueIdentifier>{0ab884f1-7b9a-4ad0-91d2-f1ac84773eec}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03. Utility\06. FieldSystem\Room\05. Room_Gacha">
+      <UniqueIdentifier>{820f4014-89e1-411c-b031-be391e0f1e5e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -2156,6 +2159,9 @@
     <ClInclude Include="..\public\CamDebugInput.h">
       <Filter>03. Utility\08. CamDirector\02. CamDebugInput</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Room_Gacha.h">
+      <Filter>03. Utility\06. FieldSystem\Room\05. Room_Gacha</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -3154,6 +3160,9 @@
     </ClCompile>
     <ClCompile Include="..\private\CamDebugInput.cpp">
       <Filter>03. Utility\08. CamDirector\02. CamDebugInput</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Room_Gacha.cpp">
+      <Filter>03. Utility\06. FieldSystem\Room\05. Room_Gacha</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
