@@ -180,6 +180,24 @@ _bool CMaterialInstance::GetMaterialTextureKey(TEXTURE_TYPE type, _uint index, s
     return true;
 }
 
+CTexture* CMaterialInstance::GetBindedTexture(TEXTURE_TYPE type)
+{
+    _uint nowIndex = m_TextureIndexs[ENUM(type)];
+
+    CTexture* pTexture = { nullptr };
+    _bool indexIn = m_pMaterialData->Get_Texture(type, nowIndex, pTexture);
+
+    if (!indexIn || nullptr == pTexture)
+        return nullptr;
+
+    return pTexture;
+}
+
+_uint CMaterialInstance::Get_BindedIndex(TEXTURE_TYPE type)
+{
+    return  m_TextureIndexs[ENUM(type)];
+}
+
 void CMaterialInstance::Render_GUI()
 {
     CShader* shaderPtr = m_pMaterialData->Get_Shader();

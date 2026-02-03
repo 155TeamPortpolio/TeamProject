@@ -11,8 +11,8 @@ private:
 	virtual ~CCharacterParryCollider() DEFAULT;
 
 public:
-	vector<OBJECT_HANDLE>& Get_Targets() { return m_ParryableTargets; }
-	
+	vector<OBJECT_HANDLE>& Get_ParryTargets() { return m_ParryableTargets; }
+
 public:
 	HRESULT         Initialize_Prototype() override;
 	HRESULT         Initialize(INIT_DESC* pArg) override;
@@ -28,9 +28,11 @@ public:
 public:
 	_vector3    Get_PrevPos() { return m_vPrevPos; }
 	_bool		Can_Parry();
+	_bool		Can_Perfect();
 
 private:
 	vector<OBJECT_HANDLE> m_ParryableTargets;
+	vector<OBJECT_HANDLE> m_EvadableTargets;
 	_vector3 m_vPrevPos;
 
 public:

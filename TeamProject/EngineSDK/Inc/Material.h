@@ -1,5 +1,7 @@
 #pragma once
 #include "Component.h"
+#include "MaterialInstance.h"
+
 NS_BEGIN(Engine)
 
 class ENGINE_DLL CMaterial :
