@@ -130,14 +130,14 @@ void CGachaStage::Update_StageEnviroment()
 	WEAPON_DESC CurrentDesc = (*m_pResultDesc)[m_iPreIndex];
 	if (CurrentDesc.Grade == GachaGrade::S)
 	{
-		//m_pScreen->SetScreen(GACHA_STAGE::AVATAR, CurrentDesc.Grade);
-		//Set_Stage(GACHA_STAGE::AVATAR);
+		m_pScreen->SetScreen(GACHA_STAGE::AVATAR, CurrentDesc.Grade);
+		Set_Stage(GACHA_STAGE::AVATAR);
 	}
 	else
 	{
-		//m_pScreen->SetScreen(GACHA_STAGE::BANGBOO, CurrentDesc.Grade);
-		//Set_Stage(GACHA_STAGE::BANGBOO);
-		//m_pResult->SetResult(CurrentDesc.strModel, CurrentDesc.strMaterial);
+		m_pScreen->SetScreen(GACHA_STAGE::BANGBOO, CurrentDesc.Grade);
+		Set_Stage(GACHA_STAGE::BANGBOO);
+		m_pResult->SetResult(CurrentDesc.strModel, CurrentDesc.strMaterial);
 	}
 }
 

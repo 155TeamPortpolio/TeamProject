@@ -27,7 +27,7 @@ private:
     _float  m_fElapsedTime = 0.f;
     _float  m_fFrameDuration = 0.02f;
 
-    _int            m_iMeshCounts;
+    _int            m_iMaterialInstanceCounts;
 
 public:
     static CGachaScreen* Create();
