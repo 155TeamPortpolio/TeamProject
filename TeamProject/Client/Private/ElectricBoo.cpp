@@ -100,7 +100,7 @@ void CElectricBoo::Add_DialoguePartner()
 	pairBooCCT.iCollisionMask = 0xFFFFFFFF;
 	pairBooCCT.bAutoFit = false;
 	pairBooCCT.fHeight = Get_Component<CCharacterController>()->Get_Height();
-	pairBooCCT.fRadius = 0.4f;
+	pairBooCCT.fRadius = Get_Component<CCharacterController>()->Get_Radius();
 	pairBooCCT.eGroup = COLLISION_GROUP::INTERACTABLE;
 	_float4 Pos = Get_Position();
 	pairBooCCT.vPos = { Pos.x - 0.6f, Pos.y, Pos.z - 0.4f };
@@ -112,6 +112,8 @@ void CElectricBoo::Add_DialoguePartner()
 		.CharacterController(pairBooCCT)
 		.Rotate(Get_WorldRotation() + Vector3(0.f, XM_PI, 0.f))
 		.Build("Partner");
+
+	pPairBoo->Get_Component<CCharacterController>()->Set_FootPosition(pairBooCCT.vPos);
 
 	pObjectContainer->Add_Child(pPairBoo, false);
 }
