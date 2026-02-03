@@ -101,7 +101,7 @@ void CGachaStage::Add_StageScreen()
 		.Position(_float3(0.f, 1.45f, -1.5f))
 		.Scale(_float3(2.f, 2.f, 2.f))
 		.Build("Result");
-	gachaResult->Get_Component<CTransform>()->Set_Quaternion(_vector4(-0.10, 0.80, -0.28, 0.52));
+	gachaResult->Get_Component<CTransform>()->Set_Quaternion(_vector4(-0.03, 0.96, -0.11, 0.24));
 
 	m_pResult = dynamic_cast<CGachaResult*>(gachaResult);
 
@@ -139,7 +139,8 @@ void CGachaStage::Update_StageEnviroment(_int index)
 	{
 		m_pScreen->SetScreen(GACHA_STAGE::BANGBOO, CurrentDesc.Grade);
 		Set_Stage(GACHA_STAGE::BANGBOO);
-		m_pResult->SetResult(CurrentDesc.strModel, CurrentDesc.strMaterial);
+		m_pResult->SetResult(CurrentDesc.strModel, CurrentDesc.strMaterial,
+			_float4(CurrentDesc.RotX,CurrentDesc.RotY,CurrentDesc.RotZ, CurrentDesc.RotW));
 	}
 }
 

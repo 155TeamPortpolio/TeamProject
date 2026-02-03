@@ -629,19 +629,20 @@ HRESULT CDataBase::LoadRamenData(const string& csvPath)
 HRESULT CDataBase::LoadWeaponData(const string& csvPath)
 {
 	io::CSVReader<
-		5,
+		9,
 		io::trim_chars<' ', '\t'>,
 		io::double_quote_escape<',', '"'>
 	>in(csvPath);
 
 	in.read_header(
 		io::ignore_extra_column | io::ignore_missing_column,
-		"ID", "Grade", "Model", "Mat", "Texture"
+		"ID", "Grade", "Model", "Mat", "Texture", "RotX", "RotY", "RotZ", "RotW"
 	);
 	string			Grade, Model, Material, Texture;
 	_int			ID;
+	_float			RotX, RotY, RotZ, RotW;
 
-	while (in.read_row(ID, Grade, Model, Material,Texture))
+	while (in.read_row(ID, Grade, Model, Material,Texture, RotX, RotY, RotZ, RotW))
 	{
 		if (ID == -1) continue;
 
@@ -651,6 +652,10 @@ HRESULT CDataBase::LoadWeaponData(const string& csvPath)
 		desc.strModel = Model;
 		desc.strMaterial = Material;
 		desc.strTexture = Texture;
+		desc.RotX = RotX;
+		desc.RotY = RotY;
+		desc.RotZ = RotZ;
+		desc.RotW = RotW;
 
 		auto [iter, inserted] = m_WeaponTables.emplace(desc.ID, move(desc));
 		if (false == inserted)

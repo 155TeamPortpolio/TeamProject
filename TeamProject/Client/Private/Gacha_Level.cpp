@@ -55,7 +55,7 @@ HRESULT CGacha_Level::Awake()
 
 void CGacha_Level::Update()
 {
-	if (InputDevice()->Mouse_Tap(MOUSE_BTN::LB))
+	if (InputDevice()->Key_Tap(VK_SPACE))
 	{
 		if (m_iIndex == -1) CamDirector()->RequestSequence("Gacha/Spin_Half");
 		else CamDirector()->RequestSequence("Gacha/Spin");
