@@ -18,18 +18,32 @@ CGachaProps::CGachaProps()
 }
 
 CGachaProps::CGachaProps(const CGachaProps& rhs)
-    :CGameObject(rhs), m_pResultDesc(rhs.m_pResultDesc), m_pIndex(rhs.m_pIndex)
+    :CGameObject(rhs), m_pResultDesc(rhs.m_pResultDesc)
 {
 }
 
-HRESULT CGachaProps::Initialize_Prototype(vector<WEAPON_DESC>* Desc, _int* Index)
+void CGachaProps::SetupInitialTVSequence()
+{
+    m_pTV->SetupInitialTVSequence();
+}
+
+void CGachaProps::PlayTVSequence()
+{
+    m_pTV->PlayTVSequence();
+}
+
+void CGachaProps::PlayStageSpin(_int index)
+{
+    m_pStage->PlayStageSpin(index);
+}
+
+HRESULT CGachaProps::Initialize_Prototype(vector<WEAPON_DESC>* Desc)
 {
     if (FAILED(__super::Initialize_Prototype()))
         return E_FAIL;
 
     Add_Component<CObjectContainer>();
     m_pResultDesc = Desc;
-    m_pIndex = Index;
 
     return S_OK;
 }
@@ -72,7 +86,7 @@ HRESULT CGachaProps::Initialize_GachaPrototype()
 {
     PrototypeManager()->Add_ProtoType("Gacha_Level", "Proto_GameObject_GachaBack", CGachaBack::Create());
     PrototypeManager()->Add_ProtoType("Gacha_Level", "Proto_GameObject_GachaTV", CGachaTV::Create(m_pResultDesc));
-    PrototypeManager()->Add_ProtoType("Gacha_Level", "Proto_GameObject_GachaStage", CGachaStage::Create(m_pResultDesc, m_pIndex));
+    PrototypeManager()->Add_ProtoType("Gacha_Level", "Proto_GameObject_GachaStage", CGachaStage::Create(m_pResultDesc));
     return S_OK;
 }
 
@@ -103,12 +117,15 @@ void CGachaProps::Add_GachaProps()
         .Build("Stage");
 
     pObjectContainer->Add_Child(gachaStage, true);
+
+    m_pStage = dynamic_cast<CGachaStage*>(gachaStage);
+    m_pTV = dynamic_cast<CGachaTV*>(gachaTV);
 }
 
-CGachaProps* CGachaProps::Create(vector<WEAPON_DESC>* Desc, _int* Index)
+CGachaProps* CGachaProps::Create(vector<WEAPON_DESC>* Desc)
 {
 	CGachaProps* Instance = new CGachaProps();
-	if (FAILED(Instance->Initialize_Prototype(Desc, Index)))
+	if (FAILED(Instance->Initialize_Prototype(Desc)))
 	{
 		Safe_Release(Instance);
 		return nullptr;

@@ -33,7 +33,7 @@ HRESULT CLoadingLevel::Awake()
 	if (!m_bGlobal)
 	{
 		PreLoadLevel("Global_Level");
-		PreLoadForTestLevel();
+		//PreLoadForTestLevel();
 		m_bGlobal = true;
 	}
 	return S_OK;
@@ -134,8 +134,6 @@ void CLoadingLevel::PreLoadLevel(const string& levelKey)
 
 void CLoadingLevel::PreLoadForTestLevel()
 {
-	
-
 	const string clientPath = "../Bin/Resources";
 	filesystem::path directory = clientPath;
 
