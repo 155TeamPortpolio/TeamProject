@@ -193,6 +193,7 @@ void CCamDirector::UpdateInput(_float dt)
         CameraManager()->AddShakeAxisWave(CamShakeAxis::Yaw,   1.4f, 3.0f, 0.6f, 0.1f, EaseType::InQuad, EaseType::InOutQuad);
         CameraManager()->AddShakeAxisWave(CamShakeAxis::Pitch, 1.f,  2.5f, 0.4f, 0.1f, EaseType::InQuad, EaseType::InOutQuad);
     }
+
 }
 
 void CCamDirector::AbortSequenceToOrbit(_bool resetTime)
