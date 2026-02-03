@@ -88,6 +88,7 @@ protected:
 	vector<class CGameObject*> m_pPortals;
 
 	/*데이터 - 맵 유형 개수*/
+	vector<OBJECT_HANDLE> m_MapObjects;
 public:
     virtual void Free();
 };

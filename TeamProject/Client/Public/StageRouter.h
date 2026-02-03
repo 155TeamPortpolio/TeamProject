@@ -27,7 +27,7 @@ public:
     /*NodeControl*/
     _int AddNode(StageType type, _int parentIndex, _int depth);
     _int CreateNode(StageType type, _int parentIndex);
-    void BuildGraph(_int MaxDepth);
+    void BuildGraph(_int MaxDepth, StageType root);
     _int GetChoiceNodeIndex(_int choiceIndex);
     _int GetChoiceCount();
 

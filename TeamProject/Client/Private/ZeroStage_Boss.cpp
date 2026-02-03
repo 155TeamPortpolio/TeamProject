@@ -1,52 +1,9 @@
 #include "pch.h"
 #include "ZeroStage_Boss.h"
-#include "Helper_Func.h"
 #include "GameInstance.h"
-
-#include "TestMap.h"
-#include "TestObject.h"
-#include "TestFloor.h"
-#include "RigidBody.h"
-#include "CharacterController.h"
-
 #include "BattleSystem.h"
-#include "DataBase.h"
-
-// Camera
-#include "Camera.h"
-#include "FreeCam.h"
-#include "CamDirector.h"
-#include "OrbitCam.h"
-#include "ShadowCam.h"
-#include "SequenceCam.h"
-#include "CamPanel.h"
-#include "CamLoader.h"
-
-/* MapData */
-#include "MapLoader.h"
-#include "MapPlacedObject.h"
-#include "MapTriggerObject.h"
-
-/* Effect */
-#include "MeshNode.h"
-#include "SpriteNode.h"
-#include "ParticleNode.h"
-#include "TrailNode.h"
-#include "EffectContainer.h"
-#include "AttackSign.h"
-
-/* Character */
-#include "Miyabi.h"
-#include "Anbi.h"
-#include "Corin.h"
-#include "JaneDoe.h"
-#include "Player.h"
-
-/* UI */
-#include "UIDirector.h"
-#include "UI_MeshBillboard.h"
-
-#include "Layer.h"
+#include "Zero_Level.h"
+#include "StageRouter.h"
 
 CZeroStage_Boss::CZeroStage_Boss()
 {
@@ -58,6 +15,7 @@ HRESULT CZeroStage_Boss::Initialize(CZero_Level* pOwnerLevel)
 	if (!pOwnerLevel)
 		return E_FAIL;
 
+	m_pOwnerLevel = pOwnerLevel;
 	return S_OK;
 }
 
@@ -100,8 +58,8 @@ HRESULT CZeroStage_Boss::Enter_Stage(StageContext& context)
 	Reserve_Enemy("Zero_Level");
 	m_eStageStage = StageState::Entrance;
 	m_PlayerHandle = context.hPlayer;
-	BossIntro(context);
 	Active_Player(CStage::PlayerPoint::Typical);
+	BossIntro(context);
 	return S_OK;
 }
 
@@ -136,7 +94,9 @@ void CZeroStage_Boss::Outro()
 void CZeroStage_Boss::End()
 {
 	if (m_outroFlow.IsDoneAll()) {
-		m_pOwnerLevel->ChangeStage();
+		auto stageType = m_pOwnerLevel->Get_Router()->GetChoiceType(m_iNextChoice);
+		m_pOwnerLevel->Get_Router()->Choose(m_iNextChoice);
+		m_pOwnerLevel->ChangeStage(stageType);
 	}
 }
 

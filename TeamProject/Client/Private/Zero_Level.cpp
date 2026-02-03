@@ -92,7 +92,7 @@ void CZero_Level::Update()
 
 HRESULT CZero_Level::Render()
 {
-	return S_OK; /*Èû³»!*/
+	return S_OK; 
 }
 
 HRESULT CZero_Level::ChangeStage(StageType type)
@@ -128,10 +128,10 @@ void CZero_Level::Ready_Prototype()
 void CZero_Level::Ready_Stage()
 {
 	/*Stage*/
-	m_pRouter = Add_LevelObject<CStageRouter>();
-	Safe_AddRef(m_pRouter);
+	m_pRouter = Add_LevelObject<CStageRouter>();Safe_AddRef(m_pRouter);
 	ObjectManager()->Add_Object(m_pRouter, { "Zero_Level","Router_Layer" });
-	m_pRouter->BuildGraph(5);
+
+	m_pRouter->BuildGraph(5, StageType::Boss);
 
 	m_StageContainer.emplace(StageType::Normal, CZeroStage_Normal::Create(this));
 	m_StageContainer.emplace(StageType::Elite, CZeroStage_Elite::Create(this));
@@ -141,7 +141,7 @@ void CZero_Level::Ready_Stage()
 	m_mapCycle[StageType::Elite].maps	= { "Zero_1_1", "Zero_1_2" };
 	m_mapCycle[StageType::Boss].maps	= { "Zero_Boss1","Zero_Boss2"};
 
-	ChangeStage();
+	ChangeStage(StageType::Boss);
 }
 
 string CZero_Level::PopMapKey(StageType type)

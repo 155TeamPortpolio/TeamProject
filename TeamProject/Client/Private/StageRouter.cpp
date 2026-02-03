@@ -230,13 +230,13 @@ _int CStageRouter::AddNode(StageType type, _int parentIndex, _int depth)
 	return static_cast<_int>(m_stageNodes.size() - 1);
 }
 
-void CStageRouter::BuildGraph(_int MaxDepth)
+void CStageRouter::BuildGraph(_int MaxDepth, StageType root)
 {
     m_stageNodes.clear();
     m_currentNode = -1;
     m_maxDepth = MaxDepth;
 
-    _int rootNode = AddNode(StageType::Normal, -1, 0);
+    _int rootNode = AddNode(root, -1, 0);
     m_currentNode = rootNode;
 
     vector<_int> layer;

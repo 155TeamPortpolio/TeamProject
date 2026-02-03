@@ -1,13 +1,9 @@
 #include "pch.h"
 #include "ZeroStage_Elite.h"
-#include "Zero_Level.h"
-#include "BattleSystem.h"
-#include "CamDirector.h"
 #include "GameInstance.h"
-#include "Layer.h"
-#include "Player.h"
-#include "StageFx.h"
-#include "UIDirector.h"
+#include "BattleSystem.h"
+#include "Zero_Level.h"
+#include "StageRouter.h"
 
 CZeroStage_Elite::CZeroStage_Elite()
 {
@@ -97,7 +93,9 @@ void CZeroStage_Elite::Outro()
 void CZeroStage_Elite::End()
 {
 	if (m_outroFlow.IsDoneAll()) {
-		m_pOwnerLevel->ChangeStage();
+		auto stageType = m_pOwnerLevel->Get_Router()->GetChoiceType(m_iNextChoice);
+		m_pOwnerLevel->Get_Router()->Choose(m_iNextChoice);
+		m_pOwnerLevel->ChangeStage(stageType);
 	}
 }
 

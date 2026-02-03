@@ -1,12 +1,8 @@
 #include "pch.h"
 #include "ZeroStage_Normal.h"
-#include "Zero_Level.h"
-#include "BattleSystem.h"
-#include "CamDirector.h"
 #include "GameInstance.h"
-#include "Layer.h"
-#include "Player.h"
-#include "UIDirector.h"
+#include "BattleSystem.h"
+#include "Zero_Level.h"
 #include "StageRouter.h"
 
 CZeroStage_Normal::CZeroStage_Normal()

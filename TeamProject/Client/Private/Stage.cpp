@@ -31,7 +31,15 @@ HRESULT CStage::Exit_Stage(StageContext& context)
 	/*데이터 - 몬스터*/
 	m_MonsterData.Reset();
 	m_pMonsters.clear();
+
+	for (size_t i = 0; i < m_pPortals.size(); i++)
+		ObjectManager()->Remove_Object(m_pPortals[i]);
 	m_pPortals.clear();
+
+	for (size_t i = 0; i < m_MapObjects.size(); i++)
+		m_MapObjects[i].Delete();
+
+	m_MapObjects.clear();
 	return S_OK;
 }
 
@@ -56,6 +64,7 @@ void CStage::Ready_Map(const string& LevelTag, const string& AreaTag)
 		datas->Battle.Spawner; /*보류*/
 		ReadyMonsterData(LevelTag, AreaTag);
 	}
+	m_MapObjects.reserve(100);
 
 	/*아직 저장 안함*/
 	auto& Entity = datas->Entity;
@@ -63,6 +72,7 @@ void CStage::Ready_Map(const string& LevelTag, const string& AreaTag)
 	{
 		data.DataName;
 		data.Handle;
+		m_MapObjects.push_back(data.Handle);
 	}
 
 	auto& MapObj = datas->MapObj;
@@ -70,6 +80,7 @@ void CStage::Ready_Map(const string& LevelTag, const string& AreaTag)
 	{
 		data.DataName;
 		data.Handle;
+		m_MapObjects.push_back(data.Handle);
 	}
 
 	auto& InvisibleWall = datas->InvWall;
@@ -77,6 +88,7 @@ void CStage::Ready_Map(const string& LevelTag, const string& AreaTag)
 	{
 		data.DataName;
 		data.Handle;
+		m_MapObjects.push_back(data.Handle);
 	}
 
 	auto& Trigger = datas->Trigger;
@@ -84,6 +96,7 @@ void CStage::Ready_Map(const string& LevelTag, const string& AreaTag)
 	{
 		data.DataName;
 		data.Handle;
+		m_MapObjects.push_back(data.Handle);
 	}
 }
 
@@ -116,9 +129,12 @@ void CStage::Active_Portal()
 	auto pRouter = m_pOwnerLevel->Get_Router();
 	const int choiceCount = pRouter->GetChoiceCount();
 	if (choiceCount <= 0) return;
+	if (m_pPortals.empty()) return;
 	
 	for (size_t i = 0; i < choiceCount; i++)
 	{
+		if (!m_pPortals[i]) continue;
+
 		auto* zeroPortal = dynamic_cast<CZeroPortal*>(m_pPortals[i]);
 		if (zeroPortal)
 			zeroPortal->SetChoiceIndex(this,i);
@@ -198,6 +214,7 @@ HRESULT CStage::ReadyMonsterData(const string& LevelTag, const string& AreaTag)
 
 	return S_OK;
 }
+
 void CStage::Reserve_Enemy(const string& LevelTag)
 {
 	auto& data = m_MonsterData.CreationData;
@@ -230,7 +247,6 @@ void CStage::Reserve_Enemy(const string& LevelTag)
 		}
 	}
 }
-
 void CStage::BaseIntro(StageContext& context)
 {
 	if (!m_introFlowBuilt)
