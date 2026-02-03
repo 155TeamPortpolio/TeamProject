@@ -193,6 +193,8 @@ PS_OUT PS_MAIN(PS_IN In)
     {
         discard;
     }
+    if (length(vMtrlDiffuse.rgb) <= 0.f)
+        vMtrlDiffuse.rgb = float3(0.01, 0.01, 0.01);
     Out.vDiffuse = vMtrlDiffuse;
   
     vector vNormalDesc = NormalTexture.Sample(DefaultSampler, In.vTexcoord);

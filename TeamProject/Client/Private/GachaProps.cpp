@@ -22,7 +22,7 @@ CGachaProps::CGachaProps(const CGachaProps& rhs)
 {
 }
 
-void CGachaProps::SetupInitialTVSequence()
+void CGachaProps::SetupInitialSequence()
 {
     m_pTV->SetupInitialTVSequence();
 }

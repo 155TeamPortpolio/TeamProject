@@ -262,6 +262,8 @@ void CEnemy::Active_AttackSign(_bool parryEnable)
 	}
 
 	static_cast<CAttackSign*>(pAttackSign)->Active(IsReallyParryEnable);
+
+	m_isParryEnable = IsReallyParryEnable;
 }
 
 void CEnemy::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER charaName)

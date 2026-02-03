@@ -22,6 +22,11 @@ public:
     virtual void    Update(_float dt)           override;
     virtual void    Late_Update(_float dt)      override;
 
+private:
+    _vector4    m_vInitRot;
+    _float      m_fRotElapsedTime = 0.f;
+    _float      m_fRotDuration = 0.85f;
+
 public:
     static CGachaResult* Create();
     virtual CGameObject* Clone(INIT_DESC* pArg) override;

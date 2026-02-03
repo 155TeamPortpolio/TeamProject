@@ -12,7 +12,7 @@ private:
     virtual ~CGachaProps() DEFAULT;
 
 public:
-    void    SetupInitialTVSequence();
+    void    SetupInitialSequence();
     void    PlayTVSequence();
     void    PlayStageSpin(_int index);
 
