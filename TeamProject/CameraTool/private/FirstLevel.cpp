@@ -11,12 +11,11 @@
 HRESULT CFirstLevel::Awake()
 {
 	PROTO->Add_ProtoType(G_GlobalLevelKey, "Proto_FreeCam", CFreeCam::Create());
-	PROTO->Add_ProtoType(G_GlobalLevelKey, "Proto_Grid", CGrid::Create());
-	PROTO->Add_ProtoType(G_GlobalLevelKey, "Proto_Corin", Corin::Create());
+	PROTO->Add_ProtoType(G_GlobalLevelKey, "Proto_Grid",    CGrid::Create());
+	PROTO->Add_ProtoType(G_GlobalLevelKey, "Proto_Corin",   Corin::Create());
 	PROTO->Add_ProtoType(G_GlobalLevelKey, "Proto_JaneDoe", JaneDoe::Create());
-	PROTO->Add_ProtoType(G_GlobalLevelKey, "Proto_Miyabi", Unagi::Create());
-
-	PROTO->Add_ProtoType(G_GlobalLevelKey, "Proto_Gacha", CGachaProps::Create());
+	PROTO->Add_ProtoType(G_GlobalLevelKey, "Proto_Miyabi",  Unagi::Create());
+	PROTO->Add_ProtoType(G_GlobalLevelKey, "Proto_Gacha",   CGachaProps::Create());
 
 	auto freeCam = Builder::Create_Object({G_GlobalLevelKey, "Proto_FreeCam"})
 		.Camera(aspect)
@@ -27,14 +26,10 @@ HRESULT CFirstLevel::Awake()
 		.Scale({50.f, 1.f, 50.f})
 		.Build("Grid");
 
-	auto corin = Builder::Create_Object({G_GlobalLevelKey, "Proto_Corin"}).Build("Corin");
-
+	auto corin   = Builder::Create_Object({G_GlobalLevelKey, "Proto_Corin"  }).Build("Corin");
 	auto janeDoe = Builder::Create_Object({G_GlobalLevelKey, "Proto_JaneDoe"}).Build("JaneDoe");
-
-	auto miyabi = Builder::Create_Object({G_GlobalLevelKey, "Proto_Miyabi"}).Build("Miyabi");
-
-	auto gacha = Builder::Create_Object({G_GlobalLevelKey, "Proto_Gacha"}).Build("Gacha");
-
+	auto miyabi  = Builder::Create_Object({G_GlobalLevelKey, "Proto_Miyabi" }).Build("Miyabi");
+	auto gacha   = Builder::Create_Object({G_GlobalLevelKey, "Proto_Gacha"  }).Build("Gacha");
 
 	OBJ->Add_Object(freeCam,   {G_GlobalLevelKey, "Camera_Layer"});
 	OBJ->Add_Object(corin,     {G_GlobalLevelKey, "Model_Layer" });
