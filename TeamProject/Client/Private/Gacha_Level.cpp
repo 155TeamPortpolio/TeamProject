@@ -48,6 +48,8 @@ HRESULT CGacha_Level::Awake()
 	// Camera
 	CamDirector()->SetSpaceRef(m_GachaHandle);
 	CamDirector()->RequestSequence("Gacha/Down");
+
+	m_pGachaProps->SetupInitialTVSequence();
 	return S_OK;
 }
 
@@ -88,17 +90,20 @@ void CGacha_Level::Ready_GachaObjects()
 
 void CGacha_Level::Update_CamTime()
 {
-	//if (CamDirector()->GetSeqPlayer()->() == "Gacha/Down")
-	//{
-	//	if (CamDirector()->GetSeqPlayer()->GetTime() >= 1.f)
-	//		m_pGachaProps->PlayTVSequence();
-	//}
-	//
-	//if (CamDirector()->GetCurrentPlayingSequence() == "Gacha/Spin")
-	//{
-	//	if (CamDirector()->GetSeqPlayer()->GetTime() >= 1.f)
-	//		m_pGachaProps->PlayStageSpin(m_iIndex);
-	//}
+	if (CamDirector()->GetCurSeqName() == "Gacha/Down")
+	{
+		if (CamDirector()->GetTime() >= 2.2f)
+			m_pGachaProps->PlayTVSequence();
+	}
+	else if (CamDirector()->GetCurSeqName() == "Gacha/Spin_Half")
+	{
+		m_pGachaProps->PlayStageSpin(m_iIndex);
+	}
+	else if (CamDirector()->GetCurSeqName() == "Gacha/Spin")
+	{
+		if (CamDirector()->GetSeqPlayer()->GetTime() >= 1.f)
+			m_pGachaProps->PlayStageSpin(m_iIndex);
+	}
 }
 
 CGacha_Level* CGacha_Level::Create(const string& LevelKey)

@@ -22,6 +22,11 @@ CGachaProps::CGachaProps(const CGachaProps& rhs)
 {
 }
 
+void CGachaProps::SetupInitialTVSequence()
+{
+    m_pTV->SetupInitialTVSequence();
+}
+
 void CGachaProps::PlayTVSequence()
 {
     m_pTV->PlayTVSequence();

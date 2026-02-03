@@ -13,6 +13,7 @@ private:
 
 public:
     void    PlayTVSequence();
+    void    SetupInitialTVSequence();
 
 public:
     virtual HRESULT Initialize_Prototype(vector<WEAPON_DESC>* Desc);
