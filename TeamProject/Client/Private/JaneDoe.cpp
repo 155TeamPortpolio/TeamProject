@@ -317,34 +317,6 @@ void CJaneDoe::OnDefensiveAssist()
     Increase_Passion(1.f);
 }
 
-void CJaneDoe::Play_Effect(const string& effectTag, _fvector offsetPosition, _fvector offsetQuaternion, _bool syncTransform)
-{
-    auto pEffect = Get_Component<CObjectContainer>()->Find_ObjectByName(effectTag);
-    if (!pEffect)
-        return;
-
-    auto pEffectTransform = pEffect->Get_Component<CTransform>();
-    if (syncTransform)
-    {
-        pEffectTransform->Set_Pos(_vector3(offsetPosition));
-        pEffectTransform->Set_Quaternion(offsetQuaternion);
-    }
-    else
-    {
-        _smatrix worldMatrix = m_pTransform->Get_WorldMatrix();
-        _quaternion worldQuaternion = m_pTransform->Get_QuaternionRotate();
-
-        _vector3 vWorldPosition = _vector3::Transform(offsetPosition, worldMatrix);
-        _quaternion localQuaternion(offsetQuaternion);
-        localQuaternion *= worldQuaternion;
-
-        pEffectTransform->Set_WorldPos(vWorldPosition);
-        pEffectTransform->Set_WorldQuaternion(localQuaternion);
-    }
-
-    static_cast<CEffectContainer*>(pEffect)->Play();
-}
-
 void CJaneDoe::Update_MotionBlurQueue()
 {
     ++m_iFrameCount;

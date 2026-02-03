@@ -18,6 +18,8 @@
 #include "UI_DamageText.h"
 #include "UIDirector.h"
 
+#include "EffectContainer.h"
+
 CCharacter::CCharacter(const CCharacter& rhs)
     : CGameObject(rhs)
     , m_fMaxHP(rhs.m_fMaxHP)
@@ -620,6 +622,34 @@ void CCharacter::Take_Damage(DAMAGE_TYPE eType, _float fDamage)
     m_fCurrentHP = max(m_fCurrentHP, 0.f);
 
     On_Hit(eType);
+}
+
+void CCharacter::Play_Effect(const string& effectTag, _fvector offsetPosition, _fvector offsetQuaternion, _bool syncTransform)
+{
+    auto pEffect = Get_Component<CObjectContainer>()->Find_ObjectByName(effectTag);
+    if (!pEffect)
+        return;
+
+    auto pEffectTransform = pEffect->Get_Component<CTransform>();
+    if (syncTransform)
+    {
+        pEffectTransform->Set_Pos(_vector3(offsetPosition));
+        pEffectTransform->Set_Quaternion(offsetQuaternion);
+    }
+    else
+    {
+        _smatrix worldMatrix = m_pTransform->Get_WorldMatrix();
+        _quaternion worldQuaternion = m_pTransform->Get_QuaternionRotate();
+
+        _vector3 vWorldPosition = _vector3::Transform(offsetPosition, worldMatrix);
+        _quaternion localQuaternion(offsetQuaternion);
+        localQuaternion *= worldQuaternion;
+
+        pEffectTransform->Set_WorldPos(vWorldPosition);
+        pEffectTransform->Set_WorldQuaternion(localQuaternion);
+    }
+
+    static_cast<CEffectContainer*>(pEffect)->Play();
 }
 
 void CCharacter::Update_Rotation(_float dt)

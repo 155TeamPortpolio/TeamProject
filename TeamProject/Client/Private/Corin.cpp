@@ -363,6 +363,11 @@ HRESULT CCorin::Initialize_Weapon()
     return S_OK;
 }
 
+HRESULT CCorin::Initialize_Effects()
+{
+    return E_NOTIMPL;
+}
+
 void CCorin::Update_States()
 {
     if (!Is_MainCharacter()) return;

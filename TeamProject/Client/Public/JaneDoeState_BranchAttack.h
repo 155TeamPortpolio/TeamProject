@@ -27,6 +27,13 @@ public:
 public:
     static CJaneDoeState_BranchAttack_Start* Create() { return new CJaneDoeState_BranchAttack_Start(); }
     virtual void Free() override { __super::Free(); }
+
+private:
+    void Update_Effects(CJaneDoe* pOwner);
+
+    _float m_fRepeatInterval = 0.05f;
+    _float m_fRepeatProgress = 0.4f;
+    _uint m_iRepeatCount{};
 };
 
 class CJaneDoeState_BranchAttack_Loop : public IBaseState<CJaneDoe>
@@ -51,6 +58,10 @@ public:
 public:
     static CJaneDoeState_BranchAttack_Release01* Create() { return new CJaneDoeState_BranchAttack_Release01(); }
     virtual void Free() override { __super::Free(); }
+
+private:
+    void Update_Effects(CJaneDoe* pOwner);
+
 };
 
 class CJaneDoeState_BranchAttack_Release02 : public IBaseState<CJaneDoe>
