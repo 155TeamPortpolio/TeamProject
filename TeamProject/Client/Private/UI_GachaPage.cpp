@@ -42,7 +42,7 @@ HRESULT CUI_GachaPage::Initialize(INIT_DESC* pArg)
     Create_Channels();
     Create_Conversions();
 
-    //Set_Alive(false);
+    Set_Alive(false);
 
 	return S_OK;
 }
