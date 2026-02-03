@@ -21,9 +21,6 @@ private:
     HRESULT Initialize_GlobalPrototype();
     void    Add_GachaProps();
 
-private:
-    vector<WEAPON_DESC> m_ResultDesc;
-
 public:
     static CGachaProps* Create();
     CGameObject* Clone(INIT_DESC* pArg) override;
