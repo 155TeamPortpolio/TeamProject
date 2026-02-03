@@ -12,8 +12,7 @@ private:
     virtual ~CGachaResult() DEFAULT;
 
 public:
-    HRESULT LinkModel(const string& strModelName);
-    HRESULT LinkMaterial(const string& strMaterialName);
+    void SetResult(string strModel, string strMaterial, _float4 vRot);
 
 public:
     virtual HRESULT Initialize_Prototype()      override;

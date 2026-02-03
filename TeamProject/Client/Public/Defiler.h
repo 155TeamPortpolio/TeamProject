@@ -11,7 +11,6 @@ class CDefiler :
     public CEnemy
 {
 public:
-    
 
 private:
     CDefiler();
@@ -30,27 +29,35 @@ public:
 
 public:
     DEFILER_BLACK_BOARD& GetBlackBoard() { return m_BlackBoard; }
+    DefilerDissolve& GetDissolve() { return m_Dissolve; }
     CStateMachine<CDefiler>* Get_MainStateMachine() { return m_pStateMachine; }
 
 public:
     void Change_CollisionMask(_uint iMask = ENUM(COLLISION_GROUP::PLAYER));
     void Release_CollisionMask();
+
+public:
+    void Set_CCTPos(_vector3 pos);
 private:
     void MoveByTraceMode(_float dt, _float moveScale = 1.f);
     void RotateToTarget(_float dt, _float rotateSpeed = 1.f);
     void Update_States(_float dt);
     void Route_AnimEvent(CAnimator3D* animator);
-    _vector3 NormalizeXZ(const _vector3& vec, const _vector3& fallback);
+    void Controll_Attack(const string& event);
+    void Update_Dissolve(_float dt);
+
 private:
     HRESULT Initialize_StateMachine();
     HRESULT Initialize_States();
     HRESULT Initialize_Transitions();
     HRESULT Initialize_Effects();
-    //HRESULT Create_Colliders();
+    HRESULT Create_Colliders();
 
 private:
     CStateMachine<CDefiler>* m_pStateMachine = { nullptr };
     DEFILER_BLACK_BOARD m_BlackBoard = {};
+    DefilerDissolve m_Dissolve = {};
+
     _uint m_BaseMask = 
         ENUM(COLLISION_GROUP::COMMON) | 
         ENUM(COLLISION_GROUP::PLAYER) | 

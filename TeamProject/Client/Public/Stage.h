@@ -9,7 +9,8 @@ class CStage :
     public CBase
 {
 protected:
-	enum class StageState {None,Entrance,BattleStart,BattleEnd,Outro,End};
+	enum class StageState	{None,Entrance,BattleStart,BattleEnd,Outro,End};
+	enum class PlayerPoint	{Typical,Sub,End};
 	struct Combined_MonsterData
 	{
 		struct creation {
@@ -46,6 +47,8 @@ protected:
 	virtual void Ready_Map(const string& LevelTag, const string& AreaTag);
 	virtual void Reserve_Enemy(const string& LevelTag);
 	virtual void Active_Enemy();
+	virtual void Active_Player(PlayerPoint pointType);
+
 protected:
 	void BaseIntro(CZero_Level::StageContext& context);
 	void BossIntro(CZero_Level::StageContext& context);
@@ -62,20 +65,22 @@ protected:
 	class CZero_Level* m_pOwnerLevel = { nullptr };
 
 	StageState m_eStageStage = {StageState::None };
-	OBJECT_HANDLE m_PlayerHandle = {};
 
-
+	/*연출*/
 	EffectFlow m_introFlow;
 	_bool m_introFlowBuilt = false;
 	EffectFlow m_outroFlow;
 	_bool m_outroFlowBuilt = false;
 
 	StageContext m_Context;
-	Combined_MonsterData m_MonsterData = {};
 
+	/*데이터 - 몬스터*/
+	Combined_MonsterData m_MonsterData = {};
 	vector<class CGameObject*> m_pMonsters;
 
-protected:
+	/*데이터 - 플레이어*/
+	OBJECT_HANDLE m_PlayerHandle = {};
+	array<_float4, ENUM(PlayerPoint::End)> m_PlayerPoint;
 
 public:
     virtual void Free();

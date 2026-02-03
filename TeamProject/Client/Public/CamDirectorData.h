@@ -19,7 +19,7 @@ class CBattlePlayer; class CFieldCharacter; class CPlayer; class CCharacter; cla
 enum class CamType       { None, Free, Orbit, Sequence, End };
 enum class CamReturnMode { None, SnapToEnd, RestorePrev };
 enum class CamSeqType    { BattleIntro, ZeroIntro, Ultimate, End };
-enum class CamEventType  { IntroFinished };
+enum class CamEventType  { IntroFinished, SpinFinished, SpinHalfFinished };
 
 enum class CamShakeType
 {
@@ -30,7 +30,8 @@ enum class CamShakeType
     Parry, GuardBreak, Knockback, Stun,
     UltimateStart, UltimateImpact, UltimateEnd,
     EarthquakeShort, EarthquakeLong,
-    Roar1S, Roar15S, Roar2S, Roar25S, Roar4S,
+    Roar1S, Roar15S, Roar2S, Roar25S, Roar4S, 
+    GachaShake,
     End
 };
 
@@ -44,6 +45,7 @@ enum class CamZoomType
     UltimateStart, UltimateImpact, UltimateEnd,
     EarthquakeShort, EarthquakeLong,
     Roar1S, Roar15S, Roar2S, Roar25S, Roar4S,
+    GachaShake,
     End
 };
 

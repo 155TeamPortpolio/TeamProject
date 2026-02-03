@@ -195,14 +195,15 @@ HRESULT CPipeLine::Update_ShadowBuffer(ID3D11DeviceContext* pContext, _bool IsSk
 HRESULT CPipeLine::Update_LightBuffer(ID3D11DeviceContext* pContext, const LIGHT_DESC& Desc, _int lightSize)
 {
 	LightBuffer lightBuffer{};
-	lightBuffer.vLightDir = Desc.vLightDirection;
-	lightBuffer.vLightPos = Desc.vLightPosition;
-	lightBuffer.vLightDiffuse = Desc.vLightDiffuse;
-	lightBuffer.vLightAmbient = Desc.vLightAmbient;
-	lightBuffer.vLightSpecular = Desc.vLightSpecular;
-	lightBuffer.fLightRange = Desc.fLightRange;
+	lightBuffer.vLightDir		= Desc.vLightDirection;
+	lightBuffer.vLightPos		= Desc.vLightPosition;
+	lightBuffer.vLightDiffuse	= Desc.vLightDiffuse;
+	lightBuffer.vLightAmbient	= Desc.vLightAmbient;
+	lightBuffer.vLightSpecular	= Desc.vLightSpecular;
+	lightBuffer.fLightRange		= Desc.fLightRange;
 	lightBuffer.fLightIntensity = Desc.fLightIntensity;
-	lightBuffer.iLightSize = lightSize;
+	lightBuffer.fInnerCos		= Desc.fInnerCos;
+	lightBuffer.fOuterCos		= Desc.fOuterCos;
 
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 
@@ -501,6 +502,7 @@ HRESULT CPipeLine::Bind_Light(CShader* pShader, class CVIBuffer* pBuffer, ID3D11
 
 		switch (LightSnapShots[i].eType)
 		{
+
 		case Engine::LIGHT_TYPE::DIRECTIONAL:
 			pRenderer->Get_BufferInputLayout(pBuffer, pShader, "DIRECTIONAL", &pLayout);
 			pContext->IASetInputLayout(pLayout);
@@ -510,6 +512,7 @@ HRESULT CPipeLine::Bind_Light(CShader* pShader, class CVIBuffer* pBuffer, ID3D11
 			pBuffer->Bind_Buffer(pContext);
 			pBuffer->Render(pContext);
 			break;
+
 		case Engine::LIGHT_TYPE::POINT:
 			pRenderer->Get_BufferInputLayout(pBuffer, pShader, "POINT", &pLayout);
 			pContext->IASetInputLayout(pLayout);
@@ -518,8 +521,16 @@ HRESULT CPipeLine::Bind_Light(CShader* pShader, class CVIBuffer* pBuffer, ID3D11
 			pBuffer->Bind_Buffer(pContext);
 			pBuffer->Render(pContext);
 			break;
+
 		case Engine::LIGHT_TYPE::SPOTLIGHT:
+			pRenderer->Get_BufferInputLayout(pBuffer, pShader, "SPOTLIGHT", &pLayout);
+			pContext->IASetInputLayout(pLayout);
+			pShader->Apply("SPOTLIGHT", pContext);
+			pShader->SetConstantBuffer("LightBuffer", Get_LightBuffer());
+			pBuffer->Bind_Buffer(pContext);
+			pBuffer->Render(pContext);
 			break;
+
 		default:
 			break;
 		}

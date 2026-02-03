@@ -141,25 +141,34 @@ HRESULT CResourceMgr::Sync_To_Level()
 	return S_OK;
 }
 
-
-
 CSoundData* CResourceMgr::Load_Sound(const string& levelTag, const string& soundKey)
 {
 	int index = ValidLevel(levelTag);
-	if (index == -1) {
-		MSG_BOX("Wrong Level Tag. :Load_Sound ");
-		return nullptr;
+	if (index == -1) return nullptr;
+
+	RS_Pool& pool = m_Resources[index];
+
+	{
+		lock_guard<mutex> lockGuard(pool.soundMutex);
+		auto it = pool.m_Sounds.find(soundKey);
+		if (it != pool.m_Sounds.end())
+			return it->second;
 	}
 
-	auto& map = m_Resources[index].m_Sounds;
-	auto iter = map.find(soundKey);
+	CSoundData* created = CSoundData::Create(MakePath(soundKey), soundKey);
+	if (!created) return nullptr;
 
-	if (iter != map.end()) return iter->second;
-
-	CSoundData* pData = CSoundData::Create(MakePath(soundKey), soundKey);
-	map.emplace(soundKey, pData);
-
-	return pData;
+	{
+		lock_guard<mutex> lockGuard(pool.soundMutex);
+		auto it = pool.m_Sounds.find(soundKey);
+		if (it != pool.m_Sounds.end())
+		{
+			Safe_Release(created);
+			return it->second;
+		}
+		pool.m_Sounds.emplace(soundKey, created);
+		return created;
+	}
 }
 
 CVIBuffer* CResourceMgr::Load_VIBuffer(const string& levelTag, const string& bufferKey, BUFFER_TYPE eType)
@@ -841,50 +850,49 @@ void CResourceMgr::Load_InitialResource()
 			MSG_BOX("Failed to preload Default.mat");
 	}
 }
- 
 _bool CResourceMgr::RequestPreload(const PreloadKey& key)
 {
 	PreloadKey tmpKey = key;
-	int index = ValidLevel(tmpKey.levelKey);
-	if (index == -1) {
-		return false;
-	}
 
-	auto& pool =  m_Resources[index];
+	int index = ValidLevel(tmpKey.levelKey);
+	if (index == -1)
+		return false;
+
+	auto& pool = m_Resources[index];
+
 	switch (tmpKey.type)
 	{
 	case Engine::ResourceType::Texture:
-		if(pool.m_Textures.count(tmpKey.resourceKey))
-			return false;
-	case Engine::ResourceType::Sound:
-		if (pool.m_Sounds.count(tmpKey.resourceKey))
-			return false;
-	case Engine::ResourceType::Shader:
-		if (pool.m_Shaders.count(tmpKey.resourceKey))
-			return false;
-	case Engine::ResourceType::Model:
-		if (pool.m_ModelDatas.count(tmpKey.resourceKey))
-			return false;
-	case Engine::ResourceType::Material:
-		if (pool.m_MaterialInstances.count(tmpKey.resourceKey))
-			return false;
-	case Engine::ResourceType::ComputeShader:
-		if (pool.m_ComputeShaders.count(tmpKey.resourceKey))
-			return false;
-	case Engine::ResourceType::Animation:
-		if (pool.m_AnimationMetas.count(tmpKey.resourceKey))
-			return false;
-	case Engine::ResourceType::Effect:
-		if (pool.m_EffectAssets.count(tmpKey.resourceKey))
-			return false;
-	case Engine::ResourceType::None:
-			return false;
-	default:
+		if (pool.m_Textures.count(tmpKey.resourceKey)) return false;
 		break;
+	case Engine::ResourceType::Sound:
+		if (pool.m_Sounds.count(tmpKey.resourceKey)) return false;
+		break;
+	case Engine::ResourceType::Shader:
+		if (pool.m_Shaders.count(tmpKey.resourceKey)) return false;
+		break;
+	case Engine::ResourceType::Model:
+		if (pool.m_ModelDatas.count(tmpKey.resourceKey)) return false;
+		break;
+	case Engine::ResourceType::Material:
+		if (pool.m_MaterialInstances.count(tmpKey.resourceKey)) return false;
+		break;
+	case Engine::ResourceType::ComputeShader:
+		if (pool.m_ComputeShaders.count(tmpKey.resourceKey)) return false;
+		break;
+	case Engine::ResourceType::Animation:
+		if (pool.m_AnimationMetas.count(tmpKey.resourceKey)) return false;
+		break;
+	case Engine::ResourceType::Effect:
+		if (pool.m_EffectAssets.count(tmpKey.resourceKey)) return false;
+		break;
+	default:
+		return false;
 	}
 
-	return m_pPreloader->Request(key);
+	return m_pPreloader->Request(tmpKey);
 }
+
 
 void CResourceMgr::PumpPreloads(vector<PreloadCompleted>& outCompleted)
 {

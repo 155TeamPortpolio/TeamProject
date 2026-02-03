@@ -48,6 +48,7 @@ _bool CGameInstance::Init_Engine(const ENGINE_DESC& engine)
 	m_pLevelManager = CLevelMgr::Create();
 	m_pPrototypeManager = CPrototypeMgr::Create();
 	m_pObjectManager = CObjectMgr::Create();
+	m_pThreadPool = CThreadPool::Create();
 	m_pResourceManager = CResourceMgr::Create(m_pDevice, m_pDeviceContext);
 	m_pResourceManager->Load_InitialResource();
 	m_pCameraManager = CCameraMgr::Create();
@@ -60,7 +61,6 @@ _bool CGameInstance::Init_Engine(const ENGINE_DESC& engine)
 	m_pFontSystem = CFontSystem::Create(m_pDevice, m_pDeviceContext);
 	m_pEventSystem = CEventSystem::Create();
 	m_pClickManager = CClickManager::Create(engine.hWnd);
-	m_pThreadPool = CThreadPool::Create();
 	m_pVideoService = CVideoService::Create(m_pThreadPool, m_pDevice, m_pDeviceContext);
 #if defined _USING_GUI
 	m_pGuiSystem = CGUISystem::Create(engine, m_pDevice, m_pDeviceContext);

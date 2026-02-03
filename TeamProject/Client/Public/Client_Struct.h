@@ -146,8 +146,19 @@ namespace Client {
 		string		strModel;
 		string		strMaterial;
 		string		strTexture;
+		_float		RotX;
+		_float		RotY;
+		_float		RotZ;
+		_float		RotW;
 	}WEAPON_DESC;
-	
+
+	typedef struct tagTVDesc {
+		string		strName;
+		_int		Col;
+		_int		Row;
+		_int		MaxFrame;
+	}TV_DESC;
+
 	typedef struct tagCloudDesc {
 		_float3 skyColor = {};
 		_float3 cloudColor = {};

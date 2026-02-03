@@ -14,20 +14,15 @@ CGachaResult::CGachaResult(const CGachaResult& rhs)
 {
 }
 
-HRESULT CGachaResult::LinkModel(const string& strModelName)
+void CGachaResult::SetResult(string strModel, string strMaterial, _float4 vRot)
 {
     auto pModel = Get_Component<CStaticModel>();
-    pModel->Link_Model("Gacha_Level", strModelName);
-
-    return S_OK;
-}
-
-HRESULT CGachaResult::LinkMaterial(const string& strMaterialName)
-{
     auto pMaterial = Get_Component<CMaterial>();
-    pMaterial->Link_Material("Gacha_Level", strMaterialName);
 
-    return S_OK;
+    pModel->Link_Model("Gacha_Level", strModel);
+    pMaterial->Link_Material("Gacha_Level", strMaterial);
+
+    m_pTransform->Set_Quaternion(_vector4(vRot));
 }
 
 HRESULT CGachaResult::Initialize_Prototype()

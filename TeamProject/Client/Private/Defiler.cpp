@@ -14,6 +14,9 @@
 #include "Defiler_Control.h"
 
 #include "Engine_Math.h"
+#include "MaterialInstance.h"
+#include "Texture.h"
+
 CDefiler::CDefiler()
 	:CEnemy()
 {
@@ -60,8 +63,8 @@ HRESULT CDefiler::Initialize(INIT_DESC* pArg)
 	if (FAILED(Initialize_StateMachine()))
 		return E_FAIL;
 
-	//if (FAILED(Create_Colliders()))
-	//	return E_FAIL;
+	if (FAILED(Create_Colliders()))
+		return E_FAIL;
 
 	if (FAILED(Initialize_Effects()))
 		return E_FAIL;
@@ -74,6 +77,23 @@ HRESULT CDefiler::Initialize(INIT_DESC* pArg)
 
 void CDefiler::Awake()
 {
+	m_vRimLightColor = _float3(0.378, 0.029, 0.070);
+	m_fRimLightPower = 4.f;
+	m_fDissolveTilling = 6.f;
+
+	auto pMaterial = Get_Component<CMaterial>();
+	auto& materialInstances = pMaterial->Get_MaterialInstances();
+	auto dissolveTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, "Dissolve.png");
+
+	for (const auto& instance : materialInstances)
+	{
+		instance->Set_Param("NoiseTexture", { dissolveTexture->Get_SRV(),"Texture2D",0 });
+		instance->Set_Param("vRimLightColor", { &m_vRimLightColor,"float3",sizeof(_float3) });
+		instance->Set_Param("fRimLightPower", { &m_fRimLightPower,"float",sizeof(_float) });
+		instance->Set_Param("fDissolveProgress", { &m_fDissolveProgress,"float",sizeof(_float) });
+		instance->Set_Param("fDissolveTiling", { &m_fDissolveTilling,"float",sizeof(_float) });
+	}
+
 }
 
 void CDefiler::Priority_Update(_float dt)
@@ -94,10 +114,12 @@ void CDefiler::Update(_float dt)
 	auto pAnimator = Get_Component<CAnimator3D>();
 	pAnimator->Update_Animation(dt);
 	Route_AnimEvent(pAnimator);
-
-	Get_Component<CCharacterController>()->Update(dt);
+	Update_Dissolve(dt);
 	MoveByTraceMode(dt);
 	RotateToTarget(dt, 4.f);
+
+	
+	Get_Component<CCharacterController>()->Update(dt);
 	m_pStateMachine->Update(dt);
 
 	Get_Component<CObjectContainer>()->UpdateChild(dt);
@@ -107,14 +129,28 @@ void CDefiler::Late_Update(_float dt)
 {
 	Get_Component<CCharacterController>()->Late_Update(dt);
 }
+static _bool CollOpen;
 
 void CDefiler::Render_GUI()
 {
+	ImGui::Text(CollOpen ? "ColOn : True" : "ColOn : False");
+	
 	ImGui::InputInt("Pattern number", &m_BlackBoard.patternIndex);
 	for (auto pattern : m_BlackBoard.patternTransition)
 	{
 		ImGui::Text(pattern.nextPattern.c_str());
 	}
+
+	// Color
+	_float color[3] = { m_vRimLightColor.x, m_vRimLightColor.y, m_vRimLightColor.z};
+	if (ImGui::ColorEdit4("RimLightColor", color,
+		ImGuiColorEditFlags_Float |
+		ImGuiColorEditFlags_DisplayRGB |
+		ImGuiColorEditFlags_InputRGB))
+	{
+		m_vRimLightColor = _float3(color[0], color[1], color[2]);
+	}
+	ImGui::DragFloat("RimLighPower", &m_fRimLightPower);
 	__super::Render_GUI();
 }
 
@@ -142,6 +178,14 @@ void CDefiler::Release_CollisionMask()
 	Get_Component<CCharacterController>()->Set_CollisionMask(m_BaseMask);
 }
 
+void CDefiler::Set_CCTPos(_vector3 pos)
+{
+	auto controller= Get_Component<CCharacterController>();
+	if (!controller)
+		return;
+	controller->Set_Position(pos);
+}
+
 void CDefiler::MoveByTraceMode(_float dt, _float moveScale)
 {
 	if (m_passDampTime > 0.f)
@@ -159,9 +203,10 @@ void CDefiler::MoveByTraceMode(_float dt, _float moveScale)
 	const _bool allowThrough = HasFlag(traceFlags, TraceFlag::AllowThroughTarget);
 	const _bool ignoreTarget = HasFlag(traceFlags, TraceFlag::IgnoreTarget);
 
-	const _vector3    rootDeltaLocal = animator->Get_RootBoneMoveDelta() * moveScale;
+	const _vector3    rootDeltaLocal = animator->Get_RootBoneMoveDelta();
 	const _quaternion rootQuatLocal = animator->Get_RootBoneQuatDelta();
 
+	/*이동량(y제외)*/
 	_vector3 rootDeltaH = rootDeltaLocal;
 	rootDeltaH.y = 0.f;
 
@@ -238,6 +283,7 @@ void CDefiler::MoveByTraceMode(_float dt, _float moveScale)
 	}
 
 	const _vector3 localForward(0.f, 0.f, 1.f);
+	/*루트 모션의 전방 진행량*/
 	_float moveLenSigned = rootDeltaH.Dot(localForward);
 
 	if (moveLenSigned > 0.f && stopAtTarget && !allowThrough)
@@ -261,10 +307,10 @@ void CDefiler::MoveByTraceMode(_float dt, _float moveScale)
 			distScale = 1.f + distToTarget * 1.2f; 
 	}
 
-	const _vector3 velocityWorld = (moveWorld / dt) * distScale;
-
-	controller->Move_Velocity(velocityWorld, dt);
-	m_pTransform->Add_Quaternion(rootQuatLocal);
+	const _vector3 velocityWorld = (moveWorld) * distScale;
+	controller->Move_RootMotion(velocityWorld, rootQuatLocal, dt);
+	//	controller->Move_Velocity(velocityWorld, dt);
+	//	m_pTransform->Add_Quaternion(rootQuatLocal);
 }
 
 
@@ -298,14 +344,80 @@ void CDefiler::Route_AnimEvent(CAnimator3D* animator)
 		switch (instance.Type)
 		{
 		case CLIP_EVENT_TYPE::NOTIFY:
-			if (instance.Tag == "AttackStart")
+			if (instance.Tag == "ParrySign")
 				Active_AttackSign(true);
+			else if (instance.Tag == "EvadeSign")
+				Active_AttackSign(false);
 			else if (instance.Tag == "TargetLockOn")
 				m_BlackBoard.LockTarget = true;
 			else if (instance.Tag == "TargetLockOff")
 				m_BlackBoard.LockTarget = false;
+			else 
+				Controll_Attack(instance.Tag);
 			break;
 		}
+	}
+}
+
+void CDefiler::Controll_Attack(const string& event)
+{
+	auto iter = DefilerAtkData.find(event);
+	if (iter == DefilerAtkData.end())
+		return;
+	auto AtkData = iter->second;
+
+	HitDesc		HitDesc = {};
+	HitDesc.eHitType	=	HIT_TYPE::ONCE;
+	HitDesc.eDamageType =	DAMAGE_TYPE::NORMAL;
+	HitDesc.fDamage		=	0.f;
+	HitDesc.fInterval	=	0.f;
+	HitDesc.iMaxCount	=	1;
+
+	if (AtkData.OnOff)
+	{
+		if (AtkData.AtkEvade == "Evade")
+			m_isParryEnable = false;
+		if (AtkData.AtkEvade == "Parry")
+			m_isParryEnable = true;
+	}
+	else 
+	{
+		m_isParryEnable = false;
+	}
+	CollOpen = AtkData.OnOff;
+	SetBattleColliderObject(AtkData.AtkBone, CEnemy::BATTLE_COLTYPE::ATTACK, AtkData.OnOff, HitDesc);
+}
+
+void CDefiler::Update_Dissolve(_float dt)
+{
+	
+	if (m_Dissolve.fDissolveElapsedTime < m_Dissolve.fDissolveDuration)
+	{
+		m_Dissolve.fDissolveElapsedTime += dt;
+		_float t = m_Dissolve.fDissolveElapsedTime / m_Dissolve.fDissolveDuration;
+
+		switch (m_Dissolve.eDissolveState)
+		{
+		case DefilerDissolve::DISAPPEAR:
+		{
+			m_fDissolveProgress = t;
+		}break;
+		case DefilerDissolve::DISSOLVE_STATE::APPEAR:
+		{
+			m_fDissolveProgress = 1.f - t;
+		}break;
+		case DefilerDissolve::DISSOLVE_STATE::NONE:
+			break;
+		default:
+			break;
+		}
+	}
+	else
+	{
+		if (DefilerDissolve::DISAPPEAR == m_Dissolve.eDissolveState)
+			m_fDissolveProgress = 1.01f;
+		else
+			m_fDissolveProgress = 0.f;
 	}
 }
 
@@ -388,6 +500,7 @@ HRESULT CDefiler::Initialize_Effects()
 {
 	auto pObjectContainer = Get_Component<CObjectContainer>();
 	Create_AttackSign("Bip001_Head");
+
 	/* Sword Slash */
 	{
 		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
@@ -436,6 +549,45 @@ HRESULT CDefiler::Initialize_Effects()
 
 		pEffect->Stop();
 		pObjectContainer->Add_Child(pEffect, false);
+	}
+
+	return S_OK;
+}
+
+
+HRESULT CDefiler::Create_Colliders()
+{
+	auto pObjectContainer = Get_Component<CObjectContainer>();
+	auto pAnimator = Get_Component<CAnimator3D>();
+
+	/* Weapon */
+	{
+		BATTLE_COLLIDER_DESC WeaponDesc{};
+
+		WeaponDesc.tagName = "Weapon";
+		WeaponDesc.isAttachBone = true;
+		WeaponDesc.tagBone = "Ctr_M_Weapon_01";
+		WeaponDesc.pOwnerAnimator3D = pAnimator;
+		WeaponDesc.eAttackColliderType = COLLIDER_TYPE::BOX;
+		WeaponDesc.vAttackSize = _float3{ 3.5f,1.5f,0.5f };
+
+		if (FAILED(AttachBattleColliderObject(&WeaponDesc)))
+			return E_FAIL;
+	}
+
+	/* Tail */
+	{
+		BATTLE_COLLIDER_DESC WeaponDesc{};
+
+		WeaponDesc.tagName = "Tail";
+		WeaponDesc.isAttachBone = true;
+		WeaponDesc.tagBone = "Ctr_M_Tail_011";
+		WeaponDesc.pOwnerAnimator3D = pAnimator;
+		WeaponDesc.eAttackColliderType = COLLIDER_TYPE::SPHERE;
+		WeaponDesc.vAttackSize = _float3{ 2.f,2.f,2.f };
+
+		if (FAILED(AttachBattleColliderObject(&WeaponDesc)))
+			return E_FAIL;
 	}
 
 	return S_OK;
