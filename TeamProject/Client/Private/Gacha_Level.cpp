@@ -47,14 +47,13 @@ HRESULT CGacha_Level::Awake()
 
 	// Camera
 	CamDirector()->SetSpaceRef(m_GachaHandle);
-	CamDirector()->RequestSequence("Gacha/StartIntro");
-
+	CamDirector()->RequestSequence("Gacha/Down");
 	return S_OK;
 }
 
 void CGacha_Level::Update()
 {
-	//юс╫ц
+	//О©╫с╫О©╫
 	if(InputDevice()->Mouse_Tap(MOUSE_BTN::LB))
 	{
 		CamDirector()->AbortSequenceToOrbit(true);

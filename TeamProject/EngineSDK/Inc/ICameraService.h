@@ -39,6 +39,14 @@ public:
     virtual void AddShake(_float ampDeg, _float freq, _float dur, _float fadeOutSec = 0.f) PURE;
     virtual void ClearShake(_float fadeOutSec = 0.f) PURE;
 
+    virtual void AddShakeAxis(CamShakeAxis axes, _float ampDeg, _float freq, _float dur, _float fadeOutSec) PURE;
+    virtual void SetShakeAxis(CamShakeAxis axes, _float ampDeg, _float freq, _float dur, _float fadeOutSec) PURE;
+
+    virtual void AddShakeAxisWave(CamShakeAxis axes, _float ampDeg, _float freq, _float dur, _float fadeOutSec,
+        EaseType attackEase, EaseType decayEase) PURE;
+    virtual void SetShakeAxisWave(CamShakeAxis axes, _float ampDeg, _float freq, _float dur, _float fadeOutSec,
+        EaseType attackEase, EaseType decayEase) PURE;
+
     virtual void SetZoomPunch(_float amountDeg, _float attackSec = 0.020f, _float releaseSec = 0.100f) PURE;
     virtual void AddZoomPunch(_float amountDeg, _float attackSec = 0.020f, _float releaseSec = 0.100f) PURE;
     virtual void ClearZoom(_float fadeOutSec = 0.f) PURE;
