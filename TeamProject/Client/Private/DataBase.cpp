@@ -31,6 +31,7 @@ HRESULT CDataBase::CreateTable()
 	if (FAILED(LoadMapData("../../Resources/Data/Map")))
 		return E_FAIL;
 
+	/*Field*/
 	//Npc
 	if (FAILED(LoadNpcDialogueData("../../Resources/Data/Npc/NPC_Dialogue.csv")))
 		return E_FAIL;
@@ -42,8 +43,10 @@ HRESULT CDataBase::CreateTable()
 	//Shop
 	if (FAILED(LoadRamenData("../../Resources/Data/Shop/Shop_Ramen.csv")))
 		return E_FAIL;
-
+	//Gacha
 	if (FAILED(LoadWeaponData("../../Resources/Data/Gacha/WeaponID.csv")))
+		return E_FAIL;
+	if (FAILED(LoadTVData("../../Resources/Data/Gacha/TVImage.csv")))
 		return E_FAIL;
 
 	return S_OK;
@@ -157,6 +160,43 @@ WEAPON_DESC CDataBase::GetWeaponDesc(_int WeaponID)
 		return WEAPON_DESC{};
 
 	return iter->second;
+}
+
+TV_DESC CDataBase::GetTVDesc(const string& strName)
+{
+	auto iter = m_TVTables.find(strName);
+	if (iter == m_TVTables.end())
+		return TV_DESC{};
+
+	return iter->second;
+}
+
+vector<WEAPON_DESC> CDataBase::GetGachaResults(_int WeaponNum)
+{
+	vector<WEAPON_DESC> Results(10);
+
+	if (WeaponNum <= 0 || WeaponNum > 10 || m_WeaponTables.empty())
+		return Results;
+
+	vector<_int> weaponKeys;
+	for (const auto& pair : m_WeaponTables)
+		weaponKeys.push_back(pair.first);
+
+	random_device rd;
+	mt19937 gen(rd());
+	uniform_int_distribution<_int> weaponDist(0, weaponKeys.size() - 1);
+
+	vector<_int> positions(10);
+	iota(positions.begin(), positions.end(), 0);
+	shuffle(positions.begin(), positions.end(), gen);
+
+	for (_int i = 0; i < WeaponNum; ++i)
+	{
+		_int randomIdx = weaponDist(gen);
+		Results[positions[i]] = m_WeaponTables[weaponKeys[randomIdx]];
+	}
+
+	return Results;
 }
 
 HRESULT CDataBase::LoadPlayerCreationTable(const string& csvPath)
@@ -615,6 +655,42 @@ HRESULT CDataBase::LoadWeaponData(const string& csvPath)
 		if (false == inserted)
 		{
 			wstring ErrorMsg = L"Duplicate WeaponKey in CSV : " + desc.ID;
+			MessageBox(NULL, ErrorMsg.c_str(), L"System Message", MB_OK);
+		}
+	}
+
+	return S_OK;
+}
+
+HRESULT CDataBase::LoadTVData(const string& csvPath)
+{
+	io::CSVReader<
+		4,
+		io::trim_chars<' ', '\t'>,
+		io::double_quote_escape<',', '"'>
+	>in(csvPath);
+
+	in.read_header(
+		io::ignore_extra_column | io::ignore_missing_column,
+		"Name", "Col", "Row", "MaxFrame"
+	);
+	string			Name;
+	_int			Col, Row, MaxFrame;
+
+	while (in.read_row(Name, Col, Row, MaxFrame))
+	{
+		if (Name.empty()) continue;
+
+		TV_DESC desc = {};
+		desc.strName = Name;
+		desc.Col = Col;
+		desc.Row = Row;
+		desc.MaxFrame = MaxFrame;
+
+		auto [iter, inserted] = m_TVTables.emplace(desc.strName, move(desc));
+		if (false == inserted)
+		{
+			wstring ErrorMsg = L"Duplicate TVkey in CSV : " + Helper::ConvertToWideString(desc.strName);
 			MessageBox(NULL, ErrorMsg.c_str(), L"System Message", MB_OK);
 		}
 	}

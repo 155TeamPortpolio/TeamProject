@@ -56,6 +56,7 @@ private:
 
 public:
     HRESULT Initialize();
+    void    Awake();
     void    Priority_Update(_float dt);
     void    Update(_float dt);
     void    Late_Update(_float dt);
@@ -119,6 +120,7 @@ private: // 초기화
     CGameObject* CreateBattleCharacter(CHARACTER character);
 
 private:
+    _bool           m_bAwaked = false;
     // 입력
     InputState      m_input;
     _bool           m_bLockInput = false;

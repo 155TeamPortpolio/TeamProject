@@ -5,15 +5,30 @@
 
 void CMiyabiState_Idle::Enter(CMiyabi* pOwner)
 {
-    pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size02_Unagi_Ani_Idle")
+    pOwner->Unlock_Move();
+    _int iEntryMode = pOwner->Get_StateMachine()->Get_Int("IdleEntryMode");
+    pOwner->Get_StateMachine()->Set_Int("IdleEntryMode", 0);
+
+    pOwner->End_AllAttackColliders();
+
+    if (iEntryMode == 1)
+    {
+        pOwner->Get_StateMachine()->Set_Trigger("Evade");
+    }
+
+    pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Idle")
         .Loop(true)
         .Apply();
+
+    __super::Enter(pOwner);
 }
 
 void CMiyabiState_Idle::Update(CMiyabi* pOwner, _float dt)
 {
+    __super::Update(pOwner, dt);
 }
 
 void CMiyabiState_Idle::Exit(CMiyabi* pOwner)
 {
+    __super::Exit(pOwner);
 }

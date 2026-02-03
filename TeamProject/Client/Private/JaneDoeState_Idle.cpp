@@ -21,4 +21,16 @@ void CJaneDoeState_Idle::Enter(CJaneDoe* pOwner)
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Idle")
         .Loop(true)
         .Apply();
+
+    __super::Enter(pOwner);
+}
+
+void CJaneDoeState_Idle::Update(CJaneDoe* pOwner, _float dt)
+{
+    __super::Update(pOwner, dt);
+}
+
+void CJaneDoeState_Idle::Exit(CJaneDoe* pOwner)
+{
+    __super::Exit(pOwner);
 }

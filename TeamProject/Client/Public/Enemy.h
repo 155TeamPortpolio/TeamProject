@@ -57,6 +57,8 @@ public:
     _bool               IsParryEnable() const { return m_isParryEnable; }
     // 플레이어가 수행할 수 있는 콤보 카운트의 갯수
     _int                Get_ComboCount() const { return m_tStatus.iPlayerComboCount; }
+    // Attack Side 반환
+    ATTACK_SIDE Get_AttackSide()const { return m_eCurAttackSide; }
 
     /* Setter*/
     // 몬스터 공격 시 attack sign 이펙트 활성화 함수

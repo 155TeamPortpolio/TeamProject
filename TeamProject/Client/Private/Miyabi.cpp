@@ -20,11 +20,16 @@
 #include "ObjectContainer.h"
 
 #include "StateMachine.h"
+//#include "MiyabiState_Start.h"
 #include "MiyabiState_Idle.h"
 #include "MiyabiState_Move.h"
 #include "MiyabiState_Attack.h"
+#include "MiyabiState_SwitchIn.h"
+#include "MiyabiState_SwitchInParryAid.h"
+#include "MiyabiState_SwitchOut.h"
 #include "MiyabiState_NormalAttack.h"
-#include "MiyabiState_ChargeAttack.h"
+//#include "MiyabiState_Hit.h"
+//#include "MiyabiState_Evade.h"
 
 CMiyabi::CMiyabi()
 {
@@ -76,7 +81,7 @@ void CMiyabi::Awake()
 	m_eCharacterName = CHARACTER::Miyabi;
 
 	Initialize_Stat();
-	m_fCurrentHP = 300.f;
+	m_fCurrentHP = 312.f;
 	m_tEnergy.fCurrentEnergy = 75;
 
 	if (FAILED(Attach_ParryCollider()))
@@ -143,6 +148,18 @@ void CMiyabi::Render_GUI()
 //	Shader->Apply("OutLine", pContext);
 //	Model->Draw(pContext, idx);
 //}
+
+void CMiyabi::Increase_Frost(_uint iFrost)
+{
+	m_iFrost += iFrost;
+	m_iFrost = min(m_iFrost, MAX_FROST);
+}
+
+void CMiyabi::Decrease_Frost(_uint iFrost)
+{
+	m_iFrost -= iFrost;
+	m_iFrost = max(m_iFrost, 0.f);
+}
 
 void CMiyabi::Reset_State()
 {
@@ -264,13 +281,14 @@ HRESULT CMiyabi::Initialize_StateMachine()
 
 HRESULT CMiyabi::Initialize_States()
 {
+	//m_pStateMachine->Register_State("Start", CMiyabiState_Start::Create());
 	m_pStateMachine->Register_State("Idle", CMiyabiState_Idle::Create());
 	m_pStateMachine->Register_State("Move", CMiyabiState_Move::Create());
 	m_pStateMachine->Register_State("Attack", CMiyabiState_Attack::Create());
-	//m_pStateMachine->Register_State("Evade", CJaneDoeState_Evade::Create());
-	//m_pStateMachine->Register_State("SwitchIn", CJaneDoeState_SwitchIn::Create());
-	//m_pStateMachine->Register_State("SwitchOut", CJaneDoeState_SwitchOut::Create());
-	//m_pStateMachine->Register_State("Hit", CJaneDoeState_Hit::Create());
+	//m_pStateMachine->Register_State("Evade", CMiyabiState_Evade::Create());
+	m_pStateMachine->Register_State("SwitchIn", CMiyabiState_SwitchIn::Create());
+	m_pStateMachine->Register_State("SwitchOut", CMiyabiState_SwitchOut::Create());
+	//m_pStateMachine->Register_State("Hit", CMiyabiState_Hit::Create());
 
 	return S_OK;
 }

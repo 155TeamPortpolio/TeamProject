@@ -60,12 +60,12 @@ public:
     void          StartBattleIntro(CamSeqType type);
     void          StartDialog();
     void          EndDialog();
+    void          AbortSequenceToOrbit(_bool resetTime);
 
 private:
     string        ResolveSeqKey(CamSeqType type) const;
     void          UpdatePlayer();
     void          UpdateInput(_float dt);
-    void          AbortSequenceToOrbit(_bool resetTime);
     void          SyncSeqInputLock();
       
     _bool         IsValid() const { return GetPlayer()->Get_CurCharacterHandle().isValid(); }
