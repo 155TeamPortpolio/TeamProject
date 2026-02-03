@@ -4,6 +4,9 @@
 #include "GameInstance.h"
 #include "ObjectContainer.h"
 
+#include "FieldSystem.h"
+#include "UI_BackButton.h"
+
 HRESULT CUI_GachaPage::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
@@ -19,7 +22,9 @@ HRESULT CUI_GachaPage::Initialize(INIT_DESC* pArg)
 
     Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("gacha.json")));
 
-    Set_Alive(false);
+    Create_BackButton();
+
+    //Set_Alive(false);
 
 	return S_OK;
 }
@@ -43,6 +48,26 @@ void CUI_GachaPage::UI_Active(void* pArg)
 void CUI_GachaPage::UI_DeActive(void* pArg)
 {
     Set_Alive(false);
+}
+
+void CUI_GachaPage::Create_BackButton()
+{
+    CUI_BackButton::BUTTON_DESC* pDesc = new CUI_BackButton::BUTTON_DESC;
+    pDesc->onClick = [this]() { OnClick_Back(); };
+
+    auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_BackButton" })
+        .Add_UIDesc(pDesc)
+        .Build("buttonBack");
+
+    if (!pObj)
+        return;
+
+    Get_Component<CObjectContainer>()->Add_Child(pObj);
+}
+
+void CUI_GachaPage::OnClick_Back()
+{
+    FieldSystem()->RequestExitTop();
 }
 
 CGameObject* CUI_GachaPage::Create()

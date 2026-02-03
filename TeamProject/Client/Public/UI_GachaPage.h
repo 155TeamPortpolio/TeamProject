@@ -21,6 +21,11 @@ public:
 	virtual void	UI_Active(void* pArg = nullptr)  override;
 	virtual void	UI_DeActive(void* pArg = nullptr) override;
 
+private:
+	void Create_BackButton();
+
+	void OnClick_Back();
+
 public:
 	static  CGameObject* Create();
 	virtual CGameObject* Clone(INIT_DESC* pArg = {}) override;
