@@ -162,9 +162,9 @@ public: // 패링
 
 public: // 무적
     _bool Is_Invincible() const { return m_iInvincibleCount > 0 || m_fInvincibleTimer > 0.f; }
-    void Push_Invincible() { ++m_iInvincibleCount; }
-    void Pop_Invincible() { if (m_iInvincibleCount > 0) --m_iInvincibleCount; }
-    void Set_InvincibleTimer(_float fDuration) { m_fInvincibleTimer = fDuration; }
+    void  Push_Invincible() { ++m_iInvincibleCount; }
+    void  Pop_Invincible() { if (m_iInvincibleCount > 0) --m_iInvincibleCount; }
+    void  Set_InvincibleTimer(_float fDuration) { m_fInvincibleTimer = fDuration; }
 
 public: // 행동 이벤트
     virtual void    Reset_State() {}
