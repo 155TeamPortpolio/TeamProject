@@ -35,7 +35,7 @@ static unordered_map<string, Spawner::OBJ_SPEC> s_NPCTable =
 	{ "Howl",           Spawner::OBJ_SPEC{ "Proto_GameObject_Howl", &CHowl::Create } },
 	{ "Jaeger",         Spawner::OBJ_SPEC{ "Proto_GameObject_Jaeger", &CJaeger::Create } },
 	{ "ExploreBoo",     Spawner::OBJ_SPEC{ "Proto_GameObject_ExploreBoo", &CElectricBoo::Create } },
-	{ "Sirchop",     Spawner::OBJ_SPEC{ "Proto_GameObject_Sirchop", &CSirChop::Create } },
+	{ "Sirchop",		Spawner::OBJ_SPEC{ "Proto_GameObject_Sirchop", &CSirChop::Create } },
 	{ "SilverAnbi",     Spawner::OBJ_SPEC{ "Proto_GameObject_SilverAnbi", &CSilverAnbi::Create } }
 };
 
@@ -58,8 +58,9 @@ void Client::Spawner::Register_Prototype(const string& MapDataName, const string
 	{
 	case Client::Spawner::ENTITY_TYPE::NPC:			Table = &s_NPCTable;		break;
 	case Client::Spawner::ENTITY_TYPE::INTERACTABLE:Table = &s_InteractTable;	break;
-	case Client::Spawner::ENTITY_TYPE::ETC:										return;
+	case Client::Spawner::ENTITY_TYPE::AMBIENTACTOR:Table = &s_InteractTable;	break;
 	case Client::Spawner::ENTITY_TYPE::INVWALL:									return;
+	case Client::Spawner::ENTITY_TYPE::ETC:										return;
 	default:																	return;
 	}
 
@@ -73,15 +74,16 @@ OBJECT_HANDLE Client::Spawner::Create_Entity(const SPAWNER_DESC& Desc)
 	{
 	case 0:	return Create_NPC(Desc);			break;
 	case 1:	return Create_Interactable(Desc);	break;
-	case 2:	return Create_ETC(Desc);			break;
+	case 2: return Create_AmbientActor(Desc);	break;
 	case 3: return Create_Invwall(Desc);		break;
+	case 4:	return Create_ETC(Desc);			break;
 	default:return OBJECT_HANDLE();				break;
 	}
 }
 
 /* --------------------------------------------------------------------------------------------------------------------- */
 
-/* Maptool Type 0 */
+/* Maptool Type 0 (NPC) */
 #pragma region Entity0(NPC)
 OBJECT_HANDLE Client::Spawner::Create_NPC(const SPAWNER_DESC& Desc)
 {
@@ -108,6 +110,7 @@ OBJECT_HANDLE Client::Spawner::Create_NPC(const SPAWNER_DESC& Desc)
 		.Scale(Desc.vScale)
 		.Build(Desc.tagName);
 
+
 	Object->Get_Component<CCharacterController>()->Set_FootPosition(Desc.vTranslation);
 	
 	//Optional
@@ -123,7 +126,7 @@ OBJECT_HANDLE Client::Spawner::Create_NPC(const SPAWNER_DESC& Desc)
 
 /* --------------------------------------------------------------------------------------------------------------------- */
 
-/* Maptool Type 1 */
+/* Maptool Type 1 (Interactable) */
 #pragma region Entity1(Interactable)
 OBJECT_HANDLE Client::Spawner::Create_Interactable(const SPAWNER_DESC& Desc)
 {
@@ -185,32 +188,30 @@ OBJECT_HANDLE Client::Spawner::Create_Interactable(const SPAWNER_DESC& Desc)
 
 /* --------------------------------------------------------------------------------------------------------------------- */
 
-/* Maptool Type 2 */
-#pragma region Entity2(ETC)
-OBJECT_HANDLE Client::Spawner::Create_ETC(const SPAWNER_DESC& Desc)
+/* Maptool Type 2 (AmbientActor) */
+#pragma region Entity2(AmbientActor)
+OBJECT_HANDLE Client::Spawner::Create_AmbientActor(const SPAWNER_DESC& Desc)
 {
-	/* PlayerSpawn */
-	if (Desc.tagName == "PlayerSpawn") {
-		auto player = dynamic_cast<CPlayer*>(ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Player)));
-		auto character = player->Get_CurCharacterHandle().Get();
-		if (!character)
-			return OBJECT_HANDLE();
-			
-		character->Get_Component<CTransform>()->Set_Quaternion(
-			XMQuaternionRotationRollPitchYaw(
-				Desc.vRotation.x,
-				Desc.vRotation.y,
-				Desc.vRotation.z));
+	auto InteractTable = s_InteractTable.find(Desc.tagName);
 
-		character->Get_Component<CCharacterController>()->Set_FootPosition(XMLoadFloat3(&Desc.vTranslation));
-	}
+	if (InteractTable == s_InteractTable.end())
+		return OBJECT_HANDLE();
 
-	return OBJECT_HANDLE();
+	PrototypeManager()->Add_ProtoType(Desc.tagLevel, InteractTable->second.ProtoTag, InteractTable->second.Create());
+
+	CGameObject* Object = Builder::Create_Object({ Desc.tagLevel, InteractTable->second.ProtoTag })
+		.Position(Desc.vTranslation)
+		.Scale(Desc.vScale)
+		.Build(Desc.tagName);
+
+	ObjectManager()->Add_Object(Object, { Desc.tagLevel, "AmbientActor_Layer" });
+	return Object->Get_Handle();
 }
 #pragma endregion
 
+/* --------------------------------------------------------------------------------------------------------------------- */
 
-/* Maptool Type 3 */
+/* Maptool Type 3 (Invwall) */
 #pragma region Entity3(Invwall)
 OBJECT_HANDLE Client::Spawner::Create_Invwall(const SPAWNER_DESC& Desc)
 {
@@ -234,6 +235,31 @@ OBJECT_HANDLE Client::Spawner::Create_Invwall(const SPAWNER_DESC& Desc)
 	return Object->Get_Handle();
 }
 
+/* --------------------------------------------------------------------------------------------------------------------- */
+
+/* Maptool Type 4 (ETC) */
+#pragma region Entity4(ETC)
+OBJECT_HANDLE Client::Spawner::Create_ETC(const SPAWNER_DESC& Desc)
+{
+	/* PlayerSpawn */
+	if (Desc.tagName == "PlayerSpawn") {
+		auto player = dynamic_cast<CPlayer*>(ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Player)));
+		auto character = player->Get_CurCharacterHandle().Get();
+		if (!character)
+			return OBJECT_HANDLE();
+
+		character->Get_Component<CTransform>()->Set_Quaternion(
+			XMQuaternionRotationRollPitchYaw(
+				Desc.vRotation.x,
+				Desc.vRotation.y,
+				Desc.vRotation.z));
+
+		character->Get_Component<CCharacterController>()->Set_FootPosition(XMLoadFloat3(&Desc.vTranslation));
+	}
+
+	return OBJECT_HANDLE();
+}
+#pragma endregion
 
 /* --------------------------------------------------------------------------------------------------------------------- */
 
@@ -250,4 +276,5 @@ void Client::Spawner::Gravity(CGameObject* pGameObject, const vector<FIELD_DATA>
 	}
 }
 #pragma endregion
+
 

@@ -21,6 +21,58 @@ CGachaScreen::CGachaScreen(const CGachaScreen& rhs)
 {
 }
 
+void CGachaScreen::PlayTVSequence(vector<WEAPON_DESC>* ResultDesc)
+{
+	if (m_fScreenElapsedTime >= m_fIntervalScreenDuration)
+	{
+		if(m_iCurPlayingIndex < 10) 
+			++m_iCurPlayingIndex;
+
+		SetMaterialInstances(m_iCurPlayingIndex,{
+			(*ResultDesc)[0].Grade == GachaGrade::S ? 5 : (*ResultDesc)[0].Grade == GachaGrade::A ? 3 : 1,
+			(*ResultDesc)[1].Grade == GachaGrade::S ? 5 : (*ResultDesc)[1].Grade == GachaGrade::A ? 3 : 1,
+			(*ResultDesc)[2].Grade == GachaGrade::S ? 5 : (*ResultDesc)[2].Grade == GachaGrade::A ? 3 : 1,
+			(*ResultDesc)[3].Grade == GachaGrade::S ? 5 : (*ResultDesc)[3].Grade == GachaGrade::A ? 3 : 1,
+			(*ResultDesc)[4].Grade == GachaGrade::S ? 5 : (*ResultDesc)[4].Grade == GachaGrade::A ? 3 : 1,
+			(*ResultDesc)[5].Grade == GachaGrade::S ? 5 : (*ResultDesc)[5].Grade == GachaGrade::A ? 3 : 1,
+			(*ResultDesc)[6].Grade == GachaGrade::S ? 5 : (*ResultDesc)[6].Grade == GachaGrade::A ? 3 : 1,
+			(*ResultDesc)[7].Grade == GachaGrade::S ? 5 : (*ResultDesc)[7].Grade == GachaGrade::A ? 3 : 1,
+			(*ResultDesc)[8].Grade == GachaGrade::S ? 5 : (*ResultDesc)[8].Grade == GachaGrade::A ? 3 : 1,
+			(*ResultDesc)[9].Grade == GachaGrade::S ? 5 : (*ResultDesc)[9].Grade == GachaGrade::A ? 3 : 1,
+			});
+		m_fScreenElapsedTime = 0.f;
+	}
+}
+
+void CGachaScreen::SetupInitialTVSequence(vector<WEAPON_DESC>* ResultDesc)
+{
+	auto pMaterial = Get_Component<CMaterial>();
+	auto pMaterialInstances = pMaterial->Get_MaterialInstances();
+
+	SetMaterialInstances(pMaterialInstances.size(), {
+	(*ResultDesc)[0].Grade == GachaGrade::S ? 4 : (*ResultDesc)[0].Grade == GachaGrade::A ? 2 : 0,
+	(*ResultDesc)[1].Grade == GachaGrade::S ? 4 : (*ResultDesc)[1].Grade == GachaGrade::A ? 2 : 0,
+	(*ResultDesc)[2].Grade == GachaGrade::S ? 4 : (*ResultDesc)[2].Grade == GachaGrade::A ? 2 : 0,
+	(*ResultDesc)[3].Grade == GachaGrade::S ? 4 : (*ResultDesc)[3].Grade == GachaGrade::A ? 2 : 0,
+	(*ResultDesc)[4].Grade == GachaGrade::S ? 4 : (*ResultDesc)[4].Grade == GachaGrade::A ? 2 : 0,
+	(*ResultDesc)[5].Grade == GachaGrade::S ? 4 : (*ResultDesc)[5].Grade == GachaGrade::A ? 2 : 0,
+	(*ResultDesc)[6].Grade == GachaGrade::S ? 4 : (*ResultDesc)[6].Grade == GachaGrade::A ? 2 : 0,
+	(*ResultDesc)[7].Grade == GachaGrade::S ? 4 : (*ResultDesc)[7].Grade == GachaGrade::A ? 2 : 0,
+	(*ResultDesc)[8].Grade == GachaGrade::S ? 4 : (*ResultDesc)[8].Grade == GachaGrade::A ? 2 : 0,
+	(*ResultDesc)[9].Grade == GachaGrade::S ? 4 : (*ResultDesc)[9].Grade == GachaGrade::A ? 2 : 0,
+	Helper::Get_Random_Int(0, 2),
+	Helper::Get_Random_Int(0, 2),
+	Helper::Get_Random_Int(0, 2),
+	Helper::Get_Random_Int(0, 2),
+	Helper::Get_Random_Int(0, 2),
+	Helper::Get_Random_Int(0, 2),
+	Helper::Get_Random_Int(0, 2),
+	Helper::Get_Random_Int(0, 2),
+	Helper::Get_Random_Int(0, 2),
+	Helper::Get_Random_Int(0, 2)
+		});
+}
+
 HRESULT CGachaScreen::Initialize_Prototype()
 {
     if (FAILED(__super::Initialize_Prototype()))
@@ -46,7 +98,7 @@ void CGachaScreen::Awake()
 {
 	auto pMaterial = Get_Component<CMaterial>();
 	auto pMaterialInstances = pMaterial->Get_MaterialInstances();
-
+	
 	auto pModel = Get_Component<CModel>();
 	m_iMaterialInstanceCounts = pMaterialInstances.size();
 
@@ -72,12 +124,13 @@ void CGachaScreen::Awake()
 
 void CGachaScreen::Priority_Update(_float dt)
 {
+	m_fScreenElapsedTime += dt;
 }
 
 void CGachaScreen::Update(_float dt)
 {
-	m_fElapsedTime += dt;
-	if (m_fElapsedTime > m_fFrameDuration)
+	m_fFrameElapsedTime += dt;
+	if (m_fFrameElapsedTime > m_fFrameDuration)
 	{
 		for (_int i = 0; i < m_iMaterialInstanceCounts; ++i)
 		{
@@ -85,12 +138,29 @@ void CGachaScreen::Update(_float dt)
 			if (m_CurrentFrameIndexs[i] >= m_MaxFrameIndexs[i])
 				m_CurrentFrameIndexs[i] = 0;
 		}
-		m_fElapsedTime = 0.f;
+		m_fFrameElapsedTime = 0.f;
 	}
 }
 
 void CGachaScreen::Late_Update(_float dt)
 {
+}
+
+void CGachaScreen::SetMaterialInstances(_int ChangeNum, vector<_int> ScreenIndex)
+{
+	auto pMaterial = Get_Component<CMaterial>();
+	auto pMaterialInstances = pMaterial->Get_MaterialInstances();
+
+	for (_int idx = 0; idx < ChangeNum; ++idx)
+	{
+		string strTexture;
+		pMaterialInstances[idx]->ChangeTexture(TEXTURE_TYPE::DIFFUSE, ScreenIndex[idx]);
+		pMaterialInstances[idx]->GetMaterialTextureKey(TEXTURE_TYPE::DIFFUSE, ScreenIndex[idx], strTexture);
+		TV_DESC Desc = CDataBase::GetInstance()->GetTVDesc(strTexture);
+		m_Cols[idx] = Desc.Col;
+		m_Rows[idx] = Desc.Row;
+		m_MaxFrameIndexs[idx] = Desc.MaxFrame;
+	}
 }
 
 CGachaScreen* CGachaScreen::Create()

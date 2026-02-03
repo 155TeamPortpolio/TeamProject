@@ -12,6 +12,10 @@ private:
     virtual ~CGachaTV() DEFAULT;
 
 public:
+    void    PlayTVSequence();
+    void    SetupInitialTVSequence();
+
+public:
     virtual HRESULT Initialize_Prototype(vector<WEAPON_DESC>* Desc);
     virtual HRESULT Initialize(INIT_DESC* pArg) override;
     virtual void    Awake()                     override;
@@ -24,6 +28,9 @@ private:
 
 private:
     vector<WEAPON_DESC>* m_pResultDesc = nullptr;
+
+private:
+    class CGachaScreen* m_pScreen = nullptr;
 
 public:
     static CGachaTV* Create(vector<WEAPON_DESC>* Desc);

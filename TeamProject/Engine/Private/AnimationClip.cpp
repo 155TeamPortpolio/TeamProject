@@ -38,6 +38,11 @@ HRESULT CAnimationClip::Initialize(const string& animationPath)
 void CAnimationClip::Set_Events(vector<ANIM_EVENT>& Events)
 {
 	m_Events = Events;
+	sort(m_Events.begin(), m_Events.end(),
+		[](const ANIM_EVENT& lhs, const ANIM_EVENT& rhs)
+		{
+			return lhs.EventTime < rhs.EventTime;
+		});
 }
 
 _float CAnimationClip::TranslateAnimateMatrix(vector<_float4x4>& transfomationMatrices,

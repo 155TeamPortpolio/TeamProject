@@ -174,7 +174,6 @@ TV_DESC CDataBase::GetTVDesc(const string& strName)
 vector<WEAPON_DESC> CDataBase::GetGachaResults(_int WeaponNum)
 {
 	vector<WEAPON_DESC> Results(10);
-
 	if (WeaponNum <= 0 || WeaponNum > 10 || m_WeaponTables.empty())
 		return Results;
 
@@ -182,9 +181,13 @@ vector<WEAPON_DESC> CDataBase::GetGachaResults(_int WeaponNum)
 	for (const auto& pair : m_WeaponTables)
 		weaponKeys.push_back(pair.first);
 
+	if (WeaponNum > weaponKeys.size())
+		WeaponNum = weaponKeys.size();
+
 	random_device rd;
 	mt19937 gen(rd());
-	uniform_int_distribution<_int> weaponDist(0, weaponKeys.size() - 1);
+
+	shuffle(weaponKeys.begin(), weaponKeys.end(), gen);
 
 	vector<_int> positions(10);
 	iota(positions.begin(), positions.end(), 0);
@@ -192,8 +195,7 @@ vector<WEAPON_DESC> CDataBase::GetGachaResults(_int WeaponNum)
 
 	for (_int i = 0; i < WeaponNum; ++i)
 	{
-		_int randomIdx = weaponDist(gen);
-		Results[positions[i]] = m_WeaponTables[weaponKeys[randomIdx]];
+		Results[positions[i]] = m_WeaponTables[weaponKeys[i]];
 	}
 
 	return Results;
@@ -627,19 +629,20 @@ HRESULT CDataBase::LoadRamenData(const string& csvPath)
 HRESULT CDataBase::LoadWeaponData(const string& csvPath)
 {
 	io::CSVReader<
-		5,
+		9,
 		io::trim_chars<' ', '\t'>,
 		io::double_quote_escape<',', '"'>
 	>in(csvPath);
 
 	in.read_header(
 		io::ignore_extra_column | io::ignore_missing_column,
-		"ID", "Grade", "Model", "Mat", "Texture"
+		"ID", "Grade", "Model", "Mat", "Texture", "RotX", "RotY", "RotZ", "RotW"
 	);
 	string			Grade, Model, Material, Texture;
 	_int			ID;
+	_float			RotX, RotY, RotZ, RotW;
 
-	while (in.read_row(ID, Grade, Model, Material,Texture))
+	while (in.read_row(ID, Grade, Model, Material,Texture, RotX, RotY, RotZ, RotW))
 	{
 		if (ID == -1) continue;
 
@@ -649,6 +652,10 @@ HRESULT CDataBase::LoadWeaponData(const string& csvPath)
 		desc.strModel = Model;
 		desc.strMaterial = Material;
 		desc.strTexture = Texture;
+		desc.RotX = RotX;
+		desc.RotY = RotY;
+		desc.RotZ = RotZ;
+		desc.RotW = RotW;
 
 		auto [iter, inserted] = m_WeaponTables.emplace(desc.ID, move(desc));
 		if (false == inserted)

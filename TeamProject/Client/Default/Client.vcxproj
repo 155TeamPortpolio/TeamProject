@@ -393,6 +393,7 @@
     <ClInclude Include="..\public\GachaTV.h" />
     <ClInclude Include="..\public\GachaResult.h" />
     <ClInclude Include="..\public\Gacha_Level.h" />
+    <ClInclude Include="..\Public\MilitaryHelicopter.h" />
     <ClInclude Include="..\Public\MiyabiState_BackStep.h" />
     <ClInclude Include="..\Public\MiyabiState_Dash.h" />
     <ClInclude Include="..\Public\MiyabiState_Evade.h" />
@@ -774,6 +775,7 @@
     <ClCompile Include="..\private\GachaTV.cpp" />
     <ClCompile Include="..\private\GachaResult.cpp" />
     <ClCompile Include="..\private\Gacha_Level.cpp" />
+    <ClCompile Include="..\private\MilitaryHelicopter.cpp" />
     <ClCompile Include="..\Private\MiyabiState_BackStep.cpp" />
     <ClCompile Include="..\Private\MiyabiState_Dash.cpp" />
     <ClCompile Include="..\Private\MiyabiState_Evade.cpp" />
