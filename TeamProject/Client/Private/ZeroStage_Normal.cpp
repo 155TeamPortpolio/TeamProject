@@ -55,11 +55,10 @@ void CZeroStage_Normal::Update()
 
 }
 
-HRESULT CZeroStage_Normal::Enter_Stage(CZero_Level::StageContext& context)
+HRESULT CZeroStage_Normal::Enter_Stage(StageContext& context)
 {
-	Ready_Map("Zero_Level", "Zero_1_1");
+	Ready_Map("Zero_Level", context.mapKey);
 	Reserve_Enemy("Zero_Level");
-
 	m_eStageStage = StageState::Entrance;
 	m_PlayerHandle = context.hPlayer;
 	Active_Player(CStage::PlayerPoint::Typical);

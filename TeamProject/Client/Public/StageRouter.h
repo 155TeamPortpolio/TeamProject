@@ -1,10 +1,13 @@
 #pragma once
 #include "LevelObject.h"
+#include "Zero_Level.h"
 
 NS_BEGIN(Client)
 class CStageRouter :
     public CLevelObject
 {
+   
+
 private:
 	CStageRouter();
 	~CStageRouter() DEFAULT;
@@ -19,12 +22,32 @@ public:
 
 public:
     virtual void    Render_GUI() override;
+
 public:
-    void Ready_Stages();
     StageType Pop_StageType();
 
+    /*NodeControl*/
+    _int AddNode(StageType type, _int parentIndex, _int depth);
+    _int  CreateNode(StageType type, _int parentIndex);
+    void  BuildGraph(_int MaxDepth);
+
 private:
-    queue<StageType> m_StageQueue;
+    /*Rand*/
+    _int RollChildCount(_int depth, _int maxDepth);
+    StageType RollType(_int depth, _int maxDepth);
+
+    /*Data*/
+    _bool Choose(_int choiceIndex);
+    _int GetChoiceCount();
+    StageType GetChoiceType(_int choiceIndex);
+    StageType GetCurrentType();
+
+private:
+    vector<StageNode> m_stageNodes;
+    queue<_int> m_visitQueue;
+
+    _int m_currentNode = -1;
+    _int m_maxDepth = 0;
 
 public:
 	static CStageRouter* Create();

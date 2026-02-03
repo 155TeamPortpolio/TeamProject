@@ -27,13 +27,6 @@ protected:
 		_float3 rotation;
 	};
 
-	struct StageContext{
-
-		StageType eStageType;
-		_int StageID = { -1 };
-		Combined_MonsterData combindeData = {};
-	};
-
 protected:
     CStage();
     ~CStage() DEFAULT;
@@ -43,8 +36,8 @@ public:
 	virtual void    Update()PURE;
 
 public:
-	virtual HRESULT Enter_Stage(CZero_Level::StageContext& context)PURE;
-	virtual HRESULT Exit_Stage(CZero_Level::StageContext& context);
+	virtual HRESULT Enter_Stage(StageContext& context)PURE;
+	virtual HRESULT Exit_Stage(StageContext& context);
 	virtual void StageChangeOn(StageType nextStageType, _int StageID);
 
 protected:
@@ -55,8 +48,8 @@ protected:
 	virtual void Active_Portal();
 
 protected:
-	void BaseIntro(CZero_Level::StageContext& context);
-	void BossIntro(CZero_Level::StageContext& context);
+	void BaseIntro(StageContext& context);
+	void BossIntro(StageContext& context);
 	void BaseOutro();
 
 private:

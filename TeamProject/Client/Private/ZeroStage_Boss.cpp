@@ -94,12 +94,14 @@ void CZeroStage_Boss::Update()
 }
 
 
-HRESULT CZeroStage_Boss::Enter_Stage(CZero_Level::StageContext& context)
+HRESULT CZeroStage_Boss::Enter_Stage(StageContext& context)
 {
-	Ready_Map("Zero_Level", "Zero_Boss1");
+	Ready_Map("Zero_Level", context.mapKey);
+	Reserve_Enemy("Zero_Level");
 	m_eStageStage = StageState::Entrance;
 	m_PlayerHandle = context.hPlayer;
 	BossIntro(context);
+	Active_Player(CStage::PlayerPoint::Typical);
 	return S_OK;
 }
 
@@ -107,7 +109,7 @@ void CZeroStage_Boss::Intro()
 {
 	if (m_introFlow.IsDoneAll())
 	{
-		CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_Sacrifice", {_vector3(-2.f, 1.f, 21.f)});
+		Active_Enemy();
 		CBattleSystem::GetInstance()->SetActive(true);
 		m_eStageStage = StageState::BattleStart;
 	}
@@ -119,8 +121,7 @@ void CZeroStage_Boss::Battle()
 	if (isBattleEnd) {
 		m_eStageStage = StageState::BattleEnd;
 		CBattleSystem::GetInstance()->SetActive(false);
-		STAGE_CHANGED_DESC Stage_End = { this };
-		EventSystem()->Broadcast<STAGE_CHANGED_DESC>(Stage_End);
+		Active_Portal();
 	}
 }
 

@@ -41,12 +41,8 @@
 #include "DataBase.h"
 
 CZero_Level::CZero_Level(const string& LevelKey)
-	:CLevel(LevelKey),
-	m_pGameInstance{ CGameInstance::GetInstance() },
-	m_pCamDirector{CCamDirector::GetInstance()}
+	:CLevel(LevelKey)
 {
-	Safe_AddRef(m_pGameInstance);
-	Safe_AddRef(m_pCamDirector);
 }
 
 HRESULT CZero_Level::Initialize()
@@ -96,19 +92,22 @@ void CZero_Level::Update()
 
 HRESULT CZero_Level::Render()
 {
-	return S_OK;
+	return S_OK; /*Èû³»!*/
 }
 
-HRESULT CZero_Level::ChangeStage()
+HRESULT CZero_Level::ChangeStage(StageType type)
 {
-	StageType type = Get_LevelObject<CStageRouter>()->Pop_StageType();
 	auto found = m_StageContainer.find(type);
 	if (found == m_StageContainer.end())
 		return E_FAIL;
-	if(m_Context.pNowStage)
+
+	if (m_Context.pNowStage)
 		m_Context.pNowStage->Exit_Stage(m_Context);
 
-	m_Context.pNowStage = m_StageContainer[type];
+	m_Context.nextType = type;
+	m_Context.mapKey = PopMapKey(type);
+
+	m_Context.pNowStage = found->second;
 	return m_Context.pNowStage->Enter_Stage(m_Context);
 }
 
@@ -129,14 +128,28 @@ void CZero_Level::Ready_Prototype()
 void CZero_Level::Ready_Stage()
 {
 	/*Stage*/
-	auto Router = Add_LevelObject<CStageRouter>();
-	Safe_AddRef(Router);
-	ObjectManager()->Add_Object(Router, { "Zero_Level","Router_Layer" });
+	m_pRouter = Add_LevelObject<CStageRouter>();
+	Safe_AddRef(m_pRouter);
+	ObjectManager()->Add_Object(m_pRouter, { "Zero_Level","Router_Layer" });
+	m_pRouter->BuildGraph(5);
+
 	m_StageContainer.emplace(StageType::Normal, CZeroStage_Normal::Create(this));
 	m_StageContainer.emplace(StageType::Elite, CZeroStage_Elite::Create(this));
 	m_StageContainer.emplace(StageType::Boss, CZeroStage_Boss::Create(this));
 
+	m_mapCycle[StageType::Normal].maps	= { "Zero_1_1", "Zero_1_2" };
+	m_mapCycle[StageType::Elite].maps	= { "Zero_1_1", "Zero_1_2" };
+	m_mapCycle[StageType::Boss].maps	= { "Zero_Boss1","Zero_Boss2"};
+
 	ChangeStage();
+}
+
+string CZero_Level::PopMapKey(StageType type)
+{
+	auto it = m_mapCycle.find(type);
+	if (it == m_mapCycle.end())
+		return {};
+	return it->second.Next();
 }
 
 CZero_Level* CZero_Level::Create(const string& LevelKey)
@@ -158,9 +171,6 @@ void CZero_Level::Free()
 	for (auto& pair : m_StageContainer)
 		Safe_Release(pair.second);
 	m_StageContainer.clear();
-
-	m_pGameInstance->DestroyInstance();
-	m_pCamDirector->DestroyInstance();
 
 	RenderSystem()->Set_FogDesc({ _float4(0.08f, 0.02f, 0.02f, 1.0f),0.f, 0.f, 0.02f, false });
 

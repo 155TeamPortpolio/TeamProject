@@ -11,12 +11,14 @@
 #include "Character.h"
 #include "CharacterController.h"
 #include "Layer.h"
+#include "Zero_Level.h"
+#include "StageRouter.h"
 
 CStage::CStage()
 {
 }
 
-HRESULT CStage::Exit_Stage(CZero_Level::StageContext& context)
+HRESULT CStage::Exit_Stage(StageContext& context)
 {
 	BattleSystem()->ClearBattleStage();
 	ObjectManager()->Get_Layer({ "Zero_Level","PlacedObject_Layer" })->Clear_Layer();
@@ -138,6 +140,8 @@ void CStage::Active_Player(PlayerPoint pointType)
 
 void CStage::Active_Portal()
 {
+	auto pRouter = m_pOwnerLevel->Get_Router();
+	pRouter;
 	for (size_t i = 0; i < m_pPortals.size(); i++)
 	{
 		ObjectManager()->Add_Object(m_pPortals[i], { "Zero_Level","Portal_Layer" });
@@ -220,7 +224,7 @@ HRESULT CStage::ReadyMonsterData(const string& LevelTag, const string& AreaTag)
 	return S_OK;
 }
 
-void CStage::BaseIntro(CZero_Level::StageContext& context)
+void CStage::BaseIntro(StageContext& context)
 {
 	if (!m_introFlowBuilt)
 	{
@@ -267,7 +271,7 @@ void CStage::BaseIntro(CZero_Level::StageContext& context)
 
 	m_introFlow.Start();
 }
-void CStage::BossIntro(CZero_Level::StageContext& context)
+void CStage::BossIntro(StageContext& context)
 {
 	if (!m_introFlowBuilt)
 	{

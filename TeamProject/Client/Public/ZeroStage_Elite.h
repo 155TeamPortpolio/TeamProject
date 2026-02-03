@@ -13,7 +13,7 @@ public:
 	virtual void    Update()override;
 
 public:
-	virtual HRESULT Enter_Stage(CZero_Level::StageContext& context)override;
+	virtual HRESULT Enter_Stage(StageContext& context)override;
 
 private:
 	void Intro();
