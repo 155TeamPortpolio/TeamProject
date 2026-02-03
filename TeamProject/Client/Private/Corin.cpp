@@ -8,6 +8,7 @@
 
 #include "Animator3D.h"
 #include "CharacterController.h"
+#include "ObjectContainer.h"
 
 #include "StateMachine.h"
 #include "CorinState_Start.h"
@@ -26,6 +27,7 @@
 #include "FootIK.h"
 
 #include "DataBase.h"
+#include "EffectContainer.h"
 
 CCorin::CCorin()
 {
@@ -220,6 +222,9 @@ HRESULT CCorin::Initialize_StateMachine()
     if (FAILED(Initialize_Transitions()))
         return E_FAIL;
 
+    if (FAILED(Initialize_Effects()))
+        return E_FAIL;
+
     m_pStateMachine->Set_DefaultState("Idle");
     m_pStateMachine->Initialize(this);
 
@@ -365,7 +370,25 @@ HRESULT CCorin::Initialize_Weapon()
 
 HRESULT CCorin::Initialize_Effects()
 {
-    return E_NOTIMPL;
+    auto pObjectContainer = Get_Component<CObjectContainer>();
+
+    // Normal Slash
+    {
+        auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+            .Asset("corin_normal1_slash.json")
+            .Build("Corin_Normal_Slash0");
+        pEffect->Stop();
+        pObjectContainer->Add_Child(pEffect);
+    }
+    {
+        auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+            .Asset("corin_normal1_slash.json")
+            .Build("Corin_Normal_Slash1");
+        pEffect->Stop();
+        pObjectContainer->Add_Child(pEffect);
+    }
+
+    return S_OK;
 }
 
 void CCorin::Update_States()
