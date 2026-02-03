@@ -21,7 +21,7 @@ CMiyabiState_NormalAttack* CMiyabiState_NormalAttack::Create()
     pSubStateMachine->Register_State("Attack_03", CMiyabiState_Attack_03::Create());
     pSubStateMachine->Register_State("Attack_04", CMiyabiState_Attack_04::Create());
     pSubStateMachine->Register_State("Attack_05", CMiyabiState_Attack_05::Create());
-    pSubStateMachine->Register_State("Attack_06", CMiyabiState_Attack_06::Create());
+    //pSubStateMachine->Register_State("Attack_06", CMiyabiState_Attack_06::Create());
     pSubStateMachine->Register_State("Attack_End", CMiyabiState_Attack_End::Create());
 
     pSubStateMachine->Get_State("Attack_End")->Set_Tag("End");
@@ -36,7 +36,7 @@ CMiyabiState_NormalAttack* CMiyabiState_NormalAttack::Create()
     pSubStateMachine->Register_Transition("Attack_02", "Attack_03", comboConditions);
     pSubStateMachine->Register_Transition("Attack_03", "Attack_04", comboConditions);
     pSubStateMachine->Register_Transition("Attack_04", "Attack_05", comboConditions);
-    pSubStateMachine->Register_Transition("Attack_05", "Attack_06", comboConditions);
+    //pSubStateMachine->Register_Transition("Attack_05", "Attack_06", comboConditions);
 
     // End ÀüÀÌ
     pSubStateMachine->Register_Transition("Attack_01", "Attack_End",
@@ -49,8 +49,8 @@ CMiyabiState_NormalAttack* CMiyabiState_NormalAttack::Create()
         CStateMachine<CMiyabi>::CONDITION_ANIMATION_END);
     pSubStateMachine->Register_Transition("Attack_05", "Attack_End",
         CStateMachine<CMiyabi>::CONDITION_ANIMATION_END);
-    pSubStateMachine->Register_Transition("Attack_06", "Attack_End",
-        CStateMachine<CMiyabi>::CONDITION_ANIMATION_END);
+    //pSubStateMachine->Register_Transition("Attack_06", "Attack_End",
+    //    CStateMachine<CMiyabi>::CONDITION_ANIMATION_END);
 
     pSubStateMachine->Set_DefaultState("Attack_01");
 
@@ -149,7 +149,7 @@ void CMiyabiState_Attack_03::Exit(CMiyabi* pOwner)
 
 void CMiyabiState_Attack_04::Enter(CMiyabi* pOwner)
 {
-    pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_04_02")
+    pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_05")
         .Apply();
 }
 
@@ -167,7 +167,7 @@ void CMiyabiState_Attack_04::Exit(CMiyabi* pOwner)
 
 void CMiyabiState_Attack_05::Enter(CMiyabi* pOwner)
 {
-    pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_05")
+    pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_06")
         .Apply();
 }
 
@@ -183,37 +183,37 @@ void CMiyabiState_Attack_05::Exit(CMiyabi* pOwner)
     static_cast<CMiyabiState_NormalAttack*>(m_pParentState)->Set_ComboIndex(4);
 }
 
-void CMiyabiState_Attack_06::Enter(CMiyabi* pOwner)
-{
-    pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_06")
-        .Apply();
-}
-
-void CMiyabiState_Attack_06::Update(CMiyabi* pOwner, _float dt)
-{
-    pOwner->Process_RootMotion(dt,
-        ENUM(CMiyabi::ROOTMOTION_MASK::MOVE) |
-        ENUM(CMiyabi::ROOTMOTION_MASK::QUATERNION));
-}
-
-void CMiyabiState_Attack_06::Exit(CMiyabi* pOwner)
-{
-    static_cast<CMiyabiState_NormalAttack*>(m_pParentState)->Set_ComboIndex(5);
-}
+//void CMiyabiState_Attack_06::Enter(CMiyabi* pOwner)
+//{
+//    pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_06")
+//        .Apply();
+//}
+//
+//void CMiyabiState_Attack_06::Update(CMiyabi* pOwner, _float dt)
+//{
+//    pOwner->Process_RootMotion(dt,
+//        ENUM(CMiyabi::ROOTMOTION_MASK::MOVE) |
+//        ENUM(CMiyabi::ROOTMOTION_MASK::QUATERNION));
+//}
+//
+//void CMiyabiState_Attack_06::Exit(CMiyabi* pOwner)
+//{
+//    static_cast<CMiyabiState_NormalAttack*>(m_pParentState)->Set_ComboIndex(5);
+//}
 
 void CMiyabiState_Attack_End::Enter(CMiyabi* pOwner)
 {
     CMiyabiState_NormalAttack* pParent = static_cast<CMiyabiState_NormalAttack*>(m_pParentState);
     _uint iIndex = pParent ? pParent->Get_ComboIndex() : 0;
 
-    const string arrEndAnims[6] =
+    const string arrEndAnims[5] =
     {
         pOwner->Get_Name() + "Attack_01_End",
         pOwner->Get_Name() + "Attack_02_End",
         pOwner->Get_Name() + "Attack_03_End",
-        pOwner->Get_Name() + "Attack_04_End",
         pOwner->Get_Name() + "Attack_05_End",
-        pOwner->Get_Name() + "Attack_06_End"
+        pOwner->Get_Name() + "Attack_06_End",
+        //pOwner->Get_Name() + "Attack_06_End"
     };
 
     pOwner->Get_Animator()->Change_Animation(arrEndAnims[iIndex])
