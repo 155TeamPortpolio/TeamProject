@@ -1,0 +1,46 @@
+{
+  "TagDataFormat": "BattleData",
+  "TagArea": "Zero_Boss1",
+  "PlayerSpawnPoint": {
+    "tagType": "PlayerPoint",
+    "iIndex": 0,
+    "vScale": [
+      0.7952134609222412,
+      0.8361367583274841,
+      0.8361368179321289
+    ],
+    "vRotation": [
+      -0.0,
+      0.0,
+      0.0
+    ],
+    "vTranslation": [
+      3.484315872192383,
+      0.056121826171875,
+      -4.605259895324707
+    ]
+  },
+  "Spawners": [],
+  "Monsters": [
+    {
+      "tagType": "MonsterPoint",
+      "iIndex": 0,
+      "vScale": [
+        0.7952134609222412,
+        0.8361367583274841,
+        0.8361368179321289
+      ],
+      "vRotation": [
+        -0.0,
+        3.0253820419311523,
+        0.0
+      ],
+      "vTranslation": [
+        0.4334371089935303,
+        0.0240020751953125,
+        27.24942398071289
+      ]
+    }
+  ],
+  "EndPoints": []
+}
