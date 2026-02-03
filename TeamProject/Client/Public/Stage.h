@@ -19,6 +19,12 @@ protected:
 		};
 		vector<creation> CreationData;
 		vector<_float3>	 SpawnPoint;
+		void Reset() {
+			vector<creation> dummy;
+			vector<_float3> dummy2;
+			CreationData.swap(dummy);
+			SpawnPoint.swap(dummy2);
+		}
 	};
 
 	struct PlayerSRT
@@ -38,7 +44,7 @@ public:
 public:
 	virtual HRESULT Enter_Stage(StageContext& context)PURE;
 	virtual HRESULT Exit_Stage(StageContext& context);
-	virtual void StageChangeOn(StageType nextStageType, _int StageID);
+	virtual void StageChangeOn(_int choiceIndex);
 
 protected:
 	virtual void Ready_Map(const string& LevelTag, const string& AreaTag);
@@ -62,6 +68,7 @@ protected:
 	class CZero_Level* m_pOwnerLevel = { nullptr };
 	StageState	m_eStageStage = {StageState::None };
 	StageType	m_eType = {};
+	_int m_iNextChoice = { -1 };
 
 	/*ø¨√‚*/
 	EffectFlow m_introFlow;

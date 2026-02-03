@@ -124,13 +124,19 @@ void CZeroPortal::Interact(CGameObject* pObject)
 	if (!m_bIsInteractable)
 		return;
 
-	m_pTargetStage->StageChangeOn(StageType::Boss, 0);
+	m_pOwnerStage->StageChangeOn(m_choiceIndex);
 	m_bIsInteractable = false;
 }
 
 OBJECT_HANDLE CZeroPortal::Get_InteractHandle()
 {
 	return Get_Handle();
+}
+
+void CZeroPortal::SetChoiceIndex(CStage* pOwener, int idx)
+{
+	m_pOwnerStage = pOwener;
+	m_choiceIndex = idx;
 }
 
 void CZeroPortal::Extend(_float dt)

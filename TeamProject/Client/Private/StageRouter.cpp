@@ -11,6 +11,7 @@ CStageRouter::CStageRouter()
 {
 
 }
+
 void CStageRouter::Render_GUI()
 {
     static const char* typeNames[] = { "Normal", "Elite", "Boss", "Shop", "Rest", "End" };
@@ -33,26 +34,35 @@ void CStageRouter::Render_GUI()
 
     constexpr float stepX = 140.f;
     constexpr float stepY = 70.f;
-    constexpr float nodeRadius = 14.f;
+    constexpr float nodeRadiusBase = 14.f;
 
     ImVec2 canvasEnd = add(canvasPos, canvasSize);
     draw->AddRectFilled(canvasPos, canvasEnd, IM_COL32(20, 20, 20, 255));
     draw->PushClipRect(canvasPos, canvasEnd, true);
 
-    ImVec2 origin = add(canvasPos, ImVec2(80.f, canvasSize.y * 0.5f));
+    const float pad = 40.f;
+    const ImVec2 originBase = add(canvasPos, ImVec2(pad, pad));
 
+    const int nodeCount = (int)m_stageNodes.size();
     ImGui::SetCursorScreenPos(add(canvasPos, ImVec2(8.f, 8.f)));
-    ImGui::Text("nodes: %d", (int)m_stageNodes.size());
+    ImGui::Text("nodes: %d", nodeCount);
+
+    if (nodeCount <= 0)
+    {
+        draw->PopClipRect();
+        ImGui::End();
+        return;
+    }
 
     // ---- depth 범위 ----
     int maxDepth = 0;
-    for (int nodeIndex = 0; nodeIndex < (int)m_stageNodes.size(); ++nodeIndex)
+    for (int nodeIndex = 0; nodeIndex < nodeCount; ++nodeIndex)
         if (m_stageNodes[nodeIndex].depth > maxDepth)
             maxDepth = m_stageNodes[nodeIndex].depth;
 
     // ---- depth별 개수 ----
     std::vector<int> depthCount(maxDepth + 1, 0);
-    for (int nodeIndex = 0; nodeIndex < (int)m_stageNodes.size(); ++nodeIndex)
+    for (int nodeIndex = 0; nodeIndex < nodeCount; ++nodeIndex)
     {
         int depth = m_stageNodes[nodeIndex].depth;
         if (depth >= 0 && depth <= maxDepth)
@@ -71,10 +81,10 @@ void CStageRouter::Render_GUI()
     // ---- depth별 커서 ----
     std::vector<int> depthCursor(maxDepth + 1, 0);
 
-    // ---- (1) 먼저 nodeYOffset 채우기 ----
-    std::vector<float> nodeYOffset(m_stageNodes.size(), 0.f);
+    // ---- (1) nodeYOffset 채우기 ----
+    std::vector<float> nodeYOffset(nodeCount, 0.f);
 
-    for (int nodeIndex = 0; nodeIndex < (int)m_stageNodes.size(); ++nodeIndex)
+    for (int nodeIndex = 0; nodeIndex < nodeCount; ++nodeIndex)
     {
         int depth = m_stageNodes[nodeIndex].depth;
         if (depth < 0 || depth > maxDepth)
@@ -84,8 +94,8 @@ void CStageRouter::Render_GUI()
         nodeYOffset[nodeIndex] = depthBaseY[depth] + order * stepY;
     }
 
-    // ---- (2) 그 다음 부모를 자식 평균으로 보정 ----
-    for (int nodeIndex = (int)m_stageNodes.size() - 1; nodeIndex >= 0; --nodeIndex)
+    // ---- (2) 부모를 자식 평균으로 보정 ----
+    for (int nodeIndex = nodeCount - 1; nodeIndex >= 0; --nodeIndex)
     {
         const StageNode& node = m_stageNodes[nodeIndex];
         if (node.ChildrenIndex.empty())
@@ -96,7 +106,7 @@ void CStageRouter::Render_GUI()
 
         for (int childIndex : node.ChildrenIndex)
         {
-            if (childIndex < 0 || childIndex >= (int)nodeYOffset.size())
+            if (childIndex < 0 || childIndex >= nodeCount)
                 continue;
 
             sumY += nodeYOffset[childIndex];
@@ -107,23 +117,67 @@ void CStageRouter::Render_GUI()
             nodeYOffset[nodeIndex] = sumY / (float)count;
     }
 
+    // ==========================
+    //  바운딩 + 비균일 스케일(X/Y 따로)
+    //  - Y 때문에 X까지 줄어드는 문제 해결
+    // ==========================
+    float minX = 1e9f, maxX = -1e9f;
+    float minY = 1e9f, maxY = -1e9f;
+
+    for (int nodeIndex = 0; nodeIndex < nodeCount; ++nodeIndex)
+    {
+        const StageNode& node = m_stageNodes[nodeIndex];
+        float xRaw = node.depth * stepX;
+        float yRaw = nodeYOffset[nodeIndex];
+
+        if (xRaw < minX) minX = xRaw;
+        if (xRaw > maxX) maxX = xRaw;
+        if (yRaw < minY) minY = yRaw;
+        if (yRaw > maxY) maxY = yRaw;
+    }
+
+    float spanX = maxX - minX;
+    float spanY = maxY - minY;
+    if (spanX < 1.f) spanX = 1.f;
+    if (spanY < 1.f) spanY = 1.f;
+
+    float availX = canvasSize.x - pad * 2.f;
+    float availY = canvasSize.y - pad * 2.f;
+    if (availX < 1.f) availX = 1.f;
+    if (availY < 1.f) availY = 1.f;
+
+    float scaleX = availX / spanX;
+    float scaleY = availY / spanY;
+
+    // "압축만": 확대는 막기
+    if (scaleX > 1.f) scaleX = 1.f;
+    if (scaleY > 1.f) scaleY = 1.f;
+
+    // 노드 크기는 더 작은 축 기준으로(원형 유지)
+    float nodeRadius = nodeRadiusBase * ((scaleX < scaleY) ? scaleX : scaleY);
+    if (nodeRadius < 6.f) nodeRadius = 6.f;
+
+    const ImVec2 base = originBase;
+
     auto getNodePos = [&](int nodeIndex) -> ImVec2
         {
             const StageNode& node = m_stageNodes[nodeIndex];
-            float x = origin.x + node.depth * stepX;
-            float y = origin.y + nodeYOffset[nodeIndex];
-            return ImVec2(x, y);
+
+            float xLocal = (node.depth * stepX - minX) * scaleX;
+            float yLocal = (nodeYOffset[nodeIndex] - minY) * scaleY;
+
+            return ImVec2(base.x + xLocal, base.y + yLocal);
         };
 
     /* 1) 선 */
-    for (int nodeIndex = 0; nodeIndex < (int)m_stageNodes.size(); ++nodeIndex)
+    for (int nodeIndex = 0; nodeIndex < nodeCount; ++nodeIndex)
     {
         ImVec2 from = getNodePos(nodeIndex);
 
         const StageNode& node = m_stageNodes[nodeIndex];
         for (int childIndex : node.ChildrenIndex)
         {
-            if (childIndex < 0 || childIndex >= (int)m_stageNodes.size())
+            if (childIndex < 0 || childIndex >= nodeCount)
                 continue;
 
             ImVec2 to = getNodePos(childIndex);
@@ -132,7 +186,7 @@ void CStageRouter::Render_GUI()
     }
 
     /* 2) 노드 */
-    for (int nodeIndex = 0; nodeIndex < (int)m_stageNodes.size(); ++nodeIndex)
+    for (int nodeIndex = 0; nodeIndex < nodeCount; ++nodeIndex)
     {
         const StageNode& node = m_stageNodes[nodeIndex];
         ImVec2 pos = getNodePos(nodeIndex);
@@ -153,7 +207,6 @@ void CStageRouter::Render_GUI()
         const char* label =
             (typeIndex >= 0 && typeIndex < (int)IM_ARRAYSIZE(typeNames)) ? typeNames[typeIndex] : "Unknown";
 
-        // ---- 글자 흰색 + 가운데 ----
         ImVec2 textSize = ImGui::CalcTextSize(label);
         ImVec2 textPos = sub(pos, ImVec2(textSize.x * 0.5f, textSize.y * 0.5f));
         draw->AddText(textPos, IM_COL32(255, 255, 255, 255), label);
@@ -161,22 +214,8 @@ void CStageRouter::Render_GUI()
 
     draw->PopClipRect();
     ImGui::End();
-}
+} 
 
-
-StageType CStageRouter::Pop_StageType()
-{
-	if (m_visitQueue.empty())
-		return StageType::End;
-
-	int nodeIndex = m_visitQueue.front();
-	m_visitQueue.pop();
-
-	for (int child : m_stageNodes[nodeIndex].ChildrenIndex)
-		m_visitQueue.push(child);
-
-	return m_stageNodes[nodeIndex].MyType;
-}
 
 /*스테이지 노드 추가*/
 _int CStageRouter::AddNode(StageType type, _int parentIndex, _int depth)
@@ -193,34 +232,52 @@ _int CStageRouter::AddNode(StageType type, _int parentIndex, _int depth)
 
 void CStageRouter::BuildGraph(_int MaxDepth)
 {
-	m_stageNodes.clear();
-	m_currentNode = -1;
+    m_stageNodes.clear();
+    m_currentNode = -1;
+    m_maxDepth = MaxDepth;
 
-	m_maxDepth = MaxDepth;
+    _int rootNode = AddNode(StageType::Normal, -1, 0);
+    m_currentNode = rootNode;
 
-	_int RootNode = AddNode(StageType::Normal, -1, 0);
-	m_currentNode = RootNode;
+    vector<_int> layer;
+    layer.push_back(rootNode);
 
-	vector<_int> layer;
-	layer.push_back(RootNode);
+    for (_int depth = 0; depth < m_maxDepth; ++depth)
+    {
+        vector<_int> nextLayer;
+        nextLayer.reserve(layer.size() * 3);
 
-	for (size_t depth = 0; depth < m_maxDepth; depth++)
-	{
-		vector<_int> nextLayer;
+        for (_int parentIndex : layer)
+        {
+            _int childCount = RollChildCount(depth, m_maxDepth);
 
-		for (_int parentIndex : layer)
-		{
-			_int childCount = RollChildCount(depth - 1, m_maxDepth);
+            for (_int i = 0; i < childCount; ++i)
+            {
+                StageType type = RollType(depth + 1, m_maxDepth);
+                _int childIndex = AddNode(type, parentIndex, depth + 1);
 
-			for (int i = 0; i < childCount; ++i)
-			{
-				StageType type = RollType(depth, m_maxDepth);
-				_int childIndex = AddNode(type, parentIndex, depth);
-				m_stageNodes[parentIndex].ChildrenIndex.push_back(childIndex);
-				nextLayer.push_back(childIndex);
-			}
-		}
-	}
+                m_stageNodes[parentIndex].ChildrenIndex.push_back(childIndex);
+                nextLayer.push_back(childIndex);
+            }
+        }
+
+        layer = move(nextLayer);
+        if (layer.empty())
+            break;
+    }
+
+    m_stageNodes[rootNode].visited = true;
+    for (int child : m_stageNodes[rootNode].ChildrenIndex)
+        m_stageNodes[child].visited = true;
+}
+
+
+_int CStageRouter::GetChoiceNodeIndex(_int choiceIndex)
+{
+   if (m_currentNode < 0) return -1;
+   const auto& children = m_stageNodes[m_currentNode].ChildrenIndex;
+   if (choiceIndex < 0 || choiceIndex >= (int)children.size()) return -1;
+   return children[choiceIndex];
 }
 
 _int CStageRouter::RollChildCount(_int depth, _int maxDepth)
@@ -258,6 +315,7 @@ _bool CStageRouter::Choose(_int choiceIndex)
 	m_currentNode = nextNode;
 
 	m_stageNodes[m_currentNode].visited = true;
+
 	for (int child : m_stageNodes[m_currentNode].ChildrenIndex)
 		m_stageNodes[child].visited = true;
 
@@ -267,15 +325,17 @@ _bool CStageRouter::Choose(_int choiceIndex)
 _int CStageRouter::GetChoiceCount()
 {
 	if (m_currentNode < 0) return 0;
-	return static_cast<int>(m_stageNodes[m_currentNode].ChildrenIndex.size());
+	return static_cast<_int>(m_stageNodes[m_currentNode].ChildrenIndex.size());
 }
 
 StageType CStageRouter::GetChoiceType(_int choiceIndex)
 {
 	if (m_currentNode < 0) return StageType::End;
 	const auto& children = m_stageNodes[m_currentNode].ChildrenIndex;
+
 	if (choiceIndex < 0 || choiceIndex >= static_cast<int>(children.size()))
 		return StageType::End;
+
 	return m_stageNodes[children[choiceIndex]].MyType;
 }
 

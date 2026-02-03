@@ -24,23 +24,22 @@ public:
     virtual void    Render_GUI() override;
 
 public:
-    StageType Pop_StageType();
-
     /*NodeControl*/
     _int AddNode(StageType type, _int parentIndex, _int depth);
-    _int  CreateNode(StageType type, _int parentIndex);
-    void  BuildGraph(_int MaxDepth);
+    _int CreateNode(StageType type, _int parentIndex);
+    void BuildGraph(_int MaxDepth);
+    _int GetChoiceNodeIndex(_int choiceIndex);
+    _int GetChoiceCount();
 
+    _bool Choose(_int choiceIndex);
+    StageType GetChoiceType(_int choiceIndex);
+    StageType GetCurrentType();
 private:
     /*Rand*/
     _int RollChildCount(_int depth, _int maxDepth);
     StageType RollType(_int depth, _int maxDepth);
 
     /*Data*/
-    _bool Choose(_int choiceIndex);
-    _int GetChoiceCount();
-    StageType GetChoiceType(_int choiceIndex);
-    StageType GetCurrentType();
 
 private:
     vector<StageNode> m_stageNodes;

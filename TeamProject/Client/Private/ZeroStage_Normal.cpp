@@ -7,6 +7,7 @@
 #include "Layer.h"
 #include "Player.h"
 #include "UIDirector.h"
+#include "StageRouter.h"
 
 CZeroStage_Normal::CZeroStage_Normal()
 {
@@ -57,12 +58,14 @@ void CZeroStage_Normal::Update()
 
 HRESULT CZeroStage_Normal::Enter_Stage(StageContext& context)
 {
+
 	Ready_Map("Zero_Level", context.mapKey);
 	Reserve_Enemy("Zero_Level");
 	m_eStageStage = StageState::Entrance;
 	m_PlayerHandle = context.hPlayer;
 	Active_Player(CStage::PlayerPoint::Typical);
 	BaseIntro(context);
+
 	return S_OK;
 }
 
@@ -95,7 +98,9 @@ void CZeroStage_Normal::Outro()
 void CZeroStage_Normal::End()
 {
 	if (m_outroFlow.IsDoneAll()) {
-		m_pOwnerLevel->ChangeStage();
+		auto stageType = m_pOwnerLevel->Get_Router()->GetChoiceType(m_iNextChoice);
+		m_pOwnerLevel->Get_Router()->Choose(m_iNextChoice);
+		m_pOwnerLevel->ChangeStage(stageType);
 	}
 }
 
