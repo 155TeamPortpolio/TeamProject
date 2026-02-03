@@ -68,6 +68,10 @@ public:
 public:
     static CCorinState_Attack_03* Create() { return new CCorinState_Attack_03(); }
     virtual void Free() override { __super::Free(); }
+
+private:
+    void Update_Effects(CCorin* pOwner);
+
 };
 
 class CCorinState_Attack_04 : public IBaseState<CCorin>

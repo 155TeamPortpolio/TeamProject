@@ -232,6 +232,12 @@ void CCorinState_Attack_03::Exit(CCorin* pOwner)
     static_cast<CCorinState_NormalAttack*>(m_pParentState)->Set_ComboIndex(2);
 }
 
+void CCorinState_Attack_03::Update_Effects(CCorin* pOwner)
+{
+    if (IsCrossAnimProgress(0.41f))
+        pOwner->Play_Effect("Corin_Sting0", _vector3(0.3f, 0.7f, 0.7f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+}
+
 void CCorinState_Attack_04::Enter(CCorin* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_Normal_04")
