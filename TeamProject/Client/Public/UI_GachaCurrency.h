@@ -1,14 +1,22 @@
 #pragma once
-#include "UI_HUD.h"
+#include "UI_Object.h"
+
+NS_BEGIN(Engine)
+class CTextSlot;
+NS_END
 
 NS_BEGIN(Client)
 
-class CUI_FieldHUD final : public CUI_HUD
+class CUI_GachaCurrency final : public CUI_Object
 {
 private:
-	CUI_FieldHUD() {}
-	CUI_FieldHUD(const CUI_FieldHUD& rhs) : CUI_HUD(rhs) {}
-	virtual ~CUI_FieldHUD() DEFAULT;
+	enum class CHILD { PADDING, VALUE, END };
+	inline static const string INSTANCENAMES[ENUM(CHILD::END)] = { "padding", "value" };
+
+private:
+	CUI_GachaCurrency() {}
+	CUI_GachaCurrency(const CUI_GachaCurrency& rhs) : CUI_Object(rhs) {}
+	virtual ~CUI_GachaCurrency() DEFAULT;
 
 public:
 	virtual HRESULT Initialize_Prototype()           override;
@@ -20,6 +28,15 @@ public:
 	virtual void    Render_GUI()                     override { __super::Render_GUI(); }
 	virtual void	UI_Active(void* pArg = nullptr)  override;
 	virtual void	UI_DeActive(void* pArg = nullptr) override;
+
+private:
+	class CUI_Object* m_pChildren[ENUM(CHILD::END)] = {};
+	class CTextSlot* m_pTextSlots[ENUM(CHILD::END)] = {};
+
+	const _int m_iMaxDigits = { 8 };
+
+private:
+	void Cache();
 
 public:
 	static  CGameObject* Create();
