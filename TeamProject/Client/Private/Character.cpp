@@ -236,7 +236,7 @@ OBJECT_HANDLE CCharacter::Calculate_Parry()
     _float fMinDist = FLT_MAX;
 
     // 몬스터의 트리거 콜라이더로 검사. 이후 부모 오브젝트의 Handle 저장
-    for (auto iter : pParry->Get_Targets())
+    for (auto iter : pParry->Get_ParryTargets())
     {
         _float fDist = (vPos - iter.Get()->Get_WorldPos()).Length();
         if (fDist >= fMinDist)
@@ -415,9 +415,10 @@ _bool CCharacter::Is_OppositeInput() const
     return fAngle >= TURNBACK_ANGLE_THRESHOLD;
 }
 
-_bool CCharacter::Can_Evade() const
+_bool CCharacter::Can_Evade()
 {
-    if (m_fEvadeCooldown > 0.f) return false;
+    if (m_fEvadeCooldown > 0.f)
+        return false;
     return true;
 }
 
@@ -447,6 +448,15 @@ _bool CCharacter::Use_EvadeBuffer()
 _bool CCharacter::Can_Ultimate()
 {
     if (m_fCurrentDecibel == MAX_DECIBEL) return true;
+    return false;
+}
+
+_bool CCharacter::Is_Perfect()
+{
+    CCharacterParryCollider* pParry = dynamic_cast<CCharacterParryCollider*>
+        (Get_Component<CObjectContainer>()->Get_Children()[m_iParryColliderIndex]);
+    if (pParry && pParry->Can_Perfect())
+        return true;
     return false;
 }
 
