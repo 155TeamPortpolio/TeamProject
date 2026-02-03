@@ -1081,6 +1081,9 @@
     <Filter Include="02. GameObject\Object\Gacha\GachaProps\GachaStage\GachaResult">
       <UniqueIdentifier>{5b3fe7e7-f877-4cae-bf66-a57e17b1b328}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03. Utility\08. CamDirector\02. CamDebugInput">
+      <UniqueIdentifier>{0ab884f1-7b9a-4ad0-91d2-f1ac84773eec}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -2082,6 +2085,9 @@
     <ClInclude Include="..\Public\MiyabiState_Hit.h">
       <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Hit</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\CamDebugInput.h">
+      <Filter>03. Utility\08. CamDirector\02. CamDebugInput</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -3044,6 +3050,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\MiyabiState_Hit.cpp">
       <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Hit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CamDebugInput.cpp">
+      <Filter>03. Utility\08. CamDirector\02. CamDebugInput</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

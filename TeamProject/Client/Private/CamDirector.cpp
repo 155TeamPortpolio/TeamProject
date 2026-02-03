@@ -11,6 +11,7 @@
 #include "SequenceCam.h"
 #include "OrbitCam.h"
 #include "FreeCam.h"
+#include "CamDebugInput.h"
 // Component
 #include "CharacterController.h"
 #include "CamSequencePlayer.h"
@@ -156,44 +157,7 @@ string CCamDirector::ResolveSeqKey(CamSeqType type) const
 
 void CCamDirector::UpdateInput(_float dt)
 {
-    const auto& levelKey = LevelManager()->Get_NowLevelKey();
-
-    if (InputDevice()->Key_Tap(VK_F1))
-    {
-        if (m_playing.active) AbortSequenceToOrbit(true);
-        CameraManager()->Set_MainCam(GetFreeCamComp(), 0.5f);
-    }
-
-    if (InputDevice()->Key_Tap(VK_F2))
-    {
-        if (m_playing.active) AbortSequenceToOrbit(true);
-        CameraManager()->Set_MainCam(GetOrbitCamComp(), 0.5f);
-        //if (levelKey == "Gacha_Level") RequestSequence("Gacha/Down");
-    }
-
-    if (InputDevice()->Key_Tap(VK_F3))
-    {
-        if      (levelKey == "Gacha_Level") RequestSequence("Gacha/Spin_Half");
-        else if (levelKey == "Test_Level")  RequestSequence(CamSeqType::BattleIntro);
-        else if (levelKey == "Zero_Level")  RequestSequence(CamSeqType::ZeroIntro);
-    }
-
-    if (InputDevice()->Key_Tap(VK_F4))
-    {
-        if (levelKey == "Gacha_Level") RequestSequence("Gacha/Spin");
-    }
-
-    if (IsFinished(CamEventType::SpinFinished) || IsFinished(CamEventType::SpinHalfFinished))
-    {
-        CameraManager()->SetZoomType(ENUM(CamZoomType::GachaShake), 1.5f);
-        //CameraManager()->SetShakeType(ENUM(CamShakeType::EarthquakeShort), 1.2f);
-        //CameraManager()->AddShakeAxisWave(0x4, 3.0f, 3.0f, 1.2f, 0.0f, EaseType::None, EaseType::OutCubic);
-       // CameraManager()->AddShakeAxisWave(CamShakeAxis::Roll, 3.0f, 3.0f, 1.2f, 0.0f, EaseType::None, EaseType::OutCubic);
-        CameraManager()->AddShakeAxisWave(CamShakeAxis::Roll,  3.f,  4.0f, 0.8f, 0.1f, EaseType::InQuad, EaseType::InOutQuad);
-        CameraManager()->AddShakeAxisWave(CamShakeAxis::Yaw,   1.4f, 3.0f, 0.6f, 0.1f, EaseType::InQuad, EaseType::InOutQuad);
-        CameraManager()->AddShakeAxisWave(CamShakeAxis::Pitch, 1.f,  2.5f, 0.4f, 0.1f, EaseType::InQuad, EaseType::InOutQuad);
-    }
-
+    CamDebugInput::UpdateInput(dt);
 }
 
 void CCamDirector::AbortSequenceToOrbit(_bool resetTime)
@@ -274,25 +238,9 @@ _uint CCamDirector::RequestSequence(const string& key)
     return RequestSequence(key, entry.defaultReq);
 }
 
-_uint CCamDirector::RequestSequence(const string& key, _float blendInSec, _bool resetTime, _float blendOutSec)
-{
-    CamSequenceRequestDesc req{};
-    req.blendInSec = blendInSec;
-    req.blendOutSec = blendOutSec;
-    req.resetTime = resetTime;
-    req.returnMode = CamReturnMode::SnapToEnd;
-    req.returnCamType = m_returnCamType;
-    return RequestSequence(key, req);
-}
-
 _uint CCamDirector::RequestSequence(CamSeqType type)
 {
     return RequestSequence(ResolveSeqKey(type));
-}
-
-_uint CCamDirector::RequestSequence(CamSeqType type, const CamSequenceRequestDesc& req)
-{
-    return RequestSequence(ResolveSeqKey(type), req);
 }
 
 _bool CCamDirector::IsPlaying(const string& key) const
@@ -327,13 +275,13 @@ _uint CCamDirector::RequestSequence(const string& key, const CamSequenceRequestD
     CamType resolvedReturnCamType = req.returnCamType;
     if (resolvedReturnCamType == CamType::None) resolvedReturnCamType = m_returnCamType;
 
+    auto seqPlayer = GetSeqPlayer();
+    auto seqCam = GetSeqCamComp();
+
     if (!m_playing.active)
     {
         if (req.returnMode == CamReturnMode::RestorePrev && resolvedReturnCamType == CamType::Orbit)
             GetOrbitCam()->CaptureSnapshot(m_playing.prevOrbit);
-
-        auto seqPlayer = GetSeqPlayer();
-        auto seqCam = GetSeqCamComp();
 
         seqPlayer->SetSequence(&entry.seqDesc);
 
@@ -367,10 +315,7 @@ _uint CCamDirector::RequestSequence(const string& key, const CamSequenceRequestD
 
         return handle;
     }
-
     {
-        auto seqPlayer = GetSeqPlayer();
-
         seqPlayer->SetApplyEnabled(false);
         seqPlayer->Stop(false);
 

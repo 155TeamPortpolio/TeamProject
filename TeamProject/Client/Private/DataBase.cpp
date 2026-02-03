@@ -377,8 +377,17 @@ HRESULT CDataBase::LoadMapData(const string& MapDataFolderPath)
 			auto tokens = SplitFileName(stem, '.');
 
 			if (find(begin(MAP_DATA_TAGS), end(MAP_DATA_TAGS), tokens[0]) != end(MAP_DATA_TAGS)) {
-				if (tokens[0] == "BattleData")
+				
+				if (tokens[0] == "BattleData") {
+					MapData_Path_Packet packet = {};
+					packet.TagDataFormat = tokens[0];
+					packet.TagDataFileKey = FilePath.filename().string();
+					packet.TagDataFilePath = FilePath.string();
+					packet.TagArea = tokens[1];
+
+					m_MapAreaData[packet.TagArea].push_back(packet);
 					continue;
+				}
 
 				_int iVersion = {};
 				
@@ -411,16 +420,6 @@ HRESULT CDataBase::LoadMapData(const string& MapDataFolderPath)
 				continue;
 			}
 
-			if (tokens[0] == "BattleData") {
-				MapData_Path_Packet packet = {};
-				packet.TagDataFormat = tokens[0];
-				packet.TagDataFileKey = FilePath.filename().string();
-				packet.TagDataFilePath = FilePath.string();
-				packet.TagArea = tokens[1];
-
-				m_MapAreaData[packet.TagArea].push_back(packet);
-				continue;
-			}
 		}
 	}
 
