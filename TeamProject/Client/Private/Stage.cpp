@@ -8,6 +8,7 @@
 #include "BattlePlayer.h"
 #include "DataBase.h"
 #include "Enemy.h"
+#include "Character.h"
 
 CStage::CStage()
 {
@@ -88,7 +89,6 @@ void CStage::Reserve_Enemy(const string& LevelTag)
 			auto pMonster = Builder::Create_Object({ "Zero_Level",data[i].creationInfo.ProtoTag })
 				.Add_ObjDesc(enemyDesc)
 				.CharacterController(MonsterCCT)
-				.FromPool()
 				.Build(data[i].creationInfo.DisplayName);
 
 			if (pMonster) {
@@ -107,6 +107,16 @@ void CStage::Active_Enemy()
 		CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(pMonster, { "Zero_Level", "Enemy_Layer"});
 		BattleSystem()->EnterBattleObject(BATTLE_OBJ_TYPE::MONSTER, pMonster->Get_Handle());
 	}
+}
+
+void CStage::Active_Player(PlayerPoint pointType)
+{
+	if (!m_PlayerHandle.isValid())
+		return;
+
+	_vector4 point = m_PlayerPoint[ENUM(pointType)];
+	
+	auto character = m_PlayerHandle.GetAs<CCharacter>();
 }
 
 HRESULT CStage::ReadyPlayerPoint(const vector<BATTLE_POINT_DATA>& point)

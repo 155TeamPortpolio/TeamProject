@@ -148,7 +148,8 @@ void CPreloadScheduler::Pump(vector<PreloadCompleted>& outCompleted)
 _bool CPreloadScheduler::IsAllDone() const
 {
     const _uint total = m_total.load();
-    if (total == 0) return true; 
+    if (total == 0) 
+        return true; 
     return (m_done.load() >= total);
 }
 

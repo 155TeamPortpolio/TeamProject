@@ -47,6 +47,8 @@ protected:
 	virtual void Ready_Map(const string& LevelTag, const string& AreaTag);
 	virtual void Reserve_Enemy(const string& LevelTag);
 	virtual void Active_Enemy();
+	virtual void Active_Player(PlayerPoint pointType);
+
 protected:
 	void BaseIntro(CZero_Level::StageContext& context);
 	void BossIntro(CZero_Level::StageContext& context);
@@ -79,7 +81,6 @@ protected:
 	/*데이터 - 플레이어*/
 	OBJECT_HANDLE m_PlayerHandle = {};
 	array<_float4, ENUM(PlayerPoint::End)> m_PlayerPoint;
-protected:
 
 public:
     virtual void Free();
