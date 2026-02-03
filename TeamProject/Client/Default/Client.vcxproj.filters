@@ -298,9 +298,6 @@
     <Filter Include="02. GameObject\Object\Interactable\Portal">
       <UniqueIdentifier>{af8fd851-810f-475c-814f-9032f6562f43}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Object\Map">
-      <UniqueIdentifier>{d1149f0e-c9f3-45bd-89e7-df5876021132}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\UI\02. 3D\Mesh\UI_MeshPyramid">
       <UniqueIdentifier>{24b1d39d-8f09-4dfa-9e14-05a0d492a803}</UniqueIdentifier>
     </Filter>
@@ -1030,7 +1027,10 @@
     <Filter Include="03. Utility\11. Gui_Panel\01. VideoPanel">
       <UniqueIdentifier>{cda206a5-0c6c-4143-93c8-4bffe9105136}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Object\Map\MilitaryHelicopter">
+    <Filter Include="02. GameObject\Object\AmbientActor">
+      <UniqueIdentifier>{d1149f0e-c9f3-45bd-89e7-df5876021132}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\AmbientActor\MilitaryHelicopter">
       <UniqueIdentifier>{3725cb2b-0a0a-48e4-b810-dc4822b2c7d3}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\Object\Player\Character\03. Miyabi\State\Switch">
@@ -2059,7 +2059,10 @@
       <Filter>02. GameObject\Object\Enemy\Normal\EtherClayMore\State\Parry</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\MilitaryHelicopter.h">
-      <Filter>02. GameObject\Object\Map\MilitaryHelicopter</Filter>
+      <Filter>02. GameObject\Object\AmbientActor\MilitaryHelicopter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\AmbientActor.h">
+      <Filter>02. GameObject\Object\AmbientActor</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\MiyabiState_SwitchOut.h">
       <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Switch\SwitchOut</Filter>
@@ -3028,7 +3031,10 @@
       <Filter>02. GameObject\UI\01. 2D\Lottery\ResultBanner</Filter>
     </ClCompile>
     <ClCompile Include="..\private\MilitaryHelicopter.cpp">
-      <Filter>02. GameObject\Object\Map\MilitaryHelicopter</Filter>
+      <Filter>02. GameObject\Object\AmbientActor\MilitaryHelicopter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\AmbientActor.cpp">
+      <Filter>02. GameObject\Object\AmbientActor</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\MiyabiState_SwitchOut.cpp">
       <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Switch\SwitchOut</Filter>
