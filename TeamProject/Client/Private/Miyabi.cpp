@@ -402,6 +402,16 @@ HRESULT CMiyabi::Initialize_Stat()
 
 HRESULT CMiyabi::Initialize_Weapon()
 {
+	ATTACK_COLLIDER_DESC KatanaDesc;
+	KatanaDesc.eColliderType = COLLIDER_TYPE::BOX;
+	KatanaDesc.pOwnerAnimator = m_pAnimator;
+	KatanaDesc.tagBone = "Bn_katana_burst_eye";
+	KatanaDesc.tagName = "KatanaWeapon";
+	KatanaDesc.vCenter = { 0.2f,-0.3f,0.015f };
+	KatanaDesc.vSize = { 0.3f,1.3f,0.3f };
+	KatanaDesc.vRotation = { 0.f,0.f,0.69f };
+	if (FAILED(Attach_AttackCollider(&KatanaDesc)))
+		return E_FAIL;
 
 	return S_OK;
 }

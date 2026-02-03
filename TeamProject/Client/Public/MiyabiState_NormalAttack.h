@@ -86,17 +86,17 @@ public:
     virtual void Free() override { __super::Free(); }
 };
 
-class CMiyabiState_Attack_06 : public IBaseState<CMiyabi>
-{
-public:
-    virtual void Enter(CMiyabi* pOwner) override;
-    virtual void Update(CMiyabi* pOwner, _float dt) override;
-    virtual void Exit(CMiyabi* pOwner) override;
-
-public:
-    static CMiyabiState_Attack_06* Create() { return new CMiyabiState_Attack_06(); }
-    virtual void Free() override { __super::Free(); }
-};
+//class CMiyabiState_Attack_06 : public IBaseState<CMiyabi>
+//{
+//public:
+//    virtual void Enter(CMiyabi* pOwner) override;
+//    virtual void Update(CMiyabi* pOwner, _float dt) override;
+//    virtual void Exit(CMiyabi* pOwner) override;
+//
+//public:
+//    static CMiyabiState_Attack_06* Create() { return new CMiyabiState_Attack_06(); }
+//    virtual void Free() override { __super::Free(); }
+//};
 
 class CMiyabiState_Attack_End : public IBaseState<CMiyabi>
 {
