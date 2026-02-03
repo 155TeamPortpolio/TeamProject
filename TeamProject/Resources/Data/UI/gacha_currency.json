@@ -1,0 +1,327 @@
+{
+    "alive": true,
+    "instanceName": "gacha_currency",
+    "transform": {
+        "anchor": 6,
+        "anchorOffset": [
+            -427.0,
+            20.0
+        ],
+        "size": [
+            180.0,
+            48.0
+        ],
+        "scale": [
+            1.0,
+            1.0
+        ],
+        "pivot": [
+            0.0,
+            0.0
+        ],
+        "radian": 0.0
+    },
+    "color": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+    ],
+    "pass": "Opaque",
+    "colorTexKey": "empty.png",
+    "colorTexMode": 0,
+    "colorTexMix": 1.0,
+    "colorUVUse": 0,
+    "colorUVOffset": [
+        0.0,
+        0.0
+    ],
+    "colorUVScale": [
+        1.0,
+        1.0
+    ],
+    "colorUVAutoScroll": false,
+    "colorUVSpeed": [
+        0.0,
+        0.0
+    ],
+    "animClips": [],
+    "children": [
+        {
+            "alive": true,
+            "instanceName": "NineSlice",
+            "transform": {
+                "anchor": 0,
+                "anchorOffset": [
+                    -90.0,
+                    -29.0
+                ],
+                "size": [
+                    180.0,
+                    58.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "pass": "NineSlice",
+            "colorTexKey": "empty.png",
+            "colorTexMode": 0,
+            "colorTexMix": 1.0,
+            "colorUVUse": 0,
+            "colorUVOffset": [
+                0.0,
+                0.0
+            ],
+            "colorUVScale": [
+                1.0,
+                1.0
+            ],
+            "colorUVAutoScroll": false,
+            "colorUVSpeed": [
+                0.0,
+                0.0
+            ],
+            "animClips": [],
+            "children": [],
+            "typeTag": "NineSlice",
+            "textureTag": "BtnBg0158.png",
+            "nineSlice": {
+                "borderPx": [
+                    29.0,
+                    29.0,
+                    0.0,
+                    0.0
+                ],
+                "uvRangeX": [
+                    0.0,
+                    0.3186813294887543,
+                    0.6813186407089233,
+                    1.0
+                ],
+                "uvRangeY": [
+                    0.0,
+                    0.0,
+                    1.0,
+                    1.0
+                ],
+                "textureSize": [
+                    91.0,
+                    58.0
+                ]
+            }
+        },
+        {
+            "alive": true,
+            "instanceName": "SpriteAnimation",
+            "transform": {
+                "anchor": 2,
+                "anchorOffset": [
+                    -50.0,
+                    -19.0
+                ],
+                "size": [
+                    38.0,
+                    38.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "pass": "SpriteAnimation",
+            "colorTexKey": "empty.png",
+            "colorTexMode": 0,
+            "colorTexMix": 1.0,
+            "colorUVUse": 0,
+            "colorUVOffset": [
+                0.0,
+                0.0
+            ],
+            "colorUVScale": [
+                1.0,
+                1.0
+            ],
+            "colorUVAutoScroll": false,
+            "colorUVSpeed": [
+                0.0,
+                0.0
+            ],
+            "animClips": [],
+            "children": [],
+            "typeTag": "SpriteAnimation",
+            "textureTag": "ItemBubble_IconCoin.png",
+            "spriteAnimation": {
+                "loop": true,
+                "frameCountX": 9,
+                "frameCountY": 9,
+                "frameCountTotal": 81,
+                "frameSpeed": 30.0
+            }
+        },
+        {
+            "alive": true,
+            "instanceName": "padding",
+            "transform": {
+                "anchor": 2,
+                "anchorOffset": [
+                    -97.0,
+                    -0.0
+                ],
+                "size": [
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                0.4117647111415863,
+                0.4117647111415863,
+                0.4117647111415863,
+                1.0
+            ],
+            "pass": "Opaque",
+            "colorTexKey": "empty.png",
+            "colorTexMode": 0,
+            "colorTexMix": 1.0,
+            "colorUVUse": 0,
+            "colorUVOffset": [
+                0.0,
+                0.0
+            ],
+            "colorUVScale": [
+                1.0,
+                1.0
+            ],
+            "colorUVAutoScroll": false,
+            "colorUVSpeed": [
+                0.0,
+                0.0
+            ],
+            "animClips": [],
+            "children": [],
+            "typeTag": "Text",
+            "text": {
+                "content": "00000",
+                "fontTag": "NanumSquareNeo.spritefont",
+                "fontScale": 0.4499998688697815,
+                "outlined": false,
+                "outlineThickness": 1.0,
+                "outlineColor": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "shear": [
+                    0.0,
+                    0.0
+                ],
+                "autoPos": true,
+                "anchor": 2
+            }
+        },
+        {
+            "alive": true,
+            "instanceName": "value",
+            "transform": {
+                "anchor": 2,
+                "anchorOffset": [
+                    -58.0,
+                    -0.0
+                ],
+                "size": [
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "pass": "Opaque",
+            "colorTexKey": "empty.png",
+            "colorTexMode": 0,
+            "colorTexMix": 1.0,
+            "colorUVUse": 0,
+            "colorUVOffset": [
+                0.0,
+                0.0
+            ],
+            "colorUVScale": [
+                1.0,
+                1.0
+            ],
+            "colorUVAutoScroll": false,
+            "colorUVSpeed": [
+                0.0,
+                0.0
+            ],
+            "animClips": [],
+            "children": [],
+            "typeTag": "Text",
+            "text": {
+                "content": "475",
+                "fontTag": "NanumSquareNeo.spritefont",
+                "fontScale": 0.4499998688697815,
+                "outlined": false,
+                "outlineThickness": 1.0,
+                "outlineColor": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "shear": [
+                    0.0,
+                    0.0
+                ],
+                "autoPos": true,
+                "anchor": 2
+            }
+        }
+    ],
+    "typeTag": "CanvasPanel"
+}

@@ -1084,6 +1084,15 @@
     <Filter Include="02. GameObject\UI\01. 2D\Gacha">
       <UniqueIdentifier>{74208fc4-3148-4056-87ef-d7a5dbcecbd5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\Gacha\Channel">
+      <UniqueIdentifier>{67718b5d-35e2-46ac-bcc6-5081191eeade}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\Gacha\Currency">
+      <UniqueIdentifier>{e5f3d679-d65f-4f2d-80e4-874884e492bf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\Gacha\Conversion">
+      <UniqueIdentifier>{e604887e-58bb-4092-aa7b-587df8e4a1e1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
