@@ -95,7 +95,7 @@ void CMiyabiState_NormalAttack::Exit(CMiyabi* pOwner)
 #pragma region SubStates
 void CMiyabiState_Attack_01::Enter(CMiyabi* pOwner)
 {
-    pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size02_Unagi_Ani_Attack_01")
+    pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_01")
         .Apply();
 }
 
@@ -113,7 +113,7 @@ void CMiyabiState_Attack_01::Exit(CMiyabi* pOwner)
 
 void CMiyabiState_Attack_02::Enter(CMiyabi* pOwner)
 {
-    pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size02_Unagi_Ani_Attack_02")
+    pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_02")
         .Apply();
 }
 
@@ -131,7 +131,7 @@ void CMiyabiState_Attack_02::Exit(CMiyabi* pOwner)
 
 void CMiyabiState_Attack_03::Enter(CMiyabi* pOwner)
 {
-    pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size02_Unagi_Ani_Attack_03")
+    pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_03")
         .Apply();
 }
 
@@ -149,7 +149,7 @@ void CMiyabiState_Attack_03::Exit(CMiyabi* pOwner)
 
 void CMiyabiState_Attack_04::Enter(CMiyabi* pOwner)
 {
-    pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size02_Unagi_Ani_Attack_04_02")
+    pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_04_02")
         .Apply();
 }
 
@@ -167,7 +167,7 @@ void CMiyabiState_Attack_04::Exit(CMiyabi* pOwner)
 
 void CMiyabiState_Attack_05::Enter(CMiyabi* pOwner)
 {
-    pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size02_Unagi_Ani_Attack_05")
+    pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_05")
         .Apply();
 }
 
@@ -185,7 +185,7 @@ void CMiyabiState_Attack_05::Exit(CMiyabi* pOwner)
 
 void CMiyabiState_Attack_06::Enter(CMiyabi* pOwner)
 {
-    pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size02_Unagi_Ani_Attack_06")
+    pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_06")
         .Apply();
 }
 
@@ -208,12 +208,12 @@ void CMiyabiState_Attack_End::Enter(CMiyabi* pOwner)
 
     const string arrEndAnims[6] =
     {
-        pOwner->Get_Name() + "Attack_Normal_01_End",
-        pOwner->Get_Name() + "Attack_Normal_02_End",
-        pOwner->Get_Name() + "Attack_Normal_03_End",
-        pOwner->Get_Name() + "Attack_Normal_04_End",
-        pOwner->Get_Name() + "Attack_Normal_05_End",
-        pOwner->Get_Name() + "Attack_Normal_06_End"
+        pOwner->Get_Name() + "Attack_01_End",
+        pOwner->Get_Name() + "Attack_02_End",
+        pOwner->Get_Name() + "Attack_03_End",
+        pOwner->Get_Name() + "Attack_04_End",
+        pOwner->Get_Name() + "Attack_05_End",
+        pOwner->Get_Name() + "Attack_06_End"
     };
 
     pOwner->Get_Animator()->Change_Animation(arrEndAnims[iIndex])
