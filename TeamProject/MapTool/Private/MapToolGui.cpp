@@ -458,6 +458,7 @@ void CMapToolGui::Place_BattleData(PHYSICS_RAY_HIT* pRayHit)
     {
     case MapTool::BATTLE_TYPE::PLAYER:
         tagProto = "Proto_GameObject_BattlePlayerPoint";
+        desc->iIndex = m_iPlayerIndex++;
         //tagInstanceName = "PlayerPoint";
         break;
     case MapTool::BATTLE_TYPE::SPAWNER:
@@ -635,9 +636,13 @@ void CMapToolGui::Save_BattleData()
         { g_TagMapToolLevel, g_tagBattleObjType[ENUM(BATTLE_TYPE::PLAYER)] });
     if (nullptr != pPlayerLayer)
     {
-        auto pPlayerPoint = dynamic_cast<CBattleObject*>(pPlayerLayer->Get_AllObject().front());
-        if (nullptr != pPlayerPoint)
-            pPlayerPoint->Export_ObjectData(&m_BattleData.PlayerSpawnPoint);
+        for (auto& pPlayerPoint : pPlayerLayer->Get_AllObject())
+        {
+            BATTLE_POINT_DATA playerpointdata = {};
+
+            static_cast<CBattleObject*>(pPlayerPoint)->Export_ObjectData(&playerpointdata);
+            m_BattleData.PlayerSpawnPoint.push_back(playerpointdata);
+        }
     }
 
     CLayer* pMonsterLayer = m_pGameInstance->Get_ObjectMgr()->Get_Layer(
@@ -748,42 +753,46 @@ void CMapToolGui::Load_BattleData(const string& filepath)
     if (nullptr != pPlayerLayer)
         pPlayerLayer->Clear_Layer();
 
-    if (m_BattleData.PlayerSpawnPoint.iIndex != -1) {
-        CBattleObject::BATTLE_INIT_DESC* desc = new CBattleObject::BATTLE_INIT_DESC();
-        string tagProto = "Proto_GameObject_BattlePlayerPoint";
-        string tagInstanceName = "BattlePlayerPoint";
+    m_iPlayerIndex = m_BattleData.PlayerSpawnPoint.size();
 
-        COLLIDER_DESC ColDesc = {};
-        ColDesc.eType = COLLIDER_TYPE::BOX;
-        ColDesc.bTrigger = true; // 충돌 박스 생성하는 트리거
-        ColDesc.vSize = {
-            m_BattleData.PlayerSpawnPoint.vScale[0],
-            m_BattleData.PlayerSpawnPoint.vScale[1],
-            m_BattleData.PlayerSpawnPoint.vScale[2],
-        };
+    if (!m_BattleData.PlayerSpawnPoint.empty()) {
+        for (auto Player : m_BattleData.PlayerSpawnPoint) {
+            CBattleObject::BATTLE_INIT_DESC* desc = new CBattleObject::BATTLE_INIT_DESC();
+            string tagProto = "Proto_GameObject_BattlePlayerPoint";
+            string tagInstanceName = "BattlePlayerPoint";
 
-        _float3 vPos = {
-            m_BattleData.PlayerSpawnPoint.vTranslation[0],
-            m_BattleData.PlayerSpawnPoint.vTranslation[1],
-            m_BattleData.PlayerSpawnPoint.vTranslation[2],
-        };
+            COLLIDER_DESC ColDesc = {};
+            ColDesc.eType = COLLIDER_TYPE::BOX;
+            ColDesc.bTrigger = true; // 충돌 박스 생성하는 트리거
+            ColDesc.vSize = {
+                Player.vScale[0],
+                Player.vScale[1],
+                Player.vScale[2],
+            };
 
-        _float3 vRot = {
-            m_BattleData.PlayerSpawnPoint.vRotation[0],
-            m_BattleData.PlayerSpawnPoint.vRotation[1],
-            m_BattleData.PlayerSpawnPoint.vRotation[2],
-        };
+            _float3 vPos = {
+                Player.vTranslation[0],
+                Player.vTranslation[1],
+                Player.vTranslation[2],
+            };
 
-        CGameObject* pStaticObject = Builder::Create_Object({ g_TagMapToolLevel , "Proto_GameObject_BattlePlayerPoint" })
-            .Add_ObjDesc(desc)
-            .Collider(ColDesc)
-            .Position(vPos)
-            .Rotate(vRot)
-            .Build(tagInstanceName);
+            _float3 vRot = {
+                Player.vRotation[0],
+                Player.vRotation[1],
+                Player.vRotation[2],
+            };
 
-        pStaticObject->Get_Component<CCollider>()->Set_DebugRender(true);
+            CGameObject* pStaticObject = Builder::Create_Object({ g_TagMapToolLevel , "Proto_GameObject_BattlePlayerPoint" })
+                .Add_ObjDesc(desc)
+                .Collider(ColDesc)
+                .Position(vPos)
+                .Rotate(vRot)
+                .Build(tagInstanceName);
 
-        ObjectManager()->Add_Object(pStaticObject, { g_TagMapToolLevel, g_tagBattleObjType[ENUM(BATTLE_TYPE::PLAYER)] });
+            pStaticObject->Get_Component<CCollider>()->Set_DebugRender(true);
+
+            ObjectManager()->Add_Object(pStaticObject, { g_TagMapToolLevel, g_tagBattleObjType[ENUM(BATTLE_TYPE::PLAYER)] });
+        }
     }
 
     //Load MonsterSpawnPoint
