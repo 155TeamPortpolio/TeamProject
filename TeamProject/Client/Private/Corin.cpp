@@ -387,6 +387,13 @@ HRESULT CCorin::Initialize_Effects()
         pEffect->Stop();
         pObjectContainer->Add_Child(pEffect);
     }
+    {
+        auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+            .Asset("corin_normal2_slash.json")
+            .Build("Corin_Normal2_Slash0");
+        pEffect->Stop();
+        pObjectContainer->Add_Child(pEffect);
+    }
 
     // Sting
     {

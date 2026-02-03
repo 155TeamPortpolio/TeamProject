@@ -325,6 +325,8 @@ void CCorinState_Attack_05::Update(CCorin* pOwner, _float dt)
             pOwner->End_AttackCollider("Saw");
         }
     }
+
+    Update_Effects(pOwner);
 }
 
 void CCorinState_Attack_05::Exit(CCorin* pOwner)
@@ -334,6 +336,8 @@ void CCorinState_Attack_05::Exit(CCorin* pOwner)
 
 void CCorinState_Attack_05::Update_Effects(CCorin* pOwner)
 {
+    if (IsCrossAnimProgress(0.37f))
+        pOwner->Play_Effect("Corin_Normal2_Slash0", _vector3(0.f, 0.2f, -0.5f), _quaternion(0.07f, -0.63f, 0.22f, 0.74f));
 }
 
 void CCorinState_Attack_End::Enter(CCorin* pOwner)
