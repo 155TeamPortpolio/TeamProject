@@ -8,6 +8,7 @@
 #include "Room_Street.h"
 #include "Room_Lottery.h"
 #include "Room_Noodle.h"
+#include "Room_Gacha.h"
 
 // Camera
 #include "Camera.h"
@@ -68,6 +69,9 @@ void CMainCity_Level::Update()
 {
 	FieldSystem()->Update();
 	auto layer = ObjectManager()->Get_Layer({"MainCity_Level","PlacedObject_Layer"});
+
+	if(InputDevice()->Key_Tap(VK_F4)) 
+		FieldSystem()->RequestEnter("Gacha", false);
 	//layer->Set_RenderState(false);
 }
 
@@ -86,6 +90,7 @@ void CMainCity_Level::Ready_Map(const string& LevelTag, const string& AreaTag)
 	FieldSystem()->RegisterRoom(CRoom_Street::Create({ "MainCity" , true }));
 	FieldSystem()->RegisterRoom(CRoom_Lottery::Create({ "Lottery" , false }));
 	FieldSystem()->RegisterRoom(CRoom_Noodle::Create({ "Noodle" , false }));
+	FieldSystem()->RegisterRoom(CRoom_Gacha::Create({ "Gacha" , false }));
 	FieldSystem()->RequestEnter("MainCity", true);
 }
 
