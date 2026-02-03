@@ -56,7 +56,7 @@ void CGacha_Level::Update()
 	//�ӽ�
 	if(InputDevice()->Mouse_Tap(MOUSE_BTN::LB))
 	{
-		CamDirector()->AbortSequenceToOrbit(true);
+		//CamDirector()->AbortSequenceToOrbit(true);
 		CamDirector()->RequestSequence("Gacha/Spin");
 
 		++m_iIndex;

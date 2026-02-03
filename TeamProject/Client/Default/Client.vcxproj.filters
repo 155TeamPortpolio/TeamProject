@@ -448,9 +448,6 @@
     <Filter Include="03. Utility\06. FieldSystem\Room\03. Lottery">
       <UniqueIdentifier>{f458eb41-acf4-446d-a7e3-75ed729e28c0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\UI\02. 3D\Plane\DamageText">
-      <UniqueIdentifier>{4ca6e733-edcb-4ac1-88df-cd51632b53c6}</UniqueIdentifier>
-    </Filter>
     <Filter Include="03. Utility\07. UIDirector">
       <UniqueIdentifier>{42edd944-ef6d-4efd-b82d-9cadbc7ddc9f}</UniqueIdentifier>
     </Filter>
@@ -997,9 +994,6 @@
     <Filter Include="02. GameObject\Object\Enemy\Normal\EtherClayMore\State\Parry">
       <UniqueIdentifier>{3654afe4-97aa-4a58-9ad0-1c8974d7bd98}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\UI\02. 3D\Plane\Gangta">
-      <UniqueIdentifier>{93712aaf-87f8-46e7-8d80-8d430b09aa6f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\UI\01. 2D\BackButton">
       <UniqueIdentifier>{97c4cc33-5194-4f2e-954a-7234d9714dbb}</UniqueIdentifier>
     </Filter>
@@ -1083,6 +1077,21 @@
     </Filter>
     <Filter Include="03. Utility\08. CamDirector\02. CamDebugInput">
       <UniqueIdentifier>{0ab884f1-7b9a-4ad0-91d2-f1ac84773eec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\02. 3D\Plane\Damage_UI">
+      <UniqueIdentifier>{03c2ced7-a851-47d9-8422-bcef295e1b2d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\02. 3D\Plane\Damage_UI\Swaebing">
+      <UniqueIdentifier>{e06e79fe-0096-42d7-8216-0235c8562657}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\02. 3D\Plane\Damage_UI\Seoriyeol">
+      <UniqueIdentifier>{0a6e0c5f-9379-4396-bede-fdeb577f7c12}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\02. 3D\Plane\Damage_UI\Gangta">
+      <UniqueIdentifier>{93712aaf-87f8-46e7-8d80-8d430b09aa6f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\02. 3D\Plane\Damage_UI\DamageText">
+      <UniqueIdentifier>{4ca6e733-edcb-4ac1-88df-cd51632b53c6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1864,7 +1873,7 @@
       <Filter>03. Utility\06. FieldSystem\Room\03. Lottery</Filter>
     </ClInclude>
     <ClInclude Include="..\public\UI_DamageText.h">
-      <Filter>02. GameObject\UI\02. 3D\Plane\DamageText</Filter>
+      <Filter>02. GameObject\UI\02. 3D\Plane\Damage_UI\DamageText</Filter>
     </ClInclude>
     <ClInclude Include="..\public\ThugPoacher.h">
       <Filter>02. GameObject\Object\Enemy\Normal\ThugPoacher</Filter>
@@ -2026,7 +2035,7 @@
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler</Filter>
     </ClInclude>
     <ClInclude Include="..\public\UI_Gangta.h">
-      <Filter>02. GameObject\UI\02. 3D\Plane\Gangta</Filter>
+      <Filter>02. GameObject\UI\02. 3D\Plane\Damage_UI\Gangta</Filter>
     </ClInclude>
     <ClInclude Include="..\public\MapLightPoint.h">
       <Filter>02. GameObject\MapObject\04. MapLightPoint</Filter>
@@ -2087,6 +2096,12 @@
     </ClInclude>
     <ClInclude Include="..\public\CamDebugInput.h">
       <Filter>03. Utility\08. CamDirector\02. CamDebugInput</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_Seoriyeol.h">
+      <Filter>02. GameObject\UI\02. 3D\Plane\Damage_UI\Seoriyeol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_Swaebing.h">
+      <Filter>02. GameObject\UI\02. 3D\Plane\Damage_UI\Swaebing</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2838,7 +2853,7 @@
       <Filter>03. Utility\06. FieldSystem\Room\03. Lottery</Filter>
     </ClCompile>
     <ClCompile Include="..\private\UI_DamageText.cpp">
-      <Filter>02. GameObject\UI\02. 3D\Plane\DamageText</Filter>
+      <Filter>02. GameObject\UI\02. 3D\Plane\Damage_UI\DamageText</Filter>
     </ClCompile>
     <ClCompile Include="..\private\ThugPoacher.cpp">
       <Filter>02. GameObject\Object\Enemy\Normal\ThugPoacher</Filter>
@@ -2992,7 +3007,7 @@
     </ClCompile>
     <ClCompile Include="..\private\MapLightPoint.cpp" />
     <ClCompile Include="..\private\UI_Gangta.cpp">
-      <Filter>02. GameObject\UI\02. 3D\Plane\Gangta</Filter>
+      <Filter>02. GameObject\UI\02. 3D\Plane\Damage_UI\Gangta</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UI_IconButton.cpp">
       <Filter>02. GameObject\UI\01. 2D\IconButton</Filter>
@@ -3053,6 +3068,12 @@
     </ClCompile>
     <ClCompile Include="..\private\CamDebugInput.cpp">
       <Filter>03. Utility\08. CamDirector\02. CamDebugInput</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_Seoriyeol.cpp">
+      <Filter>02. GameObject\UI\02. 3D\Plane\Damage_UI\Seoriyeol</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_Swaebing.cpp">
+      <Filter>02. GameObject\UI\02. 3D\Plane\Damage_UI\Swaebing</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

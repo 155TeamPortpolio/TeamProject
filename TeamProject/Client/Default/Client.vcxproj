@@ -403,6 +403,8 @@
     <ClInclude Include="..\Public\MiyabiState_SwitchInNormal.h" />
     <ClInclude Include="..\Public\MiyabiState_SwitchInParryAid.h" />
     <ClInclude Include="..\Public\MiyabiState_SwitchOut.h" />
+    <ClInclude Include="..\public\UI_Swaebing.h" />
+    <ClInclude Include="..\public\UI_Seoriyeol.h" />
     <ClInclude Include="..\public\UI_Gangta.h" />
     <ClInclude Include="..\Public\ICamCollidable.h" />
     <ClInclude Include="..\Public\JaneDoeState_AssaultAttack.h" />
@@ -782,6 +784,8 @@
     <ClCompile Include="..\Private\MiyabiState_SwitchInNormal.cpp" />
     <ClCompile Include="..\Private\MiyabiState_SwitchInParryAid.cpp" />
     <ClCompile Include="..\Private\MiyabiState_SwitchOut.cpp" />
+    <ClCompile Include="..\private\UI_Swaebing.cpp" />
+    <ClCompile Include="..\private\UI_Seoriyeol.cpp" />
     <ClCompile Include="..\private\UI_Gangta.cpp" />
     <ClCompile Include="..\Private\JaneDoeState_AssaultAttack.cpp" />
     <ClCompile Include="..\Private\JaneDoeState_CounterAttack.cpp" />
