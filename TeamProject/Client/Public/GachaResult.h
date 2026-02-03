@@ -12,7 +12,7 @@ private:
     virtual ~CGachaResult() DEFAULT;
 
 public:
-    void SetResult(string strModel, string strMaterial);
+    void SetResult(string strModel, string strMaterial, _float4 vRot);
 
 public:
     virtual HRESULT Initialize_Prototype()      override;
@@ -21,6 +21,11 @@ public:
     virtual void    Priority_Update(_float dt)  override;
     virtual void    Update(_float dt)           override;
     virtual void    Late_Update(_float dt)      override;
+
+private:
+    _vector4    m_vInitRot;
+    _float      m_fRotElapsedTime = 0.f;
+    _float      m_fRotDuration = 0.85f;
 
 public:
     static CGachaResult* Create();

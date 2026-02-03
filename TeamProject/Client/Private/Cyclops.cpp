@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "Claymore.h"
+#include "Cyclops.h"
 
 #include "Helper_Func.h"
 #include "GameInstance.h"
@@ -18,27 +18,26 @@
 
 /* States */
 #include "StateMachine.h"
-#include "Claymore_Attack.h"
-#include "Claymore_Born.h"
-#include "Claymore_Death.h"
-#include "Claymore_Groggy.h"
-#include "Claymore_Hit.h"
-#include "Claymore_Idle.h"
-#include "Claymore_Move.h"
-#include "Claymore_Chase.h"
-#include "Claymore_Parried.h"
+#include "Cyclops_Attack.h"
+#include "Cyclops_Born.h"
+#include "Cyclops_Death.h"
+#include "Cyclops_Groggy.h"
+#include "Cyclops_Hit.h"
+#include "Cyclops_Idle.h"
+#include "Cyclops_Move.h"
+#include "Cyclops_Chase.h"
 
-CClaymore::CClaymore()
+CCyclops::CCyclops()
 	: CEnemyNormal()
 {
 }
 
-CClaymore::CClaymore(const CClaymore& rhg)
+CCyclops::CCyclops(const CCyclops& rhg)
 	: CEnemyNormal(rhg)
 {
 }
 
-HRESULT CClaymore::Initialize_Prototype()
+HRESULT CCyclops::Initialize_Prototype()
 {
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
@@ -49,26 +48,26 @@ HRESULT CClaymore::Initialize_Prototype()
 	Add_Component<CCharacterController>();
 
 	auto pResourceMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
-	pResourceMgr->Add_ResourcePath("Claymore.mat", "../Bin/Resources/Zero/Enemy/Claymore/Claymore.mat");
-	pResourceMgr->Add_ResourcePath("Claymore.model", "../Bin/Resources/Zero/Enemy/Claymore/Claymore.model");
-	//pResourceMgr->Add_ResourcePath("Monster_Claymore_Meta.json", "../../Resources/Data/Meta/Zero/Monster_Claymore_Meta.json");
+	pResourceMgr->Add_ResourcePath("Cyclops.mat", "../Bin/Resources/Zero/Enemy/Cyclops/Cyclops.mat");
+	pResourceMgr->Add_ResourcePath("Cyclops.model", "../Bin/Resources/Zero/Enemy/Cyclops/Cyclops.model");
+	//pResourceMgr->Add_ResourcePath("Monster_Cyclops_Meta.json", "../Bin/Resources/Zero/Enemy/Cyclops/Monster_Cyclops_Meta.json");
 
 	auto pModel = Get_Component<CSkeletalModel>();
-	pModel->Link_Model(G_GlobalLevelKey, "Claymore.model");
+	pModel->Link_Model(G_GlobalLevelKey, "Cyclops.model");
 
 	auto pMaterial = Get_Component<CMaterial>();
-	pMaterial->Link_Material(G_GlobalLevelKey, "Claymore.mat");
+	pMaterial->Link_Material(G_GlobalLevelKey, "Cyclops.mat");
 
 	return S_OK;
 }
 
-HRESULT CClaymore::Initialize(INIT_DESC* pArg)
+HRESULT CCyclops::Initialize(INIT_DESC* pArg)
 {
 	__super::Initialize(pArg);
 
 	auto pAnimator = Get_Component<CAnimator3D>();
-	pAnimator->LinkAnimate_Model(G_GlobalLevelKey, "Claymore.model");
-	pAnimator->Link_MetaData(G_GlobalLevelKey, "Monster_Claymore_Meta.json");
+	pAnimator->LinkAnimate_Model(G_GlobalLevelKey, "Cyclops.model");
+	pAnimator->Link_MetaData(G_GlobalLevelKey, "Monster_Cyclops_Meta.json");
 	pAnimator->Set_ExtractMotionboneMovement(AXIS::X | AXIS::Z);
 	pAnimator->Resize_Layer(2);
 	pAnimator->Set_LayerType(ANIM_LAYER_STATE::ADDITIVE, 1);
@@ -82,17 +81,17 @@ HRESULT CClaymore::Initialize(INIT_DESC* pArg)
 	return S_OK;
 }
 
-void CClaymore::Awake()
+void CCyclops::Awake()
 {
 	__super::Awake();
 }
 
-void CClaymore::Priority_Update(_float dt)
+void CCyclops::Priority_Update(_float dt)
 {
 	Get_Component<CObjectContainer>()->Priority_UpdateChild(dt);
 }
 
-void CClaymore::Update(_float dt)
+void CCyclops::Update(_float dt)
 {
 	Get_Component<CAnimator3D>()->Update_Animation(dt);
 	Get_Component<CCharacterController>()->Update(dt);
@@ -103,14 +102,14 @@ void CClaymore::Update(_float dt)
 	m_pStateMachine->Update(dt);
 }
 
-void CClaymore::Late_Update(_float dt)
+void CCyclops::Late_Update(_float dt)
 {
 	Get_Component<CCharacterController>()->Late_Update(dt);
 
 	__super::Late_Update(dt);
 }
 
-void CClaymore::Render_GUI()
+void CCyclops::Render_GUI()
 {
 	ImGui::PushID(this);
 
@@ -175,6 +174,11 @@ void CClaymore::Render_GUI()
 				m_pStateMachine->Set_Int("AttackPattern", 3);
 				m_pStateMachine->Set_Trigger("Idle_To_Attack");
 			}
+			if (ImGui::Button(u8"4. Attack04"))
+			{
+				m_pStateMachine->Set_Int("AttackPattern", 4);
+				m_pStateMachine->Set_Trigger("Idle_To_Attack");
+			}
 			ImGui::TreePop();
 		}
 		if (ImGui::TreeNode("Death##ThugAssaulterTestDeath"))
@@ -201,11 +205,6 @@ void CClaymore::Render_GUI()
 			if (ImGui::Button("Parried"))
 				Parried();
 
-			if (ImGui::Button("Execute"))
-				m_tStatus.iNowHP -= m_tStatus.iMaxHP;
-
-
-
 			ImGui::TreePop();
 		}
 
@@ -217,23 +216,27 @@ void CClaymore::Render_GUI()
 	ImGui::Checkbox("Auto Pattern", &m_isAutoPatternPlay);
 #pragma endregion
 
+	if (ImGui::Button("Execute"))
+		m_tStatus.iNowHP -= m_tStatus.iMaxHP;
 
+	if (ImGui::Button("Groggy"))
+		m_tStatus.iGroggyValue += 100;
 
 	ImGui::PopID();
 }
 
-void CClaymore::OnPooledAcquire(INIT_DESC* pArg)
+void CCyclops::OnPooledAcquire(INIT_DESC* pArg)
 {
 	Initialize(pArg);
 }
 
-void CClaymore::OnPooledRelease()
+void CCyclops::OnPooledRelease()
 {
 }
 
-void CClaymore::Parried()
+void CCyclops::Parried()
 {
-	if ("Attack" != m_pStateMachine->Get_CurrentStateName() || false == m_isParryEnable)
+	if ("Attack" != m_pStateMachine->Get_CurrentStateName())
 		return;
 
 	__super::Parried();
@@ -242,21 +245,8 @@ void CClaymore::Parried()
 	SetOnAttack(false, ATTACK_SIDE::NONE); 
 }
 
-HRESULT CClaymore::Ready_Children(INIT_DESC* pArg)
+HRESULT CCyclops::Ready_Children(INIT_DESC* pArg)
 {
-	BATTLE_COLLIDER_DESC WeaponDesc = {};
-
-	WeaponDesc.tagName = "Weapon";
-	WeaponDesc.isAttachBone = true;
-	WeaponDesc.tagBone = "Bip001_L_Forearm";
-	WeaponDesc.pOwnerAnimator3D = Get_Component<CAnimator3D>();
-	WeaponDesc.eAttackColliderType = COLLIDER_TYPE::BOX;
-	WeaponDesc.vCenter = { 0.8f, 0.f, 0.f };
-	WeaponDesc.vAttackSize = { 1.8f, 0.3f, 0.3f };
-
-	if (FAILED(AttachBattleColliderObject(&WeaponDesc)))
-		return E_FAIL;
-
 	Create_AttackSign("Bip001_Head");
 	Create_UIEnemyStatus("Bip001_Spine2");
 	Create_MeshPyramid();
@@ -264,33 +254,33 @@ HRESULT CClaymore::Ready_Children(INIT_DESC* pArg)
 	return S_OK;
 }
 
-CClaymore* CClaymore::Create()
+CCyclops* CCyclops::Create()
 {
-	CClaymore* instance = new CClaymore();
+	CCyclops* instance = new CCyclops();
 
 	if (FAILED(instance->Initialize_Prototype()))
 	{
 		Safe_Release(instance);
-		MSG_BOX("Failed to create : CClaymore");
+		MSG_BOX("Failed to create : CCyclops");
 	}
 
 	return instance;
 }
 
-CGameObject* CClaymore::Clone(INIT_DESC* pArg)
+CGameObject* CCyclops::Clone(INIT_DESC* pArg)
 {
-	CClaymore* instance = new CClaymore(*this);
+	CCyclops* instance = new CCyclops(*this);
 
 	if (FAILED(instance->Initialize(pArg)))
 	{
 		Safe_Release(instance);
-		MSG_BOX("Failed to clone : CClaymore");
+		MSG_BOX("Failed to clone : CCyclops");
 	}
 
 	return instance;
 }
 
-void CClaymore::Free()
+void CCyclops::Free()
 {
 	__super::Free();
 
@@ -298,7 +288,7 @@ void CClaymore::Free()
 }
 
 
-void CClaymore::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER charaName)
+void CCyclops::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER charaName)
 {
 	__super::TakeDamage(eDamageType, fDamage, charaName);
 
@@ -307,7 +297,7 @@ void CClaymore::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER ch
 
 	if ("Groggy" == m_pStateMachine->Get_CurrentStateName())
 	{
-		Get_Component<CAnimator3D>()->Set_Animation(1, "Claymore_Ani_Hit_Stay")
+		Get_Component<CAnimator3D>()->Set_Animation(1, "Cyclops_Ani_Hit_Knock")
 			.LayerBlend(1.f, 0.f, 1.f, EaseType::Linear)
 			.Loop(false)
 			.Apply();
@@ -320,7 +310,7 @@ void CClaymore::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER ch
 	}
 	else
 	{
-		Get_Component<CAnimator3D>()->Set_Animation(1, "Claymore_Ani_Hit_Stay")
+		Get_Component<CAnimator3D>()->Set_Animation(1, "Cyclops_Ani_Hit_Stay")
 			.LayerBlend(1.f, 0.f, 1.f, EaseType::Linear)
 			.Loop(false)
 			.Apply();
@@ -328,9 +318,9 @@ void CClaymore::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER ch
 }
 
 /* For.State Machine */
-HRESULT CClaymore::Initialize_StateMachine()
+HRESULT CCyclops::Initialize_StateMachine()
 {
-	m_pStateMachine = CStateMachine<CClaymore>::Create();
+	m_pStateMachine = CStateMachine<CCyclops>::Create();
 	if (nullptr == m_pStateMachine)
 		return E_FAIL;
 
@@ -346,54 +336,53 @@ HRESULT CClaymore::Initialize_StateMachine()
 	m_pStateMachine->Set_DefaultState("Born");
 	m_pStateMachine->Initialize(this);
 
-	Get_Component<CAnimator3D>()->Set_Animation("Monster_Claymore_Ani_Born")
+	Get_Component<CAnimator3D>()->Set_Animation("Monster_Cyclops_Ani_Born")
 		.Apply();
 
 	return S_OK;
 }
 
-HRESULT CClaymore::Initialize_States()
+HRESULT CCyclops::Initialize_States()
 {
-	m_pStateMachine->Register_State("Born", CClaymore_Born::Create());
-	m_pStateMachine->Register_State("Idle", CClaymore_Idle::Create());
-	m_pStateMachine->Register_State("Attack", CClaymore_Attack::Create());
-	m_pStateMachine->Register_State("Move", CClaymore_Move::Create());
-	m_pStateMachine->Register_State("Chase", CClaymore_Chase::Create());
-	m_pStateMachine->Register_State("Death", CClaymore_Death::Create());
-	m_pStateMachine->Register_State("Groggy", CClaymore_Groggy::Create());
-	m_pStateMachine->Register_State("Hit", CClaymore_Hit::Create());
-	m_pStateMachine->Register_State("Parried", CClaymore_Parried::Create());
+	m_pStateMachine->Register_State("Born", CCyclops_Born::Create());
+	m_pStateMachine->Register_State("Idle", CCyclops_Idle::Create());
+	m_pStateMachine->Register_State("Attack", CCyclops_Attack::Create());
+	m_pStateMachine->Register_State("Move", CCyclops_Move::Create());
+	m_pStateMachine->Register_State("Chase", CCyclops_Chase::Create());
+	m_pStateMachine->Register_State("Death", CCyclops_Death::Create());
+	m_pStateMachine->Register_State("Groggy", CCyclops_Groggy::Create());
+	m_pStateMachine->Register_State("Hit", CCyclops_Hit::Create());
 
 	return S_OK;
 }
 
-HRESULT CClaymore::Initialize_Transitions()
+HRESULT CCyclops::Initialize_Transitions()
 {
 	m_pStateMachine->Register_Transition("Born", "Idle",
-		CStateMachine<CClaymore>::CONDITION_ANIMATION_END);
+		CStateMachine<CCyclops>::CONDITION_ANIMATION_END);
 	m_pStateMachine->Register_Transition("Idle", "Attack",
-		CStateMachine<CClaymore>::CONDITION_TRIGGER, "Idle_To_Attack");
+		CStateMachine<CCyclops>::CONDITION_TRIGGER, "Idle_To_Attack");
 	m_pStateMachine->Register_Transition("Idle", "Move",
-		CStateMachine<CClaymore>::CONDITION_TRIGGER, "Idle_To_Move");
+		CStateMachine<CCyclops>::CONDITION_TRIGGER, "Idle_To_Move");
 	m_pStateMachine->Register_Transition("Idle", "Chase",
-		CStateMachine<CClaymore>::CONDITION_TRIGGER, "Idle_To_Chase");
+		CStateMachine<CCyclops>::CONDITION_TRIGGER, "Idle_To_Chase");
 	m_pStateMachine->Register_Transition("Idle", "Death",
-		CStateMachine<CClaymore>::CONDITION_TRIGGER, "Idle_To_Death");
+		CStateMachine<CCyclops>::CONDITION_TRIGGER, "Idle_To_Death");
 	m_pStateMachine->Register_Transition("Idle", "Groggy",
-		CStateMachine<CClaymore>::CONDITION_TRIGGER, "Idle_To_Groggy");
+		CStateMachine<CCyclops>::CONDITION_TRIGGER, "Idle_To_Groggy");
 	m_pStateMachine->Register_Transition("Idle", "Hit",
-		CStateMachine<CClaymore>::CONDITION_TRIGGER, "Idle_To_Hit");
+		CStateMachine<CCyclops>::CONDITION_TRIGGER, "Idle_To_Hit");
 
 	return S_OK;
 }
 
-HRESULT CClaymore::Ready_Rules()
+HRESULT CCyclops::Ready_Rules()
 {
 	// x = Idle에서 다음 상태로 넘어가는 쿨타임, y = dt 더한 타이머용
 	m_vIdleTime = { 1.f, 0.f };
 
-	m_tHysteriesis.fEvadeEnter = 2.f;
-	m_tHysteriesis.fComboEnter = 3.f;
+	m_tHysteriesis.fEvadeEnter = 3.f;
+	m_tHysteriesis.fComboEnter = 3.5f;
 	m_tHysteriesis.fComboExit = 4.5f;
 	m_tHysteriesis.fChaseEnter = 7.f;
 	m_tHysteriesis.fChaseExit = 5.f;
@@ -401,7 +390,7 @@ HRESULT CClaymore::Ready_Rules()
 	return S_OK;
 }
 
-void CClaymore::Update_States(_float dt)
+void CCyclops::Update_States(_float dt)
 {
 	if (true == m_isIdle) {
 		m_pStateMachine->Change_State("Idle");
@@ -421,7 +410,7 @@ void CClaymore::Update_States(_float dt)
 	//================================
 }
 
-void CClaymore::ControlState(const _float dt)
+void CCyclops::ControlState(const _float dt)
 {
 	if ("Death" != m_pStateMachine->Get_CurrentStateName() &&
 		0 >= m_tStatus.iNowHP)
@@ -459,7 +448,7 @@ void CClaymore::ControlState(const _float dt)
 	}
 }
 
-void CClaymore::CheckDistanceFromPlayer()
+void CCyclops::CheckDistanceFromPlayer()
 {
 	if ("Chase" != m_pStateMachine->Get_CurrentStateName() &&
 		m_tTargetingInfo.fDistance >= m_tHysteriesis.fChaseEnter)
@@ -468,4 +457,4 @@ void CClaymore::CheckDistanceFromPlayer()
 	if (true == m_pStateMachine->Get_Bool("Chase") &&
 		m_tTargetingInfo.fDistance <= m_tHysteriesis.fChaseExit)
 		m_pStateMachine->Set_Bool("Chase", false);
-}
+} 

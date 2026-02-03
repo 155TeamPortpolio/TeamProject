@@ -937,36 +937,6 @@
     <Filter Include="02. GameObject\UI\01. 2D\Ramen\AttributeText">
       <UniqueIdentifier>{f0281968-7296-48e8-82fd-78db5b7603ed}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\Normal\EtherClayMore">
-      <UniqueIdentifier>{2e91f17b-8838-42a5-8a0a-feb4f0c6e2fd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\Normal\EtherClayMore\State">
-      <UniqueIdentifier>{cdc50882-96ab-4e05-92ea-af2fc143c1a6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\Normal\EtherClayMore\State\Attack">
-      <UniqueIdentifier>{de46f533-eb1d-452f-b92e-9c519903d452}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\Normal\EtherClayMore\State\Born">
-      <UniqueIdentifier>{c2a0b3f3-c8a4-46a4-81b3-aa0f1e1a74dc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\Normal\EtherClayMore\State\Chase">
-      <UniqueIdentifier>{aca0e369-cacf-41e6-a0ee-16f83b25c4de}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\Normal\EtherClayMore\State\Death">
-      <UniqueIdentifier>{2db3d7c9-b8f9-4c75-93f2-be7ffd8ff4a9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\Normal\EtherClayMore\State\Groggy">
-      <UniqueIdentifier>{01bf956e-c338-419e-b7c2-a6669703e6d3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\Normal\EtherClayMore\State\Hit">
-      <UniqueIdentifier>{85957015-a295-4ce7-9d22-78b8c6f7ca80}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\Normal\EtherClayMore\State\Idle">
-      <UniqueIdentifier>{ea247a3d-2553-4b62-ac9b-db68f2890db4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\Normal\EtherClayMore\State\Move">
-      <UniqueIdentifier>{88748695-877d-4ee3-b4ec-98dd770e4549}</UniqueIdentifier>
-    </Filter>
     <Filter Include="03. Utility\11. Gui_Panel">
       <UniqueIdentifier>{3e01fbb6-36a4-4470-a580-447caf0cfcc5}</UniqueIdentifier>
     </Filter>
@@ -991,9 +961,6 @@
     <Filter Include="02. GameObject\Object\Gacha\GachaProps\GachaBack">
       <UniqueIdentifier>{e5c0363c-6e7d-497f-a9a3-598931dd3e38}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\Normal\EtherClayMore\State\Parry">
-      <UniqueIdentifier>{3654afe4-97aa-4a58-9ad0-1c8974d7bd98}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\UI\02. 3D\Plane\Gangta">
       <UniqueIdentifier>{93712aaf-87f8-46e7-8d80-8d430b09aa6f}</UniqueIdentifier>
     </Filter>
@@ -1015,6 +982,36 @@
     <Filter Include="02. GameObject\MapObject\04. MapLightPoint">
       <UniqueIdentifier>{8f98ed95-123b-4c72-b0bb-bcf3efb5405b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\EtherCyclops">
+      <UniqueIdentifier>{0ff727ca-27db-4332-8293-d5d66e81c545}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\EtherCyclops\State">
+      <UniqueIdentifier>{30049c97-c041-4ccd-ab13-35683e9b20cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\EtherCyclops\State\Attack">
+      <UniqueIdentifier>{be9088f1-b9e1-4850-a38b-81bf25934519}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\EtherCyclops\State\Born">
+      <UniqueIdentifier>{ba818e80-3875-48e5-9761-b85e8d43484c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\EtherCyclops\State\Chase">
+      <UniqueIdentifier>{d94d4145-2efc-4268-bb3b-342eeb038e6a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\EtherCyclops\State\Death">
+      <UniqueIdentifier>{f3e28410-7af3-4b0c-a235-d25ed662a5f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\EtherCyclops\State\Groggy">
+      <UniqueIdentifier>{7d034347-c2b6-4dd8-a1b4-33a1bcc8c54f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\EtherCyclops\State\Hit">
+      <UniqueIdentifier>{98baea88-7e7d-457c-ba98-002ce9cb7112}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\EtherCyclops\State\Idle">
+      <UniqueIdentifier>{c1004aa9-3dce-49e6-a557-e127080f7931}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\EtherCyclops\State\Move">
+      <UniqueIdentifier>{ddc25e66-a5c8-49a5-8031-c9b69098be3b}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02. GameObject\Object\Gacha\GachaProps\GachaTV\GachaScreen">
       <UniqueIdentifier>{6c7a64fc-1a0e-4b5a-9d58-467e698d12fe}</UniqueIdentifier>
     </Filter>
@@ -1031,6 +1028,40 @@
       <UniqueIdentifier>{d1149f0e-c9f3-45bd-89e7-df5876021132}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\Object\AmbientActor\MilitaryHelicopter">
+    <Filter Include="02. GameObject\Object\Enemy\Normal\EtherClaymore">
+      <UniqueIdentifier>{2e91f17b-8838-42a5-8a0a-feb4f0c6e2fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\EtherClaymore\State">
+      <UniqueIdentifier>{cdc50882-96ab-4e05-92ea-af2fc143c1a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\EtherClaymore\State\Attack">
+      <UniqueIdentifier>{de46f533-eb1d-452f-b92e-9c519903d452}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\EtherClaymore\State\Born">
+      <UniqueIdentifier>{c2a0b3f3-c8a4-46a4-81b3-aa0f1e1a74dc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\EtherClaymore\State\Chase">
+      <UniqueIdentifier>{aca0e369-cacf-41e6-a0ee-16f83b25c4de}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\EtherClaymore\State\Death">
+      <UniqueIdentifier>{2db3d7c9-b8f9-4c75-93f2-be7ffd8ff4a9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\EtherClaymore\State\Groggy">
+      <UniqueIdentifier>{01bf956e-c338-419e-b7c2-a6669703e6d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\EtherClaymore\State\Hit">
+      <UniqueIdentifier>{85957015-a295-4ce7-9d22-78b8c6f7ca80}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\EtherClaymore\State\Idle">
+      <UniqueIdentifier>{ea247a3d-2553-4b62-ac9b-db68f2890db4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\EtherClaymore\State\Move">
+      <UniqueIdentifier>{88748695-877d-4ee3-b4ec-98dd770e4549}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\EtherClaymore\State\Parry">
+      <UniqueIdentifier>{3654afe4-97aa-4a58-9ad0-1c8974d7bd98}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Map\MilitaryHelicopter">
       <UniqueIdentifier>{3725cb2b-0a0a-48e4-b810-dc4822b2c7d3}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\Object\Player\Character\03. Miyabi\State\Switch">
@@ -1978,31 +2009,31 @@
       <Filter>02. GameObject\UI\01. 2D\Ramen\AttributeText</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Claymore.h">
-      <Filter>02. GameObject\Object\Enemy\Normal\EtherClayMore</Filter>
+      <Filter>02. GameObject\Object\Enemy\Normal\EtherClaymore</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Claymore_Attack.h">
-      <Filter>02. GameObject\Object\Enemy\Normal\EtherClayMore\State\Attack</Filter>
+      <Filter>02. GameObject\Object\Enemy\Normal\EtherClaymore\State\Attack</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Claymore_Born.h">
-      <Filter>02. GameObject\Object\Enemy\Normal\EtherClayMore\State\Born</Filter>
+      <Filter>02. GameObject\Object\Enemy\Normal\EtherClaymore\State\Born</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Claymore_Chase.h">
-      <Filter>02. GameObject\Object\Enemy\Normal\EtherClayMore\State\Chase</Filter>
+      <Filter>02. GameObject\Object\Enemy\Normal\EtherClaymore\State\Chase</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Claymore_Death.h">
-      <Filter>02. GameObject\Object\Enemy\Normal\EtherClayMore\State\Death</Filter>
+      <Filter>02. GameObject\Object\Enemy\Normal\EtherClaymore\State\Death</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Claymore_Groggy.h">
-      <Filter>02. GameObject\Object\Enemy\Normal\EtherClayMore\State\Groggy</Filter>
+      <Filter>02. GameObject\Object\Enemy\Normal\EtherClaymore\State\Groggy</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Claymore_Hit.h">
-      <Filter>02. GameObject\Object\Enemy\Normal\EtherClayMore\State\Hit</Filter>
+      <Filter>02. GameObject\Object\Enemy\Normal\EtherClaymore\State\Hit</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Claymore_Idle.h">
-      <Filter>02. GameObject\Object\Enemy\Normal\EtherClayMore\State\Idle</Filter>
+      <Filter>02. GameObject\Object\Enemy\Normal\EtherClaymore\State\Idle</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Claymore_Move.h">
-      <Filter>02. GameObject\Object\Enemy\Normal\EtherClayMore\State\Move</Filter>
+      <Filter>02. GameObject\Object\Enemy\Normal\EtherClaymore\State\Move</Filter>
     </ClInclude>
     <ClInclude Include="..\public\MonsterSpawnConsole.h">
       <Filter>03. Utility\11. Gui_Panel\00. MonsterSpawnPanel</Filter>
@@ -2052,11 +2083,38 @@
     <ClInclude Include="..\Public\UI_RamenResultBanner.h">
       <Filter>02. GameObject\UI\01. 2D\Ramen\ResultBanner</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Cyclops.h">
+      <Filter>02. GameObject\Object\Enemy\Normal\EtherCyclops</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Cyclops_Born.h">
+      <Filter>02. GameObject\Object\Enemy\Normal\EtherCyclops\State\Born</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Cyclops_Death.h">
+      <Filter>02. GameObject\Object\Enemy\Normal\EtherCyclops\State\Death</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Cyclops_Groggy.h">
+      <Filter>02. GameObject\Object\Enemy\Normal\EtherCyclops\State\Groggy</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Cyclops_Hit.h">
+      <Filter>02. GameObject\Object\Enemy\Normal\EtherCyclops\State\Hit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Cyclops_Idle.h">
+      <Filter>02. GameObject\Object\Enemy\Normal\EtherCyclops\State\Idle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Cyclops_Move.h">
+      <Filter>02. GameObject\Object\Enemy\Normal\EtherCyclops\State\Move</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Cyclops_Attack.h">
+      <Filter>02. GameObject\Object\Enemy\Normal\EtherCyclops\State\Attack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Cyclops_Chase.h">
+      <Filter>02. GameObject\Object\Enemy\Normal\EtherCyclops\State\Chase</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\UI_LotteryResultBanner.h">
       <Filter>02. GameObject\UI\01. 2D\Lottery\ResultBanner</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Claymore_Parried.h">
-      <Filter>02. GameObject\Object\Enemy\Normal\EtherClayMore\State\Parry</Filter>
+      <Filter>02. GameObject\Object\Enemy\Normal\EtherClaymore\State\Parry</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\MilitaryHelicopter.h">
       <Filter>02. GameObject\Object\AmbientActor\MilitaryHelicopter</Filter>
@@ -2952,31 +3010,31 @@
       <Filter>02. GameObject\UI\01. 2D\Ramen\AttributeText</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Claymore.cpp">
-      <Filter>02. GameObject\Object\Enemy\Normal\EtherClayMore</Filter>
+      <Filter>02. GameObject\Object\Enemy\Normal\EtherClaymore</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Claymore_Attack.cpp">
-      <Filter>02. GameObject\Object\Enemy\Normal\EtherClayMore\State\Attack</Filter>
+      <Filter>02. GameObject\Object\Enemy\Normal\EtherClaymore\State\Attack</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Claymore_Born.cpp">
-      <Filter>02. GameObject\Object\Enemy\Normal\EtherClayMore\State\Born</Filter>
+      <Filter>02. GameObject\Object\Enemy\Normal\EtherClaymore\State\Born</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Claymore_Chase.cpp">
-      <Filter>02. GameObject\Object\Enemy\Normal\EtherClayMore\State\Chase</Filter>
+      <Filter>02. GameObject\Object\Enemy\Normal\EtherClaymore\State\Chase</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Claymore_Death.cpp">
-      <Filter>02. GameObject\Object\Enemy\Normal\EtherClayMore\State\Death</Filter>
+      <Filter>02. GameObject\Object\Enemy\Normal\EtherClaymore\State\Death</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Claymore_Groggy.cpp">
-      <Filter>02. GameObject\Object\Enemy\Normal\EtherClayMore\State\Groggy</Filter>
+      <Filter>02. GameObject\Object\Enemy\Normal\EtherClaymore\State\Groggy</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Claymore_Hit.cpp">
-      <Filter>02. GameObject\Object\Enemy\Normal\EtherClayMore\State\Hit</Filter>
+      <Filter>02. GameObject\Object\Enemy\Normal\EtherClaymore\State\Hit</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Claymore_Idle.cpp">
-      <Filter>02. GameObject\Object\Enemy\Normal\EtherClayMore\State\Idle</Filter>
+      <Filter>02. GameObject\Object\Enemy\Normal\EtherClaymore\State\Idle</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Claymore_Move.cpp">
-      <Filter>02. GameObject\Object\Enemy\Normal\EtherClayMore\State\Move</Filter>
+      <Filter>02. GameObject\Object\Enemy\Normal\EtherClaymore\State\Move</Filter>
     </ClCompile>
     <ClCompile Include="..\private\MonsterSpawnConsole.cpp">
       <Filter>03. Utility\11. Gui_Panel\00. MonsterSpawnPanel</Filter>
@@ -2997,7 +3055,7 @@
       <Filter>02. GameObject\Object\Gacha\GachaProps</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Claymore_Parried.cpp">
-      <Filter>02. GameObject\Object\Enemy\Normal\EtherClayMore\State\Parry</Filter>
+      <Filter>02. GameObject\Object\Enemy\Normal\EtherClaymore\State\Parry</Filter>
     </ClCompile>
     <ClCompile Include="..\private\MapLightPoint.cpp" />
     <ClCompile Include="..\private\UI_Gangta.cpp">
@@ -3020,6 +3078,33 @@
     </ClCompile>
     <ClCompile Include="..\private\MapLightPoint.cpp">
       <Filter>02. GameObject\MapObject\04. MapLightPoint</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Cyclops.cpp">
+      <Filter>02. GameObject\Object\Enemy\Normal\EtherCyclops</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Cyclops_Born.cpp">
+      <Filter>02. GameObject\Object\Enemy\Normal\EtherCyclops\State\Born</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Cyclops_Death.cpp">
+      <Filter>02. GameObject\Object\Enemy\Normal\EtherCyclops\State\Death</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Cyclops_Groggy.cpp">
+      <Filter>02. GameObject\Object\Enemy\Normal\EtherCyclops\State\Groggy</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Cyclops_Hit.cpp">
+      <Filter>02. GameObject\Object\Enemy\Normal\EtherCyclops\State\Hit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Cyclops_Idle.cpp">
+      <Filter>02. GameObject\Object\Enemy\Normal\EtherCyclops\State\Idle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Cyclops_Move.cpp">
+      <Filter>02. GameObject\Object\Enemy\Normal\EtherCyclops\State\Move</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Cyclops_Attack.cpp">
+      <Filter>02. GameObject\Object\Enemy\Normal\EtherCyclops\State\Attack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Cyclops_Chase.cpp">
+      <Filter>02. GameObject\Object\Enemy\Normal\EtherCyclops\State\Chase</Filter>
     </ClCompile>
     <ClCompile Include="..\private\GachaScreen.cpp">
       <Filter>02. GameObject\Object\Gacha\GachaProps\GachaTV\GachaScreen</Filter>

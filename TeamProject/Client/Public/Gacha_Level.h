@@ -21,15 +21,19 @@ public:
 
 private:
 	void Ready_GachaObjects();
+	void Update_CamTime();
 
 private:
 	CGameInstance* m_pGameInstance = { nullptr };
 	class CCamDirector* m_pCamDirector = { nullptr };
 
 private:
+	class CGachaProps* m_pGachaProps = nullptr;
+
+private:
 	OBJECT_HANDLE			m_GachaHandle{};
 	vector<WEAPON_DESC>		m_ResultDesc;
-	_int					m_iIndex = 0;
+	_int					m_iIndex = -1;
 	_int					m_iMaxIndex = 10;
 
 public:

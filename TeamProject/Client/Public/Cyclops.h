@@ -6,12 +6,12 @@ NS_BEGIN(Client)
 template<typename Type>
 class CStateMachine;
 
-class CClaymore final : public CEnemyNormal
+class CCyclops final : public CEnemyNormal
 {
 private:
-    CClaymore();
-    CClaymore(const CClaymore& rhg);
-    virtual ~CClaymore() = default;
+    CCyclops();
+    CCyclops(const CCyclops& rhg);
+    virtual ~CCyclops() = default;
 
 public:
     HRESULT Initialize_Prototype()override;
@@ -26,7 +26,7 @@ public:
     virtual void Parried() override;
 
 public:
-    static CClaymore* Create();
+    static CCyclops* Create();
     CGameObject* Clone(INIT_DESC* pArg) override;
     virtual void Free() override;
 
@@ -35,7 +35,7 @@ private:
 
 public:
     /* Getter */
-    CStateMachine<CClaymore>*   GetStateMachine() const { return m_pStateMachine; }
+    CStateMachine<CCyclops>*   GetStateMachine() const { return m_pStateMachine; }
     HYSTERIESIS                 GetHysteriesis() const { return m_tHysteriesis; }
 
     /* Setter */
@@ -52,7 +52,7 @@ private:
     void CheckDistanceFromPlayer();
 
 private:
-    CStateMachine<CClaymore>* m_pStateMachine = { nullptr };
+    CStateMachine<CCyclops>* m_pStateMachine = { nullptr };
     ATTACK_BLACK_BOARD  m_tAttackBlackBoard = {};
     HYSTERIESIS         m_tHysteriesis = {};
 
