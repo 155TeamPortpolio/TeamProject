@@ -29,7 +29,8 @@ private:
 
 private:
     class CGachaStageScreen*    m_pScreen = nullptr;
-    class CGachaResult*         m_pResult = nullptr;
+    class CGachaResult*         m_pWeaponResult = nullptr;
+    class CGachaResult*         m_pAvatarResult = nullptr;
     
 private:    
     vector<WEAPON_DESC>*    m_pResultDesc = nullptr;
