@@ -2097,6 +2097,15 @@
     <ClInclude Include="..\Public\UI_GachaPage.h">
       <Filter>02. GameObject\UI\01. 2D\Gacha</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UI_GachaChannel.h">
+      <Filter>02. GameObject\UI\01. 2D\Gacha\Channel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_GachaCurrency.h">
+      <Filter>02. GameObject\UI\01. 2D\Gacha\Currency</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_GachaConversion.h">
+      <Filter>02. GameObject\UI\01. 2D\Gacha\Conversion</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -3062,6 +3071,15 @@
     </ClCompile>
     <ClCompile Include="..\Private\UI_GachaPage.cpp">
       <Filter>02. GameObject\UI\01. 2D\Gacha</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_GachaChannel.cpp">
+      <Filter>02. GameObject\UI\01. 2D\Gacha\Channel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_GachaCurrency.cpp">
+      <Filter>02. GameObject\UI\01. 2D\Gacha\Currency</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_GachaConversion.cpp">
+      <Filter>02. GameObject\UI\01. 2D\Gacha\Conversion</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

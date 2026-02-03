@@ -402,6 +402,9 @@
     <ClInclude Include="..\Public\MiyabiState_SwitchInNormal.h" />
     <ClInclude Include="..\Public\MiyabiState_SwitchInParryAid.h" />
     <ClInclude Include="..\Public\MiyabiState_SwitchOut.h" />
+    <ClInclude Include="..\Public\UI_GachaChannel.h" />
+    <ClInclude Include="..\Public\UI_GachaConversion.h" />
+    <ClInclude Include="..\Public\UI_GachaCurrency.h" />
     <ClInclude Include="..\Public\UI_GachaPage.h" />
     <ClInclude Include="..\public\UI_Gangta.h" />
     <ClInclude Include="..\Public\ICamCollidable.h" />
@@ -781,6 +784,9 @@
     <ClCompile Include="..\Private\MiyabiState_SwitchInNormal.cpp" />
     <ClCompile Include="..\Private\MiyabiState_SwitchInParryAid.cpp" />
     <ClCompile Include="..\Private\MiyabiState_SwitchOut.cpp" />
+    <ClCompile Include="..\Private\UI_GachaChannel.cpp" />
+    <ClCompile Include="..\Private\UI_GachaConversion.cpp" />
+    <ClCompile Include="..\Private\UI_GachaCurrency.cpp" />
     <ClCompile Include="..\Private\UI_GachaPage.cpp" />
     <ClCompile Include="..\private\UI_Gangta.cpp" />
     <ClCompile Include="..\Private\JaneDoeState_AssaultAttack.cpp" />
