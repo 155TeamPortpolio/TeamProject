@@ -78,6 +78,16 @@ void CUIDirector::Hide_Ramen()
 	UI_DeActive("ramen");
 }
 
+void CUIDirector::Show_GachaPage()
+{
+	UI_Active("gachaPage");
+}
+
+void CUIDirector::Hide_GachaPage()
+{
+	UI_DeActive("gachaPage");
+}
+
 void CUIDirector::Show_ResultBanner(const string& strTextureKey, const _wstring& wstrText1, const _wstring& wstrText2)
 {
 	CUI_ResultBanner::RESULT_DESC desc = {};
