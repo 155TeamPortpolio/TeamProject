@@ -23,6 +23,7 @@ public:
 
 private:
 	void NormalizeDir(_float4& dir);
+	void GetSpotConeDegrees(const LIGHT_DESC& desc, float& innerDeg, float& outerDeg);
 
 private:
 	_int m_ID = {-1};
