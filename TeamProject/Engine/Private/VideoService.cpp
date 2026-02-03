@@ -48,7 +48,7 @@ _uint CVideoService::CreatePlayer(IVideoDecoderBackend* pDecoderBackend)
         context.cancelRequested.store(false, std::memory_order_release);
     }
 
-
+    playerObject->SetID(newPlayerID);
     return newPlayerID;
 }
 
@@ -110,6 +110,15 @@ void CVideoService::StartDecode(_uint playerId)
 
     contextPtr->pDecoder->SetLoop(desc.loop);
     m_threadPool->enqueue([this, playerId] { DecodeLoop(playerId); });
+}
+
+IVideoDecoderBackend* CVideoService::Get_OwnDecoder(_uint playerId)
+{
+    auto contextIterator = m_VideoContexts.find(playerId);
+    if (contextIterator == m_VideoContexts.end())
+        return nullptr;
+
+    return contextIterator->second.pDecoder;
 }
 
 void CVideoService::DecodeLoop(_uint playerId)

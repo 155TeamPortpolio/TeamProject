@@ -33,9 +33,15 @@ public:
     void     RegisterZoomPresets(const CamZoomPreset* presets, _uint count)   override { m_zoom.RegisterPresets(presets, count); }
 
 public:
-    void     SetShake(_float ampDeg, _float freq, _float dur, _float fadeOutSec = 0.f) override { m_shake.Set(ampDeg, freq, dur, fadeOutSec); }
-    void     AddShake(_float ampDeg, _float freq, _float dur, _float fadeOutSec = 0.f) override { m_shake.Add(ampDeg, freq, dur, fadeOutSec); }
-    void     ClearShake(_float fadeOutSec = 0.f)                                       override { m_shake.Clear(fadeOutSec); }
+    void     SetShake(_float ampDeg, _float freq, _float dur, _float fadeOutSec = 0.f)  override { m_shake.Set(ampDeg, freq, dur, fadeOutSec); }
+    void     AddShake(_float ampDeg, _float freq, _float dur, _float fadeOutSec = 0.f)  override { m_shake.Add(ampDeg, freq, dur, fadeOutSec); }
+    void     ClearShake(_float fadeOutSec = 0.f)                                        override { m_shake.Clear(fadeOutSec); }
+
+    void     AddShakeAxis(CamShakeAxis axes, _float ampDeg, _float freq, _float dur, _float fadeOutSec) override;
+    void     SetShakeAxis(CamShakeAxis axes, _float ampDeg, _float freq, _float dur, _float fadeOutSec) override;
+
+    void     AddShakeAxisWave(CamShakeAxis axes, _float ampDeg, _float freq, _float dur, _float fadeOutSec, EaseType attackEase, EaseType decayEase) override;
+    void     SetShakeAxisWave(CamShakeAxis axes, _float ampDeg, _float freq, _float dur, _float fadeOutSec, EaseType attackEase, EaseType decayEase) override;
 
 public:
     void     SetZoomPunch(_float amountDeg, _float attackSec = 0.020f, _float releaseSec = 0.100f) override { m_zoom.SetPunch(amountDeg, attackSec, releaseSec); }

@@ -58,6 +58,7 @@ void CCharacterParryCollider::Late_Update(_float dt)
 {
 	Get_Component<CRigidBody>()->Late_Update(dt);
 	m_ParryableTargets.clear();
+	m_EvadableTargets.clear();
 }
 
 void CCharacterParryCollider::Render_GUI()
@@ -67,28 +68,24 @@ void CCharacterParryCollider::Render_GUI()
 
 void CCharacterParryCollider::OnTriggerEnter(CGameObject* pOther)
 {
-	if (!dynamic_cast<CEnemy*>(pOther)) return;
-
-	//auto pCharacter = dynamic_cast<CCharacter*>(Get_Component<CChild>()->Get_Parent());
-	//if (pCharacter->Is_Invincible()) return;
-
+	if (!dynamic_cast<CEnemy*>(pOther))
+		return;
+	m_EvadableTargets.push_back(pOther->Get_Handle());
 	m_ParryableTargets.push_back(pOther->Get_Handle());
 }
 
 void CCharacterParryCollider::OnTriggerStay(CGameObject* pOther)
 {
-	if (!dynamic_cast<CEnemy*>(pOther)) return;
-
-	//auto pCharacter = dynamic_cast<CCharacter*>(Get_Component<CChild>()->Get_Parent());
-	//if (pCharacter->Is_Invincible()) return;
-
+	if (!dynamic_cast<CEnemy*>(pOther))
+		return;
 	// 중복 체크
 	OBJECT_HANDLE handle = pOther->Get_Handle();
-	for (auto& h : m_ParryableTargets)
+	for (auto& h : m_EvadableTargets)
 	{
 		if (h.hObjID == handle.hObjID)
 			return;
 	}
+	m_EvadableTargets.push_back(handle);
 	m_ParryableTargets.push_back(handle);
 }
 
@@ -111,6 +108,20 @@ _bool CCharacterParryCollider::Can_Parry()
 			++it;
 	}
 	return !m_ParryableTargets.empty();
+}
+
+_bool CCharacterParryCollider::Can_Perfect()
+{
+	for (auto it = m_EvadableTargets.begin(); it != m_EvadableTargets.end(); )
+	{
+		OBJECT_HANDLE handle = *it;
+		CEnemy* pEnemy = dynamic_cast<CEnemy*>(handle.Get());
+		if (!pEnemy || !pEnemy->IsOnAttack())
+			it = m_EvadableTargets.erase(it);
+		else
+			++it;
+	}
+	return !m_EvadableTargets.empty();
 }
 
 CCharacterParryCollider* CCharacterParryCollider::Create()

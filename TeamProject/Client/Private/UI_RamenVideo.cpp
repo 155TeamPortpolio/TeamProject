@@ -64,24 +64,28 @@ void CUI_RamenVideo::Update(_float dt)
     Get_Component<CObjectContainer>()->UpdateChild(dt);
 
     if (m_pPlayer->GetState() == VIDEO_PLAY_STATE::Ended)
-        OnVideoExit();
+        UI_DeActive();
 }
 
 void CUI_RamenVideo::UI_Active(void* pArg)
 {
-    /*재생 / 디코딩 시작*/
     Set_Alive(true);
+    VideoService()->StartDecode(m_PlayerID);
     m_pPlayer->Play(); 
 }
 
 void CUI_RamenVideo::UI_DeActive(void* pArg)
 {
+    Set_Alive(false);
+    m_pPlayer->Stop();
+    if (m_OnClick)
+        m_OnClick();
 }
 
 void CUI_RamenVideo::Create_SkipButton()
 {
     CUI_IconButton::BUTTON_DESC* pDesc = new CUI_IconButton::BUTTON_DESC;
-    pDesc->onClick = [this]() { OnVideoExit(); m_pPlayer->SkipToEnd(); };
+    pDesc->onClick = [this]() { UI_DeActive(); };
     pDesc->strLabel = L"건너뛰기";
     pDesc->strTextureKey = "IconSkip.png";
     auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_IconButton" })
@@ -94,13 +98,6 @@ void CUI_RamenVideo::Create_SkipButton()
     pObj->Set_Anchor(ANCHOR::Right | ANCHOR::Top);
     pObj->Set_AnchorOffset({ - 140.f, 111.f });
     Get_Component<CObjectContainer>()->Add_Child(pObj);
-}
-
-void CUI_RamenVideo::OnVideoExit()
-{
-    Set_Alive(false);
-    if (m_OnClick)
-        m_OnClick();
 }
 
 CGameObject* CUI_RamenVideo::Create()

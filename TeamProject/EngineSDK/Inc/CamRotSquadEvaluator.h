@@ -35,7 +35,6 @@ private:
 
 public:
     static CCamRotSquadEvaluator* Create() { return new CCamRotSquadEvaluator(); }
-    virtual void Free() override { __super::Free(); }
 };
 
 NS_END

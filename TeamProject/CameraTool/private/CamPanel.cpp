@@ -24,53 +24,54 @@ namespace
         if (raw.empty()) return {};
 
         filesystem::path p = filesystem::path(raw);
-
-        if (p.extension().string() != ".cam")
-            p += ".cam";
+        if (p.extension().string() != ".cam") p += ".cam";
 
         filesystem::path abs = filesystem::absolute(p).lexically_normal();
         return abs.string();
     }
+
     Matrix GetRefRT(OBJECT_HANDLE h)
     {
         auto obj = OBJ->Request_Object(h);
         auto tr = obj->Get_Component<CTransform>();
 
-        Matrix refWorld = Matrix(tr->Get_WorldMatrix());
+        Matrix world = Matrix(tr->Get_WorldMatrix());
 
         Vector3 s{};
         Vector3 t{};
         Quaternion r = Quaternion::Identity;
-        refWorld.Decompose(s, r, t);
+        world.Decompose(s, r, t);
         r.Normalize();
 
         return Matrix::CreateFromQuaternion(r) * Matrix::CreateTranslation(t);
     }
-    _vector3 ToLocalPos(_vector3 worldPos, const Matrix& refRT)
-    {
-        const Matrix inv = refRT.Invert();
-        const Vector3 p = Vector3::Transform(Vector3(worldPos.x, worldPos.y, worldPos.z), inv);
-        return _vector3(p.x, p.y, p.z);
-    }
-    _vector3 ToLocalDir(_vector3 worldDir, const Matrix& refRT)
-    {
-        const Matrix inv = refRT.Invert();
 
-        Vector3 d = Vector3::TransformNormal(Vector3(worldDir.x, worldDir.y, worldDir.z), inv);
-        d.Normalize();
-        return _vector3(d.x, d.y, d.z);
-    }
-    _vector3 ToWorldPos(_vector3 localPos, const Matrix& refRT)
+    _vector3 ToLocalPos(const _vector3& worldPos, const Matrix& refRT)
     {
-        const Vector3 p = Vector3::Transform(Vector3(localPos.x, localPos.y, localPos.z), refRT);
-        return _vector3(p.x, p.y, p.z);
+        const Matrix inv = refRT.Invert();
+        return _vector3::Transform(worldPos, inv);
     }
-    _vector3 ToWorldDir(_vector3 localDir, const Matrix& refRT)
+
+    _vector3 ToLocalDir(const _vector3& worldDir, const Matrix& refRT)
     {
-        Vector3 d = Vector3::TransformNormal(Vector3(localDir.x, localDir.y, localDir.z), refRT);
+        const Matrix inv = refRT.Invert();
+        _vector3 d = _vector3::TransformNormal(worldDir, inv);
         d.Normalize();
-        return _vector3(d.x, d.y, d.z);
+        return d;
     }
+
+    _vector3 ToWorldPos(const _vector3& localPos, const Matrix& refRT)
+    {
+        return _vector3::Transform(localPos, refRT);
+    }
+
+    _vector3 ToWorldDir(const _vector3& localDir, const Matrix& refRT)
+    {
+        _vector3 d = _vector3::TransformNormal(localDir, refRT);
+        d.Normalize();
+        return d;
+    }
+
     void ConvertKeysSpace(vector<CamKeyFrame>& keys, CamSpace from, CamSpace to, OBJECT_HANDLE refHandle)
     {
         if (from == to) return;
@@ -86,6 +87,7 @@ namespace
             }
             return;
         }
+
         if (from == CamSpace::Local && to == CamSpace::World)
         {
             for (auto& k : keys)
@@ -95,38 +97,14 @@ namespace
             }
         }
     }
+
     float Approach(float cur, float target, float maxDelta)
     {
         if (cur < target) return min(cur + maxDelta, target);
         return max(cur - maxDelta, target);
     }
-    float ExtractRollRad(const Vector3& forward, const Vector3& up)
-    {
-        Vector3 f = forward;
-        Vector3 u = up;
 
-        if (f.LengthSquared() <= 1e-8f) f = Vector3(0.f, 0.f, 1.f);
-        else f.Normalize();
-
-        if (u.LengthSquared() <= 1e-8f) u = Vector3(0.f, 1.f, 0.f);
-        else u.Normalize();
-
-        Vector3 baseUp(0.f, 1.f, 0.f);
-        if (fabsf(f.Dot(baseUp)) > 0.98f) baseUp = Vector3(0.f, 0.f, 1.f);
-
-        Matrix lookM = Matrix::CreateWorld(Vector3::Zero, f, baseUp);
-        Quaternion lookRot = Quaternion::CreateFromRotationMatrix(lookM);
-        lookRot.Normalize();
-
-        Matrix lookRM = Matrix::CreateFromQuaternion(lookRot);
-
-        Vector3 upZero = Vector3::TransformNormal(Vector3(0.f, 1.f, 0.f), lookRM);
-        Vector3 rightZero = Vector3::TransformNormal(Vector3(1.f, 0.f, 0.f), lookRM);
-
-        const float sinA = u.Dot(rightZero);
-        const float cosA = u.Dot(upZero);
-        return atan2f(sinA, cosA);
-    }
+    
 }
 
 void CCamPanel::Init()
@@ -162,6 +140,17 @@ void CCamPanel::Update_Panel(_float dt)
     }
 
     target.sequence->orbitArc.NormalizeAxis();
+
+    if (!target.sequence->orbitSpin.keepHeight)
+    {
+        if (target.sequence->orbitSpin.axis.LengthSquared() <= 1e-10f)
+            target.sequence->orbitSpin.axis = _vector3(0.f, 1.f, 0.f);
+
+        target.sequence->orbitSpin.axis.Normalize();
+    }
+
+    if (target.sequence->orbitSpin.extraTurns < 0)
+        target.sequence->orbitSpin.extraTurns = 0;
 
     RecalcEndTimeFromKeys();
     ClampCurTime();
@@ -212,6 +201,7 @@ void CCamPanel::Update_Panel(_float dt)
     if (state.playAllLink && !state.recording)
         animGUIController.SetTimeSec(state.playAllRefHandle, state.curTime);
 }
+
 
 void CCamPanel::Render_GUI()
 {
@@ -279,9 +269,9 @@ void CCamPanel::Render_GUI()
                 ImVec2 contentAvail = ImGui::GetContentRegionAvail();
 
                 float minRight = 420.f;
-                float minLeft = 520.f;
+                float minLeft = 460.f;
 
-                float desiredLeft = contentAvail.x * 0.60f;
+                float desiredLeft = contentAvail.x * 0.47f;
                 float maxLeft = contentAvail.x - minRight;
 
                 float leftColW = desiredLeft;
@@ -508,6 +498,7 @@ void CCamPanel::DrawCamSelector()
         if (Helper::DrawEnumCombo("##pos_interp", target.sequence->posInterp, shown, 140.f))
         {
             if (target.sequence->posInterp == CamPosInterp::OrbitArc) target.sequence->orbitArc.enabled = true;
+            if (target.sequence->posInterp == CamPosInterp::OrbitSpin) target.sequence->orbitSpin.enabled = true;
             changedAny = true;
         }
     }
@@ -644,6 +635,7 @@ void CCamPanel::DrawCamSelector()
 }
 
 
+
 void CCamPanel::DrawKeyframeList()
 {
     if (!target.sequence)
@@ -675,21 +667,36 @@ void CCamPanel::DrawKeyframeEditor()
         return;
     }
 
-    const bool showOrbitArc = target.sequence && (target.sequence->posInterp == CamPosInterp::OrbitArc);
+    CamPosInterp seqPos = target.sequence ? target.sequence->posInterp : CamPosInterp::Linear;
+    CamPosInterp keyPos = seqPos;
+
+    if (target.sequence)
+    {
+        const CamKeyFrame& k = GetSelectedKey();
+        if (k.useCustomInterp) keyPos = k.outPosInterp;
+    }
+
+    CamPosInterp orbitUiPos = keyPos;
+    if (orbitUiPos != CamPosInterp::OrbitArc && orbitUiPos != CamPosInterp::OrbitSpin)
+        orbitUiPos = seqPos;
+
+    const bool showOrbitArc = target.sequence && (orbitUiPos == CamPosInterp::OrbitArc);
+    const bool showOrbitSpin = target.sequence && (orbitUiPos == CamPosInterp::OrbitSpin);
+    const bool showOrbit = showOrbitArc || showOrbitSpin;
 
     ImGuiTableFlags splitFlags =
         ImGuiTableFlags_SizingStretchProp |
         ImGuiTableFlags_BordersInnerV |
         ImGuiTableFlags_PadOuterX;
 
-    int cols = showOrbitArc ? 2 : 1;
+    int cols = showOrbit ? 2 : 1;
 
     if (ImGui::BeginTable("SelectedKeySplit", cols, splitFlags, ImVec2(0.f, 0.f)))
     {
-        if (showOrbitArc)
+        if (showOrbit)
         {
-            ImGui::TableSetupColumn("Key", ImGuiTableColumnFlags_WidthFixed, 420.f);
-            ImGui::TableSetupColumn("OrbitArc", ImGuiTableColumnFlags_WidthStretch);
+            ImGui::TableSetupColumn("Key", ImGuiTableColumnFlags_WidthFixed, 600.f);
+            ImGui::TableSetupColumn("Orbit", ImGuiTableColumnFlags_WidthStretch);
         }
         else
             ImGui::TableSetupColumn("Key", ImGuiTableColumnFlags_WidthStretch);
@@ -702,10 +709,12 @@ void CCamPanel::DrawKeyframeEditor()
         ImGui::TableSetColumnIndex(0);
         DrawKeyframeEditor_SelectedKeyTable(changedAny);
 
-        if (showOrbitArc)
+        if (showOrbit)
         {
             ImGui::TableSetColumnIndex(1);
-            DrawKeyframeEditor_OrbitArc(changedOrbit);
+
+            if (showOrbitArc) DrawKeyframeEditor_OrbitArc(changedOrbit);
+            if (showOrbitSpin) DrawKeyframeEditor_OrbitSpin(changedOrbit);
         }
 
         if (changedAny || changedOrbit)
@@ -714,6 +723,8 @@ void CCamPanel::DrawKeyframeEditor()
         ImGui::EndTable();
     }
 }
+
+
 
 void CCamPanel::DrawTimeline()
 {
@@ -1516,6 +1527,22 @@ void CCamPanel::ClampCurTime()
 
 void CCamPanel::PostEdit_SequenceChanged()
 {
+    if (!target.sequence) return;
+
+    bool needArc = (target.sequence->posInterp == CamPosInterp::OrbitArc);
+    bool needSpin = (target.sequence->posInterp == CamPosInterp::OrbitSpin);
+
+    for (const auto& k : target.sequence->keyframes)
+    {
+        if (!k.useCustomInterp) continue;
+
+        if (k.outPosInterp == CamPosInterp::OrbitArc) needArc = true;
+        if (k.outPosInterp == CamPosInterp::OrbitSpin) needSpin = true;
+    }
+
+    if (needArc) target.sequence->orbitArc.enabled = true;
+    if (needSpin) target.sequence->orbitSpin.enabled = true;
+
     if (!target.player) return;
 
     target.player->Invalidate();
@@ -1523,6 +1550,7 @@ void CCamPanel::PostEdit_SequenceChanged()
     if (!state.recording)
         target.player->SetTime(state.curTime);
 }
+
 
 bool CCamPanel::HasValidSelection() const
 {
@@ -2586,8 +2614,7 @@ void CCamPanel::DrawKeyframeEditor_SelectedKeyTable(bool& ioChangedAny)
     char msg[256];
     sprintf_s(msg, u8"적용하면 기존 키 %d개가 덮어씌워져 제거됩니다.\n그래도 적용할까요?", keyEditUI.pendingOverwriteCount);
 
-    const ConfirmResult timeR = DrawConfirmPopupModal("TimeCollisionConfirm", nullptr,
-        {u8"같은 시간대에 키가 이미 있습니다.", msg}, u8"적용", u8"취소", 120.f);
+    const ConfirmResult timeR = DrawConfirmPopupModal("TimeCollisionConfirm", nullptr, {u8"같은 시간대에 키가 이미 있습니다.", msg}, u8"적용", u8"취소", 120.f);
 
     if (timeR == ConfirmResult::Ok)
     {
@@ -2604,20 +2631,149 @@ void CCamPanel::DrawKeyframeEditor_SelectedKeyTable(bool& ioChangedAny)
     }
 }
 
+void CCamPanel::DrawKeyframeEditor_OrbitSpin(bool& ioChangedOrbit)
+{
+    CamOrbitSpinDesc& d = target.sequence->orbitSpin;
+
+    const auto& keyframes = GetKeyFrames();
+
+    auto GetAutoSegment = [&](_vector3& outP0, _vector3& outP1) -> bool
+        {
+            if (keyframes.size() < 2) return false;
+
+            int selectedIndex = state.selectedKeyIdx;
+            if (selectedIndex < 0 || selectedIndex >= (int)keyframes.size()) selectedIndex = 0;
+
+            if (selectedIndex + 1 < (int)keyframes.size()) { outP0 = keyframes[(size_t)selectedIndex].pos; outP1 = keyframes[(size_t)selectedIndex + 1].pos; return true; }
+            if (selectedIndex - 1 >= 0) { outP0 = keyframes[(size_t)selectedIndex - 1].pos; outP1 = keyframes[(size_t)selectedIndex].pos; return true; }
+
+            return false;
+        };
+
+    ImGui::SeparatorText("OrbitSpin");
+
+    const float labelWidth = 78.f;
+    const float comboWidth = 170.f;
+    const float vecW = 90.f;
+    const float gap = 10.f;
+
+    ImGui::PushID("OrbitSpinEditor");
+
+    if (ImGui::BeginTable("##layout", 2, ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_PadOuterX | ImGuiTableFlags_NoSavedSettings))
+    {
+        ImGui::TableSetupColumn("Label", ImGuiTableColumnFlags_WidthFixed, labelWidth);
+        ImGui::TableSetupColumn("Ctrl", ImGuiTableColumnFlags_WidthStretch);
+
+        ImGui::TableNextRow();
+        ImGui::TableSetColumnIndex(0);
+        DrawLabelDisabled("Flags");
+        ImGui::TableSetColumnIndex(1);
+
+        if (ImGui::Checkbox("Enabled##os_enabled", &d.enabled)) ioChangedOrbit = true;
+        ImGui::SameLine(0.f, 12.f);
+        if (ImGui::Checkbox("KeepY##os_keepy", &d.keepHeight)) ioChangedOrbit = true;
+        ImGui::SameLine(0.f, 12.f);
+        if (ImGui::Checkbox("CW##os_cw", &d.clockwise)) ioChangedOrbit = true;
+
+        ImGui::TableNextRow();
+        ImGui::TableSetColumnIndex(0);
+        DrawLabelDisabled("Center");
+        ImGui::TableSetColumnIndex(1);
+
+        ImGui::SetNextItemWidth(comboWidth);
+        if (DrawEnumCombo("##os_center_mode", d.centerMode, comboWidth)) ioChangedOrbit = true;
+
+        const bool canAuto = (keyframes.size() >= 2);
+
+        ImGui::SameLine(0.f, 12.f);
+        if (!canAuto) ImGui::BeginDisabled();
+        if (ImGui::SmallButton("Auto Center##os_autocenter"))
+        {
+            _vector3 p0{}, p1{};
+            if (GetAutoSegment(p0, p1))
+            {
+                d.enabled = true;
+                d.centerMode = CamSpinCenterMode::Custom;
+                d.center = (p0 + p1) * 0.5f;
+                ioChangedOrbit = true;
+            }
+        }
+        if (!canAuto) ImGui::EndDisabled();
+
+        ImGui::SameLine();
+        if (ImGui::SmallButton("Use Origin##os_origin"))
+        {
+            d.enabled = true;
+            d.centerMode = CamSpinCenterMode::Origin;
+            d.center = _vector3{};
+            ioChangedOrbit = true;
+        }
+
+        ImGui::TableNextRow();
+        ImGui::TableSetColumnIndex(0);
+        DrawLabelDisabled("CenterXYZ");
+        ImGui::TableSetColumnIndex(1);
+
+        const bool customCenter = (d.centerMode == CamSpinCenterMode::Custom);
+        if (!customCenter) ImGui::BeginDisabled();
+        _vector3 center = d.center;
+        if (DragVec3XYZ("os_center", center, 0.05f, -99999.f, 99999.f, "%.1f", vecW, gap))
+        {
+            d.center = center;
+            ioChangedOrbit = true;
+        }
+        if (!customCenter) ImGui::EndDisabled();
+
+        ImGui::TableNextRow();
+        ImGui::TableSetColumnIndex(0);
+        DrawLabelDisabled("Axis");
+        ImGui::TableSetColumnIndex(1);
+
+        if (d.keepHeight) ImGui::BeginDisabled();
+        _vector3 axis = d.axis;
+        if (DragVec3XYZ("os_axis", axis, 0.01f, -1.f, 1.f, "%.2f", vecW, gap))
+        {
+            if (axis.LengthSquared() <= 1e-10f) axis = _vector3(0.f, 1.f, 0.f);
+            axis.Normalize();
+            d.axis = axis;
+            ioChangedOrbit = true;
+        }
+        if (d.keepHeight) ImGui::EndDisabled();
+
+        ImGui::TableNextRow();
+        ImGui::TableSetColumnIndex(0);
+        DrawLabelDisabled("Turns");
+        ImGui::TableSetColumnIndex(1);
+
+        int turns = d.extraTurns;
+        ImGui::SetNextItemWidth(140.f);
+        if (ImGui::DragInt("##os_turns", &turns, 1.0f, 0, 20))
+        {
+            d.extraTurns = max(0, turns);
+            ioChangedOrbit = true;
+        }
+
+        ImGui::EndTable();
+    }
+
+    ImGui::PopID();
+}
+
 void CCamPanel::DrawKeyframeEditor_OrbitArc(bool& ioChangedOrbit)
 {
     CamOrbitArcDesc& d = target.sequence->orbitArc;
 
+    const auto& keyframes = GetKeyFrames();
+
     auto GetAutoSegment = [&](_vector3& outP0, _vector3& outP1) -> bool
         {
-            const auto& keys = GetKeyFrames();
-            if (keys.size() < 2) return false;
+            if (keyframes.size() < 2) return false;
 
-            int i = state.selectedKeyIdx;
-            if (i < 0 || i >= (int)keys.size()) i = 0;
+            int selectedIndex = state.selectedKeyIdx;
+            if (selectedIndex < 0 || selectedIndex >= (int)keyframes.size()) selectedIndex = 0;
 
-            if (i + 1 < (int)keys.size()) { outP0 = keys[(size_t)i].pos; outP1 = keys[(size_t)i + 1].pos; return true; }
-            if (i - 1 >= 0) { outP0 = keys[(size_t)i - 1].pos; outP1 = keys[(size_t)i].pos; return true; }
+            if (selectedIndex + 1 < (int)keyframes.size()) { outP0 = keyframes[(size_t)selectedIndex].pos; outP1 = keyframes[(size_t)selectedIndex + 1].pos; return true; }
+            if (selectedIndex - 1 >= 0) { outP0 = keyframes[(size_t)selectedIndex - 1].pos; outP1 = keyframes[(size_t)selectedIndex].pos; return true; }
 
             return false;
         };
@@ -2640,82 +2796,123 @@ void CCamPanel::DrawKeyframeEditor_OrbitArc(bool& ioChangedOrbit)
 
     ImGui::SeparatorText("OrbitArc");
 
-    DrawLabelDisabled("Enabled");
-    ImGui::SameLine();
-    if (ImGui::Checkbox("##oa_enabled", &d.enabled)) ioChangedOrbit = true;
-
-    ImGui::SameLine(0.f, 12.f);
-
-    const bool canAuto = (GetKeyFrames().size() >= 2);
-    if (!canAuto) ImGui::BeginDisabled();
-
-    if (ImGui::SmallButton("Auto 180##oa_auto180"))
-    {
-        _vector3 p0{}, p1{};
-        if (GetAutoSegment(p0, p1))
-        {
-            const _vector3 chord = p1 - p0;
-
-            d.enabled = true;
-            d.center = (p0 + p1) * 0.5f;
-            d.axis = ComputeAxisPerpChord(chord);
-
-            d.angleMode = CamOrbitArcAngleMode::Force180;
-            d.radiusMode = CamOrbitArcRadiusMode::FixedStartRadius;
-
-            ioChangedOrbit = true;
-        }
-    }
-
-    ImGui::SameLine();
-    if (ImGui::SmallButton("Auto Center##oa_autocenter"))
-    {
-        _vector3 p0{}, p1{};
-        if (GetAutoSegment(p0, p1)) { d.enabled = true; d.center = (p0 + p1) * 0.5f; ioChangedOrbit = true; }
-    }
-
-    ImGui::SameLine();
-    if (ImGui::SmallButton("Auto Axis##oa_autoaxis"))
-    {
-        _vector3 p0{}, p1{};
-        if (GetAutoSegment(p0, p1))
-        {
-            d.enabled = true;
-            d.axis = ComputeAxisPerpChord(p1 - p0);
-            d.NormalizeAxis();
-            ioChangedOrbit = true;
-        }
-    }
-
-    if (!canAuto) ImGui::EndDisabled();
-
-    ImGui::Spacing();
-
+    const float labelWidth = 78.f;
+    const float comboWidth = 170.f;
     const float vecW = 90.f;
     const float gap = 10.f;
 
-    DrawLabelDisabled("Center");
-    ImGui::SameLine();
-    _vector3 center = d.center;
-    if (DragVec3XYZ("oa_center", center, 0.05f, -99999.f, 99999.f, "%.1f", vecW, gap)) { d.center = center; ioChangedOrbit = true; }
+    ImGui::PushID("OrbitArcEditor");
 
-    DrawLabelDisabled("Axis");
-    ImGui::SameLine();
-    _vector3 axis = d.axis;
-    if (DragVec3XYZ("oa_axis", axis, 0.01f, -1.f, 1.f, "%.2f", vecW, gap)) { d.axis = axis; d.NormalizeAxis(); ioChangedOrbit = true; }
+    if (ImGui::BeginTable("##layout", 2, ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_PadOuterX | ImGuiTableFlags_NoSavedSettings))
+    {
+        ImGui::TableSetupColumn("Label", ImGuiTableColumnFlags_WidthFixed, labelWidth);
+        ImGui::TableSetupColumn("Ctrl", ImGuiTableColumnFlags_WidthStretch);
 
-    DrawLabelDisabled("Angle");
-    ImGui::SameLine();
-    if (DrawEnumCombo("##oa_angle", d.angleMode, 160.f)) ioChangedOrbit = true;
+        ImGui::TableNextRow();
+        ImGui::TableSetColumnIndex(0);
+        DrawLabelDisabled("Enabled");
+        ImGui::TableSetColumnIndex(1);
 
-    ImGui::SameLine(0.f, 12.f);
-    DrawLabelDisabled("CW");
-    ImGui::SameLine();
-    if (ImGui::Checkbox("##oa_cw", &d.clockwise)) ioChangedOrbit = true;
+        if (ImGui::Checkbox("##oa_enabled", &d.enabled)) ioChangedOrbit = true;
 
-    DrawLabelDisabled("Radius");
-    ImGui::SameLine();
-    if (DrawEnumCombo("##oa_radius", d.radiusMode, 160.f)) ioChangedOrbit = true;
+        const bool canAuto = (keyframes.size() >= 2);
+
+        ImGui::SameLine(0.f, 12.f);
+        if (!canAuto) ImGui::BeginDisabled();
+
+        if (ImGui::SmallButton("Auto 180##oa_auto180"))
+        {
+            _vector3 p0{}, p1{};
+            if (GetAutoSegment(p0, p1))
+            {
+                const _vector3 chord = p1 - p0;
+
+                d.enabled = true;
+                d.center = (p0 + p1) * 0.5f;
+                d.axis = ComputeAxisPerpChord(chord);
+
+                d.angleMode = CamOrbitArcAngleMode::Force180;
+                d.radiusMode = CamOrbitArcRadiusMode::FixedStartRadius;
+
+                ioChangedOrbit = true;
+            }
+        }
+
+        ImGui::SameLine();
+        if (ImGui::SmallButton("Auto Center##oa_autocenter"))
+        {
+            _vector3 p0{}, p1{};
+            if (GetAutoSegment(p0, p1))
+            {
+                d.enabled = true;
+                d.center = (p0 + p1) * 0.5f;
+                ioChangedOrbit = true;
+            }
+        }
+
+        ImGui::SameLine();
+        if (ImGui::SmallButton("Auto Axis##oa_autoaxis"))
+        {
+            _vector3 p0{}, p1{};
+            if (GetAutoSegment(p0, p1))
+            {
+                d.enabled = true;
+                d.axis = ComputeAxisPerpChord(p1 - p0);
+                d.NormalizeAxis();
+                ioChangedOrbit = true;
+            }
+        }
+
+        if (!canAuto) ImGui::EndDisabled();
+
+        ImGui::TableNextRow();
+        ImGui::TableSetColumnIndex(0);
+        DrawLabelDisabled("Center");
+        ImGui::TableSetColumnIndex(1);
+
+        _vector3 center = d.center;
+        if (DragVec3XYZ("oa_center", center, 0.05f, -99999.f, 99999.f, "%.1f", vecW, gap))
+        {
+            d.center = center;
+            ioChangedOrbit = true;
+        }
+
+        ImGui::TableNextRow();
+        ImGui::TableSetColumnIndex(0);
+        DrawLabelDisabled("Axis");
+        ImGui::TableSetColumnIndex(1);
+
+        _vector3 axis = d.axis;
+        if (DragVec3XYZ("oa_axis", axis, 0.01f, -1.f, 1.f, "%.2f", vecW, gap))
+        {
+            d.axis = axis;
+            d.NormalizeAxis();
+            ioChangedOrbit = true;
+        }
+
+        ImGui::TableNextRow();
+        ImGui::TableSetColumnIndex(0);
+        DrawLabelDisabled("Angle");
+        ImGui::TableSetColumnIndex(1);
+
+        ImGui::SetNextItemWidth(comboWidth);
+        if (DrawEnumCombo("##oa_angle", d.angleMode, comboWidth)) ioChangedOrbit = true;
+
+        ImGui::SameLine(0.f, 12.f);
+        if (ImGui::Checkbox("CW##oa_cw", &d.clockwise)) ioChangedOrbit = true;
+
+        ImGui::TableNextRow();
+        ImGui::TableSetColumnIndex(0);
+        DrawLabelDisabled("Radius");
+        ImGui::TableSetColumnIndex(1);
+
+        ImGui::SetNextItemWidth(comboWidth);
+        if (DrawEnumCombo("##oa_radius", d.radiusMode, comboWidth)) ioChangedOrbit = true;
+
+        ImGui::EndTable();
+    }
+
+    ImGui::PopID();
 }
 
 void CCamPanel::DrawAutoLoadPopup()

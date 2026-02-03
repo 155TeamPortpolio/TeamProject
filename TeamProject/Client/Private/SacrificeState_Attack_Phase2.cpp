@@ -3,6 +3,7 @@
 #include "Helper_Func.h"
 #include "GameInstance.h"
 #include "CamDirector.h"
+#include "BattleSystem.h"
 
 /* Object */
 #include "Sacrifice.h"
@@ -550,7 +551,7 @@ void CSacrificeState_Attack_08_Phase2::Enter(CSacrifice* pOwner)
 	m_IsJumpStart = false;
 
 	_vector3 vCurrDir = pOwner->Get_Component<CTransform>()->Dir(STATE::LOOK);
-	_vector3 vTargetPos = pOwner->GetTargetingInfo().vTargetPos;
+	_vector3 vTargetPos = BattleSystem()->GetCurCharacterHandle().Get()->Get_Component<CTransform>()->Get_WorldPos();
 	m_vFirstTargetPosition = vTargetPos - vCurrDir * 2.f;
 }
 
@@ -620,7 +621,7 @@ void CSacrificeState_Attack_08_Phase2::Update_Move(CSacrifice* pOwner, _float dt
 	if (!m_IsJumpStart && m_fAnimProgress >= 0.12f)
 	{
 		_vector3 vCurrDir = pOwner->Get_Component<CTransform>()->Dir(STATE::LOOK);
-		_vector3 vTargetPos = pOwner->GetTargetingInfo().vTargetPos;
+		_vector3 vTargetPos = BattleSystem()->GetCurCharacterHandle().Get()->Get_Component<CTransform>()->Get_WorldPos();
 		m_vSecondTargetPosition = vTargetPos - vCurrDir * 2.f;
 		m_IsJumpStart = true;
 	}

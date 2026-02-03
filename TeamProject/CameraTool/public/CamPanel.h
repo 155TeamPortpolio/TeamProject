@@ -77,6 +77,7 @@ private:
 
 private:
     void   DrawKeyframeEditor_SelectedKeyTable(bool& ioChangedAny);
+    void   DrawKeyframeEditor_OrbitSpin(bool& ioChangedOrbit);
     void   DrawKeyframeEditor_OrbitArc(bool& ioChangedOrbit);
 
 private:

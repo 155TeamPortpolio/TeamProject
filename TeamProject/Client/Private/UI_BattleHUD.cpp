@@ -34,13 +34,18 @@ HRESULT CUI_BattleHUD::Initialize(INIT_DESC* pArg)
     Add_PartObject(G_GlobalLevelKey, "Proto_GameObject_Decibel", "decibel", CHILD::ULTIMATE1, _float2(50.f, 136.f));
     Add_PartObject(G_GlobalLevelKey, "Proto_GameObject_BattleHUDAction", "action", CHILD::ACTION, _float2(1178.f, 655.f));
 
+    // 이벤트 : UI_PLAYER_INIT_DESC
+    Get_Component<CEventListener>()->Add_Listener<UI_PLAYER_INIT_DESC>([&](const UI_PLAYER_INIT_DESC& desc)
+        {
+            for (_int i = 0; i < 3; ++i)
+                Set_ChildAlive(ROLE_CHILD[i], i < desc.iCount);
+        });
+
     // 이벤트 : UI_PLAYER_STATUS_DESC
     Get_Component<CEventListener>()->Add_Listener<UI_PLAYER_STATUS_DESC>([&](const UI_PLAYER_STATUS_DESC& desc)
         {
             Set_Values(desc);
         });
-
-    //UI_DeActive();   // 나중에 battleSystem에서 보이게 제어할 때 처음에는 알파 0으로 하는게 좋을 듯
 
     return S_OK;
 }

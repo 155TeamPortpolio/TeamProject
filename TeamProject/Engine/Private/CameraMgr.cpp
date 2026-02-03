@@ -77,6 +77,26 @@ void CCameraMgr::Clear(_float blendTime)
     BeginBlendTo(m_baseCamObj, blendTime);
 }
 
+void CCameraMgr::AddShakeAxis(CamShakeAxis axes, _float ampDeg, _float freq, _float dur, _float fadeOutSec)
+{
+    m_shake.AddAxis(axes, ampDeg, freq, dur, fadeOutSec);
+}
+
+void CCameraMgr::SetShakeAxis(CamShakeAxis axes, _float ampDeg, _float freq, _float dur, _float fadeOutSec)
+{
+    m_shake.SetAxis(axes, ampDeg, freq, dur, fadeOutSec);
+}
+
+void CCameraMgr::AddShakeAxisWave(CamShakeAxis axes, _float ampDeg, _float freq, _float dur, _float fadeOutSec, EaseType attackEase, EaseType decayEase)
+{
+    m_shake.AddAxisWave(axes, ampDeg, freq, dur, fadeOutSec, attackEase, decayEase);
+}
+
+void CCameraMgr::SetShakeAxisWave(CamShakeAxis axes, _float ampDeg, _float freq, _float dur, _float fadeOutSec, EaseType attackEase, EaseType decayEase)
+{
+    m_shake.SetAxisWave(axes, ampDeg, freq, dur, fadeOutSec, attackEase, decayEase);
+}
+
 CCameraMgr::CamPoseFrame CCameraMgr::CapturePose(CCamera* cam) const
 {
     CamPoseFrame pose{};

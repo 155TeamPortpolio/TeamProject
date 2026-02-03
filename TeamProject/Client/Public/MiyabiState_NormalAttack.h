@@ -20,7 +20,7 @@ private:
     _uint m_iComboIndex = 0;
 
 public:
-    static CMiyabiState_NormalAttack* Create() { return new CMiyabiState_NormalAttack(); }
+    static CMiyabiState_NormalAttack* Create();
     virtual void Free() override { __super::Free(); }
 };
 
@@ -30,7 +30,7 @@ class CMiyabiState_Attack_01 : public IBaseState<CMiyabi>
 {
 public:
     virtual void Enter(CMiyabi* pOwner) override;
-    virtual void Update(CMiyabi* pOwner, _float dt) override {}
+    virtual void Update(CMiyabi* pOwner, _float dt) override;
     virtual void Exit(CMiyabi* pOwner) override;
 
 public:
@@ -42,7 +42,7 @@ class CMiyabiState_Attack_02 : public IBaseState<CMiyabi>
 {
 public:
     virtual void Enter(CMiyabi* pOwner) override;
-    virtual void Update(CMiyabi* pOwner, _float dt) override {}
+    virtual void Update(CMiyabi* pOwner, _float dt) override;
     virtual void Exit(CMiyabi* pOwner) override;
 
 public:
@@ -54,7 +54,7 @@ class CMiyabiState_Attack_03 : public IBaseState<CMiyabi>
 {
 public:
     virtual void Enter(CMiyabi* pOwner) override;
-    virtual void Update(CMiyabi* pOwner, _float dt) override {}
+    virtual void Update(CMiyabi* pOwner, _float dt) override;
     virtual void Exit(CMiyabi* pOwner) override;
 
 public:
@@ -66,7 +66,7 @@ class CMiyabiState_Attack_04 : public IBaseState<CMiyabi>
 {
 public:
     virtual void Enter(CMiyabi* pOwner) override;
-    virtual void Update(CMiyabi* pOwner, _float dt) override {}
+    virtual void Update(CMiyabi* pOwner, _float dt) override;
     virtual void Exit(CMiyabi* pOwner) override;
 
 public:
@@ -78,7 +78,7 @@ class CMiyabiState_Attack_05 : public IBaseState<CMiyabi>
 {
 public:
     virtual void Enter(CMiyabi* pOwner) override;
-    virtual void Update(CMiyabi* pOwner, _float dt) override {}
+    virtual void Update(CMiyabi* pOwner, _float dt) override;
     virtual void Exit(CMiyabi* pOwner) override;
 
 public:
@@ -90,7 +90,7 @@ class CMiyabiState_Attack_06 : public IBaseState<CMiyabi>
 {
 public:
     virtual void Enter(CMiyabi* pOwner) override;
-    virtual void Update(CMiyabi* pOwner, _float dt) override {}
+    virtual void Update(CMiyabi* pOwner, _float dt) override;
     virtual void Exit(CMiyabi* pOwner) override;
 
 public:
@@ -102,7 +102,7 @@ class CMiyabiState_Attack_End : public IBaseState<CMiyabi>
 {
 public:
     virtual void Enter(CMiyabi* pOwner) override;
-    virtual void Update(CMiyabi* pOwner, _float dt) override;
+    virtual void Update(CMiyabi* pOwner, _float dt) override {}
     virtual void Exit(CMiyabi* pOwner) override {}
 
 public:

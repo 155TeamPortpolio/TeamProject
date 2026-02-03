@@ -50,7 +50,8 @@ void CUI_BossHUD::Update(_float dt)
     Update_HPBackGauge(fRatio, dt);
 
     // Groggy
-    Set_GaugeFill(CHILD::GAUGE_GROGGY, m_pMonsterStatus->iGroggyValue / m_fGroggyMax);
+    if (!m_pMonsterStatus->isGroggyStay)
+        Set_GaugeFill(CHILD::GAUGE_GROGGY, m_pMonsterStatus->iGroggyValue / m_fGroggyMax);
     Set_GroggyText(m_pMonsterStatus->iGroggyValue, 2);
 
     Get_Component<CObjectContainer>()->UpdateChild(dt);

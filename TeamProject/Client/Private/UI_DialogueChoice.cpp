@@ -32,7 +32,13 @@ HRESULT CUI_DialogueChoice::Initialize(INIT_DESC* pArg)
         if (!m_pBtns[i])
             continue;
 
-        m_pBtns[i]->Set_OnClick([=]() { Change_Dialogue(i); });
+        m_pBtns[i]->Set_OnClick([=]() {
+            if (m_isChosen)
+                return;
+
+            Change_Dialogue(i);
+            m_isChosen = true;
+            });
     }
 
     return S_OK;
@@ -69,6 +75,8 @@ void CUI_DialogueChoice::UI_Active(void* pArg)
         Set_ChildAnimation(CHOICES[i], 0);
         Set_ChildText(static_cast<TEXTSLOT>(i), m_pChoiceDesc[i].Text);
     }
+
+    m_isChosen = false;
 }
 
 void CUI_DialogueChoice::UI_DeActive(void* pArg)
@@ -133,12 +141,19 @@ void CUI_DialogueChoice::Cache_Children()
 
 void CUI_DialogueChoice::Update_KeyInput()
 {
+    if (m_isChosen)
+        return;
+
     char vkKey = '0';
     for (_int i = 0; i < m_iNumChoices; ++i)
     {
         if (InputDevice()->Key_Tap(vkKey + (i + 1)))
+        {
             Change_Dialogue(i);
-    }
+            m_isChosen = true;
+            return;
+        } 
+    }     
 }
 
 void CUI_DialogueChoice::Change_Dialogue(_int iIndex)
