@@ -118,11 +118,12 @@ void CJaneDoe::Awake()
 
 void CJaneDoe::Priority_Update(_float dt)
 {
-    if (m_bPassion)
+    if (m_bPassion && m_pCCT->Get_CompActive())
     {
         Update_MotionBlurQueue();
         Add_PassionMotionBlur();
     }
+
     __super::Priority_Update(dt);
 }
 
@@ -191,8 +192,7 @@ void CJaneDoe::Decrease_Passion(_float fStream)
     if (m_bPassion && m_fPassionStream == 0.f)
     {
         m_bPassion = false;
-        m_vRimLightColor = _float3(0.f, 0.f, 0.f);
-        m_fRimLightPower = 0.f;
+        Reset_RimLight();
         m_fAttackPower /= 1.25f;
     }
 }
@@ -341,6 +341,12 @@ void CJaneDoe::Update_MotionBlurQueue()
     _float4x4 worldMatrix = *m_pTransform->Get_WorldMatrix_Ptr();
     m_WorldMatrices.push_back(worldMatrix);
     m_BoneMatrices.push_back(BoneMatrices);
+}
+
+void CJaneDoe::Reset_RimLight()
+{
+    m_vRimLightColor = _float3(0.f, 0.f, 0.f);
+    m_fRimLightPower = 0.f;
 }
 
 HRESULT CJaneDoe::Initialize_StateMachine()

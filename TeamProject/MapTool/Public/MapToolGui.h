@@ -98,7 +98,8 @@ private:
 
 	/* For.BattleData */
 	BATTLE_TYPE			m_eBattlyDataType = {};
-	_float3				m_vBattleDataSize = { 1.f, 1.f, 1.f };;
+	_float3				m_vBattleDataSize = { 1.f, 1.f, 1.f };
+	_int				m_iPlayerIndex = {};
 	_int				m_iSpawnerIndex = {};
 	_int				m_iMonsterIndex = {};
 	_int				m_iEndPointIndex = {};

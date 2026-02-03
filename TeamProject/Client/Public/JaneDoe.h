@@ -46,7 +46,8 @@ public: // 행동 이벤트
     virtual void    OnDefensiveAssist()        override;
 
 public: // 모션블러
-    void Update_MotionBlurQueue();
+    void    Update_MotionBlurQueue();
+    void    Reset_RimLight();
 
 private: // 초기화
     HRESULT Initialize_StateMachine();
