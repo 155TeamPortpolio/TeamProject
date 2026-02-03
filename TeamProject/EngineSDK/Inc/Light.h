@@ -16,6 +16,7 @@ public:
 public:
 	void Render_GUI();
 	void Set_Desc(const LIGHT_DESC& desc, LIGHT_TYPE eType);
+	void Set_Desc(const LIGHT_DESC& desc);
 	_float4 Get_Position();
 	LIGHT_DESC SnapShot_Desc();
 
