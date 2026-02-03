@@ -48,14 +48,14 @@ void CGachaScreen::Awake()
 	auto pMaterialInstances = pMaterial->Get_MaterialInstances();
 
 	auto pModel = Get_Component<CModel>();
-	m_iMeshCounts = pModel->Get_MeshCount();
+	m_iMaterialInstanceCounts = pMaterialInstances.size();
 
-	m_Cols.resize(m_iMeshCounts);
-	m_Rows.resize(m_iMeshCounts);
-	m_CurrentFrameIndexs.resize(m_iMeshCounts);
-	m_MaxFrameIndexs.resize(m_iMeshCounts);
+	m_Cols.resize(m_iMaterialInstanceCounts);
+	m_Rows.resize(m_iMaterialInstanceCounts);
+	m_CurrentFrameIndexs.resize(m_iMaterialInstanceCounts);
+	m_MaxFrameIndexs.resize(m_iMaterialInstanceCounts);
 
-	for (_int idx = 0; idx <m_iMeshCounts; ++idx)
+	for (_int idx = 0; idx < m_iMaterialInstanceCounts; ++idx)
 	{
 		pMaterialInstances[idx]->Set_Param("FrameIndex", { &m_CurrentFrameIndexs[idx], "int", sizeof(_int)});
 		pMaterialInstances[idx]->Set_Param("Col", { &m_Cols[idx], "int", sizeof(_int)});
@@ -79,7 +79,7 @@ void CGachaScreen::Update(_float dt)
 	m_fElapsedTime += dt;
 	if (m_fElapsedTime > m_fFrameDuration)
 	{
-		for (_int i = 0; i < m_iMeshCounts; ++i)
+		for (_int i = 0; i < m_iMaterialInstanceCounts; ++i)
 		{
 			++m_CurrentFrameIndexs[i];
 			if (m_CurrentFrameIndexs[i] >= m_MaxFrameIndexs[i])

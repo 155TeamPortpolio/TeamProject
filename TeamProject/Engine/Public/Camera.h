@@ -38,7 +38,7 @@ public:
 				   
 	_bool          Lerp_FOV(_float dst, _float dt);
 
-	virtual void   Render_GUI() override;
+	void           Render_GUI() override;
 
 private:
 	Lens        m_lens{};
@@ -47,6 +47,6 @@ private:
 
 public:
 	static  CCamera*    Create();
-	virtual CComponent* Clone() { return new CCamera(*this); }
+	CComponent* Clone() { return new CCamera(*this); }
 };
 NS_END
