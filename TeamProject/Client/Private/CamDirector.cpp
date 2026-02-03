@@ -139,7 +139,11 @@ void CCamDirector::StartBattleIntro(CamSeqType type)
 {
     AutoTarget();
     RequestSequence(type);
-    UIDirector()->Hide_HUD(CUIDirector::HUD::BATTLE);
+
+    if (type == CamSeqType::ZeroIntro)
+        BattleSystem()->GetBattlePlayer()->QuestStart();
+
+    //UIDirector()->Hide_HUD(CUIDirector::HUD::BATTLE);
     UIDirector()->Show_SceneFrame();
 }
 

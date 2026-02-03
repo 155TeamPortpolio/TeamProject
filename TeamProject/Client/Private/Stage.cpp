@@ -194,7 +194,7 @@ void CStage::BaseIntro(CZero_Level::StageContext& context)
 		{
 			m_introFlow.AddOnce(seqId, [context]() {if (context.isFirstIn)
 			{
-				BattleSystem()->GetBattlePlayer()->QuestStart();
+				//BattleSystem()->GetBattlePlayer()->QuestStart();
 				CamDirector()->StartBattleIntro(CamSeqType::ZeroIntro);
 			}
 				});
@@ -232,6 +232,7 @@ void CStage::BossIntro(CZero_Level::StageContext& context)
 		m_introFlow.AddOnce(seqId, [this]() {CUIDirector::GetInstance()->FadeIn_Screen(1.f); });
 		m_introFlow.AddOnce(seqId, [context]() {
 			//BattleSystem()->GetBattlePlayer()->QuestStart();
+			
 			CamDirector()->StartBattleIntro(CamSeqType::BattleIntro);
 
 			});

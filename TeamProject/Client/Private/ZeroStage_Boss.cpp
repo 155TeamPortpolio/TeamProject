@@ -116,6 +116,9 @@ HRESULT CZeroStage_Boss::Enter_Stage(CZero_Level::StageContext& context)
 	Ready_Map("Zero_Level", "Zero_Boss1");
 	m_eStageStage = StageState::Entrance;
 	m_PlayerHandle = context.hPlayer;
+
+	CamDirector()->GetCharacter()->Get_Component<CCharacterController>()->Set_Position({});
+
 	BossIntro(context);
 	return S_OK;
 }
