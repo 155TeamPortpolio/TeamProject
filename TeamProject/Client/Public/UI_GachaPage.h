@@ -23,6 +23,9 @@ public:
 
 private:
 	void Create_BackButton();
+	void Create_Currency();
+	void Create_Channels();
+	void Create_Conversions();
 
 	void OnClick_Back();
 

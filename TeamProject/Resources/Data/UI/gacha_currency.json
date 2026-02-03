@@ -4,7 +4,7 @@
     "transform": {
         "anchor": 6,
         "anchorOffset": [
-            -427.0,
+            -240.0,
             20.0
         ],
         "size": [
@@ -188,7 +188,7 @@
             "transform": {
                 "anchor": 2,
                 "anchorOffset": [
-                    -97.0,
+                    -94.0,
                     -0.0
                 ],
                 "size": [
@@ -258,7 +258,7 @@
             "transform": {
                 "anchor": 2,
                 "anchorOffset": [
-                    -58.0,
+                    -54.0,
                     -0.0
                 ],
                 "size": [

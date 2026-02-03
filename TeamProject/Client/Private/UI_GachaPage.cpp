@@ -23,6 +23,9 @@ HRESULT CUI_GachaPage::Initialize(INIT_DESC* pArg)
     Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("gacha.json")));
 
     Create_BackButton();
+    Create_Currency();
+    Create_Channels();
+    Create_Conversions();
 
     //Set_Alive(false);
 
@@ -58,6 +61,44 @@ void CUI_GachaPage::Create_BackButton()
     auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_BackButton" })
         .Add_UIDesc(pDesc)
         .Build("buttonBack");
+
+    if (!pObj)
+        return;
+
+    Get_Component<CObjectContainer>()->Add_Child(pObj);
+}
+
+void CUI_GachaPage::Create_Currency()
+{
+    auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_GachaCurrency" })
+        .Build("currency");
+
+    if (!pObj)
+        return;
+
+    Get_Component<CObjectContainer>()->Add_Child(pObj);
+}
+
+void CUI_GachaPage::Create_Channels()
+{
+    for (_int i = 0; i < 8; ++i)
+    {
+        auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_GachaChannel" })
+            .Build("channel");
+
+        if (!pObj)
+            continue;
+        
+        pObj->Set_Anchor(ANCHOR::Left | ANCHOR::Top);
+        pObj->Set_AnchorOffset({ 57.f, 118.f + 88.f  * i });
+        Get_Component<CObjectContainer>()->Add_Child(pObj);
+    } 
+}
+
+void CUI_GachaPage::Create_Conversions()
+{
+    auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_GachaConversion" })
+        .Build("conversion");
 
     if (!pObj)
         return;
