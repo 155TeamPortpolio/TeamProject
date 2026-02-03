@@ -358,6 +358,7 @@
     <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\backends\imgui_impl_win32.h" />
     <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\imgui.h" />
     <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\ImGuizmo.h" />
+    <ClInclude Include="..\Public\AmbientActor.h" />
     <ClInclude Include="..\Public\Anbi.h" />
     <ClInclude Include="..\Public\AnbiState_Attack.h" />
     <ClInclude Include="..\Public\AnbiState_Idle.h" />
@@ -749,6 +750,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='EngineDebug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="..\private\AmbientActor.cpp" />
     <ClCompile Include="..\Private\Anbi.cpp" />
     <ClCompile Include="..\Private\AnbiState_Attack.cpp" />
     <ClCompile Include="..\Private\AnbiState_Idle.cpp" />

@@ -162,6 +162,8 @@ void CMapPlacedObject::Rotate_SlotData(MAPOBJ_DESC* pObjDesc)
 	}
 }
 
+#pragma endregion
+
 void CMapPlacedObject::RotatePerSec(_float dt)
 {
 	if (m_vDegreePerSec == _vector3::Zero)
@@ -185,7 +187,6 @@ void CMapPlacedObject::RotatePerSec(_float dt)
 
 	Get_Component<CTransform>()->Set_Quaternion(nextQuat);
 }
-#pragma endregion
 
 void CMapPlacedObject::Render_GUI()
 {
