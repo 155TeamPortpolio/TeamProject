@@ -1081,6 +1081,9 @@
     <Filter Include="02. GameObject\Object\Gacha\GachaProps\GachaStage\GachaResult">
       <UniqueIdentifier>{5b3fe7e7-f877-4cae-bf66-a57e17b1b328}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\Gacha">
+      <UniqueIdentifier>{74208fc4-3148-4056-87ef-d7a5dbcecbd5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -2082,6 +2085,9 @@
     <ClInclude Include="..\Public\MiyabiState_Hit.h">
       <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Hit</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UI_GachaPage.h">
+      <Filter>02. GameObject\UI\01. 2D\Gacha</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -3044,6 +3050,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\MiyabiState_Hit.cpp">
       <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Hit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_GachaPage.cpp">
+      <Filter>02. GameObject\UI\01. 2D\Gacha</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
