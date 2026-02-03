@@ -49,7 +49,8 @@ public: // 이펙트
     void Play_Effect(const string& effectTag, _fvector offsetPosition, _fvector offsetQuaternion, _bool syncTransform = true);
 
 public: // 모션블러
-    void Update_MotionBlurQueue();
+    void    Update_MotionBlurQueue();
+    void    Reset_RimLight();
 
 private: // 초기화
     HRESULT Initialize_StateMachine();
