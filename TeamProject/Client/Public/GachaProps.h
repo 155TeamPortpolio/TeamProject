@@ -12,7 +12,12 @@ private:
     virtual ~CGachaProps() DEFAULT;
 
 public:
-    virtual HRESULT Initialize_Prototype(vector<WEAPON_DESC>* Desc, _int* Index);
+    void    SetupInitialTVSequence();
+    void    PlayTVSequence();
+    void    PlayStageSpin(_int index);
+
+public:
+    virtual HRESULT Initialize_Prototype(vector<WEAPON_DESC>* Desc);
     virtual HRESULT Initialize(INIT_DESC* pArg) override;
     virtual void    Awake()                     override;
     virtual void    Priority_Update(_float dt)  override;
@@ -25,10 +30,13 @@ private:
 
 private:
     vector<WEAPON_DESC>*    m_pResultDesc = nullptr;
-    _int*                   m_pIndex = nullptr;
+
+private:
+    class CGachaTV*                 m_pTV = nullptr;
+    class CGachaStage*              m_pStage = nullptr;
 
 public:
-    static CGachaProps* Create(vector<WEAPON_DESC>* Desc, _int* Index);
+    static CGachaProps* Create(vector<WEAPON_DESC>* Desc);
     virtual CGameObject* Clone(INIT_DESC* pArg) override;
     virtual void Free() override;
 };

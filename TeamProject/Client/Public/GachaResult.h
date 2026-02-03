@@ -12,7 +12,7 @@ private:
     virtual ~CGachaResult() DEFAULT;
 
 public:
-    void SetResult(string strModel, string strMaterial);
+    void SetResult(string strModel, string strMaterial, _float4 vRot);
 
 public:
     virtual HRESULT Initialize_Prototype()      override;
