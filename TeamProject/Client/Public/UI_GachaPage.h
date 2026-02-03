@@ -22,6 +22,9 @@ public:
 	virtual void	UI_DeActive(void* pArg = nullptr) override;
 
 private:
+	_uint	m_iDenny = {};	// µ¥´Ï
+
+private:
 	void Create_BackButton();
 	void Create_Currency();
 	void Create_Channels();

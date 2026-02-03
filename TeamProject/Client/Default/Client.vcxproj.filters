@@ -3075,11 +3075,11 @@
     <ClCompile Include="..\Private\UI_GachaChannel.cpp">
       <Filter>02. GameObject\UI\01. 2D\Gacha\Channel</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\UI_GachaCurrency.cpp">
-      <Filter>02. GameObject\UI\01. 2D\Gacha\Currency</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\UI_GachaConversion.cpp">
       <Filter>02. GameObject\UI\01. 2D\Gacha\Conversion</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_GachaCurrency.cpp">
+      <Filter>02. GameObject\UI\01. 2D\Gacha\Currency</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
