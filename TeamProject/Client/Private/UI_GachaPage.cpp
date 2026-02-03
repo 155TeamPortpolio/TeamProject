@@ -133,6 +133,8 @@ void CUI_GachaPage::OnClick_Back()
 
 void CUI_GachaPage::OnClick_Conversion()
 {
+    // 확인 배너 띄우고 
+    // 확인 배너에서 확인 누르면 가챠 레벨로 넘어가고/가격만큼 데니 깎아
 }
 
 CGameObject* CUI_GachaPage::Create()

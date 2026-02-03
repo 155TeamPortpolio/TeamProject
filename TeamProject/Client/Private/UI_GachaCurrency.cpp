@@ -39,7 +39,8 @@ void CUI_GachaCurrency::Update(_float dt)
 
 void CUI_GachaCurrency::UI_Active(void* pArg)
 {
-    _int iValue = { 56 };
+    _uint iValue = {};
+    RuntimeBucket().Int64.TryGet(PersistScope::SaveSlot, "Denny", iValue);
 
     // 텍스트 슬롯 (패딩, 값) 에 값 채움
     string strValue = to_string(iValue);
