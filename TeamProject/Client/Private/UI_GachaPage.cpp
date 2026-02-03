@@ -97,13 +97,18 @@ void CUI_GachaPage::Create_Channels()
 
 void CUI_GachaPage::Create_Conversions()
 {
-    auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_GachaConversion" })
-        .Build("conversion");
+    for (_int i = 0; i < 2; ++i)
+    {
+        auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_GachaConversion" })
+            .Build("conversion");
 
-    if (!pObj)
-        return;
+        if (!pObj)
+            return;
 
-    Get_Component<CObjectContainer>()->Add_Child(pObj);
+        pObj->Set_Anchor(ANCHOR::Right | ANCHOR::Bottom);
+        pObj->Set_AnchorOffset({ -55.f - 390.f * (i + 1), -68.f });
+        Get_Component<CObjectContainer>()->Add_Child(pObj);
+    }
 }
 
 void CUI_GachaPage::OnClick_Back()
