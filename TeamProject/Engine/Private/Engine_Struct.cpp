@@ -365,3 +365,78 @@ void Engine::tagUIHandle::Release()
 	Reset();
 }
 
+LIGHT_DESC LIGHT_DESC::SpotSet()
+{
+	LIGHT_DESC desc = {};
+	desc.eType = LIGHT_TYPE::SPOTLIGHT;
+
+	desc.vLightPosition = { 0.f, 0.f, 0.f, 1.f };
+	desc.vLightDirection = { 0.f, -1.f, 0.f, 0.f };
+
+	desc.vLightDiffuse = { 1.f, 1.f, 1.f, 1.f };
+	desc.vLightAmbient = { 0.f, 0.f, 0.f, 1.f };
+	desc.vLightSpecular = { 1.f, 1.f, 1.f, 1.f };
+
+	desc.fLightIntensity = 2.5f;
+
+	desc.fLightRange = 15.f;
+
+	desc.fInnerCos = 0.966f;
+	desc.fOuterCos = 0.906f;
+
+	return desc;
+}
+
+LIGHT_DESC LIGHT_DESC::PointSet()
+{
+	LIGHT_DESC desc = {};
+	desc.eType = LIGHT_TYPE::POINT;
+
+	desc.vLightPosition = { 0.f, 0.f, 0.f, 1.f };
+	desc.vLightDirection = { 0.f, -1.f, 0.f, 0.f }; 
+
+	desc.vLightDiffuse = { 1.f, 1.f, 1.f, 1.f };
+	desc.vLightAmbient = { 0.f, 0.f, 0.f, 1.f };
+	desc.vLightSpecular = { 1.f, 1.f, 1.f, 1.f };
+
+	desc.fLightIntensity = 2.0f;
+	desc.fLightRange = 10.f;
+
+	desc.fInnerCos = 1.f;
+	desc.fOuterCos = 1.f;
+
+	return desc;
+}
+
+LIGHT_DESC LIGHT_DESC::DirectionSet()
+{
+	LIGHT_DESC desc = {};
+	desc.eType = LIGHT_TYPE::DIRECTIONAL;
+
+	desc.vLightPosition = { 0.f, 0.f, 0.f, 0.f }; 
+	desc.vLightDirection = { 0.f, -1.f, 0.f, 0.f };
+
+	desc.vLightDiffuse = { 1.f, 1.f, 1.f, 1.f };
+	desc.vLightAmbient = { 0.0f, 0.0f, 0.0f, 1.f };
+	desc.vLightSpecular = { 1.f, 1.f, 1.f, 1.f };
+
+	desc.fLightIntensity = 1.0f;
+	desc.fLightRange = 0.f;
+
+	desc.fInnerCos = 1.f;
+	desc.fOuterCos = 1.f;
+
+	return desc;
+}
+
+void LIGHT_DESC::SetSpotDegree(_float innerDeg, _float outerDeg)
+{
+	const _float innerRad = XMConvertToRadians(innerDeg);
+	const _float outerRad = XMConvertToRadians(outerDeg);
+
+	fInnerCos = cosf(innerRad * 0.5f);
+	fOuterCos = cosf(outerRad * 0.5f);
+
+	if (fInnerCos < fOuterCos)
+		swap(fInnerCos,fOuterCos);
+}

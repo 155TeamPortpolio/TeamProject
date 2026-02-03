@@ -41,10 +41,10 @@ class ENGINE_DLL CPipeLine :
 		_float4 vLightDiffuse;
 		_float4 vLightAmbient;
 		_float4 vLightSpecular;
-		_float fLightRange;
-		_float fLightIntensity;
-		_int iLightSize;
-		_float LightPadding;
+		_float	fLightRange;
+		_float	fLightIntensity;
+		_float	fInnerCos;
+		_float	fOuterCos;
 	};
 
 	struct alignas(16)  SSAOBuffer

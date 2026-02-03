@@ -10,6 +10,7 @@ private:
     {
         GANG_OUT, GANG_IN, TA_OUT, TA_IN, GANG_OUTLINE, TA_OUTLINE,
         FACTORY_OUT_01, FACTORY_OUT_02, FACTORY_IN_01, FACTORY_IN_02,
+        GANGTA_STAR,
         END
     };
 
@@ -18,6 +19,7 @@ private:
         "Gang_Out", "Gang_In", "Ta_Out", "Ta_In", "Gang_Outline", "Ta_Outline",
         "Factory_Out_01", "Factory_Out_02",
         "Factory_In_01", "Factory_In_02",
+        "Gangta_Star"
     };
 
 private:

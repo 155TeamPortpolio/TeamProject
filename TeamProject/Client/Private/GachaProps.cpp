@@ -18,16 +18,18 @@ CGachaProps::CGachaProps()
 }
 
 CGachaProps::CGachaProps(const CGachaProps& rhs)
-    :CGameObject(rhs)
+    :CGameObject(rhs), m_pResultDesc(rhs.m_pResultDesc), m_pIndex(rhs.m_pIndex)
 {
 }
 
-HRESULT CGachaProps::Initialize_Prototype()
+HRESULT CGachaProps::Initialize_Prototype(vector<WEAPON_DESC>* Desc, _int* Index)
 {
     if (FAILED(__super::Initialize_Prototype()))
         return E_FAIL;
 
     Add_Component<CObjectContainer>();
+    m_pResultDesc = Desc;
+    m_pIndex = Index;
 
     return S_OK;
 }
@@ -69,9 +71,8 @@ void CGachaProps::Late_Update(_float dt)
 HRESULT CGachaProps::Initialize_GachaPrototype()
 {
     PrototypeManager()->Add_ProtoType("Gacha_Level", "Proto_GameObject_GachaBack", CGachaBack::Create());
-    PrototypeManager()->Add_ProtoType("Gacha_Level", "Proto_GameObject_GachaTV", CGachaTV::Create());
-    PrototypeManager()->Add_ProtoType("Gacha_Level", "Proto_GameObject_GachaStage", CGachaStage::Create());
-    PrototypeManager()->Add_ProtoType("Gacha_Level", "Proto_GameObject_GachaResult", CGachaResult::Create());
+    PrototypeManager()->Add_ProtoType("Gacha_Level", "Proto_GameObject_GachaTV", CGachaTV::Create(m_pResultDesc));
+    PrototypeManager()->Add_ProtoType("Gacha_Level", "Proto_GameObject_GachaStage", CGachaStage::Create(m_pResultDesc, m_pIndex));
     return S_OK;
 }
 
@@ -102,21 +103,12 @@ void CGachaProps::Add_GachaProps()
         .Build("Stage");
 
     pObjectContainer->Add_Child(gachaStage, true);
-
-    CGameObject* gachaResult = Builder::Create_Object({ "Gacha_Level", "Proto_GameObject_GachaResult" })
-        .Collider(colliderDesc)
-        .Position(_float3(0.f, 1.45f, -1.5f))
-        .Scale(_float3(2.f,2.f,2.f))
-        .Build("Result");
-    gachaResult->Get_Component<CTransform>()->Set_Quaternion(_vector4(-0.10, 0.80, -0.28, 0.52));
-    
-    pObjectContainer->Add_Child(gachaResult, true);
 }
 
-CGachaProps* CGachaProps::Create()
+CGachaProps* CGachaProps::Create(vector<WEAPON_DESC>* Desc, _int* Index)
 {
 	CGachaProps* Instance = new CGachaProps();
-	if (FAILED(Instance->Initialize_Prototype()))
+	if (FAILED(Instance->Initialize_Prototype(Desc, Index)))
 	{
 		Safe_Release(Instance);
 		return nullptr;

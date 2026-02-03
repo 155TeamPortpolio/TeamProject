@@ -9,6 +9,7 @@
 #include "GameInstance.h"
 #include "Shader.h"
 #include "Texture.h"
+#include "DataBase.h"
 
 CGachaScreen::CGachaScreen()
 	:CGameObject()
@@ -30,7 +31,6 @@ HRESULT CGachaScreen::Initialize_Prototype()
 
     pModel->Link_Model("Gacha_Level", "TVScreen1.model");
     pMaterial->Link_Material("Gacha_Level", "TVScreen1.mat");
-
     return S_OK;
 }
 
@@ -45,17 +45,28 @@ HRESULT CGachaScreen::Initialize(INIT_DESC* pArg)
 void CGachaScreen::Awake()
 {
 	auto pMaterial = Get_Component<CMaterial>();
-
-	CTexture* pTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, "Gacha_A_Loop.png");
-	if (pTexture == nullptr) return;
-
 	auto pMaterialInstances = pMaterial->Get_MaterialInstances();
-	for (auto& instance : pMaterialInstances)
+
+	auto pModel = Get_Component<CModel>();
+	m_iMaterialInstanceCounts = pMaterialInstances.size();
+
+	m_Cols.resize(m_iMaterialInstanceCounts);
+	m_Rows.resize(m_iMaterialInstanceCounts);
+	m_CurrentFrameIndexs.resize(m_iMaterialInstanceCounts);
+	m_MaxFrameIndexs.resize(m_iMaterialInstanceCounts);
+
+	for (_int idx = 0; idx < m_iMaterialInstanceCounts; ++idx)
 	{
-		instance->Set_Param("DiffuseTexture", { pTexture->Get_SRV(), "Texture2D", 0});
-		instance->Set_Param("FrameIndex", { &m_iCurrentFrameIndex, "int", sizeof(_int)});
-		instance->Set_Param("Col", { &m_iCol, "int", sizeof(_int)});
-		instance->Set_Param("Row", { &m_iRow, "int", sizeof(_int)});
+		pMaterialInstances[idx]->Set_Param("FrameIndex", { &m_CurrentFrameIndexs[idx], "int", sizeof(_int)});
+		pMaterialInstances[idx]->Set_Param("Col", { &m_Cols[idx], "int", sizeof(_int)});
+		pMaterialInstances[idx]->Set_Param("Row", { &m_Rows[idx], "int", sizeof(_int)});
+
+		string strTexture;
+		pMaterialInstances[idx]->GetMaterialTextureKey(TEXTURE_TYPE::DIFFUSE, 0, strTexture);
+		TV_DESC Desc = CDataBase::GetInstance()->GetTVDesc(strTexture);
+		m_Cols[idx] = Desc.Col;
+		m_Rows[idx] = Desc.Row;
+		m_MaxFrameIndexs[idx] = Desc.MaxFrame;
 	}
 }
 
@@ -68,10 +79,13 @@ void CGachaScreen::Update(_float dt)
 	m_fElapsedTime += dt;
 	if (m_fElapsedTime > m_fFrameDuration)
 	{
-		++m_iCurrentFrameIndex;
+		for (_int i = 0; i < m_iMaterialInstanceCounts; ++i)
+		{
+			++m_CurrentFrameIndexs[i];
+			if (m_CurrentFrameIndexs[i] >= m_MaxFrameIndexs[i])
+				m_CurrentFrameIndexs[i] = 0;
+		}
 		m_fElapsedTime = 0.f;
-		if (m_iCurrentFrameIndex >= m_iMaxFrameIndex)
-			m_iCurrentFrameIndex = 0;
 	}
 }
 

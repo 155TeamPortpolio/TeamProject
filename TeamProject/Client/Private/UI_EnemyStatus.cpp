@@ -57,7 +57,9 @@ void CUI_EnemyStatus::Update(_float dt)
     Update_HPBackGauge(fRatio, dt);
 
     // Groggy
-    Set_GaugeFill(CHILD::GAUGE_GROGGY, m_pMonsterStatus->iGroggyValue / m_fGroggyMax);
+    // 값이 올라갈 때는 노란색, 그로기 상태에선 무지개, 내려갈 땐 회색
+    if(!m_pMonsterStatus->isGroggyStay)
+        Set_GaugeFill(CHILD::GAUGE_GROGGY, m_pMonsterStatus->iGroggyValue / m_fGroggyMax);
     Set_GroggyText(m_pMonsterStatus->iGroggyValue, 2);
 
     // 모든 하위 UI 업데이트

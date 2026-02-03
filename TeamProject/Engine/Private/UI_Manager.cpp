@@ -265,7 +265,12 @@ void CUI_Manager::Release_Subtree_ToPool(CUI_Object* root)
 
 void CUI_Manager::CleanUp()
 {
-	for (CUI_Object* obj : DeleteUIs)
+	auto snap = DeleteUIs;
+
+	DeleteUIs.clear();
+	DeleteUI_IDs.clear();
+
+	for (CUI_Object* obj : snap)
 	{
 		if (!obj) continue;
 
@@ -289,16 +294,15 @@ void CUI_Manager::CleanUp()
 		Safe_Release(vec[idx]);
 		vec[idx] = nullptr;
 	}
-	DeleteUIs.clear();
-	DeleteUI_IDs.clear();
+	auto snapRelease = m_ReleaseUIs;
+	m_ReleaseUIs.clear();
+	m_ReleaseUI_IDs.clear();
 
-	for (CUI_Object* obj : m_ReleaseUIs)
+	for (CUI_Object* obj : snapRelease)
 	{
 		if (!obj) continue;
 		Release_Subtree_ToPool(obj);
 	}
-	m_ReleaseUIs.clear();
-	m_ReleaseUI_IDs.clear();
 }
 
 static vector<CUI_Object*> emptyVec;
