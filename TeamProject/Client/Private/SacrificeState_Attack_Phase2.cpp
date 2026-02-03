@@ -139,7 +139,7 @@ void CSacrificeState_Attack_Phase2::BuildPattern(CSacrifice* pOwner)
 			}break;
 			case 1:
 			{
-				blackBoard.stateQueue.push_back("Attack04_Phase2");
+				//blackBoard.stateQueue.push_back("Attack04_Phase2");
 			}break;
 			case 2:
 			{

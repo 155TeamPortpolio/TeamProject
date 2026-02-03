@@ -37,6 +37,7 @@ private: // 초기화
     HRESULT Initialize_Transitions();
     HRESULT Initialize_Stat();
     HRESULT Initialize_Weapon();
+    HRESULT Initialize_Effects();
 
 private: // 상태 처리
     void    Update_States();

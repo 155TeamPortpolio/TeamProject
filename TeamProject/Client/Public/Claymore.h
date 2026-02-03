@@ -33,9 +33,6 @@ public:
 private:
     HRESULT Ready_Children(INIT_DESC* pArg);
 
-private:
-    vector<_int>     m_ArrowsChildIndices;
-
 public:
     /* Getter */
     CStateMachine<CClaymore>*   GetStateMachine() const { return m_pStateMachine; }

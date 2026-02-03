@@ -24,6 +24,7 @@ private:
     void ColliderGroup_SlotData(MAPOBJ_DESC* pObjDesc);
     void Effect_SlotData(MAPOBJ_DESC* pObjDesc);
     void Rotate_SlotData(MAPOBJ_DESC* pObjDesc);
+    void Animation_SlotData(MAPOBJ_DESC* pObjDesc);
 
 private:
     void RotatePerSec(_float dt);

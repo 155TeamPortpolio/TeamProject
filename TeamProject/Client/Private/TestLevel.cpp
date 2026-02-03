@@ -54,6 +54,7 @@
 #include "ThugPoacher.h"
 #include "ThugPoacher_Arrow.h"
 #include "Claymore.h"
+#include "Cyclops.h"
 
 /*npc*/
 #include "OfficeMeow.h"
@@ -152,6 +153,7 @@ HRESULT CTestLevel::Awake()
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_ThugPoacher", CThugPoacher::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_ThugPoacher_Arrow", CThugPoacher_Arrow::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Claymore", CClaymore::Create());
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Cyclops", CCyclops::Create());
 
 	CBattleSystem::GetInstance()->ReadyBattle("TrainingRoom", 1);
 	// It will be changed soooooon
