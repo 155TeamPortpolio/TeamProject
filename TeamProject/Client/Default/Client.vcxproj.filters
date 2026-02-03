@@ -1028,6 +1028,7 @@
       <UniqueIdentifier>{d1149f0e-c9f3-45bd-89e7-df5876021132}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\Object\AmbientActor\MilitaryHelicopter">
+	</Filter>
     <Filter Include="02. GameObject\Object\Enemy\Normal\EtherClaymore">
       <UniqueIdentifier>{2e91f17b-8838-42a5-8a0a-feb4f0c6e2fd}</UniqueIdentifier>
     </Filter>
