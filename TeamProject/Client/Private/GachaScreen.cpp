@@ -21,6 +21,17 @@ CGachaScreen::CGachaScreen(const CGachaScreen& rhs)
 {
 }
 
+void CGachaScreen::PlayTVSequence(vector<WEAPON_DESC>* ResultDesc)
+{
+	if (m_bIsPlaying) return;
+
+	SetMaterialInstances({
+
+		});
+
+	m_bIsPlaying = true;
+}
+
 HRESULT CGachaScreen::Initialize_Prototype()
 {
     if (FAILED(__super::Initialize_Prototype()))
@@ -46,7 +57,7 @@ void CGachaScreen::Awake()
 {
 	auto pMaterial = Get_Component<CMaterial>();
 	auto pMaterialInstances = pMaterial->Get_MaterialInstances();
-
+	
 	auto pModel = Get_Component<CModel>();
 	m_iMaterialInstanceCounts = pMaterialInstances.size();
 
@@ -91,6 +102,24 @@ void CGachaScreen::Update(_float dt)
 
 void CGachaScreen::Late_Update(_float dt)
 {
+}
+
+void CGachaScreen::SetMaterialInstances(vector<_int> ScreenIndex)
+{
+	auto pMaterial = Get_Component<CMaterial>();
+	auto pMaterialInstances = pMaterial->Get_MaterialInstances();
+	m_iMaterialInstanceCounts = pMaterialInstances.size();
+
+	for (_int idx = 0; idx < m_iMaterialInstanceCounts; ++idx)
+	{
+		string strTexture;
+		pMaterialInstances[idx]->ChangeTexture(TEXTURE_TYPE::DIFFUSE, ScreenIndex[idx]);
+		pMaterialInstances[idx]->GetMaterialTextureKey(TEXTURE_TYPE::DIFFUSE, ScreenIndex[idx], strTexture);
+		TV_DESC Desc = CDataBase::GetInstance()->GetTVDesc(strTexture);
+		m_Cols[idx] = Desc.Col;
+		m_Rows[idx] = Desc.Row;
+		m_MaxFrameIndexs[idx] = Desc.MaxFrame;
+	}
 }
 
 CGachaScreen* CGachaScreen::Create()

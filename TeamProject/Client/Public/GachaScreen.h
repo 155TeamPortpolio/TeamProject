@@ -12,12 +12,18 @@ private:
     virtual ~CGachaScreen() DEFAULT;
 
 public:
+    void PlayTVSequence(vector<WEAPON_DESC>* ResultDesc);
+
+public:
     virtual HRESULT Initialize_Prototype()      override;
     virtual HRESULT Initialize(INIT_DESC* pArg) override;
     virtual void    Awake()                     override;
     virtual void    Priority_Update(_float dt)  override;
     virtual void    Update(_float dt)           override;
     virtual void    Late_Update(_float dt)      override;
+
+private:
+    void SetMaterialInstances(vector<_int> ScreenIndex);
 
 private:
     vector<_int>    m_Cols = {4};
@@ -28,6 +34,9 @@ private:
     _float  m_fFrameDuration = 0.02f;
 
     _int            m_iMaterialInstanceCounts;
+
+    _bool           m_bIsPlaying = false;
+    _float          m_fIntervalScreenTime = 0.1f;
 
 public:
     static CGachaScreen* Create();

@@ -53,16 +53,14 @@ HRESULT CGacha_Level::Awake()
 
 void CGacha_Level::Update()
 {
-	//�ӽ�
-	if(InputDevice()->Mouse_Tap(MOUSE_BTN::LB))
+	if (InputDevice()->Mouse_Tap(MOUSE_BTN::LB))
 	{
-		CamDirector()->AbortSequenceToOrbit(true);
-		CamDirector()->RequestSequence("Gacha/Spin");
-
+		if (m_iIndex == -1) CamDirector()->RequestSequence("Gacha/Spin_Half");
+		else CamDirector()->RequestSequence("Gacha/Spin");
 		++m_iIndex;
-		if (m_iIndex >= m_iMaxIndex)
-			m_iIndex = 0;
+		if (m_iIndex >= m_iMaxIndex) m_iIndex = 0;
 	}
+	Update_CamTime();
 }
 
 HRESULT CGacha_Level::Render()
@@ -78,13 +76,29 @@ void CGacha_Level::Ready_GachaObjects()
 	auto pProto = PrototypeManager();
 	auto objMgr = ObjectManager();
 
-	pProto->Add_ProtoType("Gacha_Level", "Proto_GameObject_GachaProps", CGachaProps::Create(&m_ResultDesc, &m_iIndex));
+	pProto->Add_ProtoType("Gacha_Level", "Proto_GameObject_GachaProps", CGachaProps::Create(&m_ResultDesc));
 	auto gachaProps = Builder::Create_Object({ "Gacha_Level", "Proto_GameObject_GachaProps" })
 		.Build("GachaProps");
 
 	objMgr->Add_Object(gachaProps, { "Gacha_Level", "Gacha_Layer" });
 
 	m_GachaHandle = gachaProps->Get_Handle();
+	m_pGachaProps = dynamic_cast<CGachaProps*>(gachaProps);
+}
+
+void CGacha_Level::Update_CamTime()
+{
+	//if (CamDirector()->GetSeqPlayer()->() == "Gacha/Down")
+	//{
+	//	if (CamDirector()->GetSeqPlayer()->GetTime() >= 1.f)
+	//		m_pGachaProps->PlayTVSequence();
+	//}
+	//
+	//if (CamDirector()->GetCurrentPlayingSequence() == "Gacha/Spin")
+	//{
+	//	if (CamDirector()->GetSeqPlayer()->GetTime() >= 1.f)
+	//		m_pGachaProps->PlayStageSpin(m_iIndex);
+	//}
 }
 
 CGacha_Level* CGacha_Level::Create(const string& LevelKey)
