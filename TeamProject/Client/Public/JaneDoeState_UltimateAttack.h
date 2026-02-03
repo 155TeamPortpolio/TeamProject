@@ -37,6 +37,9 @@ public:
     virtual void Exit(CJaneDoe* pOwner) override;
 
 private:
+    void Update_Effects(CJaneDoe* pOwner);
+
+private:
     _float m_fDamageTimer = 0.f;
     const _float m_fDamageInterval = 0.15f;
     _bool m_bDamageActive = true;

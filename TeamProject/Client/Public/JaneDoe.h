@@ -45,9 +45,6 @@ public: // 행동 이벤트
     virtual void    OnPerfectDodge()           override;
     virtual void    OnDefensiveAssist()        override;
 
-public: // 이펙트
-    void Play_Effect(const string& effectTag, _fvector offsetPosition, _fvector offsetQuaternion, _bool syncTransform = true);
-
 public: // 모션블러
     void Update_MotionBlurQueue();
 
