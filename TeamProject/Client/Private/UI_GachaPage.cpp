@@ -7,7 +7,20 @@
 #include "FieldSystem.h"
 #include "UI_BackButton.h"
 
+#include "UI_GachaChannel.h"
 #include "UI_GachaConversion.h"
+
+void CUI_GachaPage::Select_Channel(CUI_Object* pSelected)
+{
+    if (m_pSelectedChannel == pSelected || !pSelected)
+        return;
+
+    if (m_pSelectedChannel)
+        m_pSelectedChannel->UI_DeActive();
+
+    m_pSelectedChannel = pSelected;
+    m_pSelectedChannel->UI_Active();
+}
 
 HRESULT CUI_GachaPage::Initialize_Prototype()
 {
@@ -85,7 +98,10 @@ void CUI_GachaPage::Create_Channels()
 {
     for (_int i = 0; i < 8; ++i)
     {
+        CUI_GachaChannel::CHANNEL_DESC* pDesc = new CUI_GachaChannel::CHANNEL_DESC;
+        pDesc->onSelect = [this](CUI_Object* pObj) { Select_Channel(pObj); };
         auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_GachaChannel" })
+            .Add_UIDesc(pDesc)
             .Build("channel");
 
         if (!pObj)

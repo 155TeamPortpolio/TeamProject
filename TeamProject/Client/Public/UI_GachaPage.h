@@ -11,6 +11,9 @@ private:
 	virtual ~CUI_GachaPage() DEFAULT;
 
 public:
+	void Select_Channel(CUI_Object* pSelected);
+
+public:
 	virtual HRESULT Initialize_Prototype()           override;
 	virtual HRESULT Initialize(INIT_DESC* pArg = {}) override;
 	virtual void	Awake()							 override;
@@ -22,6 +25,8 @@ public:
 	virtual void	UI_DeActive(void* pArg = nullptr) override;
 
 private:
+	CUI_Object* m_pSelectedChannel = {};
+
 	_uint	m_iDenny = {};	// µ¥´Ï
 
 private:
