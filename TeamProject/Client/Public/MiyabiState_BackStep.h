@@ -2,21 +2,21 @@
 #include "IHState.h"
 
 NS_BEGIN(Client)
-
 class CMiyabi;
 
-class CMiyabiState_Attack : public IHState<CMiyabi>
+class CMiyabiState_BackStep :
+    public IBaseState<CMiyabi>
 {
 public:
     virtual void Enter(CMiyabi* pOwner) override;
     virtual void Update(CMiyabi* pOwner, _float dt) override;
-    virtual void Exit(CMiyabi* pOwner) override;
+    virtual void Exit(CMiyabi* pOwner) override {}
 
 private:
-    _float      m_fHoldTime = 0.f;
+    _bool m_bEvadeType = false;
 
 public:
-    static CMiyabiState_Attack* Create();
+    static CMiyabiState_BackStep* Create() { return new CMiyabiState_BackStep(); }
     virtual void Free() override { __super::Free(); }
 };
 

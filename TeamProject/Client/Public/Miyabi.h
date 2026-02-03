@@ -18,14 +18,19 @@ public:
     virtual void    Update(_float dt) override;
     virtual void    Late_Update(_float dt) override;
     virtual void    Render_GUI() override;
-    //void            Render_OutLine(ID3D11DeviceContext* pContext, _uint idx);
-
+    //void          Render_OutLine(ID3D11DeviceContext* pContext, _uint idx);
+    
 public: // 상태머신
     CStateMachine<CMiyabi>* Get_StateMachine() { return m_pStateMachine; }
 
 public: // 타겟팅
     _bool   Is_LookTarget() const { return m_bLookTarget; }
     void    Set_LookTarget(_bool bLook) { m_bLookTarget = bLook; }
+
+public: // 서리
+    _bool   Has_Frost() const { return m_iFrost > 0; }
+    void    Increase_Frost(_uint iFrost);
+    void    Decrease_Frost(_uint iFrost);
 
 public: // 행동 이벤트
     virtual void    Reset_State()              override;
@@ -61,6 +66,11 @@ private:
 
     // 타겟팅
     _bool   m_bLookTarget = true;
+
+    // 서리
+    _uint   m_iFrost = { 0 };
+
+    _uint   MAX_FROST = { 6 };
 
 public:
     static CMiyabi* Create();
