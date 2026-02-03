@@ -7,6 +7,8 @@
 #include "FieldSystem.h"
 #include "UI_BackButton.h"
 
+#include "UI_GachaConversion.h"
+
 HRESULT CUI_GachaPage::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
@@ -97,16 +99,29 @@ void CUI_GachaPage::Create_Channels()
 
 void CUI_GachaPage::Create_Conversions()
 {
-    for (_int i = 0; i < 2; ++i)
+    static const _int iMaxCount = 2;
+    static const _int COSTS[2] = { 10000, 100000 };
+    static const _int COUNTS[2] = { 1, 10 }; 
+
+    for (_int i = 0; i < iMaxCount; ++i)
     {
+        CUI_GachaConversion::CONVERSION_DESC* pDesc = new CUI_GachaConversion::CONVERSION_DESC;
+        pDesc->iCost = COSTS[i];
+        pDesc->iCount = COUNTS[i];
+        pDesc->onClick = [this]() { OnClick_Conversion(); };
+
         auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_GachaConversion" })
+            .Add_UIDesc(pDesc)
             .Build("conversion");
 
         if (!pObj)
             return;
 
+        _float fStartX = -55.f - 390.f * iMaxCount;
+        _float fSpacing = 390.f;
+
         pObj->Set_Anchor(ANCHOR::Right | ANCHOR::Bottom);
-        pObj->Set_AnchorOffset({ -55.f - 390.f * (i + 1), -68.f });
+        pObj->Set_AnchorOffset({ fStartX + fSpacing * i, -68.f });
         Get_Component<CObjectContainer>()->Add_Child(pObj);
     }
 }
@@ -114,6 +129,10 @@ void CUI_GachaPage::Create_Conversions()
 void CUI_GachaPage::OnClick_Back()
 {
     FieldSystem()->RequestExitTop();
+}
+
+void CUI_GachaPage::OnClick_Conversion()
+{
 }
 
 CGameObject* CUI_GachaPage::Create()

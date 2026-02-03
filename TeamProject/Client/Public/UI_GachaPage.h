@@ -31,6 +31,7 @@ private:
 	void Create_Conversions();
 
 	void OnClick_Back();
+	void OnClick_Conversion();
 
 public:
 	static  CGameObject* Create();
