@@ -40,10 +40,6 @@ void CBattlePlayer::Awake()
     desc.eMode = UI_ACTION_PRIMARY_MODE::ATTACK;
     EventSystem()->Broadcast<UI_ACTION_PRIMARY_DESC>({ desc });
 
-    UI_PLAYER_INIT_DESC initdesc;
-    initdesc.iCount = 3;
-    EventSystem()->Broadcast<UI_PLAYER_INIT_DESC>({ initdesc });
-
     m_bAwaked = true;
 }
 
@@ -630,6 +626,10 @@ void CBattlePlayer::Update_Target()
 
 void CBattlePlayer::Update_Status()
 {
+    UI_PLAYER_INIT_DESC initdesc;
+    initdesc.iCount = m_BattleCharacters.size();
+    EventSystem()->Broadcast<UI_PLAYER_INIT_DESC>({ initdesc });
+
     for (_uint i = 0; i < m_BattleCharacters.size() && i < 3; ++i)
     {
         CCharacter* pCharacter = m_BattleCharacters[i];
@@ -689,7 +689,8 @@ CGameObject* CBattlePlayer::CreateBattleCharacter(CHARACTER character)
 {
     CCT_DESC characterCCT;
     characterCCT.eGroup = COLLISION_GROUP::PLAYER;
-    characterCCT.iCollisionMask = 0xFFFFFFFF;
+    characterCCT.iCollisionMask = 0xFFFFFFFF - 
+        (ENUM(COLLISION_GROUP::PLAYER) | ENUM(COLLISION_GROUP::PLAYER_ATTACK));
     characterCCT.bAutoFit = false;
     characterCCT.fHeight = 1.13;
     characterCCT.fRadius = 0.3f;
