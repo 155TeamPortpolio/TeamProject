@@ -11,11 +11,10 @@ class CZero_Level : public CLevel
 {
 public:
 	typedef struct tagStageContext {
-		_bool isFirstIn = {};
-		StageType eStageType;
-		_int StageID = { -1 };
-		class CStage* pNowStage = { nullptr };
-		OBJECT_HANDLE hPlayer = {};
+		_bool			isFirstIn = {};
+		StageType		eStageType = {StageType::Normal};
+		OBJECT_HANDLE	hPlayer = {};
+		class CStage*	pNowStage = { nullptr };
 	}StageContext;
 
 private:
@@ -29,9 +28,13 @@ public:
 	virtual HRESULT Render()     override;
 
 public:
-	static void PreLoad_Level();
 	StageContext& Get_StageContext() { return m_Context; };
-	HRESULT ChangeStage(StageType nextStageType, _int StageID);
+	HRESULT ChangeStage();
+
+private:
+	void Ready_Prototype();
+	void Ready_Stage();
+
 
 private:
 	CGameInstance* m_pGameInstance = {nullptr};

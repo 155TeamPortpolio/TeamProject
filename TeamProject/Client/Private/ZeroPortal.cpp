@@ -21,6 +21,10 @@ CZeroPortal::CZeroPortal(const CZeroPortal& rhs)
 {
 }
 
+//ResourceManager()->Add_ResourcePath("Eff_Objects_048.png", "../Bin/Resources/Effect/Texture/Eff_Objects_048.png");
+//ResourceManager()->Add_ResourcePath("Eff_Noise_092.png", "../Bin/Resources/Effect/Texture/Eff_Noise_092.png");
+//ResourceManager()->Add_ResourcePath("Eff_Noise_097_LYX_01.png", "../Bin/Resources/Effect/Texture/Eff_Noise_097_LYX_01.png");
+
 HRESULT CZeroPortal::Initialize_Prototype()
 {
 	if (FAILED(__super::Initialize_Prototype()))
@@ -29,10 +33,6 @@ HRESULT CZeroPortal::Initialize_Prototype()
 	Add_Component<CEventListener>();
 	Add_Component<CPlaneModel>();
 	Add_Component<CMaterial>();
-
-	ResourceManager()->Add_ResourcePath("Eff_Objects_048.png", "../Bin/Resources/Effect/Texture/Eff_Objects_048.png");
-	ResourceManager()->Add_ResourcePath("Eff_Noise_092.png", "../Bin/Resources/Effect/Texture/Eff_Noise_092.png");
-	ResourceManager()->Add_ResourcePath("Eff_Noise_097_LYX_01.png", "../Bin/Resources/Effect/Texture/Eff_Noise_097_LYX_01.png");
 
 	auto pModel = Get_Component<CPlaneModel>();
 	pModel->Link_Model(G_GlobalLevelKey, "Engine_Default_Rect");
@@ -44,12 +44,11 @@ HRESULT CZeroPortal::Initialize_Prototype()
 	auto MaterialDat = customInstance->Get_MaterialData();
 	if (MaterialDat)
 		MaterialDat->Link_Shader(G_GlobalLevelKey, "VTX_Portal.hlsl")  ;
+
 	customInstance->Get_MaterialData()->Link_Texture(G_GlobalLevelKey, "Eff_Objects_048.png", TEXTURE_TYPE::DIFFUSE);
 	customInstance->Get_MaterialData()->Link_Texture(G_GlobalLevelKey, "Eff_Noise_092.png", TEXTURE_TYPE::NOISE);
 	customInstance->Get_MaterialData()->Link_Texture(G_GlobalLevelKey, "Eff_Noise_097_LYX_01.png", TEXTURE_TYPE::AMBIENT);
 
-	m_eRenderLayer = RENDER_LAYER::None;
-	m_isAlive = false;
 	return S_OK;
 }
 
@@ -57,14 +56,6 @@ HRESULT CZeroPortal::Initialize(INIT_DESC* pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
-
-	Get_Component<CEventListener>()->Add_Listener<STAGE_CHANGED_DESC>([&](STAGE_CHANGED_DESC desc)
-		{
-			m_pTargetStage = desc.pStage;
-			m_eRenderLayer = RENDER_LAYER::Default;
-			m_isAlive = true;
-		});
-
 	return S_OK;
 }
 
@@ -79,7 +70,6 @@ void CZeroPortal::Awake()
 	{
 		pMaterial->Add_MaterialData(Instance, "g_Time", { &m_Time, "float", sizeof(_float) });
 	}
-
 
 }
 

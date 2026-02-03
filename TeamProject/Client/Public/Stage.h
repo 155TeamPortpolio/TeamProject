@@ -21,6 +21,12 @@ protected:
 		vector<_float3>	 SpawnPoint;
 	};
 
+	struct PlayerSRT
+	{
+		_float4 pos;
+		_float3 rotation;
+	};
+
 	struct StageContext{
 
 		StageType eStageType;
@@ -37,10 +43,8 @@ public:
 	virtual void    Update()PURE;
 
 public:
-	virtual HRESULT Ready_Stage(CZero_Level::StageContext& context)PURE;
 	virtual HRESULT Enter_Stage(CZero_Level::StageContext& context)PURE;
-	virtual HRESULT Exit_Stage(CZero_Level::StageContext& context)PURE;
-
+	virtual HRESULT Exit_Stage(CZero_Level::StageContext& context);
 	virtual void StageChangeOn(StageType nextStageType, _int StageID);
 
 protected:
@@ -48,6 +52,7 @@ protected:
 	virtual void Reserve_Enemy(const string& LevelTag);
 	virtual void Active_Enemy();
 	virtual void Active_Player(PlayerPoint pointType);
+	virtual void Active_Portal();
 
 protected:
 	void BaseIntro(CZero_Level::StageContext& context);
@@ -61,10 +66,9 @@ private:
 	HRESULT ReadyMonsterData(const string& LevelTag, const string& AreaTag);
 
 protected:
-	_float m_fStageTime = {};
 	class CZero_Level* m_pOwnerLevel = { nullptr };
-
-	StageState m_eStageStage = {StageState::None };
+	StageState	m_eStageStage = {StageState::None };
+	StageType	m_eType = {};
 
 	/*연출*/
 	EffectFlow m_introFlow;
@@ -72,16 +76,18 @@ protected:
 	EffectFlow m_outroFlow;
 	_bool m_outroFlowBuilt = false;
 
-	StageContext m_Context;
-
 	/*데이터 - 몬스터*/
 	Combined_MonsterData m_MonsterData = {};
 	vector<class CGameObject*> m_pMonsters;
 
 	/*데이터 - 플레이어*/
 	OBJECT_HANDLE m_PlayerHandle = {};
-	array<_float4, ENUM(PlayerPoint::End)> m_PlayerPoint;
+	array<PlayerSRT, ENUM(PlayerPoint::End)> m_PlayerPoint;
 
+	/*데이터 - 스테이지 포탈*/
+	vector<class CGameObject*> m_pPortals;
+
+	/*데이터 - 맵 유형 개수*/
 public:
     virtual void Free();
 };

@@ -11,7 +11,7 @@ namespace Client {
 		_float			fRadius = {};			// CCT 로컬 원점으로부터 반지름
 		void Reset() {
 			TagInstanceName.clear();
-			hObject.Reset();
+			hObject.Delete();
 			isOnField = false;
 			vPos = {};
 			fRadius = { 0.f };

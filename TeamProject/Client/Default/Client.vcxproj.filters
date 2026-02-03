@@ -31,9 +31,6 @@
     <Filter Include="02. GameObject\Object">
       <UniqueIdentifier>{ee0b304b-250c-46e2-9366-5f47d592f662}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Object\TestObject">
-      <UniqueIdentifier>{0e6fbf4f-e3f7-4fbe-b297-96bd81424db0}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\Camera\00. CamObject">
       <UniqueIdentifier>{e0bba242-799e-4a24-b080-7db510093c47}</UniqueIdentifier>
     </Filter>
@@ -64,32 +61,8 @@
     <Filter Include="03. Utility">
       <UniqueIdentifier>{29ed2e80-51e7-4b83-bf45-611f7b08c5f5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Object\TestMap">
-      <UniqueIdentifier>{114539f5-03f2-4556-955b-1a6e3209f1d2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\TestFloor">
-      <UniqueIdentifier>{9a786c78-55f1-4399-939f-533a9bc4aecf}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\TestObject\State">
-      <UniqueIdentifier>{085a852c-00e6-436e-a955-b9fee3ab278d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\TestObject\State\Idle">
-      <UniqueIdentifier>{bc6ffaeb-519b-4208-991d-1a58048fb437}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\TestObject\State\Walk">
-      <UniqueIdentifier>{54bd1bb6-306c-476c-b2e1-2d74297b5b30}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\TestObject\State\Jump">
-      <UniqueIdentifier>{23e2d573-702d-416e-9396-0a1c9ea17b26}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\TestObject\State\Dash">
-      <UniqueIdentifier>{2327218e-4663-4e02-baa7-6d285208b6dc}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\Object\Enemy">
       <UniqueIdentifier>{b66aa194-a926-4d74-9e5d-a9dc4d525f95}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\TestCloud">
-      <UniqueIdentifier>{25fda550-74fc-4087-a876-d429ed1ca86e}</UniqueIdentifier>
     </Filter>
     <Filter Include="03. Utility\00. MapLoader">
       <UniqueIdentifier>{b225c53e-224c-4830-98f3-48fbbeb76845}</UniqueIdentifier>
@@ -108,9 +81,6 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Player\Character">
       <UniqueIdentifier>{eeb033b4-780f-4eeb-930b-50f8ab6baf67}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\TestPlane">
-      <UniqueIdentifier>{1bb9fb41-6674-49a3-9da6-bd39a0ff8454}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\Camera\05. ShadowCam">
       <UniqueIdentifier>{54711cba-0d76-43fd-b108-03e7250725a9}</UniqueIdentifier>
@@ -258,9 +228,6 @@
     </Filter>
     <Filter Include="02. GameObject\UI\02. 3D\Plane\IconLabel">
       <UniqueIdentifier>{3e2a37e2-c5e9-4d9d-b5ff-033ee76f6b0f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Level\04. Zero\Stage_Normal\ZeroStage_1_1">
-      <UniqueIdentifier>{31799f7e-c42c-4ec3-9e5e-e5a6f39f378c}</UniqueIdentifier>
     </Filter>
     <Filter Include="03. Utility\06. FieldSystem">
       <UniqueIdentifier>{8f93581d-d66b-4732-9c1c-97298cb6889a}</UniqueIdentifier>
@@ -931,9 +898,6 @@
     <Filter Include="03. Utility\10. VideoDecoder">
       <UniqueIdentifier>{842cbfe9-dc9e-47db-9dfe-d0e21c570f36}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Object\TestUI">
-      <UniqueIdentifier>{b91a27c1-4713-4ef5-94df-7ee719c4d4ed}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\UI\01. 2D\Ramen\AttributeIcon">
       <UniqueIdentifier>{07fca487-bd7e-40a2-8e75-7b49fe25f31b}</UniqueIdentifier>
     </Filter>
@@ -975,9 +939,6 @@
     </Filter>
     <Filter Include="03. Utility\11. Gui_Panel\00. MonsterSpawnPanel">
       <UniqueIdentifier>{baab1bb3-30ce-4b98-8c82-4df607affe62}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Level\05. Gacha">
-      <UniqueIdentifier>{fa9bd871-fe4c-4859-8b99-9123ce93fc2d}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\Object\Gacha">
       <UniqueIdentifier>{858b15a4-6c43-48b1-893b-d5dc3866306a}</UniqueIdentifier>
@@ -1084,6 +1045,48 @@
     <Filter Include="03. Utility\08. CamDirector\02. CamDebugInput">
       <UniqueIdentifier>{0ab884f1-7b9a-4ad0-91d2-f1ac84773eec}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Test">
+      <UniqueIdentifier>{aa1a75b6-8971-4b7d-b987-d96df16ea11a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Test\TestCloud">
+      <UniqueIdentifier>{25fda550-74fc-4087-a876-d429ed1ca86e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Test\TestFloor">
+      <UniqueIdentifier>{9a786c78-55f1-4399-939f-533a9bc4aecf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Test\TestMap">
+      <UniqueIdentifier>{114539f5-03f2-4556-955b-1a6e3209f1d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Test\TestObject">
+      <UniqueIdentifier>{0e6fbf4f-e3f7-4fbe-b297-96bd81424db0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Test\TestObject\State">
+      <UniqueIdentifier>{085a852c-00e6-436e-a955-b9fee3ab278d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Test\TestObject\State\Idle">
+      <UniqueIdentifier>{bc6ffaeb-519b-4208-991d-1a58048fb437}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Test\TestObject\State\Walk">
+      <UniqueIdentifier>{54bd1bb6-306c-476c-b2e1-2d74297b5b30}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Test\TestObject\State\Jump">
+      <UniqueIdentifier>{23e2d573-702d-416e-9396-0a1c9ea17b26}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Test\TestObject\State\Dash">
+      <UniqueIdentifier>{2327218e-4663-4e02-baa7-6d285208b6dc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Test\TestPlane">
+      <UniqueIdentifier>{1bb9fb41-6674-49a3-9da6-bd39a0ff8454}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Test\TestUI">
+      <UniqueIdentifier>{b91a27c1-4713-4ef5-94df-7ee719c4d4ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Level\04. Zero\StageRouter">
+      <UniqueIdentifier>{39ef1038-9b5d-47be-9f01-e97529314cff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Level\05. Gacha">
+      <UniqueIdentifier>{fa9bd871-fe4c-4859-8b99-9123ce93fc2d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1117,7 +1120,7 @@
       <Filter>97. GUI_Inc\Guizmo</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\TestObject.h">
-      <Filter>02. GameObject\Object\TestObject</Filter>
+      <Filter>02. GameObject\Test\TestObject</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\FreeCam.h">
       <Filter>02. GameObject\Camera\02. FreeCam</Filter>
@@ -1150,7 +1153,7 @@
       <Filter>99. Defines</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\TestMap.h">
-      <Filter>02. GameObject\Object\TestMap</Filter>
+      <Filter>02. GameObject\Test\TestMap</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\IBaseState.h">
       <Filter>03. Utility\01. HFSM</Filter>
@@ -1162,7 +1165,7 @@
       <Filter>03. Utility\01. HFSM</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\TestFloor.h">
-      <Filter>02. GameObject\Object\TestFloor</Filter>
+      <Filter>02. GameObject\Test\TestFloor</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\MapData_Defines.h">
       <Filter>03. Utility\00. MapLoader</Filter>
@@ -1171,16 +1174,16 @@
       <Filter>03. Utility\00. MapLoader</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\TestState_Idle.h">
-      <Filter>02. GameObject\Object\TestObject\State\Idle</Filter>
+      <Filter>02. GameObject\Test\TestObject\State\Idle</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\TestState_Walk.h">
-      <Filter>02. GameObject\Object\TestObject\State\Walk</Filter>
+      <Filter>02. GameObject\Test\TestObject\State\Walk</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\TestState_Jump.h">
-      <Filter>02. GameObject\Object\TestObject\State\Jump</Filter>
+      <Filter>02. GameObject\Test\TestObject\State\Jump</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\TestState_Dash.h">
-      <Filter>02. GameObject\Object\TestObject\State\Dash</Filter>
+      <Filter>02. GameObject\Test\TestObject\State\Dash</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Character.h">
       <Filter>02. GameObject\Object\Player\Character</Filter>
@@ -1285,7 +1288,7 @@
       <Filter>02. GameObject\Object\Enemy\Boss\Sacrifice\State\Evade\Phase1</Filter>
     </ClInclude>
     <ClInclude Include="..\public\TestCloud.h">
-      <Filter>02. GameObject\Object\TestCloud</Filter>
+      <Filter>02. GameObject\Test\TestCloud</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\SacrificeState_Walk.h">
       <Filter>02. GameObject\Object\Enemy\Boss\Sacrifice\State\Walk</Filter>
@@ -1360,7 +1363,7 @@
       <Filter>99. Defines</Filter>
     </ClInclude>
     <ClInclude Include="..\public\TestPlane.h">
-      <Filter>02. GameObject\Object\TestPlane</Filter>
+      <Filter>02. GameObject\Test\TestPlane</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\SacrificeState_Parry.h">
       <Filter>02. GameObject\Object\Enemy\Boss\Sacrifice\State\Parry</Filter>
@@ -1646,9 +1649,6 @@
     </ClInclude>
     <ClInclude Include="..\Public\UI_WorldToScreen.h">
       <Filter>02. GameObject\UI\02. 3D\Plane</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\ZeroStage_1_1.h">
-      <Filter>01. Level\04. Zero\Stage_Normal\ZeroStage_1_1</Filter>
     </ClInclude>
     <ClInclude Include="..\public\ThugAssaulter_Groggy.h">
       <Filter>02. GameObject\Object\Enemy\Normal\ThugAssaulter\State\Groggy</Filter>
@@ -1963,7 +1963,7 @@
       <Filter>03. Utility\11. Gui_Panel\01. VideoPanel</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\TestVideo.h">
-      <Filter>02. GameObject\Object\TestUI</Filter>
+      <Filter>02. GameObject\Test\TestUI</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UI_BackButton.h">
       <Filter>02. GameObject\UI\01. 2D\BackButton</Filter>
@@ -2088,6 +2088,9 @@
     <ClInclude Include="..\public\CamDebugInput.h">
       <Filter>03. Utility\08. CamDirector\02. CamDebugInput</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\StageRouter.h">
+      <Filter>01. Level\04. Zero\StageRouter</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2137,7 +2140,7 @@
       <Filter>01. Level</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\TestObject.cpp">
-      <Filter>02. GameObject\Object\TestObject</Filter>
+      <Filter>02. GameObject\Test\TestObject</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\FreeCam.cpp">
       <Filter>02. GameObject\Camera\02. FreeCam</Filter>
@@ -2167,25 +2170,25 @@
       <Filter>03. Utility\00. MapLoader</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\TestMap.cpp">
-      <Filter>02. GameObject\Object\TestMap</Filter>
+      <Filter>02. GameObject\Test\TestMap</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\StateParameter.cpp">
       <Filter>03. Utility\01. HFSM</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\TestFloor.cpp">
-      <Filter>02. GameObject\Object\TestFloor</Filter>
+      <Filter>02. GameObject\Test\TestFloor</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\TestState_Idle.cpp">
-      <Filter>02. GameObject\Object\TestObject\State\Idle</Filter>
+      <Filter>02. GameObject\Test\TestObject\State\Idle</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\TestState_Walk.cpp">
-      <Filter>02. GameObject\Object\TestObject\State\Walk</Filter>
+      <Filter>02. GameObject\Test\TestObject\State\Walk</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\TestState_Jump.cpp">
-      <Filter>02. GameObject\Object\TestObject\State\Jump</Filter>
+      <Filter>02. GameObject\Test\TestObject\State\Jump</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\TestState_Dash.cpp">
-      <Filter>02. GameObject\Object\TestObject\State\Dash</Filter>
+      <Filter>02. GameObject\Test\TestObject\State\Dash</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Character.cpp">
       <Filter>02. GameObject\Object\Player\Character</Filter>
@@ -2281,7 +2284,7 @@
       <Filter>02. GameObject\Object\Enemy\Boss\Sacrifice\State\Evade\Phase1</Filter>
     </ClCompile>
     <ClCompile Include="..\private\TestCloud.cpp">
-      <Filter>02. GameObject\Object\TestCloud</Filter>
+      <Filter>02. GameObject\Test\TestCloud</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\SacrificeHandState_Idle.cpp">
       <Filter>02. GameObject\Object\Enemy\Boss\Sacrifice_Hand\State\Idle</Filter>
@@ -2353,7 +2356,7 @@
       <Filter>02. GameObject\Object\Player\Character\02. Corin\State\Attack\Normal</Filter>
     </ClCompile>
     <ClCompile Include="..\private\TestPlane.cpp">
-      <Filter>02. GameObject\Object\TestPlane</Filter>
+      <Filter>02. GameObject\Test\TestPlane</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\SacrificeState_Parry.cpp">
       <Filter>02. GameObject\Object\Enemy\Boss\Sacrifice\State\Parry</Filter>
@@ -2636,9 +2639,6 @@
     </ClCompile>
     <ClCompile Include="..\Private\UI_WorldToScreen.cpp">
       <Filter>02. GameObject\UI\02. 3D\Plane</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\ZeroStage_1_1.cpp">
-      <Filter>01. Level\04. Zero\Stage_Normal\ZeroStage_1_1</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\FieldSystem.cpp">
       <Filter>03. Utility\06. FieldSystem</Filter>
@@ -2931,7 +2931,7 @@
       <Filter>03. Utility\11. Gui_Panel\01. VideoPanel</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\TestVideo.cpp">
-      <Filter>02. GameObject\Object\TestUI</Filter>
+      <Filter>02. GameObject\Test\TestUI</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UI_BackButton.cpp">
       <Filter>02. GameObject\UI\01. 2D\BackButton</Filter>
@@ -3053,6 +3053,9 @@
     </ClCompile>
     <ClCompile Include="..\private\CamDebugInput.cpp">
       <Filter>03. Utility\08. CamDirector\02. CamDebugInput</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\StageRouter.cpp">
+      <Filter>01. Level\04. Zero\StageRouter</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

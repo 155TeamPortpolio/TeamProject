@@ -42,25 +42,15 @@
 #include "JaneDoe.h"
 #include "Player.h"
 
-/* Enemy */
-#include "Sacrifice.h" 
-#include "SacrificeHand.h"
-#include "Sacrifice_Laser.h"
-#include "Sacrifice_Orb.h"
-#include "ThugBulkyEnforcer.h"
-#include "EnemyAttackCollider.h"
-#include "EnemyTriggerCollider.h"
-#include "ThugAssaulter.h"
-
 /* UI */
 #include "UIDirector.h"
 #include "UI_MeshBillboard.h"
 
-#include "GameInstance.h"
 #include "Layer.h"
 
 CZeroStage_Boss::CZeroStage_Boss()
 {
+	m_eType = StageType::Boss;
 }
 
 HRESULT CZeroStage_Boss::Initialize(CZero_Level* pOwnerLevel)
@@ -78,10 +68,7 @@ HRESULT CZeroStage_Boss::Awake()
 
 void CZeroStage_Boss::Update()
 {
-
-
 	float dt = TimeManager()->Get_RawDeltaTime(G_EngineTimerID);
-	m_fStageTime += dt;
 
 	switch (m_eStageStage)
 	{
@@ -106,10 +93,6 @@ void CZeroStage_Boss::Update()
 	}
 }
 
-HRESULT CZeroStage_Boss::Ready_Stage(CZero_Level::StageContext& context)
-{
-	return S_OK;
-}
 
 HRESULT CZeroStage_Boss::Enter_Stage(CZero_Level::StageContext& context)
 {
@@ -117,12 +100,6 @@ HRESULT CZeroStage_Boss::Enter_Stage(CZero_Level::StageContext& context)
 	m_eStageStage = StageState::Entrance;
 	m_PlayerHandle = context.hPlayer;
 	BossIntro(context);
-	return S_OK;
-}
-
-HRESULT CZeroStage_Boss::Exit_Stage(CZero_Level::StageContext& context)
-{
-	ObjectManager()->Get_Layer({ "Zero_Level","PlacedObject_Layer" })->Clear_Layer();
 	return S_OK;
 }
 
@@ -158,10 +135,7 @@ void CZeroStage_Boss::Outro()
 void CZeroStage_Boss::End()
 {
 	if (m_outroFlow.IsDoneAll()) {
-		RenderSystem()->UnRegister_AddictiveColor();
-		ObjectManager()->Get_Layer({ "Zero_Level","PlacedObject_Layer" })->Clear_Layer();
-		ObjectManager()->Get_Layer({ "Zero_Level","InteractableObject_Layer" })->Clear_Layer();
-		m_pOwnerLevel->ChangeStage(StageType::Boss, 0);
+		m_pOwnerLevel->ChangeStage();
 	}
 }
 
