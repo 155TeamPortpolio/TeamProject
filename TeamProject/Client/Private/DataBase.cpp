@@ -624,20 +624,20 @@ HRESULT CDataBase::LoadRamenData(const string& csvPath)
 HRESULT CDataBase::LoadGachaResultData(const string& csvPath)
 {
 	io::CSVReader<
-		12,
+		13,
 		io::trim_chars<' ', '\t'>,
 		io::double_quote_escape<',', '"'>
 	>in(csvPath);
 
 	in.read_header(
 		io::ignore_extra_column | io::ignore_missing_column,
-		"ID", "Grade", "Model", "Mat", "Texture", "RotX", "RotY", "RotZ", "RotW", "Meta", "Start", "Loop"
+		"ID", "Grade", "Model", "Mat", "Texture", "Label", "RotX", "RotY", "RotZ", "RotW", "Meta", "Start", "Loop"
 	);
-	string			Grade, Model, Material, Texture, Meta, Start, Loop;
+	string			Grade, Model, Material, Texture, Label, Meta, Start, Loop;
 	_int			ID;
 	_float			RotX, RotY, RotZ, RotW;
 
-	while (in.read_row(ID, Grade, Model, Material,Texture, RotX, RotY, RotZ, RotW, Meta, Start, Loop))
+	while (in.read_row(ID, Grade, Model, Material,Texture, Label, RotX, RotY, RotZ, RotW, Meta, Start, Loop))
 	{
 		if (ID == -1) continue;
 
@@ -647,6 +647,7 @@ HRESULT CDataBase::LoadGachaResultData(const string& csvPath)
 		desc.strModel = Model;
 		desc.strMaterial = Material;
 		desc.strTexture = Texture;
+		desc.strLabel = Helper::ConvertToWideString(Label);
 		desc.RotX = RotX;
 		desc.RotY = RotY;
 		desc.RotZ = RotZ;

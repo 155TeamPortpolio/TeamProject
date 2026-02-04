@@ -146,6 +146,7 @@ namespace Client {
 		string		strModel;
 		string		strMaterial;
 		string		strTexture;
+		wstring		strLabel;
 		_float		RotX;
 		_float		RotY;
 		_float		RotZ;
