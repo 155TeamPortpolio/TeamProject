@@ -21,26 +21,26 @@
         },
         "vLightDiffuse": {
           "x": 1.0,
-          "y": 0.0,
-          "z": 0.0,
+          "y": 1.0,
+          "z": 1.0,
           "w": 0.0
         },
         "vLightAmbient": {
           "x": 1.0,
-          "y": 0.0,
-          "z": 0.0,
+          "y": 1.0,
+          "z": 1.0,
           "w": 0.0
         },
         "vLightSpecular": {
           "x": 1.0,
-          "y": 0.0,
-          "z": 0.0,
+          "y": 1.0,
+          "z": 1.0,
           "w": 0.0
         },
-        "fLightRange": 1.0,
-        "fLightIntensity": 10.0,
-        "fInnerCos": 1.0,
-        "fOuterCos": 1.0
+        "fLightRange": 50.0,
+        "fLightIntensity": 5.0,
+        "fInnerCos": 5.0,
+        "fOuterCos": 50.0
       },
       "vTranslation": [
         -1.695296049118042,
@@ -65,27 +65,27 @@
           "w": 0.2424507737159729
         },
         "vLightDiffuse": {
-          "x": 0.0,
-          "y": 0.0,
-          "z": 0.0,
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0,
           "w": 0.0
         },
         "vLightAmbient": {
-          "x": 0.0,
-          "y": 0.0,
-          "z": 0.0,
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0,
           "w": 0.0
         },
         "vLightSpecular": {
-          "x": 0.0,
-          "y": 0.0,
-          "z": 0.0,
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0,
           "w": 0.0
         },
-        "fLightRange": 1.0,
-        "fLightIntensity": 3.0,
-        "fInnerCos": 0.949999988079071,
-        "fOuterCos": 0.8500000238418579
+        "fLightRange": 50.0,
+        "fLightIntensity": 5.0,
+        "fInnerCos": 5.0,
+        "fOuterCos": 50.0
       },
       "vTranslation": [
         1.6966476440429688,
@@ -110,27 +110,27 @@
           "w": -0.21451063454151154
         },
         "vLightDiffuse": {
-          "x": 0.0,
-          "y": 0.0,
-          "z": 0.0,
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0,
           "w": 0.0
         },
         "vLightAmbient": {
-          "x": 0.0,
-          "y": 0.0,
-          "z": 0.0,
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0,
           "w": 0.0
         },
         "vLightSpecular": {
-          "x": 0.0,
-          "y": 0.0,
-          "z": 0.0,
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0,
           "w": 0.0
         },
-        "fLightRange": 1.0,
-        "fLightIntensity": 3.0,
-        "fInnerCos": 0.949999988079071,
-        "fOuterCos": 0.8500000238418579
+        "fLightRange": 50.0,
+        "fLightIntensity": 5.0,
+        "fInnerCos": 5.0,
+        "fOuterCos": 50.0
       },
       "vTranslation": [
         4.079999923706055,
@@ -161,21 +161,21 @@
           "w": 0.0
         },
         "vLightAmbient": {
-          "x": 0.0,
-          "y": 0.0,
-          "z": 0.0,
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0,
           "w": 0.0
         },
         "vLightSpecular": {
-          "x": 0.0,
-          "y": 0.0,
-          "z": 0.0,
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0,
           "w": 0.0
         },
-        "fLightRange": 1.0,
-        "fLightIntensity": 3.0,
-        "fInnerCos": 0.949999988079071,
-        "fOuterCos": 0.8500000238418579
+        "fLightRange": 50.0,
+        "fLightIntensity": 5.0,
+        "fInnerCos": 5.0,
+        "fOuterCos": 50.0
       },
       "vTranslation": [
         4.078164577484131,
@@ -200,27 +200,27 @@
           "w": 0.6971352696418762
         },
         "vLightDiffuse": {
-          "x": 0.0,
-          "y": 0.0,
-          "z": 0.0,
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0,
           "w": 0.0
         },
         "vLightAmbient": {
-          "x": 0.0,
-          "y": 0.0,
-          "z": 0.0,
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0,
           "w": 0.0
         },
         "vLightSpecular": {
-          "x": 0.0,
-          "y": 0.0,
-          "z": 0.0,
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0,
           "w": 0.0
         },
-        "fLightRange": 1.0,
-        "fLightIntensity": 3.0,
-        "fInnerCos": 0.949999988079071,
-        "fOuterCos": 0.8500000238418579
+        "fLightRange": 50.0,
+        "fLightIntensity": 5.0,
+        "fInnerCos": 5.0,
+        "fOuterCos": 50.0
       },
       "vTranslation": [
         4.079952716827393,
@@ -245,27 +245,27 @@
           "w": 0.908329963684082
         },
         "vLightDiffuse": {
-          "x": 0.0,
-          "y": 0.0,
-          "z": 0.0,
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0,
           "w": 0.0
         },
         "vLightAmbient": {
-          "x": 0.0,
-          "y": 0.0,
-          "z": 0.0,
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0,
           "w": 0.0
         },
         "vLightSpecular": {
-          "x": 0.0,
-          "y": 0.0,
-          "z": 0.0,
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0,
           "w": 0.0
         },
-        "fLightRange": 1.0,
-        "fLightIntensity": 3.0,
-        "fInnerCos": 0.949999988079071,
-        "fOuterCos": 0.8500000238418579
+        "fLightRange": 50.0,
+        "fLightIntensity": 5.0,
+        "fInnerCos": 5.0,
+        "fOuterCos": 50.0
       },
       "vTranslation": [
         1.6975317001342773,
@@ -290,27 +290,27 @@
           "w": 0.9038806557655334
         },
         "vLightDiffuse": {
-          "x": 0.0,
-          "y": 0.0,
-          "z": 0.0,
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0,
           "w": 0.0
         },
         "vLightAmbient": {
-          "x": 0.0,
-          "y": 0.0,
-          "z": 0.0,
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0,
           "w": 0.0
         },
         "vLightSpecular": {
-          "x": 0.0,
-          "y": 0.0,
-          "z": 0.0,
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0,
           "w": 0.0
         },
-        "fLightRange": 1.0,
-        "fLightIntensity": 3.0,
-        "fInnerCos": 0.949999988079071,
-        "fOuterCos": 0.8500000238418579
+        "fLightRange": 50.0,
+        "fLightIntensity": 5.0,
+        "fInnerCos": 5.0,
+        "fOuterCos": 50.0
       },
       "vTranslation": [
         -1.6973518133163452,
@@ -335,27 +335,27 @@
           "w": 0.7031803131103516
         },
         "vLightDiffuse": {
-          "x": 0.0,
-          "y": 0.0,
-          "z": 0.0,
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0,
           "w": 0.0
         },
         "vLightAmbient": {
-          "x": 0.0,
-          "y": 0.0,
-          "z": 0.0,
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0,
           "w": 0.0
         },
         "vLightSpecular": {
-          "x": 0.0,
-          "y": 0.0,
-          "z": 0.0,
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0,
           "w": 0.0
         },
-        "fLightRange": 1.0,
-        "fLightIntensity": 3.0,
-        "fInnerCos": 0.949999988079071,
-        "fOuterCos": 0.8500000238418579
+        "fLightRange": 50.0,
+        "fLightIntensity": 5.0,
+        "fInnerCos": 5.0,
+        "fOuterCos": 50.0
       },
       "vTranslation": [
         -4.074591636657715,
@@ -380,27 +380,27 @@
           "w": 0.6805232167243958
         },
         "vLightDiffuse": {
-          "x": 0.0,
-          "y": 0.0,
-          "z": 0.0,
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0,
           "w": 0.0
         },
         "vLightAmbient": {
-          "x": 0.0,
-          "y": 0.0,
-          "z": 0.0,
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0,
           "w": 0.0
         },
         "vLightSpecular": {
-          "x": 0.0,
-          "y": 0.0,
-          "z": 0.0,
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0,
           "w": 0.0
         },
-        "fLightRange": 1.0,
-        "fLightIntensity": 3.0,
-        "fInnerCos": 0.949999988079071,
-        "fOuterCos": 0.8500000238418579
+        "fLightRange": 50.0,
+        "fLightIntensity": 5.0,
+        "fInnerCos": 5.0,
+        "fOuterCos": 50.0
       },
       "vTranslation": [
         -4.066230297088623,
@@ -425,27 +425,27 @@
           "w": 0.652960479259491
         },
         "vLightDiffuse": {
-          "x": 0.0,
-          "y": 0.0,
-          "z": 0.0,
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0,
           "w": 0.0
         },
         "vLightAmbient": {
-          "x": 0.0,
-          "y": 0.0,
-          "z": 0.0,
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0,
           "w": 0.0
         },
         "vLightSpecular": {
-          "x": 0.0,
-          "y": 0.0,
-          "z": 0.0,
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0,
           "w": 0.0
         },
-        "fLightRange": 1.0,
-        "fLightIntensity": 3.0,
-        "fInnerCos": 0.949999988079071,
-        "fOuterCos": 0.8500000238418579
+        "fLightRange": 50.0,
+        "fLightIntensity": 5.0,
+        "fInnerCos": 5.0,
+        "fOuterCos": 50.0
       },
       "vTranslation": [
         -4.071258068084717,
@@ -471,8 +471,8 @@
         },
         "vLightDiffuse": {
           "x": 0.0,
-          "y": 0.0,
-          "z": 0.0,
+          "y": 0.2,
+          "z": 1.0,
           "w": 0.0
         },
         "vLightAmbient": {
@@ -487,10 +487,10 @@
           "z": 0.0,
           "w": 0.0
         },
-        "fLightRange": 1.0,
-        "fLightIntensity": 3.0,
-        "fInnerCos": 0.949999988079071,
-        "fOuterCos": 0.8500000238418579
+        "fLightRange": 100.0,
+        "fLightIntensity": 50.0,
+        "fInnerCos": 100.0,
+        "fOuterCos": 130.0
       },
       "vTranslation": [
         -0.010457918047904968,
