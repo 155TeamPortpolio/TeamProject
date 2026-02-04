@@ -71,7 +71,6 @@ void CUI_GachaPage::UI_DeActive(void* pArg)
 void CUI_GachaPage::Create_BackButton()
 {
     CUI_BackButton::BUTTON_DESC* pDesc = new CUI_BackButton::BUTTON_DESC;
-    pDesc->onClick = [this]() { OnClick_Back(); };
 
     auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_BackButton" })
         .Add_UIDesc(pDesc)
@@ -140,11 +139,6 @@ void CUI_GachaPage::Create_Conversions()
         pObj->Set_AnchorOffset({ fStartX + fSpacing * i, -68.f });
         Get_Component<CObjectContainer>()->Add_Child(pObj);
     }
-}
-
-void CUI_GachaPage::OnClick_Back()
-{
-    FieldSystem()->RequestExitTop();
 }
 
 void CUI_GachaPage::OnClick_Conversion()
