@@ -6,7 +6,7 @@
     {
       "iIndex": 0,
       "LightDesc": {
-        "eLightType": 0,
+        "eLightType": 2,
         "vOffsetPosition": {
           "x": 0.0,
           "y": 0.0,
@@ -636,7 +636,7 @@
     {
       "iIndex": 14,
       "LightDesc": {
-        "eLightType": 0,
+        "eLightType": 2,
         "vOffsetPosition": {
           "x": 1.961817850054744e-44,
           "y": 2.6624670822171524e-44,
