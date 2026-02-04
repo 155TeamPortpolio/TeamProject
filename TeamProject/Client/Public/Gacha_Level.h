@@ -20,6 +20,7 @@ public:
 	virtual HRESULT Render()     override;
 
 private:
+	void Ready_Map(const string& LevelTag, const string& AreaTag);
 	void Ready_GachaObjects();
 	void Update_CamTime();
 
