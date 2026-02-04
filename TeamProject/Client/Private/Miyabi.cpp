@@ -430,6 +430,14 @@ HRESULT CMiyabi::Initialize_Weapon()
 	return S_OK;
 }
 
+HRESULT CMiyabi::Initialize_Effects()
+{
+	if (FAILED(__super::Initialize_Effects()))
+		return E_FAIL;
+
+	return S_OK;
+}
+
 void CMiyabi::Update_States()
 {
 	if (!Is_MainCharacter()) return;

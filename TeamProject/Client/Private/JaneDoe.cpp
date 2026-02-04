@@ -535,6 +535,9 @@ HRESULT CJaneDoe::Initialize_Weapon()
 
 HRESULT CJaneDoe::Initialize_Effects()
 {
+    if (FAILED(__super::Initialize_Effects()))
+        return E_FAIL;
+
     auto pObjectContainer = Get_Component<CObjectContainer>();
 
     // Normal Slash

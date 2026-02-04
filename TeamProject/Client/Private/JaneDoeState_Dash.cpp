@@ -5,6 +5,10 @@
 #include "JaneDoeState_Evade.h"
 #include "CharacterController.h"
 
+#include "GameInstance.h"
+#include "EffectContainer.h"
+
+
 void CJaneDoeState_Dash::Enter(CJaneDoe* pOwner)
 {
     pOwner->Use_Evade();
@@ -27,6 +31,7 @@ void CJaneDoeState_Dash::Enter(CJaneDoe* pOwner)
     _vector3 vDir = pOwner->Get_InputDir();
     if (vDir.Length() > 0.01f)
         pOwner->Rotate(vDir);
+
 }
 
 void CJaneDoeState_Dash::Update(CJaneDoe* pOwner, _float dt)
@@ -75,5 +80,16 @@ void CJaneDoeState_Dash::Update(CJaneDoe* pOwner, _float dt)
     {   // Idle
         pSubMachine->Set_Int("ExitMode", 0);
         pSubMachine->Set_Trigger("Complete");
+    }
+
+    Update_Effects(pOwner);
+}
+
+void CJaneDoeState_Dash::Update_Effects(CJaneDoe* pOwner)
+{
+    if (IsCrossAnimProgress(0.05f))
+    {
+        pOwner->Play_Effect("Player_Run_Start0", _vector3(0.f, 1.1f, 1.3f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+        pOwner->Play_Effect("Player_Run_Start1", _vector3(0.f, 0.15f, 0.f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
     }
 }

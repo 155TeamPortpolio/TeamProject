@@ -215,6 +215,7 @@ public: // 피격
     _vector3 Get_HitTargetPos() const { return m_vHitPos; }
 
 public: // 이펙트
+    virtual HRESULT Initialize_Effects();
     void Play_Effect(const string& effectTag, _fvector offsetPosition, _fvector offsetQuaternion, _bool syncTransform = true);
 
 private:

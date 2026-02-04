@@ -111,7 +111,10 @@ void CParticleNode::Stop()
 	if (m_IsLoop)
 		Get_Component<CParticleSystem>()->Pause();
 	else
+	{
+		Get_Component<CParticleSystem>()->Pause();
 		m_IsEffectActive = false;
+	}
 }
 
 CParticleNode* CParticleNode::Create()

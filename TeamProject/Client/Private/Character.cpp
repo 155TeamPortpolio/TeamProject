@@ -629,6 +629,29 @@ void CCharacter::Take_Damage(DAMAGE_TYPE eType, _float fDamage)
     On_Hit(eType);
 }
 
+HRESULT CCharacter::Initialize_Effects()
+{
+    auto pObjectContainer = Get_Component<CObjectContainer>();
+
+    // Dash
+    {
+        auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+            .Asset("player_run_start0.json")
+            .Build("Player_Run_Start0");
+        pEffect->Stop();
+        pObjectContainer->Add_Child(pEffect, false);
+    }
+    {
+        auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+            .Asset("player_run_start1.json")
+            .Build("Player_Run_Start1");
+        pEffect->Stop();
+        pObjectContainer->Add_Child(pEffect, false);
+    }
+
+    return S_OK;
+}
+
 void CCharacter::Play_Effect(const string& effectTag, _fvector offsetPosition, _fvector offsetQuaternion, _bool syncTransform)
 {
     auto pEffect = Get_Component<CObjectContainer>()->Find_ObjectByName(effectTag);
