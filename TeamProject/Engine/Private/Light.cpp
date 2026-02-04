@@ -28,6 +28,8 @@ HRESULT CLight::Initialize(COMPONENT_DESC* pArg)
 		m_Light.vLightDirection = desc->vDirection;
 		m_Light.vLightSpecular = desc->vSpecular;
 		m_Light.fLightIntensity = desc->fIntensity;
+		m_Light.fInnerCos = desc->fInnerCos;
+		m_Light.fOuterCos = desc->fOuterCos;
 	}
 
 	m_ID = CGameInstance::GetInstance()->Get_LightMgr()->Register_Light(this, m_ID);
