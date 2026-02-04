@@ -385,13 +385,18 @@ void CMapLoader::Place_LightFromLoadData(MAP_LIGHT* pData)
     ColDesc.vColliderColor = { pData->LightDesc.vLightDiffuse.x, pData->LightDesc.vLightDiffuse.y ,pData->LightDesc.vLightDiffuse.z };
 
     LIGHT_INIT_DESC LightDesc{};
-    LightDesc.eType      = LIGHT_TYPE::POINT;
+    LightDesc.eType      = pData->LightDesc.eLightType;
+
     LightDesc.vPosition  = pData->LightDesc.vOffsetPosition;
+    LightDesc.vDirection = pData->LightDesc.vLightDirection;
+
     LightDesc.vDiffuse   = pData->LightDesc.vLightDiffuse;
     LightDesc.vAmbient   = pData->LightDesc.vLightAmbient;
     LightDesc.vSpecular  = pData->LightDesc.vLightSpecular;
+
     LightDesc.fRange     = pData->LightDesc.fLightRange;
     LightDesc.fIntensity = pData->LightDesc.fLightIntensity;
+
     
     for (auto& tSlotData : m_MapSlotFormatData) {
         // 일단 데이터 다 때려넣기
@@ -399,11 +404,14 @@ void CMapLoader::Place_LightFromLoadData(MAP_LIGHT* pData)
             Desc->SlotDataValues[tSlotData.first].push_back(FieldData);
     }
 
+    _quaternion LightDir = LightDesc.vDirection;
+
     CGameObject* pLightPoint = Builder::Create_Object({ G_GlobalLevelKey ,"Proto_GameObject_MapLightPoint" })
         .Add_ObjDesc(Desc)
         .Collider(ColDesc)
         .Light(LightDesc)
         .Position({ pData->vTranslation[0], pData->vTranslation[1], pData->vTranslation[2] })
+        .Rotate(LightDir.ToEuler())
         .Build("LightPoint" + to_string(pData->iIndex));
 
     pLightPoint->Get_Component<CCollider>()->Set_DebugRender(true);

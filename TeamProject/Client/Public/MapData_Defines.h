@@ -136,6 +136,7 @@ namespace Client {
 		_float	fInnerCos = {};
 		_float	fOuterCos = {};
 	}LIGHT_DESC_JSON;
+
 	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(LIGHT_DESC_JSON,
 		eLightType, vOffsetPosition, vLightDirection,
 		vLightDiffuse, vLightAmbient, vLightSpecular,
