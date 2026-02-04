@@ -1092,6 +1092,12 @@
     <Filter Include="03. Utility\08. CamDirector\02. CamDebugInput">
       <UniqueIdentifier>{0ab884f1-7b9a-4ad0-91d2-f1ac84773eec}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Gacha\GachaProps\GachaStage\GachaResult\GachaWeapon">
+      <UniqueIdentifier>{cdb4990c-5088-4e72-bd47-0d7326b624de}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Gacha\GachaProps\GachaStage\GachaResult\GachaAvatar">
+      <UniqueIdentifier>{b3c6c0b5-8784-4276-b136-655f66acf0f2}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02. GameObject\UI\02. 3D\Plane\Damage_UI">
       <UniqueIdentifier>{03c2ced7-a851-47d9-8422-bcef295e1b2d}</UniqueIdentifier>
     </Filter>
@@ -2198,6 +2204,12 @@
     <ClInclude Include="..\public\CamDebugInput.h">
       <Filter>03. Utility\08. CamDirector\02. CamDebugInput</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\GachaWeapon.h">
+      <Filter>02. GameObject\Object\Gacha\GachaProps\GachaStage\GachaResult\GachaWeapon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\GachaAvatar.h">
+      <Filter>02. GameObject\Object\Gacha\GachaProps\GachaStage\GachaResult\GachaAvatar</Filter>
+    </ClInclude>
     <ClInclude Include="..\public\UI_Seoriyeol.h">
       <Filter>02. GameObject\UI\02. 3D\Plane\Damage_UI\Seoriyeol</Filter>
     </ClInclude>
@@ -3218,6 +3230,12 @@
     <ClCompile Include="..\private\CamDebugInput.cpp">
       <Filter>03. Utility\08. CamDirector\02. CamDebugInput</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\GachaWeapon.cpp">
+      <Filter>02. GameObject\Object\Gacha\GachaProps\GachaStage\GachaResult\GachaWeapon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\GachaAvatar.cpp">
+      <Filter>02. GameObject\Object\Gacha\GachaProps\GachaStage\GachaResult\GachaAvatar</Filter>    
+      </ClCompile>
     <ClCompile Include="..\private\UI_Seoriyeol.cpp">
       <Filter>02. GameObject\UI\02. 3D\Plane\Damage_UI\Seoriyeol</Filter>
     </ClCompile>

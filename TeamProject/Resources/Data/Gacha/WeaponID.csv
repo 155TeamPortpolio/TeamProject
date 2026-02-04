@@ -12,3 +12,5 @@ ID,Grade,Model,Mat,Texture,RotX,RotY,RotZ,RotW
 10,A,Weapon_A_1281_Modelout.model,Weapon_A_1281_Modelout.mat,Weapon_A_1281 (1).png,-0.11,0.92,-0.09,0.37
 11,A,Weapon_A_1421_Modelout.model,Weapon_A_1421_Modelout.mat,Weapon_A_1421 (1).png,-0.21,0.75,-0.38,0.49
 12,A,Weapon_A_1441_Modelout.model,Weapon_A_1441_Modelout.mat,Weapon_A_1441 (1).png,0.07,0.97,-0.25,-0.02
+13,S,Miyabi.model,Miyabi.mat,,,,,
+14,S,JaneDoeModel.model,JaneDoe.mat,,,,,
