@@ -90,6 +90,12 @@
           "prototypeTag": "Proto_GameObject_Ramen",
           "instanceName": "ramen",
           "prefabPath" : ""
+        },
+        
+        {
+          "prototypeTag": "Proto_GameObject_GachaPage",
+          "instanceName": "gachaPage",
+          "prefabPath" : ""
         }
       ]
     }

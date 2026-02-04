@@ -72,9 +72,21 @@ _int CBattleSystem::GetPlayerParryingCount()
 	return m_pBattlePlayer->GetParryingCount();
 }
 
+void CBattleSystem::SetActive(_bool isActive)
+{
+	if (false == isActive) {
+		m_isActive = false;
+		ClearBattleStage();
+		return;
+	}
+	else {
+		m_isActive = true;
+	}
+}
+
 void CBattleSystem::ReadyBattle(const string& tagArea, _uint iPrefabIndex)
 {
-	auto pDataBase = CDataBase::GetInstance(); 
+	auto pDataBase = CDataBase::GetInstance();
 	auto pObjMgr = ObjectManager();
 }
 
@@ -94,19 +106,6 @@ void CBattleSystem::ReadyBattle(const string& tagArea, _uint StageNumber, _uint 
 	CacheData->Battle.PortalPoint;
 	//const vector<MONSTER_SPAWN_DESC>* pMonsterSpawnData = pDatabase->GetMonsterSpawnData(tagArea);
 }
-
-void CBattleSystem::SetActive(_bool isActive)
-{
-	if (false == isActive) {
-		m_isActive = false;
-		ClearBattleStage();
-		return;
-	}
-	else {
-		m_isActive = true;
-	}
-}
-
 /*지금 싸우려는 애들->*/
 void CBattleSystem::SpawnMosnter(const string& MonsterProtoTag, _float3 vSpawnPos, _float3 vRot)
 {
@@ -198,6 +197,26 @@ void CBattleSystem::TakeAreaDamage(const _float3& vCenter, _float fRadius, const
 		_float fDistSq = vDiff.x * vDiff.x + vDiff.y * vDiff.y + vDiff.z * vDiff.z;
 
 		if (fDistSq > fRadiusSq)
+			continue;
+
+		auto pEnemy = dynamic_cast<CEnemy*>(info.hObject.Get());
+		if (pEnemy)
+			pEnemy->TakeDamage(hitDesc.eDamageType, hitDesc.fDamage);
+	}
+}
+
+void CBattleSystem::TakeBoxDamage(const _float3& vCenter, const _float3& vHalfExtents, const _quaternion& qRotation, const HitDesc& hitDesc)
+{
+	_quaternion qInverse;
+	qRotation.Inverse(qInverse);
+
+	for (auto& info : m_BattleObjInfos[BATTLE_OBJ_TYPE::MONSTER])
+	{
+		_vector3 vLocal = _vector3::Transform(info.vPos - vCenter, qInverse);
+
+		if (fabs(vLocal.x) > vHalfExtents.x ||
+			fabs(vLocal.y) > vHalfExtents.y ||
+			fabs(vLocal.z) > vHalfExtents.z)
 			continue;
 
 		auto pEnemy = dynamic_cast<CEnemy*>(info.hObject.Get());

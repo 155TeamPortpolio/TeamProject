@@ -32,6 +32,10 @@ public:
     virtual void                Interact(CGameObject* pObject = nullptr) override;
     virtual OBJECT_HANDLE       Get_InteractHandle() override;
 
+public:
+    void SetChoiceIndex(class CStage* pOwener, int idx);
+    int  GetChoiceIndex() const { return m_choiceIndex; }
+
 private:
     void Extend(_float dt);
     void Contract(_float dt);
@@ -40,7 +44,10 @@ private:
     _bool  m_bVisible = { false };
     string m_NextMapTag{};
     _float m_Time = {};
-    class CStage* m_pTargetStage = { nullptr };
+
+private:
+    _int m_choiceIndex = -1;
+    class CStage* m_pOwnerStage = { nullptr };
 
 private:
     _float m_fDuration = .5f;

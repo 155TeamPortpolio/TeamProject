@@ -212,7 +212,7 @@ void CCharacter::DeActive_Character()
     m_fDissolveProgress = 0.f;
     m_iInvincibleCount = 0;
     m_inputInfo = {};
-    Reset_State();
+    //Reset_State();
 }
 
 void CCharacter::Update_DissolveProgress(_float dt)

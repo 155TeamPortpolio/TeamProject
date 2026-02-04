@@ -414,6 +414,11 @@
     <ClInclude Include="..\Public\MiyabiState_SwitchInNormal.h" />
     <ClInclude Include="..\Public\MiyabiState_SwitchInParryAid.h" />
     <ClInclude Include="..\Public\MiyabiState_SwitchOut.h" />
+    <ClInclude Include="..\Public\StageRouter.h" />
+    <ClInclude Include="..\Public\UI_GachaChannel.h" />
+    <ClInclude Include="..\Public\UI_GachaConversion.h" />
+    <ClInclude Include="..\Public\UI_GachaCurrency.h" />
+    <ClInclude Include="..\Public\UI_GachaPage.h" />
     <ClInclude Include="..\public\Room_Gacha.h" />
     <ClInclude Include="..\public\UI_Gangta.h" />
     <ClInclude Include="..\Public\ICamCollidable.h" />
@@ -690,7 +695,6 @@
     <ClInclude Include="..\public\JaneDoe.h" />
     <ClInclude Include="..\Public\VideoPanel.h" />
     <ClInclude Include="..\Public\ZeroPortal.h" />
-    <ClInclude Include="..\public\ZeroStage_1_1.h" />
     <ClInclude Include="..\Public\ZeroStage_Boss.h" />
     <ClInclude Include="..\Public\ZeroStage_Elite.h" />
     <ClInclude Include="..\Public\ZeroStage_Normal.h" />
@@ -805,6 +809,11 @@
     <ClCompile Include="..\Private\MiyabiState_SwitchInNormal.cpp" />
     <ClCompile Include="..\Private\MiyabiState_SwitchInParryAid.cpp" />
     <ClCompile Include="..\Private\MiyabiState_SwitchOut.cpp" />
+    <ClCompile Include="..\Private\StageRouter.cpp" />
+    <ClCompile Include="..\Private\UI_GachaChannel.cpp" />
+    <ClCompile Include="..\Private\UI_GachaConversion.cpp" />
+    <ClCompile Include="..\Private\UI_GachaCurrency.cpp" />
+    <ClCompile Include="..\Private\UI_GachaPage.cpp" />
     <ClCompile Include="..\private\Room_Gacha.cpp" />
     <ClCompile Include="..\private\UI_Gangta.cpp" />
     <ClCompile Include="..\Private\JaneDoeState_AssaultAttack.cpp" />
@@ -1074,7 +1083,6 @@
     <ClCompile Include="..\private\JaneDoe.cpp" />
     <ClCompile Include="..\Private\VideoPanel.cpp" />
     <ClCompile Include="..\Private\ZeroPortal.cpp" />
-    <ClCompile Include="..\private\ZeroStage_1_1.cpp" />
     <ClCompile Include="..\Private\ZeroStage_Boss.cpp" />
     <ClCompile Include="..\Private\ZeroStage_Elite.cpp" />
     <ClCompile Include="..\Private\ZeroStage_Normal.cpp" />

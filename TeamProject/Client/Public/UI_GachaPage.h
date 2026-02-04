@@ -1,14 +1,17 @@
 #pragma once
-#include "UI_HUD.h"
+#include "UI_Object.h"
 
 NS_BEGIN(Client)
 
-class CUI_FieldHUD final : public CUI_HUD
+class CUI_GachaPage final : public CUI_Object
 {
 private:
-	CUI_FieldHUD() {}
-	CUI_FieldHUD(const CUI_FieldHUD& rhs) : CUI_HUD(rhs) {}
-	virtual ~CUI_FieldHUD() DEFAULT;
+	CUI_GachaPage() {}
+	CUI_GachaPage(const CUI_GachaPage& rhs) : CUI_Object(rhs) {}
+	virtual ~CUI_GachaPage() DEFAULT;
+
+public:
+	void Select_Channel(CUI_Object* pSelected);
 
 public:
 	virtual HRESULT Initialize_Prototype()           override;
@@ -20,6 +23,20 @@ public:
 	virtual void    Render_GUI()                     override { __super::Render_GUI(); }
 	virtual void	UI_Active(void* pArg = nullptr)  override;
 	virtual void	UI_DeActive(void* pArg = nullptr) override;
+
+private:
+	CUI_Object* m_pSelectedChannel = {};
+
+	_uint	m_iDenny = {};	// µ¥´Ï
+
+private:
+	void Create_BackButton();
+	void Create_Currency();
+	void Create_Channels();
+	void Create_Conversions();
+
+	void OnClick_Back();
+	void OnClick_Conversion();
 
 public:
 	static  CGameObject* Create();
