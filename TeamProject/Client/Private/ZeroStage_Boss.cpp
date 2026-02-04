@@ -58,6 +58,7 @@ HRESULT CZeroStage_Boss::Enter_Stage(StageContext& context)
 	Reserve_Enemy("Zero_Level");
 	m_eStageStage = StageState::Entrance;
 	m_PlayerHandle = context.hPlayer;
+
 	Active_Player(CStage::PlayerPoint::Typical);
 	BossIntro(context);
 	return S_OK;

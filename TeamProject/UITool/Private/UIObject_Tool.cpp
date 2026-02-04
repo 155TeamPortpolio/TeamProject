@@ -29,14 +29,11 @@ HRESULT CUIObject_Tool::Initialize(INIT_DESC* pArg)
     return S_OK;
 }
 
-
 void CUIObject_Tool::Awake()
 {
     __super::Awake();
 
     m_vAnchorOffset = Get_AnchorOffset(m_eAnchor);
-
-   // Set_Clickable(true);
 }
 
 void CUIObject_Tool::Update(_float dt)
@@ -689,8 +686,6 @@ void CUIObject_Tool::Render_GUI_Color()
     sprite->Set_Param("ColorUVScale", {&m_colorUVScale, "float2", sizeof(Vector2)});
 }
 
-
-
 _bool CUIObject_Tool::Render_GUI_Image(string& strTextureKey)
 {
     _bool isDirty = {};
@@ -704,7 +699,8 @@ _bool CUIObject_Tool::Render_GUI_Image(string& strTextureKey)
 
         string fileName = Helper::GetFileNameWithExtension(filePath);
 
-        CGameInstance::GetInstance()->Get_ResourceMgr()->Add_ResourcePath(fileName, filePath);
+        ResourceManager()->Add_ResourcePath(fileName, filePath);
+
         strTextureKey = fileName;
 
         ApplySpriteTexture(0, G_GlobalLevelKey, strTextureKey, true);
