@@ -48,15 +48,16 @@ namespace Engine {
 	typedef struct LightInitDesc :public COMPONENT_DESC {
 
 		LIGHT_TYPE			eType = {};
-		_float4		vDiffuse = {};
-		_float4		vAmbient = {};
-		_float4		vSpecular = {};
+		_float4				vDiffuse = {};
+		_float4				vAmbient = {};
+		_float4				vSpecular = {};
 
-		_float4		vDirection = {};
-		_float4		vPosition = {};
-		_float			fRange = {};
-		_float			fIntensity = { 3.f };
-
+		_float4				vDirection = {};
+		_float4				vPosition = {};
+		_float				fRange = {};
+		_float				fIntensity = { 3.f };
+		_float				fInnerCos = 0.95f;
+		_float				fOuterCos = 0.85f;
 		LightInitDesc() DEFAULT;
 		virtual ~LightInitDesc() DEFAULT;
 	}LIGHT_INIT_DESC;
