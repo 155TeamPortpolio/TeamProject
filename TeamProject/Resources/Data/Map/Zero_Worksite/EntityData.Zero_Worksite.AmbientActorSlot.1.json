@@ -1,0 +1,23 @@
+{
+  "TagDataFormat": "AmbientActorSlot",
+  "TagArea": "Zero_Worksite",
+  "iVersion": 1,
+  "values": [
+    {
+      "iObjID": 4,
+      "TagName": "AnimationName",
+      "defaultvalue": {
+        "type": "String",
+        "value": "Device_Vehicle_MilitaryHelicopter_01_Ani_Flying"
+      }
+    },
+    {
+      "iObjID": 5,
+      "TagName": "AnimationName",
+      "defaultvalue": {
+        "type": "String",
+        "value": "Device_Vehicle_MilitaryHelicopter_01_Ani_Hove"
+      }
+    }
+  ]
+}

@@ -24,6 +24,9 @@
 #include "Portal.h"
 #include "ZeroPortal.h"
 
+/* Maptool Type 2 (ETC) */
+#include "MilitaryHelicopter.h"
+
 #pragma region Tables
 /* Maptool Type 0 */
 static unordered_map<string, Spawner::OBJ_SPEC> s_NPCTable =
@@ -46,6 +49,12 @@ static unordered_map<string, Spawner::OBJ_SPEC> s_InteractTable =
 	{ "ZeroPortal", Spawner::OBJ_SPEC{ "Proto_GameObject_ZeroPortal", &CZeroPortal::Create }},
 	{ "Invwall",	Spawner::OBJ_SPEC{ "Proto_GameObject_Invwall", &CZeroPortal::Create } }
 };
+
+/* Maptool Type 2 */
+static unordered_map<string, Spawner::OBJ_SPEC> s_AmbientActorTable =
+{
+	{ "MilitaryHelicopter",     Spawner::OBJ_SPEC{ "MilitaryHelicopter", &CMilitaryHelicopter::Create }}
+};
 #pragma endregion
 
 /* --------------------------------------------------------------------------------------------------------------------- */
@@ -56,9 +65,9 @@ void Client::Spawner::Register_Prototype(const string& MapDataName, const string
 
 	switch (EntityType)
 	{
-	case Client::Spawner::ENTITY_TYPE::NPC:			Table = &s_NPCTable;		break;
-	case Client::Spawner::ENTITY_TYPE::INTERACTABLE:Table = &s_InteractTable;	break;
-	case Client::Spawner::ENTITY_TYPE::AMBIENTACTOR:Table = &s_InteractTable;	break;
+	case Client::Spawner::ENTITY_TYPE::NPC:			Table = &s_NPCTable;			break;
+	case Client::Spawner::ENTITY_TYPE::INTERACTABLE:Table = &s_InteractTable;		break;
+	case Client::Spawner::ENTITY_TYPE::AMBIENTACTOR:Table = &s_AmbientActorTable;	break;
 	case Client::Spawner::ENTITY_TYPE::INVWALL:									return;
 	case Client::Spawner::ENTITY_TYPE::ETC:										return;
 	default:																	return;
@@ -192,14 +201,32 @@ OBJECT_HANDLE Client::Spawner::Create_Interactable(const SPAWNER_DESC& Desc)
 #pragma region Entity2(AmbientActor)
 OBJECT_HANDLE Client::Spawner::Create_AmbientActor(const SPAWNER_DESC& Desc)
 {
-	auto InteractTable = s_InteractTable.find(Desc.tagName);
-
-	if (InteractTable == s_InteractTable.end())
+	auto InteractTable = s_AmbientActorTable.find(Desc.tagName);
+	if (InteractTable == s_AmbientActorTable.end())
 		return OBJECT_HANDLE();
 
+	auto Slot = Desc.SlotDataValues.find("AmbientActorSlot");
+	if (Slot == Desc.SlotDataValues.end())
+		return OBJECT_HANDLE();
+
+	CAmbientActor::AMBIENTACTOR_DESC* pAmbientActorDesc = new CAmbientActor::AMBIENTACTOR_DESC;
+
+	for (auto tFieldData : Slot->second) {
+		if (tFieldData.TagName == "AnimationName")
+		{
+			pAmbientActorDesc->strAnimName = *GetSlotValue<string>(tFieldData.defaultvalue);
+		}
+	}
+	
 	PrototypeManager()->Add_ProtoType(Desc.tagLevel, InteractTable->second.ProtoTag, InteractTable->second.Create());
 
+	if (pAmbientActorDesc->strAnimName.empty()) {
+		Safe_Delete(pAmbientActorDesc);
+		return OBJECT_HANDLE();
+	}
+
 	CGameObject* Object = Builder::Create_Object({ Desc.tagLevel, InteractTable->second.ProtoTag })
+		.Add_ObjDesc(pAmbientActorDesc)
 		.Position(Desc.vTranslation)
 		.Scale(Desc.vScale)
 		.Build(Desc.tagName);
