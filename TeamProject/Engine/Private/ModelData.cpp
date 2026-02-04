@@ -16,7 +16,9 @@ HRESULT CModelData::Initialize(const string& filePath, ID3D11Device* pDevice)
 
 	ifstream ifs(filePath.c_str(), ios::binary);
 	if (!ifs.is_open()) {
- 		MSG_BOX("There is No File. :CModelData ");
+		wstring Alarm = L"There is No File. :CModelData \n" + Helper::ConvertToWideString(filePath);
+		MessageBox(NULL, Alarm.c_str(), L"System Message", MB_OK);
+		//MSG_BOX("There is No File. :CModelData ");
 		//__debugbreak();
 		return E_FAIL;
 	}
@@ -271,7 +273,7 @@ vector<MaterialUsageRow> CModelData::BuildMaterialUsageTable(_bool includeMeshIn
 	for (auto& pair : mapByMaterial)
 		rows.push_back(std::move(pair.second));
 
-	// meshCount ³»¸²Â÷¼øÀ¸·Î Á¤·Ä(¸¹ÀÌ ¾²´Â ¸ÓÆ¼¸®¾óÀÌ À§·Î)
+	// meshCount ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Æ¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
 	sort(rows.begin(), rows.end(),
 		[](const MaterialUsageRow& leftRow, const MaterialUsageRow& rightRow)
 		{
@@ -306,7 +308,7 @@ const vector<string> CModelData::Get_BoneNames()
 const vector<_int> CModelData::GenerateFollowingIndices(CModelData* pMasterData)
 {
 	vector<_int> FollowingIndices;
-	/*¸¶½ºÅÍ µ¥ÀÌÅÍ¿¡¼­ ³» ÀÌ¸§°ú °°Àº °ÍÀÌ ÀÖÀ¸¸é ³Ö´Â´Ù. ¾øÀ¸¸é -1ÀÌ µé¾î°£´Ù*/
+	/*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Í¿ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ì¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´Â´ï¿½. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ -1ï¿½ï¿½ ï¿½ï¿½î°£ï¿½ï¿½*/
 	for (string boneName : Get_BoneNames()) {
 		_int Index = pMasterData->Find_BoneIndexByName(boneName);
 		FollowingIndices.push_back(Index);

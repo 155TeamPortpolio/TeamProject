@@ -61,6 +61,8 @@ public:
     ATTACK_SIDE Get_AttackSide()const { return m_eCurAttackSide; }
 
     /* Setter*/
+
+    virtual void        Set_Alive(_bool alive) override;
     // 몬스터 공격 시 attack sign 이펙트 활성화 함수
     virtual void        Active_AttackSign(_bool parryEnable = true);
     // 플레이어 무기에서 몬스터한테 데미지 입힐 때 호출 될 함 수
@@ -82,6 +84,9 @@ public:
     void                SetParryEnable(_bool is) { m_isParryEnable = is; }
     // 플레이어가 수행할 수 있는 콤보 카운트 내리는 함수
     void                Decrease_ComboCount() { --m_tStatus.iPlayerComboCount; }
+    
+    
+
 
     // 몬스터 사망 연출용, 머터리얼 파라미터 업데이트
     void Active_Vanish() { m_fUseVanish = 1.f; }
