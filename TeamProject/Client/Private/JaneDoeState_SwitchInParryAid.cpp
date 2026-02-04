@@ -69,6 +69,13 @@ void CJaneDoeState_SwitchInParryAid_Start::Enter(CJaneDoe* pOwner)
         .BlendDuration(0.1f)
         .Speed(2.5f)
         .Apply();
+
+    OBJECT_HANDLE handle = pOwner->Get_ParryHandle();
+    if (handle.isValid())
+    {
+        dynamic_cast<CEnemy*>(handle.Get())->Parried();
+        BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::PARRY);
+    }
 }
 
 void CJaneDoeState_SwitchInParryAid_Start::Update(CJaneDoe* pOwner, _float dt)
@@ -85,13 +92,6 @@ void CJaneDoeState_SwitchInParryAid_L_Loop::Enter(CJaneDoe* pOwner)
         .BlendDuration(0.1f)
         .Speed(2.f)
         .Apply();
-
-    OBJECT_HANDLE handle = pOwner->Get_ParryHandle();
-    if (handle.isValid())
-    {
-        dynamic_cast<CEnemy*>(handle.Get())->Parried();
-        BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::PARRY);
-    }
 }
 
 void CJaneDoeState_SwitchInParryAid_L_Loop::Update(CJaneDoe* pOwner, _float dt)
