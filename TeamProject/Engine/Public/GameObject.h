@@ -82,7 +82,7 @@ public:
 
 public:
 	_bool Is_Alive() { return m_isAlive; };
-	void Set_Alive(_bool alive) { m_isAlive = alive; };
+	virtual void Set_Alive(_bool alive) { m_isAlive = alive; };
 
 public:
 	void Set_FromPool(_bool fromPool) { m_PoolMark.fromPool = fromPool; }

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "DisplayGate.h"
 #include "CameraMgr.h"
 #include "CamDirectorData.h"
 #include "CamEventController.h"
@@ -74,6 +75,7 @@ private:
     _uint         RequestSequence(const string& key, const CamSequenceRequestDesc& req);
 
 private:
+    CMonitorGate            m_gate;
     CamDirectorSeqMap       m_seqs{};
     CamDirectorPlayingState m_playing{};
     CamDirectorCamHandles   m_camHandles{};

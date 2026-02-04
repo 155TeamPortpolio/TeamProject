@@ -148,7 +148,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
     const int primaryW = mi.rcMonitor.right - mi.rcMonitor.left;
 
-    if (primaryW > 2500)
+    if (primaryW > 25000)
     {
         WinX = 2560;
         WinY = 1360;

@@ -105,6 +105,11 @@ _bool CMaterialData::Get_Texture(TEXTURE_TYPE eType, _uint index, CTexture*& out
 	}
 }
 
+_uint CMaterialData::Get_TextureCount(TEXTURE_TYPE eType)
+{
+	return m_Textures[eType].size();
+}
+
 _bool CMaterialData::Has_Texture(TEXTURE_TYPE eType)
 {
 	auto it = m_Textures.find(eType);

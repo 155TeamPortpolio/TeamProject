@@ -29,7 +29,7 @@
 #include "MiyabiState_SwitchOut.h"
 #include "MiyabiState_NormalAttack.h"
 //#include "MiyabiState_Hit.h"
-//#include "MiyabiState_Evade.h"
+#include "MiyabiState_Evade.h"
 
 CMiyabi::CMiyabi()
 {
@@ -83,6 +83,7 @@ void CMiyabi::Awake()
 	Initialize_Stat();
 	m_fCurrentHP = 312.f;
 	m_tEnergy.fCurrentEnergy = 75;
+	m_iFrost = 6;
 
 	if (FAILED(Attach_ParryCollider()))
 		return;
@@ -137,6 +138,14 @@ void CMiyabi::Render_GUI()
 	}
 
 	__super::Render_GUI();
+}
+
+_bool CMiyabi::Can_Evade()
+{
+	if (m_pStateMachine->Get_Bool("InDash02"))
+		return false;
+
+	return __super::Can_Evade();
 }
 
 //void CMiyabi::Render_OutLine(ID3D11DeviceContext* pContext, _uint idx)
@@ -299,7 +308,7 @@ HRESULT CMiyabi::Initialize_States()
 	m_pStateMachine->Register_State("Idle", CMiyabiState_Idle::Create());
 	m_pStateMachine->Register_State("Move", CMiyabiState_Move::Create());
 	m_pStateMachine->Register_State("Attack", CMiyabiState_Attack::Create());
-	//m_pStateMachine->Register_State("Evade", CMiyabiState_Evade::Create());
+	m_pStateMachine->Register_State("Evade", CMiyabiState_Evade::Create());
 	m_pStateMachine->Register_State("SwitchIn", CMiyabiState_SwitchIn::Create());
 	m_pStateMachine->Register_State("SwitchOut", CMiyabiState_SwitchOut::Create());
 	//m_pStateMachine->Register_State("Hit", CMiyabiState_Hit::Create());

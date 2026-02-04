@@ -328,7 +328,28 @@
     },
     {
       "ClipTag": "Avatar_Female_Size02_Unagi_Ani_Attack_ChargeAttack_Attack03",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.12456139922142029,
+          "EventType": "Notify",
+          "EventTag": "AreaAttackStart"
+        },
+        {
+          "EventTime": 0.9734242558479309,
+          "EventType": "Notify",
+          "EventTag": "AreaAttackEnd"
+        },
+        {
+          "EventTime": 2.103703737258911,
+          "EventType": "Notify",
+          "EventTag": "AreaAttackStart"
+        },
+        {
+          "EventTime": 2.3574397563934326,
+          "EventType": "Notify",
+          "EventTag": "AreaAttackEnd"
+        }
+      ]
     },
     {
       "ClipTag": "Avatar_Female_Size02_Unagi_Ani_Attack_ChargeAttack_Attack03_End",

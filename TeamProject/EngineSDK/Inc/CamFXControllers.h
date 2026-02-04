@@ -4,8 +4,6 @@
 
 NS_BEGIN(Engine)
 
-
-
 class ShakeController
 {
 public:

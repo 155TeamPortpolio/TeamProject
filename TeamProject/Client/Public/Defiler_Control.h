@@ -85,6 +85,10 @@ static const unordered_map<string, DefilerAttackType> DefilerAtkData =
     {"F_Type_On",{"Tail","Evade","Normal",true}}    ,{"F_Type_Off",{"Tail","Evade","Normal",false}},
     {"G_Type_On",{"Tail","Parry","Hard",true}}      ,{"G_Type_Off",{"Tail","Parry","Hard",false}},
     {"H_Type_On",{"Tail","Evade","Hard",true}}      ,{"H_Type_Off",{"Tail","Evade","Hard",false}},
+    {"I_Type_On",{"Area","Parry","Normal",true}}    ,{"I_Type_Off",{"Area","Parry","Normal",false}},
+    {"J_Type_On",{"Area","Evade","Normal",true}}    ,{"J_Type_Off",{"Area","Evade","Normal",false}},
+    {"K_Type_On",{"Area","Parry","Hard",true}}      ,{"K_Type_Off",{"Area","Parry","Hard",false}},
+    {"L_Type_On",{"Area","Evade","Hard",true}}      ,{"L_Type_Off",{"Area","Evade","Hard",false}},
 };
 
 

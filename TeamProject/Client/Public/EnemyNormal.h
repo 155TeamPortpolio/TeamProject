@@ -24,7 +24,7 @@ public:
     virtual void    Late_Update(_float dt) override;
 
 public:
-    void            CaptureRotateToDir(_float3 vTargetDir, _float fSpeed = 10.f);
+    void            CaptureRotateToDir(_float3 vTargetDir, _float fSpeed = 0.5f);
 
 protected:
     void            RotateToDir(_float dt);
