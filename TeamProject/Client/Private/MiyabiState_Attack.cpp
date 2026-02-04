@@ -5,6 +5,7 @@
 #include "Miyabi.h"
 
 #include "MiyabiState_NormalAttack.h"
+#include "MiyabiState_ChargeAttack.h"
 //#include "MiyabiState_RushAttack.h"
 //#include "MiyabiState_ExAttack.h"
 //#include "MiyabiState_UltimateAttack.h"
@@ -21,13 +22,15 @@ CMiyabiState_Attack* CMiyabiState_Attack::Create()
     auto pSubStateMachine = pInstance->Get_SubStateMachine();
 
     pSubStateMachine->Register_State("NormalAttack", CMiyabiState_NormalAttack::Create());
+    pSubStateMachine->Register_State("ChargeAttack", CMiyabiState_ChargeAttack::Create());
     //pSubStateMachine->Register_State("RushAttack", CMiyabiState_RushAttack::Create());
     //pSubStateMachine->Register_State("ExAttack", CMiyabiState_ExAttack::Create());
     //pSubStateMachine->Register_State("UltimateAttack", CMiyabiState_UltimateAttack::Create());
     //pSubStateMachine->Register_State("CounterAttack", CMiyabiState_CounterAttack::Create());
     //pSubStateMachine->Register_State("AssaultAttack", CMiyabiState_AssaultAttack::Create());
 
-    pSubStateMachine->Get_State("NormalAttack")->Set_Tag("NormalAttack");
+    pSubStateMachine->Register_Transition("NormalAttack", "ChargeAttack",
+        CStateMachine<CMiyabi>::CONDITION_TRIGGER, "ToChargeAttack");
 
     pSubStateMachine->Register_Transition("NormalAttack", "ExAttack",
         CStateMachine<CMiyabi>::CONDITION_TRIGGER, "ToExAttack");
@@ -56,9 +59,9 @@ void CMiyabiState_Attack::Enter(CMiyabi* pOwner)
     case 3:
         m_pSubStateMachine->Set_DefaultState("UltimateAttack");
         break;
-    case 4:
-        m_pSubStateMachine->Set_DefaultState("ChargeAttack");
-        break;
+    //case 4:
+    //    m_pSubStateMachine->Set_DefaultState("ChargeAttack");
+    //    break;
     case 5:
         m_pSubStateMachine->Set_DefaultState("CounterAttack");
         break;
@@ -69,8 +72,6 @@ void CMiyabiState_Attack::Enter(CMiyabi* pOwner)
         m_pSubStateMachine->Set_DefaultState("NormalAttack");
         break;
     }
-
-    m_fHoldTime = 0.f;
 
     __super::Enter(pOwner);
 }
@@ -83,24 +84,6 @@ void CMiyabiState_Attack::Update(CMiyabi* pOwner, _float dt)
         pOwner->Get_StateMachine()->Set_Int("AttackEntryMode", 0);
         m_pSubStateMachine->Set_Trigger("ToUltimate");
     }
-
-    //if (pOwner->Has_Frost())
-    //{
-    //    if (CGameInstance::GetInstance()->Get_InputDev()->Mouse_Hold(MOUSE_BTN::LB))
-    //    {
-    //        m_fHoldTime += dt;
-    //        if (m_fHoldTime >= 0.3f)
-    //        {
-    //            m_pSubStateMachine->Set_Trigger("Salchow");
-    //            m_fHoldTime = 0.f;
-    //            pOwner->Set_Salchow(false);
-    //        }
-    //    }
-    //    else
-    //    {
-    //        m_fHoldTime = 0.f;
-    //    }
-    //}
 
     if (pOwner->Is_LookTarget())
         pOwner->Look_Target();

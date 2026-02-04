@@ -29,6 +29,7 @@ public: // Å¸°ÙÆÃ
 
 public: // ¼­¸®
     _bool   Has_Frost() const { return m_iFrost > 0; }
+    _bool   Can_Charge() const { return m_iFrost >= 2; }
     void    Increase_Frost(_uint iFrost);
     void    Decrease_Frost(_uint iFrost);
 
