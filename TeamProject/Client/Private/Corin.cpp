@@ -374,6 +374,7 @@ HRESULT CCorin::Initialize_Effects()
         return E_FAIL;
 
     auto pObjectContainer = Get_Component<CObjectContainer>();
+    auto pAnimator = Get_Component<CAnimator3D>();
 
     // Normal Slash
     {
@@ -419,6 +420,32 @@ HRESULT CCorin::Initialize_Effects()
             .Build("Corin_Sting0");
         pEffect->Stop();
         pObjectContainer->Add_Child(pEffect, false);
+    }
+
+    // Saw Slash
+    {
+        auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+            .Asset("corin_normal1_saw_slash.json")
+            .Build("Corin_Saw_Slash0");
+        pEffect->Stop();
+        pObjectContainer->Add_Child(pEffect, false);
+        pEffect->AttachBone(pAnimator, "Weapon_saw");
+    }
+    {
+        auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+            .Asset("corin_normal2_saw_slash.json")
+            .Build("Corin_Saw_Slash1");
+        pEffect->Stop();
+        pObjectContainer->Add_Child(pEffect, false);
+        pEffect->AttachBone(pAnimator, "Weapon_saw");
+    }
+    {
+        auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+            .Asset("corin_ex_saw_slash.json")
+            .Build("Corin_Ex_Saw_Slash0");
+        pEffect->Stop();
+        pObjectContainer->Add_Child(pEffect, false);
+        pEffect->AttachBone(pAnimator, "Weapon_saw");
     }
 
     return S_OK;

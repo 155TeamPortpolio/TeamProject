@@ -86,6 +86,7 @@ void CCorinState_NormalAttack::Update(CCorin* pOwner, _float dt)
 
 void CCorinState_NormalAttack::Exit(CCorin* pOwner)
 {
+    pOwner->Stop_Effect("Corin_Saw_Slash0");
     pOwner->Reset_ReserveCombo();
     __super::Exit(pOwner);
 }
@@ -237,7 +238,10 @@ void CCorinState_Attack_03::Exit(CCorin* pOwner)
 void CCorinState_Attack_03::Update_Effects(CCorin* pOwner)
 {
     if (IsCrossAnimProgress(0.41f))
+    {
         pOwner->Play_Effect("Corin_Sting0", _vector3(0.3f, 0.7f, 0.7f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+        pOwner->Play_Effect("Corin_Saw_Slash0", _vector3(0.f, 0.f, 0.f), _quaternion(0.f, 0.f, 0.f, 1.f));
+    }
 }
 
 void CCorinState_Attack_04::Enter(CCorin* pOwner)

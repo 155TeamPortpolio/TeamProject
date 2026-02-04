@@ -55,6 +55,10 @@ public:
 public:
     static CCorinState_UltimateAttack_End* Create() { return new CCorinState_UltimateAttack_End(); }
     virtual void Free() override { __super::Free(); }
+
+private:
+    void Update_Effects(CCorin* pOwner);
+
 };
 
 NS_END

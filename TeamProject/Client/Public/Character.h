@@ -217,6 +217,7 @@ public: // 피격
 public: // 이펙트
     virtual HRESULT Initialize_Effects();
     void Play_Effect(const string& effectTag, _fvector offsetPosition, _fvector offsetQuaternion, _bool syncTransform = true);
+    void Stop_Effect(const string& effectTag);
 
 private:
     void    Update_Rotation(_float dt);

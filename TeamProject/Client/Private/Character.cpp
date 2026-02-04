@@ -680,6 +680,15 @@ void CCharacter::Play_Effect(const string& effectTag, _fvector offsetPosition, _
     static_cast<CEffectContainer*>(pEffect)->Play();
 }
 
+void CCharacter::Stop_Effect(const string& effectTag)
+{
+    auto pEffect = Get_Component<CObjectContainer>()->Find_ObjectByName(effectTag);
+    if (!pEffect)
+        return;
+
+    static_cast<CEffectContainer*>(pEffect)->Stop();
+}
+
 void CCharacter::Update_Rotation(_float dt)
 {
     if (!m_bCanRotate) return;

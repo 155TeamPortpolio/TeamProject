@@ -497,6 +497,8 @@ namespace Engine
 		string ModelTag{};
 		string MaterialTag{};
 
+		_float fPendingDuration{};
+
 		string DiffuseTextureTag{};
 		string NoiseTextureTag{};
 		string DissolveTextureTag{};
