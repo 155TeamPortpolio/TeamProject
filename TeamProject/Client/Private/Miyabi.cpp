@@ -83,6 +83,7 @@ void CMiyabi::Awake()
 	Initialize_Stat();
 	m_fCurrentHP = 312.f;
 	m_tEnergy.fCurrentEnergy = 75;
+	m_iFrost = 3;
 
 	if (FAILED(Attach_ParryCollider()))
 		return;
