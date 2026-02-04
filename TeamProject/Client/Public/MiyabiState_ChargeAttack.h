@@ -70,7 +70,7 @@ class CMiyabiState_Charge_Attack01 : public IBaseState<CMiyabi>
 {
 public:
     virtual void Enter(CMiyabi* pOwner) override;
-    virtual void Update(CMiyabi* pOwner, _float dt) override {}
+    virtual void Update(CMiyabi* pOwner, _float dt) override;
     virtual void Exit(CMiyabi* pOwner) override {}
 
 public:
@@ -82,8 +82,13 @@ class CMiyabiState_Charge_Attack03 : public IBaseState<CMiyabi>
 {
 public:
     virtual void Enter(CMiyabi* pOwner) override;
-    virtual void Update(CMiyabi* pOwner, _float dt) override {}
-    virtual void Exit(CMiyabi* pOwner) override {}
+    virtual void Update(CMiyabi* pOwner, _float dt) override;
+    virtual void Exit(CMiyabi* pOwner) override;
+
+private:
+    _float m_fAreaTimer = { 0.f };
+    _float m_fAreaInterval = { 0.05f };
+    _bool  m_bAreaAttack = { false };
 
 public:
     static CMiyabiState_Charge_Attack03* Create() { return new CMiyabiState_Charge_Attack03(); }

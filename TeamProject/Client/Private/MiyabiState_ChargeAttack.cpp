@@ -3,6 +3,7 @@
 #include "MiyabiState_Attack.h"
 #include "Miyabi.h"
 #include "GameInstance.h"
+#include "BattleSystem.h"
 #include "Animator3D.h"
 
 CMiyabiState_ChargeAttack* CMiyabiState_ChargeAttack::Create()
@@ -61,6 +62,8 @@ void CMiyabiState_ChargeAttack::Enter(CMiyabi* pOwner)
     m_pSubStateMachine->Set_Int("ChargeLevel", 0);
     m_pSubStateMachine->Reset_Trigger("Release");
 
+    pOwner->Push_Invincible();
+
     __super::Enter(pOwner);
 }
 
@@ -77,6 +80,7 @@ void CMiyabiState_ChargeAttack::Update(CMiyabi* pOwner, _float dt)
 
 void CMiyabiState_ChargeAttack::Exit(CMiyabi* pOwner)
 {
+    pOwner->Pop_Invincible();
     __super::Exit(pOwner);
 }
 
@@ -147,7 +151,6 @@ void CMiyabiState_Charge_Start_03::Exit(CMiyabi* pOwner)
 void CMiyabiState_Charge_End::Enter(CMiyabi* pOwner)
 {
     _uint iLevel = m_pOwnerStateMachine->Get_Int("ChargeLevel");
-    m_pOwnerStateMachine->Set_Int("ChargeLevel", 0);
 
     if (iLevel >= 3)
         pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_ChargeAttack_Attack03_End")
@@ -164,10 +167,76 @@ void CMiyabiState_Charge_Attack01::Enter(CMiyabi* pOwner)
         .Apply();
 }
 
+void CMiyabiState_Charge_Attack01::Update(CMiyabi* pOwner, _float dt)
+{
+    _uint iLevel = m_pOwnerStateMachine->Get_Int("ChargeLevel");
+    _vector3 vPos = pOwner->Get_Component<CTransform>()->Dir(STATE::POSITION);
+    _vector3 vLook = pOwner->Get_Component<CTransform>()->Dir(STATE::LOOK);
+    if (IsCrossAnimProgress(0.21f))
+    {
+        if (iLevel == 1)
+        {
+            BattleSystem()->TakeAreaDamage(vPos, 8.f, vLook, 30.f, HitDesc()
+                .Type(HIT_TYPE::ONCE)
+                .Damage(pOwner->Get_AttackPower() * 4.547f * Helper::Get_Random_Float(1.f, 1.5f)
+                    , DAMAGE_TYPE::NORMAL)
+            );
+        }
+        else
+        {
+            BattleSystem()->TakeAreaDamage(vPos, 8.f, vLook, 60.f, HitDesc()
+                .Type(HIT_TYPE::ONCE)
+                .Damage(pOwner->Get_AttackPower() * 8.581f * Helper::Get_Random_Float(1.f, 1.5f)
+                    , DAMAGE_TYPE::NORMAL)
+            );
+        }
+    }
+}
+
 // Charge_Attack03 (3´Ü °ø°Ý)
 void CMiyabiState_Charge_Attack03::Enter(CMiyabi* pOwner)
 {
+    m_bAreaAttack = false;
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_ChargeAttack_Attack03")
         .Apply();
+}
+
+void CMiyabiState_Charge_Attack03::Update(CMiyabi* pOwner, _float dt)
+{
+    for (const auto& Event : pOwner->Get_Animator()->Get_EventBus())
+    {
+        if (Event.Type != CLIP_EVENT_TYPE::NOTIFY) continue;
+        if (Event.Tag == "AreaAttackStart")
+        {
+            m_bAreaAttack = true;
+            m_fAreaTimer = 0.f;
+        }
+        else if (Event.Tag == "AreaAttackEnd")
+        {
+            m_bAreaAttack = false;
+        }
+    }
+
+    if (m_bAreaAttack)
+    {
+        m_fAreaTimer += dt;
+        if (m_fAreaTimer >= m_fAreaInterval)
+        {
+            m_fAreaTimer -= m_fAreaInterval;
+            _vector3 vPos = pOwner->Get_WorldPos();
+            _vector3 vLook = pOwner->Get_Component<CTransform>()->Dir(STATE::LOOK);
+            BattleSystem()->TakeAreaDamage(vPos, 8.f, HitDesc()
+                .Type(HIT_TYPE::ONCE)
+                .Damage(pOwner->Get_AttackPower() * 1.07055f * Helper::Get_Random_Float(1.f, 1.5f)
+                    , DAMAGE_TYPE::NORMAL)
+            );
+
+        }
+    }
+}
+
+void CMiyabiState_Charge_Attack03::Exit(CMiyabi* pOwner)
+{
+    m_bAreaAttack = false;
 }
 
