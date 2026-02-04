@@ -370,6 +370,9 @@ HRESULT CCorin::Initialize_Weapon()
 
 HRESULT CCorin::Initialize_Effects()
 {
+    if (FAILED(__super::Initialize_Effects()))
+        return E_FAIL;
+
     auto pObjectContainer = Get_Component<CObjectContainer>();
 
     // Normal Slash
