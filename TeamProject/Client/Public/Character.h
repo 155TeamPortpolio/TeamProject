@@ -273,7 +273,6 @@ protected:
     // 패링
     _int            m_iParryColliderIndex = {};
     SWITCH          m_eSwitchType = SWITCH::END;
-    _float          m_fParryOffset = { 1.8f };
     _vector3        m_vParryPos = {};
     _vector3        m_vParryLook = {};
     OBJECT_HANDLE   m_ParryHandle;
