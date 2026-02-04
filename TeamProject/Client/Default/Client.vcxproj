@@ -388,6 +388,7 @@
     <ClInclude Include="..\Public\Cyclops_Attack.h" />
     <ClInclude Include="..\Public\Cyclops_Chase.h" />
     <ClInclude Include="..\public\Claymore_Parried.h" />
+    <ClInclude Include="..\public\Cyclops_Spit.h" />
     <ClInclude Include="..\Public\Defiler.h" />
     <ClInclude Include="..\Public\Defiler_Control.h" />
     <ClInclude Include="..\Public\DefilerState_Attack.h" />
@@ -790,6 +791,7 @@
     <ClCompile Include="..\Private\Cyclops_Move.cpp" />
     <ClCompile Include="..\Private\Cyclops_Attack.cpp" />
     <ClCompile Include="..\Private\Cyclops_Chase.cpp" />
+    <ClCompile Include="..\private\Cyclops_Spit.cpp" />
     <ClCompile Include="..\Private\Defiler.cpp" />
     <ClCompile Include="..\Private\DefilerState_Attack.cpp" />
     <ClCompile Include="..\Private\DefilerState_Born.cpp" />

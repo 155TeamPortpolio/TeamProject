@@ -13,14 +13,7 @@ public:
     virtual void Exit(CMiyabi* pOwner) override;
 
 public:
-    void Set_ChargeLevel(_uint iLevel) { m_iChargeLevel = iLevel; }
-    _uint Get_ChargeLevel() const { return m_iChargeLevel; }
-
-private:
-    _uint m_iChargeLevel = 0;
-
-public:
-    static CMiyabiState_ChargeAttack* Create() { return new CMiyabiState_ChargeAttack(); }
+    static CMiyabiState_ChargeAttack* Create();
     virtual void Free() override { __super::Free(); }
 };
 
@@ -61,11 +54,23 @@ public:
     virtual void Free() override { __super::Free(); }
 };
 
+class CMiyabiState_Charge_End : public IBaseState<CMiyabi>
+{
+public:
+    virtual void Enter(CMiyabi* pOwner) override;
+    virtual void Update(CMiyabi* pOwner, _float dt) {}
+    virtual void Exit(CMiyabi* pOwner) {}
+
+public:
+    static CMiyabiState_Charge_End* Create() { return new CMiyabiState_Charge_End(); }
+    virtual void Free() override { __super::Free(); }
+};
+
 class CMiyabiState_Charge_Attack01 : public IBaseState<CMiyabi>
 {
 public:
     virtual void Enter(CMiyabi* pOwner) override;
-    virtual void Update(CMiyabi* pOwner, _float dt) override {}
+    virtual void Update(CMiyabi* pOwner, _float dt) override;
     virtual void Exit(CMiyabi* pOwner) override {}
 
 public:
@@ -77,23 +82,16 @@ class CMiyabiState_Charge_Attack03 : public IBaseState<CMiyabi>
 {
 public:
     virtual void Enter(CMiyabi* pOwner) override;
-    virtual void Update(CMiyabi* pOwner, _float dt) override {}
-    virtual void Exit(CMiyabi* pOwner) override {}
-
-public:
-    static CMiyabiState_Charge_Attack03* Create() { return new CMiyabiState_Charge_Attack03(); }
-    virtual void Free() override { __super::Free(); }
-};
-
-class CMiyabiState_Charge_End : public IBaseState<CMiyabi>
-{
-public:
-    virtual void Enter(CMiyabi* pOwner) override;
     virtual void Update(CMiyabi* pOwner, _float dt) override;
     virtual void Exit(CMiyabi* pOwner) override;
 
+private:
+    _float m_fAreaTimer = { 0.f };
+    _float m_fAreaInterval = { 0.05f };
+    _bool  m_bAreaAttack = { false };
+
 public:
-    static CMiyabiState_Charge_End* Create() { return new CMiyabiState_Charge_End(); }
+    static CMiyabiState_Charge_Attack03* Create() { return new CMiyabiState_Charge_Attack03(); }
     virtual void Free() override { __super::Free(); }
 };
 

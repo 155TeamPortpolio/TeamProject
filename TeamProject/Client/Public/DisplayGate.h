@@ -25,7 +25,7 @@ public:
     }
 
 private:
-    int m_minWidth  = 2500;
+    int m_minWidth  = 25000;
     int m_minHeight = 0;
 };
 

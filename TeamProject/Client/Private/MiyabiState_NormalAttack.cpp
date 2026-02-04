@@ -60,9 +60,11 @@ CMiyabiState_NormalAttack* CMiyabiState_NormalAttack::Create()
 void CMiyabiState_NormalAttack::Enter(CMiyabi* pOwner)
 {
     pOwner->Lock_Move();
+
     m_iComboIndex = 0;
-    // 트리거 초기화
+    m_fHoldTime = 0.f;
     m_pSubStateMachine->Reset_Trigger("NextCombo");
+
     __super::Enter(pOwner);
 }
 
@@ -70,6 +72,23 @@ void CMiyabiState_NormalAttack::Update(CMiyabi* pOwner, _float dt)
 {
     if (InputDevice()->Mouse_Tap(MOUSE_BTN::LB))
         m_pSubStateMachine->Set_Trigger("NextCombo");
+
+    if (pOwner->Can_Charge())
+    {
+        if (InputDevice()->Mouse_Hold(MOUSE_BTN::LB))
+        {
+            m_fHoldTime += dt;
+            if (m_fHoldTime >= 0.3f)
+            {
+                m_pOwnerStateMachine->Set_Trigger("ToChargeAttack");
+                m_fHoldTime = 0.f;
+            }
+        }
+        else
+        {
+            m_fHoldTime = 0.f;
+        }
+    }
 
     auto pMiyabiState = pOwner->Get_StateMachine();
     if (pMiyabiState->Get_Bool("OutReserve"))

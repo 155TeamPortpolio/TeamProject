@@ -22,6 +22,8 @@ public:
     
 public: // 상태머신
     CStateMachine<CMiyabi>* Get_StateMachine() { return m_pStateMachine; }
+    // 회피관련 미야비 특수처리
+    virtual _bool Can_Evade() override;
 
 public: // 타겟팅
     _bool   Is_LookTarget() const { return m_bLookTarget; }
@@ -29,6 +31,7 @@ public: // 타겟팅
 
 public: // 서리
     _bool   Has_Frost() const { return m_iFrost > 0; }
+    _bool   Can_Charge() const { return m_iFrost >= 2; }
     void    Increase_Frost(_uint iFrost);
     void    Decrease_Frost(_uint iFrost);
 
