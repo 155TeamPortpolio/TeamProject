@@ -238,6 +238,17 @@ void ShakeController::AddAxisWave(CamShakeAxis axes, _float ampDeg, _float freq,
     auto& s = m_instances.back();
     s.attackSec = 0.f;
     s.sustainSec = 0.f;
+
+    s.spring = true;
+    s.noiseFreq = p.noiseFreq;
+
+    s.yawSign = 1.f;
+    s.rollSign = 1.f;
+    s.sideSign = 1.f;
+
+    s.springPhase = XM_PIDIV2;
+    s.springPhase2 = XM_PIDIV2;
+    s.springH2 = 0.35f;
 }
 
 void ShakeController::Clear(_float fadeOutSec)
@@ -278,7 +289,18 @@ void ShakeController::Apply(const Quaternion& camRot, _float dt, Vector3& outWor
         if (w <= 0.f) continue;
 
         const _float k = KickCurve(t, s.kickDur);
-        const _float n = Noise3(t, s.noiseFreq, s.p0, s.p1, s.p2);
+
+        _float n{};
+        if (s.spring)
+        {
+            const _float omega = s.noiseFreq * (2.f * XM_PI);
+            const _float a0 = sinf(omega * t + s.springPhase);
+            const _float a1 = sinf(omega * t * 2.f + s.springPhase2) * s.springH2;
+            n = a0 + a1;
+            posAcc.z += (s.noiseRotRad * 0.0012f) * w * n;
+        }
+        else
+            n = Noise3(t, s.noiseFreq, s.p0, s.p1, s.p2);
 
         const _float kick = s.kickRotRad * w * k;
         const _float noise = s.noiseRotRad * w * n;

@@ -18,6 +18,7 @@
 #include "Miyabi.h"
 
 #include "Camera.h"
+#include "DisplayGate.h"
 
 CBattlePlayer::CBattlePlayer()
 {
@@ -28,7 +29,11 @@ HRESULT CBattlePlayer::Initialize()
     CBattleSystem::GetInstance()->SetBattlePlayer(this);
     Initialize_CharacterPrototype();
 
-    vector<CHARACTER> BattleCharacters = { CHARACTER::JaneDoe, CHARACTER::Corin, CHARACTER::Miyabi };
+    //vector<CHARACTER> BattleCharacters = { CHARACTER::JaneDoe, CHARACTER::Corin, CHARACTER::Miyabi };
+
+    // Jehyun
+    vector<CHARACTER> BattleCharacters = {CHARACTER::Miyabi,CHARACTER::JaneDoe, CHARACTER::Corin, };
+
     SetBattleCharacters(BattleCharacters);
 
     return S_OK;
