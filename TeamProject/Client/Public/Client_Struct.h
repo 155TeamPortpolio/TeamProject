@@ -11,7 +11,7 @@ namespace Client {
 		_float			fRadius = {};			// CCT 로컬 원점으로부터 반지름
 		void Reset() {
 			TagInstanceName.clear();
-			hObject.Reset();
+			hObject.Delete();
 			isOnField = false;
 			vPos = {};
 			fRadius = { 0.f };
@@ -140,7 +140,7 @@ namespace Client {
 		vector<RAMEN_ATTRIBUTE> attributes;
 	}RAMEN_DESC;
 
-	typedef struct tagWeaponDesc {
+	typedef struct tagGachaResultDesc {
 		_int		ID;
 		GachaGrade	Grade;
 		string		strModel;
@@ -150,7 +150,10 @@ namespace Client {
 		_float		RotY;
 		_float		RotZ;
 		_float		RotW;
-	}WEAPON_DESC;
+		string		strMeta;
+		string		strStartAnim;
+		string		strLoopAnim;
+	}GACHA_RESULT_DESC;
 
 	typedef struct tagTVDesc {
 		string		strName;

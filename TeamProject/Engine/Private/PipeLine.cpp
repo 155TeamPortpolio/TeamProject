@@ -343,8 +343,6 @@ _bool CPipeLine::isVisible(MINMAX_BOX minMax, _fmatrix worldTransform)
 	return m_Frustum.Intersects(worldAabb);
 }
 
-
-
 _uint CPipeLine::Write_ObjectData(const _float4x4& worldMatrix)
 {
 	if (!m_pObjectArray) return UINT_MAX;

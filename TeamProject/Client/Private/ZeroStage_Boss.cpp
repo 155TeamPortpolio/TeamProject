@@ -1,66 +1,13 @@
 #include "pch.h"
 #include "ZeroStage_Boss.h"
-#include "Helper_Func.h"
 #include "GameInstance.h"
-
-#include "TestMap.h"
-#include "TestObject.h"
-#include "TestFloor.h"
-#include "RigidBody.h"
-#include "CharacterController.h"
-
 #include "BattleSystem.h"
-#include "DataBase.h"
-
-// Camera
-#include "Camera.h"
-#include "FreeCam.h"
-#include "CamDirector.h"
-#include "OrbitCam.h"
-#include "ShadowCam.h"
-#include "SequenceCam.h"
-#include "CamPanel.h"
-#include "CamLoader.h"
-
-/* MapData */
-#include "MapLoader.h"
-#include "MapPlacedObject.h"
-#include "MapTriggerObject.h"
-
-/* Effect */
-#include "MeshNode.h"
-#include "SpriteNode.h"
-#include "ParticleNode.h"
-#include "TrailNode.h"
-#include "EffectContainer.h"
-#include "AttackSign.h"
-
-/* Character */
-#include "Miyabi.h"
-#include "Anbi.h"
-#include "Corin.h"
-#include "JaneDoe.h"
-#include "Player.h"
-
-/* Enemy */
-#include "Sacrifice.h" 
-#include "SacrificeHand.h"
-#include "Sacrifice_Laser.h"
-#include "Sacrifice_Orb.h"
-#include "ThugBulkyEnforcer.h"
-#include "EnemyAttackCollider.h"
-#include "EnemyTriggerCollider.h"
-#include "ThugAssaulter.h"
-
-/* UI */
-#include "UIDirector.h"
-#include "UI_MeshBillboard.h"
-
-#include "GameInstance.h"
-#include "Layer.h"
+#include "Zero_Level.h"
+#include "StageRouter.h"
 
 CZeroStage_Boss::CZeroStage_Boss()
 {
+	m_eType = StageType::Boss;
 }
 
 HRESULT CZeroStage_Boss::Initialize(CZero_Level* pOwnerLevel)
@@ -68,6 +15,7 @@ HRESULT CZeroStage_Boss::Initialize(CZero_Level* pOwnerLevel)
 	if (!pOwnerLevel)
 		return E_FAIL;
 
+	m_pOwnerLevel = pOwnerLevel;
 	return S_OK;
 }
 
@@ -78,10 +26,7 @@ HRESULT CZeroStage_Boss::Awake()
 
 void CZeroStage_Boss::Update()
 {
-
-
 	float dt = TimeManager()->Get_RawDeltaTime(G_EngineTimerID);
-	m_fStageTime += dt;
 
 	switch (m_eStageStage)
 	{
@@ -106,23 +51,16 @@ void CZeroStage_Boss::Update()
 	}
 }
 
-HRESULT CZeroStage_Boss::Ready_Stage(CZero_Level::StageContext& context)
-{
-	return S_OK;
-}
 
-HRESULT CZeroStage_Boss::Enter_Stage(CZero_Level::StageContext& context)
+HRESULT CZeroStage_Boss::Enter_Stage(StageContext& context)
 {
-	Ready_Map("Zero_Level", "Zero_Boss1");
+	Ready_Map("Zero_Level", context.mapKey);
+	Reserve_Enemy("Zero_Level");
 	m_eStageStage = StageState::Entrance;
 	m_PlayerHandle = context.hPlayer;
-	BossIntro(context);
-	return S_OK;
-}
 
-HRESULT CZeroStage_Boss::Exit_Stage(CZero_Level::StageContext& context)
-{
-	ObjectManager()->Get_Layer({ "Zero_Level","PlacedObject_Layer" })->Clear_Layer();
+	Active_Player(CStage::PlayerPoint::Typical);
+	BossIntro(context);
 	return S_OK;
 }
 
@@ -130,7 +68,7 @@ void CZeroStage_Boss::Intro()
 {
 	if (m_introFlow.IsDoneAll())
 	{
-		CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_Sacrifice", {_vector3(-2.f, 1.f, 21.f)});
+		Active_Enemy();
 		CBattleSystem::GetInstance()->SetActive(true);
 		m_eStageStage = StageState::BattleStart;
 	}
@@ -142,8 +80,7 @@ void CZeroStage_Boss::Battle()
 	if (isBattleEnd) {
 		m_eStageStage = StageState::BattleEnd;
 		CBattleSystem::GetInstance()->SetActive(false);
-		STAGE_CHANGED_DESC Stage_End = { this };
-		EventSystem()->Broadcast<STAGE_CHANGED_DESC>(Stage_End);
+		Active_Portal();
 	}
 }
 
@@ -158,10 +95,9 @@ void CZeroStage_Boss::Outro()
 void CZeroStage_Boss::End()
 {
 	if (m_outroFlow.IsDoneAll()) {
-		RenderSystem()->UnRegister_AddictiveColor();
-		ObjectManager()->Get_Layer({ "Zero_Level","PlacedObject_Layer" })->Clear_Layer();
-		ObjectManager()->Get_Layer({ "Zero_Level","InteractableObject_Layer" })->Clear_Layer();
-		m_pOwnerLevel->ChangeStage(StageType::Boss, 0);
+		auto stageType = m_pOwnerLevel->Get_Router()->GetChoiceType(m_iNextChoice);
+		m_pOwnerLevel->Get_Router()->Choose(m_iNextChoice);
+		m_pOwnerLevel->ChangeStage(stageType);
 	}
 }
 

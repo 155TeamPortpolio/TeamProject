@@ -358,6 +358,7 @@
     <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\backends\imgui_impl_win32.h" />
     <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\imgui.h" />
     <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\ImGuizmo.h" />
+    <ClInclude Include="..\Public\AmbientActor.h" />
     <ClInclude Include="..\Public\Anbi.h" />
     <ClInclude Include="..\Public\AnbiState_Attack.h" />
     <ClInclude Include="..\Public\AnbiState_Idle.h" />
@@ -395,6 +396,7 @@
     <ClInclude Include="..\public\DefilerState_Idle.h" />
     <ClInclude Include="..\Public\CorinState_AssaultAttack.h" />
     <ClInclude Include="..\Public\CorinState_CounterAttack.h" />
+    <ClInclude Include="..\public\GachaAvatar.h" />
     <ClInclude Include="..\public\GachaBack.h" />
     <ClInclude Include="..\public\GachaProps.h" />
     <ClInclude Include="..\public\GachaScreen.h" />
@@ -402,6 +404,7 @@
     <ClInclude Include="..\public\GachaStageScreen.h" />
     <ClInclude Include="..\public\GachaTV.h" />
     <ClInclude Include="..\public\GachaResult.h" />
+    <ClInclude Include="..\public\GachaWeapon.h" />
     <ClInclude Include="..\public\Gacha_Level.h" />
     <ClInclude Include="..\Public\MilitaryHelicopter.h" />
     <ClInclude Include="..\Public\MiyabiState_BackStep.h" />
@@ -414,6 +417,14 @@
     <ClInclude Include="..\Public\MiyabiState_SwitchInNormal.h" />
     <ClInclude Include="..\Public\MiyabiState_SwitchInParryAid.h" />
     <ClInclude Include="..\Public\MiyabiState_SwitchOut.h" />
+    <ClInclude Include="..\public\UI_Swaebing.h" />
+    <ClInclude Include="..\public\UI_Seoriyeol.h" />
+    <ClInclude Include="..\Public\StageRouter.h" />
+    <ClInclude Include="..\Public\UI_GachaChannel.h" />
+    <ClInclude Include="..\Public\UI_GachaConversion.h" />
+    <ClInclude Include="..\Public\UI_GachaCurrency.h" />
+    <ClInclude Include="..\Public\UI_GachaPage.h" />
+    <ClInclude Include="..\public\Room_Gacha.h" />
     <ClInclude Include="..\public\UI_Gangta.h" />
     <ClInclude Include="..\Public\ICamCollidable.h" />
     <ClInclude Include="..\Public\JaneDoeState_AssaultAttack.h" />
@@ -689,7 +700,6 @@
     <ClInclude Include="..\public\JaneDoe.h" />
     <ClInclude Include="..\Public\VideoPanel.h" />
     <ClInclude Include="..\Public\ZeroPortal.h" />
-    <ClInclude Include="..\public\ZeroStage_1_1.h" />
     <ClInclude Include="..\Public\ZeroStage_Boss.h" />
     <ClInclude Include="..\Public\ZeroStage_Elite.h" />
     <ClInclude Include="..\Public\ZeroStage_Normal.h" />
@@ -749,6 +759,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='EngineDebug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="..\private\AmbientActor.cpp" />
     <ClCompile Include="..\Private\Anbi.cpp" />
     <ClCompile Include="..\Private\AnbiState_Attack.cpp" />
     <ClCompile Include="..\Private\AnbiState_Idle.cpp" />
@@ -785,6 +796,7 @@
     <ClCompile Include="..\Private\DefilerState_Attack.cpp" />
     <ClCompile Include="..\Private\DefilerState_Born.cpp" />
     <ClCompile Include="..\Private\DefilerState_Idle.cpp" />
+    <ClCompile Include="..\private\GachaAvatar.cpp" />
     <ClCompile Include="..\private\GachaBack.cpp" />
     <ClCompile Include="..\private\GachaProps.cpp" />
     <ClCompile Include="..\private\GachaScreen.cpp" />
@@ -792,6 +804,7 @@
     <ClCompile Include="..\private\GachaStageScreen.cpp" />
     <ClCompile Include="..\private\GachaTV.cpp" />
     <ClCompile Include="..\private\GachaResult.cpp" />
+    <ClCompile Include="..\private\GachaWeapon.cpp" />
     <ClCompile Include="..\private\Gacha_Level.cpp" />
     <ClCompile Include="..\private\MilitaryHelicopter.cpp" />
     <ClCompile Include="..\Private\MiyabiState_BackStep.cpp" />
@@ -804,6 +817,14 @@
     <ClCompile Include="..\Private\MiyabiState_SwitchInNormal.cpp" />
     <ClCompile Include="..\Private\MiyabiState_SwitchInParryAid.cpp" />
     <ClCompile Include="..\Private\MiyabiState_SwitchOut.cpp" />
+    <ClCompile Include="..\private\UI_Swaebing.cpp" />
+    <ClCompile Include="..\private\UI_Seoriyeol.cpp" />
+    <ClCompile Include="..\Private\StageRouter.cpp" />
+    <ClCompile Include="..\Private\UI_GachaChannel.cpp" />
+    <ClCompile Include="..\Private\UI_GachaConversion.cpp" />
+    <ClCompile Include="..\Private\UI_GachaCurrency.cpp" />
+    <ClCompile Include="..\Private\UI_GachaPage.cpp" />
+    <ClCompile Include="..\private\Room_Gacha.cpp" />
     <ClCompile Include="..\private\UI_Gangta.cpp" />
     <ClCompile Include="..\Private\JaneDoeState_AssaultAttack.cpp" />
     <ClCompile Include="..\Private\JaneDoeState_CounterAttack.cpp" />
@@ -1072,7 +1093,6 @@
     <ClCompile Include="..\private\JaneDoe.cpp" />
     <ClCompile Include="..\Private\VideoPanel.cpp" />
     <ClCompile Include="..\Private\ZeroPortal.cpp" />
-    <ClCompile Include="..\private\ZeroStage_1_1.cpp" />
     <ClCompile Include="..\Private\ZeroStage_Boss.cpp" />
     <ClCompile Include="..\Private\ZeroStage_Elite.cpp" />
     <ClCompile Include="..\Private\ZeroStage_Normal.cpp" />

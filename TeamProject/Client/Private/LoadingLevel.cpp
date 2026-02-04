@@ -33,7 +33,7 @@ HRESULT CLoadingLevel::Awake()
 	if (!m_bGlobal)
 	{
 		PreLoadLevel("Global_Level");
-		//PreLoadForTestLevel();
+		PreLoadForTestLevel();
 		m_bGlobal = true;
 	}
 	return S_OK;
@@ -167,28 +167,8 @@ void CLoadingLevel::PreLoadForTestLevel()
 		const string fileName = filePathObj.filename().string();
 
 		resourceManager->Add_ResourcePath(fileName, filePath);
-
-		const ResourceType type = CheckResourceType(filePath, fileName);
-		if (type == ResourceType::None)
-			continue;
-
-		PreloadKey key{};
-		key.type = type;
-		key.levelKey = "Test_Level";
-		key.resourceKey = fileName;
-		key.options.isSRGB = isSRGB(filePath);
-
-		m_LoadQue[type].push(key);
 	}
 
-	for (auto& queuePerType : m_LoadQue)
-	{
-		while (!queuePerType.second.empty())
-		{
-			resourceManager->RequestPreload(queuePerType.second.front());
-			queuePerType.second.pop();
-		}
-	}
 }
 
 

@@ -17,7 +17,8 @@ public:
     _uint Get_ComboIndex() const { return m_iComboIndex; }
 
 private:
-    _uint m_iComboIndex = 0;
+    _uint  m_iComboIndex = 0;
+    _float m_fHoldTime = 0.f;
 
 public:
     static CMiyabiState_NormalAttack* Create();

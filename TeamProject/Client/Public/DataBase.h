@@ -20,16 +20,16 @@ public:
     PlayerDesc              GetPlayerDesc(const string& strName);
     MonsterCreationDesc     GetMonsterDesc(const string& strName);
     MonsterCreationDesc     GetMonsterDesc(_int ColonyIndex, _int MonsterIndex);
+    const vector<MapData_Path_Packet>*  GetMapDataPacket(const string& tagArea);
+    const EncounterTable*               GetMonsterSpawnData(const string& tagArea, _uint iStageType);
     NpcIDDesc               GetNpcIDData(const wstring& strName);
     NpcDialogueDesc         GetNpcDialogueDesc(pair<string, _uint> dialogueID);
     ChoiceDesc              GetNpcChoiceDesc(const string& strName);
-    const vector<MapData_Path_Packet>*  GetMapDataPacket(const string& tagArea);
-    const EncounterTable*               GetMonsterSpawnData(const string& tagArea, _uint iStageType);
-    RAMEN_DESC              GetRamenDesc(const string& strName);
-    vector<const RAMEN_DESC*> GetRamenTable();
-    WEAPON_DESC             GetWeaponDesc(_int WeaponID);
-    TV_DESC                 GetTVDesc(const string& strName);
-    vector<WEAPON_DESC>     GetGachaResults(_int WeaponNum);
+    RAMEN_DESC                      GetRamenDesc(const string& strName);
+    vector<const RAMEN_DESC*>       GetRamenTable();
+    GACHA_RESULT_DESC               GetGachaResultDesc(_int ID);
+    vector<GACHA_RESULT_DESC>       GetGachaGroup();
+    TV_DESC                         GetTVDesc(const string& strName);
 
 public:
     HRESULT LoadPlayerCreationTable(const string& csvPath);
@@ -41,7 +41,8 @@ public:
     HRESULT LoadNpcDialogueData(const string& csvPath);
     HRESULT LoadNpcChoiceData(const string& csvPath);
     HRESULT LoadRamenData(const string& csvPath);
-    HRESULT LoadWeaponData(const string& csvPath);
+    HRESULT LoadGachaResultData(const string& csvPath);
+    HRESULT LoadGachaData(const string& csvPath);
     HRESULT LoadTVData(const string& csvPath);
 
 public:
@@ -73,7 +74,8 @@ private:
     map<pair<string, _uint>, NpcDialogueDesc>		        m_DialogueTables;
     unordered_map<string, ChoiceDesc>				        m_DialgoueChoiceTables;
     //FieldData
-    unordered_map<_int, WEAPON_DESC>                        m_WeaponTables;
+    unordered_map<_int, GACHA_RESULT_DESC>                  m_ResultTables;
+    vector<array<_int, 10>>                                 m_GachaData;
     unordered_map<string, RAMEN_DESC>                       m_RamenTables;
     unordered_map<string, TV_DESC>                          m_TVTables;
     // BattleField Data
@@ -81,6 +83,9 @@ private:
     //맵 데이터 <-> 런타임 데이터 연결용 (현재 작동중인 레벨에서만)
     unordered_map<string, CASHED_OBJ_DATA>  m_CashedData;
     
+private:
+    _int m_iCurrentGachaOrder = 0;
+    _int m_iMaxGachaOrder = 3;
 
 public:
     virtual void Free() override;

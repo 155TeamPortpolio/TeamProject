@@ -35,7 +35,7 @@ HRESULT CFirstLevel::Awake()
 	OBJ->Add_Object(corin,     {G_GlobalLevelKey, "Model_Layer" });
 	OBJ->Add_Object(janeDoe,   {G_GlobalLevelKey, "Model_Layer" });
 	OBJ->Add_Object(miyabi,    {G_GlobalLevelKey, "Model_Layer" });
-	OBJ->Add_Object(gacha,     {G_GlobalLevelKey, "Gacha_Layer" });
+	//OBJ->Add_Object(gacha,     {G_GlobalLevelKey, "Gacha_Layer" });
 	//OBJ->Add_Object(demoGrid,  {G_GlobalLevelKey, "Grid_Layer"});
 
 	CAM->Set_MainCam(freeCam->Get_Component<CCamera>());
@@ -47,7 +47,7 @@ HRESULT CFirstLevel::Awake()
 	auto camPanel = CCamPanel::Create(GUISystem()->Get_Context());
 	camPanel->SetCaptureTarget(static_cast<CCamObj*>(freeCam));
 	camPanel->SetSpaceRefCandidates({corinHandle, janeHandle, miyabiHandle});
-	camPanel->SetSpaceReference(janeHandle);
+	camPanel->SetSpaceReference(miyabiHandle);
 	GUISystem()->Register_Panel(camPanel);
 
 	return S_OK;

@@ -17,14 +17,7 @@ HRESULT CUI_FieldHUD::Initialize(INIT_DESC* pArg)
 {
     __super::Initialize(pArg);
 
-    const string& filePath = ResourceManager()->Get_ResourcePath("hud_field.json");
-    Load(Helper::LoadJson<nlohmann::ordered_json>(filePath));
-
-    Ready_PartObjects();
-
-    /*임시*/
-    m_handles[Child::GRADIENTF] = Get_DescendantHandle("gradientF");
-    m_handles[Child::GRADIENTJ] = Get_DescendantHandle("gradientJ");
+    Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("hud_field.json")));
 
     return S_OK;
 }
@@ -35,56 +28,19 @@ void CUI_FieldHUD::Awake()
 
 void CUI_FieldHUD::Update(_float dt)
 {
-    if (!m_isTemp)
-    {
-        //Set_Animation(Child::GRADIENTF, 0); // 가까이 다가갔을 때 돌아가게
-        Set_Animation(Child::GRADIENTJ, 0);
-        m_isTemp = true;
-    }
+    __super::Update(dt);
 
     Get_Component<CObjectContainer>()->UpdateChild(dt);
 }
 
 void CUI_FieldHUD::UI_Active(void* pArg)
 {
-    if (!pArg)
-        return;
-
-    //UI_TRANSITION_DESC* pDesc = static_cast<UI_TRANSITION_DESC*>(pArg);
-    //if (pDesc->isFade)
-    //    Set_Animation(0);
-    //else
-    Set_Alpha(1.f);
+    Set_Alive(true);
 }
 
 void CUI_FieldHUD::UI_DeActive(void* pArg)
 {
-    Set_Alpha(0.f);
-}
-
-void CUI_FieldHUD::Ready_PartObjects()
-{
-    //Add_PartObject("Proto_GameObject_FieldHUDAction", "action", &m_handles[ENUM(Child::ACTION)], _float2(1178.f, 655.f));
-}
-
-void CUI_FieldHUD::Add_PartObject(const string& strPrototypeTag, const string& strInstanceName, UI_HANDLE* pHandleOut, _float2 vOffset)
-{
-    CUI_Object* pObj = Builder::Create_UIObject({ LevelManager()->Get_NowLevelKey(), strPrototypeTag })
-        .Offset(vOffset)
-        .Build(strInstanceName);
-
-    if (!pObj)
-        return;
-
-    Get_Component<CObjectContainer>()->Add_Child(pObj);
-
-    if (pHandleOut)
-        *pHandleOut = pObj->Get_Handle();
-}
-
-void CUI_FieldHUD::Set_Animation(Child child, _int iIndex)
-{
-    //ForChild(child, [iIndex](CUI_Object* ui) { ui->Set_Animation(iIndex); });
+    Set_Alive(false);
 }
 
 CGameObject* CUI_FieldHUD::Create()

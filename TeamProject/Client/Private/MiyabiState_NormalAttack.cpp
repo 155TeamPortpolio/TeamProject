@@ -60,9 +60,11 @@ CMiyabiState_NormalAttack* CMiyabiState_NormalAttack::Create()
 void CMiyabiState_NormalAttack::Enter(CMiyabi* pOwner)
 {
     pOwner->Lock_Move();
+
     m_iComboIndex = 0;
-    // 트리거 초기화
+    m_fHoldTime = 0.f;
     m_pSubStateMachine->Reset_Trigger("NextCombo");
+
     __super::Enter(pOwner);
 }
 
@@ -70,6 +72,23 @@ void CMiyabiState_NormalAttack::Update(CMiyabi* pOwner, _float dt)
 {
     if (InputDevice()->Mouse_Tap(MOUSE_BTN::LB))
         m_pSubStateMachine->Set_Trigger("NextCombo");
+
+    if (pOwner->Can_Charge())
+    {
+        if (InputDevice()->Mouse_Hold(MOUSE_BTN::LB))
+        {
+            m_fHoldTime += dt;
+            if (m_fHoldTime >= 0.3f)
+            {
+                m_pOwnerStateMachine->Set_Trigger("ToChargeAttack");
+                m_fHoldTime = 0.f;
+            }
+        }
+        else
+        {
+            m_fHoldTime = 0.f;
+        }
+    }
 
     auto pMiyabiState = pOwner->Get_StateMachine();
     if (pMiyabiState->Get_Bool("OutReserve"))
@@ -104,6 +123,21 @@ void CMiyabiState_Attack_01::Update(CMiyabi* pOwner, _float dt)
     pOwner->Process_RootMotion(dt,
         ENUM(CMiyabi::ROOTMOTION_MASK::MOVE) |
         ENUM(CMiyabi::ROOTMOTION_MASK::QUATERNION));
+
+    for (const auto& Event : pOwner->Get_Animator()->Get_EventBus())
+    {
+        if (Event.Type != CLIP_EVENT_TYPE::NOTIFY) continue;
+        if (Event.Tag == "AreaAttack")
+        {
+            _vector3 vLook = pOwner->Get_Component<CTransform>()->Dir(STATE::LOOK);
+            _vector3 vPos = pOwner->Get_WorldPos();
+            BattleSystem()->TakeAreaDamage(vPos + vLook * 2.f, 3.f, HitDesc()
+                .Type(HIT_TYPE::ONCE)
+                .Damage(pOwner->Get_AttackPower() * 0.269f * Helper::Get_Random_Float(1.f, 1.5f)
+                    , DAMAGE_TYPE::NORMAL)
+            );
+        }
+    }
 }
 
 void CMiyabiState_Attack_01::Exit(CMiyabi* pOwner)
@@ -122,6 +156,23 @@ void CMiyabiState_Attack_02::Update(CMiyabi* pOwner, _float dt)
     pOwner->Process_RootMotion(dt,
         ENUM(CMiyabi::ROOTMOTION_MASK::MOVE) |
         ENUM(CMiyabi::ROOTMOTION_MASK::QUATERNION));
+
+    for (const auto& Event : pOwner->Get_Animator()->Get_EventBus())
+    {
+        if (Event.Type != CLIP_EVENT_TYPE::NOTIFY) continue;
+        if (Event.Tag == "KatanaStart")
+        {
+            pOwner->Begin_AttackCollider("KatanaWeapon", HitDesc()
+                .Type(HIT_TYPE::ONCE)
+                .Damage(pOwner->Get_AttackPower() * 0.296f * Helper::Get_Random_Float(1.f, 1.5f)
+                    , DAMAGE_TYPE::NORMAL)
+            );
+        }
+        else if (Event.Tag == "KatanaEnd")
+        {
+            pOwner->End_AttackCollider("KatanaWeapon");
+        }
+    }
 }
 
 void CMiyabiState_Attack_02::Exit(CMiyabi* pOwner)
@@ -140,6 +191,33 @@ void CMiyabiState_Attack_03::Update(CMiyabi* pOwner, _float dt)
     pOwner->Process_RootMotion(dt,
         ENUM(CMiyabi::ROOTMOTION_MASK::MOVE) |
         ENUM(CMiyabi::ROOTMOTION_MASK::QUATERNION));
+
+    for (const auto& Event : pOwner->Get_Animator()->Get_EventBus())
+    {
+        if (Event.Type != CLIP_EVENT_TYPE::NOTIFY) continue;
+        if (Event.Tag == "AreaAttack")
+        {
+            _vector3 vLook = pOwner->Get_Component<CTransform>()->Dir(STATE::LOOK);
+            _vector3 vPos = pOwner->Get_WorldPos();
+            BattleSystem()->TakeAreaDamage(vPos + vLook * 2.f, 3.f, HitDesc()
+                .Type(HIT_TYPE::ONCE)
+                .Damage(pOwner->Get_AttackPower() * 0.628f * Helper::Get_Random_Float(1.f, 1.5f)
+                    , DAMAGE_TYPE::NORMAL)
+            );
+        }
+        else if (Event.Tag == "KatanaStart")
+        {
+            pOwner->Begin_AttackCollider("KatanaWeapon", HitDesc()
+                .Type(HIT_TYPE::ONCE)
+                .Damage(pOwner->Get_AttackPower() * 0.628f * Helper::Get_Random_Float(1.f, 1.5f)
+                    , DAMAGE_TYPE::NORMAL)
+            );
+        }
+        else if (Event.Tag == "KatanaEnd")
+        {
+            pOwner->End_AttackCollider("KatanaWeapon");
+        }
+    }
 }
 
 void CMiyabiState_Attack_03::Exit(CMiyabi* pOwner)
@@ -158,6 +236,22 @@ void CMiyabiState_Attack_04::Update(CMiyabi* pOwner, _float dt)
     pOwner->Process_RootMotion(dt,
         ENUM(CMiyabi::ROOTMOTION_MASK::MOVE) |
         ENUM(CMiyabi::ROOTMOTION_MASK::QUATERNION));
+
+    for (const auto& Event : pOwner->Get_Animator()->Get_EventBus())
+    {
+        if (Event.Type != CLIP_EVENT_TYPE::NOTIFY) continue;
+        if (Event.Tag == "AreaAttack")
+        {
+            _vector3 vLook = pOwner->Get_Component<CTransform>()->Dir(STATE::LOOK);
+            _quaternion qRotation = pOwner->Get_Component<CTransform>()->Get_QuaternionRotate();
+            _vector3 vPos = pOwner->Get_WorldPos();
+            BattleSystem()->TakeBoxDamage(vPos + vLook * 1.f, _vector3(4.f, 4.f, 2.f), qRotation, HitDesc()
+                .Type(HIT_TYPE::ONCE)
+                .Damage(pOwner->Get_AttackPower() * 0.965f * Helper::Get_Random_Float(1.f, 1.5f)
+                    , DAMAGE_TYPE::NORMAL)
+            );
+        }
+    }
 }
 
 void CMiyabiState_Attack_04::Exit(CMiyabi* pOwner)
@@ -176,6 +270,21 @@ void CMiyabiState_Attack_05::Update(CMiyabi* pOwner, _float dt)
     pOwner->Process_RootMotion(dt,
         ENUM(CMiyabi::ROOTMOTION_MASK::MOVE) |
         ENUM(CMiyabi::ROOTMOTION_MASK::QUATERNION));
+
+    for (const auto& Event : pOwner->Get_Animator()->Get_EventBus())
+    {
+        if (Event.Type != CLIP_EVENT_TYPE::NOTIFY) continue;
+        if (Event.Tag == "AreaAttack")
+        {
+            _vector3 vLook = pOwner->Get_Component<CTransform>()->Dir(STATE::LOOK);
+            _vector3 vPos = pOwner->Get_WorldPos();
+            BattleSystem()->TakeAreaDamage(vPos, 3.f, HitDesc()
+                .Type(HIT_TYPE::ONCE)
+                .Damage(pOwner->Get_AttackPower() * 1.29f * Helper::Get_Random_Float(1.f, 1.5f)
+                    , DAMAGE_TYPE::NORMAL)
+            );
+        }
+    }
 }
 
 void CMiyabiState_Attack_05::Exit(CMiyabi* pOwner)

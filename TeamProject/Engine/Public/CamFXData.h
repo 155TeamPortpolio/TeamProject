@@ -42,6 +42,11 @@ struct CamShakeInstance
     _float   sideSign{};
 
     _float   p0{}, p1{}, p2{};
+
+    _bool    spring{};
+    _float   springPhase{};
+    _float   springPhase2{};
+    _float   springH2 = 0.35f;
 };
 
 // ----------------- Zoom ------------------

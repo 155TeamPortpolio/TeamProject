@@ -24,20 +24,16 @@ private:
 
 private:
     CUI_Gangta() {}
-    CUI_Gangta(const CUI_Gangta& rhs);
+    CUI_Gangta(const CUI_Gangta& rhs) : CUI_WorldToScreen(rhs) {}
     virtual ~CUI_Gangta() DEFAULT;
 
 public:
-    HRESULT Initialize_Prototype() override;
+    HRESULT Initialize_Prototype()          override;
     HRESULT Initialize(INIT_DESC* arg = {}) override;
-
-    void    Awake() override {}
-    void    Update(_float dt) override;
-
-    void    UI_Active(void* arg) override;
-    void    UI_DeActive(void* arg) override;
-
-    _bool   Is_AnimFinished() override;
+    void    Update(_float dt)               override;
+    void    UI_Active(void* arg)            override;
+    void    UI_DeActive(void* arg)          override;
+    _bool   Is_AnimFinished()               override;
 
 private:
     void  Cache_Children();

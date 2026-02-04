@@ -38,8 +38,6 @@ public: //setter
 	void	ReadyBattle(const string& tagArea, _uint StageNumber, _uint iPrefabIndex);
 	
 	void	SpawnMosnter(const string& MonsterProtoTag, _float3 vSpawnPos, _float3 vRot = {});
-	void	SpawnMosnterFromPool(const string& MonsterProtoTag, _float3 vSpawnPos, _float3 vRot);
-
 
 	// 플레이어(캐릭터들) 로직 정해지기 전까지 임시
 	void	SetPlayer(vector<OBJECT_HANDLE> hPlayers);
@@ -56,15 +54,17 @@ public:
 
 public:
 	void	TakeAreaDamage(const _float3& vCenter, _float fRadius, const HitDesc& hitDesc);
+	void	TakeAreaDamage(const _float3& vCenter, _float fRadius, const _float3& vDir, _float fAngle, const HitDesc& hitDesc);
+	void	TakeBoxDamage(const _float3& vCenter, const _float3& vHalfExtents, const _quaternion& qRotation, const HitDesc& hitDesc);
 	void	TakeAllDamage(const HitDesc& hitDesc);
 	_bool	ExitBattleObject(BATTLE_OBJ_TYPE eObjType, OBJECT_HANDLE hObject);
 	void	EnterBattleObject(BATTLE_OBJ_TYPE eObjType, OBJECT_HANDLE hObject);
+	void	ClearBattleStage();
 
 public:
 	_bool isMonsterCleared();
 
 private:
-	void	ClearBattleStage();
 	void	Update_BattleInfo();
 	void	CheckVFX(const _float dt);
 

@@ -19,7 +19,7 @@
 #include "Player.h"
 #include "BattlePlayer.h"
 #include "BattleSystem.h"
-#include "Character.h"
+#include "Animator3D.h"
 
 namespace
 {
@@ -80,10 +80,6 @@ void CCamDirector::AutoField()
 {
     AutoTarget();
     RequestSequence("Field/Front");
-
-    CMonitorGate gate;
-    if (gate.Pass())
-        RenderSystem()->SetOn(false);
 }
 
 void CCamDirector::Update(_float dt)
@@ -139,8 +135,15 @@ void CCamDirector::StartBattleIntro(CamSeqType type)
 {
     AutoTarget();
     RequestSequence(type);
-    UIDirector()->Hide_HUD(CUIDirector::HUD::BATTLE);
-    UIDirector()->Show_SceneFrame();
+
+    if (type == CamSeqType::ZeroIntro)
+        BattleSystem()->GetBattlePlayer()->QuestStart();
+
+    if (GetCharacterName() == CHARACTER::Miyabi)
+    {
+        auto animator = GetCharacter()->Get_Component<CAnimator3D>();
+        animator->Set_Animation("Avatar_Female_Size02_Unagi_Ani_QuestStart").Apply();
+    }
 }
 
 string CCamDirector::ResolveSeqKey(CamSeqType type) const

@@ -1,15 +1,13 @@
 #include "pch.h"
 #include "ZeroStage_Normal.h"
-#include "Zero_Level.h"
-#include "BattleSystem.h"
-#include "CamDirector.h"
 #include "GameInstance.h"
-#include "Layer.h"
-#include "Player.h"
-#include "UIDirector.h"
+#include "BattleSystem.h"
+#include "Zero_Level.h"
+#include "StageRouter.h"
 
 CZeroStage_Normal::CZeroStage_Normal()
 {
+	m_eType = StageType::Normal;
 }
 
 HRESULT CZeroStage_Normal::Initialize(CZero_Level* pOwnerLevel)
@@ -29,7 +27,6 @@ HRESULT CZeroStage_Normal::Awake()
 void CZeroStage_Normal::Update()
 {
 	float dt = TimeManager()->Get_RawDeltaTime(G_EngineTimerID);
-	m_fStageTime += dt;
 
 	switch (m_eStageStage)
 	{
@@ -55,24 +52,16 @@ void CZeroStage_Normal::Update()
 
 }
 
-HRESULT CZeroStage_Normal::Ready_Stage(CZero_Level::StageContext& context)
+HRESULT CZeroStage_Normal::Enter_Stage(StageContext& context)
 {
-	return S_OK;
-}
 
-HRESULT CZeroStage_Normal::Enter_Stage(CZero_Level::StageContext& context)
-{
-	m_Context.StageID = 0;
-	Ready_Map("Zero_Level", "Zero_1_1");
+	Ready_Map("Zero_Level", context.mapKey);
 	Reserve_Enemy("Zero_Level");
 	m_eStageStage = StageState::Entrance;
 	m_PlayerHandle = context.hPlayer;
+	Active_Player(CStage::PlayerPoint::Typical);
 	BaseIntro(context);
-	return S_OK;
-}
 
-HRESULT CZeroStage_Normal::Exit_Stage(CZero_Level::StageContext& context)
-{
 	return S_OK;
 }
 
@@ -92,8 +81,7 @@ void CZeroStage_Normal::Battle()
 	if (isBattleEnd) {
 		m_eStageStage = StageState::BattleEnd;
 		CBattleSystem::GetInstance()->SetActive(false);
-		STAGE_CHANGED_DESC Stage_End = {this};
-		EventSystem()->Broadcast<STAGE_CHANGED_DESC>(Stage_End);
+		Active_Portal();
 	}
 }
 
@@ -106,13 +94,11 @@ void CZeroStage_Normal::Outro()
 void CZeroStage_Normal::End()
 {
 	if (m_outroFlow.IsDoneAll()) {
-		RenderSystem()->UnRegister_AddictiveColor();
-		ObjectManager()->Get_Layer({ "Zero_Level","PlacedObject_Layer" })->Clear_Layer();
-		ObjectManager()->Get_Layer({ "Zero_Level","InteractableObject_Layer" })->Clear_Layer();
-		m_pOwnerLevel->ChangeStage(StageType::Elite, 0);
+		auto stageType = m_pOwnerLevel->Get_Router()->GetChoiceType(m_iNextChoice);
+		m_pOwnerLevel->Get_Router()->Choose(m_iNextChoice);
+		m_pOwnerLevel->ChangeStage(stageType);
 	}
 }
-
 
 CZeroStage_Normal* CZeroStage_Normal::Create(CZero_Level* pOwnerLevel)
 {

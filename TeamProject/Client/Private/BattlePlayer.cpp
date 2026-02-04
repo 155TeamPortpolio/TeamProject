@@ -18,6 +18,7 @@
 #include "Miyabi.h"
 
 #include "Camera.h"
+#include "DisplayGate.h"
 
 CBattlePlayer::CBattlePlayer()
 {
@@ -28,7 +29,11 @@ HRESULT CBattlePlayer::Initialize()
     CBattleSystem::GetInstance()->SetBattlePlayer(this);
     Initialize_CharacterPrototype();
 
-    vector<CHARACTER> BattleCharacters = { CHARACTER::JaneDoe, CHARACTER::Corin, CHARACTER::Miyabi };
+    //vector<CHARACTER> BattleCharacters = { CHARACTER::JaneDoe, CHARACTER::Corin, CHARACTER::Miyabi };
+
+    // Jehyun
+    vector<CHARACTER> BattleCharacters = {CHARACTER::Miyabi,CHARACTER::JaneDoe, CHARACTER::Corin, };
+
     SetBattleCharacters(BattleCharacters);
 
     return S_OK;
@@ -39,10 +44,6 @@ void CBattlePlayer::Awake()
     UI_ACTION_PRIMARY_DESC desc;
     desc.eMode = UI_ACTION_PRIMARY_MODE::ATTACK;
     EventSystem()->Broadcast<UI_ACTION_PRIMARY_DESC>({ desc });
-
-    UI_PLAYER_INIT_DESC initdesc;
-    initdesc.iCount = 3;
-    EventSystem()->Broadcast<UI_PLAYER_INIT_DESC>({ initdesc });
 
     m_bAwaked = true;
 }
@@ -130,9 +131,132 @@ void CBattlePlayer::Render_GUI()
     if (nullptr == m_pCurrentCharacter)
         return;
 
-    ImGui::Text("Can Parry : %s", m_pCurrentCharacter->Can_Parry() ? "TRUE" : "FALSE");
-    ImGui::Text("Can Move : %s", m_pCurrentCharacter->Can_Move() ? "TRUE" : "FALSE");
-    ImGui::Text("Is Invicible : %s", m_pCurrentCharacter->Is_Invincible() ? "TRUE" : "FALSE");
+    // Current Character Info
+    if (ImGui::CollapsingHeader("Current Character", ImGuiTreeNodeFlags_DefaultOpen))
+    {
+        ImGui::Text("Name : %s", Helper::EnumToString(m_pCurrentCharacter->Get_CharacterName()));
+        ImGui::Text("Is Main : %s", m_pCurrentCharacter->Is_MainCharacter() ? "TRUE" : "FALSE");
+        ImGui::Text("ParryAid : %s", m_pCurrentCharacter->Can_Parry() ? "TRUE" : "FALSE");
+        ImGui::Text("PerfectDodge : %s", m_pCurrentCharacter->Is_Perfect() ? "TRUE" : "FALSE");
+        ImGui::Text("Can Move : %s", m_pCurrentCharacter->Can_Move() ? "TRUE" : "FALSE");
+        ImGui::Text("Is Invincible : %s", m_pCurrentCharacter->Is_Invincible() ? "TRUE" : "FALSE");
+    }
+
+    // Input State
+    if (ImGui::CollapsingHeader("Input State"))
+    {
+        ImGui::Text("Direction : (%.2f, %.2f, %.2f)", m_input.direction.x, m_input.direction.y, m_input.direction.z);
+        ImGui::Text("Current Key : (%d, %d)", m_input.current.x, m_input.current.z);
+        ImGui::Text("Buffer Timer : %.3f", m_input.bufferTimer);
+        ImGui::Text("Lock Input : %s", m_bLockInput ? "TRUE" : "FALSE");
+    }
+
+    // Switch State
+    if (ImGui::CollapsingHeader("Switch State"))
+    {
+        ImGui::Text("Can Switch : %s", Can_Switch() ? "TRUE" : "FALSE");
+        ImGui::Text("Switch Cooldown : %.2f", m_fSwitchCooldown);
+        ImGui::Text("Parrying Count : %d / 6", m_iParryingCount);
+        ImGui::Text("Reserve Parry : %s", m_bReserveParry ? "TRUE" : "FALSE");
+        ImGui::Text("Combo Select : %s", m_bComboSelect ? "TRUE" : "FALSE");
+        if (m_bComboSelect)
+            ImGui::Text("Combo Timer : %.2f / %.2f", m_fComboSelectTimer, COMBO_SELECT_DURATION);
+    }
+
+    // Target Info
+    if (ImGui::CollapsingHeader("Target"))
+    {
+        ImGui::Text("Lock On : %s", m_bLockOn ? "TRUE" : "FALSE");
+        ImGui::Text("Lock On Cooldown : %.2f", m_fLockOnCooldown);
+        if (m_TargetHandle.isValid())
+            ImGui::Text("Target : %s", m_TargetHandle.Get()->Get_InstanceName().c_str());
+        else
+            ImGui::Text("Target : None");
+    }
+
+    // Battle Characters List
+    if (ImGui::CollapsingHeader("Battle Characters", ImGuiTreeNodeFlags_DefaultOpen))
+    {
+        for (_uint i = 0; i < m_BattleCharacters.size(); ++i)
+        {
+            CCharacter* pChar = m_BattleCharacters[i];
+            _bool bIsMain = pChar->Is_MainCharacter();
+            _bool bCanSwitchIn = pChar->Can_SwitchIn();
+            _bool bCCTActive = pChar->Get_CCT()->Get_CompActive();
+
+            ImGui::PushID(i);
+
+            // 상태에 따른 색상 표시
+            // 초록 : 현재 활성 캐릭터 (인덱스 0)
+            // 빨강 : 교체 불가 상태
+            // 흰색 : 대기 중 (정상)
+            if (i == 0)
+                ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.2f, 1.0f, 0.2f, 1.0f));
+            else if (!bCanSwitchIn)
+                ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.3f, 0.3f, 1.0f));
+            else
+                ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
+
+            ImGui::Text("[%d] %s", i, pChar->Get_Name().c_str());
+            ImGui::PopStyleColor();
+
+            ImGui::SameLine();
+            ImGui::Text("| Main:%s CCT:%s SwitchIn:%s",
+                bIsMain ? "O" : "X",
+                bCCTActive ? "O" : "X",
+                bCanSwitchIn ? "O" : "X");
+
+            // 비정상 상태 감지 및 강제 비활성화 버튼
+            // 케이스 1: 메인이 아닌데 CCT가 활성화됨
+            // 케이스 2: 메인인데 CCT가 비활성화됨 (인덱스 0인 경우)
+            _bool bAbnormal = (!bIsMain && bCCTActive) || (bIsMain && !bCCTActive && i == 0);
+            if (bAbnormal)
+            {
+                ImGui::SameLine();
+                ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.8f, 0.2f, 0.2f, 1.0f));
+                if (ImGui::SmallButton("Force Fix"))
+                {
+                    if (!bIsMain && bCCTActive)
+                        pChar->DeActive_Character();
+                    else if (bIsMain && !bCCTActive)
+                        pChar->Active_Character();
+                }
+                ImGui::PopStyleColor();
+            }
+
+            ImGui::PopID();
+        }
+
+        ImGui::Separator();
+
+        // 전체 강제 정리 버튼
+        if (ImGui::Button("Force Sync All Characters"))
+        {
+            for (_uint i = 0; i < m_BattleCharacters.size(); ++i)
+            {
+                CCharacter* pChar = m_BattleCharacters[i];
+                if (i == 0)
+                {
+                    pChar->Set_MainCharacter(true);
+                    pChar->Active_Character();
+                }
+                else
+                {
+                    pChar->Set_MainCharacter(false);
+                    pChar->DeActive_Character();
+                }
+            }
+        }
+        ImGui::SameLine();
+        if (ImGui::Button("Force DeActive All Non-Main"))
+        {
+            for (_uint i = 1; i < m_BattleCharacters.size(); ++i)
+            {
+                m_BattleCharacters[i]->Set_MainCharacter(false);
+                m_BattleCharacters[i]->DeActive_Character();
+            }
+        }
+    }
 }
 
 OBJECT_HANDLE CBattlePlayer::GetCurCharacterHandle()
@@ -630,6 +754,10 @@ void CBattlePlayer::Update_Target()
 
 void CBattlePlayer::Update_Status()
 {
+    UI_PLAYER_INIT_DESC initdesc;
+    initdesc.iCount = m_BattleCharacters.size();
+    EventSystem()->Broadcast<UI_PLAYER_INIT_DESC>({ initdesc });
+
     for (_uint i = 0; i < m_BattleCharacters.size() && i < 3; ++i)
     {
         CCharacter* pCharacter = m_BattleCharacters[i];
@@ -689,7 +817,8 @@ CGameObject* CBattlePlayer::CreateBattleCharacter(CHARACTER character)
 {
     CCT_DESC characterCCT;
     characterCCT.eGroup = COLLISION_GROUP::PLAYER;
-    characterCCT.iCollisionMask = 0xFFFFFFFF;
+    characterCCT.iCollisionMask = 0xFFFFFFFF - 
+        (ENUM(COLLISION_GROUP::PLAYER) | ENUM(COLLISION_GROUP::PLAYER_ATTACK));
     characterCCT.bAutoFit = false;
     characterCCT.fHeight = 1.13;
     characterCCT.fRadius = 0.3f;
