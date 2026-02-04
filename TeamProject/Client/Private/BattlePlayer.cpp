@@ -29,11 +29,7 @@ HRESULT CBattlePlayer::Initialize()
     CBattleSystem::GetInstance()->SetBattlePlayer(this);
     Initialize_CharacterPrototype();
 
-    //vector<CHARACTER> BattleCharacters = { CHARACTER::JaneDoe, CHARACTER::Corin, CHARACTER::Miyabi };
-
-    // Jehyun
     vector<CHARACTER> BattleCharacters = {CHARACTER::Miyabi,CHARACTER::JaneDoe, CHARACTER::Corin, };
-
     SetBattleCharacters(BattleCharacters);
 
     return S_OK;
@@ -413,6 +409,22 @@ void CBattlePlayer::Cancel_ComboAttack()
     m_bComboSelect = false;
 }
 
+void CBattlePlayer::Start_ChainParry()
+{
+    if (m_bChainParry)
+        return;
+
+    m_bChainParry = true;
+}
+
+void CBattlePlayer::End_ChainParry()
+{
+    if (!m_bChainParry)
+        return;
+    
+    m_bChainParry = false;
+}
+
 void CBattlePlayer::Update_Input(_float dt)
 {
     // 콤보 테스트
@@ -562,10 +574,19 @@ void CBattlePlayer::Process_Switch()
             {
                 desc.eState = UI_ACTION_STATE::EXECUTING;
                 SwitchCharacter(iTargetIndex);
-                m_iParryingCount--;
-                if (m_iParryingCount == 0) m_iParryingCount = 6;
-                m_fSwitchCooldown = SWITCH_COOLDOWN;
             }
+        }
+        else if (m_bChainParry && m_pCurrentCharacter->Can_Parry())
+        {
+            // 교체 불가지만 체인 모드에서 패링 가능하면 현재 캐릭터로 재패링
+            m_ParryHandle = m_pCurrentCharacter->Calculate_Parry();
+            m_vSwitchPosition = _vector4{ m_pCurrentCharacter->Get_ParryPos() };
+            m_vSwitchLook = _vector4{ m_pCurrentCharacter->Get_ParryLook() };
+
+            m_pCurrentCharacter->Get_CCT()->Set_Position(m_vSwitchPosition);
+            m_pCurrentCharacter->Get_Component<CTransform>()->Set_Look(m_vSwitchLook);
+            m_pCurrentCharacter->Set_ParryHandle(m_ParryHandle);
+            m_pCurrentCharacter->On_ChainParry();
         }
     }
 
@@ -668,11 +689,18 @@ void CBattlePlayer::NotifyCharacterSwitchOut()
     m_pCurrentCharacter->Set_MainCharacter(false);
     m_pCurrentCharacter->On_SwitchOut();
     m_input.ResetBuffer();
+
+    if (!m_bChainParry)
+    {
+        m_iParryingCount--;
+        if (m_iParryingCount == 0) m_iParryingCount = 6;
+        m_fSwitchCooldown = SWITCH_COOLDOWN;
+    }
 }
 
 _bool CBattlePlayer::Can_Switch() const
 {
-    if (m_fSwitchCooldown > 0.f) return false;
+    if (m_fSwitchCooldown > 0.f) return false;   
     if (m_BattleCharacters.size() <= 1) return false;
     if (m_pCurrentCharacter->Can_SwitchIn()) return false;  // 메인이 비활성화면 교체 불가
 
