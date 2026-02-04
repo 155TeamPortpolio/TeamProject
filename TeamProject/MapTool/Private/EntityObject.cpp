@@ -44,7 +44,7 @@ HRESULT CEntityObject::Initialize_Prototype()
 HRESULT CEntityObject::Initialize(INIT_DESC* pArg)
 {
 	__super::Initialize(pArg);
-	auto pDesc = static_cast<ENTITY_INIT_DESC*>(pArg);
+	auto pDesc = dynamic_cast<ENTITY_INIT_DESC*>(pArg);
 
 	if (pDesc)
 		m_iType = pDesc->iType;

@@ -113,15 +113,35 @@ namespace Client {
 
 	/* Light Data */
 	#pragma region LightData
-	typedef struct tagLightJsonDesc {
+	NLOHMANN_JSON_SERIALIZE_ENUM(LIGHT_TYPE,
+		{
+			{LIGHT_TYPE::DIRECTIONAL,	"Directional"},
+			{LIGHT_TYPE::POINT,			"Point"},
+			{LIGHT_TYPE::SPOTLIGHT,		"Spotlight"}
+		})
+
+		typedef struct tagLightJsonDesc {
+		LIGHT_TYPE	eLightType = {};
+
 		_float4 vOffsetPosition = {};
+		_float4	vLightDirection = {};
+
 		_float4	vLightDiffuse = {};
 		_float4	vLightAmbient = {};
 		_float4	vLightSpecular = {};
+
 		_float	fLightRange = {};
 		_float	fLightIntensity = {};
+
+		_float	fInnerCos = {};
+		_float	fOuterCos = {};
 	}LIGHT_DESC_JSON;
-	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(LIGHT_DESC_JSON, vOffsetPosition, vLightDiffuse, vLightAmbient, vLightSpecular, fLightRange, fLightIntensity);
+
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(LIGHT_DESC_JSON,
+		eLightType, vOffsetPosition, vLightDirection,
+		vLightDiffuse, vLightAmbient, vLightSpecular,
+		fLightRange, fLightIntensity,
+		fInnerCos, fOuterCos);
 
 	typedef struct tagMapLight
 	{

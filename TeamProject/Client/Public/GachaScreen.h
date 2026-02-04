@@ -12,8 +12,8 @@ private:
     virtual ~CGachaScreen() DEFAULT;
 
 public:
-    void PlayTVSequence(vector<WEAPON_DESC>* ResultDesc);
-    void SetupInitialTVSequence(vector<WEAPON_DESC>* ResultDesc);
+    void PlayTVSequence(vector<GACHA_RESULT_DESC>* ResultDesc);
+    void SetupInitialTVSequence(vector<GACHA_RESULT_DESC>* ResultDesc);
 
 public:
     virtual HRESULT Initialize_Prototype()      override;
