@@ -44,6 +44,17 @@ void CUI_GachaConversion::Update(_float dt)
 {
 	__super::Update(dt);
 
+    if (m_isClicked &&
+        Is_ChildAnimationFinished(CHILD::OVERLAY) &&
+        Is_ChildAnimationFinished(CHILD::LABEL) &&
+        Is_ChildAnimationFinished(CHILD::COUNT))
+    {
+        if (m_OnClick)
+            m_OnClick();
+
+        m_isClicked = false;
+    }
+
 	Get_Component<CObjectContainer>()->UpdateChild(dt);
 }
 
@@ -77,8 +88,7 @@ void CUI_GachaConversion::OnClick()
     Set_ChildAnimation(CHILD::OVERLAY, 0);
     Set_ChildAnimation(CHILD::LABEL, 0);
     Set_ChildAnimation(CHILD::COUNT, 0);
-    if (m_OnClick)
-        m_OnClick();
+    m_isClicked = true;
 }
 
 void CUI_GachaConversion::Set_ChildAnimation(CHILD child, _int iIndex)
@@ -97,6 +107,15 @@ void CUI_GachaConversion::Set_ChildText(CHILD child, const _wstring& strText)
         return;
 
     pTextSlot->Set_Text(strText);
+}
+
+_bool CUI_GachaConversion::Is_ChildAnimationFinished(CHILD child)
+{
+    auto pChild = m_pChildren[ENUM(child)];
+    if (!pChild)
+        return false;
+
+    return pChild->Is_AnimFinished();
 }
 
 CGameObject* CUI_GachaConversion::Create()

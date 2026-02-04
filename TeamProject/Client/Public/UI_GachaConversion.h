@@ -36,6 +36,8 @@ public:
 	virtual void	UI_DeActive(void* pArg = nullptr) override;
 
 private:
+	_bool m_isClicked = {};
+
 	class CUI_Object* m_pChildren[ENUM(CHILD::END)] = {};
 	class CTextSlot* m_pTextSlots[ENUM(CHILD::END)] = {};
 	class CButtonUI* m_pButton = {};
@@ -47,6 +49,8 @@ private:
 
 	void Set_ChildAnimation(CHILD child, _int iIndex);
 	void Set_ChildText(CHILD child, const _wstring& strText);
+
+	_bool Is_ChildAnimationFinished(CHILD child);
 
 public:
 	static  CGameObject* Create();
