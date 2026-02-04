@@ -161,7 +161,7 @@
         {
           "EventTime": 1.3333333730697632,
           "EventType": "Notify",
-          "EventTag": "FinishAttackAll"
+          "EventTag": "FinishAll"
         }
       ]
     },
@@ -181,7 +181,7 @@
         {
           "EventTime": 1.9870046377182007,
           "EventType": "Notify",
-          "EventTag": "FinishAttackAll"
+          "EventTag": "FinishAll"
         }
       ]
     },

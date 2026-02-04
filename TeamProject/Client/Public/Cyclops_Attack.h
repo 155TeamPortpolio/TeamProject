@@ -21,6 +21,10 @@ private:
 	void Register_States();
 	void Register_Transitions();
 	void AttackFromIndex(_int iMoveIndex);
+
+private:
+	HitDesc		m_HitDesc = {};
+	_bool		m_isStopRotate = { false };
 };
 
 class CCyclops_Attack1 : public IBaseState<CCyclops>
