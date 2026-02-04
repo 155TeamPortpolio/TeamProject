@@ -32,6 +32,13 @@ HRESULT CLightPoint::Initialize_Prototype()
 	pMaterial->Link_Material(G_GlobalLevelKey, "Default.mat");
 
 	m_LightDesc.eType = LIGHT_TYPE::POINT;
+	m_LightDesc.vLightDirection = { 0,-1,0,0 };
+	m_LightDesc.vOffsetPosition = {};
+	m_LightDesc.vLightDiffuse = {};
+	m_LightDesc.vLightAmbient = {};
+	m_LightDesc.vLightSpecular = {};
+	m_LightDesc.fLightRange = { 1.f };
+	m_LightDesc.fLightIntensity = { 1.f };
 
 	return S_OK;
 }
@@ -40,20 +47,27 @@ HRESULT CLightPoint::Initialize(INIT_DESC* pArg)
 {
 	__super::Initialize(pArg);
 
-	Get_Component<CCollider>()->Set_MapToolMode(true);
-	Get_Component<CTransform>()->Scale({ 0.3f, 0.3f, 0.3f });
-	Get_Component<CCollider>()->Set_Size({ 0.3f, 0.3f, 0.3f });
-	Get_Component<CCollider>()->Set_ColliderColor({ 1.f, 1.f, 1.f, 1.f });
+	if (LIGHT_INIT_DESC* pDesc = dynamic_cast<LIGHT_INIT_DESC*>(pArg)) {
+		m_LightDesc.eType = pDesc->DescJson.eLightType;
 
-	if (LIGHT_INIT_DESC* pDesc = static_cast<LIGHT_INIT_DESC*>(pArg)) {
+		m_LightDesc.vLightDirection = { 0, -1, 0, 0 };
 		m_LightDesc.vOffsetPosition = pDesc->DescJson.vOffsetPosition;
+
 		m_LightDesc.vLightDiffuse = pDesc->DescJson.vLightDiffuse;
 		m_LightDesc.vLightAmbient = pDesc->DescJson.vLightAmbient;
 		m_LightDesc.vLightSpecular = pDesc->DescJson.vLightSpecular;
+
 		m_LightDesc.fLightRange = pDesc->DescJson.fLightRange;
 		m_LightDesc.fLightIntensity = pDesc->DescJson.fLightIntensity;
-	}
 
+		m_LightDesc.fOuterCos = pDesc->DescJson.fOuterCos;
+		m_LightDesc.fInnerCos = pDesc->DescJson.fInnerCos;
+	}
+	
+	Get_Component<CCollider>()->Set_MapToolMode(true);
+	Get_Component<CTransform>()->Scale({ 0.1f, 0.1f, 0.1f });
+	Get_Component<CCollider>()->Set_Size({ 0.3f, 0.3f, 0.3f });
+	Get_Component<CCollider>()->Set_ColliderColor({ 1.f, 1.f, 1.f, 1.f });
 
 	Get_Component<CLight>()->Set_Desc(m_LightDesc, m_LightDesc.eType);
 
@@ -84,12 +98,20 @@ void CLightPoint::Export_ObjectData(void* pDesc)
 
 	_vector3 Pos = Get_WorldPos();
 	pMapLightDesc->vTranslation = { Pos.x, Pos.y ,Pos.z };
+	pMapLightDesc->LightDesc.eLightType = m_LightDesc.eType;
+
 	pMapLightDesc->LightDesc.vOffsetPosition = m_LightDesc.vOffsetPosition;
+	pMapLightDesc->LightDesc.vLightDirection = m_LightDesc.vLightDirection;
+
 	pMapLightDesc->LightDesc.vLightDiffuse = m_LightDesc.vLightDiffuse;
 	pMapLightDesc->LightDesc.vLightAmbient = m_LightDesc.vLightAmbient;
 	pMapLightDesc->LightDesc.vLightSpecular = m_LightDesc.vLightSpecular;
+
 	pMapLightDesc->LightDesc.fLightRange = m_LightDesc.fLightRange;
 	pMapLightDesc->LightDesc.fLightIntensity = m_LightDesc.fLightIntensity;
+
+	pMapLightDesc->LightDesc.fOuterCos = m_LightDesc.fOuterCos;
+	pMapLightDesc->LightDesc.fInnerCos = m_LightDesc.fInnerCos;
 }
 
 void CLightPoint::Render_GUI()
@@ -103,17 +125,20 @@ void CLightPoint::Render_GUI()
 	ImGui::DragFloat3("Pos", fPos, 0.01f, -100.f, 100.f, "%.2f");
 	Get_Component<CTransform>()->Set_Pos({ fPos[0], fPos[1] ,fPos[2] });
 
-	LIGHT_TYPE eType = m_LightDesc.eType;
+	_quaternion Rot = Get_Component<CTransform>()->Get_QuaternionRotate();
+
+	_float3 Euler = Rot.ToEuler();
+	_float fRot[3] = { Euler.x, Euler.y, Euler.z };
+	ImGui::DragFloat3("Rot", fRot, 0.01f, -100.f, 100.f, "%.2f");
+	Get_Component<CTransform>()->Rotate({ fRot[0], fRot[1] ,fRot[2] });
+	XMStoreFloat4(&m_LightDesc.vLightDirection, Get_Component<CTransform>()->Get_QuaternionRotate());
 
 	const char* typeNames[] = { "Directional", "Point", "Spot" };
-	ImGui::Text("Type : %s", typeNames[static_cast<_int>(eType)]);
-
-	ImGui::Text("Range");
-	ImGui::DragFloat("##Range", &m_LightDesc.fLightRange, 0.01f, 0.0f, 1000.0f, "%.2f");
-	Get_Component<CCollider>()->Set_Size({ m_LightDesc.fLightRange, m_LightDesc.fLightRange, m_LightDesc.fLightRange });
-
-	ImGui::Text("Intensity");
-	ImGui::DragFloat("##Intensity", &m_LightDesc.fLightIntensity, 0.01f, 0.0f, 100.0f, "%.2f");
+	int currentType = static_cast<int>(m_LightDesc.eType);
+	if (ImGui::Combo("Type", &currentType, typeNames, IM_ARRAYSIZE(typeNames)))
+	{
+		m_LightDesc.eType = static_cast<LIGHT_TYPE>(currentType);
+	}
 
 	ImGui::Text("Diffuse");
 	ImGui::ColorEdit3("Diffuse", &m_LightDesc.vLightDiffuse.x);
@@ -122,8 +147,20 @@ void CLightPoint::Render_GUI()
 	ImGui::Text("Specular");
 	ImGui::ColorEdit3("Specular", &m_LightDesc.vLightSpecular.x);
 
-	ImGui::DragFloat3("Offset", &m_LightDesc.vOffsetPosition.x, 0.1f);
+	ImGui::Text("Range");
+	ImGui::DragFloat("##Range", &m_LightDesc.fLightRange, 0.01f, 0.0f, 1000.0f, "%.2f");
+	Get_Component<CCollider>()->Set_Size({ m_LightDesc.fLightRange, m_LightDesc.fLightRange, m_LightDesc.fLightRange });
+
+	ImGui::Text("Intensity");
+	ImGui::DragFloat("##Intensity", &m_LightDesc.fLightIntensity, 0.01f, 0.0f, 100.0f, "%.2f");
+
+
+	ImGui::DragFloat3("Offset", &m_LightDesc.vOffsetPosition.x, 0.01f);
 	Get_Component<CCollider>()->Set_Center({ m_LightDesc.vOffsetPosition.x, m_LightDesc.vOffsetPosition.y, m_LightDesc.vOffsetPosition.z });
+
+	ImGui::DragFloat("Inner", &m_LightDesc.fInnerCos, 0.01f);
+	ImGui::DragFloat("Outer", &m_LightDesc.fOuterCos, 0.01f);
+
 
 	Get_Component<CLight>()->Set_Desc(m_LightDesc, m_LightDesc.eType);
 	
