@@ -88,6 +88,16 @@ void CParticleNode::Late_Update(_float dt)
 {
 }
 
+void CParticleNode::OnPooledAcquire(INIT_DESC* pArg)
+{
+	Play();
+}
+
+void CParticleNode::OnPooledRelease()
+{
+	Stop();
+}
+
 void CParticleNode::Play()
 {
 	m_IsEffectActive = true;

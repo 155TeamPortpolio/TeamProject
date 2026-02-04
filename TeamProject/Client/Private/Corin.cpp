@@ -389,6 +389,20 @@ HRESULT CCorin::Initialize_Effects()
     }
     {
         auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+            .Asset("corin_normal1_slash.json")
+            .Build("Corin_Normal_Slash2");
+        pEffect->Stop();
+        pObjectContainer->Add_Child(pEffect);
+    }
+    {
+        auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+            .Asset("corin_normal1_slash.json")
+            .Build("Corin_Normal_Slash3");
+        pEffect->Stop();
+        pObjectContainer->Add_Child(pEffect);
+    }
+    {
+        auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
             .Asset("corin_normal2_slash.json")
             .Build("Corin_Normal2_Slash0");
         pEffect->Stop();
