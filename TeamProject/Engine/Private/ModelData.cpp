@@ -308,7 +308,6 @@ const vector<string> CModelData::Get_BoneNames()
 const vector<_int> CModelData::GenerateFollowingIndices(CModelData* pMasterData)
 {
 	vector<_int> FollowingIndices;
-	/*������ �����Ϳ��� �� �̸��� ���� ���� ������ �ִ´�. ������ -1�� ����*/
 	for (string boneName : Get_BoneNames()) {
 		_int Index = pMasterData->Find_BoneIndexByName(boneName);
 		FollowingIndices.push_back(Index);

@@ -91,17 +91,13 @@ void CUI_Ramen::UI_DeActive(void* pArg)
 
 void CUI_Ramen::Create_BackButton()
 {
-    CUI_BackButton::BUTTON_DESC* pDesc = new CUI_BackButton::BUTTON_DESC;
-
-    auto pContainer = Get_Component<CObjectContainer>();
     auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_BackButton" })
-        .Add_UIDesc(pDesc)
         .Build("buttonBack");
 
     if (!pObj)
         return;
 
-    pContainer->Add_Child(pObj);
+    Get_Component<CObjectContainer>()->Add_Child(pObj);
 }
 
 void CUI_Ramen::Create_Menus()

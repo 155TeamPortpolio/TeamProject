@@ -5,11 +5,6 @@ NS_BEGIN(Client)
 
 class CUI_BackButton final : public CUI_Object
 {
-public:
-	typedef struct tagButtonDesc : public UI_DESC{
-		function<void()> onClick = {};
-	}BUTTON_DESC;
-
 private:
 	enum class CHILD { BUTTON, OVERLAY, ICON, END };
 	inline static const string INSTANCENAMES[ENUM(CHILD::END)] = { "button", "overlay", "icon" };
