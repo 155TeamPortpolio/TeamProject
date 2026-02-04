@@ -1,19 +1,18 @@
 #pragma once
-#include "GameObject.h"
+#include "GachaResult.h"
 
 NS_BEGIN(Client)
 
-class CGachaResult :
-    public CGameObject
+class CGachaWeapon :
+    public CGachaResult
 {
-protected:
-    CGachaResult();
-    CGachaResult(const CGachaResult& rhs);
-    virtual ~CGachaResult() DEFAULT;
+private:
+    CGachaWeapon();
+    CGachaWeapon(const CGachaWeapon& rhs);
+    virtual ~CGachaWeapon() DEFAULT;
 
 public:
-    virtual void SetResult(GACHA_RESULT_DESC Desc) PURE;
-    virtual void SetRenderState(_bool Render);
+    virtual void SetResult(GACHA_RESULT_DESC Desc) override;
 
 public:
     virtual HRESULT Initialize_Prototype()      override;
@@ -23,8 +22,14 @@ public:
     virtual void    Update(_float dt)           override;
     virtual void    Late_Update(_float dt)      override;
 
+private:
+    _vector4    m_vInitRot;
+    _float      m_fRotElapsedTime = 0.f;
+    _float      m_fRotDuration = 0.85f;
+
 public:
-    virtual CGameObject* Clone(INIT_DESC* pArg) PURE;
+    static CGachaWeapon* Create();
+    virtual CGameObject* Clone(INIT_DESC* pArg) override;
     virtual void Free() override;
 };
 

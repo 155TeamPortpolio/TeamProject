@@ -29,7 +29,7 @@ void CGachaTV::SetupInitialTVSequence()
 	m_pScreen->SetupInitialTVSequence(m_pResultDesc);
 }
 
-HRESULT CGachaTV::Initialize_Prototype(vector<WEAPON_DESC>* Desc)
+HRESULT CGachaTV::Initialize_Prototype(vector<GACHA_RESULT_DESC>* Desc)
 {
     if (FAILED(__super::Initialize_Prototype()))
         return E_FAIL;
@@ -97,7 +97,7 @@ void CGachaTV::Add_TVScreen()
 	m_pScreen = dynamic_cast<CGachaScreen*>(gachaScreen);
 }
  
-CGachaTV* CGachaTV::Create(vector<WEAPON_DESC>* Desc)
+CGachaTV* CGachaTV::Create(vector<GACHA_RESULT_DESC>* Desc)
 {
 	CGachaTV* Instance = new CGachaTV();
 	if (FAILED(Instance->Initialize_Prototype(Desc)))

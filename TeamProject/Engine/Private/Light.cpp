@@ -28,6 +28,9 @@ HRESULT CLight::Initialize(COMPONENT_DESC* pArg)
 		m_Light.vLightDirection = desc->vDirection;
 		m_Light.vLightSpecular = desc->vSpecular;
 		m_Light.fLightIntensity = desc->fIntensity;
+		m_Light.SetSpotDegree(desc->fInnerDegree,desc->fOuterDegree);
+		//m_Light.fInnerCos = desc->fInnerCos;
+		//m_Light.fOuterCos = desc->fOuterCos;
 	}
 
 	m_ID = CGameInstance::GetInstance()->Get_LightMgr()->Register_Light(this, m_ID);
@@ -61,21 +64,18 @@ void CLight::GetSpotConeDegrees(const LIGHT_DESC& desc, float& innerDeg, float& 
 	innerDeg = XMConvertToDegrees(innerRad);
 	outerDeg = XMConvertToDegrees(outerRad);
 }
-
 void CLight::Render_GUI()
 {
 	ImGui::SeparatorText("Light");
 
-	float childWidth = ImGui::GetContentRegionAvail().x;
-	const float textLineHeight = ImGui::GetTextLineHeightWithSpacing();
-	const float childHeight = (textLineHeight * 16) + (ImGui::GetStyle().WindowPadding.y * 2);
+	const float lineHeight = ImGui::GetTextLineHeightWithSpacing();
+	const float childHeight = (lineHeight * 16.f) + (ImGui::GetStyle().WindowPadding.y * 2.f);
 
 	ImGui::Checkbox("Active", &m_bActive);
 	Set_CompActive(m_bActive);
 
-	ImGui::BeginChild("##LightChild", ImVec2{ 0, childHeight }, true);
+	ImGui::BeginChild("##LightChild", ImVec2(0.f, childHeight), true);
 
-	// --- Type 변경 ---
 	const char* typeNames[] = { "Directional", "Point", "Spot" };
 	int typeIndex = static_cast<int>(m_Light.eType);
 
@@ -83,22 +83,12 @@ void CLight::Render_GUI()
 	if (ImGui::Combo("##LightType", &typeIndex, typeNames, IM_ARRAYSIZE(typeNames)))
 	{
 		m_Light.eType = static_cast<LIGHT_TYPE>(typeIndex);
-
-		// 타입별 기본값 적용(사용 중인 팩토리/프리셋에 맞춰 호출)
-		if (m_Light.eType == LIGHT_TYPE::DIRECTIONAL)
-			m_Light = LIGHT_DESC::DirectionSet();
-		else if (m_Light.eType == LIGHT_TYPE::POINT)
-			m_Light = LIGHT_DESC::PointSet();
-		else if (m_Light.eType == LIGHT_TYPE::SPOTLIGHT)
-			m_Light = LIGHT_DESC::SpotSet();
-
-		// 기본값 적용 후 방향 정규화
 		NormalizeDir(m_Light.vLightDirection);
 	}
 
 	ImGui::Separator();
 
-	// --- 공통 파라미터 ---
+
 	if (m_Light.eType != LIGHT_TYPE::DIRECTIONAL)
 	{
 		ImGui::TextUnformatted("Range");
@@ -106,7 +96,6 @@ void CLight::Render_GUI()
 	}
 	else
 	{
-		// Directional은 range 의미 없으면 잠그거나 숨기는 게 깔끔
 		ImGui::TextDisabled("Range (Directional: unused)");
 	}
 
@@ -124,7 +113,6 @@ void CLight::Render_GUI()
 
 	ImGui::Separator();
 
-	// --- 타입별 파라미터 ---
 	if (m_Light.eType == LIGHT_TYPE::DIRECTIONAL)
 	{
 		ImGui::TextUnformatted("Direction");
@@ -141,22 +129,19 @@ void CLight::Render_GUI()
 			ImGui::Spacing();
 			ImGui::TextUnformatted("Spot Cone (Degrees)");
 
-			// cos값을 degree로 보여주고 편집 -> 다시 cos로 저장
-			static float innerDegCached = 15.f;
-			static float outerDegCached = 25.f;
+			float innerDegUi = 0.f;
+			float outerDegUi = 0.f;
+			GetSpotConeDegrees(m_Light, innerDegUi, outerDegUi); // m_Light(cos) -> deg
 
-			// 매 프레임 cos->deg 갱신(원하면 조건부로만 해도 됨)
-			GetSpotConeDegrees(m_Light, innerDegCached, outerDegCached);
-
-			bool changedInner = ImGui::DragFloat("##InnerDeg", &innerDegCached, 0.1f, 0.1f, 179.0f, "Inner: %.1f");
-			bool changedOuter = ImGui::DragFloat("##OuterDeg", &outerDegCached, 0.1f, 0.1f, 179.0f, "Outer: %.1f");
+			bool changedInner = ImGui::DragFloat("##InnerDeg", &innerDegUi, 0.1f, 0.1f, 179.0f, "Inner: %.1f");
+			bool changedOuter = ImGui::DragFloat("##OuterDeg", &outerDegUi, 0.1f, 0.1f, 179.0f, "Outer: %.1f");
 
 			if (changedInner || changedOuter)
 			{
-				if (innerDegCached > outerDegCached)
-					swap(innerDegCached, outerDegCached);
+				if (innerDegUi > outerDegUi)
+					std::swap(innerDegUi, outerDegUi);
 
-				m_Light.SetSpotDegree(innerDegCached, outerDegCached);
+				m_Light.SetSpotDegree(innerDegUi, outerDegUi); // deg -> m_Light(cos) 반영
 			}
 
 			ImGui::Text("InnerCos: %.3f  OuterCos: %.3f", m_Light.fInnerCos, m_Light.fOuterCos);
@@ -165,6 +150,7 @@ void CLight::Render_GUI()
 
 	ImGui::EndChild();
 }
+
 
 void CLight::Set_Desc(const LIGHT_DESC& desc, LIGHT_TYPE eType)
 {
