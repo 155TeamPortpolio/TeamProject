@@ -22,9 +22,8 @@ public:
 	virtual void    Update()override;
 
 public:
-	virtual HRESULT Ready_Stage(CZero_Level::StageContext& context)override;
-	virtual HRESULT Enter_Stage(CZero_Level::StageContext& context)override;
-	virtual HRESULT Exit_Stage(CZero_Level::StageContext& context)override;
+	virtual HRESULT Enter_Stage(StageContext& context)override;
+
 private:
 	void Intro();
 	void Battle();
@@ -32,9 +31,6 @@ private:
 	void End();
 
 private:
-	class CGameInstance* m_pGameInstance{};
-	class CCamDirector* m_pCamDirector{};
-	OBJECT_HANDLE m_PlayerHandle = {};
 	_bool m_isSequenceEnd = {};
 public:
 	static CZeroStage_Boss* Create(class CZero_Level* pOwnerLevel);

@@ -162,9 +162,9 @@ public: // 패링
 
 public: // 무적
     _bool Is_Invincible() const { return m_iInvincibleCount > 0 || m_fInvincibleTimer > 0.f; }
-    void Push_Invincible() { ++m_iInvincibleCount; }
-    void Pop_Invincible() { if (m_iInvincibleCount > 0) --m_iInvincibleCount; }
-    void Set_InvincibleTimer(_float fDuration) { m_fInvincibleTimer = fDuration; }
+    void  Push_Invincible() { ++m_iInvincibleCount; }
+    void  Pop_Invincible() { if (m_iInvincibleCount > 0) --m_iInvincibleCount; }
+    void  Set_InvincibleTimer(_float fDuration) { m_fInvincibleTimer = fDuration; }
 
 public: // 행동 이벤트
     virtual void    Reset_State() {}
@@ -213,6 +213,9 @@ public: // 공격 & 패링 콜라이더
 public: // 피격
     void     Take_Damage(DAMAGE_TYPE eType, _float fDamage);
     _vector3 Get_HitTargetPos() const { return m_vHitPos; }
+
+public: // 이펙트
+    void Play_Effect(const string& effectTag, _fvector offsetPosition, _fvector offsetQuaternion, _bool syncTransform = true);
 
 private:
     void    Update_Rotation(_float dt);

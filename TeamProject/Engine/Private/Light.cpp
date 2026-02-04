@@ -160,11 +160,6 @@ void CLight::Render_GUI()
 			}
 
 			ImGui::Text("InnerCos: %.3f  OuterCos: %.3f", m_Light.fInnerCos, m_Light.fOuterCos);
-
-			ImGui::Spacing();
-			ImGui::TextUnformatted("Spot Direction");
-			if (ImGui::DragFloat3("##SpotDir", &m_Light.vLightDirection.x, 0.01f, -1.0f, 1.0f))
-				NormalizeDir(m_Light.vLightDirection);
 		}
 	}
 
@@ -196,6 +191,8 @@ LIGHT_DESC CLight::SnapShot_Desc()
 	if (!m_pOwner) return snapShot;
 	CTransform* pTransform = m_pOwner->Get_Component<CTransform>();
 	if (!pTransform) return  snapShot;
+	if (m_Light.eType == LIGHT_TYPE::SPOTLIGHT)
+		m_Light.vLightDirection = _vector4(pTransform->Dir(STATE::LOOK));
 
 	snapShot = m_Light;
 
