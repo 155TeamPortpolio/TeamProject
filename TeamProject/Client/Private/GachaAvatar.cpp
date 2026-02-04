@@ -25,6 +25,8 @@ void CGachaAvatar::SetResult(string strModel, string strMaterial, _float4 vRot)
     pModel->Link_Model(G_GlobalLevelKey, "Miyabi.model");
     pMaterial->Link_Material(G_GlobalLevelKey, "Miyabi.mat");
 
+    pModel->Hide_MehsByName("PET");
+
     m_pAnimator = Get_Component<CAnimator3D>();
     m_pAnimator->LinkAnimate_Model(G_GlobalLevelKey, "Miyabi.model");
     m_pAnimator->Link_MetaData(G_GlobalLevelKey, "Miyabi_Meta.json");
