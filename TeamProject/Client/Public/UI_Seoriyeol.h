@@ -13,7 +13,7 @@ private:
 		RI_IN_1,      RI_IN_2,
 		YEOL_IN_1,    YEOL_IN_2,
 		FACTORY_1,    FACTORY_2,   FACTORY_3, FACTORY_4,
-		SPRITEANIM_1, SPRITEANIM_2,
+		SPRITEANIM_1, SPRITEANIM_2, SPRITEANIM_3, SPRITEANIM_4,
 		ICE, 
 		END
 	};
@@ -22,8 +22,8 @@ private:
 		"Seo_In_1",     "Seo_In_2", 
 		"Ri_In_1",      "Ri_In_2",
 		"Yeol_In_1",    "Yeol_In_2",
-		"Factory_1",    "Factory_2",   "Factory_3",  "Factory_4", 
-		"SpriteAnim_1", "SpriteAnim_2",
+		"Factory_1",    "Factory_2",     "Factory_3",    "Factory_4", 
+		"SpriteAnim_1", "SpriteAnim_2",  "SpriteAnim_3", "SpriteAnim_4",
 		"Ice"
 	};
 
