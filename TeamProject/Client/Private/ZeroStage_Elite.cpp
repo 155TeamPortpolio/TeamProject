@@ -1,16 +1,13 @@
 #include "pch.h"
 #include "ZeroStage_Elite.h"
-#include "Zero_Level.h"
-#include "BattleSystem.h"
-#include "CamDirector.h"
 #include "GameInstance.h"
-#include "Layer.h"
-#include "Player.h"
-#include "StageFx.h"
-#include "UIDirector.h"
+#include "BattleSystem.h"
+#include "Zero_Level.h"
+#include "StageRouter.h"
 
 CZeroStage_Elite::CZeroStage_Elite()
 {
+	m_eType = StageType::Elite;
 }
 
 HRESULT CZeroStage_Elite::Initialize(CZero_Level* pOwnerLevel)
@@ -31,8 +28,6 @@ void CZeroStage_Elite::Update()
 {
 
 	float dt = TimeManager()->Get_RawDeltaTime(G_EngineTimerID);
-	m_fStageTime += dt;
-
 	switch (m_eStageStage)
 	{
 	case Client::CStage::StageState::Entrance:
@@ -56,24 +51,14 @@ void CZeroStage_Elite::Update()
 	}
 }
 
-HRESULT CZeroStage_Elite::Ready_Stage(CZero_Level::StageContext& context)
+HRESULT CZeroStage_Elite::Enter_Stage(StageContext& context)
 {
-	Ready_Map("Zero_Level", "Zero_1_1");
-	return S_OK;
-}
-
-HRESULT CZeroStage_Elite::Enter_Stage(CZero_Level::StageContext& context)
-{
-	Ready_Map("Zero_Level", "Zero_1_1");
+	Ready_Map("Zero_Level", context.mapKey);
+	Reserve_Enemy("Zero_Level");
 	m_eStageStage = StageState::Entrance;
 	m_PlayerHandle = context.hPlayer;
 	BaseIntro(context);
-
-	return S_OK;
-}
-
-HRESULT CZeroStage_Elite::Exit_Stage(CZero_Level::StageContext& context)
-{
+	Active_Player(CStage::PlayerPoint::Typical);
 	return S_OK;
 }
 
@@ -81,10 +66,7 @@ void CZeroStage_Elite::Intro()
 {
 	if (m_introFlow.IsDoneAll())
 	{
-		CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_ThugAssaulter", { -13.f, -5.f,34.f });
-		CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_ThugBulkyEnforcer", { -1.f, -5.f,38.f });
-		CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_ThugAssaulter", { -12.f, -5.f,34.f });
-
+		Active_Enemy();
 		CBattleSystem::GetInstance()->SetActive(true);
 		m_eStageStage = StageState::BattleStart;
 	}
@@ -96,8 +78,7 @@ void CZeroStage_Elite::Battle()
 	if (isBattleEnd) {
 		m_eStageStage = StageState::BattleEnd;
 		CBattleSystem::GetInstance()->SetActive(false);
-		STAGE_CHANGED_DESC Stage_End = {this};
-		EventSystem()->Broadcast<STAGE_CHANGED_DESC>(Stage_End);
+		Active_Portal();
 	}
 }
 
@@ -112,10 +93,9 @@ void CZeroStage_Elite::Outro()
 void CZeroStage_Elite::End()
 {
 	if (m_outroFlow.IsDoneAll()) {
-		RenderSystem()->UnRegister_AddictiveColor();
-		ObjectManager()->Get_Layer({ "Zero_Level","PlacedObject_Layer" })->Clear_Layer();
-		ObjectManager()->Get_Layer({ "Zero_Level","InteractableObject_Layer" })->Clear_Layer();
-		m_pOwnerLevel->ChangeStage(StageType::Boss, 0);
+		auto stageType = m_pOwnerLevel->Get_Router()->GetChoiceType(m_iNextChoice);
+		m_pOwnerLevel->Get_Router()->Choose(m_iNextChoice);
+		m_pOwnerLevel->ChangeStage(stageType);
 	}
 }
 

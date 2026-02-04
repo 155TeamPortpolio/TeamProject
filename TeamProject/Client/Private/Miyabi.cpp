@@ -110,6 +110,20 @@ void CMiyabi::Late_Update(_float dt)
 
 void CMiyabi::Render_GUI()
 {
+	ImGui::Separator();
+	ImGui::Text("FrostCount : %d", m_iFrost);
+	if (ImGui::Button("Max"))
+		Increase_Frost(MAX_FROST);
+	ImGui::SameLine();
+	if (ImGui::Button("Up"))
+		Increase_Frost(1);
+	ImGui::SameLine();
+	if (ImGui::Button("Down"))
+		Decrease_Frost(1);
+	ImGui::SameLine();
+	if (ImGui::Button("Zero"))
+		Decrease_Frost(MAX_FROST);
+
 	if (m_pStateMachine)
 	{
 		ImGui::Separator();

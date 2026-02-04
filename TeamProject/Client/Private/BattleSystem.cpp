@@ -72,9 +72,21 @@ _int CBattleSystem::GetPlayerParryingCount()
 	return m_pBattlePlayer->GetParryingCount();
 }
 
+void CBattleSystem::SetActive(_bool isActive)
+{
+	if (false == isActive) {
+		m_isActive = false;
+		ClearBattleStage();
+		return;
+	}
+	else {
+		m_isActive = true;
+	}
+}
+
 void CBattleSystem::ReadyBattle(const string& tagArea, _uint iPrefabIndex)
 {
-	auto pDataBase = CDataBase::GetInstance(); 
+	auto pDataBase = CDataBase::GetInstance();
 	auto pObjMgr = ObjectManager();
 }
 
@@ -94,19 +106,6 @@ void CBattleSystem::ReadyBattle(const string& tagArea, _uint StageNumber, _uint 
 	CacheData->Battle.PortalPoint;
 	//const vector<MONSTER_SPAWN_DESC>* pMonsterSpawnData = pDatabase->GetMonsterSpawnData(tagArea);
 }
-
-void CBattleSystem::SetActive(_bool isActive)
-{
-	if (false == isActive) {
-		m_isActive = false;
-		ClearBattleStage();
-		return;
-	}
-	else {
-		m_isActive = true;
-	}
-}
-
 /*지금 싸우려는 애들->*/
 void CBattleSystem::SpawnMosnter(const string& MonsterProtoTag, _float3 vSpawnPos, _float3 vRot)
 {
