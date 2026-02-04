@@ -162,6 +162,11 @@ namespace Client {
 		_int		MaxFrame;
 	}TV_DESC;
 
+	typedef struct tagGachaChannelDesc {
+		wstring		strLabel = {};
+		string		strTextureKey = {}; 
+	}GACHA_CHANNEL_DESC;
+
 	typedef struct tagCloudDesc {
 		_float3 skyColor = {};
 		_float3 cloudColor = {};

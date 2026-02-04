@@ -12,8 +12,8 @@ class CUI_GachaChannel final : public CUI_Object
 {
 public:
 	typedef struct tagChannelDesc : public UI_DESC {
-		string strTextureKey = {};
 		wstring strLabel = {};
+		string strTextureKey = {}; 
 		function<void(CUI_Object* pObj)>	onSelect = {};
 	}CHANNEL_DESC;
 

@@ -4,9 +4,9 @@
 #include "GameInstance.h"
 #include "ObjectContainer.h"
 
+#include "DataBase.h"
 #include "FieldSystem.h"
 #include "UI_BackButton.h"
-
 #include "UI_GachaChannel.h"
 #include "UI_GachaConversion.h"
 
@@ -92,16 +92,15 @@ void CUI_GachaPage::Create_Currency()
 
 void CUI_GachaPage::Create_Channels()
 {
-    static const _int iChannelsCount = { 7 };
+    static const _int iMaxChannels = { 8 };
+    auto& channels = CDataBase::GetInstance()->GeGachaChannels();
 
-    static const string TEXTUREKEYS[iChannelsCount] = { "IconRole13_GaCha_S.png", "IconRole24_GaCha_S.png", "IconRole46_GaCha_S.png", "Weapon_S_1091_GaCha.png", "Weapon_S_1201_GaCha.png", "IconTV_Gacha.png", "IconBangboo_Gacha.png" };
-    static const wstring LABELS[iChannelsCount] = { L"독점 채널", L"독점 채널", L"독점 재개봉", L"W-엔진", L"W-엔진", L"일반 채널", L"Bangboo"};
-
+    _int iChannelsCount = min(iMaxChannels, channels.size());
     for (_int i = 0; i < iChannelsCount; ++i)
     {
         CUI_GachaChannel::CHANNEL_DESC* pDesc = new CUI_GachaChannel::CHANNEL_DESC;
-        pDesc->strTextureKey = TEXTUREKEYS[i];
-        pDesc->strLabel = LABELS[i];
+        pDesc->strLabel = channels[i].strLabel;
+        pDesc->strTextureKey = channels[i].strTextureKey; 
         pDesc->onSelect = [this](CUI_Object* pObj) { Select_Channel(pObj); };
         auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_GachaChannel" })
             .Add_UIDesc(pDesc)
