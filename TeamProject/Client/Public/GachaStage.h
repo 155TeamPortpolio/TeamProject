@@ -15,7 +15,7 @@ public:
     void    PlayStageSpin(_int index);
 
 public:
-    virtual HRESULT Initialize_Prototype(vector<WEAPON_DESC>* Desc);
+    virtual HRESULT Initialize_Prototype(vector<GACHA_RESULT_DESC>* Desc);
     virtual HRESULT Initialize(INIT_DESC* pArg) override;
     virtual void    Awake()                     override;
     virtual void    Priority_Update(_float dt)  override;
@@ -33,13 +33,13 @@ private:
     class CGachaResult*         m_pAvatarResult = nullptr;
     
 private:    
-    vector<WEAPON_DESC>*    m_pResultDesc = nullptr;
+    vector<GACHA_RESULT_DESC>*    m_pResultDesc = nullptr;
     GACHA_STAGE             m_eStage = GACHA_STAGE::BANGBOO;
 
     _int                    m_iIndex = -1;
 
 public:
-    static CGachaStage* Create(vector<WEAPON_DESC>* Desc);
+    static CGachaStage* Create(vector<GACHA_RESULT_DESC>* Desc);
     virtual CGameObject* Clone(INIT_DESC* pArg) override;
     virtual void Free() override;
 };

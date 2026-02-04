@@ -84,7 +84,7 @@ void CGacha_Level::Ready_Map(const string& LevelTag, const string& AreaTag)
 
 void CGacha_Level::Ready_GachaObjects()
 {
-	m_ResultDesc = CDataBase::GetInstance()->GetGachaResults(9);
+	m_ResultDesc = CDataBase::GetInstance()->GetGachaGroup();
 
 	auto pProto = PrototypeManager();
 	auto objMgr = ObjectManager();

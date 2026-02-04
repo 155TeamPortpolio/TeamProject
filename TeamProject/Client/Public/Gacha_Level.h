@@ -33,7 +33,7 @@ private:
 
 private:
 	OBJECT_HANDLE			m_GachaHandle{};
-	vector<WEAPON_DESC>		m_ResultDesc;
+	vector<GACHA_RESULT_DESC>		m_ResultDesc;
 	_int					m_iIndex = -1;
 	_int					m_iMaxIndex = 10;
 
