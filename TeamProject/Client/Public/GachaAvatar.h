@@ -11,6 +11,9 @@ class CGachaAvatar :
     public CGachaResult
 {
 private:
+    enum class ANIMSTATE { START, LOOP, END };
+
+private:
     CGachaAvatar();
     CGachaAvatar(const CGachaAvatar& rhs);
     virtual ~CGachaAvatar() DEFAULT;
@@ -27,7 +30,13 @@ public:
     virtual void    Late_Update(_float dt)      override;
 
 private:
+    void Update_States();
+
+private:
     CAnimator3D*    m_pAnimator = nullptr;
+
+private:
+    ANIMSTATE       m_eAnimState = ANIMSTATE::START;
 
 public:
     static CGachaAvatar* Create();

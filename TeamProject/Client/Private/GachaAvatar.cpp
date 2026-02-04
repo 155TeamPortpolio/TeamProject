@@ -13,17 +13,28 @@ CGachaAvatar::CGachaAvatar()
 }
 
 CGachaAvatar::CGachaAvatar(const CGachaAvatar& rhs)
-    :CGachaResult(rhs), m_pAnimator(rhs.m_pAnimator)
+    :CGachaResult(rhs)
 {
 }
 
 void CGachaAvatar::SetResult(string strModel, string strMaterial, _float4 vRot)
 {
-    //auto pModel = Get_Component<CSkeletalModel>();
-    //auto pMaterial = Get_Component<CMaterial>();
-    //
-    //pModel->Link_Model(G_GlobalLevelKey, "Miyabi.model");
-    //pMaterial->Link_Material(G_GlobalLevelKey, "Miyabi.mat");
+    auto pModel = Get_Component<CSkeletalModel>();
+    auto pMaterial = Get_Component<CMaterial>();
+    
+    pModel->Link_Model(G_GlobalLevelKey, "Miyabi.model");
+    pMaterial->Link_Material(G_GlobalLevelKey, "Miyabi.mat");
+
+    m_pAnimator = Get_Component<CAnimator3D>();
+    m_pAnimator->LinkAnimate_Model(G_GlobalLevelKey, "Miyabi.model");
+    m_pAnimator->Link_MetaData(G_GlobalLevelKey, "Miyabi_Meta.json");
+
+    m_pAnimator->Set_Animation("Avatar_Female_Size02_Unagi_Ani_Gacha_Start")
+        .Loop(false)
+        .Apply();
+
+    m_pTransform->Set_Pos(_float4(0.f, 0.2f, -1.6f, 0.f));
+    m_pTransform->Rotate(_float3(0.f, XM_PI, 0.f));
 }
 
 HRESULT CGachaAvatar::Initialize_Prototype()
@@ -33,7 +44,7 @@ HRESULT CGachaAvatar::Initialize_Prototype()
 
     auto pModel = Add_Component<CSkeletalModel>();
     auto pMaterial = Add_Component<CMaterial>();
-    m_pAnimator = Add_Component<CAnimator3D>();
+    Add_Component<CAnimator3D>();
 
     pModel->Link_Model(G_GlobalLevelKey, "Miyabi.model");
     pMaterial->Link_Material(G_GlobalLevelKey, "Miyabi.mat");
@@ -52,6 +63,7 @@ HRESULT CGachaAvatar::Initialize(INIT_DESC* pArg)
 void CGachaAvatar::Awake()
 {
     __super::Awake();
+    m_pAnimator = Get_Component<CAnimator3D>();
     m_pAnimator->LinkAnimate_Model(G_GlobalLevelKey, "Miyabi.model");
     m_pAnimator->Link_MetaData(G_GlobalLevelKey, "Miyabi_Meta.json");
 
@@ -68,12 +80,31 @@ void CGachaAvatar::Priority_Update(_float dt)
 void CGachaAvatar::Update(_float dt)
 {
     m_pAnimator->Update_Animation(dt);
+    Update_States();
     __super::Update(dt);
 }
 
 void CGachaAvatar::Late_Update(_float dt)
 {
     __super::Late_Update(dt);
+}
+
+void CGachaAvatar::Update_States()
+{
+    switch (m_eAnimState)
+    {
+    case ANIMSTATE::START:
+        if (m_pAnimator->isCurrentAnimEnd())
+        {
+            m_pAnimator->Change_Animation("Avatar_Female_Size02_Unagi_Ani_Gacha_Loop")
+                .Loop(true)
+                .Apply();
+            m_eAnimState = ANIMSTATE::LOOP;
+        }
+        break;
+    case ANIMSTATE::LOOP:
+        break;
+    }
 }
 
 CGachaAvatar* CGachaAvatar::Create()

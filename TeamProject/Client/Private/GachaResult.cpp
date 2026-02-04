@@ -18,8 +18,8 @@ CGachaResult::CGachaResult(const CGachaResult& rhs)
 
 void CGachaResult::SetRenderState(_bool Render)
 {
-    if (Render) SetRenderLayer(RENDER_LAYER::None);
-    else SetRenderLayer(RENDER_LAYER::Default);
+    if (Render) SetRenderLayer(RENDER_LAYER::Default);
+    else SetRenderLayer(RENDER_LAYER::None);
 }
 
 HRESULT CGachaResult::Initialize_Prototype()
