@@ -29,7 +29,6 @@ HRESULT CUI_GachaConversion::Initialize(INIT_DESC* pArg)
 
     Set_ChildText(CHILD::COST, Helper::ConvertToWideString(to_string(pDesc->iCost / 10000)) + L"¸¸");
     Set_ChildText(CHILD::COUNT, Helper::ConvertToWideString(to_string(pDesc->iCount)));
-    m_OnClick = pDesc->onClick;
 
     if (m_pButton)
         m_pButton->Set_OnClick([this]() { OnClick(); });

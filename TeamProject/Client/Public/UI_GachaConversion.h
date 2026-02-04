@@ -13,7 +13,6 @@ public:
 	typedef struct tagConversionDesc : public UI_DESC {
 		_int iCost = {};
 		_int iCount = {};
-		function<void()> onClick = {};
 	}CONVERSION_DESC;
 
 private:

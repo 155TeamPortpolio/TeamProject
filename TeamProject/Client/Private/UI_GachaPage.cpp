@@ -120,7 +120,6 @@ void CUI_GachaPage::Create_Conversions()
         CUI_GachaConversion::CONVERSION_DESC* pDesc = new CUI_GachaConversion::CONVERSION_DESC;
         pDesc->iCost = COSTS[i];
         pDesc->iCount = COUNTS[i];
-        pDesc->onClick = [this]() { OnClick_Conversion(); };
 
         auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_GachaConversion" })
             .Add_UIDesc(pDesc)
@@ -129,6 +128,7 @@ void CUI_GachaPage::Create_Conversions()
         if (!pObj)
             return;
 
+        pObj->Set_OnClick([this]() { OnClick_Conversion(); });
         _float fStartX = -55.f - 390.f * iMaxCount;
         _float fSpacing = 390.f;
 
