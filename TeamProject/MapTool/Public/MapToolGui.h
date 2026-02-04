@@ -59,6 +59,7 @@ public:
 	const vector<ModelPathPack>& Get_ModelPathPack() { return m_ModelPathPack; }
 
 	void			Render_ClearLayer();
+	void			Clear_BattleData();
 private:
 	/* Refernce */
 	CGameInstance* m_pGameInstance = { nullptr };
