@@ -19,7 +19,6 @@ HRESULT CModelData::Initialize(const string& filePath, ID3D11Device* pDevice)
 		wstring Alarm = L"There is No File. :CModelData \n" + Helper::ConvertToWideString(filePath);
 		MessageBox(NULL, Alarm.c_str(), L"System Message", MB_OK);
 		//MSG_BOX("There is No File. :CModelData ");
-		//__debugbreak();
 		return E_FAIL;
 	}
 
@@ -273,7 +272,6 @@ vector<MaterialUsageRow> CModelData::BuildMaterialUsageTable(_bool includeMeshIn
 	for (auto& pair : mapByMaterial)
 		rows.push_back(std::move(pair.second));
 
-	// meshCount ������������ ����(���� ���� ��Ƽ������ ����)
 	sort(rows.begin(), rows.end(),
 		[](const MaterialUsageRow& leftRow, const MaterialUsageRow& rightRow)
 		{
@@ -308,7 +306,6 @@ const vector<string> CModelData::Get_BoneNames()
 const vector<_int> CModelData::GenerateFollowingIndices(CModelData* pMasterData)
 {
 	vector<_int> FollowingIndices;
-	/*������ �����Ϳ��� �� �̸��� ���� ���� ������ �ִ´�. ������ -1�� ����*/
 	for (string boneName : Get_BoneNames()) {
 		_int Index = pMasterData->Find_BoneIndexByName(boneName);
 		FollowingIndices.push_back(Index);
