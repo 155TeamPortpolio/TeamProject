@@ -138,12 +138,6 @@ void CCamDirector::StartBattleIntro(CamSeqType type)
 
     if (type == CamSeqType::ZeroIntro)
         BattleSystem()->GetBattlePlayer()->QuestStart();
-
-    if (GetCharacterName() == CHARACTER::Miyabi)
-    {
-        auto animator = GetCharacter()->Get_Component<CAnimator3D>();
-        animator->Set_Animation("Avatar_Female_Size02_Unagi_Ani_QuestStart").Apply();
-    }
 }
 
 string CCamDirector::ResolveSeqKey(CamSeqType type) const

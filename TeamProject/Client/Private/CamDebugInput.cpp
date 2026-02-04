@@ -45,7 +45,6 @@ void CamDebugInput::UpdateInput(_float dt)
 
     if (InputDevice()->Key_Tap(VK_F4))
     {
-       // if (levelKey == "Gacha_Level") CamDirector()->RequestSequence("Gacha/Spin");
         if (levelKey == "Gacha_Level" || levelKey == "Zero_Level")
         {
             auto obj = Builder::Create_UIObject({G_GlobalLevelKey, "Proto_GameObject_Seoriyeol"}).Build("Seoriyeol");
