@@ -24,7 +24,7 @@ CCorinState_SwitchInParryAid* CCorinState_SwitchInParryAid::Create()
     pSubStateMachine->Get_State("H_End")->Set_Tag("End");
 
     pSubStateMachine->Register_Transition("ParryAid_Start", "L_Loop",
-        CStateMachine<CCorin>::CONDITION_ANIMATION_GREATER, "", 0.4f);
+        CStateMachine<CCorin>::CONDITION_ANIMATION_END);
     pSubStateMachine->Register_Transition("L_Loop", "L_End",
         CStateMachine<CCorin>::CONDITION_ANIMATION_END);
 
@@ -69,7 +69,8 @@ void CCorinState_SwitchInParryAid_Start::Enter(CCorin* pOwner)
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_ParryAid_Start")
         .Loop(false)
         .BlendDuration(0.1f)
-        .Speed(2.5f)
+        .ReserveSpeed(0.f, 1.f, 2.f, EaseType::OutQuint)
+        .EndAt(0.4f)
         .Apply();
 
     OBJECT_HANDLE handle = pOwner->Get_ParryHandle();
