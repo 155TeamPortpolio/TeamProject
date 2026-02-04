@@ -17,8 +17,8 @@ void CBattleFXFlow::Initialize_Preset()
 		evade.fBlurDuration = duration;
 		evade.vStartColor = { 1.f,1.f,1.f };
 		evade.vTargetColor = { 0.6f,0.6f,0.6f };
-		evade.tPlayerTimeScale = TIME_SCALING({ duration, 0.3f, 0.f, 0.f , EaseType::InOutSine });
-		evade.tMonsterTimeScale = TIME_SCALING({ duration, 0.3f, 0.f, 0.f , EaseType::InOutSine });
+		evade.tPlayerTimeScale = TIME_SCALING({ duration, 0.8f, 0.f, 0.f , EaseType::OutExpo });
+		evade.tMonsterTimeScale = TIME_SCALING({ duration, 0.8f, 0.f, 0.f , EaseType::OutExpo });
 	}
 
 	{
@@ -26,15 +26,22 @@ void CBattleFXFlow::Initialize_Preset()
 		const _float duration = 1.f;
 		Parry.fVFXDuration = duration;
 		Parry.fBlurDuration = duration;
-		Parry.tPlayerTimeScale = TIME_SCALING({ duration, 0.3f, 0.f, 0.f , EaseType::InOutSine });
-		Parry.tMonsterTimeScale = TIME_SCALING({ duration, 0.3f, 0.f, 0.f , EaseType::InOutSine });
+		Parry.tPlayerTimeScale = TIME_SCALING({ duration, 0.f, 0.2f, 1.f , EaseType::InExpo });
+		Parry.tMonsterTimeScale = TIME_SCALING({ duration, 0.f, 0.2f, 1.f , EaseType::InExpo });
 	}
 	{
-		auto& Parry = m_BattleVFXData[ENUM(BATTLE_VFX_TYPE::ULTIMATE)];
+		auto& Ultimate = m_BattleVFXData[ENUM(BATTLE_VFX_TYPE::ULTIMATE)];
 		const _float duration = 2.f;
-		Parry.fVFXDuration = duration;
-		Parry.fBlurDuration = duration;
-		Parry.tMonsterTimeScale = TIME_SCALING({ duration, 0.f, 0.f, 0.f , EaseType::InOutSine });
+		Ultimate.fVFXDuration = duration;
+		Ultimate.fBlurDuration = duration;
+		Ultimate.tMonsterTimeScale = TIME_SCALING({ duration, 0.f, 0.f, 0.f , EaseType::InOutSine });
+	}
+	{
+		auto& Switch = m_BattleVFXData[ENUM(BATTLE_VFX_TYPE::SWITCH)];
+		const _float duration = 2.f;
+		Switch.fVFXDuration = duration;
+		Switch.fBlurDuration = duration;
+		Switch.tMonsterTimeScale = TIME_SCALING({ duration, 0.f, 0.f, 0.f , EaseType::InOutSine });
 	}
 }
 
@@ -159,6 +166,9 @@ void CBattleFXFlow::StartVfx(BATTLE_VFX_TYPE vfxType)
 	case BATTLE_VFX_TYPE::ULTIMATE:
 		StartVfx_Ultimate();
 		break;
+	case BATTLE_VFX_TYPE::SWITCH:
+		StartVfx_Ultimate();
+		break;
 	default:
 		m_BattleVFX.isRunning = false;
 		break;
@@ -176,8 +186,6 @@ void CBattleFXFlow::StartVfx_Evade()
 
 	AddCall([this]() {RenderSystem()->Register_AddictiveColor(&m_BattleVFX.vNowColor);});
 	AddCall([this, preset]() {RenderSystem()->Apply_RadialBlur(preset.fBlurDuration);});
-
-	
 	AddStep(
 		[this, preset,elapsed = 0.f, duration = m_BattleVFX.fDuration](_float dt) mutable -> _bool
 		{
@@ -220,10 +228,9 @@ void CBattleFXFlow::StartVfx_Parry()
 	AddParallelTimeScale(BATTLE_OBJ_TYPE::MONSTER, preset.tMonsterTimeScale);
 
 	AddCall([this, preset]() {RenderSystem()->Apply_RadialBlur(preset.fBlurDuration); });
-
-
 	AddStep(
-		[this, preset, elapsed = 0.f, duration = m_BattleVFX.fDuration](_float dt) mutable -> _bool
+		[this, preset, elapsed = 0.f, duration = m_BattleVFX.fDuration]
+		(_float dt) mutable -> _bool
 		{
 			elapsed += dt;
 			_float time01 = 1.f;
@@ -266,6 +273,48 @@ void CBattleFXFlow::StartVfx_Ultimate()
 		m_BattleVFX.vNowColor = {};
 		m_BattleVFX.isRunning = false;
 		});
+	Start(nullptr);
+}
+
+void CBattleFXFlow::StartVfx_Switch()
+{
+	Clear(false);
+
+	auto& preset = m_BattleVFXData[ENUM(BATTLE_VFX_TYPE::PARRY)];
+	AddParallelTimeScale(BATTLE_OBJ_TYPE::PLAYER, preset.tPlayerTimeScale);
+	AddParallelTimeScale(BATTLE_OBJ_TYPE::MONSTER, preset.tMonsterTimeScale);
+
+	AddCall([this, preset]() {RenderSystem()->Apply_RadialBlur(preset.fBlurDuration); });
+	AddStep(
+		[this, preset, elapsed = 0.f, duration = m_BattleVFX.fDuration]
+		(_float dt) mutable -> _bool
+		{
+			elapsed += dt;
+			_float time01 = 1.f;
+			if (duration > 0.f)
+				time01 = clamp(elapsed / duration, 0.f, 1.f);
+
+			_float normalizedT = 1.f - time01;
+			_float pingpongT = (normalizedT < 0.5f) ? (normalizedT * 2.f) : (2.f - normalizedT * 2.f);
+			_float easeT = Math::ApplyEase(EaseType::InOutSine, pingpongT);
+
+			const _float3 target = { 0.1f, 0.3f, 0.3f };
+			_vector startColor = XMLoadFloat3(&preset.vStartColor);
+			_vector targetColor = XMLoadFloat3(&preset.vTargetColor);
+			XMStoreFloat3(&m_BattleVFX.vNowColor, XMVectorLerp(startColor, targetColor, easeT));
+
+			m_BattleVFX.fCurPos = duration * time01;
+
+			return elapsed < duration;
+		}
+	);
+
+	AddCall([this, preset]() {
+		m_BattleVFX.fCurPos = 0.f;
+		m_BattleVFX.vNowColor = {};
+		m_BattleVFX.isRunning = false;
+		});
+
 	Start(nullptr);
 }
 
