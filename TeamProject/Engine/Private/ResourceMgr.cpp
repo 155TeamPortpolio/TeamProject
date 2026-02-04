@@ -552,6 +552,7 @@ ANIMATION_META CResourceMgr::Load_MetaClip(const string& levelTag, const string&
 		string animPath = animDir + DataClip.ClipTag + ".anim";
 		CAnimationClip* pClip = CAnimationClip::Create(animPath);
 
+
 		if (!DataClip.Events.empty())
 			pClip->Set_Events(DataClip.Events);
 

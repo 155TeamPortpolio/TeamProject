@@ -12,7 +12,7 @@ protected:
     virtual ~CGachaResult() DEFAULT;
 
 public:
-    virtual void SetResult(string strModel, string strMaterial, _float4 vRot) PURE;
+    virtual void SetResult(GACHA_RESULT_DESC Desc) PURE;
     virtual void SetRenderState(_bool Render);
 
 public:

@@ -198,6 +198,11 @@ _uint CMaterialInstance::Get_BindedIndex(TEXTURE_TYPE type)
     return  m_TextureIndexs[ENUM(type)];
 }
 
+_uint CMaterialInstance::Get_BindedCount(TEXTURE_TYPE type)
+{
+    return m_pMaterialData->Get_TextureCount(type);
+}
+
 void CMaterialInstance::Render_GUI()
 {
     CShader* shaderPtr = m_pMaterialData->Get_Shader();

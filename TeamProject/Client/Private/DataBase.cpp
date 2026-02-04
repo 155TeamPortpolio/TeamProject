@@ -44,7 +44,9 @@ HRESULT CDataBase::CreateTable()
 	if (FAILED(LoadRamenData("../../Resources/Data/Shop/Shop_Ramen.csv")))
 		return E_FAIL;
 	//Gacha
-	if (FAILED(LoadWeaponData("../../Resources/Data/Gacha/WeaponID.csv")))
+	if (FAILED(LoadGachaResultData("../../Resources/Data/Gacha/ResultID.csv")))
+		return E_FAIL;
+	if (FAILED(LoadGachaData("../../Resources/Data/Gacha/GachaRandom.csv")))
 		return E_FAIL;
 	if (FAILED(LoadTVData("../../Resources/Data/Gacha/TVImage.csv")))
 		return E_FAIL;
@@ -153,13 +155,29 @@ vector<const RAMEN_DESC*> CDataBase::GetRamenTable()
 	return result;
 }
 
-WEAPON_DESC CDataBase::GetWeaponDesc(_int WeaponID)
+GACHA_RESULT_DESC CDataBase::GetGachaResultDesc(_int ID)
 {
-	auto iter = m_WeaponTables.find(WeaponID);
-	if (iter == m_WeaponTables.end())
-		return WEAPON_DESC{};
+	auto iter = m_ResultTables.find(ID);
+	if (iter == m_ResultTables.end())
+		return GACHA_RESULT_DESC{};
 
 	return iter->second;
+}
+
+vector<GACHA_RESULT_DESC> CDataBase::GetGachaGroup()
+{
+	array<_int, 10> IDs = m_GachaData[m_iCurrentGachaOrder++];
+
+	vector<GACHA_RESULT_DESC> Results;
+	for (auto& ID : IDs)
+	{
+		Results.push_back(GetGachaResultDesc(ID));
+	}
+
+	if (m_iCurrentGachaOrder >= m_iMaxGachaOrder)
+		m_iCurrentGachaOrder = 0;
+
+	return Results;
 }
 
 TV_DESC CDataBase::GetTVDesc(const string& strName)
@@ -169,36 +187,6 @@ TV_DESC CDataBase::GetTVDesc(const string& strName)
 		return TV_DESC{};
 
 	return iter->second;
-}
-
-vector<WEAPON_DESC> CDataBase::GetGachaResults(_int WeaponNum)
-{
-	vector<WEAPON_DESC> Results(10);
-	if (WeaponNum <= 0 || WeaponNum > 10 || m_WeaponTables.empty())
-		return Results;
-
-	vector<_int> weaponKeys;
-	for (const auto& pair : m_WeaponTables)
-		weaponKeys.push_back(pair.first);
-
-	if (WeaponNum > weaponKeys.size())
-		WeaponNum = weaponKeys.size();
-
-	random_device rd;
-	mt19937 gen(rd());
-
-	shuffle(weaponKeys.begin(), weaponKeys.end(), gen);
-
-	vector<_int> positions(10);
-	iota(positions.begin(), positions.end(), 0);
-	shuffle(positions.begin(), positions.end(), gen);
-
-	for (_int i = 0; i < WeaponNum; ++i)
-	{
-		Results[positions[i]] = m_WeaponTables[weaponKeys[i]];
-	}
-
-	return Results;
 }
 
 HRESULT CDataBase::LoadPlayerCreationTable(const string& csvPath)
@@ -626,27 +614,27 @@ HRESULT CDataBase::LoadRamenData(const string& csvPath)
 	return S_OK;
 }
 
-HRESULT CDataBase::LoadWeaponData(const string& csvPath)
+HRESULT CDataBase::LoadGachaResultData(const string& csvPath)
 {
 	io::CSVReader<
-		9,
+		12,
 		io::trim_chars<' ', '\t'>,
 		io::double_quote_escape<',', '"'>
 	>in(csvPath);
 
 	in.read_header(
 		io::ignore_extra_column | io::ignore_missing_column,
-		"ID", "Grade", "Model", "Mat", "Texture", "RotX", "RotY", "RotZ", "RotW"
+		"ID", "Grade", "Model", "Mat", "Texture", "RotX", "RotY", "RotZ", "RotW", "Meta", "Start", "Loop"
 	);
-	string			Grade, Model, Material, Texture;
+	string			Grade, Model, Material, Texture, Meta, Start, Loop;
 	_int			ID;
 	_float			RotX, RotY, RotZ, RotW;
 
-	while (in.read_row(ID, Grade, Model, Material,Texture, RotX, RotY, RotZ, RotW))
+	while (in.read_row(ID, Grade, Model, Material,Texture, RotX, RotY, RotZ, RotW, Meta, Start, Loop))
 	{
 		if (ID == -1) continue;
 
-		WEAPON_DESC desc = {};
+		GACHA_RESULT_DESC desc = {};
 		desc.ID = ID;
 		desc.Grade = StringToGachaGrade(Grade);
 		desc.strModel = Model;
@@ -656,13 +644,39 @@ HRESULT CDataBase::LoadWeaponData(const string& csvPath)
 		desc.RotY = RotY;
 		desc.RotZ = RotZ;
 		desc.RotW = RotW;
+		desc.strMeta = Meta;
+		desc.strStartAnim = Start;
+		desc.strLoopAnim = Loop;
 
-		auto [iter, inserted] = m_WeaponTables.emplace(desc.ID, move(desc));
+		auto [iter, inserted] = m_ResultTables.emplace(desc.ID, move(desc));
 		if (false == inserted)
 		{
 			wstring ErrorMsg = L"Duplicate WeaponKey in CSV : " + desc.ID;
 			MessageBox(NULL, ErrorMsg.c_str(), L"System Message", MB_OK);
 		}
+	}
+
+	return S_OK;
+}
+
+HRESULT CDataBase::LoadGachaData(const string& csvPath)
+{
+	io::CSVReader<
+		10,
+		io::trim_chars<' ', '\t'>,
+		io::double_quote_escape<',', '"'>
+	>in(csvPath);
+
+	in.read_header(
+		io::ignore_extra_column | io::ignore_missing_column,
+		"ID_0", "ID_1", "ID_2", "ID_3","ID_4","ID_5", "ID_6", "ID_7", "ID_8", "ID_9"
+	);
+
+	array<_int, 10> IDs;
+
+	while (in.read_row(IDs[0], IDs[1], IDs[2], IDs[3], IDs[4], IDs[5], IDs[6], IDs[7], IDs[8], IDs[9]))
+	{
+		m_GachaData.push_back(IDs);
 	}
 
 	return S_OK;

@@ -37,7 +37,7 @@ void CGachaProps::PlayStageSpin(_int index)
     m_pStage->PlayStageSpin(index);
 }
 
-HRESULT CGachaProps::Initialize_Prototype(vector<WEAPON_DESC>* Desc)
+HRESULT CGachaProps::Initialize_Prototype(vector<GACHA_RESULT_DESC>* Desc)
 {
     if (FAILED(__super::Initialize_Prototype()))
         return E_FAIL;
@@ -97,8 +97,9 @@ void CGachaProps::Add_GachaProps()
     colliderDesc.eType = COLLIDER_TYPE::BOX;
     colliderDesc.eGroup = COLLISION_GROUP::COMMON;
     colliderDesc.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER);
-    colliderDesc.bAutoFit = true;
-    colliderDesc.bTrigger = true;
+    colliderDesc.bAutoFit = false;
+    colliderDesc.vSize = _float3(3.754, 0.460, 3.524);
+    colliderDesc.vCenter = _float3(0.040, -0.083, -0.916);
 
     CGameObject* gachaBack = Builder::Create_Object({ "Gacha_Level", "Proto_GameObject_GachaBack" })
         .Collider(colliderDesc)
@@ -122,7 +123,7 @@ void CGachaProps::Add_GachaProps()
     m_pTV = dynamic_cast<CGachaTV*>(gachaTV);
 }
 
-CGachaProps* CGachaProps::Create(vector<WEAPON_DESC>* Desc)
+CGachaProps* CGachaProps::Create(vector<GACHA_RESULT_DESC>* Desc)
 {
 	CGachaProps* Instance = new CGachaProps();
 	if (FAILED(Instance->Initialize_Prototype(Desc)))

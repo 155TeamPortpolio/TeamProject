@@ -12,7 +12,7 @@ private:
     virtual ~CGachaWeapon() DEFAULT;
 
 public:
-    virtual void SetResult(string strModel, string strMaterial, _float4 vRot) override;
+    virtual void SetResult(GACHA_RESULT_DESC Desc) override;
 
 public:
     virtual HRESULT Initialize_Prototype()      override;

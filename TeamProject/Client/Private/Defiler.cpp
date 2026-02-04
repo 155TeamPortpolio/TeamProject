@@ -590,5 +590,20 @@ HRESULT CDefiler::Create_Colliders()
 			return E_FAIL;
 	}
 
+	/* Area */
+	{
+		BATTLE_COLLIDER_DESC WeaponDesc{};
+
+		WeaponDesc.tagName = "Area";
+		WeaponDesc.isAttachBone = true;
+		WeaponDesc.tagBone = "Bip001";
+		WeaponDesc.pOwnerAnimator3D = pAnimator;
+		WeaponDesc.eAttackColliderType = COLLIDER_TYPE::SPHERE;
+		WeaponDesc.vAttackSize = _float3{ 4.f,4.f,4.f };
+
+		if (FAILED(AttachBattleColliderObject(&WeaponDesc)))
+			return E_FAIL;
+	}
+
 	return S_OK;
 }
