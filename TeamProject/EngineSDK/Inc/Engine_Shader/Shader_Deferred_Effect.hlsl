@@ -83,7 +83,7 @@ PS_OUT_COMPOSITE PS_MAIN_COMPOSITE(PS_IN In)    //여기서 가중치 합성 후 원래 타�
     
     /* Diffuse */
     float3 vDiffuseColor = (fDiffuseAlpha > fElipson) ? (vDiffuseEffectDesc.rgb / fDiffuseAlpha) : 0.f;
-    vDiffuseColor = BoostBrightColor(vDiffuseColor, 0.5f, 1.f);
+    vDiffuseColor = BoostBrightColor(vDiffuseColor, 0.5f, 0.4f);
     Out.vDiffuseEffect = float4(vDiffuseColor * fOutAlpha, fOutAlpha);
     
     /* Bloom */

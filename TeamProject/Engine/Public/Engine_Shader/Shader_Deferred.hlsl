@@ -274,7 +274,9 @@ float4 PS_MAIN_FINAL(PS_IN In) : SV_Target
     
     hdrColor += hdrBloom.rgb * 0.3;
     
-    float3 mapped = ACESFilm(hdrColor) + radialBloom.rgb + effect.rgb;
+    /* 이렇게 해도 되는지 물어봐야됨 */
+    float3 radialBloomColor = lerp(radialBloom.rgb, float3(0.f, 0.f, 0.f), effect.a);
+    float3 mapped = ACESFilm(hdrColor) + radialBloomColor + effect.rgb;
     
     float3 finalColor = ui.rgb + mapped * (1.f - ui.a);
 
