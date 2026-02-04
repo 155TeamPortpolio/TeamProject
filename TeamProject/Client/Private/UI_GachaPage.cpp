@@ -70,10 +70,7 @@ void CUI_GachaPage::UI_DeActive(void* pArg)
 
 void CUI_GachaPage::Create_BackButton()
 {
-    CUI_BackButton::BUTTON_DESC* pDesc = new CUI_BackButton::BUTTON_DESC;
-
     auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_BackButton" })
-        .Add_UIDesc(pDesc)
         .Build("buttonBack");
 
     if (!pObj)
