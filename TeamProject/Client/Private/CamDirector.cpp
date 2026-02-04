@@ -80,10 +80,6 @@ void CCamDirector::AutoField()
 {
     AutoTarget();
     RequestSequence("Field/Front");
-
-    CMonitorGate gate;
-    if (gate.Pass())
-        RenderSystem()->SetOn(false);
 }
 
 void CCamDirector::Update(_float dt)
@@ -139,6 +135,9 @@ void CCamDirector::StartBattleIntro(CamSeqType type)
 {
     AutoTarget();
     RequestSequence(type);
+
+    if (type == CamSeqType::ZeroIntro)
+        BattleSystem()->GetBattlePlayer()->QuestStart();
 }
 
 string CCamDirector::ResolveSeqKey(CamSeqType type) const
