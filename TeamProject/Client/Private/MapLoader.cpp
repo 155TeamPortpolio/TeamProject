@@ -396,8 +396,10 @@ void CMapLoader::Place_LightFromLoadData(MAP_LIGHT* pData)
 
     LightDesc.fRange     = pData->LightDesc.fLightRange;
     LightDesc.fIntensity = pData->LightDesc.fLightIntensity;
-
     
+    LightDesc.fInnerCos = pData->LightDesc.fInnerCos;
+    LightDesc.fOuterCos = pData->LightDesc.fOuterCos;
+
     for (auto& tSlotData : m_MapSlotFormatData) {
         // 일단 데이터 다 때려넣기
         for (auto& FieldData : tSlotData.second[pData->iIndex])
