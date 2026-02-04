@@ -501,6 +501,51 @@
     {
       "iIndex": 11,
       "LightDesc": {
+        "eLightType": 1,
+        "vOffsetPosition": {
+          "x": 0.0038198470138013363,
+          "y": 5.605193857299268e-45,
+          "z": -2.948023122757878e-38,
+          "w": -3.407957865237955e-42
+        },
+        "vLightDirection": {
+          "x": 0.6992287039756775,
+          "y": -1.1118501674900472e-09,
+          "z": -1.0828138385932107e-09,
+          "w": 0.7148980498313904
+        },
+        "vLightDiffuse": {
+          "x": 0.0,
+          "y": 0.2,
+          "z": 1.0,
+          "w": 0.0
+        },
+        "vLightAmbient": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0,
+          "w": 0.0
+        },
+        "vLightSpecular": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0,
+          "w": 0.0
+        },
+        "fLightRange": 100.0,
+        "fLightIntensity": 50.0,
+        "fInnerCos": 100.0,
+        "fOuterCos": 130.0
+      },
+      "vTranslation": [
+        -0.010457918047904968,
+        2.749380350112915,
+        -0.8489007949829102
+      ]
+    },
+    {
+      "iIndex": 12,
+      "LightDesc": {
         "eLightType": 2,
         "vOffsetPosition": {
           "x": 3.2229864679470793e-44,
@@ -544,7 +589,7 @@
       ]
     },
     {
-      "iIndex": 12,
+      "iIndex": 13,
       "LightDesc": {
         "eLightType": 2,
         "vOffsetPosition": {
@@ -589,7 +634,7 @@
       ]
     },
     {
-      "iIndex": 13,
+      "iIndex": 14,
       "LightDesc": {
         "eLightType": 2,
         "vOffsetPosition": {
@@ -634,7 +679,7 @@
       ]
     },
     {
-      "iIndex": 14,
+      "iIndex": 15,
       "LightDesc": {
         "eLightType": 2,
         "vOffsetPosition": {
@@ -679,7 +724,7 @@
       ]
     },
     {
-      "iIndex": 15,
+      "iIndex": 16,
       "LightDesc": {
         "eLightType": 2,
         "vOffsetPosition": {
@@ -724,7 +769,7 @@
       ]
     },
     {
-      "iIndex": 16,
+      "iIndex": 17,
       "LightDesc": {
         "eLightType": 2,
         "vOffsetPosition": {

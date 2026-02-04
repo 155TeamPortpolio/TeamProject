@@ -6,10 +6,14 @@
 #include "Child.h"
 #include "StaticModel.h"
 #include "Material.h"
+#include "Light.h"
 
 #include "GachaStageScreen.h"
 #include "GachaWeapon.h"
 #include "GachaAvatar.h"
+
+#include "CamDirector.h"
+#include "DataBase.h"
 
 CGachaStage::CGachaStage()
     :CGameObject()
@@ -23,10 +27,31 @@ CGachaStage::CGachaStage(const CGachaStage& rhs)
 
 void CGachaStage::PlayStageSpin(_int index)
 {
-	if (m_iIndex == index) return;
-	m_iIndex = index;
+	if (m_iSpinIndex == index) return;
+	m_iSpinIndex = index;
+	SetLightOff();
+	Update_StageEnviroment(m_iSpinIndex);
+}
 
-	Update_StageEnviroment(m_iIndex);
+void CGachaStage::PlayRevealEffect()
+{
+	CameraManager()->SetZoomType(ENUM(CamZoomType::GachaShake), 1.8f);
+	CameraManager()->AddShakeAxisWave(CamShakeAxis::Roll, 3.f, 4.0f, 0.8f, 0.1f, EaseType::InQuad, EaseType::InOutQuad);
+	CameraManager()->AddShakeAxisWave(CamShakeAxis::Yaw, 1.4f, 3.0f, 0.6f, 0.1f, EaseType::InQuad, EaseType::InOutQuad);
+	CameraManager()->AddShakeAxisWave(CamShakeAxis::Pitch, 1.f, 2.5f, 0.4f, 0.1f, EaseType::InQuad, EaseType::InOutQuad);
+
+	switch ((*m_pResultDesc)[m_iIndex].Grade)
+	{
+	case GachaGrade::S:
+		SetLightEffect(_float4(1.0f, 0.9f, 0.2f, 1.0f));
+		break;
+	case GachaGrade::A:
+		SetLightEffect(_float4(1.0f, 0.2f, 0.5f, 1.0f));
+		break;
+	case GachaGrade::B:
+		SetLightEffect(_float4(0.1f, 0.3f, 0.9f, 1.0f));
+		break;
+	}
 }
 
 HRESULT CGachaStage::Initialize_Prototype(vector<GACHA_RESULT_DESC>* Desc)
@@ -52,11 +77,18 @@ HRESULT CGachaStage::Initialize(INIT_DESC* pArg)
 		return E_FAIL;
 
 	Add_StageScreen();
-    return S_OK; 
+	
+	return S_OK; 
 }
 
 void CGachaStage::Awake()
 {
+	m_MainSpotLightHandle = 
+		CDataBase::GetInstance()->Get_CashedData("Gacha")->GetDataByDataIndex(10, MAPOBJ_TYPE::LIGHT)->Handle;
+	m_MainPointLightHandle =
+		CDataBase::GetInstance()->Get_CashedData("Gacha")->GetDataByDataIndex(11, MAPOBJ_TYPE::LIGHT)->Handle;
+
+	SetLightOff();
 }
 
 void CGachaStage::Priority_Update(_float dt)
@@ -69,6 +101,16 @@ void CGachaStage::Update(_float dt)
 {
 	CObjectContainer* pObjectContainer = Get_Component<CObjectContainer>();
 	pObjectContainer->UpdateChild(dt);
+
+	Update_CamTime();
+
+	if (InputDevice()->Key_Tap(VK_SPACE))
+	{
+		if (m_iIndex == -1) CamDirector()->RequestSequence("Gacha/Spin_Half");
+		else CamDirector()->RequestSequence("Gacha/Spin");
+		++m_iIndex;
+		if (m_iIndex >= m_iMaxIndex) m_iIndex = 0;
+	}
 }
 
 void CGachaStage::Late_Update(_float dt)
@@ -151,6 +193,44 @@ void CGachaStage::Set_Stage(GACHA_STAGE eStage)
 		pModel->Hide_MehsByName("0023_GachaStage_Prop_TV_04_mesh0023");
 	}
 }
+
+void CGachaStage::Update_CamTime()
+{
+	if (CamDirector()->GetCurSeqName() == "Gacha/Spin_Half")
+	{
+		if (CamDirector()->GetSeqPlayer()->GetTime() >= 0.7f)
+		{
+			PlayStageSpin(m_iIndex);
+		}
+	}
+	else if (CamDirector()->GetCurSeqName() == "Gacha/Spin")
+	{
+		if (CamDirector()->GetSeqPlayer()->GetTime() >= 1.f)
+		{
+			PlayStageSpin(m_iIndex);
+		}
+	}
+}
+
+//void CGachaStage::SetLightEffect(_float4 color)
+//{
+//	if (m_MainLightHandle.isValid() == false)
+//		return;
+//	auto pLight = m_MainLightHandle.Get()->Get_Component<CLight>();
+//
+//	pLight->Set_CompActive(true);
+//	LIGHT_DESC Desc = pLight->SnapShot_Desc();
+//	Desc.vLightDiffuse = color;
+//	pLight->Set_Desc(Desc);
+//}
+//
+//void CGachaStage::SetLightOff()
+//{
+//	if (m_MainLightHandle.isValid() == false)
+//		return;
+//	auto pLight = m_MainLightHandle.Get();
+//	pLight->Get_Component<CLight>()->Set_CompActive(false);
+//}
 
 void CGachaStage::Update_StageEnviroment(_int index)
 {

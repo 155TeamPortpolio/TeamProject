@@ -13,6 +13,7 @@ private:
 
 public:
     void    PlayStageSpin(_int index);
+    void    PlayRevealEffect();
 
 public:
     virtual HRESULT Initialize_Prototype(vector<GACHA_RESULT_DESC>* Desc);
@@ -27,16 +28,24 @@ private:
     void    Update_StageEnviroment(_int index);
     void    Set_Stage(GACHA_STAGE eStage);
 
+    void    Update_CamTime();
+    void    SetLightEffect(_float4 color);
+    void    SetLightOff();
+
 private:
     class CGachaStageScreen*    m_pScreen = nullptr;
     class CGachaResult*         m_pWeaponResult = nullptr;
     class CGachaResult*         m_pAvatarResult = nullptr;
-    
+    OBJECT_HANDLE               m_MainSpotLightHandle = {};
+    OBJECT_HANDLE               m_MainPointLightHandle = {};
+
 private:    
     vector<GACHA_RESULT_DESC>*    m_pResultDesc = nullptr;
     GACHA_STAGE             m_eStage = GACHA_STAGE::BANGBOO;
 
     _int                    m_iIndex = -1;
+    _int                    m_iSpinIndex = -1;
+    _int					m_iMaxIndex = 10;
 
 public:
     static CGachaStage* Create(vector<GACHA_RESULT_DESC>* Desc);
