@@ -8,7 +8,8 @@
 #include "Material.h"
 
 #include "GachaStageScreen.h"
-#include "GachaResult.h"
+#include "GachaWeapon.h"
+#include "GachaAvatar.h"
 
 CGachaStage::CGachaStage()
     :CGameObject()
@@ -78,7 +79,8 @@ void CGachaStage::Late_Update(_float dt)
 void CGachaStage::Add_StageScreen()
 {
 	PrototypeManager()->Add_ProtoType("Gacha_Level", "Proto_GameObject_GachaStageScreen", CGachaStageScreen::Create());
-	PrototypeManager()->Add_ProtoType("Gacha_Level", "Proto_GameObject_GachaResult", CGachaResult::Create());
+	PrototypeManager()->Add_ProtoType("Gacha_Level", "Proto_GameObject_GachaWeapon", CGachaWeapon::Create());
+	PrototypeManager()->Add_ProtoType("Gacha_Level", "Proto_GameObject_GachaAvatar", CGachaAvatar::Create());
 
 	auto pObjectContainer = Add_Component<CObjectContainer>();
 	COLLIDER_DESC colliderDesc{};
@@ -96,16 +98,24 @@ void CGachaStage::Add_StageScreen()
 
 	pObjectContainer->Add_Child(gachaStageScreen, true);
 
-	CGameObject* gachaResult = Builder::Create_Object({ "Gacha_Level", "Proto_GameObject_GachaResult" })
+	CGameObject* gachaWeapon = Builder::Create_Object({ "Gacha_Level", "Proto_GameObject_GachaWeapon" })
 		.Collider(colliderDesc)
 		.Position(_float3(0.f, 1.45f, -1.5f))
 		.Scale(_float3(2.f, 2.f, 2.f))
-		.Build("Result");
-	gachaResult->Get_Component<CTransform>()->Set_Quaternion(_vector4(-0.03, 0.96, -0.11, 0.24));
+		.Build("Weapon");
+	gachaWeapon->Get_Component<CTransform>()->Set_Quaternion(_vector4(-0.03, 0.96, -0.11, 0.24));
 
-	m_pResult = dynamic_cast<CGachaResult*>(gachaResult);
+	m_pWeaponResult = dynamic_cast<CGachaResult*>(gachaWeapon);
 
-	pObjectContainer->Add_Child(gachaResult, true);
+	pObjectContainer->Add_Child(gachaWeapon, true);
+
+	CGameObject* gachaAvatar = Builder::Create_Object({ "Gacha_Level", "Proto_GameObject_GachaAvatar" })
+		.Collider(colliderDesc)
+		.Build("Avatar");
+
+	m_pAvatarResult = dynamic_cast<CGachaResult*>(gachaAvatar);
+
+	pObjectContainer->Add_Child(gachaAvatar, true);
 }
 
 void CGachaStage::Set_Stage(GACHA_STAGE eStage)
@@ -134,13 +144,22 @@ void CGachaStage::Update_StageEnviroment(_int index)
 	{
 		m_pScreen->SetScreen(GACHA_STAGE::AVATAR, CurrentDesc.Grade);
 		Set_Stage(GACHA_STAGE::AVATAR);
+
+		m_pAvatarResult->SetResult(CurrentDesc.strModel, CurrentDesc.strMaterial,
+			_float4(CurrentDesc.RotX, CurrentDesc.RotY, CurrentDesc.RotZ, CurrentDesc.RotW));
+
+		m_pAvatarResult->SetRenderState(true);
+		m_pWeaponResult->SetRenderState(false);
 	}
 	else
 	{
 		m_pScreen->SetScreen(GACHA_STAGE::BANGBOO, CurrentDesc.Grade);
 		Set_Stage(GACHA_STAGE::BANGBOO);
-		m_pResult->SetResult(CurrentDesc.strModel, CurrentDesc.strMaterial,
+		m_pWeaponResult->SetResult(CurrentDesc.strModel, CurrentDesc.strMaterial,
 			_float4(CurrentDesc.RotX,CurrentDesc.RotY,CurrentDesc.RotZ, CurrentDesc.RotW));
+
+		m_pAvatarResult->SetRenderState(false);
+		m_pWeaponResult->SetRenderState(true);
 	}
 }
 

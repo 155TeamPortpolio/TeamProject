@@ -3,6 +3,7 @@
 // Engine
 #include "ObjectContainer.h"
 #include "GameInstance.h"
+#include "UI_Seoriyeol.h"
 
 namespace
 {
@@ -16,22 +17,6 @@ namespace
     static constexpr _float kAxisMixX            = 0.15f;
     static constexpr _float kAxisMixY            = 0.85f;
     static constexpr _float kMinScaleClamp       = 0.70f;
-}
-
-CUI_Gangta::CUI_Gangta(const CUI_Gangta& rhs) : CUI_WorldToScreen(rhs)
-{
-    for (_int i = 0; i < ENUM(CHILD::END); ++i)
-        m_children[i] = nullptr;
-
-    m_rippleTime = 0.f;
-    m_rippleEnabled = true;
-
-    m_baseScaleSelf = Vector2(1.f, 1.f);
-    for (_int i = 0; i < ENUM(CHILD::END); ++i)
-    {
-        m_baseScaleChild[i] = Vector2(1.f, 1.f);
-        m_baseAnchorChild[i] = Vector2(0.f, 0.f);
-    }
 }
 
 HRESULT CUI_Gangta::Initialize_Prototype()
@@ -81,8 +66,8 @@ void CUI_Gangta::UI_DeActive(void* arg)
 
 _bool CUI_Gangta::Is_AnimFinished()
 {
-    for (_int i = 0; i < ENUM(CHILD::END); ++i)
-        if (!m_children[i]->Is_AnimFinished())
+    for (auto child : m_children)
+        if (!child->Is_AnimFinished())
             return false;
 
     return true;
@@ -96,8 +81,8 @@ void CUI_Gangta::Cache_Children()
 
 void CUI_Gangta::SetAllChildAnim(_int idx) const
 {
-    for (_int i = 0; i < ENUM(CHILD::END); ++i)
-        m_children[i]->Set_Animation(idx);
+    for (auto child : m_children)
+        child->Set_Animation(idx);
 }
 
 void CUI_Gangta::Ripple_Begin()

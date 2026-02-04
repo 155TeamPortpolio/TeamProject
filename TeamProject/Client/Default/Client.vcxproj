@@ -395,6 +395,7 @@
     <ClInclude Include="..\public\DefilerState_Idle.h" />
     <ClInclude Include="..\Public\CorinState_AssaultAttack.h" />
     <ClInclude Include="..\Public\CorinState_CounterAttack.h" />
+    <ClInclude Include="..\public\GachaAvatar.h" />
     <ClInclude Include="..\public\GachaBack.h" />
     <ClInclude Include="..\public\GachaProps.h" />
     <ClInclude Include="..\public\GachaScreen.h" />
@@ -402,6 +403,7 @@
     <ClInclude Include="..\public\GachaStageScreen.h" />
     <ClInclude Include="..\public\GachaTV.h" />
     <ClInclude Include="..\public\GachaResult.h" />
+    <ClInclude Include="..\public\GachaWeapon.h" />
     <ClInclude Include="..\public\Gacha_Level.h" />
     <ClInclude Include="..\Public\MilitaryHelicopter.h" />
     <ClInclude Include="..\Public\MiyabiState_BackStep.h" />
@@ -414,6 +416,8 @@
     <ClInclude Include="..\Public\MiyabiState_SwitchInNormal.h" />
     <ClInclude Include="..\Public\MiyabiState_SwitchInParryAid.h" />
     <ClInclude Include="..\Public\MiyabiState_SwitchOut.h" />
+    <ClInclude Include="..\public\UI_Swaebing.h" />
+    <ClInclude Include="..\public\UI_Seoriyeol.h" />
     <ClInclude Include="..\Public\StageRouter.h" />
     <ClInclude Include="..\Public\UI_GachaChannel.h" />
     <ClInclude Include="..\Public\UI_GachaConversion.h" />
@@ -790,6 +794,7 @@
     <ClCompile Include="..\Private\DefilerState_Attack.cpp" />
     <ClCompile Include="..\Private\DefilerState_Born.cpp" />
     <ClCompile Include="..\Private\DefilerState_Idle.cpp" />
+    <ClCompile Include="..\private\GachaAvatar.cpp" />
     <ClCompile Include="..\private\GachaBack.cpp" />
     <ClCompile Include="..\private\GachaProps.cpp" />
     <ClCompile Include="..\private\GachaScreen.cpp" />
@@ -797,6 +802,7 @@
     <ClCompile Include="..\private\GachaStageScreen.cpp" />
     <ClCompile Include="..\private\GachaTV.cpp" />
     <ClCompile Include="..\private\GachaResult.cpp" />
+    <ClCompile Include="..\private\GachaWeapon.cpp" />
     <ClCompile Include="..\private\Gacha_Level.cpp" />
     <ClCompile Include="..\private\MilitaryHelicopter.cpp" />
     <ClCompile Include="..\Private\MiyabiState_BackStep.cpp" />
@@ -809,6 +815,8 @@
     <ClCompile Include="..\Private\MiyabiState_SwitchInNormal.cpp" />
     <ClCompile Include="..\Private\MiyabiState_SwitchInParryAid.cpp" />
     <ClCompile Include="..\Private\MiyabiState_SwitchOut.cpp" />
+    <ClCompile Include="..\private\UI_Swaebing.cpp" />
+    <ClCompile Include="..\private\UI_Seoriyeol.cpp" />
     <ClCompile Include="..\Private\StageRouter.cpp" />
     <ClCompile Include="..\Private\UI_GachaChannel.cpp" />
     <ClCompile Include="..\Private\UI_GachaConversion.cpp" />
