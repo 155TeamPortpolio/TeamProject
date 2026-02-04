@@ -21,7 +21,7 @@ CGachaScreen::CGachaScreen(const CGachaScreen& rhs)
 {
 }
 
-void CGachaScreen::PlayTVSequence(vector<WEAPON_DESC>* ResultDesc)
+void CGachaScreen::PlayTVSequence(vector<GACHA_RESULT_DESC>* ResultDesc)
 {
 	if (m_fScreenElapsedTime >= m_fIntervalScreenDuration)
 	{
@@ -44,7 +44,7 @@ void CGachaScreen::PlayTVSequence(vector<WEAPON_DESC>* ResultDesc)
 	}
 }
 
-void CGachaScreen::SetupInitialTVSequence(vector<WEAPON_DESC>* ResultDesc)
+void CGachaScreen::SetupInitialTVSequence(vector<GACHA_RESULT_DESC>* ResultDesc)
 {
 	auto pMaterial = Get_Component<CMaterial>();
 	auto pMaterialInstances = pMaterial->Get_MaterialInstances();
