@@ -248,6 +248,10 @@ void CCyclops::Render_GUI()
 	if (ImGui::Button("Groggy"))
 		m_tStatus.iGroggyValue += 100;
 
+	if (ImGui::Button("Test Alive"))
+		Set_Alive(!Is_Alive());
+
+
 	ImGui::PopID();
 }
 
