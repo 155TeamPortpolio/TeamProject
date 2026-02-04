@@ -23,8 +23,6 @@ HRESULT CUI_Seoriyeol::Initialize(INIT_DESC* arg)
 
 void CUI_Seoriyeol::Update(_float dt)
 {
-    //dt *= 0.1f;
-
     __super::Update(dt);
 
     Get_Component<CObjectContainer>()->UpdateChild(dt);

@@ -38,7 +38,7 @@ public:
 	void    Update(_float dt)               override;
 	void    UI_Active(void* arg)            override;
 	void    UI_DeActive(void* arg)          override;
-	_bool   Is_AnimFinished()              override;
+	_bool   Is_AnimFinished()               override;
 
 private:
 	void    Cache_Children();
