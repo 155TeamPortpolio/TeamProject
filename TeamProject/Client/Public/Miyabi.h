@@ -22,6 +22,8 @@ public:
     
 public: // 상태머신
     CStateMachine<CMiyabi>* Get_StateMachine() { return m_pStateMachine; }
+    // 회피관련 미야비 특수처리
+    virtual _bool Can_Evade() override;
 
 public: // 타겟팅
     _bool   Is_LookTarget() const { return m_bLookTarget; }

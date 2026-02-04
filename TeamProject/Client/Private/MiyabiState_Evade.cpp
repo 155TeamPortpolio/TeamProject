@@ -8,21 +8,23 @@
 #include "MiyabiState_Dash.h"
 #include "MiyabiState_Backstep.h"
 
+CMiyabiState_Evade* CMiyabiState_Evade::Create()
+{
+    auto pInstance = new CMiyabiState_Evade();
+    pInstance->m_pSubStateMachine = CStateMachine<CMiyabi>::Create();
+    auto pSubStateMachine = pInstance->Get_SubStateMachine();
+
+    pSubStateMachine->Register_State("Dash", CMiyabiState_Dash::Create());
+    pSubStateMachine->Register_State("Backstep", CMiyabiState_BackStep::Create());
+
+    return pInstance;
+}
+
 void CMiyabiState_Evade::Enter(CMiyabi* pOwner)
 {
     pOwner->Get_StateMachine()->Reset_Trigger("ToMove");
     pOwner->Get_StateMachine()->Reset_Trigger("ToIdle");
     pOwner->Push_Invincible();
-
-    if (!m_pSubStateMachine)
-    {
-        m_pSubStateMachine = CStateMachine<CMiyabi>::Create();
-        m_pSubStateMachine->Register_State("Dash", CMiyabiState_Dash::Create());
-        m_pSubStateMachine->Register_State("Backstep", CMiyabiState_BackStep::Create());
-
-        m_pSubStateMachine->Get_State("Dash")->Set_Tag("Dash");
-        m_pSubStateMachine->Get_State("Backstep")->Set_Tag("Backstep");
-    }
 
     if (pOwner->Is_Move())
         m_pSubStateMachine->Set_DefaultState("Dash");
