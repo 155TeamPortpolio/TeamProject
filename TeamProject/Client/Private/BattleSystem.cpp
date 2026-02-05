@@ -201,7 +201,7 @@ void CBattleSystem::TakeAreaDamage(const _float3& vCenter, _float fRadius, const
 
 		auto pEnemy = dynamic_cast<CEnemy*>(info.hObject.Get());
 		if (pEnemy)
-			pEnemy->TakeDamage(hitDesc.eDamageType, hitDesc.fDamage);
+			pEnemy->TakeDamage(hitDesc.eDamageType, hitDesc.fDamage, hitDesc.eName);
 	}
 }
 
@@ -232,7 +232,7 @@ void CBattleSystem::TakeAreaDamage(const _float3& vCenter, _float fRadius, const
 
 		auto pEnemy = dynamic_cast<CEnemy*>(info.hObject.Get());
 		if (pEnemy)
-			pEnemy->TakeDamage(hitDesc.eDamageType, hitDesc.fDamage);
+			pEnemy->TakeDamage(hitDesc.eDamageType, hitDesc.fDamage, hitDesc.eName);
 	}
 }
 
@@ -252,7 +252,7 @@ void CBattleSystem::TakeBoxDamage(const _float3& vCenter, const _float3& vHalfEx
 
 		auto pEnemy = dynamic_cast<CEnemy*>(info.hObject.Get());
 		if (pEnemy)
-			pEnemy->TakeDamage(hitDesc.eDamageType, hitDesc.fDamage);
+			pEnemy->TakeDamage(hitDesc.eDamageType, hitDesc.fDamage, hitDesc.eName);
 	}
 }
 
@@ -267,7 +267,7 @@ void CBattleSystem::TakeAllDamage(const HitDesc& hitDesc)
 		auto pEnemy = dynamic_cast<CEnemy*>(handle.Get());
 		if (pEnemy)
 		{
-			pEnemy->TakeDamage(hitDesc.eDamageType, hitDesc.fDamage);
+			pEnemy->TakeDamage(hitDesc.eDamageType, hitDesc.fDamage, hitDesc.eName);
 		}
 	}
 }
