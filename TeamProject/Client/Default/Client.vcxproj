@@ -419,6 +419,7 @@
     <ClInclude Include="..\Public\MiyabiState_SwitchOut.h" />
     <ClInclude Include="..\Public\UI_GachaDisplay.h" />
     <ClInclude Include="..\Public\UI_GachaResult.h" />
+    <ClInclude Include="..\Public\UI_GachaResultItem.h" />
     <ClInclude Include="..\public\UI_Swaebing.h" />
     <ClInclude Include="..\public\UI_Seoriyeol.h" />
     <ClInclude Include="..\Public\StageRouter.h" />
@@ -821,6 +822,7 @@
     <ClCompile Include="..\Private\MiyabiState_SwitchOut.cpp" />
     <ClCompile Include="..\Private\UI_GachaDisplay.cpp" />
     <ClCompile Include="..\Private\UI_GachaResult.cpp" />
+    <ClCompile Include="..\Private\UI_GachaResultItem.cpp" />
     <ClCompile Include="..\private\UI_Swaebing.cpp" />
     <ClCompile Include="..\private\UI_Seoriyeol.cpp" />
     <ClCompile Include="..\Private\StageRouter.cpp" />

@@ -3,12 +3,12 @@
 
 NS_BEGIN(Client)
 
-class CUI_GachaResult final : public CUI_Object
+class CUI_GachaResultItem final : public CUI_Object
 {
 private:
-	CUI_GachaResult() {}
-	CUI_GachaResult(const CUI_GachaResult& rhs) : CUI_Object(rhs) {}
-	virtual ~CUI_GachaResult() DEFAULT;
+	CUI_GachaResultItem() {}
+	CUI_GachaResultItem(const CUI_GachaResultItem& rhs) : CUI_Object(rhs) {}
+	virtual ~CUI_GachaResultItem() DEFAULT;
 
 public:
 	virtual HRESULT Initialize_Prototype()           override;
@@ -20,19 +20,6 @@ public:
 	virtual void    Render_GUI()                     override { __super::Render_GUI(); }
 	virtual void	UI_Active(void* pArg = nullptr)  override;
 	virtual void	UI_DeActive(void* pArg = nullptr) override;
-
-private:
-	CUI_Object* m_pTitle = {};
-
-	static const _int COL = 5;
-	static const _int ROW = 2; 
-	static const _int WIDTH = 220.f;
-	static const _int HEIGHT = 148.f;
-	static const _int SPACING = 4.f;
-
-private:
-	void Cache();
-	void Create_Items();
 
 public:
 	static  CGameObject* Create();
