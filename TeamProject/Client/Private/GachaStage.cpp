@@ -11,6 +11,7 @@
 #include "GachaStageScreen.h"
 #include "GachaWeapon.h"
 #include "GachaAvatar.h"
+#include "GachaFootStage.h"
 
 #include "CamDirector.h"
 #include "DataBase.h"
@@ -142,6 +143,7 @@ void CGachaStage::Add_StageScreen()
 	PrototypeManager()->Add_ProtoType("Gacha_Level", "Proto_GameObject_GachaStageScreen", CGachaStageScreen::Create());
 	PrototypeManager()->Add_ProtoType("Gacha_Level", "Proto_GameObject_GachaWeapon", CGachaWeapon::Create());
 	PrototypeManager()->Add_ProtoType("Gacha_Level", "Proto_GameObject_GachaAvatar", CGachaAvatar::Create());
+	PrototypeManager()->Add_ProtoType("Gacha_Level", "Proto_GameObject_GachaFootStage", CGachaFootStage::Create());
 
 	auto pObjectContainer = Add_Component<CObjectContainer>();
 	COLLIDER_DESC colliderDesc{};
@@ -170,6 +172,21 @@ void CGachaStage::Add_StageScreen()
 
 	pObjectContainer->Add_Child(gachaWeapon, true);
 
+	colliderDesc = {};
+	colliderDesc.eType = COLLIDER_TYPE::BOX;
+	colliderDesc.eGroup = COLLISION_GROUP::COMMON;
+	colliderDesc.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER);
+	colliderDesc.bAutoFit = true;
+
+	CGameObject* gachaFootStage = Builder::Create_Object({ "Gacha_Level", "Proto_GameObject_GachaFootStage" })
+		.Position(_float3(0.f, 0.3f, -1.4f))
+		.Collider(colliderDesc)
+		.Build("FootStage");
+
+	m_pFootStage = dynamic_cast<CGachaFootStage*>(gachaFootStage);
+
+	pObjectContainer->Add_Child(gachaFootStage, true);
+
 	RIGIDBODY_DESC rigidDesc{};
 	rigidDesc.isKinematic = false;
 	rigidDesc.bEnableGravity = true;
@@ -183,7 +200,7 @@ void CGachaStage::Add_StageScreen()
 	colliderDesc.vSize = { 1.f, 2.f, 1.f }; 
 
 	CGameObject* gachaAvatar = Builder::Create_Object({ "Gacha_Level", "Proto_GameObject_GachaAvatar" })
-		.Position(_float3(0.f, 1.f, -1.6f))
+		.Position(_float3(0.f, 1.5f, -1.6f))
 		.Collider(colliderDesc)
 		.RigidBody(rigidDesc)
 		.Build("Avatar");
@@ -203,13 +220,14 @@ void CGachaStage::Set_Stage(GACHA_STAGE eStage)
 	{
 		pModel->Link_Model("Gacha_Level", "AvatarScreen1out.model");
 		pMaterial->Link_Material("Gacha_Level", "AvatarScreen1out.mat");
+		m_pFootStage->SetRenderLayer(RENDER_LAYER::Default);
 	}
 	else
 	{
 		pModel->Link_Model("Gacha_Level", "BangBooNoScreen1.model");
 		pMaterial->Link_Material("Gacha_Level", "BangBooNoScreen1.mat");
-
 		pModel->Hide_MehsByName("0023_GachaStage_Prop_TV_04_mesh0023");
+		m_pFootStage->SetRenderLayer(RENDER_LAYER::None);
 	}
 }
 
