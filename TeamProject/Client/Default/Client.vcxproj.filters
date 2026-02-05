@@ -2255,6 +2255,9 @@
     <ClInclude Include="..\Public\MiyabiState_RushAttack.h">
       <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Attack\Rush</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\MiyabiState_ExAttack.h">
+      <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Attack\Ex</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -3301,6 +3304,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\MiyabiState_RushAttack.cpp">
       <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Attack\Rush</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MiyabiState_ExAttack.cpp">
+      <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Attack\Ex</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
