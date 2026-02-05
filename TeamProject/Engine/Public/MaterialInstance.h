@@ -46,6 +46,7 @@ public:
 	class CTexture* GetBindedTexture(TEXTURE_TYPE type);
 	vector<_uint>& Get_TextureIndex() { return m_TextureIndexs; }
 	_uint Get_BindedIndex(TEXTURE_TYPE type);
+	_uint Get_BindedCount(TEXTURE_TYPE type);
 public:
 	virtual void Render_GUI();
 	void TypeCheck(const string& first, SHADER_PARAM& second);

@@ -104,10 +104,11 @@ void CStage::Active_Enemy()
 	for (auto* pMonster : m_pMonsters)
 	{
 		if (!pMonster) continue;
-		CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(pMonster, { "Zero_Level", "Enemy_Layer" });
+		pMonster->Set_Alive(true);
 		BattleSystem()->EnterBattleObject(BATTLE_OBJ_TYPE::MONSTER, pMonster->Get_Handle());
 	}
 }
+
 void CStage::Active_Player(PlayerPoint pointType)
 {
 	if (!m_PlayerHandle.isValid())
@@ -123,6 +124,7 @@ void CStage::Active_Player(PlayerPoint pointType)
 	character->Get_CCT()->Set_Position(_vector4(point.pos));
 	character->Get_Component<CTransform>()->Rotate(_vector3(point.rotation));
 }
+
 void CStage::Active_Portal()
 {
 	auto pRouter = m_pOwnerLevel->Get_Router();
@@ -135,9 +137,10 @@ void CStage::Active_Portal()
 		if (!m_pPortals[i]) continue;
 
 		auto* zeroPortal = dynamic_cast<CZeroPortal*>(m_pPortals[i]);
-		if (zeroPortal)
+		if (zeroPortal) {
+			zeroPortal->Set_Alive(true);
 			zeroPortal->SetChoiceIndex(this,i);
-		ObjectManager()->Add_Object(m_pPortals[i], { "Zero_Level","Portal_Layer" });
+		}
 	}
 }
 
@@ -153,7 +156,7 @@ HRESULT CStage::ReadyPlayerPoint(const vector<BATTLE_POINT_DATA>& point)
 		auto translation = point[i].vTranslation;
 		auto rotation = point[i].vRotation;
 
-		m_PlayerPoint[i].pos= { translation[0], translation[1], translation[2] , translation[3] };
+		m_PlayerPoint[i].pos= { translation[0], translation[1], translation[2],1.f };
 		m_PlayerPoint[i].rotation= { rotation[0], rotation[1], rotation[2] };
 	}
 
@@ -171,7 +174,9 @@ HRESULT CStage::ReadyPortalPoint(const vector<BATTLE_POINT_DATA>& point)
 		auto portal = Builder::Create_Object({ "Zero_Level" ,"Proto_GameObject_ZeroPortal" })
 			.Position({ trans[0],  trans[1],  trans[2] })
 			.Build("zeroPortal#" + to_string(i));
+		portal->Set_Alive(false);
 		m_pPortals.push_back(portal);
+		ObjectManager()->Add_Object(m_pPortals[i], { "Zero_Level","Portal_Layer" });
 	}
 
 	return S_OK;
@@ -241,6 +246,8 @@ void CStage::Reserve_Enemy(const string& LevelTag)
 
 			if (pMonster) {
 				m_pMonsters.push_back(pMonster);
+				pMonster->Set_Alive(false);
+				CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(pMonster, { "Zero_Level", "Enemy_Layer" });
 				spawn += 1;
 			}
 		}

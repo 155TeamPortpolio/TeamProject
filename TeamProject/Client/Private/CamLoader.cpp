@@ -88,7 +88,7 @@ namespace
         {0.22f, 0.080f, 2.500f}, // Roar25S
         {0.26f, 0.090f, 4.000f}, // Roar4S
 
-        {1.f, 0.060f, 0.1f}, // GachaShake
+        {1.00f, 0.060f, 0.2f}, // GachaShake
     };
 
     _bool StartsWith(const string& s, const char* prefix)

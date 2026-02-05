@@ -7,33 +7,7 @@
       "TagLayer": "PlacedObject_Layer",
       "Objects": [
         {
-          "iObjID": 0,
-          "TagModelResourceKey": "GachaStageout.model",
-          "TagMaterialResourceKey": "GachaStageout.mat",
-          "vRight": [
-            1.0,
-            0.0,
-            0.0,
-            0.0
-          ],
-          "vUp": [
-            0.0,
-            1.0,
-            0.0,
-            0.0
-          ],
-          "vLook": [
-            0.0,
-            0.0,
-            1.0,
-            0.0
-          ],
-          "vPos": [
-            0.0,
-            0.0,
-            0.0,
-            1.0
-          ]
+        
         }
       ]
     }

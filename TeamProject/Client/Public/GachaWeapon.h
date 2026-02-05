@@ -12,7 +12,7 @@ private:
     virtual ~CGachaWeapon() DEFAULT;
 
 public:
-    virtual void SetResult(string strModel, string strMaterial, _float4 vRot) override;
+    virtual void SetResult(GACHA_RESULT_DESC Desc) override;
 
 public:
     virtual HRESULT Initialize_Prototype()      override;
@@ -26,6 +26,8 @@ private:
     _vector4    m_vInitRot;
     _float      m_fRotElapsedTime = 0.f;
     _float      m_fRotDuration = 0.85f;
+     
+    _bool       m_bRevealEffect = true;
 
 public:
     static CGachaWeapon* Create();

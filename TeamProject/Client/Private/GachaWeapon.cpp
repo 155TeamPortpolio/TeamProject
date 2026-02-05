@@ -3,6 +3,8 @@
 
 #include "StaticModel.h"
 #include "Material.h"
+#include "Child.h"
+#include "GachaStage.h"
 
 #include "Helper_Func.h"
 
@@ -16,18 +18,21 @@ CGachaWeapon::CGachaWeapon(const CGachaWeapon& rhs)
 {
 }
 
-void CGachaWeapon::SetResult(string strModel, string strMaterial, _float4 vRot)
+void CGachaWeapon::SetResult(GACHA_RESULT_DESC Desc)
 {
     auto pModel = Get_Component<CStaticModel>();
-    auto pMaterial = Get_Component<CMaterial>();
+    auto pMaterial = Get_Component<CMaterial>(); 
 
-    pModel->Link_Model("Gacha_Level", strModel);
-    pMaterial->Link_Material("Gacha_Level", strMaterial);
+    pModel->Link_Model("Gacha_Level", Desc.strModel);
+    pMaterial->Link_Material("Gacha_Level", Desc.strMaterial);
 
-    m_pTransform->Set_Quaternion(_vector4(vRot));
+    _vector4 vRot = _vector4(Desc.RotX, Desc.RotY, Desc.RotZ, Desc.RotW);
+    m_pTransform->Set_Quaternion(vRot);
 
     m_vInitRot = vRot;
     m_fRotElapsedTime = 0.f;
+
+    m_bRevealEffect = false;
 }
 
 HRESULT CGachaWeapon::Initialize_Prototype()
@@ -37,9 +42,6 @@ HRESULT CGachaWeapon::Initialize_Prototype()
 
     auto pModel = Add_Component<CStaticModel>();
     auto pMaterial = Add_Component<CMaterial>();
-
-    pModel->Link_Model("Gacha_Level", "Weapon_A_Common_03out.model");
-    pMaterial->Link_Material("Gacha_Level", "Weapon_A_Common_03out.mat");
 
     return S_OK;
 }
@@ -77,6 +79,13 @@ void CGachaWeapon::Update(_float dt)
         XMVECTOR vFinalQuat = XMQuaternionMultiply(vInitQuat, vYRotQuat);
 
         m_pTransform->Set_Quaternion(vFinalQuat);
+    }
+    else if (m_bRevealEffect == false)
+    {
+        auto pParent = dynamic_cast<CGachaStage*>(Get_Component<CChild>()->Get_Parent());
+        pParent->PlayRevealEffect();
+
+        m_bRevealEffect = true;
     }
 }
 

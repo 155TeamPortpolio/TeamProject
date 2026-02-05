@@ -1170,6 +1170,18 @@
     {
       "ClipTag": "JaneDoe_Ani_Walk_R",
       "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Gacha_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Gacha_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Gacha_Loop_02",
+      "Events": []
     }
   ]
 }

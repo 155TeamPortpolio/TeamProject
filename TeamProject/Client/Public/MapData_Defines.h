@@ -211,6 +211,7 @@ namespace Client {
 			case MAPOBJ_TYPE::TRIGGER:	return &Trigger;
 			case MAPOBJ_TYPE::INVWALL:	return &InvWall;
 			case MAPOBJ_TYPE::ENTITY:	return &Entity;
+			case MAPOBJ_TYPE::LIGHT:	return &Light;
 			default:					return nullptr;
 			}
 		}

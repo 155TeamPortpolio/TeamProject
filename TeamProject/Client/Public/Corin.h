@@ -26,6 +26,7 @@ public: // 행동 이벤트
     virtual void    Reset_State()              override;
     virtual void    On_Start()                 override;
     virtual void    On_SwitchIn(SWITCH eType)  override;
+    virtual void    On_ChainParry()            override;
     virtual void    On_SwitchOut()             override;
     virtual void    On_Ultimate()              override;
     virtual void    On_Special()               override;

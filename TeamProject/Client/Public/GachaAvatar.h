@@ -19,7 +19,7 @@ private:
     virtual ~CGachaAvatar() DEFAULT;
 
 public:
-    virtual void SetResult(string strModel, string strMaterial, _float4 vRot) override;
+    virtual void SetResult(GACHA_RESULT_DESC Desc) override;
 
 public:
     virtual HRESULT Initialize_Prototype()      override;
@@ -37,6 +37,8 @@ private:
 
 private:
     ANIMSTATE       m_eAnimState = ANIMSTATE::START;
+    string          strLoopAnim = "";
+    _bool           m_bRevealEffect = true;
 
 public:
     static CGachaAvatar* Create();

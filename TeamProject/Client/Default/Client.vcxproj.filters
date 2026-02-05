@@ -1089,6 +1089,9 @@
     <Filter Include="03. Utility\08. CamDirector\02. CamDebugInput">
       <UniqueIdentifier>{0ab884f1-7b9a-4ad0-91d2-f1ac84773eec}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\EtherCyclops\Spit">
+      <UniqueIdentifier>{4fe523f1-b826-442e-bc7c-e21b5480b449}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02. GameObject\Object\Gacha\GachaProps\GachaStage\GachaResult\GachaWeapon">
       <UniqueIdentifier>{cdb4990c-5088-4e72-bd47-0d7326b624de}</UniqueIdentifier>
     </Filter>
@@ -1160,6 +1163,18 @@
     </Filter>
     <Filter Include="01. Level\04. Zero\Stage_Start">
       <UniqueIdentifier>{68bfc06d-7f7e-4232-b8f1-d9e74f644886}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Npc\Background\Crowd">
+      <UniqueIdentifier>{090fe14d-c489-4bd5-8524-dec97cb3fdc5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Npc\Background\Pedestrian">
+      <UniqueIdentifier>{38a9114f-dcab-4df2-8f6b-c17d39ba59ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\Gacha\Display">
+      <UniqueIdentifier>{d863e830-0e43-4884-ae68-e83abab8552b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\Gacha\Result">
+      <UniqueIdentifier>{70b86f41-b532-40be-ba58-6b3edec7f698}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -2207,6 +2222,9 @@
     <ClInclude Include="..\public\CamDebugInput.h">
       <Filter>03. Utility\08. CamDirector\02. CamDebugInput</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Cyclops_Spit.h">
+      <Filter>02. GameObject\Object\Enemy\Normal\EtherCyclops\Spit</Filter>
+    </ClInclude>
     <ClInclude Include="..\public\GachaWeapon.h">
       <Filter>02. GameObject\Object\Gacha\GachaProps\GachaStage\GachaResult\GachaWeapon</Filter>
     </ClInclude>
@@ -2227,6 +2245,27 @@
     </ClInclude>
     <ClInclude Include="..\public\ZeroStage_Start.h">
       <Filter>01. Level\04. Zero\Stage_Start</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\BackgroundNpc.h">
+      <Filter>02. GameObject\Object\Npc\Background</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\PedestrianNpc.h">
+      <Filter>02. GameObject\Object\Npc\Background\Pedestrian</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CrowdNpc.h">
+      <Filter>02. GameObject\Object\Npc\Background\Crowd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_GachaDisplay.h">
+      <Filter>02. GameObject\UI\01. 2D\Gacha\Display</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_GachaResult.h">
+      <Filter>02. GameObject\UI\01. 2D\Gacha\Result</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MiyabiState_RushAttack.h">
+      <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Attack\Rush</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MiyabiState_ExAttack.h">
+      <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Attack\Ex</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -3236,6 +3275,9 @@
     <ClCompile Include="..\private\CamDebugInput.cpp">
       <Filter>03. Utility\08. CamDirector\02. CamDebugInput</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\Cyclops_Spit.cpp">
+      <Filter>02. GameObject\Object\Enemy\Normal\EtherCyclops\Spit</Filter>
+    </ClCompile>
     <ClCompile Include="..\private\GachaWeapon.cpp">
       <Filter>02. GameObject\Object\Gacha\GachaProps\GachaStage\GachaResult\GachaWeapon</Filter>
     </ClCompile>
@@ -3256,6 +3298,27 @@
     </ClCompile>
     <ClCompile Include="..\private\ZeroStage_Start.cpp">
       <Filter>01. Level\04. Zero\Stage_Start</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\BackgroundNpc.cpp">
+      <Filter>02. GameObject\Object\Npc\Background</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\PedestrianNpc.cpp">
+      <Filter>02. GameObject\Object\Npc\Background\Pedestrian</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CrowdNpc.cpp">
+      <Filter>02. GameObject\Object\Npc\Background\Crowd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_GachaDisplay.cpp">
+      <Filter>02. GameObject\UI\01. 2D\Gacha\Display</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_GachaResult.cpp">
+      <Filter>02. GameObject\UI\01. 2D\Gacha\Result</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MiyabiState_RushAttack.cpp">
+      <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Attack\Rush</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MiyabiState_ExAttack.cpp">
+      <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Attack\Ex</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

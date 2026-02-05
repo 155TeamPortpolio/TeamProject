@@ -73,6 +73,15 @@ void CCharacterAttackCollider::Late_Update(_float dt)
 void CCharacterAttackCollider::Render_GUI()
 {
 	__super::Render_GUI();
+	if (ImGui::TreeNode("Hit Records"))
+	{
+		for (const auto& pair : m_HitRecords)
+		{
+			ImGui::Text("Target: %s | Hits: %d | LastTime: %.2f",
+				pair.first->Get_InstanceName(), pair.second.iHitCount, pair.second.fLastHitTime);
+		}
+		ImGui::TreePop();
+	}
 }
 
 void CCharacterAttackCollider::OnTriggerEnter(CGameObject* pOther)

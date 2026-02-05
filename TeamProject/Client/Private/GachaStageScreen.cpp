@@ -60,6 +60,24 @@ void CGachaStageScreen::SetScreen(GACHA_STAGE eStage, GachaGrade eGrade)
 	}
 }
 
+void CGachaStageScreen::ScreenOff(GACHA_STAGE eStage)
+{
+	auto pModel = Add_Component<CStaticModel>();
+	auto pMaterial = Add_Component<CMaterial>();
+	if (eStage == GACHA_STAGE::BANGBOO)
+	{
+
+		pModel->Link_Model("Gacha_Level", "BangBooScreen2.model");
+		pMaterial->Link_Material("Gacha_Level", "BangBooScreen2.mat");
+	}
+	else
+	{
+		pModel->Link_Model("Gacha_Level", "Screen1.model");
+		pMaterial->Link_Material("Gacha_Level", "Screen1.mat");
+	}
+	ScreenOffMaterialInstances();
+}
+
 HRESULT CGachaStageScreen::Initialize_Prototype()
 {
     if (FAILED(__super::Initialize_Prototype()))
@@ -153,6 +171,35 @@ void CGachaStageScreen::ResetMaterialInstances(vector<_int> ScreenIndex)
 		string strTexture;
 		pMaterialInstances[idx]->ChangeTexture(TEXTURE_TYPE::DIFFUSE, ScreenIndex[idx]);
 		pMaterialInstances[idx]->GetMaterialTextureKey(TEXTURE_TYPE::DIFFUSE, ScreenIndex[idx], strTexture);
+		TV_DESC Desc = CDataBase::GetInstance()->GetTVDesc(strTexture);
+		m_Cols[idx] = Desc.Col;
+		m_Rows[idx] = Desc.Row;
+		m_MaxFrameIndexs[idx] = Desc.MaxFrame;
+	}
+}
+
+
+void CGachaStageScreen::ScreenOffMaterialInstances()
+{
+	auto pMaterial = Get_Component<CMaterial>();
+	auto pMaterialInstances = pMaterial->Get_MaterialInstances();
+	m_iMaterialInstanceCounts = pMaterialInstances.size();
+
+	m_Cols.resize(m_iMaterialInstanceCounts);
+	m_Rows.resize(m_iMaterialInstanceCounts);
+	m_CurrentFrameIndexs.resize(m_iMaterialInstanceCounts);
+	m_MaxFrameIndexs.resize(m_iMaterialInstanceCounts);
+
+	for (_int idx = 0; idx < m_iMaterialInstanceCounts; ++idx)
+	{
+		_uint TexIndex = pMaterialInstances[idx]->Get_BindedCount(TEXTURE_TYPE::DIFFUSE);
+		pMaterialInstances[idx]->Set_Param("FrameIndex", { &m_CurrentFrameIndexs[idx], "int", sizeof(_int) });
+		pMaterialInstances[idx]->Set_Param("Col", { &m_Cols[idx], "int", sizeof(_int) });
+		pMaterialInstances[idx]->Set_Param("Row", { &m_Rows[idx], "int", sizeof(_int) });
+
+		string strTexture;
+		pMaterialInstances[idx]->ChangeTexture(TEXTURE_TYPE::DIFFUSE, TexIndex - 1);
+		pMaterialInstances[idx]->GetMaterialTextureKey(TEXTURE_TYPE::DIFFUSE, TexIndex - 1, strTexture);
 		TV_DESC Desc = CDataBase::GetInstance()->GetTVDesc(strTexture);
 		m_Cols[idx] = Desc.Col;
 		m_Rows[idx] = Desc.Row;

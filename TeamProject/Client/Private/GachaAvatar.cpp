@@ -1,9 +1,13 @@
 #include "pch.h"
 #include "GachaAvatar.h"
 
+#include "GachaStage.h"
+
 #include "SkeletalModel.h"
 #include "Material.h"
 #include "Animator3D.h"
+#include "RigidBody.h"
+#include "Child.h"
 
 #include "Helper_Func.h"
 
@@ -17,26 +21,29 @@ CGachaAvatar::CGachaAvatar(const CGachaAvatar& rhs)
 {
 }
 
-void CGachaAvatar::SetResult(string strModel, string strMaterial, _float4 vRot)
+void CGachaAvatar::SetResult(GACHA_RESULT_DESC Desc)
 {
     auto pModel = Get_Component<CSkeletalModel>();
     auto pMaterial = Get_Component<CMaterial>();
     
-    pModel->Link_Model(G_GlobalLevelKey, "Miyabi.model");
-    pMaterial->Link_Material(G_GlobalLevelKey, "Miyabi.mat");
+    pModel->Link_Model(G_GlobalLevelKey, Desc.strModel);
+    pMaterial->Link_Material(G_GlobalLevelKey, Desc.strMaterial);
 
     pModel->Hide_MehsByName("PET");
 
     m_pAnimator = Get_Component<CAnimator3D>();
-    m_pAnimator->LinkAnimate_Model(G_GlobalLevelKey, "Miyabi.model");
-    m_pAnimator->Link_MetaData(G_GlobalLevelKey, "Miyabi_Meta.json");
+    m_pAnimator->LinkAnimate_Model(G_GlobalLevelKey, Desc.strModel);
+    m_pAnimator->Link_MetaData(G_GlobalLevelKey, Desc.strMeta);
 
-    m_pAnimator->Set_Animation("Avatar_Female_Size02_Unagi_Ani_Gacha_Start")
+    m_pAnimator->Set_Animation(Desc.strStartAnim)
         .Loop(false)
         .Apply();
 
-    m_pTransform->Set_Pos(_float4(0.f, 0.2f, -1.6f, 0.f));
+    strLoopAnim = Desc.strLoopAnim;
+    m_eAnimState = ANIMSTATE::START;
+
     m_pTransform->Rotate(_float3(0.f, XM_PI, 0.f));
+    m_bRevealEffect = false;
 }
 
 HRESULT CGachaAvatar::Initialize_Prototype()
@@ -47,9 +54,8 @@ HRESULT CGachaAvatar::Initialize_Prototype()
     auto pModel = Add_Component<CSkeletalModel>();
     auto pMaterial = Add_Component<CMaterial>();
     Add_Component<CAnimator3D>();
-
-    pModel->Link_Model(G_GlobalLevelKey, "Miyabi.model");
-    pMaterial->Link_Material(G_GlobalLevelKey, "Miyabi.mat");
+    Add_Component<CRigidBody>();
+    Add_Component<CCollider>();
 
     return S_OK;
 }
@@ -88,6 +94,7 @@ void CGachaAvatar::Update(_float dt)
 
 void CGachaAvatar::Late_Update(_float dt)
 {
+    Get_Component<CRigidBody>()->Late_Update(dt);
     __super::Late_Update(dt);
 }
 
@@ -98,10 +105,19 @@ void CGachaAvatar::Update_States()
     case ANIMSTATE::START:
         if (m_pAnimator->isCurrentAnimEnd())
         {
-            m_pAnimator->Change_Animation("Avatar_Female_Size02_Unagi_Ani_Gacha_Loop")
+            m_pAnimator->Change_Animation(strLoopAnim)
                 .Loop(true)
                 .Apply();
             m_eAnimState = ANIMSTATE::LOOP;
+        }
+        else if(m_pAnimator->Get_CurAnimDuration() >= 0.35)
+        {
+            if (m_bRevealEffect == false) 
+            {
+                auto pParent = dynamic_cast<CGachaStage*>(Get_Component<CChild>()->Get_Parent());
+                pParent->PlayRevealEffect();
+                m_bRevealEffect = true;
+            }
         }
         break;
     case ANIMSTATE::LOOP:

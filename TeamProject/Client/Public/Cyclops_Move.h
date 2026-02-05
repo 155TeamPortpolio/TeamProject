@@ -10,8 +10,8 @@ class CCyclops_Move : public IHState<CCyclops>
 {
 private:
 	enum MOVEINDEX : _int {
-		Walk_Front = 1,
-		Walk_Back,
+		Walk_Back = 1,
+		Walk_Front,
 		Walk_Left,
 		Walk_Right,
 		Walk_F_L,

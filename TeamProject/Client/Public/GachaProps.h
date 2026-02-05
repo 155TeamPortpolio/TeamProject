@@ -17,7 +17,7 @@ public:
     void    PlayStageSpin(_int index);
 
 public:
-    virtual HRESULT Initialize_Prototype(vector<WEAPON_DESC>* Desc);
+    virtual HRESULT Initialize_Prototype(vector<GACHA_RESULT_DESC>* Desc);
     virtual HRESULT Initialize(INIT_DESC* pArg) override;
     virtual void    Awake()                     override;
     virtual void    Priority_Update(_float dt)  override;
@@ -29,14 +29,14 @@ private:
     void Add_GachaProps();
 
 private:
-    vector<WEAPON_DESC>*    m_pResultDesc = nullptr;
+    vector<GACHA_RESULT_DESC>*    m_pResultDesc = nullptr;
 
 private:
     class CGachaTV*                 m_pTV = nullptr;
     class CGachaStage*              m_pStage = nullptr;
 
 public:
-    static CGachaProps* Create(vector<WEAPON_DESC>* Desc);
+    static CGachaProps* Create(vector<GACHA_RESULT_DESC>* Desc);
     virtual CGameObject* Clone(INIT_DESC* pArg) override;
     virtual void Free() override;
 };

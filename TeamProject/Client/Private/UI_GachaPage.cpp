@@ -4,9 +4,9 @@
 #include "GameInstance.h"
 #include "ObjectContainer.h"
 
+#include "DataBase.h"
 #include "FieldSystem.h"
 #include "UI_BackButton.h"
-
 #include "UI_GachaChannel.h"
 #include "UI_GachaConversion.h"
 
@@ -70,11 +70,7 @@ void CUI_GachaPage::UI_DeActive(void* pArg)
 
 void CUI_GachaPage::Create_BackButton()
 {
-    CUI_BackButton::BUTTON_DESC* pDesc = new CUI_BackButton::BUTTON_DESC;
-    pDesc->onClick = [this]() { OnClick_Back(); };
-
     auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_BackButton" })
-        .Add_UIDesc(pDesc)
         .Build("buttonBack");
 
     if (!pObj)
@@ -96,9 +92,15 @@ void CUI_GachaPage::Create_Currency()
 
 void CUI_GachaPage::Create_Channels()
 {
-    for (_int i = 0; i < 8; ++i)
+    static const _int iMaxChannels = { 8 };
+    auto& channels = CDataBase::GetInstance()->GeGachaChannels();
+
+    _int iChannelsCount = min(iMaxChannels, channels.size());
+    for (_int i = 0; i < iChannelsCount; ++i)
     {
         CUI_GachaChannel::CHANNEL_DESC* pDesc = new CUI_GachaChannel::CHANNEL_DESC;
+        pDesc->strLabel = channels[i].strLabel;
+        pDesc->strTextureKey = channels[i].strTextureKey; 
         pDesc->onSelect = [this](CUI_Object* pObj) { Select_Channel(pObj); };
         auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_GachaChannel" })
             .Add_UIDesc(pDesc)
@@ -107,6 +109,9 @@ void CUI_GachaPage::Create_Channels()
         if (!pObj)
             continue;
         
+        if (i == 0)
+            Select_Channel(pObj);
+
         pObj->Set_Anchor(ANCHOR::Left | ANCHOR::Top);
         pObj->Set_AnchorOffset({ 57.f, 118.f + 88.f  * i });
         Get_Component<CObjectContainer>()->Add_Child(pObj);
@@ -124,7 +129,6 @@ void CUI_GachaPage::Create_Conversions()
         CUI_GachaConversion::CONVERSION_DESC* pDesc = new CUI_GachaConversion::CONVERSION_DESC;
         pDesc->iCost = COSTS[i];
         pDesc->iCount = COUNTS[i];
-        pDesc->onClick = [this]() { OnClick_Conversion(); };
 
         auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_GachaConversion" })
             .Add_UIDesc(pDesc)
@@ -133,6 +137,7 @@ void CUI_GachaPage::Create_Conversions()
         if (!pObj)
             return;
 
+        pObj->Set_OnClick([this]() { OnClick_Conversion(); });
         _float fStartX = -55.f - 390.f * iMaxCount;
         _float fSpacing = 390.f;
 
@@ -142,15 +147,18 @@ void CUI_GachaPage::Create_Conversions()
     }
 }
 
-void CUI_GachaPage::OnClick_Back()
-{
-    FieldSystem()->RequestExitTop();
-}
-
 void CUI_GachaPage::OnClick_Conversion()
 {
-    // 확인 배너 띄우고 
-    // 확인 배너에서 확인 누르면 가챠 레벨로 넘어가고/가격만큼 데니 깎아
+    _uint iDenny = {};
+    RuntimeBucket().Int64.TryGet(PersistScope::SaveSlot, "Denny", iDenny);
+
+    if (iDenny < 10000)
+        return;
+
+    iDenny -= 10000;
+    RuntimeBucket().Int64.Set(PersistScope::SaveSlot, "Denny", iDenny);
+
+    LevelManager()->Request_ChangeLevel("Gacha_Level", true);
 }
 
 CGameObject* CUI_GachaPage::Create()

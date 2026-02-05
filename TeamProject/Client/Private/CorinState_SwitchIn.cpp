@@ -102,6 +102,8 @@ void CCorinState_SwitchIn::Exit(CCorin* pOwner)
 
 _bool CCorinState_SwitchIn::Handle_Transition(CCorin* pOwner, const string& strState)
 {
+    if (pOwner->Get_StateMachine()->Get_Int("IdleEntryMode") == 2)
+        return true;
     if (m_pSubStateMachine->Get_CurrentStateName() == "SwitchInParryAid")
     {
         IHState<CCorin>* pState = dynamic_cast<IHState<CCorin>*>(m_pSubStateMachine->Get_CurrentState());

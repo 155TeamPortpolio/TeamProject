@@ -248,14 +248,16 @@ OBJECT_HANDLE CCharacter::Calculate_Parry()
     }
 
     _vector3 vAttackPos = {};
+    _float vAttackOffset = {};
     _vector3 vAttackLook = {};
     if (targetHandle.isValid())
     {
-        vAttackPos = targetHandle.Get()->Get_Component<CCharacterController>()->Get_FootPosition();
+        vAttackPos = targetHandle.Get()->Get_WorldPos();
+        vAttackOffset = targetHandle.Get()->Get_Component<CCharacterController>()->Get_Radius();
         vAttackLook = targetHandle.Get()->Get_Component<CTransform>()->Dir(STATE::LOOK);
     }
 
-    m_vParryPos = vAttackPos + vAttackLook * m_fParryOffset;
+    m_vParryPos = vAttackPos + vAttackLook * vAttackOffset * 2.f;
     m_vParryPos.y = vAttackPos.y;
     m_vParryLook = vAttackPos - m_vParryPos;
     m_vParryLook.Normalize();
@@ -629,6 +631,29 @@ void CCharacter::Take_Damage(DAMAGE_TYPE eType, _float fDamage)
     On_Hit(eType);
 }
 
+HRESULT CCharacter::Initialize_Effects()
+{
+    auto pObjectContainer = Get_Component<CObjectContainer>();
+
+    // Dash
+    {
+        auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+            .Asset("player_run_start0.json")
+            .Build("Player_Run_Start0");
+        pEffect->Stop();
+        pObjectContainer->Add_Child(pEffect, false);
+    }
+    {
+        auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+            .Asset("player_run_start1.json")
+            .Build("Player_Run_Start1");
+        pEffect->Stop();
+        pObjectContainer->Add_Child(pEffect, false);
+    }
+
+    return S_OK;
+}
+
 void CCharacter::Play_Effect(const string& effectTag, _fvector offsetPosition, _fvector offsetQuaternion, _bool syncTransform)
 {
     auto pEffect = Get_Component<CObjectContainer>()->Find_ObjectByName(effectTag);
@@ -655,6 +680,15 @@ void CCharacter::Play_Effect(const string& effectTag, _fvector offsetPosition, _
     }
 
     static_cast<CEffectContainer*>(pEffect)->Play();
+}
+
+void CCharacter::Stop_Effect(const string& effectTag)
+{
+    auto pEffect = Get_Component<CObjectContainer>()->Find_ObjectByName(effectTag);
+    if (!pEffect)
+        return;
+
+    static_cast<CEffectContainer*>(pEffect)->Stop();
 }
 
 void CCharacter::Update_Rotation(_float dt)

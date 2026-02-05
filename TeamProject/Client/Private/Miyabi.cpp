@@ -20,7 +20,7 @@
 #include "ObjectContainer.h"
 
 #include "StateMachine.h"
-//#include "MiyabiState_Start.h"
+#include "MiyabiState_Start.h"
 #include "MiyabiState_Idle.h"
 #include "MiyabiState_Move.h"
 #include "MiyabiState_Attack.h"
@@ -29,7 +29,7 @@
 #include "MiyabiState_SwitchOut.h"
 #include "MiyabiState_NormalAttack.h"
 //#include "MiyabiState_Hit.h"
-//#include "MiyabiState_Evade.h"
+#include "MiyabiState_Evade.h"
 
 CMiyabi::CMiyabi()
 {
@@ -83,6 +83,7 @@ void CMiyabi::Awake()
 	Initialize_Stat();
 	m_fCurrentHP = 312.f;
 	m_tEnergy.fCurrentEnergy = 75;
+	m_iFrost = 6;
 
 	if (FAILED(Attach_ParryCollider()))
 		return;
@@ -137,6 +138,14 @@ void CMiyabi::Render_GUI()
 	}
 
 	__super::Render_GUI();
+}
+
+_bool CMiyabi::Can_Evade()
+{
+	if (m_pStateMachine->Get_Bool("InDash02"))
+		return false;
+
+	return __super::Can_Evade();
 }
 
 //void CMiyabi::Render_OutLine(ID3D11DeviceContext* pContext, _uint idx)
@@ -194,6 +203,12 @@ void CMiyabi::On_SwitchIn(SWITCH eType)
 	m_pStateMachine->Set_Trigger("SwitchIn");
 }
 
+void CMiyabi::On_ChainParry()
+{
+	m_pStateMachine->Set_Int("IdleEntryMode", 2);
+	m_pStateMachine->Set_Trigger("ToIdle");
+}
+
 void CMiyabi::On_SwitchOut()
 {
 	__super::On_SwitchOut();
@@ -233,7 +248,6 @@ void CMiyabi::On_Ultimate()
 
 void CMiyabi::On_Special()
 {
-	if (m_tEnergy.fCurrentEnergy < m_tEnergy.fSpecialEnergy) return;
 	if (InputDevice()->Key_Tap('E') == false) return;
 
 	string strCurrentState = m_pStateMachine->Get_CurrentStateName();
@@ -245,11 +259,15 @@ void CMiyabi::On_Special()
 			m_pStateMachine->Get_CurrentState());
 		if (pAttack && pAttack->Get_SubStateMachine())
 		{
-			if (pAttack->Get_SubStateMachine()->Get_CurrentStateName() == "NormalAttack")
+			string strAttackType = pAttack->Get_SubStateMachine()->Get_CurrentStateName();
+
+			if (strAttackType == "NormalAttack")
 			{
 				pAttack->Get_SubStateMachine()->Set_Trigger("ToExAttack");
 				return;
 			}
+			// NormalAttack이 아니면 아무것도 안함 (ExAttack 포함)
+			return;
 		}
 	}
 
@@ -287,6 +305,9 @@ HRESULT CMiyabi::Initialize_StateMachine()
 	if (FAILED(Initialize_Transitions()))
 		return E_FAIL;
 
+	if (FAILED(Initialize_Effects()))
+		return E_FAIL;
+
 	m_pStateMachine->Set_DefaultState("Idle");
 	m_pStateMachine->Initialize(this);
 
@@ -295,11 +316,11 @@ HRESULT CMiyabi::Initialize_StateMachine()
 
 HRESULT CMiyabi::Initialize_States()
 {
-	//m_pStateMachine->Register_State("Start", CMiyabiState_Start::Create());
+	m_pStateMachine->Register_State("Start", CMiyabiState_Start::Create());
 	m_pStateMachine->Register_State("Idle", CMiyabiState_Idle::Create());
 	m_pStateMachine->Register_State("Move", CMiyabiState_Move::Create());
 	m_pStateMachine->Register_State("Attack", CMiyabiState_Attack::Create());
-	//m_pStateMachine->Register_State("Evade", CMiyabiState_Evade::Create());
+	m_pStateMachine->Register_State("Evade", CMiyabiState_Evade::Create());
 	m_pStateMachine->Register_State("SwitchIn", CMiyabiState_SwitchIn::Create());
 	m_pStateMachine->Register_State("SwitchOut", CMiyabiState_SwitchOut::Create());
 	//m_pStateMachine->Register_State("Hit", CMiyabiState_Hit::Create());
@@ -425,6 +446,14 @@ HRESULT CMiyabi::Initialize_Weapon()
 	KatanaDesc.vSize = { 0.3f,1.3f,0.3f };
 	KatanaDesc.vRotation = { 0.f,0.f,0.69f };
 	if (FAILED(Attach_AttackCollider(&KatanaDesc)))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CMiyabi::Initialize_Effects()
+{
+	if (FAILED(__super::Initialize_Effects()))
 		return E_FAIL;
 
 	return S_OK;

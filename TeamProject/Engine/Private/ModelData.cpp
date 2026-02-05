@@ -16,8 +16,9 @@ HRESULT CModelData::Initialize(const string& filePath, ID3D11Device* pDevice)
 
 	ifstream ifs(filePath.c_str(), ios::binary);
 	if (!ifs.is_open()) {
- 		MSG_BOX("There is No File. :CModelData ");
-		//__debugbreak();
+		wstring Alarm = L"There is No File. :CModelData \n" + Helper::ConvertToWideString(filePath);
+		MessageBox(NULL, Alarm.c_str(), L"System Message", MB_OK);
+		//MSG_BOX("There is No File. :CModelData ");
 		return E_FAIL;
 	}
 
@@ -50,6 +51,13 @@ HRESULT CModelData::Initialize(const string& filePath, ID3D11Device* pDevice)
 	ifs.close();
 
 	if (fileHeader.isAnimate) {
+
+		_uint boneCount = m_pSkeleton ? m_pSkeleton->Get_BoneCount() : 0;
+
+		for (auto mesh : m_Meshes) {
+			mesh->BakeSkinRemapAndRebuildVB(pDevice, boneCount);
+		}
+
 		for (auto mesh : m_Meshes) {
 			mesh->Create_BoneMinMax(m_pSkeleton);
 		}
@@ -271,7 +279,6 @@ vector<MaterialUsageRow> CModelData::BuildMaterialUsageTable(_bool includeMeshIn
 	for (auto& pair : mapByMaterial)
 		rows.push_back(std::move(pair.second));
 
-	// meshCount 내림차순으로 정렬(많이 쓰는 머티리얼이 위로)
 	sort(rows.begin(), rows.end(),
 		[](const MaterialUsageRow& leftRow, const MaterialUsageRow& rightRow)
 		{
@@ -306,7 +313,6 @@ const vector<string> CModelData::Get_BoneNames()
 const vector<_int> CModelData::GenerateFollowingIndices(CModelData* pMasterData)
 {
 	vector<_int> FollowingIndices;
-	/*마스터 데이터에서 내 이름과 같은 것이 있으면 넣는다. 없으면 -1이 들어간다*/
 	for (string boneName : Get_BoneNames()) {
 		_int Index = pMasterData->Find_BoneIndexByName(boneName);
 		FollowingIndices.push_back(Index);

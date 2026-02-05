@@ -37,6 +37,7 @@ public: // 행동 이벤트
     virtual void    Reset_State()              override;
     virtual void    On_Start()                 override;
     virtual void    On_SwitchIn(SWITCH eType)  override;
+    virtual void    On_ChainParry()            override;
     virtual void    On_SwitchOut()             override;
     virtual void    On_Ultimate()              override;
     virtual void    On_Special()               override;
@@ -55,7 +56,7 @@ private: // 초기화
     HRESULT Initialize_Transitions();
     HRESULT Initialize_Stat();
     HRESULT Initialize_Weapon();
-    HRESULT Initialize_Effects();
+    HRESULT Initialize_Effects() override;
 
 private: // 상태 처리
     void    Update_States();

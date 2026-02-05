@@ -32,28 +32,51 @@ float4 ExtractBright(float4 color, float Thereshold =2.f, float Softness = 0.5f,
 
 float4 SoftExtractBright(float4 color, float Threshold = 1.f, float Softness = 0.5f, float Intensity = 1.f)
 {
+    if (any(isnan(color)) || any(isinf(color)))
+        return float4(0, 0, 0, 0);
+    
+    color = clamp(color, 0.0f, 100.0f);
+
     float brightness = dot(color.rgb, float3(0.2126, 0.7152, 0.0722));
+    brightness = max(brightness, 0.0f);
+
+    Threshold = max(Threshold, 0.001f);
+    Softness = clamp(Softness, 0.0f, 1.0f);
+    Intensity = clamp(Intensity, 0.0f, 10.0f);
     
     float knee = Threshold * Softness;
+    knee = max(knee, 0.00001f);
+
     float soft = brightness - Threshold + knee;
     soft = clamp(soft, 0.0, 2.0 * knee);
     soft = soft * soft / (4.0 * knee + 0.00001);
-    
+
     float contribution = max(soft, brightness - Threshold);
-    contribution /= max(brightness, 0.00001);
+
+    float safeBrightness = max(brightness, 0.001f);
+    contribution /= safeBrightness;
+
+    contribution = clamp(contribution, 0.0f, 10.0f);
+
+    float4 result = color * contribution * Intensity;
+
+    result = clamp(result, 0.0f, 50.0f);
     
-    return color * contribution * Intensity;
+    if (any(isnan(result)) || any(isinf(result)))
+        return float4(0, 0, 0, 0);
+    
+    return result;
 }
 
 float3 ACESFilm(float3 color)
 {
-    float a = 2.51f;
-    float b = 0.03f;
-    float c = 2.43f;
-    float d = 0.59f;
-    float e = 0.14f;
-    
-    return saturate((color * (a * color + b)) / (color * (c * color + d) + e));
+    float A = 0.15f;
+    float B = 0.50f;
+    float C = 0.10f;
+    float D = 0.20f;
+    float E = 0.02f;
+    float F = 0.30f;
+    return ((color * (A * color + C * B) + D * E) / (color * (A * color + B) + D * F)) - E / F;
 }
 
 float4 ApplyColorMode(uint ColorMode, float4 Diffuse, float4 Color)

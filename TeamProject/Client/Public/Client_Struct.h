@@ -88,6 +88,7 @@ namespace Client {
 	// 타격 정보
 	struct HitDesc
 	{
+		CHARACTER	eName = CHARACTER::END;
 		HIT_TYPE    eHitType = HIT_TYPE::ONCE;
 		DAMAGE_TYPE eDamageType = DAMAGE_TYPE::NORMAL;
 		_float      fDamage = 0.f;
@@ -96,6 +97,7 @@ namespace Client {
 		_float      fEnergyCharge = 1.f;
 		_float      fDecibelCharge = 10.f;
 
+		HitDesc& Name(CHARACTER e) { eName = e; return *this; }
 		HitDesc& Type(HIT_TYPE e) { eHitType = e; return *this; }
 		HitDesc& Damage(_float f, DAMAGE_TYPE e = DAMAGE_TYPE::NORMAL) { fDamage = f; eDamageType = e; return *this; }
 		HitDesc& Interval(_float f) { fInterval = f; return *this; }
@@ -140,17 +142,21 @@ namespace Client {
 		vector<RAMEN_ATTRIBUTE> attributes;
 	}RAMEN_DESC;
 
-	typedef struct tagWeaponDesc {
+	typedef struct tagGachaResultDesc {
 		_int		ID;
 		GachaGrade	Grade;
 		string		strModel;
 		string		strMaterial;
 		string		strTexture;
+		wstring		strLabel;
 		_float		RotX;
 		_float		RotY;
 		_float		RotZ;
 		_float		RotW;
-	}WEAPON_DESC;
+		string		strMeta;
+		string		strStartAnim;
+		string		strLoopAnim;
+	}GACHA_RESULT_DESC;
 
 	typedef struct tagTVDesc {
 		string		strName;
@@ -158,6 +164,11 @@ namespace Client {
 		_int		Row;
 		_int		MaxFrame;
 	}TV_DESC;
+
+	typedef struct tagGachaChannelDesc {
+		wstring		strLabel = {};
+		string		strTextureKey = {}; 
+	}GACHA_CHANNEL_DESC;
 
 	typedef struct tagCloudDesc {
 		_float3 skyColor = {};
