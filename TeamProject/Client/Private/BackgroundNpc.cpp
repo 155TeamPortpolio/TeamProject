@@ -5,6 +5,7 @@
 
 #include "ObjectContainer.h"
 #include "GameInstance.h"
+#include "PedestrianNpc.h"
 #include "CrowdNpc.h"
 
 CBackgroundNpc::CBackgroundNpc()
@@ -20,7 +21,8 @@ HRESULT CBackgroundNpc::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
 
-	PrototypeManager()->Add_ProtoType("Test_Level","Proto_Crowd", CCrowdNpc::Create());
+	PrototypeManager()->Add_ProtoType("MainCity_Level","Proto_GameObject_Pedestrian", CPedestrianNpc::Create());
+	PrototypeManager()->Add_ProtoType("MainCity_Level","Proto_GameObject_Crowd", CCrowdNpc::Create());
 	Add_Component<CObjectContainer>();
 
 	return S_OK;
@@ -30,7 +32,7 @@ HRESULT CBackgroundNpc::Initialize(INIT_DESC* pArg)
 {
 	__super::Initialize(pArg);
 	Build_Pedestrian(3);
-
+	Build_Crowd(3);
 	return S_OK;
 }
 
@@ -73,10 +75,10 @@ void CBackgroundNpc::Build_Crowd(_uint Count)
 		toCenter.Normalize();
 		_float yaw = atan2f(toCenter.x, toCenter.z);
 
-		auto child = Builder::Create_Object({ "Test_Level", "Proto_Crowd" })
+		auto child = Builder::Create_Object({ "MainCity_Level", "Proto_GameObject_Crowd" })
 			.Position({ x, 0.f, z })
 			.Rotate({ 0.f, yaw, 0.f })
-			.Build(std::to_string(idx));
+			.Build("Crowd_"+to_string(idx));
 
 		Get_Component<CObjectContainer>()->Add_Child(child, true);
 	}
@@ -87,7 +89,8 @@ void CBackgroundNpc::Build_Pedestrian(_uint Count)
 	_uint count = Count;
 	for (_uint idx = 0; idx < count; ++idx)
 	{
-		auto child = Builder::Create_Object({ "Test_Level", "Proto_Crowd" }).Build(std::to_string(idx));
+		auto child = Builder::Create_Object({ "MainCity_Level", "Proto_GameObject_Pedestrian" }).
+			Build("Pedestrian_"+to_string(idx));
 		Get_Component<CObjectContainer>()->Add_Child(child, false);
 	}
 }

@@ -51,6 +51,13 @@ HRESULT CModelData::Initialize(const string& filePath, ID3D11Device* pDevice)
 	ifs.close();
 
 	if (fileHeader.isAnimate) {
+
+		_uint boneCount = m_pSkeleton ? m_pSkeleton->Get_BoneCount() : 0;
+
+		for (auto mesh : m_Meshes) {
+			mesh->BakeSkinRemapAndRebuildVB(pDevice, boneCount);
+		}
+
 		for (auto mesh : m_Meshes) {
 			mesh->Create_BoneMinMax(m_pSkeleton);
 		}

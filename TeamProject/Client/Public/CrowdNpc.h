@@ -17,17 +17,10 @@ public:
     virtual void    Update(_float dt) override;
     virtual void    Late_Update(_float dt) override;
 
-private:
-    void Calc_Destination(_float dt);
-
-protected:
-    _uint m_CurPointIdx = {};
-    _float3 m_NowPos = {};
-    _float3 m_DstPos = {};
-    _float m_CurYaw = {};
 public:
     static CCrowdNpc* Create();
     CGameObject* Clone(INIT_DESC* pArg);
     virtual void Free() override;
 };
+
 NS_END
