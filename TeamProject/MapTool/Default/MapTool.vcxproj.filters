@@ -46,9 +46,6 @@
     <Filter Include="02. Object\MapTool Object">
       <UniqueIdentifier>{e268297a-f12f-4503-8e76-bfdfffbcf90f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. Object\MapTool Object\Placed Object">
-      <UniqueIdentifier>{42c068ab-f479-41e7-b642-c8eb0472f56a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="03. MapTool System\MapToolGui">
       <UniqueIdentifier>{d7d994b2-905f-4cfe-8cf2-0ce25e9cca1a}</UniqueIdentifier>
     </Filter>
@@ -96,6 +93,9 @@
     </Filter>
     <Filter Include="02. Object\Cam\FreeCam">
       <UniqueIdentifier>{b3542ded-bf57-438d-96b4-fb7851c34193}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Object\MapTool Object\Placed Object">
+      <UniqueIdentifier>{42c068ab-f479-41e7-b642-c8eb0472f56a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

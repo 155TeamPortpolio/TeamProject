@@ -27,6 +27,10 @@ public:
 public:
     static CCorinState_ExAttack_Start* Create() { return new CCorinState_ExAttack_Start(); }
     virtual void Free() override { __super::Free(); }
+
+private:
+    void Update_Effects(CCorin* pOwner);
+
 };
 
 class CCorinState_ExAttack_Loop : public IBaseState<CCorin>
