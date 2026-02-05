@@ -13,6 +13,8 @@ HRESULT CMaskUI::Initialize(INIT_DESC* pArg)
 {
     __super::Initialize(pArg);
 
+    m_stencilMode = StencilMode::Write;
+
     Set_OriginTexSize(true);
 
     auto sprite = Get_Component<CSprite2D>();
@@ -51,6 +53,8 @@ void CMaskUI::Render_GUI()
 void CMaskUI::Save(nlohmann::ordered_json& data)
 {
     __super::Save(data);
+    
+    data["stencilMode"] = ENUM(StencilMode::Write);
 
     data["typeTag"] = m_strTypeTag;
     data["maskTextureKey"] = m_strTextureKey;

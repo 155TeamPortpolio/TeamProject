@@ -511,9 +511,19 @@ void UIPass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
 		pCurShader->Bind_Value("TransformIndex", WorldMatParam);
 		pCurShader->Bind_Value("vColor", { packet.pColor, "float4", sizeof(_float4) });
 		packet.pSprite2D->Apply_Shader(pContext);
-		packet.pSprite2D->Draw_Sprite(pContext);
 
-		CGameInstance::GetInstance()->Get_FontSystem()->Render_TextFont(packet.pSprite2D->Get_TextKey());
+		if (packet.StencilRef != 0)
+		{
+			ID3D11DepthStencilState* pDS = {};
+			UINT oldRef = 0;
+
+			pContext->OMGetDepthStencilState(&pDS, &oldRef);
+			pContext->OMSetDepthStencilState(pDS, (UINT)packet.StencilRef);
+
+			if (pDS) pDS->Release();
+		}
+		packet.pSprite2D->Draw_Sprite(pContext);
+		FontSystem()->Render_TextFont(packet.pSprite2D->Get_TextKey());
 	}
 	m_Packets.clear();
 }

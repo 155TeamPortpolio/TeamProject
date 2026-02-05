@@ -3,8 +3,11 @@
 #include "Helper_Func.h"
 
 NS_BEGIN(Engine)
+
 class ENGINE_DLL CUI_Object abstract : public CGameObject
 {
+protected:
+	
 	//		명칭, 스케일 배율
 	//		사이즈는 픽셀
 	//		
@@ -150,6 +153,13 @@ public:
 	virtual void Load(const nlohmann::ordered_json& data);
 
 public:
+	void        Set_StencilMode(StencilMode mode) { m_stencilMode = mode; }
+	void        Set_StencilRef(_uint ref) { m_stencilRef = ref; }
+
+	StencilMode Get_StencilMode() const { return m_stencilMode; }
+	_uint       Get_StencilRef()  const { return m_stencilRef; }
+
+public:
 	UI_HANDLE Get_Handle();
 	UI_HANDLE Get_DescendantHandle(const string& instanceName);
 
@@ -161,6 +171,9 @@ private:
 	_bool Set_KeyframeTime(UI_ANIM_CLIP& clip, _int iKeyframeIndex, _float fTime);
 
 protected:
+	StencilMode m_stencilMode = StencilMode::None;
+	_uint m_stencilRef = 0;
+
 	/*스크린 사이즈*/
 	_float2 m_WinSize = {};
 	/*부모 기준의 앵커 오프셋*/
