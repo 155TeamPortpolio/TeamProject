@@ -100,6 +100,17 @@ void CMiyabiState_Dash_01::Update(CMiyabi* pOwner, _float dt)
         pSubMachine->Set_Int("ExitMode", 0);
         pSubMachine->Set_Trigger("Complete");
     }
+
+    Update_Effects(pOwner);
+}
+
+void CMiyabiState_Dash_01::Update_Effects(CMiyabi* pOwner)
+{
+    if (IsCrossAnimProgress(0.02f))
+    {
+        pOwner->Play_Effect("Player_Run_Start0", _vector3(0.f, 1.1f, 1.3f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+        pOwner->Play_Effect("Player_Run_Start1", _vector3(0.f, 0.15f, 0.f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+    }
 }
 
 void CMiyabiState_Dash_02::Enter(CMiyabi* pOwner)
@@ -137,9 +148,20 @@ void CMiyabiState_Dash_02::Update(CMiyabi* pOwner, _float dt)
         pSubMachine->Set_Int("ExitMode", 0);
         pSubMachine->Set_Trigger("Complete");
     }
+
+    Update_Effects(pOwner);
 }
 
 void CMiyabiState_Dash_02::Exit(CMiyabi* pOwner)
 {
     pOwner->Get_StateMachine()->Set_Bool("InDash02", false);
+}
+
+void CMiyabiState_Dash_02::Update_Effects(CMiyabi* pOwner)
+{
+    if (IsCrossAnimProgress(0.02f))
+    {
+        pOwner->Play_Effect("Player_Run_Start0", _vector3(0.f, 1.1f, 1.3f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+        pOwner->Play_Effect("Player_Run_Start1", _vector3(0.f, 0.15f, 0.f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+    }
 }

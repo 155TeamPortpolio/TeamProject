@@ -296,6 +296,9 @@ HRESULT CMiyabi::Initialize_StateMachine()
 	if (FAILED(Initialize_Transitions()))
 		return E_FAIL;
 
+	if (FAILED(Initialize_Effects()))
+		return E_FAIL;
+
 	m_pStateMachine->Set_DefaultState("Idle");
 	m_pStateMachine->Initialize(this);
 

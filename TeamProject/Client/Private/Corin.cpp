@@ -447,6 +447,14 @@ HRESULT CCorin::Initialize_Effects()
         pObjectContainer->Add_Child(pEffect, false);
         pEffect->AttachBone(pAnimator, "Weapon_saw");
     }
+    {
+        auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+            .Asset("corin_ultimate_saw_slash.json")
+            .Build("Corin_Ultimate_Saw_Slash0");
+        pEffect->Stop();
+        pObjectContainer->Add_Child(pEffect, false);
+        pEffect->AttachBone(pAnimator, "Weapon_saw");
+    }
 
     // Ex Explode
     {
