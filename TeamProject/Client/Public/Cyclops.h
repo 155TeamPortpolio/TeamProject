@@ -32,6 +32,7 @@ public:
 
 private:
     HRESULT Ready_Children(INIT_DESC* pArg);
+    HRESULT Ready_Spit(_uint iNum);
 
 public:
     /* Getter */
@@ -41,6 +42,7 @@ public:
     /* Setter */
     void            Idle() { m_isIdle = true; }
     virtual void    TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER charaName = CHARACTER::END) override;
+    void            Spit(_uint iSpitType);
 
 private:
     HRESULT Initialize_StateMachine();
@@ -55,6 +57,8 @@ private:
     CStateMachine<CCyclops>* m_pStateMachine = { nullptr };
     ATTACK_BLACK_BOARD  m_tAttackBlackBoard = {};
     HYSTERIESIS         m_tHysteriesis = {};
+    vector<_int>        m_SpitIndex;
+
 
     _bool               m_isAutoPatternPlay = { true };
 

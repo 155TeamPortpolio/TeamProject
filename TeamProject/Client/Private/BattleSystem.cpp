@@ -205,6 +205,37 @@ void CBattleSystem::TakeAreaDamage(const _float3& vCenter, _float fRadius, const
 	}
 }
 
+void CBattleSystem::TakeAreaDamage(const _float3& vCenter, _float fRadius, const _float3& vDir, _float fAngle, const HitDesc& hitDesc)
+{
+	_float fRadiusSq = fRadius * fRadius;
+	_float fCosHalfAngle = cosf(XMConvertToRadians(fAngle * 0.5f));
+	_vector3 vDirNorm = vDir;
+	vDirNorm.Normalize();
+
+	for (auto& info : m_BattleObjInfos[BATTLE_OBJ_TYPE::MONSTER])
+	{
+		_vector3 vDiff = info.vPos - vCenter;
+		_float fDistSq = vDiff.x * vDiff.x + vDiff.y * vDiff.y + vDiff.z * vDiff.z;
+		if (fDistSq > fRadiusSq)
+			continue;
+
+		_vector3 vToTarget = vDiff;
+		vToTarget.y = 0.f;
+		vToTarget.Normalize();
+
+		_vector3 vDirFlat = vDirNorm;
+		vDirFlat.y = 0.f;
+		vDirFlat.Normalize();
+
+		if (vToTarget.Dot(vDirFlat) < fCosHalfAngle)
+			continue;
+
+		auto pEnemy = dynamic_cast<CEnemy*>(info.hObject.Get());
+		if (pEnemy)
+			pEnemy->TakeDamage(hitDesc.eDamageType, hitDesc.fDamage);
+	}
+}
+
 void CBattleSystem::TakeBoxDamage(const _float3& vCenter, const _float3& vHalfExtents, const _quaternion& qRotation, const HitDesc& hitDesc)
 {
 	_quaternion qInverse;

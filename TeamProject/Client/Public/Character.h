@@ -193,7 +193,7 @@ public: // 회전
     _bool    Is_OppositeInput() const;
 
 public: // 회피
-    _bool    Can_Evade();
+    virtual _bool   Can_Evade();
     void     Use_Evade();
     void     Buffer_Evade() { m_bEvadeBuffer = true; }
     _bool    Use_EvadeBuffer();

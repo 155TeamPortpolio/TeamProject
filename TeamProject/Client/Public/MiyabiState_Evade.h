@@ -15,7 +15,7 @@ private:
     _uint    m_iMask = { 0xFFFFFFFF };
 
 public:
-    static CMiyabiState_Evade* Create() { return new CMiyabiState_Evade(); }
+    static CMiyabiState_Evade* Create();
     virtual void Free() override { __super::Free(); }
 };
 

@@ -71,6 +71,7 @@ void CClaymore_Run_Start::Exit(CClaymore* pOwner)
 void CClaymore_Run_Loop::Enter(CClaymore* pOwner)
 {
 	pOwner->Get_Component<CAnimator3D>()->Change_Animation("Monster_Claymore_Ani_Run_Loop")
+		.Loop(true)
 		.Apply();
 }
 

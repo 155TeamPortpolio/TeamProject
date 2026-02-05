@@ -52,6 +52,11 @@ HRESULT CGacha_Level::Awake()
 	CamDirector()->RequestSequence("Gacha/Down");
 
 	m_pGachaProps->SetupInitialSequence();
+
+	//==================== UI ===============
+	auto uiDirector = CUIDirector::GetInstance();
+	uiDirector->Load_LevelObjects("Gacha_Level");
+
 	return S_OK;
 }
 

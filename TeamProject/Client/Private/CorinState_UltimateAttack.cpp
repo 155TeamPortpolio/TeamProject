@@ -63,7 +63,7 @@ void CCorinState_UltimateAttack::Update(CCorin* pOwner, _float dt)
     auto pCorinState = pOwner->Get_StateMachine();
     if (pCorinState->Get_Bool("OutReserve"))
     {
-        if (m_pSubStateMachine->Get_CurrentStateName() == "End")
+        if (m_pSubStateMachine->Get_CurrentStateName() == "Ultimate_End")
         {
             pCorinState->Set_Trigger("SwitchOut");
             pCorinState->Set_Bool("OutReserve", false);
