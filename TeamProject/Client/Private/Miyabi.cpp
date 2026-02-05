@@ -20,7 +20,7 @@
 #include "ObjectContainer.h"
 
 #include "StateMachine.h"
-//#include "MiyabiState_Start.h"
+#include "MiyabiState_Start.h"
 #include "MiyabiState_Idle.h"
 #include "MiyabiState_Move.h"
 #include "MiyabiState_Attack.h"
@@ -203,6 +203,12 @@ void CMiyabi::On_SwitchIn(SWITCH eType)
 	m_pStateMachine->Set_Trigger("SwitchIn");
 }
 
+void CMiyabi::On_ChainParry()
+{
+	m_pStateMachine->Set_Int("IdleEntryMode", 2);
+	m_pStateMachine->Set_Trigger("ToIdle");
+}
+
 void CMiyabi::On_SwitchOut()
 {
 	__super::On_SwitchOut();
@@ -296,6 +302,9 @@ HRESULT CMiyabi::Initialize_StateMachine()
 	if (FAILED(Initialize_Transitions()))
 		return E_FAIL;
 
+	if (FAILED(Initialize_Effects()))
+		return E_FAIL;
+
 	m_pStateMachine->Set_DefaultState("Idle");
 	m_pStateMachine->Initialize(this);
 
@@ -304,7 +313,7 @@ HRESULT CMiyabi::Initialize_StateMachine()
 
 HRESULT CMiyabi::Initialize_States()
 {
-	//m_pStateMachine->Register_State("Start", CMiyabiState_Start::Create());
+	m_pStateMachine->Register_State("Start", CMiyabiState_Start::Create());
 	m_pStateMachine->Register_State("Idle", CMiyabiState_Idle::Create());
 	m_pStateMachine->Register_State("Move", CMiyabiState_Move::Create());
 	m_pStateMachine->Register_State("Attack", CMiyabiState_Attack::Create());
@@ -434,6 +443,14 @@ HRESULT CMiyabi::Initialize_Weapon()
 	KatanaDesc.vSize = { 0.3f,1.3f,0.3f };
 	KatanaDesc.vRotation = { 0.f,0.f,0.69f };
 	if (FAILED(Attach_AttackCollider(&KatanaDesc)))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CMiyabi::Initialize_Effects()
+{
+	if (FAILED(__super::Initialize_Effects()))
 		return E_FAIL;
 
 	return S_OK;

@@ -48,7 +48,13 @@ protected:
     void Update_GradientModule(_float dt);
     void Bind_Params();
 
+    void Update_PendingStop();
+
     /*Default Params*/
+    _bool m_IsPendingStop = false;
+    _float m_fPendingDuration = 0.2f;
+    _float m_fPendingElapsedTime{};
+
     _float m_fScreenWidth{};
     _float m_fScreenHeight{};
 

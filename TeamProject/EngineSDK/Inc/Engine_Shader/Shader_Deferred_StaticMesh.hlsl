@@ -45,6 +45,11 @@ PS_OUT_RESULT PS_SSAO(PS_IN In)
     vector vDepthDesc = DepthTexture.Sample(DefaultSampler, In.vTexcoord);
     vector vNormalDesc = NormalTexture.Sample(DefaultSampler, In.vTexcoord);
     float3 worldNormal = normalize(vNormalDesc.xyz * 2.f - 1.f);
+    if (length(worldNormal) < 0.001f)
+    {
+        Out.vResult = 1.0f; 
+        return Out;
+    }
     float fViewZ = vDepthDesc.y * zFar;
     
     float3 N = mul(float4(worldNormal, 0.f), matView).xyz;
@@ -106,6 +111,11 @@ PS_OUT_RESULT PS_SSAO(PS_IN In)
     }
     
     occlusion = 1.0 - (occlusion / 64.0);
+    occlusion = saturate(occlusion);
+    
+    if (isnan(occlusion) || isinf(occlusion))
+        occlusion = 1.0;
+    
     Out.vResult = occlusion;
     
     return Out;

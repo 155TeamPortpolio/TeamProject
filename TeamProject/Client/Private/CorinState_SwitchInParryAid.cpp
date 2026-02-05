@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "CorinState_SwitchInParryAid.h"
 
+#include "GameInstance.h"
 #include "BattleSystem.h"
 
 #include "Corin.h"
@@ -38,6 +39,18 @@ void CCorinState_SwitchInParryAid::Enter(CCorin* pOwner)
 {
     pOwner->Lock_Move();
     pOwner->Lock_Rotate();
+
+    OBJECT_HANDLE handle = pOwner->Get_ParryHandle();
+    if (handle.isValid())
+    {
+        dynamic_cast<CEnemy*>(handle.Get())->Parried();
+        BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::PARRY);
+        TARGET_LOCK_DESC desc;
+        desc.bLock = true;
+        desc.tHandle = handle;
+        EventSystem()->Broadcast<TARGET_LOCK_DESC>({ desc });
+    }
+
     __super::Enter(pOwner);
 }
 
@@ -61,6 +74,16 @@ void CCorinState_SwitchInParryAid::Exit(CCorin* pOwner)
 {
     pOwner->Unlock_Move();
     pOwner->Unlock_Rotate();
+
+    OBJECT_HANDLE handle = pOwner->Get_ParryHandle();
+    if (handle.isValid())
+    {
+        TARGET_LOCK_DESC desc;
+        desc.bLock = false;
+        desc.tHandle = handle;
+        EventSystem()->Broadcast<TARGET_LOCK_DESC>({ desc });
+    }
+
     __super::Exit(pOwner);
 }
 
@@ -72,13 +95,6 @@ void CCorinState_SwitchInParryAid_Start::Enter(CCorin* pOwner)
         .ReserveSpeed(0.f, 1.f, 2.f, EaseType::OutQuint)
         .EndAt(0.4f)
         .Apply();
-
-    OBJECT_HANDLE handle = pOwner->Get_ParryHandle();
-    if (handle.isValid())
-    {
-        dynamic_cast<CEnemy*>(handle.Get())->Parried();
-        BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::PARRY);
-    }
 }
 
 void CCorinState_SwitchInParryAid_Start::Update(CCorin* pOwner, _float dt)

@@ -216,6 +216,12 @@ void CJaneDoe::On_SwitchIn(SWITCH eType)
     m_pStateMachine->Set_Trigger("SwitchIn");
 }
 
+void CJaneDoe::On_ChainParry()
+{
+    m_pStateMachine->Set_Int("IdleEntryMode", 2);
+    m_pStateMachine->Set_Trigger("ToIdle");
+}
+
 void CJaneDoe::On_SwitchOut()
 {
     __super::On_SwitchOut();
@@ -535,6 +541,9 @@ HRESULT CJaneDoe::Initialize_Weapon()
 
 HRESULT CJaneDoe::Initialize_Effects()
 {
+    if (FAILED(__super::Initialize_Effects()))
+        return E_FAIL;
+
     auto pObjectContainer = Get_Component<CObjectContainer>();
 
     // Normal Slash

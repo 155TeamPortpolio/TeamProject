@@ -7,22 +7,23 @@ NS_END
 
 NS_BEGIN(Client)
 
-class CUI_GachaConversion final : public CUI_Object
+class CUI_GachaDisplay final : public CUI_Object
 {
 public:
-	typedef struct tagConversionDesc : public UI_DESC {
-		_int iCost = {};
-		_int iCount = {};
-	}CONVERSION_DESC;
+	enum class TYPE { LABEL, SKIP, END };
+	typedef struct tagGachaDisplayDesc {
+		TYPE	eType;
+		wstring strLabel = {};
+	}GACHA_DISPLAY_DESC;
 
 private:
-	enum class CHILD { BUTTON, OVERLAY, LABEL, COST, COUNT, END };
-	inline static const string INSTANCENAMES[ENUM(CHILD::END)] = { "button", "overlay", "label", "cost", "count" };
+	enum class CHILD { BG, LABEL, END };
+	inline static const string INSTANCENAMES[ENUM(CHILD::END)] = { "bg", "label" };
 
 private:
-	CUI_GachaConversion() {}
-	CUI_GachaConversion(const CUI_GachaConversion& rhs) : CUI_Object(rhs) {}
-	virtual ~CUI_GachaConversion() DEFAULT;
+	CUI_GachaDisplay() {}
+	CUI_GachaDisplay(const CUI_GachaDisplay& rhs) : CUI_Object(rhs) {}
+	virtual ~CUI_GachaDisplay() DEFAULT;
 
 public:
 	virtual HRESULT Initialize_Prototype()           override;
@@ -36,21 +37,16 @@ public:
 	virtual void	UI_DeActive(void* pArg = nullptr) override;
 
 private:
-	_bool m_isClicked = {};
+	CUI_Object* m_pChildren[ENUM(CHILD::END)] = {};
+	CUI_Object* m_pSkipButton = {};
 
-	class CUI_Object* m_pChildren[ENUM(CHILD::END)] = {};
-	class CTextSlot* m_pTextSlots[ENUM(CHILD::END)] = {};
-	class CButtonUI* m_pButton = {};
+	class CTextSlot* m_pLabelTextSlot = {};
 
 private:
 	void Cache();
-
-	void OnClick();
+	void Create_SkipButton();
 
 	void Set_ChildAnimation(CHILD child, _int iIndex);
-	void Set_ChildText(CHILD child, const _wstring& strText);
-
-	_bool Is_ChildAnimationFinished(CHILD child);
 
 public:
 	static  CGameObject* Create();

@@ -31,10 +31,10 @@ HRESULT CUI_GachaChannel::Initialize(INIT_DESC* pArg)
         return S_OK;
 
     if (m_pIcon)
-        m_pIcon->Change_Texture(0, G_GlobalLevelKey, "IconRole13_GaCha_S.png");
+        m_pIcon->Change_Texture(0, G_GlobalLevelKey, pDesc->strTextureKey);
 
     if (m_pLabel)
-        m_pLabel->Set_Text(L"µ¶Á¡ Àç°³ºÀ");
+        m_pLabel->Set_Text(pDesc->strLabel);
 
     if (m_pButton)
         m_pButton->Set_OnClick([this]() {

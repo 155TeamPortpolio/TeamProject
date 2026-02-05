@@ -1164,6 +1164,12 @@
     <Filter Include="02. GameObject\Object\Npc\Background\Pedestrian">
       <UniqueIdentifier>{38a9114f-dcab-4df2-8f6b-c17d39ba59ed}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\Gacha\Display">
+      <UniqueIdentifier>{d863e830-0e43-4884-ae68-e83abab8552b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\Gacha\Result">
+      <UniqueIdentifier>{70b86f41-b532-40be-ba58-6b3edec7f698}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -2240,6 +2246,12 @@
     <ClInclude Include="..\Public\CrowdNpc.h">
       <Filter>02. GameObject\Object\Npc\Background\Crowd</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UI_GachaDisplay.h">
+      <Filter>02. GameObject\UI\01. 2D\Gacha\Display</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_GachaResult.h">
+      <Filter>02. GameObject\UI\01. 2D\Gacha\Result</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -3277,6 +3289,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\CrowdNpc.cpp">
       <Filter>02. GameObject\Object\Npc\Background\Crowd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_GachaDisplay.cpp">
+      <Filter>02. GameObject\UI\01. 2D\Gacha\Display</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_GachaResult.cpp">
+      <Filter>02. GameObject\UI\01. 2D\Gacha\Result</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

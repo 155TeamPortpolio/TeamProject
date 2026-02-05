@@ -198,6 +198,7 @@ private:
 
 	_bool m_IsLoop = false;
 	_uint m_iBurstCount{};
+	_uint m_iMaxBurstCount{};
 
 	_float m_fSpawnPerSec{};
 	_float m_fSpawnAcc{};

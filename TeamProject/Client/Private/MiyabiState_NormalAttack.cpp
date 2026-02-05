@@ -132,6 +132,7 @@ void CMiyabiState_Attack_01::Update(CMiyabi* pOwner, _float dt)
             _vector3 vLook = pOwner->Get_Component<CTransform>()->Dir(STATE::LOOK);
             _vector3 vPos = pOwner->Get_WorldPos();
             BattleSystem()->TakeAreaDamage(vPos + vLook * 2.f, 3.f, HitDesc()
+                .Name(pOwner->Get_CharacterName())
                 .Type(HIT_TYPE::ONCE)
                 .Damage(pOwner->Get_AttackPower() * 0.269f * Helper::Get_Random_Float(1.f, 1.5f)
                     , DAMAGE_TYPE::NORMAL)
@@ -163,6 +164,7 @@ void CMiyabiState_Attack_02::Update(CMiyabi* pOwner, _float dt)
         if (Event.Tag == "KatanaStart")
         {
             pOwner->Begin_AttackCollider("KatanaWeapon", HitDesc()
+                .Name(pOwner->Get_CharacterName())
                 .Type(HIT_TYPE::ONCE)
                 .Damage(pOwner->Get_AttackPower() * 0.296f * Helper::Get_Random_Float(1.f, 1.5f)
                     , DAMAGE_TYPE::NORMAL)
@@ -200,6 +202,7 @@ void CMiyabiState_Attack_03::Update(CMiyabi* pOwner, _float dt)
             _vector3 vLook = pOwner->Get_Component<CTransform>()->Dir(STATE::LOOK);
             _vector3 vPos = pOwner->Get_WorldPos();
             BattleSystem()->TakeAreaDamage(vPos + vLook * 2.f, 3.f, HitDesc()
+                .Name(pOwner->Get_CharacterName())
                 .Type(HIT_TYPE::ONCE)
                 .Damage(pOwner->Get_AttackPower() * 0.628f * Helper::Get_Random_Float(1.f, 1.5f)
                     , DAMAGE_TYPE::NORMAL)
@@ -246,6 +249,7 @@ void CMiyabiState_Attack_04::Update(CMiyabi* pOwner, _float dt)
             _quaternion qRotation = pOwner->Get_Component<CTransform>()->Get_QuaternionRotate();
             _vector3 vPos = pOwner->Get_WorldPos();
             BattleSystem()->TakeBoxDamage(vPos + vLook * 1.f, _vector3(4.f, 4.f, 2.f), qRotation, HitDesc()
+                .Name(pOwner->Get_CharacterName())
                 .Type(HIT_TYPE::ONCE)
                 .Damage(pOwner->Get_AttackPower() * 0.965f * Helper::Get_Random_Float(1.f, 1.5f)
                     , DAMAGE_TYPE::NORMAL)
@@ -279,6 +283,7 @@ void CMiyabiState_Attack_05::Update(CMiyabi* pOwner, _float dt)
             _vector3 vLook = pOwner->Get_Component<CTransform>()->Dir(STATE::LOOK);
             _vector3 vPos = pOwner->Get_WorldPos();
             BattleSystem()->TakeAreaDamage(vPos, 3.f, HitDesc()
+                .Name(pOwner->Get_CharacterName())
                 .Type(HIT_TYPE::ONCE)
                 .Damage(pOwner->Get_AttackPower() * 1.29f * Helper::Get_Random_Float(1.f, 1.5f)
                     , DAMAGE_TYPE::NORMAL)

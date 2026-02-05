@@ -17,9 +17,6 @@ HRESULT CUI_BackButton::Initialize_Prototype()
 
 HRESULT CUI_BackButton::Initialize(INIT_DESC* pArg)
 {
-    BUTTON_DESC* pDesc = static_cast<BUTTON_DESC*>(pArg);
-    m_OnClick = pDesc->onClick;
-
     __super::Initialize(pArg);
     Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("button_back.json")));
     Cache_Children();
