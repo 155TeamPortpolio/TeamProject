@@ -28,7 +28,7 @@
       }
     },
     {
-      "iObjID": 10,
+      "iObjID": 9,
       "TagName": "bCooking",
       "defaultvalue": {
         "type": "Bool",
