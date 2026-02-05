@@ -8,6 +8,8 @@ int FrameIndex;
 int Col;
 int Row;
 
+float2 UVTiling;
+
 struct VS_IN
 {
     float3 vPosition : POSITION;
@@ -128,6 +130,51 @@ PS_OUT PS_EMISSIVE(PS_IN In)
   
     vector vNormalDesc = NormalTexture.Sample(DefaultSampler, In.vTexcoord);
     vector vMetalic = MetalnessTexture.Sample(DefaultSampler, In.vTexcoord);
+    Out.vDiffuse = vMtrlDiffuse;
+    
+    if (vNormalDesc.a > 0.2f)
+    {
+        float3 vNormal;
+        vNormal.x = vNormalDesc.y * 2.f - 1.f;
+        vNormal.y = vNormalDesc.z * 2.f - 1.f;
+        vNormal.z = 1.f;
+        float3 T = normalize(In.vTangent);
+        float3 B = normalize(In.vBinormal * -1);
+        float3 N = normalize(In.vNormal.xyz);
+
+        float3x3 WorldMatrix = float3x3(T, B, N);
+        
+        vNormal = mul(vNormal, WorldMatrix);
+    
+        Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 1.f);
+    }
+    else
+    {
+        float3 vNormal = normalize(In.vNormal);
+        Out.vNormal = float4(vNormal * 0.5f + 0.5f, 1.f);
+    }
+    
+    float linearDepth = saturate(In.viewZ / zFar);
+    Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / zFar, linearDepth, 1.f);
+    Out.vMetalic = float4(vMetalic.rgb, 0.3f);
+    Out.vEmissive = float4(vEmissiveColor.rgb * vMetalic.b * 1.f, vMetalic.a);
+    Out.fEmissiveInfo = float2(0.f, 1.f);
+    return Out;
+}
+
+PS_OUT PS_TILING(PS_IN In)
+{
+    PS_OUT Out;
+
+    vector vMtrlDiffuse = DiffuseTexture.Sample(LinearSampler, In.vTexcoord * UVTiling);
+    
+    if (vMtrlDiffuse.a < 0.2)
+    {
+        discard;
+    }
+  
+    vector vNormalDesc = NormalTexture.Sample(LinearSampler, In.vTexcoord * UVTiling);
+    vector vMetalic = MetalnessTexture.Sample(LinearSampler, In.vTexcoord * UVTiling);
     Out.vDiffuse = vMtrlDiffuse;
     
     if (vNormalDesc.a > 0.2f)
@@ -283,6 +330,15 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN();
+    }
+    pass Tiling
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_TILING();
     }
     pass TV
     {

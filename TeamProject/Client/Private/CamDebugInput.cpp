@@ -54,25 +54,14 @@ void CamDebugInput::UpdateInput(_float dt)
         }
     }
 
-    if (CamDirector()->IsFinished(CamEventType::SpinFinished) || CamDirector()->IsFinished(CamEventType::SpinHalfFinished))
-    {
-        CameraManager()->SetZoomType(ENUM(CamZoomType::GachaShake), 2.f);
-        
-        // 1차 시도
-        CameraManager()->AddShakeAxisWave(CamShakeAxis::Roll,  2.5f,   4.0f, 0.8f, 0.1f,  EaseType::InQuad, EaseType::OutQuad);
-        CameraManager()->AddShakeAxisWave(CamShakeAxis::Yaw,   1.25f,  3.0f, 0.6f, 0.1f,  EaseType::InQuad, EaseType::OutQuad);
-        CameraManager()->AddShakeAxisWave(CamShakeAxis::Pitch, 1.f,    2.5f, 0.4f, 0.1f,  EaseType::InQuad, EaseType::OutQuad);
-
-        // 2차 시도
-        //CameraManager()->AddShakeAxisWave(CamShakeAxis::Roll,  5.f,   4.0f, 1.f, 0.1f,  EaseType::InCubic, EaseType::OutCirc);
-        //CameraManager()->AddShakeAxisWave(CamShakeAxis::Yaw,   2.5f,  3.0f, 1.f, 0.1f,  EaseType::InCubic, EaseType::OutCirc);
-        //CameraManager()->AddShakeAxisWave(CamShakeAxis::Pitch, 1.25f, 2.0f, 1.f, 0.1f,  EaseType::InCubic, EaseType::OutCirc);
-
-        // 3차 시도
-        //CameraManager()->AddShakeAxisWave(CamShakeAxis::Roll,  2.2f, 4.0f, 0.8f, 0.2f, EaseType::OutSine, EaseType::OutQuad);
-        //CameraManager()->AddShakeAxisWave(CamShakeAxis::Yaw,   1.1f, 3.0f, 0.8f, 0.2f, EaseType::OutSine, EaseType::OutQuad);
-        //CameraManager()->AddShakeAxisWave(CamShakeAxis::Pitch, 0.6f, 2.5f, 0.8f, 0.2f, EaseType::OutSine, EaseType::OutQuad);
-        
-        
-    }
+    //if (CamDirector()->IsFinished(CamEventType::SpinFinished) || CamDirector()->IsFinished(CamEventType::SpinHalfFinished))
+    //{
+    //    CameraManager()->SetZoomType(ENUM(CamZoomType::GachaShake), 1.8f);
+    //    //CameraManager()->SetShakeType(ENUM(CamShakeType::EarthquakeShort), 1.2f);
+    //    //CameraManager()->AddShakeAxisWave(0x4, 3.0f, 3.0f, 1.2f, 0.0f, EaseType::None, EaseType::OutCubic);
+    //   // CameraManager()->AddShakeAxisWave(CamShakeAxis::Roll, 3.0f, 3.0f, 1.2f, 0.0f, EaseType::None, EaseType::OutCubic);
+    //    CameraManager()->AddShakeAxisWave(CamShakeAxis::Roll,  3.f,  4.0f, 0.8f, 0.1f, EaseType::InQuad, EaseType::InOutQuad);
+    //    CameraManager()->AddShakeAxisWave(CamShakeAxis::Yaw,   1.4f, 3.0f, 0.6f, 0.1f, EaseType::InQuad, EaseType::InOutQuad);
+    //    CameraManager()->AddShakeAxisWave(CamShakeAxis::Pitch, 1.f,  2.5f, 0.4f, 0.1f, EaseType::InQuad, EaseType::InOutQuad);
+    //}
 }
