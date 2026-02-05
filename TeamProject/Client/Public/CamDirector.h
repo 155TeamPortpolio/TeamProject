@@ -5,6 +5,7 @@
 #include "CamDirectorData.h"
 #include "CamEventController.h"
 #include "CamDialogueController.h"
+#include "ParryCamFx.h"
 
 NS_BEGIN(Client)
 

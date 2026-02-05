@@ -7,6 +7,7 @@
 // Client
 #include "UI_Gangta.h"
 #include "UI_Seoriyeol.h"
+#include "BattleSystem.h"
 
 void CamDebugInput::UpdateInput(_float dt)
 {
@@ -34,12 +35,6 @@ void CamDebugInput::UpdateInput(_float dt)
         }
         else if (levelKey == "Test_Level")  CamDirector()->RequestSequence(CamSeqType::BattleIntro);
 
-        //else if (levelKey == "Test_Level" && CamDirector()->GetCharacterName() == CHARACTER::Miyabi)
-        //{
-        //    CamDirector()->RequestSequence(CamSeqType::ZeroIntro);
-        //    CamDirector()->GetCharacter()->Get_Component<CAnimator3D>()->Set_Animation("Avatar_Female_Size02_Unagi_Ani_QuestStart").Apply();
-        //}
-
         else if (levelKey == "Zero_Level")  CamDirector()->RequestSequence(CamSeqType::ZeroIntro);
     }
 
@@ -58,9 +53,9 @@ void CamDebugInput::UpdateInput(_float dt)
         CameraManager()->SetZoomType(ENUM(CamZoomType::GachaShake), 2.f);
         
         // 1차 시도
-        CameraManager()->AddShakeAxisWave(CamShakeAxis::Roll,  2.5f,   4.0f, 0.8f, 0.1f,  EaseType::InQuad, EaseType::OutQuad);
-        CameraManager()->AddShakeAxisWave(CamShakeAxis::Yaw,   1.25f,  3.0f, 0.6f, 0.1f,  EaseType::InQuad, EaseType::OutQuad);
-        CameraManager()->AddShakeAxisWave(CamShakeAxis::Pitch, 1.f,    2.5f, 0.4f, 0.1f,  EaseType::InQuad, EaseType::OutQuad);
+        //CameraManager()->AddShakeAxisWave(CamShakeAxis::Roll,  2.5f,   4.0f, 0.8f, 0.1f,  EaseType::InQuad, EaseType::OutQuad);
+        //CameraManager()->AddShakeAxisWave(CamShakeAxis::Yaw,   1.25f,  3.0f, 0.6f, 0.1f,  EaseType::InQuad, EaseType::OutQuad);
+        //CameraManager()->AddShakeAxisWave(CamShakeAxis::Pitch, 1.f,    2.5f, 0.4f, 0.1f,  EaseType::InQuad, EaseType::OutQuad);
 
         // 2차 시도
         //CameraManager()->AddShakeAxisWave(CamShakeAxis::Roll,  5.f,   4.0f, 1.f, 0.1f,  EaseType::InCubic, EaseType::OutCirc);
@@ -68,10 +63,10 @@ void CamDebugInput::UpdateInput(_float dt)
         //CameraManager()->AddShakeAxisWave(CamShakeAxis::Pitch, 1.25f, 2.0f, 1.f, 0.1f,  EaseType::InCubic, EaseType::OutCirc);
 
         // 3차 시도
-        //CameraManager()->AddShakeAxisWave(CamShakeAxis::Roll,  2.2f, 4.0f, 0.8f, 0.2f, EaseType::OutSine, EaseType::OutQuad);
-        //CameraManager()->AddShakeAxisWave(CamShakeAxis::Yaw,   1.1f, 3.0f, 0.8f, 0.2f, EaseType::OutSine, EaseType::OutQuad);
-        //CameraManager()->AddShakeAxisWave(CamShakeAxis::Pitch, 0.6f, 2.5f, 0.8f, 0.2f, EaseType::OutSine, EaseType::OutQuad);
-        
-        
+        CameraManager()->AddShakeAxisWave(CamShakeAxis::Roll,  2.2f, 4.0f, 0.8f, 0.12f, EaseType::InCubic, EaseType::OutQuad);
+        CameraManager()->AddShakeAxisWave(CamShakeAxis::Yaw,   1.1f, 3.0f, 0.8f, 0.12f, EaseType::InCubic, EaseType::OutQuad);
+        CameraManager()->AddShakeAxisWave(CamShakeAxis::Pitch, 0.6f, 2.5f, 0.8f, 0.12f, EaseType::InCubic, EaseType::OutQuad);
     }
+
+
 }
