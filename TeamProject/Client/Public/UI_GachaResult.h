@@ -21,6 +21,12 @@ public:
 	virtual void	UI_Active(void* pArg = nullptr)  override;
 	virtual void	UI_DeActive(void* pArg = nullptr) override;
 
+private:
+	CUI_Object* m_pTitle = {};
+
+private:
+	void Cache();
+
 public:
 	static  CGameObject* Create();
 	virtual CGameObject* Clone(INIT_DESC* pArg = {}) override;
