@@ -112,7 +112,7 @@ void CGachaAvatar::Update_States()
         }
         else if(m_pAnimator->Get_CurAnimDuration() >= 0.35)
         {
-            if (m_bRevealEffect == false)
+            if (m_bRevealEffect == false) 
             {
                 auto pParent = dynamic_cast<CGachaStage*>(Get_Component<CChild>()->Get_Parent());
                 pParent->PlayRevealEffect();

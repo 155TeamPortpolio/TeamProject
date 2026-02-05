@@ -39,13 +39,13 @@ HRESULT CGacha_Level::Awake()
 	auto pShadowCam = ObjectManager()->Find_Global(ENUM(GLOBAL_ID::ShadowCam));
 	LIGHT_DESC lightDesc = {};
 	lightDesc.vLightPosition = _float4(-50.f, 50.f, 0.f, 1.f);
-	lightDesc.vLightDiffuse = _float4(0.f, 0.3f, 1.f, 1.f);
-	lightDesc.vLightAmbient = _float4(1.f, 1.f, 1.f, 1.f);
+	lightDesc.vLightDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
+	lightDesc.vLightAmbient = _float4(0.5f, 0.5f, 0.5f, 1.f);
 	lightDesc.vLightSpecular = _float4(0.f, 0.f, 0.f, 1.f);
 	lightDesc.fLightIntensity = 1.f;
 	pShadowCam->Get_Component<CLight>()->Set_Desc(lightDesc, LIGHT_TYPE::DIRECTIONAL);
 
-	RenderSystem()->Set_FogDesc({ _float4(0.1f, 0.1f, 0.1f, 1.0f) ,0.f, 0.f, 0.02f, true });
+	RenderSystem()->Set_FogDesc({ _float4(0.1f, 0.1f, 0.1f, 1.0f) ,0.f, 0.f, 0.02f, false });
 
 	Ready_GachaObjects();
 

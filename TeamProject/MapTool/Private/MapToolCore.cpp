@@ -459,10 +459,13 @@ void CMapToolCore::Place_LightPointFromLoadData(MAP_LIGHT* pData)
 	string Name = "LightPoint" + to_string(pData->iIndex);
 	pDesc->DescJson = pData->LightDesc;
 
+	_quaternion Rot = pDesc->DescJson.vLightDirection;
+
 	CGameObject* pStaticObject = Builder::Create_Object({ g_TagMapToolLevel ,"Proto_GameObject_LightPoint" })
 		.Add_ObjDesc(pDesc)
 		.Collider(ColDesc)
 		.Position({ pData->vTranslation[0], pData->vTranslation[1], pData->vTranslation[2] })
+		.Rotate(Rot.ToEuler())
 		.Build(Name);
 
 	pStaticObject->Get_Component<CCollider>()->Set_DebugRender(true);
