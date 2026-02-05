@@ -67,6 +67,7 @@ void CZeroPortal::Awake()
 		pMaterial->Add_MaterialData(Instance, "g_Time", { &m_Time, "float", sizeof(_float) });
 	}
 
+	Get_Component<CCollider>()->Set_Trigger(true);
 }
 
 void CZeroPortal::Priority_Update(_float dt)
