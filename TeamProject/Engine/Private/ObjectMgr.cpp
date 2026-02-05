@@ -22,13 +22,18 @@ HRESULT CObjectMgr::Initialize()
 void CObjectMgr::Pre_EngineUpdate(_float dt)
 {
 
-	for (auto pObject : m_ReleaseObjs)
+	auto Releasesnap = m_ReleaseObjs;
+
+	m_ReleaseObjs.clear();
+	m_DeleteIDs.clear();
+	for (auto pObject : Releasesnap)
 	{
 		if (!pObject) continue;
 		Release_Subtree_ToPool(pObject);
 	}
 	m_ReleaseObjs.clear();
-	m_ReleaseIDs.clear();
+	m_DeleteIDs.clear();
+
 	auto snap = m_DeleteObjs;
 
 	m_DeleteObjs.clear();
@@ -36,8 +41,8 @@ void CObjectMgr::Pre_EngineUpdate(_float dt)
 	for (auto pObject : snap)
 	{
 		_uint ObjectID = pObject->Get_ObjectID();
-		pObject->Get_Layer()->Remove_GameObject(ObjectID);
-		//Safe_Release(pObject);
+		if(auto pLayer= pObject->Get_Layer())
+			pLayer->Remove_GameObject(ObjectID);
 	}
 
 	for (auto& pair : m_Layers)

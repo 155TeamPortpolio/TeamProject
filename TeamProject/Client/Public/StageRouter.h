@@ -6,8 +6,7 @@ NS_BEGIN(Client)
 class CStageRouter :
     public CLevelObject
 {
-   
-
+  
 private:
 	CStageRouter();
 	~CStageRouter() DEFAULT;
@@ -47,7 +46,8 @@ private:
 
     _int m_currentNode = -1;
     _int m_maxDepth = 0;
-
+    _int m_guiSelectedNode = -1;
+    _int m_guiHoveredNode = -1;
 public:
 	static CStageRouter* Create();
 	virtual CGameObject* Clone(INIT_DESC* pArg) override;
