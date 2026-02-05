@@ -989,7 +989,7 @@
       <UniqueIdentifier>{d1149f0e-c9f3-45bd-89e7-df5876021132}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\Object\AmbientActor\MilitaryHelicopter">
-	</Filter>
+    </Filter>
     <Filter Include="02. GameObject\Object\Enemy\Normal\EtherClaymore">
       <UniqueIdentifier>{2e91f17b-8838-42a5-8a0a-feb4f0c6e2fd}</UniqueIdentifier>
     </Filter>
@@ -1022,9 +1022,6 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Enemy\Normal\EtherClaymore\State\Parry">
       <UniqueIdentifier>{3654afe4-97aa-4a58-9ad0-1c8974d7bd98}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Map\MilitaryHelicopter">
-      <UniqueIdentifier>{3725cb2b-0a0a-48e4-b810-dc4822b2c7d3}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\Object\Player\Character\03. Miyabi\State\Switch">
       <UniqueIdentifier>{00f18c7d-1578-4f15-8fa7-d24202c297bc}</UniqueIdentifier>
@@ -1157,6 +1154,12 @@
     </Filter>
     <Filter Include="03. Utility\06. FieldSystem\Room\05. Room_Gacha">
       <UniqueIdentifier>{820f4014-89e1-411c-b031-be391e0f1e5e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Effect\MeshEffect">
+      <UniqueIdentifier>{6160f086-da22-44d2-91a6-5d30cc56d8e0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Level\04. Zero\Stage_Start">
+      <UniqueIdentifier>{68bfc06d-7f7e-4232-b8f1-d9e74f644886}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -2222,6 +2225,9 @@
     <ClInclude Include="..\public\Room_Gacha.h">
       <Filter>03. Utility\06. FieldSystem\Room\05. Room_Gacha</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\ZeroStage_Start.h">
+      <Filter>01. Level\04. Zero\Stage_Start</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -3234,8 +3240,8 @@
       <Filter>02. GameObject\Object\Gacha\GachaProps\GachaStage\GachaResult\GachaWeapon</Filter>
     </ClCompile>
     <ClCompile Include="..\private\GachaAvatar.cpp">
-      <Filter>02. GameObject\Object\Gacha\GachaProps\GachaStage\GachaResult\GachaAvatar</Filter>    
-      </ClCompile>
+      <Filter>02. GameObject\Object\Gacha\GachaProps\GachaStage\GachaResult\GachaAvatar</Filter>
+    </ClCompile>
     <ClCompile Include="..\private\UI_Seoriyeol.cpp">
       <Filter>02. GameObject\UI\02. 3D\Plane\Damage_UI\Seoriyeol</Filter>
     </ClCompile>
@@ -3247,6 +3253,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Room_Gacha.cpp">
       <Filter>03. Utility\06. FieldSystem\Room\05. Room_Gacha</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ZeroStage_Start.cpp">
+      <Filter>01. Level\04. Zero\Stage_Start</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

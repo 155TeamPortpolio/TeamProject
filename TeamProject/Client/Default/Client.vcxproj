@@ -416,6 +416,7 @@
     <ClInclude Include="..\Public\MiyabiState_SwitchInNormal.h" />
     <ClInclude Include="..\Public\MiyabiState_SwitchInParryAid.h" />
     <ClInclude Include="..\Public\MiyabiState_SwitchOut.h" />
+    <ClInclude Include="..\public\ZeroStage_Start.h" />
     <ClInclude Include="..\public\UI_Swaebing.h" />
     <ClInclude Include="..\public\UI_Seoriyeol.h" />
     <ClInclude Include="..\Public\StageRouter.h" />
@@ -815,6 +816,7 @@
     <ClCompile Include="..\Private\MiyabiState_SwitchInNormal.cpp" />
     <ClCompile Include="..\Private\MiyabiState_SwitchInParryAid.cpp" />
     <ClCompile Include="..\Private\MiyabiState_SwitchOut.cpp" />
+    <ClCompile Include="..\private\ZeroStage_Start.cpp" />
     <ClCompile Include="..\private\UI_Swaebing.cpp" />
     <ClCompile Include="..\private\UI_Seoriyeol.cpp" />
     <ClCompile Include="..\Private\StageRouter.cpp" />
