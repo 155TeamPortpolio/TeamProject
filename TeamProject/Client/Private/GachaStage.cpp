@@ -14,6 +14,7 @@
 
 #include "CamDirector.h"
 #include "DataBase.h"
+#include "UIDirector.h"
 
 #include "Helper_Func.h"
 
@@ -49,21 +50,22 @@ void CGachaStage::PlayRevealEffect()
 		m_pScreen->SetScreen(GACHA_STAGE::AVATAR, GachaGrade::S);
 		SetBottomLightEffect(_float4(0.f,0.f,0.f,0.f), _float4(1.0f, 0.9f, 0.2f, 1.0f), _float4(0.25f, 0.25f, 0.25f, 0.5f), 1.0f);
 		SetTopLightEffect(_float4(0.f, 0.f, 0.f, 0.f), _float4(1.0f, 0.9f, 0.2f, 1.0f), _float4(0.25f, 0.25f, 0.25f, 0.5f), 1.2f);
-		SetMiddleLightEffect(_float4(0.1f, 0.1f, 0.1f, 1.f), _float4(0.7f, 0.7f, 0.7f, 1.f), 1.5f);
+		SetMiddleLightEffect(_float4(0.1f, 0.1f, 0.1f, 1.f), _float4(1.0f, 1.0f, 1.0f, 1.f), 0.6f);
 		break;
 	case GachaGrade::A:
 		m_pScreen->SetScreen(GACHA_STAGE::BANGBOO, GachaGrade::A);
 		SetBottomLightEffect(_float4(0.f, 0.f, 0.f, 0.f), _float4(1.0f, 0.2f, 0.5f, 1.0f), _float4(0.25f, 0.25f, 0.25f, 0.5f), 1.0f);
 		SetTopLightEffect(_float4(0.f, 0.f, 0.f, 0.f), _float4(1.0f, 0.2f, 0.5f, 1.0f), _float4(0.25f, 0.25f, 0.25f, 0.5f), 1.2f);
-		SetMiddleLightEffect(_float4(0.1f, 0.1f, 0.1f, 1.f), _float4(0.7f, 0.7f, 0.7f, 1.f), 1.5f);
+		SetMiddleLightEffect(_float4(0.1f, 0.1f, 0.1f, 1.f), _float4(1.0f, 1.0f, 1.0f, 1.f), 0.6f);
 		break;
 	case GachaGrade::B:
 		m_pScreen->SetScreen(GACHA_STAGE::BANGBOO, GachaGrade::B);
 		SetBottomLightEffect(_float4(0.f, 0.f, 0.f, 0.f), _float4(0.1f, 0.3f, 0.9f, 1.0f), _float4(0.25f, 0.25f, 0.25f, 0.5f), 1.0f);
 		SetTopLightEffect(_float4(0.f, 0.f, 0.f, 0.f), _float4(0.1f, 0.3f, 0.9f, 1.0f), _float4(0.25f, 0.25f, 0.25f, 0.5f), 1.2f);
-		SetMiddleLightEffect(_float4(0.1f, 0.1f, 0.1f, 1.f), _float4(0.7f, 0.7f, 0.7f, 1.f), 1.5f);
+		SetMiddleLightEffect(_float4(0.1f, 0.1f, 0.1f, 1.f), _float4(1.0f, 1.0f, 1.0f, 1.f), 0.6f);
 		break;
 	}
+	CUIDirector::GetInstance()->Show_GachaLabel((*m_pResultDesc)[m_iIndex].strLabel);
 }
 
 HRESULT CGachaStage::Initialize_Prototype(vector<GACHA_RESULT_DESC>* Desc)
@@ -124,8 +126,8 @@ void CGachaStage::Update(_float dt)
 		else CamDirector()->RequestSequence("Gacha/Spin");
 		++m_iIndex;
 		if (m_iIndex >= m_iMaxIndex) m_iIndex = 0;
-
-		SetMiddleLightEffect(_float4(0.6f, 0.6f, 0.6f, 1.f), _float4(0.1f, 0.1f, 0.1f, 1.f), 1.f);
+		CUIDirector::GetInstance()->Hide_GachaLabel();
+		SetMiddleLightEffect(_float4(1.f, 1.f, 1.f, 1.f), _float4(0.1f, 0.1f, 0.1f, 1.f), 1.f);
 	}
 }
 
@@ -245,13 +247,15 @@ void CGachaStage::Update_Lights(_float dt)
 
 			if (fProgress <= 0.5f)
 			{
-				_float fLerpRatio = fProgress * 2.f; 
-				vCurrentColor = XMVectorLerp(BottomLight.StartColor, BottomLight.MiddleColor, fLerpRatio);
+				_float t = fProgress * 2.f; 
+				_float fEasedRatio = Math::ApplyEase(EaseType::OutExpo, t);
+				vCurrentColor = XMVectorLerp(BottomLight.StartColor, BottomLight.MiddleColor, fEasedRatio);
 			}
 			else
 			{
-				_float fLerpRatio = (fProgress - 0.5f) * 2.f; 
-				vCurrentColor = XMVectorLerp(BottomLight.MiddleColor, BottomLight.EndColor, fLerpRatio);
+				_float t = (fProgress - 0.5f) * 2.f; 
+				_float fEasedRatio = Math::ApplyEase(EaseType::InExpo, t);
+				vCurrentColor = XMVectorLerp(BottomLight.MiddleColor, BottomLight.EndColor, fEasedRatio);
 			}
 
 			Desc.vLightDiffuse = vCurrentColor;
@@ -280,13 +284,15 @@ void CGachaStage::Update_Lights(_float dt)
 
 			if (fProgress <= 0.5f)
 			{
-				_float fLerpRatio = fProgress * 2.f;
-				vCurrentColor = XMVectorLerp(TopLight.StartColor, TopLight.MiddleColor, fLerpRatio);
+				_float t = fProgress * 2.f;
+				_float fEasedRatio = Math::ApplyEase(EaseType::OutExpo, t);
+				vCurrentColor = XMVectorLerp(TopLight.StartColor, TopLight.MiddleColor, fEasedRatio);
 			}
 			else
 			{
-				_float fLerpRatio = (fProgress - 0.5f) * 2.f;
-				vCurrentColor = XMVectorLerp(TopLight.MiddleColor, TopLight.EndColor, fLerpRatio);
+				_float t = (fProgress - 0.5f) * 2.f;
+				_float fEasedRatio = Math::ApplyEase(EaseType::InExpo, t);
+				vCurrentColor = XMVectorLerp(TopLight.MiddleColor, TopLight.EndColor, fEasedRatio);
 			}
 
 			Desc.vLightDiffuse = vCurrentColor;
@@ -311,11 +317,9 @@ void CGachaStage::Update_Lights(_float dt)
 			LIGHT_DESC Desc = pLight->Get_Desc();
 
 			_float fProgress = MiddleLight.CurElpasedTime / MiddleLight.Duration;
-			_vector4 vCurrentColor;
+			_float fEasedRatio = Math::ApplyEase(EaseType::InOutCubic, fProgress);
 
-			_float fLerpRatio = fProgress;
-			vCurrentColor = XMVectorLerp(MiddleLight.StartColor, MiddleLight.EndColor, fLerpRatio);
-
+			_vector4 vCurrentColor = XMVectorLerp(MiddleLight.StartColor, MiddleLight.EndColor, fEasedRatio);
 			Desc.vLightDiffuse = vCurrentColor;
 			pLight->Set_Desc(Desc);
 		}
