@@ -47,10 +47,10 @@ HRESULT CMaterialData::Initialize(const string& levelKey, ifstream& ifs, const s
 			TEXTURE_INFO_HEADER textureInfoHeader = {};
 			ifs.read(reinterpret_cast<char*>(&textureInfoHeader), sizeof(TEXTURE_INFO_HEADER));
 			CGameInstance::GetInstance()->Get_ResourceMgr()->Add_ResourcePath(
-				ParentName+ "_" +textureInfoHeader.TextureKey,
+				textureInfoHeader.TextureKey,
 				directory + textureInfoHeader.TextureKey);
 
-			Link_Texture(levelKey, ParentName + "_" + textureInfoHeader.TextureKey, static_cast<TEXTURE_TYPE>(textureHeader.typeID));
+			Link_Texture(levelKey,textureInfoHeader.TextureKey, static_cast<TEXTURE_TYPE>(textureHeader.typeID));
 		}
 	}
 

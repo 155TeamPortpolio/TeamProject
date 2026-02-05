@@ -166,16 +166,17 @@ MINMAX_BOX CSkeletalModel::Get_LocalBoundingBox()
 
  vector<_float4x4> CSkeletalModel::Get_BoneMatrices(_uint meshIndex)
  {
+	 auto usedBones = m_pData->Get_Mesh(meshIndex)->Get_UsedBones();
 	 vector<_float4x4> result;
-	 result.reserve(m_CombinedMatrices.size());
+	 result.reserve(usedBones.size());
 
-	 for (size_t i = 0; i < m_CombinedMatrices.size(); ++i)
+	 for (uint16_t boneIndex : usedBones)
 	 {
-		 _smatrix final = m_CombinedMatrices[i];
-		 _smatrix offset= m_pData->Get_Offset(meshIndex, i);
-
-		 result.push_back(offset*final);
+		 _smatrix finalMat = m_CombinedMatrices[boneIndex];
+		 _smatrix offsetMat = m_pData->Get_Offset(meshIndex, (_uint)boneIndex);
+		 result.push_back(offsetMat * finalMat);
 	 }
+
 	 return result;
  }
 
