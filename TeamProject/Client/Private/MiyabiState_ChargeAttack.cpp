@@ -177,6 +177,7 @@ void CMiyabiState_Charge_Attack01::Update(CMiyabi* pOwner, _float dt)
         if (iLevel == 1)
         {
             BattleSystem()->TakeAreaDamage(vPos, 8.f, vLook, 30.f, HitDesc()
+                .Name(pOwner->Get_CharacterName())
                 .Type(HIT_TYPE::ONCE)
                 .Damage(pOwner->Get_AttackPower() * 4.547f * Helper::Get_Random_Float(1.f, 1.5f)
                     , DAMAGE_TYPE::NORMAL)
@@ -226,6 +227,7 @@ void CMiyabiState_Charge_Attack03::Update(CMiyabi* pOwner, _float dt)
             _vector3 vPos = pOwner->Get_WorldPos();
             _vector3 vLook = pOwner->Get_Component<CTransform>()->Dir(STATE::LOOK);
             BattleSystem()->TakeAreaDamage(vPos, 8.f, HitDesc()
+                .Name(pOwner->Get_CharacterName())
                 .Type(HIT_TYPE::ONCE)
                 .Damage(pOwner->Get_AttackPower() * 1.07055f * Helper::Get_Random_Float(1.f, 1.5f)
                     , DAMAGE_TYPE::NORMAL)

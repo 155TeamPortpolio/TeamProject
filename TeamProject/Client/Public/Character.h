@@ -173,6 +173,7 @@ public: // 행동 이벤트
     virtual void    On_Attack();
     virtual void    On_Evade();
     virtual void    On_SwitchIn(SWITCH eType) {}
+    virtual void    On_ChainParry() {}
     virtual void    On_SwitchOut();
     virtual void    On_Ultimate();
     virtual void    On_Special() {}
@@ -272,7 +273,6 @@ protected:
     // 패링
     _int            m_iParryColliderIndex = {};
     SWITCH          m_eSwitchType = SWITCH::END;
-    _float          m_fParryOffset = { 1.8f };
     _vector3        m_vParryPos = {};
     _vector3        m_vParryLook = {};
     OBJECT_HANDLE   m_ParryHandle;

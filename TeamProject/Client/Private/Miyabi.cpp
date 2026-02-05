@@ -20,7 +20,7 @@
 #include "ObjectContainer.h"
 
 #include "StateMachine.h"
-//#include "MiyabiState_Start.h"
+#include "MiyabiState_Start.h"
 #include "MiyabiState_Idle.h"
 #include "MiyabiState_Move.h"
 #include "MiyabiState_Attack.h"
@@ -203,6 +203,12 @@ void CMiyabi::On_SwitchIn(SWITCH eType)
 	m_pStateMachine->Set_Trigger("SwitchIn");
 }
 
+void CMiyabi::On_ChainParry()
+{
+	m_pStateMachine->Set_Int("IdleEntryMode", 2);
+	m_pStateMachine->Set_Trigger("ToIdle");
+}
+
 void CMiyabi::On_SwitchOut()
 {
 	__super::On_SwitchOut();
@@ -304,7 +310,7 @@ HRESULT CMiyabi::Initialize_StateMachine()
 
 HRESULT CMiyabi::Initialize_States()
 {
-	//m_pStateMachine->Register_State("Start", CMiyabiState_Start::Create());
+	m_pStateMachine->Register_State("Start", CMiyabiState_Start::Create());
 	m_pStateMachine->Register_State("Idle", CMiyabiState_Idle::Create());
 	m_pStateMachine->Register_State("Move", CMiyabiState_Move::Create());
 	m_pStateMachine->Register_State("Attack", CMiyabiState_Attack::Create());

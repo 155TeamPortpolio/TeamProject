@@ -216,6 +216,12 @@ void CJaneDoe::On_SwitchIn(SWITCH eType)
     m_pStateMachine->Set_Trigger("SwitchIn");
 }
 
+void CJaneDoe::On_ChainParry()
+{
+    m_pStateMachine->Set_Int("IdleEntryMode", 2);
+    m_pStateMachine->Set_Trigger("ToIdle");
+}
+
 void CJaneDoe::On_SwitchOut()
 {
     __super::On_SwitchOut();
