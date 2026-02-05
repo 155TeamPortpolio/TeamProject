@@ -299,6 +299,7 @@ void CCorinState_ExAttack_Explode::Enter(CCorin* pOwner)
     pSubStateMachine->Set_Int("EndEntryMode", iEntryMode);
 
     pOwner->Stop_Effect("Corin_Ex_Saw_Slash0");
+    pOwner->Play_Effect("Corin_Ex_Explode", _vector3(0.1f, 0.7f, 1.3f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
 }
 
 void CCorinState_ExAttack_Explode::Update(CCorin* pOwner, _float dt)

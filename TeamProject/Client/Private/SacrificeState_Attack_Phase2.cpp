@@ -632,15 +632,15 @@ void CSacrificeState_Attack_08_Phase2::Update_Move(CSacrifice* pOwner, _float dt
 		{
 			_vector3 vCurrPosition = pOwner->Get_Component<CTransform>()->Get_Pos();
 			_vector3 vNextPosition = _vector3::Lerp(vCurrPosition, m_vFirstTargetPosition, dt * 3.f);
-			_vector3 vVelocity = (vNextPosition - vCurrPosition) / dt;
-			pCCT->Move_Velocity(vVelocity, dt);
+			_vector3 vDeltaMove = (vNextPosition - vCurrPosition);
+			pCCT->Move_Displacement(vDeltaMove, dt);
 		}
 		else if (m_fAnimProgress < 0.5f)
 		{
 			_vector3 vCurrPosition = pOwner->Get_Component<CTransform>()->Get_Pos();
 			_vector3 vNextPosition = _vector3::Lerp(vCurrPosition, m_vSecondTargetPosition, dt * 3.f);
-			_vector3 vVelocity = (vNextPosition - vCurrPosition) / dt;
-			pCCT->Move_Velocity(vVelocity, dt);
+			_vector3 vDeltaMove = (vNextPosition - vCurrPosition);
+			pCCT->Move_Displacement(vDeltaMove, dt);
 		}
 	}
 }
