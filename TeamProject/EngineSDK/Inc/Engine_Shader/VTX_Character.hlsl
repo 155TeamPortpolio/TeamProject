@@ -370,10 +370,8 @@ PS_OUT PS_DEBUG(PS_IN In)
     PS_OUT Out;
     
     vector vMtrlDiffuse = DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
-    if (vMtrlDiffuse.a < 0.2)
-    {
-        vMtrlDiffuse = float4(In.vTexcoord, 1, 1);
-    }
+    vMtrlDiffuse = float4(In.vTexcoord, 1, 1);
+
   
     vector vNormalDesc = NormalTexture.Sample(DefaultSampler, In.vTexcoord);
     Out.vDiffuse = vMtrlDiffuse;
