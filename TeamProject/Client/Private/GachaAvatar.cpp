@@ -2,13 +2,16 @@
 #include "GachaAvatar.h"
 
 #include "GachaStage.h"
+#include "GachaFootStage.h"
 
 #include "SkeletalModel.h"
 #include "Material.h"
 #include "Animator3D.h"
 #include "RigidBody.h"
 #include "Child.h"
+#include "ObjectContainer.h"
 
+#include "GameInstance.h"
 #include "Helper_Func.h"
 
 CGachaAvatar::CGachaAvatar()

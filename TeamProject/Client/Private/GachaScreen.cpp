@@ -11,6 +11,8 @@
 #include "Texture.h"
 #include "DataBase.h"
 
+#include "UIDirector.h"
+
 CGachaScreen::CGachaScreen()
 	:CGameObject()
 {
@@ -25,8 +27,9 @@ void CGachaScreen::PlayTVSequence(vector<GACHA_RESULT_DESC>* ResultDesc)
 {
 	if (m_fScreenElapsedTime >= m_fIntervalScreenDuration)
 	{
-		if(m_iCurPlayingIndex < 10) 
+		if (m_iCurPlayingIndex < 10)
 			++m_iCurPlayingIndex;
+		else CUIDirector::GetInstance()->Show_GachaSkipButton();
 
 		SetMaterialInstances(m_iCurPlayingIndex,{
 			(*ResultDesc)[0].Grade == GachaGrade::S ? 5 : (*ResultDesc)[0].Grade == GachaGrade::A ? 3 : 1,
@@ -119,6 +122,7 @@ void CGachaScreen::Awake()
 		m_Cols[idx] = Desc.Col;
 		m_Rows[idx] = Desc.Row;
 		m_MaxFrameIndexs[idx] = Desc.MaxFrame;
+		m_CurrentFrameIndexs[idx] = Helper::Get_Random_Int(0, Desc.MaxFrame - 1);
 	}
 }
 

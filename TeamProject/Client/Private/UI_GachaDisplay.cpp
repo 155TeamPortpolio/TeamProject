@@ -49,6 +49,10 @@ void CUI_GachaDisplay::UI_Active(void* pArg)
     switch (pDesc->eType)
     {
     case TYPE::LABEL:
+        if (m_isLabelVisible)
+            return;
+
+        m_isLabelVisible = true;
         Set_ChildAnimation(CHILD::BG, 0);
         Set_ChildAnimation(CHILD::LABEL, 0);
         if (m_pLabelTextSlot)
@@ -69,6 +73,10 @@ void CUI_GachaDisplay::UI_DeActive(void* pArg)
     switch (pDesc->eType)
     {
     case TYPE::LABEL:
+        if (!m_isLabelVisible)
+            return;
+
+        m_isLabelVisible = false;
         Set_ChildAnimation(CHILD::BG, 1);
         Set_ChildAnimation(CHILD::LABEL, 1);
         break;

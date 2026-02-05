@@ -380,6 +380,8 @@
     <ClInclude Include="..\public\Claymore_Idle.h" />
     <ClInclude Include="..\public\Claymore_Move.h" />
     <ClInclude Include="..\Public\CrowdNpc.h" />
+    <ClInclude Include="..\public\GachaFootStage.h" />
+    <ClInclude Include="..\Public\MiyabiState_ExAttack.h" />
     <ClInclude Include="..\Public\PedestrianNpc.h" />
     <ClInclude Include="..\Public\Cyclops.h" />
     <ClInclude Include="..\Public\Cyclops_Born.h" />
@@ -414,6 +416,7 @@
     <ClInclude Include="..\Public\MiyabiState_Dash.h" />
     <ClInclude Include="..\Public\MiyabiState_Evade.h" />
     <ClInclude Include="..\Public\MiyabiState_Hit.h" />
+    <ClInclude Include="..\Public\MiyabiState_RushAttack.h" />
     <ClInclude Include="..\Public\MiyabiState_Start.h" />
     <ClInclude Include="..\Public\MiyabiState_SwitchIn.h" />
     <ClInclude Include="..\Public\MiyabiState_SwitchInAttack.h" />
@@ -422,6 +425,7 @@
     <ClInclude Include="..\Public\MiyabiState_SwitchOut.h" />
     <ClInclude Include="..\Public\UI_GachaDisplay.h" />
     <ClInclude Include="..\Public\UI_GachaResult.h" />
+    <ClInclude Include="..\Public\UI_GachaResultItem.h" />
     <ClInclude Include="..\public\UI_Swaebing.h" />
     <ClInclude Include="..\public\UI_Seoriyeol.h" />
     <ClInclude Include="..\Public\StageRouter.h" />
@@ -789,6 +793,8 @@
     <ClCompile Include="..\Private\CorinState_AssaultAttack.cpp" />
     <ClCompile Include="..\Private\CorinState_CounterAttack.cpp" />
     <ClCompile Include="..\Private\CrowdNpc.cpp" />
+    <ClCompile Include="..\private\GachaFootStage.cpp" />
+    <ClCompile Include="..\Private\MiyabiState_ExAttack.cpp" />
     <ClCompile Include="..\Private\PedestrianNpc.cpp" />
     <ClCompile Include="..\Private\Cyclops.cpp" />
     <ClCompile Include="..\Private\Cyclops_Born.cpp" />
@@ -819,6 +825,7 @@
     <ClCompile Include="..\Private\MiyabiState_Dash.cpp" />
     <ClCompile Include="..\Private\MiyabiState_Evade.cpp" />
     <ClCompile Include="..\Private\MiyabiState_Hit.cpp" />
+    <ClCompile Include="..\Private\MiyabiState_RushAttack.cpp" />
     <ClCompile Include="..\Private\MiyabiState_Start.cpp" />
     <ClCompile Include="..\Private\MiyabiState_SwitchIn.cpp" />
     <ClCompile Include="..\Private\MiyabiState_SwitchInAttack.cpp" />
@@ -827,6 +834,7 @@
     <ClCompile Include="..\Private\MiyabiState_SwitchOut.cpp" />
     <ClCompile Include="..\Private\UI_GachaDisplay.cpp" />
     <ClCompile Include="..\Private\UI_GachaResult.cpp" />
+    <ClCompile Include="..\Private\UI_GachaResultItem.cpp" />
     <ClCompile Include="..\private\UI_Swaebing.cpp" />
     <ClCompile Include="..\private\UI_Seoriyeol.cpp" />
     <ClCompile Include="..\Private\StageRouter.cpp" />
