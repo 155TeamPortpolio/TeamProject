@@ -24,6 +24,13 @@ public:
 private:
 	CUI_Object* m_pTitle = {};
 
+	vector<CUI_Object*> m_pItems = {};
+
+	_bool m_isItemAppear = {};
+	_int m_iItemIndex = {};
+	_float m_fItemTimer = {};
+	_float m_fItemDuration = { 0.1f };
+
 	static const _int COL = 5;
 	static const _int ROW = 2; 
 	static const _int WIDTH = 220.f;

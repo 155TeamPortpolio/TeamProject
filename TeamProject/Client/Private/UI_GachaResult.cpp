@@ -22,7 +22,8 @@ HRESULT CUI_GachaResult::Initialize(INIT_DESC* pArg)
 
     Create_Items();
 
-    UI_Active();
+    Set_Alive(false);
+    //UI_Active();
 
 	return S_OK;
 }
@@ -36,7 +37,19 @@ void CUI_GachaResult::Update(_float dt)
     if (InputDevice()->Key_Down('P'))
         UI_Active();
 
-	__super::Update(dt);
+    if (m_iItemIndex < m_pItems.size())
+    {
+        m_fItemTimer += dt;
+    
+        if (m_fItemTimer >= m_fItemDuration)
+        {
+            m_pItems[m_iItemIndex]->UI_Active();
+            ++m_iItemIndex;
+            m_fItemTimer = 0.f;
+        }
+    }
+
+    __super::Update(dt);
 
 	Get_Component<CObjectContainer>()->UpdateChild(dt);
 }
@@ -46,6 +59,12 @@ void CUI_GachaResult::UI_Active(void* pArg)
     Set_Animation(0);
     if (m_pTitle)
         m_pTitle->Set_Animation(0);
+
+    m_iItemIndex = 0;
+    m_fItemTimer = 0;
+
+   for (auto& pItem : m_pItems)
+       pItem->Set_Alive(false);
 }
 
 void CUI_GachaResult::UI_DeActive(void* pArg)
@@ -63,9 +82,9 @@ void CUI_GachaResult::Create_Items()
 
     _float2 vCenter = { m_WinSize.x * 0.5f, m_WinSize.y * 0.7f };
 
-    for (_int i = 0; i < COL; ++i)
+    for (_int j = 0; j < ROW; ++j)
     {
-        for (_int j = 0; j < ROW; ++j)
+        for (_int i = 0; i < COL; ++i)
         {
             auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_GachaResultItem" }).Build("resultItem");
             if (!pObj)
@@ -77,8 +96,9 @@ void CUI_GachaResult::Create_Items()
             float x = vCenter.x + offsetX;
             float y = vCenter.y + offsetY;
             pObj->Set_AnchorOffset({ x, y });
-
+            pObj->Set_Alive(false);
             pContainer->Add_Child(pObj);
+            m_pItems.push_back(pObj);
         } 
     } 
 }

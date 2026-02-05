@@ -6,6 +6,9 @@ NS_BEGIN(Client)
 class CUI_GachaResultItem final : public CUI_Object
 {
 private:
+	enum class RANK { B, A, S, END };
+
+private:
 	CUI_GachaResultItem() {}
 	CUI_GachaResultItem(const CUI_GachaResultItem& rhs) : CUI_Object(rhs) {}
 	virtual ~CUI_GachaResultItem() DEFAULT;
@@ -20,6 +23,11 @@ public:
 	virtual void    Render_GUI()                     override { __super::Render_GUI(); }
 	virtual void	UI_Active(void* pArg = nullptr)  override;
 	virtual void	UI_DeActive(void* pArg = nullptr) override;
+
+private:
+	RANK		m_eRank = { RANK::B };
+
+	CUI_Object* m_pOverlay = {};
 
 public:
 	static  CGameObject* Create();

@@ -90,6 +90,7 @@ public:
 	void Add_AnchorOffsetX(_float fOffset) { m_vAnchorOffset.x += fOffset; }
 	void Add_AnchorOffsetY(_float fOffset) { m_vAnchorOffset.y += fOffset; }
 	void Set_Color(_float4 vColor) { m_vColor = vColor; }
+	void Set_RGB(_float3 vRGB) { m_vColor.x = vRGB.x; m_vColor.y = vRGB.y; m_vColor.z = vRGB.z; }
 	void Set_Alpha(_float fAlpha) { m_vColor.w = fAlpha; }
 	void Rotate_Left(_float _radian) { m_fRadian += _radian; }
 	/*Get Size*/
