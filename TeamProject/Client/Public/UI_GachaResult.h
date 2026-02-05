@@ -3,15 +3,12 @@
 
 NS_BEGIN(Client)
 
-class CUI_GachaPage final : public CUI_Object
+class CUI_GachaResult final : public CUI_Object
 {
 private:
-	CUI_GachaPage() {}
-	CUI_GachaPage(const CUI_GachaPage& rhs) : CUI_Object(rhs) {}
-	virtual ~CUI_GachaPage() DEFAULT;
-
-public:
-	void Select_Channel(CUI_Object* pSelected);
+	CUI_GachaResult() {}
+	CUI_GachaResult(const CUI_GachaResult& rhs) : CUI_Object(rhs) {}
+	virtual ~CUI_GachaResult() DEFAULT;
 
 public:
 	virtual HRESULT Initialize_Prototype()           override;
@@ -23,19 +20,6 @@ public:
 	virtual void    Render_GUI()                     override { __super::Render_GUI(); }
 	virtual void	UI_Active(void* pArg = nullptr)  override;
 	virtual void	UI_DeActive(void* pArg = nullptr) override;
-
-private:
-	CUI_Object* m_pSelectedChannel = {};
-
-	_uint	m_iDenny = {};	// µ¥´Ï
-
-private:
-	void Create_BackButton();
-	void Create_Currency();
-	void Create_Channels();
-	void Create_Conversions();
-
-	void OnClick_Conversion();
 
 public:
 	static  CGameObject* Create();

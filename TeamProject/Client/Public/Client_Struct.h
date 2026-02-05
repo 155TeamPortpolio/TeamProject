@@ -146,6 +146,7 @@ namespace Client {
 		string		strModel;
 		string		strMaterial;
 		string		strTexture;
+		wstring		strLabel;
 		_float		RotX;
 		_float		RotY;
 		_float		RotZ;
@@ -161,6 +162,11 @@ namespace Client {
 		_int		Row;
 		_int		MaxFrame;
 	}TV_DESC;
+
+	typedef struct tagGachaChannelDesc {
+		wstring		strLabel = {};
+		string		strTextureKey = {}; 
+	}GACHA_CHANNEL_DESC;
 
 	typedef struct tagCloudDesc {
 		_float3 skyColor = {};

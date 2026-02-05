@@ -12,6 +12,8 @@ class CUI_GachaChannel final : public CUI_Object
 {
 public:
 	typedef struct tagChannelDesc : public UI_DESC {
+		wstring strLabel = {};
+		string strTextureKey = {}; 
 		function<void(CUI_Object* pObj)>	onSelect = {};
 	}CHANNEL_DESC;
 
@@ -36,7 +38,7 @@ private:
 	function<void(CUI_Object* pObj)>	m_onSelect = {};
 
 	_float			m_fLerpTimer = {};
-	_float			m_fLerpSpeed = { 2.f };
+	_float			m_fLerpSpeed = { 4.f };
 	Vector4			m_vLerpColors[2] = {};
 
 	class CUI_Object* m_pOutline = {};

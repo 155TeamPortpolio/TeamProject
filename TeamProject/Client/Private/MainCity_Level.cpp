@@ -71,7 +71,7 @@ void CMainCity_Level::Update()
 	auto layer = ObjectManager()->Get_Layer({"MainCity_Level","PlacedObject_Layer"});
 
 	if(InputDevice()->Key_Tap(VK_F4)) 
-		FieldSystem()->RequestEnter("Gacha", false);
+		FieldSystem()->RequestEnter("Gacha", true);
 	//layer->Set_RenderState(false);
 }
 

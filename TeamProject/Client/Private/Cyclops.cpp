@@ -7,6 +7,7 @@
 
 /* Child */
 #include "AttackSign.h"
+#include "Cyclops_Spit.h"
 
 /* Component */
 #include "Material.h"
@@ -207,6 +208,31 @@ void CCyclops::Render_GUI()
 
 			ImGui::TreePop();
 		}
+		if (ImGui::TreeNode("Spit##Spit"))
+		{
+			// 침 확인용
+			ImGui::BeginDisabled(true);
+			auto pObjectContainerCom = Get_Component<CObjectContainer>();
+			for (auto& index : m_SpitIndex)
+			{
+				auto pSpit = dynamic_cast<CCyclops_Spit*> (pObjectContainerCom->Get_ChildByOrder(index));
+				if (nullptr == pSpit)
+					continue;
+				_bool isAlive = pSpit->Is_Alive();
+				ImGui::Checkbox(pSpit->Get_InstanceName().c_str(), &isAlive);
+			}
+			ImGui::EndDisabled();
+
+			if (ImGui::Button("Spit Straight"))
+				Spit(ENUM(CCyclops_Spit::SPIT::STRAIGHT));
+			if (ImGui::Button("Spit Arc Center"))
+				Spit(ENUM(CCyclops_Spit::SPIT::ARC_CENTER));
+			if (ImGui::Button("Spit Arc Left"))
+				Spit(ENUM(CCyclops_Spit::SPIT::ARC_LEFT));
+			if (ImGui::Button("Spit Arc Riight"))
+				Spit(ENUM(CCyclops_Spit::SPIT::ARC_RIGHT));
+			ImGui::TreePop();
+		}
 
 		ImGui::TreePop();
 	}
@@ -221,6 +247,10 @@ void CCyclops::Render_GUI()
 
 	if (ImGui::Button("Groggy"))
 		m_tStatus.iGroggyValue += 100;
+
+	if (ImGui::Button("Test Alive"))
+		Set_Alive(!Is_Alive());
+
 
 	ImGui::PopID();
 }
@@ -247,12 +277,68 @@ void CCyclops::Parried()
 
 HRESULT CCyclops::Ready_Children(INIT_DESC* pArg)
 {
-	Create_AttackSign("Bip001_Head");
-	Create_UIEnemyStatus("Bip001_Spine2");
+	BATTLE_COLLIDER_DESC WeaponDesc = {};
+
+	WeaponDesc.tagName = "Head";
+	WeaponDesc.isAttachBone = true;
+	WeaponDesc.tagBone = "Bn_Head";
+	WeaponDesc.pOwnerAnimator3D = Get_Component<CAnimator3D>();
+	WeaponDesc.vAttackSize = { 0.5f,0.f,0.f };
+
+	if (FAILED(AttachBattleColliderObject(&WeaponDesc)))
+		return E_FAIL;
+
+	Create_AttackSign("Bn_Head");
+	Create_UIEnemyStatus("Bip001_Spine");
 	Create_MeshPyramid();
+
+	Ready_Spit(3);
 
 	return S_OK;
 }
+
+HRESULT CCyclops::Ready_Spit(_uint iNum)
+{
+	if (1 > iNum)
+		return E_FAIL;
+
+	string tagNowLevel = LevelManager()->Get_NowLevelKey();
+	auto pObjectContainer = Get_Component<CObjectContainer>();
+
+	_float4x4* pHeadBone = Get_Component<CAnimator3D>()->Get_BoneMatrixPtr(CAnimator3D::BoneSpace::COMBINED, "Bn_Head");
+	if (nullptr == pHeadBone)
+		return E_FAIL;
+	for (_uint i = 0; i < iNum; ++i)
+	{
+		string tagInstanceName = "Spit" + to_string(i);
+
+		CCyclops_Spit::SPIT_DESC* pDesc = new CCyclops_Spit::SPIT_DESC();
+		pDesc->pHeadBone = pHeadBone;
+
+		COLLIDER_DESC SpitColDesc = {};
+		SpitColDesc.eGroup = COLLISION_GROUP::MONSTER;
+		SpitColDesc.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER) | ENUM(COLLISION_GROUP::COMMON) | ENUM(COLLISION_GROUP::PLAYER_ATTACK);
+		SpitColDesc.bTrigger = true;
+		SpitColDesc.bAutoFit = false;
+		SpitColDesc.eType = COLLIDER_TYPE::SPHERE;
+		SpitColDesc.vSize = { 0.2f, 0.f, 0.f };
+
+		auto pSpit = Builder::Create_Object({ tagNowLevel , "Proto_GameObject_Cyclops_Spit" })
+			.Add_ObjDesc(pDesc)
+			.Collider(SpitColDesc)
+			.Build(tagInstanceName);
+
+		if (nullptr == pSpit)
+			continue;
+
+		_int iChildIndex = pObjectContainer->Add_Child(pSpit, false);
+
+		m_SpitIndex.push_back(iChildIndex);
+	}
+
+	return S_OK;
+}
+
 
 CCyclops* CCyclops::Create()
 {
@@ -315,6 +401,28 @@ void CCyclops::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER cha
 			.Loop(false)
 			.Apply();
 	}
+}
+
+void CCyclops::Spit(_uint iSpitType)
+{
+	if (ENUM(CCyclops_Spit::SPIT::ARC_RIGHT) < iSpitType || 0 > iSpitType)
+		return;
+
+	auto pObjectContainerCom = Get_Component<CObjectContainer>();
+	for (auto& index : m_SpitIndex)
+	{
+		auto pSpit = dynamic_cast<CCyclops_Spit*> (pObjectContainerCom->Get_ChildByOrder(index));
+		if (nullptr == pSpit)
+			continue;
+
+		if (false == pSpit->Is_Alive())
+		{
+			pSpit->ShootSpit(static_cast<CCyclops_Spit::SPIT>(iSpitType));
+			return;
+		}
+	}
+
+
 }
 
 /* For.State Machine */
@@ -382,10 +490,10 @@ HRESULT CCyclops::Ready_Rules()
 	m_vIdleTime = { 1.f, 0.f };
 
 	m_tHysteriesis.fEvadeEnter = 3.f;
-	m_tHysteriesis.fComboEnter = 3.5f;
-	m_tHysteriesis.fComboExit = 4.5f;
-	m_tHysteriesis.fChaseEnter = 7.f;
-	m_tHysteriesis.fChaseExit = 5.f;
+	m_tHysteriesis.fComboEnter = 5.0f;
+	m_tHysteriesis.fComboExit = 8.f;
+	m_tHysteriesis.fChaseEnter = 12.f;
+	m_tHysteriesis.fChaseExit = 10.f;
 
 	return S_OK;
 }
@@ -410,7 +518,7 @@ void CCyclops::Update_States(_float dt)
 	//================================
 }
 
-void CCyclops::ControlState(const _float dt)
+void CCyclops::ControlState(const _float dt)	
 {
 	if ("Death" != m_pStateMachine->Get_CurrentStateName() &&
 		0 >= m_tStatus.iNowHP)
