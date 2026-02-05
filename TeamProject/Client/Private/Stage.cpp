@@ -22,8 +22,7 @@ CStage::CStage()
 HRESULT CStage::Exit_Stage(StageContext& context)
 {
 	BattleSystem()->ClearBattleStage();
-	ObjectManager()->Get_Layer({ "Zero_Level","PlacedObject_Layer" })->Clear_Layer();
-	ObjectManager()->Get_Layer({ "Zero_Level","InteractableObject_Layer" })->Clear_Layer();
+
 	m_introFlowBuilt = false;
 	m_outroFlowBuilt = false;
 	m_iNextChoice = { -1 };
