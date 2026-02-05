@@ -15,6 +15,11 @@ void CMiyabiState_Idle::Enter(CMiyabi* pOwner)
     {
         pOwner->Get_StateMachine()->Set_Trigger("Evade");
     }
+    else if (iEntryMode == 2)
+    {
+        pOwner->Set_Switch(CCharacter::SWITCH::PARRYAID);
+        pOwner->Get_StateMachine()->Set_Trigger("SwitchIn");
+    }
 
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Idle")
         .Loop(true)

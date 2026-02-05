@@ -248,14 +248,16 @@ OBJECT_HANDLE CCharacter::Calculate_Parry()
     }
 
     _vector3 vAttackPos = {};
+    _float vAttackOffset = {};
     _vector3 vAttackLook = {};
     if (targetHandle.isValid())
     {
-        vAttackPos = targetHandle.Get()->Get_Component<CCharacterController>()->Get_FootPosition();
+        vAttackPos = targetHandle.Get()->Get_WorldPos();
+        vAttackOffset = targetHandle.Get()->Get_Component<CCharacterController>()->Get_Radius();
         vAttackLook = targetHandle.Get()->Get_Component<CTransform>()->Dir(STATE::LOOK);
     }
 
-    m_vParryPos = vAttackPos + vAttackLook * m_fParryOffset;
+    m_vParryPos = vAttackPos + vAttackLook * vAttackOffset * 2.f;
     m_vParryPos.y = vAttackPos.y;
     m_vParryLook = vAttackPos - m_vParryPos;
     m_vParryLook.Normalize();
@@ -316,6 +318,11 @@ void CCharacter::On_Ultimate()
 void CCharacter::On_Interact()
 {
     m_bCanInteract = true;
+}
+
+void CCharacter::OnDefensiveAssist()
+{
+
 }
 
 void CCharacter::Process_RootMotion(_float dt, const ROOTMOTION_DESC& desc)
