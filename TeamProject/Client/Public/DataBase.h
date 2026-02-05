@@ -30,6 +30,7 @@ public:
     GACHA_RESULT_DESC               GetGachaResultDesc(_int ID);
     vector<GACHA_RESULT_DESC>       GetGachaGroup();
     TV_DESC                         GetTVDesc(const string& strName);
+    const vector<GACHA_CHANNEL_DESC>& GeGachaChannels();
 
 public:
     HRESULT LoadPlayerCreationTable(const string& csvPath);
@@ -44,6 +45,7 @@ public:
     HRESULT LoadGachaResultData(const string& csvPath);
     HRESULT LoadGachaData(const string& csvPath);
     HRESULT LoadTVData(const string& csvPath);
+    HRESULT LoadGachaChannelData(const string& csvPath);
 
 public:
     const CASHED_OBJ_DATA* Get_CashedData(const string& AreaTag);
@@ -76,8 +78,9 @@ private:
     //FieldData
     unordered_map<_int, GACHA_RESULT_DESC>                  m_ResultTables;
     vector<array<_int, 10>>                                 m_GachaData;
+    vector<GACHA_CHANNEL_DESC>                              m_GachaChannels;
     unordered_map<string, RAMEN_DESC>                       m_RamenTables;
-    unordered_map<string, TV_DESC>                          m_TVTables;
+    unordered_map<string, TV_DESC>                          m_TVTables; 
     // BattleField Data
     
     //맵 데이터 <-> 런타임 데이터 연결용 (현재 작동중인 레벨에서만)

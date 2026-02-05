@@ -250,6 +250,15 @@ void CEnemy::Create_AttackSign(string boneTag)
 	pAttackSign->Get_Component<CBoneFollower>()->Link_Bone(pAnimator, boneTag);
 }
 
+void CEnemy::Set_Alive(_bool alive)
+{
+	m_isAlive = alive;
+
+	if (m_hUIEnemyStatus.isValid())
+		m_hUIEnemyStatus.Get()->Set_Alive(alive);
+
+}
+
 void CEnemy::Active_AttackSign(_bool parryEnable)
 {
 	auto pAttackSign = Get_Component<CObjectContainer>()->Find_ObjectByName("AttackSign");
@@ -341,6 +350,8 @@ void CEnemy::Create_UIBossHUD()
 
 	// UI Mgr¿¡ µî·Ï
 	CGameInstance::GetInstance()->Get_UIMgr()->Add_UIObject(pBossHUD, strLevelKey);
+
+	m_hUIEnemyStatus = pBossHUD->Get_Handle();
 }
 HRESULT CEnemy::AttachBattleColliderObject(BATTLE_COLLIDER_DESC* pDesc, _bool isSeparate)
 {

@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "Cyclops.h"
 #include "Cyclops_Attack.h"
+#include "Cyclops_Spit.h"
 #include "Helper_Func.h"
 
 #include "Animator3D.h"
@@ -15,6 +16,10 @@ void CCyclops_Attack::Enter(CCyclops* pOwner)
 		Register_Transitions();
 
 		__super::Enter(pOwner);
+
+		m_HitDesc.eDamageType = DAMAGE_TYPE::NORMAL;
+		m_HitDesc.eHitType = HIT_TYPE::ONCE;
+		m_HitDesc.fDamage = 10.f;
 	}
 
 	auto pStateMachine = pOwner->GetStateMachine();
@@ -30,19 +35,29 @@ void CCyclops_Attack::Enter(CCyclops* pOwner)
 		AttackFromIndex(iAttackPatternIndex);
 	}
 	else {
-		//iAttackPatternIndex = Helper::Get_Random_Int(1, 3);
-
-		if (targetinginfo.fDistance <= hysteriesis.fComboEnter)
-			iAttackPatternIndex = 2;		// 뒷 구르기 후 한 발 공격
+		if (targetinginfo.fDistance <= hysteriesis.fEvadeEnter) // 가까울때
+		{
+			_int i = Helper::Get_Random_Int(0, 3);
+			if (0 == i)
+				iAttackPatternIndex = 4;	// 25% 확률로 백스텝하면서 침뱉는 공격
+			else
+				iAttackPatternIndex = 3;	// 75% 확률로 머가리로 후림
+		}
+		else if (targetinginfo.fDistance < hysteriesis.fComboEnter)
+			iAttackPatternIndex = 1;		// 침뱉음
+		else if (targetinginfo.fDistance < hysteriesis.fChaseExit)
+			iAttackPatternIndex = 2;		// 적당히 멀면 Shoot
 		else
 		{
-			_int iAttackPatternIndex = Helper::Get_Random_Int(1, 5);
-			
+			// 너무멀면 다음행동
+			pOwner->Idle();
+			return;
 		}
 		AttackFromIndex(iAttackPatternIndex);
 	}
 	pOwner->CaptureRotateToDir(pOwner->GetTargetingInfo().vDirToTarget);
 
+	m_isStopRotate = false;
 }
 
 void CCyclops_Attack::Update(CCyclops* pOwner, _float dt)
@@ -56,6 +71,11 @@ void CCyclops_Attack::Update(CCyclops* pOwner, _float dt)
 
 	__super::Update(pOwner, dt);
 
+	if (false == m_isStopRotate)
+		pOwner->CaptureRotateToDir(pOwner->GetTargetingInfo().vDirToTarget);
+	else
+		int a = 1;
+
 
 	for (const auto& Event : pOwner->Get_Component<CAnimator3D>()->Get_EventBus())
 	{
@@ -63,37 +83,36 @@ void CCyclops_Attack::Update(CCyclops* pOwner, _float dt)
 		{
 		case Engine::CLIP_EVENT_TYPE::NOTIFY:
 		{
-			if (Event.Tag == "UnleashAttack")
+			if (Event.Tag == "UnleashAttackParry_false")
 				pOwner->UnleashAttack(CEnemy::ATTACK_SIDE::NONE, false);
-			else if (Event.Tag == "UnleashAttackParry_false")
-			{
-			}
 			else if (Event.Tag == "UnleashAttackParry_true")
-			{
-			}
+				pOwner->UnleashAttack(CEnemy::ATTACK_SIDE::NONE, true);
 			else if (Event.Tag == "TurnOnAttackCol")
-			{
-			}
+				pOwner->SetBattleColliderObject("Head", CEnemy::BATTLE_COLTYPE::ATTACK, true, m_HitDesc);
 			else if (Event.Tag == "TurnOffAttackCol")
-			{
-			}
+				pOwner->SetBattleColliderObject("Head", CEnemy::BATTLE_COLTYPE::ATTACK, false);
 			else if (Event.Tag == "Shoot")
 			{
+				pOwner->Spit(ENUM(CCyclops_Spit::SPIT::STRAIGHT));
+				m_isStopRotate = true;
 			}
 			else if (Event.Tag == "SpitOnce")
 			{
+				pOwner->Spit(ENUM(CCyclops_Spit::SPIT::ARC_CENTER));
+				m_isStopRotate = true;
 			}
 			else if (Event.Tag == "SpitThreeTimes1")
 			{
+				pOwner->Spit(ENUM(CCyclops_Spit::SPIT::ARC_CENTER));
+				m_isStopRotate = true;
 			}
 			else if (Event.Tag == "SpitThreeTimes2")
-			{
-			}
+				pOwner->Spit(ENUM(CCyclops_Spit::SPIT::ARC_LEFT));
 			else if (Event.Tag == "SpitThreeTimes3")
-			{
-			}
+				pOwner->Spit(ENUM(CCyclops_Spit::SPIT::ARC_RIGHT));
 			else if (Event.Tag == "FinishAll")
 				pOwner->SetOnAttack(false);
+
 
 			break;
 		}

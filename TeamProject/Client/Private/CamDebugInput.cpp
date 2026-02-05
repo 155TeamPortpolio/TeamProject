@@ -3,6 +3,7 @@
 // Engine
 #include "GameInstance.h"
 #include "CamDirector.h"
+#include "Animator3D.h"
 // Client
 #include "UI_Gangta.h"
 #include "UI_Seoriyeol.h"
@@ -32,6 +33,13 @@ void CamDebugInput::UpdateInput(_float dt)
             static_cast<CUI_Gangta*>(obj)->UI_Active({});
         }
         else if (levelKey == "Test_Level")  CamDirector()->RequestSequence(CamSeqType::BattleIntro);
+
+        //else if (levelKey == "Test_Level" && CamDirector()->GetCharacterName() == CHARACTER::Miyabi)
+        //{
+        //    CamDirector()->RequestSequence(CamSeqType::ZeroIntro);
+        //    CamDirector()->GetCharacter()->Get_Component<CAnimator3D>()->Set_Animation("Avatar_Female_Size02_Unagi_Ani_QuestStart").Apply();
+        //}
+
         else if (levelKey == "Zero_Level")  CamDirector()->RequestSequence(CamSeqType::ZeroIntro);
     }
 

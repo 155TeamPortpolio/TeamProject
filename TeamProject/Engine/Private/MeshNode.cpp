@@ -47,6 +47,8 @@ HRESULT CMeshNode::Initialize(INIT_DESC* pArg)
 
 	/* Set Param */
 	{
+		m_fPendingDuration = pMeshNode->fPendingDuration;
+
 		m_DiffuseTextureTag = pMeshNode->DiffuseTextureTag;
 		m_NoiseTextureTag = pMeshNode->NoiseTextureTag;
 		m_DissolveTextureTag = pMeshNode->DissolveTextureTag;
@@ -150,6 +152,18 @@ void CMeshNode::Update(_float dt)
 
 	if (m_IsEffectActive)
 	{
+		if(m_IsPendingStop)
+		{
+			m_fPendingElapsedTime += dt;
+
+			if (m_fPendingElapsedTime >= m_fPendingDuration)
+			{
+				m_ColorModule.vCurrColor.w = 0.f;
+				m_IsEffectActive = false;
+				m_isAlive = false;
+			}
+		}
+
 		m_fProgress = m_fElpasedTime / m_fDuration;
 
 		Update_TextureSlotModule(dt);
@@ -176,14 +190,15 @@ void CMeshNode::Play()
 {
 	m_isAlive = true;
 	m_IsEffectActive = true;
+	m_IsPendingStop = false;
 	m_fElpasedTime = 0.f;
 	Reset();
 }
 
 void CMeshNode::Stop()
 {
-	m_isAlive = false;
-	m_IsEffectActive = false;
+	m_fPendingElapsedTime = 0.f;
+	m_IsPendingStop = true;
 }
 
 CMeshNode* CMeshNode::Create()
@@ -325,6 +340,9 @@ void CMeshNode::Update_ColorModule(_float dt)
 	_float t = m_fElpasedTime / m_fDuration;
 
 	m_ColorModule.vCurrColor = _vector4::Lerp(m_ColorModule.vStartColor, m_ColorModule.vEndColor, Math::ApplyEase(m_ColorModule.eEaseType, t));
+
+	if (m_IsPendingStop)
+		m_ColorModule.vCurrColor.w = 1.f - (m_fPendingElapsedTime / m_fPendingDuration);
 }
 
 void CMeshNode::Update_ScaleModule(_float dt)
@@ -441,4 +459,9 @@ void CMeshNode::Bind_Params()
 	/* Gradient */
 	pMaterialInstance->Set_Param("EnableGradient", { &m_GradientModule.fEnableGradient,"float",sizeof(_float) });
 	pMaterialInstance->Set_Param("GradientMode", { &m_GradientModule.eGradientMode,"uint",sizeof(_uint) });
+}
+
+void CMeshNode::Update_PendingStop()
+{
+
 }

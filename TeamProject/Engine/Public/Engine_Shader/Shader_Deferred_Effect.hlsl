@@ -83,7 +83,7 @@ PS_OUT_COMPOSITE PS_MAIN_COMPOSITE(PS_IN In)    //여기서 가중치 합성 후 원래 타�
     
     /* Diffuse */
     float3 vDiffuseColor = (fDiffuseAlpha > fElipson) ? (vDiffuseEffectDesc.rgb / fDiffuseAlpha) : 0.f;
-    vDiffuseColor = BoostBrightColor(vDiffuseColor, 0.5f, 1.f);
+    vDiffuseColor = BoostBrightColor(vDiffuseColor, 0.5f, 0.4f);
     Out.vDiffuseEffect = float4(vDiffuseColor * fOutAlpha, fOutAlpha);
     
     /* Bloom */
@@ -225,7 +225,7 @@ PS_OUT_RESULT PS_MAIN_COMBINED(PS_IN In)
 {
     PS_OUT_RESULT Out;
     
-    vector vDiffuse = DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
+    vector vDiffuse = EffectDiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
     vector vBloom = EffectBloomFinalTexture.Sample(DefaultSampler, In.vTexcoord);
   
     Out.vResult.rgb = vDiffuse.rgb + vBloom.rgb;
@@ -240,7 +240,7 @@ technique11 DefaultTechnique
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_Default, 0);
-        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        SetBlendState(BS_OITComposite, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_COMPOSITE();
