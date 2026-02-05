@@ -151,8 +151,8 @@ void CZero_Level::Ready_Stage()
 	m_StageContainer.emplace(StageType::Boss, CZeroStage_Boss::Create(this));
 
 	m_mapCycle[StageType::Start].maps	= { "Zero_Start" };
-	m_mapCycle[StageType::Normal].maps	= { "Zero_1_1", "Zero_2_1"};
-	m_mapCycle[StageType::Elite].maps	= { "Zero_1_2", "Zero_2_2" };
+	m_mapCycle[StageType::Normal].maps	= { "Zero_1_1",	"Zero_1_2", "Zero_2_1" };
+	m_mapCycle[StageType::Elite].maps	= { "Zero_1_1",	"Zero_1_2", "Zero_2_1" };
 	m_mapCycle[StageType::Boss].maps	= { "Zero_Boss1","Zero_Boss2"};
 
 	ChangeStage(StageType::Start);
