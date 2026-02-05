@@ -119,9 +119,9 @@ void CStage::Active_Player(PlayerPoint pointType)
 		return;
 
 	auto point = m_PlayerPoint[ENUM(pointType)];
-	point.pos.y += 1.f;
+	//point.pos.y += 1.f;
 
-	character->Get_CCT()->Set_Position(_vector4(point.pos));
+	character->Get_CCT()->Set_FootPosition(_vector3{ point.pos.x, point.pos.y, point.pos.z });
 	character->Get_Component<CTransform>()->Rotate(_vector3(point.rotation));
 }
 
@@ -172,7 +172,7 @@ HRESULT CStage::ReadyPortalPoint(const vector<BATTLE_POINT_DATA>& point)
 	{
 		auto trans = point[i].vTranslation;
 		auto portal = Builder::Create_Object({ "Zero_Level" ,"Proto_GameObject_ZeroPortal" })
-			.Position({ trans[0],  trans[1],  trans[2] })
+			.Position({ trans[0],  trans[1] + 1.5f,  trans[2] })
 			.Build("zeroPortal#" + to_string(i));
 		portal->Set_Alive(false);
 		m_pPortals.push_back(portal);
