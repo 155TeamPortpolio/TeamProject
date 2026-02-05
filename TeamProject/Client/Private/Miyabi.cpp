@@ -203,6 +203,12 @@ void CMiyabi::On_SwitchIn(SWITCH eType)
 	m_pStateMachine->Set_Trigger("SwitchIn");
 }
 
+void CMiyabi::On_ChainParry()
+{
+	m_pStateMachine->Set_Int("IdleEntryMode", 2);
+	m_pStateMachine->Set_Trigger("ToIdle");
+}
+
 void CMiyabi::On_SwitchOut()
 {
 	__super::On_SwitchOut();
@@ -242,7 +248,6 @@ void CMiyabi::On_Ultimate()
 
 void CMiyabi::On_Special()
 {
-	if (m_tEnergy.fCurrentEnergy < m_tEnergy.fSpecialEnergy) return;
 	if (InputDevice()->Key_Tap('E') == false) return;
 
 	string strCurrentState = m_pStateMachine->Get_CurrentStateName();
@@ -254,11 +259,15 @@ void CMiyabi::On_Special()
 			m_pStateMachine->Get_CurrentState());
 		if (pAttack && pAttack->Get_SubStateMachine())
 		{
-			if (pAttack->Get_SubStateMachine()->Get_CurrentStateName() == "NormalAttack")
+			string strAttackType = pAttack->Get_SubStateMachine()->Get_CurrentStateName();
+
+			if (strAttackType == "NormalAttack")
 			{
 				pAttack->Get_SubStateMachine()->Set_Trigger("ToExAttack");
 				return;
 			}
+			// NormalAttack이 아니면 아무것도 안함 (ExAttack 포함)
+			return;
 		}
 	}
 
@@ -294,6 +303,9 @@ HRESULT CMiyabi::Initialize_StateMachine()
 		return E_FAIL;
 
 	if (FAILED(Initialize_Transitions()))
+		return E_FAIL;
+
+	if (FAILED(Initialize_Effects()))
 		return E_FAIL;
 
 	m_pStateMachine->Set_DefaultState("Idle");
@@ -434,6 +446,14 @@ HRESULT CMiyabi::Initialize_Weapon()
 	KatanaDesc.vSize = { 0.3f,1.3f,0.3f };
 	KatanaDesc.vRotation = { 0.f,0.f,0.69f };
 	if (FAILED(Attach_AttackCollider(&KatanaDesc)))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CMiyabi::Initialize_Effects()
+{
+	if (FAILED(__super::Initialize_Effects()))
 		return E_FAIL;
 
 	return S_OK;

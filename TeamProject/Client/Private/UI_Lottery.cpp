@@ -120,16 +120,13 @@ void CUI_Lottery::Create_ScratchCard()
 
 void CUI_Lottery::Create_BackButton()
 {
-    CUI_BackButton::BUTTON_DESC* pDesc = new CUI_BackButton::BUTTON_DESC;
-    pDesc->onClick = [this]() { OnClick_Back(); };
-
     auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_BackButton" })
-        .Add_UIDesc(pDesc)
         .Build("buttonBack");
 
     if (!pObj)
         return;
 
+    pObj->Set_OnClick([this]() { OnClick_Back(); });
     Get_Component<CObjectContainer>()->Add_Child(pObj); 
 }
 

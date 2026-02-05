@@ -60,7 +60,7 @@ void CJaneDoeState_RushAttack::Update(CJaneDoe* pOwner, _float dt)
 
         if (Event.Tag == "LHandStart")
         {
-            pOwner->Begin_AttackCollider("HandWeapon_L", { HIT_TYPE::ONCE, DAMAGE_TYPE::HARD, Helper::Get_Random_Float(10,30), 0, 0 });
+            pOwner->Begin_AttackCollider("HandWeapon_L", { pOwner->Get_CharacterName(), HIT_TYPE::ONCE, DAMAGE_TYPE::HARD, Helper::Get_Random_Float(10,30), 0, 0 });
         }
         else if (Event.Tag == "LHandEnd")
         {
@@ -68,7 +68,7 @@ void CJaneDoeState_RushAttack::Update(CJaneDoe* pOwner, _float dt)
         }
         else if (Event.Tag == "RHandStart")
         {
-            pOwner->Begin_AttackCollider("HandWeapon_R", { HIT_TYPE::ONCE, DAMAGE_TYPE::HARD, Helper::Get_Random_Float(10,30), 0, 0 });
+            pOwner->Begin_AttackCollider("HandWeapon_R", { pOwner->Get_CharacterName(), HIT_TYPE::ONCE, DAMAGE_TYPE::HARD, Helper::Get_Random_Float(10,30), 0, 0 });
         }
         else if (Event.Tag == "RHandEnd")
         {
@@ -76,7 +76,7 @@ void CJaneDoeState_RushAttack::Update(CJaneDoe* pOwner, _float dt)
         }
         else if (Event.Tag == "LFootStart")
         {
-            pOwner->Begin_AttackCollider("FootWeapon_L", { HIT_TYPE::ONCE, DAMAGE_TYPE::HARD, Helper::Get_Random_Float(20,40), 0, 0 });
+            pOwner->Begin_AttackCollider("FootWeapon_L", { pOwner->Get_CharacterName(), HIT_TYPE::ONCE, DAMAGE_TYPE::HARD, Helper::Get_Random_Float(20,40), 0, 0 });
         }
         else if (Event.Tag == "LFootEnd")
         {

@@ -84,7 +84,7 @@ HRESULT CEffectRenderer::Render_EffectCombined()
 	Get_BufferInputLayout(m_pVIBuffer, m_pShader, "COMBINED", &pLayout);
 	m_pContext->IASetInputLayout(pLayout);
 
-	m_pTargetManager->Bind_Target("Target_DiffuseEffect", m_pShader, "DiffuseTexture");
+	m_pTargetManager->Bind_Target("Target_DiffuseEffect", m_pShader, "EffectDiffuseTexture");
 	m_pTargetManager->Bind_Target("Target_BloomBlurY_Effect", m_pShader, "EffectBloomFinalTexture");
 
 	Bind_WorldMatrix();
@@ -203,7 +203,7 @@ HRESULT CEffectRenderer::Ready_Target()
 	RenderTargetDesc RimLightAccDesc = { "Target_RimLightAcc",DXGI_FORMAT_R16G16B16A16_FLOAT, DXGI_FORMAT_D24_UNORM_S8_UINT, _float4(0.f,0.f,0.f,0.f),ViewportDesc.Width,ViewportDesc.Height };
 	m_pTargetManager->Create_Target(RimLightAccDesc);
 
-	RenderTargetDesc DiffuseDesc = { "Target_DiffuseEffect" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(1.f, 1.f, 1.f, 1.f) ,ViewportDesc.Width, ViewportDesc.Height };
+	RenderTargetDesc DiffuseDesc = { "Target_DiffuseEffect" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
 	m_pTargetManager->Create_Target(DiffuseDesc);
 
 	RenderTargetDesc BloomDesc = { "Target_BloomEffect" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.0f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };

@@ -19,6 +19,9 @@ public:
     virtual void    Update(_float dt)           override;
     virtual void    Late_Update(_float dt)      override;
 
+private:
+    _float2         m_vTiling = _float2(2.f, 2.f);
+
 public:
     static CGachaBack* Create();
     virtual CGameObject* Clone(INIT_DESC* pArg) override;

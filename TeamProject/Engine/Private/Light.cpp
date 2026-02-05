@@ -170,6 +170,19 @@ void CLight::Set_Desc(const LIGHT_DESC& desc)
 		m_ID = CGameInstance::GetInstance()->Get_LightMgr()->Register_Light(this, m_ID);
 }
 
+LIGHT_DESC CLight::Get_Desc()
+{
+	LIGHT_DESC snapShot{};
+	if (!m_pOwner) return snapShot;
+	CTransform* pTransform = m_pOwner->Get_Component<CTransform>();
+	if (m_Light.eType == LIGHT_TYPE::SPOTLIGHT && pTransform)
+		m_Light.vLightDirection = _vector4(pTransform->Dir(STATE::LOOK));
+
+	snapShot = m_Light;
+
+	return snapShot;
+}
+
 LIGHT_DESC CLight::SnapShot_Desc()
 {
 	LIGHT_DESC snapShot{};

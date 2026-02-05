@@ -2,6 +2,8 @@
 #include "Base.h"
 #include "DynamicBoneStruct.h"
 #include "MeshSection.h"
+#include "Mesh.h"
+#include "Skeleton.h"
 
 NS_BEGIN(Engine)
 

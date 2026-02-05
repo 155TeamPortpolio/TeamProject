@@ -26,7 +26,6 @@ HRESULT CGachaBack::Initialize_Prototype()
     Get_Component<CStaticModel>()->Link_Model("Gacha_Level", "GachaStageout.model");
     Get_Component<CMaterial>()->Link_Material("Gacha_Level", "GachaStageout.mat");
 
-	Get_Component<CModel>()->ShadowCast(false);
     return S_OK;
 }
 
@@ -40,6 +39,13 @@ HRESULT CGachaBack::Initialize(INIT_DESC* pArg)
 
 void CGachaBack::Awake()
 {
+	auto pMaterial = Get_Component<CMaterial>();
+	auto pMaterialInstances = pMaterial->Get_MaterialInstances();
+
+	for (auto& pInstance : pMaterialInstances)
+	{
+		pInstance->Set_Param("UVTiling", { &m_vTiling, "float2", sizeof(_float2) });
+	}
 }
 
 void CGachaBack::Priority_Update(_float dt)

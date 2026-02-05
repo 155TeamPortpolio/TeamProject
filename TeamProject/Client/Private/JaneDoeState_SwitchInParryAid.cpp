@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "JaneDoeState_SwitchInParryAid.h"
 
+#include "GameInstance.h"
 #include "BattleSystem.h"
 
 #include "JaneDoe.h"
@@ -36,6 +37,18 @@ void CJaneDoeState_SwitchInParryAid::Enter(CJaneDoe* pOwner)
 {
     pOwner->Lock_Move();
     pOwner->Lock_Rotate();
+
+    OBJECT_HANDLE handle = pOwner->Get_ParryHandle();
+    if (handle.isValid())
+    {
+        dynamic_cast<CEnemy*>(handle.Get())->Parried();
+        BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::PARRY);
+        TARGET_LOCK_DESC desc;
+        desc.bLock = true;
+        desc.tHandle = handle;
+        EventSystem()->Broadcast<TARGET_LOCK_DESC>({ desc });
+    }
+
     __super::Enter(pOwner);
 }
 
@@ -59,6 +72,16 @@ void CJaneDoeState_SwitchInParryAid::Exit(CJaneDoe* pOwner)
 {
     pOwner->Unlock_Move();
     pOwner->Unlock_Rotate();
+
+    OBJECT_HANDLE handle = pOwner->Get_ParryHandle();
+    if (handle.isValid())
+    {
+        TARGET_LOCK_DESC desc;
+        desc.bLock = false;
+        desc.tHandle = handle;
+        EventSystem()->Broadcast<TARGET_LOCK_DESC>({ desc });
+    }
+
     __super::Exit(pOwner);
 }
 
@@ -70,13 +93,6 @@ void CJaneDoeState_SwitchInParryAid_Start::Enter(CJaneDoe* pOwner)
         .ReserveSpeed(0.f, 1.f, 2.f, EaseType::OutQuint)
         .EndAt(0.22f)
         .Apply();
-
-    OBJECT_HANDLE handle = pOwner->Get_ParryHandle();
-    if (handle.isValid())
-    {
-        dynamic_cast<CEnemy*>(handle.Get())->Parried();
-        BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::PARRY);
-    }
 }
 
 void CJaneDoeState_SwitchInParryAid_Start::Update(CJaneDoe* pOwner, _float dt)

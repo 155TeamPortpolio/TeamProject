@@ -13,7 +13,8 @@ struct StageNode {
 	_int			ParentIndex;
 	vector<_int>	ChildrenIndex; 
 	_int depth = 0;
-	_bool visited = { false };    
+	_bool cleared = { false };
+	_bool opened = { false };
 };
 
 struct MapCycle

@@ -17,6 +17,9 @@ public:
     void Priority_Update(_float dt) override;
     void Update(_float dt) override;
     void Late_Update(_float dt) override;
+
+    virtual void OnPooledAcquire(INIT_DESC* pArg = nullptr);
+    virtual void OnPooledRelease();
     
 public:
     virtual void Play() override;

@@ -1,11 +1,17 @@
 #include "pch.h"
 #include "GachaAvatar.h"
 
+#include "GachaStage.h"
+#include "GachaFootStage.h"
+
 #include "SkeletalModel.h"
 #include "Material.h"
 #include "Animator3D.h"
 #include "RigidBody.h"
+#include "Child.h"
+#include "ObjectContainer.h"
 
+#include "GameInstance.h"
 #include "Helper_Func.h"
 
 CGachaAvatar::CGachaAvatar()
@@ -39,8 +45,8 @@ void CGachaAvatar::SetResult(GACHA_RESULT_DESC Desc)
     strLoopAnim = Desc.strLoopAnim;
     m_eAnimState = ANIMSTATE::START;
 
-    //m_pTransform->Set_Pos(_float4(0.f, 0.2f, -1.6f, 0.f));
     m_pTransform->Rotate(_float3(0.f, XM_PI, 0.f));
+    m_bRevealEffect = false;
 }
 
 HRESULT CGachaAvatar::Initialize_Prototype()
@@ -53,9 +59,6 @@ HRESULT CGachaAvatar::Initialize_Prototype()
     Add_Component<CAnimator3D>();
     Add_Component<CRigidBody>();
     Add_Component<CCollider>();
-
-    //pModel->Link_Model(G_GlobalLevelKey, "Miyabi.model");
-    //pMaterial->Link_Material(G_GlobalLevelKey, "Miyabi.mat");
 
     return S_OK;
 }
@@ -109,6 +112,15 @@ void CGachaAvatar::Update_States()
                 .Loop(true)
                 .Apply();
             m_eAnimState = ANIMSTATE::LOOP;
+        }
+        else if(m_pAnimator->Get_CurAnimDuration() >= 0.35)
+        {
+            if (m_bRevealEffect == false) 
+            {
+                auto pParent = dynamic_cast<CGachaStage*>(Get_Component<CChild>()->Get_Parent());
+                pParent->PlayRevealEffect();
+                m_bRevealEffect = true;
+            }
         }
         break;
     case ANIMSTATE::LOOP:

@@ -18,6 +18,10 @@ private:
 public:
     static CJaneDoeState_Dash* Create() { return new CJaneDoeState_Dash(); }
     virtual void Free() override { __super::Free(); }
+
+private:
+    void Update_Effects(CJaneDoe* pOwner);
+
 };
 
 NS_END

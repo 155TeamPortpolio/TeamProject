@@ -88,6 +88,16 @@ void CParticleNode::Late_Update(_float dt)
 {
 }
 
+void CParticleNode::OnPooledAcquire(INIT_DESC* pArg)
+{
+	Play();
+}
+
+void CParticleNode::OnPooledRelease()
+{
+	Stop();
+}
+
 void CParticleNode::Play()
 {
 	m_IsEffectActive = true;
@@ -101,7 +111,10 @@ void CParticleNode::Stop()
 	if (m_IsLoop)
 		Get_Component<CParticleSystem>()->Pause();
 	else
+	{
+		Get_Component<CParticleSystem>()->Pause();
 		m_IsEffectActive = false;
+	}
 }
 
 CParticleNode* CParticleNode::Create()

@@ -158,6 +158,7 @@ HRESULT CTestLevel::Awake()
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Cyclops_Spit", CCyclops_Spit::Create());
 
 
+
 	CBattleSystem::GetInstance()->ReadyBattle("TrainingRoom", 1);
 	// It will be changed soooooon
 	CBattleSystem::GetInstance()->SetActive(true);

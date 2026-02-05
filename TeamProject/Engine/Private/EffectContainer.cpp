@@ -120,6 +120,29 @@ void CEffectContainer::Late_Update(_float dt)
 {
 }
 
+void CEffectContainer::OnPooledAcquire(INIT_DESC* pArg)
+{
+	for (const auto& node : m_Nodes)
+		node->OnPooledAcquire(pArg);
+
+	GAMEOBJECT_DESC* obj = static_cast<GAMEOBJECT_DESC*>(pArg);
+	auto tfIter = m_Components.find(type_index(typeid(CTransform)));
+
+	if (tfIter != m_Components.end()) {
+		auto descIter = obj->CompDesc.find(type_index(typeid(CTransform)));
+		if (descIter == obj->CompDesc.end())
+			tfIter->second->Initialize(nullptr);
+		else
+			tfIter->second->Initialize(descIter->second);
+	}
+}
+
+void CEffectContainer::OnPooledRelease()
+{
+	for (const auto& node : m_Nodes)
+		node->OnPooledRelease();
+}
+
 CEffectContainer::EFFECT_CONTAINER_CONTEXT& CEffectContainer::GetEffectContext()
 {
 	return m_EffectContext;

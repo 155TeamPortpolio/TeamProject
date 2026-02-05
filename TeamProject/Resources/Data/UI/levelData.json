@@ -98,6 +98,16 @@
           "prefabPath" : ""
         }
       ]
+    },
+
+    "Gacha_Level": {
+      "objects": [ 
+        {
+          "prototypeTag": "Proto_GameObject_GachaDisplay",
+          "instanceName": "gachaDisplay",
+          "prefabPath" : ""
+        }
+      ]
     }
   }
 }
