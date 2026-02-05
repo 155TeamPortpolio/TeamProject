@@ -358,24 +358,33 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
     {
         vector LightDesc = vMetalicDesc;
         float3 vLookVector = normalize(FaceDirTexture.Sample(DefaultSampler, In.vTexcoord).xyz * 2.f - 1.f);
-        
+    
         float3 headRight = normalize(cross(float3(0, 1, 0), vLookVector));
-
         float RdotL = dot(headRight, lightDir);
         float FdotL = dot(vLookVector, lightDir);
         
-        float faceShadow = LightDesc.r;
+        float faceShadow = 1.f - LightDesc.r; 
         float specularMask = LightDesc.g;
     
-        faceShadow *= saturate(-FdotL);
-        float brightness = lerp(0.45f, 1.45f, faceShadow);
-      
+        float lightIntensity = FdotL * 0.5f + 0.5f;
+    
+        float threshold = faceShadow;
+    
+        float shadow = smoothstep(threshold - 0.1f, threshold + 0.1f, lightIntensity);
+    
+        float sideInfluence = RdotL * 0.3f;
+        shadow = saturate(shadow + sideInfluence);
+    
+        float minBrightness = 0.2f;
+        float maxBrightness = 0.55f;
+        float brightness = lerp(minBrightness, maxBrightness, shadow);
+    
         float alpha = 0.f;
         if (length(vDiffuse.rgb) > 0.f)
             alpha = 1.f;
-        
-        Out.vLight = float4(vDiffuse.rgb * vLightDiffuse.rgb * brightness , alpha);
-        Out.vLightInfo = float4(brightness, 0.f, brightness, 0);
+    
+        Out.vLight = float4(vDiffuse.rgb * vLightDiffuse.rgb * brightness, alpha);
+        Out.vLightInfo = float4(brightness, 0.f, brightness, shadow);
     }
     
     return Out;
@@ -473,11 +482,7 @@ PS_OUT_LIGHT PS_MAIN_SPOTLIGHT(PS_IN In)
     float roughness = vMetalicDesc.r;
     float metalic = vMetalicDesc.g;
 
-
-    //float3 lightDir = normalize(vLightPos.xyz - vWorldPos.xyz);
     float3 viewDir = normalize(vCamPosition.xyz - vWorldPos.xyz);
-
-    //float NdotL = saturate(dot(worldNormal, lightDir));
 
     float3 PBR = CalculateSpotLight(
         vDiffuse.rgb, worldNormal, metalic, roughness, vWorldPos.xyz,
@@ -523,7 +528,7 @@ PS_OUT_RESULT PS_MAIN_COMBINED(PS_IN In)
     if (vMetalic.a < 0.7)
         Out.vResult = float4(vLight.rgb + ambient, vLight.a);
     else
-        Out.vResult = float4(vLight.rgb + vLightAmbient.rgb * vDiffuse.rgb * 0.5, vLight.a);
+        Out.vResult = float4(vLight.rgb + vLightAmbient.rgb * vDiffuse.rgb * shadowValue, vLight.a);
     
     Out.vResult.rgb += vRimLight.rgb + vMotionBlur.rgb;
     
