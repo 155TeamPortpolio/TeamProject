@@ -453,6 +453,17 @@ HRESULT CMiyabi::Initialize_Effects()
 	if (FAILED(__super::Initialize_Effects()))
 		return E_FAIL;
 
+	auto pObjectContainer = Get_Component<CObjectContainer>();
+
+	// Normal Slash
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_normal1_slash.json")
+			.Build("Miyabi_Normal0_Slash0");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect);
+	}
+
 	return S_OK;
 }
 

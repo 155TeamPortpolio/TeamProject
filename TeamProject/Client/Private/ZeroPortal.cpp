@@ -157,7 +157,7 @@ void CZeroPortal::Extend(_float dt)
 	{
 		_float t = m_fElapsedTime / m_fDuration;
 
-		_vector3 vCurrScale = _vector3::Lerp(_vector3(m_vContractScale), _vector3(m_vExtendScale), Math::ApplyEase(EaseType::OutBounce, t));
+		_vector3 vCurrScale = _vector3::Lerp(_vector3(m_vContractScale), _vector3(m_vExtendScale), Math::ApplyEase(EaseType::OutExpo, t));
 		m_pTransform->Scale(vCurrScale);
 	}
 }
@@ -174,7 +174,7 @@ void CZeroPortal::Contract(_float dt)
 	{
 		_float t = m_fElapsedTime / m_fDuration;
 
-		_vector3 vCurrScale = _vector3::Lerp(_vector3(m_vExtendScale), _vector3(m_vContractScale), Math::ApplyEase(EaseType::OutBounce, t));
+		_vector3 vCurrScale = _vector3::Lerp(_vector3(m_vExtendScale), _vector3(m_vContractScale), Math::ApplyEase(EaseType::OutExpo, t));
 		m_pTransform->Scale(vCurrScale);
 	}
 }
