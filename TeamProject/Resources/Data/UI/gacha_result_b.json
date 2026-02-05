@@ -27,6 +27,7 @@
         1.0,
         1.0
     ],
+    "stencilMode": 0,
     "pass": "Opaque",
     "colorTexKey": "empty.png",
     "colorTexMode": 0,
@@ -76,6 +77,7 @@
                 0.0,
                 1.0
             ],
+            "stencilMode": 0,
             "pass": "Opaque",
             "colorTexKey": "empty.png",
             "colorTexMode": 0,
@@ -128,6 +130,7 @@
                 1.0,
                 1.0
             ],
+            "stencilMode": 1,
             "pass": "UI_StencilWrite",
             "colorTexKey": "empty.png",
             "colorTexMode": 0,
@@ -180,6 +183,7 @@
                 0.3921568691730499,
                 1.0
             ],
+            "stencilMode": 2,
             "pass": "Opaque_StencilTest",
             "colorTexKey": "empty.png",
             "colorTexMode": 0,
@@ -232,6 +236,7 @@
                 1.0,
                 1.0
             ],
+            "stencilMode": 2,
             "pass": "Opaque_StencilTest",
             "colorTexKey": "empty.png",
             "colorTexMode": 0,
@@ -284,6 +289,7 @@
                 1.0,
                 1.0
             ],
+            "stencilMode": 0,
             "pass": "Opaque",
             "colorTexKey": "empty.png",
             "colorTexMode": 0,
@@ -336,6 +342,7 @@
                 1.0,
                 1.0
             ],
+            "stencilMode": 0,
             "pass": "Opaque",
             "colorTexKey": "empty.png",
             "colorTexMode": 0,
