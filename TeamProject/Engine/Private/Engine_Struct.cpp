@@ -169,6 +169,8 @@ MESH_NODE Engine::tagMeshNode::FromJson(nlohmann::ordered_json& json)
 	node.ModelTag = json.value("model_key", node.ModelTag);
 	node.MaterialTag = json.value("material_key", node.MaterialTag);
 
+	node.fPendingDuration = json.value("pending_duration", 0.f);
+
 	node.fDelayTime = json.value("delay_time", node.fDelayTime);
 	node.fDuration = json.value("duration", node.fDuration);
 	node.isLoop = json.value("is_loop", node.isLoop);

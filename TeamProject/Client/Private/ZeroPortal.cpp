@@ -21,10 +21,6 @@ CZeroPortal::CZeroPortal(const CZeroPortal& rhs)
 {
 }
 
-//ResourceManager()->Add_ResourcePath("Eff_Objects_048.png", "../Bin/Resources/Effect/Texture/Eff_Objects_048.png");
-//ResourceManager()->Add_ResourcePath("Eff_Noise_092.png", "../Bin/Resources/Effect/Texture/Eff_Noise_092.png");
-//ResourceManager()->Add_ResourcePath("Eff_Noise_097_LYX_01.png", "../Bin/Resources/Effect/Texture/Eff_Noise_097_LYX_01.png");
-
 HRESULT CZeroPortal::Initialize_Prototype()
 {
 	if (FAILED(__super::Initialize_Prototype()))

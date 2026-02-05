@@ -302,6 +302,9 @@ HRESULT CMiyabi::Initialize_StateMachine()
 	if (FAILED(Initialize_Transitions()))
 		return E_FAIL;
 
+	if (FAILED(Initialize_Effects()))
+		return E_FAIL;
+
 	m_pStateMachine->Set_DefaultState("Idle");
 	m_pStateMachine->Initialize(this);
 
@@ -440,6 +443,14 @@ HRESULT CMiyabi::Initialize_Weapon()
 	KatanaDesc.vSize = { 0.3f,1.3f,0.3f };
 	KatanaDesc.vRotation = { 0.f,0.f,0.69f };
 	if (FAILED(Attach_AttackCollider(&KatanaDesc)))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CMiyabi::Initialize_Effects()
+{
+	if (FAILED(__super::Initialize_Effects()))
 		return E_FAIL;
 
 	return S_OK;

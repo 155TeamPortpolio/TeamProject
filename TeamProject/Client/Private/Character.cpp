@@ -320,11 +320,6 @@ void CCharacter::On_Interact()
     m_bCanInteract = true;
 }
 
-void CCharacter::OnDefensiveAssist()
-{
-
-}
-
 void CCharacter::Process_RootMotion(_float dt, const ROOTMOTION_DESC& desc)
 {
     auto pTransform = Get_Component<CTransform>();
@@ -636,6 +631,29 @@ void CCharacter::Take_Damage(DAMAGE_TYPE eType, _float fDamage)
     On_Hit(eType);
 }
 
+HRESULT CCharacter::Initialize_Effects()
+{
+    auto pObjectContainer = Get_Component<CObjectContainer>();
+
+    // Dash
+    {
+        auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+            .Asset("player_run_start0.json")
+            .Build("Player_Run_Start0");
+        pEffect->Stop();
+        pObjectContainer->Add_Child(pEffect, false);
+    }
+    {
+        auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+            .Asset("player_run_start1.json")
+            .Build("Player_Run_Start1");
+        pEffect->Stop();
+        pObjectContainer->Add_Child(pEffect, false);
+    }
+
+    return S_OK;
+}
+
 void CCharacter::Play_Effect(const string& effectTag, _fvector offsetPosition, _fvector offsetQuaternion, _bool syncTransform)
 {
     auto pEffect = Get_Component<CObjectContainer>()->Find_ObjectByName(effectTag);
@@ -662,6 +680,15 @@ void CCharacter::Play_Effect(const string& effectTag, _fvector offsetPosition, _
     }
 
     static_cast<CEffectContainer*>(pEffect)->Play();
+}
+
+void CCharacter::Stop_Effect(const string& effectTag)
+{
+    auto pEffect = Get_Component<CObjectContainer>()->Find_ObjectByName(effectTag);
+    if (!pEffect)
+        return;
+
+    static_cast<CEffectContainer*>(pEffect)->Stop();
 }
 
 void CCharacter::Update_Rotation(_float dt)
