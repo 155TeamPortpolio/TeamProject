@@ -222,7 +222,7 @@ void CBattleFXFlow::StartVfx_Parry()
 	AddParallelTimeScale(BATTLE_OBJ_TYPE::MONSTER, preset.tMonsterTimeScale);
 
 	AddCall([this, preset]() {RenderSystem()->Apply_RadialBlur(preset.fBlurDuration); });
-	AddCall([this, preset]() {CamDirector()->RequestSequence("Parry/Corin"); });
+	AddCall([this, preset]() {CamDirector()->StartParry(); });
 
 	AddStep(
 		[this, preset, elapsed = 0.f, duration = m_BattleVFX.fDuration](_float dt) mutable -> _bool

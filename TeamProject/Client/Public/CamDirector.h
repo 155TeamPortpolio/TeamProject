@@ -61,6 +61,8 @@ public:
     _bool         StopRequest(_uint handle, _float blendOutSec = 0.25f, _bool resetTime = true);
     void          StopAll(_float blendOutSec = 0.25f);
     void          Update(_float dt);
+
+    void          StartParry();
     void          StartBattleIntro(CamSeqType type);
     void          StartDialog();
     void          EndDialog();
