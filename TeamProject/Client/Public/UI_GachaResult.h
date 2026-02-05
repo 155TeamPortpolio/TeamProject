@@ -21,6 +21,26 @@ public:
 	virtual void	UI_Active(void* pArg = nullptr)  override;
 	virtual void	UI_DeActive(void* pArg = nullptr) override;
 
+private:
+	CUI_Object* m_pTitle = {};
+
+	vector<CUI_Object*> m_pItems = {};
+
+	_bool m_isItemAppear = {};
+	_int m_iItemIndex = {};
+	_float m_fItemTimer = {};
+	_float m_fItemDuration = { 0.1f };
+
+	static const _int COL = 5;
+	static const _int ROW = 2; 
+	static const _int WIDTH = 220.f;
+	static const _int HEIGHT = 148.f;
+	static const _int SPACING = 4.f;
+
+private:
+	void Cache();
+	void Create_Items();
+
 public:
 	static  CGameObject* Create();
 	virtual CGameObject* Clone(INIT_DESC* pArg = {}) override;

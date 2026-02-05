@@ -32,6 +32,7 @@ void CUI_Manager::Pre_EngineUpdate(_float dt)
 
 void CUI_Manager::Post_EngineUpdate(_float dt)
 {
+	Reset_StencilAllocator();
 	Sort_UI();
 
 	auto itLevel = m_UIObjects.find(m_nowLevelKey);
@@ -261,7 +262,6 @@ void CUI_Manager::Release_Subtree_ToPool(CUI_Object* root)
 	const CLONE_DESC& poolKey = root->Get_PoolKey();
 	m_pUIPool->Return(poolKey, root);
 }
-
 
 void CUI_Manager::CleanUp()
 {

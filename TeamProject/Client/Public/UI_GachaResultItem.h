@@ -1,29 +1,17 @@
 #pragma once
 #include "UI_Object.h"
 
-NS_BEGIN(Engine)
-class CTextSlot;
-NS_END
-
 NS_BEGIN(Client)
 
-class CUI_GachaDisplay final : public CUI_Object
+class CUI_GachaResultItem final : public CUI_Object
 {
-public:
-	enum class TYPE { LABEL, SKIP, END };
-	typedef struct tagGachaDisplayDesc {
-		TYPE	eType;
-		wstring strLabel = {};
-	}GACHA_DISPLAY_DESC;
+private:
+	enum class RANK { B, A, S, END };
 
 private:
-	enum class CHILD { BG, LABEL, END };
-	inline static const string INSTANCENAMES[ENUM(CHILD::END)] = { "bg", "label" };
-
-private:
-	CUI_GachaDisplay() {}
-	CUI_GachaDisplay(const CUI_GachaDisplay& rhs) : CUI_Object(rhs) {}
-	virtual ~CUI_GachaDisplay() DEFAULT;
+	CUI_GachaResultItem() {}
+	CUI_GachaResultItem(const CUI_GachaResultItem& rhs) : CUI_Object(rhs) {}
+	virtual ~CUI_GachaResultItem() DEFAULT;
 
 public:
 	virtual HRESULT Initialize_Prototype()           override;
@@ -37,18 +25,9 @@ public:
 	virtual void	UI_DeActive(void* pArg = nullptr) override;
 
 private:
-	CUI_Object* m_pChildren[ENUM(CHILD::END)] = {};
-	CUI_Object* m_pSkipButton = {};
+	RANK		m_eRank = { RANK::B };
 
-	class CTextSlot* m_pLabelTextSlot = {};
-
-	_bool	m_isLabelVisible = {};
-
-private:
-	void Cache();
-	void Create_SkipButton();
-
-	void Set_ChildAnimation(CHILD child, _int iIndex);
+	CUI_Object* m_pOverlay = {};
 
 public:
 	static  CGameObject* Create();

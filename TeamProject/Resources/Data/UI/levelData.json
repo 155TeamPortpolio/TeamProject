@@ -106,6 +106,12 @@
           "prototypeTag": "Proto_GameObject_GachaDisplay",
           "instanceName": "gachaDisplay",
           "prefabPath" : ""
+        },
+        
+        {
+          "prototypeTag": "Proto_GameObject_GachaResult",
+          "instanceName": "gachaResult",
+          "prefabPath" : ""
         }
       ]
     }
