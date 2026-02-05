@@ -2,7 +2,6 @@
 #include "CorinState_RushAttack.h"
 #include "Corin.h"
 
-
 CCorinState_RushAttack* CCorinState_RushAttack::Create()
 {
     auto pInstance = new CCorinState_RushAttack();
