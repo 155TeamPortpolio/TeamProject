@@ -97,7 +97,7 @@ HRESULT CTestLevel::Initialize()
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_ZeroPortal", CZeroPortal::Create());
 	auto pPortal = Builder::Create_Object({ G_GlobalLevelKey,"Proto_GameObject_ZeroPortal" })
 		.Build("Portal");
-
+	
 	ObjectManager()->Add_Object(pPortal, { "Test_Level","Portal" });
 	return S_OK;
 }

@@ -25,6 +25,8 @@ public:
     virtual void    Update(_float dt)           override;
     virtual void    Late_Update(_float dt)      override;
 
+    virtual void Render_GUI()override;
+
     virtual void    OnTriggerEnter(CGameObject* pOther) override;
     virtual void    OnTriggerStay(CGameObject* pOher)   override;
     virtual void    OnTriggerExit(CGameObject* pOther)  override;
@@ -50,7 +52,14 @@ private:
     class CStage* m_pOwnerStage = { nullptr };
 
 private:
+    _bool m_OnExtend = false;
+    _bool m_OnContract = false;
 
+    _float m_fDuration{};
+    _float m_fElapsedTime{};
+
+    _float3 m_vContractScale{ 0.3f,0.3f,0.3f };
+    _float3 m_vExtendScale{ 1.3f,1.3f,1.3f };
 public:
     static CZeroPortal* Create();
     virtual CGameObject* Clone(INIT_DESC* pArg) override;

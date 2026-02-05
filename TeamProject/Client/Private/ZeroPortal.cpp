@@ -4,12 +4,12 @@
 #include "GameInstance.h"
 
 //Components
-#include "Material.h"
-#include "MaterialInstance.h"
-#include "MaterialData.h"
-#include "ParticleSystem.h"
+#include "ObjectContainer.h"
 #include "EventListener.h"
 #include "Stage.h"
+
+//Object
+#include "EffectContainer.h"
 
 CZeroPortal::CZeroPortal()
 	: CInteractable()
@@ -26,8 +26,7 @@ HRESULT CZeroPortal::Initialize_Prototype()
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
 
-	Add_Component<CParticleSystem>();
-	Add_Component<CMaterial>();
+	Add_Component<CObjectContainer>();
 	Add_Component<CEventListener>();
 
 	return S_OK;
@@ -38,31 +37,13 @@ HRESULT CZeroPortal::Initialize(INIT_DESC* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-	EFFECT_ASSET asset = ResourceManager()->Load_EffectAsset(G_GlobalLevelKey, "zero_portal.json");
-	if (asset.iNodeCount < 1)
-		return E_FAIL;
-	PARTICLE_NODE* particleParam = static_cast<PARTICLE_NODE*>(asset.Nodes[0]);
+	auto pObjectContainer = Get_Component<CObjectContainer>();
 
+	auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+		.Asset("zero_portal.json")
+		.Build("ZeroPortal");
 
-	ID3D11Device* pDevice = CGameInstance::GetInstance()->Get_Device();
-	auto pModel = Get_Component<CParticleSystem>();
-	pModel->ShadowCast(false);
-	pModel->SetParticleParams(*particleParam);
-
-	CMaterial* pMaterial = Get_Component<CMaterial>();
-	CMaterialInstance* customInstance = CMaterialInstance::Create_Handle("Point_Effect_Base", "Default", pDevice);
-	customInstance->ChangeTexture(TEXTURE_TYPE::DIFFUSE, 0);
-	customInstance->Set_Blended(true);
-
-	pMaterial->Insert_MaterialInstance(customInstance, nullptr);
-
-	auto MaterialDat = customInstance->Get_MaterialData();
-	if (MaterialDat)
-	{
-		MaterialDat->Link_Shader(G_GlobalLevelKey, "VTX_InstancePoint.hlsl");
-		MaterialDat->Link_Texture(G_GlobalLevelKey, particleParam->TextureKey, TEXTURE_TYPE::DIFFUSE);
-	}
-
+	pObjectContainer->Add_Child(pEffect);
 
 	return S_OK;
 }
@@ -80,8 +61,13 @@ void CZeroPortal::Update(_float dt)
 {
 	m_Time += dt;
 	Get_Component<CCollider>()->Update(dt);
-	Get_Component<CParticleSystem>()->Simulation_Particle(dt);
-	//Extend(dt);
+	Get_Component<CObjectContainer>()->UpdateChild(dt);
+
+	if (m_OnExtend)
+		Extend(dt);
+
+	if (m_OnContract)
+		Contract(dt);
 
 	if (m_bIsInteractable) {
 		//Interact();
@@ -94,6 +80,26 @@ void CZeroPortal::Update(_float dt)
 
 void CZeroPortal::Late_Update(_float dt)
 {
+}
+
+void CZeroPortal::Render_GUI()
+{
+	__super::Render_GUI();
+
+	if (ImGui::Button("Extend"))
+	{
+		m_OnExtend = true;
+		m_fDuration = 0.7f;
+		m_fElapsedTime = 0.f;
+	}
+
+	if (ImGui::Button("Contract"))
+	{
+		m_OnContract = true;
+		m_fDuration = 0.7f;
+		m_fElapsedTime = 0.f;
+	}
+
 }
 
 void CZeroPortal::OnTriggerEnter(CGameObject* pOther)
@@ -141,10 +147,36 @@ void CZeroPortal::SetChoiceIndex(CStage* pOwener, int idx)
 
 void CZeroPortal::Extend(_float dt)
 {
+	m_fElapsedTime += dt;
+	if (m_fElapsedTime >= m_fDuration)
+	{
+		m_OnExtend = false;
+		m_pTransform->Scale(m_vExtendScale);
+	}
+	else
+	{
+		_float t = m_fElapsedTime / m_fDuration;
+
+		_vector3 vCurrScale = _vector3::Lerp(_vector3(m_vContractScale), _vector3(m_vExtendScale), Math::ApplyEase(EaseType::OutBounce, t));
+		m_pTransform->Scale(vCurrScale);
+	}
 }
 
 void CZeroPortal::Contract(_float dt)
 {
+	m_fElapsedTime += dt;
+	if (m_fElapsedTime >= m_fDuration)
+	{
+		m_OnContract = false;
+		m_pTransform->Scale(m_vContractScale);
+	}
+	else
+	{
+		_float t = m_fElapsedTime / m_fDuration;
+
+		_vector3 vCurrScale = _vector3::Lerp(_vector3(m_vExtendScale), _vector3(m_vContractScale), Math::ApplyEase(EaseType::OutBounce, t));
+		m_pTransform->Scale(vCurrScale);
+	}
 }
 
 CZeroPortal* CZeroPortal::Create()
