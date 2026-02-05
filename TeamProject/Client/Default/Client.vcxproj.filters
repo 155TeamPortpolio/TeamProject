@@ -1158,6 +1158,12 @@
     <Filter Include="03. Utility\06. FieldSystem\Room\05. Room_Gacha">
       <UniqueIdentifier>{820f4014-89e1-411c-b031-be391e0f1e5e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Npc\Background\Crowd">
+      <UniqueIdentifier>{090fe14d-c489-4bd5-8524-dec97cb3fdc5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Npc\Background\Pedestrian">
+      <UniqueIdentifier>{38a9114f-dcab-4df2-8f6b-c17d39ba59ed}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02. GameObject\UI\01. 2D\Gacha\Display">
       <UniqueIdentifier>{d863e830-0e43-4884-ae68-e83abab8552b}</UniqueIdentifier>
     </Filter>
@@ -2234,6 +2240,15 @@
     <ClInclude Include="..\public\Room_Gacha.h">
       <Filter>03. Utility\06. FieldSystem\Room\05. Room_Gacha</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\BackgroundNpc.h">
+      <Filter>02. GameObject\Object\Npc\Background</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\PedestrianNpc.h">
+      <Filter>02. GameObject\Object\Npc\Background\Pedestrian</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CrowdNpc.h">
+      <Filter>02. GameObject\Object\Npc\Background\Crowd</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\UI_GachaDisplay.h">
       <Filter>02. GameObject\UI\01. 2D\Gacha\Display</Filter>
     </ClInclude>
@@ -3271,6 +3286,15 @@
     </ClCompile>
     <ClCompile Include="..\private\Room_Gacha.cpp">
       <Filter>03. Utility\06. FieldSystem\Room\05. Room_Gacha</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\BackgroundNpc.cpp">
+      <Filter>02. GameObject\Object\Npc\Background</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\PedestrianNpc.cpp">
+      <Filter>02. GameObject\Object\Npc\Background\Pedestrian</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CrowdNpc.cpp">
+      <Filter>02. GameObject\Object\Npc\Background\Crowd</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UI_GachaDisplay.cpp">
       <Filter>02. GameObject\UI\01. 2D\Gacha\Display</Filter>

@@ -88,6 +88,7 @@ namespace Client {
 	// 타격 정보
 	struct HitDesc
 	{
+		CHARACTER	eName = CHARACTER::END;
 		HIT_TYPE    eHitType = HIT_TYPE::ONCE;
 		DAMAGE_TYPE eDamageType = DAMAGE_TYPE::NORMAL;
 		_float      fDamage = 0.f;
@@ -96,6 +97,7 @@ namespace Client {
 		_float      fEnergyCharge = 1.f;
 		_float      fDecibelCharge = 10.f;
 
+		HitDesc& Name(CHARACTER e) { eName = e; return *this; }
 		HitDesc& Type(HIT_TYPE e) { eHitType = e; return *this; }
 		HitDesc& Damage(_float f, DAMAGE_TYPE e = DAMAGE_TYPE::NORMAL) { fDamage = f; eDamageType = e; return *this; }
 		HitDesc& Interval(_float f) { fInterval = f; return *this; }

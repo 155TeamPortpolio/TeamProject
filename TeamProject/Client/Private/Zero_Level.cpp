@@ -141,7 +141,7 @@ void CZero_Level::Ready_Stage()
 	m_mapCycle[StageType::Elite].maps	= { "Zero_1_1", "Zero_1_2" };
 	m_mapCycle[StageType::Boss].maps	= { "Zero_Boss1","Zero_Boss2"};
 
-	ChangeStage(StageType::Boss);
+	ChangeStage(StageType::Normal);
 }
 
 string CZero_Level::PopMapKey(StageType type)

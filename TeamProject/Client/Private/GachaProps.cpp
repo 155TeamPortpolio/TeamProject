@@ -101,11 +101,11 @@ void CGachaProps::Add_GachaProps()
     colliderDesc.vSize = _float3(3.754, 0.460, 3.524);
     colliderDesc.vCenter = _float3(0.040, -0.083, -0.916);
 
-    CGameObject* gachaBack = Builder::Create_Object({ "Gacha_Level", "Proto_GameObject_GachaBack" })
-        .Collider(colliderDesc)
-        .Build("Back");
+   CGameObject* gachaBack = Builder::Create_Object({ "Gacha_Level", "Proto_GameObject_GachaBack" })
+       .Collider(colliderDesc)
+       .Build("Back");
 
-    pObjectContainer->Add_Child(gachaBack, true);
+   pObjectContainer->Add_Child(gachaBack, true);
 
     CGameObject* gachaTV = Builder::Create_Object({ "Gacha_Level", "Proto_GameObject_GachaTV" })
         .Collider(colliderDesc)

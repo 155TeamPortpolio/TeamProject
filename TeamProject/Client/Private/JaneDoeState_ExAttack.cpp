@@ -96,7 +96,8 @@ void CJaneDoeState_ExAttack::Update(CJaneDoe* pOwner, _float dt)
 
 void CJaneDoeState_ExAttack::Exit(CJaneDoe* pOwner)
 {
-    pOwner->Reserve_ComboAttack();
+    pOwner->Reset_InputInfo();
+    pOwner->Reset_ReserveCombo();
     pOwner->Pop_Invincible();
     __super::Exit(pOwner);
 }
@@ -142,13 +143,6 @@ void CJaneDoeState_ExAttack_Start::Update_Effects(CJaneDoe* pOwner)
 void CJaneDoeState_ExAttack_End::Enter(CJaneDoe* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_ExSpecial_End")
-        .Speed(1.2f)
+        .Speed(1.5f)
         .Apply();
-}
-
-void CJaneDoeState_ExAttack_End::Update(CJaneDoe* pOwner, _float dt)
-{
-    pOwner->Process_RootMotion(dt,
-        ENUM(CJaneDoe::ROOTMOTION_MASK::MOVE) |
-        ENUM(CJaneDoe::ROOTMOTION_MASK::QUATERNION));
 }

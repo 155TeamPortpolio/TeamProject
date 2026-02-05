@@ -85,6 +85,8 @@ void CCorinState_UltimateAttack_Start::Enter(CCorin* pOwner)
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "SwitchIn_Attack_Ex_Start")
         //.Speed(2.f)
         .Apply();
+
+    pOwner->Play_Effect("Corin_Saw_Slash0", _vector3(), _quaternion(0.f, 0.f, 0.f, 1.f), false);
 }
 
 void CCorinState_UltimateAttack_Start::Update(CCorin* pOwner, _float dt)
@@ -103,6 +105,8 @@ void CCorinState_UltimateAttack_Loop::Enter(CCorin* pOwner)
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "SwitchIn_Attack_Ex")
         //.Speed(2.f)
         .Apply();
+
+    pOwner->Play_Effect("Corin_Ultimate_Saw_Slash0", _vector3(), _quaternion(0.f, 0.f, 0.f, 1.f), false);
 }
 
 void CCorinState_UltimateAttack_Loop::Update(CCorin* pOwner, _float dt)
@@ -110,6 +114,20 @@ void CCorinState_UltimateAttack_Loop::Update(CCorin* pOwner, _float dt)
     pOwner->Process_RootMotion(dt,
         ENUM(CCorin::ROOTMOTION_MASK::MOVE) |
         ENUM(CCorin::ROOTMOTION_MASK::QUATERNION));
+
+    Update_Effects(pOwner);
+}
+
+void CCorinState_UltimateAttack_Loop::Update_Effects(CCorin* pOwner)
+{
+    if (IsCrossAnimProgress(0.22f))
+        pOwner->Play_Effect("Corin_Normal_Slash0", _vector3(0.f, 0.5f, 0.f), _quaternion(-0.68f, 0.17f, 0.15f, 0.7f));
+    if (IsCrossAnimProgress(0.31f))
+        pOwner->Play_Effect("Corin_Normal_Slash1", _vector3(0.f, 0.6f, 0.f), _quaternion(-0.69f, 0.13f, 0.19f, 0.69f));
+    if (IsCrossAnimProgress(0.41f))
+        pOwner->Play_Effect("Corin_Normal_Slash2", _vector3(0.f, 0.5f, 0.f), _quaternion(-0.62f, 0.25f, 0.08f, 0.74f));
+    if (IsCrossAnimProgress(0.69f))
+        pOwner->Play_Effect("Corin_Normal_Slash3", _vector3(-0.1f, 1.2f, 0.6f), _quaternion(0.72f, 0.14f, 0.66f, 0.15f));
 }
 
 void CCorinState_UltimateAttack_End::Enter(CCorin* pOwner)
@@ -127,4 +145,15 @@ void CCorinState_UltimateAttack_End::Update(CCorin* pOwner, _float dt)
     pOwner->Process_RootMotion(dt,
         ENUM(CCorin::ROOTMOTION_MASK::MOVE) |
         ENUM(CCorin::ROOTMOTION_MASK::QUATERNION));
+
+    Update_Effects(pOwner);
+}
+
+void CCorinState_UltimateAttack_End::Update_Effects(CCorin* pOwner)
+{
+    if (IsCrossAnimProgress(0.2f))
+    {
+        pOwner->Stop_Effect("Corin_Saw_Slash0");
+        pOwner->Stop_Effect("Corin_Ultimate_Saw_Slash0");
+    }
 }

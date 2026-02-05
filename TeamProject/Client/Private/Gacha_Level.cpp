@@ -39,11 +39,13 @@ HRESULT CGacha_Level::Awake()
 	auto pShadowCam = ObjectManager()->Find_Global(ENUM(GLOBAL_ID::ShadowCam));
 	LIGHT_DESC lightDesc = {};
 	lightDesc.vLightPosition = _float4(-50.f, 50.f, 0.f, 1.f);
-	lightDesc.vLightDiffuse = _float4(0.f, 0.3f, 1.f, 1.f);
-	lightDesc.vLightAmbient = _float4(1.f, 1.f, 1.f, 1.f);
+	lightDesc.vLightDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
+	lightDesc.vLightAmbient = _float4(0.7f, 0.7f, 0.7f, 1.f);
 	lightDesc.vLightSpecular = _float4(0.f, 0.f, 0.f, 1.f);
 	lightDesc.fLightIntensity = 1.f;
 	pShadowCam->Get_Component<CLight>()->Set_Desc(lightDesc, LIGHT_TYPE::DIRECTIONAL);
+
+	RenderSystem()->Set_FogDesc({ _float4(0.1f, 0.1f, 0.1f, 1.0f) ,0.f, 0.f, 0.02f, false });
 
 	Ready_GachaObjects();
 
@@ -62,13 +64,6 @@ HRESULT CGacha_Level::Awake()
 
 void CGacha_Level::Update()
 {
-	if (InputDevice()->Key_Tap(VK_SPACE))
-	{
-		if (m_iIndex == -1) CamDirector()->RequestSequence("Gacha/Spin_Half");
-		else CamDirector()->RequestSequence("Gacha/Spin");
-		++m_iIndex;
-		if (m_iIndex >= m_iMaxIndex) m_iIndex = 0;
-	}
 	Update_CamTime();
 }
 
@@ -110,16 +105,6 @@ void CGacha_Level::Update_CamTime()
 	{
 		if (CamDirector()->GetTime() >= 2.2f)
 			m_pGachaProps->PlayTVSequence();
-	}
-	else if (CamDirector()->GetCurSeqName() == "Gacha/Spin_Half")
-	{
-		if (CamDirector()->GetSeqPlayer()->GetTime() >= 0.7f)
-			m_pGachaProps->PlayStageSpin(m_iIndex);
-	}
-	else if (CamDirector()->GetCurSeqName() == "Gacha/Spin")
-	{
-		if (CamDirector()->GetSeqPlayer()->GetTime() >= 1.f)
-			m_pGachaProps->PlayStageSpin(m_iIndex);
 	}
 }
 

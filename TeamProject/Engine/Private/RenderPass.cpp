@@ -180,6 +180,10 @@ void SkinnedOpaquePass::Write_Buffer(ID3D11DeviceContext* pContext)
 
 	for (auto& packet : m_Packets)
 	{
+		if (!pPipeLine->isVisible(packet.pModel->Get_MeshBoundingBox(packet.DrawIndex),
+			XMLoadFloat4x4(packet.pWorldMatrix)))
+			continue;
+
 		_uint TransformIndex = pPipeLine->GetOrWriteTransform(packet.ObjID, *packet.pWorldMatrix);
 		_uint SkinningOffset = 0;
 		if (packet.bSkinning)
@@ -549,7 +553,6 @@ void StaticShadowPass::Write_Buffer(ID3D11DeviceContext* pContext)
 
 	if (m_Packets.empty())
 		return;
-
 	for (auto& packet : m_Packets)
 	{
 		_uint TransformIndex = pPipeLine->GetOrWriteTransform(packet.ObjID, *packet.pWorldMatrix);
@@ -565,7 +568,7 @@ void StaticShadowPass::Write_Buffer(ID3D11DeviceContext* pContext)
 
 		packet.TransformIndex = TransformIndex;
 		packet.SkinningOffset = SkinningOffset;
-		m_VisiblePackets.push_back(packet);
+		m_VisiblePackets.push_back(move(packet));
 	}
 }
 
@@ -666,7 +669,7 @@ void SkinnedShadowPass::Write_Buffer(ID3D11DeviceContext* pContext)
 
 		packet.TransformIndex = TransformIndex;
 		packet.SkinningOffset = SkinningOffset;
-		m_VisiblePackets.push_back(packet);
+		m_VisiblePackets.push_back(move(packet));
 	}
 }
 void SkinnedShadowPass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer, _bool IsFinal)

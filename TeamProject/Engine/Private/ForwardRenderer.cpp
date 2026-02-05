@@ -70,8 +70,6 @@ HRESULT CForwardRenderer::Render_StaticShadow(StaticShadowPass* pShadowPass, _bo
 		return S_OK;
 	}
 
-	m_pPipeLine->Update_StaticCSM();
-
 	_uint				iNumViewports = { 1 };
 	D3D11_VIEWPORT		ViewportDesc{};
 
@@ -102,7 +100,6 @@ HRESULT CForwardRenderer::Render_SkinnedShadow(SkinnedShadowPass* pShadowPass, _
 		return S_OK;
 	}
 
-	m_pPipeLine->Update_SkinnedCSM();
 
 	_uint				iNumViewports = { 1 };
 	D3D11_VIEWPORT		ViewportDesc{};

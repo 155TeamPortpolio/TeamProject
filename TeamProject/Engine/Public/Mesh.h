@@ -4,16 +4,6 @@ NS_BEGIN(Engine)
 class ENGINE_DLL CMesh :
 	public CVIBuffer
 {
-	struct IslandRange /*같은 인덱스 버퍼를 공유하는 아이들의 모음*/
-	{
-		_uint startIndex = {};
-		_uint indexCount = {};
-		MINMAX_BOX localBox{};
-	};
-
-	struct UnionFind {
-		
-	};
 protected:
 	CMesh();
 	CMesh(const string& ModelKey);
@@ -26,14 +16,17 @@ private:
 	virtual HRESULT Create_AnimateVertex(ID3D11Device* pDevice, ifstream& ifs) ;
 	virtual HRESULT Create_StaticVertex(ID3D11Device* pDevice, ifstream& ifs) ;
 	virtual HRESULT Create_Index(ID3D11Device* pDevice) override;
+	virtual HRESULT Finalize_AnimateVertexVB(ID3D11Device* pDevice);
 
 public:
 	_uint Get_MaterialIndex() { return m_MaterialIndex; }
 	_float3 Get_MinVertexLocal() { return m_vMeshMinLocal; }
 	_float3 Get_MaxVertexLocal() { return m_vMeshMaxLocal; }
+
 	const vector<_uint>& Get_Indices() { return m_indices; }
 	const vector<VTXMESH>& Get_StaticVertices() { return m_StaticVertex; }
 	const vector<VTXSKINMESH>& Get_SkinnedVertices() { return m_Skined; }
+
 
 	virtual _uint Get_StaticVerticesCount() { return m_iVerticesCount; }
 	virtual _uint Get_SkinnedVerticesCount() { return m_iVerticesCount; }
@@ -44,6 +37,14 @@ public:
 	void Create_BoneMinMax(class CSkeleton* pSkeleton);
 	void ExpandBox(MINMAX_BOX& b, const _float3& p);
 	virtual void Render_GUI();
+
+public:
+	HRESULT BakeSkinRemapAndRebuildVB(ID3D11Device* pDevice, _uint skeletonBoneCount);
+	const vector<uint16_t>& Get_UsedBones() const { return m_UsedBones; }
+
+private:
+	void BuildUsedBonesAndRemap(_uint skeletonBoneCount);
+	void RemapVertexBlendIndices();
 
 protected:
 	vector<_uint> m_indices;										
@@ -57,8 +58,9 @@ protected:
 	_float3 m_vMeshMinLocal = { FLT_MAX ,FLT_MAX ,FLT_MAX };
 	_float3 m_vMeshMaxLocal = { -FLT_MAX ,-FLT_MAX ,-FLT_MAX };
 	
-	vector<IslandRange> m_Islands;
-
+private:
+	vector<uint16_t> m_UsedBones;
+	vector<uint16_t> m_GlobalToLocal;
 public:
 	static CMesh* Create(ID3D11Device* pDevice,ifstream& ifs, MESH_TYPE eType);
 	virtual void Free() override;

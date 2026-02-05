@@ -26,6 +26,8 @@ private:
     _vector4    m_vInitRot;
     _float      m_fRotElapsedTime = 0.f;
     _float      m_fRotDuration = 0.85f;
+     
+    _bool       m_bRevealEffect = true;
 
 public:
     static CGachaWeapon* Create();
