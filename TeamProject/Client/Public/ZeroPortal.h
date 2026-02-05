@@ -50,9 +50,7 @@ private:
     class CStage* m_pOwnerStage = { nullptr };
 
 private:
-    _float m_fDuration = .5f;
-    _float m_fElapsedTime = 0.f;
-    _vector3 m_vTargetSize = {2.f,2.f,2.f};
+
 public:
     static CZeroPortal* Create();
     virtual CGameObject* Clone(INIT_DESC* pArg) override;

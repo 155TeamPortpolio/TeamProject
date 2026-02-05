@@ -7,7 +7,7 @@
 #include "Material.h"
 #include "MaterialInstance.h"
 #include "MaterialData.h"
-#include "PlaneModel.h"
+#include "ParticleSystem.h"
 #include "EventListener.h"
 #include "Stage.h"
 
@@ -26,24 +26,9 @@ HRESULT CZeroPortal::Initialize_Prototype()
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
 
-	Add_Component<CEventListener>();
-	Add_Component<CPlaneModel>();
+	Add_Component<CParticleSystem>();
 	Add_Component<CMaterial>();
-
-	auto pModel = Get_Component<CPlaneModel>();
-	pModel->Link_Model(G_GlobalLevelKey, "Engine_Default_Rect");
-	CMaterial* pMaterial = Get_Component<CMaterial>();
-
-	ID3D11Device* pDevice = CGameInstance::GetInstance()->Get_Device();
-	CMaterialInstance* customInstance = CMaterialInstance::Create_Handle("Rect_Effect_Base", "Opaque", pDevice);
-	pMaterial->Insert_MaterialInstance(customInstance, nullptr);
-	auto MaterialDat = customInstance->Get_MaterialData();
-	if (MaterialDat)
-		MaterialDat->Link_Shader(G_GlobalLevelKey, "VTX_Portal.hlsl")  ;
-
-	customInstance->Get_MaterialData()->Link_Texture(G_GlobalLevelKey, "Eff_Objects_048.png", TEXTURE_TYPE::DIFFUSE);
-	customInstance->Get_MaterialData()->Link_Texture(G_GlobalLevelKey, "Eff_Noise_092.png", TEXTURE_TYPE::NOISE);
-	customInstance->Get_MaterialData()->Link_Texture(G_GlobalLevelKey, "Eff_Noise_097_LYX_01.png", TEXTURE_TYPE::AMBIENT);
+	Add_Component<CEventListener>();
 
 	return S_OK;
 }
@@ -52,20 +37,38 @@ HRESULT CZeroPortal::Initialize(INIT_DESC* pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
+
+	EFFECT_ASSET asset = ResourceManager()->Load_EffectAsset(G_GlobalLevelKey, "zero_portal.json");
+	if (asset.iNodeCount < 1)
+		return E_FAIL;
+	PARTICLE_NODE* particleParam = static_cast<PARTICLE_NODE*>(asset.Nodes[0]);
+
+
+	ID3D11Device* pDevice = CGameInstance::GetInstance()->Get_Device();
+	auto pModel = Get_Component<CParticleSystem>();
+	pModel->ShadowCast(false);
+	pModel->SetParticleParams(*particleParam);
+
+	CMaterial* pMaterial = Get_Component<CMaterial>();
+	CMaterialInstance* customInstance = CMaterialInstance::Create_Handle("Point_Effect_Base", "Default", pDevice);
+	customInstance->ChangeTexture(TEXTURE_TYPE::DIFFUSE, 0);
+	customInstance->Set_Blended(true);
+
+	pMaterial->Insert_MaterialInstance(customInstance, nullptr);
+
+	auto MaterialDat = customInstance->Get_MaterialData();
+	if (MaterialDat)
+	{
+		MaterialDat->Link_Shader(G_GlobalLevelKey, "VTX_InstancePoint.hlsl");
+		MaterialDat->Link_Texture(G_GlobalLevelKey, particleParam->TextureKey, TEXTURE_TYPE::DIFFUSE);
+	}
+
+
 	return S_OK;
 }
 
 void CZeroPortal::Awake()
 {
-	auto pModel = Get_Component<CPlaneModel>();
-	pModel->ShadowCast(false);
-
-	auto pMaterial = Get_Component<CMaterial>();
-	auto MaterialInstances = pMaterial->Get_MaterialInstances();
-	for (auto& Instance : MaterialInstances)
-	{
-		pMaterial->Add_MaterialData(Instance, "g_Time", { &m_Time, "float", sizeof(_float) });
-	}
 
 }
 
@@ -77,6 +80,7 @@ void CZeroPortal::Update(_float dt)
 {
 	m_Time += dt;
 	Get_Component<CCollider>()->Update(dt);
+	Get_Component<CParticleSystem>()->Simulation_Particle(dt);
 	//Extend(dt);
 
 	if (m_bIsInteractable) {
@@ -97,7 +101,7 @@ void CZeroPortal::OnTriggerEnter(CGameObject* pOther)
 	auto pCollidable = pOther->Get_Component<ICollidable>();
 	if (pCollidable && (pCollidable->Get_Group() != COLLISION_GROUP::PLAYER))
 		return;
-	m_fElapsedTime = 0;
+
 	m_bIsInteractable = true;
 }
 
@@ -111,7 +115,7 @@ void CZeroPortal::OnTriggerExit(CGameObject* pOther)
 	auto pCollidable = pOther->Get_Component<ICollidable>();
 	if (pCollidable && (pCollidable->Get_Group() != COLLISION_GROUP::PLAYER))
 		return;
-	m_fElapsedTime = 0;
+
 	m_bIsInteractable = false;
 }
 
@@ -137,13 +141,6 @@ void CZeroPortal::SetChoiceIndex(CStage* pOwener, int idx)
 
 void CZeroPortal::Extend(_float dt)
 {
-	_vector3 nowScale  = m_pTransform->Get_Scale();
-	m_fElapsedTime += dt;
-
-	_float ratio = Math::Clamp01(m_fElapsedTime / m_fDuration);
-	_float Ease = Math::EaseInOutBounce(ratio);
-	Vector3 scale = Vector3::Lerp(nowScale,m_vTargetSize,Ease);
-	m_pTransform->Scale(scale);
 }
 
 void CZeroPortal::Contract(_float dt)
