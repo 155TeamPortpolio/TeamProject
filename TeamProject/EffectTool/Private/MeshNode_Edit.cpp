@@ -100,9 +100,9 @@ void CMeshNode_Edit::Play()
 
 void CMeshNode_Edit::Import(nlohmann::ordered_json& json)
 {
-
 	m_ModelKey = json.value("model_key", m_ModelKey);
 	m_MaterialKey = json.value("material_key", m_MaterialKey);
+	m_fPendingDuration = json.value("pending_duration", 0.f);
 
 	m_fDelayTime = json.value("delay_time", m_fDelayTime);
 	m_fDuration = json.value("duration", m_fDuration);
@@ -287,6 +287,7 @@ void CMeshNode_Edit::Export(nlohmann::ordered_json& json)
 		{"effect_type", static_cast<_uint>(EFFECT_TYPE::MESH)},
 		{"model_key",m_ModelKey},
 		{"material_key",m_MaterialKey},
+		{"pending_duration",m_fPendingDuration},
 
 		{"delay_time", m_fDelayTime},
 		{"duration", m_fDuration},
@@ -462,6 +463,7 @@ void CMeshNode_Edit::SetUp_MeshEffect()
 
 	ImGui::DragFloat("Delay Time", &m_fDelayTime);
 	ImGui::DragFloat("Duration", &m_fDuration);
+	ImGui::DragFloat("Pending Duration", &m_fPendingDuration);
 
 	if (ImGui::Button("Add Diffuse Texture"))
 		Add_Texture(EFFECT_TEXTURE_TYPE::DIFFUSE);

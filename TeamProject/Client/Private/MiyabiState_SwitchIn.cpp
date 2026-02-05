@@ -102,6 +102,8 @@ void CMiyabiState_SwitchIn::Exit(CMiyabi* pOwner)
 
 _bool CMiyabiState_SwitchIn::Handle_Transition(CMiyabi* pOwner, const string& strState)
 {
+    if (pOwner->Get_StateMachine()->Get_Int("IdleEntryMode") == 2)
+        return true;
     if (m_pSubStateMachine->Get_CurrentStateName() == "SwitchInParryAid")
     {
         IHState<CMiyabi>* pState = dynamic_cast<IHState<CMiyabi>*>(m_pSubStateMachine->Get_CurrentState());

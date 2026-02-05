@@ -25,6 +25,9 @@ public:
 	void Update(_float dt) override;
 	void Late_Update(_float dt) override;
 
+	virtual void OnPooledAcquire(INIT_DESC* pArg = nullptr);
+	virtual void OnPooledRelease();
+
 public:
 	EFFECT_CONTAINER_CONTEXT& GetEffectContext();
 	void SetLinePoints(_float3 point0, _float3 point1);
