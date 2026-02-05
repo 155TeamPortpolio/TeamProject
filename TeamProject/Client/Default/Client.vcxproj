@@ -411,6 +411,7 @@
     <ClInclude Include="..\Public\MiyabiState_Dash.h" />
     <ClInclude Include="..\Public\MiyabiState_Evade.h" />
     <ClInclude Include="..\Public\MiyabiState_Hit.h" />
+    <ClInclude Include="..\Public\MiyabiState_RushAttack.h" />
     <ClInclude Include="..\Public\MiyabiState_Start.h" />
     <ClInclude Include="..\Public\MiyabiState_SwitchIn.h" />
     <ClInclude Include="..\Public\MiyabiState_SwitchInAttack.h" />
@@ -813,6 +814,7 @@
     <ClCompile Include="..\Private\MiyabiState_Dash.cpp" />
     <ClCompile Include="..\Private\MiyabiState_Evade.cpp" />
     <ClCompile Include="..\Private\MiyabiState_Hit.cpp" />
+    <ClCompile Include="..\Private\MiyabiState_RushAttack.cpp" />
     <ClCompile Include="..\Private\MiyabiState_Start.cpp" />
     <ClCompile Include="..\Private\MiyabiState_SwitchIn.cpp" />
     <ClCompile Include="..\Private\MiyabiState_SwitchInAttack.cpp" />
