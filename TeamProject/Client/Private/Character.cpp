@@ -320,6 +320,11 @@ void CCharacter::On_Interact()
     m_bCanInteract = true;
 }
 
+void CCharacter::OnDefensiveAssist()
+{
+
+}
+
 void CCharacter::Process_RootMotion(_float dt, const ROOTMOTION_DESC& desc)
 {
     auto pTransform = Get_Component<CTransform>();
