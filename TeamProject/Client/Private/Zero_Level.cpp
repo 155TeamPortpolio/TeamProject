@@ -8,8 +8,9 @@
 
 #include "Stage.h"
 #include "ZeroStage_Boss.h"
-#include "ZeroStage_Normal.h"
 #include "ZeroStage_Elite.h"
+#include "ZeroStage_Normal.h"
+#include "ZeroStage_Start.h"
 #include "TestCloud.h"
 
 // Camera
@@ -144,6 +145,7 @@ void CZero_Level::Ready_Stage()
 
 	m_pRouter->BuildGraph(5, StageType::Boss);
 
+	m_StageContainer.emplace(StageType::Start, CZeroStage_Start::Create(this));
 	m_StageContainer.emplace(StageType::Normal, CZeroStage_Normal::Create(this));
 	m_StageContainer.emplace(StageType::Elite, CZeroStage_Elite::Create(this));
 	m_StageContainer.emplace(StageType::Boss, CZeroStage_Boss::Create(this));
