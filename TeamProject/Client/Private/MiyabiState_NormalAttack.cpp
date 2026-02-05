@@ -237,11 +237,23 @@ void CMiyabiState_Attack_03::Update(CMiyabi* pOwner, _float dt)
             pOwner->End_AttackCollider("KatanaWeapon");
         }
     }
+    
+    Update_Effects(pOwner);
 }
 
 void CMiyabiState_Attack_03::Exit(CMiyabi* pOwner)
 {
     static_cast<CMiyabiState_NormalAttack*>(m_pParentState)->Set_ComboIndex(2);
+}
+
+void CMiyabiState_Attack_03::Update_Effects(CMiyabi* pOwner)
+{
+    if (IsCrossAnimProgress(0.2f))
+        pOwner->Play_Effect("Miyabi_Normal1_Slash0", _vector3(0.f, 0.8f, 0.f), _quaternion(0.21f, 0.65f, 0.7f, -0.19f));
+    if (IsCrossAnimProgress(0.25f))
+        pOwner->Play_Effect("Miyabi_Normal1_Slash1", _vector3(0.f, 0.9f, 0.f), _quaternion(-0.61f, -0.34f, -0.27f, 0.66f));
+    if (IsCrossAnimProgress(0.3f))
+        pOwner->Play_Effect("Miyabi_Normal2_Slash0", _vector3(0.f, 1.2f, 0.f), _quaternion(-0.33f, 0.66f, 0.62f, 0.27f));
 }
 
 void CMiyabiState_Attack_04::Enter(CMiyabi* pOwner)
