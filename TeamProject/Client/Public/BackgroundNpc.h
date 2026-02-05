@@ -18,7 +18,7 @@ public:
     virtual void    Late_Update(_float dt) override;
 
 private:
-    void Build_Crowd(_uint Count);
+    void Build_Crowd(_uint Count, _bool Round = false);
     void Build_Pedestrian(_uint Count);
 public:
     static CBackgroundNpc* Create();
