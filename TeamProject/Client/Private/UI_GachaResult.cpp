@@ -18,6 +18,12 @@ HRESULT CUI_GachaResult::Initialize(INIT_DESC* pArg)
 	__super::Initialize(pArg);
 
     Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("gacha_result.json")));
+    Cache();
+
+    Create_Items();
+
+    Set_Alive(false);
+    //UI_Active();
 
 	return S_OK;
 }
@@ -28,17 +34,73 @@ void CUI_GachaResult::Awake()
 
 void CUI_GachaResult::Update(_float dt)
 {
-	__super::Update(dt);
+    if (InputDevice()->Key_Down('P'))
+        UI_Active();
+
+    if (m_iItemIndex < m_pItems.size())
+    {
+        m_fItemTimer += dt;
+    
+        if (m_fItemTimer >= m_fItemDuration)
+        {
+            m_pItems[m_iItemIndex]->UI_Active();
+            ++m_iItemIndex;
+            m_fItemTimer = 0.f;
+        }
+    }
+
+    __super::Update(dt);
 
 	Get_Component<CObjectContainer>()->UpdateChild(dt);
 }
 
 void CUI_GachaResult::UI_Active(void* pArg)
 {
+    Set_Animation(0);
+    if (m_pTitle)
+        m_pTitle->Set_Animation(0);
+
+    m_iItemIndex = 0;
+    m_fItemTimer = 0;
+
+   for (auto& pItem : m_pItems)
+       pItem->Set_Alive(false);
 }
 
 void CUI_GachaResult::UI_DeActive(void* pArg)
 {
+}
+
+void CUI_GachaResult::Cache()
+{
+    m_pTitle = dynamic_cast<CUI_Object*>(Get_Component<CObjectContainer>()->Find_Descendant("title"));
+}
+
+void CUI_GachaResult::Create_Items()
+{
+    auto pContainer = Get_Component<CObjectContainer>();
+
+    _float2 vCenter = { m_WinSize.x * 0.5f, m_WinSize.y * 0.7f };
+
+    for (_int j = 0; j < ROW; ++j)
+    {
+        for (_int i = 0; i < COL; ++i)
+        {
+            auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_GachaResultItem" }).Build("resultItem");
+            if (!pObj)
+                continue;
+
+            float offsetX = (i - (COL - 1) * 0.5f) * (WIDTH + SPACING);
+            float offsetY = (j - (ROW - 1) * 0.5f) * (HEIGHT + SPACING);
+
+            float x = vCenter.x + offsetX;
+            float y = vCenter.y + offsetY;
+            pObj->Set_AnchorOffset({ x, y });
+            pObj->Set_Alive(false);
+            pContainer->Add_Child(pObj);
+            m_pItems.push_back(pObj);
+        } 
+    } 
 }
 
 CGameObject* CUI_GachaResult::Create()

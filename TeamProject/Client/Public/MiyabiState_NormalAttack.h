@@ -37,6 +37,10 @@ public:
 public:
     static CMiyabiState_Attack_01* Create() { return new CMiyabiState_Attack_01(); }
     virtual void Free() override { __super::Free(); }
+
+private:
+    void Update_Effects(CMiyabi* pOwner);
+
 };
 
 class CMiyabiState_Attack_02 : public IBaseState<CMiyabi>
@@ -49,6 +53,10 @@ public:
 public:
     static CMiyabiState_Attack_02* Create() { return new CMiyabiState_Attack_02(); }
     virtual void Free() override { __super::Free(); }
+
+private:
+    void Update_Effects(CMiyabi* pOwner);
+
 };
 
 class CMiyabiState_Attack_03 : public IBaseState<CMiyabi>
@@ -61,6 +69,10 @@ public:
 public:
     static CMiyabiState_Attack_03* Create() { return new CMiyabiState_Attack_03(); }
     virtual void Free() override { __super::Free(); }
+
+private:
+    void Update_Effects(CMiyabi* pOwner);
+
 };
 
 class CMiyabiState_Attack_04 : public IBaseState<CMiyabi>

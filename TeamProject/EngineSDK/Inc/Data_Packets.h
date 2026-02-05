@@ -118,6 +118,8 @@ namespace Engine {
 	typedef struct DrawUIPacket : BASE_PACKET {
 		class CSprite2D* pSprite2D = { nullptr };
 		_float4* pColor = {};
+
+		_uint StencilRef{};
 	}SPRITE_PACKET;
 
 	typedef struct DrawDebugPacket : BASE_PACKET {

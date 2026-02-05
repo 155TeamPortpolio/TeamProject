@@ -148,6 +148,9 @@ void CParticleNode_Edit::Import(nlohmann::ordered_json& json)
 	m_TextureKey = json.value("texture_key", m_TextureKey);
 	m_TexturePath = json.value("texture_path", m_TexturePath);
 
+	m_UseMask = json.value("use_mask", false);
+	m_MaskTextureTag = json.value("mask_texture_tag", "");
+
 	/* Offset Transform */
 	auto vOffsetPosition = json.value("offset_position", json::array({ 0.f,0.f,0.f }));
 	auto vOffsetQuaternion = json.value("offset_quaternion", json::array({ 0.f,0.f,0.f,1.f }));
@@ -235,11 +238,19 @@ void CParticleNode_Edit::Import(nlohmann::ordered_json& json)
 
 		auto pMaterialInstance = Get_Component<CMaterial>()->Get_MaterialInstance(0);
 		pMaterialInstance->Set_Param("DiffuseTexture", { pTexture->Get_SRV(),"Texture2D",0 });
+	}
 
-		//auto pMaterialData = Get_Component<CMaterial>()->Get_MaterialInstance(0)->Get_MaterialData();
-		//pMaterialData->Link_Texture(G_GlobalLevelKey, m_TextureKey, TEXTURE_TYPE::DIFFUSE);
-		//
-		//Get_Component<CMaterial>()->Get_MaterialInstance(0)->ChangeTexture(TEXTURE_TYPE::DIFFUSE, 0);
+	/* Set Mask */
+	if (m_UseMask)
+	{
+		auto pTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_MaskTextureTag);
+
+		if (pTexture)
+		{
+			auto pMaterialInstance = Get_Component<CMaterial>()->Get_MaterialInstance(0);
+			pMaterialInstance->Override_Pass("MaskPass");
+			pMaterialInstance->Set_Param("MaskTexture", { pTexture->Get_SRV(),"Texture2D",0 });
+		}
 	}
 
 	_vector3 vPosition(vOffsetPosition[0], vOffsetPosition[1], vOffsetPosition[2]);
@@ -259,6 +270,9 @@ void CParticleNode_Edit::Export(nlohmann::ordered_json& json)
 		{"effect_type", ENUM(EFFECT_TYPE::PARTICLE)},
 		{"texture_key", m_TextureKey},
 		{"texture_path",m_TexturePath},
+
+		{"use_mask", m_UseMask},
+		{"mask_texture_tag",m_MaskTextureTag},
 
 		/* Offset Transform */
 		{"offset_position",json::array({vOffsetPosition.x,vOffsetPosition.y,vOffsetPosition.z})},
@@ -360,6 +374,21 @@ void CParticleNode_Edit::AddTextures()
 			pMaterialInstance->Set_Param("DiffuseTexture", { pTexture->Get_SRV(),"Texture2D",0 });
 		}
 	}
+
+	if (m_UseMask)
+	{
+		if (ImGui::Button("Add Mask Texture"))
+		{
+			if (!m_pContext->Textures.empty())
+			{
+				m_MaskTextureTag = m_pContext->TextureTags[0];
+
+				auto pTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_pContext->TextureTags[0]);
+				auto pMaterialInstance = Get_Component<CMaterial>()->Get_MaterialInstance(0);
+				pMaterialInstance->Set_Param("MaskTexture", { pTexture->Get_SRV(),"Texture2D",0 });
+			}
+		}
+	}
 }
 
 void CParticleNode_Edit::SetUp_ParticleEffect()
@@ -370,6 +399,16 @@ void CParticleNode_Edit::SetUp_ParticleEffect()
 
 	ImGui::DragFloat("Delay Time", &m_fDelayTime);
 	ImGui::DragFloat("Duration", &m_fDuration);
+	if (ImGui::Checkbox("Use Mask", &m_UseMask))
+	{
+		auto pMaterialInstance = Get_Component<CMaterial>()->Get_MaterialInstance(0);
+
+		if (m_UseMask)
+			pMaterialInstance->Override_Pass("MaskPass");
+		else
+			pMaterialInstance->Override_Pass("Default");
+	}
+
 
 	{
 		_float rimLightColor[3] = { m_vRimLightColor.x,m_vRimLightColor.y,m_vRimLightColor.z };

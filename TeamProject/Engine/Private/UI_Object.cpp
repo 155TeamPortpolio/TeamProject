@@ -8,6 +8,8 @@
 #include "Child.h"
 #include "ObjectContainer.h"
 
+
+
 CUI_Object::CUI_Object(const CUI_Object& rhs) : CGameObject(rhs)
 {
     m_WinSize       = rhs.m_WinSize;
@@ -84,20 +86,31 @@ void CUI_Object::Post_EngineUpdate(_float dt)
         m_vColorLinear.z = powf(m_vColor.z, 2.2f);
         m_vColorLinear.w = m_fCombinedAlpha;        // m_vCombinedAlpha = 부모 알파 * 내 알파
 
+        if (m_stencilMode == StencilMode::Write)
+        {
+            m_stencilRef = UIManager()->Alloc_StencilRef();
+        }
+        else if (m_stencilMode == StencilMode::Test)
+        {
+            m_stencilRef = UIManager()->Get_StencilRef();
+        }
+
         SPRITE_PACKET packet;
         packet.pSprite2D    = Get_Component<CSprite2D>();
         packet.pWorldMatrix = m_pTransform->Get_WorldMatrix_Ptr();
         packet.pColor       = &m_vColorLinear;
         packet.ObjID        = m_ObjectID;
+        packet.StencilRef   = m_stencilRef;
+
         _bool isUI     = (packet.pSprite2D != nullptr);
         _bool isValid  = (packet.pSprite2D->IsValid());
         _bool isActive = (packet.pSprite2D->Get_CompActive());
 
         if(isUI && isValid && isActive)
-            CGameInstance::GetInstance()->Get_RenderSystem()->Submit_UI(packet);
+            RenderSystem()->Submit_UI(packet);
 
         if (m_isClickable)
-            CGameInstance::GetInstance()->Get_ClickMgr()->Register_ClickableObject(this);
+            ClickManager()->Register_ClickableObject(this);
     }
 
     if (CObjectContainer* pObjContainer = Get_Component<CObjectContainer>()) 
@@ -463,6 +476,8 @@ void CUI_Object::Load(const nlohmann::ordered_json& data)
     m_isAlive = data.value("alive", true);
 
     m_InstanceName = data.value("instanceName", "");
+
+    m_stencilMode = (StencilMode)data.value("stencilMode", 0u);
 
     if (data.contains("transform"))
     {

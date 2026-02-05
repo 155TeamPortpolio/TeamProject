@@ -76,10 +76,8 @@ void CUIObject_Tool::OnClick()
 
 void CUIObject_Tool::Remove_SelfFromParent()
 {
-    auto pGameInstance = CGameInstance::GetInstance();
-
-    const string& strCurrentLevel = pGameInstance->Get_LevelMgr()->Get_NowLevelKey();
-    const auto& objects = pGameInstance ->Get_UIMgr()->Get_LevelUI(strCurrentLevel);
+    const string& strCurrentLevel = LevelManager()->Get_NowLevelKey();
+    const auto& objects = UIManager()->Get_LevelUI(strCurrentLevel);
 
     for (auto& pObj : objects)
     {
@@ -120,6 +118,7 @@ void CUIObject_Tool::Save(nlohmann::ordered_json& data)
 
     data["color"] = {m_vColor.x, m_vColor.y, m_vColor.z, m_vColor.w};
 
+    data["stencilMode"] = m_useMask ? ENUM(StencilMode::Test) : ENUM(StencilMode::None);
     data["pass"] = Get_Component<CSprite2D>()->Get_PassConstant();
 
     m_colorTexModeU = (_uint)m_colorTexMode;
@@ -231,7 +230,10 @@ void CUIObject_Tool::Render_GUI_Property()
         m_InstanceName = szInstanceName;
 
     if (ImGui::Checkbox("Use Mask", &m_useMask))
+    {
+        m_stencilMode = m_useMask? StencilMode::Test : StencilMode::None;
         Set_BasePass(m_basePass);
+    }
 
     ImGui::TextDisabled(("BasePass : " + m_basePass).c_str());
 }
