@@ -6,7 +6,7 @@
     {
       "iIndex": 0,
       "LightDesc": {
-        "eLightType": 2,
+        "eLightType": 1,
         "vOffsetPosition": {
           "x": 0.0,
           "y": 0.0,
@@ -14,10 +14,10 @@
           "w": 0.0
         },
         "vLightDirection": {
-          "x": -0.3078717887401581,
-          "y": 0.8685466647148132,
-          "z": 0.23388148844242096,
-          "w": 0.3100664019584656
+          "x": -0.34441670775413513,
+          "y": 0.8910618424415588,
+          "z": 0.12281273305416107,
+          "w": 0.2688920795917511
         },
         "vLightDiffuse": {
           "x": 1.0,
@@ -37,8 +37,8 @@
           "z": 1.0,
           "w": 0.0
         },
-        "fLightRange": 50.0,
-        "fLightIntensity": 5.0,
+        "fLightRange": 10.0,
+        "fLightIntensity": 10.0,
         "fInnerCos": 5.0,
         "fOuterCos": 50.0
       },
@@ -51,7 +51,7 @@
     {
       "iIndex": 1,
       "LightDesc": {
-        "eLightType": 2,
+        "eLightType": 1,
         "vOffsetPosition": {
           "x": 0.0,
           "y": 0.0,
@@ -59,10 +59,10 @@
           "w": 0.0
         },
         "vLightDirection": {
-          "x": -0.07235045731067657,
-          "y": -0.9270645976066589,
-          "z": -0.2766481637954712,
-          "w": 0.2424507737159729
+          "x": -0.09345348924398422,
+          "y": -0.947852611541748,
+          "z": -0.19380037486553192,
+          "w": 0.23512423038482666
         },
         "vLightDiffuse": {
           "x": 1.0,
@@ -82,8 +82,8 @@
           "z": 1.0,
           "w": 0.0
         },
-        "fLightRange": 50.0,
-        "fLightIntensity": 5.0,
+        "fLightRange": 10.0,
+        "fLightIntensity": 10.0,
         "fInnerCos": 5.0,
         "fOuterCos": 50.0
       },
@@ -96,7 +96,7 @@
     {
       "iIndex": 2,
       "LightDesc": {
-        "eLightType": 2,
+        "eLightType": 1,
         "vOffsetPosition": {
           "x": 4.1620916782503237e-13,
           "y": 6.319856074104925e-43,
@@ -127,8 +127,8 @@
           "z": 1.0,
           "w": 0.0
         },
-        "fLightRange": 50.0,
-        "fLightIntensity": 5.0,
+        "fLightRange": 10.0,
+        "fLightIntensity": 10.0,
         "fInnerCos": 5.0,
         "fOuterCos": 50.0
       },
@@ -141,7 +141,7 @@
     {
       "iIndex": 3,
       "LightDesc": {
-        "eLightType": 2,
+        "eLightType": 1,
         "vOffsetPosition": {
           "x": 1.961817850054744e-44,
           "y": 1.401298464324817e-44,
@@ -172,8 +172,8 @@
           "z": 1.0,
           "w": 0.0
         },
-        "fLightRange": 50.0,
-        "fLightIntensity": 5.0,
+        "fLightRange": 10.0,
+        "fLightIntensity": 10.0,
         "fInnerCos": 5.0,
         "fOuterCos": 50.0
       },
@@ -186,7 +186,7 @@
     {
       "iIndex": 4,
       "LightDesc": {
-        "eLightType": 2,
+        "eLightType": 1,
         "vOffsetPosition": {
           "x": 2.1019476964872256e-44,
           "y": 4.344025239406933e-44,
@@ -217,8 +217,8 @@
           "z": 1.0,
           "w": 0.0
         },
-        "fLightRange": 50.0,
-        "fLightIntensity": 5.0,
+        "fLightRange": 10.0,
+        "fLightIntensity": 10.0,
         "fInnerCos": 5.0,
         "fOuterCos": 50.0
       },
@@ -231,7 +231,7 @@
     {
       "iIndex": 5,
       "LightDesc": {
-        "eLightType": 2,
+        "eLightType": 1,
         "vOffsetPosition": {
           "x": 2.1019476964872256e-44,
           "y": 4.0637655465419695e-44,
@@ -262,8 +262,8 @@
           "z": 1.0,
           "w": 0.0
         },
-        "fLightRange": 50.0,
-        "fLightIntensity": 5.0,
+        "fLightRange": 10.0,
+        "fLightIntensity": 10.0,
         "fInnerCos": 5.0,
         "fOuterCos": 50.0
       },
@@ -276,7 +276,7 @@
     {
       "iIndex": 6,
       "LightDesc": {
-        "eLightType": 2,
+        "eLightType": 1,
         "vOffsetPosition": {
           "x": 0.0,
           "y": 1.7978659297287403e-42,
@@ -307,8 +307,8 @@
           "z": 1.0,
           "w": 0.0
         },
-        "fLightRange": 50.0,
-        "fLightIntensity": 5.0,
+        "fLightRange": 10.0,
+        "fLightIntensity": 10.0,
         "fInnerCos": 5.0,
         "fOuterCos": 50.0
       },
@@ -321,7 +321,7 @@
     {
       "iIndex": 7,
       "LightDesc": {
-        "eLightType": 2,
+        "eLightType": 1,
         "vOffsetPosition": {
           "x": 2.1019476964872256e-44,
           "y": 5.605193857299268e-44,
@@ -352,8 +352,8 @@
           "z": 1.0,
           "w": 0.0
         },
-        "fLightRange": 50.0,
-        "fLightIntensity": 5.0,
+        "fLightRange": 10.0,
+        "fLightIntensity": 10.0,
         "fInnerCos": 5.0,
         "fOuterCos": 50.0
       },
@@ -366,7 +366,7 @@
     {
       "iIndex": 8,
       "LightDesc": {
-        "eLightType": 2,
+        "eLightType": 1,
         "vOffsetPosition": {
           "x": 2.1019476964872256e-44,
           "y": 5.74532370373175e-44,
@@ -397,8 +397,8 @@
           "z": 1.0,
           "w": 0.0
         },
-        "fLightRange": 50.0,
-        "fLightIntensity": 5.0,
+        "fLightRange": 10.0,
+        "fLightIntensity": 10.0,
         "fInnerCos": 5.0,
         "fOuterCos": 50.0
       },
@@ -411,7 +411,7 @@
     {
       "iIndex": 9,
       "LightDesc": {
-        "eLightType": 2,
+        "eLightType": 1,
         "vOffsetPosition": {
           "x": 2.1019476964872256e-44,
           "y": 4.344025239406933e-44,
@@ -442,8 +442,8 @@
           "z": 1.0,
           "w": 0.0
         },
-        "fLightRange": 50.0,
-        "fLightIntensity": 5.0,
+        "fLightRange": 10.0,
+        "fLightIntensity": 10.0,
         "fInnerCos": 5.0,
         "fOuterCos": 50.0
       },
@@ -471,7 +471,7 @@
         },
         "vLightDiffuse": {
           "x": 0.0,
-          "y": 0.2,
+          "y": 0.20000000298023224,
           "z": 1.0,
           "w": 0.0
         },
@@ -487,10 +487,10 @@
           "z": 0.0,
           "w": 0.0
         },
-        "fLightRange": 100.0,
+        "fLightRange": 85.0,
         "fLightIntensity": 50.0,
-        "fInnerCos": 100.0,
-        "fOuterCos": 130.0
+        "fInnerCos": 30.0,
+        "fOuterCos": 100.0
       },
       "vTranslation": [
         -0.010457918047904968,
@@ -500,6 +500,51 @@
     },
     {
       "iIndex": 11,
+      "LightDesc": {
+        "eLightType": 2,
+        "vOffsetPosition": {
+          "x": 0.0038198470138013363,
+          "y": 5.605193857299268e-45,
+          "z": -2.948023122757878e-38,
+          "w": -3.407957865237955e-42
+        },
+        "vLightDirection": {
+          "x": 0.8201189041137695,
+          "y": -8.298826514874236e-08,
+          "z": -8.298826514874236e-08,
+          "w": -0.5721931457519531
+        },
+        "vLightDiffuse": {
+          "x": 0.0,
+          "y": 0.20000000298023224,
+          "z": 0.0,
+          "w": 0.0
+        },
+        "vLightAmbient": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0,
+          "w": 0.0
+        },
+        "vLightSpecular": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0,
+          "w": 0.0
+        },
+        "fLightRange": 70.0,
+        "fLightIntensity": 50.0,
+        "fInnerCos": 10.0,
+        "fOuterCos": 70.0
+      },
+      "vTranslation": [
+        -0.0,
+        1.5,
+        -0.4000000059604645
+      ]
+    },
+    {
+      "iIndex": 12,
       "LightDesc": {
         "eLightType": 2,
         "vOffsetPosition": {
@@ -544,7 +589,7 @@
       ]
     },
     {
-      "iIndex": 12,
+      "iIndex": 13,
       "LightDesc": {
         "eLightType": 2,
         "vOffsetPosition": {
@@ -589,7 +634,7 @@
       ]
     },
     {
-      "iIndex": 13,
+      "iIndex": 14,
       "LightDesc": {
         "eLightType": 2,
         "vOffsetPosition": {
@@ -634,7 +679,7 @@
       ]
     },
     {
-      "iIndex": 14,
+      "iIndex": 15,
       "LightDesc": {
         "eLightType": 2,
         "vOffsetPosition": {
@@ -679,7 +724,7 @@
       ]
     },
     {
-      "iIndex": 15,
+      "iIndex": 16,
       "LightDesc": {
         "eLightType": 2,
         "vOffsetPosition": {
@@ -724,7 +769,7 @@
       ]
     },
     {
-      "iIndex": 16,
+      "iIndex": 17,
       "LightDesc": {
         "eLightType": 2,
         "vOffsetPosition": {
@@ -766,6 +811,51 @@
         0.7832474708557129,
         2.5899999141693115,
         -0.6861263513565063
+      ]
+    },
+    {
+      "iIndex": 18,
+      "LightDesc": {
+        "eLightType": 2,
+        "vOffsetPosition": {
+          "x": 7.52316384526264e-37,
+          "y": 0.0,
+          "z": -2.9912926180638254e-15,
+          "w": -1.4352098871614776e-41
+        },
+        "vLightDirection": {
+          "x": 0.20348095893859863,
+          "y": -0.11527440696954727,
+          "z": -0.0662328228354454,
+          "w": 0.9700105786323547
+        },
+        "vLightDiffuse": {
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0,
+          "w": 0.0
+        },
+        "vLightAmbient": {
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0,
+          "w": 0.0
+        },
+        "vLightSpecular": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0,
+          "w": 0.0
+        },
+        "fLightRange": 20.0,
+        "fLightIntensity": 5.0,
+        "fInnerCos": 10.0,
+        "fOuterCos": 30.0
+      },
+      "vTranslation": [
+        0.5427068471908569,
+        2.2558045387268066,
+        -3.1540987491607666
       ]
     }
   ]

@@ -13,6 +13,7 @@ private:
 
 public:
     void SetScreen(GACHA_STAGE eStage, GachaGrade eGrade);
+    void ScreenOff(GACHA_STAGE eStage);
 
 public:
     virtual HRESULT Initialize_Prototype()      override;
@@ -24,6 +25,7 @@ public:
 
 private:
     void ResetMaterialInstances(vector<_int> ScreenIndex);
+    void ScreenOffMaterialInstances();
 
 private:
     vector<_int>    m_Cols = { 4 };
