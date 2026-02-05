@@ -31,7 +31,7 @@ HRESULT CBackgroundNpc::Initialize_Prototype()
 HRESULT CBackgroundNpc::Initialize(INIT_DESC* pArg)
 {
 	__super::Initialize(pArg);
-	Build_Pedestrian(3);
+	//Build_Pedestrian(3);
 	Build_Crowd(3,true);
 	Build_Crowd(2);
 	return S_OK;
