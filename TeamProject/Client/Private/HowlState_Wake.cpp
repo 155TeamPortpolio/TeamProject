@@ -19,9 +19,9 @@ void CHowlState_Wake::Enter(CHowl* pOwner)
             CStateMachine<CHowl>::CONDITION_ANIMATION_END);
         m_pSubStateMachine->Register_Transition("End", "Idle",
             CStateMachine<CHowl>::CONDITION_ANIMATION_END);
-
-        m_pSubStateMachine->Set_DefaultState("Start");
     }
+    m_pSubStateMachine->Set_DefaultState("Start");
+    __super::Enter(pOwner);
 }
 
 void CHowlState_Wake::Update(CHowl* pOwner, _float dt)
