@@ -1,17 +1,25 @@
 #pragma once
 #include "UI_Object.h"
 
+NS_BEGIN(Engine)
+class CSprite2D;
+NS_END
+
 NS_BEGIN(Client)
 
 class CUI_GachaResultItem final : public CUI_Object
 {
 private:
-	enum class RANK { B, A, S, END };
+	enum class SPRITE { ITEM_ICON_BACK, ITEM_ICON_FRONT, RANK_ICON, END };
+	inline static const string SPRITE_INSTANCENAMES[ENUM(SPRITE::END)] = { "itemIconBack", "itemIconFront", "rankIcon" };
 
 private:
 	CUI_GachaResultItem() {}
 	CUI_GachaResultItem(const CUI_GachaResultItem& rhs) : CUI_Object(rhs) {}
 	virtual ~CUI_GachaResultItem() DEFAULT;
+
+public:
+	void Set_ResultDesc(GACHA_RESULT_DESC desc);
 
 public:
 	virtual HRESULT Initialize_Prototype()           override;
@@ -25,9 +33,14 @@ public:
 	virtual void	UI_DeActive(void* pArg = nullptr) override;
 
 private:
-	RANK		m_eRank = { RANK::B };
-
 	CUI_Object* m_pOverlay = {};
+
+	class CSprite2D* m_pSprites[ENUM(SPRITE::END)] = {};
+
+private:
+	void Cache();
+
+	void Change_SpriteTexture(SPRITE sprite, const string& strTextureKey);
 
 public:
 	static  CGameObject* Create();
