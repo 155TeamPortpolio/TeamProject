@@ -35,6 +35,7 @@ public:
 
 private:
     void    Add_StageScreen();
+    void    Add_UIText();
     void    Update_StageEnviroment(_int index);
     void    Set_Stage(GACHA_STAGE eStage, _int ResultID);
     void    Reset_Target();
