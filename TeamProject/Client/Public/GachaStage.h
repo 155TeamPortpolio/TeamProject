@@ -37,6 +37,7 @@ private:
     void    Add_StageScreen();
     void    Update_StageEnviroment(_int index);
     void    Set_Stage(GACHA_STAGE eStage, _int ResultID);
+    void    Reset_Target();
 
     void    Update_CamTime();
     void    Update_Lights(_float dt);
