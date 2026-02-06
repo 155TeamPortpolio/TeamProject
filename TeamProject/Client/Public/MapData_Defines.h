@@ -103,7 +103,7 @@ namespace Client {
 	{
 		string	TagDataFormat = "";
 		string	TagArea = "";
-		BATTLE_POINT_DATA					PlayerSpawnPoint = {};
+		vector<BATTLE_POINT_DATA>			PlayerSpawnPoint;
 		vector<BATTLE_POINT_SPAWNER_DATA>	Spawners;
 		vector<BATTLE_POINT_DATA>			Monsters;
 		vector<BATTLE_POINT_DATA>			EndPoints;

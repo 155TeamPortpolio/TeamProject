@@ -1,10 +1,10 @@
 {
   "TagDataFormat": "Collider",
-  "TagArea": "Zero_1_2",
+  "TagArea": "Zero_3_1",
   "iVersion": 1,
   "values": [
     {
-      "iObjID": 0,
+      "iObjID": 1,
       "TagName": "bCooking",
       "defaultvalue": {
         "type": "Bool",
@@ -28,7 +28,7 @@
       }
     },
     {
-      "iObjID": 10,
+      "iObjID": 9,
       "TagName": "bCooking",
       "defaultvalue": {
         "type": "Bool",

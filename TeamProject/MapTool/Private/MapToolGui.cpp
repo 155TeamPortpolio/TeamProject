@@ -1190,11 +1190,24 @@ void CMapToolGui::Render_ClearLayer()
 
                 if (i == ENUM(MAPOBJ_TYPE::TRIGGER) || i == ENUM(MAPOBJ_TYPE::ALL))
                     m_iTriggerIndex = {};
-
+                else {
+                    m_iEndPointIndex = 0;
+                    m_iMonsterIndex = 0;
+                    m_iSpawnerIndex = 0;
+                    m_iPlayerIndex = 0;
+                }                
             }
         }
     }
     ImGui::PopID();
+}
+
+void CMapToolGui::Clear_BattleData()
+{
+    m_iPlayerIndex = 0;
+    m_iMonsterIndex = 0;
+    m_iSpawnerIndex = 0;
+    m_iEndPointIndex = 0;
 }
 
 void CMapToolGui::KeyInput()
