@@ -45,15 +45,12 @@ HRESULT CFirstLevel::Awake()
 		.Position(Vector3(0.f, 0.3f, -1.4f))
 		.Build("FootStage");
 
-
-
-
 	OBJ->Add_Object(freeCam,   {G_GlobalLevelKey, "Camera_Layer"});
 	OBJ->Add_Object(corin,     {G_GlobalLevelKey, "Model_Layer" });
 	OBJ->Add_Object(janeDoe,   {G_GlobalLevelKey, "Model_Layer" });
 	OBJ->Add_Object(miyabi,    {G_GlobalLevelKey, "Model_Layer" });
-	//OBJ->Add_Object(gacha,     {G_GlobalLevelKey, "Gacha_Layer" });
-	//OBJ->Add_Object(footStage, {G_GlobalLevelKey, "Gacha_Layer" });
+	OBJ->Add_Object(gacha,     {G_GlobalLevelKey, "Gacha_Layer" });
+	OBJ->Add_Object(footStage, {G_GlobalLevelKey, "Gacha_Layer" });
 
 	//OBJ->Add_Object(demoGrid,  {G_GlobalLevelKey, "Grid_Layer"  });
 

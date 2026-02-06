@@ -2513,7 +2513,7 @@ void CCamPanel::DrawKeyframeEditor_SelectedKeyTable(bool& ioChangedAny)
         BeginRow("Pos");
         {
             _vector3 pos = keyPtr->pos;
-            if (DrawVec3Row_LeftLabel("pos", pos, 0.05f))
+            if (DrawVec3Row_LeftLabel("pos", pos, 0.01f))
             {
                 keyPtr->pos = pos;
                 ioChangedAny = true;

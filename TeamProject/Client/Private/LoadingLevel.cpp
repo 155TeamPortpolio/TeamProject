@@ -191,6 +191,9 @@ ResourceType CLoadingLevel::CheckResourceType(const string& filePath,const strin
 	if (ext == ".mat")
 		return ResourceType::Material;
 
+	if (ext == ".wav")
+		return ResourceType::Sound;
+
 	if(isEffect(filePath))
 		return ResourceType::Effect;
 
