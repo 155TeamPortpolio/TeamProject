@@ -323,6 +323,7 @@
     <ClInclude Include="..\public\MapToolObject.h" />
     <ClInclude Include="..\Public\MapTool_Context.h" />
     <ClInclude Include="..\Public\MapTool_Struct.h" />
+    <ClInclude Include="..\public\MovePoint.h" />
     <ClInclude Include="..\public\PickingInstanceModel.h" />
     <ClInclude Include="..\public\MainApp.h" />
     <ClInclude Include="..\public\MapToolLevel.h" />
@@ -397,6 +398,7 @@
     <ClCompile Include="..\private\DummyModel.cpp" />
     <ClCompile Include="..\private\Grid.cpp" />
     <ClCompile Include="..\private\MapToolGui.cpp" />
+    <ClCompile Include="..\private\MovePoint.cpp" />
     <ClCompile Include="..\private\PickingInstanceModel.cpp" />
     <ClCompile Include="..\Private\MainApp.cpp" />
     <ClCompile Include="..\private\MapToolLevel.cpp" />
