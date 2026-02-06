@@ -135,15 +135,6 @@ void CMiyabiState_ExAttack_01::Update(CMiyabi* pOwner, _float dt)
         ENUM(CMiyabi::ROOTMOTION_MASK::MOVE) |
         ENUM(CMiyabi::ROOTMOTION_MASK::QUATERNION));
 
-    Update_Effects(pOwner);
-}
-
-void CMiyabiState_ExAttack_01::Update_Effects(CMiyabi* pOwner)
-{
-    if (IsCrossAnimProgress(0.17f))
-    {
-        pOwner->Play_Effect("Miyabi_Ex0_Slash0", _vector3(0.f, 0.7f, 0.f), _quaternion(-0.21f, 0.71f, 0.64f, 0.2f));
-        pOwner->Play_Effect("Miyabi_Ex0_Sting0", _vector3(-6.6f, 0.8f, 2.5f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
     for (const auto& Event : pOwner->Get_Animator()->Get_EventBus())
     {
         if (Event.Type != CLIP_EVENT_TYPE::NOTIFY) continue;
@@ -159,6 +150,17 @@ void CMiyabiState_ExAttack_01::Update_Effects(CMiyabi* pOwner)
         {
             pOwner->End_AttackCollider("KatanaWeapon");
         }
+    }
+
+    Update_Effects(pOwner);
+}
+
+void CMiyabiState_ExAttack_01::Update_Effects(CMiyabi* pOwner)
+{
+    if (IsCrossAnimProgress(0.17f))
+    {
+        pOwner->Play_Effect("Miyabi_Ex0_Slash0", _vector3(0.f, 0.7f, 0.f), _quaternion(-0.21f, 0.71f, 0.64f, 0.2f));
+        pOwner->Play_Effect("Miyabi_Ex0_Sting0", _vector3(-6.6f, 0.8f, 2.5f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
     }
 }
 
