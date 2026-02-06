@@ -23,7 +23,8 @@ public:
     void          SetReturnCam(CamType type)                 { m_returnCamType          = type;   }
     void          SetTarget(OBJECT_HANDLE targetHandle);
     void          AutoTarget();
-    void          AutoField();
+    void          AutoField(CamStartDir dir);
+    void          AutoBattle(CamStartDir dir);
 
     OBJECT_HANDLE GetCamHandle(CamType type) const { return m_camHandles[ENUM(type)];                }
     COrbitCam*    GetOrbitCam()              const { return static_cast<COrbitCam*>(GetOrbitObj());  }

@@ -76,10 +76,40 @@ void CCamDirector::AutoTarget()
         SetTarget(handle);
 }
 
-void CCamDirector::AutoField()
+void CCamDirector::AutoField(CamStartDir dir)
 {
     AutoTarget();
-    RequestSequence("Field/Front");
+
+    switch (dir)
+    {
+    case CamStartDir::Front:
+        RequestSequence("Field/Front");
+        break;
+
+    case CamStartDir::Back:
+        RequestSequence("Field/Back");
+        break;
+
+    default: break;
+    }
+}
+
+void CCamDirector::AutoBattle(CamStartDir dir)
+{
+    AutoTarget();
+
+    switch (dir)
+    {
+    case CamStartDir::Front:
+        RequestSequence("Battle/Front");
+        break;
+
+    case CamStartDir::Back:
+        RequestSequence("Battle/Back");
+        break;
+
+    default: break;
+    }
 }
 
 void CCamDirector::Update(_float dt)

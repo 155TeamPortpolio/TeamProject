@@ -57,7 +57,7 @@ HRESULT CMainCity_Level::Awake()
 
 	Ready_Map("MainCity_Level", "MainCity");
 
-	CamDirector()->AutoField();
+	CamDirector()->AutoField(CamStartDir::Back);
 	FieldSystem()->SetActive(true);
 	//ObjectManager()->Get_Layer({"MainCity_Level", "PlacedObject_Layer"})->Set_RenderState(false);
 	//auto layer = ObjectManager()->Get_Layer({"MainCity_Level", "PlacedObject_Layer"});

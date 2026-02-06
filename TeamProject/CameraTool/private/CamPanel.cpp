@@ -1816,27 +1816,26 @@ void CCamPanel::CaptureSelectedKey_FromCaptureCam()
     Vector3 worldUp(up4.x, up4.y, up4.z);
     worldUp.Normalize();
 
-    auto CalcRollRad = [](const Vector3& fwd, const Vector3& up) -> float
+    auto CalcRollRad = [](Vector3 fwd, Vector3 up) -> float
         {
-            Vector3 f = fwd;
-            Vector3 u = up;
-            f.Normalize();
-            u.Normalize();
+            fwd.Normalize();
+            up.Normalize();
 
-            const float yaw = atan2f(f.x, f.z);
-            const float pitch = asinf(-f.y);
+            Vector3 referenceUp = Vector3::Up;
+            const float parallel = fabsf(fwd.Dot(referenceUp));
+            if (parallel > 0.999f) referenceUp = Vector3(0.f, 0.f, 1.f);
 
-            Quaternion baseQ = Quaternion::CreateFromYawPitchRoll(yaw, pitch, 0.f);
-            Matrix baseM = Matrix::CreateFromQuaternion(baseQ);
+            Vector3 right = referenceUp.Cross(fwd);
+            right.Normalize();
 
-            Vector3 baseUp = Vector3::TransformNormal(Vector3::Up, baseM);
+            Vector3 baseUp = fwd.Cross(right);
             baseUp.Normalize();
 
-            Vector3 c = baseUp.Cross(u);
-            const float sinv = c.Dot(f);
-            const float cosv = baseUp.Dot(u);
+            Vector3 c = baseUp.Cross(up);
+            const float sinv = c.Dot(fwd);
+            const float cosv = baseUp.Dot(up);
 
-            return atan2f(sinv, cosv);
+            return -atan2f(sinv, cosv);
         };
 
     if (target.sequence && target.sequence->space == CamSpace::Local)
@@ -1868,6 +1867,7 @@ void CCamPanel::CaptureSelectedKey_FromCaptureCam()
     SyncEditorFromSelection();
     PostEdit_SequenceChanged();
 }
+
 
 
 bool CCamPanel::ValidateCamPath(const string& pickedPath, string& outError) const
