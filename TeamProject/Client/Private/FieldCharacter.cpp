@@ -19,13 +19,11 @@ CFieldCharacter::CFieldCharacter(const CFieldCharacter& rhs)
 
 void CFieldCharacter::Active_Character()
 {
-	m_pCCT->Set_CompActive(true);
 	SetRenderLayer(RENDER_LAYER::Default);
 }
 
 void CFieldCharacter::DeActive_Character()
 {
-	m_pCCT->Set_CompActive(false);
 	SetRenderLayer(RENDER_LAYER::None);
 }
 
