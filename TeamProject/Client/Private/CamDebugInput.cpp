@@ -40,9 +40,11 @@ void CamDebugInput::UpdateInput(_float dt)
     {
         if (levelKey == "Gacha_Level")
         {
-            auto obj = Builder::Create_UIObject({G_GlobalLevelKey, "Proto_GameObject_Gangta"}).Build("Gangta");
-            UIManager()->Add_UIObject(obj, LevelManager()->Get_NowLevelKey());
-            static_cast<CUI_Gangta*>(obj)->UI_Active({});
+            CamDirector()->RequestSequence("Gacha/Miyabi_01");
+
+            //auto obj = Builder::Create_UIObject({G_GlobalLevelKey, "Proto_GameObject_Gangta"}).Build("Gangta");
+            //UIManager()->Add_UIObject(obj, LevelManager()->Get_NowLevelKey());
+            //static_cast<CUI_Gangta*>(obj)->UI_Active({});
         }
         else if (levelKey == "Test_Level")  CamDirector()->RequestSequence(CamSeqType::BattleIntro);
 
@@ -53,9 +55,11 @@ void CamDebugInput::UpdateInput(_float dt)
     {
         if (levelKey == "Gacha_Level" || levelKey == "Zero_Level")
         {
-            auto obj = Builder::Create_UIObject({G_GlobalLevelKey, "Proto_GameObject_Seoriyeol"}).Build("Seoriyeol");
-            UIManager()->Add_UIObject(obj, LevelManager()->Get_NowLevelKey());
-            static_cast<CUI_Seoriyeol*>(obj)->UI_Active({});
+            CamDirector()->RequestSequence("Gacha/Miyabi_02");
+
+            //auto obj = Builder::Create_UIObject({G_GlobalLevelKey, "Proto_GameObject_Seoriyeol"}).Build("Seoriyeol");
+            //UIManager()->Add_UIObject(obj, LevelManager()->Get_NowLevelKey());
+            //static_cast<CUI_Seoriyeol*>(obj)->UI_Active({});
         }
     }
 }

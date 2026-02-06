@@ -93,11 +93,6 @@ CamPose CCamEvaluator::Evaluate(float time) const
 	_bool orbit = false;
 	_vector3 center{};
 
-	//if (posMode == CamPosInterp::OrbitArc && seqDesc->orbitArc.enabled)
-	//{
-	//	orbit = true;
-	//	center = seqDesc->orbitArc.center;
-	//}
 	if (posMode == CamPosInterp::OrbitSpin && seqDesc->orbitSpin.enabled)
 	{
 		orbit = true;

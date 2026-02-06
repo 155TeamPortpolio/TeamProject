@@ -1812,6 +1812,33 @@ void CCamPanel::CaptureSelectedKey_FromCaptureCam()
     Vector3 worldLook(look4.x, look4.y, look4.z);
     worldLook.Normalize();
 
+    _vector4 up4 = camTr->Dir(STATE::UP);
+    Vector3 worldUp(up4.x, up4.y, up4.z);
+    worldUp.Normalize();
+
+    auto CalcRollRad = [](const Vector3& fwd, const Vector3& up) -> float
+        {
+            Vector3 f = fwd;
+            Vector3 u = up;
+            f.Normalize();
+            u.Normalize();
+
+            const float yaw = atan2f(f.x, f.z);
+            const float pitch = asinf(-f.y);
+
+            Quaternion baseQ = Quaternion::CreateFromYawPitchRoll(yaw, pitch, 0.f);
+            Matrix baseM = Matrix::CreateFromQuaternion(baseQ);
+
+            Vector3 baseUp = Vector3::TransformNormal(Vector3::Up, baseM);
+            baseUp.Normalize();
+
+            Vector3 c = baseUp.Cross(u);
+            const float sinv = c.Dot(f);
+            const float cosv = baseUp.Dot(u);
+
+            return atan2f(sinv, cosv);
+        };
+
     if (target.sequence && target.sequence->space == CamSpace::Local)
     {
         const Matrix refRT = GetRefRT(target.spaceRefHandle);
@@ -1822,21 +1849,26 @@ void CCamPanel::CaptureSelectedKey_FromCaptureCam()
         Vector3 localLook = Vector3::TransformNormal(worldLook, inv);
         localLook.Normalize();
 
+        Vector3 localUp = Vector3::TransformNormal(worldUp, inv);
+        localUp.Normalize();
+
         key.pos = _vector3(localPos.x, localPos.y, localPos.z);
         key.look = _vector3(localLook.x, localLook.y, localLook.z);
+        key.roll = CalcRollRad(localLook, localUp);
     }
     else
     {
         key.pos = _vector3(worldPos.x, worldPos.y, worldPos.z);
         key.look = _vector3(worldLook.x, worldLook.y, worldLook.z);
+        key.roll = CalcRollRad(worldLook, worldUp);
     }
 
     if (target.captureCamComp) key.fov = target.captureCamComp->Get_FOV();
-    key.roll = 0.f;
 
     SyncEditorFromSelection();
     PostEdit_SequenceChanged();
 }
+
 
 bool CCamPanel::ValidateCamPath(const string& pickedPath, string& outError) const
 {
