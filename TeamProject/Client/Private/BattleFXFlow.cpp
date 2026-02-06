@@ -28,8 +28,8 @@ void CBattleFXFlow::Initialize_Preset()
 		const _float duration = 1.f;
 		Parry.fVFXDuration = duration;
 		Parry.fBlurDuration = duration;
-		Parry.tPlayerTimeScale = TIME_SCALING({ duration, 0.3f, 0.f, 0.f , EaseType::InOutSine });
-		Parry.tMonsterTimeScale = TIME_SCALING({ duration, 0.3f, 0.f, 0.f , EaseType::InOutSine });
+		Parry.tPlayerTimeScale = TIME_SCALING({ duration, 0.1f, 0.f, 0.01f , EaseType::OutBack });
+		Parry.tMonsterTimeScale = TIME_SCALING({ duration, 0.1f, 0.f, 0.01f , EaseType::OutBack});
 	}
 	{
 		auto& Parry = m_BattleVFXData[ENUM(BATTLE_VFX_TYPE::ULTIMATE)];

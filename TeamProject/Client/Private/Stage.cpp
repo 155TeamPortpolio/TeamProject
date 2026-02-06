@@ -114,15 +114,19 @@ void CStage::Active_Player(PlayerPoint pointType)
 	if (!m_PlayerHandle.isValid())
 		return;
 
+	auto pPlayer = ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Player));
+	auto castedPlayer = dynamic_cast<CPlayer*>(pPlayer);
+	m_PlayerHandle = castedPlayer->Get_CurCharacterHandle();
+
 	auto character = m_PlayerHandle.GetAs<CCharacter>();
 	if (!character)
 		return;
 
 	auto point = m_PlayerPoint[ENUM(pointType)];
-	//point.pos.y += 1.f;
-
+	
 	character->Get_CCT()->Set_FootPosition(_vector3{ point.pos.x, point.pos.y, point.pos.z });
 	character->Get_Component<CTransform>()->Rotate(_vector3(point.rotation));
+	CamDirector()->AutoBattle(CamStartDir::Back);
 }
 
 void CStage::Active_Portal()
