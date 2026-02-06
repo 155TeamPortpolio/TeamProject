@@ -2,8 +2,6 @@
 #include "BattleFXFlow.h"
 #include "GameInstance.h"
 
-#include "CamDirector.h"
-
 CBattleFXFlow::CBattleFXFlow() {
 
 }
@@ -14,22 +12,22 @@ void CBattleFXFlow::Initialize_Preset()
 
 	{
 		auto& evade = m_BattleVFXData[ENUM(BATTLE_VFX_TYPE::EVADE)];
-		const _float duration = 1.f;
+		const _float duration = 1.5f;
 		evade.fVFXDuration = duration;
-		evade.fBlurDuration = duration;
+		evade.fBlurDuration = .5f;
 		evade.vStartColor = { 1.f,1.f,1.f };
-		evade.vTargetColor = { 0.6f,0.6f,0.6f };
-		evade.tPlayerTimeScale = TIME_SCALING({ duration, 0.3f, 0.f, 0.f , EaseType::InOutSine });
-		evade.tMonsterTimeScale = TIME_SCALING({ duration, 0.3f, 0.f, 0.f , EaseType::InOutSine });
+		evade.vTargetColor = { 0.01f,0.01f,0.01f };
+		evade.tPlayerTimeScale = TIME_SCALING({ duration, 0.8f, 0.f, 0.5f , EaseType::InOutSine });
+		evade.tMonsterTimeScale = TIME_SCALING({ duration, 0.8f, 0.f, 0.5f , EaseType::InOutSine });
 	}
 
 	{
 		auto& Parry = m_BattleVFXData[ENUM(BATTLE_VFX_TYPE::PARRY)];
-		const _float duration = 1.f;
+		const _float duration = .5f;
 		Parry.fVFXDuration = duration;
-		Parry.fBlurDuration = duration;
-		Parry.tPlayerTimeScale = TIME_SCALING({ duration, 0.1f, 0.f, 0.01f , EaseType::OutBack });
-		Parry.tMonsterTimeScale = TIME_SCALING({ duration, 0.1f, 0.f, 0.01f , EaseType::OutBack});
+		Parry.fBlurDuration = .5f;
+		Parry.tPlayerTimeScale = TIME_SCALING({ duration, 0.1f, 0.3f, 0.5f , EaseType::OutBack });
+		Parry.tMonsterTimeScale = TIME_SCALING({ duration, 0.1f, 0.3f, 0.5f , EaseType::OutBack});
 	}
 	{
 		auto& Parry = m_BattleVFXData[ENUM(BATTLE_VFX_TYPE::ULTIMATE)];
@@ -83,7 +81,7 @@ void CBattleFXFlow::Update(_float dt)
 		++trackIndex;
 	}
 
-	// ¸ÞÀÎ ½ÃÄö½º ÁøÇà
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	while (m_stepIndex < m_steps.size())
 	{
 		_bool keep = m_steps[m_stepIndex](dt);
@@ -149,7 +147,7 @@ void CBattleFXFlow::StartVfx(BATTLE_VFX_TYPE vfxType)
 	m_BattleVFX.fCurPos = 0.f;
 	m_BattleVFX.vNowColor = preset.vStartColor;
 
-	// Å¸ÀÔº° ºôµå
+	// Å¸ï¿½Ôºï¿½ ï¿½ï¿½ï¿½ï¿½
 	switch (vfxType)
 	{
 	case BATTLE_VFX_TYPE::EVADE:
@@ -191,8 +189,6 @@ void CBattleFXFlow::StartVfx_Evade()
 			_float normalizedT = 1.f - time01;
 			_float pingpongT = (normalizedT < 0.5f) ? (normalizedT * 2.f) : (2.f - normalizedT * 2.f);
 			_float easeT = Math::ApplyEase(EaseType::OutSine, pingpongT);
-
-			const _float3 target = { 0.1f, 0.3f, 0.3f };
 			_vector startColor = XMLoadFloat3(&preset.vStartColor);
 			_vector targetColor = XMLoadFloat3(&preset.vTargetColor);
 			XMStoreFloat3(&m_BattleVFX.vNowColor, XMVectorLerp(startColor, targetColor, easeT));
@@ -222,7 +218,7 @@ void CBattleFXFlow::StartVfx_Parry()
 	AddParallelTimeScale(BATTLE_OBJ_TYPE::MONSTER, preset.tMonsterTimeScale);
 
 	AddCall([this, preset]() {RenderSystem()->Apply_RadialBlur(preset.fBlurDuration); });
-	AddCall([this, preset]() {CamDirector()->StartParry(); });
+
 
 	AddStep(
 		[this, preset, elapsed = 0.f, duration = m_BattleVFX.fDuration](_float dt) mutable -> _bool
@@ -312,7 +308,7 @@ void CBattleFXFlow::AddStep(StepFunc step)
 	m_steps.emplace_back(move(step));
 }
 
-/*NÃÊ ±â´Ù¸²*/
+/*Nï¿½ï¿½ ï¿½ï¿½Ù¸ï¿½*/
 void CBattleFXFlow::AddWait(_float duration)
 {
 	_float elapsed = 0.f;
@@ -322,7 +318,7 @@ void CBattleFXFlow::AddWait(_float duration)
 		});
 }
 
-/*1È¸ È£Ãâ ÈÄ ³Ñ¾î°¨*/
+/*1È¸ È£ï¿½ï¿½ ï¿½ï¿½ ï¿½Ñ¾î°¨*/
 void CBattleFXFlow::AddCall(function<void()> fn)
 {
 	m_steps.emplace_back([fn = std::move(fn)](float) mutable -> bool {
@@ -349,7 +345,7 @@ void CBattleFXFlow::AddParallel(_float duration, function<void(SubFlow& subFlow)
 	m_parallelTracks.emplace_back(move(track));
 }
 
-/*¼Ò¼ö ¸ñÇ¥Ä¡ ÇâÇØ º¸°£*/
+/*ï¿½Ò¼ï¿½ ï¿½ï¿½Ç¥Ä¡ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½*/
 void CBattleFXFlow::AddLerpFloatFromTo(_float* valuePtr, _float fromValue, _float toValue, _float duration, EaseType ease)
 {
 	if (!valuePtr || duration <= 0.f)
@@ -370,14 +366,14 @@ void CBattleFXFlow::AddLerpFloatFromTo(_float* valuePtr, _float fromValue, _floa
 		});
 }
 
-/*À§¿¡°Å ·¡ÆÛ 0 >¸ñÇ¥¸¸ Á¤ÇØÁÜ*/
+/*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ 0 >ï¿½ï¿½Ç¥ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
 void CBattleFXFlow::AddLerpFloatTo(_float* valuePtr, _float toValue, _float duration, EaseType ease)
 {
 	if (!valuePtr) return;
 	AddLerpFloatFromTo(valuePtr, *valuePtr, toValue, duration, ease);
 }
 
-/*ÄÃ·¯ º¸°£*/
+/*ï¿½Ã·ï¿½ ï¿½ï¿½ï¿½ï¿½*/
 void CBattleFXFlow::AddLerpColor3FromTo(_float3* colorPtr, const _float3& fromValue, const _float3& toValue, _float duration, EaseType ease)
 {
 	if (!colorPtr || duration <= 0.f)
@@ -401,14 +397,14 @@ void CBattleFXFlow::AddLerpColor3FromTo(_float3* colorPtr, const _float3& fromVa
 		});
 }
 
-/*ÄÃ·¯ º¸°£ ·¡ÆÛ*/
+/*ï¿½Ã·ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½*/
 void CBattleFXFlow::AddLerpColor3To(_float3* colorPtr, const _float3& toValue, _float duration, EaseType ease)
 {
 	if (!colorPtr) return;
 	AddLerpColor3FromTo(colorPtr, *colorPtr, toValue, duration, ease);
 }
 
-/*¿Ô´Ù°¬´Ù ÄÃ·¯ */
+/*ï¿½Ô´Ù°ï¿½ï¿½ï¿½ ï¿½Ã·ï¿½ */
 void CBattleFXFlow::AddPingPongColor3(_float3* colorPtr, const _float3& peakValue,
 	_float duration, EaseType ease)
 {
