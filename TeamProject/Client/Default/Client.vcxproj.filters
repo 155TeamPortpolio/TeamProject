@@ -2276,6 +2276,9 @@
     <ClInclude Include="..\Public\MiyabiState_UltimateAttack.h">
       <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Attack\Ultimate</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\MiyabiState_CounterAttack.h">
+      <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Attack\Counter</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -3337,6 +3340,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\MiyabiState_UltimateAttack.cpp">
       <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Attack\Ultimate</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MiyabiState_CounterAttack.cpp">
+      <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Attack\Counter</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

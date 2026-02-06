@@ -9,7 +9,7 @@
 #include "MiyabiState_RushAttack.h"
 #include "MiyabiState_ExAttack.h"
 #include "MiyabiState_UltimateAttack.h"
-//#include "MiyabiState_CounterAttack.h"
+#include "MiyabiState_CounterAttack.h"
 //#include "MiyabiState_AssaultAttack.h"
 
 #include "CharacterController.h"
@@ -25,7 +25,7 @@ CMiyabiState_Attack* CMiyabiState_Attack::Create()
     pSubStateMachine->Register_State("RushAttack", CMiyabiState_RushAttack::Create());
     pSubStateMachine->Register_State("ExAttack", CMiyabiState_ExAttack::Create());
     pSubStateMachine->Register_State("UltimateAttack", CMiyabiState_UltimateAttack::Create());
-    //pSubStateMachine->Register_State("CounterAttack", CMiyabiState_CounterAttack::Create());
+    pSubStateMachine->Register_State("CounterAttack", CMiyabiState_CounterAttack::Create());
     //pSubStateMachine->Register_State("AssaultAttack", CMiyabiState_AssaultAttack::Create());
 
     pSubStateMachine->Register_Transition("NormalAttack", "ChargeAttack",
@@ -58,9 +58,9 @@ void CMiyabiState_Attack::Enter(CMiyabi* pOwner)
     case 3:
         m_pSubStateMachine->Set_DefaultState("UltimateAttack");
         break;
-    //case 4:
-    //    m_pSubStateMachine->Set_DefaultState("ChargeAttack");
-    //    break;
+    case 4:
+        m_pSubStateMachine->Set_DefaultState("ChargeAttack");
+        break;
     case 5:
         m_pSubStateMachine->Set_DefaultState("CounterAttack");
         break;
