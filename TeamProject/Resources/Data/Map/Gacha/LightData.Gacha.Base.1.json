@@ -262,7 +262,7 @@
           "z": 1.0,
           "w": 0.0
         },
-        "fLightRange": 0.0,
+        "fLightRange": 1.0,
         "fLightIntensity": 0.0,
         "fInnerCos": 5.0,
         "fOuterCos": 50.0
@@ -307,7 +307,7 @@
           "z": 1.0,
           "w": 0.0
         },
-        "fLightRange": 0.0,
+        "fLightRange": 1.0,
         "fLightIntensity": 0.0,
         "fInnerCos": 5.0,
         "fOuterCos": 50.0
