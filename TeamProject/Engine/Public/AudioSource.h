@@ -19,8 +19,8 @@ public:
         FMOD::Channel* pChanel = { nullptr };
         SOUND_GROUP eGroup = { SOUND_GROUP::SFX };
     }AUDIO_SLOT;
-
 private:
+
     CAudioSource();
     CAudioSource(const CAudioSource& rhs);
     virtual ~CAudioSource();
