@@ -51,6 +51,7 @@ HRESULT CZeroPortal::Initialize(INIT_DESC* pArg)
 void CZeroPortal::Awake()
 {
 
+	Get_Component<CCollider>()->Set_Trigger(true);
 }
 
 void CZeroPortal::Priority_Update(_float dt)

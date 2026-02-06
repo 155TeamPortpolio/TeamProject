@@ -209,17 +209,6 @@ void CCamSequencePlayer::ApplyPose(const CamPose& pose)
         hasSpaceRef = true;
     }
 
-    if (hasKeys)
-    {
-        Matrix rotM = Matrix::CreateFromQuaternion(finalRot);
-        Vector3 forward = Vector3::TransformNormal(Vector3(0.f, 0.f, 1.f), rotM);
-        forward.Normalize();
-
-        Quaternion rollQ = Quaternion::CreateFromAxisAngle(forward, pose.roll);
-        finalRot = rollQ * finalRot;
-        finalRot.Normalize();
-    }
-
     Vector3 basePos = curT;
     if (needSpaceRef && hasSpaceRef) basePos = spaceRefT;
 
@@ -244,6 +233,7 @@ void CCamSequencePlayer::ApplyPose(const CamPose& pose)
     if (apply.cam && hasKeys)
         apply.cam->Set_FOV(pose.fov);
 }
+
 
 _float CCamSequencePlayer::GetPlaybackDuration() const
 {

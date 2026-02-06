@@ -375,8 +375,8 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
         float sideInfluence = RdotL * 0.3f;
         shadow = saturate(shadow + sideInfluence);
     
-        float minBrightness = 0.2f;
-        float maxBrightness = 0.55f;
+        float minBrightness = 0.05f;
+        float maxBrightness = 0.25f;
         float brightness = lerp(minBrightness, maxBrightness, shadow);
     
         float alpha = 0.f;

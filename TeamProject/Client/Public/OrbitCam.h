@@ -3,9 +3,9 @@
 #include "CamObject.h"
 #include "OrbitCamTypes.h"
 #include "CamOcclusionTracker.h"
+#include "ParryCamFx.h"
 
 NS_BEGIN(Client)
-class ICamCollidable;
 
 class COrbitCam final : public CCamObject
 {
