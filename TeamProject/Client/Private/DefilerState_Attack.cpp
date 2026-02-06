@@ -64,8 +64,8 @@ void CDefilerState_Attack::Build_Pattern(CDefiler* pOwner, _int Type)
 	{
 		blackBoard.patternTransition.push_back({ "Attack_Evade",0.f,1.f });
 		blackBoard.patternTransition.push_back({ "Attack07",0.f,1.f });
-		blackBoard.patternTransition.push_back({ "Attack03",0.f,1.f });
-		blackBoard.patternTransition.push_back({ "Attack01_01_P2",0.f,1.f });
+		//blackBoard.patternTransition.push_back({ "Attack03",0.f,1.f });
+		//blackBoard.patternTransition.push_back({ "Attack01_01_P2",0.f,1.f });
 		break;
 	}
 	case 9 :

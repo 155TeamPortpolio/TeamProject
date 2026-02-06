@@ -1185,7 +1185,7 @@
     <Filter Include="02. GameObject\Object\Gacha\GachaProps\GachaStage\FootStage">
       <UniqueIdentifier>{ebc006d0-8a7d-4a82-a4f3-8660ecd31a07}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\Boss\MiasmaBlade">
+    <Filter Include="02. GameObject\Object\Enemy\Boss\Defiler\MiasmaBlade">
       <UniqueIdentifier>{44e42690-e6c7-45f8-a497-d81095d6108e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -2289,7 +2289,7 @@
       <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Attack\Ex</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\MiasmaBlade.h">
-      <Filter>02. GameObject\Object\Enemy\Boss\MiasmaBlade</Filter>
+      <Filter>02. GameObject\Object\Enemy\Boss\Defiler\MiasmaBlade</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\MiyabiState_UltimateAttack.h">
       <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Attack\Ultimate</Filter>
@@ -3357,7 +3357,7 @@
       <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Attack\Ex</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\MiasmaBlade.cpp">
-      <Filter>02. GameObject\Object\Enemy\Boss\MiasmaBlade</Filter>
+      <Filter>02. GameObject\Object\Enemy\Boss\Defiler\MiasmaBlade</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\MiyabiState_UltimateAttack.cpp">
       <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Attack\Ultimate</Filter>

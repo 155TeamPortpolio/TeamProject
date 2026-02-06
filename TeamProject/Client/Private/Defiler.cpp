@@ -50,6 +50,9 @@ HRESULT CDefiler::Initialize(INIT_DESC* pArg)
 {
 	__super::Initialize(pArg);
 
+	//Get_Component<CAudioSource>()->SoundFolder("Zero_Level","../Bin/Sound/");
+	//Get_Component<CAudioSource>()->Slot("Hello.wav").Attribute3D(true).Loop(false).Play();
+
 	m_eEnemyClass = ENEMY_CLASS::BOSS;
 	vector<_uint> ProMeshes = Get_Component<CSkeletalModel>()->Hide_MehsByName("Pro");
 	vector<_uint> WeaponMeshes = Get_Component<CSkeletalModel>()->Show_MehsByName("Weapon");
@@ -369,6 +372,7 @@ void CDefiler::Controll_Attack(const string& event)
 	HitDesc.fDamage		=	0.f;
 	HitDesc.fInterval	=	0.f;
 	HitDesc.iMaxCount	=	1;
+	m_isOnAttack = AtkData.OnOff;
 
 	if (AtkData.OnOff)
 	{
@@ -392,16 +396,17 @@ void CDefiler::Controll_Summon(const string& event)
 		auto desc = new CMiasmaBlade::BladeDesc;
 		desc->pOwner = this;
 		desc->vTargetPos = m_tTargetingInfo.vTargetPos;
-		Matrix boneMat = Get_Component<CAnimator3D>()->Get_BoneMatrix(CAnimator3D::BoneSpace::COMBINED, "Ctr_M_Prop_01");
+		Matrix boneMat = Get_Component<CAnimator3D>()
+			->Get_BoneMatrix(CAnimator3D::BoneSpace::COMBINED, "Ctr_M_Prop_01");
 		Matrix WorldMat = m_pTransform->Get_WorldMatrix();
 		_vector3 S, T;_quaternion R;
 		(boneMat * WorldMat).Decompose(S,R,T);
 		auto pBlade = 
 			Builder::Create_Object({ "Zero_Level","Proto_GameObject_MiasmaBlade" })
-			.Position(T)
+			.FromPool()
 			.Add_ObjDesc(desc)
 			.Build("MiasmaBlade");
-
+		pBlade->Get_Component<CCharacterController>()->Set_Position(T);
 		ObjectManager()->Add_Object(pBlade, { levelKey ,"Enemy_Layer"});
 	}
 }

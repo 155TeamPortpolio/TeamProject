@@ -23,13 +23,26 @@ public:
     void    Update(_float dt) override;
     void    Late_Update(_float dt) override;
     void    Render_GUI()override;
-
+public:
+    virtual void    OnTriggerEnter(CGameObject* pOther) override;
+    virtual void    OnTriggerStay(CGameObject* pOher) override;
 public:
     virtual void OnPooledAcquire(INIT_DESC* pArg = nullptr) override;		// 풀에서 꺼낼 때
     virtual void OnPooledRelease()override;
+public:
+    virtual void Parried() override;
 
 private:
-    _float3 m_vTargetPos = {};
+    _bool   Try_Hit(CGameObject* pTarget);
+
+private:
+    _vector3 m_vTargetPos = {};
+    class CDefiler* m_pOwner = { nullptr };
+
+
+private:
+    HitDesc m_tHitDesc{};
+    _float  m_fTimer = {};
 public:
     static CMiasmaBlade* Create();
     CGameObject* Clone(INIT_DESC* pArg) override;
