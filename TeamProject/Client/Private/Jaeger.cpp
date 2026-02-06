@@ -23,6 +23,14 @@ CJaeger::CJaeger(const CJaeger& rhs)
 {
 }
 
+void CJaeger::Execute()
+{
+	UI_DIALOGUE_REQUEST_DESC desc;
+	desc.strDialogueID = m_DiagloueData.StartDialogueID;
+	desc.iSequenceID = m_iNextSequceID;
+	EventSystem()->Broadcast<UI_DIALOGUE_REQUEST_DESC>({ desc });
+}
+
 HRESULT CJaeger::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
@@ -62,6 +70,8 @@ void CJaeger::Awake()
 		.Apply();
 
 	__super::Awake();
+
+	Add_InteractZone(Get_Position(), _float3(0.f, 0.f, 1.2f), Get_WorldRotation());
 }
 
 void CJaeger::Priority_Update(_float dt)
@@ -77,6 +87,11 @@ void CJaeger::Update(_float dt)
 void CJaeger::Late_Update(_float dt)
 {
 	__super::Late_Update(dt);
+}
+
+void CJaeger::Success(_uint curSequenceID)
+{
+	LevelManager()->Request_ChangeLevel("MainCity_Level", true);
 }
 
 CJaeger* CJaeger::Create()
