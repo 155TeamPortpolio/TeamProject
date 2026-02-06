@@ -251,7 +251,7 @@ void CCamDirector::SyncSeqInputLock()
         m_seqInputLocked = false;
     }
 }
-
+ 
 void CCamDirector::StartDialog()
 {
     //m_dialogue.Begin(35.f, 0.5f);
