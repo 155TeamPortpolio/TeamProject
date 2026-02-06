@@ -32,8 +32,8 @@ void CamDebugInput::UpdateInput(_float dt)
         UpdateGachaLevel();
 
 
-    CMonitorGate gate;
-    if (!gate.Pass()) return;
+    //CMonitorGate gate;
+    //if (!gate.Pass()) return;
 
     if (InputDevice()->Mouse_Tap(MOUSE_BTN::RB))
     {

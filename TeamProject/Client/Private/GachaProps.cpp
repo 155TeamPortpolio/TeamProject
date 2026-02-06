@@ -2,6 +2,8 @@
 #include "GachaProps.h"
 
 #include "GameInstance.h"
+#include "CamDirector.h"
+
 #include "StaticModel.h"
 #include "Material.h"
 #include "ObjectContainer.h"
@@ -35,6 +37,11 @@ void CGachaProps::PlayTVSequence()
 void CGachaProps::PlayStageSpin(_int index)
 {
     m_pStage->PlayStageSpin(index);
+}
+
+void CGachaProps::ResetTarget()
+{
+    CamDirector()->SetSpaceRef(this->Get_Handle());
 }
 
 HRESULT CGachaProps::Initialize_Prototype(vector<GACHA_RESULT_DESC>* Desc)

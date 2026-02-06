@@ -8,6 +8,7 @@
 #include "Material.h"
 #include "Light.h"
 
+#include "GachaProps.h"
 #include "GachaStageScreen.h"
 #include "GachaWeapon.h"
 #include "GachaAvatar.h"
@@ -121,16 +122,18 @@ void CGachaStage::Update(_float dt)
 
 	Update_CamTime();
 	Update_Lights(dt);
+
 	if (InputDevice()->Key_Tap(VK_SPACE))
 	{
-		if (m_iIndex == -1) CamDirector()->RequestSequence("Gacha/Spin_Half");
-		else CamDirector()->RequestSequence("Gacha/Spin");
+		Play_CameraSequence();
+
 		++m_iIndex;
 		if (m_iIndex >= m_iMaxIndex)
 		{
 			m_iIndex = m_iMaxIndex - 1;
 			UIDirector()->Show_GachaResult(m_pResultDesc);
 		}
+
 		CUIDirector::GetInstance()->Hide_GachaLabel();
 		SetMiddleLightEffect(_float4(1.f, 1.f, 1.f, 1.f), _float4(0.1f, 0.1f, 0.1f, 1.f), 1.f);
 	}
@@ -238,6 +241,19 @@ void CGachaStage::Set_Stage(GACHA_STAGE eStage, _int ResultID)
 		m_pFootStage->SetRenderLayer(RENDER_LAYER::None);
 		m_pFootStage->Get_Component<CCollider>()->Set_CollisionMask(ENUM(COLLISION_GROUP::COMMON));
 	}
+}
+
+void CGachaStage::Reset_Target()
+{
+	dynamic_cast<CGachaProps*>(Get_Component<CChild>()->Get_Parent())->ResetTarget();
+}
+
+void CGachaStage::Play_CameraSequence()
+{
+	Reset_Target();
+
+	if (m_iIndex == -1) CamDirector()->RequestSequence("Gacha/Spin_Half");
+	else if (m_iIndex < m_iMaxIndex - 1) CamDirector()->RequestSequence("Gacha/Spin");
 }
 
 void CGachaStage::Update_CamTime()

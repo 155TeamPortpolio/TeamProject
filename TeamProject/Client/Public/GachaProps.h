@@ -15,6 +15,7 @@ public:
     void    SetupInitialSequence();
     void    PlayTVSequence();
     void    PlayStageSpin(_int index);
+    void    ResetTarget();
 
 public:
     virtual HRESULT Initialize_Prototype(vector<GACHA_RESULT_DESC>* Desc);
