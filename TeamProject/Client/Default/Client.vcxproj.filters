@@ -289,9 +289,6 @@
     <Filter Include="02. GameObject\Object\Interactable\ZeroPortal">
       <UniqueIdentifier>{178b3764-628b-48ca-8cb2-36ae8c8f8dbd}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Camera\04. OrbitCam\00. LockOnController">
-      <UniqueIdentifier>{ab87437a-0803-4974-b6ba-72bdda89f83e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. Level\04. Zero\Stage_Super">
       <UniqueIdentifier>{2d99fd31-8614-425b-a72e-b5c437bc2fc3}</UniqueIdentifier>
     </Filter>
@@ -1142,6 +1139,9 @@
     </Filter>
     <Filter Include="03. Utility\06. FieldSystem\Room\05. Room_Gacha">
       <UniqueIdentifier>{820f4014-89e1-411c-b031-be391e0f1e5e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Camera\04. OrbitCam\00. ParryCamFX">
+      <UniqueIdentifier>{ab87437a-0803-4974-b6ba-72bdda89f83e}</UniqueIdentifier>
     </Filter>
     <Filter Include="03. Utility\07. UIDirector">
       <UniqueIdentifier>{42edd944-ef6d-4efd-b82d-9cadbc7ddc9f}</UniqueIdentifier>
@@ -2243,6 +2243,9 @@
     <ClInclude Include="..\public\Room_Gacha.h">
       <Filter>03. Utility\06. FieldSystem\Room\05. Room_Gacha</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\ParryCamFx.h">
+      <Filter>02. GameObject\Camera\04. OrbitCam\00. ParryCamFX</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\BackgroundNpc.h">
       <Filter>02. GameObject\Object\Npc\Background</Filter>
     </ClInclude>
@@ -3298,6 +3301,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Room_Gacha.cpp">
       <Filter>03. Utility\06. FieldSystem\Room\05. Room_Gacha</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ParryCamFx.cpp">
+      <Filter>02. GameObject\Camera\04. OrbitCam\00. ParryCamFX</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\BackgroundNpc.cpp">
       <Filter>02. GameObject\Object\Npc\Background</Filter>

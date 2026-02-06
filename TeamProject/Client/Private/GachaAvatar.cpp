@@ -13,6 +13,7 @@
 
 #include "GameInstance.h"
 #include "Helper_Func.h"
+#include "CamDirector.h"
 
 CGachaAvatar::CGachaAvatar()
     :CGachaResult()

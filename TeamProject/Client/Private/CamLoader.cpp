@@ -130,6 +130,15 @@ namespace
             return req;
         }
 
+        if (StartsWith(key, "Parry/"))
+        {
+            req.blendInSec  = 0.75f;
+            req.blendOutSec = 0.75f;
+            req.resetTime   = true;
+            req.returnMode  = CamReturnMode::RestorePrev;
+            return req;
+        }
+
         req.blendInSec  = 0.f;
         req.blendOutSec = 0.f;
         req.resetTime   = true;

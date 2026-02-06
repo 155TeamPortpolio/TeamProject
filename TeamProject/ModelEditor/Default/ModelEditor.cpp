@@ -167,7 +167,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
     const int primaryW = mi.rcMonitor.right - mi.rcMonitor.left;
 
-    if (primaryW > 25000)
+    if (primaryW > 2500)
     {
         g_iWinSizeX = 2560;
         g_iWinSizeY = 1360;
