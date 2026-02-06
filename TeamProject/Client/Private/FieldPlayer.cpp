@@ -111,7 +111,8 @@ void CFieldPlayer::Update_Input(_float dt)
 void CFieldPlayer::Update_Interact(_float dt)
 {
 	if (m_bLockInput) return;
-	if (InputDevice()->Key_Tap('F')) m_pCurrentCharacter->On_Interact();
+	if (InputDevice()->Key_Tap('F'))
+		m_pCurrentCharacter->On_Interact();
 }
 
 void CFieldPlayer::Update_Movement(_float dt)
@@ -122,7 +123,6 @@ void CFieldPlayer::Update_Movement(_float dt)
 		Process_Movement(dt);
 		return;
 	}
-
 	m_input.prevDirection = m_input.direction;
 	m_input.previous = m_input.current;
 

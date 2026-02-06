@@ -1812,6 +1812,32 @@ void CCamPanel::CaptureSelectedKey_FromCaptureCam()
     Vector3 worldLook(look4.x, look4.y, look4.z);
     worldLook.Normalize();
 
+    _vector4 up4 = camTr->Dir(STATE::UP);
+    Vector3 worldUp(up4.x, up4.y, up4.z);
+    worldUp.Normalize();
+
+    auto CalcRollRad = [](Vector3 fwd, Vector3 up) -> float
+        {
+            fwd.Normalize();
+            up.Normalize();
+
+            Vector3 referenceUp = Vector3::Up;
+            const float parallel = fabsf(fwd.Dot(referenceUp));
+            if (parallel > 0.999f) referenceUp = Vector3(0.f, 0.f, 1.f);
+
+            Vector3 right = referenceUp.Cross(fwd);
+            right.Normalize();
+
+            Vector3 baseUp = fwd.Cross(right);
+            baseUp.Normalize();
+
+            Vector3 c = baseUp.Cross(up);
+            const float sinv = c.Dot(fwd);
+            const float cosv = baseUp.Dot(up);
+
+            return -atan2f(sinv, cosv);
+        };
+
     if (target.sequence && target.sequence->space == CamSpace::Local)
     {
         const Matrix refRT = GetRefRT(target.spaceRefHandle);
@@ -1822,21 +1848,27 @@ void CCamPanel::CaptureSelectedKey_FromCaptureCam()
         Vector3 localLook = Vector3::TransformNormal(worldLook, inv);
         localLook.Normalize();
 
+        Vector3 localUp = Vector3::TransformNormal(worldUp, inv);
+        localUp.Normalize();
+
         key.pos = _vector3(localPos.x, localPos.y, localPos.z);
         key.look = _vector3(localLook.x, localLook.y, localLook.z);
+        key.roll = CalcRollRad(localLook, localUp);
     }
     else
     {
         key.pos = _vector3(worldPos.x, worldPos.y, worldPos.z);
         key.look = _vector3(worldLook.x, worldLook.y, worldLook.z);
+        key.roll = CalcRollRad(worldLook, worldUp);
     }
 
     if (target.captureCamComp) key.fov = target.captureCamComp->Get_FOV();
-    key.roll = 0.f;
 
     SyncEditorFromSelection();
     PostEdit_SequenceChanged();
 }
+
+
 
 bool CCamPanel::ValidateCamPath(const string& pickedPath, string& outError) const
 {

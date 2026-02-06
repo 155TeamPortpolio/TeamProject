@@ -424,6 +424,7 @@
     <ClInclude Include="..\Public\MiyabiState_SwitchInNormal.h" />
     <ClInclude Include="..\Public\MiyabiState_SwitchInParryAid.h" />
     <ClInclude Include="..\Public\MiyabiState_SwitchOut.h" />
+    <ClInclude Include="..\public\ParryCamFx.h" />
     <ClInclude Include="..\Public\UI_GachaDisplay.h" />
     <ClInclude Include="..\Public\UI_GachaResult.h" />
     <ClInclude Include="..\Public\UI_GachaResultItem.h" />
@@ -834,6 +835,7 @@
     <ClCompile Include="..\Private\MiyabiState_SwitchInNormal.cpp" />
     <ClCompile Include="..\Private\MiyabiState_SwitchInParryAid.cpp" />
     <ClCompile Include="..\Private\MiyabiState_SwitchOut.cpp" />
+    <ClCompile Include="..\private\ParryCamFx.cpp" />
     <ClCompile Include="..\Private\UI_GachaDisplay.cpp" />
     <ClCompile Include="..\Private\UI_GachaResult.cpp" />
     <ClCompile Include="..\Private\UI_GachaResultItem.cpp" />
