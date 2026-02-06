@@ -40,6 +40,10 @@ public:
 public:
     static CMiyabiState_ExAttack_01* Create() { return new CMiyabiState_ExAttack_01(); }
     virtual void Free() override { __super::Free(); }
+
+private:
+    void Update_Effects(CMiyabi* pOwner);
+
 };
 
 class CMiyabiState_ExAttack_02 : public IBaseState<CMiyabi>
