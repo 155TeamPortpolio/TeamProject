@@ -8,8 +8,9 @@
 
 #include "Stage.h"
 #include "ZeroStage_Boss.h"
-#include "ZeroStage_Normal.h"
 #include "ZeroStage_Elite.h"
+#include "ZeroStage_Normal.h"
+#include "ZeroStage_Start.h"
 #include "TestCloud.h"
 
 // Camera
@@ -31,6 +32,11 @@
 #include "EnemyAttackCollider.h"
 #include "EnemyTriggerCollider.h"
 #include "StageRouter.h"
+#include "ThugPoacher.h"
+#include "ThugPoacher_Arrow.h"
+#include "Claymore.h"
+#include "Cyclops.h"
+
 
 /* UI */
 #include "UIDirector.h"
@@ -115,18 +121,26 @@ HRESULT CZero_Level::ChangeStage(StageType type)
 
 void CZero_Level::Ready_Prototype()
 {
-	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_Sacrifice", CSacrifice::Create());
-	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_SacrificeHand", CSacrificeHand::Create());
-	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_SacrificeLaser", CSacrifice_Laser::Create());
-	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_SacrificeOrb", CSacrifice_Orb::Create());
-	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_ThugBulkyEnforcer", CThugBulkyEnforcer::Create());
-	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_ThugAssaulter", CThugAssaulter::Create());
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_EnemyAttackCollider", CEnemyAttackCollider::Create());
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_EnemyTriggerCollider", CEnemyTriggerCollider::Create());
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_Defiler", CDefiler::Create());
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_MiasmaBlade", CMiasmaBlade::Create());
+
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_ZeroPortal", CZeroPortal::Create());
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_LevelObject_ZeroPortal", CStageRouter::Create());
+
+	/* Enemy */
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_ThugBulkyEnforcer", CThugBulkyEnforcer::Create());
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_ThugAssaulter", CThugAssaulter::Create());
+	PrototypeManager()->Add_ProtoType("Zero_Level",	"Proto_GameObject_SacrificeHand", CSacrificeHand::Create());
+	PrototypeManager()->Add_ProtoType("Zero_Level",	"Proto_GameObject_SacrificeLaser", CSacrifice_Laser::Create());
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_SacrificeOrb", CSacrifice_Orb::Create());
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_Sacrifice", CSacrifice::Create());
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_Defiler", CDefiler::Create());
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_ThugPoacher", CThugPoacher::Create());
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_ThugPoacher_Arrow", CThugPoacher_Arrow::Create());
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_Claymore", CClaymore::Create());
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_Cyclops", CCyclops::Create());
 }
 
 void CZero_Level::Ready_Stage()
@@ -137,15 +151,17 @@ void CZero_Level::Ready_Stage()
 
 	m_pRouter->BuildGraph(5, StageType::Boss);
 
+	m_StageContainer.emplace(StageType::Start, CZeroStage_Start::Create(this));
 	m_StageContainer.emplace(StageType::Normal, CZeroStage_Normal::Create(this));
 	m_StageContainer.emplace(StageType::Elite, CZeroStage_Elite::Create(this));
 	m_StageContainer.emplace(StageType::Boss, CZeroStage_Boss::Create(this));
 
-	m_mapCycle[StageType::Normal].maps	= { "Zero_1_1", "Zero_1_2" };
-	m_mapCycle[StageType::Elite].maps	= { "Zero_1_1", "Zero_1_2" };
+	m_mapCycle[StageType::Start].maps	= { "Zero_Start" };
+	m_mapCycle[StageType::Normal].maps	= { "Zero_1_1",	"Zero_1_2", "Zero_2_1", "Zero_5_1" };
+	m_mapCycle[StageType::Elite].maps	= { "Zero_1_1",	"Zero_1_2", "Zero_2_1" };
 	m_mapCycle[StageType::Boss].maps	= { "Zero_Boss1","Zero_Boss2"};
 
-	ChangeStage(StageType::Normal);
+	ChangeStage(StageType::Start);
 }
 
 string CZero_Level::PopMapKey(StageType type)

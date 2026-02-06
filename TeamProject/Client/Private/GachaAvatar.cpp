@@ -39,6 +39,7 @@ void CGachaAvatar::SetResult(GACHA_RESULT_DESC Desc)
     m_pAnimator->LinkAnimate_Model(G_GlobalLevelKey, Desc.strModel);
     m_pAnimator->Link_MetaData(G_GlobalLevelKey, Desc.strMeta);
 
+    m_pAnimator->Set_Pause(false);
     m_pAnimator->Set_Animation(Desc.strStartAnim)
         .Loop(false)
         .Apply();
@@ -48,6 +49,12 @@ void CGachaAvatar::SetResult(GACHA_RESULT_DESC Desc)
 
     m_pTransform->Rotate(_float3(0.f, XM_PI, 0.f));
     m_bRevealEffect = false;
+}
+
+void CGachaAvatar::SetRenderState(_bool Render)
+{
+    __super::SetRenderState(Render);
+    if(Render == false) m_pAnimator->Set_Pause(true);
 }
 
 HRESULT CGachaAvatar::Initialize_Prototype()
@@ -121,10 +128,17 @@ void CGachaAvatar::Update_States()
                 auto pParent = dynamic_cast<CGachaStage*>(Get_Component<CChild>()->Get_Parent());
                 pParent->PlayRevealEffect();
                 m_bRevealEffect = true;
+
+                CamDirector()->SetSpaceRef(Get_Handle());
             }
         }
         break;
     case ANIMSTATE::LOOP:
+        if (m_bSequencePlay == false)
+        {
+            CamDirector()->RequestSequence("Gacha/Miyabi_01");
+            m_bSequencePlay = true;
+        }
         break;
     }
 }
