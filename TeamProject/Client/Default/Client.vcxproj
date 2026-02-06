@@ -382,6 +382,7 @@
     <ClInclude Include="..\Public\CrowdNpc.h" />
     <ClInclude Include="..\public\GachaFootStage.h" />
     <ClInclude Include="..\Public\MiyabiState_ExAttack.h" />
+    <ClInclude Include="..\Public\MiyabiState_UltimateAttack.h" />
     <ClInclude Include="..\Public\PedestrianNpc.h" />
     <ClInclude Include="..\Public\Cyclops.h" />
     <ClInclude Include="..\Public\Cyclops_Born.h" />
@@ -795,6 +796,7 @@
     <ClCompile Include="..\Private\CrowdNpc.cpp" />
     <ClCompile Include="..\private\GachaFootStage.cpp" />
     <ClCompile Include="..\Private\MiyabiState_ExAttack.cpp" />
+    <ClCompile Include="..\Private\MiyabiState_UltimateAttack.cpp" />
     <ClCompile Include="..\Private\PedestrianNpc.cpp" />
     <ClCompile Include="..\Private\Cyclops.cpp" />
     <ClCompile Include="..\Private\Cyclops_Born.cpp" />

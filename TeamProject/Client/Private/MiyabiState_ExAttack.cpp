@@ -162,6 +162,8 @@ void CMiyabiState_ExAttack_02::Enter(CMiyabi* pOwner)
         .Speed(1.f)
         .Apply();
 
+    pOwner->Increase_Frost(2);
+
     m_vPos = pOwner->Get_WorldPos();
     m_vLook = pOwner->Get_Component<CTransform>()->Dir(STATE::LOOK);
     m_iMask = pOwner->Get_CCT()->Get_CollisionMask();
@@ -215,6 +217,8 @@ void CMiyabiState_ExAttack_03::Enter(CMiyabi* pOwner)
 {
     m_iCount = 0;
     m_fProgress = 0.3f;
+
+    pOwner->Increase_Frost(2);
 
     auto EnergyDesc = pOwner->Get_EnergyDesc();
     EnergyDesc.fCurrentEnergy -= EnergyDesc.fSpecialEnergy;

@@ -2263,12 +2263,15 @@
     </ClInclude>
     <ClInclude Include="..\public\GachaFootStage.h">
       <Filter>02. GameObject\Object\Gacha\GachaProps\GachaStage\FootStage</Filter>
-          </ClInclude>
+    </ClInclude>
     <ClInclude Include="..\Public\MiyabiState_RushAttack.h">
       <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Attack\Rush</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\MiyabiState_ExAttack.h">
       <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Attack\Ex</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MiyabiState_UltimateAttack.h">
+      <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Attack\Ultimate</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -3319,12 +3322,15 @@
     </ClCompile>
     <ClCompile Include="..\private\GachaFootStage.cpp">
       <Filter>02. GameObject\Object\Gacha\GachaProps\GachaStage\FootStage</Filter>
-          </ClCompile>
+    </ClCompile>
     <ClCompile Include="..\Private\MiyabiState_RushAttack.cpp">
       <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Attack\Rush</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\MiyabiState_ExAttack.cpp">
       <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Attack\Ex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MiyabiState_UltimateAttack.cpp">
+      <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Attack\Ultimate</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
