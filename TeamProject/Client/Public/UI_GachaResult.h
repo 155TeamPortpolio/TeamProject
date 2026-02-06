@@ -5,6 +5,11 @@ NS_BEGIN(Client)
 
 class CUI_GachaResult final : public CUI_Object
 {
+public: 
+	typedef struct tagResultDesc {
+		const vector<GACHA_RESULT_DESC>* pResultDesc = {};
+	}RESULT_DESC;
+
 private:
 	CUI_GachaResult() {}
 	CUI_GachaResult(const CUI_GachaResult& rhs) : CUI_Object(rhs) {}
@@ -24,22 +29,27 @@ public:
 private:
 	CUI_Object* m_pTitle = {};
 
-	vector<CUI_Object*> m_pItems = {};
+	vector<class CUI_GachaResultItem*> m_pItems;
+	const vector<GACHA_RESULT_DESC>* m_pResultDesc = {};
 
-	_bool m_isItemAppear = {};
-	_int m_iItemIndex = {};
-	_float m_fItemTimer = {};
-	_float m_fItemDuration = { 0.1f };
+	_int m_iItemAppearIndex = {};
+	_float m_fItemAppearTimer = {};
+	const _float m_fItemAppearDuration = { 0.1f };
 
-	static const _int COL = 5;
-	static const _int ROW = 2; 
+	static const _int MAX_COL = 5;
 	static const _int WIDTH = 220.f;
 	static const _int HEIGHT = 148.f;
 	static const _int SPACING = 4.f;
 
 private:
-	void Cache();
-	void Create_Items();
+	void Cache(); 
+
+	void Update_ItemAppear(_float dt);
+
+	_bool Ensure_ItemCount(size_t count); 
+	void Update_ItemLayout();
+
+	class CUI_GachaResultItem* Create_Item(); 
 
 public:
 	static  CGameObject* Create();
