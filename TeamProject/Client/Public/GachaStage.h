@@ -50,6 +50,7 @@ private:
     class CGachaStageScreen*    m_pScreen = nullptr;
     class CGachaResult*         m_pWeaponResult = nullptr;
     class CGachaResult*         m_pAvatarResult = nullptr;
+    class CGachaFootStage*      m_pFootStage = nullptr;
     OBJECT_HANDLE               m_MainTopLightHandle = {};
     OBJECT_HANDLE               m_MainBottomLightHandle = {};
     OBJECT_HANDLE               m_MainMiddleLightHandle = {};

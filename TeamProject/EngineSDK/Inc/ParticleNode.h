@@ -31,6 +31,8 @@ public:
     virtual void Free() override;
 
 protected:
+    _bool m_UseMask = false;
+    string m_MaskTextureTag{};
 
 };
 NS_END

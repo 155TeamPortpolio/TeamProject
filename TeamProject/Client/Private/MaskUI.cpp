@@ -14,6 +14,8 @@ HRESULT CMaskUI::Initialize(INIT_DESC* pArg)
 {
     __super::Initialize(pArg);
 
+    m_stencilMode = StencilMode::Write;
+
     Get_Component<CSprite2D>()->Link_Shader(G_GlobalLevelKey, "VTX_UI.hlsl");
 
     return S_OK;
@@ -22,6 +24,8 @@ HRESULT CMaskUI::Initialize(INIT_DESC* pArg)
 void CMaskUI::Load(const nlohmann::ordered_json& data)
 {
     __super::Load(data);
+
+    m_stencilMode = StencilMode::Write;
      
     auto pSprite = Get_Component<CSprite2D>();
     const string maskTextureKey = data.value("maskTextureKey", "empty.png");

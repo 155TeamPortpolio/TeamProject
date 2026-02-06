@@ -58,23 +58,8 @@
     <Filter Include="02. GameObject\MapObject\02. MapTriggerObject">
       <UniqueIdentifier>{3ee57455-7966-4d9b-bcb9-5d01b67f74e6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03. Utility">
-      <UniqueIdentifier>{29ed2e80-51e7-4b83-bf45-611f7b08c5f5}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\Object\Enemy">
       <UniqueIdentifier>{b66aa194-a926-4d74-9e5d-a9dc4d525f95}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03. Utility\00. MapLoader">
-      <UniqueIdentifier>{b225c53e-224c-4830-98f3-48fbbeb76845}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03. Utility\01. HFSM">
-      <UniqueIdentifier>{6600c1e3-1d7c-4379-8e66-d55cb9799a70}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03. Utility\02. CamLoader">
-      <UniqueIdentifier>{01fa8660-fa55-4073-9664-f30e02931412}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03. Utility\03. UILoader">
-      <UniqueIdentifier>{5142a8bf-9e06-4a8f-b695-a095b762835d}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\Object\Player">
       <UniqueIdentifier>{b9726592-5cfc-4ee2-a801-040f03747e42}</UniqueIdentifier>
@@ -91,9 +76,6 @@
     <Filter Include="01. Level\01. LoadingLevel">
       <UniqueIdentifier>{843e3c5c-413c-4e9b-a399-53d7346524d5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03. Utility\04. BattleSystem">
-      <UniqueIdentifier>{b180e495-0af6-48a7-9aa3-dd8d6b302e10}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\Effect">
       <UniqueIdentifier>{5ed6b41d-6c27-48c7-8c25-a26c610b028e}</UniqueIdentifier>
     </Filter>
@@ -102,9 +84,6 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Player\BattlePlayer">
       <UniqueIdentifier>{45cb19da-f007-4f0d-bdc3-7535ba09aeb5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03. Utility\05. DataBase">
-      <UniqueIdentifier>{63a6de62-07b4-44f0-a0b6-7c116f8319b7}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\UI">
       <UniqueIdentifier>{55bb7252-7639-4270-b550-e55db163b9f0}</UniqueIdentifier>
@@ -228,9 +207,6 @@
     </Filter>
     <Filter Include="02. GameObject\UI\02. 3D\Plane\IconLabel">
       <UniqueIdentifier>{3e2a37e2-c5e9-4d9d-b5ff-033ee76f6b0f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03. Utility\06. FieldSystem">
-      <UniqueIdentifier>{8f93581d-d66b-4732-9c1c-97298cb6889a}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\Object\Player\FieldPlayer">
       <UniqueIdentifier>{193802ca-37b3-4ec0-87fc-ec787fbb8906}</UniqueIdentifier>
@@ -367,18 +343,6 @@
     <Filter Include="02. GameObject\UI\01. 2D\SceneFrame">
       <UniqueIdentifier>{da2fd65e-9bf7-4fb2-a1b2-95af726ef1a4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03. Utility\06. FieldSystem\Room">
-      <UniqueIdentifier>{3c7a7548-6ec8-44bd-ab8c-d800f9c1f45f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03. Utility\06. FieldSystem\Room\02. Street">
-      <UniqueIdentifier>{49e5231b-dc58-454a-a08c-fc4c6137a751}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03. Utility\06. FieldSystem\Room\01. Director">
-      <UniqueIdentifier>{720e4aa3-1d89-41b4-81e8-92fa8ac3853a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03. Utility\06. FieldSystem\Room\00. RoomSuper">
-      <UniqueIdentifier>{adac0c1c-e59e-4d29-8387-c059a199c741}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\UI\01. 2D\Dialogue\Message">
       <UniqueIdentifier>{8586251d-ec90-4723-ac77-2750945a94a4}</UniqueIdentifier>
     </Filter>
@@ -400,29 +364,8 @@
     <Filter Include="02. GameObject\MapObject\99. EntitySpawner">
       <UniqueIdentifier>{8b852d8f-36c2-4c1e-b080-ca2b3222160f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03. Utility\04. BattleSystem\Monster Spawner">
-      <UniqueIdentifier>{0bdcfd9b-76a0-4c91-82f2-9a71e5d819f5}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\UI\03. UIElement\NineSlice">
       <UniqueIdentifier>{2646c162-8883-48f9-b637-d3f38abb755c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03. Utility\04. BattleSystem\FX_Battle">
-      <UniqueIdentifier>{80b278d6-d073-43f9-b769-b90f4b580861}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03. Utility\06. FieldSystem\Room\03. Lottery">
-      <UniqueIdentifier>{f458eb41-acf4-446d-a7e3-75ed729e28c0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03. Utility\07. UIDirector">
-      <UniqueIdentifier>{42edd944-ef6d-4efd-b82d-9cadbc7ddc9f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03. Utility\08. CamDirector">
-      <UniqueIdentifier>{0d1fd986-9b7f-4463-b27c-8cc9eae09a0b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03. Utility\08. CamDirector\00. CamEventController">
-      <UniqueIdentifier>{e32e2694-55ad-4df0-9498-5b9d07742769}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03. Utility\08. CamDirector\01. CamDialogueController">
-      <UniqueIdentifier>{9d3b873e-a8e1-46d5-bf26-47096a796f2e}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\UI\03. UIElement\Atlas_Sprite">
       <UniqueIdentifier>{141ad35d-d882-4929-ae9d-00da8a8aaf8e}</UniqueIdentifier>
@@ -847,9 +790,6 @@
     <Filter Include="02. GameObject\Object\Player\Character\02. Corin\State\Attack\Assault">
       <UniqueIdentifier>{c16121b5-d212-452e-93ac-5ce0eaf47543}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03. Utility\09. Interface">
-      <UniqueIdentifier>{51900e22-1c4e-4ebd-b4f6-2e6da8fde730}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\Object\Npc\Service\SirChop">
       <UniqueIdentifier>{d2a50a8e-9e0b-42f2-a758-62374a5c7f8b}</UniqueIdentifier>
     </Filter>
@@ -877,9 +817,6 @@
     <Filter Include="02. GameObject\Camera\04. OrbitCam\01. OrbitCamCollider">
       <UniqueIdentifier>{bb6ef566-7828-4054-a05e-14d7b79b3b20}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03. Utility\06. FieldSystem\Room\04. Noodle">
-      <UniqueIdentifier>{810c5f63-0a50-441a-b876-0b38ab52f72c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. Level\02. MainCity">
       <UniqueIdentifier>{5c06b70c-30b5-443f-8830-698352a45197}</UniqueIdentifier>
     </Filter>
@@ -889,20 +826,11 @@
     <Filter Include="02. GameObject\Object\Npc\Service\SilverAnbi">
       <UniqueIdentifier>{1fb6f464-481c-4f28-9d2c-18957cf84b87}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03. Utility\10. VideoDecoder">
-      <UniqueIdentifier>{842cbfe9-dc9e-47db-9dfe-d0e21c570f36}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\UI\01. 2D\Ramen\AttributeIcon">
       <UniqueIdentifier>{07fca487-bd7e-40a2-8e75-7b49fe25f31b}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\UI\01. 2D\Ramen\AttributeText">
       <UniqueIdentifier>{f0281968-7296-48e8-82fd-78db5b7603ed}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03. Utility\11. Gui_Panel">
-      <UniqueIdentifier>{3e01fbb6-36a4-4470-a580-447caf0cfcc5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03. Utility\11. Gui_Panel\00. MonsterSpawnPanel">
-      <UniqueIdentifier>{baab1bb3-30ce-4b98-8c82-4df607affe62}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\Object\Gacha">
       <UniqueIdentifier>{858b15a4-6c43-48b1-893b-d5dc3866306a}</UniqueIdentifier>
@@ -981,9 +909,6 @@
     </Filter>
     <Filter Include="02. GameObject\UI\01. 2D\Lottery\ResultBanner">
       <UniqueIdentifier>{e04f041f-17af-4539-a63b-f9ab0f594352}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03. Utility\11. Gui_Panel\01. VideoPanel">
-      <UniqueIdentifier>{cda206a5-0c6c-4143-93c8-4bffe9105136}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\Object\AmbientActor">
       <UniqueIdentifier>{d1149f0e-c9f3-45bd-89e7-df5876021132}</UniqueIdentifier>
@@ -1086,9 +1011,6 @@
     <Filter Include="02. GameObject\UI\01. 2D\Gacha\Conversion">
       <UniqueIdentifier>{e604887e-58bb-4092-aa7b-587df8e4a1e1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03. Utility\08. CamDirector\02. CamDebugInput">
-      <UniqueIdentifier>{0ab884f1-7b9a-4ad0-91d2-f1ac84773eec}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\Object\Enemy\Normal\EtherCyclops\Spit">
       <UniqueIdentifier>{4fe523f1-b826-442e-bc7c-e21b5480b449}</UniqueIdentifier>
     </Filter>
@@ -1155,9 +1077,6 @@
     <Filter Include="01. Level\05. Gacha">
       <UniqueIdentifier>{fa9bd871-fe4c-4859-8b99-9123ce93fc2d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03. Utility\06. FieldSystem\Room\05. Room_Gacha">
-      <UniqueIdentifier>{820f4014-89e1-411c-b031-be391e0f1e5e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\Object\Npc\Background\Crowd">
       <UniqueIdentifier>{090fe14d-c489-4bd5-8524-dec97cb3fdc5}</UniqueIdentifier>
     </Filter>
@@ -1169,6 +1088,93 @@
     </Filter>
     <Filter Include="02. GameObject\UI\01. 2D\Gacha\Result">
       <UniqueIdentifier>{70b86f41-b532-40be-ba58-6b3edec7f698}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\Gacha\Result\ResultItem">
+      <UniqueIdentifier>{aa22d079-15fe-4ce3-9769-f18957aab65c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility">
+      <UniqueIdentifier>{29ed2e80-51e7-4b83-bf45-611f7b08c5f5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\00. MapLoader">
+      <UniqueIdentifier>{b225c53e-224c-4830-98f3-48fbbeb76845}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\01. HFSM">
+      <UniqueIdentifier>{6600c1e3-1d7c-4379-8e66-d55cb9799a70}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\02. CamLoader">
+      <UniqueIdentifier>{01fa8660-fa55-4073-9664-f30e02931412}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\03. UILoader">
+      <UniqueIdentifier>{5142a8bf-9e06-4a8f-b695-a095b762835d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\04. BattleSystem">
+      <UniqueIdentifier>{b180e495-0af6-48a7-9aa3-dd8d6b302e10}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\04. BattleSystem\Monster Spawner">
+      <UniqueIdentifier>{0bdcfd9b-76a0-4c91-82f2-9a71e5d819f5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\04. BattleSystem\FX_Battle">
+      <UniqueIdentifier>{80b278d6-d073-43f9-b769-b90f4b580861}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\05. DataBase">
+      <UniqueIdentifier>{63a6de62-07b4-44f0-a0b6-7c116f8319b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\06. FieldSystem">
+      <UniqueIdentifier>{8f93581d-d66b-4732-9c1c-97298cb6889a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\06. FieldSystem\Room">
+      <UniqueIdentifier>{3c7a7548-6ec8-44bd-ab8c-d800f9c1f45f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\06. FieldSystem\Room\02. Street">
+      <UniqueIdentifier>{49e5231b-dc58-454a-a08c-fc4c6137a751}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\06. FieldSystem\Room\01. Director">
+      <UniqueIdentifier>{720e4aa3-1d89-41b4-81e8-92fa8ac3853a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\06. FieldSystem\Room\00. RoomSuper">
+      <UniqueIdentifier>{adac0c1c-e59e-4d29-8387-c059a199c741}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\06. FieldSystem\Room\03. Lottery">
+      <UniqueIdentifier>{f458eb41-acf4-446d-a7e3-75ed729e28c0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\06. FieldSystem\Room\04. Noodle">
+      <UniqueIdentifier>{810c5f63-0a50-441a-b876-0b38ab52f72c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\06. FieldSystem\Room\05. Room_Gacha">
+      <UniqueIdentifier>{820f4014-89e1-411c-b031-be391e0f1e5e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\07. UIDirector">
+      <UniqueIdentifier>{42edd944-ef6d-4efd-b82d-9cadbc7ddc9f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\08. CamDirector">
+      <UniqueIdentifier>{0d1fd986-9b7f-4463-b27c-8cc9eae09a0b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\08. CamDirector\00. CamEventController">
+      <UniqueIdentifier>{e32e2694-55ad-4df0-9498-5b9d07742769}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\08. CamDirector\01. CamDialogueController">
+      <UniqueIdentifier>{9d3b873e-a8e1-46d5-bf26-47096a796f2e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\08. CamDirector\02. CamDebugInput">
+      <UniqueIdentifier>{0ab884f1-7b9a-4ad0-91d2-f1ac84773eec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\09. Interface">
+      <UniqueIdentifier>{51900e22-1c4e-4ebd-b4f6-2e6da8fde730}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\10. VideoDecoder">
+      <UniqueIdentifier>{842cbfe9-dc9e-47db-9dfe-d0e21c570f36}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\11. Gui_Panel">
+      <UniqueIdentifier>{3e01fbb6-36a4-4470-a580-447caf0cfcc5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\11. Gui_Panel\00. MonsterSpawnPanel">
+      <UniqueIdentifier>{baab1bb3-30ce-4b98-8c82-4df607affe62}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\11. Gui_Panel\01. VideoPanel">
+      <UniqueIdentifier>{cda206a5-0c6c-4143-93c8-4bffe9105136}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Gacha\GachaProps\GachaStage\FootStage">
+      <UniqueIdentifier>{ebc006d0-8a7d-4a82-a4f3-8660ecd31a07}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -2252,6 +2258,12 @@
     <ClInclude Include="..\Public\UI_GachaResult.h">
       <Filter>02. GameObject\UI\01. 2D\Gacha\Result</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UI_GachaResultItem.h">
+      <Filter>02. GameObject\UI\01. 2D\Gacha\Result\ResultItem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\GachaFootStage.h">
+      <Filter>02. GameObject\Object\Gacha\GachaProps\GachaStage\FootStage</Filter>
+          </ClInclude>
     <ClInclude Include="..\Public\MiyabiState_RushAttack.h">
       <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Attack\Rush</Filter>
     </ClInclude>
@@ -3302,6 +3314,12 @@
     <ClCompile Include="..\Private\UI_GachaResult.cpp">
       <Filter>02. GameObject\UI\01. 2D\Gacha\Result</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\UI_GachaResultItem.cpp">
+      <Filter>02. GameObject\UI\01. 2D\Gacha\Result\ResultItem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\GachaFootStage.cpp">
+      <Filter>02. GameObject\Object\Gacha\GachaProps\GachaStage\FootStage</Filter>
+          </ClCompile>
     <ClCompile Include="..\Private\MiyabiState_RushAttack.cpp">
       <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Attack\Rush</Filter>
     </ClCompile>

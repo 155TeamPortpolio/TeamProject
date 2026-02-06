@@ -219,13 +219,13 @@ void CMesh::ExpandBox(MINMAX_BOX& b, const _float3& p)
 	b.ExpandBox(p);
 }
 
-static inline bool HasWeight(const XMFLOAT4& weight, int lane)
+bool CMesh::HasWeight(const XMFLOAT4& weight, int lane)
 {
 	const float* w = reinterpret_cast<const float*>(&weight);
 	return w[lane] > 1e-6f;
 }
 
-static inline uint32_t GetBlendIndexLane(const XMUINT4& blendIndex, int lane)
+uint32_t CMesh::GetBlendIndexLane(const XMUINT4& blendIndex, int lane)
 {
 	const uint32_t* idx = reinterpret_cast<const uint32_t*>(&blendIndex);
 	return idx[lane];
