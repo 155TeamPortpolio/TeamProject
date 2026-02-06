@@ -64,6 +64,7 @@ void CMiyabiState_SwitchIn::Update(CMiyabi* pOwner, _float dt)
             pMiyabiState->Set_Trigger("SwitchOut");
             pMiyabiState->Set_Bool("OutReserve", false);
         }
+        return;
     }
 
     if (m_pSubStateMachine->Get_Trigger("Complete"))

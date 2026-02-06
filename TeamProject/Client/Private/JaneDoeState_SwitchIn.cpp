@@ -64,6 +64,7 @@ void CJaneDoeState_SwitchIn::Update(CJaneDoe* pOwner, _float dt)
             pJaneDoeState->Set_Trigger("SwitchOut");
             pJaneDoeState->Set_Bool("OutReserve", false);
         }
+        return; // OutReserve 대기중이면 Complete로 Idle 전환하지 않음
     }
 
     if (m_pSubStateMachine->Get_Trigger("Complete"))
