@@ -1,0 +1,32 @@
+{
+  "TagDataFormat": "Base",
+  "TagArea": "Zero_6_1",
+  "iVersion": 1,
+  "Entities": [
+    {
+      "iEntityID": 0,
+      "tagName": "Invwall",
+      "iType": 3,
+      "vScale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "vRotation": [
+        -0.0,
+        0.0,
+        0.0
+      ],
+      "vTranslation": [
+        -22.404178619384766,
+        11.325472831726074,
+        -26.68026351928711
+      ],
+      "vColSize": [
+        29.90999984741211,
+        3.0,
+        0.10000000149011612
+      ]
+    }
+  ]
+}
