@@ -40,7 +40,7 @@ void CAnimator3D::LinkAnimate_Model(const string& LevelKey, const string& ModelK
 		Reset_Anim();
 	}
 
-	m_pData = CGameInstance::GetInstance()->Get_ResourceMgr()->Load_ModelData(LevelKey, ModelKey);
+ 	m_pData = CGameInstance::GetInstance()->Get_ResourceMgr()->Load_ModelData(LevelKey, ModelKey);
 	Safe_AddRef(m_pData);
 	_float4x4 IdentityMatrix;
 	XMStoreFloat4x4(&IdentityMatrix, XMMatrixIdentity());
@@ -1777,6 +1777,7 @@ void CAnimator3D::Reset_Anim()
 		Safe_Release(Clip);
 	}
 
+	m_AnimLayers.clear();
 	m_pAnimClips.clear();
 	Safe_Release(m_pData);
 }

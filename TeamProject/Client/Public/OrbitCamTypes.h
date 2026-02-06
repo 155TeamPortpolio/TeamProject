@@ -5,14 +5,12 @@ class CGameObject; class CCharacterController;
 NS_END
 
 NS_BEGIN(Client)
-
 struct OrbitLockState
 {
     OBJECT_HANDLE handle{};
     _bool         active    = false;
     _float        savedDist = 0.f;
 };
-
 struct OrbitBlendState
 {
     _bool    active   = false;
@@ -22,7 +20,6 @@ struct OrbitBlendState
     EaseType ease     = EaseType::InOutSine;
     _float   weight   = 0.f;
 };
-
 struct OrbitLockEval
 {
     _float   weight    = 0.f;
@@ -31,14 +28,12 @@ struct OrbitLockEval
     _float   dist      = 0.f;
     Vector3  focusPos{};
 };
-
 struct OrbitAutoYaw
 {
     Vector3 prevFootWorld{};
     _float  holdTimer   = 0.f;
     _bool   hasPrevFoot = false;
 };
-
 struct OrbitCollideEval
 {
     _float allowedDist = 0.f;
@@ -48,21 +43,18 @@ struct OrbitCollideEval
     _float yawDeltaCapDeg = 0.f;
     _float pitchDeltaCapDeg = 0.f;
 };
-
 struct OrbitSwitch
 {
     _bool   active  = false;
     _float  elapsed = 0.f;
     Vector3 holdPivotWorld{};
 };
-
 struct OrbitInputEval
 {
     _float yawDeltaDeg   = 0.f;
     _float pitchDeltaDeg = 0.f;
     _float zoomDelta     = 0.f;
 };
-
 struct OrbitPose
 {
     Vector2 rotGoalDeg{};
@@ -78,14 +70,12 @@ struct OrbitPose
     Vector3 pivotInternalOffset{};
     Vector3 pivotExternalOffset{};
 };
-
 struct OrbitInput
 {
     _float sensX     = 0.1f;
     _float sensY     = 0.08f;
     _float zoomSpeed = 1.0f;
 };
-
 struct OrbitProfile
 {
     _float distMin = 0.7f;
@@ -134,7 +124,6 @@ struct OrbitProfile
     _float yawHitDeltaCapDeg = 200.f;
     _float pitchHitDeltaCapDeg = 180.f;
 };
-
 struct OrbitSnapshot
 {
     OrbitPose       pose{};
@@ -144,7 +133,6 @@ struct OrbitSnapshot
     OrbitSwitch     sw{};
     OBJECT_HANDLE   target{};
 };
-
 struct OrbitPivotStabilizer
 {
     Vector3 lastRawPivot{};
@@ -159,5 +147,4 @@ struct OrbitPivotStabilizer
     _float  outlierDist = 0.25f;
     _float  outlierVel = 7.0f;
 };
-
 NS_END

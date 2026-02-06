@@ -103,6 +103,9 @@
     <ClInclude Include="..\public\Unagi.h">
       <Filter>03. Obj\99. Character\03. Unagi</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\GachaFootStage.h">
+      <Filter>03. Obj\99. Character\02. GachaProps\03. GachaFootStage</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CameraTool.ico">
@@ -178,6 +181,9 @@
     </Filter>
     <Filter Include="03. Obj\99. Character\03. Unagi">
       <UniqueIdentifier>{6dc79a7a-21b6-4ef7-8b72-f351f323d7a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Obj\99. Character\02. GachaProps\03. GachaFootStage">
+      <UniqueIdentifier>{9a4038d5-beff-4fd0-9c1e-8d36f5e2fa3c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -261,6 +267,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Unagi.cpp">
       <Filter>03. Obj\99. Character\03. Unagi</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\GachaFootStage.cpp">
+      <Filter>03. Obj\99. Character\02. GachaProps\03. GachaFootStage</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -238,6 +238,7 @@
     <ClInclude Include="..\public\DebugCamData.h" />
     <ClInclude Include="..\public\FreeCam.h" />
     <ClInclude Include="..\public\GachaBack.h" />
+    <ClInclude Include="..\public\GachaFootStage.h" />
     <ClInclude Include="..\public\GachaProps.h" />
     <ClInclude Include="..\public\GachaStage.h" />
     <ClInclude Include="..\public\GachaTV.h" />
@@ -273,6 +274,7 @@
     <ClCompile Include="..\private\Corin.cpp" />
     <ClCompile Include="..\private\FreeCam.cpp" />
     <ClCompile Include="..\private\GachaBack.cpp" />
+    <ClCompile Include="..\private\GachaFootStage.cpp" />
     <ClCompile Include="..\private\GachaProps.cpp" />
     <ClCompile Include="..\private\GachaStage.cpp" />
     <ClCompile Include="..\private\GachaTV.cpp" />

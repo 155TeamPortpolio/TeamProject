@@ -78,7 +78,7 @@ HRESULT CScott_Level::Awake()
 	Ready_Map("Scott_Level", "Zero_Worksite");
 	//Ready_Npc();
 
-	CamDirector()->AutoField();
+	CamDirector()->AutoField(CamStartDir::Back);
 
 	return S_OK;
 }

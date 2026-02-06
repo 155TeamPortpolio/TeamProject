@@ -5,8 +5,6 @@
 
 void CCursorController::Initialize()
 {
-    m_monitorGate.SetMinWidth(2500);
-
 #ifdef _USING_GUI
     m_cachedGuiActive = GUISystem()->Is_GUIActive();
     SyncMouseLockByGui();

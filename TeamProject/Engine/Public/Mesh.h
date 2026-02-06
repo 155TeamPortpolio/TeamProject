@@ -41,11 +41,12 @@ public:
 public:
 	HRESULT BakeSkinRemapAndRebuildVB(ID3D11Device* pDevice, _uint skeletonBoneCount);
 	const vector<uint16_t>& Get_UsedBones() const { return m_UsedBones; }
-
-private:
+	
+protected:
 	void BuildUsedBonesAndRemap(_uint skeletonBoneCount);
 	void RemapVertexBlendIndices();
-
+	bool HasWeight(const XMFLOAT4& weight, int lane);
+	uint32_t GetBlendIndexLane(const XMUINT4& blendIndex, int lane);
 protected:
 	vector<_uint> m_indices;										
 	vector<VTXMESH> m_StaticVertex;
@@ -58,7 +59,7 @@ protected:
 	_float3 m_vMeshMinLocal = { FLT_MAX ,FLT_MAX ,FLT_MAX };
 	_float3 m_vMeshMaxLocal = { -FLT_MAX ,-FLT_MAX ,-FLT_MAX };
 	
-private:
+protected:
 	vector<uint16_t> m_UsedBones;
 	vector<uint16_t> m_GlobalToLocal;
 public:

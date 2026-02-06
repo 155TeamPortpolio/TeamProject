@@ -8,8 +8,7 @@
 #include "MiyabiState_ChargeAttack.h"
 #include "MiyabiState_RushAttack.h"
 #include "MiyabiState_ExAttack.h"
-//#include "MiyabiState_UltimateAttack.h"
-//#include "MiyabiState_BranchAttack.h"
+#include "MiyabiState_UltimateAttack.h"
 //#include "MiyabiState_CounterAttack.h"
 //#include "MiyabiState_AssaultAttack.h"
 
@@ -25,7 +24,7 @@ CMiyabiState_Attack* CMiyabiState_Attack::Create()
     pSubStateMachine->Register_State("ChargeAttack", CMiyabiState_ChargeAttack::Create());
     pSubStateMachine->Register_State("RushAttack", CMiyabiState_RushAttack::Create());
     pSubStateMachine->Register_State("ExAttack", CMiyabiState_ExAttack::Create());
-    //pSubStateMachine->Register_State("UltimateAttack", CMiyabiState_UltimateAttack::Create());
+    pSubStateMachine->Register_State("UltimateAttack", CMiyabiState_UltimateAttack::Create());
     //pSubStateMachine->Register_State("CounterAttack", CMiyabiState_CounterAttack::Create());
     //pSubStateMachine->Register_State("AssaultAttack", CMiyabiState_AssaultAttack::Create());
 

@@ -6,6 +6,7 @@
 #include "LevelMgr.h"
 
 #include "UI_Gangta.h"
+#include "UI_Seoriyeol.h"
 
 namespace
 {
@@ -25,7 +26,7 @@ namespace
     constexpr _float kGlyphHeightPx = 96.f;
     constexpr _float kGlyphSpacingPx = 2.f;
 
-    constexpr _float  kSpawnRadiusPx = 75.f;
+    constexpr _float  kSpawnRadiusPx = 125.f;
     const     Vector3 kDefaultFollowOffset = Vector3(0.f, 1.3f, 0.f);
 
     constexpr _float kOverlapHold = 0.23f;
@@ -52,8 +53,9 @@ namespace
     constexpr _float   kFlashSec  = 0.12f;
     constexpr EaseType kFlashEase = EaseType::OutQuad;
 
-    constexpr _float kDamageScaleMin = 0.25f;
-    constexpr _float kDamageScaleMax = 1.35f;
+    constexpr _float kDamageScaleMin = 0.3f;
+    constexpr _float kDamageScaleMax = 0.8f;
+
     constexpr _float kDamageScaleMaxDamage = 10000.f;
 
     constexpr _float kDamageBangBangThreshold = 7000.f;
@@ -245,7 +247,7 @@ void CUI_DamageText::UI_Active(void* arg)
         case CHARACTER::JaneDoe: m_colorFrameIdx = kColorIdx_JaneDoe; break;
         case CHARACTER::Corin:   m_colorFrameIdx = kColorIdx_Corin;   break;
         case CHARACTER::Miyabi:  m_colorFrameIdx = kColorIdx_Miyabi;  break;
-        default:                 m_colorFrameIdx = 0;                 break;
+        default:                 m_colorFrameIdx = kColorIdx_Miyabi;  break;
         }
     }
     else m_colorFrameIdx = 7;
@@ -270,23 +272,6 @@ void CUI_DamageText::UI_Active(void* arg)
     m_baseAnchorOffset = Vector2(base.x, base.y) + m_spawnOffsetPx;
 
     SetDamage(desc->damage);
-
-    //static _uint dmgPopupCount = 0;
-    //++dmgPopupCount;
-
-    //if ((dmgPopupCount % 10u) == 0u)
-    //{
-    //    static _uint s_idx = 0;
-
-    //    auto builder = Builder::Create_UIObject({G_GlobalLevelKey, "Proto_GameObject_Gangta"});
-    //    auto ui = builder.Build("Gangta_Test_" + to_string(s_idx++));
-    //    auto gangta = static_cast<CUI_Gangta*>(ui);
-
-    //    gangta->Set_AnchorOffset(Vector2(m_vLeftTop.x - 14.f, m_vLeftTop.y - 14.f));
-
-    //    UIManager()->Add_UIObject(gangta, LevelManager()->Get_NowLevelKey());
-    //    gangta->UI_Active({});
-    //}
 }
 
 void CUI_DamageText::UI_DeActive(void* arg)
