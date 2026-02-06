@@ -128,8 +128,11 @@ void CGachaStage::Update(_float dt)
 		if (m_iIndex == -1) CamDirector()->RequestSequence("Gacha/Spin_Half");
 		else CamDirector()->RequestSequence("Gacha/Spin");
 		++m_iIndex;
-		if (m_iIndex >= m_iMaxIndex) m_iIndex = 0;
-
+		if (m_iIndex >= m_iMaxIndex)
+		{
+			m_iIndex = m_iMaxIndex - 1;
+			UIDirector()->Show_GachaResult(m_pResultDesc);
+		}
 		CUIDirector::GetInstance()->Hide_GachaLabel();
 		SetMiddleLightEffect(_float4(1.f, 1.f, 1.f, 1.f), _float4(0.1f, 0.1f, 0.1f, 1.f), 1.f);
 	}
