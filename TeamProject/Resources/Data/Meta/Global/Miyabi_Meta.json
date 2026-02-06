@@ -260,7 +260,18 @@
     },
     {
       "ClipTag": "Avatar_Female_Size02_Unagi_Ani_Attack_Branch_01_Attack_01",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.03547758236527443,
+          "EventType": "Notify",
+          "EventTag": "KatanaAttackStart"
+        },
+        {
+          "EventTime": 0.10006497800350189,
+          "EventType": "Notify",
+          "EventTag": "KatanaAttackEnd"
+        }
+      ]
     },
     {
       "ClipTag": "Avatar_Female_Size02_Unagi_Ani_Attack_Branch_01_Attack_01_End",
@@ -276,7 +287,18 @@
     },
     {
       "ClipTag": "Avatar_Female_Size02_Unagi_Ani_Attack_Branch_01_Attack_03",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.19883041083812714,
+          "EventType": "Notify",
+          "EventTag": "KatanaAttackStart"
+        },
+        {
+          "EventTime": 0.2684210538864136,
+          "EventType": "Notify",
+          "EventTag": "KatanaAttackEnd"
+        }
+      ]
     },
     {
       "ClipTag": "Avatar_Female_Size02_Unagi_Ani_Attack_Branch_01_Attack_03_End",
