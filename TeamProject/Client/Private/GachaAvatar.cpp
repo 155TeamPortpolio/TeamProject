@@ -127,6 +127,11 @@ void CGachaAvatar::Update_States()
         }
         break;
     case ANIMSTATE::LOOP:
+        if (m_bSequencePlay == false)
+        {
+            CamDirector()->RequestSequence("Gacha/Miyabi_01");
+            m_bSequencePlay = true;
+        }
         break;
     }
 }

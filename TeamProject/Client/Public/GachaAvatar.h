@@ -39,6 +39,7 @@ private:
     ANIMSTATE       m_eAnimState = ANIMSTATE::START;
     string          strLoopAnim = "";
     _bool           m_bRevealEffect = true;
+    _bool           m_bSequencePlay = false;
 
 public:
     static CGachaAvatar* Create();
