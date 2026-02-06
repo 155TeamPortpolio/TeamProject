@@ -42,7 +42,7 @@ void CMiyabiState_Evade::Update(CMiyabi* pOwner, _float dt)
 {
     __super::Update(pOwner, dt);
 
-    if (m_fAnimProgress >= 0.02f)
+    if (m_fAnimProgress <0.1f && m_fAnimProgress >= 0.02f)
     {
         if (pOwner->Is_Perfect() && !m_pSubStateMachine->Get_Bool("Extreme"))
         {

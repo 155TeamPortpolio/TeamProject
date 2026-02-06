@@ -1074,6 +1074,15 @@
     <Filter Include="01. Level\05. Gacha">
       <UniqueIdentifier>{fa9bd871-fe4c-4859-8b99-9123ce93fc2d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03. Utility\06. FieldSystem\Room\05. Room_Gacha">
+      <UniqueIdentifier>{820f4014-89e1-411c-b031-be391e0f1e5e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Effect\MeshEffect">
+      <UniqueIdentifier>{6160f086-da22-44d2-91a6-5d30cc56d8e0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Level\04. Zero\Stage_Start">
+      <UniqueIdentifier>{68bfc06d-7f7e-4232-b8f1-d9e74f644886}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02. GameObject\Object\Npc\Background\Crowd">
       <UniqueIdentifier>{090fe14d-c489-4bd5-8524-dec97cb3fdc5}</UniqueIdentifier>
     </Filter>
@@ -2243,6 +2252,9 @@
     <ClInclude Include="..\public\Room_Gacha.h">
       <Filter>03. Utility\06. FieldSystem\Room\05. Room_Gacha</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\ZeroStage_Start.h">
+      <Filter>01. Level\04. Zero\Stage_Start</Filter>
+    </ClInclude>
     <ClInclude Include="..\public\ParryCamFx.h">
       <Filter>02. GameObject\Camera\04. OrbitCam\00. ParryCamFX</Filter>
     </ClInclude>
@@ -2266,12 +2278,15 @@
     </ClInclude>
     <ClInclude Include="..\public\GachaFootStage.h">
       <Filter>02. GameObject\Object\Gacha\GachaProps\GachaStage\FootStage</Filter>
-          </ClInclude>
+    </ClInclude>
     <ClInclude Include="..\Public\MiyabiState_RushAttack.h">
       <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Attack\Rush</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\MiyabiState_ExAttack.h">
       <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Attack\Ex</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MiyabiState_UltimateAttack.h">
+      <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Attack\Ultimate</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -3302,6 +3317,9 @@
     <ClCompile Include="..\private\Room_Gacha.cpp">
       <Filter>03. Utility\06. FieldSystem\Room\05. Room_Gacha</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\ZeroStage_Start.cpp">
+      <Filter>01. Level\04. Zero\Stage_Start</Filter>
+    </ClCompile>
     <ClCompile Include="..\private\ParryCamFx.cpp">
       <Filter>02. GameObject\Camera\04. OrbitCam\00. ParryCamFX</Filter>
     </ClCompile>
@@ -3325,12 +3343,15 @@
     </ClCompile>
     <ClCompile Include="..\private\GachaFootStage.cpp">
       <Filter>02. GameObject\Object\Gacha\GachaProps\GachaStage\FootStage</Filter>
-          </ClCompile>
+    </ClCompile>
     <ClCompile Include="..\Private\MiyabiState_RushAttack.cpp">
       <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Attack\Rush</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\MiyabiState_ExAttack.cpp">
       <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Attack\Ex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MiyabiState_UltimateAttack.cpp">
+      <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Attack\Ultimate</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

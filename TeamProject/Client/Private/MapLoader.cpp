@@ -506,7 +506,8 @@ HRESULT CMapLoader::LoadBattleData(const MapData_Path_Packet* pPacket)
 
     m_CachedBattleData.HasBattleData = m_bHasBattleData;
 
-    m_CachedBattleData.PlayerPoint.push_back(m_BattleData.PlayerSpawnPoint);
+    for (auto& PlayerSpawnPoint : m_BattleData.PlayerSpawnPoint)
+        m_CachedBattleData.PlayerPoint.push_back(PlayerSpawnPoint);
 
     for (auto& MonsterPoint : m_BattleData.Monsters)
         m_CachedBattleData.MonsterPoint.push_back(MonsterPoint);

@@ -382,6 +382,7 @@
     <ClInclude Include="..\Public\CrowdNpc.h" />
     <ClInclude Include="..\public\GachaFootStage.h" />
     <ClInclude Include="..\Public\MiyabiState_ExAttack.h" />
+    <ClInclude Include="..\Public\MiyabiState_UltimateAttack.h" />
     <ClInclude Include="..\Public\PedestrianNpc.h" />
     <ClInclude Include="..\Public\Cyclops.h" />
     <ClInclude Include="..\Public\Cyclops_Born.h" />
@@ -423,6 +424,7 @@
     <ClInclude Include="..\Public\MiyabiState_SwitchInNormal.h" />
     <ClInclude Include="..\Public\MiyabiState_SwitchInParryAid.h" />
     <ClInclude Include="..\Public\MiyabiState_SwitchOut.h" />
+    <ClInclude Include="..\public\ZeroStage_Start.h" />
     <ClInclude Include="..\public\ParryCamFx.h" />
     <ClInclude Include="..\Public\UI_GachaDisplay.h" />
     <ClInclude Include="..\Public\UI_GachaResult.h" />
@@ -796,6 +798,7 @@
     <ClCompile Include="..\Private\CrowdNpc.cpp" />
     <ClCompile Include="..\private\GachaFootStage.cpp" />
     <ClCompile Include="..\Private\MiyabiState_ExAttack.cpp" />
+    <ClCompile Include="..\Private\MiyabiState_UltimateAttack.cpp" />
     <ClCompile Include="..\Private\PedestrianNpc.cpp" />
     <ClCompile Include="..\Private\Cyclops.cpp" />
     <ClCompile Include="..\Private\Cyclops_Born.cpp" />
@@ -833,6 +836,7 @@
     <ClCompile Include="..\Private\MiyabiState_SwitchInNormal.cpp" />
     <ClCompile Include="..\Private\MiyabiState_SwitchInParryAid.cpp" />
     <ClCompile Include="..\Private\MiyabiState_SwitchOut.cpp" />
+    <ClCompile Include="..\private\ZeroStage_Start.cpp" />
     <ClCompile Include="..\private\ParryCamFx.cpp" />
     <ClCompile Include="..\Private\UI_GachaDisplay.cpp" />
     <ClCompile Include="..\Private\UI_GachaResult.cpp" />

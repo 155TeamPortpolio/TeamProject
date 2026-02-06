@@ -59,7 +59,7 @@ void CJaneDoeState_Dash::Update(CJaneDoe* pOwner, _float dt)
         return;
     }
 
-    if (m_fAnimProgress >= 0.15f)
+    if (m_fAnimProgress >= 0.12f)
     {
         if (pOwner->Can_Evade() && pOwner->Use_EvadeBuffer())
         {   // Idle -> Evade

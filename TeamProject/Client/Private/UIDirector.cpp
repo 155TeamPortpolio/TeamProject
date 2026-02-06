@@ -9,6 +9,7 @@
 #include "UI_DamageText.h"
 #include "UI_ResultBanner.h"
 #include "UI_GachaDisplay.h"
+#include "UI_GachaResult.h"
 
 IMPLEMENT_SINGLETON(CUIDirector);
 
@@ -120,6 +121,14 @@ void CUIDirector::Hide_GachaSkipButton()
 	desc.eType = CUI_GachaDisplay::TYPE::SKIP;
 
 	UI_DeActive("gachaDisplay", &desc);
+}
+
+void CUIDirector::Show_GachaResult(const vector<GACHA_RESULT_DESC>* pResultDesc)
+{
+	CUI_GachaResult::RESULT_DESC desc = {};
+	desc.pResultDesc = pResultDesc;
+
+	UI_Active("gachaResult", &desc);
 }
 
 void CUIDirector::Show_ResultBanner(const string& strTextureKey, const _wstring& wstrText1, const _wstring& wstrText2)
