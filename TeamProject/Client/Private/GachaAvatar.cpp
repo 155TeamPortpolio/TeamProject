@@ -121,6 +121,8 @@ void CGachaAvatar::Update_States()
                 auto pParent = dynamic_cast<CGachaStage*>(Get_Component<CChild>()->Get_Parent());
                 pParent->PlayRevealEffect();
                 m_bRevealEffect = true;
+
+                CamDirector()->SetSpaceRef(Get_Handle());
             }
         }
         break;
