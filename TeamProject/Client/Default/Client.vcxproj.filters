@@ -1086,6 +1086,9 @@
     <Filter Include="02. GameObject\UI\01. 2D\Gacha\Result">
       <UniqueIdentifier>{70b86f41-b532-40be-ba58-6b3edec7f698}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\Gacha\Result\ResultItem">
+      <UniqueIdentifier>{aa22d079-15fe-4ce3-9769-f18957aab65c}</UniqueIdentifier>
+    </Filter>
     <Filter Include="03. Utility">
       <UniqueIdentifier>{29ed2e80-51e7-4b83-bf45-611f7b08c5f5}</UniqueIdentifier>
     </Filter>
@@ -2258,6 +2261,9 @@
     <ClInclude Include="..\Public\UI_GachaResult.h">
       <Filter>02. GameObject\UI\01. 2D\Gacha\Result</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UI_GachaResultItem.h">
+      <Filter>02. GameObject\UI\01. 2D\Gacha\Result\ResultItem</Filter>
+    </ClInclude>
     <ClInclude Include="..\public\GachaFootStage.h">
       <Filter>02. GameObject\Object\Gacha\GachaProps\GachaStage\FootStage</Filter>
           </ClInclude>
@@ -3313,6 +3319,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\UI_GachaResult.cpp">
       <Filter>02. GameObject\UI\01. 2D\Gacha\Result</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_GachaResultItem.cpp">
+      <Filter>02. GameObject\UI\01. 2D\Gacha\Result\ResultItem</Filter>
     </ClCompile>
     <ClCompile Include="..\private\GachaFootStage.cpp">
       <Filter>02. GameObject\Object\Gacha\GachaProps\GachaStage\FootStage</Filter>
