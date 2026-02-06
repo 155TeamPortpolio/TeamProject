@@ -338,9 +338,10 @@ HRESULT CDataBase::LoadMonsterSpawnData(const string& csvPath)
 			continue;
 		
 		_uint iStageType{};
-		if (StageType == "Normal")		iStageType = 0;
-		else if (StageType == "Elite")	iStageType = 1;
-		else if (StageType == "Boss")	iStageType = 2;
+		if (StageType == "Start")		iStageType = ENUM(StageType::Start);
+		else if (StageType == "Normal")	iStageType = ENUM(StageType::Normal);
+		else if (StageType == "Elite")	iStageType = ENUM(StageType::Elite);
+		else if (StageType == "Boss")	iStageType = ENUM(StageType::Boss);
 
 		SPAWN_MONSTER_DESC desc{};
 		desc.Colony = Colony;

@@ -3,6 +3,7 @@
 #include "SkeletalModel.h"
 #include "Material.h"
 #include "Helper_Func.h"
+#include "Animator3D.h"
 
 static vector<vector<_vector3>> dstPoint =
 {
@@ -47,6 +48,7 @@ HRESULT CPedestrianNpc::Initialize_Prototype()
 
     Add_Component<CSkeletalModel>();
     Add_Component<CMaterial>();
+    Add_Component<CAnimator3D>();
 
     return S_OK;
 }
@@ -55,8 +57,8 @@ HRESULT CPedestrianNpc::Initialize(INIT_DESC* pArg)
 {
     __super::Initialize(pArg);
 
-    Get_Component<CModel>()->Link_Model(G_GlobalLevelKey, "JaneDoeModel.model");
-    Get_Component<CMaterial>()->Link_Material(G_GlobalLevelKey, "JaneDoe.mat");
+    Get_Component<CModel>()->Link_Model("MainCity_Level", "NPC_21.model");
+    Get_Component<CMaterial>()->Link_Material("MainCity_Level", "NPC_21.mat");
 
     const _uint routeCount = (_uint)dstPoint.size();
     if (routeCount == 0)
@@ -86,6 +88,11 @@ HRESULT CPedestrianNpc::Initialize(INIT_DESC* pArg)
     m_Vel = dir01 * (float)m_MoveSpeed;
     m_Vel.y = 0.f;
 
+    Get_Component<CAnimator3D>()->LinkAnimate_Model("MainCity_Level", "NPC_21.model");
+    Get_Component<CAnimator3D>()->Link_MetaData("MainCity_Level", "NPC_21_Meta.json");
+    Get_Component<CAnimator3D>()
+        ->Set_Animation("NPC_Female_Size01_Ani_MainCity_Walk_Lively_030").Loop(true).Apply();
+
     return S_OK;
 }
 
@@ -99,6 +106,7 @@ void CPedestrianNpc::Priority_Update(_float dt)
 
 void CPedestrianNpc::Update(_float dt)
 {
+    Get_Component<CAnimator3D>()->Update_Animation(dt);
     Calc_Destination(dt);
 }
 

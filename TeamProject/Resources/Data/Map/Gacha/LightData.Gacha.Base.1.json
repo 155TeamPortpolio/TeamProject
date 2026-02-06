@@ -37,8 +37,8 @@
           "z": 1.0,
           "w": 0.0
         },
-        "fLightRange": 10.0,
-        "fLightIntensity": 10.0,
+        "fLightRange": 5.0,
+        "fLightIntensity": 30.0,
         "fInnerCos": 5.0,
         "fOuterCos": 50.0
       },
@@ -82,8 +82,8 @@
           "z": 1.0,
           "w": 0.0
         },
-        "fLightRange": 10.0,
-        "fLightIntensity": 10.0,
+        "fLightRange": 5.0,
+        "fLightIntensity": 30.0,
         "fInnerCos": 5.0,
         "fOuterCos": 50.0
       },
@@ -127,15 +127,15 @@
           "z": 1.0,
           "w": 0.0
         },
-        "fLightRange": 10.0,
+        "fLightRange": 7.0,
         "fLightIntensity": 10.0,
         "fInnerCos": 5.0,
         "fOuterCos": 50.0
       },
       "vTranslation": [
-        4.079999923706055,
-        0.20000000298023224,
-        0.5
+        0.0,
+        2.9,
+        1.8
       ]
     },
     {
@@ -172,8 +172,8 @@
           "z": 1.0,
           "w": 0.0
         },
-        "fLightRange": 10.0,
-        "fLightIntensity": 10.0,
+        "fLightRange": 3.0,
+        "fLightIntensity": 1.0,
         "fInnerCos": 5.0,
         "fOuterCos": 50.0
       },
@@ -217,8 +217,8 @@
           "z": 1.0,
           "w": 0.0
         },
-        "fLightRange": 10.0,
-        "fLightIntensity": 10.0,
+        "fLightRange": 3.0,
+        "fLightIntensity": 1.0,
         "fInnerCos": 5.0,
         "fOuterCos": 50.0
       },
@@ -262,8 +262,8 @@
           "z": 1.0,
           "w": 0.0
         },
-        "fLightRange": 10.0,
-        "fLightIntensity": 10.0,
+        "fLightRange": 1.0,
+        "fLightIntensity": 0.0,
         "fInnerCos": 5.0,
         "fOuterCos": 50.0
       },
@@ -307,8 +307,8 @@
           "z": 1.0,
           "w": 0.0
         },
-        "fLightRange": 10.0,
-        "fLightIntensity": 10.0,
+        "fLightRange": 1.0,
+        "fLightIntensity": 0.0,
         "fInnerCos": 5.0,
         "fOuterCos": 50.0
       },
@@ -352,8 +352,8 @@
           "z": 1.0,
           "w": 0.0
         },
-        "fLightRange": 10.0,
-        "fLightIntensity": 10.0,
+        "fLightRange": 3.0,
+        "fLightIntensity": 1.0,
         "fInnerCos": 5.0,
         "fOuterCos": 50.0
       },
@@ -397,8 +397,8 @@
           "z": 1.0,
           "w": 0.0
         },
-        "fLightRange": 10.0,
-        "fLightIntensity": 10.0,
+        "fLightRange": 3.0,
+        "fLightIntensity": 1.0,
         "fInnerCos": 5.0,
         "fOuterCos": 50.0
       },
@@ -442,8 +442,8 @@
           "z": 1.0,
           "w": 0.0
         },
-        "fLightRange": 10.0,
-        "fLightIntensity": 10.0,
+        "fLightRange": 3.0,
+        "fLightIntensity": 1.0,
         "fInnerCos": 5.0,
         "fOuterCos": 50.0
       },
@@ -471,8 +471,8 @@
         },
         "vLightDiffuse": {
           "x": 0.0,
-          "y": 0.20000000298023224,
-          "z": 1.0,
+          "y": 0.0,
+          "z": 0.0,
           "w": 0.0
         },
         "vLightAmbient": {
@@ -487,10 +487,10 @@
           "z": 0.0,
           "w": 0.0
         },
-        "fLightRange": 85.0,
-        "fLightIntensity": 50.0,
-        "fInnerCos": 30.0,
-        "fOuterCos": 100.0
+        "fLightRange": 30.0,
+        "fLightIntensity": 100.0,
+        "fInnerCos": 25.0,
+        "fOuterCos": 30.0
       },
       "vTranslation": [
         -0.010457918047904968,
@@ -516,7 +516,7 @@
         },
         "vLightDiffuse": {
           "x": 0.0,
-          "y": 0.20000000298023224,
+          "y": 0.0,
           "z": 0.0,
           "w": 0.0
         },
@@ -533,7 +533,7 @@
           "w": 0.0
         },
         "fLightRange": 70.0,
-        "fLightIntensity": 50.0,
+        "fLightIntensity": 100.0,
         "fInnerCos": 10.0,
         "fOuterCos": 70.0
       },
@@ -560,9 +560,9 @@
           "w": 0.5838205814361572
         },
         "vLightDiffuse": {
-          "x": 0.0,
-          "y": 0.0,
-          "z": 0.0,
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0,
           "w": 0.0
         },
         "vLightAmbient": {
@@ -578,7 +578,7 @@
           "w": 0.0
         },
         "fLightRange": 1.0,
-        "fLightIntensity": 3.0,
+        "fLightIntensity": 1.0,
         "fInnerCos": 0.949999988079071,
         "fOuterCos": 0.8500000238418579
       },
@@ -605,9 +605,9 @@
           "w": 0.5836496949195862
         },
         "vLightDiffuse": {
-          "x": 0.0,
-          "y": 0.0,
-          "z": 0.0,
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0,
           "w": 0.0
         },
         "vLightAmbient": {
@@ -623,7 +623,7 @@
           "w": 0.0
         },
         "fLightRange": 1.0,
-        "fLightIntensity": 3.0,
+        "fLightIntensity": 1.0,
         "fInnerCos": 0.949999988079071,
         "fOuterCos": 0.8500000238418579
       },
@@ -650,9 +650,9 @@
           "w": 0.5836496949195862
         },
         "vLightDiffuse": {
-          "x": 0.0,
-          "y": 0.0,
-          "z": 0.0,
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0,
           "w": 0.0
         },
         "vLightAmbient": {
@@ -668,7 +668,7 @@
           "w": 0.0
         },
         "fLightRange": 1.0,
-        "fLightIntensity": 3.0,
+        "fLightIntensity": 1.0,
         "fInnerCos": 0.949999988079071,
         "fOuterCos": 0.8500000238418579
       },
@@ -695,9 +695,9 @@
           "w": 0.6188896894454956
         },
         "vLightDiffuse": {
-          "x": 0.0,
-          "y": 0.0,
-          "z": 0.0,
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0,
           "w": 0.0
         },
         "vLightAmbient": {
@@ -713,7 +713,7 @@
           "w": 0.0
         },
         "fLightRange": 1.0,
-        "fLightIntensity": 3.0,
+        "fLightIntensity": 1.0,
         "fInnerCos": 0.949999988079071,
         "fOuterCos": 0.8500000238418579
       },
@@ -740,9 +740,9 @@
           "w": 0.6179127097129822
         },
         "vLightDiffuse": {
-          "x": 0.0,
-          "y": 0.0,
-          "z": 0.0,
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0,
           "w": 0.0
         },
         "vLightAmbient": {
@@ -758,7 +758,7 @@
           "w": 0.0
         },
         "fLightRange": 1.0,
-        "fLightIntensity": 3.0,
+        "fLightIntensity": 1.0,
         "fInnerCos": 0.949999988079071,
         "fOuterCos": 0.8500000238418579
       },
@@ -785,9 +785,9 @@
           "w": 0.6179124116897583
         },
         "vLightDiffuse": {
-          "x": 0.0,
-          "y": 0.0,
-          "z": 0.0,
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0,
           "w": 0.0
         },
         "vLightAmbient": {
@@ -803,7 +803,7 @@
           "w": 0.0
         },
         "fLightRange": 1.0,
-        "fLightIntensity": 3.0,
+        "fLightIntensity": 1.0,
         "fInnerCos": 0.949999988079071,
         "fOuterCos": 0.8500000238418579
       },
@@ -847,15 +847,16 @@
           "z": 0.0,
           "w": 0.0
         },
+
         "fLightRange": 20.0,
-        "fLightIntensity": 5.0,
-        "fInnerCos": 10.0,
+        "fLightIntensity": 10.0,
+        "fInnerCos": 25.0,
         "fOuterCos": 30.0
       },
       "vTranslation": [
-        0.5427068471908569,
-        2.2558045387268066,
-        -3.1540987491607666
+        0.5,
+        2.2,
+        -3.2
       ]
     }
   ]

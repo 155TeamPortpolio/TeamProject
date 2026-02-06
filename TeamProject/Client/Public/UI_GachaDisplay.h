@@ -42,6 +42,8 @@ private:
 
 	class CTextSlot* m_pLabelTextSlot = {};
 
+	_bool	m_isLabelVisible = {};
+
 private:
 	void Cache();
 	void Create_SkipButton();

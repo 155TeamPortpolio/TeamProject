@@ -139,11 +139,19 @@ void CMiyabiState_Attack_01::Update(CMiyabi* pOwner, _float dt)
             );
         }
     }
+
+    Update_Effects(pOwner);
 }
 
 void CMiyabiState_Attack_01::Exit(CMiyabi* pOwner)
 {
     static_cast<CMiyabiState_NormalAttack*>(m_pParentState)->Set_ComboIndex(0);
+}
+
+void CMiyabiState_Attack_01::Update_Effects(CMiyabi* pOwner)
+{
+    if (IsCrossAnimProgress(0.25f))
+        pOwner->Play_Effect("Miyabi_Normal0_Slash0", _vector3(0.2f, 0.7f, 0.f), _quaternion(-0.19f, 0.71f, 0.66f, 0.17f));
 }
 
 void CMiyabiState_Attack_02::Enter(CMiyabi* pOwner)
@@ -175,11 +183,19 @@ void CMiyabiState_Attack_02::Update(CMiyabi* pOwner, _float dt)
             pOwner->End_AttackCollider("KatanaWeapon");
         }
     }
+
+    Update_Effects(pOwner);
 }
 
 void CMiyabiState_Attack_02::Exit(CMiyabi* pOwner)
 {
     static_cast<CMiyabiState_NormalAttack*>(m_pParentState)->Set_ComboIndex(1);
+}
+
+void CMiyabiState_Attack_02::Update_Effects(CMiyabi* pOwner)
+{
+    if (IsCrossAnimProgress(0.25f))
+        pOwner->Play_Effect("Miyabi_Normal0_Slash0", _vector3(-0.1f, 0.9f, 0.f), _quaternion(-0.03f, 0.71f, -0.13f, 0.69f));
 }
 
 void CMiyabiState_Attack_03::Enter(CMiyabi* pOwner)
@@ -221,11 +237,23 @@ void CMiyabiState_Attack_03::Update(CMiyabi* pOwner, _float dt)
             pOwner->End_AttackCollider("KatanaWeapon");
         }
     }
+    
+    Update_Effects(pOwner);
 }
 
 void CMiyabiState_Attack_03::Exit(CMiyabi* pOwner)
 {
     static_cast<CMiyabiState_NormalAttack*>(m_pParentState)->Set_ComboIndex(2);
+}
+
+void CMiyabiState_Attack_03::Update_Effects(CMiyabi* pOwner)
+{
+    if (IsCrossAnimProgress(0.2f))
+        pOwner->Play_Effect("Miyabi_Normal1_Slash0", _vector3(0.f, 0.8f, 0.f), _quaternion(0.21f, 0.65f, 0.7f, -0.19f));
+    if (IsCrossAnimProgress(0.25f))
+        pOwner->Play_Effect("Miyabi_Normal1_Slash1", _vector3(0.f, 0.9f, 0.f), _quaternion(-0.61f, -0.34f, -0.27f, 0.66f));
+    if (IsCrossAnimProgress(0.3f))
+        pOwner->Play_Effect("Miyabi_Normal2_Slash0", _vector3(0.f, 1.2f, 0.f), _quaternion(-0.33f, 0.66f, 0.62f, 0.27f));
 }
 
 void CMiyabiState_Attack_04::Enter(CMiyabi* pOwner)
@@ -256,11 +284,31 @@ void CMiyabiState_Attack_04::Update(CMiyabi* pOwner, _float dt)
             );
         }
     }
+
+    Update_Effects(pOwner);
 }
 
 void CMiyabiState_Attack_04::Exit(CMiyabi* pOwner)
 {
     static_cast<CMiyabiState_NormalAttack*>(m_pParentState)->Set_ComboIndex(3);
+}
+
+void CMiyabiState_Attack_04::Update_Effects(CMiyabi* pOwner)
+{
+    if (IsCrossAnimProgress(0.12f))
+        pOwner->Play_Effect("Miyabi_Normal0_Sting0", _vector3(-6.3f, 3.1f, -0.7f), _quaternion(-0.04f, -0.09f, -0.15f, 0.98f), false);
+    if (IsCrossAnimProgress(0.21f))
+        pOwner->Play_Effect("Miyabi_Normal0_Sting1", _vector3(6.3f, 3.8f,1.3f), _quaternion(-0.02f, 0.f, 0.98f, -0.2f), false);
+    if (IsCrossAnimProgress(0.23f))
+        pOwner->Play_Effect("Miyabi_Normal1_Sting0", _vector3(4.f, 7.f, 0.5f), _quaternion(0.12f, -0.16f, 0.84f, -0.5f), false);
+    if(IsCrossAnimProgress(0.24f))
+        pOwner->Play_Effect("Miyabi_Normal1_Sting1", _vector3(-1.4f, 4.9f, -1.1f), _quaternion(-0.24f, -0.19f, -0.39f, 0.87f), false);
+    if (IsCrossAnimProgress(0.31f))
+        pOwner->Play_Effect("Miyabi_Normal0_Sting2", _vector3(-4.4f, 4.3f, -1.9f), _quaternion(-0.04f, -0.09f, -0.24f, 0.97f), false);
+    if (IsCrossAnimProgress(0.38f))
+        pOwner->Play_Effect("Miyabi_Normal0_Sting3", _vector3(5.6f, -1.2f, 1.8f), _quaternion(-0.12f, -0.13f, 0.96f, 0.21f), false);
+    if (IsCrossAnimProgress(0.4f))
+        pOwner->Play_Effect("Miyabi_Normal0_Sting4", _vector3(6.3f, 3.8f, 1.5f), _quaternion(-0.02f, 0.f, 0.98f, -0.2f), false);
 }
 
 void CMiyabiState_Attack_05::Enter(CMiyabi* pOwner)
@@ -286,15 +334,39 @@ void CMiyabiState_Attack_05::Update(CMiyabi* pOwner, _float dt)
                 .Name(pOwner->Get_CharacterName())
                 .Type(HIT_TYPE::ONCE)
                 .Damage(pOwner->Get_AttackPower() * 1.29f * Helper::Get_Random_Float(1.f, 1.5f)
-                    , DAMAGE_TYPE::NORMAL)
+                    , DAMAGE_TYPE::HARD)
             );
         }
     }
+
+    Update_Effects(pOwner);
 }
 
 void CMiyabiState_Attack_05::Exit(CMiyabi* pOwner)
 {
     static_cast<CMiyabiState_NormalAttack*>(m_pParentState)->Set_ComboIndex(4);
+}
+
+void CMiyabiState_Attack_05::Update_Effects(CMiyabi* pOwner)
+{
+    if (IsCrossAnimProgress(0.15f))
+        pOwner->Play_Effect("Miyabi_Normal3_Slash0", _vector3(0.f, 0.8f, 0.f), _quaternion(0.73f, -0.09f, 0.21f, -0.65f));
+    if (IsCrossAnimProgress(0.22f))
+        pOwner->Play_Effect("Miyabi_Normal3_Slash1", _vector3(0.f, 0.8f, 0.f), _quaternion(-0.64f, -0.17f, 0.2f, 0.73f));
+    if (IsCrossAnimProgress(0.29f))
+        pOwner->Play_Effect("Miyabi_Normal3_Slash2", _vector3(0.f, 1.f, 0.f), _quaternion(0.63f, 0.53f, 0.51f, -0.26f));
+    if (IsCrossAnimProgress(0.36f))
+        pOwner->Play_Effect("Miyabi_Normal3_Slash3", _vector3(0.f, 1.f, 0.f), _quaternion(-0.21f, -0.65f, -0.49f, 0.55f));
+    if (IsCrossAnimProgress(0.43f))
+        pOwner->Play_Effect("Miyabi_Normal3_Slash4", _vector3(0.f, 1.f, 0.f), _quaternion(-0.53f, 0.59f, 0.37f, 0.48f));
+    if (IsCrossAnimProgress(0.5f))
+        pOwner->Play_Effect("Miyabi_Normal3_Slash5", _vector3(0.f, 1.f, 0.f), _quaternion(-0.49f, 0.52f, 0.49f, 0.51f));
+    if (IsCrossAnimProgress(0.57f))
+        pOwner->Play_Effect("Miyabi_Normal3_Slash6", _vector3(0.f, 1.f, 0.f), _quaternion(0.73f, 0.25f, 0.19f, -0.61f));
+    if (IsCrossAnimProgress(0.64f))
+        pOwner->Play_Effect("Miyabi_Normal3_Slash7", _vector3(0.f, 1.f, 0.f), _quaternion(-0.45f, 0.42f, 0.28f, 0.74f));
+    if (IsCrossAnimProgress(0.71f))
+        pOwner->Play_Effect("Miyabi_Normal3_Slash8", _vector3(0.f, 1.f, 0.f), _quaternion(0.68f, 0.43f, 0.42f, -0.42f));
 }
 
 //void CMiyabiState_Attack_06::Enter(CMiyabi* pOwner)

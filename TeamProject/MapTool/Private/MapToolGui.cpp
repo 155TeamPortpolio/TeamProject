@@ -114,6 +114,9 @@ void CMapToolGui::Render_GUI()
     case MapTool::MAPOBJ_TYPE::BATTLE:
         fObjhectSettingChild *= 4.f;
         break;
+    case MapTool::MAPOBJ_TYPE::MOVEPOINT:
+        fObjhectSettingChild *= 4.f;
+        break;
     }
 
     ImGui::BeginChild("##MapToolGuiObjectSettingChild", ImVec2{ 0, fObjhectSettingChild }, true);
@@ -320,6 +323,55 @@ void CMapToolGui::Compute_Ray()
     XMStoreFloat3(&m_PhysicsRay.vDirection, rayDir);
 }
 
+void CMapToolGui::Set_ObjectPicking(_bool is)
+{
+    // 사용X
+    CLayer* pStaticLayer = m_pGameInstance->Get_ObjectMgr()->Get_Layer({ g_TagMapToolLevel, g_tagMapObjType[ENUM(MAPOBJ_TYPE::PLACED)] });
+    if (nullptr == pStaticLayer)
+        return;
+
+    for (auto& pObject : pStaticLayer->Get_AllObject()) {
+        pObject->Get_Component<CRayReceiver>()->Set_CompActive(is);
+    }
+}
+
+void CMapToolGui::PreSet_ModelResource()
+{
+    ImGui::PushID("MapTool_RakeResource");
+    ImGuiListClipper clipper;
+    clipper.Begin((_int)m_ModelPathPack.size());
+    while (clipper.Step()) {
+        for (_int i = clipper.DisplayStart; i < clipper.DisplayEnd; ++i) {
+            const string TagResourceName = m_ModelPathPack[i].TagName;
+
+            ImGuiTreeNodeFlags flags =
+                ImGuiTreeNodeFlags_Leaf |
+                ImGuiTreeNodeFlags_NoTreePushOnOpen |
+                ImGuiTreeNodeFlags_SpanFullWidth |
+                ((m_iSelectedModelIndex == i) ? ImGuiTreeNodeFlags_Selected : 0);
+
+            ImGui::TreeNodeEx((void*)(intptr_t)i, flags, "%s", TagResourceName.c_str());
+
+            if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen())
+            {
+                m_iSelectedModelIndex = i;
+                m_TagSelectedModelName = TagResourceName;
+
+                if (false == m_ModelPathPack[i].isLoaded) {
+                    auto pRcsMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
+                    pRcsMgr->Add_ResourcePath(m_ModelPathPack[i].TagModelKey, m_ModelPathPack[i].TagModelPath);
+                    pRcsMgr->Add_ResourcePath(m_ModelPathPack[i].TagMaterialKey, m_ModelPathPack[i].TagMaterialPath);
+                    m_ModelPathPack[i].isLoaded = true;
+                }
+
+            }
+        }
+    }
+    ImGui::PopID();
+}
+
+
+#pragma PlaceObject
 void CMapToolGui::Place_Object(PHYSICS_RAY_HIT* pRayHit)
 {
     if (nullptr == pRayHit->pHitObject ||
@@ -337,111 +389,83 @@ void CMapToolGui::Place_Object(PHYSICS_RAY_HIT* pRayHit)
 
     switch (eType)
     {
-    case MAPOBJ_TYPE::PLACED:
-    {
-        CPlacedObject::MAPTOOL_OBJECT_DESC* Desc = new CPlacedObject::MAPTOOL_OBJECT_DESC;
-        Desc->TagModelKey = m_ModelPathPack[m_iSelectedModelIndex].TagModelKey;
-        Desc->TagMaterialKey = m_ModelPathPack[m_iSelectedModelIndex].TagMaterialKey;
-
-        COLLIDER_DESC ColDesc = {};
-        ColDesc.bAutoFit = true; // 충돌 박스 생성하는 트리거
-        ColDesc.strModelKey = m_ModelPathPack[m_iSelectedModelIndex].TagModelKey;
-
-        string fileName = Helper::GetFileNameWithOutExtension(m_ModelPathPack[m_iSelectedModelIndex].TagModelKey);
-
-        CGameObject* pStaticObject = Builder::Create_Object({ g_TagMapToolLevel ,"Proto_GameObject_PlacedObject" })
-            .Position(pRayHit->vPoint)
-            .Scale(m_vScale_PlacedObject)
-            .Add_ObjDesc(Desc)
-            .Collider(ColDesc)
-            .Build(fileName);
-
-        pStaticObject->Get_Component<CCollider>()->Set_DebugRender(m_pMapToolContext->isAllDebugRender);
-
-        pObjMgr->Add_Object(pStaticObject, { g_TagMapToolLevel, g_tagMapObjType[ENUM(MAPOBJ_TYPE::PLACED)] });
-        break;
-    }
-    case MAPOBJ_TYPE::TRIGGER:
-    {
-        COLLIDER_DESC ColDesc = {};
-        ColDesc.eType = m_TriggerTransform.eType;
-        ColDesc.bTrigger = true; // 충돌 박스 생성하는 트리거
-        ColDesc.vSize = m_TriggerTransform.vScale;
-        ColDesc.vRotation = { XMConvertToRadians(m_TriggerTransform.vRotation.x),
-                              XMConvertToRadians(m_TriggerTransform.vRotation.y),
-                              XMConvertToRadians(m_TriggerTransform.vRotation.z) };
-
-        string TagInstanceName = "Trigger_Object" + to_string(m_iTriggerIndex++);
-        CGameObject* pStaticObject = Builder::Create_Object({ g_TagMapToolLevel ,"Proto_GameObject_TriggerObject" })
-            .Collider(ColDesc)
-            .Position(pRayHit->vPoint)
-            .Build(TagInstanceName);
-
-        pStaticObject->Get_Component<CCollider>()->Set_DebugRender(m_pMapToolContext->isAllDebugRender);
-
-        pObjMgr->Add_Object(pStaticObject, { g_TagMapToolLevel, g_tagMapObjType[ENUM(MAPOBJ_TYPE::TRIGGER)] });
-        break;
-    }
-    case MAPOBJ_TYPE::ENTITY:
-    {
-        COLLIDER_DESC ColDesc = {};
-        ColDesc.eType = COLLIDER_TYPE::BOX;
-        ColDesc.bTrigger = true; // 충돌 박스 생성하는 트리거
-        ColDesc.vSize = m_vEntitySize;
-
-        string TagInstanceName = "Entity" + to_string(m_iTriggerIndex++);
-        CGameObject* pStaticObject = Builder::Create_Object({ g_TagMapToolLevel ,"Proto_GameObject_EntityObject" })
-            .Collider(ColDesc)
-            .Position(pRayHit->vPoint)
-            .Build(TagInstanceName);
-
-        pStaticObject->Get_Component<CCollider>()->Set_DebugRender(true);
-
-        pObjMgr->Add_Object(pStaticObject, { g_TagMapToolLevel, g_tagMapObjType[ENUM(MAPOBJ_TYPE::ENTITY)] });
-
-        //if (-1 != m_iPickedEntityModelIndex) {
-        //    for (auto Pack : m_ModelPathPack)
-        //    {
-        //        if (Pack.TagName == m_EntityModelPathPackName[m_iPickedEntityModelIndex])
-        //            dynamic_cast<CEntityObject*>(pStaticObject)->Set_EntityModel(Pack.TagName, Pack.TagModelKey, Pack.TagMaterialKey);
-        //    }
-        //}
-        break;
-    }
-    case MAPOBJ_TYPE::BATTLE:
-    {
-        Place_BattleData(pRayHit);
-        break;
-    }
-    case MAPOBJ_TYPE::LIGHT:
-    {
-        COLLIDER_DESC ColDesc = {};
-        ColDesc.eType = COLLIDER_TYPE::SPHERE;
-        ColDesc.bTrigger = true; // 충돌 박스 생성하는 트리거
-
-        string TagInstanceName = "LightPoint" + to_string(m_iTriggerIndex++);
-        CGameObject* pStaticObject = Builder::Create_Object({ g_TagMapToolLevel ,"Proto_GameObject_LightPoint" })
-            .Collider(ColDesc)
-            .Position(pRayHit->vPoint)
-            .Build(TagInstanceName);
-
-        pStaticObject->Get_Component<CCollider>()->Set_DebugRender(m_pMapToolContext->isAllDebugRender);
-
-        pObjMgr->Add_Object(pStaticObject, { g_TagMapToolLevel, g_tagMapObjType[ENUM(MAPOBJ_TYPE::LIGHT)] });
-        break;
-    }
+    case MAPOBJ_TYPE::PLACED:   Place_Placed(pRayHit);      break;
+    case MAPOBJ_TYPE::TRIGGER:  Place_Trigger(pRayHit);     break;
+    case MAPOBJ_TYPE::ENTITY:   Place_Entity(pRayHit);      break;
+    case MAPOBJ_TYPE::BATTLE:   Place_Battle(pRayHit);      break;
+    case MAPOBJ_TYPE::LIGHT:    Place_Light(pRayHit);       break;
+    case MAPOBJ_TYPE::MOVEPOINT:Place_MovePoint(pRayHit);   break;
     case MAPOBJ_TYPE::ALL:
-        break;
     case MAPOBJ_TYPE::END:
-        break;
     default:
         break;
     }
-
-   
 }
 
-void CMapToolGui::Place_BattleData(PHYSICS_RAY_HIT* pRayHit)
+void CMapToolGui::Place_Placed(PHYSICS_RAY_HIT* pRayHit)
+{
+    CPlacedObject::MAPTOOL_OBJECT_DESC* Desc = new CPlacedObject::MAPTOOL_OBJECT_DESC;
+    Desc->TagModelKey = m_ModelPathPack[m_iSelectedModelIndex].TagModelKey;
+    Desc->TagMaterialKey = m_ModelPathPack[m_iSelectedModelIndex].TagMaterialKey;
+
+    COLLIDER_DESC ColDesc = {};
+    ColDesc.bAutoFit = true; // 충돌 박스 생성하는 트리거
+    ColDesc.strModelKey = m_ModelPathPack[m_iSelectedModelIndex].TagModelKey;
+
+    string fileName = Helper::GetFileNameWithOutExtension(m_ModelPathPack[m_iSelectedModelIndex].TagModelKey);
+
+    CGameObject* pStaticObject = Builder::Create_Object({ g_TagMapToolLevel ,"Proto_GameObject_PlacedObject" })
+        .Position(pRayHit->vPoint)
+        .Scale(m_vScale_PlacedObject)
+        .Add_ObjDesc(Desc)
+        .Collider(ColDesc)
+        .Build(fileName);
+
+    pStaticObject->Get_Component<CCollider>()->Set_DebugRender(m_pMapToolContext->isAllDebugRender);
+
+    ObjectManager()->Add_Object(pStaticObject, {g_TagMapToolLevel, g_tagMapObjType[ENUM(MAPOBJ_TYPE::PLACED)]});
+}
+
+void CMapToolGui::Place_Trigger(PHYSICS_RAY_HIT* pRayHit)
+{
+    COLLIDER_DESC ColDesc = {};
+    ColDesc.eType = m_TriggerTransform.eType;
+    ColDesc.bTrigger = true; // 충돌 박스 생성하는 트리거
+    ColDesc.vSize = m_TriggerTransform.vScale;
+    ColDesc.vRotation = { XMConvertToRadians(m_TriggerTransform.vRotation.x),
+                          XMConvertToRadians(m_TriggerTransform.vRotation.y),
+                          XMConvertToRadians(m_TriggerTransform.vRotation.z) };
+
+    string TagInstanceName = "Trigger_Object" + to_string(m_iTriggerIndex++);
+    CGameObject* pStaticObject = Builder::Create_Object({ g_TagMapToolLevel ,"Proto_GameObject_TriggerObject" })
+        .Collider(ColDesc)
+        .Position(pRayHit->vPoint)
+        .Build(TagInstanceName);
+
+    pStaticObject->Get_Component<CCollider>()->Set_DebugRender(m_pMapToolContext->isAllDebugRender);
+
+    ObjectManager()->Add_Object(pStaticObject, { g_TagMapToolLevel, g_tagMapObjType[ENUM(MAPOBJ_TYPE::TRIGGER)] });
+}
+
+void CMapToolGui::Place_Entity(PHYSICS_RAY_HIT* pRayHit)
+{
+    COLLIDER_DESC ColDesc = {};
+    ColDesc.eType = COLLIDER_TYPE::BOX;
+    ColDesc.bTrigger = true; // 충돌 박스 생성하는 트리거
+    ColDesc.vSize = m_vEntitySize;
+
+    string TagInstanceName = "Entity" + to_string(m_iTriggerIndex++);
+    CGameObject* pStaticObject = Builder::Create_Object({ g_TagMapToolLevel ,"Proto_GameObject_EntityObject" })
+        .Collider(ColDesc)
+        .Position(pRayHit->vPoint)
+        .Build(TagInstanceName);
+
+    pStaticObject->Get_Component<CCollider>()->Set_DebugRender(true);
+
+    ObjectManager()->Add_Object(pStaticObject, {g_TagMapToolLevel, g_tagMapObjType[ENUM(MAPOBJ_TYPE::ENTITY)]});
+}
+
+void CMapToolGui::Place_Battle(PHYSICS_RAY_HIT* pRayHit)
 {
     if (BATTLE_TYPE::NONE == m_eBattlyDataType)
         return;
@@ -487,55 +511,37 @@ void CMapToolGui::Place_BattleData(PHYSICS_RAY_HIT* pRayHit)
     pStaticObject->Get_Component<CCollider>()->Set_DebugRender(true);
 
     ObjectManager()->Add_Object(pStaticObject, {g_TagMapToolLevel, g_tagBattleObjType[ENUM(m_eBattlyDataType)]});
-
 }
 
-void CMapToolGui::Set_ObjectPicking(_bool is)
+void CMapToolGui::Place_Light(PHYSICS_RAY_HIT* pRayHit)
 {
-    // 사용X
-    CLayer* pStaticLayer = m_pGameInstance->Get_ObjectMgr()->Get_Layer({ g_TagMapToolLevel, g_tagMapObjType[ENUM(MAPOBJ_TYPE::PLACED)] });
-    if (nullptr == pStaticLayer)
-        return;
+    COLLIDER_DESC ColDesc = {};
+    ColDesc.eType = COLLIDER_TYPE::SPHERE;
+    ColDesc.bTrigger = true; // 충돌 박스 생성하는 트리거
 
-    for (auto& pObject : pStaticLayer->Get_AllObject()) {
-        pObject->Get_Component<CRayReceiver>()->Set_CompActive(is);
-    }
+    string TagInstanceName = "LightPoint" + to_string(m_iTriggerIndex++);
+    CGameObject* pStaticObject = Builder::Create_Object({ g_TagMapToolLevel ,"Proto_GameObject_LightPoint" })
+        .Collider(ColDesc)
+        .Position(pRayHit->vPoint)
+        .Build(TagInstanceName);
+
+    pStaticObject->Get_Component<CCollider>()->Set_DebugRender(m_pMapToolContext->isAllDebugRender);
+
+    ObjectManager()->Add_Object(pStaticObject, {g_TagMapToolLevel, g_tagMapObjType[ENUM(MAPOBJ_TYPE::LIGHT)]});
 }
 
-void CMapToolGui::PreSet_ModelResource()
+void CMapToolGui::Place_MovePoint(PHYSICS_RAY_HIT* pRayHit)
 {
-    ImGui::PushID("MapTool_RakeResource");
-    ImGuiListClipper clipper;
-    clipper.Begin((_int)m_ModelPathPack.size());
-    while (clipper.Step()) {
-        for (_int i = clipper.DisplayStart; i < clipper.DisplayEnd; ++i) {
-            const string TagResourceName = m_ModelPathPack[i].TagName;
+    string TagInstanceName = "MovePoint_" + to_string(m_iTriggerIndex++);
+    CGameObject* pStaticObject = Builder::Create_Object({ g_TagMapToolLevel ,"Proto_GameObject_MovePoint" })
+        .Position(pRayHit->vPoint)
+        .Build(TagInstanceName);
 
-            ImGuiTreeNodeFlags flags =
-                ImGuiTreeNodeFlags_Leaf |
-                ImGuiTreeNodeFlags_NoTreePushOnOpen |
-                ImGuiTreeNodeFlags_SpanFullWidth |
-                ((m_iSelectedModelIndex == i) ? ImGuiTreeNodeFlags_Selected : 0);
+    pStaticObject->Get_Component<CCollider>()->Set_DebugRender(true);
 
-            ImGui::TreeNodeEx((void*)(intptr_t)i, flags, "%s", TagResourceName.c_str());
-
-            if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen())
-            {
-                m_iSelectedModelIndex = i;
-                m_TagSelectedModelName = TagResourceName;
-
-                if (false == m_ModelPathPack[i].isLoaded) {
-                    auto pRcsMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
-                    pRcsMgr->Add_ResourcePath(m_ModelPathPack[i].TagModelKey, m_ModelPathPack[i].TagModelPath);
-                    pRcsMgr->Add_ResourcePath(m_ModelPathPack[i].TagMaterialKey, m_ModelPathPack[i].TagMaterialPath);
-                    m_ModelPathPack[i].isLoaded = true;
-                }
-                
-            }
-        }
-    }
-    ImGui::PopID();
+    ObjectManager()->Add_Object(pStaticObject, { g_TagMapToolLevel, g_tagMapObjType[ENUM(MAPOBJ_TYPE::MOVEPOINT)] });
 }
+
 
 void CMapToolGui::Save_MapData()
 {
@@ -1117,7 +1123,6 @@ void CMapToolGui::Setting_SelectType()
     case MapTool::MAPOBJ_TYPE::BATTLE:
         ImGui::TextColored(ImVec4(1.f, 1.f, 1.f, 1.f), "BattleData Box Scale ( HalfExtents(x,y,z) )");
         ImGui::InputFloat3("##BattleBoxScale", reinterpret_cast<float*>(&m_vBattleDataSize), "%.1f");
-        
         switch (m_eBattlyDataType)
         {
         case MapTool::BATTLE_TYPE::SPAWNER:
@@ -1128,8 +1133,14 @@ void CMapToolGui::Setting_SelectType()
             ImGui::TextColored(ImVec4(1.f, 1.f, 1.f, 1.f), "MonsterIndex");
             ImGui::InputInt("##MonsterIndex", &m_iMonsterIndex);
             break;
+        default:
+            break;
         }
-        
+    break;
+    case MapTool::MAPOBJ_TYPE::MOVEPOINT:
+
+        break;
+    default:
         break;
     }
 }
@@ -1190,11 +1201,24 @@ void CMapToolGui::Render_ClearLayer()
 
                 if (i == ENUM(MAPOBJ_TYPE::TRIGGER) || i == ENUM(MAPOBJ_TYPE::ALL))
                     m_iTriggerIndex = {};
-
+                else {
+                    m_iEndPointIndex = 0;
+                    m_iMonsterIndex = 0;
+                    m_iSpawnerIndex = 0;
+                    m_iPlayerIndex = 0;
+                }                
             }
         }
     }
     ImGui::PopID();
+}
+
+void CMapToolGui::Clear_BattleData()
+{
+    m_iPlayerIndex = 0;
+    m_iMonsterIndex = 0;
+    m_iSpawnerIndex = 0;
+    m_iEndPointIndex = 0;
 }
 
 void CMapToolGui::KeyInput()

@@ -130,6 +130,23 @@ namespace
             return req;
         }
 
+        if (StartsWith(key, "Parry/"))
+        {
+            req.blendInSec  = 0.75f;
+            req.blendOutSec = 0.75f;
+            req.resetTime   = true;
+            req.returnMode  = CamReturnMode::RestorePrev;
+            return req;
+        }
+
+        if (StartsWith(key, "GachaCharacter/"))
+        {
+            req.blendInSec  = 0.5f;
+            req.blendOutSec = 0.5f;
+            req.resetTime   = true;
+            req.returnMode  = CamReturnMode::SnapToEnd;
+        }
+
         req.blendInSec  = 0.f;
         req.blendOutSec = 0.f;
         req.resetTime   = true;

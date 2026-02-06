@@ -8,14 +8,19 @@
 #include "Material.h"
 #include "Light.h"
 
+#include "GachaProps.h"
 #include "GachaStageScreen.h"
 #include "GachaWeapon.h"
 #include "GachaAvatar.h"
+#include "GachaFootStage.h"
 
 #include "CamDirector.h"
 #include "DataBase.h"
+#include "UIDirector.h"
 
 #include "Helper_Func.h"
+
+#include "UI_GachaText.h"
 
 CGachaStage::CGachaStage()
     :CGameObject()
@@ -49,21 +54,22 @@ void CGachaStage::PlayRevealEffect()
 		m_pScreen->SetScreen(GACHA_STAGE::AVATAR, GachaGrade::S);
 		SetBottomLightEffect(_float4(0.f,0.f,0.f,0.f), _float4(1.0f, 0.9f, 0.2f, 1.0f), _float4(0.25f, 0.25f, 0.25f, 0.5f), 1.0f);
 		SetTopLightEffect(_float4(0.f, 0.f, 0.f, 0.f), _float4(1.0f, 0.9f, 0.2f, 1.0f), _float4(0.25f, 0.25f, 0.25f, 0.5f), 1.2f);
-		SetMiddleLightEffect(_float4(0.1f, 0.1f, 0.1f, 1.f), _float4(0.7f, 0.7f, 0.7f, 1.f), 1.5f);
+		SetMiddleLightEffect(_float4(0.1f, 0.1f, 0.1f, 1.f), _float4(1.0f, 1.0f, 1.0f, 1.f), 0.6f);
 		break;
 	case GachaGrade::A:
 		m_pScreen->SetScreen(GACHA_STAGE::BANGBOO, GachaGrade::A);
 		SetBottomLightEffect(_float4(0.f, 0.f, 0.f, 0.f), _float4(1.0f, 0.2f, 0.5f, 1.0f), _float4(0.25f, 0.25f, 0.25f, 0.5f), 1.0f);
 		SetTopLightEffect(_float4(0.f, 0.f, 0.f, 0.f), _float4(1.0f, 0.2f, 0.5f, 1.0f), _float4(0.25f, 0.25f, 0.25f, 0.5f), 1.2f);
-		SetMiddleLightEffect(_float4(0.1f, 0.1f, 0.1f, 1.f), _float4(0.7f, 0.7f, 0.7f, 1.f), 1.5f);
+		SetMiddleLightEffect(_float4(0.1f, 0.1f, 0.1f, 1.f), _float4(1.0f, 1.0f, 1.0f, 1.f), 0.6f);
 		break;
 	case GachaGrade::B:
 		m_pScreen->SetScreen(GACHA_STAGE::BANGBOO, GachaGrade::B);
 		SetBottomLightEffect(_float4(0.f, 0.f, 0.f, 0.f), _float4(0.1f, 0.3f, 0.9f, 1.0f), _float4(0.25f, 0.25f, 0.25f, 0.5f), 1.0f);
 		SetTopLightEffect(_float4(0.f, 0.f, 0.f, 0.f), _float4(0.1f, 0.3f, 0.9f, 1.0f), _float4(0.25f, 0.25f, 0.25f, 0.5f), 1.2f);
-		SetMiddleLightEffect(_float4(0.1f, 0.1f, 0.1f, 1.f), _float4(0.7f, 0.7f, 0.7f, 1.f), 1.5f);
+		SetMiddleLightEffect(_float4(0.1f, 0.1f, 0.1f, 1.f), _float4(1.0f, 1.0f, 1.0f, 1.f), 0.6f);
 		break;
 	}
+	CUIDirector::GetInstance()->Show_GachaLabel((*m_pResultDesc)[m_iIndex].strLabel);
 }
 
 HRESULT CGachaStage::Initialize_Prototype(vector<GACHA_RESULT_DESC>* Desc)
@@ -89,7 +95,8 @@ HRESULT CGachaStage::Initialize(INIT_DESC* pArg)
 		return E_FAIL;
 
 	Add_StageScreen();
-	
+	Add_UIText();
+
 	return S_OK; 
 }
 
@@ -118,14 +125,20 @@ void CGachaStage::Update(_float dt)
 
 	Update_CamTime();
 	Update_Lights(dt);
+
 	if (InputDevice()->Key_Tap(VK_SPACE))
 	{
-		if (m_iIndex == -1) CamDirector()->RequestSequence("Gacha/Spin_Half");
-		else CamDirector()->RequestSequence("Gacha/Spin");
-		++m_iIndex;
-		if (m_iIndex >= m_iMaxIndex) m_iIndex = 0;
+		Play_CameraSequence();
 
-		SetMiddleLightEffect(_float4(0.6f, 0.6f, 0.6f, 1.f), _float4(0.1f, 0.1f, 0.1f, 1.f), 1.f);
+		++m_iIndex;
+		if (m_iIndex >= m_iMaxIndex)
+		{
+			m_iIndex = m_iMaxIndex - 1;
+			UIDirector()->Show_GachaResult(m_pResultDesc);
+		}
+
+		CUIDirector::GetInstance()->Hide_GachaLabel();
+		SetMiddleLightEffect(_float4(1.f, 1.f, 1.f, 1.f), _float4(0.1f, 0.1f, 0.1f, 1.f), 1.f);
 	}
 }
 
@@ -140,6 +153,7 @@ void CGachaStage::Add_StageScreen()
 	PrototypeManager()->Add_ProtoType("Gacha_Level", "Proto_GameObject_GachaStageScreen", CGachaStageScreen::Create());
 	PrototypeManager()->Add_ProtoType("Gacha_Level", "Proto_GameObject_GachaWeapon", CGachaWeapon::Create());
 	PrototypeManager()->Add_ProtoType("Gacha_Level", "Proto_GameObject_GachaAvatar", CGachaAvatar::Create());
+	PrototypeManager()->Add_ProtoType("Gacha_Level", "Proto_GameObject_GachaFootStage", CGachaFootStage::Create());
 
 	auto pObjectContainer = Add_Component<CObjectContainer>();
 	COLLIDER_DESC colliderDesc{};
@@ -168,6 +182,21 @@ void CGachaStage::Add_StageScreen()
 
 	pObjectContainer->Add_Child(gachaWeapon, true);
 
+	colliderDesc = {};
+	colliderDesc.eType = COLLIDER_TYPE::BOX;
+	colliderDesc.eGroup = COLLISION_GROUP::COMMON;
+	colliderDesc.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER);
+	colliderDesc.bAutoFit = true;
+
+	CGameObject* gachaFootStage = Builder::Create_Object({ "Gacha_Level", "Proto_GameObject_GachaFootStage" })
+		.Position(_float3(0.f, 0.3f, -1.4f))
+		.Collider(colliderDesc)
+		.Build("FootStage");
+
+	m_pFootStage = dynamic_cast<CGachaFootStage*>(gachaFootStage);
+
+	pObjectContainer->Add_Child(gachaFootStage, true);
+
 	RIGIDBODY_DESC rigidDesc{};
 	rigidDesc.isKinematic = false;
 	rigidDesc.bEnableGravity = true;
@@ -181,7 +210,7 @@ void CGachaStage::Add_StageScreen()
 	colliderDesc.vSize = { 1.f, 2.f, 1.f }; 
 
 	CGameObject* gachaAvatar = Builder::Create_Object({ "Gacha_Level", "Proto_GameObject_GachaAvatar" })
-		.Position(_float3(0.f, 1.f, -1.6f))
+		.Position(_float3(0.f, 1.5f, -1.6f))
 		.Collider(colliderDesc)
 		.RigidBody(rigidDesc)
 		.Build("Avatar");
@@ -191,7 +220,20 @@ void CGachaStage::Add_StageScreen()
 	pObjectContainer->Add_Child(gachaAvatar, true);
 }
 
-void CGachaStage::Set_Stage(GACHA_STAGE eStage)
+void CGachaStage::Add_UIText()
+{
+	PrototypeManager()->Add_ProtoType("Gacha_Level", "Proto_GameObject_UIGachaText", CUI_GachaText::Create());
+
+	CGameObject* uiGachaText = Builder::Create_Object({ "Gacha_Level", "Proto_GameObject_UIGachaText" })
+		.Rotate(_float3(XMConvertToRadians(-18.f), XMConvertToRadians(180.f), 0.f))
+		.Scale(_float3(1.28f, 1.28f, 1.28f))
+		.Position(_float3(0.f, 0.152f, -2.5f))
+		.Build("uiGachaText");
+
+	Add_Component<CObjectContainer>()->Add_Child(uiGachaText, true);
+}
+
+void CGachaStage::Set_Stage(GACHA_STAGE eStage, _int ResultID)
 {
 	auto pModel = Get_Component<CStaticModel>();
 	auto pMaterial = Get_Component<CMaterial>();
@@ -201,14 +243,33 @@ void CGachaStage::Set_Stage(GACHA_STAGE eStage)
 	{
 		pModel->Link_Model("Gacha_Level", "AvatarScreen1out.model");
 		pMaterial->Link_Material("Gacha_Level", "AvatarScreen1out.mat");
+		if (ResultID != 14)
+		{
+			m_pFootStage->SetRenderLayer(RENDER_LAYER::Default);
+			m_pFootStage->Get_Component<CCollider>()->Set_CollisionMask(ENUM(COLLISION_GROUP::PLAYER));
+		}
 	}
 	else
 	{
 		pModel->Link_Model("Gacha_Level", "BangBooNoScreen1.model");
 		pMaterial->Link_Material("Gacha_Level", "BangBooNoScreen1.mat");
-
 		pModel->Hide_MehsByName("0023_GachaStage_Prop_TV_04_mesh0023");
+		m_pFootStage->SetRenderLayer(RENDER_LAYER::None);
+		m_pFootStage->Get_Component<CCollider>()->Set_CollisionMask(ENUM(COLLISION_GROUP::COMMON));
 	}
+}
+
+void CGachaStage::Reset_Target()
+{
+	dynamic_cast<CGachaProps*>(Get_Component<CChild>()->Get_Parent())->ResetTarget();
+}
+
+void CGachaStage::Play_CameraSequence()
+{
+	Reset_Target();
+
+	if (m_iIndex == -1) CamDirector()->RequestSequence("Gacha/Spin_Half");
+	else if (m_iIndex < m_iMaxIndex - 1) CamDirector()->RequestSequence("Gacha/Spin");
 }
 
 void CGachaStage::Update_CamTime()
@@ -245,13 +306,15 @@ void CGachaStage::Update_Lights(_float dt)
 
 			if (fProgress <= 0.5f)
 			{
-				_float fLerpRatio = fProgress * 2.f; 
-				vCurrentColor = XMVectorLerp(BottomLight.StartColor, BottomLight.MiddleColor, fLerpRatio);
+				_float t = fProgress * 2.f; 
+				_float fEasedRatio = Math::ApplyEase(EaseType::OutExpo, t);
+				vCurrentColor = XMVectorLerp(BottomLight.StartColor, BottomLight.MiddleColor, fEasedRatio);
 			}
 			else
 			{
-				_float fLerpRatio = (fProgress - 0.5f) * 2.f; 
-				vCurrentColor = XMVectorLerp(BottomLight.MiddleColor, BottomLight.EndColor, fLerpRatio);
+				_float t = (fProgress - 0.5f) * 2.f; 
+				_float fEasedRatio = Math::ApplyEase(EaseType::InExpo, t);
+				vCurrentColor = XMVectorLerp(BottomLight.MiddleColor, BottomLight.EndColor, fEasedRatio);
 			}
 
 			Desc.vLightDiffuse = vCurrentColor;
@@ -280,13 +343,15 @@ void CGachaStage::Update_Lights(_float dt)
 
 			if (fProgress <= 0.5f)
 			{
-				_float fLerpRatio = fProgress * 2.f;
-				vCurrentColor = XMVectorLerp(TopLight.StartColor, TopLight.MiddleColor, fLerpRatio);
+				_float t = fProgress * 2.f;
+				_float fEasedRatio = Math::ApplyEase(EaseType::OutExpo, t);
+				vCurrentColor = XMVectorLerp(TopLight.StartColor, TopLight.MiddleColor, fEasedRatio);
 			}
 			else
 			{
-				_float fLerpRatio = (fProgress - 0.5f) * 2.f;
-				vCurrentColor = XMVectorLerp(TopLight.MiddleColor, TopLight.EndColor, fLerpRatio);
+				_float t = (fProgress - 0.5f) * 2.f;
+				_float fEasedRatio = Math::ApplyEase(EaseType::InExpo, t);
+				vCurrentColor = XMVectorLerp(TopLight.MiddleColor, TopLight.EndColor, fEasedRatio);
 			}
 
 			Desc.vLightDiffuse = vCurrentColor;
@@ -311,11 +376,9 @@ void CGachaStage::Update_Lights(_float dt)
 			LIGHT_DESC Desc = pLight->Get_Desc();
 
 			_float fProgress = MiddleLight.CurElpasedTime / MiddleLight.Duration;
-			_vector4 vCurrentColor;
+			_float fEasedRatio = Math::ApplyEase(EaseType::InOutCubic, fProgress);
 
-			_float fLerpRatio = fProgress;
-			vCurrentColor = XMVectorLerp(MiddleLight.StartColor, MiddleLight.EndColor, fLerpRatio);
-
+			_vector4 vCurrentColor = XMVectorLerp(MiddleLight.StartColor, MiddleLight.EndColor, fEasedRatio);
 			Desc.vLightDiffuse = vCurrentColor;
 			pLight->Set_Desc(Desc);
 		}
@@ -389,7 +452,7 @@ void CGachaStage::Update_StageEnviroment(_int index)
 	GACHA_RESULT_DESC CurrentDesc = (*m_pResultDesc)[index];
 	if (CurrentDesc.Grade == GachaGrade::S)
 	{
-		Set_Stage(GACHA_STAGE::AVATAR);
+		Set_Stage(GACHA_STAGE::AVATAR, CurrentDesc.ID);
 		m_pAvatarResult->SetResult(CurrentDesc);
 
 		m_pAvatarResult->SetRenderState(true);
@@ -397,7 +460,7 @@ void CGachaStage::Update_StageEnviroment(_int index)
 	}
 	else
 	{
-		Set_Stage(GACHA_STAGE::BANGBOO);
+		Set_Stage(GACHA_STAGE::BANGBOO, CurrentDesc.ID);
 		m_pWeaponResult->SetResult(CurrentDesc);
 
 		m_pAvatarResult->SetRenderState(false);

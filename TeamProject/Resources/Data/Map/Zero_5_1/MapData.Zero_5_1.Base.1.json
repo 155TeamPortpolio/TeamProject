@@ -1,0 +1,244 @@
+{
+  "TagDataFormat": "Base",
+  "TagArea": "Zero_5_1",
+  "iVersion": 1,
+  "Layers": [
+    {
+      "TagLayer": "PlacedObject_Layer",
+      "Objects": [
+        {
+          "iObjID": 0,
+          "TagModelResourceKey": "Stage_Zero_Abyss_3_1_Wallout.model",
+          "TagMaterialResourceKey": "Stage_Zero_Abyss_3_1_Wallout.mat",
+          "vRight": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "vPos": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 1,
+          "TagModelResourceKey": "Stage_Zero_Abyss_3_1_Propout.model",
+          "TagMaterialResourceKey": "Stage_Zero_Abyss_3_1_Propout.mat",
+          "vRight": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "vPos": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 2,
+          "TagModelResourceKey": "Stage_Zero_Abyss_3_1_Pillarout.model",
+          "TagMaterialResourceKey": "Stage_Zero_Abyss_3_1_Pillarout.mat",
+          "vRight": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "vPos": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 3,
+          "TagModelResourceKey": "Stage_Zero_Abyss_3_1_NAPMeshRootout.model",
+          "TagMaterialResourceKey": "Stage_Zero_Abyss_3_1_NAPMeshRootout.mat",
+          "vRight": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "vPos": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 4,
+          "TagModelResourceKey": "Stage_Zero_Abyss_3_1_Groundout.model",
+          "TagMaterialResourceKey": "Stage_Zero_Abyss_3_1_Groundout.mat",
+          "vRight": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "vPos": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 5,
+          "TagModelResourceKey": "Stage_Zero_Abyss_3_1_Decalout.model",
+          "TagMaterialResourceKey": "Stage_Zero_Abyss_3_1_Decalout.mat",
+          "vRight": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "vPos": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 6,
+          "TagModelResourceKey": "Stage_Zero_Abyss_3_1_BackGround_Groupout.model",
+          "TagMaterialResourceKey": "Stage_Zero_Abyss_3_1_BackGround_Groupout.mat",
+          "vRight": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "vPos": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 7,
+          "TagModelResourceKey": "Stage_Zero_Abyss_3_1_CombineEtherout.model",
+          "TagMaterialResourceKey": "Stage_Zero_Abyss_3_1_CombineEtherout.mat",
+          "vRight": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "vPos": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        }
+      ]
+    }
+  ]
+}

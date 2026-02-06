@@ -69,6 +69,9 @@ PARTICLE_NODE Engine::tagParticleNode::FromJson(nlohmann::ordered_json& json)
 {
 	PARTICLE_NODE node{};
 
+	node.useMask = json.value("use_mask", false);
+	node.MaskTextureTag = json.value("mask_texture_tag", "");
+
 	auto offsetPostion = json.value("offset_position", json::array({ 0.f,0.f,0.f }));
 	auto offsetQuaternion = json.value("offset_quaternion", json::array({ 0.f,0.f,0.f,1.f }));
 

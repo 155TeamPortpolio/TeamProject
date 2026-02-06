@@ -103,6 +103,7 @@
 #include "UI_GachaConversion.h"
 #include "UI_GachaDisplay.h"
 #include "UI_GachaResult.h"
+#include "UI_GachaResultItem.h"
 
 #include "UI_AtlasSprite.h"
 #include "UI_DamageText.h"
@@ -193,7 +194,7 @@ void CMainApp::Set_Levels()
 
 	LevelManager()->Set_LoadingLevel("Loading_Level");
 	m_pGameInstance->Notify_LevelSet(); 
-	m_pGameInstance->Get_LevelMgr()->Request_ChangeLevel("Test_Level", true);
+	m_pGameInstance->Get_LevelMgr()->Request_ChangeLevel("Gacha_Level", true);
 } 
 
 CMainApp* CMainApp::Create()
@@ -311,6 +312,7 @@ void CMainApp::Initialize_GlobalPrototype()
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_GachaConversion", CUI_GachaConversion::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_GachaDisplay", CUI_GachaDisplay::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_GachaResult", CUI_GachaResult::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_GachaResultItem", CUI_GachaResultItem::Create());
 
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_AtlasSprite", CUI_AtlasSprite::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_DamageText",  CUI_DamageText::Create());

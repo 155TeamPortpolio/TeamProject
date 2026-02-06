@@ -23,12 +23,14 @@ public:
 	virtual void    SetOrbitState(const CamOrbitState& next)  override;
 
 	virtual const   CamOrbitState& GetOrbitState() const { return orbit; }
+	virtual void    SetRollDeg(_float deg);
 
 private:
 	void    ApplyRotation(_float dt);
 	void    SyncRotation();
 
 private:
+	_float            rollDeg = 0.f;
 	_float            moveSpeed      = 2.f;
 	_float            sensitivity    = 0.2f;
 	_vector2          targetRotDeg   = {};

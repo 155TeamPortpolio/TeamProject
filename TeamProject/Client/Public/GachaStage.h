@@ -35,9 +35,12 @@ public:
 
 private:
     void    Add_StageScreen();
+    void    Add_UIText();
     void    Update_StageEnviroment(_int index);
-    void    Set_Stage(GACHA_STAGE eStage);
+    void    Set_Stage(GACHA_STAGE eStage, _int ResultID);
+    void    Reset_Target();
 
+    void    Play_CameraSequence();
     void    Update_CamTime();
     void    Update_Lights(_float dt);
 
@@ -50,6 +53,7 @@ private:
     class CGachaStageScreen*    m_pScreen = nullptr;
     class CGachaResult*         m_pWeaponResult = nullptr;
     class CGachaResult*         m_pAvatarResult = nullptr;
+    class CGachaFootStage*      m_pFootStage = nullptr;
     OBJECT_HANDLE               m_MainTopLightHandle = {};
     OBJECT_HANDLE               m_MainBottomLightHandle = {};
     OBJECT_HANDLE               m_MainMiddleLightHandle = {};
