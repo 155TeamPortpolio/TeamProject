@@ -30,8 +30,8 @@ void CGachaStage::Awake()
 	Get_Component<CStaticModel>()->Link_Model(G_GlobalLevelKey, "GachaStage_Avatarout.model");
 	Get_Component<CMaterial>()->Link_Material(G_GlobalLevelKey, "GachaStage_Avatarout.mat");
 
-	Get_Component<CStaticModel>()->Link_Model(G_GlobalLevelKey, "GachaStage_Bangbooout.model");
-	Get_Component<CMaterial>()->Link_Material(G_GlobalLevelKey, "GachaStage_Bangbooout.mat");
+	//Get_Component<CStaticModel>()->Link_Model(G_GlobalLevelKey, "GachaStage_Bangbooout.model");
+	//Get_Component<CMaterial>()->Link_Material(G_GlobalLevelKey, "GachaStage_Bangbooout.mat");
 }
 
 CGachaStage* CGachaStage::Create()

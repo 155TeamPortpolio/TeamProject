@@ -36,7 +36,7 @@ void CHowl::Execute()
 		desc.iSequenceID = m_iNextSequceID;
 		EventSystem()->Broadcast<UI_DIALOGUE_REQUEST_DESC>({ desc });
 	}
-	else Process_Event({ TEXT("아우"),0,0,DialogueResult::Success });
+	else Success(0);
 }
 
 HRESULT CHowl::Initialize_Prototype()
@@ -163,8 +163,8 @@ void CHowl::Update_States(_float dt)
 
 void CHowl::Success(_uint curSequenceID)
 {
+	m_pStateMachine->Set_Trigger("ToWake");
 	FieldSystem()->RequestEnter("Lottery", true);
-	
 }
 
 CHowl* CHowl::Create()
