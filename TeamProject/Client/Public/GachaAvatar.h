@@ -20,6 +20,7 @@ private:
 
 public:
     virtual void SetResult(GACHA_RESULT_DESC Desc) override;
+    virtual void SetRenderState(_bool Render) override;
 
 public:
     virtual HRESULT Initialize_Prototype()      override;

@@ -39,6 +39,7 @@ private:
     void    Set_Stage(GACHA_STAGE eStage, _int ResultID);
     void    Reset_Target();
 
+    void    Play_CameraSequence();
     void    Update_CamTime();
     void    Update_Lights(_float dt);
 
