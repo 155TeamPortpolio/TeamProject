@@ -35,7 +35,6 @@ private:
 	void Create_Channels();
 	void Create_Conversions();
 
-	void OnClick_Back();
 	void OnClick_Conversion();
 
 public:

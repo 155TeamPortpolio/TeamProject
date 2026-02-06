@@ -173,6 +173,7 @@ public: // 행동 이벤트
     virtual void    On_Attack();
     virtual void    On_Evade();
     virtual void    On_SwitchIn(SWITCH eType) {}
+    virtual void    On_ChainParry() {}
     virtual void    On_SwitchOut();
     virtual void    On_Ultimate();
     virtual void    On_Special() {}
@@ -193,7 +194,7 @@ public: // 회전
     _bool    Is_OppositeInput() const;
 
 public: // 회피
-    _bool    Can_Evade();
+    virtual _bool   Can_Evade();
     void     Use_Evade();
     void     Buffer_Evade() { m_bEvadeBuffer = true; }
     _bool    Use_EvadeBuffer();
@@ -215,7 +216,9 @@ public: // 피격
     _vector3 Get_HitTargetPos() const { return m_vHitPos; }
 
 public: // 이펙트
+    virtual HRESULT Initialize_Effects();
     void Play_Effect(const string& effectTag, _fvector offsetPosition, _fvector offsetQuaternion, _bool syncTransform = true);
+    void Stop_Effect(const string& effectTag);
 
 private:
     void    Update_Rotation(_float dt);
@@ -272,7 +275,6 @@ protected:
     // 패링
     _int            m_iParryColliderIndex = {};
     SWITCH          m_eSwitchType = SWITCH::END;
-    _float          m_fParryOffset = { 1.8f };
     _vector3        m_vParryPos = {};
     _vector3        m_vParryLook = {};
     OBJECT_HANDLE   m_ParryHandle;

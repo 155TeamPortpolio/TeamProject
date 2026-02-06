@@ -231,8 +231,8 @@ PS_OUT PS_MAIN(PS_IN In)
         float3 headRight = normalize(cross(float3(0.f, 1.f, 0.f), vLookVector.xyz));
 
         vMetalic = LightTexture.Sample(DefaultSampler, In.vTexcoord);
-
-        vMetalic.a = 0.8f;
+        if (length(vMetalic.rgb) < 0.01f) vMetalic.a = 0.6f;
+        else vMetalic.a = 0.8f;
         Out.vLook = float4(vLookVector.xyz * 0.5f + 0.5f, 0.f);
     }
     
@@ -370,10 +370,8 @@ PS_OUT PS_DEBUG(PS_IN In)
     PS_OUT Out;
     
     vector vMtrlDiffuse = DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
-    if (vMtrlDiffuse.a < 0.2)
-    {
-        vMtrlDiffuse = float4(In.vTexcoord, 1, 1);
-    }
+    vMtrlDiffuse = float4(In.vTexcoord, 1, 1);
+
   
     vector vNormalDesc = NormalTexture.Sample(DefaultSampler, In.vTexcoord);
     Out.vDiffuse = vMtrlDiffuse;
@@ -452,6 +450,16 @@ technique11 DefaultTechnique
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_WriteStencil,1);
         SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_MAIN();
+    }
+
+    pass Blend
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_WriteStencil, 1);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN();

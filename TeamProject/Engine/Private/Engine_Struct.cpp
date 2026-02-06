@@ -69,6 +69,9 @@ PARTICLE_NODE Engine::tagParticleNode::FromJson(nlohmann::ordered_json& json)
 {
 	PARTICLE_NODE node{};
 
+	node.useMask = json.value("use_mask", false);
+	node.MaskTextureTag = json.value("mask_texture_tag", "");
+
 	auto offsetPostion = json.value("offset_position", json::array({ 0.f,0.f,0.f }));
 	auto offsetQuaternion = json.value("offset_quaternion", json::array({ 0.f,0.f,0.f,1.f }));
 
@@ -168,6 +171,8 @@ MESH_NODE Engine::tagMeshNode::FromJson(nlohmann::ordered_json& json)
 	node.eType = json.value("effect_type", node.eType);
 	node.ModelTag = json.value("model_key", node.ModelTag);
 	node.MaterialTag = json.value("material_key", node.MaterialTag);
+
+	node.fPendingDuration = json.value("pending_duration", 0.f);
 
 	node.fDelayTime = json.value("delay_time", node.fDelayTime);
 	node.fDuration = json.value("duration", node.fDuration);

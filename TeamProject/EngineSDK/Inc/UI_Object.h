@@ -3,8 +3,11 @@
 #include "Helper_Func.h"
 
 NS_BEGIN(Engine)
+
 class ENGINE_DLL CUI_Object abstract : public CGameObject
 {
+protected:
+	
 	//		명칭, 스케일 배율
 	//		사이즈는 픽셀
 	//		
@@ -87,6 +90,7 @@ public:
 	void Add_AnchorOffsetX(_float fOffset) { m_vAnchorOffset.x += fOffset; }
 	void Add_AnchorOffsetY(_float fOffset) { m_vAnchorOffset.y += fOffset; }
 	void Set_Color(_float4 vColor) { m_vColor = vColor; }
+	void Set_RGB(_float3 vRGB) { m_vColor.x = vRGB.x; m_vColor.y = vRGB.y; m_vColor.z = vRGB.z; }
 	void Set_Alpha(_float fAlpha) { m_vColor.w = fAlpha; }
 	void Rotate_Left(_float _radian) { m_fRadian += _radian; }
 	/*Get Size*/
@@ -150,6 +154,13 @@ public:
 	virtual void Load(const nlohmann::ordered_json& data);
 
 public:
+	void        Set_StencilMode(StencilMode mode) { m_stencilMode = mode; }
+	void        Set_StencilRef(_uint ref) { m_stencilRef = ref; }
+
+	StencilMode Get_StencilMode() const { return m_stencilMode; }
+	_uint       Get_StencilRef()  const { return m_stencilRef; }
+
+public:
 	UI_HANDLE Get_Handle();
 	UI_HANDLE Get_DescendantHandle(const string& instanceName);
 
@@ -161,6 +172,9 @@ private:
 	_bool Set_KeyframeTime(UI_ANIM_CLIP& clip, _int iKeyframeIndex, _float fTime);
 
 protected:
+	StencilMode m_stencilMode = StencilMode::None;
+	_uint m_stencilRef = 0;
+
 	/*스크린 사이즈*/
 	_float2 m_WinSize = {};
 	/*부모 기준의 앵커 오프셋*/

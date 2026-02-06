@@ -27,6 +27,10 @@ public:
 public:
     static CCorinState_ExAttack_Start* Create() { return new CCorinState_ExAttack_Start(); }
     virtual void Free() override { __super::Free(); }
+
+private:
+    void Update_Effects(CCorin* pOwner);
+
 };
 
 class CCorinState_ExAttack_Loop : public IBaseState<CCorin>
@@ -69,8 +73,8 @@ class CCorinState_ExAttack_End : public IBaseState<CCorin>
 {
 public:
     virtual void Enter(CCorin* pOwner) override;
-    virtual void Update(CCorin* pOwner, _float dt) override {};
-    virtual void Exit(CCorin* pOwner) override {};
+    virtual void Update(CCorin* pOwner, _float dt) override {}
+    virtual void Exit(CCorin* pOwner) override {}
 
 public:
     static CCorinState_ExAttack_End* Create() { return new CCorinState_ExAttack_End(); }

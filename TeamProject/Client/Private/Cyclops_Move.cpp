@@ -31,8 +31,12 @@ void CCyclops_Move::Enter(CCyclops* pOwner)
 		_float fDistance = pOwner->GetTargetingInfo().fDistance;
 
 		// 거리기반 행동판단해야함
-
-		iMovePatternIndex = Helper::Get_Random_Int(3, 7);
+		if (fDistance <= hysteriesis.fEvadeEnter)
+			iMovePatternIndex = MOVEINDEX::Walk_Back;
+		else if (fDistance <= hysteriesis.fComboExit)
+			iMovePatternIndex = Helper::Get_Random_Int(2, 7);
+		else
+			iMovePatternIndex = MOVEINDEX::Walk_Front;
 	}
 	ChangeMovePatternFromIndex(iMovePatternIndex);
 }

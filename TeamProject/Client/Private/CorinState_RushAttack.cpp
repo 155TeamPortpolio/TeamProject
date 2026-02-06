@@ -2,7 +2,6 @@
 #include "CorinState_RushAttack.h"
 #include "Corin.h"
 
-
 CCorinState_RushAttack* CCorinState_RushAttack::Create()
 {
     auto pInstance = new CCorinState_RushAttack();
@@ -29,6 +28,8 @@ void CCorinState_RushAttack::Enter(CCorin* pOwner)
 {
     pOwner->Lock_Move();
     __super::Enter(pOwner);
+
+    pOwner->Play_Effect("Corin_Saw_Slash1", _vector3(), _quaternion(0.f, 0.f, 0.f, 1.f), false);
 }
 
 void CCorinState_RushAttack::Update(CCorin* pOwner, _float dt)
@@ -50,6 +51,8 @@ void CCorinState_RushAttack::Update(CCorin* pOwner, _float dt)
 
 void CCorinState_RushAttack::Exit(CCorin* pOwner)
 {
+    pOwner->Stop_Effect("Corin_Saw_Slash1");
+
     __super::Exit(pOwner);
 }
 

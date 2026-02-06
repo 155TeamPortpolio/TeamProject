@@ -518,7 +518,7 @@ _float CGameObject::Calculate_LinearDepth(const MINMAX_BOX& box)
 	_vector3 toCenter = centerWorld - camPos;
 	_float depth = toCenter.Dot(forward);
 
-	if (depth < 0.f) depth = 0.f;
+	//if (depth < 0.f) depth = 0.f;
 	return depth;
 }
 

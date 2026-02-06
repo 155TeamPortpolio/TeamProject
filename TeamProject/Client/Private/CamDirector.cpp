@@ -19,7 +19,7 @@
 #include "Player.h"
 #include "BattlePlayer.h"
 #include "BattleSystem.h"
-#include "Character.h"
+#include "Animator3D.h"
 
 namespace
 {
@@ -76,10 +76,40 @@ void CCamDirector::AutoTarget()
         SetTarget(handle);
 }
 
-void CCamDirector::AutoField()
+void CCamDirector::AutoField(CamStartDir dir)
 {
     AutoTarget();
-    RequestSequence("Field/Front");
+
+    switch (dir)
+    {
+    case CamStartDir::Front:
+        RequestSequence("Field/Front");
+        break;
+
+    case CamStartDir::Back:
+        RequestSequence("Field/Back");
+        break;
+
+    default: break;
+    }
+}
+
+void CCamDirector::AutoBattle(CamStartDir dir)
+{
+    AutoTarget();
+
+    switch (dir)
+    {
+    case CamStartDir::Front:
+        RequestSequence("Battle/Front");
+        break;
+
+    case CamStartDir::Back:
+        RequestSequence("Battle/Back");
+        break;
+
+    default: break;
+    }
 }
 
 void CCamDirector::Update(_float dt)
@@ -129,6 +159,34 @@ void CCamDirector::Update(_float dt)
         m_dialogue.Update(dt, GetOrbitCamComp(), GetOrbitCam(), GetCharacter()->Get_Component<CTransform>());
 
      UpdateInput(dt);
+}
+
+void CCamDirector::StartParry()
+{
+    if (!m_gate.Pass()) return;
+
+    auto charaName = GetCharacterName();
+    auto anim = GetCharacter()->Get_Component<CAnimator3D>();
+    
+   // RequestSequence("Parry/Corin");
+
+    GetOrbitCam()->SetLockOn(BattleSystem()->GetBattlePlayer()->GetTargetHandle());
+
+    switch (charaName)
+    {
+    case CHARACTER::JaneDoe:
+        anim->Set_Animation("Avatar_Female_Size03_JaneDoe_Ani_Attack_ParryAid_L").Apply();
+        break;
+
+    case CHARACTER::Corin:
+        anim->Set_Animation("Avatar_Female_Size01_Corin_Ani_Attack_ParryAid_L").Apply();
+        break;
+
+    case CHARACTER::Miyabi:
+        anim->Set_Animation("Avatar_Female_Size02_Unagi_Ani_Attack_ParryAid_L").Apply();
+        break;
+    }
+
 }
 
 void CCamDirector::StartBattleIntro(CamSeqType type)

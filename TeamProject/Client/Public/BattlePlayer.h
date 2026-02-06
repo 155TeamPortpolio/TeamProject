@@ -88,6 +88,11 @@ public: // 콤보 어택
     void            Execute_ComboAttack(_bool bNext);
     void            Cancel_ComboAttack();
 
+public: // 연속 패링
+    void            Start_ChainParry();
+    void            End_ChainParry();
+    _bool           Is_ChainParry() const { return m_bChainParry; }
+
 private: // 입력 처리
     void    Update_Input(_float dt);
     void    Process_Movement(_float dt);
@@ -143,6 +148,8 @@ private:
     // 콤보 어택
     _bool           m_bComboSelect = false;
     _float          m_fComboSelectTimer = 0.f;
+    // 연속 패링
+    _bool           m_bChainParry = false;
     // 게이지
     _uint           m_iParryingCount = 6;
 

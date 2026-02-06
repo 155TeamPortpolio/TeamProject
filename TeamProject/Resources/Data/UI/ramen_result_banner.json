@@ -27,10 +27,25 @@
         1.0,
         1.0
     ],
+    "stencilMode": 0,
     "pass": "Opaque",
     "colorTexKey": "empty.png",
     "colorTexMode": 0,
     "colorTexMix": 1.0,
+    "colorUVUse": 0,
+    "colorUVOffset": [
+        0.0,
+        0.0
+    ],
+    "colorUVScale": [
+        1.0,
+        1.0
+    ],
+    "colorUVAutoScroll": false,
+    "colorUVSpeed": [
+        0.0,
+        0.0
+    ],
     "animClips": [
         {
             "duration": 0.20000000298023224,
@@ -191,10 +206,25 @@
                 0.3921568691730499,
                 1.0
             ],
+            "stencilMode": 0,
             "pass": "Opaque",
             "colorTexKey": "empty.png",
             "colorTexMode": 0,
             "colorTexMix": 1.0,
+            "colorUVUse": 0,
+            "colorUVOffset": [
+                0.0,
+                0.0
+            ],
+            "colorUVScale": [
+                1.0,
+                1.0
+            ],
+            "colorUVAutoScroll": false,
+            "colorUVSpeed": [
+                0.0,
+                0.0
+            ],
             "animClips": [],
             "children": [],
             "typeTag": "Image",
@@ -229,10 +259,25 @@
                 0.0,
                 0.7843137383460999
             ],
+            "stencilMode": 0,
             "pass": "Opaque",
             "colorTexKey": "empty.png",
             "colorTexMode": 0,
             "colorTexMix": 1.0,
+            "colorUVUse": 0,
+            "colorUVOffset": [
+                0.0,
+                0.0
+            ],
+            "colorUVScale": [
+                1.0,
+                1.0
+            ],
+            "colorUVAutoScroll": false,
+            "colorUVSpeed": [
+                0.0,
+                0.0
+            ],
             "animClips": [],
             "children": [],
             "typeTag": "Image",
@@ -267,10 +312,25 @@
                 0.0,
                 1.0
             ],
+            "stencilMode": 0,
             "pass": "Opaque",
             "colorTexKey": "empty.png",
             "colorTexMode": 0,
             "colorTexMix": 1.0,
+            "colorUVUse": 0,
+            "colorUVOffset": [
+                0.0,
+                0.0
+            ],
+            "colorUVScale": [
+                1.0,
+                1.0
+            ],
+            "colorUVAutoScroll": false,
+            "colorUVSpeed": [
+                0.0,
+                0.0
+            ],
             "animClips": [],
             "children": [],
             "typeTag": "Image",
@@ -305,10 +365,25 @@
                 1.0,
                 1.0
             ],
+            "stencilMode": 1,
             "pass": "UI_StencilWrite",
             "colorTexKey": "empty.png",
             "colorTexMode": 0,
             "colorTexMix": 1.0,
+            "colorUVUse": 0,
+            "colorUVOffset": [
+                0.0,
+                0.0
+            ],
+            "colorUVScale": [
+                1.0,
+                1.0
+            ],
+            "colorUVAutoScroll": false,
+            "colorUVSpeed": [
+                0.0,
+                0.0
+            ],
             "animClips": [],
             "children": [],
             "typeTag": "Mask",
@@ -343,10 +418,25 @@
                 0.12156862765550613,
                 1.0
             ],
+            "stencilMode": 2,
             "pass": "UVAnimation_StencilTest",
             "colorTexKey": "empty.png",
             "colorTexMode": 0,
             "colorTexMix": 1.0,
+            "colorUVUse": 0,
+            "colorUVOffset": [
+                0.0,
+                0.0
+            ],
+            "colorUVScale": [
+                1.0,
+                1.0
+            ],
+            "colorUVAutoScroll": false,
+            "colorUVSpeed": [
+                0.0,
+                0.0
+            ],
             "animClips": [],
             "children": [],
             "typeTag": "UVAnimation",
@@ -387,10 +477,25 @@
                 0.12156862765550613,
                 1.0
             ],
+            "stencilMode": 2,
             "pass": "UVAnimation_StencilTest",
             "colorTexKey": "empty.png",
             "colorTexMode": 0,
             "colorTexMix": 1.0,
+            "colorUVUse": 0,
+            "colorUVOffset": [
+                0.0,
+                0.0
+            ],
+            "colorUVScale": [
+                1.0,
+                1.0
+            ],
+            "colorUVAutoScroll": false,
+            "colorUVSpeed": [
+                0.0,
+                0.0
+            ],
             "animClips": [],
             "children": [],
             "typeTag": "UVAnimation",
@@ -431,10 +536,25 @@
                 0.12156862765550613,
                 1.0
             ],
+            "stencilMode": 2,
             "pass": "UVAnimation_StencilTest",
             "colorTexKey": "empty.png",
             "colorTexMode": 0,
             "colorTexMix": 1.0,
+            "colorUVUse": 0,
+            "colorUVOffset": [
+                0.0,
+                0.0
+            ],
+            "colorUVScale": [
+                1.0,
+                1.0
+            ],
+            "colorUVAutoScroll": false,
+            "colorUVSpeed": [
+                0.0,
+                0.0
+            ],
             "animClips": [],
             "children": [],
             "typeTag": "UVAnimation",
@@ -475,10 +595,25 @@
                 1.0,
                 1.0
             ],
+            "stencilMode": 0,
             "pass": "Opaque",
             "colorTexKey": "empty.png",
             "colorTexMode": 0,
             "colorTexMix": 1.0,
+            "colorUVUse": 0,
+            "colorUVOffset": [
+                0.0,
+                0.0
+            ],
+            "colorUVScale": [
+                1.0,
+                1.0
+            ],
+            "colorUVAutoScroll": false,
+            "colorUVSpeed": [
+                0.0,
+                0.0
+            ],
             "animClips": [],
             "children": [],
             "typeTag": "Text",
@@ -531,10 +666,25 @@
                 0.6980392336845398,
                 1.0
             ],
+            "stencilMode": 0,
             "pass": "Opaque",
             "colorTexKey": "empty.png",
             "colorTexMode": 0,
             "colorTexMix": 1.0,
+            "colorUVUse": 0,
+            "colorUVOffset": [
+                0.0,
+                0.0
+            ],
+            "colorUVScale": [
+                1.0,
+                1.0
+            ],
+            "colorUVAutoScroll": false,
+            "colorUVSpeed": [
+                0.0,
+                0.0
+            ],
             "animClips": [],
             "children": [],
             "typeTag": "Image",
@@ -569,10 +719,25 @@
                 0.6980392336845398,
                 1.0
             ],
+            "stencilMode": 0,
             "pass": "Opaque",
             "colorTexKey": "empty.png",
             "colorTexMode": 0,
             "colorTexMix": 1.0,
+            "colorUVUse": 0,
+            "colorUVOffset": [
+                0.0,
+                0.0
+            ],
+            "colorUVScale": [
+                1.0,
+                1.0
+            ],
+            "colorUVAutoScroll": false,
+            "colorUVSpeed": [
+                0.0,
+                0.0
+            ],
             "animClips": [],
             "children": [],
             "typeTag": "Text",
@@ -625,10 +790,25 @@
                 0.0,
                 1.0
             ],
+            "stencilMode": 0,
             "pass": "Opaque",
             "colorTexKey": "empty.png",
             "colorTexMode": 0,
             "colorTexMix": 1.0,
+            "colorUVUse": 0,
+            "colorUVOffset": [
+                0.0,
+                0.0
+            ],
+            "colorUVScale": [
+                1.0,
+                1.0
+            ],
+            "colorUVAutoScroll": false,
+            "colorUVSpeed": [
+                0.0,
+                0.0
+            ],
             "animClips": [],
             "children": [],
             "typeTag": "Text",
@@ -681,10 +861,25 @@
                 0.0,
                 1.0
             ],
+            "stencilMode": 0,
             "pass": "Opaque",
             "colorTexKey": "empty.png",
             "colorTexMode": 0,
             "colorTexMix": 1.0,
+            "colorUVUse": 0,
+            "colorUVOffset": [
+                0.0,
+                0.0
+            ],
+            "colorUVScale": [
+                1.0,
+                1.0
+            ],
+            "colorUVAutoScroll": false,
+            "colorUVSpeed": [
+                0.0,
+                0.0
+            ],
             "animClips": [],
             "children": [],
             "typeTag": "Image",
@@ -719,10 +914,25 @@
                 1.0,
                 0.019607843831181526
             ],
+            "stencilMode": 0,
             "pass": "Opaque",
             "colorTexKey": "empty.png",
             "colorTexMode": 0,
             "colorTexMix": 1.0,
+            "colorUVUse": 0,
+            "colorUVOffset": [
+                0.0,
+                0.0
+            ],
+            "colorUVScale": [
+                1.0,
+                1.0
+            ],
+            "colorUVAutoScroll": false,
+            "colorUVSpeed": [
+                0.0,
+                0.0
+            ],
             "animClips": [],
             "children": [],
             "typeTag": "Image",
@@ -757,10 +967,25 @@
                 0.0,
                 1.0
             ],
+            "stencilMode": 0,
             "pass": "Opaque",
             "colorTexKey": "empty.png",
             "colorTexMode": 0,
             "colorTexMix": 1.0,
+            "colorUVUse": 0,
+            "colorUVOffset": [
+                0.0,
+                0.0
+            ],
+            "colorUVScale": [
+                1.0,
+                1.0
+            ],
+            "colorUVAutoScroll": false,
+            "colorUVSpeed": [
+                0.0,
+                0.0
+            ],
             "animClips": [],
             "children": [],
             "typeTag": "Image",
@@ -795,10 +1020,25 @@
                 1.0,
                 0.019607843831181526
             ],
+            "stencilMode": 0,
             "pass": "Opaque",
             "colorTexKey": "empty.png",
             "colorTexMode": 0,
             "colorTexMix": 1.0,
+            "colorUVUse": 0,
+            "colorUVOffset": [
+                0.0,
+                0.0
+            ],
+            "colorUVScale": [
+                1.0,
+                1.0
+            ],
+            "colorUVAutoScroll": false,
+            "colorUVSpeed": [
+                0.0,
+                0.0
+            ],
             "animClips": [],
             "children": [],
             "typeTag": "Image",

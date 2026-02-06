@@ -7,21 +7,8 @@
 void CMiyabiState_BackStep::Enter(CMiyabi* pOwner)
 {
     pOwner->Use_Evade();
-    //if (pOwner->Is_Passion())
-    //{
-    //    pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Evade_Back_03")
-    //        .Speed(1.f)
-    //        .Apply();
-    //}
-    //else
-    //{
-    //    m_bEvadeType = !m_bEvadeType;
-
-    //    string strEvade = m_bEvadeType ? "Evade_Back_01" : "Evade_Back_02";
-    //    pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + strEvade)
-    //        .Speed(1.f)
-    //        .Apply();
-    //}
+    pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Evade_Back")
+        .Apply();
 }
 
 void CMiyabiState_BackStep::Update(CMiyabi* pOwner, _float dt)
@@ -61,7 +48,7 @@ void CMiyabiState_BackStep::Update(CMiyabi* pOwner, _float dt)
         }
     }
 
-    if (m_fAnimProgress >= 0.3f)
+    if (m_fAnimProgress >= 0.25f)
     {   // Run
         if (pOwner->Is_Move())
         {

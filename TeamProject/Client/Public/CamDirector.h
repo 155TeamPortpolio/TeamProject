@@ -1,9 +1,11 @@
 #pragma once
 
+#include "DisplayGate.h"
 #include "CameraMgr.h"
 #include "CamDirectorData.h"
 #include "CamEventController.h"
 #include "CamDialogueController.h"
+#include "ParryCamFx.h"
 
 NS_BEGIN(Client)
 
@@ -21,7 +23,8 @@ public:
     void          SetReturnCam(CamType type)                 { m_returnCamType          = type;   }
     void          SetTarget(OBJECT_HANDLE targetHandle);
     void          AutoTarget();
-    void          AutoField();
+    void          AutoField(CamStartDir dir);
+    void          AutoBattle(CamStartDir dir);
 
     OBJECT_HANDLE GetCamHandle(CamType type) const { return m_camHandles[ENUM(type)];                }
     COrbitCam*    GetOrbitCam()              const { return static_cast<COrbitCam*>(GetOrbitObj());  }
@@ -59,6 +62,8 @@ public:
     _bool         StopRequest(_uint handle, _float blendOutSec = 0.25f, _bool resetTime = true);
     void          StopAll(_float blendOutSec = 0.25f);
     void          Update(_float dt);
+
+    void          StartParry();
     void          StartBattleIntro(CamSeqType type);
     void          StartDialog();
     void          EndDialog();
@@ -74,6 +79,7 @@ private:
     _uint         RequestSequence(const string& key, const CamSequenceRequestDesc& req);
 
 private:
+    CMonitorGate            m_gate;
     CamDirectorSeqMap       m_seqs{};
     CamDirectorPlayingState m_playing{};
     CamDirectorCamHandles   m_camHandles{};

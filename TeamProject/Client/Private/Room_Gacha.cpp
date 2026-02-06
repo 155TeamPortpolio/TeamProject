@@ -17,10 +17,19 @@ void CRoom_Gacha::Enter()
 	auto pFieldPlayer = FieldSystem()->GetFieldPlayer();
 	pFieldPlayer->Lock_Input();
 	pFieldPlayer->DeActive_Field();
+
+	UIDirector()->Hide_HUD(CUIDirector::HUD::FIELD);
+	UIDirector()->Show_GachaPage();
 }
 
 void CRoom_Gacha::Exit()
 {
+	auto pFieldPlayer = FieldSystem()->GetFieldPlayer();
+	pFieldPlayer->UnLock_Input();
+	pFieldPlayer->Active_Field();
+
+	UIDirector()->Show_HUD(CUIDirector::HUD::FIELD);
+	UIDirector()->Hide_GachaPage();
 }
 
 void CRoom_Gacha::Update()

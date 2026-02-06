@@ -60,9 +60,11 @@ CMiyabiState_NormalAttack* CMiyabiState_NormalAttack::Create()
 void CMiyabiState_NormalAttack::Enter(CMiyabi* pOwner)
 {
     pOwner->Lock_Move();
+
     m_iComboIndex = 0;
-    // 트리거 초기화
+    m_fHoldTime = 0.f;
     m_pSubStateMachine->Reset_Trigger("NextCombo");
+
     __super::Enter(pOwner);
 }
 
@@ -70,6 +72,23 @@ void CMiyabiState_NormalAttack::Update(CMiyabi* pOwner, _float dt)
 {
     if (InputDevice()->Mouse_Tap(MOUSE_BTN::LB))
         m_pSubStateMachine->Set_Trigger("NextCombo");
+
+    if (pOwner->Can_Charge())
+    {
+        if (InputDevice()->Mouse_Hold(MOUSE_BTN::LB))
+        {
+            m_fHoldTime += dt;
+            if (m_fHoldTime >= 0.3f)
+            {
+                m_pOwnerStateMachine->Set_Trigger("ToChargeAttack");
+                m_fHoldTime = 0.f;
+            }
+        }
+        else
+        {
+            m_fHoldTime = 0.f;
+        }
+    }
 
     auto pMiyabiState = pOwner->Get_StateMachine();
     if (pMiyabiState->Get_Bool("OutReserve"))
@@ -113,17 +132,26 @@ void CMiyabiState_Attack_01::Update(CMiyabi* pOwner, _float dt)
             _vector3 vLook = pOwner->Get_Component<CTransform>()->Dir(STATE::LOOK);
             _vector3 vPos = pOwner->Get_WorldPos();
             BattleSystem()->TakeAreaDamage(vPos + vLook * 2.f, 3.f, HitDesc()
+                .Name(pOwner->Get_CharacterName())
                 .Type(HIT_TYPE::ONCE)
                 .Damage(pOwner->Get_AttackPower() * 0.269f * Helper::Get_Random_Float(1.f, 1.5f)
                     , DAMAGE_TYPE::NORMAL)
             );
         }
     }
+
+    Update_Effects(pOwner);
 }
 
 void CMiyabiState_Attack_01::Exit(CMiyabi* pOwner)
 {
     static_cast<CMiyabiState_NormalAttack*>(m_pParentState)->Set_ComboIndex(0);
+}
+
+void CMiyabiState_Attack_01::Update_Effects(CMiyabi* pOwner)
+{
+    if (IsCrossAnimProgress(0.25f))
+        pOwner->Play_Effect("Miyabi_Normal0_Slash0", _vector3(0.2f, 0.7f, 0.f), _quaternion(-0.19f, 0.71f, 0.66f, 0.17f));
 }
 
 void CMiyabiState_Attack_02::Enter(CMiyabi* pOwner)
@@ -144,6 +172,7 @@ void CMiyabiState_Attack_02::Update(CMiyabi* pOwner, _float dt)
         if (Event.Tag == "KatanaStart")
         {
             pOwner->Begin_AttackCollider("KatanaWeapon", HitDesc()
+                .Name(pOwner->Get_CharacterName())
                 .Type(HIT_TYPE::ONCE)
                 .Damage(pOwner->Get_AttackPower() * 0.296f * Helper::Get_Random_Float(1.f, 1.5f)
                     , DAMAGE_TYPE::NORMAL)
@@ -154,11 +183,19 @@ void CMiyabiState_Attack_02::Update(CMiyabi* pOwner, _float dt)
             pOwner->End_AttackCollider("KatanaWeapon");
         }
     }
+
+    Update_Effects(pOwner);
 }
 
 void CMiyabiState_Attack_02::Exit(CMiyabi* pOwner)
 {
     static_cast<CMiyabiState_NormalAttack*>(m_pParentState)->Set_ComboIndex(1);
+}
+
+void CMiyabiState_Attack_02::Update_Effects(CMiyabi* pOwner)
+{
+    if (IsCrossAnimProgress(0.25f))
+        pOwner->Play_Effect("Miyabi_Normal0_Slash0", _vector3(-0.1f, 0.9f, 0.f), _quaternion(-0.03f, 0.71f, -0.13f, 0.69f));
 }
 
 void CMiyabiState_Attack_03::Enter(CMiyabi* pOwner)
@@ -181,6 +218,7 @@ void CMiyabiState_Attack_03::Update(CMiyabi* pOwner, _float dt)
             _vector3 vLook = pOwner->Get_Component<CTransform>()->Dir(STATE::LOOK);
             _vector3 vPos = pOwner->Get_WorldPos();
             BattleSystem()->TakeAreaDamage(vPos + vLook * 2.f, 3.f, HitDesc()
+                .Name(pOwner->Get_CharacterName())
                 .Type(HIT_TYPE::ONCE)
                 .Damage(pOwner->Get_AttackPower() * 0.628f * Helper::Get_Random_Float(1.f, 1.5f)
                     , DAMAGE_TYPE::NORMAL)
@@ -199,11 +237,23 @@ void CMiyabiState_Attack_03::Update(CMiyabi* pOwner, _float dt)
             pOwner->End_AttackCollider("KatanaWeapon");
         }
     }
+    
+    Update_Effects(pOwner);
 }
 
 void CMiyabiState_Attack_03::Exit(CMiyabi* pOwner)
 {
     static_cast<CMiyabiState_NormalAttack*>(m_pParentState)->Set_ComboIndex(2);
+}
+
+void CMiyabiState_Attack_03::Update_Effects(CMiyabi* pOwner)
+{
+    if (IsCrossAnimProgress(0.2f))
+        pOwner->Play_Effect("Miyabi_Normal1_Slash0", _vector3(0.f, 0.8f, 0.f), _quaternion(0.21f, 0.65f, 0.7f, -0.19f));
+    if (IsCrossAnimProgress(0.25f))
+        pOwner->Play_Effect("Miyabi_Normal1_Slash1", _vector3(0.f, 0.9f, 0.f), _quaternion(-0.61f, -0.34f, -0.27f, 0.66f));
+    if (IsCrossAnimProgress(0.3f))
+        pOwner->Play_Effect("Miyabi_Normal2_Slash0", _vector3(0.f, 1.2f, 0.f), _quaternion(-0.33f, 0.66f, 0.62f, 0.27f));
 }
 
 void CMiyabiState_Attack_04::Enter(CMiyabi* pOwner)
@@ -227,6 +277,7 @@ void CMiyabiState_Attack_04::Update(CMiyabi* pOwner, _float dt)
             _quaternion qRotation = pOwner->Get_Component<CTransform>()->Get_QuaternionRotate();
             _vector3 vPos = pOwner->Get_WorldPos();
             BattleSystem()->TakeBoxDamage(vPos + vLook * 1.f, _vector3(4.f, 4.f, 2.f), qRotation, HitDesc()
+                .Name(pOwner->Get_CharacterName())
                 .Type(HIT_TYPE::ONCE)
                 .Damage(pOwner->Get_AttackPower() * 0.965f * Helper::Get_Random_Float(1.f, 1.5f)
                     , DAMAGE_TYPE::NORMAL)
@@ -260,6 +311,7 @@ void CMiyabiState_Attack_05::Update(CMiyabi* pOwner, _float dt)
             _vector3 vLook = pOwner->Get_Component<CTransform>()->Dir(STATE::LOOK);
             _vector3 vPos = pOwner->Get_WorldPos();
             BattleSystem()->TakeAreaDamage(vPos, 3.f, HitDesc()
+                .Name(pOwner->Get_CharacterName())
                 .Type(HIT_TYPE::ONCE)
                 .Damage(pOwner->Get_AttackPower() * 1.29f * Helper::Get_Random_Float(1.f, 1.5f)
                     , DAMAGE_TYPE::NORMAL)

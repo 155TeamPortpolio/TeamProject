@@ -63,6 +63,9 @@ HRESULT CRenderSystem::Initialize()
 
 HRESULT CRenderSystem::Render()
 {
+	m_pPipeLine->Update_StaticCSM();
+	m_pPipeLine->Update_SkinnedCSM();
+
 	m_pPipeLine->Begin_ObjectBuffer(m_pContext);
 	m_pPipeLine->Begin_SkinningBuffer(m_pContext);
 

@@ -140,6 +140,8 @@ namespace Engine
 		Ended,
 		Error
 	};
+
+	enum class StencilMode { None, Write, Test };
 }
 #endif // Engine_Enum_h__
 

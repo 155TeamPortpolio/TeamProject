@@ -15,6 +15,10 @@ public:
 public:
     static CCorinState_Dash* Create() { return new CCorinState_Dash(); }
     virtual void Free() override { __super::Free(); }
+
+private:
+    void Update_Effects(CCorin* pOwner);
+
 };
 
 NS_END

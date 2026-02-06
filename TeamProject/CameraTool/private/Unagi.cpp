@@ -30,7 +30,8 @@ void Unagi::Awake()
 	const string modelKey = "Miyabi.model";
 	const string matKey   = "Miyabi.mat";
 	const string metaKey  = "Miyabi_Meta.json";
-	const string idleClip = "_Unagi_Ani_Idle";
+	// const string idleClip = "_Unagi_Ani_Idle";
+	const string idleClip = "Avatar_Female_Size02_Unagi_Ani_Gacha_Loop";
 
 	RES->Add_ResourcePath(modelKey, "../bin/Resources/Global/BattleCharacter/Miyabi/Miyabi.model");
 	RES->Add_ResourcePath(matKey,   "../bin/Resources/Global/BattleCharacter/Miyabi/Miyabi.mat");

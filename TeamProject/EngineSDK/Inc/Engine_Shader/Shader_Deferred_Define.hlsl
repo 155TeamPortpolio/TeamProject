@@ -115,6 +115,7 @@ Texture2D EffectAccTexture : register(t21);
 Texture2D EffectBloomAccTextutre : register(t22);
 Texture2D RevealageTexture : register(t23);
 Texture2D RimLightAccTexture : register(t24);
+Texture2D EffectDiffuseTexture : register(t25);
 
 //─────────────UI─────────────
 Texture2D UI2DTexture : register(t30);

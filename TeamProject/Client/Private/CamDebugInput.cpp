@@ -3,9 +3,13 @@
 // Engine
 #include "GameInstance.h"
 #include "CamDirector.h"
+#include "Animator3D.h"
+#include "InputMgr.h"
 // Client
 #include "UI_Gangta.h"
 #include "UI_Seoriyeol.h"
+#include "BattleSystem.h"
+
 
 void CamDebugInput::UpdateInput(_float dt)
 {
@@ -23,37 +27,39 @@ void CamDebugInput::UpdateInput(_float dt)
         CameraManager()->Set_MainCam(CamDirector()->GetOrbitCamComp(), 0.5f);
     }
 
+    CMonitorGate gate;
+    if (!gate.Pass()) return;
+
+    if (InputDevice()->Mouse_Tap(MOUSE_BTN::RB))
+    {
+        CamDirector()->GetOrbitCam()->ClearLockOn();
+    }
+
+
     if (InputDevice()->Key_Tap(VK_F3))
     {
         if (levelKey == "Gacha_Level")
         {
-            auto obj = Builder::Create_UIObject({G_GlobalLevelKey, "Proto_GameObject_Gangta"}).Build("Gangta");
-            UIManager()->Add_UIObject(obj, LevelManager()->Get_NowLevelKey());
-            static_cast<CUI_Gangta*>(obj)->UI_Active({});
+            CamDirector()->RequestSequence("Gacha/Miyabi_01");
+
+            //auto obj = Builder::Create_UIObject({G_GlobalLevelKey, "Proto_GameObject_Gangta"}).Build("Gangta");
+            //UIManager()->Add_UIObject(obj, LevelManager()->Get_NowLevelKey());
+            //static_cast<CUI_Gangta*>(obj)->UI_Active({});
         }
         else if (levelKey == "Test_Level")  CamDirector()->RequestSequence(CamSeqType::BattleIntro);
+
         else if (levelKey == "Zero_Level")  CamDirector()->RequestSequence(CamSeqType::ZeroIntro);
     }
 
     if (InputDevice()->Key_Tap(VK_F4))
     {
-       // if (levelKey == "Gacha_Level") CamDirector()->RequestSequence("Gacha/Spin");
         if (levelKey == "Gacha_Level" || levelKey == "Zero_Level")
         {
-            auto obj = Builder::Create_UIObject({G_GlobalLevelKey, "Proto_GameObject_Seoriyeol"}).Build("Seoriyeol");
-            UIManager()->Add_UIObject(obj, LevelManager()->Get_NowLevelKey());
-            static_cast<CUI_Seoriyeol*>(obj)->UI_Active({});
-        }
-    }
+            CamDirector()->RequestSequence("Gacha/Miyabi_02");
 
-    if (CamDirector()->IsFinished(CamEventType::SpinFinished) || CamDirector()->IsFinished(CamEventType::SpinHalfFinished))
-    {
-        CameraManager()->SetZoomType(ENUM(CamZoomType::GachaShake), 1.8f);
-        //CameraManager()->SetShakeType(ENUM(CamShakeType::EarthquakeShort), 1.2f);
-        //CameraManager()->AddShakeAxisWave(0x4, 3.0f, 3.0f, 1.2f, 0.0f, EaseType::None, EaseType::OutCubic);
-       // CameraManager()->AddShakeAxisWave(CamShakeAxis::Roll, 3.0f, 3.0f, 1.2f, 0.0f, EaseType::None, EaseType::OutCubic);
-        CameraManager()->AddShakeAxisWave(CamShakeAxis::Roll,  3.f,  4.0f, 0.8f, 0.1f, EaseType::InQuad, EaseType::InOutQuad);
-        CameraManager()->AddShakeAxisWave(CamShakeAxis::Yaw,   1.4f, 3.0f, 0.6f, 0.1f, EaseType::InQuad, EaseType::InOutQuad);
-        CameraManager()->AddShakeAxisWave(CamShakeAxis::Pitch, 1.f,  2.5f, 0.4f, 0.1f, EaseType::InQuad, EaseType::InOutQuad);
+            //auto obj = Builder::Create_UIObject({G_GlobalLevelKey, "Proto_GameObject_Seoriyeol"}).Build("Seoriyeol");
+            //UIManager()->Add_UIObject(obj, LevelManager()->Get_NowLevelKey());
+            //static_cast<CUI_Seoriyeol*>(obj)->UI_Active({});
+        }
     }
 }

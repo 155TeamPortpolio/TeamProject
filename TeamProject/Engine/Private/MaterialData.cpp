@@ -47,10 +47,10 @@ HRESULT CMaterialData::Initialize(const string& levelKey, ifstream& ifs, const s
 			TEXTURE_INFO_HEADER textureInfoHeader = {};
 			ifs.read(reinterpret_cast<char*>(&textureInfoHeader), sizeof(TEXTURE_INFO_HEADER));
 			CGameInstance::GetInstance()->Get_ResourceMgr()->Add_ResourcePath(
-				ParentName+ "_" +textureInfoHeader.TextureKey,
+				textureInfoHeader.TextureKey,
 				directory + textureInfoHeader.TextureKey);
 
-			Link_Texture(levelKey, ParentName + "_" + textureInfoHeader.TextureKey, static_cast<TEXTURE_TYPE>(textureHeader.typeID));
+			Link_Texture(levelKey,textureInfoHeader.TextureKey, static_cast<TEXTURE_TYPE>(textureHeader.typeID));
 		}
 	}
 
@@ -103,6 +103,11 @@ _bool CMaterialData::Get_Texture(TEXTURE_TYPE eType, _uint index, CTexture*& out
 		outPtr = m_Textures[eType][index];
 		return true;
 	}
+}
+
+_uint CMaterialData::Get_TextureCount(TEXTURE_TYPE eType)
+{
+	return m_Textures[eType].size();
 }
 
 _bool CMaterialData::Has_Texture(TEXTURE_TYPE eType)

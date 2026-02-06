@@ -198,63 +198,160 @@ _uint CMaterialInstance::Get_BindedIndex(TEXTURE_TYPE type)
     return  m_TextureIndexs[ENUM(type)];
 }
 
+_uint CMaterialInstance::Get_BindedCount(TEXTURE_TYPE type)
+{
+    return m_pMaterialData->Get_TextureCount(type);
+}
+
 void CMaterialInstance::Render_GUI()
 {
+    ImGui::PushID(this);
+
     CShader* shaderPtr = m_pMaterialData->Get_Shader();
-    const auto& passList = shaderPtr->Get_PassList();
-
-    int currentIndex = -1;
-    for (int passIndex = 0; passIndex < (int)passList.size(); ++passIndex)
-    {
-        if (override_Pass == passList[passIndex]) { currentIndex = passIndex; break; }
-    }
-    if (!passList.empty() && currentIndex < 0)
-    {
-        override_Pass = passList[0];
-        currentIndex = 0;
-    }
-
-    const char* previewText = (!passList.empty()) ? passList[currentIndex].c_str() : "(No Pass)";
-    if (ImGui::BeginCombo("##shaderPass", previewText))
-    {
-        for (int passIndex = 0; passIndex < (int)passList.size(); ++passIndex)
+    auto passList = shaderPtr->Get_PassList();
+    const auto findPassIndex = [&](const string& passName) -> int
         {
-            bool isSelected = (passIndex == currentIndex);
-            if (ImGui::Selectable(passList[passIndex].c_str(), isSelected))
-                override_Pass = passList[passIndex];
-            if (isSelected) ImGui::SetItemDefaultFocus();
-        }
-        ImGui::EndCombo();
-    }
+            for (int passIndex = 0; passIndex < (int)passList.size(); ++passIndex)
+            {
+                if (passList[passIndex] == passName)
+                    return passIndex;
+            }
+            return -1;
+        };
+    const auto ensureValidPass = [&]()
+        {
+            if (passList.empty())
+            {
+                override_Pass.clear();
+                return;
+            }
 
-    m_pMaterialData->Render_GUI(m_TextureIndexs);
+            if (override_Pass.empty())
+                return;
 
-    // ------------------------------
-    // Dynamic Slots
-    // ------------------------------
+            if (findPassIndex(override_Pass) < 0)
+                override_Pass = passList[0];
+        };
+
+    const auto drawPassCombo = [&]()
+        {
+            if (passList.empty())
+            {
+                ImGui::TextDisabled("(No Pass)");
+                return;
+            }
+
+            int currentIndex = findPassIndex(override_Pass.empty()? m_pMaterialData->Get_PassConstant():override_Pass);
+            if (currentIndex < 0) currentIndex = 0;
+
+            const char* previewText = passList[currentIndex].c_str();
+
+            if (ImGui::BeginCombo("##shaderPass", previewText))
+            {
+                for (int passIndex = 0; passIndex < (int)passList.size(); ++passIndex)
+                {
+                    const bool isSelected = (passIndex == currentIndex);
+                    if (ImGui::Selectable(passList[passIndex].c_str(), isSelected))
+                    {
+                        override_Pass = passList[passIndex];
+                        currentIndex = passIndex;
+                    }
+                    if (isSelected) ImGui::SetItemDefaultFocus();
+                }
+                ImGui::EndCombo();
+            }
+        };
+
+    const auto pushTypeBadgeColor = [&](const string& typeName)
+        {
+            ImVec4 badgeColor = ImVec4(0.75f, 0.75f, 0.75f, 1.0f);
+            if (typeName == "Texture2D") badgeColor = ImVec4(0.55f, 0.85f, 1.0f, 1.0f);
+            else if (typeName == "float") badgeColor = ImVec4(0.80f, 1.0f, 0.65f, 1.0f);
+            else if (typeName.find("float") != string::npos) badgeColor = ImVec4(0.80f, 1.0f, 0.65f, 1.0f);
+            else if (typeName == "int" || typeName == "bool") badgeColor = ImVec4(1.0f, 0.85f, 0.55f, 1.0f);
+
+            ImGui::PushStyleColor(ImGuiCol_Text, badgeColor);
+        };
+
+    const auto popTypeBadgeColor = [&]()
+        {
+            ImGui::PopStyleColor();
+        };
+
+    const auto drawBoundDot = [&](bool isBound)
+        {
+            ImDrawList* drawList = ImGui::GetWindowDrawList();
+            ImVec2 cursorPos = ImGui::GetCursorScreenPos();
+            float radius = 4.0f;
+
+            ImU32 dotColor = isBound ? IM_COL32(110, 255, 110, 255) : IM_COL32(255, 110, 110, 255);
+            drawList->AddCircleFilled(ImVec2(cursorPos.x + radius, cursorPos.y + radius + 2.0f), radius, dotColor);
+            ImGui::Dummy(ImVec2(radius * 2.0f + 2.0f, radius * 2.0f));
+        };
+
+    const auto editParamValue = [&](const string& slotName, SHADER_PARAM& param)
+        {
+            if (param.typeName == "float")
+            {
+                float* valuePtr = reinterpret_cast<float*>(param.pData);
+                if (!valuePtr) { ImGui::TextDisabled("(null)"); return; }
+                ImGui::DragFloat("##v", valuePtr, 0.01f);
+                return;
+            }
+
+            if (param.typeName == "float3")
+            {
+                float* valuePtr = reinterpret_cast<float*>(param.pData);
+                if (!valuePtr) { ImGui::TextDisabled("(null)"); return; }
+                ImGui::DragFloat3("##v", valuePtr, 0.01f);
+                return;
+            }
+
+            if (param.typeName == "bool")
+            {
+                bool* valuePtr = reinterpret_cast<bool*>(param.pData);
+                if (!valuePtr) { ImGui::TextDisabled("(null)"); return; }
+                ImGui::Checkbox("##v", valuePtr);
+                return;
+            }
+
+            if (param.typeName == "Texture2D")
+            {
+                void* textureHandle = reinterpret_cast<void*>(param.pData);
+                if (!textureHandle) { ImGui::TextDisabled("(none)"); return; }
+                ImGui::TextUnformatted("[Texture Bound]");
+                // ImGui::Image((ImTextureID)textureHandle, ImVec2(64, 64));
+                return;
+            }
+
+            ImGui::TextDisabled("No editor for type: %s", param.typeName.c_str());
+        };
+
+    ensureValidPass();
+    drawPassCombo();
+
+    if (m_pMaterialData)
+        m_pMaterialData->Render_GUI(m_TextureIndexs);
+
+    auto& slotsForPass = m_DynamicSlots;
+
     if (ImGui::CollapsingHeader("Dynamic Slots", ImGuiTreeNodeFlags_DefaultOpen))
     {
         ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(6, 4));
         ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(8, 6));
 
-        // 상단 툴바
         ImGui::AlignTextToFramePadding();
         ImGui::TextUnformatted("Slots");
         ImGui::SameLine();
 
-        if (ImGui::SmallButton("Reset Defaults"))
-            Reset_DynamicSlot();
-
-        ImGui::SameLine();
         if (ImGui::SmallButton("Clear All"))
         {
-            // 바인딩까지 확실히 끊고 싶으면: ClearDynamicSlotsBound(shaderPtr);
-            m_DynamicSlots.clear();
+          slotsForPass.clear();
         }
 
         ImGui::Separator();
 
-        ImGuiTableFlags flags =
+        ImGuiTableFlags tableFlags =
             ImGuiTableFlags_BordersInnerV |
             ImGuiTableFlags_RowBg |
             ImGuiTableFlags_Resizable |
@@ -264,7 +361,7 @@ void CMaterialInstance::Render_GUI()
 
         const float tableHeight = 240.0f;
 
-        if (ImGui::BeginTable("##DynamicSlotTable", 4, flags, ImVec2(0, tableHeight)))
+        if (ImGui::BeginTable("##DynamicSlotTable", 4, tableFlags, ImVec2(0, tableHeight)))
         {
             ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_WidthStretch, 2.2f);
             ImGui::TableSetupColumn("Type", ImGuiTableColumnFlags_WidthFixed, 110.0f);
@@ -272,19 +369,18 @@ void CMaterialInstance::Render_GUI()
             ImGui::TableSetupColumn("Value", ImGuiTableColumnFlags_WidthStretch, 2.6f);
             ImGui::TableHeadersRow();
 
-            std::string removeKey;
+            string removeKey;
             bool requestRemove = false;
 
-            for (auto& pair : m_DynamicSlots)
+            for (auto& nameAndParam : slotsForPass)
             {
-                const std::string& slotName = pair.first;
-                SHADER_PARAM& param = pair.second;
+                const string& slotName = nameAndParam.first;
+                SHADER_PARAM& param = nameAndParam.second;
 
                 const bool isBound = (param.pData != nullptr);
 
                 ImGui::TableNextRow();
 
-                // Name (TreeNode 느낌)
                 ImGui::TableSetColumnIndex(0);
                 ImGui::PushID(slotName.c_str());
 
@@ -295,7 +391,6 @@ void CMaterialInstance::Render_GUI()
 
                 ImGui::TreeNodeEx("##slotnode", nodeFlags, "%s", slotName.c_str());
 
-                // 우클릭 메뉴
                 if (ImGui::BeginPopupContextItem("##slotctx"))
                 {
                     if (ImGui::MenuItem("Unbind"))
@@ -312,34 +407,32 @@ void CMaterialInstance::Render_GUI()
 
                 ImGui::PopID();
 
-                // Type (배지)
                 ImGui::TableSetColumnIndex(1);
-                GuiUtil::PushTypeBadgeColor(param.typeName);
+                pushTypeBadgeColor(param.typeName);
                 ImGui::TextUnformatted(param.typeName.c_str());
-                GuiUtil::PopTypeBadgeColor();
+                popTypeBadgeColor();
 
-                // Bound (점 + 텍스트)
+                // Bound
                 ImGui::TableSetColumnIndex(2);
-                ImGui::PushStyleColor(ImGuiCol_Text, isBound ? ImVec4(0.55f, 1.0f, 0.55f, 1.0f)
+                ImGui::PushStyleColor(ImGuiCol_Text,
+                    isBound ? ImVec4(0.55f, 1.0f, 0.55f, 1.0f)
                     : ImVec4(1.0f, 0.55f, 0.55f, 1.0f));
-                GuiUtil::DrawBoundDot(isBound);
+                drawBoundDot(isBound);
                 ImGui::SameLine();
                 ImGui::TextUnformatted(isBound ? "Yes" : "No");
                 ImGui::PopStyleColor();
 
-                // Value/Editor
+                // Value
                 ImGui::TableSetColumnIndex(3);
-
-                // 한 줄에 딱 맞게 아이템 폭 조절
                 ImGui::PushItemWidth(-FLT_MIN);
-                TypeCheck(slotName, param);
+                editParamValue(slotName, param);
                 ImGui::PopItemWidth();
             }
 
             ImGui::EndTable();
 
             if (requestRemove && !removeKey.empty())
-                m_DynamicSlots.erase(removeKey);
+                slotsForPass.erase(removeKey);
         }
 
         ImGui::Spacing();
@@ -347,6 +440,8 @@ void CMaterialInstance::Render_GUI()
 
         ImGui::PopStyleVar(2);
     }
+
+    ImGui::PopID();
 }
 
 void CMaterialInstance::TypeCheck(const std::string& slotName, SHADER_PARAM& param)
@@ -364,11 +459,9 @@ void CMaterialInstance::TypeCheck(const std::string& slotName, SHADER_PARAM& par
             return;
         }
 
-        // 미니 썸네일
         const ImVec2 thumbSize(40, 40);
         ImGui::Image((ImTextureID)srvPtr, thumbSize);
 
-        // 호버 시 확대 툴팁
         if (ImGui::IsItemHovered())
         {
             ImGui::BeginTooltip();

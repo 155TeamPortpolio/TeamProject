@@ -438,6 +438,9 @@ namespace Engine
 		string TextureKey{};
 		string TexturePath{};
 
+		_bool useMask = false;
+		string MaskTextureTag{};
+
 		_float3 vOffsetPosition{};
 		_float4 vOffsetQuaternion{};
 		_float3 vRimLightColor{};
@@ -496,6 +499,8 @@ namespace Engine
 	{
 		string ModelTag{};
 		string MaterialTag{};
+
+		_float fPendingDuration{};
 
 		string DiffuseTextureTag{};
 		string NoiseTextureTag{};

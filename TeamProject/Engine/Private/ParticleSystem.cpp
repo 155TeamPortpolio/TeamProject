@@ -226,6 +226,7 @@ void CParticleSystem::Simulation_Particle(_float dt)
 void CParticleSystem::Reset()
 {
 	m_fSpawnAcc = 0.f;
+	m_iBurstCount = m_iMaxBurstCount;
 	m_IsPause = false;
 }
 
@@ -297,6 +298,7 @@ void CParticleSystem::ApplyPending()
 	m_fElapsedTime = 0.f;
 	m_IsLoop = m_PendingChanged.isLoop;
 	m_iBurstCount = m_PendingChanged.iBurstCount;
+	m_iMaxBurstCount = m_PendingChanged.iBurstCount;
 	m_fSpawnPerSec = m_PendingChanged.fSpawnPerSec;
 	m_fSpawnAcc = 0.f;
 	m_iSpawnParticleCount = 0;
