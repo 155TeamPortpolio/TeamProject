@@ -3,6 +3,7 @@
 #include "Helper_Func.h"
 #include "GameInstance.h"
 #include "CamDirector.h"
+#include "BattleSystem.h"
 
 /* Object */
 #include "Sacrifice.h"
@@ -138,11 +139,11 @@ void CSacrificeState_Attack_Phase2::BuildPattern(CSacrifice* pOwner)
 			}break;
 			case 1:
 			{
-				blackBoard.stateQueue.push_back("Attack04_Phase2");
+				//blackBoard.stateQueue.push_back("Attack04_Phase2");
 			}break;
 			case 2:
 			{
-				blackBoard.stateQueue.push_back("Attack03_Phase2");
+				//blackBoard.stateQueue.push_back("Attack03_Phase2");
 			}break;
 			case 3:
 			{
@@ -189,13 +190,13 @@ void CSacrificeState_Attack_01_Phase2::Update(CSacrifice* pOwner, _float dt)
 	}
 
 	CSacrifice::SACRIFICE_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
-	if (m_fAnimProgress >= 0.8f)
+	if (m_fAnimProgress >= 0.6f)
 	{
 		blackBoard.isChainOpen = true;
 		if (!blackBoard.stateQueue.empty())
 			blackBoard.isRequestNext = true;
 
-		pOwner->DeactiveWhip();
+		//pOwner->DeactiveWhip();
 	}
 
 	for (const auto& Event : pOwner->Get_Component<CAnimator3D>()->Get_EventBus())
@@ -550,7 +551,7 @@ void CSacrificeState_Attack_08_Phase2::Enter(CSacrifice* pOwner)
 	m_IsJumpStart = false;
 
 	_vector3 vCurrDir = pOwner->Get_Component<CTransform>()->Dir(STATE::LOOK);
-	_vector3 vTargetPos = pOwner->GetTargetingInfo().vTargetPos;
+	_vector3 vTargetPos = BattleSystem()->GetCurCharacterHandle().Get()->Get_Component<CTransform>()->Get_WorldPos();
 	m_vFirstTargetPosition = vTargetPos - vCurrDir * 2.f;
 }
 
@@ -620,7 +621,7 @@ void CSacrificeState_Attack_08_Phase2::Update_Move(CSacrifice* pOwner, _float dt
 	if (!m_IsJumpStart && m_fAnimProgress >= 0.12f)
 	{
 		_vector3 vCurrDir = pOwner->Get_Component<CTransform>()->Dir(STATE::LOOK);
-		_vector3 vTargetPos = pOwner->GetTargetingInfo().vTargetPos;
+		_vector3 vTargetPos = BattleSystem()->GetCurCharacterHandle().Get()->Get_Component<CTransform>()->Get_WorldPos();
 		m_vSecondTargetPosition = vTargetPos - vCurrDir * 2.f;
 		m_IsJumpStart = true;
 	}
@@ -631,15 +632,15 @@ void CSacrificeState_Attack_08_Phase2::Update_Move(CSacrifice* pOwner, _float dt
 		{
 			_vector3 vCurrPosition = pOwner->Get_Component<CTransform>()->Get_Pos();
 			_vector3 vNextPosition = _vector3::Lerp(vCurrPosition, m_vFirstTargetPosition, dt * 3.f);
-			_vector3 vVelocity = (vNextPosition - vCurrPosition) / dt;
-			pCCT->Move_Velocity(vVelocity, dt);
+			_vector3 vDeltaMove = (vNextPosition - vCurrPosition);
+			pCCT->Move_Displacement(vDeltaMove, dt);
 		}
 		else if (m_fAnimProgress < 0.5f)
 		{
 			_vector3 vCurrPosition = pOwner->Get_Component<CTransform>()->Get_Pos();
 			_vector3 vNextPosition = _vector3::Lerp(vCurrPosition, m_vSecondTargetPosition, dt * 3.f);
-			_vector3 vVelocity = (vNextPosition - vCurrPosition) / dt;
-			pCCT->Move_Velocity(vVelocity, dt);
+			_vector3 vDeltaMove = (vNextPosition - vCurrPosition);
+			pCCT->Move_Displacement(vDeltaMove, dt);
 		}
 	}
 }

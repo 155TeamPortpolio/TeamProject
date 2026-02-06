@@ -8,6 +8,7 @@
 #include "Room_Street.h"
 #include "Room_Lottery.h"
 #include "Room_Noodle.h"
+#include "Room_Gacha.h"
 
 // Camera
 #include "Camera.h"
@@ -22,6 +23,8 @@
 
 /* UI */
 #include "UIDirector.h"
+#include "Layer.h"
+#include "BackgroundNpc.h"
 
 CMainCity_Level::CMainCity_Level(const string& LevelKey)
 	:CLevel(LevelKey),
@@ -54,8 +57,15 @@ HRESULT CMainCity_Level::Awake()
 
 	Ready_Map("MainCity_Level", "MainCity");
 
-	CamDirector()->AutoField();
+	CamDirector()->AutoField(CamStartDir::Back);
 	FieldSystem()->SetActive(true);
+	//ObjectManager()->Get_Layer({"MainCity_Level", "PlacedObject_Layer"})->Set_RenderState(false);
+	//auto layer = ObjectManager()->Get_Layer({"MainCity_Level", "PlacedObject_Layer"});
+	pProto->Add_ProtoType("MainCity_Level", "Proto_GameObject_CBackgroundNpc", CBackgroundNpc::Create());
+	auto testBack = Builder::Create_Object({ "MainCity_Level","Proto_GameObject_CBackgroundNpc" }).Build("Back");
+
+	ObjectManager()->Add_Object(testBack, { "MainCity_Level","NPC_Layer" });
+
 
 	return S_OK;
 }
@@ -63,6 +73,11 @@ HRESULT CMainCity_Level::Awake()
 void CMainCity_Level::Update()
 {
 	FieldSystem()->Update();
+	auto layer = ObjectManager()->Get_Layer({"MainCity_Level","PlacedObject_Layer"});
+
+	if(InputDevice()->Key_Tap(VK_F4)) 
+		FieldSystem()->RequestEnter("Gacha", true);
+	//layer->Set_RenderState(false);
 }
 
 HRESULT CMainCity_Level::Render()
@@ -80,6 +95,7 @@ void CMainCity_Level::Ready_Map(const string& LevelTag, const string& AreaTag)
 	FieldSystem()->RegisterRoom(CRoom_Street::Create({ "MainCity" , true }));
 	FieldSystem()->RegisterRoom(CRoom_Lottery::Create({ "Lottery" , false }));
 	FieldSystem()->RegisterRoom(CRoom_Noodle::Create({ "Noodle" , false }));
+	FieldSystem()->RegisterRoom(CRoom_Gacha::Create({ "Gacha" , false }));
 	FieldSystem()->RequestEnter("MainCity", true);
 }
 

@@ -7,7 +7,8 @@ NS_END
 
 NS_BEGIN(UITool)
 
-enum class UISizeMode { Default, FHD, QHD, UHD };
+enum class UISizeMode     { Default, FHD, QHD, UHD };
+enum class UIColorTexMode { None, Replace, Multiply };
 
 class CUIObject_Tool abstract : public CUI_Object
 {
@@ -75,6 +76,23 @@ protected:
 	_bool	   m_isAspectRatioLocked = {};
 
 	_int	   m_iClipIndex = { -1 };
+
+protected:
+	string         m_colorTextureKey = "empty.png";
+	UIColorTexMode m_colorTexMode = UIColorTexMode::None;
+	_float         m_colorTexMix = 1.f;
+	_uint          m_colorTexModeU = 0;
+
+	_uint          m_colorUVUseU = 0;
+	Vector2        m_colorUVOffset = Vector2(0.f, 0.f);
+	Vector2        m_colorUVScale = Vector2(1.f, 1.f);
+
+	_bool          m_colorUVAutoScroll = false;
+	Vector2        m_colorUVSpeed = Vector2(0.f, 0.f);
+
+	_float         m_timelineTime;
+	_bool          m_timelineDragging;
+	_bool          m_timelineResumePlay;
 
 public:
 	virtual void Free() { __super::Free(); }

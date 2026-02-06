@@ -61,10 +61,10 @@ cbuffer LightBuffer : register(b9)
     vector vLightDiffuse;
     vector vLightAmbient;
     vector vLightSpecular;
-    float fLightRange;
-    float fLightIntensity;
-    int iLightSize;
-    float LightPadding;
+    float  fLightRange;
+    float  fLightIntensity;
+    float  fInnerCos;
+    float  fOuterCos;
 }
 
 cbuffer SSAOBuffer : register(b10)
@@ -114,6 +114,8 @@ Texture2D EffectTexture : register(t20);
 Texture2D EffectAccTexture : register(t21);
 Texture2D EffectBloomAccTextutre : register(t22);
 Texture2D RevealageTexture : register(t23);
+Texture2D RimLightAccTexture : register(t24);
+Texture2D EffectDiffuseTexture : register(t25);
 
 //─────────────UI─────────────
 Texture2D UI2DTexture : register(t30);

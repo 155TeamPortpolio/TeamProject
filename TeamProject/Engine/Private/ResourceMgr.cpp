@@ -36,7 +36,7 @@ CResourceMgr::CResourceMgr(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 HRESULT CResourceMgr::Initiallize()
 {
-	m_pPreloader = CPreloadScheduler::Create(CThreadPool::Create());
+	m_pPreloader = CPreloadScheduler::Create(ThreadPool());
 	Init_PreLoader();
 	return S_OK;
 }
@@ -141,25 +141,34 @@ HRESULT CResourceMgr::Sync_To_Level()
 	return S_OK;
 }
 
-
-
 CSoundData* CResourceMgr::Load_Sound(const string& levelTag, const string& soundKey)
 {
 	int index = ValidLevel(levelTag);
-	if (index == -1) {
-		MSG_BOX("Wrong Level Tag. :Load_Sound ");
-		return nullptr;
+	if (index == -1) return nullptr;
+
+	RS_Pool& pool = m_Resources[index];
+
+	{
+		lock_guard<mutex> lockGuard(pool.soundMutex);
+		auto it = pool.m_Sounds.find(soundKey);
+		if (it != pool.m_Sounds.end())
+			return it->second;
 	}
 
-	auto& map = m_Resources[index].m_Sounds;
-	auto iter = map.find(soundKey);
+	CSoundData* created = CSoundData::Create(MakePath(soundKey), soundKey);
+	if (!created) return nullptr;
 
-	if (iter != map.end()) return iter->second;
-
-	CSoundData* pData = CSoundData::Create(MakePath(soundKey), soundKey);
-	map.emplace(soundKey, pData);
-
-	return pData;
+	{
+		lock_guard<mutex> lockGuard(pool.soundMutex);
+		auto it = pool.m_Sounds.find(soundKey);
+		if (it != pool.m_Sounds.end())
+		{
+			Safe_Release(created);
+			return it->second;
+		}
+		pool.m_Sounds.emplace(soundKey, created);
+		return created;
+	}
 }
 
 CVIBuffer* CResourceMgr::Load_VIBuffer(const string& levelTag, const string& bufferKey, BUFFER_TYPE eType)
@@ -484,7 +493,47 @@ CTexture* CResourceMgr::Load_Texture(const string& levelTag, const string& textu
 
 ANIMATION_META CResourceMgr::Load_MetaClip(const string& levelTag, const string& MetaKey)
 {
-	int index = ValidLevel(levelTag);
+	//const string metaPath = Get_ResourcePath(MetaKey);
+	string metaPath = "../../Resources/Data/Meta/";
+	string foundPath;
+
+	for (const auto& entry : filesystem::directory_iterator(metaPath))
+	{
+		if (!entry.is_directory())
+			continue;
+
+		filesystem::path candidate = entry.path() / MetaKey;
+		if (filesystem::exists(candidate))
+		{
+			foundPath = candidate.string();
+			break;
+		}
+	}
+
+	if (metaPath.empty())
+	{
+		return {};
+	}
+
+	ANIM_META MetaData = Helper::LoadJson<ANIM_META>(foundPath);
+	
+	ANIMATION_META Meta;
+	const string animDir = MetaData.AnimPath;
+	Meta.PreTransform = MetaData.PreTransform;
+	Meta.pClips.reserve(MetaData.Clips.size());
+
+	if (animDir.empty()) return{};
+	const string key = "Resources/";
+	size_t pos = animDir.find(key);
+
+	pos += key.length();
+	size_t end = animDir.find('/', pos);
+	string LevelTag = animDir.substr(pos, end - pos) + "_Level";
+	
+	if (!levelTag.empty())
+		LevelTag = levelTag;
+
+	int index = ValidLevel(LevelTag);
 	if (index == -1) {
 		MSG_BOX("Wrong Level Tag. : Load_AnimClip");
 		return ANIMATION_META();
@@ -498,19 +547,11 @@ ANIMATION_META CResourceMgr::Load_MetaClip(const string& levelTag, const string&
 			return it->second;
 	}
 
-	const string metaPath = Get_ResourcePath(MetaKey);
-	const string animDir = filesystem::path(metaPath).parent_path().string();
-
-	ANIM_META MetaData = Helper::LoadJson<ANIM_META>(metaPath);
-
-	ANIMATION_META Meta;
-	Meta.PreTransform = MetaData.PreTransform;
-	Meta.pClips.reserve(MetaData.Clips.size());
-
-	for (auto& DataClip : MetaData.Clips) {
-
-		string animPath = animDir + "\\Anim\\" + DataClip.ClipTag + ".anim";
+	for (auto& DataClip : MetaData.Clips)
+	{
+		string animPath = animDir + DataClip.ClipTag + ".anim";
 		CAnimationClip* pClip = CAnimationClip::Create(animPath);
+
 
 		if (!DataClip.Events.empty())
 			pClip->Set_Events(DataClip.Events);
@@ -810,50 +851,49 @@ void CResourceMgr::Load_InitialResource()
 			MSG_BOX("Failed to preload Default.mat");
 	}
 }
- 
 _bool CResourceMgr::RequestPreload(const PreloadKey& key)
 {
 	PreloadKey tmpKey = key;
-	int index = ValidLevel(tmpKey.levelKey);
-	if (index == -1) {
-		return false;
-	}
 
-	auto& pool =  m_Resources[index];
+	int index = ValidLevel(tmpKey.levelKey);
+	if (index == -1)
+		return false;
+
+	auto& pool = m_Resources[index];
+
 	switch (tmpKey.type)
 	{
 	case Engine::ResourceType::Texture:
-		if(pool.m_Textures.count(tmpKey.resourceKey))
-			return false;
-	case Engine::ResourceType::Sound:
-		if (pool.m_Sounds.count(tmpKey.resourceKey))
-			return false;
-	case Engine::ResourceType::Shader:
-		if (pool.m_Shaders.count(tmpKey.resourceKey))
-			return false;
-	case Engine::ResourceType::Model:
-		if (pool.m_ModelDatas.count(tmpKey.resourceKey))
-			return false;
-	case Engine::ResourceType::Material:
-		if (pool.m_MaterialInstances.count(tmpKey.resourceKey))
-			return false;
-	case Engine::ResourceType::ComputeShader:
-		if (pool.m_ComputeShaders.count(tmpKey.resourceKey))
-			return false;
-	case Engine::ResourceType::Animation:
-		if (pool.m_AnimationMetas.count(tmpKey.resourceKey))
-			return false;
-	case Engine::ResourceType::Effect:
-		if (pool.m_EffectAssets.count(tmpKey.resourceKey))
-			return false;
-	case Engine::ResourceType::None:
-			return false;
-	default:
+		if (pool.m_Textures.count(tmpKey.resourceKey)) return false;
 		break;
+	case Engine::ResourceType::Sound:
+		if (pool.m_Sounds.count(tmpKey.resourceKey)) return false;
+		break;
+	case Engine::ResourceType::Shader:
+		if (pool.m_Shaders.count(tmpKey.resourceKey)) return false;
+		break;
+	case Engine::ResourceType::Model:
+		if (pool.m_ModelDatas.count(tmpKey.resourceKey)) return false;
+		break;
+	case Engine::ResourceType::Material:
+		if (pool.m_MaterialInstances.count(tmpKey.resourceKey)) return false;
+		break;
+	case Engine::ResourceType::ComputeShader:
+		if (pool.m_ComputeShaders.count(tmpKey.resourceKey)) return false;
+		break;
+	case Engine::ResourceType::Animation:
+		if (pool.m_AnimationMetas.count(tmpKey.resourceKey)) return false;
+		break;
+	case Engine::ResourceType::Effect:
+		if (pool.m_EffectAssets.count(tmpKey.resourceKey)) return false;
+		break;
+	default:
+		return false;
 	}
 
-	return m_pPreloader->Request(key);
+	return m_pPreloader->Request(tmpKey);
 }
+
 
 void CResourceMgr::PumpPreloads(vector<PreloadCompleted>& outCompleted)
 {

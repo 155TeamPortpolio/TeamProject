@@ -79,6 +79,27 @@ ENGINE_DLL _float Math::MoveTowards(_float cur, _float target, _float maxDelta)
 	return cur + (d > 0.f ? maxDelta : -maxDelta);
 }
 
+// 특정 방향에 대하여 오른쪽 수직
+ENGINE_DLL _vector3 Math::PerpRightXZ(const _vector3& v)
+{
+	return _vector3(v.z, 0.f, -v.x);
+}
+// 특정 방향에 대하여 왼쪽 수직
+ENGINE_DLL _vector3 Math::PerpLeftXZ(const _vector3& v)
+{
+	return  _vector3(-v.z, 0.f, v.x);
+}
+
+/*x,z 평면상의 방향값만 노말라이즈 해줌*/
+ENGINE_DLL _vector3 Math::NormalizeSafeXZ(_vector3 v)
+{
+	v.y = 0.f;
+	float lenSq = v.LengthSquared();
+	if (lenSq < 1e-8f) return _vector3(0.f, 0.f, 1.f);
+	v /= sqrtf(lenSq);
+	return v;
+}
+
 ENGINE_DLL _float Math::ApplyEase(EaseType type, _float t)
 {
 	t = clamp(t, 0.f, 1.f);
@@ -353,6 +374,36 @@ ENGINE_DLL _vector3 Math::RotateVectorByQuaternion(const _vector3& vec, const _v
 	out.y = XMVectorGetY(r);
 	out.z = XMVectorGetZ(r);
 	return out;
+}
+
+ENGINE_DLL _vector3 Math::DampVector( _vector3 curDir,  _vector3 targetDir, _float dt, _float dampSpeed)
+{
+	curDir.y = 0.f;
+	targetDir.y = 0.f;
+
+	if (curDir.Length() <= 1e-6f)
+		return targetDir;
+	if (targetDir.Length() <= 1e-6f)
+		return curDir;
+
+	curDir.Normalize();
+	targetDir.Normalize();
+
+	// 완전 반대(-1) 근처면 lerp가 0으로 가서 튐 -> 그냥 타겟으로 스냅(또는 유지)
+	const _float dot = curDir.Dot(targetDir);
+	if (dot < -0.999f)
+		return targetDir;
+
+	const _float t = 1.f - expf(-dampSpeed * dt);
+
+	_vector3 blended = curDir * (1.f - t) + targetDir * t;
+	blended.y = 0.f;
+
+	if (blended.Length() <= 1e-6f)
+		return targetDir;
+
+	blended.Normalize();
+	return blended;
 }
 
 ENGINE_DLL _float Math::EaseInOutBounce(_float t)

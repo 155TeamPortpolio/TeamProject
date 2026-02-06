@@ -17,6 +17,9 @@ public:
     void Priority_Update(_float dt) override;
     void Update(_float dt) override;
     void Late_Update(_float dt) override;
+
+    virtual void OnPooledAcquire(INIT_DESC* pArg = nullptr);
+    virtual void OnPooledRelease();
     
 public:
     virtual void Play() override;
@@ -28,6 +31,8 @@ public:
     virtual void Free() override;
 
 protected:
+    _bool m_UseMask = false;
+    string m_MaskTextureTag{};
 
 };
 NS_END

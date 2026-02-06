@@ -1,0 +1,323 @@
+{
+  "AnimPath" : "../bin/Resources/Zero/Enemy/ThugBulkyEnforcer/Anim/",
+  "PreTransform": {
+    "_11": -0.009999999776482582,
+    "_12": 0.0,
+    "_13": -1.1920929798847624e-09,
+    "_14": 0.0,
+    "_21": 0.0,
+    "_22": 0.009999999776482582,
+    "_23": 0.0,
+    "_24": 0.0,
+    "_31": 1.1920929798847624e-09,
+    "_32": 0.0,
+    "_33": -0.009999999776482582,
+    "_34": 0.0,
+    "_41": 0.0,
+    "_42": 0.0,
+    "_43": 0.0,
+    "_44": 1.0
+  },
+  "Clips": [
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Attack_01",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Attack_02",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Attack_03",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Attack_04",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Attack_05_01",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Attack_05_02",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Born",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Death_Back",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Death_Front",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Death_Stay",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Debuff_Stun_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Debuff_Stun_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Debuff_Stun_Start_Back",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Debuff_Stun_Start_Front",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Evade",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Galgame_Angry_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Galgame_Angry_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Galgame_Angry_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Galgame_Happy_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Galgame_Happy_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Galgame_Happy_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Galgame_Idle",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Galgame_Sad_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Galgame_Sad_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Galgame_Sad_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Galgame_Surprise_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Galgame_Surprise_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Galgame_Surprise_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Hit_H_Back",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Hit_H_Front",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Hit_L_Back_Down",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Hit_L_Back_Left",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Hit_L_Back_Right",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Hit_L_Back_Up",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Hit_L_Front_Down",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Hit_L_Front_Left",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Hit_L_Front_Right",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Hit_L_Front_Up",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Hit_Parry_Left",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Hit_Parry_Right",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Hit_Shake",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Hit_Stay",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Idle",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Ignite",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Ignite_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_MainCity_Stand_Happy_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_MainCity_Stand_Idle01",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_MainCity_Stand_Idle02",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_MainCity_Stand_Idle03",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_MainCity_Stand_Idle04",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_MainCity_Stand_Sad_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Run",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Run_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Run_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_SideStep_L",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_SideStep_R",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Stun_Hit_H_Back",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Stun_Hit_H_Front",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Stun_Hit_L_Back_Down",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Stun_Hit_L_Back_Left",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Stun_Hit_L_Back_Right",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Stun_Hit_L_Back_Up",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Stun_Hit_L_Front_Down",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Stun_Hit_L_Front_Left",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Stun_Hit_L_Front_Right",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Stun_Hit_L_Front_Up",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Stun_Hit_Stay",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Walk_B",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Walk_F",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Walk_F_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Walk_FL_RFoot",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Walk_FR_RFoot",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Walk_L",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Walk_R",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Walk_RF_LFoot",
+      "Events": []
+    }
+  ]
+}

@@ -45,9 +45,9 @@ void CCorinState_Evade::Update(CCorin* pOwner, _float dt)
 {
     __super::Update(pOwner, dt);
 
-    if (m_fAnimProgress >= 0.1f)
+    if (m_fAnimProgress < 0.15f && m_fAnimProgress >= 0.02f)
     {
-        if (pOwner->Can_Parry() && !m_pSubStateMachine->Get_Bool("Extreme"))
+        if (pOwner->Is_Perfect() && !m_pSubStateMachine->Get_Bool("Extreme"))
         {
             BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::EVADE);
             m_pSubStateMachine->Set_Bool("Extreme", true);

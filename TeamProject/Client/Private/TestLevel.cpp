@@ -12,6 +12,7 @@
 #include "BattleSystem.h"
 #include "FieldSystem.h"
 #include "DataBase.h"
+#include "MonsterSpawnConsole.h"
 
 // Camera
 #include "Camera.h"
@@ -52,6 +53,9 @@
 #include "Defiler.h"
 #include "ThugPoacher.h"
 #include "ThugPoacher_Arrow.h"
+#include "Claymore.h"
+#include "Cyclops.h"
+#include "Cyclops_Spit.h"
 
 /*npc*/
 #include "OfficeMeow.h"
@@ -63,12 +67,16 @@
 
 /* UI */
 #include "UIDirector.h"
+#include "TestVideo.h"
 
 /* Interactable */
 #include "Portal.h"
 
 /* ShaderTest */
 #include "TestCloud.h"
+
+// test
+#include "ZeroPortal.h"
 
 CTestLevel::CTestLevel(const string& LevelKey)
 	:CLevel(LevelKey),
@@ -86,7 +94,12 @@ HRESULT CTestLevel::Initialize()
 
 
 	RenderSystem()->Set_FogDesc({ _float4(0.12f, 0.25f, 0.35f, 1.0f),0.f, 0.f, 0.005f, true });
-
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_ZeroPortal", CZeroPortal::Create());
+	auto pPortal = Builder::Create_Object({ G_GlobalLevelKey,"Proto_GameObject_ZeroPortal" })
+		.Position(_float3(0.f,6.f,0.f))
+		.Build("Portal");
+	
+	ObjectManager()->Add_Object(pPortal, { "Test_Level","Portal" });
 	return S_OK;
 }
 
@@ -148,6 +161,11 @@ HRESULT CTestLevel::Awake()
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Defiler", CDefiler::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_ThugPoacher", CThugPoacher::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_ThugPoacher_Arrow", CThugPoacher_Arrow::Create());
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Claymore", CClaymore::Create());
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Cyclops", CCyclops::Create());
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Cyclops_Spit", CCyclops_Spit::Create());
+
+
 
 	CBattleSystem::GetInstance()->ReadyBattle("TrainingRoom", 1);
 	// It will be changed soooooon
@@ -157,10 +175,15 @@ HRESULT CTestLevel::Awake()
 	//Ready_TestObject();
 	//Ready_Npc();
 
-	CamDirector()->StartBattleIntro(CamSeqType::BattleIntro);
+	CamDirector()->StartBattleIntro(CamSeqType::ZeroIntro);
+	//CamDirector()->AutoBattle(CamStartDir::Back);
 	//CUIDirector::GetInstance()->Show_SceneFrame();
 	CUIDirector::GetInstance()->Show_HUD(CUIDirector::HUD::BATTLE);
 	//GameInstance()->Set_EngineTimeScale(0.05f);
+
+#ifdef  _USING_GUI
+	Ready_MonsterSpawnConsole();
+#endif
 
 	return S_OK;
 }
@@ -183,19 +206,19 @@ void CTestLevel::Update()
 	}
 	
 	// [`] 
-	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Tap(VK_OEM_3)) {
-		CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_ThugBulkyEnforcer", { -0.18f, 0.f,1.59f });
-	}	
-	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Tap(VK_F6)) {
-		CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_ThugAssaulter", { -0.18f, 0.f,5.f });
-	}
-
-	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Tap(VK_F7)) {
-		CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_ThugPoacher", { -0.18f, 0.f, 7.f });
-	}
-	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Tap(VK_F8)) {
-		CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_Defiler", { -0.18f, 0.f,5.f });
-	}
+	//if (CGameInstance::GetInstance()->Get_InputDev()->Key_Tap(VK_OEM_3)) {
+	//	CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_ThugBulkyEnforcer", { -0.18f, 0.f,1.59f });
+	//}	
+	//if (CGameInstance::GetInstance()->Get_InputDev()->Key_Tap(VK_F6)) {
+	//	CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_ThugAssaulter", { -0.18f, 0.f,5.f });
+	//}
+	//
+	//if (CGameInstance::GetInstance()->Get_InputDev()->Key_Tap(VK_F7)) {
+	//	CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_ThugPoacher", { -0.18f, 0.f, 7.f });
+	//}
+	//if (CGameInstance::GetInstance()->Get_InputDev()->Key_Tap(VK_F8)) {
+	//	CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_Defiler", { -0.18f, 0.f,5.f });
+	//}
 }
 
 void CTestLevel::Ready_Map(const string& LevelTag, const string& AreaTag)
@@ -356,6 +379,21 @@ void CTestLevel::Ready_Npc()
 
 	objMgr->Add_Object(testHowl, { "Test_Level", "Npc_Layer" });
 }
+
+#ifdef  _USING_GUI
+HRESULT CTestLevel::Ready_MonsterSpawnConsole()
+{
+	auto pGuiSystem = m_pGameInstance->Get_GUISystem();
+
+	CMonsterSpawnConsole* pConsole = CMonsterSpawnConsole::Create(pGuiSystem->Get_Context());
+	if (nullptr == pConsole)
+		return E_FAIL;
+
+	pGuiSystem->Register_Panel(pConsole); 
+	
+	return S_OK;
+}
+#endif
 
 HRESULT CTestLevel::Render()
 {

@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "OrbitCam.h"
-#include "OrbitCamCollider.h"
+#include "CamOcclusionTracker.h"
 #include "ICamCollidable.h"
 // Engine
 #include "GameInstance.h"
@@ -66,7 +66,6 @@ HRESULT COrbitCam::Initialize_Prototype()
     __super::Initialize_Prototype();
     Add_Component<CCharacterController>();
     Add_Component<CEventListener>();
-    Add_Component<CObjectContainer>();
 
     m_pose.rotGoalDeg = Vector2(0.f, m_prof.startPitchDeg);
     m_pose.rotCurDeg = m_pose.rotGoalDeg;
@@ -100,8 +99,6 @@ HRESULT COrbitCam::Initialize(INIT_DESC* pArg)
             else ClearLockOn();
         });
 
-    Create_OrbitCollider();
-
     return S_OK;
 }
 
@@ -116,7 +113,7 @@ void COrbitCam::SetTarget(OBJECT_HANDLE h)
         m_target = h;
 
         Switch_Reset();
-        AutoYaw_OnTarget();
+        AutoYaw_OnTarget(); 
 
         m_pose.pivotInternalOffset = Vector3::Zero;
         m_pose.rotGoalDeg = m_pose.rotCurDeg;
@@ -356,8 +353,6 @@ void COrbitCam::ApplyCollide(_float dt)
 
 void COrbitCam::Priority_Update(_float dt)
 {
-    Get_Component<CObjectContainer>()->Priority_UpdateChild(dt);
-
     if (SkipUpdate(dt)) return;
 
     UpdateSwitch(dt);
@@ -415,17 +410,84 @@ void COrbitCam::Priority_Update(_float dt)
     m_pose.distCur = m_pose.distCur + (m_pose.distGoal - m_pose.distCur) * distA;
 
     ApplyPose(dt, lockRes);
+    EvalOcclusion();
 }
 
-void COrbitCam::Update(_float dt)
+void COrbitCam::EvalOcclusion()
 {
-    Get_Component<CObjectContainer>()->UpdateChild(dt);
+    m_occlusion.BeginFrame();
+
+    auto scene = PhysicsSystem()->Get_Scene();
+    if (!scene) { m_occlusion.Dispatch(); return; }
+
+    const Vector3 pivot = GetPivotPos();
+    const Vector3 camPos = m_pTransform->Get_WorldPos();
+
+    Vector3 seg = camPos - pivot;
+    const float maxDist = seg.Length();
+    if (maxDist <= 0.f) { m_occlusion.Dispatch(); return; }
+
+    const Vector3 dir = seg / maxDist;
+
+    struct Filter final : PxQueryFilterCallback
+    {
+        OBJECT_HANDLE ignoreA{};
+        OBJECT_HANDLE ignoreB{};
+
+        PxQueryHitType::Enum preFilter(const PxFilterData&, const PxShape* shape, const PxRigidActor* actor, PxHitFlags&) override
+        {
+            if (!actor) return PxQueryHitType::eNONE;
+            if (shape && (shape->getFlags() & PxShapeFlag::eTRIGGER_SHAPE)) return PxQueryHitType::eNONE;
+
+            auto obj = reinterpret_cast<CGameObject*>(actor->userData);
+            if (!obj) return PxQueryHitType::eNONE;
+
+            OBJECT_HANDLE h = obj->Get_Handle();
+            if (h == ignoreA) return PxQueryHitType::eNONE;
+            if (h == ignoreB) return PxQueryHitType::eNONE;
+
+            return PxQueryHitType::eTOUCH;
+        }
+
+        PxQueryHitType::Enum postFilter(const PxFilterData&, const PxQueryHit&) override
+        {
+            return PxQueryHitType::eTOUCH;
+        }
+    } filter;
+
+    filter.ignoreA = m_target;
+    filter.ignoreB = Lock_Handle();
+
+    PxQueryFilterData filterData;
+    filterData.flags = PxQueryFlag::eSTATIC | PxQueryFlag::eDYNAMIC | PxQueryFlag::ePREFILTER | PxQueryFlag::eNO_BLOCK;
+
+    PxRaycastBufferN<64> buf;
+    PxHitFlags hitFlags = PxHitFlag::ePOSITION | PxHitFlag::eNORMAL;
+
+    const PxVec3 originPx(pivot.x, pivot.y, pivot.z);
+    const PxVec3 dirPx(dir.x, dir.y, dir.z);
+
+    const _bool ok = scene->raycast(originPx, dirPx, maxDist, buf, hitFlags, filterData, &filter);
+    if (ok)
+    {
+        for (PxU32 i = 0; i < buf.nbTouches; ++i)
+        {
+            const PxRaycastHit& h = buf.touches[i];
+
+            auto obj = reinterpret_cast<CGameObject*>(h.actor->userData);
+            if (!obj) continue;
+
+            const Vector3 hitPos(h.position.x, h.position.y, h.position.z);
+            const Vector3 hitN(h.normal.x, h.normal.y, h.normal.z);
+            const _float hitDist = (_float)h.distance;
+
+            m_occlusion.AddHit(obj, hitPos, hitN, hitDist);
+        }
+    }
+
+    m_occlusion.Dispatch();
 }
 
-void COrbitCam::Late_Update(_float dt)
-{
-    Get_Component<CObjectContainer>()->Late_UpdateChild(dt);
-}
 
 void COrbitCam::ClampTargets()
 {
@@ -462,8 +524,6 @@ void COrbitCam::ApplyPose(_float dt, const OrbitLockEval& lockRes)
 
     m_pTransform->Set_WorldPos(Vector4(camPos.x, camPos.y, camPos.z, 1.f));
 
-    UpdateOccluderTrigger(pivot, camPos);
-
     if (lockRes.weight > 0.f)
     {
         Vector3 lookAt = Vector3::Lerp(pivot, lockRes.focusPos, lockRes.weight);
@@ -473,8 +533,6 @@ void COrbitCam::ApplyPose(_float dt, const OrbitLockEval& lockRes)
 
     m_pTransform->Set_WorldQuaternion(XMVectorSet(q.x, q.y, q.z, q.w));
 }
-
-
 
 Vector3 COrbitCam::GetFoot() const
 {
@@ -554,8 +612,6 @@ _float COrbitCam::EvalAutoYaw(_float dt, const Vector3& foot, const Vector3& cam
 
     return deltaYawDeg * a;
 }
-
-
 
 void COrbitCam::Switch_Begin(const Vector3& holdPivotWorld)
 {
@@ -666,7 +722,7 @@ _float COrbitCam::CalcAllowDist(const OrbitProfile& prof, PxScene* scene, Engine
     PxQueryFilterData filterData;
     filterData.flags = PxQueryFlag::eSTATIC | PxQueryFlag::ePREFILTER;
 
-    CRaycastFilterCallback filterCallback(ENUM(COLLISION_GROUP::COMMON), false);
+    CRaycastFilterCallback filterCallback(ENUM(COLLISION_GROUP::COMMON) + ENUM(COLLISION_GROUP::GROUND), false);
 
     _float minAllowed = distWanted;
 
@@ -701,7 +757,6 @@ _float COrbitCam::CalcAllowDist(const OrbitProfile& prof, PxScene* scene, Engine
     return minAllowed;
 }
 
-
 void COrbitCam::SmoothPose(_float dt)
 {
     float rotA = 1.f - expf(-m_prof.rotSmooth * dt);
@@ -716,53 +771,6 @@ void COrbitCam::SmoothPose(_float dt)
     pivotA = clamp(pivotA, 0.f, 1.f);
     m_pose.pivotCurWorld = m_pose.pivotCurWorld + (m_pose.pivotGoalWorld - m_pose.pivotCurWorld) * pivotA;
 }
-
-void COrbitCam::UpdateOccluderTrigger(const Vector3& pivotWorld, const Vector3& camWorld)
-{
-    if (!m_occluderTrigger.isValid()) return;
-
-    auto obj = ObjectManager()->Request_Object(m_occluderTrigger);
-    if (!obj) return;
-
-    auto tr = obj->Get_Component<CTransform>();
-    if (!tr) return;
-
-    constexpr float kStartPad = 0.25f;
-    constexpr float kEndPad = 0.15f;
-
-    constexpr float kWidth = 0.7f;
-    constexpr float kHeight = 0.7f;
-
-    constexpr float kMinLen = 0.05f;
-
-    Vector3 dir = camWorld - pivotWorld;
-    float dist = dir.Length();
-    if (dist <= 0.001f) return;
-
-    dir /= dist;
-
-    Vector3 a = pivotWorld + dir * kStartPad;
-    Vector3 b = camWorld - dir * kEndPad;
-
-    Vector3 ab = b - a;
-    float len = ab.Length();
-
-    if (len < kMinLen)
-    {
-        len = kMinLen;
-        b = a + dir * len;
-    }
-
-    Vector3 mid = (a + b) * 0.5f;
-
-    Quaternion rot = MakeLookRotation(dir);
-
-    tr->Set_WorldPos(Vector4(mid.x, mid.y, mid.z, 1.f));
-    tr->Set_WorldQuaternion(XMVectorSet(rot.x, rot.y, rot.z, rot.w));
-
-    tr->Scale(Vector3(kWidth, kHeight, len));
-}
-
 
 void COrbitCam::Lock_Reset()
 {
@@ -935,7 +943,7 @@ void COrbitCam::CalcRotDeg(const Vector3& lookDir, Vector2& outRotDeg) const
 void COrbitCam::GetBasePivot(const OBJECT_HANDLE& h, Vector3& outFootWorld, Vector3& outBasePivotWorld) const
 {
     auto obj = ObjectManager()->Request_Object(h);
-    auto cc = obj->Get_Component<Engine::CCharacterController>();
+    auto cc = obj->Get_Component<CCharacterController>();
 
     const Vector4 foot4 = cc->Get_FootPosition();
     outFootWorld = Vector3(foot4.x, foot4.y, foot4.z);
@@ -1019,32 +1027,6 @@ Vector3 COrbitCam::PivotStab_Eval(_float dt, const Vector3& rawPivot)
     m_pivotStab.filteredPivot = LerpVec(m_pivotStab.filteredPivot, rawPivot, aPos);
 
     return m_pivotStab.filteredPivot;
-}
-
-void COrbitCam::Create_OrbitCollider()
-{
-    PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_OrbitCamCollider", COrbitCamCollider::Create());
-
-    RIGIDBODY_DESC rb{};
-    rb.isKinematic = true;
-    rb.bEnableGravity = false;
-
-    COLLIDER_DESC col{};
-    col.eType = COLLIDER_TYPE::SPHERE;
-    col.eGroup = COLLISION_GROUP::CAMERA;
-    col.iCollisionMask = ENUM(COLLISION_GROUP::INTERACTABLE);
-    col.bAutoFit = false;
-    col.bTrigger = true;
-    col.vCenter = _float3(0.f, 0.f, 0.f);
-    col.vSize = _float3(1.f, 1.f, 1.f);
-
-    CGameObject* occluder = Builder::Create_Object({G_GlobalLevelKey, "Proto_GameObject_OrbitCamCollider"})
-        .RigidBody(rb)
-        .Collider(col)
-        .Build("OrbitCamCollider");
-
-    m_occluderTrigger = occluder->Get_Handle();
-    Get_Component<CObjectContainer>()->Add_Child(occluder, false);
 }
 
 COrbitCam* COrbitCam::Create()

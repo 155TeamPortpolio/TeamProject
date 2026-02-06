@@ -8,14 +8,44 @@
 #include "BattlePlayer.h"
 #include "DataBase.h"
 #include "Enemy.h"
+#include "Character.h"
+#include "CharacterController.h"
+#include "Layer.h"
+#include "Zero_Level.h"
+#include "StageRouter.h"
+#include "ZeroPortal.h"
 
 CStage::CStage()
 {
 }
 
-void CStage::StageChangeOn(StageType nextStageType, _int StageID)
+HRESULT CStage::Exit_Stage(StageContext& context)
+{
+	BattleSystem()->ClearBattleStage();
+
+	m_introFlowBuilt = false;
+	m_outroFlowBuilt = false;
+	m_iNextChoice = { -1 };
+
+	/*데이터 - 몬스터*/
+	m_MonsterData.Reset();
+	m_pMonsters.clear();
+
+	for (size_t i = 0; i < m_pPortals.size(); i++)
+		ObjectManager()->Remove_Object(m_pPortals[i]);
+	m_pPortals.clear();
+
+	for (size_t i = 0; i < m_MapObjects.size(); i++)
+		m_MapObjects[i].Delete();
+
+	m_MapObjects.clear();
+	return S_OK;
+}
+
+void CStage::StageChangeOn(_int choiceIndex)
 {
 	m_eStageStage = StageState::Outro;
+	m_iNextChoice = choiceIndex;
 }
 
 void CStage::Ready_Map(const string& LevelTag, const string& AreaTag)
@@ -25,14 +55,15 @@ void CStage::Ready_Map(const string& LevelTag, const string& AreaTag)
 		MSG_BOX("Failed to Load MapData!");
 	Safe_Release(pMapLoader);
 
-	const CASHED_OBJ_DATA* datas =  CDataBase::GetInstance()->Get_CashedData(AreaTag);
+	const CASHED_OBJ_DATA* datas = CDataBase::GetInstance()->Get_CashedData(AreaTag);
 	if (datas->Battle.HasBattleData) {
 		ReadyPlayerPoint(datas->Battle.PlayerPoint);
 		ReadyMonsterPoint(datas->Battle.MonsterPoint);
-		ReadyPortalPoint(datas->Battle.MonsterPoint);
+		ReadyPortalPoint(datas->Battle.PortalPoint);
 		datas->Battle.Spawner; /*보류*/
 		ReadyMonsterData(LevelTag, AreaTag);
 	}
+	m_MapObjects.reserve(100);
 
 	/*아직 저장 안함*/
 	auto& Entity = datas->Entity;
@@ -40,6 +71,7 @@ void CStage::Ready_Map(const string& LevelTag, const string& AreaTag)
 	{
 		data.DataName;
 		data.Handle;
+		m_MapObjects.push_back(data.Handle);
 	}
 
 	auto& MapObj = datas->MapObj;
@@ -47,6 +79,7 @@ void CStage::Ready_Map(const string& LevelTag, const string& AreaTag)
 	{
 		data.DataName;
 		data.Handle;
+		m_MapObjects.push_back(data.Handle);
 	}
 
 	auto& InvisibleWall = datas->InvWall;
@@ -54,6 +87,7 @@ void CStage::Ready_Map(const string& LevelTag, const string& AreaTag)
 	{
 		data.DataName;
 		data.Handle;
+		m_MapObjects.push_back(data.Handle);
 	}
 
 	auto& Trigger = datas->Trigger;
@@ -61,13 +95,133 @@ void CStage::Ready_Map(const string& LevelTag, const string& AreaTag)
 	{
 		data.DataName;
 		data.Handle;
+		m_MapObjects.push_back(data.Handle);
 	}
+}
+
+void CStage::Active_Enemy()
+{
+	for (auto* pMonster : m_pMonsters)
+	{
+		if (!pMonster) continue;
+		pMonster->Set_Alive(true);
+		BattleSystem()->EnterBattleObject(BATTLE_OBJ_TYPE::MONSTER, pMonster->Get_Handle());
+	}
+}
+
+void CStage::Active_Player(PlayerPoint pointType)
+{
+	if (!m_PlayerHandle.isValid())
+		return;
+
+	auto character = m_PlayerHandle.GetAs<CCharacter>();
+	if (!character)
+		return;
+
+	auto point = m_PlayerPoint[ENUM(pointType)];
+	//point.pos.y += 1.f;
+
+	character->Get_CCT()->Set_FootPosition(_vector3{ point.pos.x, point.pos.y, point.pos.z });
+	character->Get_Component<CTransform>()->Rotate(_vector3(point.rotation));
+}
+
+void CStage::Active_Portal()
+{
+	auto pRouter = m_pOwnerLevel->Get_Router();
+	const int choiceCount = pRouter->GetChoiceCount();
+	if (choiceCount <= 0) return;
+	if (m_pPortals.empty()) return;
+	
+	for (size_t i = 0; i < choiceCount; i++)
+	{
+		if (!m_pPortals[i]) continue;
+
+		auto* zeroPortal = dynamic_cast<CZeroPortal*>(m_pPortals[i]);
+		if (zeroPortal) {
+			zeroPortal->Set_Alive(true);
+			zeroPortal->SetChoiceIndex(this,i);
+		}
+	}
+}
+
+HRESULT CStage::ReadyPlayerPoint(const vector<BATTLE_POINT_DATA>& point)
+{
+	if (point.empty()) {
+		MSG_BOX("No Player Point : CStage ReadyMap");
+		return E_FAIL;
+	}
+
+	for (size_t i = 0; i < point.size(); i++)
+	{
+		auto translation = point[i].vTranslation;
+		auto rotation = point[i].vRotation;
+
+		m_PlayerPoint[i].pos= { translation[0], translation[1], translation[2],1.f };
+		m_PlayerPoint[i].rotation= { rotation[0], rotation[1], rotation[2] };
+	}
+
+	return S_OK;
+}
+HRESULT CStage::ReadyPortalPoint(const vector<BATTLE_POINT_DATA>& point)
+{
+	if (point.empty()) {
+		return S_OK;
+	}
+
+	for (size_t i = 0; i < point.size(); i++)
+	{
+		auto trans = point[i].vTranslation;
+		auto portal = Builder::Create_Object({ "Zero_Level" ,"Proto_GameObject_ZeroPortal" })
+			.Position({ trans[0],  trans[1] + 1.5f,  trans[2] })
+			.Build("zeroPortal#" + to_string(i));
+		portal->Set_Alive(false);
+		m_pPortals.push_back(portal);
+		ObjectManager()->Add_Object(m_pPortals[i], { "Zero_Level","Portal_Layer" });
+	}
+
+	return S_OK;
+}
+HRESULT CStage::ReadyMonsterPoint(const vector<BATTLE_POINT_DATA>& point)
+{
+	if (point.empty()) {
+		return S_OK;
+	}
+
+	for (size_t i = 0; i < point.size(); i++)
+		m_MonsterData.SpawnPoint.push_back(
+			{ point[i].vTranslation[0],point[i].vTranslation[1],point[i].vTranslation[2] }
+		);
+
+	return S_OK;
+}
+HRESULT CStage::ReadyMonsterData(const string& LevelTag, const string& AreaTag)
+{
+	auto* monsterSpawnMap = CDataBase::GetInstance()->GetMonsterSpawnData(AreaTag, ENUM(m_eType));
+	if (!monsterSpawnMap)
+		return E_FAIL;
+
+	auto iterator = monsterSpawnMap->find(0);
+	if (iterator == monsterSpawnMap->end())
+		return E_FAIL;
+
+	const auto& monsterSpawnData = iterator->second;
+
+	for (size_t index = 0; index < monsterSpawnData.size(); ++index)
+	{
+		auto creation = CDataBase::GetInstance()->GetMonsterDesc(
+			monsterSpawnData[index].Colony,
+			monsterSpawnData[index].MonsterID);
+
+		_int count = monsterSpawnData[index].Count;
+		m_MonsterData.CreationData.push_back({ creation, count });
+	}
+
+	return S_OK;
 }
 
 void CStage::Reserve_Enemy(const string& LevelTag)
 {
 	auto& data = m_MonsterData.CreationData;
-	m_MonsterData.SpawnPoint;
 	_int spawn = {};
 	for (size_t i = 0; i < data.size(); i++)
 	{
@@ -88,84 +242,18 @@ void CStage::Reserve_Enemy(const string& LevelTag)
 			auto pMonster = Builder::Create_Object({ "Zero_Level",data[i].creationInfo.ProtoTag })
 				.Add_ObjDesc(enemyDesc)
 				.CharacterController(MonsterCCT)
-				.FromPool()
 				.Build(data[i].creationInfo.DisplayName);
 
 			if (pMonster) {
 				m_pMonsters.push_back(pMonster);
+				pMonster->Set_Alive(false);
+				CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(pMonster, { "Zero_Level", "Enemy_Layer" });
 				spawn += 1;
 			}
 		}
 	}
 }
-
-void CStage::Active_Enemy()
-{
-	for (auto* pMonster: m_pMonsters)
-	{
-		if (!pMonster) continue;
-		CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(pMonster, { "Zero_Level", "Enemy_Layer"});
-		BattleSystem()->EnterBattleObject(BATTLE_OBJ_TYPE::MONSTER, pMonster->Get_Handle());
-	}
-}
-
-HRESULT CStage::ReadyPlayerPoint(const vector<BATTLE_POINT_DATA>& point)
-{
-	if (point.empty()) {
-		MSG_BOX("No Player Point : CStage ReadyMap");
-		return E_FAIL;
-	}
-	return S_OK;
-}
-
-HRESULT CStage::ReadyPortalPoint(const vector<BATTLE_POINT_DATA>& point)
-{
-	if (point.empty()) {
-		return S_OK;
-	}
-	return S_OK;
-}
-
-HRESULT CStage::ReadyMonsterPoint(const vector<BATTLE_POINT_DATA>& point)
-{
-	if (point.empty()) {
-		return S_OK;
-	}
-
-	for (size_t i = 0; i < point.size(); i++)
-		m_MonsterData.SpawnPoint.push_back(
-			{ point[i].vTranslation[0],point[i].vTranslation[1],point[i].vTranslation[2] }
-		);
-	
-	return S_OK;
-}
-
-HRESULT CStage::ReadyMonsterData(const string& LevelTag, const string& AreaTag)
-{
-	auto* monsterSpawnMap = CDataBase::GetInstance()->GetMonsterSpawnData(AreaTag, ENUM(m_Context.eStageType));
-	if (!monsterSpawnMap)
-		return E_FAIL;
-
-	auto iterator = monsterSpawnMap->find(m_Context.StageID);
-	if (iterator == monsterSpawnMap->end())
-		return E_FAIL;
-
-	const auto& monsterSpawnData = iterator->second;
-
-	for (size_t index = 0; index < monsterSpawnData.size(); ++index)
-	{
-		auto creation = CDataBase::GetInstance()->GetMonsterDesc(
-			monsterSpawnData[index].Colony,
-			monsterSpawnData[index].MonsterID);
-
-		_int count = monsterSpawnData[index].Count;
-		m_MonsterData.CreationData.push_back({ creation, count });
-	}
-
-	return S_OK;
-}
-
-void CStage::BaseIntro(CZero_Level::StageContext& context)
+void CStage::BaseIntro(StageContext& context)
 {
 	if (!m_introFlowBuilt)
 	{
@@ -177,8 +265,11 @@ void CStage::BaseIntro(CZero_Level::StageContext& context)
 		{
 			m_introFlow.AddOnce(seqId, [context]() {if (context.isFirstIn)
 			{
-				BattleSystem()->GetBattlePlayer()->QuestStart();
+				//BattleSystem()->GetBattlePlayer()->QuestStart();
 				CamDirector()->StartBattleIntro(CamSeqType::ZeroIntro);
+
+				UIDirector()->Hide_HUD(CUIDirector::HUD::BATTLE);
+				UIDirector()->Show_SceneFrame();
 			}
 				});
 			m_introFlow.AddWaitUntil(seqId, []()
@@ -189,6 +280,12 @@ void CStage::BaseIntro(CZero_Level::StageContext& context)
 			{
 				CUIDirector::GetInstance()->Show_HUD(CUIDirector::HUD::BATTLE);
 			}
+				});
+			m_introFlow.AddOnce(seqId, [&context]() {
+				if (context.isFirstIn)
+					{
+						context.isFirstIn = false;
+					}
 				});
 		}
 		else {
@@ -204,7 +301,7 @@ void CStage::BaseIntro(CZero_Level::StageContext& context)
 
 	m_introFlow.Start();
 }
-void CStage::BossIntro(CZero_Level::StageContext& context)
+void CStage::BossIntro(StageContext& context)
 {
 	if (!m_introFlowBuilt)
 	{
@@ -215,18 +312,20 @@ void CStage::BossIntro(CZero_Level::StageContext& context)
 		m_introFlow.AddOnce(seqId, [this]() {CUIDirector::GetInstance()->FadeIn_Screen(1.f); });
 		m_introFlow.AddOnce(seqId, [context]() {
 			//BattleSystem()->GetBattlePlayer()->QuestStart();
+			
 			CamDirector()->StartBattleIntro(CamSeqType::BattleIntro);
 
+			UIDirector()->Hide_HUD(CUIDirector::HUD::BATTLE);
+			UIDirector()->Show_SceneFrame();
 			});
 		m_introFlow.AddWaitUntil(seqId, []()
 			{
 				//return !CamDirector()->IsPlaying(CamSeqType::ZeroIntro);
 				return !CamDirector()->IsPlaying(CamSeqType::BattleIntro);
 			});
-		m_introFlow.AddOnce(seqId, [context]() {if (context.isFirstIn)
-		{
-			CUIDirector::GetInstance()->Show_HUD(CUIDirector::HUD::BATTLE);
-		}
+		m_introFlow.AddOnce(seqId, [context]()
+			{
+				CUIDirector::GetInstance()->Show_HUD(CUIDirector::HUD::BATTLE);
 			});
 		m_introFlow.EndSequence(seqId);
 	}
@@ -240,6 +339,7 @@ void CStage::BaseOutro()
 		size_t seqId = m_outroFlow.BeginSequence();
 		m_outroFlow.AddOnce(seqId, [this]() {CUIDirector::GetInstance()->FadeOut_Screen(1.f); });
 		m_outroFlow.AddWait(seqId, 2.0f);
+		m_outroFlow.AddOnce(seqId, [this]() {RenderSystem()->UnRegister_AddictiveColor(); });
 	}
 
 	m_outroFlow.Start();

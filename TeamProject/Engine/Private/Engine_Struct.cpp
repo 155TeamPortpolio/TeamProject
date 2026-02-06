@@ -5,31 +5,40 @@
 
 _bool Engine::tagObjectHandle::isValid()
 {
-	CGameObject* pObj = CGameInstance::GetInstance()->Get_ObjectMgr()->Request_Object({ Level,Layer,hObjID });
-	if (pObj) {
-		if (Level.empty()) Level = pObj->Get_LayerDesc().LevelTag;
-		if (Layer.empty()) Layer = pObj->Get_LayerDesc().LayerTag;
-		return true;
-	}
-	return false;
+	auto obj = ObjectManager()->Request_Object({Level, Layer, hObjID});
+	if (!obj) return false;
+
+	if (Level.empty()) Level = obj->Get_LayerDesc().LevelTag;
+	if (Layer.empty()) Layer = obj->Get_LayerDesc().LayerTag;
+	return true;
 }
+
+_bool Engine::tagObjectHandle::isValid() const
+{
+	return ObjectManager()->Request_Object({Level, Layer, hObjID}) != nullptr;
+}
+
+CGameObject* Engine::tagObjectHandle::Get()
+{
+	auto obj = ObjectManager()->Request_Object({Level, Layer, hObjID});
+	if (!obj) return nullptr;
+
+	if (Level.empty()) Level = obj->Get_LayerDesc().LevelTag;
+	if (Layer.empty()) Layer = obj->Get_LayerDesc().LayerTag;
+	return obj;
+}
+
+CGameObject* Engine::tagObjectHandle::Get() const
+{
+	return ObjectManager()->Request_Object({Level, Layer, hObjID});
+}
+
 void Engine::tagObjectHandle::Reset()
 {
 	Level.clear();
 	Layer.clear();
 	hObjID = 0;
 	return;
-}
-
-CGameObject* Engine::tagObjectHandle::Get()
-{
-	CGameObject* pObj = CGameInstance::GetInstance()->Get_ObjectMgr()->Request_Object({ Level,Layer,hObjID });
-
-	if (pObj) {
-		if (Level.empty()) Level = pObj->Get_LayerDesc().LevelTag;
-		if (Layer.empty()) Layer = pObj->Get_LayerDesc().LayerTag;
-	}
-	return pObj;
 }
 
 void Engine::tagObjectHandle::Delete()
@@ -60,11 +69,17 @@ PARTICLE_NODE Engine::tagParticleNode::FromJson(nlohmann::ordered_json& json)
 {
 	PARTICLE_NODE node{};
 
+	node.useMask = json.value("use_mask", false);
+	node.MaskTextureTag = json.value("mask_texture_tag", "");
+
 	auto offsetPostion = json.value("offset_position", json::array({ 0.f,0.f,0.f }));
 	auto offsetQuaternion = json.value("offset_quaternion", json::array({ 0.f,0.f,0.f,1.f }));
 
 	node.vOffsetPosition = _float3(offsetPostion[0], offsetPostion[1], offsetPostion[2]);
 	node.vOffsetQuaternion = _float4(offsetQuaternion[0], offsetQuaternion[1], offsetQuaternion[2], offsetQuaternion[3]);
+
+	auto rimLight = json.value("rimlight_color", json::array({ 0.f,0.f,0.f }));
+	node.vRimLightColor = _float3(rimLight[0], rimLight[1], rimLight[2]);
 
 	auto pivot = json.value("pivot", json::array({ 0.5f,0.5f }));
 	node.vPivot = _float2(pivot[0], pivot[1]);
@@ -157,6 +172,8 @@ MESH_NODE Engine::tagMeshNode::FromJson(nlohmann::ordered_json& json)
 	node.ModelTag = json.value("model_key", node.ModelTag);
 	node.MaterialTag = json.value("material_key", node.MaterialTag);
 
+	node.fPendingDuration = json.value("pending_duration", 0.f);
+
 	node.fDelayTime = json.value("delay_time", node.fDelayTime);
 	node.fDuration = json.value("duration", node.fDuration);
 	node.isLoop = json.value("is_loop", node.isLoop);
@@ -167,6 +184,7 @@ MESH_NODE Engine::tagMeshNode::FromJson(nlohmann::ordered_json& json)
 	node.MaskTextureTagA = json.value("mask_texture_tag", "");
 	node.MaskTextureTagB = json.value("mask_texture_tagB", "");
 	node.DistortionTextureTag = json.value("distortion_texture_tag", "");
+	node.DistortionMaskTextureTag = json.value("distortion_mask_texture_tag", "");
 	node.GradientTextureTag = json.value("gradient_texture_tag", "");
 
 	auto offsetPostion = json.value("offset_position", json::array({ 0.f,0.f,0.f }));
@@ -246,6 +264,8 @@ MESH_NODE Engine::tagMeshNode::FromJson(nlohmann::ordered_json& json)
 	node.fMaskTilling = json.value("mask_tilling", 0.f);
 
 	/* Distortion */
+	node.useDiffuseAlpha = json.value("use_diffuse_alpha", true);
+	node.useDistortionMask = json.value("use_distortion_mask", false);
 	node.fEnableDistortion = json.value("enable_distortion", 0.f);
 	node.fDistortionStrength = json.value("distortion_strength", 0.f);
 	node.fDistortionTilling = json.value("distortion_tilling", 0.f);
@@ -350,3 +370,78 @@ void Engine::tagUIHandle::Release()
 	Reset();
 }
 
+LIGHT_DESC LIGHT_DESC::SpotSet()
+{
+	LIGHT_DESC desc = {};
+	desc.eType = LIGHT_TYPE::SPOTLIGHT;
+
+	desc.vLightPosition = { 0.f, 0.f, 0.f, 1.f };
+	desc.vLightDirection = { 0.f, -1.f, 0.f, 0.f };
+
+	desc.vLightDiffuse = { 1.f, 1.f, 1.f, 1.f };
+	desc.vLightAmbient = { 0.f, 0.f, 0.f, 1.f };
+	desc.vLightSpecular = { 1.f, 1.f, 1.f, 1.f };
+
+	desc.fLightIntensity = 2.5f;
+
+	desc.fLightRange = 15.f;
+
+	desc.fInnerCos = 0.966f;
+	desc.fOuterCos = 0.906f;
+
+	return desc;
+}
+
+LIGHT_DESC LIGHT_DESC::PointSet()
+{
+	LIGHT_DESC desc = {};
+	desc.eType = LIGHT_TYPE::POINT;
+
+	desc.vLightPosition = { 0.f, 0.f, 0.f, 1.f };
+	desc.vLightDirection = { 0.f, -1.f, 0.f, 0.f }; 
+
+	desc.vLightDiffuse = { 1.f, 1.f, 1.f, 1.f };
+	desc.vLightAmbient = { 0.f, 0.f, 0.f, 1.f };
+	desc.vLightSpecular = { 1.f, 1.f, 1.f, 1.f };
+
+	desc.fLightIntensity = 2.0f;
+	desc.fLightRange = 10.f;
+
+	desc.fInnerCos = 1.f;
+	desc.fOuterCos = 1.f;
+
+	return desc;
+}
+
+LIGHT_DESC LIGHT_DESC::DirectionSet()
+{
+	LIGHT_DESC desc = {};
+	desc.eType = LIGHT_TYPE::DIRECTIONAL;
+
+	desc.vLightPosition = { 0.f, 0.f, 0.f, 0.f }; 
+	desc.vLightDirection = { 0.f, -1.f, 0.f, 0.f };
+
+	desc.vLightDiffuse = { 1.f, 1.f, 1.f, 1.f };
+	desc.vLightAmbient = { 0.0f, 0.0f, 0.0f, 1.f };
+	desc.vLightSpecular = { 1.f, 1.f, 1.f, 1.f };
+
+	desc.fLightIntensity = 1.0f;
+	desc.fLightRange = 0.f;
+
+	desc.fInnerCos = 1.f;
+	desc.fOuterCos = 1.f;
+
+	return desc;
+}
+
+void LIGHT_DESC::SetSpotDegree(_float innerDeg, _float outerDeg)
+{
+	const _float innerRad = XMConvertToRadians(innerDeg);
+	const _float outerRad = XMConvertToRadians(outerDeg);
+
+	fInnerCos = cosf(innerRad * 0.5f);
+	fOuterCos = cosf(outerRad * 0.5f);
+
+	if (fInnerCos < fOuterCos)
+		swap(fInnerCos,fOuterCos);
+}

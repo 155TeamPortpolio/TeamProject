@@ -5,6 +5,7 @@
 #include "Material.h"
 #include "MaterialInstance.h"
 #include "MaterialData.h"
+#include "Texture.h"
 
 CParticleNode::CParticleNode()
 	:CEffectNode()
@@ -58,6 +59,19 @@ HRESULT CParticleNode::Initialize(INIT_DESC* pArg)
 
 	_vector3 vPosition = pParticleNode->vOffsetPosition;
 	_quaternion vQuaternion = pParticleNode->vOffsetQuaternion;
+	m_UseMask = pParticleNode->useMask;
+	m_MaskTextureTag = pParticleNode->MaskTextureTag;
+
+	if (m_UseMask)
+	{
+		auto pTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_MaskTextureTag);
+
+		if (pTexture)
+		{
+			customInstance->Override_Pass("MaskPass");
+			customInstance->Set_Param("MaskTexture", { pTexture->Get_SRV(),"Texture2D",0 });
+		}
+	}
 
 	m_pTransform->Set_Pos(vPosition);
 	m_pTransform->Set_Quaternion(vQuaternion);
@@ -88,6 +102,16 @@ void CParticleNode::Late_Update(_float dt)
 {
 }
 
+void CParticleNode::OnPooledAcquire(INIT_DESC* pArg)
+{
+	Play();
+}
+
+void CParticleNode::OnPooledRelease()
+{
+	Stop();
+}
+
 void CParticleNode::Play()
 {
 	m_IsEffectActive = true;
@@ -98,7 +122,13 @@ void CParticleNode::Play()
 
 void CParticleNode::Stop()
 {
-	m_IsEffectActive = false;
+	if (m_IsLoop)
+		Get_Component<CParticleSystem>()->Pause();
+	else
+	{
+		Get_Component<CParticleSystem>()->Pause();
+		m_IsEffectActive = false;
+	}
 }
 
 CParticleNode* CParticleNode::Create()

@@ -45,6 +45,11 @@ CRenderer* CForwardRenderer::GetRenderer(RENDERER_TYPE eType)
 	return nullptr;
 }
 
+void CForwardRenderer::Set_GlitchDesc(GLITCH_DESC desc)
+{
+	m_pSkinnedRenderer->Set_GlitchDesc(desc);
+}
+
 HRESULT CForwardRenderer::Render_Priority(PriorityPass* pPriorityPass)
 {
 	
@@ -64,8 +69,6 @@ HRESULT CForwardRenderer::Render_StaticShadow(StaticShadowPass* pShadowPass, _bo
 		pShadowPass->Clear();
 		return S_OK;
 	}
-
-	m_pPipeLine->Update_StaticCSM();
 
 	_uint				iNumViewports = { 1 };
 	D3D11_VIEWPORT		ViewportDesc{};
@@ -97,7 +100,6 @@ HRESULT CForwardRenderer::Render_SkinnedShadow(SkinnedShadowPass* pShadowPass, _
 		return S_OK;
 	}
 
-	m_pPipeLine->Update_SkinnedCSM();
 
 	_uint				iNumViewports = { 1 };
 	D3D11_VIEWPORT		ViewportDesc{};

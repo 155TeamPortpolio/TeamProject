@@ -17,10 +17,8 @@ struct Lens
 
 namespace CamUtil
 {
-	// "현재 시간(time)이 키프레임들 중 어느 구간(두 키 사이)에 속하는지"를 찾아서, 그 구간 안에서의 "보간 비율(0~1)"까지 같이 계산해주는 함수.
 	ENGINE_DLL CamKeySegment FindKeySegment(const vector<CamKeyFrame>& keyframes, float time);
 
-	// =========================================================================================================================
     ENGINE_DLL bool Save(const filesystem::path& path, const CamSequenceDesc& seq, string* outErrorMsg = {});
     ENGINE_DLL bool Load(const filesystem::path& path, CamSequenceDesc& outSeq, string* outErrorMsg = {});
 

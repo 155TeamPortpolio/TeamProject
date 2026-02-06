@@ -75,6 +75,7 @@ private:
 	_float4 m_vPosition = {};
 	_float4 m_vScale = { 1.f,1.f, 1.f, 0.f };
 	_float4 m_qRotation = {};	
+	_float3 m_EularRotation = {};	
 
 	_float4x4 m_LocalMatrix = {};
 	_float4x4 m_WorldInversMatrix = {};

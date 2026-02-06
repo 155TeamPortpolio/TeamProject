@@ -73,6 +73,15 @@ void CCharacterAttackCollider::Late_Update(_float dt)
 void CCharacterAttackCollider::Render_GUI()
 {
 	__super::Render_GUI();
+	if (ImGui::TreeNode("Hit Records"))
+	{
+		for (const auto& pair : m_HitRecords)
+		{
+			ImGui::Text("Target: %s | Hits: %d | LastTime: %.2f",
+				pair.first->Get_InstanceName(), pair.second.iHitCount, pair.second.fLastHitTime);
+		}
+		ImGui::TreePop();
+	}
 }
 
 void CCharacterAttackCollider::OnTriggerEnter(CGameObject* pOther)
@@ -97,10 +106,10 @@ void CCharacterAttackCollider::OnTriggerEnter(CGameObject* pOther)
 			pCharacter->OnDamage();
 			if (m_tHitDesc.eDamageType == DAMAGE_TYPE::HARD && pEnemy->IsGroggy() && pEnemy->Get_ComboCount() != 0)
 			{
-				if (pCharacter->Is_MainCharacter())
+				if (pCharacter->Is_MainCharacter() && !pCharacter->Is_ReserveCombo())
 				{
 					pEnemy->Decrease_ComboCount();
-					BattleSystem()->GetBattlePlayer()->Request_ComboAttack();
+					pCharacter->Reserve_ComboAttack();
 				}
 			}
 		}
@@ -151,7 +160,7 @@ void CCharacterAttackCollider::OnTriggerStay(CGameObject* pOther)
 				if (pCharacter->Is_MainCharacter())
 				{
 					pEnemy->Decrease_ComboCount();
-					BattleSystem()->GetBattlePlayer()->Request_ComboAttack();
+					pCharacter->Reserve_ComboAttack();
 				}
 			}
 		}

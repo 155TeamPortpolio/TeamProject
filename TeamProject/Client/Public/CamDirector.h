@@ -1,15 +1,18 @@
 #pragma once
 
+#include "DisplayGate.h"
 #include "CameraMgr.h"
 #include "CamDirectorData.h"
 #include "CamEventController.h"
 #include "CamDialogueController.h"
+#include "ParryCamFx.h"
 
 NS_BEGIN(Client)
 
 class CCamDirector final : public CBase
 {
     DECLARE_SINGLETON(CCamDirector)
+    using SeqPlayer = CCamSequencePlayer;
 private:
     CCamDirector() {}
     virtual ~CCamDirector() DEFAULT;
@@ -20,7 +23,8 @@ public:
     void          SetReturnCam(CamType type)                 { m_returnCamType          = type;   }
     void          SetTarget(OBJECT_HANDLE targetHandle);
     void          AutoTarget();
-    void          AutoField();
+    void          AutoField(CamStartDir dir);
+    void          AutoBattle(CamStartDir dir);
 
     OBJECT_HANDLE GetCamHandle(CamType type) const { return m_camHandles[ENUM(type)];                }
     COrbitCam*    GetOrbitCam()              const { return static_cast<COrbitCam*>(GetOrbitObj());  }
@@ -40,15 +44,14 @@ public:
     CHARACTER     GetCharacterName()         const { return GetCharacter()->Get_CharacterName(); }
     string        GetCharacterStr()          const { return Helper::EnumToString(GetCharacter()->Get_CharacterName()); }
     OBJECT_HANDLE GetCurHandle()             const { return GetPlayer()->Get_CurCharacterHandle(); }
-    
-    CCamSequencePlayer* GetSeqPlayer()       const { return GetSeqObj()->Get_Component<CCamSequencePlayer>(); }
+    _float        GetTime()                  const { return GetSeqPlayer()->GetTime(); }
+    const string& GetCurSeqName()            const { return m_playing.active ? m_playing.key : kEmpty; }
+    SeqPlayer*    GetSeqPlayer()             const { return GetSeqObj()->Get_Component<CCamSequencePlayer>(); }
 
 public:
     _bool         Register(const string& key, const fs::path& path);
     _bool         Register(const string& key, const fs::path& path, const CamSequenceRequestDesc& defaultReq);
-    void          UnRegister(const string& key);
-            
-public:           
+    void          UnRegister(const string& key);         
     _uint         RequestSequence(const string& key);
     _uint         RequestSequence(CamSeqType type);
     
@@ -59,23 +62,24 @@ public:
     _bool         StopRequest(_uint handle, _float blendOutSec = 0.25f, _bool resetTime = true);
     void          StopAll(_float blendOutSec = 0.25f);
     void          Update(_float dt);
+
+    void          StartParry();
     void          StartBattleIntro(CamSeqType type);
     void          StartDialog();
     void          EndDialog();
+    void          AbortSequenceToOrbit(_bool resetTime);
 
 private:
     string        ResolveSeqKey(CamSeqType type) const;
     void          UpdatePlayer();
     void          UpdateInput(_float dt);
-    void          AbortSequenceToOrbit(_bool resetTime);
     void          SyncSeqInputLock();
       
     _bool         IsValid() const { return GetPlayer()->Get_CurCharacterHandle().isValid(); }
     _uint         RequestSequence(const string& key, const CamSequenceRequestDesc& req);
-    _uint         RequestSequence(const string& key, _float blendInSec, _bool resetTime, _float blendOutSec);
-    _uint         RequestSequence(CamSeqType type, const CamSequenceRequestDesc& req);
 
 private:
+    CMonitorGate            m_gate;
     CamDirectorSeqMap       m_seqs{};
     CamDirectorPlayingState m_playing{};
     CamDirectorCamHandles   m_camHandles{};
@@ -91,6 +95,8 @@ private:
     _bool                   m_lastEndedValid = false;
     string                  m_lastEndedKey{};
     _bool                   m_seqInputLocked = false;
+
+    inline static const string kEmpty{};
 }; 
 
 inline auto* CamDirector() { return CCamDirector::GetInstance(); }

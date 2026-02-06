@@ -159,6 +159,7 @@ public:
 	void SetParticleParams(PARTICLE_NODE particleDesc);
 	void Simulation_Particle(_float dt);
 	void Reset();
+	void Pause();
 
 public:
 	virtual void Render_GUI() override;
@@ -180,6 +181,7 @@ private:
 	_uint m_iMaxInstancesCount{};
 	_bool isDrawing = { true };
 
+	_bool m_IsPause = false;
 	_bool m_IsChanged = false;
 	PARTICLE_NODE m_PendingChanged{};
 
@@ -189,12 +191,14 @@ private:
 	MODULE_MASK m_eModuelMask{};
 	COLOR_MODE m_eColorMode = COLOR_MODE::ADDITIVE;
 	_float2 m_vPivot{ 0.5f,0.5f };
+	_float3 m_vRimLightColor{};
 
 	_float m_fDelayDuration{};
 	_float m_fElapsedTime{};
 
 	_bool m_IsLoop = false;
 	_uint m_iBurstCount{};
+	_uint m_iMaxBurstCount{};
 
 	_float m_fSpawnPerSec{};
 	_float m_fSpawnAcc{};

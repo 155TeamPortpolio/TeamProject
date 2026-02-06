@@ -227,7 +227,15 @@ void CGameObject::RenderHierarchy(CGameObject*& SelectedObject, bool isSelected)
 	ImGui::PopID();
 
 }
-
+_bool CGameObject::Is_Root() {
+	if (CChild* pChild = Get_Component<CChild>()) {
+		m_isRootObject = false;
+	}
+	else {
+		m_isRootObject = true;
+	}
+	return m_isRootObject;
+}
 void CGameObject::Set_Layer(CLayer* pLayer)
 {
 	m_pLayer = pLayer;
@@ -510,7 +518,7 @@ _float CGameObject::Calculate_LinearDepth(const MINMAX_BOX& box)
 	_vector3 toCenter = centerWorld - camPos;
 	_float depth = toCenter.Dot(forward);
 
-	if (depth < 0.f) depth = 0.f;
+	//if (depth < 0.f) depth = 0.f;
 	return depth;
 }
 

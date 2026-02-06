@@ -58,7 +58,11 @@ void CJaneDoeState_CounterAttack::Update(CJaneDoe* pOwner, _float dt)
 
 		if (Event.Tag == "LHandStart")
 		{
-			pOwner->Begin_AttackCollider("HandWeapon_L", { HIT_TYPE::ONCE, DAMAGE_TYPE::HARD, Helper::Get_Random_Float(10,30), 0, 0 });
+			pOwner->Begin_AttackCollider("HandWeapon_L", HitDesc()
+				.Type(HIT_TYPE::ONCE)
+				.Damage(pOwner->Get_AttackPower() * 3.412f * Helper::Get_Random_Float(1.f, 1.5f)
+					, DAMAGE_TYPE::HARD)
+			);
 		}
 		else if (Event.Tag == "LHandEnd")
 		{
@@ -66,7 +70,11 @@ void CJaneDoeState_CounterAttack::Update(CJaneDoe* pOwner, _float dt)
 		}
 		else if (Event.Tag == "RHandStart")
 		{
-			pOwner->Begin_AttackCollider("HandWeapon_R", { HIT_TYPE::ONCE, DAMAGE_TYPE::HARD, Helper::Get_Random_Float(10,30), 0, 0 });
+			pOwner->Begin_AttackCollider("HandWeapon_R", HitDesc()
+				.Type(HIT_TYPE::ONCE)
+				.Damage(pOwner->Get_AttackPower() * 3.412f * Helper::Get_Random_Float(1.f, 1.5f)
+					, DAMAGE_TYPE::HARD)
+			);
 		}
 		else if (Event.Tag == "RHandEnd")
 		{
@@ -74,7 +82,11 @@ void CJaneDoeState_CounterAttack::Update(CJaneDoe* pOwner, _float dt)
 		}
 		else if (Event.Tag == "LFootStart")
 		{
-			pOwner->Begin_AttackCollider("FootWeapon_L", { HIT_TYPE::ONCE, DAMAGE_TYPE::HARD, Helper::Get_Random_Float(20,40), 0, 0 });
+			pOwner->Begin_AttackCollider("FootWeapon_L", HitDesc()
+				.Type(HIT_TYPE::ONCE)
+				.Damage(pOwner->Get_AttackPower() * 3.412f * Helper::Get_Random_Float(1.f, 1.5f)
+					, DAMAGE_TYPE::HARD)
+			);
 		}
 		else if (Event.Tag == "LFootEnd")
 		{
@@ -82,7 +94,11 @@ void CJaneDoeState_CounterAttack::Update(CJaneDoe* pOwner, _float dt)
 		}
 		else if (Event.Tag == "RFootStart")
 		{
-			pOwner->Begin_AttackCollider("FootWeapon_R", { HIT_TYPE::ONCE, DAMAGE_TYPE::HARD, Helper::Get_Random_Float(20,40), 0, 0 });
+			pOwner->Begin_AttackCollider("FootWeapon_R", HitDesc()
+				.Type(HIT_TYPE::ONCE)
+				.Damage(pOwner->Get_AttackPower() * 3.412f * Helper::Get_Random_Float(1.f, 1.5f)
+					, DAMAGE_TYPE::HARD)
+			);
 		}
 		else if (Event.Tag == "RFootEnd")
 		{
@@ -106,6 +122,7 @@ void CJaneDoeState_CounterAttack::Update(CJaneDoe* pOwner, _float dt)
 
 void CJaneDoeState_CounterAttack::Exit(CJaneDoe* pOwner)
 {
+	pOwner->Reset_ReserveCombo();
 	pOwner->Pop_Invincible();
 	__super::Exit(pOwner);
 }

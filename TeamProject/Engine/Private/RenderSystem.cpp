@@ -63,6 +63,9 @@ HRESULT CRenderSystem::Initialize()
 
 HRESULT CRenderSystem::Render()
 {
+	m_pPipeLine->Update_StaticCSM();
+	m_pPipeLine->Update_SkinnedCSM();
+
 	m_pPipeLine->Begin_ObjectBuffer(m_pContext);
 	m_pPipeLine->Begin_SkinningBuffer(m_pContext);
 
@@ -140,6 +143,11 @@ _bool CRenderSystem::Get_FogDesc(FOG_DESC& outResult)
 void CRenderSystem::Set_FogDesc(FOG_DESC desc)
 {
 	m_pPost->Set_FogDesc(desc);
+}
+
+void CRenderSystem::Set_GlitchDesc(GLITCH_DESC desc)
+{
+	m_pForward->Set_GlitchDesc(desc);
 }
 
 void CRenderSystem::Update(_float dt)

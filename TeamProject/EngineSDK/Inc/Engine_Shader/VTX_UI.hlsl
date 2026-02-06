@@ -196,6 +196,44 @@ float4 vColor;
 
 float2 vFlip;
 
+uint ColorTexMode = 0;
+float ColorTexMix = 1.f;
+
+float RecolorThreshold = 0.1f;
+float RecolorSoftness = 0.3f;
+
+float2 ColorUVOffset = float2(0.f, 0.f);
+float2 ColorUVScale = float2(1.f, 1.f);
+uint ColorUVUse = 0;
+
+float3 ApplyColorTexture(float3 baseRgb, float2 uv)
+{
+    if (ColorTexMode == 0)
+        return baseRgb;
+
+    float2 uvC = uv;
+
+    if (ColorUVUse != 0)
+    {
+        uvC = (uvC - 0.5f) * ColorUVScale + 0.5f; 
+        uvC += ColorUVOffset; 
+    }
+
+    float3 c = ColorTexture.Sample(LinearSampler, uvC).rgb;
+
+    float m = saturate(ColorTexMix);
+
+    float lum = dot(baseRgb, float3(0.299f, 0.587f, 0.114f));
+    float mask = smoothstep(RecolorThreshold, RecolorThreshold + RecolorSoftness, lum);
+
+    float t = m * mask;
+
+    if (ColorTexMode == 1)
+        return lerp(baseRgb, c, t);
+
+    return lerp(baseRgb, baseRgb * c, t);
+}
+
 struct PS_IN
 {
     float4 vPosition : SV_POSITION;
@@ -209,21 +247,24 @@ struct PS_OUT
 
 PS_OUT PS_MAIN(PS_IN In)
 {
-    PS_OUT Out;
-    
-    float2 vTexcoord = { In.vTexcoord.x * (1.f - 2.f * vFlip.x) + vFlip.x, In.vTexcoord.y * (1.f - 2.f * vFlip.y) + vFlip.y };
-    
-    vector vDiffuse = SpriteTexture.Sample(LinearSampler, vTexcoord);
-    //clip(vDiffuse.a - 0.1f);
-    
-    float4 color = vDiffuse * vColor;
+     PS_OUT Out;
+
+    float2 uv = float2(
+        In.vTexcoord.x * (1.f - 2.f * vFlip.x) + vFlip.x,
+        In.vTexcoord.y * (1.f - 2.f * vFlip.y) + vFlip.y
+    );
+
+    float4 tex = SpriteTexture.Sample(LinearSampler, uv);
+
+    float3 rgb = ApplyColorTexture(tex.rgb, uv);
+
+    float4 color = float4(rgb, tex.a) * vColor;
+
     Out.vColor.rgb = color.rgb * color.a;
     Out.vColor.a = color.a;
-    
+
     return Out;
 }
-
-Texture2D ColorTexture;
 
 uint ColorCol = 1;
 uint ColorRow = 1;
@@ -241,6 +282,15 @@ PS_OUT PS_MAIN_SPRITEANIMATION_COLORATLAS(PS_IN In)
     clip(digit.a - 0.1f);
 
     float2 uvColor = CalculateFrameIndex(ColorCol, ColorRow, ColorFrameIndex, In.vTexcoord);
+
+    if (ColorUVUse != 0)
+    {
+        float2 frameSize = float2(1.0f / ColorCol, 1.0f / ColorRow);
+        float2 localOffset = ColorUVOffset * frameSize;
+        float2 center = uvColor;
+        uvColor += localOffset;
+    }
+
     float4 grad = ColorTexture.Sample(LinearSampler, uvColor);
 
     float cm = saturate(ColorMix);
@@ -360,6 +410,18 @@ PS_OUT PS_MAIN_MASKPREVIEW(PS_IN In)
     clip(vDiffuse.a - 0.1f);
 
     Out.vColor = (vDiffuse * vColor) * MaskPreviewAlpha;
+    return Out;
+}
+
+PS_OUT PS_VIDEOPLAY(PS_IN In)
+{
+    PS_OUT Out;
+    vector vDiffuse = SpriteTexture.Sample(PointSampler, In.vTexcoord);
+   
+    float4 color = vDiffuse * vColor;
+    Out.vColor.rgb = color.rgb * color.a;
+    Out.vColor.a = color.a;
+    
     return Out;
 }
 
@@ -593,5 +655,14 @@ technique11 DefaultTechnique
         VertexShader   = compile vs_5_0 VS_MAIN_CUSTOM();
         GeometryShader = compile gs_5_0 GS_MAIN_CUSTOM();
         PixelShader    = compile ps_5_0 PS_MAIN_CUSTOM();
+    }
+    pass VideoPlay
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_Premultiplied, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader   = compile vs_5_0 VS_MAIN();
+        GeometryShader = compile gs_5_0 GS_MAIN();
+        PixelShader    = compile ps_5_0 PS_VIDEOPLAY();
     }
 }

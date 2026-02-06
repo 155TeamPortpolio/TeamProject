@@ -28,56 +28,129 @@ HRESULT CLight::Initialize(COMPONENT_DESC* pArg)
 		m_Light.vLightDirection = desc->vDirection;
 		m_Light.vLightSpecular = desc->vSpecular;
 		m_Light.fLightIntensity = desc->fIntensity;
+		m_Light.SetSpotDegree(desc->fInnerDegree,desc->fOuterDegree);
+		//m_Light.fInnerCos = desc->fInnerCos;
+		//m_Light.fOuterCos = desc->fOuterCos;
 	}
 
 	m_ID = CGameInstance::GetInstance()->Get_LightMgr()->Register_Light(this, m_ID);
 	return S_OK;
 }
 
+
+void CLight::NormalizeDir(_float4& dir)
+{
+	XMVECTOR vec = XMLoadFloat4(&dir);
+	vec = XMVector3Normalize(vec);
+	XMStoreFloat4(&dir, vec);
+	dir.w = 0.f;
+}
+
+void CLight::GetSpotConeDegrees(const LIGHT_DESC& desc, float& innerDeg, float& outerDeg)
+{
+	auto ClampFloat = [](_float value, _float minValue, _float maxValue)->float
+		{
+			if (value < minValue) return minValue;
+			if (value > maxValue) return maxValue;
+			return value;
+		};
+
+	float innerCos = ClampFloat(desc.fInnerCos, -1.f, 1.f);
+	float outerCos = ClampFloat(desc.fOuterCos, -1.f, 1.f);
+
+	float innerRad = acosf(innerCos) * 2.f;
+	float outerRad = acosf(outerCos) * 2.f;
+
+	innerDeg = XMConvertToDegrees(innerRad);
+	outerDeg = XMConvertToDegrees(outerRad);
+}
 void CLight::Render_GUI()
 {
 	ImGui::SeparatorText("Light");
-	float childWidth = ImGui::GetContentRegionAvail().x;
-	const float textLineHeight = ImGui::GetTextLineHeightWithSpacing();
-	const float childHeight = (textLineHeight * 12) + (ImGui::GetStyle().WindowPadding.y * 2);
+
+	const float lineHeight = ImGui::GetTextLineHeightWithSpacing();
+	const float childHeight = (lineHeight * 16.f) + (ImGui::GetStyle().WindowPadding.y * 2.f);
 
 	ImGui::Checkbox("Active", &m_bActive);
 	Set_CompActive(m_bActive);
 
-	ImGui::BeginChild("##LightChild", ImVec2{ 0, childHeight }, true);
-	LIGHT_TYPE eType = m_Light.eType;
+	ImGui::BeginChild("##LightChild", ImVec2(0.f, childHeight), true);
 
 	const char* typeNames[] = { "Directional", "Point", "Spot" };
-	ImGui::Text("Type : %s", typeNames[static_cast<_int>(eType)]);
+	int typeIndex = static_cast<int>(m_Light.eType);
 
-	ImGui::Text("Range");
-	ImGui::DragFloat("##Range", &m_Light.fLightRange, 1.0f, 0.0f, 1000.0f, "%.1f");
-	ImGui::Text("Intensity");
-	ImGui::DragFloat("##Intensity", &m_Light.fLightIntensity, 0.5f, 0.0f, 10.0f, "%.1f");
-
-	ImGui::Text("Diffuse");
-	ImGui::ColorEdit3("Diffuse", &m_Light.vLightDiffuse.x);
-	ImGui::Text("Ambient");
-	ImGui::ColorEdit3("Ambient", &m_Light.vLightAmbient.x);
-	ImGui::Text("Specular");
-	ImGui::ColorEdit3("Specular", &m_Light.vLightSpecular.x);
-
-	if (eType == LIGHT_TYPE::DIRECTIONAL)
+	ImGui::TextUnformatted("Type");
+	if (ImGui::Combo("##LightType", &typeIndex, typeNames, IM_ARRAYSIZE(typeNames)))
 	{
-		ImGui::Text("Direction");
-		if (ImGui::DragFloat3("##Direction", &m_Light.vLightDirection.x, 0.0f, -1.0f, 1.0f))
-		{
-			XMVECTOR dir = XMLoadFloat4(&m_Light.vLightDirection);
-			dir = XMVector3Normalize(dir);
-			XMStoreFloat4(&m_Light.vLightDirection, dir);
-		}
+		m_Light.eType = static_cast<LIGHT_TYPE>(typeIndex);
+		NormalizeDir(m_Light.vLightDirection);
 	}
-	else {
-		ImGui::DragFloat3("Offset", &m_Light.vOffsetPosition.x, 0.1f);
+
+	ImGui::Separator();
+
+
+	if (m_Light.eType != LIGHT_TYPE::DIRECTIONAL)
+	{
+		ImGui::TextUnformatted("Range");
+		ImGui::DragFloat("##Range", &m_Light.fLightRange, 1.0f, 0.0f, 1000.0f, "%.1f");
+	}
+	else
+	{
+		ImGui::TextDisabled("Range (Directional: unused)");
+	}
+
+	ImGui::TextUnformatted("Intensity");
+	ImGui::DragFloat("##Intensity", &m_Light.fLightIntensity, 0.1f, 0.0f, 50.0f, "%.2f");
+
+	ImGui::TextUnformatted("Diffuse");
+	ImGui::ColorEdit3("##Diffuse", &m_Light.vLightDiffuse.x);
+
+	ImGui::TextUnformatted("Ambient");
+	ImGui::ColorEdit3("##Ambient", &m_Light.vLightAmbient.x);
+
+	ImGui::TextUnformatted("Specular");
+	ImGui::ColorEdit3("##Specular", &m_Light.vLightSpecular.x);
+
+	ImGui::Separator();
+
+	if (m_Light.eType == LIGHT_TYPE::DIRECTIONAL)
+	{
+		ImGui::TextUnformatted("Direction");
+		if (ImGui::DragFloat3("##Direction", &m_Light.vLightDirection.x, 0.01f, -1.0f, 1.0f))
+			NormalizeDir(m_Light.vLightDirection);
+	}
+	else
+	{
+		ImGui::TextUnformatted("Offset");
+		ImGui::DragFloat3("##Offset", &m_Light.vOffsetPosition.x, 0.1f);
+
+		if (m_Light.eType == LIGHT_TYPE::SPOTLIGHT)
+		{
+			ImGui::Spacing();
+			ImGui::TextUnformatted("Spot Cone (Degrees)");
+
+			float innerDegUi = 0.f;
+			float outerDegUi = 0.f;
+			GetSpotConeDegrees(m_Light, innerDegUi, outerDegUi); // m_Light(cos) -> deg
+
+			bool changedInner = ImGui::DragFloat("##InnerDeg", &innerDegUi, 0.1f, 0.1f, 179.0f, "Inner: %.1f");
+			bool changedOuter = ImGui::DragFloat("##OuterDeg", &outerDegUi, 0.1f, 0.1f, 179.0f, "Outer: %.1f");
+
+			if (changedInner || changedOuter)
+			{
+				if (innerDegUi > outerDegUi)
+					std::swap(innerDegUi, outerDegUi);
+
+				m_Light.SetSpotDegree(innerDegUi, outerDegUi); // deg -> m_Light(cos) ¹Ý¿µ
+			}
+
+			ImGui::Text("InnerCos: %.3f  OuterCos: %.3f", m_Light.fInnerCos, m_Light.fOuterCos);
+		}
 	}
 
 	ImGui::EndChild();
 }
+
 
 void CLight::Set_Desc(const LIGHT_DESC& desc, LIGHT_TYPE eType)
 {
@@ -88,6 +161,28 @@ void CLight::Set_Desc(const LIGHT_DESC& desc, LIGHT_TYPE eType)
 		m_ID = CGameInstance::GetInstance()->Get_LightMgr()->Register_Light(this, m_ID);
 }
 
+void CLight::Set_Desc(const LIGHT_DESC& desc)
+{
+	m_Light = desc;
+	m_Light.eType = desc.eType;
+
+	if (m_ID == -1)
+		m_ID = CGameInstance::GetInstance()->Get_LightMgr()->Register_Light(this, m_ID);
+}
+
+LIGHT_DESC CLight::Get_Desc()
+{
+	LIGHT_DESC snapShot{};
+	if (!m_pOwner) return snapShot;
+	CTransform* pTransform = m_pOwner->Get_Component<CTransform>();
+	if (m_Light.eType == LIGHT_TYPE::SPOTLIGHT && pTransform)
+		m_Light.vLightDirection = _vector4(pTransform->Dir(STATE::LOOK));
+
+	snapShot = m_Light;
+
+	return snapShot;
+}
+
 LIGHT_DESC CLight::SnapShot_Desc()
 {
 	LIGHT_DESC snapShot{};
@@ -95,6 +190,8 @@ LIGHT_DESC CLight::SnapShot_Desc()
 	if (!m_pOwner) return snapShot;
 	CTransform* pTransform = m_pOwner->Get_Component<CTransform>();
 	if (!pTransform) return  snapShot;
+	if (m_Light.eType == LIGHT_TYPE::SPOTLIGHT)
+		m_Light.vLightDirection = _vector4(pTransform->Dir(STATE::LOOK));
 
 	snapShot = m_Light;
 

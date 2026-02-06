@@ -26,7 +26,6 @@ private:
 
 public:
     static CCamPosHermiteEvaluator* Create() { return new CCamPosHermiteEvaluator(); }
-    virtual void Free() override { __super::Free(); }
 };
 
 NS_END

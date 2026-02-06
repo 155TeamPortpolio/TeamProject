@@ -299,7 +299,12 @@ void CCharacterController::Late_Update(_float dt)
 {
 	if (!m_pController) return;
 
-	_float3 vDisplacement = m_vVelocity * dt;
+	//_float3 vDisplacement = m_vVelocity * dt;
+	_float3 vDisplacement;
+	vDisplacement.x = m_vRootMotion.x;
+	vDisplacement.z = m_vRootMotion.z;
+	vDisplacement.y = m_vVelocity.y * dt;
+
 	if (m_fMaxSpeed > 0.0f)
 	{
 		_float fPlanarSpeed = sqrtf(vDisplacement.x * vDisplacement.x +
@@ -312,7 +317,10 @@ void CCharacterController::Late_Update(_float dt)
 		}
 	}
 
-	m_vPrevVelocity = m_vVelocity;
+	// 디버그용
+	m_vPrevVelocity.x = m_vRootMotion.x / dt;
+	m_vPrevVelocity.z = m_vRootMotion.z / dt;
+	m_vPrevVelocity.y = m_vVelocity.y;
 
 	Move(XMLoadFloat3(&vDisplacement), dt);
 
@@ -325,6 +333,7 @@ void CCharacterController::Late_Update(_float dt)
 		(float)footPosition.z,
 		1.f));
 
+	m_vRootMotion = {};
 	m_vVelocity.x = 0.f;
 	m_vVelocity.z = 0.f;
 }
@@ -668,8 +677,9 @@ void CCharacterController::Move_RootMotion(_fvector vLocalDelta, _fvector qRotat
 	_vector3 vWorldMotion = _vector3::Transform(vLocalMotion, matRot);
 	vWorldMotion *= fRootMotionScale;
 
-	m_vVelocity.x = vWorldMotion.x / dt;
-	m_vVelocity.z = vWorldMotion.z / dt;
+	//m_vVelocity.x = vWorldMotion.x / dt;
+	//m_vVelocity.z = vWorldMotion.z / dt;
+	m_vRootMotion += vWorldMotion;
 }
 
 void CCharacterController::Stop_Movement()

@@ -1,5 +1,6 @@
 #pragma once
 #include "IHState.h"
+#include "Defiler_Control.h"
 
 NS_BEGIN(Client)
 class CDefiler;

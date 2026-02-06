@@ -23,7 +23,6 @@ private:
 
 public:
 	static CCamPosCatmullRomEvaluator* Create() { return new CCamPosCatmullRomEvaluator(); }
-	virtual void Free() override { __super::Free(); }
 };
 
 NS_END

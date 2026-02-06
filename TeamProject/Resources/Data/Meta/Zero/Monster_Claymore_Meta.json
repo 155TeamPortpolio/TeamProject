@@ -1,0 +1,399 @@
+{
+  "AnimPath": "../Bin/Resources/Zero/Enemy/Claymore/Anim/",
+  "PreTransform": {
+    "_11": -0.009999999776482582,
+    "_12": 0.0,
+    "_13": 0.0,
+    "_14": 0.0,
+    "_21": 0.0,
+    "_22": 0.009999999776482582,
+    "_23": 0.0,
+    "_24": 0.0,
+    "_31": 0.0,
+    "_32": 0.0,
+    "_33": -0.009999999776482582,
+    "_34": 0.0,
+    "_41": 0.0,
+    "_42": 0.0,
+    "_43": 0.0,
+    "_44": 1.0
+  },
+  "Clips": [
+    {
+      "ClipTag": "Claymore_Ani_Attack_02b",
+      "Events": []
+    },
+    {
+      "ClipTag": "Claymore_Ani_Attack_04",
+      "Events": [
+        {
+          "EventTime": 0.5567251443862915,
+          "EventType": "Notify",
+          "EventTag": "UnleashAttack"
+        },
+        {
+          "EventTime": 0.7204678058624268,
+          "EventType": "Notify",
+          "EventTag": "TurnOnAttackCol"
+        },
+        {
+          "EventTime": 1.0233917236328125,
+          "EventType": "Notify",
+          "EventTag": "TurnOffAttackCol"
+        },
+        {
+          "EventTime": 1.0233917236328125,
+          "EventType": "Notify",
+          "EventTag": "FinishAll"
+        }
+      ]
+    },
+    {
+      "ClipTag": "Claymore_Ani_Attack_05",
+      "Events": []
+    },
+    {
+      "ClipTag": "Claymore_Ani_Chaos",
+      "Events": []
+    },
+    {
+      "ClipTag": "Claymore_Ani_Debuff_Stun_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "Claymore_Ani_Debuff_Stun_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "Claymore_Ani_Debuff_Stun_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "Claymore_Ani_Hit_Knock",
+      "Events": []
+    },
+    {
+      "ClipTag": "Claymore_Ani_Hit_Sky_Fly_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "Claymore_Ani_Hit_Sky_Knock",
+      "Events": []
+    },
+    {
+      "ClipTag": "Claymore_Ani_Hit_Sky_Knock_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "Claymore_Ani_Hit_Sky_Knock_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "Claymore_Ani_Hit_Sky_Throw_Back_High_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "Claymore_Ani_Hit_Sky_Throw_Front_High_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "Claymore_Ani_Hit_Stay",
+      "Events": []
+    },
+    {
+      "ClipTag": "Claymore_Ani_HitFly_Back",
+      "Events": []
+    },
+    {
+      "ClipTag": "Claymore_Ani_HitFly_Back_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "Claymore_Ani_HitFly_Front",
+      "Events": []
+    },
+    {
+      "ClipTag": "Claymore_Ani_HitFly_Front_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "Claymore_Ani_HitThrow_Back",
+      "Events": []
+    },
+    {
+      "ClipTag": "Claymore_Ani_HitThrow_Back_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "Claymore_Ani_HitThrow_Back_Small",
+      "Events": []
+    },
+    {
+      "ClipTag": "Claymore_Ani_HitThrow_Back_Small_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "Claymore_Ani_HitThrow_Front",
+      "Events": []
+    },
+    {
+      "ClipTag": "Claymore_Ani_HitThrow_Front_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "Claymore_Ani_HitThrow_Front_Small",
+      "Events": []
+    },
+    {
+      "ClipTag": "Claymore_Ani_HitThrow_Front_Small_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "Claymore_Ani_HitWall_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "Claymore_Ani_HitWall_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "Claymore_Ani_Idle",
+      "Events": []
+    },
+    {
+      "ClipTag": "Claymore_Ani_Ignite",
+      "Events": []
+    },
+    {
+      "ClipTag": "Claymore_Ani_Ignite_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_Claymore_Ani_Attack_01",
+      "Events": [
+        {
+          "EventTime": 0.009999999776482582,
+          "EventType": "Notify",
+          "EventTag": "UnleashAttack"
+        },
+        {
+          "EventTime": 0.6499999761581421,
+          "EventType": "Notify",
+          "EventTag": "TurnOnAttackCol"
+        },
+        {
+          "EventTime": 0.8402858972549438,
+          "EventType": "Notify",
+          "EventTag": "TurnOffAttackCol"
+        },
+        {
+          "EventTime": 0.8402858972549438,
+          "EventType": "Notify",
+          "EventTag": "FinishAll"
+        }
+      ]
+    },
+    {
+      "ClipTag": "Monster_Claymore_Ani_Attack_02",
+      "Events": [
+        {
+          "EventTime": 0.009999999776482582,
+          "EventType": "Notify",
+          "EventTag": "UnleashAttack"
+        },
+        {
+          "EventTime": 1.0842105150222778,
+          "EventType": "Notify",
+          "EventTag": "TurnOnAttackCol"
+        },
+        {
+          "EventTime": 1.432228684425354,
+          "EventType": "Notify",
+          "EventTag": "TurnOffAttackCol"
+        },
+        {
+          "EventTime": 1.9676414728164673,
+          "EventType": "Notify",
+          "EventTag": "TurnOnAttackCol"
+        },
+        {
+          "EventTime": 2.2353477478027344,
+          "EventType": "Notify",
+          "EventTag": "TurnOffAttackCol"
+        },
+        {
+          "EventTime": 2.7975308895111084,
+          "EventType": "Notify",
+          "EventTag": "TurnOnAttackCol"
+        },
+        {
+          "EventTime": 3.399869918823242,
+          "EventType": "Notify",
+          "EventTag": "TurnOffAttackCol"
+        },
+        {
+          "EventTime": 3.4000000953674316,
+          "EventType": "Notify",
+          "EventTag": "FinishAll"
+        }
+      ]
+    },
+    {
+      "ClipTag": "Monster_Claymore_Ani_Attack_03",
+      "Events": [
+        {
+          "EventTime": 0.8187134265899658,
+          "EventType": "Notify",
+          "EventTag": "UnleashAttack"
+        },
+        {
+          "EventTime": 2.0849902629852295,
+          "EventType": "Notify",
+          "EventTag": "TurnOnAttackCol"
+        },
+        {
+          "EventTime": 3.220273017883301,
+          "EventType": "Notify",
+          "EventTag": "TurnOffAttackCol"
+        },
+        {
+          "EventTime": 3.220273017883301,
+          "EventType": "Notify",
+          "EventTag": "FinishAll"
+        }
+      ]
+    },
+    {
+      "ClipTag": "Monster_Claymore_Ani_Attack_03_End",
+      "Events": [
+        {
+          "EventTime": 0.03937621787190437,
+          "EventType": "Notify",
+          "EventTag": "TurnOnAttackCol"
+        },
+        {
+          "EventTime": 0.8794021606445313,
+          "EventType": "Notify",
+          "EventTag": "TurnOffAttackCol"
+        },
+        {
+          "EventTime": 0.8794021606445313,
+          "EventType": "Notify",
+          "EventTag": "FinishAll"
+        }
+      ]
+    },
+    {
+      "ClipTag": "Monster_Claymore_Ani_Born",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_Claymore_Ani_Death_Back",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_Claymore_Ani_Death_Front",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_Claymore_Ani_Death_Stay",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_Claymore_Ani_Dodge",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_Claymore_Ani_Hit_H_Back",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_Claymore_Ani_Hit_H_Front",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_Claymore_Ani_Hit_L_Back_Down",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_Claymore_Ani_Hit_L_Back_Left",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_Claymore_Ani_Hit_L_Back_Right",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_Claymore_Ani_Hit_L_Back_Up",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_Claymore_Ani_Hit_L_Front_Down",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_Claymore_Ani_Hit_L_Front_Left",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_Claymore_Ani_Hit_L_Front_Right",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_Claymore_Ani_Hit_L_Front_Up",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_Claymore_Ani_Hit_Shake",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_Claymore_Ani_Hit_Sky_InAir",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_Claymore_Ani_Hit_Sky_InAir_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_Claymore_Ani_Run_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_Claymore_Ani_Run_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_Claymore_Ani_Run_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_Claymore_Ani_Walk_B",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_Claymore_Ani_Walk_F",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_Claymore_Ani_Walk_F_L",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_Claymore_Ani_Walk_F_R",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_Claymore_Ani_Walk_L",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_Claymore_Ani_Walk_R",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_Claymore_Ani_Walk_R_F",
+      "Events": []
+    }
+  ]
+}

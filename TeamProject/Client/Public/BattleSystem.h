@@ -38,8 +38,6 @@ public: //setter
 	void	ReadyBattle(const string& tagArea, _uint StageNumber, _uint iPrefabIndex);
 	
 	void	SpawnMosnter(const string& MonsterProtoTag, _float3 vSpawnPos, _float3 vRot = {});
-	void	SpawnMosnterFromPool(const string& MonsterProtoTag, _float3 vSpawnPos, _float3 vRot);
-
 
 	// 플레이어(캐릭터들) 로직 정해지기 전까지 임시
 	void	SetPlayer(vector<OBJECT_HANDLE> hPlayers);
@@ -56,15 +54,17 @@ public:
 
 public:
 	void	TakeAreaDamage(const _float3& vCenter, _float fRadius, const HitDesc& hitDesc);
+	void	TakeAreaDamage(const _float3& vCenter, _float fRadius, const _float3& vDir, _float fAngle, const HitDesc& hitDesc);
+	void	TakeBoxDamage(const _float3& vCenter, const _float3& vHalfExtents, const _quaternion& qRotation, const HitDesc& hitDesc);
 	void	TakeAllDamage(const HitDesc& hitDesc);
 	_bool	ExitBattleObject(BATTLE_OBJ_TYPE eObjType, OBJECT_HANDLE hObject);
 	void	EnterBattleObject(BATTLE_OBJ_TYPE eObjType, OBJECT_HANDLE hObject);
+	void	ClearBattleStage();
 
 public:
 	_bool isMonsterCleared();
 
 private:
-	void	ClearBattleStage();
 	void	Update_BattleInfo();
 	void	CheckVFX(const _float dt);
 
@@ -79,6 +79,14 @@ private:
 	/*Map 구조 변경 후 재적용 예정*/
 	BATTLE_FIELD_DATA			m_BattleFieldData = {};// 현재 Stage에 셋팅 된 BattlePoint 정보
 	vector<OBJECT_HANDLE>		m_SpawnerHandles;// 스포너 핸들
+
+private:
+	_bool	m_isUseInspector = { false };
+
+public:
+	_bool	IsUseInspector() { return m_isUseInspector; }
+	void	SetUseInspector(_bool is) { m_isUseInspector = is; }
+
 private: /*현재 사용 X*/
 	const _char* m_LayerTag[3] = { "Model_Layer", "Enemy_Layer" ,"None"};
 	unordered_map<BATTLE_OBJ_TYPE, vector<OBJECT_HANDLE>>	m_Handles;			// BATTLE_OBJ_TYPE 별로 생성된 오브젝트의 핸들 모음

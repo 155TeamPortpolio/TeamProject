@@ -211,6 +211,18 @@ BlendState BS_Additive
     BlendOpAlpha = Add;
 };
 
+BlendState BS_Additive_MaxAlpha
+{
+    BlendEnable[0] = true;
+    SrcBlend = One;
+    DestBlend = One;
+    BlendOp = Add;
+    
+    SrcBlendAlpha = One;
+    DestBlendAlpha = One; 
+    BlendOpAlpha = Max;
+};
+
 BlendState BS_SrcAdditive
 {
     BlendEnable[0] = true;
@@ -309,6 +321,15 @@ BlendState BS_OITAccmulation
     SrcBlendAlpha[4] = One;
     DestBlendAlpha[4] = One;
     BlendOpAlpha[4] = Add;
+
+    /* RimLight */
+    BlendEnable[5] = true;
+    SrcBlend[5] = One;
+    DestBlend[5] = One;
+    BlendOp[5] = Add;
+    SrcBlendAlpha[5] = One;
+    DestBlendAlpha[5] = One;
+    BlendOpAlpha[5] = Add;
 };
 
 SamplerState DefaultSampler = sampler_state

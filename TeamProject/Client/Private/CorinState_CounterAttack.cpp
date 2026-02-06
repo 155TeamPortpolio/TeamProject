@@ -43,7 +43,8 @@ void CCorinState_CounterAttack::Update(CCorin* pOwner, _float dt)
 			pOwner->Begin_AttackCollider("Saw",
 				HitDesc()
 				.Type(HIT_TYPE::INTERVAL)
-				.Damage(Helper::Get_Random_Float(5.f, 10.f), DAMAGE_TYPE::NORMAL)
+				.Damage(pOwner->Get_AttackPower() * 2.712f * Helper::Get_Random_Float(1.f, 1.5f)
+					, DAMAGE_TYPE::HARD)
 				.Interval(0.05f)
 				.Charge(5.f, 50.f)
 			);
@@ -76,6 +77,7 @@ void CCorinState_CounterAttack::Update(CCorin* pOwner, _float dt)
 
 void CCorinState_CounterAttack::Exit(CCorin* pOwner)
 {
+	pOwner->Reset_ReserveCombo();
 	pOwner->Pop_Invincible();
 	pOwner->Unlock_Move();
 	__super::Exit(pOwner);

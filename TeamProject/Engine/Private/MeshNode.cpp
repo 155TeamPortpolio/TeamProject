@@ -47,12 +47,15 @@ HRESULT CMeshNode::Initialize(INIT_DESC* pArg)
 
 	/* Set Param */
 	{
+		m_fPendingDuration = pMeshNode->fPendingDuration;
+
 		m_DiffuseTextureTag = pMeshNode->DiffuseTextureTag;
 		m_NoiseTextureTag = pMeshNode->NoiseTextureTag;
 		m_DissolveTextureTag = pMeshNode->DissolveTextureTag;
 		m_MaskTextureTagA = pMeshNode->MaskTextureTagA;
 		m_MaskTextureTagB = pMeshNode->MaskTextureTagB;
 		m_DistortionTextureTag = pMeshNode->DistortionTextureTag;
+		m_DistortionMaskTextureTag = pMeshNode->DistortionMaskTextureTag;
 		m_GradientTextureTag = pMeshNode->GradientTextureTag;
 
 		/* Offset Transform */
@@ -115,6 +118,8 @@ HRESULT CMeshNode::Initialize(INIT_DESC* pArg)
 		m_MaskModule.fMaskTilling = pMeshNode->fMaskTilling;
 
 		/* Distortion */
+		m_DistortionModule.useDiffuseAlpha = pMeshNode->useDiffuseAlpha;
+		m_DistortionModule.useDistortionMask = pMeshNode->useDistortionMask;
 		m_DistortionModule.fEnableDistortion = pMeshNode->fEnableDistortion;
 		m_DistortionModule.fDistortionStrength = pMeshNode->fDistortionStrength;
 		m_DistortionModule.fDistortionTilling = pMeshNode->fDistortionTilling;
@@ -130,7 +135,6 @@ HRESULT CMeshNode::Initialize(INIT_DESC* pArg)
 	_float2 screenSize = CGameInstance::GetInstance()->Get_ClientSize();
 	m_fScreenWidth = screenSize.x;
 	m_fScreenHeight = screenSize.y;
-
 	return S_OK;
 }
 
@@ -148,6 +152,18 @@ void CMeshNode::Update(_float dt)
 
 	if (m_IsEffectActive)
 	{
+		if(m_IsPendingStop)
+		{
+			m_fPendingElapsedTime += dt;
+
+			if (m_fPendingElapsedTime >= m_fPendingDuration)
+			{
+				m_ColorModule.vCurrColor.w = 0.f;
+				m_IsEffectActive = false;
+				m_isAlive = false;
+			}
+		}
+
 		m_fProgress = m_fElpasedTime / m_fDuration;
 
 		Update_TextureSlotModule(dt);
@@ -165,18 +181,24 @@ void CMeshNode::Late_Update(_float dt)
 {
 }
 
+void CMeshNode::Render_GUI()
+{
+	__super::Render_GUI();
+}
+
 void CMeshNode::Play()
 {
 	m_isAlive = true;
 	m_IsEffectActive = true;
+	m_IsPendingStop = false;
 	m_fElpasedTime = 0.f;
 	Reset();
 }
 
 void CMeshNode::Stop()
 {
-	m_isAlive = false;
-	m_IsEffectActive = false;
+	m_fPendingElapsedTime = 0.f;
+	m_IsPendingStop = true;
 }
 
 CMeshNode* CMeshNode::Create()
@@ -273,6 +295,16 @@ void CMeshNode::Bind_Textures()
 			MSG_BOX("Not exist Distortion Texture : %s", m_DistortionTextureTag.c_str());
 	}
 
+	if (!m_DistortionMaskTextureTag.empty())
+	{
+		auto pDistortionMaskTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_DistortionMaskTextureTag);
+
+		if (pDistortionMaskTexture)
+			pMaterialInstance->Set_Param("DistortionMaskTexture", { pDistortionMaskTexture->Get_SRV(),"Texture2D",0 });
+		else
+			MSG_BOX("Not exist Distortion Mask Texture : %s", m_DistortionMaskTextureTag.c_str());
+	}
+
 	if (!m_GradientTextureTag.empty())
 	{
 		auto pGradientTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_GradientTextureTag);
@@ -308,6 +340,9 @@ void CMeshNode::Update_ColorModule(_float dt)
 	_float t = m_fElpasedTime / m_fDuration;
 
 	m_ColorModule.vCurrColor = _vector4::Lerp(m_ColorModule.vStartColor, m_ColorModule.vEndColor, Math::ApplyEase(m_ColorModule.eEaseType, t));
+
+	if (m_IsPendingStop)
+		m_ColorModule.vCurrColor.w = 1.f - (m_fPendingElapsedTime / m_fPendingDuration);
 }
 
 void CMeshNode::Update_ScaleModule(_float dt)
@@ -414,6 +449,8 @@ void CMeshNode::Bind_Params()
 	pMaterialInstance->Set_Param("MaskTilling", { &m_MaskModule.fMaskTilling,"float",sizeof(_float) });
 
 	/* Distortion */
+	pMaterialInstance->Set_Param("UseDiffuseAlpha", { &m_DistortionModule.useDiffuseAlpha,"bool",sizeof(_bool) });
+	pMaterialInstance->Set_Param("UseDistortionMask", { &m_DistortionModule.useDistortionMask,"bool",sizeof(_bool) });
 	pMaterialInstance->Set_Param("EnableDistortion", { &m_DistortionModule.fEnableDistortion,"float",sizeof(_float) });
 	pMaterialInstance->Set_Param("DistortionStrength", { &m_DistortionModule.fDistortionStrength,"float",sizeof(_float) });
 	pMaterialInstance->Set_Param("DistortionTilling", { &m_DistortionModule.fDistortionTilling,"float",sizeof(_float) });
@@ -422,4 +459,9 @@ void CMeshNode::Bind_Params()
 	/* Gradient */
 	pMaterialInstance->Set_Param("EnableGradient", { &m_GradientModule.fEnableGradient,"float",sizeof(_float) });
 	pMaterialInstance->Set_Param("GradientMode", { &m_GradientModule.eGradientMode,"uint",sizeof(_uint) });
+}
+
+void CMeshNode::Update_PendingStop()
+{
+
 }

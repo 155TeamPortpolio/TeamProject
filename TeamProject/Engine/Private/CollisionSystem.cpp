@@ -996,9 +996,9 @@ void CCollisionSystem::Exit_TriggerCollisions(ICollidable* pCollidable)
 			pOther->OnCollisionExit(pCollidable);
 
 		if (bOtherTrigger)
-			pCollidable->OnCollisionExit(pOther);
-		else
 			pCollidable->OnTriggerExit(pOther);
+		else
+			pCollidable->OnCollisionExit(pOther);
 
 		// 상대방 목록에서 제거
 		pOther->Get_CurrentCollisions().erase(pCollidable);

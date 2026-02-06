@@ -5,7 +5,8 @@
 
 void CJaneDoeState_SwitchOut::Enter(CJaneDoe* pOwner)
 {
-    pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "SwitchOut_Normal")
+    pOwner->Get_StateMachine()->Reset_Trigger("ToIdle");
+    pOwner->Get_Animator()->Set_Animation(pOwner->Get_Name() + "SwitchOut_Normal")
         .Loop(false)
         .Apply();
 }
@@ -27,6 +28,7 @@ void CJaneDoeState_SwitchOut::Update(CJaneDoe* pOwner, _float dt)
     if (m_fAnimProgress >= 0.6f)
     {
         pOwner->DeActive_Character();
+        pOwner->Reset_RimLight();
         pOwner->Get_StateMachine()->Set_Trigger("ToIdle");
     }
 }

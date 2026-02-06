@@ -134,8 +134,6 @@ void CLoadingLevel::PreLoadLevel(const string& levelKey)
 
 void CLoadingLevel::PreLoadForTestLevel()
 {
-	
-
 	const string clientPath = "../Bin/Resources";
 	filesystem::path directory = clientPath;
 
@@ -169,28 +167,8 @@ void CLoadingLevel::PreLoadForTestLevel()
 		const string fileName = filePathObj.filename().string();
 
 		resourceManager->Add_ResourcePath(fileName, filePath);
-
-		const ResourceType type = CheckResourceType(filePath, fileName);
-		if (type == ResourceType::None)
-			continue;
-
-		PreloadKey key{};
-		key.type = type;
-		key.levelKey = "Test_Level";
-		key.resourceKey = fileName;
-		key.options.isSRGB = isSRGB(filePath);
-
-		m_LoadQue[type].push(key);
 	}
 
-	for (auto& queuePerType : m_LoadQue)
-	{
-		while (!queuePerType.second.empty())
-		{
-			resourceManager->RequestPreload(queuePerType.second.front());
-			queuePerType.second.pop();
-		}
-	}
 }
 
 
@@ -207,7 +185,7 @@ ResourceType CLoadingLevel::CheckResourceType(const string& filePath,const strin
 	if (ext == ".png" || ext == ".jpg" || ext == ".jpeg" || ext == ".dds" || ext == ".bmp" )
 		return ResourceType::Texture;
 
-	if (ext == ".model" )
+	if (ext == ".model")
 		return ResourceType::Model;
 
 	if (ext == ".mat")

@@ -25,12 +25,18 @@ public:
     virtual void    Update(_float dt)           override;
     virtual void    Late_Update(_float dt)      override;
 
+    virtual void Render_GUI()override;
+
     virtual void    OnTriggerEnter(CGameObject* pOther) override;
     virtual void    OnTriggerStay(CGameObject* pOher)   override;
     virtual void    OnTriggerExit(CGameObject* pOther)  override;
 
     virtual void                Interact(CGameObject* pObject = nullptr) override;
     virtual OBJECT_HANDLE       Get_InteractHandle() override;
+
+public:
+    void SetChoiceIndex(class CStage* pOwener, int idx);
+    int  GetChoiceIndex() const { return m_choiceIndex; }
 
 private:
     void Extend(_float dt);
@@ -40,12 +46,20 @@ private:
     _bool  m_bVisible = { false };
     string m_NextMapTag{};
     _float m_Time = {};
-    class CStage* m_pTargetStage = { nullptr };
 
 private:
-    _float m_fDuration = .5f;
-    _float m_fElapsedTime = 0.f;
-    _vector3 m_vTargetSize = {2.f,2.f,2.f};
+    _int m_choiceIndex = -1;
+    class CStage* m_pOwnerStage = { nullptr };
+
+private:
+    _bool m_OnExtend = false;
+    _bool m_OnContract = false;
+
+    _float m_fDuration{};
+    _float m_fElapsedTime{};
+
+    _float3 m_vContractScale{ 0.3f,0.3f,0.3f };
+    _float3 m_vExtendScale{ 1.3f,1.3f,1.3f };
 public:
     static CZeroPortal* Create();
     virtual CGameObject* Clone(INIT_DESC* pArg) override;

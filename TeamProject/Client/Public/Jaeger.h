@@ -14,12 +14,18 @@ private:
     virtual ~CJaeger() DEFAULT;
 
 public:
+    virtual void    Execute() override;
+
+public:
     virtual HRESULT Initialize_Prototype() override;
     virtual HRESULT Initialize(INIT_DESC* pArg) override;
     virtual void    Awake() override;
     virtual void    Priority_Update(_float dt) override;
     virtual void    Update(_float dt) override;
     virtual void    Late_Update(_float dt) override;
+
+private:
+    virtual void    Success(_uint curSequenceID) override;
 
 public:
     static CJaeger* Create();

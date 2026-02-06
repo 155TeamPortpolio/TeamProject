@@ -1,5 +1,6 @@
 #pragma once
 #include "Enemy.h"
+#include "Defiler_Control.h"
 
 NS_BEGIN(Client)
 
@@ -10,41 +11,6 @@ class CDefiler :
     public CEnemy
 {
 public:
-    enum class TraceType {TRACE, ONTARGET, NONE};
-    typedef struct tagDefilerBlackBoard : public ATTACK_BLACK_BOARD
-    {
-        //  deque<string> stateQueue;
-        //  _bool isRequestNext = false;//다음 상태가 존재 할 때 상태 전환 요청
-        //  _bool isChainOpen = false;  //현재 상태에서 다음으로 진행 가능여부
-        //  _bool isEnd = false;
-        //  string currentStateTag{};
-        _int pattern = { 0 };
-
-        TraceType eTraceType = {};
-        deque<_float> progressQueue; 
-        _float currentStartProgress = 0.f;
-        _bool EndChain = {};
-
-        void OnTarget() { eTraceType = TraceType::ONTARGET; }
-        void OnTrace() { eTraceType = TraceType::TRACE; }
-        void NoneTrace() { eTraceType = TraceType::NONE; }
-        _float PopStartProgress()
-        {
-            _float progress = 0.f;
-            if (!progressQueue.empty())
-            {
-                progress = progressQueue.front();
-                progressQueue.pop_front();
-            }
-            return progress;
-        }
-        _bool ConsumeChain() {
-            _bool prevChain = EndChain;
-            EndChain = false;
-            return prevChain;
-        }
-
-    }DEFILER_BLACK_BOARD;
 
 private:
     CDefiler();
@@ -63,24 +29,42 @@ public:
 
 public:
     DEFILER_BLACK_BOARD& GetBlackBoard() { return m_BlackBoard; }
+    DefilerDissolve& GetDissolve() { return m_Dissolve; }
     CStateMachine<CDefiler>* Get_MainStateMachine() { return m_pStateMachine; }
 
+public:
+    void Change_CollisionMask(_uint iMask = ENUM(COLLISION_GROUP::PLAYER));
+    void Release_CollisionMask();
+
+public:
+    void Set_CCTPos(_vector3 pos);
 private:
     void MoveByTraceMode(_float dt, _float moveScale = 1.f);
     void RotateToTarget(_float dt, _float rotateSpeed = 1.f);
     void Update_States(_float dt);
     void Route_AnimEvent(CAnimator3D* animator);
+    void Controll_Attack(const string& event);
+    void Update_Dissolve(_float dt);
 
 private:
     HRESULT Initialize_StateMachine();
     HRESULT Initialize_States();
     HRESULT Initialize_Transitions();
     HRESULT Initialize_Effects();
-    //HRESULT Create_Colliders();
+    HRESULT Create_Colliders();
 
 private:
     CStateMachine<CDefiler>* m_pStateMachine = { nullptr };
     DEFILER_BLACK_BOARD m_BlackBoard = {};
+    DefilerDissolve m_Dissolve = {};
+
+    _uint m_BaseMask = 
+        ENUM(COLLISION_GROUP::COMMON) | 
+        ENUM(COLLISION_GROUP::PLAYER) | 
+        ENUM(COLLISION_GROUP::PLAYER_ATTACK);
+
+    _bool m_bDirLockedNear = false;
+    _float m_passDampTime = 0.f;
 
 public:
     static CDefiler* Create();

@@ -32,17 +32,31 @@ namespace Engine
 	}INIT_DESC;
 
 	/* Light Desc struct*/
+	/* Light Desc struct*/
 	typedef struct tagLightDesc {
 		union { _float4 vLightPosition;  _float4 vOffsetPosition; };
-		_float4		vLightDirection = { 0,-1,0,0 };
-		_float4		vLightDiffuse = {};
-		_float4		vLightAmbient = {};
-		_float4		vLightSpecular = {};
-		_float			fLightRange = {};
-		_float			fLightIntensity = { 3.f };
-		_float2		lightPadding = {};
-		LIGHT_TYPE eType = { LIGHT_TYPE::DIRECTIONAL };
-	}LIGHT_DESC;
+
+		_float4 vLightDirection = { 0,-1,0,0 };
+
+		_float4 vLightDiffuse = {};
+		_float4 vLightAmbient = {};
+		_float4 vLightSpecular = {};
+
+		_float  fLightRange = 15.f;
+		_float  fLightIntensity = 3.f;
+
+		_float  fInnerCos = 0.95f; 
+		_float  fOuterCos = 0.85f; 
+
+		LIGHT_TYPE eType = LIGHT_TYPE::DIRECTIONAL;
+		_uint3      pad0 = {}; 
+
+		static tagLightDesc SpotSet();
+		static tagLightDesc PointSet();
+		static tagLightDesc DirectionSet();
+		void SetSpotDegree(_float innerDeg, _float outerDeg);
+	} LIGHT_DESC;
+
 
 	/*File Info Desc*/
 	/*Model*/
@@ -424,9 +438,12 @@ namespace Engine
 		string TextureKey{};
 		string TexturePath{};
 
+		_bool useMask = false;
+		string MaskTextureTag{};
+
 		_float3 vOffsetPosition{};
 		_float4 vOffsetQuaternion{};
-
+		_float3 vRimLightColor{};
 		_float2 vPivot{ 0.5f,0.5f };
 		_uint iRGBMaskMode{};
 		_uint iModuleMask{};
@@ -483,12 +500,15 @@ namespace Engine
 		string ModelTag{};
 		string MaterialTag{};
 
+		_float fPendingDuration{};
+
 		string DiffuseTextureTag{};
 		string NoiseTextureTag{};
 		string DissolveTextureTag{};
 		string MaskTextureTagA{};
 		string MaskTextureTagB{};
 		string DistortionTextureTag{};
+		string DistortionMaskTextureTag{};
 		string GradientTextureTag{};
 
 		_float3 vOffsetPosition{};
@@ -548,6 +568,8 @@ namespace Engine
 		_float fMaskTilling{};
 
 		/* Distortion */
+		_bool useDiffuseAlpha = true;
+		_bool useDistortionMask = false;
 		_float fEnableDistortion{};
 		_float fDistortionStrength{};
 		_float fDistortionTilling{};
@@ -599,33 +621,36 @@ namespace Engine
 		static tagEffectAsset FromJson(nlohmann::ordered_json& json);
 	}EFFECT_ASSET;
 
-	typedef struct ENGINE_DLL tagObjectHandle {
-		string Level = {};
-		string Layer = {};
-		_uint hObjID = {};
+	typedef struct ENGINE_DLL tagObjectHandle
+	{
+		string Level{};
+		string Layer{};
+		_uint  hObjID{};
 
 		_bool isValid();
+		_bool isValid() const;
+
 		void Reset();
-		class CGameObject* Get();
+		CGameObject* Get();
+		CGameObject* Get() const;
+
 		void Delete();
 		void Set_Alive(_bool alive);
 		_bool isAlive();
-		_bool operator==(const tagObjectHandle& rhs) {
-			if (isValid())
-				return hObjID == rhs.hObjID;
-			else
-				return false;
-		}
-		_bool operator !=(const tagObjectHandle& rhs) {
-			return hObjID != rhs.hObjID;
-		}
-		tagObjectHandle& operator= (const tagObjectHandle& rhs) {
-			Level = rhs.Level;
-			Layer = rhs.Layer;
+
+		_bool operator==(const tagObjectHandle& rhs) const { return hObjID == rhs.hObjID; }
+		_bool operator!=(const tagObjectHandle& rhs) const { return hObjID != rhs.hObjID; }
+
+		tagObjectHandle& operator=(const tagObjectHandle& rhs)
+		{
+			Level  = rhs.Level;
+			Layer  = rhs.Layer;
 			hObjID = rhs.hObjID;
 			return *this;
 		}
-		class CGameObject* operator()() { return Get(); }
+
+		CGameObject* operator()() const { return Get(); }
+
 		template<typename TObject>
 		TObject* GetAs() const
 		{
@@ -636,7 +661,7 @@ namespace Engine
 			return dynamic_cast<TObject*>(objectPtr);
 		}
 
-	}OBJECT_HANDLE;
+	} OBJECT_HANDLE;
 
 	typedef struct ENGINE_DLL tagUIHandle {
 		string Level = {};

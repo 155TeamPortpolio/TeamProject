@@ -1,0 +1,1187 @@
+{
+  "AnimPath": "../bin/Resources/Global/BattleCharacter/JaneDoe/Anim/",
+  "PreTransform": {
+    "_11": -0.009999999776482582,
+    "_12": 0.0,
+    "_13": 0.0,
+    "_14": 0.0,
+    "_21": 0.0,
+    "_22": 0.009999999776482582,
+    "_23": 0.0,
+    "_24": 0.0,
+    "_31": 0.0,
+    "_32": 0.0,
+    "_33": -0.009999999776482582,
+    "_34": 0.0,
+    "_41": 0.0,
+    "_42": 0.0,
+    "_43": 0.0,
+    "_44": 1.0
+  },
+  "Clips": [
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Attack_AssaultAid",
+      "Events": [
+        {
+          "EventTime": 0.12007797509431839,
+          "EventType": "Notify",
+          "EventTag": "RFootStart"
+        },
+        {
+          "EventTime": 0.19298246502876282,
+          "EventType": "Notify",
+          "EventTag": "RFootEnd"
+        },
+        {
+          "EventTime": 0.274463951587677,
+          "EventType": "Notify",
+          "EventTag": "LFootStart"
+        },
+        {
+          "EventTime": 0.4502924084663391,
+          "EventType": "Notify",
+          "EventTag": "LFootEnd"
+        },
+        {
+          "EventTime": 0.5875243544578552,
+          "EventType": "Notify",
+          "EventTag": "AreaAttack"
+        },
+        {
+          "EventTime": 0.6261208653450012,
+          "EventType": "Notify",
+          "EventTag": "AreaAttack"
+        },
+        {
+          "EventTime": 0.6561403274536133,
+          "EventType": "Notify",
+          "EventTag": "AreaAttack"
+        },
+        {
+          "EventTime": 0.6800000071525574,
+          "EventType": "Notify",
+          "EventTag": "AreaAttack"
+        },
+        {
+          "EventTime": 0.707602322101593,
+          "EventType": "Notify",
+          "EventTag": "CheckCombo"
+        }
+      ]
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Attack_AssaultAid_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Attack_Branch_01",
+      "Events": [
+        {
+          "EventTime": 0.2526315748691559,
+          "EventType": "Notify",
+          "EventTag": "LFootStart"
+        },
+        {
+          "EventTime": 1.600000023841858,
+          "EventType": "Notify",
+          "EventTag": "LFootEnd"
+        }
+      ]
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Attack_Branch_01_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Attack_Branch_01_Release",
+      "Events": [
+        {
+          "EventTime": 0.14249512553215027,
+          "EventType": "Notify",
+          "EventTag": "LFootStart"
+        },
+        {
+          "EventTime": 0.14249512553215027,
+          "EventType": "Notify",
+          "EventTag": "RFootStart"
+        },
+        {
+          "EventTime": 1.0058479309082031,
+          "EventType": "Notify",
+          "EventTag": "LFootEnd"
+        },
+        {
+          "EventTime": 1.0058479309082031,
+          "EventType": "Notify",
+          "EventTag": "RFootEnd"
+        },
+        {
+          "EventTime": 0.6118908524513245,
+          "EventType": "Notify",
+          "EventTag": "CheckCombo"
+        }
+      ]
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Attack_Branch_02_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Attack_Branch_02_Release",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Attack_Branch_02_Repeat",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Attack_Branch_02_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Attack_Counter_01",
+      "Events": [
+        {
+          "EventTime": 0.05640025809407234,
+          "EventType": "Notify",
+          "EventTag": "LHandStart"
+        },
+        {
+          "EventTime": 0.13294346630573273,
+          "EventType": "Notify",
+          "EventTag": "LHandEnd"
+        },
+        {
+          "EventTime": 0.2356725037097931,
+          "EventType": "Notify",
+          "EventTag": "LFootStart"
+        },
+        {
+          "EventTime": 0.2940870523452759,
+          "EventType": "Notify",
+          "EventTag": "LFootEnd"
+        },
+        {
+          "EventTime": 0.41091617941856384,
+          "EventType": "Notify",
+          "EventTag": "RHandStart"
+        },
+        {
+          "EventTime": 0.5337881445884705,
+          "EventType": "Notify",
+          "EventTag": "RHandEnd"
+        },
+        {
+          "EventTime": 0.5378167033195496,
+          "EventType": "Notify",
+          "EventTag": "CheckCombo"
+        }
+      ]
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Attack_Counter_01_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Attack_Counter_02",
+      "Events": [
+        {
+          "EventTime": 0.1801169514656067,
+          "EventType": "Notify",
+          "EventTag": "RFootStart"
+        },
+        {
+          "EventTime": 0.2713450491428375,
+          "EventType": "Notify",
+          "EventTag": "RFootEnd"
+        },
+        {
+          "EventTime": 0.6339181661605835,
+          "EventType": "Notify",
+          "EventTag": "LFootStart"
+        },
+        {
+          "EventTime": 0.7415205240249634,
+          "EventType": "Notify",
+          "EventTag": "LFootEnd"
+        },
+        {
+          "EventTime": 0.7508772015571594,
+          "EventType": "Notify",
+          "EventTag": "CheckCombo"
+        }
+      ]
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Attack_Counter_02_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Attack_Counter_03",
+      "Events": [
+        {
+          "EventTime": 0.09005847573280334,
+          "EventType": "Notify",
+          "EventTag": "LFootStart"
+        },
+        {
+          "EventTime": 0.1610136479139328,
+          "EventType": "Notify",
+          "EventTag": "RFootStart"
+        },
+        {
+          "EventTime": 0.16647173464298248,
+          "EventType": "Notify",
+          "EventTag": "LFootEnd"
+        },
+        {
+          "EventTime": 0.2756335139274597,
+          "EventType": "Notify",
+          "EventTag": "RFootEnd"
+        },
+        {
+          "EventTime": 0.3411305844783783,
+          "EventType": "Notify",
+          "EventTag": "LFootStart"
+        },
+        {
+          "EventTime": 0.39844051003456116,
+          "EventType": "Notify",
+          "EventTag": "LFootEnd"
+        },
+        {
+          "EventTime": 0.5294346809387207,
+          "EventType": "Notify",
+          "EventTag": "RFootStart"
+        },
+        {
+          "EventTime": 0.5321637392044067,
+          "EventType": "Notify",
+          "EventTag": "LFootStart"
+        },
+        {
+          "EventTime": 0.6276803016662598,
+          "EventType": "Notify",
+          "EventTag": "RFootEnd"
+        },
+        {
+          "EventTime": 0.6304093599319458,
+          "EventType": "Notify",
+          "EventTag": "LFootEnd"
+        },
+        {
+          "EventTime": 0.6495126485824585,
+          "EventType": "Notify",
+          "EventTag": "CheckCombo"
+        }
+      ]
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Attack_Counter_03_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Attack_ExSpecial",
+      "Events": [
+        {
+          "EventTime": 0.12373224645853043,
+          "EventType": "Notify",
+          "EventTag": "LFootStart"
+        },
+        {
+          "EventTime": 0.12293697148561478,
+          "EventType": "Notify",
+          "EventTag": "RFootStart"
+        },
+        {
+          "EventTime": 1.2293696403503418,
+          "EventType": "Notify",
+          "EventTag": "LFootEnd"
+        },
+        {
+          "EventTime": 1.2293696403503418,
+          "EventType": "Notify",
+          "EventTag": "RFootEnd"
+        },
+        {
+          "EventTime": 0.8326185345649719,
+          "EventType": "Notify",
+          "EventTag": "CheckCombo"
+        }
+      ]
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Attack_ExSpecial_02",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Attack_ExSpecial_02_01",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Attack_ExSpecial_02_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Attack_ExSpecial_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Attack_Normal_01",
+      "Events": [
+        {
+          "EventTime": 0.10916179418563843,
+          "EventType": "Notify",
+          "EventTag": "RHandStart"
+        },
+        {
+          "EventTime": 0.26471734046936035,
+          "EventType": "Notify",
+          "EventTag": "RHandEnd"
+        }
+      ]
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Attack_Normal_01_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Attack_Normal_02",
+      "Events": [
+        {
+          "EventTime": 0.0,
+          "EventType": "Notify",
+          "EventTag": "RHandStart"
+        },
+        {
+          "EventTime": 0.08187134563922882,
+          "EventType": "Notify",
+          "EventTag": "RHandEnd"
+        },
+        {
+          "EventTime": 0.09122807532548904,
+          "EventType": "Notify",
+          "EventTag": "LHandStart"
+        },
+        {
+          "EventTime": 0.09122807532548904,
+          "EventType": "Notify",
+          "EventTag": "LFootStart"
+        },
+        {
+          "EventTime": 0.39532163739204407,
+          "EventType": "Notify",
+          "EventTag": "LHandEnd"
+        },
+        {
+          "EventTime": 0.39532163739204407,
+          "EventType": "Notify",
+          "EventTag": "LFootEnd"
+        }
+      ]
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Attack_Normal_02_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Attack_Normal_03",
+      "Events": [
+        {
+          "EventTime": 0.17056529223918915,
+          "EventType": "Notify",
+          "EventTag": "LHandStart"
+        },
+        {
+          "EventTime": 0.17056529223918915,
+          "EventType": "Notify",
+          "EventTag": "RHandStart"
+        },
+        {
+          "EventTime": 0.27017542719841003,
+          "EventType": "Notify",
+          "EventTag": "LHandEnd"
+        },
+        {
+          "EventTime": 0.27017542719841003,
+          "EventType": "Notify",
+          "EventTag": "RHandEnd"
+        }
+      ]
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Attack_Normal_03_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Attack_Normal_04",
+      "Events": [
+        {
+          "EventTime": 0.09122807532548904,
+          "EventType": "Notify",
+          "EventTag": "LHandStart"
+        },
+        {
+          "EventTime": 0.21624432504177094,
+          "EventType": "Notify",
+          "EventTag": "LHandEnd"
+        },
+        {
+          "EventTime": 0.20272904634475708,
+          "EventType": "Notify",
+          "EventTag": "RHandStart"
+        },
+        {
+          "EventTime": 0.26185837388038635,
+          "EventType": "Notify",
+          "EventTag": "RHandEnd"
+        },
+        {
+          "EventTime": 0.4476933181285858,
+          "EventType": "Notify",
+          "EventTag": "LFootStart"
+        },
+        {
+          "EventTime": 0.5558154582977295,
+          "EventType": "Notify",
+          "EventTag": "LFootEnd"
+        },
+        {
+          "EventTime": 0.5845354199409485,
+          "EventType": "Notify",
+          "EventTag": "RHandStart"
+        },
+        {
+          "EventTime": 0.7095516324043274,
+          "EventType": "Notify",
+          "EventTag": "RHandEnd"
+        }
+      ]
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Attack_Normal_04_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Attack_Normal_05",
+      "Events": [
+        {
+          "EventTime": 0.11319037526845932,
+          "EventType": "Notify",
+          "EventTag": "LFootStart"
+        },
+        {
+          "EventTime": 0.11319037526845932,
+          "EventType": "Notify",
+          "EventTag": "LHandStart"
+        },
+        {
+          "EventTime": 0.22300195693969727,
+          "EventType": "Notify",
+          "EventTag": "LFootEnd"
+        },
+        {
+          "EventTime": 0.4105263352394104,
+          "EventType": "Notify",
+          "EventTag": "LHandEnd"
+        }
+      ]
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Attack_Normal_05_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Attack_Normal_06",
+      "Events": [
+        {
+          "EventTime": 0.13567252457141876,
+          "EventType": "Notify",
+          "EventTag": "RHandStart"
+        },
+        {
+          "EventTime": 0.13567252457141876,
+          "EventType": "Notify",
+          "EventTag": "LFootStart"
+        },
+        {
+          "EventTime": 0.13567252457141876,
+          "EventType": "Notify",
+          "EventTag": "RFootStart"
+        },
+        {
+          "EventTime": 0.8608187437057495,
+          "EventType": "Notify",
+          "EventTag": "RHandEnd"
+        },
+        {
+          "EventTime": 0.8608187437057495,
+          "EventType": "Notify",
+          "EventTag": "LFootEnd"
+        },
+        {
+          "EventTime": 0.8608187437057495,
+          "EventType": "Notify",
+          "EventTag": "RFootEnd"
+        },
+        {
+          "EventTime": 0.877193033695221,
+          "EventType": "Notify",
+          "EventTag": "CheckCombo"
+        }
+      ]
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Attack_Normal_06_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Attack_ParryAid_H",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Attack_ParryAid_H_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Attack_ParryAid_L",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Attack_ParryAid_L_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Attack_ParryAid_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Attack_Rush_01",
+      "Events": [
+        {
+          "EventTime": 0.10999999940395355,
+          "EventType": "Notify",
+          "EventTag": "RFootStart"
+        },
+        {
+          "EventTime": 0.3001949191093445,
+          "EventType": "Notify",
+          "EventTag": "RFootEnd"
+        },
+        {
+          "EventTime": 0.33000001311302185,
+          "EventType": "Notify",
+          "EventTag": "RFootStart"
+        },
+        {
+          "EventTime": 0.9000000357627869,
+          "EventType": "Notify",
+          "EventTag": "RFootEnd"
+        }
+      ]
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Attack_Rush_01_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Attack_Rush_02",
+      "Events": [
+        {
+          "EventTime": 0.16588693857192993,
+          "EventType": "Notify",
+          "EventTag": "LHandStart"
+        },
+        {
+          "EventTime": 0.16588693857192993,
+          "EventType": "Notify",
+          "EventTag": "RHandStart"
+        },
+        {
+          "EventTime": 0.43515270948410034,
+          "EventType": "Notify",
+          "EventTag": "LHandEnd"
+        },
+        {
+          "EventTime": 0.6250811815261841,
+          "EventType": "Notify",
+          "EventTag": "RHandEnd"
+        }
+      ]
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Attack_Rush_02_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Attack_Rush_03",
+      "Events": [
+        {
+          "EventTime": 0.10125473141670227,
+          "EventType": "Notify",
+          "EventTag": "LFootStart"
+        },
+        {
+          "EventTime": 0.10125473141670227,
+          "EventType": "Notify",
+          "EventTag": "RFootStart"
+        },
+        {
+          "EventTime": 0.3966861665248871,
+          "EventType": "Notify",
+          "EventTag": "LFootEnd"
+        },
+        {
+          "EventTime": 0.3966861665248871,
+          "EventType": "Notify",
+          "EventTag": "RFootEnd"
+        },
+        {
+          "EventTime": 0.40097469091415405,
+          "EventType": "Notify",
+          "EventTag": "RHandStart"
+        },
+        {
+          "EventTime": 0.4524366557598114,
+          "EventType": "Notify",
+          "EventTag": "RHandEnd"
+        },
+        {
+          "EventTime": 0.4524366557598114,
+          "EventType": "Notify",
+          "EventTag": "LHandStart"
+        },
+        {
+          "EventTime": 0.4524366557598114,
+          "EventType": "Notify",
+          "EventTag": "LFootStart"
+        },
+        {
+          "EventTime": 0.6239765882492065,
+          "EventType": "Notify",
+          "EventTag": "LHandEnd"
+        },
+        {
+          "EventTime": 0.6239765882492065,
+          "EventType": "Notify",
+          "EventTag": "LFootEnd"
+        }
+      ]
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Attack_Rush_03_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Attack_Special",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Attack_Special_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Death",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Evade_Back_01",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Evade_Back_02",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Evade_Back_03",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Evade_Front_01",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Evade_Front_02",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Evade_Front_03",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Hit_H_Back",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Hit_H_Front",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Hit_L_Back",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Hit_L_Front",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Hit_Shake",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_HitFly_Back",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_HitFly_Front",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Idle",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Idle_AFK",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_QuestStart",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Revive_01",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Revive_02",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Revive_03",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Revive_04",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Run",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Run_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Run_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_SwitchIn_Attack",
+      "Events": [
+        {
+          "EventTime": 0.39298245310783386,
+          "EventType": "Notify",
+          "EventTag": "AreaAttack"
+        },
+        {
+          "EventTime": 0.4366471767425537,
+          "EventType": "Notify",
+          "EventTag": "AreaAttack"
+        },
+        {
+          "EventTime": 0.5421702265739441,
+          "EventType": "Notify",
+          "EventTag": "AreaAttack"
+        },
+        {
+          "EventTime": 0.5712800621986389,
+          "EventType": "Notify",
+          "EventTag": "AreaAttack"
+        },
+        {
+          "EventTime": 0.6513320803642273,
+          "EventType": "Notify",
+          "EventTag": "AreaAttack"
+        },
+        {
+          "EventTime": 0.669525682926178,
+          "EventType": "Notify",
+          "EventTag": "AreaAttack"
+        },
+        {
+          "EventTime": 0.7568551301956177,
+          "EventType": "Notify",
+          "EventTag": "AreaAttack"
+        },
+        {
+          "EventTime": 0.7859649062156677,
+          "EventType": "Notify",
+          "EventTag": "AreaAttack"
+        },
+        {
+          "EventTime": 0.8623781800270081,
+          "EventType": "Notify",
+          "EventTag": "AreaAttack"
+        },
+        {
+          "EventTime": 1.0006496906280518,
+          "EventType": "Notify",
+          "EventTag": "AreaAttack"
+        },
+        {
+          "EventTime": 1.0333982706069946,
+          "EventType": "Notify",
+          "EventTag": "AreaAttack"
+        },
+        {
+          "EventTime": 1.0661468505859375,
+          "EventType": "Notify",
+          "EventTag": "AreaAttack"
+        },
+        {
+          "EventTime": 1.0988954305648804,
+          "EventType": "Notify",
+          "EventTag": "AreaAttack"
+        },
+        {
+          "EventTime": 1.1643924713134766,
+          "EventType": "Notify",
+          "EventTag": "AreaAttack"
+        }
+      ]
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_SwitchIn_Attack_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_SwitchIn_Attack_Ex",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_SwitchIn_Attack_Ex_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_SwitchIn_Attack_Ex_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_SwitchIn_Normal",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_SwitchOut_Normal",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Taunt",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Taunt_01",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Taunt_02",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Taunt_03",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_TurnBack",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Walk",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Walk_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Walk_End_Interact",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Walk_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Walk_Start_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Cam_QuestStart",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Cam_SwitchIn_Attack_Ex_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "JaneDoe_Ani_Attack_01_01",
+      "Events": []
+    },
+    {
+      "ClipTag": "JaneDoe_Ani_Attack_01_02",
+      "Events": []
+    },
+    {
+      "ClipTag": "JaneDoe_Ani_Attack_02_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "JaneDoe_Ani_Attack_02_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "JaneDoe_Ani_Attack_03",
+      "Events": []
+    },
+    {
+      "ClipTag": "JaneDoe_Ani_Attack_04",
+      "Events": []
+    },
+    {
+      "ClipTag": "JaneDoe_Ani_Attack_05",
+      "Events": []
+    },
+    {
+      "ClipTag": "JaneDoe_Ani_Attack_06",
+      "Events": []
+    },
+    {
+      "ClipTag": "JaneDoe_Ani_Attack_07",
+      "Events": []
+    },
+    {
+      "ClipTag": "JaneDoe_Ani_Attack_08",
+      "Events": []
+    },
+    {
+      "ClipTag": "JaneDoe_Ani_Debuff_Stun_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "JaneDoe_Ani_Debuff_Stun_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "JaneDoe_Ani_Debuff_Stun_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "JaneDoe_Ani_Hit_H_Back",
+      "Events": []
+    },
+    {
+      "ClipTag": "JaneDoe_Ani_Hit_H_Front",
+      "Events": []
+    },
+    {
+      "ClipTag": "JaneDoe_Ani_Hit_Knock",
+      "Events": []
+    },
+    {
+      "ClipTag": "JaneDoe_Ani_Hit_L_Back_Down",
+      "Events": []
+    },
+    {
+      "ClipTag": "JaneDoe_Ani_Hit_L_Back_Left",
+      "Events": []
+    },
+    {
+      "ClipTag": "JaneDoe_Ani_Hit_L_Back_Right",
+      "Events": []
+    },
+    {
+      "ClipTag": "JaneDoe_Ani_Hit_L_Back_Up",
+      "Events": []
+    },
+    {
+      "ClipTag": "JaneDoe_Ani_Hit_L_Front_Down",
+      "Events": []
+    },
+    {
+      "ClipTag": "JaneDoe_Ani_Hit_L_Front_Left",
+      "Events": []
+    },
+    {
+      "ClipTag": "JaneDoe_Ani_Hit_L_Front_Right",
+      "Events": []
+    },
+    {
+      "ClipTag": "JaneDoe_Ani_Hit_L_Front_Up",
+      "Events": []
+    },
+    {
+      "ClipTag": "JaneDoe_Ani_Hit_Shake",
+      "Events": []
+    },
+    {
+      "ClipTag": "JaneDoe_Ani_Hit_Sky_Detach_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "JaneDoe_Ani_Hit_Sky_Detach_OnGround",
+      "Events": []
+    },
+    {
+      "ClipTag": "JaneDoe_Ani_Hit_Sky_Detach_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "JaneDoe_Ani_Hit_Sky_Fly_Back_OnGround",
+      "Events": []
+    },
+    {
+      "ClipTag": "JaneDoe_Ani_Hit_Sky_Fly_Back_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "JaneDoe_Ani_Hit_Sky_Fly_Front_OnGround",
+      "Events": []
+    },
+    {
+      "ClipTag": "JaneDoe_Ani_Hit_Sky_Fly_Front_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "JaneDoe_Ani_Hit_Sky_Fly_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "JaneDoe_Ani_Hit_Sky_InAir_OnGround",
+      "Events": []
+    },
+    {
+      "ClipTag": "JaneDoe_Ani_Hit_Sky_InAir_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "JaneDoe_Ani_Hit_Sky_Knock_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "JaneDoe_Ani_Hit_Sky_Knock_OnGround",
+      "Events": []
+    },
+    {
+      "ClipTag": "JaneDoe_Ani_Hit_Sky_Knock_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "JaneDoe_Ani_Hit_Sky_Throw_High_Back_OnGround",
+      "Events": []
+    },
+    {
+      "ClipTag": "JaneDoe_Ani_Hit_Sky_Throw_High_Back_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "JaneDoe_Ani_Hit_Sky_Throw_High_Front_OnGround",
+      "Events": []
+    },
+    {
+      "ClipTag": "JaneDoe_Ani_Hit_Sky_Throw_High_Front_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "JaneDoe_Ani_Hit_Sky_Throw_Loop_Back",
+      "Events": []
+    },
+    {
+      "ClipTag": "JaneDoe_Ani_Hit_Sky_Throw_Loop_Front",
+      "Events": []
+    },
+    {
+      "ClipTag": "JaneDoe_Ani_Hit_Sky_Throw_Low_Back_OnGround",
+      "Events": []
+    },
+    {
+      "ClipTag": "JaneDoe_Ani_Hit_Sky_Throw_Low_Back_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "JaneDoe_Ani_Hit_Sky_Throw_Low_Front_OnGround",
+      "Events": []
+    },
+    {
+      "ClipTag": "JaneDoe_Ani_Hit_Sky_Throw_Low_Front_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "JaneDoe_Ani_Hit_Stay",
+      "Events": []
+    },
+    {
+      "ClipTag": "JaneDoe_Ani_Idle",
+      "Events": []
+    },
+    {
+      "ClipTag": "JaneDoe_Ani_Parry",
+      "Events": []
+    },
+    {
+      "ClipTag": "JaneDoe_Ani_Parry_Hit",
+      "Events": []
+    },
+    {
+      "ClipTag": "JaneDoe_Ani_ParryAid_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "JaneDoe_Ani_ParryAid_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "JaneDoe_Ani_ParryAssault",
+      "Events": []
+    },
+    {
+      "ClipTag": "JaneDoe_Ani_Walk_B",
+      "Events": []
+    },
+    {
+      "ClipTag": "JaneDoe_Ani_Walk_F",
+      "Events": []
+    },
+    {
+      "ClipTag": "JaneDoe_Ani_Walk_FL_LFoot",
+      "Events": []
+    },
+    {
+      "ClipTag": "JaneDoe_Ani_Walk_FR_LFoot",
+      "Events": []
+    },
+    {
+      "ClipTag": "JaneDoe_Ani_Walk_L",
+      "Events": []
+    },
+    {
+      "ClipTag": "JaneDoe_Ani_Walk_LF_RFoot",
+      "Events": []
+    },
+    {
+      "ClipTag": "JaneDoe_Ani_Walk_R",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Gacha_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Gacha_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Gacha_Loop_02",
+      "Events": []
+    }
+  ]
+}

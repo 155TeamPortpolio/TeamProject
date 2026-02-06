@@ -234,6 +234,7 @@ void CCamSequencePlayer::ApplyPose(const CamPose& pose)
         apply.cam->Set_FOV(pose.fov);
 }
 
+
 _float CCamSequencePlayer::GetPlaybackDuration() const
 {
     if (!target.seq) return 0.f;

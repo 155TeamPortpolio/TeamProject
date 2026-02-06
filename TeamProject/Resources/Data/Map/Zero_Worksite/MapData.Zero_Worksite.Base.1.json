@@ -440,39 +440,150 @@
             10.0,
             1.0
           ]
-        }
-      ]
-    },
-    {
-      "TagLayer": "TriggerObject_Layer",
-      "Objects": [
+        },
         {
           "iObjID": 15,
-          "TagModelResourceKey": "ZeroUI",
-          "TagMaterialResourceKey": "BOX",
+          "TagModelResourceKey": "Zero_Prop_Receiver_02.model",
+          "TagMaterialResourceKey": "Zero_Prop_Receiver_02.mat",
           "vRight": [
+            1.0000134706497192,
             0.0,
+            -3.695537770909141e-06,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            3.695537770909141e-06,
+            0.0,
+            1.0000134706497192,
+            0.0
+          ],
+          "vPos": [
+            27.16619300842285,
+            11.11734390258789,
+            3.859999895095825,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 16,
+          "TagModelResourceKey": "Zero_Prop_Detector_03.model",
+          "TagMaterialResourceKey": "Zero_Prop_Detector_03.mat",
+          "vRight": [
+            1.0,
+            0.0,
+            -7.152557373046875e-07,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            7.152557373046875e-07,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "vPos": [
+            -3.744659185409546,
+            -0.9091148376464844,
+            12.715851783752441,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 17,
+          "TagModelResourceKey": "Zero_Prop_Detector_03.model",
+          "TagMaterialResourceKey": "Zero_Prop_Detector_03.mat",
+          "vRight": [
+            0.9999964833259583,
+            0.0,
+            -2.6821999199455604e-06,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            2.6821999199455604e-06,
+            0.0,
+            0.9999964833259583,
+            0.0
+          ],
+          "vPos": [
+            -3.746736526489258,
+            -0.9118802547454834,
+            -1.1713989973068237,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 18,
+          "TagModelResourceKey": "Zero_Prop_CampLight_03.model",
+          "TagMaterialResourceKey": "Zero_Prop_CampLight_03.mat",
+          "vRight": [
+            1.0,
+            0.0,
+            -1.7285346984863281e-06,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            1.7285346984863281e-06,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "vPos": [
+            28.29754066467285,
+            10.840991973876953,
+            17.022172927856445,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 19,
+          "TagModelResourceKey": "Zero_Prop_CampLight_03.model",
+          "TagMaterialResourceKey": "Zero_Prop_CampLight_03.mat",
+          "vRight": [
+            1.0,
             0.0,
             0.0,
             0.0
           ],
           "vUp": [
-            0.10000000149011612,
-            0.10000000149011612,
-            0.10000000149011612,
+            0.0,
+            1.0,
+            0.0,
             0.0
           ],
           "vLook": [
-            -0.0,
             0.0,
             0.0,
+            1.0,
             0.0
           ],
           "vPos": [
-            5.0091094970703125,
-            -3.2870664596557617,
-            9.357000350952148,
-            0.0
+            15.943381309509277,
+            10.690990447998047,
+            -28.713266372680664,
+            1.0
           ]
         }
       ]

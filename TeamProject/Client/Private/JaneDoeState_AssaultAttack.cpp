@@ -47,12 +47,17 @@ void CJaneDoeState_AssaultAttack::Update(CJaneDoe* pOwner, _float dt)
 			_vector3 vPos = pOwner->Get_WorldPos();
 			BattleSystem()->TakeAreaDamage(vPos + vLook * 2.f, 2.f, HitDesc()
 				.Type(HIT_TYPE::ONCE)
-				.Damage(Helper::Get_Random_Float(10, 20), DAMAGE_TYPE::NORMAL)
+				.Damage(pOwner->Get_AttackPower() * 3.455f * Helper::Get_Random_Float(1.f, 1.5f)
+					, DAMAGE_TYPE::HARD)
 			);
 		}
 		else if (Event.Tag == "LFootStart")
 		{
-			pOwner->Begin_AttackCollider("FootWeapon_L", { HIT_TYPE::ONCE, DAMAGE_TYPE::NORMAL, Helper::Get_Random_Float(10,20), 0, 0 });
+			pOwner->Begin_AttackCollider("FootWeapon_L", HitDesc()
+				.Type(HIT_TYPE::ONCE)
+				.Damage(pOwner->Get_AttackPower() * 3.455f * Helper::Get_Random_Float(1.f, 1.5f)
+					, DAMAGE_TYPE::NORMAL)
+			);
 		}
 		else if (Event.Tag == "LFootEnd")
 		{
@@ -60,7 +65,11 @@ void CJaneDoeState_AssaultAttack::Update(CJaneDoe* pOwner, _float dt)
 		}
 		else if (Event.Tag == "RFootStart")
 		{
-			pOwner->Begin_AttackCollider("FootWeapon_R", { HIT_TYPE::ONCE, DAMAGE_TYPE::NORMAL, Helper::Get_Random_Float(10,20), 0, 0 });
+			pOwner->Begin_AttackCollider("FootWeapon_R", HitDesc()
+				.Type(HIT_TYPE::ONCE)
+				.Damage(pOwner->Get_AttackPower() * 3.455f * Helper::Get_Random_Float(1.f, 1.5f)
+					, DAMAGE_TYPE::NORMAL)
+			);
 		}
 		else if (Event.Tag == "RFootEnd")
 		{
@@ -84,6 +93,7 @@ void CJaneDoeState_AssaultAttack::Update(CJaneDoe* pOwner, _float dt)
 
 void CJaneDoeState_AssaultAttack::Exit(CJaneDoe* pOwner)
 {
+	pOwner->Reserve_ComboAttack();
 	pOwner->Pop_Invincible();
 	pOwner->Unlock_Move();
 	__super::Exit(pOwner);

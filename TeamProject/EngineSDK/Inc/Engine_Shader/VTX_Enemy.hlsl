@@ -1,5 +1,7 @@
 #include "Shader_Define.hlsl"
 
+float fUseVanish;
+float fEmissiveStrength;
 float3 vEmissiveColor;
 float3 vRimLightColor;
 float fRimLightPower;
@@ -146,52 +148,6 @@ PS_OUT PS_MAIN(PS_IN In)
         discard;
     }
     Out.vDiffuse = vMtrlDiffuse;
-  
-    vector vNormalDesc = NormalTexture.Sample(DefaultSampler, In.vTexcoord);
-    vector vMetalic = MetalnessTexture.Sample(DefaultSampler, In.vTexcoord);
-    vector vAmbient = AmbientTexture.Sample(DefaultSampler, In.vTexcoord);
-    
-    float fNoise = NoiseTexture.Sample(LinearSampler, In.vTexcoord * fDissolveTiling).r;
-    
-    if (fNoise < fDissolveProgress)
-        discard;
-  
-    vAmbient.r = 0.f;
-
-    float3 vNormal;
-    vNormal.xy = vNormalDesc.xy * 2.f - 1.f;
-    vNormal.z = 1.f;
-    float3 T = normalize(In.vTangent);
-    float3 B = normalize(In.vBinormal * -1);
-    float3 N = normalize(In.vNormal.xyz);
-
-    float3x3 WorldMatrix = float3x3(T, B, N);
-        
-    vNormal = mul(vNormal, WorldMatrix);
-    vMetalic.a = 0.6f;
-    Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, vNormalDesc.z);
-
-    if (vAmbient.g < 0.2)
-        vAmbient.g = 1.f;
-    Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / zFar, 0.f, 1.f);
-    Out.vAmbient = vAmbient;
-    Out.vMetalic = vMetalic;
-    Out.vRimLight = float4(vRimLightColor, fRimLightPower);
-    Out.vEmissive = float4(vMtrlDiffuse.rgb * vAmbient.b, 0.5f);
-    Out.vPostInfo = float4(0.f, 0.f, 0.f, 0.f);
-    return Out;
-}
-
-PS_OUT PS_MAIN_EMISSIVE(PS_IN In)
-{
-    PS_OUT Out;
-    
-    vector vMtrlDiffuse = DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
-    if (vMtrlDiffuse.a < 0.2)
-    {
-        discard;
-    }
-    Out.vDiffuse = vMtrlDiffuse;
     // die - emissive
     
     vector vNormalDesc = NormalTexture.Sample(DefaultSampler, In.vTexcoord);
@@ -199,14 +155,13 @@ PS_OUT PS_MAIN_EMISSIVE(PS_IN In)
     vector vAmbient = AmbientTexture.Sample(DefaultSampler, In.vTexcoord);
     
     float fNoise = NoiseTexture.Sample(LinearSampler, In.vTexcoord * fDissolveTiling).r;
-    float fEmissiveNoise = EmissiveNoiseTexture.Sample(LinearSampler, In.vTexcoord).r;
-    fEmissiveNoise = smoothstep(0.4f, 0.8f, fEmissiveNoise);
-    
     if (fNoise < fDissolveProgress)
         discard;
   
     vAmbient.r = 0.f;
-  
+    
+    float3 vEmissive = lerp(vMtrlDiffuse.rgb * 0.05f, vEmissiveColor, fEmissiveStrength);
+    
     float3 vNormal;
     vNormal.xy = vNormalDesc.xy * 2.f - 1.f;
     vNormal.z = 1.f;
@@ -227,8 +182,57 @@ PS_OUT PS_MAIN_EMISSIVE(PS_IN In)
     Out.vAmbient = vAmbient;
     Out.vMetalic = vMetalic;
     Out.vRimLight = float4(vRimLightColor, fRimLightPower);
-    Out.vEmissive = float4(vEmissiveColor, 1.f);
-    Out.vPostInfo = float4(0.f, 0.f, 0.f, 0.f);
+    Out.vEmissive = float4(vEmissive, 1.f);
+    Out.vPostInfo = float4(fUseVanish, 0.f, 0.f, 0.f);
+    return Out;
+}
+
+PS_OUT PS_MAIN_EMISSIVE(PS_IN In)
+{
+    PS_OUT Out;
+    
+    vector vMtrlDiffuse = DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
+    if (vMtrlDiffuse.a < 0.2)
+    {
+        discard;
+    }
+    Out.vDiffuse = vMtrlDiffuse;
+    // die - emissive
+    
+    vector vNormalDesc = NormalTexture.Sample(DefaultSampler, In.vTexcoord);
+    vector vMetalic = MetalnessTexture.Sample(DefaultSampler, In.vTexcoord);
+    vector vAmbient = AmbientTexture.Sample(DefaultSampler, In.vTexcoord);
+    
+    float fNoise = NoiseTexture.Sample(LinearSampler, In.vTexcoord * fDissolveTiling).r;
+    if (fNoise < fDissolveProgress)
+        discard;
+  
+    vAmbient.r = 0.f;
+    
+    float3 vEmissive = lerp(vMtrlDiffuse.rgb * 0.8f, vEmissiveColor, fEmissiveStrength);
+    
+    float3 vNormal;
+    vNormal.xy = vNormalDesc.xy * 2.f - 1.f;
+    vNormal.z = 1.f;
+    float3 T = normalize(In.vTangent);
+    float3 B = normalize(In.vBinormal * -1);
+    float3 N = normalize(In.vNormal.xyz);
+
+    float3x3 WorldMatrix = float3x3(T, B, N);
+        
+    vNormal = mul(vNormal, WorldMatrix);
+    vMetalic.a = 0.6f;
+    
+    Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, vNormalDesc.z);
+   
+    if (vAmbient.g < 0.2)
+        vAmbient.g = 1.f;
+    Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / zFar, 0.f, 1.f);
+    Out.vAmbient = vAmbient;
+    Out.vMetalic = vMetalic;
+    Out.vRimLight = float4(vRimLightColor, fRimLightPower);
+    Out.vEmissive = float4(vEmissive, fEmissiveStrength);
+    Out.vPostInfo = float4(1.f, 0.f, 0.f, 0.f);
     return Out;
 }
 

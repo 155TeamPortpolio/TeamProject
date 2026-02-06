@@ -48,6 +48,7 @@ void CAnimToolPanel::Update_Panel(_float dt)
 			}
 		}
 	}
+	return;
 
 	if (m_pGameInstance->Get_InputDev()->Key_Tap('I')) {
 		if (nullptr != m_pSelectAnimator) {
@@ -419,7 +420,8 @@ void CAnimToolPanel::Draw_TimelineUI(float duration, float& ioTime, const char* 
 		float hoverTime = local01 * endT;
 
 		ImGui::BeginTooltip();
-		ImGui::Text("t = %.2fs", m_pSelectAnimator->Get_AnimLayers()[0].fProgress);
+		if(m_pSelectAnimator)
+			ImGui::Text("t = %.2fs", m_pSelectAnimator->Get_AnimLayers()[0].fProgress);
 		ImGui::EndTooltip();
 
 		dl->AddLine(ImVec2(barPos.x + barSize.x * local01, barPos.y), ImVec2(barPos.x + barSize.x * local01, barPos.y + barSize.y), colHot, 1.5f);
@@ -650,6 +652,7 @@ void CAnimToolPanel::Save_Event()
 	string MetaPath = m_pGameInstance->Get_ResourceMgr()->Get_ResourcePath(ClipKey);
 
 	ANIM_META tMeta{};
+	tMeta.AnimPath = m_pSelectAnimator->Get_AnimPath();
 	tMeta.PreTransform = m_pSelectAnimator->Get_PreTransform();
 	tMeta.Clips = m_AnimClip;
 

@@ -49,25 +49,22 @@ HRESULT CThugPoacher::Initialize_Prototype()
 	Add_Component<CCharacterController>();
 
 	auto pResourceMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
-	pResourceMgr->Add_ResourcePath("ThugPoacher.mat", "../Bin/Resources/Model/skeletal/Enemy/ThugPoacher/ThugPoacher.mat");
-	pResourceMgr->Add_ResourcePath("ThugPoacher.model", "../Bin/Resources/Model/skeletal/Enemy/ThugPoacher/ThugPoacher.model");
-	pResourceMgr->Add_ResourcePath("ThugPoacher_Meta.json", "../Bin/Resources/Model/skeletal/Enemy/ThugPoacher/ThugPoacher_Meta.json");
+	pResourceMgr->Add_ResourcePath("ThugPoacher.mat", "../Bin/Resources/Zero/Enemy/ThugPoacher/ThugPoacher.mat");
+	pResourceMgr->Add_ResourcePath("ThugPoacher.model", "../Bin/Resources/Zero/Enemy/ThugPoacher/ThugPoacher.model");
+	//pResourceMgr->Add_ResourcePath("ThugPoacher_Meta.json", "../Bin/Resources/Model/skeletal/Enemy/ThugPoacher/ThugPoacher_Meta.json");
 	
-	
+	auto pModel = Get_Component<CSkeletalModel>();
+	pModel->Link_Model(G_GlobalLevelKey, "ThugPoacher.model");
+
+	auto pMaterial = Get_Component<CMaterial>();
+	pMaterial->Link_Material(G_GlobalLevelKey, "ThugPoacher.mat");
+
 	return S_OK;
 }
 
 HRESULT CThugPoacher::Initialize(INIT_DESC* pArg)
 {
 	__super::Initialize(pArg);
-
-	//m_pTransform->Scale({ 0.01f,0.01f,0.01f });
-
-	auto pModel = Get_Component<CSkeletalModel>();
-	pModel->Link_Model(G_GlobalLevelKey, "ThugPoacher.model");
-
-	auto pMaterial = Get_Component<CMaterial>();
-	pMaterial->Link_Material(G_GlobalLevelKey, "ThugPoacher.mat");
 
 	auto pAnimator = Get_Component<CAnimator3D>();
 	pAnimator->LinkAnimate_Model(G_GlobalLevelKey, "ThugPoacher.model");
@@ -81,11 +78,6 @@ HRESULT CThugPoacher::Initialize(INIT_DESC* pArg)
 
 	if (FAILED(Initialize_StateMachine()))
 		return E_FAIL;
-
-	// 임시 확인용
-#ifdef _USING_GUI
-	CGameInstance::GetInstance()->Get_GUISystem()->Get_Context()->pSelectedObject = this;
-#endif // _USING_GUI
 
 	return S_OK;
 }
@@ -183,6 +175,11 @@ void CThugPoacher::Render_GUI()
 				m_pStateMachine->Set_Int("AttackPattern", 3);
 				m_pStateMachine->Set_Trigger("Idle_To_Attack");
 			}
+			if (ImGui::Button(u8"4. Attack04"))
+			{
+				m_pStateMachine->Set_Int("AttackPattern", 4);
+				m_pStateMachine->Set_Trigger("Idle_To_Attack");
+			}
 			ImGui::TreePop();
 		}
 		if (ImGui::TreeNode("Death##ThugAssaulterTestDeath"))
@@ -205,9 +202,6 @@ void CThugPoacher::Render_GUI()
 
 			if (ImGui::Button("Hit"))
 				TakeDamage(DAMAGE_TYPE::NORMAL, 20.f);
-
-			if (ImGui::Button("Parried"))
-				Parried();
 
 			if (ImGui::Button("Execute"))
 				m_tStatus.iNowHP -= m_tStatus.iMaxHP;
@@ -245,13 +239,6 @@ void CThugPoacher::OnPooledRelease()
 
 void CThugPoacher::Parried()
 {
-	/*if ("Attack" != m_pStateMachine->Get_CurrentStateName())
-		return;
-
-	__super::Parried();
-
-	m_pStateMachine->Change_State("Parried");
-	SetOnAttack(false, ATTACK_SIDE::NONE); */
 }
 
 HRESULT CThugPoacher::Ready_Children(INIT_DESC* pArg)
@@ -484,7 +471,10 @@ void CThugPoacher::ControlState(const _float dt)
 {
 	if ("Death" != m_pStateMachine->Get_CurrentStateName() &&
 		0 >= m_tStatus.iNowHP)
+	{
+		RequestRemoveOnDeathToBattleSystem();
 		m_pStateMachine->Change_State("Death");
+	}
 
 	if ("Death" != m_pStateMachine->Get_CurrentStateName() &&
 		"Groggy" != m_pStateMachine->Get_CurrentStateName() &&
@@ -517,11 +507,11 @@ void CThugPoacher::ControlState(const _float dt)
 
 void CThugPoacher::CheckDistanceFromPlayer()
 {
-	//if ("Chase" != m_pStateMachine->Get_CurrentStateName() &&
-	//	m_tTargetingInfo.fDistance >= m_tHysteriesis.fChaseEnter)
-	//	m_pStateMachine->Set_Bool("Chase", true);
+	if ("Chase" != m_pStateMachine->Get_CurrentStateName() &&
+		m_tTargetingInfo.fDistance >= m_tHysteriesis.fChaseEnter)
+		m_pStateMachine->Set_Bool("Chase", true);
 	
-	//if (true == m_pStateMachine->Get_Bool("Chase") &&
-	//	m_tTargetingInfo.fDistance <= m_tHysteriesis.fChaseExit)
-	//	m_pStateMachine->Set_Bool("Chase", false);
+	if (true == m_pStateMachine->Get_Bool("Chase") &&
+		m_tTargetingInfo.fDistance <= m_tHysteriesis.fChaseExit)
+		m_pStateMachine->Set_Bool("Chase", false);
 }

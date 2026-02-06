@@ -11,7 +11,7 @@ namespace Client {
 		_float			fRadius = {};			// CCT 로컬 원점으로부터 반지름
 		void Reset() {
 			TagInstanceName.clear();
-			hObject.Reset();
+			hObject.Delete();
 			isOnField = false;
 			vPos = {};
 			fRadius = { 0.f };
@@ -33,17 +33,11 @@ namespace Client {
 
 	struct PlayerDesc {
 		string	strPlayerName = {};
-		_uint	LV = {};
-		_float	SpecialAttack = {};
-		string	ExType = {};
-		_float	Ultimate = {};
-	};
-
-	struct PlayerLVDesc {
-		_uint	LV = {};
 		_float	MaxHP = {};
 		_float	Attack = {};
 		_float	Defend = {};
+		_float	SpecialAttack = {};
+		_float	Ultimate = {};
 	};
 
 	struct NpcIDDesc {
@@ -94,14 +88,16 @@ namespace Client {
 	// 타격 정보
 	struct HitDesc
 	{
+		CHARACTER	eName = CHARACTER::END;
 		HIT_TYPE    eHitType = HIT_TYPE::ONCE;
 		DAMAGE_TYPE eDamageType = DAMAGE_TYPE::NORMAL;
 		_float      fDamage = 0.f;
 		_float      fInterval = 0.f;
 		_uint       iMaxCount = 1;
-		_float      fEnergyCharge = 10.f;
-		_float      fDecibelCharge = 100.f;
+		_float      fEnergyCharge = 1.f;
+		_float      fDecibelCharge = 10.f;
 
+		HitDesc& Name(CHARACTER e) { eName = e; return *this; }
 		HitDesc& Type(HIT_TYPE e) { eHitType = e; return *this; }
 		HitDesc& Damage(_float f, DAMAGE_TYPE e = DAMAGE_TYPE::NORMAL) { fDamage = f; eDamageType = e; return *this; }
 		HitDesc& Interval(_float f) { fInterval = f; return *this; }
@@ -131,4 +127,51 @@ namespace Client {
 		string roomKey;
 		_bool persistent = { false };
 	}ROOM_DESC;
+
+	typedef struct tagRamenAttributeDesc {
+		string	strAttributeID;
+		wstring strAttributeName;
+		_int	iAttributeValue;
+	}RAMEN_ATTRIBUTE;
+
+	typedef struct tagRamenDesc	{
+		string	strID;
+		wstring strName;
+		_uint	iPrice;
+		_int	iOrder;
+		vector<RAMEN_ATTRIBUTE> attributes;
+	}RAMEN_DESC;
+
+	typedef struct tagGachaResultDesc {
+		_int		ID;
+		GachaGrade	Grade;
+		string		strModel;
+		string		strMaterial;
+		string		strTexture;
+		wstring		strLabel;
+		_float		RotX;
+		_float		RotY;
+		_float		RotZ;
+		_float		RotW;
+		string		strMeta;
+		string		strStartAnim;
+		string		strLoopAnim;
+	}GACHA_RESULT_DESC;
+
+	typedef struct tagTVDesc {
+		string		strName;
+		_int		Col;
+		_int		Row;
+		_int		MaxFrame;
+	}TV_DESC;
+
+	typedef struct tagGachaChannelDesc {
+		wstring		strLabel = {};
+		string		strTextureKey = {}; 
+	}GACHA_CHANNEL_DESC;
+
+	typedef struct tagCloudDesc {
+		_float3 skyColor = {};
+		_float3 cloudColor = {};
+	}CLOUD_DESC;
 }

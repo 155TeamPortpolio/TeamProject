@@ -17,8 +17,6 @@ HRESULT CDataBase::CreateTable()
 	//플레이어
 	if (FAILED(LoadPlayerCreationTable("../../Resources/Data/PlayerTable/PlayerTableCSV.csv"))) 
 		return E_FAIL;
-	if (FAILED(LoadPlayerLVTable("../../Resources/Data/PlayerTable/PlayerLVCSV.csv")))
-		return E_FAIL;
 
 	//몬스터
 	if (FAILED(LoadMonsterCreationTable("../../Resources/Data/MonsterTable/MonsterTable.csv"))) 
@@ -33,6 +31,7 @@ HRESULT CDataBase::CreateTable()
 	if (FAILED(LoadMapData("../../Resources/Data/Map")))
 		return E_FAIL;
 
+	/*Field*/
 	//Npc
 	if (FAILED(LoadNpcDialogueData("../../Resources/Data/Npc/NPC_Dialogue.csv")))
 		return E_FAIL;
@@ -41,6 +40,18 @@ HRESULT CDataBase::CreateTable()
 	if (FAILED(LoadNpcIDData("../../Resources/Data/Npc/Npc_ID.csv")))
 		return E_FAIL;
 
+	//Shop
+	if (FAILED(LoadRamenData("../../Resources/Data/Shop/Shop_Ramen.csv")))
+		return E_FAIL;
+	//Gacha
+	if (FAILED(LoadGachaResultData("../../Resources/Data/Gacha/ResultID.csv")))
+		return E_FAIL;
+	if (FAILED(LoadGachaData("../../Resources/Data/Gacha/GachaRandom.csv")))
+		return E_FAIL;
+	if (FAILED(LoadTVData("../../Resources/Data/Gacha/TVImage.csv")))
+		return E_FAIL;
+	if (FAILED(LoadGachaChannelData("../../Resources/Data/Gacha/GachaChannel.csv")))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -50,15 +61,6 @@ PlayerDesc CDataBase::GetPlayerDesc(const string& strName)
 	auto iter = m_PlayerTables.find(strName);
 	if (iter == m_PlayerTables.end())
 		return PlayerDesc{};
-
-	return iter->second;
-}
-
-PlayerLVDesc CDataBase::GetLevelDesc(_uint lv)
-{
-	auto iter = m_PlayerLVTables.find(lv);
-	if (iter == m_PlayerLVTables.end())
-		return PlayerLVDesc{};
 
 	return iter->second;
 }
@@ -131,6 +133,69 @@ const EncounterTable* CDataBase::GetMonsterSpawnData(const string& tagArea, _uin
 	return &itStage->second;
 }
 
+RAMEN_DESC CDataBase::GetRamenDesc(const string& strName)
+{
+	auto iter = m_RamenTables.find(strName);
+	if (iter == m_RamenTables.end())
+		return RAMEN_DESC();
+
+	return iter->second;
+}
+
+vector<const RAMEN_DESC*> CDataBase::GetRamenTable()
+{
+	vector<const RAMEN_DESC*> result;
+	for (const auto& ramen : m_RamenTables)
+		result.push_back(&ramen.second);
+
+	sort(result.begin(), result.end(),
+		[](const RAMEN_DESC* a, const RAMEN_DESC* b)
+		{
+			return a->iOrder < b->iOrder;
+		});
+
+	return result;
+}
+
+GACHA_RESULT_DESC CDataBase::GetGachaResultDesc(_int ID)
+{
+	auto iter = m_ResultTables.find(ID);
+	if (iter == m_ResultTables.end())
+		return GACHA_RESULT_DESC{};
+
+	return iter->second;
+}
+
+vector<GACHA_RESULT_DESC> CDataBase::GetGachaGroup()
+{
+	array<_int, 10> IDs = m_GachaData[m_iCurrentGachaOrder++];
+
+	vector<GACHA_RESULT_DESC> Results;
+	for (auto& ID : IDs)
+	{
+		Results.push_back(GetGachaResultDesc(ID));
+	}
+
+	if (m_iCurrentGachaOrder >= m_iMaxGachaOrder)
+		m_iCurrentGachaOrder = 0;
+
+	return Results;
+}
+
+TV_DESC CDataBase::GetTVDesc(const string& strName)
+{
+	auto iter = m_TVTables.find(strName);
+	if (iter == m_TVTables.end())
+		return TV_DESC{};
+
+	return iter->second;
+}
+
+const vector<GACHA_CHANNEL_DESC>& CDataBase::GeGachaChannels()
+{
+	return m_GachaChannels;
+}
+
 HRESULT CDataBase::LoadPlayerCreationTable(const string& csvPath)
 {
 	/*
@@ -138,7 +203,7 @@ HRESULT CDataBase::LoadPlayerCreationTable(const string& csvPath)
 		trim_chars = 앞 뒤 공백 제거
 		double_quote_escape = "..." 안의 쉼표 및 따옴표 처리 */
 	io::CSVReader<
-		5,
+		6,
 		io::trim_chars<' ', '\t'>,
 		io::double_quote_escape<',', '"'>
 	>in(csvPath);
@@ -149,67 +214,29 @@ HRESULT CDataBase::LoadPlayerCreationTable(const string& csvPath)
 	*/
 	in.read_header(
 		io::ignore_extra_column | io::ignore_missing_column,
-		"Name", "LV",
-		"SpecialAttack", "ExType", "Ultimate"
+		"Name", "HP", "Attack", "Defend",
+		"SpecialAttack", "Ultimate"
 	);
 
-	string	Name{}, ExType{};
-	_uint	LV{};
-	_float	SpecialAttack{}, Ultimate{};
+	string	Name{};
+	_float	HP{}, Attack{}, Defend{}, SpecialAttack{}, Ultimate{};
 
-	while (in.read_row(Name, LV, SpecialAttack, ExType, Ultimate))
+	while (in.read_row(Name, HP, Attack, Defend, SpecialAttack, Ultimate))
 	{
 		if (Name.empty()) continue;
 
 		PlayerDesc desc = {};
 		desc.strPlayerName = Name;
-		desc.LV = LV;
+		desc.MaxHP = HP;
+		desc.Attack = Attack;
+		desc.Defend = Defend;
 		desc.SpecialAttack = SpecialAttack;
-		desc.ExType = ExType;
 		desc.Ultimate = Ultimate;
 
 		auto [iter, inserted] = m_PlayerTables.emplace(desc.strPlayerName, move(desc));
 		if (false == inserted) 
 		{
 			wstring ErrorMsg = L"Duplicate PlayerKey in CSV : " + Helper::ConvertToWideString(Name);
-			MessageBox(NULL, ErrorMsg.c_str(), L"System Message", MB_OK);
-		}
-	}
-
-	return S_OK;
-}
-
-HRESULT CDataBase::LoadPlayerLVTable(const string& csvPath)
-{
-	io::CSVReader<
-		4,
-		io::trim_chars<' ', '\t'>,
-		io::double_quote_escape<',', '"'>
-	>in(csvPath);
-
-	in.read_header(
-		io::ignore_extra_column | io::ignore_missing_column,
-		"LV",
-		"HP", "Attack", "Defend"
-	);
-
-	_uint	LV{};
-	_float	HP{}, Attack{}, Defend{};
-
-	while (in.read_row(LV, HP, Attack, Defend))
-	{
-		if (LV <= 0) continue;
-
-		PlayerLVDesc desc = {};
-		desc.LV = LV;
-		desc.MaxHP = HP;
-		desc.Attack = Attack;
-		desc.Defend = Defend;
-
-		auto [iter, inserted] = m_PlayerLVTables.emplace(desc.LV, move(desc));
-		if (false == inserted) 
-		{
-			wstring ErrorMsg = L"Duplicate PlayerLVKey in CSV : " + to_wstring(LV);
 			MessageBox(NULL, ErrorMsg.c_str(), L"System Message", MB_OK);
 		}
 	}
@@ -311,9 +338,10 @@ HRESULT CDataBase::LoadMonsterSpawnData(const string& csvPath)
 			continue;
 		
 		_uint iStageType{};
-		if (StageType == "Normal")		iStageType = 0;
-		else if (StageType == "Elite")	iStageType = 1;
-		else if (StageType == "Boss")	iStageType = 2;
+		if (StageType == "Start")		iStageType = ENUM(StageType::Start);
+		else if (StageType == "Normal")	iStageType = ENUM(StageType::Normal);
+		else if (StageType == "Elite")	iStageType = ENUM(StageType::Elite);
+		else if (StageType == "Boss")	iStageType = ENUM(StageType::Boss);
 
 		SPAWN_MONSTER_DESC desc{};
 		desc.Colony = Colony;
@@ -344,9 +372,19 @@ HRESULT CDataBase::LoadMapData(const string& MapDataFolderPath)
 			const string stem = FilePath.stem().string();
 			auto tokens = SplitFileName(stem, '.');
 
+			if (find(begin(MAP_DATA_TAGS), end(MAP_DATA_TAGS), tokens[0]) != end(MAP_DATA_TAGS)) {
+				
+				if (tokens[0] == "BattleData") {
+					MapData_Path_Packet packet = {};
+					packet.TagDataFormat = tokens[0];
+					packet.TagDataFileKey = FilePath.filename().string();
+					packet.TagDataFilePath = FilePath.string();
+					packet.TagArea = tokens[1];
 
+					m_MapAreaData[packet.TagArea].push_back(packet);
+					continue;
+				}
 
-			if (tokens[0] == "MapData" || tokens[0] == "EntityData") {
 				_int iVersion = {};
 				
 				auto [ptr, ec] = std::from_chars(tokens[3].data(), tokens[3].data() + tokens[3].size(), iVersion);
@@ -378,16 +416,6 @@ HRESULT CDataBase::LoadMapData(const string& MapDataFolderPath)
 				continue;
 			}
 
-			if (tokens[0] == "BattleData") {
-				MapData_Path_Packet packet = {};
-				packet.TagDataFormat = tokens[0];
-				packet.TagDataFileKey = FilePath.filename().string();
-				packet.TagDataFilePath = FilePath.string();
-				packet.TagArea = tokens[1];
-
-				m_MapAreaData[packet.TagArea].push_back(packet);
-				continue;
-			}
 		}
 	}
 
@@ -537,6 +565,195 @@ HRESULT CDataBase::LoadNpcChoiceData(const string& csvPath)
 	return S_OK;
 }
 
+HRESULT CDataBase::LoadRamenData(const string& csvPath)
+{
+	io::CSVReader<
+		11,
+		io::trim_chars<' ', '\t'>,
+		io::double_quote_escape<',', '"'>
+	>in(csvPath);
+	
+	in.read_header(
+		io::ignore_extra_column | io::ignore_missing_column,
+		"ID", "Name", "Price", "Order", "AttributeCount", "AttributeID1", "AttributeName1", "AttributeValue1", "AttributeID2", "AttributeName2", "AttributeValue2"
+	);
+	string			strID;
+	string			strName;
+	string			strPrice;
+	string			strOrder;
+	string			strAttributeCount;
+	string			strAttributeID1, strAttributeName1, strAttributeValue1;
+	string			strAttributeID2, strAttributeName2, strAttributeValue2;
+	
+	while (in.read_row(strID, strName, strPrice, strOrder, strAttributeCount, strAttributeID1, strAttributeName1, strAttributeValue1, strAttributeID2, strAttributeName2, strAttributeValue2))
+	{
+		if (strID.empty()) continue;
+	
+		RAMEN_DESC desc = {};
+		desc.strID = strID;
+		desc.strName = StringToWString(strName);
+		desc.iPrice = strPrice.empty()? 0 : stoi(strPrice);
+		desc.iOrder = strOrder.empty() ? 999 : stoi(strOrder);
+
+		_int iAttributeCount = strAttributeCount.empty() ? 0 : stoi(strAttributeCount);  
+		desc.attributes.reserve(iAttributeCount);
+
+		if (iAttributeCount >= 1)
+		{
+			_int iAttributeValue1 = strAttributeValue1.empty() ? 0 : stoi(strAttributeValue1);
+			desc.attributes.push_back(RAMEN_ATTRIBUTE{ strAttributeID1, Helper::ConvertToWideString(strAttributeName1), iAttributeValue1 });
+		} 
+
+		if (iAttributeCount >= 2)
+		{
+			_int iAttributeValue2 = strAttributeValue2.empty() ? 0 : stoi(strAttributeValue2);
+			desc.attributes.push_back(RAMEN_ATTRIBUTE{ strAttributeID2, Helper::ConvertToWideString(strAttributeName2), iAttributeValue2 });
+		} 
+	
+		auto [iter, inserted] = m_RamenTables.emplace(strID, move(desc));
+		if (false == inserted)
+		{
+			string ErrorMsg = "Duplicate RamenTable in CSV : ";
+			std::wstring wErrorMsg(ErrorMsg.begin(), ErrorMsg.end());
+			MessageBox(NULL, wErrorMsg.c_str(), L"System Message", MB_OK);
+		}
+	}
+
+	return S_OK;
+}
+
+HRESULT CDataBase::LoadGachaResultData(const string& csvPath)
+{
+	io::CSVReader<
+		13,
+		io::trim_chars<' ', '\t'>,
+		io::double_quote_escape<',', '"'>
+	>in(csvPath);
+
+	in.read_header(
+		io::ignore_extra_column | io::ignore_missing_column,
+		"ID", "Grade", "Model", "Mat", "Texture", "Label", "RotX", "RotY", "RotZ", "RotW", "Meta", "Start", "Loop"
+	);
+	string			Grade, Model, Material, Texture, Label, Meta, Start, Loop;
+	_int			ID;
+	_float			RotX, RotY, RotZ, RotW;
+
+	while (in.read_row(ID, Grade, Model, Material,Texture, Label, RotX, RotY, RotZ, RotW, Meta, Start, Loop))
+	{
+		if (ID == -1) continue;
+
+		GACHA_RESULT_DESC desc = {};
+		desc.ID = ID;
+		desc.Grade = StringToGachaGrade(Grade);
+		desc.strModel = Model;
+		desc.strMaterial = Material;
+		desc.strTexture = Texture;
+		desc.strLabel = Helper::ConvertToWideString(Label);
+		desc.RotX = RotX;
+		desc.RotY = RotY;
+		desc.RotZ = RotZ;
+		desc.RotW = RotW;
+		desc.strMeta = Meta;
+		desc.strStartAnim = Start;
+		desc.strLoopAnim = Loop;
+
+		auto [iter, inserted] = m_ResultTables.emplace(desc.ID, move(desc));
+		if (false == inserted)
+		{
+			wstring ErrorMsg = L"Duplicate WeaponKey in CSV : " + desc.ID;
+			MessageBox(NULL, ErrorMsg.c_str(), L"System Message", MB_OK);
+		}
+	}
+
+	return S_OK;
+}
+
+HRESULT CDataBase::LoadGachaData(const string& csvPath)
+{
+	io::CSVReader<
+		10,
+		io::trim_chars<' ', '\t'>,
+		io::double_quote_escape<',', '"'>
+	>in(csvPath);
+
+	in.read_header(
+		io::ignore_extra_column | io::ignore_missing_column,
+		"ID_0", "ID_1", "ID_2", "ID_3","ID_4","ID_5", "ID_6", "ID_7", "ID_8", "ID_9"
+	);
+
+	array<_int, 10> IDs;
+
+	while (in.read_row(IDs[0], IDs[1], IDs[2], IDs[3], IDs[4], IDs[5], IDs[6], IDs[7], IDs[8], IDs[9]))
+	{
+		m_GachaData.push_back(IDs);
+	}
+
+	return S_OK;
+}
+
+HRESULT CDataBase::LoadTVData(const string& csvPath)
+{
+	io::CSVReader<
+		4,
+		io::trim_chars<' ', '\t'>,
+		io::double_quote_escape<',', '"'>
+	>in(csvPath);
+
+	in.read_header(
+		io::ignore_extra_column | io::ignore_missing_column,
+		"Name", "Col", "Row", "MaxFrame"
+	);
+	string			Name;
+	_int			Col, Row, MaxFrame;
+
+	while (in.read_row(Name, Col, Row, MaxFrame))
+	{
+		if (Name.empty()) continue;
+
+		TV_DESC desc = {};
+		desc.strName = Name;
+		desc.Col = Col;
+		desc.Row = Row;
+		desc.MaxFrame = MaxFrame;
+
+		auto [iter, inserted] = m_TVTables.emplace(desc.strName, move(desc));
+		if (false == inserted)
+		{
+			wstring ErrorMsg = L"Duplicate TVkey in CSV : " + Helper::ConvertToWideString(desc.strName);
+			MessageBox(NULL, ErrorMsg.c_str(), L"System Message", MB_OK);
+		}
+	}
+
+	return S_OK;
+}
+
+HRESULT CDataBase::LoadGachaChannelData(const string& csvPath)
+{
+	io::CSVReader<
+		2,
+		io::trim_chars<' ', '\t'>,
+		io::double_quote_escape<',', '"'>
+	>in(csvPath);
+
+	in.read_header(
+		io::ignore_extra_column | io::ignore_missing_column,
+		"Label", "TextureKey"
+	);
+
+	string strLabel = {}, textureKey = {};
+
+	while (in.read_row(strLabel, textureKey))
+	{
+		GACHA_CHANNEL_DESC desc = {};
+		desc.strLabel = Helper::ConvertToWideString(strLabel);
+		desc.strTextureKey = textureKey;
+
+		m_GachaChannels.push_back(desc);
+	}
+
+	return S_OK;
+}
+
 const CASHED_OBJ_DATA* CDataBase::Get_CashedData(const string& AreaTag)
 {
 	auto iter = m_CashedData.find(AreaTag);
@@ -608,6 +825,15 @@ Speaker CDataBase::StringToSpeaker(const string& str)
 	if (str == "Player") return Speaker::Player;
 
 	return Speaker::Npc;
+}
+
+GachaGrade CDataBase::StringToGachaGrade(const string& str)
+{
+	if (str == "S") return GachaGrade::S;
+	if (str == "A") return GachaGrade::A;
+	if (str == "B") return GachaGrade::B;
+
+	return GachaGrade::B;
 }
 
 wstring CDataBase::StringToWString(const string& str)

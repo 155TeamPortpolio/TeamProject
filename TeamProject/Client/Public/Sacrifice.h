@@ -41,6 +41,7 @@ public:
 
 public:
     void TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER charaName = CHARACTER::END) override;
+    void Parried() override;
 
 public:
     /* For State Machine */
@@ -122,12 +123,7 @@ private:
     _uint m_iHandID{};
 
     /* Material Params */
-    _float3 m_vRimLightColor{};
-    _float m_fRimLightPower{};
-
     _bool m_IsOnDissolve = false;
-    _float m_fDissolveDuration{};
-    _float m_fDissolveElapsedTime{};
     DISSOLVE_STATE m_eDissolveState = DISSOLVE_STATE::NONE;
 
     /* Battle Params */

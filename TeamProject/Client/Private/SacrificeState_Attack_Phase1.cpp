@@ -143,7 +143,7 @@ void CSacrificeState_Attack_Phase1::BuildPattern(CSacrifice* pOwner)
 		}
 		else
 		{
-			_uint iRandIndex = Helper::Get_Random_Int(0, 3);
+			_uint iRandIndex = Helper::Get_Random_Int(0, 2);
 			switch (iRandIndex)
 			{
 			case 0:
@@ -173,6 +173,8 @@ void CSacrificeState_Attack_Phase1::BuildPattern(CSacrifice* pOwner)
 			}
 		}
 	}
+	blackBoard.stateQueue.clear();
+	blackBoard.stateQueue.push_back("Attack08_Phase1");
 
 	blackBoard.isRequestNext = true;
 }
@@ -329,7 +331,7 @@ void CSacrificeState_Attack_02_Phase1::Update(CSacrifice* pOwner, _float dt)
 		if (Event.Type != CLIP_EVENT_TYPE::NOTIFY) continue;
 
 		if (Event.Tag == "Start_Attack")
-			pOwner->UnleashAttack(CEnemy::ATTACK_SIDE::RIGHT);
+			pOwner->UnleashAttack(CEnemy::ATTACK_SIDE::LEFT);
 		if (Event.Tag == "Start_Collider")
 		{
 			HitDesc hitDesc{};
@@ -568,7 +570,7 @@ void CSacrificeState_Attack_05_Phase1::Update(CSacrifice* pOwner, _float dt)
 	pOwner->MoveByRootMotion(dt);
 
 	if (m_fAnimProgress < 0.55f)
-		pOwner->RotateToTarget(dt, 80.f);
+		pOwner->RotateToTarget(dt, 60.f);
 
 	Update_Effects(pOwner);
 }
@@ -603,17 +605,6 @@ void CSacrificeState_Attack_05_Phase1::Update_Effects(CSacrifice* pOwner)
 	/* Orb1 */
 	if (IsCrossAnimProgress(0.3f))
 	{
-		COLLIDER_DESC colliderDesc = {};
-		colliderDesc.eGroup = COLLISION_GROUP::MONSTER_ATTACK;
-		colliderDesc.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER);
-		colliderDesc.bTrigger = true;
-		colliderDesc.bAutoFit = false;
-		colliderDesc.eType = COLLIDER_TYPE::SPHERE;
-		colliderDesc.vSize = _float3{ 2.f,2.f,2.f };
-		colliderDesc.fSizeScale = 1.f;
-		colliderDesc.vCenter = _float3{ 0.f,0.f,0.f };
-		colliderDesc.vRotation = _float3{ 0.f,0.f,0.f };
-
 		auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 		auto pTransform = pOwner->Get_Component<CTransform>();
 
@@ -639,6 +630,18 @@ void CSacrificeState_Attack_05_Phase1::Update_Effects(CSacrifice* pOwner)
 
 		_vector3 vDir = vTargetPosition - vBonePosition;
 		vDir.Normalize();
+
+		COLLIDER_DESC colliderDesc = {};
+		colliderDesc.eGroup = COLLISION_GROUP::MONSTER;
+		//colliderDesc.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER_ATTACK) + ENUM(COLLISION_GROUP::PLAYER) + ENUM(COLLISION_GROUP::COMMON);
+		colliderDesc.bTrigger = false;
+		colliderDesc.bAutoFit = false;
+		colliderDesc.eType = COLLIDER_TYPE::SPHERE;
+		colliderDesc.vSize = _float3{ 1.f,1.f,1.f };
+		colliderDesc.fSizeScale = 1.f;
+		colliderDesc.vCenter = _float3{ 0.f,0.f,0.f };
+		colliderDesc.vRotation = _float3{ 0.f,0.f,0.f };
+
 
 		auto pOrb = Builder::Create_Object({ "Zero_Level","Proto_GameObject_SacrificeOrb"})
 			.Position(vBonePosition)
@@ -646,23 +649,12 @@ void CSacrificeState_Attack_05_Phase1::Update_Effects(CSacrifice* pOwner)
 			.Build("SacrificeOrb");
 
 		pOrb->Get_Component<CTransform>()->Set_Look(vDir);
-		ObjectManager()->Add_Object(pOrb, { pOwner->Get_Level(),"Effect_Layer" });
+		ObjectManager()->Add_Object(pOrb, { pOwner->Get_Level(),"Enemy_Layer" });
 	}
 
 	/* Orb2 */
 	if (IsCrossAnimProgress(0.35f))
 	{
-		COLLIDER_DESC colliderDesc = {};
-		colliderDesc.eGroup = COLLISION_GROUP::MONSTER_ATTACK;
-		colliderDesc.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER);
-		colliderDesc.bTrigger = true;
-		colliderDesc.bAutoFit = false;
-		colliderDesc.eType = COLLIDER_TYPE::SPHERE;
-		colliderDesc.vSize = _float3{ 2.f,2.f,2.f };
-		colliderDesc.fSizeScale = 1.f;
-		colliderDesc.vCenter = _float3{ 0.f,0.f,0.f };
-		colliderDesc.vRotation = _float3{ 0.f,0.f,0.f };
-
 		auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 		auto pTransform = pOwner->Get_Component<CTransform>();
 
@@ -689,13 +681,24 @@ void CSacrificeState_Attack_05_Phase1::Update_Effects(CSacrifice* pOwner)
 		_vector3 vDir = vTargetPosition - vBonePosition;
 		vDir.Normalize();
 
+		COLLIDER_DESC colliderDesc = {};
+		colliderDesc.eGroup = COLLISION_GROUP::MONSTER;
+		//colliderDesc.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER_ATTACK) + ENUM(COLLISION_GROUP::PLAYER) + ENUM(COLLISION_GROUP::COMMON);
+		colliderDesc.bTrigger = false;
+		colliderDesc.bAutoFit = false;
+		colliderDesc.eType = COLLIDER_TYPE::SPHERE;
+		colliderDesc.vSize = _float3{ 1.f,1.f,1.f };
+		colliderDesc.fSizeScale = 1.f;
+		colliderDesc.vCenter = _float3{ 0.f,0.f,0.f };
+		colliderDesc.vRotation = _float3{ 0.f,0.f,0.f };
+
 		auto pOrb = Builder::Create_Object({ "Zero_Level","Proto_GameObject_SacrificeOrb" })
 			.Position(vBonePosition)
 			.Collider(colliderDesc)
 			.Build("SacrificeOrb");
 
 		pOrb->Get_Component<CTransform>()->Set_Look(vDir);
-		ObjectManager()->Add_Object(pOrb, { pOwner->Get_Level(),"Effect_Layer" });
+		ObjectManager()->Add_Object(pOrb, { pOwner->Get_Level(),"Enemy_Layer" });
 	}
 
 	/* Laser */
@@ -845,7 +848,7 @@ void CSacrificeState_Attack_07_Phase1::Update(CSacrifice* pOwner, _float dt)
 		if (Event.Type != CLIP_EVENT_TYPE::NOTIFY) continue;
 
 		if (Event.Tag == "Start_Attack")
-			pOwner->UnleashAttack(CEnemy::ATTACK_SIDE::RIGHT);
+			pOwner->UnleashAttack(CEnemy::ATTACK_SIDE::LEFT);
 		if (Event.Tag == "Start_Collider")
 		{
 			HitDesc hitDesc{};
@@ -936,7 +939,7 @@ void CSacrificeState_Attack_08_Phase1::Update(CSacrifice* pOwner, _float dt)
 		if (Event.Type != CLIP_EVENT_TYPE::NOTIFY) continue;
 
 		if (Event.Tag == "Start_Attack")
-			pOwner->UnleashAttack(CEnemy::ATTACK_SIDE::RIGHT);
+			pOwner->UnleashAttack(CEnemy::ATTACK_SIDE::LEFT);
 		if (Event.Tag == "Start_Collider")
 		{
 			HitDesc hitDesc{};
@@ -1087,15 +1090,15 @@ void CSacrificeState_Attack_08_Phase1::Update_Move(CSacrifice* pOwner, _float dt
 		{
 			_vector3 vCurrPosition = pOwner->Get_Component<CTransform>()->Get_Pos();
 			_vector3 vNextPosition = _vector3::Lerp(vCurrPosition, m_vFirstTargetPosition, dt * 3.f);
-			_vector3 vVelocity = (vNextPosition - vCurrPosition) / dt;
-			pCCT->Move_Velocity(vVelocity, dt);
+			_vector3 vDeltaMove = (vNextPosition - vCurrPosition);
+			pCCT->Move_Displacement(vDeltaMove,dt);
 		}
 		else if (m_fAnimProgress < 0.5f)
 		{
 			_vector3 vCurrPosition = pOwner->Get_Component<CTransform>()->Get_Pos();
 			_vector3 vNextPosition = _vector3::Lerp(vCurrPosition, m_vSecondTargetPosition, dt * 3.f);
-			_vector3 vVelocity = (vNextPosition - vCurrPosition) / dt;
-			pCCT->Move_Velocity(vVelocity, dt);
+			_vector3 vDeltaMove = (vNextPosition - vCurrPosition);
+			pCCT->Move_Displacement(vDeltaMove, dt);
 		}
 	}
 }

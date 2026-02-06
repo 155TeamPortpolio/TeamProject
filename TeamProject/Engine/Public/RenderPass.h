@@ -25,7 +25,10 @@ public:
 #pragma region STATIC_SHADOW_PASS
 class StaticShadowPass final : public RenderPass {
 private:
-	StaticShadowPass(class CRenderSystem* pRenderSystem) :RenderPass{ pRenderSystem } {};
+	StaticShadowPass(class CRenderSystem* pRenderSystem) :RenderPass{ pRenderSystem } {
+		m_Packets.reserve(5000);
+		m_VisiblePackets.reserve(5000);
+	};
 	virtual ~StaticShadowPass() DEFAULT;
 public:
 	virtual void Write_Buffer(ID3D11DeviceContext* pContext);

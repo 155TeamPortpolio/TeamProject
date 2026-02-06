@@ -4,23 +4,27 @@
 
 #include "JaneDoe.h"
 
+CJaneDoeState_ExAttack* CJaneDoeState_ExAttack::Create()
+{
+    auto pInstance = new CJaneDoeState_ExAttack();
+    pInstance->m_pSubStateMachine = CStateMachine<CJaneDoe>::Create();
+    auto pSubStateMachine = pInstance->Get_SubStateMachine();
+
+    pSubStateMachine->Register_State("ExAttack_Start", CJaneDoeState_ExAttack_Start::Create());
+    pSubStateMachine->Register_State("ExAttack_End", CJaneDoeState_ExAttack_End::Create());
+
+    pSubStateMachine->Get_State("ExAttack_End")->Set_Tag("End");
+
+    pSubStateMachine->Register_Transition("ExAttack_Start", "ExAttack_End",
+        CStateMachine<CJaneDoe>::CONDITION_ANIMATION_END);
+
+    pSubStateMachine->Set_DefaultState("ExAttack_Start");
+
+    return pInstance;
+}
+
 void CJaneDoeState_ExAttack::Enter(CJaneDoe* pOwner)
 {
-    if (!m_pSubStateMachine)
-    {
-        m_pSubStateMachine = CStateMachine<CJaneDoe>::Create();
-        
-        m_pSubStateMachine->Register_State("ExAttack_Start", CJaneDoeState_ExAttack_Start::Create());
-        m_pSubStateMachine->Register_State("ExAttack_End", CJaneDoeState_ExAttack_End::Create());
-
-        m_pSubStateMachine->Get_State("ExAttack_End")->Set_Tag("End");
-
-        m_pSubStateMachine->Register_Transition("ExAttack_Start", "ExAttack_End",
-            CStateMachine<CJaneDoe>::CONDITION_ANIMATION_END);
-
-        m_pSubStateMachine->Set_DefaultState("ExAttack_Start");
-    }
-
     CCharacter::EnergyDesc energyDesc = pOwner->Get_EnergyDesc();
     energyDesc.fCurrentEnergy -= energyDesc.fSpecialEnergy;
     pOwner->Set_CurrentEnergy(energyDesc.fCurrentEnergy);
@@ -50,7 +54,12 @@ void CJaneDoeState_ExAttack::Update(CJaneDoe* pOwner, _float dt)
 
         if (Event.Tag == "LFootStart")
         {
-            pOwner->Begin_AttackCollider("FootWeapon_L", { HIT_TYPE::INTERVAL, DAMAGE_TYPE::HARD, Helper::Get_Random_Float(10,20), 0.05f, 0 });
+            pOwner->Begin_AttackCollider("FootWeapon_L", HitDesc()
+                .Type(HIT_TYPE::INTERVAL)
+                .Damage(pOwner->Get_AttackPower() * 5.747f * Helper::Get_Random_Float(1.f, 1.5f)
+                    , DAMAGE_TYPE::HARD)
+                .Interval(0.05f)
+            );
         }
         else if (Event.Tag == "LFootEnd")
         {
@@ -58,7 +67,12 @@ void CJaneDoeState_ExAttack::Update(CJaneDoe* pOwner, _float dt)
         }
         else if (Event.Tag == "RFootStart")
         {
-            pOwner->Begin_AttackCollider("FootWeapon_R", { HIT_TYPE::INTERVAL, DAMAGE_TYPE::HARD, Helper::Get_Random_Float(10,20), 0.05f, 0 });
+            pOwner->Begin_AttackCollider("FootWeapon_R", HitDesc()
+                .Type(HIT_TYPE::INTERVAL)
+                .Damage(pOwner->Get_AttackPower() * 5.747f * Helper::Get_Random_Float(1.f, 1.5f)
+                    , DAMAGE_TYPE::HARD)
+                .Interval(0.05f)
+            );
         }
         else if (Event.Tag == "RFootEnd")
         {
@@ -82,6 +96,8 @@ void CJaneDoeState_ExAttack::Update(CJaneDoe* pOwner, _float dt)
 
 void CJaneDoeState_ExAttack::Exit(CJaneDoe* pOwner)
 {
+    pOwner->Reset_InputInfo();
+    pOwner->Reset_ReserveCombo();
     pOwner->Pop_Invincible();
     __super::Exit(pOwner);
 }
@@ -99,18 +115,34 @@ void CJaneDoeState_ExAttack_Start::Update(CJaneDoe* pOwner, _float dt)
     pOwner->Process_RootMotion(dt,
         ENUM(CJaneDoe::ROOTMOTION_MASK::MOVE) |
         ENUM(CJaneDoe::ROOTMOTION_MASK::QUATERNION));
+
+    Update_Effects(pOwner);
+}
+
+void CJaneDoeState_ExAttack_Start::Update_Effects(CJaneDoe* pOwner)
+{
+    if (IsCrossAnimProgress(0.17f))
+        pOwner->Play_Effect("JaneDoe_Ex_Slash0", _vector3(0.f, 1.3f, 0.f), _quaternion(0.64f, 0.29f, 0.64f, 0.29f));
+
+    if (IsCrossAnimProgress(0.24f))
+        pOwner->Play_Effect("JaneDoe_Ex_Slash1", _vector3(0.f, 2.f, 0.f), _quaternion(0.64f, 0.29f, 0.64f, 0.29f));
+
+    if (IsCrossAnimProgress(0.31f))
+        pOwner->Play_Effect("JaneDoe_Ex_Slash2", _vector3(0.f, 2.4f, 0.f), _quaternion(0.64f, 0.29f, 0.64f, 0.29f));
+
+    if (IsCrossAnimProgress(0.38f))
+        pOwner->Play_Effect("JaneDoe_Ex_Slash3", _vector3(0.f, 2.4f, 0.f), _quaternion(0.64f, 0.29f, 0.64f, 0.29f));
+
+    if (IsCrossAnimProgress(0.5f))
+        pOwner->Play_Effect("JaneDoe_Sting", _vector3(0.4f, 2.3f, -3.f), _quaternion(0.2f, 0.f, 0.f, 0.98f), false);
+
+    if (IsCrossAnimProgress(0.52f))
+        pOwner->Play_Effect("JaneDoe_Normal_Slash0",_vector3(0.2f,0.5f,0.3f),_quaternion(0.59f,0.56f,-0.43f,0.39f));
 }
 
 void CJaneDoeState_ExAttack_End::Enter(CJaneDoe* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_ExSpecial_End")
-        .Speed(1.2f)
+        .Speed(1.5f)
         .Apply();
-}
-
-void CJaneDoeState_ExAttack_End::Update(CJaneDoe* pOwner, _float dt)
-{
-    pOwner->Process_RootMotion(dt,
-        ENUM(CJaneDoe::ROOTMOTION_MASK::MOVE) |
-        ENUM(CJaneDoe::ROOTMOTION_MASK::QUATERNION));
 }

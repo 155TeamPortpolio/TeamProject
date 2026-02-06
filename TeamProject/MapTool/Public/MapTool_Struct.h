@@ -51,14 +51,6 @@ namespace MapTool {
 	}ENTITY;
 	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ENTITY, iEntityID, tagName, iType, vScale, vRotation, vTranslation, vColSize);
 
-	typedef struct tagMapEntity
-	{
-		_int		iEntityID = { -1 };
-		string		TagModelKey = {};
-		string		TagMaterialKey = {};
-	}MAP_ENTITY;
-	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(MAP_ENTITY, TagModelKey, TagMaterialKey);
-
 	typedef struct tagEntityHeader {
 		string		TagDataFormat = {};
 		string		TagArea = {};
@@ -67,18 +59,51 @@ namespace MapTool {
 	}Entity_Header;
 	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Entity_Header, TagDataFormat, TagArea, iVersion, Entities);
 
+
+	/* Light Data */
+	NLOHMANN_JSON_SERIALIZE_ENUM(LIGHT_TYPE,
+		{
+			{LIGHT_TYPE::DIRECTIONAL,	"Directional"},
+			{LIGHT_TYPE::POINT,			"Point"},
+			{LIGHT_TYPE::SPOTLIGHT,		"Spotlight"}
+		})
+
+	typedef struct tagLightJsonDesc {
+		LIGHT_TYPE	eLightType	= {};
+
+		_float4 vOffsetPosition	= {};
+		_float4	vLightDirection	= {};
+
+		_float4	vLightDiffuse	= {};
+		_float4	vLightAmbient	= {};
+		_float4	vLightSpecular	= {};
+
+		_float	fLightRange		= {};
+		_float	fLightIntensity = {};
+
+		_float	fInnerCos = {};
+		_float	fOuterCos = {};
+	}LIGHT_DESC_JSON;
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(LIGHT_DESC_JSON,
+		eLightType, vOffsetPosition, vLightDirection,
+		vLightDiffuse, vLightAmbient, vLightSpecular,
+		fLightRange, fLightIntensity,
+		fInnerCos, fOuterCos);
+
 	typedef struct tagMapLight
 	{
-		_int		iIndex{};
-		LIGHT_DESC	LightDesc;
-	}LIGHT_POSITION;
-	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(LIGHT_POSITION, iIndex, LightDesc);
+		_int			 iIndex{};
+		string			 TagArea = {};
+		LIGHT_DESC_JSON	 LightDesc;
+		array<_float, 3> vTranslation = { 0.f, 0.f, 0.f };
+	}MAP_LIGHT;
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(MAP_LIGHT, iIndex, LightDesc, vTranslation);
 
 	typedef struct tagLightHeader {
 		string		TagDataFormat = {};
 		string		TagArea = {};
 		_int		iVersion = 1;
-		vector<LIGHT_POSITION> Lights;
+		vector<MAP_LIGHT> Lights;
 	}Light_Header;
 	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Light_Header, TagDataFormat, TagArea, iVersion, Lights);
 
@@ -105,10 +130,10 @@ namespace MapTool {
 		string	TagDataFormat = "";
 		string	TagArea = "";
 
-		BATTLE_POINT_DATA			PlayerSpawnPoint = {};
+		vector<BATTLE_POINT_DATA>			PlayerSpawnPoint = {};
 		vector<BATTLE_POINT_SPAWNER_DATA>	Spawners;
-		vector<BATTLE_POINT_DATA>	Monsters;
-		vector<BATTLE_POINT_DATA>	EndPoints;
+		vector<BATTLE_POINT_DATA>			Monsters;
+		vector<BATTLE_POINT_DATA>			EndPoints;
 	}BATTLE_FIELD_DATA;
 	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(BATTLE_FIELD_DATA, TagDataFormat, TagArea, PlayerSpawnPoint, Spawners, Monsters, EndPoints);
 

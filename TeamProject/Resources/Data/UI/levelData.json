@@ -28,18 +28,6 @@
           "prototypeTag": "Proto_GameObject_Logo",
           "instanceName": "logo",
           "prefabPath" : ""
-        },
-        
-        {
-          "prototypeTag": "Proto_GameObject_Lottery",
-          "instanceName": "lottery",
-          "prefabPath" : ""
-        },
-        
-        {
-          "prototypeTag": "Proto_GameObject_ResultBanner",
-          "instanceName": "result_banner",
-          "prefabPath" : ""
         }
       ]
     },
@@ -99,14 +87,30 @@
         },
         
         {
-          "prototypeTag": "Proto_GameObject_ResultBanner",
-          "instanceName": "result_banner",
+          "prototypeTag": "Proto_GameObject_Ramen",
+          "instanceName": "ramen",
           "prefabPath" : ""
         },
         
         {
-          "prototypeTag": "Proto_GameObject_Ramen",
-          "instanceName": "ramen",
+          "prototypeTag": "Proto_GameObject_GachaPage",
+          "instanceName": "gachaPage",
+          "prefabPath" : ""
+        }
+      ]
+    },
+
+    "Gacha_Level": {
+      "objects": [ 
+        {
+          "prototypeTag": "Proto_GameObject_GachaDisplay",
+          "instanceName": "gachaDisplay",
+          "prefabPath" : ""
+        },
+        
+        {
+          "prototypeTag": "Proto_GameObject_GachaResult",
+          "instanceName": "gachaResult",
           "prefabPath" : ""
         }
       ]

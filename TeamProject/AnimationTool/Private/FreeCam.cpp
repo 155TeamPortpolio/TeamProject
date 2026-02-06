@@ -19,6 +19,7 @@ void CFreeCam::Priority_Update(_float dt)
 {
     if (GUISystem()->UsingUI())
         return;
+
     auto input = GAME->Get_InputDev();
 
     if (input->Mouse_Down(MOUSE_BTN::RB))

@@ -131,7 +131,17 @@ namespace Engine
 	};
 
 	enum class AlphaCheckLevel { None = 0, Fast = 1, Hint = 2, Precise = 3 };
+	enum class VIDEO_PLAY_STATE
+	{
+		Closed,
+		Ready,
+		Playing,
+		Paused,
+		Ended,
+		Error
+	};
 
+	enum class StencilMode { None, Write, Test };
 }
 #endif // Engine_Enum_h__
 

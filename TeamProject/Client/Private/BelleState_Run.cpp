@@ -14,7 +14,7 @@ void CBelleState_Run::Enter(CBelle* pOwner)
         m_pSubStateMachine->Get_State("End")->Set_Tag("End");
 
         m_pSubStateMachine->Register_Transition("Start", "Loop",
-            CStateMachine<CBelle>::CONDITION_ANIMATION_GREATER, "", 0.98);
+            CStateMachine<CBelle>::CONDITION_ANIMATION_GREATER, "", 0.97);
 
         m_pSubStateMachine->Register_Transition("Start", "End",
             CStateMachine<CBelle>::CONDITION_BOOL_FALSE, "IsMove");
@@ -83,7 +83,6 @@ void CBelleState_Run_Loop::Update(CBelle* pOwner, _float dt)
         if (Event.Tag == "L" || Event.Tag == "R")
             static_cast<CBelleState_Run*>(m_pParentState)->Set_LastFoot(Event.Tag);
     }
-    pOwner->Process_RootMotion(dt);
 }
 
 void CBelleState_Run_End::Enter(CBelle* pOwner)

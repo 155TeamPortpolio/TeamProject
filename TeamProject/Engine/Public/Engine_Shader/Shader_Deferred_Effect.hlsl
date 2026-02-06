@@ -4,6 +4,12 @@ matrix g_WorldMatrix;
 float BloomScreenWidth;
 float BloomScreenHeight;
 
+float RimStrength = 0.3; // 0~ 몇
+float RimEdgeScale = 20; // 120~300 추천
+float RimEdgePower = 2.5; // 1.5~2.5
+float RimSampleOffset = 2; // 1~3 (픽셀 단위)
+float RimBloomMul = 1; // 1~3
+
 BlendState BS_OITComposite
 {
     BlendEnable[0] = true;
@@ -77,13 +83,30 @@ PS_OUT_COMPOSITE PS_MAIN_COMPOSITE(PS_IN In)    //여기서 가중치 합성 후 원래 타�
     
     /* Diffuse */
     float3 vDiffuseColor = (fDiffuseAlpha > fElipson) ? (vDiffuseEffectDesc.rgb / fDiffuseAlpha) : 0.f;
-    vDiffuseColor = BoostBrightColor(vDiffuseColor, 0.5f, 1.f);
+    vDiffuseColor = BoostBrightColor(vDiffuseColor, 0.5f, 0.4f);
     Out.vDiffuseEffect = float4(vDiffuseColor * fOutAlpha, fOutAlpha);
     
     /* Bloom */
     float3 vBloomColor = (fBloomAlpha > fElipson) ? (vBloomEffectDesc.rgb / fBloomAlpha) : 0.f;
     Out.vBloomEffect = float4(vBloomColor * fOutAlpha, fOutAlpha);
     
+    /* RimLight */
+    float eps = 1e-6;
+    float cov = fOutAlpha;
+    
+    float C0 = 0.001;
+    float C1 = 0.75; 
+
+    float3 PaintColor = RimLightAccTexture.Sample(LinearSampler, In.vTexcoord);
+    float PaintStrength = 2.0;
+    
+    float w = max(fwidth(cov), eps);
+    float up = smoothstep(C0 - w, C0 + w, cov); // C0 지나면 올라오고
+    float down = 1.0 - smoothstep(C1 - w, C1 + w, cov); // C1 지나면 내려감
+    float paint = saturate(up * down * PaintStrength);
+    
+    Out.vDiffuseEffect.rgb += PaintColor * paint;
+  
     return Out;
 }
 
@@ -202,7 +225,7 @@ PS_OUT_RESULT PS_MAIN_COMBINED(PS_IN In)
 {
     PS_OUT_RESULT Out;
     
-    vector vDiffuse = DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
+    vector vDiffuse = EffectDiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
     vector vBloom = EffectBloomFinalTexture.Sample(DefaultSampler, In.vTexcoord);
   
     Out.vResult.rgb = vDiffuse.rgb + vBloom.rgb;
@@ -217,7 +240,7 @@ technique11 DefaultTechnique
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_Default, 0);
-        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        SetBlendState(BS_OITComposite, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_COMPOSITE();

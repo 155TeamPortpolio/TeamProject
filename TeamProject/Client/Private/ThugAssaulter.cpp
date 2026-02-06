@@ -48,9 +48,15 @@ HRESULT CThugAssaulter::Initialize_Prototype()
 	Add_Component<CCharacterController>();
 
 	auto pResourceMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
-	pResourceMgr->Add_ResourcePath("ThugAssaulter.mat", "../Bin/Resources/Model/skeletal/Enemy/ThugAssaulter/ThugAssaulter.mat");
-	pResourceMgr->Add_ResourcePath("ThugAssaulter.model", "../Bin/Resources/Model/skeletal/Enemy/ThugAssaulter/ThugAssaulter.model");
-	pResourceMgr->Add_ResourcePath("Monster_ThugAssaulter_Meta.json", "../Bin/Resources/Model/skeletal/Enemy/ThugAssaulter/Monster_ThugAssaulter_Meta.json");
+	pResourceMgr->Add_ResourcePath("ThugAssaulter.mat", "../Bin/Resources/Zero/Enemy/ThugAssaulter/ThugAssaulter.mat");
+	pResourceMgr->Add_ResourcePath("ThugAssaulter.model", "../Bin/Resources/Zero/Enemy/ThugAssaulter/ThugAssaulter.model");
+	//pResourceMgr->Add_ResourcePath("Monster_ThugAssaulter_Meta.json", "../Bin/Resources/Zero/Enemy/ThugAssaulter/Monster_ThugAssaulter_Meta.json");
+
+	auto pModel = Get_Component<CSkeletalModel>();
+	pModel->Link_Model(G_GlobalLevelKey, "ThugAssaulter.model");
+
+	auto pMaterial = Get_Component<CMaterial>();
+	pMaterial->Link_Material(G_GlobalLevelKey, "ThugAssaulter.mat");
 
 	return S_OK;
 }
@@ -59,20 +65,11 @@ HRESULT CThugAssaulter::Initialize(INIT_DESC* pArg)
 {
 	__super::Initialize(pArg);
 
-	//m_pTransform->Scale({ 0.01f,0.01f,0.01f });
-
-	auto pModel = Get_Component<CSkeletalModel>();
-	pModel->Link_Model(G_GlobalLevelKey, "ThugAssaulter.model");
-
-	auto pMaterial = Get_Component<CMaterial>();
-	pMaterial->Link_Material(G_GlobalLevelKey, "ThugAssaulter.mat");
-
 	auto pAnimator = Get_Component<CAnimator3D>();
 	pAnimator->LinkAnimate_Model(G_GlobalLevelKey, "ThugAssaulter.model");
 	pAnimator->Link_MetaData(G_GlobalLevelKey, "Monster_ThugAssaulter_Meta.json");
 	pAnimator->Set_ExtractMotionboneMovement(AXIS::X | AXIS::Z);
 	pAnimator->Resize_Layer(2);
-	//for (size_t i = 1; i < 2; i++)
 	pAnimator->Set_LayerType(ANIM_LAYER_STATE::ADDITIVE, 1);
 
 	if (FAILED(Ready_Children(pArg)))
@@ -80,12 +77,6 @@ HRESULT CThugAssaulter::Initialize(INIT_DESC* pArg)
 
 	if (FAILED(Initialize_StateMachine()))
 		return E_FAIL;
-
-	// 임시 확인용
-#ifdef _USING_GUI
-	CGameInstance::GetInstance()->Get_GUISystem()->Get_Context()->pSelectedObject = this;
-#endif // _USING_GUI
-
 
 	return S_OK;
 }
@@ -315,7 +306,7 @@ void CThugAssaulter::OnPooledRelease()
 
 void CThugAssaulter::Parried()
 {
-	if ("Attack" != m_pStateMachine->Get_CurrentStateName())
+	if ("Attack" != m_pStateMachine->Get_CurrentStateName() || false == m_isParryEnable)
 		return;
 
 	__super::Parried();
@@ -537,7 +528,10 @@ void CThugAssaulter::ControlState(const _float dt)
 {
 	if ("Death" != m_pStateMachine->Get_CurrentStateName() &&
 		0 >= m_tStatus.iNowHP)
+	{
+		RequestRemoveOnDeathToBattleSystem();
 		m_pStateMachine->Change_State("Death");
+	}
 
 	if ("Death" != m_pStateMachine->Get_CurrentStateName() &&
 		"Groggy" != m_pStateMachine->Get_CurrentStateName() &&

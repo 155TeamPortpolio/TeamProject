@@ -247,6 +247,9 @@ HRESULT CSkinnedMeshRenderer::Render_Vanish_Noise()
 	Get_BufferInputLayout(m_pVIBuffer, m_pShader, "VANISHNOISE", &pLayout);
 	m_pContext->IASetInputLayout(pLayout);
 
+	m_pShader->Bind_Value("g_GlitchSpeed", { &m_GlitchDesc.glitchSpeed, "float", sizeof(_float) });
+	m_pShader->Bind_Value("g_GlitchStrength", { &m_GlitchDesc.glitchStrength, "float", sizeof(_float) });
+
 	m_pTargetManager->Bind_Target("Target_Vanish", m_pShader, "VanishTexture");
 	m_pShader->Bind_Value("g_fTime",{ &m_fTime, "float", sizeof(_float)});
 

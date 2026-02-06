@@ -6,6 +6,8 @@
 void CDefilerState_Idle::Enter(CDefiler* pOwner)
 {
 	__super::Enter(pOwner);
+	DEFILER_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
+	blackBoard.TraceType_OnlyAnim();
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("Monster_IsoldetheDefiler_Ani_Idle_Loop")
 		.Speed(1.f)

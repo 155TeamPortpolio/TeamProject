@@ -2,26 +2,34 @@
 #include "CorinState_RushAttack.h"
 #include "Corin.h"
 
+CCorinState_RushAttack* CCorinState_RushAttack::Create()
+{
+    auto pInstance = new CCorinState_RushAttack();
+    pInstance->m_pSubStateMachine = CStateMachine<CCorin>::Create();
+    auto pSubStateMachine = pInstance->Get_SubStateMachine();
+
+    pSubStateMachine->Register_State("Rush_Start", CCorinState_Rush_Start::Create());
+    pSubStateMachine->Register_State("Rush_Explode", CCorinState_Rush_Explode::Create());
+    pSubStateMachine->Register_State("Rush_End", CCorinState_Rush_End::Create());
+
+    pSubStateMachine->Get_State("Rush_End")->Set_Tag("End");
+
+    pSubStateMachine->Register_Transition("Rush_Start", "Rush_Explode",
+        CStateMachine<CCorin>::CONDITION_ANIMATION_END);
+    pSubStateMachine->Register_Transition("Rush_Explode", "Rush_End",
+        CStateMachine<CCorin>::CONDITION_ANIMATION_END);
+
+    pSubStateMachine->Set_DefaultState("Rush_Start");
+
+    return pInstance;
+}
+
 void CCorinState_RushAttack::Enter(CCorin* pOwner)
 {
     pOwner->Lock_Move();
-    if (!m_pSubStateMachine)
-    {
-        m_pSubStateMachine = CStateMachine<CCorin>::Create();
-        m_pSubStateMachine->Register_State("Rush_Start", CCorinState_Rush_Start::Create());
-        m_pSubStateMachine->Register_State("Rush_Explode", CCorinState_Rush_Explode::Create());
-        m_pSubStateMachine->Register_State("Rush_End", CCorinState_Rush_End::Create());
-        
-        m_pSubStateMachine->Get_State("Rush_End")->Set_Tag("End");
-
-        m_pSubStateMachine->Register_Transition("Rush_Start", "Rush_Explode",
-            CStateMachine<CCorin>::CONDITION_ANIMATION_END);
-        m_pSubStateMachine->Register_Transition("Rush_Explode", "Rush_End",
-            CStateMachine<CCorin>::CONDITION_ANIMATION_END);
-
-        m_pSubStateMachine->Set_DefaultState("Rush_Start");
-    }
     __super::Enter(pOwner);
+
+    pOwner->Play_Effect("Corin_Saw_Slash1", _vector3(), _quaternion(0.f, 0.f, 0.f, 1.f), false);
 }
 
 void CCorinState_RushAttack::Update(CCorin* pOwner, _float dt)
@@ -43,6 +51,8 @@ void CCorinState_RushAttack::Update(CCorin* pOwner, _float dt)
 
 void CCorinState_RushAttack::Exit(CCorin* pOwner)
 {
+    pOwner->Stop_Effect("Corin_Saw_Slash1");
+
     __super::Exit(pOwner);
 }
 
@@ -51,7 +61,14 @@ void CCorinState_Rush_Start::Enter(CCorin* pOwner)
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_Rush")
         .Speed(2.f)
         .Apply();
-    pOwner->Begin_AttackCollider("Saw", { HIT_TYPE::COUNT, DAMAGE_TYPE::NORMAL, 1.f, 0.f, 7 });
+    pOwner->Begin_AttackCollider("Saw", HitDesc()
+        .Type(HIT_TYPE::COUNT)
+        .Damage(pOwner->Get_AttackPower() * 0.967f * Helper::Get_Random_Float(1.f, 1.5f)
+            , DAMAGE_TYPE::NORMAL)
+        .Interval(0.05f)
+        .MaxCount(7)
+        .Charge(1.f, 10.f)
+    );
 }
 
 void CCorinState_Rush_Start::Update(CCorin* pOwner, _float dt)

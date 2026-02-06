@@ -195,14 +195,15 @@ HRESULT CPipeLine::Update_ShadowBuffer(ID3D11DeviceContext* pContext, _bool IsSk
 HRESULT CPipeLine::Update_LightBuffer(ID3D11DeviceContext* pContext, const LIGHT_DESC& Desc, _int lightSize)
 {
 	LightBuffer lightBuffer{};
-	lightBuffer.vLightDir = Desc.vLightDirection;
-	lightBuffer.vLightPos = Desc.vLightPosition;
-	lightBuffer.vLightDiffuse = Desc.vLightDiffuse;
-	lightBuffer.vLightAmbient = Desc.vLightAmbient;
-	lightBuffer.vLightSpecular = Desc.vLightSpecular;
-	lightBuffer.fLightRange = Desc.fLightRange;
+	lightBuffer.vLightDir		= Desc.vLightDirection;
+	lightBuffer.vLightPos		= Desc.vLightPosition;
+	lightBuffer.vLightDiffuse	= Desc.vLightDiffuse;
+	lightBuffer.vLightAmbient	= Desc.vLightAmbient;
+	lightBuffer.vLightSpecular	= Desc.vLightSpecular;
+	lightBuffer.fLightRange		= Desc.fLightRange;
 	lightBuffer.fLightIntensity = Desc.fLightIntensity;
-	lightBuffer.iLightSize = lightSize;
+	lightBuffer.fInnerCos		= Desc.fInnerCos;
+	lightBuffer.fOuterCos		= Desc.fOuterCos;
 
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 
@@ -342,7 +343,112 @@ _bool CPipeLine::isVisible(MINMAX_BOX minMax, _fmatrix worldTransform)
 	return m_Frustum.Intersects(worldAabb);
 }
 
+static XMVECTOR NormalizePlane(XMVECTOR plane)
+{
+	XMVECTOR normal = XMVectorSetW(plane, 0.f);
+	float length = XMVectorGetX(XMVector3Length(normal));
+	if (length <= 1e-6f) return plane;
+	return XMVectorScale(plane, 1.f / length);
+}
 
+static void ExtractFrustumPlanesFromMatrix(const XMMATRIX& clipFromWorld, XMVECTOR outPlanes[6])
+{
+	XMFLOAT4X4 matrixFloat;
+	XMStoreFloat4x4(&matrixFloat, clipFromWorld);
+
+	XMVECTOR row0 = XMVectorSet(matrixFloat._11, matrixFloat._12, matrixFloat._13, matrixFloat._14);
+	XMVECTOR row1 = XMVectorSet(matrixFloat._21, matrixFloat._22, matrixFloat._23, matrixFloat._24);
+	XMVECTOR row2 = XMVectorSet(matrixFloat._31, matrixFloat._32, matrixFloat._33, matrixFloat._34);
+	XMVECTOR row3 = XMVectorSet(matrixFloat._41, matrixFloat._42, matrixFloat._43, matrixFloat._44);
+
+	outPlanes[0] = NormalizePlane(XMVectorAdd(row3, row0));      // left
+	outPlanes[1] = NormalizePlane(XMVectorSubtract(row3, row0)); // right
+	outPlanes[2] = NormalizePlane(XMVectorAdd(row3, row1));      // bottom
+	outPlanes[3] = NormalizePlane(XMVectorSubtract(row3, row1)); // top
+	outPlanes[4] = NormalizePlane(XMVectorAdd(row3, row2));      // near
+	outPlanes[5] = NormalizePlane(XMVectorSubtract(row3, row2)); // far
+}
+
+static bool IntersectAabbWithPlanes(const XMFLOAT3& minPos, const XMFLOAT3& maxPos, const XMVECTOR planes[6])
+{
+	XMFLOAT3 centerFloat;
+	centerFloat.x = (minPos.x + maxPos.x) * 0.5f;
+	centerFloat.y = (minPos.y + maxPos.y) * 0.5f;
+	centerFloat.z = (minPos.z + maxPos.z) * 0.5f;
+
+	XMFLOAT3 extentFloat;
+	extentFloat.x = (maxPos.x - minPos.x) * 0.5f;
+	extentFloat.y = (maxPos.y - minPos.y) * 0.5f;
+	extentFloat.z = (maxPos.z - minPos.z) * 0.5f;
+
+	XMVECTOR center = XMVectorSet(centerFloat.x, centerFloat.y, centerFloat.z, 1.f);
+	XMVECTOR extents = XMVectorSet(extentFloat.x, extentFloat.y, extentFloat.z, 0.f);
+
+	for (int planeIndex = 0; planeIndex < 6; ++planeIndex)
+	{
+		XMVECTOR plane = planes[planeIndex];
+
+		float distance = XMVectorGetX(XMPlaneDotCoord(plane, center));
+
+		XMVECTOR normalAbs = XMVectorAbs(XMVectorSetW(plane, 0.f));
+		float radius = XMVectorGetX(XMVector3Dot(normalAbs, extents));
+
+		if (distance + radius < 0.f)
+			return false;
+	}
+	return true;
+}
+
+void CPipeLine::filterVisibleCSM(vector<OPAQUE_PACKET>& packets, vector<OPAQUE_PACKET>& outPacket)
+{
+	outPacket.clear();
+	outPacket.reserve(packets.size());
+
+	auto* gameInstance = CGameInstance::GetInstance();
+	if (!gameInstance) return;
+
+	CCSMShadow* csm = m_pStaticCSM;
+	if (!csm) return;
+
+	// 캐스케이드 플레인 미리 뽑기
+	const _uint cascadeCount = csm->GetCascadeCount();
+	XMVECTOR cascadePlanes[4][6];
+
+	for (_uint cascadeIndex = 0; cascadeIndex < cascadeCount; ++cascadeIndex)
+	{
+		const _matrix& lightViewProj = csm->GetLightViewProj(cascadeIndex);
+		ExtractFrustumPlanesFromMatrix(lightViewProj, cascadePlanes[cascadeIndex]);
+	}
+
+	// 패킷 1번 순회: 월드박스 만든 다음, 어느 캐스케이드라도 걸리면 통과(합집합)
+	for (auto& packet : packets)
+	{
+		if (!packet.pModel || !packet.pWorldMatrix)
+			continue;
+
+		MINMAX_BOX localBox = packet.pModel->Get_MeshBoundingBox(packet.DrawIndex);
+		MINMAX_BOX worldBox = localBox.TransformBox_8Corner(Matrix(*packet.pWorldMatrix));
+
+		// MINMAX_BOX -> XMFLOAT3로 변환 (멤버명은 네 타입에 맞춰 수정)
+		XMFLOAT3 minPos(worldBox.vMin.x, worldBox.vMin.y, worldBox.vMin.z);
+		XMFLOAT3 maxPos(worldBox.vMax.x, worldBox.vMax.y, worldBox.vMax.z);
+
+		bool anyCascadeHit = false;
+		for (_uint cascadeIndex = 0; cascadeIndex < cascadeCount; ++cascadeIndex)
+		{
+			if (IntersectAabbWithPlanes(minPos, maxPos, cascadePlanes[cascadeIndex]))
+			{
+				anyCascadeHit = true;
+				break;
+			}
+		}
+
+		if (!anyCascadeHit)
+			continue;
+
+		outPacket.push_back(packet);
+	}
+}
 
 _uint CPipeLine::Write_ObjectData(const _float4x4& worldMatrix)
 {
@@ -501,6 +607,7 @@ HRESULT CPipeLine::Bind_Light(CShader* pShader, class CVIBuffer* pBuffer, ID3D11
 
 		switch (LightSnapShots[i].eType)
 		{
+
 		case Engine::LIGHT_TYPE::DIRECTIONAL:
 			pRenderer->Get_BufferInputLayout(pBuffer, pShader, "DIRECTIONAL", &pLayout);
 			pContext->IASetInputLayout(pLayout);
@@ -510,6 +617,7 @@ HRESULT CPipeLine::Bind_Light(CShader* pShader, class CVIBuffer* pBuffer, ID3D11
 			pBuffer->Bind_Buffer(pContext);
 			pBuffer->Render(pContext);
 			break;
+
 		case Engine::LIGHT_TYPE::POINT:
 			pRenderer->Get_BufferInputLayout(pBuffer, pShader, "POINT", &pLayout);
 			pContext->IASetInputLayout(pLayout);
@@ -518,8 +626,16 @@ HRESULT CPipeLine::Bind_Light(CShader* pShader, class CVIBuffer* pBuffer, ID3D11
 			pBuffer->Bind_Buffer(pContext);
 			pBuffer->Render(pContext);
 			break;
+
 		case Engine::LIGHT_TYPE::SPOTLIGHT:
+			pRenderer->Get_BufferInputLayout(pBuffer, pShader, "SPOTLIGHT", &pLayout);
+			pContext->IASetInputLayout(pLayout);
+			pShader->Apply("SPOTLIGHT", pContext);
+			pShader->SetConstantBuffer("LightBuffer", Get_LightBuffer());
+			pBuffer->Bind_Buffer(pContext);
+			pBuffer->Render(pContext);
 			break;
+
 		default:
 			break;
 		}

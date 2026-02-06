@@ -45,6 +45,8 @@ namespace
         {0.06f, 0.00020f, 0.060f, 0.14f, 0.00040f, 9.f, 2.000f, 0.600f},  // Roar2S
         {0.07f, 0.00022f, 0.060f, 0.16f, 0.00045f, 9.f, 2.500f, 0.700f},  // Roar25S
         {0.08f, 0.00024f, 0.060f, 0.20f, 0.00055f, 8.5f, 4.000f, 1.000f}, // Roar4S
+
+        {1.10f, 0.00220f, 0.080f, 0.55f, 0.00110f, 9.5f, 0.55f, 0.25f},   // GachaShake
     };
 
     static const CamZoomPreset kZoomPresets[] =
@@ -85,6 +87,8 @@ namespace
         {0.18f, 0.080f, 2.000f}, // Roar2S
         {0.22f, 0.080f, 2.500f}, // Roar25S
         {0.26f, 0.090f, 4.000f}, // Roar4S
+
+        {1.00f, 0.060f, 0.2f}, // GachaShake
     };
 
     _bool StartsWith(const string& s, const char* prefix)
@@ -121,6 +125,15 @@ namespace
         {
             req.blendInSec  = 0.f;
             req.blendOutSec = 0.f;
+            req.resetTime   = true;
+            req.returnMode  = CamReturnMode::RestorePrev;
+            return req;
+        }
+
+        if (StartsWith(key, "Parry/"))
+        {
+            req.blendInSec  = 0.75f;
+            req.blendOutSec = 0.75f;
             req.resetTime   = true;
             req.returnMode  = CamReturnMode::RestorePrev;
             return req;

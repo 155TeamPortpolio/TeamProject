@@ -41,10 +41,10 @@ class ENGINE_DLL CPipeLine :
 		_float4 vLightDiffuse;
 		_float4 vLightAmbient;
 		_float4 vLightSpecular;
-		_float fLightRange;
-		_float fLightIntensity;
-		_int iLightSize;
-		_float LightPadding;
+		_float	fLightRange;
+		_float	fLightIntensity;
+		_float	fInnerCos;
+		_float	fOuterCos;
 	};
 
 	struct alignas(16)  SSAOBuffer
@@ -73,6 +73,7 @@ public:
 	HRESULT Initialize(ID3D11Device* pDevice, class CRenderSystem* pSystem);
 public:
 	_bool isVisible(MINMAX_BOX minMax, _fmatrix worldTransform);
+	void filterVisibleCSM(vector<OPAQUE_PACKET>& packets,vector<OPAQUE_PACKET>& outPacket);
 public:
 	HRESULT Update_FrameBuffer(ID3D11DeviceContext* pContext);
 	HRESULT Update_ShadowBuffer(ID3D11DeviceContext* pContext, _bool IsSkinningMesh, _int cascadeIndex);

@@ -40,7 +40,7 @@ void CAnimator3D::LinkAnimate_Model(const string& LevelKey, const string& ModelK
 		Reset_Anim();
 	}
 
-	m_pData = CGameInstance::GetInstance()->Get_ResourceMgr()->Load_ModelData(LevelKey, ModelKey);
+ 	m_pData = CGameInstance::GetInstance()->Get_ResourceMgr()->Load_ModelData(LevelKey, ModelKey);
 	Safe_AddRef(m_pData);
 	_float4x4 IdentityMatrix;
 	XMStoreFloat4x4(&IdentityMatrix, XMMatrixIdentity());
@@ -642,17 +642,31 @@ void CAnimator3D::Clear_Events()
 
 vector<_float4x4> CAnimator3D::Get_BoneMatrices(_uint meshIndex)
 {
+	auto usedBones = m_pData->Get_Mesh(meshIndex)->Get_UsedBones();
 	vector<_float4x4> result;
-	result.reserve(m_CombinedMatrices.size());
+	result.reserve(usedBones.size());
 
-	for (size_t i = 0; i < m_CombinedMatrices.size(); ++i)
+	for (uint16_t boneIndex : usedBones)
 	{
-		_smatrix final = m_CombinedMatrices[i];
-		_smatrix offset = m_pData->Get_Offset(meshIndex, i);
-
-		result.push_back(offset * final);
+		_smatrix finalMat = m_CombinedMatrices[boneIndex];
+		_smatrix offsetMat = m_pData->Get_Offset(meshIndex, (_uint)boneIndex);
+		result.push_back(offsetMat * finalMat);
 	}
+
 	return result;
+	//
+	//vector<_float4x4> result;
+	//result.reserve(m_CombinedMatrices.size());
+	//
+	//for (size_t i = 0; i < m_CombinedMatrices.size(); ++i)
+	//{
+	//	_smatrix final = m_CombinedMatrices[i];
+	//	_smatrix offset = m_pData->Get_Offset(meshIndex, i);
+	//
+	//	result.push_back(offset * final);
+	//}
+	//
+	//return result;
 }
 
 _float4x4 CAnimator3D::Get_BoneMatrix(BoneSpace eBoneSpace, AnimArg BoneArg)
@@ -1389,9 +1403,9 @@ void CAnimator3D::Update_Layers(_float dt)
 
 	for (auto& Layer : m_AnimLayers) {
 		if (Layer.bPause) continue;
-		if (Layer.fLayerWeight <= 0) continue;
 		if (-1 == Layer.iClipIndex) continue;
-	
+		if (Layer.isEndLayerBlended()) continue;
+
 		if (Layer.bBlending)
 			Animation_Convert(Layer, dt);
 		else
@@ -1404,15 +1418,17 @@ void CAnimator3D::Update_Layers(_float dt)
 void CAnimator3D::BuildLocal(_float dt)
 {
 	for (auto& Layer : m_AnimLayers) {
-		if (Layer.fLayerWeight <= 0) continue;
+		if (Layer.isEndLayerBlended()) continue;
 
-		if (EaseType::None != Layer.eLayerEaseType) {
-			_float Ease = 0.f;
-			Layer.fLayerWeightElapsed += dt;
+		if (0.f <= Layer.fLayerWeightDuration) {
+			if (EaseType::None != Layer.eLayerEaseType) {
+				_float Ease = 0.f;
+				Layer.fLayerWeightElapsed += dt;
 
-			_float t = min(Layer.fLayerWeightElapsed / Layer.fLayerWeightDuration, 1.f);
-			Ease = Math::ApplyEase(Layer.eLayerEaseType, t);
-			Layer.fLayerWeight = Math::Lerp(Layer.fLayerWeight, Layer.fTargetLayerWeight, Ease);
+				_float t = min(Layer.fLayerWeightElapsed / Layer.fLayerWeightDuration, 1.f);
+				Ease = Math::ApplyEase(Layer.eLayerEaseType, t);
+				Layer.fLayerWeight = Math::Lerp(Layer.fLayerWeight, Layer.fTargetLayerWeight, Ease);
+			}
 		}
 
 		switch (Layer.eLayerType)
@@ -1761,6 +1777,7 @@ void CAnimator3D::Reset_Anim()
 		Safe_Release(Clip);
 	}
 
+	m_AnimLayers.clear();
 	m_pAnimClips.clear();
 	Safe_Release(m_pData);
 }

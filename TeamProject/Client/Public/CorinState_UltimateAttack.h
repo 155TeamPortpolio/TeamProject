@@ -13,7 +13,7 @@ public:
     virtual void Exit(CCorin* pOwner) override;
 
 public:
-    static CCorinState_UltimateAttack* Create() { return new CCorinState_UltimateAttack(); }
+    static CCorinState_UltimateAttack* Create();
     virtual void Free() override { __super::Free(); }
 };
 
@@ -39,6 +39,10 @@ public:
 public:
     static CCorinState_UltimateAttack_Loop* Create() { return new CCorinState_UltimateAttack_Loop(); }
     virtual void Free() override { __super::Free(); }
+
+private:
+    void Update_Effects(CCorin* pOwner);
+
 };
 
 class CCorinState_UltimateAttack_End : public IBaseState<CCorin>
@@ -51,6 +55,10 @@ public:
 public:
     static CCorinState_UltimateAttack_End* Create() { return new CCorinState_UltimateAttack_End(); }
     virtual void Free() override { __super::Free(); }
+
+private:
+    void Update_Effects(CCorin* pOwner);
+
 };
 
 NS_END

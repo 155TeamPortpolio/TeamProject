@@ -15,15 +15,25 @@ void CCorinState_Idle::Enter(CCorin* pOwner)
     {
         pOwner->Get_StateMachine()->Set_Trigger("Evade");
     }
+    else if (iEntryMode == 2)
+    {
+        pOwner->Set_Switch(CCharacter::SWITCH::PARRYAID);
+        pOwner->Get_StateMachine()->Set_Trigger("SwitchIn");
+    }
 
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Idle")
         .Loop(true)
         .Apply();
+
+    __super::Enter(pOwner);
 }
 
 void CCorinState_Idle::Update(CCorin* pOwner, _float dt)
 {
-    //pOwner->Process_RootMotion(dt,
-    //    ENUM(CCorin::ROOTMOTION_MASK::MOVE) |
-    //    ENUM(CCorin::ROOTMOTION_MASK::QUATERNION));
+    __super::Update(pOwner, dt);
+}
+
+void CCorinState_Idle::Exit(CCorin* pOwner)
+{
+    __super::Exit(pOwner);
 }

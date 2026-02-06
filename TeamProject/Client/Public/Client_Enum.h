@@ -3,7 +3,7 @@
 
 namespace Client {
 	enum class GLOBAL_ID : _uint { FreeCam, OrbitCam, SeqCam, ShadowCam, Player, Cloud };
-	enum class CHARACTER { JaneDoe, Corin, END };
+	enum class CHARACTER { JaneDoe, Corin, Miyabi, END };
 
 	/* UI */
 	// ---------- Battle HUD : Stat ----------
@@ -22,13 +22,15 @@ namespace Client {
 	enum class Speaker { Player, Npc, System };
 	enum class DialogueType {Normal, Choice, Quest};
 	enum class DialogueResult {Fail, Running, Success, None};
-
+	enum class GachaGrade { S, A, B };
 
 	//------------------- Battle -------------------
-	enum class StageType { Normal, Elite, Boss, End };
+	enum class StageType { Start, Normal, Elite, Boss, End };
 	enum class BATTLE_VFX_TYPE { EVADE,PARRY, SWITCH,ULTIMATE, END };
 	enum class BATTLE_OBJ_TYPE { PLAYER, MONSTER, ENVOBJECT, END };
 
+	//------------------- Gacha --------------------
+	enum class GACHA_STAGE { BANGBOO, AVATAR, END };
 }
 
 #endif

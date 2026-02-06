@@ -39,6 +39,20 @@ public:
 
 	void Show_Lottery();
 	void Hide_Lottery();
+	void Show_Ramen();
+	void Hide_Ramen();
+	void Show_GachaPage();
+	void Hide_GachaPage(); 
+
+	/* 가챠 결과 연출 중, 현재 가챠의 이름을 화면에 표시 */
+	void Show_GachaLabel(const _wstring& strLabel);
+	/* 가챠 이름 표시를 숨김 */
+	void Hide_GachaLabel();
+	/* 가챠 결과 연출을 건너뛸 수 있는 버튼을 화면에 표시 */
+	void Show_GachaSkipButton();
+	/* 가챠 결과 연출 건너뛰기 버튼을 숨김 */
+	void Hide_GachaSkipButton();
+	void Show_GachaResult(const vector<GACHA_RESULT_DESC>* pResultDesc);
 
 	/* 결과 배너를 띄움 */
 	void Show_ResultBanner(const string& strTextureKey, const _wstring& wstrText1, const _wstring& wstrText2);

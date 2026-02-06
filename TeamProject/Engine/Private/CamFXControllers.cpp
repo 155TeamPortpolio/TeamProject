@@ -1,6 +1,8 @@
 #include "Engine_Defines.h"
 #include "CamFXControllers.h"
 
+#include "Helper_Func.h"
+
 namespace
 {
     _uint HashU(_uint x)
@@ -86,12 +88,72 @@ namespace
 
         return 1.f - Smooth01(t / r);
     }
+
+    _float Ease01(EaseType type, _float u)
+    {
+        u = Clamp01(u);
+        if (type == EaseType::None) return Smooth01(u);
+        return Math::ApplyEase(type, u);
+    }
+
+    _float Envelope(_float elapsed, _float attackSec, _float sustainSec, _float decaySec, EaseType attackEase, EaseType decayEase)
+    {
+        if (elapsed < attackSec)
+            return attackSec <= 0.f ? 1.f : Ease01(attackEase, elapsed / attackSec);
+
+        elapsed -= attackSec;
+        if (elapsed < sustainSec) return 1.f;
+
+        elapsed -= sustainSec;
+        if (decaySec <= 0.f) return 0.f;
+
+        return 1.f - Ease01(decayEase, elapsed / decaySec);
+    }
 }
 
 void ShakeController::Reset()
 {
     m_instances.clear();
     m_seed = 1u;
+}
+
+void ShakeController::AddPreset(const CamShakePreset& p, _float strength, uint8_t axisMask, EaseType attackEase, EaseType decayEase)
+{
+    CamShakeInstance s{};
+
+    s.seed = HashU(m_seed++);
+    s.elapsed = 0.f;
+    s.axisMask = axisMask;
+
+    s.attackSec = ClampAttack(p.dur);
+    s.sustainSec = max(0.f, p.dur);
+    s.decaySec = max(0.f, p.fadeOutSec);
+
+    s.attackEase = attackEase;
+    s.decayEase = decayEase;
+
+    s.kickDur = p.kickDur;
+    s.kickRotRad = XMConvertToRadians(p.kickRotDeg * strength);
+    s.kickPos = p.kickPos * strength;
+
+    s.noiseRotRad = XMConvertToRadians(p.noiseRotDeg * strength);
+    s.noisePos = p.noisePos * strength;
+    s.noiseFreq = p.noiseFreq * (0.92f + 0.18f * Hash01(s.seed + 11u));
+
+    s.yawSign = (Hash01(s.seed + 21u) < 0.5f) ? -1.f : 1.f;
+    s.rollSign = (Hash01(s.seed + 31u) < 0.5f) ? -1.f : 1.f;
+
+    const _float side = Hash01(s.seed + 41u) * 2.f - 1.f;
+    s.sideSign = (side < 0.f) ? -1.f : 1.f;
+
+    s.p0 = Hash01(s.seed + 51u) * 10.f;
+    s.p1 = Hash01(s.seed + 61u) * 10.f;
+    s.p2 = Hash01(s.seed + 71u) * 10.f;
+
+    m_instances.push_back(s);
+
+    if (m_instances.size() > 6)
+        m_instances.erase(m_instances.begin());
 }
 
 void ShakeController::Set(_float ampDeg, _float freq, _float dur, _float fadeOutSec)
@@ -128,39 +190,65 @@ void ShakeController::Add(_uint type, _float strength)
     AddPreset(GetPreset(type), strength);
 }
 
-void ShakeController::AddPreset(const CamShakePreset& p, _float strength)
+void ShakeController::SetAxis(CamShakeAxis axes, _float ampDeg, _float freq, _float dur, _float fadeOutSec)
 {
-    CamShakeInstance s{};
+    m_instances.clear();
+    AddAxis(axes, ampDeg, freq, dur, fadeOutSec);
+}
 
-    s.seed    = HashU(m_seed++);
-    s.elapsed = 0.f;
+void ShakeController::AddAxis(CamShakeAxis axes, _float ampDeg, _float freq, _float dur, _float fadeOutSec)
+{
+    CamShakePreset p{};
+    p.kickRotDeg = ampDeg;
+    p.kickPos = 0.f;
+    p.kickDur = min(0.070f, max(0.035f, dur * 0.32f));
 
-    s.attackSec  = ClampAttack(p.dur);
-    s.sustainSec = max(0.f, p.dur);
-    s.decaySec   = max(0.f, p.fadeOutSec);
+    p.noiseRotDeg = ampDeg * 0.55f;
+    p.noisePos = 0.f;
+    p.noiseFreq = max(8.f, freq);
 
-    s.kickDur    = p.kickDur;
-    s.kickRotRad = XMConvertToRadians(p.kickRotDeg * strength);
-    s.kickPos    = p.kickPos * strength;
+    p.dur = max(0.030f, dur);
+    p.fadeOutSec = max(0.f, fadeOutSec);
 
-    s.noiseRotRad = XMConvertToRadians(p.noiseRotDeg * strength);
-    s.noisePos    = p.noisePos * strength;
-    s.noiseFreq   = p.noiseFreq * (0.92f + 0.18f * Hash01(s.seed + 11u));
+    AddPreset(p, 1.f, ToAxisMask(axes));
+}
 
-    s.yawSign  = (Hash01(s.seed + 21u) < 0.5f) ? -1.f : 1.f;
-    s.rollSign = (Hash01(s.seed + 31u) < 0.5f) ? -1.f : 1.f;
+void ShakeController::SetAxisWave(CamShakeAxis axes, _float ampDeg, _float freq, _float dur, _float fadeOutSec, EaseType attackEase, EaseType decayEase)
+{
+    m_instances.clear();
+    AddAxisWave(axes, ampDeg, freq, dur, fadeOutSec, attackEase, decayEase);
+}
 
-    const _float side = Hash01(s.seed + 41u) * 2.f - 1.f;
-    s.sideSign = (side < 0.f) ? -1.f : 1.f;
+void ShakeController::AddAxisWave(CamShakeAxis axes, _float ampDeg, _float freq, _float dur, _float fadeOutSec, EaseType attackEase, EaseType decayEase)
+{
+    CamShakePreset p{};
+    p.kickRotDeg = ampDeg * 0.35f;
+    p.kickPos = 0.f;
+    p.kickDur = min(0.10f, max(0.04f, dur * 0.12f));
 
-    s.p0 = Hash01(s.seed + 51u) * 10.f;
-    s.p1 = Hash01(s.seed + 61u) * 10.f;
-    s.p2 = Hash01(s.seed + 71u) * 10.f;
+    p.noiseRotDeg = ampDeg;
+    p.noisePos = 0.f;
+    p.noiseFreq = max(0.1f, freq);
 
-    m_instances.push_back(s);
+    p.dur = 0.f;
+    p.fadeOutSec = max(0.f, dur + fadeOutSec);
 
-    if (m_instances.size() > 6)
-        m_instances.erase(m_instances.begin());
+    AddPreset(p, 1.f, ToAxisMask(axes), attackEase, decayEase);
+
+    auto& s = m_instances.back();
+    s.attackSec = 0.f;
+    s.sustainSec = 0.f;
+
+    s.spring = true;
+    s.noiseFreq = p.noiseFreq;
+
+    s.yawSign = 1.f;
+    s.rollSign = 1.f;
+    s.sideSign = 1.f;
+
+    s.springPhase = XM_PIDIV2;
+    s.springPhase2 = XM_PIDIV2;
+    s.springH2 = 0.35f;
 }
 
 void ShakeController::Clear(_float fadeOutSec)
@@ -182,13 +270,13 @@ void ShakeController::Clear(_float fadeOutSec)
 void ShakeController::Apply(const Quaternion& camRot, _float dt, Vector3& outWorldPosDelta, Quaternion& outRotDelta)
 {
     outWorldPosDelta = Vector3::Zero;
-    outRotDelta      = Quaternion::Identity;
+    outRotDelta = Quaternion::Identity;
 
     if (m_instances.empty()) return;
 
     _float pitchAcc = 0.f;
-    _float yawAcc   = 0.f;
-    _float rollAcc  = 0.f;
+    _float yawAcc = 0.f;
+    _float rollAcc = 0.f;
 
     Vector3 posAcc = Vector3::Zero;
 
@@ -197,18 +285,33 @@ void ShakeController::Apply(const Quaternion& camRot, _float dt, Vector3& outWor
         const _float t = s.elapsed;
         s.elapsed += dt;
 
-        const _float w = Envelope(t, s.attackSec, s.sustainSec, s.decaySec);
+        const _float w = Envelope(t, s.attackSec, s.sustainSec, s.decaySec, s.attackEase, s.decayEase);
         if (w <= 0.f) continue;
 
         const _float k = KickCurve(t, s.kickDur);
-        const _float n = Noise3(t, s.noiseFreq, s.p0, s.p1, s.p2);
 
-        const _float kick  = s.kickRotRad * w * k;
+        _float n{};
+        if (s.spring)
+        {
+            const _float omega = s.noiseFreq * (2.f * XM_PI);
+            const _float a0 = sinf(omega * t + s.springPhase);
+            const _float a1 = sinf(omega * t * 2.f + s.springPhase2) * s.springH2;
+            n = a0 + a1;
+            posAcc.z += (s.noiseRotRad * 0.0012f) * w * n;
+        }
+        else
+            n = Noise3(t, s.noiseFreq, s.p0, s.p1, s.p2);
+
+        const _float kick = s.kickRotRad * w * k;
         const _float noise = s.noiseRotRad * w * n;
 
-        pitchAcc +=  kick * 1.00f + noise * 0.55f;
-        yawAcc   += (kick * 0.22f + noise * 0.75f) * s.yawSign * s.sideSign;
-        rollAcc  += (kick * 0.18f + noise * 0.60f) * s.rollSign * s.sideSign;
+        const _float pitchTerm = kick * 1.00f + noise * 0.55f;
+        const _float yawTerm = kick * 0.22f + noise * 0.75f;
+        const _float rollTerm = kick * 0.18f + noise * 0.60f;
+
+        if (s.axisMask & 0x1) pitchAcc += pitchTerm;
+        if (s.axisMask & 0x2) yawAcc += yawTerm * s.yawSign * s.sideSign;
+        if (s.axisMask & 0x4) rollAcc += rollTerm * s.rollSign * s.sideSign;
 
         posAcc.z -= s.kickPos * w * k;
         posAcc.x += s.kickPos * w * k * 0.55f * (-s.sideSign);
@@ -221,9 +324,9 @@ void ShakeController::Apply(const Quaternion& camRot, _float dt, Vector3& outWor
     outRotDelta = Quaternion::CreateFromYawPitchRoll(yawAcc, pitchAcc, rollAcc);
     outRotDelta.Normalize();
 
-    const Matrix  R       = Matrix::CreateFromQuaternion(camRot);
-    const Vector3 right   = Vector3(R._11, R._12, R._13);
-    const Vector3 up      = Vector3(R._21, R._22, R._23);
+    const Matrix R = Matrix::CreateFromQuaternion(camRot);
+    const Vector3 right = Vector3(R._11, R._12, R._13);
+    const Vector3 up = Vector3(R._21, R._22, R._23);
     const Vector3 forward = Vector3(R._31, R._32, R._33);
 
     outWorldPosDelta = right * posAcc.x + up * posAcc.y + forward * posAcc.z;

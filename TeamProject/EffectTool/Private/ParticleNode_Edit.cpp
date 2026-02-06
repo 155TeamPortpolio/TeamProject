@@ -94,6 +94,7 @@ void CParticleNode_Edit::Play()
 
 	PARTICLE_NODE node{};
 
+	node.vRimLightColor = m_vRimLightColor;
 	node.vPivot = m_vPivot;
 	node.iRGBMaskMode = m_iRGBMaskMode;
 	node.iColorMode = ENUM(m_eColorMode);
@@ -147,11 +148,16 @@ void CParticleNode_Edit::Import(nlohmann::ordered_json& json)
 	m_TextureKey = json.value("texture_key", m_TextureKey);
 	m_TexturePath = json.value("texture_path", m_TexturePath);
 
+	m_UseMask = json.value("use_mask", false);
+	m_MaskTextureTag = json.value("mask_texture_tag", "");
+
 	/* Offset Transform */
 	auto vOffsetPosition = json.value("offset_position", json::array({ 0.f,0.f,0.f }));
 	auto vOffsetQuaternion = json.value("offset_quaternion", json::array({ 0.f,0.f,0.f,1.f }));
 
+	auto rimLightColor = json.value("rimlight_color", json::array({ 0.f,0.f,0.f }));
 	auto pivot = json.value("pivot", json::array({ 0.5f,0.5f }));
+	m_vRimLightColor = _float3(rimLightColor[0], rimLightColor[1], rimLightColor[2]);
 	m_vPivot = _float2(pivot[0], pivot[1]);
 	m_iRGBMaskMode = json.value("rgb_mask", m_iRGBMaskMode);
 	m_eColorMode = static_cast<CParticleSystem::COLOR_MODE>(json.at("color_mode").get<_uint>());
@@ -232,11 +238,19 @@ void CParticleNode_Edit::Import(nlohmann::ordered_json& json)
 
 		auto pMaterialInstance = Get_Component<CMaterial>()->Get_MaterialInstance(0);
 		pMaterialInstance->Set_Param("DiffuseTexture", { pTexture->Get_SRV(),"Texture2D",0 });
+	}
 
-		//auto pMaterialData = Get_Component<CMaterial>()->Get_MaterialInstance(0)->Get_MaterialData();
-		//pMaterialData->Link_Texture(G_GlobalLevelKey, m_TextureKey, TEXTURE_TYPE::DIFFUSE);
-		//
-		//Get_Component<CMaterial>()->Get_MaterialInstance(0)->ChangeTexture(TEXTURE_TYPE::DIFFUSE, 0);
+	/* Set Mask */
+	if (m_UseMask)
+	{
+		auto pTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_MaskTextureTag);
+
+		if (pTexture)
+		{
+			auto pMaterialInstance = Get_Component<CMaterial>()->Get_MaterialInstance(0);
+			pMaterialInstance->Override_Pass("MaskPass");
+			pMaterialInstance->Set_Param("MaskTexture", { pTexture->Get_SRV(),"Texture2D",0 });
+		}
 	}
 
 	_vector3 vPosition(vOffsetPosition[0], vOffsetPosition[1], vOffsetPosition[2]);
@@ -257,10 +271,14 @@ void CParticleNode_Edit::Export(nlohmann::ordered_json& json)
 		{"texture_key", m_TextureKey},
 		{"texture_path",m_TexturePath},
 
+		{"use_mask", m_UseMask},
+		{"mask_texture_tag",m_MaskTextureTag},
+
 		/* Offset Transform */
 		{"offset_position",json::array({vOffsetPosition.x,vOffsetPosition.y,vOffsetPosition.z})},
 		{"offset_quaternion",json::array({vOffsetQuaternion.x,vOffsetQuaternion.y,vOffsetQuaternion.z,vOffsetQuaternion.w})},
 
+		{"rimlight_color",json::array({m_vRimLightColor.x,m_vRimLightColor.y,m_vRimLightColor.z})},
 		{"pivot",json::array({m_vPivot.x,m_vPivot.y})},
 		{"rgb_mask",m_iRGBMaskMode},
 		{"color_mode",ENUM(m_eColorMode)},
@@ -356,6 +374,21 @@ void CParticleNode_Edit::AddTextures()
 			pMaterialInstance->Set_Param("DiffuseTexture", { pTexture->Get_SRV(),"Texture2D",0 });
 		}
 	}
+
+	if (m_UseMask)
+	{
+		if (ImGui::Button("Add Mask Texture"))
+		{
+			if (!m_pContext->Textures.empty())
+			{
+				m_MaskTextureTag = m_pContext->TextureTags[0];
+
+				auto pTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_pContext->TextureTags[0]);
+				auto pMaterialInstance = Get_Component<CMaterial>()->Get_MaterialInstance(0);
+				pMaterialInstance->Set_Param("MaskTexture", { pTexture->Get_SRV(),"Texture2D",0 });
+			}
+		}
+	}
 }
 
 void CParticleNode_Edit::SetUp_ParticleEffect()
@@ -366,7 +399,26 @@ void CParticleNode_Edit::SetUp_ParticleEffect()
 
 	ImGui::DragFloat("Delay Time", &m_fDelayTime);
 	ImGui::DragFloat("Duration", &m_fDuration);
+	if (ImGui::Checkbox("Use Mask", &m_UseMask))
+	{
+		auto pMaterialInstance = Get_Component<CMaterial>()->Get_MaterialInstance(0);
 
+		if (m_UseMask)
+			pMaterialInstance->Override_Pass("MaskPass");
+		else
+			pMaterialInstance->Override_Pass("Default");
+	}
+
+
+	{
+		_float rimLightColor[3] = { m_vRimLightColor.x,m_vRimLightColor.y,m_vRimLightColor.z };
+
+		if (ImGui::ColorEdit3("RimLight Color", rimLightColor))
+		{
+			m_vRimLightColor = _float3(rimLightColor[0], rimLightColor[1], rimLightColor[2]);
+			isDirty = true;
+		}
+	}
 	isDirty |= ImGui::DragFloat2("Pivot", &m_vPivot.x);
 	isDirty |= ImGui::DragInt("RGB Mask Mode", reinterpret_cast<_int*>(&m_iRGBMaskMode));
 	isDirty |= Helper::DrawEnumCombo("Color Mode", m_eColorMode, 100.f);
@@ -448,6 +500,7 @@ void CParticleNode_Edit::SetUp_ParticleEffect()
 
 		PARTICLE_NODE node{};
 
+		node.vRimLightColor = m_vRimLightColor;
 		node.vPivot = m_vPivot;
 		node.iRGBMaskMode = m_iRGBMaskMode;
 		node.SpawnShape = ENUM(m_eSpawnShape);

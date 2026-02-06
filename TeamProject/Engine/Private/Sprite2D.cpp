@@ -40,23 +40,33 @@ void CSprite2D::Apply_Shader(ID3D11DeviceContext* pContext)
 {
 	if (m_pShader == nullptr) return;
 
-	ID3D11ShaderResourceView* nullSRV[1] = { nullptr };
+    ID3D11ShaderResourceView* nullSRV[1]{};
 
 	for (UINT slot = 0; slot < MAX_TEXTURE_TYPE_VALUE; ++slot)
 		pContext->PSSetShaderResources(slot, 1, nullSRV);
 
-	if (!m_pTextures.empty() && m_pTextures[m_iDrawIndex] != nullptr) {
+	if (!m_pTextures.empty() && m_pTextures[m_iDrawIndex] != nullptr)
+    {
 		SHADER_PARAM param = {};
-		param.typeName = "Texture2D";
-		param.iSize = 0;
-		param.pData = m_pTextures[m_iDrawIndex]->Get_SRV();
+		param.typeName     = "Texture2D";
+		param.iSize        = 0;
+		param.pData        = m_pTextures[m_iDrawIndex]->Get_SRV();
 
 		m_pShader->Bind_Value("SpriteTexture", param);
 	}
 
+    if (m_pTextures.size() > 1 && m_pTextures[1] != nullptr)
+    {
+        SHADER_PARAM param = {};
+        param.typeName     = "Texture2D";
+        param.iSize        = 0;
+        param.pData        = m_pTextures[1]->Get_SRV();
+
+        m_pShader->Bind_Value("ColorTexture", param);
+    }
+
 	for (auto& Slot : m_DynamicSlots) 
 		m_pShader->Bind_Value(Slot.first, Slot.second);
-
 
 	m_pShader->Apply(m_PassConstant, pContext);
 }
@@ -106,12 +116,14 @@ HRESULT CSprite2D::Change_Texture(_uint idx, const string& levelKey, const strin
 		Add_Texture(levelKey, texKey);
 	else
 	{
-		if (m_pTextures[idx])
-			Safe_Release(m_pTextures[idx]);
-
+        // 새로운 텍스쳐가 없으면 기존 텍스쳐 유지
 		auto tex = CGameInstance::GetInstance()->Get_ResourceMgr()->Load_Texture(levelKey, texKey, true);
 		if (!tex)
 			return E_FAIL;
+         
+        // 새로운 텍스쳐가 있으면 기존 텍스쳐 삭제
+        if (m_pTextures[idx])
+            Safe_Release(m_pTextures[idx]);
 
 		m_pTextures[idx] = tex;
 		Safe_AddRef(tex);
@@ -565,6 +577,8 @@ void CSprite2D::Free()
 	Safe_Release(m_pPoint);
 	Safe_Release(m_pShader);
 
-	for (auto& texture : m_pTextures)
-		Safe_Release(texture);
+    for (auto& texture : m_pTextures) {
+        if(texture->Get_SRV())
+		    Safe_Release(texture);
+    }
 }

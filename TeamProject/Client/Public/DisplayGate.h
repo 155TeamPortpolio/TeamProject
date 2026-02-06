@@ -2,27 +2,35 @@
 
 NS_BEGIN(Client)
 
+struct MonitorSize
+{
+    int width{};
+    int height{};
+};
+
 class CMonitorGate final
 {
 public:
-    void SetMinWidth(int px)  { m_minWidth  = px; }
-    void SetMinHeight(int px) { m_minHeight = px; }
+    bool Pass() const;
 
-    bool Pass(HWND hWnd) const
+    MonitorSize GetMonitorSize(int monitorIdx = 0) const;
+
+    int GetMonitorWidth(int monitorIdx = 0)  const { return GetMonitorSize(monitorIdx).width; }
+    int GetMonitorHeight(int monitorIdx = 0) const { return GetMonitorSize(monitorIdx).height; }
+
+    int GetMonitorCount() const;
+
+private:
+    struct MonitorDesc
     {
-        HMONITOR hMon = MonitorFromWindow(hWnd, MONITOR_DEFAULTTONEAREST);
+        HMONITOR hMon{};
+        RECT     rc{};
+        bool     isPrimary{};
+    };
 
-        MONITORINFO mi{};
-        mi.cbSize = sizeof(mi);
-        GetMonitorInfo(hMon, &mi);
+    static BOOL CALLBACK EnumMonitorsProc(HMONITOR hMon, HDC, LPRECT, LPARAM lParam);
 
-        const int w = mi.rcMonitor.right  - mi.rcMonitor.left;
-        const int h = mi.rcMonitor.bottom - mi.rcMonitor.top;
-
-        if (w < m_minWidth)  return false;
-        if (h < m_minHeight) return false;
-        return true;
-    }
+    static vector<MonitorDesc> CollectMonitorsSorted();
 
 private:
     int m_minWidth  = 2500;

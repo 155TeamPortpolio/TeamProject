@@ -19,13 +19,11 @@ CFieldCharacter::CFieldCharacter(const CFieldCharacter& rhs)
 
 void CFieldCharacter::Active_Character()
 {
-	m_pCCT->Set_CompActive(true);
 	SetRenderLayer(RENDER_LAYER::Default);
 }
 
 void CFieldCharacter::DeActive_Character()
 {
-	m_pCCT->Set_CompActive(false);
 	SetRenderLayer(RENDER_LAYER::None);
 }
 
@@ -75,7 +73,7 @@ void CFieldCharacter::Process_RootMotion(_float dt, const ROOTMOTION_DESC& desc)
 
 void CFieldCharacter::Process_RootMotion(_float dt, _uint iModeMask)
 {
-	ROOTMOTION_DESC desc;
+	ROOTMOTION_DESC desc{};
 	desc.iModeMask = iModeMask;
 	Process_RootMotion(dt, desc);
 }
@@ -183,26 +181,7 @@ void CFieldCharacter::Process_Interact(CGameObject* pObject)
 {
 	auto pInteract = dynamic_cast<IInteract*>(pObject);
 
-	if (pInteract != nullptr)
-	{
-		pInteract->Interact(this);
-	}
-}
-
-_bool CFieldCharacter::Is_OppositeInput() const
-{
-	if (m_inputInfo.curMoveX == 0 && m_inputInfo.curMoveZ == 0) return false;
-	if (m_inputInfo.prevMoveX == 0 && m_inputInfo.prevMoveZ == 0) return false;
-
-	_vector2 vPrev((_float)m_inputInfo.prevMoveX, (_float)m_inputInfo.prevMoveZ);
-	_vector2 vCur((_float)m_inputInfo.curMoveX, (_float)m_inputInfo.curMoveZ);
-	vPrev.Normalize();
-	vCur.Normalize();
-
-	_float fDot = vPrev.Dot(vCur);
-	_float fAngle = XMConvertToDegrees(acosf(fDot));
-
-	return fAngle >= TURNBACK_ANGLE_THRESHOLD;
+	if (pInteract) pInteract->Interact(this);
 }
 
 void CFieldCharacter::Update_Rotation(_float dt)

@@ -18,12 +18,22 @@ public:
     void Add(_uint type, _float strength = 1.f);
 
 public:
+    void SetAxis(CamShakeAxis axes, _float ampDeg, _float freq, _float dur, _float fadeOutSec);
+    void AddAxis(CamShakeAxis axes, _float ampDeg, _float freq, _float dur, _float fadeOutSec);
+
+public:
+    void SetAxisWave(CamShakeAxis axes, _float ampDeg, _float freq, _float dur, _float fadeOutSec, EaseType attackEase, EaseType decayEase);
+    void AddAxisWave(CamShakeAxis axes, _float ampDeg, _float freq, _float dur, _float fadeOutSec, EaseType attackEase, EaseType decayEase);
+
+public:
     void Clear(_float fadeOutSec);
     void Apply(const Quaternion& camRot, _float dt, Vector3& outWorldPosDelta, Quaternion& outRotDelta);
     void Reset();
 
 private:
-    void AddPreset(const CamShakePreset& p, _float strength);
+    void AddPreset(const CamShakePreset& p, _float strength, uint8_t axisMask = (uint8_t)CamShakeAxis::All,
+        EaseType attackEase = EaseType::None, EaseType decayEase = EaseType::None);
+
     const CamShakePreset& GetPreset(_uint type) const { return m_presets[type]; }
 
 private:

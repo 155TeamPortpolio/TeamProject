@@ -28,6 +28,7 @@ public:
 	virtual void	Update_Panel(_float dt) override;
 	virtual void	Render_GUI() override;
 
+
 public:
 	void			RakeResources();
 	void			CheckCoolTime(_float dt);
@@ -38,23 +39,27 @@ public:
 	// 기존 레이피킹 방식. 사용X
 	void			Set_ObjectPicking(_bool is);
 	void			PreSet_ModelResource();
+
 	void			Save_MapData();
 	void			Save_EntityData();
-	void			Save_MapToolEntityData();
-	void			Save_EntityInit();
-	void			Load_EntityInit();
-	const vector<string>& Get_EntityModelNames() { return m_EntityModelPathPackName; }
-	const vector<ModelPathPack>& Get_ModelPathPack() { return m_ModelPathPack; }
-	void			Set_EntityModel();
 	void			Save_BattleData();
+	void			Save_LightData();
+
 	void			Load_BattleData(const string& filepath = "");
+
 	void			Select_PlaceType(const string& tagLabel, _bool isShowDetail = true);
 	void			Select_TriggerType();
 	void			Select_BattleDataType();
 	void			Setting_SelectType();
 
-	void			Render_ClearLayer();
+	void			Set_EntityModel();
+	void			Save_EntityInit();
+	void			Load_EntityInit();
+	const vector<string>& Get_EntityModelNames() { return m_EntityModelPathPackName; }
+	const vector<ModelPathPack>& Get_ModelPathPack() { return m_ModelPathPack; }
 
+	void			Render_ClearLayer();
+	void			Clear_BattleData();
 private:
 	/* Refernce */
 	CGameInstance* m_pGameInstance = { nullptr };
@@ -62,6 +67,8 @@ private:
 	class CSlotFieldGui* m_pSlotFieldGui = { nullptr };
 	class CMapToolAssistant* m_pAssistant = { nullptr };
 	MAPTOOL_CONTEXT* m_pMapToolContext = { nullptr };
+
+	_bool m_bOpenSlotField = false;
 
 	// Physics Ray
 	PHYSICS_RAY	m_PhysicsRay = {};
@@ -92,15 +99,17 @@ private:
 
 	/* For.BattleData */
 	BATTLE_TYPE			m_eBattlyDataType = {};
-	_float3				m_vBattleDataSize = { 1.f, 1.f, 1.f };;
+	_float3				m_vBattleDataSize = { 1.f, 1.f, 1.f };
+	_int				m_iPlayerIndex = {};
 	_int				m_iSpawnerIndex = {};
 	_int				m_iMonsterIndex = {};
 	_int				m_iEndPointIndex = {};
 
 	/* For.Data */
-	MapData_Header	m_MapData = {};
-	Entity_Header	m_EntityData = {};
-	BATTLE_FIELD_DATA m_BattleData = {};
+	MapData_Header		m_MapData = {};
+	Entity_Header		m_EntityData = {};
+	BATTLE_FIELD_DATA	m_BattleData = {};
+	Light_Header		m_LightData = {};
 	///_uint			m_iBattleTableIndex = {};
 	_float2			m_vShowDataSaveFinish = {};
 	_bool			m_isShowDataSaveFinish = { false };

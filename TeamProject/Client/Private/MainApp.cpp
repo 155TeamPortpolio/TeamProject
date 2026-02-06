@@ -9,6 +9,7 @@
 #include "MainCity_Level.h"
 #include "Scott_Level.h"
 #include "Zero_Level.h"
+#include "Gacha_Level.h"
 
 #include "UIDirector.h"
 #include "DataBase.h"
@@ -23,9 +24,11 @@
 #include "ShadowCam.h"
 #include "CamLoader.h"
 
+// Map
 #include "MapPlacedObject.h"
 #include "MapTriggerObject.h"
 #include "MapInvisibleWall.h"
+#include "MapLightPoint.h"
 
 #include "SpriteNode.h"
 #include "MeshNode.h"
@@ -73,19 +76,41 @@
 
 #include "UI_IconLabel.h" 
 #include "UI_NameIndicator.h"
+
+#include "UI_BackButton.h"
+#include "UI_IconButton.h"
+
 #include "UI_Dialogue.h" 
 #include "UI_DialogueMessage.h"
 #include "UI_DialogueChoice.h"
+
 #include "UI_Lottery.h"
 #include "UI_ScratchCard.h"
 #include "UI_Newspaper.h"
-#include "UI_ResultBanner.h"
+#include "UI_LotteryResultBanner.h"
 
 #include "UI_Ramen.h"
 #include "UI_RamenMenu.h"
+#include "UI_RamenAttributeIcon.h"
+#include "UI_RamenAttributeText.h"
+#include "UI_RamenOrderBanner.h"
+#include "UI_RamenVideo.h"
+#include "UI_RamenResultBanner.h"
+
+#include "UI_GachaPage.h"
+#include "UI_GachaChannel.h"
+#include "UI_GachaCurrency.h"
+#include "UI_GachaConversion.h"
+#include "UI_GachaDisplay.h"
+#include "UI_GachaResult.h"
+#include "UI_GachaResultItem.h"
 
 #include "UI_AtlasSprite.h"
 #include "UI_DamageText.h"
+#include "UI_Gangta.h"
+#include "UI_Seoriyeol.h"
+
+#include "VideoPanel.h"
 
 CMainApp::CMainApp()
 {
@@ -129,6 +154,7 @@ HRESULT CMainApp::Initialize()
 
 	#ifdef  _USING_GUI
 		ImGui::SetCurrentContext(m_pGameInstance->Get_GUISystem()->GetEngineImGuiContext());
+		//GUISystem()->Register_Panel(CVideoPanel::Create(GUISystem()->Get_Context()));
 	#endif //  _USING_GUI
 
 	m_cursorController.Initialize();
@@ -164,6 +190,7 @@ void CMainApp::Set_Levels()
 	LevelManager()->Register_Level("MainCity_Level", []()->CLevel* {return CMainCity_Level::Create("MainCity_Level"); });
 	LevelManager()->Register_Level("Scott_Level",    []()->CLevel* {return CScott_Level::Create("Scott_Level"); });
 	LevelManager()->Register_Level("Zero_Level",     []()->CLevel* {return CZero_Level::Create("Zero_Level"); });
+	LevelManager()->Register_Level("Gacha_Level",    []()->CLevel* {return CGacha_Level::Create("Gacha_Level"); });
 
 	LevelManager()->Set_LoadingLevel("Loading_Level");
 	m_pGameInstance->Notify_LevelSet(); 
@@ -200,6 +227,7 @@ void CMainApp::Initialize_GlobalPrototype()
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_MapPlacedObject", CMapPlacedObject::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_MapTriggerObject", CMapTriggerObject::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_MapInvisibleWall", CMapInvisibleWall::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_MapLightPoint", CMapLightPoint::Create());
 
 	// Camera
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_OrbitCam",    COrbitCam::Create());
@@ -258,6 +286,9 @@ void CMainApp::Initialize_GlobalPrototype()
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_IconLabel", CUI_IconLabel::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_NameIndicator", CUI_NameIndicator::Create());
 
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_BackButton", CUI_BackButton::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_IconButton", CUI_IconButton::Create());
+
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Dialogue", CUI_Dialogue::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_DialogueMessage", CUI_DialogueMessage::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_DialogueChoice", CUI_DialogueChoice::Create());
@@ -265,13 +296,29 @@ void CMainApp::Initialize_GlobalPrototype()
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Lottery", CUI_Lottery::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_ScratchCard", CUI_ScratchCard::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Newspaper", CUI_Newspaper::Create());
-	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_ResultBanner", CUI_ResultBanner::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_LotteryResultBanner", CUI_LotteryResultBanner::Create());
 
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Ramen", CUI_Ramen::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_RamenMenu", CUI_RamenMenu::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_RamenAttributeIcon", CUI_RamenAttributeIcon::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_RamenAttributeText", CUI_RamenAttributeText::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_RamenOrderBanner", CUI_RamenOrderBanner::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_RamenVideo", CUI_RamenVideo::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_RamenResultBanner", CUI_RamenResultBanner::Create());
+
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_GachaPage", CUI_GachaPage::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_GachaChannel", CUI_GachaChannel::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_GachaCurrency", CUI_GachaCurrency::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_GachaConversion", CUI_GachaConversion::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_GachaDisplay", CUI_GachaDisplay::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_GachaResult", CUI_GachaResult::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_GachaResultItem", CUI_GachaResultItem::Create());
 
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_AtlasSprite", CUI_AtlasSprite::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_DamageText",  CUI_DamageText::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Gangta",      CUI_Gangta::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Seoriyeol",   CUI_Seoriyeol::Create());
+
 	/*Enviroment*/
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Cloud", CTestCloud::Create());
 
@@ -294,7 +341,7 @@ void CMainApp::Create_GlobalCamObjs()
 
 	CCT_DESC desc;
 	desc.eGroup = COLLISION_GROUP::CAMERA;
-	//desc.iCollisionMask = ENUM(COLLISION_GROUP::COMMON) | ENUM(COLLISION_GROUP::INTERACTABLE);
+	desc.iCollisionMask = ENUM(COLLISION_GROUP::COMMON) | ENUM(COLLISION_GROUP::INTERACTABLE);
 
 	auto orbitCam = Builder::Create_Object({G_GlobalLevelKey, "Proto_GameObject_OrbitCam"})
 		.Camera(aspect)

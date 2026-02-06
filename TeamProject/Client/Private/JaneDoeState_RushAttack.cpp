@@ -60,7 +60,7 @@ void CJaneDoeState_RushAttack::Update(CJaneDoe* pOwner, _float dt)
 
         if (Event.Tag == "LHandStart")
         {
-            pOwner->Begin_AttackCollider("HandWeapon_L", { HIT_TYPE::ONCE, DAMAGE_TYPE::HARD, Helper::Get_Random_Float(10,30), 0, 0 });
+            pOwner->Begin_AttackCollider("HandWeapon_L", { pOwner->Get_CharacterName(), HIT_TYPE::ONCE, DAMAGE_TYPE::HARD, Helper::Get_Random_Float(10,30), 0, 0 });
         }
         else if (Event.Tag == "LHandEnd")
         {
@@ -68,7 +68,7 @@ void CJaneDoeState_RushAttack::Update(CJaneDoe* pOwner, _float dt)
         }
         else if (Event.Tag == "RHandStart")
         {
-            pOwner->Begin_AttackCollider("HandWeapon_R", { HIT_TYPE::ONCE, DAMAGE_TYPE::HARD, Helper::Get_Random_Float(10,30), 0, 0 });
+            pOwner->Begin_AttackCollider("HandWeapon_R", { pOwner->Get_CharacterName(), HIT_TYPE::ONCE, DAMAGE_TYPE::HARD, Helper::Get_Random_Float(10,30), 0, 0 });
         }
         else if (Event.Tag == "RHandEnd")
         {
@@ -76,7 +76,7 @@ void CJaneDoeState_RushAttack::Update(CJaneDoe* pOwner, _float dt)
         }
         else if (Event.Tag == "LFootStart")
         {
-            pOwner->Begin_AttackCollider("FootWeapon_L", { HIT_TYPE::ONCE, DAMAGE_TYPE::HARD, Helper::Get_Random_Float(20,40), 0, 0 });
+            pOwner->Begin_AttackCollider("FootWeapon_L", { pOwner->Get_CharacterName(), HIT_TYPE::ONCE, DAMAGE_TYPE::HARD, Helper::Get_Random_Float(20,40), 0, 0 });
         }
         else if (Event.Tag == "LFootEnd")
         {
@@ -120,6 +120,7 @@ void CJaneDoeState_RushAttack::Exit(CJaneDoe* pOwner)
 void CJaneDoeState_Rush01_Start::Enter(CJaneDoe* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_Rush_01")
+        .ReserveSpeed(0.6f, 1.f, 2.f, EaseType::OutQuint)
         .Apply();
 }
 
@@ -243,6 +244,18 @@ void CJaneDoeState_Rush03_Start::Update(CJaneDoe* pOwner, _float dt)
     pOwner->Process_RootMotion(dt,
         ENUM(CJaneDoe::ROOTMOTION_MASK::MOVE) |
         ENUM(CJaneDoe::ROOTMOTION_MASK::QUATERNION));
+
+    Update_Effects(pOwner);
+}
+
+void CJaneDoeState_Rush03_Start::Update_Effects(CJaneDoe* pOwner)
+{
+    if (IsCrossAnimProgress(0.1f))
+        pOwner->Play_Effect("JaneDoe_Normal_Slash0", _vector3(0.f, 0.5f, 0.f), _quaternion(0.69f, -0.23f, 0.15f, 0.67f));
+    if (IsCrossAnimProgress(0.26f))
+        pOwner->Play_Effect("JaneDoe_Normal_Slash1", _vector3(-0.1f, 1.f, 0.f), _quaternion(-0.52f, 0.39f, 0.63f, -0.43f));
+    if (IsCrossAnimProgress(0.38f))
+        pOwner->Play_Effect("JaneDoe_Normal_Slash2", _vector3(-0.3f, 0.8f, 0.1f), _quaternion(0.01f, 0.65f, 0.72f, 0.25f));
 }
 
 void CJaneDoeState_Rush03_End::Enter(CJaneDoe* pOwner)

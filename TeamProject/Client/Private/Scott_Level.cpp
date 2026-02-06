@@ -78,7 +78,7 @@ HRESULT CScott_Level::Awake()
 	Ready_Map("Scott_Level", "Zero_Worksite");
 	//Ready_Npc();
 
-	CamDirector()->AutoField();
+	CamDirector()->AutoField(CamStartDir::Back);
 
 	return S_OK;
 }
@@ -100,9 +100,6 @@ void CScott_Level::PreLoad_Level()
 
 void CScott_Level::Ready_Map(const string& LevelTag, const string& AreaTag)
 {
-	//// Ready MapObject key and path to ResourceMgr 
-	Rake_MapResources();
-
 	//Map Loader Logic is going to Change
 	CMapLoader* pMapLoader = CMapLoader::Create(LevelTag, AreaTag);
 	if (nullptr == pMapLoader)
@@ -134,26 +131,6 @@ void CScott_Level::Ready_Npc()
 		.Build("Test_Meow");
 
 	objMgr->Add_Object(testMeow, { "Scott_Level", "Npc_Layer" });
-}
-
-void CScott_Level::Rake_MapResources()
-{
-	filesystem::path MapDataFolderPath = "../Bin/Resources/MapData/Model/";
-	Helper::EnsureDirectoryExist(MapDataFolderPath);
-
-	auto pRcsMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
-	for (const auto& entry : filesystem::recursive_directory_iterator(MapDataFolderPath))
-	{
-		if (entry.is_regular_file() && entry.path().extension() == ".model")
-		{
-			filesystem::path ModelPath = entry.path();
-			filesystem::path MaterialPath = ModelPath;
-			MaterialPath.replace_extension(".mat");
-
-			pRcsMgr->Add_ResourcePath(ModelPath.filename().string(), ModelPath.string());
-			pRcsMgr->Add_ResourcePath(MaterialPath.filename().string(), MaterialPath.string());
-		}
-	}
 }
 
 CScott_Level* CScott_Level::Create(const string& LevelKey)

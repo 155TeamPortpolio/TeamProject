@@ -5,13 +5,17 @@
 #include "GameInstance.h"
 #include "LevelMgr.h"
 
+#include "UI_Gangta.h"
+#include "UI_Seoriyeol.h"
+
 namespace
 {
     static const string kAtlasTexKey = "DamageText.png";
     static const string kColorAtlasTexKey = "DamageTextColor.png";
 
     constexpr _uint  kColorIdx_JaneDoe = 0;
-    constexpr _uint  kColorIdx_Corin = 3;
+    constexpr _uint  kColorIdx_Corin   = 3;
+    constexpr _uint  kColorIdx_Miyabi  = 2;
 
     constexpr _uint  kColorFrameCountX = 8;
     constexpr _uint  kColorFrameCountY = 1;
@@ -22,7 +26,7 @@ namespace
     constexpr _float kGlyphHeightPx = 96.f;
     constexpr _float kGlyphSpacingPx = 2.f;
 
-    constexpr _float  kSpawnRadiusPx = 75.f;
+    constexpr _float  kSpawnRadiusPx = 125.f;
     const     Vector3 kDefaultFollowOffset = Vector3(0.f, 1.3f, 0.f);
 
     constexpr _float kOverlapHold = 0.23f;
@@ -49,8 +53,9 @@ namespace
     constexpr _float   kFlashSec  = 0.12f;
     constexpr EaseType kFlashEase = EaseType::OutQuad;
 
-    constexpr _float kDamageScaleMin = 0.25f;
-    constexpr _float kDamageScaleMax = 1.35f;
+    constexpr _float kDamageScaleMin = 0.3f;
+    constexpr _float kDamageScaleMax = 0.8f;
+
     constexpr _float kDamageScaleMaxDamage = 10000.f;
 
     constexpr _float kDamageBangBangThreshold = 7000.f;
@@ -241,7 +246,8 @@ void CUI_DamageText::UI_Active(void* arg)
         {
         case CHARACTER::JaneDoe: m_colorFrameIdx = kColorIdx_JaneDoe; break;
         case CHARACTER::Corin:   m_colorFrameIdx = kColorIdx_Corin;   break;
-        default:                 m_colorFrameIdx = 0;                 break;
+        case CHARACTER::Miyabi:  m_colorFrameIdx = kColorIdx_Miyabi;  break;
+        default:                 m_colorFrameIdx = kColorIdx_Miyabi;  break;
         }
     }
     else m_colorFrameIdx = 7;

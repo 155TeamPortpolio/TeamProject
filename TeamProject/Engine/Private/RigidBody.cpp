@@ -427,6 +427,13 @@ _bool CRigidBody::Is_Sleeping()
 	return false;
 }
 
+void CRigidBody::Set_CCD(_bool bEnable)
+{
+	PxRigidDynamic* pDynamic = m_pActor->is<PxRigidDynamic>();
+	if (pDynamic)
+		pDynamic->setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, bEnable);
+}
+
 void CRigidBody::Update_RigidBody()
 {
 	if (!m_pActor) return;
@@ -438,16 +445,17 @@ void CRigidBody::Update_RigidBody()
 		_vector vScale, vRot, vTrans;
 		XMMatrixDecompose(&vScale, &vRot, &vTrans, worldMat);
 
-		//m_pActor->setKinematicTarget(PxTransform(ToPxVec3(vPos), ToPxQuat(vRot)));
 		PxRigidDynamic* pDynamic = m_pActor->is<PxRigidDynamic>();
 		if (pDynamic)
-			pDynamic->setGlobalPose(PxTransform(ToPxVec3(vPos), ToPxQuat(vRot)));
+			pDynamic->setKinematicTarget(PxTransform(ToPxVec3(vPos), ToPxQuat(vRot)));
+		//if (pDynamic)
+		//	pDynamic->setGlobalPose(PxTransform(ToPxVec3(vPos), ToPxQuat(vRot)));
 	}
 	else				// Physics -> Transform
 	{
 		PxTransform globalPose = m_pActor->getGlobalPose();
 		m_pOwnerTransform->Set_WorldPos(ToDxVec(globalPose.p));
-		m_pOwnerTransform->Set_WorldQuaternion(ToDxQuat(globalPose.q));
+		//m_pOwnerTransform->Set_WorldQuaternion(ToDxQuat(globalPose.q));
 	}
 }
 

@@ -15,6 +15,9 @@ public:
     CRenderer* GetRenderer(RENDERER_TYPE eType);
 
 public:
+    void Set_GlitchDesc(GLITCH_DESC desc);
+
+public:
     HRESULT Render_Priority(class PriorityPass* pPriorityPass);
     HRESULT Render_StaticShadow(class StaticShadowPass* pShadowPass, _bool clear = false);
     HRESULT Render_SkinnedShadow(class SkinnedShadowPass* pShadowPass, _bool clear = false);
@@ -47,7 +50,7 @@ private:
     class CSkinnedMeshRenderer* m_pSkinnedRenderer;
 
     _float m_fStaticUpdateTimer = 0.f;
-    _float m_fStaticUpdateInterval = 0.2f;
+    _float m_fStaticUpdateInterval = 0.05f;
 
 public:
     static CForwardRenderer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext,

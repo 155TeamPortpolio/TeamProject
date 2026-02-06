@@ -12,15 +12,32 @@ class CUI_RamenMenu final : public CUI_Object
 {
 public:
 	typedef struct tagRamenMenuDesc : public UI_DESC {
-		function<void(CUI_Object* pObj)>	onSelect = {};
+		RAMEN_DESC		tRamenDesc = {};
+		function<void(CUI_Object* pObj, const RAMEN_DESC& tRamenDesc)>	onSelect = {};
 	}RAMENMENU_DESC;
 
 private:
-	enum class SPRITE { BUTTON, ICON_MENU, ICON_ATT1, ICON_ATT2, END };
-	inline static const string SPRITE_INSTANCENAMES[ENUM(SPRITE::END)] = { "button", "iconMenu", "iconAttribute1", "iconAttribute2" };
+	enum class CHILD { ACTIVE, ICON_MENU, END };
+	inline static const string INSTANCENAMES[ENUM(CHILD::END)] = { "active", "iconMenu" };
 
-	enum class TEXT { NAME, PRICE, END };
-	inline static const string TEXT_INSTANCENAMES[ENUM(SPRITE::END)] = { "name", "price" };
+	enum class TEXTSLOT { NAME, PRICE, END };
+	inline static const string TEXT_INSTANCENAMES[ENUM(TEXTSLOT::END)] = { "name", "price" };
+
+	inline static const unordered_map<string, string> ICON_MENU_TEXTURES = {
+		{"ramen_white_veggie", "IconRamen01.png"},
+		{"ramen_white_zucchini", "IconRamen02.png"},
+		{"ramen_white_fried_chashu", "IconRamen03.png"},
+		{"ramen_white_redpepper_meat", "IconRamen04.png"},
+		{"ramen_white_greenpepper_meat", "IconRamen05.png"},
+		{"ramen_white_seafood", "IconRamen06.png"},
+		{"ramen_black_mushroom", "IconRamen07.png"},
+		{"ramen_black_smoked_chashu", "IconRamen08.png"},
+		{"ramen_black_redpepper_chicken", "IconRamen09.png"},
+		{"ramen_black_greenpepper_chicken", "IconRamen10.png"},
+		{"ramen_black_cold_seafood", "IconRamen11.png"},
+		{"ramen_black_bibim", "IconRamen12.png"},
+		{"rmane_black_bone", "IconRamen13.png"},
+	};
 
 private:
 	CUI_RamenMenu() {}
@@ -39,18 +56,25 @@ public:
 	virtual void	UI_DeActive(void* pArg)			 override;
 
 private:
-	function<void(CUI_Object* pObj)>	m_onSelect = {};
-	 
-	class CSprite2D*	m_pSprites[ENUM(SPRITE::END)] = {};
-	class CTextSlot*	m_pTexts[ENUM(TEXT::END)] = {};
+	RAMEN_DESC		m_tRamenDesc = {};
+	function<void(CUI_Object* pObj, const RAMEN_DESC& tRamenDesc)>	m_onSelect = {};
+
+	class CUI_Object*	m_pChildren[ENUM(CHILD::END)] = {};
+	class CTextSlot*	m_pTexts[ENUM(TEXTSLOT::END)] = {};
 	class CButtonUI*	m_pButton = {};
-	class CUI_Object*	m_pOverlay = {};
+
+	vector<CUI_Object*> m_AttributeIcons;
+	CUI_Object* m_pAttributeText = {};
 
 private:
 	void Cache();
+	void Create_AttributeIcons();
+	void Create_AttributeText();
 
-	void Change_Sprite(SPRITE sprite, _uint iIndex);
-	void Set_Text(TEXT text, const _wstring& strText);
+	void Set_ChildAlive(CHILD child, _bool isAlive);
+	void Set_ChildAlpha(CHILD child, _float fAlpha);
+	void Set_ChildTexture(CHILD child, const string& strTextureKey);
+	void Set_Text(TEXTSLOT text, const _wstring& strText);
 
 public:
 	static  CGameObject* Create();
