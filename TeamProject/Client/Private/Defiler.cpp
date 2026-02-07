@@ -52,9 +52,7 @@ HRESULT CDefiler::Initialize_Prototype()
 HRESULT CDefiler::Initialize(INIT_DESC* pArg)
 {
 	__super::Initialize(pArg);
-
-	//Get_Component<CAudioSource>()->SoundFolder("Zero_Level","../Bin/Sound/");
-	//Get_Component<CAudioSource>()->Slot("Hello.wav").Attribute3D(true).Loop(false).Play();
+	Get_Component<CAudioSource>()->SoundFolder("Zero_Level","../Bin/Resources/Zero/Enemy/Defiler_Isolde/Sound/");
 
 	m_eEnemyClass = ENEMY_CLASS::BOSS;
 	vector<_uint> ProMeshes = Get_Component<CSkeletalModel>()->Hide_MehsByName("Pro");
@@ -391,8 +389,17 @@ void CDefiler::Route_AnimEvent(CAnimator3D* animator)
 			else 
 				Controll_Attack(instance.Tag);
 			break;
+
+		case CLIP_EVENT_TYPE::SOUND:
+			Controll_Sound(instance.Tag);
+			break;
 		}
 	}
+}
+
+void CDefiler::Controll_Sound(const string& event)
+{
+	Get_Component<CAudioSource>()->Slot(event).Play();
 }
 
 void CDefiler::Controll_Attack(const string& event)
