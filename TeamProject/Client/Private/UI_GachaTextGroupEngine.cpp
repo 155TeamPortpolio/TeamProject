@@ -56,9 +56,8 @@ void CUI_GachaTextGroupEngine::Create_Texts()
 	PrototypeManager()->Add_ProtoType("Gacha_Level", "Proto_GameObject_UIGachaText", CUI_GachaText::Create());
 	
 	CGameObject* pObj = Builder::Create_Object({ "Gacha_Level", "Proto_GameObject_UIGachaText" })
-		.Rotate(_float3(XMConvertToRadians(-18.f), XMConvertToRadians(180.f), 0.f))
-		.Scale(_float3(1.28f, 1.28f, 1.28f))
-		.Position(_float3(0.f, 0.152f, -2.5f))
+		.Rotate(_float3(XMConvertToRadians(-18.f), 0.f, 0.f))
+		.Position(_float3(0.f, 0.18f, 1.8f))
 		.Build("uiGachaText");
 	
 	Get_Component<CObjectContainer>()->Add_Child(pObj);

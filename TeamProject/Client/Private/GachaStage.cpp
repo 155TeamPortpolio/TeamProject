@@ -227,6 +227,8 @@ void CGachaStage::Add_UIText()
 	PrototypeManager()->Add_ProtoType("Gacha_Level", "Proto_GameObject_UIGachaTextReveal", CUI_GachaTextReveal::Create());
 	
 	CGameObject* uiGachaText = Builder::Create_Object({ "Gacha_Level", "Proto_GameObject_UIGachaTextReveal" })
+		.Rotate(_float3(0.f, XMConvertToRadians(180.f), 0.f))
+		.Position(_float3(0.f, 0.f, -1.f))
 		.Build("uiGachaText");
 	
 	Get_Component<CObjectContainer>()->Add_Child(uiGachaText);

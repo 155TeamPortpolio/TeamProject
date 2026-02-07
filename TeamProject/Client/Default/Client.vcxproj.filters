@@ -2324,6 +2324,9 @@
     <ClInclude Include="..\Public\UI_GachaText.h">
       <Filter>02. GameObject\UI\02. 3D\Mesh\UI_GachaReveal\UI_GachaText</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UI_GachaTextGroupAgent.h">
+      <Filter>02. GameObject\UI\02. 3D\Mesh\UI_GachaReveal\UI_GachaTextGroup\Agent</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -3406,6 +3409,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\UI_GachaText.cpp">
       <Filter>02. GameObject\UI\02. 3D\Mesh\UI_GachaReveal\UI_GachaText</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_GachaTextGroupAgent.cpp">
+      <Filter>02. GameObject\UI\02. 3D\Mesh\UI_GachaReveal\UI_GachaTextGroup\Agent</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

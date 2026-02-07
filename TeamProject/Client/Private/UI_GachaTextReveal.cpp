@@ -4,12 +4,13 @@
 #include "GameInstance.h"
 #include "ObjectContainer.h"
 
+#include "UI_GachaTextGroupAgent.h"
 #include "UI_GachaTextGroupEngine.h"
 
 void CUI_GachaTextReveal::Show(const GACHA_RESULT_DESC& desc)
 {
-	if (m_Groups[ENUM(GROUP::ENGINE)])
-		m_Groups[ENUM(GROUP::ENGINE)]->Show(desc.Grade);
+	if (m_Groups[ENUM(desc.Type)])
+		m_Groups[ENUM(desc.Type)]->Show(desc.Grade);
 }
 
 HRESULT CUI_GachaTextReveal::Initialize_Prototype()
@@ -26,10 +27,8 @@ HRESULT CUI_GachaTextReveal::Initialize(INIT_DESC* pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
-
-	m_Groups.resize(ENUM(GROUP::END));
-
-	Create_TextGroups();
+	 
+	Add_TextGroups();
 
 	return S_OK;
 }
@@ -38,15 +37,33 @@ void CUI_GachaTextReveal::Update(_float dt)
 {
 }
 
-void CUI_GachaTextReveal::Create_TextGroups()
+HRESULT CUI_GachaTextReveal::Add_TextGroups()
 {
-	PrototypeManager()->Add_ProtoType("Gacha_Level", "Proto_GameObject_UIGachaTextGroupEngine", CUI_GachaTextGroupEngine::Create());
-	
-	CGameObject* pObj = Builder::Create_Object({ "Gacha_Level", "Proto_GameObject_UIGachaTextGroupEngine" })
-		.Build("groupEngine");
-	
+	m_Groups.resize(ENUM(GachaType::End));
+
+	if(FAILED(Add_TextGroup("Gacha_Level", "Proto_GameObject_UIGachaTextGroupAgent", GachaType::Agent, CUI_GachaTextGroupAgent::Create())))
+		return E_FAIL;
+
+	if (FAILED(Add_TextGroup("Gacha_Level", "Proto_GameObject_UIGachaTextGroupEngine", GachaType::Engine, CUI_GachaTextGroupEngine::Create())))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CUI_GachaTextReveal::Add_TextGroup(const string& strLevelTag, const string& strPrototypeTag, GachaType eType, CGameObject* pProto)
+{
+	PrototypeManager()->Add_ProtoType(strLevelTag, strPrototypeTag, pProto);
+
+	CGameObject* pObj = Builder::Create_Object({ strLevelTag, strPrototypeTag })
+		.Build("textGroup");
+
+	if (!pObj)
+		return E_FAIL;
+
 	Get_Component<CObjectContainer>()->Add_Child(pObj);
-	m_Groups[ENUM(GROUP::ENGINE)] = dynamic_cast<CUI_GachaTextGroupEngine*>(pObj);
+	m_Groups[ENUM(eType)] = dynamic_cast<CUI_GachaTextGroupAgent*>(pObj);
+
+	return S_OK;
 }
 
 CGameObject* CUI_GachaTextReveal::Create()
