@@ -52,9 +52,7 @@ HRESULT CDefiler::Initialize_Prototype()
 HRESULT CDefiler::Initialize(INIT_DESC* pArg)
 {
 	__super::Initialize(pArg);
-
-	//Get_Component<CAudioSource>()->SoundFolder("Zero_Level","../Bin/Sound/");
-	//Get_Component<CAudioSource>()->Slot("Hello.wav").Attribute3D(true).Loop(false).Play();
+	Get_Component<CAudioSource>()->SoundFolder("Zero_Level","../Bin/Resources/Zero/Enemy/Defiler_Isolde/Sound/");
 
 	m_eEnemyClass = ENEMY_CLASS::BOSS;
 	vector<_uint> ProMeshes = Get_Component<CSkeletalModel>()->Hide_MehsByName("Pro");
@@ -138,12 +136,9 @@ void CDefiler::Late_Update(_float dt)
 {
 	Get_Component<CCharacterController>()->Late_Update(dt);
 }
-static _bool CollOpen;
 
 void CDefiler::Render_GUI()
 {
-	ImGui::Text(CollOpen ? "ColOn : True" : "ColOn : False");
-	
 	ImGui::InputInt("Pattern number", &m_BlackBoard.patternIndex);
 	for (auto pattern : m_BlackBoard.patternTransition)
 	{
@@ -391,8 +386,17 @@ void CDefiler::Route_AnimEvent(CAnimator3D* animator)
 			else 
 				Controll_Attack(instance.Tag);
 			break;
+
+		case CLIP_EVENT_TYPE::SOUND:
+			Controll_Sound(instance.Tag);
+			break;
 		}
 	}
+}
+
+void CDefiler::Controll_Sound(const string& event)
+{
+	Get_Component<CAudioSource>()->Slot(event).Play();
 }
 
 void CDefiler::Controll_Attack(const string& event)
@@ -424,7 +428,6 @@ void CDefiler::Controll_Attack(const string& event)
 	{
 		m_isParryEnable = false;
 	}
-	CollOpen = AtkData.OnOff;
 	SetBattleColliderObject(AtkData.AtkBone, CEnemy::BATTLE_COLTYPE::ATTACK, AtkData.OnOff, HitDesc);
 }
 
