@@ -74,8 +74,13 @@ HRESULT CModelData::Initialize(const string& filePath, ID3D11Device* pDevice)
 		m_vMaxLocal.x = max(m_vMaxLocal.x, meshMax.x);
 		m_vMaxLocal.y = max(m_vMaxLocal.y, meshMax.y);
 		m_vMaxLocal.z = max(m_vMaxLocal.z, meshMax.z);
-	}
 
+	}
+#ifdef OPTIMIZE_VERTEX
+	for (auto mesh : m_Meshes) {
+		mesh->Optimize_Vertex();
+	}
+#endif // OPTIMIZE_VERTEX
 	return S_OK;
 }
 
