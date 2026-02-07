@@ -44,6 +44,10 @@ private:
 public:
     static CMiyabiState_UltimateAttack_Loop* Create() { return new CMiyabiState_UltimateAttack_Loop(); }
     virtual void Free() override { __super::Free(); }
+
+private:
+    void Update_Effects(CMiyabi* pOwner);
+
 };
 
 class CMiyabiState_UltimateAttack_End : public IBaseState<CMiyabi>
