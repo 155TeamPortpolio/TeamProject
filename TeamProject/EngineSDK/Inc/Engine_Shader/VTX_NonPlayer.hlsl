@@ -11,8 +11,7 @@ float4x4 g_CommandBoneMatrices[512];
 matrix g_worldMatrix;
 Texture2D MotionBlurNoiseTexture;
 float fCameraFadeAlpha;
-float4 fSkinColor = { 1.00f, 0.86f, 0.70f,1.f };
-float4 fHairColor = { 1.00f, 0.36f, 0.36f, 1.f };
+float4 fVariationColor = { 1.00f, 0.86f, 0.70f,1.f };
 
 
 struct VS_IN
@@ -198,8 +197,8 @@ PS_OUT PS_MAIN(PS_IN In)
     }
     if (length(vMtrlDiffuse.rgb) <= 0.f)
         vMtrlDiffuse.rgb = float3(0.01, 0.01, 0.01);
-    Out.vDiffuse = vMtrlDiffuse;
-  
+    Out.vDiffuse = vMtrlDiffuse * fVariationColor;
+
     vector vNormalDesc = NormalTexture.Sample(DefaultSampler, In.vTexcoord);
     vector vMetalic = MetalnessTexture.Sample(DefaultSampler, In.vTexcoord);
     vector vAmbient = AmbientTexture.Sample(DefaultSampler, In.vTexcoord);
@@ -260,7 +259,7 @@ PS_OUT PS_SKIN(PS_IN In)
     }
     if (length(vMtrlDiffuse.rgb) <= 0.f)
         vMtrlDiffuse.rgb = float3(0.01, 0.01, 0.01);
-    Out.vDiffuse = vMtrlDiffuse * fSkinColor;
+    Out.vDiffuse = vMtrlDiffuse * fVariationColor;
   
     vector vNormalDesc = NormalTexture.Sample(DefaultSampler, In.vTexcoord);
     vector vMetalic = MetalnessTexture.Sample(DefaultSampler, In.vTexcoord);
@@ -310,70 +309,6 @@ PS_OUT PS_SKIN(PS_IN In)
     
     return Out;
 }
-
-PS_OUT PS_HAIR(PS_IN In)
-{
-    PS_OUT Out;
-    
-    vector vMtrlDiffuse = DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
-    if (vMtrlDiffuse.a < 0.2)
-    {
-        discard;
-    }
-    if (length(vMtrlDiffuse.rgb) <= 0.f)
-        vMtrlDiffuse.rgb = float3(0.01, 0.01, 0.01);
-    Out.vDiffuse = vMtrlDiffuse * fHairColor;
-  
-    vector vNormalDesc = NormalTexture.Sample(DefaultSampler, In.vTexcoord);
-    vector vMetalic = MetalnessTexture.Sample(DefaultSampler, In.vTexcoord);
-    vector vAmbient = AmbientTexture.Sample(DefaultSampler, In.vTexcoord);
-    
-    float fNoise = NoiseTexture.Sample(LinearSampler, In.vTexcoord * fDissolveTiling).r;
-    
-    if (fNoise < fDissolveProgress)
-        discard;
-  
-    vAmbient.r = 0.f;
-    if(vNormalDesc.a > 0.f)
-    {
-        float3 vNormal;
-        vNormal.xy = vNormalDesc.xy * 2.f - 1.f;
-        vNormal.z = 1.f;
-        float3 T = normalize(In.vTangent);
-        float3 B = normalize(In.vBinormal * -1);
-        float3 N = normalize(In.vNormal.xyz);
-
-        float3x3 WorldMatrix = float3x3(T, B, N);
-        
-        vNormal = mul(vNormal, WorldMatrix);
-        vMetalic.a = 0.6f;
-        Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, vNormalDesc.z);
-        Out.vLook = float4(0.f, 0.f, 0.f, 0.f);
-    }
-    else
-    {
-        float3 vNormal = normalize(In.vNormal);
-        Out.vNormal = float4(vNormal * 0.5f + 0.5f, 1.f);
-
-        float3 headRight = normalize(cross(float3(0.f, 1.f, 0.f), vLookVector.xyz));
-
-        vMetalic = LightTexture.Sample(DefaultSampler, In.vTexcoord);
-        if (length(vMetalic.rgb) < 0.01f) vMetalic.a = 0.6f;
-        else vMetalic.a = 0.8f;
-        Out.vLook = float4(vLookVector.xyz * 0.5f + 0.5f, 0.f);
-    }
-    
-    if (vAmbient.g < 0.2) vAmbient.g = 1.f;
-    vAmbient.b = 0;
-    Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / zFar, 0.f, 1.f);
-    Out.vAmbient = vAmbient;
-    Out.vMetalic = vMetalic;
-    Out.vRimLight = float4(vRimLightColor, fRimLightPower);
-    
-    return Out;
-}
-
-
 PS_OUT PS_TRANSPARENTNOISE(PS_IN In)
 {
     PS_OUT Out;
@@ -538,7 +473,7 @@ technique11 DefaultTechnique
         SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
-        PixelShader = compile ps_5_0 PS_HAIR();
+        PixelShader = compile ps_5_0 PS_SKIN();
     }
 
     pass TransparentNoise

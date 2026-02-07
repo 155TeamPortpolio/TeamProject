@@ -618,6 +618,11 @@
           "EventTag": "ParrySign"
         },
         {
+          "EventTime": 4.880000114440918,
+          "EventType": "Notify",
+          "EventTag": "TraceType_TrackTarget"
+        },
+        {
           "EventTime": 5.628654956817627,
           "EventType": "Notify",
           "EventTag": "A_Type_On"
@@ -641,11 +646,6 @@
           "EventTime": 6.795321464538574,
           "EventType": "Notify",
           "EventTag": "A_Type_Off"
-        },
-        {
-          "EventTime": 4.880000114440918,
-          "EventType": "Notify",
-          "EventTag": "TraceType_TrackTarget"
         }
       ]
     },
@@ -693,7 +693,13 @@
     },
     {
       "ClipTag": "Monster_IsoldetheDefiler_Ani_Born",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.6095516681671143,
+          "EventType": "Sound",
+          "EventTag": "Defiler_Entrance.wav"
+        }
+      ]
     },
     {
       "ClipTag": "Monster_IsoldetheDefiler_Ani_Death_Back",
