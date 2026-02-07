@@ -101,6 +101,7 @@ HRESULT COrbitCam::Initialize(INIT_DESC* pArg)
     Get_Component<CEventListener>()->Add_Listener<TARGET_LOCK_DESC>([&](TARGET_LOCK_DESC desc)
         {
             if (!desc.tHandle.isValid()) return;
+            if (!desc.tHandle.Get()->Get_Component<CCharacterController>()) return;
             if (desc.bLock) SetLockOn(desc.tHandle);
             else ClearLockOn();
         });
@@ -378,10 +379,19 @@ void COrbitCam::Priority_Update(_float dt)
     float pivotA = 1.f - expf(-m_prof.pivotSmooth * dt);
     pivotA = clamp(pivotA, 0.f, 1.f);
 
-    Vector2 rotCurNext = m_pose.rotCurDeg + (m_pose.rotGoalDeg - m_pose.rotCurDeg) * rotA;
+    Vector2 rotGoalLocal = m_pose.rotGoalDeg;
+
+    if (m_dialogueYaw.active && lockRes.weight <= 0.f)
+    {
+        const float w = clamp(m_dialogueYaw.weight, 0.f, 1.f);
+        const float delta = Math::WrapDeg(m_dialogueYaw.yawGoalDeg - rotGoalLocal.x);
+        rotGoalLocal.x = rotGoalLocal.x + delta * w;
+    }
+
+    Vector2 rotCurNext = m_pose.rotCurDeg + (rotGoalLocal - m_pose.rotCurDeg) * rotA;
     const Vector3 pivotCurNext = m_pose.pivotCurWorld + (m_pose.pivotGoalWorld - m_pose.pivotCurWorld) * pivotA;
 
-    if (lockRes.weight <= 0.f && m_prof.autoYaw)
+    if (lockRes.weight <= 0.f && m_prof.autoYaw && !m_dialogueYaw.active)
     {
         const Vector3 foot = GetFoot();
 
@@ -394,7 +404,8 @@ void COrbitCam::Priority_Update(_float dt)
 
         ClampTargets();
 
-        rotCurNext = m_pose.rotCurDeg + (m_pose.rotGoalDeg - m_pose.rotCurDeg) * rotA;
+        rotGoalLocal = m_pose.rotGoalDeg;
+        rotCurNext = m_pose.rotCurDeg + (rotGoalLocal - m_pose.rotCurDeg) * rotA;
     }
 
     auto cc = Get_Component<CCharacterController>();
@@ -494,6 +505,12 @@ void COrbitCam::EvalOcclusion()
     m_occlusion.Dispatch();
 }
 
+void COrbitCam::DialogueYaw_Set(_float yawGoalDeg, _float weight)
+{
+    m_dialogueYaw.active     = true;
+    m_dialogueYaw.yawGoalDeg = yawGoalDeg; 
+    m_dialogueYaw.weight     = clamp(weight, 0.f, 1.f);
+}
 
 void COrbitCam::ClampTargets()
 {

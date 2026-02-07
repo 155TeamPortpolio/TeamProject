@@ -44,6 +44,16 @@ private:
 
     _float maxPivotOff = 0.8f;
     _float faceYOffsetMul = 0.85f;
+
+    Vector3 sideDir{};
+    _bool   sideInit   = false;
+    _int    sideSign   = 0;
+    _bool   yawInit    = false;
+    _float  yawSm      = 0.f;
+    _float  wSm        = 0.f;
+    _float  yawTau     = 0.12f;
+    _float  wTau       = 0.10f;
+    _float  yawBiasDeg = 15.f;
 };
 
 NS_END

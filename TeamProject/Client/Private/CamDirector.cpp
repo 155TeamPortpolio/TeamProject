@@ -169,6 +169,12 @@ void CCamDirector::Update(_float dt)
     if (IsValid())
         m_dialogue.Update(dt, GetOrbitCamComp(), GetOrbitCam(), GetCharacter()->Get_Component<CTransform>());
 
+    if (m_dialogueUnlockPending && !m_dialogue.IsBusy())
+    {
+        GetOrbitCam()->Unlock_Input();
+        m_dialogueUnlockPending = false;
+    }
+
      UpdateInput(dt);
 }
 
@@ -266,8 +272,8 @@ void CCamDirector::SyncSeqInputLock()
 void CCamDirector::StartDialog()
 {
     GetOrbitCam()->Lock_Input();
-
     m_dialogue.Begin(60.f, 0.5f);
+    m_dialogueUnlockPending = false;
 }
 
 void CCamDirector::EndDialog()
@@ -275,6 +281,7 @@ void CCamDirector::EndDialog()
     GetOrbitCam()->Unlock_Input();
 
     m_dialogue.End(0.5f);
+    m_dialogueUnlockPending = true;
 }
 
 void CCamDirector::UpdatePlayer()

@@ -54,6 +54,19 @@ namespace
 
         return offset * (maxLen / len);
     }
+
+    float ExpAlpha(float tau, float dt)
+    {
+        float t = max(tau, 0.0001f);
+        float a = 1.f - expf(-dt / t);
+        return clamp(a, 0.f, 1.f);
+    }
+
+    float SmoothAngleDeg(float cur, float target, float a)
+    {
+        float d = Math::WrapDeg(target - cur);
+        return cur + d * a;
+    }
 }
 
 void CCamDialogueController::Reset()
@@ -78,7 +91,7 @@ void CCamDialogueController::Reset()
 
     hasBlendInit = false;
 
-    ease = EaseType::InOutCubic;
+    ease = EaseType::InOutSine;
 
     maxPivotOff = 0.8f;
     faceYOffsetMul = 0.85f;
@@ -95,6 +108,7 @@ void CCamDialogueController::Begin(_float fovHold, _float blendSec)
     blendTime = 0.f;
     blendDur = blendSec > 0.f ? blendSec : 0.f;
 
+    fovSaved = 0.f;
     fovFrom = 0.f;
     fovTo = 0.f;
 
@@ -102,6 +116,14 @@ void CCamDialogueController::Begin(_float fovHold, _float blendSec)
     pivotTo = Vector3::Zero;
 
     hasBlendInit = false;
+
+    sideDir = Vector3::Zero;
+    sideInit = false;
+    sideSign = 0;
+
+    yawInit = false;
+    yawSm = 0.f;
+    wSm = 0.f;
 
     partner = FieldSystem()->GetInteractHandle();
 }
@@ -142,10 +164,9 @@ void CCamDialogueController::Update(_float dt, CCamera* cam, COrbitCam* orbit, C
 
     const PivotSample other = SamplePivots(partner, offsetY, faceYOffsetMul);
 
-    const Vector3 basePivotMe = me.basePivot;
-    const Vector3 basePivotOrbit = orbit->GetBasePivot();
+    const Vector3 basePivot = orbit->GetBasePivot();
 
-    Vector3 desiredPivot = basePivotMe;
+    Vector3 desiredPivot = basePivot;
 
     if (other.valid)
     {
@@ -159,10 +180,10 @@ void CCamDialogueController::Update(_float dt, CCamera* cam, COrbitCam* orbit, C
         desiredPivot = Vector3(midXZ.x, midY, midXZ.z);
     }
 
-    const Vector3 rawOff = desiredPivot - basePivotMe;
-    desiredPivot = basePivotMe + ClampOffset(rawOff, maxPivotOff);
+    const Vector3 rawOff = desiredPivot - basePivot;
+    desiredPivot = basePivot + ClampOffset(rawOff, maxPivotOff);
 
-    Vector3 desiredExt = desiredPivot - basePivotOrbit;
+    Vector3 desiredExt = desiredPivot - basePivot;
 
     _float desiredHoldFov = this->fovHold;
 
@@ -170,6 +191,103 @@ void CCamDialogueController::Update(_float dt, CCamera* cam, COrbitCam* orbit, C
     {
         desiredHoldFov = fovSaved;
         desiredExt = Vector3::Zero;
+    }
+
+    if (restore)
+    {
+        _float wOut = wSm;
+
+        const _float aW = ExpAlpha(wTau, dt);
+        wSm = wSm + (0.f - wSm) * aW;
+        wOut = wSm;
+
+        if (blend && blendDur > 0.f)
+        {
+            _float rawT = blendTime / blendDur;
+            rawT = clamp(rawT, 0.f, 1.f);
+
+            _float rampOut = 1.f - rawT;
+            rampOut = Math::ApplyEase(ease, rampOut);
+
+            wOut *= rampOut;
+        }
+
+        if (wOut > 0.001f) orbit->DialogueYaw_Set(yawSm, wOut);
+        else orbit->DialogueYaw_Clear();
+    }
+    else if (!hold || !other.valid || orbit->IsDistHit())
+    {
+        orbit->DialogueYaw_Clear();
+        sideInit = false;
+        sideSign = 0;
+        yawInit = false;
+        wSm = 0.f;
+    }
+    else
+    {
+        Vector3 ab = other.facePivot - me.facePivot;
+        ab.y = 0.f;
+
+        const _float abLen = ab.Length();
+        if (abLen > 0.f)
+        {
+            ab /= abLen;
+
+            const Vector3 sideA(-ab.z, 0.f, ab.x);
+
+            if (!sideInit)
+            {
+                Vector3 camLook = cam->Get_Owner()->Get_Component<CTransform>()->Dir(STATE::LOOK);
+                camLook.y = 0.f;
+                camLook.Normalize();
+
+                sideSign = (sideA.Dot(camLook) >= 0.f) ? 1 : -1;
+                sideInit = true;
+            }
+
+            const Vector3 side = sideA * (_float)sideSign;
+
+            const Vector3 delta = other.facePivot - me.facePivot;
+            const _float sep = fabsf(delta.Dot(side));
+
+            const _float sepMin = 0.35f;
+            _float wRaw = (sepMin - sep) / sepMin;
+            wRaw = clamp(wRaw, 0.f, 1.f);
+
+            if (blend && blendDur > 0.f)
+            {
+                _float ramp = blendTime / blendDur;
+                ramp = clamp(ramp, 0.f, 1.f);
+                ramp = Math::ApplyEase(ease, ramp);
+                wRaw *= ramp;
+            }
+
+            const _float yawGoalRaw = Math::WrapDeg(XMConvertToDegrees(atan2f(side.x, side.z)) + (_float)sideSign * yawBiasDeg);
+
+            const _float aYaw = ExpAlpha(yawTau, dt);
+            const _float aW = ExpAlpha(wTau, dt);
+
+            if (!yawInit)
+            {
+                yawSm = yawGoalRaw;
+                wSm = 0.f;
+                yawInit = true;
+            }
+
+            yawSm = SmoothAngleDeg(yawSm, yawGoalRaw, aYaw);
+            wSm = wSm + (wRaw - wSm) * aW;
+
+            if (wSm > 0.001f) orbit->DialogueYaw_Set(yawSm, wSm);
+            else orbit->DialogueYaw_Clear();
+        }
+        else
+        {
+            orbit->DialogueYaw_Clear();
+            sideInit = false;
+            sideSign = 0;
+            yawInit = false;
+            wSm = 0.f;
+        }
     }
 
     const Vector3 curExt = orbit->GetPivotExt();
@@ -252,5 +370,11 @@ void CCamDialogueController::Update(_float dt, CCamera* cam, COrbitCam* orbit, C
         hasBlendInit = false;
 
         partner.Reset();
+
+        orbit->DialogueYaw_Clear();
+        sideInit = false;
+        sideSign = 0;
+        yawInit = false;
+        wSm = 0.f;
     }
 }

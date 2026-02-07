@@ -95,6 +95,7 @@ private:
     _bool                   m_lastEndedValid = false;
     string                  m_lastEndedKey{};
     _bool                   m_seqInputLocked = false;
+    _bool                   m_dialogueUnlockPending = false;
 
     inline static const string kEmpty{};
 }; 

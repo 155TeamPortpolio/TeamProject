@@ -55,6 +55,9 @@ public:
 
     void    EvalOcclusion();
 
+    void    DialogueYaw_Set(_float yawGoalDeg, _float weight);
+    void    DialogueYaw_Clear() { m_dialogueYaw = {}; }
+
 private:
     void    ClampTargets();
 
@@ -138,6 +141,7 @@ private:
 
     OrbitPivotStabilizer m_pivotStab{};
     CCamOcclusionTracker m_occlusion{};
+    OrbitDialogueYaw     m_dialogueYaw{};
 
 public:
     static  COrbitCam* Create();

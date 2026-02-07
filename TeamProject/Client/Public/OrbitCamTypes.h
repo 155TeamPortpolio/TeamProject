@@ -147,4 +147,10 @@ struct OrbitPivotStabilizer
     _float  outlierDist = 0.25f;
     _float  outlierVel = 7.0f;
 };
+struct OrbitDialogueYaw
+{
+    _bool  active = false;
+    _float yawGoalDeg = 0.f;
+    _float weight = 0.f;
+};
 NS_END
