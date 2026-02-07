@@ -18,7 +18,7 @@ HRESULT CUI_TextButton::Initialize_Prototype()
 HRESULT CUI_TextButton::Initialize(INIT_DESC* pArg)
 {
     __super::Initialize(pArg);
-    Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("button_icon.json")));
+    Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("button_text.json")));
     Cache_Children();
 
     if (!pArg)

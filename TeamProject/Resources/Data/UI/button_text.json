@@ -2,10 +2,10 @@
     "alive": true,
     "instanceName": "button_text",
     "transform": {
-        "anchor": 0,
+        "anchor": 5,
         "anchorOffset": [
-            -116.0,
-            -26.0
+            0.0,
+            0.0
         ],
         "size": [
             232.0,
@@ -667,7 +667,7 @@
             "children": [],
             "typeTag": "Text",
             "text": {
-                "content": "확인",
+                "content": "텍스트",
                 "fontTag": "NanumSquareNeo.spritefont",
                 "fontScale": 0.49999988079071045,
                 "outlined": false,
