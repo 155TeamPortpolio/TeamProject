@@ -97,6 +97,9 @@
     <Filter Include="02. Object\MapTool Object\Placed Object">
       <UniqueIdentifier>{42c068ab-f479-41e7-b642-c8eb0472f56a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. Object\MapTool Object\MovePoint Object">
+      <UniqueIdentifier>{f9b4b6d4-b435-4674-acb2-ed902109717f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -210,6 +213,9 @@
     <ClInclude Include="..\public\FreeCam.h">
       <Filter>02. Object\Cam\FreeCam</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\MovePoint.h">
+      <Filter>02. Object\MapTool Object\MovePoint Object</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -318,6 +324,9 @@
     </ClCompile>
     <ClCompile Include="..\private\FreeCam.cpp">
       <Filter>02. Object\Cam\FreeCam</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MovePoint.cpp">
+      <Filter>02. Object\MapTool Object\MovePoint Object</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
