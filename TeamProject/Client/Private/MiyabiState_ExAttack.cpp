@@ -172,6 +172,7 @@ void CMiyabiState_ExAttack_02::Enter(CMiyabi* pOwner)
     m_fProgress = 0.2f;
 
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_Branch_01_Attack_02")
+        .Speed(1.5f)
         .Apply();
 
     pOwner->Increase_Frost(2);
@@ -293,6 +294,7 @@ void CMiyabiState_ExAttack_03::Enter(CMiyabi* pOwner)
     EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
 
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_Branch_01_Attack_03")
+        .Speed(1.5f)
         .Apply();
 
     m_iMask = pOwner->Get_CCT()->Get_CollisionMask();
@@ -364,7 +366,7 @@ void CMiyabiState_ExAttack_03::Update_Effects(CMiyabi* pOwner)
         pOwner->Play_Effect("Miyabi_Ex0_Sting0", _vector3(-6.6f, 0.8f, 2.f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
     }
 
-    if (m_iRepeatCount < 15)
+    if (m_iRepeatCount < 18)
     {
         if (IsCrossAnimProgress(m_fRepeatProgress))
         {

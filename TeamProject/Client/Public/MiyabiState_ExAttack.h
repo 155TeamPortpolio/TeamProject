@@ -103,7 +103,7 @@ private:
     _float3 m_vCenter{ 0.f,2.f,1.f };
     _uint m_iRepeatCount{};
     _float m_fRepeatProgress{};
-    _float m_fRepeatInterval = 0.04f;
+    _float m_fRepeatInterval = 0.03f;
 };
 
 class CMiyabiState_ExAttack_End : public IBaseState<CMiyabi>

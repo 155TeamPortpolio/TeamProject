@@ -14,6 +14,7 @@
 #include "CharacterController.h"
 #include "ObjectContainer.h"
 #include "BoneFollower.h"
+#include "AudioSource.h"
 
 void CSacrificeState_Attack_Phase1::Enter(CSacrifice* pOwner)
 {
@@ -174,7 +175,7 @@ void CSacrificeState_Attack_Phase1::BuildPattern(CSacrifice* pOwner)
 		}
 	}
 	blackBoard.stateQueue.clear();
-	blackBoard.stateQueue.push_back("Attack08_Phase1");
+	blackBoard.stateQueue.push_back("Attack03_Phase1");
 
 	blackBoard.isRequestNext = true;
 }
@@ -485,6 +486,7 @@ void CSacrificeState_Attack_03_Phase1::Update_Effects(CSacrifice* pOwner)
 		ObjectManager()->Add_Object(smoke, { pOwner->Get_Level(),"Effect_Layer" });
 
 		CameraManager()->AddImpact(ENUM(CamShakeType::LandingCrush), ENUM(CamZoomType::LandingCrush), 2.5f);
+		pOwner->Get_Component<CAudioSource>()->Slot("Sacrifice_HitGround0.wav").Attribute3D(true).Loop(false).Play();
 	}
 }
 
