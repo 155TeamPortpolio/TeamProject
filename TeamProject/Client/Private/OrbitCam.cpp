@@ -11,6 +11,9 @@
 #include "EventListener.h"
 #include "ObjectContainer.h"
 
+#include "StaticModel.h"
+#include "Material.h"
+
 namespace
 {
     void BuildOrbitBasis(const Vector2& rotDeg, Vector3& outLook, Vector3& outRight, Quaternion& outQ)
@@ -66,6 +69,9 @@ HRESULT COrbitCam::Initialize_Prototype()
     __super::Initialize_Prototype();
     Add_Component<CCharacterController>();
     Add_Component<CEventListener>();
+    
+    //Add_Component<CStaticModel>()->Link_Model(G_GlobalLevelKey, "Default.model");
+    //Add_Component<CMaterial>()->Link_Material(G_GlobalLevelKey, "Default.mat");
 
     m_pose.rotGoalDeg = Vector2(0.f, m_prof.startPitchDeg);
     m_pose.rotCurDeg = m_pose.rotGoalDeg;

@@ -30,7 +30,7 @@ void JaneDoe::Awake()
 	const string modelKey  = "JaneDoeModel.model";
 	const string matKey    = "JaneDoe.mat";
 	const string metaKey   = "JaneDoe_Meta.json";
-	const string idleClip  = "JaneDoe_Ani_Idle";
+	const string idleClip  = "Avatar_Female_Size03_JaneDoe_Ani_Gacha_Loop";
 
 	RES->Add_ResourcePath(modelKey, "../bin/Resources/Global/BattleCharacter/JaneDoe/JaneDoeModel.model");
 	RES->Add_ResourcePath(matKey,   "../bin/Resources/Global/BattleCharacter/JaneDoe/JaneDoe.mat");
