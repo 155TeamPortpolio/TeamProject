@@ -21,9 +21,6 @@ CEditorSystem::CEditorSystem()
 HRESULT CEditorSystem::Initialize()
 {
     m_CheckNameRules.emplace("proxy");
-    m_CheckNameRules.emplace("lod");
-    m_CheckNameRules.emplace("eff");
-    m_CheckNameRules.emplace("nap");
     m_CheckNameRules.emplace("dummy");
 
 	return S_OK;

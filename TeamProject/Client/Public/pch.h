@@ -23,3 +23,5 @@ using namespace Client;
 #include "Client_Struct.h"
 #include "Event_Struct.h"
 #include "UIDesign_Macro.h"
+
+#define OPTIMIZE_VERTEX
