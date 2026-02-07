@@ -38,11 +38,8 @@ private:
 private:
     _vector3 m_vTargetPos = {};
     class CDefiler* m_pOwner = { nullptr };
+    _bool isParried = { false };
 
-
-private:
-    HitDesc m_tHitDesc{};
-    _float  m_fTimer = {};
 public:
     static CMiasmaBlade* Create();
     CGameObject* Clone(INIT_DESC* pArg) override;

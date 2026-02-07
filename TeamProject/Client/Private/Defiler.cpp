@@ -404,9 +404,9 @@ void CDefiler::Controll_Summon(const string& event)
 		auto pBlade = 
 			Builder::Create_Object({ "Zero_Level","Proto_GameObject_MiasmaBlade" })
 			.FromPool()
+			.Position(T)
 			.Add_ObjDesc(desc)
 			.Build("MiasmaBlade");
-		pBlade->Get_Component<CCharacterController>()->Set_Position(T);
 		ObjectManager()->Add_Object(pBlade, { levelKey ,"Enemy_Layer"});
 	}
 }
