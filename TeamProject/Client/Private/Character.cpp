@@ -197,14 +197,25 @@ void CCharacter::Rush_Target()
 
     auto pTarget = m_TargetHandle.Get();
     _vector3 vTargetPos = pTarget->Get_WorldPos();
-    _float fOffset = pTarget->Get_Component<CCharacterController>()->Get_Radius();
+    _float fOffset = {};
+    CCharacterController* pCCT = pTarget->Get_Component<CCharacterController>();
+    if (pCCT)
+    {
+        fOffset = pCCT->Get_Radius();
+    }
+    else
+    {
+        CCollider* pCollider = pTarget->Get_Component<CCollider>();
+        _float3 vSize = pCollider->Get_Size();
+        fOffset = max(vSize.x, vSize.z) * 0.5f;
+    }
 
     _vector3 vDir = vTargetPos - Get_WorldPos();
     vDir.y = 0.f;
     vDir.Normalize();
 
     _vector3 vDest = vTargetPos - vDir * fOffset * 2.f;
-    vDest.y = Get_WorldPos().y;
+    vDest.y = Get_WorldPos().y + 0.1f;
 
     m_pCCT->Set_Position(vDest);
     Get_Component<CTransform>()->Set_Look(vDir);
@@ -287,10 +298,10 @@ OBJECT_HANDLE CCharacter::Calculate_Parry()
     }
 
     m_vParryPos = vAttackPos + vAttackLook * vAttackOffset * 2.f;
-    m_vParryPos.y = vAttackPos.y;
+    m_vParryPos.y = Get_WorldPos().y;
     m_vParryLook = vAttackPos - m_vParryPos;
     m_vParryLook.Normalize();
-    m_vParryPos.y += 1.f;
+    m_vParryPos.y += 0.1f;
 
     return targetHandle;
 }

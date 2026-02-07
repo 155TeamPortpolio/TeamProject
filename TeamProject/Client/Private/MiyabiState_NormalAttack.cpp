@@ -63,6 +63,16 @@ void CMiyabiState_NormalAttack::Enter(CMiyabi* pOwner)
 
     m_iComboIndex = 0;
     m_fHoldTime = 0.f;
+
+    _int iEntryIndex = m_pParentState->Get_SubStateMachine()->Get_Int("ComboEntryIndex");
+    m_pParentState->Get_SubStateMachine()->Set_Int("ComboEntryIndex", 0);
+
+    m_iComboIndex = iEntryIndex;
+    const string arrEntryStates[5] = {
+        "Attack_01", "Attack_02", "Attack_03", "Attack_04", "Attack_05"
+    };
+    m_pSubStateMachine->Set_DefaultState(arrEntryStates[iEntryIndex]);
+
     m_pSubStateMachine->Reset_Trigger("NextCombo");
 
     __super::Enter(pOwner);
