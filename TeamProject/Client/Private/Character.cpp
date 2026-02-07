@@ -272,8 +272,18 @@ OBJECT_HANDLE CCharacter::Calculate_Parry()
     if (targetHandle.isValid())
     {
         vAttackPos = targetHandle.Get()->Get_WorldPos();
-        vAttackOffset = targetHandle.Get()->Get_Component<CCharacterController>()->Get_Radius();
         vAttackLook = targetHandle.Get()->Get_Component<CTransform>()->Dir(STATE::LOOK);
+        CCharacterController* pCCT = targetHandle.Get()->Get_Component<CCharacterController>();
+        if (pCCT)
+        {
+            vAttackOffset = pCCT->Get_Radius();
+        }
+        else
+        {
+            CCollider* pCollider = targetHandle.Get()->Get_Component<CCollider>();
+            _float3 vSize = pCollider->Get_Size();
+            vAttackOffset = max(vSize.x, vSize.z) * 0.5f;
+        }
     }
 
     m_vParryPos = vAttackPos + vAttackLook * vAttackOffset * 2.f;
