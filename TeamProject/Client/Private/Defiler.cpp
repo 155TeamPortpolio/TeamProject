@@ -17,6 +17,9 @@
 #include "MaterialInstance.h"
 #include "Texture.h"
 
+#include "MiasmaBlade.h" 
+#include "AudioSource.h"
+
 CDefiler::CDefiler()
 	:CEnemy()
 {
@@ -35,7 +38,7 @@ HRESULT CDefiler::Initialize_Prototype()
 	Add_Component<CMaterial>();
 	Add_Component<CCharacterController>();
 	Add_Component<CObjectContainer>();
-
+	Add_Component<CAudioSource>();
 	auto pResource = CGameInstance::GetInstance()->Get_ResourceMgr();
 	Get_Component<CSkeletalModel>()->Link_Model("Zero_Level", "Defiler_Isolde.model");
 	Get_Component<CMaterial>()->Link_Material("Zero_Level", "Defiler_Isolde.mat");
@@ -46,6 +49,9 @@ HRESULT CDefiler::Initialize_Prototype()
 HRESULT CDefiler::Initialize(INIT_DESC* pArg)
 {
 	__super::Initialize(pArg);
+
+	//Get_Component<CAudioSource>()->SoundFolder("Zero_Level","../Bin/Sound/");
+	//Get_Component<CAudioSource>()->Slot("Hello.wav").Attribute3D(true).Loop(false).Play();
 
 	m_eEnemyClass = ENEMY_CLASS::BOSS;
 	vector<_uint> ProMeshes = Get_Component<CSkeletalModel>()->Hide_MehsByName("Pro");
@@ -152,19 +158,6 @@ void CDefiler::Render_GUI()
 	}
 	ImGui::DragFloat("RimLighPower", &m_fRimLightPower);
 	__super::Render_GUI();
-}
-
-CDefiler* CDefiler::Create()
-{
-	CDefiler* instance = new CDefiler();
-
-	if (FAILED(instance->Initialize_Prototype()))
-	{
-		Safe_Release(instance);
-		MSG_BOX("Failed to create : CDefiler");
-	}
-
-	return instance;
 }
 
 void CDefiler::Change_CollisionMask(_uint iMask)
@@ -345,13 +338,17 @@ void CDefiler::Route_AnimEvent(CAnimator3D* animator)
 		{
 		case CLIP_EVENT_TYPE::NOTIFY:
 			if (instance.Tag == "ParrySign")
-				Active_AttackSign(true);
+				UnleashAttack(CEnemy::ATTACK_SIDE::NONE, true);
+			//Active_AttackSign(true);
 			else if (instance.Tag == "EvadeSign")
-				Active_AttackSign(false);
+				UnleashAttack(CEnemy::ATTACK_SIDE::NONE, false);
+
 			else if (instance.Tag == "TargetLockOn")
 				m_BlackBoard.LockTarget = true;
 			else if (instance.Tag == "TargetLockOff")
 				m_BlackBoard.LockTarget = false;
+			else if (instance.Tag == "TraceType_TrackTarget")
+				m_BlackBoard.TraceType_OnTarget();
 			else 
 				Controll_Attack(instance.Tag);
 			break;
@@ -362,8 +359,11 @@ void CDefiler::Route_AnimEvent(CAnimator3D* animator)
 void CDefiler::Controll_Attack(const string& event)
 {
 	auto iter = DefilerAtkData.find(event);
-	if (iter == DefilerAtkData.end())
+	if (iter == DefilerAtkData.end()) {
+		Controll_Summon(event);
 		return;
+	}
+
 	auto AtkData = iter->second;
 
 	HitDesc		HitDesc = {};
@@ -372,6 +372,7 @@ void CDefiler::Controll_Attack(const string& event)
 	HitDesc.fDamage		=	0.f;
 	HitDesc.fInterval	=	0.f;
 	HitDesc.iMaxCount	=	1;
+	m_isOnAttack = AtkData.OnOff;
 
 	if (AtkData.OnOff)
 	{
@@ -386,6 +387,28 @@ void CDefiler::Controll_Attack(const string& event)
 	}
 	CollOpen = AtkData.OnOff;
 	SetBattleColliderObject(AtkData.AtkBone, CEnemy::BATTLE_COLTYPE::ATTACK, AtkData.OnOff, HitDesc);
+}
+
+void CDefiler::Controll_Summon(const string& event)
+{
+	string levelKey = LevelManager()->Get_NowLevelKey();
+	if (event == "Blade") {
+		auto desc = new CMiasmaBlade::BladeDesc;
+		desc->pOwner = this;
+		desc->vTargetPos = m_tTargetingInfo.vTargetPos;
+		Matrix boneMat = Get_Component<CAnimator3D>()
+			->Get_BoneMatrix(CAnimator3D::BoneSpace::COMBINED, "Ctr_M_Prop_01");
+		Matrix WorldMat = m_pTransform->Get_WorldMatrix();
+		_vector3 S, T;_quaternion R;
+		(boneMat * WorldMat).Decompose(S,R,T);
+		auto pBlade = 
+			Builder::Create_Object({ "Zero_Level","Proto_GameObject_MiasmaBlade" })
+			.FromPool()
+			.Position(T)
+			.Add_ObjDesc(desc)
+			.Build("MiasmaBlade");
+		ObjectManager()->Add_Object(pBlade, { levelKey ,"Enemy_Layer"});
+	}
 }
 
 void CDefiler::Update_Dissolve(_float dt)
@@ -419,6 +442,19 @@ void CDefiler::Update_Dissolve(_float dt)
 		else
 			m_fDissolveProgress = 0.f;
 	}
+}
+
+CDefiler* CDefiler::Create()
+{
+	CDefiler* instance = new CDefiler();
+
+	if (FAILED(instance->Initialize_Prototype()))
+	{
+		Safe_Release(instance);
+		MSG_BOX("Failed to create : CDefiler");
+	}
+
+	return instance;
 }
 
 CGameObject* CDefiler::Clone(INIT_DESC* pArg)

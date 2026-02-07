@@ -381,6 +381,8 @@
     <ClInclude Include="..\public\Claymore_Move.h" />
     <ClInclude Include="..\Public\CrowdNpc.h" />
     <ClInclude Include="..\public\GachaFootStage.h" />
+    <ClInclude Include="..\Public\MiasmaBlade.h" />
+    <ClInclude Include="..\Public\MiyabiState_CounterAttack.h" />
     <ClInclude Include="..\Public\MiyabiState_ExAttack.h" />
     <ClInclude Include="..\Public\MiyabiState_UltimateAttack.h" />
     <ClInclude Include="..\Public\PedestrianNpc.h" />
@@ -801,6 +803,8 @@
     <ClCompile Include="..\Private\CorinState_CounterAttack.cpp" />
     <ClCompile Include="..\Private\CrowdNpc.cpp" />
     <ClCompile Include="..\private\GachaFootStage.cpp" />
+    <ClCompile Include="..\Private\MiasmaBlade.cpp" />
+    <ClCompile Include="..\Private\MiyabiState_CounterAttack.cpp" />
     <ClCompile Include="..\Private\MiyabiState_ExAttack.cpp" />
     <ClCompile Include="..\Private\MiyabiState_UltimateAttack.cpp" />
     <ClCompile Include="..\Private\PedestrianNpc.cpp" />

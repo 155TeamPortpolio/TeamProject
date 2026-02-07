@@ -360,12 +360,12 @@
         {
           "EventTime": 1.409999966621399,
           "EventType": "Notify",
-          "EventTag": "A_Type_On"
+          "EventTag": "I_Type_On"
         },
         {
           "EventTime": 1.6399999856948853,
           "EventType": "Notify",
-          "EventTag": "A_Type_Off"
+          "EventTag": "I_Type_Off"
         },
         {
           "EventTime": 1.8843404054641724,
@@ -375,12 +375,12 @@
         {
           "EventTime": 2.0049381256103516,
           "EventType": "Notify",
-          "EventTag": "A_Type_On"
+          "EventTag": "I_Type_On"
         },
         {
           "EventTime": 2.140000104904175,
           "EventType": "Notify",
-          "EventTag": "A_Type_Off"
+          "EventTag": "I_Type_Off"
         },
         {
           "EventTime": 2.240000009536743,
@@ -390,12 +390,12 @@
         {
           "EventTime": 2.3299999237060547,
           "EventType": "Notify",
-          "EventTag": "A_Type_On"
+          "EventTag": "I_Type_On"
         },
         {
           "EventTime": 2.4000000953674316,
           "EventType": "Notify",
-          "EventTag": "A_Type_Off"
+          "EventTag": "I_Type_Off"
         },
         {
           "EventTime": 2.5325534343719482,
@@ -405,12 +405,12 @@
         {
           "EventTime": 2.609999895095825,
           "EventType": "Notify",
-          "EventTag": "A_Type_On"
+          "EventTag": "I_Type_On"
         },
         {
           "EventTime": 2.680000066757202,
           "EventType": "Notify",
-          "EventTag": "A_Type_Off"
+          "EventTag": "I_Type_Off"
         },
         {
           "EventTime": 2.8399999141693115,
@@ -420,12 +420,12 @@
         {
           "EventTime": 2.940000057220459,
           "EventType": "Notify",
-          "EventTag": "A_Type_On"
+          "EventTag": "I_Type_On"
         },
         {
           "EventTime": 3.0199999809265137,
           "EventType": "Notify",
-          "EventTag": "A_Type_Off"
+          "EventTag": "I_Type_Off"
         },
         {
           "EventTime": 3.5877840518951416,
@@ -463,6 +463,11 @@
           "EventTag": "A_Type_On"
         },
         {
+          "EventTime": 1.747563362121582,
+          "EventType": "Notify",
+          "EventTag": "CoreOngoing"
+        },
+        {
           "EventTime": 2.054710865020752,
           "EventType": "Notify",
           "EventTag": "CamShake"
@@ -498,14 +503,14 @@
           "EventTag": "A_Type_On"
         },
         {
-          "EventTime": 2.7482781410217285,
-          "EventType": "Notify",
-          "EventTag": "TargetLockOff"
-        },
-        {
           "EventTime": 2.2887587547302246,
           "EventType": "Notify",
           "EventTag": "A_Type_Off"
+        },
+        {
+          "EventTime": 2.7482781410217285,
+          "EventType": "Notify",
+          "EventTag": "TargetLockOff"
         }
       ]
     },
@@ -548,14 +553,29 @@
           "EventTag": "EvadeSign"
         },
         {
+          "EventTime": 0.7517868280410767,
+          "EventType": "Notify",
+          "EventTag": "Laser"
+        },
+        {
           "EventTime": 2.052945375442505,
           "EventType": "Notify",
           "EventTag": "EvadeSign"
         },
         {
-          "EventTime": 3.319999933242798,
+          "EventTime": 2.1512670516967773,
+          "EventType": "Notify",
+          "EventTag": "Laser"
+        },
+        {
+          "EventTime": 3.2699999809265137,
           "EventType": "Notify",
           "EventTag": "EvadeSign"
+        },
+        {
+          "EventTime": 3.4119558334350586,
+          "EventType": "Notify",
+          "EventTag": "Laser"
         }
       ]
     },
@@ -568,9 +588,19 @@
           "EventTag": "ParrySign"
         },
         {
+          "EventTime": 2.6198830604553223,
+          "EventType": "Notify",
+          "EventTag": "Blade"
+        },
+        {
           "EventTime": 2.885964870452881,
           "EventType": "Notify",
           "EventTag": "ParrySign"
+        },
+        {
+          "EventTime": 3.2748537063598633,
+          "EventType": "Notify",
+          "EventTag": "Blade"
         },
         {
           "EventTime": 4.093567371368408,
@@ -578,14 +608,44 @@
           "EventTag": "ParrySign"
         },
         {
+          "EventTime": 4.277777671813965,
+          "EventType": "Notify",
+          "EventTag": "Blade"
+        },
+        {
           "EventTime": 4.80994176864624,
           "EventType": "Notify",
           "EventTag": "ParrySign"
         },
         {
+          "EventTime": 5.628654956817627,
+          "EventType": "Notify",
+          "EventTag": "A_Type_On"
+        },
+        {
+          "EventTime": 5.751461982727051,
+          "EventType": "Notify",
+          "EventTag": "A_Type_Off"
+        },
+        {
           "EventTime": 5.8947367668151855,
           "EventType": "Notify",
           "EventTag": "ParrySign"
+        },
+        {
+          "EventTime": 6.672514915466309,
+          "EventType": "Notify",
+          "EventTag": "A_Type_On"
+        },
+        {
+          "EventTime": 6.795321464538574,
+          "EventType": "Notify",
+          "EventTag": "A_Type_Off"
+        },
+        {
+          "EventTime": 4.880000114440918,
+          "EventType": "Notify",
+          "EventTag": "TraceType_TrackTarget"
         }
       ]
     },

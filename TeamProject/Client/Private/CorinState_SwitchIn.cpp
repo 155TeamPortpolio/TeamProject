@@ -64,6 +64,7 @@ void CCorinState_SwitchIn::Update(CCorin* pOwner, _float dt)
             pCorinState->Set_Trigger("SwitchOut");
             pCorinState->Set_Bool("OutReserve", false);
         }
+        return;
     }
 
     if (m_pSubStateMachine->Get_Trigger("Complete"))
