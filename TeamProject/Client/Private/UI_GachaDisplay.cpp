@@ -5,8 +5,7 @@
 #include "ObjectContainer.h"
 #include "TextSlot.h"
 #include "UI_IconButton.h"
-
-#include "UIDirector.h"
+#include "UI_GachaVideo.h"
 
 HRESULT CUI_GachaDisplay::Initialize_Prototype()
 {
@@ -24,6 +23,7 @@ HRESULT CUI_GachaDisplay::Initialize(INIT_DESC* pArg)
     Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("gacha_display.json")));
     Cache();
 
+    Create_Video();
     Create_SkipButton();
 
 	return S_OK;
@@ -48,6 +48,10 @@ void CUI_GachaDisplay::UI_Active(void* pArg)
     GACHA_DISPLAY_DESC* pDesc = static_cast<GACHA_DISPLAY_DESC*>(pArg);
     switch (pDesc->eType)
     {
+    case TYPE::VIDEO:
+        if (m_pVideo)
+            m_pVideo->Play_Video(pDesc->eGrade);
+        break;
     case TYPE::LABEL:
         if (m_isLabelVisible)
             return;
@@ -59,7 +63,8 @@ void CUI_GachaDisplay::UI_Active(void* pArg)
             m_pLabelTextSlot->Set_Text(pDesc->strLabel);
         break;
     case TYPE::SKIP:
-        if (m_pSkipButton) m_pSkipButton->Set_Alive(true);
+        if (m_pSkipButton)
+            m_pSkipButton->Set_Alive(true);
         break;
     } 
 }
@@ -81,7 +86,8 @@ void CUI_GachaDisplay::UI_DeActive(void* pArg)
         Set_ChildAnimation(CHILD::LABEL, 1);
         break;
     case TYPE::SKIP:
-        if (m_pSkipButton) m_pSkipButton->Set_Alive(false);
+        if (m_pSkipButton) 
+            m_pSkipButton->Set_Alive(false);
         break;
     } 
 }
@@ -101,6 +107,20 @@ void CUI_GachaDisplay::Cache()
         if (i == ENUM(CHILD::LABEL))
             m_pLabelTextSlot = pObj->Get_Component<CTextSlot>();
     }
+}
+
+void CUI_GachaDisplay::Create_Video()
+{
+    PrototypeManager()->Add_ProtoType("Gacha_Level", "Proto_GameObject_GachaVideo", CUI_GachaVideo::Create());
+
+    auto pObj = Builder::Create_UIObject({ "Gacha_Level", "Proto_GameObject_GachaVideo"})
+        .Build("video");
+
+    if (!pObj)
+        return;
+
+    Get_Component<CObjectContainer>()->Add_Child(pObj);
+    m_pVideo = dynamic_cast<CUI_GachaVideo*>(pObj);
 }
 
 void CUI_GachaDisplay::Create_SkipButton()
