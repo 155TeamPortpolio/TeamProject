@@ -191,6 +191,25 @@ void CCharacter::OnTriggerExit(CGameObject* pOther)
     }
 }
 
+void CCharacter::Rush_Target()
+{
+    if (!m_TargetHandle.isValid()) return;
+
+    auto pTarget = m_TargetHandle.Get();
+    _vector3 vTargetPos = pTarget->Get_WorldPos();
+    _float fOffset = pTarget->Get_Component<CCharacterController>()->Get_Radius();
+
+    _vector3 vDir = vTargetPos - Get_WorldPos();
+    vDir.y = 0.f;
+    vDir.Normalize();
+
+    _vector3 vDest = vTargetPos - vDir * fOffset * 2.f;
+    vDest.y = Get_WorldPos().y;
+
+    m_pCCT->Set_Position(vDest);
+    Get_Component<CTransform>()->Set_Look(vDir);
+}
+
 _bool CCharacter::Can_SwitchIn() const
 {
     return !m_pCCT->Get_CompActive();
