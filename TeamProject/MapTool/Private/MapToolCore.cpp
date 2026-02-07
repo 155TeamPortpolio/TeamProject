@@ -210,6 +210,8 @@ void CMapToolCore::Load_WithEntityData()
 
 void CMapToolCore::LoadEntity(const filesystem::path& BasePath, LOADED_DATA& LoadedData)
 {
+	Clear_Layer(MAPOBJ_TYPE::ENTITY);
+
 	filesystem::path entityPath = BasePath;
 	string filename = entityPath.filename().string();
 
@@ -220,8 +222,6 @@ void CMapToolCore::LoadEntity(const filesystem::path& BasePath, LOADED_DATA& Loa
 		entityPath.replace_filename(filename);
 
 		if (filesystem::exists(entityPath)) {
-			Clear_Layer(MAPOBJ_TYPE::ENTITY);
-
 			Entity_Header EntityHeader = Helper::LoadJson<Entity_Header>(entityPath.string());
 			LoadedData.tagDataFormat = "EntityData";
 
@@ -243,6 +243,9 @@ void CMapToolCore::LoadEntity(const filesystem::path& BasePath, LOADED_DATA& Loa
 
 void CMapToolCore::LoadBattle(const filesystem::path& BasePath, LOADED_DATA& LoadedData)
 {
+	Clear_Layer(MAPOBJ_TYPE::BATTLE);
+	m_pMapToolGui->Clear_BattleData();
+
 	filesystem::path BattlePath = BasePath;
 	string filename = BattlePath.filename().string();
 
@@ -266,6 +269,8 @@ void CMapToolCore::LoadBattle(const filesystem::path& BasePath, LOADED_DATA& Loa
 
 void CMapToolCore::LoadLight(const filesystem::path& BasePath, LOADED_DATA& LoadedData)
 {
+	Clear_Layer(MAPOBJ_TYPE::LIGHT);
+
 	filesystem::path lightPath = BasePath;
 	string filename = lightPath.filename().string();
 
@@ -276,8 +281,6 @@ void CMapToolCore::LoadLight(const filesystem::path& BasePath, LOADED_DATA& Load
 		lightPath.replace_filename(filename);
 
 		if (filesystem::exists(lightPath)) {
-			Clear_Layer(MAPOBJ_TYPE::LIGHT);
-
 			Light_Header LightHeader = Helper::LoadJson<Light_Header>(lightPath.string());
 			LoadedData.tagDataFormat = "LightData";
 
@@ -305,6 +308,23 @@ void CMapToolCore::Clear_Layer(MAPOBJ_TYPE eObjType)
 		for (_int j = 0; j < ENUM(MAPOBJ_TYPE::END); j++)
 		{
 			CLayer* pLayer = m_pGameInstance->Get_ObjectMgr()->Get_Layer({ g_TagMapToolLevel, g_tagMapObjType[j] });
+			if (nullptr == pLayer)
+				continue;
+			pLayer->Clear_Layer();
+		}
+
+		for (_int j = 0; j < ENUM(BATTLE_TYPE::END); j++)
+		{
+			CLayer* pLayer = m_pGameInstance->Get_ObjectMgr()->Get_Layer({ g_TagMapToolLevel, g_tagBattleObjType[j] });
+			if (nullptr == pLayer)
+				continue;
+			pLayer->Clear_Layer();
+		}		
+	}
+	else if (MAPOBJ_TYPE::BATTLE == eObjType) {
+		for (_int j = 0; j < ENUM(BATTLE_TYPE::END); j++)
+		{
+			CLayer* pLayer = m_pGameInstance->Get_ObjectMgr()->Get_Layer({ g_TagMapToolLevel, g_tagBattleObjType[j] });
 			if (nullptr == pLayer)
 				continue;
 			pLayer->Clear_Layer();
@@ -459,10 +479,13 @@ void CMapToolCore::Place_LightPointFromLoadData(MAP_LIGHT* pData)
 	string Name = "LightPoint" + to_string(pData->iIndex);
 	pDesc->DescJson = pData->LightDesc;
 
+	_quaternion Rot = pDesc->DescJson.vLightDirection;
+
 	CGameObject* pStaticObject = Builder::Create_Object({ g_TagMapToolLevel ,"Proto_GameObject_LightPoint" })
 		.Add_ObjDesc(pDesc)
 		.Collider(ColDesc)
 		.Position({ pData->vTranslation[0], pData->vTranslation[1], pData->vTranslation[2] })
+		.Rotate(Rot.ToEuler())
 		.Build(Name);
 
 	pStaticObject->Get_Component<CCollider>()->Set_DebugRender(true);

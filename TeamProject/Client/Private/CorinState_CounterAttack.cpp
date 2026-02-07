@@ -21,13 +21,12 @@ CCorinState_CounterAttack* CCorinState_CounterAttack::Create()
 
 	pSubStateMachine->Set_DefaultState("Counter_Start");
 
-	pSubStateMachine->Set_Bool("ReserveNormal", false);
-
 	return pInstance;
 }
 
 void CCorinState_CounterAttack::Enter(CCorin* pOwner)
 {
+	m_pSubStateMachine->Set_Bool("ReserveNormal", false);
 	pOwner->Lock_Move();
 	pOwner->Push_Invincible();
 	__super::Enter(pOwner);

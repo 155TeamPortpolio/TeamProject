@@ -22,8 +22,7 @@ CStage::CStage()
 HRESULT CStage::Exit_Stage(StageContext& context)
 {
 	BattleSystem()->ClearBattleStage();
-	ObjectManager()->Get_Layer({ "Zero_Level","PlacedObject_Layer" })->Clear_Layer();
-	ObjectManager()->Get_Layer({ "Zero_Level","InteractableObject_Layer" })->Clear_Layer();
+
 	m_introFlowBuilt = false;
 	m_outroFlowBuilt = false;
 	m_iNextChoice = { -1 };
@@ -105,25 +104,31 @@ void CStage::Active_Enemy()
 	for (auto* pMonster : m_pMonsters)
 	{
 		if (!pMonster) continue;
-		CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(pMonster, { "Zero_Level", "Enemy_Layer" });
+		pMonster->Set_Alive(true);
 		BattleSystem()->EnterBattleObject(BATTLE_OBJ_TYPE::MONSTER, pMonster->Get_Handle());
 	}
 }
+
 void CStage::Active_Player(PlayerPoint pointType)
 {
 	if (!m_PlayerHandle.isValid())
 		return;
+
+	auto pPlayer = ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Player));
+	auto castedPlayer = dynamic_cast<CPlayer*>(pPlayer);
+	m_PlayerHandle = castedPlayer->Get_CurCharacterHandle();
 
 	auto character = m_PlayerHandle.GetAs<CCharacter>();
 	if (!character)
 		return;
 
 	auto point = m_PlayerPoint[ENUM(pointType)];
-	point.pos.y += 1.f;
-
-	character->Get_CCT()->Set_Position(_vector4(point.pos));
+	
+	character->Get_CCT()->Set_FootPosition(_vector3{ point.pos.x, point.pos.y, point.pos.z });
 	character->Get_Component<CTransform>()->Rotate(_vector3(point.rotation));
+	CamDirector()->AutoBattle(CamStartDir::Back);
 }
+
 void CStage::Active_Portal()
 {
 	auto pRouter = m_pOwnerLevel->Get_Router();
@@ -136,9 +141,10 @@ void CStage::Active_Portal()
 		if (!m_pPortals[i]) continue;
 
 		auto* zeroPortal = dynamic_cast<CZeroPortal*>(m_pPortals[i]);
-		if (zeroPortal)
+		if (zeroPortal) {
+			zeroPortal->Set_Alive(true);
 			zeroPortal->SetChoiceIndex(this,i);
-		ObjectManager()->Add_Object(m_pPortals[i], { "Zero_Level","Portal_Layer" });
+		}
 	}
 }
 
@@ -154,7 +160,7 @@ HRESULT CStage::ReadyPlayerPoint(const vector<BATTLE_POINT_DATA>& point)
 		auto translation = point[i].vTranslation;
 		auto rotation = point[i].vRotation;
 
-		m_PlayerPoint[i].pos= { translation[0], translation[1], translation[2] , translation[3] };
+		m_PlayerPoint[i].pos= { translation[0], translation[1], translation[2],1.f };
 		m_PlayerPoint[i].rotation= { rotation[0], rotation[1], rotation[2] };
 	}
 
@@ -170,9 +176,11 @@ HRESULT CStage::ReadyPortalPoint(const vector<BATTLE_POINT_DATA>& point)
 	{
 		auto trans = point[i].vTranslation;
 		auto portal = Builder::Create_Object({ "Zero_Level" ,"Proto_GameObject_ZeroPortal" })
-			.Position({ trans[0],  trans[1],  trans[2] })
+			.Position({ trans[0],  trans[1] + 1.5f,  trans[2] })
 			.Build("zeroPortal#" + to_string(i));
+		portal->Set_Alive(false);
 		m_pPortals.push_back(portal);
+		ObjectManager()->Add_Object(m_pPortals[i], { "Zero_Level","Portal_Layer" });
 	}
 
 	return S_OK;
@@ -242,6 +250,8 @@ void CStage::Reserve_Enemy(const string& LevelTag)
 
 			if (pMonster) {
 				m_pMonsters.push_back(pMonster);
+				pMonster->Set_Alive(false);
+				CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(pMonster, { "Zero_Level", "Enemy_Layer" });
 				spawn += 1;
 			}
 		}

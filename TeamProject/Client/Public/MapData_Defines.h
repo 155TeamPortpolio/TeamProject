@@ -103,7 +103,7 @@ namespace Client {
 	{
 		string	TagDataFormat = "";
 		string	TagArea = "";
-		BATTLE_POINT_DATA					PlayerSpawnPoint = {};
+		vector<BATTLE_POINT_DATA>			PlayerSpawnPoint;
 		vector<BATTLE_POINT_SPAWNER_DATA>	Spawners;
 		vector<BATTLE_POINT_DATA>			Monsters;
 		vector<BATTLE_POINT_DATA>			EndPoints;
@@ -211,6 +211,7 @@ namespace Client {
 			case MAPOBJ_TYPE::TRIGGER:	return &Trigger;
 			case MAPOBJ_TYPE::INVWALL:	return &InvWall;
 			case MAPOBJ_TYPE::ENTITY:	return &Entity;
+			case MAPOBJ_TYPE::LIGHT:	return &Light;
 			default:					return nullptr;
 			}
 		}

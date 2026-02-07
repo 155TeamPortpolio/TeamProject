@@ -124,6 +124,7 @@ public: // 이동
     _bool       Can_Rotate() const { return m_bCanRotate; }
     void        Lock_Rotate() { m_bCanRotate = false; }
     void        Unlock_Rotate() { m_bCanRotate = true; }
+    void        Rush_Target();
 
 public: // 상태
     _bool       Is_Attack() const { return m_bIsAttack; }

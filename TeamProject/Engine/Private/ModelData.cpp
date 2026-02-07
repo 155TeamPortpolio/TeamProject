@@ -19,7 +19,6 @@ HRESULT CModelData::Initialize(const string& filePath, ID3D11Device* pDevice)
 		wstring Alarm = L"There is No File. :CModelData \n" + Helper::ConvertToWideString(filePath);
 		MessageBox(NULL, Alarm.c_str(), L"System Message", MB_OK);
 		//MSG_BOX("There is No File. :CModelData ");
-		//__debugbreak();
 		return E_FAIL;
 	}
 
@@ -52,6 +51,13 @@ HRESULT CModelData::Initialize(const string& filePath, ID3D11Device* pDevice)
 	ifs.close();
 
 	if (fileHeader.isAnimate) {
+
+		_uint boneCount = m_pSkeleton ? m_pSkeleton->Get_BoneCount() : 0;
+
+		for (auto mesh : m_Meshes) {
+			mesh->BakeSkinRemapAndRebuildVB(pDevice, boneCount);
+		}
+
 		for (auto mesh : m_Meshes) {
 			mesh->Create_BoneMinMax(m_pSkeleton);
 		}
@@ -68,8 +74,13 @@ HRESULT CModelData::Initialize(const string& filePath, ID3D11Device* pDevice)
 		m_vMaxLocal.x = max(m_vMaxLocal.x, meshMax.x);
 		m_vMaxLocal.y = max(m_vMaxLocal.y, meshMax.y);
 		m_vMaxLocal.z = max(m_vMaxLocal.z, meshMax.z);
-	}
 
+	}
+#ifdef OPTIMIZE_VERTEX
+	for (auto mesh : m_Meshes) {
+		mesh->Optimize_Vertex();
+	}
+#endif // OPTIMIZE_VERTEX
 	return S_OK;
 }
 
@@ -273,7 +284,6 @@ vector<MaterialUsageRow> CModelData::BuildMaterialUsageTable(_bool includeMeshIn
 	for (auto& pair : mapByMaterial)
 		rows.push_back(std::move(pair.second));
 
-	// meshCount ������������ ����(���� ���� ��Ƽ������ ����)
 	sort(rows.begin(), rows.end(),
 		[](const MaterialUsageRow& leftRow, const MaterialUsageRow& rightRow)
 		{

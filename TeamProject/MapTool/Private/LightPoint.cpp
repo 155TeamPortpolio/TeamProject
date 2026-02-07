@@ -50,7 +50,7 @@ HRESULT CLightPoint::Initialize(INIT_DESC* pArg)
 	if (LIGHT_INIT_DESC* pDesc = dynamic_cast<LIGHT_INIT_DESC*>(pArg)) {
 		m_LightDesc.eType = pDesc->DescJson.eLightType;
 
-		m_LightDesc.vLightDirection = { 0, -1, 0, 0 };
+		m_LightDesc.vLightDirection = pDesc->DescJson.vLightDirection;
 		m_LightDesc.vOffsetPosition = pDesc->DescJson.vOffsetPosition;
 
 		m_LightDesc.vLightDiffuse = pDesc->DescJson.vLightDiffuse;

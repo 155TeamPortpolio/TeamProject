@@ -14,7 +14,7 @@ CStageRouter::CStageRouter()
 
 void CStageRouter::Render_GUI()
 {
-    static const char* typeNames[] = { "Normal", "Elite", "Boss", "Shop", "Rest", "End" };
+    static const char* typeNames[] = { "Start", "Normal", "Elite", "Boss", "Shop", "Rest", "End" };
 
     ImGui::Begin("Stage Map");
 
@@ -22,12 +22,11 @@ void CStageRouter::Render_GUI()
     ImVec2 canvasSize = ImGui::GetContentRegionAvail();
     ImDrawList* draw = ImGui::GetWindowDrawList();
 
-    auto add = [](const ImVec2& a, const ImVec2& b) -> ImVec2 { return ImVec2(a.x + b.x, a.y + b.y); };
-    auto sub = [](const ImVec2& a, const ImVec2& b) -> ImVec2 { return ImVec2(a.x - b.x, a.y - b.y); };
+    auto add = [](const ImVec2& left, const ImVec2& right) -> ImVec2 { return ImVec2(left.x + right.x, left.y + right.y); };
 
     if (canvasSize.x < 10.f || canvasSize.y < 10.f)
     {
-        ImGui::Text("Canvas too small.");
+        ImGui::TextUnformatted("Canvas too small.");
         ImGui::End();
         return;
     }
@@ -36,7 +35,7 @@ void CStageRouter::Render_GUI()
     constexpr float stepY = 70.f;
     constexpr float nodeRadiusBase = 14.f;
 
-    ImVec2 canvasEnd = add(canvasPos, canvasSize);
+    const ImVec2 canvasEnd = add(canvasPos, canvasSize);
     draw->AddRectFilled(canvasPos, canvasEnd, IM_COL32(20, 20, 20, 255));
     draw->PushClipRect(canvasPos, canvasEnd, true);
 
@@ -44,6 +43,7 @@ void CStageRouter::Render_GUI()
     const ImVec2 originBase = add(canvasPos, ImVec2(pad, pad));
 
     const int nodeCount = (int)m_stageNodes.size();
+
     ImGui::SetCursorScreenPos(add(canvasPos, ImVec2(8.f, 8.f)));
     ImGui::Text("nodes: %d", nodeCount);
 
@@ -102,24 +102,21 @@ void CStageRouter::Render_GUI()
             continue;
 
         float sumY = 0.f;
-        int count = 0;
-
+        int childCount = 0;
         for (int childIndex : node.ChildrenIndex)
         {
             if (childIndex < 0 || childIndex >= nodeCount)
                 continue;
-
             sumY += nodeYOffset[childIndex];
-            ++count;
+            ++childCount;
         }
 
-        if (count > 0)
-            nodeYOffset[nodeIndex] = sumY / (float)count;
+        if (childCount > 0)
+            nodeYOffset[nodeIndex] = sumY / (float)childCount;
     }
 
     // ==========================
     //  바운딩 + 비균일 스케일(X/Y 따로)
-    //  - Y 때문에 X까지 줄어드는 문제 해결
     // ==========================
     float minX = 1e9f, maxX = -1e9f;
     float minY = 1e9f, maxY = -1e9f;
@@ -162,59 +159,195 @@ void CStageRouter::Render_GUI()
     auto getNodePos = [&](int nodeIndex) -> ImVec2
         {
             const StageNode& node = m_stageNodes[nodeIndex];
-
             float xLocal = (node.depth * stepX - minX) * scaleX;
             float yLocal = (nodeYOffset[nodeIndex] - minY) * scaleY;
-
             return ImVec2(base.x + xLocal, base.y + yLocal);
         };
 
-    /* 1) 선 */
+    // ==========================
+    //  입력(클릭)
+    //  - 현재 노드의 자식만 선택 가능
+    //  - opened(열림) && !cleared(이미 지나감)만 이동
+    // ==========================
+    m_guiHoveredNode = -1;
+
+    ImVec2 mousePos = ImGui::GetIO().MousePos;
+    bool leftClicked = ImGui::IsMouseClicked(ImGuiMouseButton_Left);
+
+    bool canvasHovered =
+        ImGui::IsWindowHovered() &&
+        mousePos.x >= canvasPos.x && mousePos.x <= canvasEnd.x &&
+        mousePos.y >= canvasPos.y && mousePos.y <= canvasEnd.y;
+
+    int clickedNodeIndex = -1;
+
+    // ==========================
+    //  1) 선
+    // ==========================
     for (int nodeIndex = 0; nodeIndex < nodeCount; ++nodeIndex)
     {
         ImVec2 from = getNodePos(nodeIndex);
-
         const StageNode& node = m_stageNodes[nodeIndex];
+
         for (int childIndex : node.ChildrenIndex)
         {
             if (childIndex < 0 || childIndex >= nodeCount)
                 continue;
 
             ImVec2 to = getNodePos(childIndex);
-            draw->AddLine(from, to, IM_COL32(120, 120, 120, 255), 2.f);
+
+            // 선 색도 상태에 따라 살짝 다르게
+            ImU32 lineColor = IM_COL32(120, 120, 120, 255);
+
+            // 현재 노드 -> 자식 라인 강조
+            if (nodeIndex == m_currentNode)
+                lineColor = IM_COL32(160, 160, 160, 255);
+
+            draw->AddLine(from, to, lineColor, 2.f);
         }
     }
 
-    /* 2) 노드 */
+    // ==========================
+    //  2) 노드(그리기 + 히트 테스트)
+    // ==========================
     for (int nodeIndex = 0; nodeIndex < nodeCount; ++nodeIndex)
     {
-        const StageNode& node = m_stageNodes[nodeIndex];
+        StageNode& node = m_stageNodes[nodeIndex];
         ImVec2 pos = getNodePos(nodeIndex);
 
-        ImU32 color = IM_COL32(150, 150, 150, 255);
-        switch (node.MyType)
+        // 히트 테스트(원)
+        ImVec2 delta = ImVec2(mousePos.x - pos.x, mousePos.y - pos.y);
+        float dist2 = delta.x * delta.x + delta.y * delta.y;
+        bool hovered = canvasHovered && (dist2 <= nodeRadius * nodeRadius);
+
+        if (hovered)
+            m_guiHoveredNode = nodeIndex;
+
+        if (hovered && leftClicked)
+            clickedNodeIndex = nodeIndex;
+
+        // 상태 판단
+        bool isCurrent = (nodeIndex == m_currentNode);
+        bool isOpened = node.opened;     // 현재 코드 기준: opened == 열림(선택 가능)
+        bool isCleared = node.cleared;    // 이미 지나간 노드(회색)
+
+        // 현재 노드의 몇 번째 자식인지(선택 가능 판단용)
+        int choiceOrder = -1;
+        bool isSelectableNow = false;
+
+        if (m_currentNode >= 0)
         {
-        case StageType::Normal: color = IM_COL32(160, 160, 160, 255); break;
-        case StageType::Elite:  color = IM_COL32(255, 120, 120, 255); break;
-        case StageType::Boss:   color = IM_COL32(255, 220, 80, 255);  break;
-        default: break;
+            const auto& children = m_stageNodes[m_currentNode].ChildrenIndex;
+            for (int childOrder = 0; childOrder < (int)children.size(); ++childOrder)
+            {
+                if (children[childOrder] == nodeIndex)
+                {
+                    choiceOrder = childOrder;
+                    break;
+                }
+            }
+
+            isSelectableNow = (choiceOrder >= 0) && isOpened && !isCleared;
         }
 
-        draw->AddCircleFilled(pos, nodeRadius, color);
-        draw->AddCircle(pos, nodeRadius, IM_COL32(30, 30, 30, 255), 0, 2.f);
+        // 색 결정
+        ImU32 fillColor = IM_COL32(150, 150, 150, 255);
 
+        if (isCleared)
+        {
+            // 이미 지나간 노드: 회색
+            fillColor = IM_COL32(90, 90, 90, 255);
+        }
+        else if (!isOpened)
+        {
+            // 잠김: 더 어두운 회색
+            fillColor = IM_COL32(50, 50, 50, 255);
+        }
+        else
+        {
+            // 열림(선택 후보): 타입 색
+            switch (node.MyType)
+            {
+            case StageType::Normal: fillColor = IM_COL32(160, 160, 160, 255); break;
+            case StageType::Elite:  fillColor = IM_COL32(255, 120, 120, 255); break;
+            case StageType::Boss:   fillColor = IM_COL32(255, 220, 80, 255);  break;
+            default: break;
+            }
+
+            // 현재 선택 가능한 자식이면 강조
+            if (isSelectableNow)
+                fillColor = IM_COL32(110, 220, 170, 255);
+        }
+
+        // 테두리(현재/호버)
+        ImU32 borderColor = IM_COL32(30, 30, 30, 255);
+        float borderThickness = 2.f;
+
+        if (isCurrent)
+        {
+            borderColor = IM_COL32(80, 200, 255, 255);
+            borderThickness = 3.f;
+        }
+        else if (hovered)
+        {
+            borderColor = IM_COL32(220, 220, 220, 255);
+        }
+
+        draw->AddCircleFilled(pos, nodeRadius, fillColor);
+        draw->AddCircle(pos, nodeRadius, borderColor, 0, borderThickness);
+
+        // 라벨
         int typeIndex = (int)node.MyType;
         const char* label =
             (typeIndex >= 0 && typeIndex < (int)IM_ARRAYSIZE(typeNames)) ? typeNames[typeIndex] : "Unknown";
 
         ImVec2 textSize = ImGui::CalcTextSize(label);
-        ImVec2 textPos = sub(pos, ImVec2(textSize.x * 0.5f, textSize.y * 0.5f));
+        ImVec2 textPos = ImVec2(pos.x - textSize.x * 0.5f, pos.y - textSize.y * 0.5f);
         draw->AddText(textPos, IM_COL32(255, 255, 255, 255), label);
     }
 
+    // ==========================
+    //  클릭 결과 처리
+    //  - 현재 노드의 자식만 Choose로 이동
+    // ==========================
+    if (clickedNodeIndex >= 0 && clickedNodeIndex < nodeCount && m_currentNode >= 0)
+    {
+        const auto& children = m_stageNodes[m_currentNode].ChildrenIndex;
+
+        for (int choiceOrder = 0; choiceOrder < (int)children.size(); ++choiceOrder)
+        {
+            if (children[choiceOrder] != clickedNodeIndex)
+                continue;
+
+            StageNode& clickedNode = m_stageNodes[clickedNodeIndex];
+
+            // opened: 열림, cleared: 이미 지나감
+            if (clickedNode.opened && !clickedNode.cleared)
+            {
+                dynamic_cast<CZero_Level*>(m_pOwner)->ChangeStage(clickedNode.MyType);
+                Choose(choiceOrder);
+                m_guiSelectedNode = clickedNodeIndex;
+            }
+            break;
+        }
+    }
+
     draw->PopClipRect();
+
+    // 선택 정보(원하면)
+    if (m_guiSelectedNode >= 0 && m_guiSelectedNode < nodeCount)
+    {
+        const StageNode& node = m_stageNodes[m_guiSelectedNode];
+        ImGui::Separator();
+        ImGui::Text("Selected: %d  Type: %s  opened: %s  cleared: %s",
+            m_guiSelectedNode,
+            typeNames[(int)node.MyType],
+            node.opened ? "true" : "false",
+            node.cleared ? "true" : "false");
+    }
+
     ImGui::End();
-} 
+}
 
 
 /*스테이지 노드 추가*/
@@ -224,7 +357,8 @@ _int CStageRouter::AddNode(StageType type, _int parentIndex, _int depth)
 	node.MyType = type;
 	node.ParentIndex = parentIndex;
 	node.depth = depth;
-	node.visited = (depth == 0);
+    node.opened = (depth == 0); 
+    node.cleared = (depth == 0); 
 
 	m_stageNodes.push_back(move(node));
 	return static_cast<_int>(m_stageNodes.size() - 1);
@@ -266,9 +400,10 @@ void CStageRouter::BuildGraph(_int MaxDepth, StageType root)
             break;
     }
 
-    m_stageNodes[rootNode].visited = true;
+    m_stageNodes[rootNode].opened = true; 
+    m_stageNodes[rootNode].cleared = true; // 지나감 처리
     for (int child : m_stageNodes[rootNode].ChildrenIndex)
-        m_stageNodes[child].visited = true;
+        m_stageNodes[child].opened = true; 
 }
 
 
@@ -285,7 +420,7 @@ _int CStageRouter::RollChildCount(_int depth, _int maxDepth)
 	if (depth <= 1) 
 		return 3;
 	if (depth < maxDepth - 1) 
-		return Helper::Get_Random_Int(2, 3);
+		return Helper::Get_Random_Int(1, 3);
 	return 2;
 }
 
@@ -302,26 +437,24 @@ StageType CStageRouter::RollType(_int depth, _int maxDepth)
 	if (r < 0.55f) return StageType::Elite;
 	return StageType::Normal;
 }
-
 _bool CStageRouter::Choose(_int choiceIndex)
 {
-	if (m_currentNode < 0) return false;
+    if (m_currentNode < 0) return false;
 
-	auto& cur = m_stageNodes[m_currentNode];
-	if (choiceIndex < 0 || choiceIndex >= static_cast<int>(cur.ChildrenIndex.size()))
-		return false;
+    auto& cur = m_stageNodes[m_currentNode];
+    if (choiceIndex < 0 || choiceIndex >= (int)cur.ChildrenIndex.size())
+        return false;
 
-	int nextNode = cur.ChildrenIndex[choiceIndex];
-	m_currentNode = nextNode;
+    int nextNode = cur.ChildrenIndex[choiceIndex];
+    m_currentNode = nextNode;
 
-	m_stageNodes[m_currentNode].visited = true;
+    m_stageNodes[m_currentNode].cleared = true; // 지나감
 
-	for (int child : m_stageNodes[m_currentNode].ChildrenIndex)
-		m_stageNodes[child].visited = true;
+    for (int child : m_stageNodes[m_currentNode].ChildrenIndex)
+        m_stageNodes[child].opened = true;
 
-	return true;
+    return true;
 }
-
 _int CStageRouter::GetChoiceCount()
 {
 	if (m_currentNode < 0) return 0;

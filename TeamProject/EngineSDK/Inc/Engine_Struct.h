@@ -234,7 +234,6 @@ namespace Engine
 			vMin.x = min(vMin.x, p.x); vMin.y = min(vMin.y, p.y); vMin.z = min(vMin.z, p.z);
 			vMax.x = max(vMax.x, p.x); vMax.y = max(vMax.y, p.y); vMax.z = max(vMax.z, p.z);
 		}
-
 		tagMinMaxBoxInfo TransformBox_8Corner(const _float4x4& worldMat)
 		{
 			tagMinMaxBoxInfo outBox{};
@@ -280,6 +279,8 @@ namespace Engine
 
 			return outBox;
 		}
+		_vector3 GetHalfPoint() { return _vector3(vMax) - _vector3(vMin); };
+		_vector3 GetRadius() { return (_vector3(vMax) + _vector3(vMin))*0.5f; };
 	}MINMAX_BOX;
 
 
@@ -437,6 +438,9 @@ namespace Engine
 	{
 		string TextureKey{};
 		string TexturePath{};
+
+		_bool useMask = false;
+		string MaskTextureTag{};
 
 		_float3 vOffsetPosition{};
 		_float4 vOffsetQuaternion{};

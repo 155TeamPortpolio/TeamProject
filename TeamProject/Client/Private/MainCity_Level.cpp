@@ -24,6 +24,7 @@
 /* UI */
 #include "UIDirector.h"
 #include "Layer.h"
+#include "BackgroundNpc.h"
 
 CMainCity_Level::CMainCity_Level(const string& LevelKey)
 	:CLevel(LevelKey),
@@ -56,10 +57,14 @@ HRESULT CMainCity_Level::Awake()
 
 	Ready_Map("MainCity_Level", "MainCity");
 
-	CamDirector()->AutoField();
+	CamDirector()->AutoField(CamStartDir::Back);
 	FieldSystem()->SetActive(true);
 	//ObjectManager()->Get_Layer({"MainCity_Level", "PlacedObject_Layer"})->Set_RenderState(false);
 	//auto layer = ObjectManager()->Get_Layer({"MainCity_Level", "PlacedObject_Layer"});
+	pProto->Add_ProtoType("MainCity_Level", "Proto_GameObject_CBackgroundNpc", CBackgroundNpc::Create());
+	auto testBack = Builder::Create_Object({ "MainCity_Level","Proto_GameObject_CBackgroundNpc" }).Build("Back");
+
+	ObjectManager()->Add_Object(testBack, { "MainCity_Level","NPC_Layer" });
 
 
 	return S_OK;

@@ -260,7 +260,18 @@
     },
     {
       "ClipTag": "Avatar_Female_Size02_Unagi_Ani_Attack_Branch_01_Attack_01",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.03547758236527443,
+          "EventType": "Notify",
+          "EventTag": "KatanaAttackStart"
+        },
+        {
+          "EventTime": 0.10006497800350189,
+          "EventType": "Notify",
+          "EventTag": "KatanaAttackEnd"
+        }
+      ]
     },
     {
       "ClipTag": "Avatar_Female_Size02_Unagi_Ani_Attack_Branch_01_Attack_01_End",
@@ -276,7 +287,18 @@
     },
     {
       "ClipTag": "Avatar_Female_Size02_Unagi_Ani_Attack_Branch_01_Attack_03",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.19883041083812714,
+          "EventType": "Notify",
+          "EventTag": "KatanaAttackStart"
+        },
+        {
+          "EventTime": 0.2684210538864136,
+          "EventType": "Notify",
+          "EventTag": "KatanaAttackEnd"
+        }
+      ]
     },
     {
       "ClipTag": "Avatar_Female_Size02_Unagi_Ani_Attack_Branch_01_Attack_03_End",
@@ -373,7 +395,38 @@
     },
     {
       "ClipTag": "Avatar_Female_Size02_Unagi_Ani_Attack_Counter",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.16582195460796356,
+          "EventType": "Notify",
+          "EventTag": "KatanaAttackStart"
+        },
+        {
+          "EventTime": 0.3278752267360687,
+          "EventType": "Notify",
+          "EventTag": "KatanaAttackEnd"
+        },
+        {
+          "EventTime": 0.3862897753715515,
+          "EventType": "Notify",
+          "EventTag": "AreaAttack"
+        },
+        {
+          "EventTime": 0.4239766001701355,
+          "EventType": "Notify",
+          "EventTag": "AreaAttack"
+        },
+        {
+          "EventTime": 0.4597790539264679,
+          "EventType": "Notify",
+          "EventTag": "AreaAttack"
+        },
+        {
+          "EventTime": 0.5031188726425171,
+          "EventType": "Notify",
+          "EventTag": "AreaAttack"
+        }
+      ]
     },
     {
       "ClipTag": "Avatar_Female_Size02_Unagi_Ani_Attack_Counter_02",
@@ -797,7 +850,48 @@
     },
     {
       "ClipTag": "Avatar_Female_Size02_Unagi_Ani_SwitchIn_Attack_Ex",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.21858349442481995,
+          "EventType": "Notify",
+          "EventTag": "UltimateAttack"
+        },
+        {
+          "EventTime": 0.27000001072883606,
+          "EventType": "Notify",
+          "EventTag": "UltimateAttack"
+        },
+        {
+          "EventTime": 0.3241065442562103,
+          "EventType": "Notify",
+          "EventTag": "UltimateAttack"
+        },
+        {
+          "EventTime": 0.8969460129737854,
+          "EventType": "Notify",
+          "EventTag": "UltimateAttack"
+        },
+        {
+          "EventTime": 1.0024690628051758,
+          "EventType": "Notify",
+          "EventTag": "UltimateAttack"
+        },
+        {
+          "EventTime": 1.1004548072814941,
+          "EventType": "Notify",
+          "EventTag": "UltimateAttack"
+        },
+        {
+          "EventTime": 2.0426249504089355,
+          "EventType": "Notify",
+          "EventTag": "UltimateStart"
+        },
+        {
+          "EventTime": 2.8265106678009033,
+          "EventType": "Notify",
+          "EventTag": "UltimateEnd"
+        }
+      ]
     },
     {
       "ClipTag": "Avatar_Female_Size02_Unagi_Ani_SwitchIn_Attack_Ex_End",

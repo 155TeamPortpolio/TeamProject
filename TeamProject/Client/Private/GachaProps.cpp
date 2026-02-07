@@ -2,6 +2,8 @@
 #include "GachaProps.h"
 
 #include "GameInstance.h"
+#include "CamDirector.h"
+
 #include "StaticModel.h"
 #include "Material.h"
 #include "ObjectContainer.h"
@@ -35,6 +37,11 @@ void CGachaProps::PlayTVSequence()
 void CGachaProps::PlayStageSpin(_int index)
 {
     m_pStage->PlayStageSpin(index);
+}
+
+void CGachaProps::ResetTarget()
+{
+    CamDirector()->SetSpaceRef(this->Get_Handle());
 }
 
 HRESULT CGachaProps::Initialize_Prototype(vector<GACHA_RESULT_DESC>* Desc)
@@ -101,11 +108,11 @@ void CGachaProps::Add_GachaProps()
     colliderDesc.vSize = _float3(3.754, 0.460, 3.524);
     colliderDesc.vCenter = _float3(0.040, -0.083, -0.916);
 
-    CGameObject* gachaBack = Builder::Create_Object({ "Gacha_Level", "Proto_GameObject_GachaBack" })
-        .Collider(colliderDesc)
-        .Build("Back");
+   CGameObject* gachaBack = Builder::Create_Object({ "Gacha_Level", "Proto_GameObject_GachaBack" })
+       .Collider(colliderDesc)
+       .Build("Back");
 
-    pObjectContainer->Add_Child(gachaBack, true);
+   pObjectContainer->Add_Child(gachaBack, true);
 
     CGameObject* gachaTV = Builder::Create_Object({ "Gacha_Level", "Proto_GameObject_GachaTV" })
         .Collider(colliderDesc)

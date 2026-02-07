@@ -209,12 +209,29 @@ void CFreeCam::SetOrbitState(const CamOrbitState& next)
 	orbit.initialized = false;
 }
 
+void CFreeCam::SetRollDeg(_float deg)
+{
+	rollDeg = deg;
+
+	const _float yawRad = XMConvertToRadians(targetRotDeg.x);
+	const _float pitchRad = XMConvertToRadians(targetRotDeg.y);
+	const _float rollRad = XMConvertToRadians(rollDeg);
+
+	targetRot = Quaternion::CreateFromYawPitchRoll(yawRad, pitchRad, rollRad);
+	curRot = targetRot;
+	curRot.Normalize();
+
+	const _vector4 q4{curRot.x, curRot.y, curRot.z, curRot.w};
+	m_pTransform->Set_Quaternion(q4);
+}
+
 void CFreeCam::ApplyRotation(_float dt)
 {
 	const _float yawRad = XMConvertToRadians(targetRotDeg.x);
 	const _float pitchRad = XMConvertToRadians(targetRotDeg.y);
+	const _float rollRad = XMConvertToRadians(rollDeg);
 
-	targetRot = Quaternion::CreateFromYawPitchRoll(yawRad, pitchRad, 0.f);
+	targetRot = Quaternion::CreateFromYawPitchRoll(yawRad, pitchRad, rollRad);
 
 	float alpha = 1.f - expf(-rotSmoothSpeed * dt);
 	alpha = clamp(alpha, 0.f, 1.f);
@@ -222,14 +239,14 @@ void CFreeCam::ApplyRotation(_float dt)
 	curRot = Quaternion::Slerp(curRot, targetRot, alpha);
 	curRot.Normalize();
 
-	const _vector4 q4{curRot.x, curRot.y, curRot.z, curRot.w };
+	const _vector4 q4{curRot.x, curRot.y, curRot.z, curRot.w};
 	m_pTransform->Set_Quaternion(q4);
 }
 
 void CFreeCam::SyncRotation()
 {
 	_vector4 look4 = m_pTransform->Dir(STATE::LOOK);
-	_vector3 forward{ look4.x, look4.y, look4.z };
+	_vector3 forward{look4.x, look4.y, look4.z};
 	forward.Normalize();
 
 	const float yawRad = atan2f(forward.x, forward.z);
@@ -239,7 +256,43 @@ void CFreeCam::SyncRotation()
 	targetRotDeg.y = XMConvertToDegrees(pitchRad);
 	targetRotDeg.y = clamp(targetRotDeg.y, -89.f, 89.f);
 
-	targetRot = Quaternion::CreateFromYawPitchRoll(yawRad, pitchRad, 0.f);
+	_vector4 up4 = m_pTransform->Dir(STATE::UP);
+	Vector3 actualUp(up4.x, up4.y, up4.z);
+	actualUp.Normalize();
+
+	Quaternion base = Quaternion::CreateFromYawPitchRoll(yawRad, pitchRad, 0.f);
+
+	Vector3 v(0.f, 1.f, 0.f);
+
+	const float qx = base.x;
+	const float qy = base.y;
+	const float qz = base.z;
+	const float qw = base.w;
+
+	const float tx = 2.f * (qy * v.z - qz * v.y);
+	const float ty = 2.f * (qz * v.x - qx * v.z);
+	const float tz = 2.f * (qx * v.y - qy * v.x);
+
+	const float cx = qy * tz - qz * ty;
+	const float cy = qz * tx - qx * tz;
+	const float cz = qx * ty - qy * tx;
+
+	Vector3 baseUp(v.x + qw * tx + cx, v.y + qw * ty + cy, v.z + qw * tz + cz);
+	baseUp.Normalize();
+
+	Vector3 fwd(forward.x, forward.y, forward.z);
+
+	Vector3 c(baseUp.y * actualUp.z - baseUp.z * actualUp.y,
+		baseUp.z * actualUp.x - baseUp.x * actualUp.z,
+		baseUp.x * actualUp.y - baseUp.y * actualUp.x);
+
+	const float sinv = c.x * fwd.x + c.y * fwd.y + c.z * fwd.z;
+	const float cosv = baseUp.x * actualUp.x + baseUp.y * actualUp.y + baseUp.z * actualUp.z;
+
+	const float rollRad = atan2f(sinv, cosv);
+	rollDeg = XMConvertToDegrees(rollRad);
+
+	targetRot = Quaternion::CreateFromYawPitchRoll(yawRad, pitchRad, rollRad);
 	curRot = targetRot;
 }
 

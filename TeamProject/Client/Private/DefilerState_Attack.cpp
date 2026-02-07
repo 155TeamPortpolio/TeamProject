@@ -64,8 +64,8 @@ void CDefilerState_Attack::Build_Pattern(CDefiler* pOwner, _int Type)
 	{
 		blackBoard.patternTransition.push_back({ "Attack_Evade",0.f,1.f });
 		blackBoard.patternTransition.push_back({ "Attack07",0.f,1.f });
-		blackBoard.patternTransition.push_back({ "Attack03",0.f,1.f });
-		blackBoard.patternTransition.push_back({ "Attack01_01_P2",0.f,1.f });
+		//blackBoard.patternTransition.push_back({ "Attack03",0.f,1.f });
+		//blackBoard.patternTransition.push_back({ "Attack01_01_P2",0.f,1.f });
 		break;
 	}
 	case 9 :
@@ -544,7 +544,7 @@ void CDefilerState_Attack_09_End::Exit(CDefiler* pOwner)
 void CDefilerState_Attack_Grab::Enter(CDefiler* pOwner)
 {
 	DEFILER_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
-	blackBoard.TraceType_OnlyAnim();
+	blackBoard.TraceType_Fierce();
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("Monster_IsoldetheDefiler_Ani_Attack_Grab_01")
 		.StartAt(blackBoard.reservedPattern.animStartProgress)

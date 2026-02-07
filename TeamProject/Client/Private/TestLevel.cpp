@@ -76,6 +76,10 @@
 /* ShaderTest */
 #include "TestCloud.h"
 
+// test
+#include "ZeroPortal.h"
+#include "MiasmaBlade.h"
+
 CTestLevel::CTestLevel(const string& LevelKey)
 	:CLevel(LevelKey),
 	m_pGameInstance{ CGameInstance::GetInstance() },
@@ -92,7 +96,12 @@ HRESULT CTestLevel::Initialize()
 
 
 	RenderSystem()->Set_FogDesc({ _float4(0.12f, 0.25f, 0.35f, 1.0f),0.f, 0.f, 0.005f, true });
-
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_ZeroPortal", CZeroPortal::Create());
+	auto pPortal = Builder::Create_Object({ G_GlobalLevelKey,"Proto_GameObject_ZeroPortal" })
+		.Position(_float3(0.f,6.f,0.f))
+		.Build("Portal");
+	
+	ObjectManager()->Add_Object(pPortal, { "Test_Level","Portal" });
 	return S_OK;
 }
 
@@ -152,12 +161,14 @@ HRESULT CTestLevel::Awake()
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_EnemyTriggerCollider", CEnemyTriggerCollider::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_ThugAssaulter", CThugAssaulter::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Defiler", CDefiler::Create());
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_MiasmaBlade", CMiasmaBlade::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_ThugPoacher", CThugPoacher::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_ThugPoacher_Arrow", CThugPoacher_Arrow::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Claymore", CClaymore::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Cyclops", CCyclops::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Cyclops_Spit", CCyclops_Spit::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_StrikeJaeger", CStrikeJaeger::Create());
+
 
 
 	CBattleSystem::GetInstance()->ReadyBattle("TrainingRoom", 1);
@@ -169,6 +180,7 @@ HRESULT CTestLevel::Awake()
 	//Ready_Npc();
 
 	CamDirector()->StartBattleIntro(CamSeqType::ZeroIntro);
+	//CamDirector()->AutoBattle(CamStartDir::Back);
 	//CUIDirector::GetInstance()->Show_SceneFrame();
 	CUIDirector::GetInstance()->Show_HUD(CUIDirector::HUD::BATTLE);
 	//GameInstance()->Set_EngineTimeScale(0.05f);

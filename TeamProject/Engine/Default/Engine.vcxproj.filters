@@ -150,9 +150,6 @@
     <ClInclude Include="..\Public\ObjectPool.h">
       <Filter>01. Utility\03. GameObject\Managers\ObjectManager\ObjectPool</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\UI_Manager.h">
-      <Filter>01. Utility\03. GameObject\Managers\UI_Manager</Filter>
-    </ClInclude>
     <!-- 01. Utility\03. GameObject\Effect -->
     <ClInclude Include="..\public\EffectContainer.h">
       <Filter>01. Utility\03. GameObject\Effect\Container</Filter>
@@ -635,6 +632,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\OrbitSpinData.h">
       <Filter>01. Utility\04. Components\20. CamSequencePlayer\01. CamPosEvaluator\06. OrbitSpin</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Manager.h">
+      <Filter>01. Utility\03. GameObject\Managers\UI_Manager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1799,6 +1799,9 @@
     </FxCompile>
     <FxCompile Include="..\Public\Engine_Shader\VTX_MetaBall.hlsl">
       <Filter>98. BasicShader\Etc</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\VTX_NonPlayer.hlsl">
+      <Filter>98. BasicShader\SkinMesh</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
