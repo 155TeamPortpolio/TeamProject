@@ -101,6 +101,7 @@ HRESULT COrbitCam::Initialize(INIT_DESC* pArg)
     Get_Component<CEventListener>()->Add_Listener<TARGET_LOCK_DESC>([&](TARGET_LOCK_DESC desc)
         {
             if (!desc.tHandle.isValid()) return;
+            if (!desc.tHandle.Get()->Get_Component<CCharacterController>()) return;
             if (desc.bLock) SetLockOn(desc.tHandle);
             else ClearLockOn();
         });

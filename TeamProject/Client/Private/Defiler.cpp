@@ -2,6 +2,7 @@
 #include "Defiler.h"
 #include "GameInstance.h"
 #include "BattleSystem.h"
+#include "UIDirector.h"
 
 #include "SkeletalModel.h"
 #include "Animator3D.h"
@@ -19,6 +20,8 @@
 
 #include "MiasmaBlade.h" 
 #include "AudioSource.h"
+
+#include "UI_DamageText.h"
 
 CDefiler::CDefiler()
 	:CEnemy()
@@ -160,6 +163,31 @@ void CDefiler::Render_GUI()
 	__super::Render_GUI();
 }
 
+void CDefiler::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER charaName)
+{
+	_float fTakeDamage = fDamage;
+
+	if (m_tStatus.isGroggy)
+		fTakeDamage *= 1.5f;
+	else
+		m_tStatus.iGroggyValue += 2;
+
+	m_tStatus.iNowHP -= fTakeDamage;
+
+	if (0 >= m_tStatus.iNowHP)
+		m_tStatus.iNowHP = 0.f;
+
+	DAMAGE_DESC desc{};
+	_int damage = Helper::Get_Random_Int(1000, 10000); // юс╫ц
+
+	desc.damage = damage;
+	desc.followHandle = Get_Handle();
+	desc.followOffset = Calc_WorldOffsetWithBip();
+	desc.isEnemy = true;
+	desc.charaName = charaName;
+
+	UIDirector()->Request_DamageText(desc);
+}
 void CDefiler::Change_CollisionMask(_uint iMask)
 {
 	_uint Mask = Get_Component<CCharacterController>()->Get_CollisionMask();
@@ -177,6 +205,17 @@ void CDefiler::Set_CCTPos(_vector3 pos)
 	if (!controller)
 		return;
 	controller->Set_Position(pos);
+}
+
+_float3 CDefiler::Get_BipedPos()
+{
+	Matrix boneMat = Get_Component<CAnimator3D>()
+		->Get_BoneMatrix(CAnimator3D::BoneSpace::COMBINED, "Bip001");
+	Matrix WorldMat = m_pTransform->Get_WorldMatrix();
+	_vector3 S, T; _quaternion R;
+	(boneMat * WorldMat).Decompose(S, R, T);
+
+	return T;
 }
 
 void CDefiler::MoveByTraceMode(_float dt, _float moveScale)
@@ -642,4 +681,12 @@ HRESULT CDefiler::Create_Colliders()
 	}
 
 	return S_OK;
+}
+
+_float3 CDefiler::Calc_WorldOffsetWithBip()
+{
+	_vector4 pos = Get_Position();
+	_vector3 BipPos = Get_BipedPos();
+	_vector3 WorldPos = { pos.x, pos.y, pos.z };
+	return BipPos-WorldPos;
 }
