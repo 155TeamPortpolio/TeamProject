@@ -27,6 +27,25 @@ void CUI_GachaResultItem::Set_ResultDesc(GACHA_RESULT_DESC desc)
 
     Change_SpriteTexture(SPRITE::ITEM_ICON_BACK, desc.strTexture);
     Change_SpriteTexture(SPRITE::ITEM_ICON_FRONT, desc.strTexture);
+
+    if (desc.Type == GachaType::Engine)
+    { 
+        Set_ChildAnchorOffset(SPRITE::ITEM_ICON_FRONT, _float2(-54.f, -85.f));
+        Set_ChildSize(SPRITE::ITEM_ICON_FRONT, _float2(170.f, 170.f));
+    } 
+    else if (desc.Type == GachaType::Agent)
+    {
+        if (desc.strTexture == "IconRole13.png")    // 미야비
+        { 
+            Set_ChildAnchorOffset(SPRITE::ITEM_ICON_FRONT, _float2(-370.f, -220.f));
+            Set_ChildSize(SPRITE::ITEM_ICON_FRONT, _float2(800.f, 1122.96f));
+        }
+        else if (desc.strTexture == "IconRole24.png")   // 제인도
+        {
+            Set_ChildAnchorOffset(SPRITE::ITEM_ICON_FRONT, _float2(-210.f, -100.f));
+            Set_ChildSize(SPRITE::ITEM_ICON_FRONT, _float2(533.96f, 1000.f));
+        }
+    }
 }
 
 HRESULT CUI_GachaResultItem::Initialize_Prototype()
@@ -87,6 +106,7 @@ void CUI_GachaResultItem::Cache()
         if (!pObj)
             continue;
 
+        m_pChildren[i] = dynamic_cast<CUI_Object*>(pObj);
         m_pSprites[i] = pObj->Get_Component<CSprite2D>();
     }
 }
@@ -98,6 +118,24 @@ void CUI_GachaResultItem::Change_SpriteTexture(SPRITE sprite, const string& strT
         return;
 
     pSprite->Change_Texture(0, G_GlobalLevelKey, strTextureKey);
+}
+
+void CUI_GachaResultItem::Set_ChildAnchorOffset(SPRITE sprite, _float2 vOffset)
+{
+    auto pChild = m_pChildren[ENUM(sprite)];
+    if (!pChild)
+        return;
+
+    pChild->Set_AnchorOffset(vOffset);
+}
+
+void CUI_GachaResultItem::Set_ChildSize(SPRITE sprite, _float2 vSize)
+{
+    auto pChild = m_pChildren[ENUM(sprite)];
+    if (!pChild)
+        return;
+
+    pChild->Set_Size(vSize);
 }
 
 CGameObject* CUI_GachaResultItem::Create()
