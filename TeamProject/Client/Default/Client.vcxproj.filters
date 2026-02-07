@@ -2291,6 +2291,9 @@
     <ClInclude Include="..\Public\MiyabiState_UltimateAttack.h">
       <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Attack\Ultimate</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\MiyabiState_CounterAttack.h">
+      <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Attack\Counter</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\UI_GachaText.h">
       <Filter>02. GameObject\UI\02. 3D\Mesh\UI_GachaText</Filter>
     </ClInclude>
@@ -3358,6 +3361,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\MiyabiState_UltimateAttack.cpp">
       <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Attack\Ultimate</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MiyabiState_CounterAttack.cpp">
+      <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Attack\Counter</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UI_GachaText.cpp">
       <Filter>02. GameObject\UI\02. 3D\Mesh\UI_GachaText</Filter>
