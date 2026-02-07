@@ -36,7 +36,10 @@ private:
     _bool   Try_Hit(CGameObject* pTarget);
 
 private:
-    _vector3 m_vTargetPos = {};
+    _float m_ElapsedTime = {};
+    _float m_fMovceSpeed = {35};
+    _vector3 m_vTargetVelocity = {};
+    _vector3 m_vVelocity = {};
     class CDefiler* m_pOwner = { nullptr };
     _bool isParried = { false };
 
