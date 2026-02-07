@@ -52,7 +52,7 @@ void CStrikeJaeger_Groggy::Register_Transitions()
 /*============================================================================*/
 void CStrikeJaeger_Stun_Start::Enter(CStrikeJaeger* pOwner)
 {
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("Claymore_Ani_Debuff_Stun_Start")
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("StrikeJaeger_Ani_Debuff_Stun_Start")
 		.Apply();
 }
 
@@ -67,7 +67,7 @@ void CStrikeJaeger_Stun_Start::Exit(CStrikeJaeger* pOwner)
 /*============================================================================*/
 void CStrikeJaeger_Stun_Loop::Enter(CStrikeJaeger* pOwner)
 {
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("Claymore_Ani_Debuff_Stun_Loop")
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("StrikeJaeger_Ani_Debuff_Stun_Loop")
 		.Loop(true)
 		.Apply();
 }
@@ -83,7 +83,7 @@ void CStrikeJaeger_Stun_Loop::Exit(CStrikeJaeger* pOwner)
 /*============================================================================*/
 void CStrikeJaeger_Stun_End::Enter(CStrikeJaeger* pOwner)
 {
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("Claymore_Ani_Debuff_Stun_End")
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("StrikeJaeger_Ani_Debuff_Stun_End")
 		.Apply();
 }
 

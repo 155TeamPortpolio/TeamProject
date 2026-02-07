@@ -29,6 +29,7 @@
 #include "EnemyAttackCollider.h"
 #include "EnemyTriggerCollider.h"
 #include "StageRouter.h"
+#include "StrikeJaeger.h"
 
 /* UI */
 #include "UIDirector.h"
@@ -123,6 +124,7 @@ void CZero_Level::Ready_Prototype()
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_EnemyTriggerCollider", CEnemyTriggerCollider::Create());
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_ZeroPortal", CZeroPortal::Create());
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_LevelObject_ZeroPortal", CStageRouter::Create());
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_StrikeJaeger", CStrikeJaeger::Create());
 }
 
 void CZero_Level::Ready_Stage()

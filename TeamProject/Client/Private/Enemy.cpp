@@ -688,6 +688,7 @@ void CEnemy::Death()
 void CEnemy::SetOnAttack(_bool is, ATTACK_SIDE eSide)
 {
 	m_isOnAttack = is;
+	m_eCurAttackSide = eSide;
 
 	// 공격이 끝났을 때,
 	if (false == is)

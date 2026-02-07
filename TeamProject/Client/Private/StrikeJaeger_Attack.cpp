@@ -77,10 +77,20 @@ void CStrikeJaeger_Attack::Update(CStrikeJaeger* pOwner, _float dt)
 		{
 			if (Event.Tag == "UnleashAttack")
 				pOwner->UnleashAttack(CEnemy::ATTACK_SIDE::NONE, true);
-			else if (Event.Tag == "TurnOnAttackCol")
-				pOwner->SetBattleColliderObject("Weapon", CEnemy::BATTLE_COLTYPE::ATTACK, true, m_HitDesc);
-			else if (Event.Tag == "TurnOffAttackCol")
-				pOwner->SetBattleColliderObject("Weapon", CEnemy::BATTLE_COLTYPE::ATTACK, false);
+			else if (Event.Tag == "TurnOnAttackCol_L")
+			{
+				pOwner->SetBattleColliderObject("Weapon_L", CEnemy::BATTLE_COLTYPE::ATTACK, true, m_HitDesc);
+				pOwner->SetOnAttack(true, CEnemy::ATTACK_SIDE::LEFT);
+			}
+			else if (Event.Tag == "TurnOffAttackCol_L")
+				pOwner->SetBattleColliderObject("Weapon_L", CEnemy::BATTLE_COLTYPE::ATTACK, false);
+			else if (Event.Tag == "TurnOnAttackCol_R")
+			{
+				pOwner->SetBattleColliderObject("Weapon_R", CEnemy::BATTLE_COLTYPE::ATTACK, true, m_HitDesc);
+				pOwner->SetOnAttack(true, CEnemy::ATTACK_SIDE::RIGHT);
+			}
+			else if (Event.Tag == "TurnOffAttackCol_R")
+				pOwner->SetBattleColliderObject("Weapon_R", CEnemy::BATTLE_COLTYPE::ATTACK, false);
 			else if (Event.Tag == "FinishAll")
 				pOwner->SetOnAttack(false);
 			break;
@@ -121,13 +131,10 @@ void CStrikeJaeger_Attack::AttackFromIndex(_int iMoveIndex)
 		m_pSubStateMachine->Change_State("Attack01");
 		break;
 	case 2:
-		m_pSubStateMachine->Change_State("Attack02");
-		break;
-	case 3:
 		m_pSubStateMachine->Change_State("Attack03");
 		break;
-	case 4:
-		m_pSubStateMachine->Change_State("Attack04");
+	case 3:
+		m_pSubStateMachine->Change_State("Attack05");
 		break;
 	}
 }
@@ -135,7 +142,7 @@ void CStrikeJaeger_Attack::AttackFromIndex(_int iMoveIndex)
 /*============================================================================*/
 void CStrikeJaeger_Attack1::Enter(CStrikeJaeger* pOwner)
 {
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("Monster_Claymore_Ani_Attack_01")
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("StrikeJaeger_Ani_Attack01_Fast")
 		.Apply();
 }
 
@@ -150,7 +157,7 @@ void CStrikeJaeger_Attack1::Exit(CStrikeJaeger* pOwner)
 /*============================================================================*/
 void CStrikeJaeger_Attack3::Enter(CStrikeJaeger* pOwner)
 {
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("Monster_Claymore_Ani_Attack_03")
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("StrikeJaeger_Ani_Attack03A_Fast")
 		.Apply();
 }
 
@@ -167,7 +174,7 @@ void CStrikeJaeger_Attack3::Exit(CStrikeJaeger* pOwner)
 /*============================================================================*/
 void CStrikeJaeger_Attack5::Enter(CStrikeJaeger* pOwner)
 {
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("Claymore_Ani_Attack_05")
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("StrikeJaeger_Ani_Attack05_Fast")
 		.Apply();
 }
 

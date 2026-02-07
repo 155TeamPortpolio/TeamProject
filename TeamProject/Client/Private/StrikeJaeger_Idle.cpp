@@ -8,7 +8,7 @@
 
 void CStrikeJaeger_Idle::Enter(CStrikeJaeger* pOwner)
 {
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("Claymore_Ani_Idle")
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("MeleeJaeger_Ani_Idle")
 		.Loop(true)
 		.Apply();
 }

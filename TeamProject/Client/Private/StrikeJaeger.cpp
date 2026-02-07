@@ -49,15 +49,15 @@ HRESULT CStrikeJaeger::Initialize_Prototype()
 	Add_Component<CCharacterController>();
 
 	auto pResourceMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
-	pResourceMgr->Add_ResourcePath("Claymore.mat", "../Bin/Resources/Zero/Enemy/Claymore/Claymore.mat");
-	pResourceMgr->Add_ResourcePath("Claymore.model", "../Bin/Resources/Zero/Enemy/Claymore/Claymore.model");
-	//pResourceMgr->Add_ResourcePath("Monster_Claymore_Meta.json", "../../Resources/Data/Meta/Zero/Monster_Claymore_Meta.json");
+	pResourceMgr->Add_ResourcePath("Monster_StrikeJaeger.mat", "../Bin/Resources/Zero/Enemy/StrikeJaeger/Monster_StrikeJaeger.mat");
+	pResourceMgr->Add_ResourcePath("Monster_StrikeJaeger.model", "../Bin/Resources/Zero/Enemy/StrikeJaeger/Monster_StrikeJaeger.model");
 
 	auto pModel = Get_Component<CSkeletalModel>();
-	pModel->Link_Model(G_GlobalLevelKey, "Claymore.model");
+	pModel->Link_Model(G_GlobalLevelKey, "Monster_StrikeJaeger.model");
 
 	auto pMaterial = Get_Component<CMaterial>();
-	pMaterial->Link_Material(G_GlobalLevelKey, "Claymore.mat");
+	pMaterial->Link_Material(G_GlobalLevelKey, "Monster_StrikeJaeger.mat");
+
 
 	return S_OK;
 }
@@ -67,8 +67,8 @@ HRESULT CStrikeJaeger::Initialize(INIT_DESC* pArg)
 	__super::Initialize(pArg);
 
 	auto pAnimator = Get_Component<CAnimator3D>();
-	pAnimator->LinkAnimate_Model(G_GlobalLevelKey, "Claymore.model");
-	pAnimator->Link_MetaData(G_GlobalLevelKey, "Monster_Claymore_Meta.json");
+	pAnimator->LinkAnimate_Model(G_GlobalLevelKey, "Monster_StrikeJaeger.model");
+	pAnimator->Link_MetaData(G_GlobalLevelKey, "StrikeJaeger_Meta.json");
 	pAnimator->Set_ExtractMotionboneMovement(AXIS::X | AXIS::Z);
 	pAnimator->Resize_Layer(2);
 	pAnimator->Set_LayerType(ANIM_LAYER_STATE::ADDITIVE, 1);
@@ -239,23 +239,37 @@ void CStrikeJaeger::Parried()
 	__super::Parried();
 
 	m_pStateMachine->Change_State("Parried");
-	SetOnAttack(false, ATTACK_SIDE::NONE); 
+	SetOnAttack(false); 
 }
 
 HRESULT CStrikeJaeger::Ready_Children(INIT_DESC* pArg)
 {
-	BATTLE_COLLIDER_DESC WeaponDesc = {};
+	{
+		BATTLE_COLLIDER_DESC Weapon_L = {};
 
-	WeaponDesc.tagName = "Weapon";
-	WeaponDesc.isAttachBone = true;
-	WeaponDesc.tagBone = "Bip001_L_Forearm";
-	WeaponDesc.pOwnerAnimator3D = Get_Component<CAnimator3D>();
-	WeaponDesc.eAttackColliderType = COLLIDER_TYPE::BOX;
-	WeaponDesc.vCenter = { 0.8f, 0.f, 0.f };
-	WeaponDesc.vAttackSize = { 1.8f, 0.3f, 0.3f };
+		Weapon_L.tagName = "Weapon_L";
+		Weapon_L.isAttachBone = true;
+		Weapon_L.tagBone = "Bn_Weapon1";
+		Weapon_L.pOwnerAnimator3D = Get_Component<CAnimator3D>();
+		Weapon_L.vAttackSize = { 0.5f,0.f,0.f };
 
-	if (FAILED(AttachBattleColliderObject(&WeaponDesc)))
-		return E_FAIL;
+		if (FAILED(AttachBattleColliderObject(&Weapon_L)))
+			return E_FAIL;
+	}
+
+	{
+		BATTLE_COLLIDER_DESC Weapon_R = {};
+
+		Weapon_R.tagName = "Weapon_R";
+		Weapon_R.isAttachBone = true;
+		Weapon_R.tagBone = "Bn_Weapon2";
+		Weapon_R.pOwnerAnimator3D = Get_Component<CAnimator3D>();
+		Weapon_R.vAttackSize = { 0.5f,0.f,0.f };
+
+		if (FAILED(AttachBattleColliderObject(&Weapon_R)))
+			return E_FAIL;
+	}
+
 
 	Create_AttackSign("Bip001_Head");
 	Create_UIEnemyStatus("Bip001_Spine2");
@@ -307,7 +321,8 @@ void CStrikeJaeger::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTE
 
 	if ("Groggy" == m_pStateMachine->Get_CurrentStateName())
 	{
-		Get_Component<CAnimator3D>()->Set_Animation(1, "Claymore_Ani_Hit_Stay")
+		//Get_Component<CAnimator3D>()->Set_Animation(1, "StrikeJaeger_Ani_Hit_Stay")
+		Get_Component<CAnimator3D>()->Set_Animation(1, "StrikeJaeger_Ani_Hit_Knock")
 			.LayerBlend(1.f, 0.f, 1.f, EaseType::Linear)
 			.Loop(false)
 			.Apply();
@@ -320,7 +335,7 @@ void CStrikeJaeger::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTE
 	}
 	else
 	{
-		Get_Component<CAnimator3D>()->Set_Animation(1, "Claymore_Ani_Hit_Stay")
+		Get_Component<CAnimator3D>()->Set_Animation(1, "StrikeJaeger_Ani_Hit_Stay")
 			.LayerBlend(1.f, 0.f, 1.f, EaseType::Linear)
 			.Loop(false)
 			.Apply();
@@ -346,7 +361,7 @@ HRESULT CStrikeJaeger::Initialize_StateMachine()
 	m_pStateMachine->Set_DefaultState("Born");
 	m_pStateMachine->Initialize(this);
 
-	Get_Component<CAnimator3D>()->Set_Animation("Monster_Claymore_Ani_Born")
+	Get_Component<CAnimator3D>()->Set_Animation("StrikeJaeger_Ani_Born")
 		.Apply();
 
 	return S_OK;
@@ -394,9 +409,9 @@ HRESULT CStrikeJaeger::Ready_Rules()
 
 	m_tHysteriesis.fEvadeEnter = 2.f;
 	m_tHysteriesis.fComboEnter = 3.f;
-	m_tHysteriesis.fComboExit = 4.5f;
-	m_tHysteriesis.fChaseEnter = 7.f;
-	m_tHysteriesis.fChaseExit = 5.f;
+	m_tHysteriesis.fComboExit = 5.5f;
+	m_tHysteriesis.fChaseEnter = 8.f;
+	m_tHysteriesis.fChaseExit = 6.f;
 
 	return S_OK;
 }

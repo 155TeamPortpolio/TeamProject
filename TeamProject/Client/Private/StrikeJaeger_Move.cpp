@@ -107,7 +107,7 @@ void CStrikeJaeger_Move::ChangeMovePatternFromIndex(_int iMoveIndex)
 /*============================================================================*/
 void CStrikeJaeger_Walk_Front::Enter(CStrikeJaeger* pOwner)
 {
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("Monster_Claymore_Ani_Walk_F")
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("StrikeJaeger_Ani_Walk_F")
 		.Apply();
 }
 
@@ -122,7 +122,7 @@ void CStrikeJaeger_Walk_Front::Exit(CStrikeJaeger* pOwner)
 /*============================================================================*/
 void CStrikeJaeger_Walk_Back::Enter(CStrikeJaeger* pOwner)
 {
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("Monster_Claymore_Ani_Walk_B")
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("StrikeJaeger_Ani_Walk_B")
 		.Apply();
 }
 
@@ -137,7 +137,7 @@ void CStrikeJaeger_Walk_Back::Exit(CStrikeJaeger* pOwner)
 /*============================================================================*/
 void CStrikeJaeger_Walk_Left::Enter(CStrikeJaeger* pOwner)
 {
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("Monster_Claymore_Ani_Walk_L")
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("StrikeJaeger_Ani_Walk_L")
 		.Apply();
 }
 
@@ -152,7 +152,7 @@ void CStrikeJaeger_Walk_Left::Exit(CStrikeJaeger* pOwner)
 /*============================================================================*/
 void CStrikeJaeger_Walk_Right::Enter(CStrikeJaeger* pOwner)
 {
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("Monster_Claymore_Ani_Walk_R")
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("StrikeJaeger_Ani_Walk_R")
 		.Apply();
 }
 
@@ -167,7 +167,7 @@ void CStrikeJaeger_Walk_Right::Exit(CStrikeJaeger* pOwner)
 /*============================================================================*/
 void CStrikeJaeger_Walk_F_L::Enter(CStrikeJaeger* pOwner)
 {
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("Monster_Claymore_Ani_Walk_F_L")
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("StrikeJaeger_Ani_Walk_FL_RFoot")
 		.Apply();
 }
 
@@ -182,7 +182,7 @@ void CStrikeJaeger_Walk_F_L::Exit(CStrikeJaeger* pOwner)
 /*============================================================================*/
 void CStrikeJaeger_Walk_F_R::Enter(CStrikeJaeger* pOwner)
 {
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("Monster_Claymore_Ani_Walk_F_R")
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("StrikeJaeger_Ani_Walk_FR_RFoot")
 		.Apply();
 }
 
@@ -197,7 +197,7 @@ void CStrikeJaeger_Walk_F_R::Exit(CStrikeJaeger* pOwner)
 /*============================================================================*/
 void CStrikeJaeger_Walk_R_F::Enter(CStrikeJaeger* pOwner)
 {
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("Monster_Claymore_Ani_Walk_R_F")
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("StrikeJaeger_Ani_Walk_RF_LFoot")
 		.Apply();
 }
 

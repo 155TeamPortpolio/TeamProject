@@ -57,7 +57,7 @@ void CStrikeJaeger_Death::Register_Transitions()
 /*============================================================================*/
 void CStrikeJaeger_Death_Front::Enter(CStrikeJaeger* pOwner)
 {
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("Monster_Claymore_Ani_Death_Front")
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("StrikeJaeger_Ani_Death_Front")
 		.Apply();
 }
 
@@ -72,7 +72,7 @@ void CStrikeJaeger_Death_Front::Exit(CStrikeJaeger* pOwner)
 /*============================================================================*/
 void CStrikeJaeger_Death_Back::Enter(CStrikeJaeger* pOwner)
 {
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("Monster_Claymore_Ani_Death_Back")
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("StrikeJaeger_Ani_Death_Back")
 		.Apply();
 }
 
@@ -87,7 +87,7 @@ void CStrikeJaeger_Death_Back::Exit(CStrikeJaeger* pOwner)
 /*============================================================================*/
 void CStrikeJaeger_Death_Stay::Enter(CStrikeJaeger* pOwner)
 {
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("Monster_Claymore_Ani_Death_Stay")
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("StrikeJaeger_Ani_Death_Stay")
 		.Apply();
 }
 

@@ -31,8 +31,9 @@ void CStrikeJaeger_Chase::Update(CStrikeJaeger* pOwner, _float dt)
 
 	__super::Update(pOwner, dt);
 
-	if (false == pOwner->GetStateMachine()->Get_Bool("Chase"))
-		pOwner->Idle();
+	//if (false == pOwner->GetStateMachine()->Get_Bool("Chase"))
+	//	m_pSubStateMachine->Change_State("Run_End");
+		//pOwner->Idle();
 }
 
 void CStrikeJaeger_Chase::Exit(CStrikeJaeger* pOwner)
@@ -55,7 +56,7 @@ void CStrikeJaeger_Chase::Register_Transitions()
 /*============================================================================*/
 void CStrikeJaeger_Run_Start::Enter(CStrikeJaeger* pOwner)
 {
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("Monster_Claymore_Ani_Run_Start")
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("StrikeJaeger_Ani_Run_Start")
 		.Apply();
 }
 
@@ -70,13 +71,15 @@ void CStrikeJaeger_Run_Start::Exit(CStrikeJaeger* pOwner)
 /*============================================================================*/
 void CStrikeJaeger_Run_Loop::Enter(CStrikeJaeger* pOwner)
 {
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("Monster_Claymore_Ani_Run_Loop")
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("StrikeJaeger_Ani_Run_Loop")
 		.Loop(true)
 		.Apply();
 }
 
 void CStrikeJaeger_Run_Loop::Update(CStrikeJaeger* pOwner, _float dt)
 {
+	if (false == pOwner->GetStateMachine()->Get_Bool("Chase"))
+		m_pOwnerStateMachine->Change_State("Run_End");
 }
 
 void CStrikeJaeger_Run_Loop::Exit(CStrikeJaeger* pOwner)
@@ -86,14 +89,17 @@ void CStrikeJaeger_Run_Loop::Exit(CStrikeJaeger* pOwner)
 /*============================================================================*/
 void CStrikeJaeger_Run_End::Enter(CStrikeJaeger* pOwner)
 {
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("Monster_Claymore_Ani_Run_End")
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("StrikeJaeger_Ani_Run_End")
 		.Apply();
 }
 
 void CStrikeJaeger_Run_End::Update(CStrikeJaeger* pOwner, _float dt)
 {
+	if (m_fAnimProgress > 0.99f)
+		pOwner->Idle();
 }
 
 void CStrikeJaeger_Run_End::Exit(CStrikeJaeger* pOwner)
 {
+
 }
