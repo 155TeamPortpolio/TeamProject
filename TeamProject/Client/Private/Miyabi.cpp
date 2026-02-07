@@ -30,7 +30,7 @@
 #include "MiyabiState_SwitchIn.h"
 #include "MiyabiState_SwitchInParryAid.h"
 #include "MiyabiState_SwitchOut.h"
-//#include "MiyabiState_Hit.h"
+#include "MiyabiState_Hit.h"
 #include "MiyabiState_Evade.h"
 
 CMiyabi::CMiyabi()
@@ -325,7 +325,7 @@ HRESULT CMiyabi::Initialize_States()
 	m_pStateMachine->Register_State("Evade", CMiyabiState_Evade::Create());
 	m_pStateMachine->Register_State("SwitchIn", CMiyabiState_SwitchIn::Create());
 	m_pStateMachine->Register_State("SwitchOut", CMiyabiState_SwitchOut::Create());
-	//m_pStateMachine->Register_State("Hit", CMiyabiState_Hit::Create());
+	m_pStateMachine->Register_State("Hit", CMiyabiState_Hit::Create());
 
 	return S_OK;
 }
