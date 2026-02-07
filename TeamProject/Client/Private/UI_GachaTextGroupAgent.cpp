@@ -8,14 +8,13 @@
 
 void CUI_GachaTextGroupAgent::Show(GachaGrade eGrade)
 {
+	__super::Show(eGrade);
 }
 
 HRESULT CUI_GachaTextGroupAgent::Initialize_Prototype()
 {
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
-
-	Add_Component<CObjectContainer>();
 
 	return S_OK;
 }
@@ -32,6 +31,7 @@ HRESULT CUI_GachaTextGroupAgent::Initialize(INIT_DESC* pArg)
 
 void CUI_GachaTextGroupAgent::Update(_float dt)
 {
+	__super::Update(dt);
 }
 
 HRESULT CUI_GachaTextGroupAgent::Add_Texts()

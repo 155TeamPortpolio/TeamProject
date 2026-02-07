@@ -35,6 +35,7 @@ HRESULT CUI_GachaTextReveal::Initialize(INIT_DESC* pArg)
 
 void CUI_GachaTextReveal::Update(_float dt)
 {
+	Get_Component<CObjectContainer>()->UpdateChild(dt);
 }
 
 HRESULT CUI_GachaTextReveal::Add_TextGroups()
@@ -59,7 +60,7 @@ HRESULT CUI_GachaTextReveal::Add_TextGroup(const string& strLevelTag, const stri
 		return E_FAIL;
 
 	Get_Component<CObjectContainer>()->Add_Child(pObj);
-	m_pGroups[ENUM(eType)] = dynamic_cast<CUI_GachaTextGroupAgent*>(pObj);
+	m_pGroups[ENUM(eType)] = dynamic_cast<CUI_GachaTextGroup*>(pObj);
 
 	return S_OK;
 }

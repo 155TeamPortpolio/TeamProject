@@ -8,6 +8,8 @@
 
 void CUI_GachaTextGroupEngine::Show(GachaGrade eGrade)
 {
+	__super::Show(eGrade);
+
 	string strKey = "GachaStage_UI_EngineB_01";
 
 	switch (eGrade)
@@ -29,8 +31,6 @@ HRESULT CUI_GachaTextGroupEngine::Initialize_Prototype()
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
 
-	Add_Component<CObjectContainer>();
-
 	return S_OK;
 }
 
@@ -46,6 +46,7 @@ HRESULT CUI_GachaTextGroupEngine::Initialize(INIT_DESC* pArg)
 
 void CUI_GachaTextGroupEngine::Update(_float dt)
 {
+	__super::Update(dt);
 }
 
 HRESULT CUI_GachaTextGroupEngine::Add_Texts()
