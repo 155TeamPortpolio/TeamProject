@@ -1,0 +1,243 @@
+{
+  "AnimPath": "../Bin/Resources/Zero/Enemy/MeleeJaeger/Anim/",
+  "PreTransform": {
+    "_11": -0.009999999776482582,
+    "_12": 0.0,
+    "_13": 0.0,
+    "_14": 0.0,
+    "_21": 0.0,
+    "_22": 0.009999999776482582,
+    "_23": 0.0,
+    "_24": 0.0,
+    "_31": 0.0,
+    "_32": 0.0,
+    "_33": -0.009999999776482582,
+    "_34": 0.0,
+    "_41": 0.0,
+    "_42": 0.0,
+    "_43": 0.0,
+    "_44": 1.0
+  },
+  "Clips": [
+    {
+      "ClipTag": "MeleeJaeger_Ani_Attack_01",
+      "Events": []
+    },
+    {
+      "ClipTag": "MeleeJaeger_Ani_Attack_02",
+      "Events": []
+    },
+    {
+      "ClipTag": "MeleeJaeger_Ani_Attack_03",
+      "Events": []
+    },
+    {
+      "ClipTag": "MeleeJaeger_Ani_Attack_04",
+      "Events": []
+    },
+    {
+      "ClipTag": "MeleeJaeger_Ani_Attack_05",
+      "Events": []
+    },
+    {
+      "ClipTag": "MeleeJaeger_Ani_Born",
+      "Events": []
+    },
+    {
+      "ClipTag": "MeleeJaeger_Ani_Death_Back",
+      "Events": []
+    },
+    {
+      "ClipTag": "MeleeJaeger_Ani_Death_Front",
+      "Events": []
+    },
+    {
+      "ClipTag": "MeleeJaeger_Ani_Death_Stay",
+      "Events": []
+    },
+    {
+      "ClipTag": "MeleeJaeger_Ani_Debuff_Stun_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "MeleeJaeger_Ani_Debuff_Stun_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "MeleeJaeger_Ani_Evade",
+      "Events": []
+    },
+    {
+      "ClipTag": "MeleeJaeger_Ani_Hit_H_Back",
+      "Events": []
+    },
+    {
+      "ClipTag": "MeleeJaeger_Ani_Hit_H_Front",
+      "Events": []
+    },
+    {
+      "ClipTag": "MeleeJaeger_Ani_Hit_Knock",
+      "Events": []
+    },
+    {
+      "ClipTag": "MeleeJaeger_Ani_Hit_L_Back_Down",
+      "Events": []
+    },
+    {
+      "ClipTag": "MeleeJaeger_Ani_Hit_L_Back_Left",
+      "Events": []
+    },
+    {
+      "ClipTag": "MeleeJaeger_Ani_Hit_L_Back_Right",
+      "Events": []
+    },
+    {
+      "ClipTag": "MeleeJaeger_Ani_Hit_L_Back_Up",
+      "Events": []
+    },
+    {
+      "ClipTag": "MeleeJaeger_Ani_Hit_L_Front_Down",
+      "Events": []
+    },
+    {
+      "ClipTag": "MeleeJaeger_Ani_Hit_L_Front_Left",
+      "Events": []
+    },
+    {
+      "ClipTag": "MeleeJaeger_Ani_Hit_L_Front_Right",
+      "Events": []
+    },
+    {
+      "ClipTag": "MeleeJaeger_Ani_Hit_L_Front_Up",
+      "Events": []
+    },
+    {
+      "ClipTag": "MeleeJaeger_Ani_Hit_Shake",
+      "Events": []
+    },
+    {
+      "ClipTag": "MeleeJaeger_Ani_Hit_Sky_Fly_Back_OnGround",
+      "Events": []
+    },
+    {
+      "ClipTag": "MeleeJaeger_Ani_Hit_Sky_Fly_Back_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "MeleeJaeger_Ani_Hit_Sky_Fly_Front_OnGround",
+      "Events": []
+    },
+    {
+      "ClipTag": "MeleeJaeger_Ani_Hit_Sky_Fly_Front_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "MeleeJaeger_Ani_Hit_Sky_Fly_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "MeleeJaeger_Ani_Hit_Sky_InAir_OnGround",
+      "Events": []
+    },
+    {
+      "ClipTag": "MeleeJaeger_Ani_Hit_Sky_InAir_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "MeleeJaeger_Ani_Hit_Sky_Knock_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "MeleeJaeger_Ani_Hit_Sky_Knock_OnGround",
+      "Events": []
+    },
+    {
+      "ClipTag": "MeleeJaeger_Ani_Hit_Sky_Knock_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "MeleeJaeger_Ani_Hit_Sky_Throw_Back_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "MeleeJaeger_Ani_Hit_Sky_Throw_Front_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "MeleeJaeger_Ani_Hit_Sky_Throw_High_Back_OnGround",
+      "Events": []
+    },
+    {
+      "ClipTag": "MeleeJaeger_Ani_Hit_Sky_Throw_High_Back_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "MeleeJaeger_Ani_Hit_Sky_Throw_High_Front_OnGround",
+      "Events": []
+    },
+    {
+      "ClipTag": "MeleeJaeger_Ani_Hit_Sky_Throw_High_Front_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "MeleeJaeger_Ani_Hit_Sky_Throw_Low_Back_OnGround",
+      "Events": []
+    },
+    {
+      "ClipTag": "MeleeJaeger_Ani_Hit_Sky_Throw_Low_Back_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "MeleeJaeger_Ani_Hit_Sky_Throw_Low_Front_OnGround",
+      "Events": []
+    },
+    {
+      "ClipTag": "MeleeJaeger_Ani_Hit_Sky_Throw_Low_Front_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "MeleeJaeger_Ani_Hit_Stay",
+      "Events": []
+    },
+    {
+      "ClipTag": "MeleeJaeger_Ani_Idle",
+      "Events": []
+    },
+    {
+      "ClipTag": "MeleeJaeger_Ani_Move_B",
+      "Events": []
+    },
+    {
+      "ClipTag": "MeleeJaeger_Ani_Move_F",
+      "Events": []
+    },
+    {
+      "ClipTag": "MeleeJaeger_Ani_Move_F_R",
+      "Events": []
+    },
+    {
+      "ClipTag": "MeleeJaeger_Ani_Move_L",
+      "Events": []
+    },
+    {
+      "ClipTag": "MeleeJaeger_Ani_Move_R",
+      "Events": []
+    },
+    {
+      "ClipTag": "MeleeJaeger_Ani_Move_R_F",
+      "Events": []
+    },
+    {
+      "ClipTag": "MeleeJaeger_Ani_Run_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "MeleeJaeger_Ani_Run_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "MeleeJaeger_Ani_Run_Start",
+      "Events": []
+    }
+  ]
+}

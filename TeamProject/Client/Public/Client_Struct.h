@@ -144,6 +144,7 @@ namespace Client {
 
 	typedef struct tagGachaResultDesc {
 		_int		ID;
+		GachaType	Type;
 		GachaGrade	Grade;
 		string		strModel;
 		string		strMaterial;
