@@ -70,6 +70,9 @@ private:
     STAGE_LIGHT             TopLight;
     STAGE_LIGHT             MiddleLight;
 
+private:
+    class CUI_GachaTextReveal* m_pUITextReveal = {};
+
 public:
     static CGachaStage* Create(vector<GACHA_RESULT_DESC>* Desc);
     virtual CGameObject* Clone(INIT_DESC* pArg) override;

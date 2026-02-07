@@ -1185,10 +1185,22 @@
     <Filter Include="02. GameObject\Object\Gacha\GachaProps\GachaStage\FootStage">
       <UniqueIdentifier>{ebc006d0-8a7d-4a82-a4f3-8660ecd31a07}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\UI\02. 3D\Mesh\UI_GachaReveal">
+      <UniqueIdentifier>{6f7a1e1a-1051-4414-a663-f226a6f0240f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\02. 3D\Mesh\UI_GachaReveal\UI_GachaTextGroup">
+      <UniqueIdentifier>{4e1a7311-bfee-4889-8bd5-e42198151218}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\02. 3D\Mesh\UI_GachaReveal\UI_GachaTextGroup\Agent">
+      <UniqueIdentifier>{9330603c-8038-46a5-891d-4a279a525982}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\02. 3D\Mesh\UI_GachaReveal\UI_GachaTextGroup\Engine">
+      <UniqueIdentifier>{f8d4ca98-8924-4052-9095-e341b1e6c32b}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02. GameObject\Object\Enemy\Boss\Defiler\MiasmaBlade">
       <UniqueIdentifier>{44e42690-e6c7-45f8-a497-d81095d6108e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\UI\02. 3D\Mesh\UI_GachaText">
+    <Filter Include="02. GameObject\UI\02. 3D\Mesh\UI_GachaReveal\UI_GachaText">
       <UniqueIdentifier>{ed223e07-20d2-4adb-bf8a-94b7c189aa86}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -2300,8 +2312,20 @@
     <ClInclude Include="..\Public\MiyabiState_CounterAttack.h">
       <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Attack\Counter</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UI_GachaTextGroupEngine.h">
+      <Filter>02. GameObject\UI\02. 3D\Mesh\UI_GachaReveal\UI_GachaTextGroup\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_GachaTextGroup.h">
+      <Filter>02. GameObject\UI\02. 3D\Mesh\UI_GachaReveal\UI_GachaTextGroup</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_GachaTextReveal.h">
+      <Filter>02. GameObject\UI\02. 3D\Mesh\UI_GachaReveal</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\UI_GachaText.h">
-      <Filter>02. GameObject\UI\02. 3D\Mesh\UI_GachaText</Filter>
+      <Filter>02. GameObject\UI\02. 3D\Mesh\UI_GachaReveal\UI_GachaText</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_GachaTextGroupAgent.h">
+      <Filter>02. GameObject\UI\02. 3D\Mesh\UI_GachaReveal\UI_GachaTextGroup\Agent</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\MiyabiState_AssaultAttack.h">
       <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Attack\Assault</Filter>
@@ -3377,8 +3401,20 @@
     <ClCompile Include="..\Private\MiyabiState_CounterAttack.cpp">
       <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Attack\Counter</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\UI_GachaTextGroupEngine.cpp">
+      <Filter>02. GameObject\UI\02. 3D\Mesh\UI_GachaReveal\UI_GachaTextGroup\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_GachaTextGroup.cpp">
+      <Filter>02. GameObject\UI\02. 3D\Mesh\UI_GachaReveal\UI_GachaTextGroup</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_GachaTextReveal.cpp">
+      <Filter>02. GameObject\UI\02. 3D\Mesh\UI_GachaReveal</Filter>
+    </ClCompile>
     <ClCompile Include="..\Private\UI_GachaText.cpp">
-      <Filter>02. GameObject\UI\02. 3D\Mesh\UI_GachaText</Filter>
+      <Filter>02. GameObject\UI\02. 3D\Mesh\UI_GachaReveal\UI_GachaText</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_GachaTextGroupAgent.cpp">
+      <Filter>02. GameObject\UI\02. 3D\Mesh\UI_GachaReveal\UI_GachaTextGroup\Agent</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\MiyabiState_AssaultAttack.cpp">
       <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Attack\Assault</Filter>
