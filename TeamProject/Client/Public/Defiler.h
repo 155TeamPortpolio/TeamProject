@@ -10,7 +10,6 @@ class CStateMachine;
 class CDefiler :
     public CEnemy
 {
-public:
 
 private:
     CDefiler();
@@ -38,12 +37,14 @@ public:
 
 public:
     void Set_CCTPos(_vector3 pos);
+
 private:
     void MoveByTraceMode(_float dt, _float moveScale = 1.f);
     void RotateToTarget(_float dt, _float rotateSpeed = 1.f);
     void Update_States(_float dt);
     void Route_AnimEvent(CAnimator3D* animator);
     void Controll_Attack(const string& event);
+    void Controll_Summon(const string& event);
     void Update_Dissolve(_float dt);
 
 private:

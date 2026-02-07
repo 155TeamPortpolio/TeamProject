@@ -53,9 +53,8 @@ HRESULT CFirstLevel::Awake()
 	OBJ->Add_Object(janeDoe,   {G_GlobalLevelKey, "Model_Layer" });
 	OBJ->Add_Object(miyabi,    {G_GlobalLevelKey, "Model_Layer" });
 	OBJ->Add_Object(gacha,     {G_GlobalLevelKey, "Gacha_Layer" });
-//	OBJ->Add_Object(footStage, {G_GlobalLevelKey, "Gacha_Layer" });
-
-	//OBJ->Add_Object(demoGrid,  {G_GlobalLevelKey, "Grid_Layer"  });
+    //OBJ->Add_Object(footStage, {G_GlobalLevelKey, "Gacha_Layer"});
+	//OBJ->Add_Object(demoGrid,  {G_GlobalLevelKey, "Grid_Layer" });
 
 	CAM->Set_MainCam(freeCam->Get_Component<CCamera>());
 		
