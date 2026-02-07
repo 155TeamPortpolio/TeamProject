@@ -308,7 +308,6 @@ void CBattleFXFlow::AddStep(StepFunc step)
 	m_steps.emplace_back(move(step));
 }
 
-/*N�� ��ٸ�*/
 void CBattleFXFlow::AddWait(_float duration)
 {
 	_float elapsed = 0.f;
@@ -318,7 +317,6 @@ void CBattleFXFlow::AddWait(_float duration)
 		});
 }
 
-/*1ȸ ȣ�� �� �Ѿ*/
 void CBattleFXFlow::AddCall(function<void()> fn)
 {
 	m_steps.emplace_back([fn = std::move(fn)](float) mutable -> bool {
@@ -345,7 +343,6 @@ void CBattleFXFlow::AddParallel(_float duration, function<void(SubFlow& subFlow)
 	m_parallelTracks.emplace_back(move(track));
 }
 
-/*�Ҽ� ��ǥġ ���� ����*/
 void CBattleFXFlow::AddLerpFloatFromTo(_float* valuePtr, _float fromValue, _float toValue, _float duration, EaseType ease)
 {
 	if (!valuePtr || duration <= 0.f)
@@ -366,14 +363,12 @@ void CBattleFXFlow::AddLerpFloatFromTo(_float* valuePtr, _float fromValue, _floa
 		});
 }
 
-/*������ ���� 0 >��ǥ�� ������*/
 void CBattleFXFlow::AddLerpFloatTo(_float* valuePtr, _float toValue, _float duration, EaseType ease)
 {
 	if (!valuePtr) return;
 	AddLerpFloatFromTo(valuePtr, *valuePtr, toValue, duration, ease);
 }
 
-/*�÷� ����*/
 void CBattleFXFlow::AddLerpColor3FromTo(_float3* colorPtr, const _float3& fromValue, const _float3& toValue, _float duration, EaseType ease)
 {
 	if (!colorPtr || duration <= 0.f)
@@ -397,14 +392,12 @@ void CBattleFXFlow::AddLerpColor3FromTo(_float3* colorPtr, const _float3& fromVa
 		});
 }
 
-/*�÷� ���� ����*/
 void CBattleFXFlow::AddLerpColor3To(_float3* colorPtr, const _float3& toValue, _float duration, EaseType ease)
 {
 	if (!colorPtr) return;
 	AddLerpColor3FromTo(colorPtr, *colorPtr, toValue, duration, ease);
 }
 
-/*�Դٰ��� �÷� */
 void CBattleFXFlow::AddPingPongColor3(_float3* colorPtr, const _float3& peakValue,
 	_float duration, EaseType ease)
 {
