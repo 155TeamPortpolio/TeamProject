@@ -27,6 +27,8 @@
 #include "ThugBulkyEnforcer.h"
 #include "ThugAssaulter.h"
 #include "Defiler.h"
+#include "MiasmaBlade.h"
+
 #include "EnemyAttackCollider.h"
 #include "EnemyTriggerCollider.h"
 #include "StageRouter.h"
@@ -121,6 +123,8 @@ void CZero_Level::Ready_Prototype()
 {
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_EnemyAttackCollider", CEnemyAttackCollider::Create());
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_EnemyTriggerCollider", CEnemyTriggerCollider::Create());
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_Defiler", CDefiler::Create());
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_MiasmaBlade", CMiasmaBlade::Create());
 
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_ZeroPortal", CZeroPortal::Create());
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_LevelObject_ZeroPortal", CStageRouter::Create());

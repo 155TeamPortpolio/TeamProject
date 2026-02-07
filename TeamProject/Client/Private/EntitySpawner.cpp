@@ -55,6 +55,10 @@ static unordered_map<string, Spawner::OBJ_SPEC> s_AmbientActorTable =
 {
 	{ "MilitaryHelicopter",     Spawner::OBJ_SPEC{ "MilitaryHelicopter", &CMilitaryHelicopter::Create }}
 };
+
+static unordered_map<string, Spawner::OBJ_SPEC> s_ETCTable =
+{
+};
 #pragma endregion
 
 /* --------------------------------------------------------------------------------------------------------------------- */
@@ -85,6 +89,7 @@ OBJECT_HANDLE Client::Spawner::Create_Entity(const SPAWNER_DESC& Desc)
 	case 1:	return Create_Interactable(Desc);	break;
 	case 2: return Create_AmbientActor(Desc);	break;
 	case 3: return Create_Invwall(Desc);		break;
+
 	case 4:	return Create_ETC(Desc);			break;
 	default:return OBJECT_HANDLE();				break;
 	}
@@ -261,6 +266,7 @@ OBJECT_HANDLE Client::Spawner::Create_Invwall(const SPAWNER_DESC& Desc)
 	ObjectManager()->Add_Object(Object, { Desc.tagLevel, "InvisibleWall_Layer" });
 	return Object->Get_Handle();
 }
+#pragma endregion
 
 /* --------------------------------------------------------------------------------------------------------------------- */
 
@@ -282,6 +288,21 @@ OBJECT_HANDLE Client::Spawner::Create_ETC(const SPAWNER_DESC& Desc)
 				Desc.vRotation.z));
 
 		character->Get_Component<CCharacterController>()->Set_FootPosition(XMLoadFloat3(&Desc.vTranslation));
+	}
+	else {
+		auto ETC = s_ETCTable.find(Desc.tagName);
+		if (ETC == s_ETCTable.end())
+			return OBJECT_HANDLE();
+
+		PrototypeManager()->Add_ProtoType(Desc.tagLevel, ETC->second.ProtoTag, ETC->second.Create());
+
+		CGameObject* Object = Builder::Create_Object({ Desc.tagLevel, ETC->second.ProtoTag })
+			.Position(Desc.vTranslation)
+			.Scale(Desc.vScale)
+			.Build(Desc.tagName);
+
+		ObjectManager()->Add_Object(Object, { Desc.tagLevel, "ETC_Layer" });
+		return Object->Get_Handle();
 	}
 
 	return OBJECT_HANDLE();

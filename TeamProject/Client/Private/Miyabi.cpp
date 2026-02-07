@@ -24,10 +24,12 @@
 #include "MiyabiState_Idle.h"
 #include "MiyabiState_Move.h"
 #include "MiyabiState_Attack.h"
+#include "MiyabiState_NormalAttack.h"
+#include "MiyabiState_CounterAttack.h"
+//#include "MiyabiState_AssaultAttack.h"
 #include "MiyabiState_SwitchIn.h"
 #include "MiyabiState_SwitchInParryAid.h"
 #include "MiyabiState_SwitchOut.h"
-#include "MiyabiState_NormalAttack.h"
 //#include "MiyabiState_Hit.h"
 #include "MiyabiState_Evade.h"
 
@@ -710,33 +712,56 @@ void CMiyabi::Process_AttackInput(const string& strCurrentState)
 		if (!pAttack || !pAttack->Get_SubStateMachine())
 			return;
 
-		if (pAttack->Get_SubStateMachine()->Get_CurrentStateName() != "NormalAttack")
-			return;
+		string strAttackType = pAttack->Get_SubStateMachine()->Get_CurrentStateName();
 
-		CMiyabiState_NormalAttack* pNormal = static_cast<CMiyabiState_NormalAttack*>(
-			pAttack->Get_SubStateMachine()->Get_State("NormalAttack"));
-		if (pNormal && pNormal->Get_SubStateMachine())
-			pNormal->Get_SubStateMachine()->Set_Trigger("NextCombo");
+		if (strAttackType == "NormalAttack")
+		{
+			CMiyabiState_NormalAttack* pNormal = static_cast<CMiyabiState_NormalAttack*>(
+				pAttack->Get_SubStateMachine()->Get_State("NormalAttack"));
+			if (pNormal && pNormal->Get_SubStateMachine())
+				pNormal->Get_SubStateMachine()->Set_Trigger("NextCombo");
+		}
+		else if (strAttackType == "CounterAttack")
+		{
+			CMiyabiState_CounterAttack* pCounter = static_cast<CMiyabiState_CounterAttack*>(
+				pAttack->Get_SubStateMachine()->Get_CurrentState());
+			if (!pCounter || !pCounter->Get_SubStateMachine())
+				return;
+			if (!pCounter->Is_EndState())
+			{
+				pAttack->Get_SubStateMachine()->Set_Int("ComboEntryIndex", 3);
+				pCounter->Get_SubStateMachine()->Set_Bool("ReserveNormal", true);
+			}
+		}
+		//else if (strAttackType == "AssaultAttack")
+		//{
+		//	CMiyabiState_AssaultAttack* pAssault = static_cast<CMiyabiState_AssaultAttack*>(
+		//		pAttack->Get_SubStateMachine()->Get_CurrentState());
+		//	if (!pAssault || !pAssault->Get_SubStateMachine())
+		//		return;
+		//	pAttack->Get_SubStateMachine()->Set_Int("ComboEntryIndex", 4);
+		//	pAssault->Get_SubStateMachine()->Set_Bool("ReserveNormal", true);
+		//}
 	}
 	else if (strCurrentState == "SwitchIn")
 	{
-		//CMiyabiState_SwitchIn* pSwitchIn = static_cast<CMiyabiState_SwitchIn*>(
-		//	m_pStateMachine->Get_CurrentState());
-		//if (!pSwitchIn || !pSwitchIn->Get_SubStateMachine())
-		//	return;
+		CMiyabiState_SwitchIn* pSwitchIn = static_cast<CMiyabiState_SwitchIn*>(
+			m_pStateMachine->Get_CurrentState());
+		if (!pSwitchIn || !pSwitchIn->Get_SubStateMachine())
+			return;
 
-		//string strSwitchType = pSwitchIn->Get_SubStateMachine()->Get_CurrentStateName();
-		//if (strSwitchType == "SwitchInParryAid")
-		//{
-		//	CMiyabiState_SwitchInParryAid* pParryAid = static_cast<CMiyabiState_SwitchInParryAid*>(
-		//		pSwitchIn->Get_SubStateMachine()->Get_CurrentState());
-		//	if (!pSwitchIn || !pSwitchIn->Get_SubStateMachine())
-		//		return;
-		//	if (!pParryAid->Is_EndState())
-		//	{
-		//		pParryAid->Get_SubStateMachine()->Set_Bool("ReserveAssaultAid", true);
-		//	}
-		//}
+		string strSwitchType = pSwitchIn->Get_SubStateMachine()->Get_CurrentStateName();
+		if (strSwitchType == "SwitchInParryAid")
+		{
+			CMiyabiState_SwitchInParryAid* pParryAid = static_cast<CMiyabiState_SwitchInParryAid*>(
+				pSwitchIn->Get_SubStateMachine()->Get_CurrentState());
+			if (!pSwitchIn || !pSwitchIn->Get_SubStateMachine())
+				return;
+			if (!pParryAid->Is_EndState())
+			{
+				pParryAid->Get_SubStateMachine()->Set_Bool("ReserveAssaultAid", true);
+			}
+		}
 	}
 }
 
@@ -774,22 +799,22 @@ void CMiyabi::Process_EndState(const string& strCurrentState)
 				m_pStateMachine->Set_Trigger("ToIdle");
 		}
 	}
-	//else if (strCurrentState == "SwitchIn")
-	//{
-	//	CMiyabiState_SwitchIn* pSwitchIn = static_cast<CMiyabiState_SwitchIn*>(
-	//		m_pStateMachine->Get_CurrentState());
-	//	if (!pSwitchIn) return;
+	else if (strCurrentState == "SwitchIn")
+	{
+		CMiyabiState_SwitchIn* pSwitchIn = static_cast<CMiyabiState_SwitchIn*>(
+			m_pStateMachine->Get_CurrentState());
+		if (!pSwitchIn) return;
 
-	//	IHState<CMiyabi>* pSwitchInType = dynamic_cast<IHState<CMiyabi>*>(
-	//		pSwitchIn->Get_SubStateMachine()->Get_CurrentState());
-	//	if (pSwitchInType && pSwitchInType->Is_EndState())
-	//	{
-	//		IBaseState<CMiyabi>* pEnd = pSwitchInType->Get_SubStateMachine()->Get_CurrentState();
-	//		if (m_bIsEvade) return;
-	//		if (pEnd && (Is_Input() || pEnd->Is_AnimEnd()))
-	//			m_pStateMachine->Set_Trigger("ToIdle");
-	//	}
-	//}
+		IHState<CMiyabi>* pSwitchInType = dynamic_cast<IHState<CMiyabi>*>(
+			pSwitchIn->Get_SubStateMachine()->Get_CurrentState());
+		if (pSwitchInType && pSwitchInType->Is_EndState())
+		{
+			IBaseState<CMiyabi>* pEnd = pSwitchInType->Get_SubStateMachine()->Get_CurrentState();
+			if (m_bIsEvade) return;
+			if (pEnd && (Is_Input() || pEnd->Is_AnimEnd()))
+				m_pStateMachine->Set_Trigger("ToIdle");
+		}
+	}
 	//else if (strCurrentState == "Hit")
 	//{
 	//	CMiyabiState_Hit* pHit = static_cast<CMiyabiState_Hit*>(
