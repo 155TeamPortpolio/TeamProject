@@ -226,6 +226,18 @@ void CJaneDoe::On_SwitchOut()
 {
     __super::On_SwitchOut();
 
+    m_bIsAttack = false;
+    m_bIsEvade = false;
+    m_bEvadeBuffer = false;
+    m_bReserveCombo = false;
+
+    m_pStateMachine->Set_Bool("IsMove", false);
+    m_pStateMachine->Reset_Trigger("Attack");
+    m_pStateMachine->Reset_Trigger("ToEvade");
+    m_pStateMachine->Reset_Trigger("ToMove");
+    m_pStateMachine->Reset_Trigger("ToIdle");
+    m_pStateMachine->Reset_Trigger("ResetState");
+
     if (m_pStateMachine->Get_CurrentStateName() == "Attack")
     {
         m_pStateMachine->Set_Bool("OutReserve", true);

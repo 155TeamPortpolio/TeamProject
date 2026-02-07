@@ -18,6 +18,7 @@
 #include "Animator3D.h"
 #include "CharacterController.h"
 #include "ObjectContainer.h"
+#include "AudioSource.h"
 
 #include "StateMachine.h"
 #include "MiyabiState_Start.h"
@@ -50,6 +51,8 @@ HRESULT CMiyabi::Initialize_Prototype()
 	Get_Component<CModel>()->Link_Model(G_GlobalLevelKey, "Miyabi.model");
 	Get_Component<CMaterial>()->Link_Material(G_GlobalLevelKey, "Miyabi.mat");
 
+	Add_Component<CAudioSource>();
+
 	return S_OK;
 }
 
@@ -63,6 +66,8 @@ HRESULT CMiyabi::Initialize(INIT_DESC* pArg)
 
 	if (FAILED(Initialize_Weapon()))
 		return E_FAIL;
+
+	Get_Component<CAudioSource>()->SoundFolder(G_GlobalLevelKey, "../Bin/Resources/Sound/");
 
 	return S_OK;
 }
@@ -214,6 +219,18 @@ void CMiyabi::On_ChainParry()
 void CMiyabi::On_SwitchOut()
 {
 	__super::On_SwitchOut();
+
+	m_bIsAttack = false;
+	m_bIsEvade = false;
+	m_bEvadeBuffer = false;
+	m_bReserveCombo = false;
+
+	m_pStateMachine->Set_Bool("IsMove", false);
+	m_pStateMachine->Reset_Trigger("Attack");
+	m_pStateMachine->Reset_Trigger("ToEvade");
+	m_pStateMachine->Reset_Trigger("ToMove");
+	m_pStateMachine->Reset_Trigger("ToIdle");
+	m_pStateMachine->Reset_Trigger("ResetState");
 
 	if (m_pStateMachine->Get_CurrentStateName() == "Attack")
 	{

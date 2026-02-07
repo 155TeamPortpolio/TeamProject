@@ -107,13 +107,6 @@ void CMiyabiState_SwitchInParryAid_L_Loop::Enter(CMiyabi* pOwner)
         .BlendDuration(0.1f)
         .Speed(2.f)
         .Apply();
-
-    OBJECT_HANDLE handle = pOwner->Get_ParryHandle();
-    if (handle.isValid())
-    {
-        dynamic_cast<CEnemy*>(handle.Get())->Parried();
-        BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::PARRY);
-    }
 }
 
 void CMiyabiState_SwitchInParryAid_L_Loop::Update(CMiyabi* pOwner, _float dt)

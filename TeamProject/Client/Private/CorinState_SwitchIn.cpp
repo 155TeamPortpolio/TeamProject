@@ -58,8 +58,12 @@ void CCorinState_SwitchIn::Update(CCorin* pOwner, _float dt)
     auto pCorinState = pOwner->Get_StateMachine();
     if (pCorinState->Get_Bool("OutReserve"))
     {
-        if (m_pSubStateMachine->Get_CurrentState()->Get_Tag() == "End" ||
-            Is_AnimEnd())
+        IHState<CCorin>* pSub = dynamic_cast<IHState<CCorin>*>(m_pSubStateMachine->Get_CurrentState());
+        bool bEndState = false;
+        if (pSub && pSub->Get_SubStateMachine())
+            bEndState = pSub->Get_SubStateMachine()->Get_CurrentState()->Get_Tag() == "End";
+
+        if (bEndState || Is_AnimEnd())
         {
             pCorinState->Set_Trigger("SwitchOut");
             pCorinState->Set_Bool("OutReserve", false);
