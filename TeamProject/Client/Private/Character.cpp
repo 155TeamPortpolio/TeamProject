@@ -301,7 +301,7 @@ OBJECT_HANDLE CCharacter::Calculate_Parry()
     m_vParryPos.y = Get_WorldPos().y;
     m_vParryLook = vAttackPos - m_vParryPos;
     m_vParryLook.Normalize();
-    m_vParryPos.y += 0.1f;
+    m_vParryPos.y += 0.5f;
 
     return targetHandle;
 }

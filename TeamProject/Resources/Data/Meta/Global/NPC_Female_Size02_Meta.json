@@ -1,0 +1,691 @@
+{
+  "AnimPath": "../Bin/Resources/MainCity/NPC/FemaleAnim/",
+  "PreTransform": {
+    "_11": -0.009999999776482582,
+    "_12": 0.0,
+    "_13": 0.0,
+    "_14": 0.0,
+    "_21": 0.0,
+    "_22": 0.009999999776482582,
+    "_23": 0.0,
+    "_24": 0.0,
+    "_31": 0.0,
+    "_32": 0.0,
+    "_33": -0.009999999776482582,
+    "_34": 0.0,
+    "_41": 0.0,
+    "_42": 0.0,
+    "_43": 0.0,
+    "_44": 1.0
+  },
+  "Clips": [
+    {
+      "ClipTag": "NPC_Female_Size02_A_Ani_MainCity_Idle_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_Blink",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Crouch_KneelingCry_Loop_092",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_DefaultPose_500_PackageB_Bone",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_DefaultPose_500_PackageE_Bone",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_EchoPose04_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_EchoPose08_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_HIA_Sit_Check_033",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_HIA_Stand_LeanRelax_032",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Lay_DeadBody_075",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Lay_Leaning01_087",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_OL_Stand_Anxious_031",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_PracticeMartialArts02_082",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Relaxation_Stand_Watch01_030",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Run_Loop_081",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Sit_BenchPlayPhone_023",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Sit_Bind01_059",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Sit_CafePlayPhone01_025",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Sit_CafePlayPhone02_026",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Sit_Claping_Once_097",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Sit_Drunk_069",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Sit_Idle_Loop_096",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Sit_Injured01_027",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Sit_PlayMahjong01_083",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Sit_PlaySand01_088",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Sit_PlayWater01_089",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Sit_PS_Server01_055",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Sit_RamenPlayPhone_024",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Sit_Talking_Once_095",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Sit_VillagerIdle02Mix_311",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Sit_Wait01_056",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Sit_Wait01_056_PackageB_Bone",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Sit_Wait02_060",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Sit_Wait02_060_PackageB_Bone",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Sit_Wait03_074",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Sit_Wait_049",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Sit_Wait_049_PackageB_Bone",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Sit_Watch01_065",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Sit_Watch02_066",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Stand_AHF_Idle01_053",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Stand_AHF_Think01_054",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Stand_Binoculars_070",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Stand_Bowing_Once_093",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Stand_Calm01_017",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Stand_Calm01_017_PackageB_Bone",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Stand_Calm02_018",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Stand_Calm02_018_PackageB_Bone",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Stand_Cheer01_Loop_090",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Stand_Cheer02_Loop_091",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Stand_Claping_Once_094",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Stand_Cough01_071",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Stand_DF_Idle01_051",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Stand_DF_Think01_052",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Stand_Idle01_001",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Stand_Idle01_001_PackageB_Bone",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Stand_Idle01_001_PackageE_Bone",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Stand_Idle02_002",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Stand_Idle02_002_PackageB_Bone",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Stand_Idle03_003",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Stand_Idle03_003_PackageE_Bone",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Stand_Leaning_016",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Stand_Look_048",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Stand_MotorLdle01_063",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Stand_MotorLean01_064",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Stand_Negative_029",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Stand_PlayPhone_005",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Stand_PlayPhone_005_PackageB_Bone",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Stand_PlayPhone_005_PackageE_Bone",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Stand_PlayStones01_084",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Stand_PlayStones02_085",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Stand_Pose_004",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Stand_Positive_028",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Stand_PositiveMix_301",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Stand_Prayer01_Loop_086",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Stand_Reject01_057",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Stand_Reject02_058",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Stand_Scare01_013",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Stand_Scare02_014",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Stand_Scare03_015",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Stand_Seller_072",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Stand_Seller_Sleepy_073",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Stand_Server_061",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Stand_Talk02_007",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Stand_Talk02_007_PackageE_Bone",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Stand_Talk03_008",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Stand_Talk03_008_PackageE_Bone",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Stand_Talk04_009",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Stand_Talk05_010",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Stand_Talk_006",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Stand_Talk_006_PackageE_Bone",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Stand_Thinkng02_012",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Stand_Thinkng_011",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Stand_Thinkng_011_PackageE_Bone",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Stand_VillagerIdle01_062",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Stand_VillagerIdle01Mix_302",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Stand_VillagerIdle02_067",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Stand_VillagerIdle03_068",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Stand_Work_050",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_TurnAround_L_077",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_TurnAround_L_077_PackageB_Bone",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_TurnAround_L_077_PackageE_Bone",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_TurnAround_LMixIdle02_303",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_TurnAround_LMixPlayPhone_307",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_TurnAround_R_078",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_TurnAround_R_078_PackageB_Bone",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_TurnAround_R_078_PackageE_Bone",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_TurnAround_RMixIdle02_304",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_TurnAround_RMixPlayPhone_308",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Walk_DownStairs_080",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Walk_DownStairs_080_PackageB_Bone",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Walk_DownStairsMixIdle02_306",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Walk_DownStairsMixPlayPhone_310",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Walk_Fast_019",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Walk_Fast_019_PackageB_Bone",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Walk_Fast_019_PackageE_Bone",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Walk_Fast_End_L_040",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Walk_Fast_End_L_040_PackageB_Bone",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Walk_Fast_End_L_040_PackageE_Bone",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Walk_Fast_End_R_041",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Walk_Fast_End_R_041_PackageB_Bone",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Walk_Fast_End_R_041_PackageE_Bone",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Walk_Fast_Start_039",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Walk_Fast_Start_039_PackageB_Bone",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Walk_Fast_Start_039_PackageE_Bone",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Walk_Loop_037",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Walk_Loop_037_PackageB_Bone",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Walk_Loop_037_PackageE_Bone",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Walk_Normal_020",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Walk_PlayPhone_022",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Walk_PlayPhone_022_PackageB_Bone",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Walk_PlayPhone_022_PackageE_Bone",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Walk_PlayPhone_End_L_046",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Walk_PlayPhone_End_L_046_PackageB_Bone",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Walk_PlayPhone_End_L_046_PackageE_Bone",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Walk_PlayPhone_End_R_047",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Walk_PlayPhone_End_R_047_PackageB_Bone",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Walk_PlayPhone_End_R_047_PackageE_Bone",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Walk_PlayPhone_Start_045",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Walk_PlayPhone_Start_045_PackageB_Bone",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Walk_PlayPhone_Start_045_PackageE_Bone",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Walk_UpStairs_079",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Walk_UpStairs_079_PackageB_Bone",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Walk_UpStairsMixIdle02_305",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Walk_UpStairsMixPlayPhone_309",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Walk_Worry_021",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Walk_Worry_021_PackageB_Bone",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Walk_Worry_End_L_043",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Walk_Worry_End_L_043_PackageB_Bone",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Walk_Worry_End_R_044",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Walk_Worry_End_R_044_PackageB_Bone",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Walk_Worry_Start_042",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Walk_Worry_Start_042_PackageB_Bone",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Worker_Run_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Worker_Sit_Lean_036",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Worker_Stand_Confront01_034",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Worker_Stand_Work_035",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_BettyBrenda_Ani_Maincity_Idle",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_BettyBrenda_Ani_Maincity_Talk",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Sandy_Ani_MainCity_Sit_Idle01_003",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Sandy_Ani_MainCity_Stand_Idle01_001",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Sandy_Ani_MainCity_Stand_Talk01_002",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Susie_Ani_InStore_Idle",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Susie_Ani_InStore_Welcome",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Susie_Ani_Maincity_Idle",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Susie_Ani_MainCity_Idle02",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Twiggy_Ani_MainCity_Think_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Zoe_Ani_MainCity_Lay_Collapse_Loop_076",
+      "Events": []
+    }
+  ]
+}

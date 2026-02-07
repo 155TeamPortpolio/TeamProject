@@ -44,6 +44,7 @@ void CJaneDoeState_SwitchInAttack::Update(CJaneDoe* pOwner, _float dt)
             _vector3 vLook = pOwner->Get_Component<CTransform>()->Dir(STATE::LOOK);
             _vector3 vPos = pOwner->Get_WorldPos();
             BattleSystem()->TakeAreaDamage(vPos + vLook * 4.f, 8.f, HitDesc()
+                .Name(pOwner->Get_CharacterName())
                 .Type(HIT_TYPE::ONCE)
                 .Damage(pOwner->Get_AttackPower() * 6.326f * Helper::Get_Random_Float(1.f, 1.5f)
                     , DAMAGE_TYPE::NORMAL)

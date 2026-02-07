@@ -429,8 +429,8 @@ void CBattlePlayer::End_ChainParry()
 void CBattlePlayer::Update_Input(_float dt)
 {
     // 콤보 테스트
-    //if (InputDevice()->Key_Tap('G'))
-    //    Request_ComboAttack();
+    if (InputDevice()->Key_Tap('G'))
+        Request_ComboAttack();
     if (m_bComboSelect)
     {
         Process_ComboSelect(dt);
