@@ -63,19 +63,13 @@ namespace MapTool {
 #pragma endregion
 
 #pragma region MovePoint
-	typedef struct tagMovePoint
-	{
-		_int			 iIndex{ -1 };
-		array<_float, 3> vTranslation = { 0.f, 0.f, 0.f };
-	}MOVEPOINT;
-
 	typedef struct tagMovePointHeader {
 		string		TagDataFormat = {};
 		string		TagArea = {};
 		_int		iVersion = 1;
-		vector<MOVEPOINT> Points;
+		map<_int, vector<_float3>> Paths;
 	}MovePoint_Header;
-	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(MovePoint_Header, TagDataFormat, TagArea, iVersion, Points);
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(MovePoint_Header, TagDataFormat, TagArea, iVersion, Paths);
 #pragma endregion
 
 #pragma region LightData

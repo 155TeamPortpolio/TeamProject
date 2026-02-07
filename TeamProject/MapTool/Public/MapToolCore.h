@@ -38,6 +38,8 @@ private:
 	void			Place_TriggerObjectFromLoadData(MapData_Object* pData);
 	void			Place_EntityObjectFromLoadData(ENTITY* pData);
 	void			Place_LightPointFromLoadData(MAP_LIGHT* pData);
+	void			Place_MovePointFromLoadData(_int Path, vector<_float3>& Orders);
+	
 
 private:
 	CGameInstance*		m_pGameInstance = { nullptr };

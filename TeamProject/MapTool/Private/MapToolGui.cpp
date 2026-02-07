@@ -157,26 +157,7 @@ void CMapToolGui::Render_GUI()
         Select_PlaceType("Data Save Type", false);
 
         if (ImGui::Button("Save") && false == m_pMapToolContext->TagArea.empty()) {
-            switch (static_cast<MAPOBJ_TYPE>(m_iSelectedLayerIndex))
-            {
-            case MapTool::MAPOBJ_TYPE::PLACED:
-                Save_MapData();
-                break;
-            case MapTool::MAPOBJ_TYPE::ENTITY:
-                Save_EntityData();
-                break;
-            case MapTool::MAPOBJ_TYPE::BATTLE:
-                Save_BattleData();
-                break;
-            case MapTool::MAPOBJ_TYPE::LIGHT:
-                Save_LightData();
-                break;
-            case MapTool::MAPOBJ_TYPE::MOVEPOINT:
-                break;
-
-            default:
-                break;
-            }
+            Save_Data();
         }
 
         if (m_isShowDataSaveFinish) {
@@ -552,6 +533,31 @@ void CMapToolGui::Place_MovePoint(PHYSICS_RAY_HIT* pRayHit)
 }
 #pragma endregion
 
+void CMapToolGui::Save_Data()
+{
+    switch (static_cast<MAPOBJ_TYPE>(m_iSelectedLayerIndex))
+    {
+    case MapTool::MAPOBJ_TYPE::PLACED:
+        Save_MapData();
+        break;
+    case MapTool::MAPOBJ_TYPE::ENTITY:
+        Save_EntityData();
+        break;
+    case MapTool::MAPOBJ_TYPE::BATTLE:
+        Save_BattleData();
+        break;
+    case MapTool::MAPOBJ_TYPE::LIGHT:
+        Save_LightData();
+        break;
+    case MapTool::MAPOBJ_TYPE::MOVEPOINT:
+        Save_MovePoint();
+        break;
+
+    default:
+        break;
+    }
+}
+
 void CMapToolGui::Save_MapData()
 {
     m_MapData = {};
@@ -630,7 +636,7 @@ void CMapToolGui::Save_EntityData()
     }
     
     // 버전 없어도 될거같은데
-    string TagFileName = "EntityData." + m_pMapToolContext->TagArea + "." + m_EntityData.TagDataFormat + "." + std::to_string(m_MapData.iVersion);
+    string TagFileName = "EntityData." + m_pMapToolContext->TagArea + "." + m_EntityData.TagDataFormat + "." + std::to_string(m_EntityData.iVersion);
     string SavePath = "../Bin/Data/NewEntityData/" + HelperMT::MakeTimestampFileName(TagFileName, ".json");
 
     if (true == HelperMT::ExportJsonFile<Entity_Header>(m_EntityData, SavePath))
@@ -739,7 +745,20 @@ void CMapToolGui::Save_LightData()
 
 void CMapToolGui::Save_MovePoint()
 {
+    m_MovePoint = {};
+
+    m_MovePoint.iVersion = m_pMapToolContext->iVersion;
+    m_MovePoint.TagArea = m_pMapToolContext->TagArea;
+    m_MovePoint.TagDataFormat = "Base";
+            
+    m_MovePoint.Paths = m_Paths;
     
+    string TagFileName = "MovePoint." + m_pMapToolContext->TagArea + "." + m_MovePoint.TagDataFormat + "." + std::to_string(m_MovePoint.iVersion);
+    string SavePath = "../Bin/Data/NewMovePoint/" + HelperMT::MakeTimestampFileName(TagFileName, ".json");
+
+    if (true == HelperMT::ExportJsonFile<MovePoint_Header>(m_MovePoint, SavePath))
+        m_isShowDataSaveFinish = true;
+
 }
 
 void CMapToolGui::Load_BattleData(const string& filepath)
@@ -1181,7 +1200,7 @@ void CMapToolGui::Setting_MovePoint()
             for (int i = 0; i <= m_SelectedPath; ++i)
             {
                 if (m_Paths.find(i) == m_Paths.end())
-                    m_Paths.emplace(i, vector<_vector3>{});
+                    m_Paths.emplace(i, vector<_float3>{});
             }
         }
     }
@@ -1294,6 +1313,11 @@ void CMapToolGui::Delete_MovePoint(_int PathIndex, _int OrderIndex)
 void CMapToolGui::Update_MovePoint(_int PathIndex, _int OrderIndex, _vector3 vPos)
 {
     m_Paths[PathIndex][OrderIndex] = vPos;
+}
+
+void CMapToolGui::Set_MovePoint(map<_int, vector<_float3>> Path)
+{
+    m_Paths = Path;
 }
 
 #pragma endregion

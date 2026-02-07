@@ -47,6 +47,7 @@ public:
 	void			Place_MovePoint(PHYSICS_RAY_HIT* pRayHit);
 
 	//Save
+	void			Save_Data();
 	void			Save_MapData();
 	void			Save_EntityData();
 	void			Save_BattleData();
@@ -69,6 +70,7 @@ public:
 	void			Setting_MovePoint();
 	void			Delete_MovePoint(_int PathIndex, _int OrderIndex);
 	void			Update_MovePoint(_int PathIndex, _int OrderIndex, _vector3 vPos);
+	void			Set_MovePoint(map<_int, vector<_float3>> Path);
 	//Show ModelOnly
 	void			Set_EntityModel();
 	void			Save_EntityInit();
@@ -113,7 +115,7 @@ private:
 
 	//NPC MovePoint
 	_int m_SelectedPath = 0;
-	map<_int, vector<_vector3>> m_Paths;
+	map<_int, vector<_float3>> m_Paths;
 
 	//Only ShowModel
 	vector<string>		 m_EntityModelPathPackName{};
