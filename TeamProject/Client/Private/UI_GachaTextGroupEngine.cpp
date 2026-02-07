@@ -23,7 +23,7 @@ void CUI_GachaTextGroupEngine::Show(GachaGrade eGrade)
 	}
 
 	if (auto& pText = m_pTexts[ENUM(TYPE::CENTER)])
-		pText->Change_Model(strKey);
+		pText->Play(strKey);
 }
 
 HRESULT CUI_GachaTextGroupEngine::Initialize_Prototype()
@@ -55,9 +55,14 @@ HRESULT CUI_GachaTextGroupEngine::Add_Texts()
 
 	PrototypeManager()->Add_ProtoType("Gacha_Level", "Proto_GameObject_UIGachaText", CUI_GachaText::Create());
 	
+	CUI_GachaText::TEXT_DESC* pDesc = new CUI_GachaText::TEXT_DESC;
+	pDesc->vScaleOffset = { -0.4f, -0.4f, -0.4f };
+	pDesc->vPosOffset = { 0.f, -0.2f, -0.2f }; 
+
 	CGameObject* pObj = Builder::Create_Object({ "Gacha_Level", "Proto_GameObject_UIGachaText" })
+		.Add_ObjDesc(pDesc)
 		.Rotate(_float3(XMConvertToRadians(-18.f), 0.f, 0.f))
-		.Position(_float3(0.f, 0.18f, 1.8f))
+		.Position(_float3(0.f, 0.182f, 1.86f))
 		.Build("textEngine");
 	
 	if (!pObj)

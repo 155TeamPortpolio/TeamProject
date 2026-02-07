@@ -25,9 +25,7 @@ public:
 
 private:
     HRESULT Add_Texts();
-    HRESULT Add_Text(TYPE eType, const string& strModelKey, const _float3& vRotation, const _float3& vPosition);
-
-private:
+    HRESULT Add_Text(TYPE eType, const string& strModelKey, const _float3& vRotation, const _float3& vPosition, _float fScaleOffset = 0.f, _float fPosXOffset = 0.f);
 
 public:
     static CGameObject* Create();

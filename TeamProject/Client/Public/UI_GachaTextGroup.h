@@ -31,8 +31,8 @@ private:
     STATE m_eState = { STATE::END };
 
     _float m_fTimer = {};
-    const _float m_fShowDuration = { 1.f };
-    const _float m_fBlinkDuration = { 0.5f };
+    const _float m_fShowDuration = { 0.8f };
+    const _float m_fBlinkDuration = { 0.4f };
 
     _bool m_isVisible = {};
     _float m_fBlinkAcc = {};
