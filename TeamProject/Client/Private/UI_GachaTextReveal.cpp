@@ -9,8 +9,8 @@
 
 void CUI_GachaTextReveal::Show(const GACHA_RESULT_DESC& desc)
 {
-	if (m_Groups[ENUM(desc.Type)])
-		m_Groups[ENUM(desc.Type)]->Show(desc.Grade);
+	if (m_pGroups[ENUM(desc.Type)])
+		m_pGroups[ENUM(desc.Type)]->Show(desc.Grade);
 }
 
 HRESULT CUI_GachaTextReveal::Initialize_Prototype()
@@ -39,8 +39,6 @@ void CUI_GachaTextReveal::Update(_float dt)
 
 HRESULT CUI_GachaTextReveal::Add_TextGroups()
 {
-	m_Groups.resize(ENUM(GachaType::End));
-
 	if(FAILED(Add_TextGroup("Gacha_Level", "Proto_GameObject_UIGachaTextGroupAgent", GachaType::Agent, CUI_GachaTextGroupAgent::Create())))
 		return E_FAIL;
 
@@ -61,7 +59,7 @@ HRESULT CUI_GachaTextReveal::Add_TextGroup(const string& strLevelTag, const stri
 		return E_FAIL;
 
 	Get_Component<CObjectContainer>()->Add_Child(pObj);
-	m_Groups[ENUM(eType)] = dynamic_cast<CUI_GachaTextGroupAgent*>(pObj);
+	m_pGroups[ENUM(eType)] = dynamic_cast<CUI_GachaTextGroupAgent*>(pObj);
 
 	return S_OK;
 }

@@ -26,7 +26,6 @@ public:
 private:
     HRESULT Add_Texts();
     HRESULT Add_Text(TYPE eType, const string& strModelKey, const _float3& vRotation, const _float3& vPosition);
-    void Create_Texts();
 
 private:
     class CUI_GachaText* m_pText[ENUM(TYPE::END)] = {};

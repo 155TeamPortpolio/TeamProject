@@ -11,7 +11,7 @@ protected:
     virtual ~CUI_GachaTextGroup() DEFAULT;
 
 public:
-    virtual void Show(GachaGrade eGrade);
+    virtual void Show(GachaGrade eGrade) PURE;
         
 public:
     HRESULT Initialize_Prototype()     override;
@@ -21,8 +21,6 @@ public:
     void    Late_Update(_float dt)     override {}
 
 public:
-    static CGameObject* Create();
-    CGameObject* Clone(INIT_DESC* pArg) override;
     virtual void Free() override { __super::Free(); }
 };
 

@@ -8,20 +8,6 @@
 
 void CUI_GachaTextGroupAgent::Show(GachaGrade eGrade)
 {
-	string strKey = "GachaStage_UI_AgentText_01";
-
-	switch (eGrade)
-	{
-	case GachaGrade::S:
-		strKey = "GachaStage_UI_AgentText_01";
-		break;
-	case GachaGrade::A:
-		strKey = "GachaStage_UI_AgentText_02";
-		break;
-	case GachaGrade::B:
-		strKey = "GachaStage_UI_AgentText_03";
-		break;
-	}
 }
 
 HRESULT CUI_GachaTextGroupAgent::Initialize_Prototype()
@@ -87,20 +73,6 @@ HRESULT CUI_GachaTextGroupAgent::Add_Text(TYPE eType, const string& strModelKey,
 	m_pText[ENUM(eType)]->Change_Model(strModelKey);
 
 	return S_OK;
-}
-
-void CUI_GachaTextGroupAgent::Create_Texts()
-{
-	PrototypeManager()->Add_ProtoType("Gacha_Level", "Proto_GameObject_UIGachaText", CUI_GachaText::Create());
-
-	CGameObject* pObj = Builder::Create_Object({ "Gacha_Level", "Proto_GameObject_UIGachaText" })
-		.Rotate(_float3(XMConvertToRadians(0.f), XMConvertToRadians(-45.f), 0.f))
-		.Position(_float3(0.7f, 1.f, 0.f))
-		.Build("uiGachaText");
-
-	Get_Component<CObjectContainer>()->Add_Child(pObj);
-	m_pText[ENUM(TYPE::LT)] = dynamic_cast<CUI_GachaText*>(pObj);
-	m_pText[ENUM(TYPE::LT)]->Change_Model("GachaStage_UI_AgentText_01");
 }
 
 CGameObject* CUI_GachaTextGroupAgent::Create()

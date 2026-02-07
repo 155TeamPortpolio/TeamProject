@@ -21,7 +21,7 @@ public:
     void    Late_Update(_float dt)     override {}
 
 private:
-    void Create_Texts();
+    HRESULT Add_Texts();
 
 private:
     class CUI_GachaText* m_pText = {};

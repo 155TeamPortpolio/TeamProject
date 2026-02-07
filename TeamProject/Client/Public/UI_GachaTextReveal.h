@@ -25,7 +25,7 @@ private:
     HRESULT Add_TextGroup(const string& strLevelTag, const string& strPrototypeTag, GachaType eType, CGameObject* pObj);
 
 private:
-    vector<class CUI_GachaTextGroup*>   m_Groups;
+    class CUI_GachaTextGroup* m_pGroups[ENUM(GachaType::End)] = {};
 
 public:
     static CGameObject* Create();

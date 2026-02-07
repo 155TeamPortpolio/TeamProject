@@ -18,9 +18,6 @@ void CUI_GachaTextGroupEngine::Show(GachaGrade eGrade)
 	case GachaGrade::A:
 		strKey = "GachaStage_UI_EngineA_01";
 		break;
-	case GachaGrade::B:
-		strKey = "GachaStage_UI_EngineB_01";
-		break;
 	}
 
 	if (m_pText)
@@ -42,7 +39,7 @@ HRESULT CUI_GachaTextGroupEngine::Initialize(INIT_DESC* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-	Create_Texts();
+	Add_Texts();
 
 	return S_OK;
 }
@@ -51,17 +48,22 @@ void CUI_GachaTextGroupEngine::Update(_float dt)
 {
 }
 
-void CUI_GachaTextGroupEngine::Create_Texts()
+HRESULT CUI_GachaTextGroupEngine::Add_Texts()
 {
 	PrototypeManager()->Add_ProtoType("Gacha_Level", "Proto_GameObject_UIGachaText", CUI_GachaText::Create());
 	
 	CGameObject* pObj = Builder::Create_Object({ "Gacha_Level", "Proto_GameObject_UIGachaText" })
 		.Rotate(_float3(XMConvertToRadians(-18.f), 0.f, 0.f))
 		.Position(_float3(0.f, 0.18f, 1.8f))
-		.Build("uiGachaText");
+		.Build("textEngine");
 	
+	if (!pObj)
+		return E_FAIL;
+
 	Get_Component<CObjectContainer>()->Add_Child(pObj);
 	m_pText = dynamic_cast<CUI_GachaText*>(pObj);
+
+	return S_OK;
 }
 
 CGameObject* CUI_GachaTextGroupEngine::Create()
