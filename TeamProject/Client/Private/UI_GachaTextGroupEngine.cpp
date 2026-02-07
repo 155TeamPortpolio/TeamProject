@@ -22,8 +22,8 @@ void CUI_GachaTextGroupEngine::Show(GachaGrade eGrade)
 		break;
 	}
 
-	if (m_pText)
-		m_pText->Change_Model(strKey);
+	if (auto& pText = m_pTexts[ENUM(TYPE::CENTER)])
+		pText->Change_Model(strKey);
 }
 
 HRESULT CUI_GachaTextGroupEngine::Initialize_Prototype()
@@ -51,6 +51,8 @@ void CUI_GachaTextGroupEngine::Update(_float dt)
 
 HRESULT CUI_GachaTextGroupEngine::Add_Texts()
 {
+	m_pTexts.resize(ENUM(TYPE::END));
+
 	PrototypeManager()->Add_ProtoType("Gacha_Level", "Proto_GameObject_UIGachaText", CUI_GachaText::Create());
 	
 	CGameObject* pObj = Builder::Create_Object({ "Gacha_Level", "Proto_GameObject_UIGachaText" })
@@ -62,7 +64,7 @@ HRESULT CUI_GachaTextGroupEngine::Add_Texts()
 		return E_FAIL;
 
 	Get_Component<CObjectContainer>()->Add_Child(pObj);
-	m_pText = dynamic_cast<CUI_GachaText*>(pObj);
+	m_pTexts[ENUM(TYPE::CENTER)] = dynamic_cast<CUI_GachaText*>(pObj);
 
 	return S_OK;
 }

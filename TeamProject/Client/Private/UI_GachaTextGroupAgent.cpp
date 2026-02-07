@@ -36,6 +36,8 @@ void CUI_GachaTextGroupAgent::Update(_float dt)
 
 HRESULT CUI_GachaTextGroupAgent::Add_Texts()
 {
+	m_pTexts.resize(ENUM(TYPE::END));
+
 	PrototypeManager()->Add_ProtoType("Gacha_Level", "Proto_GameObject_UIGachaText", CUI_GachaText::Create());
 
 	if (FAILED(Add_Text(TYPE::LT, "GachaStage_UI_AgentText_02", _float3(0.f, XMConvertToRadians(-45.f), 0.f), _float3(0.8f, 1.32f, 0.f))))
@@ -69,8 +71,8 @@ HRESULT CUI_GachaTextGroupAgent::Add_Text(TYPE eType, const string& strModelKey,
 
 	Get_Component<CObjectContainer>()->Add_Child(pObj);
 
-	m_pText[ENUM(eType)] = dynamic_cast<CUI_GachaText*>(pObj);
-	m_pText[ENUM(eType)]->Change_Model(strModelKey);
+	m_pTexts[ENUM(eType)] = dynamic_cast<CUI_GachaText*>(pObj);
+	m_pTexts[ENUM(eType)]->Change_Model(strModelKey);
 
 	return S_OK;
 }

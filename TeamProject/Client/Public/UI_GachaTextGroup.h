@@ -23,6 +23,9 @@ public:
     void    Update(_float dt)          override;
     void    Late_Update(_float dt)     override {}
 
+protected:
+    vector<class CUI_GachaText*> m_pTexts = {};
+
 private:
     STATE m_eState = { STATE::END };
 
@@ -30,7 +33,7 @@ private:
     const _float m_fShowDuration = { 1.f };
     const _float m_fBlinkDuration = { 0.5f };
 
-    _bool m_isChildVisible = {};
+    _bool m_isVisible = {};
     _float m_fBlinkAcc = {};
     const _float m_fBlinkInterval = { 0.06f }; 
 

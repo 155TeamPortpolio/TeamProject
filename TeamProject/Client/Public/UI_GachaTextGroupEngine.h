@@ -5,6 +5,9 @@ NS_BEGIN(Client)
 
 class CUI_GachaTextGroupEngine final : public CUI_GachaTextGroup
 {
+public:
+    enum class TYPE { CENTER, END };
+
 private:
     CUI_GachaTextGroupEngine() {}
     CUI_GachaTextGroupEngine(const CUI_GachaTextGroupEngine& rhs) : CUI_GachaTextGroup(rhs) {}
@@ -22,9 +25,6 @@ public:
 
 private:
     HRESULT Add_Texts();
-
-private:
-    class CUI_GachaText* m_pText = {};
 
 public:
     static CGameObject* Create();

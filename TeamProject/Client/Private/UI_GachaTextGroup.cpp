@@ -2,6 +2,7 @@
 #include "UI_GachaTextGroup.h"
 
 #include "ObjectContainer.h"
+#include "UI_GachaText.h"
 
 void CUI_GachaTextGroup::Show(GachaGrade eGrade)
 {
@@ -63,11 +64,11 @@ void CUI_GachaTextGroup::Change_State(STATE eState)
 		break;
 	case STATE::SHOW:
 		Set_Alive(true);
-		for (auto& pChild : Get_Component<CObjectContainer>()->Get_Children())
-			pChild->Set_Alive(true);
+		for (auto& pText : m_pTexts)
+			pText->Set_Alive(true);
 		break;
 	case STATE::BLINK:
-		m_isChildVisible = true;
+		m_isVisible = true;
 		m_fBlinkAcc = 0.f;
 		break;
 	}
@@ -85,15 +86,13 @@ void CUI_GachaTextGroup::Update_Blink(_float dt)
 
 	if (m_fBlinkAcc >= m_fBlinkInterval)
 	{
-		m_isChildVisible = !m_isChildVisible;
+		m_isVisible = !m_isVisible;
 		m_fBlinkAcc = 0.f;
 
-		for (auto& pChild : Get_Component<CObjectContainer>()->Get_Children())
-			pChild->Set_Alive(m_isChildVisible);
+		for (auto& pText : m_pTexts)
+			pText->Set_Alive(m_isVisible);
 	}
 
 	if (m_fTimer >= m_fBlinkDuration)
-	{
 		Change_State(STATE::INVISIBLE); 
-	} 
 }

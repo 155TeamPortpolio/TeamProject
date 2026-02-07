@@ -28,7 +28,6 @@ private:
     HRESULT Add_Text(TYPE eType, const string& strModelKey, const _float3& vRotation, const _float3& vPosition);
 
 private:
-    class CUI_GachaText* m_pText[ENUM(TYPE::END)] = {};
 
 public:
     static CGameObject* Create();
