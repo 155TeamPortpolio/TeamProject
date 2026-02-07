@@ -1089,6 +1089,39 @@
     <Filter Include="02. GameObject\UI\01. 2D\Gacha\Result">
       <UniqueIdentifier>{70b86f41-b532-40be-ba58-6b3edec7f698}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\RebelStrikeJaeger">
+      <UniqueIdentifier>{ccfb6271-01ac-4e88-a871-5fad25f13742}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\RebelMeleeJaeger">
+      <UniqueIdentifier>{5967a4fb-ae99-4f19-b504-f1751145dd2c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\RebelStrikeJaeger\Attack">
+      <UniqueIdentifier>{0fb9d553-a6a4-4e82-b3ca-394bb5d5263a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\RebelStrikeJaeger\Born">
+      <UniqueIdentifier>{c5ec783d-8c23-4569-b657-a29f7c238607}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\RebelStrikeJaeger\Chase">
+      <UniqueIdentifier>{77c1cde5-6b2b-424e-bd1f-04697fb44290}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\RebelStrikeJaeger\Death">
+      <UniqueIdentifier>{7422d380-3d1e-47e1-8ed8-046204fc77ae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\RebelStrikeJaeger\Groggy">
+      <UniqueIdentifier>{ff3354c8-9054-43ea-8a30-0ce2e06bb762}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\RebelStrikeJaeger\Hit">
+      <UniqueIdentifier>{653a4408-5ed9-4753-87a1-f793ff0ad8ac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\RebelStrikeJaeger\Idle">
+      <UniqueIdentifier>{62de1317-ae77-4c73-abe4-407e655286e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\RebelStrikeJaeger\Move">
+      <UniqueIdentifier>{cf54b6c8-78d3-4d16-a275-bfb2accc876c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\RebelStrikeJaeger\Parried">
+      <UniqueIdentifier>{cb70b794-bf00-4a08-9942-617703f816fc}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02. GameObject\UI\01. 2D\Gacha\Result\ResultItem">
       <UniqueIdentifier>{aa22d079-15fe-4ce3-9769-f18957aab65c}</UniqueIdentifier>
     </Filter>
@@ -2297,6 +2330,36 @@
     <ClInclude Include="..\Public\UI_GachaResult.h">
       <Filter>02. GameObject\UI\01. 2D\Gacha\Result</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\StrikeJaeger.h">
+      <Filter>02. GameObject\Object\Enemy\Normal\RebelStrikeJaeger</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\StrikeJaeger_Attack.h">
+      <Filter>02. GameObject\Object\Enemy\Normal\RebelStrikeJaeger\Attack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\StrikeJaeger_Born.h">
+      <Filter>02. GameObject\Object\Enemy\Normal\RebelStrikeJaeger\Born</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\StrikeJaeger_Chase.h">
+      <Filter>02. GameObject\Object\Enemy\Normal\RebelStrikeJaeger\Chase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\StrikeJaeger_Death.h">
+      <Filter>02. GameObject\Object\Enemy\Normal\RebelStrikeJaeger\Death</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\StrikeJaeger_Groggy.h">
+      <Filter>02. GameObject\Object\Enemy\Normal\RebelStrikeJaeger\Groggy</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\StrikeJaeger_Hit.h">
+      <Filter>02. GameObject\Object\Enemy\Normal\RebelStrikeJaeger\Hit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\StrikeJaeger_Idle.h">
+      <Filter>02. GameObject\Object\Enemy\Normal\RebelStrikeJaeger\Idle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\StrikeJaeger_Move.h">
+      <Filter>02. GameObject\Object\Enemy\Normal\RebelStrikeJaeger\Move</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\StrikeJaeger_Parried.h">
+      <Filter>02. GameObject\Object\Enemy\Normal\RebelStrikeJaeger\Parried</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\UI_GachaResultItem.h">
       <Filter>02. GameObject\UI\01. 2D\Gacha\Result\ResultItem</Filter>
     </ClInclude>
@@ -3391,6 +3454,36 @@
     </ClCompile>
     <ClCompile Include="..\Private\UI_GachaResult.cpp">
       <Filter>02. GameObject\UI\01. 2D\Gacha\Result</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\StrikeJaeger.cpp">
+      <Filter>02. GameObject\Object\Enemy\Normal\RebelStrikeJaeger</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\StrikeJaeger_Attack.cpp">
+      <Filter>02. GameObject\Object\Enemy\Normal\RebelStrikeJaeger\Attack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\StrikeJaeger_Born.cpp">
+      <Filter>02. GameObject\Object\Enemy\Normal\RebelStrikeJaeger\Born</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\StrikeJaeger_Chase.cpp">
+      <Filter>02. GameObject\Object\Enemy\Normal\RebelStrikeJaeger\Chase</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\StrikeJaeger_Death.cpp">
+      <Filter>02. GameObject\Object\Enemy\Normal\RebelStrikeJaeger\Death</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\StrikeJaeger_Groggy.cpp">
+      <Filter>02. GameObject\Object\Enemy\Normal\RebelStrikeJaeger\Groggy</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\StrikeJaeger_Hit.cpp">
+      <Filter>02. GameObject\Object\Enemy\Normal\RebelStrikeJaeger\Hit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\StrikeJaeger_Idle.cpp">
+      <Filter>02. GameObject\Object\Enemy\Normal\RebelStrikeJaeger\Idle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\StrikeJaeger_Move.cpp">
+      <Filter>02. GameObject\Object\Enemy\Normal\RebelStrikeJaeger\Move</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\StrikeJaeger_Parried.cpp">
+      <Filter>02. GameObject\Object\Enemy\Normal\RebelStrikeJaeger\Parried</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UI_GachaResultItem.cpp">
       <Filter>02. GameObject\UI\01. 2D\Gacha\Result\ResultItem</Filter>

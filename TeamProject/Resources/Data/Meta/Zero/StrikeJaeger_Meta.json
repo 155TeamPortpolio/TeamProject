@@ -1,0 +1,390 @@
+{
+  "AnimPath": "../Bin/Resources/Zero/Enemy/StrikeJaeger/Anim/",
+  "PreTransform": {
+    "_11": -0.009999999776482582,
+    "_12": 0.0,
+    "_13": 0.0,
+    "_14": 0.0,
+    "_21": 0.0,
+    "_22": 0.009999999776482582,
+    "_23": 0.0,
+    "_24": 0.0,
+    "_31": 0.0,
+    "_32": 0.0,
+    "_33": -0.009999999776482582,
+    "_34": 0.0,
+    "_41": 0.0,
+    "_42": 0.0,
+    "_43": 0.0,
+    "_44": 1.0
+  },
+  "Clips": [
+    {
+      "ClipTag": "StrikeJaeger_Ani_Attack01_Fast",
+      "Events": [
+        {
+          "EventTime": 0.009999999776482582,
+          "EventType": "Notify",
+          "EventTag": "UnleashAttack"
+        },
+        {
+          "EventTime": 0.40792718529701233,
+          "EventType": "Notify",
+          "EventTag": "TurnOnAttackCol_L"
+        },
+        {
+          "EventTime": 0.5839505791664124,
+          "EventType": "Notify",
+          "EventTag": "TurnOffAttackCol_L"
+        },
+        {
+          "EventTime": 0.5799999833106995,
+          "EventType": "Notify",
+          "EventTag": "FinishAll"
+        }
+      ]
+    },
+    {
+      "ClipTag": "StrikeJaeger_Ani_Attack03A_Fast",
+      "Events": [
+        {
+          "EventTime": 0.009999999776482582,
+          "EventType": "Notify",
+          "EventTag": "UnleashAttack"
+        },
+        {
+          "EventTime": 0.40526312589645386,
+          "EventType": "Notify",
+          "EventTag": "TurnOnAttackCol_R"
+        },
+        {
+          "EventTime": 0.6140350103378296,
+          "EventType": "Notify",
+          "EventTag": "TurnOffAttackCol_R"
+        },
+        {
+          "EventTime": 0.630409300327301,
+          "EventType": "Notify",
+          "EventTag": "TurnOnAttackCol_L"
+        },
+        {
+          "EventTime": 1.0602338314056396,
+          "EventType": "Notify",
+          "EventTag": "TurnOffAttackCol_L"
+        },
+        {
+          "EventTime": 1.0602338314056396,
+          "EventType": "Notify",
+          "EventTag": "FinishAll"
+        }
+      ]
+    },
+    {
+      "ClipTag": "StrikeJaeger_Ani_Attack05_Fast",
+      "Events": [
+        {
+          "EventTime": 0.009999999776482582,
+          "EventType": "Notify",
+          "EventTag": "UnleashAttack"
+        },
+        {
+          "EventTime": 0.5184534788131714,
+          "EventType": "Notify",
+          "EventTag": "TurnOnAttackCol_R"
+        },
+        {
+          "EventTime": 0.7350227236747742,
+          "EventType": "Notify",
+          "EventTag": "TurnOffAttackCol_R"
+        },
+        {
+          "EventTime": 0.7875243425369263,
+          "EventType": "Notify",
+          "EventTag": "TurnOnAttackCol_L"
+        },
+        {
+          "EventTime": 1.043469786643982,
+          "EventType": "Notify",
+          "EventTag": "TurnOffAttackCol_L"
+        },
+        {
+          "EventTime": 1.2928524017333984,
+          "EventType": "Notify",
+          "EventTag": "TurnOnAttackCol_R"
+        },
+        {
+          "EventTime": 1.2928524017333984,
+          "EventType": "Notify",
+          "EventTag": "TurnOnAttackCol_L"
+        },
+        {
+          "EventTime": 1.8506821393966675,
+          "EventType": "Notify",
+          "EventTag": "TurnOffAttackCol_R"
+        },
+        {
+          "EventTime": 1.8506821393966675,
+          "EventType": "Notify",
+          "EventTag": "TurnOffAttackCol_L"
+        },
+        {
+          "EventTime": 1.8506821393966675,
+          "EventType": "Notify",
+          "EventTag": "FinishAll"
+        }
+      ]
+    },
+    {
+      "ClipTag": "StrikeJaeger_Ani_Born",
+      "Events": []
+    },
+    {
+      "ClipTag": "StrikeJaeger_Ani_Death_Back",
+      "Events": []
+    },
+    {
+      "ClipTag": "StrikeJaeger_Ani_Death_Front",
+      "Events": []
+    },
+    {
+      "ClipTag": "StrikeJaeger_Ani_Death_Stay",
+      "Events": []
+    },
+    {
+      "ClipTag": "StrikeJaeger_Ani_Debuff_Stun_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "StrikeJaeger_Ani_Debuff_Stun_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "StrikeJaeger_Ani_Debuff_Stun_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "StrikeJaeger_Ani_Dodge",
+      "Events": []
+    },
+    {
+      "ClipTag": "StrikeJaeger_Ani_Dodge_L",
+      "Events": []
+    },
+    {
+      "ClipTag": "StrikeJaeger_Ani_Dodge_R",
+      "Events": []
+    },
+    {
+      "ClipTag": "StrikeJaeger_Ani_Hit_H_Back",
+      "Events": []
+    },
+    {
+      "ClipTag": "StrikeJaeger_Ani_Hit_H_Front",
+      "Events": []
+    },
+    {
+      "ClipTag": "StrikeJaeger_Ani_Hit_Knock",
+      "Events": []
+    },
+    {
+      "ClipTag": "StrikeJaeger_Ani_Hit_L_Back_Down",
+      "Events": []
+    },
+    {
+      "ClipTag": "StrikeJaeger_Ani_Hit_L_Back_Left",
+      "Events": []
+    },
+    {
+      "ClipTag": "StrikeJaeger_Ani_Hit_L_Back_Right",
+      "Events": []
+    },
+    {
+      "ClipTag": "StrikeJaeger_Ani_Hit_L_Back_Up",
+      "Events": []
+    },
+    {
+      "ClipTag": "StrikeJaeger_Ani_Hit_L_Front_Down",
+      "Events": []
+    },
+    {
+      "ClipTag": "StrikeJaeger_Ani_Hit_L_Front_Left",
+      "Events": []
+    },
+    {
+      "ClipTag": "StrikeJaeger_Ani_Hit_L_Front_Right",
+      "Events": []
+    },
+    {
+      "ClipTag": "StrikeJaeger_Ani_Hit_L_Front_Up",
+      "Events": []
+    },
+    {
+      "ClipTag": "StrikeJaeger_Ani_Hit_Shake",
+      "Events": []
+    },
+    {
+      "ClipTag": "StrikeJaeger_Ani_Hit_Sky_Fly_Back_OnGround",
+      "Events": []
+    },
+    {
+      "ClipTag": "StrikeJaeger_Ani_Hit_Sky_Fly_Back_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "StrikeJaeger_Ani_Hit_Sky_Fly_Front_OnGround",
+      "Events": []
+    },
+    {
+      "ClipTag": "StrikeJaeger_Ani_Hit_Sky_Fly_Front_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "StrikeJaeger_Ani_Hit_Sky_Fly_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "StrikeJaeger_Ani_Hit_Sky_InAir_OnGround",
+      "Events": []
+    },
+    {
+      "ClipTag": "StrikeJaeger_Ani_Hit_Sky_InAir_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "StrikeJaeger_Ani_Hit_Sky_Knock_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "StrikeJaeger_Ani_Hit_Sky_Knock_OnGround",
+      "Events": []
+    },
+    {
+      "ClipTag": "StrikeJaeger_Ani_Hit_Sky_Knock_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "StrikeJaeger_Ani_Hit_Sky_Throw_Back_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "StrikeJaeger_Ani_Hit_Sky_Throw_Front_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "StrikeJaeger_Ani_Hit_Sky_Throw_High_Back_OnGround",
+      "Events": []
+    },
+    {
+      "ClipTag": "StrikeJaeger_Ani_Hit_Sky_Throw_High_Back_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "StrikeJaeger_Ani_Hit_Sky_Throw_High_Front_OnGround",
+      "Events": []
+    },
+    {
+      "ClipTag": "StrikeJaeger_Ani_Hit_Sky_Throw_High_Front_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "StrikeJaeger_Ani_Hit_Sky_Throw_Low_Back_OnGround",
+      "Events": []
+    },
+    {
+      "ClipTag": "StrikeJaeger_Ani_Hit_Sky_Throw_Low_Back_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "StrikeJaeger_Ani_Hit_Sky_Throw_Low_Front_OnGround",
+      "Events": []
+    },
+    {
+      "ClipTag": "StrikeJaeger_Ani_Hit_Sky_Throw_Low_Front_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "StrikeJaeger_Ani_Hit_Stay",
+      "Events": []
+    },
+    {
+      "ClipTag": "MeleeJaeger_Ani_Idle",
+      "Events": []
+    },
+    {
+      "ClipTag": "StrikeJaeger_Ani_Ignite",
+      "Events": []
+    },
+    {
+      "ClipTag": "StrikeJaeger_Ani_Ignite_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "StrikeJaeger_Ani_Maincity_Alert01",
+      "Events": []
+    },
+    {
+      "ClipTag": "StrikeJaeger_Ani_Maincity_SitComa01",
+      "Events": []
+    },
+    {
+      "ClipTag": "StrikeJaeger_Ani_Maincity_SitComa02",
+      "Events": []
+    },
+    {
+      "ClipTag": "StrikeJaeger_Ani_Run_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "StrikeJaeger_Ani_Run_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "StrikeJaeger_Ani_Run_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "StrikeJaeger_Ani_Walk_B",
+      "Events": []
+    },
+    {
+      "ClipTag": "StrikeJaeger_Ani_Walk_F",
+      "Events": []
+    },
+    {
+      "ClipTag": "StrikeJaeger_Ani_Walk_FL_RFoot",
+      "Events": []
+    },
+    {
+      "ClipTag": "StrikeJaeger_Ani_Walk_FR_RFoot",
+      "Events": []
+    },
+    {
+      "ClipTag": "StrikeJaeger_Ani_Walk_L",
+      "Events": []
+    },
+    {
+      "ClipTag": "StrikeJaeger_Ani_Walk_L_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "StrikeJaeger_Ani_Walk_L_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "StrikeJaeger_Ani_Walk_R",
+      "Events": []
+    },
+    {
+      "ClipTag": "StrikeJaeger_Ani_Walk_R_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "StrikeJaeger_Ani_Walk_R_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "StrikeJaeger_Ani_Walk_RF_LFoot",
+      "Events": []
+    }
+  ]
+}
