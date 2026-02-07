@@ -42,6 +42,7 @@ HRESULT CMiasmaBlade::Initialize(INIT_DESC* pArg)
 	m_pOwner = desc->pOwner;
 	m_isOnAttack = true;
 	m_isParryEnable = true;
+	isParried = false;
 
 	Get_Component<CCollider>()->Set_CollisionMask(ENUM(COLLISION_GROUP::PLAYER) |
 		ENUM(COLLISION_GROUP::PLAYER_ATTACK));
@@ -62,6 +63,16 @@ void CMiasmaBlade::Priority_Update(_float dt)
 
 void CMiasmaBlade::Update(_float dt)
 {
+	if (isParried) {
+		_vector3 target_Pos = m_pOwner->Get_BipedPos();
+		_float4 pos =  Get_Position();
+		_vector3 ownPos = { pos.x,pos.y,pos.z};
+
+		if ((target_Pos - ownPos).Length() < 3.f){
+			m_pOwner->TakeDamage(DAMAGE_TYPE::NORMAL, 10);
+			ObjectManager()->Remove_Object(this);
+		}
+	}
 	m_pTransform->Translate(m_pTransform->Dir(STATE::LOOK) * 25 * dt);
 	Get_Component<CCollider>()->Update(dt);
 }
@@ -78,7 +89,18 @@ void CMiasmaBlade::Render_GUI()
 
 void CMiasmaBlade::OnPooledAcquire(INIT_DESC* pArg)
 {
-	
+	auto desc = static_cast<BladeDesc*>(pArg);
+	__super::Initialize(desc);
+	m_pOwner = desc->pOwner;
+	m_isOnAttack = true;
+	m_isParryEnable = true;
+	isParried = false;
+	Get_Component<CCollider>()->Set_CollisionMask(ENUM(COLLISION_GROUP::PLAYER) |
+		ENUM(COLLISION_GROUP::PLAYER_ATTACK));
+	Get_Component<CCollider>()->Set_CollisionGroup(COLLISION_GROUP::MONSTER);
+	Get_Component<CRigidBody>()->Set_Kinematic(true);
+	m_pTransform->LookAt(_vector3(desc->vTargetPos));
+
 }
 
 void CMiasmaBlade::OnPooledRelease()
@@ -89,9 +111,9 @@ void CMiasmaBlade::OnPooledRelease()
 void CMiasmaBlade::Parried()
 {
 	if (m_pOwner) {
-		_float4 pos= m_pOwner->Get_Position();
-		m_pTransform->LookAt({ pos.x,pos.y,pos.z});
 		isParried = true;
+		_vector3 pos = m_pOwner->Get_BipedPos();
+		m_pTransform->LookAt(pos);
 		Get_Component<CCollider>()->Set_CollisionMask(ENUM(COLLISION_GROUP::MONSTER));
 		Get_Component<CCollider>()->Set_CollisionGroup(COLLISION_GROUP::PLAYER_ATTACK);
 	}
@@ -131,18 +153,19 @@ void CMiasmaBlade::Free()
 void CMiasmaBlade::OnTriggerEnter(CGameObject* pOther)
 
 {
+	if (isParried) return;
+
 	auto pCollidable = pOther->Get_Component<ICollidable>();
-	if (pCollidable && (pCollidable->Get_Group() != COLLISION_GROUP::PLAYER))
-		return;
-	if (!Try_Hit(pOther))
+	if (pCollidable)
 		return;
 
-	// 데미지 주는 코드
-	auto pEnemy = dynamic_cast<CCharacter*>(pOther);
-	if (nullptr != pEnemy)
-	{
-		pEnemy->Take_Damage(DAMAGE_TYPE::NORMAL, 10);
-		CameraManager()->AddImpact(1, 0);
+	else {
+		auto pEnemy = dynamic_cast<CCharacter*>(pOther);
+		if (nullptr != pEnemy)
+		{
+			pEnemy->Take_Damage(DAMAGE_TYPE::NORMAL, 10);
+			CameraManager()->AddImpact(1, 0);
+		}
 	}
 }
 
