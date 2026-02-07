@@ -80,6 +80,7 @@ public:
 
 	void			Render_ClearLayer();
 	void			Clear_BattleData();
+	bool			WorldToScreen(const _float3& world, ImVec2& out);
 private:
 	/* Refernce */
 	CGameInstance* m_pGameInstance = { nullptr };

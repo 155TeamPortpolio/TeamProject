@@ -123,7 +123,7 @@ void CMapToolGui::Render_GUI()
     ImGui::BeginChild("##MapToolGuiObjectSettingChild", ImVec2{ 0, fObjhectSettingChild }, true);
     
     Select_PlaceType("OBJ Type");
-    Setting_SelectType();
+    Setting_SelectType(); //이게 패널 Gui 몸체
     
 	ImGui::EndChild();
 
@@ -1264,6 +1264,39 @@ void CMapToolGui::Setting_MovePoint()
 
         ImGui::EndTable();
     }
+
+
+    //------------------------------------- Show Line 
+    auto draw = ImGui::GetForegroundDrawList();
+
+    auto itPath = m_Paths.find(m_SelectedPath);
+    if (itPath != m_Paths.end())
+    {
+        auto& pathPoints = itPath->second;
+        int count = static_cast<int>(pathPoints.size());
+
+        if (count >= 2)
+        {
+            for (int i = 0; i + 1 < count; ++i)
+            {
+                ImVec2 p0, p1;
+                if (!WorldToScreen(pathPoints[i], p0)) continue;
+                if (!WorldToScreen(pathPoints[i + 1], p1)) continue;
+
+                float t = static_cast<float>(i) / static_cast<float>(count - 1);
+
+                // 밝기 보정된 색 (G 채널 살짝 줌)
+                ImU32 col = IM_COL32(
+                    static_cast<int>(255 * t),          // R
+                    static_cast<int>(80),               // G (밝기용)
+                    static_cast<int>(255 * (1.f - t)),  // B
+                    255);
+
+                draw->AddLine(p0, p1, col, 2.5f);
+            }
+        }
+    }
+
 }
 
 void CMapToolGui::Delete_MovePoint(_int PathIndex, _int OrderIndex)
@@ -1396,6 +1429,31 @@ void CMapToolGui::Clear_BattleData()
     m_iMonsterIndex = 0;
     m_iSpawnerIndex = 0;
     m_iEndPointIndex = 0;
+}
+
+bool CMapToolGui::WorldToScreen(const _float3& world, ImVec2& out)
+{
+    // ViewProj 행렬 가져오기 (본인 엔진에 맞게 교체)
+    const Matrix* matView = GameInstance()->Get_CameraMgr()->Get_ViewMatrix();
+    const Matrix* matProj = GameInstance()->Get_CameraMgr()->Get_ProjMatrix();
+
+    Matrix matVP = *matView * *matProj;
+
+    _vector vWorld = XMVectorSet(world.x, world.y, world.z, 1.f);
+    _vector vClip = XMVector4Transform(vWorld, matVP);
+
+    _float w = XMVectorGetW(vClip);
+    if (w <= 0.f)
+        return false;
+
+    _float x = XMVectorGetX(vClip) / w;
+    _float y = XMVectorGetY(vClip) / w;
+
+    ImVec2 vp = ImGui::GetIO().DisplaySize;
+    out.x = (x * 0.5f + 0.5f) * vp.x;
+    out.y = (-y * 0.5f + 0.5f) * vp.y;
+
+    return true;
 }
 
 void CMapToolGui::KeyInput()
