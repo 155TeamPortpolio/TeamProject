@@ -61,6 +61,7 @@ private:
     DialogueType    StringToDialogueType(const string& str);
     DialogueResult  StringToDialogueResult(const string& str);
     Speaker         StringToSpeaker(const string& str);
+    GachaType       StringToGachaType(const string& str);
     GachaGrade      StringToGachaGrade(const string& str);
     wstring         StringToWString(const string& str);
 private:
