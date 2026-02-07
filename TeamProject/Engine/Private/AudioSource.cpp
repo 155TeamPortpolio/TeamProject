@@ -159,7 +159,7 @@ HRESULT CAudioSource::SoundFolder(const string& levelTag, const string& SoundFol
 			while (!slotKeyUsed.insert(uniqueSlotKey).second);
 			soundKey = uniqueSlotKey;
 		}
-
+		ResourceManager()->Add_ResourcePath(soundKey, filePath.string());
 		const HRESULT addResult =Add_Slot(levelTag, soundKey);
 		if (FAILED(addResult))
 			continue;

@@ -136,12 +136,9 @@ void CDefiler::Late_Update(_float dt)
 {
 	Get_Component<CCharacterController>()->Late_Update(dt);
 }
-static _bool CollOpen;
 
 void CDefiler::Render_GUI()
 {
-	ImGui::Text(CollOpen ? "ColOn : True" : "ColOn : False");
-	
 	ImGui::InputInt("Pattern number", &m_BlackBoard.patternIndex);
 	for (auto pattern : m_BlackBoard.patternTransition)
 	{
@@ -431,7 +428,6 @@ void CDefiler::Controll_Attack(const string& event)
 	{
 		m_isParryEnable = false;
 	}
-	CollOpen = AtkData.OnOff;
 	SetBattleColliderObject(AtkData.AtkBone, CEnemy::BATTLE_COLTYPE::ATTACK, AtkData.OnOff, HitDesc);
 }
 

@@ -481,6 +481,11 @@
           "EventTime": 2.7431447505950928,
           "EventType": "Notify",
           "EventTag": "TargetLockOff"
+        },
+        {
+          "EventTime": 0.8684860467910767,
+          "EventType": "Sound",
+          "EventTag": "Defiler_Charge01.wav"
         }
       ]
     },
