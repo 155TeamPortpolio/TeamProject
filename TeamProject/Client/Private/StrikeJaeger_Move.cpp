@@ -69,6 +69,9 @@ void CStrikeJaeger_Move::Register_States()
 	m_pSubStateMachine->Register_State("Walk_F_L", CStrikeJaeger_Walk_F_L::Create());
 	m_pSubStateMachine->Register_State("Walk_F_R", CStrikeJaeger_Walk_F_R::Create());
 	m_pSubStateMachine->Register_State("Walk_R_F", CStrikeJaeger_Walk_R_F::Create());
+	m_pSubStateMachine->Register_State("Dodge", CStrikeJaeger_Dodge::Create());
+	m_pSubStateMachine->Register_State("Dodge_L", CStrikeJaeger_Dodge_L::Create());
+	m_pSubStateMachine->Register_State("Dodge_R", CStrikeJaeger_Dodge_R::Create());
 }
 
 void CStrikeJaeger_Move::Register_Transitions()
@@ -206,5 +209,50 @@ void CStrikeJaeger_Walk_R_F::Update(CStrikeJaeger* pOwner, _float dt)
 }
 
 void CStrikeJaeger_Walk_R_F::Exit(CStrikeJaeger* pOwner)
+{
+}
+
+/*============================================================================*/
+void CStrikeJaeger_Dodge::Enter(CStrikeJaeger* pOwner)
+{
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("StrikeJaeger_Ani_Dodge")
+		.Apply();
+}
+
+void CStrikeJaeger_Dodge::Update(CStrikeJaeger* pOwner, _float dt)
+{
+}
+
+void CStrikeJaeger_Dodge::Exit(CStrikeJaeger* pOwner)
+{
+}
+
+/*============================================================================*/
+void CStrikeJaeger_Dodge_L::Enter(CStrikeJaeger* pOwner)
+{
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("StrikeJaeger_Ani_Dodge_L")
+		.Apply();
+}
+
+void CStrikeJaeger_Dodge_L::Update(CStrikeJaeger* pOwner, _float dt)
+{
+}
+
+void CStrikeJaeger_Dodge_L::Exit(CStrikeJaeger* pOwner)
+{
+}
+
+/*============================================================================*/
+void CStrikeJaeger_Dodge_R::Enter(CStrikeJaeger* pOwner)
+{
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("StrikeJaeger_Ani_Dodge_R")
+		.Apply();
+}
+
+void CStrikeJaeger_Dodge_R::Update(CStrikeJaeger* pOwner, _float dt)
+{
+}
+
+void CStrikeJaeger_Dodge_R::Exit(CStrikeJaeger* pOwner)
 {
 }

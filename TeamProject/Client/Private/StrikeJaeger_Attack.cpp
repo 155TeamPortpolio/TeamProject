@@ -37,13 +37,13 @@ void CStrikeJaeger_Attack::Enter(CStrikeJaeger* pOwner)
 		// 돌진 공격 빼고
 		if (targetinginfo.fDistance <= hysteriesis.fComboExit)
 		{
-			while (iAttackPatternIndex == 3 || iAttackPatternIndex == 0)
-				iAttackPatternIndex = Helper::Get_Random_Int(1, 4);
+			while (iAttackPatternIndex == 2 || iAttackPatternIndex == 0)
+				iAttackPatternIndex = Helper::Get_Random_Int(1, 3);
 		}
 		else if (targetinginfo.fDistance < hysteriesis.fChaseEnter)
 		{
 			// 멀 때, 돌진공격
-			iAttackPatternIndex = 3;
+			iAttackPatternIndex = 2;
 		}
 		else
 		{

@@ -17,6 +17,9 @@ private:
 		Walk_F_L,
 		Walk_F_R,
 		Walk_R_F,
+		Dodge,		// 회피
+		Dodge_L,	// 회피
+		Dodge_R		// 회피
 	};
 
 public:
@@ -117,5 +120,43 @@ public:
 	static CStrikeJaeger_Walk_R_F* Create() { return new CStrikeJaeger_Walk_R_F(); }
 	virtual void Free() override { __super::Free(); }
 };
+
+
+class CStrikeJaeger_Dodge : public IBaseState<CStrikeJaeger>
+{
+public:
+	virtual void Enter(CStrikeJaeger* pOwner) override;
+	virtual void Update(CStrikeJaeger* pOwner, _float dt) override;
+	virtual void Exit(CStrikeJaeger* pOwner) override;
+
+public:
+	static CStrikeJaeger_Dodge* Create() { return new CStrikeJaeger_Dodge(); }
+	virtual void Free() override { __super::Free(); }
+};
+
+class CStrikeJaeger_Dodge_L : public IBaseState<CStrikeJaeger>
+{
+public:
+	virtual void Enter(CStrikeJaeger* pOwner) override;
+	virtual void Update(CStrikeJaeger* pOwner, _float dt) override;
+	virtual void Exit(CStrikeJaeger* pOwner) override;
+
+public:
+	static CStrikeJaeger_Dodge_L* Create() { return new CStrikeJaeger_Dodge_L(); }
+	virtual void Free() override { __super::Free(); }
+};
+
+class CStrikeJaeger_Dodge_R : public IBaseState<CStrikeJaeger>
+{
+public:
+	virtual void Enter(CStrikeJaeger* pOwner) override;
+	virtual void Update(CStrikeJaeger* pOwner, _float dt) override;
+	virtual void Exit(CStrikeJaeger* pOwner) override;
+
+public:
+	static CStrikeJaeger_Dodge_R* Create() { return new CStrikeJaeger_Dodge_R(); }
+	virtual void Free() override { __super::Free(); }
+};
+
 
 NS_END
