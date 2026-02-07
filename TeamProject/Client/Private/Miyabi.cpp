@@ -26,11 +26,11 @@
 #include "MiyabiState_Attack.h"
 #include "MiyabiState_NormalAttack.h"
 #include "MiyabiState_CounterAttack.h"
-//#include "MiyabiState_AssaultAttack.h"
+#include "MiyabiState_AssaultAttack.h"
 #include "MiyabiState_SwitchIn.h"
 #include "MiyabiState_SwitchInParryAid.h"
 #include "MiyabiState_SwitchOut.h"
-//#include "MiyabiState_Hit.h"
+#include "MiyabiState_Hit.h"
 #include "MiyabiState_Evade.h"
 
 CMiyabi::CMiyabi()
@@ -325,7 +325,7 @@ HRESULT CMiyabi::Initialize_States()
 	m_pStateMachine->Register_State("Evade", CMiyabiState_Evade::Create());
 	m_pStateMachine->Register_State("SwitchIn", CMiyabiState_SwitchIn::Create());
 	m_pStateMachine->Register_State("SwitchOut", CMiyabiState_SwitchOut::Create());
-	//m_pStateMachine->Register_State("Hit", CMiyabiState_Hit::Create());
+	m_pStateMachine->Register_State("Hit", CMiyabiState_Hit::Create());
 
 	return S_OK;
 }
@@ -733,15 +733,15 @@ void CMiyabi::Process_AttackInput(const string& strCurrentState)
 				pCounter->Get_SubStateMachine()->Set_Bool("ReserveNormal", true);
 			}
 		}
-		//else if (strAttackType == "AssaultAttack")
-		//{
-		//	CMiyabiState_AssaultAttack* pAssault = static_cast<CMiyabiState_AssaultAttack*>(
-		//		pAttack->Get_SubStateMachine()->Get_CurrentState());
-		//	if (!pAssault || !pAssault->Get_SubStateMachine())
-		//		return;
-		//	pAttack->Get_SubStateMachine()->Set_Int("ComboEntryIndex", 4);
-		//	pAssault->Get_SubStateMachine()->Set_Bool("ReserveNormal", true);
-		//}
+		else if (strAttackType == "AssaultAttack")
+		{
+			CMiyabiState_AssaultAttack* pAssault = static_cast<CMiyabiState_AssaultAttack*>(
+				pAttack->Get_SubStateMachine()->Get_CurrentState());
+			if (!pAssault || !pAssault->Get_SubStateMachine())
+				return;
+			pAttack->Get_SubStateMachine()->Set_Int("ComboEntryIndex", 3);
+			pAssault->Get_SubStateMachine()->Set_Bool("ReserveNormal", true);
+		}
 	}
 	else if (strCurrentState == "SwitchIn")
 	{

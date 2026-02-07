@@ -382,6 +382,7 @@
     <ClInclude Include="..\Public\CrowdNpc.h" />
     <ClInclude Include="..\public\GachaFootStage.h" />
     <ClInclude Include="..\Public\MiasmaBlade.h" />
+    <ClInclude Include="..\Public\MiyabiState_AssaultAttack.h" />
     <ClInclude Include="..\Public\MiyabiState_CounterAttack.h" />
     <ClInclude Include="..\Public\MiyabiState_ExAttack.h" />
     <ClInclude Include="..\Public\MiyabiState_UltimateAttack.h" />
@@ -426,7 +427,11 @@
     <ClInclude Include="..\Public\MiyabiState_SwitchInNormal.h" />
     <ClInclude Include="..\Public\MiyabiState_SwitchInParryAid.h" />
     <ClInclude Include="..\Public\MiyabiState_SwitchOut.h" />
+    <ClInclude Include="..\Public\UI_GachaTextGroupAgent.h" />
+    <ClInclude Include="..\Public\UI_GachaTextReveal.h" />
     <ClInclude Include="..\Public\UI_GachaText.h" />
+    <ClInclude Include="..\Public\UI_GachaTextGroupEngine.h" />
+    <ClInclude Include="..\Public\UI_GachaTextGroup.h" />
     <ClInclude Include="..\public\ZeroStage_Start.h" />
     <ClInclude Include="..\public\ParryCamFx.h" />
     <ClInclude Include="..\Public\UI_GachaDisplay.h" />
@@ -801,6 +806,7 @@
     <ClCompile Include="..\Private\CrowdNpc.cpp" />
     <ClCompile Include="..\private\GachaFootStage.cpp" />
     <ClCompile Include="..\Private\MiasmaBlade.cpp" />
+    <ClCompile Include="..\Private\MiyabiState_AssaultAttack.cpp" />
     <ClCompile Include="..\Private\MiyabiState_CounterAttack.cpp" />
     <ClCompile Include="..\Private\MiyabiState_ExAttack.cpp" />
     <ClCompile Include="..\Private\MiyabiState_UltimateAttack.cpp" />
@@ -841,7 +847,11 @@
     <ClCompile Include="..\Private\MiyabiState_SwitchInNormal.cpp" />
     <ClCompile Include="..\Private\MiyabiState_SwitchInParryAid.cpp" />
     <ClCompile Include="..\Private\MiyabiState_SwitchOut.cpp" />
+    <ClCompile Include="..\Private\UI_GachaTextGroupAgent.cpp" />
+    <ClCompile Include="..\Private\UI_GachaTextReveal.cpp" />
     <ClCompile Include="..\Private\UI_GachaText.cpp" />
+    <ClCompile Include="..\Private\UI_GachaTextGroupEngine.cpp" />
+    <ClCompile Include="..\Private\UI_GachaTextGroup.cpp" />
     <ClCompile Include="..\private\ZeroStage_Start.cpp" />
     <ClCompile Include="..\private\ParryCamFx.cpp" />
     <ClCompile Include="..\Private\UI_GachaDisplay.cpp" />

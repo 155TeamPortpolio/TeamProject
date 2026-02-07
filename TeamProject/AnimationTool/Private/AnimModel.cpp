@@ -12,6 +12,7 @@
 #include "Animator3DEX.h"
 
 #include "AnimToolPanel.h"
+#include "AudioSource.h"
 
 CAnimModel::CAnimModel()
 	: m_pGameInstance{ CGameInstance::GetInstance() }
@@ -29,7 +30,7 @@ CAnimModel::CAnimModel(const CAnimModel& rhs)
 HRESULT CAnimModel::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
-	//Add_Component<CSkeletalModel>();
+	Add_Component<CAudioSource>();
 	//Add_Component<CMaterial>();
 
 	return S_OK;
@@ -95,7 +96,7 @@ void CAnimModel::Render_GUI()
 	ImGui::DragFloat("MoveSpeed", &m_fMoveSpeed, 0.001f, 0.f, 100.f);
 
 	//Load Resource
-	GUI_LoadResource(childHeight);
+	GUI_LoadResource(childHeight*3);
 
 	//Set Model, Materials
 	GUI_SetModel(childHeight);
@@ -143,6 +144,10 @@ void CAnimModel::GUI_LoadResource(_float fChildHeight)
 
 	if (ImGui::Button("Load Effect")) {
 		Load_Resource();
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Load Sound")) {
+		Load_Sound();
 	}
 	ImGui::SameLine();
 
@@ -360,6 +365,12 @@ void CAnimModel::Load_Resource()
 			}
 		}
 	}
+}
+
+void CAnimModel::Load_Sound()
+{
+	string folderPath = Helper::OpenFolder_Dialogue();
+	Get_Component<CAudioSource>()->SoundFolder(G_GlobalLevelKey, folderPath);
 }
 
 void CAnimModel::Set_Model(string ModelTag, string MaterialTag)
