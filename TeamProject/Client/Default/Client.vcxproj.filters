@@ -2303,6 +2303,9 @@
     <ClInclude Include="..\Public\UI_GachaText.h">
       <Filter>02. GameObject\UI\02. 3D\Mesh\UI_GachaText</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\MiyabiState_AssaultAttack.h">
+      <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Attack\Assault</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -3376,6 +3379,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\UI_GachaText.cpp">
       <Filter>02. GameObject\UI\02. 3D\Mesh\UI_GachaText</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MiyabiState_AssaultAttack.cpp">
+      <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Attack\Assault</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
