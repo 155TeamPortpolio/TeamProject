@@ -49,7 +49,9 @@ HRESULT CMiasmaBlade::Initialize(INIT_DESC* pArg)
 	Get_Component<CCollider>()->Set_CollisionGroup(COLLISION_GROUP::MONSTER);
 	Get_Component<CRigidBody>()->Set_Kinematic(true);
 	m_pTransform->LookAt(_vector3(desc->vTargetPos));
-
+	m_vVelocity = { 0,0,0 };
+	m_vTargetVelocity = m_pTransform->Dir(STATE::LOOK) * 35;
+	m_ElapsedTime = 0;
 	return S_OK;
 }
 
@@ -63,6 +65,8 @@ void CMiasmaBlade::Priority_Update(_float dt)
 
 void CMiasmaBlade::Update(_float dt)
 {
+	m_ElapsedTime += dt;
+	m_vVelocity = m_vVelocity.Lerp(m_vVelocity,m_vTargetVelocity, Math::ApplyEase(EaseType::InOutSine, m_ElapsedTime));
 	if (isParried) {
 		_vector3 target_Pos = m_pOwner->Get_BipedPos();
 		_float4 pos =  Get_Position();
@@ -73,8 +77,11 @@ void CMiasmaBlade::Update(_float dt)
 			ObjectManager()->Remove_Object(this);
 		}
 	}
-	m_pTransform->Translate(m_pTransform->Dir(STATE::LOOK) * 25 * dt);
+	m_pTransform->Translate(m_vVelocity * dt);
 	Get_Component<CCollider>()->Update(dt);
+
+	if (m_ElapsedTime > 10.f)
+		ObjectManager()->Remove_Object(this);
 }
 
 void CMiasmaBlade::Late_Update(_float dt)
@@ -95,11 +102,15 @@ void CMiasmaBlade::OnPooledAcquire(INIT_DESC* pArg)
 	m_isOnAttack = true;
 	m_isParryEnable = true;
 	isParried = false;
+
 	Get_Component<CCollider>()->Set_CollisionMask(ENUM(COLLISION_GROUP::PLAYER) |
 		ENUM(COLLISION_GROUP::PLAYER_ATTACK));
 	Get_Component<CCollider>()->Set_CollisionGroup(COLLISION_GROUP::MONSTER);
 	Get_Component<CRigidBody>()->Set_Kinematic(true);
 	m_pTransform->LookAt(_vector3(desc->vTargetPos));
+	m_vVelocity = { 0,0,0 };
+	m_vTargetVelocity = m_pTransform->Dir(STATE::LOOK) * m_fMovceSpeed;
+	m_ElapsedTime = 0;
 
 }
 
@@ -116,6 +127,8 @@ void CMiasmaBlade::Parried()
 		m_pTransform->LookAt(pos);
 		Get_Component<CCollider>()->Set_CollisionMask(ENUM(COLLISION_GROUP::MONSTER));
 		Get_Component<CCollider>()->Set_CollisionGroup(COLLISION_GROUP::PLAYER_ATTACK);
+		m_vVelocity = {0,0,0};
+		m_vTargetVelocity = m_pTransform->Dir(STATE::LOOK) * m_fMovceSpeed;
 	}
 }
 
