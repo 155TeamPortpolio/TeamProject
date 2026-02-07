@@ -85,7 +85,7 @@ void CUI_GachaText::Update_Move(_float dt)
 	_float t = m_fTimer / m_fDuration;
 	t = min(t, 1.f);
 
-	_float fEase = Math::ApplyEase(EaseType::OutQuint, t);
+	_float fEase = Math::ApplyEase(EaseType::OutExpo, t);
 
 	_vector vScale = Vector3::Lerp(m_fInitScale, m_fTargetScale, fEase);
 	m_pTransform->Scale_Vector(vScale);

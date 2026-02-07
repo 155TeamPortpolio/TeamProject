@@ -57,7 +57,7 @@ HRESULT CUI_GachaTextGroupEngine::Add_Texts()
 	
 	CUI_GachaText::TEXT_DESC* pDesc = new CUI_GachaText::TEXT_DESC;
 	pDesc->vScaleOffset = { -0.4f, -0.4f, -0.4f };
-	pDesc->vPosOffset = { 0.f, -0.2f, -0.2f }; 
+	pDesc->vPosOffset = { 0.f, -0.1f, -0.2f }; 
 
 	CGameObject* pObj = Builder::Create_Object({ "Gacha_Level", "Proto_GameObject_UIGachaText" })
 		.Add_ObjDesc(pDesc)
