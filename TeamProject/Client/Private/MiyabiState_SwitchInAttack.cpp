@@ -73,6 +73,9 @@ void CMiyabiState_SwitchInAttack_Start::Enter(CMiyabi* pOwner)
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "SwitchIn_Attack")
         .Loop(false)
         .Apply();
+
+    m_vPos = pOwner->Get_WorldPos();
+    m_vLook = pOwner->Get_Component<CTransform>()->Dir(STATE::LOOK);
 }
 
 void CMiyabiState_SwitchInAttack_Start::Update(CMiyabi* pOwner, _float dt)
@@ -80,6 +83,21 @@ void CMiyabiState_SwitchInAttack_Start::Update(CMiyabi* pOwner, _float dt)
     pOwner->Process_RootMotion(dt,
         ENUM(CMiyabi::ROOTMOTION_MASK::MOVE) |
         ENUM(CMiyabi::ROOTMOTION_MASK::QUATERNION));
+
+    for (const auto& Event : pOwner->Get_Animator()->Get_EventBus())
+    {
+        if (Event.Type != CLIP_EVENT_TYPE::NOTIFY) continue;
+
+        if (Event.Tag == "AreaAttack")
+        {
+            BattleSystem()->TakeAreaDamage(m_vPos + m_vLook * 7.f, 7.f, HitDesc()
+                .Name(pOwner->Get_CharacterName())
+                .Type(HIT_TYPE::ONCE)
+                .Damage(pOwner->Get_AttackPower() * 0.897f * Helper::Get_Random_Float(1.f, 1.5f)
+                    , DAMAGE_TYPE::NORMAL)
+            );
+        }
+    }
 }
 
 void CMiyabiState_SwitchInAttack_End::Enter(CMiyabi* pOwner)

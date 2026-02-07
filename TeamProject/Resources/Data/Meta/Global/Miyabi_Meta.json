@@ -255,12 +255,7 @@
           "EventTag": "AreaAttack"
         },
         {
-          "EventTime": 1.2194931507110596,
-          "EventType": "Notify",
-          "EventTag": "AreaAttack"
-        },
-        {
-          "EventTime": 0.8727744817733765,
+          "EventTime": 0.5768680572509766,
           "EventType": "Notify",
           "EventTag": "AreaAttack"
         },
@@ -270,12 +265,22 @@
           "EventTag": "AreaAttack"
         },
         {
-          "EventTime": 1.0491228103637695,
+          "EventTime": 0.7681611180305481,
           "EventType": "Notify",
           "EventTag": "AreaAttack"
         },
         {
-          "EventTime": 0.7681611180305481,
+          "EventTime": 0.8727744817733765,
+          "EventType": "Notify",
+          "EventTag": "AreaAttack"
+        },
+        {
+          "EventTime": 0.9594541788101196,
+          "EventType": "Notify",
+          "EventTag": "AreaAttack"
+        },
+        {
+          "EventTime": 1.0491228103637695,
           "EventType": "Notify",
           "EventTag": "AreaAttack"
         },
@@ -285,12 +290,7 @@
           "EventTag": "AreaAttack"
         },
         {
-          "EventTime": 0.5768680572509766,
-          "EventType": "Notify",
-          "EventTag": "AreaAttack"
-        },
-        {
-          "EventTime": 0.9594541788101196,
+          "EventTime": 1.2194931507110596,
           "EventType": "Notify",
           "EventTag": "AreaAttack"
         }
@@ -888,7 +888,43 @@
     },
     {
       "ClipTag": "Avatar_Female_Size02_Unagi_Ani_SwitchIn_Attack",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.3976608216762543,
+          "EventType": "Notify",
+          "EventTag": "AreaAttack"
+        },
+        {
+          "EventTime": 0.526900589466095,
+          "EventType": "Notify",
+          "EventTag": "AreaAttack"
+        },
+        {
+          "EventTime": 0.858284592628479,
+          "EventType": "Notify",
+          "EventTag": "AreaAttack"
+        },
+        {
+          "EventTime": 1.063742756843567,
+          "EventType": "Notify",
+          "EventTag": "AreaAttack"
+        },
+        {
+          "EventTime": 0.9643274545669556,
+          "EventType": "Notify",
+          "EventTag": "AreaAttack"
+        },
+        {
+          "EventTime": 1.0107213258743286,
+          "EventType": "Notify",
+          "EventTag": "AreaAttack"
+        },
+        {
+          "EventTime": 1.0339181423187256,
+          "EventType": "Notify",
+          "EventTag": "AreaAttack"
+        }
+      ]
     },
     {
       "ClipTag": "Avatar_Female_Size02_Unagi_Ani_SwitchIn_Attack_End",
