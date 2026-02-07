@@ -30,6 +30,8 @@ public:
     DEFILER_BLACK_BOARD& GetBlackBoard() { return m_BlackBoard; }
     DefilerDissolve& GetDissolve() { return m_Dissolve; }
     CStateMachine<CDefiler>* Get_MainStateMachine() { return m_pStateMachine; }
+public:
+    virtual void TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER charaName = CHARACTER::END);
 
 public:
     void Change_CollisionMask(_uint iMask = ENUM(COLLISION_GROUP::PLAYER));
@@ -37,6 +39,7 @@ public:
 
 public:
     void Set_CCTPos(_vector3 pos);
+    _float3 Get_BipedPos();
 
 private:
     void MoveByTraceMode(_float dt, _float moveScale = 1.f);
@@ -53,6 +56,7 @@ private:
     HRESULT Initialize_Transitions();
     HRESULT Initialize_Effects();
     HRESULT Create_Colliders();
+    _float3 Calc_WorldOffsetWithBip();
 
 private:
     CStateMachine<CDefiler>* m_pStateMachine = { nullptr };
