@@ -231,6 +231,11 @@
           "EventTime": 0.36666664481163025,
           "EventType": "Notify",
           "EventTag": "AreaAttack"
+        },
+        {
+          "EventTime": 0.4035087525844574,
+          "EventType": "Notify",
+          "EventTag": "CheckCombo"
         }
       ]
     },
@@ -316,6 +321,11 @@
           "EventTime": 0.10006497800350189,
           "EventType": "Notify",
           "EventTag": "KatanaAttackEnd"
+        },
+        {
+          "EventTime": 0.11734892427921295,
+          "EventType": "Notify",
+          "EventTag": "CheckCombo"
         }
       ]
     },
@@ -325,7 +335,13 @@
     },
     {
       "ClipTag": "Avatar_Female_Size02_Unagi_Ani_Attack_Branch_01_Attack_02",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.7855750322341919,
+          "EventType": "Notify",
+          "EventTag": "CheckCombo"
+        }
+      ]
     },
     {
       "ClipTag": "Avatar_Female_Size02_Unagi_Ani_Attack_Branch_01_Attack_02_End",
@@ -343,6 +359,11 @@
           "EventTime": 0.2684210538864136,
           "EventType": "Notify",
           "EventTag": "KatanaAttackEnd"
+        },
+        {
+          "EventTime": 1.438206672668457,
+          "EventType": "Notify",
+          "EventTag": "CheckCombo"
         }
       ]
     },
@@ -471,6 +492,11 @@
           "EventTime": 0.5031188726425171,
           "EventType": "Notify",
           "EventTag": "AreaAttack"
+        },
+        {
+          "EventTime": 0.5313839912414551,
+          "EventType": "Notify",
+          "EventTag": "CheckCombo"
         }
       ]
     },
@@ -905,11 +931,6 @@
           "EventTag": "AreaAttack"
         },
         {
-          "EventTime": 1.063742756843567,
-          "EventType": "Notify",
-          "EventTag": "AreaAttack"
-        },
-        {
           "EventTime": 0.9643274545669556,
           "EventType": "Notify",
           "EventTag": "AreaAttack"
@@ -923,6 +944,16 @@
           "EventTime": 1.0339181423187256,
           "EventType": "Notify",
           "EventTag": "AreaAttack"
+        },
+        {
+          "EventTime": 1.063742756843567,
+          "EventType": "Notify",
+          "EventTag": "AreaAttack"
+        },
+        {
+          "EventTime": 1.2762116193771362,
+          "EventType": "Notify",
+          "EventTag": "CheckCombo"
         }
       ]
     },

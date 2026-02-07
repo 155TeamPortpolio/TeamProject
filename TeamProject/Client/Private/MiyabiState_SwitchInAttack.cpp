@@ -94,7 +94,7 @@ void CMiyabiState_SwitchInAttack_Start::Update(CMiyabi* pOwner, _float dt)
                 .Name(pOwner->Get_CharacterName())
                 .Type(HIT_TYPE::ONCE)
                 .Damage(pOwner->Get_AttackPower() * 0.897f * Helper::Get_Random_Float(1.f, 1.5f)
-                    , DAMAGE_TYPE::NORMAL)
+                    , DAMAGE_TYPE::HARD)
             );
         }
     }
