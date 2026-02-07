@@ -427,6 +427,7 @@
     <ClInclude Include="..\Public\MiyabiState_SwitchInNormal.h" />
     <ClInclude Include="..\Public\MiyabiState_SwitchInParryAid.h" />
     <ClInclude Include="..\Public\MiyabiState_SwitchOut.h" />
+    <ClInclude Include="..\Public\UI_TextButton.h" />
     <ClInclude Include="..\Public\UI_GachaTextGroupAgent.h" />
     <ClInclude Include="..\Public\UI_GachaTextReveal.h" />
     <ClInclude Include="..\Public\UI_GachaText.h" />
@@ -848,6 +849,7 @@
     <ClCompile Include="..\Private\MiyabiState_SwitchInNormal.cpp" />
     <ClCompile Include="..\Private\MiyabiState_SwitchInParryAid.cpp" />
     <ClCompile Include="..\Private\MiyabiState_SwitchOut.cpp" />
+    <ClCompile Include="..\Private\UI_TextButton.cpp" />
     <ClCompile Include="..\Private\UI_GachaTextGroupAgent.cpp" />
     <ClCompile Include="..\Private\UI_GachaTextReveal.cpp" />
     <ClCompile Include="..\Private\UI_GachaText.cpp" />
