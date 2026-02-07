@@ -1,17 +1,17 @@
 #pragma once
-#include "GameObject.h"
+#include "UI_GachaTextGroup.h"
 
 NS_BEGIN(Client)
 
-class CUI_GachaText : public CGameObject
+class CUI_GachaTextGroupEngine final : public CUI_GachaTextGroup
 {
 private:
-    CUI_GachaText() {}
-    CUI_GachaText(const CUI_GachaText& rhs) : CGameObject(rhs) {}
-    virtual ~CUI_GachaText() DEFAULT;
+    CUI_GachaTextGroupEngine() {}
+    CUI_GachaTextGroupEngine(const CUI_GachaTextGroupEngine& rhs) : CUI_GachaTextGroup(rhs) {}
+    virtual ~CUI_GachaTextGroupEngine() DEFAULT;
 
 public:
-    void Change_Model(const string& strKey);
+    virtual void Show(GachaGrade eGrade) override;
 
 public:
     HRESULT Initialize_Prototype()     override;
@@ -19,6 +19,12 @@ public:
     void    Priority_Update(_float dt) override {}
     void    Update(_float dt)          override;
     void    Late_Update(_float dt)     override {}
+
+private:
+    void Create_Texts();
+
+private:
+    class CUI_GachaText* m_pText = {};
 
 public:
     static CGameObject* Create();

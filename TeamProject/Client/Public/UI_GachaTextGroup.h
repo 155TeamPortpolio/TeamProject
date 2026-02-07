@@ -3,16 +3,16 @@
 
 NS_BEGIN(Client)
 
-class CUI_GachaText : public CGameObject
+class CUI_GachaTextGroup : public CGameObject
 {
-private:
-    CUI_GachaText() {}
-    CUI_GachaText(const CUI_GachaText& rhs) : CGameObject(rhs) {}
-    virtual ~CUI_GachaText() DEFAULT;
+protected:
+    CUI_GachaTextGroup() {}
+    CUI_GachaTextGroup(const CUI_GachaTextGroup& rhs) : CGameObject(rhs) {}
+    virtual ~CUI_GachaTextGroup() DEFAULT;
 
 public:
-    void Change_Model(const string& strKey);
-
+    virtual void Show(GachaGrade eGrade);
+        
 public:
     HRESULT Initialize_Prototype()     override;
     HRESULT Initialize(INIT_DESC* pArg) override;

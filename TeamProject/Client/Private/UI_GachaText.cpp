@@ -4,8 +4,28 @@
 #include "StaticModel.h"
 #include "Material.h"
 
+void CUI_GachaText::Change_Model(const string& strKey)
+{
+	auto pModel = Get_Component<CStaticModel>();
+	auto pMaterial = Get_Component<CMaterial>();
+
+	pModel->Link_Model("Gacha_Level", strKey + ".model");// "GachaStage_UI_EngineB_01.model");
+	pMaterial->Link_Material("Gacha_Level", strKey + ".mat"); //"GachaStage_UI_EngineB_01.mat");
+}
+
 HRESULT CUI_GachaText::Initialize_Prototype()
 {
+	if (FAILED(__super::Initialize_Prototype()))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CUI_GachaText::Initialize(INIT_DESC* pArg)
+{
+	if (FAILED(__super::Initialize(pArg)))
+		return E_FAIL;
+
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
 
@@ -17,14 +37,6 @@ HRESULT CUI_GachaText::Initialize_Prototype()
 
 	pModel->Set_RenderType(RENDER_PASS_TYPE::RENDER_3DUI);
 	pModel->ShadowCast(false);
-
-	return S_OK;
-}
-
-HRESULT CUI_GachaText::Initialize(INIT_DESC* pArg)
-{
-	if (FAILED(__super::Initialize(pArg)))
-		return E_FAIL;
 
 	return S_OK;
 }
