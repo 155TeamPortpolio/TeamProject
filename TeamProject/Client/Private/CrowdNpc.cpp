@@ -28,12 +28,12 @@ HRESULT CCrowdNpc::Initialize(INIT_DESC* pArg)
 {
     __super::Initialize(pArg);
 
-    Get_Component<CModel>()->Link_Model(G_GlobalLevelKey, "JaneDoeModel.model");
-    Get_Component<CMaterial>()->Link_Material(G_GlobalLevelKey, "JaneDoe.mat");
+    Get_Component<CModel>()->Link_Model(G_GlobalLevelKey, "NPC_200200170_Model_Flattenedout.model");
+    Get_Component<CMaterial>()->Link_Material(G_GlobalLevelKey, "NPC_200200170_Model_Flattenedout.mat");
 
-    Get_Component<CAnimator3D>()->LinkAnimate_Model(G_GlobalLevelKey, "JaneDoeModel.model");
-    Get_Component<CAnimator3D>()->Link_MetaData(G_GlobalLevelKey, "JaneDoe_Meta.json");
-    Get_Component<CAnimator3D>()->Set_Animation("JaneDoe_Ani_Idle").Loop(true).Apply();
+    Get_Component<CAnimator3D>()->LinkAnimate_Model(G_GlobalLevelKey, "NPC_200200170_Model_Flattenedout.model");
+    Get_Component<CAnimator3D>()->Link_MetaData(G_GlobalLevelKey, "NPC_Male_Size02_Meta.json");
+    //Get_Component<CAnimator3D>()->Set_Animation("JaneDoe_Ani_Idle").Loop(true).Apply();
     return S_OK;
 }
 

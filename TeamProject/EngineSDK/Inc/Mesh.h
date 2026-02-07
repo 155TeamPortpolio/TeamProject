@@ -37,7 +37,7 @@ public:
 	void Create_BoneMinMax(class CSkeleton* pSkeleton);
 	void ExpandBox(MINMAX_BOX& b, const _float3& p);
 	virtual void Render_GUI();
-
+	void Optimize_Vertex();
 public:
 	HRESULT BakeSkinRemapAndRebuildVB(ID3D11Device* pDevice, _uint skeletonBoneCount);
 	const vector<uint16_t>& Get_UsedBones() const { return m_UsedBones; }
