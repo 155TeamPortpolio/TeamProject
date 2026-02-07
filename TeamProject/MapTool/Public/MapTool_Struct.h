@@ -65,7 +65,7 @@ namespace MapTool {
 #pragma region MovePoint
 	typedef struct tagMovePoint
 	{
-		_int	iIndex{ -1 };
+		_int			 iIndex{ -1 };
 		array<_float, 3> vTranslation = { 0.f, 0.f, 0.f };
 	}MOVEPOINT;
 

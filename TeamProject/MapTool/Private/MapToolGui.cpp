@@ -16,6 +16,7 @@
 #include "BattleSpawnerPoint.h"
 #include "EntityObject.h"
 #include "LightPoint.h"
+#include "MovePoint.h"
 
 CMapToolGui::CMapToolGui(GUI_CONTEXT* pContext)
     : CBasePanel(pContext)
@@ -169,6 +170,11 @@ void CMapToolGui::Render_GUI()
                 break;
             case MapTool::MAPOBJ_TYPE::LIGHT:
                 Save_LightData();
+                break;
+            case MapTool::MAPOBJ_TYPE::MOVEPOINT:
+                break;
+
+            default:
                 break;
             }
         }
@@ -370,8 +376,7 @@ void CMapToolGui::PreSet_ModelResource()
     ImGui::PopID();
 }
 
-
-#pragma PlaceObject
+#pragma region PlaceObject
 void CMapToolGui::Place_Object(PHYSICS_RAY_HIT* pRayHit)
 {
     if (nullptr == pRayHit->pHitObject ||
@@ -535,13 +540,17 @@ void CMapToolGui::Place_MovePoint(PHYSICS_RAY_HIT* pRayHit)
     string TagInstanceName = "MovePoint_" + to_string(m_iTriggerIndex++);
     CGameObject* pStaticObject = Builder::Create_Object({ g_TagMapToolLevel ,"Proto_GameObject_MovePoint" })
         .Position(pRayHit->vPoint)
+        .Scale({ 0.2, 0.2, 0.2 })
         .Build(TagInstanceName);
 
-    pStaticObject->Get_Component<CCollider>()->Set_DebugRender(true);
-
     ObjectManager()->Add_Object(pStaticObject, { g_TagMapToolLevel, g_tagMapObjType[ENUM(MAPOBJ_TYPE::MOVEPOINT)] });
-}
 
+    dynamic_cast<CMovePoint*>(pStaticObject)->Set_PathOrder(m_SelectedPath, m_Paths[m_SelectedPath].size());
+    dynamic_cast<CMovePoint*>(pStaticObject)->Set_GUI(this);
+
+    m_Paths[m_SelectedPath].push_back(pStaticObject->Get_WorldPos());
+}
+#pragma endregion
 
 void CMapToolGui::Save_MapData()
 {
@@ -726,6 +735,11 @@ void CMapToolGui::Save_LightData()
 
     if (true == HelperMT::ExportJsonFile<Light_Header>(m_LightData, SavePath))
         m_isShowDataSaveFinish = true;
+}
+
+void CMapToolGui::Save_MovePoint()
+{
+    
 }
 
 void CMapToolGui::Load_BattleData(const string& filepath)
@@ -1040,18 +1054,30 @@ void CMapToolGui::Setting_SelectType()
 
     switch (static_cast<MAPOBJ_TYPE>(m_iSelectedLayerIndex))
     {
-    case MapTool::MAPOBJ_TYPE::PLACED:
-    {
-        ImGui::BeginChild("##MapToolRakeResourceList", ImVec2{ 0, 200.f }, true);
-        PreSet_ModelResource();
-
-        ImGui::EndChild();
+    case MapTool::MAPOBJ_TYPE::PLACED:      Setting_Placed();   break;
+    case MapTool::MAPOBJ_TYPE::TRIGGER:     Setting_Trigger();  break;
+    case MapTool::MAPOBJ_TYPE::ENTITY:      Setting_Entity();   break;
+    case MapTool::MAPOBJ_TYPE::BATTLE:      Setting_Battle();   break;
+    case MapTool::MAPOBJ_TYPE::LIGHT:       Setting_Light();    break;
+    case MapTool::MAPOBJ_TYPE::MOVEPOINT:   Setting_MovePoint();break;
+    default:
         break;
     }
-    case MapTool::MAPOBJ_TYPE::TRIGGER:
+}
+
+#pragma region Settring
+void CMapToolGui::Setting_Placed()
+{
+    ImGui::BeginChild("##MapToolRakeResourceList", ImVec2{ 0, 200.f }, true);
+    PreSet_ModelResource();
+
+    ImGui::EndChild();
+}
+
+void CMapToolGui::Setting_Trigger()
+{
+    switch (m_TriggerTransform.eType)
     {
-        switch (m_TriggerTransform.eType)
-        {
         case COLLIDER_TYPE::BOX:
         {
             ImGui::TextColored(ImVec4(1.f, 1.f, 1.f, 1.f), "Box Scale ( HalfExtents(x,y,z) )");
@@ -1076,74 +1102,201 @@ void CMapToolGui::Setting_SelectType()
 
             break;
         }
-        }
-        break;
-    }
-    case MapTool::MAPOBJ_TYPE::ENTITY:
-    {
-        ImGui::TextColored(ImVec4(1.f, 1.f, 1.f, 1.f), "Entity Box Scale ( HalfExtents(x,y,z) )");
-        ImGui::InputFloat3("##EntityBoxScale", reinterpret_cast<float*>(&m_vEntitySize), "%.1f");
-        
-        auto pGuiContext = m_pGameInstance->Get_GUISystem()->Get_Context();
-
-        static string CurModelName = {};
-      
-        if (pGuiContext->pSelectedObject)
-        {
-            if (m_pSelectedEntityObject != dynamic_cast<CEntityObject*>(pGuiContext->pSelectedObject))
-            { 
-                m_pSelectedEntityObject = dynamic_cast<CEntityObject*>(pGuiContext->pSelectedObject);
-            }
-        }
-
-        if (ImGui::BeginCombo("EntityModel", CurModelName.c_str()))
-        {
-            for (int i = 0; i < m_EntityModelPathPackName.size(); ++i)
-            {
-                if (ImGui::Selectable(m_EntityModelPathPackName[i].c_str()))
-                {
-                    if (nullptr != m_pSelectedEntityObject)
-                    {
-                        for (auto Pack : m_ModelPathPack)
-                        {
-                            if (Pack.TagName == m_EntityModelPathPackName[i])
-                                m_pSelectedEntityObject->Set_EntityModel(Pack.TagName, Pack.TagModelKey, Pack.TagMaterialKey);
-                        }
-                    }
-
-                    CurModelName = m_EntityModelPathPackName[i];
-                    m_iPickedEntityModelIndex = i;
-                }
-            }
-            ImGui::EndCombo();
-        }
-
-        break;
-    }
-    case MapTool::MAPOBJ_TYPE::BATTLE:
-        ImGui::TextColored(ImVec4(1.f, 1.f, 1.f, 1.f), "BattleData Box Scale ( HalfExtents(x,y,z) )");
-        ImGui::InputFloat3("##BattleBoxScale", reinterpret_cast<float*>(&m_vBattleDataSize), "%.1f");
-        switch (m_eBattlyDataType)
-        {
-        case MapTool::BATTLE_TYPE::SPAWNER:
-            ImGui::TextColored(ImVec4(1.f, 1.f, 1.f, 1.f), "SpawnerIndex");
-            ImGui::InputInt("##SpawnerIndex", &m_iSpawnerIndex);
-            break;
-        case MapTool::BATTLE_TYPE::MONSTER:
-            ImGui::TextColored(ImVec4(1.f, 1.f, 1.f, 1.f), "MonsterIndex");
-            ImGui::InputInt("##MonsterIndex", &m_iMonsterIndex);
-            break;
         default:
             break;
-        }
-    break;
-    case MapTool::MAPOBJ_TYPE::MOVEPOINT:
+    }
+}
 
+void CMapToolGui::Setting_Entity()
+{
+    ImGui::TextColored(ImVec4(1.f, 1.f, 1.f, 1.f), "Entity Box Scale ( HalfExtents(x,y,z) )");
+    ImGui::InputFloat3("##EntityBoxScale", reinterpret_cast<float*>(&m_vEntitySize), "%.1f");
+
+    auto pGuiContext = m_pGameInstance->Get_GUISystem()->Get_Context();
+
+    static string CurModelName = {};
+
+    if (pGuiContext->pSelectedObject)
+    {
+        if (m_pSelectedEntityObject != dynamic_cast<CEntityObject*>(pGuiContext->pSelectedObject))
+        {
+            m_pSelectedEntityObject = dynamic_cast<CEntityObject*>(pGuiContext->pSelectedObject);
+        }
+    }
+
+    if (ImGui::BeginCombo("EntityModel", CurModelName.c_str()))
+    {
+        for (int i = 0; i < m_EntityModelPathPackName.size(); ++i)
+        {
+            if (ImGui::Selectable(m_EntityModelPathPackName[i].c_str()))
+            {
+                if (nullptr != m_pSelectedEntityObject)
+                {
+                    for (auto Pack : m_ModelPathPack)
+                    {
+                        if (Pack.TagName == m_EntityModelPathPackName[i])
+                            m_pSelectedEntityObject->Set_EntityModel(Pack.TagName, Pack.TagModelKey, Pack.TagMaterialKey);
+                    }
+                }
+
+                CurModelName = m_EntityModelPathPackName[i];
+                m_iPickedEntityModelIndex = i;
+            }
+        }
+        ImGui::EndCombo();
+    }
+}
+
+void CMapToolGui::Setting_Battle()
+{
+    ImGui::TextColored(ImVec4(1.f, 1.f, 1.f, 1.f), "BattleData Box Scale ( HalfExtents(x,y,z) )");
+    ImGui::InputFloat3("##BattleBoxScale", reinterpret_cast<float*>(&m_vBattleDataSize), "%.1f");
+    switch (m_eBattlyDataType)
+    {
+    case MapTool::BATTLE_TYPE::SPAWNER:
+        ImGui::TextColored(ImVec4(1.f, 1.f, 1.f, 1.f), "SpawnerIndex");
+        ImGui::InputInt("##SpawnerIndex", &m_iSpawnerIndex);
+        break;
+    case MapTool::BATTLE_TYPE::MONSTER:
+        ImGui::TextColored(ImVec4(1.f, 1.f, 1.f, 1.f), "MonsterIndex");
+        ImGui::InputInt("##MonsterIndex", &m_iMonsterIndex);
         break;
     default:
         break;
     }
 }
+
+void CMapToolGui::Setting_Light()
+{
+}
+
+void CMapToolGui::Setting_MovePoint()
+{
+    if (ImGui::InputInt("Path Index", &m_SelectedPath))
+    {
+        m_SelectedPath = max(0, m_SelectedPath);
+
+        if (m_Paths.find(m_SelectedPath) == m_Paths.end())
+        {
+            for (int i = 0; i <= m_SelectedPath; ++i)
+            {
+                if (m_Paths.find(i) == m_Paths.end())
+                    m_Paths.emplace(i, vector<_vector3>{});
+            }
+        }
+    }
+
+    auto it = m_Paths.find(m_SelectedPath);
+    if (it == m_Paths.end())
+        return;
+
+    auto& points = it->second;
+
+    ImGui::Separator();
+    ImGui::Text("Path %d Points", m_SelectedPath);
+
+    if (ImGui::BeginTable(
+        "MovePointTable",
+        5,
+        ImGuiTableFlags_Borders |
+        ImGuiTableFlags_RowBg |
+        ImGuiTableFlags_Resizable))
+    {
+        ImGui::TableSetupColumn("Idx", ImGuiTableColumnFlags_WidthFixed, 40.f);
+        ImGui::TableSetupColumn("X");
+        ImGui::TableSetupColumn("Y");
+        ImGui::TableSetupColumn("Z");
+        ImGui::TableSetupColumn("Del", ImGuiTableColumnFlags_WidthFixed, 40.f);
+        ImGui::TableHeadersRow();
+
+        for (int i = 0; i < points.size(); )
+        {
+            ImGui::PushID(i);
+            ImGui::TableNextRow();
+
+            // Index
+            ImGui::TableSetColumnIndex(0);
+            ImGui::Text("%d", i);
+
+            // X
+            ImGui::TableSetColumnIndex(1);
+            ImGui::Text("%.2f", points[i].x);
+
+            // Y
+            ImGui::TableSetColumnIndex(2);
+            ImGui::Text("%.2f", points[i].y);
+
+            // Z
+            ImGui::TableSetColumnIndex(3);
+            ImGui::Text("%.2f", points[i].z);
+
+            // Delete
+            ImGui::TableSetColumnIndex(4);
+            if (ImGui::Button("X"))
+            {
+                ImGui::PopID();
+                Delete_MovePoint(m_SelectedPath, i);
+                continue;   // i 증가 X
+            }
+
+            ImGui::PopID();
+            ++i;
+        }
+
+        ImGui::EndTable();
+    }
+}
+
+void CMapToolGui::Delete_MovePoint(_int PathIndex, _int OrderIndex)
+{
+    // 1. 월드 오브젝트 삭제
+    CLayer* pLayer = ObjectManager()->Get_Layer(
+        { g_TagMapToolLevel, g_tagMapObjType[ENUM(MAPOBJ_TYPE::MOVEPOINT)] });
+
+    if (pLayer)
+    {
+        for (auto& obj : pLayer->Get_AllObject())
+        {
+            auto* MovePoint = dynamic_cast<CMovePoint*>(obj);
+            if (!MovePoint) continue;
+
+            if (MovePoint->Get_PathIndex() == PathIndex &&
+                MovePoint->Get_OrderIndex() == OrderIndex)
+            {
+                MovePoint->Delete_Object(); // 기존 삭제 방식
+                break;
+            }
+        }
+    }
+
+    // 2. 위치 데이터 삭제
+    auto& points = m_Paths[PathIndex];
+    points.erase(points.begin() + OrderIndex);
+
+    // 3. 같은 Path의 order 재정렬
+    if (pLayer)
+    {
+        for (auto& obj : pLayer->Get_AllObject())
+        {
+            auto* MovePoint = dynamic_cast<CMovePoint*>(obj);
+            if (!MovePoint) continue;
+
+            if (MovePoint->Get_PathIndex() == PathIndex &&
+                MovePoint->Get_OrderIndex() > OrderIndex)
+            {
+                MovePoint->Set_PathOrder(PathIndex, MovePoint->Get_OrderIndex() - 1);
+            }
+        }
+    }
+
+}
+
+void CMapToolGui::Update_MovePoint(_int PathIndex, _int OrderIndex, _vector3 vPos)
+{
+    m_Paths[PathIndex][OrderIndex] = vPos;
+}
+
+#pragma endregion
 
 void CMapToolGui::Set_EntityModel()
 {

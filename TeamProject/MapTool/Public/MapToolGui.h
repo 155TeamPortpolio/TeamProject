@@ -51,6 +51,7 @@ public:
 	void			Save_EntityData();
 	void			Save_BattleData();
 	void			Save_LightData();
+	void			Save_MovePoint();
 
 	void			Load_BattleData(const string& filepath = "");
 
@@ -60,6 +61,14 @@ public:
 	void			Select_BattleDataType();
 	void			Setting_SelectType();
 
+	void			Setting_Placed();
+	void			Setting_Trigger();
+	void			Setting_Entity();
+	void			Setting_Battle();
+	void			Setting_Light();
+	void			Setting_MovePoint();
+	void			Delete_MovePoint(_int PathIndex, _int OrderIndex);
+	void			Update_MovePoint(_int PathIndex, _int OrderIndex, _vector3 vPos);
 	//Show ModelOnly
 	void			Set_EntityModel();
 	void			Save_EntityInit();
@@ -98,14 +107,13 @@ private:
 	_int		m_iTriggerIndex = {};
 
 	/* For.Entity */
-	_float3				 m_vEntitySize = { 1.f, 1.f, 1.f };
-	_int				 m_iEntityIndex = {};
-
-	_int				 m_iPickedEntityModelIndex{ -1 };
+	_float3	m_vEntitySize = { 1.f, 1.f, 1.f };
+	_int	m_iEntityIndex = {};
+	_int	m_iPickedEntityModelIndex{ -1 };
 
 	//NPC MovePoint
-	_bool				 m_bMovePointMode = { false };
-	
+	_int m_SelectedPath = 0;
+	map<_int, vector<_vector3>> m_Paths;
 
 	//Only ShowModel
 	vector<string>		 m_EntityModelPathPackName{};
@@ -121,11 +129,11 @@ private:
 	_int				m_iEndPointIndex = {};
 
 	/* For.Data */
-	MapData_Header		m_MapData = {};
-	Entity_Header		m_EntityData = {};
-	vector<list<_vector3>>	m_vNPCMovePoint{};
-	BATTLE_FIELD_DATA	m_BattleData = {};
-	Light_Header		m_LightData = {};
+	MapData_Header			m_MapData = {};
+	Entity_Header			m_EntityData = {};
+	BATTLE_FIELD_DATA		m_BattleData = {};
+	Light_Header			m_LightData = {};
+	MovePoint_Header	    m_MovePoint{};
 
 	///_uint			m_iBattleTableIndex = {};
 	_float2			m_vShowDataSaveFinish = {};
