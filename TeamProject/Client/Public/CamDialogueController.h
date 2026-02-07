@@ -40,7 +40,7 @@ private:
     Vector3 pivotTo{};
     _bool   hasBlendInit = false;
 
-    EaseType ease = EaseType::InOutSine;
+    EaseType ease = EaseType::InOutQuad;
 
     _float maxPivotOff = 0.8f;
     _float faceYOffsetMul = 0.85f;

@@ -73,15 +73,6 @@ void CMiyabiState_SwitchInParryAid::Exit(CMiyabi* pOwner)
     pOwner->Unlock_Move();
     pOwner->Unlock_Rotate();
 
-    OBJECT_HANDLE handle = pOwner->Get_ParryHandle();
-    if (handle.isValid())
-    {
-        TARGET_LOCK_DESC desc;
-        desc.bLock = false;
-        desc.tHandle = handle;
-        EventSystem()->Broadcast<TARGET_LOCK_DESC>({ desc });
-    }
-
     __super::Exit(pOwner);
 }
 
@@ -113,6 +104,11 @@ void CMiyabiState_SwitchInParryAid_L_Loop::Enter(CMiyabi* pOwner)
     {
         dynamic_cast<CEnemy*>(handle.Get())->Parried();
         BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::PARRY);
+
+        TARGET_LOCK_DESC desc;
+        desc.bLock = false;
+        desc.tHandle = handle;
+        EventSystem()->Broadcast<TARGET_LOCK_DESC>({desc});
     }
 }
 

@@ -370,6 +370,7 @@
     <ClInclude Include="..\Public\BackgroundNpc.h" />
     <ClInclude Include="..\Public\BattleFXFlow.h" />
     <ClInclude Include="..\public\CamDebugInput.h" />
+    <ClInclude Include="..\public\CamParryController.h" />
     <ClInclude Include="..\public\Claymore.h" />
     <ClInclude Include="..\public\Claymore_Attack.h" />
     <ClInclude Include="..\public\Claymore_Born.h" />
@@ -428,7 +429,6 @@
     <ClInclude Include="..\Public\MiyabiState_SwitchOut.h" />
     <ClInclude Include="..\Public\UI_GachaText.h" />
     <ClInclude Include="..\public\ZeroStage_Start.h" />
-    <ClInclude Include="..\public\ParryCamFx.h" />
     <ClInclude Include="..\Public\UI_GachaDisplay.h" />
     <ClInclude Include="..\Public\UI_GachaResult.h" />
     <ClInclude Include="..\Public\UI_GachaResultItem.h" />
@@ -786,6 +786,7 @@
     <ClCompile Include="..\Private\BackgroundNpc.cpp" />
     <ClCompile Include="..\Private\BattleFXFlow.cpp" />
     <ClCompile Include="..\private\CamDebugInput.cpp" />
+    <ClCompile Include="..\private\CamParryController.cpp" />
     <ClCompile Include="..\private\Claymore.cpp" />
     <ClCompile Include="..\private\Claymore_Attack.cpp" />
     <ClCompile Include="..\private\Claymore_Born.cpp" />
@@ -843,7 +844,6 @@
     <ClCompile Include="..\Private\MiyabiState_SwitchOut.cpp" />
     <ClCompile Include="..\Private\UI_GachaText.cpp" />
     <ClCompile Include="..\private\ZeroStage_Start.cpp" />
-    <ClCompile Include="..\private\ParryCamFx.cpp" />
     <ClCompile Include="..\Private\UI_GachaDisplay.cpp" />
     <ClCompile Include="..\Private\UI_GachaResult.cpp" />
     <ClCompile Include="..\Private\UI_GachaResultItem.cpp" />

@@ -5,7 +5,6 @@
 #include "CamDirectorData.h"
 #include "CamEventController.h"
 #include "CamDialogueController.h"
-#include "ParryCamFx.h"
 
 NS_BEGIN(Client)
 
@@ -44,6 +43,7 @@ public:
     CHARACTER     GetCharacterName()         const { return GetCharacter()->Get_CharacterName(); }
     string        GetCharacterStr()          const { return Helper::EnumToString(GetCharacter()->Get_CharacterName()); }
     OBJECT_HANDLE GetCurHandle()             const { return GetPlayer()->Get_CurCharacterHandle(); }
+    OBJECT_HANDLE GetCurTarget()             const;
     _float        GetTime()                  const { return GetSeqPlayer()->GetTime(); }
     const string& GetCurSeqName()            const { return m_playing.active ? m_playing.key : kEmpty; }
     SeqPlayer*    GetSeqPlayer()             const { return GetSeqObj()->Get_Component<CCamSequencePlayer>(); }

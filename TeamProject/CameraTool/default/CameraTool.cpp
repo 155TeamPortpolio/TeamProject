@@ -150,8 +150,8 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
     if (primaryW > 2500)
     {
-        WinX = 256;
-        WinY = 136;
+        WinX = 2560;
+        WinY = 1360;
     }
     else
     {

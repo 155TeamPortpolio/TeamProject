@@ -39,6 +39,11 @@ CGameObject* CCamDirector::GetCamObj(CamType type) const
     return ObjectManager()->Request_Object(m_camHandles[ENUM(type)]);
 }
 
+OBJECT_HANDLE CCamDirector::GetCurTarget() const
+{
+    BattleSystem()->GetBattlePlayer()->GetTargetHandle();
+}
+
 _bool CCamDirector::Register(const string& key, const fs::path& path)
 {
     CamSequenceRequestDesc req{};
@@ -184,8 +189,6 @@ void CCamDirector::StartParry()
 
     auto charaName = GetCharacterName();
     auto anim = GetCharacter()->Get_Component<CAnimator3D>();
-    
-   // RequestSequence("Parry/Corin");
 
     GetOrbitCam()->SetLockOn(BattleSystem()->GetBattlePlayer()->GetTargetHandle());
 
@@ -272,16 +275,17 @@ void CCamDirector::SyncSeqInputLock()
 void CCamDirector::StartDialog()
 {
     GetOrbitCam()->Lock_Input();
-    m_dialogue.Begin(60.f, 0.5f);
+    GetOrbitCam()->DialogueMode_Begin();
+
+    m_dialogue.Begin(35.f, 0.5f);
     m_dialogueUnlockPending = false;
 }
 
 void CCamDirector::EndDialog()
 {
-    GetOrbitCam()->Unlock_Input();
-
     m_dialogue.End(0.5f);
     m_dialogueUnlockPending = true;
+    GetOrbitCam()->Unlock_Input();
 }
 
 void CCamDirector::UpdatePlayer()
