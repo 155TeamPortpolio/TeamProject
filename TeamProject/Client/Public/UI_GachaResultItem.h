@@ -37,6 +37,8 @@ private:
 
 	class CSprite2D* m_pSprites[ENUM(SPRITE::END)] = {};
 
+	_float3 m_vRGB = {};
+
 private:
 	void Cache();
 

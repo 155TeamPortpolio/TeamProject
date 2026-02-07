@@ -12,15 +12,15 @@ void CUI_GachaResultItem::Set_ResultDesc(GACHA_RESULT_DESC desc)
     switch (desc.Grade)
     {
     case GachaGrade::S:
-        m_vColor = { 1.f, 0.f, 0.f, 1.f };
+        XMStoreFloat3(&m_vRGB, Helper::HexToColor("#FFD721"));
         Change_SpriteTexture(SPRITE::RANK_ICON, "RANK_S.png");
         break;
     case GachaGrade::A:
-        m_vColor = { 1.f, 0.f, 1.f, 1.f };
+        XMStoreFloat3(&m_vRGB, Helper::HexToColor("#8B25D4"));
         Change_SpriteTexture(SPRITE::RANK_ICON, "RANK_A.png");
         break;
     case GachaGrade::B:
-        m_vColor = { 0.f, 0.f, 1.f, 1.f };
+        XMStoreFloat3(&m_vRGB, Helper::HexToColor("#3B7FFC"));
         Change_SpriteTexture(SPRITE::RANK_ICON, "RANK_B.png");
         break;
     }
@@ -58,7 +58,7 @@ void CUI_GachaResultItem::Update(_float dt)
 
 	Get_Component<CObjectContainer>()->UpdateChild(dt);
     if (m_pOverlay)
-        m_pOverlay->Set_RGB(_float3(m_vColor.x, m_vColor.y, m_vColor.z));
+        m_pOverlay->Set_RGB(m_vRGB);
 }
 
 void CUI_GachaResultItem::UI_Active(void* pArg)
