@@ -64,6 +64,15 @@ private:
 public:
     static CMiyabiState_ExAttack_02* Create() { return new CMiyabiState_ExAttack_02(); }
     virtual void Free() override { __super::Free(); }
+
+private:
+    void Update_Effects(CMiyabi* pOwner);
+
+    _uint m_iRepeatCount{};
+    _float m_fRepeatProgress{};
+    _float m_fRepeatInterval = 0.05f;
+    _float m_fDistanceInterval = 0.9f;
+    _float4 m_vStartRotation = { 0.f,0.f,0.f,1.f };
 };
 
 class CMiyabiState_ExAttack_03 : public IBaseState<CMiyabi>
@@ -85,6 +94,16 @@ private:
 public:
     static CMiyabiState_ExAttack_03* Create() { return new CMiyabiState_ExAttack_03(); }
     virtual void Free() override { __super::Free(); }
+
+private:
+    void Update_Effects(CMiyabi* pOwner);
+
+    _float3 m_vMinRange{ -5.f,0.f,1.f };
+    _float3 m_vMaxRange{ -4.f, 9.f, 2.f };
+    _float3 m_vCenter{ 0.f,2.f,1.f };
+    _uint m_iRepeatCount{};
+    _float m_fRepeatProgress{};
+    _float m_fRepeatInterval = 0.04f;
 };
 
 class CMiyabiState_ExAttack_End : public IBaseState<CMiyabi>

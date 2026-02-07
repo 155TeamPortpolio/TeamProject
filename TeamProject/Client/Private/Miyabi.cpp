@@ -492,6 +492,20 @@ HRESULT CMiyabi::Initialize_Effects()
 		pEffect->Stop();
 		pObjectContainer->Add_Child(pEffect);
 	}
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_normal2_slash.json")
+			.Build("Miyabi_Normal1_Slash2");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect);
+	}
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_normal2_slash.json")
+			.Build("Miyabi_Normal1_Slash3");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect);
+	}
 
 	// Normal Slash2
 	{
@@ -587,11 +601,29 @@ HRESULT CMiyabi::Initialize_Effects()
 		pObjectContainer->Add_Child(pEffect);
 	}
 
+	for (_uint i = 0; i < 9; ++i)
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_ex1_slash.json")
+			.Build("Miyabi_Ex1_Slash" + to_string(i));
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+
 	// Ex Sting
 	{
 		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
 			.Asset("miyabi_ex0_sting.json")
 			.Build("Miyabi_Ex0_Sting0");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+
+	for (_uint i = 0; i < 9; ++i)
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_ex1_sting.json")
+			.Build("Miyabi_Ex1_Sting" + to_string(i));
 		pEffect->Stop();
 		pObjectContainer->Add_Child(pEffect, false);
 	}

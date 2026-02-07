@@ -7,6 +7,8 @@
 #include "Miyabi.h"
 #include "CharacterController.h"
 
+#include "EffectContainer.h"
+
 CMiyabiState_ExAttack* CMiyabiState_ExAttack::Create()
 {
     auto pInstance = new CMiyabiState_ExAttack();
@@ -170,7 +172,6 @@ void CMiyabiState_ExAttack_02::Enter(CMiyabi* pOwner)
     m_fProgress = 0.2f;
 
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_Branch_01_Attack_02")
-        .Speed(1.f)
         .Apply();
 
     pOwner->Increase_Frost(2);
@@ -181,6 +182,11 @@ void CMiyabiState_ExAttack_02::Enter(CMiyabi* pOwner)
     pOwner->Get_CCT()->Set_CollisionMask(m_iMask - ENUM(COLLISION_GROUP::MONSTER));
     pOwner->Set_LookTarget(false);
     m_pOwnerStateMachine->Set_Bool("Penetrate", true);
+
+    // Effect 
+    m_iRepeatCount = 0;
+    m_fRepeatProgress = 0.33f;
+    m_vStartRotation = _float4(0.f, 0.f, 0.f, 1.f);
 }
 
 void CMiyabiState_ExAttack_02::Update(CMiyabi* pOwner, _float dt)
@@ -213,6 +219,8 @@ void CMiyabiState_ExAttack_02::Update(CMiyabi* pOwner, _float dt)
             }
         }
     }
+
+    Update_Effects(pOwner);
 }
 
 void CMiyabiState_ExAttack_02::Exit(CMiyabi* pOwner)
@@ -222,6 +230,44 @@ void CMiyabiState_ExAttack_02::Exit(CMiyabi* pOwner)
         pOwner->Get_CCT()->Set_CollisionMask(m_iMask);
     }
     pOwner->Set_LookTarget(true);
+}
+
+void CMiyabiState_ExAttack_02::Update_Effects(CMiyabi* pOwner)
+{
+    if (IsCrossAnimProgress(0.16f))
+    {
+        auto pTransform = pOwner->Get_Component<CTransform>();
+
+        _vector3 vWorldPosition = pTransform->Get_WorldPos();
+        _vector3 vLook = pTransform->Dir(STATE::LOOK);
+
+        auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+            .Asset("miyabi_ex_smoke2.json")
+            .Position(vWorldPosition)
+            .Build("Miyabi_Ex_Smoke");
+
+        pEffect->Get_Component<CTransform>()->Set_Look(vLook);
+
+        ObjectManager()->Add_Object(pEffect, { pOwner->Get_Level(),"Player_Effect_Layer" });
+    }
+
+    if (m_iRepeatCount < 15)
+    {
+        if (IsCrossAnimProgress(m_fRepeatProgress))
+        {
+            _uint rand = 1;
+            _quaternion deltaRotation = _quaternion::CreateFromYawPitchRoll(XMConvertToRadians(-45.f), XMConvertToRadians(60.f), XMConvertToRadians(45.f));
+            _quaternion currRotation = m_vStartRotation;
+            currRotation *= deltaRotation;
+            currRotation.Normalize();
+            m_vStartRotation = currRotation;
+
+            pOwner->Play_Effect("Miyabi_Ex1_Slash" + to_string(m_iRepeatCount % 9), _vector3(0.f, 1.1f, -9.5f + m_iRepeatCount * m_fDistanceInterval), currRotation, false);
+
+            m_fRepeatProgress += m_fRepeatInterval;
+            ++m_iRepeatCount;
+        }
+    }
 }
 
 void CMiyabiState_ExAttack_03::Enter(CMiyabi* pOwner)
@@ -247,7 +293,6 @@ void CMiyabiState_ExAttack_03::Enter(CMiyabi* pOwner)
     EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
 
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_Branch_01_Attack_03")
-        .Speed(1.f)
         .Apply();
 
     m_iMask = pOwner->Get_CCT()->Get_CollisionMask();
@@ -258,6 +303,9 @@ void CMiyabiState_ExAttack_03::Enter(CMiyabi* pOwner)
 
     m_vPos = pOwner->Get_WorldPos();
     m_vLook = pOwner->Get_Component<CTransform>()->Dir(STATE::LOOK);
+
+    m_iRepeatCount = 0;
+    m_fRepeatProgress = 0.28f;
 }
 
 void CMiyabiState_ExAttack_03::Update(CMiyabi* pOwner, _float dt)
@@ -296,6 +344,7 @@ void CMiyabiState_ExAttack_03::Update(CMiyabi* pOwner, _float dt)
         m_iCount++;
     }
 
+    Update_Effects(pOwner);
 }
 
 void CMiyabiState_ExAttack_03::Exit(CMiyabi* pOwner)
@@ -305,6 +354,61 @@ void CMiyabiState_ExAttack_03::Exit(CMiyabi* pOwner)
         pOwner->Get_CCT()->Set_CollisionMask(m_iMask);
     }
     pOwner->Set_LookTarget(true);
+}
+
+void CMiyabiState_ExAttack_03::Update_Effects(CMiyabi* pOwner)
+{
+    if (IsCrossAnimProgress(0.14f))
+    {
+        pOwner->Play_Effect("Miyabi_Ex0_Slash0", _vector3(0.f, 0.7f, 0.f), _quaternion(-0.11f, 0.71f, 0.69f, 0.13f));
+        pOwner->Play_Effect("Miyabi_Ex0_Sting0", _vector3(-6.6f, 0.8f, 2.f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+    }
+
+    if (m_iRepeatCount < 15)
+    {
+        if (IsCrossAnimProgress(m_fRepeatProgress))
+        {
+            if (0 == m_iRepeatCount)
+            {
+                auto pTransform = pOwner->Get_Component<CTransform>();
+
+                _vector3 vWorldPosition = pTransform->Get_WorldPos();
+                _vector3 vLook = pTransform->Dir(STATE::LOOK);
+
+                auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+                    .Asset("miyabi_ex3_smoke.json")
+                    .Position(vWorldPosition)
+                    .Build("Miyabi_Ex3_Smoke");
+
+                pEffect->Get_Component<CTransform>()->Set_Look(vLook);
+
+                ObjectManager()->Add_Object(pEffect, { pOwner->Get_Level(),"Player_Effect_Layer" });
+            }
+
+            _float3 vRandPosition{}, vRandRotation{};
+            vRandPosition.x = Helper::Get_Random_Float(m_vMinRange.x, m_vMaxRange.x);
+            vRandPosition.y = Helper::Get_Random_Float(m_vMinRange.y, m_vMaxRange.y);
+            vRandPosition.z = Helper::Get_Random_Float(m_vMinRange.z, m_vMaxRange.z);
+
+            vRandRotation.x = 0.f;
+            vRandRotation.y = XMConvertToRadians(Helper::Get_Random_Float(-5.f, 5.f));
+            vRandRotation.z = XMConvertToRadians(Helper::Get_Random_Float(-10.f, 10.f));
+
+            _vector3 vDir = m_vCenter - vRandPosition;
+            vDir.Normalize();
+
+            _float yaw = atan2(vDir.z, vDir.x);
+            _float roll = atan2(vDir.y, sqrtf(vDir.x * vDir.x + vDir.z * vDir.z));
+
+            _quaternion rotation = _quaternion::CreateFromYawPitchRoll(yaw, 0.f, roll);
+            rotation *= _quaternion::CreateFromYawPitchRoll(vRandRotation);
+
+            pOwner->Play_Effect("Miyabi_Ex1_Sting" + to_string(m_iRepeatCount % 9), _vector3(vRandPosition), rotation, false);
+
+            m_fRepeatProgress += m_fRepeatInterval;
+            ++m_iRepeatCount;
+        }
+    }
 }
 
 void CMiyabiState_ExAttack_End::Enter(CMiyabi* pOwner)
