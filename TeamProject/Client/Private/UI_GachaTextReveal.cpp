@@ -9,8 +9,15 @@
 
 void CUI_GachaTextReveal::Show(const GACHA_RESULT_DESC& desc)
 {
-	if (m_pGroups[ENUM(desc.Type)])
-		m_pGroups[ENUM(desc.Type)]->Show(desc.Grade);
+	if (auto& pGroup = m_pGroups[ENUM(desc.Type)])
+		pGroup->Show(desc.Grade);
+}
+
+void CUI_GachaTextReveal::Hide()
+{
+	for (_int i = 0; i < ENUM(GachaType::End); ++i)
+		if (auto& pGroup = m_pGroups[i])
+			pGroup->Hide();
 }
 
 HRESULT CUI_GachaTextReveal::Initialize_Prototype()

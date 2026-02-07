@@ -12,7 +12,8 @@ private:
 
 public:
     void Show(const GACHA_RESULT_DESC& desc);
-    
+    void Hide();
+
 public:
     HRESULT Initialize_Prototype()     override;
     HRESULT Initialize(INIT_DESC* pArg) override;

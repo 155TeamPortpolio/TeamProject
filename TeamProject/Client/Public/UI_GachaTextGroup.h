@@ -6,7 +6,7 @@ NS_BEGIN(Client)
 class CUI_GachaTextGroup : public CGameObject
 {
 public:
-    enum class STATE { INVISIBLE, SHOW, BLINK, END };
+    enum class STATE { HIDE, SHOW, BLINK, END };
 
 protected:
     CUI_GachaTextGroup() {}
@@ -15,6 +15,7 @@ protected:
 
 public:
     virtual void Show(GachaGrade eGrade);
+    virtual void Hide();
         
 public:
     HRESULT Initialize_Prototype()     override;

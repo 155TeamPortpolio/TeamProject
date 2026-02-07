@@ -8,6 +8,11 @@ void CUI_GachaTextGroup::Show(GachaGrade eGrade)
 {
 	Change_State(STATE::SHOW);
 }
+ 
+void CUI_GachaTextGroup::Hide()
+{
+	Change_State(STATE::HIDE);
+}
 
 HRESULT CUI_GachaTextGroup::Initialize_Prototype()
 {
@@ -24,14 +29,14 @@ HRESULT CUI_GachaTextGroup::Initialize(INIT_DESC* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-	Change_State(STATE::INVISIBLE);
+	Change_State(STATE::HIDE);
 
 	return S_OK;
 }
 
 void CUI_GachaTextGroup::Update(_float dt)
 {
-	if (m_eState == STATE::INVISIBLE)
+	if (m_eState == STATE::HIDE)
 		return;
 
 	m_fTimer += dt;
@@ -59,7 +64,7 @@ void CUI_GachaTextGroup::Change_State(STATE eState)
 
 	switch (m_eState)
 	{
-	case STATE::INVISIBLE:
+	case STATE::HIDE:
 		Set_Alive(false);
 		break;
 	case STATE::SHOW:
@@ -94,5 +99,5 @@ void CUI_GachaTextGroup::Update_Blink(_float dt)
 	}
 
 	if (m_fTimer >= m_fBlinkDuration)
-		Change_State(STATE::INVISIBLE); 
+		Change_State(STATE::HIDE);
 }
