@@ -41,6 +41,7 @@ public:
     SlotBuilder Slot(const string& slotKey);
 
 private:
+
     CAudioSource();
     CAudioSource(const CAudioSource& rhs);
     virtual ~CAudioSource();

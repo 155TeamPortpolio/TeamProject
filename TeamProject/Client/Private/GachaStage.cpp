@@ -20,6 +20,8 @@
 
 #include "Helper_Func.h"
 
+#include "UI_GachaText.h"
+
 CGachaStage::CGachaStage()
     :CGameObject()
 {
@@ -93,7 +95,8 @@ HRESULT CGachaStage::Initialize(INIT_DESC* pArg)
 		return E_FAIL;
 
 	Add_StageScreen();
-	
+	Add_UIText();
+
 	return S_OK; 
 }
 
@@ -215,6 +218,19 @@ void CGachaStage::Add_StageScreen()
 	m_pAvatarResult = dynamic_cast<CGachaResult*>(gachaAvatar);
 
 	pObjectContainer->Add_Child(gachaAvatar, true);
+}
+
+void CGachaStage::Add_UIText()
+{
+	PrototypeManager()->Add_ProtoType("Gacha_Level", "Proto_GameObject_UIGachaText", CUI_GachaText::Create());
+
+	CGameObject* uiGachaText = Builder::Create_Object({ "Gacha_Level", "Proto_GameObject_UIGachaText" })
+		.Rotate(_float3(XMConvertToRadians(-18.f), XMConvertToRadians(180.f), 0.f))
+		.Scale(_float3(1.28f, 1.28f, 1.28f))
+		.Position(_float3(0.f, 0.152f, -2.5f))
+		.Build("uiGachaText");
+
+	Add_Component<CObjectContainer>()->Add_Child(uiGachaText, true);
 }
 
 void CGachaStage::Set_Stage(GACHA_STAGE eStage, _int ResultID)
