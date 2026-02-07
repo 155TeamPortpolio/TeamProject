@@ -10,7 +10,7 @@
 #include "MiyabiState_ExAttack.h"
 #include "MiyabiState_UltimateAttack.h"
 #include "MiyabiState_CounterAttack.h"
-//#include "MiyabiState_AssaultAttack.h"
+#include "MiyabiState_AssaultAttack.h"
 
 #include "CharacterController.h"
 
@@ -26,7 +26,7 @@ CMiyabiState_Attack* CMiyabiState_Attack::Create()
     pSubStateMachine->Register_State("ExAttack", CMiyabiState_ExAttack::Create());
     pSubStateMachine->Register_State("UltimateAttack", CMiyabiState_UltimateAttack::Create());
     pSubStateMachine->Register_State("CounterAttack", CMiyabiState_CounterAttack::Create());
-    //pSubStateMachine->Register_State("AssaultAttack", CMiyabiState_AssaultAttack::Create());
+    pSubStateMachine->Register_State("AssaultAttack", CMiyabiState_AssaultAttack::Create());
 
     pSubStateMachine->Register_Transition("NormalAttack", "ChargeAttack",
         CStateMachine<CMiyabi>::CONDITION_TRIGGER, "ToChargeAttack");

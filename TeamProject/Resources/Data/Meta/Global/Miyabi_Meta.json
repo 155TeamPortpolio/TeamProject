@@ -248,7 +248,53 @@
     },
     {
       "ClipTag": "Avatar_Female_Size02_Unagi_Ani_Attack_AssaultAid",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.4722546935081482,
+          "EventType": "Notify",
+          "EventTag": "AreaAttack"
+        },
+        {
+          "EventTime": 1.2194931507110596,
+          "EventType": "Notify",
+          "EventTag": "AreaAttack"
+        },
+        {
+          "EventTime": 0.8727744817733765,
+          "EventType": "Notify",
+          "EventTag": "AreaAttack"
+        },
+        {
+          "EventTime": 0.678492546081543,
+          "EventType": "Notify",
+          "EventTag": "AreaAttack"
+        },
+        {
+          "EventTime": 1.0491228103637695,
+          "EventType": "Notify",
+          "EventTag": "AreaAttack"
+        },
+        {
+          "EventTime": 0.7681611180305481,
+          "EventType": "Notify",
+          "EventTag": "AreaAttack"
+        },
+        {
+          "EventTime": 1.1507471799850464,
+          "EventType": "Notify",
+          "EventTag": "AreaAttack"
+        },
+        {
+          "EventTime": 0.5768680572509766,
+          "EventType": "Notify",
+          "EventTag": "AreaAttack"
+        },
+        {
+          "EventTime": 0.9594541788101196,
+          "EventType": "Notify",
+          "EventTag": "AreaAttack"
+        }
+      ]
     },
     {
       "ClipTag": "Avatar_Female_Size02_Unagi_Ani_Attack_AssaultAid_End",
