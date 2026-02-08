@@ -29,7 +29,8 @@ void CGachaScreen::PlayTVSequence(vector<GACHA_RESULT_DESC>* ResultDesc)
 	{
 		if (m_iCurPlayingIndex < 10)
 			++m_iCurPlayingIndex;
-		else CUIDirector::GetInstance()->Show_GachaSkipButton();
+		else 
+			CUIDirector::GetInstance()->Show_GachaSkipButton();
 
 		SetMaterialInstances(m_iCurPlayingIndex,{
 			(*ResultDesc)[0].Grade == GachaGrade::S ? 5 : (*ResultDesc)[0].Grade == GachaGrade::A ? 3 : 1,

@@ -55,12 +55,6 @@ HRESULT CGacha_Level::Awake()
 	Ready_GachaObjects();
 	Ready_GachaUI();
 
-	// Camera
-	CamDirector()->SetSpaceRef(m_GachaHandle);
-	CamDirector()->RequestSequence("Gacha/Down");
-
-	m_pGachaProps->SetupInitialSequence();
-
 	//==================== UI ===============
 	UIDirector()->Load_LevelObjects("Gacha_Level");
 
@@ -109,11 +103,13 @@ void CGacha_Level::Ready_GachaUI()
 	PrototypeManager()->Add_ProtoType("Gacha_Level", "Proto_GameObject_GachaDisplay", CUI_GachaDisplay::Create());
 
 	CUI_GachaDisplay::DISPLAY_INIT_DESC* pDesc = new CUI_GachaDisplay::DISPLAY_INIT_DESC;
-	pDesc->eGrade = GachaGrade::S;		// 뽑은 아이템에서 가장 높은 등급 넣기
-	pDesc->onClickSkip = []() {			// 스킵 눌렀을 때 실행할 함수 넣기
+	pDesc->eGrade = Get_HigestGrade();		// 뽑은 아이템에서 가장 높은 등급 넣기
+	pDesc->onClickSkip = [&]() {			// 스킵 눌렀을 때 실행할 함수 넣기
+		m_pGachaProps->ShowResults();
 		//MSG_BOX("Skip"); 
 		};
-	pDesc->onVideoFinished = []() {		// 비디오 끝났을 때 실행할 함수 넣기
+	pDesc->onVideoFinished = [&]() {		// 비디오 끝났을 때 실행할 함수 넣기
+		Play_CameraSequence();
 		//MSG_BOX("VideoFinished"); 
 		}; 
 
@@ -135,6 +131,28 @@ void CGacha_Level::Update_CamTime()
 		if (CamDirector()->GetTime() >= 2.2f)
 			m_pGachaProps->PlayTVSequence();
 	}
+}
+
+void CGacha_Level::Play_CameraSequence()
+{
+	CamDirector()->SetSpaceRef(m_GachaHandle);
+	CamDirector()->RequestSequence("Gacha/Down");
+
+	m_pGachaProps->SetupInitialSequence();
+}
+
+GachaGrade CGacha_Level::Get_HigestGrade()
+{
+	if (m_ResultDesc.empty())
+		return GachaGrade::B; 
+	GachaGrade highest = m_ResultDesc[0].Grade;
+
+	auto result = std::min_element(m_ResultDesc.begin(), m_ResultDesc.end(),
+		[](const auto& a, const auto& b) {
+			return a.Grade < b.Grade;
+		});
+
+	return result->Grade;
 }
 
 CGacha_Level* CGacha_Level::Create(const string& LevelKey)
