@@ -29,7 +29,9 @@ public:
 public:
     DEFILER_BLACK_BOARD& GetBlackBoard() { return m_BlackBoard; }
     DefilerDissolve& GetDissolve() { return m_Dissolve; }
+    TARGETING_INFO& TargetInfo() { return m_tTargetingInfo; }
     CStateMachine<CDefiler>* Get_MainStateMachine() { return m_pStateMachine; }
+
 public:
     virtual void TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER charaName = CHARACTER::END);
 
@@ -46,6 +48,7 @@ private:
     void RotateToTarget(_float dt, _float rotateSpeed = 1.f);
     void Update_States(_float dt);
     void Route_AnimEvent(CAnimator3D* animator);
+    void Controll_Sound(const string& event);
     void Controll_Attack(const string& event);
     void Controll_Summon(const string& event);
     void Update_Dissolve(_float dt);

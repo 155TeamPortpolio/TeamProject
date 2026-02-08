@@ -6,7 +6,7 @@
 void CCorinState_SwitchOut::Enter(CCorin* pOwner)
 {
     pOwner->Get_StateMachine()->Reset_Trigger("ToIdle");
-    pOwner->Get_Animator()->Set_Animation(pOwner->Get_Name() + "SwitchOut_Normal")
+    pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "SwitchOut_Normal")
         .Loop(false)
         .Apply();
 }

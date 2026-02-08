@@ -9,6 +9,7 @@
 #include "MapLoader.h"
 /* UI */
 #include "UIDirector.h"
+#include "UI_GachaDisplay.h"
 /*GachaObject*/
 #include "GachaProps.h"
 /*Component*/
@@ -52,16 +53,10 @@ HRESULT CGacha_Level::Awake()
 	RenderSystem()->Set_FogDesc({ _float4(0.1f, 0.1f, 0.1f, 1.0f) ,0.f, 0.f, 0.02f, true });
 
 	Ready_GachaObjects();
-
-	// Camera
-	CamDirector()->SetSpaceRef(m_GachaHandle);
-	CamDirector()->RequestSequence("Gacha/Down");
-
-	m_pGachaProps->SetupInitialSequence();
+	Ready_GachaUI();
 
 	//==================== UI ===============
-	auto uiDirector = CUIDirector::GetInstance();
-	uiDirector->Load_LevelObjects("Gacha_Level");
+	UIDirector()->Load_LevelObjects("Gacha_Level");
 
 	return S_OK;
 }
@@ -103,6 +98,32 @@ void CGacha_Level::Ready_GachaObjects()
 	m_pGachaProps = dynamic_cast<CGachaProps*>(gachaProps);
 }
 
+void CGacha_Level::Ready_GachaUI()
+{
+	PrototypeManager()->Add_ProtoType("Gacha_Level", "Proto_GameObject_GachaDisplay", CUI_GachaDisplay::Create());
+
+	CUI_GachaDisplay::DISPLAY_INIT_DESC* pDesc = new CUI_GachaDisplay::DISPLAY_INIT_DESC;
+	pDesc->eGrade = Get_HigestGrade();		// 뽑은 아이템에서 가장 높은 등급 넣기
+	pDesc->onClickSkip = [&]() {			// 스킵 눌렀을 때 실행할 함수 넣기
+		m_pGachaProps->ShowResults();
+		//MSG_BOX("Skip"); 
+		};
+	pDesc->onVideoFinished = [&]() {		// 비디오 끝났을 때 실행할 함수 넣기
+		Play_CameraSequence();
+		//MSG_BOX("VideoFinished"); 
+		}; 
+
+	auto pGachaDisplay = Builder::Create_UIObject({ "Gacha_Level", "Proto_GameObject_GachaDisplay"})
+		.Add_UIDesc(pDesc)
+		.Build("gacha_display");
+
+	if (!pGachaDisplay)
+		return;
+
+	UIManager()->Add_UIObject(pGachaDisplay, "Gacha_Level");
+	UIDirector()->Register(pGachaDisplay);
+}
+
 void CGacha_Level::Update_CamTime()
 {
 	if (CamDirector()->GetCurSeqName() == "Gacha/Down")
@@ -110,6 +131,28 @@ void CGacha_Level::Update_CamTime()
 		if (CamDirector()->GetTime() >= 2.2f)
 			m_pGachaProps->PlayTVSequence();
 	}
+}
+
+void CGacha_Level::Play_CameraSequence()
+{
+	CamDirector()->SetSpaceRef(m_GachaHandle);
+	CamDirector()->RequestSequence("Gacha/Down");
+
+	m_pGachaProps->SetupInitialSequence();
+}
+
+GachaGrade CGacha_Level::Get_HigestGrade()
+{
+	if (m_ResultDesc.empty())
+		return GachaGrade::B; 
+	GachaGrade highest = m_ResultDesc[0].Grade;
+
+	auto result = std::min_element(m_ResultDesc.begin(), m_ResultDesc.end(),
+		[](const auto& a, const auto& b) {
+			return a.Grade < b.Grade;
+		});
+
+	return result->Grade;
 }
 
 CGacha_Level* CGacha_Level::Create(const string& LevelKey)

@@ -62,7 +62,7 @@ void CMiyabiState_SwitchInParryAid::Update(CMiyabi* pOwner, _float dt)
         IHState<CMiyabi>* pSwitchIn = Get_ParentState();
         if (pSwitchIn && pSwitchIn->Get_SubStateMachine())
         {
-            pSwitchIn->Get_SubStateMachine()->Set_Int("ExitMode", 0);  // Idle·Î
+            pSwitchIn->Get_SubStateMachine()->Set_Int("ExitMode", 0);  // Idle
             pSwitchIn->Get_SubStateMachine()->Set_Trigger("Complete");
         }
     }

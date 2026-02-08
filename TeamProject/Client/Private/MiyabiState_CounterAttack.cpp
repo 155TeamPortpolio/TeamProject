@@ -124,7 +124,6 @@ void CMiyabiState_Counter_Start::Exit(CMiyabi* pOwner)
 	{
 		pOwner->Get_CCT()->Set_CollisionMask(m_iMask);
 	}
-
 }
 
 void CMiyabiState_Counter_End::Enter(CMiyabi* pOwner)

@@ -38,6 +38,7 @@ private: //Model Logic
     void Load_NewMeta();
     void Load_ModelOnce();
     void Load_Resource();
+    void Load_Sound();
     void Set_Model(string ModelTag, string MaterialTag);
     void Set_Animator();
     void Clear_Model();

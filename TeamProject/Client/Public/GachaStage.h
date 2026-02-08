@@ -22,6 +22,7 @@ private:
     virtual ~CGachaStage() DEFAULT;
 
 public:
+    void    ShowResults();
     void    PlayStageSpin(_int index);
     void    PlayRevealEffect();
 
@@ -69,6 +70,9 @@ private:
     STAGE_LIGHT             BottomLight;
     STAGE_LIGHT             TopLight;
     STAGE_LIGHT             MiddleLight;
+
+private:
+    class CUI_GachaTextReveal* m_pUITextReveal = {};
 
 public:
     static CGachaStage* Create(vector<GACHA_RESULT_DESC>* Desc);

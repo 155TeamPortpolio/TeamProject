@@ -25,6 +25,10 @@ public:
     virtual void Update(CMiyabi* pOwner, _float dt) override;
     virtual void Exit(CMiyabi* pOwner) override {}
 
+private:
+    _vector3 m_vPos = {};
+    _vector3 m_vLook = {};
+
 public:
     static CMiyabiState_SwitchInAttack_Start* Create() { return new CMiyabiState_SwitchInAttack_Start(); }
     virtual void Free() override { __super::Free(); }
