@@ -45,7 +45,7 @@ public:
 	void Hide_GachaPage(); 
 
 
-	void Show_GachaVideo(GachaGrade eGrade);
+	void Play_GachaVideo(GachaGrade eGrade);
 	/* 가챠 결과 연출 중, 현재 가챠의 이름을 화면에 표시 */
 	void Show_GachaLabel(const _wstring& strLabel);
 	/* 가챠 이름 표시를 숨김 */

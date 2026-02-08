@@ -62,7 +62,7 @@ HRESULT CGacha_Level::Awake()
 	//==================== UI ===============
 	UIDirector()->Load_LevelObjects("Gacha_Level");
 
-	UIDirector()->Show_GachaVideo(GachaGrade::S);	// 현재 등급에서 제일 높은 등급 넣기
+	UIDirector()->Play_GachaVideo(GachaGrade::S);	// 현재 등급에서 제일 높은 등급 넣기
 
 	return S_OK;
 }

@@ -90,7 +90,7 @@ void CUIDirector::Hide_GachaPage()
 	UI_DeActive("gachaPage");
 }
 
-void CUIDirector::Show_GachaVideo(GachaGrade eGrade)
+void CUIDirector::Play_GachaVideo(GachaGrade eGrade)
 {
 	CUI_GachaDisplay::GACHA_DISPLAY_DESC desc = {};
 	desc.eType = CUI_GachaDisplay::TYPE::VIDEO;
