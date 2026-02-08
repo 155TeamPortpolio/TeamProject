@@ -14,8 +14,8 @@ CAudioSource::SlotBuilder CAudioSource::Slot(const string& slotKey)
 	{
 		return SlotBuilder(*this, iter->second);
 	}
-	AUDIO_SLOT slot{};
-	return SlotBuilder(*this,slot);
+	static AUDIO_SLOT emptySlot{};
+	return SlotBuilder(*this, emptySlot);
 }
 
 CAudioSource::AUDIO_SLOT& CAudioSource::SlotBuilder::Play()
@@ -50,6 +50,7 @@ CAudioSource::AUDIO_SLOT& CAudioSource::SlotBuilder::Play()
 	packet.isPaused = ownerSlot.isPaused;
 	_vector3 pos = ownerRef.m_pTransform->Get_WorldPos();
 	packet.vPosition = { pos.x, pos.y, pos.z };
+	if(packet.pSound)
 	AudioDevice()->Play(packet);
 
 	return ownerSlot;
@@ -282,17 +283,19 @@ void CAudioSource::Play(const string& SoundKey)
 		return;
 
 	AUDIO_SLOT& slot = iter->second;
-
+	if (slot.pSound == nullptr)
+		return;
 	_float now = CGameInstance::GetInstance()->Get_TimeMgr()->Get_TotalTime("Audio_Timer");
 
 	if (now - slot.lastPlayTime < 0.05f)
 		return;
+	
 	slot.lastPlayTime = now;
 
 	AUDIO_PACKET packet{};
 	packet.ppChannelToUpdate = &slot.pChanel;
 	packet.pSound = slot.pSound;
-
+	
 	// 슬롯에서 설정한 값들 싹 복사
 	packet.isInfinite = slot.isInfinite;
 	packet.isPaused = slot.isPaused;

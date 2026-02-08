@@ -396,7 +396,7 @@ void CDefiler::Route_AnimEvent(CAnimator3D* animator)
 
 void CDefiler::Controll_Sound(const string& event)
 {
-	Get_Component<CAudioSource>()->Slot(event).Play();
+	Get_Component<CAudioSource>()->Slot("event").Play();
 }
 
 void CDefiler::Controll_Attack(const string& event)
