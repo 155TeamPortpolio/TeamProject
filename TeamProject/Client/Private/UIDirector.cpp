@@ -13,6 +13,21 @@
 
 IMPLEMENT_SINGLETON(CUIDirector);
 
+HRESULT CUIDirector::Register(CUI_Object* pObj)
+{
+	if (!pObj)
+		return E_FAIL;
+
+	string strInstanceName = pObj->Get_InstanceName();
+	auto iter = m_externalhandles.find(strInstanceName);
+	if (iter != m_externalhandles.end())
+		return E_FAIL;
+
+	m_externalhandles.emplace(strInstanceName, pObj->Get_Handle());
+
+	return S_OK;
+}
+
 void CUIDirector::FadeIn_Screen(_float fDuration)
 {
 	CUI_ScreenFade::FADE_DESC desc = {};
@@ -29,16 +44,6 @@ void CUIDirector::FadeOut_Screen(_float fDuration)
 	UI_DeActive("screen_fade", &desc);
 }
 
-void CUIDirector::Show_HUD(HUD hud, _bool isFade)
-{
-	Show_HUD(Get_HUDName(hud), isFade);
-}
-
-void CUIDirector::Hide_HUD(HUD hud)
-{
-	Hide_HUD(Get_HUDName(hud));
-}
-
 void CUIDirector::Show_SceneFrame()
 {
 	UI_Active("scene_frame");
@@ -47,6 +52,16 @@ void CUIDirector::Show_SceneFrame()
 void CUIDirector::Hide_SceneFrame()
 {
 	UI_DeActive("scene_frame");
+}
+
+void CUIDirector::Show_HUD(HUD hud, _bool isFade)
+{
+	Show_HUD(Get_HUDName(hud), isFade);
+}
+
+void CUIDirector::Hide_HUD(HUD hud)
+{
+	Hide_HUD(Get_HUDName(hud));
 }
 
 void CUIDirector::Request_DamageText(const DAMAGE_DESC& desc)
@@ -82,54 +97,45 @@ void CUIDirector::Hide_Ramen()
 
 void CUIDirector::Show_GachaPage()
 {
-	UI_Active("gachaPage");
+	UI_Active("gacha_page");
 }
 
 void CUIDirector::Hide_GachaPage()
 {
-	UI_DeActive("gachaPage");
-}
-
-void CUIDirector::Play_GachaVideo(GachaGrade eGrade)
-{
-	CUI_GachaDisplay::GACHA_DISPLAY_DESC desc = {};
-	desc.eType = CUI_GachaDisplay::TYPE::VIDEO;
-	desc.eGrade = eGrade;
-
-	UI_Active("gachaDisplay", &desc);
+	UI_DeActive("gacha_page");
 }
 
 void CUIDirector::Show_GachaLabel(const _wstring& strLabel)
 {
-	CUI_GachaDisplay::GACHA_DISPLAY_DESC desc = {};
+	CUI_GachaDisplay::DISPLAY_STATE_DESC desc = {};
 	desc.eType = CUI_GachaDisplay::TYPE::LABEL;
 	desc.strLabel = strLabel;
 
-	UI_Active("gachaDisplay", &desc);
+	UI_Active("gacha_display", &desc);
 }
 
 void CUIDirector::Hide_GachaLabel()
 {
-	CUI_GachaDisplay::GACHA_DISPLAY_DESC desc = {};
+	CUI_GachaDisplay::DISPLAY_STATE_DESC desc = {};
 	desc.eType = CUI_GachaDisplay::TYPE::LABEL;
 
-	UI_DeActive("gachaDisplay", &desc);
+	UI_DeActive("gacha_display", &desc);
 }
 
 void CUIDirector::Show_GachaSkipButton()
 {
-	CUI_GachaDisplay::GACHA_DISPLAY_DESC desc = {};
+	CUI_GachaDisplay::DISPLAY_STATE_DESC desc = {};
 	desc.eType = CUI_GachaDisplay::TYPE::SKIP;
 
-	UI_Active("gachaDisplay", &desc);
+	UI_Active("gacha_display", &desc);
 }
 
 void CUIDirector::Hide_GachaSkipButton()
 {
-	CUI_GachaDisplay::GACHA_DISPLAY_DESC desc = {};
+	CUI_GachaDisplay::DISPLAY_STATE_DESC desc = {};
 	desc.eType = CUI_GachaDisplay::TYPE::SKIP;
 
-	UI_DeActive("gachaDisplay", &desc);
+	UI_DeActive("gacha_display", &desc);
 }
 
 void CUIDirector::Show_GachaResult(const vector<GACHA_RESULT_DESC>* pResultDesc)
@@ -137,7 +143,7 @@ void CUIDirector::Show_GachaResult(const vector<GACHA_RESULT_DESC>* pResultDesc)
 	CUI_GachaResult::RESULT_DESC desc = {};
 	desc.pResultDesc = pResultDesc;
 
-	UI_Active("gachaResult", &desc);
+	UI_Active("gacha_result", &desc);
 }
 
 void CUIDirector::Show_ResultBanner(const string& strTextureKey, const _wstring& wstrText1, const _wstring& wstrText2)
@@ -240,22 +246,14 @@ void CUIDirector::Load_UILevelData(const string& resourceKey)
 
 void CUIDirector::Show_HUD(const string& strInstanceName, _bool isFade)
 {
-	auto it = m_handles.find(strInstanceName);
-	if (it == m_handles.end() || !it->second.isValid())
-		return;
-
 	CUI_HUD::UI_TRANSITION_DESC desc = {};
 	desc.isFade = isFade;
-	it->second.Get()->UI_Active(&desc);
+	UI_Active(strInstanceName, &desc);
 }
 
 void CUIDirector::Hide_HUD(const string& strInstanceName)
 {
-	auto it = m_handles.find(strInstanceName);
-	if (it == m_handles.end() || !it->second.isValid())
-		return;
-
-	it->second.Get()->UI_DeActive();
+	UI_DeActive(strInstanceName);
 }
 
 string CUIDirector::Get_HUDName(HUD hud)
@@ -270,23 +268,35 @@ string CUIDirector::Get_HUDName(HUD hud)
 
 void CUIDirector::UI_Active(const string& strInstanceName, void* pArg)
 {
-	auto it = m_handles.find(strInstanceName);
-	if (it == m_handles.end() || !it->second.isValid())
-		return;
-
-	it->second.Get()->UI_Active(pArg);
+	auto handle = Find_Handle(strInstanceName);
+	if (handle)
+		handle->Get()->UI_Active(pArg);
 }
 
 void CUIDirector::UI_DeActive(const string& strInstanceName, void* pArg)
 {
-	auto it = m_handles.find(strInstanceName);
-	if (it == m_handles.end() || !it->second.isValid())
-		return;
+	auto handle = Find_Handle(strInstanceName);
+	if (handle)
+		handle->Get()->UI_DeActive(pArg);
+}
 
-	it->second.Get()->UI_DeActive(pArg);
+UI_HANDLE* CUIDirector::Find_Handle(const string& strInstanceName)
+{
+	auto iterExt = m_externalhandles.find(strInstanceName);
+	if (iterExt != m_externalhandles.end() && iterExt->second.isValid())
+		return &iterExt->second;
+
+	auto iter = m_handles.find(strInstanceName);
+	if (iter != m_handles.end() && iter->second.isValid())
+		return &iter->second;
+
+	return nullptr;
 }
 
 void CUIDirector::Free()
 {
 	__super::Free();
+
+	m_handles.clear();
+	m_externalhandles.clear();
 }

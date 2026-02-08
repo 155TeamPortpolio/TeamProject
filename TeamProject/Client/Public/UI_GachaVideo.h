@@ -17,6 +17,7 @@ private:
 
 public:
 	void Play_Video(GachaGrade eGrade);
+	void Set_OnVideoFinished(function<void()> onVideoFinished);
 
 public:
 	virtual HRESULT Initialize_Prototype()           override;
@@ -34,6 +35,8 @@ private:
 	CMFVideoDecoderBackend* m_pDecoder = { nullptr };
 	_uint64 m_startTimeSec = 0.0;
 	_uint m_PlayerID = {};
+
+	function<void()> m_onVideoFinished = {};
 
 public:
 	static  CGameObject* Create();
