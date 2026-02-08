@@ -3,12 +3,14 @@
 
 #include "ObjectContainer.h"
 #include "UI_GachaText.h"
+#include "CamDirector.h"
 
-void CUI_GachaTextGroup::Show(GachaGrade eGrade)
+void CUI_GachaTextGroup::Show(GachaGrade eGrade, const string& strCamSequenceKey)
 {
 	Change_State(STATE::SHOW);
+	m_strCamSequence = strCamSequenceKey;
 }
- 
+
 void CUI_GachaTextGroup::Hide()
 {
 	Change_State(STATE::HIDE);
@@ -36,9 +38,6 @@ HRESULT CUI_GachaTextGroup::Initialize(INIT_DESC* pArg)
 
 void CUI_GachaTextGroup::Update(_float dt)
 {
-	if (m_eState == STATE::HIDE)
-		return;
-
 	m_fTimer += dt;
 
 	switch (m_eState)
@@ -48,6 +47,9 @@ void CUI_GachaTextGroup::Update(_float dt)
 		break;
 	case STATE::BLINK:
 		Update_Blink(dt);
+		break;
+	case STATE::HIDE:
+		Update_Hide(dt);
 		break;
 	}
 
@@ -65,7 +67,8 @@ void CUI_GachaTextGroup::Change_State(STATE eState)
 	switch (m_eState)
 	{
 	case STATE::HIDE:
-		Set_Alive(false);
+		for (auto& pText : m_pTexts)
+			pText->Set_Alive(false);
 		break;
 	case STATE::SHOW:
 		Set_Alive(true);
@@ -99,5 +102,19 @@ void CUI_GachaTextGroup::Update_Blink(_float dt)
 	}
 
 	if (m_fTimer >= m_fBlinkDuration)
+	{
 		Change_State(STATE::HIDE);
+	} 
+}
+
+void CUI_GachaTextGroup::Update_Hide(_float dt)
+{
+	m_fTimer += dt;
+
+	if (m_fTimer >= m_fCamWaitDuration)
+	{
+		Set_Alive(false);
+		if (!m_strCamSequence.empty())
+			CamDirector()->RequestSequence(m_strCamSequence);
+	} 
 }
