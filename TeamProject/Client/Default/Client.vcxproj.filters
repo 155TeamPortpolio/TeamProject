@@ -993,15 +993,6 @@
     <Filter Include="02. GameObject\UI\01. 2D\Gacha">
       <UniqueIdentifier>{74208fc4-3148-4056-87ef-d7a5dbcecbd5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\UI\01. 2D\Gacha\Channel">
-      <UniqueIdentifier>{67718b5d-35e2-46ac-bcc6-5081191eeade}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\UI\01. 2D\Gacha\Currency">
-      <UniqueIdentifier>{e5f3d679-d65f-4f2d-80e4-874884e492bf}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\UI\01. 2D\Gacha\Conversion">
-      <UniqueIdentifier>{e604887e-58bb-4092-aa7b-587df8e4a1e1}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\Object\Enemy\Normal\EtherCyclops\Spit">
       <UniqueIdentifier>{4fe523f1-b826-442e-bc7c-e21b5480b449}</UniqueIdentifier>
     </Filter>
@@ -1241,6 +1232,18 @@
     </Filter>
     <Filter Include="02. GameObject\UI\01. 2D\Button_Icon">
       <UniqueIdentifier>{1a076b26-13b0-4095-afa9-73b1f59561df}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\Gacha\Page">
+      <UniqueIdentifier>{7d60a9dc-24ff-4041-8059-4f73cddecdd7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\Gacha\Page\Currency">
+      <UniqueIdentifier>{e5f3d679-d65f-4f2d-80e4-874884e492bf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\Gacha\Page\Channel">
+      <UniqueIdentifier>{67718b5d-35e2-46ac-bcc6-5081191eeade}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\Gacha\Page\Conversion">
+      <UniqueIdentifier>{e604887e-58bb-4092-aa7b-587df8e4a1e1}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -2273,17 +2276,14 @@
     <ClInclude Include="..\Public\MiyabiState_Hit.h">
       <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Hit</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\UI_GachaPage.h">
-      <Filter>02. GameObject\UI\01. 2D\Gacha</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\UI_GachaChannel.h">
-      <Filter>02. GameObject\UI\01. 2D\Gacha\Channel</Filter>
+      <Filter>02. GameObject\UI\01. 2D\Gacha\Page\Channel</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UI_GachaCurrency.h">
-      <Filter>02. GameObject\UI\01. 2D\Gacha\Currency</Filter>
+      <Filter>02. GameObject\UI\01. 2D\Gacha\Page\Currency</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UI_GachaConversion.h">
-      <Filter>02. GameObject\UI\01. 2D\Gacha\Conversion</Filter>
+      <Filter>02. GameObject\UI\01. 2D\Gacha\Page\Conversion</Filter>
     </ClInclude>
     <ClInclude Include="..\public\CamDebugInput.h">
       <Filter>03. Utility\08. CamDirector\02. CamDebugInput</Filter>
@@ -2404,6 +2404,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\UI_TextButton.h">
       <Filter>02. GameObject\UI\01. 2D\Button_Text</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_GachaPage.h">
+      <Filter>02. GameObject\UI\01. 2D\Gacha\Page</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -3398,17 +3401,14 @@
     <ClCompile Include="..\Private\MiyabiState_Hit.cpp">
       <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Hit</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\UI_GachaPage.cpp">
-      <Filter>02. GameObject\UI\01. 2D\Gacha</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\UI_GachaChannel.cpp">
-      <Filter>02. GameObject\UI\01. 2D\Gacha\Channel</Filter>
+      <Filter>02. GameObject\UI\01. 2D\Gacha\Page\Channel</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UI_GachaConversion.cpp">
-      <Filter>02. GameObject\UI\01. 2D\Gacha\Conversion</Filter>
+      <Filter>02. GameObject\UI\01. 2D\Gacha\Page\Conversion</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UI_GachaCurrency.cpp">
-      <Filter>02. GameObject\UI\01. 2D\Gacha\Currency</Filter>
+      <Filter>02. GameObject\UI\01. 2D\Gacha\Page\Currency</Filter>
     </ClCompile>
     <ClCompile Include="..\private\CamDebugInput.cpp">
       <Filter>03. Utility\08. CamDirector\02. CamDebugInput</Filter>
@@ -3529,6 +3529,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\UI_TextButton.cpp">
       <Filter>02. GameObject\UI\01. 2D\Button_Text</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_GachaPage.cpp">
+      <Filter>02. GameObject\UI\01. 2D\Gacha\Page</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
