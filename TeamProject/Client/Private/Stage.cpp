@@ -241,6 +241,7 @@ void CStage::Reserve_Enemy(const string& LevelTag)
 			MonsterCCT.fRadius = data[i].creationInfo.CCT_fRadius;
 			MonsterCCT.vPos = m_MonsterData.SpawnPoint[spawn];
 			MonsterCCT.vPos.y += MonsterCCT.fHeight;
+
 			CEnemy::ENEMY_DESC* enemyDesc = new CEnemy::ENEMY_DESC();
 			enemyDesc->iMaxHP = data[i].creationInfo.iMaxHP;
 			auto pMonster = Builder::Create_Object({ "Zero_Level",data[i].creationInfo.ProtoTag })

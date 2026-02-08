@@ -2,6 +2,7 @@
 #include "MiasmaSpawner.h"
 #include "GameInstance.h"
 #include "CharacterController.h"
+#include "BattleSystem.h"
 
 static _float3 ComputeArcSpawnPos(
     const _float3& ownerPos,
@@ -37,8 +38,8 @@ void CMiasmaSpawner::Spawn(MiasmaType type, _int count, _float3 targetPos, _floa
     const string levelKey = LevelManager()->Get_NowLevelKey();
 
     const float minRadius = 1.0f;
-    float maxRadius = (ownerPos - targetPos).Length();
-    const float arcDegrees = 40.f; 
+    float maxRadius = (ownerPos - targetPos).Length()+5.f;
+    const float arcDegrees = 60.f; 
 
     for (int spawnIndex = 0; spawnIndex < count; ++spawnIndex)
     {
@@ -50,10 +51,20 @@ void CMiasmaSpawner::Spawn(MiasmaType type, _int count, _float3 targetPos, _floa
         );
 
         spawnPos.y = y;
+
+        CCT_DESC MonsterCCT;
+        MonsterCCT.eGroup = COLLISION_GROUP::MONSTER;
+        MonsterCCT.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER) | ENUM(COLLISION_GROUP::COMMON) | ENUM(COLLISION_GROUP::PLAYER_ATTACK);
+        MonsterCCT.bAutoFit = false;
+        MonsterCCT.fHeight = 1.28f;
+        MonsterCCT.fRadius = 0.55f;
+        MonsterCCT.vPos = spawnPos;
+      
         auto jaeger = Builder::Create_Object({ "Zero_Level", "Proto_GameObject_MiasmaJaeger" })
             .Position(spawnPos)
+            .CharacterController(MonsterCCT)
             .Build("MiasmaUnit");
-        jaeger->Get_Component<CCharacterController>()->Set_Position(_vector3(spawnPos));
         ObjectManager()->Add_Object(jaeger, { levelKey, "Enemy_Layer" });
+        BattleSystem()->EnterBattleObject(BATTLE_OBJ_TYPE::MONSTER,jaeger->Get_Handle());
     }
 }

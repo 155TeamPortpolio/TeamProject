@@ -3,13 +3,13 @@
 
 NS_BEGIN(Client)
 
-class CMiasmaJaeger;
-class CMiasmaJaeger_Appear : public IHState<CMiasmaJaeger>
+class CMiasmaGrandierJaeger;
+class CMiasmaJaeger_Appear : public IHState<CMiasmaGrandierJaeger>
 {
 public:
-	virtual void Enter(CMiasmaJaeger* pOwner) override;
-	virtual void Update(CMiasmaJaeger* pOwner, _float dt) override;
-	virtual void Exit(CMiasmaJaeger* pOwner) override;
+	virtual void Enter(CMiasmaGrandierJaeger* pOwner) override;
+	virtual void Update(CMiasmaGrandierJaeger* pOwner, _float dt) override;
+	virtual void Exit(CMiasmaGrandierJaeger* pOwner) override;
 
 private:
 	_float m_Duration = {};
@@ -20,24 +20,36 @@ public:
 	virtual void Free() override { __super::Free(); }
 };
 
-class CMiasmaJaeger_Attack : public IHState<CMiasmaJaeger>
+class CMiasmaJaeger_Attack : public IHState<CMiasmaGrandierJaeger>
 {
 public:
-	virtual void Enter(CMiasmaJaeger* pOwner) override;
-	virtual void Update(CMiasmaJaeger* pOwner, _float dt) override;
-	virtual void Exit(CMiasmaJaeger* pOwner) override;
+	virtual void Enter(CMiasmaGrandierJaeger* pOwner) override;
+	virtual void Update(CMiasmaGrandierJaeger* pOwner, _float dt) override;
+	virtual void Exit(CMiasmaGrandierJaeger* pOwner) override;
 
 public:
 	static CMiasmaJaeger_Attack* Create();
 	virtual void Free() override { __super::Free(); }
 };
 
-class CMiasmaJaeger_DisAppear : public IHState<CMiasmaJaeger>
+class CMiasmaJaeger_Hit : public IHState<CMiasmaGrandierJaeger>
 {
 public:
-	virtual void Enter(CMiasmaJaeger* pOwner) override;
-	virtual void Update(CMiasmaJaeger* pOwner, _float dt) override;
-	virtual void Exit(CMiasmaJaeger* pOwner) override;
+	virtual void Enter(CMiasmaGrandierJaeger* pOwner) override;
+	virtual void Update(CMiasmaGrandierJaeger* pOwner, _float dt) override;
+	virtual void Exit(CMiasmaGrandierJaeger* pOwner) override;
+
+public:
+	static CMiasmaJaeger_Hit* Create();
+	virtual void Free() override { __super::Free(); }
+};
+
+class CMiasmaJaeger_DisAppear : public IHState<CMiasmaGrandierJaeger>
+{
+public:
+	virtual void Enter(CMiasmaGrandierJaeger* pOwner) override;
+	virtual void Update(CMiasmaGrandierJaeger* pOwner, _float dt) override;
+	virtual void Exit(CMiasmaGrandierJaeger* pOwner) override;
 
 public:
 	static CMiasmaJaeger_DisAppear* Create();

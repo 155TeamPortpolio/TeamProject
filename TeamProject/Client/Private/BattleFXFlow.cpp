@@ -17,24 +17,29 @@ void CBattleFXFlow::Initialize_Preset()
 		evade.fBlurDuration = .5f;
 		evade.vStartColor = { 1.f,1.f,1.f };
 		evade.vTargetColor = { 0.01f,0.01f,0.01f };
-		evade.tPlayerTimeScale = TIME_SCALING({ duration, 0.8f, 0.f, 0.5f , EaseType::InOutSine });
-		evade.tMonsterTimeScale = TIME_SCALING({ duration, 0.8f, 0.f, 0.5f , EaseType::InOutSine });
+		evade.SetTimeData({ duration, 0.8f, 0.f, 0.5f , EaseType::InOutSine });
 	}
 
 	{
 		auto& Parry = m_BattleVFXData[ENUM(BATTLE_VFX_TYPE::PARRY)];
-		const _float duration = .5f;
+		const _float duration = 1.5f;
 		Parry.fVFXDuration = duration;
 		Parry.fBlurDuration = .5f;
-		Parry.tPlayerTimeScale = TIME_SCALING({ duration, 0.1f, 0.3f, 0.5f , EaseType::OutBack });
-		Parry.tMonsterTimeScale = TIME_SCALING({ duration, 0.1f, 0.3f, 0.5f , EaseType::OutBack});
+		Parry.SetTimeData({ duration, 0.1f, 0.3f, 0.5f , EaseType::OutBack });
 	}
 	{
-		auto& Parry = m_BattleVFXData[ENUM(BATTLE_VFX_TYPE::ULTIMATE)];
+		auto& Ultimate = m_BattleVFXData[ENUM(BATTLE_VFX_TYPE::ULTIMATE)];
 		const _float duration = 2.f;
-		Parry.fVFXDuration = duration;
-		Parry.fBlurDuration = duration;
-		Parry.tMonsterTimeScale = TIME_SCALING({ duration, 0.f, 0.f, 0.f , EaseType::InOutSine });
+		Ultimate.fVFXDuration = duration;
+		Ultimate.fBlurDuration = duration;
+		Ultimate.BattleTimeScale[ENUM(BATTLE_OBJ_TYPE::MONSTER)] = TIME_SCALING({ duration, 0.f, 0.f, 0.f , EaseType::InOutSine });
+	}
+	{
+		auto& HitLack = m_BattleVFXData[ENUM(BATTLE_VFX_TYPE::HIT)];
+		const _float duration = 0.2f;
+		HitLack.fVFXDuration = duration;
+		HitLack.fBlurDuration = duration;
+		HitLack.SetTimeData({ duration, 0.05f, 0.05f, 0.f , EaseType::OutBack });
 	}
 }
 
@@ -106,11 +111,15 @@ void CBattleFXFlow::Update(_float dt)
 		m_isRunning = true;
 	}
 }
-
 void CBattleFXFlow::Clear(_bool callOnEnd)
 {
 	if (callOnEnd && m_isRunning && m_onEnd)
 		m_onEnd();
+
+	for (auto& track : m_parallelTracks)
+	{
+		if (track.onEnd) track.onEnd();
+	}
 
 	m_steps.clear();
 	m_parallelTracks.clear();
@@ -122,14 +131,17 @@ void CBattleFXFlow::Clear(_bool callOnEnd)
 
 void CBattleFXFlow::Cancel()
 {
-	if (m_onCancel)
-		m_onCancel();
+	if (m_onCancel) m_onCancel();
+
+	for (auto& track : m_parallelTracks)
+	{
+		if (track.onEnd) track.onEnd();
+	}
 
 	m_isRunning = false;
 	m_stepIndex = 0;
 	m_steps.clear();
 	m_parallelTracks.clear();
-
 	m_onEnd = {};
 }
 
@@ -139,7 +151,7 @@ void CBattleFXFlow::StartVfx(BATTLE_VFX_TYPE vfxType)
 	if (m_BattleVFX.isRunning)
 		return;
 
-	 auto& preset = m_BattleVFXData[ENUM(vfxType)];
+	auto& preset = m_BattleVFXData[ENUM(vfxType)];
 
 	m_BattleVFX.isRunning = true;
 	m_BattleVFX.eVFXType = vfxType;
@@ -159,6 +171,9 @@ void CBattleFXFlow::StartVfx(BATTLE_VFX_TYPE vfxType)
 	case BATTLE_VFX_TYPE::ULTIMATE:
 		StartVfx_Ultimate();
 		break;
+	case BATTLE_VFX_TYPE::HIT:
+		HitLack();
+		break;
 	default:
 		m_BattleVFX.isRunning = false;
 		break;
@@ -170,16 +185,14 @@ void CBattleFXFlow::StartVfx_Evade()
 {
 	Clear(false);
 
-	auto& preset = m_BattleVFXData[ENUM(BATTLE_VFX_TYPE::EVADE)]; 
-	AddParallelTimeScale(BATTLE_OBJ_TYPE::PLAYER, preset.tPlayerTimeScale);
-	AddParallelTimeScale(BATTLE_OBJ_TYPE::MONSTER, preset.tMonsterTimeScale);
+	auto& preset = m_BattleVFXData[ENUM(BATTLE_VFX_TYPE::EVADE)];
+	AddParallelTimeScaleAll(preset);
 
-	AddCall([this]() {RenderSystem()->Register_AddictiveColor(&m_BattleVFX.vNowColor);});
-	AddCall([this, preset]() {RenderSystem()->Apply_RadialBlur(preset.fBlurDuration);});
+	AddCall([this]() {RenderSystem()->Register_AddictiveColor(&m_BattleVFX.vNowColor); });
+	AddCall([this, preset]() {RenderSystem()->Apply_RadialBlur(preset.fBlurDuration); });
 
-	
 	AddStep(
-		[this, preset,elapsed = 0.f, duration = m_BattleVFX.fDuration](_float dt) mutable -> _bool
+		[this, preset, elapsed = 0.f, duration = m_BattleVFX.fDuration](_float dt) mutable -> _bool
 		{
 			elapsed += dt;
 			_float time01 = 1.f;
@@ -214,8 +227,7 @@ void CBattleFXFlow::StartVfx_Parry()
 	Clear(false);
 
 	auto& preset = m_BattleVFXData[ENUM(BATTLE_VFX_TYPE::PARRY)];
-	AddParallelTimeScale(BATTLE_OBJ_TYPE::PLAYER, preset.tPlayerTimeScale);
-	AddParallelTimeScale(BATTLE_OBJ_TYPE::MONSTER, preset.tMonsterTimeScale);
+	AddParallelTimeScaleAll(preset);
 
 	AddCall([this, preset]() {RenderSystem()->Apply_RadialBlur(preset.fBlurDuration); });
 
@@ -257,9 +269,25 @@ void CBattleFXFlow::StartVfx_Ultimate()
 	Clear(false);
 
 	auto& preset = m_BattleVFXData[ENUM(BATTLE_VFX_TYPE::ULTIMATE)];
-	AddParallelTimeScale(BATTLE_OBJ_TYPE::MONSTER, preset.tMonsterTimeScale);
+	AddParallelTimeScale(BATTLE_OBJ_TYPE::MONSTER, preset.BattleTimeScale[ENUM(BATTLE_OBJ_TYPE::MONSTER)]);
 	AddWait(preset.fVFXDuration);
 	AddCall([this, preset]() {
+		m_BattleVFX.fCurPos = 0.f;
+		m_BattleVFX.vNowColor = {};
+		m_BattleVFX.isRunning = false;
+		});
+	Start(nullptr);
+}
+
+void CBattleFXFlow::HitLack()
+{
+	Clear(false);
+
+	auto& preset = m_BattleVFXData[ENUM(BATTLE_VFX_TYPE::HIT)];
+	AddParallelTimeScaleAll(preset);
+	AddWait(preset.fVFXDuration);
+	AddCall([this, preset]() {
+		RenderSystem()->UnRegister_AddictiveColor();
 		m_BattleVFX.fCurPos = 0.f;
 		m_BattleVFX.vNowColor = {};
 		m_BattleVFX.isRunning = false;
@@ -291,16 +319,31 @@ void CBattleFXFlow::AddParallelTimeScale(BATTLE_OBJ_TYPE type, TIME_SCALING& tim
 	);
 }
 
+void CBattleFXFlow::AddParallelTimeScaleAll(BATTLE_VFX_DATA& vfxData)
+{
+	for (size_t typeIndex = 0; typeIndex < ENUM(BATTLE_OBJ_TYPE::END); ++typeIndex)
+		AddParallelTimeScale(BATTLE_OBJ_TYPE(typeIndex), vfxData.BattleTimeScale[typeIndex]);
+}
+
+
 void CBattleFXFlow::SetLayerTimeScale(BATTLE_OBJ_TYPE type, _float scale)
 {
 	const string nowLevelKey = LevelManager()->Get_NowLevelKey();
-	ObjectManager()->Set_LayerTimeScale({ nowLevelKey, m_layerTag[ENUM(type)] }, scale);
+	if (type == BATTLE_OBJ_TYPE::CAMERA)
+		ObjectManager()->Set_LayerTimeScale({ G_GlobalLevelKey, m_layerTag[ENUM(type)] }, scale);
+	else
+		ObjectManager()->Set_LayerTimeScale({ nowLevelKey, m_layerTag[ENUM(type)] }, scale);
+
 }
 
 void CBattleFXFlow::ResetLayerTimeScale(BATTLE_OBJ_TYPE type)
 {
 	const string nowLevelKey = LevelManager()->Get_NowLevelKey();
-	ObjectManager()->Reset_LayerTimeScale({ nowLevelKey, m_layerTag[ENUM(type)] });
+	if (type == BATTLE_OBJ_TYPE::CAMERA)
+		ObjectManager()->Reset_LayerTimeScale({ G_GlobalLevelKey, m_layerTag[ENUM(type)] });
+	else
+		ObjectManager()->Reset_LayerTimeScale({ nowLevelKey, m_layerTag[ENUM(type)] });
+
 }
 
 void CBattleFXFlow::AddStep(StepFunc step)

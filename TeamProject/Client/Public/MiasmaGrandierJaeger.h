@@ -1,7 +1,7 @@
 #pragma once
 #include "Enemy.h"
 NS_BEGIN(Client)
-class CMiasmaJaeger :
+class CMiasmaGrandierJaeger :
     public CEnemy
 {
     struct MiasmaJaegerDisolveState {
@@ -26,9 +26,9 @@ class CMiasmaJaeger :
     };
 
 private:
-    CMiasmaJaeger();
-    CMiasmaJaeger(const CMiasmaJaeger& rhg);
-    virtual ~CMiasmaJaeger() DEFAULT;
+    CMiasmaGrandierJaeger();
+    CMiasmaGrandierJaeger(const CMiasmaGrandierJaeger& rhg);
+    virtual ~CMiasmaGrandierJaeger() DEFAULT;
 
 public:
     HRESULT Initialize_Prototype() override;
@@ -40,6 +40,7 @@ public:
     void    Render_GUI()override;
 
 public:
+    virtual void TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER charaName = CHARACTER::END);
     void RotateToTarget(_float dt, _float rotateSpeed);
 public:
     virtual void    OnTriggerEnter(CGameObject* pOther) override;
@@ -48,23 +49,25 @@ public:
 
 public:
     MiasmaJaegerDisolveState& Get_Dissolve() { return m_Dissolve; }
-    CStateMachine<CMiasmaJaeger>* Get_MainStateMachine() { return m_pStateMachine; }
-
+    CStateMachine<CMiasmaGrandierJaeger>* Get_MainStateMachine() { return m_pStateMachine; }
+    void LockOn(_bool lock) { m_LockedOn = lock; }
 private:
     void Update_Dissolve(_float dt);
-
+    void Route_AnimEvent(CAnimator3D* animator);
+    _float3 Get_FirePos();
 private:
     HRESULT Initialize_StateMachine();
     HRESULT Initialize_States();
     HRESULT Initialize_Transitions();
+    HRESULT Initialize_Effects();
 
 private:
     _bool m_LockedOn = { false };
     MiasmaJaegerDisolveState m_Dissolve;
-    CStateMachine<CMiasmaJaeger>* m_pStateMachine = { nullptr };
-
+    CStateMachine<CMiasmaGrandierJaeger>* m_pStateMachine = { nullptr };
+    _uint m_HitCount = {};
 public:
-    static CMiasmaJaeger* Create();
+    static CMiasmaGrandierJaeger* Create();
     CGameObject* Clone(INIT_DESC* pArg) override;
     virtual void Free() override;
 };

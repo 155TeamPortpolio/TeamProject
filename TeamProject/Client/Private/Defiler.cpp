@@ -19,7 +19,7 @@
 #include "Texture.h"
 
 #include "MiasmaBlade.h"
-#include "MiasmaJaeger.h"
+#include "MiasmaGrandierJaeger.h"
 #include "AudioSource.h"
 
 #include "UI_DamageText.h"
@@ -38,7 +38,7 @@ HRESULT CDefiler::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_MiasmaBlade", CMiasmaBlade::Create());
-	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_MiasmaJaeger", CMiasmaJaeger::Create());
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_MiasmaJaeger", CMiasmaGrandierJaeger::Create());
 
 	Add_Component<CAnimator3D>();
 	Add_Component<CSkeletalModel>();
@@ -96,7 +96,7 @@ void CDefiler::Awake()
 
 	for (const auto& instance : materialInstances)
 	{
-		instance->Set_Param("NoiseTexture", { dissolveTexture->Get_SRV(),"Texture2D",0 });
+		instance->Set_Param("NoiaseTexture", { dissolveTexture->Get_SRV(),"Texture2D",0 });
 		instance->Set_Param("vRimLightColor", { &m_vRimLightColor,"float3",sizeof(_float3) });
 		instance->Set_Param("fRimLightPower", { &m_fRimLightPower,"float",sizeof(_float) });
 		instance->Set_Param("fDissolveProgress", { &m_fDissolveProgress,"float",sizeof(_float) });
@@ -111,7 +111,9 @@ void CDefiler::Priority_Update(_float dt)
 	m_PlayerCharacterInfos = BattleSystem()->GetBattleObjects(CBattleSystem::BATTLE_OBJ_TYPE::PLAYER);
 	ComputeTargetingInfo();
 	if (InputDevice()->Key_Tap('F')) {
-		m_MiasmaSpawner.Spawn(MiasmaType::Grandier, 8, m_tTargetingInfo.vTargetPos, Get_BipedPos(), m_tTargetingInfo.vTargetPos.y)	;
+		BattleSystem()->ExcludeBattleObject(BATTLE_OBJ_TYPE::MONSTER, this->Get_Handle());
+		m_MiasmaSpawner.Spawn(MiasmaType::Grandier, 8, m_tTargetingInfo.vTargetPos, Get_BipedPos(),
+			m_tTargetingInfo.vTargetPos.y)	;
 	}
 }
 
@@ -404,7 +406,7 @@ void CDefiler::Route_AnimEvent(CAnimator3D* animator)
 
 void CDefiler::Controll_Sound(const string& event)
 {
-	Get_Component<CAudioSource>()->Slot("event").Play();
+	Get_Component<CAudioSource>()->Slot(event).Attribute3D(true).Volume(0.3f).Play();
 }
 
 void CDefiler::Controll_Attack(const string& event)

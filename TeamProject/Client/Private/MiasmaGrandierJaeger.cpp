@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "MiasmaJaeger.h"
+#include "MiasmaGrandierJaeger.h"
 
 #include "BattleSystem.h"
 #include "GameInstance.h"
@@ -9,37 +9,45 @@
 #include "Animator3D.h"
 #include "CharacterController.h"
 #include "ObjectContainer.h"
-
 #include "Texture.h"
 
-#include "Helper_Func.h"
-#include "Character.h"
 #include "StateMachine.h"
 #include "MiasmaJaegerState.h"
 
-CMiasmaJaeger::CMiasmaJaeger()
+#include "Helper_Func.h"
+#include "UIDirector.h"
+#include "UI_DamageText.h"
+
+#include "MiasmaProjectile.h"
+#include "Character.h"
+#include "AudioSource.h"
+
+CMiasmaGrandierJaeger::CMiasmaGrandierJaeger()
 	: CEnemy()
 {
 }
 
-CMiasmaJaeger::CMiasmaJaeger(const CMiasmaJaeger& rhs)
+CMiasmaGrandierJaeger::CMiasmaGrandierJaeger(const CMiasmaGrandierJaeger& rhs)
 	:CEnemy(rhs)
 {
 }
 
-HRESULT CMiasmaJaeger::Initialize_Prototype()
+HRESULT CMiasmaGrandierJaeger::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
 
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_MiasmaProjectile", CMiasmaProjectile::Create());
 	Add_Component<CSkeletalModel>()->Link_Model("Zero_Level", "MiasmaJaeger.model");
 	Add_Component<CMaterial>()->Link_Material("Zero_Level", "MiasmaJaeger.mat");
 	Add_Component<CCharacterController>();
+	Add_Component<CObjectContainer>();
 	Add_Component<CAnimator3D>();
+	Add_Component<CAudioSource>();
 
 	return S_OK;
 }
 
-HRESULT CMiasmaJaeger::Initialize(INIT_DESC* pArg)
+HRESULT CMiasmaGrandierJaeger::Initialize(INIT_DESC* pArg)
 {
 	__super::Initialize(pArg);
 	auto pAnimator = Get_Component<CAnimator3D>();
@@ -55,10 +63,16 @@ HRESULT CMiasmaJaeger::Initialize(INIT_DESC* pArg)
 
 	if (FAILED(Initialize_StateMachine()))
 		return E_FAIL;
+
+	if (FAILED(Initialize_Effects()))
+		return E_FAIL;
+
+	Get_Component<CAudioSource>()->SoundFolder("Zero_Level","../Bin/Resources/Zero/Enemy/MiasmaJaeger/Sound/");
+
 	return S_OK;
 }
 
-void CMiasmaJaeger::Awake()
+void CMiasmaGrandierJaeger::Awake()
 {
 	m_vRimLightColor = _float3(0.127, 0.029, 0.070);
 	m_fRimLightPower = 2.2f;
@@ -77,79 +91,88 @@ void CMiasmaJaeger::Awake()
 		instance->Set_Param("fDissolveTiling", { &m_fDissolveTilling,"float",sizeof(_float) });
 	}
 
+	_float height = Get_Component<CCharacterController>()->Get_Height();
+	Get_Component<CCharacterController>()->Set_BoundingMinY(height);
 	m_Dissolve.DisAppear(0.f);
 }
 
-void CMiasmaJaeger::Priority_Update(_float dt)
+void CMiasmaGrandierJaeger::Priority_Update(_float dt)
 {
+	Get_Component<CObjectContainer>()->Priority_UpdateChild(dt);
 }
 
-void CMiasmaJaeger::Update(_float dt)
+void CMiasmaGrandierJaeger::Update(_float dt)
 {
 	if (!m_LockedOn) {
 		m_PlayerCharacterInfos.clear();
 		m_PlayerCharacterInfos = BattleSystem()->GetBattleObjects(CBattleSystem::BATTLE_OBJ_TYPE::PLAYER);
 		ComputeTargetingInfo();
 	}
-	Get_Component<CAnimator3D>()->Update_Animation(dt);
-	Get_Component<CCharacterController>()->Update(dt);
 
+	auto pAnimator = Get_Component<CAnimator3D>();
+	pAnimator->Update_Animation(dt);
+	Route_AnimEvent(pAnimator);
+	RotateToTarget(dt, 6.f);
+
+	Get_Component<CObjectContainer>()->UpdateChild(dt);
 	Update_Dissolve(dt);
 	m_pStateMachine->Update(dt);
 }
 
-void CMiasmaJaeger::Late_Update(_float dt)
+void CMiasmaGrandierJaeger::Late_Update(_float dt)
 {
+	Get_Component<CObjectContainer>()->Late_UpdateChild(dt);
 }
 
-void CMiasmaJaeger::Render_GUI()
+void CMiasmaGrandierJaeger::Render_GUI()
 {
 	__super::Render_GUI();
 }
 
-void CMiasmaJaeger::OnPooledAcquire(INIT_DESC* pArg)
+void CMiasmaGrandierJaeger::OnPooledAcquire(INIT_DESC* pArg)
 {
 
 }
 
-void CMiasmaJaeger::OnPooledRelease()
+void CMiasmaGrandierJaeger::OnPooledRelease()
 {
+	LockOn(false);
 	m_isOnAttack = false;
 }
 
-CMiasmaJaeger* CMiasmaJaeger::Create()
+CMiasmaGrandierJaeger* CMiasmaGrandierJaeger::Create()
 {
-	CMiasmaJaeger* instance = new CMiasmaJaeger();
+	CMiasmaGrandierJaeger* instance = new CMiasmaGrandierJaeger();
 
 	if (FAILED(instance->Initialize_Prototype()))
 	{
 		Safe_Release(instance);
-		MSG_BOX("Failed to create : CMiasmaJaeger");
+		MSG_BOX("Failed to create : CMiasmaGrandierJaeger");
 	}
 
 	return instance;
 }
 
-CGameObject* CMiasmaJaeger::Clone(INIT_DESC* pArg)
+CGameObject* CMiasmaGrandierJaeger::Clone(INIT_DESC* pArg)
 {
-	CMiasmaJaeger* instance = new CMiasmaJaeger(*this);
+	CMiasmaGrandierJaeger* instance = new CMiasmaGrandierJaeger(*this);
 
 	if (FAILED(instance->Initialize(pArg)))
 	{
 		Safe_Release(instance);
-		MSG_BOX("Failed to clone : CMiasmaJaeger");
+		MSG_BOX("Failed to clone : CMiasmaGrandierJaeger");
 	}
 
 	return instance;
 }
 
-void CMiasmaJaeger::Free()
+void CMiasmaGrandierJaeger::Free()
 {
 	__super::Free();
 	Safe_Release(m_pStateMachine);
 }
 
-void CMiasmaJaeger::OnTriggerEnter(CGameObject* pOther)
+void CMiasmaGrandierJaeger::OnTriggerEnter(CGameObject* pOther)
 
 {
 	auto pCollidable = pOther->Get_Component<ICollidable>();
@@ -166,7 +189,7 @@ void CMiasmaJaeger::OnTriggerEnter(CGameObject* pOther)
 	}
 }
 
-void CMiasmaJaeger::Update_Dissolve(_float dt)
+void CMiasmaGrandierJaeger::Update_Dissolve(_float dt)
 {
 
 	if (m_Dissolve.fDissolveElapsedTime < m_Dissolve.fDissolveDuration)
@@ -199,7 +222,7 @@ void CMiasmaJaeger::Update_Dissolve(_float dt)
 	}
 }
 
-void CMiasmaJaeger::RotateToTarget(_float dt, _float rotateSpeed)
+void CMiasmaGrandierJaeger::RotateToTarget(_float dt, _float rotateSpeed)
 {
 	_vector3 vPosition = m_pTransform->Get_Pos();
 	_vector3 vCurrDir = m_pTransform->Dir(STATE::LOOK);
@@ -214,9 +237,79 @@ void CMiasmaJaeger::RotateToTarget(_float dt, _float rotateSpeed)
 	m_pTransform->Set_Look(vCurrDir);
 }
 
-HRESULT CMiasmaJaeger::Initialize_StateMachine()
+void CMiasmaGrandierJaeger::Route_AnimEvent(CAnimator3D* animator)
 {
-	m_pStateMachine = CStateMachine<CMiasmaJaeger>::Create();
+	auto Bus = animator->Get_EventBus();
+
+	for (EVENT_INST& instance : Bus)
+	{
+		switch (instance.Type)
+		{
+		case CLIP_EVENT_TYPE::NOTIFY:
+			if (instance.Tag == "EvadeSign"){
+				LockOn(true);
+				Active_AttackSign(false);
+			}
+			else if (instance.Tag == "Fire"){
+				string lvKey  = LevelManager()->Get_NowLevelKey();
+				_float3 pos = Get_FirePos();
+				_float3 target = m_tTargetingInfo.vTargetPos;
+				target.y = pos.y;
+				auto desc = new CMiasmaProjectile::MiasmaProjectileDesc(target);
+				auto Missile = Builder::Create_Object({ "Zero_Level", "Proto_GameObject_MiasmaProjectile" })
+					.Add_ObjDesc(desc).Position(pos).FromPool().Build("Missile");
+				ObjectManager()->Add_Object(Missile, { lvKey ,"Enemy_Layer" });
+			}
+			break;
+
+		case CLIP_EVENT_TYPE::SOUND:
+			Get_Component<CAudioSource>()->Slot(instance.Tag).Attribute3D(true).Volume(0.2f).Play();
+			break;
+		}
+	}
+}
+
+_float3 CMiasmaGrandierJaeger::Get_FirePos()
+{
+	Matrix Bone = Get_Component<CAnimator3D>()->Get_BoneMatrix(CAnimator3D::BoneSpace::COMBINED, "Bn_Weapon1");
+	Matrix World = m_pTransform->Get_WorldMatrix();
+
+	_vector3  T, S;
+	_quaternion R;
+	(Bone * World).Decompose(S, R, T);
+
+	return T;
+}
+
+void CMiasmaGrandierJaeger::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER charaName)
+{
+	BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::HIT);
+	m_HitCount++;
+	if (m_HitCount > 3.f) {
+		m_pStateMachine->Set_Trigger("Attack_To_DisAppear");
+	}
+	else {
+		Get_Component<CAnimator3D>()
+			->Set_Animation(1, "GrenadierJaeger_Ani_Hit_Stay ")
+			.LayerBlend(1.f, 0.f, 1.f, EaseType::InOutQuint)
+			.Loop(false)
+			.Apply();
+	}
+
+	DAMAGE_DESC desc = {};
+	_int damage = Helper::Get_Random_Int(1000, 10000); // юс╫ц
+	desc.damage = damage;
+	desc.followHandle = Get_Handle();
+	desc.followOffset = Vector3(0.f, 1.3f, 0.f);
+	desc.isEnemy = true;
+	desc.charaName = charaName;
+
+	UIDirector()->Request_DamageText(desc);
+}
+
+HRESULT CMiasmaGrandierJaeger::Initialize_StateMachine()
+{
+	m_pStateMachine = CStateMachine<CMiasmaGrandierJaeger>::Create();
 	if (!m_pStateMachine)
 		return E_FAIL;
 
@@ -232,14 +325,14 @@ HRESULT CMiasmaJaeger::Initialize_StateMachine()
 	return S_OK;
 }
 
-HRESULT CMiasmaJaeger::Initialize_States()
+HRESULT CMiasmaGrandierJaeger::Initialize_States()
 {
 	m_pStateMachine->Register_State("Appear", CMiasmaJaeger_Appear::Create());
 	m_pStateMachine->Register_State("Attack", CMiasmaJaeger_Attack::Create());
 	m_pStateMachine->Register_State("DisAppear", CMiasmaJaeger_DisAppear::Create());
+	m_pStateMachine->Register_State("Hit", CMiasmaJaeger_Hit::Create());
 
 	//m_pStateMachine->Register_State("Walk", CSacrificeState_Walk::Create());
-	//m_pStateMachine->Register_State("Hit", CSacrificeState_Hit::Create());
 	//m_pStateMachine->Register_State("Evade", CSacrificeState_Evade::Create());
 	//m_pStateMachine->Register_State("Death", CSacrificeState_Death::Create());
 	//m_pStateMachine->Register_State("ChangePhase", CSacrificeState_ChangePhase::Create());
@@ -249,11 +342,22 @@ HRESULT CMiasmaJaeger::Initialize_States()
 	return S_OK;
 }
 
-HRESULT CMiasmaJaeger::Initialize_Transitions()
+HRESULT CMiasmaGrandierJaeger::Initialize_Transitions()
 {
 	m_pStateMachine->Register_Transition("Appear", "Attack",
-		CStateMachine<CMiasmaJaeger>::CONDITION_TRIGGER, "Appear_To_Attack");
+		CStateMachine<CMiasmaGrandierJaeger>::CONDITION_TRIGGER, "Appear_To_Attack");
 	m_pStateMachine->Register_Transition("Attack", "DisAppear",
-		CStateMachine<CMiasmaJaeger>::CONDITION_TRIGGER, "Attack_To_DisAppear");
+		CStateMachine<CMiasmaGrandierJaeger>::CONDITION_TRIGGER, "Attack_To_DisAppear");
+
+	m_pStateMachine->Register_AnyStateTransition("Hit",
+		CStateMachine<CMiasmaGrandierJaeger>::CONDITION_TRIGGER, "Hit");
+
+	return S_OK;
+}
+
+HRESULT CMiasmaGrandierJaeger::Initialize_Effects()
+{
+	auto pObjectContainer = Get_Component<CObjectContainer>();
+	Create_AttackSign("Bip001_Head");
 	return S_OK;
 }

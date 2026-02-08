@@ -1254,6 +1254,12 @@
     <Filter Include="02. GameObject\Effect\XWall">
       <UniqueIdentifier>{514b0ec9-44d6-4bdd-aaa0-422049575a75}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Boss\Defiler\MiasmaUnit\Grandier">
+      <UniqueIdentifier>{898f9dbc-91f2-4645-a4bc-259707c47aa6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Boss\Defiler\MiasmaUnit\MiasmaProjectile">
+      <UniqueIdentifier>{5f2c7f77-49ae-4aa9-857c-472daca0a9cc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -2408,9 +2414,6 @@
     <ClInclude Include="..\Public\MiyabiState_AssaultAttack.h">
       <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Attack\Assault</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\MiasmaJaeger.h">
-      <Filter>02. GameObject\Object\Enemy\Boss\Defiler\MiasmaUnit</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\MiasmaSpawner.h">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler\MiasmaUnit</Filter>
     </ClInclude>
@@ -2428,6 +2431,12 @@
     </ClInclude>
     <ClInclude Include="..\public\XWall.h">
       <Filter>02. GameObject\Effect\XWall</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MiasmaGrandierJaeger.h">
+      <Filter>02. GameObject\Object\Enemy\Boss\Defiler\MiasmaUnit\Grandier</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MiasmaProjectile.h">
+      <Filter>02. GameObject\Object\Enemy\Boss\Defiler\MiasmaUnit\MiasmaProjectile</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -3545,9 +3554,6 @@
     <ClCompile Include="..\Private\MiyabiState_AssaultAttack.cpp">
       <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Attack\Assault</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\MiasmaJaeger.cpp">
-      <Filter>02. GameObject\Object\Enemy\Boss\Defiler\MiasmaUnit</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\MiasmaSpawner.cpp">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler\MiasmaUnit</Filter>
     </ClCompile>
@@ -3565,6 +3571,12 @@
     </ClCompile>
     <ClCompile Include="..\private\XWall.cpp">
       <Filter>02. GameObject\Effect\XWall</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MiasmaGrandierJaeger.cpp">
+      <Filter>02. GameObject\Object\Enemy\Boss\Defiler\MiasmaUnit\Grandier</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MiasmaProjectile.cpp">
+      <Filter>02. GameObject\Object\Enemy\Boss\Defiler\MiasmaUnit\MiasmaProjectile</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

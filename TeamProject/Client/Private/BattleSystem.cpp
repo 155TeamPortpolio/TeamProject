@@ -28,8 +28,10 @@ CBattleSystem::CBattleSystem()
 	
 	m_pFXFlow = CBattleFXFlow::Create();
 	m_pFXFlow->Initialize_Preset();
-	m_pFXFlow->SetLayerTag(BATTLE_OBJ_TYPE::PLAYER, "Model_Layer");
-	m_pFXFlow->SetLayerTag(BATTLE_OBJ_TYPE::MONSTER, "Enemy_Layer");
+	m_pFXFlow->SetLayerTag(BATTLE_OBJ_TYPE::PLAYER,		"Model_Layer");
+	m_pFXFlow->SetLayerTag(BATTLE_OBJ_TYPE::MONSTER,	"Enemy_Layer");
+	m_pFXFlow->SetLayerTag(BATTLE_OBJ_TYPE::CAMERA,		"Camera_Layer");
+	m_pFXFlow->SetLayerTag(BATTLE_OBJ_TYPE::EFFECT,		"Effect_Layer");
 }
 
 void CBattleSystem::Update()
@@ -174,9 +176,42 @@ void CBattleSystem::EnterBattleObject(BATTLE_OBJ_TYPE eObjType, OBJECT_HANDLE hO
 		return;
 
 	auto& handles = iter->second;
-	BATTLEOBJ_INFO info = {};
-	info.hObject = hObject;
-	handles.push_back(info);
+
+	auto hiter = find_if(
+		handles.begin(),
+		handles.end(),
+		[&](BATTLEOBJ_INFO& info) {return info.hObject == hObject; });
+
+	if (hiter == handles.end()) {
+		BATTLEOBJ_INFO info = {};
+		info.hObject = hObject;
+		handles.push_back(info);
+	}
+	else {
+
+	}
+}
+
+void CBattleSystem::ExcludeBattleObject(BATTLE_OBJ_TYPE eObjType, OBJECT_HANDLE hObject)
+{
+	auto iter = m_BattleObjInfos.find(eObjType);
+	if (iter == m_BattleObjInfos.end())
+		return ;
+
+	auto& handles = iter->second;
+
+	auto hiter = find_if(
+		handles.begin(),
+		handles.end(),
+		[&](BATTLEOBJ_INFO& info) {return info.hObject == hObject; });
+
+	if (hiter == handles.end())
+		return ;
+
+	if(!hiter->hObject.isValid())
+		return;
+	m_PendingObjInfos.emplace(hiter->hObject.hObjID, hiter->hObject);
+	ExitBattleObject(eObjType, hObject);
 }
 
 void CBattleSystem::SetPlayer(vector<OBJECT_HANDLE> hPlayers)
@@ -297,6 +332,7 @@ void CBattleSystem::Update_BattleInfo()
 	{
 		for (auto& info : infovector.second)
 		{
+			if(!info.isOnField)continue;
 			if (!info.hObject.isValid()) continue;
 
 			CGameObject* pObject = info.hObject.Get();

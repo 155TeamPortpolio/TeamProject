@@ -111,12 +111,13 @@ void CMiasmaBlade::OnPooledAcquire(INIT_DESC* pArg)
 	m_vVelocity = { 0,0,0 };
 	m_ElapsedTime = 0;
 	m_vTargetVelocity = m_pTransform->Dir(STATE::LOOK) * m_fMoveSpeed;
-
+	Get_Component<CCollider>()->Set_CompActive(true);
 }
 
 void CMiasmaBlade::OnPooledRelease()
 {
 	m_isOnAttack = false;
+	Get_Component<CCollider>()->Set_CompActive(false);
 }
 
 void CMiasmaBlade::Parried()

@@ -25,9 +25,9 @@ public:
 public: //getter  
 	CBattlePlayer*					GetBattlePlayer() const {return m_pBattlePlayer;}
 	OBJECT_HANDLE					GetCurCharacterHandle() const;
-	_bool							GetActive() { return m_isActive; }
 	const vector<BATTLEOBJ_INFO>&	GetBattleObjects(BATTLE_OBJ_TYPE eType) const;
 	vector<BATTLEOBJ_INFO>			CopyBattleObjects(BATTLE_OBJ_TYPE eType);/*복사반환*/
+	_bool							GetActive() { return m_isActive; }
 	_int							GetPlayerParryingCount();
 
 
@@ -59,6 +59,7 @@ public:
 	void	TakeAllDamage(const HitDesc& hitDesc);
 	_bool	ExitBattleObject(BATTLE_OBJ_TYPE eObjType, OBJECT_HANDLE hObject);
 	void	EnterBattleObject(BATTLE_OBJ_TYPE eObjType, OBJECT_HANDLE hObject);
+	void	ExcludeBattleObject(BATTLE_OBJ_TYPE eObjType, OBJECT_HANDLE hObject);
 	void	ClearBattleStage();
 
 public:
@@ -74,7 +75,8 @@ private:
 private:
 	class CBattlePlayer* m_pBattlePlayer = { nullptr };// 배틀 플레이어
 	class CBattleFXFlow* m_pFXFlow = { nullptr };
-	unordered_map<BATTLE_OBJ_TYPE, BattleInfo>	m_BattleObjInfos;	// 매 업데이트때 1번씩 생성된 Battle 오브젝트의 정보를 담아둠
+	unordered_map<BATTLE_OBJ_TYPE, BattleInfo>	m_BattleObjInfos;	// 배틀 오브젝트 정보
+	unordered_map<_uint, OBJECT_HANDLE>	m_PendingObjInfos;	// 잠시 제외될 친구
 	
 	/*Map 구조 변경 후 재적용 예정*/
 	BATTLE_FIELD_DATA			m_BattleFieldData = {};// 현재 Stage에 셋팅 된 BattlePoint 정보
