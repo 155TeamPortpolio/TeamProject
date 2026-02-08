@@ -56,7 +56,7 @@ private:
 
 private:
 	void Cache();
-	void Create_Video();
+	void Create_Video(function<void()> onVideoFinished);
 	void Create_SkipButton(function<void()> onClickSkip);
 
 	void Set_ChildAnimation(CHILD child, _int iIndex);

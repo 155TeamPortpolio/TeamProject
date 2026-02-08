@@ -31,6 +31,11 @@ void CUI_GachaVideo::Play_Video(GachaGrade eGrade)
     UI_Active();
 }
 
+void CUI_GachaVideo::Set_OnVideoFinished(function<void()> onVideoFinished)
+{
+    m_onVideoFinished = onVideoFinished;
+}
+
 HRESULT CUI_GachaVideo::Initialize_Prototype()
 {
     __super::Initialize_Prototype();
@@ -96,8 +101,8 @@ void CUI_GachaVideo::UI_DeActive(void* pArg)
 {
     Set_Alive(false);
     m_pPlayer->Stop();
-    if (m_OnClick)
-        m_OnClick();
+    if (m_onVideoFinished)
+        m_onVideoFinished();
 }
 
 CGameObject* CUI_GachaVideo::Create()

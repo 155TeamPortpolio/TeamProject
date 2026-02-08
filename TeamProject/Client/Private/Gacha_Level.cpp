@@ -109,9 +109,13 @@ void CGacha_Level::Ready_GachaUI()
 	PrototypeManager()->Add_ProtoType("Gacha_Level", "Proto_GameObject_GachaDisplay", CUI_GachaDisplay::Create());
 
 	CUI_GachaDisplay::DISPLAY_INIT_DESC* pDesc = new CUI_GachaDisplay::DISPLAY_INIT_DESC;
-	pDesc->onClickSkip = []() { };
-	pDesc->onVideoFinished = []() {};
 	pDesc->eGrade = GachaGrade::S;		// 뽑은 아이템에서 가장 높은 등급 넣기
+	pDesc->onClickSkip = []() {			// 스킵 눌렀을 때 실행할 함수 넣기
+		//MSG_BOX("Skip"); 
+		};
+	pDesc->onVideoFinished = []() {		// 비디오 끝났을 때 실행할 함수 넣기
+		//MSG_BOX("VideoFinished"); 
+		}; 
 
 	auto pGachaDisplay = Builder::Create_UIObject({ "Gacha_Level", "Proto_GameObject_GachaDisplay"})
 		.Add_UIDesc(pDesc)
