@@ -850,12 +850,6 @@
     <Filter Include="02. GameObject\UI\02. 3D\Plane\Gangta">
       <UniqueIdentifier>{93712aaf-87f8-46e7-8d80-8d430b09aa6f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\UI\01. 2D\BackButton">
-      <UniqueIdentifier>{97c4cc33-5194-4f2e-954a-7234d9714dbb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\UI\01. 2D\IconButton">
-      <UniqueIdentifier>{1a076b26-13b0-4095-afa9-73b1f59561df}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\UI\01. 2D\Ramen\OrderBanner">
       <UniqueIdentifier>{5b1e11eb-ac0b-4f7d-a685-d2d8256c8b8d}</UniqueIdentifier>
     </Filter>
@@ -1235,6 +1229,18 @@
     </Filter>
     <Filter Include="02. GameObject\UI\02. 3D\Mesh\UI_GachaReveal\UI_GachaText">
       <UniqueIdentifier>{ed223e07-20d2-4adb-bf8a-94b7c189aa86}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\Gacha\Display\Video">
+      <UniqueIdentifier>{314ab51b-4d5d-46ca-8358-98fb0541d8de}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\Button_Text">
+      <UniqueIdentifier>{012f8056-50c2-4280-bc12-901990c01000}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\Button_Back">
+      <UniqueIdentifier>{97c4cc33-5194-4f2e-954a-7234d9714dbb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\Button_Icon">
+      <UniqueIdentifier>{1a076b26-13b0-4095-afa9-73b1f59561df}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -2115,7 +2121,7 @@
       <Filter>02. GameObject\Test\TestUI</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UI_BackButton.h">
-      <Filter>02. GameObject\UI\01. 2D\BackButton</Filter>
+      <Filter>02. GameObject\UI\01. 2D\Button_Back</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UI_RamenAttributeIcon.h">
       <Filter>02. GameObject\UI\01. 2D\Ramen\AttributeIcon</Filter>
@@ -2187,7 +2193,7 @@
       <Filter>02. GameObject\Object\Gacha\GachaProps\GachaStage\GachaStageScreen</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UI_IconButton.h">
-      <Filter>02. GameObject\UI\01. 2D\IconButton</Filter>
+      <Filter>02. GameObject\UI\01. 2D\Button_Icon</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UI_RamenOrderBanner.h">
       <Filter>02. GameObject\UI\01. 2D\Ramen\OrderBanner</Filter>
@@ -2392,6 +2398,12 @@
     </ClInclude>
     <ClInclude Include="..\Public\MiyabiState_AssaultAttack.h">
       <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Attack\Assault</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_GachaVideo.h">
+      <Filter>02. GameObject\UI\01. 2D\Gacha\Display\Video</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_TextButton.h">
+      <Filter>02. GameObject\UI\01. 2D\Button_Text</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -3236,7 +3248,7 @@
       <Filter>02. GameObject\Test\TestUI</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UI_BackButton.cpp">
-      <Filter>02. GameObject\UI\01. 2D\BackButton</Filter>
+      <Filter>02. GameObject\UI\01. 2D\Button_Back</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UI_RamenAttributeIcon.cpp">
       <Filter>02. GameObject\UI\01. 2D\Ramen\AttributeIcon</Filter>
@@ -3297,7 +3309,7 @@
       <Filter>02. GameObject\UI\02. 3D\Plane\Damage_UI\Gangta</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UI_IconButton.cpp">
-      <Filter>02. GameObject\UI\01. 2D\IconButton</Filter>
+      <Filter>02. GameObject\UI\01. 2D\Button_Icon</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UI_RamenOrderBanner.cpp">
       <Filter>02. GameObject\UI\01. 2D\Ramen\OrderBanner</Filter>
@@ -3511,6 +3523,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\MiyabiState_AssaultAttack.cpp">
       <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Attack\Assault</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_GachaVideo.cpp">
+      <Filter>02. GameObject\UI\01. 2D\Gacha\Display\Video</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_TextButton.cpp">
+      <Filter>02. GameObject\UI\01. 2D\Button_Text</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

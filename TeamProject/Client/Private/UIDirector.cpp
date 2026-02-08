@@ -90,6 +90,15 @@ void CUIDirector::Hide_GachaPage()
 	UI_DeActive("gachaPage");
 }
 
+void CUIDirector::Play_GachaVideo(GachaGrade eGrade)
+{
+	CUI_GachaDisplay::GACHA_DISPLAY_DESC desc = {};
+	desc.eType = CUI_GachaDisplay::TYPE::VIDEO;
+	desc.eGrade = eGrade;
+
+	UI_Active("gachaDisplay", &desc);
+}
+
 void CUIDirector::Show_GachaLabel(const _wstring& strLabel)
 {
 	CUI_GachaDisplay::GACHA_DISPLAY_DESC desc = {};

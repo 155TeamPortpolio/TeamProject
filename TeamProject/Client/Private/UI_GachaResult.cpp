@@ -4,6 +4,7 @@
 #include "GameInstance.h"
 #include "ObjectContainer.h"
 #include "UI_GachaResultItem.h"
+#include "UI_TextButton.h"
 
 HRESULT CUI_GachaResult::Initialize_Prototype()
 {
@@ -20,6 +21,8 @@ HRESULT CUI_GachaResult::Initialize(INIT_DESC* pArg)
 
     Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("gacha_result.json")));
     Cache();
+    Create_ConfirmButton();
+
     m_InstanceName = "gachaResult";
 
     Set_Alive(false);
@@ -50,6 +53,10 @@ void CUI_GachaResult::UI_Active(void* pArg)
     if (m_pTitle)
         m_pTitle->Set_Animation(0);
 
+    m_isAlltemsAppeared = false;
+    if (m_pConfirmButton)
+        m_pConfirmButton->Set_Alive(false);
+
     // 아이템 처리 
     m_iItemAppearIndex = 0;
     m_fItemAppearTimer = 0;
@@ -75,10 +82,43 @@ void CUI_GachaResult::Cache()
     m_pTitle = dynamic_cast<CUI_Object*>(Get_Component<CObjectContainer>()->Find_Descendant("title"));
 }
 
+void CUI_GachaResult::Create_ConfirmButton()
+{
+    CUI_TextButton::BUTTON_DESC* pDesc = new CUI_TextButton::BUTTON_DESC;
+    pDesc->strLabel = L"확인";
+    pDesc->onClick = []() {};
+
+    auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_TextButton" })
+        .Add_UIDesc(pDesc)
+        .Build("confrimButton");
+
+    if (!pObj)
+        return;
+
+    pObj->Set_AnchorOffset({ m_WinSize.x * 0.5f, m_WinSize.y * 0.8f});
+    pObj->Set_Alive(false);
+
+    Get_Component<CObjectContainer>()->Add_Child(pObj);
+    m_pConfirmButton = pObj;
+}
+
 void CUI_GachaResult::Update_ItemAppear(_float dt)
 {
-    if (m_iItemAppearIndex >= m_pItems.size())
+    const _int iTargetCount = m_pResultDesc ? m_pResultDesc->size() : 0;
+
+    if (iTargetCount == 0)
         return;
+
+    if (m_iItemAppearIndex >= iTargetCount)
+    {
+        if (!m_isAlltemsAppeared)
+        {
+            m_isAlltemsAppeared = true;
+            if (m_pConfirmButton)
+                m_pConfirmButton->Set_Alive(true);
+        }
+        return;
+    }
 
     m_fItemAppearTimer += dt;
 
@@ -112,7 +152,7 @@ void CUI_GachaResult::Update_ItemLayout()
     _int iCol = min((int)iCount, MAX_COL);
     _int iRow = (int)((iCount + MAX_COL - 1) / MAX_COL);
 
-    _float2 vCenter = { m_WinSize.x * 0.5f, m_WinSize.y * 0.65f };
+    _float2 vCenter = { m_WinSize.x * 0.5f, m_WinSize.y * 0.52f };
 
     for (size_t i = 0; i < iCount; ++i)
     {

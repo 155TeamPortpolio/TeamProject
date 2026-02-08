@@ -10,11 +10,14 @@ NS_BEGIN(Client)
 class CUI_GachaDisplay final : public CUI_Object
 {
 public:
-	enum class TYPE { LABEL, SKIP, END };
+	enum class TYPE { VIDEO, LABEL, SKIP, END };
 	typedef struct tagGachaDisplayDesc {
 		TYPE	eType;
+		GachaGrade eGrade;
 		wstring strLabel = {};
 	}GACHA_DISPLAY_DESC;
+
+	//가챠 레벨에 ui는 레벨에서 생성하면서 콜백으로 넘겨주든가(skip, on Video Finished)
 
 private:
 	enum class CHILD { BG, LABEL, END };
@@ -37,15 +40,17 @@ public:
 	virtual void	UI_DeActive(void* pArg = nullptr) override;
 
 private:
-	CUI_Object* m_pChildren[ENUM(CHILD::END)] = {};
-	CUI_Object* m_pSkipButton = {};
+	CUI_Object* m_pChildren[ENUM(CHILD::END)] = {}; 
 
 	class CTextSlot* m_pLabelTextSlot = {};
+	class CUI_GachaVideo* m_pVideo = {};
+	CUI_Object* m_pSkipButton = {};
 
 	_bool	m_isLabelVisible = {};
 
 private:
 	void Cache();
+	void Create_Video();
 	void Create_SkipButton();
 
 	void Set_ChildAnimation(CHILD child, _int iIndex);

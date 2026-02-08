@@ -427,6 +427,7 @@
     <ClInclude Include="..\Public\MiyabiState_SwitchInNormal.h" />
     <ClInclude Include="..\Public\MiyabiState_SwitchInParryAid.h" />
     <ClInclude Include="..\Public\MiyabiState_SwitchOut.h" />
+    <ClInclude Include="..\Public\UI_TextButton.h" />
     <ClInclude Include="..\Public\StrikeJaeger.h" />
     <ClInclude Include="..\Public\StrikeJaeger_Attack.h" />
     <ClInclude Include="..\Public\StrikeJaeger_Born.h" />
@@ -442,6 +443,7 @@
     <ClInclude Include="..\Public\UI_GachaText.h" />
     <ClInclude Include="..\Public\UI_GachaTextGroupEngine.h" />
     <ClInclude Include="..\Public\UI_GachaTextGroup.h" />
+    <ClInclude Include="..\Public\UI_GachaVideo.h" />
     <ClInclude Include="..\public\ZeroStage_Start.h" />
     <ClInclude Include="..\public\ParryCamFx.h" />
     <ClInclude Include="..\Public\UI_GachaDisplay.h" />
@@ -857,6 +859,7 @@
     <ClCompile Include="..\Private\MiyabiState_SwitchInNormal.cpp" />
     <ClCompile Include="..\Private\MiyabiState_SwitchInParryAid.cpp" />
     <ClCompile Include="..\Private\MiyabiState_SwitchOut.cpp" />
+    <ClCompile Include="..\Private\UI_TextButton.cpp" />
     <ClCompile Include="..\Private\StrikeJaeger.cpp" />
     <ClCompile Include="..\Private\StrikeJaeger_Attack.cpp" />
     <ClCompile Include="..\Private\StrikeJaeger_Born.cpp" />
@@ -872,6 +875,7 @@
     <ClCompile Include="..\Private\UI_GachaText.cpp" />
     <ClCompile Include="..\Private\UI_GachaTextGroupEngine.cpp" />
     <ClCompile Include="..\Private\UI_GachaTextGroup.cpp" />
+    <ClCompile Include="..\Private\UI_GachaVideo.cpp" />
     <ClCompile Include="..\private\ZeroStage_Start.cpp" />
     <ClCompile Include="..\private\ParryCamFx.cpp" />
     <ClCompile Include="..\Private\UI_GachaDisplay.cpp" />
