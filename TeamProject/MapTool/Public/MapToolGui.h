@@ -60,8 +60,8 @@ public:
 	void			Select_PlaceType(const string& tagLabel, _bool isShowDetail = true);
 	void			Select_TriggerType();
 	void			Select_BattleDataType();
-	void			Setting_SelectType();
 
+	void			Setting_SelectType(); //Gui Body
 	void			Setting_Placed();
 	void			Setting_Trigger();
 	void			Setting_Entity();

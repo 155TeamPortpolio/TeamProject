@@ -533,6 +533,7 @@ void CMapToolGui::Place_MovePoint(PHYSICS_RAY_HIT* pRayHit)
 }
 #pragma endregion
 
+#pragma SaveData
 void CMapToolGui::Save_Data()
 {
     switch (static_cast<MAPOBJ_TYPE>(m_iSelectedLayerIndex))
@@ -750,8 +751,11 @@ void CMapToolGui::Save_MovePoint()
     m_MovePoint.iVersion = m_pMapToolContext->iVersion;
     m_MovePoint.TagArea = m_pMapToolContext->TagArea;
     m_MovePoint.TagDataFormat = "Base";
-            
-    m_MovePoint.Paths = m_Paths;
+        
+    for (auto& [Index, Position] : m_Paths)
+    {
+        m_MovePoint.Paths.push_back({ Index, Position });
+    }
     
     string TagFileName = "MovePoint." + m_pMapToolContext->TagArea + "." + m_MovePoint.TagDataFormat + "." + std::to_string(m_MovePoint.iVersion);
     string SavePath = "../Bin/Data/NewMovePoint/" + HelperMT::MakeTimestampFileName(TagFileName, ".json");
@@ -760,6 +764,7 @@ void CMapToolGui::Save_MovePoint()
         m_isShowDataSaveFinish = true;
 
 }
+#pragma endregion
 
 void CMapToolGui::Load_BattleData(const string& filepath)
 {
@@ -1287,9 +1292,9 @@ void CMapToolGui::Setting_MovePoint()
 
                 // ¹à±â º¸Á¤µÈ »ö (G Ã¤³Î »ìÂ¦ ÁÜ)
                 ImU32 col = IM_COL32(
-                    static_cast<int>(255 * t),          // R
-                    static_cast<int>(80),               // G (¹à±â¿ë)
-                    static_cast<int>(255 * (1.f - t)),  // B
+                    255,                                // R °íÁ¤
+                    static_cast<int>(255 * t),          // G 0 ¡æ 255
+                    0,                                  // B °íÁ¤
                     255);
 
                 draw->AddLine(p0, p1, col, 2.5f);

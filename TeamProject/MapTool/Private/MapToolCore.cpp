@@ -150,9 +150,19 @@ LOADED_DATA CMapToolCore::Load_MapData()
 		LoadedData.tagDataFormat = "MovePoint";
 		m_tMapToolContext.iVersion = MovePointHeader.iVersion;
 		m_tMapToolContext.TagArea = MovePointHeader.TagArea;
-		m_pMapToolGui->Set_MovePoint(MovePointHeader.Paths);
 
-		for (auto& Paths : MovePointHeader.Paths)
+		map<_int, vector<_float3>> LoadedPath;
+
+		for (auto& Path : MovePointHeader.Paths)
+		{
+			auto& dst = LoadedPath[Path.iPathIndex];
+			dst.insert(dst.end(),
+				Path.Orders.begin(),
+				Path.Orders.end());
+		}
+
+		m_pMapToolGui->Set_MovePoint(LoadedPath);
+		for (auto& Paths : LoadedPath)
 		{
 			Place_MovePointFromLoadData(Paths.first, Paths.second);
 		}
@@ -228,6 +238,7 @@ void CMapToolCore::Load_WithEntityData()
 	LoadEntity(OpenPath, LoadedData);
 	LoadBattle(OpenPath, LoadedData);
 	LoadLight(OpenPath, LoadedData);
+	LoadMovePoint(OpenPath, LoadedData);
 }
 
 void CMapToolCore::LoadEntity(const filesystem::path& BasePath, LOADED_DATA& LoadedData)
@@ -318,6 +329,46 @@ void CMapToolCore::LoadLight(const filesystem::path& BasePath, LOADED_DATA& Load
 
 				LoadedData.LoadedObjects.push_back(Desc);
 			}
+		}
+	}
+}
+
+void CMapToolCore::LoadMovePoint(const filesystem::path& BasePath, LOADED_DATA& LoadedData)
+{
+	Clear_Layer(MAPOBJ_TYPE::MOVEPOINT);
+
+	filesystem::path lightPath = BasePath;
+	string filename = lightPath.filename().string();
+
+	size_t pos = filename.find("MapData");
+
+	if (pos != string::npos) {
+		filename.replace(pos, strlen("MapData"), "MovePoint");
+		lightPath.replace_filename(filename);
+
+		if (filesystem::exists(lightPath)) {
+			MovePoint_Header MovePointHeader = Helper::LoadJson<MovePoint_Header>(lightPath.string());
+			LoadedData.tagDataFormat = "MovePoint";
+
+			m_tMapToolContext.iVersion = MovePointHeader.iVersion;
+			m_tMapToolContext.TagArea = MovePointHeader.TagArea;
+
+			map<_int, vector<_float3>> LoadedPath;
+			
+			for (auto& Path : MovePointHeader.Paths)
+			{
+				auto& dst = LoadedPath[Path.iPathIndex];
+				dst.insert(dst.end(),
+					Path.Orders.begin(),
+					Path.Orders.end());
+			}
+
+			m_pMapToolGui->Set_MovePoint(LoadedPath);
+			for (auto& Paths : LoadedPath)
+			{
+				Place_MovePointFromLoadData(Paths.first, Paths.second);
+			}
+			
 		}
 	}
 }
