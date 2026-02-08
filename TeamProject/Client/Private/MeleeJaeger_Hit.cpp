@@ -111,7 +111,7 @@ void CMeleeJaeger_Hit::Decide_L_HitState(DIR eDir, _float fDot)
 /*============================================================================*/
 void CMeleeJaeger_Hit_Knock::Enter(CMeleeJaeger* pOwner)
 {
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("StrikeJaeger_Ani_Hit_Knock")
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("MeleeJaeger_Ani_Hit_Knock")
 		.Apply();
 }
 
@@ -126,7 +126,7 @@ void CMeleeJaeger_Hit_Knock::Exit(CMeleeJaeger* pOwner)
 /*============================================================================*/
 void CMeleeJaeger_Hit_H_Front::Enter(CMeleeJaeger* pOwner)
 {
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("StrikeJaeger_Ani_Hit_H_Front")
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("MeleeJaeger_Ani_Hit_H_Front")
 		.Apply();
 }
 
@@ -141,7 +141,7 @@ void CMeleeJaeger_Hit_H_Front::Exit(CMeleeJaeger* pOwner)
 /*============================================================================*/
 void CMeleeJaeger_Hit_H_Back::Enter(CMeleeJaeger* pOwner)
 {
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("StrikeJaeger_Ani_Hit_H_Back")
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("MeleeJaeger_Ani_Hit_H_Back")
 		.Apply();
 }
 
@@ -156,7 +156,7 @@ void CMeleeJaeger_Hit_H_Back::Exit(CMeleeJaeger* pOwner)
 /*============================================================================*/
 void CMeleeJaeger_Hit_L_Back_Down::Enter(CMeleeJaeger* pOwner)
 {
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("StrikeJaeger_Ani_Hit_L_Back_Down")
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("MeleeJaeger_Ani_Hit_L_Back_Down")
 		.Apply();
 }
 
@@ -171,7 +171,7 @@ void CMeleeJaeger_Hit_L_Back_Down::Exit(CMeleeJaeger* pOwner)
 /*============================================================================*/
 void CMeleeJaeger_Hit_L_Back_Up::Enter(CMeleeJaeger* pOwner)
 {
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("StrikeJaeger_Ani_Hit_L_Back_Up")
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("MeleeJaeger_Ani_Hit_L_Back_Up")
 		.Apply();
 }
 
@@ -186,7 +186,7 @@ void CMeleeJaeger_Hit_L_Back_Up::Exit(CMeleeJaeger* pOwner)
 /*============================================================================*/
 void CMeleeJaeger_Hit_L_Back_Left::Enter(CMeleeJaeger* pOwner)
 {
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("StrikeJaeger_Ani_Hit_L_Back_Left")
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("MeleeJaeger_Ani_Hit_L_Back_Left")
 		.Apply();
 }
 
@@ -201,7 +201,7 @@ void CMeleeJaeger_Hit_L_Back_Left::Exit(CMeleeJaeger* pOwner)
 /*============================================================================*/
 void CMeleeJaeger_Hit_L_Back_Right::Enter(CMeleeJaeger* pOwner)
 {
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("StrikeJaeger_Ani_Hit_L_Back_Right")
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("MeleeJaeger_Ani_Hit_L_Back_Right")
 		.Apply();
 }
 
@@ -216,7 +216,7 @@ void CMeleeJaeger_Hit_L_Back_Right::Exit(CMeleeJaeger* pOwner)
 /*============================================================================*/
 void CMeleeJaeger_Hit_L_Front_Down::Enter(CMeleeJaeger* pOwner)
 {
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("StrikeJaeger_Ani_Hit_L_Front_Down")
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("MeleeJaeger_Ani_Hit_L_Front_Down")
 		.Apply();
 }
 
@@ -231,7 +231,7 @@ void CMeleeJaeger_Hit_L_Front_Down::Exit(CMeleeJaeger* pOwner)
 /*============================================================================*/
 void CMeleeJaeger_Hit_L_Front_Up::Enter(CMeleeJaeger* pOwner)
 {
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("StrikeJaeger_Ani_Hit_L_Front_Up")
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("MeleeJaeger_Ani_Hit_L_Front_Up")
 		.Apply();
 }
 
@@ -246,7 +246,7 @@ void CMeleeJaeger_Hit_L_Front_Up::Exit(CMeleeJaeger* pOwner)
 /*============================================================================*/
 void CMeleeJaeger_Hit_L_Front_Left::Enter(CMeleeJaeger* pOwner)
 {
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("StrikeJaeger_Ani_Hit_L_Front_Left")
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("MeleeJaeger_Ani_Hit_L_Front_Left")
 		.Apply();
 }
 
@@ -261,7 +261,7 @@ void CMeleeJaeger_Hit_L_Front_Left::Exit(CMeleeJaeger* pOwner)
 /*============================================================================*/
 void CMeleeJaeger_Hit_L_Front_Right::Enter(CMeleeJaeger* pOwner)
 {
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("StrikeJaeger_Ani_Hit_L_Front_Right")
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("MeleeJaeger_Ani_Hit_L_Front_Right")
 		.Apply();
 }
 

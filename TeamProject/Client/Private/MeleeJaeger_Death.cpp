@@ -57,7 +57,7 @@ void CMeleeJaeger_Death::Register_Transitions()
 /*============================================================================*/
 void CMeleeJaeger_Death_Front::Enter(CMeleeJaeger* pOwner)
 {
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("StrikeJaeger_Ani_Death_Front")
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("MeleeJaeger_Ani_Death_Front")
 		.Apply();
 }
 
@@ -72,7 +72,7 @@ void CMeleeJaeger_Death_Front::Exit(CMeleeJaeger* pOwner)
 /*============================================================================*/
 void CMeleeJaeger_Death_Back::Enter(CMeleeJaeger* pOwner)
 {
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("StrikeJaeger_Ani_Death_Back")
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("MeleeJaeger_Ani_Death_Back")
 		.Apply();
 }
 
@@ -87,7 +87,7 @@ void CMeleeJaeger_Death_Back::Exit(CMeleeJaeger* pOwner)
 /*============================================================================*/
 void CMeleeJaeger_Death_Stay::Enter(CMeleeJaeger* pOwner)
 {
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("StrikeJaeger_Ani_Death_Stay")
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("MeleeJaeger_Ani_Death_Stay")
 		.Apply();
 }
 

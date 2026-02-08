@@ -8,7 +8,7 @@
 
 void CMeleeJaeger_Parried::Enter(CMeleeJaeger* pOwner)
 {
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("StrikeJaeger_Ani_Hit_H_Front")
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("MeleeJaeger_Ani_Hit_H_Front")
 		.Apply();
 }
 

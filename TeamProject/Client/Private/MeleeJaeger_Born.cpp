@@ -8,7 +8,7 @@
 
 void CMeleeJaeger_Born::Enter(CMeleeJaeger* pOwner)
 {
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("StrikeJaeger_Ani_Born")
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("MeleeJaeger_Ani_Born")
 		.Apply();
 }
 

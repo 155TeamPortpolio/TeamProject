@@ -122,9 +122,15 @@ void CMeleeJaeger_Attack::AttackFromIndex(_int iMoveIndex)
 		m_pSubStateMachine->Change_State("Attack01");
 		break;
 	case 2:
-		m_pSubStateMachine->Change_State("Attack03");
+		m_pSubStateMachine->Change_State("Attack02");
 		break;
 	case 3:
+		m_pSubStateMachine->Change_State("Attack03");
+		break;
+	case 4:
+		m_pSubStateMachine->Change_State("Attack04");
+		break;
+	case 5:
 		m_pSubStateMachine->Change_State("Attack05");
 		break;
 	}
@@ -133,7 +139,7 @@ void CMeleeJaeger_Attack::AttackFromIndex(_int iMoveIndex)
 /*============================================================================*/
 void CMeleeJaeger_Attack1::Enter(CMeleeJaeger* pOwner)
 {
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("StrikeJaeger_Ani_Attack01_Fast")
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("MeleeJaeger_Ani_Attack_01")
 		.Apply();
 }
 
@@ -148,7 +154,7 @@ void CMeleeJaeger_Attack1::Exit(CMeleeJaeger* pOwner)
 /*============================================================================*/
 void CMeleeJaeger_Attack2::Enter(CMeleeJaeger* pOwner)
 {
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("StrikeJaeger_Ani_Attack03A_Fast")
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("MeleeJaeger_Ani_Attack_02")
 		.Apply();
 }
 
@@ -163,7 +169,7 @@ void CMeleeJaeger_Attack2::Exit(CMeleeJaeger* pOwner)
 /*============================================================================*/
 void CMeleeJaeger_Attack3::Enter(CMeleeJaeger* pOwner)
 {
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("StrikeJaeger_Ani_Attack03A_Fast")
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("MeleeJaeger_Ani_Attack_03")
 		.Apply();
 }
 
@@ -178,7 +184,7 @@ void CMeleeJaeger_Attack3::Exit(CMeleeJaeger* pOwner)
 /*============================================================================*/
 void CMeleeJaeger_Attack4::Enter(CMeleeJaeger* pOwner)
 {
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("StrikeJaeger_Ani_Attack03A_Fast")
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("MeleeJaeger_Ani_Attack_04")
 		.Apply();
 }
 
@@ -193,7 +199,7 @@ void CMeleeJaeger_Attack4::Exit(CMeleeJaeger* pOwner)
 /*============================================================================*/
 void CMeleeJaeger_Attack5::Enter(CMeleeJaeger* pOwner)
 {
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("StrikeJaeger_Ani_Attack03A_Fast")
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("MeleeJaeger_Ani_Attack_05")
 		.Apply();
 }
 

@@ -56,7 +56,7 @@ void CMeleeJaeger_Chase::Register_Transitions()
 /*============================================================================*/
 void CMeleeJaeger_Run_Start::Enter(CMeleeJaeger* pOwner)
 {
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("StrikeJaeger_Ani_Run_Start")
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("MeleeJaeger_Ani_Run_Start")
 		.Apply();
 }
 
@@ -71,7 +71,7 @@ void CMeleeJaeger_Run_Start::Exit(CMeleeJaeger* pOwner)
 /*============================================================================*/
 void CMeleeJaeger_Run_Loop::Enter(CMeleeJaeger* pOwner)
 {
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("StrikeJaeger_Ani_Run_Loop")
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("MeleeJaeger_Ani_Run_Loop")
 		.Loop(true)
 		.Apply();
 }
@@ -89,7 +89,7 @@ void CMeleeJaeger_Run_Loop::Exit(CMeleeJaeger* pOwner)
 /*============================================================================*/
 void CMeleeJaeger_Run_End::Enter(CMeleeJaeger* pOwner)
 {
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("StrikeJaeger_Ani_Run_End")
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("MeleeJaeger_Ani_Run_End")
 		.Apply();
 }
 

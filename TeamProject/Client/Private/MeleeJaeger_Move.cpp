@@ -107,7 +107,7 @@ void CMeleeJaeger_Move::ChangeMovePatternFromIndex(_int iMoveIndex)
 /*============================================================================*/
 void CMeleeJaeger_Walk_Front::Enter(CMeleeJaeger* pOwner)
 {
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("StrikeJaeger_Ani_Walk_F")
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("MeleeJaeger_Ani_Move_F")
 		.Apply();
 }
 
@@ -122,7 +122,7 @@ void CMeleeJaeger_Walk_Front::Exit(CMeleeJaeger* pOwner)
 /*============================================================================*/
 void CMeleeJaeger_Walk_Back::Enter(CMeleeJaeger* pOwner)
 {
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("StrikeJaeger_Ani_Walk_B")
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("MeleeJaeger_Ani_Move_B")
 		.Apply();
 }
 
@@ -137,7 +137,7 @@ void CMeleeJaeger_Walk_Back::Exit(CMeleeJaeger* pOwner)
 /*============================================================================*/
 void CMeleeJaeger_Walk_Left::Enter(CMeleeJaeger* pOwner)
 {
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("StrikeJaeger_Ani_Walk_L")
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("MeleeJaeger_Ani_Move_L")
 		.Apply();
 }
 
@@ -152,7 +152,7 @@ void CMeleeJaeger_Walk_Left::Exit(CMeleeJaeger* pOwner)
 /*============================================================================*/
 void CMeleeJaeger_Walk_Right::Enter(CMeleeJaeger* pOwner)
 {
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("StrikeJaeger_Ani_Walk_R")
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("MeleeJaeger_Ani_Move_R")
 		.Apply();
 }
 
@@ -182,7 +182,7 @@ void CMeleeJaeger_Walk_Right::Exit(CMeleeJaeger* pOwner)
 /*============================================================================*/
 void CMeleeJaeger_Walk_F_R::Enter(CMeleeJaeger* pOwner)
 {
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("StrikeJaeger_Ani_Walk_FR_RFoot")
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("MeleeJaeger_Ani_Move_F_R")
 		.Apply();
 }
 
@@ -197,7 +197,7 @@ void CMeleeJaeger_Walk_F_R::Exit(CMeleeJaeger* pOwner)
 /*============================================================================*/
 void CMeleeJaeger_Walk_R_F::Enter(CMeleeJaeger* pOwner)
 {
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("StrikeJaeger_Ani_Walk_RF_LFoot")
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("MeleeJaeger_Ani_Move_R_F")
 		.Apply();
 }
 

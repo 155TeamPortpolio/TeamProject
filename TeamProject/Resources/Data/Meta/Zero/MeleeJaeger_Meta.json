@@ -56,6 +56,10 @@
       "Events": []
     },
     {
+      "ClipTag": "StrikeJaeger_Ani_Debuff_Stun_Start",
+      "Events": []
+    },
+    {
       "ClipTag": "MeleeJaeger_Ani_Debuff_Stun_End",
       "Events": []
     },

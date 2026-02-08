@@ -174,6 +174,16 @@ void CMeleeJaeger::Render_GUI()
 				m_pStateMachine->Set_Int("AttackPattern", 3);
 				m_pStateMachine->Set_Trigger("Idle_To_Attack");
 			}
+			if (ImGui::Button(u8"4. Attack04"))
+			{
+				m_pStateMachine->Set_Int("AttackPattern", 4);
+				m_pStateMachine->Set_Trigger("Idle_To_Attack");
+			}
+			if (ImGui::Button(u8"5. Attack05"))
+			{
+				m_pStateMachine->Set_Int("AttackPattern", 5);
+				m_pStateMachine->Set_Trigger("Idle_To_Attack");
+			}
 			ImGui::TreePop();
 		}
 		if (ImGui::TreeNode("Death##ThugAssaulterTestDeath"))
@@ -246,7 +256,7 @@ HRESULT CMeleeJaeger::Ready_Children(INIT_DESC* pArg)
 	{
 		BATTLE_COLLIDER_DESC Weapon_R = {};
 
-		Weapon_R.tagName = "Weapon_R";
+		Weapon_R.tagName = "Weapon";
 		Weapon_R.isAttachBone = true;
 		Weapon_R.tagBone = "Bn_Weapon2";
 		Weapon_R.pOwnerAnimator3D = Get_Component<CAnimator3D>();

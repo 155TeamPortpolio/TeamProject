@@ -67,7 +67,7 @@ void CMeleeJaeger_Stun_Start::Exit(CMeleeJaeger* pOwner)
 /*============================================================================*/
 void CMeleeJaeger_Stun_Loop::Enter(CMeleeJaeger* pOwner)
 {
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("StrikeJaeger_Ani_Debuff_Stun_Loop")
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("MeleeJaeger_Ani_Debuff_Stun_Loop")
 		.Loop(true)
 		.Apply();
 }
@@ -83,7 +83,7 @@ void CMeleeJaeger_Stun_Loop::Exit(CMeleeJaeger* pOwner)
 /*============================================================================*/
 void CMeleeJaeger_Stun_End::Enter(CMeleeJaeger* pOwner)
 {
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("StrikeJaeger_Ani_Debuff_Stun_End")
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("MeleeJaeger_Ani_Debuff_Stun_End")
 		.Apply();
 }
 
