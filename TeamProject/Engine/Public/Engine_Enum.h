@@ -38,7 +38,6 @@ namespace Engine
 	enum class RENDER_PASS_TYPE { PRIORITY, RENDER_OPAQUE, NONLIGHT_OPAQUE, RENDER_EFFECT, RENDER_3DUI  };
 	enum class RENDERER_TYPE {SKINNED, STATIC, FORWARD, POST, EFFECT, UI};
 	enum class RENDER_LAYER { Default, CustomOnly, Both, None };
-	enum class POSTPROCESS { MRT_Bloom, MRT_Distortion, MRT_RimLight, END};
 	enum class RIMLIGHT {OUTLINE, BACKLIGHT, RIMLIGHT, END};
 	enum class NOISE_FXTYPE { MOTIONBLUR, VANISH, END };
 	enum class CUSTOMTARGET { EFFECT, UI, ETC, END };

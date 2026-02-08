@@ -20,15 +20,11 @@ public:
     HRESULT Render_RadialBlur();
     HRESULT Render_Fog();
     HRESULT Render_Final();
-    void    Add_PostProcessCommand(const POST_PROCESS_COMMAND& command);
-    HRESULT Add_NoiseTexture(string strName, CTexture* noiseTexture);
-    void    Apply_Noise(vector<string> strNames, _float duration);
 
-    void    Apply_RadialBlur(_float duration,  _float2 center = _float2(0.5,0.5));
-    void    Set_AddictiveColor(_float3* color);
-
-    void    Register_AddictiveColor(_float3* pColor);
-    void    UnRegister_AddictiveColor();
+    //void    Apply_RadialBlur(_float duration,  _float2 center = _float2(0.5,0.5));
+    //void    Set_AddictiveColor(_float3* color);
+    //void    Register_AddictiveColor(_float3* pColor);
+    //void    UnRegister_AddictiveColor();
 
 public:
     void Update(_float dt);
@@ -36,18 +32,8 @@ public:
 private:
     virtual HRESULT Ready_Target() override;
     virtual HRESULT Ready_MRT() override;
-    HRESULT Bind_NoiseTexture();
 
 private:
-    HRESULT Process_PostProcessQueue();
-    HRESULT Clear_PostProcess();
-
-private:
-    vector<POST_PROCESS_COMMAND> m_PostCommands;
-    //*노이즈*
-    unordered_map<string, CTexture*> m_pNoiseTextures;
-    vector<CTexture*>   m_pApplyNoiseTextures;
-    _float              m_fNoiseDuration;
     //*안개*
     FOG_DESC            fogDesc;
     //*블러*

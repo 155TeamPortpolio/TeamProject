@@ -185,57 +185,12 @@ HRESULT CPostRenderer::Render_Final()
 		_bool bUseAddictive = false;
 		m_pShader->Bind_Value("g_UseAddictiveColor", { &bUseAddictive, "bool", sizeof(_bool) });
 	}
-	if (FAILED(Bind_NoiseTexture())) return E_FAIL;
 	Bind_WorldMatrix();
 
 	m_pShader->Apply("FINAL", m_pContext);
 	m_pVIBuffer->Bind_Buffer(m_pContext);
 	m_pVIBuffer->Render(m_pContext);
 	return S_OK;
-}
-
-void CPostRenderer::Add_PostProcessCommand(const POST_PROCESS_COMMAND& command)
-{
-	m_PostCommands.push_back(command);
-}
-
-HRESULT CPostRenderer::Add_NoiseTexture(string strName, CTexture* noiseTexture)
-{
-	if (noiseTexture == nullptr) return E_FAIL;
-
-	m_pNoiseTextures.insert({ strName, noiseTexture });
-	return S_OK;
-}
-
-void CPostRenderer::Apply_Noise(vector<string> strNames, _float duration)
-{
-	for (auto& name : strNames)
-	{
-		m_pApplyNoiseTextures.push_back(m_pNoiseTextures[name]);
-	}
-	m_fNoiseDuration = duration;
-}
-
-void CPostRenderer::Apply_RadialBlur(_float duration, _float2 center)
-{
-	m_fRadialTotalDuration = duration;
-	m_fRadialDuration = duration;
-	m_fRadialCenter = center;
-}
-
-void CPostRenderer::Set_AddictiveColor(_float3* color)
-{
-	m_pAddictiveColor = color;
-}
-
-void CPostRenderer::Register_AddictiveColor(_float3* pColor)
-{
-	m_pAddictiveColor = pColor;
-}
-
-void CPostRenderer::UnRegister_AddictiveColor()
-{
-	m_pAddictiveColor = nullptr;
 }
 
 void CPostRenderer::Update(_float dt)
@@ -286,76 +241,6 @@ HRESULT CPostRenderer::Ready_MRT()
 	return S_OK;
 }
 
-HRESULT CPostRenderer::Bind_NoiseTexture()
-{
-	for (_int i = 0; i < m_pApplyNoiseTextures.size(); ++i)
-	{
-		string textureName = "g_NoiseTexture" + to_string(i + 1);
-
-		if (FAILED(m_pShader->Bind_Value(textureName.c_str(),{ m_pApplyNoiseTextures[i]->Get_SRV(), "Texture2D", 0})))
-			return E_FAIL;
-	}
-	if (FAILED(m_pShader->Bind_Value("g_Time", { &m_fNoiseDuration, "float", sizeof(_float) })))
-		return E_FAIL;
-	return S_OK;
-}
-
-HRESULT CPostRenderer::Process_PostProcessQueue()
-{
-	if (m_PostCommands.empty()) return S_OK;
-
-	std::stable_sort(m_PostCommands.begin(), m_PostCommands.end(),
-		[](const auto& a, const auto& b) { return a.GetKey() < b.GetKey(); });
-
-	_uint key = 0;
-	bool bound = false;
-
-	for (auto& cmd : m_PostCommands)
-	{
-		const _uint curKey = cmd.GetKey();
-
-		if (!bound || curKey != key)
-		{
-			if (bound) m_pTargetManager->End_MRT();
-			string mrt = Helper::EnumToString(cmd.eTarget);
-			if (FAILED(m_pTargetManager->Begin_MRT(mrt))) return E_FAIL;
-
-			key = curKey;
-			bound = true;
-		}
-
-		cmd.pShader->SetConstantBuffer("FrameBuffer", m_pPipeLine->Get_FrameBuffer());
-		cmd.pShader->Bind_Value("g_worldMatrix", { cmd.pWorldMatrix, "float4x4", sizeof(_float4x4) });
-		cmd.DrawCall(m_pContext);
-	}
-	if (bound) m_pTargetManager->End_MRT();
-	m_PostCommands.clear();
-	return S_OK;
-}
-
-HRESULT CPostRenderer::Clear_PostProcess()
-{
-	for (size_t i = 0; i < static_cast<_uint>(POSTPROCESS::END); ++i)
-	{
-		POSTPROCESS eType = static_cast<POSTPROCESS>(i);
-		string targetName = Helper::EnumToString(eType);
-
-		vector<CRenderTarget*> Targets = m_pTargetManager->Find_MRT(targetName);
-		for (auto& Target : Targets)
-		{
-			if (!Target)
-			{
-				MSG_BOX("Invalid PostProcess Target Key");
-				continue;
-			}
-
-			if (Target->Get_RTV())
-				Target->Clear();
-		}
-	}
-	return S_OK;
-}
-
 CPostRenderer* CPostRenderer::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, CTarget_Manager* pTargetManager, CPipeLine* pPipeLine)
 {
 	CPostRenderer* Instance = new CPostRenderer(pDevice, pContext);
@@ -369,8 +254,4 @@ CPostRenderer* CPostRenderer::Create(ID3D11Device* pDevice, ID3D11DeviceContext*
 void CPostRenderer::Free()
 {
 	__super::Free();
-	
-	for (auto& texture : m_pNoiseTextures)
-		Safe_Release(texture.second);
-	m_pNoiseTextures.clear();
 }

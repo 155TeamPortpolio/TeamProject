@@ -36,10 +36,6 @@ public:
     virtual void Set_NoiseTexture(NOISE_FXTYPE eNoise, class CTexture* noiseTexture) PURE;
     virtual CTexture* Get_NoiseTexture(NOISE_FXTYPE eNoise) PURE;
 
-    virtual void Apply_RadialBlur(_float duration, _float2 center = _float2(0.5, 0.5)) PURE;
-    virtual void Register_AddictiveColor(_float3* pColor)   PURE;
-    virtual void UnRegister_AddictiveColor()                PURE;
-
 public:
     virtual class CPipeLine* Get_Pipeline()PURE;
 
@@ -47,7 +43,7 @@ public:
    virtual void Add_RenderCommand(const RENDER_CUSTOM_COMMAND& command, CUSTOMTARGET eCustom) PURE;
    virtual void Add_OutLineCommand(const OUTLINE_COMMAND& command)PURE;
    virtual void Add_MotionBlurCommand(const MOTIONBLUR_COMMAND& command) PURE;
-   virtual void Add_PostProcessCommand(const POST_PROCESS_COMMAND& command)PURE;
+   //virtual void Add_PostProcessCommand(const POST_PROCESS_COMMAND& command)PURE;
     virtual ID3D11ShaderResourceView* Get_CustomTargetSRV(const string strTag) PURE;
     virtual ID3D11Texture2D* Get_CustomTargetTexture(const string strTag) PURE;
     virtual ID3D11ShaderResourceView* Get_EngineTargetSRV(const string strTag) PURE;

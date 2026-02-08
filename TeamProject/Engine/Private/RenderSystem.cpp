@@ -201,21 +201,6 @@ CTexture* CRenderSystem::Get_NoiseTexture(NOISE_FXTYPE eNoise)
 	return m_NoiseTextures[eNoise];
 }
 
-void CRenderSystem::Apply_RadialBlur(_float duration, _float2 center)
-{
-	m_pPost->Apply_RadialBlur(duration, center);
-}
-
-void CRenderSystem::Register_AddictiveColor(_float3* pColor)
-{
-	m_pPost->Register_AddictiveColor(pColor);
-}
-
-void CRenderSystem::UnRegister_AddictiveColor()
-{
-	m_pPost->UnRegister_AddictiveColor();
-}
-
 void CRenderSystem::BatchBegin()
 {
 	_uint FrameIndex = GameInstance()->Get_FrameCount();
@@ -273,11 +258,6 @@ void CRenderSystem::Add_OutLineCommand(const OUTLINE_COMMAND& command)
 void CRenderSystem::Add_MotionBlurCommand(const MOTIONBLUR_COMMAND& command)
 {
 	m_pForward->Add_MotionBlurCommand(command);
-}
-
-void CRenderSystem::Add_PostProcessCommand(const POST_PROCESS_COMMAND& command)
-{
-	m_pPost->Add_PostProcessCommand(command);
 }
 
 ID3D11ShaderResourceView* CRenderSystem::Get_CustomTargetSRV(const string strTag)
