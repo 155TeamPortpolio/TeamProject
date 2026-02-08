@@ -6,9 +6,9 @@
 
 #include "UI_GachaText.h"
 
-void CUI_GachaTextGroupEngine::Show(GachaGrade eGrade)
+void CUI_GachaTextGroupEngine::Show(GachaGrade eGrade, const string& strCamSequenceKey)
 {
-	__super::Show(eGrade);
+	__super::Show(eGrade, strCamSequenceKey);
 
 	string strKey = "GachaStage_UI_EngineB_01";
 

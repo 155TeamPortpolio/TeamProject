@@ -1245,6 +1245,9 @@
     <Filter Include="02. GameObject\UI\01. 2D\Gacha\Page\Conversion">
       <UniqueIdentifier>{e604887e-58bb-4092-aa7b-587df8e4a1e1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Effect\XWall">
+      <UniqueIdentifier>{514b0ec9-44d6-4bdd-aaa0-422049575a75}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -2408,6 +2411,9 @@
     <ClInclude Include="..\public\CamParryController.h">
       <Filter>03. Utility\08. CamDirector\03. CamParryController</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\XWall.h">
+      <Filter>02. GameObject\Effect\XWall</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -3532,6 +3538,9 @@
     </ClCompile>
     <ClCompile Include="..\private\CamParryController.cpp">
       <Filter>03. Utility\08. CamDirector\03. CamParryController</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\XWall.cpp">
+      <Filter>02. GameObject\Effect\XWall</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

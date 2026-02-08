@@ -157,6 +157,7 @@ namespace Client {
 		string		strMeta;
 		string		strStartAnim;
 		string		strLoopAnim;
+		string		strCamSequenceKey;
 	}GACHA_RESULT_DESC;
 
 	typedef struct tagTVDesc {

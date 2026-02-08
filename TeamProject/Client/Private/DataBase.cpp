@@ -625,20 +625,20 @@ HRESULT CDataBase::LoadRamenData(const string& csvPath)
 HRESULT CDataBase::LoadGachaResultData(const string& csvPath)
 {
 	io::CSVReader<
-		14,
+		15,
 		io::trim_chars<' ', '\t'>,
 		io::double_quote_escape<',', '"'>
 	>in(csvPath);
 
 	in.read_header(
 		io::ignore_extra_column | io::ignore_missing_column,
-		"ID", "Type", "Grade", "Model", "Mat", "Texture", "Label", "RotX", "RotY", "RotZ", "RotW", "Meta", "Start", "Loop"
+		"ID", "Type", "Grade", "Model", "Mat", "Texture", "Label", "RotX", "RotY", "RotZ", "RotW", "Meta", "Start", "Loop", "CamSequenceKey"
 	);
-	string			Type, Grade, Model, Material, Texture, Label, Meta, Start, Loop;
+	string			Type, Grade, Model, Material, Texture, Label, Meta, Start, Loop, CamSequenceKey;
 	_int			ID;
 	_float			RotX, RotY, RotZ, RotW;
 
-	while (in.read_row(ID, Type, Grade, Model, Material,Texture, Label, RotX, RotY, RotZ, RotW, Meta, Start, Loop))
+	while (in.read_row(ID, Type, Grade, Model, Material,Texture, Label, RotX, RotY, RotZ, RotW, Meta, Start, Loop, CamSequenceKey))
 	{
 		if (ID == -1) continue;
 
@@ -657,6 +657,7 @@ HRESULT CDataBase::LoadGachaResultData(const string& csvPath)
 		desc.strMeta = Meta;
 		desc.strStartAnim = Start;
 		desc.strLoopAnim = Loop;
+		desc.strCamSequenceKey = CamSequenceKey;
 
 		auto [iter, inserted] = m_ResultTables.emplace(desc.ID, move(desc));
 		if (false == inserted)
