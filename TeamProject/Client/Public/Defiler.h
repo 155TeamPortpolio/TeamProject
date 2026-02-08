@@ -29,7 +29,9 @@ public:
 public:
     DEFILER_BLACK_BOARD& GetBlackBoard() { return m_BlackBoard; }
     DefilerDissolve& GetDissolve() { return m_Dissolve; }
+    TARGETING_INFO& TargetInfo() { return m_tTargetingInfo; }
     CStateMachine<CDefiler>* Get_MainStateMachine() { return m_pStateMachine; }
+
 public:
     virtual void TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER charaName = CHARACTER::END);
 

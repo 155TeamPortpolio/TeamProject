@@ -483,12 +483,18 @@ void CDefilerState_Attack_08_02::Exit(CDefiler* pOwner)
 void CDefilerState_Attack_09_Start::Enter(CDefiler* pOwner)
 {
 	DEFILER_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
+	TARGETING_INFO& targetBoard = pOwner->GetTargetingInfo();
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("Monster_IsoldetheDefiler_Ani_Attack_09_Start")
 		.StartAt(blackBoard.reservedPattern.animStartProgress)
 		.Speed(1.f)
 		.Loop(false)
 		.Apply();
+
+	Matrix mat;
+	mat.Identity;
+	mat.Translation(targetBoard.vTargetPos);
+	pAnimator->Set_BoneMatrix(CAnimator3D::BoneSpace::MANIPULATE, mat,"Ctr_M_Prop_01");
 }
 
 void CDefilerState_Attack_09_Start::Update(CDefiler* pOwner, _float dt)

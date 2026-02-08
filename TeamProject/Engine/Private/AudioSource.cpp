@@ -14,8 +14,8 @@ CAudioSource::SlotBuilder CAudioSource::Slot(const string& slotKey)
 	{
 		return SlotBuilder(*this, iter->second);
 	}
-	AUDIO_SLOT slot{};
-	return SlotBuilder(*this,slot);
+	static AUDIO_SLOT emptySlot{};
+	return SlotBuilder(*this, emptySlot);
 }
 
 CAudioSource::AUDIO_SLOT& CAudioSource::SlotBuilder::Play()
@@ -50,6 +50,7 @@ CAudioSource::AUDIO_SLOT& CAudioSource::SlotBuilder::Play()
 	packet.isPaused = ownerSlot.isPaused;
 	_vector3 pos = ownerRef.m_pTransform->Get_WorldPos();
 	packet.vPosition = { pos.x, pos.y, pos.z };
+	if(packet.pSound)
 	AudioDevice()->Play(packet);
 
 	return ownerSlot;
