@@ -45,6 +45,7 @@ private:
 	HRESULT			LoadEntityBaseData(const MapData_Path_Packet* pPacket);
 	HRESULT			LoadBattleData(const MapData_Path_Packet* pPacket);
 	HRESULT			LoadLightData(const MapData_Path_Packet* pPacket);
+	HRESULT			LoadMovePoint(const MapData_Path_Packet* pPacket);
 
 	HRESULT			CacheSlotDataFile(const string& DataFormat, const string& SlotDataFilePath);
 
@@ -64,17 +65,19 @@ private:
 	_bool m_hasColliderData = {};
 
 	/*--------------------------------------------------------------------*/
-	_bool				m_bHasMapBase{}, m_bHasEntityBase{}, m_bHasBattleData{}, m_bHasLightBase{};
+	_bool				m_bHasMapBase{}, m_bHasEntityBase{}, m_bHasBattleData{}, m_bHasLightBase{}, m_bHasMovePoint{};
 	MapData_Header		m_MapBaseData = {};
 	Entity_Header		m_EntityBaseData = {};
 	BATTLE_FIELD_DATA	m_BattleData = {};
 	Light_Header		m_LightBaseData = {};
+	MovePoint_Header	m_MovePointData = {};
 
 	vector<CACHED_OBJECT>	m_MapObjectHandle;
 	vector<CACHED_OBJECT>	m_TriggerObjectHandle;
 	vector<CACHED_OBJECT>	m_EntityObjectHandle;
 	vector<CACHED_OBJECT>	m_LightPointHandle;
 	CACHED_BATTLE_DATA		m_CachedBattleData;
+	map<_int, vector<_float3>> m_CachedMovePoint;
 
 	queue<LoadingQueue>		m_LoadingQueue;
 	

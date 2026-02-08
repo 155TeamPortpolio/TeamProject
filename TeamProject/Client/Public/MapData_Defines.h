@@ -13,11 +13,11 @@ namespace Client {
 		"MapData",
 		"EntityData",
 		"BattleData",
-		"LightData"
+		"LightData",
+		"MovePoint"
 	};
 
-	/* Map Data */
-	#pragma region MapData
+#pragma region MapData
 	typedef struct tagMapObjectData {
 		_int		iObjID = { -1 };
 		std::string TagModelResourceKey = {};
@@ -57,8 +57,8 @@ namespace Client {
 	//NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(MapData_Slot_Header, TagDataFormat, iVersion, values);
 #pragma endregion
 
-	/* Entity Data */
-	#pragma region EntityData
+
+#pragma region EntityData
 	typedef struct tagEntityInitDesc
 	{
 		_int		iEntityID = { -1 };
@@ -80,8 +80,8 @@ namespace Client {
 	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Entity_Header, TagDataFormat, TagArea, iVersion, Entities);
 #pragma endregion
 
-	/* BattleData */
-	#pragma region BattleData
+
+#pragma region BattleData
 	typedef struct tagBattlePointData
 	{
 		string		tagType = {};			// Player, Spawner, Monster Point
@@ -111,8 +111,8 @@ namespace Client {
 	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(BATTLE_FIELD_DATA, TagDataFormat, TagArea, PlayerSpawnPoint, Spawners, Monsters, EndPoints);
 #pragma endregion
 
-	/* Light Data */
-	#pragma region LightData
+
+#pragma region LightData
 	NLOHMANN_JSON_SERIALIZE_ENUM(LIGHT_TYPE,
 		{
 			{LIGHT_TYPE::DIRECTIONAL,	"Directional"},
@@ -161,6 +161,22 @@ namespace Client {
 	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Light_Header, TagDataFormat, TagArea, iVersion, Lights);
 #pragma endregion 
 
+#pragma region MovePoint
+	typedef struct tagMovePoint {
+		_int			iPathIndex{};
+		vector<array<_float, 3>> Orders;
+	}MovePoint;
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(MovePoint, iPathIndex, Orders);
+
+	typedef struct tagMovePointHeader {
+		string		TagDataFormat = {};
+		string		TagArea = {};
+		_int		iVersion = 1;
+		vector<MovePoint> Paths;
+	}MovePoint_Header;
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(MovePoint_Header, TagDataFormat, TagArea, iVersion, Paths);
+#pragma endregion
+
 	/* Runtime CacheData */
 	enum class MAPOBJ_TYPE { PLACED, TRIGGER, INVWALL, ENTITY, BATTLE, LIGHT, END };
 	using MapSlotValue = variant<monostate, _int, _float, _bool, string, _float2, _float3, _float4>;
@@ -200,8 +216,9 @@ namespace Client {
 		vector<CACHED_OBJECT> InvWall;
 		vector<CACHED_OBJECT> Entity;
 		vector<CACHED_OBJECT> Light;
-
+		
 		CACHED_BATTLE_DATA	  Battle;
+		map<_int, vector<_float3>> MovePoint;
 
 		const vector<CACHED_OBJECT>* Select(MAPOBJ_TYPE eType) const
 		{

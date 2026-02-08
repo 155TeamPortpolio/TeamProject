@@ -10,6 +10,7 @@
 #include "BattleObject.h"
 #include "MapToolGui.h"
 #include "LightPoint.h"
+#include "MovePoint.h"
 
 IMPLEMENT_SINGLETON(CMapToolCore)
 
@@ -135,6 +136,37 @@ LOADED_DATA CMapToolCore::Load_MapData()
 			LoadedData.LoadedObjects.push_back(Desc);
 		}
 	}
+	else if (OpenPath.string().find("MovePoint") != string::npos) {
+		MovePoint_Header MovePointHeader = Helper::LoadJson<MovePoint_Header>(OpenPath.string());
+
+		if ("Base" != MovePointHeader.TagDataFormat)
+		{
+			MSG_BOX("[MapTool] Load Entity Data Failed.\nBaseData가 아닙니다.");
+			return {};
+		}
+
+		Clear_Layer(MAPOBJ_TYPE::MOVEPOINT);
+
+		LoadedData.tagDataFormat = "MovePoint";
+		m_tMapToolContext.iVersion = MovePointHeader.iVersion;
+		m_tMapToolContext.TagArea = MovePointHeader.TagArea;
+
+		map<_int, vector<_float3>> LoadedPath;
+
+		for (auto& Path : MovePointHeader.Paths)
+		{
+			auto& dst = LoadedPath[Path.iPathIndex];
+			dst.insert(dst.end(),
+				Path.Orders.begin(),
+				Path.Orders.end());
+		}
+
+		m_pMapToolGui->Set_MovePoint(LoadedPath);
+		for (auto& Paths : LoadedPath)
+		{
+			Place_MovePointFromLoadData(Paths.first, Paths.second);
+		}
+	}
 	else
 	{
 		MSG_BOX("[MapTool] Load Data Failed.\n일치하는 DataFormat이 없습니다.");
@@ -206,6 +238,7 @@ void CMapToolCore::Load_WithEntityData()
 	LoadEntity(OpenPath, LoadedData);
 	LoadBattle(OpenPath, LoadedData);
 	LoadLight(OpenPath, LoadedData);
+	LoadMovePoint(OpenPath, LoadedData);
 }
 
 void CMapToolCore::LoadEntity(const filesystem::path& BasePath, LOADED_DATA& LoadedData)
@@ -296,6 +329,46 @@ void CMapToolCore::LoadLight(const filesystem::path& BasePath, LOADED_DATA& Load
 
 				LoadedData.LoadedObjects.push_back(Desc);
 			}
+		}
+	}
+}
+
+void CMapToolCore::LoadMovePoint(const filesystem::path& BasePath, LOADED_DATA& LoadedData)
+{
+	Clear_Layer(MAPOBJ_TYPE::MOVEPOINT);
+
+	filesystem::path lightPath = BasePath;
+	string filename = lightPath.filename().string();
+
+	size_t pos = filename.find("MapData");
+
+	if (pos != string::npos) {
+		filename.replace(pos, strlen("MapData"), "MovePoint");
+		lightPath.replace_filename(filename);
+
+		if (filesystem::exists(lightPath)) {
+			MovePoint_Header MovePointHeader = Helper::LoadJson<MovePoint_Header>(lightPath.string());
+			LoadedData.tagDataFormat = "MovePoint";
+
+			m_tMapToolContext.iVersion = MovePointHeader.iVersion;
+			m_tMapToolContext.TagArea = MovePointHeader.TagArea;
+
+			map<_int, vector<_float3>> LoadedPath;
+			
+			for (auto& Path : MovePointHeader.Paths)
+			{
+				auto& dst = LoadedPath[Path.iPathIndex];
+				dst.insert(dst.end(),
+					Path.Orders.begin(),
+					Path.Orders.end());
+			}
+
+			m_pMapToolGui->Set_MovePoint(LoadedPath);
+			for (auto& Paths : LoadedPath)
+			{
+				Place_MovePointFromLoadData(Paths.first, Paths.second);
+			}
+			
 		}
 	}
 }
@@ -491,6 +564,21 @@ void CMapToolCore::Place_LightPointFromLoadData(MAP_LIGHT* pData)
 	pStaticObject->Get_Component<CCollider>()->Set_DebugRender(true);
 
 	ObjectManager()->Add_Object(pStaticObject, { g_TagMapToolLevel, g_tagMapObjType[ENUM(MAPOBJ_TYPE::LIGHT)] });
+}
+
+void CMapToolCore::Place_MovePointFromLoadData(_int Path, vector<_float3>& Orders)
+{
+	for (int i = 0; i < Orders.size(); i++) {
+		CGameObject* pStaticObject = Builder::Create_Object({ g_TagMapToolLevel ,"Proto_GameObject_MovePoint" })
+			.Position(Orders[i])
+			.Scale({ 0.2, 0.2, 0.2 })
+			.Build("MovePoint");
+
+		ObjectManager()->Add_Object(pStaticObject, { g_TagMapToolLevel, g_tagMapObjType[ENUM(MAPOBJ_TYPE::MOVEPOINT)] });
+
+		dynamic_cast<CMovePoint*>(pStaticObject)->Set_PathOrder(Path, i);
+		dynamic_cast<CMovePoint*>(pStaticObject)->Set_GUI(m_pMapToolGui);
+	}
 }
 
 void CMapToolCore::Set_AllObjectDebugRender(_bool is)

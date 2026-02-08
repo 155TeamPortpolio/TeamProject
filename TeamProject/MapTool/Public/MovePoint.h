@@ -20,13 +20,29 @@ public:
 
     virtual void Export_ObjectData(void* pDesc) override;
 
+    void Set_GUI(class CMapToolGui* pGui) {
+        if (pGui) m_pGUi = pGui;
+    }
 
+    void Set_PathOrder(_int iPathIndex, _int iOrderIndex) { 
+        m_iPathIndex = iPathIndex;
+        m_iOrderIndex = iOrderIndex;
+    }
+
+    _int Get_PathIndex() {
+        return m_iPathIndex;
+    }
+
+    _int Get_OrderIndex() { 
+        return m_iOrderIndex;
+    }
 public:
     void Render_GUI() override;
 
 private:
-    _int m_iMoveType = { -1 };
-    _int m_iNodeIndex = { -1 };
+    class CMapToolGui* m_pGUi = { nullptr };
+    _int m_iPathIndex = { -1 };
+    _int m_iOrderIndex = { -1 };
 
 public:
     static CMovePoint* Create();

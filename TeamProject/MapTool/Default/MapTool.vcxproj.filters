@@ -79,9 +79,6 @@
     <Filter Include="02. Object\MapTool Object\Battle Object\BattleEndPoint">
       <UniqueIdentifier>{3a20cff6-dba3-4ea4-b3c1-0c308081dedf}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03. MapTool System\SlotFieldGui">
-      <UniqueIdentifier>{7c030cdd-12e6-4235-af0f-e901f91843ac}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. Object\MapTool Object\Light Point">
       <UniqueIdentifier>{32910233-04a6-4ecf-bca9-94b9e0a9ccfe}</UniqueIdentifier>
     </Filter>
@@ -99,6 +96,9 @@
     </Filter>
     <Filter Include="02. Object\MapTool Object\MovePoint Object">
       <UniqueIdentifier>{f9b4b6d4-b435-4674-acb2-ed902109717f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. MapTool System\MapToolGui\SlotFieldGui">
+      <UniqueIdentifier>{7c030cdd-12e6-4235-af0f-e901f91843ac}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -166,7 +166,7 @@
       <Filter>03. MapTool System\MapToolGui</Filter>
     </ClInclude>
     <ClInclude Include="..\public\SlotFieldGui.h">
-      <Filter>03. MapTool System\SlotFieldGui</Filter>
+      <Filter>03. MapTool System\MapToolGui\SlotFieldGui</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Engine\Public\GUI_Inc\imgui_stdlib.h">
       <Filter>97. Gui_Inc</Filter>
@@ -278,7 +278,7 @@
       <Filter>02. Object\MapTool Object</Filter>
     </ClCompile>
     <ClCompile Include="..\private\SlotFieldGui.cpp">
-      <Filter>03. MapTool System\SlotFieldGui</Filter>
+      <Filter>03. MapTool System\MapToolGui\SlotFieldGui</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Engine\Public\GUI_Inc\imgui_stdlib.cpp">
       <Filter>97. Gui_Inc</Filter>
