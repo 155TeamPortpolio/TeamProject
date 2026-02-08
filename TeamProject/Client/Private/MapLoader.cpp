@@ -87,9 +87,13 @@ HRESULT CMapLoader::Load_BaseData(const string& TagArea)
             m_bHasBattleData = true;
             LoadBattleData(&packet);
         }
-        else if ("LightData") {
+        else if ("LightData" == packet.TagDataFormat) {
             m_bHasLightBase = true;
             LoadLightData(&packet);
+        }
+        else if ("MovePoint" == packet.TagDataFormat) {
+            m_bHasMovePoint = true;
+            LoadMovePoint(&packet);
         }
     }
 
@@ -186,6 +190,7 @@ void CMapLoader::Update_Database()
     Data.Entity = m_EntityObjectHandle;
     Data.Battle = m_CachedBattleData;
     Data.Light = m_LightPointHandle;
+    Data.MovePoint = m_CachedMovePoint;
 
     CDataBase::GetInstance()->Update_CashedData(m_TagArea, Data);
 }
@@ -534,12 +539,44 @@ HRESULT CMapLoader::LoadLightData(const MapData_Path_Packet* pPacket)
     }
 
     m_LightBaseData = Helper::LoadJson<Light_Header>(OpenPath.string());
-    if (-1 == m_EntityBaseData.iVersion)
+    if (-1 == m_LightBaseData.iVersion)
         return E_FAIL;
 
-    if (m_EntityBaseData.iVersion != g_iMapDataVersion) {
+    if (m_LightBaseData.iVersion != g_iMapDataVersion) {
         MSG_BOX("[MapTool] Load Entity Data Failed.\n잘못된 버전입니다.");
         return E_FAIL;
+    }
+
+    return S_OK;
+}
+
+HRESULT CMapLoader::LoadMovePoint(const MapData_Path_Packet* pPacket)
+{
+    filesystem::path OpenPath = pPacket->TagDataFilePath;
+
+    if (OpenPath.empty())
+        return E_FAIL;
+
+    if (OpenPath.extension().string() != ".json") {
+        MSG_BOX("[MapTool] Load Entity Data Failed.\nJson 파일이 아닙니다.");
+        return E_FAIL;
+    }
+
+    m_MovePointData = Helper::LoadJson<MovePoint_Header>(OpenPath.string());
+    if (-1 == m_MovePointData.iVersion)
+        return E_FAIL;
+
+    if (m_MovePointData.iVersion != g_iMapDataVersion) {
+        MSG_BOX("[MapTool] Load Entity Data Failed.\n잘못된 버전입니다.");
+        return E_FAIL;
+    }
+
+    for (auto& Path : m_MovePointData.Paths) {
+        auto& dst = m_CachedMovePoint[Path.iPathIndex];
+
+        for (auto& Position : Path.Orders)  {
+            dst.push_back({ Position[0], Position[1], Position[2]});
+        }
     }
 
     return S_OK;

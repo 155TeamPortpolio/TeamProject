@@ -9,6 +9,7 @@
 #include "MapLoader.h"
 /* UI */
 #include "UIDirector.h"
+#include "UI_GachaDisplay.h"
 /*GachaObject*/
 #include "GachaProps.h"
 /*Component*/
@@ -52,6 +53,7 @@ HRESULT CGacha_Level::Awake()
 	RenderSystem()->Set_FogDesc({ _float4(0.1f, 0.1f, 0.1f, 1.0f) ,0.f, 0.f, 0.02f, true });
 
 	Ready_GachaObjects();
+	Ready_GachaUI();
 
 	// Camera
 	CamDirector()->SetSpaceRef(m_GachaHandle);
@@ -61,8 +63,6 @@ HRESULT CGacha_Level::Awake()
 
 	//==================== UI ===============
 	UIDirector()->Load_LevelObjects("Gacha_Level");
-
-	UIDirector()->Play_GachaVideo(GachaGrade::S);	// 현재 등급에서 제일 높은 등급 넣기
 
 	return S_OK;
 }
@@ -102,6 +102,30 @@ void CGacha_Level::Ready_GachaObjects()
 
 	m_GachaHandle = gachaProps->Get_Handle();
 	m_pGachaProps = dynamic_cast<CGachaProps*>(gachaProps);
+}
+
+void CGacha_Level::Ready_GachaUI()
+{
+	PrototypeManager()->Add_ProtoType("Gacha_Level", "Proto_GameObject_GachaDisplay", CUI_GachaDisplay::Create());
+
+	CUI_GachaDisplay::DISPLAY_INIT_DESC* pDesc = new CUI_GachaDisplay::DISPLAY_INIT_DESC;
+	pDesc->eGrade = GachaGrade::S;		// 뽑은 아이템에서 가장 높은 등급 넣기
+	pDesc->onClickSkip = []() {			// 스킵 눌렀을 때 실행할 함수 넣기
+		//MSG_BOX("Skip"); 
+		};
+	pDesc->onVideoFinished = []() {		// 비디오 끝났을 때 실행할 함수 넣기
+		//MSG_BOX("VideoFinished"); 
+		}; 
+
+	auto pGachaDisplay = Builder::Create_UIObject({ "Gacha_Level", "Proto_GameObject_GachaDisplay"})
+		.Add_UIDesc(pDesc)
+		.Build("gacha_display");
+
+	if (!pGachaDisplay)
+		return;
+
+	UIManager()->Add_UIObject(pGachaDisplay, "Gacha_Level");
+	UIDirector()->Register(pGachaDisplay);
 }
 
 void CGacha_Level::Update_CamTime()

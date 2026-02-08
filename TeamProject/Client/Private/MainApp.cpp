@@ -102,7 +102,6 @@
 #include "UI_GachaChannel.h"
 #include "UI_GachaCurrency.h"
 #include "UI_GachaConversion.h"
-#include "UI_GachaDisplay.h"
 #include "UI_GachaResult.h"
 #include "UI_GachaResultItem.h"
 
@@ -313,7 +312,6 @@ void CMainApp::Initialize_GlobalPrototype()
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_GachaChannel", CUI_GachaChannel::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_GachaCurrency", CUI_GachaCurrency::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_GachaConversion", CUI_GachaConversion::Create());
-	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_GachaDisplay", CUI_GachaDisplay::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_GachaResult", CUI_GachaResult::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_GachaResultItem", CUI_GachaResultItem::Create());
 

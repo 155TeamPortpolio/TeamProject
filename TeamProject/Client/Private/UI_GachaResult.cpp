@@ -23,8 +23,6 @@ HRESULT CUI_GachaResult::Initialize(INIT_DESC* pArg)
     Cache();
     Create_ConfirmButton();
 
-    m_InstanceName = "gachaResult";
-
     Set_Alive(false);
 
 	return S_OK;

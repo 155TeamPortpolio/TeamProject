@@ -58,8 +58,12 @@ void CMiyabiState_SwitchIn::Update(CMiyabi* pOwner, _float dt)
     auto pMiyabiState = pOwner->Get_StateMachine();
     if (pMiyabiState->Get_Bool("OutReserve"))
     {
-        if (m_pSubStateMachine->Get_CurrentState()->Get_Tag() == "End" ||
-            Is_AnimEnd())
+        IHState<CMiyabi>* pSub = dynamic_cast<IHState<CMiyabi>*>(m_pSubStateMachine->Get_CurrentState());
+        bool bEndState = false;
+        if (pSub && pSub->Get_SubStateMachine())
+            bEndState = pSub->Get_SubStateMachine()->Get_CurrentState()->Get_Tag() == "End";
+
+        if (bEndState || Is_AnimEnd())
         {
             pMiyabiState->Set_Trigger("SwitchOut");
             pMiyabiState->Set_Bool("OutReserve", false);

@@ -151,27 +151,32 @@
           "EventTag": "AreaAttack"
         },
         {
-          "EventTime": 0.3010396361351013,
+          "EventTime": 0.29038336873054504,
           "EventType": "Notify",
           "EventTag": "AreaAttack"
         },
         {
-          "EventTime": 0.36764129996299744,
+          "EventTime": 0.3196881115436554,
           "EventType": "Notify",
           "EventTag": "AreaAttack"
         },
         {
-          "EventTime": 0.39961013197898865,
+          "EventTime": 0.33300843834877014,
           "EventType": "Notify",
           "EventTag": "AreaAttack"
         },
         {
-          "EventTime": 0.46621185541152954,
+          "EventTime": 0.4209226667881012,
           "EventType": "Notify",
           "EventTag": "AreaAttack"
         },
         {
-          "EventTime": 0.532813549041748,
+          "EventTime": 0.5248212814331055,
+          "EventType": "Notify",
+          "EventTag": "AreaAttack"
+        },
+        {
+          "EventTime": 0.5461338758468628,
           "EventType": "Notify",
           "EventTag": "AreaAttack"
         }
@@ -198,7 +203,7 @@
           "EventTag": "AreaAttack"
         },
         {
-          "EventTime": 0.18771928548812866,
+          "EventTime": 0.19473683834075928,
           "EventType": "Notify",
           "EventTag": "AreaAttack"
         },
@@ -208,32 +213,37 @@
           "EventTag": "AreaAttack"
         },
         {
-          "EventTime": 0.3035087585449219,
+          "EventTime": 0.3263157606124878,
           "EventType": "Notify",
           "EventTag": "AreaAttack"
         },
         {
-          "EventTime": 0.32807016372680664,
+          "EventTime": 0.38596490025520325,
           "EventType": "Notify",
           "EventTag": "AreaAttack"
         },
         {
-          "EventTime": 0.34385964274406433,
+          "EventTime": 0.4456140100955963,
           "EventType": "Notify",
           "EventTag": "AreaAttack"
         },
         {
-          "EventTime": 0.3561403453350067,
+          "EventTime": 0.5140351057052612,
           "EventType": "Notify",
           "EventTag": "AreaAttack"
         },
         {
-          "EventTime": 0.36666664481163025,
+          "EventTime": 0.5789473652839661,
           "EventType": "Notify",
           "EventTag": "AreaAttack"
         },
         {
-          "EventTime": 0.4035087525844574,
+          "EventTime": 0.6385964751243591,
+          "EventType": "Notify",
+          "EventTag": "AreaAttack"
+        },
+        {
+          "EventTime": 0.6754385828971863,
           "EventType": "Notify",
           "EventTag": "CheckCombo"
         }

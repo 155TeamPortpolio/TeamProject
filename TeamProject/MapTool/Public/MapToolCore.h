@@ -27,6 +27,7 @@ public:
 	void				LoadEntity(const filesystem::path& BasePath, LOADED_DATA& LoadedData);
 	void				LoadBattle(const filesystem::path& BasePath, LOADED_DATA& LoadedData);
 	void				LoadLight(const filesystem::path& BasePath, LOADED_DATA& LoadedData);
+	void				LoadMovePoint(const filesystem::path& BasePath, LOADED_DATA& LoadedData);
 
 	void				Clear_Layer(MAPOBJ_TYPE eObjType);
 	void				RegisterGuiPanel(class CMapToolGui* pGUIPanel);
@@ -38,6 +39,8 @@ private:
 	void			Place_TriggerObjectFromLoadData(MapData_Object* pData);
 	void			Place_EntityObjectFromLoadData(ENTITY* pData);
 	void			Place_LightPointFromLoadData(MAP_LIGHT* pData);
+	void			Place_MovePointFromLoadData(_int Path, vector<_float3>& Orders);
+	
 
 private:
 	CGameInstance*		m_pGameInstance = { nullptr };
