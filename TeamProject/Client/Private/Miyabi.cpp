@@ -466,8 +466,25 @@ HRESULT CMiyabi::Initialize_Effects()
 		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
 			.Asset("miyabi_sword_fire.json")
 			.Build("Miyabi_Sword_Fire");
+		pEffect->Stop();
 		pObjectContainer->Add_Child(pEffect, false);
 		pEffect->AttachBone(pAnimator, "Bn_Weapon");
+	}
+
+	// Ultimate Flare
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_ultimate_flare.json")
+			.Build("Miyabi_Ultimate_Flare");
+		pObjectContainer->Add_Child(pEffect, false);
+		pEffect->AttachBone(pAnimator, "Bn_Weapon", _smatrix::Identity, true);
+	}
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_ultimate_flare1.json")
+			.Build("Miyabi_Ultimate_Flare1");
+		pObjectContainer->Add_Child(pEffect, false);
+		pEffect->AttachBone(pAnimator, "Bn_Weapon", _smatrix::Identity, true);
 	}
 
 	// Normal Slash0
