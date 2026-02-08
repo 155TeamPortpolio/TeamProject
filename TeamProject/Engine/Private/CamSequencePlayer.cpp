@@ -12,37 +12,17 @@
 
 namespace
 {
-    float WrapLoopTime(float t, float dur)
-    {
-        float x = fmodf(t, dur);
-        if (x < 0.f) x += dur;
-        return x;
-    }
-    float WrapPingPongSampleTime(float t, float dur)
-    {
-        const float period = dur * 2.f;
-        float x = fmodf(t, period);
-        if (x < 0.f) x += period;
-        if (x <= dur) return x;
-        return period - x;
-    }
-    float CalcSampleTime(CamPlaybackMode mode, float playTime, float dur)
+    float ClampSampleTime(float t, float dur)
     {
         if (dur <= 1e-6f) return 0.f;
-        switch (mode)
-        {
-        case CamPlaybackMode::Once:     return clamp(playTime, 0.f, dur);
-        case CamPlaybackMode::Loop:     return WrapLoopTime(playTime, dur);
-        case CamPlaybackMode::PingPong: return WrapPingPongSampleTime(playTime, dur);
-        }
-        return clamp(playTime, 0.f, dur);
+        return clamp(t, 0.f, dur);
     }
 }
 
 HRESULT CCamSequencePlayer::Initialize(COMPONENT_DESC* pArg)
 {
     apply.transform = m_pOwner->Get_Component<CTransform>();
-    apply.cam       = m_pOwner->Get_Component<CCamera>();
+    apply.cam = m_pOwner->Get_Component<CCamera>();
 
     if (!eval.evaluator)
         eval.evaluator = CCamEvaluator::Create();
@@ -55,28 +35,28 @@ HRESULT CCamSequencePlayer::Initialize(COMPONENT_DESC* pArg)
     eval.evaluator->SetRotEvaluator(eval.rot);
     eval.evaluator->SetFovEvaluator(eval.fov);
 
-    target.seq         = nullptr;
-    playback.playing   = false;
-    playback.playTime  = 0.f;
+    seq = nullptr;
+    playback.playing = false;
+    playback.playTime = 0.f;
     playback.timeScale = 1.f;
 
     apply.applyEnabled = true;
-    eval.dirty         = true;
+    eval.dirty = true;
 
     return S_OK;
 }
 
-void CCamSequencePlayer::SetSequence(const CamSequenceDesc* seq)
+void CCamSequencePlayer::SetSequence(const CamSeqDesc* inSeq)
 {
-    target.seq        = seq;
-    playback.playing  = false;
+    seq = inSeq;
+    playback.playing = false;
     playback.playTime = 0.f;
-    eval.dirty        = true;
+    eval.dirty = true;
 }
 
 void CCamSequencePlayer::Play()
 {
-    if (!target.seq) return;
+    if (!seq) return;
 
     RebuildIfNeeded();
     playback.playing = true;
@@ -93,14 +73,16 @@ void CCamSequencePlayer::SetTime(_float t)
 {
     playback.playTime = t;
 
-    if (!target.seq || !apply.applyEnabled) return;
+    if (!seq || !apply.applyEnabled) return;
 
-    const _bool hasKeys = !target.seq->keyframes.empty();
-
+    const _bool hasKeys = !seq->keyframes.empty();
     if (hasKeys) RebuildIfNeeded();
 
-    const float dur = GetPlaybackDuration();
-    const float sampleTime = CalcSampleTime(target.seq->playbackMode, playback.playTime, dur);
+    const float dur = GetPlaybackDur();
+    const float sampleTime = ClampSampleTime(playback.playTime, dur);
+
+    if (playback.playTime != sampleTime)
+        playback.playTime = sampleTime;
 
     ApplyAtSampleTime(sampleTime);
 }
@@ -109,19 +91,19 @@ void CCamSequencePlayer::SetApplyEnabled(_bool enabled)
 {
     apply.applyEnabled = enabled;
 
-    if (!apply.applyEnabled || !target.seq) return;
+    if (!apply.applyEnabled || !seq) return;
 
     SetTime(playback.playTime);
 }
 
 void CCamSequencePlayer::Update(_float dt)
 {
-    if (!target.seq || !apply.applyEnabled) return;
+    if (!seq || !apply.applyEnabled) return;
 
-    const _bool hasKeys = !target.seq->keyframes.empty();
+    const _bool hasKeys = !seq->keyframes.empty();
     if (hasKeys) RebuildIfNeeded();
 
-    const float dur = GetPlaybackDuration();
+    const float dur = GetPlaybackDur();
 
     if (playback.playing)
     {
@@ -132,7 +114,7 @@ void CCamSequencePlayer::Update(_float dt)
             playback.playTime = 0.f;
             playback.playing = false;
         }
-        else if (target.seq->playbackMode == CamPlaybackMode::Once)
+        else
         {
             if (playback.playTime >= dur)
             {
@@ -144,7 +126,7 @@ void CCamSequencePlayer::Update(_float dt)
         }
     }
 
-    const float sampleTime = CalcSampleTime(target.seq->playbackMode, playback.playTime, dur);
+    const float sampleTime = ClampSampleTime(playback.playTime, dur);
     ApplyAtSampleTime(sampleTime);
 }
 
@@ -152,23 +134,23 @@ void CCamSequencePlayer::RebuildIfNeeded()
 {
     if (!eval.dirty) return;
     eval.dirty = false;
-    if (!target.seq) return;
+    if (!seq) return;
 
-    const auto& keys = target.seq->keyframes;
+    const auto& keys = seq->keyframes;
     if (keys.empty()) return;
 
-    eval.pos->SetSequence(target.seq);
-    eval.rot->SetSequence(target.seq);
-    eval.fov->SetSequence(target.seq);
+    eval.pos->SetSequence(seq);
+    eval.rot->SetSequence(seq);
+    eval.fov->SetSequence(seq);
 
-    eval.evaluator->Build(*target.seq);
+    eval.evaluator->Build(*seq);
 }
 
 void CCamSequencePlayer::ApplyPose(const CamPose& pose)
 {
-    const CamSequenceDesc* seq = target.seq;
+    const CamSeqDesc* curSeq = seq;
 
-    const _bool hasKeys = (seq && !seq->keyframes.empty());
+    const _bool hasKeys = (curSeq && !curSeq->keyframes.empty());
 
     Matrix curWorld = Matrix(apply.transform->Get_WorldMatrix());
 
@@ -189,7 +171,7 @@ void CCamSequencePlayer::ApplyPose(const CamPose& pose)
     Vector3 spaceRefT = Vector3::Zero;
     _bool hasSpaceRef = false;
 
-    const _bool needSpaceRef = (seq && seq->space == CamSpace::Local);
+    const _bool needSpaceRef = (curSeq && curSeq->space == CamSpace::Local);
 
     if (needSpaceRef && apply.spaceRefHandle.isValid())
     {
@@ -234,22 +216,21 @@ void CCamSequencePlayer::ApplyPose(const CamPose& pose)
         apply.cam->Set_FOV(pose.fov);
 }
 
-
-_float CCamSequencePlayer::GetPlaybackDuration() const
+_float CCamSequencePlayer::GetPlaybackDur() const
 {
-    if (!target.seq) return 0.f;
+    if (!seq) return 0.f;
 
-    if (!target.seq->keyframes.empty())
-        return eval.evaluator ? eval.evaluator->GetDuration() : target.seq->GetDuration();
+    if (!seq->keyframes.empty())
+        return eval.evaluator ? eval.evaluator->GetDuration() : seq->GetDuration();
 
-    return target.seq->refAnimDurSec;
+    return seq->refAnimDurSec;
 }
 
 void CCamSequencePlayer::ApplyAtSampleTime(_float sampleTime)
 {
     CamPose pose{};
 
-    if (!target.seq->keyframes.empty() && eval.evaluator)
+    if (!seq->keyframes.empty() && eval.evaluator)
     {
         const float easedTime = eval.evaluator->RemapTimeBySegmentEasing(sampleTime);
         pose = eval.evaluator->Evaluate(easedTime);

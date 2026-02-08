@@ -88,7 +88,7 @@ private:
     bool   LoadSequenceFromPath(const string& anyPath);
 
 private:
-    CamSequenceDesc       debugSequence{};
+    CamSeqDesc            debugSequence{};
     CamToolTarget         target{};
     CamToolEditState      state{};
     CamToolKeyPolicy      policy{};

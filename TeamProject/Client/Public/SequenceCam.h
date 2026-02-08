@@ -23,7 +23,7 @@ public:
 
 private:
     CCamSequencePlayer* m_seqPlayer{};
-    CamSequenceDesc     m_seqDesc{};
+    CamSeqDesc     m_seqDesc{};
 
 public:
     static  CSequenceCam* Create();

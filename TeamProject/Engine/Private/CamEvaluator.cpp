@@ -19,7 +19,7 @@ namespace
 	}
 }
 
-bool CCamEvaluator::Build(const CamSequenceDesc& _seqDesc)
+bool CCamEvaluator::Build(const CamSeqDesc& _seqDesc)
 {
 	seqDesc = &_seqDesc;
 
