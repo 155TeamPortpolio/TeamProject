@@ -128,6 +128,7 @@ public:
 		_float3 vTargetColor = {};
 		TIME_SCALING tPlayerTimeScale = {};		/* Duration, ScaleValue(0 < value < 1), StartLerpTime, EndLerpTime */
 		TIME_SCALING tMonsterTimeScale = {};		/* Duration, ScaleValue(0 < value < 1), StartLerpTime, EndLerpTime */
+		TIME_SCALING tCameraTimeScale = {};		/* Duration, ScaleValue(0 < value < 1), StartLerpTime, EndLerpTime */
 		TIME_SCALING tEffectTimeScale = {};		/* Duration, ScaleValue(0 < value < 1), StartLerpTime, EndLerpTime */
 	}BATTLE_VFX_DATA;
 

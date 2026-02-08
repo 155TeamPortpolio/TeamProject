@@ -811,9 +811,6 @@
     <Filter Include="02. GameObject\Object\Enemy\Boss\Defiler\State\Idle">
       <UniqueIdentifier>{d5b04047-e78b-49f4-aca1-616bbfd9634a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Camera\04. OrbitCam\01. OrbitCamCollider">
-      <UniqueIdentifier>{bb6ef566-7828-4054-a05e-14d7b79b3b20}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. Level\02. MainCity">
       <UniqueIdentifier>{5c06b70c-30b5-443f-8830-698352a45197}</UniqueIdentifier>
     </Filter>
@@ -1167,9 +1164,6 @@
     <Filter Include="03. Utility\06. FieldSystem\Room\05. Room_Gacha">
       <UniqueIdentifier>{820f4014-89e1-411c-b031-be391e0f1e5e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Camera\04. OrbitCam\00. ParryCamFX">
-      <UniqueIdentifier>{ab87437a-0803-4974-b6ba-72bdda89f83e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="03. Utility\07. UIDirector">
       <UniqueIdentifier>{42edd944-ef6d-4efd-b82d-9cadbc7ddc9f}</UniqueIdentifier>
     </Filter>
@@ -1220,6 +1214,12 @@
     </Filter>
     <Filter Include="02. GameObject\UI\02. 3D\Mesh\UI_GachaReveal\UI_GachaText">
       <UniqueIdentifier>{ed223e07-20d2-4adb-bf8a-94b7c189aa86}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Camera\04. OrbitCam\00. OrbitCamCollider">
+      <UniqueIdentifier>{bb6ef566-7828-4054-a05e-14d7b79b3b20}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\08. CamDirector\03. CamParryController">
+      <UniqueIdentifier>{bc6706b8-b671-4f03-85e0-7038a504232b}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\UI\01. 2D\Gacha\Display\Video">
       <UniqueIdentifier>{314ab51b-4d5d-46ca-8358-98fb0541d8de}</UniqueIdentifier>
@@ -2124,7 +2124,7 @@
       <Filter>02. GameObject\UI\01. 2D\Ramen\Menu</Filter>
     </ClInclude>
     <ClInclude Include="..\public\CamOcclusionTracker.h">
-      <Filter>02. GameObject\Camera\04. OrbitCam\01. OrbitCamCollider</Filter>
+      <Filter>02. GameObject\Camera\04. OrbitCam\00. OrbitCamCollider</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Defiler.h">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler</Filter>
@@ -2342,9 +2342,6 @@
     <ClInclude Include="..\public\ZeroStage_Start.h">
       <Filter>01. Level\04. Zero\Stage_Start</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\ParryCamFx.h">
-      <Filter>02. GameObject\Camera\04. OrbitCam\00. ParryCamFX</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\BackgroundNpc.h">
       <Filter>02. GameObject\Object\Npc\Background</Filter>
     </ClInclude>
@@ -2437,6 +2434,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\UI_GachaPage.h">
       <Filter>02. GameObject\UI\01. 2D\Gacha\Page</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\CamParryController.h">
+      <Filter>03. Utility\08. CamDirector\03. CamParryController</Filter>
     </ClInclude>
     <ClInclude Include="..\public\XWall.h">
       <Filter>02. GameObject\Effect\XWall</Filter>
@@ -3281,7 +3281,7 @@
       <Filter>02. GameObject\UI\01. 2D\Ramen\Menu</Filter>
     </ClCompile>
     <ClCompile Include="..\private\CamOcclusionTracker.cpp">
-      <Filter>02. GameObject\Camera\04. OrbitCam\01. OrbitCamCollider</Filter>
+      <Filter>02. GameObject\Camera\04. OrbitCam\00. OrbitCamCollider</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Defiler.cpp">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler</Filter>
@@ -3500,9 +3500,6 @@
     <ClCompile Include="..\private\ZeroStage_Start.cpp">
       <Filter>01. Level\04. Zero\Stage_Start</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\ParryCamFx.cpp">
-      <Filter>02. GameObject\Camera\04. OrbitCam\00. ParryCamFX</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\BackgroundNpc.cpp">
       <Filter>02. GameObject\Object\Npc\Background</Filter>
     </ClCompile>
@@ -3595,6 +3592,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\UI_GachaPage.cpp">
       <Filter>02. GameObject\UI\01. 2D\Gacha\Page</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CamParryController.cpp">
+      <Filter>03. Utility\08. CamDirector\03. CamParryController</Filter>
     </ClCompile>
     <ClCompile Include="..\private\XWall.cpp">
       <Filter>02. GameObject\Effect\XWall</Filter>

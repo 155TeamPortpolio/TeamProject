@@ -4,6 +4,7 @@
 #include "GameObject.h"
 #include "Engine_Math.h"
 #include "GameInstance.h"
+#include "AudioDevice.h"
 
 CGameObject* CCameraMgr::ResolveObj(OBJECT_HANDLE handle) const
 {
@@ -33,6 +34,7 @@ CCamera* CCameraMgr::Get_ShadowCam() const
 void CCameraMgr::Set_MainCam(CCamera* pCamCom, _float blendSec)
 {
     SetMainCamObj(pCamCom->Get_OwnerHandle(), blendSec);
+    AudioDevice()->Set_Listener(pCamCom->Get_Owner()->Get_Component<CTransform>());
 }
 
 void CCameraMgr::Set_ShadowCam(CCamera* pCamCom)
