@@ -37,6 +37,7 @@
 #include "Claymore.h"
 #include "Cyclops.h"
 #include "StrikeJaeger.h"
+#include "MeleeJaeger.h"
 
 /* UI */
 #include "UIDirector.h"
@@ -142,6 +143,7 @@ void CZero_Level::Ready_Prototype()
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_Claymore", CClaymore::Create());
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_Cyclops", CCyclops::Create());
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_StrikeJaeger", CStrikeJaeger::Create());
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_MeleeJaeger", CMeleeJaeger::Create());
 }
 
 void CZero_Level::Ready_Stage()

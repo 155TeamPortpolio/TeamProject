@@ -1248,6 +1248,33 @@
     <Filter Include="02. GameObject\Effect\XWall">
       <UniqueIdentifier>{514b0ec9-44d6-4bdd-aaa0-422049575a75}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\RebelMeleeJaeger\Attack">
+      <UniqueIdentifier>{29c85a9b-43cd-48b0-92e6-e7a440ec9b08}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\RebelMeleeJaeger\Born">
+      <UniqueIdentifier>{91d34630-0d7f-4707-987a-61fa51a23220}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\RebelMeleeJaeger\Chase">
+      <UniqueIdentifier>{8000f7d4-f852-4159-b4c2-f50ee3257cb7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\RebelMeleeJaeger\Death">
+      <UniqueIdentifier>{67a3c9e3-d0ee-46a1-b4ed-b5dc2d7fcd90}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\RebelMeleeJaeger\Groggy">
+      <UniqueIdentifier>{8845d8c8-32f5-4e50-9d94-2b04a20d7222}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\RebelMeleeJaeger\Hit">
+      <UniqueIdentifier>{06b1914e-4d1d-44bc-bce5-a311eb4589c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\RebelMeleeJaeger\Idle">
+      <UniqueIdentifier>{fc6450ba-1ab7-407a-b83d-7a323f69a5fc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\RebelMeleeJaeger\Move">
+      <UniqueIdentifier>{938e6970-1f21-44bc-9885-c2af52378988}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\RebelMeleeJaeger\Parried">
+      <UniqueIdentifier>{38124845-514d-476e-9c92-0e35c52d1696}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -2414,6 +2441,36 @@
     <ClInclude Include="..\public\XWall.h">
       <Filter>02. GameObject\Effect\XWall</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\MeleeJaeger.h">
+      <Filter>02. GameObject\Object\Enemy\Normal\RebelMeleeJaeger</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MeleeJaeger_Attack.h">
+      <Filter>02. GameObject\Object\Enemy\Normal\RebelMeleeJaeger\Attack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MeleeJaeger_Born.h">
+      <Filter>02. GameObject\Object\Enemy\Normal\RebelMeleeJaeger\Born</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MeleeJaeger_Chase.h">
+      <Filter>02. GameObject\Object\Enemy\Normal\RebelMeleeJaeger\Chase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MeleeJaeger_Death.h">
+      <Filter>02. GameObject\Object\Enemy\Normal\RebelMeleeJaeger\Death</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MeleeJaeger_Groggy.h">
+      <Filter>02. GameObject\Object\Enemy\Normal\RebelMeleeJaeger\Groggy</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MeleeJaeger_Hit.h">
+      <Filter>02. GameObject\Object\Enemy\Normal\RebelMeleeJaeger\Hit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MeleeJaeger_Idle.h">
+      <Filter>02. GameObject\Object\Enemy\Normal\RebelMeleeJaeger\Idle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MeleeJaeger_Move.h">
+      <Filter>02. GameObject\Object\Enemy\Normal\RebelMeleeJaeger\Move</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MeleeJaeger_Parried.h">
+      <Filter>02. GameObject\Object\Enemy\Normal\RebelMeleeJaeger\Parried</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -3541,6 +3598,36 @@
     </ClCompile>
     <ClCompile Include="..\private\XWall.cpp">
       <Filter>02. GameObject\Effect\XWall</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MeleeJaeger.cpp">
+      <Filter>02. GameObject\Object\Enemy\Normal\RebelMeleeJaeger</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MeleeJaeger_Attack.cpp">
+      <Filter>02. GameObject\Object\Enemy\Normal\RebelMeleeJaeger\Attack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MeleeJaeger_Born.cpp">
+      <Filter>02. GameObject\Object\Enemy\Normal\RebelMeleeJaeger\Born</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MeleeJaeger_Chase.cpp">
+      <Filter>02. GameObject\Object\Enemy\Normal\RebelMeleeJaeger\Chase</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MeleeJaeger_Death.cpp">
+      <Filter>02. GameObject\Object\Enemy\Normal\RebelMeleeJaeger\Death</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MeleeJaeger_Groggy.cpp">
+      <Filter>02. GameObject\Object\Enemy\Normal\RebelMeleeJaeger\Groggy</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MeleeJaeger_Hit.cpp">
+      <Filter>02. GameObject\Object\Enemy\Normal\RebelMeleeJaeger\Hit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MeleeJaeger_Idle.cpp">
+      <Filter>02. GameObject\Object\Enemy\Normal\RebelMeleeJaeger\Idle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MeleeJaeger_Move.cpp">
+      <Filter>02. GameObject\Object\Enemy\Normal\RebelMeleeJaeger\Move</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MeleeJaeger_Parried.cpp">
+      <Filter>02. GameObject\Object\Enemy\Normal\RebelMeleeJaeger\Parried</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
