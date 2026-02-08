@@ -14,7 +14,7 @@ protected:
     virtual ~CUI_GachaTextGroup() DEFAULT;
 
 public:
-    virtual void Show(GachaGrade eGrade);
+    virtual void Show(GachaGrade eGrade, const string& strCamSequenceKey);
     virtual void Hide();
         
 public:
@@ -33,16 +33,20 @@ private:
     _float m_fTimer = {};
     const _float m_fShowDuration = { 0.8f };
     const _float m_fBlinkDuration = { 0.4f };
+    const _float m_fCamWaitDuration = { 0.4f };
 
     _bool m_isVisible = {};
     _float m_fBlinkAcc = {};
     const _float m_fBlinkInterval = { 0.06f }; 
+
+    string m_strCamSequence = {}; 
 
 private:
     void Change_State(STATE eState);
 
     void Update_Show();
     void Update_Blink(_float dt);
+    void Update_Hide(_float dt);
 
 public:
     virtual void Free() override { __super::Free(); }
