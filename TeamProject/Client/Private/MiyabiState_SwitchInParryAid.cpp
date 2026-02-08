@@ -88,9 +88,9 @@ void CMiyabiState_SwitchInParryAid::Exit(CMiyabi* pOwner)
 void CMiyabiState_SwitchInParryAid_Start::Enter(CMiyabi* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_ParryAid_Start")
-        .Loop(false)
         .BlendDuration(0.1f)
-        .Speed(2.5f)
+        .ReserveSpeed(0.f, 1.f, 2.f, EaseType::OutQuint)
+        .EndAt(0.22f)
         .Apply();
 }
 
@@ -103,18 +103,10 @@ void CMiyabiState_SwitchInParryAid_Start::Update(CMiyabi* pOwner, _float dt)
 
 void CMiyabiState_SwitchInParryAid_L_Loop::Enter(CMiyabi* pOwner)
 {
-    pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_ParryAid_L")
-        .Loop(false)
+    pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "ParryAid_L")
         .BlendDuration(0.1f)
         .Speed(2.f)
         .Apply();
-
-    OBJECT_HANDLE handle = pOwner->Get_ParryHandle();
-    if (handle.isValid())
-    {
-        dynamic_cast<CEnemy*>(handle.Get())->Parried();
-        BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::PARRY);
-    }
 }
 
 void CMiyabiState_SwitchInParryAid_L_Loop::Update(CMiyabi* pOwner, _float dt)
@@ -126,7 +118,7 @@ void CMiyabiState_SwitchInParryAid_L_Loop::Update(CMiyabi* pOwner, _float dt)
 
 void CMiyabiState_SwitchInParryAid_L_End::Enter(CMiyabi* pOwner)
 {
-    pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_ParryAid_L_End")
+    pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "ParryAid_L_End")
         .Loop(false)
         .Speed(1.2f)
         .Apply();

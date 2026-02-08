@@ -625,25 +625,26 @@ HRESULT CDataBase::LoadRamenData(const string& csvPath)
 HRESULT CDataBase::LoadGachaResultData(const string& csvPath)
 {
 	io::CSVReader<
-		13,
+		14,
 		io::trim_chars<' ', '\t'>,
 		io::double_quote_escape<',', '"'>
 	>in(csvPath);
 
 	in.read_header(
 		io::ignore_extra_column | io::ignore_missing_column,
-		"ID", "Grade", "Model", "Mat", "Texture", "Label", "RotX", "RotY", "RotZ", "RotW", "Meta", "Start", "Loop"
+		"ID", "Type", "Grade", "Model", "Mat", "Texture", "Label", "RotX", "RotY", "RotZ", "RotW", "Meta", "Start", "Loop"
 	);
-	string			Grade, Model, Material, Texture, Label, Meta, Start, Loop;
+	string			Type, Grade, Model, Material, Texture, Label, Meta, Start, Loop;
 	_int			ID;
 	_float			RotX, RotY, RotZ, RotW;
 
-	while (in.read_row(ID, Grade, Model, Material,Texture, Label, RotX, RotY, RotZ, RotW, Meta, Start, Loop))
+	while (in.read_row(ID, Type, Grade, Model, Material,Texture, Label, RotX, RotY, RotZ, RotW, Meta, Start, Loop))
 	{
 		if (ID == -1) continue;
 
 		GACHA_RESULT_DESC desc = {};
 		desc.ID = ID;
+		desc.Type = StringToGachaType(Type);
 		desc.Grade = StringToGachaGrade(Grade);
 		desc.strModel = Model;
 		desc.strMaterial = Material;
@@ -825,6 +826,14 @@ Speaker CDataBase::StringToSpeaker(const string& str)
 	if (str == "Player") return Speaker::Player;
 
 	return Speaker::Npc;
+}
+
+GachaType CDataBase::StringToGachaType(const string& str)
+{
+	if (str == "Agent") return GachaType::Agent;
+	if (str == "Engine") return GachaType::Engine;
+
+	return GachaType::Engine;
 }
 
 GachaGrade CDataBase::StringToGachaGrade(const string& str)

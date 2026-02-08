@@ -58,6 +58,9 @@ void CMiyabiState_Hit::Update(CMiyabi* pOwner, _float dt)
 	if (m_pSubStateMachine->Get_CurrentState()->Get_AnimProgress() > 0.3f)
 		pOwner->Unlock_Move();
 
+	if (Is_AnimEnd())
+		pOwner->Get_StateMachine()->Set_Trigger("ToIdle");
+
 	__super::Update(pOwner, dt);
 }
 

@@ -23,6 +23,7 @@ namespace Client {
 	enum class DialogueType {Normal, Choice, Quest};
 	enum class DialogueResult {Fail, Running, Success, None};
 	enum class GachaGrade { S, A, B };
+	enum class GachaType { Agent, Engine, End };
 
 	//------------------- Battle -------------------
 	enum class StageType { Start, Normal, Elite, Boss, End };

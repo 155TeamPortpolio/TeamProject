@@ -35,12 +35,17 @@ public:
 private:
 	CUI_Object* m_pOverlay = {};
 
+	class CUI_Object* m_pChildren[ENUM(SPRITE::END)] = {};
 	class CSprite2D* m_pSprites[ENUM(SPRITE::END)] = {};
+
+	_float3 m_vRGB = {};
 
 private:
 	void Cache();
 
 	void Change_SpriteTexture(SPRITE sprite, const string& strTextureKey);
+	void Set_ChildAnchorOffset(SPRITE sprite, _float2 vOffset);
+	void Set_ChildSize(SPRITE sprite, _float2 vSize);
 
 public:
 	static  CGameObject* Create();

@@ -9,6 +9,7 @@
 
 #include "Animator3D.h"
 #include "CharacterController.h"
+#include "AudioSource.h"
 
 CMiyabiState_NormalAttack* CMiyabiState_NormalAttack::Create()
 {
@@ -29,12 +30,17 @@ CMiyabiState_NormalAttack* CMiyabiState_NormalAttack::Create()
 
     // 콤보 전이: Trigger + AnimEnd : 애니매이션중 마우스가 눌렸고 애니매이션이 끝나면 다음 재생
     vector<CStateMachine<CMiyabi>::CONDITION_INFO> comboConditions;
-    comboConditions.push_back({ CStateMachine<CMiyabi>::CONDITION_TRIGGER, "NextCombo", 0.f });
-    comboConditions.push_back({ CStateMachine<CMiyabi>::CONDITION_ANIMATION_GREATER, "", 0.7f });
-
+    comboConditions.push_back({ CStateMachine<CMiyabi>::CONDITION_TRIGGER, "NextCombo"});
+    comboConditions.push_back({ CStateMachine<CMiyabi>::CONDITION_ANIMATION_GREATER, "", 0.5f });
     pSubStateMachine->Register_Transition("Attack_01", "Attack_02", comboConditions);
+    comboConditions.pop_back();
+    comboConditions.push_back({ CStateMachine<CMiyabi>::CONDITION_ANIMATION_GREATER, "", 0.4f });
     pSubStateMachine->Register_Transition("Attack_02", "Attack_03", comboConditions);
-    pSubStateMachine->Register_Transition("Attack_03", "Attack_04", comboConditions);
+    comboConditions.pop_back();
+    comboConditions.push_back({ CStateMachine<CMiyabi>::CONDITION_ANIMATION_GREATER, "", 0.45f });
+    pSubStateMachine->Register_Transition("Attack_03", "Attack_04", comboConditions);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+    comboConditions.pop_back();
+    comboConditions.push_back({ CStateMachine<CMiyabi>::CONDITION_ANIMATION_GREATER, "", 0.5f });
     pSubStateMachine->Register_Transition("Attack_04", "Attack_05", comboConditions);
     //pSubStateMachine->Register_Transition("Attack_05", "Attack_06", comboConditions);
 
@@ -63,6 +69,16 @@ void CMiyabiState_NormalAttack::Enter(CMiyabi* pOwner)
 
     m_iComboIndex = 0;
     m_fHoldTime = 0.f;
+
+    _int iEntryIndex = m_pParentState->Get_SubStateMachine()->Get_Int("ComboEntryIndex");
+    m_pParentState->Get_SubStateMachine()->Set_Int("ComboEntryIndex", 0);
+
+    m_iComboIndex = iEntryIndex;
+    const string arrEntryStates[5] = {
+        "Attack_01", "Attack_02", "Attack_03", "Attack_04", "Attack_05"
+    };
+    m_pSubStateMachine->Set_DefaultState(arrEntryStates[iEntryIndex]);
+
     m_pSubStateMachine->Reset_Trigger("NextCombo");
 
     __super::Enter(pOwner);
@@ -115,7 +131,14 @@ void CMiyabiState_NormalAttack::Exit(CMiyabi* pOwner)
 void CMiyabiState_Attack_01::Enter(CMiyabi* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_01")
+        .ReserveSpeed(0.f, 0.2f, 0.7f, EaseType::InQuad)
+        .ReserveSpeed(0.2f, 0.4f, 2.f, EaseType::OutExpo)
+        .ReserveSpeed(0.4f, 1.f, 1.5f, EaseType::Linear)
         .Apply();
+    pOwner->Get_Component<CAudioSource>()->Slot("Boo_Slash_415605355_218786625.wav")
+        .Attribute3D(true)
+        .Loop(false)
+        .Play();
 }
 
 void CMiyabiState_Attack_01::Update(CMiyabi* pOwner, _float dt)
@@ -157,7 +180,14 @@ void CMiyabiState_Attack_01::Update_Effects(CMiyabi* pOwner)
 void CMiyabiState_Attack_02::Enter(CMiyabi* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_02")
+        .ReserveSpeed(0.f, 0.25f, 0.7f, EaseType::InQuad)
+        .ReserveSpeed(0.25f, 0.35f, 2.5f, EaseType::InCubic)
+        .ReserveSpeed(0.35f, 0.4f, 4.f, EaseType::OutExpo)
         .Apply();
+    pOwner->Get_Component<CAudioSource>()->Slot("Boo_Slash_596531371_138492562.wav")
+        .Attribute3D(true)
+        .Loop(false)
+        .Play();
 }
 
 void CMiyabiState_Attack_02::Update(CMiyabi* pOwner, _float dt)
@@ -201,7 +231,14 @@ void CMiyabiState_Attack_02::Update_Effects(CMiyabi* pOwner)
 void CMiyabiState_Attack_03::Enter(CMiyabi* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_03")
+        .ReserveSpeed(0.f, 0.2f, 0.8f, EaseType::InQuad)
+        .ReserveSpeed(0.2f, 0.35f, 2.f, EaseType::InCubic)
+        .ReserveSpeed(0.35f, 0.45f, 3.f, EaseType::OutExpo)
         .Apply();
+    pOwner->Get_Component<CAudioSource>()->Slot("Boo_Slash_4122170839_971052309.wav")
+        .Attribute3D(true)
+        .Loop(false)
+        .Play();
 }
 
 void CMiyabiState_Attack_03::Update(CMiyabi* pOwner, _float dt)
@@ -258,8 +295,16 @@ void CMiyabiState_Attack_03::Update_Effects(CMiyabi* pOwner)
 
 void CMiyabiState_Attack_04::Enter(CMiyabi* pOwner)
 {
+    pOwner->Push_Invincible();
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_05")
+        .ReserveSpeed(0.f, 0.1f, 0.8f, EaseType::InQuad)
+        .ReserveSpeed(0.1f, 0.45f, 2.f, EaseType::OutQuad)
+        .ReserveSpeed(0.45f, 1.f, 1.5f, EaseType::Linear)
         .Apply();
+    pOwner->Get_Component<CAudioSource>()->Slot("Boo_Slash_4238881969_955953320.wav")
+        .Attribute3D(true)
+        .Loop(false)
+        .Play();
 }
 
 void CMiyabiState_Attack_04::Update(CMiyabi* pOwner, _float dt)
@@ -290,6 +335,7 @@ void CMiyabiState_Attack_04::Update(CMiyabi* pOwner, _float dt)
 
 void CMiyabiState_Attack_04::Exit(CMiyabi* pOwner)
 {
+    pOwner->Pop_Invincible();
     static_cast<CMiyabiState_NormalAttack*>(m_pParentState)->Set_ComboIndex(3);
 }
 
@@ -313,7 +359,12 @@ void CMiyabiState_Attack_04::Update_Effects(CMiyabi* pOwner)
 
 void CMiyabiState_Attack_05::Enter(CMiyabi* pOwner)
 {
+    pOwner->Get_StateMachine()->Set_Bool("Resistance", true);
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_06")
+        .ReserveSpeed(0.f, 0.25f, 1.2f, EaseType::InCubic)
+        .ReserveSpeed(0.25f, 0.35f, 4.f, EaseType::OutExpo)
+        .ReserveSpeed(0.35f, 0.75f, 2.5f, EaseType::OutCirc)
+        .ReserveSpeed(0.75f, 1.f, 0.8f, EaseType::OutQuart)
         .Apply();
 }
 
@@ -344,6 +395,7 @@ void CMiyabiState_Attack_05::Update(CMiyabi* pOwner, _float dt)
 
 void CMiyabiState_Attack_05::Exit(CMiyabi* pOwner)
 {
+    pOwner->Get_StateMachine()->Set_Bool("Resistance", false);
     static_cast<CMiyabiState_NormalAttack*>(m_pParentState)->Set_ComboIndex(4);
 }
 

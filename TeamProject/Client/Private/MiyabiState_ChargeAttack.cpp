@@ -170,7 +170,7 @@ void CMiyabiState_Charge_Attack01::Enter(CMiyabi* pOwner)
 void CMiyabiState_Charge_Attack01::Update(CMiyabi* pOwner, _float dt)
 {
     _uint iLevel = m_pOwnerStateMachine->Get_Int("ChargeLevel");
-    _vector3 vPos = pOwner->Get_Component<CTransform>()->Dir(STATE::POSITION);
+    _vector3 vPos = pOwner->Get_WorldPos();
     _vector3 vLook = pOwner->Get_Component<CTransform>()->Dir(STATE::LOOK);
     if (IsCrossAnimProgress(0.21f))
     {

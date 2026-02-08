@@ -15,7 +15,7 @@ public:
         _int iLoopCount = { 0 };
         _float lastPlayTime = -999.f;
 
-        class CSoundData* pSound = {};
+        class CSoundData* pSound = { nullptr };
         FMOD::Channel* pChanel = { nullptr };
         SOUND_GROUP eGroup = { SOUND_GROUP::SFX };
     }AUDIO_SLOT;
@@ -41,6 +41,7 @@ public:
     SlotBuilder Slot(const string& slotKey);
 
 private:
+
     CAudioSource();
     CAudioSource(const CAudioSource& rhs);
     virtual ~CAudioSource();
@@ -72,5 +73,8 @@ public:
     static CAudioSource* Create();
     virtual CComponent* Clone() override;
     virtual void Free() override;
+
+public:
+    static AUDIO_SLOT EmptySlot;
 };
 NS_END

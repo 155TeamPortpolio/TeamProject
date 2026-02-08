@@ -35,6 +35,7 @@ public:
 
 private:
     void    Add_StageScreen();
+    void    Add_UIText();
     void    Update_StageEnviroment(_int index);
     void    Set_Stage(GACHA_STAGE eStage, _int ResultID);
     void    Reset_Target();
@@ -68,6 +69,9 @@ private:
     STAGE_LIGHT             BottomLight;
     STAGE_LIGHT             TopLight;
     STAGE_LIGHT             MiddleLight;
+
+private:
+    class CUI_GachaTextReveal* m_pUITextReveal = {};
 
 public:
     static CGachaStage* Create(vector<GACHA_RESULT_DESC>* Desc);

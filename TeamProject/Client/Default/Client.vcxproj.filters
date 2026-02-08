@@ -850,12 +850,6 @@
     <Filter Include="02. GameObject\UI\02. 3D\Plane\Gangta">
       <UniqueIdentifier>{93712aaf-87f8-46e7-8d80-8d430b09aa6f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\UI\01. 2D\BackButton">
-      <UniqueIdentifier>{97c4cc33-5194-4f2e-954a-7234d9714dbb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\UI\01. 2D\IconButton">
-      <UniqueIdentifier>{1a076b26-13b0-4095-afa9-73b1f59561df}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\UI\01. 2D\Ramen\OrderBanner">
       <UniqueIdentifier>{5b1e11eb-ac0b-4f7d-a685-d2d8256c8b8d}</UniqueIdentifier>
     </Filter>
@@ -999,15 +993,6 @@
     <Filter Include="02. GameObject\UI\01. 2D\Gacha">
       <UniqueIdentifier>{74208fc4-3148-4056-87ef-d7a5dbcecbd5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\UI\01. 2D\Gacha\Channel">
-      <UniqueIdentifier>{67718b5d-35e2-46ac-bcc6-5081191eeade}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\UI\01. 2D\Gacha\Currency">
-      <UniqueIdentifier>{e5f3d679-d65f-4f2d-80e4-874884e492bf}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\UI\01. 2D\Gacha\Conversion">
-      <UniqueIdentifier>{e604887e-58bb-4092-aa7b-587df8e4a1e1}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\Object\Enemy\Normal\EtherCyclops\Spit">
       <UniqueIdentifier>{4fe523f1-b826-442e-bc7c-e21b5480b449}</UniqueIdentifier>
     </Filter>
@@ -1094,6 +1079,39 @@
     </Filter>
     <Filter Include="02. GameObject\UI\01. 2D\Gacha\Result">
       <UniqueIdentifier>{70b86f41-b532-40be-ba58-6b3edec7f698}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\RebelStrikeJaeger">
+      <UniqueIdentifier>{ccfb6271-01ac-4e88-a871-5fad25f13742}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\RebelMeleeJaeger">
+      <UniqueIdentifier>{5967a4fb-ae99-4f19-b504-f1751145dd2c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\RebelStrikeJaeger\Attack">
+      <UniqueIdentifier>{0fb9d553-a6a4-4e82-b3ca-394bb5d5263a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\RebelStrikeJaeger\Born">
+      <UniqueIdentifier>{c5ec783d-8c23-4569-b657-a29f7c238607}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\RebelStrikeJaeger\Chase">
+      <UniqueIdentifier>{77c1cde5-6b2b-424e-bd1f-04697fb44290}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\RebelStrikeJaeger\Death">
+      <UniqueIdentifier>{7422d380-3d1e-47e1-8ed8-046204fc77ae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\RebelStrikeJaeger\Groggy">
+      <UniqueIdentifier>{ff3354c8-9054-43ea-8a30-0ce2e06bb762}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\RebelStrikeJaeger\Hit">
+      <UniqueIdentifier>{653a4408-5ed9-4753-87a1-f793ff0ad8ac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\RebelStrikeJaeger\Idle">
+      <UniqueIdentifier>{62de1317-ae77-4c73-abe4-407e655286e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\RebelStrikeJaeger\Move">
+      <UniqueIdentifier>{cf54b6c8-78d3-4d16-a275-bfb2accc876c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\RebelStrikeJaeger\Parried">
+      <UniqueIdentifier>{cb70b794-bf00-4a08-9942-617703f816fc}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\UI\01. 2D\Gacha\Result\ResultItem">
       <UniqueIdentifier>{aa22d079-15fe-4ce3-9769-f18957aab65c}</UniqueIdentifier>
@@ -1184,6 +1202,48 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Gacha\GachaProps\GachaStage\FootStage">
       <UniqueIdentifier>{ebc006d0-8a7d-4a82-a4f3-8660ecd31a07}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\02. 3D\Mesh\UI_GachaReveal">
+      <UniqueIdentifier>{6f7a1e1a-1051-4414-a663-f226a6f0240f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\02. 3D\Mesh\UI_GachaReveal\UI_GachaTextGroup">
+      <UniqueIdentifier>{4e1a7311-bfee-4889-8bd5-e42198151218}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\02. 3D\Mesh\UI_GachaReveal\UI_GachaTextGroup\Agent">
+      <UniqueIdentifier>{9330603c-8038-46a5-891d-4a279a525982}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\02. 3D\Mesh\UI_GachaReveal\UI_GachaTextGroup\Engine">
+      <UniqueIdentifier>{f8d4ca98-8924-4052-9095-e341b1e6c32b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Boss\Defiler\MiasmaBlade">
+      <UniqueIdentifier>{44e42690-e6c7-45f8-a497-d81095d6108e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\02. 3D\Mesh\UI_GachaReveal\UI_GachaText">
+      <UniqueIdentifier>{ed223e07-20d2-4adb-bf8a-94b7c189aa86}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\Gacha\Display\Video">
+      <UniqueIdentifier>{314ab51b-4d5d-46ca-8358-98fb0541d8de}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\Button_Text">
+      <UniqueIdentifier>{012f8056-50c2-4280-bc12-901990c01000}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\Button_Back">
+      <UniqueIdentifier>{97c4cc33-5194-4f2e-954a-7234d9714dbb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\Button_Icon">
+      <UniqueIdentifier>{1a076b26-13b0-4095-afa9-73b1f59561df}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\Gacha\Page">
+      <UniqueIdentifier>{7d60a9dc-24ff-4041-8059-4f73cddecdd7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\Gacha\Page\Currency">
+      <UniqueIdentifier>{e5f3d679-d65f-4f2d-80e4-874884e492bf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\Gacha\Page\Channel">
+      <UniqueIdentifier>{67718b5d-35e2-46ac-bcc6-5081191eeade}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\Gacha\Page\Conversion">
+      <UniqueIdentifier>{e604887e-58bb-4092-aa7b-587df8e4a1e1}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -2064,7 +2124,7 @@
       <Filter>02. GameObject\Test\TestUI</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UI_BackButton.h">
-      <Filter>02. GameObject\UI\01. 2D\BackButton</Filter>
+      <Filter>02. GameObject\UI\01. 2D\Button_Back</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UI_RamenAttributeIcon.h">
       <Filter>02. GameObject\UI\01. 2D\Ramen\AttributeIcon</Filter>
@@ -2136,7 +2196,7 @@
       <Filter>02. GameObject\Object\Gacha\GachaProps\GachaStage\GachaStageScreen</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UI_IconButton.h">
-      <Filter>02. GameObject\UI\01. 2D\IconButton</Filter>
+      <Filter>02. GameObject\UI\01. 2D\Button_Icon</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UI_RamenOrderBanner.h">
       <Filter>02. GameObject\UI\01. 2D\Ramen\OrderBanner</Filter>
@@ -2216,17 +2276,14 @@
     <ClInclude Include="..\Public\MiyabiState_Hit.h">
       <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Hit</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\UI_GachaPage.h">
-      <Filter>02. GameObject\UI\01. 2D\Gacha</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\UI_GachaChannel.h">
-      <Filter>02. GameObject\UI\01. 2D\Gacha\Channel</Filter>
+      <Filter>02. GameObject\UI\01. 2D\Gacha\Page\Channel</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UI_GachaCurrency.h">
-      <Filter>02. GameObject\UI\01. 2D\Gacha\Currency</Filter>
+      <Filter>02. GameObject\UI\01. 2D\Gacha\Page\Currency</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UI_GachaConversion.h">
-      <Filter>02. GameObject\UI\01. 2D\Gacha\Conversion</Filter>
+      <Filter>02. GameObject\UI\01. 2D\Gacha\Page\Conversion</Filter>
     </ClInclude>
     <ClInclude Include="..\public\CamDebugInput.h">
       <Filter>03. Utility\08. CamDirector\02. CamDebugInput</Filter>
@@ -2273,6 +2330,36 @@
     <ClInclude Include="..\Public\UI_GachaResult.h">
       <Filter>02. GameObject\UI\01. 2D\Gacha\Result</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\StrikeJaeger.h">
+      <Filter>02. GameObject\Object\Enemy\Normal\RebelStrikeJaeger</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\StrikeJaeger_Attack.h">
+      <Filter>02. GameObject\Object\Enemy\Normal\RebelStrikeJaeger\Attack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\StrikeJaeger_Born.h">
+      <Filter>02. GameObject\Object\Enemy\Normal\RebelStrikeJaeger\Born</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\StrikeJaeger_Chase.h">
+      <Filter>02. GameObject\Object\Enemy\Normal\RebelStrikeJaeger\Chase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\StrikeJaeger_Death.h">
+      <Filter>02. GameObject\Object\Enemy\Normal\RebelStrikeJaeger\Death</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\StrikeJaeger_Groggy.h">
+      <Filter>02. GameObject\Object\Enemy\Normal\RebelStrikeJaeger\Groggy</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\StrikeJaeger_Hit.h">
+      <Filter>02. GameObject\Object\Enemy\Normal\RebelStrikeJaeger\Hit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\StrikeJaeger_Idle.h">
+      <Filter>02. GameObject\Object\Enemy\Normal\RebelStrikeJaeger\Idle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\StrikeJaeger_Move.h">
+      <Filter>02. GameObject\Object\Enemy\Normal\RebelStrikeJaeger\Move</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\StrikeJaeger_Parried.h">
+      <Filter>02. GameObject\Object\Enemy\Normal\RebelStrikeJaeger\Parried</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\UI_GachaResultItem.h">
       <Filter>02. GameObject\UI\01. 2D\Gacha\Result\ResultItem</Filter>
     </ClInclude>
@@ -2285,8 +2372,41 @@
     <ClInclude Include="..\Public\MiyabiState_ExAttack.h">
       <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Attack\Ex</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\MiasmaBlade.h">
+      <Filter>02. GameObject\Object\Enemy\Boss\Defiler\MiasmaBlade</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\MiyabiState_UltimateAttack.h">
       <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Attack\Ultimate</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MiyabiState_CounterAttack.h">
+      <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Attack\Counter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_GachaTextGroupEngine.h">
+      <Filter>02. GameObject\UI\02. 3D\Mesh\UI_GachaReveal\UI_GachaTextGroup\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_GachaTextGroup.h">
+      <Filter>02. GameObject\UI\02. 3D\Mesh\UI_GachaReveal\UI_GachaTextGroup</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_GachaTextReveal.h">
+      <Filter>02. GameObject\UI\02. 3D\Mesh\UI_GachaReveal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_GachaText.h">
+      <Filter>02. GameObject\UI\02. 3D\Mesh\UI_GachaReveal\UI_GachaText</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_GachaTextGroupAgent.h">
+      <Filter>02. GameObject\UI\02. 3D\Mesh\UI_GachaReveal\UI_GachaTextGroup\Agent</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MiyabiState_AssaultAttack.h">
+      <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Attack\Assault</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_GachaVideo.h">
+      <Filter>02. GameObject\UI\01. 2D\Gacha\Display\Video</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_TextButton.h">
+      <Filter>02. GameObject\UI\01. 2D\Button_Text</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_GachaPage.h">
+      <Filter>02. GameObject\UI\01. 2D\Gacha\Page</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -3131,7 +3251,7 @@
       <Filter>02. GameObject\Test\TestUI</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UI_BackButton.cpp">
-      <Filter>02. GameObject\UI\01. 2D\BackButton</Filter>
+      <Filter>02. GameObject\UI\01. 2D\Button_Back</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UI_RamenAttributeIcon.cpp">
       <Filter>02. GameObject\UI\01. 2D\Ramen\AttributeIcon</Filter>
@@ -3192,7 +3312,7 @@
       <Filter>02. GameObject\UI\02. 3D\Plane\Damage_UI\Gangta</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UI_IconButton.cpp">
-      <Filter>02. GameObject\UI\01. 2D\IconButton</Filter>
+      <Filter>02. GameObject\UI\01. 2D\Button_Icon</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UI_RamenOrderBanner.cpp">
       <Filter>02. GameObject\UI\01. 2D\Ramen\OrderBanner</Filter>
@@ -3281,17 +3401,14 @@
     <ClCompile Include="..\Private\MiyabiState_Hit.cpp">
       <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Hit</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\UI_GachaPage.cpp">
-      <Filter>02. GameObject\UI\01. 2D\Gacha</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\UI_GachaChannel.cpp">
-      <Filter>02. GameObject\UI\01. 2D\Gacha\Channel</Filter>
+      <Filter>02. GameObject\UI\01. 2D\Gacha\Page\Channel</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UI_GachaConversion.cpp">
-      <Filter>02. GameObject\UI\01. 2D\Gacha\Conversion</Filter>
+      <Filter>02. GameObject\UI\01. 2D\Gacha\Page\Conversion</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UI_GachaCurrency.cpp">
-      <Filter>02. GameObject\UI\01. 2D\Gacha\Currency</Filter>
+      <Filter>02. GameObject\UI\01. 2D\Gacha\Page\Currency</Filter>
     </ClCompile>
     <ClCompile Include="..\private\CamDebugInput.cpp">
       <Filter>03. Utility\08. CamDirector\02. CamDebugInput</Filter>
@@ -3338,6 +3455,36 @@
     <ClCompile Include="..\Private\UI_GachaResult.cpp">
       <Filter>02. GameObject\UI\01. 2D\Gacha\Result</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\StrikeJaeger.cpp">
+      <Filter>02. GameObject\Object\Enemy\Normal\RebelStrikeJaeger</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\StrikeJaeger_Attack.cpp">
+      <Filter>02. GameObject\Object\Enemy\Normal\RebelStrikeJaeger\Attack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\StrikeJaeger_Born.cpp">
+      <Filter>02. GameObject\Object\Enemy\Normal\RebelStrikeJaeger\Born</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\StrikeJaeger_Chase.cpp">
+      <Filter>02. GameObject\Object\Enemy\Normal\RebelStrikeJaeger\Chase</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\StrikeJaeger_Death.cpp">
+      <Filter>02. GameObject\Object\Enemy\Normal\RebelStrikeJaeger\Death</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\StrikeJaeger_Groggy.cpp">
+      <Filter>02. GameObject\Object\Enemy\Normal\RebelStrikeJaeger\Groggy</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\StrikeJaeger_Hit.cpp">
+      <Filter>02. GameObject\Object\Enemy\Normal\RebelStrikeJaeger\Hit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\StrikeJaeger_Idle.cpp">
+      <Filter>02. GameObject\Object\Enemy\Normal\RebelStrikeJaeger\Idle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\StrikeJaeger_Move.cpp">
+      <Filter>02. GameObject\Object\Enemy\Normal\RebelStrikeJaeger\Move</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\StrikeJaeger_Parried.cpp">
+      <Filter>02. GameObject\Object\Enemy\Normal\RebelStrikeJaeger\Parried</Filter>
+    </ClCompile>
     <ClCompile Include="..\Private\UI_GachaResultItem.cpp">
       <Filter>02. GameObject\UI\01. 2D\Gacha\Result\ResultItem</Filter>
     </ClCompile>
@@ -3350,8 +3497,41 @@
     <ClCompile Include="..\Private\MiyabiState_ExAttack.cpp">
       <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Attack\Ex</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\MiasmaBlade.cpp">
+      <Filter>02. GameObject\Object\Enemy\Boss\Defiler\MiasmaBlade</Filter>
+    </ClCompile>
     <ClCompile Include="..\Private\MiyabiState_UltimateAttack.cpp">
       <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Attack\Ultimate</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MiyabiState_CounterAttack.cpp">
+      <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Attack\Counter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_GachaTextGroupEngine.cpp">
+      <Filter>02. GameObject\UI\02. 3D\Mesh\UI_GachaReveal\UI_GachaTextGroup\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_GachaTextGroup.cpp">
+      <Filter>02. GameObject\UI\02. 3D\Mesh\UI_GachaReveal\UI_GachaTextGroup</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_GachaTextReveal.cpp">
+      <Filter>02. GameObject\UI\02. 3D\Mesh\UI_GachaReveal</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_GachaText.cpp">
+      <Filter>02. GameObject\UI\02. 3D\Mesh\UI_GachaReveal\UI_GachaText</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_GachaTextGroupAgent.cpp">
+      <Filter>02. GameObject\UI\02. 3D\Mesh\UI_GachaReveal\UI_GachaTextGroup\Agent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MiyabiState_AssaultAttack.cpp">
+      <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Attack\Assault</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_GachaVideo.cpp">
+      <Filter>02. GameObject\UI\01. 2D\Gacha\Display\Video</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_TextButton.cpp">
+      <Filter>02. GameObject\UI\01. 2D\Button_Text</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_GachaPage.cpp">
+      <Filter>02. GameObject\UI\01. 2D\Gacha\Page</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

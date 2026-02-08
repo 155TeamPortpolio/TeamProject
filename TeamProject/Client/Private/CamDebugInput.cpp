@@ -35,16 +35,16 @@ void CamDebugInput::UpdateInput(_float dt)
     //CMonitorGate gate;
     //if (!gate.Pass()) return;
 
-    if (InputDevice()->Mouse_Tap(MOUSE_BTN::RB))
-    {
-        CamDirector()->GetOrbitCam()->ClearLockOn();
-    }
+    //if (InputDevice()->Mouse_Tap(MOUSE_BTN::RB))
+    //{
+    //    CamDirector()->GetOrbitCam()->ClearLockOn();
+    //}
 
 
     if (InputDevice()->Key_Tap(VK_F3))
     {
         if (levelKey == "Gacha_Level")
-            CamDirector()->RequestSequence("Gacha/Miyabi_01");
+            CamDirector()->RequestSequence("Gacha/JaneDoe_01");
 
         //auto obj = Builder::Create_UIObject({G_GlobalLevelKey, "Proto_GameObject_Gangta"}).Build("Gangta");
         //UIManager()->Add_UIObject(obj, LevelManager()->Get_NowLevelKey());
@@ -70,4 +70,13 @@ void CamDebugInput::UpdateGachaLevel()
 
     if (CamDirector()->IsFinished(CamEventType::Miyabi_03_Finished))
         CamDirector()->RequestSequence("Gacha/Miyabi_01");
+
+    if (CamDirector()->IsFinished(CamEventType::JaneDoe_01_Finished))
+        CamDirector()->RequestSequence("Gacha/JaneDoe_02");
+
+    if (CamDirector()->IsFinished(CamEventType::JaneDoe_02_Finished))
+        CamDirector()->RequestSequence("Gacha/JaneDoe_03");
+
+    if (CamDirector()->IsFinished(CamEventType::JaneDoe_03_Finished))
+        CamDirector()->RequestSequence("Gacha/JaneDoe_01");
 }

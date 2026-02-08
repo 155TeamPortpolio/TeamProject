@@ -27,6 +27,8 @@
 #include "ThugBulkyEnforcer.h"
 #include "ThugAssaulter.h"
 #include "Defiler.h"
+#include "MiasmaBlade.h"
+
 #include "EnemyAttackCollider.h"
 #include "EnemyTriggerCollider.h"
 #include "StageRouter.h"
@@ -34,7 +36,7 @@
 #include "ThugPoacher_Arrow.h"
 #include "Claymore.h"
 #include "Cyclops.h"
-
+#include "StrikeJaeger.h"
 
 /* UI */
 #include "UIDirector.h"
@@ -121,10 +123,12 @@ void CZero_Level::Ready_Prototype()
 {
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_EnemyAttackCollider", CEnemyAttackCollider::Create());
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_EnemyTriggerCollider", CEnemyTriggerCollider::Create());
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_Defiler", CDefiler::Create());
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_MiasmaBlade", CMiasmaBlade::Create());
 
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_ZeroPortal", CZeroPortal::Create());
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_LevelObject_ZeroPortal", CStageRouter::Create());
-
+	
 	/* Enemy */
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_ThugBulkyEnforcer", CThugBulkyEnforcer::Create());
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_ThugAssaulter", CThugAssaulter::Create());
@@ -137,6 +141,7 @@ void CZero_Level::Ready_Prototype()
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_ThugPoacher_Arrow", CThugPoacher_Arrow::Create());
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_Claymore", CClaymore::Create());
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_Cyclops", CCyclops::Create());
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_StrikeJaeger", CStrikeJaeger::Create());
 }
 
 void CZero_Level::Ready_Stage()

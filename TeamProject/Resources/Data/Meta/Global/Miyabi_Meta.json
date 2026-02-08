@@ -151,27 +151,32 @@
           "EventTag": "AreaAttack"
         },
         {
-          "EventTime": 0.3010396361351013,
+          "EventTime": 0.29038336873054504,
           "EventType": "Notify",
           "EventTag": "AreaAttack"
         },
         {
-          "EventTime": 0.36764129996299744,
+          "EventTime": 0.3196881115436554,
           "EventType": "Notify",
           "EventTag": "AreaAttack"
         },
         {
-          "EventTime": 0.39961013197898865,
+          "EventTime": 0.33300843834877014,
           "EventType": "Notify",
           "EventTag": "AreaAttack"
         },
         {
-          "EventTime": 0.46621185541152954,
+          "EventTime": 0.4209226667881012,
           "EventType": "Notify",
           "EventTag": "AreaAttack"
         },
         {
-          "EventTime": 0.532813549041748,
+          "EventTime": 0.5248212814331055,
+          "EventType": "Notify",
+          "EventTag": "AreaAttack"
+        },
+        {
+          "EventTime": 0.5461338758468628,
           "EventType": "Notify",
           "EventTag": "AreaAttack"
         }
@@ -198,7 +203,7 @@
           "EventTag": "AreaAttack"
         },
         {
-          "EventTime": 0.18771928548812866,
+          "EventTime": 0.19473683834075928,
           "EventType": "Notify",
           "EventTag": "AreaAttack"
         },
@@ -208,29 +213,39 @@
           "EventTag": "AreaAttack"
         },
         {
-          "EventTime": 0.3035087585449219,
+          "EventTime": 0.3263157606124878,
           "EventType": "Notify",
           "EventTag": "AreaAttack"
         },
         {
-          "EventTime": 0.32807016372680664,
+          "EventTime": 0.38596490025520325,
           "EventType": "Notify",
           "EventTag": "AreaAttack"
         },
         {
-          "EventTime": 0.34385964274406433,
+          "EventTime": 0.4456140100955963,
           "EventType": "Notify",
           "EventTag": "AreaAttack"
         },
         {
-          "EventTime": 0.3561403453350067,
+          "EventTime": 0.5140351057052612,
           "EventType": "Notify",
           "EventTag": "AreaAttack"
         },
         {
-          "EventTime": 0.36666664481163025,
+          "EventTime": 0.5789473652839661,
           "EventType": "Notify",
           "EventTag": "AreaAttack"
+        },
+        {
+          "EventTime": 0.6385964751243591,
+          "EventType": "Notify",
+          "EventTag": "AreaAttack"
+        },
+        {
+          "EventTime": 0.6754385828971863,
+          "EventType": "Notify",
+          "EventTag": "CheckCombo"
         }
       ]
     },
@@ -248,7 +263,53 @@
     },
     {
       "ClipTag": "Avatar_Female_Size02_Unagi_Ani_Attack_AssaultAid",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.4722546935081482,
+          "EventType": "Notify",
+          "EventTag": "AreaAttack"
+        },
+        {
+          "EventTime": 0.5768680572509766,
+          "EventType": "Notify",
+          "EventTag": "AreaAttack"
+        },
+        {
+          "EventTime": 0.678492546081543,
+          "EventType": "Notify",
+          "EventTag": "AreaAttack"
+        },
+        {
+          "EventTime": 0.7681611180305481,
+          "EventType": "Notify",
+          "EventTag": "AreaAttack"
+        },
+        {
+          "EventTime": 0.8727744817733765,
+          "EventType": "Notify",
+          "EventTag": "AreaAttack"
+        },
+        {
+          "EventTime": 0.9594541788101196,
+          "EventType": "Notify",
+          "EventTag": "AreaAttack"
+        },
+        {
+          "EventTime": 1.0491228103637695,
+          "EventType": "Notify",
+          "EventTag": "AreaAttack"
+        },
+        {
+          "EventTime": 1.1507471799850464,
+          "EventType": "Notify",
+          "EventTag": "AreaAttack"
+        },
+        {
+          "EventTime": 1.2194931507110596,
+          "EventType": "Notify",
+          "EventTag": "AreaAttack"
+        }
+      ]
     },
     {
       "ClipTag": "Avatar_Female_Size02_Unagi_Ani_Attack_AssaultAid_End",
@@ -270,6 +331,11 @@
           "EventTime": 0.10006497800350189,
           "EventType": "Notify",
           "EventTag": "KatanaAttackEnd"
+        },
+        {
+          "EventTime": 0.11734892427921295,
+          "EventType": "Notify",
+          "EventTag": "CheckCombo"
         }
       ]
     },
@@ -279,7 +345,13 @@
     },
     {
       "ClipTag": "Avatar_Female_Size02_Unagi_Ani_Attack_Branch_01_Attack_02",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.7855750322341919,
+          "EventType": "Notify",
+          "EventTag": "CheckCombo"
+        }
+      ]
     },
     {
       "ClipTag": "Avatar_Female_Size02_Unagi_Ani_Attack_Branch_01_Attack_02_End",
@@ -297,6 +369,11 @@
           "EventTime": 0.2684210538864136,
           "EventType": "Notify",
           "EventTag": "KatanaAttackEnd"
+        },
+        {
+          "EventTime": 1.438206672668457,
+          "EventType": "Notify",
+          "EventTag": "CheckCombo"
         }
       ]
     },
@@ -395,7 +472,43 @@
     },
     {
       "ClipTag": "Avatar_Female_Size02_Unagi_Ani_Attack_Counter",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.16582195460796356,
+          "EventType": "Notify",
+          "EventTag": "KatanaAttackStart"
+        },
+        {
+          "EventTime": 0.3278752267360687,
+          "EventType": "Notify",
+          "EventTag": "KatanaAttackEnd"
+        },
+        {
+          "EventTime": 0.3862897753715515,
+          "EventType": "Notify",
+          "EventTag": "AreaAttack"
+        },
+        {
+          "EventTime": 0.4239766001701355,
+          "EventType": "Notify",
+          "EventTag": "AreaAttack"
+        },
+        {
+          "EventTime": 0.4597790539264679,
+          "EventType": "Notify",
+          "EventTag": "AreaAttack"
+        },
+        {
+          "EventTime": 0.5031188726425171,
+          "EventType": "Notify",
+          "EventTag": "AreaAttack"
+        },
+        {
+          "EventTime": 0.5313839912414551,
+          "EventType": "Notify",
+          "EventTag": "CheckCombo"
+        }
+      ]
     },
     {
       "ClipTag": "Avatar_Female_Size02_Unagi_Ani_Attack_Counter_02",
@@ -811,7 +924,48 @@
     },
     {
       "ClipTag": "Avatar_Female_Size02_Unagi_Ani_SwitchIn_Attack",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.3976608216762543,
+          "EventType": "Notify",
+          "EventTag": "AreaAttack"
+        },
+        {
+          "EventTime": 0.526900589466095,
+          "EventType": "Notify",
+          "EventTag": "AreaAttack"
+        },
+        {
+          "EventTime": 0.858284592628479,
+          "EventType": "Notify",
+          "EventTag": "AreaAttack"
+        },
+        {
+          "EventTime": 0.9643274545669556,
+          "EventType": "Notify",
+          "EventTag": "AreaAttack"
+        },
+        {
+          "EventTime": 1.0107213258743286,
+          "EventType": "Notify",
+          "EventTag": "AreaAttack"
+        },
+        {
+          "EventTime": 1.0339181423187256,
+          "EventType": "Notify",
+          "EventTag": "AreaAttack"
+        },
+        {
+          "EventTime": 1.063742756843567,
+          "EventType": "Notify",
+          "EventTag": "AreaAttack"
+        },
+        {
+          "EventTime": 1.2762116193771362,
+          "EventType": "Notify",
+          "EventTag": "CheckCombo"
+        }
+      ]
     },
     {
       "ClipTag": "Avatar_Female_Size02_Unagi_Ani_SwitchIn_Attack_End",
@@ -826,12 +980,12 @@
           "EventTag": "UltimateAttack"
         },
         {
-          "EventTime": 0.3241065442562103,
+          "EventTime": 0.27000001072883606,
           "EventType": "Notify",
           "EventTag": "UltimateAttack"
         },
         {
-          "EventTime": 0.27000001072883606,
+          "EventTime": 0.3241065442562103,
           "EventType": "Notify",
           "EventTag": "UltimateAttack"
         },

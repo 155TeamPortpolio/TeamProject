@@ -24,7 +24,7 @@ public:
 
 public:
     virtual bool Set_ProcHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
-    virtual _bool UsingUI() { return m_bUsingUI; }
+    virtual _bool UsingUI() { if (!m_bActiveGUI)return false; return m_bUsingUI; }
     virtual void Set_UIMode() override;
     virtual void Set_Bone(_int boneIndex);
     virtual _bool Is_GUIActive() const { return m_bActiveGUI; }

@@ -58,12 +58,17 @@ void CJaneDoeState_SwitchIn::Update(CJaneDoe* pOwner, _float dt)
     auto pJaneDoeState = pOwner->Get_StateMachine();
     if (pJaneDoeState->Get_Bool("OutReserve"))
     {
-        if (m_pSubStateMachine->Get_CurrentState()->Get_Tag() == "End" ||
-            Is_AnimEnd())
+        IHState<CJaneDoe>* pSub = dynamic_cast<IHState<CJaneDoe>*>(m_pSubStateMachine->Get_CurrentState());
+        bool bEndState = false;
+        if (pSub && pSub->Get_SubStateMachine())
+            bEndState = pSub->Get_SubStateMachine()->Get_CurrentState()->Get_Tag() == "End";
+
+        if (bEndState || Is_AnimEnd())
         {
             pJaneDoeState->Set_Trigger("SwitchOut");
             pJaneDoeState->Set_Bool("OutReserve", false);
         }
+        return;
     }
 
     if (m_pSubStateMachine->Get_Trigger("Complete"))
