@@ -41,7 +41,7 @@ CGameObject* CCamDirector::GetCamObj(CamType type) const
 
 OBJECT_HANDLE CCamDirector::GetCurTarget() const
 {
-    BattleSystem()->GetBattlePlayer()->GetTargetHandle();
+    return BattleSystem()->GetBattlePlayer()->GetTargetHandle();
 }
 
 _bool CCamDirector::Register(const string& key, const fs::path& path)
@@ -174,6 +174,8 @@ void CCamDirector::Update(_float dt)
     if (IsValid())
         m_dialogue.Update(dt, GetOrbitCamComp(), GetOrbitCam(), GetCharacter()->Get_Component<CTransform>());
 
+    m_parry.Update(dt);
+
     if (m_dialogueUnlockPending && !m_dialogue.IsBusy())
     {
         GetOrbitCam()->Unlock_Input();
@@ -181,32 +183,6 @@ void CCamDirector::Update(_float dt)
     }
 
      UpdateInput(dt);
-}
-
-void CCamDirector::StartParry()
-{
-    if (!m_gate.Pass()) return;
-
-    auto charaName = GetCharacterName();
-    auto anim = GetCharacter()->Get_Component<CAnimator3D>();
-
-    GetOrbitCam()->SetLockOn(BattleSystem()->GetBattlePlayer()->GetTargetHandle());
-
-    switch (charaName)
-    {
-    case CHARACTER::JaneDoe:
-        anim->Set_Animation("Avatar_Female_Size03_JaneDoe_Ani_Attack_ParryAid_L").Apply();
-        break;
-
-    case CHARACTER::Corin:
-        anim->Set_Animation("Avatar_Female_Size01_Corin_Ani_Attack_ParryAid_L").Apply();
-        break;
-
-    case CHARACTER::Miyabi:
-        anim->Set_Animation("Avatar_Female_Size02_Unagi_Ani_Attack_ParryAid_L").Apply();
-        break;
-    }
-
 }
 
 void CCamDirector::StartBattleIntro(CamSeqType type)

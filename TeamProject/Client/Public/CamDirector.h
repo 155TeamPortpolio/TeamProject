@@ -5,6 +5,7 @@
 #include "CamDirectorData.h"
 #include "CamEventController.h"
 #include "CamDialogueController.h"
+#include "CamParryController.h"
 
 NS_BEGIN(Client)
 
@@ -18,43 +19,43 @@ private:
 
 public:
     void          SetCam(CamType type, OBJECT_HANDLE handle) { m_camHandles[ENUM(type)] = handle; }
-    void          SetSpaceRef(OBJECT_HANDLE handle)          { m_spaceRefHandle         = handle; }
-    void          SetReturnCam(CamType type)                 { m_returnCamType          = type;   }
+    void          SetSpaceRef(OBJECT_HANDLE handle) { m_spaceRefHandle = handle; }
+    void          SetReturnCam(CamType type) { m_returnCamType = type; }
     void          SetTarget(OBJECT_HANDLE targetHandle);
     void          AutoTarget();
     void          AutoField(CamStartDir dir);
     void          AutoBattle(CamStartDir dir);
 
-    OBJECT_HANDLE GetCamHandle(CamType type) const { return m_camHandles[ENUM(type)];                }
-    COrbitCam*    GetOrbitCam()              const { return static_cast<COrbitCam*>(GetOrbitObj());  }
+    OBJECT_HANDLE GetCamHandle(CamType type) const { return m_camHandles[ENUM(type)]; }
+    COrbitCam* GetOrbitCam()              const { return static_cast<COrbitCam*>(GetOrbitObj()); }
     CSequenceCam* GetSeqCam()                const { return static_cast<CSequenceCam*>(GetSeqObj()); }
-    CFreeCam*     GetFreeCam()               const { return static_cast<CFreeCam*>(GetFreeObj());    }
+    CFreeCam* GetFreeCam()               const { return static_cast<CFreeCam*>(GetFreeObj()); }
 
-    CGameObject*  GetCamObj(CamType type)    const;
-    CGameObject*  GetSeqObj()                const { return GetCamObj(CamType::Sequence); }
-    CGameObject*  GetOrbitObj()              const { return GetCamObj(CamType::Orbit);    }
-    CGameObject*  GetFreeObj()               const { return GetCamObj(CamType::Free);     }
+    CGameObject* GetCamObj(CamType type)    const;
+    CGameObject* GetSeqObj()                const { return GetCamObj(CamType::Sequence); }
+    CGameObject* GetOrbitObj()              const { return GetCamObj(CamType::Orbit); }
+    CGameObject* GetFreeObj()               const { return GetCamObj(CamType::Free); }
 
-    CCamera*      GetFreeCamComp()           const { return GetFreeCam()->Get_Component<CCamera>();  }
-    CCamera*      GetSeqCamComp()            const { return GetSeqCam()->Get_Component<CCamera>();   }
-    CCamera*      GetOrbitCamComp()          const { return GetOrbitCam()->Get_Component<CCamera>(); }
-    CPlayer*      GetPlayer()                const { return static_cast<CPlayer*>(ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Player))); }
-    CCharacter*   GetCharacter()             const { return static_cast<CCharacter*>(GetCurHandle().Get()); }
+    CCamera* GetFreeCamComp()           const { return GetFreeCam()->Get_Component<CCamera>(); }
+    CCamera* GetSeqCamComp()            const { return GetSeqCam()->Get_Component<CCamera>(); }
+    CCamera* GetOrbitCamComp()          const { return GetOrbitCam()->Get_Component<CCamera>(); }
+    CPlayer* GetPlayer()                const { return static_cast<CPlayer*>(ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Player))); }
+    CCharacter* GetCharacter()             const { return static_cast<CCharacter*>(GetCurHandle().Get()); }
     CHARACTER     GetCharacterName()         const { return GetCharacter()->Get_CharacterName(); }
     string        GetCharacterStr()          const { return Helper::EnumToString(GetCharacter()->Get_CharacterName()); }
     OBJECT_HANDLE GetCurHandle()             const { return GetPlayer()->Get_CurCharacterHandle(); }
     OBJECT_HANDLE GetCurTarget()             const;
     _float        GetTime()                  const { return GetSeqPlayer()->GetTime(); }
     const string& GetCurSeqName()            const { return m_playing.active ? m_playing.key : kEmpty; }
-    SeqPlayer*    GetSeqPlayer()             const { return GetSeqObj()->Get_Component<CCamSequencePlayer>(); }
+    SeqPlayer* GetSeqPlayer()             const { return GetSeqObj()->Get_Component<CCamSequencePlayer>(); }
 
 public:
     _bool         Register(const string& key, const fs::path& path);
     _bool         Register(const string& key, const fs::path& path, const CamSequenceRequestDesc& defaultReq);
-    void          UnRegister(const string& key);         
+    void          UnRegister(const string& key);
     _uint         RequestSequence(const string& key);
     _uint         RequestSequence(CamSeqType type);
-    
+
     _bool         IsPlaying(const string& key)       const;
     _bool         IsPlaying(CamSeqType type)         const;
     _bool         IsFinished(CamEventType eventType) const;
@@ -63,10 +64,13 @@ public:
     void          StopAll(_float blendOutSec = 0.25f);
     void          Update(_float dt);
 
-    void          StartParry();
+    void          StartParry(_float fovHold = 30.f, _float blendInSec = 0.08f, _float holdSec = 0.12f) { m_parry.Begin(fovHold, blendInSec, holdSec); }
     void          StartBattleIntro(CamSeqType type);
     void          StartDialog();
+
     void          EndDialog();
+    void          EndParry(_float blendOutSec = 0.65f) { m_parry.End(blendOutSec); }
+
     void          AbortSequenceToOrbit(_bool resetTime);
 
 private:
@@ -85,6 +89,7 @@ private:
     CamDirectorCamHandles   m_camHandles{};
     CCamEventController     m_events{};
     CCamDialogueController  m_dialogue{};
+    CCamParryController     m_parry{};
 
     OBJECT_HANDLE           m_spaceRefHandle{};
     CamType                 m_returnCamType = CamType::None;

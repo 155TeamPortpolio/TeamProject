@@ -320,6 +320,8 @@ OrbitLockEval COrbitCam::ApplyLock(_float dt)
     OrbitLockEval lockRes{};
     if (!Lock_On()) return lockRes;
 
+    if (m_parryMode) return lockRes;
+
     lockRes = EvalLock(dt, m_pose.rotGoalDeg.x, m_pose.distWanted);
 
     m_pose.rotGoalDeg.x += lockRes.yawAddDeg;
@@ -594,6 +596,7 @@ void COrbitCam::AutoYaw_OnTarget()
 
 _float COrbitCam::EvalAutoYaw(_float dt, const Vector3& foot, const Vector3& camLookWorld, const Vector3& camRightWorld, _float curYawDeg)
 {
+    if (m_parryMode) return 0.f;
     if (!m_prof.autoYaw) return 0.f;
 
     if (m_autoYaw.holdTimer > 0.f)
