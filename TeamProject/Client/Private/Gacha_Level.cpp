@@ -64,8 +64,6 @@ HRESULT CGacha_Level::Awake()
 	//==================== UI ===============
 	UIDirector()->Load_LevelObjects("Gacha_Level");
 
-	UIDirector()->Play_GachaVideo(GachaGrade::S);	// 현재 등급에서 제일 높은 등급 넣기
-
 	return S_OK;
 }
 
@@ -112,9 +110,12 @@ void CGacha_Level::Ready_GachaUI()
 
 	CUI_GachaDisplay::DISPLAY_INIT_DESC* pDesc = new CUI_GachaDisplay::DISPLAY_INIT_DESC;
 	pDesc->onClickSkip = []() { };
+	pDesc->onVideoFinished = []() {};
+	pDesc->eGrade = GachaGrade::S;		// 뽑은 아이템에서 가장 높은 등급 넣기
+
 	auto pGachaDisplay = Builder::Create_UIObject({ "Gacha_Level", "Proto_GameObject_GachaDisplay"})
 		.Add_UIDesc(pDesc)
-		.Build("gachaDisplay");
+		.Build("gacha_display");
 
 	if (!pGachaDisplay)
 		return;

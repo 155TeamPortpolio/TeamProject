@@ -53,7 +53,6 @@ public:
 	void Hide_GachaPage(); 
 
 	//==================== Gacha ===============
-	void Play_GachaVideo(GachaGrade eGrade);
 	/* 가챠 결과 연출 중, 현재 가챠의 이름을 화면에 표시 */
 	void Show_GachaLabel(const _wstring& strLabel);
 	/* 가챠 이름 표시를 숨김 */
@@ -62,6 +61,7 @@ public:
 	void Show_GachaSkipButton();
 	/* 가챠 결과 연출 건너뛰기 버튼을 숨김 */
 	void Hide_GachaSkipButton();
+	/* 가챠 결과를 화면에 표시 */
 	void Show_GachaResult(const vector<GACHA_RESULT_DESC>* pResultDesc);
 
 	/* 결과 배너를 띄움 */

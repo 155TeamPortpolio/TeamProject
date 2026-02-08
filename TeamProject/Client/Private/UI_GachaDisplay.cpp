@@ -19,6 +19,7 @@ HRESULT CUI_GachaDisplay::Initialize_Prototype()
 HRESULT CUI_GachaDisplay::Initialize(INIT_DESC* pArg)
 {
     DISPLAY_INIT_DESC* pDesc = static_cast<DISPLAY_INIT_DESC*>(pArg);
+    m_eGrade = pDesc->eGrade;
 
 	__super::Initialize(pArg);
 
@@ -33,6 +34,8 @@ HRESULT CUI_GachaDisplay::Initialize(INIT_DESC* pArg)
 
 void CUI_GachaDisplay::Awake()
 {
+    if (m_pVideo)
+        m_pVideo->Play_Video(m_eGrade);
 }
 
 void CUI_GachaDisplay::Update(_float dt)
@@ -50,10 +53,6 @@ void CUI_GachaDisplay::UI_Active(void* pArg)
     DISPLAY_STATE_DESC* pDesc = static_cast<DISPLAY_STATE_DESC*>(pArg);
     switch (pDesc->eType)
     {
-    case TYPE::VIDEO:
-        if (m_pVideo)
-            m_pVideo->Play_Video(pDesc->eGrade);
-        break;
     case TYPE::LABEL:
         if (m_isLabelVisible)
             return;

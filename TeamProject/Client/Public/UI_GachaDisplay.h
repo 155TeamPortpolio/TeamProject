@@ -11,15 +11,15 @@ class CUI_GachaDisplay final : public CUI_Object
 {
 public:
 	typedef struct tagDisplayInitDesc : public UI_DESC {
+		GachaGrade eGrade = {};
 		function<void()> onClickSkip = {};
 		function<void()> onVideoFinished = {};
 	}DISPLAY_INIT_DESC;
 
 public:
-	enum class TYPE { VIDEO, LABEL, SKIP, END };
+	enum class TYPE { LABEL, SKIP, END };
 	typedef struct tagDisplayStateDesc {
 		TYPE	eType;
-		GachaGrade eGrade;
 		wstring strLabel = {};
 	}DISPLAY_STATE_DESC;
 
@@ -51,6 +51,8 @@ private:
 	CUI_Object* m_pSkipButton = {};
 
 	_bool	m_isLabelVisible = {};
+
+	GachaGrade m_eGrade = {};
 
 private:
 	void Cache();

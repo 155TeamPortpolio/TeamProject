@@ -105,15 +105,6 @@ void CUIDirector::Hide_GachaPage()
 	UI_DeActive("gacha_page");
 }
 
-void CUIDirector::Play_GachaVideo(GachaGrade eGrade)
-{
-	CUI_GachaDisplay::DISPLAY_STATE_DESC desc = {};
-	desc.eType = CUI_GachaDisplay::TYPE::VIDEO;
-	desc.eGrade = eGrade;
-
-	UI_Active("gacha_display", &desc);
-}
-
 void CUIDirector::Show_GachaLabel(const _wstring& strLabel)
 {
 	CUI_GachaDisplay::DISPLAY_STATE_DESC desc = {};
