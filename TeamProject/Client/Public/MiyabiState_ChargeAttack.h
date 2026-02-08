@@ -52,6 +52,10 @@ public:
 public:
     static CMiyabiState_Charge_Start_03* Create() { return new CMiyabiState_Charge_Start_03(); }
     virtual void Free() override { __super::Free(); }
+
+private:
+    void Update_Effects(CMiyabi* pOwner);
+
 };
 
 class CMiyabiState_Charge_End : public IBaseState<CMiyabi>
@@ -93,6 +97,22 @@ private:
 public:
     static CMiyabiState_Charge_Attack03* Create() { return new CMiyabiState_Charge_Attack03(); }
     virtual void Free() override { __super::Free(); }
+
+private:
+    void Update_Effects(CMiyabi* pOwner);
+
+    _uint m_iRepeatCount{};
+    _float m_fRepeatProgress{};
+    _float m_fRepeatInterval = 0.015f;
+    _float3 m_vMinRange{ -1.f,-2.f,0.f };
+    _float3 m_vMaxRange{ 1.f,-1.f,5.f };
+
+    _bool m_OnEndAttack = false;
+    _uint m_iStingRepeatCount{};
+    _float m_fStingRepeatProgress{};
+    _float m_fStingRepeatInterval = 0.07f;
+    _float3 m_vStingMinRange{ -5.f,0.f,0.f };
+    _float3 m_vStingMaxRange{ -4.f, 3.f, 2.f };
 };
 
 NS_END

@@ -201,7 +201,11 @@ void CMiyabiState_UltimateAttack_Loop::Update_Effects(CMiyabi* pOwner)
         pOwner->Play_Effect("Miyabi_Ultimate_Flare", _vector3(), _quaternion(0.f, 0.f, 0.f, 1.f), false);
 
     if (IsCrossAnimProgress(0.53f))
+    {
         pOwner->Play_Effect("Miyabi_Ultimate_Flare1", _vector3(), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+        pOwner->Play_Effect("Miyabi_Ultimate_Smoke0", _vector3(0.f, 0.1f, 13.6f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+        pOwner->Play_Effect("Miyabi_Ultimate_Smoke1", _vector3(0.f, 0.1f, 13.6f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+    }
 
     if (m_iRepeatCount < 30)
     {
@@ -234,7 +238,7 @@ void CMiyabiState_UltimateAttack_Loop::Update_Effects(CMiyabi* pOwner)
         {
             _float3 vRandPosition{}, vRandRotation{}, vCenter{};
             vCenter.x = 0.f;
-            vCenter.y = 1.f;
+            vCenter.y = 2.f;
             vCenter.z = 13.6f - (m_iRepeatCount * m_fDistanceInterval);
 
             vRandPosition.x = Helper::Get_Random_Float(m_vMinRange.x, m_vMaxRange.x);

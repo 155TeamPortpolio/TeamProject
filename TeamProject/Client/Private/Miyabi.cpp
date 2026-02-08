@@ -483,9 +483,18 @@ HRESULT CMiyabi::Initialize_Effects()
 		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
 			.Asset("miyabi_sword_fire.json")
 			.Build("Miyabi_Sword_Fire");
-		pEffect->Stop();
 		pObjectContainer->Add_Child(pEffect, false);
 		pEffect->AttachBone(pAnimator, "Bn_Weapon");
+	}
+
+	// Charge Flare
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_charge0_flare1.json")
+			.Build("Miyabi_Charge0_Flare1");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+		pEffect->AttachBone(pAnimator, "Bn_Weapon", _smatrix::Identity, true);
 	}
 
 	// Ultimate Flare
@@ -493,6 +502,7 @@ HRESULT CMiyabi::Initialize_Effects()
 		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
 			.Asset("miyabi_ultimate_flare.json")
 			.Build("Miyabi_Ultimate_Flare");
+		pEffect->Stop();
 		pObjectContainer->Add_Child(pEffect, false);
 		pEffect->AttachBone(pAnimator, "Bn_Weapon", _smatrix::Identity, true);
 	}
@@ -500,8 +510,23 @@ HRESULT CMiyabi::Initialize_Effects()
 		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
 			.Asset("miyabi_ultimate_flare1.json")
 			.Build("Miyabi_Ultimate_Flare1");
+		pEffect->Stop();
 		pObjectContainer->Add_Child(pEffect, false);
 		pEffect->AttachBone(pAnimator, "Bn_Weapon", _smatrix::Identity, true);
+	}
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_ultimate_smoke0.json")
+			.Build("Miyabi_Ultimate_Smoke0");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_ultimate_smoke1.json")
+			.Build("Miyabi_Ultimate_Smoke1");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
 	}
 
 	// Normal Slash0
@@ -709,6 +734,16 @@ HRESULT CMiyabi::Initialize_Effects()
 		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
 			.Asset("miyabi_ultimate1_sting.json")
 			.Build("Miyabi_Ultimate1_Sting2");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+
+	// Charge Slash
+	for (_uint i = 0; i < 15; ++i)
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_charge0_slash.json")
+			.Build("Miyabi_Charge0_Slash" + to_string(i));
 		pEffect->Stop();
 		pObjectContainer->Add_Child(pEffect, false);
 	}
