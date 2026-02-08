@@ -34,6 +34,7 @@ private: //GUI Func
     void GUI_SetModel(_float fChildHeight);
 
 private: //Model Logic
+    void Load_NewOnce();
     void Load_NewModelMat();
     void Load_NewMeta();
     void Load_ModelOnce();
