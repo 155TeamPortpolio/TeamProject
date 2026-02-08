@@ -20,6 +20,8 @@
 
 #include "Helper_Func.h"
 
+#include "UI_GachaTextReveal.h"
+
 CGachaStage::CGachaStage()
     :CGameObject()
 {
@@ -68,6 +70,8 @@ void CGachaStage::PlayRevealEffect()
 		break;
 	}
 	CUIDirector::GetInstance()->Show_GachaLabel((*m_pResultDesc)[m_iIndex].strLabel);
+	if (m_pUITextReveal)
+		m_pUITextReveal->Show((*m_pResultDesc)[m_iIndex]);
 }
 
 HRESULT CGachaStage::Initialize_Prototype(vector<GACHA_RESULT_DESC>* Desc)
@@ -93,7 +97,8 @@ HRESULT CGachaStage::Initialize(INIT_DESC* pArg)
 		return E_FAIL;
 
 	Add_StageScreen();
-	
+	Add_UIText();
+
 	return S_OK; 
 }
 
@@ -215,6 +220,19 @@ void CGachaStage::Add_StageScreen()
 	m_pAvatarResult = dynamic_cast<CGachaResult*>(gachaAvatar);
 
 	pObjectContainer->Add_Child(gachaAvatar, true);
+}
+
+void CGachaStage::Add_UIText()
+{
+	PrototypeManager()->Add_ProtoType("Gacha_Level", "Proto_GameObject_UIGachaTextReveal", CUI_GachaTextReveal::Create());
+	
+	CGameObject* uiGachaText = Builder::Create_Object({ "Gacha_Level", "Proto_GameObject_UIGachaTextReveal" })
+		.Rotate(_float3(0.f, XMConvertToRadians(180.f), 0.f))
+		.Position(_float3(0.f, 0.f, -1.f))
+		.Build("uiGachaText");
+	
+	Get_Component<CObjectContainer>()->Add_Child(uiGachaText);
+	m_pUITextReveal = dynamic_cast<CUI_GachaTextReveal*>(uiGachaText);
 }
 
 void CGachaStage::Set_Stage(GACHA_STAGE eStage, _int ResultID)

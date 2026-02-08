@@ -80,6 +80,17 @@ void CCamDirector::AutoField(CamStartDir dir)
 {
     AutoTarget();
 
+    if (m_gate.Pass())
+    {
+        static bool shadowDisabled = false;
+
+        if (!shadowDisabled)
+        {
+            RenderSystem()->SetOn(false);
+            shadowDisabled = true;
+        }
+    }
+
     switch (dir)
     {
     case CamStartDir::Front:
@@ -251,15 +262,19 @@ void CCamDirector::SyncSeqInputLock()
         m_seqInputLocked = false;
     }
 }
-
+ 
 void CCamDirector::StartDialog()
 {
-    //m_dialogue.Begin(35.f, 0.5f);
+    GetOrbitCam()->Lock_Input();
+
+    m_dialogue.Begin(60.f, 0.5f);
 }
 
 void CCamDirector::EndDialog()
 {
-    //m_dialogue.End(0.5f);
+    GetOrbitCam()->Unlock_Input();
+
+    m_dialogue.End(0.5f);
 }
 
 void CCamDirector::UpdatePlayer()

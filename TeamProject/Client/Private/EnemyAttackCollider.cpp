@@ -134,6 +134,7 @@ void CEnemyAttackCollider::OnTriggerStay(CGameObject* pOther)
 
 void CEnemyAttackCollider::OnTriggerExit(CGameObject* pOther)
 {
+
 }
 
 void CEnemyAttackCollider::Begin_Attack(const HitDesc& hitdesc)

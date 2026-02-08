@@ -113,10 +113,10 @@ HRESULT CTestObject::Initialize_State()
 	
 	// 테스트 오디오 추가 (이벤트 감지용) add는 init에서
 	CGameInstance::GetInstance()->Get_ResourceMgr()->Add_ResourcePath("Jump.mp3", "../../DemoResource/Sound/Jump.mp3");
-	Get_Component<CAudioSource>()->Add_Slot("Test_Level", "Jump.mp3", "Jump", false, SOUND_GROUP::SFX);
-	Get_Component<CAudioSource>()->Set_SlotVolume("Jump", 0.04f);
-	Get_Component<CAudioSource>()->Set_3DAttribute("Jump", false);
-
+	//Get_Component<CAudioSource>()->Add_Slot("Test_Level", "Jump.mp3", "Jump", false, SOUND_GROUP::SFX);
+	//Get_Component<CAudioSource>()->Set_SlotVolume("Jump", 0.04f);
+	//Get_Component<CAudioSource>()->Set_3DAttribute("Jump", false);
+	//
 	return S_OK;
 }
 

@@ -67,6 +67,16 @@ void CMiyabiState_Rush_Start::Update(CMiyabi* pOwner, _float dt)
     pOwner->Process_RootMotion(dt,
         ENUM(CMiyabi::ROOTMOTION_MASK::MOVE) |
         ENUM(CMiyabi::ROOTMOTION_MASK::QUATERNION));
+
+    Update_Effects(pOwner);
+}
+
+void CMiyabiState_Rush_Start::Update_Effects(CMiyabi* pOwner)
+{
+    if (IsCrossAnimProgress(0.09f))
+        pOwner->Play_Effect("Miyabi_Normal0_Slash0", _vector3(0.f, 0.6f, 0.f), _quaternion(0.22f, 0.59f, -0.42f, 0.65f));
+    if (IsCrossAnimProgress(0.12f))
+        pOwner->Play_Effect("Miyabi_Rush0_Sting0", _vector3(6.9f, 4.8f, 1.9f), _quaternion(0.f, 0.f, 0.97f, -0.25f), false);
 }
 
 void CMiyabiState_Rush_End::Enter(CMiyabi* pOwner)

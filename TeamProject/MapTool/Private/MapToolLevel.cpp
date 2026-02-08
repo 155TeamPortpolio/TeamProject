@@ -20,6 +20,7 @@
 #include "BattleMonsterPoint.h"
 #include "BattleEndPoint.h"
 #include "LightPoint.h"
+#include "MovePoint.h"
 
 
 /* MapTool Gui */
@@ -47,6 +48,7 @@ HRESULT CMapToolLevel::Initialize()
 	pProto->Add_ProtoType("MapTool_Level", "Proto_GameObject_BattleMonsterPoint", CBattleMonsterPoint::Create());
 	pProto->Add_ProtoType("MapTool_Level", "Proto_GameObject_BattleEndPoint", CBattleEndPoint::Create());
 	pProto->Add_ProtoType("MapTool_Level", "Proto_GameObject_LightPoint", CLightPoint::Create());
+	pProto->Add_ProtoType("MapTool_Level", "Proto_GameObject_MovePoint", CMovePoint::Create());
 	return S_OK;
 }
 

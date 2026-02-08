@@ -57,7 +57,7 @@ void CMiyabiState_ExAttack::Enter(CMiyabi* pOwner)
 {
     m_pSubStateMachine->Set_Bool("Extra", false);
 
-    // °­È­ »óÅÂ ÆÇÁ¤
+    // ï¿½ï¿½È­ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     auto EnergyDesc = pOwner->Get_EnergyDesc();
     _bool bEnhanced = EnergyDesc.fCurrentEnergy >= EnergyDesc.fSpecialEnergy;
     m_pSubStateMachine->Set_Bool("Enhanced", bEnhanced);
@@ -151,6 +151,17 @@ void CMiyabiState_ExAttack_01::Update(CMiyabi* pOwner, _float dt)
             pOwner->End_AttackCollider("KatanaWeapon");
         }
     }
+
+    Update_Effects(pOwner);
+}
+
+void CMiyabiState_ExAttack_01::Update_Effects(CMiyabi* pOwner)
+{
+    if (IsCrossAnimProgress(0.17f))
+    {
+        pOwner->Play_Effect("Miyabi_Ex0_Slash0", _vector3(0.f, 0.7f, 0.f), _quaternion(-0.21f, 0.71f, 0.64f, 0.2f));
+        pOwner->Play_Effect("Miyabi_Ex0_Sting0", _vector3(-6.6f, 0.8f, 2.5f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+    }
 }
 
 void CMiyabiState_ExAttack_02::Enter(CMiyabi* pOwner)
@@ -179,7 +190,7 @@ void CMiyabiState_ExAttack_02::Update(CMiyabi* pOwner, _float dt)
     desc.iModeMask = ENUM(CMiyabi::ROOTMOTION_MASK::MOVE)
         | ENUM(CMiyabi::ROOTMOTION_MASK::QUATERNION);
     pOwner->Process_RootMotion(dt, desc);
-    // 0.2 ~ 0.9 8Å¸ 0.1°£°Ý
+    // 0.2 ~ 0.9 8Å¸ 0.1ï¿½ï¿½ï¿½ï¿½
     if(IsCrossAnimProgress(m_fProgress + m_iCount * m_fInterval))
     {
         BattleSystem()->TakeAreaDamage(m_vPos + m_vLook * 8.f, 6.f, -m_vLook, 15.f, HitDesc()
@@ -241,7 +252,7 @@ void CMiyabiState_ExAttack_03::Enter(CMiyabi* pOwner)
 
     m_iMask = pOwner->Get_CCT()->Get_CollisionMask();
     pOwner->Get_CCT()->Set_CollisionMask(m_iMask - ENUM(COLLISION_GROUP::MONSTER));
-    pOwner->Look_Target();  // ¹æÇâ ¼öµ¿ °íÁ¤
+    pOwner->Look_Target();  // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     pOwner->Set_LookTarget(false);
     m_pOwnerStateMachine->Set_Bool("Penetrate", true);
 
@@ -273,9 +284,9 @@ void CMiyabiState_ExAttack_03::Update(CMiyabi* pOwner, _float dt)
             pOwner->End_AttackCollider("KatanaWeapon");
         }
     }
-    // 0.3~0.8 12Å¸ 0.05°£°Ý
+    // 0.3~0.8 12Å¸ 0.05ï¿½ï¿½ï¿½ï¿½
     if (IsCrossAnimProgress(m_fProgress + m_iCount * m_fInterval))
-    {   // ¹üÀ§ ¼öÁ¤ ÇÊ¿ä
+    {   // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¿ï¿½
         BattleSystem()->TakeAreaDamage(m_vPos + m_vLook * 2.f, 6.f, HitDesc()
             .Name(pOwner->Get_CharacterName())
             .Type(HIT_TYPE::ONCE)

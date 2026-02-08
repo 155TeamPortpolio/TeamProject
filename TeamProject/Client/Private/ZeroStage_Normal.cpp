@@ -4,6 +4,7 @@
 #include "BattleSystem.h"
 #include "Zero_Level.h"
 #include "StageRouter.h"
+#include "CamDirector.h"
 
 CZeroStage_Normal::CZeroStage_Normal()
 {

@@ -3,6 +3,7 @@ Proto_GameObject_ThugBulkyEnforcer,ThugBulky,1.28,0.55,200,1200
 Proto_GameObject_Sacrifice,Sacrifice,1.6,0.8,1000,300
 Proto_GameObject_ThugAssaulter,ThugAssaulter,1.28,0.55,200,1100
 Proto_GameObject_ThugPoacher,ThugPoacher,1.28,0.55,200,1101
-Proto_GameObject_Claymore,Claymore,1.28,0.55,200,2100
+Proto_GameObject_Claymore,ClayMore,1.28,0.55,200,2100
 Proto_GameObject_Cyclops,Cyclops,1.28,0.55,200,2101
 Proto_GameObject_Defiler,Defiler,1.28,0.55,1000,400
+Proto_GameObject_StrikeJaeger,StrikeJaeger,1.28,0.55,200,3100

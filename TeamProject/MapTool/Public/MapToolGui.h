@@ -28,18 +28,25 @@ public:
 	virtual void	Update_Panel(_float dt) override;
 	virtual void	Render_GUI() override;
 
-
 public:
 	void			RakeResources();
 	void			CheckCoolTime(_float dt);
 	void			KeyInput();
 	void			Compute_Ray();
-	void			Place_Object(PHYSICS_RAY_HIT* pRayHit);
-	void			Place_BattleData(PHYSICS_RAY_HIT* pRayHit);
 	// 기존 레이피킹 방식. 사용X
 	void			Set_ObjectPicking(_bool is);
 	void			PreSet_ModelResource();
 
+	//Place Object
+	void			Place_Placed(PHYSICS_RAY_HIT* pRayHit);
+	void			Place_Trigger(PHYSICS_RAY_HIT* pRayHit);
+	void			Place_Object(PHYSICS_RAY_HIT* pRayHit);
+	void			Place_Entity(PHYSICS_RAY_HIT* pRayHit);
+	void			Place_Battle(PHYSICS_RAY_HIT* pRayHit);
+	void			Place_Light(PHYSICS_RAY_HIT* pRayHit);
+	void			Place_MovePoint(PHYSICS_RAY_HIT* pRayHit);
+
+	//Save
 	void			Save_MapData();
 	void			Save_EntityData();
 	void			Save_BattleData();
@@ -47,11 +54,13 @@ public:
 
 	void			Load_BattleData(const string& filepath = "");
 
+	//GUI Pannnels
 	void			Select_PlaceType(const string& tagLabel, _bool isShowDetail = true);
 	void			Select_TriggerType();
 	void			Select_BattleDataType();
 	void			Setting_SelectType();
 
+	//Show ModelOnly
 	void			Set_EntityModel();
 	void			Save_EntityInit();
 	void			Load_EntityInit();
@@ -93,6 +102,12 @@ private:
 	_int				 m_iEntityIndex = {};
 
 	_int				 m_iPickedEntityModelIndex{ -1 };
+
+	//NPC MovePoint
+	_bool				 m_bMovePointMode = { false };
+	
+
+	//Only ShowModel
 	vector<string>		 m_EntityModelPathPackName{};
 	class CEntityObject* m_pSelectedEntityObject;
 	unordered_map<string, string> m_iniModelName;
@@ -108,8 +123,10 @@ private:
 	/* For.Data */
 	MapData_Header		m_MapData = {};
 	Entity_Header		m_EntityData = {};
+	vector<list<_vector3>>	m_vNPCMovePoint{};
 	BATTLE_FIELD_DATA	m_BattleData = {};
 	Light_Header		m_LightData = {};
+
 	///_uint			m_iBattleTableIndex = {};
 	_float2			m_vShowDataSaveFinish = {};
 	_bool			m_isShowDataSaveFinish = { false };

@@ -200,6 +200,16 @@ void CMesh::Render_GUI()
 	ImGui::Text(m_VIKey.c_str());
 }
 
+void CMesh::Optimize_Vertex()
+{
+	vector<_uint> dummyIndex;
+	vector<VTXMESH> dummyStatic;
+	vector<VTXSKINMESH> dummySkinned;
+	m_Skined.swap(dummySkinned);
+	m_StaticVertex.swap(dummyStatic);
+	m_indices.swap(dummyIndex);
+}
+
 HRESULT CMesh::BakeSkinRemapAndRebuildVB(ID3D11Device* pDevice, _uint skeletonBoneCount)
 {
 	if (!pDevice) return E_FAIL;

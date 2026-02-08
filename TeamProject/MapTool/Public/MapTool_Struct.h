@@ -13,6 +13,7 @@ namespace MapTool {
 		string			TagMaterialPath = {};
 	}ModelPathPack;
 
+#pragma region ObjectData
 	typedef struct tagMapObjectData {
 		_int		iObjID = { -1 };
 		string TagModelResourceKey = {};
@@ -37,8 +38,9 @@ namespace MapTool {
 		vector<MapData_Layer> Layers;
 	}MapData_Header;
 	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(MapData_Header, TagDataFormat, TagArea, iVersion, Layers);
+#pragma endregion
 
-	/* Entity Data */
+#pragma region EntityData
 	typedef struct tagEntity
 	{
 		_int		iEntityID = { -1 };
@@ -58,8 +60,25 @@ namespace MapTool {
 		vector<ENTITY> Entities;
 	}Entity_Header;
 	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Entity_Header, TagDataFormat, TagArea, iVersion, Entities);
+#pragma endregion
 
+#pragma region MovePoint
+	typedef struct tagMovePoint
+	{
+		_int	iIndex{ -1 };
+		array<_float, 3> vTranslation = { 0.f, 0.f, 0.f };
+	}MOVEPOINT;
 
+	typedef struct tagMovePointHeader {
+		string		TagDataFormat = {};
+		string		TagArea = {};
+		_int		iVersion = 1;
+		vector<MOVEPOINT> Points;
+	}MovePoint_Header;
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(MovePoint_Header, TagDataFormat, TagArea, iVersion, Points);
+#pragma endregion
+
+#pragma region LightData
 	/* Light Data */
 	NLOHMANN_JSON_SERIALIZE_ENUM(LIGHT_TYPE,
 		{
@@ -106,8 +125,9 @@ namespace MapTool {
 		vector<MAP_LIGHT> Lights;
 	}Light_Header;
 	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Light_Header, TagDataFormat, TagArea, iVersion, Lights);
+#pragma endregion
 
-	/* BattleData */
+#pragma region BattleData
 	typedef struct tagBattlePointData 
 	{
 		string		tagType = {};			// Player, Spawner, Monster Point
@@ -136,6 +156,8 @@ namespace MapTool {
 		vector<BATTLE_POINT_DATA>			EndPoints;
 	}BATTLE_FIELD_DATA;
 	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(BATTLE_FIELD_DATA, TagDataFormat, TagArea, PlayerSpawnPoint, Spawners, Monsters, EndPoints);
+#pragma endregion
+
 
 	//====================================
 	struct LOADED_OBJECT {

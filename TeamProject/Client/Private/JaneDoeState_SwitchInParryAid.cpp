@@ -54,8 +54,6 @@ void CJaneDoeState_SwitchInParryAid::Enter(CJaneDoe* pOwner)
 
 void CJaneDoeState_SwitchInParryAid::Update(CJaneDoe* pOwner, _float dt)
 {
-    __super::Update(pOwner, dt);
-
     if (m_pSubStateMachine->Get_Trigger("Complete"))
     {
         m_pSubStateMachine->Reset_Trigger("Complete");
@@ -66,6 +64,8 @@ void CJaneDoeState_SwitchInParryAid::Update(CJaneDoe* pOwner, _float dt)
             pSwitchIn->Get_SubStateMachine()->Set_Trigger("Complete");
         }
     }
+
+    __super::Update(pOwner, dt);
 }
 
 void CJaneDoeState_SwitchInParryAid::Exit(CJaneDoe* pOwner)

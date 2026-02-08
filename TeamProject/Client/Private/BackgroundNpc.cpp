@@ -32,8 +32,8 @@ HRESULT CBackgroundNpc::Initialize(INIT_DESC* pArg)
 {
 	__super::Initialize(pArg);
 	//Build_Pedestrian(3);
-	Build_Crowd(3,true);
-	Build_Crowd(2);
+	//Build_Crowd(13,true);
+	Build_Crowd(10);
 	return S_OK;
 }
 

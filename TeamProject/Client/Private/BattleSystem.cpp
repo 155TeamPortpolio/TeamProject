@@ -44,6 +44,10 @@ void CBattleSystem::Update()
 
 	if(InputDevice()->Key_Tap(VK_SHIFT))
 	{
+		StartGimmick(BATTLE_VFX_TYPE::EVADE);
+	}
+	if(InputDevice()->Key_Tap(VK_CONTROL))
+	{
 		StartGimmick(BATTLE_VFX_TYPE::PARRY);
 	}
 }

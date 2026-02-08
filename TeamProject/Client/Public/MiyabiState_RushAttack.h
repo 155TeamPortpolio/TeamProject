@@ -29,6 +29,10 @@ public:
 public:
     static CMiyabiState_Rush_Start* Create() { return new CMiyabiState_Rush_Start(); }
     virtual void Free() override { __super::Free(); }
+
+private:
+    void Update_Effects(CMiyabi* pOwner);
+
 };
 
 class CMiyabiState_Rush_End final : public IBaseState<CMiyabi>
