@@ -26,6 +26,10 @@ private:
 	void Update_CamTime();
 
 private:
+	void Play_CameraSequence();
+	GachaGrade Get_HigestGrade();
+
+private:
 	CGameInstance* m_pGameInstance = { nullptr };
 	class CCamDirector* m_pCamDirector = { nullptr };
 
