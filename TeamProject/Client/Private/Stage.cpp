@@ -176,7 +176,7 @@ HRESULT CStage::ReadyPortalPoint(const vector<BATTLE_POINT_DATA>& point)
 	{
 		auto trans = point[i].vTranslation;
 		auto portal = Builder::Create_Object({ "Zero_Level" ,"Proto_GameObject_ZeroPortal" })
-			.Position({ trans[0],  trans[1] + 1.5f,  trans[2] })
+			.Position({ trans[0],  trans[1],  trans[2] })
 			.Build("zeroPortal#" + to_string(i));
 		portal->Set_Alive(false);
 		m_pPortals.push_back(portal);

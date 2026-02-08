@@ -10,15 +10,6 @@
     <Filter Include="00. MainApp">
       <UniqueIdentifier>{655d3ee5-432c-4c9d-9891-95b9d2687484}</UniqueIdentifier>
     </Filter>
-    <Filter Include="97. GUI_Inc">
-      <UniqueIdentifier>{46732b2e-e4d0-4929-aa86-f5b3aed6397d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="97. GUI_Inc\backend">
-      <UniqueIdentifier>{97d80c65-4526-4e59-a1bc-8da44d5e5e3d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="97. GUI_Inc\Guizmo">
-      <UniqueIdentifier>{9d85da13-28b5-4706-8886-a70ad1ee518b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. Level">
       <UniqueIdentifier>{b7664385-7831-46b8-a66b-51c17d874ed8}</UniqueIdentifier>
     </Filter>
@@ -1248,6 +1239,15 @@
     <Filter Include="02. GameObject\Effect\XWall">
       <UniqueIdentifier>{514b0ec9-44d6-4bdd-aaa0-422049575a75}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03. Utility\97. GUI_Inc">
+      <UniqueIdentifier>{46732b2e-e4d0-4929-aa86-f5b3aed6397d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\97. GUI_Inc\backend">
+      <UniqueIdentifier>{97d80c65-4526-4e59-a1bc-8da44d5e5e3d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\97. GUI_Inc\Guizmo">
+      <UniqueIdentifier>{9d85da13-28b5-4706-8886-a70ad1ee518b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1269,16 +1269,16 @@
       <Filter>00. MainApp</Filter>
     </ClInclude>
     <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\imgui.h">
-      <Filter>97. GUI_Inc</Filter>
+      <Filter>03. Utility\97. GUI_Inc</Filter>
     </ClInclude>
     <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\backends\imgui_impl_dx11.h">
-      <Filter>97. GUI_Inc\backend</Filter>
+      <Filter>03. Utility\97. GUI_Inc\backend</Filter>
     </ClInclude>
     <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\backends\imgui_impl_win32.h">
-      <Filter>97. GUI_Inc\backend</Filter>
+      <Filter>03. Utility\97. GUI_Inc\backend</Filter>
     </ClInclude>
     <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\ImGuizmo.h">
-      <Filter>97. GUI_Inc\Guizmo</Filter>
+      <Filter>03. Utility\97. GUI_Inc\Guizmo</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\TestObject.h">
       <Filter>02. GameObject\Test\TestObject</Filter>
@@ -2439,25 +2439,25 @@
       <Filter>00. MainApp</Filter>
     </ClCompile>
     <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\imgui.cpp">
-      <Filter>97. GUI_Inc</Filter>
+      <Filter>03. Utility\97. GUI_Inc</Filter>
     </ClCompile>
     <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\imgui_draw.cpp">
-      <Filter>97. GUI_Inc</Filter>
+      <Filter>03. Utility\97. GUI_Inc</Filter>
     </ClCompile>
     <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\imgui_tables.cpp">
-      <Filter>97. GUI_Inc</Filter>
+      <Filter>03. Utility\97. GUI_Inc</Filter>
     </ClCompile>
     <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\imgui_widgets.cpp">
-      <Filter>97. GUI_Inc</Filter>
+      <Filter>03. Utility\97. GUI_Inc</Filter>
     </ClCompile>
     <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\backends\imgui_impl_dx11.cpp">
-      <Filter>97. GUI_Inc\backend</Filter>
+      <Filter>03. Utility\97. GUI_Inc\backend</Filter>
     </ClCompile>
     <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\backends\imgui_impl_win32.cpp">
-      <Filter>97. GUI_Inc\backend</Filter>
+      <Filter>03. Utility\97. GUI_Inc\backend</Filter>
     </ClCompile>
     <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\ImGuizmo.cpp">
-      <Filter>97. GUI_Inc\Guizmo</Filter>
+      <Filter>03. Utility\97. GUI_Inc\Guizmo</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\TestLevel.cpp">
       <Filter>01. Level</Filter>
