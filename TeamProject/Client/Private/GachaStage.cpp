@@ -32,6 +32,12 @@ CGachaStage::CGachaStage(const CGachaStage& rhs)
 {
 }
 
+void CGachaStage::ShowResults()
+{
+	m_iIndex = m_iMaxIndex - 1;
+	UIDirector()->Show_GachaResult(m_pResultDesc);
+}
+
 void CGachaStage::PlayStageSpin(_int index)
 {
 	if (m_iSpinIndex == index) return;

@@ -153,7 +153,10 @@ void CUI_GachaPage::OnClick_Conversion()
     RuntimeBucket().Int64.TryGet(PersistScope::SaveSlot, "Denny", iDenny);
 
     if (iDenny < 10000)
+    {
+        MSG_BOX("µ· ºÎÁ·ÇÔ!");
         return;
+    } 
 
     iDenny -= 10000;
     RuntimeBucket().Int64.Set(PersistScope::SaveSlot, "Denny", iDenny);

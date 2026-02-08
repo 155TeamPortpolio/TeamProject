@@ -11,6 +11,7 @@
 #include "RayReceiver.h"
 
 #include "GameInstance.h"
+#include "MapToolGui.h"
 
 
 CMovePoint::CMovePoint()
@@ -27,7 +28,6 @@ HRESULT CMovePoint::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
 
-	Add_Component<CCollider>();
 	Add_Component<CStaticModel>();
 	Add_Component<CMaterial>();
 
@@ -36,15 +36,12 @@ HRESULT CMovePoint::Initialize_Prototype()
 	auto pMaterial = Get_Component<CMaterial>();
 	pMaterial->Link_Material(G_GlobalLevelKey, "Default.mat");
 
-	m_pTransform->Scale({ 0.2, 0.2, 0.2 });
-
 	return S_OK;
 }
 
 HRESULT CMovePoint::Initialize(INIT_DESC* pArg)
 {
 	__super::Initialize(pArg);
-
 	return S_OK;
 }
 
@@ -59,10 +56,12 @@ void CMovePoint::Priority_Update(_float dt)
 
 void CMovePoint::Update(_float dt)
 {
+	m_InstanceName = "MovePoint_" + to_string(m_iPathIndex) + "_" + to_string(m_iOrderIndex);
 }
 
 void CMovePoint::Late_Update(_float dt)
 {
+	m_pGUi->Update_MovePoint(m_iPathIndex, m_iOrderIndex, Get_WorldPos());
 }
 
 void CMovePoint::Export_ObjectData(void* pDesc)

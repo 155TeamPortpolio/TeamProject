@@ -10,7 +10,7 @@
 void CUI_GachaTextReveal::Show(const GACHA_RESULT_DESC& desc)
 {
 	if (auto& pGroup = m_pGroups[ENUM(desc.Type)])
-		pGroup->Show(desc.Grade);
+		pGroup->Show(desc.Grade, desc.strCamSequenceKey);
 }
 
 void CUI_GachaTextReveal::Hide()

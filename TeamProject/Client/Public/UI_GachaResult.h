@@ -41,8 +41,12 @@ private:
 	static const _int HEIGHT = 148.f;
 	static const _int SPACING = 4.f;
 
+	_bool m_isAlltemsAppeared = {};
+	CUI_Object* m_pConfirmButton = {};
+
 private:
 	void Cache(); 
+	void Create_ConfirmButton();
 
 	void Update_ItemAppear(_float dt);
 
