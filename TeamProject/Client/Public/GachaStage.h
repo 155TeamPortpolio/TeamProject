@@ -22,6 +22,7 @@ private:
     virtual ~CGachaStage() DEFAULT;
 
 public:
+    void    ShowResults();
     void    PlayStageSpin(_int index);
     void    PlayRevealEffect();
 
