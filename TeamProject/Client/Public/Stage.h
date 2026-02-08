@@ -17,10 +17,10 @@ protected:
 			MonsterCreationDesc creationInfo;
 			_int Count = {};
 		};
-		vector<creation> CreationData;
-		vector<_float3>	 SpawnPoint;
+		map<_int, vector<creation>> CreationData;
+		vector<_float3>				SpawnPoint;
 		void Reset() {
-			vector<creation> dummy;
+			map<_int, vector<creation>>dummy;
 			vector<_float3> dummy2;
 			CreationData.swap(dummy);
 			SpawnPoint.swap(dummy2);

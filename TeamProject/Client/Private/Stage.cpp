@@ -198,6 +198,7 @@ HRESULT CStage::ReadyMonsterPoint(const vector<BATTLE_POINT_DATA>& point)
 
 	return S_OK;
 }
+
 HRESULT CStage::ReadyMonsterData(const string& LevelTag, const string& AreaTag)
 {
 	auto* monsterSpawnMap = CDataBase::GetInstance()->GetMonsterSpawnData(AreaTag, ENUM(m_eType));
@@ -208,16 +209,17 @@ HRESULT CStage::ReadyMonsterData(const string& LevelTag, const string& AreaTag)
 	if (iterator == monsterSpawnMap->end())
 		return E_FAIL;
 
-	const auto& monsterSpawnData = iterator->second;
-
-	for (size_t index = 0; index < monsterSpawnData.size(); ++index)
+	for (auto& [Encounter, SpawnData] : *monsterSpawnMap)
 	{
-		auto creation = CDataBase::GetInstance()->GetMonsterDesc(
-			monsterSpawnData[index].Colony,
-			monsterSpawnData[index].MonsterID);
+		for (auto& Desc : SpawnData)
+		{
+			auto Creation = CDataBase::GetInstance()->GetMonsterDesc(
+				Desc.Colony,
+				Desc.MonsterID);
 
-		_int count = monsterSpawnData[index].Count;
-		m_MonsterData.CreationData.push_back({ creation, count });
+			m_MonsterData.CreationData[Encounter]
+				.push_back({ Creation, Desc.Count });
+		}
 	}
 
 	return S_OK;
@@ -225,38 +227,41 @@ HRESULT CStage::ReadyMonsterData(const string& LevelTag, const string& AreaTag)
 
 void CStage::Reserve_Enemy(const string& LevelTag)
 {
-	auto& data = m_MonsterData.CreationData;
-	_int spawn = {};
-	for (size_t i = 0; i < data.size(); i++)
-	{
-		if (i >= data.size())
-			continue;
-		for (size_t j = 0; j < data[i].Count; j++)
-		{
-			CCT_DESC MonsterCCT;
-			MonsterCCT.eGroup = COLLISION_GROUP::MONSTER;
-			MonsterCCT.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER) | ENUM(COLLISION_GROUP::COMMON) | ENUM(COLLISION_GROUP::PLAYER_ATTACK);
-			MonsterCCT.bAutoFit = false;
-			MonsterCCT.fHeight = data[i].creationInfo.CCT_fHeight;
-			MonsterCCT.fRadius = data[i].creationInfo.CCT_fRadius;
-			MonsterCCT.vPos = m_MonsterData.SpawnPoint[spawn];
-			MonsterCCT.vPos.y += MonsterCCT.fHeight;
-			CEnemy::ENEMY_DESC* enemyDesc = new CEnemy::ENEMY_DESC();
-			enemyDesc->iMaxHP = data[i].creationInfo.iMaxHP;
-			auto pMonster = Builder::Create_Object({ "Zero_Level",data[i].creationInfo.ProtoTag })
-				.Add_ObjDesc(enemyDesc)
-				.CharacterController(MonsterCCT)
-				.Build(data[i].creationInfo.DisplayName);
+	auto& CreationData = m_MonsterData.CreationData;
+	_int spawn{};
 
-			if (pMonster) {
-				m_pMonsters.push_back(pMonster);
-				pMonster->Set_Alive(false);
-				CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(pMonster, { "Zero_Level", "Enemy_Layer" });
-				spawn += 1;
+	for (auto& [Encounter, SpawnData] : CreationData) {
+		
+		for (size_t i = 0; i < SpawnData.size(); i++)
+		{
+			for (size_t j = 0; j < SpawnData[i].Count; j++)
+			{
+				CCT_DESC MonsterCCT;
+				MonsterCCT.eGroup = COLLISION_GROUP::MONSTER;
+				MonsterCCT.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER) | ENUM(COLLISION_GROUP::COMMON) | ENUM(COLLISION_GROUP::PLAYER_ATTACK);
+				MonsterCCT.bAutoFit = false;
+				MonsterCCT.fHeight = SpawnData[i].creationInfo.CCT_fHeight;
+				MonsterCCT.fRadius = SpawnData[i].creationInfo.CCT_fRadius;
+				MonsterCCT.vPos = m_MonsterData.SpawnPoint[spawn];
+				MonsterCCT.vPos.y += MonsterCCT.fHeight;
+				CEnemy::ENEMY_DESC* enemyDesc = new CEnemy::ENEMY_DESC();
+				enemyDesc->iMaxHP = SpawnData[i].creationInfo.iMaxHP;
+				auto pMonster = Builder::Create_Object({ "Zero_Level", SpawnData[i].creationInfo.ProtoTag })
+					.Add_ObjDesc(enemyDesc)
+					.CharacterController(MonsterCCT)
+					.Build(SpawnData[i].creationInfo.DisplayName);
+
+				if (pMonster) {
+					m_pMonsters.push_back(pMonster);
+					pMonster->Set_Alive(false);
+					CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(pMonster, { "Zero_Level", "Enemy_Layer" });
+					spawn++;
+				}
 			}
 		}
 	}
 }
+
 void CStage::BaseIntro(StageContext& context)
 {
 	if (!m_introFlowBuilt)
