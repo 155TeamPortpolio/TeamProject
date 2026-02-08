@@ -73,7 +73,6 @@ Quaternion CCamRotSlerpEvaluator::MakeRotFromLookRoll(_vector3 look, _float roll
 	basis._41 = 0.f;       basis._42 = 0.f;       basis._43 = 0.f;       basis._44 = 1.f;
 
 	Quaternion baseRot = Quaternion::CreateFromRotationMatrix(basis);
-
 	Quaternion rollRot = Quaternion::CreateFromAxisAngle(forward, rollRad);
 	Quaternion finalRot = rollRot * baseRot;
 	finalRot.Normalize();
