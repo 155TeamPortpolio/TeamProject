@@ -18,13 +18,15 @@ HRESULT CUI_GachaDisplay::Initialize_Prototype()
 
 HRESULT CUI_GachaDisplay::Initialize(INIT_DESC* pArg)
 {
+    DISPLAY_INIT_DESC* pDesc = static_cast<DISPLAY_INIT_DESC*>(pArg);
+
 	__super::Initialize(pArg);
 
     Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("gacha_display.json")));
     Cache();
 
     Create_Video();
-    Create_SkipButton();
+    Create_SkipButton(pDesc->onClickSkip);
 
 	return S_OK;
 }
@@ -45,7 +47,7 @@ void CUI_GachaDisplay::UI_Active(void* pArg)
     if (!pArg)
         return;
 
-    GACHA_DISPLAY_DESC* pDesc = static_cast<GACHA_DISPLAY_DESC*>(pArg);
+    DISPLAY_STATE_DESC* pDesc = static_cast<DISPLAY_STATE_DESC*>(pArg);
     switch (pDesc->eType)
     {
     case TYPE::VIDEO:
@@ -74,7 +76,7 @@ void CUI_GachaDisplay::UI_DeActive(void* pArg)
     if (!pArg)
         return;
 
-    GACHA_DISPLAY_DESC* pDesc = static_cast<GACHA_DISPLAY_DESC*>(pArg);
+    DISPLAY_STATE_DESC* pDesc = static_cast<DISPLAY_STATE_DESC*>(pArg);
     switch (pDesc->eType)
     {
     case TYPE::LABEL:
@@ -123,10 +125,10 @@ void CUI_GachaDisplay::Create_Video()
     m_pVideo = dynamic_cast<CUI_GachaVideo*>(pObj);
 }
 
-void CUI_GachaDisplay::Create_SkipButton()
+void CUI_GachaDisplay::Create_SkipButton(function<void()> onClickSkip)
 {
     CUI_IconButton::BUTTON_DESC* pDesc = new CUI_IconButton::BUTTON_DESC;
-    pDesc->onClick = [this]() { }; // 스킵 버튼 눌렀을 때 호출할 함수 채워야
+    pDesc->onClick = [&]() { onClickSkip; }; // 스킵 버튼 눌렀을 때 호출할 함수 채워야
     pDesc->strLabel = L"건너뛰기";
     pDesc->strTextureKey = "IconSkip.png";
     auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_IconButton" })

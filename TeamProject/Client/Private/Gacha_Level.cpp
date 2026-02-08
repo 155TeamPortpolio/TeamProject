@@ -9,6 +9,7 @@
 #include "MapLoader.h"
 /* UI */
 #include "UIDirector.h"
+#include "UI_GachaDisplay.h"
 /*GachaObject*/
 #include "GachaProps.h"
 /*Component*/
@@ -52,6 +53,7 @@ HRESULT CGacha_Level::Awake()
 	RenderSystem()->Set_FogDesc({ _float4(0.1f, 0.1f, 0.1f, 1.0f) ,0.f, 0.f, 0.02f, true });
 
 	Ready_GachaObjects();
+	Ready_GachaUI();
 
 	// Camera
 	CamDirector()->SetSpaceRef(m_GachaHandle);
@@ -102,6 +104,23 @@ void CGacha_Level::Ready_GachaObjects()
 
 	m_GachaHandle = gachaProps->Get_Handle();
 	m_pGachaProps = dynamic_cast<CGachaProps*>(gachaProps);
+}
+
+void CGacha_Level::Ready_GachaUI()
+{
+	PrototypeManager()->Add_ProtoType("Gacha_Level", "Proto_GameObject_GachaDisplay", CUI_GachaDisplay::Create());
+
+	CUI_GachaDisplay::DISPLAY_INIT_DESC* pDesc = new CUI_GachaDisplay::DISPLAY_INIT_DESC;
+	pDesc->onClickSkip = []() { };
+	auto pGachaDisplay = Builder::Create_UIObject({ "Gacha_Level", "Proto_GameObject_GachaDisplay"})
+		.Add_UIDesc(pDesc)
+		.Build("gachaDisplay");
+
+	if (!pGachaDisplay)
+		return;
+
+	UIManager()->Add_UIObject(pGachaDisplay, "Gacha_Level");
+	UIDirector()->Register(pGachaDisplay);
 }
 
 void CGacha_Level::Update_CamTime()

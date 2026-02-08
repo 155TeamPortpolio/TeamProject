@@ -3,6 +3,7 @@
 
 NS_BEGIN(Engine)
 class CGameInstance;
+class CUI_Object;
 NS_END
 
 NS_BEGIN(Client)
@@ -20,23 +21,30 @@ private:
 	virtual ~CUIDirector() = default;
 
 public:
+	HRESULT Register(class CUI_Object* pObj);
+
+public:
+	//==================== Common ===============
 	/* 화면 페이드인 실행 (검정 화면 -> 화면) */
 	void FadeIn_Screen(_float fDuration = 0.5f);
 	/* 화면 페이드아웃 실행 (화면 -> 검정 화면) */
 	void FadeOut_Screen(_float fDuration = 0.5f);
-
-	/* HUD를 화면에 표시 */
-	void Show_HUD(HUD hud, _bool isFade = true);
-	/* HUD를 화면에서 숨김 */
-	void Hide_HUD(HUD hud);
 
 	/* 씬 프레임을 화면에 표시 (화면 위, 아래에 프레임) */
 	void Show_SceneFrame();
 	/* 씬 프레임을 화면에서 숨김 (화면 위, 아래에 프레임) */
 	void Hide_SceneFrame();
 
+	//==================== HUD ===============
+	/* HUD를 화면에 표시 */
+	void Show_HUD(HUD hud, _bool isFade = true);
+	/* HUD를 화면에서 숨김 */
+	void Hide_HUD(HUD hud);
+
+	//==================== Battle ===============
 	void Request_DamageText(const DAMAGE_DESC& desc);
 
+	//==================== MainCity ===============
 	void Show_Lottery();
 	void Hide_Lottery();
 	void Show_Ramen();
@@ -44,7 +52,7 @@ public:
 	void Show_GachaPage();
 	void Hide_GachaPage(); 
 
-
+	//==================== Gacha ===============
 	void Play_GachaVideo(GachaGrade eGrade);
 	/* 가챠 결과 연출 중, 현재 가챠의 이름을 화면에 표시 */
 	void Show_GachaLabel(const _wstring& strLabel);
@@ -75,10 +83,13 @@ private:
 	void UI_Active(const string& strInstanceName, void* pArg = nullptr);
 	void UI_DeActive(const string& strInstanceName, void* pArg = nullptr);
 
+	UI_HANDLE* Find_Handle(const string& strInstanceName);
+
 private:
 	string								m_levelKey;
 	nlohmann::json						m_json = {};
 	unordered_map<string, UI_HANDLE>	m_handles = {};
+	unordered_map<string, UI_HANDLE>	m_externalhandles = {};
 
 public:
 	virtual void Free() override;

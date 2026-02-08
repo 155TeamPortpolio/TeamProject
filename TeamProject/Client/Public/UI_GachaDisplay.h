@@ -10,14 +10,18 @@ NS_BEGIN(Client)
 class CUI_GachaDisplay final : public CUI_Object
 {
 public:
+	typedef struct tagDisplayInitDesc : public UI_DESC {
+		function<void()> onClickSkip = {};
+		function<void()> onVideoFinished = {};
+	}DISPLAY_INIT_DESC;
+
+public:
 	enum class TYPE { VIDEO, LABEL, SKIP, END };
-	typedef struct tagGachaDisplayDesc {
+	typedef struct tagDisplayStateDesc {
 		TYPE	eType;
 		GachaGrade eGrade;
 		wstring strLabel = {};
-	}GACHA_DISPLAY_DESC;
-
-	//가챠 레벨에 ui는 레벨에서 생성하면서 콜백으로 넘겨주든가(skip, on Video Finished)
+	}DISPLAY_STATE_DESC;
 
 private:
 	enum class CHILD { BG, LABEL, END };
@@ -51,7 +55,7 @@ private:
 private:
 	void Cache();
 	void Create_Video();
-	void Create_SkipButton();
+	void Create_SkipButton(function<void()> onClickSkip);
 
 	void Set_ChildAnimation(CHILD child, _int iIndex);
 
