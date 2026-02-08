@@ -45,10 +45,10 @@ void CCorinState_SwitchInParryAid::Enter(CCorin* pOwner)
     {
         dynamic_cast<CEnemy*>(handle.Get())->Parried();
         BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::PARRY);
-        TARGET_LOCK_DESC desc;
-        desc.bLock = true;
-        desc.tHandle = handle;
-        EventSystem()->Broadcast<TARGET_LOCK_DESC>({ desc });
+        //TARGET_LOCK_DESC desc;
+        //desc.bLock = true;
+        //desc.tHandle = handle;
+        //EventSystem()->Broadcast<TARGET_LOCK_DESC>({ desc });
     }
 
     __super::Enter(pOwner);

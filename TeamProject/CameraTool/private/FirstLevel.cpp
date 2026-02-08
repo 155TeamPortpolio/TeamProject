@@ -34,13 +34,13 @@ HRESULT CFirstLevel::Awake()
 
 	auto corin     = Builder::Create_Object({G_GlobalLevelKey, "Proto_Corin"  }).Build("Corin");
 	auto janeDoe   = Builder::Create_Object({G_GlobalLevelKey, "Proto_JaneDoe"})
-		.Position(Vector3(0.f, 0.15f, -1.6f))
-		.Rotate(Vector3(0.f, XMConvertToRadians(180.f), 0.f))
+		//.Position(Vector3(0.f, 0.15f, -1.6f))
+		//.Rotate(Vector3(0.f, XMConvertToRadians(180.f), 0.f))
 		.Build("JaneDoe");
 
 	auto miyabi    = Builder::Create_Object({G_GlobalLevelKey, "Proto_Miyabi" })
-		.Position(Vector3(0.f, 0.3f, -1.6f))
-		.Rotate(Vector3(0.f, XMConvertToRadians(180.f), 0.f))
+		//.Position(Vector3(0.f, 0.3f, -1.6f))
+		//.Rotate(Vector3(0.f, XMConvertToRadians(180.f), 0.f))
 		.Build("Miyabi");
 
 	auto gacha     = Builder::Create_Object({G_GlobalLevelKey, "Proto_Gacha"  }).Build("Gacha");
@@ -52,7 +52,7 @@ HRESULT CFirstLevel::Awake()
 	OBJ->Add_Object(corin,     {G_GlobalLevelKey, "Model_Layer" });
 	OBJ->Add_Object(janeDoe,   {G_GlobalLevelKey, "Model_Layer" });
 	OBJ->Add_Object(miyabi,    {G_GlobalLevelKey, "Model_Layer" });
-	OBJ->Add_Object(gacha,     {G_GlobalLevelKey, "Gacha_Layer" });
+	//OBJ->Add_Object(gacha,     {G_GlobalLevelKey, "Gacha_Layer" });
     //OBJ->Add_Object(footStage, {G_GlobalLevelKey, "Gacha_Layer"});
 	//OBJ->Add_Object(demoGrid,  {G_GlobalLevelKey, "Grid_Layer" });
 
