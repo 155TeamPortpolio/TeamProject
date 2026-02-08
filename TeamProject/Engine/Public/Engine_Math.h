@@ -17,6 +17,7 @@ namespace Math
 	ENGINE_DLL _float     PingPong01(_float t);
 	ENGINE_DLL Vector3    SeedPhase(_uint& seed);
 	ENGINE_DLL _float     MoveTowards(_float cur, _float target, _float maxDelta);
+	ENGINE_DLL _float3	  RotateYawXZ(const _float3& dir, _float yawRad);
 	ENGINE_DLL _vector3   NormalizeSafeXZ(_vector3 v);
 	ENGINE_DLL _float     MoveTowards(_float cur, _float target, _float maxDelta); 
 	ENGINE_DLL _vector3 PerpRightXZ(const _vector3& v);

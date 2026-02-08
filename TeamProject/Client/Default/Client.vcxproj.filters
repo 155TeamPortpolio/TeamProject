@@ -1236,6 +1236,12 @@
     <Filter Include="02. GameObject\UI\02. 3D\Mesh\UI_GachaReveal\UI_GachaText">
       <UniqueIdentifier>{ed223e07-20d2-4adb-bf8a-94b7c189aa86}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Boss\Defiler\MiasmaUnit">
+      <UniqueIdentifier>{12c711a1-c5b0-4207-9ec4-cf952c536d71}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Boss\Defiler\MiasmaUnit\MiasmaState">
+      <UniqueIdentifier>{75b59c53-16bc-49e4-9037-1282fd2b373c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -2393,6 +2399,15 @@
     <ClInclude Include="..\Public\MiyabiState_AssaultAttack.h">
       <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Attack\Assault</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\MiasmaJaeger.h">
+      <Filter>02. GameObject\Object\Enemy\Boss\Defiler\MiasmaUnit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MiasmaSpawner.h">
+      <Filter>02. GameObject\Object\Enemy\Boss\Defiler\MiasmaUnit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MiasmaJaegerState.h">
+      <Filter>02. GameObject\Object\Enemy\Boss\Defiler\MiasmaUnit\MiasmaState</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -3511,6 +3526,15 @@
     </ClCompile>
     <ClCompile Include="..\Private\MiyabiState_AssaultAttack.cpp">
       <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Attack\Assault</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MiasmaJaeger.cpp">
+      <Filter>02. GameObject\Object\Enemy\Boss\Defiler\MiasmaUnit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MiasmaSpawner.cpp">
+      <Filter>02. GameObject\Object\Enemy\Boss\Defiler\MiasmaUnit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MiasmaJaegerState.cpp">
+      <Filter>02. GameObject\Object\Enemy\Boss\Defiler\MiasmaUnit\MiasmaState</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
