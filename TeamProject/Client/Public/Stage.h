@@ -4,13 +4,17 @@
 #include "StageFx.h"
 #include "MapData_Defines.h"
 
+NS_BEGIN(Engine)
+class CGameObject;
+NS_END
+
 NS_BEGIN(Client)
 class CStage :
     public CBase
 {
 protected:
-	enum class StageState	{None,Entrance,BattleStart,BattleEnd,Outro,End};
-	enum class PlayerPoint	{Typical,Sub,End};
+	enum class StageState	{None, Entrance, BattleStart, BattleEnd, Outro, End};
+	enum class PlayerPoint	{Typical, Sub, End};
 	struct Combined_MonsterData
 	{
 		struct creation {
@@ -78,11 +82,11 @@ protected:
 
 	/*데이터 - 몬스터*/
 	Combined_MonsterData m_MonsterData = {};
-	vector<class CGameObject*> m_pMonsters;
+	queue<vector<class CGameObject*>> m_MonsterQueue;
 
 	/*데이터 - 플레이어*/
 	OBJECT_HANDLE m_PlayerHandle = {};
-	array<PlayerSRT, ENUM(PlayerPoint::End)> m_PlayerPoint;
+	array<PlayerSRT, ENUM(PlayerPoint::End)> m_PlayerPoint{};
 
 	/*데이터 - 스테이지 포탈*/
 	vector<class CGameObject*> m_pPortals;

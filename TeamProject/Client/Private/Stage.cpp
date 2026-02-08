@@ -29,7 +29,8 @@ HRESULT CStage::Exit_Stage(StageContext& context)
 
 	/*데이터 - 몬스터*/
 	m_MonsterData.Reset();
-	m_pMonsters.clear();
+	while (!m_MonsterQueue.empty())
+		m_MonsterQueue.pop();
 
 	for (size_t i = 0; i < m_pPortals.size(); i++)
 		ObjectManager()->Remove_Object(m_pPortals[i]);
@@ -101,12 +102,17 @@ void CStage::Ready_Map(const string& LevelTag, const string& AreaTag)
 
 void CStage::Active_Enemy()
 {
-	for (auto* pMonster : m_pMonsters)
+	if (m_MonsterQueue.empty())
+		return;
+
+	for (auto* pMonster : m_MonsterQueue.front())
 	{
 		if (!pMonster) continue;
 		pMonster->Set_Alive(true);
 		BattleSystem()->EnterBattleObject(BATTLE_OBJ_TYPE::MONSTER, pMonster->Get_Handle());
 	}
+
+	m_MonsterQueue.pop();
 }
 
 void CStage::Active_Player(PlayerPoint pointType)
@@ -232,6 +238,8 @@ void CStage::Reserve_Enemy(const string& LevelTag)
 
 	for (auto& [Encounter, SpawnData] : CreationData) {
 		
+		vector<class CGameObject*> MonsterQueue;
+
 		for (size_t i = 0; i < SpawnData.size(); i++)
 		{
 			for (size_t j = 0; j < SpawnData[i].Count; j++)
@@ -252,13 +260,15 @@ void CStage::Reserve_Enemy(const string& LevelTag)
 					.Build(SpawnData[i].creationInfo.DisplayName);
 
 				if (pMonster) {
-					m_pMonsters.push_back(pMonster);
+					MonsterQueue.push_back(pMonster);
 					pMonster->Set_Alive(false);
 					CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(pMonster, { "Zero_Level", "Enemy_Layer" });
 					spawn++;
 				}
 			}
 		}
+
+		m_MonsterQueue.push(MonsterQueue);
 	}
 }
 
