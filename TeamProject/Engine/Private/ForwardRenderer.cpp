@@ -214,7 +214,7 @@ HRESULT CForwardRenderer::Render_Combined()
 {
 	m_pSkinnedRenderer->Render_SkinnedMesh_Combined();
 	m_pStaticRenderer->Render_StaticMesh_Combined();
-
+	
 	m_pShader->SetConstantBuffer("FrameBuffer", m_pPipeLine->Get_FrameBuffer());
 
 	ID3D11InputLayout* pLayout;
@@ -223,10 +223,12 @@ HRESULT CForwardRenderer::Render_Combined()
 
 	m_pTargetManager->Bind_Target("Target_Combined_SkinnedMesh", m_pShader, "SkinnedCombinedTexture");
 	m_pTargetManager->Bind_Target("Target_Combined_StaticMesh", m_pShader, "StaticCombinedTexture");
+	m_pTargetManager->Bind_Target("Target_Static_Depth", m_pShader, "StaticDepthTexture");
+	m_pTargetManager->Bind_Target("Target_Skinned_Depth", m_pShader, "SkinnedDepthTexture");
 	m_pTargetManager->Bind_Target("Target_VanishNoise", m_pShader, "VanishNoiseTexture");
 	m_pTargetManager->Bind_Target("Target_DiffuseUI", m_pShader, "UICombinedTexture");
 
-	Bind_WorldMatrix();
+	Bind_WorldMatrix(); 
 
 	m_pShader->Apply("COMBINED", m_pContext);
 	m_pVIBuffer->Bind_Buffer(m_pContext);
