@@ -199,18 +199,16 @@ void CMiyabiState_Attack_02::Update(CMiyabi* pOwner, _float dt)
     for (const auto& Event : pOwner->Get_Animator()->Get_EventBus())
     {
         if (Event.Type != CLIP_EVENT_TYPE::NOTIFY) continue;
-        if (Event.Tag == "KatanaStart")
+        if (Event.Tag == "AreaAttack")
         {
-            pOwner->Begin_AttackCollider("KatanaWeapon", HitDesc()
+            _vector3 vLook = pOwner->Get_Component<CTransform>()->Dir(STATE::LOOK);
+            _vector3 vPos = pOwner->Get_WorldPos();
+            BattleSystem()->TakeAreaDamage(vPos + vLook * 1.f, 1.5f, HitDesc()
                 .Name(pOwner->Get_CharacterName())
                 .Type(HIT_TYPE::ONCE)
-                .Damage(pOwner->Get_AttackPower() * 0.296f * Helper::Get_Random_Float(1.f, 1.5f)
+                .Damage(pOwner->Get_AttackPower() * 0.269f * Helper::Get_Random_Float(1.f, 1.5f)
                     , DAMAGE_TYPE::NORMAL)
             );
-        }
-        else if (Event.Tag == "KatanaEnd")
-        {
-            pOwner->End_AttackCollider("KatanaWeapon");
         }
     }
 

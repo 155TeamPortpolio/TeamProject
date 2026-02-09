@@ -12,10 +12,6 @@ class CCamPosPerSegmentEvaluator; class CCamRotPerSegmentEvaluator; class CCamFo
 
 class ENGINE_DLL CCamSequencePlayer final : public CComponent
 {
-	struct CamPlayerTarget
-	{
-		const CamSequenceDesc* seq{};
-	};
 	struct CamPlayerPlaybackState
 	{
 		_bool  playing = false;
@@ -40,7 +36,7 @@ class ENGINE_DLL CCamSequencePlayer final : public CComponent
 	};
 
 private:
-	CamPlayerTarget        target{};
+	const CamSeqDesc*      seq{};
 	CamPlayerPlaybackState playback{};
 	CamPlayerApplyState    apply{};
 	CamPlayerEvalState     eval{};
@@ -55,8 +51,8 @@ public:
 	HRESULT Initialize(COMPONENT_DESC* pArg) override;
 
 public:
-	void   SetSequence(const CamSequenceDesc* seq);
-	const  CamSequenceDesc* GetSequence() const { return target.seq; }
+	void   SetSequence(const CamSeqDesc* seq);
+	const  CamSeqDesc* GetSequence() const { return seq; }
 
 	void   Invalidate() { eval.dirty = true; }
 
@@ -76,15 +72,15 @@ public:
 	void   SetApplyEnabled(_bool enabled);
 	_bool  IsApplyEnabled() const { return apply.applyEnabled; }
 
-	void   SetSpaceReference(OBJECT_HANDLE handle) { apply.spaceRefHandle = handle; }
-	void   ClearSpaceReference() { apply.spaceRefHandle.Reset(); }
+	void   SetSpaceRef(OBJECT_HANDLE handle) { apply.spaceRefHandle = handle; }
+	void   ClearSpaceRef() { apply.spaceRefHandle.Reset(); }
 
 	void   Update(_float dt);
 
 private:
 	void   RebuildIfNeeded();
 	void   ApplyPose(const CamPose& pose);
-	_float GetPlaybackDuration() const;
+	_float GetPlaybackDur() const;
 	void   ApplyAtSampleTime(_float sampleTime);
 
 public:

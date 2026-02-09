@@ -2,21 +2,15 @@
 
 NS_BEGIN(Client)
 
-struct MonitorSize
-{
-    int width{};
-    int height{};
-};
-
 class CMonitorGate final
 {
 public:
     bool Pass() const;
 
-    MonitorSize GetMonitorSize(int monitorIdx = 0) const;
+    Vector2 GetMonitorSize(int monitorIdx = 0) const;
 
-    int GetMonitorWidth(int monitorIdx = 0)  const { return GetMonitorSize(monitorIdx).width; }
-    int GetMonitorHeight(int monitorIdx = 0) const { return GetMonitorSize(monitorIdx).height; }
+    int GetMonitorWidth(int monitorIdx = 0)  const { return GetMonitorSize(monitorIdx).x; }
+    int GetMonitorHeight(int monitorIdx = 0) const { return GetMonitorSize(monitorIdx).y; }
 
     int GetMonitorCount() const;
 

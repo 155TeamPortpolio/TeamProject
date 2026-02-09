@@ -37,7 +37,7 @@ void CMiyabiState_UltimateAttack::Enter(CMiyabi* pOwner)
 
     __super::Enter(pOwner);
 
-    //CCamDirector::GetInstance()->RequestSequence(CamSeqType::Ultimate);
+    CamDirector()->RequestSequence(CamSeqType::Ultimate);
 }
 
 void CMiyabiState_UltimateAttack::Update(CMiyabi* pOwner, _float dt)

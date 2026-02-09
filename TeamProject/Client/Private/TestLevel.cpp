@@ -95,7 +95,7 @@ HRESULT CTestLevel::Initialize()
 	//	MSG_BOX("Failed to Load MonsterTable!");
 
 
-	RenderSystem()->Set_FogDesc({ _float4(0.12f, 0.25f, 0.35f, 1.0f),0.f, 0.f, 0.005f, true });
+	//RenderSystem()->Set_FogDesc({ _float4(0.12f, 0.25f, 0.35f, 1.0f),0.f, 0.f, 0.005f, true });
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_ZeroPortal", CZeroPortal::Create());
 	auto pPortal = Builder::Create_Object({ G_GlobalLevelKey,"Proto_GameObject_ZeroPortal" })
 		.Position(_float3(0.f,6.f,0.f))
@@ -176,8 +176,8 @@ HRESULT CTestLevel::Awake()
 	//Ready_TestObject();
 	//Ready_Npc();
 
-	CamDirector()->StartBattleIntro(CamSeqType::BattleIntro);
-	//CamDirector()->AutoBattle(CamStartDir::Back);
+	//CamDirector()->StartBattleIntro(CamSeqType::BattleIntro);
+	CamDirector()->AutoBattle(CamStartDir::Back);
 	//CUIDirector::GetInstance()->Show_SceneFrame();
 	CUIDirector::GetInstance()->Show_HUD(CUIDirector::HUD::BATTLE);
 	//GameInstance()->Set_EngineTimeScale(0.05f);

@@ -6,7 +6,7 @@ NS_BEGIN(CameraTool)
 
 struct CamToolTarget
 {
-    CamSequenceDesc*    sequence{};
+    CamSeqDesc*         sequence{};
     _uint               nextKeyId = 1;
 
     CCamObj*            captureCamObj{};
@@ -57,7 +57,7 @@ struct KeyframeListUIState
     bool requestOpenFileErrorPopup = false;
 
     char prefabNameBuf[128] = "DebugSequence";
-    const CamSequenceDesc* lastSeqPtr = nullptr;
+    const CamSeqDesc* lastSeqPtr = nullptr;
     bool nameEditing = false;
 
     string lastLoadedPath{};

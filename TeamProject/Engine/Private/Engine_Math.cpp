@@ -11,6 +11,19 @@ ENGINE_DLL _vector2 Math::Lerp(_vector2 x, _vector2 y, _float t)
 	return x + (y - x) * t;
 }
 
+ENGINE_DLL _float Math::WrapPi(float a)
+{
+	while (a > XM_PI)  a -= XM_2PI;
+	while (a < -XM_PI) a += XM_2PI;
+	return a;
+}
+
+ENGINE_DLL _float Math::LerpAngle(float a, float b, float u)
+{
+	_float d = WrapPi(b - a);
+	return a + d * u;
+}
+
 ENGINE_DLL _float Math::WrapDeg(_float deg)
 {
 	while (deg > 180.f)  deg -= 360.f;

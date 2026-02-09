@@ -63,6 +63,9 @@ HRESULT CRenderSystem::Initialize()
 
 HRESULT CRenderSystem::Render()
 {
+	m_pPipeLine->Update_FrameBuffer(m_pContext);
+	m_pPipeLine->Update_Frustum();
+
 	m_pPipeLine->Update_StaticCSM();
 	m_pPipeLine->Update_SkinnedCSM();
 
@@ -126,20 +129,6 @@ CRenderSystem* CRenderSystem::Create(ID3D11Device* pDevice, ID3D11DeviceContext*
 		Safe_Release(Instance);
 	}
 	return Instance;
-}
-
-_bool CRenderSystem::Get_FogDesc(FOG_DESC& outResult)
-{
-	if (!m_pPost)
-		return false;
-
-	outResult = m_pPost->Get_FogDesc();
-	return true;
-}
-
-void CRenderSystem::Set_FogDesc(FOG_DESC desc)
-{
-	m_pPost->Set_FogDesc(desc);
 }
 
 void CRenderSystem::Set_GlitchDesc(GLITCH_DESC desc)

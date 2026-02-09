@@ -191,8 +191,10 @@ HRESULT CPostRenderer::Render_Fog_Internal()
 	
 	m_pShader->SetConstantBuffer("FrameBuffer", m_pPipeLine->Get_FrameBuffer());
 	
-	m_pShader->Bind_Value("FogDensity", { &fogDesc.fogDensity, "float", sizeof(_float) });
-	m_pShader->Bind_Value("FogColor", { &fogDesc.fogColor, "float4", sizeof(_float4) });
+	FOG_DESC fog = m_pFogCommand->GetFogDesc();
+
+	m_pShader->Bind_Value("FogDensity", { &fog.fogDensity, "float", sizeof(_float) });
+	m_pShader->Bind_Value("FogColor", { &fog.fogColor, "float4", sizeof(_float4) });
 	
 	Bind_WorldMatrix();
 

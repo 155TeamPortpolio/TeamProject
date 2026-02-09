@@ -3,7 +3,7 @@
 
 #include "CamSequencePlayer.h"
 
-void CCamEventController::SetSequence(const CamSequenceDesc* seq)
+void CCamEventController::SetSequence(const CamSeqDesc* seq)
 {
 	m_seq = seq;
 	m_rules.clear();

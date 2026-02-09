@@ -294,7 +294,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <AdditionalIncludeDirectories>../../EngineSDK/Inc/;../Public/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalOptions>/wd4005 /wd4251 /wd4819 /wd4267 /wd4244 /wd4172 /wd4018 /wd4838 /wd4305 /wd4101 /wd4129 /wd4715 /wd4067 /Zo %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/wd4005 /wd4251 /wd4819 /wd4267 /wd4244 /wd4172 /wd4018 /wd4838 /wd4305 /wd4101 /wd4129 /wd4715 /wd4067 /wd4652 /Zo %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
     </ClCompile>
     <Link>
@@ -1098,7 +1098,9 @@
     <ClCompile Include="..\Private\MiyabiState_NormalAttack.cpp" />
     <ClCompile Include="..\Private\MiyabiState_Run.cpp" />
     <ClCompile Include="..\Private\MiyabiState_Walk.cpp" />
-    <ClCompile Include="..\private\OrbitCam.cpp" />
+    <ClCompile Include="..\private\OrbitCam.cpp">
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='ClientDebug|x64'">Level3</WarningLevel>
+    </ClCompile>
     <ClCompile Include="..\Private\FreeCam.cpp" />
     <ClCompile Include="..\Private\MainApp.cpp" />
     <ClCompile Include="..\private\MapFloorObject.cpp" />
