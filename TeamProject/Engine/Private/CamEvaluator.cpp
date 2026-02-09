@@ -3,106 +3,34 @@
 
 namespace
 {
-	Quaternion MakeLookRotation(const _vector3& forward, const _vector3& up)
-	{
-		_vector3 f = forward;
-		_vector3 u = up;
-
-		f.Normalize();
-		u.Normalize();
-
-		Matrix m = Matrix::CreateWorld(_vector3::Zero, -f, u);
-
-		Quaternion q = Quaternion::CreateFromRotationMatrix(m);
-		q.Normalize();
-		return q;
-	}
-
-    Quaternion MakeLookRotationStable(const Vector3& forward, const Vector3& upHint)
+    Quaternion MakeLookRotationWorldUp(const Vector3& forward, const Quaternion& qRef)
     {
         Vector3 f = forward;
-        Vector3 u = upHint;
+        f.Normalize();
 
-        if (f.LengthSquared() <= 1e-12f) f = Vector3(0.f, 0.f, 1.f);
-        else f.Normalize();
+        Vector3 referenceUp(0.f, 1.f, 0.f);
 
-        if (u.LengthSquared() <= 1e-12f) u = Vector3(0.f, 1.f, 0.f);
-        else u.Normalize();
+        Vector3 right = referenceUp.Cross(f);
+        right.Normalize();
 
-        Vector3 fb = -f;
-
-        const float parallel = fabsf(fb.Dot(u));
-        if (parallel > 0.999f)
-        {
-            Vector3 alt = Vector3(0.f, 0.f, 1.f);
-            if (fabsf(fb.Dot(alt)) > 0.999f) alt = Vector3(1.f, 0.f, 0.f);
-            u = alt;
-        }
-
-        Vector3 right = u.Cross(fb);
-        if (right.LengthSquared() <= 1e-12f) right = Vector3(1.f, 0.f, 0.f);
-        else right.Normalize();
-
-        Vector3 up = fb.Cross(right);
-        if (up.LengthSquared() <= 1e-12f) up = Vector3(0.f, 1.f, 0.f);
-        else up.Normalize();
+        Vector3 up = f.Cross(right);
+        up.Normalize();
 
         Matrix basis;
         basis._11 = right.x; basis._12 = right.y; basis._13 = right.z; basis._14 = 0.f;
         basis._21 = up.x;    basis._22 = up.y;    basis._23 = up.z;    basis._24 = 0.f;
-        basis._31 = fb.x;    basis._32 = fb.y;    basis._33 = fb.z;    basis._34 = 0.f;
+        basis._31 = f.x;     basis._32 = f.y;     basis._33 = f.z;     basis._34 = 0.f;
         basis._41 = 0.f;     basis._42 = 0.f;     basis._43 = 0.f;     basis._44 = 1.f;
 
         Quaternion q = Quaternion::CreateFromRotationMatrix(basis);
         q.Normalize();
+
+        if (qRef.Dot(q) < 0.f) 
+            q = -q;
+
+        q.Normalize();
         return q;
     }
-}
-
-bool CCamEvaluator::Build(const CamSeqDesc& _seqDesc)
-{
-	seqDesc = &_seqDesc;
-
-	cachedKeys = _seqDesc.keyframes;
-	if (cachedKeys.size() < 2) return false;
-
-	stable_sort(cachedKeys.begin(), cachedKeys.end(), [](const CamKeyFrame& a, const CamKeyFrame& b) { return a.time < b.time; });
-
-	vector<CamKeyFrame> merged;
-	merged.reserve(cachedKeys.size());
-
-	constexpr float kEps = 1e-4f;
-
-	for (size_t i = 0; i < cachedKeys.size(); ++i)
-	{
-		const CamKeyFrame& cur = cachedKeys[i];
-
-		if (merged.empty())
-		{
-			merged.push_back(cur);
-			continue;
-		}
-
-		CamKeyFrame& last = merged.back();
-
-		if (fabsf(cur.time - last.time) <= kEps) last = cur;
-		else merged.push_back(cur);
-	}
-
-	cachedKeys.swap(merged);
-
-	if (cachedKeys.size() < 2) return false;
-
-	duration = cachedKeys.back().time;
-	if (duration <= 0.f) return false;
-
-	if (!posEval || !rotEval || !fovEval) return false;
-
-	if (!posEval->Build(cachedKeys)) return false;
-	if (!rotEval->Build(cachedKeys)) return false;
-	if (!fovEval->Build(cachedKeys)) return false;
-
-	return true;
 }
 
 CamPose CCamEvaluator::Evaluate(float time) const
@@ -135,7 +63,6 @@ CamPose CCamEvaluator::Evaluate(float time) const
         };
 
     const CamPosInterp posMode = ResolvePosMode(i);
-
     if (posMode != CamPosInterp::OrbitSpin) return pose;
     if (!seqDesc->orbitSpin.enabled) return pose;
 
@@ -161,57 +88,51 @@ CamPose CCamEvaluator::Evaluate(float time) const
     if (seqDesc->orbitSpin.centerMode == CamSpinCenterMode::Custom)
         center = Vector3(seqDesc->orbitSpin.center.x, seqDesc->orbitSpin.center.y, seqDesc->orbitSpin.center.z);
 
-    Vector3 up = Vector3(0.f, 1.f, 0.f);
-    if (!seqDesc->orbitSpin.keepHeight)
-    {
-        up = Vector3(seqDesc->orbitSpin.axis.x, seqDesc->orbitSpin.axis.y, seqDesc->orbitSpin.axis.z);
-        if (up.LengthSquared() <= 1e-12f) up = Vector3(0.f, 1.f, 0.f);
-        up.Normalize();
-    }
-
     Vector3 p(pose.pos.x, pose.pos.y, pose.pos.z);
     Vector3 look = center - p;
-
     if (look.LengthSquared() <= 1e-8f) return pose;
-
     look.Normalize();
 
-    Quaternion qLook = MakeLookRotation(_vector3(look.x, look.y, look.z), _vector3(up.x, up.y, up.z));
+    Quaternion qRef = pose.rot;
+    qRef.Normalize();
+
+    Quaternion qLook = MakeLookRotationWorldUp(look, qRef);
     qLook.Normalize();
 
-    const float blendSec = 0.20f;
+    float blendSec = 0.001f;
+    const float segDur = tEnd - tStart;
+    blendSec = min(blendSec, segDur * 0.25f);
 
-    const float inU = (t - tStart) / blendSec;
-    const float outU = (tEnd - t) / blendSec;
-
-    if (t <= tStart + blendSec)
+    if (blendSec > 0.f && t < tStart + blendSec)
     {
+        float u = (t - tStart) / blendSec;
+        u = clamp(u, 0.f, 1.f);
+        u = Math::ApplyEase(EaseType::InOutSine, u);
+
         Quaternion qInBase = rotEval->Evaluate(tStart);
         qInBase.Normalize();
 
-        const float dot = qInBase.x * qLook.x + qInBase.y * qLook.y + qInBase.z * qLook.z + qInBase.w * qLook.w;
-        if (dot < 0.f) qLook = Quaternion(-qLook.x, -qLook.y, -qLook.z, -qLook.w);
+        Quaternion qL = qLook;
+        if (qInBase.Dot(qL) < 0.f) qL = -qL;
 
-        float w = clamp(inU, 0.f, 1.f);
-        w = Math::ApplyEase(EaseType::InOutSine, w);
-
-        pose.rot = Quaternion::Slerp(qInBase, qLook, w);
+        pose.rot = Quaternion::Slerp(qInBase, qL, u);
         pose.rot.Normalize();
         return pose;
     }
 
-    if (t >= tEnd - blendSec)
+    if (blendSec > 0.f && t > tEnd - blendSec)
     {
+        float u = (t - (tEnd - blendSec)) / blendSec;
+        u = clamp(u, 0.f, 1.f);
+        u = Math::ApplyEase(EaseType::InOutSine, u);
+
         Quaternion qOutBase = rotEval->Evaluate(tEnd);
         qOutBase.Normalize();
 
-        const float dot = qOutBase.x * qLook.x + qOutBase.y * qLook.y + qOutBase.z * qLook.z + qOutBase.w * qLook.w;
-        if (dot < 0.f) qLook = Quaternion(-qLook.x, -qLook.y, -qLook.z, -qLook.w);
+        Quaternion qL = qLook;
+        if (qOutBase.Dot(qL) < 0.f) qL = -qL;
 
-        float w = clamp(outU, 0.f, 1.f);
-        w = Math::ApplyEase(EaseType::InOutSine, w);
-
-        pose.rot = Quaternion::Slerp(qOutBase, qLook, w);
+        pose.rot = Quaternion::Slerp(qL, qOutBase, u);
         pose.rot.Normalize();
         return pose;
     }
@@ -221,6 +142,52 @@ CamPose CCamEvaluator::Evaluate(float time) const
     return pose;
 }
 
+
+bool CCamEvaluator::Build(const CamSeqDesc& _seqDesc)
+{
+	seqDesc = &_seqDesc;
+
+	cachedKeys = _seqDesc.keyframes;
+	if (cachedKeys.size() < 2) return false;
+
+	stable_sort(cachedKeys.begin(), cachedKeys.end(), [](const CamKeyFrame& a, const CamKeyFrame& b) { return a.time < b.time; });
+
+	vector<CamKeyFrame> merged;
+	merged.reserve(cachedKeys.size());
+
+	constexpr float kEps = 1e-4f;
+
+	for (size_t i = 0; i < cachedKeys.size(); ++i)
+	{
+		const CamKeyFrame& cur = cachedKeys[i];
+
+		if (merged.empty())
+		{
+			merged.push_back(cur);
+			continue;
+		}
+
+		CamKeyFrame& last = merged.back();
+
+		if (fabsf(cur.time - last.time) <= kEps) last = cur;
+		else merged.push_back(cur);
+	}
+
+	cachedKeys.swap(merged);
+   
+	if (cachedKeys.size() < 2) return false;
+
+	duration = cachedKeys.back().time;
+	if (duration <= 0.f) return false;
+
+	if (!posEval || !rotEval || !fovEval) return false;
+
+	if (!posEval->Build(cachedKeys)) return false;
+	if (!rotEval->Build(cachedKeys)) return false;
+	if (!fovEval->Build(cachedKeys)) return false;
+
+	return true;
+}
 
 _float CCamEvaluator::RemapTimeBySegmentEasing(float t) const
 {

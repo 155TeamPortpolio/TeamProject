@@ -31,5 +31,4 @@ public:
     virtual void Free() override;
 };
 
-
 NS_END

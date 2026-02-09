@@ -172,7 +172,7 @@ void CCamDirector::Update(_float dt)
     SyncSeqInputLock();
 
     if (IsValid())
-        m_dialogue.Update(dt, GetOrbitCamComp(), GetOrbitCam(), GetCharacter()->Get_Component<CTransform>());
+        m_dialogue.Update(dt);
 
     m_parry.Update(dt);
 

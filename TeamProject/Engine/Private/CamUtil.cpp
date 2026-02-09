@@ -340,5 +340,4 @@ bool CamUtil::Load(const filesystem::path& path, CamSeqDesc& outSeq, string* out
         return false;
 
     return true;
-    return true;
 }

@@ -200,6 +200,8 @@ void CCamSequencePlayer::ApplyPose(const CamPose& pose)
         finalRot.Normalize();
     }
 
+    auto delta = (Vector3(apply.transform->Get_Pos()) - finalPos).Length();
+
     apply.transform->Set_Pos(_vector3(finalPos.x, finalPos.y, finalPos.z));
     apply.transform->Set_Quaternion(_vector4(finalRot.x, finalRot.y, finalRot.z, finalRot.w));
 
@@ -233,13 +235,12 @@ void CCamSequencePlayer::ApplyAtSampleTime(_float sampleTime)
         pose.fov = apply.cam->Get_FOV();
         pose.roll = 0.f;
     }
-
     ApplyPose(pose);
 }
 
 CCamSequencePlayer* CCamSequencePlayer::Create()
 {
-    auto inst = new CCamSequencePlayer();
+    auto inst = new CCamSequencePlayer(); 
     if (FAILED(inst->Initialize_Prototype()))
     {
         MSG_BOX("CamSequencePlayer Create Failed : CamSequencePlayer");
