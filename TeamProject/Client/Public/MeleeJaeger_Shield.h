@@ -6,7 +6,7 @@ NS_BEGIN(Client)
 class CMeleeJaeger_Shield final : public CEnemy
 {
 public:
-    typedef struct tagMeleeJaegerShieldDesc : public Engine::GAMEOBJECT_DESC
+    typedef struct tagMeleeJaegerShieldDesc : public CEnemy::ENEMY_DESC
     {
         const _float4x4* pHandBone = { nullptr };
     }JAEGERSHIELD_DESC;
@@ -25,6 +25,10 @@ public:
     void    Late_Update(_float dt) override;
     virtual void Render_GUI() override;
     virtual void OnTriggerEnter(CGameObject* pOther) override;
+
+public:
+    virtual void    TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER charaName = CHARACTER::END) override;
+
 
 private:
     void    ComputePosition(_bool isFirst = false);

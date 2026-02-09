@@ -5,7 +5,7 @@ NS_BEGIN(Client)
 
 template<typename Type>
 class CStateMachine;
-
+class CMeleeJaeger_Shield;
 class CMeleeJaeger final : public CEnemyNormal
 {
 private:
@@ -37,10 +37,12 @@ public:
     /* Getter */
     CStateMachine<CMeleeJaeger>*   GetStateMachine() const { return m_pStateMachine; }
     HYSTERIESIS                 GetHysteriesis() const { return m_tHysteriesis; }
+    _bool                       IsShield() const { return m_isShield; }
 
     /* Setter */
     void            Idle() { m_isIdle = true; }
     virtual void    TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER charaName = CHARACTER::END) override;
+    void            SetIsShield(_bool is) { m_isShield = is; }
 
 private:
     HRESULT Initialize_StateMachine();
@@ -53,14 +55,17 @@ private:
 
 private:
     CStateMachine<CMeleeJaeger>* m_pStateMachine = { nullptr };
-    ATTACK_BLACK_BOARD  m_tAttackBlackBoard = {};
-    HYSTERIESIS         m_tHysteriesis = {};
+    ATTACK_BLACK_BOARD      m_tAttackBlackBoard = {};
+    HYSTERIESIS             m_tHysteriesis = {};
+    CMeleeJaeger_Shield*    m_pShield = {};
 
     _bool               m_isAutoPatternPlay = { true };
 
     /*For.Idle*/
     _bool               m_isIdle = { false };
     _float2             m_vIdleTime = {};
+
+    _bool               m_isShield = { false };
 
 };
 

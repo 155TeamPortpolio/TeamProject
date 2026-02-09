@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "MeleeJaeger_Shield.h"
+#include "MeleeJaeger.h"
 #include "GameInstance.h"
 #include "BattleSystem.h"
 
@@ -54,7 +55,6 @@ HRESULT CMeleeJaeger_Shield::Initialize(INIT_DESC* pArg)
 		return E_FAIL;
 
 	Get_Component<CRigidBody>()->Set_Kinematic(true);
-
 	m_vOffset = { -0.05f, -0.03f, 0.17f };
 
 	return S_OK;
@@ -104,6 +104,20 @@ void CMeleeJaeger_Shield::OnTriggerEnter(CGameObject* pOther)
 {
 }
 
+void CMeleeJaeger_Shield::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER charaName)
+{
+	__super::TakeDamage(eDamageType, fDamage, charaName);
+	m_tStatus.iGroggyValue = 0;
+
+	if (0 >= m_tStatus.iNowHP)
+	{
+		m_isAlive = false;
+		dynamic_cast<CMeleeJaeger*>(Get_Component<CChild>()->Get_Parent())->SetIsShield(false); 
+		Get_Component<CCollider>()->Set_CompActive(false);
+	}
+
+}
+
 void CMeleeJaeger_Shield::ComputePosition(_bool isFirst)
 {
 	auto pChildCom = Get_Component<CChild>();
@@ -139,7 +153,10 @@ void CMeleeJaeger_Shield::ComputePosition(_bool isFirst)
 	m_pTransform->Set_Quaternion(pParent->Get_Component<CTransform>()->Get_QuaternionRotate());
 
 	if (!m_isFirstCompute)
+	{
+		dynamic_cast<CMeleeJaeger*>(Get_Component<CChild>()->Get_Parent())->SetIsShield(true);
 		m_isFirstCompute = true;
+	}
 }
 
 CMeleeJaeger_Shield* CMeleeJaeger_Shield::Create()

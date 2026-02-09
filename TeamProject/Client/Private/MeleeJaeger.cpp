@@ -130,12 +130,13 @@ void CMeleeJaeger::Render_GUI()
 	ImGui::SeparatorText("Status");
 	auto pCharacter = GetCharacterOnField();
 	if (nullptr != pCharacter) {
-		ImGui::BeginChild("TracePlayer##ThugAssaulterStatus", ImVec2{ 0, childHeight + textLineHeight * 4.f }, true);
+		ImGui::BeginChild("TracePlayer##ThugAssaulterStatus", ImVec2{ 0, childHeight + textLineHeight * 6.f }, true);
 
 		ImGui::Text("AnimName : %s", Get_Component<CAnimator3D>()->Get_CurAnimName().c_str());
 		ImGui::Text("SelfDir: %.2f, %.2f, %.2f", m_tTargetingInfo.vDirSelfLook.x, m_tTargetingInfo.vDirSelfLook.y, m_tTargetingInfo.vDirSelfLook.z);
 		ImGui::Text("CaptureDir: %.2f, %.2f, %.2f", m_tRotDir.vDirToLookCapture.x, m_tRotDir.vDirToLookCapture.y, m_tRotDir.vDirToLookCapture.z);
 		ImGui::Text("HP : %d", (_int)m_tStatus.iNowHP);
+		ImGui::Text("Shield HP : %d", (_int)m_pShield->GetStatus().iNowHP);
 		ImGui::Text("Groggy Value : %d", m_tStatus.iGroggyValue);
 		ImGui::Text("Groggy StayTime : %d", m_tGroggyManage.fGroggyStayTime);
 
@@ -144,6 +145,7 @@ void CMeleeJaeger::Render_GUI()
 		ImGui::Checkbox("IsGroggy", &m_tStatus.isGroggy);
 		ImGui::Checkbox("ForUI.IsGroggyStay", &m_tStatus.isGroggyStay);
 		ImGui::Checkbox("IsOnAttack", &m_isOnAttack);
+		ImGui::Checkbox("IsShield", &m_isShield);
 		ImGui::EndDisabled();
 
 		ImGui::EndChild();
@@ -227,7 +229,8 @@ void CMeleeJaeger::Render_GUI()
 	ImGui::Checkbox("Auto Pattern", &m_isAutoPatternPlay);
 #pragma endregion
 
-
+	if (ImGui::Button("Execute"))
+		m_tStatus.iNowHP -= m_tStatus.iMaxHP;
 
 	ImGui::PopID();
 }
@@ -257,14 +260,16 @@ HRESULT CMeleeJaeger::Ready_Children(INIT_DESC* pArg)
 	{
 		CMeleeJaeger_Shield::JAEGERSHIELD_DESC* pShieldDesc = new CMeleeJaeger_Shield::JAEGERSHIELD_DESC();
 		pShieldDesc->pHandBone = Get_Component<CAnimator3D>()->Get_BoneMatrixPtr(CAnimator3D::BoneSpace::COMBINED, "Bn_Weapon1");
+		pShieldDesc->iMaxHP = m_tStatus.iMaxHP * 0.25f;
 
 		COLLIDER_DESC ShieldColliderDesc= {};
-		ShieldColliderDesc.eGroup = COLLISION_GROUP::MONSTER_ATTACK;
+		ShieldColliderDesc.eGroup = COLLISION_GROUP::MONSTER;
 		ShieldColliderDesc.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER) | ENUM(COLLISION_GROUP::PLAYER_ATTACK);
 		ShieldColliderDesc.bTrigger = true;
 		ShieldColliderDesc.bAutoFit = false;
 		ShieldColliderDesc.eType = COLLIDER_TYPE::BOX;
-		ShieldColliderDesc.vSize = { 0.5f, 1.f, 0.5f };
+		ShieldColliderDesc.vCenter = { -0.13f, -0.12f, -0.13f};
+		ShieldColliderDesc.vSize = { 1.02f, 1.66f, 0.32f };
 
 		auto pShield = Builder::Create_Object({ LevelManager()->Get_NowLevelKey(), "Proto_GameObject_MeleeJaeger_Shield" })
 			.Add_ObjDesc(pShieldDesc)
@@ -275,6 +280,9 @@ HRESULT CMeleeJaeger::Ready_Children(INIT_DESC* pArg)
 			return E_FAIL;
 		
 		Get_Component<CObjectContainer>()->Add_Child(pShield, false);
+
+		m_pShield = static_cast<CMeleeJaeger_Shield*>(pShield);
+		Safe_AddRef(m_pShield);
 	}
 
 	{
@@ -327,21 +335,31 @@ void CMeleeJaeger::Free()
 {
 	__super::Free();
 
+	Safe_Release(m_pShield);
 	Safe_Release(m_pStateMachine);
 }
 
 
 void CMeleeJaeger::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER charaName)
 {
-	__super::TakeDamage(eDamageType, fDamage, charaName);
+	_float fResultDamage = fDamage;
+
+	
+	if (m_isShield)
+	{
+		fResultDamage = fDamage * 0.3f;
+		m_pShield->TakeDamage(eDamageType, fDamage, charaName);
+		// 쉴드 있을 때 그로기 수치 늘어나는지 확인해야함
+	}
+
+	__super::TakeDamage(eDamageType, fResultDamage, charaName);
 
 	if (0 >= m_tStatus.iNowHP)
 		return;
 
 	if ("Groggy" == m_pStateMachine->Get_CurrentStateName())
 	{
-		//Get_Component<CAnimator3D>()->Set_Animation(1, "StrikeJaeger_Ani_Hit_Stay")
-		Get_Component<CAnimator3D>()->Set_Animation(1, "MeleeJaeger_Ani_Hit_Knock")
+		Get_Component<CAnimator3D>()->Set_Animation(1, "StrikeJaeger_Ani_Hit_Stay")
 			.LayerBlend(1.f, 0.f, 1.f, EaseType::Linear)
 			.Loop(false)
 			.Apply();
