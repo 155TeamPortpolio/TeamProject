@@ -41,14 +41,9 @@
       "ClipTag": "Avatar_Female_Size02_Unagi_Ani_Attack_02",
       "Events": [
         {
-          "EventTime": 0.16491228342056274,
+          "EventTime": 0.24093566834926605,
           "EventType": "Notify",
-          "EventTag": "KatanaStart"
-        },
-        {
-          "EventTime": 0.24561403691768646,
-          "EventType": "Notify",
-          "EventTag": "KatanaEnd"
+          "EventTag": "AreaAttack"
         }
       ]
     },

@@ -866,7 +866,7 @@ CGameObject* CBattlePlayer::CreateBattleCharacter(CHARACTER character)
     }
     case CHARACTER::Corin:
     {
-        characterCCT.fHeight = 1.17f;
+        characterCCT.fHeight = 0.75f;
         characterCCT.fRadius = 0.27f;
         auto Corin = Builder::Create_Object({ G_GlobalLevelKey, "Proto_GameObject_Corin" })
             .Position(_float3(3.f, 0.f, 0.f))
@@ -877,7 +877,7 @@ CGameObject* CBattlePlayer::CreateBattleCharacter(CHARACTER character)
     }
     case CHARACTER::Miyabi:
     {
-        characterCCT.fHeight = 0.73f;
+        characterCCT.fHeight = 1.15f;
         characterCCT.fRadius = 0.26f;
         auto Miyabi = Builder::Create_Object({ G_GlobalLevelKey , "Proto_GameObject_Miyabi" })
             .Position(_float3(3.f, 0.f, 0.f))
