@@ -18,7 +18,8 @@
 #include "MaterialInstance.h"
 #include "Texture.h"
 
-#include "MiasmaBlade.h" 
+#include "MiasmaBlade.h"
+#include "MiasmaGrandierJaeger.h"
 #include "AudioSource.h"
 
 #include "UI_DamageText.h"
@@ -36,16 +37,18 @@ CDefiler::CDefiler(const CDefiler& rhg)
 HRESULT CDefiler::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_MiasmaBlade", CMiasmaBlade::Create());
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_MiasmaJaeger", CMiasmaGrandierJaeger::Create());
+
 	Add_Component<CAnimator3D>();
 	Add_Component<CSkeletalModel>();
 	Add_Component<CMaterial>();
 	Add_Component<CCharacterController>();
 	Add_Component<CObjectContainer>();
 	Add_Component<CAudioSource>();
-	auto pResource = CGameInstance::GetInstance()->Get_ResourceMgr();
 	Get_Component<CSkeletalModel>()->Link_Model("Zero_Level", "Defiler_Isolde.model");
 	Get_Component<CMaterial>()->Link_Material("Zero_Level", "Defiler_Isolde.mat");
-
+	
 	return S_OK;
 }
 
@@ -78,7 +81,6 @@ HRESULT CDefiler::Initialize(INIT_DESC* pArg)
 
 	Create_UIEnemyStatus("Bip001_Spine2");
 	Create_UIBossHUD();
-
 	return S_OK;
 }
 
@@ -94,7 +96,7 @@ void CDefiler::Awake()
 
 	for (const auto& instance : materialInstances)
 	{
-		instance->Set_Param("NoiseTexture", { dissolveTexture->Get_SRV(),"Texture2D",0 });
+		instance->Set_Param("NoiaseTexture", { dissolveTexture->Get_SRV(),"Texture2D",0 });
 		instance->Set_Param("vRimLightColor", { &m_vRimLightColor,"float3",sizeof(_float3) });
 		instance->Set_Param("fRimLightPower", { &m_fRimLightPower,"float",sizeof(_float) });
 		instance->Set_Param("fDissolveProgress", { &m_fDissolveProgress,"float",sizeof(_float) });
@@ -104,7 +106,15 @@ void CDefiler::Awake()
 }
 
 void CDefiler::Priority_Update(_float dt)
-{
+{	
+	m_PlayerCharacterInfos.clear();
+	m_PlayerCharacterInfos = BattleSystem()->GetBattleObjects(CBattleSystem::BATTLE_OBJ_TYPE::PLAYER);
+	ComputeTargetingInfo();
+	if (InputDevice()->Key_Tap('F')) {
+		BattleSystem()->ExcludeBattleObject(BATTLE_OBJ_TYPE::MONSTER, this->Get_Handle());
+		m_MiasmaSpawner.Spawn(MiasmaType::Grandier, 8, m_tTargetingInfo.vTargetPos, Get_BipedPos(),
+			m_tTargetingInfo.vTargetPos.y)	;
+	}
 }
 
 void CDefiler::Update(_float dt)
@@ -112,9 +122,8 @@ void CDefiler::Update(_float dt)
 	ManageGroggy(dt);
 
 	if (!m_BlackBoard.LockTarget) {
-		m_PlayerCharacterInfos.clear();
-		m_PlayerCharacterInfos = BattleSystem()->GetBattleObjects(CBattleSystem::BATTLE_OBJ_TYPE::PLAYER);
-		ComputeTargetingInfo();
+		m_BlackBoard.vTargetPos = m_tTargetingInfo.vTargetPos;
+		m_BlackBoard.vTargetDir = m_tTargetingInfo.vDirToTarget;
 	}
 	Update_States(dt);
 
@@ -183,6 +192,7 @@ void CDefiler::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER cha
 
 	UIDirector()->Request_DamageText(desc);
 }
+
 void CDefiler::Change_CollisionMask(_uint iMask)
 {
 	_uint Mask = Get_Component<CCharacterController>()->Get_CollisionMask();
@@ -247,7 +257,7 @@ void CDefiler::MoveByTraceMode(_float dt, _float moveScale)
 
 	// Å¸°Ù º¤ÅÍ
 	const _vector3 nowPos = transform->Get_WorldPos();
-	const _vector3 targetPos = m_tTargetingInfo.vTargetPos;
+	const _vector3 targetPos = m_BlackBoard.vTargetPos;
 
 	_vector3 toTarget = targetPos - nowPos;
 	toTarget.y = 0.f;
@@ -345,7 +355,7 @@ void CDefiler::RotateToTarget(_float dt, _float rotateSpeed)
 {
 	_vector3 vPosition = m_pTransform->Get_Pos();
 	_vector3 vCurrDir = m_pTransform->Dir(STATE::LOOK);
-	_vector3 vTargetDir = m_tTargetingInfo.vDirToTarget;
+	_vector3 vTargetDir = m_BlackBoard.vTargetDir;
 	vCurrDir.Normalize();
 	vTargetDir.Normalize();
 
@@ -372,10 +382,11 @@ void CDefiler::Route_AnimEvent(CAnimator3D* animator)
 		{
 		case CLIP_EVENT_TYPE::NOTIFY:
 			if (instance.Tag == "ParrySign")
-				UnleashAttack(CEnemy::ATTACK_SIDE::NONE, true);
-			//Active_AttackSign(true);
+				//UnleashAttack(CEnemy::ATTACK_SIDE::NONE, true);
+				Active_AttackSign(true);
 			else if (instance.Tag == "EvadeSign")
-				UnleashAttack(CEnemy::ATTACK_SIDE::NONE, false);
+				//UnleashAttack(CEnemy::ATTACK_SIDE::NONE, false);
+				Active_AttackSign(false);
 
 			else if (instance.Tag == "TargetLockOn")
 				m_BlackBoard.LockTarget = true;
@@ -396,7 +407,7 @@ void CDefiler::Route_AnimEvent(CAnimator3D* animator)
 
 void CDefiler::Controll_Sound(const string& event)
 {
-	Get_Component<CAudioSource>()->Slot("event").Play();
+	Get_Component<CAudioSource>()->Slot(event).Attribute3D(true).Volume(0.3f).Play();
 }
 
 void CDefiler::Controll_Attack(const string& event)
