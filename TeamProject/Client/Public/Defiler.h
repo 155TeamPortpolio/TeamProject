@@ -1,6 +1,7 @@
 #pragma once
 #include "Enemy.h"
 #include "Defiler_Control.h"
+#include "MiasmaSpawner.h"
 
 NS_BEGIN(Client)
 
@@ -65,6 +66,7 @@ private:
     CStateMachine<CDefiler>* m_pStateMachine = { nullptr };
     DEFILER_BLACK_BOARD m_BlackBoard = {};
     DefilerDissolve m_Dissolve = {};
+    CMiasmaSpawner m_MiasmaSpawner = {};
 
     _uint m_BaseMask = 
         ENUM(COLLISION_GROUP::COMMON) | 

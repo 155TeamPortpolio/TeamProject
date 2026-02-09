@@ -92,6 +92,18 @@ ENGINE_DLL _float Math::MoveTowards(_float cur, _float target, _float maxDelta)
 	return cur + (d > 0.f ? maxDelta : -maxDelta);
 }
 
+ENGINE_DLL _float3 Math::RotateYawXZ(const _float3& dir, _float yawRad)
+{
+	const float cosVal = std::cos(yawRad);
+	const float sinVal = std::sin(yawRad);
+
+	_float3 out;
+	out.x = dir.x * cosVal - dir.z * sinVal;
+	out.y = dir.y;
+	out.z = dir.x * sinVal + dir.z * cosVal;
+	return out;
+}
+
 // 특정 방향에 대하여 오른쪽 수직
 ENGINE_DLL _vector3 Math::PerpRightXZ(const _vector3& v)
 {
