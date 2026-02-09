@@ -3,7 +3,7 @@
 
 NS_BEGIN(Engine)
 class CTexture;
-class CPostRenderer final :
+class ENGINE_DLL CPostRenderer final :
     public CRenderer
 {
 private:
@@ -12,19 +12,27 @@ private:
     HRESULT Initialize(class CTarget_Manager* pTargetManager, class CPipeLine* pPipeLine);
 
 public:
+    template<typename T>
+    T* GetCommand()
+    {
+        auto it = m_CommandMap.find(typeid(T));
+
+        if (it != m_CommandMap.end())
+            return dynamic_cast<T*>(it->second);
+
+        return nullptr;
+    }
+
     void Set_FogDesc(FOG_DESC desc) { fogDesc = desc; };
     FOG_DESC Get_FogDesc() const { return fogDesc; };
 
 public:
-    HRESULT Render_HDRBloom();
-    HRESULT Render_RadialBlur();
-    HRESULT Render_Fog();
+    HRESULT Render_PostProcessCommand();
+    HRESULT Render_HDRBloom_Internal();
+    HRESULT Render_RadialBlur_Internal();
+    HRESULT Render_Fog_Internal();
+    HRESULT Render_Addictive_Internal();
     HRESULT Render_Final();
-
-    //void    Apply_RadialBlur(_float duration,  _float2 center = _float2(0.5,0.5));
-    //void    Set_AddictiveColor(_float3* color);
-    //void    Register_AddictiveColor(_float3* pColor);
-    //void    UnRegister_AddictiveColor();
 
 public:
     void Update(_float dt);
@@ -34,16 +42,22 @@ private:
     virtual HRESULT Ready_MRT() override;
 
 private:
+    class CHDRBloomCommand*             m_pHDRBloomCommand;
+    class CGlitchCommand*               m_pGlitchCommand;
+    class CRadialBlurCommand*           m_pRadialBlurCommand;
+    class CFogCommand*                  m_pFogCommand;
+    class CGuassianBlurCommand*         m_pGuassianBlurCommand;
+    class CAddictiveColorCommand*       m_pAddictiveColorCommand;
+    
+    map<type_index, class CPostProcessCommand*> m_CommandMap;
+
+private:
     //*안개*
     FOG_DESC            fogDesc;
-    //*블러*
-    _float              m_fRadialDuration = 0.f;
-    _float              m_fRadialTotalDuration = 0.f;
-    _float3*            m_pAddictiveColor = nullptr; //_float3(0.1, 0.54, 0.58)
-    _float2             m_fRadialCenter = _float2(0.5, 0.5);
-
     _float              m_fScreenWidth;
     _float              m_fScreenHeight;
+
+    string              m_strLastTargetName = "Target_Final";
 
 public:
     static CPostRenderer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext,
