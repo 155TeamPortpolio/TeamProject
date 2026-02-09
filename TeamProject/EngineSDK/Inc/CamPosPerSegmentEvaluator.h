@@ -19,16 +19,16 @@ private:
     CamPosInterp ResolveMode(_uint segIdx) const;
 
 private:
-    const CamSeqDesc*     seq{};
+    const CamSeqDesc* seq{};
     const vector<CamKeyFrame>* keyframes{};
 
-    ICamPosEvaluator*          evalLinear{};
-    ICamPosEvaluator*          evalCatmull{};
-    ICamPosEvaluator*          evalCentripetal{};
-    ICamPosEvaluator*          evalBSpline{};
-    ICamPosEvaluator*          evalHermite{};
-    ICamPosEvaluator*          evalOrbitArc{};
-    ICamPosEvaluator*          evalOrbitSpin{};
+    ICamPosEvaluator* evalLinear{};
+    ICamPosEvaluator* evalCatmull{};
+    ICamPosEvaluator* evalCentripetal{};
+    ICamPosEvaluator* evalBSpline{};
+    ICamPosEvaluator* evalHermite{};
+    ICamPosEvaluator* evalOrbitArc{};
+    ICamPosEvaluator* evalOrbitSpin{};
 
 public:
     static CCamPosPerSegmentEvaluator* Create() { return new CCamPosPerSegmentEvaluator(); }

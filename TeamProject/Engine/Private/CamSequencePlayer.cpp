@@ -10,15 +10,6 @@
 #include "CamRotPerSegmentEvaluator.h"
 #include "CamFovPerSegmentEvaluator.h"
 
-namespace
-{
-    float ClampSampleTime(float t, float dur)
-    {
-        if (dur <= 1e-6f) return 0.f;
-        return clamp(t, 0.f, dur);
-    }
-}
-
 HRESULT CCamSequencePlayer::Initialize(COMPONENT_DESC* pArg)
 {
     apply.transform = m_pOwner->Get_Component<CTransform>();
@@ -79,7 +70,7 @@ void CCamSequencePlayer::SetTime(_float t)
     if (hasKeys) RebuildIfNeeded();
 
     const float dur = GetPlaybackDur();
-    const float sampleTime = ClampSampleTime(playback.playTime, dur);
+    const float sampleTime = clamp(playback.playTime, 0.f, dur);
 
     if (playback.playTime != sampleTime)
         playback.playTime = sampleTime;
@@ -126,7 +117,7 @@ void CCamSequencePlayer::Update(_float dt)
         }
     }
 
-    const float sampleTime = ClampSampleTime(playback.playTime, dur);
+    const float sampleTime = clamp(playback.playTime, 0.f, dur);
     ApplyAtSampleTime(sampleTime);
 }
 

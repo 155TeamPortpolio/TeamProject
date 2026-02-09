@@ -2568,10 +2568,6 @@ void CCamPanel::DrawKeyframeEditor_SelectedKeyTable(bool& ioChangedAny)
                 }
             }
 
-            ImGui::SameLine();
-            if (target.sequence && target.sequence->space == CamSpace::Local) ImGui::TextDisabled("Local");
-            else ImGui::TextDisabled("World");
-
             ImGui::SameLine(0.f, 12.f);
 
             const _vector3 o = keyPtr->pos;
@@ -2582,11 +2578,11 @@ void CCamPanel::DrawKeyframeEditor_SelectedKeyTable(bool& ioChangedAny)
                 const float tHit = -o.z / d.z;
                 const _vector3 hit = o + d * tHit;
 
-                if (tHit >= 0.f) ImGui::TextDisabled("AimXY(z=0): (%.2f, %.2f)", hit.x, hit.y);
-                else ImGui::TextDisabled("AimXY(z=0): (%.2f, %.2f) (behind)", hit.x, hit.y);
+                if (tHit >= 0.f) ImGui::TextDisabled("(z=0): (%.2f, %.2f)", hit.x, hit.y);
+                else ImGui::TextDisabled("(z=0): (%.2f, %.2f) (behind)", hit.x, hit.y);
             }
             else
-                ImGui::TextDisabled("AimXY(z=0): (parallel)");
+                ImGui::TextDisabled("(z=0): (parallel)");
         }
 
 

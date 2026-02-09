@@ -234,7 +234,7 @@ bool CamUtil::Load(const filesystem::path& path, CamSeqDesc& outSeq, string* out
     _uint fovInterp = 0;
     _uint segmentEase = 0;
 
-    if (version <= static_cast<_uint>(CamVersion::V4))
+    if (version <= static_cast<_uint>(CamVersion::V3))
     {
         _uint projTypeDummy = 0;
         if (!ReadData(inFile, projTypeDummy)) return false;
