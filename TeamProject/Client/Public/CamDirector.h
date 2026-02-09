@@ -64,7 +64,7 @@ public:
     void          StopAll(_float blendOutSec = 0.25f);
     void          Update(_float dt);
 
-    void          StartParry(_float fovHold = 30.f, _float blendInSec = 0.08f, _float holdSec = 0.12f) { m_parry.Begin(fovHold, blendInSec, holdSec); }
+    void          StartParry(_float fovHold = 30.f, _float blendInSec = 0.08f, _float holdSec = 0.12f);
     void          StartBattleIntro(CamSeqType type);
     void          StartDialog();
 
