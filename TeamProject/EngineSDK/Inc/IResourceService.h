@@ -28,7 +28,7 @@ public:
     virtual HRESULT Sync_To_Level()PURE;
 
 
-    virtual _bool RequestPreload(const PreloadKey& key) PURE;
+    virtual _bool RequestPreload(PreloadKey key) PURE;
     virtual void PumpPreloads(vector<PreloadCompleted>& outCompleted) PURE;
     virtual void GetPreloadProgress(_uint& outDone, _uint& outTotal) const PURE;
     virtual _bool isLoadComplete() const PURE;

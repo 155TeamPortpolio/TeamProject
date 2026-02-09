@@ -7,6 +7,10 @@ namespace Math
 	ENGINE_DLL _float   Lerp(_float x, _float y, _float t);
 	ENGINE_DLL _vector2 Lerp(_vector2 x, _vector2 y, _float t);
 
+	ENGINE_DLL _float WrapPi(float a);
+
+	ENGINE_DLL _float LerpAngle(float a, float b, float u);
+
 	ENGINE_DLL _float     WrapDeg(_float deg);
 	ENGINE_DLL _float     QuatDot(const Quaternion& a, const Quaternion& b);
 	ENGINE_DLL Quaternion QuatNegate(const Quaternion& q);
@@ -17,6 +21,7 @@ namespace Math
 	ENGINE_DLL _float     PingPong01(_float t);
 	ENGINE_DLL Vector3    SeedPhase(_uint& seed);
 	ENGINE_DLL _float     MoveTowards(_float cur, _float target, _float maxDelta);
+	ENGINE_DLL _float3	  RotateYawXZ(const _float3& dir, _float yawRad);
 	ENGINE_DLL _vector3   NormalizeSafeXZ(_vector3 v);
 	ENGINE_DLL _float     MoveTowards(_float cur, _float target, _float maxDelta); 
 	ENGINE_DLL _vector3 PerpRightXZ(const _vector3& v);

@@ -121,7 +121,7 @@ void CLoadingLevel::PreLoadLevel(const string& levelKey)
 	}
 
 	// 큐에 쌓인 것들 전부 프리로드 요청
-	for (auto& queuePerType : m_LoadQue)
+	for (auto queuePerType : m_LoadQue)
 	{
 		while (!queuePerType.second.empty())
 		{

@@ -13,9 +13,8 @@ private:
     CCamPanel(GUI_CONTEXT* context) : CBasePanel(context) {}
     ~CCamPanel() DEFAULT;
 
-    void    Init();
-
 public:
+    void    Init();
     void    Update_Panel(_float dt) override;
     void    Render_GUI() override;
     void    SetCaptureTarget(CCamObj* camObj);
@@ -88,7 +87,7 @@ private:
     bool   LoadSequenceFromPath(const string& anyPath);
 
 private:
-    CamSequenceDesc       debugSequence{};
+    CamSeqDesc            debugSequence{};
     CamToolTarget         target{};
     CamToolEditState      state{};
     CamToolKeyPolicy      policy{};

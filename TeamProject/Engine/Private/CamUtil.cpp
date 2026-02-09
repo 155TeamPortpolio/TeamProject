@@ -9,10 +9,11 @@ namespace
         V1 = 1u,
         V2 = 2u,
         V3 = 3u,
+        V4 = 4u,
     };
 
     constexpr _uint kCamMagic = 0x43414D53u;
-    constexpr _uint kCamVersion = static_cast<_uint>(CamVersion::V3);
+    constexpr _uint kCamVersion = static_cast<_uint>(CamVersion::V4);
 }
 
 CamKeySegment CamUtil::FindKeySegment(const vector<CamKeyFrame>& keyframes, float time)
@@ -49,7 +50,7 @@ CamKeySegment CamUtil::FindKeySegment(const vector<CamKeyFrame>& keyframes, floa
 
 	return { segmentIdx, normalizedTime };
 }
-// =======================================================================================================
+
 ofstream CamUtil::OpenOut(const filesystem::path& filePath, bool truncate)
 {
 	ios::openmode mode = ios::binary | ios::out;
@@ -125,40 +126,8 @@ bool CamUtil::ReadString(ifstream& inFile, string& outStr)
 	return static_cast<bool>(inFile);
 }
 
-void CamUtil::WriteAlign(ofstream& outFile, _uint align)
-{
-	assert(align > 0);
-
-	const streamoff pos = outFile.tellp();
-	const _uint padding = static_cast<_uint>((align - (pos % align)) % align);
-	if (padding == 0) return;
-
-	static const uint8_t zeros[16] = { 0 };
-	_uint remain = padding;
-
-	while (remain > 0)
-	{
-		const _uint chunk = (remain < 16u) ? remain : 16u;
-		WriteBytes(outFile, zeros, static_cast<size_t>(chunk));
-		remain -= chunk;
-	}
-}
-
-bool CamUtil::ReadAlign(ifstream& inFile, _uint align)
-{
-	assert(align > 0);
-
-	const streamoff pos = inFile.tellg();
-	const _uint padding = static_cast<_uint>((align - (pos % align)) % align);
-	if (padding == 0) return true;
-
-	vector<uint8_t> scratch(static_cast<size_t>(padding));
-	return ReadBytes(inFile, scratch.data(), scratch.size());
-}
-
 bool CamUtil::AtomicReplaceFile(const filesystem::path& tempPath, const filesystem::path& targetPath, string& outErrorMsg)
 {
-#ifdef _WIN32
     const wstring tempW = tempPath.wstring();
     const wstring targetW = targetPath.wstring();
 
@@ -166,22 +135,9 @@ bool CamUtil::AtomicReplaceFile(const filesystem::path& tempPath, const filesyst
         return false;
 
     return true;
-#else
-    error_code ec;
-    filesystem::rename(tempPath, targetPath, ec);
-    if (!ec) return true;
-
-    filesystem::remove(targetPath, ec);
-    ec.clear();
-    filesystem::rename(tempPath, targetPath, ec);
-    if (ec)
-        return false;
-
-    return true;
-#endif
 }
 
-bool CamUtil::Save(const filesystem::path& path, const CamSequenceDesc& seq, string* outErrorMsg)
+bool CamUtil::Save(const filesystem::path& path, const CamSeqDesc& seq, string* outErrorMsg)
 {
     const filesystem::path tempPath = path.string() + ".tmp";
 
@@ -191,9 +147,6 @@ bool CamUtil::Save(const filesystem::path& path, const CamSequenceDesc& seq, str
     WriteHeader(outFile, kCamMagic, kCamVersion);
 
     WriteString(outFile, seq.name);
-
-    WriteData(outFile, static_cast<_uint>(seq.projType));
-    WriteData(outFile, static_cast<_uint>(seq.playbackMode));
 
     WriteData(outFile, static_cast<_uint>(seq.space));
 
@@ -259,7 +212,7 @@ bool CamUtil::Save(const filesystem::path& path, const CamSequenceDesc& seq, str
     return true;
 }
 
-bool CamUtil::Load(const filesystem::path& path, CamSequenceDesc& outSeq, string* outErrorMsg)
+bool CamUtil::Load(const filesystem::path& path, CamSeqDesc& outSeq, string* outErrorMsg)
 {
     ifstream inFile = OpenIn(path);
     if (!inFile) return false;
@@ -274,8 +227,6 @@ bool CamUtil::Load(const filesystem::path& path, CamSequenceDesc& outSeq, string
     if (!ReadString(inFile, outSeq.name))
         return false;
 
-    _uint projType = 0;
-    _uint playbackMode = 0;
     _uint space = 0;
 
     _uint posInterp = 0;
@@ -283,8 +234,14 @@ bool CamUtil::Load(const filesystem::path& path, CamSequenceDesc& outSeq, string
     _uint fovInterp = 0;
     _uint segmentEase = 0;
 
-    if (!ReadData(inFile, projType)) return false;
-    if (!ReadData(inFile, playbackMode)) return false;
+    if (version <= static_cast<_uint>(CamVersion::V3))
+    {
+        _uint projTypeDummy = 0;
+        if (!ReadData(inFile, projTypeDummy)) return false;
+
+        _uint playbackModeDummy = 0;
+        if (!ReadData(inFile, playbackModeDummy)) return false;
+    }
 
     if (!ReadData(inFile, space)) return false;
 
@@ -293,9 +250,6 @@ bool CamUtil::Load(const filesystem::path& path, CamSequenceDesc& outSeq, string
     if (!ReadData(inFile, fovInterp)) return false;
 
     if (!ReadData(inFile, segmentEase)) return false;
-
-    outSeq.projType = static_cast<CamProjType>(projType);
-    outSeq.playbackMode = static_cast<CamPlaybackMode>(playbackMode);
 
     outSeq.space = static_cast<CamSpace>(space);
 

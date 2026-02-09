@@ -294,7 +294,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <AdditionalIncludeDirectories>../../EngineSDK/Inc/;../Public/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalOptions>/wd4005 /wd4251 /wd4819 /wd4267 /wd4244 /wd4172 /wd4018 /wd4838 /wd4305 /wd4101 /wd4129 /wd4715 /wd4067 /Zo %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/wd4005 /wd4251 /wd4819 /wd4267 /wd4244 /wd4172 /wd4018 /wd4838 /wd4305 /wd4101 /wd4129 /wd4715 /wd4067 /wd4652 /Zo %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
     </ClCompile>
     <Link>
@@ -380,9 +380,13 @@
     <ClInclude Include="..\public\Claymore_Hit.h" />
     <ClInclude Include="..\public\Claymore_Idle.h" />
     <ClInclude Include="..\public\Claymore_Move.h" />
+    <ClInclude Include="..\Public\MiasmaGrandierJaeger.h" />
     <ClInclude Include="..\Public\CrowdNpc.h" />
     <ClInclude Include="..\public\GachaFootStage.h" />
     <ClInclude Include="..\Public\MiasmaBlade.h" />
+    <ClInclude Include="..\Public\MiasmaJaegerState.h" />
+    <ClInclude Include="..\Public\MiasmaProjectile.h" />
+    <ClInclude Include="..\Public\MiasmaSpawner.h" />
     <ClInclude Include="..\Public\MiyabiState_AssaultAttack.h" />
     <ClInclude Include="..\Public\MiyabiState_CounterAttack.h" />
     <ClInclude Include="..\Public\MiyabiState_ExAttack.h" />
@@ -816,11 +820,15 @@
     <ClCompile Include="..\private\Claymore_Idle.cpp" />
     <ClCompile Include="..\private\Claymore_Move.cpp" />
     <ClCompile Include="..\private\Claymore_Parried.cpp" />
+    <ClCompile Include="..\Private\MiasmaGrandierJaeger.cpp" />
     <ClCompile Include="..\Private\CorinState_AssaultAttack.cpp" />
     <ClCompile Include="..\Private\CorinState_CounterAttack.cpp" />
     <ClCompile Include="..\Private\CrowdNpc.cpp" />
     <ClCompile Include="..\private\GachaFootStage.cpp" />
     <ClCompile Include="..\Private\MiasmaBlade.cpp" />
+    <ClCompile Include="..\Private\MiasmaJaegerState.cpp" />
+    <ClCompile Include="..\Private\MiasmaProjectile.cpp" />
+    <ClCompile Include="..\Private\MiasmaSpawner.cpp" />
     <ClCompile Include="..\Private\MiyabiState_AssaultAttack.cpp" />
     <ClCompile Include="..\Private\MiyabiState_CounterAttack.cpp" />
     <ClCompile Include="..\Private\MiyabiState_ExAttack.cpp" />
@@ -1092,7 +1100,9 @@
     <ClCompile Include="..\Private\MiyabiState_NormalAttack.cpp" />
     <ClCompile Include="..\Private\MiyabiState_Run.cpp" />
     <ClCompile Include="..\Private\MiyabiState_Walk.cpp" />
-    <ClCompile Include="..\private\OrbitCam.cpp" />
+    <ClCompile Include="..\private\OrbitCam.cpp">
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='ClientDebug|x64'">Level3</WarningLevel>
+    </ClCompile>
     <ClCompile Include="..\Private\FreeCam.cpp" />
     <ClCompile Include="..\Private\MainApp.cpp" />
     <ClCompile Include="..\private\MapFloorObject.cpp" />

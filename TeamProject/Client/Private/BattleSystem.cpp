@@ -28,9 +28,10 @@ CBattleSystem::CBattleSystem()
 	
 	m_pFXFlow = CBattleFXFlow::Create();
 	m_pFXFlow->Initialize_Preset();
-	m_pFXFlow->SetLayerTag(BATTLE_OBJ_TYPE::PLAYER, "Model_Layer");
-	m_pFXFlow->SetLayerTag(BATTLE_OBJ_TYPE::MONSTER, "Enemy_Layer");
-	m_pFXFlow->SetLayerTag(BATTLE_OBJ_TYPE::CAMERA, "Camera_Layer");
+	m_pFXFlow->SetLayerTag(BATTLE_OBJ_TYPE::PLAYER,		"Model_Layer");
+	m_pFXFlow->SetLayerTag(BATTLE_OBJ_TYPE::MONSTER,	"Enemy_Layer");
+	m_pFXFlow->SetLayerTag(BATTLE_OBJ_TYPE::CAMERA,		"Camera_Layer");
+	m_pFXFlow->SetLayerTag(BATTLE_OBJ_TYPE::EFFECT,		"Effect_Layer");
 }
 
 void CBattleSystem::Update()
@@ -42,6 +43,7 @@ void CBattleSystem::Update()
 
 	CheckVFX(dt);
 	Update_BattleInfo();
+	CleanUp_Data();
 
 	if(InputDevice()->Key_Tap(VK_SHIFT))
 	{
@@ -61,12 +63,12 @@ OBJECT_HANDLE CBattleSystem::GetCurCharacterHandle() const
 
 const vector<BATTLEOBJ_INFO>& CBattleSystem::GetBattleObjects(BATTLE_OBJ_TYPE eType) const
 {
-	return m_BattleObjInfos.at(eType);
+	return m_BattleSnapShots.at(eType);
 }
 
 vector<BATTLEOBJ_INFO> CBattleSystem::CopyBattleObjects(BATTLE_OBJ_TYPE eType)
 {
-	return m_BattleObjInfos[eType];
+	return m_BattleSnapShots[eType];
 }
 
 _int CBattleSystem::GetPlayerParryingCount()
@@ -81,7 +83,7 @@ void CBattleSystem::SetActive(_bool isActive)
 {
 	if (false == isActive) {
 		m_isActive = false;
-		ClearBattleStage();
+		//ClearBattleStage();
 		return;
 	}
 	else {
@@ -89,28 +91,6 @@ void CBattleSystem::SetActive(_bool isActive)
 	}
 }
 
-void CBattleSystem::ReadyBattle(const string& tagArea, _uint iPrefabIndex)
-{
-	auto pDataBase = CDataBase::GetInstance();
-	auto pObjMgr = ObjectManager();
-}
-
-void CBattleSystem::ReadyBattle(const string& tagArea, _uint StageNumber, _uint iPrefabIndex)
-{
-	auto pDatabase = CDataBase::GetInstance();
-	auto CacheData = CDataBase::GetInstance()->Get_CashedData(tagArea);
-
-	if (!CacheData->Battle.HasBattleData)
-		return;
-
-	/*PlayerPos*/
-	CacheData->Battle.PlayerPoint;
-
-	/*MonsterPos*/
-	CacheData->Battle.MonsterPoint;
-	CacheData->Battle.PortalPoint;
-	//const vector<MONSTER_SPAWN_DESC>* pMonsterSpawnData = pDatabase->GetMonsterSpawnData(tagArea);
-}
 /*지금 싸우려는 애들->*/
 void CBattleSystem::SpawnMosnter(const string& MonsterProtoTag, _float3 vSpawnPos, _float3 vRot)
 {
@@ -142,42 +122,7 @@ void CBattleSystem::SpawnMosnter(const string& MonsterProtoTag, _float3 vSpawnPo
 		return;
 
 	CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(pMonster, { NowLevel, "Enemy_Layer" });
-
-	BATTLEOBJ_INFO EnemyInfo = {};
-	EnemyInfo.hObject = pMonster->Get_Handle();
-	m_BattleObjInfos[BATTLE_OBJ_TYPE::MONSTER].push_back(EnemyInfo);
-}
-
-_bool CBattleSystem::ExitBattleObject(BATTLE_OBJ_TYPE eObjType, OBJECT_HANDLE hObject)
-{
-	auto iter = m_BattleObjInfos.find(eObjType);
-	if(iter == m_BattleObjInfos.end())
-		return false;
-
-	auto& handles = iter->second;
-
-	auto hiter = find_if(
-		handles.begin(),
-		handles.end(),
-		[&](BATTLEOBJ_INFO& info){return info.hObject == hObject;});
-
-	if (hiter == handles.end())
-		return false;
-
-	handles.erase(hiter);
-	return true;
-}
-
-void CBattleSystem::EnterBattleObject(BATTLE_OBJ_TYPE eObjType, OBJECT_HANDLE hObject)
-{
-	auto iter = m_BattleObjInfos.find(eObjType);
-	if (iter == m_BattleObjInfos.end())
-		return;
-
-	auto& handles = iter->second;
-	BATTLEOBJ_INFO info = {};
-	info.hObject = hObject;
-	handles.push_back(info);
+	EnterBattleObject(BATTLE_OBJ_TYPE::MONSTER, pMonster->Get_Handle());
 }
 
 void CBattleSystem::SetPlayer(vector<OBJECT_HANDLE> hPlayers)
@@ -188,6 +133,7 @@ void CBattleSystem::SetPlayer(vector<OBJECT_HANDLE> hPlayers)
 
 		BATTLEOBJ_INFO playerInfo = {};
 		playerInfo.hObject = hPlayer;
+		playerInfo.isOnField = true;
 		m_BattleObjInfos[BATTLE_OBJ_TYPE::PLAYER].push_back(playerInfo);
 	}
 }
@@ -196,7 +142,7 @@ void CBattleSystem::TakeAreaDamage(const _float3& vCenter, _float fRadius, const
 {
 	_float fRadiusSq = fRadius * fRadius;
 
-	for (auto& info : m_BattleObjInfos[BATTLE_OBJ_TYPE::MONSTER])
+	for (auto& info : m_BattleSnapShots[BATTLE_OBJ_TYPE::MONSTER])
 	{
 		_float3 vDiff = info.vPos - vCenter;
 		_float fDistSq = vDiff.x * vDiff.x + vDiff.y * vDiff.y + vDiff.z * vDiff.z;
@@ -217,7 +163,7 @@ void CBattleSystem::TakeAreaDamage(const _float3& vCenter, _float fRadius, const
 	_vector3 vDirNorm = vDir;
 	vDirNorm.Normalize();
 
-	for (auto& info : m_BattleObjInfos[BATTLE_OBJ_TYPE::MONSTER])
+	for (auto& info : m_BattleSnapShots[BATTLE_OBJ_TYPE::MONSTER])
 	{
 		_vector3 vDiff = info.vPos - vCenter;
 		_float fDistSq = vDiff.x * vDiff.x + vDiff.y * vDiff.y + vDiff.z * vDiff.z;
@@ -246,7 +192,7 @@ void CBattleSystem::TakeBoxDamage(const _float3& vCenter, const _float3& vHalfEx
 	_quaternion qInverse;
 	qRotation.Inverse(qInverse);
 
-	for (auto& info : m_BattleObjInfos[BATTLE_OBJ_TYPE::MONSTER])
+	for (auto& info : m_BattleSnapShots[BATTLE_OBJ_TYPE::MONSTER])
 	{
 		_vector3 vLocal = _vector3::Transform(info.vPos - vCenter, qInverse);
 
@@ -263,7 +209,7 @@ void CBattleSystem::TakeBoxDamage(const _float3& vCenter, const _float3& vHalfEx
 
 void CBattleSystem::TakeAllDamage(const HitDesc& hitDesc)
 {
-	for (auto& info : m_BattleObjInfos[BATTLE_OBJ_TYPE::MONSTER])
+	for (auto& info : m_BattleSnapShots[BATTLE_OBJ_TYPE::MONSTER])
 	{
 		auto& handle = info.hObject;
 
@@ -277,19 +223,22 @@ void CBattleSystem::TakeAllDamage(const HitDesc& hitDesc)
 	}
 }
 
-void CBattleSystem::ClearBattleStage()
+void CBattleSystem::CleanUp_Data()
 {
-	for (auto& Pair : m_BattleObjInfos) {
-		if (Pair.first == BATTLE_OBJ_TYPE::PLAYER)
-			continue;
-		for (auto info : Pair.second)
-		{
-			info.Reset();
-		}
-		Pair.second.clear();
-	}
+	m_BattleSnapShots.clear();
+	for (size_t i = 0; i < ENUM(BATTLE_OBJ_TYPE::END); i++)
+	{
+		BATTLE_OBJ_TYPE eType = BATTLE_OBJ_TYPE(i);
+		auto& vector = m_BattleObjInfos[eType];
+		auto& snapVector = m_BattleSnapShots[eType];
 
-	m_BattleFieldData = {};
+		for (size_t i = 0; i < vector.size(); i++)
+		{
+			if (!vector[i].isOnField) continue;
+			if (!vector[i].hObject.isValid()) continue;
+			snapVector.push_back(vector[i]);
+		}
+	}
 }
 
 void CBattleSystem::Update_BattleInfo()
@@ -306,16 +255,13 @@ void CBattleSystem::Update_BattleInfo()
 			info.vPos = { objWorldPos.x, objWorldPos.y,objWorldPos.z };
 			auto* cct = pObject->Get_Component<CCharacterController>();
 			info.fRadius = (cct != nullptr)? cct->Get_Radius():0;
-			info.isOnField = true;
 		}
 	}
 }
 
 _bool CBattleSystem::isMonsterCleared()
 {
-	
-
-	return m_BattleObjInfos[BATTLE_OBJ_TYPE::MONSTER].empty();
+	return m_BattleSnapShots[BATTLE_OBJ_TYPE::MONSTER].empty();
 }
 
 void CBattleSystem::CheckVFX(const _float dt)
@@ -326,13 +272,105 @@ void CBattleSystem::CheckVFX(const _float dt)
 	m_pFXFlow->Update(dt);
 }
 
+void CBattleSystem::EnterBattleObject(BATTLE_OBJ_TYPE eObjType, OBJECT_HANDLE hObject)
+{
+	auto BattleInfo = FindBattleObjInfo(hObject);
+
+	if (nullptr != BattleInfo) {
+		BattleInfo->isOnField = true;
+		return;
+	}
+
+	auto& vector = FindBattleType(eObjType);
+
+	BattleObjectInfo info = {};
+	info.hObject = hObject;
+	info.isOnField = true;
+
+	vector.push_back(info);
+	m_BattleObjIndex[hObject] = { eObjType, static_cast<_uint>(vector.size() - 1) };
+}
+
+_bool CBattleSystem::ExitBattleObject(BATTLE_OBJ_TYPE eObjType, OBJECT_HANDLE hObject)
+{
+	auto indexIter = m_BattleObjIndex.find(hObject);
+	if (indexIter == m_BattleObjIndex.end())
+		return false;
+	auto& indexList = FindBattleType(eObjType);
+	_uint removeIndex= indexIter->second.indexInVector;
+
+	RemoveFromListSwapPop(indexList, removeIndex, eObjType);
+	return true;
+}
+
+void CBattleSystem::ExcludeBattleObject(BATTLE_OBJ_TYPE eObjType, OBJECT_HANDLE hObject)
+{
+	auto indexIter = m_BattleObjIndex.find(hObject);
+	if (indexIter == m_BattleObjIndex.end())
+		return;
+	auto& indexList = FindBattleType(eObjType);
+	indexList[indexIter->second.indexInVector].isOnField = false;
+}
+
+void CBattleSystem::ClearBattleStage()
+{
+	for (auto& Pair : m_BattleObjInfos) {
+		if (Pair.first == BATTLE_OBJ_TYPE::PLAYER)
+			continue;
+		for (auto& info : Pair.second)
+		{
+			info.Reset();
+		}
+		Pair.second.clear();
+	}
+	m_BattleObjIndex.clear();
+	m_BattleSnapShots.clear();
+}
+
+BATTLEOBJ_INFO* CBattleSystem::FindBattleObjInfo(OBJECT_HANDLE objectHandle)
+{
+	auto it = m_BattleObjIndex.find(objectHandle);
+	if (it == m_BattleObjIndex.end())
+		return nullptr;
+
+	const BattleObjIndex& indexInfo = it->second;
+
+	TypeVector& infoList = m_BattleObjInfos[indexInfo.objType];
+
+	if (indexInfo.indexInVector >= infoList.size())
+		return nullptr;
+	
+	return &infoList[indexInfo.indexInVector];
+}
+
+vector<BATTLEOBJ_INFO>& CBattleSystem::FindBattleType(BATTLE_OBJ_TYPE eObjType)
+{
+	return m_BattleObjInfos[eObjType];
+}
+
+_bool CBattleSystem::RemoveFromListSwapPop(TypeVector& infoList, _uint removeIndex, BATTLE_OBJ_TYPE objType)
+{
+	const _uint lastIndex = (_uint)infoList.size() - 1;
+	if (removeIndex != lastIndex)
+	{
+		infoList[removeIndex] = infoList[lastIndex]; /*마지막 인덱스 애를 리무브 인덱스로 옮겨줌*/
+
+		OBJECT_HANDLE movedHandle = infoList[removeIndex].hObject; 
+		auto itMoved = m_BattleObjIndex.find(movedHandle);
+		if (itMoved != m_BattleObjIndex.end())
+		{	/*인덱스 관련 정보도 바꿔줌*/
+			itMoved->second.objType = objType;
+			itMoved->second.indexInVector = removeIndex;
+		}
+	}
+
+	infoList.pop_back(); /*마지막 정보 삭제*/
+	return true;
+}
+
 void CBattleSystem::StartGimmick(BATTLE_VFX_TYPE eVFXType)
 {
 	m_pFXFlow->StartVfx(eVFXType);
-}
-
-void CBattleSystem::StartTimeScale(BATTLE_OBJ_TYPE eObjType, _float fDuration, _float fScale, _float fStartLerpTime, _float fEndLerpTime)
-{
 }
 
 void CBattleSystem::Free()

@@ -13,10 +13,6 @@ enum class CamFovInterp
 {
 	Linear, Smooth, Hold
 };
-enum class CamPlaybackMode 
-{
-	Once, Loop, PingPong,
-};
 enum class CamProjType
 {
 	Perspective, Orthographic, 

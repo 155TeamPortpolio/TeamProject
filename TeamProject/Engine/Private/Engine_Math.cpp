@@ -11,6 +11,19 @@ ENGINE_DLL _vector2 Math::Lerp(_vector2 x, _vector2 y, _float t)
 	return x + (y - x) * t;
 }
 
+ENGINE_DLL _float Math::WrapPi(float a)
+{
+	while (a > XM_PI)  a -= XM_2PI;
+	while (a < -XM_PI) a += XM_2PI;
+	return a;
+}
+
+ENGINE_DLL _float Math::LerpAngle(float a, float b, float u)
+{
+	_float d = WrapPi(b - a);
+	return a + d * u;
+}
+
 ENGINE_DLL _float Math::WrapDeg(_float deg)
 {
 	while (deg > 180.f)  deg -= 360.f;
@@ -77,6 +90,18 @@ ENGINE_DLL _float Math::MoveTowards(_float cur, _float target, _float maxDelta)
 	const _float d = target - cur;
 	if (fabsf(d) <= maxDelta) return target;
 	return cur + (d > 0.f ? maxDelta : -maxDelta);
+}
+
+ENGINE_DLL _float3 Math::RotateYawXZ(const _float3& dir, _float yawRad)
+{
+	const float cosVal = std::cos(yawRad);
+	const float sinVal = std::sin(yawRad);
+
+	_float3 out;
+	out.x = dir.x * cosVal - dir.z * sinVal;
+	out.y = dir.y;
+	out.z = dir.x * sinVal + dir.z * cosVal;
+	return out;
 }
 
 // 특정 방향에 대하여 오른쪽 수직

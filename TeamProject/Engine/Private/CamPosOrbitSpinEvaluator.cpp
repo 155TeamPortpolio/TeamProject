@@ -27,6 +27,9 @@ Vector3 CCamPosOrbitSpinEvaluator::ResolveCenter() const
     if (desc->centerMode == CamSpinCenterMode::Custom)
         return Vector3(desc->center.x, desc->center.y, desc->center.z);
 
+    if (desc->centerMode == CamSpinCenterMode::SpaceRefOrigin)
+        return Vector3::Zero;
+
     return Vector3::Zero;
 }
 
@@ -43,50 +46,20 @@ Vector3 CCamPosOrbitSpinEvaluator::ResolveAxisN(_bool keepHeight) const
 
 void CCamPosOrbitSpinEvaluator::BuildSegmentCache(const CamKeyFrame& k0, const CamKeyFrame& k1, SegmentCache& out) const
 {
-    out.keepHeight = desc->keepHeight;
-
     out.center = ResolveCenter();
-    out.axisN = ResolveAxisN(out.keepHeight);
+    out.axisN = ResolveAxisN(desc->keepHeight);
 
     const Vector3 p0(k0.pos.x, k0.pos.y, k0.pos.z);
     const Vector3 p1(k1.pos.x, k1.pos.y, k1.pos.z);
 
-    Vector3 a = p0 - out.center;
-    Vector3 b = p1 - out.center;
-
-    if (out.keepHeight)
-    {
-        out.baseY = p0.y;
-
-        a.y = 0.f;
-        b.y = 0.f;
-
-        out.aPar = Vector3::Zero;
-        out.bPar = Vector3::Zero;
-
-        out.aLen = a.Length();
-        out.bLen = b.Length();
-
-        const Vector3 aDir = SafeNormalizeOrX(a);
-        const Vector3 bDir = SafeNormalizeOrX(b);
-
-        float ang = SignedAngleOnAxis(aDir, bDir, out.axisN);
-
-        if (desc->clockwise && ang > 0.f) ang -= XM_2PI;
-        if (!desc->clockwise && ang < 0.f) ang += XM_2PI;
-
-        const float turnAdd = (desc->clockwise ? -XM_2PI : XM_2PI) * float(desc->extraTurns);
-        out.totalAngle = ang + turnAdd;
-
-        out.aDir = aDir;
-        return;
-    }
+    const Vector3 a = p0 - out.center;
+    const Vector3 b = p1 - out.center;
 
     const Vector3 aPar = out.axisN * a.Dot(out.axisN);
     const Vector3 bPar = out.axisN * b.Dot(out.axisN);
 
-    Vector3 aPerp = a - aPar;
-    Vector3 bPerp = b - bPar;
+    const Vector3 aPerp = a - aPar;
+    const Vector3 bPerp = b - bPar;
 
     out.aPar = aPar;
     out.bPar = bPar;
@@ -110,8 +83,6 @@ void CCamPosOrbitSpinEvaluator::BuildSegmentCache(const CamKeyFrame& k0, const C
 
 bool CCamPosOrbitSpinEvaluator::Build(const vector<CamKeyFrame>& keys)
 {
-    assert(desc);
-
     keyframes = &keys;
 
     cache.clear();
@@ -127,10 +98,6 @@ bool CCamPosOrbitSpinEvaluator::Build(const vector<CamKeyFrame>& keys)
 
 _vector3 CCamPosOrbitSpinEvaluator::Evaluate(_float time) const
 {
-    assert(desc);
-    assert(desc->enabled);
-    assert(keyframes);
-
     const auto& keys = *keyframes;
     const size_t n = keys.size();
 
@@ -150,16 +117,14 @@ _vector3 CCamPosOrbitSpinEvaluator::Evaluate(_float time) const
     const Quaternion q = Quaternion::CreateFromAxisAngle(c.axisN, ang);
     const Matrix rm = Matrix::CreateFromQuaternion(q);
 
-    Vector3 dir = Vector3::Transform(c.aDir, rm);
+    const Vector3 dir = Vector3::Transform(c.aDir, rm);
 
     const float len = c.aLen + (c.bLen - c.aLen) * u;
-    Vector3 perp = dir * len;
+    const Vector3 perp = dir * len;
 
-    Vector3 par = c.aPar + (c.bPar - c.aPar) * u;
+    const Vector3 par = c.aPar + (c.bPar - c.aPar) * u;
 
-    Vector3 p = c.center + par + perp;
-
-    if (c.keepHeight) p.y = c.baseY;
+    const Vector3 p = c.center + par + perp;
 
     return _vector3(p.x, p.y, p.z);
 }

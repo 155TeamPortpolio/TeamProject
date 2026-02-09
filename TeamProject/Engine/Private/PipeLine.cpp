@@ -319,6 +319,7 @@ void CPipeLine::Update_HiZ(ID3D11DeviceContext* pContext)
 
 _bool CPipeLine::isVisible(MINMAX_BOX minMax, _fmatrix worldTransform)
 {
+
 	// 월드 AABB 계산
 	MINMAX_BOX worldBox = minMax.TransformBox_8Corner(Matrix(worldTransform));
 
@@ -336,7 +337,7 @@ _bool CPipeLine::isVisible(MINMAX_BOX minMax, _fmatrix worldTransform)
 	if (!(extents.x > 0.f && extents.y > 0.f && extents.z > 0.f))
 		return false;
 
-	extents.y = max(extents.y, 0.2f);
+	extents.y = max(extents.y, 0.4f);
 
 	BoundingBox worldAabb(center, extents);
 
