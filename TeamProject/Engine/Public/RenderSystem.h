@@ -33,8 +33,6 @@ public:
 	virtual class CRenderer* GetRenderer(RENDERER_TYPE eType) override;
 	virtual class CPostRenderer* GetPostRenderer() override { return m_pPost; }
 
-	virtual _bool Get_FogDesc(FOG_DESC& outResult) override;
-	virtual void Set_FogDesc(FOG_DESC desc)override;
 	virtual void Set_GlitchDesc(GLITCH_DESC desc) override;
 	virtual void SetRimLightMode(RIMLIGHT eMode) override;
 

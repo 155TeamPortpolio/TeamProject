@@ -99,6 +99,8 @@ void CMiyabi::Awake()
 void CMiyabi::Priority_Update(_float dt)
 {
 	__super::Priority_Update(dt);
+	if (!m_BoneMatrices.empty() && m_pCCT->Get_CompActive())
+		Update_MotionBlurQueue();
 }
 
 void CMiyabi::Update(_float dt)
@@ -310,6 +312,38 @@ void CMiyabi::OnPerfectDodge()
 
 void CMiyabi::OnDefensiveAssist()
 {
+}
+
+void CMiyabi::Add_MotionBlur()
+{
+	if (m_BoneMatrices.size() > 5)
+	{
+		m_BoneMatrices.pop_front();
+		m_WorldMatrices.pop_front();
+	}
+
+	auto Model = Get_Component<CSkeletalModel>();
+	vector<vector<_float4x4>> BoneMatrices;
+	BoneMatrices.resize(Model->Get_MeshCount());
+	for (_int i = 0; i < Model->Get_MeshCount(); ++i)
+	{
+		BoneMatrices[i] = m_pAnimator->Get_BoneMatrices(i);
+	}
+
+	m_WorldMatrices.push_back(*m_pTransform->Get_WorldMatrix_Ptr());
+	m_BoneMatrices.push_back(BoneMatrices);
+}
+
+void CMiyabi::Clear_MotionBlur()
+{
+	m_BoneMatrices.clear();
+	m_WorldMatrices.clear();
+}
+
+void CMiyabi::Reset_RimLight()
+{
+	m_vRimLightColor = _float3(0.f, 0.f, 0.f);
+	m_fRimLightPower = 0.f;
 }
 
 HRESULT CMiyabi::Initialize_StateMachine()
@@ -980,6 +1014,64 @@ void CMiyabi::Process_EndState(const string& strCurrentState)
 	//			m_pStateMachine->Set_Trigger("ToIdle");
 	//	}
 	//}
+}
+
+HRESULT CMiyabi::Update_MotionBlurQueue()
+{
+	auto Model = Get_Component<CSkeletalModel>();
+	m_vRimLightColor = _float3(0.1f, 0.4f, 1.f);
+	m_fRimLightPower = 2.f;
+
+	for (_int k = m_BoneMatrices.size() - 1; k >= 0; --k)
+	{
+		_float t = (_float)k / (_float)(m_BoneMatrices.size() - 1);
+		_float4 vColor;
+		vColor.x = 0.0f;
+		vColor.y = 0.15f + (0.35f * t);
+		vColor.z = 0.4f + (0.6f * t);
+		vColor.w = 0.05f + (0.6f * t);
+
+		for (_int i = 0; i < Model->Get_MeshCount(); ++i)
+		{
+			if (Model->isDrawable(i) == false) continue;
+			MOTIONBLUR_COMMAND Command =
+			{
+				Get_Component<CMaterial>()->Get_Shader(Model->Get_MaterialIndex(i)),
+				&m_WorldMatrices[k],
+				m_BoneMatrices[k][i],
+				"float4x4[]",
+				vColor,
+				static_cast<_uint>(sizeof(_float4x4) * m_BoneMatrices[k][i].size()),
+				i,
+				[this](ID3D11DeviceContext* pContext, _uint index) {Render_DashMotionBlur(pContext, index); }
+			};
+			RenderSystem()->Add_MotionBlurCommand(Command);
+		}
+	}
+	return S_OK;
+}
+
+HRESULT CMiyabi::Render_DashMotionBlur(ID3D11DeviceContext* pContext, _uint idx)
+{
+	auto RenderSys = RenderSystem()->GetRenderer(RENDERER_TYPE::SKINNED);
+	auto Model = Get_Component<CSkeletalModel>();
+	auto Material = Get_Component<CMaterial>();
+	_int Index = Model->Get_MaterialIndex(idx);
+	auto Shader = Material->Get_Shader(Index);
+	ID3D11InputLayout* pLayout;
+	RenderSys->Get_InputLayout(
+		Model,
+		Shader,
+		idx,
+		"MotionBlur",
+		&pLayout
+	);
+
+	pContext->IASetInputLayout(pLayout);
+	Shader->Apply("MotionBlur", pContext);
+	Model->Draw(pContext, idx);
+
+	return S_OK;
 }
 
 //HRESULT CMiyabi::Add_OutLineRender()

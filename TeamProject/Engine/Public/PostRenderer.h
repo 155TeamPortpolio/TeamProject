@@ -23,9 +23,6 @@ public:
         return nullptr;
     }
 
-    void Set_FogDesc(FOG_DESC desc) { fogDesc = desc; };
-    FOG_DESC Get_FogDesc() const { return fogDesc; };
-
 public:
     HRESULT Render_PostProcessCommand();
     HRESULT Render_HDRBloom_Internal();
@@ -52,8 +49,6 @@ private:
     map<type_index, class CPostProcessCommand*> m_CommandMap;
 
 private:
-    //*¾È°³*
-    FOG_DESC            fogDesc;
     _float              m_fScreenWidth;
     _float              m_fScreenHeight;
 

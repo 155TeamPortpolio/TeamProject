@@ -128,20 +128,6 @@ CRenderSystem* CRenderSystem::Create(ID3D11Device* pDevice, ID3D11DeviceContext*
 	return Instance;
 }
 
-_bool CRenderSystem::Get_FogDesc(FOG_DESC& outResult)
-{
-	if (!m_pPost)
-		return false;
-
-	outResult = m_pPost->Get_FogDesc();
-	return true;
-}
-
-void CRenderSystem::Set_FogDesc(FOG_DESC desc)
-{
-	m_pPost->Set_FogDesc(desc);
-}
-
 void CRenderSystem::Set_GlitchDesc(GLITCH_DESC desc)
 {
 	m_pForward->Set_GlitchDesc(desc);
