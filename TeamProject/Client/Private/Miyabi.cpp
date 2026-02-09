@@ -496,6 +496,48 @@ HRESULT CMiyabi::Initialize_Effects()
 		pObjectContainer->Add_Child(pEffect, false);
 		pEffect->AttachBone(pAnimator, "Bn_Weapon", _smatrix::Identity, true);
 	}
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_charge0_particle.json")
+			.Build("Miyabi_Charge0_Particle0");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_charge0_particle.json")
+			.Build("Miyabi_Charge0_Particle1");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_charge_start.json")
+			.Build("Miyabi_Charge_Start");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_charge_stack_up.json")
+			.Build("Miyabi_Charge_StackUp0");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_charge_stack_up.json")
+			.Build("Miyabi_Charge_StackUp1");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_charge0_smoke.json")
+			.Build("Miyabi_Charge0_Smoke");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
 
 	// Ultimate Flare
 	{

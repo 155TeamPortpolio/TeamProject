@@ -28,6 +28,7 @@ public:
 public:
     static CMiyabiState_Charge_Start* Create() { return new CMiyabiState_Charge_Start(); }
     virtual void Free() override { __super::Free(); }
+
 };
 
 class CMiyabiState_Charge_Start_02 : public IBaseState<CMiyabi>
@@ -40,6 +41,7 @@ public:
 public:
     static CMiyabiState_Charge_Start_02* Create() { return new CMiyabiState_Charge_Start_02(); }
     virtual void Free() override { __super::Free(); }
+
 };
 
 class CMiyabiState_Charge_Start_03 : public IBaseState<CMiyabi>
@@ -52,9 +54,6 @@ public:
 public:
     static CMiyabiState_Charge_Start_03* Create() { return new CMiyabiState_Charge_Start_03(); }
     virtual void Free() override { __super::Free(); }
-
-private:
-    void Update_Effects(CMiyabi* pOwner);
 
 };
 

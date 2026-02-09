@@ -103,7 +103,10 @@ void CMiyabiState_Charge_Start::Enter(CMiyabi* pOwner)
         .Apply();
     else
         pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_ChargeAttack_Start")
+        .Speed(1.6f)
         .Apply();
+
+    //pOwner->Play_Effect("Miyabi_Charge_Start", _vector3(0.f, 0.1f, 0.f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
 }
 void CMiyabiState_Charge_Start::Update(CMiyabi* pOwner, _float dt)
 {
@@ -119,7 +122,10 @@ void CMiyabiState_Charge_Start_02::Enter(CMiyabi* pOwner)
 {
     pOwner->Decrease_Frost(2);
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_ChargeAttack_Start_02")
+        .Speed(1.6f)
         .Apply();
+
+    pOwner->Play_Effect("Miyabi_Charge_StackUp0", _vector3(0.f, 1.f, 0.f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
 }
 
 void CMiyabiState_Charge_Start_02::Update(CMiyabi* pOwner, _float dt)
@@ -136,22 +142,19 @@ void CMiyabiState_Charge_Start_03::Enter(CMiyabi* pOwner)
 {
     pOwner->Decrease_Frost(2);
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_ChargeAttack_Start_03")
+        .Speed(1.6f)
         .Apply();
+
+    pOwner->Play_Effect("Miyabi_Charge_StackUp1", _vector3(0.f, 1.f, 0.f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
 }
 
 void CMiyabiState_Charge_Start_03::Update(CMiyabi* pOwner, _float dt)
 {
-    Update_Effects(pOwner);
 }
 
 void CMiyabiState_Charge_Start_03::Exit(CMiyabi* pOwner)
 {
     m_pOwnerStateMachine->Set_Int("ChargeLevel", 3);
-}
-
-void CMiyabiState_Charge_Start_03::Update_Effects(CMiyabi* pOwner)
-{
-    
 }
 
 // Charge_End
@@ -218,6 +221,12 @@ void CMiyabiState_Charge_Attack03::Enter(CMiyabi* pOwner)
 
 void CMiyabiState_Charge_Attack03::Update(CMiyabi* pOwner, _float dt)
 {
+    CCharacter::ROOTMOTION_DESC desc;
+    desc.fMoveWeight = 1.f;// m_fAnimProgress < 0.2f ? 1.5f : 1.8f;
+    desc.iModeMask = ENUM(CMiyabi::ROOTMOTION_MASK::MOVE)
+        | ENUM(CMiyabi::ROOTMOTION_MASK::QUATERNION);
+    pOwner->Process_RootMotion(dt, desc);
+
     for (const auto& Event : pOwner->Get_Animator()->Get_EventBus())
     {
         if (Event.Type != CLIP_EVENT_TYPE::NOTIFY) continue;
@@ -314,21 +323,8 @@ void CMiyabiState_Charge_Attack03::Update_Effects(CMiyabi* pOwner)
     if (IsCrossAnimProgress(0.88f))
     {
         pOwner->Play_Effect("Miyabi_Charge0_Flare1", _vector3(), _quaternion(0.f, 0.f, 0.f, 1.f), false);
-
-        auto pTransform = pOwner->Get_Component<CTransform>();
-
-        _vector3 vWorldPosition = pTransform->Get_WorldPos();
-        _vector3 vLook = pTransform->Dir(STATE::LOOK);
-        vWorldPosition += vLook * 2.f;
-
-        auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
-            .Asset("miyabi_charge0_particle.json")
-            .Position(vWorldPosition)
-            .Build("Miyabi_Charge0_Particle");
-
-        pEffect->Get_Component<CTransform>()->Set_Look(vLook);
-
-        ObjectManager()->Add_Object(pEffect, { pOwner->Get_Level(),"Player_Effect_Layer" });
+        pOwner->Play_Effect("Miyabi_Charge0_Particle1", _vector3(0.f, 0.f, 3.f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+        pOwner->Play_Effect("Miyabi_Charge0_Smoke", _vector3(0.f, 0.f, 3.f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
 
         m_fRepeatProgress = 0.88f;
         m_fStingRepeatProgress = 0.88f;
