@@ -3,6 +3,8 @@
 #include "GameInstance.h"
 #include "CamObject.h"
 
+#include "BattleSystem.h"
+
 #include "Animator3D.h"
 #include "CharacterController.h"
 #include "SkeletalModel.h"
@@ -653,6 +655,9 @@ _bool CCharacter::Is_Active_AttackCollider(const string& strName)
 
 void CCharacter::Take_Damage(DAMAGE_TYPE eType, _float fDamage)
 {
+    // 패링 가능했을때 패링애니매이션으로 전환
+    BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::PARRY);
+
     if (Is_Invincible()) return;
     {
         _int damage = Helper::Get_Random_Int(1000.f, 10000.f);
