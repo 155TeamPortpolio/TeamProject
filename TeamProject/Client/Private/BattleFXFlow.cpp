@@ -41,10 +41,10 @@ void CBattleFXFlow::Initialize_Preset()
 	}
 	{
 		auto& HitLack = m_BattleVFXData[ENUM(BATTLE_VFX_TYPE::HIT)];
-		const _float duration = 2.5f;
+		const _float duration = 1.5f;
 		HitLack.fVFXDuration = duration;
 		HitLack.fBlurDuration = duration;
-		HitLack.SetTimeData({ duration, 0.f, 0.25f, .9f , EaseType::OutExpo });
+		HitLack.SetTimeData({ duration, 0.f, 0.45f, .9f , EaseType::InOutSine });
 	}
 }
 

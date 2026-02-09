@@ -24,7 +24,8 @@ public :
     virtual _uint Get_LevelCount() override { return m_LevelCreators.size(); }
     virtual const vector<string> Get_LevelList()override; //레벨 키 모음
     virtual _bool Check_ValidateLevel(const string& LevelTag)override;
-    virtual const string& Get_NowLevelKey()override;
+    virtual string Get_NowLevelKey()override;
+    virtual string Get_PrevLevelKey()override;
     virtual  class CLevel* Get_CurrentLevel()override { return m_pCurrentLevel; };
 #pragma endregion
 
@@ -33,6 +34,8 @@ public :
     virtual const string& Get_NextLevel() override { return m_TransDesc.nextLevelKey; } //로딩 이후 레벨은 무엇인지
     virtual const LEVEL_TRANS_DESC& Get_TransitionDesc() override { return m_TransDesc; } //로딩 이후 레벨은 무엇인지
     virtual void Notify_LoadComplete()override; //로딩이 다되었다면 호출
+    //virtual void Get_C()override; 
+    //virtual void Notify_LoadComplet/e()override; 
 #pragma endregion
 private:
     void ClearResource();
@@ -44,6 +47,7 @@ private:
     class CLevel* m_pReadyLevel = { nullptr };      //대기중 레벨 포인터
     LEVEL_STATE m_eState = {}; //현재 레벨 전환 과정 상태
     LEVEL_TRANS_DESC m_TransDesc = {};
+    string m_prevLevelKey = {};
     unordered_map<string, LEVEL_CREATOR> m_LevelCreators;/*레벨 생성자*/
 public:
     static CLevelMgr* Create();

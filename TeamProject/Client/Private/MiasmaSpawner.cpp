@@ -3,6 +3,8 @@
 #include "GameInstance.h"
 #include "CharacterController.h"
 #include "BattleSystem.h"
+#include "Defiler.h"
+#include "MiasmaBlade.h"
 
 static _float3 ComputeArcSpawnPos(
     const _float3& ownerPos,
@@ -33,13 +35,31 @@ static _float3 ComputeArcSpawnPos(
     return spawnPos;
 }
 
-void CMiasmaSpawner::Spawn(MiasmaType type, _int count, _float3 targetPos, _float3 ownerPos, _float y)
+void CMiasmaSpawner::Spawn(MiasmaType type, _int count, _float3 targetPos, _float3 ownerPos, _float y, CDefiler* pDefiler)
+{
+    switch (type)
+    {
+    case Client::MiasmaType::Heavy:
+        SpawnGrandier(count,targetPos,ownerPos, y);
+        break;
+    case Client::MiasmaType::Grandier:
+        SpawnGrandier(count,targetPos,ownerPos, y);
+        break;
+    case Client::MiasmaType::Blade:
+        SpawnBlade(targetPos,ownerPos, pDefiler);
+        break;
+    default:
+        break;
+    }
+}
+
+void CMiasmaSpawner::SpawnGrandier(_int count, _float3 targetPos, _float3 ownerPos, _float y)
 {
     const string levelKey = LevelManager()->Get_NowLevelKey();
 
     const float minRadius = 1.0f;
-    float maxRadius = (ownerPos - targetPos).Length()+5.f;
-    const float arcDegrees = 60.f; 
+    float maxRadius = (ownerPos - targetPos).Length() + 5.f;
+    const float arcDegrees = 60.f;
 
     for (int spawnIndex = 0; spawnIndex < count; ++spawnIndex)
     {
@@ -60,12 +80,27 @@ void CMiasmaSpawner::Spawn(MiasmaType type, _int count, _float3 targetPos, _floa
         MonsterCCT.fRadius = 0.55f;
         MonsterCCT.vPos = spawnPos;
         MonsterCCT.vPos.y += MonsterCCT.fHeight;
-      
+
         auto jaeger = Builder::Create_Object({ "Zero_Level", "Proto_GameObject_MiasmaJaeger" })
             .Position(spawnPos)
             .CharacterController(MonsterCCT)
             .Build("MiasmaUnit");
         ObjectManager()->Add_Object(jaeger, { levelKey, "Enemy_Layer" });
-        BattleSystem()->EnterBattleObject(BATTLE_OBJ_TYPE::MONSTER,jaeger->Get_Handle());
+        BattleSystem()->EnterBattleObject(BATTLE_OBJ_TYPE::MONSTER, jaeger->Get_Handle());
     }
+}
+
+void CMiasmaSpawner::SpawnBlade(_float3 Target, _float3 Owner, CDefiler* pDefiler)
+{
+    const string levelKey = LevelManager()->Get_NowLevelKey();
+    auto desc = new CMiasmaBlade::BladeDesc;
+    desc->pOwner = pDefiler;
+    desc->vTargetPos = Target;
+    auto pBlade =
+    Builder::Create_Object({ "Zero_Level","Proto_GameObject_MiasmaBlade" })
+    .FromPool()
+    .Position(Owner)
+    .Add_ObjDesc(desc)
+    .Build("MiasmaBlade");
+    ObjectManager()->Add_Object(pBlade, { levelKey ,"Enemy_Layer" });
 }

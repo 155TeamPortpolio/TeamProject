@@ -185,7 +185,7 @@ HRESULT CTestLevel::Awake()
 #ifdef  _USING_GUI
 	Ready_MonsterSpawnConsole();
 #endif
-
+	string key = LevelManager()->Get_PrevLevelKey();
 	return S_OK;
 }
 

@@ -32,6 +32,8 @@ HRESULT CLevelMgr::Request_ChangeLevel(string LevelID,_bool Load)
         m_eState = LEVEL_STATE::REQUEST;
     else
         m_eState = LEVEL_STATE::LOADED;
+    if(m_pCurrentLevel)
+    m_prevLevelKey = m_pCurrentLevel->Get_Key();
 
     return S_OK;
 }
@@ -145,12 +147,17 @@ _bool CLevelMgr::Check_ValidateLevel(const string& LevelTag)
     return m_LevelCreators.count(LevelTag);
 }
 
-const string& CLevelMgr::Get_NowLevelKey()
+string CLevelMgr::Get_NowLevelKey()
 {
     if (m_pCurrentLevel)
         return m_pCurrentLevel->Get_Key();
     else
         return m_TransDesc.nextLevelKey;
+}
+
+string CLevelMgr::Get_PrevLevelKey()
+{
+    return m_prevLevelKey;
 }
 
 #pragma endregion

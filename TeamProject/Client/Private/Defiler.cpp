@@ -110,11 +110,7 @@ void CDefiler::Priority_Update(_float dt)
 	m_PlayerCharacterInfos.clear();
 	m_PlayerCharacterInfos = BattleSystem()->GetBattleObjects(CBattleSystem::BATTLE_OBJ_TYPE::PLAYER);
 	ComputeTargetingInfo();
-	if (InputDevice()->Key_Tap('F')) {
-		BattleSystem()->ExcludeBattleObject(BATTLE_OBJ_TYPE::MONSTER, this->Get_Handle());
-		m_MiasmaSpawner.Spawn(MiasmaType::Grandier, 8, m_tTargetingInfo.vTargetPos, Get_BipedPos(),
-			m_tTargetingInfo.vTargetPos.y)	;
-	}
+
 }
 
 void CDefiler::Update(_float dt)
@@ -169,6 +165,7 @@ void CDefiler::Render_GUI()
 
 void CDefiler::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER charaName)
 {
+	BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::HIT);
 	_float fTakeDamage = fDamage;
 
 	if (m_tStatus.isGroggy)
@@ -212,10 +209,10 @@ void CDefiler::Set_CCTPos(_vector3 pos)
 	controller->Set_Position(pos);
 }
 
-_float3 CDefiler::Get_BipedPos()
+_float3 CDefiler::Get_BipedPos(const string Bone)
 {
 	Matrix boneMat = Get_Component<CAnimator3D>()
-		->Get_BoneMatrix(CAnimator3D::BoneSpace::COMBINED, "Bip001");
+		->Get_BoneMatrix(CAnimator3D::BoneSpace::COMBINED, Bone);
 	Matrix WorldMat = m_pTransform->Get_WorldMatrix();
 	_vector3 S, T; _quaternion R;
 	(boneMat * WorldMat).Decompose(S, R, T);
@@ -446,21 +443,13 @@ void CDefiler::Controll_Summon(const string& event)
 {
 	string levelKey = LevelManager()->Get_NowLevelKey();
 	if (event == "Blade") {
-		auto desc = new CMiasmaBlade::BladeDesc;
-		desc->pOwner = this;
-		desc->vTargetPos = m_tTargetingInfo.vTargetPos;
-		Matrix boneMat = Get_Component<CAnimator3D>()
-			->Get_BoneMatrix(CAnimator3D::BoneSpace::COMBINED, "Ctr_M_Prop_01");
-		Matrix WorldMat = m_pTransform->Get_WorldMatrix();
-		_vector3 S, T;_quaternion R;
-		(boneMat * WorldMat).Decompose(S,R,T);
-		auto pBlade = 
-			Builder::Create_Object({ "Zero_Level","Proto_GameObject_MiasmaBlade" })
-			.FromPool()
-			.Position(T)
-			.Add_ObjDesc(desc)
-			.Build("MiasmaBlade");
-		ObjectManager()->Add_Object(pBlade, { levelKey ,"Enemy_Layer"});
+		
+		m_MiasmaSpawner.Spawn(MiasmaType::Blade, 1, m_tTargetingInfo.vTargetPos, Get_BipedPos("Ctr_M_Prop_01"),
+			m_tTargetingInfo.vTargetPos.y, this);
+	}
+	if (event == "Grandier") {
+		m_MiasmaSpawner.Spawn(MiasmaType::Grandier, 8, m_tTargetingInfo.vTargetPos, Get_BipedPos(),
+			m_tTargetingInfo.vTargetPos.y,this);
 	}
 }
 

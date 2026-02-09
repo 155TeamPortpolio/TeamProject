@@ -42,7 +42,7 @@ public:
 
 public:
     void Set_CCTPos(_vector3 pos);
-    _float3 Get_BipedPos();
+    _float3 Get_BipedPos(const string Bone = {"Bip001"});
 
 private:
     void MoveByTraceMode(_float dt, _float moveScale = 1.f);
