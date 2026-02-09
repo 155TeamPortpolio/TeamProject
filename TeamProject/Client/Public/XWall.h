@@ -21,13 +21,15 @@ public:
     void    Priority_Update(_float dt) override;
     void    Update(_float dt) override;
     void    Late_Update(_float dt) override;
-
+    void    Awake() override;
 private:
-    _vector2 m_vCount = { 3, 0 };
-    _uint m_ParticleCount = {};
-    vector<INSTANCE_INIT_DESC> m_InitDescs;
+    _vector2 m_vCount = { 3, 3 };
+    _vector2 m_vOffset = { 0.1f, 0.3f };
     CMaterialInstance* m_pMaterial_Instance = { nullptr };
 
+    vector<INSTANCE_INIT_DESC> m_InitDescs;
+    vector<INSTANCE_XWALL> m_XWall;
+    vector<_float>         m_fBrightness;
 public:
     static CXWall* Create();
     CGameObject* Clone(INIT_DESC* pArg) override;

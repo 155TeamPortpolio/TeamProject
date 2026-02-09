@@ -1068,9 +1068,6 @@
     <Filter Include="01. Utility\04. Components\21. CharacterController">
       <UniqueIdentifier>{369a82b3-3454-4a97-8d03-a03f4504558b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Utility\04. Components\22. EventListner">
-      <UniqueIdentifier>{547d6618-91fb-4755-a756-17b271b63e88}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. Utility\04. Components\03. Model\TrailModel">
       <UniqueIdentifier>{f0c16643-312d-4c10-8d76-d770bd532d23}</UniqueIdentifier>
     </Filter>
@@ -1184,6 +1181,9 @@
     </Filter>
     <Filter Include="01. Utility\04. Components\20. CamSequencePlayer\01. CamPosEvaluator\06. OrbitSpin">
       <UniqueIdentifier>{1c88ead6-b51f-4598-83cc-49243672b3ff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\22. EventListner">
+      <UniqueIdentifier>{547d6618-91fb-4755-a756-17b271b63e88}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
