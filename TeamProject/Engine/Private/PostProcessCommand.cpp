@@ -60,7 +60,7 @@ CGlitchCommand::CGlitchCommand()
 	m_iPriority = static_cast<_uint>(POST_PROCESS_ORDER::GLITCH);
 	m_bEnabled = false;
 	m_eEffectType = EFFECT_TYPE::REPLACE;
-	//m_strOutputTargetName = "Target_Glitch";
+	m_strOutputTargetName = "Target_Glitch";
 }
 
 ID3D11ShaderResourceView* CGlitchCommand::GetNoiseSRV()
@@ -74,8 +74,15 @@ CGlitchCommand* CGlitchCommand::SetNoiseTexture(CTexture* pTexture)
 	return this;
 }
 
+CGlitchCommand* CGlitchCommand::SetIntensity(_float fIntensity)
+{
+	m_fIntensity = fIntensity;
+	return this;
+}
+
 CGlitchCommand* CGlitchCommand::SetDuration(_float fDuration)
 {
+	m_fAccTime = 0.f;
 	m_fDuration = fDuration;
 	return this;
 }
@@ -89,11 +96,17 @@ CGlitchCommand* CGlitchCommand::SetEaseType(EaseType easeType)
 void CGlitchCommand::Update(_float dt)
 {
 	m_fAccTime += dt;
+	if (m_fAccTime > m_fDuration)
+		m_bEnabled = false;
+
+	_float normalizedT = 1.f - (m_fAccTime / m_fDuration);
+	_float pingPongT = (normalizedT < 0.5f) ? (normalizedT * 2.f) : (2.f - normalizedT * 2.f);
+	m_fEaseT = Math::ApplyEase(m_EaseType, pingPongT);
 }
 
 void CGlitchCommand::Execute(CPostRenderer* pRenderer)
 {
-	//pRenderer->Render_Glitch_Internal();
+	pRenderer->Render_Glitch_Internal();
 }
 
 CGlitchCommand* CGlitchCommand::Create()
@@ -224,11 +237,13 @@ CGuassianBlurCommand::CGuassianBlurCommand()
 	m_iPriority = static_cast<_uint>(POST_PROCESS_ORDER::GAUSSIAN_BLUR);
 	m_bEnabled = false;
 	m_eEffectType = EFFECT_TYPE::REPLACE;
+	m_strOutputTargetName = "Target_Guassian_BlurY";
 }
 
 CGuassianBlurCommand* CGuassianBlurCommand::SetDuration(_float fDuration)
 {
 	m_fDuration = fDuration;
+	m_fAccTime = 0.f;
 	return this;
 }
 
@@ -238,14 +253,27 @@ CGuassianBlurCommand* CGuassianBlurCommand::SetIntensity(_float fIntensity)
 	return this;
 }
 
+CGuassianBlurCommand* CGuassianBlurCommand::SetEaseType(EaseType easeType)
+{
+	m_EaseType = easeType;
+	return this;
+}
+
 void CGuassianBlurCommand::Update(_float dt)
 {
 	m_fAccTime += dt;
+
+	if (m_fAccTime > m_fDuration)
+		m_bEnabled = false;
+
+	_float normalizedT = 1.f - (m_fAccTime / m_fDuration);
+	_float pingPongT = (normalizedT < 0.5f) ? (normalizedT * 2.f) : (2.f - normalizedT * 2.f);
+	m_fEaseT = Math::ApplyEase(m_EaseType, pingPongT);
 }
 
 void CGuassianBlurCommand::Execute(CPostRenderer* pRenderer)
 {
-	//
+	pRenderer->Render_GuassianBlur_Internal();
 }
 
 CGuassianBlurCommand* CGuassianBlurCommand::Create()

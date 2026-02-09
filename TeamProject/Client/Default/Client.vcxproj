@@ -391,6 +391,7 @@
     <ClInclude Include="..\Public\MiyabiState_CounterAttack.h" />
     <ClInclude Include="..\Public\MiyabiState_ExAttack.h" />
     <ClInclude Include="..\Public\MiyabiState_UltimateAttack.h" />
+    <ClInclude Include="..\Public\Miyabi_Ghost.h" />
     <ClInclude Include="..\Public\PedestrianNpc.h" />
     <ClInclude Include="..\Public\Cyclops.h" />
     <ClInclude Include="..\Public\Cyclops_Born.h" />
@@ -539,7 +540,7 @@
     <ClInclude Include="..\Public\UI_RamenVideo.h" />
     <ClInclude Include="..\Public\UI_ResultBanner.h" />
     <ClInclude Include="..\Public\UI_ScratchCard.h" />
-    <ClInclude Include="..\Public\StageFx.h" />
+    <ClInclude Include="..\Public\EffectFlow.h" />
     <ClInclude Include="..\public\ThugAssaulter_Groggy.h" />
     <ClInclude Include="..\Public\Belle.h" />
     <ClInclude Include="..\Public\BelleState_Idle.h" />
@@ -832,6 +833,7 @@
     <ClCompile Include="..\Private\MiyabiState_CounterAttack.cpp" />
     <ClCompile Include="..\Private\MiyabiState_ExAttack.cpp" />
     <ClCompile Include="..\Private\MiyabiState_UltimateAttack.cpp" />
+    <ClCompile Include="..\Private\Miyabi_Ghost.cpp" />
     <ClCompile Include="..\Private\PedestrianNpc.cpp" />
     <ClCompile Include="..\Private\Cyclops.cpp" />
     <ClCompile Include="..\Private\Cyclops_Born.cpp" />
