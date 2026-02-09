@@ -63,7 +63,7 @@ HRESULT CZero_Level::Initialize()
 	/*ENV*/
 	auto pCloud = ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Cloud));
 	pCloud->Set_Alive(false);
-	RenderSystem()->Set_FogDesc({ _float4(0.08f, 0.02f, 0.02f, 1.0f),0.f, 0.f, 0.02f, true });
+	//RenderSystem()->Set_FogDesc({ _float4(0.08f, 0.02f, 0.02f, 1.0f),0.f, 0.f, 0.02f, true });
 
 	/* Player */
 	auto pPlayer = ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Player));
@@ -193,7 +193,7 @@ void CZero_Level::Free()
 		Safe_Release(pair.second);
 	m_StageContainer.clear();
 
-	RenderSystem()->Set_FogDesc({ _float4(0.08f, 0.02f, 0.02f, 1.0f),0.f, 0.f, 0.02f, false });
+	//RenderSystem()->Set_FogDesc({ _float4(0.08f, 0.02f, 0.02f, 1.0f),0.f, 0.f, 0.02f, false });
 
 	auto pPlayer = ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Player));
 	auto castedPlayer = dynamic_cast<CPlayer*>(pPlayer);

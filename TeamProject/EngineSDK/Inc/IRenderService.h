@@ -31,8 +31,6 @@ public:
     virtual class CRenderer* GetRenderer(RENDERER_TYPE eType = RENDERER_TYPE::FORWARD) PURE;
     virtual class CPostRenderer* GetPostRenderer() PURE;
     virtual HRESULT Create_RenderTarget(const RenderTargetDesc& desc) PURE;
-    virtual void Set_FogDesc(FOG_DESC desc)PURE;
-    virtual _bool Get_FogDesc(FOG_DESC& outResult) PURE;
     virtual void Set_GlitchDesc(GLITCH_DESC desc) PURE;
     virtual void Set_NoiseTexture(NOISE_FXTYPE eNoise, class CTexture* noiseTexture) PURE;
     virtual CTexture* Get_NoiseTexture(NOISE_FXTYPE eNoise) PURE;
