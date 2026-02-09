@@ -3,6 +3,7 @@
 
 #include "GameInstance.h"
 #include "ObjectContainer.h" 
+#include "AudioSource.h"
 #include "TextSlot.h"
 
 #include "UI_IconButton.h"
@@ -12,13 +13,15 @@ HRESULT CUI_LotteryResultBanner::Initialize_Prototype()
     __super::Initialize_Prototype();
 
     Add_Component<CObjectContainer>();
+    Add_Component<CAudioSource>();
+    Get_Component<CAudioSource>()->SoundFolder(G_GlobalLevelKey, "../Bin/Resources/Global/UI/Sound/");
 
     return S_OK;
 }
 
 HRESULT CUI_LotteryResultBanner::Initialize(INIT_DESC* pArg)
 {
-    __super::Initialize();
+    __super::Initialize(pArg);
 
     Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("lottery_result_banner.json")));
     Cache();
@@ -46,6 +49,8 @@ void CUI_LotteryResultBanner::Update(_float dt)
 
 void CUI_LotteryResultBanner::UI_Active(void* pArg)
 {
+    Get_Component<CAudioSource>()->Slot("UI_Open_Swoosh.wav").Attribute3D(false).Loop(false).Play();
+
     Change_State(STATE::VISIBLE);
 
     _int iDenny = {};

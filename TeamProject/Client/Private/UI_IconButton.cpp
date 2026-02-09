@@ -3,6 +3,7 @@
 
 #include "GameInstance.h"
 #include "ObjectContainer.h"
+#include "AudioSource.h"
 #include "Sprite2D.h"
 #include "TextSlot.h"
 
@@ -11,6 +12,8 @@ HRESULT CUI_IconButton::Initialize_Prototype()
     __super::Initialize_Prototype();
 
     Add_Component<CObjectContainer>();
+    Add_Component<CAudioSource>();
+    Get_Component<CAudioSource>()->SoundFolder(G_GlobalLevelKey, "../Bin/Resources/Global/UI/Sound/");
 
     return S_OK;
 }
@@ -29,6 +32,7 @@ HRESULT CUI_IconButton::Initialize(INIT_DESC* pArg)
         return S_OK;
 
     m_OnClick = pDesc->onClick;
+    m_strSoundKey = pDesc->strSoundKey;
 
     auto pIcon = m_pChildren[ENUM(CHILD::ICON)];
     if (pIcon)
@@ -47,6 +51,8 @@ HRESULT CUI_IconButton::Initialize(INIT_DESC* pArg)
         Set_ChildAnimation(CHILD::OVERLAY, 0);
         Set_ChildAnimation(CHILD::ICON, 0);
         Set_ChildAnimation(CHILD::LABEL, 0);
+        if(!m_strSoundKey.empty())  
+            Get_Component<CAudioSource>()->Slot(m_strSoundKey).Attribute3D(false).Loop(false).Play();
             });
 
     return S_OK;

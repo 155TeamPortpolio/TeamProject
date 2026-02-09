@@ -21,7 +21,7 @@ HRESULT CUI_RamenResultBanner::Initialize(INIT_DESC* pArg)
     RESULT_BANNER_DESC* pDesc = static_cast<RESULT_BANNER_DESC*>(pArg);
     m_OnClick = pDesc->onClickConfirm;
 
-    __super::Initialize();
+    __super::Initialize(pArg);
 
     Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("ramen_result_banner.json")));
     Cache();
