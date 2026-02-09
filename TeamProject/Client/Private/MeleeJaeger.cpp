@@ -7,6 +7,7 @@
 
 /* Child */
 #include "AttackSign.h"
+#include "MeleeJaeger_Shield.h"
 
 /* Component */
 #include "Material.h"
@@ -254,6 +255,29 @@ void CMeleeJaeger::Parried()
 HRESULT CMeleeJaeger::Ready_Children(INIT_DESC* pArg)
 {
 	{
+		CMeleeJaeger_Shield::JAEGERSHIELD_DESC* pShieldDesc = new CMeleeJaeger_Shield::JAEGERSHIELD_DESC();
+		pShieldDesc->pHandBone = Get_Component<CAnimator3D>()->Get_BoneMatrixPtr(CAnimator3D::BoneSpace::COMBINED, "Bn_Weapon1");
+
+		COLLIDER_DESC ShieldColliderDesc= {};
+		ShieldColliderDesc.eGroup = COLLISION_GROUP::MONSTER_ATTACK;
+		ShieldColliderDesc.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER) | ENUM(COLLISION_GROUP::PLAYER_ATTACK);
+		ShieldColliderDesc.bTrigger = true;
+		ShieldColliderDesc.bAutoFit = false;
+		ShieldColliderDesc.eType = COLLIDER_TYPE::BOX;
+		ShieldColliderDesc.vSize = { 0.5f, 1.f, 0.5f };
+
+		auto pShield = Builder::Create_Object({ LevelManager()->Get_NowLevelKey(), "Proto_GameObject_MeleeJaeger_Shield" })
+			.Add_ObjDesc(pShieldDesc)
+			.Collider(ShieldColliderDesc)
+			.Build("Shield");
+
+		if (nullptr == pShield)
+			return E_FAIL;
+		
+		Get_Component<CObjectContainer>()->Add_Child(pShield, false);
+	}
+
+	{
 		BATTLE_COLLIDER_DESC Weapon_R = {};
 
 		Weapon_R.tagName = "Weapon";
@@ -265,7 +289,6 @@ HRESULT CMeleeJaeger::Ready_Children(INIT_DESC* pArg)
 		if (FAILED(AttachBattleColliderObject(&Weapon_R)))
 			return E_FAIL;
 	}
-
 
 	Create_AttackSign("Bip001_Head");
 	Create_UIEnemyStatus("Bip001_Spine2");
@@ -446,11 +469,9 @@ void CMeleeJaeger::ControlState(const _float dt)
 		true == m_tStatus.isGroggy)
 		m_pStateMachine->Change_State("Groggy");
 
-
 	if (true == m_isAutoPatternPlay &&
 		"Idle" == m_pStateMachine->Get_CurrentStateName())
 	{
-
 		m_vIdleTime.y += dt;
 
 		if (m_vIdleTime.x <= m_vIdleTime.y)
@@ -463,7 +484,6 @@ void CMeleeJaeger::ControlState(const _float dt)
 				m_pStateMachine->Set_Trigger("Idle_To_Attack");
 			else
 				m_pStateMachine->Set_Trigger("Idle_To_Move");
-
 
 			m_vIdleTime.y = 0.f;
 		}

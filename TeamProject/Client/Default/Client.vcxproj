@@ -392,6 +392,7 @@
     <ClInclude Include="..\Public\MeleeJaeger_Idle.h" />
     <ClInclude Include="..\Public\MeleeJaeger_Move.h" />
     <ClInclude Include="..\Public\MeleeJaeger_Parried.h" />
+    <ClInclude Include="..\public\MeleeJaeger_Shield.h" />
     <ClInclude Include="..\Public\MiasmaBlade.h" />
     <ClInclude Include="..\Public\MiyabiState_AssaultAttack.h" />
     <ClInclude Include="..\Public\MiyabiState_CounterAttack.h" />
@@ -839,6 +840,7 @@
     <ClCompile Include="..\Private\MeleeJaeger_Idle.cpp" />
     <ClCompile Include="..\Private\MeleeJaeger_Move.cpp" />
     <ClCompile Include="..\Private\MeleeJaeger_Parried.cpp" />
+    <ClCompile Include="..\private\MeleeJaeger_Shield.cpp" />
     <ClCompile Include="..\Private\MiasmaBlade.cpp" />
     <ClCompile Include="..\Private\MiyabiState_AssaultAttack.cpp" />
     <ClCompile Include="..\Private\MiyabiState_CounterAttack.cpp" />
