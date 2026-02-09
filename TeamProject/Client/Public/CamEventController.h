@@ -1,7 +1,7 @@
 #pragma once
 
 NS_BEGIN(Engine)
-struct CamSequenceDesc;
+struct CamSeqDesc;
 NS_END
 
 NS_BEGIN(Client)
@@ -11,7 +11,7 @@ class CCamEventController
 public:
 	void  BeginFrame() { m_fired.clear(); }
 
-	void  SetSequence(const CamSequenceDesc* seq);
+	void  SetSequence(const CamSeqDesc* seq);
 	void  SyncTime(_float time, _bool isPlaying);
 	void  Evaluate(_float time, _bool isPlaying);
 
@@ -25,7 +25,7 @@ private:
 	};
 
 private:
-	const CamSequenceDesc*      m_seq{};
+	const CamSeqDesc*      m_seq{};
 	unordered_map<string, Rule> m_rules{};
 	unordered_set<string>       m_fired{};
 

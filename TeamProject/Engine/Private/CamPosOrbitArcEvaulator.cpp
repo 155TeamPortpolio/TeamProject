@@ -1,6 +1,44 @@
 #include "Engine_Defines.h"
 #include "CamPosOrbitArcEvaulator.h"
 
+namespace
+{
+    Vector3 NormalizeSafe(const Vector3& v, float eps = 1e-8f)
+    {
+        const float lsq = v.LengthSquared();
+        if (lsq <= eps * eps) return _vector3(0.f, 0.f, 0.f);
+
+        _vector3 out = v;
+        out.Normalize();
+        return out;
+    }
+
+    Vector3 ProjectToPlane(const Vector3& v, const Vector3& unitAxis)
+    {
+        const float d = v.Dot(unitAxis);
+        return v - unitAxis * d;
+    }
+
+    Vector3 RotateAroundAxis(const Vector3& v, const Vector3& unitAxis, float angleRad)
+    {
+        const float c = cosf(angleRad);
+        const float s = sinf(angleRad);
+
+        const _vector3 cross = unitAxis.Cross(v);
+        const float dot = unitAxis.Dot(v);
+
+        return v * c + cross * s + unitAxis * (dot * (1.f - c));
+    }
+
+    float  SignedAngleAroundAxis(const Vector3& fromUnit, const Vector3& toUnit, const Vector3& unitAxis)
+    {
+        const float cosv = clamp(fromUnit.Dot(toUnit), -1.f, 1.f);
+        const _vector3 cr = fromUnit.Cross(toUnit);
+        const float sinv = unitAxis.Dot(cr);
+        return atan2f(sinv, cosv);
+    }
+}
+
 bool CCamPosOrbitArcEvaluator::Build(const vector<CamKeyFrame>& keys)
 {
     if (keys.empty()) return false;
@@ -86,39 +124,4 @@ _vector3 CCamPosOrbitArcEvaluator::Evaluate(_float time) const
     const float h = h0 + (h1 - h0) * u;
 
     return c + dir * r + axis * h;
-}
-
-_vector3 CCamPosOrbitArcEvaluator::NormalizeSafe(const _vector3& v, float eps)
-{
-    const float lsq = v.LengthSquared();
-    if (lsq <= eps * eps) return _vector3(0.f, 0.f, 0.f);
-
-    _vector3 out = v;
-    out.Normalize();
-    return out;
-}
-
-_vector3 CCamPosOrbitArcEvaluator::ProjectToPlane(const _vector3& v, const _vector3& unitAxis)
-{
-    const float d = v.Dot(unitAxis);
-    return v - unitAxis * d;
-}
-
-_vector3 CCamPosOrbitArcEvaluator::RotateAroundAxis(const _vector3& v, const _vector3& unitAxis, float angleRad)
-{
-    const float c = cosf(angleRad);
-    const float s = sinf(angleRad);
-
-    const _vector3 cross = unitAxis.Cross(v);
-    const float dot = unitAxis.Dot(v);
-
-    return v * c + cross * s + unitAxis * (dot * (1.f - c));
-}
-
-float CCamPosOrbitArcEvaluator::SignedAngleAroundAxis(const _vector3& fromUnit, const _vector3& toUnit, const _vector3& unitAxis)
-{
-    const float cosv = clamp(fromUnit.Dot(toUnit), -1.f, 1.f);
-    const _vector3 cr = fromUnit.Cross(toUnit);
-    const float sinv = unitAxis.Dot(cr);
-    return atan2f(sinv, cosv);
 }

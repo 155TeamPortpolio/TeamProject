@@ -4,7 +4,6 @@
 #include "Camera_Enum.h"
 #include "Camera_Struct.h"
 
-
 NS_BEGIN(Engine)
 
 struct Lens
@@ -19,8 +18,8 @@ namespace CamUtil
 {
 	ENGINE_DLL CamKeySegment FindKeySegment(const vector<CamKeyFrame>& keyframes, float time);
 
-    ENGINE_DLL bool Save(const filesystem::path& path, const CamSequenceDesc& seq, string* outErrorMsg = {});
-    ENGINE_DLL bool Load(const filesystem::path& path, CamSequenceDesc& outSeq, string* outErrorMsg = {});
+    ENGINE_DLL bool Save(const filesystem::path& path, const CamSeqDesc& seq, string* outErrorMsg = {});
+    ENGINE_DLL bool Load(const filesystem::path& path, CamSeqDesc& outSeq, string* outErrorMsg = {});
 
     ENGINE_DLL ofstream OpenOut(const filesystem::path& filePath, bool truncate = true);
     ENGINE_DLL ifstream OpenIn(const filesystem::path& filePath);
@@ -45,9 +44,6 @@ namespace CamUtil
 
 	template<typename T>
     ENGINE_DLL bool ReadVector(ifstream& inFile, vector<T>& outValues, _uint maxCount);
-
-    ENGINE_DLL void WriteAlign(ofstream& outFile, _uint align);
-    ENGINE_DLL bool ReadAlign(ifstream& inFile, _uint align);
 
     ENGINE_DLL bool AtomicReplaceFile(const filesystem::path& tempPath, const filesystem::path& targetPath, string& outErrorMsg);
 

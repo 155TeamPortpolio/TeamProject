@@ -90,7 +90,8 @@ void StaticOpaquePass::Write_Buffer(ID3D11DeviceContext* pContext)
 		frustums.push_back(packet);
 	}
 
-
+	if (frustums.empty())
+		int i = 0;
 	sort(frustums.begin(), frustums.end(),
 		[](const OPAQUE_PACKET& leftPacket, const OPAQUE_PACKET& rightPacket) {
 			return leftPacket.fLinearZ < rightPacket.fLinearZ;
@@ -104,9 +105,8 @@ void StaticOpaquePass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRender
 	pCurShader = { nullptr };
 
 	vector<OPAQUE_PACKET> occlude;
-	//occlude.reserve(m_VisiblePackets.size());
+	occlude.reserve(m_VisiblePackets.size());
 	occlude = pPipeLine->OcculsionCulling(m_VisiblePackets);
-	//occlude = m_VisiblePackets;
 	
 	sort(occlude.begin(), occlude.end(),
 		[](const OPAQUE_PACKET& leftPacket, const OPAQUE_PACKET& rightPacket) {
