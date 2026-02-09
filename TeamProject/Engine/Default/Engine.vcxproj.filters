@@ -1803,6 +1803,9 @@
     <FxCompile Include="..\Public\Engine_Shader\VTX_NonPlayer.hlsl">
       <Filter>98. BasicShader\SkinMesh</Filter>
     </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\VTX_XWall.hlsl">
+      <Filter>98. BasicShader\Etc</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="cpp.hint" />

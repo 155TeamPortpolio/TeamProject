@@ -783,6 +783,7 @@ void CResourceMgr::Load_InitialResource()
 	Add_ResourcePath("VTX_Debug.hlsl",		"../Bin/ShaderFiles/VTX_Debug.hlsl");
 	Add_ResourcePath("VTX_Cloud.hlsl",		"../Bin/ShaderFiles/VTX_Cloud.hlsl");
 	Add_ResourcePath("VTX_Portal.hlsl",		"../Bin/ShaderFiles/VTX_Portal.hlsl");
+	Add_ResourcePath("VTX_XWall.hlsl",		"../Bin/ShaderFiles/VTX_XWall.hlsl");
 	Add_ResourcePath("VTX_Point.hlsl",		"../Bin/ShaderFiles/VTX_Point.hlsl");
 	Add_ResourcePath("VTX_InstancePoint.hlsl", "../Bin/ShaderFiles/VTX_InstancePoint.hlsl");
 	Add_ResourcePath("VTX_EffectMesh.hlsl", "../Bin/ShaderFiles/VTX_EffectMesh.hlsl");

@@ -1167,6 +1167,7 @@ exit /b 0</Command>
     <FxCompile Include="..\Public\Engine_Shader\VTX_Trail.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_UI.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_UIMesh.hlsl" />
+    <FxCompile Include="..\Public\Engine_Shader\VTX_XWall.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Public\Engine_Shader\CS_Particle.hlsli">

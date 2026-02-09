@@ -1248,9 +1248,6 @@
     <Filter Include="03. Utility\97. GUI_Inc\Guizmo">
       <UniqueIdentifier>{9d85da13-28b5-4706-8886-a70ad1ee518b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="97. CustomShader">
-      <UniqueIdentifier>{25ba4e8f-8534-4081-b1a7-7577aafac872}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -3545,10 +3542,5 @@
     <ClCompile Include="..\private\XWall.cpp">
       <Filter>02. GameObject\Effect\XWall</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="..\Bin\ShaderFiles\Client_Shader_XWall.hlsl">
-      <Filter>97. CustomShader</Filter>
-    </FxCompile>
   </ItemGroup>
 </Project>
