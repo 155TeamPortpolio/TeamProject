@@ -6,15 +6,19 @@ namespace
     Quaternion MakeLookRotationWorldUp(const Vector3& forward, const Quaternion& qRef)
     {
         Vector3 f = forward;
-        f.Normalize();
+        if (f.LengthSquared() <= 1e-12f) f = Vector3(0.f, 0.f, 1.f);
+        else f.Normalize();
 
         Vector3 referenceUp(0.f, 1.f, 0.f);
+        if (fabsf(f.Dot(referenceUp)) > 0.999f) referenceUp = Vector3(0.f, 0.f, 1.f);
 
         Vector3 right = referenceUp.Cross(f);
-        right.Normalize();
+        if (right.LengthSquared() <= 1e-12f) right = Vector3(1.f, 0.f, 0.f);
+        else right.Normalize();
 
         Vector3 up = f.Cross(right);
-        up.Normalize();
+        if (up.LengthSquared() <= 1e-12f) up = Vector3(0.f, 1.f, 0.f);
+        else up.Normalize();
 
         Matrix basis;
         basis._11 = right.x; basis._12 = right.y; basis._13 = right.z; basis._14 = 0.f;
@@ -25,11 +29,23 @@ namespace
         Quaternion q = Quaternion::CreateFromRotationMatrix(basis);
         q.Normalize();
 
-        if (qRef.Dot(q) < 0.f) 
-            q = -q;
-
+        if (qRef.Dot(q) < 0.f) q = -q;
         q.Normalize();
         return q;
+    }
+
+    Vector3 LerpVec3(const Vector3& a, const Vector3& b, float t)
+    {
+        return a + (b - a) * t;
+    }
+
+    float SafeBlendSec(float requested, float segDur)
+    {
+        if (segDur <= 1e-6f) return 0.f;
+        float s = requested;
+        s = min(s, segDur * 0.25f);
+        if (s < 0.f) s = 0.f;
+        return s;
     }
 }
 
@@ -88,56 +104,63 @@ CamPose CCamEvaluator::Evaluate(float time) const
     if (seqDesc->orbitSpin.centerMode == CamSpinCenterMode::Custom)
         center = Vector3(seqDesc->orbitSpin.center.x, seqDesc->orbitSpin.center.y, seqDesc->orbitSpin.center.z);
 
-    Vector3 p(pose.pos.x, pose.pos.y, pose.pos.z);
-    Vector3 look = center - p;
-    if (look.LengthSquared() <= 1e-8f) return pose;
-    look.Normalize();
+    const float segDur = tEnd - tStart;
 
+    Vector3 pCur(pose.pos.x, pose.pos.y, pose.pos.z);
     Quaternion qRef = pose.rot;
     qRef.Normalize();
 
-    Quaternion qLook = MakeLookRotationWorldUp(look, qRef);
-    qLook.Normalize();
+    Vector3 pStart(posEval->Evaluate(tStart).x, posEval->Evaluate(tStart).y, posEval->Evaluate(tStart).z);
+    Vector3 pEnd(posEval->Evaluate(tEnd).x, posEval->Evaluate(tEnd).y, posEval->Evaluate(tEnd).z);
 
-    float blendSec = 0.001f;
-    const float segDur = tEnd - tStart;
-    blendSec = min(blendSec, segDur * 0.25f);
+    Quaternion rStart = rotEval->Evaluate(tStart); rStart.Normalize();
+    Quaternion rEnd = rotEval->Evaluate(tEnd);   rEnd.Normalize();
+
+    Matrix mStart = Matrix::CreateFromQuaternion(rStart);
+    Matrix mEnd = Matrix::CreateFromQuaternion(rEnd);
+
+    Vector3 lookDirStart = Vector3::Transform(Vector3(0.f, 0.f, 1.f), mStart);
+    Vector3 lookDirEnd = Vector3::Transform(Vector3(0.f, 0.f, 1.f), mEnd);
+
+    if (lookDirStart.LengthSquared() <= 1e-12f) lookDirStart = Vector3(0.f, 0.f, 1.f);
+    else lookDirStart.Normalize();
+
+    if (lookDirEnd.LengthSquared() <= 1e-12f) lookDirEnd = Vector3(0.f, 0.f, 1.f);
+    else lookDirEnd.Normalize();
+
+    float distStart = (center - pStart).Length();
+    float distEnd = (center - pEnd).Length();
+
+    if (distStart < 0.25f) distStart = 0.25f;
+    if (distEnd < 0.25f) distEnd = 0.25f;
+
+    Vector3 pivotStart = pStart + lookDirStart * distStart;
+    Vector3 pivotEnd = pEnd + lookDirEnd * distEnd;
+
+    float blendSec = SafeBlendSec(0.20f, segDur);
+
+    Vector3 pivot = center;
 
     if (blendSec > 0.f && t < tStart + blendSec)
     {
         float u = (t - tStart) / blendSec;
         u = clamp(u, 0.f, 1.f);
         u = Math::ApplyEase(EaseType::InOutSine, u);
-
-        Quaternion qInBase = rotEval->Evaluate(tStart);
-        qInBase.Normalize();
-
-        Quaternion qL = qLook;
-        if (qInBase.Dot(qL) < 0.f) qL = -qL;
-
-        pose.rot = Quaternion::Slerp(qInBase, qL, u);
-        pose.rot.Normalize();
-        return pose;
+        pivot = LerpVec3(pivotStart, center, u);
     }
-
-    if (blendSec > 0.f && t > tEnd - blendSec)
+    else if (blendSec > 0.f && t > tEnd - blendSec)
     {
         float u = (t - (tEnd - blendSec)) / blendSec;
         u = clamp(u, 0.f, 1.f);
         u = Math::ApplyEase(EaseType::InOutSine, u);
-
-        Quaternion qOutBase = rotEval->Evaluate(tEnd);
-        qOutBase.Normalize();
-
-        Quaternion qL = qLook;
-        if (qOutBase.Dot(qL) < 0.f) qL = -qL;
-
-        pose.rot = Quaternion::Slerp(qL, qOutBase, u);
-        pose.rot.Normalize();
-        return pose;
+        pivot = LerpVec3(center, pivotEnd, u);
     }
 
-    pose.rot = qLook;
+    Vector3 look = pivot - pCur;
+    if (look.LengthSquared() <= 1e-8f) return pose;
+    look.Normalize();
+
+    pose.rot = MakeLookRotationWorldUp(look, qRef);
     pose.rot.Normalize();
     return pose;
 }

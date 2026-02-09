@@ -63,6 +63,9 @@ HRESULT CRenderSystem::Initialize()
 
 HRESULT CRenderSystem::Render()
 {
+	m_pPipeLine->Update_FrameBuffer(m_pContext);
+	m_pPipeLine->Update_Frustum();
+
 	m_pPipeLine->Update_StaticCSM();
 	m_pPipeLine->Update_SkinnedCSM();
 
