@@ -68,15 +68,56 @@ float4 SoftExtractBright(float4 color, float Threshold = 1.f, float Softness = 0
     return result;
 }
 
-float3 ACESFilm(float3 color)
+float3 UchimuraTonemap(float3 x, float P, float a, float m, float l, float c, float b)
 {
-    float A = 0.15f;
-    float B = 0.50f;
-    float C = 0.10f;
-    float D = 0.20f;
-    float E = 0.02f;
-    float F = 0.30f;
-    return ((color * (A * color + C * B) + D * E) / (color * (A * color + B) + D * F)) - E / F;
+    // P = max brightness, a = contrast, m = linear section start
+    // l = linear section length, c = black, b = pedestal
+    float l0 = ((P - m) * l) / a;
+    float L0 = m - m / a;
+    float L1 = m + (1.0f - m) / a;
+    float S0 = m + l0;
+    float S1 = m + a * l0;
+    float C2 = (a * P) / (P - S1);
+    float CP = -C2 / P;
+
+    float3 w0 = 1.0f - smoothstep(0.0f, m, x);
+    float3 w2 = step(m + l0, x);
+    float3 w1 = 1.0f - w0 - w2;
+
+    float3 T = m * pow(x / m, c) + b;
+    float3 S = P - (P - S1) * exp(CP * (x - S0));
+    float3 L = m + a * (x - m);
+
+    return T * w0 + L * w1 + S * w2;
+}
+
+float3 UchimuraTonemap(float3 color)
+{
+    const float P = 1.0f; // max brightness
+    const float a = 1.0f; // contrast
+    const float m = 0.22f; // linear section start
+    const float l = 0.4f; // linear section length
+    const float c = 1.33f; // black tightness
+    const float b = 0.0f; // pedestal
+    
+    return UchimuraTonemap(color, P, a, m, l, c, b);
+}
+
+float3 ZZZStyleTonemap(float3 color)
+{
+    color *= 1.2f;
+    
+    const float a = 2.51f;
+    const float b = 0.03f;
+    const float c = 2.43f;
+    const float d = 0.59f;
+    const float e = 0.14f;
+    color = saturate((color * (a * color + b)) / (color * (c * color + d) + e));
+
+    float luminance = dot(color, float3(0.299f, 0.587f, 0.114f));
+    color = lerp(luminance, color, 1.15f);
+    
+    return color;
 }
 
 float4 ApplyColorMode(uint ColorMode, float4 Diffuse, float4 Color)
