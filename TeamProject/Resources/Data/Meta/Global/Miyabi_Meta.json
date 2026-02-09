@@ -579,7 +579,53 @@
     },
     {
       "ClipTag": "Avatar_Female_Size02_Unagi_Ani_Evade_Front_02",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.0,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.01572449691593647,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.10220922529697418,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.26731643080711365,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.33021441102027893,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.4324236512184143,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.47959715127944946,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.4166991412639618,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.46387264132499695,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        }
+      ]
     },
     {
       "ClipTag": "Avatar_Female_Size02_Unagi_Ani_Evade_Front_Left",
