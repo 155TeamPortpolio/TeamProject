@@ -157,15 +157,6 @@ namespace Engine {
 		function<void(ID3D11DeviceContext*)> DrawCallback;  
 	}RENDER_CUSTOM_COMMAND;
 
-	typedef struct RenderPostProcessingRequestCommand
-	{
-		POSTPROCESS eTarget; //	enum class POSTPROCESS { BLOOM, DISTORTION, END};
-		class CShader* pShader = { nullptr };
-		_float4x4* pWorldMatrix = { nullptr };
-		function<void(ID3D11DeviceContext*)> DrawCall;
-		_uint GetKey() const;
-	}POST_PROCESS_COMMAND;
-
 	typedef ENGINE_DLL struct RenderOutLineRequestCommand
 	{
 		class CShader* pShader = { nullptr };

@@ -88,10 +88,10 @@ HRESULT CRenderSystem::Render()
 	m_pPipeLine->End_ObjectBuffer(m_pContext);
 	m_pPipeLine->End_SkinningBuffer(m_pContext);
 
-
 	m_pForward->Render_Priority(m_pPriorityPass);
 	m_pForward->Render_StaticShadow(m_pStaticShadowPass, !IsOn);
 	m_pForward->Render_SkinnedShadow(m_pSkinnedShadowPass, !IsOn);
+
 	m_pForward->Render_SkinnedMesh(m_pSkinnedPass);
 	m_pForward->Render_StaticMesh(m_pStaticPass, m_pInstancePass);
 
@@ -113,13 +113,10 @@ HRESULT CRenderSystem::Render()
 	m_pForward->Render_OutLine();
 	m_pUI->Render_2D(m_pUIPass);
 
-	m_pPost->Render_Fog();
-	m_pPost->Render_HDRBloom();
-	m_pPost->Render_RadialBlur();
+	m_pPost->Render_PostProcessCommand();
 	m_pPost->Render_Final();
 
-
-	m_pUI->Render_CustomTarget();
+	//m_pUI->Render_CustomTarget();
 
 	return S_OK;
 }
@@ -132,20 +129,6 @@ CRenderSystem* CRenderSystem::Create(ID3D11Device* pDevice, ID3D11DeviceContext*
 		Safe_Release(Instance);
 	}
 	return Instance;
-}
-
-_bool CRenderSystem::Get_FogDesc(FOG_DESC& outResult)
-{
-	if (!m_pPost)
-		return false;
-
-	outResult = m_pPost->Get_FogDesc();
-	return true;
-}
-
-void CRenderSystem::Set_FogDesc(FOG_DESC desc)
-{
-	m_pPost->Set_FogDesc(desc);
 }
 
 void CRenderSystem::Set_GlitchDesc(GLITCH_DESC desc)
@@ -202,21 +185,6 @@ void CRenderSystem::Set_NoiseTexture(NOISE_FXTYPE eNoise, CTexture* noiseTexture
 CTexture* CRenderSystem::Get_NoiseTexture(NOISE_FXTYPE eNoise)
 {
 	return m_NoiseTextures[eNoise];
-}
-
-void CRenderSystem::Apply_RadialBlur(_float duration, _float2 center)
-{
-	m_pPost->Apply_RadialBlur(duration, center);
-}
-
-void CRenderSystem::Register_AddictiveColor(_float3* pColor)
-{
-	m_pPost->Register_AddictiveColor(pColor);
-}
-
-void CRenderSystem::UnRegister_AddictiveColor()
-{
-	m_pPost->UnRegister_AddictiveColor();
 }
 
 void CRenderSystem::BatchBegin()
@@ -276,11 +244,6 @@ void CRenderSystem::Add_OutLineCommand(const OUTLINE_COMMAND& command)
 void CRenderSystem::Add_MotionBlurCommand(const MOTIONBLUR_COMMAND& command)
 {
 	m_pForward->Add_MotionBlurCommand(command);
-}
-
-void CRenderSystem::Add_PostProcessCommand(const POST_PROCESS_COMMAND& command)
-{
-	m_pPost->Add_PostProcessCommand(command);
 }
 
 ID3D11ShaderResourceView* CRenderSystem::Get_CustomTargetSRV(const string strTag)

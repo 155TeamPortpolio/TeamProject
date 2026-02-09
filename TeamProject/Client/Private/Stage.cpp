@@ -29,7 +29,8 @@ HRESULT CStage::Exit_Stage(StageContext& context)
 
 	/*데이터 - 몬스터*/
 	m_MonsterData.Reset();
-	m_pMonsters.clear();
+	while (!m_MonsterQueue.empty())
+		m_MonsterQueue.pop();
 
 	for (size_t i = 0; i < m_pPortals.size(); i++)
 		ObjectManager()->Remove_Object(m_pPortals[i]);
@@ -101,12 +102,17 @@ void CStage::Ready_Map(const string& LevelTag, const string& AreaTag)
 
 void CStage::Active_Enemy()
 {
-	for (auto* pMonster : m_pMonsters)
+	if (m_MonsterQueue.empty())
+		return;
+
+	for (auto* pMonster : m_MonsterQueue.front())
 	{
 		if (!pMonster) continue;
 		pMonster->Set_Alive(true);
 		BattleSystem()->EnterBattleObject(BATTLE_OBJ_TYPE::MONSTER, pMonster->Get_Handle());
 	}
+
+	m_MonsterQueue.pop();
 }
 
 void CStage::Active_Player(PlayerPoint pointType)
@@ -176,7 +182,7 @@ HRESULT CStage::ReadyPortalPoint(const vector<BATTLE_POINT_DATA>& point)
 	{
 		auto trans = point[i].vTranslation;
 		auto portal = Builder::Create_Object({ "Zero_Level" ,"Proto_GameObject_ZeroPortal" })
-			.Position({ trans[0],  trans[1] + 1.5f,  trans[2] })
+			.Position({ trans[0],  trans[1],  trans[2] })
 			.Build("zeroPortal#" + to_string(i));
 		portal->Set_Alive(false);
 		m_pPortals.push_back(portal);
@@ -198,6 +204,7 @@ HRESULT CStage::ReadyMonsterPoint(const vector<BATTLE_POINT_DATA>& point)
 
 	return S_OK;
 }
+
 HRESULT CStage::ReadyMonsterData(const string& LevelTag, const string& AreaTag)
 {
 	auto* monsterSpawnMap = CDataBase::GetInstance()->GetMonsterSpawnData(AreaTag, ENUM(m_eType));
@@ -208,16 +215,17 @@ HRESULT CStage::ReadyMonsterData(const string& LevelTag, const string& AreaTag)
 	if (iterator == monsterSpawnMap->end())
 		return E_FAIL;
 
-	const auto& monsterSpawnData = iterator->second;
-
-	for (size_t index = 0; index < monsterSpawnData.size(); ++index)
+	for (auto& [Encounter, SpawnData] : *monsterSpawnMap)
 	{
-		auto creation = CDataBase::GetInstance()->GetMonsterDesc(
-			monsterSpawnData[index].Colony,
-			monsterSpawnData[index].MonsterID);
+		for (auto& Desc : SpawnData)
+		{
+			auto Creation = CDataBase::GetInstance()->GetMonsterDesc(
+				Desc.Colony,
+				Desc.MonsterID);
 
-		_int count = monsterSpawnData[index].Count;
-		m_MonsterData.CreationData.push_back({ creation, count });
+			m_MonsterData.CreationData[Encounter]
+				.push_back({ Creation, Desc.Count });
+		}
 	}
 
 	return S_OK;
@@ -225,38 +233,45 @@ HRESULT CStage::ReadyMonsterData(const string& LevelTag, const string& AreaTag)
 
 void CStage::Reserve_Enemy(const string& LevelTag)
 {
-	auto& data = m_MonsterData.CreationData;
-	_int spawn = {};
-	for (size_t i = 0; i < data.size(); i++)
-	{
-		if (i >= data.size())
-			continue;
-		for (size_t j = 0; j < data[i].Count; j++)
-		{
-			CCT_DESC MonsterCCT;
-			MonsterCCT.eGroup = COLLISION_GROUP::MONSTER;
-			MonsterCCT.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER) | ENUM(COLLISION_GROUP::COMMON) | ENUM(COLLISION_GROUP::PLAYER_ATTACK);
-			MonsterCCT.bAutoFit = false;
-			MonsterCCT.fHeight = data[i].creationInfo.CCT_fHeight;
-			MonsterCCT.fRadius = data[i].creationInfo.CCT_fRadius;
-			MonsterCCT.vPos = m_MonsterData.SpawnPoint[spawn];
-			MonsterCCT.vPos.y += MonsterCCT.fHeight;
-			CEnemy::ENEMY_DESC* enemyDesc = new CEnemy::ENEMY_DESC();
-			enemyDesc->iMaxHP = data[i].creationInfo.iMaxHP;
-			auto pMonster = Builder::Create_Object({ "Zero_Level",data[i].creationInfo.ProtoTag })
-				.Add_ObjDesc(enemyDesc)
-				.CharacterController(MonsterCCT)
-				.Build(data[i].creationInfo.DisplayName);
+	auto& CreationData = m_MonsterData.CreationData;
+	_int spawn{};
 
-			if (pMonster) {
-				m_pMonsters.push_back(pMonster);
-				pMonster->Set_Alive(false);
-				CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(pMonster, { "Zero_Level", "Enemy_Layer" });
-				spawn += 1;
+	for (auto& [Encounter, SpawnData] : CreationData) {
+		
+		vector<class CGameObject*> MonsterQueue;
+
+		for (size_t i = 0; i < SpawnData.size(); i++)
+		{
+			for (size_t j = 0; j < SpawnData[i].Count; j++)
+			{
+				CCT_DESC MonsterCCT;
+				MonsterCCT.eGroup = COLLISION_GROUP::MONSTER;
+				MonsterCCT.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER) | ENUM(COLLISION_GROUP::COMMON) | ENUM(COLLISION_GROUP::PLAYER_ATTACK);
+				MonsterCCT.bAutoFit = false;
+				MonsterCCT.fHeight = SpawnData[i].creationInfo.CCT_fHeight;
+				MonsterCCT.fRadius = SpawnData[i].creationInfo.CCT_fRadius;
+				MonsterCCT.vPos = m_MonsterData.SpawnPoint[spawn];
+				MonsterCCT.vPos.y += MonsterCCT.fHeight;
+				CEnemy::ENEMY_DESC* enemyDesc = new CEnemy::ENEMY_DESC();
+				enemyDesc->iMaxHP = SpawnData[i].creationInfo.iMaxHP;
+				auto pMonster = Builder::Create_Object({ "Zero_Level", SpawnData[i].creationInfo.ProtoTag })
+					.Add_ObjDesc(enemyDesc)
+					.CharacterController(MonsterCCT)
+					.Build(SpawnData[i].creationInfo.DisplayName);
+
+				if (pMonster) {
+					MonsterQueue.push_back(pMonster);
+					pMonster->Set_Alive(false);
+					CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(pMonster, { "Zero_Level", "Enemy_Layer" });
+					spawn++;
+				}
 			}
 		}
+
+		m_MonsterQueue.push(MonsterQueue);
 	}
 }
+
 void CStage::BaseIntro(StageContext& context)
 {
 	if (!m_introFlowBuilt)
@@ -296,7 +311,7 @@ void CStage::BaseIntro(StageContext& context)
 			m_introFlow.AddWait(seqId, 0.2f);
 			m_introFlow.AddOnce(seqId, [this]() {CUIDirector::GetInstance()->FadeIn_Screen(1.f); });
 			m_introFlow.AddWait(seqId, 0.2f);
-			m_introFlow.AddOnce(seqId, [this]() {RenderSystem()->Apply_RadialBlur(2.f); });
+			//m_introFlow.AddOnce(seqId, [this]() {RenderSystem()->Apply_RadialBlur(2.f); });
 			m_introFlow.AddWait(seqId, 2.0f);
 		}
 
@@ -343,7 +358,7 @@ void CStage::BaseOutro()
 		size_t seqId = m_outroFlow.BeginSequence();
 		m_outroFlow.AddOnce(seqId, [this]() {CUIDirector::GetInstance()->FadeOut_Screen(1.f); });
 		m_outroFlow.AddWait(seqId, 2.0f);
-		m_outroFlow.AddOnce(seqId, [this]() {RenderSystem()->UnRegister_AddictiveColor(); });
+		//m_outroFlow.AddOnce(seqId, [this]() {RenderSystem()->UnRegister_AddictiveColor(); });
 	}
 
 	m_outroFlow.Start();

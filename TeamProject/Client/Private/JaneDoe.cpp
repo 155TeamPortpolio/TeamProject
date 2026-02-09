@@ -112,8 +112,8 @@ void CJaneDoe::Awake()
     if (FAILED(Attach_ParryCollider()))
         return;
 
-    auto Texture = ResourceManager()->Load_Texture(G_GlobalLevelKey, "Eff_Noise_045.png");
-    RenderSystem()->Set_NoiseTexture(NOISE_FXTYPE::MOTIONBLUR, Texture);
+    //auto Texture = ResourceManager()->Load_Texture(G_GlobalLevelKey, "Eff_Noise_045.png");
+    //RenderSystem()->Set_NoiseTexture(NOISE_FXTYPE::MOTIONBLUR, Texture);
 }
 
 void CJaneDoe::Priority_Update(_float dt)
@@ -890,7 +890,6 @@ void CJaneDoe::Process_EndState(const string& strCurrentState)
 HRESULT CJaneDoe::Add_PassionMotionBlur()
 {
     auto Model = Get_Component<CSkeletalModel>();
-    _uint size = sizeof(_float4x4) * m_pAnimator->Get_BoneMatrices(CAnimator3D::BoneSpace::COMBINED).size();
     m_vRimLightColor = _float3(1.f, 0.1f, 0.f);
     m_fRimLightPower = 3.f;
 
@@ -913,7 +912,7 @@ HRESULT CJaneDoe::Add_PassionMotionBlur()
                 m_BoneMatrices[k][i],
                 "float4x4[]",
                 vColor,
-                size,
+                static_cast<_uint>(sizeof(_float4x4) * m_BoneMatrices[k][i].size()),
                 i,
                 [this](ID3D11DeviceContext* pContext, _uint index) {Render_PassionMotionBlur(pContext, index); }
             };

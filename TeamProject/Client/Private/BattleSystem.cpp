@@ -313,6 +313,8 @@ void CBattleSystem::Update_BattleInfo()
 
 _bool CBattleSystem::isMonsterCleared()
 {
+	
+
 	return m_BattleObjInfos[BATTLE_OBJ_TYPE::MONSTER].empty();
 }
 

@@ -5,15 +5,18 @@
 #include "GameInstance.h"
 #include "RoomDirector.h"
 #include "TestCloud.h"
+
+#include "PostRenderer.h"
+#include "PostProcessCommand.h"
 IMPLEMENT_SINGLETON(CFieldSystem)
 
 CFieldSystem::CFieldSystem()
 {
 	m_pRoomDirector = CRoomDirector::Create();
 
-	m_DayTime.TargetFog = { _float4(0.95f, 0.75f, 0.8f, 1.0f),0.f,0.f, 0.003f, true };
+	m_DayTime.TargetFog = { _float4(0.95f, 0.75f, 0.8f, 1.0f), 0.003f };
 	m_DayTime.TargetCloud = { _float3(0.7f, 0.5f, 0.65f), _float3(0.95f, 0.7f, 0.75f) };
-	m_DayTime.StartFog = { _float4(0.95f, 0.75f, 0.8f, 1.0f),0.f,0.f, 0.003f, true };
+	m_DayTime.StartFog = { _float4(0.95f, 0.75f, 0.8f, 1.0f),0.003f };
 	m_DayTime.StartCloud = { _float3(0.7f, 0.5f, 0.65f), _float3(0.95f, 0.7f, 0.75f) };
 }
 
@@ -141,7 +144,12 @@ void CFieldSystem::DayTimer::Update_Transition(_float dt)
 		time
 	);
 
-	RenderSystem()->Set_FogDesc({ fogColor, 0.f, 0.f, fogDensity, true });
+	RenderSystem()->GetPostRenderer()
+		->GetCommand<CFogCommand>()
+		->SetColor(fogColor)
+		->SetDensity(fogDensity)
+		->SetEnable(true);
+
 	auto pCloud = dynamic_cast<CTestCloud*>(ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Cloud)));
 	pCloud->Set_CloudInfo(skyColor, cloudColor);
 
@@ -167,22 +175,22 @@ void CFieldSystem::DayTimer::Set_DayPhase(DayPhase ePhase)
 	switch (ePhase)
 	{
 	case Client::DayPhase::EarlyMorning:
-		TargetFog = { _float4(0.95f, 0.75f, 0.8f, 1.0f),0.f,0.f, 0.003f, true };
+		TargetFog = { _float4(0.95f, 0.75f, 0.8f, 1.0f),0.003f };
 		TargetCloud = { _float3(0.7f, 0.5f, 0.65f), _float3(0.95f, 0.7f, 0.75f) };
 		currentHour = 0.f;
 		break;
 	case Client::DayPhase::Morning:
-		TargetFog = { _float4(0.85f, 0.9f, 0.95f, 1.0f),0.f,0.f, 0.0015f, true };
+		TargetFog = { _float4(0.85f, 0.9f, 0.95f, 1.0f), 0.0015f };
 		TargetCloud = { _float3(0.4f, 0.7f, 1.0f), _float3(1.0f, 1.0f, 1.0f) };
 		currentHour = 6.0f;
 		break;
 	case Client::DayPhase::Afternoon:
-		TargetFog = { _float4(1.0f, 0.55f, 0.45f, 1.0f), 0.f, 0.f, 0.0035f, true };
+		TargetFog = { _float4(1.0f, 0.55f, 0.45f, 1.0f), 0.0035f };
 		TargetCloud = { _float3(0.486f, 0.073f, 0.073f), _float3(1.0f, 0.6f, 0.5f) };
 		currentHour = 12.0f;
 		break;
 	case Client::DayPhase::LateNight:
-		TargetFog = { _float4(0.25f, 0.3f, 0.45f, 1.0f),0.f,0.f,  0.004f, true };
+		TargetFog = { _float4(0.25f, 0.3f, 0.45f, 1.0f), 0.004f };
 		TargetCloud = { _float3(0.1f, 0.15f, 0.3f), _float3(0.3f, 0.35f, 0.5f) };
 		currentHour = 18.0f;
 		break;

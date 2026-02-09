@@ -10,6 +10,7 @@ class CTarget_Manager :
 		ID3D11DepthStencilView* pPrevDSV = nullptr;
 		D3D11_VIEWPORT PrevViewPort;
 		UINT NumViewports = 1;
+		string targetName = {};
 	};
 
 private:

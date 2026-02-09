@@ -391,7 +391,8 @@ HRESULT CSkinnedMeshRenderer::Process_OutLineQueue()
 {
 	if (m_OutLineCommands.empty())
 	{
-		if (FAILED(m_pTargetManager->End_MRT())) return E_FAIL;
+		if (FAILED(m_pTargetManager->End_MRT())) 
+			return E_FAIL;
 		return S_OK;
 	}
 
@@ -419,7 +420,8 @@ HRESULT CSkinnedMeshRenderer::Process_OutLineQueue()
 
 	m_OutLineCommands.clear();
 
-	if (FAILED(m_pTargetManager->End_MRT())) return E_FAIL;
+	if (FAILED(m_pTargetManager->End_MRT())) 
+		return E_FAIL;
 
 	return S_OK;
 }
