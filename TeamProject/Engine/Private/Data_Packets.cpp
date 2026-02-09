@@ -20,11 +20,6 @@ BLENDRENDERKEY Engine::DrawBlendedPacket::GetKey() const
 	};
 }
 
-_uint Engine::RenderPostProcessingRequestCommand::GetKey() const
-{
-	return static_cast<_uint>(eTarget);
-}
-
 BLENDRENDERKEY Engine::DrawEffectPacket::GetKey() const
 {
 	return {

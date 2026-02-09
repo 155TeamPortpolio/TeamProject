@@ -76,6 +76,11 @@ void CZeroStage_Elite::Battle()
 {
 	_bool isBattleEnd = CBattleSystem::GetInstance()->isMonsterCleared();
 	if (isBattleEnd) {
+		if (!m_MonsterQueue.empty()) {
+			Active_Enemy();
+			return;
+		}
+
 		m_eStageStage = StageState::BattleEnd;
 		CBattleSystem::GetInstance()->SetActive(false);
 		Active_Portal();

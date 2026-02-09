@@ -20,7 +20,9 @@ private:
 	void Battle();
 	void Outro();
 	void End();
+
 private:
+	virtual void Active_Portal() override;
 
 public:
 	static CZeroStage_Start* Create(class CZero_Level* pOwnerLevel);

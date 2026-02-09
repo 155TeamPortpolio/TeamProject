@@ -2,6 +2,10 @@
 #include "BattleFXFlow.h"
 #include "GameInstance.h"
 
+#include "PostRenderer.h"
+#include "PostProcessCommand.h"
+#include "CamDirector.h"
+
 CBattleFXFlow::CBattleFXFlow() {
 
 }
@@ -86,7 +90,7 @@ void CBattleFXFlow::Update(_float dt)
 		++trackIndex;
 	}
 
-	// ���� ������ ����
+	// ???? ?????? ????
 	while (m_stepIndex < m_steps.size())
 	{
 		_bool keep = m_steps[m_stepIndex](dt);
@@ -159,7 +163,7 @@ void CBattleFXFlow::StartVfx(BATTLE_VFX_TYPE vfxType)
 	m_BattleVFX.fCurPos = 0.f;
 	m_BattleVFX.vNowColor = preset.vStartColor;
 
-	// Ÿ�Ժ� ����
+	// ???? ????
 	switch (vfxType)
 	{
 	case BATTLE_VFX_TYPE::EVADE:
@@ -190,6 +194,26 @@ void CBattleFXFlow::StartVfx_Evade()
 
 	AddCall([this]() {RenderSystem()->Register_AddictiveColor(&m_BattleVFX.vNowColor); });
 	AddCall([this, preset]() {RenderSystem()->Apply_RadialBlur(preset.fBlurDuration); });
+	auto& preset = m_BattleVFXData[ENUM(BATTLE_VFX_TYPE::EVADE)]; 
+	AddParallelTimeScale(BATTLE_OBJ_TYPE::PLAYER, preset.tPlayerTimeScale);
+	AddParallelTimeScale(BATTLE_OBJ_TYPE::MONSTER, preset.tMonsterTimeScale);
+	AddParallelTimeScale(BATTLE_OBJ_TYPE::CAMERA, preset.tCameraTimeScale);
+
+	CPostRenderer* pPost = RenderSystem()->GetPostRenderer();
+
+	AddCall([this,pPost]() {
+		pPost->GetCommand<CAddictiveColorCommand>()
+			->SetAddictiveColor(&m_BattleVFX.vNowColor)
+			->SetEnable(true);
+		});
+
+	AddCall([this, preset, pPost]() {
+		pPost->GetCommand<CRadialBlurCommand>()
+			->SetDuration(preset.fBlurDuration)
+			->SetEaseType(EaseType::InOutSine)
+			->SetIntensity(0.2)
+			->SetEnable(true);
+		});
 
 	AddStep(
 		[this, preset, elapsed = 0.f, duration = m_BattleVFX.fDuration](_float dt) mutable -> _bool
@@ -212,8 +236,9 @@ void CBattleFXFlow::StartVfx_Evade()
 		}
 	);
 
-	AddCall([this, preset]() {
-		RenderSystem()->UnRegister_AddictiveColor();
+	AddCall([this, preset, pPost]() {
+		pPost->GetCommand<CAddictiveColorCommand>()
+			->SetEnable(false);
 		m_BattleVFX.fCurPos = 0.f;
 		m_BattleVFX.vNowColor = {};
 		m_BattleVFX.isRunning = false;
@@ -229,8 +254,8 @@ void CBattleFXFlow::StartVfx_Parry()
 	auto& preset = m_BattleVFXData[ENUM(BATTLE_VFX_TYPE::PARRY)];
 	AddParallelTimeScaleAll(preset);
 
-	AddCall([this, preset]() {RenderSystem()->Apply_RadialBlur(preset.fBlurDuration); });
-
+	//AddCall([this, preset]() {RenderSystem()->Apply_RadialBlur(preset.fBlurDuration); });
+	AddCall([this, preset]() {CamDirector()->StartParry(); });
 
 	AddStep(
 		[this, preset, elapsed = 0.f, duration = m_BattleVFX.fDuration](_float dt) mutable -> _bool
@@ -259,6 +284,7 @@ void CBattleFXFlow::StartVfx_Parry()
 		m_BattleVFX.fCurPos = 0.f;
 		m_BattleVFX.vNowColor = {};
 		m_BattleVFX.isRunning = false;
+		CamDirector()->EndParry();
 		});
 
 	Start(nullptr);
