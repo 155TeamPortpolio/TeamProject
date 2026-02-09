@@ -13,6 +13,9 @@
 
 #include "UIDirector.h"
 
+#include "PostRenderer.h"
+#include "PostProcessCommand.h"
+
 CGachaScreen::CGachaScreen()
 	:CGameObject()
 {
@@ -29,9 +32,12 @@ void CGachaScreen::PlayTVSequence(vector<GACHA_RESULT_DESC>* ResultDesc)
 	{
 		if (m_iCurPlayingIndex < 10)
 			++m_iCurPlayingIndex;
-		else 
+		else if(m_bIsPlay == false)
+		{
+			m_EffectFlow.Start();
 			CUIDirector::GetInstance()->Show_GachaSkipButton();
-
+			m_bIsPlay = true;
+		}
 		SetMaterialInstances(m_iCurPlayingIndex,{
 			(*ResultDesc)[0].Grade == GachaGrade::S ? 5 : (*ResultDesc)[0].Grade == GachaGrade::A ? 3 : 1,
 			(*ResultDesc)[1].Grade == GachaGrade::S ? 5 : (*ResultDesc)[1].Grade == GachaGrade::A ? 3 : 1,
@@ -95,6 +101,8 @@ HRESULT CGachaScreen::Initialize(INIT_DESC* pArg)
     if (FAILED(__super::Initialize(pArg)))
         return E_FAIL;
 
+	BaseEffectFlowSetting();
+
     return S_OK;
 }
 
@@ -134,6 +142,8 @@ void CGachaScreen::Priority_Update(_float dt)
 
 void CGachaScreen::Update(_float dt)
 {
+	m_EffectFlow.Tick(dt);
+
 	m_fFrameElapsedTime += dt;
 	if (m_fFrameElapsedTime > m_fFrameDuration)
 	{
@@ -168,6 +178,33 @@ void CGachaScreen::SetMaterialInstances(_int ChangeNum, vector<_int> ScreenIndex
 	}
 }
 
+void CGachaScreen::BaseEffectFlowSetting()
+{
+	size_t sequenceId = m_EffectFlow.BeginSequence();
+	auto pPost = RenderSystem()->GetPostRenderer();
+
+	m_EffectFlow.AddOnce(sequenceId, [pPost]() {
+		pPost->GetCommand<CGuassianBlurCommand>()
+			->SetDuration(0.6f)
+			->SetIntensity(2.5f)
+			->SetEaseType(EaseType::InOutSine)
+			->SetEnable(true);
+		});
+
+	m_EffectFlow.AddWait(sequenceId, 0.4);
+
+	auto pTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, "VX_Noise_UU_26.png");
+	m_EffectFlow.AddOnce(sequenceId, [pPost, pTexture]() {
+		pPost->GetCommand<CGlitchCommand>()
+			->SetDuration(0.1f)
+			->SetIntensity(5.f)
+			->SetNoiseTexture(pTexture)
+			->SetEaseType(EaseType::InQuart)
+			->SetEnable(true);
+		});
+	m_EffectFlow.EndSequence(sequenceId);
+
+}
 CGachaScreen* CGachaScreen::Create()
 {
 	CGachaScreen* Instance = new CGachaScreen();

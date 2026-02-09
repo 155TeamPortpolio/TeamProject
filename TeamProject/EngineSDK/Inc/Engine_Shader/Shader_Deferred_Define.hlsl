@@ -161,8 +161,13 @@ Texture2D SkinnedCombinedTexture : register(t60);
 Texture2D StaticCombinedTexture : register(t61);
 Texture2D UICombinedTexture : register(t62);
 Texture2D EffectCombinedTexture : register(t63);
+//===========
+Texture2D GlitchNoiseTexture : register(t65);
+//===========
+Texture2D GuassianBlurXTexture : register(t66);
 
-Texture2D FinalTexture : register(t65);
+Texture2D FinalTexture : register(t69);
+
 
 // ─────────────  ETC ─────────────
 Texture2DArray StaticShadowMapArray : register(t70);

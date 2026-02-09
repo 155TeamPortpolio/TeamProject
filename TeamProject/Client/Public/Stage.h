@@ -1,7 +1,7 @@
 #pragma once
 #include "Base.h"
 #include "Zero_Level.h"
-#include "StageFx.h"
+#include "EffectFlow.h"
 #include "MapData_Defines.h"
 
 NS_BEGIN(Engine)
