@@ -84,7 +84,7 @@ void CUI_GachaResult::Create_ConfirmButton()
 {
     CUI_TextButton::BUTTON_DESC* pDesc = new CUI_TextButton::BUTTON_DESC;
     pDesc->strLabel = L"È®ÀÎ";
-    pDesc->onClick = []() {};
+    pDesc->onClick = []() { LevelManager()->Request_ChangeLevel("MainCity_Level", true); };
 
     auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_TextButton" })
         .Add_UIDesc(pDesc)

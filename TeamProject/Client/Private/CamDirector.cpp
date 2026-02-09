@@ -39,6 +39,11 @@ CGameObject* CCamDirector::GetCamObj(CamType type) const
     return ObjectManager()->Request_Object(m_camHandles[ENUM(type)]);
 }
 
+OBJECT_HANDLE CCamDirector::GetCurTarget() const
+{
+    return BattleSystem()->GetBattlePlayer()->GetTargetHandle();
+}
+
 _bool CCamDirector::Register(const string& key, const fs::path& path)
 {
     CamSequenceRequestDesc req{};
@@ -169,35 +174,15 @@ void CCamDirector::Update(_float dt)
     if (IsValid())
         m_dialogue.Update(dt, GetOrbitCamComp(), GetOrbitCam(), GetCharacter()->Get_Component<CTransform>());
 
-     UpdateInput(dt);
-}
+    m_parry.Update(dt);
 
-void CCamDirector::StartParry()
-{
-    if (!m_gate.Pass()) return;
-
-    auto charaName = GetCharacterName();
-    auto anim = GetCharacter()->Get_Component<CAnimator3D>();
-    
-   // RequestSequence("Parry/Corin");
-
-    GetOrbitCam()->SetLockOn(BattleSystem()->GetBattlePlayer()->GetTargetHandle());
-
-    switch (charaName)
+    if (m_dialogueUnlockPending && !m_dialogue.IsBusy())
     {
-    case CHARACTER::JaneDoe:
-        anim->Set_Animation("Avatar_Female_Size03_JaneDoe_Ani_Attack_ParryAid_L").Apply();
-        break;
-
-    case CHARACTER::Corin:
-        anim->Set_Animation("Avatar_Female_Size01_Corin_Ani_Attack_ParryAid_L").Apply();
-        break;
-
-    case CHARACTER::Miyabi:
-        anim->Set_Animation("Avatar_Female_Size02_Unagi_Ani_Attack_ParryAid_L").Apply();
-        break;
+        GetOrbitCam()->Unlock_Input();
+        m_dialogueUnlockPending = false;
     }
 
+     UpdateInput(dt);
 }
 
 void CCamDirector::StartBattleIntro(CamSeqType type)
@@ -266,15 +251,17 @@ void CCamDirector::SyncSeqInputLock()
 void CCamDirector::StartDialog()
 {
     GetOrbitCam()->Lock_Input();
+    GetOrbitCam()->DialogueMode_Begin();
 
-    m_dialogue.Begin(60.f, 0.5f);
+    m_dialogue.Begin(35.f, 0.5f);
+    m_dialogueUnlockPending = false;
 }
 
 void CCamDirector::EndDialog()
 {
-    GetOrbitCam()->Unlock_Input();
-
     m_dialogue.End(0.5f);
+    m_dialogueUnlockPending = true;
+    GetOrbitCam()->Unlock_Input();
 }
 
 void CCamDirector::UpdatePlayer()

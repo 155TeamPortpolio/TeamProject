@@ -3,7 +3,6 @@
 #include "CamObject.h"
 #include "OrbitCamTypes.h"
 #include "CamOcclusionTracker.h"
-#include "ParryCamFx.h"
 
 NS_BEGIN(Client)
 
@@ -53,7 +52,20 @@ public:
 
     OBJECT_HANDLE GetTarget() const { return m_target; }
 
+public:
+    void  DialogueMode_Begin()   { m_dialogueMode = true; }
+    void  DialogueMode_End()     { m_dialogueMode = false; }
+    _bool IsDialogueMode() const { return m_dialogueMode; }
+
     void    EvalOcclusion();
+
+    void    DialogueYaw_Set(_float yawGoalDeg, _float weight);
+    void    DialogueYaw_Clear() { m_dialogueYaw = {}; }
+    
+public:
+    void  ParryMode_Begin() { m_parryMode = true; }
+    void  ParryMode_End()   { m_parryMode = false; }
+    _bool IsParryMode() const { return m_parryMode; }
 
 private:
     void    ClampTargets();
@@ -125,6 +137,8 @@ private:
     OrbitBlendState  m_lockBlend{};
     Vector3          m_lockFocus{};
     _bool            m_hasLockFocus = false;
+    _bool            m_dialogueMode = false;
+    _bool            m_parryMode    = false;
 
     OrbitAutoYaw  m_autoYaw{};
     OrbitSwitch   m_switch{};
@@ -138,6 +152,7 @@ private:
 
     OrbitPivotStabilizer m_pivotStab{};
     CCamOcclusionTracker m_occlusion{};
+    OrbitDialogueYaw     m_dialogueYaw{};
 
 public:
     static  COrbitCam* Create();

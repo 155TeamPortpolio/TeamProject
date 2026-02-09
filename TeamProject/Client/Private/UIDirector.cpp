@@ -19,11 +19,11 @@ HRESULT CUIDirector::Register(CUI_Object* pObj)
 		return E_FAIL;
 
 	string strInstanceName = pObj->Get_InstanceName();
-	auto iter = m_externalhandles.find(strInstanceName);
-	if (iter != m_externalhandles.end())
+	auto iter = m_handles.find(strInstanceName);
+	if (iter != m_handles.end())
 		return E_FAIL;
 
-	m_externalhandles.emplace(strInstanceName, pObj->Get_Handle());
+	m_handles.emplace(strInstanceName, pObj->Get_Handle());
 
 	return S_OK;
 }
@@ -282,10 +282,6 @@ void CUIDirector::UI_DeActive(const string& strInstanceName, void* pArg)
 
 UI_HANDLE* CUIDirector::Find_Handle(const string& strInstanceName)
 {
-	auto iterExt = m_externalhandles.find(strInstanceName);
-	if (iterExt != m_externalhandles.end() && iterExt->second.isValid())
-		return &iterExt->second;
-
 	auto iter = m_handles.find(strInstanceName);
 	if (iter != m_handles.end() && iter->second.isValid())
 		return &iter->second;
@@ -298,5 +294,4 @@ void CUIDirector::Free()
 	__super::Free();
 
 	m_handles.clear();
-	m_externalhandles.clear();
 }
