@@ -30,6 +30,7 @@ CBattleSystem::CBattleSystem()
 	m_pFXFlow->Initialize_Preset();
 	m_pFXFlow->SetLayerTag(BATTLE_OBJ_TYPE::PLAYER, "Model_Layer");
 	m_pFXFlow->SetLayerTag(BATTLE_OBJ_TYPE::MONSTER, "Enemy_Layer");
+	m_pFXFlow->SetLayerTag(BATTLE_OBJ_TYPE::CAMERA, "Camera_Layer");
 }
 
 void CBattleSystem::Update()
@@ -312,6 +313,8 @@ void CBattleSystem::Update_BattleInfo()
 
 _bool CBattleSystem::isMonsterCleared()
 {
+	
+
 	return m_BattleObjInfos[BATTLE_OBJ_TYPE::MONSTER].empty();
 }
 

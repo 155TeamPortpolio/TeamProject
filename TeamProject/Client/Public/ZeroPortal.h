@@ -39,6 +39,7 @@ public:
     int  GetChoiceIndex() const { return m_choiceIndex; }
 
 private:
+    void Focus(_float dt);
     void Extend(_float dt);
     void Contract(_float dt);
 
@@ -52,14 +53,18 @@ private:
     class CStage* m_pOwnerStage = { nullptr };
 
 private:
+    _bool m_bInPlayer = { false };
+
+
+private:
     _bool m_OnExtend = false;
     _bool m_OnContract = false;
 
     _float m_fDuration{};
     _float m_fElapsedTime{};
 
-    _float3 m_vContractScale{ 0.3f,0.3f,0.3f };
-    _float3 m_vExtendScale{ 1.3f,1.3f,1.3f };
+    _vector3 m_vBaseScale{};
+    _vector3 m_vExtendScale{};
 public:
     static CZeroPortal* Create();
     virtual CGameObject* Clone(INIT_DESC* pArg) override;

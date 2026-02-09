@@ -77,7 +77,7 @@ void CZeroStage_Boss::Intro()
 void CZeroStage_Boss::Battle()
 {
 	_bool isBattleEnd = CBattleSystem::GetInstance()->isMonsterCleared();
-	if (isBattleEnd) {
+	if (isBattleEnd) {                 
 		m_eStageStage = StageState::BattleEnd;
 		CBattleSystem::GetInstance()->SetActive(false);
 		Active_Portal();

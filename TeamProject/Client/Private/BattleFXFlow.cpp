@@ -4,6 +4,7 @@
 
 #include "PostRenderer.h"
 #include "PostProcessCommand.h"
+#include "CamDirector.h"
 
 CBattleFXFlow::CBattleFXFlow() {
 
@@ -29,8 +30,9 @@ void CBattleFXFlow::Initialize_Preset()
 		const _float duration = .5f;
 		Parry.fVFXDuration = duration;
 		Parry.fBlurDuration = .5f;
-		Parry.tPlayerTimeScale = TIME_SCALING({ duration, 0.1f, 0.3f, 0.5f , EaseType::OutBack });
+		Parry.tPlayerTimeScale	= TIME_SCALING({ duration, 0.1f, 0.3f, 0.5f , EaseType::OutBack });
 		Parry.tMonsterTimeScale = TIME_SCALING({ duration, 0.1f, 0.3f, 0.5f , EaseType::OutBack});
+		Parry.tCameraTimeScale	= TIME_SCALING({ duration, 0.1f, 0.2f, 0.8f , EaseType::InOutSine});
 	}
 	{
 		auto& Parry = m_BattleVFXData[ENUM(BATTLE_VFX_TYPE::ULTIMATE)];
@@ -84,7 +86,7 @@ void CBattleFXFlow::Update(_float dt)
 		++trackIndex;
 	}
 
-	// ���� ������ ����
+	// ???? ?????? ????
 	while (m_stepIndex < m_steps.size())
 	{
 		_bool keep = m_steps[m_stepIndex](dt);
@@ -150,7 +152,7 @@ void CBattleFXFlow::StartVfx(BATTLE_VFX_TYPE vfxType)
 	m_BattleVFX.fCurPos = 0.f;
 	m_BattleVFX.vNowColor = preset.vStartColor;
 
-	// Ÿ�Ժ� ����
+	// ???? ????
 	switch (vfxType)
 	{
 	case BATTLE_VFX_TYPE::EVADE:
@@ -176,6 +178,7 @@ void CBattleFXFlow::StartVfx_Evade()
 	auto& preset = m_BattleVFXData[ENUM(BATTLE_VFX_TYPE::EVADE)]; 
 	AddParallelTimeScale(BATTLE_OBJ_TYPE::PLAYER, preset.tPlayerTimeScale);
 	AddParallelTimeScale(BATTLE_OBJ_TYPE::MONSTER, preset.tMonsterTimeScale);
+	AddParallelTimeScale(BATTLE_OBJ_TYPE::CAMERA, preset.tCameraTimeScale);
 
 	CPostRenderer* pPost = RenderSystem()->GetPostRenderer();
 
@@ -233,9 +236,10 @@ void CBattleFXFlow::StartVfx_Parry()
 	auto& preset = m_BattleVFXData[ENUM(BATTLE_VFX_TYPE::PARRY)];
 	AddParallelTimeScale(BATTLE_OBJ_TYPE::PLAYER, preset.tPlayerTimeScale);
 	AddParallelTimeScale(BATTLE_OBJ_TYPE::MONSTER, preset.tMonsterTimeScale);
+	AddParallelTimeScale(BATTLE_OBJ_TYPE::CAMERA, preset.tCameraTimeScale);
 
 	//AddCall([this, preset]() {RenderSystem()->Apply_RadialBlur(preset.fBlurDuration); });
-
+	AddCall([this, preset]() {CamDirector()->StartParry(); });
 
 	AddStep(
 		[this, preset, elapsed = 0.f, duration = m_BattleVFX.fDuration](_float dt) mutable -> _bool
@@ -264,6 +268,7 @@ void CBattleFXFlow::StartVfx_Parry()
 		m_BattleVFX.fCurPos = 0.f;
 		m_BattleVFX.vNowColor = {};
 		m_BattleVFX.isRunning = false;
+		CamDirector()->EndParry();
 		});
 
 	Start(nullptr);

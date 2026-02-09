@@ -6,12 +6,12 @@
 
 #include "UI_GachaText.h"
 
-void CUI_GachaTextGroupAgent::Show(GachaGrade eGrade)
+void CUI_GachaTextGroupAgent::Show(GachaGrade eGrade, const string& strCamSequenceKey)
 {
-	__super::Show(eGrade);
+	__super::Show(eGrade, strCamSequenceKey);
 
-	for(auto& pText : m_pTexts)
-		pText->Play("");
+	for (auto& pText : m_pTexts)
+		pText->Play("");	// 미야비랑 제인도는 S급이라 뭐 달라질게 없어서 분기 처리 안함
 }
 
 HRESULT CUI_GachaTextGroupAgent::Initialize_Prototype()

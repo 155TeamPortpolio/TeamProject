@@ -89,7 +89,6 @@ private:
 	string								m_levelKey;
 	nlohmann::json						m_json = {};
 	unordered_map<string, UI_HANDLE>	m_handles = {};
-	unordered_map<string, UI_HANDLE>	m_externalhandles = {};
 
 public:
 	virtual void Free() override;

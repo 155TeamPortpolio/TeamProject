@@ -14,7 +14,7 @@ private:
     virtual ~CUI_GachaTextGroupEngine() DEFAULT;
 
 public:
-    virtual void Show(GachaGrade eGrade) override;
+    virtual void Show(GachaGrade eGrade, const string& strCamSequenceKey) override;
 
 public:
     HRESULT Initialize_Prototype()     override;
