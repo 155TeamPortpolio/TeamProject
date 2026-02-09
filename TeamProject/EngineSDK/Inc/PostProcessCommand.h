@@ -70,6 +70,7 @@ public:
     _float GetIntensity() const {return  m_fIntensity; }
     CGlitchCommand* SetNoiseTexture(class CTexture* pTexture);
     CGlitchCommand* SetDuration(_float fDuration);
+    CGlitchCommand* SetEaseType(EaseType easeType);
 
 public:
     virtual void Update(_float dt) override;
@@ -80,6 +81,7 @@ private:
     _float m_fIntensity;
     _float m_fAccTime = 0.0f;
     _float m_fDuration = 1.f;
+    EaseType m_EaseType = EaseType::InOutSine;
 
 public:
     static CGlitchCommand* Create();
@@ -126,8 +128,17 @@ private:
     virtual ~CFogCommand() = default;
     
 public:
+    FOG_DESC GetFogDesc() const { return m_FogDesc; }
+    CFogCommand* SetFogDesc(FOG_DESC Desc);
+    CFogCommand* SetColor(_float4 vColor);
+    CFogCommand* SetDensity(_float fDensity);
+
+public:
     virtual void Update(_float dt) override;
     virtual void Execute(class CPostRenderer* pRenderer) override;
+
+private:
+    FOG_DESC    m_FogDesc;
 
 public:
     static CFogCommand* Create();

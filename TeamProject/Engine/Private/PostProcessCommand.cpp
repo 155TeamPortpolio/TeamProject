@@ -80,6 +80,12 @@ CGlitchCommand* CGlitchCommand::SetDuration(_float fDuration)
 	return this;
 }
 
+CGlitchCommand* CGlitchCommand::SetEaseType(EaseType easeType)
+{
+	m_EaseType = easeType;
+	return this;
+}
+
 void CGlitchCommand::Update(_float dt)
 {
 	m_fAccTime += dt;
@@ -172,6 +178,24 @@ CFogCommand::CFogCommand()
 	m_bEnabled = false;
 	m_eEffectType = EFFECT_TYPE::REPLACE;
 	m_strOutputTargetName = "Target_Fog";
+}
+
+CFogCommand* CFogCommand::SetFogDesc(FOG_DESC Desc)
+{
+	m_FogDesc = Desc;
+	return this;
+}
+
+CFogCommand* CFogCommand::SetColor(_float4 vColor)
+{
+	m_FogDesc.fogColor = vColor;
+	return this;
+}
+
+CFogCommand* CFogCommand::SetDensity(_float fDensity)
+{
+	m_FogDesc.fogDensity = fDensity;
+	return this;
 }
 
 void CFogCommand::Update(_float dt)
