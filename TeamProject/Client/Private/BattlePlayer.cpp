@@ -16,6 +16,7 @@
 #include "Corin.h"
 #include "JaneDoe.h"
 #include "Miyabi.h"
+#include "Miyabi_Ghost.h"
 
 #include "Camera.h"
 #include "DisplayGate.h"
@@ -833,6 +834,8 @@ HRESULT CBattlePlayer::Initialize_CharacterPrototype()
     if (FAILED(pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_JaneDoe", CJaneDoe::Create())))
         return E_FAIL;
     if (FAILED(pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Miyabi", CMiyabi::Create())))
+        return E_FAIL;
+    if (FAILED(pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Miyabi_Ghost", CMiyabi_Ghost::Create())))
         return E_FAIL;
     if (FAILED(pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_CharacterAttackCollider", CCharacterAttackCollider::Create())))
         return E_FAIL;
