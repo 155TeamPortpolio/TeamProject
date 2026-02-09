@@ -31,6 +31,8 @@ public:
 
 	HRESULT Create_RenderTarget(const RenderTargetDesc& desc) override;
 	virtual class CRenderer* GetRenderer(RENDERER_TYPE eType) override;
+	virtual class CPostRenderer* GetPostRenderer() override { return m_pPost; }
+
 	virtual _bool Get_FogDesc(FOG_DESC& outResult) override;
 	virtual void Set_FogDesc(FOG_DESC desc)override;
 	virtual void Set_GlitchDesc(GLITCH_DESC desc) override;
@@ -38,10 +40,6 @@ public:
 
 	virtual void Set_NoiseTexture(NOISE_FXTYPE eNoise, class CTexture* noiseTexture) override;
 	virtual CTexture* Get_NoiseTexture(NOISE_FXTYPE eNoise) override;
-
-	virtual void Apply_RadialBlur(_float duration, _float2 center = _float2(0.5, 0.5)) override;
-	virtual void Register_AddictiveColor(_float3* pColor) override;
-	virtual void UnRegister_AddictiveColor() override;
 
 public:
 	void BatchBegin();
@@ -62,7 +60,7 @@ public:
 	virtual void Add_RenderCommand(const RENDER_CUSTOM_COMMAND& command, CUSTOMTARGET eCustom) override;
 	virtual void Add_OutLineCommand(const OUTLINE_COMMAND& command) override;
 	virtual void Add_MotionBlurCommand(const MOTIONBLUR_COMMAND& command) override;
-	virtual void Add_PostProcessCommand(const POST_PROCESS_COMMAND& command)override;
+	//virtual void Add_PostProcessCommand(const POST_PROCESS_COMMAND& command)override;
 	virtual ID3D11ShaderResourceView* Get_CustomTargetSRV(const string strTag) override;
 	virtual ID3D11Texture2D* Get_CustomTargetTexture(const string strTag) override;
 	virtual ID3D11ShaderResourceView* Get_EngineTargetSRV(const string strTag) override;

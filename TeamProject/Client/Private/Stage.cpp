@@ -311,7 +311,7 @@ void CStage::BaseIntro(StageContext& context)
 			m_introFlow.AddWait(seqId, 0.2f);
 			m_introFlow.AddOnce(seqId, [this]() {CUIDirector::GetInstance()->FadeIn_Screen(1.f); });
 			m_introFlow.AddWait(seqId, 0.2f);
-			m_introFlow.AddOnce(seqId, [this]() {RenderSystem()->Apply_RadialBlur(2.f); });
+			//m_introFlow.AddOnce(seqId, [this]() {RenderSystem()->Apply_RadialBlur(2.f); });
 			m_introFlow.AddWait(seqId, 2.0f);
 		}
 
@@ -358,7 +358,7 @@ void CStage::BaseOutro()
 		size_t seqId = m_outroFlow.BeginSequence();
 		m_outroFlow.AddOnce(seqId, [this]() {CUIDirector::GetInstance()->FadeOut_Screen(1.f); });
 		m_outroFlow.AddWait(seqId, 2.0f);
-		m_outroFlow.AddOnce(seqId, [this]() {RenderSystem()->UnRegister_AddictiveColor(); });
+		//m_outroFlow.AddOnce(seqId, [this]() {RenderSystem()->UnRegister_AddictiveColor(); });
 	}
 
 	m_outroFlow.Start();
