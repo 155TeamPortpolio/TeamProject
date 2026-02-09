@@ -11,7 +11,7 @@ private:
     virtual ~CCamFovPerSegmentEvaluator() DEFAULT;
 
 public:
-    void         SetSequence(const CamSequenceDesc* s) { seq = s; }
+    void         SetSequence(const CamSeqDesc* s) { seq = s; }
                  
     bool         Build(const vector<CamKeyFrame>& keys) override;
     _float       Evaluate(_float time) const override;
@@ -20,7 +20,7 @@ private:
     CamFovInterp ResolveMode(_uint segIdx) const;
 
 private:
-    const CamSequenceDesc*     seq{};
+    const CamSeqDesc*     seq{};
     const vector<CamKeyFrame>* keyframes{};
 
     ICamFovEvaluator*          evalLinear{};
@@ -30,6 +30,5 @@ public:
     static CCamFovPerSegmentEvaluator* Create() { return new CCamFovPerSegmentEvaluator(); }
     virtual void Free() override;
 };
-
 
 NS_END

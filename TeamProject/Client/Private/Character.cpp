@@ -215,7 +215,7 @@ void CCharacter::Rush_Target()
     vDir.Normalize();
 
     _vector3 vDest = vTargetPos - vDir * fOffset * 2.f;
-    vDest.y = Get_WorldPos().y + 0.1f;
+    vDest.y = Get_WorldPos().y + 0.5f;
 
     m_pCCT->Set_Position(vDest);
     Get_Component<CTransform>()->Set_Look(vDir);

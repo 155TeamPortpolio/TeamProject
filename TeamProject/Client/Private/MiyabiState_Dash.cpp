@@ -149,12 +149,23 @@ void CMiyabiState_Dash_02::Update(CMiyabi* pOwner, _float dt)
         pSubMachine->Set_Trigger("Complete");
     }
 
+    for (const auto& Event : pOwner->Get_Animator()->Get_EventBus())
+    {
+        if (Event.Type != CLIP_EVENT_TYPE::NOTIFY) continue;
+        if (Event.Tag == "MotionBlur")
+        {
+            pOwner->Add_MotionBlur();
+        }
+    }
+
     Update_Effects(pOwner);
 }
 
 void CMiyabiState_Dash_02::Exit(CMiyabi* pOwner)
 {
     pOwner->Get_StateMachine()->Set_Bool("InDash02", false);
+    pOwner->Clear_MotionBlur();
+    pOwner->Reset_RimLight();
 }
 
 void CMiyabiState_Dash_02::Update_Effects(CMiyabi* pOwner)

@@ -11,7 +11,7 @@ private:
     virtual ~CCamRotPerSegmentEvaluator() DEFAULT;
 
 public:
-    void         SetSequence(const CamSequenceDesc* s) { seq = s; }
+    void         SetSequence(const CamSeqDesc* s) { seq = s; }
     bool         Build(const vector<CamKeyFrame>& keys) override;
     Quaternion   Evaluate(_float time) const override;
     _float       GetLastRoll() const override { return lastRoll; }
@@ -20,7 +20,7 @@ private:
     CamRotInterp ResolveMode(_uint segIdx) const;
 
 private:
-    const CamSequenceDesc*     seq{};
+    const CamSeqDesc*     seq{};
     const vector<CamKeyFrame>* keyframes{};
 
     ICamRotEvaluator* evalSlerp{};

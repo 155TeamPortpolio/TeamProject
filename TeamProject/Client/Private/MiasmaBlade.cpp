@@ -109,14 +109,15 @@ void CMiasmaBlade::OnPooledAcquire(INIT_DESC* pArg)
 	Get_Component<CRigidBody>()->Set_Kinematic(true);
 	m_pTransform->LookAt(_vector3(desc->vTargetPos));
 	m_vVelocity = { 0,0,0 };
-	m_vTargetVelocity = m_pTransform->Dir(STATE::LOOK) * m_fMovceSpeed;
 	m_ElapsedTime = 0;
-
+	m_vTargetVelocity = m_pTransform->Dir(STATE::LOOK) * m_fMoveSpeed;
+	Get_Component<CCollider>()->Set_CompActive(true);
 }
 
 void CMiasmaBlade::OnPooledRelease()
 {
 	m_isOnAttack = false;
+	Get_Component<CCollider>()->Set_CompActive(false);
 }
 
 void CMiasmaBlade::Parried()
@@ -128,7 +129,8 @@ void CMiasmaBlade::Parried()
 		Get_Component<CCollider>()->Set_CollisionMask(ENUM(COLLISION_GROUP::MONSTER));
 		Get_Component<CCollider>()->Set_CollisionGroup(COLLISION_GROUP::PLAYER_ATTACK);
 		m_vVelocity = {0,0,0};
-		m_vTargetVelocity = m_pTransform->Dir(STATE::LOOK) * m_fMovceSpeed;
+		m_ElapsedTime = 0.4;
+		m_vTargetVelocity = m_pTransform->Dir(STATE::LOOK) * m_fMoveSpeed;
 	}
 }
 

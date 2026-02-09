@@ -173,9 +173,6 @@
     <ClInclude Include="..\Public\Base.h">
       <Filter>01. Utility\04. Components\99. SuperClass</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Component.h">
-      <Filter>01. Utility\04. Components</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Transform.h">
       <Filter>01. Utility\04. Components\00. Transform</Filter>
     </ClInclude>
@@ -336,9 +333,6 @@
     </ClInclude>
     <ClInclude Include="..\Public\CamFovPerSegmentEvaluator.h">
       <Filter>01. Utility\04. Components\20. CamSequencePlayer\03. CamFovEvaluator\99. PerSegment</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\CamUtil.h">
-      <Filter>01. Utility\04. Components\20. CamSequencePlayer\99. CamUtility</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Camera_Enum.h">
       <Filter>01. Utility\04. Components\20. CamSequencePlayer\99. CamUtility</Filter>
@@ -635,6 +629,12 @@
     </ClInclude>
     <ClInclude Include="..\Public\UI_Manager.h">
       <Filter>01. Utility\03. GameObject\Managers\UI_Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CamUtil.h">
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\99. CamUtility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Component.h">
+      <Filter>01. Utility\04. Components</Filter>
     </ClInclude>
     <ClInclude Include="..\public\PostProcessCommand.h">
       <Filter>01. Utility\06. RenderSystem\RenderPass\Renderer\Post\PostProcessCommand</Filter>

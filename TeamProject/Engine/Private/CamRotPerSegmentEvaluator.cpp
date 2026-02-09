@@ -3,22 +3,6 @@
 #include "CamRotSlerpEvaluator.h"
 #include "CamRotSquadEvaluator.h"
 
-namespace
-{
-    float WrapPi(float a)
-    {
-        while (a >  XM_PI) a -= XM_2PI;
-        while (a < -XM_PI) a += XM_2PI;
-        return a;
-    }
-
-    float LerpAngle(float a, float b, float u)
-    {
-        float d = WrapPi(b - a);
-        return a + d * u;
-    }
-}
-
 bool CCamRotPerSegmentEvaluator::Build(const vector<CamKeyFrame>& keys)
 {
     keyframes = &keys;
@@ -85,7 +69,7 @@ Quaternion CCamRotPerSegmentEvaluator::Evaluate(_float time) const
         float u = segment.normalizedTime;
         u = clamp(u, 0.f, 1.f);
 
-        lastRoll = LerpAngle(k0.roll, k1.roll, u);
+        lastRoll = Math::LerpAngle(k0.roll, k1.roll, u);
     }
 
     switch (mode)

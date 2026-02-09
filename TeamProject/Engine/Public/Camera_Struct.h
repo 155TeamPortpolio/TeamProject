@@ -41,13 +41,9 @@ struct CamKeyFrame
 
 	string       eventTag;
 };
-struct CamSequenceDesc 
+struct CamSeqDesc 
 { 
 	string              name;
-
-	CamProjType         projType = CamProjType::Perspective;
-	CamPlaybackMode     playbackMode = CamPlaybackMode::Once;
-
 	CamPosInterp        posInterp = CamPosInterp::Linear;
 	CamRotInterp        rotInterp = CamRotInterp::Slerp;
 	CamFovInterp        fovInterp = CamFovInterp::Linear;
