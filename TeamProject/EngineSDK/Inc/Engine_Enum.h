@@ -141,6 +141,16 @@ namespace Engine
 	};
 
 	enum class StencilMode { None, Write, Test };
+
+	enum class POST_PROCESS_ORDER : unsigned int
+	{
+		HDRBLOOM = 100,
+		FOG = 200,
+		GLITCH = 300,
+		RADIAL_BLUR = 400,
+		GAUSSIAN_BLUR = 500,
+		ADDICTIVE_COLOR = 600,
+	};
 }
 #endif // Engine_Enum_h__
 
