@@ -85,10 +85,10 @@ HRESULT CRenderSystem::Render()
 	m_pPipeLine->End_ObjectBuffer(m_pContext);
 	m_pPipeLine->End_SkinningBuffer(m_pContext);
 
-
 	m_pForward->Render_Priority(m_pPriorityPass);
 	m_pForward->Render_StaticShadow(m_pStaticShadowPass, !IsOn);
 	m_pForward->Render_SkinnedShadow(m_pSkinnedShadowPass, !IsOn);
+
 	m_pForward->Render_SkinnedMesh(m_pSkinnedPass);
 	m_pForward->Render_StaticMesh(m_pStaticPass, m_pInstancePass);
 
@@ -110,13 +110,10 @@ HRESULT CRenderSystem::Render()
 	m_pForward->Render_OutLine();
 	m_pUI->Render_2D(m_pUIPass);
 
-	m_pPost->Render_Fog();
-	m_pPost->Render_HDRBloom();
-	m_pPost->Render_RadialBlur();
+	m_pPost->Render_PostProcessCommand();
 	m_pPost->Render_Final();
 
-
-	m_pUI->Render_CustomTarget();
+	//m_pUI->Render_CustomTarget();
 
 	return S_OK;
 }

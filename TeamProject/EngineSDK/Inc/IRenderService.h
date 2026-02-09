@@ -29,6 +29,7 @@ public:
 
 public:
     virtual class CRenderer* GetRenderer(RENDERER_TYPE eType = RENDERER_TYPE::FORWARD) PURE;
+    virtual class CPostRenderer* GetPostRenderer() PURE;
     virtual HRESULT Create_RenderTarget(const RenderTargetDesc& desc) PURE;
     virtual void Set_FogDesc(FOG_DESC desc)PURE;
     virtual _bool Get_FogDesc(FOG_DESC& outResult) PURE;
@@ -43,7 +44,6 @@ public:
    virtual void Add_RenderCommand(const RENDER_CUSTOM_COMMAND& command, CUSTOMTARGET eCustom) PURE;
    virtual void Add_OutLineCommand(const OUTLINE_COMMAND& command)PURE;
    virtual void Add_MotionBlurCommand(const MOTIONBLUR_COMMAND& command) PURE;
-   //virtual void Add_PostProcessCommand(const POST_PROCESS_COMMAND& command)PURE;
     virtual ID3D11ShaderResourceView* Get_CustomTargetSRV(const string strTag) PURE;
     virtual ID3D11Texture2D* Get_CustomTargetTexture(const string strTag) PURE;
     virtual ID3D11ShaderResourceView* Get_EngineTargetSRV(const string strTag) PURE;
