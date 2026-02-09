@@ -78,19 +78,20 @@ public:
 		_float EvalScale01(_float t01) const
 		{
 			const _float start = clamp(data.fStartLerpTime, 0.f, 1.f);
-			const _float end = clamp(data.fEndLerpTime, 0.f, 1.f);
-			const _float target = data.fValue;
+			_float end = clamp(data.fEndLerpTime, 0.f, 1.f);
+			end = min(end, 1.f - start); 
 
+			const _float target = data.fValue;
 			const EaseType ease = data.eEaseType;
 
-			if (start > 0.f && t01 < start)
+			if (start > 0.f && t01 <= start)
 			{
 				_float a = clamp(t01 / start, 0.f, 1.f);
 				a = Math::ApplyEase(ease, a);
 				return Math::Lerp(1.f, target, a);
 			}
 
-			if (end > 0.f && t01 > (1.f - end))
+			if (end > 0.f && t01 >= (1.f - end))
 			{
 				_float a = clamp((t01 - (1.f - end)) / end, 0.f, 1.f);
 				a = Math::ApplyEase(ease, a);
@@ -130,8 +131,9 @@ public:
 		array<TIME_SCALING, ENUM(BATTLE_OBJ_TYPE::END)> BattleTimeScale;
 
 		void SetTimeData(const TIME_SCALE_DATA& data) {
-			for (size_t typeIndex = 0; typeIndex < ENUM(BATTLE_OBJ_TYPE::END); ++typeIndex)
+			for (size_t typeIndex = 0; typeIndex < ENUM(BATTLE_OBJ_TYPE::END); ++typeIndex) {
 				BattleTimeScale[typeIndex] = data;
+			}
 		}
 	}BATTLE_VFX_DATA;
 

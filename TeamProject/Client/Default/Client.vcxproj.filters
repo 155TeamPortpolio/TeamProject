@@ -469,9 +469,6 @@
     <Filter Include="02. GameObject\Object\Enemy\Boss\Sacrifice\Sacrifice_Laser">
       <UniqueIdentifier>{1e80cf8b-3c80-481d-a79c-f8493cb8d192}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\Boss\Sacrifice\Sacrifice_Orb">
-      <UniqueIdentifier>{68fc2704-df5f-4515-afc4-be9016f4d9a1}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\Object\Enemy\Boss\Sacrifice_Hand">
       <UniqueIdentifier>{8fba8062-3d01-4a71-a27f-806808b2273d}</UniqueIdentifier>
     </Filter>
@@ -1263,6 +1260,9 @@
     <Filter Include="03. Utility\97. GUI_Inc\Guizmo">
       <UniqueIdentifier>{9d85da13-28b5-4706-8886-a70ad1ee518b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Boss\Sacrifice\Sacrifice_Laser\Sacrifice_Orb">
+      <UniqueIdentifier>{68fc2704-df5f-4515-afc4-be9016f4d9a1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1764,7 +1764,7 @@
       <Filter>02. GameObject\UI\01. 2D\HUD_Battle\Action\Switch</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Sacrifice_Orb.h">
-      <Filter>02. GameObject\Object\Enemy\Boss\Sacrifice\Sacrifice_Orb</Filter>
+      <Filter>02. GameObject\Object\Enemy\Boss\Sacrifice\Sacrifice_Laser\Sacrifice_Orb</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UI_UltimateAction.h">
       <Filter>02. GameObject\UI\01. 2D\HUD_Battle\Action\Ultimate</Filter>
@@ -2931,7 +2931,7 @@
       <Filter>02. GameObject\MapObject\03. MapInvisibleWall</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Sacrifice_Orb.cpp">
-      <Filter>02. GameObject\Object\Enemy\Boss\Sacrifice\Sacrifice_Orb</Filter>
+      <Filter>02. GameObject\Object\Enemy\Boss\Sacrifice\Sacrifice_Laser\Sacrifice_Orb</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UI_UltimateAction.cpp">
       <Filter>02. GameObject\UI\01. 2D\HUD_Battle\Action\Ultimate</Filter>

@@ -122,10 +122,7 @@ void CBattleSystem::SpawnMosnter(const string& MonsterProtoTag, _float3 vSpawnPo
 		return;
 
 	CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(pMonster, { NowLevel, "Enemy_Layer" });
-
-	BATTLEOBJ_INFO EnemyInfo = {};
-	EnemyInfo.hObject = pMonster->Get_Handle();
-	m_BattleObjInfos[BATTLE_OBJ_TYPE::MONSTER].push_back(EnemyInfo);
+	EnterBattleObject(BATTLE_OBJ_TYPE::MONSTER, pMonster->Get_Handle());
 }
 
 void CBattleSystem::SetPlayer(vector<OBJECT_HANDLE> hPlayers)

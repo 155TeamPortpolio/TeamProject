@@ -382,10 +382,11 @@ void CDefiler::Route_AnimEvent(CAnimator3D* animator)
 		{
 		case CLIP_EVENT_TYPE::NOTIFY:
 			if (instance.Tag == "ParrySign")
-				UnleashAttack(CEnemy::ATTACK_SIDE::NONE, true);
-			//Active_AttackSign(true);
+				//UnleashAttack(CEnemy::ATTACK_SIDE::NONE, true);
+				Active_AttackSign(true);
 			else if (instance.Tag == "EvadeSign")
-				UnleashAttack(CEnemy::ATTACK_SIDE::NONE, false);
+				//UnleashAttack(CEnemy::ATTACK_SIDE::NONE, false);
+				Active_AttackSign(false);
 
 			else if (instance.Tag == "TargetLockOn")
 				m_BlackBoard.LockTarget = true;
