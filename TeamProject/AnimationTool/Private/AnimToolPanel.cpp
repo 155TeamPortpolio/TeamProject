@@ -171,6 +171,16 @@ void CAnimToolPanel::GUI_DefaultSetting()
 void CAnimToolPanel::GUI_Setting_Clips(_float fChildHeight)
 {
 	ImGui::Text("ClipTag : "); ImGui::SameLine();
+	ImGui::SetNextItemWidth(130.f);
+
+	static char s_ClipSearch[256] = {};
+	ImGui::InputTextWithHint(
+		"##ClipSearch",
+		"Search clip...",
+		s_ClipSearch,
+		IM_ARRAYSIZE(s_ClipSearch)
+	);
+	ImGui::SameLine();
 	ImGui::SetNextItemWidth(300.f);
 	if (ImGui::BeginCombo("##Model Combo", m_CurClipTag.c_str())) //Model
 	{
@@ -178,7 +188,16 @@ void CAnimToolPanel::GUI_Setting_Clips(_float fChildHeight)
 			int iIndex = 0;
 			for (auto& Clip : m_AnimClip)
 			{
-				string ClipTag = Clip.ClipTag;
+				const string& ClipTag = Clip.ClipTag;
+				if (s_ClipSearch[0] != '\0')
+				{
+					if (ClipTag.find(s_ClipSearch) == string::npos)
+					{
+						iIndex++;
+						continue;
+					}
+				}
+
 				bool selected = (m_CurClipTag == ClipTag);
 				if (ImGui::Selectable(ClipTag.c_str(), selected))
 				{
@@ -202,70 +221,6 @@ void CAnimToolPanel::GUI_Setting_Clips(_float fChildHeight)
 			}
 		}
 		ImGui::EndCombo();
-	}
-
-	//Set Layer
-	ImGui::SameLine();
-	ImGui::Text("	Layer : "); ImGui::SameLine();
-
-	static int LayerIndex = 0;
-	int LayerCount = m_pSelectAnimator ? m_pSelectAnimator->Get_NumLayer() : 0;
-
-	char preview[16];
-	sprintf_s(preview, "%d", LayerIndex);
-	ImGui::PushItemWidth(50.f);
-	if (ImGui::BeginCombo("##LayerCombo", preview))
-	{
-		for (int i = 0; i < LayerCount; ++i)
-		{
-			bool selected = (LayerIndex == i);
-			char label[16];
-			sprintf_s(label, "%d", i);
-
-			if (ImGui::Selectable(label, selected))
-				LayerIndex = i;
-
-			if (selected)
-				ImGui::SetItemDefaultFocus();
-		}
-		ImGui::EndCombo();
-	}
-
-	//Start Bone
-	ImGui::SameLine();
-	ImGui::Text("	Start Bone : "); ImGui::SameLine();
-	static int StartBoneIndex = -1;
-	ImGui::PushItemWidth(50.f);
-	ImGui::InputInt("##StartBone", &StartBoneIndex, 0, 0);
-	ImGui::SameLine();
-	if (ImGui::Button("Set##StartBone", { 55.f, 0.f }))
-	{
-		if (nullptr != m_pSelectAnimator) m_pSelectAnimator->Set_StartBone(StartBoneIndex);
-	}
-	ImGui::SameLine();
-	if (ImGui::Button("Reset##StartBone", { 55.f, 0.f }))
-	{
-		if (nullptr != m_pSelectAnimator) m_pSelectAnimator->Reset_StartBone();
-	}
-
-	//Extract Bone
-	ImGui::SameLine();
-	ImGui::Text("	Extrack Bone : "); ImGui::SameLine();
-	static int MoveBoneIndex = -1;
-	ImGui::PushItemWidth(50.f);
-	ImGui::InputInt("##ExtractBone", &MoveBoneIndex, 0, 0);
-	ImGui::SameLine();
-	if (ImGui::Button("Set##ExtractBone", { 55.f, 0.f }))
-	{
-		if (nullptr != m_pSelectAnimator) {
-			m_pSelectAnimator->Set_MotionBone(MoveBoneIndex);
-			m_pSelectAnimator->Set_ExtractMotionboneMovement(AXIS::X | AXIS::Z);
-		}
-	}
-	ImGui::SameLine();
-	if (ImGui::Button("Reset##ExtractBone", { 55.f, 0.f }))
-	{
-		if (nullptr != m_pSelectAnimator) m_pSelectAnimator->Reset_ExtractBoneMovement();
 	}
 
 	Draw_ToolbarUI();

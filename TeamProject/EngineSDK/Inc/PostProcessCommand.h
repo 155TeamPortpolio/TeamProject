@@ -67,8 +67,9 @@ private:
 
 public:
     ID3D11ShaderResourceView* GetNoiseSRV();
-    _float GetIntensity() const {return  m_fIntensity; }
+    _float GetIntensity() const {return  m_fIntensity * m_fEaseT; }
     CGlitchCommand* SetNoiseTexture(class CTexture* pTexture);
+    CGlitchCommand* SetIntensity(_float fIntensity);
     CGlitchCommand* SetDuration(_float fDuration);
     CGlitchCommand* SetEaseType(EaseType easeType);
 
@@ -78,10 +79,11 @@ public:
 
 private:
     class CTexture* m_pNoiseTexture = nullptr;
-    _float m_fIntensity;
+    _float m_fIntensity = 1.f;
     _float m_fAccTime = 0.0f;
     _float m_fDuration = 1.f;
     EaseType m_EaseType = EaseType::InOutSine;
+    _float m_fEaseT = 0.f;
 
 public:
     static CGlitchCommand* Create();
@@ -109,9 +111,9 @@ public:
 
 private:
     _float2 m_vCenter = _float2(0.5, 0.5);
-    _float m_fEaseT = 0.f;
     _float m_fDuration = 1.f;
     _float m_fIntensity = 1.f;
+    _float m_fEaseT = 0.f;
     EaseType m_EaseType = EaseType::InOutSine;
     _float m_fAccTime = 0.0f;
 
@@ -153,18 +155,21 @@ private:
     virtual ~CGuassianBlurCommand() = default;
 
 public:
-    _float GetIntensity() const { return m_fIntensity; }
+    _float GetIntensity() const { return m_fIntensity * m_fEaseT; }
     CGuassianBlurCommand* SetDuration(_float fDuration);
     CGuassianBlurCommand* SetIntensity(_float fIntensity);
+    CGuassianBlurCommand* SetEaseType(EaseType easeType);
 
 public:
     virtual void Update(_float dt) override;
     virtual void Execute(class CPostRenderer* pRenderer) override;
 
 private:
-    _float      m_fDuration;
-    _float      m_fIntensity;
-    _float      m_fAccTime;
+    _float      m_fDuration = 0.f;
+    _float      m_fIntensity = 1.f;
+    _float      m_fAccTime = 0.f;
+    _float      m_fEaseT = 0.f;
+    EaseType    m_EaseType = EaseType::InOutSine;
 
 public:
     static CGuassianBlurCommand* Create();

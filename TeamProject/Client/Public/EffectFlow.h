@@ -2,6 +2,8 @@
 #include "pch.h"
 #include "BattleFXFlow.h"
 
+NS_BEGIN(Client)
+
 class EffectFlow
 {
     using FnOnce = function<void()>;
@@ -237,3 +239,5 @@ private:
     vector<Sequence> sequences;
     _bool running = false;
 };
+
+NS_END

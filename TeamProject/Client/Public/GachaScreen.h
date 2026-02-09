@@ -1,5 +1,6 @@
 #pragma once
 #include "GameObject.h"
+#include "EffectFlow.h"
 
 NS_BEGIN(Client)
 
@@ -25,7 +26,11 @@ public:
 
 private:
     void SetMaterialInstances(_int ChangeNum, vector<_int> ScreenIndex);
+    void BaseEffectFlowSetting();
 
+private:
+    EffectFlow                  m_EffectFlow;
+    _bool                       m_bIsPlay = false;
 private:
     vector<_int>    m_Cols = {4};
     vector<_int>    m_Rows = {8};
@@ -40,6 +45,7 @@ private:
     _int            m_iCurPlayingIndex = 0;
     _float          m_fIntervalScreenDuration = 0.15f;
     _float          m_fScreenElapsedTime = 0.f;
+
 public:
     static CGachaScreen* Create();
     virtual CGameObject* Clone(INIT_DESC* pArg) override;

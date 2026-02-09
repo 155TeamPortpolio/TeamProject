@@ -32,6 +32,9 @@ inline bool HasFlag(TraceFlag value, TraceFlag flag)
 
 typedef struct tagDefilerBlackBoard
 {
+    _vector3 vTargetPos = {};
+    _vector3 vTargetDir = {};
+
     _float3 vStartPos = {};
     _bool isRequestNext = false;//다음 상태가 존재 할 때 상태 전환 요청
     _bool isChainOpen = false;  //현재 상태에서 다음으로 진행 가능여부
@@ -42,7 +45,7 @@ typedef struct tagDefilerBlackBoard
     _vector3 CurrentDir = _vector3(0.f, 0.f, 1.f); 
 
     /*패턴*/
-    _int patternIndex = { 8 };
+    _int patternIndex = { 10 };
     struct DefilerPattern { string nextPattern; _float animStartProgress; _float animEndProgress;};
     deque<DefilerPattern> patternTransition;
     DefilerPattern reservedPattern = {};

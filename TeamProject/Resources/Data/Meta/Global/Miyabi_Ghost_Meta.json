@@ -1,0 +1,63 @@
+{
+  "AnimPath": "../bin/Resources/Global/BattleCharacter/Miyabi/Ghost/Anim/",
+  "PreTransform": {
+    "_11": -0.009999999776482582,
+    "_12": 0.0,
+    "_13": 0.0,
+    "_14": 0.0,
+    "_21": 0.0,
+    "_22": 0.009999999776482582,
+    "_23": 0.0,
+    "_24": 0.0,
+    "_31": 0.0,
+    "_32": 0.0,
+    "_33": -0.009999999776482582,
+    "_34": 0.0,
+    "_41": 0.0,
+    "_42": 0.0,
+    "_43": 0.0,
+    "_44": 1.0
+  },
+  "Clips": [
+    {
+      "ClipTag": "Avatar_Female_Size02_Unagi_Ghost_Ani_Attack_05",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Unagi_Ghost_Ani_Attack_05_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Unagi_Ghost_Ani_Attack_06",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Unagi_Ghost_Ani_Attack_06_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Unagi_Ghost_Ani_Idle",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Unagi_Ghost_Ani_Idle_AFK",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Unagi_Ghost_Ani_Move_01",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Unagi_Ghost_Ani_Move_02",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Unagi_Ghost_Ani_Move_03",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_Unagi_Ghost_Ani_QuestStart",
+      "Events": []
+    }
+  ]
+}
