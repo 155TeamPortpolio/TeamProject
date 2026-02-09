@@ -2,6 +2,9 @@
 #include "BattleFXFlow.h"
 #include "GameInstance.h"
 
+#include "PostRenderer.h"
+#include "PostProcessCommand.h"
+
 CBattleFXFlow::CBattleFXFlow() {
 
 }
@@ -174,8 +177,21 @@ void CBattleFXFlow::StartVfx_Evade()
 	AddParallelTimeScale(BATTLE_OBJ_TYPE::PLAYER, preset.tPlayerTimeScale);
 	AddParallelTimeScale(BATTLE_OBJ_TYPE::MONSTER, preset.tMonsterTimeScale);
 
-	AddCall([this]() {RenderSystem()->Register_AddictiveColor(&m_BattleVFX.vNowColor);});
-	AddCall([this, preset]() {RenderSystem()->Apply_RadialBlur(preset.fBlurDuration);});
+	CPostRenderer* pPost = RenderSystem()->GetPostRenderer();
+
+	AddCall([this,pPost]() {
+		pPost->GetCommand<CAddictiveColorCommand>()
+			->SetAddictiveColor(&m_BattleVFX.vNowColor)
+			->SetEnable(true);
+		});
+
+	AddCall([this, preset, pPost]() {
+		pPost->GetCommand<CRadialBlurCommand>()
+			->SetDuration(preset.fBlurDuration)
+			->SetEaseType(EaseType::InOutSine)
+			->SetIntensity(0.2)
+			->SetEnable(true);
+		});
 
 	
 	AddStep(
@@ -199,8 +215,9 @@ void CBattleFXFlow::StartVfx_Evade()
 		}
 	);
 
-	AddCall([this, preset]() {
-		RenderSystem()->UnRegister_AddictiveColor();
+	AddCall([this, preset, pPost]() {
+		pPost->GetCommand<CAddictiveColorCommand>()
+			->SetEnable(false);
 		m_BattleVFX.fCurPos = 0.f;
 		m_BattleVFX.vNowColor = {};
 		m_BattleVFX.isRunning = false;
@@ -217,7 +234,7 @@ void CBattleFXFlow::StartVfx_Parry()
 	AddParallelTimeScale(BATTLE_OBJ_TYPE::PLAYER, preset.tPlayerTimeScale);
 	AddParallelTimeScale(BATTLE_OBJ_TYPE::MONSTER, preset.tMonsterTimeScale);
 
-	AddCall([this, preset]() {RenderSystem()->Apply_RadialBlur(preset.fBlurDuration); });
+	//AddCall([this, preset]() {RenderSystem()->Apply_RadialBlur(preset.fBlurDuration); });
 
 
 	AddStep(
