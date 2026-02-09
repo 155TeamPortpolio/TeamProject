@@ -68,6 +68,7 @@ void CMiyabiState_Run_Loop::Enter(CMiyabi* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Run")
         .Loop(true)
+        .Speed(1.f)
         .EndAt(0.93f)
         .Apply();
 
