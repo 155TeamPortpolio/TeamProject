@@ -170,8 +170,6 @@ HRESULT CTestLevel::Awake()
 
 
 
-	CBattleSystem::GetInstance()->ReadyBattle("TrainingRoom", 1);
-	// It will be changed soooooon
 	CBattleSystem::GetInstance()->SetActive(true);
 
 	//====================Test=================

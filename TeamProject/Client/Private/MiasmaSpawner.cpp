@@ -59,6 +59,7 @@ void CMiasmaSpawner::Spawn(MiasmaType type, _int count, _float3 targetPos, _floa
         MonsterCCT.fHeight = 1.28f;
         MonsterCCT.fRadius = 0.55f;
         MonsterCCT.vPos = spawnPos;
+        MonsterCCT.vPos.y += MonsterCCT.fHeight;
       
         auto jaeger = Builder::Create_Object({ "Zero_Level", "Proto_GameObject_MiasmaJaeger" })
             .Position(spawnPos)

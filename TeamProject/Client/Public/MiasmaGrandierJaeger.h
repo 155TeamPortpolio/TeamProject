@@ -56,6 +56,8 @@ private:
     void Route_AnimEvent(CAnimator3D* animator);
     _float3 Get_FirePos();
 private:
+    void Summon_Bullet();
+private:
     HRESULT Initialize_StateMachine();
     HRESULT Initialize_States();
     HRESULT Initialize_Transitions();

@@ -58,8 +58,8 @@ void CMiasmaJaeger_Attack::Enter(CMiasmaGrandierJaeger* pOwner)
 
 void CMiasmaJaeger_Attack::Update(CMiasmaGrandierJaeger* pOwner, _float dt)
 {
-	//if (m_fAnimProgress >= 0.95f)
-	//	pOwner->Get_MainStateMachine()->Set_Trigger("Attack_To_DisAppear");
+	if (m_fAnimProgress >= 0.95f)
+		pOwner->Get_MainStateMachine()->Set_Trigger("Attack_To_DisAppear");
 }
 
 void CMiasmaJaeger_Attack::Exit(CMiasmaGrandierJaeger* pOwner)

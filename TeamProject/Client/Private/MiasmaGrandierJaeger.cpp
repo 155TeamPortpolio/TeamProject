@@ -90,9 +90,7 @@ void CMiasmaGrandierJaeger::Awake()
 		instance->Set_Param("fDissolveProgress", { &m_fDissolveProgress,"float",sizeof(_float) });
 		instance->Set_Param("fDissolveTiling", { &m_fDissolveTilling,"float",sizeof(_float) });
 	}
-
-	_float height = Get_Component<CCharacterController>()->Get_Height();
-	Get_Component<CCharacterController>()->Set_BoundingMinY(height);
+;
 	m_Dissolve.DisAppear(0.f);
 }
 
@@ -113,7 +111,7 @@ void CMiasmaGrandierJaeger::Update(_float dt)
 	pAnimator->Update_Animation(dt);
 	Route_AnimEvent(pAnimator);
 	RotateToTarget(dt, 6.f);
-
+	Get_Component<CCharacterController>()->Update(dt);
 	Get_Component<CObjectContainer>()->UpdateChild(dt);
 	Update_Dissolve(dt);
 	m_pStateMachine->Update(dt);
@@ -122,6 +120,7 @@ void CMiasmaGrandierJaeger::Update(_float dt)
 void CMiasmaGrandierJaeger::Late_Update(_float dt)
 {
 	Get_Component<CObjectContainer>()->Late_UpdateChild(dt);
+	Get_Component<CCharacterController>()->Late_Update(dt);
 }
 
 void CMiasmaGrandierJaeger::Render_GUI()
@@ -246,20 +245,13 @@ void CMiasmaGrandierJaeger::Route_AnimEvent(CAnimator3D* animator)
 		switch (instance.Type)
 		{
 		case CLIP_EVENT_TYPE::NOTIFY:
-			if (instance.Tag == "EvadeSign"){
+			if (instance.Tag == "EvadeSign") 
+			{
 				LockOn(true);
 				Active_AttackSign(false);
 			}
-			else if (instance.Tag == "Fire"){
-				string lvKey  = LevelManager()->Get_NowLevelKey();
-				_float3 pos = Get_FirePos();
-				_float3 target = m_tTargetingInfo.vTargetPos;
-				target.y = pos.y;
-				auto desc = new CMiasmaProjectile::MiasmaProjectileDesc(target);
-				auto Missile = Builder::Create_Object({ "Zero_Level", "Proto_GameObject_MiasmaProjectile" })
-					.Add_ObjDesc(desc).Position(pos).FromPool().Build("Missile");
-				ObjectManager()->Add_Object(Missile, { lvKey ,"Enemy_Layer" });
-			}
+			else if (instance.Tag == "Fire")
+				Summon_Bullet();
 			break;
 
 		case CLIP_EVENT_TYPE::SOUND:
@@ -279,6 +271,27 @@ _float3 CMiasmaGrandierJaeger::Get_FirePos()
 	(Bone * World).Decompose(S, R, T);
 
 	return T;
+}
+
+void CMiasmaGrandierJaeger::Summon_Bullet()
+{
+	string lvKey = LevelManager()->Get_NowLevelKey();
+	_float3 pos = Get_FirePos();
+	_float3 target = m_tTargetingInfo.vTargetPos;
+	target.y = pos.y;
+	auto desc = new CMiasmaProjectile::MiasmaProjectileDesc(target);
+
+	COLLIDER_DESC ColDesc = {};
+	ColDesc.eGroup = COLLISION_GROUP::MONSTER;
+	ColDesc.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER_ATTACK) | ENUM(COLLISION_GROUP::PLAYER) | ENUM(COLLISION_GROUP::COMMON);
+	ColDesc.bTrigger = true;
+	ColDesc.bAutoFit = false;
+	ColDesc.eType = COLLIDER_TYPE::BOX;
+	ColDesc.vSize = { 1.f, 2.f, 2.f };
+
+	auto Missile = Builder::Create_Object({ "Zero_Level", "Proto_GameObject_MiasmaProjectile" })
+		.Collider(ColDesc).Add_ObjDesc(desc).Position(pos).FromPool().Build("Missile");
+	ObjectManager()->Add_Object(Missile, { lvKey ,"Enemy_Layer" });
 }
 
 void CMiasmaGrandierJaeger::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER charaName)
@@ -327,10 +340,10 @@ HRESULT CMiasmaGrandierJaeger::Initialize_StateMachine()
 
 HRESULT CMiasmaGrandierJaeger::Initialize_States()
 {
-	m_pStateMachine->Register_State("Appear", CMiasmaJaeger_Appear::Create());
-	m_pStateMachine->Register_State("Attack", CMiasmaJaeger_Attack::Create());
-	m_pStateMachine->Register_State("DisAppear", CMiasmaJaeger_DisAppear::Create());
-	m_pStateMachine->Register_State("Hit", CMiasmaJaeger_Hit::Create());
+	m_pStateMachine->Register_State("Appear",		CMiasmaJaeger_Appear::Create());
+	m_pStateMachine->Register_State("Attack",		CMiasmaJaeger_Attack::Create());
+	m_pStateMachine->Register_State("DisAppear",	CMiasmaJaeger_DisAppear::Create());
+	m_pStateMachine->Register_State("Hit",			CMiasmaJaeger_Hit::Create());
 
 	//m_pStateMachine->Register_State("Walk", CSacrificeState_Walk::Create());
 	//m_pStateMachine->Register_State("Evade", CSacrificeState_Evade::Create());

@@ -37,14 +37,8 @@ HRESULT CMiasmaProjectile::Initialize(INIT_DESC* pArg)
 	m_isOnAttack = true;
 	m_isParryEnable = false;
 
-	Get_Component<CCollider>()->Set_CollisionMask(ENUM(COLLISION_GROUP::PLAYER) |
-		ENUM(COLLISION_GROUP::PLAYER_ATTACK));
-	Get_Component<CCollider>()->Set_CollisionGroup(COLLISION_GROUP::MONSTER);
-	Get_Component<CCollider>()->Set_Size({ 1,2,3 });
-	Get_Component<CCollider>()->Set_Trigger(true);
-
+	auto pCollider = Get_Component<CCollider>();
 	auto rigid = Get_Component<CRigidBody>();
-
 	rigid->Set_Kinematic(false);
 	rigid->Set_CCD(true);
 	rigid->Set_Gravity(false);
@@ -53,6 +47,7 @@ HRESULT CMiasmaProjectile::Initialize(INIT_DESC* pArg)
 	m_vVelocity = { 0,0,0 };
 	m_vTargetVelocity = m_pTransform->Dir(STATE::LOOK) * m_fMoveSpeed;
 	m_ElapsedTime = 0;
+
 	return S_OK;
 }
 
@@ -68,10 +63,10 @@ void CMiasmaProjectile::Update(_float dt)
 {
 	m_ElapsedTime += dt;
 	m_vVelocity = m_vVelocity.Lerp(m_vVelocity, m_vTargetVelocity, Math::ApplyEase(EaseType::InOutSine, m_ElapsedTime));
-	Get_Component<CRigidBody>()->Set_Velocity(m_vVelocity);
+	Get_Component<CTransform>()->Translate(m_vVelocity*dt);
+	Get_Component<CRigidBody>()->Set_GlobalPos(m_pTransform->Get_Pos(), m_pTransform->Get_QuaternionRotate());
 	Get_Component<CCollider>()->Update(dt);
-
-	if (m_ElapsedTime > 10.f)
+	if (m_ElapsedTime > 5.f)
 		ObjectManager()->Remove_Object(this);
 }
 
@@ -86,19 +81,13 @@ void CMiasmaProjectile::Render_GUI()
 
 void CMiasmaProjectile::OnPooledAcquire(INIT_DESC* pArg)
 {
-	auto desc = static_cast<MiasmaProjectileDesc*>(pArg);
-	__super::Initialize(desc);
-	m_isOnAttack = true;
-	m_isParryEnable = false;
-	m_pTransform->LookAt(_vector3(desc->vTargetPos));
-	m_vVelocity = { 0,0,0 };
-	m_vTargetVelocity = m_pTransform->Dir(STATE::LOOK) * m_fMoveSpeed;
-	m_ElapsedTime = 0;
+	Initialize(pArg);
 	Get_Component<CCollider>()->Set_CompActive(true);
 }
 
 void CMiasmaProjectile::OnPooledRelease()
 {
+	m_isOnAttack = false;
 	m_vVelocity = { 0,0,0 };
 	Get_Component<CCollider>()->Set_CompActive(false);
 }

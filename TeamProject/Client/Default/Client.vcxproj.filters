@@ -1260,6 +1260,9 @@
     <Filter Include="02. GameObject\Object\Enemy\Boss\Defiler\MiasmaUnit\MiasmaProjectile">
       <UniqueIdentifier>{5f2c7f77-49ae-4aa9-857c-472daca0a9cc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Boss\Defiler\MiasmaUnit\SpawnBall">
+      <UniqueIdentifier>{a3bc9ca9-4433-4e46-9004-99a25381c934}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
