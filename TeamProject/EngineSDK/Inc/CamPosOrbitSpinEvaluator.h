@@ -30,9 +30,6 @@ private:
         float   bLen = 0.f;
 
         float   totalAngle = 0.f;
-
-        float   baseY = 0.f;
-        _bool   keepHeight = true;
     };
 
 private:
@@ -42,8 +39,8 @@ private:
 
 private:
     const vector<CamKeyFrame>* keyframes{};
-    const CamOrbitSpinDesc* desc{};
-    vector<SegmentCache>    cache{};
+    const CamOrbitSpinDesc*    desc{};
+    vector<SegmentCache>       cache{};
 
 public:
     static CCamPosOrbitSpinEvaluator* Create() { return new CCamPosOrbitSpinEvaluator(); }

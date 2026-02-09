@@ -17,14 +17,14 @@ bool CMonitorGate::Pass() const
     return true;
 }
 
-MonitorSize CMonitorGate::GetMonitorSize(int monitorIdx) const
+Vector2 CMonitorGate::GetMonitorSize(int monitorIdx) const
 {
     vector<MonitorDesc> monitors = CollectMonitorsSorted();
     const RECT rc = monitors[monitorIdx].rc;
 
-    MonitorSize size{};
-    size.width  = rc.right  - rc.left;
-    size.height = rc.bottom - rc.top;
+    Vector2 size{};
+    size.x = rc.right  - rc.left;
+    size.y = rc.bottom - rc.top;
     return size;
 }
 

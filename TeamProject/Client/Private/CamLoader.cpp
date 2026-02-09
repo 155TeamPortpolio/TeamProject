@@ -98,9 +98,9 @@ namespace
         return memcmp(s.data(), prefix, n) == 0;
     }
 
-    CamSequenceRequestDesc ResolveDefaultReq(const string& key)
+    CamSeqReqDesc ResolveDefaultReq(const string& key)
     {
-        CamSequenceRequestDesc req{};
+        CamSeqReqDesc req{};
         req.returnCamType = CamType::None;
 
         if (StartsWith(key, "CutScene/"))
@@ -169,7 +169,7 @@ namespace
             rel.replace_extension();
 
             const string key = rel.generic_string();
-            const CamSequenceRequestDesc req = ResolveDefaultReq(key);
+            const CamSeqReqDesc req = ResolveDefaultReq(key);
 
             CamDirector()->Register(key, path, req);
         }
