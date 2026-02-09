@@ -3,6 +3,8 @@
 #include "CorinState_ExAttack.h"
 #include "Corin.h"
 
+#include "AudioSource.h"
+
 CCorinState_ExAttack* CCorinState_ExAttack::Create()
 {
     auto pInstance = new CCorinState_ExAttack();
@@ -204,6 +206,9 @@ void CCorinState_ExAttack_Start::Update_Effects(CCorin* pOwner)
 
 void CCorinState_ExAttack_Loop::Enter(CCorin* pOwner)
 {
+    // Jehyun
+    pOwner->Get_Component<CAudioSource>()->Slot("ExAttack_01_Voice.wav").Attribute3D(true).Loop(false).Play();
+
     if (Get_ParentState()->Get_SubStateMachine()->Get_Bool("Enhanced"))
     {
         pOwner->Unlock_Move();
