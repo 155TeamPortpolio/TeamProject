@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "Miyabi.h"
+#include "Miyabi_Ghost.h"
 
 #include "GameInstance.h"
 #include "BattleSystem.h"
@@ -18,6 +19,7 @@
 #include "Animator3D.h"
 #include "CharacterController.h"
 #include "ObjectContainer.h"
+#include "BoneFollower.h"
 #include "AudioSource.h"
 
 #include "StateMachine.h"
@@ -67,6 +69,9 @@ HRESULT CMiyabi::Initialize(INIT_DESC* pArg)
 	if (FAILED(Initialize_Weapon()))
 		return E_FAIL;
 
+	if (FAILED(Initialize_Ghost()))
+		return E_FAIL;
+
 	Get_Component<CAudioSource>()->SoundFolder(G_GlobalLevelKey, "../Bin/Resources/Sound/");
 
 	return S_OK;
@@ -94,6 +99,9 @@ void CMiyabi::Awake()
 
 	if (FAILED(Attach_ParryCollider()))
 		return;
+
+	Get_Component<CSkeletalModel>()->Hide_MehsByName("0012_Unagi_PET_mesh0012");
+	Set_WeaponEffectMesh(false);
 }
 
 void CMiyabi::Priority_Update(_float dt)
@@ -346,6 +354,19 @@ void CMiyabi::Reset_RimLight()
 	m_fRimLightPower = 0.f;
 }
 
+void CMiyabi::Set_WeaponEffectMesh(_bool bOn)
+{
+	auto pModel = Get_Component<CSkeletalModel>();
+	if (bOn)
+	{
+		pModel->Show_MehsByName("0015_Unagi_Weapon03_mesh0015");
+	}
+	else
+	{
+		pModel->Hide_MehsByName("0015_Unagi_Weapon03_mesh0015");
+	}
+}
+
 HRESULT CMiyabi::Initialize_StateMachine()
 {
 	m_pStateMachine = CStateMachine<CMiyabi>::Create();
@@ -500,6 +521,25 @@ HRESULT CMiyabi::Initialize_Weapon()
 	KatanaDesc.vRotation = { 0.f,0.f,0.69f };
 	if (FAILED(Attach_AttackCollider(&KatanaDesc)))
 		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CMiyabi::Initialize_Ghost()
+{
+	RIGIDBODY_DESC rigidDesc{};
+	rigidDesc.isKinematic = true;
+	rigidDesc.bEnableGravity = false;
+	
+	CGameObject* pGhost = Builder::Create_Object(
+		{ G_GlobalLevelKey, "Proto_GameObject_Miyabi_Ghost" })
+		.RigidBody(rigidDesc)
+		.Build("Miyabi_Ghost");
+	if (nullptr == pGhost)
+		return E_FAIL;
+
+	static_cast<CMiyabi_Ghost*>(pGhost)->Set_FollowTarget(m_pTransform);
+	Get_Component<CObjectContainer>()->Add_Child(pGhost, false);
 
 	return S_OK;
 }

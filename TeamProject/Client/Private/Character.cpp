@@ -49,8 +49,9 @@ HRESULT CCharacter::Initialize(INIT_DESC* pArg)
     Safe_AddRef(m_pAnimator);
     Safe_AddRef(m_pCCT);
 
-    if (pArg == nullptr) return S_OK;
-    GAMEOBJECT_DESC* pCharacterDesc = static_cast<GAMEOBJECT_DESC*>(pArg);
+    if (pArg == nullptr)
+        return S_OK;
+
     return S_OK;
 }
 

@@ -143,6 +143,13 @@ void CMiyabiState_Dash_02::Update(CMiyabi* pOwner, _float dt)
             return;
         }
     }
+
+    if (IsCrossAnimProgress(0.25f))
+    {
+        pOwner->Clear_MotionBlur();
+        pOwner->Reset_RimLight();
+    }
+
     if (m_fAnimProgress >= 0.7f)
     {   // Idle
         pSubMachine->Set_Int("ExitMode", 0);
