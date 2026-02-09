@@ -535,7 +535,7 @@
     <ClInclude Include="..\Public\UI_RamenVideo.h" />
     <ClInclude Include="..\Public\UI_ResultBanner.h" />
     <ClInclude Include="..\Public\UI_ScratchCard.h" />
-    <ClInclude Include="..\Public\StageFx.h" />
+    <ClInclude Include="..\Public\EffectFlow.h" />
     <ClInclude Include="..\public\ThugAssaulter_Groggy.h" />
     <ClInclude Include="..\Public\Belle.h" />
     <ClInclude Include="..\Public\BelleState_Idle.h" />
