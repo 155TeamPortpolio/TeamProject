@@ -6,6 +6,10 @@ NS_BEGIN(Client)
 class CUI_Wipeout final : public CUI_Object
 {
 private:
+	enum CHILD { RAINBOW, END };
+	inline static const string INSTANCENAMES[ENUM(CHILD::END)] = { "rainbow" };
+	
+private:
 	CUI_Wipeout() {}
 	CUI_Wipeout(const CUI_Wipeout& rhs) : CUI_Object(rhs) {}
 	virtual ~CUI_Wipeout() DEFAULT;
@@ -21,6 +25,14 @@ public:
 
 private:
 	_bool	m_isVisible = {};
+
+private:
+	class CUI_Object* m_pChildren[ENUM(CHILD::END)] = {};
+
+private:
+	void Cache();
+
+	void Set_ChildAnimation(CHILD child, _int iIndex, _bool isPlayChild = false);
 
 public:
 	static  CGameObject* Create();
