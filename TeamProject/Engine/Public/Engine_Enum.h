@@ -150,6 +150,7 @@ namespace Engine
 		RADIAL_BLUR = 400,
 		GAUSSIAN_BLUR = 500,
 		ADDICTIVE_COLOR = 600,
+		SATURATION = 700,
 	};
 }
 #endif // Engine_Enum_h__

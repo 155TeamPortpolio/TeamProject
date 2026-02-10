@@ -41,6 +41,7 @@ HRESULT CPostRenderer::Initialize(CTarget_Manager* pTargetManager, CPipeLine* pP
 	m_pGlitchCommand = CGlitchCommand::Create();
 	m_pRadialBlurCommand = CRadialBlurCommand::Create();
 	m_pGuassianBlurCommand = CGuassianBlurCommand::Create();
+	m_pSaturationCommand = CSaturationCommand::Create();
 
 	m_CommandMap[typeid(CHDRBloomCommand)] = m_pHDRBloomCommand;
 	m_CommandMap[typeid(CGlitchCommand)] = m_pGlitchCommand;
@@ -48,6 +49,7 @@ HRESULT CPostRenderer::Initialize(CTarget_Manager* pTargetManager, CPipeLine* pP
 	m_CommandMap[typeid(CFogCommand)] = m_pFogCommand;
 	m_CommandMap[typeid(CGuassianBlurCommand)] = m_pGuassianBlurCommand;
 	m_CommandMap[typeid(CAddictiveColorCommand)] = m_pAddictiveColorCommand;
+	m_CommandMap[typeid(CSaturationCommand)] = m_pSaturationCommand;
 
 	return S_OK;
 }
@@ -60,7 +62,8 @@ HRESULT CPostRenderer::Render_PostProcessCommand()
 		 m_pGlitchCommand,
 		 m_pRadialBlurCommand,
 		 m_pGuassianBlurCommand,
-		 m_pAddictiveColorCommand
+		 m_pAddictiveColorCommand,
+		 m_pSaturationCommand
 	};
 
 	commands.erase(
@@ -317,6 +320,32 @@ HRESULT CPostRenderer::Render_GuassianBlur_Internal()
 	return S_OK;
 }
 
+HRESULT CPostRenderer::Render_Saturation_Internal()
+{
+	if (FAILED(m_pTargetManager->Begin_MRT("MRT_Saturation"))) return E_FAIL;
+
+	m_pShader->SetConstantBuffer("FrameBuffer", m_pPipeLine->Get_FrameBuffer());
+
+	m_pTargetManager->Bind_Target(m_strLastTargetName, m_pShader, "FinalTexture");
+
+	_float fIntensity = m_pSaturationCommand->GetIntensity();
+	m_pShader->Bind_Value("SaturationIntensity", { &fIntensity, "float", sizeof(_float) });
+
+	Bind_WorldMatrix();
+
+	ID3D11InputLayout* pLayout;
+	Get_BufferInputLayout(m_pVIBuffer, m_pShader, "SATURATION", &pLayout);
+	m_pContext->IASetInputLayout(pLayout);
+
+	m_pShader->Apply("SATURATION", m_pContext);
+	m_pVIBuffer->Bind_Buffer(m_pContext);
+	m_pVIBuffer->Render(m_pContext);
+
+	m_pTargetManager->End_MRT();
+
+	return S_OK;
+}
+
 HRESULT CPostRenderer::Render_Final()
 {
 	ID3D11InputLayout* pLayout;
@@ -380,6 +409,9 @@ HRESULT CPostRenderer::Ready_Target()
 	RenderTargetDesc GuassianBlurYDesc = { "Target_Guassian_BlurY", DXGI_FORMAT_R16G16B16A16_FLOAT,DXGI_FORMAT_D24_UNORM_S8_UINT, _float4(0.0f, 0.0f, 0.0f, 0.0f),ViewportDesc.Width ,ViewportDesc.Height };
 	m_pTargetManager->Create_Target(GuassianBlurYDesc);
 
+	RenderTargetDesc SaturationDesc = { "Target_Saturation", DXGI_FORMAT_R16G16B16A16_FLOAT,DXGI_FORMAT_D24_UNORM_S8_UINT, _float4(0.0f, 0.0f, 0.0f, 0.0f),ViewportDesc.Width ,ViewportDesc.Height };
+	m_pTargetManager->Create_Target(SaturationDesc);
+
 	return S_OK;
 }
 
@@ -396,6 +428,9 @@ HRESULT CPostRenderer::Ready_MRT()
 	}
 	{
 		if (FAILED(m_pTargetManager->Add_MRT("MRT_Glitch", "Target_Glitch"))) return E_FAIL;
+	}
+	{
+		if (FAILED(m_pTargetManager->Add_MRT("MRT_Saturation", "Target_Saturation"))) return E_FAIL;
 	}
 	{
 		if (FAILED(m_pTargetManager->Add_MRT("MRT_HDR_Bright", "Target_HDR_Bright"))) return E_FAIL;

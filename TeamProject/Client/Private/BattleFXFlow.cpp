@@ -196,9 +196,11 @@ void CBattleFXFlow::StartVfx_Evade()
 
 	CPostRenderer* pPost = RenderSystem()->GetPostRenderer();
 
-	AddCall([this,pPost]() {
-		pPost->GetCommand<CAddictiveColorCommand>()
-			->SetAddictiveColor(&m_BattleVFX.vNowColor)
+	AddCall([this, preset,pPost]() {
+		pPost->GetCommand<CSaturationCommand>()
+			->SetIntensity(0.5)
+			->SetDuration(preset.fVFXDuration)
+			->SetEaseType(EaseType::InOutCubic)
 			->SetEnable(true);
 		});
 
