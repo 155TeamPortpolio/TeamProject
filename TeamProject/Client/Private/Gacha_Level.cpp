@@ -32,6 +32,12 @@ HRESULT CGacha_Level::Initialize()
 
 HRESULT CGacha_Level::Awake()
 {
+	//==================== UI ===============
+	UIDirector()->Load_LevelObjects("Gacha_Level");
+	UIDirector()->FadeIn_Screen(1.f);
+
+	Ready_GachaUI();	// UIDirector에서 Load_LevelObject 실행 한 뒤에
+
 	Ready_Map("Gacha_Level", "Gacha");
 
 	auto pCloud = ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Cloud));
@@ -53,10 +59,6 @@ HRESULT CGacha_Level::Awake()
 	//RenderSystem()->Set_FogDesc({ _float4(0.1f, 0.1f, 0.1f, 1.0f) ,0.f, 0.f, 0.02f, true });
 
 	Ready_GachaObjects(); 
-
-	//==================== UI ===============
-	UIDirector()->Load_LevelObjects("Gacha_Level");
-	Ready_GachaUI();	// UIDirector에서 Load_LevelObject 실행 한 뒤에
 
 	return S_OK;
 }
@@ -135,6 +137,7 @@ void CGacha_Level::Update_CamTime()
 
 void CGacha_Level::Play_CameraSequence()
 {
+	UIDirector()->FadeIn_Screen(1.5f);
 	CamDirector()->SetSpaceRef(m_GachaHandle);
 	CamDirector()->RequestSequence("Gacha/Down");
 
