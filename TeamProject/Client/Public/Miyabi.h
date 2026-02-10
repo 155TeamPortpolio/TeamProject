@@ -53,12 +53,16 @@ public: // 모션블러
     void    Clear_MotionBlur();
     void    Reset_RimLight();
 
+public: // 무기 이펙트 메쉬
+    void    Set_WeaponEffectMesh(_bool bOn);
+
 private: // 초기화
     HRESULT Initialize_StateMachine();
     HRESULT Initialize_States();
     HRESULT Initialize_Transitions();
     HRESULT Initialize_Stat();
     HRESULT Initialize_Weapon();
+    HRESULT Initialize_Ghost();
     HRESULT Initialize_Effects() override;
 
 private: // 상태 처리

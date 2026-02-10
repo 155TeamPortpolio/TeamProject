@@ -1260,11 +1260,17 @@
     <Filter Include="03. Utility\97. GUI_Inc\Guizmo">
       <UniqueIdentifier>{9d85da13-28b5-4706-8886-a70ad1ee518b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\03. Miyabi\Ghost">
+      <UniqueIdentifier>{9340de87-a191-47d1-9501-7133bc6b1f51}</UniqueIdentifier>
+    </Filter>
     <Filter Include="03. Utility\12. EffectFlow">
       <UniqueIdentifier>{aed4e5a0-ae30-4fc4-ac90-5e1c265991f8}</UniqueIdentifier>
-          </Filter>
+    </Filter>
     <Filter Include="02. GameObject\Object\Enemy\Boss\Sacrifice\Sacrifice_Laser\Sacrifice_Orb">
       <UniqueIdentifier>{68fc2704-df5f-4515-afc4-be9016f4d9a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\Wipeout">
+      <UniqueIdentifier>{3f5f7d60-1268-4b6f-b2f4-3e0e9000df8f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -2435,14 +2441,20 @@
     <ClInclude Include="..\public\XWall.h">
       <Filter>02. GameObject\Effect\XWall</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Miyabi_Ghost.h">
+      <Filter>02. GameObject\Object\Player\Character\03. Miyabi\Ghost</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\EffectFlow.h">
       <Filter>03. Utility\12. EffectFlow</Filter>
-          </ClInclude>
+    </ClInclude>
     <ClInclude Include="..\Public\MiasmaGrandierJaeger.h">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler\MiasmaUnit\Grandier</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\MiasmaProjectile.h">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler\MiasmaUnit\MiasmaProjectile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Wipeout.h">
+      <Filter>02. GameObject\UI\01. 2D\Wipeout</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -3575,11 +3587,17 @@
     <ClCompile Include="..\private\XWall.cpp">
       <Filter>02. GameObject\Effect\XWall</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\Miyabi_Ghost.cpp">
+      <Filter>02. GameObject\Object\Player\Character\03. Miyabi\Ghost</Filter>
+    </ClCompile>
     <ClCompile Include="..\Private\MiasmaGrandierJaeger.cpp">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler\MiasmaUnit\Grandier</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\MiasmaProjectile.cpp">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler\MiasmaUnit\MiasmaProjectile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Wipeout.cpp">
+      <Filter>02. GameObject\UI\01. 2D\Wipeout</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

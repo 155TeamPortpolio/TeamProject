@@ -112,6 +112,8 @@ private: // 캐릭터 전환
     _bool   Can_Switch() const;
     _bool   Can_SwitchTo(_uint iIndex) const;
     _int    Find_SwitchIndex(_bool bNext) const;
+    void    Set_SwitchCoolDown(_float fTime) { m_fSwitchCoolDown = fTime; }
+    void    Reset_SwitchCoolDown() { m_fSwitchCoolDown = SWITCH_COOLDOWN; }
 
 private: // 타겟팅
     void    Update_Target();
@@ -135,7 +137,8 @@ private:
     CCharacter*             m_pCurrentCharacter = nullptr;
     _uint                   m_iCurrentIndex = 0;
     // 캐릭터 전환
-    _float          m_fSwitchCooldown = 0.f;
+    _float          m_fSwitchTimer = 0.f;
+    _float          m_fSwitchCoolDown = SWITCH_COOLDOWN;
     _vector4        m_vSwitchPosition = XMVectorSet(0.f, 0.f, 0.f, 1.f);
     _vector4        m_vSwitchLook = XMVectorSet(0.f, 0.f, 0.f, 0.f);
     _bool           m_bSwitchNext = true;
@@ -144,7 +147,7 @@ private:
     // 타겟팅
     OBJECT_HANDLE   m_TargetHandle;
     _bool           m_bLockOn = false;
-    _float          m_fLockOnCooldown = 0.f;
+    _float          m_fLockOnTimer = 0.f;
     // 콤보 어택
     _bool           m_bComboSelect = false;
     _float          m_fComboSelectTimer = 0.f;
