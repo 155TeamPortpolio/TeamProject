@@ -296,13 +296,7 @@ BlendState BS_OITAccmulation
     BlendOpAlpha[1] = Add;
 
     /* Bloom Info */
-    BlendEnable[2] = true;
-    SrcBlend[2] = One;
-    DestBlend[2] = One;
-    BlendOp[2] = Add;
-    SrcBlendAlpha[2] = One;
-    DestBlendAlpha[2] = One;
-    BlendOpAlpha[2] = Add;
+    BlendEnable[2] = false;
 
     /* Revealage */
     BlendEnable[3] = true;
