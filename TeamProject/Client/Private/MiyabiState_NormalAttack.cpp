@@ -122,6 +122,7 @@ void CMiyabiState_NormalAttack::Update(CMiyabi* pOwner, _float dt)
 
 void CMiyabiState_NormalAttack::Exit(CMiyabi* pOwner)
 {
+    pOwner->Show_Ghost();
     pOwner->Reset_ReserveCombo();
     __super::Exit(pOwner);
 }
@@ -228,6 +229,7 @@ void CMiyabiState_Attack_02::Update_Effects(CMiyabi* pOwner)
 
 void CMiyabiState_Attack_03::Enter(CMiyabi* pOwner)
 {
+    pOwner->Hide_Ghost();
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_03")
         .ReserveSpeed(0.f, 0.2f, 0.8f, EaseType::InQuad)
         .ReserveSpeed(0.2f, 0.35f, 2.f, EaseType::InCubic)
@@ -439,6 +441,8 @@ void CMiyabiState_Attack_05::Update_Effects(CMiyabi* pOwner)
 
 void CMiyabiState_Attack_End::Enter(CMiyabi* pOwner)
 {
+    pOwner->Show_Ghost();
+
     CMiyabiState_NormalAttack* pParent = static_cast<CMiyabiState_NormalAttack*>(m_pParentState);
     _uint iIndex = pParent ? pParent->Get_ComboIndex() : 0;
 

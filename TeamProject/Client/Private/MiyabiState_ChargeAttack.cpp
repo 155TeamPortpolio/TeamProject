@@ -90,6 +90,7 @@ void CMiyabiState_ChargeAttack::Exit(CMiyabi* pOwner)
 // Charge_Start (1´Ü)
 void CMiyabiState_Charge_Start::Enter(CMiyabi* pOwner)
 {
+    pOwner->Hide_Ghost();
     pOwner->Decrease_Frost(2);
     CMiyabiState_ChargeAttack* pChargeAttack = static_cast<CMiyabiState_ChargeAttack*>(m_pParentState);
     CMiyabiState_Attack* pAttack = pChargeAttack ? static_cast<CMiyabiState_Attack*>(pChargeAttack->Get_ParentState()) : nullptr;
@@ -175,6 +176,7 @@ void CMiyabiState_Charge_Start_03::Update_Effects(CMiyabi* pOwner)
 // Charge_End
 void CMiyabiState_Charge_End::Enter(CMiyabi* pOwner)
 {
+    pOwner->Show_Ghost();
     _uint iLevel = m_pOwnerStateMachine->Get_Int("ChargeLevel");
 
     if (iLevel >= 3)

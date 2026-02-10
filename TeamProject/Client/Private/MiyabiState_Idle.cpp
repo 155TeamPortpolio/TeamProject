@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "MiyabiState_Idle.h"
 #include "Miyabi.h"
+#include "Miyabi_Ghost.h"
 #include "Animator3D.h"
 
 void CMiyabiState_Idle::Enter(CMiyabi* pOwner)
@@ -22,6 +23,12 @@ void CMiyabiState_Idle::Enter(CMiyabi* pOwner)
     }
 
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Idle")
+        .Loop(true)
+        .Apply();
+
+    pOwner->Show_Ghost();
+    pOwner->Get_Ghost()->Get_Component<CAnimator3D>()
+        ->Change_Animation(pOwner->Get_GhostName() + "Idle")
         .Loop(true)
         .Apply();
 

@@ -63,15 +63,15 @@ HRESULT CMiyabi::Initialize(INIT_DESC* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
+	if (FAILED(Initialize_Ghost()))
+		return E_FAIL;
+
 	if (FAILED(Initialize_StateMachine()))
 		return E_FAIL;
 
 	if (FAILED(Initialize_Weapon()))
 		return E_FAIL;
 
-	if (FAILED(Initialize_Ghost()))
-		return E_FAIL;
-	
 	Get_Component<CAudioSource>()->SoundFolder(G_GlobalLevelKey, "../Bin/Resources/Global/BattleCharacter/Miyabi/Sound");
 	
 	return S_OK;
@@ -142,6 +142,12 @@ void CMiyabi::Render_GUI()
 	if (ImGui::Button("Zero"))
 		Decrease_Frost(MAX_FROST);
 
+	if (ImGui::Button("Show Ghost"))
+		Show_Ghost();
+	ImGui::SameLine();
+	if (ImGui::Button("Hide Ghost"))
+		Hide_Ghost();
+
 	if (m_pStateMachine)
 	{
 		ImGui::Separator();
@@ -155,6 +161,18 @@ void CMiyabi::Render_GUI()
 	}
 
 	__super::Render_GUI();
+}
+
+void CMiyabi::Show_Ghost()
+{
+	if (m_pGhost)
+		m_pGhost->Get_Component<CSkeletalModel>()->Show_MehsByName("Unagi_PET_mesh0000");
+}
+
+void CMiyabi::Hide_Ghost()
+{
+	if (m_pGhost)
+		m_pGhost->Get_Component<CSkeletalModel>()->Hide_MehsByName("Unagi_PET_mesh0000");
 }
 
 _bool CMiyabi::Can_Evade()

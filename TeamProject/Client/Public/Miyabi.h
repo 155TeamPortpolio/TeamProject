@@ -3,6 +3,8 @@
 
 NS_BEGIN(Client)
 
+class CMiyabi_Ghost;
+
 class CMiyabi final : public CCharacter
 {
 private:
@@ -20,6 +22,12 @@ public:
     virtual void    Render_GUI() override;
     //void          Render_OutLine(ID3D11DeviceContext* pContext, _uint idx);
     
+public: // 고스트
+    CMiyabi_Ghost* Get_Ghost() { return m_pGhost; }
+    const string&  Get_GhostName() const { return m_strGhostName; }
+    void           Show_Ghost();
+    void           Hide_Ghost();
+
 public: // 상태머신
     CStateMachine<CMiyabi>* Get_StateMachine() { return m_pStateMachine; }
     // 회피관련 미야비 특수처리
@@ -78,7 +86,7 @@ private: // 모션블러 렌더
 
 private:
     // 고스트
-    class CMiyabi_Ghost* m_pGhost = { nullptr };
+    CMiyabi_Ghost* m_pGhost = { nullptr };
     string m_strGhostName = { "Avatar_Female_Size02_Unagi_Ghost_Ani_" };
     // 상태머신
     CStateMachine<CMiyabi>* m_pStateMachine = { nullptr };
