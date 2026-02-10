@@ -7,6 +7,8 @@
 #include "Animator3D.h"
 #include "ObjectContainer.h"
 
+#include "AudioSource.h"
+
 HRESULT Corin::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
@@ -14,6 +16,7 @@ HRESULT Corin::Initialize_Prototype()
 	Add_Component<CMaterial>();
 	Add_Component<CObjectContainer>();
 	Add_Component<CAnimator3D>();
+
 	return S_OK;
 }
 

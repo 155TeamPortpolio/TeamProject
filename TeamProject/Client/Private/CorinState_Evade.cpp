@@ -6,6 +6,8 @@
 #include "CorinState_Dash.h"
 #include "CorinState_Backstep.h"
 
+#include "AudioSource.h"
+
 CCorinState_Evade* CCorinState_Evade::Create()
 {
     auto pInstance = new CCorinState_Evade();
@@ -37,6 +39,9 @@ void CCorinState_Evade::Enter(CCorin* pOwner)
     m_pSubStateMachine->Reset_Trigger("Complete");
     m_pSubStateMachine->Set_Bool("Extreme", false);
     m_pSubStateMachine->Set_Int("ExitMode", 0);
+
+    //Jehyun
+    //pOwner->Get_Component<CAudioSource>()->Slot("Corin_Evade_02_Voice.wav").Attribute3D(true).Loop(false).Play();
 
     __super::Enter(pOwner);
 }
