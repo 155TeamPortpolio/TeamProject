@@ -51,14 +51,6 @@ HRESULT CUI_WipeoutRTV::Initialize(INIT_DESC* pArg)
     desc.Height = m_WinSize.y;
     RenderSystem()->Create_RenderTarget(desc);
 
-    // 렌더타겟에 SRV 바인딩
-    //SHADER_PARAM param = {};
-    //auto pSRV = RenderSystem()->Get_CustomTargetSRV("wipeout");
-    //param.pData = pSRV;
-    //param.typeName = "Texture2D";
-    //param.iSize = 0;
-    //pSprite->Set_Param("SpriteTexture", param);
-
     // 뷰, 프로젝션 행렬 구성
     XMStoreFloat4x4(&m_ViewMatrix, XMMatrixIdentity());
     XMStoreFloat4x4(&m_ProjMatrix, XMMatrixOrthographicLH(m_WinSize.x, m_WinSize.y, 0.f, 1.f));

@@ -478,22 +478,6 @@ PS_OUT PS_MAIN_NINESLICE(PS_IN In)
     return Out;
 }
 
-PS_OUT PS_MAIN_CUSTOM(PS_IN In)
-{
-    PS_OUT Out;
-    
-    float2 vTexcoord = { In.vTexcoord.x * (1.f - 2.f * vFlip.x) + vFlip.x, In.vTexcoord.y * (1.f - 2.f * vFlip.y) + vFlip.y };
-    
-    vector vDiffuse = SpriteTexture.Sample(LinearSampler, vTexcoord);
-    clip(vDiffuse.a - 0.1f);
-    
-    float4 color = vDiffuse * vColor;
-    Out.vColor.rgb = color.rgb * color.a;
-    Out.vColor.a = color.a;
-    
-    return Out;
-}
-
 // -------------------------------------------------------------------------------------
 technique11 DefaultTechnique
 {
@@ -654,7 +638,7 @@ technique11 DefaultTechnique
         SetBlendState(BS_Premultiplied, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader   = compile vs_5_0 VS_MAIN_CUSTOM();
         GeometryShader = compile gs_5_0 GS_MAIN_CUSTOM();
-        PixelShader    = compile ps_5_0 PS_MAIN_CUSTOM();
+        PixelShader    = compile ps_5_0 PS_MAIN();
     }
     pass VideoPlay
     {
