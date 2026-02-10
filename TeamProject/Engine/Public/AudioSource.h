@@ -1,47 +1,89 @@
 #pragma once
 #include "Component.h"
 NS_BEGIN(Engine)
+class CTransform; class IAudioService; class CSoundData;
 
-class ENGINE_DLL CAudioSource :
-    public CComponent
+class ENGINE_DLL CAudioSource : public CComponent
 {
 public:
-    typedef struct tagAudioSlot {
-        _bool isInfinite = { false };/*무한*/
-        _bool isPaused = { false };/*정지 상태*/
-        _bool is3DAttribute = { false };/*3D 공간*/
+    typedef struct tagAudioSlot 
+    {
+        _bool             isInfinite    = false;/*무한*/
+        _bool             isPaused      = false;/*정지 상태*/
+        _bool             is3DAttribute = false;/*3D 공간*/
+                          
+        _float            fVolume       = 1.f; /*기본 볼륨*/
+        _int              iLoopCount    = 0;
+        _float            lastPlayTime  = -999.f;
 
-        _float fVolume = { 1.f }; /*기본 볼륨*/
-        _int iLoopCount = { 0 };
-        _float lastPlayTime = -999.f;
-
-        class CSoundData* pSound = { nullptr };
-        FMOD::Channel* pChanel = { nullptr };
-        SOUND_GROUP eGroup = { SOUND_GROUP::SFX };
+        CSoundData*       pSound{};
+        FMOD::Channel*    pChanel{};
+        SOUND_GROUP       eGroup = SOUND_GROUP::SFX;
     }AUDIO_SLOT;
+
+    // Jehyun
+    typedef struct tagAudioSequence
+    {
+        vector<string> slotKeys;
+        _uint          idx          = 0;
+        _float         lastPlayTime = -999.f;
+        _bool          isInfinite   = false;
+        _bool          isPaused     = false;
+        _bool          is3D         = false;
+        _float         volume       = 1.f;
+        _int           loopCount    = 0;
+        SOUND_GROUP    group        = SOUND_GROUP::SFX;
+    }AUDIO_SEQUENCE;
 
     class ENGINE_DLL SlotBuilder
     {
     public:
-        SlotBuilder(CAudioSource& Ref,AUDIO_SLOT& Slot): ownerRef(Ref),ownerSlot(Slot){}
-        SlotBuilder Infinite(_bool Loop) { ownerSlot.isInfinite = Loop; return *this; };
-        SlotBuilder Loop(_int Count) { ownerSlot.iLoopCount = Count;return *this; };
-        SlotBuilder Pause(_bool Pause) { ownerSlot.isPaused = Pause; return *this;};
-        SlotBuilder Attribute3D(_bool Attribute) { ownerSlot.is3DAttribute = Attribute; return *this;};
-        SlotBuilder Group(SOUND_GROUP eGROUP) { ownerSlot.eGroup = eGROUP; return *this;};
-        SlotBuilder Volume(_float volume) { ownerSlot.fVolume = volume; return *this;};
+        SlotBuilder(CAudioSource& Ref,AUDIO_SLOT& Slot): ownerRef(Ref), ownerSlot(Slot) {}
+        SlotBuilder Infinite(_bool Loop)         { ownerSlot.isInfinite    = Loop;      return *this; };
+        SlotBuilder Loop(_int Count)             { ownerSlot.iLoopCount    = Count;     return *this; };
+        SlotBuilder Pause(_bool Pause)           { ownerSlot.isPaused      = Pause;     return *this; };
+        SlotBuilder Attribute3D(_bool Attribute) { ownerSlot.is3DAttribute = Attribute; return *this; };
+        SlotBuilder Group(SOUND_GROUP eGROUP)    { ownerSlot.eGroup        = eGROUP;    return *this; };
+        SlotBuilder Volume(_float volume)        { ownerSlot.fVolume       = volume;    return *this; };
         AUDIO_SLOT& Play();
 
     private:
         CAudioSource& ownerRef;
         AUDIO_SLOT& ownerSlot;
     };
+    
+    // Jehyun
+    class ENGINE_DLL SequenceBuilder
+    {
+    public:
+        SequenceBuilder(CAudioSource& Ref, AUDIO_SEQUENCE& Seq) : ownerRef(Ref), ownerSeq(Seq) {}
+        SequenceBuilder Infinite(_bool Loop)         { ownerSeq.isInfinite = Loop;   return *this; }
+        SequenceBuilder Loop(_int Count)             { ownerSeq.loopCount  = Count;  return *this; }
+        SequenceBuilder Pause(_bool Pause)           { ownerSeq.isPaused   = Pause;  return *this; }
+        SequenceBuilder Attribute3D(_bool is3D)      { ownerSeq.is3D       = is3D;   return *this; }
+        SequenceBuilder Group(SOUND_GROUP eGROUP)    { ownerSeq.group      = eGROUP; return *this; }
+        SequenceBuilder Volume(_float volume)        { ownerSeq.volume     = volume; return *this; }
+        SequenceBuilder Reset(_uint idx = 0)         { ownerSeq.idx        = idx;    return *this; }
+        AUDIO_SLOT&     PlayNext();
+
+    private:
+        CAudioSource&   ownerRef;
+        AUDIO_SEQUENCE& ownerSeq;
+    };
 
 public:
-    SlotBuilder Slot(const string& slotKey);
+    SlotBuilder     Slot(const string& slotKey);
+   
+    SequenceBuilder Sequence(const string& seqKey);
+    HRESULT         Add_Sequence(const string& seqKey, initializer_list<const char*> slotKeys);
+   
+    template<typename... Args>
+    HRESULT Add_Sequence(const string& seqKey, const char* first, const Args...rest)
+    {
+        return Add_Sequence(seqKey, {first, rest...});
+    }
 
 private:
-
     CAudioSource();
     CAudioSource(const CAudioSource& rhs);
     virtual ~CAudioSource();
@@ -52,29 +94,32 @@ public:
 
 public:
     HRESULT Add_Slot(const string& levelTag,const string& SoundKey);
-    HRESULT SoundFolder(const string& levelTag, const string& SoundFolder, const string& extension = { ".wav" });    void Set_SlotVolume(const string& slotKey, _float fVolume);
-    void Set_SlotLoopCount(const string& slotKey, _int iLoopCount);
-    void Set_SlotPuase(const string& slotKey, _bool isPaused);
-    void Set_3DAttribute(const string& slotKey, _bool _3DAttribute);
-    void FadeOut_Volume(const string& slotKey, _float factor);
-    void FadeIn_Volume(const string& slotKey, _float factor,_float dst = 1.f);
+    HRESULT SoundFolder(const string& levelTag, const string& SoundFolder, const string& extension = { ".wav" });   
+    void    Set_SlotVolume(const string& slotKey, _float fVolume);
+    void    Set_SlotLoopCount(const string& slotKey, _int iLoopCount);
+    void    Set_SlotPuase(const string& slotKey, _bool isPaused);
+    void    Set_3DAttribute(const string& slotKey, _bool _3DAttribute);
+    void    FadeOut_Volume(const string& slotKey, _float factor);
+    void    FadeIn_Volume(const string& slotKey, _float factor,_float dst = 1.f);
 
-    void Play(const string& SoundKey);
-    void RePlay(const string& SoundKey);
+    void    Play(const string& SoundKey);
+    void    RePlay(const string& SoundKey);
 
 public:
-    void Render_GUI();
+    void    Render_GUI();
 private:
-    class IAudioService* m_pAudioDevice = { nullptr };
-    class CTransform* m_pTransform = { nullptr };
-    unordered_map<string, AUDIO_SLOT> m_Audios;
-    _float4 m_vPos = {};
+    IAudioService* m_pAudioDevice{};
+    CTransform*    m_pTransform{};
+    _float4        m_vPos{};
+    unordered_map<string, AUDIO_SLOT>     m_Audios;
+    unordered_map<string, AUDIO_SEQUENCE> m_Sequences;
+
 public:
     static CAudioSource* Create();
     virtual CComponent* Clone() override;
     virtual void Free() override;
 
 public:
-    static AUDIO_SLOT EmptySlot;
+    inline static AUDIO_SLOT EmptySlot{};
 };
 NS_END
