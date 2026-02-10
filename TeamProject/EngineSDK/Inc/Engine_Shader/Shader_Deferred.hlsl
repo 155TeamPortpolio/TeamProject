@@ -19,6 +19,9 @@ float ScreenWidth;
 float ScreenHeight;
 
 float   GuassianIntensity;
+float   SaturationIntensity;
+
+bool    bSkinned = false;
 
 struct VS_IN
 {
@@ -241,10 +244,17 @@ PS_OUT_RESULT PS_ADDICTIVECOLOR(PS_IN In)
     
     float4 scene = FinalTexture.Sample(DefaultSampler, In.vTexcoord);
     
-    float skinnedAlpha = 1 - SkinnedCombinedTexture.Sample(DefaultSampler, In.vTexcoord).a;
-    float3 tinted = scene.rgb * AddictiveColor;
+    if(bSkinned)
+    {
+        float skinnedAlpha = 1 - SkinnedCombinedTexture.Sample(DefaultSampler, In.vTexcoord).a;
+        float3 tinted = scene.rgb * AddictiveColor;
     
-    Out.vResult = float4(lerp(scene.rgb, tinted, skinnedAlpha), scene.a);
+        Out.vResult = float4(lerp(scene.rgb, tinted, skinnedAlpha), scene.a);
+    }
+    else
+    {
+        Out.vResult = float4(scene.rgb * AddictiveColor, scene.a);
+    }
     
     return Out;
 }
@@ -265,6 +275,21 @@ PS_OUT_RESULT PS_GLITCH(PS_IN In)
     
     float2 glitchUV = float2(uv.x + shift, uv.y);
     Out.vResult = FinalTexture.Sample(DefaultSampler, glitchUV);
+    
+    return Out;
+}
+
+PS_OUT_RESULT PS_SATURATION(PS_IN In)
+{
+    PS_OUT_RESULT Out;
+    
+    float4 scene = FinalTexture.Sample(DefaultSampler, In.vTexcoord);
+    float gray = dot(scene.rgb, float3(0.2126, 0.7152, 0.0722));
+
+    float saturation = 1.0 - SaturationIntensity; 
+    float3 result = lerp(float3(gray, gray, gray), scene.rgb, saturation);
+    
+    Out.vResult = float4(result, scene.a);
     
     return Out;
 }
@@ -419,6 +444,16 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_FOG();
+    }
+
+    pass SATURATION
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_SATURATION();
     }
 
     pass ADDICTIVECOLOR

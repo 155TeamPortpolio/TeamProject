@@ -301,6 +301,12 @@ CAddictiveColorCommand* CAddictiveColorCommand::SetAddictiveColor(_float3* vColo
 	return this;
 }
 
+CPostProcessCommand* CAddictiveColorCommand::SetSkinned(_bool bSkinned)
+{
+	m_bSkinned = bSkinned;
+	return this;
+}
+
 CPostProcessCommand* CAddictiveColorCommand::SetEnable(_bool bEnable)
 {
 	m_bEnabled = bEnable;
@@ -323,6 +329,61 @@ CAddictiveColorCommand* CAddictiveColorCommand::Create()
 }
 
 void CAddictiveColorCommand::Free()
+{
+	__super::Free();
+}
+
+CSaturationCommand::CSaturationCommand()
+{
+	m_strName = "Saturation";
+	m_iPriority = static_cast<_uint>(POST_PROCESS_ORDER::SATURATION);
+	m_bEnabled = false;
+	m_eEffectType = EFFECT_TYPE::REPLACE;
+	m_strOutputTargetName = "Target_Saturation";
+}
+
+CSaturationCommand* CSaturationCommand::SetDuration(_float fDuration)
+{
+	m_fDuration = fDuration;
+	m_fAccTime = 0.f;
+	return this;
+}
+
+CSaturationCommand* CSaturationCommand::SetIntensity(_float fIntensity)
+{
+	m_fIntensity = fIntensity;
+	return this;
+}
+
+CSaturationCommand* CSaturationCommand::SetEaseType(EaseType easeType)
+{
+	m_EaseType = easeType;
+	return this;
+}
+
+void CSaturationCommand::Update(_float dt)
+{
+	m_fAccTime += dt;
+
+	if (m_fAccTime > m_fDuration)
+		m_bEnabled = false;
+
+	_float normalizedT = 1.f - (m_fAccTime / m_fDuration);
+	_float pingPongT = (normalizedT < 0.5f) ? (normalizedT * 2.f) : (2.f - normalizedT * 2.f);
+	m_fEaseT = Math::ApplyEase(m_EaseType, pingPongT);
+}
+
+void CSaturationCommand::Execute(CPostRenderer* pRenderer)
+{
+	pRenderer->Render_Saturation_Internal();
+}
+
+CSaturationCommand* CSaturationCommand::Create()
+{
+	return new CSaturationCommand();
+}
+
+void CSaturationCommand::Free()
 {
 	__super::Free();
 }

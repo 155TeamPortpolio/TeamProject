@@ -185,7 +185,9 @@ private:
 
 public:
     _float3* GetAddictiveColor() { return m_vAddictiveColor; }
+    _bool GetSkinned() const { return m_bSkinned; }
     CAddictiveColorCommand* SetAddictiveColor(_float3* vColor);
+    CPostProcessCommand* SetSkinned(_bool bSkinned);
     virtual CPostProcessCommand* SetEnable(_bool bEnable) override;
 
 public:
@@ -194,9 +196,40 @@ public:
 
 private:
     _float3*      m_vAddictiveColor = nullptr;
+    _bool         m_bSkinned = false;
 
 public:
     static CAddictiveColorCommand* Create();
     virtual void Free() override;
 };
+
+class ENGINE_DLL CSaturationCommand :
+    public CPostProcessCommand
+{
+private:
+    CSaturationCommand();
+    virtual ~CSaturationCommand() = default;
+
+public:
+    _float GetIntensity() const { return m_fIntensity * m_fEaseT; }
+    CSaturationCommand* SetDuration(_float fDuration);
+    CSaturationCommand* SetIntensity(_float fIntensity);
+    CSaturationCommand* SetEaseType(EaseType easeType);
+
+public:
+    virtual void Update(_float dt) override;
+    virtual void Execute(class CPostRenderer* pRenderer) override;
+
+private:
+    _float      m_fDuration = 0.f;
+    _float      m_fIntensity = 1.f;
+    _float      m_fAccTime = 0.f;
+    _float      m_fEaseT = 0.f;
+    EaseType    m_EaseType = EaseType::InOutSine;
+
+public:
+    static CSaturationCommand* Create();
+    virtual void Free() override;
+};
+
 NS_END
