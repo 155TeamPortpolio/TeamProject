@@ -3,8 +3,11 @@
 #include "GameInstance.h"
 #include "CharacterController.h"
 #include "BattleSystem.h"
+#include "Defiler.h"
+#include "MiasmaBlade.h"
+#include "MiasmaSpawnBall.h"
 
-static _float3 ComputeArcSpawnPos(
+_float3 CMiasmaSpawner::ComputeArcSpawnPos(
     const _float3& ownerPos,
     const _float3& targetPos,
     _float minRadius,
@@ -33,13 +36,57 @@ static _float3 ComputeArcSpawnPos(
     return spawnPos;
 }
 
-void CMiasmaSpawner::Spawn(MiasmaType type, _int count, _float3 targetPos, _float3 ownerPos, _float y)
+_float3 CMiasmaSpawner::ComputeParabolarPos(const _float3& ownerPos, const _float3& targetPos)
+{
+    _vector3 forward = _vector3(targetPos) - _vector3(ownerPos);
+    _float length = forward.Length();
+    forward.y = 0.f;
+    if (forward.LengthSquared() < 1e-6f)
+        forward = { 0.f, 0.f, 1.f };
+    else
+        forward.Normalize();
+
+    const _vector3 up = { 0.f, 1.f, 0.f };
+
+    _vector3 right = up.Cross(forward);
+    right.Normalize();
+
+    const _float sideSign = m_parabolLeft ? -1.f : +1.f; // ¿ÞÂÊÀÌ¸é -1
+    m_parabolLeft = !m_parabolLeft;
+
+    const _float sideOffset = 5.0f;   
+    const _float forwardOffset = length * 0.7f;
+    _vector3 offset = right * (sideOffset * sideSign) + forward * forwardOffset;
+
+    _vector3 pos = _vector3(ownerPos) + offset;
+    return _float3{ pos.x, targetPos.y, pos.z };
+}
+
+void CMiasmaSpawner::Spawn(MiasmaType type, _int count, _float3 targetPos, _float3 ownerPos, _float y, CDefiler* pDefiler)
+{
+    switch (type)
+    {
+    case Client::MiasmaType::Heavy:
+        SpawnHeavy(targetPos,ownerPos);
+        break;
+    case Client::MiasmaType::Grandier:
+        SpawnGrandier(count,targetPos,ownerPos, y);
+        break;
+    case Client::MiasmaType::Blade:
+        SpawnBlade(targetPos,ownerPos, pDefiler);
+        break;
+    default:
+        break;
+    }
+}
+
+void CMiasmaSpawner::SpawnGrandier(_int count, _float3 targetPos, _float3 ownerPos, _float y)
 {
     const string levelKey = LevelManager()->Get_NowLevelKey();
 
     const float minRadius = 1.0f;
-    float maxRadius = (ownerPos - targetPos).Length()+5.f;
-    const float arcDegrees = 60.f; 
+    float maxRadius = (ownerPos - targetPos).Length() + 5.f;
+    const float arcDegrees = 60.f;
 
     for (int spawnIndex = 0; spawnIndex < count; ++spawnIndex)
     {
@@ -60,12 +107,50 @@ void CMiasmaSpawner::Spawn(MiasmaType type, _int count, _float3 targetPos, _floa
         MonsterCCT.fRadius = 0.55f;
         MonsterCCT.vPos = spawnPos;
         MonsterCCT.vPos.y += MonsterCCT.fHeight;
-      
-        auto jaeger = Builder::Create_Object({ "Zero_Level", "Proto_GameObject_MiasmaJaeger" })
+
+        auto jaeger = Builder::Create_Object({ "Zero_Level", "Proto_GameObject_MiasmaGrandierJaeger" })
             .Position(spawnPos)
             .CharacterController(MonsterCCT)
             .Build("MiasmaUnit");
         ObjectManager()->Add_Object(jaeger, { levelKey, "Enemy_Layer" });
-        BattleSystem()->EnterBattleObject(BATTLE_OBJ_TYPE::MONSTER,jaeger->Get_Handle());
+        BattleSystem()->EnterBattleObject(BATTLE_OBJ_TYPE::MONSTER, jaeger->Get_Handle());
     }
+}
+
+void CMiasmaSpawner::SpawnBlade(_float3 Target, _float3 Owner, CDefiler* pDefiler)
+{
+    const string levelKey = LevelManager()->Get_NowLevelKey();
+    auto desc = new CMiasmaBlade::BladeDesc;
+    desc->pOwner = pDefiler;
+    desc->vTargetPos = Target;
+    auto pBlade =
+    Builder::Create_Object({ "Zero_Level","Proto_GameObject_MiasmaBlade" })
+    .FromPool()
+    .Position(Owner)
+    .Add_ObjDesc(desc)
+    .Build("MiasmaBlade");
+    ObjectManager()->Add_Object(pBlade, { levelKey ,"Enemy_Layer" });
+}
+
+void CMiasmaSpawner::SpawnHeavy(_float3 Target, _float3 Owner)
+{
+    const string levelKey = LevelManager()->Get_NowLevelKey();
+    auto desc = new CMiasmaSpawnBall::SpawnParbolar;
+    desc->startPos = Owner;
+    desc->targetPos = ComputeParabolarPos(Owner,Target);
+
+    COLLIDER_DESC ColDesc = {};
+    ColDesc.eGroup = COLLISION_GROUP::COMMON;
+    ColDesc.iCollisionMask = ENUM(COLLISION_GROUP::GROUND);
+    ColDesc.bTrigger = false;
+    ColDesc.bAutoFit = true;
+    ColDesc.eType = COLLIDER_TYPE::SPHERE;
+
+    auto Ball = Builder::Create_Object({ "Zero_Level", "Proto_GameObject_MiasmaSpawnBall" })
+        .Position(Owner)
+        .Add_ObjDesc(desc)
+        .Collider(ColDesc)
+        .FromPool()
+        .Build("MiasmaSpawn");
+    ObjectManager()->Add_Object(Ball, { levelKey, "Enemy_Layer" });
 }
