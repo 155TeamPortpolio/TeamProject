@@ -13,7 +13,7 @@ namespace
     static const string kAtlasTexKey = "DamageText.png";
     static const string kColorAtlasTexKey = "DamageTextColor.png";
 
-    constexpr _uint  kColorIdx_JaneDoe = 0;
+    constexpr _uint  kColorIdx_JaneDoe = 3;
     constexpr _uint  kColorIdx_Corin   = 3;
     constexpr _uint  kColorIdx_Miyabi  = 2;
 
@@ -247,7 +247,7 @@ void CUI_DamageText::UI_Active(void* arg)
         case CHARACTER::JaneDoe: m_colorFrameIdx = kColorIdx_JaneDoe; break;
         case CHARACTER::Corin:   m_colorFrameIdx = kColorIdx_Corin;   break;
         case CHARACTER::Miyabi:  m_colorFrameIdx = kColorIdx_Miyabi;  break;
-        default:                 m_colorFrameIdx = kColorIdx_Miyabi;  break;
+        default:                 m_colorFrameIdx = 1;  break;
         }
     }
     else m_colorFrameIdx = 7;

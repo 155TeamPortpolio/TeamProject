@@ -8,11 +8,13 @@
 #include "Material.h"
 #include "Child.h"
 #include "Camera.h"
+#include "ObjectContainer.h"
 // Client
 #include "BattleSystem.h"
 #include "BattlePlayer.h"
 #include "Player.h"
 #include "MaterialInstance.h"
+#include "Enemy.h"
 
 namespace
 {
@@ -105,7 +107,13 @@ void CUI_MeshPyramid::Update(_float dt)
     const float eased = Math::ApplyEase(EaseType::InOutSine, m_rt.fadeT);
     m_alpha = m_cfg.baseColorAlpha.w * eased;
 
-    //rt.isAlert = IsAlert();
+    auto child = Get_Component<CChild>();
+    if (!child) return;
+
+    auto parentObj = child->Get_Parent();
+    if (!parentObj) return;
+
+    m_rt.isAlert = static_cast<CEnemy*>(parentObj)->IsOnAttack();
 
     if (!m_rt.isAlert)
     {
@@ -119,10 +127,7 @@ void CUI_MeshPyramid::Update(_float dt)
         const int phase = (int)(m_rt.alertBlinkT / period);
         m_color = (phase & 1) ? m_cfg.red : m_cfg.gray;
     }
-    auto child = Get_Component<CChild>();
-    if (!child)
-        return;
-    auto parentObj = child->Get_Parent();
+    
 
     OBJECT_HANDLE hChar = BattleSystem()->GetCurCharacterHandle();
     auto charObj = ObjectManager()->Request_Object(hChar);

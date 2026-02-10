@@ -74,6 +74,7 @@ HRESULT CGacha_Level::Awake()
 void CGacha_Level::Update()
 {
 	Update_CamTime();
+	Update_AvatarSequence();
 }
 
 HRESULT CGacha_Level::Render()
@@ -141,6 +142,29 @@ void CGacha_Level::Update_CamTime()
 		if (CamDirector()->GetTime() >= 2.2f)
 			m_pGachaProps->PlayTVSequence();
 	}
+}
+
+void CGacha_Level::Update_AvatarSequence()
+{
+	auto& cam = *CamDirector();
+
+	if (cam.IsFinished(CamEventType::Miyabi_01_Finished))
+		cam.RequestSequence("Gacha/Miyabi_02");
+
+	if (cam.IsFinished(CamEventType::Miyabi_02_Finished))
+		cam.RequestSequence("Gacha/Miyabi_03");
+
+	if (cam.IsFinished(CamEventType::Miyabi_03_Finished))
+		cam.RequestSequence("Gacha/Miyabi_01");
+
+	if (cam.IsFinished(CamEventType::JaneDoe_01_Finished))
+		cam.RequestSequence("Gacha/JaneDoe_02");
+
+	if (cam.IsFinished(CamEventType::JaneDoe_02_Finished))
+		cam.RequestSequence("Gacha/JaneDoe_03");
+
+	if (cam.IsFinished(CamEventType::JaneDoe_03_Finished))
+		cam.RequestSequence("Gacha/JaneDoe_01");
 }
 
 void CGacha_Level::Play_CameraSequence()
