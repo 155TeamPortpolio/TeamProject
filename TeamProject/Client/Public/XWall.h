@@ -22,14 +22,17 @@ public:
     void    Update(_float dt) override;
     void    Late_Update(_float dt) override;
     void    Awake() override;
+
+public:
+    virtual void Render_GUI() override;
+
 private:
-    _vector2 m_vCount = { 3, 3 };
-    _vector2 m_vOffset = { 0.1f, 0.3f };
+    _vector2 m_vCount = { 10, 3 };
+    _vector2 m_vOffset = { 5.f, 3.f };
     CMaterialInstance* m_pMaterial_Instance = { nullptr };
 
     vector<INSTANCE_INIT_DESC> m_InitDescs;
     vector<INSTANCE_XWALL> m_XWall;
-    vector<_float>         m_fBrightness;
 public:
     static CXWall* Create();
     CGameObject* Clone(INIT_DESC* pArg) override;

@@ -188,6 +188,7 @@ HRESULT CTestLevel::Awake()
 
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_XWall", CXWall::Create());
 	auto XWall = Builder::Create_Object({ "Test_Level", "Proto_GameObject_XWall" })
+		.Position({ 0.f, 2.f, 0.f, })
 		.Build("XWall");
 
 	ObjectManager()->Add_Object(XWall, { "Test_Level", "Effect_Layer" });
