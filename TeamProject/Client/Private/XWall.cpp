@@ -33,6 +33,11 @@ HRESULT CXWall::Initialize(INIT_DESC* pArg)
 {
 	__super::Initialize(pArg);
 
+	if (XWALL_DESC* pDesc = dynamic_cast<XWALL_DESC*>(pArg)) {
+		m_vCount = pDesc->vCount;
+		m_vOffset = pDesc->vOffset;
+	}
+
 	INSTANCE_INIT_DESC instanceDesc = {};
 	instanceDesc.ElementKey = "ClientVTXXWall";
 	instanceDesc.ElementCount = VTX_XWALLINSTANCE::iElementCount;
@@ -65,9 +70,6 @@ HRESULT CXWall::Initialize(INIT_DESC* pArg)
 		instance->Override_Pass("Default");
 	}
 
-	m_XWall.resize(instanceDesc.instanceCount, { {1,0,0,0},{0,1,0,0},{0,0,1,0},{0,0,0,1}, {0} });
-	m_fBrightness.resize(instanceDesc.instanceCount, 0.f);
-
     return S_OK;
 }
 
@@ -97,8 +99,6 @@ void CXWall::Awake()
 			m_XWall[index].vTranslation = localPos;
 		}
 	}
-
-	m_pTransform->Scale({ 0.1f, 0.1f, 0.1f });
 }
 
 void CXWall::Render_GUI()
@@ -118,6 +118,7 @@ void CXWall::Render_GUI()
 			inst.vBrightness
 		);
 	}
+
 	ImGui::End();
 }
 
@@ -129,15 +130,18 @@ void CXWall::Update(_float dt)
 {
 	_vector3 vPlayerPos = CBattleSystem::GetInstance()->GetBattlePlayer()->GetCurCharacterHandle().Get()->Get_WorldPos();
 
+	const _float fMin = 1.5f;
+	const _float fMax = 3.0f;
+
 	for (size_t i = 0; i < m_XWall.size(); i++)
 	{
-		_vector3 PointPos = { m_XWall[i].vTranslation.x, m_XWall[i].vTranslation.y, m_XWall[i].vTranslation.z};
+		_vector3 vPointPos = { m_XWall[i].vTranslation.x, m_XWall[i].vTranslation.y, m_XWall[i].vTranslation.z};
+		_vector3 vWorldPoint = XMVector3TransformCoord(vPointPos, static_cast<Matrix>(m_pTransform->Get_WorldMatrix()));
+
+		float fDist = _vector3::Distance(vWorldPoint, vPlayerPos);
 	
-		if (1.f >= _vector3::Distance(PointPos, vPlayerPos))
-			m_XWall[i].vBrightness = 1.f;
-		else
-			m_XWall[i].vBrightness = 0.5f;
-	
+		float t = clamp((fDist - fMin) / (fMax - fMin), 0.f, 1.f);
+		m_XWall[i].vBrightness = 1.f - t;
 	}
 
 	Get_Component<CInstanceModel>()->Update_Instance(CGameInstance::GetInstance()->Get_Context(), m_XWall.data(), 0, static_cast<_uint>(m_XWall.size()));
