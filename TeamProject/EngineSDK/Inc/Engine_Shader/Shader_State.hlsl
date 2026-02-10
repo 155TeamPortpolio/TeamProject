@@ -167,6 +167,13 @@ DepthStencilState DSS_ReadOnly
     DepthWriteMask = zero;
 };
 
+DepthStencilState DSS_WriteOnly
+{
+    DepthEnable = true;
+    DepthWriteMask = all;
+    DepthFunc = always;
+};
+
 DepthStencilState DSS_Command
 {
     DepthEnable = true;
