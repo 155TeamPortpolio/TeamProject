@@ -47,6 +47,7 @@ public:
     void Control_Summon(const string& event);
     void Control_TargetEnable(_bool On);
     void Update_Dissolve(_float dt);
+    void SetBoneToWorld(const string& Bone, _vector3 pos);
 private:
     void MoveByTraceMode(_float dt, _float moveScale = 1.f);
     void RotateToTarget(_float dt, _float rotateSpeed = 1.f);

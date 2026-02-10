@@ -17,6 +17,7 @@ void CDefilerState_Attack::Build_Pattern(CDefiler* pOwner, _int Type)
 	DEFILER_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
 	TARGETING_INFO& targetInfo = pOwner->GetTargetingInfo();
 	blackBoard.patternTransition.clear();
+
 	switch (Type)
 	{
 	case 0 :
@@ -79,11 +80,11 @@ void CDefilerState_Attack::Build_Pattern(CDefiler* pOwner, _int Type)
 	}
 	case 10 :
 	{
-		blackBoard.patternTransition.push_back({ "Attack_Evade",0.f,1.f });
+		//blackBoard.patternTransition.push_back({ "Attack_Evade",0.f,1.f });
 		blackBoard.patternTransition.push_back({ "Attack09_Start",0.f,1.f });
-		blackBoard.patternTransition.push_back({ "Attack09_Loop",0.f,1.f });
-		blackBoard.patternTransition.push_back({ "Attack09_End",0.f,1.f });
-		blackBoard.patternTransition.push_back({ "Attack01_01_P2",0.f,1.f });
+		//blackBoard.patternTransition.push_back({ "Attack09_Loop",0.f,1.f });
+		//blackBoard.patternTransition.push_back({ "Attack09_End",0.f,1.f });
+		//blackBoard.patternTransition.push_back({ "Attack01_01_P2",0.f,1.f });
 		break;
 	}
 	case 11 :
@@ -151,7 +152,7 @@ void CDefilerState_Attack::Enter(CDefiler* pOwner)
 	auto& blackboard = pOwner->GetBlackBoard();
 
 	Build_Pattern(pOwner, blackboard.patternIndex);
-	blackboard.patternIndex = clamp(++blackboard.patternIndex, 0, m_maxPattern);
+	blackboard.patternIndex = 10; // clamp(++blackboard.patternIndex, 0, m_maxPattern);
 
 	if (!blackboard.patternTransition.empty())
 	{

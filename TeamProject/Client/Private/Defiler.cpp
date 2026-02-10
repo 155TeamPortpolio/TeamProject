@@ -109,6 +109,11 @@ void CDefiler::Awake()
 		instance->Set_Param("fDissolveTiling", { &m_fDissolveTilling,"float",sizeof(_float) });
 	}
 
+
+	static _bool    m_bTestBoneToWorld = false;
+	static _float3  m_TestBoneWorldPos = { 0.f, 0.f, 0.f };
+	static char     m_TestBoneName[64] = "Ctr_M_Prop_01";
+	SetBoneToWorld(m_TestBoneName, m_TestBoneWorldPos);
 }
 
 void CDefiler::Priority_Update(_float dt)
@@ -129,43 +134,51 @@ void CDefiler::Update(_float dt)
 		m_BlackBoard.vTargetPos = m_tTargetingInfo.vTargetPos;
 		m_BlackBoard.vTargetDir = m_tTargetingInfo.vDirToTarget;
 	}
+
 	Update_States(dt);
 
-	auto pAnimator = Get_Component<CAnimator3D>();
-	pAnimator->Update_Animation(dt);
-	Route_AnimEvent(pAnimator);
+	auto animatorPtr = Get_Component<CAnimator3D>();
+	animatorPtr->Update_Animation(dt);
+
+	Route_AnimEvent(animatorPtr);
+
 	MoveByTraceMode(dt);
 	RotateToTarget(dt, 4.f);
-	
 	Get_Component<CCharacterController>()->Update(dt);
-	m_pStateMachine->Update(dt);
 
+	m_pStateMachine->Update(dt);
 	Get_Component<CObjectContainer>()->UpdateChild(dt);
 }
-
 void CDefiler::Late_Update(_float dt)
 {
 	Get_Component<CCharacterController>()->Late_Update(dt);
 }
-
 void CDefiler::Render_GUI()
 {
 	ImGui::InputInt("Pattern number", &m_BlackBoard.patternIndex);
-	for (auto pattern : m_BlackBoard.patternTransition)
+	for (auto& pattern : m_BlackBoard.patternTransition)
 	{
-		ImGui::Text(pattern.nextPattern.c_str());
+		ImGui::TextUnformatted(pattern.nextPattern.c_str());
 	}
 
-	// Color
-	_float color[3] = { m_vRimLightColor.x, m_vRimLightColor.y, m_vRimLightColor.z};
-	if (ImGui::ColorEdit4("RimLightColor", color,
+	ImGui::SeparatorText("RimLight");
+
+	_float color[3] = {
+		m_vRimLightColor.x,
+		m_vRimLightColor.y,
+		m_vRimLightColor.z
+	};
+
+	if (ImGui::ColorEdit3("RimLightColor", color,
 		ImGuiColorEditFlags_Float |
 		ImGuiColorEditFlags_DisplayRGB |
 		ImGuiColorEditFlags_InputRGB))
 	{
 		m_vRimLightColor = _float3(color[0], color[1], color[2]);
 	}
-	ImGui::DragFloat("RimLighPower", &m_fRimLightPower);
+
+	ImGui::DragFloat("RimLightPower", &m_fRimLightPower, 0.01f, 0.f, 10.f);
+
 	__super::Render_GUI();
 }
 
@@ -500,6 +513,36 @@ void CDefiler::Update_Dissolve(_float dt)
 	default:
 		break;
 	}
+}
+void CDefiler::SetBoneToWorld(const string& boneName, _vector3 targetWorldPos)
+{
+	auto animatorPtr = Get_Component<CAnimator3D>();
+	if (!animatorPtr) return;
+
+	Matrix ownerWorld = m_pTransform->Get_WorldMatrix();
+	Matrix ownerWorldInv = ownerWorld.Invert();
+
+	Matrix baseCombined = animatorPtr->Get_BoneMatrix(CAnimator3D::BoneSpace::COMBINED, boneName);
+	Matrix parentCombined = animatorPtr->Get_ParentBoneMatrix(CAnimator3D::BoneSpace::COMBINED, boneName);
+
+	// 현재 본 월드
+	Matrix baseWorld = baseCombined * ownerWorld;
+
+	// 위치만 교체 (Decompose 불필요)
+	Matrix desiredWorld = baseWorld;
+	desiredWorld.Translation(targetWorldPos);
+
+	Matrix desiredCombined = desiredWorld * ownerWorldInv;
+
+	Matrix parentInv =parentCombined.Invert();
+
+	Matrix baseLocal = baseCombined * parentInv;
+	Matrix desiredLocal = desiredCombined * parentInv;
+
+	// 좌곱 델타
+	Matrix manipulate = desiredLocal * baseLocal.Invert();
+
+	animatorPtr->Set_BoneMatrix(CAnimator3D::BoneSpace::MANIPULATE, manipulate, boneName);
 }
 
 CDefiler* CDefiler::Create()
