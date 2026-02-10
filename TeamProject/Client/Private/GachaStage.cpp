@@ -276,6 +276,8 @@ void CGachaStage::Set_Stage(GACHA_STAGE eStage, _int ResultID)
 void CGachaStage::Reset_Target()
 {
 	dynamic_cast<CGachaProps*>(Get_Component<CChild>()->Get_Parent())->ResetTarget();
+	if(auto pLight = CamDirector()->GetSeqCam()->Get_Component<CLight>())
+		pLight->Set_CompActive(false);
 }
 
 void CGachaStage::Play_CameraSequence()
