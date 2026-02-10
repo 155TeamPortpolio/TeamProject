@@ -128,14 +128,18 @@ CCameraMgr::CamPoseFrame CCameraMgr::BlendPose(const CamPoseFrame& a, const CamP
     CamPoseFrame out{};
 
     out.pos = Vector3::Lerp(a.pos, b.pos, t);
-    out.rot = Quaternion::Slerp(a.rot, b.rot, t);
+
+    Quaternion bRot = b.rot;
+    if (a.rot.Dot(bRot) < 0.f) bRot = -bRot;
+
+    out.rot = Quaternion::Slerp(a.rot, bRot, t);
     out.rot.Normalize();
 
-    out.lens             = b.lens;
-    out.lens.fov         = a.lens.fov         + (b.lens.fov         - a.lens.fov)         * t;
-    out.lens.nearZ       = a.lens.nearZ       + (b.lens.nearZ       - a.lens.nearZ)       * t;
-    out.lens.farZ        = a.lens.farZ        + (b.lens.farZ        - a.lens.farZ)        * t;
-    out.lens.aspect      = a.lens.aspect      + (b.lens.aspect      - a.lens.aspect)      * t;
+    out.lens = b.lens;
+    out.lens.fov = a.lens.fov + (b.lens.fov - a.lens.fov) * t;
+    out.lens.nearZ = a.lens.nearZ + (b.lens.nearZ - a.lens.nearZ) * t;
+    out.lens.farZ = a.lens.farZ + (b.lens.farZ - a.lens.farZ) * t;
+    out.lens.aspect = a.lens.aspect + (b.lens.aspect - a.lens.aspect) * t;
     out.lens.orthoHeight = a.lens.orthoHeight + (b.lens.orthoHeight - a.lens.orthoHeight) * t;
 
     return out;

@@ -176,4 +176,40 @@ namespace Client {
 		_float3 skyColor = {};
 		_float3 cloudColor = {};
 	}CLOUD_DESC;
+
+	typedef struct  tagInstanceXWall
+	{
+		_float4	vRight, vUp, vLook, vTranslation;
+		_float vBrightness;
+	}INSTANCE_XWALL;
+
+	typedef struct   tagVertexXWallInstancing {
+		static constexpr unsigned int					iElementCount = { 5 };
+		static constexpr D3D11_INPUT_ELEMENT_DESC		Elements[5] = {
+			{ "INSTANCE", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1,0,  D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+			{ "INSTANCE", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, 1,16, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+			{ "INSTANCE", 2, DXGI_FORMAT_R32G32B32A32_FLOAT, 1,32, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+			{ "INSTANCE", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, 1,48, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+			{ "INSTANCE", 4, DXGI_FORMAT_R32_FLOAT,		     1,64, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+		};
+	}VTX_XWALLINSTANCE;
+
+	typedef struct  tagInstanceParticle
+	{
+		_float4	vRight, vUp, vLook, vTranslation;
+		_float4 vColor;
+		_float2 vLifetime;
+	}INSTANCE_PARTICLE;
+
+	typedef struct   tagVertexParticleInstancing {
+		static constexpr unsigned int					iElementCount = { 6 };
+		static constexpr D3D11_INPUT_ELEMENT_DESC		Elements[6] = {
+			{ "INSTANCE", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1,0,  D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+			{ "INSTANCE", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, 1,16, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+			{ "INSTANCE", 2, DXGI_FORMAT_R32G32B32A32_FLOAT, 1,32, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+			{ "INSTANCE", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, 1,48, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+			{ "INSTANCE", 4, DXGI_FORMAT_R32G32B32A32_FLOAT, 1,64, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+			{ "INSTANCE", 5, DXGI_FORMAT_R32G32_FLOAT,		 1,80, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+		};
+	}VTX_PARTICLEINSTANCE;
 }

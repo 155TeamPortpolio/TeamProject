@@ -227,6 +227,7 @@ void CParticleSystem::Reset()
 {
 	m_fSpawnAcc = 0.f;
 	m_iBurstCount = m_iMaxBurstCount;
+	m_iSpawnParticleCount = 0;
 	m_IsPause = false;
 }
 

@@ -2,6 +2,8 @@
 #include "CorinState_RushAttack.h"
 #include "Corin.h"
 
+#include "AudioSource.h"
+
 CCorinState_RushAttack* CCorinState_RushAttack::Create()
 {
     auto pInstance = new CCorinState_RushAttack();
@@ -30,6 +32,8 @@ void CCorinState_RushAttack::Enter(CCorin* pOwner)
     __super::Enter(pOwner);
 
     pOwner->Play_Effect("Corin_Saw_Slash1", _vector3(), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+
+    pOwner->Get_Component<CAudioSource>()->Slot("Corin_RushAttack_01_SFX.wav").Attribute3D(true).Loop(false).Volume(0.5f).Play();
 }
 
 void CCorinState_RushAttack::Update(CCorin* pOwner, _float dt)
@@ -59,7 +63,7 @@ void CCorinState_RushAttack::Exit(CCorin* pOwner)
 void CCorinState_Rush_Start::Enter(CCorin* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_Rush")
-        .Speed(2.f)
+        .Speed(1.5f)
         .Apply();
     pOwner->Begin_AttackCollider("Saw", HitDesc()
         .Type(HIT_TYPE::COUNT)

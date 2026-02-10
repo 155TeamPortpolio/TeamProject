@@ -5,6 +5,8 @@
 #include "CorinState_Evade.h"
 #include "CharacterController.h"
 
+#include "AudioSource.h"
+
 void CCorinState_Dash::Enter(CCorin* pOwner)
 {
     pOwner->Use_Evade();
@@ -15,6 +17,9 @@ void CCorinState_Dash::Enter(CCorin* pOwner)
     _vector3 vDir = pOwner->Get_InputDir();
     if (vDir.Length() > 0.01f)
         pOwner->Rotate(vDir);
+
+    // Jehyun
+    pOwner->Get_Component<CAudioSource>()->Slot("Corin_Dash_02_SFX.wav").Attribute3D(true).Loop(false).Volume(0.5f).Play();
 }
 
 void CCorinState_Dash::Update(CCorin* pOwner, _float dt)
@@ -63,6 +68,8 @@ void CCorinState_Dash::Update(CCorin* pOwner, _float dt)
     {   // Idle
         pSubMachine->Set_Int("ExitMode", 0);
         pSubMachine->Set_Trigger("Complete");
+
+        //pOwner->Get_Component<CAudioSource>()->Slot("Corin_Dash_02_SFX.wav").Pause(true);
     }
 
     Update_Effects(pOwner);

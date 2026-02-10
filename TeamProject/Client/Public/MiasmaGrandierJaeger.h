@@ -1,30 +1,11 @@
 #pragma once
 #include "Enemy.h"
+#include "Defiler_Control.h"
+
 NS_BEGIN(Client)
 class CMiasmaGrandierJaeger :
     public CEnemy
 {
-    struct MiasmaJaegerDisolveState {
-        enum DISSOLVE_STATE { DISAPPEAR, APPEAR, NONE, END };
-        DISSOLVE_STATE eDissolveState = NONE;
-        _float fDissolveDuration = 2.f;
-        _float fDissolveElapsedTime = 0.f;
-        _float fDissolveProgress = 0.f;
-
-        void Appear(_float duration) { Set_DissolveState(DISSOLVE_STATE::APPEAR, duration); }
-        void DisAppear(_float duration) { Set_DissolveState(DISSOLVE_STATE::DISAPPEAR, duration); }
-        void Set_DissolveState(DISSOLVE_STATE state, _float duration)
-        {
-            eDissolveState = state;
-            fDissolveDuration = duration;
-            fDissolveElapsedTime = 0.f;
-            fDissolveProgress = 0.f;
-        }
-        _bool isComplete() {
-            return fDissolveElapsedTime >= fDissolveDuration;
-        }
-    };
-
 private:
     CMiasmaGrandierJaeger();
     CMiasmaGrandierJaeger(const CMiasmaGrandierJaeger& rhg);
@@ -48,7 +29,7 @@ public:
     virtual void OnPooledRelease()override;
 
 public:
-    MiasmaJaegerDisolveState& Get_Dissolve() { return m_Dissolve; }
+    DefilerDissolve& Get_Dissolve() { return m_Dissolve; }
     CStateMachine<CMiasmaGrandierJaeger>* Get_MainStateMachine() { return m_pStateMachine; }
     void LockOn(_bool lock) { m_LockedOn = lock; }
 private:
@@ -65,7 +46,7 @@ private:
 
 private:
     _bool m_LockedOn = { false };
-    MiasmaJaegerDisolveState m_Dissolve;
+    DefilerDissolve m_Dissolve;
     CStateMachine<CMiasmaGrandierJaeger>* m_pStateMachine = { nullptr };
     _uint m_HitCount = {};
 public:
