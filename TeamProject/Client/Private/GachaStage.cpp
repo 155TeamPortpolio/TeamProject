@@ -21,6 +21,7 @@
 #include "Helper_Func.h"
 
 #include "UI_GachaTextReveal.h"
+#include "EffectContainer.h"
 
 CGachaStage::CGachaStage()
     :CGameObject()
@@ -57,11 +58,27 @@ void CGachaStage::PlayRevealEffect()
 	switch ((*m_pResultDesc)[m_iIndex].Grade)
 	{
 	case GachaGrade::S:
+	{
 		m_pScreen->SetScreen(GACHA_STAGE::AVATAR, GachaGrade::S);
 		SetBottomLightEffect(_float4(0.f,0.f,0.f,0.f), _float4(1.0f, 0.9f, 0.2f, 1.0f), _float4(0.25f, 0.25f, 0.25f, 0.5f), 1.0f);
 		SetTopLightEffect(_float4(0.f, 0.f, 0.f, 0.f), _float4(1.0f, 0.9f, 0.2f, 1.0f), _float4(0.25f, 0.25f, 0.25f, 0.5f), 1.2f);
 		SetMiddleLightEffect(_float4(0.1f, 0.1f, 0.1f, 1.f), _float4(1.0f, 1.0f, 1.0f, 1.f), 0.6f);
-		break;
+
+		/* Effect */
+		auto pDistortion = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("gacha_distortion.json")
+			.Position(_float3(0.f, 0.3f, -3.5f))
+			.Build("Gacha_Distortion");
+
+		auto pParticle = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("gacha_particle.json")
+			.Position(_float3(0.f, 0.5f, -1.f))
+			.Build("Gacha_Particle");
+
+		ObjectManager()->Add_Object(pDistortion, { "Gacha_Level","Effect_Layer" });
+		ObjectManager()->Add_Object(pParticle, { "Gacha_Level","Effect_Layer" });
+
+	}break;
 	case GachaGrade::A:
 		m_pScreen->SetScreen(GACHA_STAGE::BANGBOO, GachaGrade::A);
 		SetBottomLightEffect(_float4(0.f, 0.f, 0.f, 0.f), _float4(1.0f, 0.2f, 0.5f, 1.0f), _float4(0.25f, 0.25f, 0.25f, 0.5f), 1.0f);

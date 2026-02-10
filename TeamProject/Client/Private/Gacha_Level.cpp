@@ -17,6 +17,8 @@
 /*DataBase*/
 #include "DataBase.h"
 
+#include "EffectContainer.h"
+
 CGacha_Level::CGacha_Level(const string& LevelKey)
 	:CLevel(LevelKey),
 	m_pGameInstance{ CGameInstance::GetInstance() },
@@ -58,12 +60,30 @@ HRESULT CGacha_Level::Awake()
 	UIDirector()->Load_LevelObjects("Gacha_Level");
 	Ready_GachaUI();	// UIDirector에서 Load_LevelObject 실행 한 뒤에
 
+	//==================== Effect ============
+	//auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+	//	.Asset("gacha_smoke.json")
+	//	.Position(_float3(0.f, -0.7f, 0.f))
+	//	.Build("Gacha_Smoke");
+	//
+	//ObjectManager()->Add_Object(pEffect, { "Gacha_Level","Effect_Layer" });
+
 	return S_OK;
 }
 
 void CGacha_Level::Update()
 {
 	Update_CamTime();
+
+	if (InputDevice()->Key_Tap('Z'))
+	{
+		auto pParticle = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("gacha_particle.json")
+			.Position(_float3(0.f, 1.f, 0.f))
+			.Build("Gacha_Particle");
+
+		ObjectManager()->Add_Object(pParticle, { "Gacha_Level","Effect_Layer" });
+	}
 }
 
 HRESULT CGacha_Level::Render()

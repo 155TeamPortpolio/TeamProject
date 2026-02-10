@@ -106,15 +106,22 @@ void CMiyabiState_Charge_Start::Enter(CMiyabi* pOwner)
         .Speed(1.6f)
         .Apply();
 
-    //pOwner->Play_Effect("Miyabi_Charge_Start", _vector3(0.f, 0.1f, 0.f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+  
 }
 void CMiyabiState_Charge_Start::Update(CMiyabi* pOwner, _float dt)
 {
+    if(IsCrossAnimProgress(0.16f))
+        pOwner->Play_Effect("Miyabi_Charge_Start", _vector3(0.f, 0.1f, 0.f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+
 }
 
 void CMiyabiState_Charge_Start::Exit(CMiyabi* pOwner)
 {
     m_pOwnerStateMachine->Set_Int("ChargeLevel", 1);
+}
+
+void CMiyabiState_Charge_Start::Update_Effects(CMiyabi* pOwner)
+{
 }
 
 // Charge_Start_02 (2´Ü)
@@ -137,6 +144,10 @@ void CMiyabiState_Charge_Start_02::Exit(CMiyabi* pOwner)
     m_pOwnerStateMachine->Set_Int("ChargeLevel", 2);
 }
 
+void CMiyabiState_Charge_Start_02::Update_Effects(CMiyabi* pOwner)
+{
+}
+
 // Charge_Start_03 (3´Ü)
 void CMiyabiState_Charge_Start_03::Enter(CMiyabi* pOwner)
 {
@@ -155,6 +166,10 @@ void CMiyabiState_Charge_Start_03::Update(CMiyabi* pOwner, _float dt)
 void CMiyabiState_Charge_Start_03::Exit(CMiyabi* pOwner)
 {
     m_pOwnerStateMachine->Set_Int("ChargeLevel", 3);
+}
+
+void CMiyabiState_Charge_Start_03::Update_Effects(CMiyabi* pOwner)
+{
 }
 
 // Charge_End
