@@ -20,7 +20,7 @@ void CBattleFXFlow::Initialize_Preset()
 		evade.fVFXDuration = duration;
 		evade.fBlurDuration = .5f;
 		evade.vStartColor = { 1.f,1.f,1.f };
-		evade.vTargetColor = { 0.7f,0.7f,0.7f };
+		evade.vTargetColor = { 0.1f,0.1f,0.1f };
 		evade.SetTimeData({ duration, 0.1f, 0.f, 0.5f , EaseType::OutCubic });
 	}
 
@@ -41,7 +41,7 @@ void CBattleFXFlow::Initialize_Preset()
 	}
 	{
 		auto& HitLack = m_BattleVFXData[ENUM(BATTLE_VFX_TYPE::HIT)];
-		const _float duration = 2.5f;
+		const _float duration = 1.5f;
 		HitLack.fVFXDuration = duration;
 		HitLack.fBlurDuration = duration;
 		HitLack.SetTimeData({ duration, 0.f, 0.25f, .9f , EaseType::OutExpo });
@@ -196,9 +196,11 @@ void CBattleFXFlow::StartVfx_Evade()
 
 	CPostRenderer* pPost = RenderSystem()->GetPostRenderer();
 
-	AddCall([this,pPost]() {
-		pPost->GetCommand<CAddictiveColorCommand>()
-			->SetAddictiveColor(&m_BattleVFX.vNowColor)
+	AddCall([this, preset,pPost]() {
+		pPost->GetCommand<CSaturationCommand>()
+			->SetIntensity(0.5)
+			->SetDuration(preset.fVFXDuration)
+			->SetEaseType(EaseType::InOutCubic)
 			->SetEnable(true);
 		});
 
