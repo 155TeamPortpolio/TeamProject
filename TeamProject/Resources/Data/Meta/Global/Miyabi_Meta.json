@@ -606,22 +606,22 @@
           "EventTag": "MotionBlur"
         },
         {
-          "EventTime": 0.4324236512184143,
-          "EventType": "Notify",
-          "EventTag": "MotionBlur"
-        },
-        {
-          "EventTime": 0.47959715127944946,
-          "EventType": "Notify",
-          "EventTag": "MotionBlur"
-        },
-        {
           "EventTime": 0.4166991412639618,
           "EventType": "Notify",
           "EventTag": "MotionBlur"
         },
         {
+          "EventTime": 0.4324236512184143,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
           "EventTime": 0.46387264132499695,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.47959715127944946,
           "EventType": "Notify",
           "EventTag": "MotionBlur"
         }
@@ -1147,11 +1147,48 @@
     },
     {
       "ClipTag": "Avatar_Female_Size02_Unagi_Ani_Walk",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.23999999463558197,
+          "EventType": "Sound",
+          "EventTag": "Walk_L"
+        },
+        {
+          "EventTime": 0.5400000214576721,
+          "EventType": "Sound",
+          "EventTag": "Walk_R"
+        },
+        {
+          "EventTime": 0.8399999737739563,
+          "EventType": "Sound",
+          "EventTag": "Walk_L"
+        }
+      ]
     },
     {
       "ClipTag": "Avatar_Female_Size02_Unagi_Ani_Walk_Start",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.20000000298023224,
+          "EventType": "Sound",
+          "EventTag": "Walk_L"
+        },
+        {
+          "EventTime": 0.47999998927116394,
+          "EventType": "Sound",
+          "EventTag": "Walk_R"
+        },
+        {
+          "EventTime": 0.7599999904632568,
+          "EventType": "Sound",
+          "EventTag": "Walk_L"
+        },
+        {
+          "EventTime": 1.0399999618530273,
+          "EventType": "Sound",
+          "EventTag": "Walk_R"
+        }
+      ]
     },
     {
       "ClipTag": "Avatar_Female_Size02_Unagi_Ghost_Ani_Attack_05",
