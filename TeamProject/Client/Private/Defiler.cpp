@@ -26,6 +26,7 @@
 #include "AudioSource.h"
 
 #include "UI_DamageText.h"
+#include "DefilerWeapon.h"
 
 CDefiler::CDefiler()
 	:CEnemy()
@@ -45,6 +46,7 @@ HRESULT CDefiler::Initialize_Prototype()
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_MiasmaSpawnBall", CMiasmaSpawnBall::Create());
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_MiasmaHeavy", CMiasmaHeavyJaeger::Create());
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_MiasmaDummy", CMiasmaDummyUnit::Create());
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_DefilerWeapon", CDefilerWeapon::Create());
 
 	Add_Component<CAnimator3D>();
 	Add_Component<CSkeletalModel>();
@@ -110,7 +112,6 @@ void CDefiler::Awake()
 	}
 
 }
-
 void CDefiler::Priority_Update(_float dt)
 {	
 	m_PlayerCharacterInfos.clear();
@@ -129,17 +130,19 @@ void CDefiler::Update(_float dt)
 		m_BlackBoard.vTargetPos = m_tTargetingInfo.vTargetPos;
 		m_BlackBoard.vTargetDir = m_tTargetingInfo.vDirToTarget;
 	}
+
 	Update_States(dt);
 
-	auto pAnimator = Get_Component<CAnimator3D>();
-	pAnimator->Update_Animation(dt);
-	Route_AnimEvent(pAnimator);
+	auto animatorPtr = Get_Component<CAnimator3D>();
+	animatorPtr->Update_Animation(dt);
+
+	Route_AnimEvent(animatorPtr);
+
 	MoveByTraceMode(dt);
 	RotateToTarget(dt, 4.f);
-	
 	Get_Component<CCharacterController>()->Update(dt);
-	m_pStateMachine->Update(dt);
 
+	m_pStateMachine->Update(dt);
 	Get_Component<CObjectContainer>()->UpdateChild(dt);
 }
 
@@ -147,25 +150,32 @@ void CDefiler::Late_Update(_float dt)
 {
 	Get_Component<CCharacterController>()->Late_Update(dt);
 }
-
 void CDefiler::Render_GUI()
 {
 	ImGui::InputInt("Pattern number", &m_BlackBoard.patternIndex);
-	for (auto pattern : m_BlackBoard.patternTransition)
+	for (auto& pattern : m_BlackBoard.patternTransition)
 	{
-		ImGui::Text(pattern.nextPattern.c_str());
+		ImGui::TextUnformatted(pattern.nextPattern.c_str());
 	}
 
-	// Color
-	_float color[3] = { m_vRimLightColor.x, m_vRimLightColor.y, m_vRimLightColor.z};
-	if (ImGui::ColorEdit4("RimLightColor", color,
+	ImGui::SeparatorText("RimLight");
+
+	_float color[3] = {
+		m_vRimLightColor.x,
+		m_vRimLightColor.y,
+		m_vRimLightColor.z
+	};
+
+	if (ImGui::ColorEdit3("RimLightColor", color,
 		ImGuiColorEditFlags_Float |
 		ImGuiColorEditFlags_DisplayRGB |
 		ImGuiColorEditFlags_InputRGB))
 	{
 		m_vRimLightColor = _float3(color[0], color[1], color[2]);
 	}
-	ImGui::DragFloat("RimLighPower", &m_fRimLightPower);
+
+	ImGui::DragFloat("RimLightPower", &m_fRimLightPower, 0.01f, 0.f, 10.f);
+
 	__super::Render_GUI();
 }
 
@@ -205,6 +215,16 @@ void CDefiler::Change_CollisionMask(_uint iMask)
 void CDefiler::Release_CollisionMask()
 {
 	Get_Component<CCharacterController>()->Set_CollisionMask(m_BaseMask);
+}
+
+void CDefiler::Hide_MeshGroup(const string& mesh)
+{
+	Get_Component<CSkeletalModel>()->Hide_MehsByName(mesh);
+}
+
+void CDefiler::Show_MeshGroup(const string& mesh)
+{
+	Get_Component<CSkeletalModel>()->Show_MehsByName(mesh);
 }
 
 void CDefiler::Set_CCTPos(_vector3 pos)
@@ -356,6 +376,11 @@ void CDefiler::MoveByTraceMode(_float dt, _float moveScale)
 
 void CDefiler::RotateToTarget(_float dt, _float rotateSpeed)
 {
+	
+	const _bool ignoreTarget = HasFlag(m_BlackBoard.eTraceFlag, TraceFlag::IgnoreTarget);
+	if (ignoreTarget)
+		return;
+
 	_vector3 vPosition = m_pTransform->Get_Pos();
 	_vector3 vCurrDir = m_pTransform->Dir(STATE::LOOK);
 	_vector3 vTargetDir = m_BlackBoard.vTargetDir;
@@ -457,6 +482,14 @@ void CDefiler::Control_Summon(const string& event)
 	else if (event == "Heavy") {
 		m_MiasmaSpawner.Spawn(MiasmaType::Heavy, 1, m_tTargetingInfo.vTargetPos, Get_BipedPos("Ctr_M_Weapon_03"),
 			m_tTargetingInfo.vTargetPos.y,this);
+	}
+	else if (event == "Weapon") {
+		Hide_MeshGroup(event);
+		m_MiasmaSpawner.Spawn(MiasmaType::Weapon, 1, m_tTargetingInfo.vTargetPos, Get_BipedPos("Ctr_M_Prop_01"),
+			m_tTargetingInfo.vTargetPos.y,this);
+	}
+	else if (event == "WeaponShow") {
+		Show_MeshGroup("Weapon");
 	}
 }
 
