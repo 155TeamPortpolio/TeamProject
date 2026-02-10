@@ -181,4 +181,7 @@ struct DefilerDissolve {
     _bool isComplete() {
         return fDissolveElapsedTime >= fDissolveDuration;
     }
+    _bool isComplete(DISSOLVE_STATE state) {
+        return (eDissolveState == state && fDissolveElapsedTime >= fDissolveDuration);
+    }
 }; 

@@ -28,14 +28,14 @@
           "EventTag": "ParrySign"
         },
         {
+          "EventTime": 0.75,
+          "EventType": "Sound",
+          "EventTag": "DefilerSwingBase.wav"
+        },
+        {
           "EventTime": 0.7953216433525085,
           "EventType": "Notify",
           "EventTag": "TargetLockOn"
-        },
-        {
-          "EventTime": 0.812995433807373,
-          "EventType": "Sound",
-          "EventTag": "DefilerSwingBase.wav"
         },
         {
           "EventTime": 0.8483430743217468,
@@ -51,6 +51,11 @@
           "EventTime": 1.0074074268341064,
           "EventType": "Notify",
           "EventTag": "TargetLockOff"
+        },
+        {
+          "EventTime": 1.0692657232284546,
+          "EventType": "Notify",
+          "EventTag": "ParrySign"
         },
         {
           "EventTime": 1.2548407316207886,
@@ -76,11 +81,6 @@
           "EventTime": 1.458298921585083,
           "EventType": "Notify",
           "EventTag": "A_Type_Off"
-        },
-        {
-          "EventTime": 1.0692657232284546,
-          "EventType": "Notify",
-          "EventTag": "ParrySign"
         }
       ]
     },
@@ -91,6 +91,11 @@
           "EventTime": 0.7634827494621277,
           "EventType": "Notify",
           "EventTag": "ParrySign"
+        },
+        {
+          "EventTime": 0.949999988079071,
+          "EventType": "Sound",
+          "EventTag": "DefilerSwingBase.wav"
         },
         {
           "EventTime": 0.9909031391143799,
@@ -123,6 +128,11 @@
           "EventTag": "TargetLockOn"
         },
         {
+          "EventTime": 1.350000023841858,
+          "EventType": "Sound",
+          "EventTag": "DefilerSwingBase.wav"
+        },
+        {
           "EventTime": 1.4619882106781006,
           "EventType": "Notify",
           "EventTag": "A_Type_On"
@@ -141,6 +151,11 @@
           "EventTime": 1.9818062782287598,
           "EventType": "Notify",
           "EventTag": "ParrySign"
+        },
+        {
+          "EventTime": 2.1500000953674316,
+          "EventType": "Sound",
+          "EventTag": "DefilerSwingBase.wav"
         },
         {
           "EventTime": 2.1767380237579346,
@@ -168,6 +183,11 @@
           "EventTag": "ParrySign"
         },
         {
+          "EventTime": 2.8299999237060547,
+          "EventType": "Sound",
+          "EventTag": "DefilerSwingBase.wav"
+        },
+        {
           "EventTime": 2.842755079269409,
           "EventType": "Notify",
           "EventTag": "TargetLockOn"
@@ -191,6 +211,11 @@
           "EventTime": 3.4113059043884277,
           "EventType": "Notify",
           "EventTag": "ParrySign"
+        },
+        {
+          "EventTime": 3.6700000762939453,
+          "EventType": "Sound",
+          "EventTag": "DefilerSwingBase.wav"
         },
         {
           "EventTime": 3.736191987991333,
@@ -223,6 +248,16 @@
           "EventTag": "TargetLockOn"
         },
         {
+          "EventTime": 4.96999979019165,
+          "EventType": "Sound",
+          "EventTag": "DefilerSwingBase.wav"
+        },
+        {
+          "EventTime": 5.179999828338623,
+          "EventType": "Sound",
+          "EventTag": "DefilerHitGround.wav"
+        },
+        {
           "EventTime": 5.181936264038086,
           "EventType": "Notify",
           "EventTag": "A_Type_On"
@@ -246,6 +281,11 @@
           "EventTime": 0.7610136270523071,
           "EventType": "Notify",
           "EventTag": "ParrySign"
+        },
+        {
+          "EventTime": 1.2999999523162842,
+          "EventType": "Sound",
+          "EventTag": "DefilerSwingBase.wav"
         },
         {
           "EventTime": 1.3634827136993408,
@@ -278,6 +318,11 @@
           "EventTag": "ParrySign"
         },
         {
+          "EventTime": 0.8211825489997864,
+          "EventType": "Sound",
+          "EventTag": "DefilerSwingBase.wav"
+        },
+        {
           "EventTime": 0.8790123462677002,
           "EventType": "Notify",
           "EventTag": "A_Type_On"
@@ -291,6 +336,16 @@
           "EventTime": 1.156595230102539,
           "EventType": "Notify",
           "EventTag": "A_Type_On"
+        },
+        {
+          "EventTime": 1.168161153793335,
+          "EventType": "Sound",
+          "EventTag": "DefilerSwingBase.wav"
+        },
+        {
+          "EventTime": 1.283820629119873,
+          "EventType": "Sound",
+          "EventTag": "DefilerHitGround2.wav"
         },
         {
           "EventTime": 1.7464587688446045,
@@ -328,6 +383,11 @@
           "EventTag": "ParrySign"
         },
         {
+          "EventTime": 3.215334892272949,
+          "EventType": "Sound",
+          "EventTag": "DefilerSwingBase.wav"
+        },
+        {
           "EventTime": 3.259999990463257,
           "EventType": "Notify",
           "EventTag": "TargetLockOn"
@@ -336,6 +396,11 @@
           "EventTime": 3.2615983486175537,
           "EventType": "Notify",
           "EventTag": "A_Type_On"
+        },
+        {
+          "EventTime": 3.299999952316284,
+          "EventType": "Sound",
+          "EventTag": "DefilerHitGround.wav"
         },
         {
           "EventTime": 3.504483461380005,
@@ -468,9 +533,14 @@
           "EventTag": "ParrySign"
         },
         {
-          "EventTime": 0.8684860467910767,
+          "EventTime": 0.6800000071525574,
           "EventType": "Sound",
           "EventTag": "Defiler_Charge01.wav"
+        },
+        {
+          "EventTime": 1.0,
+          "EventType": "Sound",
+          "EventTag": "DefilerSwingBase.wav"
         },
         {
           "EventTime": 1.143859624862671,
@@ -481,6 +551,11 @@
           "EventTime": 1.6204677820205688,
           "EventType": "Notify",
           "EventTag": "A_Type_On"
+        },
+        {
+          "EventTime": 1.673424243927002,
+          "EventType": "Sound",
+          "EventTag": "DefilerHitGround2.wav"
         },
         {
           "EventTime": 1.747563362121582,
@@ -518,9 +593,19 @@
           "EventTag": "TargetLockOn"
         },
         {
+          "EventTime": 1.8300000429153442,
+          "EventType": "Sound",
+          "EventTag": "DefilerSwingBase.wav"
+        },
+        {
           "EventTime": 1.8910980224609375,
           "EventType": "Notify",
           "EventTag": "A_Type_On"
+        },
+        {
+          "EventTime": 1.899935007095337,
+          "EventType": "Sound",
+          "EventTag": "DefilerHitGround3.wav"
         },
         {
           "EventTime": 2.2887587547302246,
@@ -588,7 +673,7 @@
           "EventTag": "Laser"
         },
         {
-          "EventTime": 3.2699999809265137,
+          "EventTime": 3.130000114440918,
           "EventType": "Notify",
           "EventTag": "EvadeSign"
         },
@@ -613,9 +698,19 @@
           "EventTag": "Blade"
         },
         {
+          "EventTime": 2.5799999237060547,
+          "EventType": "Sound",
+          "EventTag": "DefilerSwingBase.wav"
+        },
+        {
           "EventTime": 2.885964870452881,
           "EventType": "Notify",
           "EventTag": "ParrySign"
+        },
+        {
+          "EventTime": 3.200000047683716,
+          "EventType": "Sound",
+          "EventTag": "DefilerSwingBase.wav"
         },
         {
           "EventTime": 3.2748537063598633,
@@ -626,6 +721,11 @@
           "EventTime": 4.093567371368408,
           "EventType": "Notify",
           "EventTag": "ParrySign"
+        },
+        {
+          "EventTime": 4.216373920440674,
+          "EventType": "Sound",
+          "EventTag": "DefilerSwingBase.wav"
         },
         {
           "EventTime": 4.277777671813965,
@@ -656,6 +756,11 @@
           "EventTime": 5.8947367668151855,
           "EventType": "Notify",
           "EventTag": "ParrySign"
+        },
+        {
+          "EventTime": 6.590642929077148,
+          "EventType": "Sound",
+          "EventTag": "DefilerSwingBase.wav"
         },
         {
           "EventTime": 6.672514915466309,
@@ -700,6 +805,36 @@
           "EventTime": 0.0,
           "EventType": "Notify",
           "EventTag": "TsunamiStart"
+        },
+        {
+          "EventTime": 2.700000047683716,
+          "EventType": "Notify",
+          "EventTag": "Weapon"
+        },
+        {
+          "EventTime": 3.0,
+          "EventType": "Notify",
+          "EventTag": "WeaponShow"
+        },
+        {
+          "EventTime": 3.369999885559082,
+          "EventType": "Notify",
+          "EventTag": "Weapon"
+        },
+        {
+          "EventTime": 4.0,
+          "EventType": "Notify",
+          "EventTag": "WeaponShow"
+        },
+        {
+          "EventTime": 5.024691104888916,
+          "EventType": "Notify",
+          "EventTag": "Weapon"
+        },
+        {
+          "EventTime": 6.800000190734863,
+          "EventType": "Notify",
+          "EventTag": "WeaponShow"
         }
       ]
     },
