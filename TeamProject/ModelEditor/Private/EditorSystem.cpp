@@ -37,7 +37,8 @@ _bool CEditorSystem::CheckNamingRule(string MeshName)
     string lowerName = Helper::ToLower(MeshName);
     for (auto& name : m_CheckNameRules)
     {
-        if (lowerName.find(name) != string::npos)
+        string lowerRule = Helper::ToLower(name);
+        if (lowerName.find(lowerRule) != string::npos)
             return false;
     }
     return true;

@@ -29,6 +29,8 @@ public:
     HRESULT Render_RadialBlur_Internal();
     HRESULT Render_Fog_Internal();
     HRESULT Render_Addictive_Internal();
+    HRESULT Render_Glitch_Internal();
+    HRESULT Render_GuassianBlur_Internal();
     HRESULT Render_Final();
 
 public:
@@ -51,7 +53,8 @@ private:
 private:
     _float              m_fScreenWidth;
     _float              m_fScreenHeight;
-
+    
+    _float              m_fAccTime = 0.f;
     string              m_strLastTargetName = "Target_Final";
 
 public:

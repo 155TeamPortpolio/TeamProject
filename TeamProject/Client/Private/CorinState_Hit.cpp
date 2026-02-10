@@ -7,7 +7,6 @@
 
 void CCorinState_Hit::Enter(CCorin* pOwner)
 {
-	pOwner->Push_Invincible();
 	pOwner->Lock_Move();
 	pOwner->Stop_Rotation();
 
@@ -67,7 +66,6 @@ void CCorinState_Hit::Update(CCorin* pOwner, _float dt)
 void CCorinState_Hit::Exit(CCorin* pOwner)
 {
 	pOwner->Unlock_Move();
-	pOwner->Pop_Invincible();
 	__super::Exit(pOwner);
 }
 

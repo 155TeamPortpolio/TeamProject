@@ -10,12 +10,16 @@ float2  RadialCenter;
 float   FogDensity;
 float4  FogColor;
 
+float   GlitchIntensity;
+
 float   g_Time;
 float3  AddictiveColor;
 
 float ScreenWidth;
 float ScreenHeight;
 
+float   GuassianIntensity;
+bool    bSkinned = false;
 
 struct VS_IN
 {
@@ -162,6 +166,51 @@ PS_OUT_RESULT PS_HDR_BLURV(PS_IN In)
     return Out;
 }
 
+PS_OUT_RESULT PS_GUASSIAN_BLURH(PS_IN In)
+{
+    PS_OUT_RESULT Out;
+    
+    float2 texelSize = GuassianIntensity / float2(ScreenWidth, ScreenHeight);
+    float3 result = 0;
+
+    float weights[5] = { 0.227027, 0.1945946, 0.1216216, 0.054054, 0.016216 };
+    
+    result = FinalTexture.Sample(DefaultSampler, In.vTexcoord).rgb * weights[0];
+    
+    for (int i = 1; i < 5; ++i)
+    {
+        float2 offset = float2(texelSize.x * i, 0);
+        result += FinalTexture.Sample(DefaultSampler, In.vTexcoord + offset).rgb * weights[i];
+        result += FinalTexture.Sample(DefaultSampler, In.vTexcoord - offset).rgb * weights[i];
+    }
+    
+    Out.vResult = float4(result, 1.f);
+    return Out;
+}
+
+PS_OUT_RESULT PS_GUASSIAN_BLURV(PS_IN In)
+{
+    PS_OUT_RESULT Out;
+    
+    float2 texelSize = GuassianIntensity / float2(ScreenWidth, ScreenHeight);
+    float3 result = 0;
+
+    float weights[5] = { 0.227027, 0.1945946, 0.1216216, 0.054054, 0.016216 };
+    
+    result = GuassianBlurXTexture.Sample(DefaultSampler, In.vTexcoord).rgb * weights[0];
+    
+    for (int i = 1; i < 5; ++i)
+    {
+        float2 offset = float2(0, texelSize.y * i);
+        result += GuassianBlurXTexture.Sample(DefaultSampler, In.vTexcoord + offset).rgb * weights[i];
+        result += GuassianBlurXTexture.Sample(DefaultSampler, In.vTexcoord - offset).rgb * weights[i];
+    }
+    
+    Out.vResult = float4(result, 1.f);
+    
+    return Out;
+}
+
 PS_OUT_RESULT PS_RADIAL_BLUR(PS_IN In)
 {
     PS_OUT_RESULT Out;
@@ -193,10 +242,37 @@ PS_OUT_RESULT PS_ADDICTIVECOLOR(PS_IN In)
     
     float4 scene = FinalTexture.Sample(DefaultSampler, In.vTexcoord);
     
-    float skinnedAlpha = 1 - SkinnedCombinedTexture.Sample(DefaultSampler, In.vTexcoord).a;
-    float3 tinted = scene.rgb * AddictiveColor;
+    if(bSkinned)
+    {
+        float skinnedAlpha = 1 - SkinnedCombinedTexture.Sample(DefaultSampler, In.vTexcoord).a;
+        float3 tinted = scene.rgb * AddictiveColor;
     
-    Out.vResult = float4(lerp(scene.rgb, tinted, skinnedAlpha), scene.a);
+        Out.vResult = float4(lerp(scene.rgb, tinted, skinnedAlpha), scene.a);
+    }
+    else
+    {
+        Out.vResult = float4(scene.rgb * AddictiveColor, scene.a);
+    }
+    
+    return Out;
+}
+
+PS_OUT_RESULT PS_GLITCH(PS_IN In)
+{
+    PS_OUT_RESULT Out;
+    float2 uv = In.vTexcoord;
+    
+    float randomOffset = GlitchNoiseTexture.Sample(LinearSampler, float2(g_Time * 0.3, 0.5)).r * 10.0;
+    
+    float noise1 = GlitchNoiseTexture.Sample(LinearSampler, float2(uv.y * 30.0 + randomOffset, 0.5)).r;
+    float noise2 = GlitchNoiseTexture.Sample(LinearSampler, float2(uv.y * 80.0 + g_Time * 2.0, 0.7)).r;
+
+    float combinedNoise = noise1 * 0.7 + noise2 * 0.3;
+    
+    float shift = (combinedNoise - 0.5) * GlitchIntensity * 0.02;
+    
+    float2 glitchUV = float2(uv.x + shift, uv.y);
+    Out.vResult = FinalTexture.Sample(DefaultSampler, glitchUV);
     
     return Out;
 }
@@ -313,6 +389,26 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_HDR_BLURV();
     }
 
+    pass GUASSIAN_BLURH
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_GUASSIAN_BLURH();
+    }
+
+    pass GUASSIAN_BLURV
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_GUASSIAN_BLURV();
+    }
+
     pass RADIAL
     {
         SetRasterizerState(RS_Default);
@@ -341,6 +437,16 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_ADDICTIVECOLOR();
+    }
+
+    pass GLITCH
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_GLITCH();
     }
 
     pass COMBINED

@@ -175,7 +175,7 @@ void CDefilerState_Attack::ComboTransition(CDefiler* pOwner)
 
 	if (m_fAnimProgress >= blackBoard.reservedPattern.animEndProgress)
 		blackBoard.isRequestNext = true;
-}
+}/*EvadeSign*/
 
 void CDefilerState_Attack::Exit(CDefiler* pOwner)
 {
