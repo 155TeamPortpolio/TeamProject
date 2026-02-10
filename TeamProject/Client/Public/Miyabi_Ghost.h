@@ -1,5 +1,8 @@
 #pragma once
 #include "GameObject.h"
+
+NS_BEGIN(Client)
+
 class CMiyabi_Ghost final : public CGameObject
 {
 private:
@@ -33,3 +36,4 @@ public:
 	virtual void Free() override;
 };
 
+NS_END

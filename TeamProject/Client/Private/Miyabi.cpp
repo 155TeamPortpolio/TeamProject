@@ -346,11 +346,6 @@ void CMiyabi::Clear_MotionBlur()
 {
 	m_BoneMatrices.clear();
 	m_WorldMatrices.clear();
-}
-
-void CMiyabi::Reset_RimLight()
-{
-	m_vRimLightColor = _float3(0.f, 0.f, 0.f);
 	m_fRimLightPower = 0.f;
 }
 
@@ -538,7 +533,8 @@ HRESULT CMiyabi::Initialize_Ghost()
 	if (nullptr == pGhost)
 		return E_FAIL;
 
-	static_cast<CMiyabi_Ghost*>(pGhost)->Set_FollowTarget(m_pTransform);
+	m_pGhost = static_cast<CMiyabi_Ghost*>(pGhost);
+	m_pGhost->Set_FollowTarget(m_pTransform);
 	Get_Component<CObjectContainer>()->Add_Child(pGhost, false);
 
 	return S_OK;

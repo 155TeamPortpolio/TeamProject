@@ -51,7 +51,6 @@ public: // 행동 이벤트
 public: // 모션블러
     void    Add_MotionBlur();
     void    Clear_MotionBlur();
-    void    Reset_RimLight();
 
 public: // 무기 이펙트 메쉬
     void    Set_WeaponEffectMesh(_bool bOn);
@@ -78,6 +77,9 @@ private: // 모션블러 렌더
 //    HRESULT Add_OutLineRender();
 
 private:
+    // 고스트
+    class CMiyabi_Ghost* m_pGhost = { nullptr };
+    string m_strGhostName = { "Avatar_Female_Size02_Unagi_Ghost_Ani_" };
     // 상태머신
     CStateMachine<CMiyabi>* m_pStateMachine = { nullptr };
 
