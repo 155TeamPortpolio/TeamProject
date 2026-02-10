@@ -41,12 +41,12 @@ void CMiyabiState_SwitchInParryAid::Enter(CMiyabi* pOwner)
     OBJECT_HANDLE handle = pOwner->Get_ParryHandle();
     if (handle.isValid())
     {
-        dynamic_cast<CEnemy*>(handle.Get())->Parried();
-        BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::PARRY);
-        TARGET_LOCK_DESC desc;
-        desc.bLock = true;
-        desc.tHandle = handle;
-        EventSystem()->Broadcast<TARGET_LOCK_DESC>({ desc });
+        //dynamic_cast<CEnemy*>(handle.Get())->Parried();
+
+        //TARGET_LOCK_DESC desc;
+        //desc.bLock = true;
+        //desc.tHandle = handle;
+        //EventSystem()->Broadcast<TARGET_LOCK_DESC>({ desc });
     }
 
     __super::Enter(pOwner);
@@ -62,7 +62,7 @@ void CMiyabiState_SwitchInParryAid::Update(CMiyabi* pOwner, _float dt)
         IHState<CMiyabi>* pSwitchIn = Get_ParentState();
         if (pSwitchIn && pSwitchIn->Get_SubStateMachine())
         {
-            pSwitchIn->Get_SubStateMachine()->Set_Int("ExitMode", 0);  // Idle·Î
+            pSwitchIn->Get_SubStateMachine()->Set_Int("ExitMode", 0);  // Idle
             pSwitchIn->Get_SubStateMachine()->Set_Trigger("Complete");
         }
     }
@@ -72,15 +72,6 @@ void CMiyabiState_SwitchInParryAid::Exit(CMiyabi* pOwner)
 {
     pOwner->Unlock_Move();
     pOwner->Unlock_Rotate();
-
-    OBJECT_HANDLE handle = pOwner->Get_ParryHandle();
-    if (handle.isValid())
-    {
-        TARGET_LOCK_DESC desc;
-        desc.bLock = false;
-        desc.tHandle = handle;
-        EventSystem()->Broadcast<TARGET_LOCK_DESC>({ desc });
-    }
 
     __super::Exit(pOwner);
 }
@@ -107,6 +98,15 @@ void CMiyabiState_SwitchInParryAid_L_Loop::Enter(CMiyabi* pOwner)
         .BlendDuration(0.1f)
         .Speed(2.f)
         .Apply();
+
+    OBJECT_HANDLE handle = pOwner->Get_ParryHandle();
+    if (handle.isValid())
+    {
+        TARGET_LOCK_DESC desc;
+        desc.bLock = false;
+        desc.tHandle = handle;
+        EventSystem()->Broadcast<TARGET_LOCK_DESC>({desc});
+    }
 }
 
 void CMiyabiState_SwitchInParryAid_L_Loop::Update(CMiyabi* pOwner, _float dt)

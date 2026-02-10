@@ -1,26 +1,30 @@
 #pragma once
 #include "Base.h"
 #include "Zero_Level.h"
-#include "StageFx.h"
+#include "EffectFlow.h"
 #include "MapData_Defines.h"
+
+NS_BEGIN(Engine)
+class CGameObject;
+NS_END
 
 NS_BEGIN(Client)
 class CStage :
     public CBase
 {
 protected:
-	enum class StageState	{None,Entrance,BattleStart,BattleEnd,Outro,End};
-	enum class PlayerPoint	{Typical,Sub,End};
+	enum class StageState	{None, Entrance, BattleStart, BattleEnd, Outro, End};
+	enum class PlayerPoint	{Typical, Sub, End};
 	struct Combined_MonsterData
 	{
 		struct creation {
 			MonsterCreationDesc creationInfo;
 			_int Count = {};
 		};
-		vector<creation> CreationData;
-		vector<_float3>	 SpawnPoint;
+		map<_int, vector<creation>> CreationData;
+		vector<_float3>				SpawnPoint;
 		void Reset() {
-			vector<creation> dummy;
+			map<_int, vector<creation>>dummy;
 			vector<_float3> dummy2;
 			CreationData.swap(dummy);
 			SpawnPoint.swap(dummy2);
@@ -78,11 +82,11 @@ protected:
 
 	/*데이터 - 몬스터*/
 	Combined_MonsterData m_MonsterData = {};
-	vector<class CGameObject*> m_pMonsters;
+	queue<vector<class CGameObject*>> m_MonsterQueue;
 
 	/*데이터 - 플레이어*/
 	OBJECT_HANDLE m_PlayerHandle = {};
-	array<PlayerSRT, ENUM(PlayerPoint::End)> m_PlayerPoint;
+	array<PlayerSRT, ENUM(PlayerPoint::End)> m_PlayerPoint{};
 
 	/*데이터 - 스테이지 포탈*/
 	vector<class CGameObject*> m_pPortals;

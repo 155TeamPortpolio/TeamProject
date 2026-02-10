@@ -37,7 +37,7 @@ private:
 
 private:
     _float m_ElapsedTime = {};
-    _float m_fMovceSpeed = {35};
+    _float m_fMoveSpeed = {35};
     _vector3 m_vTargetVelocity = {};
     _vector3 m_vVelocity = {};
     class CDefiler* m_pOwner = { nullptr };

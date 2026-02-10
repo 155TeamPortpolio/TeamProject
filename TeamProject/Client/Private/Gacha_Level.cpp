@@ -50,7 +50,7 @@ HRESULT CGacha_Level::Awake()
 	lightDesc.fLightIntensity = 0.7f;
 	pShadowCam->Get_Component<CLight>()->Set_Desc(lightDesc, LIGHT_TYPE::DIRECTIONAL);
 
-	RenderSystem()->Set_FogDesc({ _float4(0.1f, 0.1f, 0.1f, 1.0f) ,0.f, 0.f, 0.02f, true });
+	//RenderSystem()->Set_FogDesc({ _float4(0.1f, 0.1f, 0.1f, 1.0f) ,0.f, 0.f, 0.02f, true });
 
 	Ready_GachaObjects(); 
 

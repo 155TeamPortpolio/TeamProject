@@ -1,5 +1,6 @@
 #pragma once
 #include "GameObject.h"
+#include "EffectFlow.h"
 
 NS_BEGIN(Client)
 
@@ -70,6 +71,8 @@ private:
     STAGE_LIGHT             BottomLight;
     STAGE_LIGHT             TopLight;
     STAGE_LIGHT             MiddleLight;
+
+    EffectFlow              m_EffectFlow;
 
 private:
     class CUI_GachaTextReveal* m_pUITextReveal = {};

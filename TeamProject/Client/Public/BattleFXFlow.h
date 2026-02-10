@@ -55,6 +55,7 @@ public:
 		_float	fEndLerpTime = { 0.2f };	// 스케일 종료 보간 비율 (0~1)
 		EaseType eEaseType = EaseType::None;
 	}TIME_SCALE_DATA; /* fDuration, fValue, fStartLerpTime */
+
 	typedef struct tagTimeScale
 	{
 		_bool isRunning = false;
@@ -77,19 +78,20 @@ public:
 		_float EvalScale01(_float t01) const
 		{
 			const _float start = clamp(data.fStartLerpTime, 0.f, 1.f);
-			const _float end = clamp(data.fEndLerpTime, 0.f, 1.f);
-			const _float target = data.fValue;
+			_float end = clamp(data.fEndLerpTime, 0.f, 1.f);
+			end = min(end, 1.f - start); 
 
+			const _float target = data.fValue;
 			const EaseType ease = data.eEaseType;
 
-			if (start > 0.f && t01 < start)
+			if (start > 0.f && t01 <= start)
 			{
 				_float a = clamp(t01 / start, 0.f, 1.f);
 				a = Math::ApplyEase(ease, a);
 				return Math::Lerp(1.f, target, a);
 			}
 
-			if (end > 0.f && t01 > (1.f - end))
+			if (end > 0.f && t01 >= (1.f - end))
 			{
 				_float a = clamp((t01 - (1.f - end)) / end, 0.f, 1.f);
 				a = Math::ApplyEase(ease, a);
@@ -126,9 +128,13 @@ public:
 		_float			fBlurDuration = {};			/* 블러 먹이는 시간 */
 		_float3 vStartColor = {};
 		_float3 vTargetColor = {};
-		TIME_SCALING tPlayerTimeScale = {};		/* Duration, ScaleValue(0 < value < 1), StartLerpTime, EndLerpTime */
-		TIME_SCALING tMonsterTimeScale = {};		/* Duration, ScaleValue(0 < value < 1), StartLerpTime, EndLerpTime */
-		TIME_SCALING tEffectTimeScale = {};		/* Duration, ScaleValue(0 < value < 1), StartLerpTime, EndLerpTime */
+		array<TIME_SCALING, ENUM(BATTLE_OBJ_TYPE::END)> BattleTimeScale;
+
+		void SetTimeData(const TIME_SCALE_DATA& data) {
+			for (size_t typeIndex = 0; typeIndex < ENUM(BATTLE_OBJ_TYPE::END); ++typeIndex) {
+				BattleTimeScale[typeIndex] = data;
+			}
+		}
 	}BATTLE_VFX_DATA;
 
 
@@ -156,6 +162,7 @@ public:
 	void StartVfx_Parry();
 	void StartVfx_Ultimate();
 	void StartVfx_Switch();
+	void HitLack();
 	void SetLayerTimeScale(BATTLE_OBJ_TYPE type, _float scale);
 	void ResetLayerTimeScale(BATTLE_OBJ_TYPE type);
 
@@ -176,6 +183,7 @@ private:/*시퀀스 추가 함수*/
 	void AddPingPongColor3(_float3* colorPtr, const _float3& peakValue, _float duration, EaseType ease = EaseType::InOutSine);
 	void SetOnCancel(VoidFunc onCancel) { m_onCancel = move(onCancel); }
 	void AddParallelTimeScale(BATTLE_OBJ_TYPE type, TIME_SCALING& timeScale);
+	void AddParallelTimeScaleAll(BATTLE_VFX_DATA& vfxData);
 
 private:
 	const BATTLE_VFX_DATA& GetPreset(BATTLE_VFX_TYPE type) const {return m_BattleVFXData[ENUM(type)];};

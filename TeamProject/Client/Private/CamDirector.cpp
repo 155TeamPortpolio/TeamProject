@@ -39,15 +39,20 @@ CGameObject* CCamDirector::GetCamObj(CamType type) const
     return ObjectManager()->Request_Object(m_camHandles[ENUM(type)]);
 }
 
+OBJECT_HANDLE CCamDirector::GetCurTarget() const
+{
+    return BattleSystem()->GetBattlePlayer()->GetTargetHandle();
+}
+
 _bool CCamDirector::Register(const string& key, const fs::path& path)
 {
-    CamSequenceRequestDesc req{};
+    CamSeqReqDesc req{};
     return Register(key, path, req);
 }
 
-_bool CCamDirector::Register(const string& key, const fs::path& path, const CamSequenceRequestDesc& defaultReq)
+_bool CCamDirector::Register(const string& key, const fs::path& path, const CamSeqReqDesc& defaultReq)
 {
-    CamDirectorSeqEntry entry{};
+    CamSeqEntry entry{};
     entry.path = path;
     CamUtil::Load(entry.path, entry.seqDesc);
     entry.defaultReq = defaultReq;
@@ -167,37 +172,23 @@ void CCamDirector::Update(_float dt)
     SyncSeqInputLock();
 
     if (IsValid())
-        m_dialogue.Update(dt, GetOrbitCamComp(), GetOrbitCam(), GetCharacter()->Get_Component<CTransform>());
+        m_dialogue.Update(dt);
+
+    m_parry.Update(dt);
+
+    if (m_dialogueUnlockPending && !m_dialogue.IsBusy())
+    {
+        GetOrbitCam()->Unlock_Input();
+        m_dialogueUnlockPending = false;
+    }
 
      UpdateInput(dt);
 }
 
-void CCamDirector::StartParry()
+void CCamDirector::StartParry(_float fovHold, _float blendInSec, _float holdSec)
 {
     if (!m_gate.Pass()) return;
-
-    auto charaName = GetCharacterName();
-    auto anim = GetCharacter()->Get_Component<CAnimator3D>();
-    
-   // RequestSequence("Parry/Corin");
-
-    GetOrbitCam()->SetLockOn(BattleSystem()->GetBattlePlayer()->GetTargetHandle());
-
-    switch (charaName)
-    {
-    case CHARACTER::JaneDoe:
-        anim->Set_Animation("Avatar_Female_Size03_JaneDoe_Ani_Attack_ParryAid_L").Apply();
-        break;
-
-    case CHARACTER::Corin:
-        anim->Set_Animation("Avatar_Female_Size01_Corin_Ani_Attack_ParryAid_L").Apply();
-        break;
-
-    case CHARACTER::Miyabi:
-        anim->Set_Animation("Avatar_Female_Size02_Unagi_Ani_Attack_ParryAid_L").Apply();
-        break;
-    }
-
+    m_parry.Begin(fovHold, blendInSec, holdSec);
 }
 
 void CCamDirector::StartBattleIntro(CamSeqType type)
@@ -266,15 +257,17 @@ void CCamDirector::SyncSeqInputLock()
 void CCamDirector::StartDialog()
 {
     GetOrbitCam()->Lock_Input();
+    GetOrbitCam()->DialogueMode_Begin();
 
-    m_dialogue.Begin(60.f, 0.5f);
+    m_dialogue.Begin(35.f, 0.5f);
+    m_dialogueUnlockPending = false;
 }
 
 void CCamDirector::EndDialog()
 {
-    GetOrbitCam()->Unlock_Input();
-
     m_dialogue.End(0.5f);
+    m_dialogueUnlockPending = true;
+    GetOrbitCam()->Unlock_Input();
 }
 
 void CCamDirector::UpdatePlayer()
@@ -332,7 +325,7 @@ _bool CCamDirector::IsFinished(CamEventType type) const
     return m_events.IsFired(Helper::EnumToString(type));
 }
 
-_uint CCamDirector::RequestSequence(const string& key, const CamSequenceRequestDesc& req)
+_uint CCamDirector::RequestSequence(const string& key, const CamSeqReqDesc& req)
 {
     auto it = m_seqs.find(key);
     if (it == m_seqs.end()) return 0u;
@@ -355,8 +348,8 @@ _uint CCamDirector::RequestSequence(const string& key, const CamSequenceRequestD
 
         seqPlayer->SetSequence(&entry.seqDesc);
 
-        if (entry.seqDesc.space == CamSpace::Local) seqPlayer->SetSpaceReference(m_spaceRefHandle);
-        else seqPlayer->ClearSpaceReference();
+        if (entry.seqDesc.space == CamSpace::Local) seqPlayer->SetSpaceRef(m_spaceRefHandle);
+        else seqPlayer->ClearSpaceRef();
 
         seqPlayer->SetApplyEnabled(true);
 
@@ -391,8 +384,8 @@ _uint CCamDirector::RequestSequence(const string& key, const CamSequenceRequestD
 
         seqPlayer->SetSequence(&entry.seqDesc);
 
-        if (entry.seqDesc.space == CamSpace::Local) seqPlayer->SetSpaceReference(m_spaceRefHandle);
-        else seqPlayer->ClearSpaceReference();
+        if (entry.seqDesc.space == CamSpace::Local) seqPlayer->SetSpaceRef(m_spaceRefHandle);
+        else seqPlayer->ClearSpaceRef();
 
         seqPlayer->SetApplyEnabled(true);
 

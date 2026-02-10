@@ -38,17 +38,6 @@ void CJaneDoeState_SwitchInParryAid::Enter(CJaneDoe* pOwner)
     pOwner->Lock_Move();
     pOwner->Lock_Rotate();
 
-    OBJECT_HANDLE handle = pOwner->Get_ParryHandle();
-    if (handle.isValid())
-    {
-        dynamic_cast<CEnemy*>(handle.Get())->Parried();
-        BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::PARRY);
-        TARGET_LOCK_DESC desc;
-        desc.bLock = true;
-        desc.tHandle = handle;
-        EventSystem()->Broadcast<TARGET_LOCK_DESC>({ desc });
-    }
-
     __super::Enter(pOwner);
 }
 
@@ -72,15 +61,6 @@ void CJaneDoeState_SwitchInParryAid::Exit(CJaneDoe* pOwner)
 {
     pOwner->Unlock_Move();
     pOwner->Unlock_Rotate();
-
-    OBJECT_HANDLE handle = pOwner->Get_ParryHandle();
-    if (handle.isValid())
-    {
-        TARGET_LOCK_DESC desc;
-        desc.bLock = false;
-        desc.tHandle = handle;
-        EventSystem()->Broadcast<TARGET_LOCK_DESC>({ desc });
-    }
 
     __super::Exit(pOwner);
 }
@@ -109,6 +89,15 @@ void CJaneDoeState_SwitchInParryAid_L_Loop::Enter(CJaneDoe* pOwner)
         .BlendDuration(0.1f)
         .Speed(2.f)
         .Apply();
+
+    OBJECT_HANDLE handle = pOwner->Get_ParryHandle();
+    if (handle.isValid())
+    {
+        TARGET_LOCK_DESC desc;
+        desc.bLock = false;
+        desc.tHandle = handle;
+        EventSystem()->Broadcast<TARGET_LOCK_DESC>({desc});
+    }
 }
 
 void CJaneDoeState_SwitchInParryAid_L_Loop::Update(CJaneDoe* pOwner, _float dt)

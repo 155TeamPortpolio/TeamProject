@@ -11,9 +11,6 @@
 #include "EventListener.h"
 #include "ObjectContainer.h"
 
-#include "StaticModel.h"
-#include "Material.h"
-
 namespace
 {
     void BuildOrbitBasis(const Vector2& rotDeg, Vector3& outLook, Vector3& outRight, Quaternion& outQ)
@@ -69,10 +66,9 @@ HRESULT COrbitCam::Initialize_Prototype()
     __super::Initialize_Prototype();
     Add_Component<CCharacterController>();
     Add_Component<CEventListener>();
-    
-    //Add_Component<CStaticModel>()->Link_Model(G_GlobalLevelKey, "Default.model");
-    //Add_Component<CMaterial>()->Link_Material(G_GlobalLevelKey, "Default.mat");
 
+   
+    
     m_pose.rotGoalDeg = Vector2(0.f, m_prof.startPitchDeg);
     m_pose.rotCurDeg = m_pose.rotGoalDeg;
 
@@ -324,6 +320,8 @@ OrbitLockEval COrbitCam::ApplyLock(_float dt)
     OrbitLockEval lockRes{};
     if (!Lock_On()) return lockRes;
 
+    if (m_parryMode) return lockRes;
+
     lockRes = EvalLock(dt, m_pose.rotGoalDeg.x, m_pose.distWanted);
 
     m_pose.rotGoalDeg.x += lockRes.yawAddDeg;
@@ -379,10 +377,19 @@ void COrbitCam::Priority_Update(_float dt)
     float pivotA = 1.f - expf(-m_prof.pivotSmooth * dt);
     pivotA = clamp(pivotA, 0.f, 1.f);
 
-    Vector2 rotCurNext = m_pose.rotCurDeg + (m_pose.rotGoalDeg - m_pose.rotCurDeg) * rotA;
+    Vector2 rotGoalLocal = m_pose.rotGoalDeg;
+
+    if (m_dialogueYaw.active && lockRes.weight <= 0.f)
+    {
+        const float w = clamp(m_dialogueYaw.weight, 0.f, 1.f);
+        const float delta = Math::WrapDeg(m_dialogueYaw.yawGoalDeg - rotGoalLocal.x);
+        rotGoalLocal.x = rotGoalLocal.x + delta * w;
+    }
+
+    Vector2 rotCurNext = m_pose.rotCurDeg + (rotGoalLocal - m_pose.rotCurDeg) * rotA;
     const Vector3 pivotCurNext = m_pose.pivotCurWorld + (m_pose.pivotGoalWorld - m_pose.pivotCurWorld) * pivotA;
 
-    if (lockRes.weight <= 0.f && m_prof.autoYaw)
+    if (lockRes.weight <= 0.f && m_prof.autoYaw && !m_dialogueYaw.active)
     {
         const Vector3 foot = GetFoot();
 
@@ -395,19 +402,31 @@ void COrbitCam::Priority_Update(_float dt)
 
         ClampTargets();
 
-        rotCurNext = m_pose.rotCurDeg + (m_pose.rotGoalDeg - m_pose.rotCurDeg) * rotA;
+        rotGoalLocal = m_pose.rotGoalDeg;
+        rotCurNext = m_pose.rotCurDeg + (rotGoalLocal - m_pose.rotCurDeg) * rotA;
     }
 
-    auto cc = Get_Component<CCharacterController>();
-    auto scene = PhysicsSystem()->Get_Scene();
+    if (m_dialogueMode)
+    {
+        m_hitDist = false;
+        m_yawDeltaCapDeg = m_prof.yawDeltaCapDeg;
+        m_pitchDeltaCapDeg = m_prof.pitchDeltaCapDeg;
 
-    const OrbitCollideEval colRes = EvalCollideDist(dt, m_prof, scene, cc, pivotCurNext, m_pose.distWanted, m_pose.rotCurDeg, rotCurNext, m_pose.distGoal);
+        m_pose.distGoal = clamp(m_pose.distWanted, m_prof.distMin, m_prof.distMax);
+    }
+    else
+    {
+        auto cc = Get_Component<CCharacterController>();
+        auto scene = PhysicsSystem()->Get_Scene();
 
-    m_hitDist = colRes.hit;
-    m_yawDeltaCapDeg = colRes.yawDeltaCapDeg;
-    m_pitchDeltaCapDeg = colRes.pitchDeltaCapDeg;
+        const OrbitCollideEval colRes = EvalCollideDist(dt, m_prof, scene, cc, pivotCurNext, m_pose.distWanted, m_pose.rotCurDeg, rotCurNext, m_pose.distGoal);
 
-    m_pose.distGoal = colRes.goalDist;
+        m_hitDist = colRes.hit;
+        m_yawDeltaCapDeg = colRes.yawDeltaCapDeg;
+        m_pitchDeltaCapDeg = colRes.pitchDeltaCapDeg;
+
+        m_pose.distGoal = colRes.goalDist;
+    }
 
     float distA = 1.f - expf(-m_prof.distSmooth * dt);
     distA = clamp(distA, 0.f, 1.f);
@@ -419,6 +438,7 @@ void COrbitCam::Priority_Update(_float dt)
     ApplyPose(dt, lockRes);
     EvalOcclusion();
 }
+
 
 void COrbitCam::EvalOcclusion()
 {
@@ -495,6 +515,12 @@ void COrbitCam::EvalOcclusion()
     m_occlusion.Dispatch();
 }
 
+void COrbitCam::DialogueYaw_Set(_float yawGoalDeg, _float weight)
+{
+    m_dialogueYaw.active     = true;
+    m_dialogueYaw.yawGoalDeg = yawGoalDeg; 
+    m_dialogueYaw.weight     = clamp(weight, 0.f, 1.f);
+}
 
 void COrbitCam::ClampTargets()
 {
@@ -570,6 +596,7 @@ void COrbitCam::AutoYaw_OnTarget()
 
 _float COrbitCam::EvalAutoYaw(_float dt, const Vector3& foot, const Vector3& camLookWorld, const Vector3& camRightWorld, _float curYawDeg)
 {
+    if (m_parryMode) return 0.f;
     if (!m_prof.autoYaw) return 0.f;
 
     if (m_autoYaw.holdTimer > 0.f)

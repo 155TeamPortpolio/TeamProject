@@ -14,7 +14,7 @@ NS_END
 
 NS_BEGIN(Client)
 namespace fs = filesystem;
-class CBattlePlayer; class CFieldCharacter; class CPlayer; class CCharacter; class CBattlePlayer;
+class CBattlePlayer; class CFieldCharacter; class CPlayer; class CCharacter; class CBattlePlayer; class CBattleSystem;
 
 enum class CamType       { None, Free, Orbit, Sequence, End };
 enum class CamReturnMode { None, SnapToEnd, RestorePrev };
@@ -50,7 +50,7 @@ enum class CamZoomType
     End
 };
 
-struct CamSequenceRequestDesc
+struct CamSeqReqDesc
 {
     _float blendInSec  = 0.25f;
     _float blendOutSec = 0.25f;
@@ -60,14 +60,14 @@ struct CamSequenceRequestDesc
     CamType       returnCamType = CamType::None;
 };
 
-struct CamDirectorSeqEntry
+struct CamSeqEntry
 {
     filesystem::path       path{};
-    CamSequenceDesc        seqDesc{};
-    CamSequenceRequestDesc defaultReq{};
+    CamSeqDesc        seqDesc{};
+    CamSeqReqDesc defaultReq{};
 };
 
-struct CamDirectorPlayingState
+struct CamPlayingState
 {
     _uint            handle = 0u;
     string           key{};
@@ -88,7 +88,7 @@ struct CamDirectorPlayingState
     OrbitSnapshot    prevOrbit{};
 };
 
-using CamDirectorSeqMap     = unordered_map<string, CamDirectorSeqEntry>;
-using CamDirectorCamHandles = array<OBJECT_HANDLE, ENUM(CamType::End)>;
+using CamSeqMap     = unordered_map<string, CamSeqEntry>;
+using CamObjHandles = array<OBJECT_HANDLE, ENUM(CamType::End)>;
 
 NS_END

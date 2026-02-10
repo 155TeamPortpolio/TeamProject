@@ -16,6 +16,7 @@
 #include "Corin.h"
 #include "JaneDoe.h"
 #include "Miyabi.h"
+#include "Miyabi_Ghost.h"
 
 #include "Camera.h"
 #include "DisplayGate.h"
@@ -63,18 +64,18 @@ void CBattlePlayer::Priority_Update(_float dt)
 
 void CBattlePlayer::Update(_float dt)
 {
-    if (m_fSwitchCooldown > 0.f)
+    if (m_fSwitchTimer > 0.f)
     {
-        m_fSwitchCooldown -= dt;
-        if (m_fSwitchCooldown <= 0.f)
-            m_fSwitchCooldown = 0.f;
+        m_fSwitchTimer -= dt;
+        if (m_fSwitchTimer <= 0.f)
+            m_fSwitchTimer = 0.f;
     }
 
-    if (m_fLockOnCooldown > 0.f)
+    if (m_fLockOnTimer > 0.f)
     {
-        m_fLockOnCooldown -= dt;
-        if (m_fLockOnCooldown <= 0.f)
-            m_fLockOnCooldown = 0.f;
+        m_fLockOnTimer -= dt;
+        if (m_fLockOnTimer <= 0.f)
+            m_fLockOnTimer = 0.f;
     }
 
     UI_ACTION_DESC desc{};
@@ -152,7 +153,7 @@ void CBattlePlayer::Render_GUI()
     if (ImGui::CollapsingHeader("Switch State"))
     {
         ImGui::Text("Can Switch : %s", Can_Switch() ? "TRUE" : "FALSE");
-        ImGui::Text("Switch Cooldown : %.2f", m_fSwitchCooldown);
+        ImGui::Text("Switch Cooldown : %.2f", m_fSwitchTimer);
         ImGui::Text("Parrying Count : %d / 6", m_iParryingCount);
         ImGui::Text("Reserve Parry : %s", m_bReserveParry ? "TRUE" : "FALSE");
         ImGui::Text("Combo Select : %s", m_bComboSelect ? "TRUE" : "FALSE");
@@ -164,7 +165,7 @@ void CBattlePlayer::Render_GUI()
     if (ImGui::CollapsingHeader("Target"))
     {
         ImGui::Text("Lock On : %s", m_bLockOn ? "TRUE" : "FALSE");
-        ImGui::Text("Lock On Cooldown : %.2f", m_fLockOnCooldown);
+        ImGui::Text("Lock On Cooldown : %.2f", m_fLockOnTimer);
         if (m_TargetHandle.isValid())
             ImGui::Text("Target : %s", m_TargetHandle.Get()->Get_InstanceName().c_str());
         else
@@ -399,7 +400,7 @@ void CBattlePlayer::Execute_ComboAttack(_bool bNext)
 
     Sync_ActionUI();
 
-    m_fSwitchCooldown = SWITCH_COOLDOWN;
+    m_fSwitchTimer = m_fSwitchCoolDown;
     m_fComboSelectTimer = 0.f;
     m_bComboSelect = false;
 }
@@ -499,10 +500,10 @@ void CBattlePlayer::Update_Input(_float dt)
     Process_Interact();
 
     // 락온 토글
-    if (InputDevice()->Mouse_Tap(MOUSE_BTN::MB) && m_fLockOnCooldown <= 0.f)
+    if (InputDevice()->Mouse_Tap(MOUSE_BTN::MB) && m_fLockOnTimer <= 0.f)
     {
         m_bLockOn = !m_bLockOn;
-        m_fLockOnCooldown = LOCKON_COOLDOWN;
+        m_fLockOnTimer = LOCKON_COOLDOWN;
 
         if (!m_TargetHandle.isValid()) return;
 
@@ -695,13 +696,13 @@ void CBattlePlayer::NotifyCharacterSwitchOut()
     {
         m_iParryingCount--;
         if (m_iParryingCount == 0) m_iParryingCount = 6;
-        m_fSwitchCooldown = SWITCH_COOLDOWN;
+        m_fSwitchTimer = SWITCH_COOLDOWN;
     }
 }
 
 _bool CBattlePlayer::Can_Switch() const
 {
-    if (m_fSwitchCooldown > 0.f) return false;   
+    if (m_fSwitchTimer > 0.f) return false;   
     if (m_BattleCharacters.size() <= 1) return false;
     if (m_pCurrentCharacter->Can_SwitchIn()) return false;  // 메인이 비활성화면 교체 불가
 
@@ -834,6 +835,8 @@ HRESULT CBattlePlayer::Initialize_CharacterPrototype()
         return E_FAIL;
     if (FAILED(pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Miyabi", CMiyabi::Create())))
         return E_FAIL;
+    if (FAILED(pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Miyabi_Ghost", CMiyabi_Ghost::Create())))
+        return E_FAIL;
     if (FAILED(pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_CharacterAttackCollider", CCharacterAttackCollider::Create())))
         return E_FAIL;
     if (FAILED(pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_CharacterParryCollider", CCharacterParryCollider::Create())))
@@ -866,7 +869,7 @@ CGameObject* CBattlePlayer::CreateBattleCharacter(CHARACTER character)
     }
     case CHARACTER::Corin:
     {
-        characterCCT.fHeight = 1.17f;
+        characterCCT.fHeight = 0.75f;
         characterCCT.fRadius = 0.27f;
         auto Corin = Builder::Create_Object({ G_GlobalLevelKey, "Proto_GameObject_Corin" })
             .Position(_float3(3.f, 0.f, 0.f))
@@ -877,7 +880,7 @@ CGameObject* CBattlePlayer::CreateBattleCharacter(CHARACTER character)
     }
     case CHARACTER::Miyabi:
     {
-        characterCCT.fHeight = 0.73f;
+        characterCCT.fHeight = 1.15f;
         characterCCT.fRadius = 0.26f;
         auto Miyabi = Builder::Create_Object({ G_GlobalLevelKey , "Proto_GameObject_Miyabi" })
             .Position(_float3(3.f, 0.f, 0.f))

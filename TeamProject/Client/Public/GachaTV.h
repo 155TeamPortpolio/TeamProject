@@ -28,8 +28,6 @@ private:
 
 private:
     vector<GACHA_RESULT_DESC>* m_pResultDesc = nullptr;
-
-private:
     class CGachaScreen* m_pScreen = nullptr;
 
 public:

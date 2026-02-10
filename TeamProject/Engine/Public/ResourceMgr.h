@@ -53,7 +53,7 @@ public:
 	virtual void Load_InitialResource() override;
 
 public:
-	_bool RequestPreload(const PreloadKey& key);
+	_bool RequestPreload(PreloadKey key);
 	void PumpPreloads(vector<PreloadCompleted>& outCompleted);
 	void GetPreloadProgress(_uint& outDone, _uint& outTotal) const;
 	virtual _bool isLoadComplete() const override;
