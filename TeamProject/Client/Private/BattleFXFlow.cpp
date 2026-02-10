@@ -20,7 +20,7 @@ void CBattleFXFlow::Initialize_Preset()
 		evade.fVFXDuration = duration;
 		evade.fBlurDuration = .5f;
 		evade.vStartColor = { 1.f,1.f,1.f };
-		evade.vTargetColor = { 0.7f,0.7f,0.7f };
+		evade.vTargetColor = { 0.1f,0.1f,0.1f };
 		evade.SetTimeData({ duration, 0.1f, 0.f, 0.5f , EaseType::OutCubic });
 	}
 
@@ -44,7 +44,7 @@ void CBattleFXFlow::Initialize_Preset()
 		const _float duration = 1.5f;
 		HitLack.fVFXDuration = duration;
 		HitLack.fBlurDuration = duration;
-		HitLack.SetTimeData({ duration, 0.f, 0.45f, .9f , EaseType::InOutSine });
+		HitLack.SetTimeData({ duration, 0.f, 0.25f, .9f , EaseType::OutExpo });
 	}
 }
 

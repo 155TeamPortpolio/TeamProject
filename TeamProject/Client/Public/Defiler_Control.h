@@ -109,7 +109,10 @@ struct DefilerDissolve {
         fDissolveElapsedTime = 0.f;
         fDissolveProgress = 0.f;
     }
+    void Appear(_float duration) { Set_DissolveState(DISSOLVE_STATE::APPEAR, duration); }
+    void DisAppear(_float duration) { Set_DissolveState(DISSOLVE_STATE::DISAPPEAR, duration); }
+
     _bool isComplete() {
         return fDissolveElapsedTime >= fDissolveDuration;
     }
-};
+}; 

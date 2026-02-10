@@ -1251,23 +1251,29 @@
     <Filter Include="02. GameObject\Object\Enemy\Boss\Defiler\MiasmaUnit\SpawnBall">
       <UniqueIdentifier>{a3bc9ca9-4433-4e46-9004-99a25381c934}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03. Utility\97. GUI_Inc">
-      <UniqueIdentifier>{46732b2e-e4d0-4929-aa86-f5b3aed6397d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03. Utility\97. GUI_Inc\backend">
-      <UniqueIdentifier>{97d80c65-4526-4e59-a1bc-8da44d5e5e3d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03. Utility\97. GUI_Inc\Guizmo">
-      <UniqueIdentifier>{9d85da13-28b5-4706-8886-a70ad1ee518b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\Object\Player\Character\03. Miyabi\Ghost">
       <UniqueIdentifier>{9340de87-a191-47d1-9501-7133bc6b1f51}</UniqueIdentifier>
-  </Filter>
+    </Filter>
     <Filter Include="03. Utility\12. EffectFlow">
       <UniqueIdentifier>{aed4e5a0-ae30-4fc4-ac90-5e1c265991f8}</UniqueIdentifier>
-          </Filter>
+    </Filter>
     <Filter Include="02. GameObject\Object\Enemy\Boss\Sacrifice\Sacrifice_Laser\Sacrifice_Orb">
       <UniqueIdentifier>{68fc2704-df5f-4515-afc4-be9016f4d9a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Boss\Defiler\MiasmaUnit\Heavy">
+      <UniqueIdentifier>{d2358095-7721-45b5-be27-454cdf80a9e4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="98. Default\97. GUI_Inc">
+      <UniqueIdentifier>{46732b2e-e4d0-4929-aa86-f5b3aed6397d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="98. Default\97. GUI_Inc\backend">
+      <UniqueIdentifier>{97d80c65-4526-4e59-a1bc-8da44d5e5e3d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="98. Default\97. GUI_Inc\Guizmo">
+      <UniqueIdentifier>{9d85da13-28b5-4706-8886-a70ad1ee518b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Boss\Defiler\MiasmaUnit\Heavy\HeavyDummyUnit">
+      <UniqueIdentifier>{22daf38f-4e55-444e-93df-ec2dbf2b57f4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1290,16 +1296,16 @@
       <Filter>00. MainApp</Filter>
     </ClInclude>
     <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\imgui.h">
-      <Filter>03. Utility\97. GUI_Inc</Filter>
+      <Filter>98. Default\97. GUI_Inc</Filter>
     </ClInclude>
     <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\backends\imgui_impl_dx11.h">
-      <Filter>03. Utility\97. GUI_Inc\backend</Filter>
+      <Filter>98. Default\97. GUI_Inc\backend</Filter>
     </ClInclude>
     <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\backends\imgui_impl_win32.h">
-      <Filter>03. Utility\97. GUI_Inc\backend</Filter>
+      <Filter>98. Default\97. GUI_Inc\backend</Filter>
     </ClInclude>
     <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\ImGuizmo.h">
-      <Filter>03. Utility\97. GUI_Inc\Guizmo</Filter>
+      <Filter>98. Default\97. GUI_Inc\Guizmo</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\TestObject.h">
       <Filter>02. GameObject\Test\TestObject</Filter>
@@ -2443,12 +2449,21 @@
     </ClInclude>
     <ClInclude Include="..\Public\EffectFlow.h">
       <Filter>03. Utility\12. EffectFlow</Filter>
-          </ClInclude>
+    </ClInclude>
     <ClInclude Include="..\Public\MiasmaGrandierJaeger.h">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler\MiasmaUnit\Grandier</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\MiasmaProjectile.h">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler\MiasmaUnit\MiasmaProjectile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MiasmaSpawnBall.h">
+      <Filter>02. GameObject\Object\Enemy\Boss\Defiler\MiasmaUnit\SpawnBall</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MiasmaHeavyJaeger.h">
+      <Filter>02. GameObject\Object\Enemy\Boss\Defiler\MiasmaUnit\Heavy</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MiasmaDummyUnit.h">
+      <Filter>02. GameObject\Object\Enemy\Boss\Defiler\MiasmaUnit\Heavy\HeavyDummyUnit</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2475,25 +2490,25 @@
       <Filter>00. MainApp</Filter>
     </ClCompile>
     <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\imgui.cpp">
-      <Filter>03. Utility\97. GUI_Inc</Filter>
+      <Filter>98. Default\97. GUI_Inc</Filter>
     </ClCompile>
     <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\imgui_draw.cpp">
-      <Filter>03. Utility\97. GUI_Inc</Filter>
+      <Filter>98. Default\97. GUI_Inc</Filter>
     </ClCompile>
     <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\imgui_tables.cpp">
-      <Filter>03. Utility\97. GUI_Inc</Filter>
+      <Filter>98. Default\97. GUI_Inc</Filter>
     </ClCompile>
     <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\imgui_widgets.cpp">
-      <Filter>03. Utility\97. GUI_Inc</Filter>
+      <Filter>98. Default\97. GUI_Inc</Filter>
     </ClCompile>
     <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\backends\imgui_impl_dx11.cpp">
-      <Filter>03. Utility\97. GUI_Inc\backend</Filter>
+      <Filter>98. Default\97. GUI_Inc\backend</Filter>
     </ClCompile>
     <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\backends\imgui_impl_win32.cpp">
-      <Filter>03. Utility\97. GUI_Inc\backend</Filter>
+      <Filter>98. Default\97. GUI_Inc\backend</Filter>
     </ClCompile>
     <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\ImGuizmo.cpp">
-      <Filter>03. Utility\97. GUI_Inc\Guizmo</Filter>
+      <Filter>98. Default\97. GUI_Inc\Guizmo</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\TestLevel.cpp">
       <Filter>01. Level</Filter>
@@ -3589,6 +3604,15 @@
     </ClCompile>
     <ClCompile Include="..\Private\MiasmaProjectile.cpp">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler\MiasmaUnit\MiasmaProjectile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MiasmaSpawnBall.cpp">
+      <Filter>02. GameObject\Object\Enemy\Boss\Defiler\MiasmaUnit\SpawnBall</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MiasmaHeavyJaeger.cpp">
+      <Filter>02. GameObject\Object\Enemy\Boss\Defiler\MiasmaUnit\Heavy</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MiasmaDummyUnit.cpp">
+      <Filter>02. GameObject\Object\Enemy\Boss\Defiler\MiasmaUnit\Heavy\HeavyDummyUnit</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

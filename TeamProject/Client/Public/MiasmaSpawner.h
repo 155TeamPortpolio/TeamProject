@@ -7,6 +7,13 @@ public:
 	void Spawn(MiasmaType type, _int count, _float3 Target, _float3 Owner, _float y, class CDefiler* pDefiler);
 	void SpawnGrandier(_int count, _float3 Target, _float3 Owner, _float y);
 	void SpawnBlade( _float3 Target, _float3 Owner, class CDefiler* pDefiler);
+	void SpawnHeavy( _float3 Target, _float3 Owner);
+public:
+	_float3 ComputeArcSpawnPos(const _float3& ownerPos, const _float3& targetPos, _float minRadius, _float maxRadius, _float arcDegrees, _float yFixed);
+	_float3 ComputeParabolarPos(const _float3& ownerPos, const _float3& targetPos);
+
+private:
+	_bool m_parabolLeft = {};
 };
 
 NS_END

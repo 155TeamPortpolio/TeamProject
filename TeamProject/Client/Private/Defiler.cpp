@@ -20,6 +20,9 @@
 
 #include "MiasmaBlade.h"
 #include "MiasmaGrandierJaeger.h"
+#include "MiasmaSpawnBall.h"
+#include "MiasmaHeavyJaeger.h"
+#include "MiasmaDummyUnit.h"
 #include "AudioSource.h"
 
 #include "UI_DamageText.h"
@@ -38,7 +41,10 @@ HRESULT CDefiler::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_MiasmaBlade", CMiasmaBlade::Create());
-	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_MiasmaJaeger", CMiasmaGrandierJaeger::Create());
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_MiasmaGrandierJaeger", CMiasmaGrandierJaeger::Create());
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_MiasmaSpawnBall", CMiasmaSpawnBall::Create());
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_MiasmaHeavy", CMiasmaHeavyJaeger::Create());
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_MiasmaDummy", CMiasmaDummyUnit::Create());
 
 	Add_Component<CAnimator3D>();
 	Add_Component<CSkeletalModel>();
@@ -111,6 +117,8 @@ void CDefiler::Priority_Update(_float dt)
 	m_PlayerCharacterInfos = BattleSystem()->GetBattleObjects(CBattleSystem::BATTLE_OBJ_TYPE::PLAYER);
 	ComputeTargetingInfo();
 
+	if (InputDevice()->Key_Tap('F'))
+		Controll_Summon("Heavy");
 }
 
 void CDefiler::Update(_float dt)
@@ -447,8 +455,12 @@ void CDefiler::Controll_Summon(const string& event)
 		m_MiasmaSpawner.Spawn(MiasmaType::Blade, 1, m_tTargetingInfo.vTargetPos, Get_BipedPos("Ctr_M_Prop_01"),
 			m_tTargetingInfo.vTargetPos.y, this);
 	}
-	if (event == "Grandier") {
+	else if (event == "Grandier") {
 		m_MiasmaSpawner.Spawn(MiasmaType::Grandier, 8, m_tTargetingInfo.vTargetPos, Get_BipedPos(),
+			m_tTargetingInfo.vTargetPos.y,this);
+	}
+	else if (event == "Heavy") {
+		m_MiasmaSpawner.Spawn(MiasmaType::Heavy, 1, m_tTargetingInfo.vTargetPos, Get_BipedPos("Ctr_M_Prop_01"),
 			m_tTargetingInfo.vTargetPos.y,this);
 	}
 }
