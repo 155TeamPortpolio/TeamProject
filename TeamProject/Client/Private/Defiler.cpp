@@ -26,6 +26,7 @@
 #include "AudioSource.h"
 
 #include "UI_DamageText.h"
+#include "DefilerWeapon.h"
 
 CDefiler::CDefiler()
 	:CEnemy()
@@ -45,6 +46,7 @@ HRESULT CDefiler::Initialize_Prototype()
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_MiasmaSpawnBall", CMiasmaSpawnBall::Create());
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_MiasmaHeavy", CMiasmaHeavyJaeger::Create());
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_MiasmaDummy", CMiasmaDummyUnit::Create());
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_DefilerWeapon", CDefilerWeapon::Create());
 
 	Add_Component<CAnimator3D>();
 	Add_Component<CSkeletalModel>();
@@ -109,13 +111,7 @@ void CDefiler::Awake()
 		instance->Set_Param("fDissolveTiling", { &m_fDissolveTilling,"float",sizeof(_float) });
 	}
 
-
-	static _bool    m_bTestBoneToWorld = false;
-	static _float3  m_TestBoneWorldPos = { 0.f, 0.f, 0.f };
-	static char     m_TestBoneName[64] = "Ctr_M_Prop_01";
-	SetBoneToWorld(m_TestBoneName, m_TestBoneWorldPos);
 }
-
 void CDefiler::Priority_Update(_float dt)
 {	
 	m_PlayerCharacterInfos.clear();
@@ -149,6 +145,7 @@ void CDefiler::Update(_float dt)
 	m_pStateMachine->Update(dt);
 	Get_Component<CObjectContainer>()->UpdateChild(dt);
 }
+
 void CDefiler::Late_Update(_float dt)
 {
 	Get_Component<CCharacterController>()->Late_Update(dt);
@@ -218,6 +215,16 @@ void CDefiler::Change_CollisionMask(_uint iMask)
 void CDefiler::Release_CollisionMask()
 {
 	Get_Component<CCharacterController>()->Set_CollisionMask(m_BaseMask);
+}
+
+void CDefiler::Hide_MeshGroup(const string& mesh)
+{
+	Get_Component<CSkeletalModel>()->Hide_MehsByName(mesh);
+}
+
+void CDefiler::Show_MeshGroup(const string& mesh)
+{
+	Get_Component<CSkeletalModel>()->Show_MehsByName(mesh);
 }
 
 void CDefiler::Set_CCTPos(_vector3 pos)
@@ -369,6 +376,11 @@ void CDefiler::MoveByTraceMode(_float dt, _float moveScale)
 
 void CDefiler::RotateToTarget(_float dt, _float rotateSpeed)
 {
+	
+	const _bool ignoreTarget = HasFlag(m_BlackBoard.eTraceFlag, TraceFlag::IgnoreTarget);
+	if (ignoreTarget)
+		return;
+
 	_vector3 vPosition = m_pTransform->Get_Pos();
 	_vector3 vCurrDir = m_pTransform->Dir(STATE::LOOK);
 	_vector3 vTargetDir = m_BlackBoard.vTargetDir;
@@ -471,6 +483,14 @@ void CDefiler::Control_Summon(const string& event)
 		m_MiasmaSpawner.Spawn(MiasmaType::Heavy, 1, m_tTargetingInfo.vTargetPos, Get_BipedPos("Ctr_M_Weapon_03"),
 			m_tTargetingInfo.vTargetPos.y,this);
 	}
+	else if (event == "Weapon") {
+		Hide_MeshGroup(event);
+		m_MiasmaSpawner.Spawn(MiasmaType::Weapon, 1, m_tTargetingInfo.vTargetPos, Get_BipedPos("Ctr_M_Prop_01"),
+			m_tTargetingInfo.vTargetPos.y,this);
+	}
+	else if (event == "WeaponShow") {
+		Show_MeshGroup("Weapon");
+	}
 }
 
 void CDefiler::Control_TargetEnable(_bool On)
@@ -513,36 +533,6 @@ void CDefiler::Update_Dissolve(_float dt)
 	default:
 		break;
 	}
-}
-void CDefiler::SetBoneToWorld(const string& boneName, _vector3 targetWorldPos)
-{
-	auto animatorPtr = Get_Component<CAnimator3D>();
-	if (!animatorPtr) return;
-
-	Matrix ownerWorld = m_pTransform->Get_WorldMatrix();
-	Matrix ownerWorldInv = ownerWorld.Invert();
-
-	Matrix baseCombined = animatorPtr->Get_BoneMatrix(CAnimator3D::BoneSpace::COMBINED, boneName);
-	Matrix parentCombined = animatorPtr->Get_ParentBoneMatrix(CAnimator3D::BoneSpace::COMBINED, boneName);
-
-	// 현재 본 월드
-	Matrix baseWorld = baseCombined * ownerWorld;
-
-	// 위치만 교체 (Decompose 불필요)
-	Matrix desiredWorld = baseWorld;
-	desiredWorld.Translation(targetWorldPos);
-
-	Matrix desiredCombined = desiredWorld * ownerWorldInv;
-
-	Matrix parentInv =parentCombined.Invert();
-
-	Matrix baseLocal = baseCombined * parentInv;
-	Matrix desiredLocal = desiredCombined * parentInv;
-
-	// 좌곱 델타
-	Matrix manipulate = desiredLocal * baseLocal.Invert();
-
-	animatorPtr->Set_BoneMatrix(CAnimator3D::BoneSpace::MANIPULATE, manipulate, boneName);
 }
 
 CDefiler* CDefiler::Create()
