@@ -142,6 +142,7 @@ public: // 상태
 public: // 캐릭터 전환
     SWITCH      Get_Switch() const { return m_eSwitchType; }
     void        Set_Switch(SWITCH eType) { m_eSwitchType = eType; }
+    void        Reset_Switch() { m_eSwitchType = SWITCH::END; }
     _bool       Is_MainCharacter() const { return m_bIsMain; }
     void        Set_MainCharacter(_bool bMain) { m_bIsMain = bMain; }
     _bool       Can_SwitchIn() const;

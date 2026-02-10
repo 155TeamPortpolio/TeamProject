@@ -1,7 +1,10 @@
 #include "pch.h"
 #include "Character.h"
 #include "GameInstance.h"
+#include "BattleSystem.h"
+
 #include "CamObject.h"
+#include "Enemy.h"
 
 #include "Animator3D.h"
 #include "CharacterController.h"
@@ -654,6 +657,14 @@ _bool CCharacter::Is_Active_AttackCollider(const string& strName)
 
 void CCharacter::Take_Damage(DAMAGE_TYPE eType, _float fDamage)
 {
+    // 패링 가능했을때
+    if(m_eSwitchType == SWITCH::PARRYAID)
+    {
+        BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::PARRY);
+        if (m_ParryHandle.isValid())
+            m_ParryHandle.GetAs<CEnemy>()->Parried();
+    }
+
     if (Is_Invincible()) return;
     {
         _int damage = Helper::Get_Random_Int(1000.f, 10000.f);

@@ -41,8 +41,8 @@ void CMiyabiState_SwitchInParryAid::Enter(CMiyabi* pOwner)
     OBJECT_HANDLE handle = pOwner->Get_ParryHandle();
     if (handle.isValid())
     {
-        dynamic_cast<CEnemy*>(handle.Get())->Parried();
-        BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::PARRY);
+        //dynamic_cast<CEnemy*>(handle.Get())->Parried();
+
         //TARGET_LOCK_DESC desc;
         //desc.bLock = true;
         //desc.tHandle = handle;

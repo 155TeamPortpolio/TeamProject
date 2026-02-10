@@ -102,6 +102,7 @@ void CMiyabiState_SwitchIn::Update(CMiyabi* pOwner, _float dt)
 void CMiyabiState_SwitchIn::Exit(CMiyabi* pOwner)
 {
     pOwner->Pop_Invincible();
+    pOwner->Reset_Switch();
     __super::Exit(pOwner);
 }
 
