@@ -89,6 +89,7 @@ void CUI_LotteryResultBanner::Create_ConfirmButton()
     pDesc->onClick = [this]() { OnClick_Confirm(); };
     pDesc->strLabel = L"È®ÀÎ";
     pDesc->strTextureKey = "IconOK.png";
+    pDesc->strSoundKey = "UI_Close_Swoosh.wav";
     auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_IconButton" })
         .Add_UIDesc(pDesc)
         .Build("buttonOK");
