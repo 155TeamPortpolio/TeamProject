@@ -17,6 +17,10 @@ HRESULT CUI_Wipeout::Initialize_Prototype()
     Add_Component<CRectModel>();
     Add_Component<CMaterial>();
 
+    auto pUI = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_WipeoutRTV" }).Build("wipeoutRTV");
+    if (pUI)
+        UIManager()->Add_UIObject(pUI, LevelManager()->Get_NowLevelKey());
+
 	return S_OK;
 }
 
@@ -25,19 +29,12 @@ HRESULT CUI_Wipeout::Initialize(INIT_DESC* pArg)
     if (FAILED(__super::Initialize(pArg)))
         return E_FAIL;
 
-    auto pUI = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_WipeoutRTV" }).Build("wipeoutRTV");
-    if (pUI)
-        UIManager()->Add_UIObject(pUI, LevelManager()->Get_NowLevelKey());
-
     auto pMaterial = Get_Component<CMaterial>();
     auto pMtrInst = CMaterialInstance::Create_Handle("wipeout", "UI", GameInstance()->Get_Device());
     pMaterial->Insert_MaterialInstance(pMtrInst, &m_iMtrlInstIdx);
     auto pMaterialData = pMtrInst->Get_MaterialData();
     if (pMaterialData)
-    {
         pMaterialData->Link_Shader(G_GlobalLevelKey, "VTX_NorTex.hlsl");
-        //pMaterialData->Link_Texture(G_GlobalLevelKey, "ScratchCardRewardIcon04.png", TEXTURE_TYPE::DIFFUSE);
-    }
 
     _uint                   iNumViewports = { 1 };
     D3D11_VIEWPORT			ViewPortDesc{};
@@ -45,7 +42,6 @@ HRESULT CUI_Wipeout::Initialize(INIT_DESC* pArg)
 
     const _float fViewportSizeX = ViewPortDesc.Width;
     const _float fViewportSizeY = ViewPortDesc.Height;
-    m_pTransform->Scale(_float3(fViewportSizeX, fViewportSizeY, 1.f));
 
     XMStoreFloat4x4(&m_ViewMatrix, XMMatrixIdentity());
     XMStoreFloat4x4(&m_ProjMatrix, XMMatrixOrthographicLH(fViewportSizeX, fViewportSizeY, 0.f, 1.f));
@@ -53,6 +49,7 @@ HRESULT CUI_Wipeout::Initialize(INIT_DESC* pArg)
     pMtrInst->Set_Param("g_ViewMatrix", { &m_ViewMatrix, "float4x4", sizeof(_float4x4) });
     pMtrInst->Set_Param("g_ProjMatrix", { &m_ProjMatrix, "float4x4", sizeof(_float4x4) });
 
+    m_pTransform->Scale(_float3(fViewportSizeX, fViewportSizeY, 1.f));
     Get_Component<CRectModel>()->Set_RenderType(RENDER_PASS_TYPE::RENDER_3DUI);
 
     {
@@ -62,6 +59,15 @@ HRESULT CUI_Wipeout::Initialize(INIT_DESC* pArg)
         param.typeName = "Texture2D";
         param.iSize = 0;
         pMtrInst->Set_Param("DiffuseTexture", param);
+    }
+
+    {
+        SHADER_PARAM param = {};
+        auto pSkinnedDepthSRV = RenderSystem()->Get_EngineTargetSRV("Target_Skinned_Depth");
+        param.pData = pSkinnedDepthSRV;
+        param.typeName = "Texture2D";
+        param.iSize = 0;
+        pMtrInst->Set_Param("MaskTexture", param);
     }
 
 	return S_OK;

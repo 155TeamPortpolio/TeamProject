@@ -66,6 +66,7 @@ VS_OUT VS_BILLBOARD(VS_IN In)
 float4x4 g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 VS_OUT VS_MAIN_CUSTOM(VS_IN In)
 {
+    // 월드, 뷰, 프로젝션 행렬을 따로 던져서 버텍스 셰이더 처리
     VS_OUT Out;
     
     matrix matWV, matWVP;
@@ -156,6 +157,30 @@ PS_OUT PS_MAIN_UI(PS_IN In)
     PS_OUT Out;
     
     vector vMtrlDiffuse = DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
+    if (vMtrlDiffuse.a < 0.001f)
+        discard;
+       
+    vector vMaskDesc = MaskTexture.Sample(DefaultSampler, In.vTexcoord);
+    float fViewZ = vMaskDesc.y * zFar;
+
+    vector vWorldPos;
+    vWorldPos.x = In.vTexcoord.x * 2.f - 1.f;
+    vWorldPos.y = In.vTexcoord.y * -2.f + 1.f;
+    vWorldPos.z = vMaskDesc.x;
+    vWorldPos.w = 1.f;
+
+    vWorldPos = vWorldPos * fViewZ;
+    vWorldPos = mul(vWorldPos, matProjectionInverse);
+    vWorldPos = mul(vWorldPos, matViewInverse);
+    
+    float2 vTexcoord;
+    vTexcoord.x = vWorldPos.x / vWorldPos.w * 0.5f + 0.5f;
+    vTexcoord.y = vWorldPos.y / vWorldPos.w * -0.5f + 0.5f;
+    
+    vMaskDesc = MaskTexture.Sample(DefaultSampler, vTexcoord);
+    
+    if (vWorldPos.w - 0.01f < vMaskDesc.y * zFar)
+        discard;
     
     Out.vDiffuse = vMtrlDiffuse;
     Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 1.f);
