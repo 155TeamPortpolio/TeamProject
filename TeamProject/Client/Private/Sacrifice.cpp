@@ -252,6 +252,9 @@ void CSacrifice::Parried()
 	__super::Parried();
 
 	m_pStateMachine->Change_State("Parry");
+	DeactiveAxe();
+	DeactiveSword();
+	DeactiveWhip();
 }
 
 void CSacrifice::RotateToTarget(_float dt, _float rotateSpeed)

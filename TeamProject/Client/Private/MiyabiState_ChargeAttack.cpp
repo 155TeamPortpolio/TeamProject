@@ -137,6 +137,7 @@ void CMiyabiState_Charge_Start_02::Enter(CMiyabi* pOwner)
 
 void CMiyabiState_Charge_Start_02::Update(CMiyabi* pOwner, _float dt)
 {
+    Update_Effects(pOwner);
 }
 
 void CMiyabiState_Charge_Start_02::Exit(CMiyabi* pOwner)
@@ -146,6 +147,7 @@ void CMiyabiState_Charge_Start_02::Exit(CMiyabi* pOwner)
 
 void CMiyabiState_Charge_Start_02::Update_Effects(CMiyabi* pOwner)
 {
+       
 }
 
 // Charge_Start_03 (3´Ü)
@@ -161,6 +163,7 @@ void CMiyabiState_Charge_Start_03::Enter(CMiyabi* pOwner)
 
 void CMiyabiState_Charge_Start_03::Update(CMiyabi* pOwner, _float dt)
 {
+    Update_Effects(pOwner);
 }
 
 void CMiyabiState_Charge_Start_03::Exit(CMiyabi* pOwner)
