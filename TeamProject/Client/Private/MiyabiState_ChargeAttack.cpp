@@ -132,7 +132,7 @@ void CMiyabiState_Charge_Start_02::Enter(CMiyabi* pOwner)
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_ChargeAttack_Start_02")
         .Speed(1.6f)
         .Apply();
-
+    pOwner->Set_WeaponEffectMesh(true);
     pOwner->Play_Effect("Miyabi_Charge_StackUp0", _vector3(0.f, 1.f, 0.f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
 }
 

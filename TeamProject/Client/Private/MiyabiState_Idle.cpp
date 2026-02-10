@@ -6,6 +6,7 @@
 
 void CMiyabiState_Idle::Enter(CMiyabi* pOwner)
 {
+    pOwner->Set_WeaponEffectMesh(false);
     pOwner->Unlock_Move();
     _int iEntryMode = pOwner->Get_StateMachine()->Get_Int("IdleEntryMode");
     pOwner->Get_StateMachine()->Set_Int("IdleEntryMode", 0);

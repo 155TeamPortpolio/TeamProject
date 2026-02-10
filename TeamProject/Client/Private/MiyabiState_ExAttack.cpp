@@ -170,6 +170,8 @@ void CMiyabiState_ExAttack_01::Update_Effects(CMiyabi* pOwner)
 
 void CMiyabiState_ExAttack_02::Enter(CMiyabi* pOwner)
 {
+    pOwner->Set_WeaponEffectMesh(true);
+
     m_iCount = 0;
     m_fProgress = 0.2f;
 
@@ -275,6 +277,8 @@ void CMiyabiState_ExAttack_02::Update_Effects(CMiyabi* pOwner)
 
 void CMiyabiState_ExAttack_03::Enter(CMiyabi* pOwner)
 {
+    pOwner->Set_WeaponEffectMesh(true);
+
     m_iCount = 0;
     m_fProgress = 0.3f;
 
