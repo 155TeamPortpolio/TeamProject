@@ -38,7 +38,6 @@ namespace Engine
 	enum class RENDER_PASS_TYPE { PRIORITY, RENDER_OPAQUE, NONLIGHT_OPAQUE, RENDER_EFFECT, RENDER_3DUI  };
 	enum class RENDERER_TYPE {SKINNED, STATIC, FORWARD, POST, EFFECT, UI};
 	enum class RENDER_LAYER { Default, CustomOnly, Both, None };
-	enum class POSTPROCESS { MRT_Bloom, MRT_Distortion, MRT_RimLight, END};
 	enum class RIMLIGHT {OUTLINE, BACKLIGHT, RIMLIGHT, END};
 	enum class NOISE_FXTYPE { MOTIONBLUR, VANISH, END };
 	enum class CUSTOMTARGET { EFFECT, UI, ETC, END };
@@ -142,6 +141,17 @@ namespace Engine
 	};
 
 	enum class StencilMode { None, Write, Test };
+
+	enum class POST_PROCESS_ORDER : unsigned int
+	{
+		HDRBLOOM = 100,
+		FOG = 200,
+		GLITCH = 300,
+		RADIAL_BLUR = 400,
+		GAUSSIAN_BLUR = 500,
+		ADDICTIVE_COLOR = 600,
+		SATURATION = 700,
+	};
 }
 #endif // Engine_Enum_h__
 

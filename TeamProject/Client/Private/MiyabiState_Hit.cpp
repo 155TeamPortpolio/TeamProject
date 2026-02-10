@@ -4,7 +4,6 @@
 
 void CMiyabiState_Hit::Enter(CMiyabi* pOwner)
 {
-	pOwner->Push_Invincible();
 	pOwner->Lock_Move();
 	pOwner->Stop_Rotation();
 
@@ -67,7 +66,6 @@ void CMiyabiState_Hit::Update(CMiyabi* pOwner, _float dt)
 void CMiyabiState_Hit::Exit(CMiyabi* pOwner)
 {
 	pOwner->Unlock_Move();
-	pOwner->Pop_Invincible();
 	__super::Exit(pOwner);
 }
 

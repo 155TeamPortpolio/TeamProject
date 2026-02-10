@@ -1,7 +1,10 @@
 #include "pch.h"
 #include "Character.h"
 #include "GameInstance.h"
+#include "BattleSystem.h"
+
 #include "CamObject.h"
+#include "Enemy.h"
 
 #include "Animator3D.h"
 #include "CharacterController.h"
@@ -19,6 +22,7 @@
 #include "UIDirector.h"
 
 #include "EffectContainer.h"
+#include "AudioSource.h"
 
 CCharacter::CCharacter(const CCharacter& rhs)
     : CGameObject(rhs)
@@ -38,6 +42,7 @@ HRESULT CCharacter::Initialize_Prototype()
     Add_Component<CObjectContainer>();
     Add_Component<CAnimator3D>();
     Add_Component<CCharacterController>();
+    Add_Component<CAudioSource>();
     return S_OK;
 }
 
@@ -49,8 +54,9 @@ HRESULT CCharacter::Initialize(INIT_DESC* pArg)
     Safe_AddRef(m_pAnimator);
     Safe_AddRef(m_pCCT);
 
-    if (pArg == nullptr) return S_OK;
-    GAMEOBJECT_DESC* pCharacterDesc = static_cast<GAMEOBJECT_DESC*>(pArg);
+    if (pArg == nullptr)
+        return S_OK;
+
     return S_OK;
 }
 
@@ -215,7 +221,7 @@ void CCharacter::Rush_Target()
     vDir.Normalize();
 
     _vector3 vDest = vTargetPos - vDir * fOffset * 2.f;
-    vDest.y = Get_WorldPos().y + 0.1f;
+    vDest.y = Get_WorldPos().y + 0.5f;
 
     m_pCCT->Set_Position(vDest);
     Get_Component<CTransform>()->Set_Look(vDir);
@@ -653,6 +659,14 @@ _bool CCharacter::Is_Active_AttackCollider(const string& strName)
 
 void CCharacter::Take_Damage(DAMAGE_TYPE eType, _float fDamage)
 {
+    // 패링 가능했을때
+    if(m_eSwitchType == SWITCH::PARRYAID)
+    {
+        BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::PARRY);
+        if (m_ParryHandle.isValid())
+            m_ParryHandle.GetAs<CEnemy>()->Parried();
+    }
+
     if (Is_Invincible()) return;
     {
         _int damage = Helper::Get_Random_Int(1000.f, 10000.f);

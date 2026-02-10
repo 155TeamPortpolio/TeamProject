@@ -49,6 +49,7 @@ HRESULT CTarget_Manager::Begin_MRT(const string& strMRTTag, _uint Clear, ID3D11D
 	m_pContext->PSSetShaderResources(0, D3D11_COMMONSHADER_INPUT_RESOURCE_SLOT_COUNT, pSRV);
 
 	SavedState state;
+	state.targetName = strMRTTag;
 	m_pContext->OMGetRenderTargets(
 		1,
 		&state.pPrevRTV,

@@ -29,6 +29,8 @@
 #include "DataBase.h"
 #include "EffectContainer.h"
 
+#include "AudioSource.h"
+
 CCorin::CCorin()
 {
 }
@@ -45,6 +47,8 @@ HRESULT CCorin::Initialize_Prototype()
 
     Get_Component<CModel>()->Link_Model(G_GlobalLevelKey, "Corin.model");
     Get_Component<CMaterial>()->Link_Material(G_GlobalLevelKey, "Corin.mat");
+
+
     return S_OK;
 }
 
@@ -56,6 +60,10 @@ HRESULT CCorin::Initialize(INIT_DESC* pArg)
         return E_FAIL;
     if (FAILED(Initialize_Weapon()))
         return E_FAIL;
+
+    // Jehyun
+    auto& sound = *Get_Component<CAudioSource>();
+    sound.SoundFolder(G_GlobalLevelKey, "../bin/Resources/Global/BattleCharacter/Corin/Sound/");
 
     return S_OK;
 }

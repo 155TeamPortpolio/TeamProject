@@ -18,7 +18,11 @@
 #include "MaterialInstance.h"
 #include "Texture.h"
 
-#include "MiasmaBlade.h" 
+#include "MiasmaBlade.h"
+#include "MiasmaGrandierJaeger.h"
+#include "MiasmaSpawnBall.h"
+#include "MiasmaHeavyJaeger.h"
+#include "MiasmaDummyUnit.h"
 #include "AudioSource.h"
 
 #include "UI_DamageText.h"
@@ -36,16 +40,21 @@ CDefiler::CDefiler(const CDefiler& rhg)
 HRESULT CDefiler::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_MiasmaBlade", CMiasmaBlade::Create());
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_MiasmaGrandierJaeger", CMiasmaGrandierJaeger::Create());
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_MiasmaSpawnBall", CMiasmaSpawnBall::Create());
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_MiasmaHeavy", CMiasmaHeavyJaeger::Create());
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_MiasmaDummy", CMiasmaDummyUnit::Create());
+
 	Add_Component<CAnimator3D>();
 	Add_Component<CSkeletalModel>();
 	Add_Component<CMaterial>();
 	Add_Component<CCharacterController>();
 	Add_Component<CObjectContainer>();
 	Add_Component<CAudioSource>();
-	auto pResource = CGameInstance::GetInstance()->Get_ResourceMgr();
 	Get_Component<CSkeletalModel>()->Link_Model("Zero_Level", "Defiler_Isolde.model");
 	Get_Component<CMaterial>()->Link_Material("Zero_Level", "Defiler_Isolde.mat");
-
+	
 	return S_OK;
 }
 
@@ -78,7 +87,6 @@ HRESULT CDefiler::Initialize(INIT_DESC* pArg)
 
 	Create_UIEnemyStatus("Bip001_Spine2");
 	Create_UIBossHUD();
-
 	return S_OK;
 }
 
@@ -104,7 +112,13 @@ void CDefiler::Awake()
 }
 
 void CDefiler::Priority_Update(_float dt)
-{
+{	
+	m_PlayerCharacterInfos.clear();
+	m_PlayerCharacterInfos = BattleSystem()->GetBattleObjects(CBattleSystem::BATTLE_OBJ_TYPE::PLAYER);
+	ComputeTargetingInfo();
+
+	if (InputDevice()->Key_Tap('F'))
+		Control_Summon("Heavy");
 }
 
 void CDefiler::Update(_float dt)
@@ -112,19 +126,16 @@ void CDefiler::Update(_float dt)
 	ManageGroggy(dt);
 
 	if (!m_BlackBoard.LockTarget) {
-		m_PlayerCharacterInfos.clear();
-		m_PlayerCharacterInfos = BattleSystem()->GetBattleObjects(CBattleSystem::BATTLE_OBJ_TYPE::PLAYER);
-		ComputeTargetingInfo();
+		m_BlackBoard.vTargetPos = m_tTargetingInfo.vTargetPos;
+		m_BlackBoard.vTargetDir = m_tTargetingInfo.vDirToTarget;
 	}
 	Update_States(dt);
 
 	auto pAnimator = Get_Component<CAnimator3D>();
 	pAnimator->Update_Animation(dt);
 	Route_AnimEvent(pAnimator);
-	Update_Dissolve(dt);
 	MoveByTraceMode(dt);
 	RotateToTarget(dt, 4.f);
-
 	
 	Get_Component<CCharacterController>()->Update(dt);
 	m_pStateMachine->Update(dt);
@@ -160,6 +171,7 @@ void CDefiler::Render_GUI()
 
 void CDefiler::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER charaName)
 {
+	BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::HIT);
 	_float fTakeDamage = fDamage;
 
 	if (m_tStatus.isGroggy)
@@ -183,6 +195,7 @@ void CDefiler::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER cha
 
 	UIDirector()->Request_DamageText(desc);
 }
+
 void CDefiler::Change_CollisionMask(_uint iMask)
 {
 	_uint Mask = Get_Component<CCharacterController>()->Get_CollisionMask();
@@ -202,10 +215,10 @@ void CDefiler::Set_CCTPos(_vector3 pos)
 	controller->Set_Position(pos);
 }
 
-_float3 CDefiler::Get_BipedPos()
+_float3 CDefiler::Get_BipedPos(const string Bone)
 {
 	Matrix boneMat = Get_Component<CAnimator3D>()
-		->Get_BoneMatrix(CAnimator3D::BoneSpace::COMBINED, "Bip001");
+		->Get_BoneMatrix(CAnimator3D::BoneSpace::COMBINED, Bone);
 	Matrix WorldMat = m_pTransform->Get_WorldMatrix();
 	_vector3 S, T; _quaternion R;
 	(boneMat * WorldMat).Decompose(S, R, T);
@@ -247,7 +260,7 @@ void CDefiler::MoveByTraceMode(_float dt, _float moveScale)
 
 	// Å¸°Ù º¤ÅÍ
 	const _vector3 nowPos = transform->Get_WorldPos();
-	const _vector3 targetPos = m_tTargetingInfo.vTargetPos;
+	const _vector3 targetPos = m_BlackBoard.vTargetPos;
 
 	_vector3 toTarget = targetPos - nowPos;
 	toTarget.y = 0.f;
@@ -345,7 +358,7 @@ void CDefiler::RotateToTarget(_float dt, _float rotateSpeed)
 {
 	_vector3 vPosition = m_pTransform->Get_Pos();
 	_vector3 vCurrDir = m_pTransform->Dir(STATE::LOOK);
-	_vector3 vTargetDir = m_tTargetingInfo.vDirToTarget;
+	_vector3 vTargetDir = m_BlackBoard.vTargetDir;
 	vCurrDir.Normalize();
 	vTargetDir.Normalize();
 
@@ -373,10 +386,8 @@ void CDefiler::Route_AnimEvent(CAnimator3D* animator)
 		case CLIP_EVENT_TYPE::NOTIFY:
 			if (instance.Tag == "ParrySign")
 				UnleashAttack(CEnemy::ATTACK_SIDE::NONE, true);
-			//Active_AttackSign(true);
 			else if (instance.Tag == "EvadeSign")
 				UnleashAttack(CEnemy::ATTACK_SIDE::NONE, false);
-
 			else if (instance.Tag == "TargetLockOn")
 				m_BlackBoard.LockTarget = true;
 			else if (instance.Tag == "TargetLockOff")
@@ -388,22 +399,22 @@ void CDefiler::Route_AnimEvent(CAnimator3D* animator)
 			break;
 
 		case CLIP_EVENT_TYPE::SOUND:
-			Controll_Sound(instance.Tag);
+			Control_Sound(instance.Tag);
 			break;
 		}
 	}
 }
 
-void CDefiler::Controll_Sound(const string& event)
+void CDefiler::Control_Sound(const string& event)
 {
-	Get_Component<CAudioSource>()->Slot("event").Play();
+	Get_Component<CAudioSource>()->Slot(event).Attribute3D(true).Volume(0.3f).Play();
 }
 
 void CDefiler::Controll_Attack(const string& event)
 {
 	auto iter = DefilerAtkData.find(event);
 	if (iter == DefilerAtkData.end()) {
-		Controll_Summon(event);
+		Control_Summon(event);
 		return;
 	}
 
@@ -431,58 +442,63 @@ void CDefiler::Controll_Attack(const string& event)
 	SetBattleColliderObject(AtkData.AtkBone, CEnemy::BATTLE_COLTYPE::ATTACK, AtkData.OnOff, HitDesc);
 }
 
-void CDefiler::Controll_Summon(const string& event)
+void CDefiler::Control_Summon(const string& event)
 {
 	string levelKey = LevelManager()->Get_NowLevelKey();
 	if (event == "Blade") {
-		auto desc = new CMiasmaBlade::BladeDesc;
-		desc->pOwner = this;
-		desc->vTargetPos = m_tTargetingInfo.vTargetPos;
-		Matrix boneMat = Get_Component<CAnimator3D>()
-			->Get_BoneMatrix(CAnimator3D::BoneSpace::COMBINED, "Ctr_M_Prop_01");
-		Matrix WorldMat = m_pTransform->Get_WorldMatrix();
-		_vector3 S, T;_quaternion R;
-		(boneMat * WorldMat).Decompose(S,R,T);
-		auto pBlade = 
-			Builder::Create_Object({ "Zero_Level","Proto_GameObject_MiasmaBlade" })
-			.FromPool()
-			.Position(T)
-			.Add_ObjDesc(desc)
-			.Build("MiasmaBlade");
-		ObjectManager()->Add_Object(pBlade, { levelKey ,"Enemy_Layer"});
+		
+		m_MiasmaSpawner.Spawn(MiasmaType::Blade, 1, m_tTargetingInfo.vTargetPos, Get_BipedPos("Ctr_M_Prop_01"),
+			m_tTargetingInfo.vTargetPos.y, this);
 	}
+	else if (event == "Grandier") {
+		m_MiasmaSpawner.Spawn(MiasmaType::Grandier, 8, m_tTargetingInfo.vTargetPos, Get_BipedPos(),
+			m_tTargetingInfo.vTargetPos.y,this);
+	}
+	else if (event == "Heavy") {
+		m_MiasmaSpawner.Spawn(MiasmaType::Heavy, 1, m_tTargetingInfo.vTargetPos, Get_BipedPos("Ctr_M_Weapon_03"),
+			m_tTargetingInfo.vTargetPos.y,this);
+	}
+}
+
+void CDefiler::Control_TargetEnable(_bool On)
+{
+	if (On) {
+		BattleSystem()->ExcludeBattleObject(BATTLE_OBJ_TYPE::MONSTER, this->Get_Handle());
+	}
+	else {
+		BattleSystem()->EnterBattleObject(BATTLE_OBJ_TYPE::MONSTER, this->Get_Handle());
+	}
+	Get_Component<CCharacterController>()->Set_CompActive(On);
 }
 
 void CDefiler::Update_Dissolve(_float dt)
 {
-	
-	if (m_Dissolve.fDissolveElapsedTime < m_Dissolve.fDissolveDuration)
-	{
-		m_Dissolve.fDissolveElapsedTime += dt;
-		_float t = m_Dissolve.fDissolveElapsedTime / m_Dissolve.fDissolveDuration;
+	const _float duration = m_Dissolve.fDissolveDuration;
 
-		switch (m_Dissolve.eDissolveState)
-		{
-		case DefilerDissolve::DISAPPEAR:
-		{
-			m_fDissolveProgress = t;
-		}break;
-		case DefilerDissolve::DISSOLVE_STATE::APPEAR:
-		{
-			m_fDissolveProgress = 1.f - t;
-		}break;
-		case DefilerDissolve::DISSOLVE_STATE::NONE:
-			break;
-		default:
-			break;
-		}
-	}
-	else
+	if (duration <= 0.f)
 	{
-		if (DefilerDissolve::DISAPPEAR == m_Dissolve.eDissolveState)
-			m_fDissolveProgress = 1.01f;
-		else
-			m_fDissolveProgress = 0.f;
+		m_fDissolveProgress =
+			(m_Dissolve.eDissolveState == DefilerDissolve::DISAPPEAR) ? 1.f : 0.f;
+		return;
+	}
+
+	m_Dissolve.fDissolveElapsedTime =
+		min(m_Dissolve.fDissolveElapsedTime + dt, duration);
+
+	_float t = m_Dissolve.fDissolveElapsedTime / duration; 
+
+	switch (m_Dissolve.eDissolveState)
+	{
+	case DefilerDissolve::DISAPPEAR:
+		m_fDissolveProgress = t;
+		break;
+
+	case DefilerDissolve::APPEAR:
+		m_fDissolveProgress = 1.f - t;
+		break;
+
+	default:
+		break;
 	}
 }
 

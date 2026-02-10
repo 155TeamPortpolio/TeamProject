@@ -165,7 +165,7 @@ HRESULT CStaticMeshRenderer::Render_StaticMesh_Combined()
 
 	m_pTargetManager->Bind_Target("Target_Static_Diffuse", m_pShader, "DiffuseTexture");
 	m_pTargetManager->Bind_Target("Target_SSAO_Blur", m_pShader, "SSAOFinalTexture");
-	m_pTargetManager->Bind_Target("Target_Metalic", m_pShader, "MetalicTexture");
+	m_pTargetManager->Bind_Target("Target_Static_Metalic", m_pShader, "MetalicTexture");
 	m_pTargetManager->Bind_Target("Target_LightAcc_StaticMesh", m_pShader, "LightTexture");
 	m_pTargetManager->Bind_Target("Target_LightInfo_StaticMesh", m_pShader, "LightInfoTexture");
 	m_pTargetManager->Bind_Target("Target_BloomBlurY_StaticMesh", m_pShader, "MeshBloomFinalTexture");

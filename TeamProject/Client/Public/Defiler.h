@@ -1,6 +1,7 @@
 #pragma once
 #include "Enemy.h"
 #include "Defiler_Control.h"
+#include "MiasmaSpawner.h"
 
 NS_BEGIN(Client)
 
@@ -41,17 +42,17 @@ public:
 
 public:
     void Set_CCTPos(_vector3 pos);
-    _float3 Get_BipedPos();
-
+    _float3 Get_BipedPos(const string Bone = {"Bip001"});
+    void Control_Sound(const string& event);
+    void Control_Summon(const string& event);
+    void Control_TargetEnable(_bool On);
+    void Update_Dissolve(_float dt);
 private:
     void MoveByTraceMode(_float dt, _float moveScale = 1.f);
     void RotateToTarget(_float dt, _float rotateSpeed = 1.f);
     void Update_States(_float dt);
     void Route_AnimEvent(CAnimator3D* animator);
-    void Controll_Sound(const string& event);
     void Controll_Attack(const string& event);
-    void Controll_Summon(const string& event);
-    void Update_Dissolve(_float dt);
 
 private:
     HRESULT Initialize_StateMachine();
@@ -65,6 +66,7 @@ private:
     CStateMachine<CDefiler>* m_pStateMachine = { nullptr };
     DEFILER_BLACK_BOARD m_BlackBoard = {};
     DefilerDissolve m_Dissolve = {};
+    CMiasmaSpawner m_MiasmaSpawner = {};
 
     _uint m_BaseMask = 
         ENUM(COLLISION_GROUP::COMMON) | 

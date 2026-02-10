@@ -48,19 +48,32 @@ public: // 행동 이벤트
     virtual void    OnPerfectDodge()           override;
     virtual void    OnDefensiveAssist()        override;
 
+public: // 모션블러
+    void    Add_MotionBlur();
+    void    Clear_MotionBlur();
+    void    Reset_RimLight();
+
+public: // 무기 이펙트 메쉬
+    void    Set_WeaponEffectMesh(_bool bOn);
+
 private: // 초기화
     HRESULT Initialize_StateMachine();
     HRESULT Initialize_States();
     HRESULT Initialize_Transitions();
     HRESULT Initialize_Stat();
     HRESULT Initialize_Weapon();
+    HRESULT Initialize_Ghost();
     HRESULT Initialize_Effects() override;
 
 private: // 상태 처리
     void    Update_States();
     void    Process_AttackInput(const string& strCurrentState);
     void    Process_EndState(const string& strCurrentState);
-    
+
+private: // 모션블러 렌더
+    HRESULT Update_MotionBlurQueue();
+    HRESULT Render_DashMotionBlur(ID3D11DeviceContext* pContext, _uint index);
+
 //private:
 //    HRESULT Add_OutLineRender();
 
@@ -73,8 +86,13 @@ private:
 
     // 서리
     _uint   m_iFrost = { 0 };
-
     _uint   MAX_FROST = { 6 };
+
+    // 모션블러
+    deque<vector<vector<_float4x4>>>    m_BoneMatrices;
+    deque<_float4x4>                    m_WorldMatrices;
+    //_uint                               m_iFrameCount = 0;
+    //static constexpr _uint              FRAMECOUNT = 7;
 
 public:
     static CMiyabi* Create();

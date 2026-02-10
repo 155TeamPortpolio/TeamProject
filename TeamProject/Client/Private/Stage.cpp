@@ -27,7 +27,7 @@ HRESULT CStage::Exit_Stage(StageContext& context)
 	m_outroFlowBuilt = false;
 	m_iNextChoice = { -1 };
 
-	/*µ¥ÀÌÅÍ - ¸ó½ºÅÍ*/
+	/*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ - ï¿½ï¿½ï¿½ï¿½*/
 	m_MonsterData.Reset();
 	while (!m_MonsterQueue.empty())
 		m_MonsterQueue.pop();
@@ -61,14 +61,14 @@ void CStage::Ready_Map(const string& LevelTag, const string& AreaTag)
 		ReadyPlayerPoint(datas->Battle.PlayerPoint);
 		ReadyMonsterPoint(datas->Battle.MonsterPoint);
 		ReadyPortalPoint(datas->Battle.PortalPoint);
-		datas->Battle.Spawner; /*º¸·ù*/
+		datas->Battle.Spawner; /*ï¿½ï¿½ï¿½ï¿½*/
 		ReadyMonsterData(LevelTag, AreaTag);
 	}
 	m_MapObjects.reserve(100);
 
-	/*¾ÆÁ÷ ÀúÀå ¾ÈÇÔ*/
+	/*ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½*/
 	auto& Entity = datas->Entity;
-	for (auto& data : Entity) /*¿£Æ¼Æ¼*/
+	for (auto& data : Entity) /*ï¿½ï¿½Æ¼Æ¼*/
 	{
 		data.DataName;
 		data.Handle;
@@ -76,7 +76,7 @@ void CStage::Ready_Map(const string& LevelTag, const string& AreaTag)
 	}
 
 	auto& MapObj = datas->MapObj;
-	for (auto& data : MapObj) /*¸Ê ¿ÀºêÁ§Æ®*/
+	for (auto& data : MapObj) /*ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®*/
 	{
 		data.DataName;
 		data.Handle;
@@ -84,7 +84,7 @@ void CStage::Ready_Map(const string& LevelTag, const string& AreaTag)
 	}
 
 	auto& InvisibleWall = datas->InvWall;
-	for (auto& data : InvisibleWall) /*Åõ¸í º® -> ±×³É ³À ¸Þ½¬*/
+	for (auto& data : InvisibleWall) /*ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ -> ï¿½×³ï¿½ ï¿½ï¿½ ï¿½Þ½ï¿½*/
 	{
 		data.DataName;
 		data.Handle;
@@ -92,7 +92,7 @@ void CStage::Ready_Map(const string& LevelTag, const string& AreaTag)
 	}
 
 	auto& Trigger = datas->Trigger;
-	for (auto& data : Trigger) /*Åõ¸í º® -> ±×³É ³À ¸Þ½¬*/
+	for (auto& data : Trigger) /*ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ -> ï¿½×³ï¿½ ï¿½ï¿½ ï¿½Þ½ï¿½*/
 	{
 		data.DataName;
 		data.Handle;
@@ -311,7 +311,7 @@ void CStage::BaseIntro(StageContext& context)
 			m_introFlow.AddWait(seqId, 0.2f);
 			m_introFlow.AddOnce(seqId, [this]() {CUIDirector::GetInstance()->FadeIn_Screen(1.f); });
 			m_introFlow.AddWait(seqId, 0.2f);
-			m_introFlow.AddOnce(seqId, [this]() {RenderSystem()->Apply_RadialBlur(2.f); });
+			//m_introFlow.AddOnce(seqId, [this]() {RenderSystem()->Apply_RadialBlur(2.f); });
 			m_introFlow.AddWait(seqId, 2.0f);
 		}
 
@@ -358,7 +358,7 @@ void CStage::BaseOutro()
 		size_t seqId = m_outroFlow.BeginSequence();
 		m_outroFlow.AddOnce(seqId, [this]() {CUIDirector::GetInstance()->FadeOut_Screen(1.f); });
 		m_outroFlow.AddWait(seqId, 2.0f);
-		m_outroFlow.AddOnce(seqId, [this]() {RenderSystem()->UnRegister_AddictiveColor(); });
+		//m_outroFlow.AddOnce(seqId, [this]() {RenderSystem()->UnRegister_AddictiveColor(); });
 	}
 
 	m_outroFlow.Start();

@@ -33,6 +33,11 @@
           "EventTag": "TargetLockOn"
         },
         {
+          "EventTime": 0.812995433807373,
+          "EventType": "Sound",
+          "EventTag": "DefilerSwingBase.wav"
+        },
+        {
           "EventTime": 0.8483430743217468,
           "EventType": "Notify",
           "EventTag": "A_Type_On"
@@ -46,6 +51,11 @@
           "EventTime": 1.0074074268341064,
           "EventType": "Notify",
           "EventTag": "TargetLockOff"
+        },
+        {
+          "EventTime": 1.2548407316207886,
+          "EventType": "Sound",
+          "EventTag": "DefilerSwingBase.wav"
         },
         {
           "EventTime": 1.263677716255188,
@@ -66,6 +76,11 @@
           "EventTime": 1.458298921585083,
           "EventType": "Notify",
           "EventTag": "A_Type_Off"
+        },
+        {
+          "EventTime": 1.0692657232284546,
+          "EventType": "Notify",
+          "EventTag": "ParrySign"
         }
       ]
     },
@@ -453,6 +468,11 @@
           "EventTag": "ParrySign"
         },
         {
+          "EventTime": 0.8684860467910767,
+          "EventType": "Sound",
+          "EventTag": "Defiler_Charge01.wav"
+        },
+        {
           "EventTime": 1.143859624862671,
           "EventType": "Notify",
           "EventTag": "TargetLockOn"
@@ -465,7 +485,7 @@
         {
           "EventTime": 1.747563362121582,
           "EventType": "Notify",
-          "EventTag": "CoreOngoing"
+          "EventTag": "MiasmaCore"
         },
         {
           "EventTime": 2.054710865020752,
@@ -481,11 +501,6 @@
           "EventTime": 2.7431447505950928,
           "EventType": "Notify",
           "EventTag": "TargetLockOff"
-        },
-        {
-          "EventTime": 0.8684860467910767,
-          "EventType": "Sound",
-          "EventTag": "Defiler_Charge01.wav"
         }
       ]
     },
@@ -694,7 +709,13 @@
     },
     {
       "ClipTag": "Monster_IsoldetheDefiler_Ani_Attack_Summon",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 2.243274688720703,
+          "EventType": "Notify",
+          "EventTag": "Grandier"
+        }
+      ]
     },
     {
       "ClipTag": "Monster_IsoldetheDefiler_Ani_Born",

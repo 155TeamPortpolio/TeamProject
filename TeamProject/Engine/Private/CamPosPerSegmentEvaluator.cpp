@@ -10,8 +10,6 @@
 
 bool CCamPosPerSegmentEvaluator::Build(const vector<CamKeyFrame>& keys)
 {
-    assert(seq);
-
     keyframes = &keys;
 
     Safe_Release(evalLinear);

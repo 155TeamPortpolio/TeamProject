@@ -4,6 +4,7 @@
 #include "ObjectContainer.h"
 #include "UI_GachaText.h"
 #include "CamDirector.h"
+#include "Light.h"
 
 void CUI_GachaTextGroup::Show(GachaGrade eGrade, const string& strCamSequenceKey)
 {
@@ -111,10 +112,22 @@ void CUI_GachaTextGroup::Update_Hide(_float dt)
 {
 	m_fTimer += dt;
 
-	if (m_fTimer >= m_fCamWaitDuration)
-	{
-		Set_Alive(false);
-		if (!m_strCamSequence.empty())
-			CamDirector()->RequestSequence(m_strCamSequence);
-	} 
+	if (m_fTimer < m_fCamWaitDuration)
+		return;
+
+	Set_Alive(false);
+	if (m_strCamSequence.empty())
+		return;
+
+	CamDirector()->RequestSequence(m_strCamSequence);
+
+	auto pLight = CamDirector()->GetSeqCam()->Add_Component<CLight>();
+	LIGHT_DESC desc = {};
+	desc.eType = LIGHT_TYPE::POINT;
+	desc.vOffsetPosition = { 1.2f, 0.1f, 0.f, 0.f };
+	desc.vLightDiffuse = Helper::HexToColor("#FFF3D5");
+	desc.fLightRange = 100.f;
+	desc.fLightIntensity = 4.f; 
+
+	pLight->Set_Desc(desc);
 }

@@ -140,8 +140,8 @@ HRESULT CEffectRenderer::Render_Effect_Bloom()
 		m_pContext->IASetInputLayout(pLayout);
 
 
-		m_pShader->Bind_Value("BloomScreenWidth", { &m_fBloomScreenWidth, "float", sizeof(float) });
-		m_pShader->Bind_Value("BloomScreenHeight", { &m_fBloomScreenHeight, "float", sizeof(float) });
+		m_pShader->Bind_Value("BloomScreenWidth", { &m_fBloomScreenWidth, "float", sizeof(_float) });
+		m_pShader->Bind_Value("BloomScreenHeight", { &m_fBloomScreenHeight, "float", sizeof(_float) });
 
 		m_pShader->Apply("BLOOM_BLURX", m_pContext);
 		m_pVIBuffer->Bind_Buffer(m_pContext);

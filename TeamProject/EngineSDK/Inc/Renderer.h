@@ -3,7 +3,7 @@
 
 NS_BEGIN(Engine)
 
-class CRenderer abstract :
+class ENGINE_DLL CRenderer abstract :
     public CBase
 {
 protected:

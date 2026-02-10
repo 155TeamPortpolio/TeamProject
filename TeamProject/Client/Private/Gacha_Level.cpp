@@ -17,6 +17,8 @@
 /*DataBase*/
 #include "DataBase.h"
 
+#include "EffectContainer.h"
+
 CGacha_Level::CGacha_Level(const string& LevelKey)
 	:CLevel(LevelKey),
 	m_pGameInstance{ CGameInstance::GetInstance() },
@@ -45,18 +47,26 @@ HRESULT CGacha_Level::Awake()
 	LIGHT_DESC lightDesc = {};
 	lightDesc.vLightPosition = _float4(0.f, 50.f, 0.f, 1.f);
 	lightDesc.vLightDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
-	lightDesc.vLightAmbient = _float4(0.9f, 0.9f, 0.9f, 1.f);
+	lightDesc.vLightAmbient = _float4(1.f, 1.f, 1.f, 1.f); //_float4(0.9f, 0.9f, 0.9f, 1.f);
 	lightDesc.vLightSpecular = _float4(0.f, 0.f, 0.f, 1.f);
-	lightDesc.fLightIntensity = 0.7f;
+	lightDesc.fLightIntensity = 1.f;// 0.7f;
 	pShadowCam->Get_Component<CLight>()->Set_Desc(lightDesc, LIGHT_TYPE::DIRECTIONAL);
 
-	RenderSystem()->Set_FogDesc({ _float4(0.1f, 0.1f, 0.1f, 1.0f) ,0.f, 0.f, 0.02f, true });
+	//RenderSystem()->Set_FogDesc({ _float4(0.1f, 0.1f, 0.1f, 1.0f) ,0.f, 0.f, 0.02f, true });
 
 	Ready_GachaObjects(); 
 
 	//==================== UI ===============
 	UIDirector()->Load_LevelObjects("Gacha_Level");
 	Ready_GachaUI();	// UIDirector에서 Load_LevelObject 실행 한 뒤에
+
+	//==================== Effect ============
+	//auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+	//	.Asset("gacha_background_light.json")
+	//	.Position(_float3(0.f, 0.5f, -0.1f))
+	//	.Build("Gacha_Light");
+	//
+	//ObjectManager()->Add_Object(pEffect, { "Gacha_Level","Effect_Layer" });
 
 	return S_OK;
 }

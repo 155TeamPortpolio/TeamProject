@@ -9,6 +9,8 @@
 #include "VIBuffer.h"
 #include "Texture.h"
 
+#include "PostProcessCommand.h"
+
 CPostRenderer::CPostRenderer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CRenderer(pDevice, pContext)
 {
@@ -33,22 +35,74 @@ HRESULT CPostRenderer::Initialize(CTarget_Manager* pTargetManager, CPipeLine* pP
 	m_fScreenWidth = ViewportDesc.Width;
 	m_fScreenHeight = ViewportDesc.Height;
 
+	m_pHDRBloomCommand = CHDRBloomCommand::Create();
+	m_pFogCommand = CFogCommand::Create();
+	m_pAddictiveColorCommand = CAddictiveColorCommand::Create();
+	m_pGlitchCommand = CGlitchCommand::Create();
+	m_pRadialBlurCommand = CRadialBlurCommand::Create();
+	m_pGuassianBlurCommand = CGuassianBlurCommand::Create();
+	m_pSaturationCommand = CSaturationCommand::Create();
+
+	m_CommandMap[typeid(CHDRBloomCommand)] = m_pHDRBloomCommand;
+	m_CommandMap[typeid(CGlitchCommand)] = m_pGlitchCommand;
+	m_CommandMap[typeid(CRadialBlurCommand)] = m_pRadialBlurCommand;
+	m_CommandMap[typeid(CFogCommand)] = m_pFogCommand;
+	m_CommandMap[typeid(CGuassianBlurCommand)] = m_pGuassianBlurCommand;
+	m_CommandMap[typeid(CAddictiveColorCommand)] = m_pAddictiveColorCommand;
+	m_CommandMap[typeid(CSaturationCommand)] = m_pSaturationCommand;
+
 	return S_OK;
 }
 
-HRESULT CPostRenderer::Render_HDRBloom()
+HRESULT CPostRenderer::Render_PostProcessCommand()
+{
+	vector<CPostProcessCommand*> commands = {
+		 m_pFogCommand,
+		 m_pHDRBloomCommand,
+		 m_pGlitchCommand,
+		 m_pRadialBlurCommand,
+		 m_pGuassianBlurCommand,
+		 m_pAddictiveColorCommand,
+		 m_pSaturationCommand
+	};
+
+	commands.erase(
+		std::remove(commands.begin(), commands.end(), nullptr),
+		commands.end()
+	);
+
+	if (commands.empty()) return S_OK;
+
+	std::stable_sort(commands.begin(), commands.end(),
+		[](auto* a, auto* b) { return a->GetPriority() < b->GetPriority(); });
+
+	m_strLastTargetName = "Target_Final";
+	for (auto& cmd : commands)
+	{
+		if (!cmd->IsEnabled()) 
+			continue;
+		cmd->Execute(this);
+		if (cmd->GetEffectType() == CPostProcessCommand::EFFECT_TYPE::REPLACE)
+			m_strLastTargetName = cmd->GetOutPutTargetName();
+	}
+
+	return S_OK;
+}
+
+HRESULT CPostRenderer::Render_HDRBloom_Internal()
 {
 	{
 		if (FAILED(m_pTargetManager->Begin_MRT("MRT_HDR_Bright"))) return E_FAIL;
 
-		if (fogDesc.IsUse) m_pTargetManager->Bind_Target("Target_Fog", m_pShader, "FinalTexture");
-		else m_pTargetManager->Bind_Target("Target_Final", m_pShader, "FinalTexture");
+		m_pTargetManager->Bind_Target(m_strLastTargetName, m_pShader, "FinalTexture");
 
 		/* Effect Combined Texture*/
 		m_pTargetManager->Bind_Target("Target_Combined_Effect", m_pShader, "EffectCombinedTexture");
+		
+		m_pShader->SetConstantBuffer("FrameBuffer", m_pPipeLine->Get_FrameBuffer());
 
 		Bind_WorldMatrix();
-
+		
 		ID3D11InputLayout* pLayout;
 		Get_BufferInputLayout(m_pVIBuffer, m_pShader, "HDR_BRIGHT", &pLayout);
 		m_pContext->IASetInputLayout(pLayout);
@@ -67,8 +121,11 @@ HRESULT CPostRenderer::Render_HDRBloom()
 
 		Bind_WorldMatrix();
 
-		m_pShader->Bind_Value("fScreenWidth", { &m_fScreenWidth, "float", sizeof(float) });
-		m_pShader->Bind_Value("fScreenHeight", { &m_fScreenHeight, "float", sizeof(float) });
+		m_pShader->Bind_Value("ScreenWidth", { &m_fScreenWidth, "float", sizeof(_float) });
+		m_pShader->Bind_Value("ScreenHeight", { &m_fScreenHeight, "float", sizeof(_float) });
+
+		_float fIntensity = m_pHDRBloomCommand->GetIntensity();
+		m_pShader->Bind_Value("HDRIntensity", { &fIntensity, "float", sizeof(_float) });
 
 		ID3D11InputLayout* pLayout;
 		Get_BufferInputLayout(m_pVIBuffer, m_pShader, "HDR_BLURH", &pLayout);
@@ -87,6 +144,9 @@ HRESULT CPostRenderer::Render_HDRBloom()
 
 		m_pTargetManager->Bind_Target("Target_HDR_BlurX", m_pShader, "HDRBlurXTexture");
 
+		_float fIntensity = m_pHDRBloomCommand->GetIntensity();
+		m_pShader->Bind_Value("HDRIntensity", { &fIntensity, "float", sizeof(_float) });
+
 		ID3D11InputLayout* pLayout;
 		Get_BufferInputLayout(m_pVIBuffer, m_pShader, "HDR_BLURV", &pLayout);
 		m_pContext->IASetInputLayout(pLayout);
@@ -100,22 +160,17 @@ HRESULT CPostRenderer::Render_HDRBloom()
 	return S_OK;
 }
 
-HRESULT CPostRenderer::Render_RadialBlur()
+HRESULT CPostRenderer::Render_RadialBlur_Internal()
 {
 	if (FAILED(m_pTargetManager->Begin_MRT("MRT_RadialBlur"))) return E_FAIL;
 
-	m_pTargetManager->Bind_Target("Target_Final", m_pShader, "FinalTexture");
+	m_pTargetManager->Bind_Target(m_strLastTargetName, m_pShader, "FinalTexture");
 
-	_float normalizedT = 1.f - (m_fRadialDuration / m_fRadialTotalDuration);
-	_float pingPongT = (normalizedT < 0.5f) ? (normalizedT * 2.f) : (2.f - normalizedT * 2.f);
-	_float EaseT = Math::ApplyEase(EaseType::InOutSine, pingPongT);
+	_float2 vCenter = m_pRadialBlurCommand->GetCenter();
+	_float Intensity = m_pRadialBlurCommand->GetIntensity();
 
-	_bool RadialUse = false;
-	if (m_fRadialDuration > 0.f) RadialUse = true;
-
-	m_pShader->Bind_Value("g_RadialEaseT", { &EaseT, "float", sizeof(_float) });
-	m_pShader->Bind_Value("g_RadialCenter", { &m_fRadialCenter, "float2", sizeof(_float2) });
-	m_pShader->Bind_Value("g_RadialUse", { &RadialUse, "bool", sizeof(_bool) });
+	m_pShader->Bind_Value("RadialCenter", { &vCenter, "float2", sizeof(_float2) });
+	m_pShader->Bind_Value("RadialIntensity", { &Intensity, "float", sizeof(_float) });
 
 	ID3D11InputLayout* pLayout;
 	Get_BufferInputLayout(m_pVIBuffer, m_pShader, "RADIAL", &pLayout);
@@ -129,25 +184,160 @@ HRESULT CPostRenderer::Render_RadialBlur()
 	return S_OK;
 }
 
-HRESULT CPostRenderer::Render_Fog()
+HRESULT CPostRenderer::Render_Fog_Internal()
 {
 	if (FAILED(m_pTargetManager->Begin_MRT("MRT_Fog"))) return E_FAIL;
 
 	m_pTargetManager->Bind_Target("Target_Static_Depth", m_pShader, "StaticDepthTexture");
 	m_pTargetManager->Bind_Target("Target_Skinned_Depth", m_pShader, "SkinnedDepthTexture");
-	m_pTargetManager->Bind_Target("Target_Final", m_pShader, "FinalTexture");
-
+	m_pTargetManager->Bind_Target(m_strLastTargetName, m_pShader, "FinalTexture");
+	
 	m_pShader->SetConstantBuffer("FrameBuffer", m_pPipeLine->Get_FrameBuffer());
+	
+	FOG_DESC fog = m_pFogCommand->GetFogDesc();
 
-	m_pShader->Bind_Value("g_FogDensity", { &fogDesc.fogDensity, "float", sizeof(_float) });
-	m_pShader->Bind_Value("g_FogColor", { &fogDesc.fogColor, "float4", sizeof(_float4) });
-	m_pShader->Bind_Value("g_FogUse", { &fogDesc.IsUse, "bool", sizeof(_bool) });
+	m_pShader->Bind_Value("FogDensity", { &fog.fogDensity, "float", sizeof(_float) });
+	m_pShader->Bind_Value("FogColor", { &fog.fogColor, "float4", sizeof(_float4) });
+	
+	Bind_WorldMatrix();
 
 	ID3D11InputLayout* pLayout;
 	Get_BufferInputLayout(m_pVIBuffer, m_pShader, "FOG", &pLayout);
 	m_pContext->IASetInputLayout(pLayout);
-
+	
 	m_pShader->Apply("FOG", m_pContext);
+	m_pVIBuffer->Bind_Buffer(m_pContext);
+	m_pVIBuffer->Render(m_pContext);
+
+	m_pTargetManager->End_MRT();
+
+	return S_OK;
+}
+
+HRESULT CPostRenderer::Render_Addictive_Internal()
+{
+	if (FAILED(m_pTargetManager->Begin_MRT("MRT_Addictive"))) return E_FAIL;
+
+	m_pShader->SetConstantBuffer("FrameBuffer", m_pPipeLine->Get_FrameBuffer());
+
+	m_pTargetManager->Bind_Target(m_strLastTargetName, m_pShader, "FinalTexture");
+	_float3* vAddictiveColor = m_pAddictiveColorCommand->GetAddictiveColor();
+	_bool bSkinned = m_pAddictiveColorCommand->GetSkinned();
+	m_pShader->Bind_Value("AddictiveColor", { vAddictiveColor, "float3", sizeof(_float3) });
+	m_pShader->Bind_Value("bSkinned", { &bSkinned, "bool", sizeof(_bool) });
+	m_pTargetManager->Bind_Target("Target_Combined_SkinnedMesh", m_pShader, "SkinnedCombinedTexture");
+
+	ID3D11InputLayout* pLayout;
+	Get_BufferInputLayout(m_pVIBuffer, m_pShader, "ADDICTIVECOLOR", &pLayout);
+	m_pContext->IASetInputLayout(pLayout);
+
+	m_pShader->Apply("ADDICTIVECOLOR", m_pContext);
+	m_pVIBuffer->Bind_Buffer(m_pContext);
+	m_pVIBuffer->Render(m_pContext);
+
+	m_pTargetManager->End_MRT();
+
+	return S_OK;
+}
+
+HRESULT CPostRenderer::Render_Glitch_Internal()
+{
+	if (FAILED(m_pTargetManager->Begin_MRT("MRT_Glitch"))) return E_FAIL;
+
+	m_pShader->SetConstantBuffer("FrameBuffer", m_pPipeLine->Get_FrameBuffer());
+
+	m_pTargetManager->Bind_Target(m_strLastTargetName, m_pShader, "FinalTexture");
+
+	_float fIntensity = m_pGlitchCommand->GetIntensity();
+	ID3D11ShaderResourceView* NoiseSRV = m_pGlitchCommand->GetNoiseSRV();
+	m_pShader->Bind_Value("GlitchIntensity", { &fIntensity, "float", sizeof(_float) });
+	m_pShader->Bind_Value("GlitchNoiseTexture", { NoiseSRV, "Texture2D", 0 });
+	m_pShader->Bind_Value("g_Time", { &m_fAccTime, "float", sizeof(_float)});
+
+	Bind_WorldMatrix();
+
+	ID3D11InputLayout* pLayout;
+	Get_BufferInputLayout(m_pVIBuffer, m_pShader, "GLITCH", &pLayout);
+	m_pContext->IASetInputLayout(pLayout);
+
+	m_pShader->Apply("GLITCH", m_pContext);
+	m_pVIBuffer->Bind_Buffer(m_pContext);
+	m_pVIBuffer->Render(m_pContext);
+
+	m_pTargetManager->End_MRT();
+
+	return S_OK;
+}
+
+HRESULT CPostRenderer::Render_GuassianBlur_Internal()
+{
+	{
+		if (FAILED(m_pTargetManager->Begin_MRT("MRT_Guassian_BlurH"))) return E_FAIL;
+
+		m_pShader->SetConstantBuffer("FrameBuffer", m_pPipeLine->Get_FrameBuffer());
+
+		m_pTargetManager->Bind_Target(m_strLastTargetName, m_pShader, "FinalTexture");
+
+		_float fIntensity = m_pGuassianBlurCommand->GetIntensity();
+		m_pShader->Bind_Value("GuassianIntensity", { &fIntensity, "float", sizeof(_float) });
+		m_pShader->Bind_Value("ScreenWidth", { &m_fScreenWidth, "float", sizeof(_float) });
+		m_pShader->Bind_Value("ScreenHeight", { &m_fScreenHeight, "float", sizeof(_float) });
+
+		Bind_WorldMatrix();
+
+		ID3D11InputLayout* pLayout;
+		Get_BufferInputLayout(m_pVIBuffer, m_pShader, "GUASSIAN_BLURH", &pLayout);
+		m_pContext->IASetInputLayout(pLayout);
+
+		m_pShader->Apply("GUASSIAN_BLURH", m_pContext);
+		m_pVIBuffer->Bind_Buffer(m_pContext);
+		m_pVIBuffer->Render(m_pContext);
+
+		m_pTargetManager->End_MRT();
+	}
+	{
+		if (FAILED(m_pTargetManager->Begin_MRT("MRT_Guassian_BlurV"))) return E_FAIL;
+
+		m_pShader->SetConstantBuffer("FrameBuffer", m_pPipeLine->Get_FrameBuffer());
+
+		m_pTargetManager->Bind_Target("Target_Guassian_BlurX", m_pShader, "GuassianBlurXTexture");
+
+		_float fIntensity = m_pGuassianBlurCommand->GetIntensity();
+		m_pShader->Bind_Value("GuassianIntensity", { &fIntensity, "float", sizeof(_float) });
+
+		Bind_WorldMatrix();
+
+		ID3D11InputLayout* pLayout;
+		Get_BufferInputLayout(m_pVIBuffer, m_pShader, "GUASSIAN_BLURV", &pLayout);
+		m_pContext->IASetInputLayout(pLayout);
+
+		m_pShader->Apply("GUASSIAN_BLURV", m_pContext);
+		m_pVIBuffer->Bind_Buffer(m_pContext);
+		m_pVIBuffer->Render(m_pContext);
+
+		m_pTargetManager->End_MRT();
+	}
+	return S_OK;
+}
+
+HRESULT CPostRenderer::Render_Saturation_Internal()
+{
+	if (FAILED(m_pTargetManager->Begin_MRT("MRT_Saturation"))) return E_FAIL;
+
+	m_pShader->SetConstantBuffer("FrameBuffer", m_pPipeLine->Get_FrameBuffer());
+
+	m_pTargetManager->Bind_Target(m_strLastTargetName, m_pShader, "FinalTexture");
+
+	_float fIntensity = m_pSaturationCommand->GetIntensity();
+	m_pShader->Bind_Value("SaturationIntensity", { &fIntensity, "float", sizeof(_float) });
+
+	Bind_WorldMatrix();
+
+	ID3D11InputLayout* pLayout;
+	Get_BufferInputLayout(m_pVIBuffer, m_pShader, "SATURATION", &pLayout);
+	m_pContext->IASetInputLayout(pLayout);
+
+	m_pShader->Apply("SATURATION", m_pContext);
 	m_pVIBuffer->Bind_Buffer(m_pContext);
 	m_pVIBuffer->Render(m_pContext);
 
@@ -162,30 +352,15 @@ HRESULT CPostRenderer::Render_Final()
 	Get_BufferInputLayout(m_pVIBuffer, m_pShader, "FINAL", &pLayout);
 	m_pContext->IASetInputLayout(pLayout);
 
-	m_pTargetManager->Bind_Target("Target_Fog", m_pShader, "FinalTexture");
+	m_pShader->SetConstantBuffer("FrameBuffer", m_pPipeLine->Get_FrameBuffer());
+
+	m_pTargetManager->Bind_Target(m_strLastTargetName, m_pShader, "FinalTexture");
 	m_pTargetManager->Bind_Target("Target_DistortionAcc", m_pShader, "DistortionCombinedTexture");
-	m_pTargetManager->Bind_Target("Target_Radial", m_pShader, "RadialBloomTexture");
-	m_pTargetManager->Bind_Target("Target_MotionNoise", m_pShader, "MotionBlurTexture");
-	
+
 	m_pTargetManager->Bind_Target("Target_HDR_BlurY", m_pShader, "HDRBloomFinalTexture");
 	m_pTargetManager->Bind_Target("Target_UI", m_pShader, "UI2DTexture");
-
-	m_pTargetManager->Bind_Target("Target_Combined_SkinnedMesh", m_pShader, "SkinnedCombinedTexture");
 	m_pTargetManager->Bind_Target("Target_Combined_Effect", m_pShader, "EffectCombinedTexture");
 
-	if (m_pAddictiveColor != nullptr)
-	{
-		_bool bUseAddictive = _vector3(*m_pAddictiveColor).Length() > 0.01f;
-
-		m_pShader->Bind_Value("g_UseAddictiveColor", { &bUseAddictive, "bool", sizeof(_bool) });
-		m_pShader->Bind_Value("g_AddictiveColor", { m_pAddictiveColor, "float3", sizeof(_float3) });
-	}
-	else
-	{
-		_bool bUseAddictive = false;
-		m_pShader->Bind_Value("g_UseAddictiveColor", { &bUseAddictive, "bool", sizeof(_bool) });
-	}
-	if (FAILED(Bind_NoiseTexture())) return E_FAIL;
 	Bind_WorldMatrix();
 
 	m_pShader->Apply("FINAL", m_pContext);
@@ -194,53 +369,11 @@ HRESULT CPostRenderer::Render_Final()
 	return S_OK;
 }
 
-void CPostRenderer::Add_PostProcessCommand(const POST_PROCESS_COMMAND& command)
-{
-	m_PostCommands.push_back(command);
-}
-
-HRESULT CPostRenderer::Add_NoiseTexture(string strName, CTexture* noiseTexture)
-{
-	if (noiseTexture == nullptr) return E_FAIL;
-
-	m_pNoiseTextures.insert({ strName, noiseTexture });
-	return S_OK;
-}
-
-void CPostRenderer::Apply_Noise(vector<string> strNames, _float duration)
-{
-	for (auto& name : strNames)
-	{
-		m_pApplyNoiseTextures.push_back(m_pNoiseTextures[name]);
-	}
-	m_fNoiseDuration = duration;
-}
-
-void CPostRenderer::Apply_RadialBlur(_float duration, _float2 center)
-{
-	m_fRadialTotalDuration = duration;
-	m_fRadialDuration = duration;
-	m_fRadialCenter = center;
-}
-
-void CPostRenderer::Set_AddictiveColor(_float3* color)
-{
-	m_pAddictiveColor = color;
-}
-
-void CPostRenderer::Register_AddictiveColor(_float3* pColor)
-{
-	m_pAddictiveColor = pColor;
-}
-
-void CPostRenderer::UnRegister_AddictiveColor()
-{
-	m_pAddictiveColor = nullptr;
-}
-
 void CPostRenderer::Update(_float dt)
 {
-	if (m_fRadialDuration > 0.f) m_fRadialDuration -= dt;
+	m_fAccTime += dt;
+	for (auto& cmd : m_CommandMap)
+		cmd.second->Update(dt);
 }
 
 HRESULT CPostRenderer::Ready_Target()
@@ -261,8 +394,23 @@ HRESULT CPostRenderer::Ready_Target()
 	RenderTargetDesc RadialBlurDesc = { "Target_Radial", DXGI_FORMAT_R16G16B16A16_FLOAT,DXGI_FORMAT_D24_UNORM_S8_UINT, _float4(0.0f, 0.0f, 0.0f, 0.0f),ViewportDesc.Width ,ViewportDesc.Height };
 	m_pTargetManager->Create_Target(RadialBlurDesc);
 
-	RenderTargetDesc FogDesc = {"Target_Fog",DXGI_FORMAT_R16G16B16A16_FLOAT,DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.0f, 0.0f, 0.0f, 0.0f),ViewportDesc.Width,ViewportDesc.Height};
+	RenderTargetDesc FogDesc = {"Target_Fog", DXGI_FORMAT_R16G16B16A16_FLOAT,DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.0f, 0.0f, 0.0f, 0.0f),ViewportDesc.Width,ViewportDesc.Height};
 	m_pTargetManager->Create_Target(FogDesc);
+
+	RenderTargetDesc AddictiveColorDesc = { "Target_AddictiveColor", DXGI_FORMAT_R16G16B16A16_FLOAT,DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.0f, 0.0f, 0.0f, 0.0f),ViewportDesc.Width,ViewportDesc.Height };
+	m_pTargetManager->Create_Target(AddictiveColorDesc);
+
+	RenderTargetDesc GlitchDesc = { "Target_Glitch", DXGI_FORMAT_R16G16B16A16_FLOAT,DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.0f, 0.0f, 0.0f, 0.0f),ViewportDesc.Width,ViewportDesc.Height };
+	m_pTargetManager->Create_Target(GlitchDesc);
+
+	RenderTargetDesc GuassianBlurXDesc = { "Target_Guassian_BlurX", DXGI_FORMAT_R16G16B16A16_FLOAT,DXGI_FORMAT_D24_UNORM_S8_UINT, _float4(0.0f, 0.0f, 0.0f, 0.0f),ViewportDesc.Width,ViewportDesc.Height };
+	m_pTargetManager->Create_Target(GuassianBlurXDesc);
+
+	RenderTargetDesc GuassianBlurYDesc = { "Target_Guassian_BlurY", DXGI_FORMAT_R16G16B16A16_FLOAT,DXGI_FORMAT_D24_UNORM_S8_UINT, _float4(0.0f, 0.0f, 0.0f, 0.0f),ViewportDesc.Width ,ViewportDesc.Height };
+	m_pTargetManager->Create_Target(GuassianBlurYDesc);
+
+	RenderTargetDesc SaturationDesc = { "Target_Saturation", DXGI_FORMAT_R16G16B16A16_FLOAT,DXGI_FORMAT_D24_UNORM_S8_UINT, _float4(0.0f, 0.0f, 0.0f, 0.0f),ViewportDesc.Width ,ViewportDesc.Height };
+	m_pTargetManager->Create_Target(SaturationDesc);
 
 	return S_OK;
 }
@@ -272,87 +420,29 @@ HRESULT CPostRenderer::Ready_MRT()
 	{
 		if (FAILED(m_pTargetManager->Add_MRT("MRT_Fog", "Target_Fog"))) return E_FAIL;
 	}
-
 	{
 		if (FAILED(m_pTargetManager->Add_MRT("MRT_RadialBlur", "Target_Radial"))) return E_FAIL;
 	}
-
+	{
+		if (FAILED(m_pTargetManager->Add_MRT("MRT_Addictive", "Target_AddictiveColor"))) return E_FAIL;
+	}
+	{
+		if (FAILED(m_pTargetManager->Add_MRT("MRT_Glitch", "Target_Glitch"))) return E_FAIL;
+	}
+	{
+		if (FAILED(m_pTargetManager->Add_MRT("MRT_Saturation", "Target_Saturation"))) return E_FAIL;
+	}
 	{
 		if (FAILED(m_pTargetManager->Add_MRT("MRT_HDR_Bright", "Target_HDR_Bright"))) return E_FAIL;
 		if (FAILED(m_pTargetManager->Add_MRT("MRT_HDR_BlurH", "Target_HDR_BlurX"))) return E_FAIL;
 		if (FAILED(m_pTargetManager->Add_MRT("MRT_HDR_BlurV", "Target_HDR_BlurY"))) return E_FAIL;
 	}
 
-	return S_OK;
-}
-
-HRESULT CPostRenderer::Bind_NoiseTexture()
-{
-	for (_int i = 0; i < m_pApplyNoiseTextures.size(); ++i)
 	{
-		string textureName = "g_NoiseTexture" + to_string(i + 1);
-
-		if (FAILED(m_pShader->Bind_Value(textureName.c_str(),{ m_pApplyNoiseTextures[i]->Get_SRV(), "Texture2D", 0})))
-			return E_FAIL;
+		if (FAILED(m_pTargetManager->Add_MRT("MRT_Guassian_BlurH", "Target_Guassian_BlurX"))) return E_FAIL;
+		if (FAILED(m_pTargetManager->Add_MRT("MRT_Guassian_BlurV", "Target_Guassian_BlurY"))) return E_FAIL;
 	}
-	if (FAILED(m_pShader->Bind_Value("g_Time", { &m_fNoiseDuration, "float", sizeof(_float) })))
-		return E_FAIL;
-	return S_OK;
-}
 
-HRESULT CPostRenderer::Process_PostProcessQueue()
-{
-	if (m_PostCommands.empty()) return S_OK;
-
-	std::stable_sort(m_PostCommands.begin(), m_PostCommands.end(),
-		[](const auto& a, const auto& b) { return a.GetKey() < b.GetKey(); });
-
-	_uint key = 0;
-	bool bound = false;
-
-	for (auto& cmd : m_PostCommands)
-	{
-		const _uint curKey = cmd.GetKey();
-
-		if (!bound || curKey != key)
-		{
-			if (bound) m_pTargetManager->End_MRT();
-			string mrt = Helper::EnumToString(cmd.eTarget);
-			if (FAILED(m_pTargetManager->Begin_MRT(mrt))) return E_FAIL;
-
-			key = curKey;
-			bound = true;
-		}
-
-		cmd.pShader->SetConstantBuffer("FrameBuffer", m_pPipeLine->Get_FrameBuffer());
-		cmd.pShader->Bind_Value("g_worldMatrix", { cmd.pWorldMatrix, "float4x4", sizeof(_float4x4) });
-		cmd.DrawCall(m_pContext);
-	}
-	if (bound) m_pTargetManager->End_MRT();
-	m_PostCommands.clear();
-	return S_OK;
-}
-
-HRESULT CPostRenderer::Clear_PostProcess()
-{
-	for (size_t i = 0; i < static_cast<_uint>(POSTPROCESS::END); ++i)
-	{
-		POSTPROCESS eType = static_cast<POSTPROCESS>(i);
-		string targetName = Helper::EnumToString(eType);
-
-		vector<CRenderTarget*> Targets = m_pTargetManager->Find_MRT(targetName);
-		for (auto& Target : Targets)
-		{
-			if (!Target)
-			{
-				MSG_BOX("Invalid PostProcess Target Key");
-				continue;
-			}
-
-			if (Target->Get_RTV())
-				Target->Clear();
-		}
-	}
 	return S_OK;
 }
 
@@ -369,8 +459,8 @@ CPostRenderer* CPostRenderer::Create(ID3D11Device* pDevice, ID3D11DeviceContext*
 void CPostRenderer::Free()
 {
 	__super::Free();
-	
-	for (auto& texture : m_pNoiseTextures)
-		Safe_Release(texture.second);
-	m_pNoiseTextures.clear();
+
+	for (auto& cmd : m_CommandMap)
+		Safe_Release(cmd.second);
+	m_CommandMap.clear();
 }

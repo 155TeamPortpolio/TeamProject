@@ -15,7 +15,7 @@ public:
     void  Begin(_float fovHold = 30.f, _float blendSec = 0.5f);
     void  End(_float blendSec = 0.5f);
 
-    void  Update(_float dt, CCamera* cam, COrbitCam* orbit, CTransform* focusTr);
+    void  Update(_float dt);
 
     _bool IsHolding() const { return hold; }
     _bool IsBusy() const { return hold || blend; }

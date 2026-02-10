@@ -854,11 +854,12 @@ void CResourceMgr::Load_InitialResource()
 			MSG_BOX("Failed to preload Default.mat");
 	}
 }
-_bool CResourceMgr::RequestPreload(const PreloadKey& key)
-{
-	PreloadKey tmpKey = key;
 
-	int index = ValidLevel(tmpKey.levelKey);
+_bool CResourceMgr::RequestPreload(PreloadKey key)
+{
+	PreloadKey tmpKey = std::move(key);
+
+	const int index = ValidLevel(tmpKey.levelKey);
 	if (index == -1)
 		return false;
 
@@ -867,29 +868,53 @@ _bool CResourceMgr::RequestPreload(const PreloadKey& key)
 	switch (tmpKey.type)
 	{
 	case Engine::ResourceType::Texture:
+	{
+		std::lock_guard<std::mutex> lockGuard(pool.textureMutex);
 		if (pool.m_Textures.count(tmpKey.resourceKey)) return false;
 		break;
+	}
 	case Engine::ResourceType::Sound:
+	{
+		std::lock_guard<std::mutex> lockGuard(pool.soundMutex);
 		if (pool.m_Sounds.count(tmpKey.resourceKey)) return false;
 		break;
+	}
 	case Engine::ResourceType::Shader:
+	{
+		std::lock_guard<std::mutex> lockGuard(pool.shaderMutex);
 		if (pool.m_Shaders.count(tmpKey.resourceKey)) return false;
 		break;
+	}
 	case Engine::ResourceType::Model:
+	{
+		std::lock_guard<std::mutex> lockGuard(pool.modelMutex);
 		if (pool.m_ModelDatas.count(tmpKey.resourceKey)) return false;
 		break;
+	}
 	case Engine::ResourceType::Material:
+	{
+		std::lock_guard<std::mutex> lockGuard(pool.materialMutex);
 		if (pool.m_MaterialInstances.count(tmpKey.resourceKey)) return false;
 		break;
+	}
 	case Engine::ResourceType::ComputeShader:
+	{
+		std::lock_guard<std::mutex> lockGuard(pool.computeMutex);
 		if (pool.m_ComputeShaders.count(tmpKey.resourceKey)) return false;
 		break;
+	}
 	case Engine::ResourceType::Animation:
+	{
+		std::lock_guard<std::mutex> lockGuard(pool.animMutex);
 		if (pool.m_AnimationMetas.count(tmpKey.resourceKey)) return false;
 		break;
+	}
 	case Engine::ResourceType::Effect:
+	{
+		std::lock_guard<std::mutex> lockGuard(pool.effectMutex);
 		if (pool.m_EffectAssets.count(tmpKey.resourceKey)) return false;
 		break;
+	}
 	default:
 		return false;
 	}
