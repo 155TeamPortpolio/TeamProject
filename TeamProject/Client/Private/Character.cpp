@@ -273,10 +273,11 @@ OBJECT_HANDLE CCharacter::Calculate_Parry()
     OBJECT_HANDLE targetHandle;
     _float fMinDist = FLT_MAX;
 
-    // 몬스터의 트리거 콜라이더로 검사. 이후 부모 오브젝트의 Handle 저장
     for (auto iter : pParry->Get_ParryTargets())
     {
-        _float fDist = (vPos - iter.Get()->Get_WorldPos()).Length();
+        _vector3 vDiff = vPos - iter.Get()->Get_WorldPos();
+        vDiff.y = 0.f;
+        _float fDist = vDiff.Length();
         if (fDist >= fMinDist)
             continue;
         fMinDist = fDist;
@@ -285,11 +286,17 @@ OBJECT_HANDLE CCharacter::Calculate_Parry()
 
     _vector3 vAttackPos = {};
     _float vAttackOffset = {};
-    _vector3 vAttackLook = {};
+    _vector3 vDirToPlayer = {};
+
     if (targetHandle.isValid())
     {
         vAttackPos = targetHandle.Get()->Get_WorldPos();
-        vAttackLook = targetHandle.Get()->Get_Component<CTransform>()->Dir(STATE::LOOK);
+        vAttackPos.y = vPos.y;
+
+        vDirToPlayer = vPos - vAttackPos;
+        vDirToPlayer.y = 0.f;
+        vDirToPlayer.Normalize();
+
         CCharacterController* pCCT = targetHandle.Get()->Get_Component<CCharacterController>();
         if (pCCT)
         {
@@ -303,11 +310,12 @@ OBJECT_HANDLE CCharacter::Calculate_Parry()
         }
     }
 
-    m_vParryPos = vAttackPos + vAttackLook * vAttackOffset * 2.f;
-    m_vParryPos.y = Get_WorldPos().y;
+    m_vParryPos = vAttackPos + vDirToPlayer * vAttackOffset * 2.f;
+    m_vParryPos.y = vPos.y + 0.5f;
+
     m_vParryLook = vAttackPos - m_vParryPos;
+    m_vParryLook.y = 0.f;
     m_vParryLook.Normalize();
-    m_vParryPos.y += 0.5f;
 
     return targetHandle;
 }
