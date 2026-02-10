@@ -326,7 +326,7 @@ void CCorinState_Attack_05::Enter(CCorin* pOwner)
 
     // Jehyun
     auto& sound = *pOwner->Get_Component<CAudioSource>();
-    //sound.Slot("Corin_NormalAttack_03_SFX.wav").Attribute3D(true).Loop(false).Volume(0.5f).Play();
+    sound.Slot("Corin_NormalAttack_03_SFX.wav").Attribute3D(true).Loop(false).Volume(0.5f).Play();
     sound.Slot("Corin_NormalAttack_07_Voice.wav").Attribute3D(true).Loop(false).Volume(1.f).Play();
 }
 

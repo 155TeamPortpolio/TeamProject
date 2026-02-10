@@ -17,6 +17,8 @@
 /*DataBase*/
 #include "DataBase.h"
 
+#include "EffectContainer.h"
+
 CGacha_Level::CGacha_Level(const string& LevelKey)
 	:CLevel(LevelKey),
 	m_pGameInstance{ CGameInstance::GetInstance() },
@@ -59,6 +61,14 @@ HRESULT CGacha_Level::Awake()
 	//RenderSystem()->Set_FogDesc({ _float4(0.1f, 0.1f, 0.1f, 1.0f) ,0.f, 0.f, 0.02f, true });
 
 	Ready_GachaObjects(); 
+
+	//==================== Effect ============
+	//auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+	//	.Asset("gacha_background_light.json")
+	//	.Position(_float3(0.f, 0.5f, -0.1f))
+	//	.Build("Gacha_Light");
+	//
+	//ObjectManager()->Add_Object(pEffect, { "Gacha_Level","Effect_Layer" });
 
 	return S_OK;
 }

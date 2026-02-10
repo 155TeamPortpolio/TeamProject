@@ -14,25 +14,21 @@ namespace
         x ^= x >> 16;
         return x;
     }
-
     _float Hash01(_uint x)
     {
         return (HashU(x) & 0x00FFFFFF) / (float)0x01000000;
     }
-
     _float Clamp01(_float t)
     {
         if (t < 0.f) return 0.f;
         if (t > 1.f) return 1.f;
         return t;
     }
-
     _float Smooth01(_float t)
     {
         t = Clamp01(t);
         return t * t * (3.f - 2.f * t);
     }
-
     _float Envelope(_float elapsed, _float attackSec, _float sustainSec, _float decaySec)
     {
         if (elapsed < attackSec) return attackSec <= 0.f ? 1.f : Smooth01(elapsed / attackSec);
@@ -45,7 +41,6 @@ namespace
 
         return 1.f - Smooth01(elapsed / decaySec);
     }
-
     _float KickCurve(_float t, _float kickDur)
     {
         if (kickDur <= 0.f) return 0.f;
@@ -56,7 +51,6 @@ namespace
         const _float s = sinf(u * XM_PI);
         return a * s;
     }
-
     _float Noise3(_float t, _float f, _float p0, _float p1, _float p2)
     {
         const _float x0 = sinf((t + p0) * f * (2.f * XM_PI));
@@ -64,13 +58,11 @@ namespace
         const _float x2 = sinf((t + p2) * f * (2.f * XM_PI) * 2.31f);
         return x0 * 0.56f + x1 * 0.30f + x2 * 0.14f;
     }
-
     _float ClampAttack(_float dur)
     {
         const _float a = dur * 0.18f;
         return min(0.045f, max(0.010f, a));
     }
-
     _float ZoomWeight(const CamZoomInstance& s)
     {
         const _float a = s.attackSec;
@@ -88,14 +80,12 @@ namespace
 
         return 1.f - Smooth01(t / r);
     }
-
     _float Ease01(EaseType type, _float u)
     {
         u = Clamp01(u);
         if (type == EaseType::None) return Smooth01(u);
         return Math::ApplyEase(type, u);
     }
-
     _float Envelope(_float elapsed, _float attackSec, _float sustainSec, _float decaySec, EaseType attackEase, EaseType decayEase)
     {
         if (elapsed < attackSec)

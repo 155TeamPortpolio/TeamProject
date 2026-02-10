@@ -63,7 +63,7 @@ void CCorinState_RushAttack::Exit(CCorin* pOwner)
 void CCorinState_Rush_Start::Enter(CCorin* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_Rush")
-        .Speed(2.f)
+        .Speed(1.5f)
         .Apply();
     pOwner->Begin_AttackCollider("Saw", HitDesc()
         .Type(HIT_TYPE::COUNT)

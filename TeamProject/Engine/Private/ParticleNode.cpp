@@ -114,6 +114,7 @@ void CParticleNode::OnPooledRelease()
 
 void CParticleNode::Play()
 {
+	m_isAlive = true;
 	m_IsEffectActive = true;
 	m_fElpasedTime = 0.f;
 
