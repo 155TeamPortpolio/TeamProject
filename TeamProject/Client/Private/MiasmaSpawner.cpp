@@ -54,8 +54,8 @@ _float3 CMiasmaSpawner::ComputeParabolarPos(const _float3& ownerPos, const _floa
     const _float sideSign = m_parabolLeft ? -1.f : +1.f; // øﬁ¬ ¿Ã∏È -1
     m_parabolLeft = !m_parabolLeft;
 
-    const _float sideOffset = 4.0f;   
-    const _float forwardOffset = length * 0.8f;
+    const _float sideOffset = 5.0f;   
+    const _float forwardOffset = length * 0.7f;
     _vector3 offset = right * (sideOffset * sideSign) + forward * forwardOffset;
 
     _vector3 pos = _vector3(ownerPos) + offset;

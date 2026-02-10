@@ -102,7 +102,7 @@ void CDefiler::Awake()
 
 	for (const auto& instance : materialInstances)
 	{
-		instance->Set_Param("NoiaseTexture", { dissolveTexture->Get_SRV(),"Texture2D",0 });
+		instance->Set_Param("NoiseTexture", { dissolveTexture->Get_SRV(),"Texture2D",0 });
 		instance->Set_Param("vRimLightColor", { &m_vRimLightColor,"float3",sizeof(_float3) });
 		instance->Set_Param("fRimLightPower", { &m_fRimLightPower,"float",sizeof(_float) });
 		instance->Set_Param("fDissolveProgress", { &m_fDissolveProgress,"float",sizeof(_float) });
@@ -118,7 +118,7 @@ void CDefiler::Priority_Update(_float dt)
 	ComputeTargetingInfo();
 
 	if (InputDevice()->Key_Tap('F'))
-		Controll_Summon("Heavy");
+		Control_Summon("Heavy");
 }
 
 void CDefiler::Update(_float dt)
@@ -134,10 +134,8 @@ void CDefiler::Update(_float dt)
 	auto pAnimator = Get_Component<CAnimator3D>();
 	pAnimator->Update_Animation(dt);
 	Route_AnimEvent(pAnimator);
-	Update_Dissolve(dt);
 	MoveByTraceMode(dt);
 	RotateToTarget(dt, 4.f);
-
 	
 	Get_Component<CCharacterController>()->Update(dt);
 	m_pStateMachine->Update(dt);
@@ -387,12 +385,9 @@ void CDefiler::Route_AnimEvent(CAnimator3D* animator)
 		{
 		case CLIP_EVENT_TYPE::NOTIFY:
 			if (instance.Tag == "ParrySign")
-				//UnleashAttack(CEnemy::ATTACK_SIDE::NONE, true);
-				Active_AttackSign(true);
+				UnleashAttack(CEnemy::ATTACK_SIDE::NONE, true);
 			else if (instance.Tag == "EvadeSign")
-				//UnleashAttack(CEnemy::ATTACK_SIDE::NONE, false);
-				Active_AttackSign(false);
-
+				UnleashAttack(CEnemy::ATTACK_SIDE::NONE, false);
 			else if (instance.Tag == "TargetLockOn")
 				m_BlackBoard.LockTarget = true;
 			else if (instance.Tag == "TargetLockOff")
@@ -404,13 +399,13 @@ void CDefiler::Route_AnimEvent(CAnimator3D* animator)
 			break;
 
 		case CLIP_EVENT_TYPE::SOUND:
-			Controll_Sound(instance.Tag);
+			Control_Sound(instance.Tag);
 			break;
 		}
 	}
 }
 
-void CDefiler::Controll_Sound(const string& event)
+void CDefiler::Control_Sound(const string& event)
 {
 	Get_Component<CAudioSource>()->Slot(event).Attribute3D(true).Volume(0.3f).Play();
 }
@@ -419,7 +414,7 @@ void CDefiler::Controll_Attack(const string& event)
 {
 	auto iter = DefilerAtkData.find(event);
 	if (iter == DefilerAtkData.end()) {
-		Controll_Summon(event);
+		Control_Summon(event);
 		return;
 	}
 
@@ -447,7 +442,7 @@ void CDefiler::Controll_Attack(const string& event)
 	SetBattleColliderObject(AtkData.AtkBone, CEnemy::BATTLE_COLTYPE::ATTACK, AtkData.OnOff, HitDesc);
 }
 
-void CDefiler::Controll_Summon(const string& event)
+void CDefiler::Control_Summon(const string& event)
 {
 	string levelKey = LevelManager()->Get_NowLevelKey();
 	if (event == "Blade") {
@@ -460,41 +455,50 @@ void CDefiler::Controll_Summon(const string& event)
 			m_tTargetingInfo.vTargetPos.y,this);
 	}
 	else if (event == "Heavy") {
-		m_MiasmaSpawner.Spawn(MiasmaType::Heavy, 1, m_tTargetingInfo.vTargetPos, Get_BipedPos("Ctr_M_Prop_01"),
+		m_MiasmaSpawner.Spawn(MiasmaType::Heavy, 1, m_tTargetingInfo.vTargetPos, Get_BipedPos("Ctr_M_Weapon_03"),
 			m_tTargetingInfo.vTargetPos.y,this);
 	}
 }
 
+void CDefiler::Control_TargetEnable(_bool On)
+{
+	if (On) {
+		BattleSystem()->ExcludeBattleObject(BATTLE_OBJ_TYPE::MONSTER, this->Get_Handle());
+	}
+	else {
+		BattleSystem()->EnterBattleObject(BATTLE_OBJ_TYPE::MONSTER, this->Get_Handle());
+	}
+	Get_Component<CCharacterController>()->Set_CompActive(On);
+}
+
 void CDefiler::Update_Dissolve(_float dt)
 {
-	
-	if (m_Dissolve.fDissolveElapsedTime < m_Dissolve.fDissolveDuration)
-	{
-		m_Dissolve.fDissolveElapsedTime += dt;
-		_float t = m_Dissolve.fDissolveElapsedTime / m_Dissolve.fDissolveDuration;
+	const _float duration = m_Dissolve.fDissolveDuration;
 
-		switch (m_Dissolve.eDissolveState)
-		{
-		case DefilerDissolve::DISAPPEAR:
-		{
-			m_fDissolveProgress = t;
-		}break;
-		case DefilerDissolve::DISSOLVE_STATE::APPEAR:
-		{
-			m_fDissolveProgress = 1.f - t;
-		}break;
-		case DefilerDissolve::DISSOLVE_STATE::NONE:
-			break;
-		default:
-			break;
-		}
-	}
-	else
+	if (duration <= 0.f)
 	{
-		if (DefilerDissolve::DISAPPEAR == m_Dissolve.eDissolveState)
-			m_fDissolveProgress = 1.01f;
-		else
-			m_fDissolveProgress = 0.f;
+		m_fDissolveProgress =
+			(m_Dissolve.eDissolveState == DefilerDissolve::DISAPPEAR) ? 1.f : 0.f;
+		return;
+	}
+
+	m_Dissolve.fDissolveElapsedTime =
+		min(m_Dissolve.fDissolveElapsedTime + dt, duration);
+
+	_float t = m_Dissolve.fDissolveElapsedTime / duration; 
+
+	switch (m_Dissolve.eDissolveState)
+	{
+	case DefilerDissolve::DISAPPEAR:
+		m_fDissolveProgress = t;
+		break;
+
+	case DefilerDissolve::APPEAR:
+		m_fDissolveProgress = 1.f - t;
+		break;
+
+	default:
+		break;
 	}
 }
 

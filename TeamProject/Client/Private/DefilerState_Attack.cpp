@@ -109,25 +109,38 @@ void CDefilerState_Attack::Build_Pattern(CDefiler* pOwner, _int Type)
 
 void CDefilerState_Attack::ReadySubState()
 {
-
+	/*3단 공격*/
 	m_pSubStateMachine->Register_State("Attack01_01",			CDefilerState_Attack_01_01::Create());
 	m_pSubStateMachine->Register_State("Attack01_02",			CDefilerState_Attack_01_02::Create());
+	/*6단 패링 공력*/
 	m_pSubStateMachine->Register_State("Attack01_01_P2",		CDefilerState_Attack_01_01_P2::Create());
+	/*칼던지고 꼬리 공격*/
 	m_pSubStateMachine->Register_State("Attack01_03",			CDefilerState_Attack_01_03::Create());
+	/*연속 패링 팽이 공격*/
 	m_pSubStateMachine->Register_State("Attack02",				CDefilerState_Attack_02::Create());
+	/*내려찍고 "알생성"*/
 	m_pSubStateMachine->Register_State("Attack03",				CDefilerState_Attack_03::Create());
+	/*좀더 높이 올라가서 내려찍음*/
 	m_pSubStateMachine->Register_State("Attack04",				CDefilerState_Attack_04::Create());
+	/*뚫고 돌진 공격*/
 	m_pSubStateMachine->Register_State("Attack05",				CDefilerState_Attack_05::Create());
+	/*3단 레이저 공격*/
 	m_pSubStateMachine->Register_State("Attack06",				CDefilerState_Attack_06::Create());
+	/*미아즈마 블레이드*/
 	m_pSubStateMachine->Register_State("Attack07",				CDefilerState_Attack_07::Create());
+	
+	/*미아즈마 병사 소환, 방패병*/
 	m_pSubStateMachine->Register_State("Attack08_01_Start",		CDefilerState_Attack_08_01_Start::Create());
 	m_pSubStateMachine->Register_State("Attack08_01_Loop",		CDefilerState_Attack_08_01_Loop::Create());
 	m_pSubStateMachine->Register_State("Attack08_01_End",		CDefilerState_Attack_08_01_End::Create());
 	m_pSubStateMachine->Register_State("Attack08_02",			CDefilerState_Attack_08_02::Create());
+	/*해일*/
 	m_pSubStateMachine->Register_State("Attack09_Start",		CDefilerState_Attack_09_Start::Create());
 	m_pSubStateMachine->Register_State("Attack09_Loop",			CDefilerState_Attack_09_Loop::Create());
 	m_pSubStateMachine->Register_State("Attack09_End",			CDefilerState_Attack_09_End::Create());
+	/*돌진 똑같음 - 모습만 달라진 느낌 */
 	m_pSubStateMachine->Register_State("Attack_Grab",			CDefilerState_Attack_Grab::Create());
+	/*미아즈마 병사 소환, 총잽이*/
 	m_pSubStateMachine->Register_State("Attack_Summon",			CDefilerState_Attack_Summon::Create());
 	m_pSubStateMachine->Register_State("Attack_Evade",			CDefilerState_Attack_Evade::Create());
 }
@@ -138,7 +151,7 @@ void CDefilerState_Attack::Enter(CDefiler* pOwner)
 	auto& blackboard = pOwner->GetBlackBoard();
 
 	Build_Pattern(pOwner, blackboard.patternIndex);
-	//blackboard.patternIndex = 6;// clamp(++blackboard.patternIndex, 0, m_maxPattern);
+	blackboard.patternIndex = clamp(++blackboard.patternIndex, 0, m_maxPattern);
 
 	if (!blackboard.patternTransition.empty())
 	{
@@ -402,12 +415,14 @@ void CDefilerState_Attack_08_01_Start::Enter(CDefiler* pOwner)
 {
 	DEFILER_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
 	blackBoard.TraceType_OnlyAnim();
+	blackBoard.TraceType_IgnoreRotation();
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("Monster_IsoldetheDefiler_Ani_Attack_08_01_Start")
 		.StartAt(blackBoard.reservedPattern.animStartProgress)
 		.Speed(1.f)
 		.Loop(false)
 		.Apply();
+	pOwner->Control_TargetEnable(false);
 }
 
 void CDefilerState_Attack_08_01_Start::Update(CDefiler* pOwner, _float dt)
@@ -426,17 +441,29 @@ void CDefilerState_Attack_08_01_Loop::Enter(CDefiler* pOwner)
 	pAnimator->Change_Animation("Monster_IsoldetheDefiler_Ani_Attack_08_01_Loop")
 		.StartAt(blackBoard.reservedPattern.animStartProgress)
 		.Speed(1.f)
-		.Loop(false)
+		.Loop(true)
 		.Apply();
 }
 
 void CDefilerState_Attack_08_01_Loop::Update(CDefiler* pOwner, _float dt)
 {
-	ComboTransition(pOwner);
+	m_Elapsed += dt;
+	m_Interval += dt;
+	if (m_Duration < m_Elapsed) {
+		auto& blackBoard = pOwner->GetBlackBoard();
+		blackBoard.isRequestNext = true;
+	}
+
+	if (m_Interval >= 0.6f) {
+		pOwner->Control_Summon("Heavy");
+		m_Interval = 0.f;
+	}
 }
 
 void CDefilerState_Attack_08_01_Loop::Exit(CDefiler* pOwner)
 {
+	m_Interval = 0.f;
+	m_Elapsed = 0.f;
 }
 
 void CDefilerState_Attack_08_01_End::Enter(CDefiler* pOwner)
@@ -457,18 +484,21 @@ void CDefilerState_Attack_08_01_End::Update(CDefiler* pOwner, _float dt)
 
 void CDefilerState_Attack_08_01_End::Exit(CDefiler* pOwner)
 {
+	pOwner->Control_TargetEnable(true);
 }
 
 void CDefilerState_Attack_08_02::Enter(CDefiler* pOwner)
 {
 	DEFILER_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
 	blackBoard.TraceType_OnlyAnim();
+	blackBoard.TraceType_IgnoreRotation();
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("Monster_IsoldetheDefiler_Ani_Attack_08_02")
 		.StartAt(blackBoard.reservedPattern.animStartProgress)
 		.Speed(1.f)
 		.Loop(false)
 		.Apply();
+
 }
 
 void CDefilerState_Attack_08_02::Update(CDefiler* pOwner, _float dt)
@@ -485,16 +515,14 @@ void CDefilerState_Attack_09_Start::Enter(CDefiler* pOwner)
 	DEFILER_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
 	TARGETING_INFO& targetBoard = pOwner->GetTargetingInfo();
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
+	blackBoard.TraceType_OnlyAnim();
+	blackBoard.TraceType_IgnoreRotation();
 	pAnimator->Change_Animation("Monster_IsoldetheDefiler_Ani_Attack_09_Start")
 		.StartAt(blackBoard.reservedPattern.animStartProgress)
 		.Speed(1.f)
 		.Loop(false)
 		.Apply();
 
-	Matrix mat;
-	mat.Identity;
-	mat.Translation(targetBoard.vTargetPos);
-	pAnimator->Set_BoneMatrix(CAnimator3D::BoneSpace::MANIPULATE, mat,"Ctr_M_Prop_01");
 }
 
 void CDefilerState_Attack_09_Start::Update(CDefiler* pOwner, _float dt)
@@ -529,7 +557,6 @@ void CDefilerState_Attack_09_Loop::Exit(CDefiler* pOwner)
 void CDefilerState_Attack_09_End::Enter(CDefiler* pOwner)
 {
 	DEFILER_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
-	blackBoard.TraceType_OnlyAnim();
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("Monster_IsoldetheDefiler_Ani_Attack_09_End")
 		.StartAt(blackBoard.reservedPattern.animStartProgress)
@@ -594,20 +621,22 @@ void CDefilerState_Attack_Evade::Enter(CDefiler* pOwner)
 	DEFILER_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
 	blackBoard.TraceType_OnlyAnim();
 	auto& dissolve = pOwner->GetDissolve();
-	dissolve.Set_DissolveState(dissolve.DISAPPEAR, 0.7f);
+	dissolve.Set_DissolveState(dissolve.DISAPPEAR, .7f);
 	m_eState = EVADE_IN;
+	pOwner->Control_TargetEnable(false);
 }
 
 void CDefilerState_Attack_Evade::Update(CDefiler* pOwner, _float dt)
 {
 	DEFILER_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
 	auto& dissolve = pOwner->GetDissolve();
+	pOwner->Update_Dissolve(dt);
 	if (m_eState == EVADE_IN && dissolve.isComplete()) {
 		m_eState = EVADE_OUT;
-		dissolve.Set_DissolveState(dissolve.APPEAR, 0.5f);
+		dissolve.Set_DissolveState(dissolve.APPEAR, .5f);
 		pOwner->Set_CCTPos({ 0,1.1f,0 });
 	}
-	if (m_eState == EVADE_OUT && dissolve.isComplete()) {
+	else if (m_eState == EVADE_OUT && dissolve.isComplete()) {
 		blackBoard.isRequestNext = true;
 	}
 }
@@ -615,4 +644,5 @@ void CDefilerState_Attack_Evade::Update(CDefiler* pOwner, _float dt)
 void CDefilerState_Attack_Evade::Exit(CDefiler* pOwner)
 {
 	auto& dissolve = pOwner->GetDissolve();
+	pOwner->Control_TargetEnable(true);
 }
