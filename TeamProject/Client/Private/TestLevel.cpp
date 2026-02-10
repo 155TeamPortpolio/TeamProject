@@ -79,6 +79,7 @@
 // test
 #include "ZeroPortal.h"
 #include "MiasmaBlade.h"
+#include "XWall.h"
 
 CTestLevel::CTestLevel(const string& LevelKey)
 	:CLevel(LevelKey),
@@ -181,6 +182,18 @@ HRESULT CTestLevel::Awake()
 	//CUIDirector::GetInstance()->Show_SceneFrame();
 	CUIDirector::GetInstance()->Show_HUD(CUIDirector::HUD::BATTLE);
 	//GameInstance()->Set_EngineTimeScale(0.05f);
+	
+	CXWall::XWALL_DESC* XWallDesc = new CXWall::XWALL_DESC;
+	XWallDesc->vCount = { 15, 3 };
+
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_XWall", CXWall::Create());
+	auto XWall = Builder::Create_Object({ "Test_Level", "Proto_GameObject_XWall" })
+		.Add_ObjDesc(XWallDesc)
+		.Position({ 0.f, 1.f, 1.f, })
+		.Build("XWall");
+
+	ObjectManager()->Add_Object(XWall, { "Test_Level", "Effect_Layer" });
+
 
 #ifdef  _USING_GUI
 	Ready_MonsterSpawnConsole();
