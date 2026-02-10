@@ -3,6 +3,7 @@
 #include "Corin.h"
 
 #include "CharacterController.h"
+#include "AudioSource.h"
 
 void CCorinState_Backstep::Enter(CCorin* pOwner)
 {
@@ -10,6 +11,8 @@ void CCorinState_Backstep::Enter(CCorin* pOwner)
 	pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Evade_Back")
         .Speed(1.f)
 		.Apply();
+
+    pOwner->Get_Component<CAudioSource>()->Slot("Corin_BackStep_01_SFX.wav").Attribute3D(true).Loop(false).Volume(0.35f).Play();
 }
 
 void CCorinState_Backstep::Update(CCorin* pOwner, _float dt)

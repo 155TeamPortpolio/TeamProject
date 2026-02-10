@@ -6,6 +6,7 @@
 #include "Miyabi.h"
 
 #include "CamDirector.h"
+#include "AudioSource.h"
 
 CMiyabiState_UltimateAttack* CMiyabiState_UltimateAttack::Create()
 {
@@ -38,6 +39,8 @@ void CMiyabiState_UltimateAttack::Enter(CMiyabi* pOwner)
     __super::Enter(pOwner);
 
     CamDirector()->RequestSequence(CamSeqType::Ultimate);
+
+    pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_Ultimate_01_Voice.wav").Attribute3D(true).Loop(false).Play();
 }
 
 void CMiyabiState_UltimateAttack::Update(CMiyabi* pOwner, _float dt)

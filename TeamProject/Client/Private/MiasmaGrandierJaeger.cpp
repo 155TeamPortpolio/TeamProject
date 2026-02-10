@@ -198,15 +198,15 @@ void CMiasmaGrandierJaeger::Update_Dissolve(_float dt)
 
 		switch (m_Dissolve.eDissolveState)
 		{
-		case MiasmaJaegerDisolveState::DISAPPEAR:
+		case DefilerDissolve::DISAPPEAR:
 		{
 			m_fDissolveProgress = t;
 		}break;
-		case MiasmaJaegerDisolveState::DISSOLVE_STATE::APPEAR:
+		case DefilerDissolve::DISSOLVE_STATE::APPEAR:
 		{
 			m_fDissolveProgress = 1.f - t;
 		}break;
-		case MiasmaJaegerDisolveState::DISSOLVE_STATE::NONE:
+		case DefilerDissolve::DISSOLVE_STATE::NONE:
 			break;
 		default:
 			break;
@@ -214,7 +214,7 @@ void CMiasmaGrandierJaeger::Update_Dissolve(_float dt)
 	}
 	else
 	{
-		if (MiasmaJaegerDisolveState::DISAPPEAR == m_Dissolve.eDissolveState)
+		if (DefilerDissolve::DISAPPEAR == m_Dissolve.eDissolveState)
 			m_fDissolveProgress = 1.01f;
 		else
 			m_fDissolveProgress = 0.f;
@@ -340,17 +340,10 @@ HRESULT CMiasmaGrandierJaeger::Initialize_StateMachine()
 
 HRESULT CMiasmaGrandierJaeger::Initialize_States()
 {
-	m_pStateMachine->Register_State("Appear",		CMiasmaJaeger_Appear::Create());
-	m_pStateMachine->Register_State("Attack",		CMiasmaJaeger_Attack::Create());
-	m_pStateMachine->Register_State("DisAppear",	CMiasmaJaeger_DisAppear::Create());
-	m_pStateMachine->Register_State("Hit",			CMiasmaJaeger_Hit::Create());
-
-	//m_pStateMachine->Register_State("Walk", CSacrificeState_Walk::Create());
-	//m_pStateMachine->Register_State("Evade", CSacrificeState_Evade::Create());
-	//m_pStateMachine->Register_State("Death", CSacrificeState_Death::Create());
-	//m_pStateMachine->Register_State("ChangePhase", CSacrificeState_ChangePhase::Create());
-	//m_pStateMachine->Register_State("Parry", CSacrificeState_Parry::Create());
-	//m_pStateMachine->Register_State("Groggy", CSacrificeState_Groggy::Create());
+	m_pStateMachine->Register_State("Appear",		CMiasmaGrandierJaeger_Appear::Create());
+	m_pStateMachine->Register_State("Attack",		CMiasmaGrandierJaeger_Attack::Create());
+	m_pStateMachine->Register_State("DisAppear",	CMiasmaGrandierJaeger_DisAppear::Create());
+	m_pStateMachine->Register_State("Hit",			CMiasmaGrandierJaeger_Hit::Create());
 
 	return S_OK;
 }

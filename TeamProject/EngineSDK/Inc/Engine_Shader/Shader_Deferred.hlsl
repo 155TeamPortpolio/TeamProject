@@ -19,6 +19,7 @@ float ScreenWidth;
 float ScreenHeight;
 
 float   GuassianIntensity;
+bool    bSkinned = false;
 
 struct VS_IN
 {
@@ -241,10 +242,17 @@ PS_OUT_RESULT PS_ADDICTIVECOLOR(PS_IN In)
     
     float4 scene = FinalTexture.Sample(DefaultSampler, In.vTexcoord);
     
-    float skinnedAlpha = 1 - SkinnedCombinedTexture.Sample(DefaultSampler, In.vTexcoord).a;
-    float3 tinted = scene.rgb * AddictiveColor;
+    if(bSkinned)
+    {
+        float skinnedAlpha = 1 - SkinnedCombinedTexture.Sample(DefaultSampler, In.vTexcoord).a;
+        float3 tinted = scene.rgb * AddictiveColor;
     
-    Out.vResult = float4(lerp(scene.rgb, tinted, skinnedAlpha), scene.a);
+        Out.vResult = float4(lerp(scene.rgb, tinted, skinnedAlpha), scene.a);
+    }
+    else
+    {
+        Out.vResult = float4(scene.rgb * AddictiveColor, scene.a);
+    }
     
     return Out;
 }

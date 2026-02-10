@@ -33,6 +33,11 @@
           "EventTag": "TargetLockOn"
         },
         {
+          "EventTime": 0.812995433807373,
+          "EventType": "Sound",
+          "EventTag": "DefilerSwingBase.wav"
+        },
+        {
           "EventTime": 0.8483430743217468,
           "EventType": "Notify",
           "EventTag": "A_Type_On"
@@ -46,6 +51,11 @@
           "EventTime": 1.0074074268341064,
           "EventType": "Notify",
           "EventTag": "TargetLockOff"
+        },
+        {
+          "EventTime": 1.2548407316207886,
+          "EventType": "Sound",
+          "EventTag": "DefilerSwingBase.wav"
         },
         {
           "EventTime": 1.263677716255188,
@@ -68,14 +78,9 @@
           "EventTag": "A_Type_Off"
         },
         {
-          "EventTime": 0.812995433807373,
-          "EventType": "Sound",
-          "EventTag": "DefilerSwingBase.wav"
-        },
-        {
-          "EventTime": 1.2548407316207886,
-          "EventType": "Sound",
-          "EventTag": "DefilerSwingBase.wav"
+          "EventTime": 1.0692657232284546,
+          "EventType": "Notify",
+          "EventTag": "ParrySign"
         }
       ]
     },
@@ -704,7 +709,13 @@
     },
     {
       "ClipTag": "Monster_IsoldetheDefiler_Ani_Attack_Summon",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 2.243274688720703,
+          "EventType": "Notify",
+          "EventTag": "Grandier"
+        }
+      ]
     },
     {
       "ClipTag": "Monster_IsoldetheDefiler_Ani_Born",

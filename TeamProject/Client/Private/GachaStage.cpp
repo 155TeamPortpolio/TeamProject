@@ -22,6 +22,9 @@
 
 #include "UI_GachaTextReveal.h"
 
+#include "PostRenderer.h"
+#include "PostProcessCommand.h"
+
 CGachaStage::CGachaStage()
     :CGameObject()
 {
@@ -53,6 +56,8 @@ void CGachaStage::PlayRevealEffect()
 	CameraManager()->AddShakeAxisWave(CamShakeAxis::Roll, 3.f, 4.0f, 0.8f, 0.1f, EaseType::InQuad, EaseType::InOutQuad);
 	CameraManager()->AddShakeAxisWave(CamShakeAxis::Yaw, 1.4f, 3.0f, 0.6f, 0.1f, EaseType::InQuad, EaseType::InOutQuad);
 	CameraManager()->AddShakeAxisWave(CamShakeAxis::Pitch, 1.f, 2.5f, 0.4f, 0.1f, EaseType::InQuad, EaseType::InOutQuad);
+	
+	m_RevealEffectFlow.Start();
 
 	switch ((*m_pResultDesc)[m_iIndex].Grade)
 	{
@@ -110,7 +115,9 @@ HRESULT CGachaStage::Initialize(INIT_DESC* pArg)
 
 	Add_StageScreen();
 	Add_UIText();
-
+	BaseHalfEffectFlowSetting();
+	BaseFullEffectFlowSetting();
+	BaseRevealEffectFlowSetting();
 	return S_OK; 
 }
 
@@ -130,6 +137,10 @@ void CGachaStage::Priority_Update(_float dt)
 {
 	CObjectContainer* pObjectContainer = Get_Component<CObjectContainer>();
 	pObjectContainer->Priority_UpdateChild(dt);
+
+	m_HalfEffectFlow.Tick(dt);
+	m_FullEffectFlow.Tick(dt);
+	m_RevealEffectFlow.Tick(dt);
 }
 
 void CGachaStage::Update(_float dt)
@@ -160,6 +171,155 @@ void CGachaStage::Late_Update(_float dt)
 {
 	CObjectContainer* pObjectContainer = Get_Component<CObjectContainer>();
 	pObjectContainer->Late_UpdateChild(dt);
+}
+
+void CGachaStage::BaseHalfEffectFlowSetting()
+{
+ 	size_t sequenceId = m_HalfEffectFlow.BeginSequence();
+	auto pPost = RenderSystem()->GetPostRenderer();
+
+	m_HalfEffectFlow.AddWait(sequenceId, 0.1);
+
+	m_HalfEffectFlow.AddOnce(sequenceId, [pPost]() {
+		pPost->GetCommand<CGuassianBlurCommand>()
+			->SetDuration(1.f)
+			->SetIntensity(4.f)
+			->SetEaseType(EaseType::OutCubic)
+			->SetEnable(true);
+		});
+
+	m_HalfEffectFlow.AddWait(sequenceId, 0.4);
+
+	auto pTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, "VX_Noise_UU_26.png");
+	m_HalfEffectFlow.AddOnce(sequenceId, [pPost, pTexture]() {
+		pPost->GetCommand<CGlitchCommand>()
+			->SetDuration(0.1f)
+			->SetIntensity(0.5f)
+			->SetNoiseTexture(pTexture)
+			->SetEaseType(EaseType::OutQuart)
+			->SetEnable(true);
+		});
+
+	m_HalfEffectFlow.AddWait(sequenceId, 0.1);
+
+	m_HalfEffectFlow.AddOnce(sequenceId, [pPost, pTexture]() {
+		pPost->GetCommand<CGlitchCommand>()
+			->SetDuration(0.1f)
+			->SetIntensity(2.f)
+			->SetNoiseTexture(pTexture)
+			->SetEaseType(EaseType::OutQuart)
+			->SetEnable(true);
+		});
+
+	m_HalfEffectFlow.AddWait(sequenceId, 0.1);
+
+	m_HalfEffectFlow.AddOnce(sequenceId, [pPost, pTexture]() {
+		pPost->GetCommand<CGlitchCommand>()
+			->SetDuration(0.1f)
+			->SetIntensity(0.5f)
+			->SetNoiseTexture(pTexture)
+			->SetEaseType(EaseType::OutQuart)
+			->SetEnable(true);
+		});
+
+
+	m_HalfEffectFlow.AddOnce(sequenceId, [this, pPost]() {
+		pPost->GetCommand<CAddictiveColorCommand>()
+			->SetAddictiveColor(&m_vRevealColor)
+			->SetSkinned(false)
+			->SetEnable(true);
+		SetRevealColorEffect(_float4(1.f, 1.f, 1.f, 1.f), _float4(1.f, 1.f, 1.f, 1.f), _float4(0.1f, 0.1f, 0.1f, 1.f), 1.f);
+		});
+
+	m_HalfEffectFlow.EndSequence(sequenceId);
+}
+
+void CGachaStage::BaseFullEffectFlowSetting()
+{
+	size_t sequenceId = m_FullEffectFlow.BeginSequence();
+	auto pPost = RenderSystem()->GetPostRenderer();
+
+	m_FullEffectFlow.AddWait(sequenceId, 0.1);
+
+	m_FullEffectFlow.AddOnce(sequenceId, [pPost]() {
+		pPost->GetCommand<CGuassianBlurCommand>()
+			->SetDuration(1.4f)
+			->SetIntensity(4.f)
+			->SetEaseType(EaseType::InCubic)
+			->SetEnable(true);
+		});
+
+	m_FullEffectFlow.AddWait(sequenceId, 0.7);
+
+	auto pTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, "VX_Noise_UU_26.png");
+	m_FullEffectFlow.AddOnce(sequenceId, [pPost, pTexture]() {
+		pPost->GetCommand<CGlitchCommand>()
+			->SetDuration(0.3f)
+			->SetIntensity(0.5f)
+			->SetNoiseTexture(pTexture)
+			->SetEaseType(EaseType::OutQuart)
+			->SetEnable(true);
+		});
+
+	m_FullEffectFlow.AddWait(sequenceId, 0.3);
+
+	m_FullEffectFlow.AddOnce(sequenceId, [pPost, pTexture]() {
+		pPost->GetCommand<CGlitchCommand>()
+			->SetDuration(0.1f)
+			->SetIntensity(2.f)
+			->SetNoiseTexture(pTexture)
+			->SetEaseType(EaseType::OutQuart)
+			->SetEnable(true);
+		});
+
+	m_FullEffectFlow.AddWait(sequenceId, 0.1);
+
+	m_FullEffectFlow.AddOnce(sequenceId, [pPost, pTexture]() {
+		pPost->GetCommand<CGlitchCommand>()
+			->SetDuration(0.3f)
+			->SetIntensity(0.5f)
+			->SetNoiseTexture(pTexture)
+			->SetEaseType(EaseType::OutQuart)
+			->SetEnable(true);
+		});
+
+	m_FullEffectFlow.AddOnce(sequenceId, [this, pPost]() {
+		pPost->GetCommand<CAddictiveColorCommand>()
+			->SetAddictiveColor(&m_vRevealColor)
+			->SetSkinned(false)
+			->SetEnable(true);
+		SetRevealColorEffect(_float4(1.f, 1.f, 1.f, 1.f), _float4(1.f, 1.f, 1.f, 1.f), _float4(0.1f, 0.1f, 0.1f, 1.f), 1.f);
+		});
+
+	m_FullEffectFlow.EndSequence(sequenceId);
+}
+
+void CGachaStage::BaseRevealEffectFlowSetting()
+{
+	size_t sequenceId = m_RevealEffectFlow.BeginSequence();
+	auto pPost = RenderSystem()->GetPostRenderer();
+
+	m_RevealEffectFlow.AddOnce(sequenceId, [this, pPost]() {
+		SetRevealColorEffect(_float4(0.1f, 0.1f, 0.1f, 1.f), _float4(1.f, 1.f, 1.f, 1.f), _float4(1.f, 1.f, 1.f, 1.f), 0.2f);
+		});
+
+	m_RevealEffectFlow.AddWait(sequenceId, 0.4);
+
+	m_RevealEffectFlow.AddOnce(sequenceId, [pPost]() {
+		pPost->GetCommand<CGuassianBlurCommand>()
+			->SetDuration(0.4f)
+			->SetIntensity(5.f)
+			->SetEaseType(EaseType::InCubic)
+			->SetEnable(true);
+		});
+
+
+	m_RevealEffectFlow.AddOnce(sequenceId, [this, pPost]() {
+		pPost->GetCommand<CAddictiveColorCommand>()
+			->SetEnable(false);	
+		});
+
+	m_RevealEffectFlow.EndSequence(sequenceId);
 }
 
 void CGachaStage::Add_StageScreen()
@@ -283,9 +443,16 @@ void CGachaStage::Reset_Target()
 void CGachaStage::Play_CameraSequence()
 {
 	Reset_Target();
-
-	if (m_iIndex == -1) CamDirector()->RequestSequence("Gacha/Spin_Half");
-	else if (m_iIndex < m_iMaxIndex - 1) CamDirector()->RequestSequence("Gacha/Spin");
+	if (m_iIndex == -1)
+	{
+		CamDirector()->RequestSequence("Gacha/Spin_Half");
+		m_HalfEffectFlow.Start();
+	}
+	else if (m_iIndex < m_iMaxIndex - 1) 
+	{
+		CamDirector()->RequestSequence("Gacha/Spin");
+		m_FullEffectFlow.Start();
+	}
 }
 
 void CGachaStage::Update_CamTime()
@@ -407,6 +574,23 @@ void CGachaStage::Update_Lights(_float dt)
 		}
 	}
 
+	if (AddictiveColor.Duration > 0.f)
+	{
+		AddictiveColor.CurElpasedTime += dt;
+
+		if (AddictiveColor.CurElpasedTime <= AddictiveColor.Duration)
+		{
+			_float fProgress = AddictiveColor.CurElpasedTime / AddictiveColor.Duration;
+			_float fEasedRatio = Math::ApplyEase(EaseType::InOutSine, fProgress);
+
+			_vector4 vCurrentColor = XMVectorLerp(AddictiveColor.StartColor, AddictiveColor.EndColor, fEasedRatio);
+			m_vRevealColor = _vector3(vCurrentColor);
+		}
+		else
+		{
+			m_vRevealColor = _vector3(AddictiveColor.EndColor);
+		}
+	}
 }
 
 void CGachaStage::SetBottomLightEffect(_float4 BottomStartColor, _float4 BottomMiddleColor, _float4 BottomEndColor, _float Duration)
@@ -446,6 +630,11 @@ void CGachaStage::SetMiddleLightEffect(_float4 MiddleStartColor, _float4 MiddleE
 	Desc.vLightAmbient = MiddleStartColor;
 	MiddleLight = { MiddleStartColor, _float4(0.f,0.f,0.f,0.f), MiddleEndColor, 0.f,  Duration};
 	pLight->Set_Desc(Desc);
+}
+
+void CGachaStage::SetRevealColorEffect(_float4 Start, _float4 Middle, _float4 End, _float Duration)
+{
+	AddictiveColor = { Start, Middle, End, 0.f,  Duration };
 }
 
 void CGachaStage::SetInitLight()

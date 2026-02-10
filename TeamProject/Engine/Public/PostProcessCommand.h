@@ -185,7 +185,9 @@ private:
 
 public:
     _float3* GetAddictiveColor() { return m_vAddictiveColor; }
+    _bool GetSkinned() const { return m_bSkinned; }
     CAddictiveColorCommand* SetAddictiveColor(_float3* vColor);
+    CPostProcessCommand* SetSkinned(_bool bSkinned);
     virtual CPostProcessCommand* SetEnable(_bool bEnable) override;
 
 public:
@@ -194,6 +196,7 @@ public:
 
 private:
     _float3*      m_vAddictiveColor = nullptr;
+    _bool         m_bSkinned = false;
 
 public:
     static CAddictiveColorCommand* Create();

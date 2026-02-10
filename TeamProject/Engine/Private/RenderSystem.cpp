@@ -116,7 +116,7 @@ HRESULT CRenderSystem::Render()
 	m_pPost->Render_PostProcessCommand();
 	m_pPost->Render_Final();
 
-	//m_pUI->Render_CustomTarget();
+	m_pUI->Render_CustomTarget();
 
 	return S_OK;
 }

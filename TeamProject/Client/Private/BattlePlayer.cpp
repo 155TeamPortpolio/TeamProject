@@ -30,7 +30,10 @@ HRESULT CBattlePlayer::Initialize()
     CBattleSystem::GetInstance()->SetBattlePlayer(this);
     Initialize_CharacterPrototype();
 
-    vector<CHARACTER> BattleCharacters = {CHARACTER::Miyabi,CHARACTER::JaneDoe, CHARACTER::Corin, };
+    // Jehyun
+    vector<CHARACTER> BattleCharacters = {CHARACTER::Corin, CHARACTER::Miyabi, CHARACTER::JaneDoe, };
+
+    //vector<CHARACTER> BattleCharacters = {CHARACTER::Miyabi,CHARACTER::JaneDoe, CHARACTER::Corin, };
     SetBattleCharacters(BattleCharacters);
 
     return S_OK;

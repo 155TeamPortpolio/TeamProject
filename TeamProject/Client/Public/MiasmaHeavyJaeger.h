@@ -3,13 +3,13 @@
 #include "Defiler_Control.h"
 
 NS_BEGIN(Client)
-class CMiasmaGrandierJaeger :
+class CMiasmaHeavyJaeger :
     public CEnemy
 {
 private:
-    CMiasmaGrandierJaeger();
-    CMiasmaGrandierJaeger(const CMiasmaGrandierJaeger& rhg);
-    virtual ~CMiasmaGrandierJaeger() DEFAULT;
+    CMiasmaHeavyJaeger();
+    CMiasmaHeavyJaeger(const CMiasmaHeavyJaeger& rhg);
+    virtual ~CMiasmaHeavyJaeger() DEFAULT;
 
 public:
     HRESULT Initialize_Prototype() override;
@@ -21,23 +21,27 @@ public:
     void    Render_GUI()override;
 
 public:
+    void MoveByAnim(_float dt, _float moveScale);
     virtual void TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER charaName = CHARACTER::END);
     void RotateToTarget(_float dt, _float rotateSpeed);
+    void Dissolve(_bool appear);
+
 public:
     virtual void    OnTriggerEnter(CGameObject* pOther) override;
-    virtual void OnPooledAcquire(INIT_DESC* pArg = nullptr) override;		// 풀에서 꺼낼 때
-    virtual void OnPooledRelease()override;
+    virtual void    OnPooledAcquire(INIT_DESC* pArg = nullptr) override;		// 풀에서 꺼낼 때
+    virtual void    OnPooledRelease()override;
 
 public:
     DefilerDissolve& Get_Dissolve() { return m_Dissolve; }
-    CStateMachine<CMiasmaGrandierJaeger>* Get_MainStateMachine() { return m_pStateMachine; }
+    CStateMachine<CMiasmaHeavyJaeger>* Get_MainStateMachine() { return m_pStateMachine; }
     void LockOn(_bool lock) { m_LockedOn = lock; }
+    void Parried() override;
+    void SpawnChild();
+
 private:
     void Update_Dissolve(_float dt);
     void Route_AnimEvent(CAnimator3D* animator);
-    _float3 Get_FirePos();
-private:
-    void Summon_Bullet();
+
 private:
     HRESULT Initialize_StateMachine();
     HRESULT Initialize_States();
@@ -46,11 +50,12 @@ private:
 
 private:
     _bool m_LockedOn = { false };
+    _vector3 m_vCurrentDir = {};
     DefilerDissolve m_Dissolve;
-    CStateMachine<CMiasmaGrandierJaeger>* m_pStateMachine = { nullptr };
-    _uint m_HitCount = {};
+    CStateMachine<CMiasmaHeavyJaeger>* m_pStateMachine = { nullptr };
+  
 public:
-    static CMiasmaGrandierJaeger* Create();
+    static CMiasmaHeavyJaeger* Create();
     CGameObject* Clone(INIT_DESC* pArg) override;
     virtual void Free() override;
 };

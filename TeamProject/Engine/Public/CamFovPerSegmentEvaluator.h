@@ -20,11 +20,11 @@ private:
     CamFovInterp ResolveMode(_uint segIdx) const;
 
 private:
-    const CamSeqDesc*     seq{};
+    const CamSeqDesc* seq{};
     const vector<CamKeyFrame>* keyframes{};
 
-    ICamFovEvaluator*          evalLinear{};
-    ICamFovEvaluator*          evalSmooth{};
+    ICamFovEvaluator* evalLinear{};
+    ICamFovEvaluator* evalSmooth{};
 
 public:
     static CCamFovPerSegmentEvaluator* Create() { return new CCamFovPerSegmentEvaluator(); }
