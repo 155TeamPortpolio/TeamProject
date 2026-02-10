@@ -1,10 +1,12 @@
 #include "pch.h"
 #include "MiyabiState_Idle.h"
 #include "Miyabi.h"
+#include "Miyabi_Ghost.h"
 #include "Animator3D.h"
 
 void CMiyabiState_Idle::Enter(CMiyabi* pOwner)
 {
+    pOwner->Set_WeaponEffectMesh(false);
     pOwner->Unlock_Move();
     _int iEntryMode = pOwner->Get_StateMachine()->Get_Int("IdleEntryMode");
     pOwner->Get_StateMachine()->Set_Int("IdleEntryMode", 0);
@@ -22,6 +24,12 @@ void CMiyabiState_Idle::Enter(CMiyabi* pOwner)
     }
 
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Idle")
+        .Loop(true)
+        .Apply();
+
+    pOwner->Show_Ghost();
+    pOwner->Get_Ghost()->Get_Component<CAnimator3D>()
+        ->Change_Animation(pOwner->Get_GhostName() + "Idle")
         .Loop(true)
         .Apply();
 
