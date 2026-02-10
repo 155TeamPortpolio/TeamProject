@@ -22,6 +22,7 @@
 #include "UIDirector.h"
 
 #include "EffectContainer.h"
+#include "AudioSource.h"
 
 CCharacter::CCharacter(const CCharacter& rhs)
     : CGameObject(rhs)
@@ -41,6 +42,7 @@ HRESULT CCharacter::Initialize_Prototype()
     Add_Component<CObjectContainer>();
     Add_Component<CAnimator3D>();
     Add_Component<CCharacterController>();
+    Add_Component<CAudioSource>();
     return S_OK;
 }
 
