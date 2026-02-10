@@ -1,13 +1,8 @@
 #include "Shader_Define.hlsl"
 
-vector g_Color = { 1.f, 1.f, 0.f, 1.f };
-float4x4 g_WorldMatrix =
-{
-    1, 0, 0, 0,
-    0, 1, 0, 0,
-    0, 0, 1, 0,
-    0, 0, 0, 1
-};
+vector g_Color = { 0.8f, 0.35f, 0.1f, 1.f };
+vector g_BrightColor = { 1.f, 0.7f, 0.1f, 1.f };
+float4x4 g_WorldMatrix;
 
 struct VS_IN
 {
@@ -27,8 +22,14 @@ struct VS_IN
 struct VS_OUT
 {
 	float4 vWorldPos    : SV_POSITION;
-	float2 vTexcoord    : TEXCOORD0;
-	float fBrightness   : TEXCOORD1;
+    float4 vNormal      : NORMAL;
+    float3 vTangent     : TANGENT;
+    float3 vBinormal    : BINORMAL;
+    
+    float2 vTexcoord    : TEXCOORD0;
+    float fBrightness   : TEXCOORD1;
+    float4 vProjPos     : TEXCOORD2;
+    float viewZ         : TEXCOORD3;
 };
 
 
@@ -41,27 +42,44 @@ VS_OUT VS_MAIN(VS_IN In)
     float3 camRight = matViewInverse[0].xyz;
     float3 camUp = matViewInverse[1].xyz;
 
+    float scale = 0.2f;
+    
     float3 billboardPos =
-        In.vPosition.x * camRight +
-        In.vPosition.y * camUp +
+        In.vPosition.x * camRight * scale +
+        In.vPosition.y * camUp * scale +
         In.iTranslation.xyz;
 
     float4 worldPos = float4(billboardPos, 1.f);
     
     matrix VP = mul(matView, matProjection);
     matrix WVP = mul(g_WorldMatrix, VP);
+    
     Out.vWorldPos = mul(worldPos, WVP);
-	Out.vTexcoord = In.vTexcoord;
+    Out.vNormal = mul(vector(In.vNormal, 0.f), ObjectBufferArray[TransformIndex].Transform);
+    Out.vTangent = normalize(mul(vector(In.vTangent, 0.f), ObjectBufferArray[TransformIndex].Transform)).xyz;
+    Out.vBinormal = normalize(cross(Out.vNormal.xyz, Out.vTangent.xyz));
+    
+    Out.vTexcoord = In.vTexcoord;
 	Out.fBrightness = In.fBrightness;
-   
+    Out.vProjPos = Out.vWorldPos;
+    
+    float4 viewPos = mul(worldPos, matView);
+    Out.viewZ = viewPos.z;
+    
 	return Out;
 }
 
 struct PS_IN
 {
-	float4 vWorldPos    : SV_POSITION;
-	float2 vTexcoord    : TEXCOORD0;
-	float fBrightness   : TEXCOORD1;
+    float4 vWorldPos    : SV_POSITION;
+    float4 vNormal      : NORMAL;
+    float3 vTangent     : TANGENT;
+    float3 vBinormal    : BINORMAL;
+    
+    float2 vTexcoord    : TEXCOORD0;
+    float  fBrightness  : TEXCOORD1;
+    float4 vProjPos     : TEXCOORD2;
+    float  viewZ        : TEXCOORD3;
 };
 
 struct PS_OUT
@@ -79,10 +97,16 @@ PS_OUT PS_MAIN(PS_IN In)
     PS_OUT Out;
     
     vector vMtrlDiffuse = DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
-    if (vMtrlDiffuse.a < 0.1f)
+    if (vMtrlDiffuse.a < 0.9f)
         discard;
         
-    Out.vDiffuse = vMtrlDiffuse * g_Color;
+    Out.vDiffuse = vMtrlDiffuse * g_Color;    
+    Out.vNormal = normalize(In.vNormal);
+    
+    float linearDepth = saturate(In.viewZ / zFar);
+    Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / zFar, linearDepth, 1.f);
+    Out.vEmissive = float4(g_BrightColor.rgb * In.fBrightness, 1.f);
+    Out.fEmissiveInfo = float2(0.f, 1.f);
     
     return Out;
 }
