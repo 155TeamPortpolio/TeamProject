@@ -85,7 +85,7 @@ HRESULT CSacrifice::Initialize(INIT_DESC* pArg)
 	auto pCCT = Get_Component<CCharacterController>();
 
 	auto pAudio = Get_Component<CAudioSource>();
-	pAudio->SoundFolder("Zero_Level", "../Bin/Resources/Sound/Sacrifice/");
+	pAudio->SoundFolder("Zero_Level", "../Bin/Resources/Zero/Enemy/Sacrifice/Sound");
 
 	if (FAILED(Initialize_StateMachine()))
 		return E_FAIL;
