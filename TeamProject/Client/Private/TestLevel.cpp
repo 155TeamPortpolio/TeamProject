@@ -184,7 +184,7 @@ HRESULT CTestLevel::Awake()
 	//GameInstance()->Set_EngineTimeScale(0.05f);
 	
 	CXWall::XWALL_DESC* XWallDesc = new CXWall::XWALL_DESC;
-	XWallDesc->vCount = { 3, 3 };
+	XWallDesc->vCount = { 15, 3 };
 
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_XWall", CXWall::Create());
 	auto XWall = Builder::Create_Object({ "Test_Level", "Proto_GameObject_XWall" })
