@@ -76,7 +76,7 @@ void CGachaStage::PlayRevealEffect()
 			.Build("Gacha_Distortion");
 
 		auto pParticle = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
-			.Asset("gacha_particle.json")
+			.Asset("gacha_s_rank.json")
 			.Position(_float3(0.f, 0.5f, -1.f))
 			.Build("Gacha_Particle");
 
@@ -90,6 +90,14 @@ void CGachaStage::PlayRevealEffect()
 		SetBottomLightEffect(_float4(0.f, 0.f, 0.f, 0.f), _float4(1.0f, 0.2f, 0.5f, 1.0f), _float4(0.25f, 0.25f, 0.25f, 0.5f), 1.0f);
 		SetTopLightEffect(_float4(0.f, 0.f, 0.f, 0.f), _float4(1.0f, 0.2f, 0.5f, 1.0f), _float4(0.25f, 0.25f, 0.25f, 0.5f), 1.2f);
 		SetMiddleLightEffect(_float4(0.1f, 0.1f, 0.1f, 1.f), _float4(1.0f, 1.0f, 1.0f, 1.f), 0.6f);
+
+		auto pParticle = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("gacha_a_rank.json")
+			.Position(_float3(0.f, 0.5f, -1.f))
+			.Build("Gacha_Particle");
+
+		ObjectManager()->Add_Object(pParticle, { "Gacha_Level","Effect_Layer" });
+
 		break;
 	}
 	case GachaGrade::B:
@@ -98,6 +106,14 @@ void CGachaStage::PlayRevealEffect()
 		SetBottomLightEffect(_float4(0.f, 0.f, 0.f, 0.f), _float4(0.1f, 0.3f, 0.9f, 1.0f), _float4(0.25f, 0.25f, 0.25f, 0.5f), 1.0f);
 		SetTopLightEffect(_float4(0.f, 0.f, 0.f, 0.f), _float4(0.1f, 0.3f, 0.9f, 1.0f), _float4(0.25f, 0.25f, 0.25f, 0.5f), 1.2f);
 		SetMiddleLightEffect(_float4(0.1f, 0.1f, 0.1f, 1.f), _float4(1.0f, 1.0f, 1.0f, 1.f), 0.6f);
+
+		auto pParticle = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("gacha_b_rank.json")
+			.Position(_float3(0.f, 0.5f, -1.f))
+			.Build("Gacha_Particle");
+
+		ObjectManager()->Add_Object(pParticle, {  "Gacha_Level","Effect_Layer" });
+
 		break;
 	}
 	}
@@ -243,7 +259,7 @@ void CGachaStage::BaseHalfEffectFlowSetting()
 			->SetAddictiveColor(&m_vRevealColor)
 			->SetSkinned(false)
 			->SetEnable(true);
-		SetRevealColorEffect(_float4(1.f, 1.f, 1.f, 1.f), _float4(1.f, 1.f, 1.f, 1.f), _float4(0.1f, 0.1f, 0.1f, 1.f), 1.f);
+		SetRevealColorEffect(_float4(1.f, 1.f, 1.f, 1.f), _float4(1.f, 1.f, 1.f, 1.f), _float4(0.2f, 0.2f, 0.2f, 1.f), 1.f);
 		});
 
 	m_HalfEffectFlow.EndSequence(sequenceId);
@@ -303,7 +319,7 @@ void CGachaStage::BaseFullEffectFlowSetting()
 			->SetAddictiveColor(&m_vRevealColor)
 			->SetSkinned(false)
 			->SetEnable(true);
-		SetRevealColorEffect(_float4(1.f, 1.f, 1.f, 1.f), _float4(1.f, 1.f, 1.f, 1.f), _float4(0.1f, 0.1f, 0.1f, 1.f), 1.f);
+		SetRevealColorEffect(_float4(1.f, 1.f, 1.f, 1.f), _float4(1.f, 1.f, 1.f, 1.f), _float4(0.2f, 0.2f, 0.2f, 1.f), 1.f);
 		});
 
 	m_FullEffectFlow.EndSequence(sequenceId);
@@ -315,7 +331,7 @@ void CGachaStage::BaseRevealEffectFlowSetting()
 	auto pPost = RenderSystem()->GetPostRenderer();
 
 	m_RevealEffectFlow.AddOnce(sequenceId, [this, pPost]() {
-		SetRevealColorEffect(_float4(0.1f, 0.1f, 0.1f, 1.f), _float4(1.f, 1.f, 1.f, 1.f), _float4(1.f, 1.f, 1.f, 1.f), 0.2f);
+		SetRevealColorEffect(_float4(0.2f, 0.2f, 0.2f, 1.f), _float4(1.f, 1.f, 1.f, 1.f), _float4(1.f, 1.f, 1.f, 1.f), 0.2f);
 		});
 
 	m_RevealEffectFlow.AddWait(sequenceId, 0.4);

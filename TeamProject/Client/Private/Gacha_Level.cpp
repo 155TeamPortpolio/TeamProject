@@ -62,9 +62,9 @@ HRESULT CGacha_Level::Awake()
 
 	//==================== Effect ============
 	//auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
-	//	.Asset("gacha_smoke.json")
-	//	.Position(_float3(0.f, -0.7f, 0.f))
-	//	.Build("Gacha_Smoke");
+	//	.Asset("gacha_background_light.json")
+	//	.Position(_float3(0.f, 0.5f, -0.1f))
+	//	.Build("Gacha_Light");
 	//
 	//ObjectManager()->Add_Object(pEffect, { "Gacha_Level","Effect_Layer" });
 
@@ -74,16 +74,6 @@ HRESULT CGacha_Level::Awake()
 void CGacha_Level::Update()
 {
 	Update_CamTime();
-
-	if (InputDevice()->Key_Tap('Z'))
-	{
-		auto pParticle = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
-			.Asset("gacha_particle.json")
-			.Position(_float3(0.f, 1.f, 0.f))
-			.Build("Gacha_Particle");
-
-		ObjectManager()->Add_Object(pParticle, { "Gacha_Level","Effect_Layer" });
-	}
 }
 
 HRESULT CGacha_Level::Render()
