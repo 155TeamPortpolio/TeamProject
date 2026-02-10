@@ -15,6 +15,7 @@
 #include "Defiler.h"
 #include "Texture.h"
 #include "AudioSource.h"
+#include "DefilerAxe.h"
 
 CDefilerWeapon::CDefilerWeapon()
 	: CEnemy()
@@ -51,12 +52,7 @@ HRESULT CDefilerWeapon::Initialize(INIT_DESC* pArg)
 	Get_Component<CCollider>()->Set_Trigger(true);
 	Get_Component<CRigidBody>()->Set_Kinematic(true);
 	Get_Component<CAudioSource>()->SoundFolder("Zero_Level", "../Bin/Resources/Zero/Enemy/Defiler_Weapon/Sound/");
-
-	return S_OK;
-}
-
-void CDefilerWeapon::Awake()
-{
+	
 	m_vRimLightColor = _float3(0.378, 0.029, 0.070);
 	m_fRimLightPower = 4.f;
 	m_fDissolveTilling = 6.f;
@@ -67,12 +63,18 @@ void CDefilerWeapon::Awake()
 
 	for (const auto& instance : materialInstances)
 	{
-		instance->Set_Param("NoiseTexture",		{ dissolveTexture->Get_SRV(),"Texture2D",0 });
-		instance->Set_Param("vRimLightColor",	{ &m_vRimLightColor,"float3",sizeof(_float3) });
-		instance->Set_Param("fRimLightPower",	{ &m_fRimLightPower,"float",sizeof(_float) });
-		instance->Set_Param("fDissolveProgress",{ &m_fDissolveProgress,"float",sizeof(_float) });
-		instance->Set_Param("fDissolveTiling",	{ &m_fDissolveTilling,"float",sizeof(_float) });
+		instance->Set_Param("NoiseTexture", { dissolveTexture->Get_SRV(),"Texture2D",0 });
+		instance->Set_Param("vRimLightColor", { &m_vRimLightColor,"float3",sizeof(_float3) });
+		instance->Set_Param("fRimLightPower", { &m_fRimLightPower,"float",sizeof(_float) });
+		instance->Set_Param("fDissolveProgress", { &m_fDissolveProgress,"float",sizeof(_float) });
+		instance->Set_Param("fDissolveTiling", { &m_fDissolveTilling,"float",sizeof(_float) });
 	}
+	return S_OK;
+}
+
+void CDefilerWeapon::Awake()
+{
+	
 }
 
 void CDefilerWeapon::Priority_Update(_float dt)
@@ -83,7 +85,7 @@ void CDefilerWeapon::Update(_float dt)
 	m_ElapsedTime += dt;
 
 	const _vector3 nowPos = Get_WorldPos();
-	const bool hitGround = (m_vTargetPos.y + 0.5f >= nowPos.y);
+	const bool hitGround = m_vTargetPos.y + 0.5f >= nowPos.y;
 
 	if (hitGround && !m_isSliding)
 	{
@@ -94,10 +96,9 @@ void CDefilerWeapon::Update(_float dt)
 		Get_Component<CAudioSource>()->Slot("DefilerWeaponGround.wav").Volume(0.5f).Play();
 	}
 
-	if (m_isSliding)
+	if (m_isSliding&& !m_isFinalThrow)
 	{
-		const float friction = 12.f;
-		const float damping = expf(-friction * dt);
+		const float damping = expf(-20.f * dt);
 		m_slideVelXZ *= damping;
 		_vector3 move = m_slideVelXZ * dt;
 		move.y = 0.f;
@@ -128,6 +129,12 @@ void CDefilerWeapon::Update(_float dt)
 
 		return;
 	}
+	else if(m_isSliding && m_isFinalThrow) {
+		SummonAxe();
+		ObjectManager()->Remove_Object(this);
+		return;
+	}
+
 	float t = Math::ApplyEase(EaseType::OutExpo, m_ElapsedTime);
 	t = clamp(t, 0.f, 1.f);
 
@@ -220,13 +227,14 @@ _bool CDefilerWeapon::Try_Hit(CGameObject* pTarget)
 
 void CDefilerWeapon::Reset_Value(DefilerWeaponDesc* pArg)
 {
+	m_isFinalThrow = pArg->isFinal;
+	m_fMoveSpeed = m_isFinalThrow? 150.f : 120.f;
 	m_isOnAttack	= true;
 	m_isParryEnable = false;
 	m_isEnd			= false;
 	m_isSliding		= false;
-
 	m_vTargetPos = _vector3(pArg->vTargetPos);
-	_vector3 pos = m_vTargetPos; pos.y -= 2.f;
+	_vector3 pos = m_vTargetPos; 
 	m_pTransform->LookAt(pos);
 
 	m_vTargetVelocity = m_pTransform->Dir(STATE::LOOK) * m_fMoveSpeed;
@@ -238,7 +246,34 @@ void CDefilerWeapon::Reset_Value(DefilerWeaponDesc* pArg)
 
 	m_fDissolveProgress = 1.01f;
 	m_Dissolve.fDissolveElapsedTime = 0.f;
-	m_Dissolve.Appear(0.5f);
+	m_Dissolve.Appear(0.01f);
+}
+
+void CDefilerWeapon::SummonAxe()
+{
+	const string levelKey = LevelManager()->Get_NowLevelKey();
+	_vector3 pos = m_pTransform->Get_Pos();
+	CDefilerAxe::DefilerAxeDesc* desc = new CDefilerAxe::DefilerAxeDesc;
+	desc->vLook = m_pTransform->Dir(STATE::LOOK);
+
+	CCT_DESC MonsterCCT;
+	MonsterCCT.eGroup = COLLISION_GROUP::MONSTER;
+	MonsterCCT.iCollisionMask =  ENUM(COLLISION_GROUP::COMMON) | ENUM(COLLISION_GROUP::PLAYER_ATTACK);
+	MonsterCCT.bAutoFit = false;
+	MonsterCCT.fHeight = .3f;
+	MonsterCCT.fRadius = 2.f;
+	MonsterCCT.vPos = pos;
+	MonsterCCT.vPos.y += MonsterCCT.fHeight;
+
+	auto pBlade =
+		Builder::Create_Object({ "Zero_Level","Proto_GameObject_DefilerAxe" })
+		.FromPool()
+		.Add_ObjDesc(desc)
+		.CharacterController(MonsterCCT)
+		.Build("DefilerAxe");
+
+	ObjectManager()->Add_Object(pBlade, { levelKey ,"Enemy_Layer" });
+	BattleSystem()->EnterBattleObject(BATTLE_OBJ_TYPE::MONSTER, pBlade->Get_Handle());
 }
 
 void CDefilerWeapon::Update_Dissolve(_float dt)

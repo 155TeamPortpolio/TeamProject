@@ -1281,6 +1281,15 @@
     <Filter Include="02. GameObject\Object\Enemy\Boss\Defiler\ThrowWeapon">
       <UniqueIdentifier>{6ed9d642-434f-4168-93a5-3c95f11f9401}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Boss\Defiler\DefilerWall">
+      <UniqueIdentifier>{1c6fff43-5204-4903-ad6b-ef3914118a40}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Boss\Defiler\DefilerAxe">
+      <UniqueIdentifier>{c5a60f7b-40ab-4f90-9c1b-1d1e467d1dc6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Boss\Defiler\DefilerSpawner">
+      <UniqueIdentifier>{4021281a-dbf6-4666-9647-1a0c58628bde}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -2429,9 +2438,6 @@
     <ClInclude Include="..\Public\MiyabiState_AssaultAttack.h">
       <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Attack\Assault</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\MiasmaSpawner.h">
-      <Filter>02. GameObject\Object\Enemy\Boss\Defiler\MiasmaUnit</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\MiasmaJaegerState.h">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler\MiasmaUnit\MiasmaState</Filter>
     </ClInclude>
@@ -2476,6 +2482,15 @@
     </ClInclude>
     <ClInclude Include="..\Public\DefilerWeapon.h">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler\ThrowWeapon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\DefilerWall.h">
+      <Filter>02. GameObject\Object\Enemy\Boss\Defiler\DefilerWall</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\DefilerAxe.h">
+      <Filter>02. GameObject\Object\Enemy\Boss\Defiler\DefilerAxe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MiasmaSpawner.h">
+      <Filter>02. GameObject\Object\Enemy\Boss\Defiler\DefilerSpawner</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -3587,9 +3602,6 @@
     <ClCompile Include="..\Private\MiyabiState_AssaultAttack.cpp">
       <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Attack\Assault</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\MiasmaSpawner.cpp">
-      <Filter>02. GameObject\Object\Enemy\Boss\Defiler\MiasmaUnit</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\MiasmaJaegerState.cpp">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler\MiasmaUnit\MiasmaState</Filter>
     </ClCompile>
@@ -3631,6 +3643,15 @@
     </ClCompile>
     <ClCompile Include="..\Private\DefilerWeapon.cpp">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler\ThrowWeapon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\DefilerWall.cpp">
+      <Filter>02. GameObject\Object\Enemy\Boss\Defiler\DefilerWall</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\DefilerAxe.cpp">
+      <Filter>02. GameObject\Object\Enemy\Boss\Defiler\DefilerAxe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MiasmaSpawner.cpp">
+      <Filter>02. GameObject\Object\Enemy\Boss\Defiler\DefilerSpawner</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
