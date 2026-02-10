@@ -87,8 +87,6 @@ void CCamDirector::AutoField(CamStartDir dir)
 
     if (m_gate.Pass())
     {
-        return;
-
         static bool shadowDisabled = false;
 
         if (!shadowDisabled)

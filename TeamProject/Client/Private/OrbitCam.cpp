@@ -66,8 +66,6 @@ HRESULT COrbitCam::Initialize_Prototype()
     __super::Initialize_Prototype();
     Add_Component<CCharacterController>();
     Add_Component<CEventListener>();
-
-   
     
     m_pose.rotGoalDeg = Vector2(0.f, m_prof.startPitchDeg);
     m_pose.rotCurDeg = m_pose.rotGoalDeg;
