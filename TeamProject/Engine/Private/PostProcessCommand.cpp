@@ -301,6 +301,12 @@ CAddictiveColorCommand* CAddictiveColorCommand::SetAddictiveColor(_float3* vColo
 	return this;
 }
 
+CPostProcessCommand* CAddictiveColorCommand::SetSkinned(_bool bSkinned)
+{
+	m_bSkinned = bSkinned;
+	return this;
+}
+
 CPostProcessCommand* CAddictiveColorCommand::SetEnable(_bool bEnable)
 {
 	m_bEnabled = bEnable;

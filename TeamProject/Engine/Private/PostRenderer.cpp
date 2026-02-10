@@ -219,7 +219,9 @@ HRESULT CPostRenderer::Render_Addictive_Internal()
 
 	m_pTargetManager->Bind_Target(m_strLastTargetName, m_pShader, "FinalTexture");
 	_float3* vAddictiveColor = m_pAddictiveColorCommand->GetAddictiveColor();
+	_bool bSkinned = m_pAddictiveColorCommand->GetSkinned();
 	m_pShader->Bind_Value("AddictiveColor", { vAddictiveColor, "float3", sizeof(_float3) });
+	m_pShader->Bind_Value("bSkinned", { &bSkinned, "bool", sizeof(_bool) });
 	m_pTargetManager->Bind_Target("Target_Combined_SkinnedMesh", m_pShader, "SkinnedCombinedTexture");
 
 	ID3D11InputLayout* pLayout;

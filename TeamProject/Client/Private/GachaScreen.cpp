@@ -185,21 +185,21 @@ void CGachaScreen::BaseEffectFlowSetting()
 
 	m_EffectFlow.AddOnce(sequenceId, [pPost]() {
 		pPost->GetCommand<CGuassianBlurCommand>()
-			->SetDuration(0.6f)
-			->SetIntensity(2.5f)
-			->SetEaseType(EaseType::InOutSine)
+			->SetDuration(0.54f)
+			->SetIntensity(4.f)
+			->SetEaseType(EaseType::OutCubic)
 			->SetEnable(true);
 		});
 
-	m_EffectFlow.AddWait(sequenceId, 0.4);
+	m_EffectFlow.AddWait(sequenceId, 0.1);
 
 	auto pTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, "VX_Noise_UU_26.png");
 	m_EffectFlow.AddOnce(sequenceId, [pPost, pTexture]() {
 		pPost->GetCommand<CGlitchCommand>()
-			->SetDuration(0.1f)
-			->SetIntensity(5.f)
+			->SetDuration(0.13f)
+			->SetIntensity(0.5f)
 			->SetNoiseTexture(pTexture)
-			->SetEaseType(EaseType::InQuart)
+			->SetEaseType(EaseType::OutQuart)
 			->SetEnable(true);
 		});
 	m_EffectFlow.EndSequence(sequenceId);

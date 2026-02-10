@@ -8,14 +8,14 @@ class CGachaStage :
     public CGameObject
 {
 private:
-    typedef struct StageMainLight
+    typedef struct StageEffect
     {
         _vector4                 StartColor;
         _vector4                 MiddleColor;
         _vector4                 EndColor;
         _float                  CurElpasedTime = 0.f;
         _float                  Duration;
-    }STAGE_LIGHT;
+    }STAGE_EFFECT;
 
 private:
     CGachaStage();
@@ -36,6 +36,10 @@ public:
     virtual void    Late_Update(_float dt)      override;
 
 private:
+    void    BaseHalfEffectFlowSetting();
+    void    BaseFullEffectFlowSetting();
+    void    BaseRevealEffectFlowSetting();
+
     void    Add_StageScreen();
     void    Add_UIText();
     void    Update_StageEnviroment(_int index);
@@ -49,6 +53,7 @@ private:
     void    SetBottomLightEffect(_float4 BottomStartColor, _float4 BottomMiddleColor, _float4 BottomEndColor, _float Duration);
     void    SetTopLightEffect(_float4 TopStartColor, _float4 TopMiddleColor, _float4 TopEndColor, _float Duration);
     void    SetMiddleLightEffect(_float4 MiddleStartColor, _float4 MiddleEndColor, _float Duration);
+    void    SetRevealColorEffect(_float4 Start, _float4 Middle, _float4 End, _float Duration);
     void    SetInitLight();
 
 private:
@@ -68,11 +73,16 @@ private:
     _int                    m_iSpinIndex = -1;
     _int					m_iMaxIndex = 10;
 
-    STAGE_LIGHT             BottomLight;
-    STAGE_LIGHT             TopLight;
-    STAGE_LIGHT             MiddleLight;
+    STAGE_EFFECT             BottomLight;
+    STAGE_EFFECT             TopLight;
+    STAGE_EFFECT             MiddleLight;
+    STAGE_EFFECT             AddictiveColor;
 
-    EffectFlow              m_EffectFlow;
+    EffectFlow              m_HalfEffectFlow;
+    EffectFlow              m_FullEffectFlow;
+    EffectFlow              m_RevealEffectFlow;
+
+    _float3                 m_vRevealColor = _float3(1.f, 1.f, 1.f);
 
 private:
     class CUI_GachaTextReveal* m_pUITextReveal = {};
