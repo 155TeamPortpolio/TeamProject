@@ -62,7 +62,7 @@ class CCorinState_ExAttack_Explode : public IBaseState<CCorin>
 public:
     virtual void Enter(CCorin* pOwner) override;
     virtual void Update(CCorin* pOwner, _float dt) override;
-    virtual void Exit(CCorin* pOwner) override {};
+    virtual void Exit(CCorin* pOwner) override;
 
 public:
     static CCorinState_ExAttack_Explode* Create() { return new CCorinState_ExAttack_Explode(); }
