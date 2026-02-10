@@ -19,6 +19,7 @@
 #include "ObjectContainer.h"
 #include "MaterialInstance.h"
 #include "BoneFollower.h"
+#include "AudioSource.h"
 
 /* States */
 #include "StateMachine.h"
@@ -52,6 +53,7 @@ HRESULT CSacrifice::Initialize_Prototype()
 	Add_Component<CMaterial>();
 	Add_Component<CObjectContainer>();
 	Add_Component<CCharacterController>();
+	Add_Component<CAudioSource>();
 
 	auto pResource = CGameInstance::GetInstance()->Get_ResourceMgr();
 	pResource->Add_ResourcePath("SacrificeBringer.model", "../Bin/Resources/Model/skeletal/Enemy/Sacrifice/Body/SacrificeBringer.model");
@@ -81,6 +83,9 @@ HRESULT CSacrifice::Initialize(INIT_DESC* pArg)
 	pAnimator->Set_LayerType(ANIM_LAYER_STATE::ADDITIVE, 2);
 
 	auto pCCT = Get_Component<CCharacterController>();
+
+	auto pAudio = Get_Component<CAudioSource>();
+	pAudio->SoundFolder("Zero_Level", "../Bin/Resources/Sound/Sacrifice/");
 
 	if (FAILED(Initialize_StateMachine()))
 		return E_FAIL;

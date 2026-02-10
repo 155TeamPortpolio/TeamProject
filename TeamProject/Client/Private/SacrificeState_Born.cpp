@@ -6,6 +6,7 @@
 #include "GameInstance.h"
 #include "EffectContainer.h"
 #include "CamDirector.h"
+#include "AudioSource.h"
 
 void CSacrificeState_Born::Enter(CSacrifice* pOwner)
 {
@@ -67,6 +68,8 @@ void CSacrificeState_Born_Phase1::Update_Effects(CSacrifice* pOwner)
 
 		CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(effect, { "Test_Level","Effect_Layer" });
 		CameraManager()->AddImpact(ENUM(CamShakeType::ExplosionBig),ENUM(CamZoomType::ExplosionBig), 2.f);
+
+		pOwner->Get_Component<CAudioSource>()->Slot("Sacrifice_Born_Voice.wav").Attribute3D(false).Loop(false).Play();
 
 		m_IsEffectSpawn = true;
 	}

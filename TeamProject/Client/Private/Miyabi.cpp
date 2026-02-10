@@ -561,6 +561,90 @@ HRESULT CMiyabi::Initialize_Effects()
 		pEffect->AttachBone(pAnimator, "Bn_Weapon");
 	}
 
+	// Charge Flare
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_charge0_flare1.json")
+			.Build("Miyabi_Charge0_Flare1");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+		pEffect->AttachBone(pAnimator, "Bn_Weapon", _smatrix::Identity, true);
+	}
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_charge0_particle.json")
+			.Build("Miyabi_Charge0_Particle0");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_charge0_particle.json")
+			.Build("Miyabi_Charge0_Particle1");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_charge_start.json")
+			.Build("Miyabi_Charge_Start");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_charge_stack_up.json")
+			.Build("Miyabi_Charge_StackUp0");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_charge_stack_up.json")
+			.Build("Miyabi_Charge_StackUp1");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_charge0_smoke.json")
+			.Build("Miyabi_Charge0_Smoke");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+
+	// Ultimate Flare
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_ultimate_flare.json")
+			.Build("Miyabi_Ultimate_Flare");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+		pEffect->AttachBone(pAnimator, "Bn_Weapon", _smatrix::Identity, true);
+	}
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_ultimate_flare1.json")
+			.Build("Miyabi_Ultimate_Flare1");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+		pEffect->AttachBone(pAnimator, "Bn_Weapon", _smatrix::Identity, true);
+	}
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_ultimate_smoke0.json")
+			.Build("Miyabi_Ultimate_Smoke0");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_ultimate_smoke1.json")
+			.Build("Miyabi_Ultimate_Smoke1");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+
 	// Normal Slash0
 	{
 		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
@@ -582,6 +666,20 @@ HRESULT CMiyabi::Initialize_Effects()
 		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
 			.Asset("miyabi_normal2_slash.json")
 			.Build("Miyabi_Normal1_Slash1");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect);
+	}
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_normal2_slash.json")
+			.Build("Miyabi_Normal1_Slash2");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect);
+	}
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_normal2_slash.json")
+			.Build("Miyabi_Normal1_Slash3");
 		pEffect->Stop();
 		pObjectContainer->Add_Child(pEffect);
 	}
@@ -680,6 +778,25 @@ HRESULT CMiyabi::Initialize_Effects()
 		pObjectContainer->Add_Child(pEffect);
 	}
 
+	// Ultimate Slash
+	for (_uint i = 0; i < 6; ++i)
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_ultimate0_slash.json")
+			.Build("Miyabi_Ultimate0_Slash" + to_string(i));
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+
+	for (_uint i = 0; i < 9; ++i)
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_ex1_slash.json")
+			.Build("Miyabi_Ex1_Slash" + to_string(i));
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+
 	// Ex Sting
 	{
 		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
@@ -689,11 +806,60 @@ HRESULT CMiyabi::Initialize_Effects()
 		pObjectContainer->Add_Child(pEffect, false);
 	}
 
+	for (_uint i = 0; i < 9; ++i)
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_ex1_sting.json")
+			.Build("Miyabi_Ex1_Sting" + to_string(i));
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+
 	// Rush Sting
 	{
 		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
 			.Asset("miyabi_rush0_sting.json")
 			.Build("Miyabi_Rush0_Sting0");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+
+	// Ultimate Sting
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_ultimate0_sting.json")
+			.Build("Miyabi_Ultimate0_Sting0");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_ultimate1_sting.json")
+			.Build("Miyabi_Ultimate1_Sting0");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_ultimate1_sting.json")
+			.Build("Miyabi_Ultimate1_Sting1");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_ultimate1_sting.json")
+			.Build("Miyabi_Ultimate1_Sting2");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+
+	// Charge Slash
+	for (_uint i = 0; i < 15; ++i)
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_charge0_slash.json")
+			.Build("Miyabi_Charge0_Slash" + to_string(i));
 		pEffect->Stop();
 		pObjectContainer->Add_Child(pEffect, false);
 	}
