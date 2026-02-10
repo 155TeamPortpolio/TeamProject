@@ -4,7 +4,6 @@
 
 void CJaneDoeState_Hit::Enter(CJaneDoe* pOwner)
 {
-	pOwner->Push_Invincible();
 	pOwner->Lock_Move();
 	pOwner->Stop_Rotation();
 
@@ -64,7 +63,6 @@ void CJaneDoeState_Hit::Update(CJaneDoe* pOwner, _float dt)
 void CJaneDoeState_Hit::Exit(CJaneDoe* pOwner)
 {
 	pOwner->Unlock_Move();
-	pOwner->Pop_Invincible();
 	__super::Exit(pOwner);
 }
 

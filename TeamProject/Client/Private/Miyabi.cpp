@@ -71,9 +71,9 @@ HRESULT CMiyabi::Initialize(INIT_DESC* pArg)
 
 	if (FAILED(Initialize_Ghost()))
 		return E_FAIL;
-
-	Get_Component<CAudioSource>()->SoundFolder(G_GlobalLevelKey, "../Bin/Resources/Sound/");
-
+	
+	Get_Component<CAudioSource>()->SoundFolder(G_GlobalLevelKey, "../Bin/Resources/Global/BattleCharacter/Miyabi/Sound");
+	
 	return S_OK;
 }
 
