@@ -515,6 +515,7 @@ void CDefilerState_Attack_09_Start::Enter(CDefiler* pOwner)
 {
 	DEFILER_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
 	TARGETING_INFO& targetBoard = pOwner->GetTargetingInfo();
+	pOwner->Control_TargetEnable(false);
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	blackBoard.TraceType_OnlyAnim();
 	blackBoard.TraceType_IgnoreRotation();
@@ -573,6 +574,7 @@ void CDefilerState_Attack_09_End::Update(CDefiler* pOwner, _float dt)
 
 void CDefilerState_Attack_09_End::Exit(CDefiler* pOwner)
 {
+	pOwner->Control_TargetEnable(true);
 }
 
 void CDefilerState_Attack_Grab::Enter(CDefiler* pOwner)

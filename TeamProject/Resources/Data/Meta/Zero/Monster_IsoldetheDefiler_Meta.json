@@ -832,7 +832,7 @@
           "EventTag": "Weapon"
         },
         {
-          "EventTime": 6.800000190734863,
+          "EventTime": 6.300000190734863,
           "EventType": "Notify",
           "EventTag": "WeaponShow"
         }
