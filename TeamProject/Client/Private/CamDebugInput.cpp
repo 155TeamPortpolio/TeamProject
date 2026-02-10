@@ -10,15 +10,12 @@
 #include "UI_Seoriyeol.h"
 #include "BattleSystem.h"
 
-namespace
-{
-    auto& cam = *CamDirector();
-    auto& mgr = *CameraManager();
-}
-
 void CamDebugInput::UpdateInput(_float dt)
 {
     const auto& levelKey = LevelManager()->Get_NowLevelKey();
+
+    auto& cam = *CamDirector();
+    auto& mgr = *CameraManager();
 
     if (InputDevice()->Key_Tap(VK_F1))
     {
@@ -43,6 +40,9 @@ void CamDebugInput::UpdateInput(_float dt)
 
 void CamDebugInput::UpdateGachaLevel()
 {
+    auto& cam = *CamDirector();
+    auto& mgr = *CameraManager();
+
     if (cam.IsFinished(CamEventType::Miyabi_01_Finished))
         cam.RequestSequence("Gacha/Miyabi_02");
 

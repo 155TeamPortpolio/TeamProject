@@ -181,6 +181,9 @@ void CCorinState_ExAttack_Start::Enter(CCorin* pOwner)
             .Speed(1.f)
             .Apply();
     }
+
+    auto& sound = *pOwner->Get_Component<CAudioSource>();
+    sound.Slot("Corin_ExAttack_Loop_Charge_SFX.wav").Attribute3D(true).Loop(false).Pause(false).Volume(0.5f).Play();
 }
 
 void CCorinState_ExAttack_Start::Update(CCorin* pOwner, _float dt)
@@ -207,7 +210,8 @@ void CCorinState_ExAttack_Start::Update_Effects(CCorin* pOwner)
 void CCorinState_ExAttack_Loop::Enter(CCorin* pOwner)
 {
     // Jehyun
-    pOwner->Get_Component<CAudioSource>()->Slot("Corin_ExAttack_01_Voice.wav").Attribute3D(true).Loop(false).Play();
+    auto& sound = *pOwner->Get_Component<CAudioSource>();
+    sound.Slot("Corin_ExAttack_01_Voice.wav").Attribute3D(true).Loop(false).Play();
 
     if (Get_ParentState()->Get_SubStateMachine()->Get_Bool("Enhanced"))
     {
@@ -312,6 +316,12 @@ void CCorinState_ExAttack_Explode::Update(CCorin* pOwner, _float dt)
     pOwner->Process_RootMotion(dt,
         ENUM(CCorin::ROOTMOTION_MASK::MOVE) |
         ENUM(CCorin::ROOTMOTION_MASK::QUATERNION));
+}
+
+void CCorinState_ExAttack_Explode::Exit(CCorin* pOwner)
+{
+    auto& sound = *pOwner->Get_Component<CAudioSource>();
+    sound.Set_SlotPuase("Corin_ExAttack_Loop_Charge_SFX.wav", true);
 }
 
 void CCorinState_ExAttack_End::Enter(CCorin* pOwner)
