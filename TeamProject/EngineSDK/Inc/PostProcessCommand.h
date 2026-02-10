@@ -202,4 +202,34 @@ public:
     static CAddictiveColorCommand* Create();
     virtual void Free() override;
 };
+
+class ENGINE_DLL CSaturationCommand :
+    public CPostProcessCommand
+{
+private:
+    CSaturationCommand();
+    virtual ~CSaturationCommand() = default;
+
+public:
+    _float GetIntensity() const { return m_fIntensity * m_fEaseT; }
+    CSaturationCommand* SetDuration(_float fDuration);
+    CSaturationCommand* SetIntensity(_float fIntensity);
+    CSaturationCommand* SetEaseType(EaseType easeType);
+
+public:
+    virtual void Update(_float dt) override;
+    virtual void Execute(class CPostRenderer* pRenderer) override;
+
+private:
+    _float      m_fDuration = 0.f;
+    _float      m_fIntensity = 1.f;
+    _float      m_fAccTime = 0.f;
+    _float      m_fEaseT = 0.f;
+    EaseType    m_EaseType = EaseType::InOutSine;
+
+public:
+    static CSaturationCommand* Create();
+    virtual void Free() override;
+};
+
 NS_END
