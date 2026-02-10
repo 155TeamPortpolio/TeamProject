@@ -41,7 +41,7 @@ void CCorinState_Evade::Enter(CCorin* pOwner)
     m_pSubStateMachine->Set_Int("ExitMode", 0);
 
     //Jehyun
-    pOwner->Get_Component<CAudioSource>()->Slot("Evade_02_Voice.wav").Attribute3D(true).Loop(false).Play();
+    //pOwner->Get_Component<CAudioSource>()->Slot("Corin_Evade_02_Voice.wav").Attribute3D(true).Loop(false).Play();
 
     __super::Enter(pOwner);
 }

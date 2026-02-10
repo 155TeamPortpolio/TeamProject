@@ -4,6 +4,8 @@
 #include "GameInstance.h"
 #include "Animator3D.h"
 
+#include "AudioSource.h"
+
 CCorinState_NormalAttack* CCorinState_NormalAttack::Create()
 {
     auto pInstance = new CCorinState_NormalAttack();
@@ -100,6 +102,11 @@ void CCorinState_Attack_01::Enter(CCorin* pOwner)
         .ReserveSpeed(0.37f, 0.45f, 0.4f, EaseType::OutQuart)
         .ReserveSpeed(0.45f, 0.5f, 1.5f, EaseType::Linear)
         .Apply();
+
+    // Jehyun
+    auto& sound = *pOwner->Get_Component<CAudioSource>();
+    sound.Slot("Corin_NormalAttack_01_Voice.wav").Attribute3D(true).Loop(false).Volume(1.f).Play();
+    sound.Slot("Corin_NormalAttack_01_SFX.wav").Attribute3D(true).Loop(false).Volume(0.5f).Play();
 }
 
 void CCorinState_Attack_01::Update(CCorin* pOwner, _float dt)
@@ -150,6 +157,11 @@ void CCorinState_Attack_02::Enter(CCorin* pOwner)
         .ReserveSpeed(0.25f, 0.35f, 0.4f, EaseType::OutQuart)
         .ReserveSpeed(0.35f, 0.40f, 1.5f, EaseType::Linear)
         .Apply();
+
+    // Jehyun
+    auto& sound = *pOwner->Get_Component<CAudioSource>();
+    sound.Slot("Corin_NormalAttack_02_SFX.wav").Attribute3D(true).Loop(false).Volume(0.5f).Play();
+    sound.Slot("Corin_NormalAttack_02_Voice.wav").Attribute3D(true).Loop(false).Volume(1.f).Play();
 }
 
 void CCorinState_Attack_02::Update(CCorin* pOwner, _float dt)
@@ -199,6 +211,10 @@ void CCorinState_Attack_03::Enter(CCorin* pOwner)
         .Speed(1.5f)
         .ReserveSpeed(0.5f, 1.f, 0.55f, EaseType::OutQuart)
         .Apply();
+
+    auto& sound = *pOwner->Get_Component<CAudioSource>();
+    sound.Slot("Corin_NormalAttack_03_SFX.wav").Attribute3D(true).Loop(false).Volume(0.5f).Play();
+    sound.Slot("Corin_NormalAttack_05_Voice.wav").Attribute3D(true).Loop(false).Volume(1.f).Play();
 }
 
 void CCorinState_Attack_03::Update(CCorin* pOwner, _float dt)
@@ -251,6 +267,11 @@ void CCorinState_Attack_04::Enter(CCorin* pOwner)
         .ReserveSpeed(0.22f, 0.46f, 0.55f, EaseType::OutQuart)
         .ReserveSpeed(0.46f, 0.51f, 1.5f, EaseType::Linear)
         .Apply();
+
+    // Jehyun
+    auto& sound = *pOwner->Get_Component<CAudioSource>();
+    sound.Slot("Corin_NormalAttack_04_SFX.wav").Attribute3D(true).Loop(false).Volume(0.5f).Play();
+    sound.Slot("Corin_NormalAttack_06_Voice.wav").Attribute3D(true).Loop(false).Volume(1.f).Play();
 }
 
 void CCorinState_Attack_04::Update(CCorin* pOwner, _float dt)
@@ -302,6 +323,11 @@ void CCorinState_Attack_05::Enter(CCorin* pOwner)
         .Speed(1.5f)
         .ReserveSpeed(0.4f, 1.f, 0.5f, EaseType::OutQuart)
         .Apply();
+
+    // Jehyun
+    auto& sound = *pOwner->Get_Component<CAudioSource>();
+    //sound.Slot("Corin_NormalAttack_03_SFX.wav").Attribute3D(true).Loop(false).Volume(0.5f).Play();
+    sound.Slot("Corin_NormalAttack_07_Voice.wav").Attribute3D(true).Loop(false).Volume(1.f).Play();
 }
 
 void CCorinState_Attack_05::Update(CCorin* pOwner, _float dt)

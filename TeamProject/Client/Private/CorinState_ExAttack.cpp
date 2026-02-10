@@ -207,7 +207,7 @@ void CCorinState_ExAttack_Start::Update_Effects(CCorin* pOwner)
 void CCorinState_ExAttack_Loop::Enter(CCorin* pOwner)
 {
     // Jehyun
-    pOwner->Get_Component<CAudioSource>()->Slot("ExAttack_01_Voice.wav").Attribute3D(true).Loop(false).Play();
+    pOwner->Get_Component<CAudioSource>()->Slot("Corin_ExAttack_01_Voice.wav").Attribute3D(true).Loop(false).Play();
 
     if (Get_ParentState()->Get_SubStateMachine()->Get_Bool("Enhanced"))
     {

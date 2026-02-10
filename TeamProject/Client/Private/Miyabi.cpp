@@ -74,6 +74,10 @@ HRESULT CMiyabi::Initialize(INIT_DESC* pArg)
 
 	Get_Component<CAudioSource>()->SoundFolder(G_GlobalLevelKey, "../Bin/Resources/Sound/");
 
+	// Jehyun
+	auto& sound = *Get_Component<CAudioSource>();
+	sound.SoundFolder(G_GlobalLevelKey, "../bin/Resources/Global/BattleCharacter/Miyabi/Sound/");
+
 	return S_OK;
 }
 
