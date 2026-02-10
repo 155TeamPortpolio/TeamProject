@@ -32,7 +32,7 @@ void CUI_Wipeout::Awake()
 
 void CUI_Wipeout::Update(_float dt)
 {
-    if (InputDevice()->Key_Tap('U'))
+    if (InputDevice()->Key_Tap('I'))
     {
         m_isVisible = !m_isVisible;
         Set_Alpha(m_isVisible ? 1.f : 0.f);
