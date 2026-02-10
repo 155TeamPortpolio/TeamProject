@@ -122,12 +122,12 @@ void CUI_GachaTextGroup::Update_Hide(_float dt)
 	CamDirector()->RequestSequence(m_strCamSequence);
 
 	auto pLight = CamDirector()->GetSeqCam()->Add_Component<CLight>();
-	LIGHT_DESC dsec = {};
-	dsec.eType = LIGHT_TYPE::POINT;
-	dsec.vOffsetPosition = {};
-	dsec.vLightDiffuse = Helper::HexToColor("##FFF3D5");
-	dsec.fLightRange = 20.f;
-	dsec.fLightIntensity = 4.f; 
+	LIGHT_DESC desc = {};
+	desc.eType = LIGHT_TYPE::POINT;
+	desc.vOffsetPosition = { 1.2f, 0.1f, 0.f, 0.f };
+	desc.vLightDiffuse = Helper::HexToColor("#FFF3D5");
+	desc.fLightRange = 100.f;
+	desc.fLightIntensity = 4.f; 
 
-	pLight->Set_Desc(dsec);
+	pLight->Set_Desc(desc);
 }
