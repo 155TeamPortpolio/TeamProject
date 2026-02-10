@@ -110,7 +110,7 @@
 #include "UI_Gangta.h"
 #include "UI_Seoriyeol.h"
 
-#include "UI_Wipeout.h"
+#include "UI_WipeoutRTV.h"
 
 #include "VideoPanel.h"
 
@@ -196,7 +196,7 @@ void CMainApp::Set_Levels()
 
 	LevelManager()->Set_LoadingLevel("Loading_Level");
 	m_pGameInstance->Notify_LevelSet(); 
-	m_pGameInstance->Get_LevelMgr()->Request_ChangeLevel("Gacha_Level", true);
+	m_pGameInstance->Get_LevelMgr()->Request_ChangeLevel("Test_Level", true);
 } 
 
 CMainApp* CMainApp::Create()
@@ -321,7 +321,7 @@ void CMainApp::Initialize_GlobalPrototype()
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Gangta",      CUI_Gangta::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Seoriyeol",   CUI_Seoriyeol::Create());
 
-	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Wipeout", CUI_Wipeout::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_WipeoutRTV", CUI_WipeoutRTV::Create());
 
 	/*Enviroment*/
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Cloud", CTestCloud::Create());

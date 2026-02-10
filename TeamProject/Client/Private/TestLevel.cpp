@@ -81,6 +81,8 @@
 #include "MiasmaBlade.h"
 #include "XWall.h"
 
+#include "UI_Wipeout.h"
+
 CTestLevel::CTestLevel(const string& LevelKey)
 	:CLevel(LevelKey),
 	m_pGameInstance{ CGameInstance::GetInstance() },
@@ -194,6 +196,12 @@ HRESULT CTestLevel::Awake()
 
 	ObjectManager()->Add_Object(XWall, { "Test_Level", "Effect_Layer" });
 
+
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Wipeout", CUI_Wipeout::Create());
+	auto pWipeout = Builder::Create_Object({ "Test_Level", "Proto_GameObject_Wipeout" })
+		.Position({ 0.f, 1.f, 1.f, })
+		.Build("wipeout");
+	ObjectManager()->Add_Object(pWipeout, { "Test_Level", "UI_Layer" });
 
 #ifdef  _USING_GUI
 	Ready_MonsterSpawnConsole();
