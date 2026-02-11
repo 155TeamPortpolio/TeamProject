@@ -51,18 +51,24 @@ HRESULT CXWall::Initialize(INIT_DESC* pArg)
 	customInstance->ChangeTexture(TEXTURE_TYPE::DIFFUSE, 0);
 	customInstance->Set_Blended(false);
 
+	HRESULT hr = S_OK;
+
 	Get_Component<CMaterial>()->Insert_MaterialInstance(customInstance, nullptr);
 	auto MaterialDat = customInstance->Get_MaterialData();
 	if (MaterialDat)
 	{
-		MaterialDat->Link_Shader(G_GlobalLevelKey, "VTX_XWall.hlsl");
-		MaterialDat->Link_Texture(G_GlobalLevelKey, "Eff_Objects_041.png", TEXTURE_TYPE::DIFFUSE);
+		hr = MaterialDat->Link_Shader(G_GlobalLevelKey, "VTX_XWall.hlsl");
+		hr = MaterialDat->Link_Texture(G_GlobalLevelKey, "Eff_Objects_041.png", TEXTURE_TYPE::DIFFUSE);
 	}
 
-	Get_Component<CInstanceModel>()->Link_InstanceData(CGameInstance::GetInstance()->Get_Device(),
+	if (FAILED(hr)) return hr;
+
+	hr = Get_Component<CInstanceModel>()->Link_InstanceData(CGameInstance::GetInstance()->Get_Device(),
 		m_InitDescs, G_GlobalLevelKey, "Rect.model");
 	Get_Component<CInstanceModel>()->Link_InstanceMeshAll(0);
 	Get_Component<CInstanceModel>()->ShadowCast(false);
+
+	if (FAILED(hr)) return hr;
 
 	for (auto& instance : Get_Component<CMaterial>()->Get_MaterialInstances())
 	{
@@ -70,7 +76,7 @@ HRESULT CXWall::Initialize(INIT_DESC* pArg)
 		instance->Override_Pass("Default");
 	}
 
-    return S_OK;
+    return hr;
 }
 
 void CXWall::Awake()
