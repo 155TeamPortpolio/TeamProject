@@ -2,6 +2,7 @@
 #include "CorinState_SwitchInAttack.h"
 
 #include "Corin.h"
+#include "AudioSource.h"
 
 CCorinState_SwitchInAttack* CCorinState_SwitchInAttack::Create()
 {

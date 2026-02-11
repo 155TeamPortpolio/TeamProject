@@ -184,6 +184,7 @@ public: // 행동 이벤트
     virtual void    OnDamage() {}
     virtual void    OnPerfectDodge() {}
     virtual void    OnDefensiveAssist() {}
+    virtual void    OnComboSound() {}
 
 public: // 루트모션
     void Process_RootMotion(_float dt, const ROOTMOTION_DESC& desc);

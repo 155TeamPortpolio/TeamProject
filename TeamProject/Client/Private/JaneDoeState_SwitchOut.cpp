@@ -19,16 +19,21 @@ void CJaneDoeState_SwitchOut::Update(CJaneDoe* pOwner, _float dt)
         return;
     }
 
+    if (m_fAnimProgress < 0.3f)
+    {
+        pOwner->Process_RootMotion(dt, ENUM(CJaneDoe::ROOTMOTION_MASK::QUATERNION));
+    }
     if (m_fAnimProgress >= 0.3f)
+    {
         pOwner->Update_DissolveProgress(dt * 5.f);
+        pOwner->Process_RootMotion(-dt, ENUM(CJaneDoe::ROOTMOTION_MASK::MOVE) |
+            ENUM(CJaneDoe::ROOTMOTION_MASK::QUATERNION));
+    }
 
-    pOwner->Process_RootMotion(-dt, ENUM(CJaneDoe::ROOTMOTION_MASK::MOVE) |
-        ENUM(CJaneDoe::ROOTMOTION_MASK::QUATERNION));
-
-    if (m_fAnimProgress >= 0.6f)
+    if (m_fAnimProgress >= 0.8f)
     {
         pOwner->DeActive_Character();
-        pOwner->Reset_RimLight();
+        pOwner->Clear_MotionBlur();
         pOwner->Get_StateMachine()->Set_Trigger("ToIdle");
     }
 }

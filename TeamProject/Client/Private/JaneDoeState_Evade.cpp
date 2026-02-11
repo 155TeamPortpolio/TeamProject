@@ -87,6 +87,9 @@ void CJaneDoeState_Evade::Update(CJaneDoe* pOwner, _float dt)
             break;
         }
     }
+
+    if (pOwner->Is_Passion())
+        pOwner->Add_MotionBlur();
 }
 
 void CJaneDoeState_Evade::Exit(CJaneDoe* pOwner)
@@ -98,5 +101,6 @@ void CJaneDoeState_Evade::Exit(CJaneDoe* pOwner)
     pOwner->Set_LookTarget(true);
     pOwner->Pop_Invincible();
     pOwner->Set_InvincibleTimer(0.5f); // 추가 무적 설정
+    pOwner->Clear_MotionBlur();
     __super::Exit(pOwner);
 }

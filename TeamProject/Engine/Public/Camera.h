@@ -20,7 +20,6 @@ public:
 public:
 	Matrix         Get_ViewMatrix()  const;
 	Matrix         Get_ProjMatrix()  const;			
-	_vector        Get_Pos()         const;
 	_float         Get_FOV()         const { return m_lens.fov;    }
 	_float         Get_Near()        const { return m_lens.zNear;  }
 	_float         Get_Far()         const { return m_lens.zFar;   }
