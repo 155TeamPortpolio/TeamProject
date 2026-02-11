@@ -97,7 +97,6 @@ void CMainCity_Level::Ready_Map(const string& LevelTag, const string& AreaTag)
 	FieldSystem()->RegisterRoom(CRoom_Noodle::Create({ "Noodle" , false }));
 	FieldSystem()->RegisterRoom(CRoom_Gacha::Create({ "Gacha" , false }));
 	FieldSystem()->RequestEnter("MainCity", true);
-
 	if (LevelManager()->Get_PrevLevelKey() == "Gacha_Level")
 	{
 		FieldSystem()->RequestEnter("Gacha", true);
