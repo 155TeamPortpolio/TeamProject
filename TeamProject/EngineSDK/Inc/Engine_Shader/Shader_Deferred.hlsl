@@ -306,6 +306,9 @@ PS_OUT_BACKBUFFER PS_MAIN_COMBINED(PS_IN In)
     float4 vStaticDepth = StaticDepthTexture.Sample(DefaultSampler, In.vTexcoord);
     float4 vSkinnedDepth = SkinnedDepthTexture.Sample(DefaultSampler, In.vTexcoord);
     
+    float4 vBlend = BlendTexture.Sample(DefaultSampler, In.vTexcoord);
+    float4 vNonLight = NonLightTexture.Sample(DefaultSampler, In.vTexcoord);
+    
     float3 result;
     float resultAlpha;
     
@@ -341,9 +344,18 @@ PS_OUT_BACKBUFFER PS_MAIN_COMBINED(PS_IN In)
         resultAlpha = 0;
     }
     
-    result.rgb = lerp(result.rgb + vVanish.rgb, vUI.rgb, vUI.a);
-    float alpha = max(vUI.a,resultAlpha);
-    Out.vBackBuffer = float4(result.rgb, alpha);
+    result.rgb += vVanish.rgb;
+    
+    result.rgb = lerp(result.rgb, vUI.rgb, vUI.a);
+    resultAlpha = max(vUI.a, resultAlpha);
+    
+    result.rgb = lerp(result.rgb, vBlend.rgb, vBlend.a);
+    resultAlpha = max(vBlend.a, resultAlpha);
+    
+    result.rgb = lerp(result.rgb, vNonLight.rgb, vNonLight.a);
+    resultAlpha = max(vNonLight.a, resultAlpha);
+    
+    Out.vBackBuffer = float4(result.rgb, resultAlpha);
     
     return Out;
 }

@@ -105,9 +105,13 @@ Texture2D SSAONoiseTexture : register(t11);
 Texture2D SSAOTexture : register(t12);
 Texture2D SSAOFinalTexture : register(t13);
 
+//=====Blend & NonLight===
+Texture2D BlendTexture : register(t14);
+Texture2D NonLightTexture : register(t15);
+
 //===LightAcc===
-Texture2D LightTexture : register(t15);
-Texture2D LightInfoTexture : register(t16);
+Texture2D LightTexture : register(t17);
+Texture2D LightInfoTexture : register(t18);
 
 //─────────────Effect─────────────
 Texture2D EffectTexture : register(t20);
