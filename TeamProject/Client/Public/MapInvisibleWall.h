@@ -22,10 +22,9 @@ public:
 public:
     void Render_GUI() override;
 
-private:
-    _vector2 m_vFenceOffset{};
-    _vector2 m_vImageSize{};
-    
+public:
+    void EnableXWall(const _vector2& vCount, const _vector2& vOffset);
+
 public:
     static CMapInvisibleWall* Create();
     CGameObject* Clone(INIT_DESC* pArg) override;

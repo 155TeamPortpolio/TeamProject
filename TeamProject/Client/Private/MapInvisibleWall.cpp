@@ -7,6 +7,9 @@
 #include "Material.h"
 #include "EffectContainer.h"
 
+#include "ObjectContainer.h"
+#include "XWall.h"
+
 CMapInvisibleWall::CMapInvisibleWall()
 	:CMapObject()
 {
@@ -70,6 +73,33 @@ void CMapInvisibleWall::Render_GUI()
 	__super::Render_GUI();
 
 	ImGui::PopID();
+}
+
+void CMapInvisibleWall::EnableXWall(const _vector2& vCount, const _vector2& vOffset)
+{
+	Add_Component<CObjectContainer>();
+
+	CXWall::XWALL_DESC* XWallDesc = new CXWall::XWALL_DESC;
+
+	if (vOffset.x != 0.f || vOffset.y != 0.f)
+		XWallDesc->vOffset = vOffset;
+
+	XWallDesc->vCount = vCount;
+	_vector4 vScale = m_pTransform->Get_Scale();
+
+	if (0 == vCount.x)
+		XWallDesc->vCount.x = static_cast<_int>(vScale.x / XWallDesc->vOffset.x);
+
+	if (0 == vCount.y)
+		XWallDesc->vCount.y = 3;
+
+
+	auto XWall = Builder::Create_Object({ G_GlobalLevelKey, "Proto_GameObject_XWall" })
+		.Add_ObjDesc(XWallDesc)
+		.Build("XWall");
+
+	ObjectManager()->Add_Object(XWall, { "Test_Level", "Effect_Layer" });
+	Get_Component<CObjectContainer>()->Add_Child(XWall, true);
 }
 
 
