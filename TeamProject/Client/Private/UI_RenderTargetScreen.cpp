@@ -7,8 +7,6 @@
 #include "MaterialInstance.h"
 #include "MaterialData.h"
 
-#include "UI_WipeoutRTV.h"
-
 HRESULT CUI_RenderTargetScreen::Initialize_Prototype()
 {
     if (FAILED(__super::Initialize_Prototype()))
@@ -81,13 +79,13 @@ void CUI_RenderTargetScreen::Ready_RenderState()
 
 void CUI_RenderTargetScreen::Ready_RTV_DrawObjects()
 {
-    auto pWipeout = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_WipeoutRTV" }).Build("wipeoutRTV");
+    auto pWipeout = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_Wipeout" }).Build("wipeout");
     if (pWipeout)
         UIManager()->Add_UIObject(pWipeout, LevelManager()->Get_NowLevelKey());
 
-    //auto pSwitch = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_WipeoutRTV" }).Build("wipeoutRTV");
-    //if (pWipeout)
-    //    UIManager()->Add_UIObject(pWipeout, LevelManager()->Get_NowLevelKey());
+    auto pSwitch = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_Switch" }).Build("switch");
+    if (pSwitch)
+        UIManager()->Add_UIObject(pSwitch, LevelManager()->Get_NowLevelKey());
 }
 
 void CUI_RenderTargetScreen::Create_RTV()
