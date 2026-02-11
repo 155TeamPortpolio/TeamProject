@@ -386,6 +386,7 @@ void CCharacter::Process_RootMotion(_float dt, const ROOTMOTION_DESC& desc)
     {
         // 루트모션 회전 사용시 수동 회전 비활성화
         m_bIsRotating = false;
+        
         if (desc.fRotateWeight >= 0.99f) pTransform->Add_Quaternion(vQuatDelta);
         else if (desc.fRotateWeight > 0.01f)
         {
@@ -455,7 +456,7 @@ void CCharacter::Look_Target()
     _vector3 vLook = target->Get_WorldPos() - Get_WorldPos();
     vLook.y = 0;
 
-    if (vLook.LengthSquared() < 0.01f)
+    if (vLook.LengthSquared() < 1.f)
     {
         return;
     }
