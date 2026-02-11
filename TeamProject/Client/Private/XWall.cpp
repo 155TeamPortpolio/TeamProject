@@ -69,7 +69,7 @@ HRESULT CXWall::Initialize(INIT_DESC* pArg)
 		instance->Set_Param("DiffuseTexture", { ResourceManager()->Load_Texture(G_GlobalLevelKey, "Eff_Objects_041.png")->Get_SRV(), "Texture2D", 0 });
 		instance->Override_Pass("Default");
 	}
-
+	
     return S_OK;
 }
 

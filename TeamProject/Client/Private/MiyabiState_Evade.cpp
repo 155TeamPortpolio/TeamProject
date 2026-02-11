@@ -47,6 +47,7 @@ void CMiyabiState_Evade::Update(CMiyabi* pOwner, _float dt)
         if (pOwner->Is_Perfect() && !m_pSubStateMachine->Get_Bool("Extreme"))
         {
             BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::EVADE);
+            pOwner->Play_Effect("Evade", _vector3(0.f, 0.f, 0.f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
             m_pSubStateMachine->Set_Bool("Extreme", true);
         }
     }

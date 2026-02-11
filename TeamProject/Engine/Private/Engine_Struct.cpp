@@ -83,6 +83,8 @@ PARTICLE_NODE Engine::tagParticleNode::FromJson(nlohmann::ordered_json& json)
 
 	auto pivot = json.value("pivot", json::array({ 0.5f,0.5f }));
 	node.vPivot = _float2(pivot[0], pivot[1]);
+	node.iUseDepthTest = json.value("use_depth_test", 1);
+	node.iRenderAlignment = json.value("render_alignment", 0);
 	node.iRGBMaskMode = json.value("rgb_mask", node.iRGBMaskMode);
 	node.iModuleMask = json.value("module_mask", node.iModuleMask);
 	node.iColorMode = json.value("color_mode", node.iColorMode);

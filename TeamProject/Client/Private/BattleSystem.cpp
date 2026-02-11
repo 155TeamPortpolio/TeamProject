@@ -24,7 +24,7 @@ CBattleSystem::CBattleSystem()
 		infos.reserve(10);
 		m_BattleObjInfos.emplace(eType, move(infos));
 	}
-
+	m_BattleSnapShots = m_BattleObjInfos;
 	
 	m_pFXFlow = CBattleFXFlow::Create();
 	m_pFXFlow->Initialize_Preset();

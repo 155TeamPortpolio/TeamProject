@@ -540,6 +540,43 @@ void CDefiler::Update_Dissolve(_float dt)
 	}
 }
 
+void CDefiler::Play_Effect(const string& effectTag, _fvector offsetPosition, _fvector offsetQuaternion, _bool syncTransform)
+{
+	auto pEffect = Get_Component<CObjectContainer>()->Find_ObjectByName(effectTag);
+	if (!pEffect)
+		return;
+
+	auto pEffectTransform = pEffect->Get_Component<CTransform>();
+	if (syncTransform)
+	{
+		pEffectTransform->Set_Pos(_vector3(offsetPosition));
+		pEffectTransform->Set_Quaternion(offsetQuaternion);
+	}
+	else
+	{
+		_smatrix worldMatrix = m_pTransform->Get_WorldMatrix();
+		_quaternion worldQuaternion = m_pTransform->Get_QuaternionRotate();
+
+		_vector3 vWorldPosition = _vector3::Transform(offsetPosition, worldMatrix);
+		_quaternion localQuaternion(offsetQuaternion);
+		localQuaternion *= worldQuaternion;
+
+		pEffectTransform->Set_WorldPos(vWorldPosition);
+		pEffectTransform->Set_WorldQuaternion(localQuaternion);
+	}
+
+	static_cast<CEffectContainer*>(pEffect)->Play();
+}
+
+void CDefiler::Stop_Effect(const string& effectTag)
+{
+	auto pEffect = Get_Component<CObjectContainer>()->Find_ObjectByName(effectTag);
+	if (!pEffect)
+		return;
+
+	static_cast<CEffectContainer*>(pEffect)->Stop();
+}
+
 CDefiler* CDefiler::Create()
 {
 	CDefiler* instance = new CDefiler();
@@ -633,56 +670,28 @@ HRESULT CDefiler::Initialize_Effects()
 	auto pObjectContainer = Get_Component<CObjectContainer>();
 	Create_AttackSign("Bip001_Head");
 
-	/* Sword Slash */
+	/* Normal Slash */
 	{
 		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
-			.Asset("sacrifice_sword_slash.json")
-			.Build("Sacrifice_Sword_Slash");
-
+			.Asset("defiler_slash0.json")
+			.Build("Defiler_Slash0_0");
 		pEffect->Stop();
-		pObjectContainer->Add_Child(pEffect, false);
+		pObjectContainer->Add_Child(pEffect);
 	}
-
-	/* Axe Slash1 */
 	{
 		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
-			.Asset("sacrifice_axe_slash.json")
-			.Build("Sacrifice_Axe_Slash1");
-
+			.Asset("defiler_slash0.json")
+			.Build("Defiler_Slash0_1");
 		pEffect->Stop();
-		pObjectContainer->Add_Child(pEffect, false);
+		pObjectContainer->Add_Child(pEffect);
 	}
-
-	/* Axe Slash2 */
 	{
 		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
-			.Asset("sacrifice_axe_slash2.json")
-			.Build("Sacrifice_Axe_Slash2");
-
+			.Asset("defiler_slash1.json")
+			.Build("Defiler_Slash1_0");
 		pEffect->Stop();
-		pObjectContainer->Add_Child(pEffect, false);
+		pObjectContainer->Add_Child(pEffect);
 	}
-
-	/* Smoke Slash1 */
-	{
-		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
-			.Asset("sacrifice_smoke_slash.json")
-			.Build("Sacrifice_Smoke_Slash1");
-
-		pEffect->Stop();
-		pObjectContainer->Add_Child(pEffect, false);
-	}
-
-	/* Smoke Slash2 */
-	{
-		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
-			.Asset("sacrifice_smoke_slash2.json")
-			.Build("Sacrifice_Smoke_Slash2");
-
-		pEffect->Stop();
-		pObjectContainer->Add_Child(pEffect, false);
-	}
-
 	return S_OK;
 }
 
