@@ -88,16 +88,17 @@ void CMapInvisibleWall::CreateXWall(const _vector2& vCount, const _vector2& vOff
 		XWallDesc->vOffset = vOffset;
 
 	XWallDesc->vCount = vCount;
-	_vector4 vScale = m_pTransform->Get_Scale();
+	_vector3 vScale = Get_Component<CCollider>()->Get_Size();
 
 	if (0 == vCount.x)
-		XWallDesc->vCount.x = static_cast<_int>(vScale.x / XWallDesc->vOffset.x) * 5;
+		XWallDesc->vCount.x = static_cast<_int>(vScale.x / XWallDesc->vOffset.x);
 
 	if (0 == vCount.y)
 		XWallDesc->vCount.y = 3;
 
 	auto XWall = Builder::Create_Object({ G_GlobalLevelKey, "Proto_GameObject_XWall" })
 		.Add_ObjDesc(XWallDesc)
+		.Rotate(Get_Component<CCollider>()->Get_Rotation())
 		.Build("XWall");
 
 	if(XWall)
