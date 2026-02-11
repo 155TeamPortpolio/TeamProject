@@ -10,6 +10,7 @@
 #include "Collider.h"
 #include "EffectContainer.h"
 
+
 /* Maptool Type 0 (NPC) */
 #include "OfficeMeow.h"
 #include "BangBooPay.h"
@@ -21,12 +22,15 @@
 #include "ElectricBoo.h"
 #include "SilverAnbi.h"
 
-/* Maptool Type 1 (ETC) */
+/* Maptool Type 1 (Interactable) */
 #include "Portal.h"
 #include "ZeroPortal.h"
 
 /* Maptool Type 2 (ETC) */
 #include "MilitaryHelicopter.h"
+
+/* Maptool Type 4 (InvWall) */
+#include "MapInvisibleWall.h"
 
 #pragma region Tables
 /* Maptool Type 0 */
@@ -282,6 +286,28 @@ OBJECT_HANDLE Client::Spawner::Create_Invwall(const SPAWNER_DESC& Desc)
 		.Position(Desc.vTranslation)
 		.Collider(tColDesc)
 		.Build(Desc.tagName);
+
+#pragma region XWall
+	/* Portal */
+	if (Desc.tagName == "XWall")
+	{
+		auto Slot = Desc.SlotDataValues.find("XWall");
+
+		if (Slot != Desc.SlotDataValues.end()) {
+			for (auto tFieldData : Slot->second) {
+				if (tFieldData.TagName == "XWall")
+				{
+					_float4 vec4 = *GetSlotValue<_float4>(tFieldData.defaultvalue);
+
+					_vector2 vCount = { vec4.x, vec4.y };
+					_vector2 vOffset = { vec4.z, vec4.w };
+
+					static_cast<CMapInvisibleWall*>(Object)->CreateXWall(vCount, vOffset);
+				}
+			}
+		}
+	}
+#pragma endregion
 
 	ObjectManager()->Add_Object(Object, { Desc.tagLevel, "InvisibleWall_Layer" });
 	return Object->Get_Handle();

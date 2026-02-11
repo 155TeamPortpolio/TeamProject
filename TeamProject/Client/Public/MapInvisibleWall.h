@@ -23,7 +23,7 @@ public:
     void Render_GUI() override;
 
 public:
-    void EnableXWall(const _vector2& vCount, const _vector2& vOffset);
+    void CreateXWall(const _vector2& vCount, const _vector2& vOffset);
 
 public:
     static CMapInvisibleWall* Create();

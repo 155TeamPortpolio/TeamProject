@@ -75,7 +75,7 @@ void CMapInvisibleWall::Render_GUI()
 	ImGui::PopID();
 }
 
-void CMapInvisibleWall::EnableXWall(const _vector2& vCount, const _vector2& vOffset)
+void CMapInvisibleWall::CreateXWall(const _vector2& vCount, const _vector2& vOffset)
 {
 	Add_Component<CObjectContainer>();
 
@@ -93,9 +93,9 @@ void CMapInvisibleWall::EnableXWall(const _vector2& vCount, const _vector2& vOff
 	if (0 == vCount.y)
 		XWallDesc->vCount.y = 3;
 
-
 	auto XWall = Builder::Create_Object({ G_GlobalLevelKey, "Proto_GameObject_XWall" })
 		.Add_ObjDesc(XWallDesc)
+		.Position({ 0.f, 1.f, 0.f })
 		.Build("XWall");
 
 	ObjectManager()->Add_Object(XWall, { "Test_Level", "Effect_Layer" });
