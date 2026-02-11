@@ -30,8 +30,8 @@ private:
     unordered_map<string, class CRoom*> m_Rooms;
     vector<string> m_ActiveStacks;
 
-    string m_pendingEnterKey;
-    _bool m_pendingOverlay = true;
+    queue<pair<string,_bool>> m_pendingEnterKeys;
+
 public:
     static CRoomDirector* Create();
     virtual void Free();

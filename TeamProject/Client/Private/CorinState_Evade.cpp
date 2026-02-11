@@ -45,6 +45,10 @@ void CCorinState_Evade::Enter(CCorin* pOwner)
     sound.Sequence("Evade_Voice").Attribute3D(true).Loop(false).PlayNext();
 
     __super::Enter(pOwner);
+
+    pOwner->Stop_Effect("Corin_Saw_Slash0");
+    pOwner->Stop_Effect("Corin_Ex_Saw_Slash0");
+    pOwner->Stop_Effect("Corin_Ultimate_Saw_Slash0");
 }
 
 void CCorinState_Evade::Update(CCorin* pOwner, _float dt)
@@ -56,6 +60,7 @@ void CCorinState_Evade::Update(CCorin* pOwner, _float dt)
         if (pOwner->Is_Perfect() && !m_pSubStateMachine->Get_Bool("Extreme"))
         {
             BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::EVADE);
+            pOwner->Play_Effect("Evade", _vector3(0.f, 0.f, 0.f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
             m_pSubStateMachine->Set_Bool("Extreme", true);
         }
     }

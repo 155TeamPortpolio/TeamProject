@@ -28,6 +28,9 @@ public:
     virtual void TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER charaName = CHARACTER::END);
 
 private:
+    void SummonWall();
+
+private:
     _bool m_bDangle = {};
     _float m_fElapsedTime = {};
     _vector3 m_vSlide = {};

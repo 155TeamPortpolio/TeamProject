@@ -5,6 +5,7 @@
 #include "Texture.h"
 
 /* Object */
+#include "EffectContainer.h"
 #include "AttackSign.h" 
 #include "EnemyAttackCollider.h"
 #include "UI_EnemyStatus.h"
@@ -298,6 +299,16 @@ void CEnemy::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER chara
 	desc.followOffset  = Vector3(0.f, 1.3f, 0.f);
 	desc.isEnemy       = true;
 	desc.charaName     = charaName;
+
+	/* Effect */
+	_vector3 vWorldPosition = m_pTransform->Get_WorldPos();
+	vWorldPosition.y += 1.2f;
+	auto pEffect = Builder::Create_Object({ G_GlobalLevelKey,"Proto_GameObject_BasicHitEffect" })
+		.Position(vWorldPosition)
+		.FromPool()
+		.Build("BasicHit");
+
+	ObjectManager()->Add_Object(pEffect, { Get_Level(),"Effect_Layer" });
 
 	UIDirector()->Request_DamageText(desc);
 }

@@ -51,6 +51,9 @@ public:
     void Control_TargetEnable(_bool On);
     void Update_Dissolve(_float dt);
 
+    void Play_Effect(const string& effectTag, _fvector offsetPosition, _fvector offsetQuaternion, _bool syncTransform = true);
+    void Stop_Effect(const string& effectTag);
+
 private:
     void MoveByTraceMode(_float dt, _float moveScale = 1.f);
     void RotateToTarget(_float dt, _float rotateSpeed = 1.f);
