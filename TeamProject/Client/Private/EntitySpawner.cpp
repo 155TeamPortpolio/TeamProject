@@ -251,7 +251,7 @@ OBJECT_HANDLE Client::Spawner::Create_AmbientActor(const SPAWNER_DESC& Desc)
 OBJECT_HANDLE Client::Spawner::Create_Effect(const SPAWNER_DESC& Desc)
 {
 	auto pParticle = Builder::Create_EffectContainer({ G_GlobalLevelKey, "Proto_GameObject_EffectContainer" })
-		.Asset(Desc.tagName)
+		.Asset(Desc.tagName + ".json")
 		.Position(Desc.vTranslation)
 		.Rotate(Desc.vRotation)
 		.Build(Desc.tagName);

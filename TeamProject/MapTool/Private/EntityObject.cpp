@@ -132,8 +132,9 @@ string CEntityObject::Get_TypeName()
 	case 0: Typename = "NPC";			break;
 	case 1: Typename = "Interact";		break;
 	case 2: Typename = "AmbientActor";	break;
-	case 3: Typename = "Invwall";		break;
-	case 4: Typename = "ETC";			break;
+	case 3: Typename = "Effect";		break;
+	case 4: Typename = "Invwall";		break;
+	case 5: Typename = "ETC";			break;
 	default:
 		break;
 	}
@@ -150,8 +151,9 @@ _vector4 CEntityObject::Get_TypeColor()
 	case 0: TypeColor = _vector4{ 1.f, 1.f, 0.f, 1.f };		break; // NPC : Yellow
 	case 1: TypeColor = _vector4{ 0.f, 1.f, 1.f, 1.f };		break; // INTERACT  : Cyan
 	case 2: TypeColor = _vector4{ 1.f, 0.5f, 0.f, 1.f };	break; // AMBIENTACTOR  : Orange
-	case 3: TypeColor = _vector4{ 0.f, 0.f, 1.f, 1.f };		break; // INVWALL : Blue
-	case 4: TypeColor = _vector4{ 0.5f, 0.f, 0.5f, 1.f };	break; // ETC : Purple
+	case 3: TypeColor = _vector4{ 0.2f, 0.9f, 0.1f, 1.f };	break; // Effect : Lime
+	case 4: TypeColor = _vector4{ 0.f, 0.f, 1.f, 1.f };		break; // INVWALL : Blue
+	case 5: TypeColor = _vector4{ 0.5f, 0.f, 0.5f, 1.f };	break; // ETC : Purple
 	default:TypeColor = _vector4{ 0.f, 1.f, 0.f, 1.f };		break; // DEF : Green 
 	}
 
@@ -171,8 +173,11 @@ void CEntityObject::Render_GUI()
 	if (ImGui::InputInt("##Version", &m_iType)) {
 		Get_Component<CCollider>()->Set_ColliderColor(Get_TypeColor());
 
-		if (m_iType == 3 && m_InstanceName != "Invwall")
+		if (m_iType == 4 && m_InstanceName != "Invwall")
 			m_InstanceName = "Invwall";
+
+		if (m_iType == 3)
+			m_pTransform->Scale({ 0.1f, 0.1f, 0.1f });
 	};
 
 	const auto EntityList = CMapToolCore::GetInstance()->Get_MapToolGui()->Get_EntityModelNames();
