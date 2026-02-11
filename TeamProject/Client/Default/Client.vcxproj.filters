@@ -1260,6 +1260,15 @@
     <Filter Include="02. GameObject\Object\Enemy\Boss\Defiler\MiasmaUnit\Heavy\HeavyDummyUnit">
       <UniqueIdentifier>{22daf38f-4e55-444e-93df-ec2dbf2b57f4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\Wipeout">
+      <UniqueIdentifier>{3f5f7d60-1268-4b6f-b2f4-3e0e9000df8f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Effect\HitEffect">
+      <UniqueIdentifier>{d0c7f39e-0011-405a-949b-aa5bc541e1d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Effect\HitEffect\BasicHit">
+      <UniqueIdentifier>{15e73540-5323-452d-b699-04f689261bb8}</UniqueIdentifier>
+    </Filter>  
     <Filter Include="02. GameObject\UI\02. 3D\Mesh\RenderTargetScreen">
       <UniqueIdentifier>{9fcf702b-1570-44a5-9f26-b33011d359a9}</UniqueIdentifier>
     </Filter>
@@ -2513,6 +2522,9 @@
     <ClInclude Include="..\Public\UI_ZeroEntranceLogo.h">
       <Filter>02. GameObject\UI\02. 3D\Mesh\ZeroEntranceLogo</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\BasicHitEffect.h">
+      <Filter>02. GameObject\Effect\HitEffect\BasicHit</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -3682,6 +3694,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\UI_ZeroEntranceLogo.cpp">
       <Filter>02. GameObject\UI\02. 3D\Mesh\ZeroEntranceLogo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\BasicHitEffect.cpp">
+      <Filter>02. GameObject\Effect\HitEffect\BasicHit</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
