@@ -17,6 +17,7 @@ void CDefilerState_Attack::Build_Pattern(CDefiler* pOwner, _int Type)
 	DEFILER_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
 	TARGETING_INFO& targetInfo = pOwner->GetTargetingInfo();
 	blackBoard.patternTransition.clear();
+	Type = 0;
 	switch (Type)
 	{
 	case 0 :
@@ -64,8 +65,8 @@ void CDefilerState_Attack::Build_Pattern(CDefiler* pOwner, _int Type)
 	{
 		blackBoard.patternTransition.push_back({ "Attack_Evade",0.f,1.f });
 		blackBoard.patternTransition.push_back({ "Attack07",0.f,1.f });
-		//blackBoard.patternTransition.push_back({ "Attack03",0.f,1.f });
-		//blackBoard.patternTransition.push_back({ "Attack01_01_P2",0.f,1.f });
+		blackBoard.patternTransition.push_back({ "Attack03",0.f,1.f });
+		blackBoard.patternTransition.push_back({ "Attack01_01_P2",0.f,1.f });
 		break;
 	}
 	case 9 :
@@ -151,7 +152,7 @@ void CDefilerState_Attack::Enter(CDefiler* pOwner)
 	auto& blackboard = pOwner->GetBlackBoard();
 
 	Build_Pattern(pOwner, blackboard.patternIndex);
-	blackboard.patternIndex = clamp(++blackboard.patternIndex, 0, m_maxPattern);
+	blackboard.patternIndex = 0; //clamp(++blackboard.patternIndex, 0, m_maxPattern);
 
 	if (!blackboard.patternTransition.empty())
 	{
@@ -180,6 +181,8 @@ void CDefilerState_Attack::Update(CDefiler* pOwner, _float dt)
 			pOwner->Get_MainStateMachine()->Set_Trigger("Idle");
 		}
 	}
+
+	Update_Effects(pOwner);
 }
 
 void CDefilerState_Attack::ComboTransition(CDefiler* pOwner)
@@ -209,10 +212,19 @@ void CDefilerState_Attack_01_01::Enter(CDefiler* pOwner)
 void CDefilerState_Attack_01_01::Update(CDefiler* pOwner, _float dt)
 {
 	ComboTransition(pOwner);
+	Update_Effects(pOwner);
 }
 
 void CDefilerState_Attack_01_01::Exit(CDefiler* pOwner)
 {
+}
+
+void CDefilerState_Attack_01_01::Update_Effects(CDefiler* pOwner)
+{
+	if (IsCrossAnimProgress(0.19f))
+		pOwner->Play_Effect("Defiler_Slash0_0", _vector3(0.f, 1.1f, 0.f), _quaternion(0.72f, 0.14f, 0.11f, 0.67f));
+	if (IsCrossAnimProgress(0.3f))
+		pOwner->Play_Effect("Defiler_Slash0_1", _vector3(0.f, 2.5f, 0.f), _quaternion(-0.19f, 0.6f, 0.62f, -0.47f));
 }
 
 void CDefilerState_Attack_01_02::Enter(CDefiler* pOwner)
@@ -231,10 +243,17 @@ void CDefilerState_Attack_01_02::Enter(CDefiler* pOwner)
 void CDefilerState_Attack_01_02::Update(CDefiler* pOwner, _float dt)
 {
 	ComboTransition(pOwner);
+	Update_Effects(pOwner);
 }
 
 void CDefilerState_Attack_01_02::Exit(CDefiler* pOwner)
 {
+}
+
+void CDefilerState_Attack_01_02::Update_Effects(CDefiler* pOwner)
+{
+	if (IsCrossAnimProgress(0.34f))
+		pOwner->Play_Effect("Defiler_Slash1_0", _vector3(0.f, 0.8f, 0.f), _quaternion(-0.08f, 0.68f, 0.71f, 0.18f));
 }
 
 void CDefilerState_Attack_01_01_P2::Enter(CDefiler* pOwner)
@@ -514,6 +533,7 @@ void CDefilerState_Attack_09_Start::Enter(CDefiler* pOwner)
 {
 	DEFILER_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
 	TARGETING_INFO& targetBoard = pOwner->GetTargetingInfo();
+	pOwner->Control_TargetEnable(false);
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	blackBoard.TraceType_OnlyAnim();
 	blackBoard.TraceType_IgnoreRotation();
@@ -572,6 +592,7 @@ void CDefilerState_Attack_09_End::Update(CDefiler* pOwner, _float dt)
 
 void CDefilerState_Attack_09_End::Exit(CDefiler* pOwner)
 {
+	pOwner->Control_TargetEnable(true);
 }
 
 void CDefilerState_Attack_Grab::Enter(CDefiler* pOwner)
@@ -599,6 +620,7 @@ void CDefilerState_Attack_Summon::Enter(CDefiler* pOwner)
 {
 	DEFILER_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
 	blackBoard.TraceType_OnlyAnim();
+	blackBoard.TraceType_IgnoreRotation();
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("Monster_IsoldetheDefiler_Ani_Attack_Summon")
 		.StartAt(blackBoard.reservedPattern.animStartProgress)

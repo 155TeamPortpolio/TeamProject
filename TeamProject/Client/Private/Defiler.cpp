@@ -23,6 +23,10 @@
 #include "MiasmaSpawnBall.h"
 #include "MiasmaHeavyJaeger.h"
 #include "MiasmaDummyUnit.h"
+#include "DefilerWeapon.h"
+#include "DefilerAxe.h"
+#include "DefilerWall.h"
+
 #include "AudioSource.h"
 
 #include "UI_DamageText.h"
@@ -45,6 +49,9 @@ HRESULT CDefiler::Initialize_Prototype()
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_MiasmaSpawnBall", CMiasmaSpawnBall::Create());
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_MiasmaHeavy", CMiasmaHeavyJaeger::Create());
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_MiasmaDummy", CMiasmaDummyUnit::Create());
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_DefilerWeapon", CDefilerWeapon::Create());
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_DefilerAxe", CDefilerAxe::Create());
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_DefilerWall", CDefilerWall::Create());
 
 	Add_Component<CAnimator3D>();
 	Add_Component<CSkeletalModel>();
@@ -110,15 +117,25 @@ void CDefiler::Awake()
 	}
 
 }
-
 void CDefiler::Priority_Update(_float dt)
 {	
 	m_PlayerCharacterInfos.clear();
 	m_PlayerCharacterInfos = BattleSystem()->GetBattleObjects(CBattleSystem::BATTLE_OBJ_TYPE::PLAYER);
 	ComputeTargetingInfo();
 
-	if (InputDevice()->Key_Tap('F'))
-		Control_Summon("Heavy");
+	if (InputDevice()->Key_Tap('F')) {
+		string nowLevelKey = LevelManager()->Get_NowLevelKey();
+		CDefilerWall::DefilerWallDesc* desc = new CDefilerWall::DefilerWallDesc;
+		desc->vLook = Math::NormalizeSafeXZ(m_pTransform->Dir(STATE::LOOK));
+		_vector3 pos = m_pTransform->Get_Pos();
+		pos.y = 0;
+
+		auto pWall = Builder::Create_Object({ "Zero_Level","Proto_GameObject_DefilerWall" })
+			.Position(pos)
+			.Add_ObjDesc(desc)
+			.Build("Wall");
+		ObjectManager()->Add_Object(pWall, { nowLevelKey,"Enemy_Layer" });
+	}
 }
 
 void CDefiler::Update(_float dt)
@@ -129,17 +146,19 @@ void CDefiler::Update(_float dt)
 		m_BlackBoard.vTargetPos = m_tTargetingInfo.vTargetPos;
 		m_BlackBoard.vTargetDir = m_tTargetingInfo.vDirToTarget;
 	}
+
 	Update_States(dt);
 
-	auto pAnimator = Get_Component<CAnimator3D>();
-	pAnimator->Update_Animation(dt);
-	Route_AnimEvent(pAnimator);
+	auto animatorPtr = Get_Component<CAnimator3D>();
+	animatorPtr->Update_Animation(dt);
+
+	Route_AnimEvent(animatorPtr);
+
 	MoveByTraceMode(dt);
 	RotateToTarget(dt, 4.f);
-	
 	Get_Component<CCharacterController>()->Update(dt);
-	m_pStateMachine->Update(dt);
 
+	m_pStateMachine->Update(dt);
 	Get_Component<CObjectContainer>()->UpdateChild(dt);
 }
 
@@ -147,25 +166,32 @@ void CDefiler::Late_Update(_float dt)
 {
 	Get_Component<CCharacterController>()->Late_Update(dt);
 }
-
 void CDefiler::Render_GUI()
 {
 	ImGui::InputInt("Pattern number", &m_BlackBoard.patternIndex);
-	for (auto pattern : m_BlackBoard.patternTransition)
+	for (auto& pattern : m_BlackBoard.patternTransition)
 	{
-		ImGui::Text(pattern.nextPattern.c_str());
+		ImGui::TextUnformatted(pattern.nextPattern.c_str());
 	}
 
-	// Color
-	_float color[3] = { m_vRimLightColor.x, m_vRimLightColor.y, m_vRimLightColor.z};
-	if (ImGui::ColorEdit4("RimLightColor", color,
+	ImGui::SeparatorText("RimLight");
+
+	_float color[3] = {
+		m_vRimLightColor.x,
+		m_vRimLightColor.y,
+		m_vRimLightColor.z
+	};
+
+	if (ImGui::ColorEdit3("RimLightColor", color,
 		ImGuiColorEditFlags_Float |
 		ImGuiColorEditFlags_DisplayRGB |
 		ImGuiColorEditFlags_InputRGB))
 	{
 		m_vRimLightColor = _float3(color[0], color[1], color[2]);
 	}
-	ImGui::DragFloat("RimLighPower", &m_fRimLightPower);
+
+	ImGui::DragFloat("RimLightPower", &m_fRimLightPower, 0.01f, 0.f, 10.f);
+
 	__super::Render_GUI();
 }
 
@@ -205,6 +231,16 @@ void CDefiler::Change_CollisionMask(_uint iMask)
 void CDefiler::Release_CollisionMask()
 {
 	Get_Component<CCharacterController>()->Set_CollisionMask(m_BaseMask);
+}
+
+void CDefiler::Hide_MeshGroup(const string& mesh)
+{
+	Get_Component<CSkeletalModel>()->Hide_MehsByName(mesh);
+}
+
+void CDefiler::Show_MeshGroup(const string& mesh)
+{
+	Get_Component<CSkeletalModel>()->Show_MehsByName(mesh);
 }
 
 void CDefiler::Set_CCTPos(_vector3 pos)
@@ -356,6 +392,11 @@ void CDefiler::MoveByTraceMode(_float dt, _float moveScale)
 
 void CDefiler::RotateToTarget(_float dt, _float rotateSpeed)
 {
+	
+	const _bool ignoreTarget = HasFlag(m_BlackBoard.eTraceFlag, TraceFlag::IgnoreTarget);
+	if (ignoreTarget)
+		return;
+
 	_vector3 vPosition = m_pTransform->Get_Pos();
 	_vector3 vCurrDir = m_pTransform->Dir(STATE::LOOK);
 	_vector3 vTargetDir = m_BlackBoard.vTargetDir;
@@ -458,11 +499,19 @@ void CDefiler::Control_Summon(const string& event)
 		m_MiasmaSpawner.Spawn(MiasmaType::Heavy, 1, m_tTargetingInfo.vTargetPos, Get_BipedPos("Ctr_M_Weapon_03"),
 			m_tTargetingInfo.vTargetPos.y,this);
 	}
+	else if (event == "Weapon") {
+		Hide_MeshGroup(event);
+		m_MiasmaSpawner.Spawn(MiasmaType::Weapon, 1, m_tTargetingInfo.vTargetPos, Get_BipedPos("Ctr_M_Prop_01"),
+			m_tTargetingInfo.vTargetPos.y,this);
+	}
+	else if (event == "WeaponShow") {
+		Show_MeshGroup("Weapon");
+	}
 }
 
 void CDefiler::Control_TargetEnable(_bool On)
 {
-	if (On) {
+	if (!On) {
 		BattleSystem()->ExcludeBattleObject(BATTLE_OBJ_TYPE::MONSTER, this->Get_Handle());
 	}
 	else {
@@ -500,6 +549,43 @@ void CDefiler::Update_Dissolve(_float dt)
 	default:
 		break;
 	}
+}
+
+void CDefiler::Play_Effect(const string& effectTag, _fvector offsetPosition, _fvector offsetQuaternion, _bool syncTransform)
+{
+	auto pEffect = Get_Component<CObjectContainer>()->Find_ObjectByName(effectTag);
+	if (!pEffect)
+		return;
+
+	auto pEffectTransform = pEffect->Get_Component<CTransform>();
+	if (syncTransform)
+	{
+		pEffectTransform->Set_Pos(_vector3(offsetPosition));
+		pEffectTransform->Set_Quaternion(offsetQuaternion);
+	}
+	else
+	{
+		_smatrix worldMatrix = m_pTransform->Get_WorldMatrix();
+		_quaternion worldQuaternion = m_pTransform->Get_QuaternionRotate();
+
+		_vector3 vWorldPosition = _vector3::Transform(offsetPosition, worldMatrix);
+		_quaternion localQuaternion(offsetQuaternion);
+		localQuaternion *= worldQuaternion;
+
+		pEffectTransform->Set_WorldPos(vWorldPosition);
+		pEffectTransform->Set_WorldQuaternion(localQuaternion);
+	}
+
+	static_cast<CEffectContainer*>(pEffect)->Play();
+}
+
+void CDefiler::Stop_Effect(const string& effectTag)
+{
+	auto pEffect = Get_Component<CObjectContainer>()->Find_ObjectByName(effectTag);
+	if (!pEffect)
+		return;
+
+	static_cast<CEffectContainer*>(pEffect)->Stop();
 }
 
 CDefiler* CDefiler::Create()
@@ -595,56 +681,28 @@ HRESULT CDefiler::Initialize_Effects()
 	auto pObjectContainer = Get_Component<CObjectContainer>();
 	Create_AttackSign("Bip001_Head");
 
-	/* Sword Slash */
+	/* Normal Slash */
 	{
 		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
-			.Asset("sacrifice_sword_slash.json")
-			.Build("Sacrifice_Sword_Slash");
-
+			.Asset("defiler_slash0.json")
+			.Build("Defiler_Slash0_0");
 		pEffect->Stop();
-		pObjectContainer->Add_Child(pEffect, false);
+		pObjectContainer->Add_Child(pEffect);
 	}
-
-	/* Axe Slash1 */
 	{
 		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
-			.Asset("sacrifice_axe_slash.json")
-			.Build("Sacrifice_Axe_Slash1");
-
+			.Asset("defiler_slash0.json")
+			.Build("Defiler_Slash0_1");
 		pEffect->Stop();
-		pObjectContainer->Add_Child(pEffect, false);
+		pObjectContainer->Add_Child(pEffect);
 	}
-
-	/* Axe Slash2 */
 	{
 		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
-			.Asset("sacrifice_axe_slash2.json")
-			.Build("Sacrifice_Axe_Slash2");
-
+			.Asset("defiler_slash1.json")
+			.Build("Defiler_Slash1_0");
 		pEffect->Stop();
-		pObjectContainer->Add_Child(pEffect, false);
+		pObjectContainer->Add_Child(pEffect);
 	}
-
-	/* Smoke Slash1 */
-	{
-		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
-			.Asset("sacrifice_smoke_slash.json")
-			.Build("Sacrifice_Smoke_Slash1");
-
-		pEffect->Stop();
-		pObjectContainer->Add_Child(pEffect, false);
-	}
-
-	/* Smoke Slash2 */
-	{
-		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
-			.Asset("sacrifice_smoke_slash2.json")
-			.Build("Sacrifice_Smoke_Slash2");
-
-		pEffect->Stop();
-		pObjectContainer->Add_Child(pEffect, false);
-	}
-
 	return S_OK;
 }
 

@@ -135,6 +135,9 @@ void CEffectContainer::OnPooledAcquire(INIT_DESC* pArg)
 		else
 			tfIter->second->Initialize(descIter->second);
 	}
+
+	m_fElapsedTime = 0.f;
+	m_isAlive = true;
 }
 
 void CEffectContainer::OnPooledRelease()

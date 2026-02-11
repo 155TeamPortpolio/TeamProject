@@ -152,6 +152,7 @@ public: //»À °ü·Ã
     enum class BoneSpace { TRANSFORMATION, MANIPULATE, COMBINED , WORLD };//, FINAL };
 
     _float4x4 Get_BoneMatrix(BoneSpace eBoneSpace, AnimArg BoneArg);
+    _float4x4 Get_ParentBoneMatrix(BoneSpace eBoneSpace, AnimArg BoneArg);
     _float4x4* Get_BoneMatrixPtr(BoneSpace eBoneSpace, AnimArg BoneArg);
     _vector3 Get_BonePosition(BoneSpace eBoneSpace, AnimArg BoneArg);
     _quaternion Get_BoneQuaternion(BoneSpace eBoneSpace, AnimArg BoneArg);
@@ -159,6 +160,7 @@ public: //»À °ü·Ã
     vector<_float4x4>* Get_BoneMatrices_Ptr(BoneSpace eBoneSpace);
 
     void Set_BoneMatrix(BoneSpace eBoneSpace, const _float4x4& Matrix, AnimArg BoneArg);
+    void Set_LayerLocalBoneMatrix(const _float4x4& Matrix, AnimArg BoneArg, _uint LayerIndex = 0);
     void Set_BonePosition(BoneSpace eBoneSpace, _vector3 Position, AnimArg BoneArg);
     void Set_BoneQuaternion(BoneSpace eBoneSpace, _quaternion Quaternion, AnimArg BoneArg);
 

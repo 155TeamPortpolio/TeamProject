@@ -104,6 +104,7 @@ void CMiyabiState_ExAttack::Update(CMiyabi* pOwner, _float dt)
 
 void CMiyabiState_ExAttack::Exit(CMiyabi* pOwner)
 {
+    pOwner->Show_Ghost();
     pOwner->Reset_ReserveCombo();
     pOwner->Get_StateMachine()->Set_Bool("Resistance", false);
     pOwner->Pop_Invincible();
@@ -112,6 +113,7 @@ void CMiyabiState_ExAttack::Exit(CMiyabi* pOwner)
 
 void CMiyabiState_ExAttack_Start::Enter(CMiyabi* pOwner)
 {
+    pOwner->Hide_Ghost();
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_Branch_01_Start")
         .Speed(3.f)
         .Apply();
@@ -168,6 +170,8 @@ void CMiyabiState_ExAttack_01::Update_Effects(CMiyabi* pOwner)
 
 void CMiyabiState_ExAttack_02::Enter(CMiyabi* pOwner)
 {
+    pOwner->Set_WeaponEffectMesh(true);
+
     m_iCount = 0;
     m_fProgress = 0.2f;
 
@@ -273,6 +277,8 @@ void CMiyabiState_ExAttack_02::Update_Effects(CMiyabi* pOwner)
 
 void CMiyabiState_ExAttack_03::Enter(CMiyabi* pOwner)
 {
+    pOwner->Set_WeaponEffectMesh(true);
+
     m_iCount = 0;
     m_fProgress = 0.3f;
 

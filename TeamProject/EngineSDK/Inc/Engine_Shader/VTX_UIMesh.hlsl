@@ -106,7 +106,6 @@ technique11 DefaultTechnique
     pass Opaque
     {
         SetRasterizerState(RS_Default);
-
         SetDepthStencilState(DSS_Default, 0);
         SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 

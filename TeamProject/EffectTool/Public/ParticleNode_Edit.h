@@ -12,6 +12,8 @@ public:
     {
         CEffectContainer_Edit::EFFECT_EDIT_CONTEXT* pContext = nullptr;
     }PARTICLE_NODE_EDIT_DESC;
+
+    enum class RENDER_ALIGNMENT { FACING, VIEW, END };
 private:
     CParticleNode_Edit();
     CParticleNode_Edit(const CParticleNode_Edit& rhs);
@@ -49,6 +51,8 @@ private:
     /*Main Params*/
     _float3 m_vRimLightColor{};
     _float2 m_vPivot{ 0.5f,0.5f };
+    _uint m_iUseDepthTest{ 1 };
+    _uint m_iRenderAlignment{};
     _uint m_iRGBMaskMode{};
     CParticleSystem::SPAWN_SHAPE m_eSpawnShape{};
     CParticleSystem::COLOR_MODE m_eColorMode{};

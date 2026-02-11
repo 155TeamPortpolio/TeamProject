@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "SacrificeState_Death.h"
 #include "Sacrifice.h"
+#include "AudioSource.h"
 
 void CSacrificeState_Death::Enter(CSacrifice* pOwner)
 {
@@ -51,6 +52,7 @@ void CSacrificeState_Death_Phase1::Enter(CSacrifice* pOwner)
 	pOwner->DeactiveEyeLaser();
 
 	pOwner->Set_Hitable(false);
+	pOwner->Get_Component<CAudioSource>()->Slot("Sacrifice_Hurt_Voice0.wav").Attribute3D(false).Loop(false).Play();
 }
 
 void CSacrificeState_Death_Phase1::Update(CSacrifice* pOwner, _float dt)

@@ -30,10 +30,9 @@ HRESULT CBattlePlayer::Initialize()
     CBattleSystem::GetInstance()->SetBattlePlayer(this);
     Initialize_CharacterPrototype();
 
-    // Jehyun
-    vector<CHARACTER> BattleCharacters = {CHARACTER::Corin, CHARACTER::Miyabi, CHARACTER::JaneDoe, };
-
-    //vector<CHARACTER> BattleCharacters = {CHARACTER::Miyabi,CHARACTER::JaneDoe, CHARACTER::Corin, };
+    // Jehyun : 원상복구 안해놓냐? 뒤질래?
+    //vector<CHARACTER> BattleCharacters = {CHARACTER::Corin, CHARACTER::Miyabi, CHARACTER::JaneDoe, };
+    vector<CHARACTER> BattleCharacters = {CHARACTER::Miyabi,CHARACTER::JaneDoe, CHARACTER::Corin, };
     SetBattleCharacters(BattleCharacters);
 
     return S_OK;
@@ -750,7 +749,7 @@ _int CBattlePlayer::Find_SwitchIndex(_bool bNext) const
 void CBattlePlayer::Update_Target()
 {
     // 현재 타겟이 유효하고 사거리 내면 유지
-    if (m_TargetHandle.isValid())
+    if (m_TargetHandle.isValid() && BattleSystem()->isValidTarget(BATTLE_OBJ_TYPE::MONSTER, m_TargetHandle))
     {
         _float fMaxDistance = (m_TargetHandle.Get()->Get_Tag() == "Boss")
             ? TARGET_BOSS_MAXDISTANCE
@@ -767,7 +766,10 @@ void CBattlePlayer::Update_Target()
 
     for (auto& monster : Monsters)
     {
-        if (!monster.hObject.isValid())  continue;
+        if (!monster.hObject.isValid()
+            || !BattleSystem()->isValidTarget(BATTLE_OBJ_TYPE::MONSTER, monster.hObject))
+            continue;
+        
         _vector3 vToMonster = monster.vPos - m_pCurrentCharacter->Get_WorldPos();
         _float fDistance = vToMonster.Length();
 

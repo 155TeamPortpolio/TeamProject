@@ -183,7 +183,7 @@ void CCorinState_ExAttack_Start::Enter(CCorin* pOwner)
     }
 
     auto& sound = *pOwner->Get_Component<CAudioSource>();
-    sound.Slot("Corin_ExAttack_Loop_Charge_SFX.wav").Attribute3D(true).Loop(false).Pause(false).Volume(0.5f).Play();
+   // sound.Slot("Corin_ExAttack_Loop_Charge_SFX.wav").Attribute3D(true).Loop(false).Pause(false).Volume(0.5f).Play();
 }
 
 void CCorinState_ExAttack_Start::Update(CCorin* pOwner, _float dt)
@@ -211,7 +211,7 @@ void CCorinState_ExAttack_Loop::Enter(CCorin* pOwner)
 {
     // Jehyun
     auto& sound = *pOwner->Get_Component<CAudioSource>();
-    sound.Slot("Corin_ExAttack_01_Voice.wav").Attribute3D(true).Loop(false).Play();
+    sound.Sequence("ExAttack_Voice").Attribute3D(true).Loop(false).PlayNext();
 
     if (Get_ParentState()->Get_SubStateMachine()->Get_Bool("Enhanced"))
     {

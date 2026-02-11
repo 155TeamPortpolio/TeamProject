@@ -929,6 +929,8 @@ HRESULT CJaneDoe::Render_PassionMotionBlur(ID3D11DeviceContext* pContext, _uint 
     auto Material = Get_Component<CMaterial>();
     _int Index = Model->Get_MaterialIndex(idx);
     auto Shader = Material->Get_Shader(Index);
+    auto instance = Material->Get_MaterialInstance(Index);
+    instance->Override_Pass("MotionBlur");
     ID3D11InputLayout* pLayout;
     RenderSys->Get_InputLayout(
         Model,
@@ -939,9 +941,9 @@ HRESULT CJaneDoe::Render_PassionMotionBlur(ID3D11DeviceContext* pContext, _uint 
     );
 
     pContext->IASetInputLayout(pLayout);
-    Shader->Apply("MotionBlur", pContext);
+    Material->Apply_Material(pContext, Index);
     Model->Draw(pContext, idx);
-
+    instance->Reset_Pass();
     return S_OK;
 }
 
