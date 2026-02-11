@@ -1275,8 +1275,17 @@
     <Filter Include="02. GameObject\Object\Enemy\Boss\Defiler\MiasmaUnit\Heavy\HeavyDummyUnit">
       <UniqueIdentifier>{22daf38f-4e55-444e-93df-ec2dbf2b57f4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\UI\01. 2D\Wipeout">
+    <Filter Include="02. GameObject\UI\02. 3D\Mesh\RenderTargetScreen">
+      <UniqueIdentifier>{9fcf702b-1570-44a5-9f26-b33011d359a9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\RTVDraw">
       <UniqueIdentifier>{3f5f7d60-1268-4b6f-b2f4-3e0e9000df8f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\RTVDraw\Wipeout">
+      <UniqueIdentifier>{b1b9c45c-75fb-4a4d-8777-38f72034a43e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\RTVDraw\Switch">
+      <UniqueIdentifier>{d77a18f5-e0a7-4f32-bc3c-09132e9e8626}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\Object\Enemy\Boss\Defiler\ThrowWeapon">
       <UniqueIdentifier>{6ed9d642-434f-4168-93a5-3c95f11f9401}</UniqueIdentifier>
@@ -2477,8 +2486,17 @@
     <ClInclude Include="..\Public\MiasmaDummyUnit.h">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler\MiasmaUnit\Heavy\HeavyDummyUnit</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UI_RenderTargetScreen.h">
+      <Filter>02. GameObject\UI\02. 3D\Mesh\RenderTargetScreen</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_RTVDraw.h">
+      <Filter>02. GameObject\UI\01. 2D\RTVDraw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Switch.h">
+      <Filter>02. GameObject\UI\01. 2D\RTVDraw\Switch</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\UI_Wipeout.h">
-      <Filter>02. GameObject\UI\01. 2D\Wipeout</Filter>
+      <Filter>02. GameObject\UI\01. 2D\RTVDraw\Wipeout</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\DefilerWeapon.h">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler\ThrowWeapon</Filter>
@@ -3638,8 +3656,17 @@
     <ClCompile Include="..\Private\MiasmaDummyUnit.cpp">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler\MiasmaUnit\Heavy\HeavyDummyUnit</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\UI_RenderTargetScreen.cpp">
+      <Filter>02. GameObject\UI\02. 3D\Mesh\RenderTargetScreen</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_RTVDraw.cpp">
+      <Filter>02. GameObject\UI\01. 2D\RTVDraw</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Switch.cpp">
+      <Filter>02. GameObject\UI\01. 2D\RTVDraw\Switch</Filter>
+    </ClCompile>
     <ClCompile Include="..\Private\UI_Wipeout.cpp">
-      <Filter>02. GameObject\UI\01. 2D\Wipeout</Filter>
+      <Filter>02. GameObject\UI\01. 2D\RTVDraw\Wipeout</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\DefilerWeapon.cpp">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler\ThrowWeapon</Filter>

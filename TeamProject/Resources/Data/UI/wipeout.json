@@ -4,20 +4,20 @@
     "transform": {
         "anchor": 0,
         "anchorOffset": [
-            -800.0,
-            -450.0
+            0.0,
+            0.0
         ],
         "size": [
-            1600.0,
-            900.0
+            100.0,
+            100.0
         ],
         "scale": [
             1.0,
             1.0
         ],
         "pivot": [
-            0.0,
-            0.0
+            0.5,
+            0.5
         ],
         "radian": 0.0
     },
@@ -46,7 +46,72 @@
         0.0,
         0.0
     ],
-    "animClips": [],
+    "animClips": [
+        {
+            "duration": 0.10000000149011612,
+            "keyframes": [
+                {
+                    "angle": 0.0,
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        0.0
+                    ],
+                    "easeType": 0,
+                    "position": [
+                        0.0,
+                        0.0
+                    ],
+                    "scale": [
+                        0.800000011920929,
+                        0.800000011920929
+                    ],
+                    "time": 0.0
+                },
+                {
+                    "angle": 0.0,
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "easeType": 0,
+                    "position": [
+                        0.0,
+                        0.0
+                    ],
+                    "scale": [
+                        0.800000011920929,
+                        0.800000011920929
+                    ],
+                    "time": 0.05000000074505806
+                },
+                {
+                    "angle": 0.0,
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "easeType": 0,
+                    "position": [
+                        0.0,
+                        0.0
+                    ],
+                    "scale": [
+                        1.0,
+                        1.0
+                    ],
+                    "time": 0.10000000149011612
+                }
+            ],
+            "loop": false,
+            "name": "clip1"
+        }
+    ],
     "children": [
         {
             "alive": true,
@@ -54,8 +119,8 @@
             "transform": {
                 "anchor": 0,
                 "anchorOffset": [
-                    -853.3333129882813,
-                    -106.66666412353516
+                    0.0,
+                    0.0
                 ],
                 "size": [
                     1706.6666259765625,
@@ -66,8 +131,8 @@
                     1.0
                 ],
                 "pivot": [
-                    0.0,
-                    0.0
+                    0.5,
+                    0.5
                 ],
                 "radian": 0.0
             },
@@ -156,7 +221,7 @@
         },
         {
             "alive": true,
-            "instanceName": "Image",
+            "instanceName": "rainbow",
             "transform": {
                 "anchor": 0,
                 "anchorOffset": [
@@ -164,8 +229,8 @@
                     0.0
                 ],
                 "size": [
-                    2396.330078125,
-                    455.3324890136719
+                    100.0,
+                    100.0
                 ],
                 "scale": [
                     1.0,
@@ -183,63 +248,10 @@
                 1.0,
                 1.0
             ],
-            "stencilMode": 2,
-            "pass": "Opaque_StencilTest",
-            "colorTexKey": "Levelendperform_Color_02.png",
-            "colorTexMode": 1,
-            "colorTexMix": 1.0,
-            "colorUVUse": 0,
-            "colorUVOffset": [
-                0.7475218176841736,
-                0.0
-            ],
-            "colorUVScale": [
-                1.0,
-                1.0
-            ],
-            "colorUVAutoScroll": true,
-            "colorUVSpeed": [
-                0.10000000149011612,
-                0.0
-            ],
-            "animClips": [],
-            "children": [],
-            "typeTag": "Image",
-            "textureTag": "Levelendperform_Mask_01.png"
-        },
-        {
-            "alive": true,
-            "instanceName": "Image",
-            "transform": {
-                "anchor": 0,
-                "anchorOffset": [
-                    0.0,
-                    0.0
-                ],
-                "size": [
-                    2021.0,
-                    505.25
-                ],
-                "scale": [
-                    1.0,
-                    1.0
-                ],
-                "pivot": [
-                    0.5,
-                    0.5
-                ],
-                "radian": 0.0
-            },
-            "color": [
-                1.0,
-                1.0,
-                1.0,
-                1.0
-            ],
-            "stencilMode": 2,
-            "pass": "Opaque_StencilTest",
-            "colorTexKey": "Levelendperform_Color_01.png",
-            "colorTexMode": 1,
+            "stencilMode": 0,
+            "pass": "Opaque",
+            "colorTexKey": "empty.png",
+            "colorTexMode": 0,
             "colorTexMix": 1.0,
             "colorUVUse": 0,
             "colorUVOffset": [
@@ -256,62 +268,306 @@
                 0.0
             ],
             "animClips": [],
-            "children": [],
-            "typeTag": "Image",
-            "textureTag": "Levelendperform_Mask_01.png"
-        },
-        {
-            "alive": true,
-            "instanceName": "Image",
-            "transform": {
-                "anchor": 0,
-                "anchorOffset": [
-                    0.0,
-                    0.0
-                ],
-                "size": [
-                    1155.3299560546875,
-                    288.8324890136719
-                ],
-                "scale": [
-                    1.0,
-                    1.0
-                ],
-                "pivot": [
-                    0.5,
-                    0.5
-                ],
-                "radian": 0.0
-            },
-            "color": [
-                1.0,
-                1.0,
-                1.0,
-                1.0
+            "children": [
+                {
+                    "alive": true,
+                    "instanceName": "Image",
+                    "transform": {
+                        "anchor": 0,
+                        "anchorOffset": [
+                            0.0,
+                            0.0
+                        ],
+                        "size": [
+                            3000.0,
+                            750.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.5,
+                            0.5
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "stencilMode": 2,
+                    "pass": "Opaque_StencilTest",
+                    "colorTexKey": "Levelendperform_Color_02.png",
+                    "colorTexMode": 1,
+                    "colorTexMix": 1.0,
+                    "colorUVUse": 0,
+                    "colorUVOffset": [
+                        0.0,
+                        0.0
+                    ],
+                    "colorUVScale": [
+                        1.0,
+                        1.0
+                    ],
+                    "colorUVAutoScroll": false,
+                    "colorUVSpeed": [
+                        0.0,
+                        0.0
+                    ],
+                    "animClips": [
+                        {
+                            "duration": 0.5,
+                            "keyframes": [
+                                {
+                                    "angle": 0.0,
+                                    "color": [
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "easeType": 0,
+                                    "position": [
+                                        0.0,
+                                        0.0
+                                    ],
+                                    "scale": [
+                                        0.0,
+                                        1.0
+                                    ],
+                                    "time": 0.0
+                                },
+                                {
+                                    "angle": 0.0,
+                                    "color": [
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "easeType": 0,
+                                    "position": [
+                                        0.0,
+                                        0.0
+                                    ],
+                                    "scale": [
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "time": 0.4000000059604645
+                                }
+                            ],
+                            "loop": false,
+                            "name": "clip0"
+                        }
+                    ],
+                    "children": [],
+                    "typeTag": "Image",
+                    "textureTag": "Levelendperform_Mask_01.png"
+                },
+                {
+                    "alive": true,
+                    "instanceName": "Image",
+                    "transform": {
+                        "anchor": 0,
+                        "anchorOffset": [
+                            0.0,
+                            0.0
+                        ],
+                        "size": [
+                            3000.0,
+                            750.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.5,
+                            0.5
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "stencilMode": 2,
+                    "pass": "Opaque_StencilTest",
+                    "colorTexKey": "Levelendperform_Color_01.png",
+                    "colorTexMode": 1,
+                    "colorTexMix": 1.0,
+                    "colorUVUse": 0,
+                    "colorUVOffset": [
+                        0.0,
+                        0.0
+                    ],
+                    "colorUVScale": [
+                        1.0,
+                        1.0
+                    ],
+                    "colorUVAutoScroll": false,
+                    "colorUVSpeed": [
+                        0.0,
+                        0.0
+                    ],
+                    "animClips": [
+                        {
+                            "duration": 0.5,
+                            "keyframes": [
+                                {
+                                    "angle": 0.0,
+                                    "color": [
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "easeType": 0,
+                                    "position": [
+                                        0.0,
+                                        0.0
+                                    ],
+                                    "scale": [
+                                        0.0,
+                                        1.0
+                                    ],
+                                    "time": 0.10000000149011612
+                                },
+                                {
+                                    "angle": 0.0,
+                                    "color": [
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "easeType": 0,
+                                    "position": [
+                                        0.0,
+                                        0.0
+                                    ],
+                                    "scale": [
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "time": 0.5
+                                }
+                            ],
+                            "loop": false,
+                            "name": "clip1"
+                        }
+                    ],
+                    "children": [],
+                    "typeTag": "Image",
+                    "textureTag": "Levelendperform_Mask_01.png"
+                },
+                {
+                    "alive": true,
+                    "instanceName": "Image",
+                    "transform": {
+                        "anchor": 0,
+                        "anchorOffset": [
+                            0.0,
+                            0.0
+                        ],
+                        "size": [
+                            3000.0,
+                            750.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.5,
+                            0.5
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "stencilMode": 2,
+                    "pass": "Opaque_StencilTest",
+                    "colorTexKey": "Levelendperform_Color_07.png",
+                    "colorTexMode": 1,
+                    "colorTexMix": 1.0,
+                    "colorUVUse": 0,
+                    "colorUVOffset": [
+                        0.0,
+                        0.0
+                    ],
+                    "colorUVScale": [
+                        1.0,
+                        1.0
+                    ],
+                    "colorUVAutoScroll": false,
+                    "colorUVSpeed": [
+                        0.0,
+                        0.0
+                    ],
+                    "animClips": [
+                        {
+                            "duration": 0.6000000238418579,
+                            "keyframes": [
+                                {
+                                    "angle": 0.0,
+                                    "color": [
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "easeType": 0,
+                                    "position": [
+                                        0.0,
+                                        0.0
+                                    ],
+                                    "scale": [
+                                        0.0,
+                                        1.0
+                                    ],
+                                    "time": 0.20000000298023224
+                                },
+                                {
+                                    "angle": 0.0,
+                                    "color": [
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "easeType": 0,
+                                    "position": [
+                                        0.0,
+                                        0.0
+                                    ],
+                                    "scale": [
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "time": 0.6000000238418579
+                                }
+                            ],
+                            "loop": false,
+                            "name": "clip2"
+                        }
+                    ],
+                    "children": [],
+                    "typeTag": "Image",
+                    "textureTag": "Levelendperform_Mask_01.png"
+                }
             ],
-            "stencilMode": 2,
-            "pass": "Opaque_StencilTest",
-            "colorTexKey": "Levelendperform_Color_05.png",
-            "colorTexMode": 1,
-            "colorTexMix": 1.0,
-            "colorUVUse": 0,
-            "colorUVOffset": [
-                0.0,
-                0.0
-            ],
-            "colorUVScale": [
-                1.0,
-                1.0
-            ],
-            "colorUVAutoScroll": false,
-            "colorUVSpeed": [
-                0.0,
-                0.0
-            ],
-            "animClips": [],
-            "children": [],
-            "typeTag": "Image",
-            "textureTag": "Levelendperform_Mask_01.png"
+            "typeTag": "CanvasPanel"
         }
     ],
     "typeTag": "CanvasPanel"
