@@ -363,9 +363,9 @@ void CMiyabi::Add_MotionBlur()
 
 void CMiyabi::Clear_MotionBlur()
 {
+	m_fRimLightPower = 0.f;
 	m_BoneMatrices.clear();
 	m_WorldMatrices.clear();
-	m_fRimLightPower = 0.f;
 }
 
 void CMiyabi::Set_WeaponEffectMesh(_bool bOn)

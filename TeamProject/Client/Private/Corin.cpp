@@ -507,12 +507,13 @@ HRESULT CCorin::Initialize_Sounds()
         "Corin_NormalAttack_01_Voice",
         "Corin_NormalAttack_02_Voice",
         "Corin_NormalAttack_03_Voice",
-        "Corin_NormalAttack_06_Voice");
+        "Corin_NormalAttack_04_Voice", 
+        "Corin_NormalAttack_05_Voice");
 
     sound.Add_Sequence("NormalAttackHeavy_Voice",
-        "Corin_NormalAttack_04_Voice",
-        "Corin_NormalAttack_05_Voice",
-        "Corin_NormalAttack_07_Voice");
+        "Corin_NormalAttackHeavy_01_Voice",
+        "Corin_NormalAttackHeavy_02_Voice",
+        "Corin_NormalAttackHeavy_03_Voice");
 
     sound.Add_Sequence("ExAttack_Voice",
         "Corin_ExAttack_01_Voice",
@@ -533,6 +534,10 @@ HRESULT CCorin::Initialize_Sounds()
     sound.Add_Sequence("Switch_Voice",
         "Corin_Switch_01_Voice",
         "Corin_Switch_02_Voice");
+
+    sound.Add_Sequence("SwitchIn_Voice",
+        "Corin_SwitchIn_01_Voice",
+        "Corin_SwitchIn_02_Voice");
 
     return S_OK;
 }

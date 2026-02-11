@@ -65,6 +65,8 @@ HRESULT CMiasmaHeavyJaeger::Initialize(INIT_DESC* pArg)
 	if (FAILED(Initialize_Effects()))
 		return E_FAIL;
 
+	Create_MeshPyramid();
+
 	Get_Component<CAudioSource>()->SoundFolder("Zero_Level", "../Bin/Resources/Zero/Enemy/MiasmaJaeger/Sound/");
 	m_vCurrentDir = {0,0,1};
 

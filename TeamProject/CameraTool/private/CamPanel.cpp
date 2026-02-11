@@ -453,6 +453,14 @@ void CCamPanel::DrawCamSelector()
         FlipKeys_Yaw180();
 
     ImGui::SameLine();
+    if (ImGui::SmallButton("Rot+90##rot_yaw90_p"))
+        RotateKeys_Yaw90(+90.f);
+
+    ImGui::SameLine();
+    if (ImGui::SmallButton("Rot-90##rot_yaw90_m"))
+        RotateKeys_Yaw90(-90.f);
+
+    ImGui::SameLine();
     ImGui::Dummy(ImVec2(14.f, 0.f));
     ImGui::SameLine();
 
@@ -629,7 +637,6 @@ void CCamPanel::DrawCamSelector()
 
     if (changedAny) PostEdit_SequenceChanged();
 }
-
 
 
 void CCamPanel::DrawKeyframeList()
@@ -1547,7 +1554,6 @@ void CCamPanel::PostEdit_SequenceChanged()
         target.player->SetTime(state.curTime);
 }
 
-
 bool CCamPanel::HasValidSelection() const
 {
     if (!target.sequence) return false;
@@ -1564,8 +1570,6 @@ CamKeyFrame& CCamPanel::GetSelectedKey()
 
 void CCamPanel::FlipKeys_Yaw180()
 {
-    assert(target.sequence);
-
     for (auto& k : target.sequence->keyframes)
     {
         k.pos.x = -k.pos.x;
@@ -1586,6 +1590,54 @@ void CCamPanel::FlipKeys_Yaw180()
         d.axis.x = -d.axis.x;
         d.axis.z = -d.axis.z;
         d.NormalizeAxis();
+    }
+
+    if (HasValidSelection())
+        SyncEditorFromSelection();
+
+    PostEdit_SequenceChanged();
+}
+
+void CCamPanel::RotateKeys_Yaw90(_float yawDeg)
+{
+    const _float s = (yawDeg >= 0.f) ? 1.f : -1.f;
+
+    for (auto& k : target.sequence->keyframes)
+    {
+        {
+            const _float x = k.pos.x;
+            const _float z = k.pos.z;
+            k.pos.x = s * z;
+            k.pos.z = -s * x;
+        }
+
+        {
+            const _float x = k.look.x;
+            const _float z = k.look.z;
+            k.look.x = s * z;
+            k.look.z = -s * x;
+            k.look.Normalize();
+        }
+    }
+
+    if (target.sequence->posInterp == CamPosInterp::OrbitArc)
+    {
+        auto& d = target.sequence->orbitArc;
+
+        {
+            const _float x = d.center.x;
+            const _float z = d.center.z;
+            d.center.x = s * z;
+            d.center.z = -s * x;
+        }
+
+        {
+            const _float x = d.axis.x;
+            const _float z = d.axis.z;
+            d.axis.x = s * z;
+            d.axis.z = -s * x;
+            d.NormalizeAxis();
+        }
     }
 
     if (HasValidSelection())

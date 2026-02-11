@@ -9,7 +9,8 @@ public:
 	typedef struct tagButtonDesc : public UI_DESC {
 		function<void()> onClick = { nullptr };
 		wstring strLabel = L"¶óº§";
-		string strTextureKey = "empty.png"; 
+		string strTextureKey = "empty.png";
+		string strSoundKey = "";
 	}BUTTON_DESC;
 
 private:
@@ -33,6 +34,7 @@ public:
 private:
 	_bool m_isClicked = {};
 	CUI_Object* m_pChildren[ENUM(CHILD::END)] = {};
+	string m_strSoundKey = {};
 
 private:
 	void Cache_Children();

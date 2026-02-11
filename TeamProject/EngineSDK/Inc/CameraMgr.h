@@ -14,8 +14,8 @@ private:
 public:
     void     Update(_float dt)                                    override;
 
-    void     Set_MainCam(CCamera* pCamCom, _float blendSec = 0.f) override;
-    void     Set_ShadowCam(CCamera* pCamCom)                      override;
+    void     Set_MainCam(CCamera* cam, _float blendSec = 0.f) override;
+    void     Set_ShadowCam(CCamera* cam)                      override;
 
     CCamera* Get_BaseCam()   const override;
     CCamera* Get_ActiveCam() const override;
@@ -24,7 +24,7 @@ public:
     void     Set_BlendEase(EaseType ease) override { m_easeType = ease; }
     EaseType Get_BlendEase() const        override { return m_easeType; }
 
-    _uint    Push(CCamera* camComp, _float blendTime = 0.25f) override;
+    _uint    Push(CCamera* cam, _float blendTime = 0.25f) override;
     _bool    Pop(_uint handle, _float blendTime = 0.25f)      override;
     void     Clear(_float blendTime = 0.25f)                  override;
 
@@ -118,7 +118,7 @@ private:
     OBJECT_HANDLE GetActiveCamObj() const { return m_overrides.empty() ? m_baseCamObj : m_overrides.back().camObj; }
 
 private:
-    void         SetMainCamObj(OBJECT_HANDLE camObjHandle, _float blendSec);
+    void         SetMainCamObj(OBJECT_HANDLE camOHandle, _float blendSec);
     void         SetShadowCamObj(OBJECT_HANDLE camObjHandle) { m_shadowCamObj = camObjHandle; }
     _uint        PushCamObj(OBJECT_HANDLE camObjHandle, _float blendSec);
 
@@ -147,6 +147,7 @@ private:
     _float        m_blendDuration{};
     CamPoseFrame  m_blendFrom{};
     OBJECT_HANDLE m_blendTargetObj{};
+    EaseType      m_blendEaseType = EaseType::OutSine;
 
 private:
     CamPoseFrame  m_outputPose{};

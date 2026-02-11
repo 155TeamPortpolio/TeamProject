@@ -3,6 +3,7 @@
 
 #include "GameInstance.h"
 #include "ObjectContainer.h"
+#include "AudioSource.h"
 #include "TextSlot.h"
 
 #include "UI_IconButton.h"
@@ -12,6 +13,8 @@ HRESULT CUI_RamenOrderBanner::Initialize_Prototype()
 	__super::Initialize_Prototype();
 
 	Add_Component<CObjectContainer>();
+    Add_Component<CAudioSource>();
+    Get_Component<CAudioSource>()->SoundFolder(G_GlobalLevelKey, "../Bin/Resources/Global/UI/Sound/");
 
 	return S_OK;
 }
@@ -21,7 +24,7 @@ HRESULT CUI_RamenOrderBanner::Initialize(INIT_DESC* pArg)
     ORDER_BANNER_DESC* pDesc = static_cast<ORDER_BANNER_DESC*>(pArg);
     m_OnClick = pDesc->onOrderComfirm;
 
-	__super::Initialize();
+	__super::Initialize(pArg);
 
 	Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("ramen_order_banner.json")));
     Cache();
@@ -51,6 +54,8 @@ void CUI_RamenOrderBanner::Update(_float dt)
 
 void CUI_RamenOrderBanner::UI_Active(void* pArg)
 {
+    Get_Component<CAudioSource>()->Slot("UI_Open_Swoosh.wav").Attribute3D(false).Loop(false).Play();
+
     Change_State(STATE::VISIBLE);
 
     wstring strMenu = L"";
@@ -75,6 +80,7 @@ void CUI_RamenOrderBanner::Create_CancelButton()
     pDesc->onClick = [this]() { OnClick_Cancel(); };
     pDesc->strLabel = L"취소";
     pDesc->strTextureKey = "IconCancel.png"; 
+    pDesc->strSoundKey = "UI_Close_Swoosh.wav";
     auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_IconButton" })
         .Add_UIDesc(pDesc)
         .Build("buttonCancel");
@@ -92,6 +98,7 @@ void CUI_RamenOrderBanner::Create_ConfirmButton()
     pDesc->onClick = [this]() { OnClick_Confirm(); };
     pDesc->strLabel = L"확인";
     pDesc->strTextureKey = "IconOK.png";
+    pDesc->strSoundKey = "UI_Close_Swoosh.wav";
     auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_IconButton" })
         .Add_UIDesc(pDesc)
         .Build("buttonOK");
