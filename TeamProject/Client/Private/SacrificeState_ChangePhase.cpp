@@ -5,6 +5,7 @@
 #include "GameInstance.h"
 #include "EffectContainer.h"
 #include "CamDirector.h"
+#include "AudioSource.h"
 
 void CSacrificeState_ChangePhase::Enter(CSacrifice* pOwner)
 {
@@ -69,6 +70,7 @@ void CSacrificeState_ChangePhase::Update_Effects(CSacrifice* pOwner)
 			.Build("Hit_Ground_Smoke");
 
 		ObjectManager()->Add_Object(effect, { pOwner->Get_Level(),"Enemy_Effect_Layer" });
+		pOwner->Get_Component<CAudioSource>()->Slot("Sacrifice_Phase2_Born_Voice.wav").Attribute3D(false).Loop(false).Play();
 	}
 
 	/* Roar Smoke */

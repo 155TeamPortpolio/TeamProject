@@ -27,6 +27,9 @@
 /* Maptool Type 2 (ETC) */
 #include "MilitaryHelicopter.h"
 
+/* Maptool Type 4 (ETC) */
+#include "Water.h"
+
 #pragma region Tables
 /* Maptool Type 0 */
 static unordered_map<string, Spawner::OBJ_SPEC> s_NPCTable =
@@ -58,6 +61,7 @@ static unordered_map<string, Spawner::OBJ_SPEC> s_AmbientActorTable =
 
 static unordered_map<string, Spawner::OBJ_SPEC> s_ETCTable =
 {
+	{ "Water",     Spawner::OBJ_SPEC{ "Water", &CWater::Create }}
 };
 #pragma endregion
 

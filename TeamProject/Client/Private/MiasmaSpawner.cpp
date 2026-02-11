@@ -6,6 +6,7 @@
 #include "Defiler.h"
 #include "MiasmaBlade.h"
 #include "MiasmaSpawnBall.h"
+#include "DefilerWeapon.h"
 
 _float3 CMiasmaSpawner::ComputeArcSpawnPos(
     const _float3& ownerPos,
@@ -74,6 +75,9 @@ void CMiasmaSpawner::Spawn(MiasmaType type, _int count, _float3 targetPos, _floa
         break;
     case Client::MiasmaType::Blade:
         SpawnBlade(targetPos,ownerPos, pDefiler);
+        break;
+    case Client::MiasmaType::Weapon:
+        SpawnWeapon(targetPos, ownerPos, pDefiler);
         break;
     default:
         break;
@@ -153,4 +157,28 @@ void CMiasmaSpawner::SpawnHeavy(_float3 Target, _float3 Owner)
         .FromPool()
         .Build("MiasmaSpawn");
     ObjectManager()->Add_Object(Ball, { levelKey, "Enemy_Layer" });
+}
+
+void CMiasmaSpawner::SpawnWeapon(_float3 Target, _float3 Owner, class CDefiler* pDefiler)
+{
+    ++m_WeaponThrowCount;
+
+    const string levelKey = LevelManager()->Get_NowLevelKey();
+    auto desc = new CDefilerWeapon::DefilerWeaponDesc;
+    Matrix boneMat = pDefiler->Get_Component<CAnimator3D>()
+        ->Get_BoneMatrix(CAnimator3D::BoneSpace::COMBINED, "Ctr_M_Prop_01");
+    Matrix WorldMat = pDefiler->Get_Component<CTransform>()->Get_WorldMatrix();
+    desc->vTargetPos = ComputeParabolarPos(Owner, Target);
+    desc->isFinal = m_WeaponThrowCount == 3;
+
+    auto pBlade =
+        Builder::Create_Object({ "Zero_Level","Proto_GameObject_DefilerWeapon" })
+        .FromPool()
+        .Position(Owner)
+        .Add_ObjDesc(desc)
+        .Build("DefilerWeapon");
+    ObjectManager()->Add_Object(pBlade, { levelKey ,"Enemy_Layer" });
+
+    if (m_WeaponThrowCount >= 3)
+        m_WeaponThrowCount = 0;
 }

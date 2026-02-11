@@ -21,7 +21,7 @@ void CBattleFXFlow::Initialize_Preset()
 		evade.fBlurDuration = .5f;
 		evade.vStartColor = { 1.f,1.f,1.f };
 		evade.vTargetColor = { 0.1f,0.1f,0.1f };
-		evade.SetTimeData({ duration, 0.1f, 0.f, 0.5f , EaseType::OutCubic });
+		evade.SetTimeData({ duration, 0.6f, 0.f, 0.5f , EaseType::OutCubic });
 	}
 
 	{
@@ -44,7 +44,7 @@ void CBattleFXFlow::Initialize_Preset()
 		const _float duration = 1.5f;
 		HitLack.fVFXDuration = duration;
 		HitLack.fBlurDuration = duration;
-		HitLack.SetTimeData({ duration, 0.f, 0.25f, .9f , EaseType::OutExpo });
+		HitLack.SetTimeData({ duration, 0.1f, 0.35f, .85f , EaseType::OutExpo });
 	}
 }
 
@@ -199,16 +199,16 @@ void CBattleFXFlow::StartVfx_Evade()
 	AddCall([this, preset,pPost]() {
 		pPost->GetCommand<CSaturationCommand>()
 			->SetIntensity(0.5)
-			->SetDuration(preset.fVFXDuration)
-			->SetEaseType(EaseType::InOutCubic)
+			->SetDuration(preset.fBlurDuration)
+			->SetEaseType(EaseType::OutSine)
 			->SetEnable(true);
 		});
 
 	AddCall([this, preset, pPost]() {
 		pPost->GetCommand<CRadialBlurCommand>()
 			->SetDuration(preset.fBlurDuration)
-			->SetEaseType(EaseType::OutCubic)
-			->SetIntensity(0.05)
+			->SetEaseType(EaseType::OutSine)
+			->SetIntensity(0.1)
 			->SetEnable(true);
 		});
 

@@ -273,10 +273,12 @@ OBJECT_HANDLE CCharacter::Calculate_Parry()
     OBJECT_HANDLE targetHandle;
     _float fMinDist = FLT_MAX;
 
-    // 몬스터의 트리거 콜라이더로 검사. 이후 부모 오브젝트의 Handle 저장
     for (auto iter : pParry->Get_ParryTargets())
     {
-        _float fDist = (vPos - iter.Get()->Get_WorldPos()).Length();
+        if (!BattleSystem()->isValidTarget(BATTLE_OBJ_TYPE::MONSTER, iter)) continue;
+        _vector3 vDiff = vPos - iter.Get()->Get_WorldPos();
+        vDiff.y = 0.f;
+        _float fDist = vDiff.Length();
         if (fDist >= fMinDist)
             continue;
         fMinDist = fDist;
@@ -285,11 +287,17 @@ OBJECT_HANDLE CCharacter::Calculate_Parry()
 
     _vector3 vAttackPos = {};
     _float vAttackOffset = {};
-    _vector3 vAttackLook = {};
+    _vector3 vDirToPlayer = {};
+
     if (targetHandle.isValid())
     {
         vAttackPos = targetHandle.Get()->Get_WorldPos();
-        vAttackLook = targetHandle.Get()->Get_Component<CTransform>()->Dir(STATE::LOOK);
+        vAttackPos.y = vPos.y;
+
+        vDirToPlayer = vPos - vAttackPos;
+        vDirToPlayer.y = 0.f;
+        vDirToPlayer.Normalize();
+
         CCharacterController* pCCT = targetHandle.Get()->Get_Component<CCharacterController>();
         if (pCCT)
         {
@@ -303,11 +311,12 @@ OBJECT_HANDLE CCharacter::Calculate_Parry()
         }
     }
 
-    m_vParryPos = vAttackPos + vAttackLook * vAttackOffset * 2.f;
-    m_vParryPos.y = Get_WorldPos().y;
+    m_vParryPos = vAttackPos + vDirToPlayer * vAttackOffset * 2.f;
+    m_vParryPos.y = vPos.y + 0.5f;
+
     m_vParryLook = vAttackPos - m_vParryPos;
+    m_vParryLook.y = 0.f;
     m_vParryLook.Normalize();
-    m_vParryPos.y += 0.5f;
 
     return targetHandle;
 }
@@ -377,6 +386,7 @@ void CCharacter::Process_RootMotion(_float dt, const ROOTMOTION_DESC& desc)
     {
         // 루트모션 회전 사용시 수동 회전 비활성화
         m_bIsRotating = false;
+        
         if (desc.fRotateWeight >= 0.99f) pTransform->Add_Quaternion(vQuatDelta);
         else if (desc.fRotateWeight > 0.01f)
         {
@@ -440,11 +450,17 @@ void CCharacter::Stop_Rotation()
 
 void CCharacter::Look_Target()
 {
-    if (!m_TargetHandle.isValid()) return;
-
+    if (!m_TargetHandle.isValid())
+        return;
     auto target = m_TargetHandle.Get();
     _vector3 vLook = target->Get_WorldPos() - Get_WorldPos();
     vLook.y = 0;
+
+    if (vLook.LengthSquared() < 1.f)
+    {
+        return;
+    }
+
     vLook.Normalize();
     Get_Component<CTransform>()->Set_Look(vLook);
 }
@@ -702,6 +718,14 @@ HRESULT CCharacter::Initialize_Effects()
             .Asset("player_run_start1.json")
             .Build("Player_Run_Start1");
         pEffect->Stop();
+        pObjectContainer->Add_Child(pEffect, false);
+    }
+    {
+        auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+            .Asset("evade.json")
+            .Build("Evade");
+        pEffect->Stop();
+        pEffect->AttachBone(m_pAnimator, "Bip001_Spine");
         pObjectContainer->Add_Child(pEffect, false);
     }
 

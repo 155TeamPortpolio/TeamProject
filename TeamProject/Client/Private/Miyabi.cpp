@@ -63,15 +63,15 @@ HRESULT CMiyabi::Initialize(INIT_DESC* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
+	if (FAILED(Initialize_Ghost()))
+		return E_FAIL;
+
 	if (FAILED(Initialize_StateMachine()))
 		return E_FAIL;
 
 	if (FAILED(Initialize_Weapon()))
 		return E_FAIL;
 
-	if (FAILED(Initialize_Ghost()))
-		return E_FAIL;
-	
 	Get_Component<CAudioSource>()->SoundFolder(G_GlobalLevelKey, "../Bin/Resources/Global/BattleCharacter/Miyabi/Sound");
 	
 	return S_OK;
@@ -142,6 +142,12 @@ void CMiyabi::Render_GUI()
 	if (ImGui::Button("Zero"))
 		Decrease_Frost(MAX_FROST);
 
+	if (ImGui::Button("Show Ghost"))
+		Show_Ghost();
+	ImGui::SameLine();
+	if (ImGui::Button("Hide Ghost"))
+		Hide_Ghost();
+
 	if (m_pStateMachine)
 	{
 		ImGui::Separator();
@@ -155,6 +161,18 @@ void CMiyabi::Render_GUI()
 	}
 
 	__super::Render_GUI();
+}
+
+void CMiyabi::Show_Ghost()
+{
+	if (m_pGhost)
+		m_pGhost->Get_Component<CSkeletalModel>()->Show_MehsByName("Unagi_PET_mesh0000");
+}
+
+void CMiyabi::Hide_Ghost()
+{
+	if (m_pGhost)
+		m_pGhost->Get_Component<CSkeletalModel>()->Hide_MehsByName("Unagi_PET_mesh0000");
 }
 
 _bool CMiyabi::Can_Evade()
@@ -346,11 +364,6 @@ void CMiyabi::Clear_MotionBlur()
 {
 	m_BoneMatrices.clear();
 	m_WorldMatrices.clear();
-}
-
-void CMiyabi::Reset_RimLight()
-{
-	m_vRimLightColor = _float3(0.f, 0.f, 0.f);
 	m_fRimLightPower = 0.f;
 }
 
@@ -538,7 +551,8 @@ HRESULT CMiyabi::Initialize_Ghost()
 	if (nullptr == pGhost)
 		return E_FAIL;
 
-	static_cast<CMiyabi_Ghost*>(pGhost)->Set_FollowTarget(m_pTransform);
+	m_pGhost = static_cast<CMiyabi_Ghost*>(pGhost);
+	m_pGhost->Set_FollowTarget(m_pTransform);
 	Get_Component<CObjectContainer>()->Add_Child(pGhost, false);
 
 	return S_OK;
@@ -1098,6 +1112,8 @@ HRESULT CMiyabi::Render_DashMotionBlur(ID3D11DeviceContext* pContext, _uint idx)
 	auto Material = Get_Component<CMaterial>();
 	_int Index = Model->Get_MaterialIndex(idx);
 	auto Shader = Material->Get_Shader(Index);
+	auto instance = Material->Get_MaterialInstance(Index);
+	instance->Override_Pass("MotionBlur");
 	ID3D11InputLayout* pLayout;
 	RenderSys->Get_InputLayout(
 		Model,
@@ -1108,9 +1124,9 @@ HRESULT CMiyabi::Render_DashMotionBlur(ID3D11DeviceContext* pContext, _uint idx)
 	);
 
 	pContext->IASetInputLayout(pLayout);
-	Shader->Apply("MotionBlur", pContext);
+	Material->Apply_Material(pContext, Index);
 	Model->Draw(pContext, idx);
-
+	instance->Reset_Pass();
 	return S_OK;
 }
 

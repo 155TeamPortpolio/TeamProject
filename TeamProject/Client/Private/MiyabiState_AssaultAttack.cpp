@@ -29,6 +29,7 @@ CMiyabiState_AssaultAttack* CMiyabiState_AssaultAttack::Create()
 void CMiyabiState_AssaultAttack::Enter(CMiyabi* pOwner)
 {
 	m_pSubStateMachine->Set_Bool("ReserveNormal", false);
+	pOwner->Set_WeaponEffectMesh(true);
 	pOwner->Lock_Move();
 	pOwner->Push_Invincible();
 	__super::Enter(pOwner);

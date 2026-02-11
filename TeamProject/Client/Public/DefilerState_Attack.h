@@ -17,6 +17,7 @@ public:
 	virtual void Free() override { __super::Free(); }
 protected:
 	void ComboTransition(CDefiler* pOwner);
+	virtual void Update_Effects(CDefiler* pOwner) {};
 
 private:
 	void Build_Pattern(CDefiler* pOwner, _int Type);
@@ -36,6 +37,10 @@ public:
 public:
 	static CDefilerState_Attack_01_01* Create() { return new CDefilerState_Attack_01_01(); }
 	virtual void Free() override { __super::Free(); }
+
+private:
+	void Update_Effects(CDefiler* pOwner) override;
+
 };
 
 class CDefilerState_Attack_01_02 : public CDefilerState_Attack
@@ -48,6 +53,9 @@ public:
 public:
 	static CDefilerState_Attack_01_02* Create() { return new CDefilerState_Attack_01_02(); }
 	virtual void Free() override { __super::Free(); }
+
+private:
+	void Update_Effects(CDefiler* pOwner) override;
 };
 
 class CDefilerState_Attack_01_01_P2 : public CDefilerState_Attack

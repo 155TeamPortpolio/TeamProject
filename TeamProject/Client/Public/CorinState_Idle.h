@@ -15,6 +15,10 @@ public:
 public:
     static CCorinState_Idle* Create() { return new CCorinState_Idle(); }
     virtual void Free() override { __super::Free(); }
+
+private:
+    _float         m_idleVoiceAcc = 0.f;
+    FMOD::Channel* m_pIdleVoiceChannel{};
 };
 
 NS_END

@@ -24,6 +24,9 @@ public:
     virtual void Update(CMiyabi* pOwner, _float dt) override;
     virtual void Exit(CMiyabi* pOwner) override {}
 
+private:
+    _int m_iSoundIdx = {};
+
 public:
     static CMiyabiState_UltimateAttack_Start* Create() { return new CMiyabiState_UltimateAttack_Start(); }
     virtual void Free() override { __super::Free(); }

@@ -47,7 +47,7 @@ HRESULT CMiasmaBlade::Initialize(INIT_DESC* pArg)
 	Get_Component<CCollider>()->Set_CollisionMask(ENUM(COLLISION_GROUP::PLAYER) |
 		ENUM(COLLISION_GROUP::PLAYER_ATTACK));
 	Get_Component<CCollider>()->Set_CollisionGroup(COLLISION_GROUP::MONSTER);
-	Get_Component<CCollider>()->Set_Trigger(true);
+	Get_Component<CCollider>()->Set_Trigger(false);
 	Get_Component<CRigidBody>()->Set_Kinematic(true);
 	m_pTransform->LookAt(_vector3(desc->vTargetPos));
 	m_vVelocity = { 0,0,0 };
@@ -104,11 +104,10 @@ void CMiasmaBlade::OnPooledAcquire(INIT_DESC* pArg)
 	m_isParryEnable = true;
 	isParried = false;
 
-	Get_Component<CCollider>()->Set_CollisionMask(ENUM(COLLISION_GROUP::PLAYER) |
-		ENUM(COLLISION_GROUP::PLAYER_ATTACK));
+	Get_Component<CCollider>()->Set_CollisionMask(ENUM(COLLISION_GROUP::PLAYER) |ENUM(COLLISION_GROUP::PLAYER_ATTACK));
 	Get_Component<CCollider>()->Set_CollisionGroup(COLLISION_GROUP::MONSTER);
 	Get_Component<CRigidBody>()->Set_Kinematic(true);
-	Get_Component<CCollider>()->Set_Trigger(true);
+	Get_Component<CCollider>()->Set_Trigger(false);
 	m_pTransform->LookAt(_vector3(desc->vTargetPos));
 	m_vVelocity = { 0,0,0 };
 	m_ElapsedTime = 0;
@@ -168,7 +167,24 @@ void CMiasmaBlade::Free()
 }
 
 void CMiasmaBlade::OnTriggerEnter(CGameObject* pOther)
+{
+	if (isParried) return;
 
+	auto pCollidable = pOther->Get_Component<ICollidable>();
+	if (pCollidable)
+		return;
+
+	else {
+		auto pEnemy = dynamic_cast<CCharacter*>(pOther);
+		if (nullptr != pEnemy)
+		{
+			pEnemy->Take_Damage(DAMAGE_TYPE::NORMAL, 10);
+			CameraManager()->AddImpact(1, 0);
+		}
+	}
+}
+
+void CMiasmaBlade::OnCollisionEnter(CGameObject* pOther)
 {
 	if (isParried) return;
 

@@ -39,6 +39,9 @@ public:
 public:
     void Change_CollisionMask(_uint iMask = ENUM(COLLISION_GROUP::PLAYER));
     void Release_CollisionMask();
+public:
+    void Hide_MeshGroup(const string& mesh);
+    void Show_MeshGroup(const string& mesh);
 
 public:
     void Set_CCTPos(_vector3 pos);
@@ -47,6 +50,10 @@ public:
     void Control_Summon(const string& event);
     void Control_TargetEnable(_bool On);
     void Update_Dissolve(_float dt);
+
+    void Play_Effect(const string& effectTag, _fvector offsetPosition, _fvector offsetQuaternion, _bool syncTransform = true);
+    void Stop_Effect(const string& effectTag);
+
 private:
     void MoveByTraceMode(_float dt, _float moveScale = 1.f);
     void RotateToTarget(_float dt, _float rotateSpeed = 1.f);

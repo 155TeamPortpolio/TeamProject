@@ -38,6 +38,7 @@
 #include "AttackSign.h"
 #include "Player.h"
 #include "TestCloud.h"
+#include "BasicHitEffect.h"
 
 /* UI */
 #include "ButtonUI.h"
@@ -72,7 +73,6 @@
 #include "UI_EnemyStatus.h"
 
 #include "UI_MeshPyramid.h"
-#include "UI_MeshBillboard.h"
 
 #include "UI_IconLabel.h" 
 #include "UI_NameIndicator.h"
@@ -111,6 +111,7 @@
 #include "UI_Seoriyeol.h"
 
 #include "UI_Wipeout.h"
+#include "UI_Switch.h"
 
 #include "VideoPanel.h"
 
@@ -196,7 +197,7 @@ void CMainApp::Set_Levels()
 
 	LevelManager()->Set_LoadingLevel("Loading_Level");
 	m_pGameInstance->Notify_LevelSet(); 
-	m_pGameInstance->Get_LevelMgr()->Request_ChangeLevel("Gacha_Level", true);
+	m_pGameInstance->Get_LevelMgr()->Request_ChangeLevel("Scott_Level", true);
 } 
 
 CMainApp* CMainApp::Create()
@@ -243,6 +244,7 @@ void CMainApp::Initialize_GlobalPrototype()
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_TrailNode", CTrailNode::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_EffectContainer", CEffectContainer::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_AttackSign", CAttackSign::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_BasicHitEffect", CBasicHitEffect::Create());
 
 	/*Player*/
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Player", CPlayer::Create());
@@ -283,7 +285,6 @@ void CMainApp::Initialize_GlobalPrototype()
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_EnemyStatus", CUI_EnemyStatus::Create());
 
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_MeshPyramid", CUI_MeshPyramid::Create());
-	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_MeshBillboard", CUI_MeshBillboard::Create());
 
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_IconLabel", CUI_IconLabel::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_NameIndicator", CUI_NameIndicator::Create());
@@ -322,6 +323,7 @@ void CMainApp::Initialize_GlobalPrototype()
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Seoriyeol",   CUI_Seoriyeol::Create());
 
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Wipeout", CUI_Wipeout::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Switch", CUI_Switch::Create());
 
 	/*Enviroment*/
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Cloud", CTestCloud::Create());
