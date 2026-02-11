@@ -441,7 +441,11 @@ void CUI_Object::Play_Animation(_float dt)
 
 void CUI_Object::Set_Animation(_uint iIndex, _bool isLoop)
 {
-    if (m_iCurrentClipIndex == iIndex && m_isAnimLoop == isLoop) return;
+    if (iIndex >= m_AnimClips.size())
+        return;
+
+    if (m_iCurrentClipIndex == iIndex && m_isAnimLoop == isLoop) 
+        return;
 
     m_iCurrentClipIndex = iIndex;
     m_isBlending = true;

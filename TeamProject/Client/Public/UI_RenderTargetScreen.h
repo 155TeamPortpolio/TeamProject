@@ -32,10 +32,11 @@ private:
 	void Ready_RTV();
 	void Ready_ViewProj();
 	void Ready_RenderState(); 
-	void Ready_RTV_DrawObjects();
+	HRESULT Ready_RTVDrawObjects();
 
 	void Create_RTV();
 	void Bind_RTV();
+	HRESULT Create_RTVDrawObject(const string& strPrototypeTag, const string& strInstanceName);
 
 public:
 	static  CGameObject* Create();

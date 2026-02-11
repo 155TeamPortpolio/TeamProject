@@ -63,6 +63,9 @@ void CUI_RTVDraw::Render_RTRecursive(CGameObject* pObj, ID3D11DeviceContext* pCo
     if (!pObj)
         return;
 
+    if (!pObj->Is_Alive())
+        return;
+
     if (auto pSprite = pObj->Get_Component<CSprite2D>())
     {
         if (auto pShader = pSprite->Get_Shader())
