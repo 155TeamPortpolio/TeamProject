@@ -261,7 +261,7 @@ void CStage::Reserve_Enemy(const string& LevelTag)
 
 				if (pMonster) {
 					MonsterQueue.push_back(pMonster);
-					pMonster->Set_Alive(false);
+					dynamic_cast<CEnemy*>(pMonster)->Set_Alive(false);
 					CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(pMonster, { "Zero_Level", "Enemy_Layer" });
 					spawn++;
 				}
