@@ -66,7 +66,7 @@ HRESULT CInstanceModel::Link_InstanceData(ID3D11Device* pDevice, vector<INSTANCE
 	{
 		m_DescArray[i] = initArray[i];
 
-		D3D11_BUFFER_DESC           InstanceDesc{};
+		D3D11_BUFFER_DESC InstanceDesc{};
 		InstanceDesc.ByteWidth = m_DescArray[i].instanceCount * m_DescArray[i].instanceStride;
 		InstanceDesc.Usage = D3D11_USAGE_DYNAMIC;
 		InstanceDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;

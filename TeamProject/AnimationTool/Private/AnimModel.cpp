@@ -80,6 +80,18 @@ void CAnimModel::Update(_float dt)
 		_quaternion dq = pAnimator->Get_RootBoneQuatDelta(); // 반환 타입이 XMFLOAT4라고 가정
 		//m_pTransform->(dq);
 		m_pTransform->Add_Quaternion(dq);
+
+		auto Bus = pAnimator->Get_EventBus();
+
+		for (EVENT_INST& instance : Bus)
+		{
+			switch (instance.Type)
+			{
+			case CLIP_EVENT_TYPE::SOUND:
+				Get_Component<CAudioSource>()->Slot(instance.Tag).Play();
+				break;
+			}
+		}
 	}
 }
 

@@ -34,6 +34,12 @@ HRESULT CGacha_Level::Initialize()
 
 HRESULT CGacha_Level::Awake()
 {
+	//==================== UI ===============
+	UIDirector()->Load_LevelObjects("Gacha_Level");
+	UIDirector()->FadeIn_Screen(1.f);
+
+	Ready_GachaUI();	// UIDirector에서 Load_LevelObject 실행 한 뒤에
+
 	Ready_Map("Gacha_Level", "Gacha");
 
 	auto pCloud = ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Cloud));
@@ -56,10 +62,6 @@ HRESULT CGacha_Level::Awake()
 
 	Ready_GachaObjects(); 
 
-	//==================== UI ===============
-	UIDirector()->Load_LevelObjects("Gacha_Level");
-	Ready_GachaUI();	// UIDirector에서 Load_LevelObject 실행 한 뒤에
-
 	//==================== Effect ============
 	//auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
 	//	.Asset("gacha_background_light.json")
@@ -74,6 +76,7 @@ HRESULT CGacha_Level::Awake()
 void CGacha_Level::Update()
 {
 	Update_CamTime();
+	Update_AvatarSequence();
 }
 
 HRESULT CGacha_Level::Render()
@@ -143,8 +146,32 @@ void CGacha_Level::Update_CamTime()
 	}
 }
 
+void CGacha_Level::Update_AvatarSequence()
+{
+	auto& cam = *CamDirector();
+
+	if (cam.IsFinished(CamEventType::Miyabi_01_Finished))
+		cam.RequestSequence("Gacha/Miyabi_02");
+
+	if (cam.IsFinished(CamEventType::Miyabi_02_Finished))
+		cam.RequestSequence("Gacha/Miyabi_03");
+
+	if (cam.IsFinished(CamEventType::Miyabi_03_Finished))
+		cam.RequestSequence("Gacha/Miyabi_01");
+
+	if (cam.IsFinished(CamEventType::JaneDoe_01_Finished))
+		cam.RequestSequence("Gacha/JaneDoe_02");
+
+	if (cam.IsFinished(CamEventType::JaneDoe_02_Finished))
+		cam.RequestSequence("Gacha/JaneDoe_03");
+
+	if (cam.IsFinished(CamEventType::JaneDoe_03_Finished))
+		cam.RequestSequence("Gacha/JaneDoe_01");
+}
+
 void CGacha_Level::Play_CameraSequence()
 {
+	UIDirector()->FadeIn_Screen(1.5f);
 	CamDirector()->SetSpaceRef(m_GachaHandle);
 	CamDirector()->RequestSequence("Gacha/Down");
 

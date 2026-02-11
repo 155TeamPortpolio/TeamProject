@@ -92,6 +92,7 @@ void CMiyabiState_Attack::Update(CMiyabi* pOwner, _float dt)
 
 void CMiyabiState_Attack::Exit(CMiyabi* pOwner)
 {
+    pOwner->Set_WeaponEffectMesh(false);
     pOwner->End_AllAttackColliders();
     pOwner->Unlock_Move();
     __super::Exit(pOwner);

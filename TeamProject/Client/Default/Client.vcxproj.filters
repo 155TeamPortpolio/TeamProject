@@ -1283,6 +1283,30 @@
     </Filter>
     <Filter Include="02. GameObject\Effect\HitEffect\BasicHit">
       <UniqueIdentifier>{15e73540-5323-452d-b699-04f689261bb8}</UniqueIdentifier>
+    </Filter>  
+    <Filter Include="02. GameObject\UI\02. 3D\Mesh\RenderTargetScreen">
+      <UniqueIdentifier>{9fcf702b-1570-44a5-9f26-b33011d359a9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\RTVDraw">
+      <UniqueIdentifier>{3f5f7d60-1268-4b6f-b2f4-3e0e9000df8f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\RTVDraw\Wipeout">
+      <UniqueIdentifier>{b1b9c45c-75fb-4a4d-8777-38f72034a43e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\RTVDraw\Switch">
+      <UniqueIdentifier>{d77a18f5-e0a7-4f32-bc3c-09132e9e8626}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Boss\Defiler\ThrowWeapon">
+      <UniqueIdentifier>{6ed9d642-434f-4168-93a5-3c95f11f9401}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Boss\Defiler\DefilerWall">
+      <UniqueIdentifier>{1c6fff43-5204-4903-ad6b-ef3914118a40}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Boss\Defiler\DefilerAxe">
+      <UniqueIdentifier>{c5a60f7b-40ab-4f90-9c1b-1d1e467d1dc6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Boss\Defiler\DefilerSpawner">
+      <UniqueIdentifier>{4021281a-dbf6-4666-9647-1a0c58628bde}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -2432,9 +2456,6 @@
     <ClInclude Include="..\Public\MiyabiState_AssaultAttack.h">
       <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Attack\Assault</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\MiasmaSpawner.h">
-      <Filter>02. GameObject\Object\Enemy\Boss\Defiler\MiasmaUnit</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\MiasmaJaegerState.h">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler\MiasmaUnit\MiasmaState</Filter>
     </ClInclude>
@@ -2474,8 +2495,29 @@
     <ClInclude Include="..\Public\MiasmaDummyUnit.h">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler\MiasmaUnit\Heavy\HeavyDummyUnit</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UI_RenderTargetScreen.h">
+      <Filter>02. GameObject\UI\02. 3D\Mesh\RenderTargetScreen</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_RTVDraw.h">
+      <Filter>02. GameObject\UI\01. 2D\RTVDraw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Switch.h">
+      <Filter>02. GameObject\UI\01. 2D\RTVDraw\Switch</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\UI_Wipeout.h">
-      <Filter>02. GameObject\UI\01. 2D\Wipeout</Filter>
+      <Filter>02. GameObject\UI\01. 2D\RTVDraw\Wipeout</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\DefilerWeapon.h">
+      <Filter>02. GameObject\Object\Enemy\Boss\Defiler\ThrowWeapon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\DefilerWall.h">
+      <Filter>02. GameObject\Object\Enemy\Boss\Defiler\DefilerWall</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\DefilerAxe.h">
+      <Filter>02. GameObject\Object\Enemy\Boss\Defiler\DefilerAxe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MiasmaSpawner.h">
+      <Filter>02. GameObject\Object\Enemy\Boss\Defiler\DefilerSpawner</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\BasicHitEffect.h">
       <Filter>02. GameObject\Effect\HitEffect\BasicHit</Filter>
@@ -3590,9 +3632,6 @@
     <ClCompile Include="..\Private\MiyabiState_AssaultAttack.cpp">
       <Filter>02. GameObject\Object\Player\Character\03. Miyabi\State\Attack\Assault</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\MiasmaSpawner.cpp">
-      <Filter>02. GameObject\Object\Enemy\Boss\Defiler\MiasmaUnit</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\MiasmaJaegerState.cpp">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler\MiasmaUnit\MiasmaState</Filter>
     </ClCompile>
@@ -3629,8 +3668,29 @@
     <ClCompile Include="..\Private\MiasmaDummyUnit.cpp">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler\MiasmaUnit\Heavy\HeavyDummyUnit</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\UI_RenderTargetScreen.cpp">
+      <Filter>02. GameObject\UI\02. 3D\Mesh\RenderTargetScreen</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_RTVDraw.cpp">
+      <Filter>02. GameObject\UI\01. 2D\RTVDraw</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Switch.cpp">
+      <Filter>02. GameObject\UI\01. 2D\RTVDraw\Switch</Filter>
+    </ClCompile>
     <ClCompile Include="..\Private\UI_Wipeout.cpp">
-      <Filter>02. GameObject\UI\01. 2D\Wipeout</Filter>
+      <Filter>02. GameObject\UI\01. 2D\RTVDraw\Wipeout</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\DefilerWeapon.cpp">
+      <Filter>02. GameObject\Object\Enemy\Boss\Defiler\ThrowWeapon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\DefilerWall.cpp">
+      <Filter>02. GameObject\Object\Enemy\Boss\Defiler\DefilerWall</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\DefilerAxe.cpp">
+      <Filter>02. GameObject\Object\Enemy\Boss\Defiler\DefilerAxe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MiasmaSpawner.cpp">
+      <Filter>02. GameObject\Object\Enemy\Boss\Defiler\DefilerSpawner</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\BasicHitEffect.cpp">
       <Filter>02. GameObject\Effect\HitEffect\BasicHit</Filter>

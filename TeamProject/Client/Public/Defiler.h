@@ -39,6 +39,9 @@ public:
 public:
     void Change_CollisionMask(_uint iMask = ENUM(COLLISION_GROUP::PLAYER));
     void Release_CollisionMask();
+public:
+    void Hide_MeshGroup(const string& mesh);
+    void Show_MeshGroup(const string& mesh);
 
 public:
     void Set_CCTPos(_vector3 pos);

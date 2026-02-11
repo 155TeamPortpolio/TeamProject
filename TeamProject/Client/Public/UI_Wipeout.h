@@ -1,13 +1,13 @@
 #pragma once
-#include "UI_Object.h"
+#include "UI_RTVDraw.h"
 
 NS_BEGIN(Client)
 
-class CUI_Wipeout final : public CUI_Object
+class CUI_Wipeout final : public CUI_RTVDraw
 {
 private:
 	CUI_Wipeout() {}
-	CUI_Wipeout(const CUI_Wipeout& rhs) : CUI_Object(rhs) {}
+	CUI_Wipeout(const CUI_Wipeout& rhs) : CUI_RTVDraw(rhs) {}
 	virtual ~CUI_Wipeout() DEFAULT;
 
 public:
@@ -18,9 +18,6 @@ public:
 	virtual void    Update(_float dt)			     override;
 	virtual void    Late_Update(_float dt)           override { __super::Late_Update(dt); }
 	virtual void    Render_GUI()                     override { __super::Render_GUI(); }
-
-private:
-	_bool	m_isVisible = {};
 
 public:
 	static  CGameObject* Create();

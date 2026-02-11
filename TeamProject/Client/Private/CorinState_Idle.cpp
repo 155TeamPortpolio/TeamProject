@@ -4,6 +4,7 @@
 #include "Corin.h"
 
 #include "Animator3D.h"
+#include "AudioSource.h"
 
 void CCorinState_Idle::Enter(CCorin* pOwner)
 {
@@ -25,6 +26,9 @@ void CCorinState_Idle::Enter(CCorin* pOwner)
         .Loop(true)
         .Apply();
 
+    m_idleVoiceAcc      = 0.f;
+    m_pIdleVoiceChannel = nullptr;
+
     __super::Enter(pOwner);
 
     pOwner->Stop_Effect("Corin_Saw_Slash0");
@@ -35,9 +39,35 @@ void CCorinState_Idle::Enter(CCorin* pOwner)
 void CCorinState_Idle::Update(CCorin* pOwner, _float dt)
 {
     __super::Update(pOwner, dt);
+
+    constexpr _float kIdleVoiceDelay = 3.f;
+
+    bool isPlaying = false;
+    if (m_pIdleVoiceChannel)
+        m_pIdleVoiceChannel->isPlaying(&isPlaying);
+
+    if (isPlaying)
+    {
+        m_idleVoiceAcc = 0.f;
+        return;
+    }
+
+    m_idleVoiceAcc += dt;
+
+    if (m_idleVoiceAcc < kIdleVoiceDelay)
+        return;
+
+    auto& sound = *pOwner->Get_Component<CAudioSource>();
+    auto& slot = sound.Sequence("Idle_Voice").Attribute3D(true).Loop(0).PlayNext();
+
+    m_pIdleVoiceChannel = slot.pChanel;
+    m_idleVoiceAcc = 0.f;
 }
 
 void CCorinState_Idle::Exit(CCorin* pOwner)
 {
+    m_idleVoiceAcc      = 0.f;
+    m_pIdleVoiceChannel = nullptr;
+
     __super::Exit(pOwner);
 }

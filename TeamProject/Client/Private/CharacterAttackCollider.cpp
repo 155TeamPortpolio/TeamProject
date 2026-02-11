@@ -115,12 +115,10 @@ void CCharacterAttackCollider::OnTriggerEnter(CGameObject* pOther)
 		}
 
 		// Camera
-		if(pCharacter != nullptr && pCharacter->Is_MainCharacter())
+		if (pCharacter != nullptr && pCharacter->Is_MainCharacter())
 		{
-			//CameraManager()->AddShake(CamShakeType::HitCrit);
-			//CameraManager()->AddZoomPunch(0.8f, 0.045f, 0.15f);
-			//CameraManager()->AddImpact(CamShakeType::TapSoft, CamZoomType::TapSoft, 1.5f);
-			CameraManager()->AddImpact(1, 0);
+			CameraManager()->AddShakeAxis(CamShakeAxis::Roll, 1.f,  10.f, 0.025f, 0.f);
+			CameraManager()->AddShakeAxis(CamShakeAxis::Yaw,  0.4f, 10.f, 0.025f, 0.f);
 		}
 	}
 
@@ -159,7 +157,8 @@ void CCharacterAttackCollider::OnTriggerStay(CGameObject* pOther)
 		// Camera
 		if (pCharacter != nullptr && pCharacter->Is_MainCharacter())
 		{
-			CameraManager()->AddImpact(1, 0);
+			CameraManager()->AddShakeAxis(CamShakeAxis::Roll, 1.f,  10.f, 0.025f, 0.f);
+			CameraManager()->AddShakeAxis(CamShakeAxis::Yaw,  0.4f, 10.f, 0.025f, 0.f);
 		}
 	}
 }

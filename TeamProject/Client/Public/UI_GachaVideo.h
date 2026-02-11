@@ -37,6 +37,7 @@ private:
 	_uint m_PlayerID = {};
 
 	function<void()> m_onVideoFinished = {};
+	_bool m_isFinished = {};
 
 public:
 	static  CGameObject* Create();

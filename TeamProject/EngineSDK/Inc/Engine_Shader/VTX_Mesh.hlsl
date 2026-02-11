@@ -1,5 +1,7 @@
 #include "Shader_Define.hlsl"
 
+matrix g_WorldMatrix;
+
 float3 vRimLightColor;
 float3 vEmissiveColor;
 float fRimLightPower;
@@ -50,6 +52,18 @@ VS_OUT VS_MAIN(VS_IN In)
     return Out;
 }
 
+VS_OUT VS_ORTHOMAIN(VS_IN In)
+{
+    VS_OUT Out;
+    
+    matrix matWV, matWVP;
+    matWVP = mul(g_WorldMatrix, matOrthograph);
+    
+    Out.vPosition = mul(float4(In.vPosition, 1.f), matWVP);
+    Out.vTexcoord = In.vTexcoord;
+    
+    return Out;
+}
 
 struct PS_IN
 {
@@ -231,6 +245,15 @@ PS_OUT PS_TV(PS_IN In)
     return Out;
 }
 
+PS_OUT PS_UI(PS_IN In)
+{
+    PS_OUT Out;
+    
+    Out.vDiffuse = DiffuseTexture.Sample(LinearSampler, In.vTexcoord);
+    
+    return Out;
+}
+
 PS_OUT PS_DEBUG(PS_IN In)
 {
     PS_OUT Out;
@@ -348,6 +371,15 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_TV();
+    }
+    pass UI
+    {
+        SetRasterizerState(RS_NoCull);
+        SetDepthStencilState(DSS_WriteOnly, 0);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_ORTHOMAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_UI();
     }
     pass Debug
     {
