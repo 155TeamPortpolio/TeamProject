@@ -24,6 +24,17 @@ ENGINE_DLL _float Math::LerpAngle(float a, float b, float u)
 	return a + d * u;
 }
 
+ENGINE_DLL Vector3 Math::Lerp(const Vector3& a, const Vector3& b, float t)
+{
+	return a + (b - a) * t;
+}
+
+ENGINE_DLL _float Math::ExpAlpha(float tau, float dt)
+{
+	float a = 1.f - expf(-dt / max(tau, 0.0001f));
+	return clamp(a, 0.f, 1.f);
+}
+
 ENGINE_DLL _float Math::WrapDeg(_float deg)
 {
 	while (deg > 180.f)  deg -= 360.f;

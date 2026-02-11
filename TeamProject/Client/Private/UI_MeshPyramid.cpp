@@ -18,12 +18,6 @@
 
 namespace
 {
-    float ExpAlpha(float speed, float dt)
-    {
-        float a = 1.f - expf(-speed * dt);
-        return clamp(a, 0.f, 1.f);
-    }
-
     float WrapRad(float rad)
     {
         while (rad > XM_PI) rad -= XM_2PI;
@@ -192,7 +186,7 @@ void CUI_MeshPyramid::Update(_float dt)
     }
     else
     {
-        const float a = ExpAlpha(m_cfg.yawSmoothSpeed, dt);
+        const float a = Math::ExpAlpha(m_cfg.yawSmoothSpeed, dt);
         const float delta = WrapRad(rawYawRad - m_rt.lastYawRad);
         m_rt.lastYawRad = WrapRad(m_rt.lastYawRad + delta * a);
     }
@@ -204,7 +198,7 @@ void CUI_MeshPyramid::Update(_float dt)
     }
     else
     {
-        const float a = ExpAlpha(m_cfg.posSmoothSpeed, dt);
+        const float a = Math::ExpAlpha(m_cfg.posSmoothSpeed, dt);
         Vector3 nextPos = Vector3::Lerp(m_rt.smoothPos, rawPos, a);
         m_rt.smoothPos = MoveTowardsVec3(m_rt.smoothPos, nextPos, m_cfg.maxPosStepPerFrame);
     }

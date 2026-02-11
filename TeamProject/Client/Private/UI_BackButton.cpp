@@ -3,6 +3,7 @@
 
 #include "GameInstance.h"
 #include "ObjectContainer.h"
+#include "AudioSource.h"
 
 #include "FieldSystem.h"
 
@@ -11,6 +12,8 @@ HRESULT CUI_BackButton::Initialize_Prototype()
     __super::Initialize_Prototype();
 
     Add_Component<CObjectContainer>();
+    Add_Component<CAudioSource>();
+    Get_Component<CAudioSource>()->SoundFolder(G_GlobalLevelKey, "../Bin/Resources/Global/UI/Sound/");
 
 	return S_OK;
 }
@@ -27,6 +30,7 @@ HRESULT CUI_BackButton::Initialize(INIT_DESC* pArg)
         m_isClicked = true;
         Set_ChildAnimation(CHILD::OVERLAY, 0);
         Set_ChildAnimation(CHILD::ICON, 0);
+        Get_Component<CAudioSource>()->Slot("UI_Close_Swoosh.wav").Attribute3D(false).Loop(false).Play();
             });
 
 	return S_OK;

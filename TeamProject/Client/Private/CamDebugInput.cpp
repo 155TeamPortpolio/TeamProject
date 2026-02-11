@@ -33,4 +33,21 @@ void CamDebugInput::UpdateInput(_float dt)
 
     if (cam.IsFinished(CamEventType::UltimateFinished))
         cam.RequestSequence("Battle/Back");
+
+    JehyunInput(dt);
+}
+
+void CamDebugInput::JehyunInput(_float dt)
+{
+    CMonitorGate gate;
+    if (!gate.Pass()) return;
+
+    auto& cam = *CamDirector();
+    auto& mgr = *CameraManager();
+
+    if (InputDevice()->Key_Tap(VK_F3))
+    {
+
+        cam.BeginWipeOut();
+    }
 }

@@ -19,14 +19,16 @@ class CBattlePlayer; class CFieldCharacter; class CPlayer; class CCharacter; cla
 enum class CamType       { None, Free, Orbit, Sequence, End };
 enum class CamReturnMode { None, SnapToEnd, RestorePrev };
 enum class CamSeqType    { BattleIntro, ZeroIntro, Ultimate, End };
+enum class CamStartDir { Front, Back };
+
 enum class CamEventType 
 {
     IntroFinished,       SpinFinished,        SpinHalfFinished, 
     Miyabi_01_Finished,  Miyabi_02_Finished,  Miyabi_03_Finished,
     JaneDoe_01_Finished, JaneDoe_02_Finished, JaneDoe_03_Finished,
-    UltimateFinished 
+    UltimateFinished, 
+    WipeOutBackFinished, WipeOutLeftFinished, WipeOutRightFinished, WipeOutFrontFinished,
 };
-enum class CamStartDir   { Front, Back };
 
 enum class CamShakeType
 {
@@ -64,6 +66,9 @@ struct CamSeqReqDesc
 
     CamReturnMode returnMode    = CamReturnMode::SnapToEnd;
     CamType       returnCamType = CamType::None;
+
+    EaseType blendInEase  = EaseType::OutSine;
+    EaseType blendOutEase = EaseType::OutSine;
 };
 
 struct CamSeqEntry
@@ -82,7 +87,8 @@ struct CamPlayingState
     _bool            pendingStart = false;
     _float           blendInRemain = 0.f;
                      
-    _float           defaultBlendOutSec = 0.25f;
+    _float           defaultBlendOutSec  = 0.25f;
+    EaseType         defaultBlendOutEase = EaseType::OutSine;
                      
     CamReturnMode    returnMode    = CamReturnMode::SnapToEnd;
     CamType          returnCamType = CamType::None;
