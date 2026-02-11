@@ -33,4 +33,37 @@ void CamDebugInput::UpdateInput(_float dt)
 
     if (cam.IsFinished(CamEventType::UltimateFinished))
         cam.RequestSequence("Battle/Back");
+
+    JehyunInput(dt);
+}
+
+void CamDebugInput::JehyunInput(_float dt)
+{
+    CMonitorGate gate;
+    if (!gate.Pass()) return;
+
+    auto& cam = *CamDirector();
+    auto& mgr = *CameraManager();
+
+    if (InputDevice()->Key_Tap(VK_F3))
+    {
+        cam.RequestSequence("WipeOutIntro/Back");
+    }
+
+    auto time = cam.GetTime();
+
+    if (cam.GetCurSeqName() == "WipeOutIntro/Back" && time > 0.3f)
+    {
+        mgr.AddShakeAxis(CamShakeAxis::Roll, 1.f, 10.f, 0.025f, 0.f);
+        mgr.AddShakeAxis(CamShakeAxis::Yaw, 0.4f, 10.f, 0.025f, 0.f);
+    }
+
+    if (cam.IsFinished(CamEventType::WipeOutBackFinished))
+        cam.RequestSequence("WipeOut/Right");
+
+    if (cam.IsFinished(CamEventType::WipeOutRightFinished))
+        cam.RequestSequence("WipeOut/Front");
+
+    if (cam.IsFinished(CamEventType::WipeOutFrontFinished))
+        cam.RequestSequence("WipeOut/Left");
 }

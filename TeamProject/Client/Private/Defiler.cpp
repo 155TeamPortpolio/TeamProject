@@ -89,6 +89,8 @@ HRESULT CDefiler::Initialize(INIT_DESC* pArg)
 
 	Create_UIEnemyStatus("Bip001_Spine2");
 	Create_UIBossHUD();
+	Create_MeshPyramid();
+
 	return S_OK;
 }
 

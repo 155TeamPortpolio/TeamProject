@@ -85,17 +85,6 @@ void CCamDirector::AutoField(CamStartDir dir)
 {
     AutoTarget();
 
-    if (m_gate.Pass())
-    {
-        static bool shadowDisabled = false;
-
-        if (!shadowDisabled)
-        {
-            RenderSystem()->SetOn(false);
-            shadowDisabled = true;
-        }
-    }
-
     switch (dir)
     {
     case CamStartDir::Front:
@@ -114,17 +103,6 @@ void CCamDirector::AutoBattle(CamStartDir dir)
 {
     AutoTarget();
 
-    if (m_gate.Pass())
-    {
-        static bool shadowDisabled = false;
-
-        if (!shadowDisabled)
-        {
-            RenderSystem()->SetOn(false);
-            shadowDisabled = true;
-        }
-    }
-
     switch (dir)
     {
     case CamStartDir::Front:
@@ -137,6 +115,9 @@ void CCamDirector::AutoBattle(CamStartDir dir)
 
     default: break;
     }
+
+    if (m_gate.Pass())
+        RenderSystem()->SetOn(false);
 }
 
 void CCamDirector::Update(_float dt)
@@ -366,12 +347,14 @@ _uint CCamDirector::RequestSequence(const string& key, const CamSeqReqDesc& req)
 
         if (req.resetTime) seqPlayer->SetTime(0.f);
 
+        CameraManager()->Set_BlendEase(req.blendInEase);
         const _uint handle = CameraManager()->Push(seqCam, req.blendInSec);
 
         m_playing.handle = handle;
         m_playing.key = key;
         m_playing.active = true;
         m_playing.defaultBlendOutSec = req.blendOutSec;
+        m_playing.defaultBlendOutEase = req.blendOutEase;
         m_playing.pendingStart = (req.blendInSec > 0.f);
         m_playing.blendInRemain = req.blendInSec;
 
@@ -404,6 +387,7 @@ _uint CCamDirector::RequestSequence(const string& key, const CamSeqReqDesc& req)
 
         m_playing.key = key;
         m_playing.defaultBlendOutSec = req.blendOutSec;
+        m_playing.defaultBlendOutEase = req.blendOutEase;
 
         if (req.returnMode != CamReturnMode::None)
         {
@@ -459,6 +443,7 @@ _bool CCamDirector::StopRequest(_uint handle, _float blendOutSec, _bool resetTim
         }
     }
 
+    CameraManager()->Set_BlendEase(m_playing.defaultBlendOutEase);
     const _bool ok = CameraManager()->Pop(handle, blendOutSec);
 
     m_playing = {};
@@ -466,6 +451,7 @@ _bool CCamDirector::StopRequest(_uint handle, _float blendOutSec, _bool resetTim
 
     return ok;
 }
+
 
 void CCamDirector::StopAll(_float blendOutSec)
 {
