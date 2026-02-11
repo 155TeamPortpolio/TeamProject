@@ -96,6 +96,8 @@ void CParticleNode_Edit::Play()
 
 	node.vRimLightColor = m_vRimLightColor;
 	node.vPivot = m_vPivot;
+	node.iUseDepthTest = m_iUseDepthTest;
+	node.iRenderAlignment = m_iRenderAlignment;
 	node.iRGBMaskMode = m_iRGBMaskMode;
 	node.iColorMode = ENUM(m_eColorMode);
 	node.isWorld = m_IsWorld;
@@ -159,6 +161,9 @@ void CParticleNode_Edit::Import(nlohmann::ordered_json& json)
 	auto pivot = json.value("pivot", json::array({ 0.5f,0.5f }));
 	m_vRimLightColor = _float3(rimLightColor[0], rimLightColor[1], rimLightColor[2]);
 	m_vPivot = _float2(pivot[0], pivot[1]);
+	
+	m_iUseDepthTest = json.value("use_depth_test", 1);
+	m_iRenderAlignment = json.value("render_alignment", 0);
 	m_iRGBMaskMode = json.value("rgb_mask", m_iRGBMaskMode);
 	m_eColorMode = static_cast<CParticleSystem::COLOR_MODE>(json.at("color_mode").get<_uint>());
 	m_fDelayTime = json.value("delay_time", m_fDelayTime);
@@ -280,6 +285,8 @@ void CParticleNode_Edit::Export(nlohmann::ordered_json& json)
 
 		{"rimlight_color",json::array({m_vRimLightColor.x,m_vRimLightColor.y,m_vRimLightColor.z})},
 		{"pivot",json::array({m_vPivot.x,m_vPivot.y})},
+		{"use_depth_test",m_iUseDepthTest},
+		{"render_alignment",m_iRenderAlignment},
 		{"rgb_mask",m_iRGBMaskMode},
 		{"color_mode",ENUM(m_eColorMode)},
 		{"delay_time",m_fDelayTime},
@@ -420,6 +427,8 @@ void CParticleNode_Edit::SetUp_ParticleEffect()
 		}
 	}
 	isDirty |= ImGui::DragFloat2("Pivot", &m_vPivot.x);
+	isDirty |= ImGui::DragInt("Use Depth Test", reinterpret_cast<_int*>(&m_iUseDepthTest));
+	isDirty |= ImGui::DragInt("Render Alignment", reinterpret_cast<_int*>(&m_iRenderAlignment));
 	isDirty |= ImGui::DragInt("RGB Mask Mode", reinterpret_cast<_int*>(&m_iRGBMaskMode));
 	isDirty |= Helper::DrawEnumCombo("Color Mode", m_eColorMode, 100.f);
 	isDirty |= ImGui::Checkbox("Is World", &m_IsWorld);
@@ -502,6 +511,8 @@ void CParticleNode_Edit::SetUp_ParticleEffect()
 
 		node.vRimLightColor = m_vRimLightColor;
 		node.vPivot = m_vPivot;
+		node.iUseDepthTest = m_iUseDepthTest;
+		node.iRenderAlignment = m_iRenderAlignment;
 		node.iRGBMaskMode = m_iRGBMaskMode;
 		node.SpawnShape = ENUM(m_eSpawnShape);
 		node.iColorMode = ENUM(m_eColorMode);

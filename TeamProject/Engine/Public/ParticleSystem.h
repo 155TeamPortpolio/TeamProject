@@ -186,6 +186,8 @@ private:
 	PARTICLE_NODE m_PendingChanged{};
 
 	/*Main Params*/
+	_uint m_iUseDepthTest = 1;
+	_uint m_iRenderAlignment{};
 	_uint m_iRGBMaskMode{};
 	PARTICLE_SPACE m_eParticleSpace = PARTICLE_SPACE::WORLD;
 	MODULE_MASK m_eModuelMask{};

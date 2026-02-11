@@ -12,6 +12,8 @@ uint ColorMode;
 uint RGBMask;
 float2 Pivot;
 float3 RimLightColor;
+uint RenderAlignment;
+uint UseDepthTest;
 
 struct VS_IN
 {
@@ -83,11 +85,26 @@ void GS_MAIN(point GS_IN In[1], inout TriangleStream<GS_OUT> triStream)
     
     float3 worldPos = In[0].vWorldPos.xyz;
     float3 camPos = vCamPosition.xyz;
+    float3 camForward = normalize(matViewInverse._31_32_33);
+    float3 camRight = normalize(matViewInverse._11_12_13);
+    float3 camUp = normalize(matViewInverse._21_22_23); /*모하냐 코딩.해.*/
+    
     float3 worldUp = float3(0.f, 1.f, 0.f);
     
-    float3 look = normalize(camPos - worldPos);
-    float3 right = normalize(cross(worldUp, look));
-    float3 up = normalize(cross(look, right));
+    float3 look, right, up;
+    
+    if(0 == RenderAlignment) /* Facing */
+    {
+        look = normalize(camPos - worldPos);
+        right = normalize(cross(worldUp, look));
+        up = normalize(cross(look, right));
+    }
+    else /* View */
+    {
+        look = -camForward.xyz;
+        right = -camRight.xyz;
+        up = camUp.xyz;
+    }
     
     float3 dir = normalize(-In[0].vVelocity);
     float vx = dot(dir, right);
@@ -114,13 +131,16 @@ void GS_MAIN(point GS_IN In[1], inout TriangleStream<GS_OUT> triStream)
         float2(+halfX + shiftX, -halfY + shiftY)
     };
     
-    for (int i = 0; i < 4; ++i)
+    if(0 == RenderAlignment)
     {
-        float x = offset[i].x;
-        float y = offset[i].y;
-
-        offset[i].x = x * c - y * s;
-        offset[i].y = x * s + y * c;
+        for (int i = 0; i < 4; ++i)
+        {
+            float x = offset[i].x;
+            float y = offset[i].y;
+    
+            offset[i].x = x * c - y * s;
+            offset[i].y = x * s + y * c;
+        }
     }
     
     float3 p0 = worldPos + (offset[0].x * right + offset[0].y * up);
@@ -220,10 +240,14 @@ PS_OUT PS_MAIN(PS_IN In)
     vDepthTexcoord.y = In.vProjPosition.y / In.vProjPosition.w * -0.5f + 0.5f;
     
     float fLinearZ = In.vViewPosition.z;
-    float fStaticViewZ = StaticMeshDepthTexture.Sample(DefaultSampler, vDepthTexcoord).y * zFar;
-    float fSkinnedViewZ = SkinnedMeshDepthTexture.Sample(DefaultSampler, vDepthTexcoord).y * zFar;
-    float fOldViewZ = (fStaticViewZ > fSkinnedViewZ) ? fSkinnedViewZ : fStaticViewZ;
-    fAlpha *= saturate(fOldViewZ - fLinearZ);
+    
+    if(UseDepthTest)
+    {
+        float fStaticViewZ = StaticMeshDepthTexture.Sample(DefaultSampler, vDepthTexcoord).y * zFar;
+        float fSkinnedViewZ = SkinnedMeshDepthTexture.Sample(DefaultSampler, vDepthTexcoord).y * zFar;
+        float fOldViewZ = (fStaticViewZ > fSkinnedViewZ) ? fSkinnedViewZ : fStaticViewZ;
+        fAlpha *= saturate(fOldViewZ - fLinearZ);
+    }
     /*------------------------------------------------------------------------------------*/
     
     /* 깊이 기반 가중치 생성 */
@@ -269,10 +293,14 @@ PS_OUT PS_MAIN_MASK(PS_IN In)
     vDepthTexcoord.y = In.vProjPosition.y / In.vProjPosition.w * -0.5f + 0.5f;
     
     float fLinearZ = In.vViewPosition.z;
-    float fStaticViewZ = StaticMeshDepthTexture.Sample(DefaultSampler, vDepthTexcoord).y * zFar;
-    float fSkinnedViewZ = SkinnedMeshDepthTexture.Sample(DefaultSampler, vDepthTexcoord).y * zFar;
-    float fOldViewZ = (fStaticViewZ > fSkinnedViewZ) ? fSkinnedViewZ : fStaticViewZ;
-    fAlpha *= saturate(fOldViewZ - fLinearZ);
+    
+    if (UseDepthTest)
+    {
+        float fStaticViewZ = StaticMeshDepthTexture.Sample(DefaultSampler, vDepthTexcoord).y * zFar;
+        float fSkinnedViewZ = SkinnedMeshDepthTexture.Sample(DefaultSampler, vDepthTexcoord).y * zFar;
+        float fOldViewZ = (fStaticViewZ > fSkinnedViewZ) ? fSkinnedViewZ : fStaticViewZ;
+        fAlpha *= saturate(fOldViewZ - fLinearZ);
+    }
     /*------------------------------------------------------------------------------------*/
     
     /* 깊이 기반 가중치 생성 */
@@ -296,7 +324,7 @@ technique11 Default
     pass Default
     {
         SetRasterizerState(RS_Default);
-        SetDepthStencilState(DSS_ReadOnly, 0);
+        SetDepthStencilState(DSS_None, 0);
         SetBlendState(BS_OITAccmulation, float4(1.f, 1.f, 1.f, 1.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = compile gs_5_0 GS_MAIN();

@@ -26,6 +26,10 @@ void CCorinState_Idle::Enter(CCorin* pOwner)
         .Apply();
 
     __super::Enter(pOwner);
+
+    pOwner->Stop_Effect("Corin_Saw_Slash0");
+    pOwner->Stop_Effect("Corin_Ex_Saw_Slash0");
+    pOwner->Stop_Effect("Corin_Ultimate_Saw_Slash0");
 }
 
 void CCorinState_Idle::Update(CCorin* pOwner, _float dt)

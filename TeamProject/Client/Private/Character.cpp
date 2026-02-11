@@ -704,6 +704,14 @@ HRESULT CCharacter::Initialize_Effects()
         pEffect->Stop();
         pObjectContainer->Add_Child(pEffect, false);
     }
+    {
+        auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+            .Asset("evade.json")
+            .Build("Evade");
+        pEffect->Stop();
+        pEffect->AttachBone(m_pAnimator, "Bip001_Spine");
+        pObjectContainer->Add_Child(pEffect, false);
+    }
 
     return S_OK;
 }
