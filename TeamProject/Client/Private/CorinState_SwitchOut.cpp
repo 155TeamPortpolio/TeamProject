@@ -19,13 +19,18 @@ void CCorinState_SwitchOut::Update(CCorin* pOwner, _float dt)
         return;
     }
 
+    if (m_fAnimProgress < 0.3f)
+    {
+        pOwner->Process_RootMotion(dt, ENUM(CCorin::ROOTMOTION_MASK::QUATERNION));
+    }
     if (m_fAnimProgress >= 0.3f)
+    {
         pOwner->Update_DissolveProgress(dt * 5.f);
+        pOwner->Process_RootMotion(-dt, ENUM(CCorin::ROOTMOTION_MASK::MOVE) |
+            ENUM(CCorin::ROOTMOTION_MASK::QUATERNION));
+    }
 
-    pOwner->Process_RootMotion(-dt, ENUM(CCorin::ROOTMOTION_MASK::MOVE) |
-        ENUM(CCorin::ROOTMOTION_MASK::QUATERNION));
-
-    if (m_fAnimProgress >= 0.6f)
+    if (m_fAnimProgress >= 0.8f)
     {
         pOwner->DeActive_Character();
         pOwner->Get_StateMachine()->Set_Trigger("ToIdle");
