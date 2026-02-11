@@ -283,17 +283,16 @@ OBJECT_HANDLE CCharacter::Calculate_Parry()
     }
 
     _vector3 vAttackPos = {};
+    _vector3 vAttackLook = {};
     _float vAttackOffset = {};
-    _vector3 vDirToPlayer = {};
 
     if (targetHandle.isValid())
     {
         vAttackPos = targetHandle.Get()->Get_WorldPos();
         vAttackPos.y = vPos.y;
-
-        vDirToPlayer = vPos - vAttackPos;
-        vDirToPlayer.y = 0.f;
-        vDirToPlayer.Normalize();
+        vAttackLook = targetHandle.Get()->Get_Component<CTransform>()->Dir(STATE::LOOK);
+        vAttackLook.y = 0.f;
+        vAttackLook.Normalize();
 
         CCharacterController* pCCT = targetHandle.Get()->Get_Component<CCharacterController>();
         if (pCCT)
@@ -308,7 +307,7 @@ OBJECT_HANDLE CCharacter::Calculate_Parry()
         }
     }
 
-    m_vParryPos = vAttackPos + vDirToPlayer * vAttackOffset * 2.f;
+    m_vParryPos = vAttackPos + vAttackLook * vAttackOffset * 3.f;
     m_vParryPos.y = vPos.y + 0.5f;
 
     m_vParryLook = vAttackPos - m_vParryPos;
