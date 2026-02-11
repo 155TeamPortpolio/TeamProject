@@ -12,6 +12,8 @@ int Row;
 
 float2 UVTiling;
 
+float g_Time;
+
 struct VS_IN
 {
     float3 vPosition : POSITION;
@@ -30,6 +32,7 @@ struct VS_OUT
     float viewZ : TEXCOORD2;
     float3 vTangent : TANGENT;
     float3 vBinormal : BINORMAL;
+    float3 vWorldPos : TEXCOORD3;
 };
 
 VS_OUT VS_MAIN(VS_IN In)
@@ -49,6 +52,7 @@ VS_OUT VS_MAIN(VS_IN In)
     Out.vTangent = normalize(mul(vector(In.vTangent, 0.f), ObjectBufferArray[TransformIndex].Transform)).xyz;
     Out.vBinormal = normalize(cross(Out.vNormal.xyz, Out.vTangent.xyz));
     Out.viewZ = viewPos.z;
+    Out.vWorldPos = worldPos; 
     return Out;
 }
 
@@ -74,6 +78,7 @@ struct PS_IN
     float viewZ : TEXCOORD2;
     float3 vTangent : TANGENT;
     float3 vBinormal : BINORMAL;
+    float3 vWorldPos : TEXCOORD3;
 };
 
 struct PS_OUT
@@ -254,6 +259,93 @@ PS_OUT PS_UI(PS_IN In)
     return Out;
 }
 
+PS_OUT PS_WATER(PS_IN In)
+{
+    PS_OUT Out;
+    
+    float3 deepWater = float3(0.01, 0.01, 0.02);
+    float3 shallowWater = float3(0.02, 0.025, 0.04);
+    float3 foamColor = float3(0.04, 0.045, 0.05);
+    
+    float worldTiling = 0.02;
+    float2 worldUV = In.vWorldPos.xz * worldTiling;
+    
+    float2 flowDir1 = float2(0.0, 1.0); 
+    float2 flowDir2 = float2(0.866, -0.5); 
+    float2 flowDir3 = float2(-0.866, -0.5); 
+    
+    float2 uv1 = worldUV + flowDir1 * g_Time * 0.02;
+    uv1 += float2(sin(g_Time * 0.2), cos(g_Time * 0.15)) * 0.02;
+    
+    float2 uv2 = worldUV + flowDir2 * g_Time * 0.03;
+    uv2 += float2(cos(g_Time * 0.3), sin(g_Time * 0.25)) * 0.015;
+    
+    float2 uv3 = worldUV * 2.5 + flowDir3 * g_Time * 0.025;
+    float rotAngle = g_Time * 0.05;
+    float cosA = cos(rotAngle);
+    float sinA = sin(rotAngle);
+    float2x2 rotationMat = float2x2(cosA, -sinA, sinA, cosA);
+    uv3 = mul(uv3, rotationMat);
+    
+    float3 normal1 = NormalTexture.Sample(LinearSampler, uv1).rgb * 2.0 - 1.0;
+    normal1.xy *= 2.0;
+    float3 normal2 = MetalnessTexture.Sample(LinearSampler, uv2).rgb * 2.0 - 1.0;
+    normal2.xy *= 1.8;
+    float4 detailSample = EmissiveTexture.Sample(LinearSampler, uv3);
+    float3 detailNormal = detailSample.rgb * 2.0 - 1.0;
+    detailNormal.xy *= 3.5;
+    
+    float3 waterNormal = normalize(normal1 * 0.5 + normal2 * 0.4 + detailNormal * 0.3);
+    
+    float3 viewDir = normalize(vCamPosition.xyz - In.vWorldPos);
+    float NdotV = saturate(dot(waterNormal, viewDir));
+    float fresnel = pow(1.0 - NdotV, 4.0);
+    
+    float depth = saturate(In.viewZ / 20.0);
+    float3 waterColor = lerp(shallowWater, deepWater, depth);
+    
+    float3 lightDir = normalize(float3(0.3, 1.0, 0.2));
+    float NdotL = dot(waterNormal, lightDir) * 0.5 + 0.5;
+    waterColor *= lerp(0.3, 1.8, NdotL);
+    
+    float normalVariation = length(normal1.xy - normal2.xy);
+    
+    float glitter = saturate(normalVariation - 1.7) * 5.0;
+    glitter = pow(glitter, 2.0);
+    
+    float flicker = sin(detailSample.b * 40.0 + g_Time * 3.0) * 0.5 + 0.5;
+    flicker = pow(flicker, 2.0);
+    
+    glitter *= (0.6 + fresnel * 0.4);
+    
+    float3 glitterColor = float3(0.9, 0.85, 0.7);
+    waterColor += glitter * flicker * glitterColor * 0.25;
+    
+    float wave = detailSample.g;
+    waterColor += wave * 0.05 * float3(0.03, 0.035, 0.04);
+    
+    float foam = saturate(detailSample.r * 3.0 - 2.0);
+    foam *= (1.0 - depth) * 0.25;
+    waterColor = lerp(waterColor, foamColor, foam);
+    
+    float3 reflectionColor = float3(0.2, 0.23, 0.28);
+    waterColor = lerp(waterColor, reflectionColor, fresnel * 0.03);
+    
+    float alpha = 0.85 + depth * 0.15;
+    Out.vDiffuse = float4(waterColor, alpha);
+    
+    Out.vNormal = float4(waterNormal * 0.5 + 0.5, 1.0);
+    
+    float linearDepth = saturate(In.viewZ / zFar);
+    Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / zFar, linearDepth, 1.f);
+    
+    float roughness = 0.05 + depth * 0.08;
+    float metallic = 0.95;
+    Out.vMetalic = float4(roughness, metallic, 0.0, 1.0);
+    
+    return Out;
+}
+
 PS_OUT PS_DEBUG(PS_IN In)
 {
     PS_OUT Out;
@@ -327,6 +419,15 @@ technique11 DefaultTechnique
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN();
     }  
+    pass Water
+    {
+        SetRasterizerState(RS_NoCull);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_WATER();
+    }
     pass Emissive
     {
         SetRasterizerState(RS_NoCull);

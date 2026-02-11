@@ -1274,9 +1274,12 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Enemy\Boss\Defiler\MiasmaUnit\Heavy\HeavyDummyUnit">
       <UniqueIdentifier>{22daf38f-4e55-444e-93df-ec2dbf2b57f4}</UniqueIdentifier>
-</Filter>
+    </Filter>
     <Filter Include="02. GameObject\UI\01. 2D\Wipeout">
       <UniqueIdentifier>{3f5f7d60-1268-4b6f-b2f4-3e0e9000df8f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Env">
+      <UniqueIdentifier>{e13e0649-5d43-4108-b4fd-d8e6ed754d44}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -2467,9 +2470,12 @@
     </ClInclude>
     <ClInclude Include="..\Public\MiasmaDummyUnit.h">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler\MiasmaUnit\Heavy\HeavyDummyUnit</Filter>
- </ClInclude>
+    </ClInclude>
     <ClInclude Include="..\Public\UI_Wipeout.h">
       <Filter>02. GameObject\UI\01. 2D\Wipeout</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Water.h">
+      <Filter>02. GameObject\Object\Env</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -3622,6 +3628,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\UI_Wipeout.cpp">
       <Filter>02. GameObject\UI\01. 2D\Wipeout</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Water.cpp">
+      <Filter>02. GameObject\Object\Env</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
