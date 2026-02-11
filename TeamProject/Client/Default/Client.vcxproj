@@ -461,6 +461,7 @@
     <ClInclude Include="..\Public\UI_GachaVideo.h" />
     <ClInclude Include="..\Public\UI_RenderTargetScreen.h" />
     <ClInclude Include="..\Public\UI_Wipeout.h" />
+    <ClInclude Include="..\public\Water.h" />
     <ClInclude Include="..\public\XWall.h" />
     <ClInclude Include="..\public\ZeroStage_Start.h" />
     <ClInclude Include="..\Public\UI_GachaDisplay.h" />
@@ -577,7 +578,7 @@
     <ClInclude Include="..\Public\UI_BossHUD.h" />
     <ClInclude Include="..\Public\UI_EnemyStatus.h" />
     <ClInclude Include="..\Public\UI_FieldHUD.h" />
-    <ClInclude Include="..\Public\UI_MeshBillboard.h" />
+    <ClInclude Include="..\Public\UI_ZeroEntranceLogo.h" />
     <ClInclude Include="..\Public\ButtonUI.h" />
     <ClInclude Include="..\Public\CamDirectorData.h" />
     <ClInclude Include="..\public\CamLoader.h" />
@@ -910,6 +911,7 @@
     <ClCompile Include="..\Private\UI_GachaVideo.cpp" />
     <ClCompile Include="..\Private\UI_RenderTargetScreen.cpp" />
     <ClCompile Include="..\Private\UI_Wipeout.cpp" />
+    <ClCompile Include="..\private\Water.cpp" />
     <ClCompile Include="..\private\XWall.cpp" />
     <ClCompile Include="..\private\ZeroStage_Start.cpp" />
     <ClCompile Include="..\Private\UI_GachaDisplay.cpp" />
@@ -1025,7 +1027,7 @@
     <ClCompile Include="..\Private\UI_BossHUD.cpp" />
     <ClCompile Include="..\Private\UI_EnemyStatus.cpp" />
     <ClCompile Include="..\Private\UI_FieldHUD.cpp" />
-    <ClCompile Include="..\Private\UI_MeshBillboard.cpp" />
+    <ClCompile Include="..\Private\UI_ZeroEntranceLogo.cpp" />
     <ClCompile Include="..\Private\ButtonUI.cpp" />
     <ClCompile Include="..\Private\CamLoader.cpp" />
     <ClCompile Include="..\private\CamObject.cpp" />

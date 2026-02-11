@@ -334,6 +334,8 @@ void CBattleSystem::ClearBattleStage()
 	}
 	m_BattleObjIndex.clear();
 	m_BattleSnapShots.clear();
+
+	m_BattleSnapShots = m_BattleObjInfos;
 }
 
 BATTLEOBJ_INFO* CBattleSystem::FindBattleObjInfo(OBJECT_HANDLE objectHandle)

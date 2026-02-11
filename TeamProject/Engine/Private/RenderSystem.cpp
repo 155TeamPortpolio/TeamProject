@@ -94,8 +94,11 @@ HRESULT CRenderSystem::Render()
 
 	m_pForward->Render_SkinnedMesh(m_pSkinnedPass);
 	m_pForward->Render_StaticMesh(m_pStaticPass, m_pInstancePass);
-
 	m_pPipeLine->Update_HiZ(m_pContext);
+
+	m_pForward->Render_Blended(m_pBlendedPass);
+	m_pForward->Render_NonLight(m_pNonLightPass);
+
 	m_pUI->Render_3D(m_pUI3DPass);
 	m_pEffect->Render_Effect(m_pEffectPass, m_pParticlePass);
 	m_pEffect->Render_Effect_Bloom();
@@ -108,8 +111,6 @@ HRESULT CRenderSystem::Render()
 	m_pForward->Render_Vanish();
 	m_pForward->Render_RimLight();
 	m_pForward->Render_Combined();
-	m_pForward->Render_Blended(m_pBlendedPass);
-	m_pForward->Render_NonLight(m_pNonLightPass);
 	m_pForward->Render_OutLine();
 	m_pUI->Render_2D(m_pUIPass);
 

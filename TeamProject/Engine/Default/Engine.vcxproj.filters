@@ -1815,6 +1815,9 @@
     <FxCompile Include="..\Public\Engine_Shader\VTX_XWall.hlsl">
       <Filter>98. BasicShader\Etc</Filter>
     </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\VTX_StaticEnemy.hlsl">
+      <Filter>98. BasicShader\Mesh</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="cpp.hint" />
