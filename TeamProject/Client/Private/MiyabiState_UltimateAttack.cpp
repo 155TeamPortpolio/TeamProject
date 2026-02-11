@@ -39,8 +39,6 @@ void CMiyabiState_UltimateAttack::Enter(CMiyabi* pOwner)
     __super::Enter(pOwner);
 
     CamDirector()->RequestSequence(CamSeqType::Ultimate);
-
-    pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_Ultimate_01_Voice.wav").Attribute3D(true).Loop(false).Play();
 }
 
 void CMiyabiState_UltimateAttack::Update(CMiyabi* pOwner, _float dt)
@@ -69,6 +67,11 @@ void CMiyabiState_UltimateAttack_Start::Enter(CMiyabi* pOwner)
     BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::ULTIMATE);
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "SwitchIn_Attack_Ex_Start")
         .Apply();
+
+    _int iPlayIdx = (m_iSoundIdx++) % 3 + 1;
+    pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_UltimateAttack_Voice_0" + to_string(iPlayIdx) + ".wav")
+        .Attribute3D(true)
+        .Play();
 }
 
 void CMiyabiState_UltimateAttack_Start::Update(CMiyabi* pOwner, _float dt)
@@ -80,6 +83,7 @@ void CMiyabiState_UltimateAttack_Start::Update(CMiyabi* pOwner, _float dt)
 
 void CMiyabiState_UltimateAttack_Loop::Enter(CMiyabi* pOwner)
 {
+    pOwner->Set_WeaponEffectMesh(true);
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "SwitchIn_Attack_Ex")
         .Apply();
 
@@ -145,6 +149,12 @@ void CMiyabiState_UltimateAttack_Loop::Update(CMiyabi* pOwner, _float dt)
         }
     }
 
+    if (IsCrossAnimProgress(0.53f))
+    {
+        pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_UltimateEnd_Voice.wav")
+            .Attribute3D(true)
+            .Play();
+    }
     Update_Effects(pOwner);
 }
 
@@ -276,7 +286,6 @@ void CMiyabiState_UltimateAttack_End::Enter(CMiyabi* pOwner)
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "SwitchIn_Attack_Ex_End")
         .EndAt(0.3f)
         .Apply();
-
     pOwner->Unlock_Move();
 }
 

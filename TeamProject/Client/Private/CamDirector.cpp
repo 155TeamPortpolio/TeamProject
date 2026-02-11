@@ -114,6 +114,17 @@ void CCamDirector::AutoBattle(CamStartDir dir)
 {
     AutoTarget();
 
+    if (m_gate.Pass())
+    {
+        static bool shadowDisabled = false;
+
+        if (!shadowDisabled)
+        {
+            RenderSystem()->SetOn(false);
+            shadowDisabled = true;
+        }
+    }
+
     switch (dir)
     {
     case CamStartDir::Front:
@@ -424,7 +435,6 @@ _bool CCamDirector::StopRequest(_uint handle, _float blendOutSec, _bool resetTim
     outRot.Normalize();
 
     auto seqPlayer = GetSeqPlayer();
-
     seqPlayer->SetApplyEnabled(false);
     seqPlayer->Stop(false);
 
