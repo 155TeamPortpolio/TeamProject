@@ -10,20 +10,21 @@ class CamWipeOutController
     {
         None,
         Shot1_Enter, Shot1_Hold,
-        Shot2_Snap,  Shot2_Hold,
-        Shot3_Snap,  Shot3_Hold,
-        Shot4_Snap,  Shot4_Hold,
+        Shot2_Snap, Shot2_Hold,
+        Shot3_Snap, Shot3_Hold,
+        Shot4_Snap, Shot4_Hold,
         End
     };
 
     struct ShotGoal
     {
         Vector3 pivotExt{};
-        _float  yawDeg    = 0.f;
-        _float  pitchDeg  = 0.f;
-        _float  dist      = 0.f;
-        _float  fov       = 0.f;
+        _float  yawDeg = 0.f;
+        _float  pitchDeg = 0.f;
+        _float  dist = 0.f;
+        _float  fov = 0.f;
         _float  yawWeight = 1.f;
+        _float  baseVictimWeight = 0.f;
     };
 
     struct PivotSample
@@ -33,66 +34,82 @@ class CamWipeOutController
         _bool   valid = false;
     };
 
+public:
     struct WipeTuning
     {
-        static constexpr _float kEnterBlendShot1Sec = 1.f;
-        static constexpr _float kSnapShotSec = 0.00f;
+        _float enterBlendShot1Sec = 1.f;
+        _float snapShotSec = 0.f;
 
-        static constexpr _float kHoldShot1Sec = 0.5f;
-        static constexpr _float kHoldShot2Sec = 1.f;
-        static constexpr _float kHoldShot3Sec = 1.f;
-        static constexpr _float kHoldShot4Sec = 1.f;
+        _float holdShot1Sec = 0.5f;
+        _float holdShot2Sec = 1.f;
+        _float holdShot3Sec = 1.f;
+        _float holdShot4Sec = 1.f;
 
-        static constexpr EaseType kApproachEase = EaseType::OutCubic;
+        EaseType approachEase = EaseType::OutCubic;
 
-        static constexpr _float kPitchBaseDeg = -12.f;
-        static constexpr _float kPitchCloseDeg = -8.f;
-        static constexpr _float kPitchWideDeg = -16.f;
+        _float pitchBaseDeg = -10.f;
+        _float pitchShot1UpDeg = 8.f;
+        _float pitchShot2HighDeg = -14.f;
+        _float pitchShot4LevelDeg = 0.f;
 
-        static constexpr _float kDistClose = 2.2f;
-        static constexpr _float kDistMid = 2.9f;
-        static constexpr _float kDistWide = 3.6f;
+        _float distClose = 2.35f;
+        _float distMid = 3.05f;
+        _float distShot2Far = 4.20f;
+        _float distShot4Far = 5.00f;
 
-        static constexpr _float kFovClose = 28.f;
-        static constexpr _float kFovMid = 32.f;
-        static constexpr _float kFovWide = 38.f;
+        _float fovClose = 28.f;
+        _float fovMid = 32.f;
+        _float fovShot2 = 40.f;
+        _float fovShot4Far = 46.f;
 
-        static constexpr _float kAngleShot1Deg = 45.f;
-        static constexpr _float kAngleShot2Deg = 65.f;
-        static constexpr _float kAngleShot3Deg = 35.f;
-        static constexpr _float kAngleShot4Deg = 30.f;
+        _float angleShot1Deg = 28.f;
+        _float angleShot2Deg = 110.f;
+        _float angleShot3Deg = 35.f;
+        _float angleShot4Deg = 25.f;
 
-        static constexpr _float kPivotClampShot1 = 0.65f;
-        static constexpr _float kPivotClampShot2 = 0.35f;
-        static constexpr _float kPivotClampShot3 = 0.55f;
-        static constexpr _float kPivotClampShot4 = 0.85f;
+        _float pivotClampShot1 = 0.55f;
+        _float pivotClampShot2 = 1.10f;
+        _float pivotClampShot3 = 0.85f;
+        _float pivotClampShot4 = 1.60f;
 
-        static constexpr _float kAttackerBiasShot1 = 0.25f;
-        static constexpr _float kAttackerBiasShot2 = 0.45f;
-        static constexpr _float kAttackerBiasShot3 = 0.20f;
-        static constexpr _float kAttackerBiasShot4 = 0.10f;
+        _float attackerBiasShot1 = 0.18f;
+        _float attackerBiasShot2 = 0.10f;
+        _float attackerBiasShot3 = 0.12f;
+        _float attackerBiasShot4 = 0.05f;
 
-        static constexpr _float kSideYawBiasDeg = 12.f;
+        _float sideYawBiasDeg = 10.f;
 
-        static constexpr _float kSepMin = 0.25f;
-        static constexpr _float kSepMax = 6.50f;
+        _float sepMin = 0.25f;
+        _float sepMax = 6.50f;
 
-        static constexpr _float kHoldDollyShot1 = 0.10f;
-        static constexpr _float kHoldDollyShot2 = 0.12f;
-        static constexpr _float kHoldDollyShot3 = 0.10f;
-        static constexpr _float kHoldDollyShot4 = 0.22f;
+        _float holdDollyShot1 = 0.08f;
+        _float holdDollyShot2 = 0.12f;
+        _float holdDollyShot3 = 0.10f;
+        _float holdDollyShot4 = 0.30f;
 
-        static constexpr _float kHoldFovPunchShot4 = 10.f;
+        _float holdFovPunchShot4 = 0.f;
 
-        static constexpr EaseType kHoldEaseShot1_3 = EaseType::InOutSine;
-        static constexpr EaseType kHoldEaseShot4 = EaseType::InCubic;
+        EaseType holdEaseShot1_3 = EaseType::InOutSine;
+        EaseType holdEaseShot4 = EaseType::InOutSine;
+
+        _float pelvisMul = 0.38f;
+
+        _float shot1YawDeltaDeg = 15.f;
+        _float shot1YawWeight = 0.35f;
+
+        _float baseVictimWeightShot2 = 0.50f;
+        _float baseVictimWeightShot3 = 0.35f;
+        _float baseVictimWeightShot4 = 0.55f;
     };
 
 public:
     void Reset();
-    void Begin(OBJECT_HANDLE victimHandle);
+    void Begin();
     void End();
     void Update(_float dt);
+
+public:
+    WipeTuning tune{};
 
 private:
     static PivotSample SamplePivots(OBJECT_HANDLE h, _float offsetY, _float faceYOffsetMul = 0.85f);
@@ -101,27 +118,31 @@ private:
     static _float      YawFromDirXZ(const Vector3& dirXZ);
     static Quaternion  YawPitchQuatDeg(_float yawDeg, _float pitchDeg);
     static Vector3     OrbitPos(const Vector3& pivotWorld, const Quaternion& q, _float dist);
-    void               ApplyGoalPose_Snap(const ShotGoal& g);
 
 private:
-    _bool    IsHoldState(State s) const;
-    _int     ResolveSideSign() const;
+    Vector3   BasePivotWorld(_float baseVictimWeight) const;
+    void      ApplyGoalPose_Snap(const ShotGoal& g);
 
-    ShotGoal BuildShotCommon(_float angleDeg, _float pitchDeg, _float dist, _float fov, _float pivotClamp, _float attackerBias) const;
+    _bool     IsHoldState(State s) const;
+    _int      ResolveSideSign() const;
+    _float    CurCamYawDeg() const;
 
-    ShotGoal BuildShot1() const;
-    ShotGoal BuildShot2() const;
-    ShotGoal BuildShot3() const;
-    ShotGoal BuildShot4() const;
+    ShotGoal  BuildShotCommon(_int sideSign, _float angleDeg, _float pitchDeg, _float dist, _float fov, _float pivotClamp, _float attackerBias, _float baseVictimWeight) const;
 
-    void BeginShot(const ShotGoal& to, _float enterSec, _float holdSec, _bool captureFrom);
-    void CaptureCurAsFrom();
+    ShotGoal  BuildShot1() const;
+    ShotGoal  BuildShot2() const;
+    ShotGoal  BuildShot3() const;
+    ShotGoal  BuildShot4() const;
 
-    void ApplyInterpolated(const ShotGoal& a, const ShotGoal& b, _float t);
-    void ApplyHold(const ShotGoal& g);
-    void SnapTo(const ShotGoal& g);
+    void      BeginShot(const ShotGoal& to, _float enterSec, _float holdSec, _bool captureFrom);
+    void      CaptureCurAsFrom();
 
-    void Advance();
+    void      ApplyInterpolated(const ShotGoal& a, const ShotGoal& b, _float t);
+    void      ApplyHold();
+    void      SnapTo(const ShotGoal& g);
+
+    void      Advance();
+    void      UpdatePivots(_float dt);
 
 private:
     _bool m_active = false;
