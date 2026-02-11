@@ -63,6 +63,24 @@ VS_OUT VS_BILLBOARD(VS_IN In)
     return Out;
 }
 
+float4x4 g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
+VS_OUT VS_MAIN_CUSTOM(VS_IN In)
+{
+    // 월드, 뷰, 프로젝션 행렬을 따로 던져서 버텍스 셰이더 처리
+    VS_OUT Out;
+    
+    matrix matWV, matWVP;
+    
+    matWV = mul(g_WorldMatrix, g_ViewMatrix);
+    matWVP = mul(matWV, g_ProjMatrix);
+    
+    Out.vPosition = mul(float4(In.vPosition, 1.f), matWVP);
+    Out.vTexcoord = In.vTexcoord;
+    Out.vNormal = mul(vector(In.vNormal, 0.f), g_WorldMatrix);
+    Out.vProjPos = Out.vPosition;
+    return Out;
+}
+
 struct PS_IN
 {
     float4 vPosition : SV_POSITION;
@@ -134,6 +152,41 @@ PS_OUT_SHADOW PS_MAIN_SHADOW(PS_IN_SHDOW In)
     return Out;
 }
 
+PS_OUT PS_MAIN_UI(PS_IN In)
+{
+    PS_OUT Out;
+    
+    vector vMtrlDiffuse = DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
+    if (vMtrlDiffuse.a < 0.001f)
+        discard;
+       
+    vector vMaskDesc = MaskTexture.Sample(DefaultSampler, In.vTexcoord);
+    float fViewZ = vMaskDesc.y * zFar;
+
+    vector vWorldPos;
+    vWorldPos.x = In.vTexcoord.x * 2.f - 1.f;
+    vWorldPos.y = In.vTexcoord.y * -2.f + 1.f;
+    vWorldPos.z = vMaskDesc.x;
+    vWorldPos.w = 1.f;
+
+    vWorldPos = vWorldPos * fViewZ;
+    vWorldPos = mul(vWorldPos, matProjectionInverse);
+    vWorldPos = mul(vWorldPos, matViewInverse);
+    
+    float2 vTexcoord;
+    vTexcoord.x = vWorldPos.x / vWorldPos.w * 0.5f + 0.5f;
+    vTexcoord.y = vWorldPos.y / vWorldPos.w * -0.5f + 0.5f;
+    
+    vMaskDesc = MaskTexture.Sample(DefaultSampler, vTexcoord);
+    
+    if (vWorldPos.w - 0.01f < vMaskDesc.y * zFar)
+        discard;
+    
+    Out.vDiffuse = vMtrlDiffuse;
+    Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 1.f);
+    Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / zFar, 0.f, 1.f);
+    return Out;
+}
 
 technique11 DefaultTechnique
 {
@@ -166,6 +219,15 @@ technique11 DefaultTechnique
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN();
     }
-    
+
+    pass UI
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_WriteOnly, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN_CUSTOM();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_MAIN_UI();
+    }
 }
 

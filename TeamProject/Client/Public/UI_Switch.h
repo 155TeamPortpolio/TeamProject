@@ -3,12 +3,12 @@
 
 NS_BEGIN(Client)
 
-class CUI_Wipeout final : public CUI_RTVDraw
+class CUI_Switch final : public CUI_RTVDraw
 {
 private:
-	CUI_Wipeout() {}
-	CUI_Wipeout(const CUI_Wipeout& rhs) : CUI_RTVDraw(rhs) {}
-	virtual ~CUI_Wipeout() DEFAULT;
+	CUI_Switch() {}
+	CUI_Switch(const CUI_Switch& rhs) : CUI_RTVDraw(rhs) {}
+	virtual ~CUI_Switch() DEFAULT;
 
 public:
 	virtual HRESULT Initialize_Prototype()           override;
