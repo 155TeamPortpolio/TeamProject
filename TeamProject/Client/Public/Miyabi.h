@@ -71,6 +71,7 @@ private: // 초기화
     HRESULT Initialize_Weapon();
     HRESULT Initialize_Ghost();
     HRESULT Initialize_Effects() override;
+    HRESULT Initialize_Sound();
 
 private: // 상태 처리
     void    Update_States();

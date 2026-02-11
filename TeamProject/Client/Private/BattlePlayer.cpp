@@ -627,7 +627,15 @@ void CBattlePlayer::Process_Interact()
 
 void CBattlePlayer::Process_ComboSelect(_float dt)
 {
+    _float fPrevTimer = m_fComboSelectTimer;
     m_fComboSelectTimer += dt;
+
+    if (fPrevTimer < COMBO_SELECT_DURATION * 0.75f
+        && m_fComboSelectTimer >= COMBO_SELECT_DURATION * 0.75f)
+    {
+        m_pCurrentCharacter->OnComboSound();
+    }
+
     if (m_fComboSelectTimer >= COMBO_SELECT_DURATION)
     {
         Cancel_ComboAttack();

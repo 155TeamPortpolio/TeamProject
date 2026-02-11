@@ -19,13 +19,18 @@ void CMiyabiState_SwitchOut::Update(CMiyabi* pOwner, _float dt)
         return;
     }
 
+    if (m_fAnimProgress < 0.3f)
+    {
+        pOwner->Process_RootMotion(dt, ENUM(CMiyabi::ROOTMOTION_MASK::QUATERNION));
+    }
     if (m_fAnimProgress >= 0.3f)
+    {
         pOwner->Update_DissolveProgress(dt * 5.f);
+        pOwner->Process_RootMotion(-dt, ENUM(CMiyabi::ROOTMOTION_MASK::MOVE) |
+            ENUM(CMiyabi::ROOTMOTION_MASK::QUATERNION));
+    }
 
-    pOwner->Process_RootMotion(-dt, ENUM(CMiyabi::ROOTMOTION_MASK::MOVE) |
-        ENUM(CMiyabi::ROOTMOTION_MASK::QUATERNION));
-
-    if (m_fAnimProgress >= 0.6f)
+    if (m_fAnimProgress >= 0.8f)
     {
         pOwner->DeActive_Character();
         pOwner->Get_StateMachine()->Set_Trigger("ToIdle");

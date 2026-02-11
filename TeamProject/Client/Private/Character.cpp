@@ -77,9 +77,6 @@ void CCharacter::Awake()
 
 void CCharacter::Priority_Update(_float dt)
 {
-    if (InputDevice()->Key_Tap('T'))
-        m_bTest = !m_bTest;
-
     Get_Component<CObjectContainer>()->Priority_UpdateChild(dt);
 }
 
@@ -286,17 +283,16 @@ OBJECT_HANDLE CCharacter::Calculate_Parry()
     }
 
     _vector3 vAttackPos = {};
+    _vector3 vAttackLook = {};
     _float vAttackOffset = {};
-    _vector3 vDirToPlayer = {};
 
     if (targetHandle.isValid())
     {
         vAttackPos = targetHandle.Get()->Get_WorldPos();
         vAttackPos.y = vPos.y;
-
-        vDirToPlayer = vPos - vAttackPos;
-        vDirToPlayer.y = 0.f;
-        vDirToPlayer.Normalize();
+        vAttackLook = targetHandle.Get()->Get_Component<CTransform>()->Dir(STATE::LOOK);
+        vAttackLook.y = 0.f;
+        vAttackLook.Normalize();
 
         CCharacterController* pCCT = targetHandle.Get()->Get_Component<CCharacterController>();
         if (pCCT)
@@ -311,7 +307,7 @@ OBJECT_HANDLE CCharacter::Calculate_Parry()
         }
     }
 
-    m_vParryPos = vAttackPos + vDirToPlayer * vAttackOffset * 2.f;
+    m_vParryPos = vAttackPos + vAttackLook * vAttackOffset * 3.f;
     m_vParryPos.y = vPos.y + 0.5f;
 
     m_vParryLook = vAttackPos - m_vParryPos;
@@ -676,11 +672,10 @@ _bool CCharacter::Is_Active_AttackCollider(const string& strName)
 void CCharacter::Take_Damage(DAMAGE_TYPE eType, _float fDamage)
 {
     // 패링 가능했을때
-    if(m_eSwitchType == SWITCH::PARRYAID)
+    if(m_eSwitchType == SWITCH::PARRYAID && m_ParryHandle.isValid())
     {
         BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::PARRY);
-        if (m_ParryHandle.isValid())
-            m_ParryHandle.GetAs<CEnemy>()->Parried();
+        m_ParryHandle.GetAs<CEnemy>()->Parried();
     }
 
     if (Is_Invincible()) return;
