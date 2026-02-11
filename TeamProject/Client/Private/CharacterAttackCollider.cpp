@@ -114,15 +114,6 @@ void CCharacterAttackCollider::OnTriggerEnter(CGameObject* pOther)
 			}
 		}
 
-		/* Effect Test */
-		_vector3 vWorldPosition = m_pTransform->Get_WorldPos();
-		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer"})
-			.Asset("basic_hit.json")
-			.Position(vWorldPosition)
-			.Build("BasicHit");
-
-		ObjectManager()->Add_Object(pEffect, { pEnemy->Get_Level(),"Effect_Layer" });
-
 		// Camera
 		if (pCharacter != nullptr && pCharacter->Is_MainCharacter())
 		{

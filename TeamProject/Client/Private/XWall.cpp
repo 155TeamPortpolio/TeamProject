@@ -71,7 +71,7 @@ HRESULT CXWall::Initialize(INIT_DESC* pArg)
 		instance->Set_Param("DiffuseTexture", { tex->Get_SRV(), "Texture2D", 0 });
 		instance->Override_Pass("Default");
 	}
-
+	
     return S_OK;
 }
 

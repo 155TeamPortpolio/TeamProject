@@ -895,11 +895,6 @@ void UI3DPass::Write_Buffer(ID3D11DeviceContext* pContext)
 
 	for (auto& packet : m_Packets)
 	{
-		if (!packet.bSkinning) {
-			if (!pPipeLine->isVisible(packet.pModel->Get_MeshBoundingBox(packet.DrawIndex), XMLoadFloat4x4(packet.pWorldMatrix)))
-				continue;
-		}
-
 		//���⼭ �ε��� �߰� ��������
 		_uint TransformIndex = pPipeLine->GetOrWriteTransform(packet.ObjID, *packet.pWorldMatrix);
 		_uint SkinningOffset = 0;

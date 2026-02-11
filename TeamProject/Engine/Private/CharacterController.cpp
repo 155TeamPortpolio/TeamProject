@@ -670,12 +670,10 @@ void CCharacterController::Move_Displacement(_fvector vDisp, _float dt)
 
 void CCharacterController::Move_RootMotion(_fvector vLocalDelta, _fvector qRotation, _float dt)
 {
-	const _float fRootMotionScale = 1.f;
 	_vector3 vDelta = vLocalDelta;
 	_vector3 vLocalMotion = _vector3(vDelta.x, 0.f, vDelta.z);
 	_smatrix matRot = _smatrix::CreateFromQuaternion(qRotation);
 	_vector3 vWorldMotion = _vector3::Transform(vLocalMotion, matRot);
-	vWorldMotion *= fRootMotionScale;
 
 	//m_vVelocity.x = vWorldMotion.x / dt;
 	//m_vVelocity.z = vWorldMotion.z / dt;
