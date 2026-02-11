@@ -238,7 +238,7 @@ void CUI_ScratchCard::Render_RT(CHILD child, ID3D11DeviceContext* pContext)
     auto pBrushShader = pSprite->Get_Shader();
 
     ID3D11InputLayout* pLayout;
-    RenderSystem()->GetRenderer(RENDERER_TYPE::UI)->Get_BufferInputLayout(pSprite->Get_Buffer(), pBrushShader, "OpaqueCustom", &pLayout);
+    RenderSystem()->GetRenderer(RENDERER_TYPE::UI)->Get_BufferInputLayout(pSprite->Get_Buffer(), pBrushShader, "Opaque_Custom", &pLayout);
     pContext->IASetInputLayout(pLayout);
     pSprite->Set_Param("g_WorldMatrix", { pChild->Get_Component<CTransform>()->Get_WorldMatrix_Ptr(), "matrix", sizeof(_float4x4) });
     pSprite->Set_Param("g_ViewMatrix", { &m_ViewMatrix, "matrix", sizeof(_float4x4) });
@@ -246,7 +246,7 @@ void CUI_ScratchCard::Render_RT(CHILD child, ID3D11DeviceContext* pContext)
     pSprite->Apply_Shader(pContext);
     pSprite->Set_Param("vColor", { &m_vColor, "float4", sizeof(_float4) });
 
-    pBrushShader->Apply("OpaqueCustom", pContext);
+    pBrushShader->Apply("Opaque_Custom", pContext);
     pSprite->Draw_Sprite(pContext);
 }
 

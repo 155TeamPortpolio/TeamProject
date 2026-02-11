@@ -62,6 +62,7 @@ public:
 	_bool	ExitBattleObject(BATTLE_OBJ_TYPE eObjType, OBJECT_HANDLE hObject);
 	void	EnterBattleObject(BATTLE_OBJ_TYPE eObjType, OBJECT_HANDLE hObject);
 	void	ExcludeBattleObject(BATTLE_OBJ_TYPE eObjType, OBJECT_HANDLE hObject);
+	_bool	isValidTarget(BATTLE_OBJ_TYPE eObjType, OBJECT_HANDLE hObject);
 	void	ClearBattleStage();
 
 private:

@@ -7,7 +7,7 @@ class CDefilerWeapon :
     public CEnemy
 {
 public:
-    struct DefilerWeaponDesc : GAMEOBJECT_DESC { Matrix vWorldMatrix = {}; _float3 vTargetPos = {};};
+    struct DefilerWeaponDesc : GAMEOBJECT_DESC { _bool isFinal = { false }; _float3 vTargetPos = {}; };
 
 private:
     CDefilerWeapon();
@@ -33,12 +33,15 @@ public:
 private:
     _bool   Try_Hit(CGameObject* pTarget);
     void Reset_Value(DefilerWeaponDesc* pArg);
+    void SummonAxe();
+
 private:
     _bool m_isEnd = {};
-    _bool    m_isSliding = false;
+    _bool m_isSliding = false;
+    _bool m_isFinalThrow = false;
 
     _float m_ElapsedTime = {};
-    _float m_fMoveSpeed = { 85 };
+    _float m_fMoveSpeed = { 120 };
     _float   m_groundY = 0.f;
 
     _vector3 m_vTargetVelocity = {};

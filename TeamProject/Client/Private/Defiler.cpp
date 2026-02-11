@@ -23,10 +23,13 @@
 #include "MiasmaSpawnBall.h"
 #include "MiasmaHeavyJaeger.h"
 #include "MiasmaDummyUnit.h"
+#include "DefilerWeapon.h"
+#include "DefilerAxe.h"
+#include "DefilerWall.h"
+
 #include "AudioSource.h"
 
 #include "UI_DamageText.h"
-#include "DefilerWeapon.h"
 
 CDefiler::CDefiler()
 	:CEnemy()
@@ -47,6 +50,8 @@ HRESULT CDefiler::Initialize_Prototype()
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_MiasmaHeavy", CMiasmaHeavyJaeger::Create());
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_MiasmaDummy", CMiasmaDummyUnit::Create());
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_DefilerWeapon", CDefilerWeapon::Create());
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_DefilerAxe", CDefilerAxe::Create());
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_DefilerWall", CDefilerWall::Create());
 
 	Add_Component<CAnimator3D>();
 	Add_Component<CSkeletalModel>();
@@ -497,7 +502,7 @@ void CDefiler::Control_Summon(const string& event)
 
 void CDefiler::Control_TargetEnable(_bool On)
 {
-	if (On) {
+	if (!On) {
 		BattleSystem()->ExcludeBattleObject(BATTLE_OBJ_TYPE::MONSTER, this->Get_Handle());
 	}
 	else {

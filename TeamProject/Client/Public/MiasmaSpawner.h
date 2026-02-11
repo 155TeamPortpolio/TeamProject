@@ -15,6 +15,7 @@ public:
 
 private:
 	_bool m_parabolLeft = {};
+	_uint m_WeaponThrowCount = {};
 };
 
 NS_END

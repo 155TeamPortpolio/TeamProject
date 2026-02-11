@@ -81,6 +81,8 @@
 #include "MiasmaBlade.h"
 #include "XWall.h"
 
+#include "UI_RenderTargetScreen.h"
+
 CTestLevel::CTestLevel(const string& LevelKey)
 	:CLevel(LevelKey),
 	m_pGameInstance{ CGameInstance::GetInstance() },
@@ -194,6 +196,10 @@ HRESULT CTestLevel::Awake()
 
 	ObjectManager()->Add_Object(XWall, { "Test_Level", "Effect_Layer" });
 
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_RenderTargetScreen", CUI_RenderTargetScreen::Create());
+	auto pRenderTargetScreen = Builder::Create_Object({ "Test_Level", "Proto_GameObject_RenderTargetScreen" })
+		.Build("rendertargetScreen");
+	ObjectManager()->Add_Object(pRenderTargetScreen, { "Test_Level", "UI_Layer" });
 
 #ifdef  _USING_GUI
 	Ready_MonsterSpawnConsole();
