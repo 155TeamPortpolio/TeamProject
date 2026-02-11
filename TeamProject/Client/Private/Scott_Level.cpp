@@ -35,7 +35,7 @@
 
 /* UI */
 #include "UIDirector.h"
-#include "UI_MeshBillboard.h"
+#include "UI_ZeroEntranceLogo.h"
 
 /* Interactable */
 #include "Portal.h"
@@ -70,6 +70,10 @@ HRESULT CScott_Level::Awake()
 	//==================== UI ===============
 	auto uiDirector = CUIDirector::GetInstance();
 	uiDirector->Load_LevelObjects("Scott_Level");
+	pProto->Add_ProtoType("Scott_Level", "Proto_GameObject_ZeroEntranceLogo", CUI_ZeroEntranceLogo::Create());
+	auto pZeroLogo = Builder::Create_Object({ "Scott_Level", "Proto_GameObject_ZeroEntranceLogo"}).Build("zeroLogo");
+	if (pZeroLogo)
+		ObjectManager()->Add_Object(pZeroLogo, { "Scott_Level", "UI_Layer" });
 
 	//==================== Interactable ===============
 	pProto->Add_ProtoType("Scott_Level", "Proto_GameObject_Portal", CPortal::Create());

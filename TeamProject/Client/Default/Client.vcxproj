@@ -576,7 +576,7 @@
     <ClInclude Include="..\Public\UI_BossHUD.h" />
     <ClInclude Include="..\Public\UI_EnemyStatus.h" />
     <ClInclude Include="..\Public\UI_FieldHUD.h" />
-    <ClInclude Include="..\Public\UI_MeshBillboard.h" />
+    <ClInclude Include="..\Public\UI_ZeroEntranceLogo.h" />
     <ClInclude Include="..\Public\ButtonUI.h" />
     <ClInclude Include="..\Public\CamDirectorData.h" />
     <ClInclude Include="..\public\CamLoader.h" />
@@ -1023,7 +1023,7 @@
     <ClCompile Include="..\Private\UI_BossHUD.cpp" />
     <ClCompile Include="..\Private\UI_EnemyStatus.cpp" />
     <ClCompile Include="..\Private\UI_FieldHUD.cpp" />
-    <ClCompile Include="..\Private\UI_MeshBillboard.cpp" />
+    <ClCompile Include="..\Private\UI_ZeroEntranceLogo.cpp" />
     <ClCompile Include="..\Private\ButtonUI.cpp" />
     <ClCompile Include="..\Private\CamLoader.cpp" />
     <ClCompile Include="..\private\CamObject.cpp" />
