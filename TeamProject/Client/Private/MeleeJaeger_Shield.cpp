@@ -10,7 +10,6 @@
 #include "ObjectContainer.h"
 #include "Collider.h"
 #include "Child.h"
-#include "BoneFollower.h"
 
 CMeleeJaeger_Shield::CMeleeJaeger_Shield()
 	: CEnemy()
@@ -29,7 +28,6 @@ HRESULT CMeleeJaeger_Shield::Initialize_Prototype()
 	Add_Component<CRigidBody>();
 	Add_Component<CMaterial>();
 	Add_Component<CStaticModel>();
-	Add_Component<CBoneFollower>();
 
 	auto pResourceMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
 	pResourceMgr->Add_ResourcePath("MeleeJaeger_Shield.mat", "../Bin/Resources/Zero/Enemy/MeleeJaeger_Shield/MeleeJaeger_Shield.mat");
@@ -51,7 +49,8 @@ HRESULT CMeleeJaeger_Shield::Initialize(INIT_DESC* pArg)
 	JAEGERSHIELD_DESC* pDesc = static_cast<JAEGERSHIELD_DESC*>(pArg);
 
 	m_pHandBone = pDesc->pHandBone;
-	if (nullptr == pDesc->pHandBone)
+	m_pWeaponBone = pDesc->pWeaponBone;
+	if (nullptr == pDesc->pWeaponBone)
 		return E_FAIL;
 
 	Get_Component<CRigidBody>()->Set_Kinematic(true);
@@ -72,7 +71,13 @@ void CMeleeJaeger_Shield::Priority_Update(_float dt)
 
 void CMeleeJaeger_Shield::Update(_float dt)
 {
+	if (!m_isFirstCompute)
+	{
+		dynamic_cast<CMeleeJaeger*>(Get_Component<CChild>()->Get_Parent())->SetIsShield(true);
+		m_isFirstCompute = true;
+	}
 	ComputePosition();
+	ComputeRoll(dt);
 
 	__super::Update(dt);
 }
@@ -86,7 +91,13 @@ void CMeleeJaeger_Shield::Late_Update(_float dt)
 void CMeleeJaeger_Shield::Render_GUI()
 {
 	ImGui::PushID(this);
-	__super::Render_GUI();
+	if (ImGui::TreeNode("Inspector"))
+	{
+		__super::Render_GUI();
+		ImGui::TreePop();
+	}
+
+	ImGui::Text("Roll Degree : %.2f", m_fComputeDegree);
 
 	float v[3] = { m_vOffset.x, m_vOffset.y, m_vOffset.z };
 
@@ -96,6 +107,7 @@ void CMeleeJaeger_Shield::Render_GUI()
 		m_vOffset.y = v[1];
 		m_vOffset.z = v[2];
 	}
+	ImGui::DragFloat("##ShieldRoll", &m_fRollDegree, 0.01f);  // speed = 0.1
 
 	ImGui::PopID();
 }
@@ -118,7 +130,15 @@ void CMeleeJaeger_Shield::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CH
 
 }
 
-void CMeleeJaeger_Shield::ComputePosition(_bool isFirst)
+void CMeleeJaeger_Shield::StartRoll(_float fDegree)
+{
+	m_fRollDegree = fDegree;
+
+	m_isRoll = true;
+	m_isStartRoll = true;
+}
+
+void CMeleeJaeger_Shield::ComputePosition()
 {
 	auto pChildCom = Get_Component<CChild>();
 	if (nullptr == pChildCom)
@@ -126,37 +146,161 @@ void CMeleeJaeger_Shield::ComputePosition(_bool isFirst)
 
 	auto pParent = pChildCom->Get_Parent();
 	_matrix mLocal = XMLoadFloat4x4(m_pTransform->Get_WorldMatrix_Ptr());
-	_matrix mHandBone = XMLoadFloat4x4(m_pHandBone);
+	_matrix mWeaponBone = XMLoadFloat4x4(m_pWeaponBone);
 	_matrix mParentWorld = XMLoadFloat4x4(pParent->Get_WorldMatrix_Ptr());
 
-	_matrix mResult = mLocal * mHandBone * mParentWorld;
+	_matrix mResult = mWeaponBone * mParentWorld;
 
 	_vector vPos = mResult.r[3];
 
-
-	if (m_isFirstCompute)
 	{
-		_vector vRight = XMVector3Normalize(mParentWorld.r[0]);
-		_vector vUp = XMVector3Normalize(mParentWorld.r[1]);
-		_vector vLook = XMVector3Normalize(mParentWorld.r[2]);
+		_matrix mWeaponBone = XMLoadFloat4x4(m_pWeaponBone);
+		_matrix mHandBone = XMLoadFloat4x4(m_pHandBone);
+		_matrix mParentWorld = XMLoadFloat4x4(pParent->Get_WorldMatrix_Ptr());
+
+		_matrix mWeaponW = mWeaponBone * mParentWorld;
+		_matrix mHandW = mHandBone * mParentWorld;
+
+		// --- 위치 ---
+		XMVECTOR weaponPos = mWeaponW.r[3];
+		XMVECTOR handPos = mHandW.r[3];
+
+		// === 본체 Look 가져오기(여기만 네 프로젝트에 맞게) ===
+		// 예: pParent가 곧 "본체"면 그대로 사용.
+		// 아니면 루트/바디 트랜스폼(혹은 spine/pelvis 본)에서 따로 얻어와야 함.
+		_matrix mBodyWorld = mParentWorld;
+
+		const XMVECTOR WORLD_UP = XMVectorSet(0.f, 1.f, 0.f, 0.f);
+
+		// 본체 look(수평)
+		XMVECTOR bodyLook = XMVector3Normalize(mParentWorld.r[2]);
+		bodyLook = bodyLook - XMVector3Dot(bodyLook, WORLD_UP) * WORLD_UP;
+		if (XMVectorGetX(XMVector3LengthSq(bodyLook)) < 1e-6f)
+			bodyLook = XMVectorSet(0.f, 0.f, 1.f, 0.f);
+		bodyLook = XMVector3Normalize(bodyLook);
+
+		// hand -> weapon (수평) : Right 힌트
+		XMVECTOR rightHint = mResult.r[3] - mHandW.r[3];
+		rightHint = rightHint - XMVector3Dot(rightHint, WORLD_UP) * WORLD_UP;
+
+		if (XMVectorGetX(XMVector3LengthSq(rightHint)) < 1e-6f)
+			rightHint = XMVector3Normalize(XMVector3Cross(WORLD_UP, bodyLook));
+		else
+			rightHint = XMVector3Normalize(rightHint);
+
+		if (m_hasPrev)
+		{
+			// 이전 회전의 월드 Right
+			XMVECTOR prevRight = XMVector3Rotate(XMVectorSet(1.f, 0.f, 0.f, 0.f), m_prevQ);
+			if (XMVectorGetX(XMVector3Dot(prevRight, rightHint)) < 0.f)
+				rightHint = XMVectorNegate(rightHint);
+		}
+
+		// Right 힌트로 Look 생성 (LH 기준: right x up = look)
+		XMVECTOR look = XMVector3Normalize(XMVector3Cross(rightHint, WORLD_UP));
+
+		// 본체 Look과 반대면 뒤집기(정면 정렬)
+		if (XMVectorGetX(XMVector3Dot(look, bodyLook)) < 0.f)
+		{
+			look = XMVectorNegate(look);
+			rightHint = XMVectorNegate(rightHint);
+		}
+
+		// 직교화
+		XMVECTOR right = XMVector3Normalize(XMVector3Cross(WORLD_UP, look));
+		XMVECTOR up = WORLD_UP;
+		look = XMVector3Cross(right, up);
+
+		// q 후보 1
+		XMMATRIX rotM = XMMatrixIdentity();
+		rotM.r[0] = right;
+		rotM.r[1] = up;
+		rotM.r[2] = look;
+		XMVECTOR q1 = XMQuaternionNormalize(XMQuaternionRotationMatrix(rotM));
+
+		XMMATRIX rotFlip = XMMatrixIdentity();
+		rotFlip.r[0] = XMVectorNegate(right);
+		rotFlip.r[1] = up;
+		rotFlip.r[2] = XMVectorNegate(look);
+		XMVECTOR q2 = XMQuaternionNormalize(XMQuaternionRotationMatrix(rotFlip));
 		
-		_vector vOffsetWorld =
-			vRight * m_vOffset.x +
-			vUp * m_vOffset.y +
-			vLook * m_vOffset.z;
+		XMVECTOR q = q1;
+		if (m_hasPrev)
+		{
+			float d1 = fabsf(XMVectorGetX(XMQuaternionDot(m_prevQ, q1)));
+			float d2 = fabsf(XMVectorGetX(XMQuaternionDot(m_prevQ, q2)));
+			q = (d2 > d1) ? q2 : q1;
 
-		vPos += vOffsetWorld;
+			if (XMVectorGetX(XMQuaternionDot(m_prevQ, q)) < 0.f)
+				q = XMVectorNegate(q);
+		}
+
+		m_pTransform->Set_WorldQuaternion(q);
+
+		// prev 갱신
+		m_prevQ = q;
+		m_hasPrev = true;
+
+
+		// 로컬 오프셋 (x=Right, y=Up, z=Look) 라고 가정
+		XMVECTOR offLocal = XMVectorSet(m_vOffset.x, m_vOffset.y, m_vOffset.z, 0.f);
+
+		// 최종 회전(q) 기준으로 월드 오프셋 생성
+		XMVECTOR offWorld = XMVector3Rotate(offLocal, q);
+
+		// 위치 적용
+		weaponPos += offWorld;
+
+		_float3 vResultPos{};
+		XMStoreFloat3(&vResultPos, weaponPos);
+		m_pTransform->Set_Pos(vResultPos);
 	}
-	_float3 vResultPos = {}; XMStoreFloat3(&vResultPos, vPos);
+}
 
-	m_pTransform->Set_Pos(vResultPos);
-	m_pTransform->Set_Quaternion(pParent->Get_Component<CTransform>()->Get_QuaternionRotate());
+void CMeleeJaeger_Shield::ComputeRoll(_float dt)
+{
+	if (false == m_isRoll)
+		return;
 
-	if (!m_isFirstCompute)
+	_matrix mWorld = XMLoadFloat4x4(m_pTransform->Get_WorldMatrix_Ptr());
+	
+	_float fRollDegree = m_fRollDegree;
+
+	if (m_isStartRoll)
+	//{
+	//	m_vStartRollTime.y += dt;
+	//
+	//	_float t = m_vStartRollTime.y / m_vStartRollTime.x;
+	//	t = clamp(t, 0.f, 1.f);
+	//
+	//	m_fComputeDegree = fRollDegree = t * m_fRollDegree;
+	//
+	//	if (m_vStartRollTime.x <= m_vStartRollTime.y)
+	//	{
+	//		m_vStartRollTime.y = 0.f;
+	//		m_isStartRoll = false;
+	//	}
+	//}
+
+	if (m_isEndRoll)
 	{
-		dynamic_cast<CMeleeJaeger*>(Get_Component<CChild>()->Get_Parent())->SetIsShield(true);
-		m_isFirstCompute = true;
+		m_vEndRollTime.y += dt;
+	
+		_float t = m_vEndRollTime.y / m_vEndRollTime.x;
+		t = clamp(t, 0.f, 1.f);
+	
+		m_fComputeDegree = fRollDegree = (1 - t) * m_fRollDegree;
+
+		if (m_vEndRollTime.x <= m_vEndRollTime.y)
+		{
+			m_vEndRollTime.y = 0.f;
+			m_isEndRoll = false;
+			m_isRoll = false;
+		}
 	}
+
+
+	m_pTransform->Rotation(XMVector3Normalize(mWorld.r[2]), XMConvertToRadians(fRollDegree));//-50
 }
 
 CMeleeJaeger_Shield* CMeleeJaeger_Shield::Create()

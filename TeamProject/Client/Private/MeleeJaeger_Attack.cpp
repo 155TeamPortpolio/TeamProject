@@ -47,6 +47,7 @@ void CMeleeJaeger_Attack::Enter(CMeleeJaeger* pOwner)
 		//	pOwner->Idle();
 		//	return;
 		//}
+		iAttackPatternIndex = 2;
 		AttackFromIndex(iAttackPatternIndex);
 	}
 	pOwner->CaptureRotateToDir(pOwner->GetTargetingInfo().vDirToTarget);
@@ -82,6 +83,10 @@ void CMeleeJaeger_Attack::Update(CMeleeJaeger* pOwner, _float dt)
 				pOwner->SetBattleColliderObject("Weapon", CEnemy::BATTLE_COLTYPE::ATTACK, false);
 			else if (Event.Tag == "FinishAll")
 				pOwner->SetOnAttack(false);
+			else if (Event.Tag == "ShieldRollStart")
+				pOwner->StartRoll(-40.f);
+			else if (Event.Tag == "ShieldRollEnd")
+				pOwner->EndRoll();
 			break;
 		}
 		case Engine::CLIP_EVENT_TYPE::EFFECT:

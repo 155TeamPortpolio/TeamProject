@@ -101,6 +101,12 @@ void CMeleeJaeger::Update(_float dt)
 
 	Update_States(dt);
 	m_pStateMachine->Update(dt);
+
+	if (m_isStop)
+		ObjectManager()->Set_LayerTimeScale({ LevelManager()->Get_NowLevelKey(), "Enemy_Layer" }, 0);
+	else
+		ObjectManager()->Set_LayerTimeScale({ LevelManager()->Get_NowLevelKey(), "Enemy_Layer" }, 1);
+
 }
 
 void CMeleeJaeger::Late_Update(_float dt)
@@ -232,6 +238,9 @@ void CMeleeJaeger::Render_GUI()
 	if (ImGui::Button("Execute"))
 		m_tStatus.iNowHP -= m_tStatus.iMaxHP;
 
+	if (ImGui::Button("Time Stop"))
+		m_isStop = !m_isStop;
+
 	ImGui::PopID();
 }
 
@@ -259,8 +268,11 @@ HRESULT CMeleeJaeger::Ready_Children(INIT_DESC* pArg)
 {
 	{
 		CMeleeJaeger_Shield::JAEGERSHIELD_DESC* pShieldDesc = new CMeleeJaeger_Shield::JAEGERSHIELD_DESC();
-		pShieldDesc->pHandBone = Get_Component<CAnimator3D>()->Get_BoneMatrixPtr(CAnimator3D::BoneSpace::COMBINED, "Bn_Weapon1");
+		pShieldDesc->pWeaponBone = Get_Component<CAnimator3D>()->Get_BoneMatrixPtr(CAnimator3D::BoneSpace::COMBINED, "Bn_Weapon1");
+		pShieldDesc->pHandBone = Get_Component<CAnimator3D>()->Get_BoneMatrixPtr(CAnimator3D::BoneSpace::COMBINED, "Bip001_L_Hand");
 		pShieldDesc->iMaxHP = m_tStatus.iMaxHP * 0.25f;
+
+	
 
 		COLLIDER_DESC ShieldColliderDesc= {};
 		ShieldColliderDesc.eGroup = COLLISION_GROUP::MONSTER;
@@ -377,6 +389,16 @@ void CMeleeJaeger::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER
 			.Loop(false)
 			.Apply();
 	}
+}
+
+void CMeleeJaeger::StartRoll(_float fDegree)
+{
+	m_pShield->StartRoll(fDegree);
+}
+
+void CMeleeJaeger::EndRoll()
+{
+	m_pShield->EndRoll();
 }
 
 /* For.State Machine */

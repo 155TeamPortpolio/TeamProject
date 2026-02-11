@@ -25,7 +25,19 @@
     },
     {
       "ClipTag": "MeleeJaeger_Ani_Attack_02",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.5642625093460083,
+          "EventType": "Notify",
+          "EventTag": "ShieldRollStart"
+        },
+        {
+          "EventTime": 0.8999999761581421,
+          "EventType": "Notify",
+          "EventTag": "ShieldRollEnd"
+        }
+
+      ]
     },
     {
       "ClipTag": "MeleeJaeger_Ani_Attack_03",
