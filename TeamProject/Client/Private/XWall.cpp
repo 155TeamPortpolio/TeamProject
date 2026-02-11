@@ -64,12 +64,12 @@ HRESULT CXWall::Initialize(INIT_DESC* pArg)
 	Get_Component<CInstanceModel>()->Link_InstanceMeshAll(0);
 	Get_Component<CInstanceModel>()->ShadowCast(false);
 
-	//for (auto& instance : Get_Component<CMaterial>()->Get_MaterialInstances())
-	//{
-	//	instance->Set_Param("DiffuseTexture", { ResourceManager()->Load_Texture(G_GlobalLevelKey, "Eff_Objects_041.png")->Get_SRV(), "Texture2D", 0 });
-	//	instance->Override_Pass("Default");
-	//}
-	//
+	for (auto& instance : Get_Component<CMaterial>()->Get_MaterialInstances())
+	{
+		instance->Set_Param("DiffuseTexture", { ResourceManager()->Load_Texture(G_GlobalLevelKey, "Eff_Objects_041.png")->Get_SRV(), "Texture2D", 0 });
+		instance->Override_Pass("Default");
+	}
+	
     return S_OK;
 }
 
