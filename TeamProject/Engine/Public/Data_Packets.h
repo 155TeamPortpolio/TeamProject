@@ -140,7 +140,7 @@ namespace Engine {
 
 		class CSoundData* pSound = {};
 		FMOD::Channel** ppChannelToUpdate = { nullptr };
-		_float3 vPosition = {};
+		FMOD_VECTOR* vPosition = {};
 	}AUDIO_PACKET;
 
 	/*Shader Param*/

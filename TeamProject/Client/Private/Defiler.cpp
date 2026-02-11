@@ -124,17 +124,16 @@ void CDefiler::Priority_Update(_float dt)
 	ComputeTargetingInfo();
 
 	if (InputDevice()->Key_Tap('F')) {
-		string nowLevelKey = LevelManager()->Get_NowLevelKey();
-		CDefilerWall::DefilerWallDesc* desc = new CDefilerWall::DefilerWallDesc;
-		desc->vLook = Math::NormalizeSafeXZ(m_pTransform->Dir(STATE::LOOK));
-		_vector3 pos = m_pTransform->Get_Pos();
-		pos.y = 0;
-
-		auto pWall = Builder::Create_Object({ "Zero_Level","Proto_GameObject_DefilerWall" })
-			.Position(pos)
-			.Add_ObjDesc(desc)
-			.Build("Wall");
-		ObjectManager()->Add_Object(pWall, { nowLevelKey,"Enemy_Layer" });
+		Get_Component<CAudioSource>()
+			->Slot("OngoingLevel_Chapter130_Belle_111302003_001.wav")
+			.FadeOut(1.f);
+	}
+	if (InputDevice()->Key_Tap('G')) {
+		Get_Component<CAudioSource>()
+			->Slot("OngoingLevel_Chapter130_Belle_111302003_001.wav")
+			.Attribute3D(false)
+			.FadeIn(1.f,1.f)
+			.Infinite(true).Play();
 	}
 }
 
@@ -146,8 +145,6 @@ void CDefiler::Update(_float dt)
 		m_BlackBoard.vTargetPos = m_tTargetingInfo.vTargetPos;
 		m_BlackBoard.vTargetDir = m_tTargetingInfo.vDirToTarget;
 	}
-
-	Update_States(dt);
 
 	auto animatorPtr = Get_Component<CAnimator3D>();
 	animatorPtr->Update_Animation(dt);
@@ -302,11 +299,11 @@ void CDefiler::MoveByTraceMode(_float dt, _float moveScale)
 	toTarget.y = 0.f;
 
 	const _float distToTarget = toTarget.Length();
-	if (distToTarget <= 1e-6f)
+	if (distToTarget <= 1.f)
 		return;
 
 	const _vector3 dirToTarget = toTarget / distToTarget;
-	const _float lockDist = 2.f;
+	const _float lockDist = 3.f;
 	if (distToTarget <= lockDist && stopAtTarget && !allowThrough)
 	{
 		m_BlackBoard.CurrentDir = dirToTarget;
