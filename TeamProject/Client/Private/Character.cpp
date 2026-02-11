@@ -77,9 +77,6 @@ void CCharacter::Awake()
 
 void CCharacter::Priority_Update(_float dt)
 {
-    if (InputDevice()->Key_Tap('T'))
-        m_bTest = !m_bTest;
-
     Get_Component<CObjectContainer>()->Priority_UpdateChild(dt);
 }
 
@@ -676,11 +673,10 @@ _bool CCharacter::Is_Active_AttackCollider(const string& strName)
 void CCharacter::Take_Damage(DAMAGE_TYPE eType, _float fDamage)
 {
     // 패링 가능했을때
-    if(m_eSwitchType == SWITCH::PARRYAID)
+    if(m_eSwitchType == SWITCH::PARRYAID && m_ParryHandle.isValid())
     {
         BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::PARRY);
-        if (m_ParryHandle.isValid())
-            m_ParryHandle.GetAs<CEnemy>()->Parried();
+        m_ParryHandle.GetAs<CEnemy>()->Parried();
     }
 
     if (Is_Invincible()) return;

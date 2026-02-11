@@ -39,7 +39,6 @@ void CCorinState_SwitchInParryAid::Enter(CCorin* pOwner)
 {
     pOwner->Lock_Move();
     pOwner->Lock_Rotate();
-
     __super::Enter(pOwner);
 }
 
@@ -71,7 +70,7 @@ void CCorinState_SwitchInParryAid_Start::Enter(CCorin* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_ParryAid_Start")
         .Loop(false)
-        .BlendDuration(0.1f)
+        .BlendDuration(0.2f)
         .ReserveSpeed(0.f, 1.f, 2.f, EaseType::OutQuint)
         .EndAt(0.4f)
         .Apply();

@@ -69,7 +69,7 @@ void CJaneDoeState_SwitchInParryAid_Start::Enter(CJaneDoe* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_ParryAid_Start")
         .Loop(false)
-        .BlendDuration(0.1f)
+        .BlendDuration(0.11f)
         .ReserveSpeed(0.f, 1.f, 2.f, EaseType::OutQuint)
         .EndAt(0.22f)
         .Apply();
