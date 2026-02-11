@@ -275,6 +275,7 @@ OBJECT_HANDLE CCharacter::Calculate_Parry()
 
     for (auto iter : pParry->Get_ParryTargets())
     {
+        if (!BattleSystem()->isValidTarget(BATTLE_OBJ_TYPE::MONSTER, iter)) continue;
         _vector3 vDiff = vPos - iter.Get()->Get_WorldPos();
         vDiff.y = 0.f;
         _float fDist = vDiff.Length();
