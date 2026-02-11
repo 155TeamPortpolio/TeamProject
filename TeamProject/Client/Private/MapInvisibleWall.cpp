@@ -45,6 +45,9 @@ void CMapInvisibleWall::Priority_Update(_float dt)
 void CMapInvisibleWall::Update(_float dt)
 {
 	Get_Component<CCollider>()->Update(dt);
+
+	if(auto* pChild = Get_Component<CObjectContainer>())
+		pChild->UpdateChild(dt);
 }
 
 void CMapInvisibleWall::Late_Update(_float dt)
@@ -88,18 +91,17 @@ void CMapInvisibleWall::CreateXWall(const _vector2& vCount, const _vector2& vOff
 	_vector4 vScale = m_pTransform->Get_Scale();
 
 	if (0 == vCount.x)
-		XWallDesc->vCount.x = static_cast<_int>(vScale.x / XWallDesc->vOffset.x);
+		XWallDesc->vCount.x = static_cast<_int>(vScale.x / XWallDesc->vOffset.x) * 5;
 
 	if (0 == vCount.y)
 		XWallDesc->vCount.y = 3;
 
 	auto XWall = Builder::Create_Object({ G_GlobalLevelKey, "Proto_GameObject_XWall" })
 		.Add_ObjDesc(XWallDesc)
-		.Position({ 0.f, 1.f, 0.f })
 		.Build("XWall");
 
-	ObjectManager()->Add_Object(XWall, { "Test_Level", "Effect_Layer" });
-	Get_Component<CObjectContainer>()->Add_Child(XWall, true);
+	if(XWall)
+		Get_Component<CObjectContainer>()->Add_Child(XWall, true);
 }
 
 

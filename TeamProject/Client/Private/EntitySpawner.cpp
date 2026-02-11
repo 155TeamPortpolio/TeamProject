@@ -292,25 +292,29 @@ OBJECT_HANDLE Client::Spawner::Create_Invwall(const SPAWNER_DESC& Desc)
 		.Build(Desc.tagName);
 
 #pragma region XWall
-	/* Portal */
-	if (Desc.tagName == "XWall")
+	auto Slot = Desc.SlotDataValues.find("XWall");
+
+	if (Slot != Desc.SlotDataValues.end())
 	{
-		auto Slot = Desc.SlotDataValues.find("XWall");
-
-		if (Slot != Desc.SlotDataValues.end()) {
-			for (auto tFieldData : Slot->second) {
-				if (tFieldData.TagName == "XWall")
-				{
-					_float4 vec4 = *GetSlotValue<_float4>(tFieldData.defaultvalue);
-
-					_vector2 vCount = { vec4.x, vec4.y };
-					_vector2 vOffset = { vec4.z, vec4.w };
-
-					static_cast<CMapInvisibleWall*>(Object)->CreateXWall(vCount, vOffset);
-				}
+		_vector2 vCount{}, vOffset{};
+		_bool bCount{}, bOffset{};
+	
+		for (auto tFieldData : Slot->second)
+		{
+			if (tFieldData.TagName == "Count") {
+				_vector2 vCount = *GetSlotValue<_float2>(tFieldData.defaultvalue);
+				bCount = true;
+			}
+			if (tFieldData.TagName == "Offset") {
+				_vector2 vOffset = *GetSlotValue<_float2>(tFieldData.defaultvalue);
+				bOffset = true;
 			}
 		}
+
+		if(bCount && bOffset)
+			static_cast<CMapInvisibleWall*>(Object)->CreateXWall(vCount, vOffset);
 	}
+	
 #pragma endregion
 
 	ObjectManager()->Add_Object(Object, { Desc.tagLevel, "InvisibleWall_Layer" });
