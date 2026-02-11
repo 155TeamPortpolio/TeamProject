@@ -46,9 +46,13 @@ public: // 행동 이벤트
     virtual void    OnPerfectDodge()           override;
     virtual void    OnDefensiveAssist()        override;
 
+//public: // 모션블러
+//    void    Update_MotionBlurQueue();
+//    void    Reset_RimLight();
+
 public: // 모션블러
-    void    Update_MotionBlurQueue();
-    void    Reset_RimLight();
+    void    Add_MotionBlur();
+    void    Clear_MotionBlur();
 
 private: // 초기화
     HRESULT Initialize_StateMachine();
@@ -63,8 +67,12 @@ private: // 상태 처리
     void    Process_AttackInput(const string& strCurrentState);
     void    Process_EndState(const string& strCurrentState);
 
+//private: // 모션블러 렌더
+//    HRESULT Add_PassionMotionBlur();
+//    HRESULT Render_PassionMotionBlur(ID3D11DeviceContext* pContext, _uint index);
+
 private: // 모션블러 렌더
-    HRESULT Add_PassionMotionBlur();
+    HRESULT Update_MotionBlurQueue();
     HRESULT Render_PassionMotionBlur(ID3D11DeviceContext* pContext, _uint index);
 
 private:

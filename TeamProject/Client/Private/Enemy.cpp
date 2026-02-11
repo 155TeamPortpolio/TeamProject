@@ -279,7 +279,8 @@ void CEnemy::Active_AttackSign(_bool parryEnable)
 void CEnemy::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER charaName)
 {
 	_float fTakeDamage = fDamage;
-	
+	BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::HIT_NORMAL);
+
 	if (m_tStatus.isGroggy)
 		fTakeDamage *= 1.5f;
 	else

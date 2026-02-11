@@ -5,6 +5,7 @@
 #include "DataBase.h"
 #include "ObjectContainer.h"
 #include "EventListener.h"
+#include "AudioSource.h"
 #include "TextSlot.h"
 #include "ButtonUI.h"
 
@@ -17,6 +18,8 @@
 
 void CUI_Dialogue::Change_Dialogue()
 {
+    Get_Component<CAudioSource>()->Slot("UI_Tick.wav").Attribute3D(false).Loop(false).Play();
+
     switch (m_tDialogueDesc.Result)
     {
     // 대화가 성공 / 실패로 종료되는 경우
@@ -42,6 +45,8 @@ void CUI_Dialogue::Change_Dialogue()
 
 void CUI_Dialogue::Change_Dialogue(ChoiceDesc desc)
 {
+    Get_Component<CAudioSource>()->Slot("UI_Tick.wav").Attribute3D(false).Loop(false).Play();
+
     m_tChoiceDesc = desc;
     // 선택 결과가 대화 종료를 의미하는 경우
     if (desc.Next_SequeceID == 0)
@@ -98,6 +103,8 @@ HRESULT CUI_Dialogue::Initialize_Prototype()
 
     Add_Component<CObjectContainer>();
     Add_Component<CEventListener>();
+    Add_Component<CAudioSource>();
+    Get_Component<CAudioSource>()->SoundFolder(G_GlobalLevelKey, "../Bin/Resources/Global/UI/Sound/");
 
     return S_OK;
 }

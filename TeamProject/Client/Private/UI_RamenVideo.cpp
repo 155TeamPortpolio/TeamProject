@@ -3,6 +3,7 @@
 
 #include "GameInstance.h"
 #include "ObjectContainer.h"
+#include "AudioSource.h"
 #include "Sprite2D.h"
 #include "MFVideoDecoderBackend.h"
 
@@ -13,6 +14,8 @@ HRESULT CUI_RamenVideo::Initialize_Prototype()
 	__super::Initialize_Prototype();
 
     Add_Component<CObjectContainer>();
+    Add_Component<CAudioSource>();
+    Get_Component<CAudioSource>()->SoundFolder(G_GlobalLevelKey, "../Bin/Resources/MainCity/Sound/NPC/");
 
 	return S_OK;
 }
@@ -71,7 +74,8 @@ void CUI_RamenVideo::UI_Active(void* pArg)
 {
     Set_Alive(true);
     VideoService()->StartDecode(m_PlayerID);
-    m_pPlayer->Play(); 
+    m_pPlayer->Play();
+    Get_Component<CAudioSource>()->Slot("SirChopCook.wav").Attribute3D(false).Loop(false).Play();
 }
 
 void CUI_RamenVideo::UI_DeActive(void* pArg)
@@ -80,6 +84,7 @@ void CUI_RamenVideo::UI_DeActive(void* pArg)
     m_pPlayer->Stop();
     if (m_OnClick)
         m_OnClick();
+    Get_Component<CAudioSource>()->Set_SlotPuase("SirChopCook.wav", true);
 }
 
 void CUI_RamenVideo::Create_SkipButton()
@@ -88,6 +93,7 @@ void CUI_RamenVideo::Create_SkipButton()
     pDesc->onClick = [this]() { UI_DeActive(); };
     pDesc->strLabel = L"°Ç³Ê¶Ù±â";
     pDesc->strTextureKey = "IconSkip.png";
+    pDesc->strSoundKey = "UI_Open_Swoosh.wav";
     auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_IconButton" })
         .Add_UIDesc(pDesc)
         .Build("buttonSkip");

@@ -3,6 +3,7 @@
 
 #include "GameInstance.h"
 #include "ObjectContainer.h" 
+#include "AudioSource.h"
 #include "TextSlot.h"
 
 #include "UI_IconButton.h"
@@ -12,6 +13,8 @@ HRESULT CUI_RamenResultBanner::Initialize_Prototype()
     __super::Initialize_Prototype();
 
     Add_Component<CObjectContainer>();
+    Add_Component<CAudioSource>();
+    Get_Component<CAudioSource>()->SoundFolder(G_GlobalLevelKey, "../Bin/Resources/Global/UI/Sound/");
 
     return S_OK;
 }
@@ -21,7 +24,7 @@ HRESULT CUI_RamenResultBanner::Initialize(INIT_DESC* pArg)
     RESULT_BANNER_DESC* pDesc = static_cast<RESULT_BANNER_DESC*>(pArg);
     m_OnClick = pDesc->onClickConfirm;
 
-    __super::Initialize();
+    __super::Initialize(pArg);
 
     Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("ramen_result_banner.json")));
     Cache();
@@ -102,6 +105,7 @@ void CUI_RamenResultBanner::Create_ConfirmButton()
     pDesc->onClick = [this]() { OnClick_Confirm(); };
     pDesc->strLabel = L"È®ÀÎ";
     pDesc->strTextureKey = "IconOK.png";
+    pDesc->strSoundKey = "UI_Close_Swoosh.wav";
     auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_IconButton" })
         .Add_UIDesc(pDesc)
         .Build("buttonOK");
