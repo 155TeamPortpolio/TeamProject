@@ -7,19 +7,12 @@
 #include "Shader.h"
 #include "Renderer.h"
 
-#include "RectModel.h"
-#include "Material.h"
-#include "MaterialInstance.h"
-#include "MaterialData.h"
-
 HRESULT CUI_WipeoutRTV::Initialize_Prototype()
 {
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
 
 	Add_Component<CObjectContainer>();
-    Add_Component<CRectModel>();
-    Add_Component<CMaterial>();
 
 	return S_OK;
 }
@@ -30,26 +23,8 @@ HRESULT CUI_WipeoutRTV::Initialize(INIT_DESC* pArg)
 		return E_FAIL;
 
     Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("wipeout.json")));
-    Cache();
-
-    //Set_Alpha(m_isVisible? 1.f : 0.f);
-
-    ID3D11Device* pDevice = CGameInstance::GetInstance()->Get_Device();
-    CMaterial* pMaterial = Get_Component<CMaterial>();
-    m_pMtrlInst = CMaterialInstance::Create_Handle("wipeout", "UI", pDevice);
-    pMaterial->Insert_MaterialInstance(m_pMtrlInst, nullptr);
-    auto MaterialDat = m_pMtrlInst->Get_MaterialData();
-    if (MaterialDat)
-        MaterialDat->Link_Shader(G_GlobalLevelKey, "VTX_Mesh.hlsl");
 
     auto pSprite = Get_Component<CSprite2D>();
-
-    // ·»´õÅ¸°Ù »ý¼º
-    RenderTargetDesc desc = {};
-    desc.Key = "wipeout";
-    desc.Width = m_WinSize.x;
-    desc.Height = m_WinSize.y;
-    RenderSystem()->Create_RenderTarget(desc);
 
     // ºä, ÇÁ·ÎÁ§¼Ç Çà·Ä ±¸¼º
     XMStoreFloat4x4(&m_ViewMatrix, XMMatrixIdentity());
@@ -68,66 +43,24 @@ void CUI_WipeoutRTV::Awake()
 
 void CUI_WipeoutRTV::Update(_float dt)
 {
-    if (InputDevice()->Key_Tap('I'))
-    {
-        m_isVisible = !m_isVisible;
-        Set_Alpha(m_isVisible ? 1.f : 0.f);
-        Set_ChildAnimation(CHILD::RAINBOW, 0, true);
-    }
-    
     __super::Update(dt);
 
     Get_Component<CObjectContainer>()->UpdateChild(dt);
 
-    // ·»´õ Å¸°Ù¿¡ ºê·¯½¬·Î ±×¸²
     RENDER_CUSTOM_COMMAND command = {};
-    command.TargetKey = "wipeout";
+    command.TargetKey = "renderTargetScreen";
     command.bClear = true;
     command.DrawCallback = [this](ID3D11DeviceContext* pContext) { Render_RT(pContext); };
     RenderSystem()->Add_RenderCommand(command, CUSTOMTARGET::UI);
-
-    m_pMtrlInst->Set_Param("g_WorldMatrix", { Get_Component<CTransform>()->Get_WorldMatrix_Ptr(), "float4x4", sizeof(_float4x4) });
 }
 
 void CUI_WipeoutRTV::Render_RT(ID3D11DeviceContext* pContext)
 {
-    auto& children = Get_Component<CObjectContainer>()->Get_Children();
-    for (auto& pChild : children)
-    {
-        Render_Recursive(pChild, pContext);
-
-        //if (!pChild)
-        //    continue;
-        //
-        //auto pSprite = pChild->Get_Component<CSprite2D>();
-        //if (!pSprite)
-        //    continue;
-        //
-        //auto pShader = pSprite->Get_Shader();
-        //
-        //ID3D11InputLayout* pLayout = { nullptr };
-        //const string strPassConstant = pSprite->Get_PassConstant();
-        //string strCustomPassConstant = "Opaque_Custom";
-        //
-        //if (strPassConstant == "UI_StencilWrite")
-        //    strCustomPassConstant = "StencilWrite_Custom";
-        //else if (strPassConstant == "Opaque_StencilTest")
-        //    strCustomPassConstant = "Opaque_StencilTest_Custom";
-        //
-        //RenderSystem()->GetRenderer(RENDERER_TYPE::UI)->Get_BufferInputLayout(pSprite->Get_Buffer(), pShader, strCustomPassConstant, &pLayout);
-        //pContext->IASetInputLayout(pLayout);
-        //pSprite->Set_Param("g_WorldMatrix", { pChild->Get_Component<CTransform>()->Get_WorldMatrix_Ptr(), "matrix", sizeof(_float4x4) });
-        //pSprite->Set_Param("g_ViewMatrix", { &m_ViewMatrix, "matrix", sizeof(_float4x4) });
-        //pSprite->Set_Param("g_ProjMatrix", { &m_ProjMatrix, "matrix", sizeof(_float4x4) });
-        //pSprite->Apply_Shader(pContext);
-        //pSprite->Set_Param("vColor", { &m_vColor, "float4", sizeof(_float4) });
-        //
-        //pShader->Apply(strCustomPassConstant, pContext);
-        //pSprite->Draw_Sprite(pContext);
-    }
+    for (auto& pChild : Get_Component<CObjectContainer>()->Get_Children())
+        Render_RTRecursive(pChild, pContext);
 }
 
-void CUI_WipeoutRTV::Render_Recursive(CGameObject* pObj, ID3D11DeviceContext* pContext)
+void CUI_WipeoutRTV::Render_RTRecursive(CGameObject* pObj, ID3D11DeviceContext* pContext)
 {
     if (!pObj)
         return;
@@ -163,38 +96,9 @@ void CUI_WipeoutRTV::Render_Recursive(CGameObject* pObj, ID3D11DeviceContext* pC
         auto& children = pContainer->Get_Children();
         for (auto& pChild : children)
         {
-            Render_Recursive(pChild, pContext);
+            Render_RTRecursive(pChild, pContext);
         }
     }
-}
-
-void CUI_WipeoutRTV::Cache()
-{
-    auto pContainer = Get_Component<CObjectContainer>();
-
-    for (_int i = 0; i < ENUM(CHILD::END); ++i)
-    {
-        auto pObj = pContainer->Find_Descendant(INSTANCENAMES[i]);
-        if (!pObj)
-            continue;
-
-        m_pChildren[i] = dynamic_cast<CUI_Object*>(pObj);
-    }
-}
-
-void CUI_WipeoutRTV::Set_ChildAnimation(CHILD child, _int iIndex, _bool isPlayChild)
-{
-    auto pChild = m_pChildren[ENUM(child)];
-    if (!pChild)
-        return;
-
-    pChild->Set_Animation(0);
-    if (!isPlayChild)
-        return;
-
-    auto children = pChild->Get_Component<CObjectContainer>()->Get_Children();
-    for (auto& pChild : children)
-        dynamic_cast<CUI_Object*>(pChild)->Set_Animation(iIndex);
 }
 
 CGameObject* CUI_WipeoutRTV::Create()

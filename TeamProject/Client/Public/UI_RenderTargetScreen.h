@@ -3,12 +3,12 @@
 
 NS_BEGIN(Client)
 
-class CUI_Wipeout final : public CGameObject
+class CUI_RenderTargetScreen final : public CGameObject
 {
 private:
-	CUI_Wipeout() {}
-	CUI_Wipeout(const CUI_Wipeout& rhs) : CGameObject(rhs) {}
-	virtual ~CUI_Wipeout() DEFAULT;
+	CUI_RenderTargetScreen() {}
+	CUI_RenderTargetScreen(const CUI_RenderTargetScreen& rhs) : CGameObject(rhs) {}
+	virtual ~CUI_RenderTargetScreen() DEFAULT;
 
 public:
 	HRESULT Initialize_Prototype()     override;
@@ -19,8 +19,23 @@ public:
 
 private:
 	_uint m_iMtrlInstIdx = {};
+
+	_float2 m_vViewPortSize = {};
+
 	_float4x4 m_ViewMatrix = {};
 	_float4x4 m_ProjMatrix = {};
+
+	const string strRTVTag = "renderTargetScreen";
+
+private:
+	HRESULT Ready_Components();
+	void Ready_RTV();
+	void Ready_ViewProj();
+	void Ready_RenderState(); 
+	void Ready_RTV_DrawObjects();
+
+	void Create_RTV();
+	void Bind_RTV();
 
 public:
 	static  CGameObject* Create();

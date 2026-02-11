@@ -453,7 +453,7 @@
     <ClInclude Include="..\Public\UI_GachaTextGroupEngine.h" />
     <ClInclude Include="..\Public\UI_GachaTextGroup.h" />
     <ClInclude Include="..\Public\UI_GachaVideo.h" />
-    <ClInclude Include="..\Public\UI_Wipeout.h" />
+    <ClInclude Include="..\Public\UI_RenderTargetScreen.h" />
     <ClInclude Include="..\Public\UI_WipeoutRTV.h" />
     <ClInclude Include="..\public\XWall.h" />
     <ClInclude Include="..\public\ZeroStage_Start.h" />
@@ -896,7 +896,7 @@
     <ClCompile Include="..\Private\UI_GachaTextGroupEngine.cpp" />
     <ClCompile Include="..\Private\UI_GachaTextGroup.cpp" />
     <ClCompile Include="..\Private\UI_GachaVideo.cpp" />
-    <ClCompile Include="..\Private\UI_Wipeout.cpp" />
+    <ClCompile Include="..\Private\UI_RenderTargetScreen.cpp" />
     <ClCompile Include="..\Private\UI_WipeoutRTV.cpp" />
     <ClCompile Include="..\private\XWall.cpp" />
     <ClCompile Include="..\private\ZeroStage_Start.cpp" />
