@@ -1281,6 +1281,12 @@
     <Filter Include="02. GameObject\Object\Env">
       <UniqueIdentifier>{e13e0649-5d43-4108-b4fd-d8e6ed754d44}</UniqueIdentifier>
           </Filter>
+    <Filter Include="02. GameObject\Effect\HitEffect">
+      <UniqueIdentifier>{d0c7f39e-0011-405a-949b-aa5bc541e1d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Effect\HitEffect\BasicHit">
+      <UniqueIdentifier>{15e73540-5323-452d-b699-04f689261bb8}</UniqueIdentifier>
+    </Filter>  
     <Filter Include="02. GameObject\UI\02. 3D\Mesh\RenderTargetScreen">
       <UniqueIdentifier>{9fcf702b-1570-44a5-9f26-b33011d359a9}</UniqueIdentifier>
     </Filter>
@@ -2518,6 +2524,9 @@
     </ClInclude>
     <ClInclude Include="..\public\Water.h">
       <Filter>02. GameObject\Object\Env</Filter>
+          </ClInclude>
+    <ClInclude Include="..\Public\BasicHitEffect.h">
+      <Filter>02. GameObject\Effect\HitEffect\BasicHit</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -3691,6 +3700,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Water.cpp">
       <Filter>02. GameObject\Object\Env</Filter>
+          </ClCompile>
+    <ClCompile Include="..\Private\BasicHitEffect.cpp">
+      <Filter>02. GameObject\Effect\HitEffect\BasicHit</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

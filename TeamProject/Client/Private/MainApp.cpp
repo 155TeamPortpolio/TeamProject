@@ -38,6 +38,7 @@
 #include "AttackSign.h"
 #include "Player.h"
 #include "TestCloud.h"
+#include "BasicHitEffect.h"
 
 /* UI */
 #include "ButtonUI.h"
@@ -244,6 +245,7 @@ void CMainApp::Initialize_GlobalPrototype()
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_TrailNode", CTrailNode::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_EffectContainer", CEffectContainer::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_AttackSign", CAttackSign::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_BasicHitEffect", CBasicHitEffect::Create());
 
 	/*Player*/
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Player", CPlayer::Create());

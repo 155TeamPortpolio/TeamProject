@@ -13,6 +13,7 @@
 #include "MaterialData.h"
 #include "ObjectContainer.h"
 #include "Animator3D.h"
+#include "AudioSource.h"
 
 /* State */
 #include "StateMachine.h"
@@ -35,6 +36,7 @@ HRESULT CSacrificeHand::Initialize_Prototype()
 	Add_Component<CSkeletalModel>();
 	Add_Component<CMaterial>();
 	Add_Component<CAnimator3D>();
+	Add_Component<CAudioSource>();
 
 	auto pResource = CGameInstance::GetInstance()->Get_ResourceMgr();
 	pResource->Add_ResourcePath("Monster_SacrificeBringerHand.model", "../Bin/Resources/Model/skeletal/Enemy/Sacrifice/Hand/Monster_SacrificeBringerHand.model");
@@ -57,6 +59,9 @@ HRESULT CSacrificeHand::Initialize(INIT_DESC* pArg)
 	auto pAnimator = Get_Component<CAnimator3D>();
 	pAnimator->LinkAnimate_Model(G_GlobalLevelKey, "Monster_SacrificeBringerHand.model");
 	pAnimator->Link_MetaData(G_GlobalLevelKey, "Monster_SacrificeBringerHand_Meta.json");
+
+	auto pAudio = Get_Component<CAudioSource>();
+	pAudio->SoundFolder(G_GlobalLevelKey, "../Bin/Resources/Zero/Enemy/Sacrifice/Sound");
 
 	/* Hand Bubble */
 	auto pObjectContainer = Get_Component<CObjectContainer>();

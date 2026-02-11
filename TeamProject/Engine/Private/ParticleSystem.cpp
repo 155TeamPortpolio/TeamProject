@@ -290,6 +290,8 @@ void CParticleSystem::ApplyPending()
 
 	m_vRimLightColor = m_PendingChanged.vRimLightColor;
 	m_vPivot = m_PendingChanged.vPivot;
+	m_iUseDepthTest = m_PendingChanged.iUseDepthTest;
+	m_iRenderAlignment = m_PendingChanged.iRenderAlignment;
 	m_iRGBMaskMode = m_PendingChanged.iRGBMaskMode;
 	m_eModuelMask = static_cast<MODULE_MASK>(m_PendingChanged.iModuleMask);
 	m_eColorMode = static_cast<COLOR_MODE>(m_PendingChanged.iColorMode);
@@ -341,7 +343,8 @@ void CParticleSystem::ApplyPending()
 	m_Noise.vScrollSpeed = m_PendingChanged.vScrollSpeed;
 
 	auto customInstance = m_pOwner->Get_Component<CMaterial>()->Get_MaterialInstance(0);
-
+	customInstance->Set_Param("UseDepthTest", { &m_iUseDepthTest,"uint",sizeof(_uint) });
+	customInstance->Set_Param("RenderAlignment", { &m_iRenderAlignment,"uint",sizeof(_uint) });
 	customInstance->Set_Param("RGBMask", { &m_iRGBMaskMode,"uint",sizeof(_uint) });
 
 	customInstance->Set_Param("Col", { &m_TextureSheetAnimation.iCol,"uint",sizeof(_uint) });
