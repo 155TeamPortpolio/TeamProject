@@ -1278,8 +1278,11 @@
     <Filter Include="02. GameObject\UI\02. 3D\Mesh\RenderTargetScreen">
       <UniqueIdentifier>{9fcf702b-1570-44a5-9f26-b33011d359a9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\UI\02. 3D\Mesh\RenderTargetScreen\Wipeout">
+    <Filter Include="02. GameObject\UI\01. 2D\RTVDraw">
       <UniqueIdentifier>{3f5f7d60-1268-4b6f-b2f4-3e0e9000df8f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\RTVDraw\Wipeout">
+      <UniqueIdentifier>{b1b9c45c-75fb-4a4d-8777-38f72034a43e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -2471,11 +2474,14 @@
     <ClInclude Include="..\Public\MiasmaDummyUnit.h">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler\MiasmaUnit\Heavy\HeavyDummyUnit</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\UI_WipeoutRTV.h">
-      <Filter>02. GameObject\UI\02. 3D\Mesh\RenderTargetScreen\Wipeout</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\UI_RenderTargetScreen.h">
       <Filter>02. GameObject\UI\02. 3D\Mesh\RenderTargetScreen</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_WipeoutRTV.h">
+      <Filter>02. GameObject\UI\01. 2D\RTVDraw\Wipeout</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_RTVDraw.h">
+      <Filter>02. GameObject\UI\01. 2D\RTVDraw</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -3626,11 +3632,14 @@
     <ClCompile Include="..\Private\MiasmaDummyUnit.cpp">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler\MiasmaUnit\Heavy\HeavyDummyUnit</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\UI_WipeoutRTV.cpp">
-      <Filter>02. GameObject\UI\02. 3D\Mesh\RenderTargetScreen\Wipeout</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\UI_RenderTargetScreen.cpp">
       <Filter>02. GameObject\UI\02. 3D\Mesh\RenderTargetScreen</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_WipeoutRTV.cpp">
+      <Filter>02. GameObject\UI\01. 2D\RTVDraw\Wipeout</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_RTVDraw.cpp">
+      <Filter>02. GameObject\UI\01. 2D\RTVDraw</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
