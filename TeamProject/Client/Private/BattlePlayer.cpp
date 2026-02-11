@@ -767,7 +767,7 @@ void CBattlePlayer::Update_Target()
     for (auto& monster : Monsters)
     {
         if (!monster.hObject.isValid()
-            || !BattleSystem()->isValidTarget(BATTLE_OBJ_TYPE::MONSTER, m_TargetHandle))
+            || !BattleSystem()->isValidTarget(BATTLE_OBJ_TYPE::MONSTER, monster.hObject))
             continue;
         
         _vector3 vToMonster = monster.vPos - m_pCurrentCharacter->Get_WorldPos();

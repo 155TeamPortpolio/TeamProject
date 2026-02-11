@@ -449,11 +449,17 @@ void CCharacter::Stop_Rotation()
 
 void CCharacter::Look_Target()
 {
-    if (!m_TargetHandle.isValid()) return;
-
+    if (!m_TargetHandle.isValid())
+        return;
     auto target = m_TargetHandle.Get();
     _vector3 vLook = target->Get_WorldPos() - Get_WorldPos();
     vLook.y = 0;
+
+    if (vLook.LengthSquared() < 0.01f)
+    {
+        return;
+    }
+
     vLook.Normalize();
     Get_Component<CTransform>()->Set_Look(vLook);
 }
