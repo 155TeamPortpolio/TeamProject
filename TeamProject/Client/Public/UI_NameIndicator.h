@@ -14,6 +14,7 @@ public:
 	typedef struct tagIndicatorDesc : public UI_DESC {
 		wstring strName = {};
 		class CCharacterController* pCCT = { nullptr };
+		_float3 vPosition = {};
 	}INDICATOR_DESC;
 
 private:

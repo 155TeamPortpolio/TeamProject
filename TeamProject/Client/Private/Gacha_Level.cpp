@@ -19,6 +19,9 @@
 
 #include "EffectContainer.h"
 
+#include "PostProcessCommand.h"
+#include "PostRenderer.h"
+
 CGacha_Level::CGacha_Level(const string& LevelKey)
 	:CLevel(LevelKey),
 	m_pGameInstance{ CGameInstance::GetInstance() },
@@ -58,8 +61,6 @@ HRESULT CGacha_Level::Awake()
 	lightDesc.fLightIntensity = 1.f;// 0.7f;
 	pShadowCam->Get_Component<CLight>()->Set_Desc(lightDesc, LIGHT_TYPE::DIRECTIONAL);
 
-	//RenderSystem()->Set_FogDesc({ _float4(0.1f, 0.1f, 0.1f, 1.0f) ,0.f, 0.f, 0.02f, true });
-
 	Ready_GachaObjects(); 
 
 	//==================== Effect ============
@@ -69,6 +70,10 @@ HRESULT CGacha_Level::Awake()
 	//	.Build("Gacha_Light");
 	//
 	//ObjectManager()->Add_Object(pEffect, { "Gacha_Level","Effect_Layer" });
+
+	auto pPost = RenderSystem()->GetPostRenderer();
+	pPost->GetCommand<CFogCommand>()->
+		SetEnable(false);
 
 	return S_OK;
 }

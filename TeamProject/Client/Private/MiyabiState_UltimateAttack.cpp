@@ -27,6 +27,7 @@ CMiyabiState_UltimateAttack* CMiyabiState_UltimateAttack::Create()
 
     pSubStateMachine->Set_DefaultState("UltimateAttack_Start");
 
+
     return pInstance;
 }
 
@@ -67,11 +68,9 @@ void CMiyabiState_UltimateAttack_Start::Enter(CMiyabi* pOwner)
     BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::ULTIMATE);
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "SwitchIn_Attack_Ex_Start")
         .Apply();
-
-    _int iPlayIdx = (m_iSoundIdx++) % 3 + 1;
-    pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_UltimateAttack_Voice_0" + to_string(iPlayIdx) + ".wav")
+    pOwner->Get_Component<CAudioSource>()->Sequence("Ultimate")
         .Attribute3D(true)
-        .Play();
+        .PlayNext();
 }
 
 void CMiyabiState_UltimateAttack_Start::Update(CMiyabi* pOwner, _float dt)

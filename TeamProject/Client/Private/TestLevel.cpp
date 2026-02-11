@@ -81,6 +81,7 @@
 #include "MiasmaBlade.h"
 #include "XWall.h"
 
+#include "Water.h"
 #include "UI_RenderTargetScreen.h"
 
 CTestLevel::CTestLevel(const string& LevelKey)
@@ -125,6 +126,7 @@ HRESULT CTestLevel::Awake()
 	//pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestModel", CTestObject::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestFloor", CTestFloor::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestMap", CTestMap::Create());
+	pProto->Add_ProtoType("Test_Level", "Proto_Env_Water", CWater::Create());
 
 	//==================== UI ===============
 	auto uiDirector = CUIDirector::GetInstance();
@@ -176,7 +178,7 @@ HRESULT CTestLevel::Awake()
 	CBattleSystem::GetInstance()->SetActive(true);
 
 	//====================Test=================
-	//Ready_TestObject();
+	Ready_TestObject();
 	//Ready_Npc();
 
 	//CamDirector()->StartBattleIntro(CamSeqType::ZeroIntro);
@@ -280,6 +282,12 @@ void CTestLevel::Ready_TestObject()
 	IProtoService* pProto = CGameInstance::GetInstance()->Get_PrototypeMgr();
 	auto objMgr = m_pGameInstance->Get_ObjectMgr();
 
+	auto testMap = Builder::Create_Object({ "Test_Level", "Proto_Env_Water" })
+		.Position(_float3(0.f, -1.1f,0.f))
+		.Scale(_float3(1.f, 0.2f, 1.f))
+		.Build("Water");
+
+	objMgr->Add_Object(testMap, { "Test_Level", "Env" });
 	//==============TestEffect==========================
 	//pResource->Add_ResourcePath("glow_particle.json", "../Bin/Resources/Effect/glow_particle.json");
 	//pResource->Add_ResourcePath("Eff_Disorder_UU_23.png", "../Bin/Resources/Effect/Eff_Disorder_UU_23.png");

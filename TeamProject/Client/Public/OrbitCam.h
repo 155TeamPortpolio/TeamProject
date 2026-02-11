@@ -91,11 +91,8 @@ private:
 
 private:
     OrbitInputEval   EvalInput(_float dt, _float lockW);
-    OrbitCollideEval EvalCollideDist(_float dt, const OrbitProfile& prof, class PxScene* scene, CCharacterController* camCC,
-        const Vector3& pivotWorld, _float distWanted, const Vector2& rotCurDeg, const Vector2& rotGoalDeg, _float distGoal);
-    _float           CalcAllowDist(const OrbitProfile& prof, class PxScene* scene, CCharacterController* camCC,
-        const Vector3& pivotWorld, _float distWanted, const Vector2& rotCurDeg, const Vector2& rotGoalDeg);
-    void             SmoothPose(_float dt);
+    OrbitCollideEval EvalCollideDist(_float dt, const OrbitProfile& prof, const Vector3& pivotWorld, _float distWanted, const Vector2& rotCurDeg, const Vector2& rotGoalDeg, _float distGoal);
+    _float           CalcAllowDist(const OrbitProfile& prof, const Vector3& pivotWorld, _float distWanted, const Vector2& rotCurDeg, const Vector2& rotGoalDeg);
 
 private:
     void          Lock_Reset();

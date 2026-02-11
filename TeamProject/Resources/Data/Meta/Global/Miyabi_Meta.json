@@ -925,7 +925,23 @@
     },
     {
       "ClipTag": "Avatar_Female_Size02_Unagi_Ani_Run",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.0011631107330322,
+          "EventType": "Sound",
+          "EventTag": "Miyabi_Walk_R.wav"
+        },
+        {
+          "EventTime": 0.23911631107330322,
+          "EventType": "Sound",
+          "EventTag": "Miyabi_Walk_L.wav"
+        },
+        {
+          "EventTime": 0.4844704568386078,
+          "EventType": "Sound",
+          "EventTag": "Miyabi_Walk_R.wav"
+        }
+      ]
     },
     {
       "ClipTag": "Avatar_Female_Size02_Unagi_Ani_Run_End",
@@ -1149,19 +1165,14 @@
       "ClipTag": "Avatar_Female_Size02_Unagi_Ani_Walk",
       "Events": [
         {
-          "EventTime": 0.23999999463558197,
+          "EventTime": 0.24567902088165283,
           "EventType": "Sound",
-          "EventTag": "Walk_L"
+          "EventTag": "Miyabi_Walk_R.wav"
         },
         {
-          "EventTime": 0.5400000214576721,
+          "EventTime": 0.549382746219635,
           "EventType": "Sound",
-          "EventTag": "Walk_R"
-        },
-        {
-          "EventTime": 0.8399999737739563,
-          "EventType": "Sound",
-          "EventTag": "Walk_L"
+          "EventTag": "Miyabi_Walk_L.wav"
         }
       ]
     },
@@ -1169,24 +1180,19 @@
       "ClipTag": "Avatar_Female_Size02_Unagi_Ani_Walk_Start",
       "Events": [
         {
-          "EventTime": 0.20000000298023224,
+          "EventTime": 0.4771929681301117,
           "EventType": "Sound",
-          "EventTag": "Walk_L"
+          "EventTag": "Miyabi_Walk_R.wav"
         },
         {
-          "EventTime": 0.47999998927116394,
+          "EventTime": 0.784275472164154,
           "EventType": "Sound",
-          "EventTag": "Walk_R"
+          "EventTag": "Miyabi_Walk_L.wav"
         },
         {
-          "EventTime": 0.7599999904632568,
+          "EventTime": 1.0847302675247192,
           "EventType": "Sound",
-          "EventTag": "Walk_L"
-        },
-        {
-          "EventTime": 1.0399999618530273,
-          "EventType": "Sound",
-          "EventTag": "Walk_R"
+          "EventTag": "Miyabi_Walk_R.wav"
         }
       ]
     },

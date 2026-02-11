@@ -118,13 +118,9 @@ void CJaneDoe::Awake()
 
 void CJaneDoe::Priority_Update(_float dt)
 {
-    if (m_bPassion && m_pCCT->Get_CompActive())
-    {
-        Update_MotionBlurQueue();
-        Add_PassionMotionBlur();
-    }
-
     __super::Priority_Update(dt);
+    if (!m_BoneMatrices.empty() && m_pCCT->Get_CompActive())
+        Update_MotionBlurQueue();
 }
 
 void CJaneDoe::Update(_float dt)
@@ -192,7 +188,7 @@ void CJaneDoe::Decrease_Passion(_float fStream)
     if (m_bPassion && m_fPassionStream == 0.f)
     {
         m_bPassion = false;
-        Reset_RimLight();
+        Clear_MotionBlur();
         m_fAttackPower /= 1.25f;
     }
 }
@@ -327,21 +323,21 @@ void CJaneDoe::OnDamage()
 
 void CJaneDoe::OnPerfectDodge()
 {
-    Increase_Passion(1.f);
+    Increase_Passion(50.f);
 }
 
 void CJaneDoe::OnDefensiveAssist()
 {
-    Increase_Passion(1.f);
+    Increase_Passion(50.f);
 }
 
-void CJaneDoe::Update_MotionBlurQueue()
+void CJaneDoe::Add_MotionBlur()
 {
     ++m_iFrameCount;
     if (m_iFrameCount < FRAMECOUNT)
         return;
-
     m_iFrameCount = 0;
+
     if (m_BoneMatrices.size() > 5)
     {
         m_BoneMatrices.pop_front();
@@ -351,20 +347,20 @@ void CJaneDoe::Update_MotionBlurQueue()
     auto Model = Get_Component<CSkeletalModel>();
     vector<vector<_float4x4>> BoneMatrices;
     BoneMatrices.resize(Model->Get_MeshCount());
-
     for (_int i = 0; i < Model->Get_MeshCount(); ++i)
     {
         BoneMatrices[i] = m_pAnimator->Get_BoneMatrices(i);
     }
-    _float4x4 worldMatrix = *m_pTransform->Get_WorldMatrix_Ptr();
-    m_WorldMatrices.push_back(worldMatrix);
+
+    m_WorldMatrices.push_back(*m_pTransform->Get_WorldMatrix_Ptr());
     m_BoneMatrices.push_back(BoneMatrices);
 }
 
-void CJaneDoe::Reset_RimLight()
+void CJaneDoe::Clear_MotionBlur()
 {
-    m_vRimLightColor = _float3(0.f, 0.f, 0.f);
     m_fRimLightPower = 0.f;
+    m_BoneMatrices.clear();
+    m_WorldMatrices.clear();
 }
 
 HRESULT CJaneDoe::Initialize_StateMachine()
@@ -887,7 +883,7 @@ void CJaneDoe::Process_EndState(const string& strCurrentState)
     }
 }
 
-HRESULT CJaneDoe::Add_PassionMotionBlur()
+HRESULT CJaneDoe::Update_MotionBlurQueue()
 {
     auto Model = Get_Component<CSkeletalModel>();
     m_vRimLightColor = _float3(1.f, 0.1f, 0.f);
@@ -929,6 +925,8 @@ HRESULT CJaneDoe::Render_PassionMotionBlur(ID3D11DeviceContext* pContext, _uint 
     auto Material = Get_Component<CMaterial>();
     _int Index = Model->Get_MaterialIndex(idx);
     auto Shader = Material->Get_Shader(Index);
+    auto instance = Material->Get_MaterialInstance(Index);
+    instance->Override_Pass("MotionBlur");
     ID3D11InputLayout* pLayout;
     RenderSys->Get_InputLayout(
         Model,
@@ -939,9 +937,9 @@ HRESULT CJaneDoe::Render_PassionMotionBlur(ID3D11DeviceContext* pContext, _uint 
     );
 
     pContext->IASetInputLayout(pLayout);
-    Shader->Apply("MotionBlur", pContext);
+    Material->Apply_Material(pContext, Index);
     Model->Draw(pContext, idx);
-
+    instance->Reset_Pass();
     return S_OK;
 }
 

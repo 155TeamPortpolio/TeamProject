@@ -16,6 +16,8 @@
 #include "HowlState_Sleep.h"
 #include "HowlState_Wake.h"
 
+//audio
+#include "AudioSource.h"
 
 CHowl::CHowl()
     :CServiceNpc()
@@ -39,6 +41,15 @@ void CHowl::Execute()
 	else Success(0);
 }
 
+void CHowl::Reset()
+{
+	Get_Component<CAudioSource>()->Slot("HowlOut.wav")
+		.Attribute3D(true)
+		.Volume(0.8)
+		.Loop(false)
+		.Play();
+}
+
 HRESULT CHowl::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
@@ -52,6 +63,9 @@ HRESULT CHowl::Initialize_Prototype()
 	pModel->Link_Model(G_GlobalLevelKey, "NPC_Woof.model");
 	auto pMaterial = Get_Component<CMaterial>();
 	pMaterial->Link_Material(G_GlobalLevelKey, "NPC_Woof.mat");
+
+	auto pAudio = Add_Component<CAudioSource>();
+	pAudio->SoundFolder("MainCity_Level", "../Bin/Resources/MainCity/Sound/NPC");
 
 	return S_OK;
 }
@@ -163,6 +177,12 @@ void CHowl::Update_States(_float dt)
 
 void CHowl::Success(_uint curSequenceID)
 {
+	Get_Component<CAudioSource>()->Slot("HowlIn.wav")
+		.Attribute3D(true)
+		.Volume(0.8)
+		.Loop(false)
+		.Play();
+
 	m_pStateMachine->Set_Trigger("ToWake");
 	FieldSystem()->RequestEnter("Lottery", true);
 }

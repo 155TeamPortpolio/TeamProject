@@ -115,6 +115,9 @@ void CJaneDoeState_Attack::Update(CJaneDoe* pOwner, _float dt)
     if (pOwner->Is_LookTarget())
         pOwner->Look_Target();
 
+    if (pOwner->Is_Passion())
+        pOwner->Add_MotionBlur();
+
     __super::Update(pOwner, dt);
 }
 
@@ -122,6 +125,7 @@ void CJaneDoeState_Attack::Exit(CJaneDoe* pOwner)
 {
     pOwner->End_AllAttackColliders();
     pOwner->Unlock_Move();
+    pOwner->Clear_MotionBlur();
     __super::Exit(pOwner);
 }
 

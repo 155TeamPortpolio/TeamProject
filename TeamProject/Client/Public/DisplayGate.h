@@ -10,9 +10,6 @@ public:
 
     Vector2 GetMonitorSize(int monitorIdx = 0) const;
 
-    int GetMonitorWidth(int monitorIdx = 0)  const { return GetMonitorSize(monitorIdx).x; }
-    int GetMonitorHeight(int monitorIdx = 0) const { return GetMonitorSize(monitorIdx).y; }
-
     int GetMonitorCount() const;
 
 private:

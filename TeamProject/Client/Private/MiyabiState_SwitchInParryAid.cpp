@@ -37,18 +37,6 @@ void CMiyabiState_SwitchInParryAid::Enter(CMiyabi* pOwner)
 {
     pOwner->Lock_Move();
     pOwner->Lock_Rotate();
-
-    OBJECT_HANDLE handle = pOwner->Get_ParryHandle();
-    if (handle.isValid())
-    {
-        //dynamic_cast<CEnemy*>(handle.Get())->Parried();
-
-        //TARGET_LOCK_DESC desc;
-        //desc.bLock = true;
-        //desc.tHandle = handle;
-        //EventSystem()->Broadcast<TARGET_LOCK_DESC>({ desc });
-    }
-
     __super::Enter(pOwner);
 }
 
@@ -79,9 +67,9 @@ void CMiyabiState_SwitchInParryAid::Exit(CMiyabi* pOwner)
 void CMiyabiState_SwitchInParryAid_Start::Enter(CMiyabi* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_ParryAid_Start")
-        .BlendDuration(0.1f)
+        .BlendDuration(0.125f)
         .ReserveSpeed(0.f, 1.f, 2.f, EaseType::OutQuint)
-        .EndAt(0.22f)
+        .EndAt(0.25f)
         .Apply();
 }
 
@@ -95,8 +83,7 @@ void CMiyabiState_SwitchInParryAid_Start::Update(CMiyabi* pOwner, _float dt)
 void CMiyabiState_SwitchInParryAid_L_Loop::Enter(CMiyabi* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "ParryAid_L")
-        .BlendDuration(0.1f)
-        .Speed(2.f)
+        .ReserveSpeed(0.f, 1.f, 2.f, EaseType::OutExpo)
         .Apply();
 
     OBJECT_HANDLE handle = pOwner->Get_ParryHandle();

@@ -103,24 +103,6 @@ namespace
         CamSeqReqDesc req{};
         req.returnCamType = CamType::None;
 
-        if (StartsWith(key, "CutScene/"))
-        {
-            req.blendInSec  = 0.f;
-            req.blendOutSec = 0.35f;
-            req.resetTime   = true;
-            req.returnMode  = CamReturnMode::RestorePrev;
-            return req;
-        }
-
-        if (StartsWith(key, "Intro/"))
-        {
-            req.blendInSec  = 0.0f;
-            req.blendOutSec = 0.5f;
-            req.resetTime   = true;
-            req.returnMode  = CamReturnMode::SnapToEnd;
-            return req;
-        }
-
         if (StartsWith(key, "Ultimate/"))
         {
             req.blendInSec  = 0.f;
@@ -130,21 +112,25 @@ namespace
             return req;
         }
 
-        if (StartsWith(key, "Parry/"))
+        if (StartsWith(key, "WipeOutIntro"))
         {
-            req.blendInSec  = 0.75f;
-            req.blendOutSec = 0.75f;
-            req.resetTime   = true;
-            req.returnMode  = CamReturnMode::RestorePrev;
+            req.blendInSec   = 0.5f;
+            req.blendOutSec  = 0.f;
+            req.resetTime    = true;
+            req.returnMode   = CamReturnMode::None;
+            req.blendInEase  = EaseType::InOutSine;
+            req.blendOutEase = EaseType::OutSine;
             return req;
         }
 
-        if (StartsWith(key, "GachaCharacter/"))
+        if (StartsWith(key, "WipeOut"))
         {
-            req.blendInSec  = 0.5f;
-            req.blendOutSec = 0.5f;
+            req.blendInSec  = 0.f;
+            req.blendOutSec = 0.f;
             req.resetTime   = true;
-            req.returnMode  = CamReturnMode::SnapToEnd;
+            req.returnMode  = CamReturnMode::None;
+            req.blendInEase = EaseType::OutQuint;
+            return req;
         }
 
         req.blendInSec  = 0.f;

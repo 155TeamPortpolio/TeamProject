@@ -94,6 +94,8 @@ HRESULT CDefiler::Initialize(INIT_DESC* pArg)
 
 	Create_UIEnemyStatus("Bip001_Spine2");
 	Create_UIBossHUD();
+	Create_MeshPyramid();
+
 	return S_OK;
 }
 
@@ -123,8 +125,19 @@ void CDefiler::Priority_Update(_float dt)
 	m_PlayerCharacterInfos = BattleSystem()->GetBattleObjects(CBattleSystem::BATTLE_OBJ_TYPE::PLAYER);
 	ComputeTargetingInfo();
 
-	if (InputDevice()->Key_Tap('F'))
-		Control_Summon("Heavy");
+	if (InputDevice()->Key_Tap('F')) {
+		string nowLevelKey = LevelManager()->Get_NowLevelKey();
+		CDefilerWall::DefilerWallDesc* desc = new CDefilerWall::DefilerWallDesc;
+		desc->vLook = Math::NormalizeSafeXZ(m_pTransform->Dir(STATE::LOOK));
+		_vector3 pos = m_pTransform->Get_Pos();
+		pos.y = 0;
+
+		auto pWall = Builder::Create_Object({ "Zero_Level","Proto_GameObject_DefilerWall" })
+			.Position(pos)
+			.Add_ObjDesc(desc)
+			.Build("Wall");
+		ObjectManager()->Add_Object(pWall, { nowLevelKey,"Enemy_Layer" });
+	}
 }
 
 void CDefiler::Update(_float dt)

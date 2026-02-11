@@ -28,6 +28,9 @@ public:
 private:
     virtual void    Success(_uint curSequenceID) override;
 
+private:
+    _int    m_iSound = 1;
+
 public:
     static CSirChop* Create();
     virtual CGameObject* Clone(INIT_DESC* pArg) override;
