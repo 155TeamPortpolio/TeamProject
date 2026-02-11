@@ -43,7 +43,7 @@ public:
         _float holdShot1Sec = 0.5f;
         _float holdShot2Sec = 1.f;
         _float holdShot3Sec = 1.f;
-        _float holdShot4Sec = 1.f;
+        _float holdShot4Sec = 0.65f;
 
         EaseType approachEase = EaseType::OutCubic;
 
@@ -85,12 +85,12 @@ public:
         _float holdDollyShot1 = 0.08f;
         _float holdDollyShot2 = 0.12f;
         _float holdDollyShot3 = 0.10f;
-        _float holdDollyShot4 = 0.30f;
+        _float holdDollyShot4 = 3.80f;
 
-        _float holdFovPunchShot4 = 0.f;
+        _float holdFovPunchShot4 = 22.f;
 
         EaseType holdEaseShot1_3 = EaseType::InOutSine;
-        EaseType holdEaseShot4 = EaseType::InOutSine;
+        EaseType holdEaseShot4 = EaseType::InQuad;
 
         _float pelvisMul = 0.38f;
 
@@ -99,8 +99,11 @@ public:
 
         _float baseVictimWeightShot2 = 0.50f;
         _float baseVictimWeightShot3 = 0.35f;
-        _float baseVictimWeightShot4 = 0.55f;
+        _float baseVictimWeightShot4 = 0.15f;
+
+        _float holdYawSweepShot4 = 15.f;
     };
+
 
 public:
     void Reset();
@@ -182,6 +185,19 @@ private:
 
     ShotGoal m_holdFrom{};
     ShotGoal m_holdTo{};
+
+    Vector3 m_lineFromPos{};
+    Vector3 m_lineToPos{};
+    _bool   m_lineActive = false;
+
+    Quaternion m_lineFromRot{};
+    Quaternion m_lineToRot{};
+
+    Vector3 m_shot4PivotFixed{};
+    Quaternion m_shot4RotFixed{};
+    _float m_shot4DistFrom = 0.f, m_shot4DistTo = 0.f;
+    _float m_shot4FovFrom = 0.f,  m_shot4FovTo = 0.f;
+    _bool m_shot4RailActive = false;
 };
 
 NS_END

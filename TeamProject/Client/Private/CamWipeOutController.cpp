@@ -147,6 +147,14 @@ void CamWipeOutController::Reset()
 
     m_holdFrom = {};
     m_holdTo = {};
+
+    m_shot4PivotFixed = Vector3::Zero;
+    m_shot4RotFixed = Quaternion::Identity;
+    m_shot4DistFrom = 0.f;
+    m_shot4DistTo = 0.f;
+    m_shot4FovFrom = 0.f;
+    m_shot4FovTo = 0.f;
+    m_shot4RailActive = false;
 }
 
 void CamWipeOutController::Begin()
@@ -211,7 +219,7 @@ void CamWipeOutController::Begin()
 
     m_active = true;
 
-    m_state = State::Shot1_Enter;
+    m_state = State::Shot1_Enter; 
     BeginShot(BuildShot1(), tune.enterBlendShot1Sec, tune.holdShot1Sec, true);
 
     ApplyGoalPose_Snap(m_shotFrom);
@@ -384,7 +392,28 @@ CamWipeOutController::ShotGoal CamWipeOutController::BuildShot3() const
 
 CamWipeOutController::ShotGoal CamWipeOutController::BuildShot4() const
 {
-    return BuildShotCommon(m_sideSign, tune.angleShot4Deg, tune.pitchShot4LevelDeg, tune.distShot4Far, tune.fovShot4Far, tune.pivotClampShot4, tune.attackerBiasShot4, tune.baseVictimWeightShot4);
+    ShotGoal g = BuildShotCommon(m_sideSign, tune.angleShot4Deg, tune.pitchShot4LevelDeg, tune.distShot4Far, tune.fovShot4Far, tune.pivotClampShot4, tune.attackerBiasShot4, tune.baseVictimWeightShot4);
+
+    g.baseVictimWeight = 0.f;
+
+    Vector3 pivotWorld = m_aFace;
+
+    const _float aimY = Math::Lerp(m_aBase.y, m_aFace.y, tune.pelvisMul);
+    pivotWorld.y = aimY;
+
+    const Vector3 basePivot = BasePivotWorld(g.baseVictimWeight);
+
+    Vector3 ext = pivotWorld - basePivot;
+
+    Vector3 extXZ(ext.x, 0.f, ext.z);
+    extXZ = ClampOffset(extXZ, tune.pivotClampShot4);
+
+    ext.x = extXZ.x;
+    ext.z = extXZ.z;
+
+    g.pivotExt = ext;
+
+    return g;
 }
 
 void CamWipeOutController::BeginShot(const ShotGoal& to, _float enterSec, _float holdSec, _bool captureFrom)
@@ -411,7 +440,10 @@ void CamWipeOutController::BeginShot(const ShotGoal& to, _float enterSec, _float
 
     m_holdTo.dist = max(0.f, m_holdTo.dist - dolly);
 
-    if (m_state == State::Shot4_Snap || m_state == State::Shot4_Hold) m_holdTo.fov = max(1.f, m_holdTo.fov - tune.holdFovPunchShot4);
+    if (m_state == State::Shot4_Snap || m_state == State::Shot4_Hold)
+        m_holdTo.fov = max(1.f, m_holdTo.fov - tune.holdFovPunchShot4);
+
+    m_shot4RailActive = false;
 
     m_shotElapsed = 0.f;
 }
@@ -478,6 +510,22 @@ void CamWipeOutController::ApplyHold()
 
     const _float t = Math::ApplyEase(ease, u);
 
+    if (m_state == State::Shot4_Hold && m_shot4RailActive)
+    {
+        const _float dist = Math::Lerp(m_shot4DistFrom, m_shot4DistTo, t);
+        const Vector3 pos = OrbitPos(m_shot4PivotFixed, m_shot4RotFixed, dist);
+
+        auto orbit = CamDirector()->GetOrbitCam();
+        auto cam = CamDirector()->GetOrbitCamComp();
+
+        orbit->SnapFromCamPose(pos, m_shot4RotFixed);
+
+        const _float fov = Math::Lerp(m_shot4FovFrom, m_shot4FovTo, t);
+        cam->Set_FOV(fov);
+
+        return;
+    }
+
     ShotGoal out{};
 
     out.pivotExt = m_holdFrom.pivotExt;
@@ -525,6 +573,20 @@ void CamWipeOutController::Advance()
         m_state = State::Shot4_Snap;
         BeginShot(BuildShot4(), tune.snapShotSec, tune.holdShot4Sec, false);
         SnapTo(m_shotTo);
+
+        const Vector3 basePivot = BasePivotWorld(m_holdFrom.baseVictimWeight);
+        m_shot4PivotFixed = basePivot + m_holdFrom.pivotExt;
+
+        m_shot4RotFixed = YawPitchQuatDeg(m_holdFrom.yawDeg, m_holdFrom.pitchDeg);
+
+        m_shot4DistFrom = m_holdFrom.dist;
+        m_shot4DistTo = m_holdTo.dist;
+
+        m_shot4FovFrom = m_holdFrom.fov;
+        m_shot4FovTo = m_holdTo.fov;
+
+        m_shot4RailActive = true;
+
         m_state = State::Shot4_Hold;
         m_shotElapsed = 0.f;
         return;
