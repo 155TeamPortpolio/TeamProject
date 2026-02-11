@@ -33,7 +33,7 @@ HRESULT CEffectContainer_Edit::Initialize_Prototype()
 
 HRESULT CEffectContainer_Edit::Initialize(INIT_DESC* pArg)
 {
-	//__super::Initialize(pArg);
+	//__super::Initialize(pArg); 
 
 	m_pTransform->Initialize(nullptr);
 	LoadTextureFromDirectory("../Bin/Resources/Texture/Diffuse",true);

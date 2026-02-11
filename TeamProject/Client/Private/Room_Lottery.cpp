@@ -5,7 +5,7 @@
 #include "GameInstance.h"
 #include "CamDirector.h"
 #include "UIDirector.h"
-
+#include "Npc.h"
 #include "FieldPlayer.h"
 
 CRoom_Lottery::CRoom_Lottery(const ROOM_DESC& desc)
@@ -31,6 +31,9 @@ void CRoom_Lottery::Exit()
 	auto pFieldPlayer = FieldSystem()->GetFieldPlayer();
 	pFieldPlayer->Active_Field();
 	pFieldPlayer->UnLock_Input();
+
+	auto NpcHandle = FieldSystem()->GetInteractHandle();
+	if (NpcHandle.isValid()) dynamic_cast<CNpc*>(NpcHandle.Get())->Reset();
 
 	CamDirector()->SetSpaceRef(CamDirector()->GetCurHandle());
 	CamDirector()->RequestSequence("Field/Back");

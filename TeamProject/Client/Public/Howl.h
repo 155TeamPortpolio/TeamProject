@@ -16,6 +16,7 @@ private:
 public:
     CStateMachine<CHowl>* Get_StateMachine() { return m_pStateMachine; }
     virtual void    Execute() override;
+    virtual void    Reset() override;
 
 public:
     virtual HRESULT Initialize_Prototype() override;

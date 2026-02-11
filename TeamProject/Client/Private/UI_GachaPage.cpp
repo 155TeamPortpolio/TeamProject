@@ -161,7 +161,7 @@ void CUI_GachaPage::OnClick_Conversion()
     iDenny -= 10000;
     RuntimeBucket().Int64.Set(PersistScope::SaveSlot, "Denny", iDenny);
 
-    LevelManager()->Request_ChangeLevel("Gacha_Level", true);
+    LevelManager()->Request_ChangeLevel("Gacha_Level", false);
 }
 
 CGameObject* CUI_GachaPage::Create()
