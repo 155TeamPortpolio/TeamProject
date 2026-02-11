@@ -59,7 +59,8 @@ private:
     CamKeyFrame& GetSelectedKey();
     vector<CamKeyFrame>& GetKeyFrames() { return target.sequence->keyframes; }
     const vector<CamKeyFrame>& GetKeyFrames() const { return target.sequence->keyframes; }
-    void                       FlipKeys_Yaw180();
+    void FlipKeys_Yaw180();
+    void RotateKeys_Yaw90(_float yawDeg);
 
 private:
     void   DrawKeyframeList_TopBar(vector<CamKeyFrame>& keys, bool& ioChangedAny);
