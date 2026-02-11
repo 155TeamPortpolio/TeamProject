@@ -42,11 +42,19 @@ void CBattleFXFlow::Initialize_Preset()
 			TIME_SCALING({ duration, 0.f, 0.3f, 1.f , EaseType::InOutSine });
 	}
 	{
-		auto& HitLack = m_BattleVFXData[ENUM(BATTLE_VFX_TYPE::HIT)];
+		auto& HitLack = m_BattleVFXData[ENUM(BATTLE_VFX_TYPE::HIT_NORMAL)];
 		const _float duration = 1.5f;
 		HitLack.fVFXDuration = duration;
 		HitLack.fBlurDuration = duration;
 		HitLack.SetTimeData({ duration, 0.1f, 0.35f, .85f , EaseType::OutExpo });
+	}
+	{
+		auto& WipeOut = m_BattleVFXData[ENUM(BATTLE_VFX_TYPE::WIPEOUT)];
+		const _float duration = 4.5f;
+		WipeOut.fVFXDuration = duration;
+		WipeOut.fBlurDuration = duration;
+		WipeOut.SetTimeData({ duration, 0.0f, 0.3f, .0f , EaseType::OutQuint });
+
 	}
 }
 
@@ -179,8 +187,11 @@ void CBattleFXFlow::StartVfx(BATTLE_VFX_TYPE vfxType)
 	case BATTLE_VFX_TYPE::ULTIMATE:
 		StartVfx_Ultimate();
 		break;
-	case BATTLE_VFX_TYPE::HIT:
+	case BATTLE_VFX_TYPE::HIT_NORMAL:
 		HitLack();
+		break;
+	case BATTLE_VFX_TYPE::WIPEOUT:
+		StartVfx_WipeOut();
 		break;
 	default:
 		m_BattleVFX.isRunning = false;
@@ -289,11 +300,11 @@ void CBattleFXFlow::StartVfx_Ultimate()
 	Start(nullptr);
 }
 
-void CBattleFXFlow::HitLack()
+void CBattleFXFlow::StartVfx_WipeOut()
 {
 	Clear(false);
 
-	auto& preset = m_BattleVFXData[ENUM(BATTLE_VFX_TYPE::HIT)];
+	auto& preset = m_BattleVFXData[ENUM(BATTLE_VFX_TYPE::WIPEOUT)];
 	AddParallelTimeScaleAll(preset);
 	AddWait(preset.fVFXDuration);
 	AddCall([this, preset]() {
@@ -303,6 +314,22 @@ void CBattleFXFlow::HitLack()
 		});
 	Start(nullptr);
 }
+
+void CBattleFXFlow::HitLack()
+{
+	Clear(false);
+
+	auto& preset = m_BattleVFXData[ENUM(BATTLE_VFX_TYPE::HIT_NORMAL)];
+	AddParallelTimeScaleAll(preset);
+	AddWait(preset.fVFXDuration);
+	AddCall([this, preset]() {
+		m_BattleVFX.fCurPos = 0.f;
+		m_BattleVFX.vNowColor = {};
+		m_BattleVFX.isRunning = false;
+		});
+	Start(nullptr);
+}
+
 void CBattleFXFlow::AddParallelTimeScale(BATTLE_OBJ_TYPE type, TIME_SCALING& timeScale)
 {
 	if (!IsValidTimeScale(timeScale.data))

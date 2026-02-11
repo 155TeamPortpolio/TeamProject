@@ -162,6 +162,7 @@ public:
 	void StartVfx_Parry();
 	void StartVfx_Ultimate();
 	void StartVfx_Switch();
+	void StartVfx_WipeOut();
 	void HitLack();
 	void SetLayerTimeScale(BATTLE_OBJ_TYPE type, _float scale);
 	void ResetLayerTimeScale(BATTLE_OBJ_TYPE type);

@@ -38,8 +38,12 @@ void CBattleSystem::Update()
 {
 	if (false == m_isActive)
 		return;
+	_uint frame = GameInstance()->Get_FrameCount();
+	if (m_LastFrame == frame)
+		return;
+	m_LastFrame = frame;
 
-	const _float dt = CGameInstance::GetInstance()->Get_EngineDeltaTime();
+	const _float dt = TimeManager()->Get_RawDeltaTime(G_EngineTimerID);
 
 	CheckVFX(dt);
 	Update_BattleInfo();
@@ -47,7 +51,7 @@ void CBattleSystem::Update()
 
 	if(InputDevice()->Key_Tap(VK_SHIFT))
 	{
-		StartGimmick(BATTLE_VFX_TYPE::EVADE);
+		StartGimmick(BATTLE_VFX_TYPE::WIPEOUT);
 	}
 	if(InputDevice()->Key_Tap(VK_CONTROL))
 	{
