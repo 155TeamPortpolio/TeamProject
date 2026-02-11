@@ -168,6 +168,8 @@ void CCamDirector::Update(_float dt)
 
     m_parry.Update(dt);
 
+    m_wipeOut.Update(dt);
+
     if (m_dialogueUnlockPending && !m_dialogue.IsBusy())
     {
         GetOrbitCam()->Unlock_Input();
@@ -253,6 +255,16 @@ void CCamDirector::StartDialog()
 
     m_dialogue.Begin(35.f, 0.5f);
     m_dialogueUnlockPending = false;
+}
+
+void CCamDirector::BeginWipeOut()
+{
+    m_wipeOut.Begin(GetCharacter()->Get_TargetHandle());
+}
+
+void CCamDirector::EndWipeOut()
+{
+    m_wipeOut.End();
 }
 
 void CCamDirector::EndDialog()
@@ -451,7 +463,6 @@ _bool CCamDirector::StopRequest(_uint handle, _float blendOutSec, _bool resetTim
 
     return ok;
 }
-
 
 void CCamDirector::StopAll(_float blendOutSec)
 {

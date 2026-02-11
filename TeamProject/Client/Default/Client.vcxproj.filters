@@ -1299,6 +1299,9 @@
     <Filter Include="02. GameObject\Object\Enemy\Boss\Defiler\DefilerSpawner">
       <UniqueIdentifier>{4021281a-dbf6-4666-9647-1a0c58628bde}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03. Utility\08. CamDirector\04. CamWipeOutController">
+      <UniqueIdentifier>{bbca9106-529f-4e73-b6f1-7102012e5969}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -2510,6 +2513,9 @@
     <ClInclude Include="..\Public\MiasmaSpawner.h">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler\DefilerSpawner</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\CamWipeOutController.h">
+      <Filter>03. Utility\08. CamDirector\04. CamWipeOutController</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -3679,6 +3685,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\MiasmaSpawner.cpp">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler\DefilerSpawner</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CamWipeOutController.cpp">
+      <Filter>03. Utility\08. CamDirector\04. CamWipeOutController</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

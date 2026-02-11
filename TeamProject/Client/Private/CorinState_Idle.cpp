@@ -26,7 +26,7 @@ void CCorinState_Idle::Enter(CCorin* pOwner)
         .Loop(true)
         .Apply();
 
-    m_idleVoiceAcc      = 0.f;
+    m_idleVoiceAcc = 0.f;
     m_pIdleVoiceChannel = nullptr;
 
     __super::Enter(pOwner);
@@ -35,6 +35,16 @@ void CCorinState_Idle::Enter(CCorin* pOwner)
 void CCorinState_Idle::Update(CCorin* pOwner, _float dt)
 {
     __super::Update(pOwner, dt);
+
+    if (!pOwner->Is_MainCharacter())
+    {
+        if (m_pIdleVoiceChannel)
+            m_pIdleVoiceChannel->stop();
+
+        m_pIdleVoiceChannel = nullptr;
+        m_idleVoiceAcc = 0.f;
+        return;
+    }
 
     constexpr _float kIdleVoiceDelay = 3.f;
 
@@ -62,7 +72,10 @@ void CCorinState_Idle::Update(CCorin* pOwner, _float dt)
 
 void CCorinState_Idle::Exit(CCorin* pOwner)
 {
-    m_idleVoiceAcc      = 0.f;
+    if (m_pIdleVoiceChannel)
+        m_pIdleVoiceChannel->stop();
+
+    m_idleVoiceAcc = 0.f;
     m_pIdleVoiceChannel = nullptr;
 
     __super::Exit(pOwner);

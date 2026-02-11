@@ -18,20 +18,17 @@ namespace
         const _float tau = 1.f / max(speed, 0.0001f);
         return Math::ExpAlpha(tau, dt);
     }
-
     Quaternion YawPitchQuat(const Vector2& rotDeg)
     {
         const float yawRad = XMConvertToRadians(rotDeg.x);
         const float pitchRad = XMConvertToRadians(rotDeg.y);
         return Quaternion::CreateFromYawPitchRoll(yawRad, pitchRad, 0.f);
     }
-
     Vector3 OrbitCamPos(const Vector3& pivot, const Quaternion& q, float dist)
     {
         const Vector3 backDir = Vector3::Transform(Vector3(0.f, 0.f, -1.f), q);
         return pivot + backDir * dist;
     }
-
     Vector3 FootPos(OBJECT_HANDLE h)
     {
         auto obj = ObjectManager()->Request_Object(h);
@@ -40,7 +37,6 @@ namespace
         const Vector4 foot4 = cc->Get_FootPosition();
         return Vector3(foot4.x, foot4.y, foot4.z);
     }
-
     Vector3 BasePivotPos(OBJECT_HANDLE h, _float offsetY)
     {
         auto obj = ObjectManager()->Request_Object(h);
@@ -51,7 +47,6 @@ namespace
 
         return foot + Vector3(0.f, cc->Get_HalfSize() * 1.5f + offsetY, 0.f);
     }
-
     void BuildOrbitBasis(const Vector2& rotDeg, Vector3& outLook, Vector3& outRight, Quaternion& outQ)
     {
         outQ = YawPitchQuat(rotDeg);
@@ -61,7 +56,6 @@ namespace
         outRight = Vector3::Transform(Vector3(1.f, 0.f, 0.f), outQ);
     }
 }
-
 
 void COrbitCam::Awake()
 {
