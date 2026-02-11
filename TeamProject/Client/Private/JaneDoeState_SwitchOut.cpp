@@ -28,7 +28,7 @@ void CJaneDoeState_SwitchOut::Update(CJaneDoe* pOwner, _float dt)
     if (m_fAnimProgress >= 0.6f)
     {
         pOwner->DeActive_Character();
-        pOwner->Reset_RimLight();
+        pOwner->Clear_MotionBlur();
         pOwner->Get_StateMachine()->Set_Trigger("ToIdle");
     }
 }

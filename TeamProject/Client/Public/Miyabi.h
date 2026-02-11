@@ -81,9 +81,6 @@ private: // 모션블러 렌더
     HRESULT Update_MotionBlurQueue();
     HRESULT Render_DashMotionBlur(ID3D11DeviceContext* pContext, _uint index);
 
-//private:
-//    HRESULT Add_OutLineRender();
-
 private:
     // 고스트
     CMiyabi_Ghost* m_pGhost = { nullptr };
@@ -101,8 +98,6 @@ private:
     // 모션블러
     deque<vector<vector<_float4x4>>>    m_BoneMatrices;
     deque<_float4x4>                    m_WorldMatrices;
-    //_uint                               m_iFrameCount = 0;
-    //static constexpr _uint              FRAMECOUNT = 7;
 
 public:
     static CMiyabi* Create();
