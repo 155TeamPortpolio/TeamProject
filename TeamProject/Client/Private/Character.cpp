@@ -275,6 +275,7 @@ OBJECT_HANDLE CCharacter::Calculate_Parry()
 
     for (auto iter : pParry->Get_ParryTargets())
     {
+        if (!BattleSystem()->isValidTarget(BATTLE_OBJ_TYPE::MONSTER, iter)) continue;
         _vector3 vDiff = vPos - iter.Get()->Get_WorldPos();
         vDiff.y = 0.f;
         _float fDist = vDiff.Length();
@@ -385,6 +386,7 @@ void CCharacter::Process_RootMotion(_float dt, const ROOTMOTION_DESC& desc)
     {
         // 루트모션 회전 사용시 수동 회전 비활성화
         m_bIsRotating = false;
+        
         if (desc.fRotateWeight >= 0.99f) pTransform->Add_Quaternion(vQuatDelta);
         else if (desc.fRotateWeight > 0.01f)
         {
@@ -448,11 +450,17 @@ void CCharacter::Stop_Rotation()
 
 void CCharacter::Look_Target()
 {
-    if (!m_TargetHandle.isValid()) return;
-
+    if (!m_TargetHandle.isValid())
+        return;
     auto target = m_TargetHandle.Get();
     _vector3 vLook = target->Get_WorldPos() - Get_WorldPos();
     vLook.y = 0;
+
+    if (vLook.LengthSquared() < 1.f)
+    {
+        return;
+    }
+
     vLook.Normalize();
     Get_Component<CTransform>()->Set_Look(vLook);
 }
