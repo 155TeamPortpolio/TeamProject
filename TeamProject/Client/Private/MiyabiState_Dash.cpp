@@ -147,7 +147,6 @@ void CMiyabiState_Dash_02::Update(CMiyabi* pOwner, _float dt)
     if (IsCrossAnimProgress(0.25f))
     {
         pOwner->Clear_MotionBlur();
-        pOwner->Reset_RimLight();
     }
 
     if (m_fAnimProgress >= 0.7f)
@@ -172,7 +171,6 @@ void CMiyabiState_Dash_02::Exit(CMiyabi* pOwner)
 {
     pOwner->Get_StateMachine()->Set_Bool("InDash02", false);
     pOwner->Clear_MotionBlur();
-    pOwner->Reset_RimLight();
 }
 
 void CMiyabiState_Dash_02::Update_Effects(CMiyabi* pOwner)

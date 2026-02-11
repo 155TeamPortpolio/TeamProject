@@ -24,6 +24,7 @@ private:
 	void Ready_GachaObjects();
 	void Ready_GachaUI();
 	void Update_CamTime();
+	void Update_AvatarSequence();
 
 private:
 	void Play_CameraSequence();

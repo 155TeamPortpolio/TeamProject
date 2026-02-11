@@ -123,7 +123,7 @@ void CObjectMgr::Add_Object_Recursive(CLayer* pLayer, CGameObject* object, strin
 	if (vector.empty()) return;
 
 	for (auto& pChild : object->Get_Children()) {
-		Add_Object_Recursive(pLayer, pChild);
+		Add_Object_Recursive(pLayer, pChild, LevelTag);
 	}
 }
 

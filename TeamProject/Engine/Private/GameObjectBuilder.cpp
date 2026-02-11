@@ -70,6 +70,8 @@ CGameObject* CGameObjectBuilder::Build(const string& instanceKey, _uint* id)
 		instance->Set_FromPool(true);
 		if(!first)
 			instance->OnPooledAcquire(m_pObjDesc);
+		else
+			instance->Awake();
 	}
 	else{
 		instance = m_pGameInstance->Get_PrototypeMgr()->Clone_Prototype(

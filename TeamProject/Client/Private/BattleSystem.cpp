@@ -312,6 +312,15 @@ void CBattleSystem::ExcludeBattleObject(BATTLE_OBJ_TYPE eObjType, OBJECT_HANDLE 
 	indexList[indexIter->second.indexInVector].isOnField = false;
 }
 
+_bool CBattleSystem::isValidTarget(BATTLE_OBJ_TYPE eObjType, OBJECT_HANDLE hObject)
+{
+	auto info = FindBattleObjInfo(hObject);
+	if (!info)
+		return false;
+
+	return info->isOnField;
+}
+
 void CBattleSystem::ClearBattleStage()
 {
 	for (auto& Pair : m_BattleObjInfos) {

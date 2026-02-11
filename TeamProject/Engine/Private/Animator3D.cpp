@@ -685,6 +685,23 @@ _float4x4 CAnimator3D::Get_BoneMatrix(BoneSpace eBoneSpace, AnimArg BoneArg)
 	}
 }
 
+_float4x4 CAnimator3D::Get_ParentBoneMatrix(BoneSpace eBoneSpace, AnimArg BoneArg)
+{
+	_int Index = Resolve_BoneIndex(BoneArg);
+	_int parentIndex =  m_pData->Get_BoneParentIndex(Index);
+	switch (eBoneSpace)
+	{
+	case Engine::CAnimator3D::BoneSpace::TRANSFORMATION:	
+		return m_TransformationMatrices[parentIndex];
+	case Engine::CAnimator3D::BoneSpace::MANIPULATE:		
+		return m_ManipulateMatrices[parentIndex];
+	case Engine::CAnimator3D::BoneSpace::COMBINED:			
+		return m_CombinedMatrices[parentIndex];
+	default:												
+		return _float4x4();
+	}
+}
+
 _float4x4* CAnimator3D::Get_BoneMatrixPtr(BoneSpace eBoneSpace, AnimArg BoneArg)
 {
 	_int Index = Resolve_BoneIndex(BoneArg);
@@ -779,6 +796,13 @@ void CAnimator3D::Set_BoneMatrix(BoneSpace eBoneSpace, const _float4x4& Matrix, 
 	//case Engine::CAnimator3D::BoneSpace::FINAL:				m_FinalMatrices[Index] = Matrix;			return;
 	default:												return;
 	}
+}
+
+void CAnimator3D::Set_LayerLocalBoneMatrix(const _float4x4& Matrix, AnimArg BoneArg, _uint LayerIndex)
+{
+	_int Index = Resolve_BoneIndex(BoneArg);
+	if (-1 == Index) return;
+	m_AnimLayers[LayerIndex].LocalMatrices[Index] = Matrix;
 }
 
 void CAnimator3D::Set_BonePosition(BoneSpace eBoneSpace, _vector3 Position, AnimArg BoneArg)
