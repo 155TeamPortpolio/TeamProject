@@ -1,7 +1,7 @@
 #include "Shader_Define.hlsl"
 
 vector g_Color = { 0.8f, 0.35f, 0.1f, 1.f };
-vector g_BrightColor = { 1.f, 0.0f, 0.0f, 1.f };
+vector g_BrightColor = { 1.f, 0.4f, 0.1f, 1.f };
 float4x4 g_WorldMatrix;
 
 struct VS_IN
