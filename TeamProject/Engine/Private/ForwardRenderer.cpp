@@ -174,16 +174,13 @@ HRESULT CForwardRenderer::Render_Blended(BlendedPass* pBlendPass)
 	ID3D11DepthStencilView* pDeferredDSV =
 		m_pTargetManager->Get_MTR_DSV("MRT_Deferred_Skinned");
 
-	ID3D11RenderTargetView* pPrevRTV = { nullptr };
-	ID3D11DepthStencilView* pPrevDSV = { nullptr };
-	m_pContext->OMGetRenderTargets(1, &pPrevRTV, &pPrevDSV);
-	m_pContext->OMSetRenderTargets(1, &pPrevRTV, pDeferredDSV);
-	pBlendPass->Execute(m_pContext, this);
-	ID3D11RenderTargetView* pRTVs[8] = { pPrevRTV };
-	m_pContext->OMSetRenderTargets(8, pRTVs, pPrevDSV);
+	if (FAILED(m_pTargetManager->Begin_MRT("MRT_Blend", 0xFF, pDeferredDSV, false))) 
+		return E_FAIL;
 
-	Safe_Release(pPrevRTV);
-	Safe_Release(pPrevDSV);
+	pBlendPass->Execute(m_pContext, this);
+
+	if (FAILED(m_pTargetManager->End_MRT())) 
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -192,17 +189,14 @@ HRESULT CForwardRenderer::Render_NonLight(NonLightPass* pNonLightPass)
 {
 	ID3D11DepthStencilView* pDeferredDSV =
 		m_pTargetManager->Get_MTR_DSV("MRT_Deferred_Skinned");
-	
-	ID3D11RenderTargetView* pPrevRTV = { nullptr };
-	ID3D11DepthStencilView* pPrevDSV = { nullptr };
-	m_pContext->OMGetRenderTargets(1, &pPrevRTV, &pPrevDSV);
-	m_pContext->OMSetRenderTargets(1, &pPrevRTV, pDeferredDSV);
+
+	if (FAILED(m_pTargetManager->Begin_MRT("MRT_NonLight", 0xFF, pDeferredDSV, false)))
+		return E_FAIL;
+
 	pNonLightPass->Execute(m_pContext, this);
-	ID3D11RenderTargetView* pRTVs[8] = { pPrevRTV };
-	m_pContext->OMSetRenderTargets(8, pRTVs, pPrevDSV);
-	
-	Safe_Release(pPrevRTV);
-	Safe_Release(pPrevDSV);
+
+	if (FAILED(m_pTargetManager->End_MRT()))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -224,6 +218,8 @@ HRESULT CForwardRenderer::Render_Combined()
 	m_pTargetManager->Bind_Target("Target_Skinned_Depth", m_pShader, "SkinnedDepthTexture");
 	m_pTargetManager->Bind_Target("Target_VanishNoise", m_pShader, "VanishNoiseTexture");
 	m_pTargetManager->Bind_Target("Target_DiffuseUI", m_pShader, "UICombinedTexture");
+	m_pTargetManager->Bind_Target("Target_Blend", m_pShader, "BlendTexture");
+	m_pTargetManager->Bind_Target("Target_NonLight", m_pShader, "NonLightTexture");
 
 	Bind_WorldMatrix(); 
 
@@ -269,6 +265,14 @@ HRESULT CForwardRenderer::Ready_Target()
 	m_pContext->RSGetViewports(&iNumViewports, &ViewportDesc);
 
 	{
+		RenderTargetDesc BlendDesc = { "Target_Blend" , DXGI_FORMAT_R16G16B16A16_FLOAT ,DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.0f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
+		m_pTargetManager->Create_Target(BlendDesc);
+	}
+	{
+		RenderTargetDesc NonLightDesc = { "Target_NonLight" , DXGI_FORMAT_R16G16B16A16_FLOAT ,DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.0f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
+		m_pTargetManager->Create_Target(NonLightDesc);
+	}
+	{
 		RenderTargetDesc ShadowDesc = { "Target_Shadow" , DXGI_FORMAT_R32G32B32A32_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(1.f, 1.f, 1.f, 1.f) ,g_iMaxWidth, g_iMaxHeight };
 		m_pTargetManager->Create_Target(ShadowDesc);
 	}
@@ -286,6 +290,12 @@ HRESULT CForwardRenderer::Ready_Target()
 
 HRESULT CForwardRenderer::Ready_MRT()
 {
+	{
+		if (FAILED(m_pTargetManager->Add_MRT("MRT_Blend", "Target_Blend"))) return E_FAIL;
+	}
+	{
+		if (FAILED(m_pTargetManager->Add_MRT("MRT_NonLight", "Target_NonLight"))) return E_FAIL;
+	}
 	{
 		if (FAILED(m_pTargetManager->Add_MRT("MRT_Shadow", "Target_Shadow"))) return E_FAIL;
 	}

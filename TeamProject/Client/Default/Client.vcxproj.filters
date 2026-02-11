@@ -1278,6 +1278,9 @@
     <Filter Include="02. GameObject\UI\01. 2D\Wipeout">
       <UniqueIdentifier>{3f5f7d60-1268-4b6f-b2f4-3e0e9000df8f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Env">
+      <UniqueIdentifier>{e13e0649-5d43-4108-b4fd-d8e6ed754d44}</UniqueIdentifier>
+          </Filter>
     <Filter Include="02. GameObject\Effect\HitEffect">
       <UniqueIdentifier>{d0c7f39e-0011-405a-949b-aa5bc541e1d4}</UniqueIdentifier>
     </Filter>
@@ -2519,6 +2522,9 @@
     <ClInclude Include="..\Public\MiasmaSpawner.h">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler\DefilerSpawner</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Water.h">
+      <Filter>02. GameObject\Object\Env</Filter>
+          </ClInclude>
     <ClInclude Include="..\Public\BasicHitEffect.h">
       <Filter>02. GameObject\Effect\HitEffect\BasicHit</Filter>
     </ClInclude>
@@ -3692,6 +3698,9 @@
     <ClCompile Include="..\Private\MiasmaSpawner.cpp">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler\DefilerSpawner</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\Water.cpp">
+      <Filter>02. GameObject\Object\Env</Filter>
+          </ClCompile>
     <ClCompile Include="..\Private\BasicHitEffect.cpp">
       <Filter>02. GameObject\Effect\HitEffect\BasicHit</Filter>
     </ClCompile>
