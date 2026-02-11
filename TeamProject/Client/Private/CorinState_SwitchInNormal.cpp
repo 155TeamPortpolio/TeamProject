@@ -2,6 +2,8 @@
 #include "CorinState_SwitchInNormal.h"
 #include "Corin.h"
 
+#include "AudioSource.h"
+
 void CCorinState_SwitchInNormal::Enter(CCorin* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "SiwtchIn_Normal")
@@ -11,6 +13,9 @@ void CCorinState_SwitchInNormal::Enter(CCorin* pOwner)
     _vector3 vDir = pOwner->Get_InputDir();
     if (vDir.Length() > 0.01f)
         pOwner->Rotate(vDir);
+
+    auto& sound = *pOwner->Get_Component<CAudioSource>();
+    auto& slot = sound.Sequence("SwitchIn_Voice").Attribute3D(true).Loop(0).PlayNext();
 }
 
 void CCorinState_SwitchInNormal::Update(CCorin* pOwner, _float dt)

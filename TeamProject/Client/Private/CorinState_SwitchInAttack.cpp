@@ -28,9 +28,6 @@ void CCorinState_SwitchInAttack::Enter(CCorin* pOwner)
     pOwner->Push_Invincible();
     pOwner->Lock_Move();
 
-    auto& sound = *pOwner->Get_Component<CAudioSource>();
-    auto& slot = sound.Sequence("SwitchIn_Voice").Attribute3D(true).Loop(0).PlayNext();
-
     __super::Enter(pOwner);
 }
 
