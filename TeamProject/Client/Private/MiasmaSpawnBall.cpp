@@ -145,7 +145,7 @@ void CMiasmaSpawnBall::SpawnJaeger()
 	MonsterCCT.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER) | ENUM(COLLISION_GROUP::COMMON) | ENUM(COLLISION_GROUP::PLAYER_ATTACK);
 	MonsterCCT.bAutoFit = false;
 	MonsterCCT.fHeight = 1.28f;
-	MonsterCCT.fRadius = 0.25f;
+	MonsterCCT.fRadius = 0.85f;
 	MonsterCCT.vPos = m_targetPos;
 	MonsterCCT.vPos.y += MonsterCCT.fHeight;
 
