@@ -631,7 +631,7 @@ technique11 DefaultTechnique
         PixelShader    = compile ps_5_0 PS_MAIN_SPRITEANIMATION_COLORATLAS();
     }
     
-    pass OpaqueCustom
+    pass Opaque_Custom
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_None, 0);
@@ -640,6 +640,27 @@ technique11 DefaultTechnique
         GeometryShader = compile gs_5_0 GS_MAIN_CUSTOM();
         PixelShader    = compile ps_5_0 PS_MAIN();
     }
+
+    pass StencilWrite_Custom
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_UIWriteStencil, 1);
+        SetBlendState(BS_ColorWriteOff, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN_CUSTOM();
+        GeometryShader = compile gs_5_0 GS_MAIN_CUSTOM();
+        PixelShader = compile ps_5_0 PS_STENCIL_WRITE_ALPHA();
+    }
+
+    pass Opaque_StencilTest_Custom
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_UIStencilTest, 1);
+        SetBlendState(BS_Premultiplied, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN_CUSTOM();
+        GeometryShader = compile gs_5_0 GS_MAIN_CUSTOM();
+        PixelShader = compile ps_5_0 PS_MAIN();
+    }
+
     pass VideoPlay
     {
         SetRasterizerState(RS_Default);

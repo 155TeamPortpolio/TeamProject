@@ -29,7 +29,7 @@ HRESULT CUI_WipeoutRTV::Initialize(INIT_DESC* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-    Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("wipeout_test.json")));
+    Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("wipeout.json")));
     Cache();
 
     //Set_Alpha(m_isVisible? 1.f : 0.f);
@@ -94,26 +94,77 @@ void CUI_WipeoutRTV::Render_RT(ID3D11DeviceContext* pContext)
     auto& children = Get_Component<CObjectContainer>()->Get_Children();
     for (auto& pChild : children)
     {
-        if (!pChild)
-            continue;
+        Render_Recursive(pChild, pContext);
 
-        auto pSprite = pChild->Get_Component<CSprite2D>();
-        if (!pSprite)
-            continue;
+        //if (!pChild)
+        //    continue;
+        //
+        //auto pSprite = pChild->Get_Component<CSprite2D>();
+        //if (!pSprite)
+        //    continue;
+        //
+        //auto pShader = pSprite->Get_Shader();
+        //
+        //ID3D11InputLayout* pLayout = { nullptr };
+        //const string strPassConstant = pSprite->Get_PassConstant();
+        //string strCustomPassConstant = "Opaque_Custom";
+        //
+        //if (strPassConstant == "UI_StencilWrite")
+        //    strCustomPassConstant = "StencilWrite_Custom";
+        //else if (strPassConstant == "Opaque_StencilTest")
+        //    strCustomPassConstant = "Opaque_StencilTest_Custom";
+        //
+        //RenderSystem()->GetRenderer(RENDERER_TYPE::UI)->Get_BufferInputLayout(pSprite->Get_Buffer(), pShader, strCustomPassConstant, &pLayout);
+        //pContext->IASetInputLayout(pLayout);
+        //pSprite->Set_Param("g_WorldMatrix", { pChild->Get_Component<CTransform>()->Get_WorldMatrix_Ptr(), "matrix", sizeof(_float4x4) });
+        //pSprite->Set_Param("g_ViewMatrix", { &m_ViewMatrix, "matrix", sizeof(_float4x4) });
+        //pSprite->Set_Param("g_ProjMatrix", { &m_ProjMatrix, "matrix", sizeof(_float4x4) });
+        //pSprite->Apply_Shader(pContext);
+        //pSprite->Set_Param("vColor", { &m_vColor, "float4", sizeof(_float4) });
+        //
+        //pShader->Apply(strCustomPassConstant, pContext);
+        //pSprite->Draw_Sprite(pContext);
+    }
+}
 
-        auto pBrushShader = pSprite->Get_Shader();
+void CUI_WipeoutRTV::Render_Recursive(CGameObject* pObj, ID3D11DeviceContext* pContext)
+{
+    if (!pObj)
+        return;
 
-        ID3D11InputLayout* pLayout;
-        RenderSystem()->GetRenderer(RENDERER_TYPE::UI)->Get_BufferInputLayout(pSprite->Get_Buffer(), pBrushShader, "OpaqueCustom", &pLayout);
-        pContext->IASetInputLayout(pLayout);
-        pSprite->Set_Param("g_WorldMatrix", { pChild->Get_Component<CTransform>()->Get_WorldMatrix_Ptr(), "matrix", sizeof(_float4x4) });
-        pSprite->Set_Param("g_ViewMatrix", { &m_ViewMatrix, "matrix", sizeof(_float4x4) });
-        pSprite->Set_Param("g_ProjMatrix", { &m_ProjMatrix, "matrix", sizeof(_float4x4) });
-        pSprite->Apply_Shader(pContext);
-        pSprite->Set_Param("vColor", { &m_vColor, "float4", sizeof(_float4) });
+    if (auto pSprite = pObj->Get_Component<CSprite2D>())
+    {
+        if (auto pShader = pSprite->Get_Shader())
+        {
+            ID3D11InputLayout* pLayout = { nullptr };
+            const string strPassConstant = pSprite->Get_PassConstant();
+            string strCustomPassConstant = "Opaque_Custom";
 
-        pBrushShader->Apply("OpaqueCustom", pContext);
-        pSprite->Draw_Sprite(pContext);
+            if (strPassConstant == "UI_StencilWrite")
+                strCustomPassConstant = "StencilWrite_Custom";
+            else if (strPassConstant == "Opaque_StencilTest")
+                strCustomPassConstant = "Opaque_StencilTest_Custom";
+
+            RenderSystem()->GetRenderer(RENDERER_TYPE::UI)->Get_BufferInputLayout(pSprite->Get_Buffer(), pShader, strCustomPassConstant, &pLayout);
+            pContext->IASetInputLayout(pLayout);
+            pSprite->Set_Param("g_WorldMatrix", { pObj->Get_Component<CTransform>()->Get_WorldMatrix_Ptr(), "matrix", sizeof(_float4x4) });
+            pSprite->Set_Param("g_ViewMatrix", { &m_ViewMatrix, "matrix", sizeof(_float4x4) });
+            pSprite->Set_Param("g_ProjMatrix", { &m_ProjMatrix, "matrix", sizeof(_float4x4) });
+            pSprite->Apply_Shader(pContext);
+            pSprite->Set_Param("vColor", { &m_vColor, "float4", sizeof(_float4) });
+
+            pShader->Apply(strCustomPassConstant, pContext);
+            pSprite->Draw_Sprite(pContext);
+        }
+    }
+
+    if (auto pContainer = pObj->Get_Component<CObjectContainer>())
+    {
+        auto& children = pContainer->Get_Children();
+        for (auto& pChild : children)
+        {
+            Render_Recursive(pChild, pContext);
+        }
     }
 }
 

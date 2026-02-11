@@ -42,6 +42,8 @@ private:
 private:
 	void Render_RT(ID3D11DeviceContext* pContext);
 
+	void Render_Recursive(class CGameObject* pObj, ID3D11DeviceContext* pContext);
+
 	void Cache();
 
 	void Set_ChildAnimation(CHILD child, _int iIndex, _bool isPlayChild = false);
