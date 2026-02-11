@@ -24,6 +24,7 @@ HRESULT CUI_NameIndicator::Initialize(INIT_DESC* pArg)
     INDICATOR_DESC* pDesc = static_cast<INDICATOR_DESC*>(pArg);
     m_strName = pDesc->strName;
     m_pCCT = pDesc->pCCT;
+    m_vPosition = pDesc->vPosition;
 
     __super::Initialize(pArg);
 

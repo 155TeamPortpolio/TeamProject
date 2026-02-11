@@ -35,7 +35,6 @@
 
 /* UI */
 #include "UIDirector.h"
-#include "UI_MeshBillboard.h"
 
 /* Interactable */
 #include "Portal.h"
