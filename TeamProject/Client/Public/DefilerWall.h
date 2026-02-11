@@ -34,7 +34,7 @@ private:
     _float  m_ElapsedTime = 0.f;
     _float  m_fDissolveProgress = 0.f;
 
-    _float2 m_vDissolveTiling = { 1.5f, 1.5f }; // 덩쿨 반복 크기
+    _float2 m_vDissolveTiling = { 1.f, 1.f }; // 덩쿨 반복 크기
     _float  m_fDissolveScrollSpeed = 0.35f;          // 아래로 흐르는 속도
     _float  m_fDissolveNoiseStrength = 0.18f;          // 경계 흔들림
     _float  m_fDissolveEdgeWidth = 0.04f;          // 경계 부드러움

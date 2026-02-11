@@ -74,7 +74,7 @@ void CDefilerWall::Update(_float dt)
 
 	const _float dissolveDuration = 1.2f;            // 전체 사라지는 시간(초)
 	const _float dissolveSpeed = (dissolveDuration > 0.f) ? (1.f / dissolveDuration) : 1.f;
-
+	
 	m_fDissolveProgress = min(1.f, m_fDissolveProgress + dt * dissolveSpeed);
 }
 void CDefilerWall::Late_Update(_float dt)

@@ -57,11 +57,13 @@ VS_OUT VS_MAIN(VS_IN In)
     Out.viewZ = viewPos.z;
     return Out;
 }
-
 VS_OUT VS_WALL(VS_IN In)
 {
     VS_OUT Out;
 
+    // ==========================
+    // World / TBN
+    // ==========================
     float3 worldPos = mul(float4(In.vPosition, 1.f), ObjectBufferArray[TransformIndex].Transform).xyz;
 
     float3 normalW = normalize(mul(float4(In.vNormal, 0.f), ObjectBufferArray[TransformIndex].Transform).xyz);
@@ -70,26 +72,77 @@ VS_OUT VS_WALL(VS_IN In)
 
     float2 uvBase = In.vTexcoord;
 
-   
-    float phase = frac(fTime ); // 0..1
-    float suck = saturate((phase - 0.5f) * 2.0f);
+    // ==========================
+    // 1) 빨려들기 타이밍(suck)
+    // ==========================
+    const float cycleSpeed = 0.45f; // 1/초
+    float phase = frac(fTime * cycleSpeed); // 0..1
 
+    float suck = saturate((phase - 0.5f) * 2.0f); // 0..1 (뒤 절반에서 빨려듦)
+    suck = suck * suck; // 가속 느낌
+
+    // ==========================
+    // 2) "끝이 먼저" 사라지게 (uv.y가 뿌리=0, 끝=1 가정)
+    // ==========================
+    float along = saturate(uvBase.y);
+
+    // 끝에서부터 내려오는 범위 (0.15~0.40 추천)
+    const float tipStart = 0.25f;
+
+    // along이 1에 가까울수록 먼저 켜짐
+    float tipMask = saturate((along - (1.0f - tipStart)) / tipStart);
+    tipMask = tipMask * tipMask;
+
+    // 끝쪽에만 먼저 강하게 적용되는 suck
+    float suckTip = suck * tipMask;
+
+    // ==========================
+    // 3) 덩쿨 마스크(시간 스크롤 + 월드 기반 가닥 위상)
+    // ==========================
     float2 uvNoise = uvBase * vDissolveTiling;
-    const float scrollDistance = 1.2f; 
-    uvNoise.y += scrollDistance;
-    uvNoise.x +=  0.35f;
+    uvNoise.y -= fTime * fDissolveScrollSpeed;
+    uvNoise.x += fTime * (0.25f * fDissolveScrollSpeed);
 
     float vineShape = DissolveTexture.SampleLevel(LinearSampler, uvNoise, 0).r;
+    vineShape = saturate((vineShape - 0.25f) * 1.6f);
 
-    // ===== 빨려들어가며 얇아짐 =====
-    const float thinAmount = 0.3f; // 0.02~0.10
-    float thin = thinAmount * vineShape * (suck);
+    // 월드 XZ 기반 가닥 분리 위상
+    const float strandSpacing = 0.8f; // 작을수록 가닥 많아짐
+    float2 strandCoord = floor(worldPos.xz / strandSpacing);
+    float hash = frac(sin(dot(strandCoord, float2(127.1f, 311.7f))) * 43758.5453f);
+    float strandPhase = hash * 6.2831853f;
 
+    // ==========================
+    // 4) 휘감기(스크류) + 수축 + 아래로 빨려들기
+    // ==========================
+    const float twistTurns = 4.0f; // 길이 전체 회전 수(2~6)
+    const float twistSpeed = 5.0f; // 시간 회전 속도(3~10)
+    float angle = (along * 6.2831853f * twistTurns) + (fTime * twistSpeed) + strandPhase;
+
+    float s, c;
+    sincos(angle, s, c);
+
+    // 끝쪽에서 먼저 감기고(=radius), 먼저 얇아지고(=thin), 먼저 내려감
+    const float radiusBase = 0.10f; // 감김 반경(0.03~0.20)
+    float radius = radiusBase * vineShape * suckTip;
+
+    const float thinAmount = 0.06f; // 수축 강도(0.02~0.12)
+    float thin = thinAmount * vineShape * suckTip;
+
+    // 단면(노말/바이노멀)에서 원 운동 -> "줄기들이 휘감기며 내려오는" 착시
+    worldPos += (normalW * c + binormW * s) * radius;
+
+    // 가늘어짐(폭/노말 방향 수축)
     worldPos -= binormW * thin;
     worldPos -= normalW * (thin * 0.6f);
 
-    worldPos.y -= suck*2 ; 
+    // 아래로 빨려들기(끝쪽 먼저)
+    const float pullDown = 2.5f; // 0.8~4.0
+    worldPos.y -= suckTip * pullDown;
 
+    // ==========================
+    // Project
+    // ==========================
     float4 viewPos = mul(float4(worldPos, 1.f), matView);
     float4 projPos = mul(viewPos, matProjection);
 
