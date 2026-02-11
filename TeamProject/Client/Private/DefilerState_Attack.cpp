@@ -17,7 +17,7 @@ void CDefilerState_Attack::Build_Pattern(CDefiler* pOwner, _int Type)
 	DEFILER_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
 	TARGETING_INFO& targetInfo = pOwner->GetTargetingInfo();
 	blackBoard.patternTransition.clear();
-	Type = 0;
+	Type = 1;
 	switch (Type)
 	{
 	case 0 :
@@ -293,10 +293,25 @@ void CDefilerState_Attack_01_03::Enter(CDefiler* pOwner)
 void CDefilerState_Attack_01_03::Update(CDefiler* pOwner, _float dt)
 {
 	ComboTransition(pOwner);
+	Update_Effects(pOwner);
 }
 
 void CDefilerState_Attack_01_03::Exit(CDefiler* pOwner)
 {
+}
+
+void CDefilerState_Attack_01_03::Update_Effects(CDefiler* pOwner)
+{
+	if (IsCrossAnimProgress(0.15f))
+		pOwner->Play_Effect("Defiler_Slash1_0", _vector3(0.f, 1.f, 0.f), _quaternion(-0.01f, 0.69f, 0.72f, 0.1f));
+	if (IsCrossAnimProgress(0.21f))
+		pOwner->Play_Effect("Defiler_Axe_Slash0_0", _vector3(0.f, 0.f, 0.f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+	if (IsCrossAnimProgress(0.36f))
+		pOwner->Play_Effect("Defiler_Tail_Slash0_0", _vector3(-2.1f, 0.6f, 1.2f), _quaternion(0.52f, -0.48f, 0.5f, -0.5f));
+	if (IsCrossAnimProgress(0.56f))
+		pOwner->Play_Effect("Defiler_Slash2_0", _vector3(0.4f, 1.5f, 1.9f), _quaternion(-0.22f, 0.54f, -0.31f, 0.75f));
+	if (IsCrossAnimProgress(0.565f))
+		pOwner->Play_Effect("Defiler_HitGround0", _vector3(0.f, 0.2f, 2.6f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
 }
 
 void CDefilerState_Attack_02::Enter(CDefiler* pOwner)

@@ -197,8 +197,16 @@ void CMeshNode::Play()
 
 void CMeshNode::Stop()
 {
-	m_fPendingElapsedTime = 0.f;
-	m_IsPendingStop = true;
+	if (m_fPendingDuration >= 0.01f)
+	{
+		m_fPendingElapsedTime = 0.f;
+		m_IsPendingStop = true;
+	}
+	else
+	{
+		m_IsEffectActive = false;
+		m_isAlive = false;
+	}
 }
 
 CMeshNode* CMeshNode::Create()
