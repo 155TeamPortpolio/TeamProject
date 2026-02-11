@@ -51,6 +51,8 @@ private:
 
 	const string& strFieldPlayerKey = "Denny";
 
+	_bool			m_isPurchased = {};
+
 private: 
 	void Create_BackButton();
 	void Create_Menus();
@@ -60,6 +62,7 @@ private:
 
 	void Cache();
 
+	void Play_ExitSound();
 	void OnClick_Order();
 	void OnClick_OrderComfirm();
 	void OnVideoFinished();
