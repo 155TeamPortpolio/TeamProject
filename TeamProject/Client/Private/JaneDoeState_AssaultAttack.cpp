@@ -114,6 +114,18 @@ void CJaneDoeState_Assault_Start::Update(CJaneDoe* pOwner, _float dt)
 	pOwner->Process_RootMotion(dt,
 		ENUM(CJaneDoe::ROOTMOTION_MASK::MOVE) |
 		ENUM(CJaneDoe::ROOTMOTION_MASK::QUATERNION));
+
+	Update_Effects(pOwner);
+}
+
+void CJaneDoeState_Assault_Start::Update_Effects(CJaneDoe* pOwner)
+{
+	if (IsCrossAnimProgress(0.05f))
+		pOwner->Play_Effect("JaneDoe_Normal_Slash0", _vector3(0.f, 1.4f, 0.f), _quaternion(0.55f, -0.49f, -0.67f, -0.11f));
+	if (IsCrossAnimProgress(0.12f))
+		pOwner->Play_Effect("JaneDoe_Normal_Slash1", _vector3(0.f, 1.7f, 0.f), _quaternion(-0.11f, 0.7f, 0.7f, 0.11f));
+	if (IsCrossAnimProgress(0.25f))
+		pOwner->Play_Effect("JaneDoe_Wide_Slash", _vector3(0.f, 0.2f, 2.3f), _quaternion(0.f, 0.74f, 0.68f, 0.f), false);
 }
 
 void CJaneDoeState_Assault_End::Enter(CJaneDoe* pOwner)
