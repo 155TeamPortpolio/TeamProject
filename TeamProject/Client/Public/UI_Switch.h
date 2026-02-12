@@ -18,6 +18,7 @@ public:
 	virtual void    Update(_float dt)			     override;
 	virtual void    Late_Update(_float dt)           override { __super::Late_Update(dt); }
 	virtual void    Render_GUI()                     override { __super::Render_GUI(); }
+	virtual void UI_Active(void* pArg = nullptr) override;
 
 public:
 	static  CGameObject* Create();
