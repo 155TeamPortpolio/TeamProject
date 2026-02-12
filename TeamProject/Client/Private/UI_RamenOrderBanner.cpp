@@ -54,7 +54,7 @@ void CUI_RamenOrderBanner::Update(_float dt)
 
 void CUI_RamenOrderBanner::UI_Active(void* pArg)
 {
-    Get_Component<CAudioSource>()->Slot("UI_Open_Swoosh.wav").Attribute3D(false).Loop(false).Play();
+    Get_Component<CAudioSource>()->Slot("UI_Open_Swoosh.wav").Play();
 
     Change_State(STATE::VISIBLE);
 

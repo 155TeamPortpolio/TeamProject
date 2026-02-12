@@ -29,7 +29,7 @@ void CUI_Ramen::Select_Menu(CUI_Object* pSelected, const RAMEN_DESC& tRamenDesc)
     m_tRamenDesc = tRamenDesc;
     Set_TextPrice();
 
-    Get_Component<CAudioSource>()->Slot("UI_Pop3.wav").Attribute3D(false).Loop(false).Play();
+    Get_Component<CAudioSource>()->Slot("UI_Pop3.wav").Play();
 }
 
 HRESULT CUI_Ramen::Initialize_Prototype()
@@ -223,8 +223,8 @@ void CUI_Ramen::Play_ExitSound()
         _int iRand = rand() % 2;
         strSoundKey = (iRand == 0) ? "SirChopNoBuy01.wav" : "SirChopNoBuy02.wav" ;
     }
-    
-    Get_Component<CAudioSource>()->Slot(strSoundKey).Attribute3D(false).Loop(false).Play();
+
+    Get_Component<CAudioSource>()->Slot(strSoundKey).Play();
 }
 
 void CUI_Ramen::OnClick_Order()
