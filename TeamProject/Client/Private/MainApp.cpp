@@ -197,7 +197,7 @@ void CMainApp::Set_Levels()
 
 	LevelManager()->Set_LoadingLevel("Loading_Level");
 	m_pGameInstance->Notify_LevelSet(); 
-	m_pGameInstance->Get_LevelMgr()->Request_ChangeLevel("Zero_Level", true);
+	m_pGameInstance->Get_LevelMgr()->Request_ChangeLevel("Test_Level", true);
 } 
 
 CMainApp* CMainApp::Create()
@@ -348,7 +348,7 @@ void CMainApp::Create_GlobalCamObjs()
 
 	CCT_DESC desc;
 	desc.eGroup = COLLISION_GROUP::CAMERA;
-	desc.iCollisionMask = ENUM(COLLISION_GROUP::COMMON) | ENUM(COLLISION_GROUP::INTERACTABLE);
+	desc.iCollisionMask = ENUM(COLLISION_GROUP::COMMON) | ENUM(COLLISION_GROUP::INTERACTABLE) | ENUM(COLLISION_GROUP::GROUND);
 
 	auto orbitCam = Builder::Create_Object({G_GlobalLevelKey, "Proto_GameObject_OrbitCam"})
 		.Camera(aspect)

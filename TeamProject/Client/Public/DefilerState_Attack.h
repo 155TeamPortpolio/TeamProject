@@ -289,4 +289,16 @@ public:
 	virtual void Free() override { __super::Free(); }
 };
 
+class CDefilerState_Attack_Barrier:  public CDefilerState_Attack
+{
+public:
+	virtual void Enter(CDefiler* pOwner) override;
+	virtual void Update(CDefiler* pOwner, _float dt) override;
+	virtual void Exit(CDefiler* pOwner) override;
+
+public:
+	static CDefilerState_Attack_Barrier* Create() { return new CDefilerState_Attack_Barrier(); }
+	virtual void Free() override { __super::Free(); }
+};
+
 NS_END

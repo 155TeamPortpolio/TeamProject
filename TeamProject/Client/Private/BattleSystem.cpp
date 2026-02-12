@@ -10,6 +10,8 @@
 #include "MonsterSpawner.h"
 #include "Character.h"
 #include "BattleFXFlow.h"
+#include"BattleSystem_Panel.h"
+#include "AudioSource.h"
 
 IMPLEMENT_SINGLETON(CBattleSystem)
 
@@ -32,6 +34,11 @@ CBattleSystem::CBattleSystem()
 	m_pFXFlow->SetLayerTag(BATTLE_OBJ_TYPE::MONSTER,	"Enemy_Layer");
 	m_pFXFlow->SetLayerTag(BATTLE_OBJ_TYPE::CAMERA,		"Camera_Layer");
 	m_pFXFlow->SetLayerTag(BATTLE_OBJ_TYPE::EFFECT,		"Effect_Layer");
+
+#ifdef _USING_GUI
+	auto panel=CBattleSystem_Panel::Create(GUISystem()->Get_Context());
+	GUISystem()->Register_Panel(panel);
+#endif
 }
 
 void CBattleSystem::Update()
@@ -51,7 +58,7 @@ void CBattleSystem::Update()
 
 	if(InputDevice()->Key_Tap(VK_SHIFT))
 	{
-		StartGimmick(BATTLE_VFX_TYPE::EVADE);
+		StartGimmick(BATTLE_VFX_TYPE::WIPEOUT);
 	}
 	if(InputDevice()->Key_Tap(VK_CONTROL))
 	{
@@ -274,7 +281,7 @@ void CBattleSystem::Update_BattleInfo()
 
 _bool CBattleSystem::isMonsterCleared()
 {
-	return m_BattleSnapShots[BATTLE_OBJ_TYPE::MONSTER].empty();
+	return m_BattleObjInfos[BATTLE_OBJ_TYPE::MONSTER].empty();
 }
 
 void CBattleSystem::CheckVFX(const _float dt)

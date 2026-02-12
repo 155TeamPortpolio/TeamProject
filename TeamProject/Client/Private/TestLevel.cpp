@@ -57,6 +57,8 @@
 #include "Cyclops.h"
 #include "Cyclops_Spit.h"
 #include "StrikeJaeger.h"
+#include "MeleeJaeger.h"
+#include "MeleeJaeger_Shield.h"
 
 /*npc*/
 #include "OfficeMeow.h"
@@ -172,6 +174,8 @@ HRESULT CTestLevel::Awake()
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Cyclops", CCyclops::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Cyclops_Spit", CCyclops_Spit::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_StrikeJaeger", CStrikeJaeger::Create());
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_MeleeJaeger", CMeleeJaeger::Create());
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_MeleeJaeger_Shield", CMeleeJaeger_Shield::Create());
 
 
 

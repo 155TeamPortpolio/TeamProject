@@ -5,6 +5,7 @@
 #include "PostRenderer.h"
 #include "PostProcessCommand.h"
 #include "CamDirector.h"
+#include "UIDirector.h"
 
 CBattleFXFlow::CBattleFXFlow() {
 
@@ -65,7 +66,7 @@ void CBattleFXFlow::Initialize_Preset()
 
 	{
 		auto& WipeOut = m_BattleVFXData[ENUM(BATTLE_VFX_TYPE::WIPEOUT)];
-		const _float duration = 4.5f;
+		const _float duration = 4.8f;
 		WipeOut.bCanIntersect = false;
 		WipeOut.fVFXDuration = duration;
 		WipeOut.fBlurDuration = duration;
@@ -89,6 +90,7 @@ void CBattleFXFlow::Update(_float dt)
 {
 	if (!m_isRunning)
 		return;
+
 	dt = TimeManager()->Get_RawDeltaTime(G_EngineTimerID);
 
 	for (_int trackIndex = 0; trackIndex < m_parallelTracks.size(); )
@@ -180,8 +182,8 @@ void CBattleFXFlow::Cancel()
 
 void CBattleFXFlow::StartVfx(BATTLE_VFX_TYPE vfxType)
 {
-	//if (m_BattleVFX.isRunning)
-	//	return;
+	if (m_BattleVFX.isRunning&& m_BattleVFX.bCanIntersect)
+		return;
 
 	auto& preset = m_BattleVFXData[ENUM(vfxType)];
 
@@ -191,6 +193,7 @@ void CBattleFXFlow::StartVfx(BATTLE_VFX_TYPE vfxType)
 	m_BattleVFX.fCurPos = 0.f;
 	m_BattleVFX.vNowColor = preset.vStartColor;
 	m_BattleVFX.bCanIntersect = preset.bCanIntersect;
+
 	switch (vfxType)
 	{
 	case BATTLE_VFX_TYPE::EVADE:
@@ -312,7 +315,7 @@ void CBattleFXFlow::StartVfx_Ultimate()
 	AddWait(preset.fVFXDuration);
 	AddCall([this, preset]() {
 		m_BattleVFX.fCurPos = 0.f;
-		m_BattleVFX.vNowColor = {};
+		m_BattleVFX.vNowColor = {}; 
 		m_BattleVFX.isRunning = false;
 		});
 	Start(nullptr);
@@ -324,12 +327,17 @@ void CBattleFXFlow::StartVfx_WipeOut()
 
 	auto& preset = m_BattleVFXData[ENUM(BATTLE_VFX_TYPE::WIPEOUT)];
 	AddParallelTimeScaleAll(preset);
-	AddCall([this]() {CamDirector()->BeginWipeOut(); });
+	AddCall([this]() {
+		CamDirector()->BeginWipeOut(); 
+		UIDirector()->Show_Wipeout();
+		UIDirector()->Hide_HUD(CUIDirector::BATTLE);
+		});
 	AddWait(preset.fVFXDuration);
 	AddCall([this, preset]() {
 		m_BattleVFX.fCurPos = 0.f;
 		m_BattleVFX.vNowColor = {};
 		m_BattleVFX.isRunning = false;
+		CamDirector()->EndWipeOut();
 		});
 	Start(nullptr);
 }

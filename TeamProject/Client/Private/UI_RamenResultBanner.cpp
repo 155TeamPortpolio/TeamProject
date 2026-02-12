@@ -13,8 +13,6 @@ HRESULT CUI_RamenResultBanner::Initialize_Prototype()
     __super::Initialize_Prototype();
 
     Add_Component<CObjectContainer>();
-    Add_Component<CAudioSource>();
-    Get_Component<CAudioSource>()->SoundFolder(G_GlobalLevelKey, "../Bin/Resources/Global/UI/Sound/");
 
     return S_OK;
 }

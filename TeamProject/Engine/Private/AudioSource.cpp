@@ -219,6 +219,19 @@ void CAudioSource::Set_SlotPuase(const string& slotKey, _bool isPaused)
 	slot.isPaused = isPaused;
 }
 
+void CAudioSource::Set_SlotStop(const string& slotKey)
+{
+	auto iter = m_Audios.find(slotKey);
+	if (iter == m_Audios.end())
+		return;
+
+	AUDIO_SLOT& slot = iter->second;
+
+	if (!slot.pChanel)
+		return;
+	slot.pChanel->stop();
+}
+
 void CAudioSource::Set_AudioPos(_vector3 pos)
 {
 	m_vPos = { pos.x,pos.y,pos.z };

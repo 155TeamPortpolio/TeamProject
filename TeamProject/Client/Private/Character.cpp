@@ -78,6 +78,10 @@ void CCharacter::Awake()
 void CCharacter::Priority_Update(_float dt)
 {
     Get_Component<CObjectContainer>()->Priority_UpdateChild(dt);
+
+    // ']'
+    if (InputDevice()->Key_Tap(VK_OEM_6))
+        m_bTest = !m_bTest;
 }
 
 void CCharacter::Update(_float dt)
@@ -96,6 +100,8 @@ void CCharacter::Update(_float dt)
 void CCharacter::Late_Update(_float dt)
 {
     m_pCCT->Late_Update(dt);
+    Get_Component<CAudioSource>()->Set_AudioPos(Get_WorldPos());
+
     m_bIsAttack = false;
     m_bIsEvade = false;
     m_bEvadeBuffer = false;
