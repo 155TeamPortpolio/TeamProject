@@ -12,7 +12,7 @@ public:
 public:
     CEffectBuilder& Asset(const string& assetKey);
     CEffectBuilder& Position(const _float3 position);
-    //CEffectBuilder& Rotate(const _float rotate);
+    CEffectBuilder& Rotate(const _float3 rotate);
     CEffectBuilder& Scale(const _float3 scale);
     CEffectBuilder& FromPool() { m_isFromPool = true; return *this; };
 
