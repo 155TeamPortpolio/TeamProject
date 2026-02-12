@@ -5,6 +5,7 @@
 #include "SkeletalModel.h"
 #include "ModelData.h"
 #include "Material.h"
+#include "AudioSource.h"
 
 CAmbientActor::CAmbientActor()
 	:CGameObject()
@@ -22,6 +23,7 @@ HRESULT CAmbientActor::Initialize_Prototype()
 	Add_Component<CAnimator3D>();
 	Add_Component<CSkeletalModel>();
 	Add_Component<CMaterial>();
+	Add_Component<CAudioSource>();
 	return S_OK;
 }
 

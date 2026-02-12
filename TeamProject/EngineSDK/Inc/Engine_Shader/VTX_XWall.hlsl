@@ -1,7 +1,7 @@
 #include "Shader_Define.hlsl"
 
 vector g_Color = { 0.8f, 0.35f, 0.1f, 1.f };
-vector g_BrightColor = { 1.f, 0.7f, 0.1f, 1.f };
+vector g_BrightColor = { 1.f, 0.4f, 0.1f, 1.f };
 float4x4 g_WorldMatrix;
 
 struct VS_IN
@@ -37,7 +37,10 @@ VS_OUT VS_MAIN(VS_IN In)
 {
 	VS_OUT Out;
     
-    row_major float4x4 instWorld = float4x4(In.iRight, In.iUp, In.iLook, In.iTranslation);
+    row_major float4x4 instLocal= float4x4(In.iRight, In.iUp, In.iLook, In.iTranslation);
+    
+    float4 instanceOrigin = mul(float4(0, 0, 0, 1), instLocal);
+    float4 worldOrigin = mul(instanceOrigin, g_WorldMatrix);
     
     float3 camRight = matViewInverse[0].xyz;
     float3 camUp = matViewInverse[1].xyz;
@@ -45,16 +48,15 @@ VS_OUT VS_MAIN(VS_IN In)
     float scale = 0.2f;
     
     float3 billboardPos =
-        In.vPosition.x * camRight * scale +
-        In.vPosition.y * camUp * scale +
-        In.iTranslation.xyz;
+    worldOrigin.xyz +
+    camRight * (In.vPosition.x * scale) +
+    camUp * (In.vPosition.y * scale);
 
     float4 worldPos = float4(billboardPos, 1.f);
-    
+
     matrix VP = mul(matView, matProjection);
-    matrix WVP = mul(g_WorldMatrix, VP);
     
-    Out.vWorldPos = mul(worldPos, WVP);
+    Out.vWorldPos = mul(worldPos, VP);
     Out.vNormal = mul(vector(In.vNormal, 0.f), ObjectBufferArray[TransformIndex].Transform);
     Out.vTangent = normalize(mul(vector(In.vTangent, 0.f), ObjectBufferArray[TransformIndex].Transform)).xyz;
     Out.vBinormal = normalize(cross(Out.vNormal.xyz, Out.vTangent.xyz));

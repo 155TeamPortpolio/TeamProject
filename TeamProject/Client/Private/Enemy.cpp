@@ -258,6 +258,9 @@ void CEnemy::Set_Alive(_bool alive)
 	if (m_hUIEnemyStatus.isValid())
 		m_hUIEnemyStatus.Get()->Set_Alive(alive);
 
+	if (nullptr != Get_Component<CCharacterController>())
+		Get_Component<CCharacterController>()->Set_CompActive(alive);
+
 }
 
 void CEnemy::Active_AttackSign(_bool parryEnable)

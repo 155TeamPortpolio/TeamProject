@@ -8,6 +8,8 @@
 #include "CharacterController.h"
 #include "Transform.h"
 #include "Collider.h"
+#include "EffectContainer.h"
+
 
 /* Maptool Type 0 (NPC) */
 #include "OfficeMeow.h"
@@ -20,14 +22,17 @@
 #include "ElectricBoo.h"
 #include "SilverAnbi.h"
 
-/* Maptool Type 1 (ETC) */
+/* Maptool Type 1 (Interactable) */
 #include "Portal.h"
 #include "ZeroPortal.h"
 
 /* Maptool Type 2 (ETC) */
 #include "MilitaryHelicopter.h"
 
-/* Maptool Type 4 (ETC) */
+/* Maptool Type 4 (InvWall) */
+#include "MapInvisibleWall.h"
+
+/* Maptool Type 5 (ETC) */
 #include "Water.h"
 
 #pragma region Tables
@@ -76,6 +81,7 @@ void Client::Spawner::Register_Prototype(const string& MapDataName, const string
 	case Client::Spawner::ENTITY_TYPE::NPC:			Table = &s_NPCTable;			break;
 	case Client::Spawner::ENTITY_TYPE::INTERACTABLE:Table = &s_InteractTable;		break;
 	case Client::Spawner::ENTITY_TYPE::AMBIENTACTOR:Table = &s_AmbientActorTable;	break;
+	case Client::Spawner::ENTITY_TYPE::EFFECT:									return;
 	case Client::Spawner::ENTITY_TYPE::INVWALL:									return;
 	case Client::Spawner::ENTITY_TYPE::ETC:										return;
 	default:																	return;
@@ -92,9 +98,9 @@ OBJECT_HANDLE Client::Spawner::Create_Entity(const SPAWNER_DESC& Desc)
 	case 0:	return Create_NPC(Desc);			break;
 	case 1:	return Create_Interactable(Desc);	break;
 	case 2: return Create_AmbientActor(Desc);	break;
-	case 3: return Create_Invwall(Desc);		break;
-
-	case 4:	return Create_ETC(Desc);			break;
+	case 3: return Create_Effect(Desc);			break;
+	case 4: return Create_Invwall(Desc);		break;
+	case 5:	return Create_ETC(Desc);			break;
 	default:return OBJECT_HANDLE();				break;
 	}
 }
@@ -247,8 +253,26 @@ OBJECT_HANDLE Client::Spawner::Create_AmbientActor(const SPAWNER_DESC& Desc)
 
 /* --------------------------------------------------------------------------------------------------------------------- */
 
-/* Maptool Type 3 (Invwall) */
-#pragma region Entity3(Invwall)
+/* Maptool Type 3 (Effect) */
+#pragma region Entity3(Effect)
+
+OBJECT_HANDLE Client::Spawner::Create_Effect(const SPAWNER_DESC& Desc)
+{
+	auto pParticle = Builder::Create_EffectContainer({ G_GlobalLevelKey, "Proto_GameObject_EffectContainer" })
+		.Asset(Desc.tagName + ".json")
+		.Position(Desc.vTranslation)
+		.Rotate(Desc.vRotation)
+		.Build(Desc.tagName);
+
+	ObjectManager()->Add_Object(pParticle, { Desc.tagLevel, "MapParticle_Layer" });
+	return pParticle->Get_Handle();
+}
+
+#pragma endregion
+/* --------------------------------------------------------------------------------------------------------------------- */
+
+/* Maptool Type 4 (Invwall) */
+#pragma region Entity4(Invwall)
 OBJECT_HANDLE Client::Spawner::Create_Invwall(const SPAWNER_DESC& Desc)
 {
 	COLLIDER_DESC tColDesc{};
@@ -267,6 +291,32 @@ OBJECT_HANDLE Client::Spawner::Create_Invwall(const SPAWNER_DESC& Desc)
 		.Collider(tColDesc)
 		.Build(Desc.tagName);
 
+#pragma region XWall
+	auto Slot = Desc.SlotDataValues.find("XWall");
+
+	if (Slot != Desc.SlotDataValues.end())
+	{
+		_vector2 vCount{}, vOffset{};
+		_bool bCount{}, bOffset{};
+	
+		for (auto tFieldData : Slot->second)
+		{
+			if (tFieldData.TagName == "Count") {
+				_vector2 vCount = *GetSlotValue<_float2>(tFieldData.defaultvalue);
+				bCount = true;
+			}
+			if (tFieldData.TagName == "Offset") {
+				_vector2 vOffset = *GetSlotValue<_float2>(tFieldData.defaultvalue);
+				bOffset = true;
+			}
+		}
+
+		if(bCount && bOffset)
+			static_cast<CMapInvisibleWall*>(Object)->CreateXWall(vCount, vOffset);
+	}
+	
+#pragma endregion
+
 	ObjectManager()->Add_Object(Object, { Desc.tagLevel, "InvisibleWall_Layer" });
 	return Object->Get_Handle();
 }
@@ -274,8 +324,8 @@ OBJECT_HANDLE Client::Spawner::Create_Invwall(const SPAWNER_DESC& Desc)
 
 /* --------------------------------------------------------------------------------------------------------------------- */
 
-/* Maptool Type 4 (ETC) */
-#pragma region Entity4(ETC)
+/* Maptool Type 5 (ETC) */
+#pragma region Entity5(ETC)
 OBJECT_HANDLE Client::Spawner::Create_ETC(const SPAWNER_DESC& Desc)
 {
 	/* PlayerSpawn */
@@ -328,5 +378,4 @@ void Client::Spawner::Gravity(CGameObject* pGameObject, const vector<FIELD_DATA>
 	}
 }
 #pragma endregion
-
 

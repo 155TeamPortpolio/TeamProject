@@ -770,6 +770,9 @@ void CBattlePlayer::Update_Target()
 
     // 가장 가까운 몬스터 탐색
     auto Monsters = CBattleSystem::GetInstance()->GetBattleObjects(CBattleSystem::BATTLE_OBJ_TYPE::MONSTER);
+    if (Monsters.empty())
+        return;
+
     _float fminDistance = FLT_MAX;
 
     for (auto& monster : Monsters)
