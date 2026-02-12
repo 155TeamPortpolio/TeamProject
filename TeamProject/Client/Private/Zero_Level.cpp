@@ -37,6 +37,8 @@
 #include "Claymore.h"
 #include "Cyclops.h"
 #include "StrikeJaeger.h"
+#include "MeleeJaeger.h"
+#include "MeleeJaeger_Shield.h"
 
 /* UI */
 #include "UIDirector.h"
@@ -104,6 +106,7 @@ HRESULT CZero_Level::Awake()
 void CZero_Level::Update()
 {
 	m_Context.pNowStage->Update();
+	BattleSystem()->Update();
 }
 
 HRESULT CZero_Level::Render()
@@ -150,6 +153,8 @@ void CZero_Level::Ready_Prototype()
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_Claymore", CClaymore::Create());
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_Cyclops", CCyclops::Create());
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_StrikeJaeger", CStrikeJaeger::Create());
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_MeleeJaeger", CMeleeJaeger::Create());
+	PrototypeManager()->Add_ProtoType("Test_Level", "Proto_GameObject_MeleeJaeger_Shield", CMeleeJaeger_Shield::Create());
 }
 
 void CZero_Level::Ready_Stage()
@@ -168,9 +173,9 @@ void CZero_Level::Ready_Stage()
 	m_mapCycle[StageType::Start].maps	= { "Zero_Start" };
 	m_mapCycle[StageType::Normal].maps	= { "Zero_1_1",	"Zero_1_2", "Zero_2_1", "Zero_5_1" };
 	m_mapCycle[StageType::Elite].maps	= { "Zero_1_1",	"Zero_1_2", "Zero_2_1" };
-	m_mapCycle[StageType::Boss].maps	= { "Zero_Boss2","Zero_Boss2"};
+	m_mapCycle[StageType::Boss].maps	= { "Zero_Boss2","Zero_Boss1"};
 
-	ChangeStage(StageType::Start);
+	ChangeStage(StageType::Boss);
 }
 
 string CZero_Level::PopMapKey(StageType type)
