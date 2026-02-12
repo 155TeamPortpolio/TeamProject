@@ -46,6 +46,7 @@ public: //setter
 	
 public:
 	void	StartGimmick(BATTLE_VFX_TYPE eVFXType);
+	void	HitVFX(DAMAGE_TYPE eDamageType);
 
 public:
 	void	TakeAreaDamage(const _float3& vCenter, _float fRadius, const HitDesc& hitDesc);
