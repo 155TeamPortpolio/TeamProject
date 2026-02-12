@@ -182,10 +182,11 @@ HRESULT CTestLevel::Awake()
 	//Ready_Npc();
 
 	//CamDirector()->StartBattleIntro(CamSeqType::ZeroIntro);
-	CamDirector()->AutoBattle(CamStartDir::Back);
 	//CUIDirector::GetInstance()->Show_SceneFrame();
 	CUIDirector::GetInstance()->Show_HUD(CUIDirector::HUD::BATTLE);
 	//GameInstance()->Set_EngineTimeScale(0.05f);
+
+	CamDirector()->AutoBattle(CamStartDir::Back);
 	
 	CXWall::XWALL_DESC* XWallDesc = new CXWall::XWALL_DESC;
 	XWallDesc->vCount = { 15, 3 };
@@ -287,7 +288,7 @@ void CTestLevel::Ready_TestObject()
 		.Scale(_float3(1.f, 0.2f, 1.f))
 		.Build("Water");
 
-	objMgr->Add_Object(testMap, { "Test_Level", "Env" });
+	//objMgr->Add_Object(testMap, { "Test_Level", "Env" });
 	//==============TestEffect==========================
 	//pResource->Add_ResourcePath("glow_particle.json", "../Bin/Resources/Effect/glow_particle.json");
 	//pResource->Add_ResourcePath("Eff_Disorder_UU_23.png", "../Bin/Resources/Effect/Eff_Disorder_UU_23.png");
