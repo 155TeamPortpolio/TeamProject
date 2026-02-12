@@ -26,11 +26,6 @@ Matrix CCamera::Get_ProjMatrix() const
 	}
 }
 
-_vector CCamera::Get_Pos() const
-{
-	return m_pOwner->Get_Component<CTransform>()->Get_Pos();
-}
-
 void CCamera::Set_Lens(_float fov, _float aspect, _float zNear, _float zFar)
 {
 	m_lens.fov    = fov; 

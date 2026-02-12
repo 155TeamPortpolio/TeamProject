@@ -627,7 +627,15 @@ void CBattlePlayer::Process_Interact()
 
 void CBattlePlayer::Process_ComboSelect(_float dt)
 {
+    _float fPrevTimer = m_fComboSelectTimer;
     m_fComboSelectTimer += dt;
+
+    if (fPrevTimer < COMBO_SELECT_DURATION * 0.5f
+        && m_fComboSelectTimer >= COMBO_SELECT_DURATION * 0.5f)
+    {
+        m_pCurrentCharacter->OnComboSound();
+    }
+
     if (m_fComboSelectTimer >= COMBO_SELECT_DURATION)
     {
         Cancel_ComboAttack();
@@ -685,9 +693,31 @@ void CBattlePlayer::NotifyCharacterSwitchOut()
     }
     else if (m_bComboSelect)
     {
-        m_vSwitchPosition = m_pCurrentCharacter->Get_Component<CCharacterController>()->Get_FootPosition()
-            + XMVectorScale(vRight, 0.5f)
-            + XMVectorSet(0.f, 1.f, 0.f, 0.f);
+        _vector3 vCharacterPos = m_pCurrentCharacter->Get_WorldPos();
+        _vector3 vTargetPos = m_TargetHandle.Get()->Get_WorldPos();
+        _vector3 vTargetLook = m_TargetHandle.Get()->Get_Component<CTransform>()->Dir(STATE::LOOK);
+        vTargetLook.y = 0.f;
+        vTargetLook.Normalize();
+
+        // XZ 평면에서 몬스터 기준 캐릭터 상대 위치
+        _vector3 vRelative = vCharacterPos - vTargetPos;
+        vRelative.y = 0.f;
+
+        // 몬스터 Look 축 기준 반사 : 2(v dot n)n - v
+        _float fDot = vRelative.Dot(vTargetLook);
+        _vector3 vReflected = vTargetLook * (2.f * fDot) - vRelative;
+        vReflected.Normalize();
+
+        _float fSpawnDist = 2.f;
+        _vector3 vSpawn = vTargetPos + vReflected * fSpawnDist;
+
+        m_vSwitchPosition = XMVectorSet(vSpawn.x, vCharacterPos.y + 1.f, vSpawn.z, 1.f);
+
+        // 스폰 지점에서 몬스터를 바라보는 방향
+        _vector3 vLookDir = vTargetPos - vSpawn;
+        vLookDir.y = 0.f;
+        vLookDir.Normalize();
+        m_vSwitchLook = XMVectorSet(vLookDir.x, 0.f, vLookDir.z, 0.f);
     }
 
     m_pCurrentCharacter->Set_MainCharacter(false);
@@ -762,6 +792,9 @@ void CBattlePlayer::Update_Target()
 
     // 가장 가까운 몬스터 탐색
     auto Monsters = CBattleSystem::GetInstance()->GetBattleObjects(CBattleSystem::BATTLE_OBJ_TYPE::MONSTER);
+    if (Monsters.empty())
+        return;
+
     _float fminDistance = FLT_MAX;
 
     for (auto& monster : Monsters)

@@ -57,20 +57,10 @@ void CMiyabiState_Move::Update(CMiyabi* pOwner, _float dt)
     for (const auto& Event : pOwner->Get_Animator()->Get_EventBus())
     {
         if (Event.Type != CLIP_EVENT_TYPE::SOUND) continue;
-        if (Event.Tag == "Walk_R")
-        {
-            pOwner->Get_Component<CAudioSource>()->Slot("Walk_R.wav")
-                .Attribute3D(true)
-                .Play();
-        }
-        if (Event.Tag == "Walk_L")
-        {
-            pOwner->Get_Component<CAudioSource>()->Slot("Walk_L.wav")
-                .Attribute3D(true)
-                .Play();
-        }
+        pOwner->Get_Component<CAudioSource>()->Slot(Event.Tag)
+            .Attribute3D(true)
+            .Play();
     }
-
 }
 
 void CMiyabiState_Move::Exit(CMiyabi* pOwner)

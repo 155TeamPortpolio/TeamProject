@@ -3,6 +3,8 @@
 #include "DefilerState_Born.h"
 #include "DefilerState_Idle.h"
 #include "DefilerState_Attack.h"
+#include "DefilerState_Other.h"
+NS_BEGIN(Client)
 /*상태간 타겟 추적 모드*/
 enum class TraceFlag : _uint
 {
@@ -110,7 +112,7 @@ typedef struct tagDefilerBlackBoard
     _vector3 CurrentDir = _vector3(0.f, 0.f, 1.f); 
 
     /*패턴*/
-    _int patternIndex = { 8 };
+    _int patternIndex = { 00 };
     struct DefilerPattern { string nextPattern; _float animStartProgress; _float animEndProgress;};
     deque<DefilerPattern> patternTransition;
     DefilerPattern reservedPattern = {};
@@ -135,7 +137,6 @@ typedef struct tagDefilerBlackBoard
         eTraceFlag =TraceFlag::None;
     }
 }DEFILER_BLACK_BOARD;
-
 
 struct DefilerAttackType {
     string AtkBone    = {"Weapon"};
@@ -185,3 +186,4 @@ struct DefilerDissolve {
         return (eDissolveState == state && fDissolveElapsedTime >= fDissolveDuration);
     }
 }; 
+NS_END

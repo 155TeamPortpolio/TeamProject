@@ -49,13 +49,12 @@ HRESULT CDefilerWall::Initialize(INIT_DESC* pArg)
 	auto& materialInstances = pMaterial->Get_MaterialInstances();
 	for (const auto& instance : materialInstances)
 	{
-		instance->Set_Param("fTime",					{ &m_ElapsedTime,       "float",  sizeof(_float) });
-		instance->Set_Param("fDissolveProgress",		{ &m_fDissolveProgress, "float",  sizeof(_float) });
-		instance->Set_Param("vDissolveTiling",			{ &m_vDissolveTiling,   "float2", sizeof(_float2) });
-		instance->Set_Param("fDissolveScrollSpeed",		{ &m_fDissolveScrollSpeed,   "float", sizeof(_float) });
-		instance->Set_Param("fDissolveNoiseStrength",	{ &m_fDissolveNoiseStrength, "float", sizeof(_float) });
-		instance->Set_Param("fDissolveEdgeWidth",		{ &m_fDissolveEdgeWidth,     "float", sizeof(_float) });
+		instance->Override_Pass("Opaque");
+		instance->Set_Param("fTime",{ &m_ElapsedTime,"float",  sizeof(_float) });
 	}
+	m_pTransform->Scale({ 0,0,0 });
+	m_bAwake = true;
+
 	return S_OK;
 }
 
@@ -70,13 +69,25 @@ void CDefilerWall::Priority_Update(_float dt)
 
 void CDefilerWall::Update(_float dt)
 {
-	m_ElapsedTime += dt; ;
+	if (!m_bAwake)
+		return;
 
-	const _float dissolveDuration = 1.2f;            // 전체 사라지는 시간(초)
-	const _float dissolveSpeed = (dissolveDuration > 0.f) ? (1.f / dissolveDuration) : 1.f;
-	
-	m_fDissolveProgress = min(1.f, m_fDissolveProgress + dt * dissolveSpeed);
+	m_ElapsedTime += dt;
+
+	const _float duration = 0.25f;
+	const _float t01 = clamp(m_ElapsedTime / duration, 0.f, 1.f);
+	const _float eased = Math::ApplyEase(EaseType::OutExpo, t01);
+	const _vector3 startScale = { 0.2f, 0.f, 0.2f };
+	const _vector3 endScale = { 1.f, 1.f, 1.f };
+	const _vector3 scale = startScale + (endScale - startScale) * eased;
+	m_pTransform->Scale(scale); 
+
+	if (t01 >= 1.f)
+	{
+		m_pTransform->Scale(endScale);  // 마감 고정
+	}
 }
+
 void CDefilerWall::Late_Update(_float dt)
 {
 }

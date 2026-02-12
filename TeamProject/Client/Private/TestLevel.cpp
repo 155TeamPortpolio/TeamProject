@@ -57,6 +57,8 @@
 #include "Cyclops.h"
 #include "Cyclops_Spit.h"
 #include "StrikeJaeger.h"
+#include "MeleeJaeger.h"
+#include "MeleeJaeger_Shield.h"
 
 /*npc*/
 #include "OfficeMeow.h"
@@ -173,6 +175,8 @@ HRESULT CTestLevel::Awake()
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Cyclops", CCyclops::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Cyclops_Spit", CCyclops_Spit::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_StrikeJaeger", CStrikeJaeger::Create());
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_MeleeJaeger", CMeleeJaeger::Create());
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_MeleeJaeger_Shield", CMeleeJaeger_Shield::Create());
 
 
 
@@ -183,10 +187,11 @@ HRESULT CTestLevel::Awake()
 	//Ready_Npc();
 
 	//CamDirector()->StartBattleIntro(CamSeqType::ZeroIntro);
-	CamDirector()->AutoBattle(CamStartDir::Back);
 	//CUIDirector::GetInstance()->Show_SceneFrame();
 	CUIDirector::GetInstance()->Show_HUD(CUIDirector::HUD::BATTLE);
 	//GameInstance()->Set_EngineTimeScale(0.05f);
+
+	CamDirector()->AutoBattle(CamStartDir::Back);
 	
 	CXWall::XWALL_DESC* XWallDesc = new CXWall::XWALL_DESC;
 	XWallDesc->vCount = { 15, 3 };
@@ -288,7 +293,7 @@ void CTestLevel::Ready_TestObject()
 		.Scale(_float3(10.f, 1.f, 1.f))
 		.Build("Water");
 
-	objMgr->Add_Object(testMap, { "Test_Level", "Env" });
+	//objMgr->Add_Object(testMap, { "Test_Level", "Env" });
 	//==============TestEffect==========================
 	//pResource->Add_ResourcePath("glow_particle.json", "../Bin/Resources/Effect/glow_particle.json");
 	//pResource->Add_ResourcePath("Eff_Disorder_UU_23.png", "../Bin/Resources/Effect/Eff_Disorder_UU_23.png");

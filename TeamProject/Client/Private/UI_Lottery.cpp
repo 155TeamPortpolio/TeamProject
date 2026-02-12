@@ -4,6 +4,7 @@
 #include "GameInstance.h"
 #include "ObjectContainer.h"
 #include "EventListener.h"
+#include "AudioSource.h"
 #include "Sprite2D.h"
 #include "ButtonUI.h" 
 #include "UI_ScratchCard.h"
@@ -18,6 +19,8 @@ HRESULT CUI_Lottery::Initialize_Prototype()
 
     Add_Component<CObjectContainer>();
     Add_Component<CEventListener>();
+    Add_Component<CAudioSource>();
+    Get_Component<CAudioSource>()->SoundFolder(G_GlobalLevelKey, "../Bin/Resources/Global/UI/Sound/");
 
 	return S_OK;
 }
@@ -80,8 +83,9 @@ void CUI_Lottery::UI_Active(void* pArg)
     Set_Alive(true);
     Set_ChildAnimation(CHILD::ICON_SCRATCH, 0);
     Set_ChildAnimation(CHILD::NEWSPAPER, 0);
+    Get_Component<CAudioSource>()->Slot("UI_PageTurning.wav").Attribute3D(false).Loop(false).Play();
     if(m_iState == STATE::READY)
-        m_iReward = rand() % ENUM(REWARD::END);
+        m_iReward = rand() % ENUM(REWARD::END); 
 }
 
 void CUI_Lottery::UI_DeActive(void* pArg)
@@ -198,6 +202,8 @@ void CUI_Lottery::OnClick_RefreshNews()
     if (Is_ChildAlive(CHILD::SCRATCH))
         return;
 
+    Get_Component<CAudioSource>()->Slot("UI_Tick.wav").Attribute3D(false).Loop(false).Play();
+    Get_Component<CAudioSource>()->Slot("UI_PageTurning.wav").Attribute3D(false).Loop(false).Play();
     Set_ChildAnimation(CHILD::OVERLAY_REFRESH, 0);
     Set_ChildAnimation(CHILD::ICON_REFRESH, 0);
 
@@ -209,6 +215,7 @@ void CUI_Lottery::OnClick_OpenScratch()
     if (Is_ChildAlive(CHILD::SCRATCH))
         return;
 
+    Get_Component<CAudioSource>()->Slot("UI_Tick.wav").Attribute3D(false).Loop(false).Play();
     Set_ChildAnimation(CHILD::OVERLAY, 0);
 
     CUI_ScratchCard::ACTIVE_DESC desc = {};

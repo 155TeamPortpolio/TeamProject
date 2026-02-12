@@ -3,6 +3,7 @@
 
 #include "GameInstance.h" 
 #include "ObjectContainer.h"
+#include "AudioSource.h"
 #include "TextSlot.h"
 #include "ButtonUI.h"
 #include "UI_BackButton.h"
@@ -27,6 +28,8 @@ void CUI_Ramen::Select_Menu(CUI_Object* pSelected, const RAMEN_DESC& tRamenDesc)
 
     m_tRamenDesc = tRamenDesc;
     Set_TextPrice();
+
+    Get_Component<CAudioSource>()->Slot("UI_Pop3.wav").Attribute3D(false).Loop(false).Play();
 }
 
 HRESULT CUI_Ramen::Initialize_Prototype()
@@ -34,6 +37,9 @@ HRESULT CUI_Ramen::Initialize_Prototype()
     __super::Initialize_Prototype();
 
     Add_Component<CObjectContainer>();
+    Add_Component<CAudioSource>();
+    Get_Component<CAudioSource>()->SoundFolder(G_GlobalLevelKey, "../Bin/Resources/Global/UI/Sound/");
+    Get_Component<CAudioSource>()->SoundFolder(G_GlobalLevelKey, "../Bin/Resources/MainCity/Sound/NPC/");
 
 	return S_OK;
 }
@@ -79,6 +85,7 @@ void CUI_Ramen::UI_Active(void* pArg)
     Set_Alive(true); 
     Set_ChildAnimation(CHILD::ORDER, 0);
     Reset();
+    m_isPurchased = false;
     for (auto& pMenu : m_pMenus)
         pMenu->UI_DeActive();
 }
@@ -93,6 +100,11 @@ void CUI_Ramen::Create_BackButton()
 {
     auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_BackButton" })
         .Build("buttonBack");
+
+    pObj->Set_OnClick([this]() {
+        FieldSystem()->RequestExitTop();
+        Play_ExitSound();
+        });
 
     if (!pObj)
         return;
@@ -202,6 +214,19 @@ void CUI_Ramen::Cache()
     }
 }
 
+void CUI_Ramen::Play_ExitSound()
+{
+    string strSoundKey = "SirChopBuy.wav";
+
+    if (!m_isPurchased)
+    {
+        _int iRand = rand() % 2;
+        strSoundKey = (iRand == 0) ? "SirChopNoBuy01.wav" : "SirChopNoBuy02.wav" ;
+    }
+    
+    Get_Component<CAudioSource>()->Slot(strSoundKey).Attribute3D(true).Loop(false).Play();
+}
+
 void CUI_Ramen::OnClick_Order()
 {
     if (!m_isAffordable)
@@ -220,7 +245,7 @@ void CUI_Ramen::OnClick_Order()
 void CUI_Ramen::OnClick_OrderComfirm()
 {
     if (m_pVideo)
-        m_pVideo->UI_Active();
+        m_pVideo->UI_Active();  
 
     m_iMoney -= m_tRamenDesc.iPrice;
     RuntimeBucket().Int64.Set(PersistScope::SaveSlot, strFieldPlayerKey, m_iMoney);
@@ -228,6 +253,8 @@ void CUI_Ramen::OnClick_OrderComfirm()
 
     for (auto& pMenu : m_pMenus)
         pMenu->UI_DeActive();
+
+    m_isPurchased = true;
 }
 
 void CUI_Ramen::OnVideoFinished()

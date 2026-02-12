@@ -46,6 +46,7 @@ public: //setter
 	
 public:
 	void	StartGimmick(BATTLE_VFX_TYPE eVFXType);
+	void	HitVFX(DAMAGE_TYPE eDamageType);
 
 public:
 	void	TakeAreaDamage(const _float3& vCenter, _float fRadius, const HitDesc& hitDesc);
@@ -73,7 +74,7 @@ private:
 private:
 	_bool	m_isReady = { false };
 	_bool	m_isActive = { false };
-
+	_uint m_LastFrame = {};
 private:
 	class CBattlePlayer* m_pBattlePlayer = { nullptr };// 배틀 플레이어
 	class CBattleFXFlow* m_pFXFlow = { nullptr };

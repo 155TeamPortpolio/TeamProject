@@ -97,12 +97,16 @@ void CJaneDoeState_SwitchIn::Update(CJaneDoe* pOwner, _float dt)
             break;
         }
     }
+
+    if (pOwner->Is_Passion())
+        pOwner->Add_MotionBlur();
 }
 
 void CJaneDoeState_SwitchIn::Exit(CJaneDoe* pOwner)
 {
     pOwner->Reset_Switch();
     pOwner->Pop_Invincible();
+    pOwner->Clear_MotionBlur();
     __super::Exit(pOwner);
 }
 

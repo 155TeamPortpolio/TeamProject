@@ -80,6 +80,10 @@ public:
 public:
 	static CDefilerState_Attack_01_03* Create() { return new CDefilerState_Attack_01_03(); }
 	virtual void Free() override { __super::Free(); }
+
+private:
+	void Update_Effects(CDefiler* pOwner);
+
 };
 
 class CDefilerState_Attack_02 : public CDefilerState_Attack
@@ -227,6 +231,8 @@ public:
 	virtual void Update(CDefiler* pOwner, _float dt) override;
 	virtual void Exit(CDefiler* pOwner) override;
 
+private:
+	_float m_ElapsedTime = {};
 public:
 	static CDefilerState_Attack_09_Loop* Create() { return new CDefilerState_Attack_09_Loop(); }
 	virtual void Free() override { __super::Free(); }
@@ -282,6 +288,5 @@ public:
 	static CDefilerState_Attack_Evade* Create() { return new CDefilerState_Attack_Evade(); }
 	virtual void Free() override { __super::Free(); }
 };
-
 
 NS_END

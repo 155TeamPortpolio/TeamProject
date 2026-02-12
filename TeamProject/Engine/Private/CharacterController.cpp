@@ -677,7 +677,10 @@ void CCharacterController::Move_RootMotion(_fvector vLocalDelta, _fvector qRotat
 
 	//m_vVelocity.x = vWorldMotion.x / dt;
 	//m_vVelocity.z = vWorldMotion.z / dt;
-	m_vRootMotion += vWorldMotion;
+	if (dt >= 0)
+		m_vRootMotion += vWorldMotion;
+	else
+		m_vRootMotion -= vWorldMotion;
 }
 
 void CCharacterController::Stop_Movement()

@@ -50,9 +50,9 @@ public:
 	typedef struct tagTimeScaleData
 	{
 		_float	fDuration = {};
-		_float	fValue = { 1.f };			// dt에 스케일 할 값 (dt * fValue)
-		_float	fStartLerpTime = { 0.f };	// 스케일 시작 보간 비율 (0~1)
-		_float	fEndLerpTime = { 0.2f };	// 스케일 종료 보간 비율 (0~1)
+		_float	fValue = { 1.f };			
+		_float	fStartLerpTime = { 0.f };	
+		_float	fEndLerpTime = { 0.2f };	
 		EaseType eEaseType = EaseType::None;
 	}TIME_SCALE_DATA; /* fDuration, fValue, fStartLerpTime */
 
@@ -115,6 +115,7 @@ public:
 		_float	fDuration = {};
 		_float	fCurPos = {};
 		_float3 vNowColor = {};
+		_bool	bCanIntersect = {};
 		_float	GetTimeRatio()
 		{
 			if (0 > fCurPos)
@@ -124,8 +125,9 @@ public:
 	}BATTLE_VFX;
 	typedef struct tagBattleVFXData
 	{
-		_float			fVFXDuration = {};			/* 화면 색 먹이는 시간 */
-		_float			fBlurDuration = {};			/* 블러 먹이는 시간 */
+		_bool	bCanIntersect = {true};
+		_float	fVFXDuration = {};			/* 화면 색 먹이는 시간 */
+		_float	fBlurDuration = {};			/* 블러 먹이는 시간 */
 		_float3 vStartColor = {};
 		_float3 vTargetColor = {};
 		array<TIME_SCALING, ENUM(BATTLE_OBJ_TYPE::END)> BattleTimeScale;
@@ -162,7 +164,9 @@ public:
 	void StartVfx_Parry();
 	void StartVfx_Ultimate();
 	void StartVfx_Switch();
-	void HitLack();
+	void StartVfx_WipeOut();
+	void NormalHitLack();
+	void HardHitLack();
 	void SetLayerTimeScale(BATTLE_OBJ_TYPE type, _float scale);
 	void ResetLayerTimeScale(BATTLE_OBJ_TYPE type);
 

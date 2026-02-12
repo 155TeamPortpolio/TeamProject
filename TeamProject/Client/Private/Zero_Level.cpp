@@ -37,6 +37,8 @@
 #include "Claymore.h"
 #include "Cyclops.h"
 #include "StrikeJaeger.h"
+#include "MeleeJaeger.h"
+#include "MeleeJaeger_Shield.h"
 
 /* UI */
 #include "UIDirector.h"
@@ -103,7 +105,9 @@ HRESULT CZero_Level::Awake()
 
 void CZero_Level::Update()
 {
+	CBattleSystem::GetInstance()->Update();
 	m_Context.pNowStage->Update();
+	BattleSystem()->Update();
 }
 
 HRESULT CZero_Level::Render()
@@ -150,6 +154,8 @@ void CZero_Level::Ready_Prototype()
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_Claymore", CClaymore::Create());
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_Cyclops", CCyclops::Create());
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_StrikeJaeger", CStrikeJaeger::Create());
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_MeleeJaeger", CMeleeJaeger::Create());
+	PrototypeManager()->Add_ProtoType("Test_Level", "Proto_GameObject_MeleeJaeger_Shield", CMeleeJaeger_Shield::Create());
 }
 
 void CZero_Level::Ready_Stage()
@@ -166,11 +172,26 @@ void CZero_Level::Ready_Stage()
 	m_StageContainer.emplace(StageType::Boss, CZeroStage_Boss::Create(this));
 
 	m_mapCycle[StageType::Start].maps	= { "Zero_Start" };
-	m_mapCycle[StageType::Normal].maps	= { "Zero_1_1",	"Zero_1_2", "Zero_2_1", "Zero_5_1" };
+ 	m_mapCycle[StageType::Normal].maps	= { "Zero_1_1",	"Zero_1_2", "Zero_2_1", "Zero_5_1" };
+	Shuffle_MapCycle(m_mapCycle[StageType::Normal].maps);
 	m_mapCycle[StageType::Elite].maps	= { "Zero_1_1",	"Zero_1_2", "Zero_2_1" };
-	m_mapCycle[StageType::Boss].maps	= { "Zero_Boss1","Zero_Boss2"};
+	Shuffle_MapCycle(m_mapCycle[StageType::Elite].maps);
+	m_mapCycle[StageType::Boss].maps	= { "Zero_Boss2","Zero_Boss1"};
 
-	ChangeStage(StageType::Start);
+	ChangeStage(StageType::Boss);
+}
+
+void CZero_Level::Shuffle_MapCycle(vector<string>& Map)
+{
+	if (Map.size() <= 1)
+		return;
+
+	for (size_t i = Map.size() - 1; i > 0 ; --i)
+	{
+		_int Rand = Helper::Get_Random_Int(0, i);
+		swap(Map[i], Map[Rand]);
+	}
+	
 }
 
 string CZero_Level::PopMapKey(StageType type)

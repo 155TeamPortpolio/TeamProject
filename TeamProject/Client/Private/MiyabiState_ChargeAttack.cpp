@@ -76,6 +76,17 @@ void CMiyabiState_ChargeAttack::Update(CMiyabi* pOwner, _float dt)
 
     m_pSubStateMachine->Set_Bool("CanCharge", pOwner->Can_Charge());
 
+    auto pMiyabiState = pOwner->Get_StateMachine();
+    if (pMiyabiState->Get_Bool("OutReserve"))
+    {
+        if (m_pSubStateMachine->Get_CurrentStateName() == "End" ||
+            Is_AnimEnd())
+        {
+            pMiyabiState->Set_Trigger("SwitchOut");
+            pMiyabiState->Set_Bool("OutReserve", false);
+        }
+    }
+
     __super::Update(pOwner, dt);
 }
 

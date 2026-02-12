@@ -14,7 +14,6 @@ public:
 public:
 	static CDefilerState_Born* Create() { return new CDefilerState_Born(); }
 	virtual void Free() override { __super::Free(); }
-
 };
 
 NS_END
