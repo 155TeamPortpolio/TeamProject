@@ -3,6 +3,7 @@
 #include "DefilerState_Born.h"
 #include "DefilerState_Idle.h"
 #include "DefilerState_Attack.h"
+NS_BEGIN(Client)
 /*상태간 타겟 추적 모드*/
 enum class TraceFlag : _uint
 {
@@ -185,3 +186,4 @@ struct DefilerDissolve {
         return (eDissolveState == state && fDissolveElapsedTime >= fDissolveDuration);
     }
 }; 
+NS_END

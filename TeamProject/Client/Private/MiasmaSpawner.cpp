@@ -89,7 +89,7 @@ void CMiasmaSpawner::SpawnGrandier(_int count, _float3 targetPos, _float3 ownerP
     const string levelKey = LevelManager()->Get_NowLevelKey();
 
     const float minRadius = 1.0f;
-    float maxRadius = (ownerPos - targetPos).Length() + 5.f;
+    float maxRadius = (_vector3(ownerPos)- _vector3(targetPos)).Length() + 5.f;
     const float arcDegrees = 60.f;
 
     for (int spawnIndex = 0; spawnIndex < count; ++spawnIndex)
