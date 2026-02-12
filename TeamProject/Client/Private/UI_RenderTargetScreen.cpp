@@ -43,6 +43,9 @@ void CUI_RenderTargetScreen::Update(_float dt)
 {
     if (InputDevice()->Key_Tap('I'))
         UIDirector()->Show_Wipeout();
+
+    if (InputDevice()->Key_Tap('J'))
+        UIDirector()->Show_Switch();
 }
 
 HRESULT CUI_RenderTargetScreen::Ready_Components()

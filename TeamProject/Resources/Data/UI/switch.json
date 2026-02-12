@@ -119,20 +119,20 @@
             "transform": {
                 "anchor": 0,
                 "anchorOffset": [
-                    0.0,
-                    -236.0
+                    -800.0,
+                    -400.0
                 ],
                 "size": [
-                    1706.6666259765625,
-                    213.3333282470703
+                    1600.0,
+                    800.0
                 ],
                 "scale": [
                     1.0,
                     1.0
                 ],
                 "pivot": [
-                    0.5,
-                    0.5
+                    0.0,
+                    0.0
                 ],
                 "radian": 0.0
             },
@@ -164,7 +164,7 @@
             "animClips": [],
             "children": [],
             "typeTag": "Image",
-            "textureTag": "Levelendperform_Slashed.png"
+            "textureTag": "Eff_Switch_01.png"
         }
     ],
     "typeTag": "CanvasPanel"
