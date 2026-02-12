@@ -31,7 +31,7 @@ void CTimer::Update_Timer()
 	if (raw < 0.f) raw = 0.f;
 	if (raw > 0.1f) raw = 0.1f;
 
-	raw = clamp(raw, 0.f, 0.033f);
+	//raw = clamp(raw, 0.f, 0.033f);
 
 	m_fRawDeltaTime = raw;
 	m_fScaledDeltaTime = raw * m_fTimeScale;
