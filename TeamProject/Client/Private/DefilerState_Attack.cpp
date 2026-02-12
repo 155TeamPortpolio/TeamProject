@@ -17,7 +17,6 @@ void CDefilerState_Attack::Build_Pattern(CDefiler* pOwner, _int Type)
 	DEFILER_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
 	TARGETING_INFO& targetInfo = pOwner->GetTargetingInfo();
 	blackBoard.patternTransition.clear();
-	Type = 1;
 	switch (Type)
 	{
 	case 0 :
@@ -139,7 +138,6 @@ void CDefilerState_Attack::Enter(CDefiler* pOwner)
 	auto& blackboard = pOwner->GetBlackBoard();
 
 	Build_Pattern(pOwner, blackboard.patternIndex);
-	blackboard.patternIndex = 10; 
 
 	if (!blackboard.patternTransition.empty())
 	{
@@ -569,11 +567,15 @@ void CDefilerState_Attack_09_Loop::Enter(CDefiler* pOwner)
 
 void CDefilerState_Attack_09_Loop::Update(CDefiler* pOwner, _float dt)
 {
-	ComboTransition(pOwner);
+	DEFILER_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
+	m_ElapsedTime += dt;
+	if(m_ElapsedTime > 10.f)
+		blackBoard.isRequestNext = true;
 }
 
 void CDefilerState_Attack_09_Loop::Exit(CDefiler* pOwner)
 {
+	m_ElapsedTime = 0.f;
 }
 
 void CDefilerState_Attack_09_End::Enter(CDefiler* pOwner)

@@ -7,6 +7,7 @@ void CJaneDoeState_SwitchOut::Enter(CJaneDoe* pOwner)
 {
     pOwner->Get_StateMachine()->Reset_Trigger("ToIdle");
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "SwitchOut_Normal")
+        .Speed(1.f)
         .Loop(false)
         .Apply();
 }

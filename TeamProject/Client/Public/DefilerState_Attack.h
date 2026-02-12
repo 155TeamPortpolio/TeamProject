@@ -231,6 +231,8 @@ public:
 	virtual void Update(CDefiler* pOwner, _float dt) override;
 	virtual void Exit(CDefiler* pOwner) override;
 
+private:
+	_float m_ElapsedTime = {};
 public:
 	static CDefilerState_Attack_09_Loop* Create() { return new CDefilerState_Attack_09_Loop(); }
 	virtual void Free() override { __super::Free(); }
