@@ -30,6 +30,7 @@ public:
 public:
     DEFILER_BLACK_BOARD& GetBlackBoard() { return m_BlackBoard; }
     DefilerDissolve& GetDissolve() { return m_Dissolve; }
+    MONSTER_STATUS& GetStatus() { return m_tStatus; }
     TARGETING_INFO& TargetInfo() { return m_tTargetingInfo; }
     CStateMachine<CDefiler>* Get_MainStateMachine() { return m_pStateMachine; }
 
@@ -39,6 +40,7 @@ public:
 public:
     void Change_CollisionMask(_uint iMask = ENUM(COLLISION_GROUP::PLAYER));
     void Release_CollisionMask();
+
 public:
     void Hide_MeshGroup(const string& mesh);
     void Show_MeshGroup(const string& mesh);
@@ -60,6 +62,10 @@ private:
     void Update_States(_float dt);
     void Route_AnimEvent(CAnimator3D* animator);
     void Controll_Attack(const string& event);
+    void Send_DamageText(_float damage, CHARACTER charaName);
+
+public:
+    void ResetAllFlags();
 
 private:
     HRESULT Initialize_StateMachine();

@@ -127,7 +127,7 @@ void CDefilerState_Attack::ReadySubState()
 	m_pSubStateMachine->Register_State("Attack09_Start",		CDefilerState_Attack_09_Start::Create());
 	m_pSubStateMachine->Register_State("Attack09_Loop",			CDefilerState_Attack_09_Loop::Create());
 	m_pSubStateMachine->Register_State("Attack09_End",			CDefilerState_Attack_09_End::Create());
-	m_pSubStateMachine->Register_State("Attack_Grab",			CDefilerState_Attack_Grab::Create());
+	/*¾È ¾µ °Í*/m_pSubStateMachine->Register_State("Attack_Grab", CDefilerState_Attack_Grab::Create());
 	m_pSubStateMachine->Register_State("Attack_Summon",			CDefilerState_Attack_Summon::Create());
 	m_pSubStateMachine->Register_State("Attack_Evade",			CDefilerState_Attack_Evade::Create());
 }
@@ -136,9 +136,10 @@ void CDefilerState_Attack::Enter(CDefiler* pOwner)
 {
 	__super::Enter(pOwner);
 	auto& blackboard = pOwner->GetBlackBoard();
-
 	Build_Pattern(pOwner, blackboard.patternIndex);
-
+	blackboard.patternIndex++;
+	if (blackboard.patternIndex > 12)
+		blackboard.patternIndex = 0.f;
 	if (!blackboard.patternTransition.empty())
 	{
 		blackboard.ReservePattern();

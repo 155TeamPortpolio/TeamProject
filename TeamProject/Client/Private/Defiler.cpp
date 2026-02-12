@@ -119,11 +119,15 @@ void CDefiler::Awake()
 	}
 
 }
+
 void CDefiler::Priority_Update(_float dt)
 {	
 	m_PlayerCharacterInfos.clear();
 	m_PlayerCharacterInfos = BattleSystem()->GetBattleObjects(CBattleSystem::BATTLE_OBJ_TYPE::PLAYER);
 	ComputeTargetingInfo();
+
+	ManageGroggy(dt);
+	Update_States(dt);
 
 	if (InputDevice()->Key_Tap('F')) {
 		Get_Component<CAudioSource>()
@@ -141,8 +145,6 @@ void CDefiler::Priority_Update(_float dt)
 
 void CDefiler::Update(_float dt)
 {
-	ManageGroggy(dt);
-
 	if (!m_BlackBoard.LockTarget) {
 		m_BlackBoard.vTargetPos = m_tTargetingInfo.vTargetPos;
 		m_BlackBoard.vTargetDir = m_tTargetingInfo.vDirToTarget;
@@ -165,8 +167,10 @@ void CDefiler::Late_Update(_float dt)
 {
 	Get_Component<CCharacterController>()->Late_Update(dt);
 }
+
 void CDefiler::Render_GUI()
 {
+	m_pStateMachine->Render_GUI();
 	ImGui::InputInt("Pattern number", &m_BlackBoard.patternIndex);
 	for (auto& pattern : m_BlackBoard.patternTransition)
 	{
@@ -194,39 +198,11 @@ void CDefiler::Render_GUI()
 	__super::Render_GUI();
 }
 
-void CDefiler::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER charaName)
-{
-	BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::HIT_NORMAL);
-	_float fTakeDamage = fDamage;
-
-	if (m_tStatus.isGroggy)
-		fTakeDamage *= 1.5f;
-	else
-		m_tStatus.iGroggyValue += 2;
-
-	m_tStatus.iNowHP -= fTakeDamage;
-
-	if (0 >= m_tStatus.iNowHP)
-		m_tStatus.iNowHP = 0.f;
-
-	DAMAGE_DESC desc{};
-	_int damage = Helper::Get_Random_Int(1000, 10000); // 임시
-
-	desc.damage = damage;
-	desc.followHandle = Get_Handle();
-	desc.followOffset = Calc_WorldOffsetWithBip();
-	desc.isEnemy = true;
-	desc.charaName = charaName;
-
-	UIDirector()->Request_DamageText(desc);
-}
-
 void CDefiler::Change_CollisionMask(_uint iMask)
 {
 	_uint Mask = Get_Component<CCharacterController>()->Get_CollisionMask();
 	Get_Component<CCharacterController>()->Set_CollisionMask(Mask - iMask);
 }
-
 void CDefiler::Release_CollisionMask()
 {
 	Get_Component<CCharacterController>()->Set_CollisionMask(m_BaseMask);
@@ -236,7 +212,6 @@ void CDefiler::Hide_MeshGroup(const string& mesh)
 {
 	Get_Component<CSkeletalModel>()->Hide_MehsByName(mesh);
 }
-
 void CDefiler::Show_MeshGroup(const string& mesh)
 {
 	Get_Component<CSkeletalModel>()->Show_MehsByName(mesh);
@@ -249,7 +224,6 @@ void CDefiler::Set_CCTPos(_vector3 pos)
 		return;
 	controller->Set_Position(pos);
 }
-
 _float3 CDefiler::Get_BipedPos(const string Bone)
 {
 	Matrix boneMat = Get_Component<CAnimator3D>()
@@ -301,11 +275,11 @@ void CDefiler::MoveByTraceMode(_float dt, _float moveScale)
 	toTarget.y = 0.f;
 
 	const _float distToTarget = toTarget.Length();
-	if (distToTarget <= 1.f)
+	if (distToTarget <= 2.f)
 		return;
 
 	const _vector3 dirToTarget = toTarget / distToTarget;
-	const _float lockDist = 3.f;
+	const _float lockDist = 2.f;
 	if (distToTarget <= lockDist && stopAtTarget && !allowThrough)
 	{
 		m_BlackBoard.CurrentDir = dirToTarget;
@@ -388,7 +362,6 @@ void CDefiler::MoveByTraceMode(_float dt, _float moveScale)
 	//	m_pTransform->Add_Quaternion(rootQuatLocal);
 }
 
-
 void CDefiler::RotateToTarget(_float dt, _float rotateSpeed)
 {
 	
@@ -411,12 +384,17 @@ void CDefiler::RotateToTarget(_float dt, _float rotateSpeed)
 
 void CDefiler::Update_States(_float dt)
 {
-
+	if (InputDevice()->Key_Tap('P'))
+	{
+		m_tStatus.iNowHP = m_tStatus.iMaxHP * 0.1f;
+		m_tStatus.iGroggyValue = 99;
+	}
+	if ("Groggy" != m_pStateMachine->Get_CurrentStateName() && "Death" != m_pStateMachine->Get_CurrentStateName() && m_tStatus.isGroggy)
+		m_pStateMachine->Change_State("Groggy");
 }
 
 void CDefiler::Route_AnimEvent(CAnimator3D* animator)
 {
-
 	auto Bus = animator->Get_EventBus();
 
 	for (EVENT_INST& instance : Bus)
@@ -444,12 +422,10 @@ void CDefiler::Route_AnimEvent(CAnimator3D* animator)
 		}
 	}
 }
-
 void CDefiler::Control_Sound(const string& event)
 {
 	Get_Component<CAudioSource>()->Slot(event).Attribute3D(true).Volume(0.3f).Play();
 }
-
 void CDefiler::Controll_Attack(const string& event)
 {
 	auto iter = DefilerAtkData.find(event);
@@ -480,6 +456,66 @@ void CDefiler::Controll_Attack(const string& event)
 		m_isParryEnable = false;
 	}
 	SetBattleColliderObject(AtkData.AtkBone, CEnemy::BATTLE_COLTYPE::ATTACK, AtkData.OnOff, HitDesc);
+}
+
+void CDefiler::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER charaName)
+{
+	BattleSystem()->HitVFX(eDamageType);
+	_float fTakeDamage = fDamage;
+	if (m_tStatus.isGroggy)
+		fTakeDamage *= 1.5f;
+	else
+		m_tStatus.iGroggyValue += 2;
+
+	m_tStatus.iNowHP -= fTakeDamage;
+
+	if (0 >= m_tStatus.iNowHP)
+		m_tStatus.iNowHP = 0.f;
+
+
+	if (m_pStateMachine->Get_CurrentState()->Get_StateName() == "Idle") {
+		Get_Component<CAnimator3D>()
+			->Set_Animation(1, "Monster_IsoldetheDefiler_Ani_Hit_H_Front")
+			.LayerBlend(.2f, 0.8f, .1f, EaseType::InOutQuint)
+			.Loop(false)
+			.Apply();
+	}
+	if (m_pStateMachine->Get_CurrentState()->Get_StateName() == "Groggy"){
+		Get_Component<CAnimator3D>()
+			->Set_Animation(1, "Monster_IsoldetheDefiler_Ani_Hit_Stay")
+			.LayerBlend(.2f, 08.f, .1f, EaseType::InOutQuint)
+			.Loop(false)
+			.Apply();
+	}
+
+	_vector3 vWorldPosition = Get_BipedPos("Bip001");
+	auto pEffect = Builder::Create_Object({ G_GlobalLevelKey,"Proto_GameObject_BasicHitEffect" })
+		.Position(vWorldPosition)
+		.FromPool()
+		.Build("BasicHit");
+
+	ObjectManager()->Add_Object(pEffect, { Get_Level(),"Effect_Layer" });
+	Send_DamageText(fDamage, charaName);
+}
+
+void CDefiler::Send_DamageText(_float damage, CHARACTER charaName)
+{
+	DAMAGE_DESC desc{};
+	damage = Helper::Get_Random_Int(1000, 10000); // 임시
+	desc.damage = damage;
+	desc.followHandle = Get_Handle();
+	desc.followOffset = Calc_WorldOffsetWithBip();
+	desc.isEnemy = true;
+	desc.charaName = charaName;
+	UIDirector()->Request_DamageText(desc);
+}
+
+void CDefiler::ResetAllFlags()
+{
+	m_isOnAttack = false;
+	m_isParryEnable = false;
+	m_BlackBoard.LockTarget = false;
+	m_BlackBoard.LockRotate = false;
 }
 
 void CDefiler::Control_Summon(const string& event)
@@ -642,6 +678,7 @@ HRESULT CDefiler::Initialize_States()
 	m_pStateMachine->Register_State("Born", CDefilerState_Born::Create());
 	m_pStateMachine->Register_State("Idle", CDefilerState_Idle::Create());
 	m_pStateMachine->Register_State("Attack", CDefilerState_Attack::Create());
+	m_pStateMachine->Register_State("Groggy", CDefilerState_Groggy::Create());
 
 	//m_pStateMachine->Register_State("Walk", CSacrificeState_Walk::Create());
 	//m_pStateMachine->Register_State("Hit", CSacrificeState_Hit::Create());
@@ -667,9 +704,6 @@ HRESULT CDefiler::Initialize_Transitions()
 	// Attack
 	m_pStateMachine->Register_AnyStateTransition("Idle",
 		CStateMachine<CDefiler>::CONDITION_TRIGGER, "Idle");
-
-	m_pStateMachine->Register_Transition("Idle", "Walk",
-		CStateMachine<CDefiler>::CONDITION_TRIGGER, "Idle_To_Walk");
 
 	return S_OK;
 }
