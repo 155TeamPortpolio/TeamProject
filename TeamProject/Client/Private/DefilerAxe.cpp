@@ -128,7 +128,7 @@ void CDefilerAxe::OnPooledRelease()
 
 void CDefilerAxe::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER charaName)
 {
-	BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::HIT);
+	BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::HIT_NORMAL);
 	_float fTakeDamage = fDamage;
 
 	if (m_tStatus.isGroggy)

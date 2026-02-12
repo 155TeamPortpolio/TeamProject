@@ -8,6 +8,7 @@ class ENGINE_DLL CAudioSource : public CComponent
 public:
     typedef struct tagAudioSlot 
     {
+        string Key = {};
         _bool             isInfinite    = false;/*무한*/
         _bool             isPaused      = false;/*정지 상태*/
         _bool             is3DAttribute = false;/*3D 공간*/
@@ -16,6 +17,11 @@ public:
         _int              iLoopCount    = 0;
         _float            lastPlayTime  = -999.f;
 
+        _bool             hasPendingFadeIn = false;
+        _float            pendingFadeInSec = 0.f;
+        _float            pendingFadeInDst = 1.f;
+        _bool             hasStopScheduled = false;
+        unsigned long long stopDspClock = 0;
         CSoundData*       pSound{};
         FMOD::Channel*    pChanel{};
         SOUND_GROUP       eGroup = SOUND_GROUP::SFX;
@@ -41,10 +47,16 @@ public:
         SlotBuilder(CAudioSource& Ref,AUDIO_SLOT& Slot): ownerRef(Ref), ownerSlot(Slot) {}
         SlotBuilder Infinite(_bool Loop)         { ownerSlot.isInfinite    = Loop;      return *this; };
         SlotBuilder Loop(_int Count)             { ownerSlot.iLoopCount    = Count;     return *this; };
-        SlotBuilder Pause(_bool Pause)           { ownerSlot.isPaused      = Pause;     return *this; };
         SlotBuilder Attribute3D(_bool Attribute) { ownerSlot.is3DAttribute = Attribute; return *this; };
         SlotBuilder Group(SOUND_GROUP eGROUP)    { ownerSlot.eGroup        = eGROUP;    return *this; };
-        SlotBuilder Volume(_float volume)        { ownerSlot.fVolume       = volume;    return *this; };
+        SlotBuilder Pause(_bool Pause)           { ownerRef.Set_SlotPuase(ownerSlot.Key, Pause);     return *this; };
+        SlotBuilder Volume(_float volume)        { ownerRef.Set_SlotVolume(ownerSlot.Key, volume); return *this; };
+        SlotBuilder FadeOut(_float Durationfactor)        { ownerRef.FadeOut_Volume(ownerSlot.Key, Durationfactor); return *this; };
+        SlotBuilder FadeIn(_float Durationfactor,_float dst = 1.f)        
+        {
+           return *this; 
+        };
+
         AUDIO_SLOT& Play();
 
     private:
@@ -74,6 +86,7 @@ public:
 public:
     SlotBuilder     Slot(const string& slotKey);
    
+
     SequenceBuilder Sequence(const string& seqKey);
     HRESULT         Add_Sequence(const string& seqKey, initializer_list<const char*> slotKeys);
    
@@ -99,18 +112,20 @@ public:
     void    Set_SlotLoopCount(const string& slotKey, _int iLoopCount);
     void    Set_SlotPuase(const string& slotKey, _bool isPaused);
     void    Set_3DAttribute(const string& slotKey, _bool _3DAttribute);
-    void    FadeOut_Volume(const string& slotKey, _float factor);
-    void    FadeIn_Volume(const string& slotKey, _float factor,_float dst = 1.f);
+    void    FadeOut_Volume(const string& slotKey, _float Durationfactor);
+    void    FadeIn_Volume(const string& slotKey, _float Durationfactor,_float dst = 1.f);
+    void    Set_AudioPos(_vector3 pos); /*오디오 상에 보낼 3D상 위치*/
 
-    void    Play(const string& SoundKey);
-    void    RePlay(const string& SoundKey);
-
+    //void    Play(const string& SoundKey, _bool continuePlay = true);
+    void Play(const string& soundKey, _bool continuePlay = true, _bool startPaused = false);
 public:
     void    Render_GUI();
 private:
-    IAudioService* m_pAudioDevice{};
-    CTransform*    m_pTransform{};
-    _float4        m_vPos{};
+    void    ClearFadePoints(FMOD::Channel* channel);
+
+private:
+    IAudioService*                        m_pAudioDevice{};
+    FMOD_VECTOR                           m_vPos{};
     unordered_map<string, AUDIO_SLOT>     m_Audios;
     unordered_map<string, AUDIO_SEQUENCE> m_Sequences;
 
