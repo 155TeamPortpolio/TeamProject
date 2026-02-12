@@ -102,8 +102,18 @@ public:
         _float baseVictimWeightShot4 = 0.15f;
 
         _float holdYawSweepShot4 = 15.f;
-    };
 
+        _float fitMargin = 1.18f;
+        _float frameBiasMul = 0.35f;
+        _float fitMinRadius = 0.55f;
+
+        _float shot1MinPivotAboveFootY = 0.35f;
+        _float shot1MinCamAboveFootY = 0.05f;
+
+        _float shot2FitStrength = 1.0f;
+        _float shot3FitStrength = 0.55f;
+        _float shot4FitStrength = 0.2f;
+    };
 
 public:
     void Reset();
@@ -130,7 +140,12 @@ private:
     _int      ResolveSideSign() const;
     _float    CurCamYawDeg() const;
 
-    ShotGoal  BuildShotCommon(_int sideSign, _float angleDeg, _float pitchDeg, _float dist, _float fov, _float pivotClamp, _float attackerBias, _float baseVictimWeight) const;
+    static _float FitDistForRadius(_float radius, _float fovYDeg, _float aspect, _float margin);
+    _float        FitDistForPair(const ShotGoal& g, const Vector3& aWorld, const Vector3& bWorld) const;
+
+    void      ClampShot1AboveGround(ShotGoal& g) const;
+
+    ShotGoal  BuildShotCommon(_int sideSign, _float angleDeg, _float pitchDeg, _float dist, _float fov, _float pivotClamp, _float attackerBias, _float baseVictimWeight, _bool useMid) const;
 
     ShotGoal  BuildShot1() const;
     ShotGoal  BuildShot2() const;
@@ -150,8 +165,6 @@ private:
 private:
     _bool m_active = false;
     State m_state = State::None;
-
-    _float m_elapsed = 0.f;
 
     _float m_shotElapsed = 0.f;
     _float m_enterSec = 0.f;
@@ -175,7 +188,6 @@ private:
 
     ShotGoal m_shotFrom{};
     ShotGoal m_shotTo{};
-    _bool    m_hasShotFrom = false;
 
     OrbitSnapshot m_prevOrbit{};
     _bool         m_prevOrbitCaptured = false;
@@ -186,18 +198,11 @@ private:
     ShotGoal m_holdFrom{};
     ShotGoal m_holdTo{};
 
-    Vector3 m_lineFromPos{};
-    Vector3 m_lineToPos{};
-    _bool   m_lineActive = false;
-
-    Quaternion m_lineFromRot{};
-    Quaternion m_lineToRot{};
-
-    Vector3 m_shot4PivotFixed{};
-    Quaternion m_shot4RotFixed{};
-    _float m_shot4DistFrom = 0.f, m_shot4DistTo = 0.f;
-    _float m_shot4FovFrom = 0.f,  m_shot4FovTo = 0.f;
-    _bool m_shot4RailActive = false;
+    Vector3     m_shot4PivotFixed{};
+    Quaternion  m_shot4RotFixed{};
+    _float      m_shot4DistFrom = 0.f, m_shot4DistTo = 0.f;
+    _float      m_shot4FovFrom = 0.f, m_shot4FovTo = 0.f;
+    _bool       m_shot4RailActive = false;
 };
 
 NS_END
