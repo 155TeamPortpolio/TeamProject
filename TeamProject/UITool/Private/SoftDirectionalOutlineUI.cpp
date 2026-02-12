@@ -80,10 +80,10 @@ void CSoftDirectionalOutlineUI::Save(nlohmann::ordered_json& data)
     data["textureTag"] = m_strTextureKey;
 
     auto& json = data["softDirectionalOutline"];
-    json["texelSize"] = m_vTexelSize;
+    json["texelSize"] = { m_vTexelSize.x, m_vTexelSize.y };
     json["radius"] = m_iRadius;
     json["glowStrength"] = m_fGlowStrength;
-    json["paddingDir"] = m_vPaddingDir;
+    json["paddingDir"] = { m_vPaddingDir.x, m_vPaddingDir.y };
     json["gaussianPower"] = m_fGaussianPower;
 }
 
@@ -94,16 +94,19 @@ void CSoftDirectionalOutlineUI::Load(const nlohmann::ordered_json& data)
     m_strTextureKey = data.value("textureTag", "");
     ApplySpriteTexture(0, G_GlobalLevelKey, m_strTextureKey, false);
 
+    auto pSprite = Get_Component<CSprite2D>();
     if (data.contains("softDirectionalOutline"))
     {
         const auto& json = data["softDirectionalOutline"];
-        m_vTexelSize = json.value("texelSize", _float2(0.1f, 0.1f));
+
+        auto vTexelSize = json.value("texelSize", json::array({ 0.1f, 0.1f }));
+        m_vTexelSize = { vTexelSize[0], vTexelSize[1] };
         m_iRadius = json.value("radius", 3);
         m_fGlowStrength = json.value("glowStrength", 1.2f);
-        m_vPaddingDir = json.value("paddingDir", _float2( 1.f,  0.f));
+        auto vPaddingDir = json.value("paddingDir", json::array({ 0.1f, 0.1f }));
+        m_vPaddingDir = { vPaddingDir[0], vPaddingDir[1] };
         m_fGaussianPower = json.value("gaussianPower", 3.f);
 
-        auto pSprite = Get_Component<CSprite2D>();    
         pSprite->Set_Param("vTexelSize", { &m_vTexelSize, "float2", sizeof(_float2) });
         pSprite->Set_Param("iRadius", { &m_iRadius, "int", sizeof(_int) });
         pSprite->Set_Param("fGlowStrength", { &m_fGlowStrength, "float", sizeof(_float) });

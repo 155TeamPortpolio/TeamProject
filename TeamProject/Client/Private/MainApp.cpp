@@ -48,9 +48,10 @@
 #include "ImageUI.h"
 #include "MaskUI.h"
 #include "NineSliceUI.h"
+#include "SoftDirectionalOutlineUI.h"
 #include "SpriteAnimationUI.h"
 #include "TextUI.h"
-#include "UVAnimationUI.h"
+#include "UVAnimationUI.h" 
 
 #include "UI_Logo.h"
 #include "UI_Loading.h"
@@ -255,6 +256,7 @@ void CMainApp::Initialize_GlobalPrototype()
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_CanvasPanel", CCanvasPanel::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Gauge", CGaugeUI::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Image", CImageUI::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_SoftDirectionalOutline", CSoftDirectionalOutlineUI::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_SpriteAnimation", CSpriteAnimationUI::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Text", CTextUI::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_UVAnimation", CUVAnimationUI::Create());

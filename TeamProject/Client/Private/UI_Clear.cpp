@@ -19,7 +19,7 @@ HRESULT CUI_Clear::Initialize(INIT_DESC* pArg)
 
     Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("clear.json")));
 
-    Set_Alive(false);
+    //Set_Alive(false);
 
     return S_OK;
 }
