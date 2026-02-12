@@ -11,9 +11,9 @@ class CamWipeOutController
     {
         None,
         Shot1_Enter, Shot1_Hold,
-        Shot2_Snap,  Shot2_Hold,
-        Shot3_Snap,  Shot3_Hold,
-        Shot4_Snap,  Shot4_Hold,
+        Shot2_Snap, Shot2_Hold,
+        Shot3_Snap, Shot3_Hold,
+        Shot4_Snap, Shot4_Hold,
         End
     };
 
@@ -35,93 +35,138 @@ class CamWipeOutController
         _bool   valid = false;
     };
 
+    struct Shot4Runtime
+    {
+        Vector3    pivotFixed{};
+        Quaternion rotFixed{};
+        _float     distFrom = 0.f;
+        _float     distTo = 0.f;
+        _bool      railActive = false;
+    };
+
 public:
     struct WipeTuning
     {
-        _float enterBlendShot1Sec = 1.f;
-        _float snapShotSec = 0.f;
+        struct Common
+        {
+            _float enterBlendShot1Sec = 1.f;
+            _float snapShotSec = 0.f;
 
-        _float holdShot1Sec = 0.5f;
-        _float holdShot2Sec = 1.f;
-        _float holdShot3Sec = 1.f;
-        _float holdShot4Sec = 1.f;
+            EaseType approachEase = EaseType::OutCubic;
 
-        EaseType approachEase = EaseType::OutCubic;
+            _float pitchBaseDeg = -10.f;
 
-        _float pitchBaseDeg = -10.f;
-        _float pitchShot1UpDeg = 8.f;
-        _float pitchShot2HighDeg = -14.f;
-        _float pitchShot4LevelDeg = 0.f;
+            _float distClose = 2.35f;
+            _float distMid = 3.05f;
 
-        _float distClose = 2.35f;
-        _float distMid = 3.05f;
-        _float distShot2Far = 4.20f;
-        _float distShot4Far = 5.00f;
+            _float fovClose = 28.f;
+            _float fovMid = 34.f;
 
-        _float fovClose = 28.f;
-        _float fovMid = 34.f;
-        _float fovShot1 = 32.f;
-        _float fovShot2 = 40.f;
-        _float fovShot4Far = 46.f;
+            _float sideYawBiasDeg = 10.f;
 
-        _float angleShot1Deg = 28.f;
-        _float angleShot2Deg = 110.f;
-        _float angleShot3Deg = 35.f;
-        _float angleShot4Deg = 25.f;
+            _float sepMin = 0.25f;
+            _float sepMax = 6.50f;
 
-        _float pivotClampShot1 = 0.55f;
-        _float pivotClampShot2 = 1.10f;
-        _float pivotClampShot3 = 0.85f;
-        _float pivotClampShot4 = 1.60f;
+            _float fitMargin = 1.18f;
+            _float frameBiasMul = 0.35f;
+            _float fitMinRadius = 0.55f;
 
-        _float attackerBiasShot1 = 0.18f;
-        _float attackerBiasShot2 = 0.10f;
-        _float attackerBiasShot3 = 0.12f;
-        _float attackerBiasShot4 = 0.05f;
+            _float pelvisMul = 0.38f;
 
-        _float sideYawBiasDeg = 10.f;
+            _float maxVictimDist = 3.0f;
+        };
 
-        _float sepMin = 0.25f;
-        _float sepMax = 6.50f;
+        struct Shot1
+        {
+            _float holdSec = 0.5f;
 
-        _float holdDollyShot1 = 0.08f;
-        _float holdDollyShot2 = 0.12f;
-        _float holdDollyShot3 = 0.10f;
-        _float holdDollyShot4 = 3.80f;
+            _float pitchUpDeg = 8.f;
 
-        _float holdFovPunchShot4 = 22.f;
+            _float angleDeg = 28.f;
+            _float pivotClamp = 0.55f;
+            _float attackerBias = 0.18f;
+
+            _float holdDolly = 0.08f;
+
+            _float yawDeltaDeg = 15.f;
+            _float yawWeight = 0.35f;
+
+            _float minPivotAboveFootY = 0.35f;
+            _float minCamAboveFootY = 0.05f;
+
+            _float distMul = 0.92f;
+            _float fov = 32.f;
+
+            _float fovAdd = 8.f;
+            _float pitchAddDeg = -6.f;
+            _float pivotYAdd = -0.15f;
+        };
+
+        struct Shot2
+        {
+            _float holdSec = 1.f;
+
+            _float pitchHighDeg = -14.f;
+
+            _float distFar = 4.20f;
+            _float fov = 40.f;
+
+            _float angleDeg = 110.f;
+            _float pivotClamp = 1.10f;
+            _float attackerBias = 0.10f;
+
+            _float baseVictimWeight = 0.50f;
+
+            _float holdDolly = 0.12f;
+
+            _float fitStrength = 1.0f;
+        };
+
+        struct Shot3
+        {
+            _float holdSec = 1.f;
+
+            _float angleDeg = 35.f;
+            _float pivotClamp = 0.85f;
+            _float attackerBias = 0.12f;
+
+            _float baseVictimWeight = 0.35f;
+
+            _float holdDolly = 0.10f;
+
+            _float fitStrength = 0.55f;
+        };
+
+        struct Shot4
+        {
+            _float holdSec = 1.f;
+
+            _float pitchLevelDeg = 0.f;
+
+            _float distFar = 5.00f;
+            _float fovFar = 46.f;
+
+            _float angleDeg = 25.f;
+            _float pivotClamp = 1.60f;
+            _float attackerBias = 0.05f;
+
+            _float baseVictimWeight = 0.15f;
+
+            _float holdDolly = 3.80f;
+
+            _float holdYawSweepDeg = 15.f;
+
+            _float fitStrength = 0.55f;
+        };
 
         EaseType holdEaseShot1_3 = EaseType::InOutSine;
         EaseType holdEaseShot4 = EaseType::InQuart;
 
-        _float pelvisMul = 0.38f;
-
-        _float shot1YawDeltaDeg = 15.f;
-        _float shot1YawWeight = 0.35f;
-
-        _float baseVictimWeightShot2 = 0.50f;
-        _float baseVictimWeightShot3 = 0.35f;
-        _float baseVictimWeightShot4 = 0.15f;
-
-        _float holdYawSweepShot4 = 15.f;
-
-        _float fitMargin = 1.18f;
-        _float frameBiasMul = 0.35f;
-        _float fitMinRadius = 0.55f;
-
-        _float shot1MinPivotAboveFootY = 0.35f;
-        _float shot1MinCamAboveFootY = 0.05f;
-
-        _float shot2FitStrength = 1.0f;
-        _float shot3FitStrength = 0.55f;
-        _float shot4FitStrength = 0.55f;
-
-        _float shot1DistMul = 0.92f;
-        _float shot1FovAdd = 8.f;
-        _float shot1PitchAddDeg = -6.f;
-        _float shot1PivotYAdd = -0.15f;
-
-        _float maxVictimDist = 1.0f;
+        Common common{};
+        Shot1  shot1{};
+        Shot2  shot2{};
+        Shot3  shot3{};
+        Shot4  shot4{};
     };
 
 public:
@@ -207,12 +252,9 @@ private:
     ShotGoal m_holdFrom{};
     ShotGoal m_holdTo{};
 
-    Vector3     m_shot4PivotFixed{};
-    Quaternion  m_shot4RotFixed{};
-    _float      m_shot4DistFrom = 0.f, m_shot4DistTo = 0.f;
-    _float      m_shot4FovFrom = 0.f, m_shot4FovTo = 0.f;
-    _bool       m_shot4RailActive = false;
-    _bool       m_victimBlocked = false;
+    Shot4Runtime m_shot4{};
+
+    _bool m_victimBlocked = false;
 };
 
 NS_END
