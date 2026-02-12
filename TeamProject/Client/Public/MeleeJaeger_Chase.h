@@ -58,4 +58,16 @@ public:
 	virtual void Free() override { __super::Free(); }
 };
 
+class CMeleeJaeger_Chase_Walk_Front : public IBaseState<CMeleeJaeger>
+{
+public:
+	virtual void Enter(CMeleeJaeger* pOwner) override;
+	virtual void Update(CMeleeJaeger* pOwner, _float dt) override;
+	virtual void Exit(CMeleeJaeger* pOwner) override;
+
+public:
+	static CMeleeJaeger_Chase_Walk_Front* Create() { return new CMeleeJaeger_Chase_Walk_Front(); }
+	virtual void Free() override { __super::Free(); }
+};
+
 NS_END

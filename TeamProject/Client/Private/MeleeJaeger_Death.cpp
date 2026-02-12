@@ -21,7 +21,7 @@ void CMeleeJaeger_Death::Enter(CMeleeJaeger* pOwner)
 		m_pSubStateMachine->Change_State("DeathBack");
 	}
 	else
-		m_pSubStateMachine->Change_State("DeathFront");
+		m_pSubStateMachine->Change_State("DeathStay");
 }
 
 void CMeleeJaeger_Death::Update(CMeleeJaeger* pOwner, _float dt)

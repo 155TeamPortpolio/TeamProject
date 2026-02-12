@@ -372,6 +372,14 @@ void CMeleeJaeger::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER
 
 	__super::TakeDamage(eDamageType, fResultDamage, charaName);
 
+	if (m_isShield)
+	{
+		m_tStatus.iGroggyValue -= 2.f;
+		if(m_tStatus.iGroggyValue < 0)
+			m_tStatus.iGroggyValue = 0.f;
+	}
+
+
 	if (0 >= m_tStatus.iNowHP)
 		return;
 
@@ -390,10 +398,11 @@ void CMeleeJaeger::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER
 	}
 	else
 	{
-		Get_Component<CAnimator3D>()->Set_Animation(1, "MeleeJaeger_Ani_Hit_Stay")
-			.LayerBlend(1.f, 0.f, 1.f, EaseType::Linear)
-			.Loop(false)
-			.Apply();
+		if (!m_isShield)
+			Get_Component<CAnimator3D>()->Set_Animation(1, "MeleeJaeger_Ani_Hit_Stay")
+				.LayerBlend(1.f, 0.f, 1.f, EaseType::Linear)
+				.Loop(false)
+				.Apply();
 	}
 }
 
@@ -472,8 +481,8 @@ HRESULT CMeleeJaeger::Ready_Rules()
 	// x = Idle에서 다음 상태로 넘어가는 쿨타임, y = dt 더한 타이머용
 	m_vIdleTime = { 1.f, 0.f };
 
-	m_tHysteriesis.fEvadeEnter = 2.f;
-	m_tHysteriesis.fComboEnter = 3.f;
+	m_tHysteriesis.fEvadeEnter = 3.f;
+	m_tHysteriesis.fComboEnter = 3.5f;
 	m_tHysteriesis.fComboExit = 4.f;
 	m_tHysteriesis.fChaseEnter = 5.5f;
 	m_tHysteriesis.fChaseExit = 4.5f;

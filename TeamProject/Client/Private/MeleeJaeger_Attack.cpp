@@ -37,9 +37,9 @@ void CMeleeJaeger_Attack::Enter(CMeleeJaeger* pOwner)
 
 		if (pOwner->IsShield())
 		{
-			if (targetinginfo.fDistance <= hysteriesis.fEvadeEnter)		// 완전 가까울때
+			/*if (targetinginfo.fDistance <= hysteriesis.fEvadeEnter)		// 완전 가까울때
 				iAttackPatternIndex = 5;
-			else if (targetinginfo.fDistance < hysteriesis.fComboExit)		// 적당히 전진 공격
+			else */if (targetinginfo.fDistance < hysteriesis.fComboExit)		// 적당히 전진 공격
 				iAttackPatternIndex = 2;
 			else
 			{

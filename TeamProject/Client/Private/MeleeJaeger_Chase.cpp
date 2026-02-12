@@ -13,9 +13,13 @@ void CMeleeJaeger_Chase::Enter(CMeleeJaeger* pOwner)
 		Register_States();
 		Register_Transitions();
 		m_pSubStateMachine->Set_DefaultState("Run_Start");
-
+		__super::Enter(pOwner);
 	}
-	__super::Enter(pOwner);
+
+	if (false == pOwner->IsShield())
+		__super::Enter(pOwner);
+	else
+		m_pSubStateMachine->Change_State("Walk_Front");
 }
 
 void CMeleeJaeger_Chase::Update(CMeleeJaeger* pOwner, _float dt)
@@ -45,6 +49,7 @@ void CMeleeJaeger_Chase::Register_States()
 	m_pSubStateMachine->Register_State("Run_Start", CMeleeJaeger_Run_Start::Create());
 	m_pSubStateMachine->Register_State("Run_Loop", CMeleeJaeger_Run_Loop::Create());
 	m_pSubStateMachine->Register_State("Run_End", CMeleeJaeger_Run_End::Create());
+	m_pSubStateMachine->Register_State("Walk_Front", CMeleeJaeger_Chase_Walk_Front::Create());
 }
 
 void CMeleeJaeger_Chase::Register_Transitions()
@@ -102,4 +107,23 @@ void CMeleeJaeger_Run_End::Update(CMeleeJaeger* pOwner, _float dt)
 void CMeleeJaeger_Run_End::Exit(CMeleeJaeger* pOwner)
 {
 
+}
+
+/*============================================================================*/
+void CMeleeJaeger_Chase_Walk_Front::Enter(CMeleeJaeger* pOwner)
+{
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("MeleeJaeger_Ani_Move_F")
+		.Speed(1.3)
+		.Loop(true)
+		.Apply();
+}
+
+void CMeleeJaeger_Chase_Walk_Front::Update(CMeleeJaeger* pOwner, _float dt)
+{
+	if (false == pOwner->GetStateMachine()->Get_Bool("Chase"))
+		pOwner->Idle();
+}
+
+void CMeleeJaeger_Chase_Walk_Front::Exit(CMeleeJaeger* pOwner)
+{
 }

@@ -266,22 +266,6 @@ void CMeleeJaeger_Shield::ComputeRoll(_float dt)
 	
 	_float fRollDegree = m_fRollDegree;
 
-	//if (m_isStartRoll)
-	//{
-	//	m_vStartRollTime.y += dt;
-	//
-	//	_float t = m_vStartRollTime.y / m_vStartRollTime.x;
-	//	t = clamp(t, 0.f, 1.f);
-	//
-	//	m_fComputeDegree = fRollDegree = t * m_fRollDegree;
-	//
-	//	if (m_vStartRollTime.x <= m_vStartRollTime.y)
-	//	{
-	//		m_vStartRollTime.y = 0.f;
-	//		m_isStartRoll = false;
-	//	}
-	//}
-
 	if (m_isEndRoll)
 	{
 		m_vEndRollTime.y += dt;
