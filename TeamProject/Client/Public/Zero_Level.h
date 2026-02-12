@@ -65,6 +65,7 @@ public:
 private:
 	void Ready_Prototype();
 	void Ready_Stage();
+	void Shuffle_MapCycle(vector<string>& Map);
 
 private:
 	StageContext m_Context = {};
