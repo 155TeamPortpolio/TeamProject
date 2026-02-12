@@ -64,7 +64,7 @@ public:
             _float fitMinRadius       = 0.55f;
             _float pelvisMul          = 0.38f;
             _float maxVictimDist      = 3.0f;
-            EaseType approachEase     = EaseType::OutCubic;
+            EaseType approachEase     = EaseType::OutExpo;
         };
         struct Shot1
         {
@@ -87,7 +87,7 @@ public:
         };
         struct Shot2
         {
-            _float holdSec          = 1.25f;
+            _float holdSec          = 1.f;
             _float pitchHighDeg     = -14.f;
             _float distFar          = 4.20f;
             _float fov              = 40.f;
@@ -100,7 +100,7 @@ public:
         };
         struct Shot3
         {
-            _float holdSec          = 1.25f;
+            _float holdSec          = 1.f;
             _float angleDeg         = 35.f;
             _float pivotClamp       = 0.85f;
             _float attackerBias     = 0.12f;
@@ -110,7 +110,7 @@ public:
         };
         struct Shot4
         {
-            _float holdSec          = 1.5f;
+            _float holdSec          = 1.2f;
             _float pitchLevelDeg    = 0.f;
             _float distFar          = 5.00f;
             _float fovFar           = 46.f;

@@ -24,7 +24,6 @@ namespace
         while (rad < -XM_PI) rad += XM_2PI;
         return rad;
     }
-
     Vector2 MoveTowardsVec2(const Vector2& cur, const Vector2& target, float maxDelta)
     {
         Vector2 d = target - cur;
@@ -33,7 +32,6 @@ namespace
         d /= len;
         return cur + d * maxDelta;
     }
-
     Vector3 MoveTowardsVec3(const Vector3& cur, const Vector3& target, float maxDelta)
     {
         Vector3 d = target - cur;
@@ -42,7 +40,6 @@ namespace
         d /= len;
         return cur + d * maxDelta;
     }
-
     Vector3 DirFromYaw(float yawRad)
     {
         return Vector3(sinf(yawRad), 0.f, cosf(yawRad));
@@ -72,6 +69,7 @@ HRESULT CUI_MeshPyramid::Initialize(INIT_DESC* arg)
     auto mtrlInsts = mtrl->Get_MaterialInstances();
     for (auto& inst : mtrlInsts)
     {
+        inst->Set_Blended(true);
         inst->Set_Param("color", {&m_color, "float3", sizeof(_float3)});
         inst->Set_Param("alpha", {&m_alpha, "float", sizeof(_float)});
     }
