@@ -33,6 +33,9 @@ private:
 
 	_uint m_iBlinkCount = {};
 
+	_float m_fTimer = {};
+	const _float m_fDuration = { 5.6f };
+
 private:
 	void Cache();
 

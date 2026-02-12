@@ -32,13 +32,17 @@ void CUI_Wipeout::Awake()
 
 void CUI_Wipeout::Update(_float dt)
 {
-    if (m_eState == STATE::DEACTIVATING)
+    if(m_eState == STATE::DEACTIVATING)
     {
         Change_State(STATE::INACTIVE);
         return;
     } 
-
+        
      __super::Update(dt);
+
+    m_fTimer += dt;
+    if (m_fTimer >= m_fDuration)
+        Change_State(STATE::DEACTIVATING);
 
     if (Is_GroupAnimationFinished(m_eCurrentGroup))
         Update_GroupState();
@@ -101,11 +105,11 @@ void CUI_Wipeout::Change_State(STATE eState)
         Set_Alive(true);
         Change_Group(GROUP::GROUP1);
         m_iBlinkCount = 0;
+        m_fTimer = 0;
         break;
     case STATE::DEACTIVATING:
         Set_Alpha(0.f);
         m_iCurrentClipIndex = -1;
-        //Change_State(STATE::INACTIVE);
         break;
     case STATE::INACTIVE:
         Set_Alive(false);
