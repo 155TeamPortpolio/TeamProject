@@ -370,6 +370,7 @@
     <ClInclude Include="..\Public\BackgroundNpc.h" />
     <ClInclude Include="..\Public\BasicHitEffect.h" />
     <ClInclude Include="..\Public\BattleFXFlow.h" />
+    <ClInclude Include="..\Public\BattleSystem_Panel.h" />
     <ClInclude Include="..\public\CamDebugInput.h" />
     <ClInclude Include="..\public\CamParryController.h" />
     <ClInclude Include="..\public\CamWipeOutController.h" />
@@ -834,6 +835,7 @@
     <ClCompile Include="..\Private\BackgroundNpc.cpp" />
     <ClCompile Include="..\Private\BasicHitEffect.cpp" />
     <ClCompile Include="..\Private\BattleFXFlow.cpp" />
+    <ClCompile Include="..\Private\BattleSystem_Panel.cpp" />
     <ClCompile Include="..\private\CamDebugInput.cpp" />
     <ClCompile Include="..\private\CamParryController.cpp" />
     <ClCompile Include="..\private\CamWipeOutController.cpp" />

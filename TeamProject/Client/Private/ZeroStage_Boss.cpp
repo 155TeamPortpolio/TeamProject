@@ -78,7 +78,7 @@ void CZeroStage_Boss::Battle()
 {
 	_bool isBattleEnd = CBattleSystem::GetInstance()->isMonsterCleared();
 	if (isBattleEnd) {                 
-		m_eStageStage = StageState::BattleEnd;
+		m_eStageStage = StageState::Outro;
 		CBattleSystem::GetInstance()->SetActive(false);
 		Active_Portal();
 	}
@@ -95,9 +95,7 @@ void CZeroStage_Boss::Outro()
 void CZeroStage_Boss::End()
 {
 	if (m_outroFlow.IsDoneAll()) {
-		auto stageType = m_pOwnerLevel->Get_Router()->GetChoiceType(m_iNextChoice);
-		m_pOwnerLevel->Get_Router()->Choose(m_iNextChoice);
-		m_pOwnerLevel->ChangeStage(stageType);
+		LevelManager()->Request_ChangeLevel("Scott_Level", true);
 	}
 }
 

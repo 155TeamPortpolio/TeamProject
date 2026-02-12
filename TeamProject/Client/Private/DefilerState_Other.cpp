@@ -15,6 +15,7 @@ void CDefilerState_Groggy::Enter(CDefiler* pOwner)
 		.Speed(1.f)
 		.Loop(false)
 		.Apply();
+	pOwner->Release_AttackCollider();
 }
 
 void CDefilerState_Groggy::Update(CDefiler* pOwner, _float dt)
