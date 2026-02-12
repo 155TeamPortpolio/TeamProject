@@ -7,7 +7,7 @@ void CMiyabiState_SwitchOut::Enter(CMiyabi* pOwner)
 {
     pOwner->Get_StateMachine()->Reset_Trigger("ToIdle");
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "SwitchOut_Normal")
-        .Loop(false)
+        .Speed(1.f)
         .Apply();
 }
 

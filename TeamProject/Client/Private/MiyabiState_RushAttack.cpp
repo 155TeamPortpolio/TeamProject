@@ -46,13 +46,16 @@ void CMiyabiState_RushAttack::Update(CMiyabi* pOwner, _float dt)
 
 void CMiyabiState_RushAttack::Exit(CMiyabi* pOwner)
 {
+    pOwner->Set_ResetMove(true);
     __super::Exit(pOwner);
 }
 
 void CMiyabiState_Rush_Start::Enter(CMiyabi* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_Rush")
-        .Speed(1.f)
+        .ReserveSpeed(0.f, 0.25f, 0.7f, EaseType::InQuad)
+        .ReserveSpeed(0.25f, 0.35f, 2.5f, EaseType::InCubic)
+        .ReserveSpeed(0.35f, 0.4f, 4.f, EaseType::OutExpo)
         .Apply();
     pOwner->Begin_AttackCollider("KatanaWeapon", HitDesc()
         .Name(pOwner->Get_CharacterName())

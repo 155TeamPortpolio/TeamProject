@@ -24,6 +24,7 @@ void CMiyabiState_Idle::Enter(CMiyabi* pOwner)
     }
 
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Idle")
+        .BlendDuration(0.5f)
         .Loop(true)
         .Apply();
 

@@ -115,6 +115,7 @@ public:
 		_float	fDuration = {};
 		_float	fCurPos = {};
 		_float3 vNowColor = {};
+		_bool	bCanIntersect = {};
 		_float	GetTimeRatio()
 		{
 			if (0 > fCurPos)
@@ -124,8 +125,9 @@ public:
 	}BATTLE_VFX;
 	typedef struct tagBattleVFXData
 	{
-		_float			fVFXDuration = {};			/* 화면 색 먹이는 시간 */
-		_float			fBlurDuration = {};			/* 블러 먹이는 시간 */
+		_bool	bCanIntersect = {true};
+		_float	fVFXDuration = {};			/* 화면 색 먹이는 시간 */
+		_float	fBlurDuration = {};			/* 블러 먹이는 시간 */
 		_float3 vStartColor = {};
 		_float3 vTargetColor = {};
 		array<TIME_SCALING, ENUM(BATTLE_OBJ_TYPE::END)> BattleTimeScale;
@@ -163,7 +165,8 @@ public:
 	void StartVfx_Ultimate();
 	void StartVfx_Switch();
 	void StartVfx_WipeOut();
-	void HitLack();
+	void NormalHitLack();
+	void HardHitLack();
 	void SetLayerTimeScale(BATTLE_OBJ_TYPE type, _float scale);
 	void ResetLayerTimeScale(BATTLE_OBJ_TYPE type);
 
