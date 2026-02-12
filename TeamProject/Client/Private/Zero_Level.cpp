@@ -104,6 +104,7 @@ HRESULT CZero_Level::Awake()
 void CZero_Level::Update()
 {
 	m_Context.pNowStage->Update();
+	BattleSystem()->Update();
 }
 
 HRESULT CZero_Level::Render()
@@ -168,9 +169,9 @@ void CZero_Level::Ready_Stage()
 	m_mapCycle[StageType::Start].maps	= { "Zero_Start" };
 	m_mapCycle[StageType::Normal].maps	= { "Zero_1_1",	"Zero_1_2", "Zero_2_1", "Zero_5_1" };
 	m_mapCycle[StageType::Elite].maps	= { "Zero_1_1",	"Zero_1_2", "Zero_2_1" };
-	m_mapCycle[StageType::Boss].maps	= { "Zero_Boss2","Zero_Boss2"};
+	m_mapCycle[StageType::Boss].maps	= { "Zero_Boss2","Zero_Boss1"};
 
-	ChangeStage(StageType::Start);
+	ChangeStage(StageType::Boss);
 }
 
 string CZero_Level::PopMapKey(StageType type)
