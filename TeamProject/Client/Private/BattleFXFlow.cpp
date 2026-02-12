@@ -54,7 +54,7 @@ void CBattleFXFlow::Initialize_Preset()
 		WipeOut.fVFXDuration = duration;
 		WipeOut.fBlurDuration = duration;
 		WipeOut.SetTimeData({ duration, 0.0f, 0.3f, .0f , EaseType::OutQuint });
-
+		WipeOut.BattleTimeScale[ENUM(BATTLE_OBJ_TYPE::CAMERA)] = TIME_SCALE_DATA{duration, 1.0f, 0.3f, .0f, EaseType::OutQuint};
 	}
 }
 
@@ -164,8 +164,8 @@ void CBattleFXFlow::Cancel()
 
 void CBattleFXFlow::StartVfx(BATTLE_VFX_TYPE vfxType)
 {
-	if (m_BattleVFX.isRunning)
-		return;
+	//if (m_BattleVFX.isRunning)
+	//	return;
 
 	auto& preset = m_BattleVFXData[ENUM(vfxType)];
 
@@ -306,6 +306,7 @@ void CBattleFXFlow::StartVfx_WipeOut()
 
 	auto& preset = m_BattleVFXData[ENUM(BATTLE_VFX_TYPE::WIPEOUT)];
 	AddParallelTimeScaleAll(preset);
+	AddCall([this]() {CamDirector()->BeginWipeOut(); });
 	AddWait(preset.fVFXDuration);
 	AddCall([this, preset]() {
 		m_BattleVFX.fCurPos = 0.f;
