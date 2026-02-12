@@ -19,7 +19,7 @@ HRESULT CUI_Switch::Initialize(INIT_DESC* pArg)
 
     Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("switch.json")));
 
-    Set_Alive(false);
+    //Set_Alive(false);
 
     return S_OK;
 }
