@@ -90,7 +90,7 @@ public:
 	void Set_PoolKey(CLONE_DESC key) { m_PoolMark.key = key; }
 	const CLONE_DESC& Get_PoolKey() const { return m_PoolMark.key; }
 
-	virtual void OnPooledAcquire(INIT_DESC* pArg = nullptr) {}		// 풀에서 꺼낼 때
+	virtual void OnPooledAcquire(INIT_DESC* pArg = nullptr) {};		// 풀에서 꺼낼 때
 	virtual void OnPooledRelease() {}														// 풀로 돌아갈 때
 
 public:
