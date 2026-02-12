@@ -21,7 +21,7 @@ void CMiyabiState_Hit::Enter(CMiyabi* pOwner)
 {
 	pOwner->Lock_Move();
 	pOwner->Stop_Rotation();
-	pOwner->Get_StateMachine()->Set_Bool("Resistance", true);
+	m_fWeight *= 0.2f;
 
 	_int iEntryMode = pOwner->Get_StateMachine()->Get_Int("HitEntryMode");
 	pOwner->Get_StateMachine()->Set_Int("HitEntryMode", 0);
@@ -56,23 +56,31 @@ void CMiyabiState_Hit::Enter(CMiyabi* pOwner)
 
 void CMiyabiState_Hit::Update(CMiyabi* pOwner, _float dt)
 {
-	pOwner->Process_RootMotion(dt,
-		ENUM(CMiyabi::ROOTMOTION_MASK::MOVE) |
-		ENUM(CMiyabi::ROOTMOTION_MASK::QUATERNION));
+	m_fWeight += dt * 0.5f;
+	m_fWeight = min(m_fWeight, 1.f);
+	pOwner->Get_StateMachine()->Set_Float("MoveWeight", m_fWeight);	// 디버그 용
+
+	CCharacter::ROOTMOTION_DESC desc;
+	desc.iModeMask = ENUM(CMiyabi::ROOTMOTION_MASK::MOVE) |
+		ENUM(CMiyabi::ROOTMOTION_MASK::QUATERNION);
+	desc.fMoveWeight = m_fWeight;
+	pOwner->Process_RootMotion(dt, desc);
 
 	if (m_pSubStateMachine->Get_CurrentState()->Get_AnimProgress() > 0.3f)
 		pOwner->Unlock_Move();
 
-	if (Is_AnimEnd())
-		pOwner->Get_StateMachine()->Set_Trigger("ToIdle");
+	auto pStateMachine = pOwner->Get_StateMachine();
+	if ( pStateMachine->Get_Trigger("ToHit")
+		|| Is_AnimEnd())
+		pStateMachine->Set_Trigger("ToIdle");
 
 	__super::Update(pOwner, dt);
 }
 
 void CMiyabiState_Hit::Exit(CMiyabi* pOwner)
 {
+	pOwner->Set_ResetMove(true);
 	pOwner->Unlock_Move();
-	pOwner->Get_StateMachine()->Set_Bool("Resistance", false);
 	__super::Exit(pOwner);
 }
 
@@ -82,7 +90,7 @@ void CMiyabi_HitNormal::Enter(CMiyabi* pOwner)
 	strAnim += pOwner->Get_StateMachine()->Get_Bool("IsBehind") ? "Hit_L_Back" : "Hit_L_Front";
 	pOwner->Get_Animator()->Change_Animation(strAnim)
 		.Speed(1.5f)
-		.EndAt(0.8f)
+		.EndAt(0.4f)
 		.Apply();
 }
 
@@ -91,6 +99,8 @@ void CMiyabi_HitHard::Enter(CMiyabi* pOwner)
 	string strAnim = pOwner->Get_Name();
 	strAnim += pOwner->Get_StateMachine()->Get_Bool("IsBehind") ? "Hit_H_Back" : "Hit_H_Front";
 	pOwner->Get_Animator()->Change_Animation(strAnim)
+		.Speed(1.5f)
+		.EndAt(0.6f)
 		.Apply();
 }
 
@@ -99,5 +109,7 @@ void CMiyabi_HitKnockOut::Enter(CMiyabi* pOwner)
 	string strAnim = pOwner->Get_Name();
 	strAnim += pOwner->Get_StateMachine()->Get_Bool("IsBehind") ? "HitFly_Back" : "HitFly_Front";
 	pOwner->Get_Animator()->Change_Animation(strAnim)
+		.Speed(1.5f)
+		.EndAt(0.7f)
 		.Apply();
 }

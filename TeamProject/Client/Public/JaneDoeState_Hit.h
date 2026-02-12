@@ -12,6 +12,9 @@ public:
     virtual void Update(CJaneDoe* pOwner, _float dt) override;
     virtual void Exit(CJaneDoe* pOwner) override;
 
+private:
+    _float m_fWeight = 5.f;
+
 public:
     static CJaneDoeState_Hit* Create();
     virtual void Free() override { __super::Free(); }

@@ -21,7 +21,7 @@ void CJaneDoeState_Hit::Enter(CJaneDoe* pOwner)
 {
 	pOwner->Lock_Move();
 	pOwner->Stop_Rotation();
-	pOwner->Get_StateMachine()->Set_Bool("Resistance", true);
+	m_fWeight *= 0.2f;
 
 	_int iEntryMode = pOwner->Get_StateMachine()->Get_Int("HitEntryMode");
 	pOwner->Get_StateMachine()->Set_Int("HitEntryMode", 0);
@@ -57,19 +57,30 @@ void CJaneDoeState_Hit::Enter(CJaneDoe* pOwner)
 
 void CJaneDoeState_Hit::Update(CJaneDoe* pOwner, _float dt)
 {
-	pOwner->Process_RootMotion(dt,
-		ENUM(CJaneDoe::ROOTMOTION_MASK::MOVE) |
-		ENUM(CJaneDoe::ROOTMOTION_MASK::QUATERNION));
+	m_fWeight += dt * 0.5f;
+	m_fWeight = min(m_fWeight, 1.f);
+	pOwner->Get_StateMachine()->Set_Float("MoveWeight", m_fWeight);	// 디버그 용
+
+	CCharacter::ROOTMOTION_DESC desc;
+	desc.iModeMask = ENUM(CJaneDoe::ROOTMOTION_MASK::MOVE) |
+		ENUM(CJaneDoe::ROOTMOTION_MASK::QUATERNION);
+	desc.fMoveWeight = m_fWeight;
+	pOwner->Process_RootMotion(dt, desc);
 
 	if(m_pSubStateMachine->Get_CurrentState()->Get_AnimProgress() > 0.3f)
 		pOwner->Unlock_Move();
+
+	auto pStateMachine = pOwner->Get_StateMachine();
+	if (pStateMachine->Get_Trigger("ToHit")
+		|| Is_AnimEnd())
+		pStateMachine->Set_Trigger("ToIdle");
 
 	__super::Update(pOwner, dt);
 }
 
 void CJaneDoeState_Hit::Exit(CJaneDoe* pOwner)
 {
-	pOwner->Get_StateMachine()->Set_Bool("Resistance", false);
+	pOwner->Set_ResetMove(true);
 	pOwner->Unlock_Move();
 	__super::Exit(pOwner);
 }
@@ -80,7 +91,7 @@ void CJaneDoe_HitNormal::Enter(CJaneDoe* pOwner)
 	strAnim += pOwner->Get_StateMachine()->Get_Bool("IsBehind") ? "Hit_L_Back" : "Hit_L_Front";
 	pOwner->Get_Animator()->Change_Animation(strAnim)
 		.Speed(1.5f)
-		.EndAt(0.8f)
+		.EndAt(0.4f)
 		.Apply();
 }
 
@@ -89,6 +100,8 @@ void CJaneDoe_HitHard::Enter(CJaneDoe* pOwner)
 	string strAnim = pOwner->Get_Name();
 	strAnim += pOwner->Get_StateMachine()->Get_Bool("IsBehind") ? "Hit_H_Back" : "Hit_H_Front";
 	pOwner->Get_Animator()->Change_Animation(strAnim)
+		.Speed(1.5f)
+		.EndAt(0.6f)
 		.Apply();
 }
 
@@ -97,5 +110,7 @@ void CJaneDoe_HitKnockOut::Enter(CJaneDoe* pOwner)
 	string strAnim = pOwner->Get_Name();
 	strAnim += pOwner->Get_StateMachine()->Get_Bool("IsBehind") ? "HitFly_Back" : "HitFly_Front";
 	pOwner->Get_Animator()->Change_Animation(strAnim)
+		.Speed(1.5f)
+		.EndAt(0.7f)
 		.Apply();
 }
