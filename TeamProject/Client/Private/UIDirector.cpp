@@ -146,14 +146,14 @@ void CUIDirector::Show_GachaResult(const vector<GACHA_RESULT_DESC>* pResultDesc)
 	UI_Active("gacha_result", &desc);
 }
 
-void CUIDirector::Show_ResultBanner(const string& strTextureKey, const _wstring& wstrText1, const _wstring& wstrText2)
+void CUIDirector::Show_Wipeout()
 {
-	CUI_ResultBanner::RESULT_DESC desc = {};
-	desc.strTextureKey = strTextureKey;
-	desc.wstrText1 = wstrText1;
-	desc.wstrText2 = wstrText2;
+	UI_Active("wipeout");
+}
 
-	UI_Active("result_banner", &desc);
+void CUIDirector::Show_Switch()
+{
+	UI_Active("switch");
 }
 
 void CUIDirector::Initialize()
