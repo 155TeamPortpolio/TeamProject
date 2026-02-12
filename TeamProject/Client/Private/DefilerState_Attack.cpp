@@ -17,6 +17,7 @@ void CDefilerState_Attack::Build_Pattern(CDefiler* pOwner, _int Type)
 	DEFILER_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
 	TARGETING_INFO& targetInfo = pOwner->GetTargetingInfo();
 	blackBoard.patternTransition.clear();
+	Type = 1;
 	switch (Type)
 	{
 	case 0 :
@@ -109,38 +110,38 @@ void CDefilerState_Attack::Build_Pattern(CDefiler* pOwner, _int Type)
 
 void CDefilerState_Attack::ReadySubState()
 {
-	/*3´Ü °ø°Ý*/
+	/*3ë‹¨ ê³µê²©*/
 	m_pSubStateMachine->Register_State("Attack01_01",			CDefilerState_Attack_01_01::Create());
 	m_pSubStateMachine->Register_State("Attack01_02",			CDefilerState_Attack_01_02::Create());
-	/*6´Ü ÆÐ¸µ °ø·Â*/
+	/*6ë‹¨ íŒ¨ë§ ê³µë ¥*/
 	m_pSubStateMachine->Register_State("Attack01_01_P2",		CDefilerState_Attack_01_01_P2::Create());
-	/*Ä®´øÁö°í ²¿¸® °ø°Ý*/
+	/*ì¹¼ë˜ì§€ê³  ê¼¬ë¦¬ ê³µê²©*/
 	m_pSubStateMachine->Register_State("Attack01_03",			CDefilerState_Attack_01_03::Create());
-	/*¿¬¼Ó ÆÐ¸µ ÆØÀÌ °ø°Ý*/
+	/*ì—°ì† íŒ¨ë§ íŒ½ì´ ê³µê²©*/
 	m_pSubStateMachine->Register_State("Attack02",				CDefilerState_Attack_02::Create());
-	/*³»·ÁÂï°í "¾Ë»ý¼º"*/
+	/*ë‚´ë ¤ì°ê³  "ì•Œìƒì„±"*/
 	m_pSubStateMachine->Register_State("Attack03",				CDefilerState_Attack_03::Create());
-	/*Á»´õ ³ôÀÌ ¿Ã¶ó°¡¼­ ³»·ÁÂïÀ½*/
+	/*ì¢€ë” ë†’ì´ ì˜¬ë¼ê°€ì„œ ë‚´ë ¤ì°ìŒ*/
 	m_pSubStateMachine->Register_State("Attack04",				CDefilerState_Attack_04::Create());
-	/*¶Õ°í µ¹Áø °ø°Ý*/
+	/*ëš«ê³  ëŒì§„ ê³µê²©*/
 	m_pSubStateMachine->Register_State("Attack05",				CDefilerState_Attack_05::Create());
-	/*3´Ü ·¹ÀÌÀú °ø°Ý*/
+	/*3ë‹¨ ë ˆì´ì € ê³µê²©*/
 	m_pSubStateMachine->Register_State("Attack06",				CDefilerState_Attack_06::Create());
-	/*¹Ì¾ÆÁî¸¶ ºí·¹ÀÌµå*/
+	/*ë¯¸ì•„ì¦ˆë§ˆ ë¸”ë ˆì´ë“œ*/
 	m_pSubStateMachine->Register_State("Attack07",				CDefilerState_Attack_07::Create());
 	
-	/*¹Ì¾ÆÁî¸¶ º´»ç ¼ÒÈ¯, ¹æÆÐº´*/
+	/*ë¯¸ì•„ì¦ˆë§ˆ ë³‘ì‚¬ ì†Œí™˜, ë°©íŒ¨ë³‘*/
 	m_pSubStateMachine->Register_State("Attack08_01_Start",		CDefilerState_Attack_08_01_Start::Create());
 	m_pSubStateMachine->Register_State("Attack08_01_Loop",		CDefilerState_Attack_08_01_Loop::Create());
 	m_pSubStateMachine->Register_State("Attack08_01_End",		CDefilerState_Attack_08_01_End::Create());
 	m_pSubStateMachine->Register_State("Attack08_02",			CDefilerState_Attack_08_02::Create());
-	/*ÇØÀÏ*/
+	/*í•´ì¼*/
 	m_pSubStateMachine->Register_State("Attack09_Start",		CDefilerState_Attack_09_Start::Create());
 	m_pSubStateMachine->Register_State("Attack09_Loop",			CDefilerState_Attack_09_Loop::Create());
 	m_pSubStateMachine->Register_State("Attack09_End",			CDefilerState_Attack_09_End::Create());
-	/*µ¹Áø ¶È°°À½ - ¸ð½À¸¸ ´Þ¶óÁø ´À³¦ */
+	/*ëŒì§„ ë˜‘ê°™ìŒ - ëª¨ìŠµë§Œ ë‹¬ë¼ì§„ ëŠë‚Œ */
 	m_pSubStateMachine->Register_State("Attack_Grab",			CDefilerState_Attack_Grab::Create());
-	/*¹Ì¾ÆÁî¸¶ º´»ç ¼ÒÈ¯, ÃÑÀìÀÌ*/
+	/*ë¯¸ì•„ì¦ˆë§ˆ ë³‘ì‚¬ ì†Œí™˜, ì´ìž½ì´*/
 	m_pSubStateMachine->Register_State("Attack_Summon",			CDefilerState_Attack_Summon::Create());
 	m_pSubStateMachine->Register_State("Attack_Evade",			CDefilerState_Attack_Evade::Create());
 }
@@ -292,10 +293,25 @@ void CDefilerState_Attack_01_03::Enter(CDefiler* pOwner)
 void CDefilerState_Attack_01_03::Update(CDefiler* pOwner, _float dt)
 {
 	ComboTransition(pOwner);
+	Update_Effects(pOwner);
 }
 
 void CDefilerState_Attack_01_03::Exit(CDefiler* pOwner)
 {
+}
+
+void CDefilerState_Attack_01_03::Update_Effects(CDefiler* pOwner)
+{
+	if (IsCrossAnimProgress(0.15f))
+		pOwner->Play_Effect("Defiler_Slash1_0", _vector3(0.f, 1.f, 0.f), _quaternion(-0.01f, 0.69f, 0.72f, 0.1f));
+	if (IsCrossAnimProgress(0.21f))
+		pOwner->Play_Effect("Defiler_Axe_Slash0_0", _vector3(0.f, 0.f, 0.f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+	if (IsCrossAnimProgress(0.36f))
+		pOwner->Play_Effect("Defiler_Tail_Slash0_0", _vector3(-2.1f, 0.6f, 1.2f), _quaternion(0.52f, -0.48f, 0.5f, -0.5f));
+	if (IsCrossAnimProgress(0.56f))
+		pOwner->Play_Effect("Defiler_Slash2_0", _vector3(0.4f, 1.5f, 1.9f), _quaternion(-0.22f, 0.54f, -0.31f, 0.75f));
+	if (IsCrossAnimProgress(0.565f))
+		pOwner->Play_Effect("Defiler_HitGround0", _vector3(0.f, 0.2f, 2.6f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
 }
 
 void CDefilerState_Attack_02::Enter(CDefiler* pOwner)

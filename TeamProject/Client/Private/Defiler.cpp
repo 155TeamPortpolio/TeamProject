@@ -677,8 +677,18 @@ HRESULT CDefiler::Initialize_Transitions()
 
 HRESULT CDefiler::Initialize_Effects()
 {
+	auto pAnimator = Get_Component<CAnimator3D>();
 	auto pObjectContainer = Get_Component<CObjectContainer>();
 	Create_AttackSign("Bip001_Head");
+
+	/* Hit Ground */
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("defiler_hit_ground0.json")
+			.Build("Defiler_HitGround0");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
 
 	/* Normal Slash */
 	{
@@ -702,6 +712,36 @@ HRESULT CDefiler::Initialize_Effects()
 		pEffect->Stop();
 		pObjectContainer->Add_Child(pEffect);
 	}
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("defiler_slash2.json")
+			.Build("Defiler_Slash2_0");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect);
+	}
+
+	/* Axe Slash */
+	{
+		_smatrix offsetMatrix = _smatrix::Identity;
+		offsetMatrix.Translation(_vector3(-1.f, 0.f, 0.f));
+
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("defiler_axe_slash0.json")
+			.Build("Defiler_Axe_Slash0_0");
+		pEffect->Stop();
+		pEffect->AttachBone(pAnimator, "Ctr_M_Weapon_01", offsetMatrix);
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+
+	/* Tail Slash */
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("defiler_tail_slash0.json")
+			.Build("Defiler_Tail_Slash0_0");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect);
+	}
+
 	return S_OK;
 }
 
