@@ -4,6 +4,11 @@ NS_BEGIN(Client)
 class CDefilerWall :
     public CEnemy
 {
+public:
+    struct DefilerWallDesc : GAMEOBJECT_DESC{
+        _vector3 vLook;
+    };
+
 private:
     CDefilerWall();
     CDefilerWall(const CDefilerWall& rhg);
@@ -23,6 +28,11 @@ public:
     virtual void OnPooledRelease()override;
 
 private:
+    void DisAppear();
+
+private:
+    _float  m_ElapsedTime = 0.f;
+    _bool m_bAwake = {};
 public:
     static CDefilerWall* Create();
     CGameObject* Clone(INIT_DESC* pArg) override;

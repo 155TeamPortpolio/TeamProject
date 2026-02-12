@@ -72,8 +72,9 @@ HRESULT CMiyabi::Initialize(INIT_DESC* pArg)
 	if (FAILED(Initialize_Weapon()))
 		return E_FAIL;
 
-	Get_Component<CAudioSource>()->SoundFolder(G_GlobalLevelKey, "../Bin/Resources/Global/BattleCharacter/Miyabi/Sound");
-	
+	if (FAILED(Initialize_Sound()))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -362,9 +363,9 @@ void CMiyabi::Add_MotionBlur()
 
 void CMiyabi::Clear_MotionBlur()
 {
+	m_fRimLightPower = 0.f;
 	m_BoneMatrices.clear();
 	m_WorldMatrices.clear();
-	m_fRimLightPower = 0.f;
 }
 
 void CMiyabi::Set_WeaponEffectMesh(_bool bOn)
@@ -881,6 +882,18 @@ HRESULT CMiyabi::Initialize_Effects()
 	return S_OK;
 }
 
+HRESULT CMiyabi::Initialize_Sound()
+{
+	Get_Component<CAudioSource>()->SoundFolder(G_GlobalLevelKey, "../Bin/Resources/Global/BattleCharacter/Miyabi/Sound");
+	Get_Component<CAudioSource>()->Add_Sequence("Ultimate"
+		, "Miyabi_UltimateAttack_Voice_01"
+		, "Miyabi_UltimateAttack_Voice_02"
+		, "Miyabi_UltimateAttack_Voice_03"
+	);
+
+	return S_OK;
+}
+
 void CMiyabi::Update_States()
 {
 	if (!Is_MainCharacter()) return;
@@ -1112,6 +1125,8 @@ HRESULT CMiyabi::Render_DashMotionBlur(ID3D11DeviceContext* pContext, _uint idx)
 	auto Material = Get_Component<CMaterial>();
 	_int Index = Model->Get_MaterialIndex(idx);
 	auto Shader = Material->Get_Shader(Index);
+	auto instance = Material->Get_MaterialInstance(Index);
+	instance->Override_Pass("MotionBlur");
 	ID3D11InputLayout* pLayout;
 	RenderSys->Get_InputLayout(
 		Model,
@@ -1122,9 +1137,9 @@ HRESULT CMiyabi::Render_DashMotionBlur(ID3D11DeviceContext* pContext, _uint idx)
 	);
 
 	pContext->IASetInputLayout(pLayout);
-	Shader->Apply("MotionBlur", pContext);
+	Material->Apply_Material(pContext, Index);
 	Model->Draw(pContext, idx);
-
+	instance->Reset_Pass();
 	return S_OK;
 }
 

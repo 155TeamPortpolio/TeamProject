@@ -24,7 +24,7 @@ CBattleSystem::CBattleSystem()
 		infos.reserve(10);
 		m_BattleObjInfos.emplace(eType, move(infos));
 	}
-
+	m_BattleSnapShots = m_BattleObjInfos;
 	
 	m_pFXFlow = CBattleFXFlow::Create();
 	m_pFXFlow->Initialize_Preset();
@@ -38,8 +38,12 @@ void CBattleSystem::Update()
 {
 	if (false == m_isActive)
 		return;
+	_uint frame = GameInstance()->Get_FrameCount();
+	if (m_LastFrame == frame)
+		return;
+	m_LastFrame = frame;
 
-	const _float dt = CGameInstance::GetInstance()->Get_EngineDeltaTime();
+	const _float dt = TimeManager()->Get_RawDeltaTime(G_EngineTimerID);
 
 	CheckVFX(dt);
 	Update_BattleInfo();
@@ -47,7 +51,7 @@ void CBattleSystem::Update()
 
 	if(InputDevice()->Key_Tap(VK_SHIFT))
 	{
-		StartGimmick(BATTLE_VFX_TYPE::EVADE);
+		StartGimmick(BATTLE_VFX_TYPE::WIPEOUT);
 	}
 	if(InputDevice()->Key_Tap(VK_CONTROL))
 	{
@@ -334,6 +338,8 @@ void CBattleSystem::ClearBattleStage()
 	}
 	m_BattleObjIndex.clear();
 	m_BattleSnapShots.clear();
+
+	m_BattleSnapShots = m_BattleObjInfos;
 }
 
 BATTLEOBJ_INFO* CBattleSystem::FindBattleObjInfo(OBJECT_HANDLE objectHandle)

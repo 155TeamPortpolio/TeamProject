@@ -94,6 +94,8 @@ HRESULT CDefiler::Initialize(INIT_DESC* pArg)
 
 	Create_UIEnemyStatus("Bip001_Spine2");
 	Create_UIBossHUD();
+	Create_MeshPyramid();
+
 	return S_OK;
 }
 
@@ -123,8 +125,18 @@ void CDefiler::Priority_Update(_float dt)
 	m_PlayerCharacterInfos = BattleSystem()->GetBattleObjects(CBattleSystem::BATTLE_OBJ_TYPE::PLAYER);
 	ComputeTargetingInfo();
 
-	if (InputDevice()->Key_Tap('F'))
-		Control_Summon("Heavy");
+	if (InputDevice()->Key_Tap('F')) {
+		Get_Component<CAudioSource>()
+			->Slot("OngoingLevel_Chapter130_Belle_111302003_001.wav")
+			.FadeOut(1.f);
+	}
+	if (InputDevice()->Key_Tap('G')) {
+		Get_Component<CAudioSource>()
+			->Slot("OngoingLevel_Chapter130_Belle_111302003_001.wav")
+			.Attribute3D(false)
+			.FadeIn(1.f,1.f)
+			.Infinite(true).Play();
+	}
 }
 
 void CDefiler::Update(_float dt)
@@ -135,8 +147,6 @@ void CDefiler::Update(_float dt)
 		m_BlackBoard.vTargetPos = m_tTargetingInfo.vTargetPos;
 		m_BlackBoard.vTargetDir = m_tTargetingInfo.vDirToTarget;
 	}
-
-	Update_States(dt);
 
 	auto animatorPtr = Get_Component<CAnimator3D>();
 	animatorPtr->Update_Animation(dt);
@@ -186,7 +196,7 @@ void CDefiler::Render_GUI()
 
 void CDefiler::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER charaName)
 {
-	BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::HIT);
+	BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::HIT_NORMAL);
 	_float fTakeDamage = fDamage;
 
 	if (m_tStatus.isGroggy)
@@ -291,11 +301,11 @@ void CDefiler::MoveByTraceMode(_float dt, _float moveScale)
 	toTarget.y = 0.f;
 
 	const _float distToTarget = toTarget.Length();
-	if (distToTarget <= 1e-6f)
+	if (distToTarget <= 1.f)
 		return;
 
 	const _vector3 dirToTarget = toTarget / distToTarget;
-	const _float lockDist = 2.f;
+	const _float lockDist = 3.f;
 	if (distToTarget <= lockDist && stopAtTarget && !allowThrough)
 	{
 		m_BlackBoard.CurrentDir = dirToTarget;
@@ -540,6 +550,43 @@ void CDefiler::Update_Dissolve(_float dt)
 	}
 }
 
+void CDefiler::Play_Effect(const string& effectTag, _fvector offsetPosition, _fvector offsetQuaternion, _bool syncTransform)
+{
+	auto pEffect = Get_Component<CObjectContainer>()->Find_ObjectByName(effectTag);
+	if (!pEffect)
+		return;
+
+	auto pEffectTransform = pEffect->Get_Component<CTransform>();
+	if (syncTransform)
+	{
+		pEffectTransform->Set_Pos(_vector3(offsetPosition));
+		pEffectTransform->Set_Quaternion(offsetQuaternion);
+	}
+	else
+	{
+		_smatrix worldMatrix = m_pTransform->Get_WorldMatrix();
+		_quaternion worldQuaternion = m_pTransform->Get_QuaternionRotate();
+
+		_vector3 vWorldPosition = _vector3::Transform(offsetPosition, worldMatrix);
+		_quaternion localQuaternion(offsetQuaternion);
+		localQuaternion *= worldQuaternion;
+
+		pEffectTransform->Set_WorldPos(vWorldPosition);
+		pEffectTransform->Set_WorldQuaternion(localQuaternion);
+	}
+
+	static_cast<CEffectContainer*>(pEffect)->Play();
+}
+
+void CDefiler::Stop_Effect(const string& effectTag)
+{
+	auto pEffect = Get_Component<CObjectContainer>()->Find_ObjectByName(effectTag);
+	if (!pEffect)
+		return;
+
+	static_cast<CEffectContainer*>(pEffect)->Stop();
+}
+
 CDefiler* CDefiler::Create()
 {
 	CDefiler* instance = new CDefiler();
@@ -630,57 +677,69 @@ HRESULT CDefiler::Initialize_Transitions()
 
 HRESULT CDefiler::Initialize_Effects()
 {
+	auto pAnimator = Get_Component<CAnimator3D>();
 	auto pObjectContainer = Get_Component<CObjectContainer>();
 	Create_AttackSign("Bip001_Head");
 
-	/* Sword Slash */
+	/* Hit Ground */
 	{
 		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
-			.Asset("sacrifice_sword_slash.json")
-			.Build("Sacrifice_Sword_Slash");
-
+			.Asset("defiler_hit_ground0.json")
+			.Build("Defiler_HitGround0");
 		pEffect->Stop();
 		pObjectContainer->Add_Child(pEffect, false);
 	}
 
-	/* Axe Slash1 */
+	/* Normal Slash */
 	{
 		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
-			.Asset("sacrifice_axe_slash.json")
-			.Build("Sacrifice_Axe_Slash1");
-
+			.Asset("defiler_slash0.json")
+			.Build("Defiler_Slash0_0");
 		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect);
+	}
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("defiler_slash0.json")
+			.Build("Defiler_Slash0_1");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect);
+	}
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("defiler_slash1.json")
+			.Build("Defiler_Slash1_0");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect);
+	}
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("defiler_slash2.json")
+			.Build("Defiler_Slash2_0");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect);
+	}
+
+	/* Axe Slash */
+	{
+		_smatrix offsetMatrix = _smatrix::Identity;
+		offsetMatrix.Translation(_vector3(-1.f, 0.f, 0.f));
+
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("defiler_axe_slash0.json")
+			.Build("Defiler_Axe_Slash0_0");
+		pEffect->Stop();
+		pEffect->AttachBone(pAnimator, "Ctr_M_Weapon_01", offsetMatrix);
 		pObjectContainer->Add_Child(pEffect, false);
 	}
 
-	/* Axe Slash2 */
+	/* Tail Slash */
 	{
 		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
-			.Asset("sacrifice_axe_slash2.json")
-			.Build("Sacrifice_Axe_Slash2");
-
+			.Asset("defiler_tail_slash0.json")
+			.Build("Defiler_Tail_Slash0_0");
 		pEffect->Stop();
-		pObjectContainer->Add_Child(pEffect, false);
-	}
-
-	/* Smoke Slash1 */
-	{
-		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
-			.Asset("sacrifice_smoke_slash.json")
-			.Build("Sacrifice_Smoke_Slash1");
-
-		pEffect->Stop();
-		pObjectContainer->Add_Child(pEffect, false);
-	}
-
-	/* Smoke Slash2 */
-	{
-		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
-			.Asset("sacrifice_smoke_slash2.json")
-			.Build("Sacrifice_Smoke_Slash2");
-
-		pEffect->Stop();
-		pObjectContainer->Add_Child(pEffect, false);
+		pObjectContainer->Add_Child(pEffect);
 	}
 
 	return S_OK;

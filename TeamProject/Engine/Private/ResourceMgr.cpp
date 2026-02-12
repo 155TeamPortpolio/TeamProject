@@ -789,6 +789,7 @@ void CResourceMgr::Load_InitialResource()
 	Add_ResourcePath("VTX_EffectMesh.hlsl", "../Bin/ShaderFiles/VTX_EffectMesh.hlsl");
 	Add_ResourcePath("VTX_Trail.hlsl", "../Bin/ShaderFiles/VTX_Trail.hlsl");
 	Add_ResourcePath("VTX_NonPlayer.hlsl", "../Bin/ShaderFiles/VTX_NonPlayer.hlsl");
+	Add_ResourcePath("VTX_StaticEnemy.hlsl", "../Bin/ShaderFiles/VTX_StaticEnemy.hlsl");
 	Add_ResourcePath("Shader_Deferred.hlsl", "../Bin/ShaderFiles/Shader_Deferred.hlsl");
 	Add_ResourcePath("Shader_PostProcess.hlsl", "../Bin/ShaderFiles/Shader_PostProcess.hlsl");
 	Add_ResourcePath("Shader_Deferred_SkinnedMesh.hlsl", "../Bin/ShaderFiles/Shader_Deferred_SkinnedMesh.hlsl");
@@ -830,6 +831,7 @@ void CResourceMgr::Load_InitialResource()
 	m_Resources[0].m_Shaders.emplace("VTX_Trail.hlsl", CShader::Create(m_pDevice, "../Bin/ShaderFiles/VTX_Trail.hlsl", "VTX_Trail.hlsl"));
 	m_Resources[0].m_Shaders.emplace("VTX_UIMesh.hlsl", CShader::Create(m_pDevice, "../Bin/ShaderFiles/VTX_UIMesh.hlsl", "VTX_UIMesh.hlsl"));
 	m_Resources[0].m_Shaders.emplace("VTX_NonPlayer.hlsl", CShader::Create(m_pDevice, "../Bin/ShaderFiles/VTX_NonPlayer.hlsl", "VTX_NonPlayer.hlsl"));
+	m_Resources[0].m_Shaders.emplace("VTX_StaticEnemy.hlsl", CShader::Create(m_pDevice, "../Bin/ShaderFiles/VTX_StaticEnemy.hlsl", "VTX_StaticEnemy.hlsl"));
 	m_Resources[0].m_Shaders.emplace("Shader_Deferred.hlsl", CShader::Create(m_pDevice, "../Bin/ShaderFiles/Shader_Deferred.hlsl", "Shader_Deferred.hlsl"));
 	m_Resources[0].m_Shaders.emplace("Shader_PostProcess.hlsl", CShader::Create(m_pDevice, "../Bin/ShaderFiles/Shader_PostProcess.hlsl", "Shader_PostProcess.hlsl"));
 	m_Resources[0].m_Shaders.emplace("Shader_Deferred_Effect.hlsl", CShader::Create(m_pDevice, "../Bin/ShaderFiles/Shader_Deferred_Effect.hlsl", "Shader_Deferred_Effect.hlsl"));

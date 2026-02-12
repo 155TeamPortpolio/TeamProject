@@ -16,6 +16,8 @@
 #include "AudioSource.h"
 #include "UI_DamageText.h"
 #include "UIDirector.h"
+#include "DefilerWall.h"
+
 CDefilerAxe::CDefilerAxe()
 	: CEnemy()
 {
@@ -90,6 +92,9 @@ void CDefilerAxe::Update(_float dt)
 		if (rad < XMConvertToRadians(0.2f))
 			m_bDangle = true;
 	}
+
+	if (InputDevice()->Key_Tap('G'))
+		SummonWall();
 }
 
 void CDefilerAxe::Late_Update(_float dt)
@@ -104,17 +109,26 @@ void CDefilerAxe::Render_GUI()
 
 void CDefilerAxe::OnPooledAcquire(INIT_DESC* pArg)
 {
+	__super::Initialize(pArg);
+	auto desc = static_cast<DefilerAxeDesc*>(pArg);
+	Get_Component<CCharacterController>()->Set_BoundingMinY(1.3f);
+	m_pTransform->Set_Look(desc->vLook);
+	m_vSlide = desc->vLook;
+	m_vSlide = Math::NormalizeSafeXZ(m_vSlide) * 5;
+	m_BaseRot = m_pTransform->Get_QuaternionRotate();
+	m_fElapsedTime = 0.f;
+	Get_Component<CCharacterController>()->Set_CompActive(true);
 }
 
 void CDefilerAxe::OnPooledRelease()
 {
-	
+	Get_Component<CCharacterController>()->Set_CompActive(false);
 }
 
 
 void CDefilerAxe::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER charaName)
 {
-	BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::HIT);
+	BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::HIT_NORMAL);
 	_float fTakeDamage = fDamage;
 
 	if (m_tStatus.isGroggy)
@@ -137,6 +151,22 @@ void CDefilerAxe::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER 
 	desc.charaName = charaName;
 
 	UIDirector()->Request_DamageText(desc);
+}
+
+void CDefilerAxe::SummonWall()
+{
+	string nowLevelKey = LevelManager()->Get_NowLevelKey();
+	CDefilerWall::DefilerWallDesc* desc = new CDefilerWall::DefilerWallDesc;
+	desc->vLook = Math::NormalizeSafeXZ(m_pTransform->Dir(STATE::LOOK));
+	_vector3 pos =  m_pTransform->Get_Pos();
+	pos.y = 0;
+
+	auto pWall = Builder::Create_Object({ "Zero_Level","Proto_GameObject_DefilerWall" })
+		.Position(pos)
+		.Add_ObjDesc(desc)
+		.Build("Wall");
+	ObjectManager()->Add_Object(pWall, { nowLevelKey,"Enemy_Layer" });
+	ObjectManager()->Remove_Object(this);
 }
 
 

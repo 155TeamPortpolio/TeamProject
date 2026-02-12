@@ -28,6 +28,7 @@
 #include "MapPlacedObject.h"
 #include "MapTriggerObject.h"
 #include "MapInvisibleWall.h"
+#include "XWall.h"
 #include "MapLightPoint.h"
 
 #include "SpriteNode.h"
@@ -38,6 +39,7 @@
 #include "AttackSign.h"
 #include "Player.h"
 #include "TestCloud.h"
+#include "BasicHitEffect.h"
 
 /* UI */
 #include "ButtonUI.h"
@@ -72,7 +74,6 @@
 #include "UI_EnemyStatus.h"
 
 #include "UI_MeshPyramid.h"
-#include "UI_MeshBillboard.h"
 
 #include "UI_IconLabel.h" 
 #include "UI_NameIndicator.h"
@@ -168,7 +169,6 @@ HRESULT CMainApp::Initialize()
 void CMainApp::Update(const float dt)
 {
 	m_pGameInstance->Update_Engine(dt);
-	CBattleSystem::GetInstance()->Update();
 	CamDirector()->Update(dt); 
 
 #ifdef NDEBUG
@@ -230,6 +230,7 @@ void CMainApp::Initialize_GlobalPrototype()
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_MapPlacedObject", CMapPlacedObject::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_MapTriggerObject", CMapTriggerObject::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_MapInvisibleWall", CMapInvisibleWall::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_XWall", CXWall::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_MapLightPoint", CMapLightPoint::Create());
 
 	// Camera
@@ -244,6 +245,7 @@ void CMainApp::Initialize_GlobalPrototype()
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_TrailNode", CTrailNode::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_EffectContainer", CEffectContainer::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_AttackSign", CAttackSign::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_BasicHitEffect", CBasicHitEffect::Create());
 
 	/*Player*/
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Player", CPlayer::Create());
@@ -284,7 +286,6 @@ void CMainApp::Initialize_GlobalPrototype()
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_EnemyStatus", CUI_EnemyStatus::Create());
 
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_MeshPyramid", CUI_MeshPyramid::Create());
-	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_MeshBillboard", CUI_MeshBillboard::Create());
 
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_IconLabel", CUI_IconLabel::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_NameIndicator", CUI_NameIndicator::Create());

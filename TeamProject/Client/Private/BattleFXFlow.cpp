@@ -21,30 +21,40 @@ void CBattleFXFlow::Initialize_Preset()
 		evade.fBlurDuration = .5f;
 		evade.vStartColor = { 1.f,1.f,1.f };
 		evade.vTargetColor = { 0.1f,0.1f,0.1f };
-		evade.SetTimeData({ duration, 0.1f, 0.f, 0.5f , EaseType::OutCubic });
+		evade.SetTimeData({ duration, 0.4f, 0.3f, 0.8f , EaseType::OutCubic });
 	}
 
 	{
 		auto& Parry = m_BattleVFXData[ENUM(BATTLE_VFX_TYPE::PARRY)];
-		const _float duration = 1.45f;
+		const _float duration = 3.f;
 		Parry.fVFXDuration = duration;
 		Parry.fBlurDuration = .5f;
-		Parry.SetTimeData({ duration, 0.3f, 0.35f, 0.45f, EaseType::OutExpo });
-		Parry.BattleTimeScale[ENUM(BATTLE_OBJ_TYPE::MONSTER)] = TIME_SCALING({ duration, 0.f, 0.9f, 1.f , EaseType::OutExpo });
-	}
+		Parry.SetTimeData({ duration, 0.2f, 0.35f, 0.45f, EaseType::OutExpo });
+		Parry.BattleTimeScale[ENUM(BATTLE_OBJ_TYPE::MONSTER)] = 
+			TIME_SCALING({ duration, 0.1f, 0.1f, 1.f , EaseType::InOutSine });
+	} 
 	{
 		auto& Ultimate = m_BattleVFXData[ENUM(BATTLE_VFX_TYPE::ULTIMATE)];
 		const _float duration = 2.f;
 		Ultimate.fVFXDuration = duration;
 		Ultimate.fBlurDuration = duration;
-		Ultimate.BattleTimeScale[ENUM(BATTLE_OBJ_TYPE::MONSTER)] = TIME_SCALING({ duration, 0.f, 0.3f, 1.f , EaseType::InOutSine });
+		Ultimate.BattleTimeScale[ENUM(BATTLE_OBJ_TYPE::MONSTER)] = 
+			TIME_SCALING({ duration, 0.f, 0.3f, 1.f , EaseType::InOutSine });
 	}
 	{
-		auto& HitLack = m_BattleVFXData[ENUM(BATTLE_VFX_TYPE::HIT)];
+		auto& HitLack = m_BattleVFXData[ENUM(BATTLE_VFX_TYPE::HIT_NORMAL)];
 		const _float duration = 1.5f;
 		HitLack.fVFXDuration = duration;
 		HitLack.fBlurDuration = duration;
-		HitLack.SetTimeData({ duration, 0.f, 0.25f, .9f , EaseType::OutExpo });
+		HitLack.SetTimeData({ duration, 0.1f, 0.35f, .85f , EaseType::OutExpo });
+	}
+	{
+		auto& WipeOut = m_BattleVFXData[ENUM(BATTLE_VFX_TYPE::WIPEOUT)];
+		const _float duration = 4.5f;
+		WipeOut.fVFXDuration = duration;
+		WipeOut.fBlurDuration = duration;
+		WipeOut.SetTimeData({ duration, 0.0f, 0.3f, .0f , EaseType::OutQuint });
+
 	}
 }
 
@@ -177,8 +187,11 @@ void CBattleFXFlow::StartVfx(BATTLE_VFX_TYPE vfxType)
 	case BATTLE_VFX_TYPE::ULTIMATE:
 		StartVfx_Ultimate();
 		break;
-	case BATTLE_VFX_TYPE::HIT:
+	case BATTLE_VFX_TYPE::HIT_NORMAL:
 		HitLack();
+		break;
+	case BATTLE_VFX_TYPE::WIPEOUT:
+		StartVfx_WipeOut();
 		break;
 	default:
 		m_BattleVFX.isRunning = false;
@@ -199,16 +212,16 @@ void CBattleFXFlow::StartVfx_Evade()
 	AddCall([this, preset,pPost]() {
 		pPost->GetCommand<CSaturationCommand>()
 			->SetIntensity(0.5)
-			->SetDuration(preset.fVFXDuration)
-			->SetEaseType(EaseType::InOutCubic)
+			->SetDuration(preset.fBlurDuration)
+			->SetEaseType(EaseType::OutSine)
 			->SetEnable(true);
 		});
 
 	AddCall([this, preset, pPost]() {
 		pPost->GetCommand<CRadialBlurCommand>()
 			->SetDuration(preset.fBlurDuration)
-			->SetEaseType(EaseType::OutCubic)
-			->SetIntensity(0.05)
+			->SetEaseType(EaseType::OutSine)
+			->SetIntensity(0.1)
 			->SetEnable(true);
 		});
 
@@ -258,7 +271,7 @@ void CBattleFXFlow::StartVfx_Parry()
 		pPost->GetCommand<CRadialBlurCommand>()
 			->SetDuration(preset.fBlurDuration)
 			->SetEaseType(EaseType::OutExpo)
-			->SetIntensity(0.1)
+			->SetIntensity(0.15)
 			->SetEnable(true);
 		});
 	AddWait(preset.fVFXDuration);
@@ -287,11 +300,26 @@ void CBattleFXFlow::StartVfx_Ultimate()
 	Start(nullptr);
 }
 
+void CBattleFXFlow::StartVfx_WipeOut()
+{
+	Clear(false);
+
+	auto& preset = m_BattleVFXData[ENUM(BATTLE_VFX_TYPE::WIPEOUT)];
+	AddParallelTimeScaleAll(preset);
+	AddWait(preset.fVFXDuration);
+	AddCall([this, preset]() {
+		m_BattleVFX.fCurPos = 0.f;
+		m_BattleVFX.vNowColor = {};
+		m_BattleVFX.isRunning = false;
+		});
+	Start(nullptr);
+}
+
 void CBattleFXFlow::HitLack()
 {
 	Clear(false);
 
-	auto& preset = m_BattleVFXData[ENUM(BATTLE_VFX_TYPE::HIT)];
+	auto& preset = m_BattleVFXData[ENUM(BATTLE_VFX_TYPE::HIT_NORMAL)];
 	AddParallelTimeScaleAll(preset);
 	AddWait(preset.fVFXDuration);
 	AddCall([this, preset]() {
@@ -307,23 +335,31 @@ void CBattleFXFlow::AddParallelTimeScale(BATTLE_OBJ_TYPE type, TIME_SCALING& tim
 	if (!IsValidTimeScale(timeScale.data))
 		return;
 
-	TIME_SCALING local = timeScale;
-	local.elapsed = 0.f;
+	const TIME_SCALE_DATA data = timeScale.data;
 
-	AddParallel(local.data.fDuration,
-		[this, type, local](SubFlow& subFlow) mutable
+	AddParallel(data.fDuration,
+		[this, type, data](SubFlow& subFlow) mutable
 		{
-			subFlow.AddStep([this, type, local](_float dt) mutable -> _bool
+			_float elapsed = 0.f;
+
+			subFlow.AddStep([this, type, data, elapsed](_float dt) mutable -> _bool
 				{
-					local.elapsed += dt;
+					elapsed += dt;
 
-					const _float scale = local.EvalScale();
+					_float t01 = 1.f;
+					if (data.fDuration > 0.f)
+						t01 = clamp(elapsed / data.fDuration, 0.f, 1.f);
+
+					// TIME_SCALING의 EvalScale01 로직을 그대로 재사용하고 싶으면
+					TIME_SCALING tmp(data);
+					const _float scale = tmp.EvalScale01(t01);
+
 					SetLayerTimeScale(type, scale);
-
-					return local.elapsed < local.data.fDuration;
+					return elapsed < data.fDuration;
 				});
 		},
-		[this, type]() { 
+		[this, type]()
+		{
 			ResetLayerTimeScale(type);
 		}
 	);

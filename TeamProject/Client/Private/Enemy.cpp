@@ -5,6 +5,7 @@
 #include "Texture.h"
 
 /* Object */
+#include "EffectContainer.h"
 #include "AttackSign.h" 
 #include "EnemyAttackCollider.h"
 #include "UI_EnemyStatus.h"
@@ -257,6 +258,9 @@ void CEnemy::Set_Alive(_bool alive)
 	if (m_hUIEnemyStatus.isValid())
 		m_hUIEnemyStatus.Get()->Set_Alive(alive);
 
+	if (nullptr != Get_Component<CCharacterController>())
+		Get_Component<CCharacterController>()->Set_CompActive(alive);
+
 }
 
 void CEnemy::Active_AttackSign(_bool parryEnable)
@@ -278,7 +282,8 @@ void CEnemy::Active_AttackSign(_bool parryEnable)
 void CEnemy::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER charaName)
 {
 	_float fTakeDamage = fDamage;
-	
+	BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::HIT_NORMAL);
+
 	if (m_tStatus.isGroggy)
 		fTakeDamage *= 1.5f;
 	else
@@ -298,6 +303,16 @@ void CEnemy::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER chara
 	desc.followOffset  = Vector3(0.f, 1.3f, 0.f);
 	desc.isEnemy       = true;
 	desc.charaName     = charaName;
+
+	/* Effect */
+	_vector3 vWorldPosition = m_pTransform->Get_WorldPos();
+	vWorldPosition.y += 1.2f;
+	auto pEffect = Builder::Create_Object({ G_GlobalLevelKey,"Proto_GameObject_BasicHitEffect" })
+		.Position(vWorldPosition)
+		.FromPool()
+		.Build("BasicHit");
+
+	ObjectManager()->Add_Object(pEffect, { Get_Level(),"Effect_Layer" });
 
 	UIDirector()->Request_DamageText(desc);
 }

@@ -446,6 +446,8 @@ namespace Engine
 		_float4 vOffsetQuaternion{};
 		_float3 vRimLightColor{};
 		_float2 vPivot{ 0.5f,0.5f };
+		_uint iUseDepthTest{ 1 };
+		_uint iRenderAlignment{};
 		_uint iRGBMaskMode{};
 		_uint iModuleMask{};
 		_uint iColorMode{};

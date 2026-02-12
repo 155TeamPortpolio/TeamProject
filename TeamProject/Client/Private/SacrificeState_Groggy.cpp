@@ -31,6 +31,9 @@ void CSacrificeState_Groggy::Enter(CSacrifice* pOwner)
 	default:
 		break;
 	}
+
+	pOwner->SetOnAttack(false);
+	pOwner->SetParryEnable(false);
 }
 
 void CSacrificeState_Groggy::Update(CSacrifice* pOwner, _float dt)

@@ -17,10 +17,11 @@ HRESULT CRoomDirector::Initialize()
 
 void CRoomDirector::Update()
 {
-	if (!m_pendingEnterKey.empty()) {
-		string key = m_pendingEnterKey;
-		_bool overlay = m_pendingOverlay;
-		m_pendingEnterKey.clear();
+	if (!m_pendingEnterKeys.empty()) {
+		auto pendingKey = m_pendingEnterKeys.front();
+		string key = pendingKey.first;
+		_bool overlay = pendingKey.second;
+		m_pendingEnterKeys.pop();
 
 		DoEnter(key, overlay);
 	}
@@ -58,8 +59,8 @@ _bool CRoomDirector::RequestEnter(const string& roomKey, _bool overlay)
 	if (!m_ActiveStacks.empty() && m_ActiveStacks.back() == roomKey)
 		return false;
 
-	m_pendingEnterKey = roomKey;
-	m_pendingOverlay = overlay;
+	m_pendingEnterKeys.push({ roomKey,overlay });
+
 	return true;
 }
 
@@ -105,7 +106,7 @@ HRESULT CRoomDirector::ClearRooms()
 		Safe_Release(pair.second);
 	m_Rooms.clear();
 	m_ActiveStacks.clear();
-	m_pendingEnterKey.clear();
+	m_pendingEnterKeys = {};
 
 	return S_OK;
 }
@@ -154,5 +155,5 @@ void CRoomDirector::Free()
 		Safe_Release(pair.second);
 	m_Rooms.clear();
 	m_ActiveStacks.clear();
-	m_pendingEnterKey.clear();
+	m_pendingEnterKeys = {};
 }
