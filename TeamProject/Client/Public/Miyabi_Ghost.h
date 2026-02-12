@@ -19,16 +19,22 @@ public:
 	void            Late_Update(_float dt) override;
 
 public:
+	void			Set_Show(_bool bShow) { m_bShow = bShow; }
 	void            Set_FollowTarget(CTransform* pTarget) { m_pTargetTransform = pTarget; }
 
 private:
 	void			FollowTarget(_float dt);
+	void			Update_Dissolve(_float dt);
 
 private:
 	CTransform*		m_pTargetTransform = nullptr;
+	_bool			m_bShow = true;
+	_float			m_fDissolveProgress = 0.f;
+	_float			m_fDissolveTiling = 5.f;
 	_float3         m_vOffset = { -0.5f, 1.55f, -0.2f };   // 미야비 기준 로컬 오프셋
 	_float          m_fFollowSpeed = 3.f;                  // 추적 보간 속도
 	_float			m_fDistanceScale = 0.5f;
+
 
 public:
 	static CMiyabi_Ghost* Create();
