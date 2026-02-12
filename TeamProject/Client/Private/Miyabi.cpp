@@ -907,7 +907,8 @@ void CMiyabi::Update_States()
 			if (m_bReserveCombo)
 			{
 				m_bReserveCombo = false;
-				BattleSystem()->GetBattlePlayer()->Request_ComboAttack();
+				if (m_TargetHandle.isAlive())
+					BattleSystem()->GetBattlePlayer()->Request_ComboAttack();
 			}
 		}
 	}
