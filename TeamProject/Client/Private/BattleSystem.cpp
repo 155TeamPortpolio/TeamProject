@@ -51,7 +51,7 @@ void CBattleSystem::Update()
 
 	if(InputDevice()->Key_Tap(VK_SHIFT))
 	{
-		StartGimmick(BATTLE_VFX_TYPE::WIPEOUT);
+		StartGimmick(BATTLE_VFX_TYPE::EVADE);
 	}
 	if(InputDevice()->Key_Tap(VK_CONTROL))
 	{
@@ -158,6 +158,8 @@ void CBattleSystem::TakeAreaDamage(const _float3& vCenter, _float fRadius, const
 		if (pEnemy)
 			pEnemy->TakeDamage(hitDesc.eDamageType, hitDesc.fDamage, hitDesc.eName);
 	}
+	if (!m_BattleSnapShots[BATTLE_OBJ_TYPE::MONSTER].empty())
+		HitVFX(hitDesc.eDamageType);
 }
 
 void CBattleSystem::TakeAreaDamage(const _float3& vCenter, _float fRadius, const _float3& vDir, _float fAngle, const HitDesc& hitDesc)
@@ -189,6 +191,8 @@ void CBattleSystem::TakeAreaDamage(const _float3& vCenter, _float fRadius, const
 		if (pEnemy)
 			pEnemy->TakeDamage(hitDesc.eDamageType, hitDesc.fDamage, hitDesc.eName);
 	}
+	if (!m_BattleSnapShots[BATTLE_OBJ_TYPE::MONSTER].empty())
+		HitVFX(hitDesc.eDamageType);
 }
 
 void CBattleSystem::TakeBoxDamage(const _float3& vCenter, const _float3& vHalfExtents, const _quaternion& qRotation, const HitDesc& hitDesc)
@@ -206,9 +210,12 @@ void CBattleSystem::TakeBoxDamage(const _float3& vCenter, const _float3& vHalfEx
 			continue;
 
 		auto pEnemy = dynamic_cast<CEnemy*>(info.hObject.Get());
-		if (pEnemy)
+		if (pEnemy) {
 			pEnemy->TakeDamage(hitDesc.eDamageType, hitDesc.fDamage, hitDesc.eName);
+		}
 	}
+	if (!m_BattleSnapShots[BATTLE_OBJ_TYPE::MONSTER].empty())
+		HitVFX(hitDesc.eDamageType);
 }
 
 void CBattleSystem::TakeAllDamage(const HitDesc& hitDesc)
@@ -225,6 +232,8 @@ void CBattleSystem::TakeAllDamage(const HitDesc& hitDesc)
 			pEnemy->TakeDamage(hitDesc.eDamageType, hitDesc.fDamage, hitDesc.eName);
 		}
 	}
+	if(!m_BattleSnapShots[BATTLE_OBJ_TYPE::MONSTER].empty())
+		HitVFX(hitDesc.eDamageType);
 }
 
 void CBattleSystem::CleanUp_Data()
@@ -386,6 +395,24 @@ _bool CBattleSystem::RemoveFromListSwapPop(TypeVector& infoList, _uint removeInd
 void CBattleSystem::StartGimmick(BATTLE_VFX_TYPE eVFXType)
 {
 	m_pFXFlow->StartVfx(eVFXType);
+}
+void CBattleSystem::HitVFX(DAMAGE_TYPE eDamageType)
+{
+	switch (eDamageType)
+	{
+	case Client::DAMAGE_TYPE::NORMAL:
+		m_pFXFlow->StartVfx(BATTLE_VFX_TYPE::HIT_NORMAL);
+		break;
+	case Client::DAMAGE_TYPE::HARD:
+		m_pFXFlow->StartVfx(BATTLE_VFX_TYPE::HIT_HARD);
+		break;
+	case Client::DAMAGE_TYPE::AIRBORNE:
+		break;
+	case Client::DAMAGE_TYPE::ULTIMATE:
+		break;
+	default:
+		break;
+	}
 }
 
 void CBattleSystem::Free()
