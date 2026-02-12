@@ -1,5 +1,10 @@
 #pragma once
 #include "Base.h"
+
+NS_BEGIN(Engine)
+class CAudioSource;
+NS_END
+
 NS_BEGIN(Client)
 class CFieldSystem :
     public CBase
@@ -36,6 +41,9 @@ public:
 	void	SetActive(_bool is);
 	_bool	IsActive() const { return m_isActive; }
 	
+//Sound
+	void	PlayBGM(string strBGM);
+
 public:
 	void	SetFieldPlayer(class CFieldPlayer* pFieldPlayer);
 	CFieldPlayer*					GetFieldPlayer();
@@ -66,6 +74,10 @@ private:
 	DayTimer m_DayTime = {};
 	OBJECT_HANDLE m_InteractHandle;
 	OBJECT_HANDLE m_InteractPartnerHandle;
+
+private:
+	CAudioSource*			m_pBGM;
+	string                  m_strPrevBGM = "";
 
 public:
 	virtual void Free() override;

@@ -2,6 +2,7 @@
 #include "Room_Street.h"
 #include "MapLoader.h"
 
+#include "FieldSystem.h"
 CRoom_Street::CRoom_Street(const ROOM_DESC& desc)
 	:CRoom(desc)
 {
@@ -18,6 +19,7 @@ void CRoom_Street::Enter()
 	if (nullptr == m_pLoader)
 		MSG_BOX("Failed to Load MapData!");
 
+	FieldSystem()->PlayBGM("MainCityBGM.wav");
 	//m_pLoader->MapIndexToEntityHandle();
 }
 
