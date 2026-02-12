@@ -105,6 +105,7 @@ void CZero_Level::Update()
 {
 	CBattleSystem::GetInstance()->Update();
 	m_Context.pNowStage->Update();
+	BattleSystem()->Update();
 }
 
 HRESULT CZero_Level::Render()
@@ -171,9 +172,9 @@ void CZero_Level::Ready_Stage()
 	Shuffle_MapCycle(m_mapCycle[StageType::Normal].maps);
 	m_mapCycle[StageType::Elite].maps	= { "Zero_1_1",	"Zero_1_2", "Zero_2_1" };
 	Shuffle_MapCycle(m_mapCycle[StageType::Elite].maps);
-	m_mapCycle[StageType::Boss].maps	= { "Zero_Boss1","Zero_Boss2"};
+	m_mapCycle[StageType::Boss].maps	= { "Zero_Boss2","Zero_Boss1"};
 
-	ChangeStage(StageType::Start);
+	ChangeStage(StageType::Boss);
 }
 
 void CZero_Level::Shuffle_MapCycle(vector<string>& Map)
