@@ -36,6 +36,8 @@ private:
 private:
 	void Cache();
 
+	void Update_GroupState();
+
 	void Change_State(STATE eState);
 	_bool Change_Group(GROUP eGroup, _int iIndex = 0);
 

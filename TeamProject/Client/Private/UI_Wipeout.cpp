@@ -33,39 +33,15 @@ void CUI_Wipeout::Awake()
 void CUI_Wipeout::Update(_float dt)
 {
     if (m_eState == STATE::DEACTIVATING)
-        Change_State(STATE::INACTIVE);
-
-    if (m_eState == STATE::ACTIVE && Is_GroupAnimationFinished(m_eCurrentGroup))
     {
-        switch (m_eCurrentGroup)
-        {
-        case GROUP::GROUP1:
-            Change_Group(GROUP::GROUP2);
-            break;
-        case GROUP::GROUP2:
-            Change_Group(GROUP::GROUP3);
-            break;
-        case GROUP::GROUP3:
-            Change_Group(GROUP::GROUP4);
-            break;
-        case GROUP::GROUP4:
-            Change_Group(GROUP::GROUP5, m_iBlinkCount);
-            break;
-        case GROUP::GROUP5:
-            if (m_iBlinkCount == 2)
-            {
-                Change_State(STATE::DEACTIVATING);
-                return;
-            } 
+        Change_State(STATE::INACTIVE);
+        return;
+    } 
 
-            Change_Group(GROUP::GROUP4, m_iBlinkCount);
-            m_iBlinkCount++;
-            break;
-        }
-    }
+     __super::Update(dt);
 
-    if(m_eState == STATE::ACTIVE)
-        __super::Update(dt);
+    if (Is_GroupAnimationFinished(m_eCurrentGroup))
+        Update_GroupState();
 
     Update_RTV("renderTargetScreen", true);
 }
@@ -85,6 +61,27 @@ void CUI_Wipeout::Cache()
             continue;
 
         m_pGroups[i] = dynamic_cast<CUI_Object*>(pObj);
+    }
+}
+
+void CUI_Wipeout::Update_GroupState()
+{
+    switch (m_eCurrentGroup)
+    {
+    case GROUP::GROUP1:        Change_Group(GROUP::GROUP2);        break;
+    case GROUP::GROUP2:        Change_Group(GROUP::GROUP3);        break;
+    case GROUP::GROUP3:        Change_Group(GROUP::GROUP4);        break;
+    case GROUP::GROUP4:        Change_Group(GROUP::GROUP5, m_iBlinkCount);        break;
+    case GROUP::GROUP5:
+        if (m_iBlinkCount == 2)
+        {
+            Change_State(STATE::DEACTIVATING);
+            return;
+        }
+
+        Change_Group(GROUP::GROUP4, m_iBlinkCount);
+        m_iBlinkCount++;
+        break;
     }
 }
 
