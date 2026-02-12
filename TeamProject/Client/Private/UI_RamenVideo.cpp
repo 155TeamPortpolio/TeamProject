@@ -75,7 +75,8 @@ void CUI_RamenVideo::UI_Active(void* pArg)
     Set_Alive(true);
     VideoService()->StartDecode(m_PlayerID);
     m_pPlayer->Play();
-    Get_Component<CAudioSource>()->Slot("SirChopCook.wav").Attribute3D(false).Loop(false).Play();
+    Get_Component<CAudioSource>()->Slot("SirChopCook.wav").Attribute3D(false).Loop(1).Play();
+    OutputDebugString(L"play\n");
 }
 
 void CUI_RamenVideo::UI_DeActive(void* pArg)
@@ -84,13 +85,15 @@ void CUI_RamenVideo::UI_DeActive(void* pArg)
     m_pPlayer->Stop();
     if (m_OnClick)
         m_OnClick();
-    Get_Component<CAudioSource>()->Set_SlotPuase("SirChopCook.wav", true);
 }
 
 void CUI_RamenVideo::Create_SkipButton()
 {
     CUI_IconButton::BUTTON_DESC* pDesc = new CUI_IconButton::BUTTON_DESC;
-    pDesc->onClick = [this]() { UI_DeActive(); };
+    pDesc->onClick = [this]() { 
+        UI_DeActive();
+        Get_Component<CAudioSource>()->Slot("SirChopCook.wav").Pause(true);
+        };
     pDesc->strLabel = L"°Ç³Ê¶Ù±â";
     pDesc->strTextureKey = "IconSkip.png";
     pDesc->strSoundKey = "UI_Open_Swoosh.wav";

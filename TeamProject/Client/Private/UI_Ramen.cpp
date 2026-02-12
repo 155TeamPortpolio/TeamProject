@@ -224,7 +224,7 @@ void CUI_Ramen::Play_ExitSound()
         strSoundKey = (iRand == 0) ? "SirChopNoBuy01.wav" : "SirChopNoBuy02.wav" ;
     }
     
-    Get_Component<CAudioSource>()->Slot(strSoundKey).Attribute3D(true).Loop(false).Play();
+    Get_Component<CAudioSource>()->Slot(strSoundKey).Attribute3D(false).Loop(false).Play();
 }
 
 void CUI_Ramen::OnClick_Order()
