@@ -35,19 +35,48 @@ void CMeleeJaeger_Attack::Enter(CMeleeJaeger* pOwner)
 	}
 	else {
 
-		//if (targetinginfo.fDistance <= hysteriesis.fComboEnter)		// 완전 가까울때
-		//	iAttackPatternIndex = 3;
-		//else if (targetinginfo.fDistance < hysteriesis.fComboExit)		// 적당히 전진 공격
-		//	iAttackPatternIndex = 1;
-		//else if (targetinginfo.fDistance < hysteriesis.fChaseEnter)		// 멀 때, 돌진공격
-		//	iAttackPatternIndex = 2;
-		//else
-		//{
-		//	// 너무멀면 다음행동
-		//	pOwner->Idle();
-		//	return;
-		//}
-		iAttackPatternIndex = 2;
+		if (pOwner->IsShield())
+		{
+			if (targetinginfo.fDistance <= hysteriesis.fEvadeEnter)		// 완전 가까울때
+				iAttackPatternIndex = 5;
+			else if (targetinginfo.fDistance < hysteriesis.fComboExit)		// 적당히 전진 공격
+				iAttackPatternIndex = 2;
+			else
+			{
+				// 너무멀면 다음행동
+				pOwner->Idle();
+				return;
+			}
+		}
+		else
+		{
+			if (targetinginfo.fDistance <= hysteriesis.fComboEnter)		// 완전 가까울때
+			{
+				_int i = Helper::Get_Random_Int(1, 3);
+				switch (i)
+				{
+				case 1:
+					iAttackPatternIndex = 2;
+					break;
+				case 2:
+					iAttackPatternIndex = 3;
+					break;
+				case 3:
+					iAttackPatternIndex = 5;
+					break;
+				}
+			}
+			else if (targetinginfo.fDistance < hysteriesis.fComboExit)		// 적당히 전진 공격
+				iAttackPatternIndex = 4;
+			else if (targetinginfo.fDistance < hysteriesis.fChaseExit)		// 적당히 전진 공격
+				iAttackPatternIndex = 1;
+			else
+			{
+				// 너무멀면 다음행동
+				pOwner->Idle();
+				return;
+			}
+		}
 		AttackFromIndex(iAttackPatternIndex);
 	}
 	pOwner->CaptureRotateToDir(pOwner->GetTargetingInfo().vDirToTarget);
@@ -77,7 +106,7 @@ void CMeleeJaeger_Attack::Update(CMeleeJaeger* pOwner, _float dt)
 			else if (Event.Tag == "TurnOnAttackCol")
 			{
 				pOwner->SetBattleColliderObject("Weapon", CEnemy::BATTLE_COLTYPE::ATTACK, true, m_HitDesc);
-				pOwner->SetOnAttack(true, CEnemy::ATTACK_SIDE::LEFT);
+				pOwner->SetOnAttack(true, CEnemy::ATTACK_SIDE::RIGHT);
 			}
 			else if (Event.Tag == "TurnOffAttackCol")
 				pOwner->SetBattleColliderObject("Weapon", CEnemy::BATTLE_COLTYPE::ATTACK, false);

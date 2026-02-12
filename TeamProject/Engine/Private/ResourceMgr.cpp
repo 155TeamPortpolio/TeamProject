@@ -783,11 +783,13 @@ void CResourceMgr::Load_InitialResource()
 	Add_ResourcePath("VTX_Debug.hlsl",		"../Bin/ShaderFiles/VTX_Debug.hlsl");
 	Add_ResourcePath("VTX_Cloud.hlsl",		"../Bin/ShaderFiles/VTX_Cloud.hlsl");
 	Add_ResourcePath("VTX_Portal.hlsl",		"../Bin/ShaderFiles/VTX_Portal.hlsl");
+	Add_ResourcePath("VTX_XWall.hlsl",		"../Bin/ShaderFiles/VTX_XWall.hlsl");
 	Add_ResourcePath("VTX_Point.hlsl",		"../Bin/ShaderFiles/VTX_Point.hlsl");
 	Add_ResourcePath("VTX_InstancePoint.hlsl", "../Bin/ShaderFiles/VTX_InstancePoint.hlsl");
 	Add_ResourcePath("VTX_EffectMesh.hlsl", "../Bin/ShaderFiles/VTX_EffectMesh.hlsl");
 	Add_ResourcePath("VTX_Trail.hlsl", "../Bin/ShaderFiles/VTX_Trail.hlsl");
 	Add_ResourcePath("VTX_NonPlayer.hlsl", "../Bin/ShaderFiles/VTX_NonPlayer.hlsl");
+	Add_ResourcePath("VTX_StaticEnemy.hlsl", "../Bin/ShaderFiles/VTX_StaticEnemy.hlsl");
 	Add_ResourcePath("Shader_Deferred.hlsl", "../Bin/ShaderFiles/Shader_Deferred.hlsl");
 	Add_ResourcePath("Shader_PostProcess.hlsl", "../Bin/ShaderFiles/Shader_PostProcess.hlsl");
 	Add_ResourcePath("Shader_Deferred_SkinnedMesh.hlsl", "../Bin/ShaderFiles/Shader_Deferred_SkinnedMesh.hlsl");
@@ -829,6 +831,7 @@ void CResourceMgr::Load_InitialResource()
 	m_Resources[0].m_Shaders.emplace("VTX_Trail.hlsl", CShader::Create(m_pDevice, "../Bin/ShaderFiles/VTX_Trail.hlsl", "VTX_Trail.hlsl"));
 	m_Resources[0].m_Shaders.emplace("VTX_UIMesh.hlsl", CShader::Create(m_pDevice, "../Bin/ShaderFiles/VTX_UIMesh.hlsl", "VTX_UIMesh.hlsl"));
 	m_Resources[0].m_Shaders.emplace("VTX_NonPlayer.hlsl", CShader::Create(m_pDevice, "../Bin/ShaderFiles/VTX_NonPlayer.hlsl", "VTX_NonPlayer.hlsl"));
+	m_Resources[0].m_Shaders.emplace("VTX_StaticEnemy.hlsl", CShader::Create(m_pDevice, "../Bin/ShaderFiles/VTX_StaticEnemy.hlsl", "VTX_StaticEnemy.hlsl"));
 	m_Resources[0].m_Shaders.emplace("Shader_Deferred.hlsl", CShader::Create(m_pDevice, "../Bin/ShaderFiles/Shader_Deferred.hlsl", "Shader_Deferred.hlsl"));
 	m_Resources[0].m_Shaders.emplace("Shader_PostProcess.hlsl", CShader::Create(m_pDevice, "../Bin/ShaderFiles/Shader_PostProcess.hlsl", "Shader_PostProcess.hlsl"));
 	m_Resources[0].m_Shaders.emplace("Shader_Deferred_Effect.hlsl", CShader::Create(m_pDevice, "../Bin/ShaderFiles/Shader_Deferred_Effect.hlsl", "Shader_Deferred_Effect.hlsl"));
@@ -853,11 +856,12 @@ void CResourceMgr::Load_InitialResource()
 			MSG_BOX("Failed to preload Default.mat");
 	}
 }
-_bool CResourceMgr::RequestPreload(const PreloadKey& key)
-{
-	PreloadKey tmpKey = key;
 
-	int index = ValidLevel(tmpKey.levelKey);
+_bool CResourceMgr::RequestPreload(PreloadKey key)
+{
+	PreloadKey tmpKey = std::move(key);
+
+	const int index = ValidLevel(tmpKey.levelKey);
 	if (index == -1)
 		return false;
 
@@ -866,29 +870,53 @@ _bool CResourceMgr::RequestPreload(const PreloadKey& key)
 	switch (tmpKey.type)
 	{
 	case Engine::ResourceType::Texture:
+	{
+		std::lock_guard<std::mutex> lockGuard(pool.textureMutex);
 		if (pool.m_Textures.count(tmpKey.resourceKey)) return false;
 		break;
+	}
 	case Engine::ResourceType::Sound:
+	{
+		std::lock_guard<std::mutex> lockGuard(pool.soundMutex);
 		if (pool.m_Sounds.count(tmpKey.resourceKey)) return false;
 		break;
+	}
 	case Engine::ResourceType::Shader:
+	{
+		std::lock_guard<std::mutex> lockGuard(pool.shaderMutex);
 		if (pool.m_Shaders.count(tmpKey.resourceKey)) return false;
 		break;
+	}
 	case Engine::ResourceType::Model:
+	{
+		std::lock_guard<std::mutex> lockGuard(pool.modelMutex);
 		if (pool.m_ModelDatas.count(tmpKey.resourceKey)) return false;
 		break;
+	}
 	case Engine::ResourceType::Material:
+	{
+		std::lock_guard<std::mutex> lockGuard(pool.materialMutex);
 		if (pool.m_MaterialInstances.count(tmpKey.resourceKey)) return false;
 		break;
+	}
 	case Engine::ResourceType::ComputeShader:
+	{
+		std::lock_guard<std::mutex> lockGuard(pool.computeMutex);
 		if (pool.m_ComputeShaders.count(tmpKey.resourceKey)) return false;
 		break;
+	}
 	case Engine::ResourceType::Animation:
+	{
+		std::lock_guard<std::mutex> lockGuard(pool.animMutex);
 		if (pool.m_AnimationMetas.count(tmpKey.resourceKey)) return false;
 		break;
+	}
 	case Engine::ResourceType::Effect:
+	{
+		std::lock_guard<std::mutex> lockGuard(pool.effectMutex);
 		if (pool.m_EffectAssets.count(tmpKey.resourceKey)) return false;
 		break;
+	}
 	default:
 		return false;
 	}

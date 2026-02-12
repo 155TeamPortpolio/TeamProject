@@ -19,7 +19,7 @@ HRESULT CModelData::Initialize(const string& filePath, ID3D11Device* pDevice)
 		wstring Alarm = L"There is No File. :CModelData \n" + Helper::ConvertToWideString(filePath);
 		MessageBox(NULL, Alarm.c_str(), L"System Message", MB_OK);
 		//MSG_BOX("There is No File. :CModelData ");
-		return E_FAIL;
+ 		return E_FAIL;
 	}
 
 	MODEL_FILE_HEADER fileHeader = {};
@@ -156,11 +156,28 @@ _int CModelData::Find_MeshIndex(const string& name)
 vector<_uint> CModelData::Find_MeshesIndex(const string& name)
 {
 	vector<_uint> result;
-	for (size_t i = 0; i < m_Meshes.size(); i++)
+
+	auto toLowerTrimCopy = [](std::string text) -> std::string
+		{
+			auto isSpace = [](unsigned char ch) -> bool { return std::isspace(ch) != 0; };
+			while (!text.empty() && isSpace((unsigned char)text.front()))
+				text.erase(text.begin());
+			while (!text.empty() && isSpace((unsigned char)text.back()))
+				text.pop_back();
+			for (char& ch : text)
+				ch = (char)std::tolower((unsigned char)ch);
+			return text;
+		};
+
+	const string needle = toLowerTrimCopy(name);
+	if (needle.empty())
+		return result;
+
+	for (size_t i = 0; i < m_Meshes.size(); ++i)
 	{
-		if (m_Meshes[i]->Get_Key().find(name) != string::npos) {
-			result.push_back(i);
-		}
+		const string key = toLowerTrimCopy(m_Meshes[i]->Get_Key());
+		if (key.find(needle) != string::npos)
+			result.push_back((_uint)i);
 	}
 	return result;
 }

@@ -4,6 +4,7 @@
 #include "BattleSystem.h"
 #include "Zero_Level.h"
 #include "StageRouter.h"
+#include "ZeroPortal.h"
 
 CZeroStage_Start::CZeroStage_Start()
 {
@@ -71,17 +72,12 @@ void CZeroStage_Start::Intro()
 		Active_Enemy();
 		CBattleSystem::GetInstance()->SetActive(true);
 		m_eStageStage = StageState::BattleStart;
+		Active_Portal();
 	}
 }
 
 void CZeroStage_Start::Battle()
 {
-	_bool isBattleEnd = CBattleSystem::GetInstance()->isMonsterCleared();
-	if (isBattleEnd) {
-		m_eStageStage = StageState::BattleEnd;
-		CBattleSystem::GetInstance()->SetActive(false);
-		Active_Portal();
-	}
 }
 
 void CZeroStage_Start::Outro()
@@ -96,6 +92,25 @@ void CZeroStage_Start::End()
 		auto stageType = m_pOwnerLevel->Get_Router()->GetChoiceType(m_iNextChoice);
 		m_pOwnerLevel->Get_Router()->Choose(m_iNextChoice);
 		m_pOwnerLevel->ChangeStage(stageType);
+	}
+}
+
+void CZeroStage_Start::Active_Portal()
+{
+	auto pRouter = m_pOwnerLevel->Get_Router();
+	const int choiceCount = pRouter->GetChoiceCount();
+	if (choiceCount <= 0) return;
+	if (m_pPortals.empty()) return;
+
+	for (size_t i = 0; i < 2; i++)
+	{
+		if (!m_pPortals[i]) continue;
+
+		auto* zeroPortal = dynamic_cast<CZeroPortal*>(m_pPortals[i]);
+		if (zeroPortal) {
+			zeroPortal->Set_Alive(true);
+			zeroPortal->SetChoiceIndex(this, i);
+		}
 	}
 }
 

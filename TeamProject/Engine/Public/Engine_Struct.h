@@ -446,6 +446,8 @@ namespace Engine
 		_float4 vOffsetQuaternion{};
 		_float3 vRimLightColor{};
 		_float2 vPivot{ 0.5f,0.5f };
+		_uint iUseDepthTest{ 1 };
+		_uint iRenderAlignment{};
 		_uint iRGBMaskMode{};
 		_uint iModuleMask{};
 		_uint iColorMode{};
@@ -663,6 +665,21 @@ namespace Engine
 		}
 
 	} OBJECT_HANDLE;
+	typedef struct ENGINE_DLL ObjectHandleHash
+	{
+		size_t operator()(const OBJECT_HANDLE& handle) const noexcept
+		{
+			return std::hash<uint32_t>{}(handle.hObjID); 
+		}
+	}hOBJECT_HASH;
+
+	typedef struct ENGINE_DLL ObjectHandleEqual
+	{
+		bool operator()(const OBJECT_HANDLE& left, const OBJECT_HANDLE& right) const noexcept
+		{
+			return left.hObjID == right.hObjID; 
+		}
+	}hOBJECT_FUNCTOR;
 
 	typedef struct ENGINE_DLL tagUIHandle {
 		string Level = {};

@@ -46,13 +46,13 @@ OBJECT_HANDLE CCamDirector::GetCurTarget() const
 
 _bool CCamDirector::Register(const string& key, const fs::path& path)
 {
-    CamSequenceRequestDesc req{};
+    CamSeqReqDesc req{};
     return Register(key, path, req);
 }
 
-_bool CCamDirector::Register(const string& key, const fs::path& path, const CamSequenceRequestDesc& defaultReq)
+_bool CCamDirector::Register(const string& key, const fs::path& path, const CamSeqReqDesc& defaultReq)
 {
-    CamDirectorSeqEntry entry{};
+    CamSeqEntry entry{};
     entry.path = path;
     CamUtil::Load(entry.path, entry.seqDesc);
     entry.defaultReq = defaultReq;
@@ -114,6 +114,17 @@ void CCamDirector::AutoBattle(CamStartDir dir)
 {
     AutoTarget();
 
+    if (m_gate.Pass())
+    {
+        static bool shadowDisabled = false;
+
+        if (!shadowDisabled)
+        {
+            RenderSystem()->SetOn(false);
+            shadowDisabled = true;
+        }
+    }
+
     switch (dir)
     {
     case CamStartDir::Front:
@@ -172,7 +183,7 @@ void CCamDirector::Update(_float dt)
     SyncSeqInputLock();
 
     if (IsValid())
-        m_dialogue.Update(dt, GetOrbitCamComp(), GetOrbitCam(), GetCharacter()->Get_Component<CTransform>());
+        m_dialogue.Update(dt);
 
     m_parry.Update(dt);
 
@@ -183,6 +194,12 @@ void CCamDirector::Update(_float dt)
     }
 
      UpdateInput(dt);
+}
+
+void CCamDirector::StartParry(_float fovHold, _float blendInSec, _float holdSec)
+{
+    if (!m_gate.Pass()) return;
+    m_parry.Begin(fovHold, blendInSec, holdSec);
 }
 
 void CCamDirector::StartBattleIntro(CamSeqType type)
@@ -319,7 +336,7 @@ _bool CCamDirector::IsFinished(CamEventType type) const
     return m_events.IsFired(Helper::EnumToString(type));
 }
 
-_uint CCamDirector::RequestSequence(const string& key, const CamSequenceRequestDesc& req)
+_uint CCamDirector::RequestSequence(const string& key, const CamSeqReqDesc& req)
 {
     auto it = m_seqs.find(key);
     if (it == m_seqs.end()) return 0u;
@@ -342,8 +359,8 @@ _uint CCamDirector::RequestSequence(const string& key, const CamSequenceRequestD
 
         seqPlayer->SetSequence(&entry.seqDesc);
 
-        if (entry.seqDesc.space == CamSpace::Local) seqPlayer->SetSpaceReference(m_spaceRefHandle);
-        else seqPlayer->ClearSpaceReference();
+        if (entry.seqDesc.space == CamSpace::Local) seqPlayer->SetSpaceRef(m_spaceRefHandle);
+        else seqPlayer->ClearSpaceRef();
 
         seqPlayer->SetApplyEnabled(true);
 
@@ -378,8 +395,8 @@ _uint CCamDirector::RequestSequence(const string& key, const CamSequenceRequestD
 
         seqPlayer->SetSequence(&entry.seqDesc);
 
-        if (entry.seqDesc.space == CamSpace::Local) seqPlayer->SetSpaceReference(m_spaceRefHandle);
-        else seqPlayer->ClearSpaceReference();
+        if (entry.seqDesc.space == CamSpace::Local) seqPlayer->SetSpaceRef(m_spaceRefHandle);
+        else seqPlayer->ClearSpaceRef();
 
         seqPlayer->SetApplyEnabled(true);
 
@@ -418,7 +435,6 @@ _bool CCamDirector::StopRequest(_uint handle, _float blendOutSec, _bool resetTim
     outRot.Normalize();
 
     auto seqPlayer = GetSeqPlayer();
-
     seqPlayer->SetApplyEnabled(false);
     seqPlayer->Stop(false);
 

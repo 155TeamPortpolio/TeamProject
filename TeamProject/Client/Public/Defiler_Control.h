@@ -11,18 +11,71 @@ enum class TraceFlag : _uint
     StopAtTarget = 1 << 1,  // 타겟 도달 시 정지
     AllowThroughTarget = 1 << 2,  // 타겟 지나침 가능
     IgnoreTarget = 1 << 3,  // 타겟 존재 무시 (연출/패턴 고정)
+    IgnoreRotation = 1 << 4, 
 };
 
-inline TraceFlag operator|(TraceFlag a, TraceFlag b)
+inline TraceFlag operator|(TraceFlag left, TraceFlag right)
 {
     return static_cast<TraceFlag>(
-        static_cast<_uint>(a) | static_cast<_uint>(b));
+        static_cast<_uint>(left) | static_cast<_uint>(right));
 }
 
-inline TraceFlag operator&(TraceFlag a, TraceFlag b)
+inline TraceFlag operator&(TraceFlag left, TraceFlag right)
 {
     return static_cast<TraceFlag>(
-        static_cast<_uint>(a) & static_cast<_uint>(b));
+        static_cast<_uint>(left) & static_cast<_uint>(right));
+}
+
+inline TraceFlag operator^(TraceFlag left, TraceFlag right)
+{
+    return static_cast<TraceFlag>(
+        static_cast<_uint>(left) ^ static_cast<_uint>(right));
+}
+
+inline TraceFlag operator~(TraceFlag value)
+{
+    return static_cast<TraceFlag>(~static_cast<_uint>(value));
+}
+
+inline TraceFlag& operator|=(TraceFlag& left, TraceFlag right)
+{
+    left = (left | right);
+    return left;
+}
+
+inline TraceFlag& operator&=(TraceFlag& left, TraceFlag right)
+{
+    left = (left & right);
+    return left;
+}
+
+inline TraceFlag& operator^=(TraceFlag& left, TraceFlag right)
+{
+    left = (left ^ right);
+    return left;
+}
+
+inline TraceFlag operator+(TraceFlag left, TraceFlag right)
+{
+    return (left | right); // add flags
+}
+
+inline TraceFlag& operator+=(TraceFlag& left, TraceFlag right)
+{
+    left |= right;
+    return left;
+}
+
+inline TraceFlag operator-(TraceFlag left, TraceFlag right)
+{
+    return static_cast<TraceFlag>(
+        static_cast<_uint>(left) & ~static_cast<_uint>(right)); // remove flags
+}
+
+inline TraceFlag& operator-=(TraceFlag& left, TraceFlag right)
+{
+    left = (left - right);
+    return left;
 }
 
 inline bool HasFlag(TraceFlag value, TraceFlag flag)
@@ -30,8 +83,22 @@ inline bool HasFlag(TraceFlag value, TraceFlag flag)
     return (static_cast<_uint>(value) & static_cast<_uint>(flag)) != 0;
 }
 
+inline void AddFlag(TraceFlag& value, TraceFlag flag)
+{
+    value |= flag;
+}
+
+inline void RemoveFlag(TraceFlag& value, TraceFlag flag)
+{
+    value = static_cast<TraceFlag>(
+        static_cast<_uint>(value) & ~static_cast<_uint>(flag));
+}
+
 typedef struct tagDefilerBlackBoard
 {
+    _vector3 vTargetPos = {};
+    _vector3 vTargetDir = {};
+
     _float3 vStartPos = {};
     _bool isRequestNext = false;//다음 상태가 존재 할 때 상태 전환 요청
     _bool isChainOpen = false;  //현재 상태에서 다음으로 진행 가능여부
@@ -39,6 +106,7 @@ typedef struct tagDefilerBlackBoard
     /*움직임*/
     TraceFlag eTraceFlag = {};
     _bool LockTarget = {};
+    _bool LockRotate = {};
     _vector3 CurrentDir = _vector3(0.f, 0.f, 1.f); 
 
     /*패턴*/
@@ -52,6 +120,7 @@ typedef struct tagDefilerBlackBoard
     void TraceType_Fierce()   { ResetTraceFlag(); eTraceFlag = TraceFlag::TrackTarget | TraceFlag::AllowThroughTarget;};
     void TraceType_OnTarget() { ResetTraceFlag(); eTraceFlag = TraceFlag::TrackTarget | TraceFlag::StopAtTarget; };
     void TraceType_OnlyAnim() { ResetTraceFlag(); eTraceFlag = TraceFlag::IgnoreTarget; };
+    void TraceType_IgnoreRotation() { eTraceFlag += TraceFlag::IgnoreRotation; };
 
     /*전환 상태*/
     void ReservePattern() {
@@ -106,7 +175,13 @@ struct DefilerDissolve {
         fDissolveElapsedTime = 0.f;
         fDissolveProgress = 0.f;
     }
+    void Appear(_float duration) { Set_DissolveState(DISSOLVE_STATE::APPEAR, duration); }
+    void DisAppear(_float duration) { Set_DissolveState(DISSOLVE_STATE::DISAPPEAR, duration); }
+
     _bool isComplete() {
         return fDissolveElapsedTime >= fDissolveDuration;
     }
-};
+    _bool isComplete(DISSOLVE_STATE state) {
+        return (eDissolveState == state && fDissolveElapsedTime >= fDissolveDuration);
+    }
+}; 

@@ -7,6 +7,8 @@
 #include "CorinState_SwitchInAttack.h"
 #include "CorinState_SwitchInParryAid.h"
 
+#include "AudioSource.h"
+
 CCorinState_SwitchIn* CCorinState_SwitchIn::Create()
 {
     auto pInstance = new CCorinState_SwitchIn();
@@ -47,6 +49,9 @@ void CCorinState_SwitchIn::Enter(CCorin* pOwner)
 
     m_pSubStateMachine->Reset_Trigger("Complete");
     m_pSubStateMachine->Set_Int("ExitMode", 0);
+
+    auto& sound = *pOwner->Get_Component<CAudioSource>();
+    sound.Sequence("Switch_Voice").Attribute3D(true).Loop(false).PlayNext();
 
     __super::Enter(pOwner);
 }
@@ -102,6 +107,7 @@ void CCorinState_SwitchIn::Update(CCorin* pOwner, _float dt)
 void CCorinState_SwitchIn::Exit(CCorin* pOwner)
 {
     pOwner->Pop_Invincible();
+    pOwner->Reset_Switch();
     __super::Exit(pOwner);
 }
 

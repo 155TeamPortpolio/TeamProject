@@ -19,7 +19,13 @@ class CBattlePlayer; class CFieldCharacter; class CPlayer; class CCharacter; cla
 enum class CamType       { None, Free, Orbit, Sequence, End };
 enum class CamReturnMode { None, SnapToEnd, RestorePrev };
 enum class CamSeqType    { BattleIntro, ZeroIntro, Ultimate, End };
-enum class CamEventType  { IntroFinished, SpinFinished, SpinHalfFinished, Miyabi_01_Finished, Miyabi_02_Finished, Miyabi_03_Finished, JaneDoe_01_Finished, JaneDoe_02_Finished, JaneDoe_03_Finished };
+enum class CamEventType 
+{
+    IntroFinished,       SpinFinished,        SpinHalfFinished, 
+    Miyabi_01_Finished,  Miyabi_02_Finished,  Miyabi_03_Finished,
+    JaneDoe_01_Finished, JaneDoe_02_Finished, JaneDoe_03_Finished,
+    UltimateFinished 
+};
 enum class CamStartDir   { Front, Back };
 
 enum class CamShakeType
@@ -50,7 +56,7 @@ enum class CamZoomType
     End
 };
 
-struct CamSequenceRequestDesc
+struct CamSeqReqDesc
 {
     _float blendInSec  = 0.25f;
     _float blendOutSec = 0.25f;
@@ -60,14 +66,14 @@ struct CamSequenceRequestDesc
     CamType       returnCamType = CamType::None;
 };
 
-struct CamDirectorSeqEntry
+struct CamSeqEntry
 {
     filesystem::path       path{};
-    CamSequenceDesc        seqDesc{};
-    CamSequenceRequestDesc defaultReq{};
+    CamSeqDesc        seqDesc{};
+    CamSeqReqDesc defaultReq{};
 };
 
-struct CamDirectorPlayingState
+struct CamPlayingState
 {
     _uint            handle = 0u;
     string           key{};
@@ -88,7 +94,7 @@ struct CamDirectorPlayingState
     OrbitSnapshot    prevOrbit{};
 };
 
-using CamDirectorSeqMap     = unordered_map<string, CamDirectorSeqEntry>;
-using CamDirectorCamHandles = array<OBJECT_HANDLE, ENUM(CamType::End)>;
+using CamSeqMap     = unordered_map<string, CamSeqEntry>;
+using CamObjHandles = array<OBJECT_HANDLE, ENUM(CamType::End)>;
 
 NS_END

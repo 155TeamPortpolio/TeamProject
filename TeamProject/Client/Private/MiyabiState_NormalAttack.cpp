@@ -122,6 +122,7 @@ void CMiyabiState_NormalAttack::Update(CMiyabi* pOwner, _float dt)
 
 void CMiyabiState_NormalAttack::Exit(CMiyabi* pOwner)
 {
+    pOwner->Show_Ghost();
     pOwner->Reset_ReserveCombo();
     __super::Exit(pOwner);
 }
@@ -199,18 +200,16 @@ void CMiyabiState_Attack_02::Update(CMiyabi* pOwner, _float dt)
     for (const auto& Event : pOwner->Get_Animator()->Get_EventBus())
     {
         if (Event.Type != CLIP_EVENT_TYPE::NOTIFY) continue;
-        if (Event.Tag == "KatanaStart")
+        if (Event.Tag == "AreaAttack")
         {
-            pOwner->Begin_AttackCollider("KatanaWeapon", HitDesc()
+            _vector3 vLook = pOwner->Get_Component<CTransform>()->Dir(STATE::LOOK);
+            _vector3 vPos = pOwner->Get_WorldPos();
+            BattleSystem()->TakeAreaDamage(vPos + vLook * 1.f, 1.5f, HitDesc()
                 .Name(pOwner->Get_CharacterName())
                 .Type(HIT_TYPE::ONCE)
-                .Damage(pOwner->Get_AttackPower() * 0.296f * Helper::Get_Random_Float(1.f, 1.5f)
+                .Damage(pOwner->Get_AttackPower() * 0.269f * Helper::Get_Random_Float(1.f, 1.5f)
                     , DAMAGE_TYPE::NORMAL)
             );
-        }
-        else if (Event.Tag == "KatanaEnd")
-        {
-            pOwner->End_AttackCollider("KatanaWeapon");
         }
     }
 
@@ -230,6 +229,8 @@ void CMiyabiState_Attack_02::Update_Effects(CMiyabi* pOwner)
 
 void CMiyabiState_Attack_03::Enter(CMiyabi* pOwner)
 {
+    pOwner->Set_WeaponEffectMesh(true);
+    pOwner->Hide_Ghost();
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_03")
         .ReserveSpeed(0.f, 0.2f, 0.8f, EaseType::InQuad)
         .ReserveSpeed(0.2f, 0.35f, 2.f, EaseType::InCubic)
@@ -295,6 +296,7 @@ void CMiyabiState_Attack_03::Update_Effects(CMiyabi* pOwner)
 
 void CMiyabiState_Attack_04::Enter(CMiyabi* pOwner)
 {
+    pOwner->Set_WeaponEffectMesh(true);
     pOwner->Push_Invincible();
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_05")
         .ReserveSpeed(0.f, 0.1f, 0.8f, EaseType::InQuad)
@@ -359,6 +361,7 @@ void CMiyabiState_Attack_04::Update_Effects(CMiyabi* pOwner)
 
 void CMiyabiState_Attack_05::Enter(CMiyabi* pOwner)
 {
+    pOwner->Set_WeaponEffectMesh(true);
     pOwner->Get_StateMachine()->Set_Bool("Resistance", true);
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_06")
         .ReserveSpeed(0.f, 0.25f, 1.2f, EaseType::InCubic)
@@ -441,6 +444,8 @@ void CMiyabiState_Attack_05::Update_Effects(CMiyabi* pOwner)
 
 void CMiyabiState_Attack_End::Enter(CMiyabi* pOwner)
 {
+    pOwner->Show_Ghost();
+
     CMiyabiState_NormalAttack* pParent = static_cast<CMiyabiState_NormalAttack*>(m_pParentState);
     _uint iIndex = pParent ? pParent->Get_ComboIndex() : 0;
 

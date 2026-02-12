@@ -11,7 +11,7 @@ private:
     virtual ~CCamEvaluator() DEFAULT;
 
 public:
-    bool    Build(const CamSequenceDesc& seqDesc);
+    bool    Build(const CamSeqDesc& seqDesc);
     CamPose Evaluate(float time) const;
 
     _float RemapTimeBySegmentEasing(float t) const;
@@ -23,7 +23,7 @@ public:
     _float GetDuration() const { return duration; }
 
 private:
-    const CamSequenceDesc* seqDesc{};
+    const CamSeqDesc* seqDesc{};
     vector<CamKeyFrame>    cachedKeys;
     _float                 duration{};
 

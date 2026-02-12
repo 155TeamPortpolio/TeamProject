@@ -6,6 +6,8 @@
 
 #include "Corin.h"
 
+#include "AudioSource.h"
+
 CCorinState_UltimateAttack* CCorinState_UltimateAttack::Create()
 {
     auto pInstance = new CCorinState_UltimateAttack();
@@ -35,7 +37,12 @@ void CCorinState_UltimateAttack::Enter(CCorin* pOwner)
     pOwner->Lock_Move();
     __super::Enter(pOwner);
 
+    //Jehyun
     CamDirector()->RequestSequence(CamSeqType::Ultimate);
+   
+    auto& sound = *pOwner->Get_Component<CAudioSource>();
+    sound.Sequence("Ultimate_Voice").Attribute3D(true).Loop(false).PlayNext();
+    sound.Slot("Corin_Ultimate_SFX_02.wav").Attribute3D(true).Loop(false).Volume(0.5f).Play();
 }
 
 void CCorinState_UltimateAttack::Update(CCorin* pOwner, _float dt)

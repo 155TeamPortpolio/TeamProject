@@ -101,6 +101,7 @@ void CJaneDoeState_SwitchIn::Update(CJaneDoe* pOwner, _float dt)
 
 void CJaneDoeState_SwitchIn::Exit(CJaneDoe* pOwner)
 {
+    pOwner->Reset_Switch();
     pOwner->Pop_Invincible();
     __super::Exit(pOwner);
 }

@@ -241,6 +241,10 @@ void CMeleeJaeger::Render_GUI()
 	if (ImGui::Button("Time Stop"))
 		m_isStop = !m_isStop;
 
+	if (ImGui::Button("Break Shield"))
+		m_pShield->TakeDamage(DAMAGE_TYPE::NORMAL, 1000, {});
+
+
 	ImGui::PopID();
 }
 
@@ -298,15 +302,17 @@ HRESULT CMeleeJaeger::Ready_Children(INIT_DESC* pArg)
 	}
 
 	{
-		BATTLE_COLLIDER_DESC Weapon_R = {};
+		BATTLE_COLLIDER_DESC Weapon = {};
 
-		Weapon_R.tagName = "Weapon";
-		Weapon_R.isAttachBone = true;
-		Weapon_R.tagBone = "Bn_Weapon2";
-		Weapon_R.pOwnerAnimator3D = Get_Component<CAnimator3D>();
-		Weapon_R.vAttackSize = { 0.5f,0.f,0.f };
+		Weapon.tagName = "Weapon";
+		Weapon.isAttachBone = true;
+		Weapon.tagBone = "Bn_Weapon2";
+		Weapon.pOwnerAnimator3D = Get_Component<CAnimator3D>();
+		Weapon.eAttackColliderType = COLLIDER_TYPE::BOX;
+		Weapon.vCenter = { 0.f,0.f,-0.5f };
+		Weapon.vAttackSize = { 0.2f,0.2f,0.7f };
 
-		if (FAILED(AttachBattleColliderObject(&Weapon_R)))
+		if (FAILED(AttachBattleColliderObject(&Weapon)))
 			return E_FAIL;
 	}
 
@@ -468,9 +474,9 @@ HRESULT CMeleeJaeger::Ready_Rules()
 
 	m_tHysteriesis.fEvadeEnter = 2.f;
 	m_tHysteriesis.fComboEnter = 3.f;
-	m_tHysteriesis.fComboExit = 5.5f;
-	m_tHysteriesis.fChaseEnter = 8.f;
-	m_tHysteriesis.fChaseExit = 6.f;
+	m_tHysteriesis.fComboExit = 4.f;
+	m_tHysteriesis.fChaseEnter = 5.5f;
+	m_tHysteriesis.fChaseExit = 4.5f;
 
 	return S_OK;
 }

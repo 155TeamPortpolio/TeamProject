@@ -294,7 +294,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <AdditionalIncludeDirectories>../../EngineSDK/Inc/;../Public/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalOptions>/wd4005 /wd4251 /wd4819 /wd4267 /wd4244 /wd4172 /wd4018 /wd4838 /wd4305 /wd4101 /wd4129 /wd4715 /wd4067 /Zo %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/wd4005 /wd4251 /wd4819 /wd4267 /wd4244 /wd4172 /wd4018 /wd4838 /wd4305 /wd4101 /wd4129 /wd4715 /wd4067 /wd4652 /Zo %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
     </ClCompile>
     <Link>
@@ -368,6 +368,7 @@
     <ClInclude Include="..\Public\AnbiState_Walk.h" />
     <ClInclude Include="..\Public\AttackSign.h" />
     <ClInclude Include="..\Public\BackgroundNpc.h" />
+    <ClInclude Include="..\Public\BasicHitEffect.h" />
     <ClInclude Include="..\Public\BattleFXFlow.h" />
     <ClInclude Include="..\public\CamDebugInput.h" />
     <ClInclude Include="..\public\CamParryController.h" />
@@ -380,6 +381,11 @@
     <ClInclude Include="..\public\Claymore_Hit.h" />
     <ClInclude Include="..\public\Claymore_Idle.h" />
     <ClInclude Include="..\public\Claymore_Move.h" />
+    <ClInclude Include="..\Public\DefilerAxe.h" />
+    <ClInclude Include="..\Public\DefilerWall.h" />
+    <ClInclude Include="..\Public\DefilerWeapon.h" />
+    <ClInclude Include="..\Public\MiasmaDummyUnit.h" />
+    <ClInclude Include="..\Public\MiasmaGrandierJaeger.h" />
     <ClInclude Include="..\Public\CrowdNpc.h" />
     <ClInclude Include="..\public\GachaFootStage.h" />
     <ClInclude Include="..\Public\MeleeJaeger.h" />
@@ -394,10 +400,16 @@
     <ClInclude Include="..\Public\MeleeJaeger_Parried.h" />
     <ClInclude Include="..\public\MeleeJaeger_Shield.h" />
     <ClInclude Include="..\Public\MiasmaBlade.h" />
+    <ClInclude Include="..\Public\MiasmaHeavyJaeger.h" />
+    <ClInclude Include="..\Public\MiasmaJaegerState.h" />
+    <ClInclude Include="..\Public\MiasmaProjectile.h" />
+    <ClInclude Include="..\Public\MiasmaSpawnBall.h" />
+    <ClInclude Include="..\Public\MiasmaSpawner.h" />
     <ClInclude Include="..\Public\MiyabiState_AssaultAttack.h" />
     <ClInclude Include="..\Public\MiyabiState_CounterAttack.h" />
     <ClInclude Include="..\Public\MiyabiState_ExAttack.h" />
     <ClInclude Include="..\Public\MiyabiState_UltimateAttack.h" />
+    <ClInclude Include="..\Public\Miyabi_Ghost.h" />
     <ClInclude Include="..\Public\PedestrianNpc.h" />
     <ClInclude Include="..\Public\Cyclops.h" />
     <ClInclude Include="..\Public\Cyclops_Born.h" />
@@ -439,6 +451,8 @@
     <ClInclude Include="..\Public\MiyabiState_SwitchInNormal.h" />
     <ClInclude Include="..\Public\MiyabiState_SwitchInParryAid.h" />
     <ClInclude Include="..\Public\MiyabiState_SwitchOut.h" />
+    <ClInclude Include="..\Public\UI_RTVDraw.h" />
+    <ClInclude Include="..\Public\UI_Switch.h" />
     <ClInclude Include="..\Public\UI_TextButton.h" />
     <ClInclude Include="..\Public\StrikeJaeger.h" />
     <ClInclude Include="..\Public\StrikeJaeger_Attack.h" />
@@ -456,6 +470,9 @@
     <ClInclude Include="..\Public\UI_GachaTextGroupEngine.h" />
     <ClInclude Include="..\Public\UI_GachaTextGroup.h" />
     <ClInclude Include="..\Public\UI_GachaVideo.h" />
+    <ClInclude Include="..\Public\UI_RenderTargetScreen.h" />
+    <ClInclude Include="..\Public\UI_Wipeout.h" />
+    <ClInclude Include="..\public\Water.h" />
     <ClInclude Include="..\public\XWall.h" />
     <ClInclude Include="..\public\ZeroStage_Start.h" />
     <ClInclude Include="..\Public\UI_GachaDisplay.h" />
@@ -546,7 +563,7 @@
     <ClInclude Include="..\Public\UI_RamenVideo.h" />
     <ClInclude Include="..\Public\UI_ResultBanner.h" />
     <ClInclude Include="..\Public\UI_ScratchCard.h" />
-    <ClInclude Include="..\Public\StageFx.h" />
+    <ClInclude Include="..\Public\EffectFlow.h" />
     <ClInclude Include="..\public\ThugAssaulter_Groggy.h" />
     <ClInclude Include="..\Public\Belle.h" />
     <ClInclude Include="..\Public\BelleState_Idle.h" />
@@ -572,7 +589,7 @@
     <ClInclude Include="..\Public\UI_BossHUD.h" />
     <ClInclude Include="..\Public\UI_EnemyStatus.h" />
     <ClInclude Include="..\Public\UI_FieldHUD.h" />
-    <ClInclude Include="..\Public\UI_MeshBillboard.h" />
+    <ClInclude Include="..\Public\UI_ZeroEntranceLogo.h" />
     <ClInclude Include="..\Public\ButtonUI.h" />
     <ClInclude Include="..\Public\CamDirectorData.h" />
     <ClInclude Include="..\public\CamLoader.h" />
@@ -813,6 +830,7 @@
     <ClCompile Include="..\Private\AnbiState_Walk.cpp" />
     <ClCompile Include="..\Private\AttackSign.cpp" />
     <ClCompile Include="..\Private\BackgroundNpc.cpp" />
+    <ClCompile Include="..\Private\BasicHitEffect.cpp" />
     <ClCompile Include="..\Private\BattleFXFlow.cpp" />
     <ClCompile Include="..\private\CamDebugInput.cpp" />
     <ClCompile Include="..\private\CamParryController.cpp" />
@@ -826,6 +844,11 @@
     <ClCompile Include="..\private\Claymore_Idle.cpp" />
     <ClCompile Include="..\private\Claymore_Move.cpp" />
     <ClCompile Include="..\private\Claymore_Parried.cpp" />
+    <ClCompile Include="..\Private\DefilerAxe.cpp" />
+    <ClCompile Include="..\Private\DefilerWall.cpp" />
+    <ClCompile Include="..\Private\DefilerWeapon.cpp" />
+    <ClCompile Include="..\Private\MiasmaDummyUnit.cpp" />
+    <ClCompile Include="..\Private\MiasmaGrandierJaeger.cpp" />
     <ClCompile Include="..\Private\CorinState_AssaultAttack.cpp" />
     <ClCompile Include="..\Private\CorinState_CounterAttack.cpp" />
     <ClCompile Include="..\Private\CrowdNpc.cpp" />
@@ -842,10 +865,16 @@
     <ClCompile Include="..\Private\MeleeJaeger_Parried.cpp" />
     <ClCompile Include="..\private\MeleeJaeger_Shield.cpp" />
     <ClCompile Include="..\Private\MiasmaBlade.cpp" />
+    <ClCompile Include="..\Private\MiasmaHeavyJaeger.cpp" />
+    <ClCompile Include="..\Private\MiasmaJaegerState.cpp" />
+    <ClCompile Include="..\Private\MiasmaProjectile.cpp" />
+    <ClCompile Include="..\Private\MiasmaSpawnBall.cpp" />
+    <ClCompile Include="..\Private\MiasmaSpawner.cpp" />
     <ClCompile Include="..\Private\MiyabiState_AssaultAttack.cpp" />
     <ClCompile Include="..\Private\MiyabiState_CounterAttack.cpp" />
     <ClCompile Include="..\Private\MiyabiState_ExAttack.cpp" />
     <ClCompile Include="..\Private\MiyabiState_UltimateAttack.cpp" />
+    <ClCompile Include="..\Private\Miyabi_Ghost.cpp" />
     <ClCompile Include="..\Private\PedestrianNpc.cpp" />
     <ClCompile Include="..\Private\Cyclops.cpp" />
     <ClCompile Include="..\Private\Cyclops_Born.cpp" />
@@ -883,6 +912,8 @@
     <ClCompile Include="..\Private\MiyabiState_SwitchInNormal.cpp" />
     <ClCompile Include="..\Private\MiyabiState_SwitchInParryAid.cpp" />
     <ClCompile Include="..\Private\MiyabiState_SwitchOut.cpp" />
+    <ClCompile Include="..\Private\UI_RTVDraw.cpp" />
+    <ClCompile Include="..\Private\UI_Switch.cpp" />
     <ClCompile Include="..\Private\UI_TextButton.cpp" />
     <ClCompile Include="..\Private\StrikeJaeger.cpp" />
     <ClCompile Include="..\Private\StrikeJaeger_Attack.cpp" />
@@ -900,6 +931,9 @@
     <ClCompile Include="..\Private\UI_GachaTextGroupEngine.cpp" />
     <ClCompile Include="..\Private\UI_GachaTextGroup.cpp" />
     <ClCompile Include="..\Private\UI_GachaVideo.cpp" />
+    <ClCompile Include="..\Private\UI_RenderTargetScreen.cpp" />
+    <ClCompile Include="..\Private\UI_Wipeout.cpp" />
+    <ClCompile Include="..\private\Water.cpp" />
     <ClCompile Include="..\private\XWall.cpp" />
     <ClCompile Include="..\private\ZeroStage_Start.cpp" />
     <ClCompile Include="..\Private\UI_GachaDisplay.cpp" />
@@ -1015,7 +1049,7 @@
     <ClCompile Include="..\Private\UI_BossHUD.cpp" />
     <ClCompile Include="..\Private\UI_EnemyStatus.cpp" />
     <ClCompile Include="..\Private\UI_FieldHUD.cpp" />
-    <ClCompile Include="..\Private\UI_MeshBillboard.cpp" />
+    <ClCompile Include="..\Private\UI_ZeroEntranceLogo.cpp" />
     <ClCompile Include="..\Private\ButtonUI.cpp" />
     <ClCompile Include="..\Private\CamLoader.cpp" />
     <ClCompile Include="..\private\CamObject.cpp" />
@@ -1112,7 +1146,9 @@
     <ClCompile Include="..\Private\MiyabiState_NormalAttack.cpp" />
     <ClCompile Include="..\Private\MiyabiState_Run.cpp" />
     <ClCompile Include="..\Private\MiyabiState_Walk.cpp" />
-    <ClCompile Include="..\private\OrbitCam.cpp" />
+    <ClCompile Include="..\private\OrbitCam.cpp">
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='ClientDebug|x64'">Level3</WarningLevel>
+    </ClCompile>
     <ClCompile Include="..\Private\FreeCam.cpp" />
     <ClCompile Include="..\Private\MainApp.cpp" />
     <ClCompile Include="..\private\MapFloorObject.cpp" />

@@ -13,6 +13,9 @@
 //state
 #include "StateMachine.h"
 
+//audio
+#include "AudioSource.h"
+
 CSirChop::CSirChop()
     :CServiceNpc()
 {
@@ -31,6 +34,14 @@ void CSirChop::Execute()
 	pAnimator->Set_Animation(Get_AnimName() + "InStore02")
 		.Loop(true)
 		.Apply();
+
+	string str = "SirChopIn0" + to_string(m_iSound++) + ".wav";
+	Get_Component<CAudioSource>()->Slot(str)
+		.Attribute3D(true)
+		.Volume(0.6)
+		.Loop(false)
+		.Play();
+	if (m_iSound >= 4) m_iSound = 1;
 }
 
 void CSirChop::Reset()
@@ -54,6 +65,9 @@ HRESULT CSirChop::Initialize_Prototype()
 	pModel->Link_Model(G_GlobalLevelKey, "NPC_SirChop_Modelout.model");
 	auto pMaterial = Get_Component<CMaterial>();
 	pMaterial->Link_Material(G_GlobalLevelKey, "NPC_SirChop_Modelout.mat");
+
+	auto pAudio = Add_Component<CAudioSource>();
+	pAudio->SoundFolder("MainCity_Level", "../Bin/Resources/MainCity/Sound/NPC");
 
 	pModel->Hide_MehsByName("Noodle");
 

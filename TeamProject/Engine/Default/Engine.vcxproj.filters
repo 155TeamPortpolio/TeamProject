@@ -173,9 +173,6 @@
     <ClInclude Include="..\Public\Base.h">
       <Filter>01. Utility\04. Components\99. SuperClass</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Component.h">
-      <Filter>01. Utility\04. Components</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Transform.h">
       <Filter>01. Utility\04. Components\00. Transform</Filter>
     </ClInclude>
@@ -336,9 +333,6 @@
     </ClInclude>
     <ClInclude Include="..\Public\CamFovPerSegmentEvaluator.h">
       <Filter>01. Utility\04. Components\20. CamSequencePlayer\03. CamFovEvaluator\99. PerSegment</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\CamUtil.h">
-      <Filter>01. Utility\04. Components\20. CamSequencePlayer\99. CamUtility</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Camera_Enum.h">
       <Filter>01. Utility\04. Components\20. CamSequencePlayer\99. CamUtility</Filter>
@@ -635,6 +629,15 @@
     </ClInclude>
     <ClInclude Include="..\Public\UI_Manager.h">
       <Filter>01. Utility\03. GameObject\Managers\UI_Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CamUtil.h">
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\99. CamUtility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Component.h">
+      <Filter>01. Utility\04. Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\PostProcessCommand.h">
+      <Filter>01. Utility\06. RenderSystem\RenderPass\Renderer\Post\PostProcessCommand</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1068,9 +1071,6 @@
     <Filter Include="01. Utility\04. Components\21. CharacterController">
       <UniqueIdentifier>{369a82b3-3454-4a97-8d03-a03f4504558b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Utility\04. Components\22. EventListner">
-      <UniqueIdentifier>{547d6618-91fb-4755-a756-17b271b63e88}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. Utility\04. Components\03. Model\TrailModel">
       <UniqueIdentifier>{f0c16643-312d-4c10-8d76-d770bd532d23}</UniqueIdentifier>
     </Filter>
@@ -1184,6 +1184,12 @@
     </Filter>
     <Filter Include="01. Utility\04. Components\20. CamSequencePlayer\01. CamPosEvaluator\06. OrbitSpin">
       <UniqueIdentifier>{1c88ead6-b51f-4598-83cc-49243672b3ff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\22. EventListner">
+      <UniqueIdentifier>{547d6618-91fb-4755-a756-17b271b63e88}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\06. RenderSystem\RenderPass\Renderer\Post\PostProcessCommand">
+      <UniqueIdentifier>{de712389-a53f-4d07-8fc0-5404e1d38e25}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1569,9 +1575,6 @@
     <ClCompile Include="..\private\SkinnedMeshRenderer.cpp">
       <Filter>01. Utility\06. RenderSystem\RenderPass\Renderer\Forward\SkinnedMesh</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\PostRenderer.cpp">
-      <Filter>01. Utility\06. RenderSystem\RenderPass\Renderer\Post</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\EffectRenderer.cpp">
       <Filter>01. Utility\06. RenderSystem\RenderPass\Renderer\Sub\Effect</Filter>
     </ClCompile>
@@ -1676,6 +1679,12 @@
     </ClCompile>
     <ClCompile Include="..\private\CamPosOrbitSpinEvaluator.cpp">
       <Filter>01. Utility\04. Components\20. CamSequencePlayer\01. CamPosEvaluator\06. OrbitSpin</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\PostProcessCommand.cpp">
+      <Filter>01. Utility\06. RenderSystem\RenderPass\Renderer\Post\PostProcessCommand</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\PostRenderer.cpp">
+      <Filter>01. Utility\06. RenderSystem\RenderPass\Renderer\Post</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1802,6 +1811,12 @@
     </FxCompile>
     <FxCompile Include="..\Public\Engine_Shader\VTX_NonPlayer.hlsl">
       <Filter>98. BasicShader\SkinMesh</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\VTX_XWall.hlsl">
+      <Filter>98. BasicShader\Etc</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\VTX_StaticEnemy.hlsl">
+      <Filter>98. BasicShader\Mesh</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

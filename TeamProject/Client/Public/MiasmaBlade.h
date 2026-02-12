@@ -25,6 +25,7 @@ public:
     void    Render_GUI()override;
 public:
     virtual void    OnTriggerEnter(CGameObject* pOther) override;
+    virtual void    OnCollisionEnter(CGameObject* pOther) override;
     virtual void    OnTriggerStay(CGameObject* pOher) override;
 public:
     virtual void OnPooledAcquire(INIT_DESC* pArg = nullptr) override;		// 풀에서 꺼낼 때
@@ -37,7 +38,7 @@ private:
 
 private:
     _float m_ElapsedTime = {};
-    _float m_fMovceSpeed = {35};
+    _float m_fMoveSpeed = {35};
     _vector3 m_vTargetVelocity = {};
     _vector3 m_vVelocity = {};
     class CDefiler* m_pOwner = { nullptr };

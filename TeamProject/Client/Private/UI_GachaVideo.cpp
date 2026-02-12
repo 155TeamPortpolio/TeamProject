@@ -80,29 +80,38 @@ void CUI_GachaVideo::Awake()
 
 void CUI_GachaVideo::Update(_float dt)
 {
+    if (m_pPlayer->GetState() == VIDEO_PLAY_STATE::Ended)
+    {
+        if (m_isFinished)   // 끝나고 한 프레임 뒤에 재생하게
+        {
+            m_pPlayer->Stop();
+            Set_Alive(false);
+            return;
+        } 
+
+        UI_DeActive();
+    } 
+
     __super::Update(dt);
 
     Get_Component<CSprite2D>()->Set_Param("SpriteTexture", { m_pPlayer->GetSRV(),"Texture2D",0 });
 
     Get_Component<CObjectContainer>()->UpdateChild(dt);
-
-    if (m_pPlayer->GetState() == VIDEO_PLAY_STATE::Ended)
-        UI_DeActive();
 }
 
 void CUI_GachaVideo::UI_Active(void* pArg)
-{
+{ 
     Set_Alive(true);
     VideoService()->StartDecode(m_PlayerID);
     m_pPlayer->Play();
+    m_isFinished = false;
 }
 
 void CUI_GachaVideo::UI_DeActive(void* pArg)
-{
-    Set_Alive(false);
-    m_pPlayer->Stop();
+{ 
     if (m_onVideoFinished)
-        m_onVideoFinished();
+        m_onVideoFinished(); 
+    m_isFinished = true;
 }
 
 CGameObject* CUI_GachaVideo::Create()

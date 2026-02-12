@@ -135,7 +135,7 @@ void CMeleeJaeger_Shield::StartRoll(_float fDegree)
 	m_fRollDegree = fDegree;
 
 	m_isRoll = true;
-	m_isStartRoll = true;
+	//m_isStartRoll = true;
 }
 
 void CMeleeJaeger_Shield::ComputePosition()
@@ -266,7 +266,7 @@ void CMeleeJaeger_Shield::ComputeRoll(_float dt)
 	
 	_float fRollDegree = m_fRollDegree;
 
-	if (m_isStartRoll)
+	//if (m_isStartRoll)
 	//{
 	//	m_vStartRollTime.y += dt;
 	//

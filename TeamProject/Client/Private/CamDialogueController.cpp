@@ -7,6 +7,7 @@
 #include "Camera.h"
 #include "Helper_Func.h"
 #include "CharacterController.h"
+#include "CamDirector.h"
 
 namespace
 {
@@ -146,9 +147,13 @@ void CCamDialogueController::End(_float blendSec)
     hasBlendInit = false;
 }
 
-void CCamDialogueController::Update(_float dt, CCamera* cam, COrbitCam* orbit, CTransform* focusTr)
+void CCamDialogueController::Update(_float dt)
 {
     if (!hold && !blend) return;
+
+    auto cam     = CamDirector()->GetOrbitCamComp();
+    auto orbit   = CamDirector()->GetOrbitCam();
+    auto camTf   = orbit->Get_Component<CTransform>();
 
     const _float curFov = cam->Get_FOV();
 
@@ -257,7 +262,7 @@ void CCamDialogueController::Update(_float dt, CCamera* cam, COrbitCam* orbit, C
 
             if (!sideInit)
             {
-                Vector3 camLook = cam->Get_Owner()->Get_Component<CTransform>()->Dir(STATE::LOOK);
+                Vector3 camLook = camTf->Dir(STATE::LOOK);
                 camLook.y = 0.f;
                 camLook.Normalize();
 

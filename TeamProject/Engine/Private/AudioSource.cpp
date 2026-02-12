@@ -14,8 +14,7 @@ CAudioSource::SlotBuilder CAudioSource::Slot(const string& slotKey)
 	{
 		return SlotBuilder(*this, iter->second);
 	}
-	static AUDIO_SLOT emptySlot{};
-	return SlotBuilder(*this, emptySlot);
+	return SlotBuilder(*this, EmptySlot);
 }
 
 CAudioSource::AUDIO_SLOT& CAudioSource::SlotBuilder::Play()
@@ -63,7 +62,7 @@ CAudioSource::CAudioSource()
 
 CAudioSource::CAudioSource(const CAudioSource& rhs)
 	:m_pAudioDevice(CGameInstance::GetInstance()->Get_AudioDev())
-	, CComponent(rhs), m_Audios(rhs.m_Audios)
+	, CComponent(rhs), m_Audios(rhs.m_Audios), m_Sequences(rhs.m_Sequences)
 {
 	for (auto& sound : m_Audios)
 		Safe_AddRef(sound.second.pSound);
@@ -385,6 +384,63 @@ void CAudioSource::RePlay(const string& slotKey)
 	}
 }
 
+// ---------
+CAudioSource::SequenceBuilder CAudioSource::Sequence(const string& seqKey)
+{
+	auto& seq = m_Sequences[seqKey];
+	return SequenceBuilder(*this, seq);
+}
+
+HRESULT CAudioSource::Add_Sequence(const string& seqKey, initializer_list<const char*> slotKeys)
+{
+	auto& seq = m_Sequences[seqKey];
+	seq.slotKeys.clear();
+	seq.slotKeys.reserve(slotKeys.size());
+
+	for (const char* raw : slotKeys)
+	{
+		string k = raw ? raw : "";
+
+		const size_t slashPos = k.find_last_of("/\\");
+		const size_t dotPos = k.find_last_of('.');
+
+		const bool hasExt = (dotPos != string::npos) && (slashPos == string::npos || dotPos > slashPos);
+		if (!hasExt)
+			k += ".wav";
+
+		seq.slotKeys.push_back(move(k));
+	}
+
+	if (seq.idx >= seq.slotKeys.size()) seq.idx = 0;
+	return S_OK;
+}
+
+CAudioSource::AUDIO_SLOT& CAudioSource::SequenceBuilder::PlayNext()
+{
+	if (ownerSeq.slotKeys.empty())
+		return CAudioSource::EmptySlot;
+
+	_float now = CGameInstance::GetInstance()->Get_TimeMgr()->Get_TotalTime("Audio_Timer");
+	if (now - ownerSeq.lastPlayTime < 0.05f)
+		return CAudioSource::EmptySlot;
+
+	ownerSeq.lastPlayTime = now;
+
+	if (ownerSeq.idx >= ownerSeq.slotKeys.size())
+		ownerSeq.idx = 0;
+
+	const string& key = ownerSeq.slotKeys[ownerSeq.idx];
+	ownerSeq.idx = (ownerSeq.idx + 1) % (_uint)ownerSeq.slotKeys.size();
+
+	return ownerRef.Slot(key)
+		.Infinite(ownerSeq.isInfinite)
+		.Loop(ownerSeq.loopCount)
+		.Pause(ownerSeq.isPaused)
+		.Attribute3D(ownerSeq.is3D)
+		.Group(ownerSeq.group)
+		.Volume(ownerSeq.volume)
+		.Play();
+}
 
 void CAudioSource::Render_GUI()
 {
@@ -429,4 +485,5 @@ void CAudioSource::Free()
 		Safe_Release(sound.second.pSound);
 
 	m_Audios.clear();
+	m_Sequences.clear();
 }

@@ -81,6 +81,10 @@
 // test
 #include "ZeroPortal.h"
 #include "MiasmaBlade.h"
+#include "XWall.h"
+
+#include "Water.h"
+#include "UI_RenderTargetScreen.h"
 
 CTestLevel::CTestLevel(const string& LevelKey)
 	:CLevel(LevelKey),
@@ -97,7 +101,7 @@ HRESULT CTestLevel::Initialize()
 	//	MSG_BOX("Failed to Load MonsterTable!");
 
 
-	RenderSystem()->Set_FogDesc({ _float4(0.12f, 0.25f, 0.35f, 1.0f),0.f, 0.f, 0.005f, true });
+	//RenderSystem()->Set_FogDesc({ _float4(0.12f, 0.25f, 0.35f, 1.0f),0.f, 0.f, 0.005f, true });
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_ZeroPortal", CZeroPortal::Create());
 	auto pPortal = Builder::Create_Object({ G_GlobalLevelKey,"Proto_GameObject_ZeroPortal" })
 		.Position(_float3(0.f,6.f,0.f))
@@ -124,6 +128,7 @@ HRESULT CTestLevel::Awake()
 	//pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestModel", CTestObject::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestFloor", CTestFloor::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestMap", CTestMap::Create());
+	pProto->Add_ProtoType("Test_Level", "Proto_Env_Water", CWater::Create());
 
 	//==================== UI ===============
 	auto uiDirector = CUIDirector::GetInstance();
@@ -163,7 +168,6 @@ HRESULT CTestLevel::Awake()
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_EnemyTriggerCollider", CEnemyTriggerCollider::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_ThugAssaulter", CThugAssaulter::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Defiler", CDefiler::Create());
-	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_MiasmaBlade", CMiasmaBlade::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_ThugPoacher", CThugPoacher::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_ThugPoacher_Arrow", CThugPoacher_Arrow::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Claymore", CClaymore::Create());
@@ -175,24 +179,38 @@ HRESULT CTestLevel::Awake()
 
 
 
-	CBattleSystem::GetInstance()->ReadyBattle("TrainingRoom", 1);
-	// It will be changed soooooon
 	CBattleSystem::GetInstance()->SetActive(true);
 
 	//====================Test=================
-	//Ready_TestObject();
+	Ready_TestObject();
 	//Ready_Npc();
 
-	CamDirector()->StartBattleIntro(CamSeqType::BattleIntro);
-	//CamDirector()->AutoBattle(CamStartDir::Back);
+	//CamDirector()->StartBattleIntro(CamSeqType::ZeroIntro);
+	CamDirector()->AutoBattle(CamStartDir::Back);
 	//CUIDirector::GetInstance()->Show_SceneFrame();
 	CUIDirector::GetInstance()->Show_HUD(CUIDirector::HUD::BATTLE);
 	//GameInstance()->Set_EngineTimeScale(0.05f);
+	
+	CXWall::XWALL_DESC* XWallDesc = new CXWall::XWALL_DESC;
+	XWallDesc->vCount = { 15, 3 };
+
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_XWall", CXWall::Create());
+	auto XWall = Builder::Create_Object({ "Test_Level", "Proto_GameObject_XWall" })
+		.Add_ObjDesc(XWallDesc)
+		.Position({ 0.f, 1.f, 1.f, })
+		.Build("XWall");
+
+	ObjectManager()->Add_Object(XWall, { "Test_Level", "Effect_Layer" });
+
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_RenderTargetScreen", CUI_RenderTargetScreen::Create());
+	auto pRenderTargetScreen = Builder::Create_Object({ "Test_Level", "Proto_GameObject_RenderTargetScreen" })
+		.Build("rendertargetScreen");
+	ObjectManager()->Add_Object(pRenderTargetScreen, { "Test_Level", "UI_Layer" });
 
 #ifdef  _USING_GUI
 	Ready_MonsterSpawnConsole();
 #endif
-
+	string key = LevelManager()->Get_PrevLevelKey();
 	return S_OK;
 }
 
@@ -268,6 +286,12 @@ void CTestLevel::Ready_TestObject()
 	IProtoService* pProto = CGameInstance::GetInstance()->Get_PrototypeMgr();
 	auto objMgr = m_pGameInstance->Get_ObjectMgr();
 
+	auto testMap = Builder::Create_Object({ "Test_Level", "Proto_Env_Water" })
+		.Position(_float3(0.f, -1.1f,0.f))
+		.Scale(_float3(1.f, 0.2f, 1.f))
+		.Build("Water");
+
+	objMgr->Add_Object(testMap, { "Test_Level", "Env" });
 	//==============TestEffect==========================
 	//pResource->Add_ResourcePath("glow_particle.json", "../Bin/Resources/Effect/glow_particle.json");
 	//pResource->Add_ResourcePath("Eff_Disorder_UU_23.png", "../Bin/Resources/Effect/Eff_Disorder_UU_23.png");

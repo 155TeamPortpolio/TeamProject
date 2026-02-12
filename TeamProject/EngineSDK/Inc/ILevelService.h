@@ -20,7 +20,8 @@ public:
     virtual _uint Get_LevelCount() PURE;
     virtual const vector<string> Get_LevelList() PURE; //레벨 키 모음
     virtual _bool Check_ValidateLevel(const string& LevelTag) PURE;
-    virtual const string& Get_NowLevelKey()PURE;
+    virtual string Get_NowLevelKey()PURE;
+    virtual string Get_PrevLevelKey()PURE;
     virtual void Set_LoadingLevel(const string& LoadingKey)PURE;
     virtual const string& Get_NextLevel() PURE;
     virtual const LEVEL_TRANS_DESC& Get_TransitionDesc() PURE;//로딩 이후 레벨은 무엇인지

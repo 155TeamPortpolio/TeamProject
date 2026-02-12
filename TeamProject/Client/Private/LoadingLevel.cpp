@@ -30,6 +30,9 @@ HRESULT CLoadingLevel::Awake()
 	auto transDesc = CGameInstance::GetInstance()->Get_LevelMgr()->Get_TransitionDesc();
 	m_NextLevel=transDesc.nextLevelKey;
 	PreLoadLevel(m_NextLevel);
+	if(m_NextLevel == "MainCity_Level")
+		PreLoadLevel("Gacha_Level");
+
 	if (!m_bGlobal)
 	{
 		PreLoadLevel("Global_Level");
@@ -121,7 +124,7 @@ void CLoadingLevel::PreLoadLevel(const string& levelKey)
 	}
 
 	// 큐에 쌓인 것들 전부 프리로드 요청
-	for (auto& queuePerType : m_LoadQue)
+	for (auto queuePerType : m_LoadQue)
 	{
 		while (!queuePerType.second.empty())
 		{

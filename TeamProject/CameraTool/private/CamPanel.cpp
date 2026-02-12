@@ -103,15 +103,11 @@ namespace
         if (cur < target) return min(cur + maxDelta, target);
         return max(cur - maxDelta, target);
     }
-
-    
 }
 
 void CCamPanel::Init()
 {
     debugSequence.name = "DebugSequence";
-    debugSequence.projType = CamProjType::Perspective;
-    debugSequence.playbackMode = CamPlaybackMode::Once;
 
     target.sequence = &debugSequence;
     state.recording = true;
@@ -164,9 +160,9 @@ void CCamPanel::Update_Panel(_float dt)
             target.player->SetSequence(target.sequence);
 
         if (target.sequence->space == CamSpace::Local)
-            target.player->SetSpaceReference(target.spaceRefHandle);
+            target.player->SetSpaceRef(target.spaceRefHandle);
         else
-            target.player->ClearSpaceReference();
+            target.player->ClearSpaceRef();
 
         target.player->SetApplyEnabled(!state.recording);
         target.player->SetTimeScale(state.timeScale);
@@ -317,7 +313,7 @@ void CCamPanel::SetCaptureTarget(CCamObj* camObj)
 
     if (target.player)
     {
-        target.player->SetSpaceReference(target.spaceRefHandle);
+        target.player->SetSpaceRef(target.spaceRefHandle);
         target.player->SetApplyEnabled(!state.recording);
         target.player->SetTimeScale(state.timeScale);
 
@@ -573,8 +569,8 @@ void CCamPanel::DrawCamSelector()
 
                 if (target.player)
                 {
-                    if (target.sequence->space == CamSpace::Local) target.player->SetSpaceReference(target.spaceRefHandle);
-                    else target.player->ClearSpaceReference();
+                    if (target.sequence->space == CamSpace::Local) target.player->SetSpaceRef(target.spaceRefHandle);
+                    else target.player->ClearSpaceRef();
                 }
 
                 changedAny = true;
@@ -615,7 +611,7 @@ void CCamPanel::DrawCamSelector()
 
                     target.spaceRefHandle = newRef;
 
-                    if (target.player) target.player->SetSpaceReference(target.spaceRefHandle);
+                    if (target.player) target.player->SetSpaceRef(target.spaceRefHandle);
 
                     changedAny = true;
                 }
@@ -1467,7 +1463,7 @@ void CCamPanel::SetSpaceReference(OBJECT_HANDLE handle)
     target.spaceRefHandle = handle;
 
     if (target.player && target.sequence && target.sequence->space == CamSpace::Local)
-        target.player->SetSpaceReference(target.spaceRefHandle);
+        target.player->SetSpaceRef(target.spaceRefHandle);
 
     ApplyActorVisibility();
 
@@ -1488,8 +1484,8 @@ void CCamPanel::SetSpaceRefCandidates(initializer_list<OBJECT_HANDLE> handles)
 
     if (target.player && target.sequence)
     {
-        if (target.sequence->space == CamSpace::Local) target.player->SetSpaceReference(target.spaceRefHandle);
-        else target.player->ClearSpaceReference();
+        if (target.sequence->space == CamSpace::Local) target.player->SetSpaceRef(target.spaceRefHandle);
+        else target.player->ClearSpaceRef();
     }
 
     ApplyActorVisibility();
@@ -2572,10 +2568,6 @@ void CCamPanel::DrawKeyframeEditor_SelectedKeyTable(bool& ioChangedAny)
                 }
             }
 
-            ImGui::SameLine();
-            if (target.sequence && target.sequence->space == CamSpace::Local) ImGui::TextDisabled("Local");
-            else ImGui::TextDisabled("World");
-
             ImGui::SameLine(0.f, 12.f);
 
             const _vector3 o = keyPtr->pos;
@@ -2586,11 +2578,11 @@ void CCamPanel::DrawKeyframeEditor_SelectedKeyTable(bool& ioChangedAny)
                 const float tHit = -o.z / d.z;
                 const _vector3 hit = o + d * tHit;
 
-                if (tHit >= 0.f) ImGui::TextDisabled("AimXY(z=0): (%.2f, %.2f)", hit.x, hit.y);
-                else ImGui::TextDisabled("AimXY(z=0): (%.2f, %.2f) (behind)", hit.x, hit.y);
+                if (tHit >= 0.f) ImGui::TextDisabled("(z=0): (%.2f, %.2f)", hit.x, hit.y);
+                else ImGui::TextDisabled("(z=0): (%.2f, %.2f) (behind)", hit.x, hit.y);
             }
             else
-                ImGui::TextDisabled("AimXY(z=0): (parallel)");
+                ImGui::TextDisabled("(z=0): (parallel)");
         }
 
 
@@ -3050,7 +3042,7 @@ bool CCamPanel::LoadSequenceFromPath(const string& anyPath)
         return false;
     }
 
-    CamSequenceDesc loaded{};
+    CamSeqDesc loaded{};
     if (!CamUtil::Load(fs::path(picked), loaded, &err))
     {
         keyListUI.lastFileError = err;
@@ -3079,8 +3071,8 @@ bool CCamPanel::LoadSequenceFromPath(const string& anyPath)
 
     if (target.player)
     {
-        if (target.sequence->space == CamSpace::Local) target.player->SetSpaceReference(target.spaceRefHandle);
-        else target.player->ClearSpaceReference();
+        if (target.sequence->space == CamSpace::Local) target.player->SetSpaceRef(target.spaceRefHandle);
+        else target.player->ClearSpaceRef();
 
         target.player->Invalidate();
         if (!state.recording) target.player->SetTime(state.curTime);

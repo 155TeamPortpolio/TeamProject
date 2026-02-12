@@ -50,6 +50,10 @@
 #include "MapLoader.h"
 #include "DataBase.h"
 
+/*PostRenderer*/
+#include "PostRenderer.h"
+#include "PostProcessCommand.h"
+
 CZero_Level::CZero_Level(const string& LevelKey)
 	:CLevel(LevelKey)
 {
@@ -65,7 +69,11 @@ HRESULT CZero_Level::Initialize()
 	/*ENV*/
 	auto pCloud = ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Cloud));
 	pCloud->Set_Alive(false);
-	RenderSystem()->Set_FogDesc({ _float4(0.08f, 0.02f, 0.02f, 1.0f),0.f, 0.f, 0.02f, true });
+
+	RenderSystem()->GetPostRenderer()->GetCommand<CFogCommand>()
+		->SetColor(_float4(0.08f, 0.02f, 0.02f, 1.0f))
+		->SetDensity(0.02f)
+		->SetEnable(true);
 
 	/* Player */
 	auto pPlayer = ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Player));
@@ -197,7 +205,8 @@ void CZero_Level::Free()
 		Safe_Release(pair.second);
 	m_StageContainer.clear();
 
-	RenderSystem()->Set_FogDesc({ _float4(0.08f, 0.02f, 0.02f, 1.0f),0.f, 0.f, 0.02f, false });
+	RenderSystem()->GetPostRenderer()->GetCommand<CFogCommand>()->
+		SetEnable(false);
 
 	auto pPlayer = ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Player));
 	auto castedPlayer = dynamic_cast<CPlayer*>(pPlayer);

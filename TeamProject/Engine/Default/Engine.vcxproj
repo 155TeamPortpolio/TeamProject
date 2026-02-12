@@ -704,6 +704,7 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\PipeLine.h" />
     <ClInclude Include="..\Public\PlaneModel.h" />
     <ClInclude Include="..\public\PointModel.h" />
+    <ClInclude Include="..\public\PostProcessCommand.h" />
     <ClInclude Include="..\public\PostRenderer.h" />
     <ClInclude Include="..\Public\PreloadScheduler.h" />
     <ClInclude Include="..\Public\PreLoad_Struct.h" />
@@ -875,6 +876,7 @@ exit /b 0</Command>
     <ClCompile Include="..\Private\PipeLine.cpp" />
     <ClCompile Include="..\Private\PlaneModel.cpp" />
     <ClCompile Include="..\private\PointModel.cpp" />
+    <ClCompile Include="..\private\PostProcessCommand.cpp" />
     <ClCompile Include="..\private\PostRenderer.cpp" />
     <ClCompile Include="..\Private\PreloadScheduler.cpp" />
     <ClCompile Include="..\Private\PrototypeMgr.cpp" />
@@ -1163,10 +1165,12 @@ exit /b 0</Command>
     <FxCompile Include="..\Public\Engine_Shader\VTX_Point.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_Portal.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_SkinMesh.hlsl" />
+    <FxCompile Include="..\Public\Engine_Shader\VTX_StaticEnemy.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_TexPos.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_Trail.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_UI.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_UIMesh.hlsl" />
+    <FxCompile Include="..\Public\Engine_Shader\VTX_XWall.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Public\Engine_Shader\CS_Particle.hlsli">

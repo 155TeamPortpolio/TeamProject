@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "Miyabi.h"
+#include "Miyabi_Ghost.h"
 
 #include "GameInstance.h"
 #include "BattleSystem.h"
@@ -18,6 +19,7 @@
 #include "Animator3D.h"
 #include "CharacterController.h"
 #include "ObjectContainer.h"
+#include "BoneFollower.h"
 #include "AudioSource.h"
 
 #include "StateMachine.h"
@@ -61,14 +63,17 @@ HRESULT CMiyabi::Initialize(INIT_DESC* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
+	if (FAILED(Initialize_Ghost()))
+		return E_FAIL;
+
 	if (FAILED(Initialize_StateMachine()))
 		return E_FAIL;
 
 	if (FAILED(Initialize_Weapon()))
 		return E_FAIL;
 
-	Get_Component<CAudioSource>()->SoundFolder(G_GlobalLevelKey, "../Bin/Resources/Sound/");
-
+	Get_Component<CAudioSource>()->SoundFolder(G_GlobalLevelKey, "../Bin/Resources/Global/BattleCharacter/Miyabi/Sound");
+	
 	return S_OK;
 }
 
@@ -94,11 +99,16 @@ void CMiyabi::Awake()
 
 	if (FAILED(Attach_ParryCollider()))
 		return;
+
+	Get_Component<CSkeletalModel>()->Hide_MehsByName("0012_Unagi_PET_mesh0012");
+	Set_WeaponEffectMesh(false);
 }
 
 void CMiyabi::Priority_Update(_float dt)
 {
 	__super::Priority_Update(dt);
+	if (!m_BoneMatrices.empty() && m_pCCT->Get_CompActive())
+		Update_MotionBlurQueue();
 }
 
 void CMiyabi::Update(_float dt)
@@ -132,6 +142,12 @@ void CMiyabi::Render_GUI()
 	if (ImGui::Button("Zero"))
 		Decrease_Frost(MAX_FROST);
 
+	if (ImGui::Button("Show Ghost"))
+		Show_Ghost();
+	ImGui::SameLine();
+	if (ImGui::Button("Hide Ghost"))
+		Hide_Ghost();
+
 	if (m_pStateMachine)
 	{
 		ImGui::Separator();
@@ -145,6 +161,18 @@ void CMiyabi::Render_GUI()
 	}
 
 	__super::Render_GUI();
+}
+
+void CMiyabi::Show_Ghost()
+{
+	if (m_pGhost)
+		m_pGhost->Get_Component<CSkeletalModel>()->Show_MehsByName("Unagi_PET_mesh0000");
+}
+
+void CMiyabi::Hide_Ghost()
+{
+	if (m_pGhost)
+		m_pGhost->Get_Component<CSkeletalModel>()->Hide_MehsByName("Unagi_PET_mesh0000");
 }
 
 _bool CMiyabi::Can_Evade()
@@ -312,6 +340,46 @@ void CMiyabi::OnDefensiveAssist()
 {
 }
 
+void CMiyabi::Add_MotionBlur()
+{
+	if (m_BoneMatrices.size() > 5)
+	{
+		m_BoneMatrices.pop_front();
+		m_WorldMatrices.pop_front();
+	}
+
+	auto Model = Get_Component<CSkeletalModel>();
+	vector<vector<_float4x4>> BoneMatrices;
+	BoneMatrices.resize(Model->Get_MeshCount());
+	for (_int i = 0; i < Model->Get_MeshCount(); ++i)
+	{
+		BoneMatrices[i] = m_pAnimator->Get_BoneMatrices(i);
+	}
+
+	m_WorldMatrices.push_back(*m_pTransform->Get_WorldMatrix_Ptr());
+	m_BoneMatrices.push_back(BoneMatrices);
+}
+
+void CMiyabi::Clear_MotionBlur()
+{
+	m_BoneMatrices.clear();
+	m_WorldMatrices.clear();
+	m_fRimLightPower = 0.f;
+}
+
+void CMiyabi::Set_WeaponEffectMesh(_bool bOn)
+{
+	auto pModel = Get_Component<CSkeletalModel>();
+	if (bOn)
+	{
+		pModel->Show_MehsByName("0015_Unagi_Weapon03_mesh0015");
+	}
+	else
+	{
+		pModel->Hide_MehsByName("0015_Unagi_Weapon03_mesh0015");
+	}
+}
+
 HRESULT CMiyabi::Initialize_StateMachine()
 {
 	m_pStateMachine = CStateMachine<CMiyabi>::Create();
@@ -470,6 +538,26 @@ HRESULT CMiyabi::Initialize_Weapon()
 	return S_OK;
 }
 
+HRESULT CMiyabi::Initialize_Ghost()
+{
+	RIGIDBODY_DESC rigidDesc{};
+	rigidDesc.isKinematic = true;
+	rigidDesc.bEnableGravity = false;
+	
+	CGameObject* pGhost = Builder::Create_Object(
+		{ G_GlobalLevelKey, "Proto_GameObject_Miyabi_Ghost" })
+		.RigidBody(rigidDesc)
+		.Build("Miyabi_Ghost");
+	if (nullptr == pGhost)
+		return E_FAIL;
+
+	m_pGhost = static_cast<CMiyabi_Ghost*>(pGhost);
+	m_pGhost->Set_FollowTarget(m_pTransform);
+	Get_Component<CObjectContainer>()->Add_Child(pGhost, false);
+
+	return S_OK;
+}
+
 HRESULT CMiyabi::Initialize_Effects()
 {
 	if (FAILED(__super::Initialize_Effects()))
@@ -485,6 +573,90 @@ HRESULT CMiyabi::Initialize_Effects()
 			.Build("Miyabi_Sword_Fire");
 		pObjectContainer->Add_Child(pEffect, false);
 		pEffect->AttachBone(pAnimator, "Bn_Weapon");
+	}
+
+	// Charge Flare
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_charge0_flare1.json")
+			.Build("Miyabi_Charge0_Flare1");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+		pEffect->AttachBone(pAnimator, "Bn_Weapon", _smatrix::Identity, true);
+	}
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_charge0_particle.json")
+			.Build("Miyabi_Charge0_Particle0");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_charge0_particle.json")
+			.Build("Miyabi_Charge0_Particle1");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_charge_start.json")
+			.Build("Miyabi_Charge_Start");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_charge_stack_up.json")
+			.Build("Miyabi_Charge_StackUp0");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_charge_stack_up.json")
+			.Build("Miyabi_Charge_StackUp1");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_charge0_smoke.json")
+			.Build("Miyabi_Charge0_Smoke");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+
+	// Ultimate Flare
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_ultimate_flare.json")
+			.Build("Miyabi_Ultimate_Flare");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+		pEffect->AttachBone(pAnimator, "Bn_Weapon", _smatrix::Identity, true);
+	}
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_ultimate_flare1.json")
+			.Build("Miyabi_Ultimate_Flare1");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+		pEffect->AttachBone(pAnimator, "Bn_Weapon", _smatrix::Identity, true);
+	}
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_ultimate_smoke0.json")
+			.Build("Miyabi_Ultimate_Smoke0");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_ultimate_smoke1.json")
+			.Build("Miyabi_Ultimate_Smoke1");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
 	}
 
 	// Normal Slash0
@@ -508,6 +680,20 @@ HRESULT CMiyabi::Initialize_Effects()
 		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
 			.Asset("miyabi_normal2_slash.json")
 			.Build("Miyabi_Normal1_Slash1");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect);
+	}
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_normal2_slash.json")
+			.Build("Miyabi_Normal1_Slash2");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect);
+	}
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_normal2_slash.json")
+			.Build("Miyabi_Normal1_Slash3");
 		pEffect->Stop();
 		pObjectContainer->Add_Child(pEffect);
 	}
@@ -606,6 +792,25 @@ HRESULT CMiyabi::Initialize_Effects()
 		pObjectContainer->Add_Child(pEffect);
 	}
 
+	// Ultimate Slash
+	for (_uint i = 0; i < 6; ++i)
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_ultimate0_slash.json")
+			.Build("Miyabi_Ultimate0_Slash" + to_string(i));
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+
+	for (_uint i = 0; i < 9; ++i)
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_ex1_slash.json")
+			.Build("Miyabi_Ex1_Slash" + to_string(i));
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+
 	// Ex Sting
 	{
 		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
@@ -615,11 +820,60 @@ HRESULT CMiyabi::Initialize_Effects()
 		pObjectContainer->Add_Child(pEffect, false);
 	}
 
+	for (_uint i = 0; i < 9; ++i)
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_ex1_sting.json")
+			.Build("Miyabi_Ex1_Sting" + to_string(i));
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+
 	// Rush Sting
 	{
 		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
 			.Asset("miyabi_rush0_sting.json")
 			.Build("Miyabi_Rush0_Sting0");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+
+	// Ultimate Sting
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_ultimate0_sting.json")
+			.Build("Miyabi_Ultimate0_Sting0");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_ultimate1_sting.json")
+			.Build("Miyabi_Ultimate1_Sting0");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_ultimate1_sting.json")
+			.Build("Miyabi_Ultimate1_Sting1");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_ultimate1_sting.json")
+			.Build("Miyabi_Ultimate1_Sting2");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+
+	// Charge Slash
+	for (_uint i = 0; i < 15; ++i)
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_charge0_slash.json")
+			.Build("Miyabi_Charge0_Slash" + to_string(i));
 		pEffect->Stop();
 		pObjectContainer->Add_Child(pEffect, false);
 	}
@@ -814,6 +1068,66 @@ void CMiyabi::Process_EndState(const string& strCurrentState)
 	//			m_pStateMachine->Set_Trigger("ToIdle");
 	//	}
 	//}
+}
+
+HRESULT CMiyabi::Update_MotionBlurQueue()
+{
+	auto Model = Get_Component<CSkeletalModel>();
+	m_vRimLightColor = _float3(0.1f, 0.4f, 1.f);
+	m_fRimLightPower = 2.f;
+
+	for (_int k = m_BoneMatrices.size() - 1; k >= 0; --k)
+	{
+		_float t = (_float)k / (_float)(m_BoneMatrices.size() - 1);
+		_float4 vColor;
+		vColor.x = 0.0f;
+		vColor.y = 0.15f + (0.35f * t);
+		vColor.z = 0.4f + (0.6f * t);
+		vColor.w = 0.05f + (0.6f * t);
+
+		for (_int i = 0; i < Model->Get_MeshCount(); ++i)
+		{
+			if (Model->isDrawable(i) == false) continue;
+			MOTIONBLUR_COMMAND Command =
+			{
+				Get_Component<CMaterial>()->Get_Shader(Model->Get_MaterialIndex(i)),
+				&m_WorldMatrices[k],
+				m_BoneMatrices[k][i],
+				"float4x4[]",
+				vColor,
+				static_cast<_uint>(sizeof(_float4x4) * m_BoneMatrices[k][i].size()),
+				i,
+				[this](ID3D11DeviceContext* pContext, _uint index) {Render_DashMotionBlur(pContext, index); }
+			};
+			RenderSystem()->Add_MotionBlurCommand(Command);
+		}
+	}
+	return S_OK;
+}
+
+HRESULT CMiyabi::Render_DashMotionBlur(ID3D11DeviceContext* pContext, _uint idx)
+{
+	auto RenderSys = RenderSystem()->GetRenderer(RENDERER_TYPE::SKINNED);
+	auto Model = Get_Component<CSkeletalModel>();
+	auto Material = Get_Component<CMaterial>();
+	_int Index = Model->Get_MaterialIndex(idx);
+	auto Shader = Material->Get_Shader(Index);
+	auto instance = Material->Get_MaterialInstance(Index);
+	instance->Override_Pass("MotionBlur");
+	ID3D11InputLayout* pLayout;
+	RenderSys->Get_InputLayout(
+		Model,
+		Shader,
+		idx,
+		"MotionBlur",
+		&pLayout
+	);
+
+	pContext->IASetInputLayout(pLayout);
+	Material->Apply_Material(pContext, Index);
+	Model->Draw(pContext, idx);
+	instance->Reset_Pass();
+	return S_OK;
 }
 
 //HRESULT CMiyabi::Add_OutLineRender()

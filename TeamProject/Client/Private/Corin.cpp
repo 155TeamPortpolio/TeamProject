@@ -29,6 +29,8 @@
 #include "DataBase.h"
 #include "EffectContainer.h"
 
+#include "AudioSource.h"
+
 CCorin::CCorin()
 {
 }
@@ -45,6 +47,8 @@ HRESULT CCorin::Initialize_Prototype()
 
     Get_Component<CModel>()->Link_Model(G_GlobalLevelKey, "Corin.model");
     Get_Component<CMaterial>()->Link_Material(G_GlobalLevelKey, "Corin.mat");
+
+
     return S_OK;
 }
 
@@ -55,6 +59,9 @@ HRESULT CCorin::Initialize(INIT_DESC* pArg)
     if (FAILED(Initialize_StateMachine()))
         return E_FAIL;
     if (FAILED(Initialize_Weapon()))
+        return E_FAIL;
+
+    if (FAILED(Initialize_Sounds()))
         return E_FAIL;
 
     return S_OK;
@@ -482,6 +489,50 @@ HRESULT CCorin::Initialize_Effects()
         pEffect->Stop();
         pObjectContainer->Add_Child(pEffect, false);
     }
+
+    return S_OK;
+}
+
+HRESULT CCorin::Initialize_Sounds()
+{
+    auto& sound = *Get_Component<CAudioSource>();
+    sound.SoundFolder(G_GlobalLevelKey, "../bin/Resources/Global/BattleCharacter/Corin/Sound/");
+
+    sound.Add_Sequence("Ultimate_Voice",
+        "Corin_Ultimate_01_Voice",
+        "Corin_Ultimate_02_Voice",
+        "Corin_Ultimate_03_Voice");
+
+    sound.Add_Sequence("NormalAttack_Voice",
+        "Corin_NormalAttack_01_Voice",
+        "Corin_NormalAttack_02_Voice",
+        "Corin_NormalAttack_03_Voice",
+        "Corin_NormalAttack_06_Voice");
+
+    sound.Add_Sequence("NormalAttackHeavy_Voice",
+        "Corin_NormalAttack_04_Voice",
+        "Corin_NormalAttack_05_Voice",
+        "Corin_NormalAttack_07_Voice");
+
+    sound.Add_Sequence("ExAttack_Voice",
+        "Corin_ExAttack_01_Voice",
+        "Corin_ExAttack_02_Voice",
+        "Corin_ExAttack_03_Voice",
+        "Corin_ExAttack_04_Voice",
+        "Corin_ExAttack_05_Voice",
+        "Corin_ExAttack_06_Voice");
+
+    sound.Add_Sequence("Idle_Voice",
+        "Corin_Idle_01_Voice",
+        "Corin_Idle_02_Voice");
+
+    sound.Add_Sequence("Evade_Voice",
+        "Corin_Evade_01_Voice",
+        "Corin_Evade_02_Voice");
+
+    sound.Add_Sequence("Switch_Voice",
+        "Corin_Switch_01_Voice",
+        "Corin_Switch_02_Voice");
 
     return S_OK;
 }
