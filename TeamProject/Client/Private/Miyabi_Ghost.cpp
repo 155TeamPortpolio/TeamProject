@@ -49,10 +49,20 @@ void CMiyabi_Ghost::Awake()
 	pAnimator->Set_Animation("Avatar_Female_Size02_Unagi_Ghost_Ani_Idle")
 		.Loop(true)
 		.Apply();
+
+	auto pMaterial = Get_Component<CMaterial>();
+	auto MaterialInstances = pMaterial->Get_MaterialInstances();
+	for (auto& Instance : MaterialInstances)
+	{
+		pMaterial->Add_MaterialData(Instance, "fDissolveProgress", { &m_fDissolveProgress, "float", sizeof(_float) });
+		pMaterial->Add_MaterialData(Instance, "fDissolveTiling", { &m_fDissolveTiling, "float", sizeof(_float) });
+	}
+	SetRenderLayer(RENDER_LAYER::Default);
 }
 
 void CMiyabi_Ghost::Priority_Update(_float dt)
 {
+	Update_Dissolve(dt);
 }
 
 void CMiyabi_Ghost::Update(_float dt)
@@ -86,6 +96,23 @@ void CMiyabi_Ghost::FollowTarget(_float dt)
 
 	m_pTransform->Set_vectorPos(vNewPos);
 	m_pTransform->Set_Look(vTargetLook);
+}
+
+void CMiyabi_Ghost::Update_Dissolve(_float dt)
+{
+	if (m_bShow)
+	{
+		SetRenderLayer(RENDER_LAYER::Default);
+		m_fDissolveProgress -= 10.f * dt;
+		m_fDissolveProgress = max(m_fDissolveProgress, 0.f);
+	}
+	else
+	{
+		if (m_fDissolveProgress == 1)
+			SetRenderLayer(RENDER_LAYER::None);
+		m_fDissolveProgress += 10.f * dt;
+		m_fDissolveProgress = min(m_fDissolveProgress, 1.f);
+	}
 }
 
 CMiyabi_Ghost* CMiyabi_Ghost::Create()

@@ -117,7 +117,9 @@ void CCamDirector::AutoBattle(CamStartDir dir)
     }
 
     if (m_gate.Pass())
+    {
         RenderSystem()->SetOn(false);
+    }
 }
 
 void CCamDirector::Update(_float dt)
@@ -255,16 +257,6 @@ void CCamDirector::StartDialog()
 
     m_dialogue.Begin(35.f, 0.5f);
     m_dialogueUnlockPending = false;
-}
-
-void CCamDirector::BeginWipeOut()
-{
-    m_wipeOut.Begin(GetCharacter()->Get_TargetHandle());
-}
-
-void CCamDirector::EndWipeOut()
-{
-    m_wipeOut.End();
 }
 
 void CCamDirector::EndDialog()

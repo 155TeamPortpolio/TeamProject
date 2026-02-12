@@ -58,7 +58,7 @@ void CCorinState_RushAttack::Update(CCorin* pOwner, _float dt)
 void CCorinState_RushAttack::Exit(CCorin* pOwner)
 {
     pOwner->Stop_Effect("Corin_Saw_Slash1");
-
+    pOwner->Set_ResetMove(true);
     __super::Exit(pOwner);
 }
 

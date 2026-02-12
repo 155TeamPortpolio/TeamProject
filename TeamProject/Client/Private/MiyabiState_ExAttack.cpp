@@ -88,14 +88,14 @@ void CMiyabiState_ExAttack::Enter(CMiyabi* pOwner)
 
 void CMiyabiState_ExAttack::Update(CMiyabi* pOwner, _float dt)
 {
-    auto pJaneDoeState = pOwner->Get_StateMachine();
-    if (pJaneDoeState->Get_Bool("OutReserve"))
+    auto pMiyabiState = pOwner->Get_StateMachine();
+    if (pMiyabiState->Get_Bool("OutReserve"))
     {
         if (m_pSubStateMachine->Get_CurrentStateName() == "End" ||
             Is_AnimEnd())
         {
-            pJaneDoeState->Set_Trigger("SwitchOut");
-            pJaneDoeState->Set_Bool("OutReserve", false);
+            pMiyabiState->Set_Trigger("SwitchOut");
+            pMiyabiState->Set_Bool("OutReserve", false);
         }
     }
 
@@ -129,7 +129,9 @@ void CMiyabiState_ExAttack_Start::Update(CMiyabi* pOwner, _float dt)
 void CMiyabiState_ExAttack_01::Enter(CMiyabi* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_Branch_01_Attack_01")
-        .Speed(1.f)
+        .ReserveSpeed(0.f, 0.2f, 0.7f, EaseType::InQuad)
+        .ReserveSpeed(0.2f, 0.4f, 2.f, EaseType::OutExpo)
+        .ReserveSpeed(0.4f, 1.f, 1.5f, EaseType::Linear)
         .Apply();
 }
 
@@ -176,7 +178,8 @@ void CMiyabiState_ExAttack_02::Enter(CMiyabi* pOwner)
     m_fProgress = 0.2f;
 
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_Branch_01_Attack_02")
-        .Speed(1.5f)
+        .ReserveSpeed(0.f, 0.2f, 0.7f, EaseType::InQuad)
+        .ReserveSpeed(0.2f, 1.f, 2.5f, EaseType::InExpo)
         .Apply();
 
     pOwner->Increase_Frost(2);
@@ -300,7 +303,10 @@ void CMiyabiState_ExAttack_03::Enter(CMiyabi* pOwner)
     EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
 
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_Branch_01_Attack_03")
-        .Speed(1.5f)
+        .ReserveSpeed(0.f, 0.1f, 0.7f, EaseType::InQuad)
+        .ReserveSpeed(0.1f, 0.2f, 2.f, EaseType::OutExpo)
+        .ReserveSpeed(0.2f, 0.5f, 1.5f, EaseType::OutQuad)
+        .ReserveSpeed(0.5f, 1.0f, 1.2f, EaseType::OutQuart)
         .Apply();
 
     m_iMask = pOwner->Get_CCT()->Get_CollisionMask();
@@ -438,5 +444,7 @@ void CMiyabiState_ExAttack_End::Enter(CMiyabi* pOwner)
             iIndex = 2;
     }
     pOwner->Get_Animator()->Change_Animation(arrEndAnims[iIndex])
+        .ReserveSpeed(0.3f, 0.75f, 1.5f, EaseType::OutSine)
+        .EndAt(0.75f)
         .Apply();
 }
