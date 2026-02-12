@@ -141,7 +141,7 @@ void CDefilerState_Attack::ReadySubState()
 	m_pSubStateMachine->Register_State("Attack09_End",			CDefilerState_Attack_09_End::Create());
 	/*돌진 똑같음 - 모습만 달라진 느낌 */
 	m_pSubStateMachine->Register_State("Attack_Grab",			CDefilerState_Attack_Grab::Create());
-
+	///*미아즈마 병사 소환, 총잽이*/
 	m_pSubStateMachine->Register_State("Attack_Summon",			CDefilerState_Attack_Summon::Create());
 	m_pSubStateMachine->Register_State("Attack_Evade",			CDefilerState_Attack_Evade::Create());
 }
