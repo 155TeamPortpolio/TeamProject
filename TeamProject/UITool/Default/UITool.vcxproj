@@ -242,6 +242,7 @@
     <ClInclude Include="..\public\MaskUI.h" />
     <ClInclude Include="..\Public\NineSliceUI.h" />
     <ClInclude Include="..\Public\pch.h" />
+    <ClInclude Include="..\Public\SoftDirectionalOutlineUI.h" />
     <ClInclude Include="..\Public\TestUI.h" />
     <ClInclude Include="..\Public\TextUI.h" />
     <ClInclude Include="..\Public\SpriteAnimationUI.h" />
@@ -271,6 +272,7 @@
     <ClCompile Include="..\private\MaskUI.cpp" />
     <ClCompile Include="..\Private\NineSliceUI.cpp" />
     <ClCompile Include="..\Private\pch.cpp" />
+    <ClCompile Include="..\Private\SoftDirectionalOutlineUI.cpp" />
     <ClCompile Include="..\Private\TestUI.cpp" />
     <ClCompile Include="..\Private\TextUI.cpp" />
     <ClCompile Include="..\Private\SpriteAnimationUI.cpp" />

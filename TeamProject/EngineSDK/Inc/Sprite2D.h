@@ -45,6 +45,7 @@ public:
 public:
     _float Get_AspectRatio();
     _uint2 Get_TextureSize();
+    _float2 Get_TexelSize();
 
 private:
     _uint  m_iDrawIndex   = {};
