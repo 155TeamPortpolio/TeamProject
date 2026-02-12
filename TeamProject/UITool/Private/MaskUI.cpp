@@ -80,8 +80,10 @@ void CMaskUI::Load(const nlohmann::ordered_json& data)
     m_previewVisible = true;
     m_previewAlpha = 0.5f;
 
-    auto sprite = Get_Component<CSprite2D>();
-    sprite->Set_Param("MaskPreviewAlpha", {&m_previewAlpha, "float", sizeof(_float)});
+    auto pSprite = Get_Component<CSprite2D>();
+    pSprite->Set_Param("MaskPreviewAlpha", {&m_previewAlpha, "float", sizeof(_float)});
+    m_fMaskThreshold = data.value("maskThreshold", m_fMaskThreshold);
+    pSprite->Set_Param("MaskThreshold", { &m_fMaskThreshold, "float", sizeof(_float) });
 }
 
 CGameObject* CMaskUI::Create()
