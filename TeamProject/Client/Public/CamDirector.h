@@ -69,8 +69,8 @@ public:
     void          StartBattleIntro(CamSeqType type);
     void          StartDialog();
 
-    void          BeginWipeOut();
-    void          EndWipeOut();
+    void          BeginWipeOut() { m_wipeOut.Begin(); }
+    void          EndWipeOut() { m_wipeOut.End(); }
 
     void          EndDialog();
     void          EndParry(_float blendOutSec = 0.65f) { m_parry.End(blendOutSec); }
