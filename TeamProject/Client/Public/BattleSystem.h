@@ -75,6 +75,7 @@ private:
 	_bool	m_isReady = { false };
 	_bool	m_isActive = { false };
 	_uint m_LastFrame = {};
+
 private:
 	class CBattlePlayer* m_pBattlePlayer = { nullptr };// 배틀 플레이어
 	class CBattleFXFlow* m_pFXFlow = { nullptr };
@@ -86,8 +87,18 @@ public:
 	_bool	IsUseInspector() { return m_isUseInspector; }
 	void	SetUseInspector(_bool is) { m_isUseInspector = is; }
 
+#ifdef _USING_GUI
+public:
+	const unordered_map<BATTLE_OBJ_TYPE, vector<BATTLEOBJ_INFO>>& Debug_GetInfos() const { return m_BattleObjInfos; }
+	const unordered_map<BATTLE_OBJ_TYPE, vector<BATTLEOBJ_INFO>>& Debug_GetSnapshots() const { return m_BattleSnapShots; }
+	const decltype(m_BattleObjIndex)& Debug_GetIndexMap() const { return m_BattleObjIndex; }
+	CBattleFXFlow* Debug_GetFXFlow() const { return m_pFXFlow; }
+	_bool Debug_IsActive() const { return m_isActive; }
+#endif
+
 private:
 	_bool	m_isUseInspector = { false };
+
 
 public:
 	virtual void Free() override;

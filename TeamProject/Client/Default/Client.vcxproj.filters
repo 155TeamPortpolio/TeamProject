@@ -1353,6 +1353,9 @@
     <Filter Include="02. GameObject\Object\Enemy\Boss\Defiler\State\OtherState">
       <UniqueIdentifier>{7070f4d4-6cda-4ac4-b714-abd5e747e09d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03. Utility\11. Gui_Panel\02. BattleSystemPanel">
+      <UniqueIdentifier>{33aaa6b5-cece-4287-bbb1-0487b614c913}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -2609,6 +2612,9 @@
     <ClInclude Include="..\Public\DefilerState_Other.h">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler\State\OtherState</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\BattleSystem_Panel.h">
+      <Filter>03. Utility\11. Gui_Panel\02. BattleSystemPanel</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -3823,6 +3829,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\DefilerState_Other.cpp">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler\State\OtherState</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\BattleSystem_Panel.cpp">
+      <Filter>03. Utility\11. Gui_Panel\02. BattleSystemPanel</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
