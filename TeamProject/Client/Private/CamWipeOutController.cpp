@@ -1,3 +1,4 @@
+// CamWipeOutController.cpp
 #include "pch.h"
 #include "CamWipeOutController.h"
 
@@ -5,8 +6,6 @@
 #include "Helper_Func.h"
 #include "GameInstance.h"
 #include "CharacterController.h"
-
-NS_BEGIN(Client)
 
 CamWipeOutController::PivotSample CamWipeOutController::SamplePivots(OBJECT_HANDLE h, _float offsetY, _float faceYOffsetMul)
 {
@@ -20,16 +19,22 @@ CamWipeOutController::PivotSample CamWipeOutController::SamplePivots(OBJECT_HAND
     const Vector3 foot(foot4.x, foot4.y, foot4.z);
 
     const _float half = cc->Get_HalfSize();
-    const Vector3 base = foot + Vector3(0.f, half * 1.5f + offsetY, 0.f);
 
-    const _float faceY = half * 2.f * faceYOffsetMul;
-    const Vector3 face = foot + Vector3(0.f, faceY + offsetY, 0.f);
+    const _float baseMul = 1.1f;
+    const _float topMul = 1.3f;
+
+    _float t = clamp(faceYOffsetMul, 0.f, 1.f);
+    const _float faceMul = baseMul + (topMul - baseMul) * t;
+
+    const Vector3 base = foot + Vector3(0.f, half * baseMul + offsetY, 0.f);
+    const Vector3 face = foot + Vector3(0.f, half * faceMul + offsetY, 0.f);
 
     s.basePivot = base;
     s.facePivot = face;
     s.valid = true;
     return s;
 }
+
 
 Vector3 CamWipeOutController::ClampOffset(const Vector3& offset, _float maxLen)
 {
@@ -189,7 +194,8 @@ void CamWipeOutController::ClampShot1AboveGround(ShotGoal& g) const
     auto aObj = ObjectManager()->Request_Object(m_attacker);
     auto aCC = aObj->Get_Component<CCharacterController>();
 
-    _float minFootY = XMVectorGetY(aCC->Get_FootPosition());
+    const Vector4 foot4 = aCC->Get_FootPosition();
+    const _float minFootY = foot4.y;
 
     const _float minPivotY = minFootY + tune.shot1MinPivotAboveFootY;
     const _float minCamY = minFootY + tune.shot1MinCamAboveFootY;
@@ -197,16 +203,14 @@ void CamWipeOutController::ClampShot1AboveGround(ShotGoal& g) const
     const Vector3 basePivot = BasePivotWorld(g.baseVictimWeight);
 
     Vector3 pivotWorld = basePivot + g.pivotExt;
-    if (pivotWorld.y < minPivotY)
-        g.pivotExt.y += (minPivotY - pivotWorld.y);
+    if (pivotWorld.y < minPivotY) g.pivotExt.y += (minPivotY - pivotWorld.y);
 
     pivotWorld = basePivot + g.pivotExt;
 
     const Quaternion q = YawPitchQuatDeg(g.yawDeg, g.pitchDeg);
     const Vector3 camPos = OrbitPos(pivotWorld, q, g.dist);
 
-    if (camPos.y < minCamY)
-        g.pivotExt.y += (minCamY - camPos.y);
+    if (camPos.y < minCamY) g.pivotExt.y += (minCamY - camPos.y);
 }
 
 CamWipeOutController::ShotGoal CamWipeOutController::BuildShotCommon(_int sideSign, _float angleDeg, _float pitchDeg, _float dist, _float fov, _float pivotClamp, _float attackerBias, _float baseVictimWeight, _bool useMid) const
@@ -280,7 +284,8 @@ CamWipeOutController::ShotGoal CamWipeOutController::BuildShot1() const
 {
     ShotGoal g = BuildShotCommon(m_sideSign, tune.angleShot1Deg, tune.pitchShot1UpDeg, tune.distClose, tune.fovClose, tune.pivotClampShot1, tune.attackerBiasShot1, 0.f, false);
 
-    g.yawDeg = g.yawDeg + (_float)m_sideSign * tune.shot1YawDeltaDeg;
+    const _float baseYaw = CurCamYawDeg();
+    g.yawDeg = baseYaw + (_float)m_sideSign * tune.shot1YawDeltaDeg;
     g.yawWeight = tune.shot1YawWeight;
 
     ClampShot1AboveGround(g);
@@ -380,6 +385,8 @@ void CamWipeOutController::CaptureCurAsFrom()
 
     from.fov = cam->Get_FOV();
     from.yawWeight = 1.f;
+
+    ClampShot1AboveGround(from);
 
     m_shotFrom = from;
 }
@@ -701,5 +708,3 @@ void CamWipeOutController::Update(_float dt)
         return;
     }
 }
-
-NS_END

@@ -1,3 +1,4 @@
+// CamWipeOutController.h
 #pragma once
 
 #include "OrbitCamTypes.h"
@@ -112,7 +113,7 @@ public:
 
         _float shot2FitStrength = 1.0f;
         _float shot3FitStrength = 0.55f;
-        _float shot4FitStrength = 0.2f;
+        _float shot4FitStrength = 0.55f;
     };
 
 public:
