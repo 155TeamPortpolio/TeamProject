@@ -89,6 +89,7 @@ void CBattleFXFlow::Update(_float dt)
 {
 	if (!m_isRunning)
 		return;
+
 	dt = TimeManager()->Get_RawDeltaTime(G_EngineTimerID);
 
 	for (_int trackIndex = 0; trackIndex < m_parallelTracks.size(); )
@@ -180,8 +181,8 @@ void CBattleFXFlow::Cancel()
 
 void CBattleFXFlow::StartVfx(BATTLE_VFX_TYPE vfxType)
 {
-	//if (m_BattleVFX.isRunning)
-	//	return;
+	if (m_BattleVFX.isRunning&& m_BattleVFX.bCanIntersect)
+		return;
 
 	auto& preset = m_BattleVFXData[ENUM(vfxType)];
 
@@ -191,6 +192,7 @@ void CBattleFXFlow::StartVfx(BATTLE_VFX_TYPE vfxType)
 	m_BattleVFX.fCurPos = 0.f;
 	m_BattleVFX.vNowColor = preset.vStartColor;
 	m_BattleVFX.bCanIntersect = preset.bCanIntersect;
+
 	switch (vfxType)
 	{
 	case BATTLE_VFX_TYPE::EVADE:
