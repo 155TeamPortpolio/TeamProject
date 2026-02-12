@@ -46,6 +46,7 @@ void CMiyabiState_RushAttack::Update(CMiyabi* pOwner, _float dt)
 
 void CMiyabiState_RushAttack::Exit(CMiyabi* pOwner)
 {
+    pOwner->Reset_InputInfo();
     __super::Exit(pOwner);
 }
 

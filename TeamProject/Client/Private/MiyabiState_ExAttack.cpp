@@ -88,14 +88,14 @@ void CMiyabiState_ExAttack::Enter(CMiyabi* pOwner)
 
 void CMiyabiState_ExAttack::Update(CMiyabi* pOwner, _float dt)
 {
-    auto pJaneDoeState = pOwner->Get_StateMachine();
-    if (pJaneDoeState->Get_Bool("OutReserve"))
+    auto pMiyabiState = pOwner->Get_StateMachine();
+    if (pMiyabiState->Get_Bool("OutReserve"))
     {
         if (m_pSubStateMachine->Get_CurrentStateName() == "End" ||
             Is_AnimEnd())
         {
-            pJaneDoeState->Set_Trigger("SwitchOut");
-            pJaneDoeState->Set_Bool("OutReserve", false);
+            pMiyabiState->Set_Trigger("SwitchOut");
+            pMiyabiState->Set_Bool("OutReserve", false);
         }
     }
 

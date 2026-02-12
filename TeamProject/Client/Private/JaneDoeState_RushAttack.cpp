@@ -9,30 +9,33 @@
 /* Component */
 #include "ObjectContainer.h"
 
+CJaneDoeState_RushAttack* CJaneDoeState_RushAttack::Create()
+{
+    auto pInstance = new CJaneDoeState_RushAttack();
+    pInstance->m_pSubStateMachine = CStateMachine<CJaneDoe>::Create();
+    auto pSubStateMachine = pInstance->Get_SubStateMachine();
+
+    pSubStateMachine->Register_State("Rush03_Start", CJaneDoeState_Rush03_Start::Create());
+    pSubStateMachine->Register_State("Rush03_End", CJaneDoeState_Rush03_End::Create());
+    pSubStateMachine->Register_State("Rush02_Start", CJaneDoeState_Rush02_Start::Create());
+    pSubStateMachine->Register_State("Rush02_End", CJaneDoeState_Rush02_End::Create());
+    pSubStateMachine->Register_State("Rush01_Start", CJaneDoeState_Rush01_Start::Create());
+    pSubStateMachine->Register_State("Rush01_End", CJaneDoeState_Rush01_End::Create());
+
+    pSubStateMachine->Register_Transition("Rush01_Start", "Rush01_End",
+        CStateMachine<CJaneDoe>::CONDITION_ANIMATION_END);
+    pSubStateMachine->Register_Transition("Rush02_Start", "Rush02_End",
+        CStateMachine<CJaneDoe>::CONDITION_ANIMATION_END);
+    pSubStateMachine->Register_Transition("Rush03_Start", "Rush03_End",
+        CStateMachine<CJaneDoe>::CONDITION_ANIMATION_END);
+
+    pSubStateMachine->Set_DefaultState("Rush03_Start");
+
+    return pInstance;
+}
+
 void CJaneDoeState_RushAttack::Enter(CJaneDoe* pOwner)
 {
-    pOwner->Lock_Move();
-    if (!m_pSubStateMachine)
-    {
-        m_pSubStateMachine = CStateMachine<CJaneDoe>::Create();
-
-        m_pSubStateMachine->Register_State("Rush03_Start", CJaneDoeState_Rush03_Start::Create());
-        m_pSubStateMachine->Register_State("Rush03_End", CJaneDoeState_Rush03_End::Create());
-        m_pSubStateMachine->Register_State("Rush02_Start", CJaneDoeState_Rush02_Start::Create());
-        m_pSubStateMachine->Register_State("Rush02_End", CJaneDoeState_Rush02_End::Create());
-        m_pSubStateMachine->Register_State("Rush01_Start", CJaneDoeState_Rush01_Start::Create());
-        m_pSubStateMachine->Register_State("Rush01_End", CJaneDoeState_Rush01_End::Create());
-
-        m_pSubStateMachine->Register_Transition("Rush01_Start", "Rush01_End",
-            CStateMachine<CJaneDoe>::CONDITION_ANIMATION_END);
-        m_pSubStateMachine->Register_Transition("Rush02_Start", "Rush02_End",
-            CStateMachine<CJaneDoe>::CONDITION_ANIMATION_END);
-        m_pSubStateMachine->Register_Transition("Rush03_Start", "Rush03_End",
-            CStateMachine<CJaneDoe>::CONDITION_ANIMATION_END);
-
-        m_pSubStateMachine->Set_DefaultState("Rush03_Start");
-    }
-
     if (pOwner->Is_Passion())
     {
         m_pSubStateMachine->Set_DefaultState("Rush03_Start");
@@ -48,7 +51,7 @@ void CJaneDoeState_RushAttack::Enter(CJaneDoe* pOwner)
         m_pSubStateMachine->Set_DefaultState("Rush01_Start");
         m_pSubStateMachine->Get_State("Rush01_End")->Set_Tag("End");
     }
-
+    pOwner->Lock_Move();
     __super::Enter(pOwner);
 }
 
