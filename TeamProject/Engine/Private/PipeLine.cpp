@@ -334,7 +334,7 @@ _bool CPipeLine::isVisible(MINMAX_BOX minMax, _fmatrix worldTransform)
 		(worldBox.vMax.z - worldBox.vMin.z) * 0.5f
 	};
 
-	if (!(extents.x > 0.f && extents.y > 0.f && extents.z > 0.f))
+	if (!(extents.x > 0.f || extents.y > 0.f || extents.z > 0.f))
 		return false;
 
 	extents.y = max(extents.y, 0.4f);

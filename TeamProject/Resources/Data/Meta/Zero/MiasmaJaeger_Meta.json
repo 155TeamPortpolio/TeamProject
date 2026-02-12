@@ -33,14 +33,14 @@
           "EventTag": "EvadeSign"
         },
         {
-          "EventTime": 1.1944118738174438,
-          "EventType": "Notify",
-          "EventTag": "Fire"
-        },
-        {
           "EventTime": 1.1747238636016846,
           "EventType": "Sound",
           "EventTag": "MiasmaGrandierFire.wav"
+        },
+        {
+          "EventTime": 1.1944118738174438,
+          "EventType": "Notify",
+          "EventTag": "Fire"
         }
       ]
     },
@@ -63,6 +63,16 @@
           "EventTime": 0.4148148000240326,
           "EventType": "Notify",
           "EventTag": "ParrySign"
+        },
+        {
+          "EventTime": 0.28999999165534973,
+          "EventType": "Sound",
+          "EventTag": "MiasmaHeavyStart.wav"
+        },
+        {
+          "EventTime": 0.6700000166893005,
+          "EventType": "Sound",
+          "EventTag": "MiasmaHeavyStart2.wav"
         }
       ]
     },
