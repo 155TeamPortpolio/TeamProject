@@ -97,6 +97,11 @@ void CCamDirector::AutoField(CamStartDir dir)
 
     default: break;
     }
+
+    if (m_gate.Pass())
+    {
+        RenderSystem()->SetOn(false);
+    }
 }
 
 void CCamDirector::AutoBattle(CamStartDir dir)
