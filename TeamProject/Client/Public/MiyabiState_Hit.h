@@ -13,7 +13,7 @@ public:
     virtual void Exit(CMiyabi* pOwner) override;
 
 public:
-    static CMiyabiState_Hit* Create() { return new CMiyabiState_Hit(); }
+    static CMiyabiState_Hit* Create();
     virtual void Free() override { __super::Free(); }
 };
 

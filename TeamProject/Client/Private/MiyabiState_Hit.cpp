@@ -2,20 +2,26 @@
 #include "MiyabiState_Hit.h"
 #include "Miyabi.h"
 
+CMiyabiState_Hit* CMiyabiState_Hit::Create()
+{
+	auto pInstance = new CMiyabiState_Hit();
+	pInstance->m_pSubStateMachine = CStateMachine<CMiyabi>::Create();
+	auto pSubStateMachine = pInstance->Get_SubStateMachine();
+
+	pSubStateMachine->Register_State("HitNormal", CMiyabi_HitNormal::Create());
+	pSubStateMachine->Register_State("HitHard", CMiyabi_HitHard::Create());
+	pSubStateMachine->Register_State("HitKnockOut", CMiyabi_HitKnockOut::Create());
+
+	pSubStateMachine->Set_DefaultState("HitNormal");
+
+	return pInstance;
+}
+
 void CMiyabiState_Hit::Enter(CMiyabi* pOwner)
 {
 	pOwner->Lock_Move();
 	pOwner->Stop_Rotation();
-
-	if (!m_pSubStateMachine)
-	{
-		m_pSubStateMachine = CStateMachine<CMiyabi>::Create();
-		m_pSubStateMachine->Register_State("HitNormal", CMiyabi_HitNormal::Create());
-		m_pSubStateMachine->Register_State("HitHard", CMiyabi_HitHard::Create());
-		m_pSubStateMachine->Register_State("HitKnockOut", CMiyabi_HitKnockOut::Create());
-
-		m_pSubStateMachine->Set_DefaultState("HitNormal");
-	}
+	pOwner->Get_StateMachine()->Set_Bool("Resistance", true);
 
 	_int iEntryMode = pOwner->Get_StateMachine()->Get_Int("HitEntryMode");
 	pOwner->Get_StateMachine()->Set_Int("HitEntryMode", 0);
@@ -66,6 +72,7 @@ void CMiyabiState_Hit::Update(CMiyabi* pOwner, _float dt)
 void CMiyabiState_Hit::Exit(CMiyabi* pOwner)
 {
 	pOwner->Unlock_Move();
+	pOwner->Get_StateMachine()->Set_Bool("Resistance", false);
 	__super::Exit(pOwner);
 }
 

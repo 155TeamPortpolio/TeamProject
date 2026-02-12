@@ -5,20 +5,26 @@
 
 #include "CharacterController.h"
 
+CCorinState_Hit* CCorinState_Hit::Create()
+{
+	auto pInstance = new CCorinState_Hit();
+	pInstance->m_pSubStateMachine = CStateMachine<CCorin>::Create();
+	auto pSubStateMachine = pInstance->Get_SubStateMachine();
+
+	pSubStateMachine->Register_State("HitNormal", CCorin_HitNormal::Create());
+	pSubStateMachine->Register_State("HitHard", CCorin_HitHard::Create());
+	pSubStateMachine->Register_State("HitKnockOut", CCorin_HitKnockOut::Create());
+
+	pSubStateMachine->Set_DefaultState("HitNormal");
+
+	return pInstance;
+}
+
 void CCorinState_Hit::Enter(CCorin* pOwner)
 {
 	pOwner->Lock_Move();
 	pOwner->Stop_Rotation();
-
-	if (!m_pSubStateMachine)
-	{
-		m_pSubStateMachine = CStateMachine<CCorin>::Create();
-		m_pSubStateMachine->Register_State("HitNormal", CCorin_HitNormal::Create());
-		m_pSubStateMachine->Register_State("HitHard", CCorin_HitHard::Create());
-		m_pSubStateMachine->Register_State("HitKnockOut", CCorin_HitKnockOut::Create());
-
-		m_pSubStateMachine->Set_DefaultState("HitNormal");
-	}
+	pOwner->Get_StateMachine()->Set_Bool("Resistance", true);
 
 	_int iEntryMode = pOwner->Get_StateMachine()->Get_Int("HitEntryMode");
 	pOwner->Get_StateMachine()->Set_Int("HitEntryMode", 0);
@@ -69,6 +75,7 @@ void CCorinState_Hit::Update(CCorin* pOwner, _float dt)
 
 void CCorinState_Hit::Exit(CCorin* pOwner)
 {
+	pOwner->Get_StateMachine()->Set_Bool("Resistance", false);
 	pOwner->Unlock_Move();
 	__super::Exit(pOwner);
 }

@@ -2,20 +2,26 @@
 #include "JaneDoeState_Hit.h"
 #include "JaneDoe.h"
 
+CJaneDoeState_Hit* CJaneDoeState_Hit::Create()
+{
+	auto pInstance = new CJaneDoeState_Hit();
+	pInstance->m_pSubStateMachine = CStateMachine<CJaneDoe>::Create();
+	auto pSubStateMachine = pInstance->Get_SubStateMachine();
+
+	pSubStateMachine->Register_State("HitNormal", CJaneDoe_HitNormal::Create());
+	pSubStateMachine->Register_State("HitHard", CJaneDoe_HitHard::Create());
+	pSubStateMachine->Register_State("HitKnockOut", CJaneDoe_HitKnockOut::Create());
+
+	pSubStateMachine->Set_DefaultState("HitNormal");
+
+	return pInstance;
+}
+
 void CJaneDoeState_Hit::Enter(CJaneDoe* pOwner)
 {
 	pOwner->Lock_Move();
 	pOwner->Stop_Rotation();
-
-	if (!m_pSubStateMachine)
-	{
-		m_pSubStateMachine = CStateMachine<CJaneDoe>::Create();
-		m_pSubStateMachine->Register_State("HitNormal", CJaneDoe_HitNormal::Create());
-		m_pSubStateMachine->Register_State("HitHard", CJaneDoe_HitHard::Create());
-		m_pSubStateMachine->Register_State("HitKnockOut", CJaneDoe_HitKnockOut::Create());
-
-		m_pSubStateMachine->Set_DefaultState("HitNormal");
-	}
+	pOwner->Get_StateMachine()->Set_Bool("Resistance", true);
 
 	_int iEntryMode = pOwner->Get_StateMachine()->Get_Int("HitEntryMode");
 	pOwner->Get_StateMachine()->Set_Int("HitEntryMode", 0);
@@ -45,6 +51,7 @@ void CJaneDoeState_Hit::Enter(CJaneDoe* pOwner)
 		IsBehind = vLook.Dot(vDir) > 0.f;
 	}
 	pOwner->Get_StateMachine()->Set_Bool("IsBehind", IsBehind);
+
 	__super::Enter(pOwner);
 }
 
@@ -62,6 +69,7 @@ void CJaneDoeState_Hit::Update(CJaneDoe* pOwner, _float dt)
 
 void CJaneDoeState_Hit::Exit(CJaneDoe* pOwner)
 {
+	pOwner->Get_StateMachine()->Set_Bool("Resistance", false);
 	pOwner->Unlock_Move();
 	__super::Exit(pOwner);
 }

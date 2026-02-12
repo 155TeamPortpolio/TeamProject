@@ -13,7 +13,7 @@ public:
     virtual void Exit(CCorin* pOwner) override;
 
 public:
-    static CCorinState_Hit* Create() { return new CCorinState_Hit(); }
+    static CCorinState_Hit* Create();
     virtual void Free() override { __super::Free(); }
 };
 
