@@ -71,6 +71,7 @@ private: // 초기화
     HRESULT Initialize_Weapon();
     HRESULT Initialize_Ghost();
     HRESULT Initialize_Effects() override;
+    HRESULT Initialize_Sound();
 
 private: // 상태 처리
     void    Update_States();
@@ -80,9 +81,6 @@ private: // 상태 처리
 private: // 모션블러 렌더
     HRESULT Update_MotionBlurQueue();
     HRESULT Render_DashMotionBlur(ID3D11DeviceContext* pContext, _uint index);
-
-//private:
-//    HRESULT Add_OutLineRender();
 
 private:
     // 고스트
@@ -101,8 +99,6 @@ private:
     // 모션블러
     deque<vector<vector<_float4x4>>>    m_BoneMatrices;
     deque<_float4x4>                    m_WorldMatrices;
-    //_uint                               m_iFrameCount = 0;
-    //static constexpr _uint              FRAMECOUNT = 7;
 
 public:
     static CMiyabi* Create();

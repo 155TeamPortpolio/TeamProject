@@ -12,6 +12,7 @@
 /* Component */
 #include "ObjectContainer.h"
 #include "CharacterController.h"
+#include "AudioSource.h"
 
 void CSacrificeState_Attack_Phase2::Enter(CSacrifice* pOwner)
 {
@@ -1056,14 +1057,15 @@ void CSacrificeState_OverDrive_Release_Start_Phase2::Enter(CSacrifice* pOwner)
 {
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("Monster_SacrificeBringer_Ani_P2_OverDrive_Charge_Start_New").Loop(false).Speed(1.2f).Apply();
-
+	
+	pOwner->Get_Component<CAudioSource>()->Slot("Sacrifice_Phase1_Laser_Attack.wav").Attribute3D(false).Loop(false).Play();
 	pOwner->OverDrive_Start();
 }
 
 void CSacrificeState_OverDrive_Release_Start_Phase2::Update(CSacrifice* pOwner, _float dt)
 {
 	CSacrifice::SACRIFICE_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
-	if (m_fAnimProgress>=0.8f)
+	if (m_fAnimProgress >= 0.8f)
 	{
 		blackBoard.isChainOpen = true;
 		if (!blackBoard.stateQueue.empty())

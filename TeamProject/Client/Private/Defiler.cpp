@@ -94,6 +94,8 @@ HRESULT CDefiler::Initialize(INIT_DESC* pArg)
 
 	Create_UIEnemyStatus("Bip001_Spine2");
 	Create_UIBossHUD();
+	Create_MeshPyramid();
+
 	return S_OK;
 }
 
@@ -124,17 +126,16 @@ void CDefiler::Priority_Update(_float dt)
 	ComputeTargetingInfo();
 
 	if (InputDevice()->Key_Tap('F')) {
-		string nowLevelKey = LevelManager()->Get_NowLevelKey();
-		CDefilerWall::DefilerWallDesc* desc = new CDefilerWall::DefilerWallDesc;
-		desc->vLook = Math::NormalizeSafeXZ(m_pTransform->Dir(STATE::LOOK));
-		_vector3 pos = m_pTransform->Get_Pos();
-		pos.y = 0;
-
-		auto pWall = Builder::Create_Object({ "Zero_Level","Proto_GameObject_DefilerWall" })
-			.Position(pos)
-			.Add_ObjDesc(desc)
-			.Build("Wall");
-		ObjectManager()->Add_Object(pWall, { nowLevelKey,"Enemy_Layer" });
+		Get_Component<CAudioSource>()
+			->Slot("OngoingLevel_Chapter130_Belle_111302003_001.wav")
+			.FadeOut(1.f);
+	}
+	if (InputDevice()->Key_Tap('G')) {
+		Get_Component<CAudioSource>()
+			->Slot("OngoingLevel_Chapter130_Belle_111302003_001.wav")
+			.Attribute3D(false)
+			.FadeIn(1.f,1.f)
+			.Infinite(true).Play();
 	}
 }
 
@@ -146,8 +147,6 @@ void CDefiler::Update(_float dt)
 		m_BlackBoard.vTargetPos = m_tTargetingInfo.vTargetPos;
 		m_BlackBoard.vTargetDir = m_tTargetingInfo.vDirToTarget;
 	}
-
-	Update_States(dt);
 
 	auto animatorPtr = Get_Component<CAnimator3D>();
 	animatorPtr->Update_Animation(dt);
@@ -197,7 +196,7 @@ void CDefiler::Render_GUI()
 
 void CDefiler::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER charaName)
 {
-	BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::HIT);
+	BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::HIT_NORMAL);
 	_float fTakeDamage = fDamage;
 
 	if (m_tStatus.isGroggy)
@@ -302,11 +301,11 @@ void CDefiler::MoveByTraceMode(_float dt, _float moveScale)
 	toTarget.y = 0.f;
 
 	const _float distToTarget = toTarget.Length();
-	if (distToTarget <= 1e-6f)
+	if (distToTarget <= 1.f)
 		return;
 
 	const _vector3 dirToTarget = toTarget / distToTarget;
-	const _float lockDist = 2.f;
+	const _float lockDist = 3.f;
 	if (distToTarget <= lockDist && stopAtTarget && !allowThrough)
 	{
 		m_BlackBoard.CurrentDir = dirToTarget;
@@ -678,8 +677,18 @@ HRESULT CDefiler::Initialize_Transitions()
 
 HRESULT CDefiler::Initialize_Effects()
 {
+	auto pAnimator = Get_Component<CAnimator3D>();
 	auto pObjectContainer = Get_Component<CObjectContainer>();
 	Create_AttackSign("Bip001_Head");
+
+	/* Hit Ground */
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("defiler_hit_ground0.json")
+			.Build("Defiler_HitGround0");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
 
 	/* Normal Slash */
 	{
@@ -703,6 +712,36 @@ HRESULT CDefiler::Initialize_Effects()
 		pEffect->Stop();
 		pObjectContainer->Add_Child(pEffect);
 	}
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("defiler_slash2.json")
+			.Build("Defiler_Slash2_0");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect);
+	}
+
+	/* Axe Slash */
+	{
+		_smatrix offsetMatrix = _smatrix::Identity;
+		offsetMatrix.Translation(_vector3(-1.f, 0.f, 0.f));
+
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("defiler_axe_slash0.json")
+			.Build("Defiler_Axe_Slash0_0");
+		pEffect->Stop();
+		pEffect->AttachBone(pAnimator, "Ctr_M_Weapon_01", offsetMatrix);
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+
+	/* Tail Slash */
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("defiler_tail_slash0.json")
+			.Build("Defiler_Tail_Slash0_0");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect);
+	}
+
 	return S_OK;
 }
 

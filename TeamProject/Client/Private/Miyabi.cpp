@@ -72,8 +72,9 @@ HRESULT CMiyabi::Initialize(INIT_DESC* pArg)
 	if (FAILED(Initialize_Weapon()))
 		return E_FAIL;
 
-	Get_Component<CAudioSource>()->SoundFolder(G_GlobalLevelKey, "../Bin/Resources/Global/BattleCharacter/Miyabi/Sound");
-	
+	if (FAILED(Initialize_Sound()))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -362,9 +363,9 @@ void CMiyabi::Add_MotionBlur()
 
 void CMiyabi::Clear_MotionBlur()
 {
+	m_fRimLightPower = 0.f;
 	m_BoneMatrices.clear();
 	m_WorldMatrices.clear();
-	m_fRimLightPower = 0.f;
 }
 
 void CMiyabi::Set_WeaponEffectMesh(_bool bOn)
@@ -877,6 +878,18 @@ HRESULT CMiyabi::Initialize_Effects()
 		pEffect->Stop();
 		pObjectContainer->Add_Child(pEffect, false);
 	}
+
+	return S_OK;
+}
+
+HRESULT CMiyabi::Initialize_Sound()
+{
+	Get_Component<CAudioSource>()->SoundFolder(G_GlobalLevelKey, "../Bin/Resources/Global/BattleCharacter/Miyabi/Sound");
+	Get_Component<CAudioSource>()->Add_Sequence("Ultimate"
+		, "Miyabi_UltimateAttack_Voice_01"
+		, "Miyabi_UltimateAttack_Voice_02"
+		, "Miyabi_UltimateAttack_Voice_03"
+	);
 
 	return S_OK;
 }

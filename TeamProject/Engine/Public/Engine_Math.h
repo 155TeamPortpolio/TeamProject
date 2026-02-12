@@ -6,9 +6,9 @@ namespace Math
 	//Float 보간 함수
 	ENGINE_DLL _float   Lerp(_float x, _float y, _float t);
 	ENGINE_DLL _vector2 Lerp(_vector2 x, _vector2 y, _float t);
-
+	
+	ENGINE_DLL Vector3  Lerp(const Vector3& a, const Vector3& b, float t);
 	ENGINE_DLL _float WrapPi(float a);
-
 	ENGINE_DLL _float LerpAngle(float a, float b, float u);
 
 	ENGINE_DLL _float     WrapDeg(_float deg);
@@ -17,6 +17,8 @@ namespace Math
 	ENGINE_DLL _uint      LcgStep(_uint& s);
 	ENGINE_DLL _float     Rand01(_uint& s);
 	ENGINE_DLL _float     SmoothStep01(_float t);
+	ENGINE_DLL _float     ExpAlpha(float tau, float dt);
+
 	ENGINE_DLL _float     Clamp01(_float t);
 	ENGINE_DLL _float     PingPong01(_float t);
 	ENGINE_DLL Vector3    SeedPhase(_uint& seed);

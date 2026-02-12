@@ -1329,6 +1329,9 @@
     <Filter Include="02. GameObject\Object\Enemy\Boss\Defiler\DefilerSpawner">
       <UniqueIdentifier>{4021281a-dbf6-4666-9647-1a0c58628bde}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03. Utility\08. CamDirector\04. CamWipeOutController">
+      <UniqueIdentifier>{bbca9106-529f-4e73-b6f1-7102012e5969}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02. GameObject\UI\02. 3D\Mesh\ZeroEntranceLogo">
       <UniqueIdentifier>{89478ed2-2501-4d4d-ac18-3d96e9af3442}</UniqueIdentifier>
     </Filter>
@@ -2588,6 +2591,9 @@
     <ClInclude Include="..\Public\MiasmaSpawner.h">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler\DefilerSpawner</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\CamWipeOutController.h">
+      <Filter>03. Utility\08. CamDirector\04. CamWipeOutController</Filter>
+    </ClInclude>
     <ClInclude Include="..\public\Water.h">
       <Filter>02. GameObject\Object\Env</Filter>
           </ClInclude>
@@ -3796,6 +3802,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\MiasmaSpawner.cpp">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler\DefilerSpawner</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CamWipeOutController.cpp">
+      <Filter>03. Utility\08. CamDirector\04. CamWipeOutController</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Water.cpp">
       <Filter>02. GameObject\Object\Env</Filter>

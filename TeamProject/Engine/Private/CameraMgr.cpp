@@ -31,15 +31,15 @@ CCamera* CCameraMgr::Get_ShadowCam() const
     return ResolveCam(m_shadowCamObj);
 }
 
-void CCameraMgr::Set_MainCam(CCamera* pCamCom, _float blendSec)
+void CCameraMgr::Set_MainCam(CCamera* cam, _float blendSec)
 {
-    SetMainCamObj(pCamCom->Get_OwnerHandle(), blendSec);
-    AudioDevice()->Set_Listener(pCamCom->Get_Owner()->Get_Component<CTransform>());
+    SetMainCamObj(cam->Get_OwnerHandle(), blendSec);
+    AudioDevice()->Set_Listener(cam->Get_Owner()->Get_Component<CTransform>());
 }
 
-void CCameraMgr::Set_ShadowCam(CCamera* pCamCom)
+void CCameraMgr::Set_ShadowCam(CCamera* cam)
 {
-    SetShadowCamObj(pCamCom->Get_OwnerHandle());
+    SetShadowCamObj(cam->Get_OwnerHandle());
 }
 
 _uint CCameraMgr::Push(CCamera* camComp, _float blendTime)
@@ -174,6 +174,7 @@ void CCameraMgr::BeginBlendTo(OBJECT_HANDLE targetObj, _float blendSec)
     m_blendDuration  = blendSec;
     m_blendFrom      = m_outputPose;
     m_blendTargetObj = targetObj;
+    m_blendEaseType  = m_easeType;
 
     if (!m_isBlending)
     {
@@ -204,7 +205,7 @@ void CCameraMgr::Update(_float dt)
         m_blendTime += dt;
 
         const _float rawT = m_blendTime / m_blendDuration;
-        const _float t = Math::ApplyEase(m_easeType, rawT);
+        const _float t = Math::ApplyEase(m_blendEaseType, rawT);
 
         if (rawT >= 1.f)
         {

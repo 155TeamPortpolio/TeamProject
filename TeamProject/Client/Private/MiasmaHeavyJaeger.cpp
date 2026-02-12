@@ -65,6 +65,8 @@ HRESULT CMiasmaHeavyJaeger::Initialize(INIT_DESC* pArg)
 	if (FAILED(Initialize_Effects()))
 		return E_FAIL;
 
+	Create_MeshPyramid();
+
 	Get_Component<CAudioSource>()->SoundFolder("Zero_Level", "../Bin/Resources/Zero/Enemy/MiasmaJaeger/Sound/");
 	m_vCurrentDir = {0,0,1};
 
@@ -389,7 +391,7 @@ void CMiasmaHeavyJaeger::MoveByAnim(_float dt, _float moveScale)
 
 void CMiasmaHeavyJaeger::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER charaName)
 {
-	BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::HIT);
+	BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::HIT_NORMAL);
 }
 
 HRESULT CMiasmaHeavyJaeger::Initialize_StateMachine()

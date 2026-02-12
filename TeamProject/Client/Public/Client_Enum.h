@@ -27,7 +27,7 @@ namespace Client {
 
 	//------------------- Battle -------------------
 	enum class StageType { Start, Normal, Elite, Boss, End };
-	enum class BATTLE_VFX_TYPE { HIT, EVADE, PARRY, SWITCH,ULTIMATE, END };
+	enum class BATTLE_VFX_TYPE { HIT_NORMAL, HIT_HARD, EVADE, PARRY, SWITCH,ULTIMATE, WIPEOUT,END };
 	enum class BATTLE_OBJ_TYPE { PLAYER, MONSTER, CAMERA,EFFECT, ENVOBJECT, END };
 
 	//------------------- Gacha --------------------
