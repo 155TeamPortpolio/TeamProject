@@ -56,6 +56,9 @@ void CSoftDirectionalOutlineUI::Render_GUI()
 
     auto pSprite = Get_Component<CSprite2D>();
 
+    m_vTexelSize = 1.f / m_vSize;// pSprite->Get_TexelSize();
+    pSprite->Set_Param("vTexelSize", { &m_vTexelSize, "float2", sizeof(_float2) });
+
     if (ImGui::DragInt("Radius", &m_iRadius, 1, 1, 10, "%d", ImGuiSliderFlags_AlwaysClamp))
         pSprite->Set_Param("iRadius", { &m_iRadius, "int", sizeof(_int) });
 
@@ -67,9 +70,6 @@ void CSoftDirectionalOutlineUI::Render_GUI()
 
     if (ImGui::DragFloat("Gaussian Power", &m_fGaussianPower, 0.1f, 1.f, 10.f, "%f", ImGuiSliderFlags_AlwaysClamp))
         pSprite->Set_Param("fGaussianPower", { &m_fGaussianPower, "float", sizeof(_float) });
-
-    m_vTexelSize = 1.f / m_vSize;// pSprite->Get_TexelSize();
-    pSprite->Set_Param("vTexelSize", { &m_vTexelSize, "float2", sizeof(_float2) });
 }
 
 void CSoftDirectionalOutlineUI::Save(nlohmann::ordered_json& data)
@@ -102,6 +102,13 @@ void CSoftDirectionalOutlineUI::Load(const nlohmann::ordered_json& data)
         m_fGlowStrength = json.value("glowStrength", 1.2f);
         m_vPaddingDir = json.value("paddingDir", _float2( 1.f,  0.f));
         m_fGaussianPower = json.value("gaussianPower", 3.f);
+
+        auto pSprite = Get_Component<CSprite2D>();    
+        pSprite->Set_Param("vTexelSize", { &m_vTexelSize, "float2", sizeof(_float2) });
+        pSprite->Set_Param("iRadius", { &m_iRadius, "int", sizeof(_int) });
+        pSprite->Set_Param("fGlowStrength", { &m_fGlowStrength, "float", sizeof(_float) });
+        pSprite->Set_Param("vPaddingDir", { &m_vPaddingDir, "float2", sizeof(_float2) });
+        pSprite->Set_Param("fGaussianPower", { &m_fGaussianPower, "float", sizeof(_float) });
     }
 }
 
