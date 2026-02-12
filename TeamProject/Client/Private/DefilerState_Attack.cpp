@@ -110,38 +110,25 @@ void CDefilerState_Attack::Build_Pattern(CDefiler* pOwner, _int Type)
 
 void CDefilerState_Attack::ReadySubState()
 {
-	/*3단 공격*/
 	m_pSubStateMachine->Register_State("Attack01_01",			CDefilerState_Attack_01_01::Create());
 	m_pSubStateMachine->Register_State("Attack01_02",			CDefilerState_Attack_01_02::Create());
-	/*6단 패링 공력*/
 	m_pSubStateMachine->Register_State("Attack01_01_P2",		CDefilerState_Attack_01_01_P2::Create());
-	/*칼던지고 꼬리 공격*/
 	m_pSubStateMachine->Register_State("Attack01_03",			CDefilerState_Attack_01_03::Create());
-	/*연속 패링 팽이 공격*/
 	m_pSubStateMachine->Register_State("Attack02",				CDefilerState_Attack_02::Create());
-	/*내려찍고 "알생성"*/
 	m_pSubStateMachine->Register_State("Attack03",				CDefilerState_Attack_03::Create());
-	/*좀더 높이 올라가서 내려찍음*/
 	m_pSubStateMachine->Register_State("Attack04",				CDefilerState_Attack_04::Create());
-	/*뚫고 돌진 공격*/
 	m_pSubStateMachine->Register_State("Attack05",				CDefilerState_Attack_05::Create());
-	/*3단 레이저 공격*/
 	m_pSubStateMachine->Register_State("Attack06",				CDefilerState_Attack_06::Create());
-	/*미아즈마 블레이드*/
 	m_pSubStateMachine->Register_State("Attack07",				CDefilerState_Attack_07::Create());
 	
-	/*미아즈마 병사 소환, 방패병*/
 	m_pSubStateMachine->Register_State("Attack08_01_Start",		CDefilerState_Attack_08_01_Start::Create());
 	m_pSubStateMachine->Register_State("Attack08_01_Loop",		CDefilerState_Attack_08_01_Loop::Create());
 	m_pSubStateMachine->Register_State("Attack08_01_End",		CDefilerState_Attack_08_01_End::Create());
 	m_pSubStateMachine->Register_State("Attack08_02",			CDefilerState_Attack_08_02::Create());
-	/*해일*/
 	m_pSubStateMachine->Register_State("Attack09_Start",		CDefilerState_Attack_09_Start::Create());
 	m_pSubStateMachine->Register_State("Attack09_Loop",			CDefilerState_Attack_09_Loop::Create());
 	m_pSubStateMachine->Register_State("Attack09_End",			CDefilerState_Attack_09_End::Create());
-	/*돌진 똑같음 - 모습만 달라진 느낌 */
 	m_pSubStateMachine->Register_State("Attack_Grab",			CDefilerState_Attack_Grab::Create());
-	///*미아즈마 병사 소환, 총잽이*/
 	m_pSubStateMachine->Register_State("Attack_Summon",			CDefilerState_Attack_Summon::Create());
 	m_pSubStateMachine->Register_State("Attack_Evade",			CDefilerState_Attack_Evade::Create());
 }
@@ -152,7 +139,7 @@ void CDefilerState_Attack::Enter(CDefiler* pOwner)
 	auto& blackboard = pOwner->GetBlackBoard();
 
 	Build_Pattern(pOwner, blackboard.patternIndex);
-	blackboard.patternIndex = 10; //clamp(++blackboard.patternIndex, 0, m_maxPattern);
+	blackboard.patternIndex = 10; 
 
 	if (!blackboard.patternTransition.empty())
 	{
@@ -191,7 +178,7 @@ void CDefilerState_Attack::ComboTransition(CDefiler* pOwner)
 
 	if (m_fAnimProgress >= blackBoard.reservedPattern.animEndProgress)
 		blackBoard.isRequestNext = true;
-}/*EvadeSign*/
+}
 
 void CDefilerState_Attack::Exit(CDefiler* pOwner)
 {
