@@ -21,23 +21,158 @@
   "Clips": [
     {
       "ClipTag": "MeleeJaeger_Ani_Attack_01",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.009999999776482582,
+          "EventType": "Notify",
+          "EventTag": "UnleashAttack"
+        },
+        {
+          "EventTime": 0.6590643525123596,
+          "EventType": "Notify",
+          "EventTag": "TurnOnAttackCol"
+        },
+        {
+          "EventTime": 1.0939570665359497,
+          "EventType": "Notify",
+          "EventTag": "TurnOffAttackCol"
+        },
+        {
+          "EventTime": 1.0939570665359497,
+          "EventType": "Notify",
+          "EventTag": "FinishAll"
+        }
+      ]
     },
     {
       "ClipTag": "MeleeJaeger_Ani_Attack_02",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.5642625093460083,
+          "EventType": "Notify",
+          "EventTag": "ShieldRollStart"
+        },
+        {
+          "EventTime": 0.8999999761581421,
+          "EventType": "Notify",
+          "EventTag": "ShieldRollEnd"
+        },
+        {
+          "EventTime": 0.3833542466163635,
+          "EventType": "Notify",
+          "EventTag": "TurnOnAttackCol"
+        },
+        {
+          "EventTime": 0.7163093090057373,
+          "EventType": "Notify",
+          "EventTag": "TurnOffAttackCol"
+        },
+        {
+          "EventTime": 0.21286550164222717,
+          "EventType": "Notify",
+          "EventTag": "UnleashAttack"
+        },
+        {
+          "EventTime": 0.7196881175041199,
+          "EventType": "Notify",
+          "EventTag": "FinishAll"
+        }
+      ]
     },
     {
       "ClipTag": "MeleeJaeger_Ani_Attack_03",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.11578947305679321,
+          "EventType": "Notify",
+          "EventTag": "UnleashAttack"
+        },
+        {
+          "EventTime": 0.5298245549201965,
+          "EventType": "Notify",
+          "EventTag": "TurnOnAttackCol"
+        },
+        {
+          "EventTime": 0.7648595571517944,
+          "EventType": "Notify",
+          "EventTag": "TurnOffAttackCol"
+        },
+        {
+          "EventTime": 0.7648595571517944,
+          "EventType": "Notify",
+          "EventTag": "FinishAll"
+        }
+      ]
     },
     {
       "ClipTag": "MeleeJaeger_Ani_Attack_04",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.1122807040810585,
+          "EventType": "Notify",
+          "EventTag": "UnleashAttack"
+        },
+        {
+          "EventTime": 0.4678362309932709,
+          "EventType": "Notify",
+          "EventTag": "TurnOnAttackCol"
+        },
+        {
+          "EventTime": 0.6986355185508728,
+          "EventType": "Notify",
+          "EventTag": "TurnOffAttackCol"
+        },
+        {
+          "EventTime": 0.817154049873352,
+          "EventType": "Notify",
+          "EventTag": "TurnOnAttackCol"
+        },
+        {
+          "EventTime": 1.0292397737503052,
+          "EventType": "Notify",
+          "EventTag": "TurnOffAttackCol"
+        },
+        {
+          "EventTime": 1.453411340713501,
+          "EventType": "Notify",
+          "EventTag": "TurnOnAttackCol"
+        },
+        {
+          "EventTime": 1.765302062034607,
+          "EventType": "Notify",
+          "EventTag": "TurnOffAttackCol"
+        },
+        {
+          "EventTime": 1.765302062034607,
+          "EventType": "Notify",
+          "EventTag": "FinishAll"
+        }
+      ]
     },
     {
       "ClipTag": "MeleeJaeger_Ani_Attack_05",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.11052630841732025,
+          "EventType": "Notify",
+          "EventTag": "UnleashAttack"
+        },
+        {
+          "EventTime": 0.790058434009552,
+          "EventType": "Notify",
+          "EventTag": "TurnOnAttackCol"
+        },
+        {
+          "EventTime": 1.221573829650879,
+          "EventType": "Notify",
+          "EventTag": "TurnOffAttackCol"
+        },
+        {
+          "EventTime": 1.221573829650879,
+          "EventType": "Notify",
+          "EventTag": "FinishAll"
+        }
+      ]
     },
     {
       "ClipTag": "MeleeJaeger_Ani_Born",
@@ -53,6 +188,10 @@
     },
     {
       "ClipTag": "MeleeJaeger_Ani_Death_Stay",
+      "Events": []
+    },
+    {
+      "ClipTag": "StrikeJaeger_Ani_Debuff_Stun_Start",
       "Events": []
     },
     {
