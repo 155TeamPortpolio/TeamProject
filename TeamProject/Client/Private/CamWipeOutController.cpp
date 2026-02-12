@@ -282,11 +282,17 @@ CamWipeOutController::ShotGoal CamWipeOutController::BuildShotCommon(_int sideSi
 
 CamWipeOutController::ShotGoal CamWipeOutController::BuildShot1() const
 {
-    ShotGoal g = BuildShotCommon(m_sideSign, tune.angleShot1Deg, tune.pitchShot1UpDeg, tune.distClose, tune.fovClose, tune.pivotClampShot1, tune.attackerBiasShot1, 0.f, false);
+    const _float dist = tune.distClose * tune.shot1DistMul;
+    const _float fov = tune.fovShot1 + tune.shot1FovAdd;
+    const _float pitch = tune.pitchShot1UpDeg + tune.shot1PitchAddDeg;
+
+    ShotGoal g = BuildShotCommon(m_sideSign, tune.angleShot1Deg, pitch, dist, fov, tune.pivotClampShot1, tune.attackerBiasShot1, 0.f, false);
 
     const _float baseYaw = CurCamYawDeg();
     g.yawDeg = baseYaw + (_float)m_sideSign * tune.shot1YawDeltaDeg;
     g.yawWeight = tune.shot1YawWeight;
+
+    g.pivotExt.y += tune.shot1PivotYAdd;
 
     ClampShot1AboveGround(g);
 
@@ -323,7 +329,7 @@ CamWipeOutController::ShotGoal CamWipeOutController::BuildShot3() const
 
 CamWipeOutController::ShotGoal CamWipeOutController::BuildShot4() const
 {
-    ShotGoal g = BuildShotCommon(m_sideSign, tune.angleShot4Deg, tune.pitchShot4LevelDeg, tune.distShot4Far, tune.fovShot4Far, tune.pivotClampShot4, tune.attackerBiasShot4, tune.baseVictimWeightShot4, true);
+    ShotGoal g = BuildShotCommon(m_sideSign, tune.angleShot4Deg, tune.pitchShot4LevelDeg, tune.distShot4Far, tune.fovShot4Far, tune.pivotClampShot4, tune.attackerBiasShot4, 0.f, false);
 
     if (m_vValid)
     {
@@ -534,15 +540,37 @@ void CamWipeOutController::UpdatePivots(_float dt)
         m_aValid = true;
     }
 
+    if (m_victimBlocked)
+    {
+        m_vBase = Vector3::Zero;
+        m_vFace = Vector3::Zero;
+        m_vValid = false;
+        return;
+    }
+
     const PivotSample v = SamplePivots(m_victim, offsetY);
     if (v.valid)
     {
+        Vector3 delta = v.facePivot - m_aFace;
+        delta.y = 0.f;
+        const _float dist = delta.Length();
+
+        if (dist > tune.maxVictimDist)
+        {
+            m_vBase = Vector3::Zero;
+            m_vFace = Vector3::Zero;
+            m_vValid = false;
+            m_victimBlocked = true;
+            return;
+        }
+
         const _float t = clamp(dt * 18.f, 0.f, 1.f);
         m_vBase = Vector3::Lerp(m_vBase, v.basePivot, t);
         m_vFace = Vector3::Lerp(m_vFace, v.facePivot, t);
         m_vValid = true;
     }
 }
+
 
 void CamWipeOutController::Reset()
 {
@@ -565,6 +593,8 @@ void CamWipeOutController::Reset()
     m_vBase = Vector3::Zero;
     m_vFace = Vector3::Zero;
     m_vValid = false;
+
+    m_victimBlocked = false;
 
     m_dirXZ = Vector3(0.f, 0.f, 1.f);
     m_sep = 0.f;
@@ -590,6 +620,7 @@ void CamWipeOutController::Reset()
     m_shot4RailActive = false;
 }
 
+
 void CamWipeOutController::Begin()
 {
     Reset();
@@ -613,6 +644,18 @@ void CamWipeOutController::Begin()
         m_vBase = v.basePivot;
         m_vFace = v.facePivot;
         m_vValid = true;
+
+        Vector3 delta = m_vFace - m_aFace;
+        delta.y = 0.f;
+        const _float dist = delta.Length();
+
+        if (dist > tune.maxVictimDist)
+        {
+            m_vBase = Vector3::Zero;
+            m_vFace = Vector3::Zero;
+            m_vValid = false;
+            m_victimBlocked = true;
+        }
     }
 
     auto attackerObj = ObjectManager()->Request_Object(m_attacker);
@@ -633,8 +676,8 @@ void CamWipeOutController::Begin()
 
     m_dirXZ = dir;
 
-    const Vector3 delta = vFace - aFace;
-    m_sep = Vector3(delta.x, 0.f, delta.z).Length();
+    const Vector3 delta2 = vFace - aFace;
+    m_sep = Vector3(delta2.x, 0.f, delta2.z).Length();
     m_sep = clamp(m_sep, tune.sepMin, tune.sepMax);
 
     m_sideSign = ResolveSideSign();
@@ -657,6 +700,8 @@ void CamWipeOutController::Begin()
     orbit->DialogueMode_Begin();
     orbit->DialogueYaw_Clear();
 }
+
+
 
 void CamWipeOutController::End()
 {

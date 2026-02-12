@@ -11,9 +11,9 @@ class CamWipeOutController
     {
         None,
         Shot1_Enter, Shot1_Hold,
-        Shot2_Snap, Shot2_Hold,
-        Shot3_Snap, Shot3_Hold,
-        Shot4_Snap, Shot4_Hold,
+        Shot2_Snap,  Shot2_Hold,
+        Shot3_Snap,  Shot3_Hold,
+        Shot4_Snap,  Shot4_Hold,
         End
     };
 
@@ -44,7 +44,7 @@ public:
         _float holdShot1Sec = 0.5f;
         _float holdShot2Sec = 1.f;
         _float holdShot3Sec = 1.f;
-        _float holdShot4Sec = 0.65f;
+        _float holdShot4Sec = 1.f;
 
         EaseType approachEase = EaseType::OutCubic;
 
@@ -59,7 +59,8 @@ public:
         _float distShot4Far = 5.00f;
 
         _float fovClose = 28.f;
-        _float fovMid = 32.f;
+        _float fovMid = 34.f;
+        _float fovShot1 = 32.f;
         _float fovShot2 = 40.f;
         _float fovShot4Far = 46.f;
 
@@ -91,7 +92,7 @@ public:
         _float holdFovPunchShot4 = 22.f;
 
         EaseType holdEaseShot1_3 = EaseType::InOutSine;
-        EaseType holdEaseShot4 = EaseType::InQuad;
+        EaseType holdEaseShot4 = EaseType::InQuart;
 
         _float pelvisMul = 0.38f;
 
@@ -114,6 +115,13 @@ public:
         _float shot2FitStrength = 1.0f;
         _float shot3FitStrength = 0.55f;
         _float shot4FitStrength = 0.55f;
+
+        _float shot1DistMul = 0.92f;
+        _float shot1FovAdd = 8.f;
+        _float shot1PitchAddDeg = -6.f;
+        _float shot1PivotYAdd = -0.15f;
+
+        _float maxVictimDist = 1.0f;
     };
 
 public:
@@ -204,6 +212,7 @@ private:
     _float      m_shot4DistFrom = 0.f, m_shot4DistTo = 0.f;
     _float      m_shot4FovFrom = 0.f, m_shot4FovTo = 0.f;
     _bool       m_shot4RailActive = false;
+    _bool       m_victimBlocked = false;
 };
 
 NS_END
