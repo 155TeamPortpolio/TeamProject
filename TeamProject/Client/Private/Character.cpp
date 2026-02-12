@@ -78,6 +78,10 @@ void CCharacter::Awake()
 void CCharacter::Priority_Update(_float dt)
 {
     Get_Component<CObjectContainer>()->Priority_UpdateChild(dt);
+
+    // ']'
+    if (InputDevice()->Key_Tap(VK_OEM_6))
+        m_bTest = !m_bTest;
 }
 
 void CCharacter::Update(_float dt)
