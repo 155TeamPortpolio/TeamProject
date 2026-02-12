@@ -1353,6 +1353,9 @@
     <Filter Include="03. Utility\11. Gui_Panel\02. BattleSystemPanel">
       <UniqueIdentifier>{33aaa6b5-cece-4287-bbb1-0487b614c913}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\RTVDraw\Clear">
+      <UniqueIdentifier>{e2f92744-e665-45f0-8f9c-c4642c126e56}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -2612,6 +2615,9 @@
     <ClInclude Include="..\Public\BattleSystem_Panel.h">
       <Filter>03. Utility\11. Gui_Panel\02. BattleSystemPanel</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UI_Clear.h">
+      <Filter>02. GameObject\UI\01. 2D\RTVDraw\Clear</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -3829,6 +3835,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\BattleSystem_Panel.cpp">
       <Filter>03. Utility\11. Gui_Panel\02. BattleSystemPanel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Clear.cpp">
+      <Filter>02. GameObject\UI\01. 2D\RTVDraw\Clear</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

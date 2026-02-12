@@ -110,9 +110,10 @@
 #include "UI_DamageText.h"
 #include "UI_Gangta.h"
 #include "UI_Seoriyeol.h"
-
-#include "UI_Wipeout.h"
+ 
+#include "UI_Clear.h"
 #include "UI_Switch.h"
+#include "UI_Wipeout.h"
 
 #include "VideoPanel.h"
 
@@ -323,8 +324,9 @@ void CMainApp::Initialize_GlobalPrototype()
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Gangta",      CUI_Gangta::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Seoriyeol",   CUI_Seoriyeol::Create());
 
-	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Wipeout", CUI_Wipeout::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Clear", CUI_Clear::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Switch", CUI_Switch::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Wipeout", CUI_Wipeout::Create());
 
 	/*Enviroment*/
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Cloud", CTestCloud::Create());
