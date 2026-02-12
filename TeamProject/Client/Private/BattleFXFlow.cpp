@@ -47,7 +47,7 @@ void CBattleFXFlow::Initialize_Preset()
 
 	{
 		auto& NormalHitLack = m_BattleVFXData[ENUM(BATTLE_VFX_TYPE::HIT_NORMAL)];
-		const _float duration = .3f;
+		const _float duration = .1f;
 		NormalHitLack.bCanIntersect = true;
 		NormalHitLack.fVFXDuration = duration;
 		NormalHitLack.fBlurDuration = duration;
@@ -56,7 +56,7 @@ void CBattleFXFlow::Initialize_Preset()
 
 	{
 		auto& HardHitLack = m_BattleVFXData[ENUM(BATTLE_VFX_TYPE::HIT_HARD)];
-		const _float duration = .5f;
+		const _float duration = .3f;
 		HardHitLack.bCanIntersect = true;
 		HardHitLack.fVFXDuration = duration;
 		HardHitLack.fBlurDuration = duration;
