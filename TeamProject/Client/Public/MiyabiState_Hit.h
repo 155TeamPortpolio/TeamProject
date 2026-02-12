@@ -12,8 +12,11 @@ public:
     virtual void Update(CMiyabi* pOwner, _float dt) override;
     virtual void Exit(CMiyabi* pOwner) override;
 
+private:
+    _float m_fWeight = 5.f;
+
 public:
-    static CMiyabiState_Hit* Create() { return new CMiyabiState_Hit(); }
+    static CMiyabiState_Hit* Create();
     virtual void Free() override { __super::Free(); }
 };
 

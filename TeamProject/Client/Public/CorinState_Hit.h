@@ -12,8 +12,11 @@ public:
     virtual void Update(CCorin* pOwner, _float dt) override;
     virtual void Exit(CCorin* pOwner) override;
 
+private:
+    _float m_fWeight = 5.f;
+
 public:
-    static CCorinState_Hit* Create() { return new CCorinState_Hit(); }
+    static CCorinState_Hit* Create();
     virtual void Free() override { __super::Free(); }
 };
 
