@@ -56,7 +56,7 @@ HRESULT CDefiler::Initialize_Prototype()
 	Add_Component<CAnimator3D>();
 	Add_Component<CSkeletalModel>();
 	Add_Component<CMaterial>();
-	Add_Component<CCharacterController>();
+	//Add_Component<CCharacterController>();
 	Add_Component<CObjectContainer>();
 	Add_Component<CAudioSource>();
 	Get_Component<CSkeletalModel>()->Link_Model("Zero_Level", "Defiler_Isolde.model");
@@ -81,7 +81,7 @@ HRESULT CDefiler::Initialize(INIT_DESC* pArg)
 	pAnimator->Set_LayerType(ANIM_LAYER_STATE::ADDITIVE, 1);
 	pAnimator->Set_LayerType(ANIM_LAYER_STATE::ADDITIVE, 2);
 
-	auto pCCT = Get_Component<CCharacterController>();
+	//auto pCCT = Get_Component<CCharacterController>();
 
 	if (FAILED(Initialize_StateMachine()))
 		return E_FAIL;
@@ -153,51 +153,29 @@ void CDefiler::Update(_float dt)
 	auto animatorPtr = Get_Component<CAnimator3D>();
 	animatorPtr->Update_Animation(dt);
 
-	Route_AnimEvent(animatorPtr);
-
-	MoveByTraceMode(dt);
-	RotateToTarget(dt, 4.f);
-	Get_Component<CCharacterController>()->Update(dt);
-
-	m_pStateMachine->Update(dt);
+	//Route_AnimEvent(animatorPtr);
+	//
+	//MoveByTraceMode(dt);
+	//RotateToTarget(dt, 4.f);
+//	Get_Component<CCharacterController>()->Update(dt);
+	
+	//m_pStateMachine->Update(dt);
 	Get_Component<CObjectContainer>()->UpdateChild(dt);
 }
 
 void CDefiler::Late_Update(_float dt)
 {
-	Get_Component<CCharacterController>()->Late_Update(dt);
+//	Get_Component<CCharacterController>()->Late_Update(dt);
 }
 
 void CDefiler::Render_GUI()
 {
 	m_pStateMachine->Render_GUI();
-	ImGui::InputInt("Pattern number", &m_BlackBoard.patternIndex);
-	for (auto& pattern : m_BlackBoard.patternTransition)
-	{
-		ImGui::TextUnformatted(pattern.nextPattern.c_str());
-	}
 
-	ImGui::SeparatorText("RimLight");
-
-	_float color[3] = {
-		m_vRimLightColor.x,
-		m_vRimLightColor.y,
-		m_vRimLightColor.z
-	};
-
-	if (ImGui::ColorEdit3("RimLightColor", color,
-		ImGuiColorEditFlags_Float |
-		ImGuiColorEditFlags_DisplayRGB |
-		ImGuiColorEditFlags_InputRGB))
-	{
-		m_vRimLightColor = _float3(color[0], color[1], color[2]);
-	}
-
-	ImGui::DragFloat("RimLightPower", &m_fRimLightPower, 0.01f, 0.f, 10.f);
-
-	__super::Render_GUI();
+#ifdef _USING_GUI
+	Client::DefilerDebugGUI::Render(m_BlackBoard);
+#endif
 }
-
 void CDefiler::Change_CollisionMask(_uint iMask)
 {
 	_uint Mask = Get_Component<CCharacterController>()->Get_CollisionMask();
@@ -206,6 +184,15 @@ void CDefiler::Change_CollisionMask(_uint iMask)
 void CDefiler::Release_CollisionMask()
 {
 	Get_Component<CCharacterController>()->Set_CollisionMask(m_BaseMask);
+}
+
+void CDefiler::Release_AttackCollider()
+{
+	for (auto pair : m_BattleColliderChildrenIndex)
+	{
+		SetBattleColliderObject(pair.first,BATTLE_COLTYPE::ATTACK ,false);
+	};
+
 }
 
 void CDefiler::Hide_MeshGroup(const string& mesh)
@@ -234,6 +221,16 @@ _float3 CDefiler::Get_BipedPos(const string Bone)
 
 	return T;
 }
+
+void CDefiler::Parried()
+{
+	if (false == m_isParryEnable)
+		return;
+
+	m_tStatus.iGroggyValue += 5.f;
+ 
+}
+
 
 void CDefiler::MoveByTraceMode(_float dt, _float moveScale)
 {
@@ -389,8 +386,6 @@ void CDefiler::Update_States(_float dt)
 		m_tStatus.iNowHP = m_tStatus.iMaxHP * 0.1f;
 		m_tStatus.iGroggyValue = 99;
 	}
-	if ("Groggy" != m_pStateMachine->Get_CurrentStateName() && "Death" != m_pStateMachine->Get_CurrentStateName() && m_tStatus.isGroggy)
-		m_pStateMachine->Change_State("Groggy");
 }
 
 void CDefiler::Route_AnimEvent(CAnimator3D* animator)
@@ -799,7 +794,6 @@ HRESULT CDefiler::Create_Colliders()
 		if (FAILED(AttachBattleColliderObject(&WeaponDesc)))
 			return E_FAIL;
 	}
-
 	/* Tail */
 	{
 		BATTLE_COLLIDER_DESC WeaponDesc{};

@@ -55,7 +55,7 @@ HRESULT CUI_IconButton::Initialize(INIT_DESC* pArg)
         Set_ChildAnimation(CHILD::ICON, 0);
         Set_ChildAnimation(CHILD::LABEL, 0);
         if(!m_strSoundKey.empty())  
-            Get_Component<CAudioSource>()->Slot(m_strSoundKey).Attribute3D(false).Loop(false).Play();
+            Get_Component<CAudioSource>()->Slot(m_strSoundKey).Play();
             });
 
     return S_OK;

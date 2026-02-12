@@ -6,6 +6,7 @@
 
 #include "Miyabi.h"
 #include "CharacterController.h"
+#include "AudioSource.h"
 
 #include "EffectContainer.h"
 
@@ -133,6 +134,9 @@ void CMiyabiState_ExAttack_01::Enter(CMiyabi* pOwner)
         .ReserveSpeed(0.2f, 0.4f, 2.f, EaseType::OutExpo)
         .ReserveSpeed(0.4f, 1.f, 1.5f, EaseType::Linear)
         .Apply();
+    pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_NormalAttack01_Voice")
+        .Attribute3D(true)
+        .Play();
 }
 
 void CMiyabiState_ExAttack_01::Update(CMiyabi* pOwner, _float dt)
@@ -181,6 +185,10 @@ void CMiyabiState_ExAttack_02::Enter(CMiyabi* pOwner)
         .ReserveSpeed(0.f, 0.2f, 0.7f, EaseType::InQuad)
         .ReserveSpeed(0.2f, 1.f, 2.5f, EaseType::InExpo)
         .Apply();
+
+    pOwner->Get_Component<CAudioSource>()->Sequence("ExAttack02")
+        .Attribute3D(true)
+        .PlayNext();
 
     pOwner->Increase_Frost(2);
 
@@ -356,6 +364,13 @@ void CMiyabiState_ExAttack_03::Update(CMiyabi* pOwner, _float dt)
                 , DAMAGE_TYPE::HARD)
         );
         m_iCount++;
+    }
+
+    if (IsCrossAnimProgress(0.1f))
+    {
+        pOwner->Get_Component<CAudioSource>()->Sequence("ExAttack03")
+            .Attribute3D(true)
+            .PlayNext();
     }
 
     Update_Effects(pOwner);

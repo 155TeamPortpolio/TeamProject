@@ -73,15 +73,21 @@ void CMiyabiState_AssaultAttack::Exit(CMiyabi* pOwner)
 
 void CMiyabiState_Assault_Start::Enter(CMiyabi* pOwner)
 {
-	//pOwner->Rush_Target();
 	pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_AssaultAid")
-		.Speed(1.f)
+		.ReserveSpeed(0.f, 0.18f, 0.7f, EaseType::InQuad)
+		.ReserveSpeed(0.18f, 0.32f, 3.f, EaseType::OutExpo)
+		.ReserveSpeed(0.32f, 0.5f, 2.f, EaseType::Linear)
+		.ReserveSpeed(0.5f, 0.55f, 0.5f, EaseType::OutExpo)
+		.ReserveSpeed(0.55f, 0.8f, 2.5f, EaseType::OutQuad)
+		.ReserveSpeed(0.8f, 1.f, 0.7f, EaseType::OutQuart)
 		.Apply();
 
 	m_iMask = pOwner->Get_CCT()->Get_CollisionMask();
 	pOwner->Get_CCT()->Set_CollisionMask(m_iMask - ENUM(COLLISION_GROUP::MONSTER));
-	pOwner->Set_LookTarget(false);
 	m_pOwnerStateMachine->Set_Bool("Penetrate", true);
+
+	pOwner->Rush_Target();
+	pOwner->Set_LookTarget(false);
 
 	m_vPos = pOwner->Get_WorldPos();
 	m_vLook = pOwner->Get_Component<CTransform>()->Dir(STATE::LOOK);
