@@ -438,5 +438,7 @@ void CMiyabiState_ExAttack_End::Enter(CMiyabi* pOwner)
             iIndex = 2;
     }
     pOwner->Get_Animator()->Change_Animation(arrEndAnims[iIndex])
+        .ReserveSpeed(0.3f, 0.75f, 1.5f, EaseType::OutSine)
+        .EndAt(0.75f)
         .Apply();
 }

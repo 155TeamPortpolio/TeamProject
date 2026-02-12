@@ -167,13 +167,13 @@ void CMiyabi::Render_GUI()
 void CMiyabi::Show_Ghost()
 {
 	if (m_pGhost)
-		m_pGhost->Get_Component<CSkeletalModel>()->Show_MehsByName("Unagi_PET_mesh0000");
+		m_pGhost->Set_Show(true);
 }
 
 void CMiyabi::Hide_Ghost()
 {
 	if (m_pGhost)
-		m_pGhost->Get_Component<CSkeletalModel>()->Hide_MehsByName("Unagi_PET_mesh0000");
+		m_pGhost->Set_Show(false);
 }
 
 _bool CMiyabi::Can_Evade()
