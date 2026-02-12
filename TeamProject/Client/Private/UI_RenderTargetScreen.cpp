@@ -77,7 +77,7 @@ void CUI_RenderTargetScreen::Ready_ViewProj()
 
 void CUI_RenderTargetScreen::Ready_RenderState()
 {
-    Get_Component<CRectModel>()->Set_RenderType(RENDER_PASS_TYPE::RENDER_3DUI);
+    Get_Component<CRectModel>()->Set_RenderType(RENDER_PASS_TYPE::NONLIGHT_OPAQUE);
 }
 
 HRESULT CUI_RenderTargetScreen::Ready_RTVDrawObjects()

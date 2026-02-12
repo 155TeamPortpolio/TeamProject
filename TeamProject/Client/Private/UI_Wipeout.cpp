@@ -32,15 +32,40 @@ void CUI_Wipeout::Awake()
 
 void CUI_Wipeout::Update(_float dt)
 {
-    if (Is_GroupAnimationFinished(m_eCurrentGroup))
+    if (m_eState == STATE::DEACTIVATING)
+        Change_State(STATE::INACTIVE);
+
+    if (m_eState == STATE::ACTIVE && Is_GroupAnimationFinished(m_eCurrentGroup))
     {
-        if(m_eCurrentGroup == GROUP::GROUP3)
-            Change_State(STATE::DEACTIVATING);
-        else
-            Change_Group(static_cast<GROUP>((ENUM(m_eCurrentGroup) + 1) % ENUM(GROUP::END)));
+        switch (m_eCurrentGroup)
+        {
+        case GROUP::GROUP1:
+            Change_Group(GROUP::GROUP2);
+            break;
+        case GROUP::GROUP2:
+            Change_Group(GROUP::GROUP3);
+            break;
+        case GROUP::GROUP3:
+            Change_Group(GROUP::GROUP4);
+            break;
+        case GROUP::GROUP4:
+            Change_Group(GROUP::GROUP5, m_iBlinkCount);
+            break;
+        case GROUP::GROUP5:
+            if (m_iBlinkCount == 2)
+            {
+                Change_State(STATE::DEACTIVATING);
+                return;
+            } 
+
+            Change_Group(GROUP::GROUP4, m_iBlinkCount);
+            m_iBlinkCount++;
+            break;
+        }
     }
 
-    __super::Update(dt);
+    if(m_eState == STATE::ACTIVE)
+        __super::Update(dt);
 
     Update_RTV("renderTargetScreen", true);
 }
@@ -74,12 +99,16 @@ void CUI_Wipeout::Change_State(STATE eState)
     {
     case STATE::ACTIVE:
         Set_Alpha(1.f);
+        Set_Scale(Vector2(1.f, 1.f));
+        Set_Animation(0);
         Set_Alive(true);
         Change_Group(GROUP::GROUP1);
+        m_iBlinkCount = 0;
         break;
     case STATE::DEACTIVATING:
         Set_Alpha(0.f);
-        Change_State(STATE::INACTIVE);
+        m_iCurrentClipIndex = -1;
+        //Change_State(STATE::INACTIVE);
         break;
     case STATE::INACTIVE:
         Set_Alive(false);
@@ -89,16 +118,16 @@ void CUI_Wipeout::Change_State(STATE eState)
     }
 }
 
-void CUI_Wipeout::Change_Group(GROUP eGroup)
+_bool CUI_Wipeout::Change_Group(GROUP eGroup, _int iIndex)
 {
     if (m_eCurrentGroup == eGroup)
-        return;
+        return false;
 
     Set_GroupAlive(m_eCurrentGroup, false);
 
     m_eCurrentGroup = eGroup;
     Set_GroupAlive(m_eCurrentGroup, true);
-    Set_GroupAnimation(m_eCurrentGroup, 0);
+    return Set_GroupAnimation(m_eCurrentGroup, iIndex);
 }
 
 void CUI_Wipeout::Set_GroupAlive(GROUP group, _bool isAlive)
@@ -110,26 +139,31 @@ void CUI_Wipeout::Set_GroupAlive(GROUP group, _bool isAlive)
     if (!pGroup)
         return;
 
+    pGroup->Set_Alpha(isAlive ? 1 : 0);
     pGroup->Set_Alive(isAlive);
 }
 
-void CUI_Wipeout::Set_GroupAnimation(GROUP group, _int iIndex)
+_bool CUI_Wipeout::Set_GroupAnimation(GROUP group, _int iIndex)
 {
     auto pGroup = m_pGroups[ENUM(group)];
     if (!pGroup)
-        return;
-     
-    pGroup->Set_Animation(iIndex);
+        return false;
+ 
+    _bool isCheck = { false };
+
+    isCheck |= pGroup->Set_Animation(iIndex);
 
     auto pContainer = pGroup->Get_Component<CObjectContainer>();
     if (!pContainer)
-        return;
+        return isCheck;
 
     for (auto& pChild : pContainer->Get_Children())
     {
         if (auto pUI = dynamic_cast<CUI_Object*>(pChild))
-            pUI->Set_Animation(iIndex);
+            isCheck |= pUI->Set_Animation(iIndex);
     }
+
+    return isCheck;
 }
 
 _bool CUI_Wipeout::Is_GroupAnimationFinished(GROUP group)

@@ -8,8 +8,8 @@ class CUI_Wipeout final : public CUI_RTVDraw
 private:
 	enum class STATE { ACTIVE, DEACTIVATING, INACTIVE, END };
 
-	enum class GROUP { GROUP1, GROUP2, GROUP3, END };
-	inline static const string INSTANCENAMES[ENUM(GROUP::END)] = { "group1", "group2", "group3" };
+	enum class GROUP { GROUP1, GROUP2, GROUP3, GROUP4, GROUP5, END };
+	inline static const string INSTANCENAMES[ENUM(GROUP::END)] = { "group1", "group2", "group3", "group4", "group5" };
 
 private:
 	CUI_Wipeout() {}
@@ -31,14 +31,16 @@ private:
 	GROUP m_eCurrentGroup = { GROUP::END };
 	STATE m_eState = { STATE::END };
 
+	_uint m_iBlinkCount = {};
+
 private:
 	void Cache();
 
 	void Change_State(STATE eState);
-	void Change_Group(GROUP eGroup);
+	_bool Change_Group(GROUP eGroup, _int iIndex = 0);
 
 	void Set_GroupAlive(GROUP group, _bool isAlive);
-	void Set_GroupAnimation(GROUP group, _int iIndex);
+	_bool Set_GroupAnimation(GROUP group, _int iIndex);
 	_bool Is_GroupAnimationFinished(GROUP group);
 
 public:

@@ -85,7 +85,7 @@ void CUI_RTVDraw::Render_RTRecursive(CGameObject* pObj, ID3D11DeviceContext* pCo
             pSprite->Set_Param("g_ViewMatrix", { &m_ViewMatrix, "matrix", sizeof(_float4x4) });
             pSprite->Set_Param("g_ProjMatrix", { &m_ProjMatrix, "matrix", sizeof(_float4x4) });
             pSprite->Apply_Shader(pContext);
-            pSprite->Set_Param("vColor", { &m_vColor, "float4", sizeof(_float4) });
+            pSprite->Set_Param("vColor", { dynamic_cast<CUI_Object*>(pObj)->Get_LinearColorPtr(), "float4", sizeof(_float4)});
 
             pShader->Apply(strCustomPassConstant, pContext);
             pSprite->Draw_Sprite(pContext);
