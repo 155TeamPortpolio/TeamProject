@@ -80,6 +80,8 @@ void CUI_RTVDraw::Render_RTRecursive(CGameObject* pObj, ID3D11DeviceContext* pCo
                 strCustomPassConstant = "Opaque_StencilTest_Custom";
             else if (strPassConstant == "UVAnimation_StencilTest")
                 strCustomPassConstant = "UVAnimation_StencilTest_Custom";
+            else if (strPassConstant == "SoftDirectionalOutline")
+                strCustomPassConstant = "SoftDirectionalOutline_Custom";
 
             RenderSystem()->GetRenderer(RENDERER_TYPE::UI)->Get_BufferInputLayout(pSprite->Get_Buffer(), pShader, strCustomPassConstant, &pLayout);
             pContext->IASetInputLayout(pLayout);

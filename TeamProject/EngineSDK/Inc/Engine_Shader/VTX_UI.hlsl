@@ -702,6 +702,16 @@ technique11 DefaultTechnique
         PixelShader    = compile ps_5_0 PS_MAIN();
     }
 
+    pass SoftDirectionalOutline_Custom
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_Premultiplied, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN_CUSTOM();
+        GeometryShader = compile gs_5_0 GS_MAIN_CUSTOM();
+        PixelShader = compile ps_5_0 PS_SOFTDIRECTIONALOUTLINE();
+    }
+
     pass StencilWrite_Custom
     {
         SetRasterizerState(RS_Default);
