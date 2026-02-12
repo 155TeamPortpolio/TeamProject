@@ -1092,12 +1092,7 @@ HRESULT CMiyabi::Update_MotionBlurQueue()
 	for (_int k = m_BoneMatrices.size() - 1; k >= 0; --k)
 	{
 		_float t = (_float)k / (_float)(m_BoneMatrices.size() - 1);
-		_float4 vColor;
-		vColor.x = 0.0f;
-		vColor.y = 0.15f + (0.35f * t);
-		vColor.z = 0.4f + (0.6f * t);
-		vColor.w = 0.05f + (0.6f * t);
-
+		_vector4 vColor = { m_vRimLightColor.x, m_vRimLightColor.y, m_vRimLightColor.z, 0.5f };
 		for (_int i = 0; i < Model->Get_MeshCount(); ++i)
 		{
 			if (Model->isDrawable(i) == false) continue;
