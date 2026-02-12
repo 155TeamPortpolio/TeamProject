@@ -164,8 +164,8 @@ void CBattleFXFlow::Cancel()
 
 void CBattleFXFlow::StartVfx(BATTLE_VFX_TYPE vfxType)
 {
-	if (m_BattleVFX.isRunning)
-		return;
+	//if (m_BattleVFX.isRunning)
+	//	return;
 
 	auto& preset = m_BattleVFXData[ENUM(vfxType)];
 
