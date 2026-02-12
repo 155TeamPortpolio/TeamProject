@@ -51,7 +51,7 @@ void CBattleSystem::Update()
 
 	if(InputDevice()->Key_Tap(VK_SHIFT))
 	{
-		StartGimmick(BATTLE_VFX_TYPE::EVADE);
+		StartGimmick(BATTLE_VFX_TYPE::WIPEOUT);
 	}
 	if(InputDevice()->Key_Tap(VK_CONTROL))
 	{

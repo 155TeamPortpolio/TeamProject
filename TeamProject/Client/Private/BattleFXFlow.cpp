@@ -65,7 +65,7 @@ void CBattleFXFlow::Initialize_Preset()
 
 	{
 		auto& WipeOut = m_BattleVFXData[ENUM(BATTLE_VFX_TYPE::WIPEOUT)];
-		const _float duration = 4.5f;
+		const _float duration = 5.5f;
 		WipeOut.bCanIntersect = false;
 		WipeOut.fVFXDuration = duration;
 		WipeOut.fBlurDuration = duration;
@@ -330,6 +330,7 @@ void CBattleFXFlow::StartVfx_WipeOut()
 		m_BattleVFX.fCurPos = 0.f;
 		m_BattleVFX.vNowColor = {};
 		m_BattleVFX.isRunning = false;
+		CamDirector()->EndWipeOut();
 		});
 	Start(nullptr);
 }
