@@ -44,17 +44,21 @@ namespace
     {
         return Vector3(sinf(yawRad), 0.f, cosf(yawRad));
     }
+    float MoveTowardsFloat(float cur, float target, float maxDelta)
+    {
+        const float d = target - cur;
+        if (fabsf(d) <= maxDelta) return target;
+        return cur + (d > 0.f ? maxDelta : -maxDelta);
+    }
 }
 
 HRESULT CUI_MeshPyramid::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
-
 	ResourceManager()->Add_ResourcePath("pyramid.model", "../bin/Resources/Global/UI/Model/UI_3DPyramid/pyramid.model");
-	ResourceManager()->Add_ResourcePath("pyramid.mat", "../bin/Resources/Global/UI/Model/UI_3DPyramid/pyramid.mat");
+	ResourceManager()->Add_ResourcePath("pyramid.mat",   "../bin/Resources/Global/UI/Model/UI_3DPyramid/pyramid.mat");
 	Add_Component<CStaticModel>()->Link_Model(G_GlobalLevelKey, "pyramid.model");
 	Add_Component<CMaterial>()->Link_Material(G_GlobalLevelKey, "pyramid.mat");
-
 	return S_OK;
 }
 
@@ -119,7 +123,6 @@ void CUI_MeshPyramid::Update(_float dt)
         const int phase = (int)(m_rt.alertBlinkT / period);
         m_color = (phase & 1) ? m_cfg.red : m_cfg.gray;
     }
-    
 
     OBJECT_HANDLE hChar = BattleSystem()->GetCurCharacterHandle();
     auto charObj = ObjectManager()->Request_Object(hChar);
@@ -127,7 +130,20 @@ void CUI_MeshPyramid::Update(_float dt)
 
     const Vector4 foot4 = charCC->Get_FootPosition();
     Vector3 foot(foot4.x, foot4.y, foot4.z);
-    foot.y += charCC->Get_HalfSize() * 0.5f;
+
+    const float desiredAnchorY = foot.y + charCC->Get_HalfSize() * m_cfg.anchorUpRatio + m_cfg.anchorUpBias;
+
+    if (!m_rt.hasAnchorY)
+    {
+        m_rt.anchorY = desiredAnchorY;
+        m_rt.hasAnchorY = true;
+    }
+    else
+    {
+        const float a = 1.f - expf(-m_cfg.anchorYSmoothSpeed * dt);
+        const float nextY = m_rt.anchorY + (desiredAnchorY - m_rt.anchorY) * a;
+        m_rt.anchorY = MoveTowardsFloat(m_rt.anchorY, nextY, m_cfg.maxAnchorYStepPerFrame);
+    }
 
     const Vector3 targetPos3 = parentObj->Get_WorldPos();
 
@@ -154,7 +170,7 @@ void CUI_MeshPyramid::Update(_float dt)
         m_rt.lastTargetXZ = MoveTowardsVec2(m_rt.lastTargetXZ, targetXZ, m_cfg.maxTargetStepPerFrame);
     }
 
-    const Vector3 stableFoot(m_rt.lastFootXZ.x, foot.y, m_rt.lastFootXZ.y);
+    const Vector3 stableFoot(m_rt.lastFootXZ.x, m_rt.anchorY, m_rt.lastFootXZ.y);
     const Vector3 stableTarget(m_rt.lastTargetXZ.x, targetPos3.y, m_rt.lastTargetXZ.y);
 
     Vector3 dir = stableTarget - stableFoot;
@@ -174,7 +190,6 @@ void CUI_MeshPyramid::Update(_float dt)
         else dir = DirFromYaw(m_rt.hasLastYaw ? m_rt.lastYawRad : 0.f);
     }
 
-    const Vector3 rawPos = stableFoot + dir * m_cfg.ringRadius + Vector3(0.f, m_cfg.yOffset, 0.f);
     const float rawYawRad = atan2f(dir.x, dir.z);
 
     if (!m_rt.hasLastYaw)
@@ -184,10 +199,13 @@ void CUI_MeshPyramid::Update(_float dt)
     }
     else
     {
-        const float a = Math::ExpAlpha(m_cfg.yawSmoothSpeed, dt);
+        const float a = 1.f - expf(-m_cfg.yawSmoothSpeed * dt);
         const float delta = WrapRad(rawYawRad - m_rt.lastYawRad);
         m_rt.lastYawRad = WrapRad(m_rt.lastYawRad + delta * a);
     }
+
+    const Vector3 dirForPos = DirFromYaw(m_rt.lastYawRad);
+    const Vector3 rawPos = stableFoot + dirForPos * m_cfg.ringRadius + Vector3(0.f, m_cfg.yOffset, 0.f);
 
     if (!m_rt.hasSmoothPos)
     {
@@ -196,9 +214,16 @@ void CUI_MeshPyramid::Update(_float dt)
     }
     else
     {
-        const float a = Math::ExpAlpha(m_cfg.posSmoothSpeed, dt);
-        Vector3 nextPos = Vector3::Lerp(m_rt.smoothPos, rawPos, a);
+        Vector3 rawPosXZ = rawPos;
+        rawPosXZ.y = m_rt.smoothPos.y;
+
+        const float a = 1.f - expf(-m_cfg.posSmoothSpeed * dt);
+        Vector3 nextPos = Vector3::Lerp(m_rt.smoothPos, rawPosXZ, a);
         m_rt.smoothPos = MoveTowardsVec3(m_rt.smoothPos, nextPos, m_cfg.maxPosStepPerFrame);
+
+        const float ay = 1.f - expf(-m_cfg.ySmoothSpeed * dt);
+        const float nextY = m_rt.smoothPos.y + (rawPos.y - m_rt.smoothPos.y) * ay;
+        m_rt.smoothPos.y = MoveTowardsFloat(m_rt.smoothPos.y, nextY, m_cfg.maxYStepPerFrame);
     }
 
     auto tf = Get_Component<CTransform>();
@@ -207,6 +232,8 @@ void CUI_MeshPyramid::Update(_float dt)
     const Quaternion q = Quaternion::CreateFromYawPitchRoll(m_rt.lastYawRad, m_cfg.basePitchRad, 0.f);
     tf->Set_WorldQuaternion(Vector4(q.x, q.y, q.z, q.w));
 }
+
+
 
 _bool CUI_MeshPyramid::IsOnScreen(_float marginPx)
 {
@@ -258,22 +285,22 @@ _bool CUI_MeshPyramid::IsOnScreen(_float marginPx)
 
 CGameObject* CUI_MeshPyramid::Create()
 {
-	CUI_MeshPyramid* pInstance = new CUI_MeshPyramid;
-	if (FAILED(pInstance->Initialize_Prototype()))
+	auto inst = new CUI_MeshPyramid;
+	if (FAILED(inst->Initialize_Prototype()))
 	{
 		MSG_BOX("Failed to Create : CUI_MeshPyramid");
-		Safe_Release(pInstance);
+		Safe_Release(inst);
 	}
-	return pInstance;
+	return inst;
 }
 
 CGameObject* CUI_MeshPyramid::Clone(INIT_DESC* pArg)
 {
-	CUI_MeshPyramid* pInstance = new CUI_MeshPyramid(*this);
-	if (FAILED(pInstance->Initialize(pArg)))
+	auto inst = new CUI_MeshPyramid(*this);
+	if (FAILED(inst->Initialize(pArg)))
 	{
 		MSG_BOX("Failed to Clone : CUI_MeshPyramid");
-		Safe_Release(pInstance);
+		Safe_Release(inst);
 	}
-	return pInstance;
+	return inst;
 }
