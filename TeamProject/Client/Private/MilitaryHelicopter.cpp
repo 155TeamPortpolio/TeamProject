@@ -6,6 +6,7 @@
 #include "SkeletalModel.h"
 #include "ModelData.h"
 #include "Material.h"
+#include "AudioSource.h"
 
 CMilitaryHelicopter::CMilitaryHelicopter()
     : CAmbientActor()
@@ -23,15 +24,14 @@ HRESULT CMilitaryHelicopter::Initialize_Prototype()
 
     auto pResource = ResourceManager();
 
-    pResource->Add_ResourcePath("Device_Vehicle_MilitaryHelicopter_01out.model", "../Bin/Resources/Scott/Map/AnimationModel/MilitaryHelicopter/Device_Vehicle_MilitaryHelicopter_01out.model");
-    pResource->Add_ResourcePath("Device_Vehicle_MilitaryHelicopter_01out.mat", "../Bin/Resources/Scott/Map/AnimationModel/MilitaryHelicopter/Device_Vehicle_MilitaryHelicopter_01out.mat");
+    pResource->Add_ResourcePath("Device_Vehicle_MilitaryHelicopter_01out.model", "../Bin/Resources/Scott/AmbientActor/MilitaryHelicopter/Device_Vehicle_MilitaryHelicopter_01out.model");
+    pResource->Add_ResourcePath("Device_Vehicle_MilitaryHelicopter_01out.mat", "../Bin/Resources/Scott/AmbientActor/MilitaryHelicopter/Device_Vehicle_MilitaryHelicopter_01out.mat");
     pResource->Add_ResourcePath("Device_Vehicle_MilitaryHelicopter_01out_Meta.json", "../Bin/Resources/Scott/Device_Vehicle_MilitaryHelicopter_01_Meta.json");
 
     auto pModel = Get_Component<CSkeletalModel>();
     pModel->Link_Model("Scott_Level", "Device_Vehicle_MilitaryHelicopter_01out.model");
     auto pMaterial = Get_Component<CMaterial>();
     pMaterial->Link_Material("Scott_Level", "Device_Vehicle_MilitaryHelicopter_01out.mat");
-
 
     return S_OK;
 }
@@ -57,6 +57,9 @@ void CMilitaryHelicopter::Awake()
     pAnimator->Set_Animation(m_AnimName)
         .Loop(true)
         .Apply();
+
+    Get_Component<CAudioSource>()->SoundFolder("Scott_Level", "../Bin/Resources/Scott/AmbientActor/MilitaryHelicopter/Sound/");
+    Get_Component<CAudioSource>()->Slot("Helicopter.wav").Attribute3D(true).Loop(true).Play();
 }
 
 void CMilitaryHelicopter::Priority_Update(_float dt)
@@ -66,6 +69,7 @@ void CMilitaryHelicopter::Priority_Update(_float dt)
 void CMilitaryHelicopter::Update(_float dt)
 {
     Get_Component<CAnimator3D>()->Update_Animation(dt);
+    //Get_Component<CAudioSource>()->
 }
 
 void CMilitaryHelicopter::Late_Update(_float dt)

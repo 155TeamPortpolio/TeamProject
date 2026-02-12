@@ -391,7 +391,7 @@ void CMiasmaHeavyJaeger::MoveByAnim(_float dt, _float moveScale)
 
 void CMiasmaHeavyJaeger::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER charaName)
 {
-	BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::HIT);
+	BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::HIT_NORMAL);
 }
 
 HRESULT CMiasmaHeavyJaeger::Initialize_StateMachine()

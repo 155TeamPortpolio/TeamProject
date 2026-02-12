@@ -51,8 +51,8 @@ HRESULT CDefilerWeapon::Initialize(INIT_DESC* pArg)
 	Get_Component<CCollider>()->Set_CollisionGroup(COLLISION_GROUP::MONSTER);
 	Get_Component<CCollider>()->Set_Trigger(true);
 	Get_Component<CRigidBody>()->Set_Kinematic(true);
-	Get_Component<CAudioSource>()->SoundFolder("Zero_Level", "../Bin/Resources/Zero/Enemy/Defiler_Weapon/Sound/");
-	
+	Get_Component<CAudioSource>()->SoundFolder("Zero_Level", "../Bin/Resources/Zero/Enemy/Defiler_Isolde/Sound/");
+
 	m_vRimLightColor = _float3(0.378, 0.029, 0.070);
 	m_fRimLightPower = 4.f;
 	m_fDissolveTilling = 6.f;
