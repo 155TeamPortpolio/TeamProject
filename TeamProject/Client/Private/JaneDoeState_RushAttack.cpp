@@ -117,6 +117,7 @@ void CJaneDoeState_RushAttack::Update(CJaneDoe* pOwner, _float dt)
 
 void CJaneDoeState_RushAttack::Exit(CJaneDoe* pOwner)
 {
+    pOwner->Set_ResetMove(true);
     __super::Exit(pOwner);
 }
 
