@@ -31,7 +31,6 @@ public:
     vector<CAnimationClip*>* Get_Clips();
     vector<ANIM_LAYER>& Get_AnimLayers();
 
-
 public:
     string& Get_AnimPath() { return m_AnimPath; }
     string m_AnimPath{};
