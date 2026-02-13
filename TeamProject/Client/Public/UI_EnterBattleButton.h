@@ -6,6 +6,10 @@ NS_BEGIN(Client)
 class CUI_EnterBattleButton final : public CUI_Object
 {
 private:
+	enum class CHILD { BUTTON, OVERLAY, LABEL, END };
+	inline static const string INSTANCENAMES[ENUM(CHILD::END)] = { "button", "overlay", "label" };
+
+private:
 	CUI_EnterBattleButton() {}
 	CUI_EnterBattleButton(const CUI_EnterBattleButton& rhs) : CUI_Object(rhs) {}
 	virtual ~CUI_EnterBattleButton() DEFAULT;
@@ -20,6 +24,14 @@ public:
 	virtual void    Render_GUI()                     override { __super::Render_GUI(); }
 
 private:
+	_bool m_isClicked = {};
+	CUI_Object* m_pChildren[ENUM(CHILD::END)] = {};
+
+private:
+	void Cache();
+
+	void Set_ChildAnimation(CHILD child, _int iIndex);
+	_bool Is_ChildAnimationFinished(CHILD child);
 
 public:
 	static  CGameObject* Create();
