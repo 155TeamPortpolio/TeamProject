@@ -1352,7 +1352,7 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Env\Water">
       <UniqueIdentifier>{eb2a971f-d7e0-4f0e-8386-8a49c973a9aa}</UniqueIdentifier>
-          </Filter>
+    </Filter>
     <Filter Include="02. GameObject\Object\Enemy\Boss\Defiler\State\OtherState">
       <UniqueIdentifier>{7070f4d4-6cda-4ac4-b714-abd5e747e09d}</UniqueIdentifier>
     </Filter>
@@ -1364,6 +1364,21 @@
     </Filter>
     <Filter Include="02. GameObject\UI\03. UIElement\SoftDirectionalOutline">
       <UniqueIdentifier>{63f153cc-8109-4433-beba-fef1b7722042}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\BattleLineup">
+      <UniqueIdentifier>{e5501893-5332-4c0a-865e-adb30f047d16}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\BattleLineup\EnterButton">
+      <UniqueIdentifier>{2a65ae1a-2d15-4aea-aaec-25a549666d32}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\BattleLineup\ElementalResonance">
+      <UniqueIdentifier>{5bc53c96-2a5a-4d7e-aea1-9926556f894f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\BattleLineup\LineupCard">
+      <UniqueIdentifier>{7605a7fe-becb-4841-9804-281139893668}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\BattleLineup\LineupCard\RenderTarget">
+      <UniqueIdentifier>{f31daf48-a890-4c4a-accc-00c9ad3a488d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -2623,7 +2638,7 @@
     </ClInclude>
     <ClInclude Include="..\public\WaterWave.h">
       <Filter>02. GameObject\Object\Env\WaterWave</Filter>
-          </ClInclude>
+    </ClInclude>
     <ClInclude Include="..\Public\DefilerState_Other.h">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler\State\OtherState</Filter>
     </ClInclude>
@@ -2635,6 +2650,21 @@
     </ClInclude>
     <ClInclude Include="..\Public\SoftDirectionalOutlineUI.h">
       <Filter>02. GameObject\UI\03. UIElement\SoftDirectionalOutline</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_BattleLineup.h">
+      <Filter>02. GameObject\UI\01. 2D\BattleLineup</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_EnterBattleButton.h">
+      <Filter>02. GameObject\UI\01. 2D\BattleLineup\EnterButton</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_ElementalResonance.h">
+      <Filter>02. GameObject\UI\01. 2D\BattleLineup\ElementalResonance</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_BattleLineupCard.h">
+      <Filter>02. GameObject\UI\01. 2D\BattleLineup\LineupCard</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_BattleLineupCardRT.h">
+      <Filter>02. GameObject\UI\01. 2D\BattleLineup\LineupCard\RenderTarget</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -3853,7 +3883,7 @@
     </ClCompile>
     <ClCompile Include="..\private\WaterWave.cpp">
       <Filter>02. GameObject\Object\Env\WaterWave</Filter>
-          </ClCompile>
+    </ClCompile>
     <ClCompile Include="..\Private\DefilerState_Other.cpp">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler\State\OtherState</Filter>
     </ClCompile>
@@ -3865,6 +3895,21 @@
     </ClCompile>
     <ClCompile Include="..\Private\SoftDirectionalOutlineUI.cpp">
       <Filter>02. GameObject\UI\03. UIElement\SoftDirectionalOutline</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_BattleLineup.cpp">
+      <Filter>02. GameObject\UI\01. 2D\BattleLineup</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_EnterBattleButton.cpp">
+      <Filter>02. GameObject\UI\01. 2D\BattleLineup\EnterButton</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_ElementalResonance.cpp">
+      <Filter>02. GameObject\UI\01. 2D\BattleLineup\ElementalResonance</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_BattleLineupCard.cpp">
+      <Filter>02. GameObject\UI\01. 2D\BattleLineup\LineupCard</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_BattleLineupCardRT.cpp">
+      <Filter>02. GameObject\UI\01. 2D\BattleLineup\LineupCard\RenderTarget</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
