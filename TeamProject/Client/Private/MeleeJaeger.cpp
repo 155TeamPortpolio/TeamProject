@@ -242,6 +242,9 @@ void CMeleeJaeger::Render_GUI()
 	if (ImGui::Button("Break Shield"))
 		m_pShield->TakeDamage(DAMAGE_TYPE::NORMAL, 1000, {});
 
+	_float fDeathDisappearProgress = m_pStateMachine->Get_Float("DeathDisappearProgress");
+	if (ImGui::DragFloat("DeathDisappearProgress", &fDeathDisappearProgress, 0.01f))
+		m_pStateMachine->Set_Float("DeathDisappearProgress", fDeathDisappearProgress);
 
 	ImGui::PopID();
 }

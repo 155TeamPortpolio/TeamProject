@@ -218,6 +218,9 @@ void CClaymore::Render_GUI()
 	ImGui::Checkbox("Auto Pattern", &m_isAutoPatternPlay);
 #pragma endregion
 
+	_float fDeathDisappearProgress = m_pStateMachine->Get_Float("DeathDisappearProgress");
+	if (ImGui::DragFloat("DeathDisappearProgress", &fDeathDisappearProgress, 0.01f))
+		m_pStateMachine->Set_Float("DeathDisappearProgress", fDeathDisappearProgress);
 
 
 	ImGui::PopID();

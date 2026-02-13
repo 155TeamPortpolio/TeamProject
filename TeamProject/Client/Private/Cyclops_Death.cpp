@@ -2,6 +2,8 @@
 #include "Cyclops.h"
 #include "Cyclops_Death.h"
 #include "Helper_Func.h"
+#include "GameInstance.h"
+#include "EffectContainer.h"
 
 #include "Animator3D.h"
 #include "CharacterController.h"
@@ -22,6 +24,8 @@ void CCyclops_Death::Enter(CCyclops* pOwner)
 	}
 	else
 		m_pSubStateMachine->Change_State("DeathFront");
+
+	pOwner->Active_Vanish();
 }
 
 void CCyclops_Death::Update(CCyclops* pOwner, _float dt)
@@ -35,8 +39,22 @@ void CCyclops_Death::Update(CCyclops* pOwner, _float dt)
 
 	__super::Update(pOwner, dt);
 
-	if (m_fAnimProgress > 0.99f)
+	pOwner->Update_DeathSquence(dt);
+	// Check
+	_float fAnimProgress = pOwner->GetStateMachine()->Get_Float("DeathDisappearProgress");
+	if (IsCrossAnimProgress(0.4f))
+	{
+		_vector3 vWorldPosition = pOwner->Get_Component<CTransform>()->Get_WorldPos();
+		vWorldPosition.y += 1.f;
+
+		auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("enemy_dead.json")
+			.Position(vWorldPosition)
+			.Build("Enemy_Dead");
+
+		ObjectManager()->Add_Object(effect, { pOwner->Get_Level(),"Enemy_Effect_Layer" });
 		pOwner->Death();
+	}
 }
 
 void CCyclops_Death::Exit(CCyclops* pOwner)

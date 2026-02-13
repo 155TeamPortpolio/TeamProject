@@ -665,6 +665,9 @@ void CEnemy::SetAutoPlayBattleCollider(const string& tagBattleCollider, _float f
 void CEnemy::RequestRemoveOnDeathToBattleSystem()
 {
 	BattleSystem()->ExitBattleObject(CBattleSystem::BATTLE_OBJ_TYPE::MONSTER, this->Get_Handle());
+
+	if (true == m_hUIEnemyStatus.isValid())
+		UIManager()->Remove_UIObject(m_hUIEnemyStatus.Get());
 }
 
 void CEnemy::Death()
