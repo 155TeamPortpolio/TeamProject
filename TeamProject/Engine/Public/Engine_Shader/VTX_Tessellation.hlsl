@@ -254,55 +254,94 @@ DS_OUT DS_TESS(PatchConstant pc, float3 bary : SV_DomainLocation, const OutputPa
 float4 PS_TESS(DS_OUT In) : SV_TARGET
 {
     float3 viewDir = normalize(vCamPosition.xyz - In.vWorldPos.xyz);
-    float3 lightDir = normalize(float3(0.3, 1.0, -0.3));
     float h = In.fHeightPct;
+    float foam = In.fFoamMask;
+
+    // ── 메쉬 UV 텍스처 ──────────────────────────────────────────
+    float2 meshUV = In.vTexcoord;
+    float2 worldOffset = In.vWorldPos.xz * 0.001;
+
+    float2 uv1 = meshUV * 0.5 + worldOffset + float2(g_Time * 0.02, g_Time * 0.05);
+    float2 uv2 = meshUV * 0.8 + worldOffset * 1.3 - float2(g_Time * 0.03, g_Time * 0.06);
+    float2 uv3 = meshUV * 1.5 + worldOffset * 0.7 + float2(g_Time * 0.04, -g_Time * 0.03);
+    float2 uv4 = meshUV * 0.25 + worldOffset * 0.5 + float2(g_Time * 0.01, g_Time * 0.02);
+
+    float tex1 = DiffuseTexture.Sample(LinearSampler, uv1).r;
+    float tex2 = DiffuseTexture.Sample(LinearSampler, uv2).r;
+    float tex3 = LightTexture.Sample(LinearSampler, uv3).r;
+    float tex4 = DiffuseTexture.Sample(LinearSampler, uv4).r;
+    float tex5 = NormalTexture.Sample(LinearSampler, uv1 * 1.5 + 0.3).r;
+    float tex6 = MetalnessTexture.Sample(LinearSampler, uv2 * 0.7 + 0.5).r;
+
+    // ── 노멀 마스크 (보조 역할만) ───────────────────────────────
+    float flatness = saturate(In.vNormal.y);
+    float curlMask = 1.0 - flatness;
+    curlMask = smoothstep(0.3, 0.8, curlMask);
 
 
-    float2 worldUV = In.vWorldPos.xz;
-    float2 uv1 = worldUV * 0.01 + float2(g_Time * 0.08, g_Time * 0.05);
-    float2 uv2 = worldUV * 0.018 - float2(g_Time * 0.06, g_Time * 0.1);
 
+    // 흐름 패턴 A: 큰 스케일의 밝고 어두운 영역
+    float flowA = tex1 * 0.5 + tex4 * 0.5;
 
-    float pattern1 = DiffuseTexture.Sample(LinearSampler, uv1).r;
-    float pattern2 = DiffuseTexture.Sample(LinearSampler, uv2).r;
+    // 흐름 패턴 B: 중간 스케일
+    float flowB = tex2 * 0.6 + tex5 * 0.4;
 
-    float patternBig = DiffuseTexture.Sample(LinearSampler, worldUV * 0.004 + g_Time * 0.02).r;
+    // 흐름 패턴 C: 작은 디테일
+    float flowC = tex3 * 0.5 + tex6 * 0.5;
 
-    float pattern = (pattern1 + pattern2) * 0.5;
+    // 메인 흐름: A와 B를 곱해서 겹치는 부분만 밝게
+    float mainFlow = flowA * flowB;
+    // 0~1 → 리맵: 어두운 쪽은 날리고 밝은 쪽을 키움
+    mainFlow = smoothstep(0.15, 0.55, mainFlow);
 
-    float2 n1 = NormalTexture.Sample(LinearSampler, uv1 * 1.5).rg * 2.0 - 1.0;
-    float2 n2 = MetalnessTexture.Sample(LinearSampler, uv2).rg * 2.0 - 1.0;
-    float3 combinedNormal = normalize(In.vNormal + float3(n1.x + n2.x * 0.6, 0.0, n1.y + n2.y * 0.6) * 0.3);
+    // 디테일 흐름: 작은 줄기
+    float detailFlow = flowA * flowC;
+    detailFlow = smoothstep(0.2, 0.5, detailFlow);
 
+    // 넓은 명암 (전체적인 밝고 어두운 영역)
+    float broadShade = smoothstep(0.25, 0.65, flowA);
 
-    float3 colorDark = float3(0.015, 0.001, 0.012);
-    float3 colorBright = float3(0.12, 0.008, 0.08);
+    // ── 최종 밝기 마스크 (텍스처 기반 + 노멀 보조) ────────────────
+    // 텍스처가 80%, 노멀이 20%
+    float brightMask = mainFlow * 0.6 + detailFlow * 0.2 + curlMask * 0.2;
+    brightMask = saturate(brightMask);
 
-    float blend = h * 0.6 + pattern * 0.4;
-    float3 baseColor = lerp(colorDark, colorBright, blend);
+    // 베이스: 검정이 아닌 어두운 마룬/자주 (레퍼런스의 기본 톤)
+    // 톤매핑 후 아주 어두운 마젠타가 됨
+    float3 colorDark = float3(0.008, 0.001, 0.006);
+    float3 colorMaroon = float3(0.025, 0.003, 0.018); 
+    float3 colorMid = float3(0.08, 0.008, 0.055);
 
-    baseColor *= (0.4 + pattern * 0.9);
+    // 넓은 명암으로 베이스 색 결정
+    float3 baseColor = lerp(colorDark, colorMaroon, broadShade);
 
-    baseColor *= (0.6 + patternBig * 0.6);
+    // 흐름 패턴으로 중간톤 영역 추가
+    baseColor = lerp(baseColor, colorMid, mainFlow * 0.5);
 
+    // 디테일 줄기로 약간 더 밝은 라인
+    baseColor += float3(0.03, 0.003, 0.02) * detailFlow * 0.4;
 
-    float foam = LightTexture.Sample(LinearSampler, uv1 * 0.5).r;
-    float glowMask = foam * smoothstep(0.6, 0.9, h);
-    glowMask = smoothstep(0.5, 0.85, glowMask);
+    float3 glowColor = float3(0.8, 0.05, 0.55); // 밝은 마젠타
+    float3 glowHot = float3(2.0, 0.15, 1.4); // 핫 핑크 (가장 밝은 곳)
 
-    float3 glowColor = float3(0.35, 0.05, 0.25);
-    float3 finalColor = baseColor + glowColor * glowMask * 0.4;
+    // 밝기 마스크가 높은 곳에 발광
+    float glowIntensity = smoothstep(0.3, 0.8, brightMask);
+    float3 glow = lerp(glowColor, glowHot, glowIntensity);
+    baseColor += glow * glowIntensity;
 
-    float fresnel = pow(1.0 - saturate(dot(combinedNormal, viewDir)), 4.0);
-    finalColor += float3(0.05, 0.002, 0.035) * fresnel * h;
+    // 컬 영역에서 추가 부스트 (노멀이 기울어진 곳 + 텍스처 밝은 곳)
+    float curlBoost = curlMask * mainFlow;
+    baseColor += float3(0.5, 0.03, 0.35) * curlBoost;
 
-    float3 reflDir = reflect(-lightDir, combinedNormal);
-    float spec = pow(saturate(dot(reflDir, viewDir)), 80.0);
-    finalColor += float3(0.15, 0.03, 0.10) * spec * 0.08 * h;
+    // ── 프레넬 ──────────────────────────────────────────────────
+    float NdotV = saturate(dot(In.vNormal, viewDir));
+    float fresnel = pow(1.0 - NdotV, 3.0);
+    baseColor += float3(0.1, 0.005, 0.07) * fresnel * brightMask * 0.3;
 
-    finalColor *= smoothstep(0.0, 0.2, h);
+    // ── 높이 페이드 ─────────────────────────────────────────────
+    baseColor *= smoothstep(0.0, 0.08, h);
 
-    return float4(finalColor, 1.0);
+    return float4(baseColor, 1.0);
 }
 // ================================================================================================
 // Technique
