@@ -44,15 +44,41 @@ HRESULT CMiasmaBlade::Initialize(INIT_DESC* pArg)
 	m_isParryEnable = true;
 	isParried = false;
 
-	Get_Component<CCollider>()->Set_CollisionMask(ENUM(COLLISION_GROUP::PLAYER) |
-		ENUM(COLLISION_GROUP::PLAYER_ATTACK));
+	Get_Component<CCollider>()->Set_CollisionMask(ENUM(COLLISION_GROUP::PLAYER) |ENUM(COLLISION_GROUP::PLAYER_ATTACK));
 	Get_Component<CCollider>()->Set_CollisionGroup(COLLISION_GROUP::MONSTER);
+
 	Get_Component<CCollider>()->Set_Trigger(false);
-	Get_Component<CRigidBody>()->Set_Kinematic(true);
+	Get_Component<CRigidBody>()->Set_Kinematic(false);
+	Get_Component<CRigidBody>()->Set_Gravity(false);
+	Get_Component<CRigidBody>()->Set_CCD(true);
+
 	m_pTransform->LookAt(_vector3(desc->vTargetPos));
 	m_vVelocity = { 0,0,0 };
-	m_vTargetVelocity = m_pTransform->Dir(STATE::LOOK) * 35;
+	m_vTargetVelocity = m_pTransform->Dir(STATE::LOOK) * m_fMoveSpeed;
 	m_ElapsedTime = 0;
+
+	{
+		BATTLE_COLLIDER_DESC BladeDesc{};
+
+		BladeDesc.tagName = "AttackCollider";
+		BladeDesc.isAttachBone = false;
+		BladeDesc.tagBone = "";
+		BladeDesc.pOwnerAnimator3D = nullptr;
+		BladeDesc.eAttackColliderType = COLLIDER_TYPE::SPHERE;
+		BladeDesc.vAttackSize = _float3{ 2.5f,2.5f,2.5f };
+
+		if (FAILED(AttachBattleColliderObject(&BladeDesc)))
+			return E_FAIL;
+	}
+
+	HitDesc		HitDesc = {};
+	HitDesc.eHitType = HIT_TYPE::ONCE;
+	HitDesc.eDamageType = DAMAGE_TYPE::NORMAL;
+	HitDesc.fDamage = 10.f;
+	HitDesc.fInterval = 0.f;
+	HitDesc.iMaxCount = 1;
+	SetBattleColliderObject("AttackCollider", CEnemy::BATTLE_COLTYPE::ATTACK, true, HitDesc);
+
 	return S_OK;
 }
 
@@ -62,12 +88,15 @@ void CMiasmaBlade::Awake()
 
 void CMiasmaBlade::Priority_Update(_float dt)
 {
+	Get_Component<CObjectContainer>()->Priority_UpdateChild(dt);
 }
 
 void CMiasmaBlade::Update(_float dt)
 {
 	m_ElapsedTime += dt;
-	m_vVelocity = m_vVelocity.Lerp(m_vVelocity,m_vTargetVelocity, Math::ApplyEase(EaseType::InOutSine, m_ElapsedTime));
+
+	m_vVelocity = m_vVelocity.Lerp(m_vVelocity,m_vTargetVelocity, Math::ApplyEase(EaseType::OutExpo, m_ElapsedTime));
+
 	if (isParried) {
 		_vector3 target_Pos = m_pOwner->Get_BipedPos();
 		_float4 pos =  Get_Position();
@@ -75,18 +104,23 @@ void CMiasmaBlade::Update(_float dt)
 
 		if ((target_Pos - ownPos).Length() < 3.f){
 			m_pOwner->TakeDamage(DAMAGE_TYPE::NORMAL, 10);
+			BattleSystem()->ExitBattleObject(BATTLE_OBJ_TYPE::MONSTER, Get_Handle());
 			ObjectManager()->Remove_Object(this);
 		}
 	}
-	m_pTransform->Translate(m_vVelocity * dt);
+	Get_Component<CRigidBody>()->Set_Velocity(m_vVelocity);
 	Get_Component<CCollider>()->Update(dt);
+	Get_Component<CObjectContainer>()->UpdateChild(dt);
 
-	if (m_ElapsedTime > 10.f)
+	if (m_ElapsedTime > 10.f) {
+		BattleSystem()->ExitBattleObject(BATTLE_OBJ_TYPE::MONSTER, Get_Handle());
 		ObjectManager()->Remove_Object(this);
+	}
 }
 
 void CMiasmaBlade::Late_Update(_float dt)
 {
+	Get_Component<CObjectContainer>()->Late_UpdateChild(dt);
 	Get_Component<CRigidBody>()->Late_Update(dt);
 }
 
@@ -95,43 +129,18 @@ void CMiasmaBlade::Render_GUI()
     __super::Render_GUI();
 }
 
-void CMiasmaBlade::OnPooledAcquire(INIT_DESC* pArg)
-{
-	auto desc = static_cast<BladeDesc*>(pArg);
-	__super::Initialize(desc);
-	m_pOwner = desc->pOwner;
-	m_isOnAttack = true;
-	m_isParryEnable = true;
-	isParried = false;
-
-	Get_Component<CCollider>()->Set_CollisionMask(ENUM(COLLISION_GROUP::PLAYER) |ENUM(COLLISION_GROUP::PLAYER_ATTACK));
-	Get_Component<CCollider>()->Set_CollisionGroup(COLLISION_GROUP::MONSTER);
-	Get_Component<CRigidBody>()->Set_Kinematic(true);
-	Get_Component<CCollider>()->Set_Trigger(false);
-	m_pTransform->LookAt(_vector3(desc->vTargetPos));
-	m_vVelocity = { 0,0,0 };
-	m_ElapsedTime = 0;
-	m_vTargetVelocity = m_pTransform->Dir(STATE::LOOK) * m_fMoveSpeed;
-	Get_Component<CCollider>()->Set_CompActive(true);
-}
-
-void CMiasmaBlade::OnPooledRelease()
-{
-	m_isOnAttack = false;
-	Get_Component<CCollider>()->Set_CompActive(false);
-}
-
 void CMiasmaBlade::Parried()
 {
 	if (m_pOwner) {
 		isParried = true;
 		_vector3 pos = m_pOwner->Get_BipedPos();
-		m_pTransform->LookAt(pos);
+		m_pTransform->LookAt(pos);/*
 		Get_Component<CCollider>()->Set_CollisionMask(ENUM(COLLISION_GROUP::MONSTER));
-		Get_Component<CCollider>()->Set_CollisionGroup(COLLISION_GROUP::PLAYER_ATTACK);
+		Get_Component<CCollider>()->Set_CollisionGroup(COLLISION_GROUP::PLAYER_ATTACK);*/
 		m_vVelocity = {0,0,0};
-		m_ElapsedTime = 0.4;
+		m_ElapsedTime = 0.1;
 		m_vTargetVelocity = m_pTransform->Dir(STATE::LOOK) * m_fMoveSpeed;
+		Get_Component<CRigidBody>()->Set_Velocity(m_vVelocity);
 	}
 }
 
@@ -164,63 +173,4 @@ CGameObject* CMiasmaBlade::Clone(INIT_DESC* pArg)
 void CMiasmaBlade::Free()
 {
 	__super::Free();
-}
-
-void CMiasmaBlade::OnTriggerEnter(CGameObject* pOther)
-{
-	if (isParried) return;
-
-	auto pCollidable = pOther->Get_Component<ICollidable>();
-	if (pCollidable)
-		return;
-
-	else {
-		auto pEnemy = dynamic_cast<CCharacter*>(pOther);
-		if (nullptr != pEnemy)
-		{
-			pEnemy->Take_Damage(DAMAGE_TYPE::NORMAL, 10);
-			CameraManager()->AddImpact(1, 0);
-		}
-	}
-}
-
-void CMiasmaBlade::OnCollisionEnter(CGameObject* pOther)
-{
-	if (isParried) return;
-
-	auto pCollidable = pOther->Get_Component<ICollidable>();
-	if (pCollidable)
-		return;
-
-	else {
-		auto pEnemy = dynamic_cast<CCharacter*>(pOther);
-		if (nullptr != pEnemy)
-		{
-			pEnemy->Take_Damage(DAMAGE_TYPE::NORMAL, 10);
-			CameraManager()->AddImpact(1, 0);
-		}
-	}
-}
-
-void CMiasmaBlade::OnTriggerStay(CGameObject* pOther)
-{
-	auto pCollidable = pOther->Get_Component<ICollidable>();
-	if (pCollidable && (pCollidable->Get_Group() != COLLISION_GROUP::PLAYER))
-		return;
-	if (!Try_Hit(pOther))
-		return;
-
-	// 데미지 주는 코드
-	auto pPlayer = dynamic_cast<CCharacter*>(pOther);
-	if (nullptr != pPlayer)
-	{
-		pPlayer->Take_Damage(DAMAGE_TYPE::NORMAL, 10);
-		CameraManager()->AddImpact(1, 0);
-	}
-}
-
-
-_bool CMiasmaBlade::Try_Hit(CGameObject* pTarget)
-{
-	return true;
 }

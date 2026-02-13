@@ -45,10 +45,10 @@ public:
 public:
     void Hide_MeshGroup(const string& mesh);
     void Show_MeshGroup(const string& mesh);
-
 public:
     void Set_CCTPos(_vector3 pos);
     _float3 Get_BipedPos(const string Bone = {"Bip001"});
+    FOUR_DIR Get_FourDirection();
     void Control_Sound(const string& event);
     void Control_Summon(const string& event);
     void Control_TargetEnable(_bool On);

@@ -8,7 +8,7 @@ void CDefilerState_Groggy::Enter(CDefiler* pOwner)
 	__super::Enter(pOwner);
 	pOwner->ResetAllFlags();
 	DEFILER_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
-	blackBoard.LockRotate = true;
+	blackBoard.TraceType_IgnoreRotation();
 	m_GroggyState = GroggyIn;
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("Monster_IsoldetheDefiler_Ani_Debuff_Stun_Start_Front")
