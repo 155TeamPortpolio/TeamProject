@@ -110,6 +110,10 @@ public:
 public:
 	static CDefilerState_Attack_03* Create() { return new CDefilerState_Attack_03(); }
 	virtual void Free() override { __super::Free(); }
+
+private:
+	void Update_Effects(CDefiler* pOwner);
+
 };
 
 class CDefilerState_Attack_04 : public CDefilerState_Attack
@@ -122,6 +126,10 @@ public:
 public:
 	static CDefilerState_Attack_04* Create() { return new CDefilerState_Attack_04(); }
 	virtual void Free() override { __super::Free(); }
+
+private:
+	void Update_Effects(CDefiler* pOwner);
+
 };
 
 class CDefilerState_Attack_05 : public CDefilerState_Attack

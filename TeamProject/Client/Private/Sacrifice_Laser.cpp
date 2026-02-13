@@ -26,20 +26,6 @@ HRESULT CSacrifice_Laser::Initialize_Prototype()
 	Add_Component<CObjectContainer>();
 	Add_Component<CBoneFollower>();
 
-	/* Effect Asset */
-	ResourceManager()->Add_ResourcePath("laser_start.json", "../Bin/Resources/Effect/Data/laser_start.json");
-	ResourceManager()->Add_ResourcePath("laser4.json", "../Bin/Resources/Effect/Data/laser4.json");
-	ResourceManager()->Add_ResourcePath("laser_hit_point.json", "../Bin/Resources/Effect/Data/laser_hit_point.json");
-
-	/* Textures */
-	ResourceManager()->Add_ResourcePath("laser_core2.png", "../Bin/Resources/Effect/Texture/laser_core2.png");
-	ResourceManager()->Add_ResourcePath("laser_wide.png", "../Bin/Resources/Effect/Texture/laser_wide.png");
-	ResourceManager()->Add_ResourcePath("Eff_Disorder_UU_23.png", "../Bin/Resources/Effect/Texture/Eff_Disorder_UU_23.png");
-	ResourceManager()->Add_ResourcePath("lightning6.png", "../Bin/Resources/Effect/Texture/lightning6.png");
-	ResourceManager()->Add_ResourcePath("Eff_Flare_085.png", "../Bin/Resources/Effect/Texture/Eff_Flare_085.png");
-	ResourceManager()->Add_ResourcePath("Flare_UU_02.png", "../Bin/Resources/Effect/Texture/Flare_UU_02.png");
-	ResourceManager()->Add_ResourcePath("Flare_UU_02.png", "../Bin/Resources/Effect/Texture/Flare_UU_02.png");
-
 	return S_OK;
 }
 

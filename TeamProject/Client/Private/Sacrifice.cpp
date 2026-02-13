@@ -145,9 +145,12 @@ void CSacrifice::Update(_float dt)
 {
 	__super::Update(dt);
 
-	Update_States(dt);
 	m_pStateMachine->Update(dt);
-
+	Update_States(dt);
+	
+	_vector3 vBipPosition = Get_Component<CAnimator3D>()->Get_BonePosition(CAnimator3D::BoneSpace::COMBINED, "Bip001");
+	vBipPosition = _vector3::Transform(vBipPosition, m_pTransform->Get_WorldMatrix());
+	Get_Component<CAudioSource>()->Set_AudioPos(vBipPosition);
 	Get_Component<CAnimator3D>()->Update_Animation(dt);
 	Get_Component<CCharacterController>()->Update(dt);
 }
@@ -320,6 +323,7 @@ void CSacrifice::DeactiveWhip()
 void CSacrifice::SetOverDrive(_bool overdrive)
 {
 	m_IsOverDrive = overdrive;
+
 	if (!m_IsOverDrive)
 		m_fOverDriveElapsedTime = 0.f;
 }
@@ -872,14 +876,14 @@ void CSacrifice::Update_States(_float dt)
 		m_tStatus.iGroggyValue = 99;
 	}
 
-	if (InputDevice()->Key_Tap('O'))
-		m_IsOverDrive = true;
-
 	if (PHASE::PHASE2 == m_eCurrPhase && !m_IsOverDrive)
 	{
 		m_fOverDriveElapsedTime += dt;
 		if (m_fOverDriveElapsedTime >= m_fOverDriveDuration)
+		{
 			m_IsOverDrive = true;
+			m_fOverDriveElapsedTime = 0.f;
+		}
 	}
 
 	/* Idle */

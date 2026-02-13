@@ -144,7 +144,7 @@ void CSacrificeState_Attack_Phase1::BuildPattern(CSacrifice* pOwner)
 		}
 		else
 		{
-			_uint iRandIndex = Helper::Get_Random_Int(0, 2);
+			_uint iRandIndex = Helper::Get_Random_Int(0, 3);
 			switch (iRandIndex)
 			{
 			case 0:
@@ -174,8 +174,8 @@ void CSacrificeState_Attack_Phase1::BuildPattern(CSacrifice* pOwner)
 			}
 		}
 	}
-	//blackBoard.stateQueue.clear();
-	//blackBoard.stateQueue.push_back("Attack03_Phase1");
+	blackBoard.stateQueue.clear();
+	blackBoard.stateQueue.push_back("Attack06_Phase1");
 
 	blackBoard.isRequestNext = true;
 }
@@ -384,9 +384,8 @@ void CSacrificeState_Attack_02_Phase1::Update_Effects(CSacrifice* pOwner)
 
 		static_cast<CEffectContainer*>(effect)->Play();
 
-		_uint randSound = Helper::Get_Random_Int(0, 1);
 		pOwner->Get_Component<CAudioSource>()->Slot("Sacrifice_Sword_Slash0.wav").Attribute3D(true).Loop(false).Play();
-		pOwner->Get_Component<CAudioSource>()->Slot("Sacrifice_Attack_Voice" + to_string(randSound) + ".wav").Attribute3D(true).Loop(false).Play();
+		pOwner->Get_Component<CAudioSource>()->Slot("Sacrifice_Attack_Voice4.wav").Attribute3D(true).Loop(false).Play();
 	}
 }
 
@@ -523,7 +522,10 @@ void CSacrificeState_Attack_04_1_Phase1::Update(CSacrifice* pOwner, _float dt)
 		if (Event.Type != CLIP_EVENT_TYPE::NOTIFY) continue;
 
 		if (Event.Tag == "Start_Attack")
+		{
 			pOwner->UnleashAttack(CEnemy::ATTACK_SIDE::RIGHT);
+			pOwner->Get_Component<CAudioSource>()->Slot("Sacrifice_Attack04.wav").Volume(0.6f).Attribute3D(false).Loop(false).Play();
+		}
 		if (Event.Tag == "Start_Collider")
 		{
 			HitDesc hitDesc{};
@@ -835,6 +837,7 @@ void CSacrificeState_Attack_07_Phase1::Enter(CSacrifice* pOwner)
 {
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("SacrificeBringer_Ani_P1_Attack_07").Loop(false).Speed(1.2f).Apply();
+	pOwner->Get_Component<CAudioSource>()->Slot("Sacrifice_Attack07.wav").Volume(0.7f).Attribute3D(true).Loop(false).Play();
 }
 
 void CSacrificeState_Attack_07_Phase1::Update(CSacrifice* pOwner, _float dt)
@@ -863,8 +866,7 @@ void CSacrificeState_Attack_07_Phase1::Update(CSacrifice* pOwner, _float dt)
 		if (Event.Tag == "Start_Attack")
 		{
 			pOwner->UnleashAttack(CEnemy::ATTACK_SIDE::LEFT);
-			_uint randNum = Helper::Get_Random_Int(0, 4);
-			pOwner->Get_Component<CAudioSource>()->Slot("Sacrifice_Attack_Voice" + to_string(randNum) + ".wav").Attribute3D(false).Loop(false).Play();
+			pOwner->Get_Component<CAudioSource>()->Slot("Sacrifice_Attack_Voice2.wav").Attribute3D(false).Loop(false).Play();
 		}
 		if (Event.Tag == "Start_Collider")
 		{
@@ -923,6 +925,8 @@ void CSacrificeState_Attack_07_Phase1::Update_Effects(CSacrifice* pOwner)
 		ObjectManager()->Add_Object(smokeTrail, { pOwner->Get_Level(),"Effect_Layer" });
 		ObjectManager()->Add_Object(smokeConeTrail, { pOwner->Get_Level(),"Effect_Layer" });
 		ObjectManager()->Add_Object(rushTrail, { pOwner->Get_Level(),"Effect_Layer" });
+
+		
 	}
 }
 
@@ -938,9 +942,7 @@ void CSacrificeState_Attack_08_Phase1::Enter(CSacrifice* pOwner)
 	_vector3 vCurrDir = pOwner->Get_Component<CTransform>()->Dir(STATE::LOOK);
 	_vector3 vTargetPos = pOwner->GetTargetingInfo().vTargetPos;
 	m_vFirstTargetPosition = vTargetPos - vCurrDir * 2.f;
-
-	_uint randNum = Helper::Get_Random_Int(0, 4);
-	pOwner->Get_Component<CAudioSource>()->Slot("Sacrifice_Attack_Voice" + to_string(randNum) + ".wav").Attribute3D(false).Loop(false).Play();
+	pOwner->Get_Component<CAudioSource>()->Slot("Sacrifice_Attack_Voice1.wav").Attribute3D(false).Loop(false).Play();
 }
 
 void CSacrificeState_Attack_08_Phase1::Update(CSacrifice* pOwner, _float dt)
@@ -992,7 +994,7 @@ void CSacrificeState_Attack_08_Phase1::Update_Effects(CSacrifice* pOwner)
 	auto pTransform = pOwner->Get_Component<CTransform>();
 
 	/* Jump Start */
-	if (IsCrossAnimProgress(0.12f))
+	if (IsCrossAnimProgress(0.11f))
 	{
 		_vector3 vBonePosition = pAnimator->Get_BonePosition(CAnimator3D::BoneSpace::COMBINED, "Skn_Finger2_03");
 		vBonePosition = _vector3::Transform(vBonePosition, pTransform->Get_WorldMatrix());
@@ -1011,6 +1013,7 @@ void CSacrificeState_Attack_08_Phase1::Update_Effects(CSacrifice* pOwner)
 		ObjectManager()->Add_Object(pEffect, { pOwner->Get_Level(),"Effect_Layer" });
 		ObjectManager()->Add_Object(pRockParticle, { pOwner->Get_Level(),"Effect_Layer" });
 
+		pOwner->Get_Component<CAudioSource>()->Slot("Sacrifice_Tab_Ground").Volume(0.6f).Attribute3D(true).Loop(false).Play();
 		CameraManager()->AddImpact(ENUM(CamShakeType::HitCrit), ENUM(CamZoomType::HitCrit), 0.75f);
 	}
 

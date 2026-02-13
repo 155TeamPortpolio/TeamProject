@@ -37,7 +37,6 @@ HRESULT CSacrifice_Orb::Initialize(INIT_DESC* pArg)
 	__super::Initialize(pArg);
 
 	auto pRigidBody = Get_Component<CRigidBody>();
-	pRigidBody->Set_Kinematic(true);
 	pRigidBody->Set_Mass(0.000001f);
 	 
 	auto pOrb = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
@@ -85,8 +84,7 @@ void CSacrifice_Orb::Update(_float dt)
 		vTargetDir.Normalize();
 
 		vTargetDir = _vector3::Lerp(vCurrDir, vTargetDir, dt * 5.f);
-		m_pTransform->Set_Look(vTargetDir);
-		m_pTransform->Translate(vTargetDir * m_fSpeed * dt);
+		pRigidBody->Set_Velocity(vTargetDir * m_fSpeed);
 
 		PHYSICS_RAY ray{};
 		PHYSICS_RAY_HIT rayHit{};

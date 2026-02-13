@@ -674,6 +674,7 @@ void CCharacter::Take_Damage(DAMAGE_TYPE eType, _float fDamage)
     // 패링 가능했을때
     if(m_eSwitchType == SWITCH::PARRYAID && m_ParryHandle.isValid())
     {
+        Play_Effect("Parry", _vector3(0.f, 0.5f, 0.4f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
         BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::PARRY);
         m_ParryHandle.GetAs<CEnemy>()->Parried();
     }
@@ -721,6 +722,13 @@ HRESULT CCharacter::Initialize_Effects()
             .Build("Evade");
         pEffect->Stop();
         pEffect->AttachBone(m_pAnimator, "Bip001_Spine");
+        pObjectContainer->Add_Child(pEffect, false);
+    }
+    {
+        auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+            .Asset("parry.json")
+            .Build("Parry");
+        pEffect->Stop();
         pObjectContainer->Add_Child(pEffect, false);
     }
 

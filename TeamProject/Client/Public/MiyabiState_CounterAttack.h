@@ -33,6 +33,10 @@ private:
 public:
     static CMiyabiState_Counter_Start* Create() { return new CMiyabiState_Counter_Start(); }
     virtual void Free() override { __super::Free(); }
+
+private:
+    void Update_Effects(CMiyabi* pOwner);
+
 };
 
 class CMiyabiState_Counter_End : public IBaseState<CMiyabi>

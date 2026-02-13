@@ -742,6 +742,52 @@ HRESULT CDefiler::Initialize_Effects()
 		pObjectContainer->Add_Child(pEffect);
 	}
 
+	/* Flare, Light */
+	{
+		_smatrix offsetMatrix = _smatrix::Identity;
+		offsetMatrix.Translation(_vector3(0.5f, 0.f, 0.f));
+
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("defiler_axe_explode.json")
+			.Build("Defiler_Axe_Explode0");
+		pEffect->Stop();
+		pEffect->AttachBone(pAnimator, "Ctr_M_Weapon_01", offsetMatrix);
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+	{
+		_smatrix offsetMatrix = _smatrix::Identity;
+		offsetMatrix.Translation(_vector3(0.5f, 0.f, 0.f));
+
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("defiler_axe_charge0.json")
+			.Build("Defiler_Axe_Charge0");
+		pEffect->Stop();
+		pEffect->AttachBone(pAnimator, "Ctr_M_Weapon_01", offsetMatrix);
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+	{
+		_smatrix offsetMatrix = _smatrix::Identity;
+		offsetMatrix.Translation(_vector3(0.5f, 0.f, 0.f));
+
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("defiler_axe_light0.json")
+			.Build("Defiler_Axe_Light0");
+		pEffect->Stop();
+		pEffect->AttachBone(pAnimator, "Ctr_M_Weapon_01", offsetMatrix);
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+	{
+		_smatrix offsetMatrix = _smatrix::Identity;
+		offsetMatrix.Translation(_vector3(0.5f, 0.f, 0.f));
+
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("defiler_axe_light1.json")
+			.Build("Defiler_Axe_Light1");
+		pEffect->Stop();
+		pEffect->AttachBone(pAnimator, "Ctr_M_Weapon_01", offsetMatrix);
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+
 	return S_OK;
 }
 
