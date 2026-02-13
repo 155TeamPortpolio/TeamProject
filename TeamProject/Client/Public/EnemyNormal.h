@@ -19,7 +19,7 @@ protected:
 public:
     virtual HRESULT Initialize_Prototype() override;
     virtual HRESULT Initialize(INIT_DESC* pArg) override;
-    virtual void    Priority_Update(_float dt) override {};
+    virtual void    Priority_Update(_float dt) override;
     virtual void    Update(_float dt) override;
     virtual void    Late_Update(_float dt) override;
 
@@ -32,6 +32,7 @@ protected:
 
 protected:
     ROT_DIR         m_tRotDir = {};
+    _bool           m_isStop = { false };
 
 protected:
     virtual void Free() override;

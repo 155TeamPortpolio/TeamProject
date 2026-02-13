@@ -126,6 +126,21 @@ void CThugBulkyEnforcer::Render_GUI()
 	const float textLineHeight = ImGui::GetTextLineHeightWithSpacing();
 	const float childHeight = (textLineHeight * 5) + (ImGui::GetStyle().WindowPadding.y * 2);
 
+	if (ImGui::Button(u8"그로기 수치 증가##DebugButton"))
+		m_tStatus.iGroggyValue += 30;
+
+	if (ImGui::Button("Hit##DebugButton"))
+		TakeDamage(DAMAGE_TYPE::NORMAL, 20.f);
+
+	if (ImGui::Button(u8"패링 (공격 시)##DebugButton"))
+		Parried();
+
+	if (ImGui::Button(u8"즉사##DebugButton"))
+		m_tStatus.iNowHP -= m_tStatus.iMaxHP;
+
+	if (ImGui::Button(u8"몬스터 HP 회복##DebugButton"))
+		m_tStatus.iNowHP = m_tStatus.iMaxHP;
+
 #pragma region Component Inspector
 	if (ImGui::TreeNode("Inspector##ThugBulkyInspector")) {
 		__super::Render_GUI();

@@ -102,10 +102,6 @@ void CMeleeJaeger::Update(_float dt)
 	Update_States(dt);
 	m_pStateMachine->Update(dt);
 
-	if (m_isStop)
-		ObjectManager()->Set_LayerTimeScale({ LevelManager()->Get_NowLevelKey(), "Enemy_Layer" }, 0);
-	else
-		ObjectManager()->Set_LayerTimeScale({ LevelManager()->Get_NowLevelKey(), "Enemy_Layer" }, 1);
 
 }
 
@@ -123,6 +119,8 @@ void CMeleeJaeger::Render_GUI()
 	float childWidth = ImGui::GetContentRegionAvail().x;
 	const float textLineHeight = ImGui::GetTextLineHeightWithSpacing();
 	const float childHeight = (textLineHeight * 5) + (ImGui::GetStyle().WindowPadding.y * 2);
+
+	GUI_DebugButton();
 
 #pragma region Component Inspector
 	if (ImGui::TreeNode("Inspector##ThugBulkyInspector")) {
