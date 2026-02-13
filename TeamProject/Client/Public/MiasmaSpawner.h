@@ -12,6 +12,7 @@ public:
 public:
 	_float3 ComputeArcSpawnPos(const _float3& ownerPos, const _float3& targetPos, _float minRadius, _float maxRadius, _float arcDegrees, _float yFixed);
 	_float3 ComputeParabolarPos(const _float3& ownerPos, const _float3& targetPos);
+	_float3 ComputeCircular(const _float3& centerPos,_float radius);
 
 private:
 	_bool m_parabolLeft = {};
