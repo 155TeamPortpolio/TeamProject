@@ -51,15 +51,18 @@ void CAnimToolPanel::Update_Panel(_float dt)
 
 		_float Cur = m_pSelectAnimator->Get_AnimLayers()[0].fCurrentTrackPosition;
 		_float Prev = m_pSelectAnimator->Get_AnimLayers()[0].fPrevTrackPosition;
-
-		for (auto& Event : m_AnimClip[m_iCurClipIndex].Events) {
-			if (Prev < Event.EventTime && Event.EventTime <= Cur){
-				if (Event.EventType == CLIP_EVENT_TYPE::SOUND) {
-					auto AS = m_pSelectModel->Get_Component<CAudioSource>();
-					if(AS) AS->Play(Event.EventTag);
+		if (m_iCurClipIndex != -1)
+		{
+			for (auto& Event : m_AnimClip[m_iCurClipIndex].Events) {
+				if (Prev < Event.EventTime && Event.EventTime <= Cur) {
+					if (Event.EventType == CLIP_EVENT_TYPE::SOUND) {
+						auto AS = m_pSelectModel->Get_Component<CAudioSource>();
+						if (AS) AS->Play(Event.EventTag);
+					}
 				}
 			}
 		}
+
 	}
 	return;
 
