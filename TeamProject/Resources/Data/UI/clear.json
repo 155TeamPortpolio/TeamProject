@@ -140,7 +140,7 @@
                 1.0,
                 1.0,
                 1.0,
-                0.8627451062202454
+                0.7843137383460999
             ],
             "stencilMode": 0,
             "pass": "Opaque",
@@ -161,72 +161,7 @@
                 0.0,
                 0.0
             ],
-            "animClips": [
-                {
-                    "duration": 0.6000000238418579,
-                    "keyframes": [
-                        {
-                            "angle": 0.0,
-                            "color": [
-                                1.0,
-                                1.0,
-                                1.0,
-                                0.0
-                            ],
-                            "easeType": 0,
-                            "position": [
-                                0.0,
-                                0.0
-                            ],
-                            "scale": [
-                                1.0,
-                                1.0
-                            ],
-                            "time": 0.0
-                        },
-                        {
-                            "angle": 0.0,
-                            "color": [
-                                1.0,
-                                1.0,
-                                1.0,
-                                1.0
-                            ],
-                            "easeType": 0,
-                            "position": [
-                                0.0,
-                                0.0
-                            ],
-                            "scale": [
-                                1.0,
-                                1.0
-                            ],
-                            "time": 0.10000000149011612
-                        },
-                        {
-                            "angle": 0.0,
-                            "color": [
-                                1.0,
-                                1.0,
-                                1.0,
-                                0.0
-                            ],
-                            "easeType": 0,
-                            "position": [
-                                0.0,
-                                0.0
-                            ],
-                            "scale": [
-                                1.0,
-                                1.0
-                            ],
-                            "time": 0.6000000238418579
-                        }
-                    ],
-                    "loop": false,
-                    "name": "clip0"
-                }
-            ],
+            "animClips": [],
             "children": [],
             "typeTag": "Image",
             "textureTag": "Clear_C.png"
@@ -258,7 +193,7 @@
                 1.0,
                 1.0,
                 1.0,
-                0.9058823585510254
+                0.5882353186607361
             ],
             "stencilMode": 0,
             "pass": "Opaque",
@@ -279,72 +214,7 @@
                 0.0,
                 0.0
             ],
-            "animClips": [
-                {
-                    "duration": 0.6000000238418579,
-                    "keyframes": [
-                        {
-                            "angle": 0.0,
-                            "color": [
-                                1.0,
-                                1.0,
-                                1.0,
-                                0.0
-                            ],
-                            "easeType": 0,
-                            "position": [
-                                0.0,
-                                0.0
-                            ],
-                            "scale": [
-                                1.0,
-                                1.0
-                            ],
-                            "time": 0.0
-                        },
-                        {
-                            "angle": 0.0,
-                            "color": [
-                                1.0,
-                                1.0,
-                                1.0,
-                                0.7843137383460999
-                            ],
-                            "easeType": 0,
-                            "position": [
-                                0.0,
-                                0.0
-                            ],
-                            "scale": [
-                                1.0,
-                                1.0
-                            ],
-                            "time": 0.10000000149011612
-                        },
-                        {
-                            "angle": 0.0,
-                            "color": [
-                                1.0,
-                                1.0,
-                                1.0,
-                                0.0
-                            ],
-                            "easeType": 0,
-                            "position": [
-                                0.0,
-                                0.0
-                            ],
-                            "scale": [
-                                1.0,
-                                1.0
-                            ],
-                            "time": 0.6000000238418579
-                        }
-                    ],
-                    "loop": false,
-                    "name": "clip1"
-                }
-            ],
+            "animClips": [],
             "children": [],
             "typeTag": "Image",
             "textureTag": "Clear_L.png"
@@ -376,7 +246,7 @@
                 1.0,
                 1.0,
                 1.0,
-                0.8392156958580017
+                0.3921568691730499
             ],
             "stencilMode": 0,
             "pass": "Opaque",
@@ -397,72 +267,7 @@
                 0.0,
                 0.0
             ],
-            "animClips": [
-                {
-                    "duration": 0.6000000238418579,
-                    "keyframes": [
-                        {
-                            "angle": 0.0,
-                            "color": [
-                                1.0,
-                                1.0,
-                                1.0,
-                                0.0
-                            ],
-                            "easeType": 0,
-                            "position": [
-                                0.0,
-                                0.0
-                            ],
-                            "scale": [
-                                1.0,
-                                1.0
-                            ],
-                            "time": 0.0
-                        },
-                        {
-                            "angle": 0.0,
-                            "color": [
-                                1.0,
-                                1.0,
-                                1.0,
-                                0.5882353186607361
-                            ],
-                            "easeType": 0,
-                            "position": [
-                                0.0,
-                                0.0
-                            ],
-                            "scale": [
-                                1.0,
-                                1.0
-                            ],
-                            "time": 0.10000000149011612
-                        },
-                        {
-                            "angle": 0.0,
-                            "color": [
-                                1.0,
-                                1.0,
-                                1.0,
-                                0.0
-                            ],
-                            "easeType": 0,
-                            "position": [
-                                0.0,
-                                0.0
-                            ],
-                            "scale": [
-                                1.0,
-                                1.0
-                            ],
-                            "time": 0.6000000238418579
-                        }
-                    ],
-                    "loop": false,
-                    "name": "clip2"
-                }
-            ],
+            "animClips": [],
             "children": [],
             "typeTag": "Image",
             "textureTag": "Clear_E.png"
@@ -494,7 +299,7 @@
                 1.0,
                 1.0,
                 1.0,
-                0.8588235378265381
+                0.19607843458652496
             ],
             "stencilMode": 0,
             "pass": "Opaque",
@@ -515,72 +320,7 @@
                 0.0,
                 0.0
             ],
-            "animClips": [
-                {
-                    "duration": 0.6000000238418579,
-                    "keyframes": [
-                        {
-                            "angle": 0.0,
-                            "color": [
-                                1.0,
-                                1.0,
-                                1.0,
-                                0.0
-                            ],
-                            "easeType": 0,
-                            "position": [
-                                0.0,
-                                0.0
-                            ],
-                            "scale": [
-                                1.0,
-                                1.0
-                            ],
-                            "time": 0.0
-                        },
-                        {
-                            "angle": 0.0,
-                            "color": [
-                                1.0,
-                                1.0,
-                                1.0,
-                                0.3921568691730499
-                            ],
-                            "easeType": 0,
-                            "position": [
-                                0.0,
-                                0.0
-                            ],
-                            "scale": [
-                                1.0,
-                                1.0
-                            ],
-                            "time": 0.10000000149011612
-                        },
-                        {
-                            "angle": 0.0,
-                            "color": [
-                                1.0,
-                                1.0,
-                                1.0,
-                                0.0
-                            ],
-                            "easeType": 0,
-                            "position": [
-                                0.0,
-                                0.0
-                            ],
-                            "scale": [
-                                1.0,
-                                1.0
-                            ],
-                            "time": 0.6000000238418579
-                        }
-                    ],
-                    "loop": false,
-                    "name": "clip3"
-                }
-            ],
+            "animClips": [],
             "children": [],
             "typeTag": "Image",
             "textureTag": "Clear_A.png"
@@ -612,7 +352,7 @@
                 1.0,
                 1.0,
                 1.0,
-                0.8823529481887817
+                0.3921568691730499
             ],
             "stencilMode": 0,
             "pass": "Opaque",
@@ -633,72 +373,7 @@
                 0.0,
                 0.0
             ],
-            "animClips": [
-                {
-                    "duration": 0.6000000238418579,
-                    "keyframes": [
-                        {
-                            "angle": 0.0,
-                            "color": [
-                                1.0,
-                                1.0,
-                                1.0,
-                                0.0
-                            ],
-                            "easeType": 0,
-                            "position": [
-                                0.0,
-                                0.0
-                            ],
-                            "scale": [
-                                1.0,
-                                1.0
-                            ],
-                            "time": 0.0
-                        },
-                        {
-                            "angle": 0.0,
-                            "color": [
-                                1.0,
-                                1.0,
-                                1.0,
-                                0.5882353186607361
-                            ],
-                            "easeType": 0,
-                            "position": [
-                                0.0,
-                                0.0
-                            ],
-                            "scale": [
-                                1.0,
-                                1.0
-                            ],
-                            "time": 0.10000000149011612
-                        },
-                        {
-                            "angle": 0.0,
-                            "color": [
-                                1.0,
-                                1.0,
-                                1.0,
-                                0.0
-                            ],
-                            "easeType": 0,
-                            "position": [
-                                0.0,
-                                0.0
-                            ],
-                            "scale": [
-                                1.0,
-                                1.0
-                            ],
-                            "time": 0.6000000238418579
-                        }
-                    ],
-                    "loop": false,
-                    "name": "clip4"
-                }
-            ],
+            "animClips": [],
             "children": [],
             "typeTag": "Image",
             "textureTag": "Clear_R.png"
@@ -730,7 +405,7 @@
                 1.0,
                 1.0,
                 1.0,
-                0.8705882430076599
+                0.5882353186607361
             ],
             "stencilMode": 0,
             "pass": "Opaque",
@@ -751,72 +426,7 @@
                 0.0,
                 0.0
             ],
-            "animClips": [
-                {
-                    "duration": 0.6000000238418579,
-                    "keyframes": [
-                        {
-                            "angle": 0.0,
-                            "color": [
-                                1.0,
-                                1.0,
-                                1.0,
-                                0.0
-                            ],
-                            "easeType": 0,
-                            "position": [
-                                0.0,
-                                0.0
-                            ],
-                            "scale": [
-                                1.0,
-                                1.0
-                            ],
-                            "time": 0.0
-                        },
-                        {
-                            "angle": 0.0,
-                            "color": [
-                                1.0,
-                                1.0,
-                                1.0,
-                                0.7843137383460999
-                            ],
-                            "easeType": 0,
-                            "position": [
-                                0.0,
-                                0.0
-                            ],
-                            "scale": [
-                                1.0,
-                                1.0
-                            ],
-                            "time": 0.10000000149011612
-                        },
-                        {
-                            "angle": 0.0,
-                            "color": [
-                                1.0,
-                                1.0,
-                                1.0,
-                                0.0
-                            ],
-                            "easeType": 0,
-                            "position": [
-                                0.0,
-                                0.0
-                            ],
-                            "scale": [
-                                1.0,
-                                1.0
-                            ],
-                            "time": 0.6000000238418579
-                        }
-                    ],
-                    "loop": false,
-                    "name": "clip5"
-                }
-            ],
+            "animClips": [],
             "children": [],
             "typeTag": "Image",
             "textureTag": "Clear_E.png"
@@ -848,7 +458,7 @@
                 1.0,
                 1.0,
                 1.0,
-                0.8627451062202454
+                0.7843137383460999
             ],
             "stencilMode": 0,
             "pass": "Opaque",
@@ -869,72 +479,7 @@
                 0.0,
                 0.0
             ],
-            "animClips": [
-                {
-                    "duration": 0.6000000238418579,
-                    "keyframes": [
-                        {
-                            "angle": 0.0,
-                            "color": [
-                                1.0,
-                                1.0,
-                                1.0,
-                                0.0
-                            ],
-                            "easeType": 0,
-                            "position": [
-                                0.0,
-                                0.0
-                            ],
-                            "scale": [
-                                1.0,
-                                1.0
-                            ],
-                            "time": 0.0
-                        },
-                        {
-                            "angle": 0.0,
-                            "color": [
-                                1.0,
-                                1.0,
-                                1.0,
-                                1.0
-                            ],
-                            "easeType": 0,
-                            "position": [
-                                0.0,
-                                0.0
-                            ],
-                            "scale": [
-                                1.0,
-                                1.0
-                            ],
-                            "time": 0.10000000149011612
-                        },
-                        {
-                            "angle": 0.0,
-                            "color": [
-                                1.0,
-                                1.0,
-                                1.0,
-                                0.0
-                            ],
-                            "easeType": 0,
-                            "position": [
-                                0.0,
-                                0.0
-                            ],
-                            "scale": [
-                                1.0,
-                                1.0
-                            ],
-                            "time": 0.6000000238418579
-                        }
-                    ],
-                    "loop": false,
-                    "name": "clip6"
-                }
-            ],
+            "animClips": [],
             "children": [],
             "typeTag": "Image",
             "textureTag": "Charged_D.png"
@@ -1032,7 +577,7 @@
                 1.0,
                 1.0,
                 1.0,
-                1.0
+                0.7843137383460999
             ],
             "stencilMode": 0,
             "pass": "SoftDirectionalOutline",
@@ -1098,7 +643,7 @@
                 1.0,
                 1.0,
                 1.0,
-                1.0
+                0.5882353186607361
             ],
             "stencilMode": 0,
             "pass": "SoftDirectionalOutline",
@@ -1164,7 +709,7 @@
                 1.0,
                 1.0,
                 1.0,
-                1.0
+                0.3921568691730499
             ],
             "stencilMode": 0,
             "pass": "SoftDirectionalOutline",
@@ -1230,7 +775,7 @@
                 1.0,
                 1.0,
                 1.0,
-                1.0
+                0.5882353186607361
             ],
             "stencilMode": 0,
             "pass": "SoftDirectionalOutline",
@@ -1296,7 +841,7 @@
                 1.0,
                 1.0,
                 1.0,
-                1.0
+                0.7843137383460999
             ],
             "stencilMode": 0,
             "pass": "SoftDirectionalOutline",

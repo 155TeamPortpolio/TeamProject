@@ -211,10 +211,12 @@ private:
     virtual ~CSaturationCommand() = default;
 
 public:
+    _uint  GetSaturationType() const { return m_SaturationType; }
     _float GetIntensity() const { return m_fIntensity * m_fEaseT; }
     CSaturationCommand* SetDuration(_float fDuration);
     CSaturationCommand* SetIntensity(_float fIntensity);
     CSaturationCommand* SetEaseType(EaseType easeType);
+    CSaturationCommand* SetSaturationType(_uint flags);
 
 public:
     virtual void Update(_float dt) override;
@@ -227,9 +229,25 @@ private:
     _float      m_fEaseT = 0.f;
     EaseType    m_EaseType = EaseType::InOutSine;
 
+    _uint       m_SaturationType = static_cast<_uint>(SATURATIONTYPE::STATIC);
 public:
     static CSaturationCommand* Create();
     virtual void Free() override;
 };
 
+class ENGINE_DLL CDistortionCommand :
+    public CPostProcessCommand
+{
+private:
+    CDistortionCommand();
+    virtual ~CDistortionCommand() = default;
+
+public:
+    virtual void Update(_float dt) override;
+    virtual void Execute(class CPostRenderer* pRenderer) override;
+
+public:
+    static CDistortionCommand* Create();
+    virtual void Free() override;
+};
 NS_END

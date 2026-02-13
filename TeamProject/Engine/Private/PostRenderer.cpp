@@ -42,6 +42,7 @@ HRESULT CPostRenderer::Initialize(CTarget_Manager* pTargetManager, CPipeLine* pP
 	m_pRadialBlurCommand = CRadialBlurCommand::Create();
 	m_pGuassianBlurCommand = CGuassianBlurCommand::Create();
 	m_pSaturationCommand = CSaturationCommand::Create();
+	m_pDistortionCommand = CDistortionCommand::Create();
 
 	m_CommandMap[typeid(CHDRBloomCommand)] = m_pHDRBloomCommand;
 	m_CommandMap[typeid(CGlitchCommand)] = m_pGlitchCommand;
@@ -49,6 +50,7 @@ HRESULT CPostRenderer::Initialize(CTarget_Manager* pTargetManager, CPipeLine* pP
 	m_CommandMap[typeid(CFogCommand)] = m_pFogCommand;
 	m_CommandMap[typeid(CGuassianBlurCommand)] = m_pGuassianBlurCommand;
 	m_CommandMap[typeid(CAddictiveColorCommand)] = m_pAddictiveColorCommand;
+	m_CommandMap[typeid(CDistortionCommand)] = m_pDistortionCommand;
 	m_CommandMap[typeid(CSaturationCommand)] = m_pSaturationCommand;
 
 	return S_OK;
@@ -62,6 +64,7 @@ HRESULT CPostRenderer::Render_PostProcessCommand()
 		 m_pGlitchCommand,
 		 m_pRadialBlurCommand,
 		 m_pGuassianBlurCommand,
+		 m_pDistortionCommand,
 		 m_pAddictiveColorCommand,
 		 m_pSaturationCommand
 	};
@@ -331,6 +334,27 @@ HRESULT CPostRenderer::Render_Saturation_Internal()
 	_float fIntensity = m_pSaturationCommand->GetIntensity();
 	m_pShader->Bind_Value("SaturationIntensity", { &fIntensity, "float", sizeof(_float) });
 
+	_uint saturationType = m_pSaturationCommand->GetSaturationType();
+
+	m_pTargetManager->Bind_Target("Target_Combined_StaticMesh", m_pShader, "StaticCombinedTexture");
+	m_pTargetManager->Bind_Target("Target_Combined_SkinnedMesh", m_pShader, "SkinnedCombinedTexture");
+	m_pTargetManager->Bind_Target("Target_Combined_Effect", m_pShader, "EffectCombinedTexture");
+
+	_bool bSaturateStaticUse = false;
+	if (saturationType & static_cast<_uint>(SATURATIONTYPE::STATIC)) 
+		bSaturateStaticUse = true;
+	m_pShader->Bind_Value("bSaturateStaticUse", { &bSaturateStaticUse, "bool", sizeof(_bool) });
+
+	_bool bSaturateSkinnedUse = false;
+	if (saturationType & static_cast<_uint>(SATURATIONTYPE::SKINNED))
+		bSaturateSkinnedUse = true;
+	m_pShader->Bind_Value("bSaturateSkinnedUse", { &bSaturateSkinnedUse, "bool", sizeof(_bool) });
+
+	_bool bSaturateEffectUse = false;
+	if (saturationType & static_cast<_uint>(SATURATIONTYPE::EFFECT))
+		bSaturateEffectUse = true;
+	m_pShader->Bind_Value("bSaturateEffectUse", { &bSaturateEffectUse, "bool", sizeof(_bool) });
+
 	Bind_WorldMatrix();
 
 	ID3D11InputLayout* pLayout;
@@ -338,6 +362,29 @@ HRESULT CPostRenderer::Render_Saturation_Internal()
 	m_pContext->IASetInputLayout(pLayout);
 
 	m_pShader->Apply("SATURATION", m_pContext);
+	m_pVIBuffer->Bind_Buffer(m_pContext);
+	m_pVIBuffer->Render(m_pContext);
+
+	m_pTargetManager->End_MRT();
+
+	return S_OK;
+}
+
+HRESULT CPostRenderer::Render_Distortion_Internal()
+{
+	if (FAILED(m_pTargetManager->Begin_MRT("MRT_Distortion"))) return E_FAIL;
+
+	m_pShader->SetConstantBuffer("FrameBuffer", m_pPipeLine->Get_FrameBuffer());
+
+	m_pTargetManager->Bind_Target(m_strLastTargetName, m_pShader, "FinalTexture");
+
+	Bind_WorldMatrix();
+
+	ID3D11InputLayout* pLayout;
+	Get_BufferInputLayout(m_pVIBuffer, m_pShader, "DISTORTION", &pLayout);
+	m_pContext->IASetInputLayout(pLayout);
+
+	m_pShader->Apply("DISTORTION", m_pContext);
 	m_pVIBuffer->Bind_Buffer(m_pContext);
 	m_pVIBuffer->Render(m_pContext);
 
@@ -412,6 +459,9 @@ HRESULT CPostRenderer::Ready_Target()
 	RenderTargetDesc SaturationDesc = { "Target_Saturation", DXGI_FORMAT_R16G16B16A16_FLOAT,DXGI_FORMAT_D24_UNORM_S8_UINT, _float4(0.0f, 0.0f, 0.0f, 0.0f),ViewportDesc.Width ,ViewportDesc.Height };
 	m_pTargetManager->Create_Target(SaturationDesc);
 
+	RenderTargetDesc DistortionDesc = { "Target_Distortion", DXGI_FORMAT_R16G16B16A16_FLOAT,DXGI_FORMAT_D24_UNORM_S8_UINT, _float4(0.0f, 0.0f, 0.0f, 0.0f),ViewportDesc.Width ,ViewportDesc.Height };
+	m_pTargetManager->Create_Target(DistortionDesc);
+
 	return S_OK;
 }
 
@@ -431,6 +481,9 @@ HRESULT CPostRenderer::Ready_MRT()
 	}
 	{
 		if (FAILED(m_pTargetManager->Add_MRT("MRT_Saturation", "Target_Saturation"))) return E_FAIL;
+	}
+	{
+		if (FAILED(m_pTargetManager->Add_MRT("MRT_Distortion", "Target_Distortion"))) return E_FAIL;
 	}
 	{
 		if (FAILED(m_pTargetManager->Add_MRT("MRT_HDR_Bright", "Target_HDR_Bright"))) return E_FAIL;

@@ -142,6 +142,15 @@ namespace Engine
 
 	enum class StencilMode { None, Write, Test };
 
+	enum class SATURATIONTYPE : unsigned int
+	{
+		NONE = 0,
+		STATIC = 1 << 0,
+		SKINNED = 1 << 1,
+		EFFECT = 1 << 2,
+		FULL = 7  // 1 | 2 | 4
+	};
+
 	enum class POST_PROCESS_ORDER : unsigned int
 	{
 		HDRBLOOM = 100,
@@ -149,8 +158,9 @@ namespace Engine
 		GLITCH = 300,
 		RADIAL_BLUR = 400,
 		GAUSSIAN_BLUR = 500,
-		ADDICTIVE_COLOR = 600,
-		SATURATION = 700,
+		DISTORTION = 600,
+		ADDICTIVE_COLOR = 700,
+		SATURATION = 800,
 	};
 }
 #endif // Engine_Enum_h__

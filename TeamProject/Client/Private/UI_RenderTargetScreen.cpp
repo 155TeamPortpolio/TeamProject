@@ -7,6 +7,7 @@
 #include "MaterialInstance.h"
 #include "MaterialData.h"
 #include "UIDirector.h"
+#include "UI_RTVDraw.h"
 
 HRESULT CUI_RenderTargetScreen::Initialize_Prototype()
 {
@@ -43,6 +44,9 @@ void CUI_RenderTargetScreen::Update(_float dt)
 {
     if (InputDevice()->Key_Tap('I'))
         UIDirector()->Show_Clear();
+
+    if (InputDevice()->Key_Tap('J'))
+        UIDirector()->Show_Switch();
 }
 
 HRESULT CUI_RenderTargetScreen::Ready_Components()
@@ -128,7 +132,13 @@ void CUI_RenderTargetScreen::Bind_RTV()
 
 HRESULT CUI_RenderTargetScreen::Create_RTVDrawObject(const string& strPrototypeTag, const string& strInstanceName)
 {
-    auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, strPrototypeTag }).Build(strInstanceName);
+    CUI_RTVDraw::RTVDRAW_DESC* pDesc = new CUI_RTVDraw::RTVDRAW_DESC;
+    pDesc->hRenderTargetScreen = Get_Handle();
+
+    auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, strPrototypeTag })
+        .Add_UIDesc(pDesc)
+        .Build(strInstanceName);
+
     if (!pObj)
         return E_FAIL;
 

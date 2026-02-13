@@ -5,6 +5,11 @@ NS_BEGIN(Client)
 
 class CUI_RTVDraw : public CUI_Object
 {
+public:
+	typedef struct tagRTVDrawDesc : public UI_DESC {
+		OBJECT_HANDLE hRenderTargetScreen = {};
+	}RTVDRAW_DESC;
+
 protected:
 	CUI_RTVDraw() {}
 	CUI_RTVDraw(const CUI_RTVDraw& rhs) : CUI_Object(rhs) {}
@@ -21,10 +26,13 @@ public:
 
 protected:
 	void Update_RTV(const string& strTargetKey, _bool isClear = true);
+	void Set_RenderTargetScreenRenderLayer(RENDER_LAYER eLayer);
 
 private:
 	_float4x4		m_ViewMatrix = {};
 	_float4x4		m_ProjMatrix = {};
+
+	OBJECT_HANDLE	m_hRenderTargetScreen = {};
 
 private:
 	void Render_RT(ID3D11DeviceContext* pContext);
