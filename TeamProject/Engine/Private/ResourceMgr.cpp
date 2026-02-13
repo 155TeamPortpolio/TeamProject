@@ -788,6 +788,7 @@ void CResourceMgr::Load_InitialResource()
 	Add_ResourcePath("VTX_InstancePoint.hlsl", "../Bin/ShaderFiles/VTX_InstancePoint.hlsl");
 	Add_ResourcePath("VTX_EffectMesh.hlsl", "../Bin/ShaderFiles/VTX_EffectMesh.hlsl");
 	Add_ResourcePath("VTX_Trail.hlsl", "../Bin/ShaderFiles/VTX_Trail.hlsl");
+	Add_ResourcePath("VTX_Tessellation.hlsl", "../Bin/ShaderFiles/VTX_Tessellation.hlsl");
 	Add_ResourcePath("VTX_NonPlayer.hlsl", "../Bin/ShaderFiles/VTX_NonPlayer.hlsl");
 	Add_ResourcePath("VTX_StaticEnemy.hlsl", "../Bin/ShaderFiles/VTX_StaticEnemy.hlsl");
 	Add_ResourcePath("Shader_Deferred.hlsl", "../Bin/ShaderFiles/Shader_Deferred.hlsl");
@@ -829,6 +830,7 @@ void CResourceMgr::Load_InitialResource()
 	m_Resources[0].m_Shaders.emplace("VTX_Point.hlsl", CShader::Create(m_pDevice, "../Bin/ShaderFiles/VTX_Point.hlsl", "VTX_Point.hlsl"));
 	m_Resources[0].m_Shaders.emplace("VTX_EffectMesh.hlsl", CShader::Create(m_pDevice, "../Bin/ShaderFiles/VTX_EffectMesh.hlsl", "VTX_EffectMesh.hlsl"));
 	m_Resources[0].m_Shaders.emplace("VTX_Trail.hlsl", CShader::Create(m_pDevice, "../Bin/ShaderFiles/VTX_Trail.hlsl", "VTX_Trail.hlsl"));
+	m_Resources[0].m_Shaders.emplace("VTX_Tessellation.hlsl", CShader::Create(m_pDevice, "../Bin/ShaderFiles/VTX_Tessellation.hlsl", "VTX_Tessellation.hlsl"));
 	m_Resources[0].m_Shaders.emplace("VTX_UIMesh.hlsl", CShader::Create(m_pDevice, "../Bin/ShaderFiles/VTX_UIMesh.hlsl", "VTX_UIMesh.hlsl"));
 	m_Resources[0].m_Shaders.emplace("VTX_NonPlayer.hlsl", CShader::Create(m_pDevice, "../Bin/ShaderFiles/VTX_NonPlayer.hlsl", "VTX_NonPlayer.hlsl"));
 	m_Resources[0].m_Shaders.emplace("VTX_StaticEnemy.hlsl", CShader::Create(m_pDevice, "../Bin/ShaderFiles/VTX_StaticEnemy.hlsl", "VTX_StaticEnemy.hlsl"));
