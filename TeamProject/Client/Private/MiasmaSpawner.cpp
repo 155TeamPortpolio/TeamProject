@@ -63,6 +63,25 @@ _float3 CMiasmaSpawner::ComputeParabolarPos(const _float3& ownerPos, const _floa
     return _float3{ pos.x, targetPos.y, pos.z };
 }
 
+_float3 CMiasmaSpawner::ComputeCircular(const _float3& centerPos, _float radius)
+{
+    if (radius <= 0.f)
+        return centerPos;
+
+    const float rand01 = Helper::Get_Random_Float(0.f, 1.f);
+    const float angle = Helper::Get_Random_Float(0.f, XM_2PI);
+
+    const float dist = radius * sqrtf(rand01);
+
+    const float offsetX = cosf(angle) * dist;
+    const float offsetZ = sinf(angle) * dist;
+
+    return _float3(
+        centerPos.x + offsetX,
+        centerPos.y,
+        centerPos.z + offsetZ
+    );
+}
 void CMiasmaSpawner::Spawn(MiasmaType type, _int count, _float3 targetPos, _float3 ownerPos, _float y, CDefiler* pDefiler)
 {
     switch (type)
@@ -94,12 +113,7 @@ void CMiasmaSpawner::SpawnGrandier(_int count, _float3 targetPos, _float3 ownerP
 
     for (int spawnIndex = 0; spawnIndex < count; ++spawnIndex)
     {
-        _float3 spawnPos = ComputeArcSpawnPos(
-            ownerPos, targetPos,
-            minRadius, maxRadius,
-            arcDegrees,
-            ownerPos.y
-        );
+        _float3 spawnPos = ComputeCircular({0,0,0},15);
 
         spawnPos.y = y;
 
@@ -129,11 +143,11 @@ void CMiasmaSpawner::SpawnBlade(_float3 Target, _float3 Owner, CDefiler* pDefile
     desc->vTargetPos = Target;
     auto pBlade =
     Builder::Create_Object({ "Zero_Level","Proto_GameObject_MiasmaBlade" })
-    .FromPool()
     .Position(Owner)
     .Add_ObjDesc(desc)
     .Build("MiasmaBlade");
     ObjectManager()->Add_Object(pBlade, { levelKey ,"Enemy_Layer" });
+    BattleSystem()->EnterBattleObject(BATTLE_OBJ_TYPE::MONSTER, pBlade->Get_Handle());
 }
 
 void CMiasmaSpawner::SpawnHeavy(_float3 Target, _float3 Owner)
@@ -165,10 +179,7 @@ void CMiasmaSpawner::SpawnWeapon(_float3 Target, _float3 Owner, class CDefiler* 
 
     const string levelKey = LevelManager()->Get_NowLevelKey();
     auto desc = new CDefilerWeapon::DefilerWeaponDesc;
-    Matrix boneMat = pDefiler->Get_Component<CAnimator3D>()
-        ->Get_BoneMatrix(CAnimator3D::BoneSpace::COMBINED, "Ctr_M_Prop_01");
-    Matrix WorldMat = pDefiler->Get_Component<CTransform>()->Get_WorldMatrix();
-    desc->vTargetPos = ComputeParabolarPos(Owner, Target);
+    desc->vTargetPos = { 0, -1,3 };
     desc->isFinal = m_WeaponThrowCount == 3;
 
     auto pBlade =

@@ -18,6 +18,8 @@
 #include "Layer.h"
 #include "RigidBody.h"
 #include "ParticleSystem.h"
+#include "Collider.h"
+#include "CharacterController.h"
 
 _uint CGameObject::s_NextID = 1;
 
@@ -311,6 +313,78 @@ _quaternion CGameObject::Get_WorldQuat()
 _vector3 CGameObject::Get_WorldRotation()
 {
 	return _quaternion(m_pTransform->Get_QuaternionRotate()).ToEuler();
+}
+
+HRESULT CGameObject::ReInitialize_Component(INIT_DESC* pArg)
+{
+	if (!m_pTransform) {
+		m_pTransform = Add_Component<CTransform>();
+		Safe_AddRef(m_pTransform);
+	}
+
+	if (pArg == nullptr)
+		return S_OK;
+
+	GAMEOBJECT_DESC* obj = static_cast<GAMEOBJECT_DESC*>(pArg);
+
+	// Transform 초기화
+	auto tfIter = m_Components.find(type_index(typeid(CTransform)));
+	if (tfIter != m_Components.end()) {
+		auto descIter = obj->CompDesc.find(type_index(typeid(CTransform)));
+		if (descIter == obj->CompDesc.end())
+			tfIter->second->Initialize(nullptr);
+		else
+			tfIter->second->Initialize(descIter->second);
+	}
+
+	// RigidBody 초기화
+	auto rbIter = m_Components.find(type_index(typeid(CRigidBody)));
+	if (rbIter != m_Components.end()) {
+		auto descIter = obj->CompDesc.find(type_index(typeid(CRigidBody)));
+		if (descIter == obj->CompDesc.end())
+			dynamic_cast<CRigidBody*>(rbIter->second)->ReInitialize(nullptr);
+		else
+			dynamic_cast<CRigidBody*>(rbIter->second)->ReInitialize(descIter->second);
+
+	}
+
+
+	auto colIter = m_Components.find(type_index(typeid(CCollider)));
+	if (colIter != m_Components.end()) {
+		auto descIter = obj->CompDesc.find(type_index(typeid(CCollider)));
+		if (descIter == obj->CompDesc.end())
+			dynamic_cast<CCollider*>(colIter->second)->ReInitialize(nullptr);
+		else
+			dynamic_cast<CCollider*>(colIter->second)->ReInitialize(descIter->second);
+	}
+
+	auto cctIter = m_Components.find(type_index(typeid(CCharacterController)));
+	if (cctIter != m_Components.end()) {
+		auto descIter = obj->CompDesc.find(type_index(typeid(CCharacterController)));
+		if (descIter == obj->CompDesc.end())
+			dynamic_cast<CCharacterController*>(cctIter->second)->ReInitialize(nullptr);
+		else
+			dynamic_cast<CCharacterController*>(cctIter->second)->ReInitialize(descIter->second);
+	}
+
+	for (auto& pair : m_Components)
+	{
+		/*상속 주는 친구들은 제외*/
+		if (pair.first == type_index(typeid(CTransform))) continue;
+		if (pair.first == type_index(typeid(CModel))) continue;
+		if (pair.first == type_index(typeid(ICollidable))) continue;
+		if (pair.first == type_index(typeid(CCollider))) continue;
+		if (pair.first == type_index(typeid(CCharacterController))) continue;
+		if (pair.first == type_index(typeid(CRigidBody))) continue;
+
+		auto iter = obj->CompDesc.find(pair.first);
+		if (iter == obj->CompDesc.end())
+			pair.second->Initialize(nullptr);
+		else
+			pair.second->Initialize(iter->second);
+	}
+
+	m_InstanceName = obj->InstanceName;
 }
 
 HRESULT CGameObject::Make_OpaquePacket()
