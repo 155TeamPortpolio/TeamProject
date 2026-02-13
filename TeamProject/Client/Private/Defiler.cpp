@@ -26,6 +26,7 @@
 #include "DefilerWeapon.h"
 #include "DefilerAxe.h"
 #include "DefilerWall.h"
+#include "WaterWave.h"
 
 #include "AudioSource.h"
 
@@ -52,7 +53,8 @@ HRESULT CDefiler::Initialize_Prototype()
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_DefilerWeapon", CDefilerWeapon::Create());
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_DefilerAxe", CDefilerAxe::Create());
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_DefilerWall", CDefilerWall::Create());
-
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_Env_Water", CWaterWave::Create());
+	
 	Add_Component<CAnimator3D>();
 	Add_Component<CSkeletalModel>();
 	Add_Component<CMaterial>();
@@ -131,9 +133,10 @@ void CDefiler::Priority_Update(_float dt)
 	Update_States(dt);
 
 	if (InputDevice()->Key_Tap('F')) {
-		Get_Component<CAudioSource>()
-			->Slot("OngoingLevel_Chapter130_Belle_111302003_001.wav")
-			.FadeOut(1.f);
+		Control_Summon("Blade");
+	}
+	if (InputDevice()->Key_Tap('H')) {
+		Control_Summon("Wave");
 	}
 	if (InputDevice()->Key_Tap('G')) {
 		Get_Component<CAudioSource>()
@@ -574,6 +577,14 @@ void CDefiler::Control_Summon(const string& event)
 	}
 	else if (event == "WeaponShow") {
 		Show_MeshGroup("Weapon");
+	}
+	else if (event == "Wave") {
+		auto testMap = Builder::Create_Object({ "Zero_Level", "Proto_Env_Water" })
+			.Position(_float3(0.f, -5.f, 20.f))
+			.Scale(_float3(6.f, 1.f, 0.2f))
+			.Build("Water");
+
+		ObjectManager()->Add_Object(testMap, {"Zero_Level", "Env"});
 	}
 }
 

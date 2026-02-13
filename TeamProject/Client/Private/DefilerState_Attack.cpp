@@ -149,7 +149,7 @@ void CDefilerState_Attack::Enter(CDefiler* pOwner)
 	__super::Enter(pOwner);
 	auto& blackboard = pOwner->GetBlackBoard();
 	Build_Pattern(pOwner, blackboard.patternIndex);
-	blackboard.patternIndex++;
+	blackboard.patternIndex = Helper::Get_Random_Int(0, 12);
 	if (blackboard.patternIndex > 12)
 		blackboard.patternIndex = 0.f;
 	if (!blackboard.patternTransition.empty())
@@ -438,14 +438,6 @@ void CDefilerState_Attack_07::Enter(CDefiler* pOwner)
 
 void CDefilerState_Attack_07::Update(CDefiler* pOwner, _float dt)
 {
-	DEFILER_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
-	if (InputDevice()->Key_Tap('X')) {
-		blackBoard.patternTransition.clear();
-		blackBoard.patternTransition.push_back({ "Trace" ,0.f,1.f });
-		blackBoard.patternTransition.push_back({ "Attack_07" ,m_fAnimProgress,1.f });
-		blackBoard.patternTransition.push_back({ "Attack04",0.f,1.f });/*내리찍*/
-		blackBoard.isRequestNext = true;
-	}
 	ComboTransition(pOwner);
 }
 
@@ -757,8 +749,6 @@ void CDefilerState_Attack_Trace::Enter(CDefiler* pOwner)
 	blackBoard.TraceType_IgnoreRotation();
 	_vector3 right = pOwner->Get_Component<CTransform>()->Dir(STATE::RIGHT);
 	_float dot = right.Dot(targetInfo.vDirToTarget);
-	//dot이 양수면 내 오른쪽
-	
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	string AnimName =(dot>0) ? "Monster_IsoldetheDefiler_Ani_Evade_Right" : "Monster_IsoldetheDefiler_Ani_Evade_Left";
 	pAnimator->Change_Animation(AnimName).Speed(1.f).Loop(true).Apply();
@@ -766,14 +756,7 @@ void CDefilerState_Attack_Trace::Enter(CDefiler* pOwner)
 
 void CDefilerState_Attack_Trace::Update(CDefiler* pOwner, _float dt)
 {
-	DEFILER_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
-	auto& targetInfo = pOwner->GetTargetingInfo();
-	_vector3 right = pOwner->Get_Component<CTransform>()->Dir(STATE::RIGHT);
-	_float dot = right.Dot(targetInfo.vDirToTarget); 
-	if (dot < 1e-4)
-		blackBoard.isRequestNext = true;
-	_vector3 moveVector = dot > 0 ? right : -right;
-	pOwner->Get_Component<CCharacterController>()->Move_RootMotion(moveVector*dt,{}, dt);
+	
 }
 
 void CDefilerState_Attack_Trace::Exit(CDefiler* pOwner)

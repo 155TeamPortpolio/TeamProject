@@ -23,13 +23,7 @@ public:
     void    Update(_float dt) override;
     void    Late_Update(_float dt) override;
     void    Render_GUI()override;
-public:
-    virtual void    OnTriggerEnter(CGameObject* pOther) override;
-    virtual void    OnCollisionEnter(CGameObject* pOther) override;
-    virtual void    OnTriggerStay(CGameObject* pOher) override;
-public:
-    virtual void OnPooledAcquire(INIT_DESC* pArg = nullptr) override;		// 풀에서 꺼낼 때
-    virtual void OnPooledRelease()override;
+
 public:
     virtual void Parried() override;
 
