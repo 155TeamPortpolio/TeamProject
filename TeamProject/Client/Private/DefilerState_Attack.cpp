@@ -2,6 +2,8 @@
 #include "DefilerState_Attack.h"
 #include "Defiler.h"
 #include "StateMachine.h"
+#include "GameInstance.h"
+#include "CharacterController.h"
 
 CDefilerState_Attack* CDefilerState_Attack::Create()
 {
@@ -17,6 +19,7 @@ void CDefilerState_Attack::Build_Pattern(CDefiler* pOwner, _int Type)
 	DEFILER_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
 	TARGETING_INFO& targetInfo = pOwner->GetTargetingInfo();
 	blackBoard.patternTransition.clear();
+	Type = 11;
 	switch (Type)
 	{
 	case 0 :
@@ -69,12 +72,11 @@ void CDefilerState_Attack::Build_Pattern(CDefiler* pOwner, _int Type)
 		blackBoard.patternTransition.push_back({ "Attack01_01",0.f,0.41f });
 		blackBoard.patternTransition.push_back({ "Attack01_02",0.19f,1.f });
 		blackBoard.patternTransition.push_back({ "Attack04",0.f,1.f });/*내리찍2*/
-
 		break;
 	}
 	case 9 :
 	{
-		blackBoard.patternTransition.push_back({ "Attack_Evade",0.f,1.f });
+		blackBoard.patternTransition.push_back({ "RePos_Back",0.f,1.f });
 		blackBoard.patternTransition.push_back({ "Attack08_01_Start",0.f,1.f }); /*방패병*/
 		blackBoard.patternTransition.push_back({ "Attack08_01_Loop",0.f,1.f });
 		blackBoard.patternTransition.push_back({ "Attack08_01_End",0.f,1.f });
@@ -84,7 +86,7 @@ void CDefilerState_Attack::Build_Pattern(CDefiler* pOwner, _int Type)
 	case 10 :
 	{
 		blackBoard.patternTransition.push_back({ "Attack_Barrier",0.f,1.f });
-		blackBoard.patternTransition.push_back({ "Attack_Evade",0.f,1.f });
+		blackBoard.patternTransition.push_back({ "RePos_Front",0.f,1.f });
 		blackBoard.patternTransition.push_back({ "Attack09_Start",0.f,1.f });
 		blackBoard.patternTransition.push_back({ "Attack09_Loop",0.f,1.f });
 		blackBoard.patternTransition.push_back({ "Attack09_End",0.f,1.f });
@@ -93,9 +95,18 @@ void CDefilerState_Attack::Build_Pattern(CDefiler* pOwner, _int Type)
 	}
 	case 11 :
 	{
-		blackBoard.patternTransition.push_back({ "Attack_Evade",0.f,1.f });
+		blackBoard.patternTransition.push_back({ "RePos_Back",0.f,1.f });
 		blackBoard.patternTransition.push_back({ "Attack07",0.f,1.f });/*이야즈마*/
 		blackBoard.patternTransition.push_back({ "Attack04",0.f,1.f });/*내리찍*/
+		break;
+	}
+	case 12 :
+	{
+		blackBoard.patternTransition.push_back({ "Attack08_02",0.f,1.f }); /*창 내리찍*/
+		break;
+	}
+	case 13 :
+	{
 		break;
 	}
 	default:
@@ -125,9 +136,11 @@ void CDefilerState_Attack::ReadySubState()
 	m_pSubStateMachine->Register_State("Attack09_Start",			CDefilerState_Attack_09_Start::Create());
 	m_pSubStateMachine->Register_State("Attack09_Loop",				CDefilerState_Attack_09_Loop::Create());
 	m_pSubStateMachine->Register_State("Attack09_End",				CDefilerState_Attack_09_End::Create());
-	m_pSubStateMachine->Register_State("Attack_Grab",	CDefilerState_Attack_Grab::Create());
+	m_pSubStateMachine->Register_State("Attack_Grab",				CDefilerState_Attack_Grab::Create());
 	m_pSubStateMachine->Register_State("Attack_Summon",				CDefilerState_Attack_Summon::Create());
-	m_pSubStateMachine->Register_State("Attack_Evade",				CDefilerState_Attack_Evade::Create());
+	m_pSubStateMachine->Register_State("RePos_Front",				CDefilerState_RePos_Front::Create());
+	m_pSubStateMachine->Register_State("RePos_Back",				CDefilerState_RePos_Back::Create());
+	m_pSubStateMachine->Register_State("Trace",				CDefilerState_Attack_Trace::Create());
 	m_pSubStateMachine->Register_State("Attack_Barrier",			CDefilerState_Attack_Barrier::Create());
 }
 
@@ -136,7 +149,7 @@ void CDefilerState_Attack::Enter(CDefiler* pOwner)
 	__super::Enter(pOwner);
 	auto& blackboard = pOwner->GetBlackBoard();
 	Build_Pattern(pOwner, blackboard.patternIndex);
-	blackboard.patternIndex++;
+	blackboard.patternIndex = Helper::Get_Random_Int(0, 12);
 	if (blackboard.patternIndex > 12)
 		blackboard.patternIndex = 0.f;
 	if (!blackboard.patternTransition.empty())
@@ -458,6 +471,8 @@ void CDefilerState_Attack_07::Enter(CDefiler* pOwner)
 {
 	DEFILER_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
 	blackBoard.TraceType_OnlyAnim();
+	blackBoard.TraceType_IgnoreRotation();
+
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("Monster_IsoldetheDefiler_Ani_Attack_07")
 		.StartAt(blackBoard.reservedPattern.animStartProgress)
@@ -606,7 +621,7 @@ void CDefilerState_Attack_09_Loop::Enter(CDefiler* pOwner)
 	pAnimator->Change_Animation("Monster_IsoldetheDefiler_Ani_Attack_09_Loop")
 		.StartAt(blackBoard.reservedPattern.animStartProgress)
 		.Speed(1.f)
-		.Loop(false)
+		.Loop(true)
 		.Apply();
 }
 
@@ -687,17 +702,17 @@ void CDefilerState_Attack_Summon::Exit(CDefiler* pOwner)
 {
 }
 
-void CDefilerState_Attack_Evade::Enter(CDefiler* pOwner)
+void CDefilerState_RePos_Front::Enter(CDefiler* pOwner)
 {
 	DEFILER_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
 	blackBoard.TraceType_OnlyAnim();
 	auto& dissolve = pOwner->GetDissolve();
-	dissolve.Set_DissolveState(dissolve.DISAPPEAR, .7f);
+	dissolve.Set_DissolveState(dissolve.DISAPPEAR, .5f);
 	m_eState = EVADE_IN;
 	pOwner->Control_TargetEnable(false);
 }
 
-void CDefilerState_Attack_Evade::Update(CDefiler* pOwner, _float dt)
+void CDefilerState_RePos_Front::Update(CDefiler* pOwner, _float dt)
 {
 	DEFILER_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
 	auto& dissolve = pOwner->GetDissolve();
@@ -705,16 +720,46 @@ void CDefilerState_Attack_Evade::Update(CDefiler* pOwner, _float dt)
 	if (m_eState == EVADE_IN && dissolve.isComplete()) {
 		m_eState = EVADE_OUT;
 		dissolve.Set_DissolveState(dissolve.APPEAR, .5f);
-		pOwner->Set_CCTPos({ 0,1.1f,0 });
+		pOwner->Set_CCTPos({ -15.f,-1.f,8.f});
 	}
 	else if (m_eState == EVADE_OUT && dissolve.isComplete()) {
 		blackBoard.isRequestNext = true;
 	}
 }
 
-void CDefilerState_Attack_Evade::Exit(CDefiler* pOwner)
+void CDefilerState_RePos_Front::Exit(CDefiler* pOwner)
 {
+	pOwner->Control_TargetEnable(true);
+}
+
+
+void CDefilerState_RePos_Back::Enter(CDefiler* pOwner)
+{
+	DEFILER_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
+	blackBoard.TraceType_OnlyAnim();
 	auto& dissolve = pOwner->GetDissolve();
+	dissolve.Set_DissolveState(dissolve.DISAPPEAR, .5f);
+	m_eState = EVADE_IN;
+	pOwner->Control_TargetEnable(false);
+}
+
+void CDefilerState_RePos_Back::Update(CDefiler* pOwner, _float dt)
+{
+	DEFILER_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
+	auto& dissolve = pOwner->GetDissolve();
+	pOwner->Update_Dissolve(dt);
+	if (m_eState == EVADE_IN && dissolve.isComplete()) {
+		m_eState = EVADE_OUT;
+		dissolve.Set_DissolveState(dissolve.APPEAR, .5f);
+		pOwner->Set_CCTPos({ 15.f,-1.f, -5.f });
+	}
+	else if (m_eState == EVADE_OUT && dissolve.isComplete()) {
+		blackBoard.isRequestNext = true;
+	}
+}
+
+void CDefilerState_RePos_Back::Exit(CDefiler* pOwner)
+{
 	pOwner->Control_TargetEnable(true);
 }
 
@@ -737,5 +782,28 @@ void CDefilerState_Attack_Barrier::Update(CDefiler* pOwner, _float dt)
 }
 
 void CDefilerState_Attack_Barrier::Exit(CDefiler* pOwner)
+{
+
+}
+
+void CDefilerState_Attack_Trace::Enter(CDefiler* pOwner)
+{
+	DEFILER_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
+	auto& targetInfo = pOwner->GetTargetingInfo();
+	blackBoard.TraceType_OnlyAnim();
+	blackBoard.TraceType_IgnoreRotation();
+	_vector3 right = pOwner->Get_Component<CTransform>()->Dir(STATE::RIGHT);
+	_float dot = right.Dot(targetInfo.vDirToTarget);
+	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
+	string AnimName =(dot>0) ? "Monster_IsoldetheDefiler_Ani_Evade_Right" : "Monster_IsoldetheDefiler_Ani_Evade_Left";
+	pAnimator->Change_Animation(AnimName).Speed(1.f).Loop(true).Apply();
+}
+
+void CDefilerState_Attack_Trace::Update(CDefiler* pOwner, _float dt)
+{
+	
+}
+
+void CDefilerState_Attack_Trace::Exit(CDefiler* pOwner)
 {
 }
