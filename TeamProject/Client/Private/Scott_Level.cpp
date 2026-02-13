@@ -83,7 +83,7 @@ HRESULT CScott_Level::Awake()
 	auto PaperEffect = Builder::Create_Object({ "Scott_Level", "Proto_GameObject_PaperEffect" })
 		.Position({ -2.f, -2.f, -6.f, })
 		.Build("PaperEffect");
-	ObjectManager()->Add_Object(PaperEffect, { "Scott_Level", "Effect_Layer" });
+	ObjectManager()->Add_Object(PaperEffect, { "Scott_Level", "MapParticle_Layer" });
 
 	CamDirector()->AutoField(CamStartDir::Back);
 
