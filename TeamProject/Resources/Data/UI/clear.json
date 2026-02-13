@@ -58,9 +58,9 @@
                         1.0,
                         1.0
                     ],
-                    "easeType": 0,
+                    "easeType": 7,
                     "position": [
-                        -200.0,
+                        -180.0,
                         0.0
                     ],
                     "scale": [
@@ -76,6 +76,25 @@
                         1.0,
                         1.0,
                         1.0
+                    ],
+                    "easeType": 0,
+                    "position": [
+                        -150.0,
+                        0.0
+                    ],
+                    "scale": [
+                        1.0,
+                        1.0
+                    ],
+                    "time": 0.10000000149011612
+                },
+                {
+                    "angle": 0.0,
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        0.0
                     ],
                     "easeType": 0,
                     "position": [
@@ -919,6 +938,468 @@
             "children": [],
             "typeTag": "Image",
             "textureTag": "Charged_D.png"
+        },
+        {
+            "alive": true,
+            "instanceName": "SoftDirectionalOutline",
+            "transform": {
+                "anchor": 0,
+                "anchorOffset": [
+                    -777.0,
+                    -125.0
+                ],
+                "size": [
+                    280.0,
+                    250.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "stencilMode": 0,
+            "pass": "SoftDirectionalOutline",
+            "colorTexKey": "empty.png",
+            "colorTexMode": 0,
+            "colorTexMix": 1.0,
+            "colorUVUse": 0,
+            "colorUVOffset": [
+                0.0,
+                0.0
+            ],
+            "colorUVScale": [
+                1.0,
+                1.0
+            ],
+            "colorUVAutoScroll": false,
+            "colorUVSpeed": [
+                0.0,
+                0.0
+            ],
+            "animClips": [],
+            "children": [],
+            "typeTag": "SoftDirectionalOutline",
+            "textureTag": "Clear_C.png",
+            "softDirectionalOutline": {
+                "texelSize": [
+                    0.0035714285913854837,
+                    0.004000000189989805
+                ],
+                "radius": 3,
+                "glowStrength": 1.0,
+                "paddingDir": [
+                    -1.0,
+                    -1.0
+                ],
+                "gaussianPower": 3.0
+            }
+        },
+        {
+            "alive": true,
+            "instanceName": "SoftDirectionalOutline",
+            "transform": {
+                "anchor": 0,
+                "anchorOffset": [
+                    -597.0,
+                    -125.0
+                ],
+                "size": [
+                    280.0,
+                    250.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "stencilMode": 0,
+            "pass": "SoftDirectionalOutline",
+            "colorTexKey": "empty.png",
+            "colorTexMode": 0,
+            "colorTexMix": 1.0,
+            "colorUVUse": 0,
+            "colorUVOffset": [
+                0.0,
+                0.0
+            ],
+            "colorUVScale": [
+                1.0,
+                1.0
+            ],
+            "colorUVAutoScroll": false,
+            "colorUVSpeed": [
+                0.0,
+                0.0
+            ],
+            "animClips": [],
+            "children": [],
+            "typeTag": "SoftDirectionalOutline",
+            "textureTag": "Clear_L.png",
+            "softDirectionalOutline": {
+                "texelSize": [
+                    0.0035714285913854837,
+                    0.004000000189989805
+                ],
+                "radius": 3,
+                "glowStrength": 1.0,
+                "paddingDir": [
+                    -1.0,
+                    -1.0
+                ],
+                "gaussianPower": 3.0
+            }
+        },
+        {
+            "alive": true,
+            "instanceName": "SoftDirectionalOutline",
+            "transform": {
+                "anchor": 0,
+                "anchorOffset": [
+                    -397.0,
+                    -125.0
+                ],
+                "size": [
+                    280.0,
+                    250.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "stencilMode": 0,
+            "pass": "SoftDirectionalOutline",
+            "colorTexKey": "empty.png",
+            "colorTexMode": 0,
+            "colorTexMix": 1.0,
+            "colorUVUse": 0,
+            "colorUVOffset": [
+                0.0,
+                0.0
+            ],
+            "colorUVScale": [
+                1.0,
+                1.0
+            ],
+            "colorUVAutoScroll": false,
+            "colorUVSpeed": [
+                0.0,
+                0.0
+            ],
+            "animClips": [],
+            "children": [],
+            "typeTag": "SoftDirectionalOutline",
+            "textureTag": "Clear_E.png",
+            "softDirectionalOutline": {
+                "texelSize": [
+                    0.0035714285913854837,
+                    0.004000000189989805
+                ],
+                "radius": 3,
+                "glowStrength": 1.0,
+                "paddingDir": [
+                    -1.0,
+                    -1.0
+                ],
+                "gaussianPower": 3.0
+            }
+        },
+        {
+            "alive": true,
+            "instanceName": "SoftDirectionalOutline",
+            "transform": {
+                "anchor": 0,
+                "anchorOffset": [
+                    -198.0,
+                    -125.0
+                ],
+                "size": [
+                    280.0,
+                    250.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "stencilMode": 0,
+            "pass": "SoftDirectionalOutline",
+            "colorTexKey": "empty.png",
+            "colorTexMode": 0,
+            "colorTexMix": 1.0,
+            "colorUVUse": 0,
+            "colorUVOffset": [
+                0.0,
+                0.0
+            ],
+            "colorUVScale": [
+                1.0,
+                1.0
+            ],
+            "colorUVAutoScroll": false,
+            "colorUVSpeed": [
+                0.0,
+                0.0
+            ],
+            "animClips": [],
+            "children": [],
+            "typeTag": "SoftDirectionalOutline",
+            "textureTag": "Clear_A.png",
+            "softDirectionalOutline": {
+                "texelSize": [
+                    0.0035714285913854837,
+                    0.004000000189989805
+                ],
+                "radius": 3,
+                "glowStrength": 1.0,
+                "paddingDir": [
+                    -1.0,
+                    -1.0
+                ],
+                "gaussianPower": 3.0
+            }
+        },
+        {
+            "alive": true,
+            "instanceName": "SoftDirectionalOutline",
+            "transform": {
+                "anchor": 0,
+                "anchorOffset": [
+                    48.0,
+                    -125.0
+                ],
+                "size": [
+                    280.0,
+                    250.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "stencilMode": 0,
+            "pass": "SoftDirectionalOutline",
+            "colorTexKey": "empty.png",
+            "colorTexMode": 0,
+            "colorTexMix": 1.0,
+            "colorUVUse": 0,
+            "colorUVOffset": [
+                0.0,
+                0.0
+            ],
+            "colorUVScale": [
+                1.0,
+                1.0
+            ],
+            "colorUVAutoScroll": false,
+            "colorUVSpeed": [
+                0.0,
+                0.0
+            ],
+            "animClips": [],
+            "children": [],
+            "typeTag": "SoftDirectionalOutline",
+            "textureTag": "Clear_R.png",
+            "softDirectionalOutline": {
+                "texelSize": [
+                    0.0035714285913854837,
+                    0.004000000189989805
+                ],
+                "radius": 3,
+                "glowStrength": 1.0,
+                "paddingDir": [
+                    -1.0,
+                    -1.0
+                ],
+                "gaussianPower": 3.0
+            }
+        },
+        {
+            "alive": true,
+            "instanceName": "SoftDirectionalOutline",
+            "transform": {
+                "anchor": 0,
+                "anchorOffset": [
+                    262.0,
+                    -125.0
+                ],
+                "size": [
+                    280.0,
+                    250.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "stencilMode": 0,
+            "pass": "SoftDirectionalOutline",
+            "colorTexKey": "empty.png",
+            "colorTexMode": 0,
+            "colorTexMix": 1.0,
+            "colorUVUse": 0,
+            "colorUVOffset": [
+                0.0,
+                0.0
+            ],
+            "colorUVScale": [
+                1.0,
+                1.0
+            ],
+            "colorUVAutoScroll": false,
+            "colorUVSpeed": [
+                0.0,
+                0.0
+            ],
+            "animClips": [],
+            "children": [],
+            "typeTag": "SoftDirectionalOutline",
+            "textureTag": "Clear_E.png",
+            "softDirectionalOutline": {
+                "texelSize": [
+                    0.0035714285913854837,
+                    0.004000000189989805
+                ],
+                "radius": 3,
+                "glowStrength": 1.0,
+                "paddingDir": [
+                    -1.0,
+                    -1.0
+                ],
+                "gaussianPower": 3.0
+            }
+        },
+        {
+            "alive": true,
+            "instanceName": "SoftDirectionalOutline",
+            "transform": {
+                "anchor": 0,
+                "anchorOffset": [
+                    466.0,
+                    -103.0
+                ],
+                "size": [
+                    300.0,
+                    206.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "stencilMode": 0,
+            "pass": "SoftDirectionalOutline",
+            "colorTexKey": "empty.png",
+            "colorTexMode": 0,
+            "colorTexMix": 1.0,
+            "colorUVUse": 0,
+            "colorUVOffset": [
+                0.0,
+                0.0
+            ],
+            "colorUVScale": [
+                1.0,
+                1.0
+            ],
+            "colorUVAutoScroll": false,
+            "colorUVSpeed": [
+                0.0,
+                0.0
+            ],
+            "animClips": [],
+            "children": [],
+            "typeTag": "SoftDirectionalOutline",
+            "textureTag": "Charged_D.png",
+            "softDirectionalOutline": {
+                "texelSize": [
+                    0.0033333334140479565,
+                    0.004854368977248669
+                ],
+                "radius": 3,
+                "glowStrength": 2.0,
+                "paddingDir": [
+                    -1.0,
+                    -1.0
+                ],
+                "gaussianPower": 1.0
+            }
         }
     ],
     "typeTag": "CanvasPanel"

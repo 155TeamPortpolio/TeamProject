@@ -534,7 +534,7 @@ PS_OUT PS_SOFTDIRECTIONALOUTLINE(PS_IN In)
 
     // Premultiplied Alpha 출력
     Out.vColor.rgb = vColor.rgb * fOutline * vColor.a;
-    Out.vColor.a = fOutline;
+    Out.vColor.a = fOutline * vColor.a;
 
     return Out;
 }
