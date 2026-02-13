@@ -84,6 +84,7 @@
 #include "XWall.h"
 
 #include "Water.h"
+#include "WaterWave.h"
 #include "UI_RenderTargetScreen.h"
 
 CTestLevel::CTestLevel(const string& LevelKey)
@@ -128,8 +129,7 @@ HRESULT CTestLevel::Awake()
 	//pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestModel", CTestObject::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestFloor", CTestFloor::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestMap", CTestMap::Create());
-	pProto->Add_ProtoType("Test_Level", "Proto_Env_Water", CWater::Create());
-
+	
 	//==================== UI ===============
 	auto uiDirector = CUIDirector::GetInstance();
 	uiDirector->Load_LevelObjects("Test_Level");
@@ -202,11 +202,6 @@ HRESULT CTestLevel::Awake()
 		.Build("XWall");
 
 	ObjectManager()->Add_Object(XWall, { "Test_Level", "Effect_Layer" });
-
-	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_RenderTargetScreen", CUI_RenderTargetScreen::Create());
-	auto pRenderTargetScreen = Builder::Create_Object({ "Test_Level", "Proto_GameObject_RenderTargetScreen" })
-		.Build("rendertargetScreen");
-	ObjectManager()->Add_Object(pRenderTargetScreen, { "Test_Level", "UI_Layer" });
 
 #ifdef  _USING_GUI
 	Ready_MonsterSpawnConsole();
@@ -287,11 +282,11 @@ void CTestLevel::Ready_TestObject()
 	IProtoService* pProto = CGameInstance::GetInstance()->Get_PrototypeMgr();
 	auto objMgr = m_pGameInstance->Get_ObjectMgr();
 
-	auto testMap = Builder::Create_Object({ "Test_Level", "Proto_Env_Water" })
-		.Position(_float3(0.f, -1.1f,0.f))
-		.Scale(_float3(1.f, 0.2f, 1.f))
-		.Build("Water");
-
+	//auto testMap = Builder::Create_Object({ "Test_Level", "Proto_Env_Water" })
+	//	.Position(_float3(0.f, 0.f, 20.f))
+	//	.Scale(_float3(6.f, 1.f, 1.f))
+	//	.Build("Water");
+	//
 	//objMgr->Add_Object(testMap, { "Test_Level", "Env" });
 	//==============TestEffect==========================
 	//pResource->Add_ResourcePath("glow_particle.json", "../Bin/Resources/Effect/glow_particle.json");

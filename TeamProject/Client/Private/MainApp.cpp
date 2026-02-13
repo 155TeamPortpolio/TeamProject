@@ -48,9 +48,10 @@
 #include "ImageUI.h"
 #include "MaskUI.h"
 #include "NineSliceUI.h"
+#include "SoftDirectionalOutlineUI.h"
 #include "SpriteAnimationUI.h"
 #include "TextUI.h"
-#include "UVAnimationUI.h"
+#include "UVAnimationUI.h" 
 
 #include "UI_Logo.h"
 #include "UI_Loading.h"
@@ -110,9 +111,10 @@
 #include "UI_DamageText.h"
 #include "UI_Gangta.h"
 #include "UI_Seoriyeol.h"
-
-#include "UI_Wipeout.h"
+ 
+#include "UI_Clear.h"
 #include "UI_Switch.h"
+#include "UI_Wipeout.h"
 
 #include "VideoPanel.h"
 
@@ -197,7 +199,7 @@ void CMainApp::Set_Levels()
 
 	LevelManager()->Set_LoadingLevel("Loading_Level");
 	m_pGameInstance->Notify_LevelSet(); 
-	m_pGameInstance->Get_LevelMgr()->Request_ChangeLevel("Test_Level", true);
+	m_pGameInstance->Get_LevelMgr()->Request_ChangeLevel("Zero_Level", true);
 } 
 
 CMainApp* CMainApp::Create()
@@ -254,6 +256,7 @@ void CMainApp::Initialize_GlobalPrototype()
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_CanvasPanel", CCanvasPanel::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Gauge", CGaugeUI::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Image", CImageUI::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_SoftDirectionalOutline", CSoftDirectionalOutlineUI::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_SpriteAnimation", CSpriteAnimationUI::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Text", CTextUI::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_UVAnimation", CUVAnimationUI::Create());
@@ -323,8 +326,9 @@ void CMainApp::Initialize_GlobalPrototype()
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Gangta",      CUI_Gangta::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Seoriyeol",   CUI_Seoriyeol::Create());
 
-	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Wipeout", CUI_Wipeout::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Clear", CUI_Clear::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Switch", CUI_Switch::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Wipeout", CUI_Wipeout::Create());
 
 	/*Enviroment*/
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Cloud", CTestCloud::Create());
@@ -348,7 +352,7 @@ void CMainApp::Create_GlobalCamObjs()
 
 	CCT_DESC desc;
 	desc.eGroup = COLLISION_GROUP::CAMERA;
-	desc.iCollisionMask = ENUM(COLLISION_GROUP::COMMON) | ENUM(COLLISION_GROUP::INTERACTABLE);
+	desc.iCollisionMask = ENUM(COLLISION_GROUP::COMMON) | ENUM(COLLISION_GROUP::INTERACTABLE) | ENUM(COLLISION_GROUP::GROUND);
 
 	auto orbitCam = Builder::Create_Object({G_GlobalLevelKey, "Proto_GameObject_OrbitCam"})
 		.Camera(aspect)

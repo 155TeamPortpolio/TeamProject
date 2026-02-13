@@ -3,6 +3,7 @@
 
 NS_BEGIN(Engine)
 class CGameInstance;
+class CGameObject;
 class CUI_Object;
 NS_END
 
@@ -64,9 +65,10 @@ public:
 	/* 가챠 결과를 화면에 표시 */
 	void Show_GachaResult(const vector<GACHA_RESULT_DESC>* pResultDesc);
 
-	//==================== Gacha ===============
-	void Show_Wipeout();
+	//==================== Switch / Clear / Wipeout =============== 
 	void Show_Switch();
+	void Show_Clear();
+	void Show_Wipeout();
 
 public:
 	/* 모든 레벨에 필요한 공통 데이터 등록 */
@@ -80,6 +82,8 @@ private:
 	void Show_HUD(const string& strInstanceName, _bool isFade = true);
 	void Hide_HUD(const string& strInstanceName);
 	string Get_HUDName(HUD hud);
+
+	HRESULT Ready_UIObject(const string& strLevelTag, const string& strPrototypeTag, const string& strInstanceName, class CGameObject* pProto);
 
 	void UI_Active(const string& strInstanceName, void* pArg = nullptr);
 	void UI_DeActive(const string& strInstanceName, void* pArg = nullptr);

@@ -90,12 +90,15 @@ public:
 	void Set_PoolKey(CLONE_DESC key) { m_PoolMark.key = key; }
 	const CLONE_DESC& Get_PoolKey() const { return m_PoolMark.key; }
 
+public:
+	virtual HRESULT ReInitialize_Component(INIT_DESC* pArg);
 	virtual void OnPooledAcquire(INIT_DESC* pArg = nullptr) {};		// 풀에서 꺼낼 때
 	virtual void OnPooledRelease() {}														// 풀로 돌아갈 때
 
 public:
 	void SetRenderLayer(RENDER_LAYER layer) { m_eRenderLayer = layer; };
 	RENDER_LAYER GetRenderLayer() const {return m_eRenderLayer; };
+
 
 private:
 	HRESULT Make_OpaquePacket();
