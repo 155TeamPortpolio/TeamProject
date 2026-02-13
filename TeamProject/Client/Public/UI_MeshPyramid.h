@@ -32,7 +32,6 @@ private:
 public:
     static CGameObject* Create();
     CGameObject* Clone(INIT_DESC* pArg) override;
-    virtual void Free() override { __super::Free(); }
 };
 
 NS_END
