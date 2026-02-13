@@ -4,6 +4,7 @@
 #include "BattleSystem.h"
 #include "Zero_Level.h"
 #include "StageRouter.h"
+#include "EffectContainer.h"
 
 CZeroStage_Boss::CZeroStage_Boss()
 {
@@ -54,6 +55,13 @@ void CZeroStage_Boss::Update()
 
 HRESULT CZeroStage_Boss::Enter_Stage(StageContext& context)
 {
+	auto fog = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+		.Asset("defiler_stage_fog.json")
+		.Position(_vector3(-1.f, -3.5f, 1.8f))
+		.Build("Stage_Fog");
+
+	ObjectManager()->Add_Object(fog, { "Zero_Level","Effect_Layer" });
+
 	Ready_Map("Zero_Level", context.mapKey);
 	Reserve_Enemy("Zero_Level");
 	m_eStageStage = StageState::Entrance;

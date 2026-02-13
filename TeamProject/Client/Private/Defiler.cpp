@@ -792,6 +792,13 @@ HRESULT CDefiler::Initialize_Effects()
 	}
 	{
 		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("defiler_slash1.json")
+			.Build("Defiler_Slash1_1");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect);
+	}
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
 			.Asset("defiler_slash2.json")
 			.Build("Defiler_Slash2_0");
 		pEffect->Stop();

@@ -272,10 +272,32 @@ void CDefilerState_Attack_01_01_P2::Enter(CDefiler* pOwner)
 void CDefilerState_Attack_01_01_P2::Update(CDefiler* pOwner, _float dt)
 {
 	ComboTransition(pOwner);
+	Update_Effects(pOwner);
 }
 
 void CDefilerState_Attack_01_01_P2::Exit(CDefiler* pOwner)
 {
+}
+
+void CDefilerState_Attack_01_01_P2::Update_Effects(CDefiler* pOwner)
+{
+	if (IsCrossAnimProgress(0.13f))
+		pOwner->Play_Effect("Defiler_Slash0_0", _vector3(0.f, 1.5f, 0.f), _quaternion(0.66f, 0.3f, -0.22f, 0.66f));
+	if (IsCrossAnimProgress(0.18f))
+		pOwner->Play_Effect("Defiler_Slash0_1", _vector3(0.f, 1.4f, 0.f), _quaternion(0.08f, 0.71f, 0.7f, 0.04f));
+	if (IsCrossAnimProgress(0.27f))
+		pOwner->Play_Effect("Defiler_Slash1_0", _vector3(0.f, 1.4f, 0.f), _quaternion(-0.1f, 0.71f, -0.53f, 0.46f));
+	if (IsCrossAnimProgress(0.35f))
+		pOwner->Play_Effect("Defiler_Slash1_1", _vector3(0.f, 1.4f, 0.f), _quaternion(0.56f, -0.47f, 0.03f, -0.69f));
+	if (IsCrossAnimProgress(0.44f))
+		pOwner->Play_Effect("Defiler_Slash1_0", _vector3(0.f, 0.8f, 0.f), _quaternion(-0.28f, 0.62f, 0.64f, 0.36f));
+	if (IsCrossAnimProgress(0.57f))
+		pOwner->Play_Effect("Defiler_Axe_Light0", _vector3(), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+	if (IsCrossAnimProgress(0.62f))
+	{
+		pOwner->Play_Effect("Defiler_Slash2_0", _vector3(0.f, 2.1f, 0.7f), _quaternion(-0.2f, 0.69f, -0.2f, 0.66f));
+		pOwner->Play_Effect("Defiler_HitGround0", _vector3(0.2f, 0.2f, 2.9f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+	}
 }
 
 void CDefilerState_Attack_01_03::Enter(CDefiler* pOwner)
@@ -438,9 +460,9 @@ void CDefilerState_Attack_05::Update_Effects(CDefiler* pOwner)
 {
 	if (IsCrossAnimProgress(0.08f))
 		pOwner->Play_Effect("Defiler_Axe_Light2", _vector3(), _quaternion(0.f, 0.f, 0.f, 1.f), false);
-	if (IsCrossAnimProgress(0.31f))
+	if (IsCrossAnimProgress(0.3f))
 		pOwner->Stop_Effect("Defiler_Axe_Light2");
-	if (IsCrossAnimProgress(0.33f))
+	if (IsCrossAnimProgress(0.3f))
 		pOwner->Play_Effect("Defiler_Dash_Trail", _vector3(-0.2f, 2.5f, -4.7f), _quaternion(0.71f, 0.f, 0.f, 0.71f));
 }
 
