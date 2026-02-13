@@ -37,6 +37,7 @@ HRESULT CWaterWave::Initialize(INIT_DESC* pArg)
 	CMaterialInstance* customInstance = CMaterialInstance::Create_Handle("Tessellation", "Opaque", pDevice);
 	customInstance->ChangeTexture(TEXTURE_TYPE::DIFFUSE, 0);
 	customInstance->Set_Param("g_Time", { &m_fAccTime, "float", sizeof(_float) });
+	customInstance->Set_Param("g_CycleTime", { &m_CycleTime, "float", sizeof(_float) });
 	pMaterial->Insert_MaterialInstance(customInstance, nullptr);
 	auto MaterialDat = customInstance->Get_MaterialData();
 	if (MaterialDat)
@@ -65,23 +66,19 @@ void CWaterWave::Update(_float dt)
 {
 	m_fAccTime += dt;
 
-	constexpr float CycleTime = 7.0f;
-	constexpr float PeakTime = 0.3f;
-
-	constexpr float CrashMoveDistance = 30.0f; 
 	_float3 CrashDirection = { 0.f, 0.f, -1.f };
 
-	float t = fmodf(m_fAccTime, CycleTime) / CycleTime;
+	_float t = fmodf(m_fAccTime, m_CycleTime) / m_CycleTime;
 
-	float overPeak = (t - PeakTime * 0.9f) / (1.0f - PeakTime * 0.9f);
+	_float overPeak = (t - m_PeakTime * 0.9f) / (1.0f - m_PeakTime * 0.9f);
 	overPeak = max(0.f, min(1.f, overPeak)); // saturate
 
-	float moveFactor = overPeak * overPeak * (3.0f - 2.0f * overPeak);
+	_float moveFactor = overPeak * overPeak * (3.0f - 2.0f * overPeak);
 
-	float fadeOut = 1.0f - max(0.f, min(1.f, (t - 0.85f) / 0.15f));
+	_float fadeOut = 1.0f - max(0.f, min(1.f, (t - 0.85f) / 0.15f));
 	fadeOut = fadeOut * fadeOut * (3.0f - 2.0f * fadeOut);
 
-	float finalMove = moveFactor * fadeOut * CrashMoveDistance;
+	_float finalMove = moveFactor * fadeOut * m_CrashMoveDistance;
 
 	_float3 newPos;
 	newPos.x = m_vOriginPos.x + CrashDirection.x * finalMove;

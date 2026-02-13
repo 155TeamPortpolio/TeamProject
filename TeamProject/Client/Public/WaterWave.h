@@ -21,6 +21,11 @@ private:
     _float      m_fAccTime = 0.f;
     _float3     m_vOriginPos;
 
+     _float     m_CycleTime = 7.0f;
+     _float     m_PeakTime = 0.3f;
+
+     _float     m_CrashMoveDistance = 60.0f;
+
 public:
     static CWaterWave* Create();
     virtual CGameObject* Clone(INIT_DESC* pArg) override;
