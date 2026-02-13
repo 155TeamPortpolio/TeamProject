@@ -33,6 +33,8 @@ HRESULT CMilitaryHelicopter::Initialize_Prototype()
     auto pMaterial = Get_Component<CMaterial>();
     pMaterial->Link_Material("Scott_Level", "Device_Vehicle_MilitaryHelicopter_01out.mat");
 
+    Get_Component<CAudioSource>()->SoundFolder("Scott_Level", "../Bin/Resources/Scott/AmbientActor/MilitaryHelicopter/Sound/");
+
     return S_OK;
 }
 
@@ -58,7 +60,6 @@ void CMilitaryHelicopter::Awake()
         .Loop(true)
         .Apply();
 
-    Get_Component<CAudioSource>()->SoundFolder("Scott_Level", "../Bin/Resources/Scott/AmbientActor/MilitaryHelicopter/Sound/");
     Get_Component<CAudioSource>()->Slot("Helicopter.wav")
         .Attribute3D(true)
         .Loop(true)
