@@ -358,6 +358,16 @@ void CBattleSystem::ClearBattleStage()
 	m_BattleSnapShots = m_BattleObjInfos;
 }
 
+void CBattleSystem::AllKill()
+{
+	HitDesc AllKill{};
+
+	AllKill.fDamage = 10000.f;
+	AllKill.eDamageType = DAMAGE_TYPE::NORMAL;
+
+	TakeAllDamage(AllKill);
+}
+
 BATTLEOBJ_INFO* CBattleSystem::FindBattleObjInfo(OBJECT_HANDLE objectHandle)
 {
 	auto it = m_BattleObjIndex.find(objectHandle);
