@@ -19,6 +19,7 @@
 #include "GaugeUI.h"
 #include "MaskUI.h"
 #include "NineSliceUI.h"
+#include "SoftDirectionalOutlineUI.h"
 
 vector<string> CUITool_Level::m_strFontKeys;
 vector<const _char*> CUITool_Level::m_szFontKeys;
@@ -161,6 +162,8 @@ HRESULT CUITool_Level::Ready_UIObjects()
 	pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_" + CMaskUI::m_strTypeTag, CMaskUI::Create());
 
 	pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_" + CNineSliceUI::m_strTypeTag, CNineSliceUI::Create());
+
+	pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_" + CSoftDirectionalOutlineUI::m_strTypeTag, CSoftDirectionalOutlineUI::Create());
 
 	return S_OK;
 }

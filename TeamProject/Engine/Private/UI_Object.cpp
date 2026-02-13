@@ -79,17 +79,12 @@ void CUI_Object::Post_EngineUpdate(_float dt)
     if (m_eRenderLayer == RENDER_LAYER::None)
         return;
 
+    if (m_stencilMode == StencilMode::Write)
+        m_stencilRef = UIManager()->Alloc_StencilRef();
+    else if (m_stencilMode == StencilMode::Test)
+        m_stencilRef = UIManager()->Get_StencilRef();
+
     if (m_eRenderLayer != RENDER_LAYER::CustomOnly) {
-
-        if (m_stencilMode == StencilMode::Write)
-        {
-            m_stencilRef = UIManager()->Alloc_StencilRef();
-        }
-        else if (m_stencilMode == StencilMode::Test)
-        {
-            m_stencilRef = UIManager()->Get_StencilRef();
-        }
-
         SPRITE_PACKET packet;
         packet.pSprite2D    = Get_Component<CSprite2D>();
         packet.pWorldMatrix = m_pTransform->Get_WorldMatrix_Ptr();
