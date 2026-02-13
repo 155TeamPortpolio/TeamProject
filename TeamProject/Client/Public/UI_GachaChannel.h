@@ -50,8 +50,6 @@ private:
 private:
 	void Cache();
 
-	void OnClick();
-
 public:
 	static  CGameObject* Create();
 	virtual CGameObject* Clone(INIT_DESC* pArg = {}) override;
