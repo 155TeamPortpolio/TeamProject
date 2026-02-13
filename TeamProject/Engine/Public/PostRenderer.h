@@ -32,6 +32,7 @@ public:
     HRESULT Render_Glitch_Internal();
     HRESULT Render_GuassianBlur_Internal();
     HRESULT Render_Saturation_Internal();
+    HRESULT Render_Distortion_Internal();
     HRESULT Render_Final();
 
 public:
@@ -49,6 +50,7 @@ private:
     class CGuassianBlurCommand*         m_pGuassianBlurCommand;
     class CAddictiveColorCommand*       m_pAddictiveColorCommand;
     class CSaturationCommand*           m_pSaturationCommand;
+    class CDistortionCommand*           m_pDistortionCommand;
     
     map<type_index, class CPostProcessCommand*> m_CommandMap;
 

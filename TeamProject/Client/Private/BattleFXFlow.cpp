@@ -232,7 +232,8 @@ void CBattleFXFlow::StartVfx_Evade()
 
 	AddCall([this, preset,pPost]() {
 		pPost->GetCommand<CSaturationCommand>()
-			->SetIntensity(0.5)
+			->SetIntensity(1.f)
+			->SetSaturationType(ENUM(SATURATIONTYPE::FULL))
 			->SetDuration(preset.fBlurDuration)
 			->SetEaseType(EaseType::OutSine)
 			->SetEnable(true);
