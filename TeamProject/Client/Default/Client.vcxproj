@@ -478,6 +478,7 @@
     <ClInclude Include="..\Public\UI_RenderTargetScreen.h" />
     <ClInclude Include="..\Public\UI_Wipeout.h" />
     <ClInclude Include="..\public\Water.h" />
+    <ClInclude Include="..\public\WaterWave.h" />
     <ClInclude Include="..\public\XWall.h" />
     <ClInclude Include="..\public\ZeroStage_Start.h" />
     <ClInclude Include="..\Public\UI_GachaDisplay.h" />
@@ -944,6 +945,7 @@
     <ClCompile Include="..\Private\UI_RenderTargetScreen.cpp" />
     <ClCompile Include="..\Private\UI_Wipeout.cpp" />
     <ClCompile Include="..\private\Water.cpp" />
+    <ClCompile Include="..\private\WaterWave.cpp" />
     <ClCompile Include="..\private\XWall.cpp" />
     <ClCompile Include="..\private\ZeroStage_Start.cpp" />
     <ClCompile Include="..\Private\UI_GachaDisplay.cpp" />
