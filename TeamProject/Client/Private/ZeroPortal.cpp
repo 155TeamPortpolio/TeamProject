@@ -31,7 +31,7 @@ HRESULT CZeroPortal::Initialize_Prototype()
 	Add_Component<CEventListener>();
 	Add_Component<CAudioSource>();
 
-	Get_Component<CAudioSource>()->SoundFolder("Zero_Level", "../Bin/Resources/Zero/Map/Sound/");
+	Get_Component<CAudioSource>()->SoundFolder("Zero_Level", "../Bin/Resources/Zero/Sound/");
 
 	return S_OK;
 }
