@@ -12,6 +12,11 @@
 #include "Child.h"
 
 #include "Character.h"
+
+#include "SkeletalModel.h"
+#include "StaticModel.h"
+#include "Material.h"
+
 CEnemyAttackCollider::CEnemyAttackCollider()
 	: CGameObject()
 {
@@ -30,6 +35,8 @@ HRESULT CEnemyAttackCollider::Initialize_Prototype()
 	Add_Component<CRigidBody>();
 	Add_Component<CCollider>();
 	Add_Component<CBoneFollower>();
+	Add_Component<CStaticModel>()->Link_Model(G_GlobalLevelKey, "Default.model");
+	Add_Component<CMaterial>()->Link_Material(G_GlobalLevelKey, "Default.mat");
 
 	return S_OK;
 }
