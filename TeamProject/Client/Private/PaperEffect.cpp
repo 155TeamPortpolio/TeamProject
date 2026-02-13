@@ -33,7 +33,7 @@ HRESULT CPaperEffect::Initialize(INIT_DESC* pArg)
 {
 	__super::Initialize(pArg);
 
-	m_ParticleCount = 20;
+	m_ParticleCount = 35;
 
 	INSTANCE_INIT_DESC instanceDesc = {};
 	instanceDesc.ElementKey = "ClientPaperEff";
@@ -86,15 +86,21 @@ void CPaperEffect::Awake()
 	for (size_t i = 0; i < m_ParticleCount; i++)
 	{
 		m_PaperEffect[i].vPosition = {
-			Helper::Get_Random_Float(-2.f, 2.f),
-			Helper::Get_Random_Float(0.f, 2.f),
-			Helper::Get_Random_Float(-2.f, 2.f)
+			Helper::Get_Random_Float(-3.f, 3.f),
+			Helper::Get_Random_Float(-3.f, 3.f),
+			Helper::Get_Random_Float(-3.f, 3.f)
 		};
 
 		m_PaperEffect[i].vVelocity = {
 			Helper::Get_Random_Float(-0.5f, 0.5f),
-			Helper::Get_Random_Float(1.f, 2.f),
+			Helper::Get_Random_Float(-1.f, 0.1f),
 			Helper::Get_Random_Float(-0.5f, 0.5f)
+		};
+
+		m_PaperEffect[i].vRotation = {
+			Helper::Get_Random_Float(0.f, XM_2PI * 2),
+			Helper::Get_Random_Float(0.f, XM_2PI * 2),
+			Helper::Get_Random_Float(0.f, XM_2PI * 2)
 		};
 
 		m_PaperEffect[i].vAngularSpeed = {
@@ -103,14 +109,18 @@ void CPaperEffect::Awake()
 			Helper::Get_Random_Float(-3.f, 3.f)
 		};
 
-		m_PaperEffect[i].fLifeTime = { Helper::Get_Random_Float(2.f, 4.f), 0.f };
+		m_PaperEffect[i].fLifeTime.x = Helper::Get_Random_Float(5.f, 18.f);
+		m_PaperEffect[i].fLifeTime.y = Helper::Get_Random_Float(0.f, m_PaperEffect[i].fLifeTime.x);
 
 		m_PaperEffect[i].fScale = Helper::Get_Random_Float(0.1f, 0.3f);
+		m_PaperEffect[i].fWindForce = Helper::Get_Random_Float(2.f, 10.f);
+		m_PaperEffect[i].fGravityScale = Helper::Get_Random_Float(0.5f, 2.1f);
 
 		m_InstancePaper[i].vUV = {
 			static_cast<_float>(Helper::Get_Random_Int(0, 1)) * 0.5f,
 			static_cast<_float>(Helper::Get_Random_Int(0, 1)) * 0.5f
 		};
+
 		m_InstancePaper[i].vRight = { m_PaperEffect[i].fScale,0,0,0 };
 		m_InstancePaper[i].vUp = { 0,m_PaperEffect[i].fScale,0,0 };
 		m_InstancePaper[i].vLook = { 0,0,m_PaperEffect[i].fScale,0 };
@@ -135,55 +145,78 @@ void CPaperEffect::Priority_Update(_float dt)
 
 void CPaperEffect::Update(_float dt)
 {
-	_float3 basePos = Get_WorldPos();
+	_vector3 basePos = Get_WorldPos();
+	_vector3 Dir = {
+		Get_Component<CTransform>()->Get_WorldMatrix().m[2][0],
+		Get_Component<CTransform>()->Get_WorldMatrix().m[2][1], 
+		Get_Component<CTransform>()->Get_WorldMatrix().m[2][2], 
+	};
+	Dir.Normalize();
 
 	for (size_t i = 0; i < m_ParticleCount; i++)
 	{
-		// 수명 증가
-		m_PaperEffect[i].fLifeTime.y += dt;
+		auto& p = m_PaperEffect[i];
 
-		// 죽으면 리셋
-		if (m_PaperEffect[i].fLifeTime.y >= m_PaperEffect[i].fLifeTime.x)
+		// 수명
+		p.fLifeTime.y += dt;
+
+		if (p.fLifeTime.y >= p.fLifeTime.x)
 		{
-			m_PaperEffect[i].fLifeTime.y = 0.f;
-			m_PaperEffect[i].fLifeTime.x = Helper::Get_Random_Float(2.f, 4.f);
+			p.fLifeTime.x = Helper::Get_Random_Float(5.f, 18.f);
+			p.fLifeTime.y = 0;
 
 			m_PaperEffect[i].vPosition = {
-				Helper::Get_Random_Float(-2.f, 2.f),
-				Helper::Get_Random_Float(0.f, 2.f),
-				Helper::Get_Random_Float(-2.f, 2.f)
+				Helper::Get_Random_Float(-3.f, 3.f),
+				Helper::Get_Random_Float(-3.f, 3.f),
+				Helper::Get_Random_Float(-3.f, 3.f)
 			};
 
-			m_PaperEffect[i].vVelocity = {
-				Helper::Get_Random_Float(-0.5f, 0.5f),
-				Helper::Get_Random_Float(1.f, 2.f),
-				Helper::Get_Random_Float(-0.5f, 0.5f)
+			p.vVelocity = {
+				Helper::Get_Random_Float(-1.f, 1.f),
+				Helper::Get_Random_Float(-1.f, 0.1f),
+				Helper::Get_Random_Float(-1.f, 1.f)
 			};
+
+			p.fScale = Helper::Get_Random_Float(0.1f, 0.3f);
+			p.fWindForce = Helper::Get_Random_Float(2.f, 5.f);
+			p.fGravityScale = Helper::Get_Random_Float(0.5f, 2.1f);
 		}
 
-		// 위치 업데이트
-		m_PaperEffect[i].vPosition += m_PaperEffect[i].vVelocity * dt;
-
+		// 위아래 흔들림 계산
+		float flutter = sinf(p.fLifeTime.y * 5.f) * 2.f;
+		p.vVelocity.y += flutter * dt;
+		
 		// 중력
-		m_PaperEffect[i].vVelocity.y -= 3.f * dt;
+		p.vVelocity.y -= p.fGravityScale * dt * 0.25f;
 
-		// 회전 적용 (Z축 회전 예시)
-		static _float angle = 0.f;
-		angle += m_PaperEffect[i].vAngularSpeed.z * dt;
+		// 바람은 위치 직접 이동
+		p.vPosition += Dir * p.fWindForce * dt;
 
-		_float c = cosf(angle);
-		_float s = sinf(angle);
+		// Y는 velocity 기반
+		p.vPosition.y += p.vVelocity.y * dt + dt;
 
-		float fScale = m_PaperEffect[i].fScale;
-		m_InstancePaper[i].vRight = { c * fScale, s * fScale, 0.f, 0.f };
-		m_InstancePaper[i].vUp = { -s * fScale, c * fScale, 0.f, 0.f };
+		// 회전 누적
+		p.vRotation += p.vAngularSpeed * dt;
+		Matrix rot = Matrix::CreateFromYawPitchRoll(p.vRotation);
+
+		XMVECTOR right = XMVector3TransformNormal({ 1,0,0 }, rot);
+		XMVECTOR up = XMVector3TransformNormal({ 0,1,0 }, rot);
+		XMVECTOR look = XMVector3TransformNormal({ 0,0,1 }, rot);
+
+		right *= p.fScale;
+		up *= p.fScale;
+		look *= p.fScale;
+
+		XMStoreFloat4(&m_InstancePaper[i].vRight, right);
+		XMStoreFloat4(&m_InstancePaper[i].vUp, up);
+		XMStoreFloat4(&m_InstancePaper[i].vLook, look);
 
 		// 위치 반영
 		m_InstancePaper[i].vTranslation =
 		{
-			basePos.x + m_PaperEffect[i].vPosition.x,
-			basePos.y + m_PaperEffect[i].vPosition.y,
-			basePos.z + m_PaperEffect[i].vPosition.z,
+			basePos.x + p.vPosition.x,
+			basePos.y + p.vPosition.y,
+			basePos.z + p.vPosition.z,
 			1.f
 		};
 	}

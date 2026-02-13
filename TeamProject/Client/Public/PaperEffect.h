@@ -18,10 +18,13 @@ public:
         _vector3 vRotation{};
         _vector3 vAngularSpeed{};
 
-        _vector2  fLifeTime{};
-        _vector2  vUV{};
+        _vector2 fLifeTime{};
+        _vector2 vUV{};
 
         _float fScale{};
+
+        _float fWindForce{};
+        _float fGravityScale{};
     }PAPEREFFECT;
 
 private:
