@@ -53,8 +53,6 @@ HRESULT CMiyabi::Initialize_Prototype()
 	Get_Component<CModel>()->Link_Model(G_GlobalLevelKey, "Miyabi.model");
 	Get_Component<CMaterial>()->Link_Material(G_GlobalLevelKey, "Miyabi.mat");
 
-	Add_Component<CAudioSource>();
-
 	return S_OK;
 }
 
@@ -890,6 +888,15 @@ HRESULT CMiyabi::Initialize_Sound()
 		, "Miyabi_UltimateAttack_Voice_02"
 		, "Miyabi_UltimateAttack_Voice_03"
 	);
+	Get_Component<CAudioSource>()->Add_Sequence("ExAttack02"
+		, "Miyabi_ExAttack02_Voice_01"
+		, "Miyabi_ExAttack02_Voice_02"
+	);
+	Get_Component<CAudioSource>()->Add_Sequence("ExAttack03"
+		, "Miyabi_ExAttack03_Voice_01"
+		, "Miyabi_ExAttack03_Voice_02"
+		, "Miyabi_ExAttack03_Voice_03"
+	);
 
 	return S_OK;
 }
@@ -907,7 +914,8 @@ void CMiyabi::Update_States()
 			if (m_bReserveCombo)
 			{
 				m_bReserveCombo = false;
-				BattleSystem()->GetBattlePlayer()->Request_ComboAttack();
+				if (m_TargetHandle.isAlive())
+					BattleSystem()->GetBattlePlayer()->Request_ComboAttack();
 			}
 		}
 	}

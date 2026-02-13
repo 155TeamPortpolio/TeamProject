@@ -40,14 +40,15 @@ public:
 public:
     void Change_CollisionMask(_uint iMask = ENUM(COLLISION_GROUP::PLAYER));
     void Release_CollisionMask();
+    void Release_AttackCollider();
 
 public:
     void Hide_MeshGroup(const string& mesh);
     void Show_MeshGroup(const string& mesh);
-
 public:
     void Set_CCTPos(_vector3 pos);
     _float3 Get_BipedPos(const string Bone = {"Bip001"});
+    FOUR_DIR Get_FourDirection();
     void Control_Sound(const string& event);
     void Control_Summon(const string& event);
     void Control_TargetEnable(_bool On);
@@ -56,6 +57,9 @@ public:
     void Play_Effect(const string& effectTag, _fvector offsetPosition, _fvector offsetQuaternion, _bool syncTransform = true);
     void Stop_Effect(const string& effectTag);
 
+public:
+    void Parried() override;
+    void StopSlashEff();
 private:
     void MoveByTraceMode(_float dt, _float moveScale = 1.f);
     void RotateToTarget(_float dt, _float rotateSpeed = 1.f);
@@ -88,6 +92,8 @@ private:
 
     _bool m_bDirLockedNear = false;
     _float m_passDampTime = 0.f;
+
+    vector<CEffectContainer*> m_SlashEffects;
 
 public:
     static CDefiler* Create();

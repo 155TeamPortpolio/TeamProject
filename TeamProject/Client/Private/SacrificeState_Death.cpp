@@ -75,6 +75,8 @@ void CSacrificeState_Death_Phase2::Enter(CSacrifice* pOwner)
 	pOwner->DeactiveLaser();
 	pOwner->DeactiveEyeLaser();
 	pOwner->Set_Hitable(false);
+
+	pOwner->RequestRemoveOnDeathToBattleSystem();	
 }
 
 void CSacrificeState_Death_Phase2::Update(CSacrifice* pOwner, _float dt)

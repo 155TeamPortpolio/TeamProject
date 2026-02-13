@@ -30,7 +30,7 @@ HRESULT CUI_BackButton::Initialize(INIT_DESC* pArg)
         m_isClicked = true;
         Set_ChildAnimation(CHILD::OVERLAY, 0);
         Set_ChildAnimation(CHILD::ICON, 0);
-        Get_Component<CAudioSource>()->Slot("UI_Close_Swoosh.wav").Attribute3D(false).Loop(false).Play();
+        Get_Component<CAudioSource>()->Slot("UI_Close_Swoosh.wav").Play();
             });
 
 	return S_OK;

@@ -50,8 +50,9 @@ public:
         SlotBuilder Attribute3D(_bool Attribute) { ownerSlot.is3DAttribute = Attribute; return *this; };
         SlotBuilder Group(SOUND_GROUP eGROUP)    { ownerSlot.eGroup        = eGROUP;    return *this; };
         SlotBuilder Pause(_bool Pause)           { ownerRef.Set_SlotPuase(ownerSlot.Key, Pause);     return *this; };
+        void Stop()                              { ownerRef.Set_SlotStop(ownerSlot.Key); };
         SlotBuilder Volume(_float volume)        { ownerRef.Set_SlotVolume(ownerSlot.Key, volume); return *this; };
-        SlotBuilder FadeOut(_float Durationfactor)        { ownerRef.FadeOut_Volume(ownerSlot.Key, Durationfactor); return *this; };
+        void FadeOut(_float Durationfactor)      { ownerRef.FadeOut_Volume(ownerSlot.Key, Durationfactor); };
         SlotBuilder FadeIn(_float Durationfactor,_float dst = 1.f)        
         {
            return *this; 
@@ -111,6 +112,7 @@ public:
     void    Set_SlotVolume(const string& slotKey, _float fVolume);
     void    Set_SlotLoopCount(const string& slotKey, _int iLoopCount);
     void    Set_SlotPuase(const string& slotKey, _bool isPaused);
+    void    Set_SlotStop(const string& slotKey);
     void    Set_3DAttribute(const string& slotKey, _bool _3DAttribute);
     void    FadeOut_Volume(const string& slotKey, _float Durationfactor);
     void    FadeIn_Volume(const string& slotKey, _float Durationfactor,_float dst = 1.f);

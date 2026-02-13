@@ -21,6 +21,10 @@ float ScreenHeight;
 float   GuassianIntensity;
 float   SaturationIntensity;
 
+bool    bSaturateStaticUse;
+bool    bSaturateSkinnedUse;
+bool    bSaturateEffectUse;
+
 bool    bSkinned = false;
 
 struct VS_IN
@@ -284,15 +288,46 @@ PS_OUT_RESULT PS_SATURATION(PS_IN In)
     PS_OUT_RESULT Out;
     
     float4 scene = FinalTexture.Sample(DefaultSampler, In.vTexcoord);
+    
+    float staticMask = bSaturateStaticUse ? StaticCombinedTexture.Sample(DefaultSampler, In.vTexcoord).a : 0.0;
+    float skinnedMask = bSaturateSkinnedUse ? SkinnedCombinedTexture.Sample(DefaultSampler, In.vTexcoord).a : 0.0;
+    float effectMask = bSaturateEffectUse ? EffectCombinedTexture.Sample(DefaultSampler, In.vTexcoord).a : 0.0;
+    
+    float combinedMask = saturate(staticMask + skinnedMask + effectMask);
+    combinedMask = step(0.01, combinedMask);
+    
     float gray = dot(scene.rgb, float3(0.2126, 0.7152, 0.0722));
+    float saturation = 1.0 - SaturationIntensity;
+    float3 desaturated = lerp(float3(gray, gray, gray), scene.rgb, saturation);
 
-    float saturation = 1.0 - SaturationIntensity; 
-    float3 result = lerp(float3(gray, gray, gray), scene.rgb, saturation);
+    float3 result = lerp(scene.rgb, desaturated, combinedMask);
     
     Out.vResult = float4(result, scene.a);
+    return Out;
+}
+
+PS_OUT_RESULT PS_DISTORTION(PS_IN In)
+{
+    PS_OUT_RESULT Out;
+    
+    float4 distortionDesc = DistortionCombinedTexture.Sample(DefaultSampler, In.vTexcoord);
+    float4 effect = EffectCombinedTexture.Sample(DefaultSampler, In.vTexcoord);
+    float2 distortion = distortionDesc.rg;
+    float weight = max(distortionDesc.a, 1e-6);
+    distortion /= weight;
+    float2 distortedUV = saturate(In.vTexcoord + distortion);
+   
+    float4 scene = FinalTexture.Sample(DefaultSampler, distortedUV);
+    float4 hdrBloom = HDRBloomFinalTexture.Sample(DefaultSampler, distortedUV);
+    scene.rgb = scene.rgb + hdrBloom.rgb * 0.3;
+    float alpha = max(scene.a, effect.a);
+    
+    Out.vResult = float4(scene.rgb + effect.rgb, alpha);
+    
     
     return Out;
 }
+
 
 PS_OUT_BACKBUFFER PS_MAIN_COMBINED(PS_IN In)
 {
@@ -362,27 +397,19 @@ PS_OUT_BACKBUFFER PS_MAIN_COMBINED(PS_IN In)
 
 float4 PS_MAIN_FINAL(PS_IN In) : SV_Target
 {
-    float4 distortionDesc = DistortionCombinedTexture.Sample(DefaultSampler, In.vTexcoord);
-    float2 distortion = distortionDesc.rg;
-    float weight = max(distortionDesc.a, 1e-6);
-    distortion /= weight;
-    float2 distortedUV = saturate(In.vTexcoord + distortion);
-   
-    float4 scene = FinalTexture.Sample(DefaultSampler, distortedUV);
-    float4 hdrBloom = HDRBloomFinalTexture.Sample(DefaultSampler, distortedUV);
-    float4 ui = UI2DTexture.Sample(DefaultSampler, In.vTexcoord);
-    float4 effect = EffectCombinedTexture.Sample(DefaultSampler, In.vTexcoord);
-
-    float3 hdrColor = effect.rgb + scene.rgb * (1.f - effect.a);
-    float alpha = max(scene.a, effect.a);
-
-    hdrColor += hdrBloom.rgb * 0.3; 
+    float4 scene = FinalTexture.Sample(DefaultSampler, In.vTexcoord);
     
-    float3 mapped = ZZZStyleTonemap(hdrColor) + effect.rgb;
+    float4 ui = UI2DTexture.Sample(DefaultSampler, In.vTexcoord);
+
+    //float3 hdrColor = effect.rgb + scene.rgb * (1.f - effect.a);
+    //float alpha = max(scene.a, effect.a);
+    float3 hdrColor = scene.rgb;
+    
+    float3 mapped = ZZZStyleTonemap(hdrColor);
     
     float3 finalColor = ui.rgb + mapped * (1.f - ui.a);
 
-    return float4(finalColor, alpha);
+    return float4(finalColor, scene.a);
 }
 
 
@@ -476,6 +503,16 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_ADDICTIVECOLOR();
+    }
+
+    pass DISTORTION
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_DISTORTION();
     }
 
     pass GLITCH

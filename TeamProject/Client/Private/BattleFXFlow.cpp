@@ -5,6 +5,7 @@
 #include "PostRenderer.h"
 #include "PostProcessCommand.h"
 #include "CamDirector.h"
+#include "UIDirector.h"
 
 CBattleFXFlow::CBattleFXFlow() {
 
@@ -65,7 +66,7 @@ void CBattleFXFlow::Initialize_Preset()
 
 	{
 		auto& WipeOut = m_BattleVFXData[ENUM(BATTLE_VFX_TYPE::WIPEOUT)];
-		const _float duration = 4.5f;
+		const _float duration = 4.8f;
 		WipeOut.bCanIntersect = false;
 		WipeOut.fVFXDuration = duration;
 		WipeOut.fBlurDuration = duration;
@@ -231,7 +232,8 @@ void CBattleFXFlow::StartVfx_Evade()
 
 	AddCall([this, preset,pPost]() {
 		pPost->GetCommand<CSaturationCommand>()
-			->SetIntensity(0.5)
+			->SetIntensity(1.f)
+			->SetSaturationType(ENUM(SATURATIONTYPE::FULL))
 			->SetDuration(preset.fBlurDuration)
 			->SetEaseType(EaseType::OutSine)
 			->SetEnable(true);
@@ -314,7 +316,7 @@ void CBattleFXFlow::StartVfx_Ultimate()
 	AddWait(preset.fVFXDuration);
 	AddCall([this, preset]() {
 		m_BattleVFX.fCurPos = 0.f;
-		m_BattleVFX.vNowColor = {};
+		m_BattleVFX.vNowColor = {}; 
 		m_BattleVFX.isRunning = false;
 		});
 	Start(nullptr);
@@ -326,12 +328,17 @@ void CBattleFXFlow::StartVfx_WipeOut()
 
 	auto& preset = m_BattleVFXData[ENUM(BATTLE_VFX_TYPE::WIPEOUT)];
 	AddParallelTimeScaleAll(preset);
-	AddCall([this]() {CamDirector()->BeginWipeOut(); });
+	AddCall([this]() {
+		CamDirector()->BeginWipeOut(); 
+		UIDirector()->Show_Wipeout();
+		UIDirector()->Hide_HUD(CUIDirector::BATTLE);
+		});
 	AddWait(preset.fVFXDuration);
 	AddCall([this, preset]() {
 		m_BattleVFX.fCurPos = 0.f;
 		m_BattleVFX.vNowColor = {};
 		m_BattleVFX.isRunning = false;
+		CamDirector()->EndWipeOut();
 		});
 	Start(nullptr);
 }

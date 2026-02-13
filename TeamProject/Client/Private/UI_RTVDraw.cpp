@@ -19,6 +19,9 @@ HRESULT CUI_RTVDraw::Initialize_Prototype()
 
 HRESULT CUI_RTVDraw::Initialize(INIT_DESC* pArg)
 {
+    RTVDRAW_DESC* pDesc = static_cast<RTVDRAW_DESC*>(pArg);
+    m_hRenderTargetScreen = pDesc->hRenderTargetScreen;
+
     if (FAILED(__super::Initialize(pArg)))
         return E_FAIL;
 
@@ -52,6 +55,12 @@ void CUI_RTVDraw::Update_RTV(const string& strTargetKey, _bool isClear)
     RenderSystem()->Add_RenderCommand(command, CUSTOMTARGET::UI);
 }
 
+void CUI_RTVDraw::Set_RenderTargetScreenRenderLayer(RENDER_LAYER eLayer)
+{
+    if (m_hRenderTargetScreen.isAlive())
+        m_hRenderTargetScreen.Get()->SetRenderLayer(eLayer);
+}
+
 void CUI_RTVDraw::Render_RT(ID3D11DeviceContext* pContext)
 {
     for (auto& pChild : Get_Component<CObjectContainer>()->Get_Children())
@@ -78,6 +87,10 @@ void CUI_RTVDraw::Render_RTRecursive(CGameObject* pObj, ID3D11DeviceContext* pCo
                 strCustomPassConstant = "StencilWrite_Custom";
             else if (strPassConstant == "Opaque_StencilTest")
                 strCustomPassConstant = "Opaque_StencilTest_Custom";
+            else if (strPassConstant == "UVAnimation_StencilTest")
+                strCustomPassConstant = "UVAnimation_StencilTest_Custom";
+            else if (strPassConstant == "SoftDirectionalOutline")
+                strCustomPassConstant = "SoftDirectionalOutline_Custom";
 
             RenderSystem()->GetRenderer(RENDERER_TYPE::UI)->Get_BufferInputLayout(pSprite->Get_Buffer(), pShader, strCustomPassConstant, &pLayout);
             pContext->IASetInputLayout(pLayout);

@@ -22,8 +22,8 @@ HRESULT CUI_ZeroEntranceLogo::Initialize_Prototype()
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
 
-	Add_Component<CStaticModel>()->Link_Model("Test_Level", "UI_3DBillboard_Zero.model");
-	Add_Component<CMaterial>()->Link_Material("Test_Level", "UI_3DBillboard_Zero.mat");
+	Add_Component<CStaticModel>()->Link_Model(G_GlobalLevelKey, "UI_3DBillboard_Zero.model");
+	Add_Component<CMaterial>()->Link_Material(G_GlobalLevelKey, "UI_3DBillboard_Zero.mat");
 	Add_Component<CCollider>();
  
 	return S_OK;
@@ -38,8 +38,8 @@ HRESULT CUI_ZeroEntranceLogo::Initialize(INIT_DESC* pArg)
 	pModel->Set_RenderType(RENDER_PASS_TYPE::RENDER_3DUI);
 	pModel->ShadowCast(false);
 
-	m_pTransform->Set_Pos(_float4(0.f, -4.f, 0.f, 1.f));
-	m_pTransform->Scale(_float3(0.5f, 0.5f, 0.5));
+	//m_pTransform->Set_Pos(_float4(0.f, -4.f, 0.f, 1.f));
+	//m_pTransform->Scale(_float3(0.5f, 0.5f, 0.5));
 
 	return S_OK;
 }
@@ -102,9 +102,9 @@ void CUI_ZeroEntranceLogo::Ready_Collider()
 	_float3 vPos = {};
 	XMStoreFloat3(&vPos, m_pTransform->Get_Pos());
 
-	pCollider->Set_Center(vPos);
-	pCollider->Set_Size({ 4.f, 4.f, 4.f });
-	pCollider->Set_Trigger(true);
+	//pCollider->Set_Center(vPos);
+	//pCollider->Set_Size({ 4.f, 4.f, 4.f });
+	//pCollider->Set_Trigger(true);
 }
 
 void CUI_ZeroEntranceLogo::Ready_NameIndicator()

@@ -370,6 +370,7 @@
     <ClInclude Include="..\Public\BackgroundNpc.h" />
     <ClInclude Include="..\Public\BasicHitEffect.h" />
     <ClInclude Include="..\Public\BattleFXFlow.h" />
+    <ClInclude Include="..\Public\BattleSystem_Panel.h" />
     <ClInclude Include="..\public\CamDebugInput.h" />
     <ClInclude Include="..\public\CamParryController.h" />
     <ClInclude Include="..\public\CamWipeOutController.h" />
@@ -454,6 +455,8 @@
     <ClInclude Include="..\Public\MiyabiState_SwitchInParryAid.h" />
     <ClInclude Include="..\Public\MiyabiState_SwitchOut.h" />
     <ClInclude Include="..\public\ThugBulkyEnforcer_Parried.h" />
+    <ClInclude Include="..\Public\SoftDirectionalOutlineUI.h" />
+    <ClInclude Include="..\Public\UI_Clear.h" />
     <ClInclude Include="..\Public\UI_RTVDraw.h" />
     <ClInclude Include="..\Public\UI_Switch.h" />
     <ClInclude Include="..\Public\UI_TextButton.h" />
@@ -476,6 +479,7 @@
     <ClInclude Include="..\Public\UI_RenderTargetScreen.h" />
     <ClInclude Include="..\Public\UI_Wipeout.h" />
     <ClInclude Include="..\public\Water.h" />
+    <ClInclude Include="..\public\WaterWave.h" />
     <ClInclude Include="..\public\XWall.h" />
     <ClInclude Include="..\public\ZeroStage_Start.h" />
     <ClInclude Include="..\Public\UI_GachaDisplay.h" />
@@ -835,6 +839,7 @@
     <ClCompile Include="..\Private\BackgroundNpc.cpp" />
     <ClCompile Include="..\Private\BasicHitEffect.cpp" />
     <ClCompile Include="..\Private\BattleFXFlow.cpp" />
+    <ClCompile Include="..\Private\BattleSystem_Panel.cpp" />
     <ClCompile Include="..\private\CamDebugInput.cpp" />
     <ClCompile Include="..\private\CamParryController.cpp" />
     <ClCompile Include="..\private\CamWipeOutController.cpp" />
@@ -918,6 +923,8 @@
     <ClCompile Include="..\Private\MiyabiState_SwitchInParryAid.cpp" />
     <ClCompile Include="..\Private\MiyabiState_SwitchOut.cpp" />
     <ClCompile Include="..\private\ThugBulkyEnforcer_Parried.cpp" />
+    <ClCompile Include="..\Private\SoftDirectionalOutlineUI.cpp" />
+    <ClCompile Include="..\Private\UI_Clear.cpp" />
     <ClCompile Include="..\Private\UI_RTVDraw.cpp" />
     <ClCompile Include="..\Private\UI_Switch.cpp" />
     <ClCompile Include="..\Private\UI_TextButton.cpp" />
@@ -940,6 +947,7 @@
     <ClCompile Include="..\Private\UI_RenderTargetScreen.cpp" />
     <ClCompile Include="..\Private\UI_Wipeout.cpp" />
     <ClCompile Include="..\private\Water.cpp" />
+    <ClCompile Include="..\private\WaterWave.cpp" />
     <ClCompile Include="..\private\XWall.cpp" />
     <ClCompile Include="..\private\ZeroStage_Start.cpp" />
     <ClCompile Include="..\Private\UI_GachaDisplay.cpp" />

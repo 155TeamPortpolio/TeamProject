@@ -7,6 +7,7 @@
 #include "MaterialInstance.h"
 #include "MaterialData.h"
 #include "UIDirector.h"
+#include "UI_RTVDraw.h"
 
 HRESULT CUI_RenderTargetScreen::Initialize_Prototype()
 {
@@ -42,7 +43,10 @@ HRESULT CUI_RenderTargetScreen::Initialize(INIT_DESC* pArg)
 void CUI_RenderTargetScreen::Update(_float dt)
 {
     if (InputDevice()->Key_Tap('I'))
-        UIDirector()->Show_Wipeout();
+        UIDirector()->Show_Clear();
+
+    if (InputDevice()->Key_Tap('J'))
+        UIDirector()->Show_Switch();
 }
 
 HRESULT CUI_RenderTargetScreen::Ready_Components()
@@ -82,10 +86,13 @@ void CUI_RenderTargetScreen::Ready_RenderState()
 
 HRESULT CUI_RenderTargetScreen::Ready_RTVDrawObjects()
 {
-    if (FAILED(Create_RTVDrawObject("Proto_GameObject_Wipeout", "wipeout")))
+    if (FAILED(Create_RTVDrawObject("Proto_GameObject_Clear", "clear")))
         return E_FAIL;
 
-    if (FAILED(Create_RTVDrawObject("Proto_GameObject_Switch", "switchv")))
+    if (FAILED(Create_RTVDrawObject("Proto_GameObject_Switch", "switch")))
+        return E_FAIL;
+
+    if (FAILED(Create_RTVDrawObject("Proto_GameObject_Wipeout", "wipeout")))
         return E_FAIL;
 
     return S_OK;
@@ -125,7 +132,13 @@ void CUI_RenderTargetScreen::Bind_RTV()
 
 HRESULT CUI_RenderTargetScreen::Create_RTVDrawObject(const string& strPrototypeTag, const string& strInstanceName)
 {
-    auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, strPrototypeTag }).Build(strInstanceName);
+    CUI_RTVDraw::RTVDRAW_DESC* pDesc = new CUI_RTVDraw::RTVDRAW_DESC;
+    pDesc->hRenderTargetScreen = Get_Handle();
+
+    auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, strPrototypeTag })
+        .Add_UIDesc(pDesc)
+        .Build(strInstanceName);
+
     if (!pObj)
         return E_FAIL;
 

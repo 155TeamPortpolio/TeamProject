@@ -26,6 +26,7 @@
 #include "DefilerWeapon.h"
 #include "DefilerAxe.h"
 #include "DefilerWall.h"
+#include "WaterWave.h"
 
 #include "AudioSource.h"
 
@@ -52,7 +53,8 @@ HRESULT CDefiler::Initialize_Prototype()
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_DefilerWeapon", CDefilerWeapon::Create());
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_DefilerAxe", CDefilerAxe::Create());
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_DefilerWall", CDefilerWall::Create());
-
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_Env_Water", CWaterWave::Create());
+	
 	Add_Component<CAnimator3D>();
 	Add_Component<CSkeletalModel>();
 	Add_Component<CMaterial>();
@@ -69,6 +71,7 @@ HRESULT CDefiler::Initialize(INIT_DESC* pArg)
 {
 	__super::Initialize(pArg);
 	Get_Component<CAudioSource>()->SoundFolder("Zero_Level","../Bin/Resources/Zero/Enemy/Defiler_Isolde/Sound/");
+	Get_Component<CCharacterController>()->Set_BoundingMinY(0.4f);
 
 	m_eEnemyClass = ENEMY_CLASS::BOSS;
 	vector<_uint> ProMeshes = Get_Component<CSkeletalModel>()->Hide_MehsByName("Pro");
@@ -130,9 +133,10 @@ void CDefiler::Priority_Update(_float dt)
 	Update_States(dt);
 
 	if (InputDevice()->Key_Tap('F')) {
-		Get_Component<CAudioSource>()
-			->Slot("OngoingLevel_Chapter130_Belle_111302003_001.wav")
-			.FadeOut(1.f);
+		Control_Summon("Blade");
+	}
+	if (InputDevice()->Key_Tap('H')) {
+		Control_Summon("Wave");
 	}
 	if (InputDevice()->Key_Tap('G')) {
 		Get_Component<CAudioSource>()
@@ -154,11 +158,11 @@ void CDefiler::Update(_float dt)
 	animatorPtr->Update_Animation(dt);
 
 	Route_AnimEvent(animatorPtr);
-
+	
 	MoveByTraceMode(dt);
 	RotateToTarget(dt, 4.f);
 	Get_Component<CCharacterController>()->Update(dt);
-
+	
 	m_pStateMachine->Update(dt);
 	Get_Component<CObjectContainer>()->UpdateChild(dt);
 }
@@ -170,34 +174,11 @@ void CDefiler::Late_Update(_float dt)
 
 void CDefiler::Render_GUI()
 {
-	m_pStateMachine->Render_GUI();
-	ImGui::InputInt("Pattern number", &m_BlackBoard.patternIndex);
-	for (auto& pattern : m_BlackBoard.patternTransition)
-	{
-		ImGui::TextUnformatted(pattern.nextPattern.c_str());
-	}
-
-	ImGui::SeparatorText("RimLight");
-
-	_float color[3] = {
-		m_vRimLightColor.x,
-		m_vRimLightColor.y,
-		m_vRimLightColor.z
-	};
-
-	if (ImGui::ColorEdit3("RimLightColor", color,
-		ImGuiColorEditFlags_Float |
-		ImGuiColorEditFlags_DisplayRGB |
-		ImGuiColorEditFlags_InputRGB))
-	{
-		m_vRimLightColor = _float3(color[0], color[1], color[2]);
-	}
-
-	ImGui::DragFloat("RimLightPower", &m_fRimLightPower, 0.01f, 0.f, 10.f);
-
 	__super::Render_GUI();
+#ifdef _USING_GUI
+	Client::DefilerDebugGUI::Render(m_BlackBoard);
+#endif
 }
-
 void CDefiler::Change_CollisionMask(_uint iMask)
 {
 	_uint Mask = Get_Component<CCharacterController>()->Get_CollisionMask();
@@ -206,6 +187,15 @@ void CDefiler::Change_CollisionMask(_uint iMask)
 void CDefiler::Release_CollisionMask()
 {
 	Get_Component<CCharacterController>()->Set_CollisionMask(m_BaseMask);
+}
+
+void CDefiler::Release_AttackCollider()
+{
+	for (auto pair : m_BattleColliderChildrenIndex)
+	{
+		SetBattleColliderObject(pair.first,BATTLE_COLTYPE::ATTACK ,false);
+	};
+
 }
 
 void CDefiler::Hide_MeshGroup(const string& mesh)
@@ -222,7 +212,7 @@ void CDefiler::Set_CCTPos(_vector3 pos)
 	auto controller= Get_Component<CCharacterController>();
 	if (!controller)
 		return;
-	controller->Set_Position(pos);
+	controller->Set_FootPosition(pos);
 }
 _float3 CDefiler::Get_BipedPos(const string Bone)
 {
@@ -233,6 +223,42 @@ _float3 CDefiler::Get_BipedPos(const string Bone)
 	(boneMat * WorldMat).Decompose(S, R, T);
 
 	return T;
+}
+
+FOUR_DIR CDefiler::Get_FourDirection()
+{
+	_vector3 shapePos = Math::NormalizeSafeXZ( Get_BipedPos());              
+	_vector3 targetPos = Math::NormalizeSafeXZ(m_tTargetingInfo.vTargetPos); 
+
+	_vector3 toTarget = targetPos - shapePos;
+	if (toTarget.LengthSquared() <= 1e-6f)
+		return FOUR_DIR::FRONT;
+
+	toTarget.Normalize();
+
+	_vector3 forward = Math::NormalizeSafeXZ(m_pTransform->Dir(STATE::LOOK));
+	if (forward.Length() <= 1e-6f) forward = _vector3(0.f, 0.f, 1.f);
+	else forward.Normalize();
+
+	_vector3 right = Math::NormalizeSafeXZ(m_pTransform->Dir(STATE::RIGHT));
+	if (right.Length() <= 1e-6f) right = _vector3(1.f, 0.f, 0.f);
+	else right.Normalize();
+
+	const _float forwardDot = toTarget.Dot(forward); 
+	const _float rightDot = toTarget.Dot(right);	
+
+	if (fabsf(forwardDot) >= fabsf(rightDot))
+		return (forwardDot >= 0.f) ? FOUR_DIR::FRONT : FOUR_DIR::BACK;
+	return (rightDot >= 0.f) ? FOUR_DIR::RIGHT : FOUR_DIR::LEFT;
+}
+
+void CDefiler::Parried()
+{
+	if (false == m_isParryEnable)
+		return;
+
+	m_tStatus.iGroggyValue += 5.f;
+ 
 }
 
 void CDefiler::MoveByTraceMode(_float dt, _float moveScale)
@@ -364,9 +390,8 @@ void CDefiler::MoveByTraceMode(_float dt, _float moveScale)
 
 void CDefiler::RotateToTarget(_float dt, _float rotateSpeed)
 {
-	
-	const _bool ignoreTarget = HasFlag(m_BlackBoard.eTraceFlag, TraceFlag::IgnoreTarget);
-	if (ignoreTarget)
+	const _bool IgnoreRotation = HasFlag(m_BlackBoard.eTraceFlag, TraceFlag::IgnoreRotation);
+	if (IgnoreRotation)
 		return;
 
 	_vector3 vPosition = m_pTransform->Get_Pos();
@@ -389,7 +414,9 @@ void CDefiler::Update_States(_float dt)
 		m_tStatus.iNowHP = m_tStatus.iMaxHP * 0.1f;
 		m_tStatus.iGroggyValue = 99;
 	}
-	if ("Groggy" != m_pStateMachine->Get_CurrentStateName() && "Death" != m_pStateMachine->Get_CurrentStateName() && m_tStatus.isGroggy)
+	if ("Groggy" != m_pStateMachine->Get_CurrentStateName()
+		&& "Death" != m_pStateMachine->Get_CurrentStateName() 
+		&& m_tStatus.isGroggy)
 		m_pStateMachine->Change_State("Groggy");
 }
 
@@ -461,6 +488,7 @@ void CDefiler::Controll_Attack(const string& event)
 void CDefiler::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER charaName)
 {
 	BattleSystem()->HitVFX(eDamageType);
+
 	_float fTakeDamage = fDamage;
 	if (m_tStatus.isGroggy)
 		fTakeDamage *= 1.5f;
@@ -472,18 +500,26 @@ void CDefiler::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER cha
 	if (0 >= m_tStatus.iNowHP)
 		m_tStatus.iNowHP = 0.f;
 
-
 	if (m_pStateMachine->Get_CurrentState()->Get_StateName() == "Idle") {
+		FOUR_DIR dir = Get_FourDirection();
+		string dirStr = { "Front" };
+		if (dir == FOUR_DIR::LEFT || dir == FOUR_DIR::RIGHT)
+			dirStr = "Back";
 		Get_Component<CAnimator3D>()
-			->Set_Animation(1, "Monster_IsoldetheDefiler_Ani_Hit_H_Front")
-			.LayerBlend(.2f, 0.8f, .1f, EaseType::InOutQuint)
+			->Set_Animation(1, "Monster_IsoldetheDefiler_Ani_Hit_H_"+dirStr)
+			.LayerBlend(.8f, 0.1f, .1f, EaseType::InOutQuint)
 			.Loop(false)
 			.Apply();
 	}
 	if (m_pStateMachine->Get_CurrentState()->Get_StateName() == "Groggy"){
+		FOUR_DIR dir = Get_FourDirection();
+		string dirStr = { "Up" };
+		if (dir == FOUR_DIR::LEFT || dir == FOUR_DIR::RIGHT)
+			dirStr = "Down";
+
 		Get_Component<CAnimator3D>()
-			->Set_Animation(1, "Monster_IsoldetheDefiler_Ani_Hit_Stay")
-			.LayerBlend(.2f, 08.f, .1f, EaseType::InOutQuint)
+			->Set_Animation(1, "Monster_IsoldetheDefiler_Ani_Stun_Hit_L_Front_"+ dirStr)
+			.LayerBlend(.8f, 0.1f, .1f, EaseType::InOutQuint)
 			.Loop(false)
 			.Apply();
 	}
@@ -541,6 +577,14 @@ void CDefiler::Control_Summon(const string& event)
 	}
 	else if (event == "WeaponShow") {
 		Show_MeshGroup("Weapon");
+	}
+	else if (event == "Wave") {
+		auto testMap = Builder::Create_Object({ "Zero_Level", "Proto_Env_Water" })
+			.Position(_float3(0.f, -5.f, 20.f))
+			.Scale(_float3(6.f, 1.f, 0.2f))
+			.Build("Water");
+
+		ObjectManager()->Add_Object(testMap, {"Zero_Level", "Env"});
 	}
 }
 
@@ -799,7 +843,6 @@ HRESULT CDefiler::Create_Colliders()
 		if (FAILED(AttachBattleColliderObject(&WeaponDesc)))
 			return E_FAIL;
 	}
-
 	/* Tail */
 	{
 		BATTLE_COLLIDER_DESC WeaponDesc{};

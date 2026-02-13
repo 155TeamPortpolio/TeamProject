@@ -160,6 +160,7 @@ public:
 	virtual void Free() override { __super::Free(); }
 };
 
+
 class CDefilerState_Attack_08_01_Start : public CDefilerState_Attack
 {
 public:
@@ -274,7 +275,7 @@ public:
 	virtual void Free() override { __super::Free(); }
 };
 
-class CDefilerState_Attack_Evade:  public CDefilerState_Attack
+class CDefilerState_RePos_Front:  public CDefilerState_Attack
 {
 	enum EvadeState {EVADE_IN,EVADE_OUT};
 public:
@@ -285,8 +286,48 @@ public:
 private:
 	EvadeState m_eState = { EVADE_IN };
 public:
-	static CDefilerState_Attack_Evade* Create() { return new CDefilerState_Attack_Evade(); }
+	static CDefilerState_RePos_Front* Create() {return  new CDefilerState_RePos_Front();}
 	virtual void Free() override { __super::Free(); }
 };
 
+class CDefilerState_RePos_Back:  public CDefilerState_Attack
+{
+
+	enum EvadeState {EVADE_IN,EVADE_OUT};
+public:
+	virtual void Enter(CDefiler* pOwner) override;
+	virtual void Update(CDefiler* pOwner, _float dt) override;
+	virtual void Exit(CDefiler* pOwner) override;
+
+private:
+	EvadeState m_eState = { EVADE_IN };
+public:
+	static CDefilerState_RePos_Back* Create() {return  new CDefilerState_RePos_Back();}
+	virtual void Free() override { __super::Free(); }
+};
+
+class CDefilerState_Attack_Barrier:  public CDefilerState_Attack
+{
+public:
+	virtual void Enter(CDefiler* pOwner) override;
+	virtual void Update(CDefiler* pOwner, _float dt) override;
+	virtual void Exit(CDefiler* pOwner) override;
+
+public:
+	static CDefilerState_Attack_Barrier* Create() { return new CDefilerState_Attack_Barrier(); }
+	virtual void Free() override { __super::Free(); }
+};
+
+
+class CDefilerState_Attack_Trace : public CDefilerState_Attack
+{
+public:
+	virtual void Enter(CDefiler* pOwner) override;
+	virtual void Update(CDefiler* pOwner, _float dt) override;
+	virtual void Exit(CDefiler* pOwner) override;
+
+public:
+	static CDefilerState_Attack_Trace* Create() { return new CDefilerState_Attack_Trace(); }
+	virtual void Free() override { __super::Free(); }
+};
 NS_END
