@@ -43,6 +43,7 @@ public:
 	
 //Sound
 	void	PlayBGM(string strBGM);
+	void	FadeOutBGM();
 
 public:
 	void	SetFieldPlayer(class CFieldPlayer* pFieldPlayer);
