@@ -65,15 +65,15 @@ public:
     void          StopAll(_float blendOutSec = 0.25f);
     void          Update(_float dt);
 
-    void          StartParry(_float fovHold = 30.f, _float blendInSec = 0.08f, _float holdSec = 0.12f);
     void          StartBattleIntro(CamSeqType type);
     void          StartDialog();
 
     void          BeginWipeOut() { m_wipeOut.Begin(); }
     void          EndWipeOut() { m_wipeOut.End(); }
-
     void          EndDialog();
-    void          EndParry(_float blendOutSec = 0.65f) { m_parry.End(blendOutSec); }
+
+    void          StartParry() { m_parry.Begin(); }
+    void          EndParry() { m_parry.End(); }
 
     void          AbortSequenceToOrbit(_bool resetTime);
 
@@ -93,7 +93,7 @@ private:
     CamObjHandles          m_camHandles{};
     CCamEventController    m_events{};
     CCamDialogueController m_dialogue{};
-    CCamParryController    m_parry{};
+    CamParryController    m_parry{};
     CamWipeOutController   m_wipeOut{};
 
     OBJECT_HANDLE          m_spaceRefHandle{};

@@ -168,12 +168,6 @@ void CCamDirector::Update(_float dt)
      UpdateInput(dt);
 }
 
-void CCamDirector::StartParry(_float fovHold, _float blendInSec, _float holdSec)
-{
-    if (!m_gate.Pass()) return;
-    m_parry.Begin(fovHold, blendInSec, holdSec);
-}
-
 void CCamDirector::StartBattleIntro(CamSeqType type)
 {
     AutoTarget();
