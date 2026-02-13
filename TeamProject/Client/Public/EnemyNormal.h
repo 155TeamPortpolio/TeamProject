@@ -28,6 +28,7 @@ public:
 
 protected:
     void            RotateToDir(_float dt);
+    void            GUI_DebugButton();
 
 protected:
     ROT_DIR         m_tRotDir = {};

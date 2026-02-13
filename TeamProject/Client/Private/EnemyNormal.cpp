@@ -131,3 +131,18 @@ void CEnemyNormal::RotateToDir(_float dt)
 	m_pTransform->Rotation(XMVectorSet(0.f, 1.f, 0.f, 0.f), step);
 }
 
+void CEnemyNormal::GUI_DebugButton()
+{
+	if (ImGui::Button(u8"그로기 수치 증가"))
+		m_tStatus.iGroggyValue += 30;
+
+	if (ImGui::Button("Hit"))
+		TakeDamage(DAMAGE_TYPE::NORMAL, 20.f);
+
+	if (ImGui::Button(u8"패링 (공격 시)"))
+		Parried();
+
+	if (ImGui::Button(u8"즉사"))
+		m_tStatus.iNowHP -= m_tStatus.iMaxHP;
+}
+

@@ -27,6 +27,7 @@
 #include "ThugBulkyEnforcer_Groggy.h"
 #include "ThugBulkyEnforcer_Death.h"
 #include "ThugBulkyEnforcer_Hit.h"
+#include "ThugBulkyEnforcer_Parried.h"
 
 #include "AttackSign.h"
 
@@ -168,11 +169,27 @@ void CThugBulkyEnforcer::Render_GUI()
 		ImGui::Text("CaptureDir: %.2f, %.2f, %.2f", m_vDirToLookCapture.x, m_vDirToLookCapture.y, m_vDirToLookCapture.z);
 		ImGui::Text("HP : %d", (_int)m_tStatus.iNowHP);
 		ImGui::Text("Groggy Value : %d", m_tStatus.iGroggyValue);
+		string tagAttackSide = {};
+		switch (m_eCurAttackSide)
+		{
+		case Client::CEnemy::ATTACK_SIDE::NONE:
+			tagAttackSide = "None";
+			break;
+		case Client::CEnemy::ATTACK_SIDE::LEFT:
+			tagAttackSide = "Left";
+			break;
+		case Client::CEnemy::ATTACK_SIDE::RIGHT:
+			tagAttackSide = "Right";
+			break;
+		}
+		ImGui::Text("AttackSide : %s", tagAttackSide.c_str());
+
 
 		ImGui::BeginDisabled(true);
 		ImGui::Checkbox(u8"isLookPlayer", &m_isLookPlayer);
 		ImGui::Checkbox(u8"회피용 트리거 활성화", &m_isBattleTriggerOn);
 		ImGui::Checkbox(u8"isOnAttack", &m_isOnAttack);
+		ImGui::Checkbox(u8"ParryEnable", &m_isParryEnable);
 		ImGui::EndDisabled();
 
 		ImGui::EndChild();
@@ -336,6 +353,17 @@ void CThugBulkyEnforcer::OnPooledAcquire(INIT_DESC* pArg)
 
 void CThugBulkyEnforcer::OnPooledRelease()
 {
+}
+
+void CThugBulkyEnforcer::Parried()
+{
+	if ("Attack" != m_pStateMachine->Get_CurrentStateName() || false == m_isParryEnable)
+		return;
+
+	__super::Parried();
+
+	m_pStateMachine->Change_State("Parried");
+	SetOnAttack(false);
 }
 
 CThugBulkyEnforcer* CThugBulkyEnforcer::Create()
@@ -548,6 +576,7 @@ HRESULT CThugBulkyEnforcer::Initialize_States()
 	m_pStateMachine->Register_State("Groggy", CThugBulkyEnforcer_Groggy::Create());
 	m_pStateMachine->Register_State("Death", CThugBulkyEnforcer_Death::Create());
 	m_pStateMachine->Register_State("Hit", CThugBulkyEnforcer_Hit::Create());
+	m_pStateMachine->Register_State("Parried", CThugBulkyEnforcer_Parried::Create());
 
 	return S_OK;
 }
