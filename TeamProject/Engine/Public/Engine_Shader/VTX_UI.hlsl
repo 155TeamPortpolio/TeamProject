@@ -247,22 +247,22 @@ struct PS_OUT
 
 PS_OUT PS_MAIN(PS_IN In)
 {
-     PS_OUT Out;
-
+    PS_OUT Out;
+    
     float2 uv = float2(
         In.vTexcoord.x * (1.f - 2.f * vFlip.x) + vFlip.x,
         In.vTexcoord.y * (1.f - 2.f * vFlip.y) + vFlip.y
     );
-
+    
     float4 tex = SpriteTexture.Sample(LinearSampler, uv);
-
+    
     float3 rgb = ApplyColorTexture(tex.rgb, uv);
-
+    
     float4 color = float4(rgb, tex.a) * vColor;
-
+    
     Out.vColor.rgb = color.rgb * color.a;
     Out.vColor.a = color.a;
-
+    
     return Out;
 }
 
@@ -478,6 +478,67 @@ PS_OUT PS_MAIN_NINESLICE(PS_IN In)
     return Out;
 }
 
+float2 vTexelSize = float2(1.0 / 100.0, 1.0 / 100.0); // 1 / textureSize
+int iRadius = 4;    // 3(얇음) ~ 4(무난) ~ 6(네온)
+float fGlowStrength = 1.2;    // 전체 강도 1(약간 약함) ~ 1.2(자연스럽) ~ 1.5이상(네온)
+
+float2 vPaddingDir = float2(1.0, 0.0);  // 퍼질 방향
+float fGaussianPower = 4.0; // 자연스러운 감쇠 3(넓게 퍼짐) ~ 4(자연스러운 소프트) ~ 6(가장자리만 강함)
+
+PS_OUT PS_SOFTDIRECTIONALOUTLINE(PS_IN In)
+{
+    PS_OUT Out;
+    
+    float vCenter = SpriteTexture.Sample(DefaultSampler, In.vTexcoord).a;
+    float fOutline = 0;
+    // 8방향 벡터
+    float2 vDirs[8] =
+    {
+        float2(1, 0), float2(-1, 0),
+        float2(0, 1), float2(0, -1),
+        normalize(float2(1, 1)),
+        normalize(float2(-1, 1)),
+        normalize(float2(1, -1)),
+        normalize(float2(-1, -1))
+    };
+
+    for (int i = 1; i <= iRadius; ++i)
+    {
+        float t = float(i) / iRadius;
+
+        // 가우시안 느낌 감쇠
+        float fDistFactor = exp(-t * t * fGaussianPower);
+
+        float2 offset = vTexelSize * i;
+
+        for (int d = 0; d < 8; ++d)
+        {
+            float2 dir = vDirs[d];
+            float2 sampleUV = In.vTexcoord + dir * offset;
+
+            float a = SpriteTexture.Sample(DefaultSampler, sampleUV).a;
+
+            // 방향성 가중치
+            float directional = saturate(dot(dir, vPaddingDir));
+
+            fOutline += a * directional * fDistFactor;
+        }
+    }
+
+    fOutline *= fGlowStrength;
+
+    // 내부 제거 (부드럽게)
+    fOutline *= (1.0 - vCenter);
+
+    fOutline = saturate(fOutline);
+
+    // Premultiplied Alpha 출력
+    Out.vColor.rgb = vColor.rgb * fOutline * vColor.a;
+    Out.vColor.a = fOutline * vColor.a;
+
+    return Out;
+}
+
 // -------------------------------------------------------------------------------------
 technique11 DefaultTechnique
 {
@@ -641,6 +702,16 @@ technique11 DefaultTechnique
         PixelShader    = compile ps_5_0 PS_MAIN();
     }
 
+    pass SoftDirectionalOutline_Custom
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_Premultiplied, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN_CUSTOM();
+        GeometryShader = compile gs_5_0 GS_MAIN_CUSTOM();
+        PixelShader = compile ps_5_0 PS_SOFTDIRECTIONALOUTLINE();
+    }
+
     pass StencilWrite_Custom
     {
         SetRasterizerState(RS_Default);
@@ -661,6 +732,16 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_MAIN();
     }
 
+    pass UVAnimation_StencilTest_Custom
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_UIStencilTest, 1);
+        SetBlendState(BS_Premultiplied, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN_CUSTOM();
+        GeometryShader = compile gs_5_0 GS_MAIN_CUSTOM();
+        PixelShader = compile ps_5_0 PS_MAIN_UVANIMATION();
+    }
+
     pass VideoPlay
     {
         SetRasterizerState(RS_Default);
@@ -669,5 +750,15 @@ technique11 DefaultTechnique
         VertexShader   = compile vs_5_0 VS_MAIN();
         GeometryShader = compile gs_5_0 GS_MAIN();
         PixelShader    = compile ps_5_0 PS_VIDEOPLAY();
+    }
+
+    pass SoftDirectionalOutline
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_Premultiplied, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = compile gs_5_0 GS_MAIN();
+        PixelShader = compile ps_5_0 PS_SOFTDIRECTIONALOUTLINE();
     }
 }

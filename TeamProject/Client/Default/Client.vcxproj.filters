@@ -1293,9 +1293,6 @@
     <Filter Include="02. GameObject\Object\Enemy\Boss\Defiler\MiasmaUnit\Heavy\HeavyDummyUnit">
       <UniqueIdentifier>{22daf38f-4e55-444e-93df-ec2dbf2b57f4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\UI\01. 2D\Wipeout">
-      <UniqueIdentifier>{3f5f7d60-1268-4b6f-b2f4-3e0e9000df8f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\Object\Env">
       <UniqueIdentifier>{e13e0649-5d43-4108-b4fd-d8e6ed754d44}</UniqueIdentifier>
     </Filter>
@@ -1358,6 +1355,15 @@
           </Filter>
     <Filter Include="02. GameObject\Object\Enemy\Boss\Defiler\State\OtherState">
       <UniqueIdentifier>{7070f4d4-6cda-4ac4-b714-abd5e747e09d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\11. Gui_Panel\02. BattleSystemPanel">
+      <UniqueIdentifier>{33aaa6b5-cece-4287-bbb1-0487b614c913}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\RTVDraw\Clear">
+      <UniqueIdentifier>{e2f92744-e665-45f0-8f9c-c4642c126e56}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\03. UIElement\SoftDirectionalOutline">
+      <UniqueIdentifier>{63f153cc-8109-4433-beba-fef1b7722042}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -2621,6 +2627,15 @@
     <ClInclude Include="..\Public\DefilerState_Other.h">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler\State\OtherState</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\BattleSystem_Panel.h">
+      <Filter>03. Utility\11. Gui_Panel\02. BattleSystemPanel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Clear.h">
+      <Filter>02. GameObject\UI\01. 2D\RTVDraw\Clear</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\SoftDirectionalOutlineUI.h">
+      <Filter>02. GameObject\UI\03. UIElement\SoftDirectionalOutline</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -3841,6 +3856,15 @@
           </ClCompile>
     <ClCompile Include="..\Private\DefilerState_Other.cpp">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler\State\OtherState</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\BattleSystem_Panel.cpp">
+      <Filter>03. Utility\11. Gui_Panel\02. BattleSystemPanel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Clear.cpp">
+      <Filter>02. GameObject\UI\01. 2D\RTVDraw\Clear</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\SoftDirectionalOutlineUI.cpp">
+      <Filter>02. GameObject\UI\03. UIElement\SoftDirectionalOutline</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

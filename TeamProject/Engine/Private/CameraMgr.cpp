@@ -34,7 +34,6 @@ CCamera* CCameraMgr::Get_ShadowCam() const
 void CCameraMgr::Set_MainCam(CCamera* cam, _float blendSec)
 {
     SetMainCamObj(cam->Get_OwnerHandle(), blendSec);
-    AudioDevice()->Set_Listener(cam->Get_Owner()->Get_Component<CTransform>());
 }
 
 void CCameraMgr::Set_ShadowCam(CCamera* cam)

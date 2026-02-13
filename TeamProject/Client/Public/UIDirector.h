@@ -64,9 +64,10 @@ public:
 	/* 가챠 결과를 화면에 표시 */
 	void Show_GachaResult(const vector<GACHA_RESULT_DESC>* pResultDesc);
 
-	//==================== Gacha ===============
-	void Show_Wipeout();
+	//==================== Switch / Clear / Wipeout =============== 
 	void Show_Switch();
+	void Show_Clear();
+	void Show_Wipeout();
 
 public:
 	/* 모든 레벨에 필요한 공통 데이터 등록 */

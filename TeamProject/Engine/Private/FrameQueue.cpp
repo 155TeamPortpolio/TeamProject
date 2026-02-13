@@ -59,17 +59,25 @@ bool CFrameQueue::PopLatestNotAfter(uint64_t nowPts, VIDEO_FRAME_CPU& outFrame)
         }
     }
 
-    if (pickedIndex >= 0)
-    {
-        outFrame = std::move(m_queue[(size_t)pickedIndex]);
-        m_queue.erase(m_queue.begin(), m_queue.begin() + (size_t)pickedIndex + 1);
-        return true;
-    }
+    //if (pickedIndex >= 0)
+    //{
+    //    outFrame = std::move(m_queue[(size_t)pickedIndex]);
+    //    m_queue.erase(m_queue.begin(), m_queue.begin() + (size_t)pickedIndex + 1);
+    //    return true;
+    //}
 
-    // 2) 여기까지 왔다는 건 "전부 nowPts보다 미래"라는 뜻.
-    //    이 경우 첫 프레임(가장 이른 미래)을 하나 뽑아서 진행을 깨뜨리지 않게 함.
-    outFrame = std::move(m_queue.front());
-    m_queue.pop_front();
+    //// 2) 여기까지 왔다는 건 "전부 nowPts보다 미래"라는 뜻.
+    ////    이 경우 첫 프레임(가장 이른 미래)을 하나 뽑아서 진행을 깨뜨리지 않게 함.
+    //outFrame = std::move(m_queue.front());
+    //m_queue.pop_front();
+    //return true;
+
+
+    if (pickedIndex < 0)
+        return false;
+
+    outFrame = move(m_queue[(size_t)pickedIndex]);
+    m_queue.erase(m_queue.begin(), m_queue.begin() + (size_t)pickedIndex + 1);
     return true;
 }
 // FrameQueue.h 내부

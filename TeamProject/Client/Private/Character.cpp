@@ -100,6 +100,8 @@ void CCharacter::Update(_float dt)
 void CCharacter::Late_Update(_float dt)
 {
     m_pCCT->Late_Update(dt);
+    Get_Component<CAudioSource>()->Set_AudioPos(Get_WorldPos());
+
     m_bIsAttack = false;
     m_bIsEvade = false;
     m_bEvadeBuffer = false;

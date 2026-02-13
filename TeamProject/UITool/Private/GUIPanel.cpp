@@ -16,6 +16,7 @@
 #include "GaugeUI.h"
 #include "MaskUI.h"
 #include "NineSliceUI.h"
+#include "SoftDirectionalOutlineUI.h"
 
 CGUIPanel::CGUIPanel(GUI_CONTEXT* pContext)
 	: CBasePanel(pContext)
@@ -195,6 +196,12 @@ void CGUIPanel::Render_GUI_CanvasPanel()
 		{
 			isCreateChild = true;
 			strType = CNineSliceUI::m_strTypeTag;
+		}
+
+		if (ImGui::Button(u8"Soft Directional Outline"))
+		{
+			isCreateChild = true;
+			strType = CSoftDirectionalOutlineUI::m_strTypeTag;
 		}
 
 		// 자식 생성

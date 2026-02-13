@@ -370,6 +370,7 @@
     <ClInclude Include="..\Public\BackgroundNpc.h" />
     <ClInclude Include="..\Public\BasicHitEffect.h" />
     <ClInclude Include="..\Public\BattleFXFlow.h" />
+    <ClInclude Include="..\Public\BattleSystem_Panel.h" />
     <ClInclude Include="..\public\CamDebugInput.h" />
     <ClInclude Include="..\public\CamParryController.h" />
     <ClInclude Include="..\public\CamWipeOutController.h" />
@@ -453,6 +454,8 @@
     <ClInclude Include="..\Public\MiyabiState_SwitchInNormal.h" />
     <ClInclude Include="..\Public\MiyabiState_SwitchInParryAid.h" />
     <ClInclude Include="..\Public\MiyabiState_SwitchOut.h" />
+    <ClInclude Include="..\Public\SoftDirectionalOutlineUI.h" />
+    <ClInclude Include="..\Public\UI_Clear.h" />
     <ClInclude Include="..\Public\UI_RTVDraw.h" />
     <ClInclude Include="..\Public\UI_Switch.h" />
     <ClInclude Include="..\Public\UI_TextButton.h" />
@@ -835,6 +838,7 @@
     <ClCompile Include="..\Private\BackgroundNpc.cpp" />
     <ClCompile Include="..\Private\BasicHitEffect.cpp" />
     <ClCompile Include="..\Private\BattleFXFlow.cpp" />
+    <ClCompile Include="..\Private\BattleSystem_Panel.cpp" />
     <ClCompile Include="..\private\CamDebugInput.cpp" />
     <ClCompile Include="..\private\CamParryController.cpp" />
     <ClCompile Include="..\private\CamWipeOutController.cpp" />
@@ -917,6 +921,8 @@
     <ClCompile Include="..\Private\MiyabiState_SwitchInNormal.cpp" />
     <ClCompile Include="..\Private\MiyabiState_SwitchInParryAid.cpp" />
     <ClCompile Include="..\Private\MiyabiState_SwitchOut.cpp" />
+    <ClCompile Include="..\Private\SoftDirectionalOutlineUI.cpp" />
+    <ClCompile Include="..\Private\UI_Clear.cpp" />
     <ClCompile Include="..\Private\UI_RTVDraw.cpp" />
     <ClCompile Include="..\Private\UI_Switch.cpp" />
     <ClCompile Include="..\Private\UI_TextButton.cpp" />
