@@ -28,6 +28,9 @@ private:
 private:
     Vector3 m_color = {1.f, 1.f, 1.f};
     _float  m_alpha = 0.f;
+    Vector3 m_topRed;
+    Vector3 m_topWhite;
+    _float  m_topBlink = 0.f;
 
 public:
     static CGameObject* Create();

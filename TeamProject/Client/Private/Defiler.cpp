@@ -56,7 +56,7 @@ HRESULT CDefiler::Initialize_Prototype()
 	Add_Component<CAnimator3D>();
 	Add_Component<CSkeletalModel>();
 	Add_Component<CMaterial>();
-	//Add_Component<CCharacterController>();
+	Add_Component<CCharacterController>();
 	Add_Component<CObjectContainer>();
 	Add_Component<CAudioSource>();
 	Get_Component<CSkeletalModel>()->Link_Model("Zero_Level", "Defiler_Isolde.model");
@@ -81,7 +81,7 @@ HRESULT CDefiler::Initialize(INIT_DESC* pArg)
 	pAnimator->Set_LayerType(ANIM_LAYER_STATE::ADDITIVE, 1);
 	pAnimator->Set_LayerType(ANIM_LAYER_STATE::ADDITIVE, 2);
 
-	//auto pCCT = Get_Component<CCharacterController>();
+	auto pCCT = Get_Component<CCharacterController>();
 
 	if (FAILED(Initialize_StateMachine()))
 		return E_FAIL;
