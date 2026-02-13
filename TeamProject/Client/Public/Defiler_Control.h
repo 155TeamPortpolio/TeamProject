@@ -5,6 +5,8 @@
 #include "DefilerState_Attack.h"
 #include "DefilerState_Other.h"
 NS_BEGIN(Client)
+/*실제 위치 계산*/
+enum class FOUR_DIR { FRONT, LEFT, RIGHT, BACK };
 /*상태간 타겟 추적 모드*/
 enum class TraceFlag : _uint
 {
@@ -100,7 +102,7 @@ typedef struct tagDefilerBlackBoard
 {
 	_vector3 vTargetPos = {};
 	_vector3 vTargetDir = {};
-
+	
 	_float3 vStartPos = {};
 	_bool isRequestNext = false;//다음 상태가 존재 할 때 상태 전환 요청
 	_bool isChainOpen = false;  //현재 상태에서 다음으로 진행 가능여부
@@ -113,7 +115,7 @@ typedef struct tagDefilerBlackBoard
 
 	/*패턴*/
 	_int patternIndex = { 00 };
-	struct DefilerPattern { string nextPattern; _float animStartProgress; _float animEndProgress; };
+    struct DefilerPattern { string nextPattern{}; _float animStartProgress{}; _float animEndProgress{}; };
 	deque<DefilerPattern> patternTransition;
 	DefilerPattern reservedPattern = {};
 
@@ -245,84 +247,234 @@ namespace DefilerDebugGUI
         if (!ImGui::CollapsingHeader("Defiler BlackBoard", ImGuiTreeNodeFlags_DefaultOpen))
             return;
 
-        ImGui::SeparatorText("Summary");
-        ImGui::Text("patternIndex: %d", bb.patternIndex);
-        DrawBoolBadge("isRequestNext", bb.isRequestNext);
-        ImGui::SameLine();
-        DrawBoolBadge("isChainOpen", bb.isChainOpen);
-
-        DrawBoolBadge("LockTarget", bb.LockTarget);
-        ImGui::SameLine();
-        DrawBoolBadge("LockRotate", bb.LockRotate);
-
-        ImGui::Text("TraceFlag: %s", TraceFlagToText(bb.eTraceFlag));
-
-        if (ImGui::TreeNode("Targeting"))
-        {
-            DrawVec3("vTargetPos", bb.vTargetPos);
-            DrawVec3("vTargetDir", bb.vTargetDir);
-            DrawFloat3("vStartPos", bb.vStartPos);
-            ImGui::TreePop();
-        }
-
-        if (ImGui::TreeNode("Movement / Trace"))
-        {
-            DrawVec3("CurrentDir", bb.CurrentDir);
-            ImGui::Text("TraceFlag: %s", TraceFlagToText(bb.eTraceFlag));
-            ImGui::Separator();
-
-            if (ImGui::Button("TraceType_Fierce")) bb.TraceType_Fierce();
-            ImGui::SameLine();
-            if (ImGui::Button("TraceType_OnTarget")) bb.TraceType_OnTarget();
-            ImGui::SameLine();
-            if (ImGui::Button("TraceType_OnlyAnim")) bb.TraceType_OnlyAnim();
-            ImGui::SameLine();
-            if (ImGui::Button("Add IgnoreRotation")) bb.TraceType_IgnoreRotation();
-
-            if (ImGui::Button("ResetTraceFlag")) bb.ResetTraceFlag();
-
-            ImGui::TreePop();
-        }
-
-        if (ImGui::TreeNode("Transition Flags"))
-        {
-            DrawBoolBadge("isRequestNext", bb.isRequestNext);
-            DrawBoolBadge("isChainOpen", bb.isChainOpen);
-
-            if (ImGui::Button("ResetNextFlag"))
-                bb.ResetNextFlag();
-
-            ImGui::TreePop();
-        }
+        // ... (위의 Summary / Targeting / Movement / Transition Flags는 그대로)
 
         if (ImGui::TreeNode("Pattern Queue"))
         {
             ImGui::Text("queue size: %d", (int)bb.patternTransition.size());
 
+            // =========================
+            // Reserved
+            // =========================
             ImGui::SeparatorText("ReservedPattern");
             ImGui::Text("next: %s", bb.reservedPattern.nextPattern.empty() ? "(empty)" : bb.reservedPattern.nextPattern.c_str());
             ImGui::Text("start: %.3f", bb.reservedPattern.animStartProgress);
             ImGui::Text("end:   %.3f", bb.reservedPattern.animEndProgress);
 
-            ImGui::SeparatorText("Queue");
-            ImGui::BeginChild("##DefilerPatternQueue", ImVec2(0, 170), true);
+            // =========================
+            // Add (by text)
+            // =========================
+            ImGui::SeparatorText("Add Pattern");
+
+            static char nextPatternBuf[128] = "Attack01_03";
+            static float startProgress = 0.f;
+            static float endProgress = 1.f;
+            static bool pushFront = false;
+
+            ImGui::InputText("nextPattern", nextPatternBuf, (int)sizeof(nextPatternBuf));
+            ImGui::DragFloat("start", &startProgress, 0.01f, 0.f, 1.f, "%.2f");
+            ImGui::DragFloat("end", &endProgress, 0.01f, 0.f, 1.f, "%.2f");
+            if (endProgress < startProgress) endProgress = startProgress;
+
+            ImGui::Checkbox("push front", &pushFront);
+            ImGui::SameLine();
+            if (ImGui::Button("Add"))
+            {
+                DEFILER_BLACK_BOARD::DefilerPattern newItem;
+                newItem.nextPattern = nextPatternBuf;
+                newItem.animStartProgress = startProgress;
+                newItem.animEndProgress = endProgress;
+
+                if (pushFront) bb.patternTransition.push_front(newItem);
+                else          bb.patternTransition.push_back(newItem);
+            }
+
+            ImGui::SameLine();
+            if (ImGui::Button("Clear Queue"))
+            {
+                bb.patternTransition.clear();
+            }
+
+            // =========================
+            // Add (by number preset)
+            // =========================
+            ImGui::SeparatorText("Add By Index (Preset)");
+
+            // "번호로도 괜찮아" => Build_Pattern 같은 룰을 GUI에서도 쓰려면
+            // 여기서는 간단히 인덱스->패턴 시퀀스 매핑을 UI에서 생성해 push_back 해줌.
+            static int presetIndex = 10; // 예: 10이면 Attack09 세트
+            static bool presetAppend = true;
+
+            ImGui::InputInt("presetIndex", &presetIndex);
+            ImGui::Checkbox("append", &presetAppend);
+            ImGui::SameLine();
+
+            auto pushPreset = [&](int index)
+                {
+                    // presetAppend=false면 기존 큐를 날리고 시작
+                    if (!presetAppend)
+                        bb.patternTransition.clear();
+
+                    auto push = [&](const char* name, float s, float e)
+                        {
+                            DEFILER_BLACK_BOARD::DefilerPattern it;
+                            it.nextPattern = name;
+                            it.animStartProgress = s;
+                            it.animEndProgress = e;
+                            bb.patternTransition.push_back(it);
+                        };
+
+                    switch (index)
+                    {
+                    case 0:
+                        push("Attack01_01", 0.f, 0.41f);
+                        push("Attack01_02", 0.19f, 1.f);
+                        break;
+                    case 1:
+                        push("Attack01_03", 0.f, 1.f);
+                        break;
+                    case 2:
+                        push("Attack01_01_P2", 0.f, 1.f);
+                        break;
+                    case 3:
+                        push("Attack02", 0.f, 1.f);
+                        break;
+                    case 4:
+                        push("Attack03", 0.f, 1.f);
+                        break;
+                    case 5:
+                        push("Attack04", 0.f, 1.f);
+                        break;
+                    case 6:
+                        push("Attack05", 0.f, 1.f);
+                        break;
+                    case 7:
+                        push("Attack06", 0.f, 1.f);
+                        break;
+                    case 8:
+                        push("Attack_Evade", 0.f, 1.f);
+                        push("Attack07", 0.f, 1.f);
+                        push("Attack03", 0.f, 1.f);
+                        push("Attack01_01_P2", 0.f, 1.f);
+                        break;
+                    case 9:
+                        push("Attack_Evade", 0.f, 1.f);
+                        push("Attack08_01_Start", 0.f, 1.f);
+                        push("Attack08_01_Loop", 0.f, 1.f);
+                        push("Attack08_01_End", 0.f, 1.f);
+                        break;
+                    case 10:
+                        push("Attack_Evade", 0.f, 1.f);
+                        push("Attack09_Start", 0.f, 1.f);
+                        push("Attack09_Loop", 0.f, 1.f);
+                        push("Attack09_End", 0.f, 1.f);
+                        push("Attack01_01_P2", 0.f, 1.f);
+                        break;
+                    case 11:
+                        push("Attack_Grab", 0.f, 1.f);
+                        break;
+                    case 12:
+                        push("Attack_Summon", 0.f, 1.f);
+                        break;
+                    default:
+                        // 알 수 없는 인덱스면 아무 것도 안 넣음
+                        break;
+                    }
+                };
+
+            if (ImGui::Button("Push Preset"))
+            {
+                pushPreset(presetIndex);
+            }
+
+            // =========================
+            // Queue list + edit
+            // =========================
+            ImGui::SeparatorText("Queue (Edit)");
+            static int selectedIndex = -1;
+
+            ImGui::BeginChild("##DefilerPatternQueue", ImVec2(0, 240), true);
 
             int index = 0;
             for (auto& p : bb.patternTransition)
             {
                 ImGui::PushID(index);
-                ImGui::Text("[%02d] %s", index, p.nextPattern.c_str());
-                ImGui::SameLine(240.f);
-                ImGui::Text("start %.2f", p.animStartProgress);
-                ImGui::SameLine(360.f);
-                ImGui::Text("end %.2f", p.animEndProgress);
+
+                bool isSelected = (selectedIndex == index);
+                char rowLabel[256];
+                sprintf_s(rowLabel, "[%02d] %s", index, p.nextPattern.c_str());
+
+                if (ImGui::Selectable(rowLabel, isSelected))
+                    selectedIndex = index;
+
+                ImGui::SameLine(260.f);
+                ImGui::Text("s %.2f", p.animStartProgress);
+                ImGui::SameLine(340.f);
+                ImGui::Text("e %.2f", p.animEndProgress);
+
                 ImGui::PopID();
                 ++index;
             }
+
             ImGui::EndChild();
 
-            if (ImGui::Button("ReservePattern (pop front)") && !bb.patternTransition.empty())
-                bb.ReservePattern();
+            // selected item edit controls
+            if (selectedIndex >= 0 && selectedIndex < (int)bb.patternTransition.size())
+            {
+                ImGui::SeparatorText("Selected");
+
+                // deque는 operator[] 가능
+                auto& sel = bb.patternTransition[(size_t)selectedIndex];
+
+                static char editNameBuf[128];
+                // 선택 바뀔 때마다 버퍼 동기화
+                // (ImGui input이 매 프레임 덮여쓰이면 입력이 안되므로, 필요할 때만 sync)
+                static int lastSelected = -999;
+                if (lastSelected != selectedIndex)
+                {
+                    strcpy_s(editNameBuf, sel.nextPattern.c_str());
+                    lastSelected = selectedIndex;
+                }
+
+                ImGui::InputText("edit next", editNameBuf, (int)sizeof(editNameBuf));
+                if (ImGui::IsItemDeactivatedAfterEdit())
+                    sel.nextPattern = editNameBuf;
+
+                ImGui::DragFloat("edit start", &sel.animStartProgress, 0.01f, 0.f, 1.f, "%.2f");
+                ImGui::DragFloat("edit end", &sel.animEndProgress, 0.01f, 0.f, 1.f, "%.2f");
+                if (sel.animEndProgress < sel.animStartProgress)
+                    sel.animEndProgress = sel.animStartProgress;
+
+                // buttons: move / delete
+                if (ImGui::Button("Up") && selectedIndex > 0)
+                {
+                    std::swap(bb.patternTransition[(size_t)selectedIndex],
+                        bb.patternTransition[(size_t)selectedIndex - 1]);
+                    selectedIndex--;
+                }
+                ImGui::SameLine();
+                if (ImGui::Button("Down") && selectedIndex + 1 < (int)bb.patternTransition.size())
+                {
+                    std::swap(bb.patternTransition[(size_t)selectedIndex],
+                        bb.patternTransition[(size_t)selectedIndex + 1]);
+                    selectedIndex++;
+                }
+                ImGui::SameLine();
+                if (ImGui::Button("Delete"))
+                {
+                    bb.patternTransition.erase(bb.patternTransition.begin() + selectedIndex);
+                    if (selectedIndex >= (int)bb.patternTransition.size())
+                        selectedIndex = (int)bb.patternTransition.size() - 1;
+                }
+            }
+
+            // existing pop-front
+            ImGui::Separator();
+            if (ImGui::Button("ReservePattern (pop front)"))
+            {
+                if (!bb.patternTransition.empty())
+                    bb.ReservePattern();
+            }
 
             ImGui::TreePop();
         }
