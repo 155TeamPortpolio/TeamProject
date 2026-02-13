@@ -228,6 +228,8 @@ void CMapLoader::Place_PlacedObjectFromLoadData(MapData_Object* pData)
             Desc->SlotDataValues[tSlotData.first].push_back(FieldData);
     }
 
+    if (Desc->TagModelKey.find("NAP") != string::npos)
+        ColliderDesc.eGroup = COLLISION_GROUP::NAP;
 
     _float3 vScl{}, vRot{}, vTrans{};
     _float4 vRotQ{};
