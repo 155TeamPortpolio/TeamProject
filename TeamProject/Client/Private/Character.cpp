@@ -78,6 +78,10 @@ void CCharacter::Awake()
 void CCharacter::Priority_Update(_float dt)
 {
     Get_Component<CObjectContainer>()->Priority_UpdateChild(dt);
+
+    // ']'
+    if (InputDevice()->Key_Tap(VK_OEM_6))
+        m_bTest = !m_bTest;
 }
 
 void CCharacter::Update(_float dt)
@@ -96,6 +100,8 @@ void CCharacter::Update(_float dt)
 void CCharacter::Late_Update(_float dt)
 {
     m_pCCT->Late_Update(dt);
+    Get_Component<CAudioSource>()->Set_AudioPos(Get_WorldPos());
+
     m_bIsAttack = false;
     m_bIsEvade = false;
     m_bEvadeBuffer = false;
@@ -222,6 +228,15 @@ void CCharacter::Rush_Target()
 
     m_pCCT->Set_Position(vDest);
     Get_Component<CTransform>()->Set_Look(vDir);
+}
+
+_vector3 CCharacter::Get_BipedPos(const string strBone)
+{
+    _smatrix boneMat = Get_Component<CAnimator3D>()->Get_BoneMatrix(CAnimator3D::BoneSpace::COMBINED, strBone);
+    _smatrix WorldMat = m_pTransform->Get_WorldMatrix();
+    _vector3 S, T; _quaternion R;
+    (boneMat * WorldMat).Decompose(S, R, T);
+    return T;
 }
 
 _bool CCharacter::Can_SwitchIn() const

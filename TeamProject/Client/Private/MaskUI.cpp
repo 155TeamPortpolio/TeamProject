@@ -26,11 +26,12 @@ void CMaskUI::Load(const nlohmann::ordered_json& data)
     __super::Load(data);
 
     m_stencilMode = StencilMode::Write;
-     
+    
     auto pSprite = Get_Component<CSprite2D>();
     const string maskTextureKey = data.value("maskTextureKey", "empty.png");
     pSprite->Change_Texture(0, G_GlobalLevelKey, maskTextureKey);
-    pSprite->Set_Param("MaskThreshold", { &m_fMaskThreshold, "float", sizeof(_float) });
+    m_fMaskThreshold = data.value("maskThreshold", m_fMaskThreshold);
+    pSprite->Set_Param("MaskThreshold", { &m_fMaskThreshold, "float", sizeof(_float) }); 
 }
 
 CGameObject* CMaskUI::Create()

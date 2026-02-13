@@ -5,6 +5,7 @@
 #include "GameInstance.h"
 #include "BattleSystem.h"
 #include "Animator3D.h"
+#include "AudioSource.h"
 #include "EffectContainer.h"
 
 CMiyabiState_ChargeAttack* CMiyabiState_ChargeAttack::Create()
@@ -143,6 +144,9 @@ void CMiyabiState_Charge_Start_02::Enter(CMiyabi* pOwner)
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_ChargeAttack_Start_02")
         .Speed(1.6f)
         .Apply();
+    pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_ChargeStart02_Voice")
+        .Attribute3D(true)
+        .Play();
     pOwner->Set_WeaponEffectMesh(true);
     pOwner->Play_Effect("Miyabi_Charge_StackUp0", _vector3(0.f, 1.f, 0.f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
 }
@@ -242,6 +246,9 @@ void CMiyabiState_Charge_Attack03::Enter(CMiyabi* pOwner)
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_ChargeAttack_Attack03")
         .Speed(1.7f)
         .Apply();
+    pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_ChargeAttack03_Voice")
+        .Attribute3D(true)
+        .Play();
 
     m_iRepeatCount = 0;
     m_iStingRepeatCount = 0;

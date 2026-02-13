@@ -34,6 +34,7 @@
 
 /* Maptool Type 5 (ETC) */
 #include "Water.h"
+#include "UI_ZeroEntranceLogo.h"
 
 #pragma region Tables
 /* Maptool Type 0 */
@@ -53,9 +54,10 @@ static unordered_map<string, Spawner::OBJ_SPEC> s_NPCTable =
 /* Maptool Type 1 */
 static unordered_map<string, Spawner::OBJ_SPEC> s_InteractTable =
 {
-	{ "Portal",     Spawner::OBJ_SPEC{ "Proto_GameObject_Portal", &CPortal::Create }},
-	{ "ZeroPortal", Spawner::OBJ_SPEC{ "Proto_GameObject_ZeroPortal", &CZeroPortal::Create }},
-	{ "Invwall",	Spawner::OBJ_SPEC{ "Proto_GameObject_Invwall", &CZeroPortal::Create } }
+	{ "Portal",			Spawner::OBJ_SPEC{ "Proto_GameObject_Portal", &CPortal::Create }},
+	{ "ZeroPortal",		Spawner::OBJ_SPEC{ "Proto_GameObject_ZeroPortal", &CZeroPortal::Create }},
+	{ "Invwall",		Spawner::OBJ_SPEC{ "Proto_GameObject_Invwall", &CZeroPortal::Create }},
+	{ "UI_ZeroLogo",	Spawner::OBJ_SPEC{ "Proto_GameObject_ZeroEntranceLogo", &CUI_ZeroEntranceLogo::Create }}
 };
 
 /* Maptool Type 2 */
@@ -66,8 +68,9 @@ static unordered_map<string, Spawner::OBJ_SPEC> s_AmbientActorTable =
 
 static unordered_map<string, Spawner::OBJ_SPEC> s_ETCTable =
 {
-	{ "Water",     Spawner::OBJ_SPEC{ "Water", &CWater::Create }}
+	{ "Water",		Spawner::OBJ_SPEC{ "Water", &CWater::Create }},
 };
+
 #pragma endregion
 
 /* --------------------------------------------------------------------------------------------------------------------- */

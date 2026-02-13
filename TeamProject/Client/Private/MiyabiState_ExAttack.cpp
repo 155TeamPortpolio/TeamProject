@@ -6,6 +6,7 @@
 
 #include "Miyabi.h"
 #include "CharacterController.h"
+#include "AudioSource.h"
 
 #include "EffectContainer.h"
 
@@ -129,8 +130,13 @@ void CMiyabiState_ExAttack_Start::Update(CMiyabi* pOwner, _float dt)
 void CMiyabiState_ExAttack_01::Enter(CMiyabi* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_Branch_01_Attack_01")
-        .Speed(1.f)
+        .ReserveSpeed(0.f, 0.2f, 0.7f, EaseType::InQuad)
+        .ReserveSpeed(0.2f, 0.4f, 2.f, EaseType::OutExpo)
+        .ReserveSpeed(0.4f, 1.f, 1.5f, EaseType::Linear)
         .Apply();
+    pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_NormalAttack01_Voice")
+        .Attribute3D(true)
+        .Play();
 }
 
 void CMiyabiState_ExAttack_01::Update(CMiyabi* pOwner, _float dt)
@@ -176,8 +182,13 @@ void CMiyabiState_ExAttack_02::Enter(CMiyabi* pOwner)
     m_fProgress = 0.2f;
 
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_Branch_01_Attack_02")
-        .Speed(1.5f)
+        .ReserveSpeed(0.f, 0.2f, 0.7f, EaseType::InQuad)
+        .ReserveSpeed(0.2f, 1.f, 2.5f, EaseType::InExpo)
         .Apply();
+
+    pOwner->Get_Component<CAudioSource>()->Sequence("ExAttack02")
+        .Attribute3D(true)
+        .PlayNext();
 
     pOwner->Increase_Frost(2);
 
@@ -300,7 +311,10 @@ void CMiyabiState_ExAttack_03::Enter(CMiyabi* pOwner)
     EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
 
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_Branch_01_Attack_03")
-        .Speed(1.5f)
+        .ReserveSpeed(0.f, 0.1f, 0.7f, EaseType::InQuad)
+        .ReserveSpeed(0.1f, 0.2f, 2.f, EaseType::OutExpo)
+        .ReserveSpeed(0.2f, 0.5f, 1.5f, EaseType::OutQuad)
+        .ReserveSpeed(0.5f, 1.0f, 1.2f, EaseType::OutQuart)
         .Apply();
 
     m_iMask = pOwner->Get_CCT()->Get_CollisionMask();
@@ -350,6 +364,13 @@ void CMiyabiState_ExAttack_03::Update(CMiyabi* pOwner, _float dt)
                 , DAMAGE_TYPE::HARD)
         );
         m_iCount++;
+    }
+
+    if (IsCrossAnimProgress(0.1f))
+    {
+        pOwner->Get_Component<CAudioSource>()->Sequence("ExAttack03")
+            .Attribute3D(true)
+            .PlayNext();
     }
 
     Update_Effects(pOwner);
@@ -438,5 +459,7 @@ void CMiyabiState_ExAttack_End::Enter(CMiyabi* pOwner)
             iIndex = 2;
     }
     pOwner->Get_Animator()->Change_Animation(arrEndAnims[iIndex])
+        .ReserveSpeed(0.3f, 0.75f, 1.5f, EaseType::OutSine)
+        .EndAt(0.75f)
         .Apply();
 }

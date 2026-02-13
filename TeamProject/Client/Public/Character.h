@@ -125,6 +125,7 @@ public: // 이동
     void        Lock_Rotate() { m_bCanRotate = false; }
     void        Unlock_Rotate() { m_bCanRotate = true; }
     void        Rush_Target();
+    _vector3    Get_BipedPos(const string strBone = { "Bip001" });
 
 public: // 상태
     _bool       Is_Attack() const { return m_bIsAttack; }

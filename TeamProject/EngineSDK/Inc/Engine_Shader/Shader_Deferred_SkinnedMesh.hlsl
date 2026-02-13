@@ -515,7 +515,7 @@ PS_OUT_RESULT PS_MAIN_COMBINED(PS_IN In)
     float fOutLine = NormalTexture.Sample(DefaultSampler, In.vTexcoord).a;
     vector vMetalic = MetalicTexture.Sample(DefaultSampler, In.vTexcoord).a;
     vector vBloom = MeshBloomFinalTexture.Sample(DefaultSampler, In.vTexcoord);
-    vector vMotionBlur = MotionBlurTexture.Sample(PointSampler, In.vTexcoord);
+    vector vMotionBlur = MotionBlurTexture.Sample(DefaultSampler, In.vTexcoord);
     
     float NdotL = vLightInfo.r;
     

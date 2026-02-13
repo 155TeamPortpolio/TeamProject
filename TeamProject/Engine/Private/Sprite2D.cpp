@@ -560,6 +560,19 @@ _uint2 CSprite2D::Get_TextureSize()
 	return vSize;
 }
 
+_float2 CSprite2D::Get_TexelSize()
+{
+    if (m_pTextures.empty() || m_pTextures.size() <= m_iDrawIndex || !m_pTextures[m_iDrawIndex])
+        return { 1.f, 1.f };
+
+    const _uint2 vSize = m_pTextures[m_iDrawIndex]->Get_Size();
+
+    if (vSize.x == 0 || vSize.y == 0)
+        return { 1.f, 1.f };
+
+    return _float2(1.0f / static_cast<float>(vSize.x), 1.0f / static_cast<float>(vSize.y));
+}
+
 CSprite2D* CSprite2D::Create()
 {
 	CSprite2D* instance = new CSprite2D();

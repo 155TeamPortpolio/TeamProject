@@ -30,6 +30,7 @@ public:
 public:
     DEFILER_BLACK_BOARD& GetBlackBoard() { return m_BlackBoard; }
     DefilerDissolve& GetDissolve() { return m_Dissolve; }
+    MONSTER_STATUS& GetStatus() { return m_tStatus; }
     TARGETING_INFO& TargetInfo() { return m_tTargetingInfo; }
     CStateMachine<CDefiler>* Get_MainStateMachine() { return m_pStateMachine; }
 
@@ -39,6 +40,8 @@ public:
 public:
     void Change_CollisionMask(_uint iMask = ENUM(COLLISION_GROUP::PLAYER));
     void Release_CollisionMask();
+    void Release_AttackCollider();
+
 public:
     void Hide_MeshGroup(const string& mesh);
     void Show_MeshGroup(const string& mesh);
@@ -54,12 +57,19 @@ public:
     void Play_Effect(const string& effectTag, _fvector offsetPosition, _fvector offsetQuaternion, _bool syncTransform = true);
     void Stop_Effect(const string& effectTag);
 
+public:
+    void Parried() override;
+    void StopSlashEff();
 private:
     void MoveByTraceMode(_float dt, _float moveScale = 1.f);
     void RotateToTarget(_float dt, _float rotateSpeed = 1.f);
     void Update_States(_float dt);
     void Route_AnimEvent(CAnimator3D* animator);
     void Controll_Attack(const string& event);
+    void Send_DamageText(_float damage, CHARACTER charaName);
+
+public:
+    void ResetAllFlags();
 
 private:
     HRESULT Initialize_StateMachine();
@@ -82,6 +92,8 @@ private:
 
     _bool m_bDirLockedNear = false;
     _float m_passDampTime = 0.f;
+
+    vector<CEffectContainer*> m_SlashEffects;
 
 public:
     static CDefiler* Create();

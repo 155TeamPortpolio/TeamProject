@@ -72,7 +72,10 @@ void CMiyabiState_Counter_Start::Enter(CMiyabi* pOwner)
 	pOwner->Set_WeaponEffectMesh(true);
 	pOwner->Rush_Target();
 	pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_Counter")
-		.Speed(1.f)
+		.ReserveSpeed(0.f, 0.11f, 0.7f, EaseType::InCubic)
+		.ReserveSpeed(0.11f, 0.25f, 2.f, EaseType::InExpo)
+		.ReserveSpeed(0.25f, 0.4f, 3.f, EaseType::OutExpo)
+		.ReserveSpeed(0.4f, 0.9f, 1.5f, EaseType::OutCubic)
 		.EndAt(0.9f)
 		.Apply();
 

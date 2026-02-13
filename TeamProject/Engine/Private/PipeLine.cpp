@@ -337,7 +337,9 @@ _bool CPipeLine::isVisible(MINMAX_BOX minMax, _fmatrix worldTransform)
 	if (!(extents.x > 0.f || extents.y > 0.f || extents.z > 0.f))
 		return false;
 
-	extents.y = max(extents.y, 0.4f);
+	extents.x = max(extents.x, 0.2f);
+	extents.y = max(extents.y, 0.2f);
+	extents.z = max(extents.z, 0.2f);
 
 	BoundingBox worldAabb(center, extents);
 

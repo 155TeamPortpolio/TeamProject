@@ -18,7 +18,7 @@
 
 void CUI_Dialogue::Change_Dialogue()
 {
-    Get_Component<CAudioSource>()->Slot("UI_Tick.wav").Attribute3D(false).Loop(false).Play();
+    Get_Component<CAudioSource>()->Slot("UI_Tick.wav").Play();
 
     switch (m_tDialogueDesc.Result)
     {
@@ -45,7 +45,7 @@ void CUI_Dialogue::Change_Dialogue()
 
 void CUI_Dialogue::Change_Dialogue(ChoiceDesc desc)
 {
-    Get_Component<CAudioSource>()->Slot("UI_Tick.wav").Attribute3D(false).Loop(false).Play();
+    Get_Component<CAudioSource>()->Slot("UI_Tick.wav").Play();
 
     m_tChoiceDesc = desc;
     // 선택 결과가 대화 종료를 의미하는 경우

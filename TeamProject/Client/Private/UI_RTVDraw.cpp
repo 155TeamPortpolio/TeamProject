@@ -19,6 +19,9 @@ HRESULT CUI_RTVDraw::Initialize_Prototype()
 
 HRESULT CUI_RTVDraw::Initialize(INIT_DESC* pArg)
 {
+    RTVDRAW_DESC* pDesc = static_cast<RTVDRAW_DESC*>(pArg);
+    m_hRenderTargetScreen = pDesc->hRenderTargetScreen;
+
     if (FAILED(__super::Initialize(pArg)))
         return E_FAIL;
 
@@ -52,6 +55,12 @@ void CUI_RTVDraw::Update_RTV(const string& strTargetKey, _bool isClear)
     RenderSystem()->Add_RenderCommand(command, CUSTOMTARGET::UI);
 }
 
+void CUI_RTVDraw::Set_RenderTargetScreenRenderLayer(RENDER_LAYER eLayer)
+{
+    if (m_hRenderTargetScreen.isAlive())
+        m_hRenderTargetScreen.Get()->SetRenderLayer(eLayer);
+}
+
 void CUI_RTVDraw::Render_RT(ID3D11DeviceContext* pContext)
 {
     for (auto& pChild : Get_Component<CObjectContainer>()->Get_Children())
@@ -61,6 +70,9 @@ void CUI_RTVDraw::Render_RT(ID3D11DeviceContext* pContext)
 void CUI_RTVDraw::Render_RTRecursive(CGameObject* pObj, ID3D11DeviceContext* pContext)
 {
     if (!pObj)
+        return;
+
+    if (!pObj->Is_Alive())
         return;
 
     if (auto pSprite = pObj->Get_Component<CSprite2D>())
@@ -75,6 +87,10 @@ void CUI_RTVDraw::Render_RTRecursive(CGameObject* pObj, ID3D11DeviceContext* pCo
                 strCustomPassConstant = "StencilWrite_Custom";
             else if (strPassConstant == "Opaque_StencilTest")
                 strCustomPassConstant = "Opaque_StencilTest_Custom";
+            else if (strPassConstant == "UVAnimation_StencilTest")
+                strCustomPassConstant = "UVAnimation_StencilTest_Custom";
+            else if (strPassConstant == "SoftDirectionalOutline")
+                strCustomPassConstant = "SoftDirectionalOutline_Custom";
 
             RenderSystem()->GetRenderer(RENDERER_TYPE::UI)->Get_BufferInputLayout(pSprite->Get_Buffer(), pShader, strCustomPassConstant, &pLayout);
             pContext->IASetInputLayout(pLayout);
@@ -82,7 +98,7 @@ void CUI_RTVDraw::Render_RTRecursive(CGameObject* pObj, ID3D11DeviceContext* pCo
             pSprite->Set_Param("g_ViewMatrix", { &m_ViewMatrix, "matrix", sizeof(_float4x4) });
             pSprite->Set_Param("g_ProjMatrix", { &m_ProjMatrix, "matrix", sizeof(_float4x4) });
             pSprite->Apply_Shader(pContext);
-            pSprite->Set_Param("vColor", { &m_vColor, "float4", sizeof(_float4) });
+            pSprite->Set_Param("vColor", { dynamic_cast<CUI_Object*>(pObj)->Get_LinearColorPtr(), "float4", sizeof(_float4)});
 
             pShader->Apply(strCustomPassConstant, pContext);
             pSprite->Draw_Sprite(pContext);

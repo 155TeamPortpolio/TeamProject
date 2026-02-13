@@ -79,22 +79,12 @@ void CUI_Object::Post_EngineUpdate(_float dt)
     if (m_eRenderLayer == RENDER_LAYER::None)
         return;
 
+    if (m_stencilMode == StencilMode::Write)
+        m_stencilRef = UIManager()->Alloc_StencilRef();
+    else if (m_stencilMode == StencilMode::Test)
+        m_stencilRef = UIManager()->Get_StencilRef();
+
     if (m_eRenderLayer != RENDER_LAYER::CustomOnly) {
-
-        m_vColorLinear.x = powf(m_vColor.x, 2.2f);
-        m_vColorLinear.y = powf(m_vColor.y, 2.2f);
-        m_vColorLinear.z = powf(m_vColor.z, 2.2f);
-        m_vColorLinear.w = m_fCombinedAlpha;        // m_vCombinedAlpha = 부모 알파 * 내 알파
-
-        if (m_stencilMode == StencilMode::Write)
-        {
-            m_stencilRef = UIManager()->Alloc_StencilRef();
-        }
-        else if (m_stencilMode == StencilMode::Test)
-        {
-            m_stencilRef = UIManager()->Get_StencilRef();
-        }
-
         SPRITE_PACKET packet;
         packet.pSprite2D    = Get_Component<CSprite2D>();
         packet.pWorldMatrix = m_pTransform->Get_WorldMatrix_Ptr();
@@ -270,7 +260,12 @@ void CUI_Object::Update_UITransform()
     }
 
     m_vCombinedScale = parentScale * m_vScale;  // 콤바인드 스케일 = 부모 스케일 * 내 스케일
+
     m_fCombinedAlpha = parentAlpha * m_vColor.w;    // 콤바인드 알파 = 부모의 콤바인드 알파 * 내 알파
+    m_vColorLinear.x = powf(m_vColor.x, 2.2f);
+    m_vColorLinear.y = powf(m_vColor.y, 2.2f);
+    m_vColorLinear.z = powf(m_vColor.z, 2.2f);
+    m_vColorLinear.w = m_fCombinedAlpha;        // m_vCombinedAlpha = 부모 알파 * 내 알파
 
     _float2 sizePx = { m_vSize.x * m_vCombinedScale.x, m_vSize.y * m_vCombinedScale.y };    // 사이즈 * 콤바인드 스케일
 
@@ -439,13 +434,18 @@ void CUI_Object::Play_Animation(_float dt)
     }
 }
 
-void CUI_Object::Set_Animation(_uint iIndex, _bool isLoop)
+_bool CUI_Object::Set_Animation(_uint iIndex, _bool isLoop)
 {
-    if (m_iCurrentClipIndex == iIndex && m_isAnimLoop == isLoop) return;
+    if (iIndex >= m_AnimClips.size())
+        return false;
+
+    if (m_iCurrentClipIndex == iIndex && m_isAnimLoop == isLoop)
+        return false;
 
     m_iCurrentClipIndex = iIndex;
     m_isBlending = true;
     m_fBlendTime = 0.f;
+    return true;
 }
 
 void CUI_Object::Stop_Animation()

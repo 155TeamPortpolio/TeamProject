@@ -7,15 +7,11 @@ NS_BEGIN(Engine)
 class ENGINE_DLL CUI_Object abstract : public CGameObject
 {
 protected:
-	
 	//		명칭, 스케일 배율
-	//		사이즈는 픽셀
-	//		
-	//		피봇은 트랜스폼 기준점
-	//		
+	//		사이즈는 픽셀	
+	//		피봇은 트랜스폼 기준점	
 	//		앵커는 부모 기준 각
 	//		앵커 오프셋 나의fxfy
-
 public:
 	typedef struct tagUIKeyframe {
 	_float		fTime = {};
@@ -100,6 +96,7 @@ public:
 	_float2 Get_CombinedScale() { return m_vCombinedScale; }
 	_float2 Get_AnchorOffset() { return m_vAnchorOffset; }
 	Vector2 Get_Scale() const { return m_vScale; }
+	_float4* Get_LinearColorPtr() { return &m_vColorLinear; }
 
 	// Screen anchors
 	_float2 LT(_float x = 0.f, _float y = 0.f) { return Get_Point_Screen({ 0.f,   0.f }, x, y); }
@@ -143,7 +140,7 @@ public:
 
 public:
 	void Play_Animation(_float dt);
-	void Set_Animation(_uint iIndex, _bool isLoop = false);
+	_bool Set_Animation(_uint iIndex, _bool isLoop = false);
 	void Stop_Animation();
 	_bool Set_LastKeyframeTime(_uint iClipIndex, _float fTime);
 

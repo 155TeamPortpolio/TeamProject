@@ -6,6 +6,8 @@
 #include "Material.h"
 #include "MaterialInstance.h"
 #include "MaterialData.h"
+#include "UIDirector.h"
+#include "UI_RTVDraw.h"
 
 HRESULT CUI_RenderTargetScreen::Initialize_Prototype()
 {
@@ -31,7 +33,7 @@ HRESULT CUI_RenderTargetScreen::Initialize(INIT_DESC* pArg)
     Ready_RTV();
     Ready_ViewProj();
     Ready_RenderState();
-    Ready_RTV_DrawObjects();
+    Ready_RTVDrawObjects();
 
     m_pTransform->Scale(_float3(m_vViewPortSize.x, m_vViewPortSize.y, 1.f));
 
@@ -40,6 +42,11 @@ HRESULT CUI_RenderTargetScreen::Initialize(INIT_DESC* pArg)
 
 void CUI_RenderTargetScreen::Update(_float dt)
 {
+    if (InputDevice()->Key_Tap('I'))
+        UIDirector()->Show_Clear();
+
+    if (InputDevice()->Key_Tap('J'))
+        UIDirector()->Show_Switch();
 }
 
 HRESULT CUI_RenderTargetScreen::Ready_Components()
@@ -74,18 +81,21 @@ void CUI_RenderTargetScreen::Ready_ViewProj()
 
 void CUI_RenderTargetScreen::Ready_RenderState()
 {
-    Get_Component<CRectModel>()->Set_RenderType(RENDER_PASS_TYPE::RENDER_3DUI);
+    Get_Component<CRectModel>()->Set_RenderType(RENDER_PASS_TYPE::NONLIGHT_OPAQUE);
 }
 
-void CUI_RenderTargetScreen::Ready_RTV_DrawObjects()
+HRESULT CUI_RenderTargetScreen::Ready_RTVDrawObjects()
 {
-    auto pWipeout = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_Wipeout" }).Build("wipeout");
-    if (pWipeout)
-        UIManager()->Add_UIObject(pWipeout, LevelManager()->Get_NowLevelKey());
+    if (FAILED(Create_RTVDrawObject("Proto_GameObject_Clear", "clear")))
+        return E_FAIL;
 
-    auto pSwitch = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_Switch" }).Build("switch");
-    if (pSwitch)
-        UIManager()->Add_UIObject(pSwitch, LevelManager()->Get_NowLevelKey());
+    if (FAILED(Create_RTVDrawObject("Proto_GameObject_Switch", "switch")))
+        return E_FAIL;
+
+    if (FAILED(Create_RTVDrawObject("Proto_GameObject_Wipeout", "wipeout")))
+        return E_FAIL;
+
+    return S_OK;
 }
 
 void CUI_RenderTargetScreen::Create_RTV()
@@ -118,6 +128,24 @@ void CUI_RenderTargetScreen::Bind_RTV()
         param.iSize = 0;
         pMtrlInst->Set_Param("MaskTexture", param);
     }
+}
+
+HRESULT CUI_RenderTargetScreen::Create_RTVDrawObject(const string& strPrototypeTag, const string& strInstanceName)
+{
+    CUI_RTVDraw::RTVDRAW_DESC* pDesc = new CUI_RTVDraw::RTVDRAW_DESC;
+    pDesc->hRenderTargetScreen = Get_Handle();
+
+    auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, strPrototypeTag })
+        .Add_UIDesc(pDesc)
+        .Build(strInstanceName);
+
+    if (!pObj)
+        return E_FAIL;
+
+    UIManager()->Add_UIObject(pObj, LevelManager()->Get_NowLevelKey());
+    UIDirector()->Register(pObj);
+
+    return S_OK;
 }
 
 CGameObject* CUI_RenderTargetScreen::Create()
