@@ -31,6 +31,7 @@ private:
     string m_strTextureKey{};
     _bool  m_previewVisible = true;
     _float m_previewAlpha   = 0.5f;
+    _float m_fMaskThreshold = 0.1f;
 
 public:
     static  CGameObject* Create();

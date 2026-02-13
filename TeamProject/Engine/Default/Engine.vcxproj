@@ -734,6 +734,7 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\StaticModel.h" />
     <ClInclude Include="..\Public\StructuredBuffer.h" />
     <ClInclude Include="..\Public\Target_Manager.h" />
+    <ClInclude Include="..\public\TessellationModel.h" />
     <ClInclude Include="..\Public\TextSlot.h" />
     <ClInclude Include="..\Public\Texture.h" />
     <ClInclude Include="..\Public\TextureSheetAnimation.h" />
@@ -758,6 +759,7 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\VI_Point.h" />
     <ClInclude Include="..\Public\VI_Rect.h" />
     <ClInclude Include="..\Public\VI_Terrain.h" />
+    <ClInclude Include="..\public\VI_Tessellation.h" />
     <ClInclude Include="..\Public\VI_Trail.h" />
   </ItemGroup>
   <ItemGroup>
@@ -904,6 +906,7 @@ exit /b 0</Command>
     <ClCompile Include="..\Private\StaticModel.cpp" />
     <ClCompile Include="..\Private\StructuredBuffer.cpp" />
     <ClCompile Include="..\Private\Target_Manager.cpp" />
+    <ClCompile Include="..\private\TessellationModel.cpp" />
     <ClCompile Include="..\Private\TextSlot.cpp" />
     <ClCompile Include="..\Private\Texture.cpp" />
     <ClCompile Include="..\Private\TextureSheetAnimation.cpp" />
@@ -927,6 +930,7 @@ exit /b 0</Command>
     <ClCompile Include="..\Private\VI_Point.cpp" />
     <ClCompile Include="..\Private\VI_Rect.cpp" />
     <ClCompile Include="..\Private\VI_Terrain.cpp" />
+    <ClCompile Include="..\private\VI_Tessellation.cpp" />
     <ClCompile Include="..\Private\VI_Trail.cpp" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_PaperEffect.hlsl">
       <FileType>Document</FileType>
@@ -1169,6 +1173,7 @@ exit /b 0</Command>
     <FxCompile Include="..\Public\Engine_Shader\VTX_Portal.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_SkinMesh.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_StaticEnemy.hlsl" />
+    <FxCompile Include="..\Public\Engine_Shader\VTX_Tessellation.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_TexPos.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_Trail.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_UI.hlsl" />

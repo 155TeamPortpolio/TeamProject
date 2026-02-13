@@ -2,6 +2,7 @@
 #include "UIDirector.h"
 
 #include "GameInstance.h"
+#include "GameObject.h"
 #include "UI_Object.h"
 #include "UILoader.h"
 #include "UI_ScreenFade.h"
@@ -10,6 +11,7 @@
 #include "UI_ResultBanner.h"
 #include "UI_GachaDisplay.h"
 #include "UI_GachaResult.h"
+#include "UI_RenderTargetScreen.h"
 
 IMPLEMENT_SINGLETON(CUIDirector);
 
@@ -146,14 +148,19 @@ void CUIDirector::Show_GachaResult(const vector<GACHA_RESULT_DESC>* pResultDesc)
 	UI_Active("gacha_result", &desc);
 }
 
-void CUIDirector::Show_Wipeout()
-{
-	UI_Active("wipeout");
-}
-
 void CUIDirector::Show_Switch()
 {
 	UI_Active("switch");
+}
+
+void CUIDirector::Show_Clear()
+{
+	UI_Active("clear");
+}
+
+void CUIDirector::Show_Wipeout()
+{
+	UI_Active("wipeout");
 }
 
 void CUIDirector::Initialize()
@@ -230,6 +237,12 @@ void CUIDirector::Load_LevelObjects(const string& levelKey)
 				MSG_BOX("UI Object Already Exists : UI Director");
 		}
 	}
+
+	if (levelKey == "Test_Level" ||
+		levelKey == "Zero_Level")
+	{
+		Ready_UIObject(levelKey, "Proto_GameObject_RenderTargetScreen", "rendertargetScreen", CUI_RenderTargetScreen::Create());
+	}
 }
 
 void CUIDirector::Load_UILevelData(const string& resourceKey)
@@ -264,6 +277,24 @@ string CUIDirector::Get_HUDName(HUD hud)
 	case HUD::BATTLE:		return "hud_battle";
 	}
 	return "";
+}
+
+HRESULT CUIDirector::Ready_UIObject(const string& strLevelTag, const string& strPrototypeTag, const string& strInstanceName, CGameObject* pProto)
+{
+	if (!pProto)
+		return E_FAIL;
+
+	if (FAILED(PrototypeManager()->Add_ProtoType(strLevelTag, strPrototypeTag, pProto)))
+		return E_FAIL;
+
+	auto pObj = Builder::Create_Object({ strLevelTag, strPrototypeTag })
+		.Build(strInstanceName);
+	if (!pObj)
+		return E_FAIL;
+
+	ObjectManager()->Add_Object(pObj, { strLevelTag, "UI_Layer" });
+
+	return S_OK;
 }
 
 void CUIDirector::UI_Active(const string& strInstanceName, void* pArg)

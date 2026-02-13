@@ -639,6 +639,12 @@
     <ClInclude Include="..\public\PostProcessCommand.h">
       <Filter>01. Utility\06. RenderSystem\RenderPass\Renderer\Post\PostProcessCommand</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\VI_Tessellation.h">
+      <Filter>01. Utility\05. Resources\07. VIBuffer\VI_Tessellation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\TessellationModel.h">
+      <Filter>01. Utility\04. Components\03. Model\TessellationModel</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <!-- Filter Definitions -->
@@ -1191,6 +1197,12 @@
     <Filter Include="01. Utility\06. RenderSystem\RenderPass\Renderer\Post\PostProcessCommand">
       <UniqueIdentifier>{de712389-a53f-4d07-8fc0-5404e1d38e25}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\05. Resources\07. VIBuffer\VI_Tessellation">
+      <UniqueIdentifier>{c0514e57-589b-4259-a3e9-1cd1fe6559ad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\03. Model\TessellationModel">
+      <UniqueIdentifier>{87db632e-a7b5-4284-9656-a75c05ae57c0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <!-- ClCompile 항목들 - 중복 제거 버전 -->
@@ -1686,6 +1698,12 @@
     <ClCompile Include="..\private\PostRenderer.cpp">
       <Filter>01. Utility\06. RenderSystem\RenderPass\Renderer\Post</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\VI_Tessellation.cpp">
+      <Filter>01. Utility\05. Resources\07. VIBuffer\VI_Tessellation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\TessellationModel.cpp">
+      <Filter>01. Utility\04. Components\03. Model\TessellationModel</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <!-- Shader Files -->
@@ -1818,7 +1836,8 @@
     <FxCompile Include="..\Public\Engine_Shader\VTX_StaticEnemy.hlsl">
       <Filter>98. BasicShader\Mesh</Filter>
     </FxCompile>
-    <FxCompile Include="..\Public\Engine_Shader\VTX_PaperEffect.hlsl">
+    <FxCompile Include="..\Public\Engine_Shader\VTX_PaperEffect.hlsl"> </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\VTX_Tessellation.hlsl">
       <Filter>98. BasicShader\Etc</Filter>
     </FxCompile>
   </ItemGroup>
