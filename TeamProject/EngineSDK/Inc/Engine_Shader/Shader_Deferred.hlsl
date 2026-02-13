@@ -320,9 +320,11 @@ PS_OUT_RESULT PS_DISTORTION(PS_IN In)
     float4 scene = FinalTexture.Sample(DefaultSampler, distortedUV);
     float4 hdrBloom = HDRBloomFinalTexture.Sample(DefaultSampler, distortedUV);
     scene.rgb = scene.rgb + hdrBloom.rgb * 0.3;
+    scene.rgb = effect.rgb + scene.rgb * (1.f - effect.a);
+    scene.rgb += effect.rgb;
     float alpha = max(scene.a, effect.a);
     
-    Out.vResult = float4(scene.rgb + effect.rgb, alpha);
+    Out.vResult = float4(scene.rgb, alpha);
     
     
     return Out;
