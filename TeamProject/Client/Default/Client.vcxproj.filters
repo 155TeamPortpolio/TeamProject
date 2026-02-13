@@ -1047,9 +1047,6 @@
     <Filter Include="03. Utility\06. FieldSystem\Room\05. Room_Gacha">
       <UniqueIdentifier>{820f4014-89e1-411c-b031-be391e0f1e5e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Effect\MeshEffect">
-      <UniqueIdentifier>{6160f086-da22-44d2-91a6-5d30cc56d8e0}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. Level\04. Zero\Stage_Start">
       <UniqueIdentifier>{68bfc06d-7f7e-4232-b8f1-d9e74f644886}</UniqueIdentifier>
     </Filter>
@@ -1355,6 +1352,9 @@
           </Filter>
     <Filter Include="02. GameObject\Object\Enemy\Boss\Defiler\State\OtherState">
       <UniqueIdentifier>{7070f4d4-6cda-4ac4-b714-abd5e747e09d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Effect\PaperEffect">
+      <UniqueIdentifier>{6160f086-da22-44d2-91a6-5d30cc56d8e0}</UniqueIdentifier>
     </Filter>
     <Filter Include="03. Utility\11. Gui_Panel\02. BattleSystemPanel">
       <UniqueIdentifier>{33aaa6b5-cece-4287-bbb1-0487b614c913}</UniqueIdentifier>
@@ -2623,9 +2623,12 @@
     </ClInclude>
     <ClInclude Include="..\public\WaterWave.h">
       <Filter>02. GameObject\Object\Env\WaterWave</Filter>
-          </ClInclude>
+    </ClInclude>
     <ClInclude Include="..\Public\DefilerState_Other.h">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler\State\OtherState</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\PaperEffect.h">
+      <Filter>02. GameObject\Effect\PaperEffect</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\BattleSystem_Panel.h">
       <Filter>03. Utility\11. Gui_Panel\02. BattleSystemPanel</Filter>
@@ -3856,6 +3859,9 @@
           </ClCompile>
     <ClCompile Include="..\Private\DefilerState_Other.cpp">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler\State\OtherState</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\PaperEffect.cpp">
+      <Filter>02. GameObject\Effect\PaperEffect</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\BattleSystem_Panel.cpp">
       <Filter>03. Utility\11. Gui_Panel\02. BattleSystemPanel</Filter>

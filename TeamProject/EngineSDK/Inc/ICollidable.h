@@ -76,7 +76,8 @@ namespace CollisionHelper
         COLLISION_GROUP::MONSTER_PARRY,
         COLLISION_GROUP::CAMERA,
         COLLISION_GROUP::INTERACTABLE,
-        COLLISION_GROUP::GROUND
+        COLLISION_GROUP::GROUND,
+        COLLISION_GROUP::NAP
     };
     inline constexpr _int VALID_GROUP_COUNT = IM_ARRAYSIZE(VALID_GROUPS);
 
@@ -84,16 +85,17 @@ namespace CollisionHelper
     {
         switch (eGroup)
         {
-        case COLLISION_GROUP::COMMON:        return "COMMON";
-        case COLLISION_GROUP::PLAYER:        return "PLAYER";
-        case COLLISION_GROUP::MONSTER:       return "MONSTER";
-        case COLLISION_GROUP::PLAYER_ATTACK: return "PLAYER_ATTACK";
-        case COLLISION_GROUP::MONSTER_ATTACK:return "MONSTER_ATTACK";
-        case COLLISION_GROUP::MONSTER_PARRY: return "MONSTER_PARRY";
-        case COLLISION_GROUP::CAMERA:        return "CAMERA";
-        case COLLISION_GROUP::INTERACTABLE:  return "INTERACABLE";
-        case COLLISION_GROUP::GROUND:        return "GROUND";
-        default:                             return "UNKNOWN";
+        case COLLISION_GROUP::COMMON:           return "COMMON";
+        case COLLISION_GROUP::PLAYER:           return "PLAYER";
+        case COLLISION_GROUP::MONSTER:          return "MONSTER";
+        case COLLISION_GROUP::PLAYER_ATTACK:    return "PLAYER_ATTACK";
+        case COLLISION_GROUP::MONSTER_ATTACK:   return "MONSTER_ATTACK";
+        case COLLISION_GROUP::MONSTER_PARRY:    return "MONSTER_PARRY";
+        case COLLISION_GROUP::CAMERA:           return "CAMERA";
+        case COLLISION_GROUP::INTERACTABLE:     return "INTERACABLE";
+        case COLLISION_GROUP::GROUND:           return "GROUND";
+        case COLLISION_GROUP::NAP:              return "NAP";
+        default:                                return "UNKNOWN";
         }
     }
 

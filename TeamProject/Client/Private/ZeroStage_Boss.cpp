@@ -80,7 +80,6 @@ void CZeroStage_Boss::Battle()
 	if (isBattleEnd) {                 
 		m_eStageStage = StageState::Outro;
 		CBattleSystem::GetInstance()->SetActive(false);
-		Active_Portal();
 	}
 }
 
