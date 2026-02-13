@@ -19,6 +19,9 @@ HRESULT CUI_RTVDraw::Initialize_Prototype()
 
 HRESULT CUI_RTVDraw::Initialize(INIT_DESC* pArg)
 {
+    RTVDRAW_DESC* pDesc = static_cast<RTVDRAW_DESC*>(pArg);
+    m_hRenderTargetScreen = pDesc->hRenderTargetScreen;
+
     if (FAILED(__super::Initialize(pArg)))
         return E_FAIL;
 
@@ -50,6 +53,12 @@ void CUI_RTVDraw::Update_RTV(const string& strTargetKey, _bool isClear)
     command.bClear = isClear;
     command.DrawCallback = [this](ID3D11DeviceContext* pContext) { Render_RT(pContext); };
     RenderSystem()->Add_RenderCommand(command, CUSTOMTARGET::UI);
+}
+
+void CUI_RTVDraw::Set_RenderTargetScreenRenderLayer(RENDER_LAYER eLayer)
+{
+    if (m_hRenderTargetScreen.isAlive())
+        m_hRenderTargetScreen.Get()->SetRenderLayer(eLayer);
 }
 
 void CUI_RTVDraw::Render_RT(ID3D11DeviceContext* pContext)
