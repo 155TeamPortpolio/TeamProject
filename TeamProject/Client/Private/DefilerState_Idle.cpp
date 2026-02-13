@@ -22,7 +22,7 @@ void CDefilerState_Idle::Update(CDefiler* pOwner, _float dt)
 	m_IdleElapsedTime += dt;
 	if (m_IdleElapsedTime >= IdleDuration)
 	{
-		pOwner->Get_MainStateMachine()->Set_Trigger("Idle_To_Attack");
+		//pOwner->Get_MainStateMachine()->Set_Trigger("Idle_To_Attack");
 	}
 }
 

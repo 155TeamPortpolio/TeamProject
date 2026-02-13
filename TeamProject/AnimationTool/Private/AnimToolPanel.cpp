@@ -141,7 +141,12 @@ void CAnimToolPanel::Render_GUI()
 
 		ImGui::EndTabBar();
 	}
-
+	ImGui::SameLine();
+	if (ImGui::Button("ReloadSound"))
+	{
+		if (m_pSelectModel)
+			dynamic_cast<CAnimModel*>(m_pSelectModel)->ReLoad_Sound();
+	}
 	ImGui::End();
 }
 
@@ -571,6 +576,16 @@ void CAnimToolPanel::Setting_NewClip()
 		//Pushback
 		m_AnimClip.push_back(newClip);
 	}
+}
+
+vector<ANIM_CLIP>& CAnimToolPanel::Get_AnimClip(const string& AnimKey)
+{
+	static vector<ANIM_CLIP> EmptyResult;
+	auto iter = m_Meta.find(AnimKey);
+	if (iter != m_Meta.end())
+		return iter->second;
+	
+	return EmptyResult;
 }
 
 void CAnimToolPanel::Reset_Panel()

@@ -92,7 +92,9 @@ void CChild::Dettach_Parent()
 {
 	m_pParent = nullptr;
 	CTransform* myTransform = m_pOwner->Get_Component<CTransform>();
+	Matrix World = myTransform->Get_WorldMatrix();
 	myTransform->Set_ParentTransform(nullptr);
+	myTransform->TranslateMatrix(World);
 }
 
 CChild* CChild::Create(CGameObject* pParent)

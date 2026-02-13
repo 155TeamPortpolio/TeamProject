@@ -30,8 +30,8 @@ HRESULT CMiasmaBlade::Initialize_Prototype()
 
 	Add_Component<CStaticModel>()->Link_Model(G_GlobalLevelKey, "Default.model");
 	Add_Component<CMaterial>()->Link_Material(G_GlobalLevelKey, "Default.mat");
+	//Add_Component<CRigidBody>();
 	Add_Component<CCollider>();
-	Add_Component<CRigidBody>();
 	return S_OK;
 }
 
@@ -48,9 +48,9 @@ HRESULT CMiasmaBlade::Initialize(INIT_DESC* pArg)
 	Get_Component<CCollider>()->Set_CollisionGroup(COLLISION_GROUP::MONSTER);
 
 	Get_Component<CCollider>()->Set_Trigger(false);
-	Get_Component<CRigidBody>()->Set_Kinematic(false);
-	Get_Component<CRigidBody>()->Set_Gravity(false);
-	Get_Component<CRigidBody>()->Set_CCD(true);
+	//Get_Component<CRigidBody>()->Set_Kinematic(false);
+	//Get_Component<CRigidBody>()->Set_Gravity(false);
+	//Get_Component<CRigidBody>()->Set_CCD(true);
 
 	m_pTransform->LookAt(_vector3(desc->vTargetPos));
 	m_vVelocity = { 0,0,0 };
@@ -59,15 +59,15 @@ HRESULT CMiasmaBlade::Initialize(INIT_DESC* pArg)
 
 	{
 		BATTLE_COLLIDER_DESC BladeDesc{};
-
-		BladeDesc.tagName = "AttackCollider";
+	
+		BladeDesc.tagName = "HEl";
 		BladeDesc.isAttachBone = false;
 		BladeDesc.tagBone = "";
 		BladeDesc.pOwnerAnimator3D = nullptr;
 		BladeDesc.eAttackColliderType = COLLIDER_TYPE::SPHERE;
 		BladeDesc.vAttackSize = _float3{ 2.5f,2.5f,2.5f };
-
-		if (FAILED(AttachBattleColliderObject(&BladeDesc)))
+	
+		if (FAILED(AttachBattleColliderObject(&BladeDesc,false)))
 			return E_FAIL;
 	}
 
@@ -77,7 +77,7 @@ HRESULT CMiasmaBlade::Initialize(INIT_DESC* pArg)
 	HitDesc.fDamage = 10.f;
 	HitDesc.fInterval = 0.f;
 	HitDesc.iMaxCount = 1;
-	SetBattleColliderObject("AttackCollider", CEnemy::BATTLE_COLTYPE::ATTACK, true, HitDesc);
+	SetBattleColliderObject("HEl", CEnemy::BATTLE_COLTYPE::ATTACK, true, HitDesc);
 
 	return S_OK;
 }
@@ -108,7 +108,8 @@ void CMiasmaBlade::Update(_float dt)
 			ObjectManager()->Remove_Object(this);
 		}
 	}
-	Get_Component<CRigidBody>()->Set_Velocity(m_vVelocity);
+	//Get_Component<CRigidBody>()->Set_Velocity(m_vVelocity);
+	m_pTransform->Translate(m_vVelocity * dt);
 	Get_Component<CCollider>()->Update(dt);
 	Get_Component<CObjectContainer>()->UpdateChild(dt);
 
@@ -120,8 +121,8 @@ void CMiasmaBlade::Update(_float dt)
 
 void CMiasmaBlade::Late_Update(_float dt)
 {
+	//Get_Component<CRigidBody>()->Late_Update(dt);
 	Get_Component<CObjectContainer>()->Late_UpdateChild(dt);
-	Get_Component<CRigidBody>()->Late_Update(dt);
 }
 
 void CMiasmaBlade::Render_GUI()
@@ -140,7 +141,7 @@ void CMiasmaBlade::Parried()
 		m_vVelocity = {0,0,0};
 		m_ElapsedTime = 0.1;
 		m_vTargetVelocity = m_pTransform->Dir(STATE::LOOK) * m_fMoveSpeed;
-		Get_Component<CRigidBody>()->Set_Velocity(m_vVelocity);
+		//Get_Component<CRigidBody>()->Set_Velocity(m_vVelocity);
 	}
 }
 

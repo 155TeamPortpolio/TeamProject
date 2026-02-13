@@ -55,6 +55,7 @@ private:
 public:
     void Setting_NewClip();
     void Setting_MetaFilePath(const string& FilePath) { m_SaveMetaFilePath = FilePath; };
+    vector<ANIM_CLIP>& Get_AnimClip(const string& AnimKey);
 
 private:
     void Reset_Panel();
