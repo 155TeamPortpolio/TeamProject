@@ -83,6 +83,7 @@ private: //Create Clip
     _float  m_fPlaySpeed = { 1.f };
     _float  m_fTickPerSec = { 1.f };
     _float  m_fTrackPos   = {};
+    _float  m_fPrevTrackPos = {};
     _float  m_fDuration  = {};
     
     vector<string> m_PreviewList;
