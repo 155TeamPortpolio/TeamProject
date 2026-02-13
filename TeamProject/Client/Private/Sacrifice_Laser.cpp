@@ -6,6 +6,7 @@
 #include "GameInstance.h"
 #include "BattleSystem.h"
 #include "PhysicsSystem.h"
+#include "Character.h"
 
 /* Component */
 #include "Child.h"
@@ -72,13 +73,13 @@ void CSacrifice_Laser::Priority_Update(_float dt)
 
 void CSacrifice_Laser::Update(_float dt)
 {
+	if (!m_IsPendingActive)
+		return;
+
 	Get_Component<CBoneFollower>()->Sync_Transform(dt, m_pTransform);
 
 	auto pEffectContainer = Get_Component<CObjectContainer>()->Find_ObjectByName("Laser");
 	CEffectContainer::EFFECT_CONTAINER_CONTEXT& context = static_cast<CEffectContainer*>(pEffectContainer)->GetEffectContext();
-
-	if (!m_IsOnTarget && 1 == m_iLaserMode)
-		Set_TargetPosition();
 
 	switch (m_iLaserMode)
 	{
@@ -111,6 +112,29 @@ void CSacrifice_Laser::Update(_float dt)
 	case 1: /* Target */
 	{
 		_vector3 vPosition0 = m_pTransform->Get_WorldPos();
+
+		if (!m_IsOnTarget)
+			Set_TargetPosition();
+		else if (!m_IsHitPlayer)
+		{
+			PHYSICS_RAY rayDesc{};
+			PHYSICS_RAY_HIT output{};
+			rayDesc.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER);
+			rayDesc.vOrigin = vPosition0;
+			rayDesc.vDirection = m_vTargetDir;
+			rayDesc.fMaxDistance = 200.f;
+
+			if (PhysicsSystem()->Raycast(rayDesc, output))
+			{
+				m_IsHitPlayer = true;
+				auto pPlayer = dynamic_cast<CCharacter*>(output.pHitObject);
+				if (pPlayer)
+				{
+					pPlayer->Take_Damage(DAMAGE_TYPE::NORMAL, 10);
+					CameraManager()->AddImpact(1, 0);
+				}
+			}
+		}
 
 		context.vLinePoint0 = vPosition0;
 		context.vLinePoint1 = m_vTargetPos;
@@ -162,7 +186,28 @@ void CSacrifice_Laser::Update(_float dt)
 
 void CSacrifice_Laser::Late_Update(_float dt)
 {
+
 	Get_Component<CObjectContainer>()->Late_UpdateChild(dt);
+}
+
+void CSacrifice_Laser::Pre_EngineUpdate(_float dt)
+{
+	if (!m_IsPendingActive)
+	{
+		m_IsPendingActive = true;
+		auto pLaser = Get_Component<CObjectContainer>()->Find_ObjectByName("Laser");
+		static_cast<CEffectContainer*>(pLaser)->Play();
+
+		auto pLaserStart = Get_Component<CObjectContainer>()->Find_ObjectByName("LaserStart");
+		static_cast<CEffectContainer*>(pLaserStart)->Play();
+
+		auto pLaserHitPoint = Get_Component<CObjectContainer>()->Find_ObjectByName("LaserHitPoint");
+		static_cast<CEffectContainer*>(pLaserHitPoint)->Play();
+		//이우석 바보바보 ㅠ  
+		return;
+	}
+
+	__super::Pre_EngineUpdate(dt);
 }
 
 void CSacrifice_Laser::Render_GUI()
@@ -175,20 +220,13 @@ void CSacrifice_Laser::Render_GUI()
 
 void CSacrifice_Laser::ActiveLaser(_uint mode)
 {
-	Get_Component<CBoneFollower>()->Sync_Transform(0.f, m_pTransform);
+	//Get_Component<CBoneFollower>()->Sync_Transform(0.f, m_pTransform);
+	m_IsPendingActive = false;
 	m_IsPendingDeactive = false;
 	m_isAlive = true;
 	m_IsOnTarget = false;
+	m_IsHitPlayer = false;
 	m_iLaserMode = mode;
-
-	auto pLaser = Get_Component<CObjectContainer>()->Find_ObjectByName("Laser");
-	static_cast<CEffectContainer*>(pLaser)->Play();
-
-	auto pLaserStart = Get_Component<CObjectContainer>()->Find_ObjectByName("LaserStart");
-	static_cast<CEffectContainer*>(pLaserStart)->Play();
-
-	auto pLaserHitPoint = Get_Component<CObjectContainer>()->Find_ObjectByName("LaserHitPoint");
-	static_cast<CEffectContainer*>(pLaserHitPoint)->Play();
 }
 
 void CSacrifice_Laser::DeactiveLaser()

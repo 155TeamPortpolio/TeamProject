@@ -1058,7 +1058,6 @@ void CSacrificeState_OverDrive_Release_Start_Phase2::Enter(CSacrifice* pOwner)
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("Monster_SacrificeBringer_Ani_P2_OverDrive_Charge_Start_New").Loop(false).Speed(1.2f).Apply();
 	
-	pOwner->Get_Component<CAudioSource>()->Slot("Sacrifice_Phase1_Laser_Attack.wav").Attribute3D(false).Loop(false).Play();
 	pOwner->OverDrive_Start();
 }
 

@@ -153,6 +153,7 @@ void CSacrifice::Update(_float dt)
 	Get_Component<CAudioSource>()->Set_AudioPos(vBipPosition);
 	Get_Component<CAnimator3D>()->Update_Animation(dt);
 	Get_Component<CCharacterController>()->Update(dt);
+	Route_AnimEvent();
 }
 
 void CSacrifice::Late_Update(_float dt)
@@ -446,9 +447,12 @@ void CSacrifice::ActiveLaser(_uint mode)
 	auto pLaser = Get_Component<CObjectContainer>()->Find_ObjectByName("Sacrifice_Laser");
 	static_cast<CSacrifice_Laser*>(pLaser)->ActiveLaser(mode);
 	
-	HitDesc desc{};
-	SetBattleColliderObject("Hand_Laser", BATTLE_COLTYPE::ATTACK, true, desc);
-	SetBattleColliderObject("Hand_Laser", BATTLE_COLTYPE::TRIGGER, true, desc);
+	if (1 != mode)
+	{
+		HitDesc desc{};
+		SetBattleColliderObject("Hand_Laser", BATTLE_COLTYPE::ATTACK, true, desc);
+		SetBattleColliderObject("Hand_Laser", BATTLE_COLTYPE::TRIGGER, true, desc);
+	}
 }
 
 void CSacrifice::DeactiveLaser()
@@ -920,4 +924,28 @@ void CSacrifice::Update_States(_float dt)
 
 	if ("Groggy" != m_pStateMachine->Get_CurrentStateName() && "Death" != m_pStateMachine->Get_CurrentStateName() && m_tStatus.isGroggy)
 		m_pStateMachine->Change_State("Groggy");
+}
+
+void CSacrifice::Route_AnimEvent()
+{
+	auto pAnimator = Get_Component<CAnimator3D>();
+	auto bus = pAnimator->Get_EventBus();
+
+	for (EVENT_INST& instance : bus)
+	{
+		switch (instance.Type)
+		{
+		case CLIP_EVENT_TYPE::NOTIFY:
+			break;
+
+		case CLIP_EVENT_TYPE::SOUND:
+			Control_Sound(instance.Tag);
+			break;
+		}
+	}
+}
+
+void CSacrifice::Control_Sound(const string& event)
+{
+	Get_Component<CAudioSource>()->Slot(event).Volume(0.5f).Attribute3D(true).Loop(false).Play();
 }

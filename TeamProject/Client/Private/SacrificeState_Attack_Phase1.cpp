@@ -269,9 +269,6 @@ void CSacrificeState_Attack_01_Phase1::Update_Effects(CSacrifice* pOwner)
 		effect2->AttachBone(pAnimator, "Skn_Finger3_03");
 
 		ObjectManager()->Add_Object(effect2, { pOwner->Get_Level(),"Effect_Layer" });
-
-		_uint randNum = Helper::Get_Random_Int(0, 4);
-		pOwner->Get_Component<CAudioSource>()->Slot("Sacrifice_Attack_Voice" + to_string(randNum) + ".wav").Attribute3D(false).Loop(false).Play();
 	}
 
 	/* Smoke Slash */
@@ -383,9 +380,6 @@ void CSacrificeState_Attack_02_Phase1::Update_Effects(CSacrifice* pOwner)
 		pEffectTransform->Set_WorldQuaternion(localQuaternion);
 
 		static_cast<CEffectContainer*>(effect)->Play();
-
-		pOwner->Get_Component<CAudioSource>()->Slot("Sacrifice_Sword_Slash0.wav").Attribute3D(true).Loop(false).Play();
-		pOwner->Get_Component<CAudioSource>()->Slot("Sacrifice_Attack_Voice4.wav").Attribute3D(true).Loop(false).Play();
 	}
 }
 
@@ -463,9 +457,6 @@ void CSacrificeState_Attack_03_Phase1::Update_Effects(CSacrifice* pOwner)
 		pEffectTransform->Set_Pos(vWorldPosition);
 
 		ObjectManager()->Add_Object(effect, { pOwner->Get_Level(),"Effect_Layer" });
-
-		_uint randNum = Helper::Get_Random_Int(0, 4);
-		pOwner->Get_Component<CAudioSource>()->Slot("Sacrifice_Attack_Voice" + to_string(randNum) + ".wav").Attribute3D(false).Loop(false).Play();
 	}
 
 	/* Hit ground smoke */
@@ -495,7 +486,6 @@ void CSacrificeState_Attack_03_Phase1::Update_Effects(CSacrifice* pOwner)
 		ObjectManager()->Add_Object(smoke, { pOwner->Get_Level(),"Effect_Layer" });
 
 		CameraManager()->AddImpact(ENUM(CamShakeType::LandingCrush), ENUM(CamZoomType::LandingCrush), 2.5f);
-		pOwner->Get_Component<CAudioSource>()->Slot("Sacrifice_HitGround0.wav").Attribute3D(true).Loop(false).Play();
 	}
 }
 
@@ -524,7 +514,6 @@ void CSacrificeState_Attack_04_1_Phase1::Update(CSacrifice* pOwner, _float dt)
 		if (Event.Tag == "Start_Attack")
 		{
 			pOwner->UnleashAttack(CEnemy::ATTACK_SIDE::RIGHT);
-			pOwner->Get_Component<CAudioSource>()->Slot("Sacrifice_Attack04.wav").Volume(0.6f).Attribute3D(false).Loop(false).Play();
 		}
 		if (Event.Tag == "Start_Collider")
 		{
@@ -736,7 +725,6 @@ void CSacrificeState_Attack_05_Phase1::Update_Effects(CSacrifice* pOwner)
 		pEffectTransform->Set_WorldQuaternion(localQuaternion);
 
 		ObjectManager()->Add_Object(effect, { pOwner->Get_Level(),"Enemy_Effect_Layer" });
-		pOwner->Get_Component<CAudioSource>()->Slot("Sacrifice_Laser_Shot0.wav").Attribute3D(true).Loop(false).Play();
 
 		pOwner->ActiveLaser(1);
 	}
@@ -837,7 +825,6 @@ void CSacrificeState_Attack_07_Phase1::Enter(CSacrifice* pOwner)
 {
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("SacrificeBringer_Ani_P1_Attack_07").Loop(false).Speed(1.2f).Apply();
-	pOwner->Get_Component<CAudioSource>()->Slot("Sacrifice_Attack07.wav").Volume(0.7f).Attribute3D(true).Loop(false).Play();
 }
 
 void CSacrificeState_Attack_07_Phase1::Update(CSacrifice* pOwner, _float dt)
@@ -866,7 +853,6 @@ void CSacrificeState_Attack_07_Phase1::Update(CSacrifice* pOwner, _float dt)
 		if (Event.Tag == "Start_Attack")
 		{
 			pOwner->UnleashAttack(CEnemy::ATTACK_SIDE::LEFT);
-			pOwner->Get_Component<CAudioSource>()->Slot("Sacrifice_Attack_Voice2.wav").Attribute3D(false).Loop(false).Play();
 		}
 		if (Event.Tag == "Start_Collider")
 		{
@@ -942,7 +928,6 @@ void CSacrificeState_Attack_08_Phase1::Enter(CSacrifice* pOwner)
 	_vector3 vCurrDir = pOwner->Get_Component<CTransform>()->Dir(STATE::LOOK);
 	_vector3 vTargetPos = pOwner->GetTargetingInfo().vTargetPos;
 	m_vFirstTargetPosition = vTargetPos - vCurrDir * 2.f;
-	pOwner->Get_Component<CAudioSource>()->Slot("Sacrifice_Attack_Voice1.wav").Attribute3D(false).Loop(false).Play();
 }
 
 void CSacrificeState_Attack_08_Phase1::Update(CSacrifice* pOwner, _float dt)
@@ -1012,8 +997,7 @@ void CSacrificeState_Attack_08_Phase1::Update_Effects(CSacrifice* pOwner)
 
 		ObjectManager()->Add_Object(pEffect, { pOwner->Get_Level(),"Effect_Layer" });
 		ObjectManager()->Add_Object(pRockParticle, { pOwner->Get_Level(),"Effect_Layer" });
-
-		pOwner->Get_Component<CAudioSource>()->Slot("Sacrifice_Tab_Ground").Volume(0.6f).Attribute3D(true).Loop(false).Play();
+		
 		CameraManager()->AddImpact(ENUM(CamShakeType::HitCrit), ENUM(CamZoomType::HitCrit), 0.75f);
 	}
 
@@ -1038,7 +1022,6 @@ void CSacrificeState_Attack_08_Phase1::Update_Effects(CSacrifice* pOwner)
 		pEffectTransform->Set_WorldQuaternion(localQuaternion);
 
 		static_cast<CEffectContainer*>(effect)->Play();
-		pOwner->Get_Component<CAudioSource>()->Slot("Sacrifice_Axe_Slash.wav").Attribute3D(true).Loop(false).Play();
 	}
 
 	/* Axe Slash */
@@ -1077,7 +1060,6 @@ void CSacrificeState_Attack_08_Phase1::Update_Effects(CSacrifice* pOwner)
 		ObjectManager()->Add_Object(pEffect, { pOwner->Get_Level(),"Effect_Layer" });
 
 		CameraManager()->AddImpact(ENUM(CamShakeType::LandingCrush), ENUM(CamZoomType::LandingCrush), 2.5f);
-		pOwner->Get_Component<CAudioSource>()->Slot("Sacrifice_Axe_HitGround.wav").Attribute3D(true).Loop(false).Play();
 	}
 }
 
@@ -1309,8 +1291,6 @@ void CSacrificeState_Attack_Roar_Phase1::Enter(CSacrifice* pOwner)
 {
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("SacrificeBringer_Ani_P1_Stun_Roar").Loop(false).Speed(1.f).Apply();
-
-	pOwner->Get_Component<CAudioSource>()->Slot("Sacrifice_Roar_Voice.wav").Attribute3D(false).Loop(false).Play();
 }
 
 void CSacrificeState_Attack_Roar_Phase1::Update(CSacrifice* pOwner, _float dt)
@@ -1329,7 +1309,6 @@ void CSacrificeState_Attack_Roar_Phase1::Update(CSacrifice* pOwner, _float dt)
 	if (IsCrossAnimProgress(0.5f))
 	{
 		pOwner->Set_DissolveState(CSacrifice::DISSOLVE_STATE::DISAPPEAR, 0.3f);
-		pOwner->Get_Component<CAudioSource>()->Slot("Sacrifice_Phase1_Laser_Attack.wav").Attribute3D(false).Loop(false).Play();
 	}
 
 	if (IsCrossAnimProgress(0.7f))

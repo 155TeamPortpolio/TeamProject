@@ -121,7 +121,6 @@ void CSacrificeHandState_Attack_01_Phase1::Enter(CSacrificeHand* pOwner)
 
 	pOwner->Set_DissolveState(CSacrificeHand::DISSOLVE_STATE::APPEAR, 0.1f);
 	pOwner->SetVisable(true);
-	pOwner->Get_Component<CAudioSource>()->Slot("Sacrifice_Hand_Attack_Voice0.wav").Attribute3D(false).Loop(false).Play();
 }
 
 void CSacrificeHandState_Attack_01_Phase1::Update(CSacrificeHand* pOwner, _float dt)
@@ -269,7 +268,6 @@ void CSacrificeHandState_Attack_03_Phase1::Enter(CSacrificeHand* pOwner)
 
 	pOwner->Set_DissolveState(CSacrificeHand::DISSOLVE_STATE::NONE, 0.f);
 	m_IsActiveHand = false;
-	pOwner->Get_Component<CAudioSource>()->Slot("Sacrifice_Hand_Attack_Voice1.wav").Attribute3D(false).Loop(false).Play();
 }
 
 void CSacrificeHandState_Attack_03_Phase1::Update(CSacrificeHand* pOwner, _float dt)
