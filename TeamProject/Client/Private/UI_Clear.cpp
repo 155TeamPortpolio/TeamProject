@@ -1,10 +1,10 @@
 #include "pch.h"
-#include "UI_Switch.h"
+#include "UI_clear.h"
 
 #include "GameInstance.h"
 #include "ObjectContainer.h" 
 
-HRESULT CUI_Switch::Initialize_Prototype()
+HRESULT CUI_Clear::Initialize_Prototype()
 {
     if (FAILED(__super::Initialize_Prototype()))
         return E_FAIL;
@@ -12,24 +12,24 @@ HRESULT CUI_Switch::Initialize_Prototype()
     return S_OK;
 }
 
-HRESULT CUI_Switch::Initialize(INIT_DESC* pArg)
+HRESULT CUI_Clear::Initialize(INIT_DESC* pArg)
 {
     if (FAILED(__super::Initialize(pArg)))
         return E_FAIL;
 
-    Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("switch.json")));
+    Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("clear.json")));
 
-    Set_Alive(false);
+    //Set_Alive(false);
 
     return S_OK;
 }
 
-void CUI_Switch::Awake()
+void CUI_Clear::Awake()
 {
     __super::Awake();
 }
 
-void CUI_Switch::Update(_float dt)
+void CUI_Clear::Update(_float dt)
 {
     __super::Update(dt);
 
@@ -39,7 +39,7 @@ void CUI_Switch::Update(_float dt)
     Update_RTV("renderTargetScreen", true);
 }
 
-void CUI_Switch::UI_Active(void* pArg)
+void CUI_Clear::UI_Active(void* pArg)
 {
     Set_Alive(true);
     Set_Animation(0);
@@ -47,23 +47,23 @@ void CUI_Switch::UI_Active(void* pArg)
         dynamic_cast<CUI_Object*>(pChild)->Set_Animation(0);
 }
 
-CGameObject* CUI_Switch::Create()
+CGameObject* CUI_Clear::Create()
 {
-    CUI_Switch* pInstance = new CUI_Switch();
+    CUI_Clear* pInstance = new CUI_Clear();
     if (FAILED(pInstance->Initialize_Prototype()))
     {
-        MSG_BOX("Failed to Create : CUI_Switch");
+        MSG_BOX("Failed to Create : CUI_Clear");
         Safe_Release(pInstance);
     }
     return pInstance;
 }
 
-CGameObject* CUI_Switch::Clone(INIT_DESC* pArg)
+CGameObject* CUI_Clear::Clone(INIT_DESC* pArg)
 {
-    CUI_Switch* pInstance = new CUI_Switch(*this);
+    CUI_Clear* pInstance = new CUI_Clear(*this);
     if (FAILED(pInstance->Initialize(pArg)))
     {
-        MSG_BOX("Failed to Clone : CUI_Switch");
+        MSG_BOX("Failed to Clone : CUI_Clear");
         Safe_Release(pInstance);
     }
     return pInstance;

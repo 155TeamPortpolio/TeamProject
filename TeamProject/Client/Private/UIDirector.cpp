@@ -146,14 +146,19 @@ void CUIDirector::Show_GachaResult(const vector<GACHA_RESULT_DESC>* pResultDesc)
 	UI_Active("gacha_result", &desc);
 }
 
-void CUIDirector::Show_Wipeout()
-{
-	UI_Active("wipeout");
-}
-
 void CUIDirector::Show_Switch()
 {
 	UI_Active("switch");
+}
+
+void CUIDirector::Show_Clear()
+{
+	UI_Active("clear");
+}
+
+void CUIDirector::Show_Wipeout()
+{
+	UI_Active("wipeout");
 }
 
 void CUIDirector::Initialize()
