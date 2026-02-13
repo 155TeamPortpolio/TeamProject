@@ -1347,6 +1347,12 @@
     <Filter Include="02. GameObject\UI\02. 3D\Mesh\GachaReveal\GachaText">
       <UniqueIdentifier>{ed223e07-20d2-4adb-bf8a-94b7c189aa86}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Env\WaterWave">
+      <UniqueIdentifier>{aea5bd1e-985a-4281-bd0f-03da8ed2d179}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Env\Water">
+      <UniqueIdentifier>{eb2a971f-d7e0-4f0e-8386-8a49c973a9aa}</UniqueIdentifier>
+          </Filter>
     <Filter Include="02. GameObject\Object\Enemy\Boss\Defiler\State\OtherState">
       <UniqueIdentifier>{7070f4d4-6cda-4ac4-b714-abd5e747e09d}</UniqueIdentifier>
     </Filter>
@@ -2612,6 +2618,12 @@
     <ClInclude Include="..\Public\BasicHitEffect.h">
       <Filter>02. GameObject\Effect\HitEffect\BasicHit</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Water.h">
+      <Filter>02. GameObject\Object\Env\Water</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\WaterWave.h">
+      <Filter>02. GameObject\Object\Env\WaterWave</Filter>
+          </ClInclude>
     <ClInclude Include="..\Public\DefilerState_Other.h">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler\State\OtherState</Filter>
     </ClInclude>
@@ -3836,6 +3848,12 @@
     <ClCompile Include="..\Private\BasicHitEffect.cpp">
       <Filter>02. GameObject\Effect\HitEffect\BasicHit</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\Water.cpp">
+      <Filter>02. GameObject\Object\Env\Water</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\WaterWave.cpp">
+      <Filter>02. GameObject\Object\Env\WaterWave</Filter>
+          </ClCompile>
     <ClCompile Include="..\Private\DefilerState_Other.cpp">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler\State\OtherState</Filter>
     </ClCompile>

@@ -361,6 +361,12 @@ CSaturationCommand* CSaturationCommand::SetEaseType(EaseType easeType)
 	return this;
 }
 
+CSaturationCommand* CSaturationCommand::SetSaturationType(_uint flags)
+{
+	m_SaturationType = flags;
+	return this;
+}
+
 void CSaturationCommand::Update(_float dt)
 {
 	m_fAccTime += dt;
@@ -384,6 +390,34 @@ CSaturationCommand* CSaturationCommand::Create()
 }
 
 void CSaturationCommand::Free()
+{
+	__super::Free();
+}
+
+CDistortionCommand::CDistortionCommand()
+{
+	m_strName = "Distortion";
+	m_iPriority = static_cast<_uint>(POST_PROCESS_ORDER::DISTORTION);
+	m_bEnabled = true;
+	m_eEffectType = EFFECT_TYPE::REPLACE;
+	m_strOutputTargetName = "Target_Distortion";
+}
+
+void CDistortionCommand::Update(_float dt)
+{
+}
+
+void CDistortionCommand::Execute(CPostRenderer* pRenderer)
+{
+	pRenderer->Render_Distortion_Internal();
+}
+
+CDistortionCommand* CDistortionCommand::Create()
+{
+	return new CDistortionCommand();
+}
+
+void CDistortionCommand::Free()
 {
 	__super::Free();
 }

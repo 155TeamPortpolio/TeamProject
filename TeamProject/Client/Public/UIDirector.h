@@ -3,6 +3,7 @@
 
 NS_BEGIN(Engine)
 class CGameInstance;
+class CGameObject;
 class CUI_Object;
 NS_END
 
@@ -81,6 +82,8 @@ private:
 	void Show_HUD(const string& strInstanceName, _bool isFade = true);
 	void Hide_HUD(const string& strInstanceName);
 	string Get_HUDName(HUD hud);
+
+	HRESULT Ready_UIObject(const string& strLevelTag, const string& strPrototypeTag, const string& strInstanceName, class CGameObject* pProto);
 
 	void UI_Active(const string& strInstanceName, void* pArg = nullptr);
 	void UI_DeActive(const string& strInstanceName, void* pArg = nullptr);
