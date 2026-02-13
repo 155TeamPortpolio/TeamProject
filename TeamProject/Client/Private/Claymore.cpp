@@ -397,10 +397,10 @@ HRESULT CClaymore::Ready_Rules()
 	m_vIdleTime = { 1.f, 0.f };
 
 	m_tHysteriesis.fEvadeEnter = 2.f;
-	m_tHysteriesis.fComboEnter = 3.f;
-	m_tHysteriesis.fComboExit = 4.5f;
-	m_tHysteriesis.fChaseEnter = 7.f;
-	m_tHysteriesis.fChaseExit = 5.f;
+	m_tHysteriesis.fComboEnter = 2.5f;
+	m_tHysteriesis.fComboExit = 3.5f;
+	m_tHysteriesis.fChaseEnter = 5.f;
+	m_tHysteriesis.fChaseExit = 4.f;
 
 	return S_OK;
 }

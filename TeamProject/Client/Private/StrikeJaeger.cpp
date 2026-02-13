@@ -411,11 +411,11 @@ HRESULT CStrikeJaeger::Ready_Rules()
 	// x = Idle에서 다음 상태로 넘어가는 쿨타임, y = dt 더한 타이머용
 	m_vIdleTime = { 1.f, 0.f };
 
-	m_tHysteriesis.fEvadeEnter = 2.f;
-	m_tHysteriesis.fComboEnter = 3.f;
-	m_tHysteriesis.fComboExit = 5.5f;
-	m_tHysteriesis.fChaseEnter = 8.f;
-	m_tHysteriesis.fChaseExit = 6.f;
+	m_tHysteriesis.fEvadeEnter = 1.f;
+	m_tHysteriesis.fComboEnter = 2.f;
+	m_tHysteriesis.fComboExit = 3.5f;
+	m_tHysteriesis.fChaseEnter = 5.f;
+	m_tHysteriesis.fChaseExit = 4.f;
 
 	return S_OK;
 }
