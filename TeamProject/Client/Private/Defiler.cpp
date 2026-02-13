@@ -771,6 +771,15 @@ HRESULT CDefiler::Initialize_Effects()
 		pObjectContainer->Add_Child(pEffect);
 	}
 
+	/* Dash Trail */
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("defiler_dash_trail.json")
+			.Build("Defiler_Dash_Trail");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect);
+	}
+
 	/* Flare, Light */
 	{
 		_smatrix offsetMatrix = _smatrix::Identity;
@@ -812,6 +821,17 @@ HRESULT CDefiler::Initialize_Effects()
 		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
 			.Asset("defiler_axe_light1.json")
 			.Build("Defiler_Axe_Light1");
+		pEffect->Stop();
+		pEffect->AttachBone(pAnimator, "Ctr_M_Weapon_01", offsetMatrix);
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+	{
+		_smatrix offsetMatrix = _smatrix::Identity;
+		offsetMatrix.Translation(_vector3(1.f, 0.f, 0.f));
+
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("defiler_axe_light2.json")
+			.Build("Defiler_Axe_Light2");
 		pEffect->Stop();
 		pEffect->AttachBone(pAnimator, "Ctr_M_Weapon_01", offsetMatrix);
 		pObjectContainer->Add_Child(pEffect, false);

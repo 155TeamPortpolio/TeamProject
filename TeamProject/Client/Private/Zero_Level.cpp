@@ -176,7 +176,7 @@ void CZero_Level::Ready_Stage()
 	Shuffle_MapCycle(m_mapCycle[StageType::Normal].maps);
 	m_mapCycle[StageType::Elite].maps	= { "Zero_1_1",	"Zero_1_2", "Zero_2_1" };
 	Shuffle_MapCycle(m_mapCycle[StageType::Elite].maps);
-	m_mapCycle[StageType::Boss].maps	= { "Zero_Boss1","Zero_Boss1"};
+	m_mapCycle[StageType::Boss].maps	= { "Zero_Boss2","Zero_Boss1"};
 
 	ChangeStage(StageType::Boss);
 }

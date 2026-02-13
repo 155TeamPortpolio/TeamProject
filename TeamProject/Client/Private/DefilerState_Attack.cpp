@@ -413,11 +413,22 @@ void CDefilerState_Attack_05::Enter(CDefiler* pOwner)
 void CDefilerState_Attack_05::Update(CDefiler* pOwner, _float dt)
 {
 	ComboTransition(pOwner);
+	Update_Effects(pOwner);
 }
 
 void CDefilerState_Attack_05::Exit(CDefiler* pOwner)
 {
 	pOwner->Release_CollisionMask();
+}
+
+void CDefilerState_Attack_05::Update_Effects(CDefiler* pOwner)
+{
+	if (IsCrossAnimProgress(0.08f))
+		pOwner->Play_Effect("Defiler_Axe_Light2", _vector3(), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+	if (IsCrossAnimProgress(0.31f))
+		pOwner->Stop_Effect("Defiler_Axe_Light2");
+	if (IsCrossAnimProgress(0.33f))
+		pOwner->Play_Effect("Defiler_Dash_Trail", _vector3(-0.2f, 2.5f, -4.7f), _quaternion(0.71f, 0.f, 0.f, 0.71f));
 }
 
 void CDefilerState_Attack_06::Enter(CDefiler* pOwner)
