@@ -34,13 +34,18 @@ void CUI_Switch::Update(_float dt)
     __super::Update(dt);
 
     if (Is_AnimFinished())
+    {
+        Set_RenderTargetScreenRenderLayer(RENDER_LAYER::None);
         Set_Alive(false);
+        return;
+    } 
 
     Update_RTV("renderTargetScreen", true);
 }
 
 void CUI_Switch::UI_Active(void* pArg)
 {
+    Set_RenderTargetScreenRenderLayer(RENDER_LAYER::Default);
     Set_Alive(true);
     Set_Animation(0);
     for (auto& pChild : Get_Component<CObjectContainer>()->Get_Children())

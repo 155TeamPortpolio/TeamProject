@@ -32,17 +32,11 @@ void CUI_Wipeout::Awake()
 
 void CUI_Wipeout::Update(_float dt)
 {
-    if(m_eState == STATE::DEACTIVATING)
-    {
-        Change_State(STATE::INACTIVE);
-        return;
-    } 
-        
      __super::Update(dt);
 
     m_fTimer += dt;
     if (m_fTimer >= m_fDuration)
-        Change_State(STATE::DEACTIVATING);
+        Change_State(STATE::INACTIVE);
 
     if (Is_GroupAnimationFinished(m_eCurrentGroup))
         Update_GroupState();
@@ -52,6 +46,7 @@ void CUI_Wipeout::Update(_float dt)
 
 void CUI_Wipeout::UI_Active(void* pArg)
 {
+    Set_RenderTargetScreenRenderLayer(RENDER_LAYER::Default);
     Change_State(STATE::ACTIVE);
 }
 
@@ -79,7 +74,7 @@ void CUI_Wipeout::Update_GroupState()
     case GROUP::GROUP5:
         if (m_iBlinkCount == 2)
         {
-            Change_State(STATE::DEACTIVATING);
+            Change_State(STATE::INACTIVE);
             return;
         }
 
@@ -107,14 +102,12 @@ void CUI_Wipeout::Change_State(STATE eState)
         m_iBlinkCount = 0;
         m_fTimer = 0;
         break;
-    case STATE::DEACTIVATING:
-        Set_Alpha(0.f);
-        m_iCurrentClipIndex = -1;
-        break;
     case STATE::INACTIVE:
+        Set_RenderTargetScreenRenderLayer(RENDER_LAYER::None);
         Set_Alive(false);
         for(_int i = 0; i < ENUM(GROUP::END); ++i)
             Set_GroupAlive(static_cast<GROUP>(i), false);
+        m_iCurrentClipIndex = -1;
         break;
     }
 }
