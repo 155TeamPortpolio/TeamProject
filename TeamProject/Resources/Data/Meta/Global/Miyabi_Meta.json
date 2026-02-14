@@ -235,7 +235,7 @@
         {
           "EventTime": 0.6385964751243591,
           "EventType": "Notify",
-          "EventTag": "AreaAttack"
+          "EventTag": "AreaAttackHard"
         },
         {
           "EventTime": 0.6754385828971863,
@@ -302,7 +302,7 @@
         {
           "EventTime": 1.2194931507110596,
           "EventType": "Notify",
-          "EventTag": "AreaAttack"
+          "EventTag": "AreaAttackHard"
         }
       ]
     },
@@ -496,7 +496,7 @@
         {
           "EventTime": 0.5031188726425171,
           "EventType": "Notify",
-          "EventTag": "AreaAttack"
+          "EventTag": "AreaAttackHard"
         },
         {
           "EventTime": 0.5313839912414551,
@@ -1015,7 +1015,7 @@
         {
           "EventTime": 1.063742756843567,
           "EventType": "Notify",
-          "EventTag": "AreaAttack"
+          "EventTag": "AreaAttackHard"
         },
         {
           "EventTime": 1.2762116193771362,
