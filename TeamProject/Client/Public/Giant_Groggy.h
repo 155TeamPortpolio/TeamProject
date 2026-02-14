@@ -6,7 +6,7 @@ NS_BEGIN(Client)
 
 class CGiant;
 
-class CClaymore_Groggy : public IHState<CGiant>
+class CGiant_Groggy : public IHState<CGiant>
 {
 public:
 	virtual void Enter(CGiant* pOwner) override;
@@ -14,7 +14,7 @@ public:
 	virtual void Exit(CGiant* pOwner) override;
 
 public:
-	static CClaymore_Groggy* Create() { return new CClaymore_Groggy(); }
+	static CGiant_Groggy* Create() { return new CGiant_Groggy(); }
 	virtual void Free() override { __super::Free(); }
 
 private:
@@ -22,7 +22,7 @@ private:
 	void Register_Transitions();
 };
 
-class CClaymore_Stun_Start : public IBaseState<CGiant>
+class CGiant_Stun_Start_Front : public IBaseState<CGiant>
 {
 public:
 	virtual void Enter(CGiant* pOwner) override;
@@ -30,11 +30,11 @@ public:
 	virtual void Exit(CGiant* pOwner) override;
 
 public:
-	static CClaymore_Stun_Start* Create() { return new CClaymore_Stun_Start(); }
+	static CGiant_Stun_Start_Front* Create() { return new CGiant_Stun_Start_Front(); }
 	virtual void Free() override { __super::Free(); }
 };
 
-class CClaymore_Stun_Loop : public IBaseState<CGiant>
+class CGiant_Stun_Start_Back : public IBaseState<CGiant>
 {
 public:
 	virtual void Enter(CGiant* pOwner) override;
@@ -42,11 +42,11 @@ public:
 	virtual void Exit(CGiant* pOwner) override;
 
 public:
-	static CClaymore_Stun_Loop* Create() { return new CClaymore_Stun_Loop(); }
+	static CGiant_Stun_Start_Back* Create() { return new CGiant_Stun_Start_Back(); }
 	virtual void Free() override { __super::Free(); }
 };
 
-class CClaymore_Stun_End : public IBaseState<CGiant>
+class CGiant_Stun_Loop : public IBaseState<CGiant>
 {
 public:
 	virtual void Enter(CGiant* pOwner) override;
@@ -54,7 +54,19 @@ public:
 	virtual void Exit(CGiant* pOwner) override;
 
 public:
-	static CClaymore_Stun_End* Create() { return new CClaymore_Stun_End(); }
+	static CGiant_Stun_Loop* Create() { return new CGiant_Stun_Loop(); }
+	virtual void Free() override { __super::Free(); }
+};
+
+class CGiant_Stun_End : public IBaseState<CGiant>
+{
+public:
+	virtual void Enter(CGiant* pOwner) override;
+	virtual void Update(CGiant* pOwner, _float dt) override;
+	virtual void Exit(CGiant* pOwner) override;
+
+public:
+	static CGiant_Stun_End* Create() { return new CGiant_Stun_End(); }
 	virtual void Free() override { __super::Free(); }
 };
 

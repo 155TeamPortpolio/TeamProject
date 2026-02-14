@@ -6,7 +6,7 @@ NS_BEGIN(Client)
 
 class CGiant;
 
-class CClaymore_Chase : public IHState<CGiant>
+class CGiant_Chase : public IHState<CGiant>
 {
 public:
 	virtual void Enter(CGiant* pOwner) override;
@@ -14,7 +14,7 @@ public:
 	virtual void Exit(CGiant* pOwner) override;
 
 public:
-	static CClaymore_Chase* Create() { return new CClaymore_Chase(); }
+	static CGiant_Chase* Create() { return new CGiant_Chase(); }
 	virtual void Free() override { __super::Free(); }
 
 private:
@@ -22,7 +22,7 @@ private:
 	void Register_Transitions();
 };
 
-class CClaymore_Run_Start : public IBaseState<CGiant>
+class CGiant_Run_Start : public IBaseState<CGiant>
 {
 public:
 	virtual void Enter(CGiant* pOwner) override;
@@ -30,11 +30,11 @@ public:
 	virtual void Exit(CGiant* pOwner) override;
 
 public:
-	static CClaymore_Run_Start* Create() { return new CClaymore_Run_Start(); }
+	static CGiant_Run_Start* Create() { return new CGiant_Run_Start(); }
 	virtual void Free() override { __super::Free(); }
 };
 
-class CClaymore_Run_Loop : public IBaseState<CGiant>
+class CGiant_Run_Loop : public IBaseState<CGiant>
 {
 public:
 	virtual void Enter(CGiant* pOwner) override;
@@ -42,11 +42,11 @@ public:
 	virtual void Exit(CGiant* pOwner) override;
 
 public:
-	static CClaymore_Run_Loop* Create() { return new CClaymore_Run_Loop(); }
+	static CGiant_Run_Loop* Create() { return new CGiant_Run_Loop(); }
 	virtual void Free() override { __super::Free(); }
 };
 
-class CClaymore_Run_End : public IBaseState<CGiant>
+class CGiant_Run_End : public IBaseState<CGiant>
 {
 public:
 	virtual void Enter(CGiant* pOwner) override;
@@ -54,7 +54,7 @@ public:
 	virtual void Exit(CGiant* pOwner) override;
 
 public:
-	static CClaymore_Run_End* Create() { return new CClaymore_Run_End(); }
+	static CGiant_Run_End* Create() { return new CGiant_Run_End(); }
 	virtual void Free() override { __super::Free(); }
 };
 

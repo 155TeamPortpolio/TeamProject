@@ -6,7 +6,7 @@ NS_BEGIN(Client)
 
 class CGiant;
 
-class CClaymore_Parried : public IBaseState<CGiant>
+class CGiant_Parried : public IBaseState<CGiant>
 {
 public:
 	virtual void Enter(CGiant* pOwner) override;
@@ -14,7 +14,7 @@ public:
 	virtual void Exit(CGiant* pOwner) override;
 
 public:
-	static CClaymore_Parried* Create() { return new CClaymore_Parried(); }
+	static CGiant_Parried* Create() { return new CGiant_Parried(); }
 	virtual void Free() override { __super::Free(); }
 };
 
