@@ -33,9 +33,9 @@ public:
     {
         struct Common
         {
-            _float enterSec = 3.f;
-            _float impactSec = 0.1f;
-            _float holdSec = 0.1f;
+            _float enterSec = 1.5f;
+            _float impactSec = 2.f;
+            _float holdSec = 0.f;
 
             _float pitchDeg = -8.f;
             _float dist = 2.85f;
@@ -66,6 +66,16 @@ public:
             _float punchDistDelta = 0.75f;
             _float punchFovAdd = 10.f;
             _float rollMaxDeg = 10.f;
+
+            _float pitchLiftDeg = 6.f;
+
+            _int   fovPulseCount = 2;
+            _float fovPulseAmp = 1.25f;
+
+            _int   rollShakeCount = 2;
+            _float rollShakeDeg = 2.0f;
+
+            _float rollArcMul = 0.35f;
         };
 
         Common common{};
@@ -110,6 +120,9 @@ private:
     void      ApplyInterpolated_Enter(const ShotGoal& a, const ShotGoal& b, _float t);
     ShotGoal  BuildBaseShot_NoLens(_int sideSign) const;
 
+    void      CaptureCurAsImpactBase();
+    ShotGoal  BuildImpactShot(_int sideSign, _float close01, _float roll01, _float u) const;
+
 private:
     _bool         m_active = false;
     State         m_state = State::None;
@@ -146,6 +159,10 @@ private:
     _bool         m_victimBlocked = false;
 
     _float        m_enterCamY = 0.f;
+
+    ShotGoal      m_impactBase{};
+    Vector3       m_impactPivotWorld{};
+    _bool         m_impactCaptured = false;
 };
 
 NS_END

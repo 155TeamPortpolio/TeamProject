@@ -189,11 +189,12 @@ public: /* IKSolver */
     void    Clear_IKChains();
     const HumanoidRigData& Get_HumanoidRig() const { return m_HumanoidRig; }
 
-protected://애니매이션 체크
+//애니매이션 체크
     //문자열 및 숫자를 인덱스로 잘 바꿔주는 함수
     _int Resolve_ClipIndex(AnimArg ClipArg);
     _int Resolve_BoneIndex(AnimArg BoneArg);
 
+protected:
     //레이어 인덱스를 찾음
     _int Find_Clip(const string& ClipTag);
     //존재하는지 여부

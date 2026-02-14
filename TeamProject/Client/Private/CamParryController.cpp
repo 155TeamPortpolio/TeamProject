@@ -2,7 +2,6 @@
 #include "CamParryController.h"
 
 #include "CamDirector.h"
-#include "Helper_Func.h"
 #include "GameInstance.h"
 #include "CharacterController.h"
 
@@ -15,10 +14,10 @@ CamParryController::PivotSample CamParryController::SamplePivots(OBJECT_HANDLE h
     auto cc = obj->Get_Component<CCharacterController>();
 
     const Vector3 foot = cc->Get_FootPosition();
-    const _float half = cc->Get_HalfSize();
+    const _float half  = cc->Get_HalfSize();
 
     const _float baseMul = 1.1f;
-    const _float topMul = 1.3f;
+    const _float topMul  = 1.3f;
 
     _float t = clamp(faceYOffsetMul, 0.f, 1.f);
     const _float faceMul = baseMul + (topMul - baseMul) * t;
@@ -273,6 +272,9 @@ CamParryController::ShotGoal CamParryController::BuildImpactShot(_int sideSign, 
 {
     ShotGoal g = BuildBaseShot(sideSign);
 
+    g.dist = m_shotFrom.dist;
+    g.fov = m_shotFrom.fov;
+
     close01 = clamp(close01, 0.f, 1.f);
     roll01 = clamp(roll01, 0.f, 1.f);
 
@@ -440,6 +442,68 @@ CamParryController::ShotGoal CamParryController::BuildBaseShot_NoLens(_int sideS
     return g;
 }
 
+void CamParryController::CaptureCurAsImpactBase()
+{
+    auto orbit = CamDirector()->GetOrbitCam();
+    auto cam = CamDirector()->GetOrbitCamComp();
+
+    OrbitSnapshot s{};
+    orbit->CaptureSnapshot(s);
+
+    m_impactPivotWorld = s.pose.pivotCurWorld;
+
+    ShotGoal g{};
+
+    g.baseVictimWeight = 0.f;
+
+    const Vector3 basePivot = BasePivotWorld(g.baseVictimWeight);
+    g.pivotExt = m_impactPivotWorld - basePivot;
+
+    g.yawDeg = s.pose.rotCurDeg.x;
+    g.pitchDeg = s.pose.rotCurDeg.y;
+    g.rollDeg = 0.f;
+
+    g.dist = s.pose.distCur;
+    g.fov = cam->Get_FOV();
+
+    g.yawWeight = 1.f;
+
+    ClampAboveGround(g);
+
+    m_impactBase = g;
+    m_impactCaptured = true;
+}
+
+CamParryController::ShotGoal CamParryController::BuildImpactShot(_int sideSign, _float close01, _float roll01, _float u) const
+{
+    ShotGoal g = m_impactBase;
+
+    close01 = clamp(close01, 0.f, 1.f);
+    roll01 = clamp(roll01, 0.f, 1.f);
+    u = clamp(u, 0.f, 1.f);
+
+    const Vector3 basePivot = BasePivotWorld(g.baseVictimWeight);
+    g.pivotExt = m_impactPivotWorld - basePivot;
+
+    g.dist = max(0.f, g.dist - tune.impact.punchDistDelta * close01);
+    g.fov = g.fov + tune.impact.punchFovAdd * close01;
+
+    g.pitchDeg = g.pitchDeg - tune.impact.pitchLiftDeg * close01;
+
+    const _float env = sinf(XM_PI * u);
+
+    const _float fovPulse = sinf(2.f * XM_PI * (_float)tune.impact.fovPulseCount * u);
+    g.fov = g.fov + tune.impact.fovPulseAmp * fovPulse * env;
+
+    g.rollDeg = (_float)sideSign * tune.impact.rollMaxDeg * roll01 * tune.impact.rollArcMul;
+
+    const _float rollPulse = sinf(2.f * XM_PI * (_float)tune.impact.rollShakeCount * u);
+    g.rollDeg = g.rollDeg + (_float)sideSign * tune.impact.rollShakeDeg * rollPulse * env;
+
+    ClampAboveGround(g);
+
+    return g;
+}
 
 
 void CamParryController::Reset()
@@ -477,6 +541,12 @@ void CamParryController::Reset()
     m_prevFov = 0.f;
 
     m_victimBlocked = false;
+
+    m_enterCamY = 0.f;
+
+    m_impactBase = {};
+    m_impactPivotWorld = Vector3::Zero;
+    m_impactCaptured = false;
 }
 
 void CamParryController::Begin()
@@ -565,6 +635,10 @@ void CamParryController::Begin()
     m_holdFrom = {};
     m_holdTo = {};
 
+    m_impactBase = {};
+    m_impactPivotWorld = Vector3::Zero;
+    m_impactCaptured = false;
+
     m_active = true;
     m_state = State::Enter;
     m_elapsed = 0.f;
@@ -576,7 +650,6 @@ void CamParryController::Begin()
     orbit->DialogueMode_Begin();
     orbit->DialogueYaw_Clear();
 }
-
 
 void CamParryController::End()
 {
@@ -613,6 +686,7 @@ void CamParryController::Update(_float dt)
 
         if (u >= 1.f)
         {
+            CaptureCurAsImpactBase();
             m_state = State::Impact;
             m_elapsed = 0.f;
         }
@@ -621,17 +695,25 @@ void CamParryController::Update(_float dt)
 
     if (m_state == State::Impact)
     {
+        if (!m_impactCaptured) CaptureCurAsImpactBase();
+
         const _float u = (tune.common.impactSec > 0.f) ? clamp(m_elapsed / tune.common.impactSec, 0.f, 1.f) : 1.f;
 
         const _float close01 = Math::ApplyEase(tune.common.impactEase, u);
         const _float roll01 = sinf(XM_PI * u);
 
-        ShotGoal g = BuildImpactShot(m_sideSign, close01, roll01);
+        ShotGoal g = BuildImpactShot(m_sideSign, close01, roll01, u);
         ApplyGoalPose_Snap(g);
 
         if (u >= 1.f)
         {
-            m_holdFrom = BuildImpactShot(m_sideSign, 1.f, 0.f);
+            if (tune.common.holdSec <= 0.f)
+            {
+                End();
+                return;
+            }
+
+            m_holdFrom = g;
             m_holdTo = BuildBaseShot(m_sideSign);
 
             m_state = State::Hold;
@@ -644,7 +726,6 @@ void CamParryController::Update(_float dt)
     {
         if (tune.common.holdSec <= 0.f)
         {
-            ApplyGoalPose_Snap(m_holdTo);
             End();
             return;
         }
@@ -662,4 +743,3 @@ void CamParryController::Update(_float dt)
         return;
     }
 }
-
