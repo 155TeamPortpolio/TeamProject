@@ -29,6 +29,16 @@ HRESULT CEnemyNormal::Initialize(INIT_DESC* pArg)
 	return S_OK;
 }
 
+void CEnemyNormal::Priority_Update(_float dt)
+{
+	__super::Priority_Update(dt);
+
+	if (m_isStop)
+		ObjectManager()->Set_LayerTimeScale({ LevelManager()->Get_NowLevelKey(), "Enemy_Layer" }, 0);
+	else
+		ObjectManager()->Set_LayerTimeScale({ LevelManager()->Get_NowLevelKey(), "Enemy_Layer" }, 1);
+}
+
 void CEnemyNormal::Update(_float dt)
 {
 	RotateToDir(dt);
@@ -129,5 +139,26 @@ void CEnemyNormal::RotateToDir(_float dt)
 	step = std::clamp(step, -maxStep, +maxStep);
 
 	m_pTransform->Rotation(XMVectorSet(0.f, 1.f, 0.f, 0.f), step);
+}
+
+void CEnemyNormal::GUI_DebugButton()
+{
+	if (ImGui::Button(u8"그로기 수치 증가##DebugButton"))
+		m_tStatus.iGroggyValue += 30;
+
+	if (ImGui::Button("Hit##DebugButton"))
+		TakeDamage(DAMAGE_TYPE::NORMAL, 20.f);
+
+	if (ImGui::Button(u8"패링 (공격 시)##DebugButton"))
+		Parried();
+
+	if (ImGui::Button(u8"즉사##DebugButton"))
+		m_tStatus.iNowHP -= m_tStatus.iMaxHP;
+
+	if (ImGui::Button(u8"몬스터 HP 회복##DebugButton"))
+		m_tStatus.iNowHP = m_tStatus.iMaxHP;
+
+	if (ImGui::Button(u8"몬스터 정지(디버그용)##DebugButton"))
+		m_isStop = !m_isStop;
 }
 

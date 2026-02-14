@@ -1,5 +1,5 @@
 {
-  "AnimPath" : "../bin/Resources/Zero/Enemy/ThugBulkyEnforcer/Anim/",
+  "AnimPath": "../bin/Resources/Zero/Enemy/ThugBulkyEnforcer/Anim/",
   "PreTransform": {
     "_11": -0.009999999776482582,
     "_12": 0.0,
@@ -21,7 +21,28 @@
   "Clips": [
     {
       "ClipTag": "ThugBulkyEnforcer_Ani_Attack_01",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.009999999776482582,
+          "EventType": "Notify",
+          "EventTag": "UnleashAttack_Right"
+        },
+        {
+          "EventTime": 0.7272903919219971,
+          "EventType": "Notify",
+          "EventTag": "TurnOnAttackCol_Right"
+        },
+        {
+          "EventTime": 0.8711500763893127,
+          "EventType": "Notify",
+          "EventTag": "TurnOffAttackCol_Right"
+        },
+        {
+          "EventTime": 0.8711500763893127,
+          "EventType": "Notify",
+          "EventTag": "FinishAll"
+        }
+      ]
     },
     {
       "ClipTag": "ThugBulkyEnforcer_Ani_Attack_02",

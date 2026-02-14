@@ -1353,6 +1353,9 @@
     <Filter Include="02. GameObject\Object\Enemy\Boss\Defiler\State\OtherState">
       <UniqueIdentifier>{7070f4d4-6cda-4ac4-b714-abd5e747e09d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Elite\ThugBulkyEnforcer\State\Parried">
+      <UniqueIdentifier>{5f91a72c-9f8b-4127-a614-47ef3f1ae674}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02. GameObject\Effect\PaperEffect">
       <UniqueIdentifier>{6160f086-da22-44d2-91a6-5d30cc56d8e0}</UniqueIdentifier>
     </Filter>
@@ -2627,6 +2630,9 @@
     <ClInclude Include="..\Public\DefilerState_Other.h">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler\State\OtherState</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\ThugBulkyEnforcer_Parried.h">
+      <Filter>02. GameObject\Object\Enemy\Elite\ThugBulkyEnforcer\State\Parried</Filter>
+    </ClInclude>
     <ClInclude Include="..\public\PaperEffect.h">
       <Filter>02. GameObject\Effect\PaperEffect</Filter>
     </ClInclude>
@@ -3859,6 +3865,9 @@
           </ClCompile>
     <ClCompile Include="..\Private\DefilerState_Other.cpp">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler\State\OtherState</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ThugBulkyEnforcer_Parried.cpp">
+      <Filter>02. GameObject\Object\Enemy\Elite\ThugBulkyEnforcer\State\Parried</Filter>
     </ClCompile>
     <ClCompile Include="..\private\PaperEffect.cpp">
       <Filter>02. GameObject\Effect\PaperEffect</Filter>
