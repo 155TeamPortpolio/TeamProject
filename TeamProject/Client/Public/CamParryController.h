@@ -108,6 +108,7 @@ private:
 
     void      ClampEnter_NoDrop(ShotGoal& g) const;
     void      ApplyInterpolated_Enter(const ShotGoal& a, const ShotGoal& b, _float t);
+    ShotGoal  BuildBaseShot_NoLens(_int sideSign) const;
 
 private:
     _bool         m_active = false;

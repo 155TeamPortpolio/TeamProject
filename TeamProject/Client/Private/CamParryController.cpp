@@ -386,8 +386,8 @@ void CamParryController::ApplyInterpolated_Enter(const ShotGoal& a, const ShotGo
     g.pitchDeg = Math::Lerp(a.pitchDeg, b.pitchDeg, t);
     g.rollDeg = a.rollDeg + Math::WrapDeg(b.rollDeg - a.rollDeg) * t;
 
-    g.dist = Math::Lerp(a.dist, b.dist, t);
-    g.fov = Math::Lerp(a.fov, b.fov, t);
+    g.dist = a.dist;
+    g.fov = a.fov;
 
     g.yawWeight = Math::Lerp(a.yawWeight, b.yawWeight, t);
     g.baseVictimWeight = a.baseVictimWeight;
@@ -397,6 +397,49 @@ void CamParryController::ApplyInterpolated_Enter(const ShotGoal& a, const ShotGo
 
     ApplyGoalPose_Snap(g);
 }
+
+CamParryController::ShotGoal CamParryController::BuildBaseShot_NoLens(_int sideSign) const
+{
+    ShotGoal g{};
+
+    const Vector3 attackerFace = m_aFace;
+    const Vector3 victimFace = m_vValid ? m_vFace : (m_aFace + m_dirXZ);
+
+    _float bias = clamp(tune.common.contactBias, 0.f, 1.f);
+    Vector3 pivotWorld = Vector3::Lerp(attackerFace, victimFace, bias);
+    pivotWorld += m_dirXZ * tune.common.forwardOffset;
+
+    const _float aimY = Math::Lerp(m_aBase.y, m_aFace.y, tune.common.pelvisMul);
+    pivotWorld.y = aimY + tune.common.pivotYAdd;
+
+    g.baseVictimWeight = 0.f;
+
+    const Vector3 basePivot = BasePivotWorld(g.baseVictimWeight);
+
+    Vector3 ext = pivotWorld - basePivot;
+
+    Vector3 extXZ(ext.x, 0.f, ext.z);
+    extXZ = ClampOffset(extXZ, tune.common.pivotClamp);
+
+    ext.x = extXZ.x;
+    ext.z = extXZ.z;
+
+    g.pivotExt = ext;
+
+    const Vector3 baseLook(m_dirXZ.x, 0.f, m_dirXZ.z);
+    const Vector3 camDir = RotateYDegXZ(baseLook, (_float)sideSign * tune.common.angleDeg);
+
+    g.yawDeg = YawFromDirXZ(camDir) + (_float)sideSign * tune.common.sideYawBiasDeg;
+    g.pitchDeg = tune.common.pitchDeg;
+    g.rollDeg = 0.f;
+
+    g.yawWeight = 1.f;
+
+    ClampAboveGround(g);
+
+    return g;
+}
+
 
 
 void CamParryController::Reset()
@@ -515,7 +558,9 @@ void CamParryController::Begin()
     CaptureCurAsFrom();
     m_enterCamY = CurCamPosWorld().y;
 
-    m_shotTo = BuildBaseShot(m_sideSign);
+    m_shotTo = BuildBaseShot_NoLens(m_sideSign);
+    m_shotTo.dist = m_shotFrom.dist;
+    m_shotTo.fov = m_shotFrom.fov;
 
     m_holdFrom = {};
     m_holdTo = {};
