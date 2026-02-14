@@ -118,6 +118,7 @@ void CClaymore::Render_GUI()
 	const float textLineHeight = ImGui::GetTextLineHeightWithSpacing();
 	const float childHeight = (textLineHeight * 5) + (ImGui::GetStyle().WindowPadding.y * 2);
 
+	GUI_DebugButton();
 #pragma region Component Inspector
 	if (ImGui::TreeNode("Inspector##ThugBulkyInspector")) {
 		__super::Render_GUI();
@@ -217,6 +218,9 @@ void CClaymore::Render_GUI()
 	ImGui::Checkbox("Auto Pattern", &m_isAutoPatternPlay);
 #pragma endregion
 
+	_float fDeathDisappearProgress = m_pStateMachine->Get_Float("DeathDisappearProgress");
+	if (ImGui::DragFloat("DeathDisappearProgress", &fDeathDisappearProgress, 0.01f))
+		m_pStateMachine->Set_Float("DeathDisappearProgress", fDeathDisappearProgress);
 
 
 	ImGui::PopID();
@@ -393,10 +397,10 @@ HRESULT CClaymore::Ready_Rules()
 	m_vIdleTime = { 1.f, 0.f };
 
 	m_tHysteriesis.fEvadeEnter = 2.f;
-	m_tHysteriesis.fComboEnter = 3.f;
-	m_tHysteriesis.fComboExit = 4.5f;
-	m_tHysteriesis.fChaseEnter = 7.f;
-	m_tHysteriesis.fChaseExit = 5.f;
+	m_tHysteriesis.fComboEnter = 2.5f;
+	m_tHysteriesis.fComboExit = 3.5f;
+	m_tHysteriesis.fChaseEnter = 5.f;
+	m_tHysteriesis.fChaseExit = 4.f;
 
 	return S_OK;
 }
