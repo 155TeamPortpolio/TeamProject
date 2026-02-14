@@ -1,12 +1,12 @@
 #include "pch.h"
-#include "Claymore.h"
-#include "Claymore_Chase.h"
+#include "Giant.h"
+#include "Giant_Chase.h"
 #include "Helper_Func.h"
 
 #include "Animator3D.h"
 #include "CharacterController.h"
 
-void CClaymore_Chase::Enter(CGiant* pOwner)
+void CGiant_Chase::Enter(CGiant* pOwner)
 {
 	if (nullptr == m_pSubStateMachine) {
 		m_pSubStateMachine = CStateMachine<CGiant>::Create();
@@ -18,10 +18,8 @@ void CClaymore_Chase::Enter(CGiant* pOwner)
 	__super::Enter(pOwner);
 }
 
-void CClaymore_Chase::Update(CGiant* pOwner, _float dt)
+void CGiant_Chase::Update(CGiant* pOwner, _float dt)
 {
-	pOwner->CaptureRotateToDir(pOwner->GetTargetingInfo().vDirToTarget);
-
 	_vector3 vRootBoneMoveDelta = pOwner->Get_Component<CAnimator3D>()->Get_RootBoneMoveDelta();
 	_quaternion qRot = pOwner->Get_Component<CTransform>()->Get_QuaternionRotate();
 	pOwner->Get_Component<CCharacterController>()->Move_RootMotion(
@@ -30,70 +28,73 @@ void CClaymore_Chase::Update(CGiant* pOwner, _float dt)
 		dt);
 
 	__super::Update(pOwner, dt);
-
-	if (false == pOwner->GetStateMachine()->Get_Bool("Chase"))
-		pOwner->Idle();
 }
 
-void CClaymore_Chase::Exit(CGiant* pOwner)
+void CGiant_Chase::Exit(CGiant* pOwner)
 {
 }
 
-void CClaymore_Chase::Register_States()
+void CGiant_Chase::Register_States()
 {
-	m_pSubStateMachine->Register_State("Run_Start", CClaymore_Run_Start::Create());
-	m_pSubStateMachine->Register_State("Run_Loop", CClaymore_Run_Loop::Create());
-	m_pSubStateMachine->Register_State("Run_End", CClaymore_Run_End::Create());
+	m_pSubStateMachine->Register_State("Run_Start", CGiant_Run_Start::Create());
+	m_pSubStateMachine->Register_State("Run_Loop", CGiant_Run_Loop::Create());
+	m_pSubStateMachine->Register_State("Run_End", CGiant_Run_End::Create());
 }
 
-void CClaymore_Chase::Register_Transitions()
+void CGiant_Chase::Register_Transitions()
 {
 	m_pSubStateMachine->Register_Transition("Run_Start", "Run_Loop",
 		CStateMachine<CGiant>::CONDITION_ANIMATION_END);
 }
 
 /*============================================================================*/
-void CClaymore_Run_Start::Enter(CGiant* pOwner)
+void CGiant_Run_Start::Enter(CGiant* pOwner)
 {
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("Monster_Claymore_Ani_Run_Start")
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("Giant_Ani_Run_Start")
 		.Apply();
 }
 
-void CClaymore_Run_Start::Update(CGiant* pOwner, _float dt)
+void CGiant_Run_Start::Update(CGiant* pOwner, _float dt)
 {
 }
 
-void CClaymore_Run_Start::Exit(CGiant* pOwner)
+void CGiant_Run_Start::Exit(CGiant* pOwner)
 {
 }
 
 /*============================================================================*/
-void CClaymore_Run_Loop::Enter(CGiant* pOwner)
+void CGiant_Run_Loop::Enter(CGiant* pOwner)
 {
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("Monster_Claymore_Ani_Run_Loop")
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("Giant_Ani_Run_loop")
 		.Loop(true)
 		.Apply();
 }
 
-void CClaymore_Run_Loop::Update(CGiant* pOwner, _float dt)
+void CGiant_Run_Loop::Update(CGiant* pOwner, _float dt)
 {
+	pOwner->CaptureRotateToDir(pOwner->GetTargetingInfo().vDirToTarget);
+
+	if (false == pOwner->GetStateMachine()->Get_Bool("Chase"))
+		m_pOwnerStateMachine->Change_State("Run_End");
 }
 
-void CClaymore_Run_Loop::Exit(CGiant* pOwner)
+void CGiant_Run_Loop::Exit(CGiant* pOwner)
 {
 }
 
 /*============================================================================*/
-void CClaymore_Run_End::Enter(CGiant* pOwner)
+void CGiant_Run_End::Enter(CGiant* pOwner)
 {
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("Monster_Claymore_Ani_Run_End")
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("Giant_Ani_Run_End")
 		.Apply();
 }
 
-void CClaymore_Run_End::Update(CGiant* pOwner, _float dt)
+void CGiant_Run_End::Update(CGiant* pOwner, _float dt)
 {
+	if (m_fAnimProgress > 0.99f)
+		pOwner->Idle();
 }
 
-void CClaymore_Run_End::Exit(CGiant* pOwner)
+void CGiant_Run_End::Exit(CGiant* pOwner)
 {
 }

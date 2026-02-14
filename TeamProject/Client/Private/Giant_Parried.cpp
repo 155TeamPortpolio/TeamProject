@@ -1,18 +1,18 @@
 #include "pch.h"
-#include "Claymore.h"
-#include "Claymore_Parried.h"
+#include "Giant.h"
+#include "Giant_Parried.h"
 #include "Helper_Func.h"
 
 #include "Animator3D.h"
 #include "CharacterController.h"
 
-void CClaymore_Parried::Enter(CGiant* pOwner)
+void CGiant_Parried::Enter(CGiant* pOwner)
 {
 	pOwner->Get_Component<CAnimator3D>()->Change_Animation("Monster_Claymore_Ani_Dodge")
 		.Apply();
 }
 
-void CClaymore_Parried::Update(CGiant* pOwner, _float dt)
+void CGiant_Parried::Update(CGiant* pOwner, _float dt)
 {
 	_vector3 vRootBoneMoveDelta = pOwner->Get_Component<CAnimator3D>()->Get_RootBoneMoveDelta();
 	_quaternion qRot = pOwner->Get_Component<CTransform>()->Get_QuaternionRotate();
@@ -25,6 +25,6 @@ void CClaymore_Parried::Update(CGiant* pOwner, _float dt)
 		pOwner->Idle();
 }
 
-void CClaymore_Parried::Exit(CGiant* pOwner)
+void CGiant_Parried::Exit(CGiant* pOwner)
 {
 }

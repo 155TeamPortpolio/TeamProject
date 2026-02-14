@@ -354,15 +354,15 @@ HRESULT CGiant::Initialize_StateMachine()
 
 HRESULT CGiant::Initialize_States()
 {
-	m_pStateMachine->Register_State("Born", CClaymore_Born::Create());
-	m_pStateMachine->Register_State("Idle", CClaymore_Idle::Create());
-	m_pStateMachine->Register_State("Attack", CClaymore_Attack::Create());
-	m_pStateMachine->Register_State("Move", CClaymore_Move::Create());
-	m_pStateMachine->Register_State("Chase", CClaymore_Chase::Create());
-	m_pStateMachine->Register_State("Death", CClaymore_Death::Create());
-	m_pStateMachine->Register_State("Groggy", CClaymore_Groggy::Create());
-	m_pStateMachine->Register_State("Hit", CClaymore_Hit::Create());
-	m_pStateMachine->Register_State("Parried", CClaymore_Parried::Create());
+	m_pStateMachine->Register_State("Born", CGiant_Born::Create());
+	m_pStateMachine->Register_State("Idle", CGiant_Idle::Create());
+	m_pStateMachine->Register_State("Attack", CGiant_Attack::Create());
+	m_pStateMachine->Register_State("Move", CGiant_Move::Create());
+	m_pStateMachine->Register_State("Chase", CGiant_Chase::Create());
+	m_pStateMachine->Register_State("Death", CGiant_Death::Create());
+	m_pStateMachine->Register_State("Groggy", CGiant_Groggy::Create());
+	m_pStateMachine->Register_State("Hit", CGiant_Hit::Create());
+	m_pStateMachine->Register_State("Parried", CGiant_Parried::Create());
 
 	return S_OK;
 }
@@ -433,7 +433,11 @@ void CGiant::ControlState(const _float dt)
 	if ("Death" != m_pStateMachine->Get_CurrentStateName() &&
 		"Groggy" != m_pStateMachine->Get_CurrentStateName() &&
 		true == m_tStatus.isGroggy)
+	{
 		m_pStateMachine->Change_State("Groggy");
+		DIR eDir = GetDIRToPlayer();
+		m_pStateMachine->Set_Int("Dir", ENUM(eDir));
+	}
 
 
 	if (true == m_isAutoPatternPlay &&
