@@ -936,6 +936,21 @@ HRESULT CMiyabi::Initialize_Sound()
 		, "Miyabi_NormalAttack05_Voice_03"
 		, "Miyabi_NormalAttack05_Voice_04"
 	);
+	AudioSrc->Add_Sequence("RushAttack"
+		, "Miyabi_RushAttack_Voice_01"
+		, "Miyabi_RushAttack_Voice_02"
+		, "Miyabi_RushAttack_Voice_03"
+		, "Miyabi_RushAttack_Voice_04"
+	);
+	AudioSrc->Add_Sequence("Evade_BackStep"
+		, "Miyabi_Evade_BackStep_Voice_01"
+		, "Miyabi_Evade_BackStep_Voice_02"
+	);
+	AudioSrc->Add_Sequence("Evade_Dash"
+		, "Miyabi_Evade_Dash_Voice_01"
+		, "Miyabi_Evade_Dash_Voice_02"
+	);
+
 
 	return S_OK;
 }
