@@ -7,6 +7,7 @@
 
 #include "CamDirector.h"
 #include "AudioSource.h"
+#include "ObjectContainer.h"
 
 CMiyabiState_UltimateAttack* CMiyabiState_UltimateAttack::Create()
 {
@@ -84,6 +85,8 @@ void CMiyabiState_UltimateAttack_Loop::Enter(CMiyabi* pOwner)
 {
     pOwner->Set_WeaponEffectMesh(true);
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "SwitchIn_Attack_Ex")
+        .ReserveSpeed(0.34f, 0.48f, 0.7f, EaseType::InExpo)
+        .ReserveSpeed(0.48f, 1.f, 2.f, EaseType::OutExpo)
         .Apply();
 
     m_bDamageActive = false;
@@ -94,6 +97,11 @@ void CMiyabiState_UltimateAttack_Loop::Enter(CMiyabi* pOwner)
 
     m_iStingRepeatCount = 0;
     m_fStingRepeatProgress = 0.54f;
+
+    pOwner->SetRenderLayer(RENDER_LAYER::CustomOnly);
+    auto effect = pOwner->Get_Component<CObjectContainer>()->Find_ObjectByName("Miyabi_Sword_Fire");
+    if (effect)
+        effect->Set_Alive(false);
 }
 
 void CMiyabiState_UltimateAttack_Loop::Update(CMiyabi* pOwner, _float dt)
@@ -130,6 +138,19 @@ void CMiyabiState_UltimateAttack_Loop::Update(CMiyabi* pOwner, _float dt)
         else if (Event.Tag == "UltimateEnd")
         {
             m_bDamageActive = false;
+        }
+
+        if (Event.Tag == "MotionBlur")
+        {
+            pOwner->Add_MotionBlur();
+        }
+        if (Event.Tag == "MotionBlurEnd")
+        {
+            pOwner->Clear_MotionBlur();
+            pOwner->SetRenderLayer(RENDER_LAYER::Default);
+            auto effect = pOwner->Get_Component<CObjectContainer>()->Find_ObjectByName("Miyabi_Sword_Fire");
+            if (effect)
+                effect->Set_Alive(true);
         }
     }
 

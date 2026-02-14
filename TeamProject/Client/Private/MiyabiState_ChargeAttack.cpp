@@ -116,7 +116,6 @@ void CMiyabiState_Charge_Start::Enter(CMiyabi* pOwner)
         .Apply();
     else
         pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_ChargeAttack_Start")
-        .Speed(1.6f)
         .Apply();
 
   
@@ -142,7 +141,7 @@ void CMiyabiState_Charge_Start_02::Enter(CMiyabi* pOwner)
 {
     pOwner->Decrease_Frost(2);
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_ChargeAttack_Start_02")
-        .Speed(1.6f)
+        .Speed(1.3f)
         .Apply();
     pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_ChargeStart02_Voice")
         .Attribute3D(true)
@@ -171,7 +170,7 @@ void CMiyabiState_Charge_Start_03::Enter(CMiyabi* pOwner)
 {
     pOwner->Decrease_Frost(2);
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_ChargeAttack_Start_03")
-        .Speed(1.6f)
+        .Speed(1.5f)
         .Apply();
 
     pOwner->Play_Effect("Miyabi_Charge_StackUp1", _vector3(0.f, 1.f, 0.f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
@@ -244,7 +243,11 @@ void CMiyabiState_Charge_Attack03::Enter(CMiyabi* pOwner)
 {
     m_bAreaAttack = false;
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_ChargeAttack_Attack03")
-        .Speed(1.7f)
+        .Speed(2.5f)
+        .ReserveSpeed(0.f, 0.33f, 1.5f, EaseType::InExpo)
+        .ReserveSpeed(0.33f, 0.88f, 1.f, EaseType::InOutBack)
+        .ReserveSpeed(0.88f, 0.9f, 0.5f, EaseType::OutExpo)
+        .ReserveSpeed(0.9f, 1.f, 1.5f, EaseType::OutQuart)
         .Apply();
     pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_ChargeAttack03_Voice")
         .Attribute3D(true)
