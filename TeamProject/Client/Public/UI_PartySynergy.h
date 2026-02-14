@@ -1,15 +1,6 @@
 #pragma once
 #include "UI_Object.h"
 
-// 속성 합 / 합계 속성
-// 파티 속성 밸런스
-// 현재 편성한 파티의 속성 시너지 요약
-// 같은 속성이 2명 이상 -> 속성 강화 보너스 발동
-// 특정 조합 
-
-// IconPairUpSkillSmall01.png
-// IconPairUpSkillSmall02.png
-
 NS_BEGIN(Engine)
 class CSprite2D;
 class CTextSlot;
@@ -25,8 +16,9 @@ private:
 	virtual ~CUI_PartySynergy() DEFAULT;
 
 public:
-	void Set_Count(_int iCount);
-	void Set_TotalCount(_int iCount);
+	void Set_Synergy(_int iPartySynergyCount, _int iTotalPartyCount);
+
+	void Set_Synergy(vector<CHARACTER> characters);
 
 public:
 	virtual HRESULT Initialize_Prototype()           override;
@@ -41,14 +33,11 @@ private:
 	class CSprite2D* m_pIcon = {};
 	class CTextSlot* m_pText = {};
 
-	wstring m_strText = {};
-	_int m_iCount = {};
-	_int m_iTotalCount = {};
-
 private:
 	void Cache();
 
-	void Set_Text();
+	void Set_Text(const _wstring& strText);
+	void Set_Icon(const string& strTextureKey);
 
 public:
 	static  CGameObject* Create();

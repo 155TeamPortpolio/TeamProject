@@ -6,18 +6,41 @@
 #include "Sprite2D.h"
 #include "TextSlot.h"
 
-void CUI_PartySynergy::Set_Count(_int iCount)
-{
-    m_iCount = iCount;
+#include "DataBase.h"
 
-    Set_Text();
+void CUI_PartySynergy::Set_Synergy(_int iPartySynergyCount, _int iTotalPartyCount)
+{
+    Set_Text(Helper::ConvertToWideString(to_string(iPartySynergyCount) + "/" + to_string(iTotalPartyCount)));
+    if (iPartySynergyCount >= 2)
+        Set_Icon("IconPairUpSkillSmall02.png");
+    else
+        Set_Icon("IconPairUpSkillSmall01.png");
 }
 
-void CUI_PartySynergy::Set_TotalCount(_int iCount)
+void CUI_PartySynergy::Set_Synergy(vector<CHARACTER> characters)
 {
-    m_iTotalCount = iCount;
+    array<_int, static_cast<_int>(ATTRIBUTE::END)> counts = {};
 
-    Set_Text();
+    auto pDatabase = CDataBase::GetInstance();
+    for (auto character : characters)
+    {
+        if (character == CHARACTER::END)
+            continue;
+         
+        counts[static_cast<_int>(pDatabase->GetPartyData(character).eAttribute)]++;
+    }
+
+    _int iTotalPartyCount = characters.size();
+    _int iPartySynergyCount = {};
+    for (int i = 0; i < static_cast<_int>(ATTRIBUTE::END); ++i)
+        if (counts[i] > iPartySynergyCount)
+            iPartySynergyCount = counts[i];
+     
+    Set_Text(Helper::ConvertToWideString(to_string(iPartySynergyCount) + "/" + to_string(iTotalPartyCount)));
+    if (iPartySynergyCount >= 2)
+        Set_Icon("IconPairUpSkillSmall02.png");
+    else
+        Set_Icon("IconPairUpSkillSmall01.png"); 
 }
 
 HRESULT CUI_PartySynergy::Initialize_Prototype()
@@ -68,11 +91,20 @@ void CUI_PartySynergy::Cache()
         m_pText = pText->Get_Component<CTextSlot>();
 }
 
-void CUI_PartySynergy::Set_Text()
+void CUI_PartySynergy::Set_Text(const _wstring& strText)
 {
-    m_strText = Helper::ConvertToWideString(to_string(m_iCount) + " / " + to_string(m_iTotalCount));
-    if (m_pText)
-        m_pText->Set_Text(m_strText);
+    if (!m_pText)
+        return;
+    
+    m_pText->Set_Text(strText);
+}
+
+void CUI_PartySynergy::Set_Icon(const string& strTextureKey)
+{
+    if (!m_pIcon)
+        return;
+
+    m_pIcon->Change_Texture(0, G_GlobalLevelKey, strTextureKey);
 }
 
 CGameObject* CUI_PartySynergy::Create()
