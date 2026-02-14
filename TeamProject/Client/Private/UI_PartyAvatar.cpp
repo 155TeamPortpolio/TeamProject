@@ -53,6 +53,7 @@ void CUI_PartyAvatar::Awake()
     pAnimator->Set_Animation("Avatar_Female_Size02_Unagi_Ani_UI_CharacterSelect_Loop_02").Loop(true).Apply();
 
     m_pTransform->Set_Pos(_float3(0.f, -1.24f, 0.7f));
+    SetRenderLayer(RENDER_LAYER::CustomOnly);
 }
 
 void CUI_PartyAvatar::Priority_Update(_float dt)
