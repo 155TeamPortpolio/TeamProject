@@ -6,7 +6,7 @@ NS_BEGIN(Client)
 
 class CGiant;
 
-class CClaymore_Death : public IHState<CGiant>
+class CGiant_Death : public IHState<CGiant>
 {
 public:
 	virtual void Enter(CGiant* pOwner) override;
@@ -14,7 +14,7 @@ public:
 	virtual void Exit(CGiant* pOwner) override;
 
 public:
-	static CClaymore_Death* Create() { return new CClaymore_Death(); }
+	static CGiant_Death* Create() { return new CGiant_Death(); }
 	virtual void Free() override { __super::Free(); }
 
 private:
@@ -22,7 +22,7 @@ private:
 	void Register_Transitions();
 };
 
-class CClaymore_Death_Front : public IBaseState<CGiant>
+class CGiant_Death_Front : public IBaseState<CGiant>
 {
 public:
 	virtual void Enter(CGiant* pOwner) override;
@@ -30,11 +30,11 @@ public:
 	virtual void Exit(CGiant* pOwner) override;
 
 public:
-	static CClaymore_Death_Front* Create() { return new CClaymore_Death_Front(); }
+	static CGiant_Death_Front* Create() { return new CGiant_Death_Front(); }
 	virtual void Free() override { __super::Free(); }
 };
 
-class CClaymore_Death_Back : public IBaseState<CGiant>
+class CGiant_Death_Back : public IBaseState<CGiant>
 {
 public:
 	virtual void Enter(CGiant* pOwner) override;
@@ -42,11 +42,11 @@ public:
 	virtual void Exit(CGiant* pOwner) override;
 
 public:
-	static CClaymore_Death_Back* Create() { return new CClaymore_Death_Back(); }
+	static CGiant_Death_Back* Create() { return new CGiant_Death_Back(); }
 	virtual void Free() override { __super::Free(); }
 };
 
-class CClaymore_Death_Stay : public IBaseState<CGiant>
+class CGiant_Death_Stay : public IBaseState<CGiant>
 {
 public:
 	virtual void Enter(CGiant* pOwner) override;
@@ -54,7 +54,7 @@ public:
 	virtual void Exit(CGiant* pOwner) override;
 
 public:
-	static CClaymore_Death_Stay* Create() { return new CClaymore_Death_Stay(); }
+	static CGiant_Death_Stay* Create() { return new CGiant_Death_Stay(); }
 	virtual void Free() override { __super::Free(); }
 };
 

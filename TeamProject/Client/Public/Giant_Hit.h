@@ -6,7 +6,7 @@ NS_BEGIN(Client)
 
 class CGiant;
 
-class CClaymore_Hit : public IHState<CGiant>
+class CGiant_Hit : public IHState<CGiant>
 {
 public:
 	virtual void Enter(CGiant* pOwner) override;
@@ -14,7 +14,7 @@ public:
 	virtual void Exit(CGiant* pOwner) override;
 
 public:
-	static CClaymore_Hit* Create() { return new CClaymore_Hit(); }
+	static CGiant_Hit* Create() { return new CGiant_Hit(); }
 	virtual void Free() override { __super::Free(); }
 
 private:
@@ -23,7 +23,7 @@ private:
 	void Decide_L_HitState(DIR eDir, _float fDot);
 };
 
-class CClaymore_Hit_Knock : public IBaseState<CGiant>
+class CGiant_Hit_H_Front : public IBaseState<CGiant>
 {
 public:
 	virtual void Enter(CGiant* pOwner) override;
@@ -31,11 +31,11 @@ public:
 	virtual void Exit(CGiant* pOwner) override;
 
 public:
-	static CClaymore_Hit_Knock* Create() { return new CClaymore_Hit_Knock(); }
+	static CGiant_Hit_H_Front* Create() { return new CGiant_Hit_H_Front(); }
 	virtual void Free() override { __super::Free(); }
 };
 
-class CClaymore_Hit_H_Front : public IBaseState<CGiant>
+class CGiant_Hit_H_Back : public IBaseState<CGiant>
 {
 public:
 	virtual void Enter(CGiant* pOwner) override;
@@ -43,11 +43,11 @@ public:
 	virtual void Exit(CGiant* pOwner) override;
 
 public:
-	static CClaymore_Hit_H_Front* Create() { return new CClaymore_Hit_H_Front(); }
+	static CGiant_Hit_H_Back* Create() { return new CGiant_Hit_H_Back(); }
 	virtual void Free() override { __super::Free(); }
 };
 
-class CClaymore_Hit_H_Back : public IBaseState<CGiant>
+class CGiant_Hit_L_Back_Down : public IBaseState<CGiant>
 {
 public:
 	virtual void Enter(CGiant* pOwner) override;
@@ -55,11 +55,11 @@ public:
 	virtual void Exit(CGiant* pOwner) override;
 
 public:
-	static CClaymore_Hit_H_Back* Create() { return new CClaymore_Hit_H_Back(); }
+	static CGiant_Hit_L_Back_Down* Create() { return new CGiant_Hit_L_Back_Down(); }
 	virtual void Free() override { __super::Free(); }
 };
 
-class CClaymore_Hit_L_Back_Down : public IBaseState<CGiant>
+class CGiant_Hit_L_Back_Up : public IBaseState<CGiant>
 {
 public:
 	virtual void Enter(CGiant* pOwner) override;
@@ -67,11 +67,11 @@ public:
 	virtual void Exit(CGiant* pOwner) override;
 
 public:
-	static CClaymore_Hit_L_Back_Down* Create() { return new CClaymore_Hit_L_Back_Down(); }
+	static CGiant_Hit_L_Back_Up* Create() { return new CGiant_Hit_L_Back_Up(); }
 	virtual void Free() override { __super::Free(); }
 };
 
-class CClaymore_Hit_L_Back_Up : public IBaseState<CGiant>
+class CGiant_Hit_L_Back_Left : public IBaseState<CGiant>
 {
 public:
 	virtual void Enter(CGiant* pOwner) override;
@@ -79,11 +79,11 @@ public:
 	virtual void Exit(CGiant* pOwner) override;
 
 public:
-	static CClaymore_Hit_L_Back_Up* Create() { return new CClaymore_Hit_L_Back_Up(); }
+	static CGiant_Hit_L_Back_Left* Create() { return new CGiant_Hit_L_Back_Left(); }
 	virtual void Free() override { __super::Free(); }
 };
 
-class CClaymore_Hit_L_Back_Left : public IBaseState<CGiant>
+class CGiant_Hit_L_Back_Right : public IBaseState<CGiant>
 {
 public:
 	virtual void Enter(CGiant* pOwner) override;
@@ -91,11 +91,11 @@ public:
 	virtual void Exit(CGiant* pOwner) override;
 
 public:
-	static CClaymore_Hit_L_Back_Left* Create() { return new CClaymore_Hit_L_Back_Left(); }
+	static CGiant_Hit_L_Back_Right* Create() { return new CGiant_Hit_L_Back_Right(); }
 	virtual void Free() override { __super::Free(); }
 };
 
-class CClaymore_Hit_L_Back_Right : public IBaseState<CGiant>
+class CGiant_Hit_L_Front_Down : public IBaseState<CGiant>
 {
 public:
 	virtual void Enter(CGiant* pOwner) override;
@@ -103,11 +103,11 @@ public:
 	virtual void Exit(CGiant* pOwner) override;
 
 public:
-	static CClaymore_Hit_L_Back_Right* Create() { return new CClaymore_Hit_L_Back_Right(); }
+	static CGiant_Hit_L_Front_Down* Create() { return new CGiant_Hit_L_Front_Down(); }
 	virtual void Free() override { __super::Free(); }
 };
 
-class CClaymore_Hit_L_Front_Down : public IBaseState<CGiant>
+class CGiant_Hit_L_Front_Up : public IBaseState<CGiant>
 {
 public:
 	virtual void Enter(CGiant* pOwner) override;
@@ -115,11 +115,11 @@ public:
 	virtual void Exit(CGiant* pOwner) override;
 
 public:
-	static CClaymore_Hit_L_Front_Down* Create() { return new CClaymore_Hit_L_Front_Down(); }
+	static CGiant_Hit_L_Front_Up* Create() { return new CGiant_Hit_L_Front_Up(); }
 	virtual void Free() override { __super::Free(); }
 };
 
-class CClaymore_Hit_L_Front_Up : public IBaseState<CGiant>
+class CGiant_Hit_L_Front_Left : public IBaseState<CGiant>
 {
 public:
 	virtual void Enter(CGiant* pOwner) override;
@@ -127,11 +127,11 @@ public:
 	virtual void Exit(CGiant* pOwner) override;
 
 public:
-	static CClaymore_Hit_L_Front_Up* Create() { return new CClaymore_Hit_L_Front_Up(); }
+	static CGiant_Hit_L_Front_Left* Create() { return new CGiant_Hit_L_Front_Left(); }
 	virtual void Free() override { __super::Free(); }
 };
 
-class CClaymore_Hit_L_Front_Left : public IBaseState<CGiant>
+class CGiant_Hit_L_Front_Right : public IBaseState<CGiant>
 {
 public:
 	virtual void Enter(CGiant* pOwner) override;
@@ -139,19 +139,7 @@ public:
 	virtual void Exit(CGiant* pOwner) override;
 
 public:
-	static CClaymore_Hit_L_Front_Left* Create() { return new CClaymore_Hit_L_Front_Left(); }
-	virtual void Free() override { __super::Free(); }
-};
-
-class CClaymore_Hit_L_Front_Right : public IBaseState<CGiant>
-{
-public:
-	virtual void Enter(CGiant* pOwner) override;
-	virtual void Update(CGiant* pOwner, _float dt) override;
-	virtual void Exit(CGiant* pOwner) override;
-
-public:
-	static CClaymore_Hit_L_Front_Right* Create() { return new CClaymore_Hit_L_Front_Right(); }
+	static CGiant_Hit_L_Front_Right* Create() { return new CGiant_Hit_L_Front_Right(); }
 	virtual void Free() override { __super::Free(); }
 };
 
