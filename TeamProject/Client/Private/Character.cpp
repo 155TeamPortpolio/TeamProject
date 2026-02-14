@@ -599,7 +599,7 @@ HRESULT CCharacter::Attach_ParryCollider()
     colliderDesc.iCollisionMask = ENUM(COLLISION_GROUP::MONSTER);
     colliderDesc.bAutoFit = false;
     colliderDesc.vCenter = { 0.f, 0.f, 0.f };
-    colliderDesc.vSize = { 5.f, 0.f, 0.f };
+    colliderDesc.vSize = { 8.f, 0.f, 0.f };
     colliderDesc.bTrigger = true;
 
     CGameObject* pParryCollider = Builder::Create_Object(
@@ -689,8 +689,11 @@ void CCharacter::Take_Damage(DAMAGE_TYPE eType, _float fDamage)
     // 패링 가능했을때
     if(m_eSwitchType == SWITCH::PARRYAID && m_ParryHandle.isValid())
     {
-        BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::PARRY);
-        m_ParryHandle.GetAs<CEnemy>()->Parried();
+        if(m_bIsMain)
+        {
+            BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::PARRY);
+            m_ParryHandle.GetAs<CEnemy>()->Parried();
+        }
     }
 
     if (Is_Invincible()) return;
