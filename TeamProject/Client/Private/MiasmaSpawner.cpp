@@ -168,7 +168,6 @@ void CMiasmaSpawner::SpawnHeavy(_float3 Target, _float3 Owner)
         .Position(Owner)
         .Add_ObjDesc(desc)
         .Collider(ColDesc)
-        .FromPool()
         .Build("MiasmaSpawn");
     ObjectManager()->Add_Object(Ball, { levelKey, "Enemy_Layer" });
 }
@@ -179,16 +178,16 @@ void CMiasmaSpawner::SpawnWeapon(_float3 Target, _float3 Owner, class CDefiler* 
 
     const string levelKey = LevelManager()->Get_NowLevelKey();
     auto desc = new CDefilerWeapon::DefilerWeaponDesc;
-    desc->vTargetPos = { 0, -1,3 };
+    desc->vTargetPos = { 0, Target.y,3 };
     desc->isFinal = m_WeaponThrowCount == 3;
 
     auto pBlade =
         Builder::Create_Object({ "Zero_Level","Proto_GameObject_DefilerWeapon" })
-        .FromPool()
         .Position(Owner)
         .Add_ObjDesc(desc)
         .Build("DefilerWeapon");
     ObjectManager()->Add_Object(pBlade, { levelKey ,"Enemy_Layer" });
+    BattleSystem()->EnterBattleObject(BATTLE_OBJ_TYPE::MONSTER, pBlade->Get_Handle());
 
     if (m_WeaponThrowCount >= 3)
         m_WeaponThrowCount = 0;

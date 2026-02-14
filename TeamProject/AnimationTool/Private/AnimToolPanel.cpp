@@ -7,7 +7,7 @@
 #include "AnimationLayout.h"
 #include "DynamicBone.h"
 #include "Channel.h"
-
+#include "AudioSource.h"
 
 CAnimToolPanel::CAnimToolPanel(GUI_CONTEXT* pContext) 
 	: CBasePanel{pContext}
@@ -25,6 +25,7 @@ void CAnimToolPanel::Update_Panel(_float dt)
 		dynamic_cast<CAnimModel*>(m_pSelectModel)->Set_Panel(this);
 		Reset_Panel();
 	}
+
 	if (nullptr != m_pSelectAnimator) {
 		float fPause = 1.f;
 		if (m_bPause) fPause = 0.f;
@@ -47,6 +48,21 @@ void CAnimToolPanel::Update_Panel(_float dt)
 				}
 			}
 		}
+
+		_float Cur = m_pSelectAnimator->Get_AnimLayers()[0].fCurrentTrackPosition;
+		_float Prev = m_pSelectAnimator->Get_AnimLayers()[0].fPrevTrackPosition;
+		if (m_iCurClipIndex != -1)
+		{
+			for (auto& Event : m_AnimClip[m_iCurClipIndex].Events) {
+				if (Prev < Event.EventTime && Event.EventTime <= Cur) {
+					if (Event.EventType == CLIP_EVENT_TYPE::SOUND) {
+						auto AS = m_pSelectModel->Get_Component<CAudioSource>();
+						if (AS) AS->Play(Event.EventTag);
+					}
+				}
+			}
+		}
+
 	}
 	return;
 
@@ -141,7 +157,12 @@ void CAnimToolPanel::Render_GUI()
 
 		ImGui::EndTabBar();
 	}
-
+	ImGui::SameLine();
+	if (ImGui::Button("ReloadSound"))
+	{
+		if (m_pSelectModel)
+			dynamic_cast<CAnimModel*>(m_pSelectModel)->ReLoad_Sound();
+	}
 	ImGui::End();
 }
 
@@ -457,7 +478,6 @@ void CAnimToolPanel::GUI_Preview(_float fChildHeight)
 			m_bPreviewPlay = true;
 			m_bPause = false;
 
-
 			if (m_pSelectAnimator && !m_PreviewList.empty())
 			{
 				m_iCurrentPrevIndex = 0;
@@ -571,6 +591,16 @@ void CAnimToolPanel::Setting_NewClip()
 		//Pushback
 		m_AnimClip.push_back(newClip);
 	}
+}
+
+vector<ANIM_CLIP>& CAnimToolPanel::Get_AnimClip(const string& AnimKey)
+{
+	static vector<ANIM_CLIP> EmptyResult;
+	auto iter = m_Meta.find(AnimKey);
+	if (iter != m_Meta.end())
+		return iter->second;
+	
+	return EmptyResult;
 }
 
 void CAnimToolPanel::Reset_Panel()

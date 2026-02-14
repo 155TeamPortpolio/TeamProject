@@ -28,6 +28,7 @@ public:
     void Render_GUI() override;
     //애니매이션 클립 이름을 주기 위해 만들어짐
     void Set_Panel(class CAnimToolPanel* pAnimToolPanel);
+    void ReLoad_Sound();
 
 private: //GUI Func
     void GUI_LoadResource(_float fChildHeight);
@@ -55,6 +56,7 @@ private:
     //Show Selected Tags
     string m_CurModelTag = { "Select Model" };
     string m_CurMaterialTag = { "Select Material" };
+    string m_CurSoundForlderTag = { };
 
     _float m_fDegree = 0.f;
 

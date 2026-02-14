@@ -4,6 +4,7 @@
 #include "GameInstance.h"
 #include "MiyabiState_Evade.h"
 #include "CharacterController.h"
+#include "ObjectContainer.h"
 
 CMiyabiState_Dash* CMiyabiState_Dash::Create()
 {
@@ -36,6 +37,22 @@ void CMiyabiState_Dash::Enter(CMiyabi* pOwner)
 
 void CMiyabiState_Dash::Update(CMiyabi* pOwner, _float dt)
 {
+    if (pOwner->Is_Attack())
+    {
+        if (m_pOwnerStateMachine->Get_Bool("Extreme"))
+        {
+            // CounterAttack
+            m_pOwnerStateMachine->Set_Int("ExitMode", 5);
+            m_pOwnerStateMachine->Set_Trigger("Complete");
+        }
+        else
+        {
+            // RushAttack
+            m_pOwnerStateMachine->Set_Int("ExitMode", 3);
+            m_pOwnerStateMachine->Set_Trigger("Complete");
+        }
+        return;
+    }
     __super::Update(pOwner, dt);
 }
 
@@ -55,23 +72,6 @@ void CMiyabiState_Dash_01::Update(CMiyabi* pOwner, _float dt)
     auto pSubMachine = Get_ParentState()->Get_OwnerStateMachine();
 
     pOwner->Process_RootMotion(dt);
-
-    if (pOwner->Is_Attack())
-    {
-        if (pSubMachine->Get_Bool("Extreme"))
-        {
-            // CounterAttack
-            pSubMachine->Set_Int("ExitMode", 5);
-            pSubMachine->Set_Trigger("Complete");
-        }
-        else
-        {
-            // RushAttack
-            pSubMachine->Set_Int("ExitMode", 3);
-            pSubMachine->Set_Trigger("Complete");
-        }
-        return;
-    }
 
     if (IsCrossAnimProgress(0.08f) && InputDevice()->Mouse_Hold(MOUSE_BTN::RB))
     {
@@ -118,6 +118,10 @@ void CMiyabiState_Dash_02::Enter(CMiyabi* pOwner)
     pOwner->Get_StateMachine()->Set_Bool("InDash02", true);
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Evade_Front_02")
         .Apply();
+    pOwner->SetRenderLayer(RENDER_LAYER::CustomOnly);
+    auto effect = pOwner->Get_Component<CObjectContainer>()->Find_ObjectByName("Miyabi_Sword_Fire");
+    if (effect)
+        effect->Set_Alive(false);
 }
 
 void CMiyabiState_Dash_02::Update(CMiyabi* pOwner, _float dt)
@@ -126,7 +130,13 @@ void CMiyabiState_Dash_02::Update(CMiyabi* pOwner, _float dt)
     auto pSubMachine = Get_ParentState()->Get_OwnerStateMachine();
 
     if (IsCrossAnimProgress(0.12f))
+    {
         pOwner->Get_StateMachine()->Set_Bool("InDash02", false);
+        pOwner->SetRenderLayer(RENDER_LAYER::Default);
+        auto effect = pOwner->Get_Component<CObjectContainer>()->Find_ObjectByName("Miyabi_Sword_Fire");
+        if (effect)
+            effect->Set_Alive(true);
+    }
 
     if (m_fAnimProgress >= 0.12f)
     {
@@ -144,12 +154,12 @@ void CMiyabiState_Dash_02::Update(CMiyabi* pOwner, _float dt)
         }
     }
 
-    if (IsCrossAnimProgress(0.25f))
+    if (IsCrossAnimProgress(0.2f))
     {
         pOwner->Clear_MotionBlur();
     }
 
-    if (m_fAnimProgress >= 0.7f)
+    if (m_fAnimProgress >= 0.45f)
     {   // Idle
         pSubMachine->Set_Int("ExitMode", 0);
         pSubMachine->Set_Trigger("Complete");
@@ -171,6 +181,10 @@ void CMiyabiState_Dash_02::Exit(CMiyabi* pOwner)
 {
     pOwner->Get_StateMachine()->Set_Bool("InDash02", false);
     pOwner->Clear_MotionBlur();
+    pOwner->SetRenderLayer(RENDER_LAYER::Default);
+    auto effect = pOwner->Get_Component<CObjectContainer>()->Find_ObjectByName("Miyabi_Sword_Fire");
+    if (effect)
+        effect->Set_Alive(true);
 }
 
 void CMiyabiState_Dash_02::Update_Effects(CMiyabi* pOwner)

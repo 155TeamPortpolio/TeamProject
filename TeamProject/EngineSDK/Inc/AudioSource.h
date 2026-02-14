@@ -23,7 +23,8 @@ public:
         _bool             hasStopScheduled = false;
         unsigned long long stopDspClock = 0;
         CSoundData*       pSound{};
-        FMOD::Channel*    pChanel{};
+        FMOD::Channel*           pChanel{};
+        vector<FMOD::Channel*>   pChannels{};
         SOUND_GROUP       eGroup = SOUND_GROUP::SFX;
     }AUDIO_SLOT;
 
@@ -116,10 +117,10 @@ public:
     void    Set_3DAttribute(const string& slotKey, _bool _3DAttribute);
     void    FadeOut_Volume(const string& slotKey, _float Durationfactor);
     void    FadeIn_Volume(const string& slotKey, _float Durationfactor,_float dst = 1.f);
-    void    Set_AudioPos(_vector3 pos); /*오디오 상에 보낼 3D상 위치*/
+    void    Set_AudioPos(_vector3 pos, _vector3 velocity = {}); /*오디오 상에 보낼 3D상 위치*/
+    void    Play(const string& soundKey, _bool continuePlay = false, _bool startPaused = false);
+    void    Update_Audio(AUDIO_SLOT& slot);
 
-    //void    Play(const string& SoundKey, _bool continuePlay = true);
-    void Play(const string& soundKey, _bool continuePlay = true, _bool startPaused = false);
 public:
     void    Render_GUI();
 private:
@@ -128,9 +129,9 @@ private:
 private:
     IAudioService*                        m_pAudioDevice{};
     FMOD_VECTOR                           m_vPos{};
+    FMOD_VECTOR                           m_vVelocity{};
     unordered_map<string, AUDIO_SLOT>     m_Audios;
     unordered_map<string, AUDIO_SEQUENCE> m_Sequences;
-
 public:
     static CAudioSource* Create();
     virtual CComponent* Clone() override;
