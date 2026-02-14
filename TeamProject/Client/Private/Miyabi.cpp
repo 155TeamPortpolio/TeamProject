@@ -99,6 +99,13 @@ void CMiyabi::Awake()
 	if (FAILED(Attach_ParryCollider()))
 		return;
 
+	auto pMaterial = Get_Component<CMaterial>();
+	auto MaterialInstances = pMaterial->Get_MaterialInstances();
+	for (auto& Instance : MaterialInstances)
+	{
+		pMaterial->Add_MaterialData(Instance, "iUseHeightGradient", { &m_iUseHeightGradient, "int", sizeof(_int) });
+	}
+
 	Get_Component<CSkeletalModel>()->Hide_MehsByName("0012_Unagi_PET_mesh0012");
 	Set_WeaponEffectMesh(false);
 }
@@ -146,6 +153,7 @@ void CMiyabi::Render_GUI()
 	ImGui::SameLine();
 	if (ImGui::Button("Hide Ghost"))
 		Hide_Ghost();
+
 
 	if (m_pStateMachine)
 	{
@@ -882,20 +890,50 @@ HRESULT CMiyabi::Initialize_Effects()
 
 HRESULT CMiyabi::Initialize_Sound()
 {
-	Get_Component<CAudioSource>()->SoundFolder(G_GlobalLevelKey, "../Bin/Resources/Global/BattleCharacter/Miyabi/Sound");
-	Get_Component<CAudioSource>()->Add_Sequence("Ultimate"
+	auto AudioSrc = Get_Component<CAudioSource>();
+	AudioSrc->SoundFolder(G_GlobalLevelKey, "../Bin/Resources/Global/BattleCharacter/Miyabi/Sound");
+	AudioSrc->Add_Sequence("Ultimate"
 		, "Miyabi_UltimateAttack_Voice_01"
 		, "Miyabi_UltimateAttack_Voice_02"
 		, "Miyabi_UltimateAttack_Voice_03"
 	);
-	Get_Component<CAudioSource>()->Add_Sequence("ExAttack02"
+	AudioSrc->Add_Sequence("ExAttack02"
 		, "Miyabi_ExAttack02_Voice_01"
 		, "Miyabi_ExAttack02_Voice_02"
 	);
-	Get_Component<CAudioSource>()->Add_Sequence("ExAttack03"
+	AudioSrc->Add_Sequence("ExAttack03"
 		, "Miyabi_ExAttack03_Voice_01"
 		, "Miyabi_ExAttack03_Voice_02"
 		, "Miyabi_ExAttack03_Voice_03"
+	);
+	AudioSrc->Add_Sequence("ChargeAttack03"
+		, "Miyabi_ChargeAttack03_Voice_01"
+		, "Miyabi_ChargeAttack03_Voice_02"
+		, "Miyabi_ChargeAttack03_Voice_03"
+	);
+	AudioSrc->Add_Sequence("NormalAttack01"
+		, "Miyabi_NormalAttack01_Voice_01"
+		, "Miyabi_NormalAttack01_Voice_02"
+		, "Miyabi_NormalAttack01_Voice_03"
+	);
+	AudioSrc->Add_Sequence("NormalAttack02"
+		, "Miyabi_NormalAttack02_Voice_01"
+		, "Miyabi_NormalAttack02_Voice_02"
+	);
+	AudioSrc->Add_Sequence("NormalAttack03"
+		, "Miyabi_NormalAttack03_Voice_01"
+		, "Miyabi_NormalAttack03_Voice_02"
+		, "Miyabi_NormalAttack03_Voice_03"
+	);
+	AudioSrc->Add_Sequence("NormalAttack04"
+		, "Miyabi_NormalAttack04_Voice_01"
+		, "Miyabi_NormalAttack04_Voice_02"
+	);
+	AudioSrc->Add_Sequence("NormalAttack05"
+		, "Miyabi_NormalAttack05_Voice_01"
+		, "Miyabi_NormalAttack05_Voice_02"
+		, "Miyabi_NormalAttack05_Voice_03"
+		, "Miyabi_NormalAttack05_Voice_04"
 	);
 
 	return S_OK;
@@ -1094,13 +1132,14 @@ void CMiyabi::Process_EndState(const string& strCurrentState)
 HRESULT CMiyabi::Update_MotionBlurQueue()
 {
 	auto Model = Get_Component<CSkeletalModel>();
-	m_vRimLightColor = _float3(0.1f, 0.4f, 1.f);
-	m_fRimLightPower = 2.f;
+	m_vRimLightColor = _vector3(0.36f, 0.75f, 1.f);
+	m_fRimLightPower = 5.f;
 
 	for (_int k = m_BoneMatrices.size() - 1; k >= 0; --k)
 	{
 		_float t = (_float)k / (_float)(m_BoneMatrices.size() - 1);
-		_vector4 vColor = { m_vRimLightColor.x, m_vRimLightColor.y, m_vRimLightColor.z, 0.5f };
+		_float fAlpha = (1.f - t) * 0.1f + 0.25f;  // 0.25 ~ 0.35
+		_vector4 vColor = { 0.1f, 0.4f, 1.f, 0.25 }; 
 		for (_int i = 0; i < Model->Get_MeshCount(); ++i)
 		{
 			if (Model->isDrawable(i) == false) continue;

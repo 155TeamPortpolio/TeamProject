@@ -413,6 +413,7 @@
     <ClInclude Include="..\Public\MiyabiState_ExAttack.h" />
     <ClInclude Include="..\Public\MiyabiState_UltimateAttack.h" />
     <ClInclude Include="..\Public\Miyabi_Ghost.h" />
+    <ClInclude Include="..\public\PaperEffect.h" />
     <ClInclude Include="..\Public\PedestrianNpc.h" />
     <ClInclude Include="..\Public\Cyclops.h" />
     <ClInclude Include="..\Public\Cyclops_Born.h" />
@@ -885,6 +886,7 @@
     <ClCompile Include="..\Private\MiyabiState_ExAttack.cpp" />
     <ClCompile Include="..\Private\MiyabiState_UltimateAttack.cpp" />
     <ClCompile Include="..\Private\Miyabi_Ghost.cpp" />
+    <ClCompile Include="..\private\PaperEffect.cpp" />
     <ClCompile Include="..\Private\PedestrianNpc.cpp" />
     <ClCompile Include="..\Private\Cyclops.cpp" />
     <ClCompile Include="..\Private\Cyclops_Born.cpp" />
