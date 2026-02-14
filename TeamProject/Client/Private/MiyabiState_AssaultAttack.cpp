@@ -118,6 +118,8 @@ void CMiyabiState_Assault_Start::Update(CMiyabi* pOwner, _float dt)
 			);
 		}
 	}
+
+	Update_Effects(pOwner);
 }
 
 void CMiyabiState_Assault_Start::Exit(CMiyabi* pOwner)
@@ -125,6 +127,77 @@ void CMiyabiState_Assault_Start::Exit(CMiyabi* pOwner)
 	if (m_pOwnerStateMachine->Get_Bool("Penetrate"))
 	{
 		pOwner->Get_CCT()->Set_CollisionMask(m_iMask);
+	}
+}
+
+void CMiyabiState_Assault_Start::Update_Effects(CMiyabi* pOwner)
+{
+	if (IsCrossAnimProgress(0.2f))
+	{
+		pOwner->Play_Effect("Miyabi_Normal1_Slash1", _vector3(0.f, 1.f, 0.f), _quaternion(-0.27f, -0.45f, -0.26f, 0.81f));
+		pOwner->Play_Effect("Miyabi_Ex1_Sting0", _vector3(-6.f, -0.6f, 1.6f), _quaternion(0.99f, 0.12f, -0.09f, -0.02f), false);
+	}
+	if (IsCrossAnimProgress(0.25f))
+	{
+		pOwner->Play_Effect("Miyabi_Normal1_Slash2", _vector3(0.f, 1.f, 0.f), _quaternion(0.89f, -0.03f, -0.04f, -0.45f));
+		pOwner->Play_Effect("Miyabi_Ex1_Sting1", _vector3(-0.7f, 1.4f, -5.4f), _quaternion(-0.26f, -0.57f, -0.25f, 0.74f), false);
+	}
+	if (IsCrossAnimProgress(0.3f))
+	{
+		pOwner->Play_Effect("Miyabi_Normal1_Slash3", _vector3(0.f, 1.f, 0.f), _quaternion(-0.47f, -0.31f, -0.52f, 0.64f));
+		pOwner->Play_Effect("Miyabi_Ex1_Sting2", _vector3(-2.7f, -2.6f, -5.5f), _quaternion(-0.15f, -0.5f, -0.25f, 0.82f), false);
+	}
+	if (IsCrossAnimProgress(0.35f))
+	{
+		pOwner->Play_Effect("Miyabi_Normal1_Slash0", _vector3(0.f, 1.f, 0.f), _quaternion(0.37f, 0.59f, -0.34f, 0.63f));
+		pOwner->Play_Effect("Miyabi_Ex1_Sting3", _vector3(-1.f, -0.4f, -4.2f), _quaternion(0.6f, -0.15f, 0.68f, 0.4f), false);
+	}
+
+	if (IsCrossAnimProgress(0.4f))
+	{
+		pOwner->Play_Effect("Miyabi_Normal1_Slash1", _vector3(0.f, 1.f, 0.f), _quaternion(-0.27f, -0.45f, -0.26f, 0.81f));
+		pOwner->Play_Effect("Miyabi_Ex1_Sting0", _vector3(-6.f, -0.6f, 1.6f), _quaternion(0.99f, 0.12f, -0.09f, -0.02f), false);
+	}
+	if (IsCrossAnimProgress(0.45f))
+	{
+		pOwner->Play_Effect("Miyabi_Normal1_Slash2", _vector3(0.f, 1.f, 0.f), _quaternion(0.89f, -0.03f, -0.04f, -0.45f));
+		pOwner->Play_Effect("Miyabi_Ex1_Sting1", _vector3(-0.7f, 1.4f, -5.4f), _quaternion(-0.26f, -0.57f, -0.25f, 0.74f), false);
+	}
+	if (IsCrossAnimProgress(0.5f))
+	{
+		pOwner->Play_Effect("Miyabi_Normal1_Slash3", _vector3(0.f, 1.f, 0.f), _quaternion(-0.47f, -0.31f, -0.52f, 0.64f));
+		pOwner->Play_Effect("Miyabi_Ex1_Sting2", _vector3(-2.7f, -2.6f, -5.5f), _quaternion(-0.15f, -0.5f, -0.25f, 0.82f), false);
+	}
+	if (IsCrossAnimProgress(0.55f))
+	{
+		pOwner->Play_Effect("Miyabi_Normal1_Slash0", _vector3(0.f, 1.f, 0.f), _quaternion(0.37f, 0.59f, -0.34f, 0.63f));
+		pOwner->Play_Effect("Miyabi_Ex1_Sting3", _vector3(-1.f, -0.4f, -4.2f), _quaternion(0.6f, -0.15f, 0.68f, 0.4f), false);
+	}
+
+	if (IsCrossAnimProgress(0.6f))
+	{
+		pOwner->Play_Effect("Miyabi_Normal1_Slash1", _vector3(0.f, 1.f, 0.f), _quaternion(-0.27f, -0.45f, -0.26f, 0.81f));
+		pOwner->Play_Effect("Miyabi_Ex1_Sting0", _vector3(-6.f, -0.6f, 1.6f), _quaternion(0.99f, 0.12f, -0.09f, -0.02f), false);
+	}
+	if (IsCrossAnimProgress(0.65f))
+	{
+		pOwner->Play_Effect("Miyabi_Normal1_Slash2", _vector3(0.f, 1.f, 0.f), _quaternion(0.89f, -0.03f, -0.04f, -0.45f));
+		pOwner->Play_Effect("Miyabi_Ex1_Sting1", _vector3(-0.7f, 1.4f, -5.4f), _quaternion(-0.26f, -0.57f, -0.25f, 0.74f), false);
+	}
+	if (IsCrossAnimProgress(0.7f))
+	{
+		pOwner->Play_Effect("Miyabi_Normal1_Slash3", _vector3(0.f, 1.f, 0.f), _quaternion(-0.47f, -0.31f, -0.52f, 0.64f));
+		pOwner->Play_Effect("Miyabi_Ex1_Sting2", _vector3(-2.7f, -2.6f, -5.5f), _quaternion(-0.15f, -0.5f, -0.25f, 0.82f), false);
+	}
+	if (IsCrossAnimProgress(0.75f))
+	{
+		pOwner->Play_Effect("Miyabi_Normal1_Slash0", _vector3(0.f, 1.f, 0.f), _quaternion(0.37f, 0.59f, -0.34f, 0.63f));
+		pOwner->Play_Effect("Miyabi_Ex1_Sting3", _vector3(-1.f, -0.4f, -4.2f), _quaternion(0.6f, -0.15f, 0.68f, 0.4f), false);
+	}
+	if (IsCrossAnimProgress(0.8f))
+	{
+		pOwner->Play_Effect("Miyabi_Normal1_Slash1", _vector3(0.f, 1.f, 0.f), _quaternion(-0.27f, -0.45f, -0.26f, 0.81f));
+		pOwner->Play_Effect("Miyabi_Ex1_Sting0", _vector3(-6.f, -0.6f, 1.6f), _quaternion(0.99f, 0.12f, -0.09f, -0.02f), false);
 	}
 }
 
