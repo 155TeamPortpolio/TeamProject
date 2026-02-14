@@ -3,12 +3,17 @@
 #include "Miyabi.h"
 
 #include "CharacterController.h"
+#include "AudioSource.h"
 
 void CMiyabiState_BackStep::Enter(CMiyabi* pOwner)
 {
     pOwner->Use_Evade();
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Evade_Back")
         .Apply();
+    if (Helper::Get_Random_Bool())
+        pOwner->Get_Component<CAudioSource>()->Sequence("Evade_BackStep")
+        .Attribute3D(true)
+        .PlayNext();
 }
 
 void CMiyabiState_BackStep::Update(CMiyabi* pOwner, _float dt)

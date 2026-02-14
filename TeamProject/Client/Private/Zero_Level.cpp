@@ -40,6 +40,7 @@
 #include "StrikeJaeger.h"
 #include "MeleeJaeger.h"
 #include "MeleeJaeger_Shield.h"
+#include "Giant.h"
 
 /* UI */
 #include "UIDirector.h"
@@ -157,6 +158,7 @@ void CZero_Level::Ready_Prototype()
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_StrikeJaeger", CStrikeJaeger::Create());
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_MeleeJaeger", CMeleeJaeger::Create());
 	PrototypeManager()->Add_ProtoType("Test_Level", "Proto_GameObject_MeleeJaeger_Shield", CMeleeJaeger_Shield::Create());
+	PrototypeManager()->Add_ProtoType("Test_Level", "Proto_GameObject_Giant", CGiant::Create());
 }
 
 void CZero_Level::Ready_Stage()
@@ -189,12 +191,12 @@ void CZero_Level::Ready_Stage()
 	//Boss
 	_uint Boss_Process{};
 	if(!RuntimeBucket().Int64.TryGet(PersistScope::SaveSlot, "Boss_Process", Boss_Process))
-		Boss_Process = 1; //Start BossMap Index;
+		Boss_Process = 2; //Start BossMap Index;
 
 	m_mapCycle[StageType::Boss].maps.push_back("Zero_Boss" + to_string(Boss_Process));
 	RuntimeBucket().Int64.Set(PersistScope::SaveSlot, "Boss_Process", ++Boss_Process);
 
-	ChangeStage(StageType::Start);
+	ChangeStage(StageType::Boss);
 }
 
 void CZero_Level::Shuffle_MapCycle(vector<string>& Map)

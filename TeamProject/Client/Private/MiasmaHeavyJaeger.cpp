@@ -38,7 +38,8 @@ HRESULT CMiasmaHeavyJaeger::Initialize_Prototype()
 	__super::Initialize_Prototype();
 	Add_Component<CSkeletalModel>()->Link_Model("Zero_Level", "MiasmaJaeger.model");
 	Add_Component<CMaterial>()->Link_Material("Zero_Level", "MiasmaJaeger.mat");
-	Add_Component<CCharacterController>();
+	Add_Component<CCollider>();
+	Add_Component<CRigidBody>();
 	Add_Component<CObjectContainer>();
 	Add_Component<CAnimator3D>();
 	Add_Component<CAudioSource>();
@@ -59,6 +60,17 @@ HRESULT CMiasmaHeavyJaeger::Initialize(INIT_DESC* pArg)
 	auto pModel = Get_Component<CSkeletalModel>();
 	pModel->Hide_MehsByName("Grenadier");
 
+
+	Matrix boneMat = Get_Component<CAnimator3D>()
+		->Get_BoneMatrix(CAnimator3D::BoneSpace::COMBINED, "Bip001");
+	_vector3 S, T; _quaternion R;
+	(boneMat).Decompose(S, R, T);
+	Get_Component<CCollider>()->Set_Trigger(false);
+	Get_Component<CRigidBody>()->Set_Kinematic(true);
+	Get_Component<CRigidBody>()->Set_Gravity(false);
+	Get_Component<CRigidBody>()->Set_CCD(true);
+
+	
 	if (FAILED(Initialize_StateMachine()))
 		return E_FAIL;
 
@@ -78,12 +90,11 @@ HRESULT CMiasmaHeavyJaeger::Initialize(INIT_DESC* pArg)
 		WeaponDesc.tagBone = "RootNode";
 		WeaponDesc.pOwnerAnimator3D = pAnimator;
 		WeaponDesc.eAttackColliderType = COLLIDER_TYPE::BOX;
-		WeaponDesc.vAttackSize = _float3{ 4.f,2.5f,1.5f };
+		WeaponDesc.vAttackSize = _float3{ 2.f,2.5f,2.5f };
 
 		if (FAILED(AttachBattleColliderObject(&WeaponDesc)))
 			return E_FAIL;
 	}
-	Get_Component<CCharacterController>()->Set_CompActive(true);
 	return S_OK;
 }
 
@@ -91,7 +102,7 @@ void CMiasmaHeavyJaeger::Awake()
 {
 	m_vRimLightColor = _float3(0.127, 0.029, 0.070);
 	m_fRimLightPower = 2.2f;
-	m_fDissolveTilling = 9.f;
+	m_fDissolveTilling = 12.f;
 
 	auto pMaterial = Get_Component<CMaterial>();
 	auto& materialInstances = pMaterial->Get_MaterialInstances();
@@ -107,8 +118,6 @@ void CMiasmaHeavyJaeger::Awake()
 	}
 	;
 	m_Dissolve.DisAppear(0.f);
-
-
 }
 
 void CMiasmaHeavyJaeger::Priority_Update(_float dt)
@@ -130,42 +139,21 @@ void CMiasmaHeavyJaeger::Update(_float dt)
 	m_pStateMachine->Update(dt);
 	RotateToTarget(dt, 6.f);
 	MoveByAnim(dt, 1.f);
-	Get_Component<CCharacterController>()->Update(dt);
 	Get_Component<CObjectContainer>()->UpdateChild(dt);
+	Get_Component<CCollider>()->Update(dt);
+	Get_Component<CRigidBody>()->Set_GlobalPos(m_pTransform->Get_WorldPos(), m_pTransform->Get_QuaternionRotate());
 	Update_Dissolve(dt);
 }
 
 void CMiasmaHeavyJaeger::Late_Update(_float dt)
 {
 	Get_Component<CObjectContainer>()->Late_UpdateChild(dt);
-	Get_Component<CCharacterController>()->Late_Update(dt);
+	Get_Component<CRigidBody>()->Late_Update(dt);
 }
 
 void CMiasmaHeavyJaeger::Render_GUI()
 {
 	__super::Render_GUI();
-}
-
-void CMiasmaHeavyJaeger::OnPooledAcquire(INIT_DESC* pArg)
-{
-	__super::Initialize(pArg);
-	auto pAnimator = Get_Component<CAnimator3D>();
-	pAnimator->LinkAnimate_Model("Zero_Level", "MiasmaJaeger.model");
-	pAnimator->Link_MetaData("Zero_Level", "MiasmaJaeger_Meta.json");
-	pAnimator->Resize_Layer(2);
-	pAnimator->Set_LayerType(ANIM_LAYER_STATE::ADDITIVE, 1);
-	pAnimator->Set_Animation("HeavyJaeger_Ani_Idle").Loop(true).Apply();
-	auto pModel = Get_Component<CSkeletalModel>();
-	pModel->Hide_MehsByName("Grenadier");
-	m_vCurrentDir = { 0,0,1 };
-	Get_Component<CCharacterController>()->Set_CompActive(true);
-}
-
-void CMiasmaHeavyJaeger::OnPooledRelease()
-{
-	LockOn(false);
-	m_isOnAttack = false;
-	Get_Component<CCharacterController>()->Set_CompActive(false);
 }
 
 CMiasmaHeavyJaeger* CMiasmaHeavyJaeger::Create()
@@ -339,9 +327,8 @@ void CMiasmaHeavyJaeger::MoveByAnim(_float dt, _float moveScale)
 {
 	auto* animator = Get_Component<CAnimator3D>();
 	auto* transform = Get_Component<CTransform>();
-	auto* controller = Get_Component<CCharacterController>();
 
-	if (!animator || !transform || !controller || dt <= 0.f)
+	if (!animator || !transform|| dt <= 0.f)
 		return;
 
 	const _vector3    rootDeltaLocal = animator->Get_RootBoneMoveDelta();
@@ -385,13 +372,15 @@ void CMiasmaHeavyJaeger::MoveByAnim(_float dt, _float moveScale)
 		distScale = 1.f + distToTarget;
 	}
 
-	const _vector3 velocityWorld = (moveWorld)*distScale;
-	controller->Move_RootMotion(velocityWorld, rootQuatLocal, dt);
+	_vector3 velocityWorld = (moveWorld)*distScale;
+	_vector3 worldPos = m_pTransform->Get_WorldPos();
+	m_pTransform->Translate(velocityWorld);
+	//Get_Component<CRigidBody>()->Set_Velocity(velocityWorld);
 }
 
 void CMiasmaHeavyJaeger::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER charaName)
 {
-	BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::HIT_NORMAL);
+	BattleSystem()->HitVFX(eDamageType);
 }
 
 HRESULT CMiasmaHeavyJaeger::Initialize_StateMachine()

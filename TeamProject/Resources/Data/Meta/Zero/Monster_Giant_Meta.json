@@ -1,0 +1,195 @@
+{
+  "AnimPath": "../Bin/Resources/Zero/Enemy/Giant/Anim/",
+  "PreTransform": {
+    "_11": -0.009999999776482582,
+    "_12": 0.0,
+    "_13": 0.0,
+    "_14": 0.0,
+    "_21": 0.0,
+    "_22": 0.009999999776482582,
+    "_23": 0.0,
+    "_24": 0.0,
+    "_31": 0.0,
+    "_32": 0.0,
+    "_33": -0.009999999776482582,
+    "_34": 0.0,
+    "_41": 0.0,
+    "_42": 0.0,
+    "_43": 0.0,
+    "_44": 1.0
+  },
+  "Clips": [
+    {
+      "ClipTag": "Giant_Ani_Attack_01",
+      "Events": []
+    },
+    {
+      "ClipTag": "Giant_Ani_Attack_02",
+      "Events": []
+    },
+    {
+      "ClipTag": "Giant_Ani_Attack_02_01",
+      "Events": []
+    },
+    {
+      "ClipTag": "Giant_Ani_Attack_02_Explode",
+      "Events": []
+    },
+    {
+      "ClipTag": "Giant_Ani_Attack_03",
+      "Events": []
+    },
+    {
+      "ClipTag": "Giant_Ani_Attack_03_Hitwall",
+      "Events": []
+    },
+    {
+      "ClipTag": "Giant_Ani_Attack_04",
+      "Events": []
+    },
+    {
+      "ClipTag": "Giant_Ani_Attack_05",
+      "Events": []
+    },
+    {
+      "ClipTag": "Giant_Ani_Attack_06_AttackBack",
+      "Events": []
+    },
+    {
+      "ClipTag": "Giant_Ani_Attack_07",
+      "Events": []
+    },
+    {
+      "ClipTag": "Giant_Ani_Attack_07_Jump",
+      "Events": []
+    },
+    {
+      "ClipTag": "Giant_Ani_Attack_07_Revenge",
+      "Events": []
+    },
+    {
+      "ClipTag": "Giant_Ani_Born",
+      "Events": []
+    },
+    {
+      "ClipTag": "Giant_Ani_Chaos",
+      "Events": []
+    },
+    {
+      "ClipTag": "Giant_Ani_Death_Back",
+      "Events": []
+    },
+    {
+      "ClipTag": "Giant_Ani_Death_Front",
+      "Events": []
+    },
+    {
+      "ClipTag": "Giant_Ani_Death_Stay",
+      "Events": []
+    },
+    {
+      "ClipTag": "Giant_Ani_Dodge",
+      "Events": []
+    },
+    {
+      "ClipTag": "Giant_Ani_Hit_H_Back",
+      "Events": []
+    },
+    {
+      "ClipTag": "Giant_Ani_Hit_H_Front",
+      "Events": []
+    },
+    {
+      "ClipTag": "Giant_Ani_Hit_Parry_Left",
+      "Events": []
+    },
+    {
+      "ClipTag": "Giant_Ani_Hit_Parry_Right",
+      "Events": []
+    },
+    {
+      "ClipTag": "Giant_Ani_Hit_Stay",
+      "Events": []
+    },
+    {
+      "ClipTag": "Giant_Ani_Ignite",
+      "Events": []
+    },
+    {
+      "ClipTag": "Giant_Ani_Ignite_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "Giant_Ani_Run_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "Giant_Ani_Run_loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "Giant_Ani_Run_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "Giant_Ani_SideStep_L",
+      "Events": []
+    },
+    {
+      "ClipTag": "Giant_Ani_SideStep_R",
+      "Events": []
+    },
+    {
+      "ClipTag": "Giant_Ani_Stun_L_Front_Down",
+      "Events": []
+    },
+    {
+      "ClipTag": "Giant_Ani_Stun_L_Front_Left",
+      "Events": []
+    },
+    {
+      "ClipTag": "Giant_Ani_Stun_L_Front_Right",
+      "Events": []
+    },
+    {
+      "ClipTag": "Giant_Ani_Stun_L_Front_Up",
+      "Events": []
+    },
+    {
+      "ClipTag": "Giant_Ani_Walk_B",
+      "Events": []
+    },
+    {
+      "ClipTag": "Giant_Ani_Walk_F",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_Giant_Ani_Debuff_Stun_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_Giant_Ani_Debuff_Stun_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_Giant_Ani_Debuff_Stun_Start_Back",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_Giant_Ani_Debuff_Stun_Start_Front",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_Giant_Ani_Hit_Shake",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_Giant_Ani_Idle",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_Giant_Ani_Stun_Hit_Stay",
+      "Events": []
+    }
+  ]
+}

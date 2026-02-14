@@ -497,10 +497,6 @@ _bool CTransform::Check_Dirty()
 
 	if (m_pParentTransform)
 	{
-		// 부모가 실제 Dirty였는지 확인 (조상 포함)
-		if (m_pParentTransform->Check_Dirty())
-			dirty = true;
-
 		// 부모 버전 변화 체크
 		if (m_ParentVersionCounter != m_pParentTransform->m_VersionCounter)
 		{

@@ -83,6 +83,8 @@ void CClaymore_Attack::Update(CClaymore* pOwner, _float dt)
 				pOwner->SetBattleColliderObject("Weapon", CEnemy::BATTLE_COLTYPE::ATTACK, false);
 			else if (Event.Tag == "FinishAll")
 				pOwner->SetOnAttack(false);
+			else if (Event.Tag == "ParryEnable_false")
+				pOwner->SetParryEnable(false);
 			break;
 		}
 		case Engine::CLIP_EVENT_TYPE::EFFECT:
