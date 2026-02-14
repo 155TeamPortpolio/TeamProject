@@ -20,6 +20,12 @@ public:
 	virtual void    Render_GUI()                     override { __super::Render_GUI(); }
 
 private:
+	static constexpr _int CARD_COUNT = 3;
+	array<string, CARD_COUNT> m_RenderTargetKeys;
+
+	class CUI_BattleLineupCard* m_pLineupCard[CARD_COUNT] = {};
+
+private:
 	void Create_BackButton();
 	void Create_HomeButton();
 	void Create_ElementalResonance();
@@ -28,6 +34,7 @@ private:
 	void Create_BackupButton(); 
 	void Create_EnterButton();
 
+	void Create_RenderTargets();
 	void Create_BattleLineupCards();
 
 public:

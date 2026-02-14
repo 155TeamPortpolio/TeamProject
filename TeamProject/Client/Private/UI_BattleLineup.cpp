@@ -8,7 +8,7 @@
 #include "UI_ElementalResonance.h"
 #include "UI_EnterBattleButton.h" 
 #include "UI_BattleLineupCard.h"
-#include "UI_AvatarTest.h"
+#include "UI_PartyAvatar.h"
 
 HRESULT CUI_BattleLineup::Initialize_Prototype()
 {
@@ -20,7 +20,7 @@ HRESULT CUI_BattleLineup::Initialize_Prototype()
     PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_ElementalResonance", CUI_ElementalResonance::Create());
     PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_EnterBattleButton", CUI_EnterBattleButton::Create());
     PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_BattleLineupCard", CUI_BattleLineupCard::Create());
-    PrototypeManager()->Add_ProtoType("Test_Level", "Proto_GameObject_AvatarTest", CUI_AvatarTest::Create());
+    PrototypeManager()->Add_ProtoType("Test_Level", "Proto_GameObject_PartyAvatar", CUI_PartyAvatar::Create());
 
     return S_OK;
 }
@@ -39,13 +39,8 @@ HRESULT CUI_BattleLineup::Initialize(INIT_DESC* pArg)
     Create_BackupButton();
     Create_EnterButton();
 
+    Create_RenderTargets();
     Create_BattleLineupCards();
-
-    auto pObj = Builder::Create_Object({ "Test_Level", "Proto_GameObject_AvatarTest"})
-        .Build("avatarTest");
-
-    if (pObj)
-        ObjectManager()->Add_Object(pObj, {"Test_Level", "UI_Layer"});
 
     //Set_Alive(false);
 
@@ -58,6 +53,15 @@ void CUI_BattleLineup::Awake()
 
 void CUI_BattleLineup::Update(_float dt)
 {
+    if (InputDevice()->Key_Tap('B'))
+        m_pLineupCard[0]->Change_Character(CHARACTER::Corin);
+
+    if (InputDevice()->Key_Tap('N'))
+        m_pLineupCard[1]->Change_Character(CHARACTER::JaneDoe);
+
+    if (InputDevice()->Key_Tap('M'))
+        m_pLineupCard[2]->Change_Character(CHARACTER::Miyabi);
+
     __super::Update(dt);
 
     Get_Component<CObjectContainer>()->UpdateChild(dt);
@@ -155,15 +159,50 @@ void CUI_BattleLineup::Create_EnterButton()
     Get_Component<CObjectContainer>()->Add_Child(pObj);
 }
 
+void CUI_BattleLineup::Create_RenderTargets()
+{
+    // ·»´õÅ¸°Ù »ý¼º
+    RenderTargetDesc desc = {};
+    desc.Width = m_WinSize.x;
+    desc.Height = m_WinSize.y;
+
+    for (_int i = 0; i < CARD_COUNT; ++i)
+    {
+        m_RenderTargetKeys[i] = "LineupCard" + to_string(i);
+        desc.Key = m_RenderTargetKeys[i];
+        RenderSystem()->Create_RenderTarget(desc);
+    } 
+}
+
 void CUI_BattleLineup::Create_BattleLineupCards()
 {
-    auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_BattleLineupCard" })
-        .Build("lineupCard");
+    const _float fWidth = 380.f;
+    const _float fSpacing = 18.f;
+    const _float fTotalWidth = fWidth * 3 + fSpacing * 2;
 
-    if (!pObj)
-        return;
+    for (_int i = 0; i < CARD_COUNT; ++i)
+    {
+        CUI_BattleLineupCard::CARD_DESC* pDesc = new CUI_BattleLineupCard::CARD_DESC;
+        pDesc->strRenderTargetKey = m_RenderTargetKeys[i];
 
-    Get_Component<CObjectContainer>()->Add_Child(pObj);
+        auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_BattleLineupCard" })
+            .Add_UIDesc(pDesc)
+            .Build("lineupCard");
+
+        if (!pObj)
+            continue;
+
+        pObj->Set_Pivot(_float2(0.5f, 0.5f));
+        pObj->Set_Anchor(ANCHOR::Center);
+
+        float fStartX = -fTotalWidth * 0.5f + fWidth * 0.5f;
+        float fOffsetX = fStartX + i * (fWidth + fSpacing);
+
+        pObj->Set_AnchorOffset(_float2(fOffsetX, 0.f));
+
+        Get_Component<CObjectContainer>()->Add_Child(pObj);
+        m_pLineupCard[i] = dynamic_cast<CUI_BattleLineupCard*>(pObj);
+    } 
 }
 
 CGameObject* CUI_BattleLineup::Create()

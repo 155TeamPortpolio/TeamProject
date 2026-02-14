@@ -2669,7 +2669,7 @@
     <ClInclude Include="..\Public\UI_BattleLineupCardRT.h">
       <Filter>02. GameObject\UI\01. 2D\BattleLineup\LineupCard\RenderTarget</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\UI_AvatarTest.h">
+    <ClInclude Include="..\Public\UI_PartyAvatar.h">
       <Filter>02. GameObject\UI\01. 2D\BattleLineup\LineupCard\Avatar</Filter>
     </ClInclude>
   </ItemGroup>
@@ -3917,7 +3917,7 @@
     <ClCompile Include="..\Private\UI_BattleLineupCardRT.cpp">
       <Filter>02. GameObject\UI\01. 2D\BattleLineup\LineupCard\RenderTarget</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\UI_AvatarTest.cpp">
+    <ClCompile Include="..\Private\UI_PartyAvatar.cpp">
       <Filter>02. GameObject\UI\01. 2D\BattleLineup\LineupCard\Avatar</Filter>
     </ClCompile>
   </ItemGroup>

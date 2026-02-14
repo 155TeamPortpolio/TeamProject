@@ -5,6 +5,11 @@ NS_BEGIN(Client)
 
 class CUI_BattleLineupCardRT final : public CUI_Object
 {
+public:
+	typedef struct tagCardDesc : public UI_DESC {
+		string strRenderTargetKey = "";
+	}CARD_DESC;
+
 private:
 	CUI_BattleLineupCardRT() {}
 	CUI_BattleLineupCardRT(const CUI_BattleLineupCardRT& rhs) : CUI_Object(rhs) {}
@@ -18,8 +23,6 @@ public:
 	virtual void    Update(_float dt)			     override;
 	virtual void    Late_Update(_float dt)           override { __super::Late_Update(dt); }
 	virtual void    Render_GUI()                     override { __super::Render_GUI(); }
-
-private:
 
 public:
 	static  CGameObject* Create();

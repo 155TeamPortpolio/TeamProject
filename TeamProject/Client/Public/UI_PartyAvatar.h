@@ -3,12 +3,17 @@
 
 NS_BEGIN(Client)
 
-class CUI_AvatarTest final : public CGameObject
+class CUI_PartyAvatar final : public CGameObject
 {
+public:
+	typedef struct tagAvatarDesc : public GAMEOBJECT_DESC {
+		string strRenderTargetKey = "";
+	}AVATAR_DESC;
+
 private:
-	CUI_AvatarTest() {}
-	CUI_AvatarTest(const CUI_AvatarTest& rhs) : CGameObject(rhs) {}
-	virtual ~CUI_AvatarTest() DEFAULT;
+	CUI_PartyAvatar() {}
+	CUI_PartyAvatar(const CUI_PartyAvatar& rhs) : CGameObject(rhs) {}
+	virtual ~CUI_PartyAvatar() DEFAULT;
 
 public:
 	virtual HRESULT Initialize_Prototype()      override;
@@ -23,7 +28,7 @@ private:
 	_float4x4 m_ProjMatrix = {};
 
 	const string m_strPassConstant = "UI_RenderTarget";
-	string m_strTargetKey = "avatarTest";
+	string m_strTargetKey = "";
 
 private:
 	void Render_RT(ID3D11DeviceContext* pContext);

@@ -16,35 +16,24 @@ HRESULT CUI_BattleLineupCardRT::Initialize(INIT_DESC* pArg)
 {
     if (FAILED(__super::Initialize(pArg)))
         return E_FAIL;
+    
+    CARD_DESC* pDesc = static_cast<CARD_DESC*>(pArg);
+    if (!pDesc)
+        return E_FAIL;
 
     auto pSprite = Get_Component<CSprite2D>();
-
     pSprite->Link_Shader(G_GlobalLevelKey, "VTX_UI.hlsl");
-    //pSprite->Add_Texture(G_GlobalLevelKey, "empty.png");
 
-    //SHADER_PARAM param = {};
-    //auto pSRV = RenderSystem()->Get_EngineTargetSRV("Target_Combined_SkinnedMesh");
-    //param.pData = pSRV;
-    //param.typeName = "Texture2D";
-    //param.iSize = 0;
-    //pSprite->Set_Param("SpriteTexture", param);
-
-    // ·»´õÅ¸°Ù »ý¼º
-    RenderTargetDesc desc = {};
-    desc.Key = "avatarTest";
-    desc.Width = 1600.f;// m_vSize.x;
-    desc.Height = 900.f;// m_vSize.y;
-    RenderSystem()->Create_RenderTarget(desc);
-    
-    //// ·»´õÅ¸°Ù¿¡ SRV ¹ÙÀÎµù
+    // ·»´õÅ¸°Ù¿¡ SRV ¹ÙÀÎµù
     SHADER_PARAM param = {};
-    auto pSRV = RenderSystem()->Get_CustomTargetSRV("avatarTest");
+    auto pSRV = RenderSystem()->Get_CustomTargetSRV(pDesc->strRenderTargetKey);
     param.pData = pSRV;
     param.typeName = "Texture2D";
     param.iSize = 0;
     pSprite->Set_Param("SpriteTexture", param);
 
-    pSprite->ChangePass("Opaque_StencilTest");    // ¸¶½ºÅ© ¹Ù±ù ºÎºÐ¿¡ ±×·ÁÁü
+    // ½ºÅÙ½Ç Å×½ºÆ®
+    pSprite->ChangePass("Opaque_StencilTest");
     m_stencilMode = StencilMode::Test;
 
     return S_OK;

@@ -1,0 +1,219 @@
+{
+    "alive": true,
+    "instanceName": "battleLineupCard_back",
+    "transform": {
+        "anchor": 0,
+        "anchorOffset": [
+            -299.0,
+            -367.0
+        ],
+        "size": [
+            598.0,
+            734.0
+        ],
+        "scale": [
+            1.0,
+            1.0
+        ],
+        "pivot": [
+            0.0,
+            0.0
+        ],
+        "radian": 0.0
+    },
+    "color": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+    ],
+    "stencilMode": 0,
+    "pass": "Opaque",
+    "colorTexKey": "empty.png",
+    "colorTexMode": 0,
+    "colorTexMix": 1.0,
+    "colorUVUse": 0,
+    "colorUVOffset": [
+        0.0,
+        0.0
+    ],
+    "colorUVScale": [
+        1.0,
+        1.0
+    ],
+    "colorUVAutoScroll": false,
+    "colorUVSpeed": [
+        0.0,
+        0.0
+    ],
+    "animClips": [],
+    "children": [
+        {
+            "alive": true,
+            "instanceName": "Mask",
+            "transform": {
+                "anchor": 0,
+                "anchorOffset": [
+                    -299.30096435546875,
+                    -367.0
+                ],
+                "size": [
+                    598.6019287109375,
+                    734.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "stencilMode": 1,
+            "pass": "UI_StencilWrite",
+            "colorTexKey": "empty.png",
+            "colorTexMode": 0,
+            "colorTexMix": 1.0,
+            "colorUVUse": 0,
+            "colorUVOffset": [
+                0.0,
+                0.0
+            ],
+            "colorUVScale": [
+                1.0,
+                1.0
+            ],
+            "colorUVAutoScroll": false,
+            "colorUVSpeed": [
+                0.0,
+                0.0
+            ],
+            "animClips": [],
+            "children": [],
+            "typeTag": "Mask",
+            "maskTextureKey": "RoleSelectMask.png",
+            "maskThreshold": 0.10000000149011612
+        },
+        {
+            "alive": true,
+            "instanceName": "bg1",
+            "transform": {
+                "anchor": 0,
+                "anchorOffset": [
+                    -299.0,
+                    -367.0
+                ],
+                "size": [
+                    598.0,
+                    734.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                0.23938226699829102,
+                0.23938226699829102,
+                0.23938226699829102,
+                1.0
+            ],
+            "stencilMode": 2,
+            "pass": "Opaque_StencilTest",
+            "colorTexKey": "empty.png",
+            "colorTexMode": 0,
+            "colorTexMix": 1.0,
+            "colorUVUse": 0,
+            "colorUVOffset": [
+                0.0,
+                0.0
+            ],
+            "colorUVScale": [
+                1.0,
+                1.0
+            ],
+            "colorUVAutoScroll": false,
+            "colorUVSpeed": [
+                0.0,
+                0.0
+            ],
+            "animClips": [],
+            "children": [],
+            "typeTag": "Image",
+            "textureTag": "empty.png"
+        },
+        {
+            "alive": true,
+            "instanceName": "bg2",
+            "transform": {
+                "anchor": 0,
+                "anchorOffset": [
+                    -167.0,
+                    -589.9220581054688
+                ],
+                "size": [
+                    334.0,
+                    1179.8441162109375
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": -0.2879793345928192
+            },
+            "color": [
+                0.4440154433250427,
+                0.4440154433250427,
+                0.4440154433250427,
+                1.0
+            ],
+            "stencilMode": 2,
+            "pass": "UVAnimation_StencilTest",
+            "colorTexKey": "empty.png",
+            "colorTexMode": 0,
+            "colorTexMix": 1.0,
+            "colorUVUse": 0,
+            "colorUVOffset": [
+                0.0,
+                0.0
+            ],
+            "colorUVScale": [
+                1.0,
+                1.0
+            ],
+            "colorUVAutoScroll": false,
+            "colorUVSpeed": [
+                0.0,
+                0.0
+            ],
+            "animClips": [],
+            "children": [],
+            "typeTag": "UVAnimation",
+            "textureTag": "RoleSelectText.png",
+            "uvAnimation": {
+                "uvOffsetSpeed": [
+                    0.0,
+                    0.019999999552965164
+                ]
+            }
+        }
+    ],
+    "typeTag": "CanvasPanel"
+}
