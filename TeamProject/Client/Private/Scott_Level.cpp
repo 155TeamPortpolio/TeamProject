@@ -78,6 +78,7 @@ HRESULT CScott_Level::Awake()
 	//Ready_Npc();
 
 	CamDirector()->AutoField(CamStartDir::Back);
+	FieldSystem()->PlayBGM("ScottBGM.wav");
 
 	return S_OK;
 }
@@ -146,6 +147,7 @@ CScott_Level* CScott_Level::Create(const string& LevelKey)
 void CScott_Level::Free()
 {
 	__super::Free();
+	FieldSystem()->FadeOutBGM();
 	m_pGameInstance->DestroyInstance();
 	m_pPlayer->Clear_Characters();
 }

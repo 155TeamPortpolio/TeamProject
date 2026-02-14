@@ -1347,12 +1347,9 @@
     <Filter Include="02. GameObject\UI\02. 3D\Mesh\GachaReveal\GachaText">
       <UniqueIdentifier>{ed223e07-20d2-4adb-bf8a-94b7c189aa86}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Object\Env\WaterWave">
-      <UniqueIdentifier>{aea5bd1e-985a-4281-bd0f-03da8ed2d179}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\Object\Env\Water">
       <UniqueIdentifier>{eb2a971f-d7e0-4f0e-8386-8a49c973a9aa}</UniqueIdentifier>
-          </Filter>
+    </Filter>
     <Filter Include="02. GameObject\Object\Enemy\Boss\Defiler\State\OtherState">
       <UniqueIdentifier>{7070f4d4-6cda-4ac4-b714-abd5e747e09d}</UniqueIdentifier>
     </Filter>
@@ -1364,6 +1361,12 @@
     </Filter>
     <Filter Include="02. GameObject\UI\03. UIElement\SoftDirectionalOutline">
       <UniqueIdentifier>{63f153cc-8109-4433-beba-fef1b7722042}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Env\WaterWaves">
+      <UniqueIdentifier>{2d0f3f8c-cb06-4de4-a97e-3beca031f5c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Env\WaterWaves\WaterWave">
+      <UniqueIdentifier>{aea5bd1e-985a-4281-bd0f-03da8ed2d179}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -2622,8 +2625,8 @@
       <Filter>02. GameObject\Object\Env\Water</Filter>
     </ClInclude>
     <ClInclude Include="..\public\WaterWave.h">
-      <Filter>02. GameObject\Object\Env\WaterWave</Filter>
-          </ClInclude>
+      <Filter>02. GameObject\Object\Env\WaterWaves\WaterWave</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\DefilerState_Other.h">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler\State\OtherState</Filter>
     </ClInclude>
@@ -2635,6 +2638,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\SoftDirectionalOutlineUI.h">
       <Filter>02. GameObject\UI\03. UIElement\SoftDirectionalOutline</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\WaterWaves.h">
+      <Filter>02. GameObject\Object\Env\WaterWaves</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -3852,8 +3858,8 @@
       <Filter>02. GameObject\Object\Env\Water</Filter>
     </ClCompile>
     <ClCompile Include="..\private\WaterWave.cpp">
-      <Filter>02. GameObject\Object\Env\WaterWave</Filter>
-          </ClCompile>
+      <Filter>02. GameObject\Object\Env\WaterWaves\WaterWave</Filter>
+    </ClCompile>
     <ClCompile Include="..\Private\DefilerState_Other.cpp">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler\State\OtherState</Filter>
     </ClCompile>
@@ -3865,6 +3871,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\SoftDirectionalOutlineUI.cpp">
       <Filter>02. GameObject\UI\03. UIElement\SoftDirectionalOutline</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\WaterWaves.cpp">
+      <Filter>02. GameObject\Object\Env\WaterWaves</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
