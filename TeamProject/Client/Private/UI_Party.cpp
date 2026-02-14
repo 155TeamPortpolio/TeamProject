@@ -44,7 +44,7 @@ HRESULT CUI_Party::Initialize(INIT_DESC* pArg)
     Create_RenderTargets();
     Create_PartyCards();
 
-    //Set_Alive(false);
+    Set_Alive(false);
 
     return S_OK;
 }
