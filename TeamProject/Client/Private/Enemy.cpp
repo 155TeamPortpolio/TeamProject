@@ -565,25 +565,6 @@ void CEnemy::ManageGroggy(const _float dt)
 
 DIR CEnemy::GetDIRToPlayer()
 {
-	//_vector vSelfLook = m_tTargetingInfo.vDirSelfLook;
-	//vSelfLook = XMVectorSetY(vSelfLook, 0.f);
-	//_vector vSelfPos = m_tTargetingInfo.vSelfPos;
-	//vSelfPos = XMVectorSetY(vSelfPos, 0.f);
-	//_vector vPlayerPos = m_tTargetingInfo.vTargetPos;
-	//vPlayerPos = XMVectorSetY(vPlayerPos, 0.f);
-	//_vector vTo = m_tTargetingInfo.vDirToTarget;
-	//vTo = XMVectorSetY(vTo, 0.f);
-
-	// 너무 가까우면 정면으로 간주
-	//if (XMVectorGetX(XMVector3LengthSq(vTo)) < 1e-8f)
-	//	return DIR::F;
-
-	//vTo = XMVector3Normalize(vTo);
-
-	//_vector vForward = XMVector3Normalize(vSelfLook);
-
-	//_float fDot = XMVectorGetX(XMVector3Dot(vForward, vTo))
-
 	_float fwdX = XMVectorGetX(m_tTargetingInfo.vDirSelfLook);
 	_float fwdZ = XMVectorGetZ(m_tTargetingInfo.vDirSelfLook);
 	_float targetX = XMVectorGetX(m_tTargetingInfo.vDirToTarget);
@@ -684,6 +665,9 @@ void CEnemy::SetAutoPlayBattleCollider(const string& tagBattleCollider, _float f
 void CEnemy::RequestRemoveOnDeathToBattleSystem()
 {
 	BattleSystem()->ExitBattleObject(CBattleSystem::BATTLE_OBJ_TYPE::MONSTER, this->Get_Handle());
+
+	if (true == m_hUIEnemyStatus.isValid())
+		UIManager()->Remove_UIObject(m_hUIEnemyStatus.Get());
 }
 
 void CEnemy::Death()
@@ -748,6 +732,7 @@ void CEnemy::CheckAutoBattlePlay(const _float dt)
 
 		if (true == m_tAutoBattleCol.IsAttackColFinish())
 		{
+			SetOnAttack(false);
 			FinishBattleColliderObject(m_tAutoBattleCol.tagBattleCollider);
 			m_tAutoBattleCol.vAttackColLifeTime.y = 0.f;
 			m_tAutoBattleCol.isAttackColliderPlay = false;

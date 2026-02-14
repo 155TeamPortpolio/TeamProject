@@ -85,6 +85,7 @@ HRESULT CStrikeJaeger::Initialize(INIT_DESC* pArg)
 void CStrikeJaeger::Awake()
 {
 	__super::Awake();
+	//m_fDeathSqueneDuration = 1.f;
 }
 
 void CStrikeJaeger::Priority_Update(_float dt)
@@ -118,6 +119,7 @@ void CStrikeJaeger::Render_GUI()
 	const float textLineHeight = ImGui::GetTextLineHeightWithSpacing();
 	const float childHeight = (textLineHeight * 5) + (ImGui::GetStyle().WindowPadding.y * 2);
 
+	GUI_DebugButton();
 #pragma region Component Inspector
 	if (ImGui::TreeNode("Inspector##ThugBulkyInspector")) {
 		__super::Render_GUI();
@@ -217,7 +219,9 @@ void CStrikeJaeger::Render_GUI()
 	ImGui::Checkbox("Auto Pattern", &m_isAutoPatternPlay);
 #pragma endregion
 
-
+	_float fDeathDisappearProgress = m_pStateMachine->Get_Float("DeathDisappearProgress");
+	if (ImGui::DragFloat("DeathDisappearProgress", &fDeathDisappearProgress, 0.01f))
+		m_pStateMachine->Set_Float("DeathDisappearProgress", fDeathDisappearProgress);
 
 	ImGui::PopID();
 }
@@ -407,11 +411,11 @@ HRESULT CStrikeJaeger::Ready_Rules()
 	// x = Idle에서 다음 상태로 넘어가는 쿨타임, y = dt 더한 타이머용
 	m_vIdleTime = { 1.f, 0.f };
 
-	m_tHysteriesis.fEvadeEnter = 2.f;
-	m_tHysteriesis.fComboEnter = 3.f;
-	m_tHysteriesis.fComboExit = 5.5f;
-	m_tHysteriesis.fChaseEnter = 8.f;
-	m_tHysteriesis.fChaseExit = 6.f;
+	m_tHysteriesis.fEvadeEnter = 1.f;
+	m_tHysteriesis.fComboEnter = 2.f;
+	m_tHysteriesis.fComboExit = 3.5f;
+	m_tHysteriesis.fChaseEnter = 5.f;
+	m_tHysteriesis.fChaseExit = 4.f;
 
 	return S_OK;
 }
