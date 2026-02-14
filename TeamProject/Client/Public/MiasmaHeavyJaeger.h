@@ -48,6 +48,7 @@ private:
 
 private:
     _bool m_LockedOn = { false };
+    _bool m_bStopMove = { false };
     _vector3 m_vCurrentDir = {};
     _vector3 m_vVelocity = {};
     DefilerDissolve m_Dissolve;

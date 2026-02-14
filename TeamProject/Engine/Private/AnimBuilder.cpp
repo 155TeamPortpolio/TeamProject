@@ -58,6 +58,7 @@ HRESULT SetAnimBuild::Apply()
 	}
 
 	Layer.fCurrentTrackPosition = m_fStartAt * m_pOwner->m_pAnimClips[m_iClipIndex]->Get_Duration();
+	Layer.fPrevTrackPosition = Layer.fCurrentTrackPosition;
 
 	//애니매이션 기본
 	Layer.bLoop = m_bLoop;
@@ -176,6 +177,7 @@ HRESULT ChangeAnimBuild::Apply()
 	Layer.bIgnoreRotation = m_bIgnoreRotation;
 	Layer.iNextClipIndex = m_iClipIndex;
 	Layer.fBlendTrackPosition = m_fStartAt * m_pOwner->m_pAnimClips[m_iClipIndex]->Get_Duration();
+	Layer.fPrevTrackPosition = Layer.fBlendTrackPosition;
 	Layer.fBlendElapsed = 0.f;
 	Layer.fBlendDuration = m_fBlendDuration;
 	Layer.eBlendEaseType = m_eBlendEaseType;

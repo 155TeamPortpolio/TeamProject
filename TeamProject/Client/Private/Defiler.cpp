@@ -71,8 +71,8 @@ HRESULT CDefiler::Initialize(INIT_DESC* pArg)
 {
 	__super::Initialize(pArg);
 	Get_Component<CAudioSource>()->SoundFolder("Zero_Level","../Bin/Resources/Zero/Enemy/Defiler_Isolde/Sound/");
-	Get_Component<CCharacterController>()->Set_BoundingMinY(0.4f);
-
+	Get_Component<CCharacterController>()->Set_BoundingMinY(0.6f);
+	Get_Component<CCharacterController>()->Set_GravityEnabled(false);
 	m_eEnemyClass = ENEMY_CLASS::BOSS;
 	vector<_uint> ProMeshes = Get_Component<CSkeletalModel>()->Hide_MehsByName("Pro");
 	vector<_uint> WeaponMeshes = Get_Component<CSkeletalModel>()->Show_MehsByName("Weapon");
@@ -133,7 +133,7 @@ void CDefiler::Priority_Update(_float dt)
 	Update_States(dt);
 
 	if (InputDevice()->Key_Tap('F')) {
-		Control_Summon("Heavy");
+		Control_Summon("Grandier");
 	}
 	if (InputDevice()->Key_Tap('H')) {
 		Control_Summon("Wave");
@@ -155,20 +155,41 @@ void CDefiler::Update(_float dt)
 	}
 
 	auto animatorPtr = Get_Component<CAnimator3D>();
-	animatorPtr->Update_Animation(dt);
+	if (m_isParried) {
+		m_fParriedElapsed += dt;
+		if (m_fParriedElapsed > 0.2f) {
+			m_fParriedElapsed = 0.f;
+			m_isParried = false;
+		}
+	}
+	else {
+		animatorPtr->Update_Animation(dt);
+	}
 
 	Route_AnimEvent(animatorPtr);
 	
 	MoveByTraceMode(dt);
 	RotateToTarget(dt, 4.f);
+	Update_Dissolve(dt);
+
 	Get_Component<CCharacterController>()->Update(dt);
-	
-	m_pStateMachine->Update(dt);
 	Get_Component<CObjectContainer>()->UpdateChild(dt);
+
+	Get_Component<CAudioSource>()->Set_AudioPos(Get_BipedPos(), 
+		Get_Component<CCharacterController>()->Get_Velocity());
+	m_pStateMachine->Update(dt);
 }
 
 void CDefiler::Late_Update(_float dt)
 {
+	if (m_isRecovering && m_tStatus.iNowHP < m_tStatus.iMaxHP) {
+		m_tStatus.iNowHP += dt* m_tStatus.iMaxHP;
+		if (m_tStatus.iMaxHP <= m_tStatus.iNowHP) {
+			m_tStatus.iNowHP = m_tStatus.iMaxHP;
+			m_isRecovering = false;
+		}
+	}
+
 	Get_Component<CCharacterController>()->Late_Update(dt);
 }
 
@@ -257,8 +278,8 @@ void CDefiler::Parried()
 	if (false == m_isParryEnable)
 		return;
 
-	m_tStatus.iGroggyValue += 5.f;
- 
+	m_tStatus.iGroggyValue += 1.5f;
+	m_isParried = true;
 }
 
 void CDefiler::MoveByTraceMode(_float dt, _float moveScale)
@@ -284,7 +305,6 @@ void CDefiler::MoveByTraceMode(_float dt, _float moveScale)
 	/*이동량(y제외)*/
 	_vector3 rootDeltaH = rootDeltaLocal;
 	rootDeltaH.y = 0.f;
-
 	if (ignoreTarget)
 	{
 		const _vector3 velocityWorld = rootDeltaH / dt;
@@ -301,7 +321,7 @@ void CDefiler::MoveByTraceMode(_float dt, _float moveScale)
 	toTarget.y = 0.f;
 
 	const _float distToTarget = toTarget.Length();
-	if (distToTarget <= 2.f)
+	if (distToTarget <= 2.f&& !allowThrough)
 		return;
 
 	const _vector3 dirToTarget = toTarget / distToTarget;
@@ -320,7 +340,7 @@ void CDefiler::MoveByTraceMode(_float dt, _float moveScale)
 		else
 			m_BlackBoard.CurrentDir.Normalize();
 
-		const _float unlockDist = 5.f;
+		const _float unlockDist = allowThrough ? 15.f: 5.f;
 
 		if (allowThrough)
 		{
@@ -337,9 +357,9 @@ void CDefiler::MoveByTraceMode(_float dt, _float moveScale)
 
 			if (!m_bDirLockedNear)
 			{
-				const _float dampSpeed = 50.f;
+				const _float dampSpeed = 20.f;
 				const _float align = m_BlackBoard.CurrentDir.Dot(dirToTarget);
-				const _bool blockFlip = (allowThrough && m_passDampTime > 0.f); // "지나간 직후" 구간만
+				const _bool blockFlip = (allowThrough && m_passDampTime > 0.f); 
 				if (!blockFlip || align > 0.f)
 					m_BlackBoard.CurrentDir = Math::DampVector(m_BlackBoard.CurrentDir, dirToTarget, dt, dampSpeed);
 			}
@@ -377,15 +397,13 @@ void CDefiler::MoveByTraceMode(_float dt, _float moveScale)
 	if (moveLenSigned > 0.f)
 	{
 		if (allowThrough && m_passDampTime > 0.f)
-			distScale = 0.4f;
+			distScale = 1.4f;
 		else
 			distScale = 1.f + distToTarget * 1.2f; 
 	}
 
 	const _vector3 velocityWorld = (moveWorld) * distScale;
 	controller->Move_RootMotion(velocityWorld, rootQuatLocal, dt);
-	//	controller->Move_Velocity(velocityWorld, dt);
-	//	m_pTransform->Add_Quaternion(rootQuatLocal);
 }
 
 void CDefiler::RotateToTarget(_float dt, _float rotateSpeed)
@@ -411,7 +429,7 @@ void CDefiler::Update_States(_float dt)
 {
 	if (InputDevice()->Key_Tap('P'))
 	{
-		m_tStatus.iNowHP = m_tStatus.iMaxHP * 0.1f;
+		m_tStatus.iNowHP = m_tStatus.iMaxHP * 0.02f;
 		m_tStatus.iGroggyValue = 99;
 	}
 	if ("Groggy" != m_pStateMachine->Get_CurrentStateName()
@@ -429,7 +447,9 @@ void CDefiler::Route_AnimEvent(CAnimator3D* animator)
 		switch (instance.Type)
 		{
 		case CLIP_EVENT_TYPE::NOTIFY:
-			if (instance.Tag == "ParrySign")
+			if (instance.Tag == "ShowMesh_Pro")
+				Show_MeshGroup("Pro");
+			else if (instance.Tag == "ParrySign")
 				UnleashAttack(CEnemy::ATTACK_SIDE::NONE, true);
 			else if (instance.Tag == "EvadeSign")
 				UnleashAttack(CEnemy::ATTACK_SIDE::NONE, false);
@@ -493,12 +513,21 @@ void CDefiler::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER cha
 	if (m_tStatus.isGroggy)
 		fTakeDamage *= 1.5f;
 	else
-		m_tStatus.iGroggyValue += 2;
+		m_tStatus.iGroggyValue += 0.5f;
 
-	m_tStatus.iNowHP -= fTakeDamage;
+	if(!m_isRecovering)
+		m_tStatus.iNowHP -= fTakeDamage;
 
-	if (0 >= m_tStatus.iNowHP)
+	if (0 >= m_tStatus.iNowHP) {
 		m_tStatus.iNowHP = 0.f;
+		m_BlackBoard.BloodPhase++;
+		if (m_BlackBoard.BloodPhase > 4) {
+			m_pStateMachine->Set_Trigger("Death");
+		}
+		else {
+			m_isRecovering = true;
+		}
+	}
 
 	if (m_pStateMachine->Get_CurrentState()->Get_StateName() == "Idle") {
 		FOUR_DIR dir = Get_FourDirection();
@@ -722,6 +751,7 @@ HRESULT CDefiler::Initialize_States()
 	m_pStateMachine->Register_State("Idle", CDefilerState_Idle::Create());
 	m_pStateMachine->Register_State("Attack", CDefilerState_Attack::Create());
 	m_pStateMachine->Register_State("Groggy", CDefilerState_Groggy::Create());
+	m_pStateMachine->Register_State("Death", CDefilerState_Death::Create());
 
 	//m_pStateMachine->Register_State("Walk", CSacrificeState_Walk::Create());
 	//m_pStateMachine->Register_State("Hit", CSacrificeState_Hit::Create());
@@ -747,6 +777,10 @@ HRESULT CDefiler::Initialize_Transitions()
 	// Attack
 	m_pStateMachine->Register_AnyStateTransition("Idle",
 		CStateMachine<CDefiler>::CONDITION_TRIGGER, "Idle");
+
+	// Attack
+	m_pStateMachine->Register_AnyStateTransition("Death",
+		CStateMachine<CDefiler>::CONDITION_TRIGGER, "Death");
 
 	return S_OK;
 }

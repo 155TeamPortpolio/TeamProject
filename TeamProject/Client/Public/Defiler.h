@@ -60,6 +60,7 @@ public:
 public:
     void Parried() override;
     void StopSlashEff();
+
 private:
     void MoveByTraceMode(_float dt, _float moveScale = 1.f);
     void RotateToTarget(_float dt, _float rotateSpeed = 1.f);
@@ -93,7 +94,7 @@ private:
     _bool m_bDirLockedNear = false;
     _float m_passDampTime = 0.f;
 
-    vector<CEffectContainer*> m_SlashEffects;
+    _bool m_isRecovering = false;
 
 public:
     static CDefiler* Create();

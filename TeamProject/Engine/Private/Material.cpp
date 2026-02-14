@@ -187,6 +187,9 @@ void CMaterial::Render_GUI()
 	if(ImGui::Button("Material Tabs")) {
 		m_bMaterialTabOpen = true;
 	}
+	if(ImGui::Button("Material BlendHasAlpha")) {
+		SetBlendHasAlpha(AlphaCheckLevel::Precise, "Blend");
+	}
 	
 	if(m_bMaterialTabOpen){
 		ImGui::SetNextWindowSize(ImVec2(800, 400), ImGuiCond_FirstUseEver);

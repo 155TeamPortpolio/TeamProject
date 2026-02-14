@@ -86,11 +86,6 @@
           "EventTime": 1.458298921585083,
           "EventType": "Notify",
           "EventTag": "A_Type_Off"
-        },
-        {
-          "EventTime": 2.5803325176239014,
-          "EventType": "Sound",
-          "EventTag": "DefilerSwingBase.wav"
         }
       ]
     },
@@ -363,14 +358,44 @@
           "EventTag": "DefilerSwingBase.wav"
         },
         {
+          "EventTime": 1.225990891456604,
+          "EventType": "Sound",
+          "EventTag": "DefilerHitGround2.wav"
+        },
+        {
           "EventTime": 1.283820629119873,
           "EventType": "Sound",
           "EventTag": "DefilerSwing3.wav"
         },
         {
+          "EventTime": 1.5099999904632568,
+          "EventType": "Sound",
+          "EventTag": "Defiler_Slash.wav"
+        },
+        {
+          "EventTime": 1.6100000143051147,
+          "EventType": "Sound",
+          "EventTag": "Defiler_Slash.wav"
+        },
+        {
           "EventTime": 1.7464587688446045,
           "EventType": "Notify",
           "EventTag": "EvadeSign"
+        },
+        {
+          "EventTime": 1.7699999809265137,
+          "EventType": "Sound",
+          "EventTag": "Defiler_Slash.wav"
+        },
+        {
+          "EventTime": 1.840000033378601,
+          "EventType": "Sound",
+          "EventTag": "Defiler_Slash.wav"
+        },
+        {
+          "EventTime": 1.899999976158142,
+          "EventType": "Sound",
+          "EventTag": "Defiler_Slash2.wav"
         },
         {
           "EventTime": 2.058739423751831,
@@ -383,6 +408,11 @@
           "EventTag": "E_Type_On"
         },
         {
+          "EventTime": 2.197530746459961,
+          "EventType": "Sound",
+          "EventTag": "Defiler_Slash.wav"
+        },
+        {
           "EventTime": 2.428849935531616,
           "EventType": "Notify",
           "EventTag": "E_Type_Off"
@@ -391,6 +421,11 @@
           "EventTime": 2.440415859222412,
           "EventType": "Notify",
           "EventTag": "TargetLockOff"
+        },
+        {
+          "EventTime": 2.4982457160949707,
+          "EventType": "Sound",
+          "EventTag": "Defiler_Slash2.wav"
         },
         {
           "EventTime": 2.729564666748047,
@@ -475,12 +510,17 @@
         {
           "EventTime": 1.8391162157058716,
           "EventType": "Sound",
-          "EventTag": "Defiler_Light.wav"
+          "EventTag": "DefilerSwing2.wav"
         },
         {
           "EventTime": 1.8843404054641724,
           "EventType": "Notify",
           "EventTag": "ParrySign"
+        },
+        {
+          "EventTime": 1.9295645952224731,
+          "EventType": "Sound",
+          "EventTag": "Defiler_Slash2.wav"
         },
         {
           "EventTime": 2.0049381256103516,
@@ -490,7 +530,7 @@
         {
           "EventTime": 2.035087823867798,
           "EventType": "Sound",
-          "EventTag": "Defiler_Light2.wav"
+          "EventTag": "DefilerSwing4.wav"
         },
         {
           "EventTime": 2.140000104904175,
@@ -498,9 +538,14 @@
           "EventTag": "I_Type_Off"
         },
         {
+          "EventTime": 2.1556854248046875,
+          "EventType": "Sound",
+          "EventTag": "Defiler_Slash2.wav"
+        },
+        {
           "EventTime": 2.2310590744018555,
           "EventType": "Sound",
-          "EventTag": "Defiler_Light.wav"
+          "EventTag": "DefilerSwing2.wav"
         },
         {
           "EventTime": 2.240000009536743,
@@ -513,6 +558,11 @@
           "EventTag": "I_Type_On"
         },
         {
+          "EventTime": 2.396881103515625,
+          "EventType": "Sound",
+          "EventTag": "Defiler_Slash2.wav"
+        },
+        {
           "EventTime": 2.4000000953674316,
           "EventType": "Notify",
           "EventTag": "I_Type_Off"
@@ -520,7 +570,7 @@
         {
           "EventTime": 2.5174789428710938,
           "EventType": "Sound",
-          "EventTag": "Defiler_Light2.wav"
+          "EventTag": "Defiler_Slash2.wav"
         },
         {
           "EventTime": 2.5325534343719482,
@@ -545,7 +595,7 @@
         {
           "EventTime": 2.8491227626800537,
           "EventType": "Sound",
-          "EventTag": "Defiler_Light.wav"
+          "EventTag": "Defiler_Slash2.wav"
         },
         {
           "EventTime": 2.940000057220459,
@@ -563,7 +613,7 @@
           "EventTag": "ParrySign"
         },
         {
-          "EventTime": 3.87420392036438,
+          "EventTime": 3.809999942779541,
           "EventType": "Sound",
           "EventTag": "DefilerSwingBase.wav"
         },
@@ -643,6 +693,11 @@
       "ClipTag": "Monster_IsoldetheDefiler_Ani_Attack_04",
       "Events": [
         {
+          "EventTime": 0.4595191776752472,
+          "EventType": "Sound",
+          "EventTag": "Defiler_Entrance.wav"
+        },
+        {
           "EventTime": 1.4934372901916504,
           "EventType": "Notify",
           "EventTag": "ParrySign"
@@ -653,9 +708,14 @@
           "EventTag": "TargetLockOn"
         },
         {
-          "EventTime": 1.8300000429153442,
+          "EventTime": 1.7699999809265137,
           "EventType": "Sound",
           "EventTag": "DefilerSwingBase.wav"
+        },
+        {
+          "EventTime": 1.7999999523162842,
+          "EventType": "Sound",
+          "EventTag": "DefilerSwing2.wav"
         },
         {
           "EventTime": 1.8910980224609375,
@@ -693,9 +753,24 @@
           "EventTag": "ParrySign"
         },
         {
+          "EventTime": 0.7799999713897705,
+          "EventType": "Sound",
+          "EventTag": "Defiler_Entrance.wav"
+        },
+        {
+          "EventTime": 0.8871326446533203,
+          "EventType": "Sound",
+          "EventTag": "Defiler_Fierce.wav"
+        },
+        {
           "EventTime": 0.9276152849197388,
           "EventType": "Notify",
           "EventTag": "A_Type_On"
+        },
+        {
+          "EventTime": 0.9713624715805054,
+          "EventType": "Sound",
+          "EventTag": "Defiler_Slash.wav"
         },
         {
           "EventTime": 1.190000057220459,
@@ -718,9 +793,19 @@
           "EventTag": "EvadeSign"
         },
         {
+          "EventTime": 0.5799999833106995,
+          "EventType": "Sound",
+          "EventTag": "Defiler_Laser.wav"
+        },
+        {
           "EventTime": 0.7517868280410767,
           "EventType": "Notify",
           "EventTag": "Laser"
+        },
+        {
+          "EventTime": 1.8899999856948853,
+          "EventType": "Sound",
+          "EventTag": "Defiler_Laser.wav"
         },
         {
           "EventTime": 2.052945375442505,
@@ -733,6 +818,11 @@
           "EventTag": "Laser"
         },
         {
+          "EventTime": 3.119999885559082,
+          "EventType": "Sound",
+          "EventTag": "Defiler_Laser.wav"
+        },
+        {
           "EventTime": 3.130000114440918,
           "EventType": "Notify",
           "EventTag": "EvadeSign"
@@ -741,6 +831,26 @@
           "EventTime": 3.4119558334350586,
           "EventType": "Notify",
           "EventTag": "Laser"
+        },
+        {
+          "EventTime": 2.559999942779541,
+          "EventType": "Sound",
+          "EventTag": "Defiler_Charge02.wav"
+        },
+        {
+          "EventTime": 0.7599999904632568,
+          "EventType": "Sound",
+          "EventTag": "LaserFire01.wav"
+        },
+        {
+          "EventTime": 2.1512670516967773,
+          "EventType": "Sound",
+          "EventTag": "LaserFire01.wav"
+        },
+        {
+          "EventTime": 3.4235217571258545,
+          "EventType": "Sound",
+          "EventTag": "LaserFire02.wav"
         }
       ]
     },
@@ -751,6 +861,11 @@
           "EventTime": 2.2923977375030518,
           "EventType": "Notify",
           "EventTag": "ParrySign"
+        },
+        {
+          "EventTime": 2.5380117893218994,
+          "EventType": "Sound",
+          "EventTag": "Defiler_Slash.wav"
         },
         {
           "EventTime": 2.5799999237060547,
@@ -766,6 +881,11 @@
           "EventTime": 2.885964870452881,
           "EventType": "Notify",
           "EventTag": "ParrySign"
+        },
+        {
+          "EventTime": 3.140000104904175,
+          "EventType": "Sound",
+          "EventTag": "Defiler_Slash.wav"
         },
         {
           "EventTime": 3.200000047683716,
@@ -791,6 +911,11 @@
           "EventTime": 4.277777671813965,
           "EventType": "Notify",
           "EventTag": "Blade"
+        },
+        {
+          "EventTime": 4.289999961853027,
+          "EventType": "Sound",
+          "EventTag": "Defiler_Slash.wav"
         },
         {
           "EventTime": 4.80994176864624,
@@ -836,7 +961,18 @@
     },
     {
       "ClipTag": "Monster_IsoldetheDefiler_Ani_Attack_08_01_End",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.1899999976158142,
+          "EventType": "Sound",
+          "EventTag": "DefilerFalling.wav"
+        },
+        {
+          "EventTime": 0.550000011920929,
+          "EventType": "Sound",
+          "EventTag": "DefilerWeaponGround.wav"
+        }
+      ]
     },
     {
       "ClipTag": "Monster_IsoldetheDefiler_Ani_Attack_08_01_Loop",
@@ -844,11 +980,28 @@
     },
     {
       "ClipTag": "Monster_IsoldetheDefiler_Ani_Attack_08_01_Start",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.41981804370880127,
+          "EventType": "Sound",
+          "EventTag": "Defiler_Entrance.wav"
+        },
+        {
+          "EventTime": 1.9171810150146484,
+          "EventType": "Sound",
+          "EventTag": "Defiler_Change.wav"
+        }
+      ]
     },
     {
       "ClipTag": "Monster_IsoldetheDefiler_Ani_Attack_08_02",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.8999999761581421,
+          "EventType": "Sound",
+          "EventTag": "DefilerHitGround.wav"
+        }
+      ]
     },
     {
       "ClipTag": "Monster_IsoldetheDefiler_Ani_Attack_09_End",
@@ -867,6 +1020,11 @@
           "EventTag": "TsunamiStart"
         },
         {
+          "EventTime": 2.619999885559082,
+          "EventType": "Sound",
+          "EventTag": "Defiler_Fierce.wav"
+        },
+        {
           "EventTime": 2.700000047683716,
           "EventType": "Notify",
           "EventTag": "Weapon"
@@ -875,6 +1033,11 @@
           "EventTime": 3.0,
           "EventType": "Notify",
           "EventTag": "WeaponShow"
+        },
+        {
+          "EventTime": 3.0,
+          "EventType": "Sound",
+          "EventTag": "Defiler_Fierce.wav"
         },
         {
           "EventTime": 3.369999885559082,
@@ -887,6 +1050,11 @@
           "EventTag": "WeaponShow"
         },
         {
+          "EventTime": 4.96999979019165,
+          "EventType": "Sound",
+          "EventTag": "Defiler_Fierce.wav"
+        },
+        {
           "EventTime": 5.024691104888916,
           "EventType": "Notify",
           "EventTag": "Weapon"
@@ -895,12 +1063,38 @@
           "EventTime": 6.300000190734863,
           "EventType": "Notify",
           "EventTag": "WeaponShow"
+        },
+        {
+          "EventTime": 4.940000057220459,
+          "EventType": "Sound",
+          "EventTag": "DefilerSwingBase.wav"
         }
       ]
     },
     {
       "ClipTag": "Monster_IsoldetheDefiler_Ani_Attack_Grab_01",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 1.2899999618530273,
+          "EventType": "Notify",
+          "EventTag": "EvadeSign"
+        },
+        {
+          "EventTime": 1.5062668323516846,
+          "EventType": "Notify",
+          "EventTag": "TargetLockOn"
+        },
+        {
+          "EventTime": 2.690000057220459,
+          "EventType": "Sound",
+          "EventTag": "Defiler_Fierce.wav"
+        },
+        {
+          "EventTime": 3.2077972888946533,
+          "EventType": "Notify",
+          "EventTag": "TargetLockOff"
+        }
+      ]
     },
     {
       "ClipTag": "Monster_IsoldetheDefiler_Ani_Attack_Summon",
@@ -952,7 +1146,13 @@
     },
     {
       "ClipTag": "Monster_IsoldetheDefiler_Ani_EtherBarrier",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 2.077777862548828,
+          "EventType": "Notify",
+          "EventTag": "ShowMesh_Pro"
+        }
+      ]
     },
     {
       "ClipTag": "Monster_IsoldetheDefiler_Ani_Evade",
