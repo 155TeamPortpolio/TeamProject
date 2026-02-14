@@ -203,6 +203,7 @@ void COrbitCam::CaptureSnapshot(OrbitSnapshot& out) const
 void COrbitCam::RestoreSnapshot(const OrbitSnapshot& s)
 {
     m_target = s.target;
+
     m_pose = s.pose;
 
     m_lock = s.lock;

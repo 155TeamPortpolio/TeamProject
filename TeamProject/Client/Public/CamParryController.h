@@ -10,6 +10,7 @@ class CamParryController
     {
         None, Enter, Impact, Hold, End
     };
+
     struct ShotGoal
     {
         Vector3 pivotExt{};
@@ -21,6 +22,7 @@ class CamParryController
         _float  yawWeight = 1.f;
         _float  baseVictimWeight = 0.f;
     };
+
     struct PivotSample
     {
         Vector3 basePivot{};
@@ -33,9 +35,10 @@ public:
     {
         struct Common
         {
-            _float enterSec = 1.5f;
-            _float impactSec = 2.f;
-            _float holdSec = 0.f;
+            _float enterSec = 0.3f;
+            _float impactSec = 0.5f;
+            //_float holdSec = 2.f;
+            _float holdSec = 0.1f;
 
             _float pitchDeg = -8.f;
             _float dist = 2.85f;
@@ -57,10 +60,11 @@ public:
             _float minPivotAboveFootY = 0.25f;
             _float minCamAboveFootY = 0.05f;
 
-            EaseType approachEase = EaseType::OutCubic;
+            EaseType approachEase = EaseType::InOutSine;
             EaseType holdEase = EaseType::InOutSine;
-            EaseType impactEase = EaseType::OutQuad;
+            EaseType impactEase = EaseType::OutCubic;
         };
+
         struct Impact
         {
             _float punchDistDelta = 0.75f;
@@ -76,10 +80,31 @@ public:
             _float rollShakeDeg = 2.0f;
 
             _float rollArcMul = 0.35f;
+
+            _float endCamAboveFootY = 0.9f;
+            _float targetCamYMix = 0.80f;
+            _float pivotDropY = 0.12f;
+        };
+
+        struct Hold
+        {
+            _float riseRatio = 0.35f;
+
+            _float risePitchLiftDeg = 10.f;
+            _float riseDistAdd = 0.35f;
+            _float pivotUp = 0.12f;
+
+            _float riseYawSweepDeg = 0.f;
+
+            _float fovRestoreMid01 = 0.35f;
+
+            EaseType riseEase = EaseType::OutSine;
+            EaseType returnEase = EaseType::InOutSine;
         };
 
         Common common{};
         Impact impact{};
+        Hold   hold{};
     };
 
 public:
@@ -111,7 +136,6 @@ private:
     void      ClampAboveGround(ShotGoal& g) const;
 
     ShotGoal  BuildBaseShot(_int sideSign) const;
-    ShotGoal  BuildImpactShot(_int sideSign, _float close01, _float roll01) const;
 
     void      CaptureCurAsFrom();
     void      ApplyInterpolated(const ShotGoal& a, const ShotGoal& b, _float t);
@@ -122,6 +146,9 @@ private:
 
     void      CaptureCurAsImpactBase();
     ShotGoal  BuildImpactShot(_int sideSign, _float close01, _float roll01, _float u) const;
+
+    void      PrepareHold(const ShotGoal& impactEnd);
+    void      ApplyHoldOrbitReturn(_float u);
 
 private:
     _bool         m_active = false;
@@ -148,7 +175,12 @@ private:
     ShotGoal      m_shotTo{};
 
     ShotGoal      m_holdFrom{};
+    ShotGoal      m_holdMid{};
     ShotGoal      m_holdTo{};
+
+    Vector3       m_holdPivotFromWorld{};
+    Vector3       m_holdPivotMidWorld{};
+    Vector3       m_holdPivotToWorld{};
 
     OrbitSnapshot m_prevOrbit{};
     _bool         m_prevOrbitCaptured = false;

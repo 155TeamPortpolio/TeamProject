@@ -133,6 +133,15 @@ namespace
             return req;
         }
 
+        if (StartsWith(key, "Parry"))
+        {
+            req.blendInSec  = 1.f;
+            req.blendOutSec = 0.f;
+            req.resetTime   = true;
+            req.returnMode  = CamReturnMode::SnapToEnd;
+            req.blendInEase = EaseType::InOutSine;
+        }
+
         req.blendInSec  = 0.f;
         req.blendOutSec = 0.f;
         req.resetTime   = true;

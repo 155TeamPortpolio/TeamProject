@@ -247,6 +247,11 @@ void CCamDirector::EndDialog()
     GetOrbitCam()->Unlock_Input();
 }
 
+void CCamDirector::StartParry()
+{
+    m_parry.Begin();
+}
+
 void CCamDirector::UpdatePlayer()
 {
     const _int type = ENUM(GetPlayer()->Get_PlayerType());

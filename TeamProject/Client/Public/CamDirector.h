@@ -72,7 +72,7 @@ public:
     void          EndWipeOut() { m_wipeOut.End(); }
     void          EndDialog();
 
-    void          StartParry() { m_parry.Begin(); }
+    void          StartParry();
     void          EndParry() { m_parry.End(); }
 
     void          AbortSequenceToOrbit(_bool resetTime);
