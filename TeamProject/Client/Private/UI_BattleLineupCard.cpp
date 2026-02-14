@@ -50,7 +50,9 @@ void CUI_BattleLineupCard::Create_RenderTarget()
 
     pObj->Set_Pivot(_float2(0.5f, 0.5f));
     pObj->Set_Anchor(ANCHOR::Center);
-    pObj->Set_Size(_float2(500.f, 500.f));
+    pObj->Set_Size(m_WinSize);
+
+    //pObj->Set_Size(_float2(500.f, 500.f));
 
     Get_Component<CObjectContainer>()->Add_Child(pObj);
 }
