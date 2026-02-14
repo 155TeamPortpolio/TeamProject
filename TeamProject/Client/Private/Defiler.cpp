@@ -133,7 +133,7 @@ void CDefiler::Priority_Update(_float dt)
 	Update_States(dt);
 
 	if (InputDevice()->Key_Tap('F')) {
-		Control_Summon("Blade");
+		Control_Summon("Heavy");
 	}
 	if (InputDevice()->Key_Tap('H')) {
 		Control_Summon("Wave");
@@ -558,7 +558,6 @@ void CDefiler::Control_Summon(const string& event)
 {
 	string levelKey = LevelManager()->Get_NowLevelKey();
 	if (event == "Blade") {
-		
 		m_MiasmaSpawner.Spawn(MiasmaType::Blade, 1, m_tTargetingInfo.vTargetPos, Get_BipedPos("Ctr_M_Prop_01"),
 			m_tTargetingInfo.vTargetPos.y, this);
 	}

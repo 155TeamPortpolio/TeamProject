@@ -30,7 +30,7 @@ CAudioSource::AUDIO_SLOT& CAudioSource::SlotBuilder::Play()
 
 	const bool needFadeIn = ownerSlot.hasPendingFadeIn;
 
-	ownerRef.Play(ownerSlot.Key, true, false);
+	ownerRef.Play(ownerSlot.Key, false, false);
 
 	if (needFadeIn && ownerSlot.pChanel)
 	{
@@ -81,7 +81,7 @@ HRESULT CAudioSource::Add_Slot(const string& levelTag, const string& SoundKey)
 	auto [it, inserted] = m_Audios.emplace(SoundKey, audioSlot);
 	if (!inserted)
 	{
-		MSG_BOX("There is Same Key Audio : CAudioSource");
+		//MSG_BOX("There is Same Key Audio : CAudioSource");
 		Safe_Release(audioSlot.pSound);
 		return E_FAIL;
 	}
@@ -232,9 +232,19 @@ void CAudioSource::Set_SlotStop(const string& slotKey)
 	slot.pChanel->stop();
 }
 
-void CAudioSource::Set_AudioPos(_vector3 pos)
+void CAudioSource::Set_AudioPos(_vector3 pos, _vector3 velocity)
 {
 	m_vPos = { pos.x,pos.y,pos.z };
+	m_vVelocity = { velocity.x,velocity.y,velocity.z };
+	for (auto& sound : m_Audios) {
+		auto& slot = sound.second;
+		if (slot.is3DAttribute && slot.pSound) {
+			_bool isPlaying = { false };
+			slot.pChanel->isPlaying(&isPlaying);
+			if (isPlaying)
+				slot.pChanel->set3DAttributes(&m_vPos, &m_vVelocity);
+		}
+	}
 }
 
 void CAudioSource::Set_3DAttribute(const string& slotKey, _bool _3DAttribute)
@@ -330,6 +340,7 @@ void CAudioSource::FadeIn_Volume(const string& slotKey, _float durationSec, _flo
 	// ? 이제 재생 시작
 	channel->setPaused(false);
 }
+
 void CAudioSource::Play(const string& soundKey, _bool continuePlay, _bool startPaused)
 {
 	auto it = m_Audios.find(soundKey);
@@ -338,7 +349,6 @@ void CAudioSource::Play(const string& soundKey, _bool continuePlay, _bool startP
 	AUDIO_SLOT& slot = it->second;
 	if (!slot.pSound) return;
 
-	// stop 예약된 채널은 절대 재사용 금지
 	if (slot.hasStopScheduled)
 	{
 		if (slot.pChanel)
@@ -348,16 +358,48 @@ void CAudioSource::Play(const string& soundKey, _bool continuePlay, _bool startP
 		}
 		slot.hasStopScheduled = false;
 		slot.stopDspClock = 0;
-		continuePlay = false; // 강제로 리플레이 경로 타게
+		continuePlay = false;
 	}
 
 	_float now = CGameInstance::GetInstance()->Get_TimeMgr()->Get_TotalTime("Audio_Timer");
+
+	const bool wantOverlap = (!continuePlay) && (!slot.isInfinite);
+
+	if (wantOverlap)
+	{
+		// 너무 자주 호출 방지(기존 값 그대로 쓰되, one-shot에만 적용)
+		if (now - slot.lastPlayTime < 0.0017f)
+			return;
+		slot.lastPlayTime = now;
+		Update_Audio(slot);
+
+		FMOD::Channel* newChannel = nullptr;
+
+		AUDIO_PACKET packet{};
+		packet.ppChannelToUpdate = &newChannel; 
+		packet.pSound = slot.pSound;
+		packet.isInfinite = false;
+		packet.isPaused = startPaused;
+		packet.is3DAttribute = slot.is3DAttribute;
+		packet.fVolume = slot.fVolume;
+		packet.iLoopCount = slot.iLoopCount;      // one-shot이면 보통 0 권장
+		packet.eGroup = slot.eGroup;
+		packet.vPosition = &m_vPos;
+
+		m_pAudioDevice->Play(packet);
+
+		if (newChannel)
+			slot.pChannels.push_back(newChannel);
+
+		return; 
+	}
+
+	// ===== 여기 아래는 기존 “키당 1채널” 동작 유지 =====
+
 	if (!continuePlay)
 	{
 		if (now - slot.lastPlayTime < 0.0017f)
-		{
 			return;
-		}
 		slot.lastPlayTime = now;
 	}
 
@@ -382,7 +424,7 @@ void CAudioSource::Play(const string& soundKey, _bool continuePlay, _bool startP
 	packet.ppChannelToUpdate = &slot.pChanel;
 	packet.pSound = slot.pSound;
 	packet.isInfinite = slot.isInfinite;
-	packet.isPaused = startPaused;        // paused-start
+	packet.isPaused = startPaused;
 	packet.is3DAttribute = slot.is3DAttribute;
 	packet.fVolume = slot.fVolume;
 	packet.iLoopCount = slot.isInfinite ? -1 : slot.iLoopCount;
@@ -394,6 +436,22 @@ void CAudioSource::Play(const string& soundKey, _bool continuePlay, _bool startP
 	slot.hasStopScheduled = false;
 	slot.stopDspClock = 0;
 }
+
+void CAudioSource::Update_Audio(AUDIO_SLOT& slot)
+{
+	auto& list = slot.pChannels;
+	for (size_t idx = 0; idx < list.size(); )
+	{
+		bool isPlaying = false;
+		if (!list[idx] || list[idx]->isPlaying(&isPlaying) != FMOD_OK || !isPlaying)
+		{
+			list.erase(list.begin() + idx);
+			continue;
+		}
+		++idx;
+	}
+}
+
 CAudioSource::SequenceBuilder CAudioSource::Sequence(const string& seqKey)
 {
 	auto& seq = m_Sequences[seqKey];

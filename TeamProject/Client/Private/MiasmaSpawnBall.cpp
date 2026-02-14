@@ -140,18 +140,17 @@ void CMiasmaSpawnBall::OnTriggerEnter(CGameObject* pOther)
 void CMiasmaSpawnBall::SpawnJaeger()
 {
 	const string levelKey = LevelManager()->Get_NowLevelKey();
-	CCT_DESC MonsterCCT;
-	MonsterCCT.eGroup = COLLISION_GROUP::MONSTER;
-	MonsterCCT.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER) | ENUM(COLLISION_GROUP::COMMON) | ENUM(COLLISION_GROUP::PLAYER_ATTACK);
-	MonsterCCT.bAutoFit = false;
-	MonsterCCT.fHeight = 1.28f;
-	MonsterCCT.fRadius = 0.85f;
-	MonsterCCT.vPos = m_targetPos;
-	MonsterCCT.vPos.y += MonsterCCT.fHeight;
 
+	COLLIDER_DESC ColDesc = {};
+	ColDesc.eGroup = COLLISION_GROUP::MONSTER;
+	ColDesc.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER_ATTACK) | ENUM(COLLISION_GROUP::PLAYER) ;
+	ColDesc.bTrigger = false;
+	ColDesc.bAutoFit = false;
+	ColDesc.eType = COLLIDER_TYPE::BOX;
+	ColDesc.vSize = { 3.5f, 2.f, 3.f };
 	auto jaeger = Builder::Create_Object({ "Zero_Level", "Proto_GameObject_MiasmaHeavy" })
 		.Position(m_targetPos)
-		.CharacterController(MonsterCCT)
+		.Collider(ColDesc)
 		.Build("MiasmaUnit");
 	ObjectManager()->Add_Object(jaeger, { levelKey, "Enemy_Layer" });
 	BattleSystem()->EnterBattleObject(BATTLE_OBJ_TYPE::MONSTER, jaeger->Get_Handle());

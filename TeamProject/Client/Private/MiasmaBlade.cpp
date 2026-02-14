@@ -30,8 +30,8 @@ HRESULT CMiasmaBlade::Initialize_Prototype()
 
 	Add_Component<CStaticModel>()->Link_Model(G_GlobalLevelKey, "Default.model");
 	Add_Component<CMaterial>()->Link_Material(G_GlobalLevelKey, "Default.mat");
-	Add_Component<CCollider>();
 	Add_Component<CRigidBody>();
+	Add_Component<CCollider>();
 	return S_OK;
 }
 
@@ -59,15 +59,15 @@ HRESULT CMiasmaBlade::Initialize(INIT_DESC* pArg)
 
 	{
 		BATTLE_COLLIDER_DESC BladeDesc{};
-
-		BladeDesc.tagName = "AttackCollider";
+	
+		BladeDesc.tagName = "HEl";
 		BladeDesc.isAttachBone = false;
 		BladeDesc.tagBone = "";
 		BladeDesc.pOwnerAnimator3D = nullptr;
 		BladeDesc.eAttackColliderType = COLLIDER_TYPE::SPHERE;
 		BladeDesc.vAttackSize = _float3{ 2.5f,2.5f,2.5f };
-
-		if (FAILED(AttachBattleColliderObject(&BladeDesc)))
+	
+		if (FAILED(AttachBattleColliderObject(&BladeDesc,false)))
 			return E_FAIL;
 	}
 
@@ -77,7 +77,7 @@ HRESULT CMiasmaBlade::Initialize(INIT_DESC* pArg)
 	HitDesc.fDamage = 10.f;
 	HitDesc.fInterval = 0.f;
 	HitDesc.iMaxCount = 1;
-	SetBattleColliderObject("AttackCollider", CEnemy::BATTLE_COLTYPE::ATTACK, true, HitDesc);
+	SetBattleColliderObject("HEl", CEnemy::BATTLE_COLTYPE::ATTACK, true, HitDesc);
 
 	return S_OK;
 }
@@ -120,8 +120,8 @@ void CMiasmaBlade::Update(_float dt)
 
 void CMiasmaBlade::Late_Update(_float dt)
 {
-	Get_Component<CObjectContainer>()->Late_UpdateChild(dt);
 	Get_Component<CRigidBody>()->Late_Update(dt);
+	Get_Component<CObjectContainer>()->Late_UpdateChild(dt);
 }
 
 void CMiasmaBlade::Render_GUI()
@@ -134,11 +134,11 @@ void CMiasmaBlade::Parried()
 	if (m_pOwner) {
 		isParried = true;
 		_vector3 pos = m_pOwner->Get_BipedPos();
-		m_pTransform->LookAt(pos);/*
+		m_pTransform->LookAt(_vector3(pos));
 		Get_Component<CCollider>()->Set_CollisionMask(ENUM(COLLISION_GROUP::MONSTER));
-		Get_Component<CCollider>()->Set_CollisionGroup(COLLISION_GROUP::PLAYER_ATTACK);*/
+		Get_Component<CCollider>()->Set_CollisionGroup(COLLISION_GROUP::PLAYER_ATTACK);
 		m_vVelocity = {0,0,0};
-		m_ElapsedTime = 0.1;
+		m_ElapsedTime = 1;
 		m_vTargetVelocity = m_pTransform->Dir(STATE::LOOK) * m_fMoveSpeed;
 		Get_Component<CRigidBody>()->Set_Velocity(m_vVelocity);
 	}

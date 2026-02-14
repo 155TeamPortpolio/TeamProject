@@ -95,6 +95,7 @@ void CBattleSystem::SetActive(_bool isActive)
 	if (false == isActive) {
 		m_isActive = false;
 		//ClearBattleStage();
+		m_pFXFlow->Clear();
 		return;
 	}
 	else {
