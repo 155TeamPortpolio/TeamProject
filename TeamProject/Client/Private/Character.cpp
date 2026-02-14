@@ -322,7 +322,7 @@ OBJECT_HANDLE CCharacter::Calculate_Parry()
         }
     }
 
-    m_vParryPos = vAttackPos + vAttackLook * vAttackOffset * 7.5f;
+    m_vParryPos = vAttackPos + vAttackLook * vAttackOffset * 3.f;
     m_vParryPos.y = vPos.y + 1.f;
 
     m_vParryLook = vAttackPos - m_vParryPos;
