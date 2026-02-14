@@ -280,7 +280,8 @@ void CThugBulkyEnforcer_Attack1::Enter(CThugBulkyEnforcer* pOwner)
 {
 	pOwner->Get_Component<CAnimator3D>()->Change_Animation("ThugBulkyEnforcer_Ani_Attack_01")
 		.Apply();
-	pOwner->Active_AttackSign(); 
+	//pOwner->Active_AttackSign(); 
+	pOwner->UnleashAttack(CEnemy::ATTACK_SIDE::RIGHT, true);
 
 	HitDesc hitdesc = {};
 	hitdesc.eDamageType = DAMAGE_TYPE::NORMAL;
@@ -324,7 +325,8 @@ void CThugBulkyEnforcer_Attack2::Enter(CThugBulkyEnforcer* pOwner)
 {
 	pOwner->Get_Component<CAnimator3D>()->Change_Animation("ThugBulkyEnforcer_Ani_Attack_02")
 		.Apply();
-	pOwner->Active_AttackSign();
+	pOwner->UnleashAttack(CEnemy::ATTACK_SIDE::RIGHT, true);
+	//pOwner->Active_AttackSign();
 
 	HitDesc hitdesc = {};
 	hitdesc.eDamageType = DAMAGE_TYPE::NORMAL;
@@ -350,6 +352,7 @@ void CThugBulkyEnforcer_Attack2::Update(CThugBulkyEnforcer* pOwner, _float dt)
 	if (false == m_isSecondAttack && m_fAnimProgress > 0.25f) {
 		pOwner->CaptureRotateDir(pOwner->GetTargetingInfo().vDirToTarget, 10.f);
 		//pOwner->Active_AttackSign();
+		pOwner->SetOnAttack(true, CEnemy::ATTACK_SIDE::LEFT);
 
 		HitDesc hitdesc = {};
 		hitdesc.eDamageType = DAMAGE_TYPE::NORMAL;
@@ -381,7 +384,8 @@ void CThugBulkyEnforcer_Attack3::Enter(CThugBulkyEnforcer* pOwner)
 {
 	pOwner->Get_Component<CAnimator3D>()->Change_Animation("ThugBulkyEnforcer_Ani_Attack_03")
 		.Apply();
-	pOwner->Active_AttackSign();
+	pOwner->UnleashAttack(CEnemy::ATTACK_SIDE::NONE, false);
+	//pOwner->Active_AttackSign();
 	m_isSecondAttack = false;
 
 	HitDesc hitdesc = {};
@@ -406,7 +410,8 @@ void CThugBulkyEnforcer_Attack3::Update(CThugBulkyEnforcer* pOwner, _float dt)
 	// 두번째 공격 시작 이펙트 및 trigger 켜기
 	if (false == m_isSecondAttack && m_fAnimProgress > 0.25f) {
 		pOwner->CaptureRotateDir(pOwner->GetTargetingInfo().vDirToTarget, 10.f);
-		pOwner->Active_AttackSign();
+		pOwner->UnleashAttack(CEnemy::ATTACK_SIDE::NONE, false);
+		//pOwner->Active_AttackSign();
 	
 		HitDesc hitdesc = {};
 		hitdesc.eDamageType = DAMAGE_TYPE::HARD;
@@ -438,7 +443,8 @@ void CThugBulkyEnforcer_Attack4::Enter(CThugBulkyEnforcer* pOwner)
 {
 	pOwner->Get_Component<CAnimator3D>()->Change_Animation("ThugBulkyEnforcer_Ani_Attack_04")
 		.Apply();
-	pOwner->Active_AttackSign();
+	pOwner->UnleashAttack(CEnemy::ATTACK_SIDE::RIGHT, true);
+	//pOwner->Active_AttackSign();
 
 	HitDesc hitdesc = {};
 	hitdesc.eDamageType = DAMAGE_TYPE::HARD;
@@ -480,7 +486,8 @@ void CThugBulkyEnforcer_Attack5_1::Enter(CThugBulkyEnforcer* pOwner)
 	pOwner->Get_Component<CAnimator3D>()->Change_Animation("ThugBulkyEnforcer_Ani_Attack_05_01")
 		.Speed(1.2f)
 		.Apply();
-	pOwner->Active_AttackSign();
+	pOwner->UnleashAttack(CEnemy::ATTACK_SIDE::LEFT, true);
+	//pOwner->Active_AttackSign();
 
 	HitDesc hitdesc = {};
 	hitdesc.eDamageType = DAMAGE_TYPE::NORMAL;
@@ -523,7 +530,8 @@ void CThugBulkyEnforcer_Attack5_2::Enter(CThugBulkyEnforcer* pOwner)
 	pOwner->Get_Component<CAnimator3D>()->Change_Animation("ThugBulkyEnforcer_Ani_Attack_05_02")
 		.Speed(1.2f)
 		.Apply();
-	pOwner->Active_AttackSign();
+	pOwner->UnleashAttack(CEnemy::ATTACK_SIDE::RIGHT, true);
+	//pOwner->Active_AttackSign();
 
 	HitDesc hitdesc = {};
 	hitdesc.eDamageType = DAMAGE_TYPE::NORMAL;
@@ -548,7 +556,8 @@ void CThugBulkyEnforcer_Attack5_2::Update(CThugBulkyEnforcer* pOwner, _float dt)
 	
 	if (false == m_isFinishFirst &&
 		m_fAnimProgress >= 0.25f) {
-		
+		pOwner->SetOnAttack(true, CEnemy::ATTACK_SIDE::LEFT);
+
 		HitDesc hitdesc = {};
 		hitdesc.eDamageType = DAMAGE_TYPE::NORMAL;
 		hitdesc.eHitType = HIT_TYPE::ONCE;

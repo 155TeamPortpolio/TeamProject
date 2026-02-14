@@ -2,16 +2,14 @@
 #include "Claymore.h"
 #include "Claymore_Death.h"
 #include "Helper_Func.h"
-#include "GameInstance.h"
-#include "EffectContainer.h"
 
 #include "Animator3D.h"
 #include "CharacterController.h"
 
-void CClaymore_Death::Enter(CClaymore* pOwner)
+void CClaymore_Death::Enter(CGiant* pOwner)
 {
 	if (nullptr == m_pSubStateMachine) {
-		m_pSubStateMachine = CStateMachine<CClaymore>::Create();
+		m_pSubStateMachine = CStateMachine<CGiant>::Create();
 
 		Register_States();
 		Register_Transitions();
@@ -24,11 +22,9 @@ void CClaymore_Death::Enter(CClaymore* pOwner)
 	}
 	else
 		m_pSubStateMachine->Change_State("DeathFront");
-
-	pOwner->Active_Vanish();
 }
 
-void CClaymore_Death::Update(CClaymore* pOwner, _float dt)
+void CClaymore_Death::Update(CGiant* pOwner, _float dt)
 {
 	_vector3 vRootBoneMoveDelta = pOwner->Get_Component<CAnimator3D>()->Get_RootBoneMoveDelta();
 	_quaternion qRot = pOwner->Get_Component<CTransform>()->Get_QuaternionRotate();
@@ -39,24 +35,11 @@ void CClaymore_Death::Update(CClaymore* pOwner, _float dt)
 
 	__super::Update(pOwner, dt);
 
-	pOwner->Update_DeathSquence(dt);
-	
-	if (IsCrossAnimProgress(0.4f))
-	{
-		_vector3 vWorldPosition = pOwner->Get_Component<CTransform>()->Get_WorldPos();
-		vWorldPosition.y += 1.f;
-
-		auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
-			.Asset("enemy_dead.json")
-			.Position(vWorldPosition)
-			.Build("Enemy_Dead");
-
-		ObjectManager()->Add_Object(effect, { pOwner->Get_Level(),"Enemy_Effect_Layer" });
+	if (m_fAnimProgress > 0.99f)
 		pOwner->Death();
-	}
 }
 
-void CClaymore_Death::Exit(CClaymore* pOwner)
+void CClaymore_Death::Exit(CGiant* pOwner)
 {
 }
 
@@ -72,46 +55,46 @@ void CClaymore_Death::Register_Transitions()
 }
 
 /*============================================================================*/
-void CClaymore_Death_Front::Enter(CClaymore* pOwner)
+void CClaymore_Death_Front::Enter(CGiant* pOwner)
 {
 	pOwner->Get_Component<CAnimator3D>()->Change_Animation("Monster_Claymore_Ani_Death_Front")
 		.Apply();
 }
 
-void CClaymore_Death_Front::Update(CClaymore* pOwner, _float dt)
+void CClaymore_Death_Front::Update(CGiant* pOwner, _float dt)
 {
 }
 
-void CClaymore_Death_Front::Exit(CClaymore* pOwner)
+void CClaymore_Death_Front::Exit(CGiant* pOwner)
 {
 }
 
 /*============================================================================*/
-void CClaymore_Death_Back::Enter(CClaymore* pOwner)
+void CClaymore_Death_Back::Enter(CGiant* pOwner)
 {
 	pOwner->Get_Component<CAnimator3D>()->Change_Animation("Monster_Claymore_Ani_Death_Back")
 		.Apply();
 }
 
-void CClaymore_Death_Back::Update(CClaymore* pOwner, _float dt)
+void CClaymore_Death_Back::Update(CGiant* pOwner, _float dt)
 {
 }
 
-void CClaymore_Death_Back::Exit(CClaymore* pOwner)
+void CClaymore_Death_Back::Exit(CGiant* pOwner)
 {
 }
 
 /*============================================================================*/
-void CClaymore_Death_Stay::Enter(CClaymore* pOwner)
+void CClaymore_Death_Stay::Enter(CGiant* pOwner)
 {
 	pOwner->Get_Component<CAnimator3D>()->Change_Animation("Monster_Claymore_Ani_Death_Stay")
 		.Apply();
 }
 
-void CClaymore_Death_Stay::Update(CClaymore* pOwner, _float dt)
+void CClaymore_Death_Stay::Update(CGiant* pOwner, _float dt)
 {
 }
 
-void CClaymore_Death_Stay::Exit(CClaymore* pOwner)
+void CClaymore_Death_Stay::Exit(CGiant* pOwner)
 {
 }

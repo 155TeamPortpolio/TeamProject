@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "ThugPoacher.h"
+#include "Giant.h"
 
 #include "Helper_Func.h"
 #include "GameInstance.h"
@@ -7,7 +7,6 @@
 
 /* Child */
 #include "AttackSign.h"
-#include "ThugPoacher_Arrow.h"
 
 /* Component */
 #include "Material.h"
@@ -19,26 +18,27 @@
 
 /* States */
 #include "StateMachine.h"
-#include "ThugPoacher_Attack.h"
-#include "ThugPoacher_Born.h"
-#include "ThugPoacher_Death.h"
-#include "ThugPoacher_Groggy.h"
-#include "ThugPoacher_Hit.h"
-#include "ThugPoacher_Idle.h"
-#include "ThugPoacher_Move.h"
-#include "ThugPoacher_Chase.h"
+#include "Giant_Attack.h"
+#include "Giant_Born.h"
+#include "Giant_Death.h"
+#include "Giant_Groggy.h"
+#include "Giant_Hit.h"
+#include "Giant_Idle.h"
+#include "Giant_Move.h"
+#include "Giant_Chase.h"
+#include "Giant_Parried.h"
 
-CThugPoacher::CThugPoacher()
+CGiant::CGiant()
 	: CEnemyNormal()
 {
 }
 
-CThugPoacher::CThugPoacher(const CThugPoacher& rhg)
+CGiant::CGiant(const CGiant& rhg)
 	: CEnemyNormal(rhg)
 {
 }
 
-HRESULT CThugPoacher::Initialize_Prototype()
+HRESULT CGiant::Initialize_Prototype()
 {
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
@@ -49,26 +49,26 @@ HRESULT CThugPoacher::Initialize_Prototype()
 	Add_Component<CCharacterController>();
 
 	auto pResourceMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
-	pResourceMgr->Add_ResourcePath("ThugPoacher.mat", "../Bin/Resources/Zero/Enemy/ThugPoacher/ThugPoacher.mat");
-	pResourceMgr->Add_ResourcePath("ThugPoacher.model", "../Bin/Resources/Zero/Enemy/ThugPoacher/ThugPoacher.model");
-	//pResourceMgr->Add_ResourcePath("ThugPoacher_Meta.json", "../Bin/Resources/Model/skeletal/Enemy/ThugPoacher/ThugPoacher_Meta.json");
-	
+	pResourceMgr->Add_ResourcePath("Monster_Giant.mat", "../Bin/Resources/Zero/Enemy/Giant/Monster_Giant.mat");
+	pResourceMgr->Add_ResourcePath("Monster_Giant.model", "../Bin/Resources/Zero/Enemy/Giant/Monster_Giant.model");
+	//pResourceMgr->Add_ResourcePath("Monster_Claymore_Meta.json", "../../Resources/Data/Meta/Zero/Monster_Claymore_Meta.json");
+
 	auto pModel = Get_Component<CSkeletalModel>();
-	pModel->Link_Model(G_GlobalLevelKey, "ThugPoacher.model");
+	pModel->Link_Model(G_GlobalLevelKey, "Monster_Giant.model");
 
 	auto pMaterial = Get_Component<CMaterial>();
-	pMaterial->Link_Material(G_GlobalLevelKey, "ThugPoacher.mat");
+	pMaterial->Link_Material(G_GlobalLevelKey, "Monster_Giant.mat");
 
 	return S_OK;
 }
 
-HRESULT CThugPoacher::Initialize(INIT_DESC* pArg)
+HRESULT CGiant::Initialize(INIT_DESC* pArg)
 {
 	__super::Initialize(pArg);
 
 	auto pAnimator = Get_Component<CAnimator3D>();
-	pAnimator->LinkAnimate_Model(G_GlobalLevelKey, "ThugPoacher.model");
-	pAnimator->Link_MetaData(G_GlobalLevelKey, "ThugPoacher_Meta.json");
+	pAnimator->LinkAnimate_Model(G_GlobalLevelKey, "Monster_Giant.model");
+	pAnimator->Link_MetaData(G_GlobalLevelKey, "Monster_Giant_Meta.json");
 	pAnimator->Set_ExtractMotionboneMovement(AXIS::X | AXIS::Z);
 	pAnimator->Resize_Layer(2);
 	pAnimator->Set_LayerType(ANIM_LAYER_STATE::ADDITIVE, 1);
@@ -82,17 +82,17 @@ HRESULT CThugPoacher::Initialize(INIT_DESC* pArg)
 	return S_OK;
 }
 
-void CThugPoacher::Awake()
+void CGiant::Awake()
 {
 	__super::Awake();
 }
 
-void CThugPoacher::Priority_Update(_float dt)
+void CGiant::Priority_Update(_float dt)
 {
 	Get_Component<CObjectContainer>()->Priority_UpdateChild(dt);
 }
 
-void CThugPoacher::Update(_float dt)
+void CGiant::Update(_float dt)
 {
 	Get_Component<CAnimator3D>()->Update_Animation(dt);
 	Get_Component<CCharacterController>()->Update(dt);
@@ -103,22 +103,20 @@ void CThugPoacher::Update(_float dt)
 	m_pStateMachine->Update(dt);
 }
 
-void CThugPoacher::Late_Update(_float dt)
+void CGiant::Late_Update(_float dt)
 {
 	Get_Component<CCharacterController>()->Late_Update(dt);
 
 	__super::Late_Update(dt);
 }
 
-void CThugPoacher::Render_GUI()
+void CGiant::Render_GUI()
 {
 	ImGui::PushID(this);
 
 	float childWidth = ImGui::GetContentRegionAvail().x;
 	const float textLineHeight = ImGui::GetTextLineHeightWithSpacing();
 	const float childHeight = (textLineHeight * 5) + (ImGui::GetStyle().WindowPadding.y * 2);
-
-	GUI_DebugButton();
 
 #pragma region Component Inspector
 	if (ImGui::TreeNode("Inspector##ThugBulkyInspector")) {
@@ -177,11 +175,6 @@ void CThugPoacher::Render_GUI()
 				m_pStateMachine->Set_Int("AttackPattern", 3);
 				m_pStateMachine->Set_Trigger("Idle_To_Attack");
 			}
-			if (ImGui::Button(u8"4. Attack04"))
-			{
-				m_pStateMachine->Set_Int("AttackPattern", 4);
-				m_pStateMachine->Set_Trigger("Idle_To_Attack");
-			}
 			ImGui::TreePop();
 		}
 		if (ImGui::TreeNode("Death##ThugAssaulterTestDeath"))
@@ -205,6 +198,9 @@ void CThugPoacher::Render_GUI()
 			if (ImGui::Button("Hit"))
 				TakeDamage(DAMAGE_TYPE::NORMAL, 20.f);
 
+			if (ImGui::Button("Parried"))
+				Parried();
+
 			if (ImGui::Button("Execute"))
 				m_tStatus.iNowHP -= m_tStatus.iMaxHP;
 
@@ -221,108 +217,80 @@ void CThugPoacher::Render_GUI()
 	ImGui::Checkbox("Auto Pattern", &m_isAutoPatternPlay);
 #pragma endregion
 
-	if (ImGui::Button("ShootArrow##ShootArrow"))
-	{
-		ShootArrow();
-	}
 
 
 	ImGui::PopID();
 }
 
-void CThugPoacher::OnPooledAcquire(INIT_DESC* pArg)
+void CGiant::OnPooledAcquire(INIT_DESC* pArg)
 {
 	Initialize(pArg);
 }
 
-void CThugPoacher::OnPooledRelease()
+void CGiant::OnPooledRelease()
 {
 }
 
-void CThugPoacher::Parried()
+void CGiant::Parried()
 {
+	if ("Attack" != m_pStateMachine->Get_CurrentStateName() || false == m_isParryEnable)
+		return;
+
+	__super::Parried();
+
+	m_pStateMachine->Change_State("Parried");
+	SetOnAttack(false, ATTACK_SIDE::NONE); 
 }
 
-HRESULT CThugPoacher::Ready_Children(INIT_DESC* pArg)
+HRESULT CGiant::Ready_Children(INIT_DESC* pArg)
 {
+	BATTLE_COLLIDER_DESC WeaponDesc = {};
+
+	WeaponDesc.tagName = "Weapon";
+	WeaponDesc.isAttachBone = true;
+	WeaponDesc.tagBone = "Bip001_L_Forearm";
+	WeaponDesc.pOwnerAnimator3D = Get_Component<CAnimator3D>();
+	WeaponDesc.eAttackColliderType = COLLIDER_TYPE::BOX;
+	WeaponDesc.vCenter = { 0.8f, 0.f, 0.f };
+	WeaponDesc.vAttackSize = { 1.8f, 0.3f, 0.3f };
+
+	if (FAILED(AttachBattleColliderObject(&WeaponDesc)))
+		return E_FAIL;
+
 	Create_AttackSign("Bip001_Head");
 	Create_UIEnemyStatus("Bip001_Spine2");
 	Create_MeshPyramid();
-	
-	Ready_Arrows(3);
 
 	return S_OK;
 }
 
-HRESULT CThugPoacher::Ready_Arrows(_uint iNum)
+CGiant* CGiant::Create()
 {
-	if (1 > iNum)
-		return E_FAIL;
-
-	string tagNowLevel = LevelManager()->Get_NowLevelKey();
-	auto pObjectContainer = Get_Component<CObjectContainer>();
-
-	_float4x4* pWeaponBone = Get_Component<CAnimator3D>()->Get_BoneMatrixPtr(CAnimator3D::BoneSpace::COMBINED, "CrossbowD_01");
-	if (nullptr == pWeaponBone)
-		return E_FAIL;
-	for (_uint i = 0; i < iNum; ++i)
-	{
-		string tagInstanceName = "Arrow" + to_string(i);
-
-		CThugPoacher_Arrow::ARROW_DESC* pDesc = new CThugPoacher_Arrow::ARROW_DESC();
-		pDesc->pWeapon = pWeaponBone;
-
-		COLLIDER_DESC ArrowColDesc = {};
-		ArrowColDesc.eGroup = COLLISION_GROUP::MONSTER;
-		ArrowColDesc.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER) | ENUM(COLLISION_GROUP::COMMON) | ENUM(COLLISION_GROUP::PLAYER_ATTACK);
-		ArrowColDesc.bTrigger = true;
-		ArrowColDesc.bAutoFit = false;
-		ArrowColDesc.eType = COLLIDER_TYPE::SPHERE;
-		ArrowColDesc.vSize = { 0.2f, 0.f, 0.f };
-
-		auto pArrow = Builder::Create_Object({ tagNowLevel , "Proto_GameObject_ThugPoacher_Arrow" })
-			.Add_ObjDesc(pDesc)
-			.Collider(ArrowColDesc)
-			.Build(tagInstanceName);
-
-		if (nullptr == pArrow)
-			continue;
-
-		_int iChildIndex = pObjectContainer->Add_Child(pArrow, false);
-
-		m_ArrowsChildIndices.push_back(iChildIndex);
-	}
-
-	return S_OK;
-}
-
-CThugPoacher* CThugPoacher::Create()
-{
-	CThugPoacher* instance = new CThugPoacher();
+	CGiant* instance = new CGiant();
 
 	if (FAILED(instance->Initialize_Prototype()))
 	{
 		Safe_Release(instance);
-		MSG_BOX("Failed to create : CThugPoacher");
+		MSG_BOX("Failed to create : CGiant");
 	}
 
 	return instance;
 }
 
-CGameObject* CThugPoacher::Clone(INIT_DESC* pArg)
+CGameObject* CGiant::Clone(INIT_DESC* pArg)
 {
-	CThugPoacher* instance = new CThugPoacher(*this);
+	CGiant* instance = new CGiant(*this);
 
 	if (FAILED(instance->Initialize(pArg)))
 	{
 		Safe_Release(instance);
-		MSG_BOX("Failed to clone : CThugPoacher");
+		MSG_BOX("Failed to clone : CGiant");
 	}
 
 	return instance;
 }
 
-void CThugPoacher::Free()
+void CGiant::Free()
 {
 	__super::Free();
 
@@ -330,7 +298,7 @@ void CThugPoacher::Free()
 }
 
 
-void CThugPoacher::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER charaName)
+void CGiant::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER charaName)
 {
 	__super::TakeDamage(eDamageType, fDamage, charaName);
 
@@ -339,7 +307,7 @@ void CThugPoacher::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER
 
 	if ("Groggy" == m_pStateMachine->Get_CurrentStateName())
 	{
-		Get_Component<CAnimator3D>()->Set_Animation(1, "ThugPoacher_Ani_Hit_Knock")
+		Get_Component<CAnimator3D>()->Set_Animation(1, "Claymore_Ani_Hit_Stay")
 			.LayerBlend(1.f, 0.f, 1.f, EaseType::Linear)
 			.Loop(false)
 			.Apply();
@@ -352,34 +320,17 @@ void CThugPoacher::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER
 	}
 	else
 	{
-		Get_Component<CAnimator3D>()->Set_Animation(1, "ThugPoacher_Ani_Hit_Stay")
+		Get_Component<CAnimator3D>()->Set_Animation(1, "Claymore_Ani_Hit_Stay")
 			.LayerBlend(1.f, 0.f, 1.f, EaseType::Linear)
 			.Loop(false)
 			.Apply();
 	}
 }
 
-void CThugPoacher::ShootArrow()
-{
-	auto pObjectContainerCom = Get_Component<CObjectContainer>();
-	for (auto& index : m_ArrowsChildIndices)
-	{
-		auto pArrow = dynamic_cast<CThugPoacher_Arrow*>(pObjectContainerCom->Get_ChildByOrder(index));
-		if (nullptr == pArrow)
-			continue;
-
-		if (false == pArrow->Is_Alive())
-		{
-			pArrow->ShootArrow();
-			return;
-		}
-	}
-}
-
 /* For.State Machine */
-HRESULT CThugPoacher::Initialize_StateMachine()
+HRESULT CGiant::Initialize_StateMachine()
 {
-	m_pStateMachine = CStateMachine<CThugPoacher>::Create();
+	m_pStateMachine = CStateMachine<CGiant>::Create();
 	if (nullptr == m_pStateMachine)
 		return E_FAIL;
 
@@ -395,53 +346,54 @@ HRESULT CThugPoacher::Initialize_StateMachine()
 	m_pStateMachine->Set_DefaultState("Born");
 	m_pStateMachine->Initialize(this);
 
-	Get_Component<CAnimator3D>()->Set_Animation("ThugAssaulter_Ani_Born")
+	Get_Component<CAnimator3D>()->Set_Animation("Monster_Claymore_Ani_Born")
 		.Apply();
 
 	return S_OK;
 }
 
-HRESULT CThugPoacher::Initialize_States()
+HRESULT CGiant::Initialize_States()
 {
-	m_pStateMachine->Register_State("Born", CThugPoacher_Born::Create());
-	m_pStateMachine->Register_State("Idle", CThugPoacher_Idle::Create());
-	m_pStateMachine->Register_State("Attack", CThugPoacher_Attack::Create());
-	m_pStateMachine->Register_State("Move", CThugPoacher_Move::Create());
-	m_pStateMachine->Register_State("Chase", CThugPoacher_Chase::Create());
-	m_pStateMachine->Register_State("Death", CThugPoacher_Death::Create());
-	m_pStateMachine->Register_State("Groggy", CThugPoacher_Groggy::Create());
-	m_pStateMachine->Register_State("Hit", CThugPoacher_Hit::Create());
+	m_pStateMachine->Register_State("Born", CClaymore_Born::Create());
+	m_pStateMachine->Register_State("Idle", CClaymore_Idle::Create());
+	m_pStateMachine->Register_State("Attack", CClaymore_Attack::Create());
+	m_pStateMachine->Register_State("Move", CClaymore_Move::Create());
+	m_pStateMachine->Register_State("Chase", CClaymore_Chase::Create());
+	m_pStateMachine->Register_State("Death", CClaymore_Death::Create());
+	m_pStateMachine->Register_State("Groggy", CClaymore_Groggy::Create());
+	m_pStateMachine->Register_State("Hit", CClaymore_Hit::Create());
+	m_pStateMachine->Register_State("Parried", CClaymore_Parried::Create());
 
 	return S_OK;
 }
 
-HRESULT CThugPoacher::Initialize_Transitions()
+HRESULT CGiant::Initialize_Transitions()
 {
 	m_pStateMachine->Register_Transition("Born", "Idle",
-		CStateMachine<CThugPoacher>::CONDITION_ANIMATION_END);
+		CStateMachine<CGiant>::CONDITION_ANIMATION_END);
 	m_pStateMachine->Register_Transition("Idle", "Attack",
-		CStateMachine<CThugPoacher>::CONDITION_TRIGGER, "Idle_To_Attack");
+		CStateMachine<CGiant>::CONDITION_TRIGGER, "Idle_To_Attack");
 	m_pStateMachine->Register_Transition("Idle", "Move",
-		CStateMachine<CThugPoacher>::CONDITION_TRIGGER, "Idle_To_Move");
+		CStateMachine<CGiant>::CONDITION_TRIGGER, "Idle_To_Move");
 	m_pStateMachine->Register_Transition("Idle", "Chase",
-		CStateMachine<CThugPoacher>::CONDITION_TRIGGER, "Idle_To_Chase");
+		CStateMachine<CGiant>::CONDITION_TRIGGER, "Idle_To_Chase");
 	m_pStateMachine->Register_Transition("Idle", "Death",
-		CStateMachine<CThugPoacher>::CONDITION_TRIGGER, "Idle_To_Death");
+		CStateMachine<CGiant>::CONDITION_TRIGGER, "Idle_To_Death");
 	m_pStateMachine->Register_Transition("Idle", "Groggy",
-		CStateMachine<CThugPoacher>::CONDITION_TRIGGER, "Idle_To_Groggy");
+		CStateMachine<CGiant>::CONDITION_TRIGGER, "Idle_To_Groggy");
 	m_pStateMachine->Register_Transition("Idle", "Hit",
-		CStateMachine<CThugPoacher>::CONDITION_TRIGGER, "Idle_To_Hit");
+		CStateMachine<CGiant>::CONDITION_TRIGGER, "Idle_To_Hit");
 
 	return S_OK;
 }
 
-HRESULT CThugPoacher::Ready_Rules()
+HRESULT CGiant::Ready_Rules()
 {
 	// x = Idle에서 다음 상태로 넘어가는 쿨타임, y = dt 더한 타이머용
 	m_vIdleTime = { 1.f, 0.f };
 
-	m_tHysteriesis.fEvadeEnter = 3.f;
-	m_tHysteriesis.fComboEnter = 3.5f;
+	m_tHysteriesis.fEvadeEnter = 2.f;
+	m_tHysteriesis.fComboEnter = 3.f;
 	m_tHysteriesis.fComboExit = 4.5f;
 	m_tHysteriesis.fChaseEnter = 7.f;
 	m_tHysteriesis.fChaseExit = 5.f;
@@ -449,7 +401,7 @@ HRESULT CThugPoacher::Ready_Rules()
 	return S_OK;
 }
 
-void CThugPoacher::Update_States(_float dt)
+void CGiant::Update_States(_float dt)
 {
 	if (true == m_isIdle) {
 		m_pStateMachine->Change_State("Idle");
@@ -469,7 +421,7 @@ void CThugPoacher::Update_States(_float dt)
 	//================================
 }
 
-void CThugPoacher::ControlState(const _float dt)
+void CGiant::ControlState(const _float dt)
 {
 	if ("Death" != m_pStateMachine->Get_CurrentStateName() &&
 		0 >= m_tStatus.iNowHP)
@@ -507,12 +459,12 @@ void CThugPoacher::ControlState(const _float dt)
 	}
 }
 
-void CThugPoacher::CheckDistanceFromPlayer()
+void CGiant::CheckDistanceFromPlayer()
 {
 	if ("Chase" != m_pStateMachine->Get_CurrentStateName() &&
 		m_tTargetingInfo.fDistance >= m_tHysteriesis.fChaseEnter)
 		m_pStateMachine->Set_Bool("Chase", true);
-	
+
 	if (true == m_pStateMachine->Get_Bool("Chase") &&
 		m_tTargetingInfo.fDistance <= m_tHysteriesis.fChaseExit)
 		m_pStateMachine->Set_Bool("Chase", false);
