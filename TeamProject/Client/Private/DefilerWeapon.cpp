@@ -46,11 +46,10 @@ HRESULT CDefilerWeapon::Initialize(INIT_DESC* pArg)
 	__super::Initialize(desc);
 	Reset_Value(desc);
 
-	Get_Component<CCollider>()->Set_CollisionMask(ENUM(COLLISION_GROUP::PLAYER) |
-		ENUM(COLLISION_GROUP::PLAYER_ATTACK));
+	Get_Component<CCollider>()->Set_CollisionMask(ENUM(COLLISION_GROUP::PLAYER) |ENUM(COLLISION_GROUP::PLAYER_ATTACK));
 	Get_Component<CCollider>()->Set_CollisionGroup(COLLISION_GROUP::MONSTER);
-	Get_Component<CCollider>()->Set_Size({2.f,2.f,2.f});
-	Get_Component<CCollider>()->Set_Trigger(true);
+	Get_Component<CCollider>()->Set_Size(m_isFinalThrow? _vector3{3.f, 3.f, 3.f} : _vector3{2.f,2.f,2.f});
+	Get_Component<CCollider>()->Set_Trigger(false);
 	Get_Component<CRigidBody>()->Set_Kinematic(true);
 	Get_Component<CAudioSource>()->SoundFolder("Zero_Level", "../Bin/Resources/Zero/Enemy/Defiler_Isolde/Sound/");
 
@@ -71,6 +70,26 @@ HRESULT CDefilerWeapon::Initialize(INIT_DESC* pArg)
 		instance->Set_Param("fDissolveTiling", { &m_fDissolveTilling,"float",sizeof(_float) });
 	}
 	m_isOnAttack = true;
+	{
+		BATTLE_COLLIDER_DESC BladeDesc{};
+	
+		BladeDesc.tagName = "HEl";
+		BladeDesc.isAttachBone = false;
+		BladeDesc.tagBone = "";
+		BladeDesc.pOwnerAnimator3D = nullptr;
+		BladeDesc.eAttackColliderType = COLLIDER_TYPE::SPHERE;
+		BladeDesc.vAttackSize = _float3{ 2.5f,2.5f,2.5f };
+	
+		if (FAILED(AttachBattleColliderObject(&BladeDesc,false)))
+			return E_FAIL;
+	}
+	HitDesc		HitDesc = {};
+	HitDesc.eHitType = HIT_TYPE::ONCE;
+	HitDesc.eDamageType = DAMAGE_TYPE::NORMAL;
+	HitDesc.fDamage = 10.f;
+	HitDesc.fInterval = 0.f;
+	HitDesc.iMaxCount = 1;
+	SetBattleColliderObject("HEl", CEnemy::BATTLE_COLTYPE::ATTACK, true, HitDesc);
 	return S_OK;
 }
 
@@ -81,6 +100,7 @@ void CDefilerWeapon::Awake()
 
 void CDefilerWeapon::Priority_Update(_float dt)
 {
+	Get_Component<CObjectContainer>()->Priority_UpdateChild(dt);
 }
 void CDefilerWeapon::Update(_float dt)
 {
@@ -134,6 +154,7 @@ void CDefilerWeapon::Update(_float dt)
 	else if(m_isSliding && m_isFinalThrow) {
 		SummonAxe();
 		ObjectManager()->Remove_Object(this);
+		BattleSystem()->ExitBattleObject(BATTLE_OBJ_TYPE::MONSTER, Get_Handle());
 		return;
 	}
 
@@ -142,13 +163,16 @@ void CDefilerWeapon::Update(_float dt)
 
 	m_vVelocity = m_vVelocity.Lerp(m_vVelocity, m_vTargetVelocity, t);
 	m_pTransform->Translate(m_vVelocity * dt);
+	Get_Component<CRigidBody>()->Set_GlobalPos(m_pTransform->Get_WorldPos(), m_pTransform->Get_QuaternionRotate());
 
 	Get_Component<CCollider>()->Update(dt);
 	Update_Dissolve(dt);
+	Get_Component<CObjectContainer>()->UpdateChild(dt);
 }
 void CDefilerWeapon::Late_Update(_float dt)
 {
 	Get_Component<CRigidBody>()->Late_Update(dt);
+	Get_Component<CObjectContainer>()->Late_UpdateChild(dt);
 }
 
 void CDefilerWeapon::Render_GUI()
@@ -156,24 +180,6 @@ void CDefilerWeapon::Render_GUI()
 	__super::Render_GUI();
 }
 
-void CDefilerWeapon::OnPooledAcquire(INIT_DESC* pArg)
-{
-	auto desc = static_cast<DefilerWeaponDesc*>(pArg);
-	__super::Initialize(desc);
-	Reset_Value(desc);
-
-	Get_Component<CCollider>()->Set_CollisionMask(ENUM(COLLISION_GROUP::PLAYER) |
-		ENUM(COLLISION_GROUP::PLAYER_ATTACK));
-	Get_Component<CCollider>()->Set_CollisionGroup(COLLISION_GROUP::MONSTER);
-	Get_Component<CCollider>()->Set_Trigger(true);
-	Get_Component<CRigidBody>()->Set_Kinematic(true);
-}
-
-void CDefilerWeapon::OnPooledRelease()
-{
-	m_isOnAttack = false;
-	Get_Component<CCollider>()->Set_CompActive(false);
-}
 
 CDefilerWeapon* CDefilerWeapon::Create()
 {
@@ -209,14 +215,14 @@ void CDefilerWeapon::Free()
 void CDefilerWeapon::OnTriggerEnter(CGameObject* pOther)
 {
 	auto pCollidable = pOther->Get_Component<ICollidable>();
-	if (pCollidable)
+	if (!pCollidable)
 		return;
 
 	else {
 		auto pEnemy = dynamic_cast<CCharacter*>(pOther);
 		if (nullptr != pEnemy)
 		{
-			pEnemy->Take_Damage(DAMAGE_TYPE::NORMAL, 10);
+			pEnemy->Take_Damage(DAMAGE_TYPE::HARD, 10);
 			CameraManager()->AddImpact(1, 0);
 		}
 	}

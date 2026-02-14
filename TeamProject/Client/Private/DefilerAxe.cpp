@@ -129,7 +129,7 @@ void CDefilerAxe::OnPooledRelease()
 
 void CDefilerAxe::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER charaName)
 {
-	BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::HIT_NORMAL);
+	BattleSystem()->HitVFX(eDamageType);
 	_float fTakeDamage = fDamage;
 	m_tStatus.iNowHP -= fTakeDamage;
 
@@ -154,7 +154,6 @@ void CDefilerAxe::SummonWall()
 	CDefilerWall::DefilerWallDesc* desc = new CDefilerWall::DefilerWallDesc;
 	desc->vLook = Math::NormalizeSafeXZ(m_pTransform->Dir(STATE::LOOK));
 	_vector3 pos =  m_pTransform->Get_Pos();
-	pos.y = 0;
 
 	auto pWall = Builder::Create_Object({ "Zero_Level","Proto_GameObject_DefilerWall" })
 		.Position(pos)
