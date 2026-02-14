@@ -995,8 +995,10 @@ void CMiyabi::Process_AttackInput(const string& strCurrentState)
 			if (pRun && pRun->Get_SubStateMachine())
 			{
 				string strRunTag = pRun->Get_SubStateMachine()->Get_CurrentStateName();
-				if (strRunTag == "End") m_pStateMachine->Set_Int("AttackEntryMode", 0);
-				else m_pStateMachine->Set_Int("AttackEntryMode", 1);
+				if (strRunTag == "Run_End")
+					m_pStateMachine->Set_Int("AttackEntryMode", 0);
+				else
+					m_pStateMachine->Set_Int("AttackEntryMode", 1);
 			}
 			else return;
 		}

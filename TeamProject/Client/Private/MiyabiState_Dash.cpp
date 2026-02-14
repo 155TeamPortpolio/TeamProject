@@ -37,6 +37,22 @@ void CMiyabiState_Dash::Enter(CMiyabi* pOwner)
 
 void CMiyabiState_Dash::Update(CMiyabi* pOwner, _float dt)
 {
+    if (pOwner->Is_Attack())
+    {
+        if (m_pOwnerStateMachine->Get_Bool("Extreme"))
+        {
+            // CounterAttack
+            m_pOwnerStateMachine->Set_Int("ExitMode", 5);
+            m_pOwnerStateMachine->Set_Trigger("Complete");
+        }
+        else
+        {
+            // RushAttack
+            m_pOwnerStateMachine->Set_Int("ExitMode", 3);
+            m_pOwnerStateMachine->Set_Trigger("Complete");
+        }
+        return;
+    }
     __super::Update(pOwner, dt);
 }
 
@@ -56,23 +72,6 @@ void CMiyabiState_Dash_01::Update(CMiyabi* pOwner, _float dt)
     auto pSubMachine = Get_ParentState()->Get_OwnerStateMachine();
 
     pOwner->Process_RootMotion(dt);
-
-    if (pOwner->Is_Attack())
-    {
-        if (pSubMachine->Get_Bool("Extreme"))
-        {
-            // CounterAttack
-            pSubMachine->Set_Int("ExitMode", 5);
-            pSubMachine->Set_Trigger("Complete");
-        }
-        else
-        {
-            // RushAttack
-            pSubMachine->Set_Int("ExitMode", 3);
-            pSubMachine->Set_Trigger("Complete");
-        }
-        return;
-    }
 
     if (IsCrossAnimProgress(0.08f) && InputDevice()->Mouse_Hold(MOUSE_BTN::RB))
     {
@@ -160,7 +159,7 @@ void CMiyabiState_Dash_02::Update(CMiyabi* pOwner, _float dt)
         pOwner->Clear_MotionBlur();
     }
 
-    if (m_fAnimProgress >= 0.7f)
+    if (m_fAnimProgress >= 0.45f)
     {   // Idle
         pSubMachine->Set_Int("ExitMode", 0);
         pSubMachine->Set_Trigger("Complete");
