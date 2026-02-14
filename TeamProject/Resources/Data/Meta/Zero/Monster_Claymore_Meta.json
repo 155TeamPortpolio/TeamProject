@@ -217,6 +217,16 @@
           "EventTag": "TurnOnAttackCol"
         },
         {
+          "EventTime": 1.151137113571167,
+          "EventType": "Sound",
+          "EventTag": "claymore_Attack2_1.wav"
+        },
+        {
+          "EventTime": 1.4299999475479126,
+          "EventType": "Notify",
+          "EventTag": "ParryEnable_false"
+        },
+        {
           "EventTime": 1.432228684425354,
           "EventType": "Notify",
           "EventTag": "TurnOffAttackCol"
@@ -225,6 +235,11 @@
           "EventTime": 1.9676414728164673,
           "EventType": "Notify",
           "EventTag": "TurnOnAttackCol"
+        },
+        {
+          "EventTime": 1.9676414728164673,
+          "EventType": "Sound",
+          "EventTag": "claymore_Attack2_2.wav"
         },
         {
           "EventTime": 2.2353477478027344,
@@ -245,21 +260,6 @@
           "EventTime": 3.4000000953674316,
           "EventType": "Notify",
           "EventTag": "FinishAll"
-        },
-        {
-          "EventTime": 1.4299999475479126,
-          "EventType": "Notify",
-          "EventTag": "ParryEnable_false"
-        },
-        {
-          "EventTime": 1.151137113571167,
-          "EventType": "Sound",
-          "EventTag": "claymore_Attack2_1.wav"
-        },
-        {
-          "EventTime": 1.9676414728164673,
-          "EventType": "Sound",
-          "EventTag": "claymore_Attack2_2.wav"
         }
       ]
     },
@@ -267,14 +267,29 @@
       "ClipTag": "Monster_Claymore_Ani_Attack_03",
       "Events": [
         {
+          "EventTime": 0.009999999776482582,
+          "EventType": "Sound",
+          "EventTag": "claymore_Attack3_Ready.wav"
+        },
+        {
           "EventTime": 0.8187134265899658,
           "EventType": "Notify",
           "EventTag": "UnleashAttack"
         },
         {
+          "EventTime": 2.0799999237060547,
+          "EventType": "Sound",
+          "EventTag": "claymore_Attack3_1.wav"
+        },
+        {
           "EventTime": 2.0849902629852295,
           "EventType": "Notify",
           "EventTag": "TurnOnAttackCol"
+        },
+        {
+          "EventTime": 2.6500000953674316,
+          "EventType": "Sound",
+          "EventTag": "claymore_Attack3_2.wav"
         },
         {
           "EventTime": 3.220273017883301,
