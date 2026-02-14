@@ -55,6 +55,7 @@ void CStage::Ready_Map(const string& LevelTag, const string& AreaTag)
 	if (nullptr == pMapLoader)
 		MSG_BOX("Failed to Load MapData!");
 	Safe_Release(pMapLoader);
+	return;
 
 	const CASHED_OBJ_DATA* datas = CDataBase::GetInstance()->Get_CashedData(AreaTag);
 	if (datas->Battle.HasBattleData) {

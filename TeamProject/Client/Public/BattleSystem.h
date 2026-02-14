@@ -65,6 +65,7 @@ public:
 	void	ExcludeBattleObject(BATTLE_OBJ_TYPE eObjType, OBJECT_HANDLE hObject);
 	_bool	isValidTarget(BATTLE_OBJ_TYPE eObjType, OBJECT_HANDLE hObject);
 	void	ClearBattleStage();
+	void	AllKill();
 
 private:
 	BATTLEOBJ_INFO*				FindBattleObjInfo(OBJECT_HANDLE objectHandle);

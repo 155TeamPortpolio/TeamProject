@@ -297,6 +297,11 @@ void CMiyabiState_Charge_Attack03::Update(CMiyabi* pOwner, _float dt)
         }
     }
 
+    if (IsCrossAnimProgress(0.9f))
+        pOwner->Get_Component<CAudioSource>()->Sequence("ChargeAttack03")
+        .Attribute3D(true)
+        .PlayNext();
+
     Update_Effects(pOwner);
 }
 
