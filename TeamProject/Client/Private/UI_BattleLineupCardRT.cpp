@@ -22,27 +22,27 @@ HRESULT CUI_BattleLineupCardRT::Initialize(INIT_DESC* pArg)
     pSprite->Link_Shader(G_GlobalLevelKey, "VTX_UI.hlsl");
     //pSprite->Add_Texture(G_GlobalLevelKey, "empty.png");
 
-    SHADER_PARAM param = {};
-    auto pSRV = RenderSystem()->Get_EngineTargetSRV("Target_Combined_SkinnedMesh");
-    param.pData = pSRV;
-    param.typeName = "Texture2D";
-    param.iSize = 0;
-    pSprite->Set_Param("SpriteTexture", param);
-
-    //// 렌더타겟 생성
-    //RenderTargetDesc desc = {};
-    //desc.Key = "lineupCard";
-    //desc.Width = m_vSize.x;
-    //desc.Height = m_vSize.y;
-    //RenderSystem()->Create_RenderTarget(desc);
-    //
-    ////// 렌더타겟에 SRV 바인딩
     //SHADER_PARAM param = {};
-    //auto pSRV = RenderSystem()->Get_CustomTargetSRV("lineupCard");
+    //auto pSRV = RenderSystem()->Get_EngineTargetSRV("Target_Combined_SkinnedMesh");
     //param.pData = pSRV;
     //param.typeName = "Texture2D";
     //param.iSize = 0;
     //pSprite->Set_Param("SpriteTexture", param);
+
+    // 렌더타겟 생성
+    RenderTargetDesc desc = {};
+    desc.Key = "avatarTest";
+    desc.Width = 1600.f;// m_vSize.x;
+    desc.Height = 900.f;// m_vSize.y;
+    RenderSystem()->Create_RenderTarget(desc);
+    
+    //// 렌더타겟에 SRV 바인딩
+    SHADER_PARAM param = {};
+    auto pSRV = RenderSystem()->Get_CustomTargetSRV("avatarTest");
+    param.pData = pSRV;
+    param.typeName = "Texture2D";
+    param.iSize = 0;
+    pSprite->Set_Param("SpriteTexture", param);
 
     pSprite->ChangePass("Opaque_StencilTest");    // 마스크 바깥 부분에 그려짐
     m_stencilMode = StencilMode::Test;

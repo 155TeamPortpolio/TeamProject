@@ -8,6 +8,7 @@
 #include "UI_ElementalResonance.h"
 #include "UI_EnterBattleButton.h" 
 #include "UI_BattleLineupCard.h"
+#include "UI_AvatarTest.h"
 
 HRESULT CUI_BattleLineup::Initialize_Prototype()
 {
@@ -19,6 +20,7 @@ HRESULT CUI_BattleLineup::Initialize_Prototype()
     PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_ElementalResonance", CUI_ElementalResonance::Create());
     PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_EnterBattleButton", CUI_EnterBattleButton::Create());
     PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_BattleLineupCard", CUI_BattleLineupCard::Create());
+    PrototypeManager()->Add_ProtoType("Test_Level", "Proto_GameObject_AvatarTest", CUI_AvatarTest::Create());
 
     return S_OK;
 }
@@ -39,7 +41,13 @@ HRESULT CUI_BattleLineup::Initialize(INIT_DESC* pArg)
 
     Create_BattleLineupCards();
 
-    Set_Alive(false);
+    auto pObj = Builder::Create_Object({ "Test_Level", "Proto_GameObject_AvatarTest"})
+        .Build("avatarTest");
+
+    if (pObj)
+        ObjectManager()->Add_Object(pObj, {"Test_Level", "UI_Layer"});
+
+    //Set_Alive(false);
 
     return S_OK;
 }

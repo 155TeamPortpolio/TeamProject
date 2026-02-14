@@ -457,6 +457,7 @@
     <ClInclude Include="..\Public\SoftDirectionalOutlineUI.h" />
     <ClInclude Include="..\Public\UI_BattleLineupCard.h" />
     <ClInclude Include="..\Public\UI_BattleLineupCardRT.h" />
+    <ClInclude Include="..\Public\UI_AvatarTest.h" />
     <ClInclude Include="..\Public\UI_ElementalResonance.h" />
     <ClInclude Include="..\Public\UI_EnterBattleButton.h" />
     <ClInclude Include="..\Public\UI_Clear.h" />
@@ -929,6 +930,7 @@
     <ClCompile Include="..\Private\SoftDirectionalOutlineUI.cpp" />
     <ClCompile Include="..\Private\UI_BattleLineupCard.cpp" />
     <ClCompile Include="..\Private\UI_BattleLineupCardRT.cpp" />
+    <ClCompile Include="..\Private\UI_AvatarTest.cpp" />
     <ClCompile Include="..\Private\UI_ElementalResonance.cpp" />
     <ClCompile Include="..\Private\UI_EnterBattleButton.cpp" />
     <ClCompile Include="..\Private\UI_Clear.cpp" />

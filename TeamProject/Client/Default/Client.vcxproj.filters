@@ -1380,6 +1380,9 @@
     <Filter Include="02. GameObject\UI\01. 2D\BattleLineup\LineupCard\RenderTarget">
       <UniqueIdentifier>{f31daf48-a890-4c4a-accc-00c9ad3a488d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\BattleLineup\LineupCard\Avatar">
+      <UniqueIdentifier>{8fdd01bf-0a4a-4437-9252-352bb3370beb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -2666,6 +2669,9 @@
     <ClInclude Include="..\Public\UI_BattleLineupCardRT.h">
       <Filter>02. GameObject\UI\01. 2D\BattleLineup\LineupCard\RenderTarget</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UI_AvatarTest.h">
+      <Filter>02. GameObject\UI\01. 2D\BattleLineup\LineupCard\Avatar</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -3910,6 +3916,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\UI_BattleLineupCardRT.cpp">
       <Filter>02. GameObject\UI\01. 2D\BattleLineup\LineupCard\RenderTarget</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_AvatarTest.cpp">
+      <Filter>02. GameObject\UI\01. 2D\BattleLineup\LineupCard\Avatar</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
