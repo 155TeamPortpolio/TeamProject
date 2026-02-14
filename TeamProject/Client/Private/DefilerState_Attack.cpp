@@ -19,7 +19,7 @@ void CDefilerState_Attack::Build_Pattern(CDefiler* pOwner, _int Type)
 	DEFILER_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
 	TARGETING_INFO& targetInfo = pOwner->GetTargetingInfo();
 	blackBoard.patternTransition.clear();
-	Type = 10;
+	Type = 3;
 	switch (Type)
 	{
 	case 0 :
@@ -348,15 +348,60 @@ void CDefilerState_Attack_02::Enter(CDefiler* pOwner)
 		.Speed(1.f)
 		.Loop(false)
 		.Apply();
+
+	m_iSlashCount = 0;
 }
 
 void CDefilerState_Attack_02::Update(CDefiler* pOwner, _float dt)
 {
 	ComboTransition(pOwner);
+	Update_Effects(pOwner);
 }
 
 void CDefilerState_Attack_02::Exit(CDefiler* pOwner)
 {
+}
+
+void CDefilerState_Attack_02::Update_Effects(CDefiler* pOwner)
+{
+	if (IsCrossAnimProgress(0.12f))
+		pOwner->Play_Effect("Defiler_Slash0_0", _vector3(0.f, 1.6f, 0.f), _quaternion(0.72f, 0.17f, -0.11f, 0.66f));
+
+	if (IsCrossAnimProgress(0.23f))
+		pOwner->Play_Effect("Defiler_Axe_Spin", _vector3(0.f, 3.5f, 0.f), _quaternion(0.71f, 0.f, 0.f, -0.71f));
+	if (IsCrossAnimProgress(0.46f))
+		pOwner->Stop_Effect("Defiler_Axe_Spin");
+
+	if (IsCrossAnimProgress(0.51f))
+		pOwner->Play_Effect("Defiler_Slash1_0", _vector3(0.f, 1.4f, 0.f), _quaternion(-0.13f, 0.64f, 0.73f, 0.2f));
+
+	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
+	const auto& events = pAnimator->Get_EventBus();
+	for (const auto& event : events)
+	{
+		if (event.Tag == "I_Type_On")
+		{
+			_float3 randPosition0{}, randPosition1{};
+			_float3 randAngle{};
+
+			randPosition0.y = Helper::Get_Random_Float(1.3f, 2.3f);
+			randPosition1.y = Helper::Get_Random_Float(1.3f, 2.3f);
+
+			randAngle.x = XMConvertToRadians(Helper::Get_Random_Float(-10.f, 10.f));
+			randAngle.y = XMConvertToRadians(Helper::Get_Random_Float(-5.f, 5.f));
+			randAngle.z = XMConvertToRadians(Helper::Get_Random_Float(-5.f, 5.f));
+
+			_quaternion rotation = m_BaseRotation;
+			rotation *= _quaternion::CreateFromYawPitchRoll(randAngle);
+
+			pOwner->Play_Effect("Defiler_Slash3_" + to_string(m_iSlashCount % 5), _vector3(randPosition0), rotation);
+			++m_iSlashCount;
+
+			rotation *= _quaternion::CreateFromYawPitchRoll(XMConvertToRadians(120.f), 0.f, 0.f);
+			pOwner->Play_Effect("Defiler_Slash3_" + to_string(m_iSlashCount % 5), _vector3(randPosition1), rotation);
+			++m_iSlashCount;
+		}
+	}
 }
 
 void CDefilerState_Attack_03::Enter(CDefiler* pOwner)

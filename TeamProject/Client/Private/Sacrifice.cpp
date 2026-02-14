@@ -947,5 +947,5 @@ void CSacrifice::Route_AnimEvent()
 
 void CSacrifice::Control_Sound(const string& event)
 {
-	Get_Component<CAudioSource>()->Slot(event).Volume(0.5f).Attribute3D(true).Loop(false).Play();
+	Get_Component<CAudioSource>()->Slot(event).Volume(0.4f).Attribute3D(true).Loop(false).Play();
 }

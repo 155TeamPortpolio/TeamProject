@@ -340,12 +340,23 @@
           "EventTime": 1.4419724941253662,
           "EventType": "Sound",
           "EventTag": "Sacrifice_Laser_Shot1.wav"
+        },
+        {
+          "EventTime": 2.102924108505249,
+          "EventType": "Sound",
+          "EventTag": "Sacrifice_Laser_Shot2.wav"
         }
       ]
     },
     {
       "ClipTag": "SacrificeBringer_Ani_P1_Attack_06",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.857374906539917,
+          "EventType": "Sound",
+          "EventTag": "Sacrifice_Laser_Shot3.wav"
+        }
+      ]
     },
     {
       "ClipTag": "SacrificeBringer_Ani_P1_Attack_07",
@@ -361,7 +372,7 @@
           "EventTag": "Start_Attack"
         },
         {
-          "EventTime": 1.2912280559539795,
+          "EventTime": 1.059999942779541,
           "EventType": "Sound",
           "EventTag": "Sacrifice_Attack07.wav"
         },

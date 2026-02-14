@@ -767,32 +767,38 @@ HRESULT CDefiler::Initialize_Effects()
 		pObjectContainer->Add_Child(pEffect, false);
 	}
 
+	/* Axe Spin*/
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("defiler_axe_spin.json")
+			.Build("Defiler_Axe_Spin");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect);
+	}
+
+	/* Axe Shot */
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("defiler_axe_shot.json")
+			.Build("Defiler_Axe_Shot");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+
 	/* Normal Slash */
+	for (_uint i = 0; i < 2; ++i)
 	{
 		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
 			.Asset("defiler_slash0.json")
-			.Build("Defiler_Slash0_0");
+			.Build("Defiler_Slash0_" + to_string(i));
 		pEffect->Stop();
 		pObjectContainer->Add_Child(pEffect);
 	}
-	{
-		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
-			.Asset("defiler_slash0.json")
-			.Build("Defiler_Slash0_1");
-		pEffect->Stop();
-		pObjectContainer->Add_Child(pEffect);
-	}
+	for (_uint i = 0; i < 2; ++i)
 	{
 		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
 			.Asset("defiler_slash1.json")
-			.Build("Defiler_Slash1_0");
-		pEffect->Stop();
-		pObjectContainer->Add_Child(pEffect);
-	}
-	{
-		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
-			.Asset("defiler_slash1.json")
-			.Build("Defiler_Slash1_1");
+			.Build("Defiler_Slash1_" + to_string(i));
 		pEffect->Stop();
 		pObjectContainer->Add_Child(pEffect);
 	}
@@ -800,6 +806,14 @@ HRESULT CDefiler::Initialize_Effects()
 		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
 			.Asset("defiler_slash2.json")
 			.Build("Defiler_Slash2_0");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect);
+	}
+	for (_uint i = 0; i < 5; ++i)
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("defiler_slash3.json")
+			.Build("Defiler_Slash3_" + to_string(i));
 		pEffect->Stop();
 		pObjectContainer->Add_Child(pEffect);
 	}

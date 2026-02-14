@@ -101,7 +101,11 @@ public:
 	static CDefilerState_Attack_02* Create() { return new CDefilerState_Attack_02(); }
 	virtual void Free() override { __super::Free(); }
 
+private:
+	void Update_Effects(CDefiler* pOwner);
 
+	_float4 m_BaseRotation{ -0.21f,0.64f,0.71f,0.21f };
+	_uint m_iSlashCount{};
 };
 
 class CDefilerState_Attack_03 : public CDefilerState_Attack
