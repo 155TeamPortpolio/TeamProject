@@ -1,0 +1,4 @@
+Character,Attribute,Specialty,AttributeTexture,SpecialtyTexture,Model,Material,Meta,Anim,PosX,PosY,PosZ,ColorR,ColorG,ColorB
+Corin,Physical,Attack,IconPhysDmg.png,IconTypeAttack.png,Corin.model,Corin.mat,Avatar_Female_Size01_Corin_Meta.json,Avatar_Female_Size01_Corin_Ani_Idle,0,-1,0.9,65,104,128
+JaneDoe,Physical,Anomaly,IconPhysDmg.png,IconTypeAnomaly.png,JaneDoeModel.model,JaneDoe.mat,JaneDoe_Meta.json,Avatar_Female_Size03_JaneDoe_Ani_Gacha_Loop_02,0,-1.42,0.8,15,91,98
+Miyabi,Ice,Anomaly,IconFrost.png,IconTypeAnomal.png,Miyabi.model,Miyabi.mat,Miyabi_Meta.meta,Avatar_Female_Size02_Unagi_Ani_UI_CharacterSelect_Loop_02,0,-1.24,0.7,86,89,93

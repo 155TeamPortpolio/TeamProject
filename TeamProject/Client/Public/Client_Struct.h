@@ -212,4 +212,18 @@ namespace Client {
 			{ "INSTANCE", 5, DXGI_FORMAT_R32G32_FLOAT,		 1,72, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
 		};
 	}VTX_PAPERINSTANCE;
+
+	typedef struct tagPartyDesc {
+		CHARACTER eCharacter;
+		ATTRIBUTE eAttribute;
+		SPECIALTY eSpecialty;
+		string strAttributeTexture;
+		string strSpecialtyTexture;
+		string strModelKey;
+		string strMaterialKey;
+		string strMetaKey;
+		string strAnimClipKey;
+		_float4 vPosition;
+		_float4 vColor;
+	}PARTY_DESC;
 }
