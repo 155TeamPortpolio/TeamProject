@@ -29,10 +29,8 @@ void CGiant_Attack::Enter(CGiant* pOwner)
 	auto targetinginfo = pOwner->GetTargetingInfo();
 
 	_int iAttackPatternIndex = pStateMachine->Get_Int("AttackPattern");
-	if (0 != iAttackPatternIndex) {
+	if (0 != iAttackPatternIndex) 
 		pStateMachine->Set_Int("AttackPattern", 0);
-		AttackFromIndex(iAttackPatternIndex);
-	}
 	else {
 		// 돌진 공격 빼고
 		//if (targetinginfo.fDistance <= hysteriesis.fComboExit)
@@ -51,8 +49,9 @@ void CGiant_Attack::Enter(CGiant* pOwner)
 		//	pOwner->Idle();
 		//	return;
 		//}
-		AttackFromIndex(iAttackPatternIndex);
 	}
+
+	AttackFromIndex(iAttackPatternIndex);
 	pOwner->CaptureRotateToDir(pOwner->GetTargetingInfo().vDirToTarget);
 
 }

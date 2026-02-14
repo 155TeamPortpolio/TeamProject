@@ -117,6 +117,8 @@ void CGiant::Render_GUI()
 	float childWidth = ImGui::GetContentRegionAvail().x;
 	const float textLineHeight = ImGui::GetTextLineHeightWithSpacing();
 	const float childHeight = (textLineHeight * 5) + (ImGui::GetStyle().WindowPadding.y * 2);
+	
+	GUI_DebugButton();
 
 #pragma region Component Inspector
 	if (ImGui::TreeNode("Inspector##ThugBulkyInspector")) {
@@ -124,7 +126,6 @@ void CGiant::Render_GUI()
 		ImGui::TreePop();
 	}
 #pragma endregion
-
 
 #pragma region Status
 	ImGui::SeparatorText("Status");
@@ -160,21 +161,76 @@ void CGiant::Render_GUI()
 
 		if (ImGui::TreeNode("AttackState##ThugAssaulterTestState_Attack"))
 		{
-			if (ImGui::Button(u8"1. Attack01"))
+			_bool	isClicked = false;
+			_int	iClickedIndex = {};
+
+			if (ImGui::Button("Attack1,"))
 			{
-				m_pStateMachine->Set_Int("AttackPattern", 1);
+				isClicked = true;
+				iClickedIndex = 1;
+			}
+			if (ImGui::Button("Attack2,"))
+			{
+				isClicked = true;
+				iClickedIndex = 2;
+			}
+			if (ImGui::Button("Attack2_1,"))
+			{
+				isClicked = true;
+				iClickedIndex = 3;
+			}
+			if (ImGui::Button("Attack2_Explode,"))
+			{
+				isClicked = true;
+				iClickedIndex = 4;
+			}
+			if (ImGui::Button("Attack3,"))
+			{
+				isClicked = true;
+				iClickedIndex = 5;
+			}
+			if (ImGui::Button("Attack3_HitWall,"))
+			{
+				isClicked = true;
+				iClickedIndex = 6;
+			}
+			if (ImGui::Button("Attack4,"))
+			{
+				isClicked = true;
+				iClickedIndex = 7;
+			}
+			if (ImGui::Button("Attack5,"))
+			{
+				isClicked = true;
+				iClickedIndex = 8;
+			}
+			if (ImGui::Button("Attack6_AttackBack,"))
+			{
+				isClicked = true;
+				iClickedIndex = 9;
+			}
+			if (ImGui::Button("Attack7,"))
+			{
+				isClicked = true;
+				iClickedIndex = 10;
+			}
+			if (ImGui::Button("Attack7_Jump,"))
+			{
+				isClicked = true;
+				iClickedIndex = 11;
+			}
+			if (ImGui::Button("Attack7_Revenge"))
+			{
+				isClicked = true;
+				iClickedIndex = 1;
+			}
+
+			if (isClicked)
+			{
+				m_pStateMachine->Set_Int("AttackPattern", iClickedIndex);
 				m_pStateMachine->Set_Trigger("Idle_To_Attack");
 			}
-			if (ImGui::Button(u8"2. Attack02"))
-			{
-				m_pStateMachine->Set_Int("AttackPattern", 2);
-				m_pStateMachine->Set_Trigger("Idle_To_Attack");
-			}
-			if (ImGui::Button(u8"3. Attack03"))
-			{
-				m_pStateMachine->Set_Int("AttackPattern", 3);
-				m_pStateMachine->Set_Trigger("Idle_To_Attack");
-			}
+
 			ImGui::TreePop();
 		}
 		if (ImGui::TreeNode("Death##ThugAssaulterTestDeath"))

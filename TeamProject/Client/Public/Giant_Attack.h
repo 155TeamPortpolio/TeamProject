@@ -10,7 +10,7 @@ class CGiant_Attack : public IHState<CGiant>
 {
 private:
 	enum ATTACK {
-		Attack1,
+		Attack1 = 1,
 		Attack2,
 		Attack2_1,
 		Attack2_Explode,

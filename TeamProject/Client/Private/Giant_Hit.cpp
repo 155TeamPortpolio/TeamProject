@@ -17,7 +17,10 @@ void CGiant_Hit::Enter(CGiant* pOwner)
 		__super::Enter(pOwner);
 	}
 
-
+	if (pOwner->GetTargetingInfo().fDotTarget >= 0.f)		// 내적 값이 양수 == 앞쪽에 가까움 
+		m_pSubStateMachine->Change_State("Hit_H_Front");
+	else                                                    // 내적 값이 음수 == 뒤쪽
+		m_pSubStateMachine->Change_State("Hit_H_Back");
 }
 
 void CGiant_Hit::Update(CGiant* pOwner, _float dt)
