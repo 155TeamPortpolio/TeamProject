@@ -517,6 +517,12 @@ ENGINE_DLL _float Helper::Get_Random_Float(_float min, _float max)
 
 }
 
+ENGINE_DLL _bool Helper::Get_Random_Bool(_float fProbability)
+{
+	uniform_int_distribution<_int> dist(0, 99);
+	return dist(RNG()) < clamp(fProbability, 0.f, 1.f) * 100;
+}
+
 ENGINE_DLL _bool Helper::IsUnderDirectory(const filesystem::path& file, const filesystem::path& dir)
 {
 	error_code ec;

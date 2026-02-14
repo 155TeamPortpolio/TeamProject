@@ -46,6 +46,7 @@ namespace Helper
 	ENGINE_DLL mt19937& Get_RNG();
 	ENGINE_DLL _int Get_Random_Int(_int min, _int max);
 	ENGINE_DLL _float Get_Random_Float(_float min, _float max);
+	ENGINE_DLL _bool  Get_Random_Bool(_float fProbability = 0.5f);
 
 	/*해당 디렉토리에 있는지*/
 	ENGINE_DLL _bool IsUnderDirectory(const filesystem::path& file, const filesystem::path& dir);
