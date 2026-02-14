@@ -575,6 +575,18 @@ void CAnimator3D::Set_LayerType(ANIM_LAYER_STATE eLayerType, _uint LayerIndex)
 	m_AnimLayers[LayerIndex].eLayerType = eLayerType;
 }
 
+_bool CAnimator3D::Get_BipWorld(_float4x4* pOutMatrix)
+{
+	_int iBoneIndex = Resolve_BoneIndex("Bip001");
+	if (-1 == iBoneIndex)
+		return false;
+
+	if(pOutMatrix)
+		*pOutMatrix = Get_BoneMatrix(BoneSpace::WORLD, "Bip001");
+
+	return true;
+}
+
 void CAnimator3D::Change_Speed(_float fSpeed, _uint LayerIndex)
 {
 	if (!isExistLayer(LayerIndex)) return;
