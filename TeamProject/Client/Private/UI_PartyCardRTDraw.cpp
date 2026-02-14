@@ -34,6 +34,8 @@ HRESULT CUI_PartyCardRTDraw::Initialize(INIT_DESC* pArg)
     pSprite->ChangePass("Opaque_StencilTest");
     m_stencilMode = StencilMode::Test;
 
+    SetRenderLayer(RENDER_LAYER::None);
+
     return S_OK;
 }
 

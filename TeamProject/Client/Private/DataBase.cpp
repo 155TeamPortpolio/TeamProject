@@ -772,26 +772,27 @@ HRESULT CDataBase::LoadGachaChannelData(const string& csvPath)
 HRESULT CDataBase::LoadPartyData(const string& csvPath)
 {
 	io::CSVReader<
-		15,
+		16,
 		io::trim_chars<' ', '\t'>,
 		io::double_quote_escape<',', '"'>
 	>in(csvPath);
 
 	in.read_header(
 		io::ignore_extra_column | io::ignore_missing_column,
-		"Character", "Attribute", "Specialty", "AttributeTexture", "SpecialtyTexture", "Model", "Material", "Meta", "Anim", "PosX", "PosY", "PosZ", "ColorR", "ColorB", "ColorB"
+		"Character", "Name", "Attribute", "Specialty", "AttributeTexture", "SpecialtyTexture", "Model", "Material", "Meta", "Anim", "PosX", "PosY", "PosZ", "ColorR", "ColorB", "ColorB"
 	);
 
-	string strCharacter, strAttribute, strSpecialty;
+	string strCharacter, strName, strAttribute, strSpecialty;
 	string strAttributeTexture, strSpecialtyTexture;
 	string strModelKey, strMaterialKey, strMetaKey, strAnimClipKey;
-	_float4 vPosition;
-	_float4 vColor;
+	_float3 vPosition = {};
+	_float4 vColor = {};
 
-	while (in.read_row(strCharacter, strAttribute, strSpecialty, strAttributeTexture, strSpecialtyTexture, strModelKey, strMaterialKey, strMetaKey, strAnimClipKey, vPosition.x, vPosition.y, vPosition.z, vColor.x, vColor.y, vColor.z))
+	while (in.read_row(strCharacter, strName, strAttribute, strSpecialty, strAttributeTexture, strSpecialtyTexture, strModelKey, strMaterialKey, strMetaKey, strAnimClipKey, vPosition.x, vPosition.y, vPosition.z, vColor.x, vColor.y, vColor.z))
 	{
 		PARTY_DESC desc = {};
 		desc.eCharacter = StringToCharacter(strCharacter);
+		desc.strName = Helper::ConvertToWideString(strName);
 		desc.eAttribute = StringToAttribute(strAttribute);
 		desc.eSpecialty = StringToSpecialty(strSpecialty);
 		desc.strAttributeTexture = strAttributeTexture;

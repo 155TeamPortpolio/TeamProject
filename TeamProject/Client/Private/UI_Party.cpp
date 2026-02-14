@@ -3,6 +3,7 @@
 
 #include "GameInstance.h"
 #include "ObjectContainer.h"
+
 #include "UI_IconButton.h"
 #include "UI_TextButton.h"
 #include "UI_PartySynergy.h"
@@ -10,6 +11,8 @@
 #include "UI_PartyCard.h"
 #include "UI_PartyCardRTDraw.h"
 #include "UI_PartyAvatar.h"
+
+#include "UIDirector.h"
 
 HRESULT CUI_Party::Initialize_Prototype()
 {
@@ -44,7 +47,7 @@ HRESULT CUI_Party::Initialize(INIT_DESC* pArg)
     Create_RenderTargets();
     Create_PartyCards();
 
-    Set_Alive(false);
+    //Set_Alive(false);
 
     return S_OK;
 }
@@ -55,18 +58,44 @@ void CUI_Party::Awake()
 
 void CUI_Party::Update(_float dt)
 {
-    if (InputDevice()->Key_Tap('B'))
-        m_pPartyCard[0]->Change_Character(CHARACTER::Corin);
+    if (InputDevice()->Key_Tap('L'))
+    {
+        vector<CHARACTER> characters;
+        characters.push_back(CHARACTER::Corin);
+        characters.push_back(CHARACTER::Miyabi);
+        characters.push_back(CHARACTER::JaneDoe);
+        UIDirector()->Show_Party(characters);
+    } 
 
-    if (InputDevice()->Key_Tap('N'))
-        m_pPartyCard[1]->Change_Character(CHARACTER::JaneDoe);
-
-    if (InputDevice()->Key_Tap('M'))
-        m_pPartyCard[2]->Change_Character(CHARACTER::Miyabi);
+    if (InputDevice()->Key_Tap('K'))
+    {
+        vector<CHARACTER> characters; 
+        characters.push_back(CHARACTER::Miyabi);
+        characters.push_back(CHARACTER::JaneDoe);
+        UIDirector()->Show_Party(characters);
+    }
 
     __super::Update(dt);
 
     Get_Component<CObjectContainer>()->UpdateChild(dt);
+}
+
+void CUI_Party::UI_Active(void* pArg)
+{
+    if (!pArg)
+        return;
+
+    UI_PARTY_DESC* pDesc = static_cast<UI_PARTY_DESC*>(pArg);
+    if (!pDesc)
+        return;
+
+    for (_int i = 0; i < PARTY_COUNT; ++i)
+    {
+        if (i < pDesc->characters.size())
+            m_pPartyCard[i]->Change_Character(pDesc->characters[i]);
+        else
+            m_pPartyCard[i]->Change_Character(CHARACTER::END);
+    }
 }
 
 void CUI_Party::Create_BackButton()

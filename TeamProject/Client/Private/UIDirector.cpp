@@ -12,6 +12,7 @@
 #include "UI_GachaDisplay.h"
 #include "UI_GachaResult.h"
 #include "UI_RenderTargetScreen.h"
+#include "UI_Party.h"
 
 IMPLEMENT_SINGLETON(CUIDirector);
 
@@ -66,9 +67,12 @@ void CUIDirector::Hide_HUD(HUD hud)
 	Hide_HUD(Get_HUDName(hud));
 }
 
-void CUIDirector::Show_Party()
+void CUIDirector::Show_Party(vector<CHARACTER> characters)
 {
-	Show_HUD("party");
+	CUI_Party::UI_PARTY_DESC desc = {};
+	desc.characters = characters;
+
+	UI_Active("party", &desc);
 }
 
 void CUIDirector::Request_DamageText(const DAMAGE_DESC& desc)

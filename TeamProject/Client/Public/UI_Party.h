@@ -5,6 +5,11 @@ NS_BEGIN(Client)
 
 class CUI_Party final : public CUI_Object
 {
+public:
+	typedef struct tagPartyDesc {
+		vector<CHARACTER> characters;
+	}UI_PARTY_DESC;
+
 private:
 	CUI_Party() {}
 	CUI_Party(const CUI_Party& rhs) : CUI_Object(rhs) {}
@@ -18,6 +23,7 @@ public:
 	virtual void    Update(_float dt)			     override;
 	virtual void    Late_Update(_float dt)           override { __super::Late_Update(dt); }
 	virtual void    Render_GUI()                     override { __super::Render_GUI(); }
+	virtual void    UI_Active(void* pArg = nullptr)	 override;
 
 private:
 	static constexpr _int PARTY_COUNT = 3;
