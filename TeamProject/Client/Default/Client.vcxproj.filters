@@ -1368,6 +1368,24 @@
     <Filter Include="02. GameObject\UI\03. UIElement\SoftDirectionalOutline">
       <UniqueIdentifier>{63f153cc-8109-4433-beba-fef1b7722042}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\Party">
+      <UniqueIdentifier>{e5501893-5332-4c0a-865e-adb30f047d16}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\Party\EnterButton">
+      <UniqueIdentifier>{2a65ae1a-2d15-4aea-aaec-25a549666d32}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\Party\PartyCard">
+      <UniqueIdentifier>{7605a7fe-becb-4841-9804-281139893668}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\Party\PartyCard\RenderTarget">
+      <UniqueIdentifier>{f31daf48-a890-4c4a-accc-00c9ad3a488d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\Party\PartyCard\Avatar">
+      <UniqueIdentifier>{8fdd01bf-0a4a-4437-9252-352bb3370beb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\Party\PartySynergy">
+      <UniqueIdentifier>{5bc53c96-2a5a-4d7e-aea1-9926556f894f}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02. GameObject\Object\Enemy\Elite\Giant">
       <UniqueIdentifier>{9252838b-0ea8-417d-925a-ea4c67e6b600}</UniqueIdentifier>
     </Filter>
@@ -2678,6 +2696,24 @@
     <ClInclude Include="..\Public\SoftDirectionalOutlineUI.h">
       <Filter>02. GameObject\UI\03. UIElement\SoftDirectionalOutline</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UI_Party.h">
+      <Filter>02. GameObject\UI\01. 2D\Party</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_PartyEnterButton.h">
+      <Filter>02. GameObject\UI\01. 2D\Party\EnterButton</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_PartySynergy.h">
+      <Filter>02. GameObject\UI\01. 2D\Party\PartySynergy</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_PartyCard.h">
+      <Filter>02. GameObject\UI\01. 2D\Party\PartyCard</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_PartyCardRTDraw.h">
+      <Filter>02. GameObject\UI\01. 2D\Party\PartyCard\RenderTarget</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_PartyAvatar.h">
+      <Filter>02. GameObject\UI\01. 2D\Party\PartyCard\Avatar</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\Giant.h">
       <Filter>02. GameObject\Object\Enemy\Elite\Giant</Filter>
     </ClInclude>
@@ -3943,6 +3979,24 @@
     </ClCompile>
     <ClCompile Include="..\Private\SoftDirectionalOutlineUI.cpp">
       <Filter>02. GameObject\UI\03. UIElement\SoftDirectionalOutline</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Party.cpp">
+      <Filter>02. GameObject\UI\01. 2D\Party</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_PartyEnterButton.cpp">
+      <Filter>02. GameObject\UI\01. 2D\Party\EnterButton</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_PartySynergy.cpp">
+      <Filter>02. GameObject\UI\01. 2D\Party\PartySynergy</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_PartyCard.cpp">
+      <Filter>02. GameObject\UI\01. 2D\Party\PartyCard</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_PartyCardRTDraw.cpp">
+      <Filter>02. GameObject\UI\01. 2D\Party\PartyCard\RenderTarget</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_PartyAvatar.cpp">
+      <Filter>02. GameObject\UI\01. 2D\Party\PartyCard\Avatar</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Giant.cpp">
       <Filter>02. GameObject\Object\Enemy\Elite\Giant</Filter>

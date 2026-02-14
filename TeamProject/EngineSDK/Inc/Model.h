@@ -22,6 +22,7 @@ public:
 	virtual _uint Get_MaterialIndex(_uint Index) PURE;
 	virtual _bool isDrawable(_uint Index) PURE;
 	virtual void SetDrawable(_uint Index,_bool isDraw) PURE;
+	virtual void SetModelDrawable(_bool isDraw) {};
 	virtual _bool isReadyToDraw()	PURE;
 
 public:
