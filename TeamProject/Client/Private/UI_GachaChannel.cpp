@@ -3,6 +3,7 @@
 
 #include "GameInstance.h"
 #include "ObjectContainer.h"
+#include "AudioSource.h"
 #include "Sprite2D.h"
 #include "TextSlot.h"
 
@@ -13,6 +14,8 @@ HRESULT CUI_GachaChannel::Initialize_Prototype()
     __super::Initialize_Prototype();
 
     Add_Component<CObjectContainer>();
+    Add_Component<CAudioSource>();
+    Get_Component<CAudioSource>()->SoundFolder(G_GlobalLevelKey, "../Bin/Resources/Global/UI/Sound/");
 
 	return S_OK;
 }
@@ -38,6 +41,7 @@ HRESULT CUI_GachaChannel::Initialize(INIT_DESC* pArg)
 
     if (m_pButton)
         m_pButton->Set_OnClick([this]() {
+        Get_Component<CAudioSource>()->Slot("UI_Tick.wav").Play();
         if (m_onSelect)
             m_onSelect(this);
             });
@@ -93,10 +97,6 @@ void CUI_GachaChannel::Cache()
     m_pIcon = pContainer->Find_Descendant("icon")->Get_Component<CSprite2D>();
     m_pLabel = pContainer->Find_Descendant("label")->Get_Component<CTextSlot>();
     m_pButton = dynamic_cast<CButtonUI*>(pContainer->Find_Descendant("button"));
-}
-
-void CUI_GachaChannel::OnClick()
-{
 }
 
 CGameObject* CUI_GachaChannel::Create()

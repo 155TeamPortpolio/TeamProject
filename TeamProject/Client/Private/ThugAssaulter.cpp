@@ -118,6 +118,8 @@ void CThugAssaulter::Render_GUI()
 	const float textLineHeight = ImGui::GetTextLineHeightWithSpacing();
 	const float childHeight = (textLineHeight * 5) + (ImGui::GetStyle().WindowPadding.y * 2);
 
+	GUI_DebugButton();
+
 #pragma region Component Inspector
 	if (ImGui::TreeNode("Inspector##ThugBulkyInspector")) {
 		__super::Render_GUI();
@@ -495,11 +497,11 @@ HRESULT CThugAssaulter::Ready_Rules()
 	//// Target 감지 범위 (default = 5.f)
 	//m_fDetectedRange = 5.f;
 
-	m_tHysteriesis.fEvadeEnter = 2.f;
-	m_tHysteriesis.fComboEnter = 3.f;
-	m_tHysteriesis.fComboExit = 4.f;
-	m_tHysteriesis.fChaseEnter = 7.f;
-	m_tHysteriesis.fChaseExit = 5.f;
+	m_tHysteriesis.fEvadeEnter = 1.5f;
+	m_tHysteriesis.fComboEnter = 2.f;
+	m_tHysteriesis.fComboExit = 3.f;
+	m_tHysteriesis.fChaseEnter = 5.f;
+	m_tHysteriesis.fChaseExit = 4.f;
 
 	return S_OK;
 }

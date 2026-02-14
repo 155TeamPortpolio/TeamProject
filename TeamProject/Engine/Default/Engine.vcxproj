@@ -932,6 +932,9 @@ exit /b 0</Command>
     <ClCompile Include="..\Private\VI_Terrain.cpp" />
     <ClCompile Include="..\private\VI_Tessellation.cpp" />
     <ClCompile Include="..\Private\VI_Trail.cpp" />
+    <FxCompile Include="..\Public\Engine_Shader\VTX_PaperEffect.hlsl">
+      <FileType>Document</FileType>
+    </FxCompile>
     <ClCompile Include="..\Public\GUI_Inc\backends\imgui_impl_dx11.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>

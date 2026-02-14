@@ -2,6 +2,8 @@
 #include "MeleeJaeger.h"
 #include "MeleeJaeger_Death.h"
 #include "Helper_Func.h"
+#include "GameInstance.h"
+#include "EffectContainer.h"
 
 #include "Animator3D.h"
 #include "CharacterController.h"
@@ -22,6 +24,8 @@ void CMeleeJaeger_Death::Enter(CMeleeJaeger* pOwner)
 	}
 	else
 		m_pSubStateMachine->Change_State("DeathStay");
+
+	pOwner->Active_Vanish();
 }
 
 void CMeleeJaeger_Death::Update(CMeleeJaeger* pOwner, _float dt)
@@ -35,8 +39,22 @@ void CMeleeJaeger_Death::Update(CMeleeJaeger* pOwner, _float dt)
 
 	__super::Update(pOwner, dt);
 
-	if (m_fAnimProgress > 0.99f)
+	if (m_fAnimProgress > 0.4f)
+		pOwner->Update_DeathSquence(dt);
+	//pOwner->GetStateMachine()->Get_Float("DeathDisappearProgress");
+	if (IsCrossAnimProgress(0.65f))
+	{
+		_vector3 vWorldPosition = pOwner->Get_Component<CTransform>()->Get_WorldPos();
+		vWorldPosition.y += 0.2f;
+
+		auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("enemy_dead.json")
+			.Position(vWorldPosition)
+			.Build("Enemy_Dead");
+
+		ObjectManager()->Add_Object(effect, { pOwner->Get_Level(),"Enemy_Effect_Layer" });
 		pOwner->Death();
+	}
 }
 
 void CMeleeJaeger_Death::Exit(CMeleeJaeger* pOwner)

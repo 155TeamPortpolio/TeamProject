@@ -3,21 +3,27 @@
 
 #include "GameInstance.h"
 #include "ObjectContainer.h"
+#include "AudioSource.h"
 #include "Sprite2D.h"
 #include "TextSlot.h"
 
 HRESULT CUI_TextButton::Initialize_Prototype()
 {
-    __super::Initialize_Prototype();
+    if (FAILED(__super::Initialize_Prototype()))
+        return E_FAIL;
 
     Add_Component<CObjectContainer>();
+    Add_Component<CAudioSource>();
+    Get_Component<CAudioSource>()->SoundFolder(G_GlobalLevelKey, "../Bin/Resources/Global/UI/Sound/");
 
     return S_OK;
 }
 
 HRESULT CUI_TextButton::Initialize(INIT_DESC* pArg)
 {
-    __super::Initialize(pArg);
+    if (FAILED(__super::Initialize(pArg)))
+        return E_FAIL;
+
     Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("button_text.json")));
     Cache_Children();
 
@@ -29,6 +35,7 @@ HRESULT CUI_TextButton::Initialize(INIT_DESC* pArg)
         return S_OK;
 
     m_OnClick = pDesc->onClick;
+    m_strSoundKey = pDesc->strSoundKey;
 
     auto pText = m_pChildren[ENUM(CHILD::LABEL)];
     if (pText)
@@ -41,6 +48,8 @@ HRESULT CUI_TextButton::Initialize(INIT_DESC* pArg)
         m_isClicked = true;
         Set_ChildAnimation(CHILD::OVERLAY, 0);
         Set_ChildAnimation(CHILD::LABEL, 0);
+        if (!m_strSoundKey.empty())
+            Get_Component<CAudioSource>()->Slot(m_strSoundKey).Play();
             });
 
     return S_OK;
