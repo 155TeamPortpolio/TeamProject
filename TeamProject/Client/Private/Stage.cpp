@@ -247,7 +247,8 @@ void CStage::Reserve_Enemy(const string& LevelTag)
 			{
 				CCT_DESC MonsterCCT;
 				MonsterCCT.eGroup = COLLISION_GROUP::MONSTER;
-				MonsterCCT.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER) | ENUM(COLLISION_GROUP::COMMON) | ENUM(COLLISION_GROUP::PLAYER_ATTACK);
+				MonsterCCT.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER) | ENUM(COLLISION_GROUP::PLAYER_ATTACK)
+					| ENUM(COLLISION_GROUP::COMMON) | ENUM(COLLISION_GROUP::GROUND) | ENUM(COLLISION_GROUP::NAP);
 				MonsterCCT.bAutoFit = false;
 				MonsterCCT.fHeight = SpawnData[i].creationInfo.CCT_fHeight;
 				MonsterCCT.fRadius = SpawnData[i].creationInfo.CCT_fRadius;
