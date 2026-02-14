@@ -27,7 +27,6 @@ HRESULT CStage::Exit_Stage(StageContext& context)
 	m_outroFlowBuilt = false;
 	m_iNextChoice = { -1 };
 
-	/*������ - ����*/
 	m_MonsterData.Reset();
 	while (!m_MonsterQueue.empty())
 		m_MonsterQueue.pop();
@@ -52,24 +51,25 @@ void CStage::StageChangeOn(_int choiceIndex)
 void CStage::Ready_Map(const string& LevelTag, const string& AreaTag)
 {
 	CMapLoader* pMapLoader = CMapLoader::Create(LevelTag, AreaTag);
-	if (nullptr == pMapLoader)
+	if (nullptr == pMapLoader) {
 		MSG_BOX("Failed to Load MapData!");
+		return;
+	}
+
 	Safe_Release(pMapLoader);
-	return;
 
 	const CASHED_OBJ_DATA* datas = CDataBase::GetInstance()->Get_CashedData(AreaTag);
 	if (datas->Battle.HasBattleData) {
 		ReadyPlayerPoint(datas->Battle.PlayerPoint);
 		ReadyMonsterPoint(datas->Battle.MonsterPoint);
 		ReadyPortalPoint(datas->Battle.PortalPoint);
-		datas->Battle.Spawner; /*����*/
+		datas->Battle.Spawner;
 		ReadyMonsterData(LevelTag, AreaTag);
 	}
 	m_MapObjects.reserve(100);
 
-	/*���� ���� ����*/
 	auto& Entity = datas->Entity;
-	for (auto& data : Entity) /*��ƼƼ*/
+	for (auto& data : Entity) 
 	{
 		data.DataName;
 		data.Handle;
@@ -77,7 +77,7 @@ void CStage::Ready_Map(const string& LevelTag, const string& AreaTag)
 	}
 
 	auto& MapObj = datas->MapObj;
-	for (auto& data : MapObj) /*�� ������Ʈ*/
+	for (auto& data : MapObj)
 	{
 		data.DataName;
 		data.Handle;
@@ -85,7 +85,7 @@ void CStage::Ready_Map(const string& LevelTag, const string& AreaTag)
 	}
 
 	auto& InvisibleWall = datas->InvWall;
-	for (auto& data : InvisibleWall) /*���� �� -> �׳� �� �޽�*/
+	for (auto& data : InvisibleWall)
 	{
 		data.DataName;
 		data.Handle;
@@ -93,7 +93,7 @@ void CStage::Ready_Map(const string& LevelTag, const string& AreaTag)
 	}
 
 	auto& Trigger = datas->Trigger;
-	for (auto& data : Trigger) /*���� �� -> �׳� �� �޽�*/
+	for (auto& data : Trigger)
 	{
 		data.DataName;
 		data.Handle;
