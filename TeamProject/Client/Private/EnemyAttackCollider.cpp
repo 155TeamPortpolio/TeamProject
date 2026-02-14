@@ -13,10 +13,6 @@
 
 #include "Character.h"
 
-#include "SkeletalModel.h"
-#include "StaticModel.h"
-#include "Material.h"
-
 CEnemyAttackCollider::CEnemyAttackCollider()
 	: CGameObject()
 {
@@ -35,8 +31,6 @@ HRESULT CEnemyAttackCollider::Initialize_Prototype()
 	Add_Component<CRigidBody>();
 	Add_Component<CCollider>();
 	Add_Component<CBoneFollower>();
-	Add_Component<CStaticModel>()->Link_Model(G_GlobalLevelKey, "Default.model");
-	Add_Component<CMaterial>()->Link_Material(G_GlobalLevelKey, "Default.mat");
 
 	return S_OK;
 }
@@ -61,7 +55,7 @@ void CEnemyAttackCollider::Priority_Update(_float dt)
 void CEnemyAttackCollider::Update(_float dt)
 {
 	Get_Component<CBoneFollower>()->Sync_Transform(dt, m_pTransform);
-	Get_Component<CRigidBody>()->Set_GlobalPos(m_pTransform->Get_Pos(), m_pTransform->Get_QuaternionRotate());
+	Get_Component<CRigidBody>()->Set_GlobalPos(Get_WorldPos(), m_pTransform->Get_QuaternionRotate());
 	Get_Component<CCollider>()->Update(dt);
 }
 

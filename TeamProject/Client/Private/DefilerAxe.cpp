@@ -49,6 +49,7 @@ HRESULT CDefilerAxe::Initialize(INIT_DESC* pArg)
 	m_vSlide = Math::NormalizeSafeXZ(m_vSlide)*5;
 	m_BaseRot = m_pTransform->Get_QuaternionRotate(); 
 	m_fElapsedTime = 0.f;
+	m_tStatus.iNowHP = 100.f;
 	return S_OK;
 }
 
@@ -93,7 +94,7 @@ void CDefilerAxe::Update(_float dt)
 			m_bDangle = true;
 	}
 
-	if (InputDevice()->Key_Tap('G'))
+	if (m_tStatus.iNowHP <= 0.f)
 		SummonWall();
 }
 
@@ -130,12 +131,6 @@ void CDefilerAxe::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER 
 {
 	BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::HIT_NORMAL);
 	_float fTakeDamage = fDamage;
-
-	if (m_tStatus.isGroggy)
-		fTakeDamage *= 1.5f;
-	else
-		m_tStatus.iGroggyValue += 2;
-
 	m_tStatus.iNowHP -= fTakeDamage;
 
 	if (0 >= m_tStatus.iNowHP)

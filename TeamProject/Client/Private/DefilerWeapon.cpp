@@ -49,6 +49,7 @@ HRESULT CDefilerWeapon::Initialize(INIT_DESC* pArg)
 	Get_Component<CCollider>()->Set_CollisionMask(ENUM(COLLISION_GROUP::PLAYER) |
 		ENUM(COLLISION_GROUP::PLAYER_ATTACK));
 	Get_Component<CCollider>()->Set_CollisionGroup(COLLISION_GROUP::MONSTER);
+	Get_Component<CCollider>()->Set_Size({2.f,2.f,2.f});
 	Get_Component<CCollider>()->Set_Trigger(true);
 	Get_Component<CRigidBody>()->Set_Kinematic(true);
 	Get_Component<CAudioSource>()->SoundFolder("Zero_Level", "../Bin/Resources/Zero/Enemy/Defiler_Isolde/Sound/");
@@ -69,6 +70,7 @@ HRESULT CDefilerWeapon::Initialize(INIT_DESC* pArg)
 		instance->Set_Param("fDissolveProgress", { &m_fDissolveProgress,"float",sizeof(_float) });
 		instance->Set_Param("fDissolveTiling", { &m_fDissolveTilling,"float",sizeof(_float) });
 	}
+	m_isOnAttack = true;
 	return S_OK;
 }
 
