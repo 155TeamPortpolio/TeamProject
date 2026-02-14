@@ -14,7 +14,7 @@
 #include "Material.h"
 #include "Animator3D.h"
 
-void CUI_PartyCard::Change_Character(CHARACTER eCharacter)
+void CUI_PartyCard::Change_Character(CHARACTER eCharacter, ATTRIBUTE eMaxAttribute)
 {
     RENDER_LAYER layer = RENDER_LAYER::None;
 
@@ -23,17 +23,27 @@ void CUI_PartyCard::Change_Character(CHARACTER eCharacter)
     if (hasCharacter)
     {
         layer = RENDER_LAYER::Default;
-
-        auto pDesc = CDataBase::GetInstance()->GetPartyData(eCharacter); 
+        
+        auto pDesc = CDataBase::GetInstance()->GetPartyData(eCharacter);
         Change_Avatar(pDesc.strModelKey, pDesc.strMaterialKey, pDesc.strMetaKey, pDesc.strAnimClipKey, pDesc.vPosition);
-        Change_Icons("IconPairUpSkillSmall01.png", pDesc.strAttributeTexture, pDesc.strSpecialtyTexture);
-        Change_Texts(pDesc.strName, 40);
+        Change_Icons( (eMaxAttribute == pDesc.eAttribute) ? "IconPairUpSkillSmall02.png" : "IconPairUpSkillSmall01.png", pDesc.strAttributeTexture, pDesc.strSpecialtyTexture);
+        Change_Texts(pDesc.strName, pDesc.iLevel);
+
+        Set_ChildColor(CHILD::BG_FRONT, pDesc.vColor);
+        Set_ChildColor(CHILD::BG_BACK, _float4(pDesc.vColor.x * 0.7f, pDesc.vColor.y * 0.7f, pDesc.vColor.z * 0.7f, pDesc.vColor.w));
+        Set_ChildColor(CHILD::BG_PATTERN, _float4(pDesc.vColor.x * 0.8f, pDesc.vColor.y * 0.8f, pDesc.vColor.z * 0.8f, pDesc.vColor.w * 0.2f));
+    }
+    else
+    {
+        Set_ChildColor(CHILD::BG_FRONT, m_vBGFrontColor);
+        Set_ChildColor(CHILD::BG_BACK, m_vBGBackColor);
+        Set_ChildColor(CHILD::BG_PATTERN, _float4(1.f, 1.f, 1.f, 0.f));
     }
 
     if (m_pRTDraw)
         m_pRTDraw->SetRenderLayer(layer);
-    Set_ChildAlive(CHILD::EMPTY,!hasCharacter);
-    Set_ChildAlive(CHILD::OCCUPIED, hasCharacter);
+    Set_ChildAlive(CHILD::EMPTY, !hasCharacter);
+    Set_ChildAlive(CHILD::OCCUPIED, hasCharacter);  
 }
 
 HRESULT CUI_PartyCard::Initialize_Prototype()
@@ -61,6 +71,9 @@ HRESULT CUI_PartyCard::Initialize(INIT_DESC* pArg)
 
     // 아바타 만들어
     Create_Avatar(pDesc->strRenderTargetKey);
+
+    m_vBGBackColor = Get_ChildColor(CHILD::BG_BACK);
+    m_vBGFrontColor = Get_ChildColor(CHILD::BG_FRONT);
 
     return S_OK;
 }
@@ -193,6 +206,24 @@ void CUI_PartyCard::Set_ChildAlive(CHILD child, _bool isAlive)
         return;
 
     pChild->Set_Alive(isAlive);
+}
+
+void CUI_PartyCard::Set_ChildColor(CHILD child, _float4 vColor)
+{
+    auto pChild = m_pChildren[ENUM(child)];
+    if (!pChild)
+        return;
+
+    pChild->Set_Color(vColor);
+}
+
+_float4 CUI_PartyCard::Get_ChildColor(CHILD child)
+{
+    auto pChild = m_pChildren[ENUM(child)];
+    if (!pChild)
+        return _float4();
+
+    return pChild->Get_Color();
 }
 
 void CUI_PartyCard::Change_SpriteTexture(SPRITE2D sprite, const string& strTextureKey)

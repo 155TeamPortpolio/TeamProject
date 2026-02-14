@@ -176,9 +176,9 @@
                         "radian": 0.0
                     },
                     "color": [
-                        0.23938226699829102,
-                        0.23938226699829102,
-                        0.23938226699829102,
+                        0.09803921729326248,
+                        0.09803921729326248,
+                        0.09803921729326248,
                         1.0
                     ],
                     "stencilMode": 2,
@@ -229,9 +229,9 @@
                         "radian": -0.2879793345928192
                     },
                     "color": [
-                        0.4440154433250427,
-                        0.4440154433250427,
-                        0.4440154433250427,
+                        0.11583012342453003,
+                        0.11583012342453003,
+                        0.11583012342453003,
                         1.0
                     ],
                     "stencilMode": 2,
@@ -263,6 +263,59 @@
                             0.019999999552965164
                         ]
                     }
+                },
+                {
+                    "alive": true,
+                    "instanceName": "bgPattern",
+                    "transform": {
+                        "anchor": 0,
+                        "anchorOffset": [
+                            -300.0,
+                            -375.0
+                        ],
+                        "size": [
+                            600.0,
+                            750.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        0.0
+                    ],
+                    "stencilMode": 2,
+                    "pass": "Opaque_StencilTest",
+                    "colorTexKey": "empty.png",
+                    "colorTexMode": 0,
+                    "colorTexMix": 1.0,
+                    "colorUVUse": 0,
+                    "colorUVOffset": [
+                        0.0,
+                        0.0
+                    ],
+                    "colorUVScale": [
+                        1.0,
+                        1.0
+                    ],
+                    "colorUVAutoScroll": false,
+                    "colorUVSpeed": [
+                        0.0,
+                        0.0
+                    ],
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "Image",
+                    "textureTag": "RoleSelectPattern.png"
                 }
             ],
             "typeTag": "CanvasPanel"
@@ -585,12 +638,12 @@
                             "transform": {
                                 "anchor": 9,
                                 "anchorOffset": [
-                                    36.0,
-                                    -63.0
+                                    40.0,
+                                    -60.0
                                 ],
                                 "size": [
-                                    46.0,
-                                    46.0
+                                    40.0,
+                                    40.0
                                 ],
                                 "scale": [
                                     1.0,
@@ -857,8 +910,8 @@
                             "transform": {
                                 "anchor": 8,
                                 "anchorOffset": [
-                                    -34.0620002746582,
-                                    -58.125
+                                    -33.0,
+                                    -59.0
                                 ],
                                 "size": [
                                     38.125,
@@ -910,12 +963,12 @@
                             "transform": {
                                 "anchor": 8,
                                 "anchorOffset": [
-                                    4.5,
-                                    -63.0
+                                    12.0,
+                                    -60.0
                                 ],
                                 "size": [
-                                    47.0,
-                                    47.0
+                                    40.0,
+                                    40.0
                                 ],
                                 "scale": [
                                     1.0,

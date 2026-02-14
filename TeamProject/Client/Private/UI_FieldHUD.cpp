@@ -4,6 +4,8 @@
 #include "GameInstance.h"
 #include "ObjectContainer.h"
 
+#include "UIDirector.h"
+
 HRESULT CUI_FieldHUD::Initialize_Prototype()
 {
     __super::Initialize_Prototype();
@@ -28,6 +30,23 @@ void CUI_FieldHUD::Awake()
 
 void CUI_FieldHUD::Update(_float dt)
 {
+    if (InputDevice()->Key_Tap('L'))
+    {
+        vector<CHARACTER> characters;
+        characters.push_back(CHARACTER::Corin);
+        characters.push_back(CHARACTER::Miyabi);
+        characters.push_back(CHARACTER::JaneDoe);
+        UIDirector()->Show_Party(characters);
+    }
+
+    if (InputDevice()->Key_Tap('K'))
+    {
+        vector<CHARACTER> characters;
+        characters.push_back(CHARACTER::Miyabi);
+        characters.push_back(CHARACTER::JaneDoe);
+        UIDirector()->Show_Party(characters);
+    }
+
     __super::Update(dt);
 
     Get_Component<CObjectContainer>()->UpdateChild(dt);

@@ -216,6 +216,7 @@ namespace Client {
 	typedef struct tagPartyDesc {
 		CHARACTER eCharacter;
 		wstring strName;
+		_int iLevel = {};
 		ATTRIBUTE eAttribute;
 		SPECIALTY eSpecialty;
 		string strAttributeTexture;
@@ -224,7 +225,7 @@ namespace Client {
 		string strMaterialKey;
 		string strMetaKey;
 		string strAnimClipKey;
-		_float3 vPosition;
-		_float4 vColor;
+		_float3 vPosition = {};
+		_float4 vColor = {};
 	}PARTY_DESC;
 }

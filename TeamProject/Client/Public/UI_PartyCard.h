@@ -16,8 +16,8 @@ public:
 	}CARD_DESC;
 
 private:
-	enum class CHILD { BG_BACK, BG_FRONT, EMPTY, OCCUPIED, END };
-	inline static const string INSTANCENAMES[ENUM(CHILD::END)] = { "bgBack", "bgFront", "empty", "occupied" };
+	enum class CHILD { BG_BACK, BG_FRONT, BG_PATTERN, EMPTY, OCCUPIED, END };
+	inline static const string INSTANCENAMES[ENUM(CHILD::END)] = { "bgBack", "bgFront", "bgPattern", "empty", "occupied" };
 
 	enum class SPRITE2D { ICON_PAIR, ICON_ATTRIBUTE, ICON_SPECIALTY, END };
 	inline static const string INSTANCENAMES_SPRITE2D[ENUM(SPRITE2D::END)] = { "iconPair", "iconAttribute", "iconSpecialty" };
@@ -31,7 +31,7 @@ private:
 	virtual ~CUI_PartyCard() DEFAULT;
 
 public:
-	void Change_Character(CHARACTER eCharacter);
+	void Change_Character(CHARACTER eCharacter, ATTRIBUTE eMaxAttribute = ATTRIBUTE::END);
 	
 public:
 	virtual HRESULT Initialize_Prototype()           override;
@@ -50,6 +50,9 @@ private:
 	class CSprite2D* m_pSprites[ENUM(SPRITE2D::END)] = {};
 	class CTextSlot* m_pTextSlots[ENUM(TEXTSLOT::END)] = {};
 
+	_float4 m_vBGBackColor = {};
+	_float4 m_vBGFrontColor = {};
+
 private:
 	void Cache();
 	void Create_RenderTarget(const string& strRenderTargetKey);
@@ -60,6 +63,9 @@ private:
 	void Change_Texts(const wstring& strName, _int iLevel);
 
 	void Set_ChildAlive(CHILD child, _bool isAlive);
+	void Set_ChildColor(CHILD child, _float4 vColor);
+	_float4 Get_ChildColor(CHILD child);
+
 	void Change_SpriteTexture(SPRITE2D sprite, const string& strTextureKey);
 	void Set_Text(TEXTSLOT textSlot, const _wstring& strText);
 

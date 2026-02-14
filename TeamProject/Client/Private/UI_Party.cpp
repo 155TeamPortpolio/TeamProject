@@ -13,6 +13,7 @@
 #include "UI_PartyAvatar.h"
 
 #include "UIDirector.h"
+#include "DataBase.h"
 
 HRESULT CUI_Party::Initialize_Prototype()
 {
@@ -47,7 +48,7 @@ HRESULT CUI_Party::Initialize(INIT_DESC* pArg)
     Create_RenderTargets();
     Create_PartyCards();
 
-    //Set_Alive(false);
+    Set_Alive(false);
 
     return S_OK;
 }
@@ -58,23 +59,6 @@ void CUI_Party::Awake()
 
 void CUI_Party::Update(_float dt)
 {
-    if (InputDevice()->Key_Tap('L'))
-    {
-        vector<CHARACTER> characters;
-        characters.push_back(CHARACTER::Corin);
-        characters.push_back(CHARACTER::Miyabi);
-        characters.push_back(CHARACTER::JaneDoe);
-        UIDirector()->Show_Party(characters);
-    } 
-
-    if (InputDevice()->Key_Tap('K'))
-    {
-        vector<CHARACTER> characters; 
-        characters.push_back(CHARACTER::Miyabi);
-        characters.push_back(CHARACTER::JaneDoe);
-        UIDirector()->Show_Party(characters);
-    }
-
     __super::Update(dt);
 
     Get_Component<CObjectContainer>()->UpdateChild(dt);
@@ -89,13 +73,43 @@ void CUI_Party::UI_Active(void* pArg)
     if (!pDesc)
         return;
 
+    Set_Alive(true);
+
+    // 파티에서 attribute 별로 카운트
+    array<_int, static_cast<_int>(ATTRIBUTE::END)> counts = {};
+    auto pDatabase = CDataBase::GetInstance();
+    for (auto character : pDesc->characters)
+    {
+        if (character == CHARACTER::END)
+            continue;
+
+        counts[static_cast<_int>(pDatabase->GetPartyData(character).eAttribute)]++;
+    }
+
+    // 제일 많은 attribute
+    _int iTotalPartyCount = pDesc->characters.size();
+    _int iPartySynergyCount = {};
+    ATTRIBUTE eMaxAttribute = ATTRIBUTE::END;
+    for (int i = 0; i < static_cast<_int>(ATTRIBUTE::END); ++i)
+    {
+        if (counts[i] > iPartySynergyCount)
+        {
+            iPartySynergyCount = counts[i];
+            eMaxAttribute = static_cast<ATTRIBUTE>(i);
+        }
+    } 
+
+    // 각각 카드 셋팅
     for (_int i = 0; i < PARTY_COUNT; ++i)
     {
         if (i < pDesc->characters.size())
-            m_pPartyCard[i]->Change_Character(pDesc->characters[i]);
+            m_pPartyCard[i]->Change_Character(pDesc->characters[i], (iPartySynergyCount >= 2) ? eMaxAttribute : ATTRIBUTE::END );
         else
             m_pPartyCard[i]->Change_Character(CHARACTER::END);
     }
+
+    // 시너지 셋팅
+    m_pPartySynergy->Set_Synergy(iPartySynergyCount, iTotalPartyCount);
 }
 
 void CUI_Party::Create_BackButton()
@@ -106,6 +120,7 @@ void CUI_Party::Create_BackButton()
     if (!pObj)
         return;
 
+    pObj->Set_OnClick([this]() { Set_Alive(false); }); // 클릭했을 때 실행할 함수 필요
     Get_Component<CObjectContainer>()->Add_Child(pObj);
 }
 
@@ -138,6 +153,7 @@ void CUI_Party::Create_PartySynergy()
         return;
 
     Get_Component<CObjectContainer>()->Add_Child(pObj);
+    m_pPartySynergy = dynamic_cast<CUI_PartySynergy*>(pObj);
 }
 
 void CUI_Party::Create_SettingButton()
@@ -187,6 +203,7 @@ void CUI_Party::Create_EnterButton()
     if (!pObj)
         return;
 
+    pObj->Set_OnClick([this]() { Set_Alive(false); }); // 클릭했을 때 실행할 함수 필요
     Get_Component<CObjectContainer>()->Add_Child(pObj);
 }
 

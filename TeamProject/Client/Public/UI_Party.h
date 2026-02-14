@@ -30,6 +30,7 @@ private:
 	array<string, PARTY_COUNT> m_RenderTargetKeys;
 
 	class CUI_PartyCard* m_pPartyCard[PARTY_COUNT] = {};
+	class CUI_PartySynergy* m_pPartySynergy = {};
 
 private:
 	void Create_BackButton();
