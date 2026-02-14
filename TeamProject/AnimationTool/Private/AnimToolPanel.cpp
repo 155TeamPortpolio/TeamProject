@@ -7,7 +7,7 @@
 #include "AnimationLayout.h"
 #include "DynamicBone.h"
 #include "Channel.h"
-
+#include "AudioSource.h"
 
 CAnimToolPanel::CAnimToolPanel(GUI_CONTEXT* pContext) 
 	: CBasePanel{pContext}
@@ -25,6 +25,7 @@ void CAnimToolPanel::Update_Panel(_float dt)
 		dynamic_cast<CAnimModel*>(m_pSelectModel)->Set_Panel(this);
 		Reset_Panel();
 	}
+
 	if (nullptr != m_pSelectAnimator) {
 		float fPause = 1.f;
 		if (m_bPause) fPause = 0.f;
@@ -47,6 +48,21 @@ void CAnimToolPanel::Update_Panel(_float dt)
 				}
 			}
 		}
+
+		_float Cur = m_pSelectAnimator->Get_AnimLayers()[0].fCurrentTrackPosition;
+		_float Prev = m_pSelectAnimator->Get_AnimLayers()[0].fPrevTrackPosition;
+		if (m_iCurClipIndex != -1)
+		{
+			for (auto& Event : m_AnimClip[m_iCurClipIndex].Events) {
+				if (Prev < Event.EventTime && Event.EventTime <= Cur) {
+					if (Event.EventType == CLIP_EVENT_TYPE::SOUND) {
+						auto AS = m_pSelectModel->Get_Component<CAudioSource>();
+						if (AS) AS->Play(Event.EventTag);
+					}
+				}
+			}
+		}
+
 	}
 	return;
 
@@ -461,7 +477,6 @@ void CAnimToolPanel::GUI_Preview(_float fChildHeight)
 		{
 			m_bPreviewPlay = true;
 			m_bPause = false;
-
 
 			if (m_pSelectAnimator && !m_PreviewList.empty())
 			{
