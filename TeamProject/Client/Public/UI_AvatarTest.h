@@ -22,6 +22,9 @@ private:
 	_float4x4 m_ViewMatrix = {};
 	_float4x4 m_ProjMatrix = {};
 
+	const string m_strPassConstant = "UI_RenderTarget";
+	string m_strTargetKey = "avatarTest";
+
 private:
 	void Render_RT(ID3D11DeviceContext* pContext);
 

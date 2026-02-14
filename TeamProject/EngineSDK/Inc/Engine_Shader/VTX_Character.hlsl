@@ -11,6 +11,7 @@ float4x4 g_CommandBoneMatrices[512];
 matrix g_worldMatrix;
 Texture2D MotionBlurNoiseTexture;
 float fCameraFadeAlpha;
+matrix g_viewMatrix, g_projMatrix;
 
 struct VS_IN
 {
@@ -162,7 +163,6 @@ VS_MOTIONOUT VS_MOTIONBLUR(VS_IN In)
     return Out;
 }
 
-matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 VS_OUT VS_CUSTOM(VS_IN In)
 {
     VS_OUT Out;
@@ -180,21 +180,21 @@ VS_OUT VS_CUSTOM(VS_IN In)
     vector vTangent = mul(float4(In.vTangent, 0.f), BoneMatrix);
     vector vBinormal = mul(float4(In.vBinormal, 0.f), BoneMatrix);
       
-    float3 worldPos = mul(vPosition, g_WorldMatrix).xyz;
-    float4 viewPos = mul(float4(worldPos, 1.f), g_ViewMatrix);
-    float4 projPos = mul(viewPos, g_ProjMatrix);
+    float3 worldPos = mul(vPosition, g_worldMatrix).xyz;
+    float4 viewPos = mul(float4(worldPos, 1.f), g_viewMatrix);
+    float4 projPos = mul(viewPos, g_projMatrix);
         
-    matrix matrixWV = mul(g_WorldMatrix, g_ViewMatrix);
-    matrix matrixWVP = mul(matrixWV, g_ProjMatrix);
+    matrix matrixWV = mul(g_worldMatrix, g_viewMatrix);
+    matrix matrixWVP = mul(matrixWV, g_projMatrix);
     
     Out.vPosition = projPos;
     
     Out.vTexcoord = In.vTexcoord;
-    Out.vNormal = normalize(mul(vNormal, g_WorldMatrix));
+    Out.vNormal = normalize(mul(vNormal, g_worldMatrix));
     Out.vProjPos = Out.vPosition;
 
-    Out.vTangent = normalize(mul(vTangent, g_WorldMatrix));
-    Out.vBinormal = normalize(mul(vBinormal, g_WorldMatrix));
+    Out.vTangent = normalize(mul(vTangent, g_worldMatrix));
+    Out.vBinormal = normalize(mul(vBinormal, g_worldMatrix));
 
     return Out;
 }
@@ -283,8 +283,9 @@ PS_OUT PS_MAIN(PS_IN In)
     return Out;
 }
 
-PS_OUT PS_UI(PS_IN In)
+PS_OUT PS_OPAQUE(PS_IN In)
 {
+    // 알파 무조건 1
     PS_OUT Out;
     
     vector vMtrlDiffuse = DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
@@ -618,14 +619,14 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_OUTLINE();
     }
 
-    pass Opaque_Custom
+    pass UI_RenderTarget
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_WriteStencil, 1);
         SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_CUSTOM();
         GeometryShader = NULL;
-        PixelShader = compile ps_5_0 PS_UI();
+        PixelShader = compile ps_5_0 PS_OPAQUE();
     }
 }
 

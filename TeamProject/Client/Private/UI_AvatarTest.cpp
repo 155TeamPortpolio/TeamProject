@@ -6,7 +6,6 @@
 #include "Material.h"
 #include "MaterialData.h"
 #include "Animator3D.h" 
-
 #include "Renderer.h"
 
 HRESULT CUI_AvatarTest::Initialize_Prototype()
@@ -38,27 +37,26 @@ HRESULT CUI_AvatarTest::Initialize(INIT_DESC* pArg)
 
 void CUI_AvatarTest::Awake()
 {
-    Get_Component<CSkeletalModel>()->Link_Model(G_GlobalLevelKey, "Miyabi.model");
-    Get_Component<CMaterial>()->Link_Material(G_GlobalLevelKey, "Miyabi.mat");;
-
-    auto pAnimator = Get_Component<CAnimator3D>();
-    pAnimator->LinkAnimate_Model(G_GlobalLevelKey, "Miyabi.model");
-    pAnimator->Link_MetaData(G_GlobalLevelKey, "Miyabi_Meta.json");
-
-    pAnimator->Set_Animation("Avatar_Female_Size02_Unagi_Ani_Gacha_Loop")
-        .Loop(true)
-        .Apply();
-
-    auto pMaterial = Get_Component<CMaterial>();
     auto pModel = Get_Component<CSkeletalModel>();
+    auto pMaterial = Get_Component<CMaterial>(); 
+    auto pAnimator = Get_Component<CAnimator3D>();
+
+    pModel->Link_Model(G_GlobalLevelKey, "Miyabi.model");
     pModel->Hide_MehsByName("HairShadow");
 
-    auto& pMaterialInstances = pMaterial->Get_MaterialInstances();
-    for (auto& Instance : pMaterialInstances)
+    pMaterial->Link_Material(G_GlobalLevelKey, "Miyabi.mat");
+
+    pAnimator->LinkAnimate_Model(G_GlobalLevelKey, "Miyabi.model");
+    pAnimator->Link_MetaData(G_GlobalLevelKey, "Miyabi_Meta.json");
+    pAnimator->Set_Animation("Avatar_Female_Size02_Unagi_Ani_Gacha_Loop").Loop(true).Apply();
+
+    auto& materialInstances = pMaterial->Get_MaterialInstances();
+    for (auto& pInstance : materialInstances)
     {
-        Instance->Override_Pass("UI_RenderTarget");
-        Instance->Set_Param("g_ViewMatrix", { &m_ViewMatrix, "matrix", sizeof(_float4x4) });
-        Instance->Set_Param("g_ProjMatrix", { &m_ProjMatrix, "matrix", sizeof(_float4x4) });
+        pInstance->Override_Pass(m_strPassConstant);
+        pInstance->Set_Param("g_worldMatrix", { Get_Component<CTransform>()->Get_WorldMatrix_Ptr(), "matrix", sizeof(_float4x4) });
+        pInstance->Set_Param("g_viewMatrix", { &m_ViewMatrix, "matrix", sizeof(_float4x4) });
+        pInstance->Set_Param("g_projMatrix", { &m_ProjMatrix, "matrix", sizeof(_float4x4) });
     }
 }
 
@@ -71,7 +69,7 @@ void CUI_AvatarTest::Update(_float dt)
     Get_Component<CAnimator3D>()->Update_Animation(dt);
 
     RENDER_CUSTOM_COMMAND command = {};
-    command.TargetKey = "avatarTest";
+    command.TargetKey = m_strTargetKey;
     command.bClear = true;
     command.DrawCallback = [this](ID3D11DeviceContext* pContext) { Render_RT(pContext); };
     RenderSystem()->Add_RenderCommand(command, CUSTOMTARGET::UI);
@@ -83,33 +81,29 @@ void CUI_AvatarTest::Late_Update(_float dt)
 
 void CUI_AvatarTest::Render_RT(ID3D11DeviceContext* pContext)
 {
-    auto RenderSys = RenderSystem()->GetRenderer(RENDERER_TYPE::SKINNED);
-    auto Model = Get_Component<CSkeletalModel>();
-    auto Material = Get_Component<CMaterial>();
-    for (_int i = 0; i < Model->Get_MeshCount(); ++i)
-    {
-        if (Model->isDrawable(i) == false) continue;
-        _int Index = Model->Get_MaterialIndex(i);
-        auto Shader = Material->Get_Shader(Index);
-        auto instance = Material->Get_MaterialInstance(Index);
-        instance->Override_Pass("Opaque_Custom");
-        ID3D11InputLayout* pLayout;
-        RenderSys->Get_InputLayout(
-            Model,
-            Shader,
-            i,
-            "Opaque_Custom",
-            &pLayout
-        );
+    auto pRenderSystem = RenderSystem()->GetRenderer(RENDERER_TYPE::SKINNED);
+    auto pModel = Get_Component<CSkeletalModel>();
+    auto pMaterial = Get_Component<CMaterial>();
 
-        instance->Set_Param("g_WorldMatrix", { Get_Component<CTransform>()->Get_WorldMatrix_Ptr(), "matrix", sizeof(_float4x4) });
+    for (_int i = 0; i < pModel->Get_MeshCount(); ++i)
+    {
+        if (pModel->isDrawable(i) == false) 
+            continue;
+
+        _int iIndex = pModel->Get_MaterialIndex(i);
+        auto pShader = pMaterial->Get_Shader(iIndex);
+        auto pInstance = pMaterial->Get_MaterialInstance(iIndex);
+        pInstance->Override_Pass(m_strPassConstant);
+        ID3D11InputLayout* pLayout;
+        pRenderSystem->Get_InputLayout(pModel, pShader, i, m_strPassConstant, &pLayout);
+         
         vector<_float4x4> BoneMatrices = Get_Component<CAnimator3D>()->Get_BoneMatrices(i);
-        instance->Set_Param("g_CommandBoneMatrices", { BoneMatrices.data(), "float4x4[]", static_cast<_uint>(sizeof(_float4x4) * BoneMatrices.size())});
+        pInstance->Set_Param("g_CommandBoneMatrices", { BoneMatrices.data(), "float4x4[]", static_cast<_uint>(sizeof(_float4x4) * BoneMatrices.size())});
 
         pContext->IASetInputLayout(pLayout);
-        Material->Apply_Material(pContext, Index);
-        Model->Draw(pContext, i);
-        instance->Reset_Pass();
+        pMaterial->Apply_Material(pContext, iIndex);
+        pModel->Draw(pContext, i);
+        pInstance->Reset_Pass();
     }
 }
 
