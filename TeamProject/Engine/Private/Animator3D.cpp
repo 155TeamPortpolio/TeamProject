@@ -1066,6 +1066,7 @@ void CAnimator3D::Animation_Run(ANIM_LAYER& Layer, _float dt)
 	_float playSpeed = Compute_PlaySpeed(Layer, dt);
 
 	//Update TrackPos
+	Layer.fPrevTrackPosition = Layer.fCurrentTrackPosition;
 	Layer.fCurrentTrackPosition = nowClip->TranslateAnimateMatrix(
 		Layer.LocalMatrices, Layer.fCurrentTrackPosition,
 		playSpeed, Layer.bLoop, Layer.fEndAt, Layer.fStartAt,
@@ -1147,6 +1148,7 @@ void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
 	}
 
 	if (Layer.bUpdate_NewClip) {
+		Layer.fPrevTrackPosition = Layer.fBlendTrackPosition;
 		Layer.fBlendTrackPosition = nextClip->TranslateAnimateMatrix(
 			Layer.BlendMatrices, Layer.fBlendTrackPosition,
 			playSpeed, Layer.bLoop, Layer.fEndAt, Layer.fStartAt,

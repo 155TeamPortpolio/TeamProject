@@ -28,8 +28,6 @@ public:
 
 public:
     virtual void    OnTriggerEnter(CGameObject* pOther) override;
-    virtual void    OnPooledAcquire(INIT_DESC* pArg = nullptr) override;		// 풀에서 꺼낼 때
-    virtual void    OnPooledRelease()override;
 
 public:
     DefilerDissolve& Get_Dissolve() { return m_Dissolve; }
@@ -51,6 +49,7 @@ private:
 private:
     _bool m_LockedOn = { false };
     _vector3 m_vCurrentDir = {};
+    _vector3 m_vVelocity = {};
     DefilerDissolve m_Dissolve;
     CStateMachine<CMiasmaHeavyJaeger>* m_pStateMachine = { nullptr };
   

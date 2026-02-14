@@ -2,6 +2,8 @@
 #include "StrikeJaeger.h"
 #include "StrikeJaeger_Death.h"
 #include "Helper_Func.h"
+#include "GameInstance.h"
+#include "EffectContainer.h"
 
 #include "Animator3D.h"
 #include "CharacterController.h"
@@ -21,7 +23,9 @@ void CStrikeJaeger_Death::Enter(CStrikeJaeger* pOwner)
 		m_pSubStateMachine->Change_State("DeathBack");
 	}
 	else
-		m_pSubStateMachine->Change_State("DeathFront");
+		m_pSubStateMachine->Change_State("DeathStay");
+
+	pOwner->Active_Vanish();
 }
 
 void CStrikeJaeger_Death::Update(CStrikeJaeger* pOwner, _float dt)
@@ -35,8 +39,22 @@ void CStrikeJaeger_Death::Update(CStrikeJaeger* pOwner, _float dt)
 
 	__super::Update(pOwner, dt);
 
-	if (m_fAnimProgress > 0.99f)
+	if (m_fAnimProgress > 0.4f)
+		pOwner->Update_DeathSquence(dt);
+	//pOwner->GetStateMachine()->Get_Float("DeathDisappearProgress");
+	if (IsCrossAnimProgress(0.65f))
+	{
+		_vector3 vWorldPosition = pOwner->Get_Component<CTransform>()->Get_WorldPos();
+		vWorldPosition.y += 0.2f;
+
+		auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("enemy_dead.json")
+			.Position(vWorldPosition)
+			.Build("Enemy_Dead");
+
+		ObjectManager()->Add_Object(effect, { pOwner->Get_Level(),"Enemy_Effect_Layer" });
 		pOwner->Death();
+	}
 }
 
 void CStrikeJaeger_Death::Exit(CStrikeJaeger* pOwner)

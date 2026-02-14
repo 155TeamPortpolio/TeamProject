@@ -19,7 +19,7 @@ void CDefilerState_Attack::Build_Pattern(CDefiler* pOwner, _int Type)
 	DEFILER_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
 	TARGETING_INFO& targetInfo = pOwner->GetTargetingInfo();
 	blackBoard.patternTransition.clear();
-	Type = 11;
+	Type = 10;
 	switch (Type)
 	{
 	case 0 :
@@ -675,7 +675,7 @@ void CDefilerState_RePos_Front::Update(CDefiler* pOwner, _float dt)
 	if (m_eState == EVADE_IN && dissolve.isComplete()) {
 		m_eState = EVADE_OUT;
 		dissolve.Set_DissolveState(dissolve.APPEAR, .5f);
-		pOwner->Set_CCTPos({ -15.f,-1.f,8.f});
+		pOwner->Set_CCTPos({ -13.f,-1.f,7.f});
 	}
 	else if (m_eState == EVADE_OUT && dissolve.isComplete()) {
 		blackBoard.isRequestNext = true;

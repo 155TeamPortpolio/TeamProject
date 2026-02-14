@@ -3,6 +3,7 @@
 
 #include "GameInstance.h"
 #include "ObjectContainer.h"
+#include "AudioSource.h"
 #include "UI_GachaResultItem.h"
 #include "UI_TextButton.h"
 
@@ -11,6 +12,8 @@ HRESULT CUI_GachaResult::Initialize_Prototype()
 	__super::Initialize_Prototype();
 
 	Add_Component<CObjectContainer>();
+    Add_Component<CAudioSource>();
+    Get_Component<CAudioSource>()->SoundFolder(G_GlobalLevelKey, "../Bin/Resources/Global/UI/Sound/");
 
 	return S_OK;
 }
@@ -85,6 +88,7 @@ void CUI_GachaResult::Create_ConfirmButton()
     CUI_TextButton::BUTTON_DESC* pDesc = new CUI_TextButton::BUTTON_DESC;
     pDesc->strLabel = L"È®ÀÎ";
     pDesc->onClick = []() { LevelManager()->Request_ChangeLevel("MainCity_Level", false); };
+    pDesc->strSoundKey = "UI_Tick.wav";
 
     auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_TextButton" })
         .Add_UIDesc(pDesc)
@@ -122,6 +126,9 @@ void CUI_GachaResult::Update_ItemAppear(_float dt)
 
     if (m_fItemAppearTimer < m_fItemAppearDuration)
         return;
+
+    if (m_iItemAppearIndex == 0)
+        Get_Component<CAudioSource>()->Slot("UI_BlingPop.wav").Play();
 
     m_pItems[m_iItemAppearIndex]->UI_Active();
     ++m_iItemAppearIndex;

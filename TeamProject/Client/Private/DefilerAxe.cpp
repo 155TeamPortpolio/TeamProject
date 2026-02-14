@@ -49,6 +49,7 @@ HRESULT CDefilerAxe::Initialize(INIT_DESC* pArg)
 	m_vSlide = Math::NormalizeSafeXZ(m_vSlide)*5;
 	m_BaseRot = m_pTransform->Get_QuaternionRotate(); 
 	m_fElapsedTime = 0.f;
+	m_tStatus.iNowHP = 100.f;
 	return S_OK;
 }
 
@@ -93,7 +94,7 @@ void CDefilerAxe::Update(_float dt)
 			m_bDangle = true;
 	}
 
-	if (InputDevice()->Key_Tap('G'))
+	if (m_tStatus.iNowHP <= 0.f)
 		SummonWall();
 }
 
@@ -128,14 +129,8 @@ void CDefilerAxe::OnPooledRelease()
 
 void CDefilerAxe::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER charaName)
 {
-	BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::HIT_NORMAL);
+	BattleSystem()->HitVFX(eDamageType);
 	_float fTakeDamage = fDamage;
-
-	if (m_tStatus.isGroggy)
-		fTakeDamage *= 1.5f;
-	else
-		m_tStatus.iGroggyValue += 2;
-
 	m_tStatus.iNowHP -= fTakeDamage;
 
 	if (0 >= m_tStatus.iNowHP)
@@ -159,7 +154,6 @@ void CDefilerAxe::SummonWall()
 	CDefilerWall::DefilerWallDesc* desc = new CDefilerWall::DefilerWallDesc;
 	desc->vLook = Math::NormalizeSafeXZ(m_pTransform->Dir(STATE::LOOK));
 	_vector3 pos =  m_pTransform->Get_Pos();
-	pos.y = 0;
 
 	auto pWall = Builder::Create_Object({ "Zero_Level","Proto_GameObject_DefilerWall" })
 		.Position(pos)

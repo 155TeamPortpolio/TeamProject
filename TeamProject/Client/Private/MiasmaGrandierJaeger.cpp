@@ -296,7 +296,7 @@ void CMiasmaGrandierJaeger::Summon_Bullet()
 
 void CMiasmaGrandierJaeger::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER charaName)
 {
-	BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::HIT_NORMAL);
+	BattleSystem()->HitVFX(eDamageType);
 	m_HitCount++;
 	if (m_HitCount > 3.f) {
 		m_pStateMachine->Set_Trigger("Attack_To_DisAppear");
