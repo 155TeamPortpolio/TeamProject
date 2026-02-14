@@ -3,6 +3,7 @@
 
 #include "GameInstance.h"
 #include "ObjectContainer.h"
+#include "AudioSource.h"
 
 #include "DataBase.h"
 #include "FieldSystem.h"
@@ -27,6 +28,8 @@ HRESULT CUI_GachaPage::Initialize_Prototype()
 	__super::Initialize_Prototype();
 
 	Add_Component<CObjectContainer>();
+    Add_Component<CAudioSource>();
+    Get_Component<CAudioSource>()->SoundFolder(G_GlobalLevelKey, "../Bin/Resources/Global/UI/Sound/");
 
 	return S_OK;
 }
@@ -60,7 +63,8 @@ void CUI_GachaPage::Update(_float dt)
 
 void CUI_GachaPage::UI_Active(void* pArg)
 {
-    Set_Alive(true);
+    Set_Alive(true);        
+    Get_Component<CAudioSource>()->Slot("UI_Beep.wav").Play();
 }
 
 void CUI_GachaPage::UI_DeActive(void* pArg)

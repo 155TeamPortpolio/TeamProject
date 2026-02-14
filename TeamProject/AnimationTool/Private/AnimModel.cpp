@@ -81,16 +81,29 @@ void CAnimModel::Update(_float dt)
 		//m_pTransform->(dq);
 		m_pTransform->Add_Quaternion(dq);
 
-		auto Bus = pAnimator->Get_EventBus();
+		//auto animString = pAnimator->Get_CurAnimName();
+		//pAnimator->Get_EventBus();
+		//if (!animString.empty()) {
+		//	auto& ANIM_CLIP = m_pAnimToolPanel->Get_AnimClip(animString);
+		//}
+	}
 
-		for (EVENT_INST& instance : Bus)
+	if (!Get_Component<CAnimator3D>())
+		return;
+
+	for (const auto& Event : Get_Component<CAnimator3D>()->Get_EventBus())
+	{
+		switch (Event.Type)
 		{
-			switch (instance.Type)
-			{
-			case CLIP_EVENT_TYPE::SOUND:
-				Get_Component<CAudioSource>()->Slot(instance.Tag).Play();
-				break;
-			}
+		case Engine::CLIP_EVENT_TYPE::NOTIFY:
+			break;
+		case Engine::CLIP_EVENT_TYPE::EFFECT:
+			break;
+		case Engine::CLIP_EVENT_TYPE::SOUND:
+			Get_Component<CAudioSource>()->Play(Event.Tag);
+			break;
+		default:
+			break;
 		}
 	}
 }
@@ -108,7 +121,7 @@ void CAnimModel::Render_GUI()
 	ImGui::DragFloat("MoveSpeed", &m_fMoveSpeed, 0.001f, 0.f, 100.f);
 
 	//Load Resource
-	GUI_LoadResource(childHeight*3);
+	GUI_LoadResource(childHeight * 3);
 
 	//Set Model, Materials
 	GUI_SetModel(childHeight);
@@ -296,7 +309,8 @@ void CAnimModel::Load_NewOnce()
 	m_pAnimToolPanel->Setting_MetaFilePath(metaPath);
 
 	Safe_AddRef(pInstance);
-
+	m_CurSoundForlderTag = ModelDir + "/Sound/";
+	Get_Component<CAudioSource>()->SoundFolder(G_GlobalLevelKey, m_CurSoundForlderTag);
 }
 
 void CAnimModel::Load_NewModelMat()
@@ -366,7 +380,7 @@ void CAnimModel::Load_ModelOnce()
 
 	string baseName;
 	bool bModel = false, bMat = false, bJson = false;
-	
+
 
 	for (const auto& pathStr : files)
 	{
@@ -471,6 +485,11 @@ void CAnimModel::Load_Sound()
 	Get_Component<CAudioSource>()->SoundFolder(G_GlobalLevelKey, folderPath);
 }
 
+void CAnimModel::ReLoad_Sound()
+{
+	Get_Component<CAudioSource>()->SoundFolder(G_GlobalLevelKey, m_CurSoundForlderTag);
+}
+
 void CAnimModel::Set_Model(string ModelTag, string MaterialTag)
 {
 	Clear_Model();
@@ -511,7 +530,7 @@ void CAnimModel::Set_Animator()
 	m_Components.emplace(type_index(typeid(CAnimator3DEX)), pInstance);
 	m_Components.emplace(type_index(typeid(CAnimator3D)), pInstance);
 	Safe_AddRef(pInstance);
-	
+
 	pInstance->LinkAnimate_Model("AnimationEdit_Level", m_CurModelTag);
 	pInstance->Link_MetaData("AnimationEdit_Level", metaTag);
 

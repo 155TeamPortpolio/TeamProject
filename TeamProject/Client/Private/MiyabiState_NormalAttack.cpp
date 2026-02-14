@@ -136,10 +136,9 @@ void CMiyabiState_Attack_01::Enter(CMiyabi* pOwner)
         .ReserveSpeed(0.2f, 0.4f, 2.f, EaseType::OutExpo)
         .ReserveSpeed(0.4f, 1.f, 1.5f, EaseType::Linear)
         .Apply();
-    pOwner->Get_Component<CAudioSource>()->Slot("Boo_Slash_415605355_218786625.wav")
+    pOwner->Get_Component<CAudioSource>()->Sequence("NormalAttack01")
         .Attribute3D(true)
-        .Loop(false)
-        .Play();
+        .PlayNext();
 }
 
 void CMiyabiState_Attack_01::Update(CMiyabi* pOwner, _float dt)
@@ -185,10 +184,9 @@ void CMiyabiState_Attack_02::Enter(CMiyabi* pOwner)
         .ReserveSpeed(0.25f, 0.35f, 2.5f, EaseType::InCubic)
         .ReserveSpeed(0.35f, 0.4f, 4.f, EaseType::OutExpo)
         .Apply();
-    pOwner->Get_Component<CAudioSource>()->Slot("Boo_Slash_596531371_138492562.wav")
+    pOwner->Get_Component<CAudioSource>()->Sequence("NormalAttack02")
         .Attribute3D(true)
-        .Loop(false)
-        .Play();
+        .PlayNext();
 }
 
 void CMiyabiState_Attack_02::Update(CMiyabi* pOwner, _float dt)
@@ -236,10 +234,9 @@ void CMiyabiState_Attack_03::Enter(CMiyabi* pOwner)
         .ReserveSpeed(0.2f, 0.35f, 2.f, EaseType::InCubic)
         .ReserveSpeed(0.35f, 0.45f, 3.f, EaseType::OutExpo)
         .Apply();
-    pOwner->Get_Component<CAudioSource>()->Slot("Boo_Slash_4122170839_971052309.wav")
+    pOwner->Get_Component<CAudioSource>()->Sequence("NormalAttack03")
         .Attribute3D(true)
-        .Loop(false)
-        .Play();
+        .PlayNext();
 }
 
 void CMiyabiState_Attack_03::Update(CMiyabi* pOwner, _float dt)
@@ -303,10 +300,9 @@ void CMiyabiState_Attack_04::Enter(CMiyabi* pOwner)
         .ReserveSpeed(0.1f, 0.45f, 2.f, EaseType::OutQuad)
         .ReserveSpeed(0.45f, 1.f, 1.5f, EaseType::Linear)
         .Apply();
-    pOwner->Get_Component<CAudioSource>()->Slot("Boo_Slash_4238881969_955953320.wav")
+    pOwner->Get_Component<CAudioSource>()->Sequence("NormalAttack04")
         .Attribute3D(true)
-        .Loop(false)
-        .Play();
+        .PlayNext();
 }
 
 void CMiyabiState_Attack_04::Update(CMiyabi* pOwner, _float dt)
@@ -369,6 +365,9 @@ void CMiyabiState_Attack_05::Enter(CMiyabi* pOwner)
         .ReserveSpeed(0.35f, 0.75f, 2.5f, EaseType::OutCirc)
         .ReserveSpeed(0.75f, 1.f, 0.8f, EaseType::OutQuart)
         .Apply();
+    pOwner->Get_Component<CAudioSource>()->Sequence("NormalAttack05")
+        .Attribute3D(true)
+        .PlayNext();
 }
 
 void CMiyabiState_Attack_05::Update(CMiyabi* pOwner, _float dt)

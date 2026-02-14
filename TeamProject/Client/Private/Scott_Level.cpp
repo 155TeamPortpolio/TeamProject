@@ -23,6 +23,7 @@
 #include "TrailNode.h"
 #include "EffectContainer.h"
 #include "AttackSign.h"
+#include "PaperEffect.h"
 
 // Camera
 #include "CamDirector.h"
@@ -79,8 +80,16 @@ HRESULT CScott_Level::Awake()
 	Ready_Map("Scott_Level", "Zero_Worksite");
 	//Ready_Npc();
 
+	//Effect
+	pProto->Add_ProtoType("Scott_Level", "Proto_GameObject_PaperEffect", CPaperEffect::Create());
+	auto PaperEffect = Builder::Create_Object({ "Scott_Level", "Proto_GameObject_PaperEffect" })
+		.Position({ -2.f, -2.f, -6.f, })
+		.Build("PaperEffect");
+	ObjectManager()->Add_Object(PaperEffect, { "Scott_Level", "MapParticle_Layer" });
+
 	CamDirector()->AutoField(CamStartDir::Back);
 
+	AudioDevice()->Set_Listener(ObjectManager()->Find_Global(ENUM(GLOBAL_ID::FreeCam))->Get_Component<CTransform>());
 	return S_OK;
 }
 

@@ -32,6 +32,11 @@
           "EventTag": "UnleashAttack"
         },
         {
+          "EventTime": 0.6000000238418579,
+          "EventType": "Sound",
+          "EventTag": "claymore_AttackSwing1.wav"
+        },
+        {
           "EventTime": 0.7204678058624268,
           "EventType": "Notify",
           "EventTag": "TurnOnAttackCol"
@@ -45,6 +50,11 @@
           "EventTime": 1.0233917236328125,
           "EventType": "Notify",
           "EventTag": "FinishAll"
+        },
+        {
+          "EventTime": 1.7999999523162842,
+          "EventType": "Sound",
+          "EventTag": "claymore_Attack_Recover.wav"
         }
       ]
     },
@@ -235,6 +245,21 @@
           "EventTime": 3.4000000953674316,
           "EventType": "Notify",
           "EventTag": "FinishAll"
+        },
+        {
+          "EventTime": 1.4299999475479126,
+          "EventType": "Notify",
+          "EventTag": "ParryEnable_false"
+        },
+        {
+          "EventTime": 1.151137113571167,
+          "EventType": "Sound",
+          "EventTag": "claymore_Attack2_1.wav"
+        },
+        {
+          "EventTime": 1.9676414728164673,
+          "EventType": "Sound",
+          "EventTag": "claymore_Attack2_2.wav"
         }
       ]
     },

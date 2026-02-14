@@ -50,7 +50,7 @@ private:
 
     _uint m_iRepeatCount{};
     _float m_fRepeatProgress{};
-    _float m_fRepeatInterval = 0.005f;
+    _float m_fRepeatInterval = 0.01f;
     _float m_fDistanceInterval = 0.53f;
     _float4 m_vStartRotation{};
 

@@ -12,6 +12,7 @@ matrix g_worldMatrix;
 Texture2D MotionBlurNoiseTexture;
 float fCameraFadeAlpha;
 matrix g_viewMatrix, g_projMatrix;
+int iUseHeightGradient = 1;
 
 struct VS_IN
 {
@@ -285,7 +286,7 @@ PS_OUT PS_MAIN(PS_IN In)
 
 PS_OUT PS_OPAQUE(PS_IN In)
 {
-    // ¾ËÆÄ ¹«Á¶°Ç 1
+    // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 1
     PS_OUT Out;
     
     vector vMtrlDiffuse = DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
@@ -447,7 +448,7 @@ PS_MOTIONOUT PS_MOTIONBLUR(PS_MOTIONIN In)
     float heightNormalized = saturate((In.vWorldHeight - 0.0f) / 2.0f);
     heightNormalized = 1.0f - heightNormalized;
     Out.vDiffuse = color * DiffuseTexture.Sample(DefaultSampler, In.vTexcoord).a;
-    Out.fHeight = heightNormalized;
+    Out.fHeight = iUseHeightGradient ? heightNormalized : 1.0f;
     
     vector vNormalDesc = NormalTexture.Sample(DefaultSampler, In.vTexcoord);
 

@@ -5,6 +5,7 @@
 
 #include "GameInstance.h"
 #include "BattleSystem.h"
+#include "UIDirector.h"
 #include "DataBase.h"
 #include "Helper_Func.h"
 #include "CharacterController.h"
@@ -373,7 +374,7 @@ void CBattlePlayer::Request_ComboAttack()
     m_bComboSelect = true;
     // 타임스케일 2초간 느리게 하기 몬스터, 캐릭터
     BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::SWITCH);
-    // UI 방송
+    UIDirector()->Show_Switch();
 }
 
 void CBattlePlayer::Execute_ComboAttack(_bool bNext)

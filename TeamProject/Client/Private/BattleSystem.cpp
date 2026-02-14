@@ -95,6 +95,7 @@ void CBattleSystem::SetActive(_bool isActive)
 	if (false == isActive) {
 		m_isActive = false;
 		//ClearBattleStage();
+		m_pFXFlow->Clear();
 		return;
 	}
 	else {
@@ -356,6 +357,16 @@ void CBattleSystem::ClearBattleStage()
 	m_BattleSnapShots.clear();
 
 	m_BattleSnapShots = m_BattleObjInfos;
+}
+
+void CBattleSystem::AllKill()
+{
+	HitDesc AllKill{};
+
+	AllKill.fDamage = 10000.f;
+	AllKill.eDamageType = DAMAGE_TYPE::NORMAL;
+
+	TakeAllDamage(AllKill);
 }
 
 BATTLEOBJ_INFO* CBattleSystem::FindBattleObjInfo(OBJECT_HANDLE objectHandle)

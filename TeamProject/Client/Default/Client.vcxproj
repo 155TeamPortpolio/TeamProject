@@ -387,6 +387,16 @@
     <ClInclude Include="..\Public\DefilerState_Other.h" />
     <ClInclude Include="..\Public\DefilerWall.h" />
     <ClInclude Include="..\Public\DefilerWeapon.h" />
+    <ClInclude Include="..\Public\Giant.h" />
+    <ClInclude Include="..\Public\Giant_Attack.h" />
+    <ClInclude Include="..\Public\Giant_Born.h" />
+    <ClInclude Include="..\Public\Giant_Chase.h" />
+    <ClInclude Include="..\Public\Giant_Death.h" />
+    <ClInclude Include="..\Public\Giant_Groggy.h" />
+    <ClInclude Include="..\Public\Giant_Hit.h" />
+    <ClInclude Include="..\Public\Giant_Idle.h" />
+    <ClInclude Include="..\Public\Giant_Move.h" />
+    <ClInclude Include="..\Public\Giant_Parried.h" />
     <ClInclude Include="..\Public\MiasmaDummyUnit.h" />
     <ClInclude Include="..\Public\MiasmaGrandierJaeger.h" />
     <ClInclude Include="..\Public\CrowdNpc.h" />
@@ -413,6 +423,7 @@
     <ClInclude Include="..\Public\MiyabiState_ExAttack.h" />
     <ClInclude Include="..\Public\MiyabiState_UltimateAttack.h" />
     <ClInclude Include="..\Public\Miyabi_Ghost.h" />
+    <ClInclude Include="..\public\PaperEffect.h" />
     <ClInclude Include="..\Public\PedestrianNpc.h" />
     <ClInclude Include="..\Public\Cyclops.h" />
     <ClInclude Include="..\Public\Cyclops_Born.h" />
@@ -454,6 +465,7 @@
     <ClInclude Include="..\Public\MiyabiState_SwitchInNormal.h" />
     <ClInclude Include="..\Public\MiyabiState_SwitchInParryAid.h" />
     <ClInclude Include="..\Public\MiyabiState_SwitchOut.h" />
+    <ClInclude Include="..\public\ThugBulkyEnforcer_Parried.h" />
     <ClInclude Include="..\Public\SoftDirectionalOutlineUI.h" />
     <ClInclude Include="..\Public\UI_PartyCard.h" />
     <ClInclude Include="..\Public\UI_PartyCardRTDraw.h" />
@@ -862,6 +874,16 @@
     <ClCompile Include="..\Private\DefilerState_Other.cpp" />
     <ClCompile Include="..\Private\DefilerWall.cpp" />
     <ClCompile Include="..\Private\DefilerWeapon.cpp" />
+    <ClCompile Include="..\Private\Giant.cpp" />
+    <ClCompile Include="..\Private\Giant_Attack.cpp" />
+    <ClCompile Include="..\Private\Giant_Born.cpp" />
+    <ClCompile Include="..\Private\Giant_Chase.cpp" />
+    <ClCompile Include="..\Private\Giant_Death.cpp" />
+    <ClCompile Include="..\Private\Giant_Groggy.cpp" />
+    <ClCompile Include="..\Private\Giant_Hit.cpp" />
+    <ClCompile Include="..\Private\Giant_Idle.cpp" />
+    <ClCompile Include="..\Private\Giant_Move.cpp" />
+    <ClCompile Include="..\Private\Giant_Parried.cpp" />
     <ClCompile Include="..\Private\MiasmaDummyUnit.cpp" />
     <ClCompile Include="..\Private\MiasmaGrandierJaeger.cpp" />
     <ClCompile Include="..\Private\CorinState_AssaultAttack.cpp" />
@@ -890,6 +912,7 @@
     <ClCompile Include="..\Private\MiyabiState_ExAttack.cpp" />
     <ClCompile Include="..\Private\MiyabiState_UltimateAttack.cpp" />
     <ClCompile Include="..\Private\Miyabi_Ghost.cpp" />
+    <ClCompile Include="..\private\PaperEffect.cpp" />
     <ClCompile Include="..\Private\PedestrianNpc.cpp" />
     <ClCompile Include="..\Private\Cyclops.cpp" />
     <ClCompile Include="..\Private\Cyclops_Born.cpp" />
@@ -927,6 +950,7 @@
     <ClCompile Include="..\Private\MiyabiState_SwitchInNormal.cpp" />
     <ClCompile Include="..\Private\MiyabiState_SwitchInParryAid.cpp" />
     <ClCompile Include="..\Private\MiyabiState_SwitchOut.cpp" />
+    <ClCompile Include="..\private\ThugBulkyEnforcer_Parried.cpp" />
     <ClCompile Include="..\Private\SoftDirectionalOutlineUI.cpp" />
     <ClCompile Include="..\Private\UI_PartyCard.cpp" />
     <ClCompile Include="..\Private\UI_PartyCardRTDraw.cpp" />

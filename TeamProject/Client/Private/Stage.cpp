@@ -52,7 +52,7 @@ void CStage::StageChangeOn(_int choiceIndex)
 void CStage::Ready_Map(const string& LevelTag, const string& AreaTag)
 {
 	CMapLoader* pMapLoader = CMapLoader::Create(LevelTag, AreaTag);
-	if (nullptr == pMapLoader)
+	if (nullptr == pMapLoader) 
 		MSG_BOX("Failed to Load MapData!");
 	Safe_Release(pMapLoader);
 
