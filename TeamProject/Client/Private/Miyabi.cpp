@@ -115,6 +115,7 @@ void CMiyabi::Priority_Update(_float dt)
 	__super::Priority_Update(dt);
 	if (!m_BoneMatrices.empty() && m_pCCT->Get_CompActive())
 		Update_MotionBlurQueue();
+
 }
 
 void CMiyabi::Update(_float dt)
