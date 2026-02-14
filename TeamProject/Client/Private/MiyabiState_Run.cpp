@@ -11,25 +11,25 @@ CMiyabiState_Run* CMiyabiState_Run::Create()
     pInstance->m_pSubStateMachine = CStateMachine<CMiyabi>::Create();
     auto pSubStateMachine = pInstance->Get_SubStateMachine();
 
-    pSubStateMachine->Register_State("Loop", CMiyabiState_Run_Loop::Create());
-    pSubStateMachine->Register_State("End", CMiyabiState_Run_End::Create());
+    pSubStateMachine->Register_State("Run_Loop", CMiyabiState_Run_Loop::Create());
+    pSubStateMachine->Register_State("Run_End", CMiyabiState_Run_End::Create());
     pSubStateMachine->Register_State("Turnback", CMiyabiState_Run_Turnback::Create());
 
-    pSubStateMachine->Get_State("End")->Set_Tag("End");
+    pSubStateMachine->Get_State("Run_End")->Set_Tag("End");
 
-    pSubStateMachine->Register_Transition("Loop", "End",
+    pSubStateMachine->Register_Transition("Run_Loop", "Run_End",
         CStateMachine<CMiyabi>::CONDITION_BOOL_FALSE, "IsMove");
     // 반대 방향 입력
-    pSubStateMachine->Register_Transition("Loop", "Turnback",
+    pSubStateMachine->Register_Transition("Run_Loop", "Turnback",
         CStateMachine<CMiyabi>::CONDITION_TRIGGER, "ToTurnback");
     // Turnback -> End: 입력 없음
-    pSubStateMachine->Register_Transition("Turnback", "End",
+    pSubStateMachine->Register_Transition("Turnback", "Run_End",
         CStateMachine<CMiyabi>::CONDITION_BOOL_FALSE, "IsMove");
     // Turnback -> Loop: 애니메이션 끝 + 입력 유지
-    pSubStateMachine->Register_Transition("Turnback", "Loop",
+    pSubStateMachine->Register_Transition("Turnback", "Run_Loop",
         CStateMachine<CMiyabi>::CONDITION_TRIGGER, "ToLoop");
 
-    pSubStateMachine->Set_DefaultState("Loop");
+    pSubStateMachine->Set_DefaultState("Run_Loop");
 
     return pInstance;
 }
@@ -45,9 +45,9 @@ void CMiyabiState_Run::Enter(CMiyabi* pOwner)
     }
 
     if (iRunEntryMode == 1)
-        m_pSubStateMachine->Set_DefaultState("End");
+        m_pSubStateMachine->Set_DefaultState("Run_End");
     else
-        m_pSubStateMachine->Set_DefaultState("Loop");
+        m_pSubStateMachine->Set_DefaultState("Run_Loop");
 
     m_pSubStateMachine->Set_Bool("IsMove", pOwner->Is_Move_Buffer());
     __super::Enter(pOwner);
