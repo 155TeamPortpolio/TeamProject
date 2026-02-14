@@ -3,12 +3,17 @@
 
 NS_BEGIN(Client)
 
-class CUI_BattleLineup final : public CUI_Object
+class CUI_PartyCardRTDraw final : public CUI_Object
 {
+public:
+	typedef struct tagCardDesc : public UI_DESC {
+		string strRenderTargetKey = "";
+	}CARD_DESC;
+
 private:
-	CUI_BattleLineup() {}
-	CUI_BattleLineup(const CUI_BattleLineup& rhs) : CUI_Object(rhs) {}
-	virtual ~CUI_BattleLineup() DEFAULT;
+	CUI_PartyCardRTDraw() {}
+	CUI_PartyCardRTDraw(const CUI_PartyCardRTDraw& rhs) : CUI_Object(rhs) {}
+	virtual ~CUI_PartyCardRTDraw() DEFAULT;
 
 public:
 	virtual HRESULT Initialize_Prototype()           override;
@@ -18,24 +23,6 @@ public:
 	virtual void    Update(_float dt)			     override;
 	virtual void    Late_Update(_float dt)           override { __super::Late_Update(dt); }
 	virtual void    Render_GUI()                     override { __super::Render_GUI(); }
-
-private:
-	static constexpr _int CARD_COUNT = 3;
-	array<string, CARD_COUNT> m_RenderTargetKeys;
-
-	class CUI_BattleLineupCard* m_pLineupCard[CARD_COUNT] = {};
-
-private:
-	void Create_BackButton();
-	void Create_HomeButton();
-	void Create_ElementalResonance();
-
-	void Create_BattleSettingButton();
-	void Create_BackupButton(); 
-	void Create_EnterButton();
-
-	void Create_RenderTargets();
-	void Create_BattleLineupCards();
 
 public:
 	static  CGameObject* Create();

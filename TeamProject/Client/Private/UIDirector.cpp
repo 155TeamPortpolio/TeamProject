@@ -66,6 +66,11 @@ void CUIDirector::Hide_HUD(HUD hud)
 	Hide_HUD(Get_HUDName(hud));
 }
 
+void CUIDirector::Show_Party()
+{
+	Show_HUD("party");
+}
+
 void CUIDirector::Request_DamageText(const DAMAGE_DESC& desc)
 {
 	const string levelKey = LevelManager()->Get_NowLevelKey();

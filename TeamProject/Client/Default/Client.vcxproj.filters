@@ -1365,23 +1365,23 @@
     <Filter Include="02. GameObject\UI\03. UIElement\SoftDirectionalOutline">
       <UniqueIdentifier>{63f153cc-8109-4433-beba-fef1b7722042}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\UI\01. 2D\BattleLineup">
+    <Filter Include="02. GameObject\UI\01. 2D\Party">
       <UniqueIdentifier>{e5501893-5332-4c0a-865e-adb30f047d16}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\UI\01. 2D\BattleLineup\EnterButton">
+    <Filter Include="02. GameObject\UI\01. 2D\Party\EnterButton">
       <UniqueIdentifier>{2a65ae1a-2d15-4aea-aaec-25a549666d32}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\UI\01. 2D\BattleLineup\ElementalResonance">
-      <UniqueIdentifier>{5bc53c96-2a5a-4d7e-aea1-9926556f894f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\UI\01. 2D\BattleLineup\LineupCard">
+    <Filter Include="02. GameObject\UI\01. 2D\Party\PartyCard">
       <UniqueIdentifier>{7605a7fe-becb-4841-9804-281139893668}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\UI\01. 2D\BattleLineup\LineupCard\RenderTarget">
+    <Filter Include="02. GameObject\UI\01. 2D\Party\PartyCard\RenderTarget">
       <UniqueIdentifier>{f31daf48-a890-4c4a-accc-00c9ad3a488d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\UI\01. 2D\BattleLineup\LineupCard\Avatar">
+    <Filter Include="02. GameObject\UI\01. 2D\Party\PartyCard\Avatar">
       <UniqueIdentifier>{8fdd01bf-0a4a-4437-9252-352bb3370beb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\Party\PartySynergy">
+      <UniqueIdentifier>{5bc53c96-2a5a-4d7e-aea1-9926556f894f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -2654,23 +2654,23 @@
     <ClInclude Include="..\Public\SoftDirectionalOutlineUI.h">
       <Filter>02. GameObject\UI\03. UIElement\SoftDirectionalOutline</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\UI_BattleLineup.h">
-      <Filter>02. GameObject\UI\01. 2D\BattleLineup</Filter>
+    <ClInclude Include="..\Public\UI_Party.h">
+      <Filter>02. GameObject\UI\01. 2D\Party</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\UI_EnterBattleButton.h">
-      <Filter>02. GameObject\UI\01. 2D\BattleLineup\EnterButton</Filter>
+    <ClInclude Include="..\Public\UI_PartyEnterButton.h">
+      <Filter>02. GameObject\UI\01. 2D\Party\EnterButton</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\UI_ElementalResonance.h">
-      <Filter>02. GameObject\UI\01. 2D\BattleLineup\ElementalResonance</Filter>
+    <ClInclude Include="..\Public\UI_PartySynergy.h">
+      <Filter>02. GameObject\UI\01. 2D\Party\PartySynergy</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\UI_BattleLineupCard.h">
-      <Filter>02. GameObject\UI\01. 2D\BattleLineup\LineupCard</Filter>
+    <ClInclude Include="..\Public\UI_PartyCard.h">
+      <Filter>02. GameObject\UI\01. 2D\Party\PartyCard</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\UI_BattleLineupCardRT.h">
-      <Filter>02. GameObject\UI\01. 2D\BattleLineup\LineupCard\RenderTarget</Filter>
+    <ClInclude Include="..\Public\UI_PartyCardRTDraw.h">
+      <Filter>02. GameObject\UI\01. 2D\Party\PartyCard\RenderTarget</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UI_PartyAvatar.h">
-      <Filter>02. GameObject\UI\01. 2D\BattleLineup\LineupCard\Avatar</Filter>
+      <Filter>02. GameObject\UI\01. 2D\Party\PartyCard\Avatar</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -3902,23 +3902,23 @@
     <ClCompile Include="..\Private\SoftDirectionalOutlineUI.cpp">
       <Filter>02. GameObject\UI\03. UIElement\SoftDirectionalOutline</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\UI_BattleLineup.cpp">
-      <Filter>02. GameObject\UI\01. 2D\BattleLineup</Filter>
+    <ClCompile Include="..\Private\UI_Party.cpp">
+      <Filter>02. GameObject\UI\01. 2D\Party</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\UI_EnterBattleButton.cpp">
-      <Filter>02. GameObject\UI\01. 2D\BattleLineup\EnterButton</Filter>
+    <ClCompile Include="..\Private\UI_PartyEnterButton.cpp">
+      <Filter>02. GameObject\UI\01. 2D\Party\EnterButton</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\UI_ElementalResonance.cpp">
-      <Filter>02. GameObject\UI\01. 2D\BattleLineup\ElementalResonance</Filter>
+    <ClCompile Include="..\Private\UI_PartySynergy.cpp">
+      <Filter>02. GameObject\UI\01. 2D\Party\PartySynergy</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\UI_BattleLineupCard.cpp">
-      <Filter>02. GameObject\UI\01. 2D\BattleLineup\LineupCard</Filter>
+    <ClCompile Include="..\Private\UI_PartyCard.cpp">
+      <Filter>02. GameObject\UI\01. 2D\Party\PartyCard</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\UI_BattleLineupCardRT.cpp">
-      <Filter>02. GameObject\UI\01. 2D\BattleLineup\LineupCard\RenderTarget</Filter>
+    <ClCompile Include="..\Private\UI_PartyCardRTDraw.cpp">
+      <Filter>02. GameObject\UI\01. 2D\Party\PartyCard\RenderTarget</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UI_PartyAvatar.cpp">
-      <Filter>02. GameObject\UI\01. 2D\BattleLineup\LineupCard\Avatar</Filter>
+      <Filter>02. GameObject\UI\01. 2D\Party\PartyCard\Avatar</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

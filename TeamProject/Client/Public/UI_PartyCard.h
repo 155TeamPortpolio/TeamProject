@@ -3,7 +3,7 @@
 
 NS_BEGIN(Client)
 
-class CUI_BattleLineupCardRT final : public CUI_Object
+class CUI_PartyCard final : public CUI_Object
 {
 public:
 	typedef struct tagCardDesc : public UI_DESC {
@@ -11,9 +11,12 @@ public:
 	}CARD_DESC;
 
 private:
-	CUI_BattleLineupCardRT() {}
-	CUI_BattleLineupCardRT(const CUI_BattleLineupCardRT& rhs) : CUI_Object(rhs) {}
-	virtual ~CUI_BattleLineupCardRT() DEFAULT;
+	CUI_PartyCard() {}
+	CUI_PartyCard(const CUI_PartyCard& rhs) : CUI_Object(rhs) {}
+	virtual ~CUI_PartyCard() DEFAULT;
+
+public:
+	void Change_Character(CHARACTER eCharacter);
 
 public:
 	virtual HRESULT Initialize_Prototype()           override;
@@ -23,6 +26,13 @@ public:
 	virtual void    Update(_float dt)			     override;
 	virtual void    Late_Update(_float dt)           override { __super::Late_Update(dt); }
 	virtual void    Render_GUI()                     override { __super::Render_GUI(); }
+
+private:
+	OBJECT_HANDLE m_hAvatar = {};
+
+private:
+	void Create_RenderTarget(const string& strRenderTargetKey);
+	HRESULT Create_Avatar(const string& strRenderTargetKey);
 
 public:
 	static  CGameObject* Create();

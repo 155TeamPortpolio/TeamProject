@@ -1,6 +1,6 @@
 {
     "alive": true,
-    "instanceName": "button_enterBattle",
+    "instanceName": "party_enterButton",
     "transform": {
         "anchor": 10,
         "anchorOffset": [

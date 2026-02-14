@@ -1,32 +1,14 @@
 #pragma once
 #include "UI_Object.h"
 
-// 속성 합 / 합계 속성
-// 파티 속성 밸런스
-// 현재 편성한 파티의 속성 시너지 요약
-// 같은 속성이 2명 이상 -> 속성 강화 보너스 발동
-// 특정 조합 
-
-// IconPairUpSkillSmall01.png
-// IconPairUpSkillSmall02.png
-
-NS_BEGIN(Engine)
-class CSprite2D;
-class CTextSlot;
-NS_END
-
 NS_BEGIN(Client)
 
-class CUI_ElementalResonance final : public CUI_Object
+class CUI_Party final : public CUI_Object
 {
 private:
-	CUI_ElementalResonance() {}
-	CUI_ElementalResonance(const CUI_ElementalResonance& rhs) : CUI_Object(rhs) {}
-	virtual ~CUI_ElementalResonance() DEFAULT;
-
-public:
-	void Set_Count(_int iCount);
-	void Set_TotalCount(_int iCount);
+	CUI_Party() {}
+	CUI_Party(const CUI_Party& rhs) : CUI_Object(rhs) {}
+	virtual ~CUI_Party() DEFAULT;
 
 public:
 	virtual HRESULT Initialize_Prototype()           override;
@@ -38,17 +20,22 @@ public:
 	virtual void    Render_GUI()                     override { __super::Render_GUI(); }
 
 private:
-	class CSprite2D* m_pIcon = {};
-	class CTextSlot* m_pText = {};
+	static constexpr _int PARTY_COUNT = 3;
+	array<string, PARTY_COUNT> m_RenderTargetKeys;
 
-	wstring m_strText = {};
-	_int m_iCount = {};
-	_int m_iTotalCount = {};
+	class CUI_PartyCard* m_pPartyCard[PARTY_COUNT] = {};
 
 private:
-	void Cache();
+	void Create_BackButton();
+	void Create_HomeButton();
+	void Create_PartySynergy();
 
-	void Set_Text();
+	void Create_SettingButton();
+	void Create_BackupButton(); 
+	void Create_EnterButton();
+
+	void Create_RenderTargets();
+	void Create_PartyCards();
 
 public:
 	static  CGameObject* Create();

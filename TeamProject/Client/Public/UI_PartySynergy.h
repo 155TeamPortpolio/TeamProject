@@ -1,22 +1,32 @@
 #pragma once
 #include "UI_Object.h"
 
+// 속성 합 / 합계 속성
+// 파티 속성 밸런스
+// 현재 편성한 파티의 속성 시너지 요약
+// 같은 속성이 2명 이상 -> 속성 강화 보너스 발동
+// 특정 조합 
+
+// IconPairUpSkillSmall01.png
+// IconPairUpSkillSmall02.png
+
+NS_BEGIN(Engine)
+class CSprite2D;
+class CTextSlot;
+NS_END
+
 NS_BEGIN(Client)
 
-class CUI_BattleLineupCard final : public CUI_Object
+class CUI_PartySynergy final : public CUI_Object
 {
-public:
-	typedef struct tagCardDesc : public UI_DESC {
-		string strRenderTargetKey = "";
-	}CARD_DESC;
-
 private:
-	CUI_BattleLineupCard() {}
-	CUI_BattleLineupCard(const CUI_BattleLineupCard& rhs) : CUI_Object(rhs) {}
-	virtual ~CUI_BattleLineupCard() DEFAULT;
+	CUI_PartySynergy() {}
+	CUI_PartySynergy(const CUI_PartySynergy& rhs) : CUI_Object(rhs) {}
+	virtual ~CUI_PartySynergy() DEFAULT;
 
 public:
-	void Change_Character(CHARACTER eCharacter);
+	void Set_Count(_int iCount);
+	void Set_TotalCount(_int iCount);
 
 public:
 	virtual HRESULT Initialize_Prototype()           override;
@@ -28,10 +38,17 @@ public:
 	virtual void    Render_GUI()                     override { __super::Render_GUI(); }
 
 private:
-	OBJECT_HANDLE m_handle = {};
+	class CSprite2D* m_pIcon = {};
+	class CTextSlot* m_pText = {};
+
+	wstring m_strText = {};
+	_int m_iCount = {};
+	_int m_iTotalCount = {};
 
 private:
-	void Create_RenderTarget(const string& strRenderTargetKey);
+	void Cache();
+
+	void Set_Text();
 
 public:
 	static  CGameObject* Create();

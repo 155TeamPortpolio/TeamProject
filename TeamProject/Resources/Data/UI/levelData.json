@@ -48,12 +48,6 @@
           "prototypeTag": "Proto_GameObject_BattleHUD",
           "instanceName": "hud_battle",
           "prefabPath" : ""
-        },
-        
-        {
-          "prototypeTag": "Proto_GameObject_BattleLineup",
-          "instanceName": "battleLineup",
-          "prefabPath" : ""
         }
       ]
     },

@@ -3,16 +3,16 @@
 
 NS_BEGIN(Client)
 
-class CUI_EnterBattleButton final : public CUI_Object
+class CUI_PartyEnterButton final : public CUI_Object
 {
 private:
 	enum class CHILD { BUTTON, OVERLAY, LABEL, END };
 	inline static const string INSTANCENAMES[ENUM(CHILD::END)] = { "button", "overlay", "label" };
 
 private:
-	CUI_EnterBattleButton() {}
-	CUI_EnterBattleButton(const CUI_EnterBattleButton& rhs) : CUI_Object(rhs) {}
-	virtual ~CUI_EnterBattleButton() DEFAULT;
+	CUI_PartyEnterButton() {}
+	CUI_PartyEnterButton(const CUI_PartyEnterButton& rhs) : CUI_Object(rhs) {}
+	virtual ~CUI_PartyEnterButton() DEFAULT;
 
 public:
 	virtual HRESULT Initialize_Prototype()           override;

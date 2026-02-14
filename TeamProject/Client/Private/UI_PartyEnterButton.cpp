@@ -1,10 +1,10 @@
 #include "pch.h"
-#include "UI_EnterBattleButton.h"
+#include "UI_PartyEnterButton.h"
 
 #include "GameInstance.h"
 #include "ObjectContainer.h"
 
-HRESULT CUI_EnterBattleButton::Initialize_Prototype()
+HRESULT CUI_PartyEnterButton::Initialize_Prototype()
 {
     if (FAILED(__super::Initialize_Prototype()))
         return E_FAIL;
@@ -14,12 +14,12 @@ HRESULT CUI_EnterBattleButton::Initialize_Prototype()
     return S_OK;
 }
 
-HRESULT CUI_EnterBattleButton::Initialize(INIT_DESC* pArg)
+HRESULT CUI_PartyEnterButton::Initialize(INIT_DESC* pArg)
 {
     if (FAILED(__super::Initialize(pArg)))
         return E_FAIL;
 
-    Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("button_enterBattle.json")));
+    Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("party_enterButton.json")));
     Cache();
 
     auto pButton = m_pChildren[ENUM(CHILD::BUTTON)];
@@ -34,11 +34,11 @@ HRESULT CUI_EnterBattleButton::Initialize(INIT_DESC* pArg)
     return S_OK;
 }
 
-void CUI_EnterBattleButton::Awake()
+void CUI_PartyEnterButton::Awake()
 {
 }
 
-void CUI_EnterBattleButton::Update(_float dt)
+void CUI_PartyEnterButton::Update(_float dt)
 {
     __super::Update(dt);
 
@@ -54,7 +54,7 @@ void CUI_EnterBattleButton::Update(_float dt)
     Get_Component<CObjectContainer>()->UpdateChild(dt);
 }
 
-void CUI_EnterBattleButton::Cache()
+void CUI_PartyEnterButton::Cache()
 {
     auto pContainer = Get_Component<CObjectContainer>();
 
@@ -68,7 +68,7 @@ void CUI_EnterBattleButton::Cache()
     }
 }
 
-void CUI_EnterBattleButton::Set_ChildAnimation(CHILD child, _int iIndex)
+void CUI_PartyEnterButton::Set_ChildAnimation(CHILD child, _int iIndex)
 {
     auto pChild = m_pChildren[ENUM(child)];
     if (!pChild)
@@ -77,7 +77,7 @@ void CUI_EnterBattleButton::Set_ChildAnimation(CHILD child, _int iIndex)
     pChild->Set_Animation(iIndex);
 }
 
-_bool CUI_EnterBattleButton::Is_ChildAnimationFinished(CHILD child)
+_bool CUI_PartyEnterButton::Is_ChildAnimationFinished(CHILD child)
 {
     auto pChild = m_pChildren[ENUM(child)];
     if (!pChild)
@@ -86,23 +86,23 @@ _bool CUI_EnterBattleButton::Is_ChildAnimationFinished(CHILD child)
     return pChild->Is_AnimFinished();
 }
 
-CGameObject* CUI_EnterBattleButton::Create()
+CGameObject* CUI_PartyEnterButton::Create()
 {
-    CUI_EnterBattleButton* pInstance = new CUI_EnterBattleButton();
+    CUI_PartyEnterButton* pInstance = new CUI_PartyEnterButton();
     if (FAILED(pInstance->Initialize_Prototype()))
     {
-        MSG_BOX("Failed to Create : CUI_EnterBattleButton");
+        MSG_BOX("Failed to Create : CUI_PartyEnterButton");
         Safe_Release(pInstance);
     }
     return pInstance;
 }
 
-CGameObject* CUI_EnterBattleButton::Clone(INIT_DESC* pArg)
+CGameObject* CUI_PartyEnterButton::Clone(INIT_DESC* pArg)
 {
-    CUI_EnterBattleButton* pInstance = new CUI_EnterBattleButton(*this);
+    CUI_PartyEnterButton* pInstance = new CUI_PartyEnterButton(*this);
     if (FAILED(pInstance->Initialize(pArg)))
     {
-        MSG_BOX("Failed to Clone : CUI_EnterBattleButton");
+        MSG_BOX("Failed to Clone : CUI_PartyEnterButton");
         Safe_Release(pInstance);
     }
     return pInstance;
