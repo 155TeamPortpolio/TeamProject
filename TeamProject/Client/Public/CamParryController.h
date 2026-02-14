@@ -10,7 +10,6 @@ class CamParryController
     {
         None, Enter, Impact, Hold, End
     };
-
     struct ShotGoal
     {
         Vector3 pivotExt{};
@@ -22,7 +21,6 @@ class CamParryController
         _float  yawWeight = 1.f;
         _float  baseVictimWeight = 0.f;
     };
-
     struct PivotSample
     {
         Vector3 basePivot{};
@@ -35,9 +33,9 @@ public:
     {
         struct Common
         {
-            _float enterSec = 0.06f;
-            _float impactSec = 0.10f;
-            _float holdSec = 0.12f;
+            _float enterSec = 3.f;
+            _float impactSec = 0.1f;
+            _float holdSec = 0.1f;
 
             _float pitchDeg = -8.f;
             _float dist = 2.85f;
@@ -63,7 +61,6 @@ public:
             EaseType holdEase = EaseType::InOutSine;
             EaseType impactEase = EaseType::OutQuad;
         };
-
         struct Impact
         {
             _float punchDistDelta = 0.75f;
@@ -97,21 +94,20 @@ private:
 
     void      ApplyGoalPose_Snap(const ShotGoal& g);
     _float    CurCamYawDeg() const;
-
     Vector3   CurCamPosWorld() const;
 
-    _int      ChooseSideSignByCamDistance() const;
-
+    _int      ChooseSideSignByCamDist() const;
     void      UpdatePivots(_float dt);
-
     void      ClampAboveGround(ShotGoal& g) const;
 
     ShotGoal  BuildBaseShot(_int sideSign) const;
     ShotGoal  BuildImpactShot(_int sideSign, _float close01, _float roll01) const;
 
     void      CaptureCurAsFrom();
-
     void      ApplyInterpolated(const ShotGoal& a, const ShotGoal& b, _float t);
+
+    void      ClampEnter_NoDrop(ShotGoal& g) const;
+    void      ApplyInterpolated_Enter(const ShotGoal& a, const ShotGoal& b, _float t);
 
 private:
     _bool         m_active = false;
@@ -147,6 +143,8 @@ private:
     _bool         m_prevFovCaptured = false;
 
     _bool         m_victimBlocked = false;
+
+    _float        m_enterCamY = 0.f;
 };
 
 NS_END

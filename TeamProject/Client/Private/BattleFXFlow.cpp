@@ -286,7 +286,7 @@ void CBattleFXFlow::StartVfx_Parry()
 	auto& preset = m_BattleVFXData[ENUM(BATTLE_VFX_TYPE::PARRY)];
 	AddParallelTimeScaleAll(preset);
 
-	//AddCall([this, preset]() {CamDirector()->StartParry(); });
+	AddCall([this, preset]() {CamDirector()->StartParry(); });
 
 	CPostRenderer* pPost = RenderSystem()->GetPostRenderer();
 	AddCall([this, preset, pPost]() {

@@ -1,4 +1,3 @@
-// CamParryController.cpp
 #include "pch.h"
 #include "CamParryController.h"
 
@@ -75,7 +74,7 @@ _float CamParryController::YawFromDirXZ(const Vector3& dirXZ)
 Quaternion CamParryController::YawPitchRollQuatDeg(_float yawDeg, _float pitchDeg, _float rollDeg)
 {
     const _float yawRad = XMConvertToRadians(yawDeg);
-    const _float pitchRad = XMConvertToRadians(-pitchDeg);
+    const _float pitchRad = XMConvertToRadians(pitchDeg);
     const _float rollRad = XMConvertToRadians(rollDeg);
     return Quaternion::CreateFromYawPitchRoll(yawRad, pitchRad, rollRad);
 }
@@ -134,7 +133,7 @@ Vector3 CamParryController::CurCamPosWorld() const
     return OrbitPos(s.pose.pivotCurWorld, q, s.pose.distCur);
 }
 
-_int CamParryController::ChooseSideSignByCamDistance() const
+_int CamParryController::ChooseSideSignByCamDist() const
 {
     const Vector3 curPos = CurCamPosWorld();
 
@@ -230,19 +229,12 @@ CamParryController::ShotGoal CamParryController::BuildBaseShot(_int sideSign) co
 {
     ShotGoal g{};
 
-    auto attackerObj = ObjectManager()->Request_Object(m_attacker);
-    auto attackerTf = attackerObj->Get_Component<CTransform>();
-
-    Vector3 attackerFwd = attackerTf->Dir(STATE::LOOK);
-    attackerFwd.y = 0.f;
-    if (attackerFwd.LengthSquared() <= 1e-10f) attackerFwd = Vector3(0.f, 0.f, 1.f);
-    attackerFwd.Normalize();
-
     const Vector3 attackerFace = m_aFace;
-    const Vector3 victimFace = m_vValid ? m_vFace : (m_aFace + attackerFwd);
+    const Vector3 victimFace = m_vValid ? m_vFace : (m_aFace + m_dirXZ);
 
-    Vector3 pivotWorld = Vector3::Lerp(attackerFace, victimFace, 0.5f);
-    pivotWorld += attackerFwd * tune.common.forwardOffset;
+    _float bias = clamp(tune.common.contactBias, 0.f, 1.f);
+    Vector3 pivotWorld = Vector3::Lerp(attackerFace, victimFace, bias);
+    pivotWorld += m_dirXZ * tune.common.forwardOffset;
 
     const _float aimY = Math::Lerp(m_aBase.y, m_aFace.y, tune.common.pelvisMul);
     pivotWorld.y = aimY + tune.common.pivotYAdd;
@@ -261,7 +253,7 @@ CamParryController::ShotGoal CamParryController::BuildBaseShot(_int sideSign) co
 
     g.pivotExt = ext;
 
-    const Vector3 baseLook(-m_dirXZ.x, 0.f, -m_dirXZ.z);
+    const Vector3 baseLook(m_dirXZ.x, 0.f, m_dirXZ.z);
     const Vector3 camDir = RotateYDegXZ(baseLook, (_float)sideSign * tune.common.angleDeg);
 
     g.yawDeg = YawFromDirXZ(camDir) + (_float)sideSign * tune.common.sideYawBiasDeg;
@@ -320,6 +312,8 @@ void CamParryController::CaptureCurAsFrom()
 
     from.yawWeight = 1.f;
 
+    ClampAboveGround(from);
+
     m_shotFrom = from;
 }
 
@@ -345,6 +339,65 @@ void CamParryController::ApplyInterpolated(const ShotGoal& a, const ShotGoal& b,
 
     ApplyGoalPose_Snap(g);
 }
+
+void CamParryController::ClampEnter_NoDrop(ShotGoal& g) const
+{
+    const Vector3 basePivot = BasePivotWorld(g.baseVictimWeight);
+    const Vector3 pivotWorld = basePivot + g.pivotExt;
+
+    auto EvalCamY = [&](float pitchDeg)
+        {
+            const Quaternion q = YawPitchRollQuatDeg(g.yawDeg, pitchDeg, g.rollDeg);
+            const Vector3 camPos = OrbitPos(pivotWorld, q, g.dist);
+            return camPos.y;
+        };
+
+    const _float y0 = EvalCamY(g.pitchDeg);
+    if (y0 >= m_enterCamY) return;
+
+    const _float yPlus = EvalCamY(g.pitchDeg + 1.f);
+    const _bool plusRaises = (yPlus > y0);
+
+    _float lo = plusRaises ? g.pitchDeg : -89.f;
+    _float hi = plusRaises ? 89.f : g.pitchDeg;
+
+    for (_int i = 0; i < 16; ++i)
+    {
+        const _float mid = (lo + hi) * 0.5f;
+        const _float yMid = EvalCamY(mid);
+
+        if (yMid < m_enterCamY) lo = mid;
+        else hi = mid;
+    }
+
+    g.pitchDeg = hi;
+}
+
+
+void CamParryController::ApplyInterpolated_Enter(const ShotGoal& a, const ShotGoal& b, _float t)
+{
+    ShotGoal g{};
+
+    g.pivotExt = Vector3::Lerp(a.pivotExt, b.pivotExt, t);
+
+    const _float yaw = a.yawDeg + Math::WrapDeg(b.yawDeg - a.yawDeg) * t;
+    g.yawDeg = yaw;
+
+    g.pitchDeg = Math::Lerp(a.pitchDeg, b.pitchDeg, t);
+    g.rollDeg = a.rollDeg + Math::WrapDeg(b.rollDeg - a.rollDeg) * t;
+
+    g.dist = Math::Lerp(a.dist, b.dist, t);
+    g.fov = Math::Lerp(a.fov, b.fov, t);
+
+    g.yawWeight = Math::Lerp(a.yawWeight, b.yawWeight, t);
+    g.baseVictimWeight = a.baseVictimWeight;
+
+    ClampAboveGround(g);
+    ClampEnter_NoDrop(g);
+
+    ApplyGoalPose_Snap(g);
+}
+
 
 void CamParryController::Reset()
 {
@@ -428,17 +481,30 @@ void CamParryController::Begin()
     if (attackerFwd.LengthSquared() <= 1e-10f) attackerFwd = Vector3(0.f, 0.f, 1.f);
     attackerFwd.Normalize();
 
-    const Vector3 attackerFace = m_aFace;
-    const Vector3 victimFace = m_vValid ? m_vFace : (m_aFace + attackerFwd);
+    Vector3 dir = attackerFwd;
 
-    Vector3 dir = victimFace - attackerFace;
-    dir.y = 0.f;
-    if (dir.LengthSquared() <= 1e-10f) dir = attackerFwd;
-    else dir.Normalize();
+    if (m_vValid)
+    {
+        Vector3 toVictim = m_vFace - m_aFace;
+        toVictim.y = 0.f;
+
+        if (toVictim.LengthSquared() > 1e-10f)
+        {
+            toVictim.Normalize();
+
+            if (toVictim.Dot(attackerFwd) > 0.f)
+            {
+                _float w = clamp(tune.common.aimVictimBlend, 0.f, 1.f);
+                dir = Vector3::Lerp(attackerFwd, toVictim, w);
+                if (dir.LengthSquared() <= 1e-10f) dir = attackerFwd;
+                else dir.Normalize();
+            }
+        }
+    }
 
     m_dirXZ = dir;
 
-    m_sideSign = ChooseSideSignByCamDistance();
+    m_sideSign = ChooseSideSignByCamDist();
 
     m_prevOrbitCaptured = true;
     orbit->CaptureSnapshot(m_prevOrbit);
@@ -447,6 +513,7 @@ void CamParryController::Begin()
     m_prevFov = cam->Get_FOV();
 
     CaptureCurAsFrom();
+    m_enterCamY = CurCamPosWorld().y;
 
     m_shotTo = BuildBaseShot(m_sideSign);
 
@@ -464,6 +531,7 @@ void CamParryController::Begin()
     orbit->DialogueMode_Begin();
     orbit->DialogueYaw_Clear();
 }
+
 
 void CamParryController::End()
 {
@@ -496,7 +564,7 @@ void CamParryController::Update(_float dt)
         const _float u = (tune.common.enterSec > 0.f) ? clamp(m_elapsed / tune.common.enterSec, 0.f, 1.f) : 1.f;
         const _float t = Math::ApplyEase(tune.common.approachEase, u);
 
-        ApplyInterpolated(m_shotFrom, m_shotTo, t);
+        ApplyInterpolated_Enter(m_shotFrom, m_shotTo, t);
 
         if (u >= 1.f)
         {
@@ -549,3 +617,4 @@ void CamParryController::Update(_float dt)
         return;
     }
 }
+
