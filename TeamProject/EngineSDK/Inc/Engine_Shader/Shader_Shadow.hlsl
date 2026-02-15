@@ -5,14 +5,9 @@
 
 int GetCascadeIndex(float fViewDepth)
 {
-    int cascadeIndex = 3;
-    if (fViewDepth < vCascadeSplits.x)
-        cascadeIndex = 0;
-    else if (fViewDepth < vCascadeSplits.y)
-        cascadeIndex = 1;
-    else if (fViewDepth < vCascadeSplits.z)
-        cascadeIndex = 2;
-    
+    int cascadeIndex = 2;
+    cascadeIndex = (fViewDepth < vCascadeSplits.y) ? 1 : cascadeIndex;
+    cascadeIndex = (fViewDepth < vCascadeSplits.x) ? 0 : cascadeIndex;
     return cascadeIndex;
 }
 
