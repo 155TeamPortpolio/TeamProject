@@ -30,38 +30,6 @@ void CJaneDoeState_BranchAttack::Enter(CJaneDoe* pOwner)
 
 void CJaneDoeState_BranchAttack::Update(CJaneDoe* pOwner, _float dt)
 {
-    for (const auto& Event : pOwner->Get_Component<CAnimator3D>()->Get_EventBus())
-    {
-        if (Event.Type != CLIP_EVENT_TYPE::NOTIFY) continue;
-
-        if (Event.Tag == "LFootStart")
-        {
-            pOwner->Begin_AttackCollider("FootWeapon_L", HitDesc()
-                .Type(HIT_TYPE::INTERVAL)
-                .Damage(pOwner->Get_AttackPower() * 3.008f * Helper::Get_Random_Float(1.f, 1.5f)
-                    , DAMAGE_TYPE::HARD)
-                .Interval(0.05f)
-            );
-        }
-        else if (Event.Tag == "LFootEnd")
-        {
-            pOwner->End_AttackCollider("FootWeapon_L");
-        }
-        else if (Event.Tag == "RFootStart")
-        {
-            pOwner->Begin_AttackCollider("FootWeapon_R", HitDesc()
-                .Type(HIT_TYPE::INTERVAL)
-                .Damage(pOwner->Get_AttackPower() * 3.008f * Helper::Get_Random_Float(1.f, 1.5f)
-                    , DAMAGE_TYPE::HARD)
-                .Interval(0.05f)
-            );
-        }
-        else if (Event.Tag == "RFootEnd")
-        {
-            pOwner->End_AttackCollider("FootWeapon_R");
-        }
-    }
-
     auto pJaneDoeState = pOwner->Get_StateMachine();
     if (pJaneDoeState->Get_Bool("OutReserve"))
     {
@@ -103,6 +71,25 @@ void CJaneDoeState_BranchAttack_Start::Update(CJaneDoe* pOwner, _float dt)
         if (pAttackState && pAttackState->Get_SubStateMachine())
         {
             pAttackState->Get_SubStateMachine()->Set_Trigger("Release");
+        }
+    }
+
+    for (const auto& Event : pOwner->Get_Component<CAnimator3D>()->Get_EventBus())
+    {
+        if (Event.Type != CLIP_EVENT_TYPE::NOTIFY) continue;
+
+        if (Event.Tag == "LFootStart")
+        {
+            pOwner->Begin_AttackCollider("FootWeapon_L", HitDesc()
+                .Type(HIT_TYPE::INTERVAL)
+                .Damage(pOwner->Get_AttackPower() * 0.162f * Helper::Get_Random_Float(1.f, 1.5f)
+                    , DAMAGE_TYPE::NORMAL)
+                .Interval(0.05f)
+            );
+        }
+        else if (Event.Tag == "LFootEnd")
+        {
+            pOwner->End_AttackCollider("FootWeapon_L");
         }
     }
 
@@ -154,6 +141,38 @@ void CJaneDoeState_BranchAttack_Release01::Update(CJaneDoe* pOwner, _float dt)
     pOwner->Process_RootMotion(dt,
         ENUM(CJaneDoe::ROOTMOTION_MASK::MOVE) |
         ENUM(CJaneDoe::ROOTMOTION_MASK::QUATERNION));
+
+    for (const auto& Event : pOwner->Get_Component<CAnimator3D>()->Get_EventBus())
+    {
+        if (Event.Type != CLIP_EVENT_TYPE::NOTIFY) continue;
+
+        if (Event.Tag == "LFootStart")
+        {
+            pOwner->Begin_AttackCollider("FootWeapon_L", HitDesc()
+                .Type(HIT_TYPE::INTERVAL)
+                .Damage(pOwner->Get_AttackPower() * 0.162f * Helper::Get_Random_Float(1.f, 1.5f)
+                    , DAMAGE_TYPE::NORMAL)
+                .Interval(0.05f)
+            );
+        }
+        else if (Event.Tag == "LFootEnd")
+        {
+            pOwner->End_AttackCollider("FootWeapon_L");
+        }
+        else if (Event.Tag == "RFootStart")
+        {
+            pOwner->Begin_AttackCollider("FootWeapon_R", HitDesc()
+                .Type(HIT_TYPE::INTERVAL)
+                .Damage(pOwner->Get_AttackPower() * 0.162f * Helper::Get_Random_Float(1.f, 1.5f)
+                    , DAMAGE_TYPE::HARD)
+                .Interval(0.05f)
+            );
+        }
+        else if (Event.Tag == "RFootEnd")
+        {
+            pOwner->End_AttackCollider("FootWeapon_R");
+        }
+    }
 
     Update_Effects(pOwner);
 }
