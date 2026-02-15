@@ -55,7 +55,7 @@ void CCorinState_UltimateAttack::Update(CCorin* pOwner, _float dt)
             pOwner->Begin_AttackCollider("Saw",
                 HitDesc()
                 .Type(HIT_TYPE::INTERVAL)
-                .Damage(pOwner->Get_AttackPower() * 20.288f * Helper::Get_Random_Float(1.f, 1.5f)
+                .Damage(pOwner->Get_AttackPower() * 2.3f * Helper::Get_Random_Float(1.f, 1.5f)
                     , DAMAGE_TYPE::ULTIMATE)
                 .Interval(0.1f)
                 .Charge(10.f, 0.f)

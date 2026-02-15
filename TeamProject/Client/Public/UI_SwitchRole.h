@@ -2,27 +2,28 @@
 #include "UI_Object.h"
 
 NS_BEGIN(Engine)
-class CTextSlot;
+class CSprite2D;
 NS_END
 
 NS_BEGIN(Client)
 
-class CUI_Switch final : public CUI_Object
+class CUI_SwitchRole final : public CUI_Object
 {
 public:
-	typedef struct tagSwitchDesc {
-		CHARACTER left;
-		CHARACTER right;
-	}SWITCH_DESC;
+	enum class SIDE { LEFT, RIGHT, END };
 
 private:
-	enum class STATE { ACTIVE, DEACTIVATING, END };
-	enum class ROLE { LEFT, RIGHT, END };
-	
+	enum class SPRITE { ROLE, MOUSE, END};
+	inline static const string INSTANCENAMES[ENUM(SPRITE::END)] = { "iconRole", "iconMouse" };
+
 private:
-	CUI_Switch() {}
-	CUI_Switch(const CUI_Switch& rhs) : CUI_Object(rhs) {}
-	virtual ~CUI_Switch() DEFAULT;
+	CUI_SwitchRole() {}
+	CUI_SwitchRole(const CUI_SwitchRole& rhs) : CUI_Object(rhs) {}
+	virtual ~CUI_SwitchRole() DEFAULT;
+
+public:
+	void Set_Side(SIDE eSide);
+	void Change_RoleIcon(CHARACTER eCharacter);
 
 public:
 	virtual HRESULT Initialize_Prototype()           override;
@@ -36,28 +37,12 @@ public:
 	virtual void	UI_DeActive(void* pArg = nullptr) override;
 
 private:
-	class CUI_SwitchGauge* m_pGauge = { nullptr };
-	class CUI_SwitchRole* m_pRoles[ENUM(ROLE::END)] = { nullptr };
-	class CTextSlot* m_pTimerText = {};
-	
-	STATE m_eState = { STATE::END };
-
-	CHARACTER m_characters[ENUM(ROLE::END)] = {};
-
-	_float m_fTimer = {};
-	const float m_fDuration = { 3.f };
+	class CSprite2D* m_pIconSprite[ENUM(SPRITE::END)] = {nullptr};
 
 private:
 	void Cache();
-	void Create_Gauge();
-	void Create_Roles();
 
-	void Change_State(STATE eState);
-	void Update_Timer(_float dt);
-
-	void Update_TimerText();
-
-	void Change_RoleIcon(ROLE eRole, CHARACTER eCharacter);
+	void Change_SpriteTexture(SPRITE eSprite, const string& strTextureKey);
 
 public:
 	static  CGameObject* Create();
