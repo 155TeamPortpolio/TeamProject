@@ -30,7 +30,9 @@ HRESULT CBattlePlayer::Initialize()
 {
     CBattleSystem::GetInstance()->SetBattlePlayer(this);
     Initialize_CharacterPrototype();
-    vector<CHARACTER> BattleCharacters = { CHARACTER::JaneDoe, CHARACTER::Miyabi, CHARACTER::Corin, };
+
+    vector<CHARACTER> BattleCharacters = { CHARACTER::Miyabi, CHARACTER::Corin, CHARACTER::JaneDoe,  };
+    //vector<CHARACTER> BattleCharacters = { CHARACTER::JaneDoe, CHARACTER::Miyabi, CHARACTER::Corin, };
     SetBattleCharacters(BattleCharacters);
 
     return S_OK;
@@ -41,7 +43,7 @@ void CBattlePlayer::Awake()
     UI_ACTION_PRIMARY_DESC desc;
     desc.eMode = UI_ACTION_PRIMARY_MODE::ATTACK;
     EventSystem()->Broadcast<UI_ACTION_PRIMARY_DESC>({ desc });
-
+    AudioDevice()->Set_Listener(m_pCurrentCharacter->Get_Component<CTransform>());
     m_bAwaked = true;
 }
 
@@ -413,6 +415,7 @@ void CBattlePlayer::Execute_ComboAttack(_bool bNext)
     m_pCurrentCharacter->Get_Component<CTransform>()->Set_Look(m_vSwitchLook);
     m_pCurrentCharacter->Set_TargetHandle(m_TargetHandle);
     m_pCurrentCharacter->On_SwitchIn(CCharacter::SWITCH::ATTACK);
+    AudioDevice()->Set_Listener(m_pCurrentCharacter->Get_Component<CTransform>());
 
     Sync_ActionUI();
 
@@ -701,6 +704,7 @@ void CBattlePlayer::NotifyCharacterSwitchIn()
     m_pCurrentCharacter->Get_Component<CCharacterController>()->Set_Position(m_vSwitchPosition);
     m_pCurrentCharacter->Get_Component<CTransform>()->Set_Look(m_vSwitchLook);
     m_pCurrentCharacter->Set_TargetHandle(m_TargetHandle);
+    AudioDevice()->Set_Listener(m_pCurrentCharacter->Get_Component<CTransform>());
 
     if (m_bReserveParry)
     {

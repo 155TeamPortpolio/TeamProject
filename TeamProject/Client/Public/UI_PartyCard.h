@@ -32,7 +32,8 @@ private:
 
 public:
 	void Change_Character(CHARACTER eCharacter, ATTRIBUTE eMaxAttribute = ATTRIBUTE::END);
-	
+	void Reverse_UVAnimDirection(_bool isReverse);
+
 public:
 	virtual HRESULT Initialize_Prototype()           override;
 	virtual HRESULT Initialize(INIT_DESC* pArg = {}) override;

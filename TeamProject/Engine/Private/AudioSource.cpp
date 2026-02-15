@@ -239,10 +239,14 @@ void CAudioSource::Set_AudioPos(_vector3 pos, _vector3 velocity)
 	for (auto& sound : m_Audios) {
 		auto& slot = sound.second;
 		if (slot.is3DAttribute && slot.pSound) {
-			_bool isPlaying = { false };
-			slot.pChanel->isPlaying(&isPlaying);
-			if (isPlaying)
-				slot.pChanel->set3DAttributes(&m_vPos, &m_vVelocity);
+			for (size_t i = 0; i < slot.pChannels.size(); i++)
+			{
+				_bool isPlaying = { false };
+				slot.pChannels[i]->isPlaying(&isPlaying);
+				if (isPlaying)
+					slot.pChannels[i]->set3DAttributes(&m_vPos, &m_vVelocity);
+			}
+		
 		}
 	}
 }
@@ -263,7 +267,9 @@ void CAudioSource::FadeOut_Volume(const string& slotKey, _float durationSec)
 	if (it == m_Audios.end()) return;
 
 	auto& slot = it->second;
-	FMOD::Channel* channel = slot.pChanel;
+	if (slot.pChannels.empty()) return;
+
+	FMOD::Channel* channel = slot.pChannels.front();
 	if (!channel) return;
 
 	bool isPlaying = false;

@@ -292,9 +292,6 @@
     <Filter Include="00. MainApp\00. CursorController">
       <UniqueIdentifier>{5e864d76-8135-44f8-b744-bd0c5b16cda6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Object\Interactable\Barricade">
-      <UniqueIdentifier>{8b1edd40-c12b-4e78-9bb4-7bbe13b2d7ba}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\Object\Npc\Service\Howl">
       <UniqueIdentifier>{8ed08d95-7d7d-4549-9bbe-fd2a5fe86237}</UniqueIdentifier>
     </Filter>
@@ -1344,9 +1341,6 @@
     <Filter Include="02. GameObject\UI\02. 3D\Mesh\GachaReveal\GachaText">
       <UniqueIdentifier>{ed223e07-20d2-4adb-bf8a-94b7c189aa86}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Object\Env\WaterWave">
-      <UniqueIdentifier>{aea5bd1e-985a-4281-bd0f-03da8ed2d179}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\Object\Env\Water">
       <UniqueIdentifier>{eb2a971f-d7e0-4f0e-8386-8a49c973a9aa}</UniqueIdentifier>
     </Filter>
@@ -1368,6 +1362,12 @@
     <Filter Include="02. GameObject\UI\03. UIElement\SoftDirectionalOutline">
       <UniqueIdentifier>{63f153cc-8109-4433-beba-fef1b7722042}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Env\WaterWaves">
+      <UniqueIdentifier>{2d0f3f8c-cb06-4de4-a97e-3beca031f5c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Env\WaterWaves\WaterWave">
+      <UniqueIdentifier>{aea5bd1e-985a-4281-bd0f-03da8ed2d179}</UniqueIdentifier>
+          </Filter>
     <Filter Include="02. GameObject\UI\01. 2D\Party">
       <UniqueIdentifier>{e5501893-5332-4c0a-865e-adb30f047d16}</UniqueIdentifier>
     </Filter>
@@ -1418,6 +1418,12 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Enemy\Elite\Giant\State\Parried">
       <UniqueIdentifier>{bc41c9e0-a786-45c2-8d45-4fbf00b4eab9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Interactable\HealKit">
+      <UniqueIdentifier>{8b1edd40-c12b-4e78-9bb4-7bbe13b2d7ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Interactable\HealKit\KitObject">
+      <UniqueIdentifier>{5f5264af-4f99-4805-ad3c-99dec2533a26}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -2676,7 +2682,7 @@
       <Filter>02. GameObject\Object\Env\Water</Filter>
     </ClInclude>
     <ClInclude Include="..\public\WaterWave.h">
-      <Filter>02. GameObject\Object\Env\WaterWave</Filter>
+      <Filter>02. GameObject\Object\Env\WaterWaves\WaterWave</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\DefilerState_Other.h">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler\State\OtherState</Filter>
@@ -2696,6 +2702,9 @@
     <ClInclude Include="..\Public\SoftDirectionalOutlineUI.h">
       <Filter>02. GameObject\UI\03. UIElement\SoftDirectionalOutline</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\WaterWaves.h">
+      <Filter>02. GameObject\Object\Env\WaterWaves</Filter>
+          </ClInclude>
     <ClInclude Include="..\Public\UI_Party.h">
       <Filter>02. GameObject\UI\01. 2D\Party</Filter>
     </ClInclude>
@@ -2743,6 +2752,12 @@
     </ClInclude>
     <ClInclude Include="..\Public\Giant_Parried.h">
       <Filter>02. GameObject\Object\Enemy\Elite\Giant\State\Parried</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\HealKit.h">
+      <Filter>02. GameObject\Object\Interactable\HealKit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\KitObject.h">
+      <Filter>02. GameObject\Object\Interactable\HealKit\KitObject</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -3960,7 +3975,7 @@
       <Filter>02. GameObject\Object\Env\Water</Filter>
     </ClCompile>
     <ClCompile Include="..\private\WaterWave.cpp">
-      <Filter>02. GameObject\Object\Env\WaterWave</Filter>
+      <Filter>02. GameObject\Object\Env\WaterWaves\WaterWave</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\DefilerState_Other.cpp">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler\State\OtherState</Filter>
@@ -3980,6 +3995,9 @@
     <ClCompile Include="..\Private\SoftDirectionalOutlineUI.cpp">
       <Filter>02. GameObject\UI\03. UIElement\SoftDirectionalOutline</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\WaterWaves.cpp">
+      <Filter>02. GameObject\Object\Env\WaterWaves</Filter>
+          </ClCompile>
     <ClCompile Include="..\Private\UI_Party.cpp">
       <Filter>02. GameObject\UI\01. 2D\Party</Filter>
     </ClCompile>
@@ -4027,6 +4045,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\Giant_Parried.cpp">
       <Filter>02. GameObject\Object\Enemy\Elite\Giant\State\Parried</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\HealKit.cpp">
+      <Filter>02. GameObject\Object\Interactable\HealKit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\KitObject.cpp">
+      <Filter>02. GameObject\Object\Interactable\HealKit\KitObject</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

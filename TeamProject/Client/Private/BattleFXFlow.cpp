@@ -68,7 +68,7 @@ void CBattleFXFlow::Initialize_Preset()
 
 	{
 		auto& HardHitLack = m_BattleVFXData[ENUM(BATTLE_VFX_TYPE::HIT_HARD)];
-		const _float duration = .15f;
+		const _float duration = .1f;
 		HardHitLack.bCanIntersect = true;
 		HardHitLack.fVFXDuration = duration;
 		HardHitLack.fBlurDuration = duration;
@@ -318,7 +318,6 @@ void CBattleFXFlow::StartVfx_Parry()
 		m_BattleVFX.fCurPos = 0.f;
 		m_BattleVFX.vNowColor = {};
 		m_BattleVFX.isRunning = false;
-		//CamDirector()->EndParry();
 		});
 
 	Start(nullptr);

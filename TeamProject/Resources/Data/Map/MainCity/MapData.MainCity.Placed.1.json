@@ -1,0 +1,216 @@
+{
+  "TagDataFormat": "Placed",
+  "TagArea": "MainCity",
+  "iVersion": 1,
+  "values": [
+    {
+      "iObjID": 24,
+      "TagName": "LookSway",
+      "defaultvalue": {
+        "type": "Float2",
+        "value": [
+          4.0,
+          8.0
+        ]
+      }
+    },
+    {
+      "iObjID": 25,
+      "TagName": "LookSway",
+      "defaultvalue": {
+        "type": "Float2",
+        "value": [
+          4.0,
+          8.0
+        ]
+      }
+    },
+    {
+      "iObjID": 26,
+      "TagName": "LookSway",
+      "defaultvalue": {
+        "type": "Float2",
+        "value": [
+          4.0,
+          8.0
+        ]
+      }
+    },
+    {
+      "iObjID": 27,
+      "TagName": "LookSway",
+      "defaultvalue": {
+        "type": "Float2",
+        "value": [
+          4.0,
+          8.0
+        ]
+      }
+    },
+    {
+      "iObjID": 28,
+      "TagName": "LookSway",
+      "defaultvalue": {
+        "type": "Float2",
+        "value": [
+          4.0,
+          8.0
+        ]
+      }
+    },
+    {
+      "iObjID": 29,
+      "TagName": "LookSway",
+      "defaultvalue": {
+        "type": "Float2",
+        "value": [
+          4.0,
+          8.0
+        ]
+      }
+    },
+    {
+      "iObjID": 30,
+      "TagName": "LookSway",
+      "defaultvalue": {
+        "type": "Float2",
+        "value": [
+          4.0,
+          8.0
+        ]
+      }
+    },
+    {
+      "iObjID": 31,
+      "TagName": "LookSway",
+      "defaultvalue": {
+        "type": "Float2",
+        "value": [
+          4.0,
+          8.0
+        ]
+      }
+    },
+    {
+      "iObjID": 32,
+      "TagName": "LookSway",
+      "defaultvalue": {
+        "type": "Float2",
+        "value": [
+          4.0,
+          8.0
+        ]
+      }
+    },
+    {
+      "iObjID": 33,
+      "TagName": "LookSway",
+      "defaultvalue": {
+        "type": "Float2",
+        "value": [
+          4.0,
+          8.0
+        ]
+      }
+    },
+    {
+      "iObjID": 34,
+      "TagName": "LookSway",
+      "defaultvalue": {
+        "type": "Float2",
+        "value": [
+          4.0,
+          8.0
+        ]
+      }
+    },
+    {
+      "iObjID": 35,
+      "TagName": "LookSway",
+      "defaultvalue": {
+        "type": "Float2",
+        "value": [
+          4.0,
+          8.0
+        ]
+      }
+    },
+    {
+      "iObjID": 36,
+      "TagName": "LookSway",
+      "defaultvalue": {
+        "type": "Float2",
+        "value": [
+          4.0,
+          8.0
+        ]
+      }
+    },
+    {
+      "iObjID": 37,
+      "TagName": "LookSway",
+      "defaultvalue": {
+        "type": "Float2",
+        "value": [
+          4.0,
+          8.0
+        ]
+      }
+    },
+    {
+      "iObjID": 38,
+      "TagName": "LookSway",
+      "defaultvalue": {
+        "type": "Float2",
+        "value": [
+          4.0,
+          8.0
+        ]
+      }
+    },
+    {
+      "iObjID": 39,
+      "TagName": "LookSway",
+      "defaultvalue": {
+        "type": "Float2",
+        "value": [
+          4.0,
+          8.0
+        ]
+      }
+    },
+    {
+      "iObjID": 40,
+      "TagName": "LookSway",
+      "defaultvalue": {
+        "type": "Float2",
+        "value": [
+          4.0,
+          8.0
+        ]
+      }
+    },
+    {
+      "iObjID": 41,
+      "TagName": "LookSway",
+      "defaultvalue": {
+        "type": "Float2",
+        "value": [
+          4.0,
+          8.0
+        ]
+      }
+    },
+    {
+      "iObjID": 42,
+      "TagName": "LookSway",
+      "defaultvalue": {
+        "type": "Float2",
+        "value": [
+          4.0,
+          8.0
+        ]
+      }
+    }
+  ]
+}

@@ -34,9 +34,6 @@ public:
 	void           Set_Aspect(_float aspect)          { m_lens.aspect = aspect;   }
 	void           Set_ProjType(CamProjType projType) { m_projType    = projType; }
 	void           Set_Lens(_float fov, _float aspect, _float zNear, _float zFar);
-				   
-	_bool          Lerp_FOV(_float dst, _float dt);
-
 	void           Render_GUI() override;
 
 private:

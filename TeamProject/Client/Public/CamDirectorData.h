@@ -19,7 +19,7 @@ class CBattlePlayer; class CFieldCharacter; class CPlayer; class CCharacter; cla
 enum class CamType       { None, Free, Orbit, Sequence, End };
 enum class CamReturnMode { None, SnapToEnd, RestorePrev };
 enum class CamSeqType    { BattleIntro, ZeroIntro, Ultimate, End };
-enum class CamStartDir { Front, Back };
+enum class CamStartDir   { Front, Back };
 
 enum class CamEventType 
 {
