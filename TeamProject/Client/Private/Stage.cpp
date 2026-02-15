@@ -187,7 +187,11 @@ HRESULT CStage::ReadyPortalPoint(const vector<BATTLE_POINT_DATA>& point)
 			.Build("zeroPortal#" + to_string(i));
 		portal->Set_Alive(false);
 		m_pPortals.push_back(portal);
-		ObjectManager()->Add_Object(m_pPortals[i], { "Zero_Level","Portal_Layer" });
+
+		portal->Get_Component<CCollider>()->Set_CollisionGroup(COLLISION_GROUP::INTERACTABLE);
+		portal->Get_Component<CCollider>()->Set_CollisionMask(ENUM(COLLISION_GROUP::PLAYER));
+
+		ObjectManager()->Add_Object(m_pPortals[i], { "Zero_Level","InteractableObject_Layer" });
 	}
 
 	return S_OK;

@@ -185,23 +185,27 @@ HRESULT CTestLevel::Awake()
 	Ready_TestObject();
 	//Ready_Npc();
 
-	//CamDirector()->StartBattleIntro(CamSeqType::ZeroIntro);
+	//CamDirector()->StartBattleIntro(CamSeqType::BattleIntro);
 	//CUIDirector::GetInstance()->Show_SceneFrame();
 	CUIDirector::GetInstance()->Show_HUD(CUIDirector::HUD::BATTLE);
 	//GameInstance()->Set_EngineTimeScale(0.05f);
 
 	CamDirector()->AutoBattle(CamStartDir::Back);
-	
-	CXWall::XWALL_DESC* XWallDesc = new CXWall::XWALL_DESC;
-	XWallDesc->vCount = { 15, 3 };
 
-	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_XWall", CXWall::Create());
-	auto XWall = Builder::Create_Object({ "Test_Level", "Proto_GameObject_XWall" })
-		.Add_ObjDesc(XWallDesc)
-		.Position({ 0.f, 1.f, 1.f, })
-		.Build("XWall");
+	CMonitorGate gate;
+	if (!gate.Pass())
+	{
+		CXWall::XWALL_DESC* XWallDesc = new CXWall::XWALL_DESC;
+		XWallDesc->vCount = {15, 3};
 
-	ObjectManager()->Add_Object(XWall, { "Test_Level", "Effect_Layer" });
+		pProto->Add_ProtoType("Test_Level", "Proto_GameObject_XWall", CXWall::Create());
+		auto XWall = Builder::Create_Object({"Test_Level", "Proto_GameObject_XWall"})
+			.Add_ObjDesc(XWallDesc)
+			.Position({0.f, 1.f, 1.f, })
+			.Build("XWall");
+
+		ObjectManager()->Add_Object(XWall, {"Test_Level", "Effect_Layer"});
+	}
 
 #ifdef  _USING_GUI
 	Ready_MonsterSpawnConsole();
@@ -214,10 +218,10 @@ void CTestLevel::Update()
 {
 	CBattleSystem::GetInstance()->Update();
 
-	if (InputDevice()->Key_Tap(VK_F4))
-	{
-		CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_Sacrifice", { 0.f, 0.5f,0.f });
-	}
+	//if (InputDevice()->Key_Tap(VK_F4))
+	//{
+	//	CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_Sacrifice", { 0.f, 0.5f,0.f });
+	//}
 	if (InputDevice()->Key_Tap(VK_F5))
 	{
 		auto rushTrail = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })

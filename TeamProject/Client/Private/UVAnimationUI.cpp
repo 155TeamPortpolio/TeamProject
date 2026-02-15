@@ -5,6 +5,12 @@
 #include "GameInstance.h"
 #include "ObjectContainer.h"
 
+void CUVAnimationUI::Reverse_Direction()
+{
+    m_vUVOffsetSpeed.x *= -1.f;
+    m_vUVOffsetSpeed.y *= -1.f;
+}
+
 HRESULT CUVAnimationUI::Initialize_Prototype()
 {
     __super::Initialize_Prototype();

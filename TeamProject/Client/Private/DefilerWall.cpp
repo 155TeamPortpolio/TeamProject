@@ -35,7 +35,6 @@ HRESULT CDefilerWall::Initialize_Prototype()
 	//Add_Component<CCollider>();
 	//Add_Component<CRigidBody>();
 	Add_Component<CAudioSource>();
-
 	return S_OK;
 }
 
@@ -53,6 +52,8 @@ HRESULT CDefilerWall::Initialize(INIT_DESC* pArg)
 		instance->Set_Param("fTime",{ &m_ElapsedTime,"float",  sizeof(_float) });
 	}
 	m_pTransform->Scale({ 0,0,0 });
+	m_EndY = -2.3f;
+	m_pTransform->Set_Y(-5.f);
 	m_bAwake = true;
 
 	return S_OK;
@@ -74,17 +75,22 @@ void CDefilerWall::Update(_float dt)
 
 	m_ElapsedTime += dt;
 
-	const _float duration = 0.25f;
+	const _float duration = .45f;
 	const _float t01 = clamp(m_ElapsedTime / duration, 0.f, 1.f);
-	const _float eased = Math::ApplyEase(EaseType::OutExpo, t01);
-	const _vector3 startScale = { 0.2f, 0.f, 0.2f };
+	const _float eased = Math::ApplyEase(EaseType::OutBack, t01);
+	const _vector3 startScale = { 0.2f, 0.05f, 0.2f };
 	const _vector3 endScale = { 1.f, 1.f, 1.f };
+	const _float startY = -5.f;
+	const _float endY = m_EndY;
 	const _vector3 scale = startScale + (endScale - startScale) * eased;
+	const _float y = Math::Lerp(startY, endY, eased);
 	m_pTransform->Scale(scale); 
-
+	m_pTransform->Set_Y(y);
 	if (t01 >= 1.f)
 	{
-		m_pTransform->Scale(endScale);  // 마감 고정
+		m_pTransform->Scale(endScale);
+		m_pTransform->Set_Y(endY);
+		m_bAwake = false; // 계속 계산 안 하게(선택)
 	}
 }
 

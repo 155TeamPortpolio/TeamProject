@@ -16,7 +16,6 @@ class CamWipeOutController
         Shot4_Snap, Shot4_Hold,
         End
     };
-
     struct ShotGoal
     {
         Vector3 pivotExt{};
@@ -27,14 +26,12 @@ class CamWipeOutController
         _float  yawWeight        = 1.f;
         _float  baseVictimWeight = 0.f;
     };
-
     struct PivotSample
     {
         Vector3 basePivot{};
         Vector3 facePivot{};
         _bool   valid = false;
     };
-
     struct Shot4Runtime
     {
         Vector3    pivotFixed{};

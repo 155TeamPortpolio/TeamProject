@@ -14,6 +14,8 @@
 #include "Material.h"
 #include "Animator3D.h"
 
+#include "UVAnimationUI.h"
+
 void CUI_PartyCard::Change_Character(CHARACTER eCharacter, ATTRIBUTE eMaxAttribute)
 {
     RENDER_LAYER layer = RENDER_LAYER::None;
@@ -44,6 +46,18 @@ void CUI_PartyCard::Change_Character(CHARACTER eCharacter, ATTRIBUTE eMaxAttribu
         m_pRTDraw->SetRenderLayer(layer);
     Set_ChildAlive(CHILD::EMPTY, !hasCharacter);
     Set_ChildAlive(CHILD::OCCUPIED, hasCharacter);  
+}
+
+void CUI_PartyCard::Reverse_UVAnimDirection(_bool isReverse)
+{
+    if (!isReverse)
+        return;
+
+    auto pFront = dynamic_cast<CUVAnimationUI*>(m_pChildren[ENUM(CHILD::BG_FRONT)]);
+    if (!pFront)
+        return;
+
+    pFront->Reverse_Direction();   
 }
 
 HRESULT CUI_PartyCard::Initialize_Prototype()
