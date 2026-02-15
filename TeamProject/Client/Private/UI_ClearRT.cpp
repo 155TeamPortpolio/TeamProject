@@ -1,10 +1,10 @@
 #include "pch.h"
-#include "UI_clear.h"
+#include "UI_ClearRT.h"
 
 #include "GameInstance.h"
 #include "ObjectContainer.h" 
 
-HRESULT CUI_Clear::Initialize_Prototype()
+HRESULT CUI_ClearRT::Initialize_Prototype()
 {
     if (FAILED(__super::Initialize_Prototype()))
         return E_FAIL;
@@ -12,24 +12,24 @@ HRESULT CUI_Clear::Initialize_Prototype()
     return S_OK;
 }
 
-HRESULT CUI_Clear::Initialize(INIT_DESC* pArg)
+HRESULT CUI_ClearRT::Initialize(INIT_DESC* pArg)
 {
     if (FAILED(__super::Initialize(pArg)))
         return E_FAIL;
 
-    Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("clear.json")));
+    Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("clearRT.json")));
 
     Set_Alive(false);
 
     return S_OK;
 }
 
-void CUI_Clear::Awake()
+void CUI_ClearRT::Awake()
 {
     __super::Awake();
 }
 
-void CUI_Clear::Update(_float dt)
+void CUI_ClearRT::Update(_float dt)
 {
     __super::Update(dt);
 
@@ -43,7 +43,7 @@ void CUI_Clear::Update(_float dt)
     Update_RTV("renderTargetScreen", true);
 }
 
-void CUI_Clear::UI_Active(void* pArg)
+void CUI_ClearRT::UI_Active(void* pArg)
 {
     Set_RenderTargetScreenRenderLayer(RENDER_LAYER::Default);
     Set_Alive(true);
@@ -52,23 +52,23 @@ void CUI_Clear::UI_Active(void* pArg)
         dynamic_cast<CUI_Object*>(pChild)->Set_Animation(0);
 }
 
-CGameObject* CUI_Clear::Create()
+CGameObject* CUI_ClearRT::Create()
 {
-    CUI_Clear* pInstance = new CUI_Clear();
+    CUI_ClearRT* pInstance = new CUI_ClearRT();
     if (FAILED(pInstance->Initialize_Prototype()))
     {
-        MSG_BOX("Failed to Create : CUI_Clear");
+        MSG_BOX("Failed to Create : CUI_ClearRT");
         Safe_Release(pInstance);
     }
     return pInstance;
 }
 
-CGameObject* CUI_Clear::Clone(INIT_DESC* pArg)
+CGameObject* CUI_ClearRT::Clone(INIT_DESC* pArg)
 {
-    CUI_Clear* pInstance = new CUI_Clear(*this);
+    CUI_ClearRT* pInstance = new CUI_ClearRT(*this);
     if (FAILED(pInstance->Initialize(pArg)))
     {
-        MSG_BOX("Failed to Clone : CUI_Clear");
+        MSG_BOX("Failed to Clone : CUI_ClearRT");
         Safe_Release(pInstance);
     }
     return pInstance;
