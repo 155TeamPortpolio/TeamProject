@@ -47,6 +47,7 @@ void CJaneDoeState_CounterAttack::Enter(CJaneDoe* pOwner)
 		m_pSubStateMachine->Set_Int("CounterMode", 1);
 	}
 
+	pOwner->Rush_Target();
 	__super::Enter(pOwner);
 }
 
@@ -60,8 +61,8 @@ void CJaneDoeState_CounterAttack::Update(CJaneDoe* pOwner, _float dt)
 		{
 			pOwner->Begin_AttackCollider("HandWeapon_L", HitDesc()
 				.Type(HIT_TYPE::ONCE)
-				.Damage(pOwner->Get_AttackPower() * 3.412f * Helper::Get_Random_Float(1.f, 1.5f)
-					, DAMAGE_TYPE::HARD)
+				.Damage(pOwner->Get_AttackPower() * 0.682f * Helper::Get_Random_Float(1.f, 1.5f)
+					, DAMAGE_TYPE::NORMAL)
 			);
 		}
 		else if (Event.Tag == "LHandEnd")
@@ -72,8 +73,8 @@ void CJaneDoeState_CounterAttack::Update(CJaneDoe* pOwner, _float dt)
 		{
 			pOwner->Begin_AttackCollider("HandWeapon_R", HitDesc()
 				.Type(HIT_TYPE::ONCE)
-				.Damage(pOwner->Get_AttackPower() * 3.412f * Helper::Get_Random_Float(1.f, 1.5f)
-					, DAMAGE_TYPE::HARD)
+				.Damage(pOwner->Get_AttackPower() * 0.682f * Helper::Get_Random_Float(1.f, 1.5f)
+					, DAMAGE_TYPE::NORMAL)
 			);
 		}
 		else if (Event.Tag == "RHandEnd")
@@ -84,7 +85,7 @@ void CJaneDoeState_CounterAttack::Update(CJaneDoe* pOwner, _float dt)
 		{
 			pOwner->Begin_AttackCollider("FootWeapon_L", HitDesc()
 				.Type(HIT_TYPE::ONCE)
-				.Damage(pOwner->Get_AttackPower() * 3.412f * Helper::Get_Random_Float(1.f, 1.5f)
+				.Damage(pOwner->Get_AttackPower() * 0.682f * Helper::Get_Random_Float(1.f, 1.5f)
 					, DAMAGE_TYPE::HARD)
 			);
 		}
@@ -96,7 +97,7 @@ void CJaneDoeState_CounterAttack::Update(CJaneDoe* pOwner, _float dt)
 		{
 			pOwner->Begin_AttackCollider("FootWeapon_R", HitDesc()
 				.Type(HIT_TYPE::ONCE)
-				.Damage(pOwner->Get_AttackPower() * 3.412f * Helper::Get_Random_Float(1.f, 1.5f)
+				.Damage(pOwner->Get_AttackPower() * 0.682f * Helper::Get_Random_Float(1.f, 1.5f)
 					, DAMAGE_TYPE::HARD)
 			);
 		}
