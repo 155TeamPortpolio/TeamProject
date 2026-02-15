@@ -14,7 +14,7 @@ public:
 
 private:
 	_float m_IdleElapsedTime = {};
-	_float IdleDuration = {1.5f};
+	_float IdleDuration = {2.5f};
 public:
 	static CDefilerState_Idle* Create() { return new CDefilerState_Idle(); }
 	virtual void Free() override { __super::Free(); }

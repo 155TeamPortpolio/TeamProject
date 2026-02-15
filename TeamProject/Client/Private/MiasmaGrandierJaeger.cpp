@@ -283,14 +283,17 @@ void CMiasmaGrandierJaeger::Summon_Bullet()
 
 	COLLIDER_DESC ColDesc = {};
 	ColDesc.eGroup = COLLISION_GROUP::MONSTER;
-	ColDesc.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER_ATTACK) | ENUM(COLLISION_GROUP::PLAYER) | ENUM(COLLISION_GROUP::COMMON);
-	ColDesc.bTrigger = true;
+	ColDesc.iCollisionMask = 
+		  ENUM(COLLISION_GROUP::PLAYER_ATTACK) 
+		| ENUM(COLLISION_GROUP::PLAYER) 
+		| ENUM(COLLISION_GROUP::COMMON);
+	ColDesc.bTrigger = false;
 	ColDesc.bAutoFit = false;
 	ColDesc.eType = COLLIDER_TYPE::BOX;
-	ColDesc.vSize = { 1.f, 2.f, 2.f };
+	ColDesc.vSize = { .4f, .4f, .4f };
 
 	auto Missile = Builder::Create_Object({ "Zero_Level", "Proto_GameObject_MiasmaProjectile" })
-		.Collider(ColDesc).Add_ObjDesc(desc).Position(pos).FromPool().Build("Missile");
+		.Collider(ColDesc).Add_ObjDesc(desc).Position(pos).Build("Missile");
 	ObjectManager()->Add_Object(Missile, { lvKey ,"Enemy_Layer" });
 }
 

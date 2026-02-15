@@ -1,4 +1,5 @@
 #include "Shader_Define.hlsl"
+#include "Shader_PBRFunction.hlsl"
 
 float3 vRimLightColor;
 float fRimLightPower;
@@ -164,9 +165,21 @@ VS_MOTIONOUT VS_MOTIONBLUR(VS_IN In)
     return Out;
 }
 
-VS_OUT VS_CUSTOM(VS_IN In)
+struct VS_CUSTOMOUT
 {
-    VS_OUT Out;
+    float4 vPosition : SV_POSITION;
+    float4 vNormal : NORMAL;
+    float2 vTexcoord : TEXCOORD0;
+    float4 vProjPos : TEXCOORD1;
+    float viewZ : TEXCOORD2;
+    float3 vTangent : TANGENT;
+    float3 vBinormal : BINORMAL;
+    float4 vWorldPos : TEXCOORD3;
+};
+
+VS_CUSTOMOUT VS_CUSTOM(VS_IN In)
+{
+    VS_CUSTOMOUT Out;
     
     float fWeightW = 1.0 - (In.vBlendWeight.x + In.vBlendWeight.y + In.vBlendWeight.z);
 
@@ -196,7 +209,8 @@ VS_OUT VS_CUSTOM(VS_IN In)
 
     Out.vTangent = normalize(mul(vTangent, g_worldMatrix));
     Out.vBinormal = normalize(mul(vBinormal, g_worldMatrix));
-
+    Out.vWorldPos = float4(worldPos, 1.f);
+    
     return Out;
 }
 
@@ -284,69 +298,166 @@ PS_OUT PS_MAIN(PS_IN In)
     return Out;
 }
 
-PS_OUT PS_OPAQUE(PS_IN In)
+PS_OUT PS_OPAQUE(VS_CUSTOMOUT In)
 {
-    // ���� ������ 1
     PS_OUT Out;
-    
-    vector vMtrlDiffuse = DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
-    if (vMtrlDiffuse.a < 0.2)
-    {
+
+    float3 localLightDir = normalize(float3(-1.f, -0.6f, 1.f));
+    float3 localLightDiffuse = float3(1.f, 1.f, 1.f);
+    float3 localLightAmbient = float3(1.f, 1.f, 1.f);
+    float3 localLightSpecular = float3(1.f, 1.f, 1.f);
+    float localLightIntensity = 2.f; 
+
+    float4 vMtrlDiffuse = DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
+
+    if (vMtrlDiffuse.a < 0.2f)
         discard;
-    }
+
     if (length(vMtrlDiffuse.rgb) <= 0.f)
-        vMtrlDiffuse.rgb = float3(0.01, 0.01, 0.01);
-    Out.vDiffuse = float4(vMtrlDiffuse.rgb, 1.f);
-  
-    vector vNormalDesc = NormalTexture.Sample(DefaultSampler, In.vTexcoord);
-    vector vMetalic = MetalnessTexture.Sample(DefaultSampler, In.vTexcoord);
-    vector vAmbient = AmbientTexture.Sample(DefaultSampler, In.vTexcoord);
-    
-    float fNoise = NoiseTexture.Sample(LinearSampler, In.vTexcoord * fDissolveTiling).r;
-    
-    if (fNoise < fDissolveProgress)
-        discard;
-  
-    vAmbient.r = 0.f;
+        vMtrlDiffuse.rgb = float3(0.01f, 0.01f, 0.01f);
+
+    float4 vNormalDesc = NormalTexture.Sample(DefaultSampler, In.vTexcoord);
+    float4 vMetalic = MetalnessTexture.Sample(DefaultSampler, In.vTexcoord);
+    float4 vAmbientTex = AmbientTexture.Sample(DefaultSampler, In.vTexcoord);
+    vAmbientTex.r = 0.f;
+
+    float3 worldNormal;
+    float normalAlpha;
+    float Skin;
+    bool bIsFace = false;
+    float3 faceLookDir = float3(0.f, 0.f, -1.f);
+
     if (vNormalDesc.a > 0.f)
     {
         float3 vNormal;
         vNormal.xy = vNormalDesc.xy * 2.f - 1.f;
         vNormal.z = 1.f;
-        float3 T = normalize(In.vTangent);
-        float3 B = normalize(In.vBinormal * -1);
-        float3 N = normalize(In.vNormal.xyz);
 
-        float3x3 WorldMatrix = float3x3(T, B, N);
-        
-        vNormal = mul(vNormal, WorldMatrix);
+        float3 T = normalize(In.vTangent);
+        float3 B = normalize(In.vBinormal * -1.f);
+        float3 N = normalize(In.vNormal);
+        float3x3 TBN = float3x3(T, B, N);
+
+        worldNormal = normalize(mul(vNormal, TBN));
+        normalAlpha = vNormalDesc.z;
+        Skin = 0.6f;
         vMetalic.a = 0.6f;
-        Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, vNormalDesc.z);
-        Out.vLook = float4(0.f, 0.f, 0.f, 0.f);
+        bIsFace = false;
     }
     else
     {
-        float3 vNormal = normalize(In.vNormal);
-        Out.vNormal = float4(vNormal * 0.5f + 0.5f, 1.f);
-
-        float3 headRight = normalize(cross(float3(0.f, 1.f, 0.f), vLookVector.xyz));
+        worldNormal = normalize(In.vNormal);
+        normalAlpha = 1.f;
+       // faceLookDir = vLookVector.xyz;
 
         vMetalic = LightTexture.Sample(DefaultSampler, In.vTexcoord);
-        if (length(vMetalic.rgb) < 0.01f)
-            vMetalic.a = 0.6f;
+    
+        float lightMapLength = length(vMetalic.rgba);
+        if (lightMapLength < 0.01f)
+        {
+            Out.vDiffuse = float4(vMtrlDiffuse.rgb, 1.f);
+            return Out;
+        }
         else
-            vMetalic.a = 0.8f;
-        Out.vLook = float4(vLookVector.xyz * 0.5f + 0.5f, 0.f);
+        {
+            if (length(vMetalic.rgb) < 0.01f)
+                vMetalic.a = 0.6f;
+            else
+                vMetalic.a = 0.8f;
+
+            Skin = vMetalic.a;
+            bIsFace = (Skin >= 0.7f);
+        }
     }
-    
-    if (vAmbient.g < 0.2)
-        vAmbient.g = 1.f;
-    vAmbient.b = 0;
-    Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / zFar, 0.f, 1.f);
-    Out.vAmbient = vAmbient;
-    Out.vMetalic = vMetalic;
-    Out.vRimLight = float4(vRimLightColor, fRimLightPower);
-    
+
+    if (vAmbientTex.g < 0.2f)
+        vAmbientTex.g = 1.f;
+    vAmbientTex.b = 0.f;
+
+    float roughness = vMetalic.r;
+    float metalic = vMetalic.g;
+    float specMask = vMetalic.b;
+
+    float3 lightDir = normalize(localLightDir * -1.f);
+    float3 viewDir = normalize(vCamPosition.xyz - In.vWorldPos.xyz);
+
+    float3 litColor = float3(0, 0, 0);
+    float NdotL_out = 0.f;
+    float specular_out = 0.f;
+    float shadowValue = 1.f;
+    float lightAlpha = 0.f;
+
+    if (length(vMtrlDiffuse.rgb) > 0.f)
+        lightAlpha = 1.f;
+
+    if (!bIsFace)
+    {
+        float NdotL = dot(worldNormal, lightDir);
+        float saturateNdotL = saturate(NdotL);
+        float halfLambert = NdotL * 0.5f + 0.5f;
+
+        float toon = smoothstep(0.55f, 0.65f, halfLambert);
+        toon = lerp(0.6f, 1.0f, toon);
+
+        float3 halfVec = normalize(viewDir + lightDir);
+        float specBase = saturate(dot(worldNormal, halfVec));
+        float specularPower = lerp(50.0f, 5.0f, roughness);
+        float spec = pow(specBase, specularPower) * specMask;
+
+        float3 PBR = CalculateDirectionalLight(
+            vMtrlDiffuse.rgb, worldNormal, metalic, roughness,
+            viewDir, lightDir, localLightDiffuse, localLightIntensity, toon);
+
+        litColor = PBR * normalAlpha;
+        NdotL_out = saturateNdotL;
+        specular_out = spec;
+        shadowValue = saturate(toon * 0.7f + 0.3f);
+    }
+    else
+    {
+        float4 LightDesc = vMetalic;
+
+        float3 headRight = normalize(cross(float3(0, 1, 0), faceLookDir));
+        float RdotL = dot(headRight, lightDir);
+        float FdotL = dot(faceLookDir, lightDir);
+
+        float faceShadow = 1.f - LightDesc.r;
+        float lightIntensity = FdotL * 0.5f + 0.5f;
+
+        float threshold = faceShadow;
+        float shadow = smoothstep(threshold - 0.1f, threshold + 0.1f, lightIntensity);
+
+        float sideInfluence = RdotL * 0.3f;
+        shadow = saturate(shadow + sideInfluence);
+
+        float minBrightness = 0.2f;//        0.3f;
+        float maxBrightness = 0.48f;//        0.5f;
+        float brightness = lerp(minBrightness, maxBrightness, shadow);
+
+        litColor = vMtrlDiffuse.rgb * localLightDiffuse * brightness;
+        NdotL_out = brightness;
+        specular_out = 0.f;
+        shadowValue = saturate(brightness * 0.7f + 0.3f);
+    }
+
+    float3 ambient = localLightAmbient * vMtrlDiffuse.rgb * vAmbientTex.g;
+    ambient = max(ambient, vMtrlDiffuse.rgb * localLightAmbient * 0.5f) * vNormalDesc.a * shadowValue;
+
+    float3 finalColor;
+    if (Skin < 0.7f)
+    {
+        finalColor = litColor + ambient;
+    }
+    else
+    {
+        finalColor = litColor + localLightAmbient * vMtrlDiffuse.rgb * max(shadowValue, 0.5f);
+    }
+
+    float3 specularColor = localLightSpecular * specular_out;
+    finalColor += specularColor;
+
+    Out.vDiffuse = float4(finalColor, lightAlpha);
+
     return Out;
 }
 

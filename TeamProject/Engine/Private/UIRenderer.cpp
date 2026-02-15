@@ -81,7 +81,7 @@ HRESULT CUIRenderer::Render_CustomTarget()
 
 			currentTargetKey = cmd.TargetKey;
 		}
-
+		
 		cmd.DrawCallback(m_pContext);
 	}
 

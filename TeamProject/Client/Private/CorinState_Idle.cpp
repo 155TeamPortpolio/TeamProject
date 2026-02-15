@@ -66,11 +66,11 @@ void CCorinState_Idle::Update(CCorin* pOwner, _float dt)
 
     if (m_idleVoiceAcc < kIdleVoiceDelay)
         return;
-
-    auto& sound = *pOwner->Get_Component<CAudioSource>();
-    auto& slot = sound.Sequence("Idle_Voice").Attribute3D(true).Loop(0).PlayNext();
-
-    m_pIdleVoiceChannel = slot.pChanel;
+    //JaeThingThing
+    //auto& sound = *pOwner->Get_Component<CAudioSource>();
+    //auto& slot = sound.Sequence("Idle_Voice").Attribute3D(true).Loop(0).PlayNext();
+    //
+    //m_pIdleVoiceChannel = slot.pChannels;
     m_idleVoiceAcc = 0.f;
 }
 

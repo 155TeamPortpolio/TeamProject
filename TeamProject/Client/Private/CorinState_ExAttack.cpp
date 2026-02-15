@@ -321,7 +321,7 @@ void CCorinState_ExAttack_Explode::Update(CCorin* pOwner, _float dt)
 void CCorinState_ExAttack_Explode::Exit(CCorin* pOwner)
 {
     auto& sound = *pOwner->Get_Component<CAudioSource>();
-    sound.Set_SlotPuase("Corin_ExAttack_Loop_Charge_SFX.wav", true);
+    //sound.Set_SlotPuase("Corin_ExAttack_Loop_Charge_SFX.wav", true);
 }
 
 void CCorinState_ExAttack_End::Enter(CCorin* pOwner)

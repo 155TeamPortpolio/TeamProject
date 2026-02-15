@@ -103,6 +103,22 @@ CMaterialInstance* CMaterial::Get_MaterialInstanceByName(const string& MaterialN
 	return *iter;
 }
 
+CMaterialInstance* CMaterial::Find_MaterialInstanceByName(const string& MaterialName)
+{
+	if (m_MaterialInstances.empty())
+		return nullptr;
+
+	auto iter = find_if(m_MaterialInstances.begin(), m_MaterialInstances.end(),
+		[&](CMaterialInstance* pInstance)->bool {
+			string lowerName = Helper::ToLower(pInstance->Get_MaterialName());
+			return lowerName.find(Helper::ToLower(MaterialName)) !=string::npos ;
+		});
+
+	if (iter == m_MaterialInstances.end()) return nullptr;
+
+	return *iter;
+}
+
 CMaterialInstance* CMaterial::Get_MaterialInstance(_uint Index)
 {
 	if (m_MaterialInstances.empty())
@@ -186,6 +202,9 @@ void CMaterial::Render_GUI()
 	
 	if(ImGui::Button("Material Tabs")) {
 		m_bMaterialTabOpen = true;
+	}
+	if(ImGui::Button("Material BlendHasAlpha")) {
+		SetBlendHasAlpha(AlphaCheckLevel::Precise, "Blend");
 	}
 	
 	if(m_bMaterialTabOpen){

@@ -112,6 +112,11 @@ void CUI_Party::UI_Active(void* pArg)
     m_pPartySynergy->Set_Synergy(iPartySynergyCount, iTotalPartyCount);
 }
 
+void CUI_Party::UI_DeActive(void* pArg)
+{
+    Set_Alive(false);
+}
+
 void CUI_Party::Create_BackButton()
 {
     auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_BackButton"})
@@ -120,7 +125,7 @@ void CUI_Party::Create_BackButton()
     if (!pObj)
         return;
 
-    pObj->Set_OnClick([this]() { Set_Alive(false); }); // 클릭했을 때 실행할 함수 필요
+    pObj->Set_OnClick([this]() { UI_DeActive(); }); // 클릭했을 때 실행할 함수 필요
     Get_Component<CObjectContainer>()->Add_Child(pObj);
 }
 
@@ -203,7 +208,7 @@ void CUI_Party::Create_EnterButton()
     if (!pObj)
         return;
 
-    pObj->Set_OnClick([this]() { Set_Alive(false); }); // 클릭했을 때 실행할 함수 필요
+    pObj->Set_OnClick([this]() { UI_DeActive(); }); // 클릭했을 때 실행할 함수 필요
     Get_Component<CObjectContainer>()->Add_Child(pObj);
 }
 
@@ -240,16 +245,22 @@ void CUI_Party::Create_PartyCards()
         if (!pObj)
             continue;
 
-        pObj->Set_Pivot(_float2(0.5f, 0.5f));
-        pObj->Set_Anchor(ANCHOR::Center);
+        auto pPartyCard = dynamic_cast<CUI_PartyCard*>(pObj);
+        if (!pPartyCard)
+            continue;
+
+        m_pPartyCard[i] = pPartyCard;
+        Get_Component<CObjectContainer>()->Add_Child(pObj); 
+
+        pPartyCard->Set_Pivot(_float2(0.5f, 0.5f));
+        pPartyCard->Set_Anchor(ANCHOR::Center);
 
         float fStartX = -fTotalWidth * 0.5f + fWidth * 0.5f;
         float fOffsetX = fStartX + i * (fWidth + fSpacing);
 
-        pObj->Set_AnchorOffset(_float2(fOffsetX, 0.f));
-
-        Get_Component<CObjectContainer>()->Add_Child(pObj);
-        m_pPartyCard[i] = dynamic_cast<CUI_PartyCard*>(pObj);
+        pPartyCard->Set_AnchorOffset(_float2(fOffsetX, 0.f));
+        
+        pPartyCard->Reverse_UVAnimDirection(i % 2);         
     } 
 }
 

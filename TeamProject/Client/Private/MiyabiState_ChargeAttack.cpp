@@ -98,6 +98,7 @@ void CMiyabiState_ChargeAttack::Update(CMiyabi* pOwner, _float dt)
 
 void CMiyabiState_ChargeAttack::Exit(CMiyabi* pOwner)
 {
+    pOwner->Set_ResetMove(true);
     pOwner->Pop_Invincible();
     __super::Exit(pOwner);
 }

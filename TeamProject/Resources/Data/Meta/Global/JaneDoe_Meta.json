@@ -837,17 +837,17 @@
         {
           "EventTime": 1.0661468505859375,
           "EventType": "Notify",
-          "EventTag": "AreaAttack"
+          "EventTag": "AreaAttackHard"
         },
         {
           "EventTime": 1.0988954305648804,
           "EventType": "Notify",
-          "EventTag": "AreaAttack"
+          "EventTag": "AreaAttackHard"
         },
         {
           "EventTime": 1.1643924713134766,
           "EventType": "Notify",
-          "EventTag": "AreaAttack"
+          "EventTag": "AreaAttackHard"
         }
       ]
     },

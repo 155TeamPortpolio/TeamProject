@@ -24,6 +24,7 @@ public:
 	virtual void    Late_Update(_float dt)           override { __super::Late_Update(dt); }
 	virtual void    Render_GUI()                     override { __super::Render_GUI(); }
 	virtual void    UI_Active(void* pArg = nullptr)	 override;
+	virtual void	UI_DeActive(void* pArg = nullptr) override;
 
 private:
 	static constexpr _int PARTY_COUNT = 3;

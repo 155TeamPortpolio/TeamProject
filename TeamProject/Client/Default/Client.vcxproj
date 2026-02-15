@@ -387,6 +387,7 @@
     <ClInclude Include="..\Public\DefilerState_Other.h" />
     <ClInclude Include="..\Public\DefilerWall.h" />
     <ClInclude Include="..\Public\DefilerWeapon.h" />
+    <ClInclude Include="..\Public\KitObject.h" />
     <ClInclude Include="..\Public\Giant.h" />
     <ClInclude Include="..\Public\Giant_Attack.h" />
     <ClInclude Include="..\Public\Giant_Born.h" />
@@ -397,6 +398,7 @@
     <ClInclude Include="..\Public\Giant_Idle.h" />
     <ClInclude Include="..\Public\Giant_Move.h" />
     <ClInclude Include="..\Public\Giant_Parried.h" />
+    <ClInclude Include="..\public\HealKit.h" />
     <ClInclude Include="..\Public\MiasmaDummyUnit.h" />
     <ClInclude Include="..\Public\MiasmaGrandierJaeger.h" />
     <ClInclude Include="..\Public\CrowdNpc.h" />
@@ -500,6 +502,7 @@
     <ClInclude Include="..\Public\UI_WipeoutRT.h" />
     <ClInclude Include="..\public\Water.h" />
     <ClInclude Include="..\public\WaterWave.h" />
+    <ClInclude Include="..\public\WaterWaves.h" />
     <ClInclude Include="..\public\XWall.h" />
     <ClInclude Include="..\public\ZeroStage_Start.h" />
     <ClInclude Include="..\Public\UI_GachaDisplay.h" />
@@ -877,6 +880,7 @@
     <ClCompile Include="..\Private\DefilerState_Other.cpp" />
     <ClCompile Include="..\Private\DefilerWall.cpp" />
     <ClCompile Include="..\Private\DefilerWeapon.cpp" />
+    <ClCompile Include="..\Private\KitObject.cpp" />
     <ClCompile Include="..\Private\Giant.cpp" />
     <ClCompile Include="..\Private\Giant_Attack.cpp" />
     <ClCompile Include="..\Private\Giant_Born.cpp" />
@@ -887,6 +891,7 @@
     <ClCompile Include="..\Private\Giant_Idle.cpp" />
     <ClCompile Include="..\Private\Giant_Move.cpp" />
     <ClCompile Include="..\Private\Giant_Parried.cpp" />
+    <ClCompile Include="..\private\HealKit.cpp" />
     <ClCompile Include="..\Private\MiasmaDummyUnit.cpp" />
     <ClCompile Include="..\Private\MiasmaGrandierJaeger.cpp" />
     <ClCompile Include="..\Private\CorinState_AssaultAttack.cpp" />
@@ -988,6 +993,7 @@
     <ClCompile Include="..\Private\UI_WipeoutRT.cpp" />
     <ClCompile Include="..\private\Water.cpp" />
     <ClCompile Include="..\private\WaterWave.cpp" />
+    <ClCompile Include="..\private\WaterWaves.cpp" />
     <ClCompile Include="..\private\XWall.cpp" />
     <ClCompile Include="..\private\ZeroStage_Start.cpp" />
     <ClCompile Include="..\Private\UI_GachaDisplay.cpp" />

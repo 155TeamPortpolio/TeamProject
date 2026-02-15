@@ -1,9 +1,5 @@
 #include "Shader_Define.hlsl"
 
-// ================================================================================================
-// 젠레스 존 제로 - 모독자 해일 셰이더
-// ================================================================================================
-
 static const float g_TsunamiHeight = 38.0f;
 
 static const float g_PeakTime = 0.42f;
@@ -25,8 +21,25 @@ static const float g_NoiseSpeed = 1.5f;
 
 float g_Time;
 float g_CycleTime;
+float g_Roughness;
+float g_FoamAmount;
+float2 g_NoiseOffset;
+float3 g_WaterTint;
+float g_TintStrength;
 
-// ── 구조체 ──────────────────────────────────────────────────────
+float SafeRoughness()
+{
+    return (g_Roughness > 0.001) ? g_Roughness : 1.0;
+}
+float SafeFoamAmount()
+{
+    return (g_FoamAmount > 0.001) ? g_FoamAmount : 1.0;
+}
+float SafeTintStrength()
+{
+    return (g_TintStrength > 0.001) ? g_TintStrength : 0.0;
+}
+
 struct VS_IN
 {
     float3 vPosition : POSITION;
@@ -42,9 +55,6 @@ struct VS_OUT
     float3 vNormal : NORMAL;
 };
 
-// ================================================================================================
-// Vertex Shader
-// ================================================================================================
 VS_OUT VS_TESS(VS_IN In)
 {
     VS_OUT Out;
@@ -55,9 +65,6 @@ VS_OUT VS_TESS(VS_IN In)
     return Out;
 }
 
-// ================================================================================================
-// Hull Shader
-// ================================================================================================
 struct PatchConstant
 {
     float edges[3] : SV_TessFactor;
@@ -84,9 +91,6 @@ VS_OUT HS_TESS(InputPatch<VS_OUT, 3> patch, uint id : SV_OutputControlPointID)
     return patch[id];
 }
 
-// ================================================================================================
-// 노이즈
-// ================================================================================================
 float hash(float2 p)
 {
     return frac(1e4 * sin(17.0 * p.x + p.y * 0.1) * (0.1 + abs(sin(p.y * 13.0 + p.x))));
@@ -118,9 +122,6 @@ float fbm(float2 p, int octaves)
     return value;
 }
 
-// ================================================================================================
-// Domain Shader
-// ================================================================================================
 struct DS_OUT
 {
     float4 vPosition : SV_POSITION;
@@ -142,6 +143,7 @@ DS_OUT DS_TESS(PatchConstant pc, float3 bary : SV_DomainLocation, const OutputPa
 
     float t = frac(g_Time / g_CycleTime);
     float depth = texcoord.y;
+    float roughness = SafeRoughness();
 
     float edgeMask = smoothstep(0.0, 0.03, texcoord.x) * smoothstep(1.0, 0.97, texcoord.x)
                    * smoothstep(0.0, 0.03, texcoord.y) * smoothstep(1.0, 0.97, texcoord.y);
@@ -164,19 +166,21 @@ DS_OUT DS_TESS(PatchConstant pc, float3 bary : SV_DomainLocation, const OutputPa
     float height = g_TsunamiHeight * envelope * wallProfile * xProfile;
     float topRegion = smoothstep(0.5, 0.9, wallProfile);
 
-    float2 noiseCoord = float2(worldPos.x * g_NoiseFreqX, worldPos.z * g_NoiseFreqZ + g_Time * g_NoiseSpeed);
+    float2 noiseCoord = float2(worldPos.x * g_NoiseFreqX, worldPos.z * g_NoiseFreqZ + g_Time * g_NoiseSpeed)
+                      + g_NoiseOffset;
     float topNoise = fbm(noiseCoord, 4) * 2.0 - 1.0;
-    height += topNoise * g_TopNoiseScale * topRegion * envelope * xProfile;
+    height += topNoise * g_TopNoiseScale * roughness * topRegion * envelope * xProfile;
 
-    float2 surfNoiseCoord = float2(worldPos.x * 0.15, worldPos.z * 0.15 + g_Time * 2.0);
+    float2 surfNoiseCoord = float2(worldPos.x * 0.15, worldPos.z * 0.15 + g_Time * 2.0)
+                          + g_NoiseOffset * 1.7;
     float surfNoise = (valueNoise(surfNoiseCoord) - 0.5) * 2.0;
-    height += surfNoise * g_SurfaceNoise * wallProfile * envelope * xProfile;
+    height += surfNoise * g_SurfaceNoise * roughness * wallProfile * envelope * xProfile;
 
-    float2 bumpCoord = float2(worldPos.x * 0.02, g_Time * 0.3);
+    float2 bumpCoord = float2(worldPos.x * 0.02, g_Time * 0.3)
+                     + g_NoiseOffset * 0.5;
     float largeBump = pow(valueNoise(bumpCoord), 2.0) * 7.5;
-    height += largeBump * topRegion * envelope * xProfile;
+    height += largeBump * roughness * topRegion * envelope * xProfile;
 
-    // 컬
     float spatialRatio = saturate(wallProfile * xProfile / 0.8);
     float topFocus = saturate((spatialRatio - 0.1) / 0.9);
     float curlMask = pow(topFocus, 1.5);
@@ -218,12 +222,13 @@ DS_OUT DS_TESS(PatchConstant pc, float3 bary : SV_DomainLocation, const OutputPa
     worldPos.y += finalHeight;
     float heightForShading = finalHeight;
 
-    // 법선
     float eps = 0.8;
-    float2 ncXp = float2((worldPos.x + eps) * g_NoiseFreqX, worldPos.z * g_NoiseFreqZ + g_Time * g_NoiseSpeed);
-    float2 ncXm = float2((worldPos.x - eps) * g_NoiseFreqX, worldPos.z * g_NoiseFreqZ + g_Time * g_NoiseSpeed);
-    float hXp = fbm(ncXp, 4) * g_TopNoiseScale * topRegion * envelope;
-    float hXm = fbm(ncXm, 4) * g_TopNoiseScale * topRegion * envelope;
+    float2 ncXp = float2((worldPos.x + eps) * g_NoiseFreqX, worldPos.z * g_NoiseFreqZ + g_Time * g_NoiseSpeed)
+                + g_NoiseOffset;
+    float2 ncXm = float2((worldPos.x - eps) * g_NoiseFreqX, worldPos.z * g_NoiseFreqZ + g_Time * g_NoiseSpeed)
+                + g_NoiseOffset;
+    float hXp = fbm(ncXp, 4) * g_TopNoiseScale * roughness * topRegion * envelope;
+    float hXm = fbm(ncXm, 4) * g_TopNoiseScale * roughness * topRegion * envelope;
     float dhdx = (hXp - hXm) / (2.0 * eps);
 
     float depthPlus = saturate(depth + 0.01);
@@ -244,76 +249,197 @@ DS_OUT DS_TESS(PatchConstant pc, float3 bary : SV_DomainLocation, const OutputPa
     Out.vPosition = mul(Out.vPosition, matProjection);
     Out.vTexcoord = texcoord;
     Out.vNormal = normal;
-    Out.fFoamMask = saturate(heightForShading / (g_TsunamiHeight * 0.85)) * smoothstep(0.6, 0.95, topRegion);
+    Out.fFoamMask = saturate(heightForShading / (g_TsunamiHeight * 0.55)) * smoothstep(0.85, 0.99, topRegion);
     Out.fHeightPct = saturate(heightForShading / g_TsunamiHeight);
     Out.fPhase = t;
 
     return Out;
 }
 
+float3 UnpackNormalRG(float4 packed)
+{
+    float3 n;
+    n.xy = packed.rg * 2.0 - 1.0;
+    n.z = sqrt(max(1.0 - dot(n.xy, n.xy), 0.0));
+    return n;
+}
+
+float3 BlendNormalUDN(float3 base, float3 detail)
+{
+    return normalize(float3(base.xy + detail.xy, base.z));
+}
+
 float4 PS_TESS(DS_OUT In) : SV_TARGET
 {
-    float3 viewDir = normalize(vCamPosition.xyz - In.vWorldPos.xyz);
-    float3 lightDir = normalize(float3(0.3, 1.0, -0.3));
-    float h = In.fHeightPct;
+    static const float3 DeepColor = float3(0.010, 0.002, 0.008);
+    static const float3 MidColor = float3(0.05, 0.005, 0.030);
+    static const float3 ShallowColor = float3(0.13, 0.012, 0.070);
+    static const float3 BrightColor = float3(0.25, 0.030, 0.140);
+    static const float3 HotColor = float3(0.38, 0.060, 0.220);
 
+    static const float3 SunDir = normalize(float3(0.0, 0.4, 0.7));
+    static const float3 SunColor = float3(0.50, 0.25, 0.35);
 
-    float2 worldUV = In.vWorldPos.xz;
-    float2 uv1 = worldUV * 0.01 + float2(g_Time * 0.08, g_Time * 0.05);
-    float2 uv2 = worldUV * 0.018 - float2(g_Time * 0.06, g_Time * 0.1);
+    float heightPct = In.fHeightPct;
+    float foamMask = In.fFoamMask;
+    float phase = In.fPhase;
+    float3 worldPos = In.vWorldPos.xyz;
+    float time = g_Time;
 
+    float2 uvN1 = worldPos.xz * 0.025 + float2(time * 0.3, time * 0.15);
+    float2 uvN2 = worldPos.xz * 0.050 + float2(-time * 0.2, time * 0.35);
+    float2 uvN3 = worldPos.xz * 0.120 + float2(time * 0.15, -time * 0.25);
 
-    float pattern1 = DiffuseTexture.Sample(LinearSampler, uv1).r;
-    float pattern2 = DiffuseTexture.Sample(LinearSampler, uv2).r;
+    float4 rawN1 = NormalTexture.Sample(LinearSampler, uvN1);
+    float4 rawN2 = MetalnessTexture.Sample(LinearSampler, uvN2);
+    float4 rawN3 = AmbientTexture.Sample(LinearSampler, uvN3);
 
-    float patternBig = DiffuseTexture.Sample(LinearSampler, worldUV * 0.004 + g_Time * 0.02).r;
+    float3 detailN1 = UnpackNormalRG(rawN1);
+    float3 detailN2 = UnpackNormalRG(rawN2);
+    float3 detailN3 = UnpackNormalRG(rawN3);
 
-    float pattern = (pattern1 + pattern2) * 0.5;
+    float3 blendedDetail = BlendNormalUDN(detailN1, detailN2 * 0.7);
+    blendedDetail = BlendNormalUDN(blendedDetail, detailN3 * 0.4);
 
-    float2 n1 = NormalTexture.Sample(LinearSampler, uv1 * 1.5).rg * 2.0 - 1.0;
-    float2 n2 = MetalnessTexture.Sample(LinearSampler, uv2).rg * 2.0 - 1.0;
-    float3 combinedNormal = normalize(In.vNormal + float3(n1.x + n2.x * 0.6, 0.0, n1.y + n2.y * 0.6) * 0.3);
+    float3 meshN = normalize(In.vNormal);
+    float detailStrength = lerp(0.4, 1.0, heightPct);
+    float3 N = normalize(float3(
+        meshN.x + blendedDetail.x * detailStrength,
+        meshN.y,
+        meshN.z + blendedDetail.y * detailStrength
+    ));
 
+    float3 V = normalize(vCamPosition.xyz - worldPos);
+    float3 H = normalize(SunDir + V);
+    float NdotV = saturate(dot(N, V));
+    float NdotL = saturate(dot(N, SunDir));
+    float NdotH = saturate(dot(N, H));
 
-    float3 colorDark = float3(0.015, 0.001, 0.012);
-    float3 colorBright = float3(0.12, 0.008, 0.08);
+    float3 waterColor = lerp(DeepColor, MidColor, smoothstep(0.0, 0.20, heightPct));
+    waterColor = lerp(waterColor, ShallowColor, smoothstep(0.15, 0.45, heightPct));
+    waterColor = lerp(waterColor, BrightColor, smoothstep(0.50, 0.80, heightPct));
 
-    float blend = h * 0.6 + pattern * 0.4;
-    float3 baseColor = lerp(colorDark, colorBright, blend);
+    float2 uvCaustic1 = worldPos.xz * 0.018 + float2(time * 0.15, time * 0.08);
+    float2 uvCaustic2 = worldPos.xz * 0.030 + float2(-time * 0.10, time * 0.18);
 
-    baseColor *= (0.4 + pattern * 0.9);
+    float4 causticA = DiffuseTexture.Sample(LinearSampler, uvCaustic1);
+    float4 causticB = DiffuseTexture.Sample(LinearSampler, uvCaustic2);
 
-    baseColor *= (0.6 + patternBig * 0.6);
+    float veinLine = saturate(causticA.g * 0.6 + causticB.g * 0.5);
+    veinLine = smoothstep(0.25, 0.70, veinLine);
+    float veinMask = smoothstep(0.08, 0.50, heightPct); 
+    float veinIntensity = veinLine * veinMask;
 
+    float darkBlob = saturate(causticA.r * 0.5 + causticB.r * 0.5);
+    darkBlob = 1.0 - smoothstep(0.3, 0.7, darkBlob) * 0.3;
+    waterColor *= darkBlob;
 
-    float foam = LightTexture.Sample(LinearSampler, uv1 * 0.5).r;
-    float glowMask = foam * smoothstep(0.6, 0.9, h);
-    glowMask = smoothstep(0.5, 0.85, glowMask);
+    waterColor = lerp(waterColor, BrightColor, veinIntensity * 0.5);
+    waterColor = lerp(waterColor, HotColor, pow(veinIntensity, 2.0) * 0.35);
 
-    float3 glowColor = float3(0.35, 0.05, 0.25);
-    float3 finalColor = baseColor + glowColor * glowMask * 0.4;
+    float edgeSparkle = saturate(causticA.b * 0.5 + causticB.b * 0.5);
+    edgeSparkle = pow(smoothstep(0.5, 0.85, edgeSparkle), 2.0);
 
-    float fresnel = pow(1.0 - saturate(dot(combinedNormal, viewDir)), 4.0);
-    finalColor += float3(0.05, 0.002, 0.035) * fresnel * h;
+    float sssMask = pow(saturate((heightPct - 0.25) / 0.75), 1.3);
+    float sssBackLight = pow(saturate(dot(V, -SunDir + N * 0.3)), 3.0) * 0.4;
+    float sssThin = smoothstep(0.55, 0.88, heightPct) * 0.35;
+    float sssTotal = saturate(sssBackLight + sssThin) * sssMask;
+    waterColor = lerp(waterColor, HotColor * 0.7, sssTotal * 0.4);
 
-    float3 reflDir = reflect(-lightDir, combinedNormal);
-    float spec = pow(saturate(dot(reflDir, viewDir)), 80.0);
-    finalColor += float3(0.15, 0.03, 0.10) * spec * 0.08 * h;
+    float wrapDiffuse = saturate(NdotL * 0.5 + 0.5);
+    float3 ambient = lerp(float3(0.005, 0.001, 0.003), float3(0.015, 0.003, 0.010), heightPct);
+    float3 diffuse = waterColor * wrapDiffuse * SunColor * 0.5 + ambient;
 
-    finalColor *= smoothstep(0.0, 0.2, h);
+    float specSharp = pow(NdotH, 200.0) * NdotL * 0.5;
+    float specWide = pow(NdotH, 24.0) * NdotL * 0.12;
+    float3 specular = (specSharp + specWide) * SunColor;
 
-    return float4(finalColor, 1.0);
+    float fresnel = pow(1.0 - NdotV, 3.0);
+    fresnel = lerp(0.02, 0.30, fresnel);
+    float3 reflDir = reflect(-V, N);
+    float3 envReflect = ShallowColor * 0.15;
+    envReflect += pow(saturate(dot(reflDir, SunDir)), 32.0) * SunColor * 0.12;
+
+    float3 lit = lerp(diffuse, envReflect, fresnel * 0.25) + specular;
+
+    lit += HotColor * edgeSparkle * veinMask * 0.12;
+
+    float ridgeGlow = smoothstep(0.72, 0.93, heightPct);
+    lit += BrightColor * ridgeGlow * 0.06;
+
+    float2 uvFoam1 = worldPos.xz * 0.05 + float2(time * 0.5, time * 0.15);
+    float2 uvFoam2 = worldPos.xz * 0.08 + float2(-time * 0.3, time * 0.7);
+    float foam1 = LightTexture.Sample(LinearSampler, uvFoam1).r;
+    float foam2 = LightTexture.Sample(LinearSampler, uvFoam2).r;
+
+    float splatter = saturate(foam1 * 0.5 + foam2 * 0.4);
+    float splatterBright = pow(smoothstep(0.45, 0.80, splatter), 2.0);
+    float splatterMask = smoothstep(0.10, 0.45, heightPct);
+    lit += HotColor * splatterBright * splatterMask * 0.15;
+
+    float foamSoft = smoothstep(0.2, 0.6, splatter);
+    float foamIntensity = foamMask * foamSoft * 0.25;
+    lit = lerp(lit, BrightColor * 0.6, foamIntensity);
+
+    float crashPhase = saturate((phase - g_PeakTime) / 0.25);
+    float sprayMask = pow(saturate(foamMask * 1.5), 2.0) * crashPhase;
+    float sprayNoise = fbm(worldPos.xz * 0.2 + time * 3.0, 2);
+    float spray = sprayMask * sprayNoise;
+    lit += HotColor * spray * 0.06;
+
+    lit *= lerp(0.25, 1.0, pow(heightPct, 0.7));
+
+    lit += DeepColor * 1.2 * smoothstep(0.0, 0.12, heightPct);
+
+// 1. [랜덤성 추가] 노이즈 텍스처 샘플링
+    // 이미 있는 LightTexture(거품용)를 재활용해서 랜덤한 얼룩을 만듭니다.
+    float2 noiseUV = worldPos.xz * 0.15 + float2(g_Time * 0.1, g_Time * 0.05);
+    float randPattern = LightTexture.Sample(LinearSampler, noiseUV).r;
+    
+    // 노이즈를 날카롭게 다듬습니다 (0.0~1.0 사이에서 대비를 키움)
+    // 이 수치들을 조절하면 얼룩덜룩한 정도가 바뀝니다.
+    randPattern = smoothstep(0.3, 0.8, randPattern);
+
+    // 2. [색상 교정] 하얀색 방지 핑크
+    // 톤매핑 후에도 핑크가 남으려면 Green 채널을 낮게 유지해야 합니다.
+    // R과 B는 높고, G는 낮은 비율을 강제로 만듭니다.
+    // (기존 색: FE5BAD -> R:0.99, G:0.35, B:0.67)
+    float3 hdrPinkColor = float3(2.5, 0.4, 1.8); // G를 낮춰서 흰색으로 타는 걸 방지
+
+    // 3. [영역 제한] 파도 '능선'만 정확히 잡기
+    // (A) 기하학적 능선: 하늘을 보고 있는 면 (N.y)
+    float ridgeGeo = pow(saturate(N.y), 10.0);
+    
+    // (B) 텍스처 좌표 제한: 파도의 앞/뒤가 아닌 '윗 입술' UV 좌표만 통과
+    // 파도가 낮을 때 전체가 빛나는 것을 막아주는 핵심입니다.
+    // 0.65~0.75 구간이 보통 파도의 꺾이는 부분입니다.
+    float ridgeUV = smoothstep(0.60, 0.70, In.vTexcoord.y) * (1.0 - smoothstep(0.75, 0.85, In.vTexcoord.y));
+
+    // (C) 높이 제한: 파도가 너무 낮을 땐(바닥) 아예 안 보이게
+    float heightFade = smoothstep(0.1, 0.25, heightPct);
+
+    // 4. [마스크 합성]
+    // 능선(Geo) * 위치(UV) * 높이(Fade) * 랜덤(Noise)
+    float finalRimMask = ridgeGeo * ridgeUV * heightFade * randPattern;
+
+    // 5. [최종 적용]
+    // 강도(Intensity)를 4.0 정도로 주어 은은하게 빛나게 합니다.
+    // (너무 높이면 다시 하얗게 변하니 주의)
+    lit += hdrPinkColor * finalRimMask * 4.0;
+    float alpha = smoothstep(0.0, 0.05, heightPct);
+    alpha = lerp(alpha, 1.0, foamIntensity * 0.2);
+    alpha = lerp(alpha, 1.0, veinIntensity * heightPct * 0.15);
+
+    return float4(lit, saturate(alpha));
 }
-// ================================================================================================
-// Technique
-// ================================================================================================
+
 technique11 DefaultTechnique
 {
     pass Opaque
     {
         SetRasterizerState(RS_NoCull);
         SetDepthStencilState(DSS_Default, 0);
-        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_TESS();
         HullShader = compile hs_5_0 HS_TESS();
         DomainShader = compile ds_5_0 DS_TESS();
