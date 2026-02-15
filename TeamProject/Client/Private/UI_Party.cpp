@@ -137,6 +137,7 @@ void CUI_Party::Create_HomeButton()
     CUI_IconButton::BUTTON_DESC* pDesc = new CUI_IconButton::BUTTON_DESC;
     pDesc->strLabel = L"거리";
     pDesc->strTextureKey = "IconMainPage.png";
+    pDesc->strSoundKey = "UI_Tick.wav";
 
     auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_IconButton"})
         .Add_UIDesc(pDesc)
@@ -169,6 +170,7 @@ void CUI_Party::Create_SettingButton()
     CUI_IconButton::BUTTON_DESC* pDesc = new CUI_IconButton::BUTTON_DESC;
     pDesc->strLabel = L"전투 설정";
     pDesc->strTextureKey = "IconMenu.png";
+    pDesc->strSoundKey = "UI_Tick.wav";
 
     auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_IconButton"})
         .Add_UIDesc(pDesc)
@@ -188,6 +190,7 @@ void CUI_Party::Create_BackupButton()
 {
     CUI_TextButton::BUTTON_DESC* pDesc = new CUI_TextButton::BUTTON_DESC;
     pDesc->strLabel = L"예비 편성";
+    pDesc->strSoundKey = "UI_Tick.wav";
 
     auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_TextButton"})
         .Add_UIDesc(pDesc)
