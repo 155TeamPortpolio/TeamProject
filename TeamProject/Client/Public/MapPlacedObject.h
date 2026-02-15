@@ -28,6 +28,8 @@ private:
 
 private:
     void RotatePerSec(_float dt);
+    void Wave(_float dt);
+    void LookSway(_float dt);
 
 public:
     void Render_GUI() override;
@@ -37,8 +39,18 @@ private:
     string  m_TagMaterialKey = {};
 
 private:
+    //Rotate
     _vector3 m_vDegreePerSec = {};
-     
+
+    //Wave
+    _vector2 m_vWave = {};
+    _float   m_fBaseY{};
+    _float   m_fWaveTime = -1.f;
+
+    //LookSway
+    _vector2 m_vLookSway = {};
+    _vector4 m_BaseRotation;
+    _float   m_fLookSwayTime = -1.f;
 
 public:
     static CMapPlacedObject* Create();
