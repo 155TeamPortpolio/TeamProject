@@ -96,6 +96,7 @@ public:
 	_float2 Get_CombinedScale() { return m_vCombinedScale; }
 	_float2 Get_AnchorOffset() { return m_vAnchorOffset; }
 	Vector2 Get_Scale() const { return m_vScale; }
+	_float4 Get_Color() { return m_vColor; }
 	_float4* Get_LinearColorPtr() { return &m_vColorLinear; }
 
 	// Screen anchors

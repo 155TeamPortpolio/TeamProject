@@ -1,0 +1,15 @@
+{
+  "TagDataFormat": "ColliderGroup",
+  "TagArea": "Zero_Boss2",
+  "iVersion": 1,
+  "values": [
+    {
+      "iObjID": 2,
+      "TagName": "Ground",
+      "defaultvalue": {
+        "type": "Bool",
+        "value": true
+      }
+    }
+  ]
+}

@@ -36,6 +36,7 @@
 
 /* UI */
 #include "UIDirector.h"
+#include "UI_Party.h"
 
 /* Interactable */
 #include "Portal.h"
@@ -70,6 +71,7 @@ HRESULT CScott_Level::Awake()
 	//==================== UI ===============
 	auto uiDirector = CUIDirector::GetInstance();
 	uiDirector->Load_LevelObjects("Scott_Level");
+	Ready_UI();
 
 	//==================== Interactable ===============
 	pProto->Add_ProtoType("Scott_Level", "Proto_GameObject_Portal", CPortal::Create());
@@ -139,6 +141,19 @@ void CScott_Level::Ready_Npc()
 		.Build("Test_Meow");
 
 	objMgr->Add_Object(testMeow, { "Scott_Level", "Npc_Layer" });
+}
+
+void CScott_Level::Ready_UI()
+{
+	if (FAILED(PrototypeManager()->Add_ProtoType("Scott_Level", "Proto_GameObject_Party", CUI_Party::Create())))
+		return;
+
+	auto pParty = Builder::Create_UIObject({ "Scott_Level", "Proto_GameObject_Party" }).Build("party");
+	if (pParty)
+	{
+		UIManager()->Add_UIObject(pParty, "Scott_Level");
+		UIDirector()->Register(pParty);
+	}
 }
 
 CScott_Level* CScott_Level::Create(const string& LevelKey)

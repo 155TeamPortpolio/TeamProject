@@ -4,6 +4,8 @@
 namespace Client {
 	enum class GLOBAL_ID : _uint { FreeCam, OrbitCam, SeqCam, ShadowCam, Player, Cloud };
 	enum class CHARACTER { JaneDoe, Corin, Miyabi, END };
+	enum class ATTRIBUTE { Electric, Ether, Fire, Ice, Physical, END };
+	enum class SPECIALTY { Attack, Anomaly, Defenses, Rupture, Stun, Support, END };
 
 	/* UI */
 	// ---------- Battle HUD : Stat ----------

@@ -127,6 +127,8 @@ public://애니매이터 데이터
     //애니매이션 레이어 타입
     void Set_LayerType(ANIM_LAYER_STATE eLayerType, _uint LayerIndex = 0);
 
+    _bool Get_BipWorld(_float4x4* pOutMatrix);
+
     /*----- Change -----*/
 
     //현재 레이어 애니매이션 속도만 변경

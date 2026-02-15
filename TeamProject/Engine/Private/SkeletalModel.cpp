@@ -218,6 +218,14 @@ _bool CSkeletalModel::isReadyToDraw()
 	return m_pData != nullptr; 
 }
 
+void CSkeletalModel::SetModelDrawable(_bool isDraw)
+{
+	for (size_t i = 0; i < m_DrawableMeshes.size(); i++)
+	{
+		m_DrawableMeshes[i] = isDraw;
+	}
+}
+
 void CSkeletalModel::Control_Bone(const string& boneName, _fmatrix BoneMatrix)
 {
 	_int Index = m_pData->Find_BoneIndexByName(boneName);

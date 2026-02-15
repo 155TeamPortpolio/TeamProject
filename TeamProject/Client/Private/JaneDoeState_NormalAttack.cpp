@@ -31,12 +31,19 @@ CJaneDoeState_NormalAttack* CJaneDoeState_NormalAttack::Create()
     // 콤보 전이: Trigger + AnimEnd : 애니매이션중 마우스가 눌렸고 애니매이션이 끝나면 다음 재생
     vector<CStateMachine<CJaneDoe>::CONDITION_INFO> comboConditions;
     comboConditions.push_back({ CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "NextCombo", 0.f });
-    comboConditions.push_back({ CStateMachine<CJaneDoe>::CONDITION_ANIMATION_GREATER, "", 0.6f });
-
+    comboConditions.push_back({ CStateMachine<CJaneDoe>::CONDITION_ANIMATION_GREATER, "", 0.35f });
     pSubStateMachine->Register_Transition("Attack_01", "Attack_02", comboConditions);
+    comboConditions.pop_back();
+    comboConditions.push_back({ CStateMachine<CJaneDoe>::CONDITION_ANIMATION_GREATER, "", 0.35f });
     pSubStateMachine->Register_Transition("Attack_02", "Attack_03", comboConditions);
+    comboConditions.pop_back();
+    comboConditions.push_back({ CStateMachine<CJaneDoe>::CONDITION_ANIMATION_GREATER, "", 0.55f });
     pSubStateMachine->Register_Transition("Attack_03", "Attack_04", comboConditions);
+    comboConditions.pop_back();
+    comboConditions.push_back({ CStateMachine<CJaneDoe>::CONDITION_ANIMATION_GREATER, "", 0.85f });
     pSubStateMachine->Register_Transition("Attack_04", "Attack_05", comboConditions);
+    comboConditions.pop_back();
+    comboConditions.push_back({ CStateMachine<CJaneDoe>::CONDITION_ANIMATION_GREATER, "", 0.5f });
     pSubStateMachine->Register_Transition("Attack_05", "Attack_06", comboConditions);
 
     // End 전이
@@ -172,7 +179,7 @@ void CJaneDoeState_Attack_02::Update(CJaneDoe* pOwner, _float dt)
         {
             pOwner->Begin_AttackCollider("HandWeapon_L", HitDesc()
                 .Type(HIT_TYPE::ONCE)
-                .Damage(pOwner->Get_AttackPower() * 0.623f * Helper::Get_Random_Float(1.f, 1.5f)
+                .Damage(pOwner->Get_AttackPower() * 0.207f * Helper::Get_Random_Float(1.f, 1.5f)
                     , DAMAGE_TYPE::NORMAL)
             );
         }
@@ -184,7 +191,7 @@ void CJaneDoeState_Attack_02::Update(CJaneDoe* pOwner, _float dt)
         {
             pOwner->Begin_AttackCollider("HandWeapon_R", HitDesc()
                 .Type(HIT_TYPE::ONCE)
-                .Damage(pOwner->Get_AttackPower() * 0.623f * Helper::Get_Random_Float(1.f, 1.5f)
+                .Damage(pOwner->Get_AttackPower() * 0.207f * Helper::Get_Random_Float(1.f, 1.5f)
                     , DAMAGE_TYPE::NORMAL)
             );
         }
@@ -196,7 +203,7 @@ void CJaneDoeState_Attack_02::Update(CJaneDoe* pOwner, _float dt)
         {
             pOwner->Begin_AttackCollider("FootWeapon_L", HitDesc()
                 .Type(HIT_TYPE::ONCE)
-                .Damage(pOwner->Get_AttackPower() * 0.623f * Helper::Get_Random_Float(1.f, 1.5f)
+                .Damage(pOwner->Get_AttackPower() * 0.207f * Helper::Get_Random_Float(1.f, 1.5f)
                     , DAMAGE_TYPE::NORMAL)
             );
         }
@@ -265,7 +272,7 @@ void CJaneDoeState_Attack_03::Update(CJaneDoe* pOwner, _float dt)
         {
             pOwner->Begin_AttackCollider("HandWeapon_L", HitDesc()
                 .Type(HIT_TYPE::ONCE)
-                .Damage(pOwner->Get_AttackPower() * 0.835f * Helper::Get_Random_Float(1.f, 1.5f)
+                .Damage(pOwner->Get_AttackPower() * 0.417f * Helper::Get_Random_Float(1.f, 1.5f)
                     , DAMAGE_TYPE::NORMAL)
             );
         }
@@ -277,7 +284,7 @@ void CJaneDoeState_Attack_03::Update(CJaneDoe* pOwner, _float dt)
         {
             pOwner->Begin_AttackCollider("HandWeapon_R", HitDesc()
                 .Type(HIT_TYPE::ONCE)
-                .Damage(pOwner->Get_AttackPower() * 0.835f * Helper::Get_Random_Float(1.f, 1.5f)
+                .Damage(pOwner->Get_AttackPower() * 0.417f * Helper::Get_Random_Float(1.f, 1.5f)
                     , DAMAGE_TYPE::NORMAL)
             );
         }
@@ -346,7 +353,7 @@ void CJaneDoeState_Attack_04::Update(CJaneDoe* pOwner, _float dt)
         {
             pOwner->Begin_AttackCollider("HandWeapon_L", HitDesc()
                 .Type(HIT_TYPE::ONCE)
-                .Damage(pOwner->Get_AttackPower() * 1.634f * Helper::Get_Random_Float(1.f, 1.5f)
+                .Damage(pOwner->Get_AttackPower() * 0.408f * Helper::Get_Random_Float(1.f, 1.5f)
                     , DAMAGE_TYPE::NORMAL)
             );
         }
@@ -358,7 +365,7 @@ void CJaneDoeState_Attack_04::Update(CJaneDoe* pOwner, _float dt)
         {
             pOwner->Begin_AttackCollider("HandWeapon_R", HitDesc()
                 .Type(HIT_TYPE::ONCE)
-                .Damage(pOwner->Get_AttackPower() * 1.634f * Helper::Get_Random_Float(1.f, 1.5f)
+                .Damage(pOwner->Get_AttackPower() * 0.408f * Helper::Get_Random_Float(1.f, 1.5f)
                     , DAMAGE_TYPE::NORMAL)
             );
         }
@@ -370,7 +377,7 @@ void CJaneDoeState_Attack_04::Update(CJaneDoe* pOwner, _float dt)
         {
             pOwner->Begin_AttackCollider("FootWeapon_L", HitDesc()
                 .Type(HIT_TYPE::ONCE)
-                .Damage(pOwner->Get_AttackPower() * 1.634f * Helper::Get_Random_Float(1.f, 1.5f)
+                .Damage(pOwner->Get_AttackPower() * 0.408f * Helper::Get_Random_Float(1.f, 1.5f)
                     , DAMAGE_TYPE::NORMAL)
             );
         }
@@ -382,7 +389,7 @@ void CJaneDoeState_Attack_04::Update(CJaneDoe* pOwner, _float dt)
         {
             pOwner->Begin_AttackCollider("FootWeapon_R", HitDesc()
                 .Type(HIT_TYPE::ONCE)
-                .Damage(pOwner->Get_AttackPower() * 1.634f * Helper::Get_Random_Float(1.f, 1.5f)
+                .Damage(pOwner->Get_AttackPower() * 0.408f * Helper::Get_Random_Float(1.f, 1.5f)
                     , DAMAGE_TYPE::NORMAL)
             );
         }
@@ -490,7 +497,7 @@ void CJaneDoeState_Attack_05::Update(CJaneDoe* pOwner, _float dt)
         {
             pOwner->Begin_AttackCollider("HandWeapon_L", HitDesc()
                 .Type(HIT_TYPE::ONCE)
-                .Damage(pOwner->Get_AttackPower() * 0.988f * Helper::Get_Random_Float(1.f, 1.5f)
+                .Damage(pOwner->Get_AttackPower() * 0.494f * Helper::Get_Random_Float(1.f, 1.5f)
                     , DAMAGE_TYPE::NORMAL)
             );
         }
@@ -502,7 +509,7 @@ void CJaneDoeState_Attack_05::Update(CJaneDoe* pOwner, _float dt)
         {
             pOwner->Begin_AttackCollider("FootWeapon_L", HitDesc()
                 .Type(HIT_TYPE::ONCE)
-                .Damage(pOwner->Get_AttackPower() * 0.988f * Helper::Get_Random_Float(1.f, 1.5f)
+                .Damage(pOwner->Get_AttackPower() * 0.494f * Helper::Get_Random_Float(1.f, 1.5f)
                     , DAMAGE_TYPE::NORMAL)
             );
         }
@@ -551,6 +558,7 @@ void CJaneDoeState_Attack_06::Enter(CJaneDoe* pOwner)
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_Normal_06")
         .Speed(1.2f)
         .ReserveSpeed(0.9, 1.0, 0.6, EaseType::Linear)
+        .EndAt(0.8f)
         .Apply();
 }
 
@@ -568,7 +576,7 @@ void CJaneDoeState_Attack_06::Update(CJaneDoe* pOwner, _float dt)
         {
             pOwner->Begin_AttackCollider("HandWeapon_R", HitDesc()
                 .Type(HIT_TYPE::ONCE)
-                .Damage(pOwner->Get_AttackPower() * 2.913f * Helper::Get_Random_Float(1.f, 1.5f)
+                .Damage(pOwner->Get_AttackPower() * 0.971f * Helper::Get_Random_Float(1.f, 1.5f)
                     , DAMAGE_TYPE::HARD)
             );
         }
@@ -580,7 +588,7 @@ void CJaneDoeState_Attack_06::Update(CJaneDoe* pOwner, _float dt)
         {
             pOwner->Begin_AttackCollider("FootWeapon_L", HitDesc()
                 .Type(HIT_TYPE::ONCE)
-                .Damage(pOwner->Get_AttackPower() * 2.913f * Helper::Get_Random_Float(1.f, 1.5f)
+                .Damage(pOwner->Get_AttackPower() * 0.971f * Helper::Get_Random_Float(1.f, 1.5f)
                     , DAMAGE_TYPE::HARD)
             );
         }
@@ -592,7 +600,7 @@ void CJaneDoeState_Attack_06::Update(CJaneDoe* pOwner, _float dt)
         {
             pOwner->Begin_AttackCollider("FootWeapon_R", HitDesc()
                 .Type(HIT_TYPE::ONCE)
-                .Damage(pOwner->Get_AttackPower() * 2.913f * Helper::Get_Random_Float(1.f, 1.5f)
+                .Damage(pOwner->Get_AttackPower() * 0.971f * Helper::Get_Random_Float(1.f, 1.5f)
                     , DAMAGE_TYPE::HARD)
             );
         }
