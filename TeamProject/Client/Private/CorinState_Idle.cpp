@@ -68,10 +68,10 @@ void CCorinState_Idle::Update(CCorin* pOwner, _float dt)
         return;
 
     auto& sound = *pOwner->Get_Component<CAudioSource>();
-    auto& slot = sound.Sequence("Idle_Voice").Attribute3D(true).Loop(0).PlayNext();
+    //auto& slot = sound.Sequence("Idle_Voice").Attribute3D(true).Loop(0).PlayNext();
 
-    m_pIdleVoiceChannel = slot.pChanel;
-    m_idleVoiceAcc = 0.f;
+    //m_pIdleVoiceChannel = slot.pChanel;
+    //m_idleVoiceAcc = 0.f;
 }
 
 void CCorinState_Idle::Exit(CCorin* pOwner)
