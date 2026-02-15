@@ -32,7 +32,7 @@ CAudioSource::AUDIO_SLOT& CAudioSource::SlotBuilder::Play()
 
 	ownerRef.Play(ownerSlot.Key, false, false);
 
-	if (needFadeIn && ownerSlot.pChanel)
+	if (needFadeIn && ownerSlot.pChannels.front())
 	{
 		ownerRef.FadeIn_Volume(ownerSlot.Key, ownerSlot.pendingFadeInSec, ownerSlot.pendingFadeInDst);
 		ownerSlot.hasPendingFadeIn = false;
@@ -166,15 +166,15 @@ void CAudioSource::Set_SlotVolume(const string& slotKey, _float fVolume)
 
 	AUDIO_SLOT& slot = iter->second;
 	slot.fVolume = fVolume;
-	FMOD::Channel* channel = iter->second.pChanel;
+	FMOD::Channel* channel = iter->second.pChannels.front();
 	if (!channel) return;
 
 	bool isPlaying = false;
 	if (channel->isPlaying(&isPlaying) != FMOD_OK || !isPlaying)
 		return;
 
-	ClearFadePoints(iter->second.pChanel);
-	iter->second.pChanel->setVolume(slot.fVolume);
+	ClearFadePoints(channel);
+	channel->setVolume(slot.fVolume);
 	
 }
 void CAudioSource::ClearFadePoints(FMOD::Channel* channel)
@@ -212,10 +212,11 @@ void CAudioSource::Set_SlotPuase(const string& slotKey, _bool isPaused)
 		return;
 
 	AUDIO_SLOT& slot = iter->second;
+	FMOD::Channel* channel = iter->second.pChannels.front();
 
-	if (!slot.pChanel)
+	if (!channel)
 		return;
-	slot.pChanel->setPaused(isPaused);
+	channel->setPaused(isPaused);
 	slot.isPaused = isPaused;
 }
 
@@ -226,10 +227,11 @@ void CAudioSource::Set_SlotStop(const string& slotKey)
 		return;
 
 	AUDIO_SLOT& slot = iter->second;
+	FMOD::Channel* channel = slot.pChannels.front();
 
-	if (!slot.pChanel)
+	if (!channel)
 		return;
-	slot.pChanel->stop();
+	channel->stop();
 }
 
 void CAudioSource::Set_AudioPos(_vector3 pos, _vector3 velocity)
@@ -302,7 +304,6 @@ void CAudioSource::FadeOut_Volume(const string& slotKey, _float durationSec)
 	slot.hasStopScheduled = true;
 	slot.stopDspClock = dspEnd;
 }
-
 void CAudioSource::FadeIn_Volume(const string& slotKey, _float durationSec, _float dstVol)
 {
 	auto it = m_Audios.find(slotKey);
@@ -310,40 +311,48 @@ void CAudioSource::FadeIn_Volume(const string& slotKey, _float durationSec, _flo
 
 	auto& slot = it->second;
 
-	bool isPlaying = false;
-	if (!slot.pChanel || slot.pChanel->isPlaying(&isPlaying) != FMOD_OK || !isPlaying)
+	// ★ front 채널만 사용
+	if (slot.pChannels.empty())
 	{
-		Play(slotKey, false, true); 
-
-		if (!slot.pChanel) return;
+		// 재생 중이 아니면 먼저 재생
+		Play(slotKey, false, true);
+		if (slot.pChannels.empty())
+			return;
 	}
 
-	FMOD::Channel* channel = slot.pChanel;
+	FMOD::Channel* channel = slot.pChannels.front();
+	if (!channel) return;
+
+	bool isPlaying = false;
+	if (channel->isPlaying(&isPlaying) != FMOD_OK || !isPlaying)
+		return;
+
 	FMOD::System* system = m_pAudioDevice->Get_System();
 	if (!system) return;
 
 	int sampleRate = 0;
-	if (system->getSoftwareFormat(&sampleRate, 0, 0) != FMOD_OK || sampleRate <= 0) return;
+	if (system->getSoftwareFormat(&sampleRate, 0, 0) != FMOD_OK || sampleRate <= 0)
+		return;
 
 	unsigned long long channelClock = 0, parentClock = 0;
-	if (channel->getDSPClock(&channelClock, &parentClock) != FMOD_OK) return;
+	if (channel->getDSPClock(&channelClock, &parentClock) != FMOD_OK)
+		return;
 
 	const unsigned long long dspNow = parentClock;
 	const float safeDuration = max(0.05f, (float)durationSec);
 	const unsigned long long dspEnd =
 		dspNow + (unsigned long long)(safeDuration * (float)sampleRate);
 
-	// ? 기존 페이드 제거
+	// 기존 페이드 제거
 	const unsigned long long dspFar =
 		dspNow + (unsigned long long)(30.0f * (float)sampleRate);
 	channel->removeFadePoints(dspNow, dspFar);
 
-	// ? 시작 0 확정
+	// 0 → dstVol 페이드
 	channel->setVolume(0.0f);
 	channel->addFadePoint(dspNow, 0.0f);
 	channel->addFadePoint(dspEnd, (float)dstVol);
 
-	// ? 이제 재생 시작
 	channel->setPaused(false);
 }
 
@@ -355,40 +364,48 @@ void CAudioSource::Play(const string& soundKey, _bool continuePlay, _bool startP
 	AUDIO_SLOT& slot = it->second;
 	if (!slot.pSound) return;
 
+	_float now = CGameInstance::GetInstance()->Get_TimeMgr()->Get_TotalTime("Audio_Timer");
+
+	// --------------------------------------
+	// stop 예약이 걸려있으면 "front 채널"만 정리
+	// --------------------------------------
 	if (slot.hasStopScheduled)
 	{
-		if (slot.pChanel)
+		if (!slot.pChannels.empty())
 		{
-			slot.pChanel->stop();
-			slot.pChanel = nullptr;
+			FMOD::Channel* frontChannel = slot.pChannels.front();
+			if (frontChannel)
+				frontChannel->stop();
+			slot.pChannels.erase(slot.pChannels.begin()); // front 제거
 		}
+
 		slot.hasStopScheduled = false;
 		slot.stopDspClock = 0;
 		continuePlay = false;
 	}
 
-	_float now = CGameInstance::GetInstance()->Get_TimeMgr()->Get_TotalTime("Audio_Timer");
-
+	// --------------------------------------
+	// 겹침(one-shot) : 계속 벡터로 쌓기
+	// --------------------------------------
 	const bool wantOverlap = (!continuePlay) && (!slot.isInfinite);
-
 	if (wantOverlap)
 	{
-		// 너무 자주 호출 방지(기존 값 그대로 쓰되, one-shot에만 적용)
 		if (now - slot.lastPlayTime < 0.0017f)
 			return;
+
 		slot.lastPlayTime = now;
 		Update_Audio(slot);
 
 		FMOD::Channel* newChannel = nullptr;
 
 		AUDIO_PACKET packet{};
-		packet.ppChannelToUpdate = &newChannel; 
+		packet.ppChannelToUpdate = &newChannel;
 		packet.pSound = slot.pSound;
 		packet.isInfinite = false;
 		packet.isPaused = startPaused;
 		packet.is3DAttribute = slot.is3DAttribute;
 		packet.fVolume = slot.fVolume;
-		packet.iLoopCount = slot.iLoopCount;      // one-shot이면 보통 0 권장
+		packet.iLoopCount = slot.iLoopCount;
 		packet.eGroup = slot.eGroup;
 		packet.vPosition = &m_vPos;
 
@@ -397,10 +414,13 @@ void CAudioSource::Play(const string& soundKey, _bool continuePlay, _bool startP
 		if (newChannel)
 			slot.pChannels.push_back(newChannel);
 
-		return; 
+		return;
 	}
 
-	// ===== 여기 아래는 기존 “키당 1채널” 동작 유지 =====
+	// --------------------------------------
+	// 단일 채널(키당 1채널)도 "vector front"로 통일
+	//  - front만 유지하고 나머지는 정리(안전)
+	// --------------------------------------
 
 	if (!continuePlay)
 	{
@@ -409,25 +429,37 @@ void CAudioSource::Play(const string& soundKey, _bool continuePlay, _bool startP
 		slot.lastPlayTime = now;
 	}
 
-	bool isPlaying = false;
-	if (slot.pChanel && slot.pChanel->isPlaying(&isPlaying) != FMOD_OK) isPlaying = false;
+	// 이미 채널들이 쌓여 있으면 정리(특히 stop/전환 시)
+	Update_Audio(slot);
 
-	if (continuePlay && slot.pChanel && isPlaying)
+	FMOD::Channel* frontChannel = nullptr;
+	if (!slot.pChannels.empty())
+		frontChannel = slot.pChannels.front();
+
+	bool isPlaying = false;
+	if (frontChannel && frontChannel->isPlaying(&isPlaying) != FMOD_OK)
+		isPlaying = false;
+
+	if (continuePlay && frontChannel && isPlaying)
 	{
-		ClearFadePoints(slot.pChanel);
-		slot.pChanel->setVolume(slot.fVolume);
-		slot.pChanel->setPaused(false);
+		ClearFadePoints(frontChannel);
+		frontChannel->setVolume(slot.fVolume);
+		frontChannel->setPaused(false);
 		return;
 	}
 
-	if (slot.pChanel)
+	// front 채널 교체: 기존 front만 stop하고 제거
+	if (frontChannel)
 	{
-		slot.pChanel->stop();
-		slot.pChanel = nullptr;
+		frontChannel->stop();
+		slot.pChannels.erase(slot.pChannels.begin());
+		frontChannel = nullptr;
 	}
 
+	FMOD::Channel* newChannel = nullptr;
+
 	AUDIO_PACKET packet{};
-	packet.ppChannelToUpdate = &slot.pChanel;
+	packet.ppChannelToUpdate = &newChannel;
 	packet.pSound = slot.pSound;
 	packet.isInfinite = slot.isInfinite;
 	packet.isPaused = startPaused;
@@ -438,6 +470,14 @@ void CAudioSource::Play(const string& soundKey, _bool continuePlay, _bool startP
 	packet.vPosition = &m_vPos;
 
 	m_pAudioDevice->Play(packet);
+
+	if (newChannel)
+	{
+		if (!slot.pChannels.empty())
+			slot.pChannels.clear();
+
+		slot.pChannels.push_back(newChannel);
+	}
 
 	slot.hasStopScheduled = false;
 	slot.stopDspClock = 0;
