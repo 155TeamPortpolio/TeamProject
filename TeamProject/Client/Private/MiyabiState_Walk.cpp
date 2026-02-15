@@ -62,6 +62,7 @@ void CMiyabiState_Walk_Start::Enter(CMiyabi* pOwner)
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Walk_Start")
         .Loop(false)
         .Speed(1.2f)
+        .EndAt(0.97f)
         .Apply();
 }
 
@@ -73,8 +74,10 @@ void CMiyabiState_Walk_Start::Update(CMiyabi* pOwner, _float dt)
 void CMiyabiState_Walk_Loop::Enter(CMiyabi* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Walk")
+        .BlendDuration(0.2f)
         .Loop(false)
         .Speed(1.2f)
+        .EndAt(0.95f)
         .Apply();
 }
 

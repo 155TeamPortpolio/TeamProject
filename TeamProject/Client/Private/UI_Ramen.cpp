@@ -101,13 +101,13 @@ void CUI_Ramen::Create_BackButton()
     auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_BackButton" })
         .Build("buttonBack");
 
+    if (!pObj)
+        return;
+
     pObj->Set_OnClick([this]() {
         FieldSystem()->RequestExitTop();
         Play_ExitSound();
         });
-
-    if (!pObj)
-        return;
 
     Get_Component<CObjectContainer>()->Add_Child(pObj);
 }

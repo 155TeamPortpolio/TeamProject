@@ -43,11 +43,16 @@ void CJaneDoeState_ExAttack::Enter(CJaneDoe* pOwner)
 
 
     pOwner->Push_Invincible();
+
+    m_eType = DAMAGE_TYPE::NORMAL;
     __super::Enter(pOwner);
 }
 
 void CJaneDoeState_ExAttack::Update(CJaneDoe* pOwner, _float dt)
 {
+    if (IsCrossAnimProgress(0.52f))
+        m_eType = DAMAGE_TYPE::HARD;
+
     for (const auto& Event : pOwner->Get_Component<CAnimator3D>()->Get_EventBus())
     {
         if (Event.Type != CLIP_EVENT_TYPE::NOTIFY) continue;
@@ -56,8 +61,8 @@ void CJaneDoeState_ExAttack::Update(CJaneDoe* pOwner, _float dt)
         {
             pOwner->Begin_AttackCollider("FootWeapon_L", HitDesc()
                 .Type(HIT_TYPE::INTERVAL)
-                .Damage(pOwner->Get_AttackPower() * 5.747f * Helper::Get_Random_Float(1.f, 1.5f)
-                    , DAMAGE_TYPE::HARD)
+                .Damage(pOwner->Get_AttackPower() * 0.574f * Helper::Get_Random_Float(1.f, 1.5f)
+                    , m_eType)
                 .Interval(0.05f)
             );
         }
@@ -69,8 +74,8 @@ void CJaneDoeState_ExAttack::Update(CJaneDoe* pOwner, _float dt)
         {
             pOwner->Begin_AttackCollider("FootWeapon_R", HitDesc()
                 .Type(HIT_TYPE::INTERVAL)
-                .Damage(pOwner->Get_AttackPower() * 5.747f * Helper::Get_Random_Float(1.f, 1.5f)
-                    , DAMAGE_TYPE::HARD)
+                .Damage(pOwner->Get_AttackPower() * 0.574f * Helper::Get_Random_Float(1.f, 1.5f)
+                    , m_eType)
                 .Interval(0.05f)
             );
         }
