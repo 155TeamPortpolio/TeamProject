@@ -277,7 +277,7 @@ float4 PS_TESS(DS_OUT In) : SV_TARGET
     static const float3 BrightColor = float3(0.25, 0.030, 0.140);
     static const float3 HotColor = float3(0.38, 0.060, 0.220);
 
-    static const float3 SunDir = normalize(float3(0.4, 0.75, -0.5));
+    static const float3 SunDir = normalize(float3(0.0, 0.4, 0.7));
     static const float3 SunColor = float3(0.50, 0.25, 0.35);
 
     float heightPct = In.fHeightPct;
@@ -318,7 +318,6 @@ float4 PS_TESS(DS_OUT In) : SV_TARGET
     float3 waterColor = lerp(DeepColor, MidColor, smoothstep(0.0, 0.20, heightPct));
     waterColor = lerp(waterColor, ShallowColor, smoothstep(0.15, 0.45, heightPct));
     waterColor = lerp(waterColor, BrightColor, smoothstep(0.50, 0.80, heightPct));
-
 
     float2 uvCaustic1 = worldPos.xz * 0.018 + float2(time * 0.15, time * 0.08);
     float2 uvCaustic2 = worldPos.xz * 0.030 + float2(-time * 0.10, time * 0.18);
@@ -392,6 +391,41 @@ float4 PS_TESS(DS_OUT In) : SV_TARGET
 
     lit += DeepColor * 1.2 * smoothstep(0.0, 0.12, heightPct);
 
+// 1. [랜덤성 추가] 노이즈 텍스처 샘플링
+    // 이미 있는 LightTexture(거품용)를 재활용해서 랜덤한 얼룩을 만듭니다.
+    float2 noiseUV = worldPos.xz * 0.15 + float2(g_Time * 0.1, g_Time * 0.05);
+    float randPattern = LightTexture.Sample(LinearSampler, noiseUV).r;
+    
+    // 노이즈를 날카롭게 다듬습니다 (0.0~1.0 사이에서 대비를 키움)
+    // 이 수치들을 조절하면 얼룩덜룩한 정도가 바뀝니다.
+    randPattern = smoothstep(0.3, 0.8, randPattern);
+
+    // 2. [색상 교정] 하얀색 방지 핑크
+    // 톤매핑 후에도 핑크가 남으려면 Green 채널을 낮게 유지해야 합니다.
+    // R과 B는 높고, G는 낮은 비율을 강제로 만듭니다.
+    // (기존 색: FE5BAD -> R:0.99, G:0.35, B:0.67)
+    float3 hdrPinkColor = float3(2.5, 0.4, 1.8); // G를 낮춰서 흰색으로 타는 걸 방지
+
+    // 3. [영역 제한] 파도 '능선'만 정확히 잡기
+    // (A) 기하학적 능선: 하늘을 보고 있는 면 (N.y)
+    float ridgeGeo = pow(saturate(N.y), 10.0);
+    
+    // (B) 텍스처 좌표 제한: 파도의 앞/뒤가 아닌 '윗 입술' UV 좌표만 통과
+    // 파도가 낮을 때 전체가 빛나는 것을 막아주는 핵심입니다.
+    // 0.65~0.75 구간이 보통 파도의 꺾이는 부분입니다.
+    float ridgeUV = smoothstep(0.60, 0.70, In.vTexcoord.y) * (1.0 - smoothstep(0.75, 0.85, In.vTexcoord.y));
+
+    // (C) 높이 제한: 파도가 너무 낮을 땐(바닥) 아예 안 보이게
+    float heightFade = smoothstep(0.1, 0.25, heightPct);
+
+    // 4. [마스크 합성]
+    // 능선(Geo) * 위치(UV) * 높이(Fade) * 랜덤(Noise)
+    float finalRimMask = ridgeGeo * ridgeUV * heightFade * randPattern;
+
+    // 5. [최종 적용]
+    // 강도(Intensity)를 4.0 정도로 주어 은은하게 빛나게 합니다.
+    // (너무 높이면 다시 하얗게 변하니 주의)
+    lit += hdrPinkColor * finalRimMask * 4.0;
     float alpha = smoothstep(0.0, 0.05, heightPct);
     alpha = lerp(alpha, 1.0, foamIntensity * 0.2);
     alpha = lerp(alpha, 1.0, veinIntensity * heightPct * 0.15);

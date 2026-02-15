@@ -271,14 +271,13 @@ float3 BlendNormalUDN(float3 base, float3 detail)
 
 float4 PS_TESS(DS_OUT In) : SV_TARGET
 {
-    // ── 팔레트 (톤매핑 *1.2 ACES 고려) ──
     static const float3 DeepColor = float3(0.010, 0.002, 0.008);
     static const float3 MidColor = float3(0.05, 0.005, 0.030);
     static const float3 ShallowColor = float3(0.13, 0.012, 0.070);
     static const float3 BrightColor = float3(0.25, 0.030, 0.140);
     static const float3 HotColor = float3(0.38, 0.060, 0.220);
 
-    static const float3 SunDir = normalize(float3(0.4, 0.75, -0.5));
+    static const float3 SunDir = normalize(float3(0.0, 0.4, 0.7));
     static const float3 SunColor = float3(0.50, 0.25, 0.35);
 
     float heightPct = In.fHeightPct;
@@ -287,7 +286,6 @@ float4 PS_TESS(DS_OUT In) : SV_TARGET
     float3 worldPos = In.vWorldPos.xyz;
     float time = g_Time;
 
-    // ── 노말맵 3레이어 (RG 언팩) ──
     float2 uvN1 = worldPos.xz * 0.025 + float2(time * 0.3, time * 0.15);
     float2 uvN2 = worldPos.xz * 0.050 + float2(-time * 0.2, time * 0.35);
     float2 uvN3 = worldPos.xz * 0.120 + float2(time * 0.15, -time * 0.25);
@@ -317,11 +315,9 @@ float4 PS_TESS(DS_OUT In) : SV_TARGET
     float NdotL = saturate(dot(N, SunDir));
     float NdotH = saturate(dot(N, H));
 
-    // ── 기본 그라데이션 ──
     float3 waterColor = lerp(DeepColor, MidColor, smoothstep(0.0, 0.20, heightPct));
     waterColor = lerp(waterColor, ShallowColor, smoothstep(0.15, 0.45, heightPct));
     waterColor = lerp(waterColor, BrightColor, smoothstep(0.50, 0.80, heightPct));
-
 
     float2 uvCaustic1 = worldPos.xz * 0.018 + float2(time * 0.15, time * 0.08);
     float2 uvCaustic2 = worldPos.xz * 0.030 + float2(-time * 0.10, time * 0.18);
@@ -329,43 +325,35 @@ float4 PS_TESS(DS_OUT In) : SV_TARGET
     float4 causticA = DiffuseTexture.Sample(LinearSampler, uvCaustic1);
     float4 causticB = DiffuseTexture.Sample(LinearSampler, uvCaustic2);
 
-    // G채널 블렌드 → 에너지 줄기 (셀 경계선)
     float veinLine = saturate(causticA.g * 0.6 + causticB.g * 0.5);
-    veinLine = smoothstep(0.25, 0.70, veinLine); // 부드럽게 threshold
-    float veinMask = smoothstep(0.08, 0.50, heightPct); // 밑바닥엔 약하게
+    veinLine = smoothstep(0.25, 0.70, veinLine);
+    float veinMask = smoothstep(0.08, 0.50, heightPct); 
     float veinIntensity = veinLine * veinMask;
 
-    // R채널 블렌드 → 어두운 영역 강화 (깊이감)
     float darkBlob = saturate(causticA.r * 0.5 + causticB.r * 0.5);
     darkBlob = 1.0 - smoothstep(0.3, 0.7, darkBlob) * 0.3;
     waterColor *= darkBlob;
 
-    // 에너지 줄기 색 적용
     waterColor = lerp(waterColor, BrightColor, veinIntensity * 0.5);
     waterColor = lerp(waterColor, HotColor, pow(veinIntensity, 2.0) * 0.35);
 
-    // B채널 → 미세 엣지 반짝
     float edgeSparkle = saturate(causticA.b * 0.5 + causticB.b * 0.5);
     edgeSparkle = pow(smoothstep(0.5, 0.85, edgeSparkle), 2.0);
 
-    // ── SSS ──
     float sssMask = pow(saturate((heightPct - 0.25) / 0.75), 1.3);
     float sssBackLight = pow(saturate(dot(V, -SunDir + N * 0.3)), 3.0) * 0.4;
     float sssThin = smoothstep(0.55, 0.88, heightPct) * 0.35;
     float sssTotal = saturate(sssBackLight + sssThin) * sssMask;
     waterColor = lerp(waterColor, HotColor * 0.7, sssTotal * 0.4);
 
-    // ── 라이팅 ──
     float wrapDiffuse = saturate(NdotL * 0.5 + 0.5);
     float3 ambient = lerp(float3(0.005, 0.001, 0.003), float3(0.015, 0.003, 0.010), heightPct);
     float3 diffuse = waterColor * wrapDiffuse * SunColor * 0.5 + ambient;
 
-    // 스페큘러
     float specSharp = pow(NdotH, 200.0) * NdotL * 0.5;
     float specWide = pow(NdotH, 24.0) * NdotL * 0.12;
     float3 specular = (specSharp + specWide) * SunColor;
 
-    // 프레넬 + 반사
     float fresnel = pow(1.0 - NdotV, 3.0);
     fresnel = lerp(0.02, 0.30, fresnel);
     float3 reflDir = reflect(-V, N);
@@ -374,10 +362,8 @@ float4 PS_TESS(DS_OUT In) : SV_TARGET
 
     float3 lit = lerp(diffuse, envReflect, fresnel * 0.25) + specular;
 
-    // ── 에너지 줄기의 엣지에 미세 글로우 ──
     lit += HotColor * edgeSparkle * veinMask * 0.12;
 
-    // ── 능선 글로우 ──
     float ridgeGlow = smoothstep(0.72, 0.93, heightPct);
     lit += BrightColor * ridgeGlow * 0.06;
 
@@ -386,36 +372,67 @@ float4 PS_TESS(DS_OUT In) : SV_TARGET
     float foam1 = LightTexture.Sample(LinearSampler, uvFoam1).r;
     float foam2 = LightTexture.Sample(LinearSampler, uvFoam2).r;
 
-    // 스플래터 패턴 → 밝은 에너지 파편
     float splatter = saturate(foam1 * 0.5 + foam2 * 0.4);
     float splatterBright = pow(smoothstep(0.45, 0.80, splatter), 2.0);
     float splatterMask = smoothstep(0.10, 0.45, heightPct);
     lit += HotColor * splatterBright * splatterMask * 0.15;
 
-    // 포말 패턴 → 부드러운 에너지 안개 (큰 영역)
     float foamSoft = smoothstep(0.2, 0.6, splatter);
     float foamIntensity = foamMask * foamSoft * 0.25;
     lit = lerp(lit, BrightColor * 0.6, foamIntensity);
 
-    // ── 스프레이 ──
     float crashPhase = saturate((phase - g_PeakTime) / 0.25);
     float sprayMask = pow(saturate(foamMask * 1.5), 2.0) * crashPhase;
     float sprayNoise = fbm(worldPos.xz * 0.2 + time * 3.0, 2);
     float spray = sprayMask * sprayNoise;
     lit += HotColor * spray * 0.06;
 
-    // ── 높이 대비 ──
     lit *= lerp(0.25, 1.0, pow(heightPct, 0.7));
 
-    // ── 최소 발광 ──
     lit += DeepColor * 1.2 * smoothstep(0.0, 0.12, heightPct);
 
+// 1. [랜덤성 추가] 노이즈 텍스처 샘플링
+    // 이미 있는 LightTexture(거품용)를 재활용해서 랜덤한 얼룩을 만듭니다.
+    float2 noiseUV = worldPos.xz * 0.15 + float2(g_Time * 0.1, g_Time * 0.05);
+    float randPattern = LightTexture.Sample(LinearSampler, noiseUV).r;
+    
+    // 노이즈를 날카롭게 다듬습니다 (0.0~1.0 사이에서 대비를 키움)
+    // 이 수치들을 조절하면 얼룩덜룩한 정도가 바뀝니다.
+    randPattern = smoothstep(0.3, 0.8, randPattern);
+
+    // 2. [색상 교정] 하얀색 방지 핑크
+    // 톤매핑 후에도 핑크가 남으려면 Green 채널을 낮게 유지해야 합니다.
+    // R과 B는 높고, G는 낮은 비율을 강제로 만듭니다.
+    // (기존 색: FE5BAD -> R:0.99, G:0.35, B:0.67)
+    float3 hdrPinkColor = float3(2.5, 0.4, 1.8); // G를 낮춰서 흰색으로 타는 걸 방지
+
+    // 3. [영역 제한] 파도 '능선'만 정확히 잡기
+    // (A) 기하학적 능선: 하늘을 보고 있는 면 (N.y)
+    float ridgeGeo = pow(saturate(N.y), 10.0);
+    
+    // (B) 텍스처 좌표 제한: 파도의 앞/뒤가 아닌 '윗 입술' UV 좌표만 통과
+    // 파도가 낮을 때 전체가 빛나는 것을 막아주는 핵심입니다.
+    // 0.65~0.75 구간이 보통 파도의 꺾이는 부분입니다.
+    float ridgeUV = smoothstep(0.60, 0.70, In.vTexcoord.y) * (1.0 - smoothstep(0.75, 0.85, In.vTexcoord.y));
+
+    // (C) 높이 제한: 파도가 너무 낮을 땐(바닥) 아예 안 보이게
+    float heightFade = smoothstep(0.1, 0.25, heightPct);
+
+    // 4. [마스크 합성]
+    // 능선(Geo) * 위치(UV) * 높이(Fade) * 랜덤(Noise)
+    float finalRimMask = ridgeGeo * ridgeUV * heightFade * randPattern;
+
+    // 5. [최종 적용]
+    // 강도(Intensity)를 4.0 정도로 주어 은은하게 빛나게 합니다.
+    // (너무 높이면 다시 하얗게 변하니 주의)
+    lit += hdrPinkColor * finalRimMask * 4.0;
     float alpha = smoothstep(0.0, 0.05, heightPct);
     alpha = lerp(alpha, 1.0, foamIntensity * 0.2);
     alpha = lerp(alpha, 1.0, veinIntensity * heightPct * 0.15);
 
     return float4(lit, saturate(alpha));
 }
+
 technique11 DefaultTechnique
 {
     pass Opaque
