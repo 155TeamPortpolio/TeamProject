@@ -11,9 +11,6 @@ class CUI_SwitchRole final : public CUI_Object
 {
 public:
 	enum class SIDE { LEFT, RIGHT, END };
-	typedef struct tagRoleDesc : public UI_DESC{
-		SIDE eSide;
-	}ROLE_DESC;
 
 private:
 	enum class SPRITE { ROLE, MOUSE, END};

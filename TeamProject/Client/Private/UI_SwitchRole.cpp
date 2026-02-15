@@ -20,6 +20,7 @@ void CUI_SwitchRole::Set_Side(SIDE eSide)
 
 void CUI_SwitchRole::Change_RoleIcon(CHARACTER eCharacter)
 {
+    UI_Active();
     switch (eCharacter)
     {
     case CHARACTER::Corin:
@@ -31,7 +32,7 @@ void CUI_SwitchRole::Change_RoleIcon(CHARACTER eCharacter)
     case CHARACTER::Miyabi:
         Change_SpriteTexture(SPRITE::ROLE, "IconRoleCircle13.png");
         break;
-    }
+    } 
 }
 
 HRESULT CUI_SwitchRole::Initialize_Prototype()
@@ -52,12 +53,6 @@ HRESULT CUI_SwitchRole::Initialize(INIT_DESC* pArg)
     Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("switch_role.json")));
     Cache();
 
-    //ROLE_DESC* pDesc = static_cast<ROLE_DESC*>(pArg);
-    //if (pDesc)
-    //{
-    //    Change_SpriteTexture(SPRITE::MOUSE, (pDesc->eSide == SIDE::LEFT) ? "MouseLIcon.png" : "MouseRIcon.png");
-    //}
-
     return S_OK;
 }
 
@@ -74,6 +69,10 @@ void CUI_SwitchRole::Update(_float dt)
 
 void CUI_SwitchRole::UI_Active(void* pArg)
 {
+    Set_Animation(0);
+    for (auto& pChild : Get_Component<CObjectContainer>()->Get_Children())
+        if (auto pUI = dynamic_cast<CUI_Object*>(pChild))
+            pUI->Set_Animation(0);
 }
 
 void CUI_SwitchRole::UI_DeActive(void* pArg)

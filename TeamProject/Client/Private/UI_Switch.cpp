@@ -79,9 +79,10 @@ void CUI_Switch::UI_Active(void* pArg)
     if (!pDesc)
         return;
 
+    m_characters[ENUM(ROLE::LEFT)] = pDesc->left;
+    m_characters[ENUM(ROLE::RIGHT)] = pDesc->right;
+
     Change_State(STATE::ACTIVE);
-    Change_RoleIcon(ROLE::LEFT, pDesc->left);
-    Change_RoleIcon(ROLE::RIGHT, pDesc->right);
 }
 
 void CUI_Switch::UI_DeActive(void* pArg)
@@ -151,10 +152,14 @@ void CUI_Switch::Change_State(STATE eState)
     case STATE::ACTIVE:
         Set_Alive(true);
         Set_Animation(0);
+        Change_RoleIcon(ROLE::LEFT, m_characters[ENUM(ROLE::LEFT)]);
+        Change_RoleIcon(ROLE::RIGHT, m_characters[ENUM(ROLE::RIGHT)]);
+        if (m_pGauge) m_pGauge->UI_Active();
         m_fTimer = m_fDuration;
         break;
     case STATE::DEACTIVATING:
         Set_Animation(1);
+        m_fTimer = 0.f;
         break;
     }
 }

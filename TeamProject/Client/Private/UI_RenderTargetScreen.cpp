@@ -50,25 +50,6 @@ HRESULT CUI_RenderTargetScreen::Initialize(INIT_DESC* pArg)
 
 void CUI_RenderTargetScreen::Update(_float dt)
 {
-    if (InputDevice()->Key_Tap('M'))
-        UIDirector()->Show_Switch(CHARACTER::JaneDoe, CHARACTER::Miyabi);
-
-    if (InputDevice()->Key_Tap('L'))
-    {
-        vector<CHARACTER> characters;
-        characters.push_back(CHARACTER::Corin);
-        characters.push_back(CHARACTER::Miyabi);
-        characters.push_back(CHARACTER::JaneDoe);
-        UIDirector()->Show_Clear();
-    }
-
-    if (InputDevice()->Key_Tap('K'))
-    {
-        vector<CHARACTER> characters;
-        characters.push_back(CHARACTER::Miyabi);
-        characters.push_back(CHARACTER::JaneDoe);
-        UIDirector()->Show_Switch();
-    }
 }
 
 HRESULT CUI_RenderTargetScreen::Ready_Components()

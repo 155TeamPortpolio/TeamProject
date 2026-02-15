@@ -94,6 +94,13 @@ void CUIDirector::Show_Switch(CHARACTER eLeft, CHARACTER eRight)
 	desc.right = eRight;
 
 	UI_Active("switch", &desc);
+	UI_Active("switchRT");
+}
+
+void CUIDirector::Hide_Switch()
+{
+	UI_DeActive("switch");
+	UI_DeActive("switchRT");
 }
 
 void CUIDirector::Show_Lottery()

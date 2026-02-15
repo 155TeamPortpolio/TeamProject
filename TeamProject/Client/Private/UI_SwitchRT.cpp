@@ -52,6 +52,11 @@ void CUI_SwitchRT::UI_Active(void* pArg)
         dynamic_cast<CUI_Object*>(pChild)->Set_Animation(0);
 }
 
+void CUI_SwitchRT::UI_DeActive(void* pArg)
+{
+    Set_RenderTargetScreenRenderLayer(RENDER_LAYER::None);
+}
+
 CGameObject* CUI_SwitchRT::Create()
 {
     CUI_SwitchRT* pInstance = new CUI_SwitchRT();

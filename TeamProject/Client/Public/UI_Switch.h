@@ -42,8 +42,10 @@ private:
 	
 	STATE m_eState = { STATE::END };
 
+	CHARACTER m_characters[ENUM(ROLE::END)] = {};
+
 	_float m_fTimer = {};
-	const float m_fDuration = { 3.3 };
+	const float m_fDuration = { 3.f };
 
 private:
 	void Cache();
