@@ -20,4 +20,16 @@ public:
 	virtual void Free() override { __super::Free(); }
 };
 
+class CDefilerState_Death : public IHState<CDefiler>
+{
+public:
+	virtual void Enter(CDefiler* pOwner) override;
+	virtual void Update(CDefiler* pOwner, _float dt) override;
+	virtual void Exit(CDefiler* pOwner) override;
+public:
+	static CDefilerState_Death* Create() { return new CDefilerState_Death(); }
+	virtual void Free() override { __super::Free(); }
+};
+
+
 NS_END

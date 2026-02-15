@@ -87,25 +87,25 @@ void CAnimModel::Update(_float dt)
 		//	auto& ANIM_CLIP = m_pAnimToolPanel->Get_AnimClip(animString);
 		//}
 	}
-
-	if (!Get_Component<CAnimator3D>())
-		return;
-
-	for (const auto& Event : Get_Component<CAnimator3D>()->Get_EventBus())
-	{
-		switch (Event.Type)
-		{
-		case Engine::CLIP_EVENT_TYPE::NOTIFY:
-			break;
-		case Engine::CLIP_EVENT_TYPE::EFFECT:
-			break;
-		case Engine::CLIP_EVENT_TYPE::SOUND:
-			Get_Component<CAudioSource>()->Play(Event.Tag);
-			break;
-		default:
-			break;
-		}
-	}
+//
+//if (!Get_Component<CAnimator3D>())
+//	return;
+//
+//for (const auto& Event : Get_Component<CAnimator3D>()->Get_EventBus())
+//{
+//	switch (Event.Type)
+//	{
+//	case Engine::CLIP_EVENT_TYPE::NOTIFY:
+//		break;
+//	case Engine::CLIP_EVENT_TYPE::EFFECT:
+//		break;
+//	case Engine::CLIP_EVENT_TYPE::SOUND:
+//		Get_Component<CAudioSource>()->Play(Event.Tag);
+//		break;
+//	default:
+//		break;
+//	}
+//}
 }
 
 void CAnimModel::Late_Update(_float dt)

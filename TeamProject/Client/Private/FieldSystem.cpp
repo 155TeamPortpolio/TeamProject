@@ -23,7 +23,6 @@ CFieldSystem::CFieldSystem()
 	m_DayTime.StartCloud = { _float3(0.7f, 0.5f, 0.65f), _float3(0.95f, 0.7f, 0.75f) };
 
 	m_pBGM = CAudioSource::Create();
-	//D:\Study\TeamProject\TeamProject\Client\Bin\Resources\MainCity\Sound\NPC
 	m_pBGM->SoundFolder(G_GlobalLevelKey, "../Bin/Resources/Global/BGM");
 }
 

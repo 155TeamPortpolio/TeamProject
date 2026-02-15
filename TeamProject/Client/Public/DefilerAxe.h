@@ -23,8 +23,6 @@ public:
     void    Render_GUI()override;
 public:
     virtual void    OnTriggerEnter(CGameObject* pOther) override;
-    virtual void OnPooledAcquire(INIT_DESC* pArg = nullptr) override;		// Ç®¿¡¼­ ²¨³¾ ¶§
-    virtual void OnPooledRelease()override;
     virtual void TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER charaName = CHARACTER::END);
 
 private:
@@ -36,8 +34,11 @@ private:
     _vector3 m_vSlide = {};
     _quaternion m_BaseRot;
 
-    _float m_ShakeAmpDeg = 15.f; // Èçµé °¢µµ(µµ)
-    _float m_ShakeHz = 4.f;    // ÃÊ´ç Èçµé È½¼ö
+    _float m_ShakeAmpDeg = 15.f;        // Èçµé °¢µµ(µµ)
+    _float m_ShakeHz = 4.f;             // ÃÊ´ç Èçµé È½¼ö
+    _float m_HitShakeAmpDeg = 0.f;     // hit·Î ´©ÀûµÇ´Â Èçµé¸² °¢µµ
+    _float m_HitShakeMaxDeg = 7.f;     // ÃÖ´ë °¢µµ(Ä¸)
+    _float m_HitShakeDecay = 10.f;     // °¢µµ °¨¼è ¼Óµµ
 
 public:
     static CDefilerAxe* Create();
