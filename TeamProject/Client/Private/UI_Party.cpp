@@ -128,7 +128,6 @@ void CUI_Party::Create_BackButton()
     if (!pObj)
         return;
 
-    pObj->Set_OnClick([this]() { UI_DeActive(); }); // 임시 : 룸 만들어지면 해제
     Get_Component<CObjectContainer>()->Add_Child(pObj);
 }
 

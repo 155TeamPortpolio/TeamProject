@@ -34,6 +34,7 @@ private:
 	class CGameInstance*	m_pGameInstance{};
 	class CCamDirector*		m_pCamDirector{};
 	class CPlayer*			m_pPlayer{};
+	class CFieldSystem* m_pFieldSystem = { nullptr };
 
 public:
 	static CScott_Level* Create(const string& LevelKey);

@@ -76,17 +76,12 @@
       "Events": [
         {
           "EventTime": 0.029999999329447746,
-          "EventType": "Notify",
+          "EventType": "Sound",
           "EventTag": "FootStepSound.wav"
         },
         {
-          "EventTime": 0.2800000011920929,
-          "EventType": "Notify",
-          "EventTag": "FootStepSound.wav"
-        },
-        {
-          "EventTime": 0.5699999928474426,
-          "EventType": "Notify",
+          "EventTime": 0.4000000059604645,
+          "EventType": "Sound",
           "EventTag": "FootStepSound.wav"
         }
       ]
@@ -96,17 +91,12 @@
       "Events": [
         {
           "EventTime": 0.03999999910593033,
-          "EventType": "Notify",
+          "EventType": "Sound",
           "EventTag": "FootStepSound.wav"
         },
         {
-          "EventTime": 0.2800000011920929,
-          "EventType": "Notify",
-          "EventTag": "FootStepSound.wav"
-        },
-        {
-          "EventTime": 0.6399999856948853,
-          "EventType": "Notify",
+          "EventTime": 0.4000000059604645,
+          "EventType": "Sound",
           "EventTag": "FootStepSound.wav"
         }
       ]
@@ -120,24 +110,24 @@
           "EventTag": "R"
         },
         {
-          "EventTime": 0.0,
-          "EventType": "Notify",
-          "EventTag": "FootStepSound.wav"
-        },
-        {
           "EventTime": 0.14463937282562256,
           "EventType": "Notify",
           "EventTag": "L"
         },
         {
-          "EventTime": 0.3100000023841858,
-          "EventType": "Notify",
-          "EventTag": "FootStepSound.wav"
-        },
-        {
           "EventTime": 0.4639376103878021,
           "EventType": "Notify",
           "EventTag": "R"
+        },
+        {
+          "EventTime": 0.027669716626405716,
+          "EventType": "Sound",
+          "EventTag": "FootStepSound.wav"
+        },
+        {
+          "EventTime": 0.36096686124801636,
+          "EventType": "Sound",
+          "EventTag": "FootStepSound.wav"
         }
       ]
     },
@@ -150,19 +140,9 @@
           "EventTag": "R"
         },
         {
-          "EventTime": 0.07999999821186066,
-          "EventType": "Notify",
-          "EventTag": "FootStepSound.wav"
-        },
-        {
           "EventTime": 0.4048459231853485,
           "EventType": "Notify",
           "EventTag": "L"
-        },
-        {
-          "EventTime": 0.41999998688697815,
-          "EventType": "Notify",
-          "EventTag": "FootStepSound.wav"
         },
         {
           "EventTime": 0.706099808216095,
@@ -171,7 +151,7 @@
         },
         {
           "EventTime": 0.8299999833106995,
-          "EventType": "Notify",
+          "EventType": "Sound",
           "EventTag": "FootStepSound.wav"
         },
         {
@@ -180,14 +160,24 @@
           "EventTag": "L"
         },
         {
-          "EventTime": 1.159999966621399,
-          "EventType": "Notify",
-          "EventTag": "FootStepSound.wav"
-        },
-        {
           "EventTime": 1.3300515413284302,
           "EventType": "Notify",
           "EventTag": "R"
+        },
+        {
+          "EventTime": 1.2152252197265625,
+          "EventType": "Sound",
+          "EventTag": "FootStepSound.wav"
+        },
+        {
+          "EventTime": 0.4958500564098358,
+          "EventType": "Sound",
+          "EventTag": "FootStepSound.wav"
+        },
+        {
+          "EventTime": 0.13795410096645355,
+          "EventType": "Sound",
+          "EventTag": "FootStepSound.wav"
         }
       ]
     },
