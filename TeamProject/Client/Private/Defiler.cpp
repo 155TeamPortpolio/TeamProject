@@ -138,13 +138,6 @@ void CDefiler::Priority_Update(_float dt)
 	if (InputDevice()->Key_Tap('H')) {
 		Control_Summon("Wave");
 	}
-	if (InputDevice()->Key_Tap('G')) {
-		Get_Component<CAudioSource>()
-			->Slot("OngoingLevel_Chapter130_Belle_111302003_001.wav")
-			.Attribute3D(false)
-			.FadeIn(1.f,1.f)
-			.Infinite(true).Play();
-	}
 }
 
 void CDefiler::Update(_float dt)
@@ -155,16 +148,8 @@ void CDefiler::Update(_float dt)
 	}
 
 	auto animatorPtr = Get_Component<CAnimator3D>();
-	if (m_isParried) {
-		m_fParriedElapsed += dt;
-		if (m_fParriedElapsed > 0.2f) {
-			m_fParriedElapsed = 0.f;
-			m_isParried = false;
-		}
-	}
-	else {
-		animatorPtr->Update_Animation(dt);
-	}
+	animatorPtr->Update_Animation(dt);
+
 
 	Route_AnimEvent(animatorPtr);
 	
@@ -209,7 +194,6 @@ void CDefiler::Release_CollisionMask()
 {
 	Get_Component<CCharacterController>()->Set_CollisionMask(m_BaseMask);
 }
-
 void CDefiler::Release_AttackCollider()
 {
 	for (auto pair : m_BattleColliderChildrenIndex)
@@ -245,7 +229,6 @@ _float3 CDefiler::Get_BipedPos(const string Bone)
 
 	return T;
 }
-
 FOUR_DIR CDefiler::Get_FourDirection()
 {
 	_vector3 shapePos = Math::NormalizeSafeXZ( Get_BipedPos());              
@@ -279,7 +262,6 @@ void CDefiler::Parried()
 		return;
 
 	m_tStatus.iGroggyValue += 1.5f;
-	m_isParried = true;
 }
 
 void CDefiler::MoveByTraceMode(_float dt, _float moveScale)
@@ -302,9 +284,9 @@ void CDefiler::MoveByTraceMode(_float dt, _float moveScale)
 	const _vector3    rootDeltaLocal = animator->Get_RootBoneMoveDelta();
 	const _quaternion rootQuatLocal = animator->Get_RootBoneQuatDelta();
 
-	/*이동량(y제외)*/
 	_vector3 rootDeltaH = rootDeltaLocal;
 	rootDeltaH.y = 0.f;
+
 	if (ignoreTarget)
 	{
 		const _vector3 velocityWorld = rootDeltaH / dt;
@@ -313,7 +295,6 @@ void CDefiler::MoveByTraceMode(_float dt, _float moveScale)
 		return;
 	}
 
-	// 타겟 벡터
 	const _vector3 nowPos = transform->Get_WorldPos();
 	const _vector3 targetPos = m_BlackBoard.vTargetPos;
 
@@ -321,7 +302,13 @@ void CDefiler::MoveByTraceMode(_float dt, _float moveScale)
 	toTarget.y = 0.f;
 
 	const _float distToTarget = toTarget.Length();
-	if (distToTarget <= 2.f&& !allowThrough)
+	if (distToTarget <= 1e-6f)
+	{
+		m_pTransform->Add_Quaternion(rootQuatLocal);
+		return;
+	}
+
+	if (distToTarget <= 2.f && !allowThrough)
 		return;
 
 	const _vector3 dirToTarget = toTarget / distToTarget;
@@ -333,6 +320,32 @@ void CDefiler::MoveByTraceMode(_float dt, _float moveScale)
 		return;
 	}
 
+	_vector3 currentDir = m_BlackBoard.CurrentDir;
+	currentDir.y = 0.f;
+	if (currentDir.Length() <= 1e-6f) currentDir = dirToTarget;
+	else currentDir.Normalize();
+
+	const _float along = toTarget.Dot(currentDir);
+	const _bool  hasPassedTarget = (along < 0.f);
+
+	if (allowThrough && hasPassedTarget)
+	{
+		if (!m_hasPassDir)
+		{
+			m_passDir = currentDir;
+			m_passDir.y = 0.f;
+			if (m_passDir.Length() > 1e-6f) m_passDir.Normalize();
+			else m_passDir = _vector3(0.f, 0.f, 1.f);
+
+			m_hasPassDir = true;
+			m_passDampTime = 0.45f; 
+		}
+	}
+	else
+	{
+		m_hasPassDir = false;
+	}
+
 	{
 		m_BlackBoard.CurrentDir.y = 0.f;
 		if (m_BlackBoard.CurrentDir.Length() <= 1e-6f)
@@ -340,7 +353,7 @@ void CDefiler::MoveByTraceMode(_float dt, _float moveScale)
 		else
 			m_BlackBoard.CurrentDir.Normalize();
 
-		const _float unlockDist = allowThrough ? 15.f: 5.f;
+		const _float unlockDist = allowThrough ? 15.f : 5.f;
 
 		if (allowThrough)
 		{
@@ -355,13 +368,18 @@ void CDefiler::MoveByTraceMode(_float dt, _float moveScale)
 					m_bDirLockedNear = false;
 			}
 
+			const _vector3 desiredDir =
+				(hasPassedTarget && m_hasPassDir) ? m_passDir : dirToTarget;
+
 			if (!m_bDirLockedNear)
 			{
 				const _float dampSpeed = 20.f;
-				const _float align = m_BlackBoard.CurrentDir.Dot(dirToTarget);
-				const _bool blockFlip = (allowThrough && m_passDampTime > 0.f); 
+
+				const _bool blockFlip = (m_passDampTime > 0.f);
+				const _float align = m_BlackBoard.CurrentDir.Dot(desiredDir);
+
 				if (!blockFlip || align > 0.f)
-					m_BlackBoard.CurrentDir = Math::DampVector(m_BlackBoard.CurrentDir, dirToTarget, dt, dampSpeed);
+					m_BlackBoard.CurrentDir = Math::DampVector(m_BlackBoard.CurrentDir, desiredDir, dt, dampSpeed);
 			}
 		}
 		else
@@ -378,7 +396,6 @@ void CDefiler::MoveByTraceMode(_float dt, _float moveScale)
 	}
 
 	const _vector3 localForward(0.f, 0.f, 1.f);
-	/*루트 모션의 전방 진행량*/
 	_float moveLenSigned = rootDeltaH.Dot(localForward);
 
 	if (moveLenSigned > 0.f && stopAtTarget && !allowThrough)
@@ -386,23 +403,22 @@ void CDefiler::MoveByTraceMode(_float dt, _float moveScale)
 
 	const _vector3 moveWorld = m_BlackBoard.CurrentDir * moveLenSigned;
 
-	const _float passed = m_BlackBoard.CurrentDir.Dot(dirToTarget);
-	const _bool hasPassedTarget = (passed < 0.f);
-
-	if (allowThrough && hasPassedTarget && m_passDampTime <= 0.f)
-		m_passDampTime = 0.2f;
-
 	_float distScale = 1.f;
-
 	if (moveLenSigned > 0.f)
 	{
 		if (allowThrough && m_passDampTime > 0.f)
-			distScale = 1.4f;
+		{
+			distScale = 1.2f; 
+		}
 		else
-			distScale = 1.f + distToTarget * 1.2f; 
+		{
+			const _float farDist = 10.f;
+			const _float t01 = clamp(distToTarget / farDist, 0.f, 1.f);
+			distScale = 1.f + t01;
+		}
 	}
 
-	const _vector3 velocityWorld = (moveWorld) * distScale;
+	const _vector3 velocityWorld = moveWorld * distScale;
 	controller->Move_RootMotion(velocityWorld, rootQuatLocal, dt);
 }
 

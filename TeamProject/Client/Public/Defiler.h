@@ -93,6 +93,8 @@ private:
 
     _bool m_bDirLockedNear = false;
     _float m_passDampTime = 0.f;
+    _vector3 m_passDir = { 0.f, 0.f, 1.f };
+    _bool    m_hasPassDir = false;
 
     _bool m_isRecovering = false;
 

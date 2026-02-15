@@ -59,16 +59,16 @@ void CBattleFXFlow::Initialize_Preset()
 
 	{
 		auto& NormalHitLack = m_BattleVFXData[ENUM(BATTLE_VFX_TYPE::HIT_NORMAL)];
-		const _float duration = .15f;
+		const _float duration = .08f;
 		NormalHitLack.bCanIntersect = true;
 		NormalHitLack.fVFXDuration = duration;
 		NormalHitLack.fBlurDuration = duration;
-		NormalHitLack.SetTimeData({ duration, 0.1f, 0.15f, .15f , EaseType::InOutSine });
+		NormalHitLack.SetTimeData({ duration, 0.1f, 0.5f, .5f , EaseType::InOutSine });
 	}
 
 	{
 		auto& HardHitLack = m_BattleVFXData[ENUM(BATTLE_VFX_TYPE::HIT_HARD)];
-		const _float duration = .3f;
+		const _float duration = .15f;
 		HardHitLack.bCanIntersect = true;
 		HardHitLack.fVFXDuration = duration;
 		HardHitLack.fBlurDuration = duration;
