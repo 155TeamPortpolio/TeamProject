@@ -79,7 +79,8 @@ public:
     void Begin();
     void End();
     void Update(_float dt);
-    
+
+    Vector3 GetImpactPointWorld() const { return m_fxPointWorld; }
 
 public:
     ParryTuning tune{};
@@ -113,6 +114,10 @@ private:
 
     string    BuildParryKey() const;
 
+    void      BuildBasis(Vector3& outFwd, Vector3& outRight) const;
+    Vector3   PivotWorldFromExt(const Vector3& ext) const;
+    Vector3   ExtFromPivotWorld(const Vector3& pivotWorld) const;
+
 private:
     _bool         m_active = false;
     State         m_state = State::None;
@@ -141,6 +146,8 @@ private:
 
     string        m_waitSeqKey{};
     _bool         m_waitSeqStarted = false;
+
+    Vector3       m_fxPointWorld{};
 };
 
 NS_END
