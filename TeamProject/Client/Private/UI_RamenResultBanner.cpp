@@ -13,6 +13,8 @@ HRESULT CUI_RamenResultBanner::Initialize_Prototype()
     __super::Initialize_Prototype();
 
     Add_Component<CObjectContainer>();
+    Add_Component<CAudioSource>();
+    Get_Component<CAudioSource>()->SoundFolder(G_GlobalLevelKey, "../Bin/Resources/Global/UI/Sound/");
 
     return S_OK;
 }
@@ -81,6 +83,8 @@ void CUI_RamenResultBanner::UI_Active(void* pArg)
     }
 
     Refresh_Layout();
+
+    Get_Component<CAudioSource>()->Slot("UI_Open_Swoosh.wav").Play();
 }
 
 void CUI_RamenResultBanner::UI_DeActive(void* pArg)
@@ -156,7 +160,7 @@ void CUI_RamenResultBanner::Change_State(STATE eState)
     switch (eState)
     {
     case STATE::INVISIBLE:
-        Set_Animation(1);
+        Set_Animation(1);     
         break;
     case STATE::VISIBLE:
         Set_Alive(true);
