@@ -543,6 +543,17 @@ void CDefilerState_Attack_06::Exit(CDefiler* pOwner)
 
 void CDefilerState_Attack_06::Update_Effects(CDefiler* pOwner)
 {
+	if (IsCrossAnimProgress(0.12f))
+		pOwner->Play_Effect("Defiler_Laser_Charge_Normal", _vector3(), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+	if (IsCrossAnimProgress(0.16f))
+		pOwner->Stop_Effect("Defiler_Laser_Charge_Normal");
+
+	if (IsCrossAnimProgress(0.46f))
+		pOwner->Play_Effect("Defiler_Laser_Charge_Strong", _vector3(), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+	if (IsCrossAnimProgress(0.56f))
+		pOwner->Stop_Effect("Defiler_Laser_Charge_Strong");
+
+
 	if (IsCrossAnimProgress(0.18f))
 	{
 		auto pLaser = pOwner->Get_Component<CObjectContainer>()->Find_ObjectByName("Defiler_Laser_0");
@@ -553,6 +564,12 @@ void CDefilerState_Attack_06::Update_Effects(CDefiler* pOwner)
 	{
 		auto pLaser = pOwner->Get_Component<CObjectContainer>()->Find_ObjectByName("Defiler_Laser_1");
 		static_cast<CDefilerLaser*>(pLaser)->Set_ActiveLaser(true, CDefilerLaser::LASER_TYPE::NORMAL);
+	}
+	
+	if (IsCrossAnimProgress(0.57f))
+	{
+		auto pLaser = pOwner->Get_Component<CObjectContainer>()->Find_ObjectByName("Defiler_Laser_2");
+		static_cast<CDefilerLaser*>(pLaser)->Set_ActiveLaser(true, CDefilerLaser::LASER_TYPE::STRONG);
 	}
 }
 

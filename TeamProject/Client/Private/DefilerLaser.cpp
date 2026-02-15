@@ -126,7 +126,22 @@ HRESULT CDefilerLaser::Initialize_Effects()
             .Build("Defiler_Normal_Shot");
 
         if (pLaserStart)
+        {
+            pLaserStart->Stop();
             pObjectContainer->Add_Child(pLaserStart, false);
+        }
+    }
+
+    {
+        auto pLaserStart = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+            .Asset("defiler_laser_shot_strong0.json")
+            .Build("Defiler_Strong_Shot");
+
+        if (pLaserStart)
+        {
+            pLaserStart->Stop();
+            pObjectContainer->Add_Child(pLaserStart, false);
+        }
     }
 
     /* Laser */
@@ -136,7 +151,10 @@ HRESULT CDefilerLaser::Initialize_Effects()
             .Build("Defiler_Laser");
 
         if (pLaser)
+        {
+            pLaser->Stop();
             pObjectContainer->Add_Child(pLaser,false);
+        }
     }
 
     /* Laser Hit Ground Point */
@@ -146,7 +164,10 @@ HRESULT CDefilerLaser::Initialize_Effects()
             .Build("Defiler_Laser_HitGround");
 
         if (pLaserHitPoint)
+        {
+            pLaserHitPoint->Stop();
             pObjectContainer->Add_Child(pLaserHitPoint, false);
+        }
     }
 
     return S_OK;
@@ -222,7 +243,15 @@ void CDefilerLaser::SetUp_Effect()
     }break;
     case CDefilerLaser::LASER_TYPE::STRONG:
     {
+        auto pLaserStart = pObjectContainer->Find_ObjectByName("Defiler_Strong_Shot");
+        if (pLaserStart)
+        {
+            auto pLaserTransform = pLaserStart->Get_Component<CTransform>();
+            pLaserTransform->Set_WorldPos(_vector3(m_vStartPoint));
+            pLaserTransform->Set_Look(_vector3(vTargetDir));
 
+            static_cast<CEffectContainer*>(pLaserStart)->Play();
+        }
     }break;
     default:
         break;

@@ -819,6 +819,31 @@ HRESULT CDefiler::Initialize_Effects()
 		pObjectContainer->Add_Child(pLaser, false);
 	}
 
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("defiler_laser_charge_normal0.json")
+			.Build("Defiler_Laser_Charge_Normal");
+
+		_smatrix offsetMatrix = _smatrix::Identity;
+		offsetMatrix.Translation(_vector3(2.f, 0.f, 0.f));
+
+		pEffect->Stop();
+		pEffect->AttachBone(pAnimator, "Ctr_M_Weapon_01", offsetMatrix);
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("defiler_laser_charge_strong0.json")
+			.Build("Defiler_Laser_Charge_Strong");
+
+		_smatrix offsetMatrix = _smatrix::Identity;
+		offsetMatrix.Translation(_vector3(2.f, 0.f, 0.f));
+
+		pEffect->Stop();
+		pEffect->AttachBone(pAnimator, "Ctr_M_Weapon_01", offsetMatrix);
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+
 	/* Hit Ground */
 	{
 		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
@@ -833,6 +858,8 @@ HRESULT CDefiler::Initialize_Effects()
 		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
 			.Asset("defiler_axe_spin.json")
 			.Build("Defiler_Axe_Spin");
+
+		pEffect->Set_Alive(false);
 		pEffect->Stop();
 		pObjectContainer->Add_Child(pEffect);
 	}
