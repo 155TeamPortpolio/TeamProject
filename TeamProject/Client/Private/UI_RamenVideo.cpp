@@ -77,7 +77,7 @@ void CUI_RamenVideo::UI_Active(void* pArg)
     m_pPlayer->Play();
     Get_Component<CAudioSource>()->Slot("UI_CoinPay.wav").Play();
     Get_Component<CAudioSource>()->Slot("SirChopCook.wav").Play();
-    OutputDebugString(L"play\n");
+    RenderSystem()->SetOn(false);
 }
 
 void CUI_RamenVideo::UI_DeActive(void* pArg)
@@ -86,6 +86,7 @@ void CUI_RamenVideo::UI_DeActive(void* pArg)
     m_pPlayer->Stop();
     if (m_OnClick)
         m_OnClick();
+    RenderSystem()->SetOn(true);
 }
 
 void CUI_RamenVideo::Create_SkipButton()
