@@ -64,6 +64,8 @@ HRESULT CGiant::Initialize_Prototype()
 
 HRESULT CGiant::Initialize(INIT_DESC* pArg)
 {
+	m_eEnemyClass = ENEMY_CLASS::ELITE;
+
 	__super::Initialize(pArg);
 
 	auto pAnimator = Get_Component<CAnimator3D>();
@@ -157,7 +159,6 @@ void CGiant::Render_GUI()
 
 #pragma region CheckState
 	if (ImGui::TreeNode("Test State##ThugAssaulterCheckState")) {
-		//ImGui::BeginChild("State##ThugBulkyEnforcerStatus", ImVec2{ 0, childHeight }, true);
 
 		if (ImGui::TreeNode("AttackState##ThugAssaulterTestState_Attack"))
 		{
@@ -233,38 +234,6 @@ void CGiant::Render_GUI()
 
 			ImGui::TreePop();
 		}
-		if (ImGui::TreeNode("Death##ThugAssaulterTestDeath"))
-		{
-			if (ImGui::Button("Death Front"))
-				m_pStateMachine->Change_State("Death");
-
-			if (ImGui::Button("Death Back"))
-			{
-				m_pStateMachine->Set_Bool("DeathBack", true);
-				m_pStateMachine->Change_State("Death");
-			}
-
-			ImGui::TreePop();
-		}
-		if (ImGui::TreeNode("Groggy&Hit##ThugAssaulterTestGroggy&Hit"))
-		{
-			if (ImGui::Button("Increase Groggy value 30"))
-				m_tStatus.iGroggyValue += 30;
-
-			if (ImGui::Button("Hit"))
-				TakeDamage(DAMAGE_TYPE::NORMAL, 20.f);
-
-			if (ImGui::Button("Parried"))
-				Parried();
-
-			if (ImGui::Button("Execute"))
-				m_tStatus.iNowHP -= m_tStatus.iMaxHP;
-
-
-
-			ImGui::TreePop();
-		}
-
 		ImGui::TreePop();
 	}
 #pragma endregion
@@ -300,18 +269,30 @@ void CGiant::Parried()
 
 HRESULT CGiant::Ready_Children(INIT_DESC* pArg)
 {
-	BATTLE_COLLIDER_DESC WeaponDesc = {};
+	{
+		BATTLE_COLLIDER_DESC WeaponLDesc = {};
 
-	WeaponDesc.tagName = "Weapon";
-	WeaponDesc.isAttachBone = true;
-	WeaponDesc.tagBone = "Bip001_L_Forearm";
-	WeaponDesc.pOwnerAnimator3D = Get_Component<CAnimator3D>();
-	WeaponDesc.eAttackColliderType = COLLIDER_TYPE::BOX;
-	WeaponDesc.vCenter = { 0.8f, 0.f, 0.f };
-	WeaponDesc.vAttackSize = { 1.8f, 0.3f, 0.3f };
+		WeaponLDesc.tagName = "Weapon_L";
+		WeaponLDesc.isAttachBone = true;
+		WeaponLDesc.tagBone = "Bip001_L_Hand";
+		WeaponLDesc.pOwnerAnimator3D = Get_Component<CAnimator3D>();
+		WeaponLDesc.vAttackSize = { 2.f, 0.3f, 0.3f };
 
-	if (FAILED(AttachBattleColliderObject(&WeaponDesc)))
-		return E_FAIL;
+		if (FAILED(AttachBattleColliderObject(&WeaponLDesc)))
+			return E_FAIL;
+	}
+	{
+		BATTLE_COLLIDER_DESC WeaponRDesc = {};
+
+		WeaponRDesc.tagName = "Weapon_R";
+		WeaponRDesc.isAttachBone = true;
+		WeaponRDesc.tagBone = "Bip001_R_Hand";
+		WeaponRDesc.pOwnerAnimator3D = Get_Component<CAnimator3D>();
+		WeaponRDesc.vAttackSize = { 2.f, 0.3f, 0.3f };
+
+		if (FAILED(AttachBattleColliderObject(&WeaponRDesc)))
+			return E_FAIL;
+	}
 
 	Create_AttackSign("Bip001_Head");
 	Create_UIEnemyStatus("Bip001_Spine2");
@@ -363,7 +344,7 @@ void CGiant::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER chara
 
 	if ("Groggy" == m_pStateMachine->Get_CurrentStateName())
 	{
-		Get_Component<CAnimator3D>()->Set_Animation(1, "Claymore_Ani_Hit_Stay")
+		Get_Component<CAnimator3D>()->Set_Animation(1, "Giant_Ani_Hit_Stay")
 			.LayerBlend(1.f, 0.f, 1.f, EaseType::Linear)
 			.Loop(false)
 			.Apply();
@@ -376,7 +357,7 @@ void CGiant::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER chara
 	}
 	else
 	{
-		Get_Component<CAnimator3D>()->Set_Animation(1, "Claymore_Ani_Hit_Stay")
+		Get_Component<CAnimator3D>()->Set_Animation(1, "Giant_Ani_Hit_Stay")
 			.LayerBlend(1.f, 0.f, 1.f, EaseType::Linear)
 			.Loop(false)
 			.Apply();
@@ -402,7 +383,7 @@ HRESULT CGiant::Initialize_StateMachine()
 	m_pStateMachine->Set_DefaultState("Born");
 	m_pStateMachine->Initialize(this);
 
-	Get_Component<CAnimator3D>()->Set_Animation("Monster_Claymore_Ani_Born")
+	Get_Component<CAnimator3D>()->Set_Animation("Giant_Ani_Born")
 		.Apply();
 
 	return S_OK;
@@ -448,11 +429,15 @@ HRESULT CGiant::Ready_Rules()
 	// x = Idle에서 다음 상태로 넘어가는 쿨타임, y = dt 더한 타이머용
 	m_vIdleTime = { 1.f, 0.f };
 
-	m_tHysteriesis.fEvadeEnter = 2.f;
-	m_tHysteriesis.fComboEnter = 3.f;
-	m_tHysteriesis.fComboExit = 4.5f;
-	m_tHysteriesis.fChaseEnter = 7.f;
-	m_tHysteriesis.fChaseExit = 5.f;
+	m_tHysteriesis.fEvadeEnter = 2.5f;
+	//m_tHysteriesis.fComboEnter = 3.f;
+	//m_tHysteriesis.fComboExit = 4.5f;
+	m_tHysteriesis.fComboEnter = 3.5f;			// Attack1, Attack2
+	m_tHysteriesis.fLeapAttack = 5.f;		// Attack4, Attack5
+	m_tHysteriesis.fJumpShort = 7.f;		// Attack2_Explode
+	m_tHysteriesis.fJumpLong = 9.f;			// Attack2_1
+	m_tHysteriesis.fChaseEnter = 8.f;
+	m_tHysteriesis.fChaseExit = 6.f;
 
 	return S_OK;
 }

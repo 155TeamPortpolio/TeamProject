@@ -8,6 +8,17 @@ class CStateMachine;
 
 class CGiant final : public CEnemyNormal
 {
+public:
+    struct GiantHys : public HYSTERIESIS
+    {
+        //_float  fPunch = {};
+        //_float  fBanging = {};
+        _float  fHug = {};
+        _float  fLeapAttack = {};
+        _float  fJumpLong = {};
+        _float  fJumpShort = {};
+    };
+
 private:
     CGiant();
     CGiant(const CGiant& rhg);
@@ -36,7 +47,7 @@ private:
 public:
     /* Getter */
     CStateMachine<CGiant>*   GetStateMachine() const { return m_pStateMachine; }
-    HYSTERIESIS                 GetHysteriesis() const { return m_tHysteriesis; }
+    GiantHys                 GetHysteriesis() const { return m_tHysteriesis; }
 
     /* Setter */
     void            Idle() { m_isIdle = true; }
@@ -54,7 +65,7 @@ private:
 private:
     CStateMachine<CGiant>* m_pStateMachine = { nullptr };
     ATTACK_BLACK_BOARD  m_tAttackBlackBoard = {};
-    HYSTERIESIS         m_tHysteriesis = {};
+    GiantHys            m_tHysteriesis = {};
 
     _bool               m_isAutoPatternPlay = { true };
 
@@ -65,3 +76,49 @@ private:
 };
 
 NS_END
+
+/*
+Attack1     ->  fPunch
+움직임 = 약 2m
+오른손 휘두름
+패링시 Parry_Right
+
+Attack2     ->  
+움직임 = 약 11m
+양손 번갈아 쿵쾅쿵쾅 앞으로 (각각 4회씩)
+초반에 패링 실패하면 맞아야함. 패링 성공해도 공격이 끊기진 않음. 회피는 가능
+
+Attack2_1   ->  fJumpLong
+움직임 약 8m
+높이 점프해서 내려찍기
+패링 되어도 끊기지않음
+
+Attack2_Explode ->  fJumpShort
+움직임 약 6.5m
+높이 점프해서 내려찍기
+
+Attack3
+움직임 약 26m(6칸반)
+오른손으로 막으며 돌진
+초반에 패링 실패하면 맞아야함. 패링 성공시 Parry_Right
+
+Attack3_HitWall
+움직임 약 -6m(1칸반)
+벽에 맞아서 넉백
+
+Attack4         ->  fLeapAttack
+움직임 약 10m
+약 6m 도약 후 왼손 휘두르고 오른손 휘두르며 전진
+패링 성공 시 Parry_Right
+
+Attack5
+움직임 약 6m
+전진하면서 양손으로 감싸면서 공격
+패링시 별도의 애니메이션 없음(Parried 호출 X)
+
+Attack6_AttackBack
+쓰기 애매함
+
+Attack7, 7_Jump, 7_Revenge 중복
+
+*/
