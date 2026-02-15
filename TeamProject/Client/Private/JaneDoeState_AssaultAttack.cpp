@@ -48,7 +48,18 @@ void CJaneDoeState_AssaultAttack::Update(CJaneDoe* pOwner, _float dt)
 			BattleSystem()->TakeAreaDamage(vPos + vLook * 2.f, 2.f, HitDesc()
 				.Name(pOwner->Get_CharacterName())
 				.Type(HIT_TYPE::ONCE)
-				.Damage(pOwner->Get_AttackPower() * 3.455f * Helper::Get_Random_Float(1.f, 1.5f)
+				.Damage(pOwner->Get_AttackPower() * 0.575f * Helper::Get_Random_Float(1.f, 1.5f)
+					, DAMAGE_TYPE::NORMAL)
+			);
+		}
+		if (Event.Tag == "AreaAttackHard")
+		{
+			_vector3 vLook = pOwner->Get_Component<CTransform>()->Dir(STATE::LOOK);
+			_vector3 vPos = pOwner->Get_WorldPos();
+			BattleSystem()->TakeAreaDamage(vPos + vLook * 2.f, 2.f, HitDesc()
+				.Name(pOwner->Get_CharacterName())
+				.Type(HIT_TYPE::ONCE)
+				.Damage(pOwner->Get_AttackPower() * 0.575f * Helper::Get_Random_Float(1.f, 1.5f)
 					, DAMAGE_TYPE::HARD)
 			);
 		}
@@ -56,7 +67,7 @@ void CJaneDoeState_AssaultAttack::Update(CJaneDoe* pOwner, _float dt)
 		{
 			pOwner->Begin_AttackCollider("FootWeapon_L", HitDesc()
 				.Type(HIT_TYPE::ONCE)
-				.Damage(pOwner->Get_AttackPower() * 3.455f * Helper::Get_Random_Float(1.f, 1.5f)
+				.Damage(pOwner->Get_AttackPower() * 0.575f * Helper::Get_Random_Float(1.f, 1.5f)
 					, DAMAGE_TYPE::NORMAL)
 			);
 		}
@@ -68,7 +79,7 @@ void CJaneDoeState_AssaultAttack::Update(CJaneDoe* pOwner, _float dt)
 		{
 			pOwner->Begin_AttackCollider("FootWeapon_R", HitDesc()
 				.Type(HIT_TYPE::ONCE)
-				.Damage(pOwner->Get_AttackPower() * 3.455f * Helper::Get_Random_Float(1.f, 1.5f)
+				.Damage(pOwner->Get_AttackPower() * 0.575f * Helper::Get_Random_Float(1.f, 1.5f)
 					, DAMAGE_TYPE::NORMAL)
 			);
 		}
