@@ -191,17 +191,21 @@ HRESULT CTestLevel::Awake()
 	//GameInstance()->Set_EngineTimeScale(0.05f);
 
 	CamDirector()->AutoBattle(CamStartDir::Back);
-	
-	CXWall::XWALL_DESC* XWallDesc = new CXWall::XWALL_DESC;
-	XWallDesc->vCount = { 15, 3 };
 
-	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_XWall", CXWall::Create());
-	auto XWall = Builder::Create_Object({ "Test_Level", "Proto_GameObject_XWall" })
-		.Add_ObjDesc(XWallDesc)
-		.Position({ 0.f, 1.f, 1.f, })
-		.Build("XWall");
+	CMonitorGate gate;
+	if (!gate.Pass())
+	{
+		CXWall::XWALL_DESC* XWallDesc = new CXWall::XWALL_DESC;
+		XWallDesc->vCount = {15, 3};
 
-	ObjectManager()->Add_Object(XWall, { "Test_Level", "Effect_Layer" });
+		pProto->Add_ProtoType("Test_Level", "Proto_GameObject_XWall", CXWall::Create());
+		auto XWall = Builder::Create_Object({"Test_Level", "Proto_GameObject_XWall"})
+			.Add_ObjDesc(XWallDesc)
+			.Position({0.f, 1.f, 1.f, })
+			.Build("XWall");
+
+		ObjectManager()->Add_Object(XWall, {"Test_Level", "Effect_Layer"});
+	}
 
 #ifdef  _USING_GUI
 	Ready_MonsterSpawnConsole();

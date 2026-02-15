@@ -33,7 +33,7 @@ public:
     {
         struct Common
         {
-            _float enterSec = 0.3f;
+            _float enterSec = 0.5f;
             _float impactSec = 0.5f;
 
             _float pitchDeg = -8.f;
@@ -52,7 +52,7 @@ public:
             _float minCamAboveFootY = 0.05f;
 
             EaseType approachEase = EaseType::InOutSine;
-            EaseType impactEase = EaseType::InOutSine;
+            EaseType impactEase = EaseType::InSine;
         };
 
         struct Impact
@@ -60,10 +60,10 @@ public:
             _float punchDistDelta = 0.75f;
             _float rollMaxDeg = 10.f;
 
-            _int   rollShakeCount = 2;
-            _float rollShakeDeg = 2.0f;
+            _int   rollShakeCount = 3;
+            _float rollShakeDeg = 2.8f;
 
-            _float rollArcMul = 0.35f;
+            _float rollArcMul = 0.4f;
 
             _float endCamAboveFootY = 0.5f;
             _float targetCamYMix = 0.80f;
@@ -132,14 +132,14 @@ private:
     ShotGoal      m_shotFrom{};
     ShotGoal      m_shotTo{};
 
-    OrbitSnapshot m_prevOrbit{};
-    _bool         m_prevOrbitCaptured = false;
-
     _float        m_enterCamY = 0.f;
 
     ShotGoal      m_impactBase{};
     Vector3       m_impactPivotWorld{};
     _bool         m_impactCaptured = false;
+
+    string        m_waitSeqKey{};
+    _bool         m_waitSeqStarted = false;
 };
 
 NS_END

@@ -27,6 +27,7 @@ public:
     void          AutoField(CamStartDir dir);
     void          AutoBattle(CamStartDir dir);
 
+    CGameObject*  GetSpaceRef()              const { return m_spaceRefHandle.Get(); }
     OBJECT_HANDLE GetCamHandle(CamType type) const { return m_camHandles[ENUM(type)]; }
     COrbitCam*    GetOrbitCam()              const { return static_cast<COrbitCam*>(GetOrbitObj()); }
     CSequenceCam* GetSeqCam()                const { return static_cast<CSequenceCam*>(GetSeqObj()); }
@@ -93,7 +94,7 @@ private:
     CamObjHandles          m_camHandles{};
     CCamEventController    m_events{};
     CCamDialogueController m_dialogue{};
-    CamParryController    m_parry{};
+    CamParryController     m_parry{};
     CamWipeOutController   m_wipeOut{};
 
     OBJECT_HANDLE          m_spaceRefHandle{};

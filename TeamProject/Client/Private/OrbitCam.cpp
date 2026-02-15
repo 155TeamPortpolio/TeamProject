@@ -273,8 +273,51 @@ void COrbitCam::SnapFromCamPose(const Vector3& pos, const Quaternion& rot)
     m_pTransform->LookAt(Vector4(m_pose.pivotCurWorld.x, m_pose.pivotCurWorld.y, m_pose.pivotCurWorld.z, 1.f));
 }
 
+void COrbitCam::SnapFromOrbitPose(const Vector3& pivotWorld, const Vector3& camPos, const Quaternion& camRot, _float dist)
+{
+    auto cc = Get_Component<CCharacterController>();
+    cc->Set_Position(Vector4(camPos.x, camPos.y, camPos.z, 1.f));
+
+    const Vector3 basePivotWorld = GetBasePivotTargetPos(m_target);
+
+    Switch_Reset();
+
+    m_pose.pivotExternalOffset = Vector3::Zero;
+    m_pose.pivotInternalOffset = pivotWorld - basePivotWorld;
+
+    PivotStab_Reset(pivotWorld);
+
+    m_pose.pivotCurWorld = pivotWorld;
+    m_pose.pivotGoalWorld = pivotWorld;
+
+    Vector3 toPivot = pivotWorld - camPos;
+    const float rawDist = toPivot.Length();
+    toPivot /= rawDist;
+
+    Vector2 rotDeg{};
+    CalcRotDeg(toPivot, rotDeg);
+
+    m_pose.rotCurDeg = rotDeg;
+    m_pose.rotGoalDeg = rotDeg;
+
+    dist = clamp(dist, m_prof.distMin, m_prof.distMax);
+
+    m_pose.distCur = dist;
+    m_pose.distGoal = dist;
+    m_pose.distWanted = dist;
+
+    m_yawDeltaCapDeg = m_prof.yawDeltaCapDeg;
+    m_pitchDeltaCapDeg = m_prof.pitchDeltaCapDeg;
+
+    ClampTargets();
+
+    m_pTransform->Set_WorldPos(Vector4(camPos.x, camPos.y, camPos.z, 1.f));
+    m_pTransform->Set_WorldQuaternion(camRot);
+}
+
 _bool COrbitCam::SkipUpdate(_float dt)
 {
+    if (m_parryMode) return true;
     if (!m_target.isValid()) return true;
 
     if (m_freeze > 0.f)
