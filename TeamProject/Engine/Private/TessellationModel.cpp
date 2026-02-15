@@ -84,7 +84,7 @@ void CTessellationModel::SetDrawable(_uint Index, _bool isDraw)
 MINMAX_BOX CTessellationModel::Get_LocalBoundingBox()
 {
     _float fHalf = m_fSize * 0.5f;
-    return MINMAX_BOX{ { -fHalf, -1.f, -fHalf }, { fHalf,  1.f, fHalf } };
+    return MINMAX_BOX{ { -fHalf, -fHalf, -fHalf }, { fHalf,  fHalf, fHalf } };
 }
 
 MINMAX_BOX CTessellationModel::Get_WorldBoundingBox()

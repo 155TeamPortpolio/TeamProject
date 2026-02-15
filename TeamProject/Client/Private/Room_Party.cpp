@@ -1,0 +1,48 @@
+#include "pch.h"
+#include "Room_Party.h"
+
+#include  "FieldSystem.h"
+#include "FieldPlayer.h"
+#include "UIDirector.h"
+
+CRoom_Party::CRoom_Party(const ROOM_DESC& desc)
+    :CRoom(desc)
+{
+}
+
+void CRoom_Party::Enter()
+{
+    auto pFieldPlayer = FieldSystem()->GetFieldPlayer();
+    pFieldPlayer->Lock_Input();
+    pFieldPlayer->DeActive_Field();
+
+    UIDirector()->Show_Party({ CHARACTER::JaneDoe, CHARACTER::Miyabi });
+}
+
+void CRoom_Party::Exit()
+{
+    auto pFieldPlayer = FieldSystem()->GetFieldPlayer();
+    pFieldPlayer->Active_Field();
+    pFieldPlayer->UnLock_Input();
+
+    UIDirector()->Hide_Party();
+}
+
+void CRoom_Party::Update()
+{
+}
+
+void CRoom_Party::OnResumeFromOverlay()
+{
+}
+
+CRoom_Party* CRoom_Party::Create(const ROOM_DESC& desc)
+{
+    CRoom_Party* instance = new CRoom_Party(desc);
+    return instance;
+}
+
+void CRoom_Party::Free()
+{
+    __super::Free();
+}

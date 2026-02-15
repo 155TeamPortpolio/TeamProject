@@ -60,6 +60,9 @@ void CCorinState_RushAttack::Exit(CCorin* pOwner)
     pOwner->Stop_Effect("Corin_Saw_Slash1");
     pOwner->Set_ResetMove(true);
     __super::Exit(pOwner);
+
+    auto& sound = *pOwner->Get_Component<CAudioSource>();
+    sound.Slot("Corin_RushAttack_01_SFX.wav").FadeOut(0.2f);
 }
 
 void CCorinState_Rush_Start::Enter(CCorin* pOwner)

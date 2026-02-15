@@ -16,6 +16,9 @@ public:
     virtual void    Priority_Update(_float dt) override;
     virtual void    Update(_float dt) override;
     virtual void    Late_Update(_float dt) override;
+    virtual void    Render_GUI() override;
+private:
+    _float4 m_fHairColor = { 1.00f, 0.86f, 0.70f,1.f };
 
 public:
     static CCrowdNpc* Create();

@@ -12,7 +12,6 @@ private:
 	HRESULT Initialize();
 public:
 	virtual void Update() override;
-	virtual void StopAll() override;
 	virtual FMOD::System* Get_System() override;
 	//사운드 시스템
 	virtual void Play(AUDIO_PACKET& packet)override;
@@ -20,6 +19,7 @@ public:
 
 public:
 	virtual void Set_GroupVolume(SOUND_GROUP group, _float volume);
+	virtual void StopAll() override;
 
 private:
 	void ApplyLoop(FMOD::Channel* channel, const AUDIO_PACKET& packet);

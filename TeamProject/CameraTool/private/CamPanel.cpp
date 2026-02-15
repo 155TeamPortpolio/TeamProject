@@ -363,7 +363,7 @@ void CCamPanel::DrawToolbar()
             SetRecording(nextRecording);
     }
 
-    const ConfirmResult capOff = DrawConfirmPopupModal( "CaptureOff_Confirm_TooFewKeys", nullptr, { u8"키프레임이 1개 이하입니다.", u8"CAPTURE(REC)를 끄면 재생이 고정처럼 보일 수 있어요.", u8"그래도 끌까요?" }, u8"끄기", u8"계속 캡처", 120.f);
+    const ConfirmResult capOff = DrawConfirmPopupModal("CaptureOff_Confirm_TooFewKeys", nullptr, {u8"키프레임이 1개 이하입니다.", u8"CAPTURE(REC)를 끄면 재생이 고정처럼 보일 수 있어요.", u8"그래도 끌까요?"}, u8"끄기", u8"계속 캡처", 120.f);
 
     if (capOff == ConfirmResult::Ok)
         SetRecording(false);
@@ -451,14 +451,6 @@ void CCamPanel::DrawCamSelector()
 
     if (ImGui::SmallButton("Flip180##flip_yaw180"))
         FlipKeys_Yaw180();
-
-    ImGui::SameLine();
-    if (ImGui::SmallButton("Rot+90##rot_yaw90_p"))
-        RotateKeys_Yaw90(+90.f);
-
-    ImGui::SameLine();
-    if (ImGui::SmallButton("Rot-90##rot_yaw90_m"))
-        RotateKeys_Yaw90(-90.f);
 
     ImGui::SameLine();
     ImGui::Dummy(ImVec2(14.f, 0.f));
@@ -639,6 +631,7 @@ void CCamPanel::DrawCamSelector()
 }
 
 
+
 void CCamPanel::DrawKeyframeList()
 {
     if (!target.sequence)
@@ -746,13 +739,13 @@ void CCamPanel::DrawTimeline()
 
     ImDrawList* dl = ImGui::GetWindowDrawList();
 
-    ImU32 colBg     = ImGui::GetColorU32(ImGuiCol_FrameBg);
+    ImU32 colBg = ImGui::GetColorU32(ImGuiCol_FrameBg);
     ImU32 colBorder = ImGui::GetColorU32(ImGuiCol_Border);
-    ImU32 colFill   = ImGui::GetColorU32(ImGuiCol_ButtonHovered);
-    ImU32 colTick   = ImGui::GetColorU32(ImGuiCol_TextDisabled);
+    ImU32 colFill = ImGui::GetColorU32(ImGuiCol_ButtonHovered);
+    ImU32 colTick = ImGui::GetColorU32(ImGuiCol_TextDisabled);
     ImU32 colCursor = ImGui::GetColorU32(ImGuiCol_Text);
-    ImU32 colText   = ImGui::GetColorU32(ImGuiCol_TextDisabled);
-    ImU32 colHot    = ImGui::GetColorU32(ImGuiCol_ButtonActive);
+    ImU32 colText = ImGui::GetColorU32(ImGuiCol_TextDisabled);
+    ImU32 colHot = ImGui::GetColorU32(ImGuiCol_ButtonActive);
 
     dl->AddRectFilled(barPos, ImVec2(barPos.x + barSize.x, barPos.y + barSize.y), colBg, 4.f);
     dl->AddRect(barPos, ImVec2(barPos.x + barSize.x, barPos.y + barSize.y), colBorder, 4.f);
@@ -1554,6 +1547,7 @@ void CCamPanel::PostEdit_SequenceChanged()
         target.player->SetTime(state.curTime);
 }
 
+
 bool CCamPanel::HasValidSelection() const
 {
     if (!target.sequence) return false;
@@ -1570,6 +1564,8 @@ CamKeyFrame& CCamPanel::GetSelectedKey()
 
 void CCamPanel::FlipKeys_Yaw180()
 {
+    assert(target.sequence);
+
     for (auto& k : target.sequence->keyframes)
     {
         k.pos.x = -k.pos.x;
@@ -1590,54 +1586,6 @@ void CCamPanel::FlipKeys_Yaw180()
         d.axis.x = -d.axis.x;
         d.axis.z = -d.axis.z;
         d.NormalizeAxis();
-    }
-
-    if (HasValidSelection())
-        SyncEditorFromSelection();
-
-    PostEdit_SequenceChanged();
-}
-
-void CCamPanel::RotateKeys_Yaw90(_float yawDeg)
-{
-    const _float s = (yawDeg >= 0.f) ? 1.f : -1.f;
-
-    for (auto& k : target.sequence->keyframes)
-    {
-        {
-            const _float x = k.pos.x;
-            const _float z = k.pos.z;
-            k.pos.x = s * z;
-            k.pos.z = -s * x;
-        }
-
-        {
-            const _float x = k.look.x;
-            const _float z = k.look.z;
-            k.look.x = s * z;
-            k.look.z = -s * x;
-            k.look.Normalize();
-        }
-    }
-
-    if (target.sequence->posInterp == CamPosInterp::OrbitArc)
-    {
-        auto& d = target.sequence->orbitArc;
-
-        {
-            const _float x = d.center.x;
-            const _float z = d.center.z;
-            d.center.x = s * z;
-            d.center.z = -s * x;
-        }
-
-        {
-            const _float x = d.axis.x;
-            const _float z = d.axis.z;
-            d.axis.x = s * z;
-            d.axis.z = -s * x;
-            d.NormalizeAxis();
-        }
     }
 
     if (HasValidSelection())
@@ -1689,7 +1637,7 @@ void CCamPanel::AddKey_Default()
     }
     else
     {
-        newKey.look = _vector3{ 0.f, 0.f, 1.f };
+        newKey.look = _vector3{0.f, 0.f, 1.f};
         newKey.fov = state.editFov;
         newKey.roll = 0.f;
     }

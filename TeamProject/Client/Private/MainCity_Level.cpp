@@ -29,9 +29,11 @@
 CMainCity_Level::CMainCity_Level(const string& LevelKey)
 	:CLevel(LevelKey),
 	m_pGameInstance{ CGameInstance::GetInstance() },
-	m_pCamDirector{ CCamDirector::GetInstance() }
+	m_pCamDirector{ CCamDirector::GetInstance() },
+	m_pFieldSystem{CFieldSystem::GetInstance()}
 {
 	Safe_AddRef(m_pGameInstance);
+	Safe_AddRef(m_pFieldSystem);
 }
 
 HRESULT CMainCity_Level::Initialize()
@@ -58,7 +60,7 @@ HRESULT CMainCity_Level::Awake()
 	Ready_Map("MainCity_Level", "MainCity");
 
 	CamDirector()->AutoField(CamStartDir::Back);
-	FieldSystem()->SetActive(true);
+	m_pFieldSystem->SetActive(true);
 	//ObjectManager()->Get_Layer({"MainCity_Level", "PlacedObject_Layer"})->Set_RenderState(false);
 	//auto layer = ObjectManager()->Get_Layer({"MainCity_Level", "PlacedObject_Layer"});
 	pProto->Add_ProtoType("MainCity_Level", "Proto_GameObject_CBackgroundNpc", CBackgroundNpc::Create());
@@ -72,11 +74,11 @@ HRESULT CMainCity_Level::Awake()
 
 void CMainCity_Level::Update()
 {
-	FieldSystem()->Update();
+	m_pFieldSystem->Update();
 	auto layer = ObjectManager()->Get_Layer({"MainCity_Level","PlacedObject_Layer"});
 
 	if(InputDevice()->Key_Tap(VK_F4)) 
-		FieldSystem()->RequestEnter("Gacha", true);
+		m_pFieldSystem->RequestEnter("Gacha", true);
 	//layer->Set_RenderState(false);
 }
 
@@ -92,14 +94,14 @@ void CMainCity_Level::PreLoad_Level()
 
 void CMainCity_Level::Ready_Map(const string& LevelTag, const string& AreaTag)
 {
-	FieldSystem()->RegisterRoom(CRoom_Street::Create({ "MainCity" , true }));
-	FieldSystem()->RegisterRoom(CRoom_Lottery::Create({ "Lottery" , false }));
-	FieldSystem()->RegisterRoom(CRoom_Noodle::Create({ "Noodle" , false }));
-	FieldSystem()->RegisterRoom(CRoom_Gacha::Create({ "Gacha" , false }));
-	FieldSystem()->RequestEnter("MainCity", true);
+	m_pFieldSystem->RegisterRoom(CRoom_Street::Create({ "MainCity" , true }));
+	m_pFieldSystem->RegisterRoom(CRoom_Lottery::Create({ "Lottery" , false }));
+	m_pFieldSystem->RegisterRoom(CRoom_Noodle::Create({ "Noodle" , false }));
+	m_pFieldSystem->RegisterRoom(CRoom_Gacha::Create({ "Gacha" , false }));
+	m_pFieldSystem->RequestEnter("MainCity", true);
 	if (LevelManager()->Get_PrevLevelKey() == "Gacha_Level")
 	{
-		FieldSystem()->RequestEnter("Gacha", true);
+		m_pFieldSystem->RequestEnter("Gacha", true);
 	}
 }
 
@@ -117,7 +119,9 @@ CMainCity_Level* CMainCity_Level::Create(const string& LevelKey)
 void CMainCity_Level::Free()
 {
 	__super::Free();
-	FieldSystem()->SetActive(false);
+	if (m_pFieldSystem)
+		m_pFieldSystem->SetActive(false);
+	m_pFieldSystem->DestroyInstance();
 	m_pGameInstance->DestroyInstance();
 	m_pPlayer->Clear_Characters();
 }

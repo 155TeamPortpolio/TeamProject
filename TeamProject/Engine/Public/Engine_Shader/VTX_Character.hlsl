@@ -302,11 +302,11 @@ PS_OUT PS_OPAQUE(VS_CUSTOMOUT In)
 {
     PS_OUT Out;
 
-    float3 localLightDir = normalize(float3(-1.f, 0.f, 0.f));
+    float3 localLightDir = normalize(float3(-1.f, -0.6f, 1.f));
     float3 localLightDiffuse = float3(1.f, 1.f, 1.f);
     float3 localLightAmbient = float3(1.f, 1.f, 1.f);
     float3 localLightSpecular = float3(1.f, 1.f, 1.f);
-    float localLightIntensity = 3.f; 
+    float localLightIntensity = 2.f; 
 
     float4 vMtrlDiffuse = DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
 
@@ -325,7 +325,7 @@ PS_OUT PS_OPAQUE(VS_CUSTOMOUT In)
     float normalAlpha;
     float Skin;
     bool bIsFace = false;
-    float3 faceLookDir = float3(0, 0, 1);
+    float3 faceLookDir = float3(0.f, 0.f, -1.f);
 
     if (vNormalDesc.a > 0.f)
     {
@@ -348,7 +348,7 @@ PS_OUT PS_OPAQUE(VS_CUSTOMOUT In)
     {
         worldNormal = normalize(In.vNormal);
         normalAlpha = 1.f;
-        faceLookDir = vLookVector.xyz;
+       // faceLookDir = vLookVector.xyz;
 
         vMetalic = LightTexture.Sample(DefaultSampler, In.vTexcoord);
     
@@ -430,8 +430,8 @@ PS_OUT PS_OPAQUE(VS_CUSTOMOUT In)
         float sideInfluence = RdotL * 0.3f;
         shadow = saturate(shadow + sideInfluence);
 
-        float minBrightness = 0.3f;
-        float maxBrightness = 0.5f;
+        float minBrightness = 0.2f;//        0.3f;
+        float maxBrightness = 0.48f;//        0.5f;
         float brightness = lerp(minBrightness, maxBrightness, shadow);
 
         litColor = vMtrlDiffuse.rgb * localLightDiffuse * brightness;

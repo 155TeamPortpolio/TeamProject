@@ -6,6 +6,9 @@
 #include "MaterialInstance.h"
 #include "MaterialData.h"
 #include "GameInstance.h"
+#include "Child.h"
+
+#include "Helper_Func.h"
 
 CWaterWave::CWaterWave()
 	:CGameObject()
@@ -13,7 +16,7 @@ CWaterWave::CWaterWave()
 }
 
 CWaterWave::CWaterWave(const CWaterWave& rhs)
-	:CGameObject(rhs)
+	:CGameObject(rhs), m_Roughness(rhs.m_Roughness) ,m_NoiseOffset(rhs.m_NoiseOffset), m_FoamAmount(rhs.m_FoamAmount)
 {
 }
 
@@ -28,6 +31,8 @@ HRESULT CWaterWave::Initialize_Prototype()
 HRESULT CWaterWave::Initialize(INIT_DESC* pArg)
 {
 	__super::Initialize(pArg);
+	auto desc = static_cast<WaterWaveDesc*>(pArg);
+	Initialize_Wave(*desc);
 
 	auto pModel = Get_Component<CTessellationModel>();
 	pModel->ShadowCast(false);
@@ -38,6 +43,12 @@ HRESULT CWaterWave::Initialize(INIT_DESC* pArg)
 	customInstance->ChangeTexture(TEXTURE_TYPE::DIFFUSE, 0);
 	customInstance->Set_Param("g_Time", { &m_fAccTime, "float", sizeof(_float) });
 	customInstance->Set_Param("g_CycleTime", { &m_CycleTime, "float", sizeof(_float) });
+	customInstance->Set_Param("g_Roughness", { &m_Roughness, "float", sizeof(_float) });
+	customInstance->Set_Param("g_FoamAmount", { &m_FoamAmount, "float", sizeof(_float) });
+	customInstance->Set_Param("g_NoiseOffset", { &m_NoiseOffset, "float2", sizeof(_float2) });
+	customInstance->Set_Param("g_WaterTint", { &m_WaterTint, "float3", sizeof(_float3) });
+	customInstance->Set_Param("g_TintStrength", { &m_TintStrength, "float", sizeof(_float) });
+
 	pMaterial->Insert_MaterialInstance(customInstance, nullptr);
 	auto MaterialDat = customInstance->Get_MaterialData();
 	if (MaterialDat)
@@ -90,6 +101,15 @@ void CWaterWave::Update(_float dt)
 
 void CWaterWave::Late_Update(_float dt)
 {
+}
+
+void CWaterWave::Initialize_Wave(WaterWaveDesc Desc)
+{
+	m_FoamAmount =  Desc.fFoamAmount;
+	m_Roughness = Desc.fRoughness;
+	m_NoiseOffset = Desc.fNoiseOffset;
+	m_WaterTint = Desc.vWaterTint;
+	m_TintStrength = Desc.fTintStrength;
 }
 
 CWaterWave* CWaterWave::Create()

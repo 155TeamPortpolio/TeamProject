@@ -44,6 +44,7 @@ public:
 
 	//==================== Scott ===============
 	void Show_Party(vector<CHARACTER> characters);
+	void Hide_Party();
 
 	//==================== Battle ===============
 	void Request_DamageText(const DAMAGE_DESC& desc);
