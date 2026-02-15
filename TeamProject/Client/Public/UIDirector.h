@@ -43,7 +43,7 @@ public:
 	void Hide_HUD(HUD hud);
 
 	//==================== Scott ===============
-	void Show_Party();
+	void Show_Party(vector<CHARACTER> characters);
 
 	//==================== Battle ===============
 	void Request_DamageText(const DAMAGE_DESC& desc);
