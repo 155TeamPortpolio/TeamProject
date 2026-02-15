@@ -47,14 +47,16 @@
 
 CScott_Level::CScott_Level(const string& LevelKey)
 	:CLevel(LevelKey),
-	m_pGameInstance{ CGameInstance::GetInstance() }
+	m_pGameInstance{ CGameInstance::GetInstance() },
+	m_pFieldSystem{ CFieldSystem::GetInstance() }
 {
 	Safe_AddRef(m_pGameInstance);
+	Safe_AddRef(m_pFieldSystem);
 }
 
 HRESULT CScott_Level::Initialize()
 {
-	FieldSystem()->SetActive(true);
+	m_pFieldSystem->SetActive(true);
 	return S_OK;
 }
 
@@ -94,7 +96,7 @@ HRESULT CScott_Level::Awake()
 
 void CScott_Level::Update()
 {
-	FieldSystem()->Update();
+	m_pFieldSystem->Update();
 }
 
 HRESULT CScott_Level::Render()
@@ -109,9 +111,9 @@ void CScott_Level::PreLoad_Level()
 
 void CScott_Level::Ready_Map(const string& LevelTag, const string& AreaTag)
 {
-	FieldSystem()->RegisterRoom(CRoom_Scott::Create({ "Scott" , true }));
+	m_pFieldSystem->RegisterRoom(CRoom_Scott::Create({ "Scott" , true }));
 	//FieldSystem()->RegisterRoom(CRoom_Party::Create({ "Party" , false }));
-	FieldSystem()->RequestEnter("Scott", true);
+	m_pFieldSystem->RequestEnter("Scott", true);
 }
 
 void CScott_Level::Ready_Npc()
@@ -166,7 +168,9 @@ CScott_Level* CScott_Level::Create(const string& LevelKey)
 void CScott_Level::Free()
 {
 	__super::Free();
-	FieldSystem()->FadeOutBGM();
+	if (m_pFieldSystem)
+		m_pFieldSystem->SetActive(false);
+	m_pFieldSystem->DestroyInstance();
 	m_pGameInstance->DestroyInstance();
 	m_pPlayer->Clear_Characters();
 }
