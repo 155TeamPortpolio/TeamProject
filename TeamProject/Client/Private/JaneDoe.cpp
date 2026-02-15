@@ -111,7 +111,6 @@ void CJaneDoe::Awake()
 
     m_fPassionStream = 100.f;
     Increase_Passion(1.f);
-
     if (FAILED(Attach_ParryCollider()))
         return;
 

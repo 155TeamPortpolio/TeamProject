@@ -93,6 +93,11 @@ public: // 연속 패링
     void            End_ChainParry();
     _bool           Is_ChainParry() const { return m_bChainParry; }
 
+public:
+    void            Recover_HP();
+    void            Recover_Energy();
+    void            Recover_Decibel();
+
 private: // 입력 처리
     void    Update_Input(_float dt);
     void    Process_Movement(_float dt);
