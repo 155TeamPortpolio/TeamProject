@@ -29,11 +29,15 @@ void CCorinState_CounterAttack::Enter(CCorin* pOwner)
 	m_pSubStateMachine->Set_Bool("ReserveNormal", false);
 	pOwner->Lock_Move();
 	pOwner->Push_Invincible();
+	m_eType = DAMAGE_TYPE::NORMAL;
 	__super::Enter(pOwner);
 }
 
 void CCorinState_CounterAttack::Update(CCorin* pOwner, _float dt)
 {
+	if (IsCrossAnimProgress(0.7f))
+		m_eType = DAMAGE_TYPE::HARD;
+
 	for (const auto& Event : pOwner->Get_Animator()->Get_EventBus())
 	{
 		if (Event.Type != CLIP_EVENT_TYPE::NOTIFY) continue;
@@ -42,8 +46,8 @@ void CCorinState_CounterAttack::Update(CCorin* pOwner, _float dt)
 			pOwner->Begin_AttackCollider("Saw",
 				HitDesc()
 				.Type(HIT_TYPE::INTERVAL)
-				.Damage(pOwner->Get_AttackPower() * 2.712f * Helper::Get_Random_Float(1.f, 1.5f)
-					, DAMAGE_TYPE::HARD)
+				.Damage(pOwner->Get_AttackPower() * 0.271f * Helper::Get_Random_Float(1.f, 1.5f)
+					, m_eType)
 				.Interval(0.05f)
 				.Charge(5.f, 50.f)
 			);

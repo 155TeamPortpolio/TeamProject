@@ -32,6 +32,7 @@ private:
 
 private:
     _float  m_ElapsedTime = 0.f;
+    _float  m_EndY = 0.f;
     _bool m_bAwake = {};
 public:
     static CDefilerWall* Create();

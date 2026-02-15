@@ -24,11 +24,16 @@ CCorinState_NormalAttack* CCorinState_NormalAttack::Create()
     // 콤보 전이: Trigger + AnimEnd : 애니매이션중 마우스가 눌렸고 애니매이션이 끝나면 다음 재생
     vector<CStateMachine<CCorin>::CONDITION_INFO> comboConditions;
     comboConditions.push_back({ CStateMachine<CCorin>::CONDITION_TRIGGER, "NextCombo", 0.f });
-    comboConditions.push_back({ CStateMachine<CCorin>::CONDITION_ANIMATION_END, "", 0.f });
-
+    comboConditions.push_back({ CStateMachine<CCorin>::CONDITION_ANIMATION_GREATER, "", 0.55f });
     pSubStateMachine->Register_Transition("Attack_01", "Attack_02", comboConditions);
+    comboConditions.pop_back();
+    comboConditions.push_back({ CStateMachine<CCorin>::CONDITION_ANIMATION_GREATER, "", 0.45f });
     pSubStateMachine->Register_Transition("Attack_02", "Attack_03", comboConditions);
+    comboConditions.pop_back();
+    comboConditions.push_back({ CStateMachine<CCorin>::CONDITION_ANIMATION_END});
     pSubStateMachine->Register_Transition("Attack_03", "Attack_04", comboConditions);
+    comboConditions.pop_back();
+    comboConditions.push_back({ CStateMachine<CCorin>::CONDITION_ANIMATION_GREATER, "", 0.6f });
     pSubStateMachine->Register_Transition("Attack_04", "Attack_05", comboConditions);
 
     // End 전이
@@ -105,7 +110,6 @@ void CCorinState_Attack_01::Enter(CCorin* pOwner)
 
     // Jehyun
     auto& sound = *pOwner->Get_Component<CAudioSource>();
-
     sound.Sequence("NormalAttack_Voice").Attribute3D(true).Loop(false).PlayNext();
     sound.Slot("Corin_NormalAttack_01_SFX.wav").Attribute3D(true).Loop(false).Volume(0.5f).Play();
 }
@@ -124,7 +128,7 @@ void CCorinState_Attack_01::Update(CCorin* pOwner, _float dt)
             pOwner->Begin_AttackCollider("Saw",
                 HitDesc()
                 .Type(HIT_TYPE::COUNT)
-                .Damage(pOwner->Get_AttackPower() * 0.82f * Helper::Get_Random_Float(1.f, 1.5f)
+                .Damage(pOwner->Get_AttackPower() * 0.2f * Helper::Get_Random_Float(1.f, 1.5f)
                     , DAMAGE_TYPE::NORMAL)
                 .Interval(0.05f)
                 .MaxCount(4)
@@ -143,6 +147,9 @@ void CCorinState_Attack_01::Update(CCorin* pOwner, _float dt)
 void CCorinState_Attack_01::Exit(CCorin* pOwner)
 {
     static_cast<CCorinState_NormalAttack*>(m_pParentState)->Set_ComboIndex(0);
+
+    auto& sound = *pOwner->Get_Component<CAudioSource>();
+    sound.Slot("Corin_NormalAttack_01_SFX.wav").FadeOut(0.2f);
 }
 
 void CCorinState_Attack_01::Update_Effects(CCorin* pOwner)
@@ -179,7 +186,7 @@ void CCorinState_Attack_02::Update(CCorin* pOwner, _float dt)
             pOwner->Begin_AttackCollider("Saw",
                 HitDesc()
                 .Type(HIT_TYPE::COUNT)
-                .Damage(pOwner->Get_AttackPower() * 0.766f * Helper::Get_Random_Float(1.f, 1.5f)
+                .Damage(pOwner->Get_AttackPower() * 0.191f * Helper::Get_Random_Float(1.f, 1.5f)
                     , DAMAGE_TYPE::NORMAL)
                 .Interval(0.05f)
                 .MaxCount(4)
@@ -198,6 +205,9 @@ void CCorinState_Attack_02::Update(CCorin* pOwner, _float dt)
 void CCorinState_Attack_02::Exit(CCorin* pOwner)
 {
     static_cast<CCorinState_NormalAttack*>(m_pParentState)->Set_ComboIndex(1);
+
+    auto& sound = *pOwner->Get_Component<CAudioSource>();
+    sound.Slot("Corin_NormalAttack_02_SFX.wav").FadeOut(0.2f);
 }
 
 void CCorinState_Attack_02::Update_Effects(CCorin* pOwner)
@@ -210,7 +220,8 @@ void CCorinState_Attack_03::Enter(CCorin* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_Normal_03")
         .Speed(1.5f)
-        .ReserveSpeed(0.5f, 1.f, 0.55f, EaseType::OutQuart)
+        .ReserveSpeed(0.5f, 0.75f, 0.55f, EaseType::OutQuart)
+        .ReserveSpeed(0.75f, 1.f, 2.f, EaseType::Linear)
         .Apply();
 
     auto& sound = *pOwner->Get_Component<CAudioSource>();
@@ -232,9 +243,9 @@ void CCorinState_Attack_03::Update(CCorin* pOwner, _float dt)
             pOwner->Begin_AttackCollider("Saw",
                 HitDesc()
                 .Type(HIT_TYPE::INTERVAL)
-                .Damage(pOwner->Get_AttackPower() * 1.792f * Helper::Get_Random_Float(1.f, 1.5f)
+                .Damage(pOwner->Get_AttackPower() * 0.179f * Helper::Get_Random_Float(1.f, 1.5f)
                     , DAMAGE_TYPE::NORMAL)
-                .Interval(0.05f)
+                .Interval(0.1f)
                 .Charge(1.f, 10.f)
             );
         }
@@ -250,6 +261,9 @@ void CCorinState_Attack_03::Update(CCorin* pOwner, _float dt)
 void CCorinState_Attack_03::Exit(CCorin* pOwner)
 {
     static_cast<CCorinState_NormalAttack*>(m_pParentState)->Set_ComboIndex(2);
+    
+    auto& sound = *pOwner->Get_Component<CAudioSource>();
+    sound.Slot("Corin_NormalAttack_03_SFX.wav").FadeOut(0.2f);
 }
 
 void CCorinState_Attack_03::Update_Effects(CCorin* pOwner)
@@ -289,7 +303,7 @@ void CCorinState_Attack_04::Update(CCorin* pOwner, _float dt)
             pOwner->Begin_AttackCollider("Saw",
                 HitDesc()
                 .Type(HIT_TYPE::INTERVAL)
-                .Damage(pOwner->Get_AttackPower() * 2.334f * Helper::Get_Random_Float(1.f, 1.5f)
+                .Damage(pOwner->Get_AttackPower() * 0.5f * Helper::Get_Random_Float(1.f, 1.5f)
                     , DAMAGE_TYPE::NORMAL)
                 .Interval(0.05f)
                 .Charge(1.f, 10.f)
@@ -307,6 +321,9 @@ void CCorinState_Attack_04::Update(CCorin* pOwner, _float dt)
 void CCorinState_Attack_04::Exit(CCorin* pOwner)
 {
     static_cast<CCorinState_NormalAttack*>(m_pParentState)->Set_ComboIndex(3);
+
+    auto& sound = *pOwner->Get_Component<CAudioSource>();
+    sound.Slot("Corin_NormalAttack_04_SFX.wav").FadeOut(0.2f);
 }
 
 void CCorinState_Attack_04::Update_Effects(CCorin* pOwner)
@@ -322,7 +339,8 @@ void CCorinState_Attack_05::Enter(CCorin* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_Normal_05")
         .Speed(1.5f)
-        .ReserveSpeed(0.4f, 1.f, 0.5f, EaseType::OutQuart)
+        .ReserveSpeed(0.4f, 0.65f, 0.5f, EaseType::OutQuart)
+        .ReserveSpeed(0.65f, 1.f, 2.5f, EaseType::OutExpo)
         .Apply();
 
     // Jehyun
@@ -345,11 +363,12 @@ void CCorinState_Attack_05::Update(CCorin* pOwner, _float dt)
             pOwner->Begin_AttackCollider("Saw",
                 HitDesc()
                 .Type(HIT_TYPE::INTERVAL)
-                .Damage(pOwner->Get_AttackPower() * 4.212f * Helper::Get_Random_Float(1.f, 1.5f)
-                    , DAMAGE_TYPE::HARD)
-                .Interval(0.05f)
+                .Damage(pOwner->Get_AttackPower() * 0.5f * Helper::Get_Random_Float(1.f, 1.5f)
+                    , m_eType)
+                .Interval(0.1f)
                 .Charge(1.f, 10.f)
             );
+            m_eType = m_eType == DAMAGE_TYPE::NORMAL ? DAMAGE_TYPE::HARD : DAMAGE_TYPE::NORMAL;
         }
         else if (Event.Tag == "SawEnd")
         {
@@ -363,6 +382,9 @@ void CCorinState_Attack_05::Update(CCorin* pOwner, _float dt)
 void CCorinState_Attack_05::Exit(CCorin* pOwner)
 {
     static_cast<CCorinState_NormalAttack*>(m_pParentState)->Set_ComboIndex(4);
+
+    auto& sound = *pOwner->Get_Component<CAudioSource>();
+    sound.Slot("Corin_NormalAttack_05_SFX.wav").FadeOut(0.2f);
 }
 
 void CCorinState_Attack_05::Update_Effects(CCorin* pOwner)

@@ -2,6 +2,7 @@
 #include "DefilerState_Other.h"
 #include "Defiler.h"
 #include "StateMachine.h"
+#include "BattleSystem.h"
 
 void CDefilerState_Groggy::Enter(CDefiler* pOwner)
 {
@@ -56,4 +57,35 @@ void CDefilerState_Groggy::Exit(CDefiler* pOwner)
 {
 	DEFILER_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
 	blackBoard.LockRotate = false;
+}
+
+void CDefilerState_Death::Enter(CDefiler* pOwner)
+{
+	__super::Enter(pOwner);
+	BattleSystem()->ExitBattleObject(BATTLE_OBJ_TYPE::MONSTER, pOwner->Get_Handle());
+	pOwner->ResetAllFlags();
+	pOwner->Release_AttackCollider();
+	DEFILER_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
+	blackBoard.ResetTraceFlag();
+	blackBoard.TraceType_IgnoreRotation();
+	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
+	pAnimator->Change_Animation("Monster_IsoldetheDefiler_Ani_Death_Front")
+		.Speed(1.f)
+		.Loop(false)
+		.Apply();
+}
+
+void CDefilerState_Death::Update(CDefiler* pOwner, _float dt)
+{
+//	if (m_fAnimProgress > 0.9)
+//		m_pOwnerStateMachine->Change_State();
+}
+
+void CDefilerState_Death::Exit(CDefiler* pOwner)
+{
+	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
+	pAnimator->Change_Animation("Monster_IsoldetheDefiler_Ani_Death_Stay")
+		.Speed(1.f)
+		.Loop(false)
+		.Apply();
 }

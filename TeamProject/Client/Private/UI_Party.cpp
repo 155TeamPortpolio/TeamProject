@@ -75,6 +75,9 @@ void CUI_Party::UI_Active(void* pArg)
 
     Set_Alive(true);
 
+    // 캐릭터 벡터 복사
+    m_characters = pDesc->characters;
+
     // 파티에서 attribute 별로 카운트
     array<_int, static_cast<_int>(ATTRIBUTE::END)> counts = {};
     auto pDatabase = CDataBase::GetInstance();
@@ -112,6 +115,11 @@ void CUI_Party::UI_Active(void* pArg)
     m_pPartySynergy->Set_Synergy(iPartySynergyCount, iTotalPartyCount);
 }
 
+void CUI_Party::UI_DeActive(void* pArg)
+{
+    Set_Alive(false);
+}
+
 void CUI_Party::Create_BackButton()
 {
     auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_BackButton"})
@@ -120,7 +128,6 @@ void CUI_Party::Create_BackButton()
     if (!pObj)
         return;
 
-    pObj->Set_OnClick([this]() { Set_Alive(false); }); // 클릭했을 때 실행할 함수 필요
     Get_Component<CObjectContainer>()->Add_Child(pObj);
 }
 
@@ -129,6 +136,7 @@ void CUI_Party::Create_HomeButton()
     CUI_IconButton::BUTTON_DESC* pDesc = new CUI_IconButton::BUTTON_DESC;
     pDesc->strLabel = L"거리";
     pDesc->strTextureKey = "IconMainPage.png";
+    pDesc->strSoundKey = "UI_Tick.wav";
 
     auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_IconButton"})
         .Add_UIDesc(pDesc)
@@ -161,6 +169,7 @@ void CUI_Party::Create_SettingButton()
     CUI_IconButton::BUTTON_DESC* pDesc = new CUI_IconButton::BUTTON_DESC;
     pDesc->strLabel = L"전투 설정";
     pDesc->strTextureKey = "IconMenu.png";
+    pDesc->strSoundKey = "UI_Tick.wav";
 
     auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_IconButton"})
         .Add_UIDesc(pDesc)
@@ -180,6 +189,7 @@ void CUI_Party::Create_BackupButton()
 {
     CUI_TextButton::BUTTON_DESC* pDesc = new CUI_TextButton::BUTTON_DESC;
     pDesc->strLabel = L"예비 편성";
+    pDesc->strSoundKey = "UI_Tick.wav";
 
     auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_TextButton"})
         .Add_UIDesc(pDesc)
@@ -203,7 +213,10 @@ void CUI_Party::Create_EnterButton()
     if (!pObj)
         return;
 
-    pObj->Set_OnClick([this]() { Set_Alive(false); }); // 클릭했을 때 실행할 함수 필요
+    pObj->Set_OnClick([this]() {  
+        LevelManager()->Request_ChangeLevel("Zero_Level", true);
+        // 배틀 시스템 통해서 캐릭터
+        }); // 클릭했을 때 실행할 함수 필요
     Get_Component<CObjectContainer>()->Add_Child(pObj);
 }
 
@@ -240,16 +253,22 @@ void CUI_Party::Create_PartyCards()
         if (!pObj)
             continue;
 
-        pObj->Set_Pivot(_float2(0.5f, 0.5f));
-        pObj->Set_Anchor(ANCHOR::Center);
+        auto pPartyCard = dynamic_cast<CUI_PartyCard*>(pObj);
+        if (!pPartyCard)
+            continue;
+
+        m_pPartyCard[i] = pPartyCard;
+        Get_Component<CObjectContainer>()->Add_Child(pObj); 
+
+        pPartyCard->Set_Pivot(_float2(0.5f, 0.5f));
+        pPartyCard->Set_Anchor(ANCHOR::Center);
 
         float fStartX = -fTotalWidth * 0.5f + fWidth * 0.5f;
         float fOffsetX = fStartX + i * (fWidth + fSpacing);
 
-        pObj->Set_AnchorOffset(_float2(fOffsetX, 0.f));
-
-        Get_Component<CObjectContainer>()->Add_Child(pObj);
-        m_pPartyCard[i] = dynamic_cast<CUI_PartyCard*>(pObj);
+        pPartyCard->Set_AnchorOffset(_float2(fOffsetX, 0.f));
+        
+        pPartyCard->Reverse_UVAnimDirection(i % 2);         
     } 
 }
 

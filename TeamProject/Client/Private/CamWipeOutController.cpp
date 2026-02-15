@@ -15,8 +15,7 @@ CamWipeOutController::PivotSample CamWipeOutController::SamplePivots(OBJECT_HAND
     auto obj = ObjectManager()->Request_Object(h);
     auto cc = obj->Get_Component<CCharacterController>();
 
-    const Vector4 foot4 = cc->Get_FootPosition();
-    const Vector3 foot(foot4.x, foot4.y, foot4.z);
+    const Vector3 foot = cc->Get_FootPosition();
 
     const _float half = cc->Get_HalfSize();
 

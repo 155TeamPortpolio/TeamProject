@@ -3,6 +3,7 @@
 
 #include "GameInstance.h"
 #include "ObjectContainer.h"
+#include "AudioSource.h"
 
 HRESULT CUI_PartyEnterButton::Initialize_Prototype()
 {
@@ -10,6 +11,8 @@ HRESULT CUI_PartyEnterButton::Initialize_Prototype()
         return E_FAIL;
 
     Add_Component<CObjectContainer>();
+    Add_Component<CAudioSource>();
+    Get_Component<CAudioSource>()->SoundFolder(G_GlobalLevelKey, "../Bin/Resources/Global/UI/Sound/");
 
     return S_OK;
 }
@@ -28,7 +31,7 @@ HRESULT CUI_PartyEnterButton::Initialize(INIT_DESC* pArg)
         m_isClicked = true;
         Set_ChildAnimation(CHILD::OVERLAY, 0);
         Set_ChildAnimation(CHILD::LABEL, 0);
-        //Get_Component<CAudioSource>()->Slot(m_strSoundKey).Play();
+        Get_Component<CAudioSource>()->Slot("UI_Tick.wav").Play();
             });
 
     return S_OK;

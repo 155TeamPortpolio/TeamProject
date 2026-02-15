@@ -42,8 +42,8 @@ void CCorinState_SwitchInAttack::Update(CCorin* pOwner, _float dt)
         {
             pOwner->Begin_AttackCollider("Saw", HitDesc()
                 .Type(HIT_TYPE::INTERVAL)
-                .Damage(pOwner->Get_AttackPower() * 6.873f * Helper::Get_Random_Float(1.f, 1.5f)
-                    , DAMAGE_TYPE::NORMAL)
+                .Damage(pOwner->Get_AttackPower() * 2.225f * Helper::Get_Random_Float(1.f, 1.5f)
+                    , DAMAGE_TYPE::HARD)
                 .Interval(0.07f)
             );
         }

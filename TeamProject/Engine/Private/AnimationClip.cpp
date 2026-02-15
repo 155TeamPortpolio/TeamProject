@@ -20,7 +20,7 @@ HRESULT CAnimationClip::Initialize(const string& animationPath)
 	ANIMATION_CLIP_HEADER ClipHeader = {};
 	ifs.read(reinterpret_cast<char*>(&ClipHeader), sizeof(ANIMATION_CLIP_HEADER));
 
-	m_ClipName = ClipHeader.ClipName;
+	m_ClipName = filesystem::path(animationPath).stem().string();
 	m_fDuration = ClipHeader.fDuration;
 	m_fTickPerSecond = ClipHeader.fTickPerSecond;
 	m_iNumChannels= ClipHeader.iNumChannels;

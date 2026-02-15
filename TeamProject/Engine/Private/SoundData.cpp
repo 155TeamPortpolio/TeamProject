@@ -11,14 +11,13 @@ CSoundData::CSoundData(const string& soundKey)
 
 HRESULT CSoundData::Initialize(const string& filePath)
 {
-	FMOD::System* pSystem = CGameInstance::GetInstance()->Get_AudioDev()->Get_System();
+    FMOD::System* system = CGameInstance::GetInstance()->Get_AudioDev()->Get_System();
+    if (!system) return E_FAIL;
 
-	FMOD_RESULT fr =pSystem->createSound(filePath.c_str(), FMOD_3D, nullptr, &m_pSound);
+    FMOD_MODE mode = FMOD_DEFAULT | FMOD_3D; // 필요하면 FMOD_2D/CREATESTREAM로 분기
+    FMOD_RESULT result = system->createSound(filePath.c_str(), mode, nullptr, &m_pSound);
 
-	if (fr == FMOD_OK)
-		return S_OK;
-	else
-		return E_FAIL;
+    return (result == FMOD_OK && m_pSound) ? S_OK : E_FAIL;
 }
 
 CSoundData* CSoundData::Create( const string& filePath, const string& soundKey)
@@ -33,5 +32,7 @@ CSoundData* CSoundData::Create( const string& filePath, const string& soundKey)
 
 void CSoundData::Free()
 {
+	if (!m_pSound) return;   // 최소 방어
 	m_pSound->release();
+	m_pSound = nullptr;
 }

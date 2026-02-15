@@ -82,6 +82,15 @@ PS_OUT_RESULT PS_FOG(PS_IN In)
     float4 vSkinnedDepthDesc = SkinnedDepthTexture.Sample(DefaultSampler, In.vTexcoord);
     float4 vScene = FinalTexture.Sample(DefaultSampler, In.vTexcoord);
     
+    float4 vNonLight = NonLightTexture.Sample(DefaultSampler, In.vTexcoord);
+    float4 vBlend = BlendTexture.Sample(DefaultSampler, In.vTexcoord);
+
+    if (vNonLight.a > 0.0001f || vBlend.a > 0.0001f)
+    {
+        Out.vResult = vScene;
+        return Out;
+    }
+    
     float4 vDepthDesc = (vStaticDepthDesc.x > 0.0001f) ? vStaticDepthDesc : vSkinnedDepthDesc;
     float fViewZ = vDepthDesc.y * zFar;
     
@@ -384,13 +393,14 @@ PS_OUT_BACKBUFFER PS_MAIN_COMBINED(PS_IN In)
     result.rgb += vVanish.rgb;
     
     result.rgb = lerp(result.rgb, vUI.rgb, vUI.a);
-    resultAlpha = max(vUI.a, resultAlpha);
-    
+    resultAlpha = resultAlpha * (1.0 - vUI.a) + vUI.a;
+
     result.rgb = lerp(result.rgb, vBlend.rgb, vBlend.a);
-    resultAlpha = max(vBlend.a, resultAlpha);
-    
+    resultAlpha = resultAlpha * (1.0 - vBlend.a) + vBlend.a;
+
     result.rgb = lerp(result.rgb, vNonLight.rgb, vNonLight.a);
-    resultAlpha = max(vNonLight.a, resultAlpha);
+    resultAlpha = lerp(resultAlpha, vNonLight.a, vNonLight.a);
+
     
     Out.vBackBuffer = float4(result.rgb, resultAlpha);
     

@@ -128,6 +128,9 @@ void CMiyabiState_Dash_02::Enter(CMiyabi* pOwner)
     auto effect = pOwner->Get_Component<CObjectContainer>()->Find_ObjectByName("Miyabi_Sword_Fire");
     if (effect)
         effect->Set_Alive(false);
+    //pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_Evade_Dash_SFX.wav")
+    //    .Attribute3D(true)
+    //    .Play();
 }
 
 void CMiyabiState_Dash_02::Update(CMiyabi* pOwner, _float dt)
