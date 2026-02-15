@@ -10,6 +10,7 @@
 
 //Object
 #include "EffectContainer.h"
+#include "AudioSource.h"
 
 CZeroPortal::CZeroPortal()
 	: CInteractable()
@@ -28,6 +29,9 @@ HRESULT CZeroPortal::Initialize_Prototype()
 
 	Add_Component<CObjectContainer>();
 	Add_Component<CEventListener>();
+	Add_Component<CAudioSource>();
+
+	Get_Component<CAudioSource>()->SoundFolder("Zero_Level", "../Bin/Resources/Zero/Interactable/ZeroPortal/Sound/");
 
 	return S_OK;
 }
@@ -45,7 +49,6 @@ HRESULT CZeroPortal::Initialize(INIT_DESC* pArg)
 
 	pObjectContainer->Add_Child(pEffect);
 
-
 	return S_OK;
 }
 
@@ -56,11 +59,11 @@ void CZeroPortal::Awake()
 	Get_Component<CCollider>()->Set_Trigger(true);
 
 	_vector3 vPos = m_pTransform->Get_WorldPos();
-	vPos.y += 1.2f;
+	vPos.y += 1.5f;
 	m_pTransform->Set_Pos(vPos);
 
 	m_vBaseScale	= m_pTransform->Get_Scale();
-	m_vExtendScale	= m_vBaseScale * 2.5f;
+	m_vExtendScale	= m_vBaseScale * 3.f;
 	m_fDuration		= 0.7f;
 }
 
@@ -73,6 +76,7 @@ void CZeroPortal::Update(_float dt)
 	m_Time += dt;
 	Get_Component<CCollider>()->Update(dt);
 	Get_Component<CObjectContainer>()->UpdateChild(dt);
+	Get_Component<CAudioSource>()->Set_AudioPos(Get_WorldPos());
 
 	Focus(dt);
 }
@@ -94,6 +98,10 @@ void CZeroPortal::OnTriggerEnter(CGameObject* pOther)
 
 	m_bIsInteractable = true;
 	m_bInPlayer = true;
+	Get_Component<CAudioSource>()->Slot("ZeroPortal_Touch.wav")
+		.Attribute3D(true)
+		.Loop(false)
+		.Play();
 }
 
 void CZeroPortal::OnTriggerStay(CGameObject* pOher)
@@ -118,6 +126,7 @@ void CZeroPortal::Interact(CGameObject* pObject)
 
 	m_pOwnerStage->StageChangeOn(m_choiceIndex);
 	m_bIsInteractable = false;
+	Get_Component<CAudioSource>()->Slot("ZeroPortal_Enter.wav").Play();
 }
 
 OBJECT_HANDLE CZeroPortal::Get_InteractHandle()

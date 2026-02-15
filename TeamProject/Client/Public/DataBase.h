@@ -31,6 +31,7 @@ public:
     vector<GACHA_RESULT_DESC>       GetGachaGroup();
     TV_DESC                         GetTVDesc(const string& strName);
     const vector<GACHA_CHANNEL_DESC>& GeGachaChannels();
+    PARTY_DESC              GetPartyData(CHARACTER eCharacter);
 
 public:
     HRESULT LoadPlayerCreationTable(const string& csvPath);
@@ -46,6 +47,7 @@ public:
     HRESULT LoadGachaData(const string& csvPath);
     HRESULT LoadTVData(const string& csvPath);
     HRESULT LoadGachaChannelData(const string& csvPath);
+    HRESULT LoadPartyData(const string& csvPath);
 
 public:
     const CASHED_OBJ_DATA* Get_CashedData(const string& AreaTag);
@@ -64,6 +66,10 @@ private:
     GachaType       StringToGachaType(const string& str);
     GachaGrade      StringToGachaGrade(const string& str);
     wstring         StringToWString(const string& str);
+    CHARACTER       StringToCharacter(const string& str);
+    ATTRIBUTE       StringToAttribute(const string& str);
+    SPECIALTY       StringToSpecialty(const string& str);
+
 private:
     // 몬스터 세팅 테이블(CCT 정보, 각종 Status(HP, 공격력 등))
     unordered_map<_int, MonsterCreationDesc>				m_MonsterCreationTables;
@@ -83,7 +89,9 @@ private:
     unordered_map<string, RAMEN_DESC>                       m_RamenTables;
     unordered_map<string, TV_DESC>                          m_TVTables; 
     // BattleField Data
-    
+    // PartyData
+    unordered_map<CHARACTER, PARTY_DESC>                    m_PartyTables;
+
     //맵 데이터 <-> 런타임 데이터 연결용 (현재 작동중인 레벨에서만)
     unordered_map<string, CASHED_OBJ_DATA>  m_CashedData;
     

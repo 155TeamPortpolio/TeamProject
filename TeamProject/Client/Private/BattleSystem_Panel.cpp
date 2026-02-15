@@ -304,6 +304,8 @@ void CBattleSystem_Panel::DrawTab_Tools()
     if (ImGui::Button("SetActive(FALSE)")) bs->SetActive(false);
 
     if (ImGui::Button("ClearBattleStage()")) bs->ClearBattleStage();
+    ImGui::SameLine();
+    if (ImGui::Button("AllKill")) bs->AllKill();
 
     ImGui::SeparatorText("Spawn Monster");
     ImGui::InputText("ProtoTag", m_spawnProto, (int)sizeof(m_spawnProto));

@@ -113,7 +113,7 @@ void CCharacter::Render_GUI()
 {
     ImGui::Separator();
     ImGui::Text("HP : %3.2f / %3.2f", m_fCurrentHP, m_fMaxHP);
-    ImGui::Text("AttackPower : %2.2f", m_fAttackPower);
+    ImGui::InputFloat("AttackPower", &m_fAttackPower ,0.f, 0.f, "%.2f");
 
     __super::Render_GUI();
 }
@@ -323,7 +323,7 @@ OBJECT_HANDLE CCharacter::Calculate_Parry()
     }
 
     m_vParryPos = vAttackPos + vAttackLook * vAttackOffset * 3.f;
-    m_vParryPos.y = vPos.y + 0.5f;
+    m_vParryPos.y = vPos.y + 1.f;
 
     m_vParryLook = vAttackPos - m_vParryPos;
     m_vParryLook.y = 0.f;
@@ -599,7 +599,7 @@ HRESULT CCharacter::Attach_ParryCollider()
     colliderDesc.iCollisionMask = ENUM(COLLISION_GROUP::MONSTER);
     colliderDesc.bAutoFit = false;
     colliderDesc.vCenter = { 0.f, 0.f, 0.f };
-    colliderDesc.vSize = { 5.f, 0.f, 0.f };
+    colliderDesc.vSize = { 8.f, 0.f, 0.f };
     colliderDesc.bTrigger = true;
 
     CGameObject* pParryCollider = Builder::Create_Object(
@@ -689,8 +689,11 @@ void CCharacter::Take_Damage(DAMAGE_TYPE eType, _float fDamage)
     // 패링 가능했을때
     if(m_eSwitchType == SWITCH::PARRYAID && m_ParryHandle.isValid())
     {
-        BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::PARRY);
-        m_ParryHandle.GetAs<CEnemy>()->Parried();
+        if(m_bIsMain)
+        {
+            BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::PARRY);
+            m_ParryHandle.GetAs<CEnemy>()->Parried();
+        }
     }
 
     if (Is_Invincible()) return;

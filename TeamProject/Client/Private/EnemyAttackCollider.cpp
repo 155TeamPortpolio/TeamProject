@@ -12,6 +12,7 @@
 #include "Child.h"
 
 #include "Character.h"
+
 CEnemyAttackCollider::CEnemyAttackCollider()
 	: CGameObject()
 {
@@ -54,7 +55,7 @@ void CEnemyAttackCollider::Priority_Update(_float dt)
 void CEnemyAttackCollider::Update(_float dt)
 {
 	Get_Component<CBoneFollower>()->Sync_Transform(dt, m_pTransform);
-	Get_Component<CRigidBody>()->Set_GlobalPos(m_pTransform->Get_Pos(), m_pTransform->Get_QuaternionRotate());
+	Get_Component<CRigidBody>()->Set_GlobalPos(Get_WorldPos(), m_pTransform->Get_QuaternionRotate());
 	Get_Component<CCollider>()->Update(dt);
 }
 

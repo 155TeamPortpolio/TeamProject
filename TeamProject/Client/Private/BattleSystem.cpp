@@ -95,6 +95,7 @@ void CBattleSystem::SetActive(_bool isActive)
 	if (false == isActive) {
 		m_isActive = false;
 		//ClearBattleStage();
+		m_pFXFlow->Clear();
 		return;
 	}
 	else {
@@ -163,7 +164,20 @@ void CBattleSystem::TakeAreaDamage(const _float3& vCenter, _float fRadius, const
 
 		auto pEnemy = dynamic_cast<CEnemy*>(info.hObject.Get());
 		if (pEnemy)
+		{
 			pEnemy->TakeDamage(hitDesc.eDamageType, hitDesc.fDamage, hitDesc.eName);
+			m_pBattlePlayer->Add_Gauge(hitDesc.fEnergyCharge, hitDesc.fDecibelCharge);
+			auto pCharacter = m_pBattlePlayer->GetCurCharacterHandle().GetAs<CCharacter>();
+			pCharacter->OnDamage();
+			if (hitDesc.eDamageType == DAMAGE_TYPE::HARD && pEnemy->IsGroggy() && pEnemy->Get_ComboCount() != 0)
+			{
+				if (!pCharacter->Is_ReserveCombo())
+				{
+					pEnemy->Decrease_ComboCount();
+					pCharacter->Reserve_ComboAttack();
+				}
+			}
+		}
 	}
 	if (!m_BattleSnapShots[BATTLE_OBJ_TYPE::MONSTER].empty())
 		HitVFX(hitDesc.eDamageType);
@@ -196,7 +210,20 @@ void CBattleSystem::TakeAreaDamage(const _float3& vCenter, _float fRadius, const
 
 		auto pEnemy = dynamic_cast<CEnemy*>(info.hObject.Get());
 		if (pEnemy)
+		{
 			pEnemy->TakeDamage(hitDesc.eDamageType, hitDesc.fDamage, hitDesc.eName);
+			m_pBattlePlayer->Add_Gauge(hitDesc.fEnergyCharge, hitDesc.fDecibelCharge);
+			auto pCharacter = m_pBattlePlayer->GetCurCharacterHandle().GetAs<CCharacter>();
+			pCharacter->OnDamage();
+			if (hitDesc.eDamageType == DAMAGE_TYPE::HARD && pEnemy->IsGroggy() && pEnemy->Get_ComboCount() != 0)
+			{
+				if (!pCharacter->Is_ReserveCombo())
+				{
+					pEnemy->Decrease_ComboCount();
+					pCharacter->Reserve_ComboAttack();
+				}
+			}
+		}
 	}
 	if (!m_BattleSnapShots[BATTLE_OBJ_TYPE::MONSTER].empty())
 		HitVFX(hitDesc.eDamageType);
@@ -217,8 +244,20 @@ void CBattleSystem::TakeBoxDamage(const _float3& vCenter, const _float3& vHalfEx
 			continue;
 
 		auto pEnemy = dynamic_cast<CEnemy*>(info.hObject.Get());
-		if (pEnemy) {
+		if (pEnemy)
+		{
 			pEnemy->TakeDamage(hitDesc.eDamageType, hitDesc.fDamage, hitDesc.eName);
+			m_pBattlePlayer->Add_Gauge(hitDesc.fEnergyCharge, hitDesc.fDecibelCharge);
+			auto pCharacter = m_pBattlePlayer->GetCurCharacterHandle().GetAs<CCharacter>();
+			pCharacter->OnDamage();
+			if (hitDesc.eDamageType == DAMAGE_TYPE::HARD && pEnemy->IsGroggy() && pEnemy->Get_ComboCount() != 0)
+			{
+				if (!pCharacter->Is_ReserveCombo())
+				{
+					pEnemy->Decrease_ComboCount();
+					pCharacter->Reserve_ComboAttack();
+				}
+			}
 		}
 	}
 	if (!m_BattleSnapShots[BATTLE_OBJ_TYPE::MONSTER].empty())
@@ -237,6 +276,17 @@ void CBattleSystem::TakeAllDamage(const HitDesc& hitDesc)
 		if (pEnemy)
 		{
 			pEnemy->TakeDamage(hitDesc.eDamageType, hitDesc.fDamage, hitDesc.eName);
+			m_pBattlePlayer->Add_Gauge(hitDesc.fEnergyCharge, hitDesc.fDecibelCharge);
+			auto pCharacter = m_pBattlePlayer->GetCurCharacterHandle().GetAs<CCharacter>();
+			pCharacter->OnDamage();
+			if (hitDesc.eDamageType == DAMAGE_TYPE::HARD && pEnemy->IsGroggy() && pEnemy->Get_ComboCount() != 0)
+			{
+				if (!pCharacter->Is_ReserveCombo())
+				{
+					pEnemy->Decrease_ComboCount();
+					pCharacter->Reserve_ComboAttack();
+				}
+			}
 		}
 	}
 	if(!m_BattleSnapShots[BATTLE_OBJ_TYPE::MONSTER].empty())
@@ -356,6 +406,16 @@ void CBattleSystem::ClearBattleStage()
 	m_BattleSnapShots.clear();
 
 	m_BattleSnapShots = m_BattleObjInfos;
+}
+
+void CBattleSystem::AllKill()
+{
+	HitDesc AllKill{};
+
+	AllKill.fDamage = 10000.f;
+	AllKill.eDamageType = DAMAGE_TYPE::NORMAL;
+
+	TakeAllDamage(AllKill);
 }
 
 BATTLEOBJ_INFO* CBattleSystem::FindBattleObjInfo(OBJECT_HANDLE objectHandle)

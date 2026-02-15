@@ -292,9 +292,6 @@
     <Filter Include="00. MainApp\00. CursorController">
       <UniqueIdentifier>{5e864d76-8135-44f8-b744-bd0c5b16cda6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Object\Interactable\Barricade">
-      <UniqueIdentifier>{8b1edd40-c12b-4e78-9bb4-7bbe13b2d7ba}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\Object\Npc\Service\Howl">
       <UniqueIdentifier>{8ed08d95-7d7d-4549-9bbe-fd2a5fe86237}</UniqueIdentifier>
     </Filter>
@@ -1047,9 +1044,6 @@
     <Filter Include="03. Utility\06. FieldSystem\Room\05. Room_Gacha">
       <UniqueIdentifier>{820f4014-89e1-411c-b031-be391e0f1e5e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Effect\MeshEffect">
-      <UniqueIdentifier>{6160f086-da22-44d2-91a6-5d30cc56d8e0}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. Level\04. Zero\Stage_Start">
       <UniqueIdentifier>{68bfc06d-7f7e-4232-b8f1-d9e74f644886}</UniqueIdentifier>
     </Filter>
@@ -1353,6 +1347,12 @@
     <Filter Include="02. GameObject\Object\Enemy\Boss\Defiler\State\OtherState">
       <UniqueIdentifier>{7070f4d4-6cda-4ac4-b714-abd5e747e09d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Elite\ThugBulkyEnforcer\State\Parried">
+      <UniqueIdentifier>{5f91a72c-9f8b-4127-a614-47ef3f1ae674}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Effect\PaperEffect">
+      <UniqueIdentifier>{6160f086-da22-44d2-91a6-5d30cc56d8e0}</UniqueIdentifier>
+    </Filter>
     <Filter Include="03. Utility\11. Gui_Panel\02. BattleSystemPanel">
       <UniqueIdentifier>{33aaa6b5-cece-4287-bbb1-0487b614c913}</UniqueIdentifier>
     </Filter>
@@ -1367,6 +1367,63 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Env\WaterWaves\WaterWave">
       <UniqueIdentifier>{aea5bd1e-985a-4281-bd0f-03da8ed2d179}</UniqueIdentifier>
+          </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\Party">
+      <UniqueIdentifier>{e5501893-5332-4c0a-865e-adb30f047d16}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\Party\EnterButton">
+      <UniqueIdentifier>{2a65ae1a-2d15-4aea-aaec-25a549666d32}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\Party\PartyCard">
+      <UniqueIdentifier>{7605a7fe-becb-4841-9804-281139893668}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\Party\PartyCard\RenderTarget">
+      <UniqueIdentifier>{f31daf48-a890-4c4a-accc-00c9ad3a488d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\Party\PartyCard\Avatar">
+      <UniqueIdentifier>{8fdd01bf-0a4a-4437-9252-352bb3370beb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\Party\PartySynergy">
+      <UniqueIdentifier>{5bc53c96-2a5a-4d7e-aea1-9926556f894f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Elite\Giant">
+      <UniqueIdentifier>{9252838b-0ea8-417d-925a-ea4c67e6b600}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Elite\Giant\State">
+      <UniqueIdentifier>{d86084be-d8a4-4e62-bd94-f787f8dd49a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Elite\Giant\State\Attack">
+      <UniqueIdentifier>{45e736d3-8035-4585-81b4-4a2046e047dd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Elite\Giant\State\Born">
+      <UniqueIdentifier>{e3921acc-1b4b-471a-922d-057b2e96f7b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Elite\Giant\State\Chase">
+      <UniqueIdentifier>{6ebf9348-fa58-4d5d-ac57-c936f2f2a293}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Elite\Giant\State\Death">
+      <UniqueIdentifier>{672ae661-1bda-4dfe-b2ea-21391949ea2e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Elite\Giant\State\Groggy">
+      <UniqueIdentifier>{e2db0d0c-a397-4ae9-9bef-1b44c07bf051}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Elite\Giant\State\Hit">
+      <UniqueIdentifier>{159a0758-7e6c-462e-b76b-97983bff3f70}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Elite\Giant\State\Idle">
+      <UniqueIdentifier>{2d270cd8-2521-4ee0-8b4a-f2e691927e4e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Elite\Giant\State\Move">
+      <UniqueIdentifier>{31718f1b-5893-44a3-afe3-c11283d18386}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Elite\Giant\State\Parried">
+      <UniqueIdentifier>{bc41c9e0-a786-45c2-8d45-4fbf00b4eab9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Interactable\HealKit">
+      <UniqueIdentifier>{8b1edd40-c12b-4e78-9bb4-7bbe13b2d7ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Interactable\HealKit\KitObject">
+      <UniqueIdentifier>{5f5264af-4f99-4805-ad3c-99dec2533a26}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -2630,6 +2687,12 @@
     <ClInclude Include="..\Public\DefilerState_Other.h">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler\State\OtherState</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\ThugBulkyEnforcer_Parried.h">
+      <Filter>02. GameObject\Object\Enemy\Elite\ThugBulkyEnforcer\State\Parried</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\PaperEffect.h">
+      <Filter>02. GameObject\Effect\PaperEffect</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\BattleSystem_Panel.h">
       <Filter>03. Utility\11. Gui_Panel\02. BattleSystemPanel</Filter>
     </ClInclude>
@@ -2641,6 +2704,60 @@
     </ClInclude>
     <ClInclude Include="..\public\WaterWaves.h">
       <Filter>02. GameObject\Object\Env\WaterWaves</Filter>
+          </ClInclude>
+    <ClInclude Include="..\Public\UI_Party.h">
+      <Filter>02. GameObject\UI\01. 2D\Party</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_PartyEnterButton.h">
+      <Filter>02. GameObject\UI\01. 2D\Party\EnterButton</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_PartySynergy.h">
+      <Filter>02. GameObject\UI\01. 2D\Party\PartySynergy</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_PartyCard.h">
+      <Filter>02. GameObject\UI\01. 2D\Party\PartyCard</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_PartyCardRTDraw.h">
+      <Filter>02. GameObject\UI\01. 2D\Party\PartyCard\RenderTarget</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_PartyAvatar.h">
+      <Filter>02. GameObject\UI\01. 2D\Party\PartyCard\Avatar</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Giant.h">
+      <Filter>02. GameObject\Object\Enemy\Elite\Giant</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Giant_Attack.h">
+      <Filter>02. GameObject\Object\Enemy\Elite\Giant\State\Attack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Giant_Born.h">
+      <Filter>02. GameObject\Object\Enemy\Elite\Giant\State\Born</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Giant_Chase.h">
+      <Filter>02. GameObject\Object\Enemy\Elite\Giant\State\Chase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Giant_Death.h">
+      <Filter>02. GameObject\Object\Enemy\Elite\Giant\State\Death</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Giant_Groggy.h">
+      <Filter>02. GameObject\Object\Enemy\Elite\Giant\State\Groggy</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Giant_Hit.h">
+      <Filter>02. GameObject\Object\Enemy\Elite\Giant\State\Hit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Giant_Idle.h">
+      <Filter>02. GameObject\Object\Enemy\Elite\Giant\State\Idle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Giant_Move.h">
+      <Filter>02. GameObject\Object\Enemy\Elite\Giant\State\Move</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Giant_Parried.h">
+      <Filter>02. GameObject\Object\Enemy\Elite\Giant\State\Parried</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\HealKit.h">
+      <Filter>02. GameObject\Object\Interactable\HealKit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\KitObject.h">
+      <Filter>02. GameObject\Object\Interactable\HealKit\KitObject</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -3863,6 +3980,12 @@
     <ClCompile Include="..\Private\DefilerState_Other.cpp">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler\State\OtherState</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\ThugBulkyEnforcer_Parried.cpp">
+      <Filter>02. GameObject\Object\Enemy\Elite\ThugBulkyEnforcer\State\Parried</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\PaperEffect.cpp">
+      <Filter>02. GameObject\Effect\PaperEffect</Filter>
+    </ClCompile>
     <ClCompile Include="..\Private\BattleSystem_Panel.cpp">
       <Filter>03. Utility\11. Gui_Panel\02. BattleSystemPanel</Filter>
     </ClCompile>
@@ -3874,6 +3997,60 @@
     </ClCompile>
     <ClCompile Include="..\private\WaterWaves.cpp">
       <Filter>02. GameObject\Object\Env\WaterWaves</Filter>
+          </ClCompile>
+    <ClCompile Include="..\Private\UI_Party.cpp">
+      <Filter>02. GameObject\UI\01. 2D\Party</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_PartyEnterButton.cpp">
+      <Filter>02. GameObject\UI\01. 2D\Party\EnterButton</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_PartySynergy.cpp">
+      <Filter>02. GameObject\UI\01. 2D\Party\PartySynergy</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_PartyCard.cpp">
+      <Filter>02. GameObject\UI\01. 2D\Party\PartyCard</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_PartyCardRTDraw.cpp">
+      <Filter>02. GameObject\UI\01. 2D\Party\PartyCard\RenderTarget</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_PartyAvatar.cpp">
+      <Filter>02. GameObject\UI\01. 2D\Party\PartyCard\Avatar</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Giant.cpp">
+      <Filter>02. GameObject\Object\Enemy\Elite\Giant</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Giant_Attack.cpp">
+      <Filter>02. GameObject\Object\Enemy\Elite\Giant\State\Attack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Giant_Born.cpp">
+      <Filter>02. GameObject\Object\Enemy\Elite\Giant\State\Born</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Giant_Chase.cpp">
+      <Filter>02. GameObject\Object\Enemy\Elite\Giant\State\Chase</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Giant_Death.cpp">
+      <Filter>02. GameObject\Object\Enemy\Elite\Giant\State\Death</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Giant_Groggy.cpp">
+      <Filter>02. GameObject\Object\Enemy\Elite\Giant\State\Groggy</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Giant_Hit.cpp">
+      <Filter>02. GameObject\Object\Enemy\Elite\Giant\State\Hit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Giant_Idle.cpp">
+      <Filter>02. GameObject\Object\Enemy\Elite\Giant\State\Idle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Giant_Move.cpp">
+      <Filter>02. GameObject\Object\Enemy\Elite\Giant\State\Move</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Giant_Parried.cpp">
+      <Filter>02. GameObject\Object\Enemy\Elite\Giant\State\Parried</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\HealKit.cpp">
+      <Filter>02. GameObject\Object\Interactable\HealKit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\KitObject.cpp">
+      <Filter>02. GameObject\Object\Interactable\HealKit\KitObject</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -134,6 +134,7 @@ void CUI_GachaDisplay::Create_SkipButton(function<void()> onClickSkip)
         };
     pDesc->strLabel = L"°Ç³Ê¶Ù±â";
     pDesc->strTextureKey = "IconSkip.png";
+    pDesc->strSoundKey = "UI_Tick.wav";
     auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_IconButton" })
         .Add_UIDesc(pDesc)
         .Build("buttonSkip");

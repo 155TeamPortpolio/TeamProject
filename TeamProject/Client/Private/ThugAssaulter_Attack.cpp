@@ -22,14 +22,19 @@ void CThugAssaulter_Attack::Enter(CThugAssaulter* pOwner)
 		return;
 
 	_int iAttackPatternIndex = pStateMachine->Get_Int("AttackPattern");
-	if (0 != iAttackPatternIndex) {
+	if (0 != iAttackPatternIndex) 
 		pStateMachine->Set_Int("AttackPattern", 0);
-		AttackFromIndex(iAttackPatternIndex);
+	else
+	{
+		auto targetinginfo = pOwner->GetTargetingInfo();
+		auto hysteriesis = pOwner->GetHysteriesis();
+		if (targetinginfo.fDistance <= hysteriesis.fComboEnter)
+			iAttackPatternIndex = Helper::Get_Random_Int(1, 2);
+		else if (targetinginfo.fDistance <= hysteriesis.fComboExit)
+			iAttackPatternIndex = Helper::Get_Random_Int(3, 4);
 	}
-	else {
 		iAttackPatternIndex = Helper::Get_Random_Int(1, 4);
-		AttackFromIndex(iAttackPatternIndex);
-	}
+	AttackFromIndex(iAttackPatternIndex);
 	pOwner->UnleashAttack();
 	//pOwner->SetOnAttack(true);
 	pOwner->CaptureRotateToDir(pOwner->GetTargetingInfo().vDirToTarget);

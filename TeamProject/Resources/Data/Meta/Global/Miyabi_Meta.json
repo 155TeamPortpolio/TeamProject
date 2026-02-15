@@ -235,7 +235,7 @@
         {
           "EventTime": 0.6385964751243591,
           "EventType": "Notify",
-          "EventTag": "AreaAttack"
+          "EventTag": "AreaAttackHard"
         },
         {
           "EventTime": 0.6754385828971863,
@@ -302,7 +302,7 @@
         {
           "EventTime": 1.2194931507110596,
           "EventType": "Notify",
-          "EventTag": "AreaAttack"
+          "EventTag": "AreaAttackHard"
         }
       ]
     },
@@ -496,7 +496,7 @@
         {
           "EventTime": 0.5031188726425171,
           "EventType": "Notify",
-          "EventTag": "AreaAttack"
+          "EventTag": "AreaAttackHard"
         },
         {
           "EventTime": 0.5313839912414551,
@@ -927,7 +927,7 @@
       "ClipTag": "Avatar_Female_Size02_Unagi_Ani_Run",
       "Events": [
         {
-          "EventTime": 0.0011631107330322,
+          "EventTime": 0.001163110719062388,
           "EventType": "Sound",
           "EventTag": "Miyabi_Walk_R.wav"
         },
@@ -1015,7 +1015,7 @@
         {
           "EventTime": 1.063742756843567,
           "EventType": "Notify",
-          "EventTag": "AreaAttack"
+          "EventTag": "AreaAttackHard"
         },
         {
           "EventTime": 1.2762116193771362,
@@ -1037,6 +1037,11 @@
           "EventTag": "UltimateAttack"
         },
         {
+          "EventTime": 0.21858349442481995,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
           "EventTime": 0.27000001072883606,
           "EventType": "Notify",
           "EventTag": "UltimateAttack"
@@ -1052,14 +1057,29 @@
           "EventTag": "UltimateAttack"
         },
         {
+          "EventTime": 0.8969460129737854,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
           "EventTime": 1.0024690628051758,
           "EventType": "Notify",
           "EventTag": "UltimateAttack"
         },
         {
+          "EventTime": 1.0024690628051758,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
           "EventTime": 1.1004548072814941,
           "EventType": "Notify",
           "EventTag": "UltimateAttack"
+        },
+        {
+          "EventTime": 1.110454797744751,
+          "EventType": "Notify",
+          "EventTag": "MotionBlurEnd"
         },
         {
           "EventTime": 2.0426249504089355,
@@ -1070,6 +1090,16 @@
           "EventTime": 2.8265106678009033,
           "EventType": "Notify",
           "EventTag": "UltimateEnd"
+        },
+        {
+          "EventTime": 0.5728394985198975,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 1.100000023841858,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
         }
       ]
     },

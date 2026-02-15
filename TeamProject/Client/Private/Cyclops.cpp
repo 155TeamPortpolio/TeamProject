@@ -118,6 +118,7 @@ void CCyclops::Render_GUI()
 	const float textLineHeight = ImGui::GetTextLineHeightWithSpacing();
 	const float childHeight = (textLineHeight * 5) + (ImGui::GetStyle().WindowPadding.y * 2);
 
+	GUI_DebugButton();
 #pragma region Component Inspector
 	if (ImGui::TreeNode("Inspector##ThugBulkyInspector")) {
 		__super::Render_GUI();
@@ -242,14 +243,9 @@ void CCyclops::Render_GUI()
 	ImGui::Checkbox("Auto Pattern", &m_isAutoPatternPlay);
 #pragma endregion
 
-	if (ImGui::Button("Execute"))
-		m_tStatus.iNowHP -= m_tStatus.iMaxHP;
-
-	if (ImGui::Button("Groggy"))
-		m_tStatus.iGroggyValue += 100;
-
-	if (ImGui::Button("Test Alive"))
-		Set_Alive(!Is_Alive());
+	_float fDeathDisappearProgress = m_pStateMachine->Get_Float("DeathDisappearProgress");
+	if (ImGui::DragFloat("DeathDisappearProgress", &fDeathDisappearProgress, 0.01f))
+		m_pStateMachine->Set_Float("DeathDisappearProgress", fDeathDisappearProgress);
 
 
 	ImGui::PopID();

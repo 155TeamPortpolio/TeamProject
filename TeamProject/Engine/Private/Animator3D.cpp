@@ -575,6 +575,18 @@ void CAnimator3D::Set_LayerType(ANIM_LAYER_STATE eLayerType, _uint LayerIndex)
 	m_AnimLayers[LayerIndex].eLayerType = eLayerType;
 }
 
+_bool CAnimator3D::Get_BipWorld(_float4x4* pOutMatrix)
+{
+	_int iBoneIndex = Resolve_BoneIndex("Bip001");
+	if (-1 == iBoneIndex)
+		return false;
+
+	if(pOutMatrix)
+		*pOutMatrix = Get_BoneMatrix(BoneSpace::WORLD, "Bip001");
+
+	return true;
+}
+
 void CAnimator3D::Change_Speed(_float fSpeed, _uint LayerIndex)
 {
 	if (!isExistLayer(LayerIndex)) return;
@@ -1066,6 +1078,7 @@ void CAnimator3D::Animation_Run(ANIM_LAYER& Layer, _float dt)
 	_float playSpeed = Compute_PlaySpeed(Layer, dt);
 
 	//Update TrackPos
+	Layer.fPrevTrackPosition = Layer.fCurrentTrackPosition;
 	Layer.fCurrentTrackPosition = nowClip->TranslateAnimateMatrix(
 		Layer.LocalMatrices, Layer.fCurrentTrackPosition,
 		playSpeed, Layer.bLoop, Layer.fEndAt, Layer.fStartAt,
@@ -1147,6 +1160,7 @@ void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
 	}
 
 	if (Layer.bUpdate_NewClip) {
+		Layer.fPrevTrackPosition = Layer.fBlendTrackPosition;
 		Layer.fBlendTrackPosition = nextClip->TranslateAnimateMatrix(
 			Layer.BlendMatrices, Layer.fBlendTrackPosition,
 			playSpeed, Layer.bLoop, Layer.fEndAt, Layer.fStartAt,

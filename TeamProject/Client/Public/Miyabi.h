@@ -99,6 +99,7 @@ private:
     // 모션블러
     deque<vector<vector<_float4x4>>>    m_BoneMatrices;
     deque<_float4x4>                    m_WorldMatrices;
+    _int                                m_iUseHeightGradient = 0;
 
 public:
     static CMiyabi* Create();

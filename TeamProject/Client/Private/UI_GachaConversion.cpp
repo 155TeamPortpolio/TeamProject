@@ -3,6 +3,7 @@
 
 #include "GameInstance.h"
 #include "ObjectContainer.h"
+#include "AudioSource.h"
 #include "TextSlot.h"
 #include "ButtonUI.h"
 
@@ -11,6 +12,8 @@ HRESULT CUI_GachaConversion::Initialize_Prototype()
 	__super::Initialize_Prototype();
 
 	Add_Component<CObjectContainer>();
+    Add_Component<CAudioSource>();
+    Get_Component<CAudioSource>()->SoundFolder(G_GlobalLevelKey, "../Bin/Resources/Global/UI/Sound/");
 
 	return S_OK;
 }
@@ -85,6 +88,8 @@ void CUI_GachaConversion::Cache()
 
 void CUI_GachaConversion::OnClick()
 {
+    Get_Component<CAudioSource>()->Slot("UI_Tick.wav").Play();
+
     Set_ChildAnimation(CHILD::OVERLAY, 0);
     Set_ChildAnimation(CHILD::LABEL, 0);
     Set_ChildAnimation(CHILD::COUNT, 0);

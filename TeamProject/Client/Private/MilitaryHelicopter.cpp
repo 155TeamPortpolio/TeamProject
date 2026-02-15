@@ -33,6 +33,8 @@ HRESULT CMilitaryHelicopter::Initialize_Prototype()
     auto pMaterial = Get_Component<CMaterial>();
     pMaterial->Link_Material("Scott_Level", "Device_Vehicle_MilitaryHelicopter_01out.mat");
 
+    Get_Component<CAudioSource>()->SoundFolder("Scott_Level", "../Bin/Resources/Scott/AmbientActor/MilitaryHelicopter/Sound/");
+
     return S_OK;
 }
 
@@ -58,8 +60,11 @@ void CMilitaryHelicopter::Awake()
         .Loop(true)
         .Apply();
 
-    Get_Component<CAudioSource>()->SoundFolder("Scott_Level", "../Bin/Resources/Scott/AmbientActor/MilitaryHelicopter/Sound/");
-    Get_Component<CAudioSource>()->Slot("Helicopter.wav").Attribute3D(true).Loop(true).Play();
+    Get_Component<CAudioSource>()->Slot("Helicopter.wav")
+        .Attribute3D(true)
+        .Loop(true)
+        .Volume(0.15f)
+        .Play();
 }
 
 void CMilitaryHelicopter::Priority_Update(_float dt)
@@ -69,7 +74,8 @@ void CMilitaryHelicopter::Priority_Update(_float dt)
 void CMilitaryHelicopter::Update(_float dt)
 {
     Get_Component<CAnimator3D>()->Update_Animation(dt);
-    //Get_Component<CAudioSource>()->
+    Get_Component<CAudioSource>()->Set_AudioPos(
+        Get_Component<CAnimator3D>()->Get_BonePosition(CAnimator3D::BoneSpace::WORLD, "Ctr_Main"));
 }
 
 void CMilitaryHelicopter::Late_Update(_float dt)
