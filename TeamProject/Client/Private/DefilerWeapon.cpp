@@ -164,10 +164,9 @@ void CDefilerWeapon::Update(_float dt)
 	m_vVelocity = m_vVelocity.Lerp(m_vVelocity, m_vTargetVelocity, t);
 	m_pTransform->Translate(m_vVelocity * dt);
 	Get_Component<CRigidBody>()->Set_GlobalPos(m_pTransform->Get_WorldPos(), m_pTransform->Get_QuaternionRotate());
-
 	Get_Component<CCollider>()->Update(dt);
-	Update_Dissolve(dt);
 	Get_Component<CObjectContainer>()->UpdateChild(dt);
+	Update_Dissolve(dt);
 }
 void CDefilerWeapon::Late_Update(_float dt)
 {

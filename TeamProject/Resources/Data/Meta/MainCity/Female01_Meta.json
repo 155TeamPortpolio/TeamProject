@@ -1,0 +1,87 @@
+{
+  "AnimPath": "",
+  "PreTransform": {
+    "_11": -0.009999999776482582,
+    "_12": 0.0,
+    "_13": 0.0,
+    "_14": 0.0,
+    "_21": 0.0,
+    "_22": 0.009999999776482582,
+    "_23": 0.0,
+    "_24": 0.0,
+    "_31": 0.0,
+    "_32": 0.0,
+    "_33": -0.009999999776482582,
+    "_34": 0.0,
+    "_41": 0.0,
+    "_42": 0.0,
+    "_43": 0.0,
+    "_44": 1.0
+  },
+  "Clips": [
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Sit_Wait01_056",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Sit_Wait02_060",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Sit_Wait_049",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Stand_Calm01_017",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Stand_Calm02_018",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Stand_Idle01_001",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Stand_Positive_028",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Stand_Talk02_007",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Stand_Talk03_008",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Stand_Talk04_009",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Stand_Talk05_010",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Stand_Talk_006",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Stand_Thinkng02_012",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Stand_Thinkng_011",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Walk_Normal_020",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Walk_PlayPhone_022",
+      "Events": []
+    }
+  ]
+}

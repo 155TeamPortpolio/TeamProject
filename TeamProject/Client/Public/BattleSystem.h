@@ -38,6 +38,7 @@ public: //getter
 	const vector<BATTLEOBJ_INFO>&	GetBattleObjects(BATTLE_OBJ_TYPE eType) const;
 	vector<BATTLEOBJ_INFO>			CopyBattleObjects(BATTLE_OBJ_TYPE eType);/*복사반환*/
 	_bool							isMonsterCleared();
+	_bool							isVFXRunning();
 
 public: //setter
 	void	SetActive(_bool is);
@@ -76,7 +77,6 @@ private:
 	_bool	m_isReady = { false };
 	_bool	m_isActive = { false };
 	_uint m_LastFrame = {};
-
 private:
 	class CBattlePlayer* m_pBattlePlayer = { nullptr };// 배틀 플레이어
 	class CBattleFXFlow* m_pFXFlow = { nullptr };

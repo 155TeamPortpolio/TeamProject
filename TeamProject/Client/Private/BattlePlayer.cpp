@@ -31,9 +31,8 @@ HRESULT CBattlePlayer::Initialize()
     CBattleSystem::GetInstance()->SetBattlePlayer(this);
     Initialize_CharacterPrototype();
 
-    // Jehyun : 원상복구 안해놓냐? 뒤질래?
-    //vector<CHARACTER> BattleCharacters = {CHARACTER::Corin, CHARACTER::Miyabi, CHARACTER::JaneDoe, };
-    vector<CHARACTER> BattleCharacters = {CHARACTER::Miyabi,CHARACTER::JaneDoe, CHARACTER::Corin, };
+    vector<CHARACTER> BattleCharacters = { CHARACTER::Miyabi, CHARACTER::Corin, CHARACTER::JaneDoe,  };
+    //vector<CHARACTER> BattleCharacters = { CHARACTER::JaneDoe, CHARACTER::Miyabi, CHARACTER::Corin, };
     SetBattleCharacters(BattleCharacters);
 
     return S_OK;
@@ -44,7 +43,7 @@ void CBattlePlayer::Awake()
     UI_ACTION_PRIMARY_DESC desc;
     desc.eMode = UI_ACTION_PRIMARY_MODE::ATTACK;
     EventSystem()->Broadcast<UI_ACTION_PRIMARY_DESC>({ desc });
-
+    AudioDevice()->Set_Listener(m_pCurrentCharacter->Get_Component<CTransform>());
     m_bAwaked = true;
 }
 
@@ -131,6 +130,22 @@ void CBattlePlayer::Render_GUI()
 {
     if (nullptr == m_pCurrentCharacter)
         return;
+
+    ImGui::Separator();
+    if (ImGui::Button("RecoverHP"))
+    {
+        Recover_HP();
+    }
+    ImGui::SameLine();
+    if (ImGui::Button("RecoverEnergy"))
+    {
+        Recover_Energy();
+    }
+    ImGui::SameLine();
+    if (ImGui::Button("RecoverDecibel"))
+    {
+        Recover_Decibel();
+    }
 
     // Current Character Info
     if (ImGui::CollapsingHeader("Current Character", ImGuiTreeNodeFlags_DefaultOpen))
@@ -374,7 +389,7 @@ void CBattlePlayer::Request_ComboAttack()
     m_bComboSelect = true;
     // 타임스케일 2초간 느리게 하기 몬스터, 캐릭터
     BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::SWITCH);
-    UIDirector()->Show_Switch();
+    //UIDirector()->Show_Switch();
 }
 
 void CBattlePlayer::Execute_ComboAttack(_bool bNext)
@@ -400,6 +415,7 @@ void CBattlePlayer::Execute_ComboAttack(_bool bNext)
     m_pCurrentCharacter->Get_Component<CTransform>()->Set_Look(m_vSwitchLook);
     m_pCurrentCharacter->Set_TargetHandle(m_TargetHandle);
     m_pCurrentCharacter->On_SwitchIn(CCharacter::SWITCH::ATTACK);
+    AudioDevice()->Set_Listener(m_pCurrentCharacter->Get_Component<CTransform>());
 
     Sync_ActionUI();
 
@@ -428,6 +444,30 @@ void CBattlePlayer::End_ChainParry()
         return;
     
     m_bChainParry = false;
+}
+
+void CBattlePlayer::Recover_HP()
+{
+    for (auto character : m_BattleCharacters)
+    {
+        character->Set_FullHP();
+    }
+}
+
+void CBattlePlayer::Recover_Energy()
+{
+    for (auto character : m_BattleCharacters)
+    {
+        character->Set_FullEnergy();
+    }
+}
+
+void CBattlePlayer::Recover_Decibel()
+{
+    for (auto character : m_BattleCharacters)
+    {
+        character->Set_FullDecibel();
+    }
 }
 
 void CBattlePlayer::Update_Input(_float dt)
@@ -664,6 +704,7 @@ void CBattlePlayer::NotifyCharacterSwitchIn()
     m_pCurrentCharacter->Get_Component<CCharacterController>()->Set_Position(m_vSwitchPosition);
     m_pCurrentCharacter->Get_Component<CTransform>()->Set_Look(m_vSwitchLook);
     m_pCurrentCharacter->Set_TargetHandle(m_TargetHandle);
+    AudioDevice()->Set_Listener(m_pCurrentCharacter->Get_Component<CTransform>());
 
     if (m_bReserveParry)
     {

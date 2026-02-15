@@ -42,11 +42,6 @@ HRESULT CUI_RenderTargetScreen::Initialize(INIT_DESC* pArg)
 
 void CUI_RenderTargetScreen::Update(_float dt)
 {
-    if (InputDevice()->Key_Tap('I'))
-        UIDirector()->Show_Clear();
-
-    if (InputDevice()->Key_Tap('J'))
-        UIDirector()->Show_Switch();
 }
 
 HRESULT CUI_RenderTargetScreen::Ready_Components()

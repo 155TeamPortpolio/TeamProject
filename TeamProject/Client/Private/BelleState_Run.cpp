@@ -36,6 +36,17 @@ void CBelleState_Run::Update(CBelle* pOwner, _float dt)
 {
     __super::Update(pOwner, dt);
     m_pSubStateMachine->Set_Bool("IsMove", pOwner->Is_Move_Buffer());
+
+    for (const auto& Event : pOwner->Get_Component<CAnimator3D>()->Get_EventBus())
+    {
+        if (Event.Type != CLIP_EVENT_TYPE::SOUND) continue;
+
+        if (Event.Tag.size() >= 4 &&
+            Event.Tag.substr(Event.Tag.size() - 4) == ".wav")
+        {
+            pOwner->PlaySFX(Event.Tag);
+        }
+    }
 }
 
 void CBelleState_Run::Exit(CBelle* pOwner)

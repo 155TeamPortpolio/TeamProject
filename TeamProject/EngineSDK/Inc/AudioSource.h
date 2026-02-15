@@ -23,7 +23,6 @@ public:
         _bool             hasStopScheduled = false;
         unsigned long long stopDspClock = 0;
         CSoundData*       pSound{};
-        FMOD::Channel*           pChanel{};
         vector<FMOD::Channel*>   pChannels{};
         SOUND_GROUP       eGroup = SOUND_GROUP::SFX;
     }AUDIO_SLOT;

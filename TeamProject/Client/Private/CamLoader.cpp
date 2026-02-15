@@ -112,24 +112,13 @@ namespace
             return req;
         }
 
-        if (StartsWith(key, "WipeOutIntro"))
+        if (StartsWith(key, "Parry"))
         {
-            req.blendInSec   = 0.5f;
-            req.blendOutSec  = 0.f;
-            req.resetTime    = true;
-            req.returnMode   = CamReturnMode::None;
-            req.blendInEase  = EaseType::InOutSine;
-            req.blendOutEase = EaseType::OutSine;
-            return req;
-        }
-
-        if (StartsWith(key, "WipeOut"))
-        {
-            req.blendInSec  = 0.f;
+            req.blendInSec  = 2.f;
             req.blendOutSec = 0.f;
             req.resetTime   = true;
-            req.returnMode  = CamReturnMode::None;
-            req.blendInEase = EaseType::OutQuint;
+            req.returnMode  = CamReturnMode::SnapToEnd;
+            req.blendInEase = EaseType::InOutSine;
             return req;
         }
 

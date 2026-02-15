@@ -84,6 +84,8 @@ void CMapPlacedObject::Priority_Update(_float dt)
 void CMapPlacedObject::Update(_float dt)
 {
 	RotatePerSec(dt);
+	Wave(dt);
+	LookSway(dt);
 }
 
 void CMapPlacedObject::Late_Update(_float dt)
@@ -152,11 +154,21 @@ void CMapPlacedObject::Rotate_SlotData(MAPOBJ_DESC* pObjDesc)
 {
 	if (!pObjDesc) return;
 
-	auto ColGroup_iter = pObjDesc->SlotDataValues.find("Rotation");
+	auto ColGroup_iter = pObjDesc->SlotDataValues.find("Placed");
 	if (ColGroup_iter != pObjDesc->SlotDataValues.end()) {
 		for (auto& tFieldData : ColGroup_iter->second) {
 			if (tFieldData.TagName == "DegreePerSec") {
 				m_vDegreePerSec = *GetSlotValue<_float3>(tFieldData.defaultvalue);
+			}
+
+			if (tFieldData.TagName == "Wave") {
+				m_vWave = *GetSlotValue<_float2>(tFieldData.defaultvalue);
+				m_fWaveTime = 0.f;
+			}
+
+			if (tFieldData.TagName == "LookSway") {
+				m_vLookSway = *GetSlotValue<_float2>(tFieldData.defaultvalue);
+				m_fLookSwayTime = 0.f;
 			}
 		}
 	}
@@ -186,6 +198,45 @@ void CMapPlacedObject::RotatePerSec(_float dt)
 	nextQuat.Normalize();
 
 	Get_Component<CTransform>()->Set_Quaternion(nextQuat);
+}
+
+void CMapPlacedObject::Wave(_float dt)
+{
+	if (m_vWave == _vector2::Zero)
+		return;
+
+	_vector3 vPos = Get_WorldPos();
+
+	if (m_fWaveTime == 0.f)
+		m_fBaseY = vPos.y;
+
+	m_fWaveTime += dt * m_vWave.x;
+
+	_float offset = sinf(XMConvertToRadians(m_fWaveTime)) * m_vWave.y;
+
+	vPos.y = m_fBaseY + offset;
+	m_pTransform->Set_Pos(vPos);
+}
+
+void CMapPlacedObject::LookSway(_float dt)
+{
+	if (m_vLookSway == _vector2::Zero)
+		return;
+
+	if (m_fLookSwayTime == 0.f)
+		m_BaseRotation = Get_WorldRotation().x;
+
+	m_fLookSwayTime += dt;
+
+	float angle =
+		sinf(m_fLookSwayTime * m_vLookSway.x) *
+		m_vLookSway.y;   // degree로 쓸 거면 rad 변환 안 함
+
+	_vector3 rot = Get_WorldRotation(); // 오일러
+
+	rot.x = m_BaseRotation + XMConvertToRadians(angle);  // X축만 변경
+
+	m_pTransform->Rotate(rot);
 }
 
 void CMapPlacedObject::Render_GUI()

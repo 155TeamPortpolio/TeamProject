@@ -29,5 +29,5 @@ void CDefilerState_Idle::Update(CDefiler* pOwner, _float dt)
 void CDefilerState_Idle::Exit(CDefiler* pOwner)
 {
 	m_IdleElapsedTime = 0;
-	IdleDuration = .5f;
+	IdleDuration = .2f;
 }

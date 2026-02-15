@@ -53,6 +53,10 @@ HRESULT CDataBase::CreateTable()
 	if (FAILED(LoadGachaChannelData("../../Resources/Data/Gacha/GachaChannel.csv")))
 		return E_FAIL;
 
+	// Party
+	if (FAILED(LoadPartyData("../../Resources/Data/Party/Party.csv")))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -194,6 +198,15 @@ TV_DESC CDataBase::GetTVDesc(const string& strName)
 const vector<GACHA_CHANNEL_DESC>& CDataBase::GeGachaChannels()
 {
 	return m_GachaChannels;
+}
+
+PARTY_DESC CDataBase::GetPartyData(CHARACTER eCharacter)
+{
+	auto iter = m_PartyTables.find(eCharacter);
+	if (iter == m_PartyTables.end())
+		return PARTY_DESC{};
+
+	return iter->second;
 }
 
 HRESULT CDataBase::LoadPlayerCreationTable(const string& csvPath)
@@ -756,6 +769,50 @@ HRESULT CDataBase::LoadGachaChannelData(const string& csvPath)
 	return S_OK;
 }
 
+HRESULT CDataBase::LoadPartyData(const string& csvPath)
+{
+	io::CSVReader<
+		17,
+		io::trim_chars<' ', '\t'>,
+		io::double_quote_escape<',', '"'>
+	>in(csvPath);
+
+	in.read_header(
+		io::ignore_extra_column | io::ignore_missing_column,
+		"Character", "Name", "Level", "Attribute", "Specialty", "AttributeTexture", "SpecialtyTexture", "Model", "Material", "Meta", "Anim", "PosX", "PosY", "PosZ", "ColorR", "ColorG", "ColorB"
+	);
+
+	string strCharacter, strName, strAttribute, strSpecialty;
+	string strAttributeTexture, strSpecialtyTexture;
+	string strModelKey, strMaterialKey, strMetaKey, strAnimClipKey;
+	_int iLevel = {};
+	_float3 vPosition = {};
+	_float3 vColor = {};
+
+	while (in.read_row(strCharacter, strName, iLevel, strAttribute, strSpecialty, strAttributeTexture, strSpecialtyTexture, strModelKey, strMaterialKey, strMetaKey, strAnimClipKey, vPosition.x, vPosition.y, vPosition.z, vColor.x, vColor.y, vColor.z))
+	{
+		PARTY_DESC desc = {};
+		desc.eCharacter = StringToCharacter(strCharacter);
+		desc.strName = Helper::ConvertToWideString(strName);
+		desc.iLevel = iLevel;
+		desc.eAttribute = StringToAttribute(strAttribute);
+		desc.eSpecialty = StringToSpecialty(strSpecialty);
+		desc.strAttributeTexture = strAttributeTexture;
+		desc.strSpecialtyTexture = strSpecialtyTexture;
+		desc.strModelKey = strModelKey;
+		desc.strMaterialKey = strMaterialKey;
+		desc.strMetaKey = strMetaKey;
+		desc.strAnimClipKey = strAnimClipKey;
+		desc.vPosition = vPosition;
+		desc.vColor = _float4(vColor.x / 255.f, vColor.y / 255.f, vColor.z / 255.f, 1.f);
+
+		if(desc.eCharacter != CHARACTER::END)
+			m_PartyTables.emplace(desc.eCharacter, desc);
+	}
+
+	return S_OK;
+}
+
 const CASHED_OBJ_DATA* CDataBase::Get_CashedData(const string& AreaTag)
 {
 	auto iter = m_CashedData.find(AreaTag);
@@ -860,6 +917,38 @@ wstring CDataBase::StringToWString(const string& str)
 	wstring wstr(size - 1, 0);
 	MultiByteToWideChar(CP_UTF8, 0, processed.c_str(), -1, &wstr[0], size);
 	return wstr;
+}
+
+CHARACTER CDataBase::StringToCharacter(const string& str)
+{ 
+	if (str == "Corin") return CHARACTER::Corin;
+	if (str == "JaneDoe") return CHARACTER::JaneDoe;
+	if (str == "Miyabi") return CHARACTER::Miyabi;
+
+	return CHARACTER::END;
+}
+
+ATTRIBUTE CDataBase::StringToAttribute(const string& str)
+{
+	if (str == "Electric") return ATTRIBUTE::Electric;
+	if (str == "Ether") return ATTRIBUTE::Ether;
+	if (str == "Fire") return ATTRIBUTE::Fire;
+	if (str == "Ice") return ATTRIBUTE::Ice;
+	if (str == "Physical") return ATTRIBUTE::Physical;
+
+	return ATTRIBUTE::END;
+}
+
+SPECIALTY CDataBase::StringToSpecialty(const string& str)
+{
+	if (str == "Attack") return SPECIALTY::Attack;
+	if (str == "Anomaly") return SPECIALTY::Anomaly;
+	if (str == "Defenses") return SPECIALTY::Defenses;
+	if (str == "Rupture") return SPECIALTY::Rupture;
+	if (str == "Stun") return SPECIALTY::Stun;
+	if (str == "Support") return SPECIALTY::Support;
+
+	return SPECIALTY::END;
 }
 
 void CDataBase::Free()

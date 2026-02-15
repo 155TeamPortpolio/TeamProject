@@ -109,6 +109,8 @@ void CJaneDoe::Awake()
     m_fCurrentHP = 300.f;
     m_tEnergy.fCurrentEnergy = 75;
 
+    m_fPassionStream = 100.f;
+    Increase_Passion(1.f);
     if (FAILED(Attach_ParryCollider()))
         return;
 
@@ -892,7 +894,7 @@ HRESULT CJaneDoe::Update_MotionBlurQueue()
 
     for (_int k = m_BoneMatrices.size() - 1; k >= 0; --k)
     {
-        _float t = (_float)k / (_float)(m_BoneMatrices.size() - 1);
+        _float t = (_float)k / (_float)(m_BoneMatrices.size());
         _float4 vColor;
         vColor.x = 0.3f + (0.7f * t);
         vColor.y = 0.0f + (0.15f * t);

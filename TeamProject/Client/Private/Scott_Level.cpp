@@ -36,22 +36,28 @@
 
 /* UI */
 #include "UIDirector.h"
+#include "UI_Party.h"
 
 /* Interactable */
 #include "Portal.h"
-
 #include "Jaeger.h"
+
+/*Room*/
+#include "Room_Scott.h"
+#include "Room_Party.h"
 
 CScott_Level::CScott_Level(const string& LevelKey)
 	:CLevel(LevelKey),
-	m_pGameInstance{ CGameInstance::GetInstance() }
+	m_pGameInstance{ CGameInstance::GetInstance() },
+	m_pFieldSystem{ CFieldSystem::GetInstance() }
 {
 	Safe_AddRef(m_pGameInstance);
+	Safe_AddRef(m_pFieldSystem);
 }
 
 HRESULT CScott_Level::Initialize()
 {
-	FieldSystem()->SetActive(true);
+	m_pFieldSystem->SetActive(true);
 	return S_OK;
 }
 
@@ -70,14 +76,12 @@ HRESULT CScott_Level::Awake()
 	//==================== UI ===============
 	auto uiDirector = CUIDirector::GetInstance();
 	uiDirector->Load_LevelObjects("Scott_Level");
-
+	Ready_UI();
+	Ready_Map("Scott_Level", "Scott");
 	//==================== Interactable ===============
 	pProto->Add_ProtoType("Scott_Level", "Proto_GameObject_Portal", CPortal::Create());
 
 	//============== Map ============================
-	Ready_Map("Scott_Level", "Zero_Worksite");
-	//Ready_Npc();
-
 	//Effect
 	pProto->Add_ProtoType("Scott_Level", "Proto_GameObject_PaperEffect", CPaperEffect::Create());
 	auto PaperEffect = Builder::Create_Object({ "Scott_Level", "Proto_GameObject_PaperEffect" })
@@ -93,7 +97,7 @@ HRESULT CScott_Level::Awake()
 
 void CScott_Level::Update()
 {
-	FieldSystem()->Update();
+	m_pFieldSystem->Update();
 }
 
 HRESULT CScott_Level::Render()
@@ -108,12 +112,9 @@ void CScott_Level::PreLoad_Level()
 
 void CScott_Level::Ready_Map(const string& LevelTag, const string& AreaTag)
 {
-	//Map Loader Logic is going to Change
-	CMapLoader* pMapLoader = CMapLoader::Create(LevelTag, AreaTag);
-	if (nullptr == pMapLoader)
-		MSG_BOX("Failed to Load MapData!");
-
-	Safe_Release(pMapLoader);
+	m_pFieldSystem->RegisterRoom(CRoom_Scott::Create({ "Scott" , true }));
+	m_pFieldSystem->RegisterRoom(CRoom_Party::Create({ "Party" , false }));
+	m_pFieldSystem->RequestEnter("Scott", true);
 }
 
 void CScott_Level::Ready_Npc()
@@ -141,6 +142,19 @@ void CScott_Level::Ready_Npc()
 	objMgr->Add_Object(testMeow, { "Scott_Level", "Npc_Layer" });
 }
 
+void CScott_Level::Ready_UI()
+{
+	if (FAILED(PrototypeManager()->Add_ProtoType("Scott_Level", "Proto_GameObject_Party", CUI_Party::Create())))
+		return;
+
+	auto pParty = Builder::Create_UIObject({ "Scott_Level", "Proto_GameObject_Party" }).Build("party");
+	if (pParty)
+	{
+		UIManager()->Add_UIObject(pParty, "Scott_Level");
+		UIDirector()->Register(pParty);
+	}
+}
+
 CScott_Level* CScott_Level::Create(const string& LevelKey)
 {
 	CScott_Level* instance = new CScott_Level(LevelKey);
@@ -155,6 +169,9 @@ CScott_Level* CScott_Level::Create(const string& LevelKey)
 void CScott_Level::Free()
 {
 	__super::Free();
+	if (m_pFieldSystem)
+		m_pFieldSystem->SetActive(false);
+	m_pFieldSystem->DestroyInstance();
 	m_pGameInstance->DestroyInstance();
 	m_pPlayer->Clear_Characters();
 }

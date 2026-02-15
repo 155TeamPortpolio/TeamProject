@@ -42,6 +42,10 @@ public:
 	/* HUD¸¦ È­¸é¿¡¼­ ¼û±è */
 	void Hide_HUD(HUD hud);
 
+	//==================== Scott ===============
+	void Show_Party(vector<CHARACTER> characters);
+	void Hide_Party();
+
 	//==================== Battle ===============
 	void Request_DamageText(const DAMAGE_DESC& desc);
 

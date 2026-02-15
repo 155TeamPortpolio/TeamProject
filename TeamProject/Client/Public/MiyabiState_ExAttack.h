@@ -60,6 +60,7 @@ private:
     _float   m_fProgress = { 0.2f };
     _float   m_fInterval = { 0.1f };
     _uint    m_iMask = { 0xFFFFFFFF }; // 충돌마스크 복구용
+    DAMAGE_TYPE m_eType = DAMAGE_TYPE::HARD;
 
 public:
     static CMiyabiState_ExAttack_02* Create() { return new CMiyabiState_ExAttack_02(); }
@@ -89,7 +90,7 @@ private:
     _float   m_fProgress = { 0.3f };
     _float   m_fInterval = { 0.05f };
     _uint    m_iMask = { 0xFFFFFFFF }; // 충돌마스크 복구용
-
+    DAMAGE_TYPE m_eType = DAMAGE_TYPE::HARD;
 
 public:
     static CMiyabiState_ExAttack_03* Create() { return new CMiyabiState_ExAttack_03(); }

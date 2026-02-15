@@ -7,6 +7,7 @@
 #include "Corin.h"
 #include "Enemy.h"
 
+#include "CamDirector.h"
 #include "CharacterController.h"
 
 CCorinState_SwitchInParryAid* CCorinState_SwitchInParryAid::Create()
@@ -39,6 +40,9 @@ void CCorinState_SwitchInParryAid::Enter(CCorin* pOwner)
 {
     pOwner->Lock_Move();
     pOwner->Lock_Rotate();
+
+    CamDirector()->StartParry();
+
     __super::Enter(pOwner);
 }
 
