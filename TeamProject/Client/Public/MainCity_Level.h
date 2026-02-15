@@ -28,6 +28,8 @@ private:
 	class CCamDirector* m_pCamDirector = { nullptr };
 	class CMapDataCloud* m_pMapDataCloud = { nullptr };
 	class CPlayer* m_pPlayer = { nullptr };
+	class CFieldSystem* m_pFieldSystem = { nullptr };
+
 public:
 	static CMainCity_Level* Create(const string& LevelKey);
 	virtual void Free() override;

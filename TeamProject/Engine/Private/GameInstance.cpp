@@ -171,8 +171,10 @@ void CGameInstance::Update_Engine(_float dt)
 void CGameInstance::Release_Engine()
 {
 	/*Managers*/
+	m_pSoundDevice->StopAll();
+	m_pSoundDevice->Update();
+	m_pSoundDevice->Update();
 	Safe_Release(m_pTimeManager);
-
 	Safe_Release(m_pLevelManager);
 	Safe_Release(m_pPrototypeManager);
 	Safe_Release(m_pObjectManager);
@@ -184,7 +186,6 @@ void CGameInstance::Release_Engine()
 	Safe_Release(m_pLightService);
 	Safe_Release(m_pGraphicDevice);
 	Safe_Release(m_pInputDevice);
-	Safe_Release(m_pSoundDevice);
 	Safe_Release(m_pRaySystem);
 	Safe_Release(m_pCollisionSystem);
 	Safe_Release(m_pFontSystem);
@@ -193,6 +194,7 @@ void CGameInstance::Release_Engine()
 	Safe_Release(m_pClickManager);
 	Safe_Release(m_pThreadPool);
 	Safe_Release(m_pVideoService);
+	Safe_Release(m_pSoundDevice);
 
 	DestroyInstance();
 }
