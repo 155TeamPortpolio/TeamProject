@@ -12,6 +12,9 @@ public:
     virtual void Update(CCorin* pOwner, _float dt) override;
     virtual void Exit(CCorin* pOwner) override;
 
+private:
+    DAMAGE_TYPE m_eType = DAMAGE_TYPE::NORMAL;
+
 public:
     static CCorinState_ExAttack* Create();
     virtual void Free() override { __super::Free(); }

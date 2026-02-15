@@ -90,12 +90,14 @@ public:
 	void Set_Alpha(_float fAlpha) { m_vColor.w = fAlpha; }
 	void Rotate_Left(_float _radian) { m_fRadian += _radian; }
 	/*Get Size*/
+	_float2 Get_Size() { return m_vSize; }
 	_float2 Get_PxSize() { return m_vSize * m_vScale; }
 	_float2 Half_PxSize() { return Get_PxSize() * 0.5f; }
 	_float2 Get_RectTopLeft_Screen();
 	_float2 Get_CombinedScale() { return m_vCombinedScale; }
 	_float2 Get_AnchorOffset() { return m_vAnchorOffset; }
 	Vector2 Get_Scale() const { return m_vScale; }
+	_float4 Get_Color() { return m_vColor; }
 	_float4* Get_LinearColorPtr() { return &m_vColorLinear; }
 
 	// Screen anchors

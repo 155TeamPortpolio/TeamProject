@@ -1,42 +1,146 @@
 #pragma once
 
+#include "OrbitCamTypes.h"
+
 NS_BEGIN(Client)
 
-class CCamParryController
+class CamParryController
 {
+    enum class State
+    {
+        None, Enter, Impact, WaitEnd
+    };
+
+    struct ShotGoal
+    {
+        Vector3 pivotExt{};
+        _float  yawDeg = 0.f;
+        _float  pitchDeg = 0.f;
+        _float  rollDeg = 0.f;
+        _float  dist = 0.f;
+        _float  yawWeight = 1.f;
+    };
+
+    struct PivotSample
+    {
+        Vector3 basePivot{};
+        Vector3 facePivot{};
+        _bool   valid = false;
+    };
+
 public:
-    void  Reset();
+    struct ParryTuning
+    {
+        struct Common
+        {
+            _float enterSec = 0.5f;
+            _float impactSec = 0.5f;
 
-    void  Begin(_float fovHold = 30.f, _float blendInSec = 0.08f, _float holdSec = 0.12f);
-    void  End(_float blendOutSec = 0.65f);
+            _float pitchDeg = -8.f;
+            _float dist = 2.85f;
 
-    void  Update(_float dt);
+            _float angleDeg = 14.f;
+            _float sideYawBiasDeg = 3.f;
 
-    _bool IsHolding() const { return hold; }
-    _bool IsBusy() const { return hold || blendIn || blendOut; }
+            _float pivotClamp = 0.85f;
+            _float pelvisMul = 0.55f;
+
+            _float forwardOffset = 0.25f;
+            _float pivotYAdd = 0.00f;
+
+            _float minPivotAboveFootY = 0.25f;
+            _float minCamAboveFootY = 0.05f;
+
+            EaseType approachEase = EaseType::InOutSine;
+            EaseType impactEase = EaseType::InSine;
+        };
+
+        struct Impact
+        {
+            _float punchDistDelta = 0.75f;
+            _float rollMaxDeg = 10.f;
+
+            _int   rollShakeCount = 4;
+            _float rollShakeDeg = 3.0f;
+
+            _float rollArcMul = 0.4f;
+
+            _float endCamAboveFootY = 0.5f;
+            _float targetCamYMix = 0.80f;
+            _float pivotDropY = 0.12f;
+        };
+
+        Common common{};
+        Impact impact{};
+    };
+
+public:
+    void Reset();
+    void Begin();
+    void End();
+    void Update(_float dt);
+    
+
+public:
+    ParryTuning tune{};
 
 private:
-    _bool  hold = false;
-    _bool  blendIn = false;
-    _bool  blendOut = false;
+    static PivotSample SamplePivots(OBJECT_HANDLE h, _float offsetY, _float faceYOffsetMul = 0.85f);
+    static Vector3     ClampOffset(const Vector3& offset, _float maxLen);
+    static Vector3     RotateYDegXZ(const Vector3& dirXZ, _float deg);
+    static _float      YawFromDirXZ(const Vector3& dirXZ);
+    static Quaternion  YawPitchRollQuatDeg(_float yawDeg, _float pitchDeg, _float rollDeg);
+    static Vector3     OrbitPos(const Vector3& pivotWorld, const Quaternion& q, _float dist);
 
-    _float fovSaved = 0.f;
-    _float fovHold = 30.f;
+private:
+    void      ApplyGoalPose_Snap(const ShotGoal& g);
+    _float    CurCamYawDeg() const;
+    Vector3   CurCamPosWorld() const;
 
-    Vector3 extSaved{};
-    Vector3 extFrom{};
-    Vector3 extTo{};
+    void      UpdatePivots(_float dt);
+    void      ClampAboveGround(ShotGoal& g) const;
 
-    _float blendTime = 0.f;
-    _float blendInDur = 0.08f;
-    _float blendOutDur = 0.65f;
+    ShotGoal  BuildBaseShot_NoLens(_int sideSign) const;
 
-    _float holdTime = 0.f;
-    _float holdDur = 0.12f;
+    void      CaptureCurAsFrom();
+    void      ApplyInterpolated_Enter(const ShotGoal& a, const ShotGoal& b, _float t);
+    void      ClampEnter_NoDrop(ShotGoal& g) const;
 
-    EaseType easeIn = EaseType::OutCubic;
-    EaseType easeOut = EaseType::InOutSine;
+    void      CaptureCurAsImpactBase();
+    ShotGoal  BuildImpactShot(_int sideSign, _float close01, _float roll01, _float u) const;
+
+    void      ComputeSideFromCam();
+
+    string    BuildParryKey() const;
+
+private:
+    _bool         m_active = false;
+    State         m_state = State::None;
+
+    _float        m_elapsed{};
+
+    OBJECT_HANDLE m_attacker{};
+
+    _int          m_sideSign = 1;
+    _bool         m_isLeft = false;
+
+    Vector3       m_aBase{};
+    Vector3       m_aFace{};
+    _bool         m_aValid = false;
+
+    Vector3       m_dirXZ = Vector3(0.f, 0.f, 1.f);
+
+    ShotGoal      m_shotFrom{};
+    ShotGoal      m_shotTo{};
+
+    _float        m_enterCamY = 0.f;
+
+    ShotGoal      m_impactBase{};
+    Vector3       m_impactPivotWorld{};
+    _bool         m_impactCaptured = false;
+
+    string        m_waitSeqKey{};
+    _bool         m_waitSeqStarted = false;
 };
-
 
 NS_END

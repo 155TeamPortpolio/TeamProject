@@ -3,17 +3,17 @@
 
 NS_BEGIN(Client)
 
-class CUI_RTVDraw : public CUI_Object
+class CUI_ScreenRT : public CUI_Object
 {
 public:
-	typedef struct tagRTVDrawDesc : public UI_DESC {
+	typedef struct tagRTDrawDesc : public UI_DESC {
 		OBJECT_HANDLE hRenderTargetScreen = {};
-	}RTVDRAW_DESC;
+	}RTDRAW_DESC;
 
 protected:
-	CUI_RTVDraw() {}
-	CUI_RTVDraw(const CUI_RTVDraw& rhs) : CUI_Object(rhs) {}
-	virtual ~CUI_RTVDraw() DEFAULT;
+	CUI_ScreenRT() {}
+	CUI_ScreenRT(const CUI_ScreenRT& rhs) : CUI_Object(rhs) {}
+	virtual ~CUI_ScreenRT() DEFAULT;
 
 public:
 	virtual HRESULT Initialize_Prototype()           override;

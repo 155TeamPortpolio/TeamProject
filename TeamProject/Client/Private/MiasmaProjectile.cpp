@@ -8,6 +8,7 @@
 #include "Material.h"
 #include "Animator3D.h"
 #include "CharacterController.h"
+#include "ObjectContainer.h"
 
 CMiasmaProjectile::CMiasmaProjectile()
 	: CEnemy()
@@ -47,6 +48,27 @@ HRESULT CMiasmaProjectile::Initialize(INIT_DESC* pArg)
 	m_vVelocity = { 0,0,0 };
 	m_vTargetVelocity = m_pTransform->Dir(STATE::LOOK) * m_fMoveSpeed;
 	m_ElapsedTime = 0;
+	{
+		BATTLE_COLLIDER_DESC BladeDesc{};
+
+		BladeDesc.tagName = "HEl";
+		BladeDesc.isAttachBone = false;
+		BladeDesc.tagBone = "";
+		BladeDesc.pOwnerAnimator3D = nullptr;
+		BladeDesc.eAttackColliderType = COLLIDER_TYPE::SPHERE;
+		BladeDesc.vAttackSize = _float3{ 2.5f,2.5f,2.5f };
+
+		if (FAILED(AttachBattleColliderObject(&BladeDesc, false)))
+			return E_FAIL;
+	}
+
+	HitDesc		HitDesc = {};
+	HitDesc.eHitType = HIT_TYPE::ONCE;
+	HitDesc.eDamageType = DAMAGE_TYPE::NORMAL;
+	HitDesc.fDamage = 10.f;
+	HitDesc.fInterval = 0.f;
+	HitDesc.iMaxCount = 1;
+	SetBattleColliderObject("HEl", CEnemy::BATTLE_COLTYPE::ATTACK, true, HitDesc);
 
 	return S_OK;
 }
@@ -57,6 +79,7 @@ void CMiasmaProjectile::Awake()
 
 void CMiasmaProjectile::Priority_Update(_float dt)
 {
+	Get_Component<CObjectContainer>()->Priority_UpdateChild(dt);
 }
 
 void CMiasmaProjectile::Update(_float dt)
@@ -64,8 +87,9 @@ void CMiasmaProjectile::Update(_float dt)
 	m_ElapsedTime += dt;
 	m_vVelocity = m_vVelocity.Lerp(m_vVelocity, m_vTargetVelocity, Math::ApplyEase(EaseType::InOutSine, m_ElapsedTime));
 	Get_Component<CTransform>()->Translate(m_vVelocity*dt);
-	Get_Component<CRigidBody>()->Set_GlobalPos(m_pTransform->Get_Pos(), m_pTransform->Get_QuaternionRotate());
+	Get_Component<CRigidBody>()->Set_GlobalPos(m_pTransform->Get_WorldPos(), m_pTransform->Get_QuaternionRotate());
 	Get_Component<CCollider>()->Update(dt);
+	Get_Component<CObjectContainer>()->UpdateChild(dt);
 	if (m_ElapsedTime > 5.f)
 		ObjectManager()->Remove_Object(this);
 }
@@ -73,23 +97,11 @@ void CMiasmaProjectile::Update(_float dt)
 void CMiasmaProjectile::Late_Update(_float dt)
 {
 	Get_Component<CRigidBody>()->Late_Update(dt);
+	Get_Component<CObjectContainer>()->Late_UpdateChild(dt);
 }
 
 void CMiasmaProjectile::Render_GUI()
 {
-}
-
-void CMiasmaProjectile::OnPooledAcquire(INIT_DESC* pArg)
-{
-	Initialize(pArg);
-	Get_Component<CCollider>()->Set_CompActive(true);
-}
-
-void CMiasmaProjectile::OnPooledRelease()
-{
-	m_isOnAttack = false;
-	m_vVelocity = { 0,0,0 };
-	Get_Component<CCollider>()->Set_CompActive(false);
 }
 
 CMiasmaProjectile* CMiasmaProjectile::Create()
@@ -125,16 +137,5 @@ void CMiasmaProjectile::Free()
 
 void CMiasmaProjectile::OnTriggerEnter(CGameObject* pOther)
 {
-	auto pCollidable = pOther->Get_Component<ICollidable>();
-	if (pCollidable)
-		return;
 
-	else {
-		auto pEnemy = dynamic_cast<CCharacter*>(pOther);
-		if (nullptr != pEnemy)
-		{
-			pEnemy->Take_Damage(DAMAGE_TYPE::NORMAL, 10);
-			CameraManager()->AddImpact(1, 0);
-		}
-	}
 }

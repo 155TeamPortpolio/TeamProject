@@ -139,6 +139,10 @@ void CMiyabiState_Attack_01::Enter(CMiyabi* pOwner)
     pOwner->Get_Component<CAudioSource>()->Sequence("NormalAttack01")
         .Attribute3D(true)
         .PlayNext();
+    pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_NormalAttack01_SFX.wav")
+        .Attribute3D(true)
+        .Volume(0.5f)
+        .Play();
 }
 
 void CMiyabiState_Attack_01::Update(CMiyabi* pOwner, _float dt)
@@ -187,6 +191,10 @@ void CMiyabiState_Attack_02::Enter(CMiyabi* pOwner)
     pOwner->Get_Component<CAudioSource>()->Sequence("NormalAttack02")
         .Attribute3D(true)
         .PlayNext();
+    pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_NormalAttack02_SFX.wav")
+        .Attribute3D(true)
+        .Volume(0.5f)
+        .Play();
 }
 
 void CMiyabiState_Attack_02::Update(CMiyabi* pOwner, _float dt)
@@ -237,6 +245,10 @@ void CMiyabiState_Attack_03::Enter(CMiyabi* pOwner)
     pOwner->Get_Component<CAudioSource>()->Sequence("NormalAttack03")
         .Attribute3D(true)
         .PlayNext();
+    pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_NormalAttack03_SFX.wav")
+        .Attribute3D(true)
+        .Volume(0.5f)
+        .Play();
 }
 
 void CMiyabiState_Attack_03::Update(CMiyabi* pOwner, _float dt)
@@ -303,6 +315,10 @@ void CMiyabiState_Attack_04::Enter(CMiyabi* pOwner)
     pOwner->Get_Component<CAudioSource>()->Sequence("NormalAttack04")
         .Attribute3D(true)
         .PlayNext();
+    pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_NormalAttack04_SFX.wav")
+        .Attribute3D(true)
+        .Volume(0.5f)
+        .Play();
 }
 
 void CMiyabiState_Attack_04::Update(CMiyabi* pOwner, _float dt)
@@ -368,6 +384,10 @@ void CMiyabiState_Attack_05::Enter(CMiyabi* pOwner)
     pOwner->Get_Component<CAudioSource>()->Sequence("NormalAttack05")
         .Attribute3D(true)
         .PlayNext();
+    pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_NormalAttack05_SFX.wav")
+        .Attribute3D(true)
+        .Volume(0.5f)
+        .Play();
 }
 
 void CMiyabiState_Attack_05::Update(CMiyabi* pOwner, _float dt)
@@ -380,6 +400,17 @@ void CMiyabiState_Attack_05::Update(CMiyabi* pOwner, _float dt)
     {
         if (Event.Type != CLIP_EVENT_TYPE::NOTIFY) continue;
         if (Event.Tag == "AreaAttack")
+        {
+            _vector3 vLook = pOwner->Get_Component<CTransform>()->Dir(STATE::LOOK);
+            _vector3 vPos = pOwner->Get_WorldPos();
+            BattleSystem()->TakeAreaDamage(vPos, 3.f, HitDesc()
+                .Name(pOwner->Get_CharacterName())
+                .Type(HIT_TYPE::ONCE)
+                .Damage(pOwner->Get_AttackPower() * 1.29f * Helper::Get_Random_Float(1.f, 1.5f)
+                    , DAMAGE_TYPE::NORMAL)
+            );
+        }
+        else if (Event.Tag == "AreaAttackHard")
         {
             _vector3 vLook = pOwner->Get_Component<CTransform>()->Dir(STATE::LOOK);
             _vector3 vPos = pOwner->Get_WorldPos();

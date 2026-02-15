@@ -12,6 +12,8 @@
 #include "UI_GachaDisplay.h"
 #include "UI_GachaResult.h"
 #include "UI_RenderTargetScreen.h"
+#include "UI_Party.h"
+#include "UI_Switch.h"
 
 IMPLEMENT_SINGLETON(CUIDirector);
 
@@ -66,6 +68,19 @@ void CUIDirector::Hide_HUD(HUD hud)
 	Hide_HUD(Get_HUDName(hud));
 }
 
+void CUIDirector::Show_Party(vector<CHARACTER> characters)
+{
+	CUI_Party::UI_PARTY_DESC desc = {};
+	desc.characters = characters;
+
+	UI_Active("party", &desc);
+}
+
+void CUIDirector::Hide_Party()
+{
+	UI_DeActive("party");
+}
+
 void CUIDirector::Request_DamageText(const DAMAGE_DESC& desc)
 {
 	const string levelKey = LevelManager()->Get_NowLevelKey();
@@ -75,6 +90,22 @@ void CUIDirector::Request_DamageText(const DAMAGE_DESC& desc)
 	dmgText->UI_Active((void*)&desc);
 
 	UIManager()->Add_UIObject(dmgText, levelKey);
+}
+
+void CUIDirector::Show_Switch(CHARACTER eLeft, CHARACTER eRight)
+{
+	CUI_Switch::SWITCH_DESC desc = {};
+	desc.left = eLeft;
+	desc.right = eRight;
+
+	UI_Active("switch", &desc);
+	UI_Active("switchRT");
+}
+
+void CUIDirector::Hide_Switch()
+{
+	UI_DeActive("switch");
+	UI_DeActive("switchRT");
 }
 
 void CUIDirector::Show_Lottery()
@@ -150,17 +181,17 @@ void CUIDirector::Show_GachaResult(const vector<GACHA_RESULT_DESC>* pResultDesc)
 
 void CUIDirector::Show_Switch()
 {
-	UI_Active("switch");
+	UI_Active("switchRT");
 }
 
 void CUIDirector::Show_Clear()
 {
-	UI_Active("clear");
+	UI_Active("clearRT");
 }
 
 void CUIDirector::Show_Wipeout()
 {
-	UI_Active("wipeout");
+	UI_Active("wipeoutRT");
 }
 
 void CUIDirector::Initialize()

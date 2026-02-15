@@ -50,6 +50,7 @@ HRESULT CDefilerAxe::Initialize(INIT_DESC* pArg)
 	m_BaseRot = m_pTransform->Get_QuaternionRotate(); 
 	m_fElapsedTime = 0.f;
 	m_tStatus.iNowHP = 100.f;
+	m_bDangle = true;
 	return S_OK;
 }
 
@@ -68,15 +69,17 @@ void CDefilerAxe::Update(_float dt)
 	m_fElapsedTime += dt;
 	Get_Component<CCharacterController>()->Update(dt);
 
-	if (!m_bDangle)
+	if (m_bDangle)
 	{
 		m_vSlide *= expf(-4.f * dt);
+		m_HitShakeAmpDeg *= expf(-m_HitShakeDecay * dt);
+
 		const float length = _vector3(m_vSlide.x, 0.f, m_vSlide.z).Length();
 		const float speedRef = 4.0f;
 		float speed = length / speedRef;
 		speed = Math::ApplyEase(EaseType::OutCubic, speed);
-
-		const float rad = XMConvertToRadians(m_ShakeAmpDeg) * speed;
+		float rad = XMConvertToRadians(m_ShakeAmpDeg) * speed;
+		rad += XMConvertToRadians(m_HitShakeAmpDeg);
 
 		float hz = 1.f + 5.f * speed; 
 		float phase = m_fElapsedTime * hz * XM_2PI;
@@ -91,7 +94,7 @@ void CDefilerAxe::Update(_float dt)
 		m_pTransform->Set_Quaternion(qFinal);
 		Get_Component<CCharacterController>()->Move_RootMotion(m_vSlide * dt, {},dt);
 		if (rad < XMConvertToRadians(0.2f))
-			m_bDangle = true;
+			m_bDangle = false;
 	}
 
 	if (m_tStatus.iNowHP <= 0.f)
@@ -107,25 +110,6 @@ void CDefilerAxe::Render_GUI()
 {
 	__super::Render_GUI();
 }
-
-void CDefilerAxe::OnPooledAcquire(INIT_DESC* pArg)
-{
-	__super::Initialize(pArg);
-	auto desc = static_cast<DefilerAxeDesc*>(pArg);
-	Get_Component<CCharacterController>()->Set_BoundingMinY(1.3f);
-	m_pTransform->Set_Look(desc->vLook);
-	m_vSlide = desc->vLook;
-	m_vSlide = Math::NormalizeSafeXZ(m_vSlide) * 5;
-	m_BaseRot = m_pTransform->Get_QuaternionRotate();
-	m_fElapsedTime = 0.f;
-	Get_Component<CCharacterController>()->Set_CompActive(true);
-}
-
-void CDefilerAxe::OnPooledRelease()
-{
-	Get_Component<CCharacterController>()->Set_CompActive(false);
-}
-
 
 void CDefilerAxe::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER charaName)
 {
@@ -145,6 +129,9 @@ void CDefilerAxe::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER 
 	desc.isEnemy = true;
 	desc.charaName = charaName;
 
+	m_bDangle = true;
+	const _float addDeg = Helper::Get_Random_Float(eDamageType == DAMAGE_TYPE::NORMAL ? 0.6f : 2.3f, eDamageType == DAMAGE_TYPE::NORMAL? 1.4f : 4.5);
+	m_HitShakeAmpDeg = min(m_HitShakeAmpDeg + addDeg, m_HitShakeMaxDeg);
 	UIDirector()->Request_DamageText(desc);
 }
 
@@ -154,7 +141,6 @@ void CDefilerAxe::SummonWall()
 	CDefilerWall::DefilerWallDesc* desc = new CDefilerWall::DefilerWallDesc;
 	desc->vLook = Math::NormalizeSafeXZ(m_pTransform->Dir(STATE::LOOK));
 	_vector3 pos =  m_pTransform->Get_Pos();
-
 	auto pWall = Builder::Create_Object({ "Zero_Level","Proto_GameObject_DefilerWall" })
 		.Position(pos)
 		.Add_ObjDesc(desc)
@@ -197,16 +183,9 @@ void CDefilerAxe::Free()
 
 void CDefilerAxe::OnTriggerEnter(CGameObject* pOther)
 {
-	auto pCollidable = pOther->Get_Component<ICollidable>();
-	if (pCollidable)
-		return;
+	auto pEnemy = dynamic_cast<CCharacter*>(pOther);
+	if (!pEnemy) return;
 
-	else {
-		auto pEnemy = dynamic_cast<CCharacter*>(pOther);
-		if (nullptr != pEnemy)
-		{
-			pEnemy->Take_Damage(DAMAGE_TYPE::NORMAL, 10);
-			CameraManager()->AddImpact(1, 0);
-		}
-	}
+	pEnemy->Take_Damage(DAMAGE_TYPE::HARD, 10);
+	CameraManager()->AddImpact(1, 0);
 }

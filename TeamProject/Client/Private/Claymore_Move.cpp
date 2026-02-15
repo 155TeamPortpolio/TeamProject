@@ -5,6 +5,7 @@
 
 #include "Animator3D.h"
 #include "CharacterController.h"
+#include "AudioSource.h"
 
 void CClaymore_Move::Enter(CClaymore* pOwner)
 {
@@ -54,6 +55,10 @@ void CClaymore_Move::Update(CClaymore* pOwner, _float dt)
 
 	if (m_fAnimProgress > 0.99f)
 		pOwner->Idle();
+
+	for (const auto& Event : pOwner->Get_Component<CAnimator3D>()->Get_EventBus())
+		if (Event.Type == CLIP_EVENT_TYPE::SOUND)
+			pOwner->Get_Component<CAudioSource>()->Slot(Event.Tag).Attribute3D(true).Loop(false).Play();
 }
 
 void CClaymore_Move::Exit(CClaymore* pOwner)

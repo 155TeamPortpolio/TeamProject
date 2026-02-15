@@ -2,6 +2,8 @@
 #include "MiyabiState_RushAttack.h"
 #include "Miyabi.h"
 
+#include "AudioSource.h"
+
 CMiyabiState_RushAttack* CMiyabiState_RushAttack::Create()
 {
     auto pInstance = new CMiyabiState_RushAttack();
@@ -57,6 +59,10 @@ void CMiyabiState_Rush_Start::Enter(CMiyabi* pOwner)
         .ReserveSpeed(0.25f, 0.35f, 2.5f, EaseType::InCubic)
         .ReserveSpeed(0.35f, 0.4f, 4.f, EaseType::OutExpo)
         .Apply();
+    if (Helper::Get_Random_Bool())
+        pOwner->Get_Component<CAudioSource>()->Sequence("RushAttack")
+        .Attribute3D(true)
+        .PlayNext();
     pOwner->Begin_AttackCollider("KatanaWeapon", HitDesc()
         .Name(pOwner->Get_CharacterName())
         .Type(HIT_TYPE::ONCE)

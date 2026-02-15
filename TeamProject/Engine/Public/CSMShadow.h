@@ -31,9 +31,9 @@ private:
     _matrix CreateLightViewProj(const _vector* frustumCorners, const _vector& lightDir, _uint cascadeIndex);
 
 private:
-    static const _uint MAX_CASCADES = 4;
+    static const _uint MAX_CASCADES = 3;
 
-    _uint m_iNumCascades = 4;
+    _uint m_iNumCascades = 3;
     _uint m_iShadowMapSize;
     _float m_fCascadeSplits[MAX_CASCADES + 1];
 

@@ -24,6 +24,7 @@ private:
 
 private:
 	HitDesc		m_HitDesc = {};
+	_bool		m_isScraping = { false };
 };
 
 class CClaymore_Attack1 : public IBaseState<CClaymore>

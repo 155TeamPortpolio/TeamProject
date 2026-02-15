@@ -1,11 +1,16 @@
 #include "pch.h"
 #include "MiyabiState_ChargeAttack.h"
-#include "MiyabiState_Attack.h"
+
 #include "Miyabi.h"
+#include "MiyabiState_Attack.h"
+
 #include "GameInstance.h"
 #include "BattleSystem.h"
+
 #include "Animator3D.h"
+#include "CharacterController.h"
 #include "AudioSource.h"
+
 #include "EffectContainer.h"
 
 CMiyabiState_ChargeAttack* CMiyabiState_ChargeAttack::Create()
@@ -93,6 +98,7 @@ void CMiyabiState_ChargeAttack::Update(CMiyabi* pOwner, _float dt)
 
 void CMiyabiState_ChargeAttack::Exit(CMiyabi* pOwner)
 {
+    pOwner->Set_ResetMove(true);
     pOwner->Pop_Invincible();
     __super::Exit(pOwner);
 }
@@ -253,6 +259,13 @@ void CMiyabiState_Charge_Attack03::Enter(CMiyabi* pOwner)
         .Attribute3D(true)
         .Play();
 
+    pOwner->Rush_Target();
+    pOwner->Set_LookTarget(false);
+
+    m_iMask = pOwner->Get_CCT()->Get_CollisionMask();
+    pOwner->Get_CCT()->Set_CollisionMask(m_iMask - ENUM(COLLISION_GROUP::MONSTER));
+    m_pOwnerStateMachine->Set_Bool("Penetrate", true);
+
     m_iRepeatCount = 0;
     m_iStingRepeatCount = 0;
     m_fRepeatProgress = 0.07f;
@@ -282,6 +295,10 @@ void CMiyabiState_Charge_Attack03::Update(CMiyabi* pOwner, _float dt)
         }
     }
 
+    auto eDamageType = DAMAGE_TYPE::NORMAL;
+    if (m_fAnimProgress >= 0.9f)
+        eDamageType = DAMAGE_TYPE::HARD;
+
     if (m_bAreaAttack)
     {
         m_fAreaTimer += dt;
@@ -294,7 +311,7 @@ void CMiyabiState_Charge_Attack03::Update(CMiyabi* pOwner, _float dt)
                 .Name(pOwner->Get_CharacterName())
                 .Type(HIT_TYPE::ONCE)
                 .Damage(pOwner->Get_AttackPower() * 1.07055f * Helper::Get_Random_Float(1.f, 1.5f)
-                    , DAMAGE_TYPE::NORMAL)
+                    , eDamageType)
             );
 
         }
@@ -310,6 +327,11 @@ void CMiyabiState_Charge_Attack03::Update(CMiyabi* pOwner, _float dt)
 
 void CMiyabiState_Charge_Attack03::Exit(CMiyabi* pOwner)
 {
+    pOwner->Set_LookTarget(true);
+    if (m_pOwnerStateMachine->Get_Bool("Penetrate"))
+    {
+        pOwner->Get_CCT()->Set_CollisionMask(m_iMask);
+    }
     m_bAreaAttack = false;
 }
 

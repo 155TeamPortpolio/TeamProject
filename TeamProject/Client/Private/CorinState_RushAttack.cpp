@@ -60,6 +60,9 @@ void CCorinState_RushAttack::Exit(CCorin* pOwner)
     pOwner->Stop_Effect("Corin_Saw_Slash1");
     pOwner->Set_ResetMove(true);
     __super::Exit(pOwner);
+
+    auto& sound = *pOwner->Get_Component<CAudioSource>();
+    sound.Slot("Corin_RushAttack_01_SFX.wav").FadeOut(0.2f);
 }
 
 void CCorinState_Rush_Start::Enter(CCorin* pOwner)
@@ -69,7 +72,7 @@ void CCorinState_Rush_Start::Enter(CCorin* pOwner)
         .Apply();
     pOwner->Begin_AttackCollider("Saw", HitDesc()
         .Type(HIT_TYPE::COUNT)
-        .Damage(pOwner->Get_AttackPower() * 0.967f * Helper::Get_Random_Float(1.f, 1.5f)
+        .Damage(pOwner->Get_AttackPower() * 0.138f * Helper::Get_Random_Float(1.f, 1.5f)
             , DAMAGE_TYPE::NORMAL)
         .Interval(0.05f)
         .MaxCount(7)

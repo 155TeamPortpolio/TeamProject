@@ -11,11 +11,11 @@ private:
 	virtual ~CUI_RenderTargetScreen() DEFAULT;
 
 public:
-	HRESULT Initialize_Prototype()     override;
-	HRESULT Initialize(INIT_DESC* pArg) override;
-	void    Priority_Update(_float dt) override {}
-	void    Update(_float dt)          override;
-	void    Late_Update(_float dt)     override {}
+	virtual HRESULT Initialize_Prototype()     override;
+	virtual HRESULT Initialize(INIT_DESC* pArg) override;
+	virtual void    Priority_Update(_float dt) override {}
+	virtual void    Update(_float dt)          override;
+	virtual void    Late_Update(_float dt)     override {}
 
 private:
 	_uint m_iMtrlInstIdx = {};
@@ -29,14 +29,14 @@ private:
 
 private:
 	HRESULT Ready_Components();
-	void Ready_RTV();
+	void Ready_RT();
 	void Ready_ViewProj();
 	void Ready_RenderState(); 
-	HRESULT Ready_RTVDrawObjects();
+	HRESULT Ready_RTDrawObjects();
 
-	void Create_RTV();
-	void Bind_RTV();
-	HRESULT Create_RTVDrawObject(const string& strPrototypeTag, const string& strInstanceName);
+	void Create_RT();
+	void Bind_RT();
+	HRESULT Create_RTDrawObject(const string& strPrototypeTag, const string& strInstanceName);
 
 public:
 	static  CGameObject* Create();

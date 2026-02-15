@@ -7,7 +7,11 @@
 #include "MaterialInstance.h"
 #include "MaterialData.h"
 #include "UIDirector.h"
-#include "UI_RTVDraw.h"
+#include "UI_ScreenRT.h"
+
+#include "UI_ClearRT.h"
+#include "UI_SwitchRT.h"
+#include "UI_WipeoutRT.h"
 
 HRESULT CUI_RenderTargetScreen::Initialize_Prototype()
 {
@@ -16,6 +20,10 @@ HRESULT CUI_RenderTargetScreen::Initialize_Prototype()
 
     Add_Component<CRectModel>();
     Add_Component<CMaterial>();
+
+    PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_ClearRT", CUI_ClearRT::Create());
+    PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_SwitchRT", CUI_SwitchRT::Create());
+    PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_WipeoutRT", CUI_WipeoutRT::Create());
 
 	return S_OK;
 }
@@ -30,10 +38,10 @@ HRESULT CUI_RenderTargetScreen::Initialize(INIT_DESC* pArg)
     if (FAILED(Ready_Components()))
         return E_FAIL;
 
-    Ready_RTV();
+    Ready_RT();
     Ready_ViewProj();
     Ready_RenderState();
-    Ready_RTVDrawObjects();
+    Ready_RTDrawObjects();
 
     m_pTransform->Scale(_float3(m_vViewPortSize.x, m_vViewPortSize.y, 1.f));
 
@@ -42,11 +50,6 @@ HRESULT CUI_RenderTargetScreen::Initialize(INIT_DESC* pArg)
 
 void CUI_RenderTargetScreen::Update(_float dt)
 {
-    if (InputDevice()->Key_Tap('I'))
-        UIDirector()->Show_Clear();
-
-    if (InputDevice()->Key_Tap('J'))
-        UIDirector()->Show_Switch();
 }
 
 HRESULT CUI_RenderTargetScreen::Ready_Components()
@@ -67,10 +70,10 @@ HRESULT CUI_RenderTargetScreen::Ready_Components()
     return S_OK;
 }
 
-void CUI_RenderTargetScreen::Ready_RTV()
+void CUI_RenderTargetScreen::Ready_RT()
 {
-    Create_RTV();
-    Bind_RTV();
+    Create_RT();
+    Bind_RT();
 }
 
 void CUI_RenderTargetScreen::Ready_ViewProj()
@@ -84,21 +87,21 @@ void CUI_RenderTargetScreen::Ready_RenderState()
     Get_Component<CRectModel>()->Set_RenderType(RENDER_PASS_TYPE::NONLIGHT_OPAQUE);
 }
 
-HRESULT CUI_RenderTargetScreen::Ready_RTVDrawObjects()
+HRESULT CUI_RenderTargetScreen::Ready_RTDrawObjects()
 {
-    if (FAILED(Create_RTVDrawObject("Proto_GameObject_Clear", "clear")))
+    if (FAILED(Create_RTDrawObject("Proto_GameObject_ClearRT", "clearRT")))
         return E_FAIL;
 
-    if (FAILED(Create_RTVDrawObject("Proto_GameObject_Switch", "switch")))
+    if (FAILED(Create_RTDrawObject("Proto_GameObject_SwitchRT", "switchRT")))
         return E_FAIL;
 
-    if (FAILED(Create_RTVDrawObject("Proto_GameObject_Wipeout", "wipeout")))
+    if (FAILED(Create_RTDrawObject("Proto_GameObject_WipeoutRT", "wipeoutRT")))
         return E_FAIL;
 
     return S_OK;
 }
 
-void CUI_RenderTargetScreen::Create_RTV()
+void CUI_RenderTargetScreen::Create_RT()
 {
     RenderTargetDesc desc = {};
     desc.Key = strRTVTag;
@@ -107,7 +110,7 @@ void CUI_RenderTargetScreen::Create_RTV()
     RenderSystem()->Create_RenderTarget(desc);
 }
 
-void CUI_RenderTargetScreen::Bind_RTV()
+void CUI_RenderTargetScreen::Bind_RT()
 {
     auto pMtrlInst = Get_Component<CMaterial>()->Get_MaterialInstance(m_iMtrlInstIdx);
 
@@ -130,9 +133,9 @@ void CUI_RenderTargetScreen::Bind_RTV()
     }
 }
 
-HRESULT CUI_RenderTargetScreen::Create_RTVDrawObject(const string& strPrototypeTag, const string& strInstanceName)
+HRESULT CUI_RenderTargetScreen::Create_RTDrawObject(const string& strPrototypeTag, const string& strInstanceName)
 {
-    CUI_RTVDraw::RTVDRAW_DESC* pDesc = new CUI_RTVDraw::RTVDRAW_DESC;
+    CUI_ScreenRT::RTDRAW_DESC* pDesc = new CUI_ScreenRT::RTDRAW_DESC;
     pDesc->hRenderTargetScreen = Get_Handle();
 
     auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, strPrototypeTag })

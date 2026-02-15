@@ -4,6 +4,8 @@
 #include "GameInstance.h"
 #include "ObjectContainer.h"
 
+#include "UIDirector.h"
+
 HRESULT CUI_FieldHUD::Initialize_Prototype()
 {
     __super::Initialize_Prototype();

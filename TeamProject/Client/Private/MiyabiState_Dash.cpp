@@ -5,6 +5,7 @@
 #include "MiyabiState_Evade.h"
 #include "CharacterController.h"
 #include "ObjectContainer.h"
+#include "AudioSource.h"
 
 CMiyabiState_Dash* CMiyabiState_Dash::Create()
 {
@@ -31,6 +32,11 @@ void CMiyabiState_Dash::Enter(CMiyabi* pOwner)
     _vector3 vDir = pOwner->Get_InputDir();
     if (vDir.Length() > 0.01f)
         pOwner->Rotate(vDir);
+
+    if (Helper::Get_Random_Bool())
+        pOwner->Get_Component<CAudioSource>()->Sequence("Evade_Dash")
+        .Attribute3D(true)
+        .PlayNext();
 
     __super::Enter(pOwner);
 }
@@ -122,6 +128,9 @@ void CMiyabiState_Dash_02::Enter(CMiyabi* pOwner)
     auto effect = pOwner->Get_Component<CObjectContainer>()->Find_ObjectByName("Miyabi_Sword_Fire");
     if (effect)
         effect->Set_Alive(false);
+    //pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_Evade_Dash_SFX.wav")
+    //    .Attribute3D(true)
+    //    .Play();
 }
 
 void CMiyabiState_Dash_02::Update(CMiyabi* pOwner, _float dt)

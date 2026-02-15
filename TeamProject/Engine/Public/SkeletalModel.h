@@ -42,6 +42,7 @@ public:
 	_float4x4* Get_BoneMatrixPtr(const string& boneName);
 
 	_bool isReadyToDraw()	override;
+	virtual void SetModelDrawable(_bool isDraw) override;
 
 public:
 	void Control_Bone(const string& boneName, _fmatrix BoneMatrix);

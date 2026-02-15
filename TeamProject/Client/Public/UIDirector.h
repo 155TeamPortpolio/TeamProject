@@ -42,8 +42,14 @@ public:
 	/* HUD를 화면에서 숨김 */
 	void Hide_HUD(HUD hud);
 
+	//==================== Scott ===============
+	void Show_Party(vector<CHARACTER> characters);
+	void Hide_Party();
+
 	//==================== Battle ===============
 	void Request_DamageText(const DAMAGE_DESC& desc);
+	void Show_Switch(CHARACTER eLeft, CHARACTER eRight);
+	void Hide_Switch();
 
 	//==================== MainCity ===============
 	void Show_Lottery();
@@ -66,6 +72,7 @@ public:
 	void Show_GachaResult(const vector<GACHA_RESULT_DESC>* pResultDesc);
 
 	//==================== Switch / Clear / Wipeout =============== 
+	/* 월드상에 Switch 문구만 뜨는 함수로 Show_Switch(vector<CHARACTER>) 함수 쓰면 switch ui 까지 같이 보입니다*/
 	void Show_Switch();
 	void Show_Clear();
 	void Show_Wipeout();

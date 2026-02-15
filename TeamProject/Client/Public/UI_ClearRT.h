@@ -1,14 +1,14 @@
 #pragma once
-#include "UI_RTVDraw.h"
+#include "UI_ScreenRT.h"
 
 NS_BEGIN(Client)
 
-class CUI_Clear final : public CUI_RTVDraw
+class CUI_ClearRT final : public CUI_ScreenRT
 {
 private:
-	CUI_Clear() {}
-	CUI_Clear(const CUI_Clear& rhs) : CUI_RTVDraw(rhs) {}
-	virtual ~CUI_Clear() DEFAULT;
+	CUI_ClearRT() {}
+	CUI_ClearRT(const CUI_ClearRT& rhs) : CUI_ScreenRT(rhs) {}
+	virtual ~CUI_ClearRT() DEFAULT;
 
 public:
 	virtual HRESULT Initialize_Prototype()           override;

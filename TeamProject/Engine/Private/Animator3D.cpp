@@ -575,6 +575,18 @@ void CAnimator3D::Set_LayerType(ANIM_LAYER_STATE eLayerType, _uint LayerIndex)
 	m_AnimLayers[LayerIndex].eLayerType = eLayerType;
 }
 
+_bool CAnimator3D::Get_BipWorld(_float4x4* pOutMatrix)
+{
+	_int iBoneIndex = Resolve_BoneIndex("Bip001");
+	if (-1 == iBoneIndex)
+		return false;
+
+	if(pOutMatrix)
+		*pOutMatrix = Get_BoneMatrix(BoneSpace::WORLD, "Bip001");
+
+	return true;
+}
+
 void CAnimator3D::Change_Speed(_float fSpeed, _uint LayerIndex)
 {
 	if (!isExistLayer(LayerIndex)) return;
@@ -1656,12 +1668,12 @@ void CAnimator3D::GUI_ShowLayerInfo()
 	if (isExistClip(curLayer.iClipIndex))
 		fDuration = m_pAnimClips[Get_CurAnimIndex()]->Get_Duration();
 	
-	_float fTrackPos;
+	_float* fTrackPos;
 	(curLayer.bBlending)
-		? fTrackPos = curLayer.fBlendTrackPosition
-		: fTrackPos = curLayer.fCurrentTrackPosition;
+		? fTrackPos = &curLayer.fBlendTrackPosition
+		: fTrackPos = &curLayer.fCurrentTrackPosition;
 
-	ImGui::SliderFloat("##PlayBar", &fTrackPos, 0.f, fDuration);
+	ImGui::SliderFloat("##PlayBar", fTrackPos, 0.f, fDuration);
 
 	ImGui::Text("Speed ");
 	ImGui::SameLine();

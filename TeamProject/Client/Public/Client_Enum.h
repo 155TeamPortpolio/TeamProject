@@ -4,6 +4,8 @@
 namespace Client {
 	enum class GLOBAL_ID : _uint { FreeCam, OrbitCam, SeqCam, ShadowCam, Player, Cloud };
 	enum class CHARACTER { JaneDoe, Corin, Miyabi, END };
+	enum class ATTRIBUTE { Electric, Ether, Fire, Ice, Physical, END };
+	enum class SPECIALTY { Attack, Anomaly, Defenses, Rupture, Stun, Support, END };
 
 	/* UI */
 	// ---------- Battle HUD : Stat ----------
@@ -27,7 +29,7 @@ namespace Client {
 
 	//------------------- Battle -------------------
 	enum class StageType { Start, Normal, Elite, Boss, End };
-	enum class BATTLE_VFX_TYPE { HIT_NORMAL, HIT_HARD, EVADE, PARRY, SWITCH,ULTIMATE, WIPEOUT,END };
+	enum class BATTLE_VFX_TYPE { HIT_NORMAL, HIT_HARD, EVADE, PARRY, SWITCH,ULTIMATE, CLEAR, WIPEOUT,END };
 	enum class BATTLE_OBJ_TYPE { PLAYER, MONSTER, CAMERA,EFFECT, ENVOBJECT, END };
 
 	//------------------- Gacha --------------------
