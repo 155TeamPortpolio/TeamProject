@@ -12,18 +12,20 @@
 #include "Child.h"
 
 CSacrifice_Laser::CSacrifice_Laser()
-	:CGameObject()
+	:CEnemy()
 {
 }
 
 CSacrifice_Laser::CSacrifice_Laser(const CSacrifice_Laser& rhg)
-	:CGameObject(rhg)
+	:CEnemy(rhg)
 {
 }
 
 HRESULT CSacrifice_Laser::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
+	Add_Component<CCollider>();
+	Add_Component<CRigidBody>();
 	Add_Component<CObjectContainer>();
 	Add_Component<CBoneFollower>();
 
@@ -40,22 +42,43 @@ HRESULT CSacrifice_Laser::Initialize(INIT_DESC* pArg)
 
 	auto pLaserStart = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
 		.Asset("laser_start.json")
+		.Position(_float3(0.f,0.f,0.8f))
 		.Build("LaserStart");
 
 	auto pLaserHitPoint = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
 		.Asset("laser_hit_point.json")
 		.Build("LaserHitPoint");
 
-	_smatrix offsetMatrix = _smatrix::Identity;
-	offsetMatrix.Translation(_vector3(0.8f, 0.f, 0.f));
-
 	auto pBoneFollower = Get_Component<CBoneFollower>();
-	pBoneFollower->Set_Offset(offsetMatrix);
 
 	auto pObjectContainer = Get_Component<CObjectContainer>();
 	pObjectContainer->Add_Child(pLaser, true);
 	pObjectContainer->Add_Child(pLaserStart,true);
 	pObjectContainer->Add_Child(pLaserHitPoint, false);
+
+	auto pRigidBody = Get_Component<CRigidBody>();
+	pRigidBody->Set_Kinematic(true);
+
+	auto pCollider = Get_Component<CCollider>();
+	pCollider->Set_Trigger(false);
+	pCollider->Set_CollisionGroup(COLLISION_GROUP::MONSTER);
+	pCollider->Set_CollisionMask(ENUM(COLLISION_GROUP::PLAYER_ATTACK));
+	pCollider->Set_Size(_float3(2.f, 2.f, 2.f));
+	pCollider->Set_CompActive(false);
+
+	{
+		BATTLE_COLLIDER_DESC BladeDesc{};
+
+		BladeDesc.tagName = "Laser_Attack";
+		BladeDesc.isAttachBone = false;
+		BladeDesc.tagBone = "";
+		BladeDesc.pOwnerAnimator3D = nullptr;
+		BladeDesc.eAttackColliderType = COLLIDER_TYPE::BOX;
+		BladeDesc.vAttackSize = _float3{ 2.5f,2.5f,2.5f };
+
+		if (FAILED(AttachBattleColliderObject(&BladeDesc, false)))
+			return E_FAIL;
+	}
 
 	m_isAlive = false;
 	
@@ -76,8 +99,6 @@ void CSacrifice_Laser::Update(_float dt)
 	if (!m_IsPendingActive)
 		return;
 
-	Get_Component<CBoneFollower>()->Sync_Transform(dt, m_pTransform);
-
 	auto pEffectContainer = Get_Component<CObjectContainer>()->Find_ObjectByName("Laser");
 	CEffectContainer::EFFECT_CONTAINER_CONTEXT& context = static_cast<CEffectContainer*>(pEffectContainer)->GetEffectContext();
 
@@ -85,12 +106,14 @@ void CSacrifice_Laser::Update(_float dt)
 	{
 	case 0: /* Turn */
 	{
+		Get_Component<CBoneFollower>()->Sync_Transform(dt, m_pTransform, true);
 		_vector3 vPosition0 = m_pTransform->Get_WorldPos();
 		_vector3 vPosition1{};
-		_vector3 vDir = m_pTransform->Dir(STATE::RIGHT);
+		_vector3 vDir = m_pTransform->Dir(STATE::LOOK);
 		vDir.y = 0.f;
 		vDir.Normalize();
 
+		vPosition0 += vDir * 0.8f;
 		PHYSICS_RAY rayDesc{};
 		PHYSICS_RAY_HIT output{};
 		rayDesc.iCollisionMask = ENUM(COLLISION_GROUP::COMMON);
@@ -108,40 +131,27 @@ void CSacrifice_Laser::Update(_float dt)
 		context.vLinePoint0 = vPosition0;
 		context.vLinePoint1 = vPosition1;
 
+		Compute_Collider(vPosition0, vPosition1);
+
 	}break;
 	case 1: /* Target */
 	{
+		Get_Component<CBoneFollower>()->Sync_Transform(dt, m_pTransform, true);
 		_vector3 vPosition0 = m_pTransform->Get_WorldPos();
 
 		if (!m_IsOnTarget)
 			Set_TargetPosition();
-		else if (!m_IsHitPlayer)
-		{
-			PHYSICS_RAY rayDesc{};
-			PHYSICS_RAY_HIT output{};
-			rayDesc.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER);
-			rayDesc.vOrigin = vPosition0;
-			rayDesc.vDirection = m_vTargetDir;
-			rayDesc.fMaxDistance = 200.f;
 
-			if (PhysicsSystem()->Raycast(rayDesc, output))
-			{
-				m_IsHitPlayer = true;
-				auto pPlayer = dynamic_cast<CCharacter*>(output.pHitObject);
-				if (pPlayer)
-				{
-					pPlayer->Take_Damage(DAMAGE_TYPE::NORMAL, 10);
-					CameraManager()->AddImpact(1, 0);
-				}
-			}
-		}
-
+		vPosition0 += m_vTargetDir * 0.8f;
 		context.vLinePoint0 = vPosition0;
 		context.vLinePoint1 = m_vTargetPos;
+
+		Compute_Collider(vPosition0, m_vTargetPos);
 
 	}break;
 	case 2: /* Look */
 	{
+		Get_Component<CBoneFollower>()->Sync_Transform(dt, m_pTransform);
 		_vector3 vPosition0 = m_pTransform->Get_WorldPos();
 		_vector3 vPosition1{};
 		_vector3 vDir = m_pTransform->Dir(STATE::RIGHT);
@@ -149,6 +159,7 @@ void CSacrifice_Laser::Update(_float dt)
 		vDir.Normalize();
 		vDir *= -1.f;
 
+		vPosition0 += vDir * 0.8f;
 		PHYSICS_RAY rayDesc{};
 		PHYSICS_RAY_HIT output{};
 		rayDesc.iCollisionMask = ENUM(COLLISION_GROUP::COMMON);
@@ -163,6 +174,8 @@ void CSacrifice_Laser::Update(_float dt)
 
 		context.vLinePoint0 = vPosition0;
 		context.vLinePoint1 = vPosition1;
+
+		Compute_Collider(vPosition0, vPosition1);
 	}break;
 	default:
 		break;
@@ -179,6 +192,7 @@ void CSacrifice_Laser::Update(_float dt)
 			m_isAlive = false;
 			m_IsPendingDeactive = false;
 		}
+
 	}
 
 	Get_Component<CObjectContainer>()->UpdateChild(dt);
@@ -186,7 +200,7 @@ void CSacrifice_Laser::Update(_float dt)
 
 void CSacrifice_Laser::Late_Update(_float dt)
 {
-
+	Get_Component<CRigidBody>()->Late_Update(dt);
 	Get_Component<CObjectContainer>()->Late_UpdateChild(dt);
 }
 
@@ -220,17 +234,31 @@ void CSacrifice_Laser::Render_GUI()
 
 void CSacrifice_Laser::ActiveLaser(_uint mode)
 {
-	//Get_Component<CBoneFollower>()->Sync_Transform(0.f, m_pTransform);
+	HitDesc		HitDesc = {};
+	HitDesc.eHitType = HIT_TYPE::ONCE;
+	HitDesc.eDamageType = DAMAGE_TYPE::NORMAL;
+	HitDesc.fDamage = 10.f;
+	HitDesc.fInterval = 0.f;
+	HitDesc.iMaxCount = 1;
+	SetBattleColliderObject("Laser_Attack", CEnemy::BATTLE_COLTYPE::ATTACK, true, HitDesc);
+	Get_Component<CCollider>()->Set_CompActive(true);
+
 	m_IsPendingActive = false;
 	m_IsPendingDeactive = false;
 	m_isAlive = true;
 	m_IsOnTarget = false;
 	m_IsHitPlayer = false;
+	
+	m_isOnAttack = true;
 	m_iLaserMode = mode;
 }
 
 void CSacrifice_Laser::DeactiveLaser()
 {
+	SetBattleColliderObject("Laser_Attack", CEnemy::BATTLE_COLTYPE::ATTACK, false);
+	Get_Component<CCollider>()->Set_CompActive(false);
+
+	m_isOnAttack = false;
 	m_IsPendingDeactive = true;
 	m_fElapseTime = 0.f;
 
@@ -322,4 +350,27 @@ void CSacrifice_Laser::Set_TargetPosition()
 		m_vTargetPos = vCurrPosition + 200.f * vDir;
 
 	m_IsOnTarget = true;
+}
+
+void CSacrifice_Laser::Compute_Collider(_float3 startPos, _float3 endPos)
+{
+	auto pAttackCollider = Get_Component<CObjectContainer>()->Find_ObjectByName("Laser_Attack_AttackCollider")->Get_Component<CCollider>();
+	auto pCollider = Get_Component<CCollider>();
+	auto pRigidBody = Get_Component<CRigidBody>();
+
+	_vector3 vLook = endPos - startPos;
+	_float vLength{};
+	vLook.y = 0.f;
+
+	vLength = vLook.Length();
+	vLook.Normalize();
+
+	_vector3 vWorldUp{ 0.f,1.f,0.f };
+	m_pTransform->Set_Look(vLook);
+
+	pCollider->Set_Center(_float3(0.f,0.f,vLength * 0.5f));
+	pCollider->Set_Size(_float3(1.f, 1.f, vLength));
+
+	pAttackCollider->Set_Center(_float3(0.f, 0.f, vLength * 0.5f));
+	pAttackCollider->Set_Size(_float3(2.f, 2.f, vLength));
 }

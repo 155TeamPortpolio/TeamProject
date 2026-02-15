@@ -397,6 +397,8 @@
     <ClInclude Include="..\Public\Giant_Idle.h" />
     <ClInclude Include="..\Public\Giant_Move.h" />
     <ClInclude Include="..\Public\Giant_Parried.h" />
+    <ClInclude Include="..\Public\Hand_Core.h" />
+    <ClInclude Include="..\Public\Hand_Sword.h" />
     <ClInclude Include="..\Public\MiasmaDummyUnit.h" />
     <ClInclude Include="..\Public\MiasmaGrandierJaeger.h" />
     <ClInclude Include="..\Public\CrowdNpc.h" />
@@ -878,6 +880,8 @@
     <ClCompile Include="..\Private\Giant_Idle.cpp" />
     <ClCompile Include="..\Private\Giant_Move.cpp" />
     <ClCompile Include="..\Private\Giant_Parried.cpp" />
+    <ClCompile Include="..\Private\Hand_Core.cpp" />
+    <ClCompile Include="..\Private\Hand_Sword.cpp" />
     <ClCompile Include="..\Private\MiasmaDummyUnit.cpp" />
     <ClCompile Include="..\Private\MiasmaGrandierJaeger.cpp" />
     <ClCompile Include="..\Private\CorinState_AssaultAttack.cpp" />

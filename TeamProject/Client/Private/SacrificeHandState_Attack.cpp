@@ -141,20 +141,18 @@ void CSacrificeHandState_Attack_01_Phase1::Update(CSacrificeHand* pOwner, _float
 		if (Event.Tag == "Start_Bubble")
 		{
 			pOwner->Active_Bubble();
-			//pOwner->UnleashAttack();
 		}
 		if (Event.Tag == "Start_Collider")
 		{
-			HitDesc hitDesc{};
-			pOwner->SetBattleColliderObject("Hand", CEnemy::BATTLE_COLTYPE::ATTACK, true, hitDesc);
+			pOwner->Active_HandCore();
 		}
 		if (Event.Tag == "End_Collider")
-			pOwner->SetBattleColliderObject("Hand", CEnemy::BATTLE_COLTYPE::ATTACK, false);
+		{
+			pOwner->Deactive_HandCore();
+		}
 		if (Event.Tag == "End_Bubble")
 		{
 			pOwner->Deactive_Bubble();
-			//pOwner->SetOnAttack(false);
-			//pOwner->SetParryEnable(false);
 		}
 	}
 
@@ -211,11 +209,12 @@ void CSacrificeHandState_Attack_02_Phase1::Update(CSacrificeHand* pOwner, _float
 		}
 		if (Event.Tag == "Start_Collider")
 		{
-			HitDesc hitDesc{};
-			pOwner->SetBattleColliderObject("Hand", CEnemy::BATTLE_COLTYPE::ATTACK, true, hitDesc);
+			pOwner->Active_HandCore();
 		}
 		if (Event.Tag == "End_Collider")
-			pOwner->SetBattleColliderObject("Hand", CEnemy::BATTLE_COLTYPE::ATTACK, false);
+		{
+			pOwner->Deactive_HandCore();
+		}
 		if (Event.Tag == "End_Bubble")
 		{
 			pOwner->Deactive_Bubble();
@@ -298,11 +297,12 @@ void CSacrificeHandState_Attack_03_Phase1::Update(CSacrificeHand* pOwner, _float
 		}
 		if (Event.Tag == "Start_Collider")
 		{
-			HitDesc hitDesc{};
-			pOwner->SetBattleColliderObject("Hand", CEnemy::BATTLE_COLTYPE::ATTACK, true, hitDesc);
+			pOwner->Active_HandCore();
 		}
 		if (Event.Tag == "End_Collider")
-			pOwner->SetBattleColliderObject("Hand", CEnemy::BATTLE_COLTYPE::ATTACK, false);
+		{
+			pOwner->Deactive_HandCore();
+		}
 		if (Event.Tag == "End_Bubble")
 		{
 			pOwner->Deactive_Bubble();
@@ -523,11 +523,12 @@ void CSacrificeHandState_OverDrive_Release_Attack01_Phase2::Update(CSacrificeHan
 		}
 		if (Event.Tag == "Start_Collider")
 		{
-			HitDesc hitDesc{};
-			pOwner->SetBattleColliderObject("Hand_Sword", CEnemy::BATTLE_COLTYPE::ATTACK, true, hitDesc);
+			pOwner->Active_Sword();
 		}
 		if (Event.Tag == "End_Collider")
-			pOwner->SetBattleColliderObject("Hand_Sword", CEnemy::BATTLE_COLTYPE::ATTACK, false);
+		{
+			pOwner->Deactive_Sword();
+		}
 		if (Event.Tag == "End_Bubble")
 		{
 			pOwner->Deactive_Bubble();
@@ -612,11 +613,12 @@ void CSacrificeHandState_OverDrive_Release_Attack02_Phase2::Update(CSacrificeHan
 		}
 		if (Event.Tag == "Start_Collider")
 		{
-			HitDesc hitDesc{};
-			pOwner->SetBattleColliderObject("Hand_Sword", CEnemy::BATTLE_COLTYPE::ATTACK, true, hitDesc);
+			pOwner->Active_Sword();
 		}
 		if (Event.Tag == "End_Collider")
-			pOwner->SetBattleColliderObject("Hand_Sword", CEnemy::BATTLE_COLTYPE::ATTACK, false);
+		{
+			pOwner->Deactive_Sword();
+		}
 		if (Event.Tag == "End_Bubble")
 		{
 			pOwner->Deactive_Bubble();

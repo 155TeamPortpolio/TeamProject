@@ -397,9 +397,9 @@ void CDefilerState_Attack_02::Update_Effects(CDefiler* pOwner)
 			pOwner->Play_Effect("Defiler_Slash3_" + to_string(m_iSlashCount % 5), _vector3(randPosition0), rotation);
 			++m_iSlashCount;
 
-			rotation *= _quaternion::CreateFromYawPitchRoll(XMConvertToRadians(120.f), 0.f, 0.f);
-			pOwner->Play_Effect("Defiler_Slash3_" + to_string(m_iSlashCount % 5), _vector3(randPosition1), rotation);
-			++m_iSlashCount;
+			//rotation *= _quaternion::CreateFromYawPitchRoll(XMConvertToRadians(120.f), 0.f, 0.f);
+			//pOwner->Play_Effect("Defiler_Slash3_" + to_string(m_iSlashCount % 5), _vector3(randPosition1), rotation);
+			//++m_iSlashCount;
 		}
 	}
 }

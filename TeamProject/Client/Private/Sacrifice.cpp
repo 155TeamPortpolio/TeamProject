@@ -668,77 +668,77 @@ HRESULT CSacrifice::Create_Colliders()
 			return E_FAIL;
 	}
 
-	/* Hand Laser */
-	{
-		BATTLE_COLLIDER_DESC HandLaserDesc{};
-
-		HandLaserDesc.tagName = "Hand_Laser";
-		HandLaserDesc.isAttachBone = true;
-		HandLaserDesc.tagBone = "Ctr_Eye6_05";
-		HandLaserDesc.pOwnerAnimator3D = pAnimator;
-		HandLaserDesc.eAttackColliderType = COLLIDER_TYPE::BOX;
-		HandLaserDesc.eTriggerColliderType = COLLIDER_TYPE::BOX;
-		HandLaserDesc.vCenter = _float3{ 16.f,0.f,0.f };
-		HandLaserDesc.vAttackSize = _float3{ 32.f,2.f,2.f };
-		HandLaserDesc.vTriggerSize = _float3{ 32.f,4.f,4.f };
-
-		if (FAILED(AttachBattleColliderObject(&HandLaserDesc)))
-			return E_FAIL;
-	}
-
-	/* Eye Laser0 */
-	{
-		BATTLE_COLLIDER_DESC HandLaserDesc{};
-
-		HandLaserDesc.tagName = "Eye_Laser0";
-		HandLaserDesc.isAttachBone = true;
-		HandLaserDesc.tagBone = "Ctr_WpnEye_01_1";
-		HandLaserDesc.pOwnerAnimator3D = pAnimator;
-		HandLaserDesc.eAttackColliderType = COLLIDER_TYPE::BOX;
-		HandLaserDesc.eTriggerColliderType = COLLIDER_TYPE::BOX;
-		HandLaserDesc.vCenter = _float3{ -16.f,0.f,0.f };
-		HandLaserDesc.vAttackSize = _float3{ 32.f,2.f,2.f };
-		HandLaserDesc.vTriggerSize = _float3{ 32.f,4.f,4.f };
-
-		if (FAILED(AttachBattleColliderObject(&HandLaserDesc)))
-			return E_FAIL;
-	}
-	
-	/* Eye Laser1 */
-	{
-		BATTLE_COLLIDER_DESC HandLaserDesc{};
-
-		HandLaserDesc.tagName = "Eye_Laser1";
-		HandLaserDesc.isAttachBone = true;
-		HandLaserDesc.tagBone = "Ctr_WpnEye_02_1";
-		HandLaserDesc.pOwnerAnimator3D = pAnimator;
-		HandLaserDesc.eAttackColliderType = COLLIDER_TYPE::BOX;
-		HandLaserDesc.eTriggerColliderType = COLLIDER_TYPE::BOX;
-		HandLaserDesc.vCenter = _float3{ -16.f,0.f,0.f };
-		HandLaserDesc.vAttackSize = _float3{ 32.f,2.f,2.f };
-		HandLaserDesc.vTriggerSize = _float3{ 32.f,4.f,4.f };
-
-		if (FAILED(AttachBattleColliderObject(&HandLaserDesc)))
-			return E_FAIL;
-	}
-	
-	/* Eye Laser2 */
-	{
-		BATTLE_COLLIDER_DESC HandLaserDesc{};
-
-		HandLaserDesc.tagName = "Eye_Laser2";
-		HandLaserDesc.isAttachBone = true;
-		HandLaserDesc.tagBone = "Ctr_WpnEye_03_1";
-		HandLaserDesc.pOwnerAnimator3D = pAnimator;
-		HandLaserDesc.eAttackColliderType = COLLIDER_TYPE::BOX;
-		HandLaserDesc.eTriggerColliderType = COLLIDER_TYPE::BOX;
-		HandLaserDesc.vCenter = _float3{ -16.f,0.f,0.f };
-		HandLaserDesc.vAttackSize = _float3{ 32.f,2.f,2.f };
-		HandLaserDesc.vTriggerSize = _float3{ 32.f,4.f,4.f };
-
-		if (FAILED(AttachBattleColliderObject(&HandLaserDesc)))
-			return E_FAIL;
-	}
+	///* Hand Laser */
+	//{
+	//	BATTLE_COLLIDER_DESC HandLaserDesc{};
+	//
+	//	HandLaserDesc.tagName = "Hand_Laser";
+	//	HandLaserDesc.isAttachBone = true;
+	//	HandLaserDesc.tagBone = "Ctr_Eye6_05";
+	//	HandLaserDesc.pOwnerAnimator3D = pAnimator;
+	//	HandLaserDesc.eAttackColliderType = COLLIDER_TYPE::BOX;
+	//	HandLaserDesc.eTriggerColliderType = COLLIDER_TYPE::BOX;
+	//	HandLaserDesc.vCenter = _float3{ 16.f,0.f,0.f };
+	//	HandLaserDesc.vAttackSize = _float3{ 32.f,2.f,2.f };
+	//	HandLaserDesc.vTriggerSize = _float3{ 32.f,4.f,4.f };
+	//
+	//	if (FAILED(AttachBattleColliderObject(&HandLaserDesc)))
+	//		return E_FAIL;
+	//}
+	//
+	///* Eye Laser0 */
+	//{
+	//	BATTLE_COLLIDER_DESC HandLaserDesc{};
+	//
+	//	HandLaserDesc.tagName = "Eye_Laser0";
+	//	HandLaserDesc.isAttachBone = true;
+	//	HandLaserDesc.tagBone = "Ctr_WpnEye_01_1";
+	//	HandLaserDesc.pOwnerAnimator3D = pAnimator;
+	//	HandLaserDesc.eAttackColliderType = COLLIDER_TYPE::BOX;
+	//	HandLaserDesc.eTriggerColliderType = COLLIDER_TYPE::BOX;
+	//	HandLaserDesc.vCenter = _float3{ -16.f,0.f,0.f };
+	//	HandLaserDesc.vAttackSize = _float3{ 32.f,2.f,2.f };
+	//	HandLaserDesc.vTriggerSize = _float3{ 32.f,4.f,4.f };
+	//
+	//	if (FAILED(AttachBattleColliderObject(&HandLaserDesc)))
+	//		return E_FAIL;
+	//}
+	//
+	///* Eye Laser1 */
+	//{
+	//	BATTLE_COLLIDER_DESC HandLaserDesc{};
+	//
+	//	HandLaserDesc.tagName = "Eye_Laser1";
+	//	HandLaserDesc.isAttachBone = true;
+	//	HandLaserDesc.tagBone = "Ctr_WpnEye_02_1";
+	//	HandLaserDesc.pOwnerAnimator3D = pAnimator;
+	//	HandLaserDesc.eAttackColliderType = COLLIDER_TYPE::BOX;
+	//	HandLaserDesc.eTriggerColliderType = COLLIDER_TYPE::BOX;
+	//	HandLaserDesc.vCenter = _float3{ -16.f,0.f,0.f };
+	//	HandLaserDesc.vAttackSize = _float3{ 32.f,2.f,2.f };
+	//	HandLaserDesc.vTriggerSize = _float3{ 32.f,4.f,4.f };
+	//
+	//	if (FAILED(AttachBattleColliderObject(&HandLaserDesc)))
+	//		return E_FAIL;
+	//}
+	//
+	///* Eye Laser2 */
+	//{
+	//	BATTLE_COLLIDER_DESC HandLaserDesc{};
+	//
+	//	HandLaserDesc.tagName = "Eye_Laser2";
+	//	HandLaserDesc.isAttachBone = true;
+	//	HandLaserDesc.tagBone = "Ctr_WpnEye_03_1";
+	//	HandLaserDesc.pOwnerAnimator3D = pAnimator;
+	//	HandLaserDesc.eAttackColliderType = COLLIDER_TYPE::BOX;
+	//	HandLaserDesc.eTriggerColliderType = COLLIDER_TYPE::BOX;
+	//	HandLaserDesc.vCenter = _float3{ -16.f,0.f,0.f };
+	//	HandLaserDesc.vAttackSize = _float3{ 32.f,2.f,2.f };
+	//	HandLaserDesc.vTriggerSize = _float3{ 32.f,4.f,4.f };
+	//
+	//	if (FAILED(AttachBattleColliderObject(&HandLaserDesc)))
+	//		return E_FAIL;
+	//}
 
 	return S_OK;
 }

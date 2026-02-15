@@ -160,14 +160,12 @@ void CSacrificeState_Attack_Phase2::BuildPattern(CSacrifice* pOwner)
 			}
 		}
 	}
-	//blackBoard.stateQueue.clear();
-	//blackBoard.stateQueue.push_back("OverDrive_Attack01");
-	//blackBoard.stateQueue.push_back("OverDrive_Attack02");
-	//blackBoard.stateQueue.push_back("OverDrive_Attack03");
-	//blackBoard.iPatternCount = 0;
-	//blackBoard.stateQueue.push_back("Attack08_Phase2");
-	//blackBoard.stateQueue.push_back("Attack08_Phase2");
-	//blackBoard.stateQueue.push_back("Attack08_Phase2");
+	blackBoard.stateQueue.clear();
+	blackBoard.stateQueue.push_back("Attack_Charge_Start_Phase2");
+	blackBoard.stateQueue.push_back("Attack_Charge_Loop_Phase2");
+	blackBoard.stateQueue.push_back("Attack_Charge_U_Start_Phase2");
+	blackBoard.stateQueue.push_back("Attack_Charge_U_Loop_Phase2");
+	blackBoard.stateQueue.push_back("Attack_Charge_U_End_Phase2");
 
 	blackBoard.isRequestNext = true;
 }

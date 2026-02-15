@@ -214,17 +214,12 @@ void CTestLevel::Update()
 {
 	CBattleSystem::GetInstance()->Update();
 
-	if (InputDevice()->Key_Tap(VK_F4))
-	{
-		CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_Sacrifice", { 0.f, 0.5f,0.f });
-	}
 	if (InputDevice()->Key_Tap(VK_F5))
 	{
-		auto rushTrail = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
-			.Asset("sacrifice_rush_trail.json")
-			.Build("Rush");
+		auto pAttackSign = Builder::Create_Object({ G_GlobalLevelKey,"Proto_GameObject_AttackSign" })
+			.Build("AttackSign");
 		
-		ObjectManager()->Add_Object(rushTrail, { "Test_Level","Effect_Layer" });
+		ObjectManager()->Add_Object(pAttackSign, { "Test_Level","Effect_Layer" });
 	}
 	
 	// [`] 

@@ -1,5 +1,5 @@
 #pragma once
-#include "GameObject.h"
+#include "Enemy.h"
 
 NS_BEGIN(Engine)
 class CEffectContainer;
@@ -8,7 +8,7 @@ NS_END
 NS_BEGIN(Client)
 
 class CSacrifice_Laser :
-    public CGameObject
+    public CEnemy
 {
 private:
     CSacrifice_Laser();
@@ -36,6 +36,7 @@ public:
 
 private:
     void Set_TargetPosition();
+    void Compute_Collider(_float3 startPos, _float3 endPos);
 
 private:
     _bool m_IsPendingActive = false;
