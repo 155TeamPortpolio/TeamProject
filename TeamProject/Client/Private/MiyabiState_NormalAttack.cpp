@@ -139,6 +139,9 @@ void CMiyabiState_Attack_01::Enter(CMiyabi* pOwner)
     pOwner->Get_Component<CAudioSource>()->Sequence("NormalAttack01")
         .Attribute3D(true)
         .PlayNext();
+    pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_NormalAttack01_SFX.wav")
+        .Attribute3D(true)
+        .Play();
 }
 
 void CMiyabiState_Attack_01::Update(CMiyabi* pOwner, _float dt)
@@ -187,6 +190,9 @@ void CMiyabiState_Attack_02::Enter(CMiyabi* pOwner)
     pOwner->Get_Component<CAudioSource>()->Sequence("NormalAttack02")
         .Attribute3D(true)
         .PlayNext();
+    pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_NormalAttack02_SFX.wav")
+        .Attribute3D(true)
+        .Play();
 }
 
 void CMiyabiState_Attack_02::Update(CMiyabi* pOwner, _float dt)
@@ -237,6 +243,9 @@ void CMiyabiState_Attack_03::Enter(CMiyabi* pOwner)
     pOwner->Get_Component<CAudioSource>()->Sequence("NormalAttack03")
         .Attribute3D(true)
         .PlayNext();
+    pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_NormalAttack03_SFX.wav")
+        .Attribute3D(true)
+        .Play();
 }
 
 void CMiyabiState_Attack_03::Update(CMiyabi* pOwner, _float dt)
@@ -303,6 +312,9 @@ void CMiyabiState_Attack_04::Enter(CMiyabi* pOwner)
     pOwner->Get_Component<CAudioSource>()->Sequence("NormalAttack04")
         .Attribute3D(true)
         .PlayNext();
+    pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_NormalAttack04_SFX.wav")
+        .Attribute3D(true)
+        .Play();
 }
 
 void CMiyabiState_Attack_04::Update(CMiyabi* pOwner, _float dt)
@@ -368,6 +380,9 @@ void CMiyabiState_Attack_05::Enter(CMiyabi* pOwner)
     pOwner->Get_Component<CAudioSource>()->Sequence("NormalAttack05")
         .Attribute3D(true)
         .PlayNext();
+    pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_NormalAttack05_SFX.wav")
+        .Attribute3D(true)
+        .Play();
 }
 
 void CMiyabiState_Attack_05::Update(CMiyabi* pOwner, _float dt)
