@@ -111,6 +111,7 @@ public: // 궁극기
     _float  Get_PrevDecibel() const { return m_fPrevDecibel; }
     _float  Get_MaxDecibel() const { return MAX_DECIBEL; }
     void    Set_Decibel(_float fDecibel) { m_fCurrentDecibel = fDecibel; }
+    void    Set_FullDecibel() { m_fCurrentDecibel = MAX_DECIBEL; }
 
 public: // 이동
     _vector3    Get_InputDir() const { return m_inputInfo.direction; }
