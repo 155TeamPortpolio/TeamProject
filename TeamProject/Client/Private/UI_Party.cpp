@@ -125,7 +125,6 @@ void CUI_Party::Create_BackButton()
     if (!pObj)
         return;
 
-    pObj->Set_OnClick([this]() { UI_DeActive(); }); // 클릭했을 때 실행할 함수 필요
     Get_Component<CObjectContainer>()->Add_Child(pObj);
 }
 

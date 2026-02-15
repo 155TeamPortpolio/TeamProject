@@ -2768,6 +2768,9 @@
     <ClInclude Include="..\public\Room_Scott.h">
       <Filter>03. Utility\06. FieldSystem\Room\06. Scott</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Room_Party.h">
+      <Filter>03. Utility\06. FieldSystem\Room\07. Party</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -4063,6 +4066,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Room_Scott.cpp">
       <Filter>03. Utility\06. FieldSystem\Room\06. Scott</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Room_Party.cpp">
+      <Filter>03. Utility\06. FieldSystem\Room\07. Party</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

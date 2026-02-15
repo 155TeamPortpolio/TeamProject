@@ -44,6 +44,7 @@
 
 /*Room*/
 #include "Room_Scott.h"
+#include "Room_Party.h"
 
 CScott_Level::CScott_Level(const string& LevelKey)
 	:CLevel(LevelKey),
@@ -112,7 +113,7 @@ void CScott_Level::PreLoad_Level()
 void CScott_Level::Ready_Map(const string& LevelTag, const string& AreaTag)
 {
 	m_pFieldSystem->RegisterRoom(CRoom_Scott::Create({ "Scott" , true }));
-	//FieldSystem()->RegisterRoom(CRoom_Party::Create({ "Party" , false }));
+	m_pFieldSystem->RegisterRoom(CRoom_Party::Create({ "Party" , false }));
 	m_pFieldSystem->RequestEnter("Scott", true);
 }
 
