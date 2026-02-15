@@ -25,8 +25,8 @@ public:
     EaseType Get_BlendEase() const        override { return m_easeType; }
 
     _uint    Push(CCamera* cam, _float blendTime = 0.25f) override;
-    _bool    Pop(_uint handle, _float blendTime = 0.25f)      override;
-    void     Clear(_float blendTime = 0.25f)                  override;
+    _bool    Pop(_uint handle, _float blendTime = 0.25f)  override;
+    void     Clear(_float blendTime = 0.25f)              override;
 
 public:
     void     RegisterShakePresets(const CamShakePreset* presets, _uint count) override { m_shake.RegisterPresets(presets, count); }
@@ -118,7 +118,7 @@ private:
     OBJECT_HANDLE GetActiveCamObj() const { return m_overrides.empty() ? m_baseCamObj : m_overrides.back().camObj; }
 
 private:
-    void         SetMainCamObj(OBJECT_HANDLE camOHandle, _float blendSec);
+    void         SetMainCamObj(OBJECT_HANDLE camObjHandle, _float blendSec);
     void         SetShadowCamObj(OBJECT_HANDLE camObjHandle) { m_shadowCamObj = camObjHandle; }
     _uint        PushCamObj(OBJECT_HANDLE camObjHandle, _float blendSec);
 
@@ -127,13 +127,14 @@ private:
     CamPoseFrame BlendPose(const CamPoseFrame& a, const CamPoseFrame& b, _float t) const;
 
     void         ApplyCache(CamCache& outCache, const CamPoseFrame& pose);
-    void         BeginBlendTo(OBJECT_HANDLE targetObj, _float blendSec);
+    void         BeginBlendTo(OBJECT_HANDLE fromObj, OBJECT_HANDLE targetObj, _float blendSec);
 
     void         UpdateShadowCache();
 
 private:
     OBJECT_HANDLE   m_baseCamObj{};
     OBJECT_HANDLE   m_shadowCamObj{};
+    OBJECT_HANDLE   m_blendFromObj{};
     ShakeController m_shake{};
     ZoomController  m_zoom{};
 

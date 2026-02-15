@@ -26,7 +26,7 @@
 #include "DefilerWeapon.h"
 #include "DefilerAxe.h"
 #include "DefilerWall.h"
-#include "WaterWave.h"
+#include "WaterWaves.h"
 
 #include "AudioSource.h"
 
@@ -53,7 +53,7 @@ HRESULT CDefiler::Initialize_Prototype()
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_DefilerWeapon", CDefilerWeapon::Create());
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_DefilerAxe", CDefilerAxe::Create());
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_DefilerWall", CDefilerWall::Create());
-	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_Env_Water", CWaterWave::Create());
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_Env_Water", CWaterWaves::Create());
 	
 	Add_Component<CAnimator3D>();
 	Add_Component<CSkeletalModel>();

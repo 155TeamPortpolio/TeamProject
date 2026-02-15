@@ -11,6 +11,8 @@
 #include "BelleState_Idle.h"
 #include "BelleState_Move.h"
 
+#include "AudioSource.h"
+
 CBelle::CBelle()
 {
 }
@@ -20,11 +22,23 @@ CBelle::CBelle(const CBelle& rhs)
 {
 }
 
+void CBelle::PlaySFX(string str)
+{
+	auto pAudio = Get_Component<CAudioSource>();
+	pAudio->Slot(str)
+		.Attribute3D(false)
+		.Volume(0.8)
+		.Loop(false)
+		.Play();
+}
+
 HRESULT CBelle::Initialize_Prototype()
 {
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
 
+	auto pAudio = Add_Component<CAudioSource>();
+	pAudio->SoundFolder(G_GlobalLevelKey, "../Bin/Resources/Global/FieldCharacter/Sound");
 	//auto pRcsMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
 	//pRcsMgr->Add_ResourcePath("Belle.model",
 	//	"../Bin/Resources/Global/FieldCharacter/Belle/Belle.model");

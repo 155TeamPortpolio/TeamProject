@@ -1,104 +1,99 @@
 #include "Shader_Define.hlsl"
 
-float3 color     = float3(1.f, 1.f, 1.f);
-float  alpha     = 1.f;
+float3 color = float3(0.75f, 0.75f, 0.75f);
+float alpha = 1.f;
+
+float3 fillDark = float3(0.35f, 0.35f, 0.38f);
+float3 fillLight = float3(0.90f, 0.90f, 0.92f);
+
+float3 outlineColor = float3(0.03f, 0.03f, 0.03f);
+float rimStart = 0.55f;
+float rimEnd = 0.92f;
+float rimStrength = 0.25f;
+
+float edgeHardness = 1.5f;
+float shadePow = 1.1f;
+
+float topBlink = 0.f;
+float3 topRed = float3(0.55f, 0.08f, 0.10f);
+float3 topWhite = float3(1.f, 1.f, 1.f);
+float topNStart = 0.85f;
+float topNEnd = 0.98f;
+float topNPow = 6.0f;
 
 struct VS_IN
 {
     float3 vPosition : POSITION;
     float3 vNormal : NORMAL;
     float2 vTexcoord : TEXCOORD0;
-    float3 vTangent : TANGENT;
-    float3 vBinormal : BINORMAL;
 };
 
 struct VS_OUT
 {
     float4 vPosition : SV_POSITION;
-    float4 vNormal : NORMAL;
-    float2 vTexcoord : TEXCOORD0;
-    float4 vProjPos : TEXCOORD1;
-    float viewZ : TEXCOORD2;
-    float3 vTangent : TANGENT;
-    float3 vBinormal : BINORMAL;
+    float3 worldPos : TEXCOORD0;
 };
 
 VS_OUT VS_MAIN(VS_IN In)
 {
     VS_OUT Out;
 
-    float3 worldPos = mul(float4(In.vPosition, 1.f), ObjectBufferArray[TransformIndex].Transform).xyz;
+    float4x4 W = ObjectBufferArray[TransformIndex].Transform;
+    float3 worldPos = mul(float4(In.vPosition, 1.f), W).xyz;
+
     float4 viewPos = mul(float4(worldPos, 1.f), matView);
     float4 projPos = mul(viewPos, matProjection);
 
     Out.vPosition = projPos;
-    Out.vTexcoord = In.vTexcoord;
-    Out.vNormal = mul(vector(In.vNormal, 0.f), ObjectBufferArray[TransformIndex].Transform);
-    Out.vProjPos = Out.vPosition;
-    Out.vTangent = normalize(mul(vector(In.vTangent, 0.f), ObjectBufferArray[TransformIndex].Transform)).xyz;
-    Out.vBinormal = normalize(cross(Out.vNormal.xyz, Out.vTangent.xyz));
-    Out.viewZ = viewPos.z;
+    Out.worldPos = worldPos;
+
     return Out;
 }
 
-struct PS_IN
+float4 PS_MAIN(VS_OUT In) : SV_TARGET0
 {
-    float4 vPosition : SV_POSITION;
-    float4 vNormal : NORMAL;
-    float2 vTexcoord : TEXCOORD0;
-    float4 vProjPos : TEXCOORD1;
-    float viewZ : TEXCOORD2;
-    float3 vTangent : TANGENT;
-    float3 vBinormal : BINORMAL;
-};
+    clip(alpha - 0.001f);
+    
+    float3 V = normalize(vCamPosition.xyz - In.worldPos);
 
-struct PS_OUT
-{
-    vector vDiffuse : SV_TARGET0;
-    vector vNormal : SV_TARGET1;
-    vector vDepth : SV_TARGET2;
-};
+    float3 dpdx = ddx(In.worldPos);
+    float3 dpdy = ddy(In.worldPos);
+    float3 Ng = normalize(cross(dpdx, dpdy));
 
-PS_OUT PS_MAIN(PS_IN In)
-{
-    PS_OUT Out;
+    float3 N = Ng;
+    if (dot(N, V) < 0.f)
+        N = -N;
 
-    float4 tex = DiffuseTexture.Sample(LinearClampSampler, In.vTexcoord);
-    clip(tex.a - 0.05f);
+    float3 L = normalize(float3(-0.35f, 0.90f, -0.25f));
+    float nl = saturate(dot(N, L));
+    float shade = pow(saturate(0.35f + 0.65f * nl), shadePow);
 
-    float4 outCol = float4(color, tex.a * alpha);
+    float3 baseRgb = lerp(fillDark, fillLight, shade) * color;
 
-    vector vNormalDesc = NormalTexture.Sample(DefaultSampler, In.vTexcoord);
+    float fres = 1.f - saturate(dot(N, V));
+    float rim = smoothstep(rimStart, rimEnd, fres) * rimStrength;
 
-    Out.vDiffuse = outCol;
+    float3 dNx = ddx(N);
+    float3 dNy = ddy(N);
+    float hard = saturate((length(dNx) + length(dNy)) * edgeHardness);
 
-    if (vNormalDesc.a > 0.2f)
-    {
-        float3 vNormal;
-        vNormal.x = vNormalDesc.y * 2.f - 1.f;
-        vNormal.y = vNormalDesc.z * 2.f - 1.f;
-        vNormal.z = 1.f;
+    float edge = saturate(max(rim, hard));
 
-        float3 T = normalize(In.vTangent);
-        float3 B = normalize(In.vBinormal * -1);
-        float3 N = normalize(In.vNormal.xyz);
+    float3 worldUp = float3(0.f, 1.f, 0.f);
+    float upDot = abs(dot(Ng, worldUp));
+    float topMask = smoothstep(topNStart, topNEnd, upDot);
+    topMask = pow(topMask, topNPow);
 
-        float3x3 WorldMatrix = float3x3(T, B, N);
+    float active = step(0.f, topBlink);
+    float blinkT = saturate(topBlink);
+    float3 blinkRgb = lerp(topRed, topWhite, blinkT);
 
-        vNormal = mul(vNormal, WorldMatrix);
+    float tTop = topMask * active;
+    float3 midRgb = lerp(baseRgb, blinkRgb, tTop);
 
-        Out.vNormal = float4(vNormal * 0.5f + 0.5f, 1.f);
-    }
-    else
-    {
-        float3 vNormal = normalize(In.vNormal.xyz);
-        Out.vNormal = float4(vNormal * 0.5f + 0.5f, 1.f);
-    }
+    float3 rgb = lerp(midRgb, outlineColor, edge);
 
-    float linearDepth = saturate(In.viewZ / zFar);
-    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / zFar, linearDepth, 1.f);
-
-    return Out;
+    return float4(rgb, alpha);
 }
 
 technique11 DefaultTechnique
@@ -106,7 +101,7 @@ technique11 DefaultTechnique
     pass Opaque
     {
         SetRasterizerState(RS_Default);
-        SetDepthStencilState(DSS_Default, 0);
+        SetDepthStencilState(DSS_ReadOnly, 0);
         SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 
         VertexShader = compile vs_5_0 VS_MAIN();
