@@ -62,7 +62,7 @@ void CBattleSystem::Update()
 	}
 	if(InputDevice()->Key_Tap(VK_CONTROL))
 	{
-		StartGimmick(BATTLE_VFX_TYPE::PARRY);
+		StartGimmick(BATTLE_VFX_TYPE::SWITCH);
 	}
 }
 
@@ -332,6 +332,11 @@ void CBattleSystem::Update_BattleInfo()
 _bool CBattleSystem::isMonsterCleared()
 {
 	return m_BattleObjInfos[BATTLE_OBJ_TYPE::MONSTER].empty();
+}
+
+_bool CBattleSystem::isVFXRunning()
+{
+	return m_pFXFlow->IsRunning();
 }
 
 void CBattleSystem::CheckVFX(const _float dt)
