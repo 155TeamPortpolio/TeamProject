@@ -1668,12 +1668,12 @@ void CAnimator3D::GUI_ShowLayerInfo()
 	if (isExistClip(curLayer.iClipIndex))
 		fDuration = m_pAnimClips[Get_CurAnimIndex()]->Get_Duration();
 	
-	_float fTrackPos;
+	_float* fTrackPos;
 	(curLayer.bBlending)
-		? fTrackPos = curLayer.fBlendTrackPosition
-		: fTrackPos = curLayer.fCurrentTrackPosition;
+		? fTrackPos = &curLayer.fBlendTrackPosition
+		: fTrackPos = &curLayer.fCurrentTrackPosition;
 
-	ImGui::SliderFloat("##PlayBar", &fTrackPos, 0.f, fDuration);
+	ImGui::SliderFloat("##PlayBar", fTrackPos, 0.f, fDuration);
 
 	ImGui::Text("Speed ");
 	ImGui::SameLine();

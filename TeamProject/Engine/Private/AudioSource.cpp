@@ -267,7 +267,9 @@ void CAudioSource::FadeOut_Volume(const string& slotKey, _float durationSec)
 	if (it == m_Audios.end()) return;
 
 	auto& slot = it->second;
-	FMOD::Channel* channel = slot.pChanel;
+	if (slot.pChannels.empty()) return;
+
+	FMOD::Channel* channel = slot.pChannels.front();
 	if (!channel) return;
 
 	bool isPlaying = false;

@@ -601,7 +601,7 @@ void CEnemy::Create_MeshPyramid()
 	auto meshPyramid = Builder::Create_Object({ G_GlobalLevelKey, "Proto_GameObject_MeshPyramid" })
 		.Build("MeshPyramid");
 
-	Get_Component<CObjectContainer>()->Add_Child(meshPyramid);
+	Get_Component<CObjectContainer>()->Add_Child(meshPyramid, false);
 }
 
 

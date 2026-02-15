@@ -7,6 +7,8 @@
 #include "JaneDoe.h"
 #include "Enemy.h"
 
+#include "CamDirector.h"
+
 CJaneDoeState_SwitchInParryAid* CJaneDoeState_SwitchInParryAid::Create()
 {
     auto pInstance = new CJaneDoeState_SwitchInParryAid();
@@ -37,6 +39,8 @@ void CJaneDoeState_SwitchInParryAid::Enter(CJaneDoe* pOwner)
 {
     pOwner->Lock_Move();
     pOwner->Lock_Rotate();
+
+    CamDirector()->StartParry();
 
     __super::Enter(pOwner);
 }

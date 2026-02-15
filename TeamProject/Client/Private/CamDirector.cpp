@@ -87,21 +87,12 @@ void CCamDirector::AutoField(CamStartDir dir)
 
     switch (dir)
     {
-    case CamStartDir::Front:
-        RequestSequence("Field/Front");
-        break;
-
-    case CamStartDir::Back:
-        RequestSequence("Field/Back");
-        break;
-
-    default: break;
+    case CamStartDir::Front: RequestSequence("Field/Front"); break;
+    case CamStartDir::Back:  RequestSequence("Field/Back");  break;
     }
 
     if (m_gate.Pass())
-    {
         RenderSystem()->SetOn(false);
-    }
 }
 
 void CCamDirector::AutoBattle(CamStartDir dir)
@@ -110,21 +101,12 @@ void CCamDirector::AutoBattle(CamStartDir dir)
 
     switch (dir)
     {
-    case CamStartDir::Front:
-        RequestSequence("Battle/Front");
-        break;
-
-    case CamStartDir::Back:
-        RequestSequence("Battle/Back");
-        break;
-
-    default: break;
+    case CamStartDir::Front: RequestSequence("Battle/Front"); break;
+    case CamStartDir::Back:  RequestSequence("Battle/Back");  break;
     }
 
     if (m_gate.Pass())
-    {
         RenderSystem()->SetOn(false);
-    }
 }
 
 void CCamDirector::Update(_float dt)
@@ -147,6 +129,8 @@ void CCamDirector::Update(_float dt)
 
         if (m_playing.pendingStart)
         {
+            seqPlayer->Update(0.f);
+
             m_playing.blendInRemain -= dt;
 
             if (m_playing.blendInRemain <= 0.f)
@@ -183,14 +167,9 @@ void CCamDirector::Update(_float dt)
         m_dialogueUnlockPending = false;
     }
 
-     UpdateInput(dt);
+    UpdateInput(dt);
 }
 
-void CCamDirector::StartParry(_float fovHold, _float blendInSec, _float holdSec)
-{
-    if (!m_gate.Pass()) return;
-    m_parry.Begin(fovHold, blendInSec, holdSec);
-}
 
 void CCamDirector::StartBattleIntro(CamSeqType type)
 {
@@ -269,6 +248,11 @@ void CCamDirector::EndDialog()
     m_dialogue.End(0.5f);
     m_dialogueUnlockPending = true;
     GetOrbitCam()->Unlock_Input();
+}
+
+void CCamDirector::StartParry()
+{
+    m_parry.Begin();
 }
 
 void CCamDirector::UpdatePlayer()

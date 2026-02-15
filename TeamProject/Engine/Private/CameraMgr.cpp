@@ -48,34 +48,43 @@ _uint CCameraMgr::Push(CCamera* camComp, _float blendTime)
 
 void CCameraMgr::SetMainCamObj(OBJECT_HANDLE camObjHandle, _float blendSec)
 {
+    const OBJECT_HANDLE fromObj = GetActiveCamObj();
+
     m_baseCamObj = camObjHandle;
 
     if (!m_overrides.empty()) return;
-    BeginBlendTo(m_baseCamObj, blendSec);
+    BeginBlendTo(fromObj, m_baseCamObj, blendSec);
 }
 
 _uint CCameraMgr::PushCamObj(OBJECT_HANDLE camObjHandle, _float blendSec)
 {
+    const OBJECT_HANDLE fromObj = GetActiveCamObj();
+
     const _uint handle = m_nextHandle++;
     m_overrides.push_back({handle, camObjHandle});
 
-    BeginBlendTo(camObjHandle, blendSec);
+    BeginBlendTo(fromObj, camObjHandle, blendSec);
     return handle;
 }
 
+
 _bool CCameraMgr::Pop(_uint handle, _float blendTime)
 {
+    const OBJECT_HANDLE fromObj = GetActiveCamObj();
+
     auto it = find_if(m_overrides.begin(), m_overrides.end(), [&](const OverrideEntry& e) { return e.handle == handle; });
     m_overrides.erase(it);
 
-    BeginBlendTo(GetActiveCamObj(), blendTime);
+    BeginBlendTo(fromObj, GetActiveCamObj(), blendTime);
     return true;
 }
 
 void CCameraMgr::Clear(_float blendTime)
 {
+    const OBJECT_HANDLE fromObj = GetActiveCamObj();
+
     m_overrides.clear();
-    BeginBlendTo(m_baseCamObj, blendTime);
+    BeginBlendTo(fromObj, m_baseCamObj, blendTime);
 }
 
 void CCameraMgr::AddShakeAxis(CamShakeAxis axes, _float ampDeg, _float freq, _float dur, _float fadeOutSec)
@@ -166,14 +175,20 @@ void CCameraMgr::ApplyCache(CamCache& outCache, const CamPoseFrame& pose)
     outCache.farZ = pose.lens.farZ;
 }
 
-void CCameraMgr::BeginBlendTo(OBJECT_HANDLE targetObj, _float blendSec)
+void CCameraMgr::BeginBlendTo(OBJECT_HANDLE fromObj, OBJECT_HANDLE targetObj, _float blendSec)
 {
-    m_isBlending     = (blendSec > 0.f);
-    m_blendTime      = 0.f;
-    m_blendDuration  = blendSec;
-    m_blendFrom      = m_outputPose;
+    m_isBlending = (blendSec > 0.f);
+    m_blendTime = 0.f;
+    m_blendDuration = blendSec;
     m_blendTargetObj = targetObj;
-    m_blendEaseType  = m_easeType;
+    m_blendFromObj = fromObj;
+    m_blendEaseType = m_easeType;
+
+    auto fromCam = ResolveCam(m_blendFromObj);
+    if (fromCam)
+        m_blendFrom = CapturePose(fromCam);
+    else
+        m_blendFrom = m_outputPose;
 
     if (!m_isBlending)
     {
@@ -212,7 +227,15 @@ void CCameraMgr::Update(_float dt)
             m_outputPose = targetPose;
         }
         else
-            m_outputPose = BlendPose(m_blendFrom, targetPose, t);
+        {
+            CamPoseFrame fromPose = m_blendFrom;
+
+            auto fromCam = ResolveCam(m_blendFromObj);
+            if (fromCam)
+                fromPose = CapturePose(fromCam);
+
+            m_outputPose = BlendPose(fromPose, targetPose, t);
+        }
     }
     else
         m_outputPose = targetPose;
@@ -242,6 +265,7 @@ void CCameraMgr::Update(_float dt)
     if (m_shadowCamObj.isValid())
         UpdateShadowCache();
 }
+
 
 void CCameraMgr::AddImpact(_uint shakeType, _uint zoomType, _float strength)
 {
