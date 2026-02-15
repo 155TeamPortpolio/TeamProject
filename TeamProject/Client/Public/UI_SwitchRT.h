@@ -1,14 +1,14 @@
 #pragma once
-#include "UI_RTVDraw.h"
+#include "UI_ScreenRT.h"
 
 NS_BEGIN(Client)
 
-class CUI_Switch final : public CUI_RTVDraw
+class CUI_SwitchRT final : public CUI_ScreenRT
 {
 private:
-	CUI_Switch() {}
-	CUI_Switch(const CUI_Switch& rhs) : CUI_RTVDraw(rhs) {}
-	virtual ~CUI_Switch() DEFAULT;
+	CUI_SwitchRT() {}
+	CUI_SwitchRT(const CUI_SwitchRT& rhs) : CUI_ScreenRT(rhs) {}
+	virtual ~CUI_SwitchRT() DEFAULT;
 
 public:
 	virtual HRESULT Initialize_Prototype()           override;

@@ -1,9 +1,9 @@
 #pragma once
-#include "UI_RTVDraw.h"
+#include "UI_ScreenRT.h"
 
 NS_BEGIN(Client)
 
-class CUI_Wipeout final : public CUI_RTVDraw
+class CUI_WipeoutRT final : public CUI_ScreenRT
 {
 private:
 	enum class STATE { ACTIVE, INACTIVE, END };
@@ -12,9 +12,9 @@ private:
 	inline static const string INSTANCENAMES[ENUM(GROUP::END)] = { "group1", "group2", "group3", "group4", "group5" };
 
 private:
-	CUI_Wipeout() {}
-	CUI_Wipeout(const CUI_Wipeout& rhs) : CUI_RTVDraw(rhs) {}
-	virtual ~CUI_Wipeout() DEFAULT;
+	CUI_WipeoutRT() {}
+	CUI_WipeoutRT(const CUI_WipeoutRT& rhs) : CUI_ScreenRT(rhs) {}
+	virtual ~CUI_WipeoutRT() DEFAULT;
 
 public:
 	virtual HRESULT Initialize_Prototype()           override;

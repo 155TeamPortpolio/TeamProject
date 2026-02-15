@@ -1,10 +1,10 @@
 #include "pch.h"
-#include "UI_Switch.h"
+#include "UI_SwitchRT.h"
 
 #include "GameInstance.h"
 #include "ObjectContainer.h" 
 
-HRESULT CUI_Switch::Initialize_Prototype()
+HRESULT CUI_SwitchRT::Initialize_Prototype()
 {
     if (FAILED(__super::Initialize_Prototype()))
         return E_FAIL;
@@ -12,24 +12,24 @@ HRESULT CUI_Switch::Initialize_Prototype()
     return S_OK;
 }
 
-HRESULT CUI_Switch::Initialize(INIT_DESC* pArg)
+HRESULT CUI_SwitchRT::Initialize(INIT_DESC* pArg)
 {
     if (FAILED(__super::Initialize(pArg)))
         return E_FAIL;
 
-    Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("switch.json")));
+    Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("switchRT.json")));
 
     Set_Alive(false);
 
     return S_OK;
 }
 
-void CUI_Switch::Awake()
+void CUI_SwitchRT::Awake()
 {
     __super::Awake();
 }
 
-void CUI_Switch::Update(_float dt)
+void CUI_SwitchRT::Update(_float dt)
 {
     __super::Update(dt);
 
@@ -43,7 +43,7 @@ void CUI_Switch::Update(_float dt)
     Update_RTV("renderTargetScreen", true);
 }
 
-void CUI_Switch::UI_Active(void* pArg)
+void CUI_SwitchRT::UI_Active(void* pArg)
 {
     Set_RenderTargetScreenRenderLayer(RENDER_LAYER::Default);
     Set_Alive(true);
@@ -52,23 +52,23 @@ void CUI_Switch::UI_Active(void* pArg)
         dynamic_cast<CUI_Object*>(pChild)->Set_Animation(0);
 }
 
-CGameObject* CUI_Switch::Create()
+CGameObject* CUI_SwitchRT::Create()
 {
-    CUI_Switch* pInstance = new CUI_Switch();
+    CUI_SwitchRT* pInstance = new CUI_SwitchRT();
     if (FAILED(pInstance->Initialize_Prototype()))
     {
-        MSG_BOX("Failed to Create : CUI_Switch");
+        MSG_BOX("Failed to Create : CUI_SwitchRT");
         Safe_Release(pInstance);
     }
     return pInstance;
 }
 
-CGameObject* CUI_Switch::Clone(INIT_DESC* pArg)
+CGameObject* CUI_SwitchRT::Clone(INIT_DESC* pArg)
 {
-    CUI_Switch* pInstance = new CUI_Switch(*this);
+    CUI_SwitchRT* pInstance = new CUI_SwitchRT(*this);
     if (FAILED(pInstance->Initialize(pArg)))
     {
-        MSG_BOX("Failed to Clone : CUI_Switch");
+        MSG_BOX("Failed to Clone : CUI_SwitchRT");
         Safe_Release(pInstance);
     }
     return pInstance;

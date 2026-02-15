@@ -159,17 +159,17 @@ void CUIDirector::Show_GachaResult(const vector<GACHA_RESULT_DESC>* pResultDesc)
 
 void CUIDirector::Show_Switch()
 {
-	UI_Active("switch");
+	UI_Active("switchRT");
 }
 
 void CUIDirector::Show_Clear()
 {
-	UI_Active("clear");
+	UI_Active("clearRT");
 }
 
 void CUIDirector::Show_Wipeout()
 {
-	UI_Active("wipeout");
+	UI_Active("wipeoutRT");
 }
 
 void CUIDirector::Initialize()
