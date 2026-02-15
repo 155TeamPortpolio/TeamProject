@@ -327,6 +327,11 @@
           "EventTag": "claymore_Attack3_1.wav"
         },
         {
+          "EventTime": 0.0131254056468606,
+          "EventType": "Notify",
+          "EventTag": "ScrapingEnd"
+        },
+        {
           "EventTime": 0.03937621787190437,
           "EventType": "Notify",
           "EventTag": "TurnOnAttackCol"
@@ -424,23 +429,49 @@
       "ClipTag": "Monster_Claymore_Ani_Run_End",
       "Events": [
         {
-          "EventTime": 0.009999999776482582,
-          "EventType": "Notify",
-          "EventTag": "ScrapingEnd"
+          "EventTime": 0.15000000596046448,
+          "EventType": "Sound",
+          "EventTag": "claymore_FootStep.wav"
+        },
+        {
+          "EventTime": 0.15000000596046448,
+          "EventType": "Sound",
+          "EventTag": "claymore_Step_Splint.wav"
         }
       ]
     },
     {
       "ClipTag": "Monster_Claymore_Ani_Run_Loop",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.30000001192092896,
+          "EventType": "Sound",
+          "EventTag": "claymore_FootStep.wav"
+        },
+        {
+          "EventTime": 0.75,
+          "EventType": "Sound",
+          "EventTag": "claymore_FootStep.wav"
+        }
+      ]
     },
     {
       "ClipTag": "Monster_Claymore_Ani_Run_Start",
       "Events": [
         {
-          "EventTime": 0.10000000149011612,
+          "EventTime": 0.33000001311302185,
           "EventType": "Sound",
-          "EventTag": "claymore_Scraping.wav"
+          "EventTag": "claymore_FootStep.wav"
+        },
+        {
+          "EventTime": 0.75,
+          "EventType": "Sound",
+          "EventTag": "claymore_FootStep.wav"
+        },
+        {
+          "EventTime": 1.1699999570846558,
+          "EventType": "Sound",
+          "EventTag": "claymore_FootStep.wav"
         }
       ]
     },

@@ -87,11 +87,7 @@ void CClaymore_Attack::Update(CClaymore* pOwner, _float dt)
 			else if (Event.Tag == "ParryEnable_false")
 				pOwner->SetParryEnable(false);
 			else if (Event.Tag == "ScrapingEnd")
-			{
-				// 소리가 왜 안멈추지
-				pOwner->Get_Component<CAudioSource>()->Set_SlotPuase("claymore_Scraping.wav", true);
 				pOwner->Get_Component<CAudioSource>()->Set_SlotStop("claymore_Scraping.wav");
-			}
 
 			
 			break;
@@ -100,9 +96,9 @@ void CClaymore_Attack::Update(CClaymore* pOwner, _float dt)
 			break;
 		case Engine::CLIP_EVENT_TYPE::SOUND:
 			if (Event.Tag == "claymore_Scraping.wav")
-				pOwner->Get_Component<CAudioSource>()->Slot(Event.Tag).Attribute3D(true).Loop(false).Volume(0.1f).Play();
+				pOwner->Get_Component<CAudioSource>()->Slot(Event.Tag).Attribute3D(true).Loop(2).Volume(0.05f).Play();
 			else
-				pOwner->Get_Component<CAudioSource>()->Slot(Event.Tag).Attribute3D(true).Loop(false).Play();
+				pOwner->Get_Component<CAudioSource>()->Slot(Event.Tag).Attribute3D(true).Play();
 
 			break;
 		default:
