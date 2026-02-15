@@ -187,6 +187,11 @@
           "EventTag": "UnleashAttack"
         },
         {
+          "EventTime": 0.2892787456512451,
+          "EventType": "Sound",
+          "EventTag": "claymore_AttackSwing1.wav"
+        },
+        {
           "EventTime": 0.6499999761581421,
           "EventType": "Notify",
           "EventTag": "TurnOnAttackCol"
@@ -277,6 +282,11 @@
           "EventTag": "UnleashAttack"
         },
         {
+          "EventTime": 0.8187134265899658,
+          "EventType": "Sound",
+          "EventTag": "claymore_Scraping.wav"
+        },
+        {
           "EventTime": 2.0799999237060547,
           "EventType": "Sound",
           "EventTag": "claymore_Attack3_1.wav"
@@ -285,6 +295,11 @@
           "EventTime": 2.0849902629852295,
           "EventType": "Notify",
           "EventTag": "TurnOnAttackCol"
+        },
+        {
+          "EventTime": 2.303313970565796,
+          "EventType": "Notify",
+          "EventTag": "ScrapingEnd"
         },
         {
           "EventTime": 2.6500000953674316,
@@ -307,9 +322,19 @@
       "ClipTag": "Monster_Claymore_Ani_Attack_03_End",
       "Events": [
         {
+          "EventTime": 0.0131254056468606,
+          "EventType": "Sound",
+          "EventTag": "claymore_Attack3_1.wav"
+        },
+        {
           "EventTime": 0.03937621787190437,
           "EventType": "Notify",
           "EventTag": "TurnOnAttackCol"
+        },
+        {
+          "EventTime": 0.3499999940395355,
+          "EventType": "Sound",
+          "EventTag": "claymore_Attack3_2.wav"
         },
         {
           "EventTime": 0.8794021606445313,
@@ -397,7 +422,13 @@
     },
     {
       "ClipTag": "Monster_Claymore_Ani_Run_End",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.009999999776482582,
+          "EventType": "Notify",
+          "EventTag": "ScrapingEnd"
+        }
+      ]
     },
     {
       "ClipTag": "Monster_Claymore_Ani_Run_Loop",
@@ -405,7 +436,13 @@
     },
     {
       "ClipTag": "Monster_Claymore_Ani_Run_Start",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.10000000149011612,
+          "EventType": "Sound",
+          "EventTag": "claymore_Scraping.wav"
+        }
+      ]
     },
     {
       "ClipTag": "Monster_Claymore_Ani_Walk_B",

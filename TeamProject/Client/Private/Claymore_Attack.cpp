@@ -5,6 +5,7 @@
 
 #include "Animator3D.h"
 #include "CharacterController.h"
+#include "AudioSource.h"
 
 void CClaymore_Attack::Enter(CClaymore* pOwner)
 {
@@ -85,11 +86,24 @@ void CClaymore_Attack::Update(CClaymore* pOwner, _float dt)
 				pOwner->SetOnAttack(false);
 			else if (Event.Tag == "ParryEnable_false")
 				pOwner->SetParryEnable(false);
+			else if (Event.Tag == "ScrapingEnd")
+			{
+				// 소리가 왜 안멈추지
+				pOwner->Get_Component<CAudioSource>()->Set_SlotPuase("claymore_Scraping.wav", true);
+				pOwner->Get_Component<CAudioSource>()->Set_SlotStop("claymore_Scraping.wav");
+			}
+
+			
 			break;
 		}
 		case Engine::CLIP_EVENT_TYPE::EFFECT:
 			break;
 		case Engine::CLIP_EVENT_TYPE::SOUND:
+			if (Event.Tag == "claymore_Scraping.wav")
+				pOwner->Get_Component<CAudioSource>()->Slot(Event.Tag).Attribute3D(true).Loop(false).Volume(0.1f).Play();
+			else
+				pOwner->Get_Component<CAudioSource>()->Slot(Event.Tag).Attribute3D(true).Loop(false).Play();
+
 			break;
 		default:
 			break;
@@ -108,11 +122,9 @@ void CClaymore_Attack::Register_States()
 {
 	m_pSubStateMachine->Register_State("Attack01", CClaymore_Attack1::Create());
 	m_pSubStateMachine->Register_State("Attack02", CClaymore_Attack2::Create());
-	//m_pSubStateMachine->Register_State("Attack02b", CClaymore_Attack2b::Create());
 	m_pSubStateMachine->Register_State("Attack03", CClaymore_Attack3::Create());
 	m_pSubStateMachine->Register_State("Attack03_End", CClaymore_Attack3_End::Create());
 	m_pSubStateMachine->Register_State("Attack04", CClaymore_Attack4::Create());
-	//m_pSubStateMachine->Register_State("Attack05", CClaymore_Attack5::Create());
 }
 
 void CClaymore_Attack::Register_Transitions()

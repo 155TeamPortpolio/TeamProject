@@ -15,6 +15,7 @@
 #include "ObjectContainer.h"
 #include "CharacterController.h"
 #include "BoneFollower.h"
+#include "AudioSource.h"
 
 /* States */
 #include "StateMachine.h"
@@ -47,6 +48,7 @@ HRESULT CClaymore::Initialize_Prototype()
 	Add_Component<CSkeletalModel>();
 	Add_Component<CMaterial>();
 	Add_Component<CCharacterController>();
+	Add_Component<CAudioSource>();
 
 	auto pResourceMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
 	pResourceMgr->Add_ResourcePath("Claymore.mat", "../Bin/Resources/Zero/Enemy/Claymore/Claymore.mat");
@@ -78,6 +80,9 @@ HRESULT CClaymore::Initialize(INIT_DESC* pArg)
 
 	if (FAILED(Initialize_StateMachine()))
 		return E_FAIL;
+	
+	Get_Component<CAudioSource>()->SoundFolder(LevelManager()->Get_NowLevelKey() , "../Bin/Resources/Zero/Enemy/Claymore/Sound");
+
 
 	return S_OK;
 }
