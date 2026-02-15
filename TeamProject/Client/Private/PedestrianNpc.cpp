@@ -5,34 +5,6 @@
 #include "Helper_Func.h"
 #include "Animator3D.h"
 
-static vector<vector<_vector3>> dstPoint =
-{
-    {
-        { 55.f,  0.f,  6.5f },
-        { 55.f,  0.f, -0.8f },
-        { 40.f,  0.f, -4.5f },
-        { -18.f, 0.f, -4.5f },
-        { -27.f, 0.f, -3.8f },
-        { -30.f, 0.f, -1.f },
-        { -30.f, 0.f,  7.f },
-        { -50.f, 0.f,  7.f },
-        { -57.f, 0.f, 17.f },
-        { -57.f, 0.f, 29.f },
-    },
-    {
-        { -57.f, 0.f, 29.f },
-        { -57.f, 0.f, 17.f },
-        { -52.f, 0.f,  7.f },
-        { -30.f, 0.f,  7.f },
-        { -30.f, 0.f, -1.f },
-        { -27.f, 0.f, -3.8f },
-        { -18.f, 0.f, -4.5f },
-        {  40.f, 0.f, -4.5f },
-        {  55.f, 0.f, -0.8f },
-        {  55.f, 0.f,  6.5f },
-    }
-};
-
 CPedestrianNpc::CPedestrianNpc()
 {
 }
@@ -57,47 +29,29 @@ HRESULT CPedestrianNpc::Initialize(INIT_DESC* pArg)
 {
     __super::Initialize(pArg);
 
-    Get_Component<CModel>()->Link_Model("MainCity_Level", "NPC_21.model");
-    Get_Component<CMaterial>()->Link_Material("MainCity_Level", "NPC_21.mat");
+    string gederWord = "Male";
+    _int variation = Helper::Get_Random_Int(1, 6);
+    string model = gederWord + "0" + to_string(variation) + ".model";
+    string material = gederWord + "0" + to_string(variation) + ".mat";
+    string meta = gederWord + "0" + to_string(variation) + "_Meta.json";
 
-    const _uint routeCount = (_uint)dstPoint.size();
-    if (routeCount == 0)
-        return E_FAIL;
+    Get_Component<CModel>()->Link_Model("MainCity_Level", model);
+    Get_Component<CMaterial>()->Link_Material("MainCity_Level", material);
 
-    m_RouteIdx = (_uint)Helper::Get_Random_Int(0, (int)routeCount - 1);
+    Get_Component<CAnimator3D>()->LinkAnimate_Model("MainCity_Level", model);
+    Get_Component<CAnimator3D>()->Link_MetaData("MainCity_Level", meta);
 
-    const vector<_vector3>& route = dstPoint[m_RouteIdx];
-    if (route.size() < 2)
-        return E_FAIL;
-
-    m_CurPointIdx = 0;
-
-    m_MoveSpeed = Helper::Get_Random_Int(2, 4);
-    m_PathOffset = Helper::Get_Random_Float(-2.2f, 2.2f);
-
-    _vector3 point0 = route[0];
-    _vector3 point1 = route[1];
-
-    _vector3 dir01 = Math::NormalizeSafeXZ(point1 - point0);
-    _vector3 right01 = Rotate90ByCw(dir01, true);
-
-    _vector3 startPos = point0 + right01 * m_PathOffset;
-    m_pTransform->Set_Pos(startPos);
-    m_pTransform->Set_Look(dir01);
-
-    m_Vel = dir01 * (float)m_MoveSpeed;
-    m_Vel.y = 0.f;
-
-    Get_Component<CAnimator3D>()->LinkAnimate_Model("MainCity_Level", "NPC_21.model");
-    Get_Component<CAnimator3D>()->Link_MetaData("MainCity_Level", "NPC_21_Meta.json");
-    Get_Component<CAnimator3D>()
-        ->Set_Animation("NPC_Female_Size01_Ani_MainCity_Walk_Lively_030").Loop(true).Apply();
+    string walk = gederWord + "0" + to_string(variation) + "_Walk_Normal02_015";
+    Get_Component<CAnimator3D>()->Set_Animation(walk).Loop(true).Apply();
 
     return S_OK;
 }
 
 void CPedestrianNpc::Awake()
 {
+
+    preset.Randomize_Natural(m_ObjectID);
+    preset.LinkMaterial(Get_Component<CMaterial>());
 }
 
 void CPedestrianNpc::Priority_Update(_float dt)
@@ -126,13 +80,10 @@ void CPedestrianNpc::Calc_Destination(_float dt)
     if (dt <= 0.f)
         return;
 
-    if (dstPoint.empty())
+    if (movePoints.empty())
         return;
 
-    if (m_RouteIdx >= (_uint)dstPoint.size())
-        m_RouteIdx = 0;
-
-    const vector<_vector3>& route = dstPoint[m_RouteIdx];
+    const vector<_float3>& route = movePoints;
     const _uint pointCount = (_uint)route.size();
     if (pointCount < 2)
         return;
@@ -271,13 +222,10 @@ void CPedestrianNpc::Calc_Destination(_float dt)
 
 void CPedestrianNpc::SnapToStart()
 {
-    if (dstPoint.empty())
+    if (movePoints.empty())
         return;
 
-    if (m_RouteIdx >= (_uint)dstPoint.size())
-        m_RouteIdx = 0;
-
-    const vector<_vector3>& route = dstPoint[m_RouteIdx];
+    const vector<_float3>& route = movePoints;
     if (route.size() < 2)
         return;
 
@@ -291,6 +239,47 @@ void CPedestrianNpc::SnapToStart()
 
     _vector3 startPos = point0 + right01 * m_PathOffset;
 
+    m_pTransform->Set_Pos(startPos);
+    m_pTransform->Set_Look(dir01);
+
+    m_Vel = dir01 * (float)m_MoveSpeed;
+    m_Vel.y = 0.f;
+
+    string gederWord = "Male";
+    _int variation = Helper::Get_Random_Int(1, 6);
+    string model = gederWord + "0" + to_string(variation) + ".model";
+    string material = gederWord + "0" + to_string(variation) + ".mat";
+    string meta = gederWord + "0" + to_string(variation) + "_Meta.json";
+
+    Get_Component<CModel>()->Link_Model("MainCity_Level", model);
+    Get_Component<CMaterial>()->Link_Material("MainCity_Level", material);
+
+    Get_Component<CAnimator3D>()->LinkAnimate_Model("MainCity_Level", model);
+    Get_Component<CAnimator3D>()->Link_MetaData("MainCity_Level", meta);
+
+    string walk = gederWord + "0" + to_string(variation) + "_Walk_Normal02_015";
+    Get_Component<CAnimator3D>()->Set_Animation(walk).Loop(true).Apply();
+
+    preset.Randomize_Natural(m_ObjectID);
+    preset.LinkMaterial(Get_Component<CMaterial>());
+}
+
+void CPedestrianNpc::Set_MovePoint(vector<_float3> points)
+{
+    movePoints = points;
+    const vector<_float3>& route = movePoints;
+    m_CurPointIdx = 0;
+
+    m_MoveSpeed = Helper::Get_Random_Float(1, 1.5f);
+    m_PathOffset = Helper::Get_Random_Float(-2.2f, 2.2f);
+
+    _vector3 point0 = route[0];
+    _vector3 point1 = route[1];
+
+    _vector3 dir01 = Math::NormalizeSafeXZ(point1 - point0);
+    _vector3 right01 = Rotate90ByCw(dir01, true);
+
+    _vector3 startPos = point0 + right01 * m_PathOffset;
     m_pTransform->Set_Pos(startPos);
     m_pTransform->Set_Look(dir01);
 

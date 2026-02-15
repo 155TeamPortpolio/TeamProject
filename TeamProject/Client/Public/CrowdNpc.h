@@ -1,5 +1,7 @@
 #pragma once
 #include "Npc.h"
+#include "NPC_Preset.h"
+
 NS_BEGIN(Client)
 class CCrowdNpc :
     public CNpc
@@ -17,8 +19,9 @@ public:
     virtual void    Update(_float dt) override;
     virtual void    Late_Update(_float dt) override;
     virtual void    Render_GUI() override;
+
 private:
-    _float4 m_fHairColor = { 1.00f, 0.86f, 0.70f,1.f };
+    NpcColorPreset preset;
 
 public:
     static CCrowdNpc* Create();

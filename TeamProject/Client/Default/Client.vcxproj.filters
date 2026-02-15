@@ -91,9 +91,6 @@
     <Filter Include="02. GameObject\Object\Npc">
       <UniqueIdentifier>{79bba1fb-58bb-4669-a74a-54e083c8c10d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Object\Npc\Background">
-      <UniqueIdentifier>{74c2a9bd-d86d-4bb7-8336-f027d17151f3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\Object\Npc\Service">
       <UniqueIdentifier>{210a1075-7fe0-417a-8c56-982a1dbb01ef}</UniqueIdentifier>
     </Filter>
@@ -1047,12 +1044,6 @@
     <Filter Include="01. Level\04. Zero\Stage_Start">
       <UniqueIdentifier>{68bfc06d-7f7e-4232-b8f1-d9e74f644886}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Object\Npc\Background\Crowd">
-      <UniqueIdentifier>{090fe14d-c489-4bd5-8524-dec97cb3fdc5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Npc\Background\Pedestrian">
-      <UniqueIdentifier>{38a9114f-dcab-4df2-8f6b-c17d39ba59ed}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\UI\01. 2D\Gacha\Display">
       <UniqueIdentifier>{d863e830-0e43-4884-ae68-e83abab8552b}</UniqueIdentifier>
     </Filter>
@@ -1367,7 +1358,7 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Env\WaterWaves\WaterWave">
       <UniqueIdentifier>{aea5bd1e-985a-4281-bd0f-03da8ed2d179}</UniqueIdentifier>
-          </Filter>
+    </Filter>
     <Filter Include="02. GameObject\UI\01. 2D\Party">
       <UniqueIdentifier>{e5501893-5332-4c0a-865e-adb30f047d16}</UniqueIdentifier>
     </Filter>
@@ -1424,6 +1415,18 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Interactable\HealKit\KitObject">
       <UniqueIdentifier>{5f5264af-4f99-4805-ad3c-99dec2533a26}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Npc\Background">
+      <UniqueIdentifier>{74c2a9bd-d86d-4bb7-8336-f027d17151f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Npc\Background\Crowd">
+      <UniqueIdentifier>{090fe14d-c489-4bd5-8524-dec97cb3fdc5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Npc\Background\Pedestrian">
+      <UniqueIdentifier>{38a9114f-dcab-4df2-8f6b-c17d39ba59ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Npc\Background\Spawner">
+      <UniqueIdentifier>{ead39d53-3d44-47f3-8122-bea1dda8f3cc}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -2704,7 +2707,7 @@
     </ClInclude>
     <ClInclude Include="..\public\WaterWaves.h">
       <Filter>02. GameObject\Object\Env\WaterWaves</Filter>
-          </ClInclude>
+    </ClInclude>
     <ClInclude Include="..\Public\UI_Party.h">
       <Filter>02. GameObject\UI\01. 2D\Party</Filter>
     </ClInclude>
@@ -2758,6 +2761,12 @@
     </ClInclude>
     <ClInclude Include="..\Public\KitObject.h">
       <Filter>02. GameObject\Object\Interactable\HealKit\KitObject</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\NPC_Preset.h">
+      <Filter>02. GameObject\Object\Npc\Background</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\BackGroundSpawner.h">
+      <Filter>02. GameObject\Object\Npc\Background\Spawner</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -3997,7 +4006,7 @@
     </ClCompile>
     <ClCompile Include="..\private\WaterWaves.cpp">
       <Filter>02. GameObject\Object\Env\WaterWaves</Filter>
-          </ClCompile>
+    </ClCompile>
     <ClCompile Include="..\Private\UI_Party.cpp">
       <Filter>02. GameObject\UI\01. 2D\Party</Filter>
     </ClCompile>
@@ -4051,6 +4060,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\KitObject.cpp">
       <Filter>02. GameObject\Object\Interactable\HealKit\KitObject</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\BackGroundSpawner.cpp">
+      <Filter>02. GameObject\Object\Npc\Background\Spawner</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

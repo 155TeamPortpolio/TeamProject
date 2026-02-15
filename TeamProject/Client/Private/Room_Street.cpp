@@ -3,6 +3,8 @@
 #include "MapLoader.h"
 
 #include "FieldSystem.h"
+#include "BackGroundSpawner.h"
+
 CRoom_Street::CRoom_Street(const ROOM_DESC& desc)
 	:CRoom(desc)
 {
@@ -18,9 +20,9 @@ void CRoom_Street::Enter()
 	m_pLoader = CMapLoader::Create("MainCity_Level", "MainCity");
 	if (nullptr == m_pLoader)
 		MSG_BOX("Failed to Load MapData!");
-
 	FieldSystem()->PlayBGM("MainCityBGM.wav");
-	//m_pLoader->MapIndexToEntityHandle();
+	CBackGroundSpawner spawner;
+	spawner.CreatePedestrian("MainCity");
 }
 
 void CRoom_Street::Update()

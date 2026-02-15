@@ -27,7 +27,7 @@ HRESULT CCrowdNpc::Initialize(INIT_DESC* pArg)
 {
     __super::Initialize(pArg);
 
-    _int isMale = Helper::Get_Random_Int(0, 1);
+    _int isMale = Helper::Get_Random_Int(0, 2);
     _int variation = Helper::Get_Random_Int(1, 10);
 
     string gederWord = "Female";
@@ -41,31 +41,30 @@ HRESULT CCrowdNpc::Initialize(INIT_DESC* pArg)
 
     string model =      gederWord + "0" + to_string(variation) + ".model";
     string material =   gederWord + "0" + to_string(variation) + ".mat";
-    string meta = gederWord;
+    string meta = gederWord + "0" + to_string(variation)+"_Meta.json";
 
     Get_Component<CModel>()->Link_Model("MainCity_Level", model);
     Get_Component<CMaterial>()->Link_Material("MainCity_Level", material);
 
     Get_Component<CAnimator3D>()->LinkAnimate_Model("MainCity_Level", model);
+    Get_Component<CAnimator3D>()->Link_MetaData("MainCity_Level", meta);
+
     if (isMale) {
-        Get_Component<CAnimator3D>()->Link_MetaData("MainCity_Level", "NPC_Male_Size02_Meta.json");
+      _int Anim =  Helper::Get_Random_Int(0, NPC_MALE_ANIM.size()-1);
+      Get_Component<CAnimator3D>()->Set_Animation(Anim).Loop(true).Apply();
     }
-    else {
-        Get_Component<CAnimator3D>()->Link_MetaData("MainCity_Level", "NPC_Female_Size02_Meta.json");
+    else{
+      _int Anim =  Helper::Get_Random_Int(0, NPC_FEMALE_ANIM.size()-1);
+      Get_Component<CAnimator3D>()->Set_Animation(Anim).Loop(true).Apply();
     }
-    
-    Get_Component<CAnimator3D>()->Set_Animation(4).Loop(true).Apply();
-    //NPC_Male_Size02_Meta.json
-    //NPC_Female_Size02_Meta.json
     m_InstanceName = model;
     return S_OK;
 }
 
 void CCrowdNpc::Awake()
 {
-    if (auto pHairMat = Get_Component<CMaterial>()->Find_MaterialInstanceByName("Hair")) {
-        pHairMat->Set_Param("fVariationColor", {&m_fHairColor ,"float4",sizeof(_float4)});
-    }
+    preset.Randomize_Natural(m_ObjectID);
+    preset.LinkMaterial(Get_Component<CMaterial>());
 }
 
 void CCrowdNpc::Priority_Update(_float dt)
@@ -83,7 +82,7 @@ void CCrowdNpc::Late_Update(_float dt)
 
 void CCrowdNpc::Render_GUI()
 {
-    ImGui::DragFloat4("Hair", &m_fHairColor.x);
+    preset.Render_Colors();
     __super::Render_GUI();
 }
 
