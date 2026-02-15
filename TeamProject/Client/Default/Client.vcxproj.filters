@@ -1419,10 +1419,7 @@
     <Filter Include="02. GameObject\Object\Interactable\HealKit">
       <UniqueIdentifier>{8b1edd40-c12b-4e78-9bb4-7bbe13b2d7ba}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Object\Interactable\HealKit\HealthKit">
-      <UniqueIdentifier>{d17eedf7-c7b6-4ff4-9523-84af5b766fe6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Interactable\HealKit\EnergyKit">
+    <Filter Include="02. GameObject\Object\Interactable\HealKit\KitObject">
       <UniqueIdentifier>{5f5264af-4f99-4805-ad3c-99dec2533a26}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -2753,8 +2750,8 @@
     <ClInclude Include="..\public\HealKit.h">
       <Filter>02. GameObject\Object\Interactable\HealKit</Filter>
     </ClInclude>
-    <ClInclude Include="CEnergyKit.h">
-      <Filter>02. GameObject\Object\Interactable\HealKit\EnergyKit</Filter>
+    <ClInclude Include="..\Public\KitObject.h">
+      <Filter>02. GameObject\Object\Interactable\HealKit\KitObject</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -4043,8 +4040,8 @@
     <ClCompile Include="..\private\HealKit.cpp">
       <Filter>02. GameObject\Object\Interactable\HealKit</Filter>
     </ClCompile>
-    <ClCompile Include="CEnergyKit.cpp">
-      <Filter>02. GameObject\Object\Interactable\HealKit\EnergyKit</Filter>
+    <ClCompile Include="..\Private\KitObject.cpp">
+      <Filter>02. GameObject\Object\Interactable\HealKit\KitObject</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

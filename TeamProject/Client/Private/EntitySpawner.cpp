@@ -209,10 +209,14 @@ OBJECT_HANDLE Client::Spawner::Create_Interactable(const SPAWNER_DESC& Desc)
 					string KitType = *GetSlotValue<string>(tFieldData.defaultvalue);
 
 					CHealKit::HEALKIT_DESC* pPortalDesc = new CHealKit::HEALKIT_DESC;
+					tColDesc.eGroup = COLLISION_GROUP::COMMON;
 
-					if		("HP")		pPortalDesc->eItemType = CHealKit::ITEMTYPE::HP;
-					else if ("Energy")	pPortalDesc->eItemType = CHealKit::ITEMTYPE::ENERGY;
-					else				pPortalDesc->eItemType = CHealKit::ITEMTYPE::END;
+					if (KitType == "HP")
+						pPortalDesc->eItemType = CHealKit::ITEMTYPE::HP;
+					else if (KitType == "Energy")
+						pPortalDesc->eItemType = CHealKit::ITEMTYPE::ENERGY;
+					else				
+						pPortalDesc->eItemType = CHealKit::ITEMTYPE::END;
 
 					pOBJDesc = pPortalDesc;
 				}

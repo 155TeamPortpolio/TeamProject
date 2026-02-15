@@ -387,6 +387,7 @@
     <ClInclude Include="..\Public\DefilerState_Other.h" />
     <ClInclude Include="..\Public\DefilerWall.h" />
     <ClInclude Include="..\Public\DefilerWeapon.h" />
+    <ClInclude Include="..\Public\KitObject.h" />
     <ClInclude Include="..\Public\Giant.h" />
     <ClInclude Include="..\Public\Giant_Attack.h" />
     <ClInclude Include="..\Public\Giant_Born.h" />
@@ -790,7 +791,6 @@
     <ClInclude Include="..\Public\ZeroStage_Elite.h" />
     <ClInclude Include="..\Public\ZeroStage_Normal.h" />
     <ClInclude Include="..\Public\Zero_Level.h" />
-    <ClInclude Include="CEnergyKit.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Resource.h" />
@@ -876,6 +876,7 @@
     <ClCompile Include="..\Private\DefilerState_Other.cpp" />
     <ClCompile Include="..\Private\DefilerWall.cpp" />
     <ClCompile Include="..\Private\DefilerWeapon.cpp" />
+    <ClCompile Include="..\Private\KitObject.cpp" />
     <ClCompile Include="..\Private\Giant.cpp" />
     <ClCompile Include="..\Private\Giant_Attack.cpp" />
     <ClCompile Include="..\Private\Giant_Born.cpp" />
@@ -1272,7 +1273,6 @@
     <ClCompile Include="..\Private\ZeroStage_Elite.cpp" />
     <ClCompile Include="..\Private\ZeroStage_Normal.cpp" />
     <ClCompile Include="..\Private\Zero_Level.cpp" />
-    <ClCompile Include="CEnergyKit.cpp" />
     <ClCompile Include="Client.cpp" />
   </ItemGroup>
   <ItemGroup>

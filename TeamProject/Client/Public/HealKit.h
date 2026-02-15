@@ -5,7 +5,7 @@
 NS_BEGIN(Client)
 
 class CHealKit final :
-    public CInteractable, public IInteract
+    public CInteractable
 {
 public:
     enum class ITEMTYPE { HP, ENERGY, END };
@@ -30,12 +30,10 @@ public:
     virtual void    OnTriggerStay(CGameObject* pOher)   override;
     virtual void    OnTriggerExit(CGameObject* pOther)  override;
 
-    virtual void                Interact(CGameObject* pObject = nullptr) override;
-    virtual OBJECT_HANDLE       Get_InteractHandle() override;
-
 private:
     void Recovery_Health();
     void Recovery_Energy();
+    void Setting_Child();
 
 private:
     _float m_fResetTimer  = { 5.f };

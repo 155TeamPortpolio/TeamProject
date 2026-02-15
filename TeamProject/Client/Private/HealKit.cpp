@@ -8,6 +8,9 @@
 #include "Character.h"
 #include "BattleSystem.h"
 #include "BattlePlayer.h"
+#include "AudioSource.h"
+
+#include "KitObject.h"
 
 CHealKit::CHealKit()
 	: CInteractable()
@@ -27,7 +30,11 @@ HRESULT CHealKit::Initialize_Prototype()
 	Add_Component<CStaticModel>();
 	Add_Component<CMaterial>();
 	Add_Component<CObjectContainer>();
-	
+	Add_Component<CAudioSource>();
+
+	Get_Component<CAudioSource>()->SoundFolder("Zero_Level", "../Bin/Resources/Zero/Interactable/HealKit/Sound");
+
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Kit_Child", CKitObject::Create());
 	return S_OK;
 }
 
@@ -43,8 +50,9 @@ HRESULT CHealKit::Initialize(INIT_DESC* pArg)
 	if (m_eItemType == ITEMTYPE::END)
 		return E_FAIL;
 	
-	Get_Component<CStaticModel>()->Link_Model("Scott_Level", "Device_Prop_ItemStand_02.model");
-	Get_Component<CMaterial>()->Link_Material("Scott_Level", "Device_Prop_ItemStand_02.mat");
+	Get_Component<CStaticModel>()->Link_Model("Zero_Level", "Device_Prop_ItemStand_02.model");
+	Get_Component<CMaterial>()->Link_Material("Zero_Level", "Device_Prop_ItemStand_02.mat");
+	Setting_Child();
 
 	return S_OK;
 }
@@ -64,6 +72,9 @@ void CHealKit::Priority_Update(_float dt)
 	if (m_fResetTimer <= m_fElapsedTime) {
 		m_bActiveItem = true;
 		m_fElapsedTime = 0.f;
+
+		for (auto& Child : Get_Children())
+			Child->SetRenderLayer(RENDER_LAYER::Default);
 	}
 
 }
@@ -84,7 +95,29 @@ void CHealKit::OnTriggerEnter(CGameObject* pOther)
 	if (pCollidable && (pCollidable->Get_Group() != COLLISION_GROUP::PLAYER))
 		return;
 
-	Interact(pOther);
+	if (!m_bActiveItem) return;
+
+	m_bActiveItem = false;
+	m_fElapsedTime = 0.f;
+
+	for (auto& Child : Get_Children())
+		Child->SetRenderLayer(RENDER_LAYER::None);
+
+	switch (m_eItemType)
+	{
+	case Client::CHealKit::ITEMTYPE::HP:		Recovery_Health();	break;
+	case Client::CHealKit::ITEMTYPE::ENERGY:	Recovery_Energy();	break;
+	case Client::CHealKit::ITEMTYPE::END:							break;
+	default:														break;
+	}
+
+	_int RandSound = Helper::Get_Random_Int(1, 4);
+	string Sound = "HealPack" + to_string(RandSound);
+	Get_Component<CAudioSource>()->Slot(Sound)
+		.Attribute3D(false)
+		.Loop(false)
+		.Volume(0.4f)
+		.Play();
 }
 
 void CHealKit::OnTriggerStay(CGameObject* pOher)
@@ -99,27 +132,6 @@ void CHealKit::OnTriggerExit(CGameObject* pOther)
 		return;
 }
 
-void CHealKit::Interact(CGameObject* pObject)
-{
-	if (!m_bActiveItem) return;
-
-	if (CCharacter* pCharactor = dynamic_cast<CCharacter*>(pObject))
-	{
-		switch (m_eItemType)
-		{
-		case Client::CHealKit::ITEMTYPE::HP:		Recovery_Health();	break;
-		case Client::CHealKit::ITEMTYPE::ENERGY:	Recovery_Energy();	break;
-		case Client::CHealKit::ITEMTYPE::END:							break;	
-		default:														break;
-		}
-	}
-}
-
-OBJECT_HANDLE CHealKit::Get_InteractHandle()
-{
-	return Get_Handle();
-}
-
 void CHealKit::Recovery_Health()
 {
 	BattleSystem()->GetBattlePlayer();
@@ -128,6 +140,18 @@ void CHealKit::Recovery_Health()
 void CHealKit::Recovery_Energy()
 {
 	BattleSystem()->GetBattlePlayer();
+}
+
+void CHealKit::Setting_Child()
+{
+	CKitObject::KIT_DESC* KitDesc = new CKitObject::KIT_DESC;
+	KitDesc->iItemType = ENUM(m_eItemType);
+	CGameObject* Object = Builder::Create_Object({ "Zero_Level",  "Kit_Child" })
+		.Add_ObjDesc(KitDesc)
+		.Position(_vector3{ 0.f, 0.35f, 0.f })
+		.Build("Kit_Child");
+
+	Add_Component<CObjectContainer>()->Add_Child(Object, true);
 }
 
 CHealKit* CHealKit::Create()
