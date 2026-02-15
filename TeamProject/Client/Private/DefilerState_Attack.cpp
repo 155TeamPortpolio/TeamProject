@@ -543,9 +543,15 @@ void CDefilerState_Attack_06::Exit(CDefiler* pOwner)
 
 void CDefilerState_Attack_06::Update_Effects(CDefiler* pOwner)
 {
-	if (IsCrossAnimProgress(0.2f))
+	if (IsCrossAnimProgress(0.18f))
 	{
 		auto pLaser = pOwner->Get_Component<CObjectContainer>()->Find_ObjectByName("Defiler_Laser_0");
+		static_cast<CDefilerLaser*>(pLaser)->Set_ActiveLaser(true, CDefilerLaser::LASER_TYPE::NORMAL);
+	}
+
+	if (IsCrossAnimProgress(0.35f))
+	{
+		auto pLaser = pOwner->Get_Component<CObjectContainer>()->Find_ObjectByName("Defiler_Laser_1");
 		static_cast<CDefilerLaser*>(pLaser)->Set_ActiveLaser(true, CDefilerLaser::LASER_TYPE::NORMAL);
 	}
 }

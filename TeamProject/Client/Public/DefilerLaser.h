@@ -25,6 +25,7 @@ private:
     HRESULT Initialize_Effects();
     void Apply_PendingActive();
     void SetUp_Effect();
+    void SetUp_Collider();
 
 public:
     void Set_ActiveLaser(_bool active, LASER_TYPE iType);

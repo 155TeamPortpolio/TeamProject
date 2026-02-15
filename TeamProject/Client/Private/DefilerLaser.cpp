@@ -78,11 +78,13 @@ void CDefilerLaser::Priority_Update(_float dt)
 
 void CDefilerLaser::Update(_float dt)
 {
-    Get_Component<CBoneFollower>()->Sync_Transform(dt, m_pTransform);
     Get_Component<CObjectContainer>()->UpdateChild(dt);
 
     if (m_IsPendingActive)
+    {
+        Get_Component<CBoneFollower>()->Sync_Transform(dt, m_pTransform);
         Apply_PendingActive();
+    }
 
     if (m_IsActive)
     {
@@ -92,6 +94,10 @@ void CDefilerLaser::Update(_float dt)
             m_IsPendingActive = false;
             m_IsActive = false;
             m_fElapsedTime = 0.f;
+            m_isOnAttack = false;
+
+            Get_Component<CCollider>()->Set_CompActive(false);
+            SetBattleColliderObject("Laser_Attack", CEnemy::BATTLE_COLTYPE::ATTACK, false);
 
             auto pLaser = Get_Component<CObjectContainer>()->Find_ObjectByName("Defiler_Laser");
             if(pLaser)
@@ -148,11 +154,6 @@ HRESULT CDefilerLaser::Initialize_Effects()
 
 void CDefilerLaser::Apply_PendingActive()
 {
-    //m_IsPendingActive = false;
-    //m_isOnAttack = false;
-    //Get_Component<CCollider>()->Set_CompActive(false);
-    //SetBattleColliderObject("Laser_Attack", CEnemy::BATTLE_COLTYPE::ATTACK, false);
-
     m_IsPendingActive = false;
     m_IsActive = true;
     m_isOnAttack = true;
@@ -167,6 +168,7 @@ void CDefilerLaser::Apply_PendingActive()
     SetBattleColliderObject("Laser_Attack", CEnemy::BATTLE_COLTYPE::ATTACK, true, HitDesc);
 
     SetUp_Effect();
+    SetUp_Collider();
 }
 
 void CDefilerLaser::SetUp_Effect()
@@ -242,6 +244,25 @@ void CDefilerLaser::SetUp_Effect()
         pLaserHitPoint->Get_Component<CTransform>()->Set_Pos(m_vEndPoint);
         static_cast<CEffectContainer*>(pLaserHitPoint)->Play();
     }
+}
+
+void CDefilerLaser::SetUp_Collider()
+{
+    auto pAttackCollider = Get_Component<CObjectContainer>()->Find_ObjectByName("Laser_Attack_AttackCollider")->Get_Component<CCollider>();
+    auto pCollider = Get_Component<CCollider>();
+    auto pRigidBody = Get_Component<CRigidBody>();
+
+    _vector3 vDir = m_vEndPoint - m_vStartPoint;
+    _float fLength = vDir.Length();
+    vDir.Normalize();
+
+    m_pTransform->Set_Look(vDir);
+
+    pCollider->Set_Center(_float3(0.f, 0.f, fLength * 0.5f));
+    pCollider->Set_Size(_float3(1.f, 1.f, fLength));
+
+    pAttackCollider->Set_Center(_float3(0.f, 0.f, fLength * 0.5f));
+    pAttackCollider->Set_Size(_float3(2.f, 2.f, fLength));
 }
 
 void CDefilerLaser::Set_ActiveLaser(_bool active, LASER_TYPE eType)
