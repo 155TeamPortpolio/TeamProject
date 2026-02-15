@@ -55,6 +55,17 @@ void CKitObject::Priority_Update(_float dt)
 
 void CKitObject::Update(_float dt)
 {
+	RotatePerSec(dt);
+	Wave(dt);
+}
+
+void CKitObject::Late_Update(_float dt)
+{
+}
+
+
+void CKitObject::RotatePerSec(_float dt)
+{
 	if (m_vDegreePerSec == _vector3::Zero)
 		return;
 
@@ -77,12 +88,20 @@ void CKitObject::Update(_float dt)
 	Get_Component<CTransform>()->Set_Quaternion(nextQuat);
 }
 
-void CKitObject::Late_Update(_float dt)
+void CKitObject::Wave(_float dt)
 {
-}
+	_float4 vLocalPos;
+	XMStoreFloat4(&vLocalPos, Get_Component<CTransform>()->Get_Pos());
+	
+	if (m_fWaveTime == 0.f)
+		m_fBaseY = vLocalPos.y;
 
-void CKitObject::Render_GUI()
-{
+	m_fWaveTime += dt * m_vWave.x;
+
+	_float offset = sinf(XMConvertToRadians(m_fWaveTime)) * m_vWave.y;
+
+	vLocalPos.y = m_fBaseY + offset;
+	m_pTransform->Set_Pos(vLocalPos);
 }
 
 CKitObject* CKitObject::Create()

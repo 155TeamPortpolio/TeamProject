@@ -148,7 +148,7 @@ void CHealKit::Setting_Child()
 	KitDesc->iItemType = ENUM(m_eItemType);
 	CGameObject* Object = Builder::Create_Object({ "Zero_Level",  "Kit_Child" })
 		.Add_ObjDesc(KitDesc)
-		.Position(_vector3{ 0.f, 0.35f, 0.f })
+		.Position(_vector3{ 0.f, 0.25f, 0.f })
 		.Build("Kit_Child");
 
 	Add_Component<CObjectContainer>()->Add_Child(Object, true);
