@@ -64,6 +64,12 @@
           "prototypeTag": "Proto_GameObject_BattleHUD",
           "instanceName": "hud_battle",
           "prefabPath" : ""
+        },
+        
+        {
+          "prototypeTag": "Proto_GameObject_Switch",
+          "instanceName": "switch",
+          "prefabPath" : ""
         }
       ]
     },
