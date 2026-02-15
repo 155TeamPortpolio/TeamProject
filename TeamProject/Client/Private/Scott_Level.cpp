@@ -40,8 +40,10 @@
 
 /* Interactable */
 #include "Portal.h"
-
 #include "Jaeger.h"
+
+/*Room*/
+#include "Room_Scott.h"
 
 CScott_Level::CScott_Level(const string& LevelKey)
 	:CLevel(LevelKey),
@@ -72,14 +74,11 @@ HRESULT CScott_Level::Awake()
 	auto uiDirector = CUIDirector::GetInstance();
 	uiDirector->Load_LevelObjects("Scott_Level");
 	Ready_UI();
-
+	Ready_Map("Scott_Level", "Scott");
 	//==================== Interactable ===============
 	pProto->Add_ProtoType("Scott_Level", "Proto_GameObject_Portal", CPortal::Create());
 
 	//============== Map ============================
-	Ready_Map("Scott_Level", "Zero_Worksite");
-	//Ready_Npc();
-
 	//Effect
 	pProto->Add_ProtoType("Scott_Level", "Proto_GameObject_PaperEffect", CPaperEffect::Create());
 	auto PaperEffect = Builder::Create_Object({ "Scott_Level", "Proto_GameObject_PaperEffect" })
@@ -88,7 +87,6 @@ HRESULT CScott_Level::Awake()
 	ObjectManager()->Add_Object(PaperEffect, { "Scott_Level", "MapParticle_Layer" });
 
 	CamDirector()->AutoField(CamStartDir::Back);
-	FieldSystem()->PlayBGM("ScottBGM.wav");
 
 	AudioDevice()->Set_Listener(ObjectManager()->Find_Global(ENUM(GLOBAL_ID::FreeCam))->Get_Component<CTransform>());
 	return S_OK;
@@ -111,12 +109,9 @@ void CScott_Level::PreLoad_Level()
 
 void CScott_Level::Ready_Map(const string& LevelTag, const string& AreaTag)
 {
-	//Map Loader Logic is going to Change
-	CMapLoader* pMapLoader = CMapLoader::Create(LevelTag, AreaTag);
-	if (nullptr == pMapLoader)
-		MSG_BOX("Failed to Load MapData!");
-
-	Safe_Release(pMapLoader);
+	FieldSystem()->RegisterRoom(CRoom_Scott::Create({ "Scott" , true }));
+	//FieldSystem()->RegisterRoom(CRoom_Party::Create({ "Party" , false }));
+	FieldSystem()->RequestEnter("Scott", true);
 }
 
 void CScott_Level::Ready_Npc()

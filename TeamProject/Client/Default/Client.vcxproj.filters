@@ -1041,9 +1041,6 @@
     <Filter Include="01. Level\05. Gacha">
       <UniqueIdentifier>{fa9bd871-fe4c-4859-8b99-9123ce93fc2d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03. Utility\06. FieldSystem\Room\05. Room_Gacha">
-      <UniqueIdentifier>{820f4014-89e1-411c-b031-be391e0f1e5e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. Level\04. Zero\Stage_Start">
       <UniqueIdentifier>{68bfc06d-7f7e-4232-b8f1-d9e74f644886}</UniqueIdentifier>
     </Filter>
@@ -1367,7 +1364,7 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Env\WaterWaves\WaterWave">
       <UniqueIdentifier>{aea5bd1e-985a-4281-bd0f-03da8ed2d179}</UniqueIdentifier>
-          </Filter>
+    </Filter>
     <Filter Include="02. GameObject\UI\01. 2D\Party">
       <UniqueIdentifier>{e5501893-5332-4c0a-865e-adb30f047d16}</UniqueIdentifier>
     </Filter>
@@ -1424,6 +1421,15 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Interactable\HealKit\KitObject">
       <UniqueIdentifier>{5f5264af-4f99-4805-ad3c-99dec2533a26}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\06. FieldSystem\Room\06. Scott">
+      <UniqueIdentifier>{37049a35-fd6e-4b21-8d6e-d37b7a1560c0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\06. FieldSystem\Room\05. Gacha">
+      <UniqueIdentifier>{820f4014-89e1-411c-b031-be391e0f1e5e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\06. FieldSystem\Room\07. Party">
+      <UniqueIdentifier>{47d49842-2238-46dd-b61f-399b1b8d45e6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -2481,7 +2487,7 @@
       <Filter>01. Level\04. Zero\StageRouter</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Room_Gacha.h">
-      <Filter>03. Utility\06. FieldSystem\Room\05. Room_Gacha</Filter>
+      <Filter>03. Utility\06. FieldSystem\Room\05. Gacha</Filter>
     </ClInclude>
     <ClInclude Include="..\public\ZeroStage_Start.h">
       <Filter>01. Level\04. Zero\Stage_Start</Filter>
@@ -2704,7 +2710,7 @@
     </ClInclude>
     <ClInclude Include="..\public\WaterWaves.h">
       <Filter>02. GameObject\Object\Env\WaterWaves</Filter>
-          </ClInclude>
+    </ClInclude>
     <ClInclude Include="..\Public\UI_Party.h">
       <Filter>02. GameObject\UI\01. 2D\Party</Filter>
     </ClInclude>
@@ -2758,6 +2764,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\KitObject.h">
       <Filter>02. GameObject\Object\Interactable\HealKit\KitObject</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Room_Scott.h">
+      <Filter>03. Utility\06. FieldSystem\Room\06. Scott</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -3777,7 +3786,7 @@
       <Filter>01. Level\04. Zero\StageRouter</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Room_Gacha.cpp">
-      <Filter>03. Utility\06. FieldSystem\Room\05. Room_Gacha</Filter>
+      <Filter>03. Utility\06. FieldSystem\Room\05. Gacha</Filter>
     </ClCompile>
     <ClCompile Include="..\private\ZeroStage_Start.cpp">
       <Filter>01. Level\04. Zero\Stage_Start</Filter>
@@ -3997,7 +4006,7 @@
     </ClCompile>
     <ClCompile Include="..\private\WaterWaves.cpp">
       <Filter>02. GameObject\Object\Env\WaterWaves</Filter>
-          </ClCompile>
+    </ClCompile>
     <ClCompile Include="..\Private\UI_Party.cpp">
       <Filter>02. GameObject\UI\01. 2D\Party</Filter>
     </ClCompile>
@@ -4051,6 +4060,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\KitObject.cpp">
       <Filter>02. GameObject\Object\Interactable\HealKit\KitObject</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Room_Scott.cpp">
+      <Filter>03. Utility\06. FieldSystem\Room\06. Scott</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
