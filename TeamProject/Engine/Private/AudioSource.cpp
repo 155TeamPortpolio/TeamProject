@@ -32,7 +32,7 @@ CAudioSource::AUDIO_SLOT& CAudioSource::SlotBuilder::Play()
 
 	ownerRef.Play(ownerSlot.Key, false, false);
 
-	if (needFadeIn && ownerSlot.pChannels.front())
+	if (needFadeIn && !ownerSlot.pChannels.empty())
 	{
 		ownerRef.FadeIn_Volume(ownerSlot.Key, ownerSlot.pendingFadeInSec, ownerSlot.pendingFadeInDst);
 		ownerSlot.hasPendingFadeIn = false;
@@ -166,7 +166,8 @@ void CAudioSource::Set_SlotVolume(const string& slotKey, _float fVolume)
 
 	AUDIO_SLOT& slot = iter->second;
 	slot.fVolume = fVolume;
-	FMOD::Channel* channel = iter->second.pChannels.front();
+	if (slot.pChannels.empty()) return;
+	FMOD::Channel* channel = slot.pChannels.front();
 	if (!channel) return;
 
 	bool isPlaying = false;
@@ -212,7 +213,8 @@ void CAudioSource::Set_SlotPuase(const string& slotKey, _bool isPaused)
 		return;
 
 	AUDIO_SLOT& slot = iter->second;
-	FMOD::Channel* channel = iter->second.pChannels.front();
+	if (slot.pChannels.empty()) return;
+	FMOD::Channel* channel = slot.pChannels.front();
 
 	if (!channel)
 		return;
@@ -227,8 +229,8 @@ void CAudioSource::Set_SlotStop(const string& slotKey)
 		return;
 
 	AUDIO_SLOT& slot = iter->second;
+	if (slot.pChannels.empty()) return;
 	FMOD::Channel* channel = slot.pChannels.front();
-
 	if (!channel)
 		return;
 	channel->stop();
@@ -594,8 +596,23 @@ void CAudioSource::Free()
 {
 	__super::Free();
 
-	for (auto& sound : m_Audios)
-		Safe_Release(sound.second.pSound);
+	for (auto& pair : m_Audios)
+	{
+		AUDIO_SLOT& slot = pair.second;
+
+		if (!slot.pChannels.empty())
+		{
+			FMOD::Channel* ch = slot.pChannels.front();
+			if (ch)
+			{
+				ClearFadePoints(ch);
+				ch->stop();
+			}
+		}
+
+		slot.pChannels.clear();
+		Safe_Release(slot.pSound);
+	}
 
 	m_Audios.clear();
 	m_Sequences.clear();
