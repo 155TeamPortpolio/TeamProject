@@ -54,6 +54,10 @@ void CAudioDevice::Update()
 
 void CAudioDevice::StopAll()
 {
+    FMOD::ChannelGroup* master = nullptr;
+    if (!m_pSystem) return;
+    if (m_pSystem->getMasterChannelGroup(&master) == FMOD_OK && master)
+        master->stop(); // 하위 그룹/채널 전부 stop
 }
 
 FMOD::System* CAudioDevice::Get_System()

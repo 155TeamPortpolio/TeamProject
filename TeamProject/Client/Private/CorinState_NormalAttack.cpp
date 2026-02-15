@@ -105,7 +105,6 @@ void CCorinState_Attack_01::Enter(CCorin* pOwner)
 
     // Jehyun
     auto& sound = *pOwner->Get_Component<CAudioSource>();
-
     sound.Sequence("NormalAttack_Voice").Attribute3D(true).Loop(false).PlayNext();
     sound.Slot("Corin_NormalAttack_01_SFX.wav").Attribute3D(true).Loop(false).Volume(0.5f).Play();
 }
@@ -143,6 +142,9 @@ void CCorinState_Attack_01::Update(CCorin* pOwner, _float dt)
 void CCorinState_Attack_01::Exit(CCorin* pOwner)
 {
     static_cast<CCorinState_NormalAttack*>(m_pParentState)->Set_ComboIndex(0);
+
+    auto& sound = *pOwner->Get_Component<CAudioSource>();
+    sound.Slot("Corin_NormalAttack_01_SFX.wav").FadeOut(0.2f);
 }
 
 void CCorinState_Attack_01::Update_Effects(CCorin* pOwner)
@@ -198,6 +200,9 @@ void CCorinState_Attack_02::Update(CCorin* pOwner, _float dt)
 void CCorinState_Attack_02::Exit(CCorin* pOwner)
 {
     static_cast<CCorinState_NormalAttack*>(m_pParentState)->Set_ComboIndex(1);
+
+    auto& sound = *pOwner->Get_Component<CAudioSource>();
+    sound.Slot("Corin_NormalAttack_02_SFX.wav").FadeOut(0.2f);
 }
 
 void CCorinState_Attack_02::Update_Effects(CCorin* pOwner)
@@ -250,6 +255,9 @@ void CCorinState_Attack_03::Update(CCorin* pOwner, _float dt)
 void CCorinState_Attack_03::Exit(CCorin* pOwner)
 {
     static_cast<CCorinState_NormalAttack*>(m_pParentState)->Set_ComboIndex(2);
+    
+    auto& sound = *pOwner->Get_Component<CAudioSource>();
+    sound.Slot("Corin_NormalAttack_03_SFX.wav").FadeOut(0.2f);
 }
 
 void CCorinState_Attack_03::Update_Effects(CCorin* pOwner)
@@ -307,6 +315,9 @@ void CCorinState_Attack_04::Update(CCorin* pOwner, _float dt)
 void CCorinState_Attack_04::Exit(CCorin* pOwner)
 {
     static_cast<CCorinState_NormalAttack*>(m_pParentState)->Set_ComboIndex(3);
+
+    auto& sound = *pOwner->Get_Component<CAudioSource>();
+    sound.Slot("Corin_NormalAttack_04_SFX.wav").FadeOut(0.2f);
 }
 
 void CCorinState_Attack_04::Update_Effects(CCorin* pOwner)
@@ -363,6 +374,9 @@ void CCorinState_Attack_05::Update(CCorin* pOwner, _float dt)
 void CCorinState_Attack_05::Exit(CCorin* pOwner)
 {
     static_cast<CCorinState_NormalAttack*>(m_pParentState)->Set_ComboIndex(4);
+
+    auto& sound = *pOwner->Get_Component<CAudioSource>();
+    sound.Slot("Corin_NormalAttack_05_SFX.wav").FadeOut(0.2f);
 }
 
 void CCorinState_Attack_05::Update_Effects(CCorin* pOwner)

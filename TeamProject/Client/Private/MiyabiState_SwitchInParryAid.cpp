@@ -6,6 +6,7 @@
 
 #include "Miyabi.h"
 #include "Enemy.h"
+#include "CamDirector.h"
 
 CMiyabiState_SwitchInParryAid* CMiyabiState_SwitchInParryAid::Create()
 {
@@ -37,6 +38,9 @@ void CMiyabiState_SwitchInParryAid::Enter(CMiyabi* pOwner)
 {
     pOwner->Lock_Move();
     pOwner->Lock_Rotate();
+
+    CamDirector()->StartParry();
+
     __super::Enter(pOwner);
 }
 

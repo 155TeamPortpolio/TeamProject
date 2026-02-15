@@ -22,9 +22,8 @@ CFieldSystem::CFieldSystem()
 	m_DayTime.StartFog = { _float4(0.95f, 0.75f, 0.8f, 1.0f),0.003f };
 	m_DayTime.StartCloud = { _float3(0.7f, 0.5f, 0.65f), _float3(0.95f, 0.7f, 0.75f) };
 
-	//m_pBGM = CAudioSource::Create();
-	//D:\Study\TeamProject\TeamProject\Client\Bin\Resources\MainCity\Sound\NPC
-	//m_pBGM->SoundFolder(G_GlobalLevelKey, "../Bin/Resources/Global/BGM");
+	m_pBGM = CAudioSource::Create();
+	m_pBGM->SoundFolder(G_GlobalLevelKey, "../Bin/Resources/Global/BGM");
 }
 
 void CFieldSystem::Update()
@@ -41,21 +40,31 @@ void CFieldSystem::Update()
 
 void CFieldSystem::SetActive(_bool is)
 {
-	if (is == false) m_pRoomDirector->ClearRooms();
+	if (is == false)
+	{
+		m_pRoomDirector->ClearRooms();
+		FieldSystem()->FadeOutBGM();
+	}
 	m_isActive = is;
 }
 
 void CFieldSystem::PlayBGM(string strBGM)
 {
-	//if (!m_strPrevBGM.empty()) m_pBGM->Set_SlotPuase(m_strPrevBGM, true);
-	//
-	//m_pBGM->Slot(strBGM)
-	//	.Attribute3D(false)
-	//	.Volume(0.8)
-	//	.Loop(true)
-	//	.Play();
-	//
-	//m_strPrevBGM = strBGM;
+	if (!m_strPrevBGM.empty()) m_pBGM->Set_SlotPuase(m_strPrevBGM, true);
+	
+	m_pBGM->Slot(strBGM)
+		.Attribute3D(false)
+		.Volume(0.8)
+		.Loop(true)
+		.Play();
+	
+	m_strPrevBGM = strBGM;
+}
+
+void CFieldSystem::FadeOutBGM()
+{
+	m_pBGM->FadeOut_Volume(m_strPrevBGM, 0.9);
+	m_strPrevBGM = "";
 }
 
 void CFieldSystem::SetFieldPlayer(CFieldPlayer* pFieldPlayer)
@@ -118,7 +127,7 @@ OBJECT_HANDLE CFieldSystem::GetInteractPartnerHandle() const
 void CFieldSystem::Free()
 {
 	__super::Free();
-	//Safe_Release(m_pBGM);
+	Safe_Release(m_pBGM);
 	Safe_Release(m_pFieldPlayer);
 	Safe_Release(m_pRoomDirector);
 }

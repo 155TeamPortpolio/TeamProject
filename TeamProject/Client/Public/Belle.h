@@ -13,6 +13,7 @@ private:
 
 public:
     CStateMachine<CBelle>* Get_StateMachine() { return m_pStateMachine; }
+    void PlaySFX(string str);
 
 public:
     virtual HRESULT Initialize_Prototype() override;

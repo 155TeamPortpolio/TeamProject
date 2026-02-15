@@ -34,19 +34,6 @@ void CCamera::Set_Lens(_float fov, _float aspect, _float zNear, _float zFar)
 	m_lens.zFar   = zFar;
 }
 
-_bool CCamera::Lerp_FOV(_float dst, _float dt)
-{
-	dt = clamp(dt, 0.f, 1.f);
-	m_lens.fov += (dst - m_lens.fov) * dt;
-
-	if (fabsf(dst - m_lens.fov) < 0.05f)
-	{
-		m_lens.fov = dst;
-		return true;
-	}
-	return false;
-}
-
 CCamera* CCamera::Create()
 {
 	auto inst = new CCamera();

@@ -88,6 +88,7 @@ HRESULT CScott_Level::Awake()
 	ObjectManager()->Add_Object(PaperEffect, { "Scott_Level", "MapParticle_Layer" });
 
 	CamDirector()->AutoField(CamStartDir::Back);
+	FieldSystem()->PlayBGM("ScottBGM.wav");
 
 	AudioDevice()->Set_Listener(ObjectManager()->Find_Global(ENUM(GLOBAL_ID::FreeCam))->Get_Component<CTransform>());
 	return S_OK;
@@ -170,6 +171,7 @@ CScott_Level* CScott_Level::Create(const string& LevelKey)
 void CScott_Level::Free()
 {
 	__super::Free();
+	FieldSystem()->FadeOutBGM();
 	m_pGameInstance->DestroyInstance();
 	m_pPlayer->Clear_Characters();
 }
