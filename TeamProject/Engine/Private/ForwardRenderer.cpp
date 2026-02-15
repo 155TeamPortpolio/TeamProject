@@ -76,12 +76,12 @@ HRESULT CForwardRenderer::Render_StaticShadow(StaticShadowPass* pShadowPass, _bo
 
 	Change_Viewport(g_iMaxWidth, g_iMaxHeight);
 
-	for (_uint i = 0; i < 4; ++i)
+	for (_uint i = 0; i < 3; ++i)
 	{
 		m_pPipeLine->Begin_ShadowRender(false, i);
 		m_pPipeLine->Update_ShadowBuffer(m_pContext, false, i);
 
-		if (i < 3) pShadowPass->Execute(m_pContext, this, false);
+		if (i < 2) pShadowPass->Execute(m_pContext, this, false);
 		else pShadowPass->Execute(m_pContext, this, true);
 		m_pPipeLine->End_ShadowRender(false);
 	}
@@ -107,12 +107,12 @@ HRESULT CForwardRenderer::Render_SkinnedShadow(SkinnedShadowPass* pShadowPass, _
 
 	Change_Viewport(g_iMaxWidth, g_iMaxHeight);
 
-	for (_uint i = 0; i < 4; ++i)
+	for (_uint i = 0; i < 3; ++i)
 	{
 		m_pPipeLine->Begin_ShadowRender(true, i);
 		m_pPipeLine->Update_ShadowBuffer(m_pContext, true, i);
 
-		if (i < 3) pShadowPass->Execute(m_pContext, this, false);
+		if (i < 2) pShadowPass->Execute(m_pContext, this, false);
 		else pShadowPass->Execute(m_pContext, this, true);
 		m_pPipeLine->End_ShadowRender(true);
 	}
