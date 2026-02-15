@@ -1,19 +1,29 @@
 #pragma once
 #include "UI_Object.h"
 
+NS_BEGIN(Engine)
+class CSprite2D;
+NS_END
+
 NS_BEGIN(Client)
 
-class CUI_Party final : public CUI_Object
+class CUI_SwitchRole final : public CUI_Object
 {
 public:
-	typedef struct tagPartyDesc {
-		vector<CHARACTER> characters;
-	}UI_PARTY_DESC;
+	enum class SIDE { LEFT, RIGHT, END };
 
 private:
-	CUI_Party() {}
-	CUI_Party(const CUI_Party& rhs) : CUI_Object(rhs) {}
-	virtual ~CUI_Party() DEFAULT;
+	enum class SPRITE { ROLE, MOUSE, END};
+	inline static const string INSTANCENAMES[ENUM(SPRITE::END)] = { "iconRole", "iconMouse" };
+
+private:
+	CUI_SwitchRole() {}
+	CUI_SwitchRole(const CUI_SwitchRole& rhs) : CUI_Object(rhs) {}
+	virtual ~CUI_SwitchRole() DEFAULT;
+
+public:
+	void Set_Side(SIDE eSide);
+	void Change_RoleIcon(CHARACTER eCharacter);
 
 public:
 	virtual HRESULT Initialize_Prototype()           override;
@@ -23,29 +33,16 @@ public:
 	virtual void    Update(_float dt)			     override;
 	virtual void    Late_Update(_float dt)           override { __super::Late_Update(dt); }
 	virtual void    Render_GUI()                     override { __super::Render_GUI(); }
-	virtual void    UI_Active(void* pArg = nullptr)	 override;
+	virtual void	UI_Active(void* pArg = nullptr)  override;
 	virtual void	UI_DeActive(void* pArg = nullptr) override;
 
 private:
-	static constexpr _int PARTY_COUNT = 3;
-	array<string, PARTY_COUNT> m_RenderTargetKeys;
-
-	class CUI_PartyCard* m_pPartyCard[PARTY_COUNT] = {};
-	class CUI_PartySynergy* m_pPartySynergy = {};
-
-	vector<CHARACTER> m_characters = {};
+	class CSprite2D* m_pIconSprite[ENUM(SPRITE::END)] = {nullptr};
 
 private:
-	void Create_BackButton();
-	void Create_HomeButton();
-	void Create_PartySynergy();
+	void Cache();
 
-	void Create_SettingButton();
-	void Create_BackupButton(); 
-	void Create_EnterButton();
-
-	void Create_RenderTargets();
-	void Create_PartyCards();
+	void Change_SpriteTexture(SPRITE eSprite, const string& strTextureKey);
 
 public:
 	static  CGameObject* Create();

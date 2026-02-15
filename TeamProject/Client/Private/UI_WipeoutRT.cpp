@@ -1,10 +1,10 @@
 #include "pch.h"
-#include "UI_Wipeout.h"
+#include "UI_WipeoutRT.h"
 
 #include "GameInstance.h"
 #include "ObjectContainer.h" 
 
-HRESULT CUI_Wipeout::Initialize_Prototype()
+HRESULT CUI_WipeoutRT::Initialize_Prototype()
 {
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
@@ -12,12 +12,12 @@ HRESULT CUI_Wipeout::Initialize_Prototype()
 	return S_OK;
 }
 
-HRESULT CUI_Wipeout::Initialize(INIT_DESC* pArg)
+HRESULT CUI_WipeoutRT::Initialize(INIT_DESC* pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-    Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("wipeout.json")));
+    Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("wipeoutRT.json")));
     Cache();
     
     Change_State(STATE::INACTIVE);
@@ -25,12 +25,12 @@ HRESULT CUI_Wipeout::Initialize(INIT_DESC* pArg)
     return S_OK;
 }
 
-void CUI_Wipeout::Awake()
+void CUI_WipeoutRT::Awake()
 {
     __super::Awake();
 }
 
-void CUI_Wipeout::Update(_float dt)
+void CUI_WipeoutRT::Update(_float dt)
 {
      __super::Update(dt);
 
@@ -44,13 +44,13 @@ void CUI_Wipeout::Update(_float dt)
     Update_RTV("renderTargetScreen", true);
 }
 
-void CUI_Wipeout::UI_Active(void* pArg)
+void CUI_WipeoutRT::UI_Active(void* pArg)
 {
     Set_RenderTargetScreenRenderLayer(RENDER_LAYER::Default);
     Change_State(STATE::ACTIVE);
 }
 
-void CUI_Wipeout::Cache()
+void CUI_WipeoutRT::Cache()
 {
     auto pContainer = Get_Component<CObjectContainer>();
     for (_int i = 0; i < ENUM(GROUP::END); ++i)
@@ -63,7 +63,7 @@ void CUI_Wipeout::Cache()
     }
 }
 
-void CUI_Wipeout::Update_GroupState()
+void CUI_WipeoutRT::Update_GroupState()
 {
     switch (m_eCurrentGroup)
     {
@@ -84,7 +84,7 @@ void CUI_Wipeout::Update_GroupState()
     }
 }
 
-void CUI_Wipeout::Change_State(STATE eState)
+void CUI_WipeoutRT::Change_State(STATE eState)
 {
     if (m_eState == eState)
         return;
@@ -112,7 +112,7 @@ void CUI_Wipeout::Change_State(STATE eState)
     }
 }
 
-_bool CUI_Wipeout::Change_Group(GROUP eGroup, _int iIndex)
+_bool CUI_WipeoutRT::Change_Group(GROUP eGroup, _int iIndex)
 {
     if (m_eCurrentGroup == eGroup)
         return false;
@@ -124,7 +124,7 @@ _bool CUI_Wipeout::Change_Group(GROUP eGroup, _int iIndex)
     return Set_GroupAnimation(m_eCurrentGroup, iIndex);
 }
 
-void CUI_Wipeout::Set_GroupAlive(GROUP group, _bool isAlive)
+void CUI_WipeoutRT::Set_GroupAlive(GROUP group, _bool isAlive)
 {
     if (group < static_cast<GROUP>(0) || group >= GROUP::END)
         return;
@@ -137,7 +137,7 @@ void CUI_Wipeout::Set_GroupAlive(GROUP group, _bool isAlive)
     pGroup->Set_Alive(isAlive);
 }
 
-_bool CUI_Wipeout::Set_GroupAnimation(GROUP group, _int iIndex)
+_bool CUI_WipeoutRT::Set_GroupAnimation(GROUP group, _int iIndex)
 {
     auto pGroup = m_pGroups[ENUM(group)];
     if (!pGroup)
@@ -160,7 +160,7 @@ _bool CUI_Wipeout::Set_GroupAnimation(GROUP group, _int iIndex)
     return isCheck;
 }
 
-_bool CUI_Wipeout::Is_GroupAnimationFinished(GROUP group)
+_bool CUI_WipeoutRT::Is_GroupAnimationFinished(GROUP group)
 {
     if (group == GROUP::END)
         return false;
@@ -190,23 +190,23 @@ _bool CUI_Wipeout::Is_GroupAnimationFinished(GROUP group)
     return true;
 }
 
-CGameObject* CUI_Wipeout::Create()
+CGameObject* CUI_WipeoutRT::Create()
 {
-    CUI_Wipeout* pInstance = new CUI_Wipeout();
+    CUI_WipeoutRT* pInstance = new CUI_WipeoutRT();
     if (FAILED(pInstance->Initialize_Prototype()))
     {
-        MSG_BOX("Failed to Create : CUI_Wipeout");
+        MSG_BOX("Failed to Create : CUI_WipeoutRT");
         Safe_Release(pInstance);
     }
     return pInstance;
 }
 
-CGameObject* CUI_Wipeout::Clone(INIT_DESC* pArg)
+CGameObject* CUI_WipeoutRT::Clone(INIT_DESC* pArg)
 {
-    CUI_Wipeout* pInstance = new CUI_Wipeout(*this);
+    CUI_WipeoutRT* pInstance = new CUI_WipeoutRT(*this);
     if (FAILED(pInstance->Initialize(pArg)))
     {
-        MSG_BOX("Failed to Clone : CUI_Wipeout");
+        MSG_BOX("Failed to Clone : CUI_WipeoutRT");
         Safe_Release(pInstance);
     }
     return pInstance;

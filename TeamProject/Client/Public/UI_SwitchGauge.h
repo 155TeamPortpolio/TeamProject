@@ -3,17 +3,19 @@
 
 NS_BEGIN(Client)
 
-class CUI_Party final : public CUI_Object
+class CUI_SwitchGauge final : public CUI_Object
 {
-public:
-	typedef struct tagPartyDesc {
-		vector<CHARACTER> characters;
-	}UI_PARTY_DESC;
+private:
+	enum class GAUGE { FRAME, FILL, END };
+	inline static const string INSTANCENAMES[ENUM(GAUGE::END)] = { "gaugeFrame", "gaugeFill" };
 
 private:
-	CUI_Party() {}
-	CUI_Party(const CUI_Party& rhs) : CUI_Object(rhs) {}
-	virtual ~CUI_Party() DEFAULT;
+	CUI_SwitchGauge() {}
+	CUI_SwitchGauge(const CUI_SwitchGauge& rhs) : CUI_Object(rhs) {}
+	virtual ~CUI_SwitchGauge() DEFAULT;
+
+public:
+	void Set_Gauge(_float fRatio);
 
 public:
 	virtual HRESULT Initialize_Prototype()           override;
@@ -23,29 +25,15 @@ public:
 	virtual void    Update(_float dt)			     override;
 	virtual void    Late_Update(_float dt)           override { __super::Late_Update(dt); }
 	virtual void    Render_GUI()                     override { __super::Render_GUI(); }
-	virtual void    UI_Active(void* pArg = nullptr)	 override;
+	virtual void	UI_Active(void* pArg = nullptr)  override;
 	virtual void	UI_DeActive(void* pArg = nullptr) override;
 
 private:
-	static constexpr _int PARTY_COUNT = 3;
-	array<string, PARTY_COUNT> m_RenderTargetKeys;
-
-	class CUI_PartyCard* m_pPartyCard[PARTY_COUNT] = {};
-	class CUI_PartySynergy* m_pPartySynergy = {};
-
-	vector<CHARACTER> m_characters = {};
+	class CUI_Object* m_pGauges[ENUM(GAUGE::END)] = {};
+	const _float m_fCapWidth = {17.f};
 
 private:
-	void Create_BackButton();
-	void Create_HomeButton();
-	void Create_PartySynergy();
-
-	void Create_SettingButton();
-	void Create_BackupButton(); 
-	void Create_EnterButton();
-
-	void Create_RenderTargets();
-	void Create_PartyCards();
+	void Cache();
 
 public:
 	static  CGameObject* Create();

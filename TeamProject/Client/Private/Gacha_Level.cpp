@@ -22,6 +22,8 @@
 #include "PostProcessCommand.h"
 #include "PostRenderer.h"
 
+#include "FieldSystem.h"
+
 CGacha_Level::CGacha_Level(const string& LevelKey)
 	:CLevel(LevelKey),
 	m_pGameInstance{ CGameInstance::GetInstance() },
@@ -62,7 +64,7 @@ HRESULT CGacha_Level::Awake()
 	pShadowCam->Get_Component<CLight>()->Set_Desc(lightDesc, LIGHT_TYPE::DIRECTIONAL);
 
 	Ready_GachaObjects(); 
-
+	FieldSystem()->PlayBGM("Gacha_Theme.wav");
 	//==================== Effect ============
 	//auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
 	//	.Asset("gacha_background_light.json")
@@ -211,5 +213,6 @@ CGacha_Level* CGacha_Level::Create(const string& LevelKey)
 void CGacha_Level::Free()
 {
 	__super::Free();
+	FieldSystem()->FadeOutBGM();
 	m_pGameInstance->DestroyInstance();
 }

@@ -55,7 +55,7 @@
         {
           "EventTime": 0.8609486222267151,
           "EventType": "Notify",
-          "EventTag": "SawInterval"
+          "EventTag": "SawIntervalHard"
         },
         {
           "EventTime": 1.550102710723877,
@@ -278,14 +278,15 @@
           "EventTag": "SawInterval"
         },
         {
-          "EventTime": 1.5213775634765625,
-          "EventType": "Notify",
-          "EventTag": "CheckCombo"
-        },
-        {
-          "EventTime": 1.4825210571289063,
+          "EventTime": 1.0,
           "EventType": "Notify",
           "EventTag": "SawEnd"
+
+        },
+        {
+          "EventTime": 1.01,
+          "EventType": "Notify",
+          "EventTag": "CheckCombo"
         }
       ]
     },

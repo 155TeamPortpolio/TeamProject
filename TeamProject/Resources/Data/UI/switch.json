@@ -2,13 +2,13 @@
     "alive": true,
     "instanceName": "switch",
     "transform": {
-        "anchor": 0,
+        "anchor": 8,
         "anchorOffset": [
-            0.0,
-            0.0
+            -401.0,
+            -210.0
         ],
         "size": [
-            100.0,
+            802.0,
             100.0
         ],
         "scale": [
@@ -16,8 +16,8 @@
             1.0
         ],
         "pivot": [
-            0.5,
-            0.5
+            0.0,
+            0.0
         ],
         "radian": 0.0
     },
@@ -48,7 +48,52 @@
     ],
     "animClips": [
         {
-            "duration": 0.800000011920929,
+            "duration": 0.20000000298023224,
+            "keyframes": [
+                {
+                    "angle": 0.0,
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        0.0
+                    ],
+                    "easeType": 0,
+                    "position": [
+                        0.0,
+                        0.0
+                    ],
+                    "scale": [
+                        1.0,
+                        1.0
+                    ],
+                    "time": 0.0
+                },
+                {
+                    "angle": 0.0,
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "easeType": 0,
+                    "position": [
+                        0.0,
+                        0.0
+                    ],
+                    "scale": [
+                        1.0,
+                        1.0
+                    ],
+                    "time": 0.20000000298023224
+                }
+            ],
+            "loop": false,
+            "name": "appear"
+        },
+        {
+            "duration": 0.30000001192092896,
             "keyframes": [
                 {
                     "angle": 0.0,
@@ -75,64 +120,45 @@
                         1.0,
                         1.0,
                         1.0,
-                        1.0
-                    ],
-                    "easeType": 2,
-                    "position": [
-                        0.0,
-                        0.0
-                    ],
-                    "scale": [
-                        1.0,
-                        1.0
-                    ],
-                    "time": 0.25999999046325684
-                },
-                {
-                    "angle": 0.0,
-                    "color": [
-                        1.0,
-                        1.0,
-                        1.0,
                         0.0
                     ],
                     "easeType": 0,
                     "position": [
-                        -20.0,
-                        0.0
+                        0.0,
+                        120.0
                     ],
                     "scale": [
                         1.0,
                         1.0
                     ],
-                    "time": 0.800000011920929
+                    "time": 0.30000001192092896
                 }
             ],
             "loop": false,
-            "name": "clip-1"
+            "name": "disppear"
         }
     ],
     "children": [
         {
             "alive": true,
-            "instanceName": "Image",
+            "instanceName": "timer",
             "transform": {
-                "anchor": 0,
+                "anchor": 8,
                 "anchorOffset": [
-                    0.0,
-                    0.0
+                    11.0,
+                    -4.0
                 ],
                 "size": [
-                    1600.0,
-                    800.0
+                    0.0,
+                    0.0
                 ],
                 "scale": [
                     1.0,
                     1.0
                 ],
                 "pivot": [
-                    0.5,
-                    0.5
+                    0.0,
+                    0.0
                 ],
                 "radian": 0.0
             },
@@ -140,7 +166,7 @@
                 1.0,
                 1.0,
                 1.0,
-                1.0
+                0.3921568691730499
             ],
             "stencilMode": 0,
             "pass": "Opaque",
@@ -161,115 +187,49 @@
                 0.0,
                 0.0
             ],
-            "animClips": [
-                {
-                    "duration": 0.30000001192092896,
-                    "keyframes": [
-                        {
-                            "angle": 0.0,
-                            "color": [
-                                1.0,
-                                1.0,
-                                1.0,
-                                1.0
-                            ],
-                            "easeType": 0,
-                            "position": [
-                                0.0,
-                                0.0
-                            ],
-                            "scale": [
-                                1.0,
-                                1.0
-                            ],
-                            "time": 0.0
-                        },
-                        {
-                            "angle": 0.0,
-                            "color": [
-                                1.0,
-                                1.0,
-                                1.0,
-                                1.0
-                            ],
-                            "easeType": 0,
-                            "position": [
-                                0.0,
-                                0.0
-                            ],
-                            "scale": [
-                                1.0,
-                                1.0
-                            ],
-                            "time": 0.03400000184774399
-                        },
-                        {
-                            "angle": 0.0,
-                            "color": [
-                                0.0,
-                                0.0,
-                                0.0,
-                                1.0
-                            ],
-                            "easeType": 0,
-                            "position": [
-                                0.0,
-                                0.0
-                            ],
-                            "scale": [
-                                1.0,
-                                1.0
-                            ],
-                            "time": 0.07999999821186066
-                        },
-                        {
-                            "angle": 0.0,
-                            "color": [
-                                1.0,
-                                1.0,
-                                1.0,
-                                1.0
-                            ],
-                            "easeType": 0,
-                            "position": [
-                                0.0,
-                                0.0
-                            ],
-                            "scale": [
-                                1.0,
-                                1.0
-                            ],
-                            "time": 0.30000001192092896
-                        }
-                    ],
-                    "loop": false,
-                    "name": "clip0"
-                }
-            ],
+            "animClips": [],
             "children": [],
-            "typeTag": "Image",
-            "textureTag": "Eff_Switch_01.png"
+            "typeTag": "Text",
+            "text": {
+                "content": "00:01:88",
+                "fontTag": "Impact.spritefont",
+                "fontScale": 1.1499998569488525,
+                "outlined": false,
+                "outlineThickness": 1.0,
+                "outlineColor": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "shear": [
+                    -0.20000000298023224,
+                    0.0
+                ],
+                "autoPos": true,
+                "anchor": 0
+            }
         },
         {
             "alive": true,
-            "instanceName": "Mask",
+            "instanceName": "Text",
             "transform": {
-                "anchor": 0,
+                "anchor": 8,
                 "anchorOffset": [
-                    0.0,
-                    0.0
+                    10.0,
+                    50.0
                 ],
                 "size": [
-                    1600.0,
-                    800.0
+                    0.0,
+                    0.0
                 ],
                 "scale": [
                     1.0,
                     1.0
                 ],
                 "pivot": [
-                    0.5,
-                    0.5
+                    0.0,
+                    0.0
                 ],
                 "radian": 0.0
             },
@@ -277,10 +237,10 @@
                 1.0,
                 1.0,
                 1.0,
-                1.0
+                0.3921568691730499
             ],
-            "stencilMode": 1,
-            "pass": "UI_StencilWrite",
+            "stencilMode": 0,
+            "pass": "Opaque",
             "colorTexKey": "empty.png",
             "colorTexMode": 0,
             "colorTexMix": 1.0,
@@ -300,22 +260,39 @@
             ],
             "animClips": [],
             "children": [],
-            "typeTag": "Mask",
-            "maskTextureKey": "Eff_Switch_01.png",
-            "maskThreshold": 0.6000000238418579
+            "typeTag": "Text",
+            "text": {
+                "content": "을 눌러 취소",
+                "fontTag": "NanumSquareNeo.spritefont",
+                "fontScale": 0.4499998688697815,
+                "outlined": false,
+                "outlineThickness": 1.0,
+                "outlineColor": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "shear": [
+                    0.0,
+                    0.0
+                ],
+                "autoPos": true,
+                "anchor": 0
+            }
         },
         {
             "alive": true,
-            "instanceName": "UVAnimation",
+            "instanceName": "Image",
             "transform": {
-                "anchor": 1,
+                "anchor": 8,
                 "anchorOffset": [
-                    -723.0,
-                    -200.0
+                    -60.0,
+                    41.0
                 ],
                 "size": [
-                    4000.0,
-                    360.0
+                    17.692306518554688,
+                    20.0
                 ],
                 "scale": [
                     1.0,
@@ -331,10 +308,10 @@
                 1.0,
                 1.0,
                 1.0,
-                0.0
+                0.5882353186607361
             ],
-            "stencilMode": 2,
-            "pass": "UVAnimation_StencilTest",
+            "stencilMode": 0,
+            "pass": "Opaque",
             "colorTexKey": "empty.png",
             "colorTexMode": 0,
             "colorTexMix": 1.0,
@@ -352,214 +329,10 @@
                 0.0,
                 0.0
             ],
-            "animClips": [
-                {
-                    "duration": 0.4000000059604645,
-                    "keyframes": [
-                        {
-                            "angle": 0.0,
-                            "color": [
-                                1.0,
-                                1.0,
-                                1.0,
-                                0.0
-                            ],
-                            "easeType": 0,
-                            "position": [
-                                0.0,
-                                0.0
-                            ],
-                            "scale": [
-                                1.0,
-                                1.0
-                            ],
-                            "time": 0.0
-                        },
-                        {
-                            "angle": 0.0,
-                            "color": [
-                                1.0,
-                                1.0,
-                                1.0,
-                                0.0
-                            ],
-                            "easeType": 22,
-                            "position": [
-                                0.0,
-                                0.0
-                            ],
-                            "scale": [
-                                1.0,
-                                1.0
-                            ],
-                            "time": 0.03400000184774399
-                        },
-                        {
-                            "angle": 0.0,
-                            "color": [
-                                1.0,
-                                1.0,
-                                1.0,
-                                1.0
-                            ],
-                            "easeType": 22,
-                            "position": [
-                                0.0,
-                                0.0
-                            ],
-                            "scale": [
-                                1.0,
-                                1.0
-                            ],
-                            "time": 0.035999998450279236
-                        },
-                        {
-                            "angle": 0.0,
-                            "color": [
-                                1.0,
-                                1.0,
-                                1.0,
-                                1.0
-                            ],
-                            "easeType": 22,
-                            "position": [
-                                0.0,
-                                0.0
-                            ],
-                            "scale": [
-                                1.0,
-                                1.0
-                            ],
-                            "time": 0.07800000160932541
-                        },
-                        {
-                            "angle": 0.0,
-                            "color": [
-                                1.0,
-                                1.0,
-                                1.0,
-                                0.0
-                            ],
-                            "easeType": 0,
-                            "position": [
-                                0.0,
-                                0.0
-                            ],
-                            "scale": [
-                                1.0,
-                                1.0
-                            ],
-                            "time": 0.07999999821186066
-                        },
-                        {
-                            "angle": 0.0,
-                            "color": [
-                                1.0,
-                                1.0,
-                                1.0,
-                                0.0
-                            ],
-                            "easeType": 0,
-                            "position": [
-                                0.0,
-                                0.0
-                            ],
-                            "scale": [
-                                1.0,
-                                1.0
-                            ],
-                            "time": 0.15800000727176666
-                        },
-                        {
-                            "angle": 0.0,
-                            "color": [
-                                1.0,
-                                1.0,
-                                1.0,
-                                1.0
-                            ],
-                            "easeType": 0,
-                            "position": [
-                                0.0,
-                                0.0
-                            ],
-                            "scale": [
-                                1.0,
-                                1.0
-                            ],
-                            "time": 0.1599999964237213
-                        },
-                        {
-                            "angle": 0.0,
-                            "color": [
-                                1.0,
-                                1.0,
-                                1.0,
-                                1.0
-                            ],
-                            "easeType": 0,
-                            "position": [
-                                0.0,
-                                0.0
-                            ],
-                            "scale": [
-                                1.0,
-                                1.0
-                            ],
-                            "time": 0.257999986410141
-                        },
-                        {
-                            "angle": 0.0,
-                            "color": [
-                                1.0,
-                                1.0,
-                                1.0,
-                                1.0
-                            ],
-                            "easeType": 0,
-                            "position": [
-                                0.0,
-                                0.0
-                            ],
-                            "scale": [
-                                1.0,
-                                1.0
-                            ],
-                            "time": 0.25999999046325684
-                        },
-                        {
-                            "angle": 0.0,
-                            "color": [
-                                1.0,
-                                1.0,
-                                1.0,
-                                0.0
-                            ],
-                            "easeType": 0,
-                            "position": [
-                                0.0,
-                                0.0
-                            ],
-                            "scale": [
-                                1.0,
-                                1.0
-                            ],
-                            "time": 0.4000000059604645
-                        }
-                    ],
-                    "loop": false,
-                    "name": "clip1"
-                }
-            ],
+            "animClips": [],
             "children": [],
-            "typeTag": "UVAnimation",
-            "textureTag": "Eff_Switch_Color.png",
-            "uvAnimation": {
-                "uvOffsetSpeed": [
-                    0.20000000298023224,
-                    0.0
-                ]
-            }
+            "typeTag": "Image",
+            "textureTag": "MouseMidIcon.png"
         }
     ],
     "typeTag": "CanvasPanel"

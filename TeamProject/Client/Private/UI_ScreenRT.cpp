@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "UI_RTVDraw.h"
+#include "UI_ScreenRT.h"
 
 #include "GameInstance.h"
 #include "ObjectContainer.h" 
@@ -7,7 +7,7 @@
 #include "Shader.h"
 #include "Renderer.h"
 
-HRESULT CUI_RTVDraw::Initialize_Prototype()
+HRESULT CUI_ScreenRT::Initialize_Prototype()
 {
     if (FAILED(__super::Initialize_Prototype()))
         return E_FAIL;
@@ -17,9 +17,9 @@ HRESULT CUI_RTVDraw::Initialize_Prototype()
     return S_OK;
 }
 
-HRESULT CUI_RTVDraw::Initialize(INIT_DESC* pArg)
+HRESULT CUI_ScreenRT::Initialize(INIT_DESC* pArg)
 {
-    RTVDRAW_DESC* pDesc = static_cast<RTVDRAW_DESC*>(pArg);
+    RTDRAW_DESC* pDesc = static_cast<RTDRAW_DESC*>(pArg);
     m_hRenderTargetScreen = pDesc->hRenderTargetScreen;
 
     if (FAILED(__super::Initialize(pArg)))
@@ -32,21 +32,21 @@ HRESULT CUI_RTVDraw::Initialize(INIT_DESC* pArg)
     return S_OK;
 }
 
-void CUI_RTVDraw::Awake()
+void CUI_ScreenRT::Awake()
 {
     // 자식 레이어 커스텀으로
     for (auto& pChild : Get_Component<CObjectContainer>()->Get_Children())
         pChild->SetRenderLayer(RENDER_LAYER::CustomOnly);
 }
 
-void CUI_RTVDraw::Update(_float dt)
+void CUI_ScreenRT::Update(_float dt)
 {
     __super::Update(dt);
 
     Get_Component<CObjectContainer>()->UpdateChild(dt);
 }
 
-void CUI_RTVDraw::Update_RTV(const string& strTargetKey, _bool isClear)
+void CUI_ScreenRT::Update_RTV(const string& strTargetKey, _bool isClear)
 {
     RENDER_CUSTOM_COMMAND command = {};
     command.TargetKey = strTargetKey;
@@ -55,19 +55,19 @@ void CUI_RTVDraw::Update_RTV(const string& strTargetKey, _bool isClear)
     RenderSystem()->Add_RenderCommand(command, CUSTOMTARGET::UI);
 }
 
-void CUI_RTVDraw::Set_RenderTargetScreenRenderLayer(RENDER_LAYER eLayer)
+void CUI_ScreenRT::Set_RenderTargetScreenRenderLayer(RENDER_LAYER eLayer)
 {
     if (m_hRenderTargetScreen.isAlive())
         m_hRenderTargetScreen.Get()->SetRenderLayer(eLayer);
 }
 
-void CUI_RTVDraw::Render_RT(ID3D11DeviceContext* pContext)
+void CUI_ScreenRT::Render_RT(ID3D11DeviceContext* pContext)
 {
     for (auto& pChild : Get_Component<CObjectContainer>()->Get_Children())
         Render_RTRecursive(pChild, pContext);
 }
 
-void CUI_RTVDraw::Render_RTRecursive(CGameObject* pObj, ID3D11DeviceContext* pContext)
+void CUI_ScreenRT::Render_RTRecursive(CGameObject* pObj, ID3D11DeviceContext* pContext)
 {
     if (!pObj)
         return;

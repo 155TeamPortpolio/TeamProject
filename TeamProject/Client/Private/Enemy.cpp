@@ -19,6 +19,7 @@
 #include "BoneFollower.h"
 #include "Material.h"
 #include "MaterialInstance.h"
+#include "AudioSource.h"
 
 #include "CharacterController.h"
 
@@ -37,6 +38,7 @@ HRESULT CEnemy::Initialize_Prototype()
 	__super::Initialize_Prototype();
 
 	Add_Component<CObjectContainer>();
+	Add_Component<CAudioSource>();
 
 	return S_OK;
 }
@@ -44,6 +46,7 @@ HRESULT CEnemy::Initialize_Prototype()
 HRESULT CEnemy::Initialize(INIT_DESC* pArg)
 {
 	__super::Initialize(pArg);
+
 
 	ENEMY_DESC* pDesc = static_cast<ENEMY_DESC*>(pArg);
 
@@ -64,6 +67,8 @@ HRESULT CEnemy::Initialize(INIT_DESC* pArg)
 		m_tStatus.iPlayerComboCount = 3;
 		break;
 	}
+
+	Get_Component<CAudioSource>()->SoundFolder(LevelManager()->Get_NowLevelKey(), "../Bin/Resources/Global/Sound/Enemy");
 
 	return S_OK;
 }
@@ -277,6 +282,8 @@ void CEnemy::Active_AttackSign(_bool parryEnable)
 	static_cast<CAttackSign*>(pAttackSign)->Active(IsReallyParryEnable);
 
 	m_isParryEnable = IsReallyParryEnable;
+
+	Get_Component<CAudioSource>()->Slot("AttackSign.wav").Play();
 }
 
 void CEnemy::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER charaName)
