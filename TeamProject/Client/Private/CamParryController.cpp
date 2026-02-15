@@ -105,8 +105,13 @@ void CamParryController::ApplyGoalPose_Snap(const ShotGoal& g)
     Vector3 fwd, right;
     BuildBasis(fwd, right);
 
+    // PivotWorld offset
     const Vector3 pivotWorld = m_aBase + right * g.pivotExt.x + Vector3::Up * g.pivotExt.y + fwd * g.pivotExt.z;
-    m_fxPointWorld = pivotWorld;
+
+    _float fxFwd = 0.f;
+    if (m_state == State::Impact) fxFwd = 0.12f;
+
+    m_fxPointWorld = pivotWorld + fwd * fxFwd;
 
     const _float attackerYaw = YawFromDirXZ(fwd);
     const _float desiredYawWorld = attackerYaw + g.yawDeg;
@@ -595,6 +600,9 @@ void CamParryController::Begin()
     m_shotTo = BuildBaseShot_NoLens(m_sideSign);
     m_shotTo.dist = m_shotFrom.dist;
 
+    const _int lookSign = -m_sideSign;
+    m_shotTo.yawDeg = Math::WrapDeg(m_shotTo.yawDeg + (_float)lookSign * tune.impact.impactStartYawExtraDeg);
+
     m_active = true;
     m_state = State::Enter;
     m_elapsed = 0.f;
@@ -603,6 +611,7 @@ void CamParryController::Begin()
 
     orbit->ParryMode_Begin();
 }
+
 
 void CamParryController::End()
 {
