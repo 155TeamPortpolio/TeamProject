@@ -75,6 +75,7 @@ void CUI_RamenVideo::UI_Active(void* pArg)
     Set_Alive(true);
     VideoService()->StartDecode(m_PlayerID);
     m_pPlayer->Play();
+    Get_Component<CAudioSource>()->Slot("UI_CoinPay.wav").Play();
     Get_Component<CAudioSource>()->Slot("SirChopCook.wav").Play();
     OutputDebugString(L"play\n");
 }
