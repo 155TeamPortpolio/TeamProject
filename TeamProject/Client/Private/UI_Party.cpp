@@ -75,6 +75,9 @@ void CUI_Party::UI_Active(void* pArg)
 
     Set_Alive(true);
 
+    // 캐릭터 벡터 복사
+    m_characters = pDesc->characters;
+
     // 파티에서 attribute 별로 카운트
     array<_int, static_cast<_int>(ATTRIBUTE::END)> counts = {};
     auto pDatabase = CDataBase::GetInstance();
@@ -125,7 +128,7 @@ void CUI_Party::Create_BackButton()
     if (!pObj)
         return;
 
-    pObj->Set_OnClick([this]() { UI_DeActive(); }); // 클릭했을 때 실행할 함수 필요
+    pObj->Set_OnClick([this]() { UI_DeActive(); }); // 임시 : 룸 만들어지면 해제
     Get_Component<CObjectContainer>()->Add_Child(pObj);
 }
 
@@ -208,7 +211,10 @@ void CUI_Party::Create_EnterButton()
     if (!pObj)
         return;
 
-    pObj->Set_OnClick([this]() { UI_DeActive(); }); // 클릭했을 때 실행할 함수 필요
+    pObj->Set_OnClick([this]() {  
+        LevelManager()->Request_ChangeLevel("Zero_Level", true);
+        // 배틀 시스템 통해서 캐릭터
+        }); // 클릭했을 때 실행할 함수 필요
     Get_Component<CObjectContainer>()->Add_Child(pObj);
 }
 

@@ -33,6 +33,8 @@ private:
 	class CUI_PartyCard* m_pPartyCard[PARTY_COUNT] = {};
 	class CUI_PartySynergy* m_pPartySynergy = {};
 
+	vector<CHARACTER> m_characters = {};
+
 private:
 	void Create_BackButton();
 	void Create_HomeButton();
