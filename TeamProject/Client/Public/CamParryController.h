@@ -8,7 +8,7 @@ class CamParryController
 {
     enum class State
     {
-        None, Enter, Impact, Hold, End
+        None, Enter, Impact, WaitEnd
     };
 
     struct ShotGoal
@@ -18,9 +18,7 @@ class CamParryController
         _float  pitchDeg = 0.f;
         _float  rollDeg = 0.f;
         _float  dist = 0.f;
-        _float  fov = 0.f;
         _float  yawWeight = 1.f;
-        _float  baseVictimWeight = 0.f;
     };
 
     struct PivotSample
@@ -37,12 +35,9 @@ public:
         {
             _float enterSec = 0.3f;
             _float impactSec = 0.5f;
-            //_float holdSec = 2.f;
-            _float holdSec = 0.1f;
 
             _float pitchDeg = -8.f;
             _float dist = 2.85f;
-            _float fov = 34.f;
 
             _float angleDeg = 14.f;
             _float sideYawBiasDeg = 3.f;
@@ -53,58 +48,30 @@ public:
             _float forwardOffset = 0.25f;
             _float pivotYAdd = 0.00f;
 
-            _float contactBias = 0.35f;
-            _float aimVictimBlend = 0.35f;
-
-            _float maxVictimDist = 3.0f;
             _float minPivotAboveFootY = 0.25f;
             _float minCamAboveFootY = 0.05f;
 
             EaseType approachEase = EaseType::InOutSine;
-            EaseType holdEase = EaseType::InOutSine;
-            EaseType impactEase = EaseType::OutCubic;
+            EaseType impactEase = EaseType::InOutSine;
         };
 
         struct Impact
         {
             _float punchDistDelta = 0.75f;
-            _float punchFovAdd = 10.f;
             _float rollMaxDeg = 10.f;
-
-            _float pitchLiftDeg = 6.f;
-
-            _int   fovPulseCount = 2;
-            _float fovPulseAmp = 1.25f;
 
             _int   rollShakeCount = 2;
             _float rollShakeDeg = 2.0f;
 
             _float rollArcMul = 0.35f;
 
-            _float endCamAboveFootY = 0.9f;
+            _float endCamAboveFootY = 0.5f;
             _float targetCamYMix = 0.80f;
             _float pivotDropY = 0.12f;
         };
 
-        struct Hold
-        {
-            _float riseRatio = 0.35f;
-
-            _float risePitchLiftDeg = 10.f;
-            _float riseDistAdd = 0.35f;
-            _float pivotUp = 0.12f;
-
-            _float riseYawSweepDeg = 0.f;
-
-            _float fovRestoreMid01 = 0.35f;
-
-            EaseType riseEase = EaseType::OutSine;
-            EaseType returnEase = EaseType::InOutSine;
-        };
-
         Common common{};
         Impact impact{};
-        Hold   hold{};
     };
 
 public:
@@ -125,30 +92,25 @@ private:
     static Vector3     OrbitPos(const Vector3& pivotWorld, const Quaternion& q, _float dist);
 
 private:
-    Vector3   BasePivotWorld(_float baseVictimWeight) const;
-
     void      ApplyGoalPose_Snap(const ShotGoal& g);
     _float    CurCamYawDeg() const;
     Vector3   CurCamPosWorld() const;
 
-    _int      ChooseSideSignByCamDist() const;
     void      UpdatePivots(_float dt);
     void      ClampAboveGround(ShotGoal& g) const;
 
-    ShotGoal  BuildBaseShot(_int sideSign) const;
+    ShotGoal  BuildBaseShot_NoLens(_int sideSign) const;
 
     void      CaptureCurAsFrom();
-    void      ApplyInterpolated(const ShotGoal& a, const ShotGoal& b, _float t);
-
-    void      ClampEnter_NoDrop(ShotGoal& g) const;
     void      ApplyInterpolated_Enter(const ShotGoal& a, const ShotGoal& b, _float t);
-    ShotGoal  BuildBaseShot_NoLens(_int sideSign) const;
+    void      ClampEnter_NoDrop(ShotGoal& g) const;
 
     void      CaptureCurAsImpactBase();
     ShotGoal  BuildImpactShot(_int sideSign, _float close01, _float roll01, _float u) const;
 
-    void      PrepareHold(const ShotGoal& impactEnd);
-    void      ApplyHoldOrbitReturn(_float u);
+    void      ComputeSideFromCam();
+
+    string    BuildParryKey() const;
 
 private:
     _bool         m_active = false;
@@ -157,38 +119,21 @@ private:
     _float        m_elapsed{};
 
     OBJECT_HANDLE m_attacker{};
-    OBJECT_HANDLE m_victim{};
 
     _int          m_sideSign = 1;
+    _bool         m_isLeft = false;
 
     Vector3       m_aBase{};
     Vector3       m_aFace{};
     _bool         m_aValid = false;
-
-    Vector3       m_vBase{};
-    Vector3       m_vFace{};
-    _bool         m_vValid = false;
 
     Vector3       m_dirXZ = Vector3(0.f, 0.f, 1.f);
 
     ShotGoal      m_shotFrom{};
     ShotGoal      m_shotTo{};
 
-    ShotGoal      m_holdFrom{};
-    ShotGoal      m_holdMid{};
-    ShotGoal      m_holdTo{};
-
-    Vector3       m_holdPivotFromWorld{};
-    Vector3       m_holdPivotMidWorld{};
-    Vector3       m_holdPivotToWorld{};
-
     OrbitSnapshot m_prevOrbit{};
     _bool         m_prevOrbitCaptured = false;
-
-    _float        m_prevFov{};
-    _bool         m_prevFovCaptured = false;
-
-    _bool         m_victimBlocked = false;
 
     _float        m_enterCamY = 0.f;
 

@@ -301,7 +301,6 @@ void CBattleFXFlow::StartVfx_Parry()
 		m_BattleVFX.fCurPos = 0.f;
 		m_BattleVFX.vNowColor = {};
 		m_BattleVFX.isRunning = false;
-		//CamDirector()->EndParry();
 		});
 
 	Start(nullptr);

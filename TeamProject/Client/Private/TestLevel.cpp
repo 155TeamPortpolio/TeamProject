@@ -185,7 +185,7 @@ HRESULT CTestLevel::Awake()
 	Ready_TestObject();
 	//Ready_Npc();
 
-	//CamDirector()->StartBattleIntro(CamSeqType::ZeroIntro);
+	//CamDirector()->StartBattleIntro(CamSeqType::BattleIntro);
 	//CUIDirector::GetInstance()->Show_SceneFrame();
 	CUIDirector::GetInstance()->Show_HUD(CUIDirector::HUD::BATTLE);
 	//GameInstance()->Set_EngineTimeScale(0.05f);
@@ -214,10 +214,10 @@ void CTestLevel::Update()
 {
 	CBattleSystem::GetInstance()->Update();
 
-	if (InputDevice()->Key_Tap(VK_F4))
-	{
-		CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_Sacrifice", { 0.f, 0.5f,0.f });
-	}
+	//if (InputDevice()->Key_Tap(VK_F4))
+	//{
+	//	CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_Sacrifice", { 0.f, 0.5f,0.f });
+	//}
 	if (InputDevice()->Key_Tap(VK_F5))
 	{
 		auto rushTrail = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })

@@ -98,18 +98,11 @@ Vector3 CamParryController::OrbitPos(const Vector3& pivotWorld, const Quaternion
     return pivotWorld + backDir * dist;
 }
 
-Vector3 CamParryController::BasePivotWorld(_float baseVictimWeight) const
-{
-    if (!m_vValid) return m_aBase;
-    return Vector3::Lerp(m_aBase, m_vBase, clamp(baseVictimWeight, 0.f, 1.f));
-}
-
 void CamParryController::ApplyGoalPose_Snap(const ShotGoal& g)
 {
     auto orbit = CamDirector()->GetOrbitCam();
-    auto cam = CamDirector()->GetOrbitCamComp();
 
-    const Vector3 basePivot = BasePivotWorld(g.baseVictimWeight);
+    const Vector3 basePivot = m_aBase;
     const Vector3 pivotWorld = basePivot + g.pivotExt;
 
     const _float baseYaw = CurCamYawDeg();
@@ -119,7 +112,6 @@ void CamParryController::ApplyGoalPose_Snap(const ShotGoal& g)
     const Vector3 camPos = OrbitPos(pivotWorld, q, g.dist);
 
     orbit->SnapFromCamPose(camPos, q);
-    cam->Set_FOV(g.fov);
 }
 
 _float CamParryController::CurCamYawDeg() const
@@ -146,29 +138,6 @@ Vector3 CamParryController::CurCamPosWorld() const
     return OrbitPos(s.pose.pivotCurWorld, q, s.pose.distCur);
 }
 
-_int CamParryController::ChooseSideSignByCamDist() const
-{
-    const Vector3 curPos = CurCamPosWorld();
-
-    ShotGoal a = BuildBaseShot(1);
-    ShotGoal b = BuildBaseShot(-1);
-
-    const Vector3 basePivotA = BasePivotWorld(a.baseVictimWeight);
-    const Vector3 pivotWorldA = basePivotA + a.pivotExt;
-    const Quaternion qA = YawPitchRollQuatDeg(a.yawDeg, a.pitchDeg, 0.f);
-    const Vector3 posA = OrbitPos(pivotWorldA, qA, a.dist);
-
-    const Vector3 basePivotB = BasePivotWorld(b.baseVictimWeight);
-    const Vector3 pivotWorldB = basePivotB + b.pivotExt;
-    const Quaternion qB = YawPitchRollQuatDeg(b.yawDeg, b.pitchDeg, 0.f);
-    const Vector3 posB = OrbitPos(pivotWorldB, qB, b.dist);
-
-    const _float da = (posA - curPos).LengthSquared();
-    const _float db = (posB - curPos).LengthSquared();
-
-    return (da <= db) ? 1 : -1;
-}
-
 void CamParryController::UpdatePivots(_float dt)
 {
     auto orbit = CamDirector()->GetOrbitCam();
@@ -181,36 +150,6 @@ void CamParryController::UpdatePivots(_float dt)
         m_aBase = Vector3::Lerp(m_aBase, attackerSample.basePivot, t);
         m_aFace = Vector3::Lerp(m_aFace, attackerSample.facePivot, t);
         m_aValid = true;
-    }
-
-    if (m_victimBlocked)
-    {
-        m_vBase = Vector3::Zero;
-        m_vFace = Vector3::Zero;
-        m_vValid = false;
-        return;
-    }
-
-    const PivotSample victimSample = SamplePivots(m_victim, offsetY);
-    if (victimSample.valid)
-    {
-        Vector3 delta = victimSample.facePivot - m_aFace;
-        delta.y = 0.f;
-        const _float dist = delta.Length();
-
-        if (dist > tune.common.maxVictimDist)
-        {
-            m_vBase = Vector3::Zero;
-            m_vFace = Vector3::Zero;
-            m_vValid = false;
-            m_victimBlocked = true;
-            return;
-        }
-
-        const _float t = clamp(dt * 18.f, 0.f, 1.f);
-        m_vBase = Vector3::Lerp(m_vBase, victimSample.basePivot, t);
-        m_vFace = Vector3::Lerp(m_vFace, victimSample.facePivot, t);
-        m_vValid = true;
     }
 }
 
@@ -225,7 +164,7 @@ void CamParryController::ClampAboveGround(ShotGoal& g) const
     const _float minPivotY = minFootY + tune.common.minPivotAboveFootY;
     const _float minCamY = minFootY + tune.common.minCamAboveFootY;
 
-    const Vector3 basePivot = BasePivotWorld(g.baseVictimWeight);
+    const Vector3 basePivot = m_aBase;
 
     Vector3 pivotWorld = basePivot + g.pivotExt;
     if (pivotWorld.y < minPivotY) g.pivotExt.y += (minPivotY - pivotWorld.y);
@@ -238,23 +177,16 @@ void CamParryController::ClampAboveGround(ShotGoal& g) const
     if (camPos.y < minCamY) g.pivotExt.y += (minCamY - camPos.y);
 }
 
-CamParryController::ShotGoal CamParryController::BuildBaseShot(_int sideSign) const
+CamParryController::ShotGoal CamParryController::BuildBaseShot_NoLens(_int sideSign) const
 {
     ShotGoal g{};
 
-    const Vector3 attackerFace = m_aFace;
-    const Vector3 victimFace = m_vValid ? m_vFace : (m_aFace + m_dirXZ);
-
-    _float bias = clamp(tune.common.contactBias, 0.f, 1.f);
-    Vector3 pivotWorld = Vector3::Lerp(attackerFace, victimFace, bias);
-    pivotWorld += m_dirXZ * tune.common.forwardOffset;
+    Vector3 pivotWorld = m_aFace + m_dirXZ * tune.common.forwardOffset;
 
     const _float aimY = Math::Lerp(m_aBase.y, m_aFace.y, tune.common.pelvisMul);
     pivotWorld.y = aimY + tune.common.pivotYAdd;
 
-    g.baseVictimWeight = 0.f;
-
-    const Vector3 basePivot = BasePivotWorld(g.baseVictimWeight);
+    const Vector3 basePivot = m_aBase;
 
     Vector3 ext = pivotWorld - basePivot;
 
@@ -273,8 +205,6 @@ CamParryController::ShotGoal CamParryController::BuildBaseShot(_int sideSign) co
     g.pitchDeg = tune.common.pitchDeg;
     g.rollDeg = 0.f;
 
-    g.dist = tune.common.dist;
-    g.fov = tune.common.fov;
     g.yawWeight = 1.f;
 
     ClampAboveGround(g);
@@ -285,16 +215,13 @@ CamParryController::ShotGoal CamParryController::BuildBaseShot(_int sideSign) co
 void CamParryController::CaptureCurAsFrom()
 {
     auto orbit = CamDirector()->GetOrbitCam();
-    auto cam = CamDirector()->GetOrbitCamComp();
 
     OrbitSnapshot s{};
     orbit->CaptureSnapshot(s);
 
     ShotGoal from{};
 
-    from.baseVictimWeight = 0.f;
-
-    const Vector3 basePivot = BasePivotWorld(from.baseVictimWeight);
+    const Vector3 basePivot = m_aBase;
     const Vector3 pivotWorld = s.pose.pivotCurWorld;
 
     from.pivotExt = pivotWorld - basePivot;
@@ -304,7 +231,6 @@ void CamParryController::CaptureCurAsFrom()
     from.rollDeg = 0.f;
 
     from.dist = s.pose.distCur;
-    from.fov = cam->Get_FOV();
 
     from.yawWeight = 1.f;
 
@@ -313,32 +239,9 @@ void CamParryController::CaptureCurAsFrom()
     m_shotFrom = from;
 }
 
-void CamParryController::ApplyInterpolated(const ShotGoal& a, const ShotGoal& b, _float t)
-{
-    ShotGoal g{};
-
-    g.pivotExt = Vector3::Lerp(a.pivotExt, b.pivotExt, t);
-
-    const _float yaw = a.yawDeg + Math::WrapDeg(b.yawDeg - a.yawDeg) * t;
-    g.yawDeg = yaw;
-
-    g.pitchDeg = Math::Lerp(a.pitchDeg, b.pitchDeg, t);
-    g.rollDeg = a.rollDeg + Math::WrapDeg(b.rollDeg - a.rollDeg) * t;
-
-    g.dist = Math::Lerp(a.dist, b.dist, t);
-    g.fov = Math::Lerp(a.fov, b.fov, t);
-
-    g.yawWeight = Math::Lerp(a.yawWeight, b.yawWeight, t);
-    g.baseVictimWeight = a.baseVictimWeight;
-
-    ClampAboveGround(g);
-
-    ApplyGoalPose_Snap(g);
-}
-
 void CamParryController::ClampEnter_NoDrop(ShotGoal& g) const
 {
-    const Vector3 basePivot = BasePivotWorld(g.baseVictimWeight);
+    const Vector3 basePivot = m_aBase;
     const Vector3 pivotWorld = basePivot + g.pivotExt;
 
     auto EvalCamY = [&](float pitchDeg)
@@ -382,10 +285,8 @@ void CamParryController::ApplyInterpolated_Enter(const ShotGoal& a, const ShotGo
     g.rollDeg = a.rollDeg + Math::WrapDeg(b.rollDeg - a.rollDeg) * t;
 
     g.dist = a.dist;
-    g.fov = a.fov;
 
     g.yawWeight = Math::Lerp(a.yawWeight, b.yawWeight, t);
-    g.baseVictimWeight = a.baseVictimWeight;
 
     ClampAboveGround(g);
     ClampEnter_NoDrop(g);
@@ -393,52 +294,9 @@ void CamParryController::ApplyInterpolated_Enter(const ShotGoal& a, const ShotGo
     ApplyGoalPose_Snap(g);
 }
 
-CamParryController::ShotGoal CamParryController::BuildBaseShot_NoLens(_int sideSign) const
-{
-    ShotGoal g{};
-
-    const Vector3 attackerFace = m_aFace;
-    const Vector3 victimFace = m_vValid ? m_vFace : (m_aFace + m_dirXZ);
-
-    _float bias = clamp(tune.common.contactBias, 0.f, 1.f);
-    Vector3 pivotWorld = Vector3::Lerp(attackerFace, victimFace, bias);
-    pivotWorld += m_dirXZ * tune.common.forwardOffset;
-
-    const _float aimY = Math::Lerp(m_aBase.y, m_aFace.y, tune.common.pelvisMul);
-    pivotWorld.y = aimY + tune.common.pivotYAdd;
-
-    g.baseVictimWeight = 0.f;
-
-    const Vector3 basePivot = BasePivotWorld(g.baseVictimWeight);
-
-    Vector3 ext = pivotWorld - basePivot;
-
-    Vector3 extXZ(ext.x, 0.f, ext.z);
-    extXZ = ClampOffset(extXZ, tune.common.pivotClamp);
-
-    ext.x = extXZ.x;
-    ext.z = extXZ.z;
-
-    g.pivotExt = ext;
-
-    const Vector3 baseLook(m_dirXZ.x, 0.f, m_dirXZ.z);
-    const Vector3 camDir = RotateYDegXZ(baseLook, (_float)sideSign * tune.common.angleDeg);
-
-    g.yawDeg = YawFromDirXZ(camDir) + (_float)sideSign * tune.common.sideYawBiasDeg;
-    g.pitchDeg = tune.common.pitchDeg;
-    g.rollDeg = 0.f;
-
-    g.yawWeight = 1.f;
-
-    ClampAboveGround(g);
-
-    return g;
-}
-
 void CamParryController::CaptureCurAsImpactBase()
 {
     auto orbit = CamDirector()->GetOrbitCam();
-    auto cam = CamDirector()->GetOrbitCamComp();
 
     OrbitSnapshot s{};
     orbit->CaptureSnapshot(s);
@@ -447,9 +305,7 @@ void CamParryController::CaptureCurAsImpactBase()
 
     ShotGoal g{};
 
-    g.baseVictimWeight = 0.f;
-
-    const Vector3 basePivot = BasePivotWorld(g.baseVictimWeight);
+    const Vector3 basePivot = m_aBase;
     g.pivotExt = m_impactPivotWorld - basePivot;
 
     g.yawDeg = s.pose.rotCurDeg.x;
@@ -457,7 +313,6 @@ void CamParryController::CaptureCurAsImpactBase()
     g.rollDeg = 0.f;
 
     g.dist = s.pose.distCur;
-    g.fov = cam->Get_FOV();
 
     g.yawWeight = 1.f;
 
@@ -484,16 +339,13 @@ CamParryController::ShotGoal CamParryController::BuildImpactShot(_int sideSign, 
 
     const _float targetCamYFixed = footY + tune.impact.endCamAboveFootY;
 
-    const Vector3 basePivot0 = BasePivotWorld(g.baseVictimWeight);
-    Vector3 pivotWorld0 = basePivot0 + (m_impactPivotWorld - basePivot0);
-
     const Quaternion qStart = YawPitchRollQuatDeg(g.yawDeg, m_impactBase.pitchDeg, 0.f);
-    const _float startCamY = OrbitPos(pivotWorld0, qStart, m_impactBase.dist).y;
+    const _float startCamY = OrbitPos(m_impactPivotWorld, qStart, m_impactBase.dist).y;
 
     const _float mix = clamp(tune.impact.targetCamYMix, 0.f, 1.f);
     const _float targetCamY = Math::Lerp(startCamY, targetCamYFixed, mix);
 
-    const Vector3 basePivot = BasePivotWorld(g.baseVictimWeight);
+    const Vector3 basePivot = m_aBase;
     g.pivotExt = m_impactPivotWorld - basePivot;
     g.pivotExt.y -= tune.impact.pivotDropY * close01;
 
@@ -533,12 +385,7 @@ CamParryController::ShotGoal CamParryController::BuildImpactShot(_int sideSign, 
     const _float pitchEnd = hi;
     g.pitchDeg = Math::Lerp(m_impactBase.pitchDeg, pitchEnd, close01);
 
-    g.fov = m_impactBase.fov - tune.impact.punchFovAdd * close01;
-
     const _float env = sinf(XM_PI * u);
-
-    const _float fovPulse = sinf(2.f * XM_PI * (_float)tune.impact.fovPulseCount * u);
-    g.fov = g.fov + tune.impact.fovPulseAmp * fovPulse * env;
 
     g.rollDeg = (_float)sideSign * tune.impact.rollMaxDeg * roll01 * tune.impact.rollArcMul;
 
@@ -550,99 +397,38 @@ CamParryController::ShotGoal CamParryController::BuildImpactShot(_int sideSign, 
     return g;
 }
 
-void CamParryController::PrepareHold(const ShotGoal& impactEnd)
+void CamParryController::ComputeSideFromCam()
 {
-    m_holdFrom = impactEnd;
-
-    m_holdMid = m_holdFrom;
-    m_holdMid.rollDeg = 0.f;
-    m_holdMid.yawWeight = 1.f;
-
-    m_holdMid.pitchDeg = m_holdFrom.pitchDeg - tune.hold.risePitchLiftDeg;
-    m_holdMid.dist = m_holdFrom.dist + tune.hold.riseDistAdd;
-    m_holdMid.yawDeg = m_holdFrom.yawDeg + (_float)m_sideSign * tune.hold.riseYawSweepDeg;
-
-    _float fovTo = m_prevFovCaptured ? m_prevFov : m_holdFrom.fov;
-    _float fovW = clamp(tune.hold.fovRestoreMid01, 0.f, 1.f);
-    m_holdMid.fov = Math::Lerp(m_holdFrom.fov, fovTo, fovW);
-
-    m_holdTo = m_holdFrom;
-    m_holdTo.baseVictimWeight = 0.f;
-    m_holdTo.rollDeg = 0.f;
-    m_holdTo.yawWeight = 1.f;
-
-    if (m_prevOrbitCaptured)
-    {
-        m_holdTo.yawDeg = m_prevOrbit.pose.rotCurDeg.x;
-        m_holdTo.pitchDeg = m_prevOrbit.pose.rotCurDeg.y;
-        m_holdTo.dist = m_prevOrbit.pose.distCur;
-    }
-
-    if (m_prevFovCaptured) m_holdTo.fov = m_prevFov;
-
-    const Vector3 basePivot = BasePivotWorld(m_holdFrom.baseVictimWeight);
-    m_holdPivotFromWorld = basePivot + m_holdFrom.pivotExt;
-    m_holdPivotMidWorld = m_holdPivotFromWorld + Vector3(0.f, tune.hold.pivotUp, 0.f);
-
     auto orbit = CamDirector()->GetOrbitCam();
     const _float offsetY = orbit->GetOffsetY();
 
-    const OBJECT_HANDLE curHandle = CamDirector()->GetCurHandle();
-    const Vector3 curBaseOrbit = OrbitBasePivotWorld(curHandle, offsetY);
+    const Vector3 basePivot = OrbitBasePivotWorld(m_attacker, offsetY);
+    Vector3 rel = CurCamPosWorld() - basePivot;
+    rel.y = 0.f;
 
-    const Vector3 ext = m_prevOrbitCaptured ? m_prevOrbit.pose.pivotExternalOffset : Vector3::Zero;
-    m_holdPivotToWorld = curBaseOrbit + ext;
+    Vector3 fwd = m_dirXZ;
+    fwd.y = 0.f;
+    if (fwd.LengthSquared() <= 1e-10f) fwd = Vector3(0.f, 0.f, 1.f);
+    fwd.Normalize();
+
+    Vector3 right = Vector3::Up.Cross(fwd);
+    right.y = 0.f;
+    if (right.LengthSquared() <= 1e-10f) right = Vector3(1.f, 0.f, 0.f);
+    right.Normalize();
+
+    m_isLeft = (rel.Dot(right) < 0.f);
+    m_sideSign = m_isLeft ? -1 : 1;
 }
 
 
-
-void CamParryController::ApplyHoldOrbitReturn(_float u)
+string CamParryController::BuildParryKey() const
 {
-    u = clamp(u, 0.f, 1.f);
+    const CHARACTER charaName = CamDirector()->GetCharacterName();
 
-    const _float split = clamp(tune.hold.riseRatio, 0.01f, 0.99f);
-
-    auto LerpGoalNoPivot = [&](const ShotGoal& a, const ShotGoal& b, _float t)
-        {
-            ShotGoal g{};
-            g.baseVictimWeight = a.baseVictimWeight;
-
-            g.yawDeg = a.yawDeg + Math::WrapDeg(b.yawDeg - a.yawDeg) * t;
-            g.pitchDeg = Math::Lerp(a.pitchDeg, b.pitchDeg, t);
-            g.rollDeg = a.rollDeg + Math::WrapDeg(b.rollDeg - a.rollDeg) * t;
-
-            g.dist = Math::Lerp(a.dist, b.dist, t);
-            g.fov = Math::Lerp(a.fov, b.fov, t);
-
-            g.yawWeight = Math::Lerp(a.yawWeight, b.yawWeight, t);
-            return g;
-        };
-
-    ShotGoal g{};
-    Vector3 pivotWorld{};
-
-    if (u < split)
-    {
-        const _float ua = u / split;
-        const _float t = Math::ApplyEase(tune.hold.riseEase, ua);
-
-        g = LerpGoalNoPivot(m_holdFrom, m_holdMid, t);
-        pivotWorld = Vector3::Lerp(m_holdPivotFromWorld, m_holdPivotMidWorld, t);
-    }
-    else
-    {
-        const _float ub = (u - split) / (1.f - split);
-        const _float t = Math::ApplyEase(tune.hold.returnEase, ub);
-
-        g = LerpGoalNoPivot(m_holdMid, m_holdTo, t);
-        pivotWorld = Vector3::Lerp(m_holdPivotMidWorld, m_holdPivotToWorld, t);
-    }
-
-    const Vector3 basePivot = BasePivotWorld(g.baseVictimWeight);
-    g.pivotExt = pivotWorld - basePivot;
-
-    ClampAboveGround(g);
-    ApplyGoalPose_Snap(g);
+    string key = "Parry/";
+    key += Helper::EnumToString(charaName);
+    key += m_isLeft ? "_Left" : "_Right";
+    return key;
 }
 
 void CamParryController::Reset()
@@ -653,38 +439,21 @@ void CamParryController::Reset()
     m_elapsed = 0.f;
 
     m_attacker.Reset();
-    m_victim.Reset();
 
     m_sideSign = 1;
+    m_isLeft = false;
 
     m_aBase = Vector3::Zero;
     m_aFace = Vector3::Zero;
     m_aValid = false;
-
-    m_vBase = Vector3::Zero;
-    m_vFace = Vector3::Zero;
-    m_vValid = false;
 
     m_dirXZ = Vector3(0.f, 0.f, 1.f);
 
     m_shotFrom = {};
     m_shotTo = {};
 
-    m_holdFrom = {};
-    m_holdMid = {};
-    m_holdTo = {};
-
-    m_holdPivotFromWorld = Vector3::Zero;
-    m_holdPivotMidWorld = Vector3::Zero;
-    m_holdPivotToWorld = Vector3::Zero;
-
     m_prevOrbitCaptured = false;
     m_prevOrbit = {};
-
-    m_prevFovCaptured = false;
-    m_prevFov = 0.f;
-
-    m_victimBlocked = false;
 
     m_enterCamY = 0.f;
 
@@ -698,10 +467,8 @@ void CamParryController::Begin()
     Reset();
 
     m_attacker = CamDirector()->GetCurHandle();
-    m_victim = CamDirector()->GetCurTarget();
 
     auto orbit = CamDirector()->GetOrbitCam();
-    auto cam = CamDirector()->GetOrbitCamComp();
 
     const _float offsetY = orbit->GetOffsetY();
 
@@ -709,26 +476,6 @@ void CamParryController::Begin()
     m_aValid = attackerSample.valid;
     m_aBase = attackerSample.basePivot;
     m_aFace = attackerSample.facePivot;
-
-    const PivotSample victimSample = SamplePivots(m_victim, offsetY);
-    if (victimSample.valid)
-    {
-        m_vBase = victimSample.basePivot;
-        m_vFace = victimSample.facePivot;
-        m_vValid = true;
-
-        Vector3 delta = m_vFace - m_aFace;
-        delta.y = 0.f;
-        const _float dist = delta.Length();
-
-        if (dist > tune.common.maxVictimDist)
-        {
-            m_vBase = Vector3::Zero;
-            m_vFace = Vector3::Zero;
-            m_vValid = false;
-            m_victimBlocked = true;
-        }
-    }
 
     auto attackerObj = ObjectManager()->Request_Object(m_attacker);
     auto attackerTf = attackerObj->Get_Component<CTransform>();
@@ -738,55 +485,18 @@ void CamParryController::Begin()
     if (attackerFwd.LengthSquared() <= 1e-10f) attackerFwd = Vector3(0.f, 0.f, 1.f);
     attackerFwd.Normalize();
 
-    Vector3 dir = attackerFwd;
+    m_dirXZ = attackerFwd;
 
-    if (m_vValid)
-    {
-        Vector3 toVictim = m_vFace - m_aFace;
-        toVictim.y = 0.f;
-
-        if (toVictim.LengthSquared() > 1e-10f)
-        {
-            toVictim.Normalize();
-
-            if (toVictim.Dot(attackerFwd) > 0.f)
-            {
-                _float w = clamp(tune.common.aimVictimBlend, 0.f, 1.f);
-                dir = Vector3::Lerp(attackerFwd, toVictim, w);
-                if (dir.LengthSquared() <= 1e-10f) dir = attackerFwd;
-                else dir.Normalize();
-            }
-        }
-    }
-
-    m_dirXZ = dir;
-
-    m_sideSign = ChooseSideSignByCamDist();
+    ComputeSideFromCam();
 
     m_prevOrbitCaptured = true;
     orbit->CaptureSnapshot(m_prevOrbit);
-
-    m_prevFovCaptured = true;
-    m_prevFov = cam->Get_FOV();
 
     CaptureCurAsFrom();
     m_enterCamY = CurCamPosWorld().y;
 
     m_shotTo = BuildBaseShot_NoLens(m_sideSign);
     m_shotTo.dist = m_shotFrom.dist;
-    m_shotTo.fov = m_shotFrom.fov;
-
-    m_holdFrom = {};
-    m_holdMid = {};
-    m_holdTo = {};
-
-    m_holdPivotFromWorld = Vector3::Zero;
-    m_holdPivotMidWorld = Vector3::Zero;
-    m_holdPivotToWorld = Vector3::Zero;
-
-    m_impactBase = {};
-    m_impactPivotWorld = Vector3::Zero;
-    m_impactCaptured = false;
 
     m_active = true;
     m_state = State::Enter;
@@ -794,10 +504,7 @@ void CamParryController::Begin()
 
     ApplyGoalPose_Snap(m_shotFrom);
 
-    orbit->Lock_Input();
     orbit->ParryMode_Begin();
-    orbit->DialogueMode_Begin();
-    orbit->DialogueYaw_Clear();
 }
 
 void CamParryController::End()
@@ -805,57 +512,13 @@ void CamParryController::End()
     if (!m_active) return;
 
     auto orbit = CamDirector()->GetOrbitCam();
-    auto cam = CamDirector()->GetOrbitCamComp();
 
     orbit->ParryMode_End();
-    orbit->DialogueMode_End();
-    orbit->Unlock_Input();
-    orbit->DialogueYaw_Clear();
 
-    if (m_prevOrbitCaptured)
-    {
-        OrbitSnapshot now{};
-        orbit->CaptureSnapshot(now);
-
-        OrbitSnapshot s = m_prevOrbit;
-
-        s.target = CamDirector()->GetCurHandle();
-        s.sw = {};
-
-        s.pose.pivotInternalOffset = Vector3::Zero;
-
-        s.pose.rotCurDeg = now.pose.rotCurDeg;
-        s.pose.rotGoalDeg = now.pose.rotGoalDeg;
-
-        s.pose.distCur = now.pose.distCur;
-        s.pose.distGoal = now.pose.distGoal;
-        s.pose.distWanted = now.pose.distWanted;
-
-        orbit->RestoreSnapshot(s);
-    }
-
-    if (m_prevFovCaptured) cam->Set_FOV(m_prevFov);
-
-    //auto charaName = CamDirector()->GetCharacterName();
-
-    //switch (charaName)
-    //{
-    //case CHARACTER::Corin:
-    //    CamDirector()->RequestSequence("Parry/Corin_Left");
-    //    break;
-
-    //case CHARACTER::JaneDoe:
-    //    CamDirector()->RequestSequence("Parry/JaneDoe_Left");
-    //    break;
-
-    //case CHARACTER::Miyabi:
-    //    CamDirector()->RequestSequence("Parry/Miyabi_Left");
-    //    break;
-    //}
+    CamDirector()->RequestSequence(BuildParryKey());
 
     Reset();
 }
-
 
 void CamParryController::Update(_float dt)
 {
@@ -863,7 +526,8 @@ void CamParryController::Update(_float dt)
 
     m_elapsed += dt;
 
-    UpdatePivots(dt);
+    if (m_state != State::WaitEnd)
+        UpdatePivots(dt);
 
     if (m_state == State::Enter)
     {
@@ -894,39 +558,14 @@ void CamParryController::Update(_float dt)
         ApplyGoalPose_Snap(g);
 
         if (u >= 1.f)
-        {
-            if (tune.common.holdSec <= 0.f)
-            {
-                End();
-                return;
-            }
+            m_state = State::WaitEnd;
 
-            PrepareHold(g);
-
-            m_state = State::Hold;
-            m_elapsed = 0.f;
-        }
         return;
     }
 
-    if (m_state == State::Hold)
+    if (m_state == State::WaitEnd)
     {
-        if (tune.common.holdSec <= 0.f)
-        {
-            End();
-            return;
-        }
-
-        const _float u = clamp(m_elapsed / tune.common.holdSec, 0.f, 1.f);
-
-        ApplyHoldOrbitReturn(u);
-
-        if (u >= 1.f)
-        {
-            ApplyHoldOrbitReturn(1.f);
-            End();
-            return;
-        }
+        End();
         return;
     }
 }
