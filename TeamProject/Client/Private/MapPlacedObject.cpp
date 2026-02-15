@@ -85,6 +85,7 @@ void CMapPlacedObject::Update(_float dt)
 {
 	RotatePerSec(dt);
 	Wave(dt);
+	LookSway(dt);
 }
 
 void CMapPlacedObject::Late_Update(_float dt)
@@ -223,21 +224,19 @@ void CMapPlacedObject::LookSway(_float dt)
 		return;
 
 	if (m_fLookSwayTime == 0.f)
-		m_BaseRotation = Get_WorldQuat();
+		m_BaseRotation = Get_WorldRotation().x;
 
 	m_fLookSwayTime += dt;
 
-	_float angle =
+	float angle =
 		sinf(m_fLookSwayTime * m_vLookSway.x) *
-		XMConvertToRadians(m_vLookSway.y);
+		m_vLookSway.y;   // degree로 쓸 거면 rad 변환 안 함
 
-	_vector right = Get_WorldMatrix().Right();
+	_vector3 rot = Get_WorldRotation(); // 오일러
 
-	_vector qRot = XMQuaternionRotationAxis(right, angle);
+	rot.x = m_BaseRotation + XMConvertToRadians(angle);  // X축만 변경
 
-	_vector qFinal = XMQuaternionMultiply(qRot, m_BaseRotation);
-
-	m_pTransform->Set_Quaternion(qFinal);
+	m_pTransform->Rotate(rot);
 }
 
 void CMapPlacedObject::Render_GUI()
