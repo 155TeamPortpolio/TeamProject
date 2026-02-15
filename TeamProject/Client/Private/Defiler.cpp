@@ -9,6 +9,7 @@
 #include "Material.h"
 #include "CharacterController.h"
 #include "ObjectContainer.h"
+#include "BoneFollower.h"
 #include "EffectContainer.h"
 
 #include "StateMachine.h"
@@ -757,6 +758,16 @@ HRESULT CDefiler::Initialize_Effects()
 	auto pAnimator = Get_Component<CAnimator3D>();
 	auto pObjectContainer = Get_Component<CObjectContainer>();
 	Create_AttackSign("Bip001_Head");
+
+	/* Laser */
+	for (_uint i = 0; i < 3; ++i)
+	{
+		auto pLaser = Builder::Create_Object({ "Zero_Level","Proto_GameObject_DefilerLaser" })
+			.Build("Defiler_Laser_" + to_string(i));
+
+		pLaser->Get_Component<CBoneFollower>()->Link_Bone(pAnimator, "Ctr_M_Weapon_01");
+		pObjectContainer->Add_Child(pLaser, false);
+	}
 
 	/* Hit Ground */
 	{

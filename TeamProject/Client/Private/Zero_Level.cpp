@@ -31,6 +31,7 @@
 #include "ThugAssaulter.h"
 #include "Defiler.h"
 #include "MiasmaBlade.h"
+#include "DefilerLaser.h"
 
 #include "EnemyAttackCollider.h"
 #include "EnemyTriggerCollider.h"
@@ -141,6 +142,7 @@ void CZero_Level::Ready_Prototype()
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_EnemyTriggerCollider", CEnemyTriggerCollider::Create());
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_Defiler", CDefiler::Create());
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_MiasmaBlade", CMiasmaBlade::Create());
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_DefilerLaser", CDefilerLaser::Create());
 
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_ZeroPortal", CZeroPortal::Create());
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_LevelObject_ZeroPortal", CStageRouter::Create());
@@ -196,7 +198,7 @@ void CZero_Level::Ready_Stage()
 	//Boss
 	_uint Boss_Process{};
 	if(!RuntimeBucket().Int64.TryGet(PersistScope::SaveSlot, "Boss_Process", Boss_Process))
-		Boss_Process = 1; //Start BossMap Index;
+		Boss_Process = 2; //Start BossMap Index;
 
 	m_mapCycle[StageType::Boss].maps.push_back("Zero_Boss" + to_string(Boss_Process));
 	RuntimeBucket().Int64.Set(PersistScope::SaveSlot, "Boss_Process", ++Boss_Process);

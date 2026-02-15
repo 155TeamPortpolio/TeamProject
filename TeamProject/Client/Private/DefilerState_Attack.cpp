@@ -4,6 +4,9 @@
 #include "StateMachine.h"
 #include "GameInstance.h"
 #include "CharacterController.h"
+#include "ObjectContainer.h"
+
+#include "DefilerLaser.h"
 
 CDefilerState_Attack* CDefilerState_Attack::Create()
 {
@@ -19,7 +22,7 @@ void CDefilerState_Attack::Build_Pattern(CDefiler* pOwner, _int Type)
 	DEFILER_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
 	TARGETING_INFO& targetInfo = pOwner->GetTargetingInfo();
 	blackBoard.patternTransition.clear();
-	Type = 3;
+	Type = 2;
 	switch (Type)
 	{
 	case 0 :
@@ -397,9 +400,9 @@ void CDefilerState_Attack_02::Update_Effects(CDefiler* pOwner)
 			pOwner->Play_Effect("Defiler_Slash3_" + to_string(m_iSlashCount % 5), _vector3(randPosition0), rotation);
 			++m_iSlashCount;
 
-			//rotation *= _quaternion::CreateFromYawPitchRoll(XMConvertToRadians(120.f), 0.f, 0.f);
-			//pOwner->Play_Effect("Defiler_Slash3_" + to_string(m_iSlashCount % 5), _vector3(randPosition1), rotation);
-			//++m_iSlashCount;
+			rotation *= _quaternion::CreateFromYawPitchRoll(XMConvertToRadians(120.f), 0.f, 0.f);
+			pOwner->Play_Effect("Defiler_Slash3_" + to_string(m_iSlashCount % 5), _vector3(randPosition1), rotation);
+			++m_iSlashCount;
 		}
 	}
 }
@@ -528,10 +531,20 @@ void CDefilerState_Attack_06::Enter(CDefiler* pOwner)
 void CDefilerState_Attack_06::Update(CDefiler* pOwner, _float dt)
 {
 	ComboTransition(pOwner);
+	Update_Effects(pOwner);
 }
 
 void CDefilerState_Attack_06::Exit(CDefiler* pOwner)
 {
+}
+
+void CDefilerState_Attack_06::Update_Effects(CDefiler* pOwner)
+{
+	if (IsCrossAnimProgress(0.2f))
+	{
+		auto pLaser = pOwner->Get_Component<CObjectContainer>()->Find_ObjectByName("Defiler_Laser_0");
+		static_cast<CDefilerLaser*>(pLaser)->Set_ActiveLaser(true, CDefilerLaser::LASER_TYPE::NORMAL);
+	}
 }
 
 void CDefilerState_Attack_07::Enter(CDefiler* pOwner)

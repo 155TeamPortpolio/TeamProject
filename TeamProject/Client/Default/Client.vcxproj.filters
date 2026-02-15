@@ -1419,17 +1419,14 @@
     <Filter Include="02. GameObject\Object\Enemy\Elite\Giant\State\Parried">
       <UniqueIdentifier>{bc41c9e0-a786-45c2-8d45-4fbf00b4eab9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\Boss\Sacrifice\Sacrifice_Laser\Laser_Core">
-      <UniqueIdentifier>{4b6c289b-50fd-41a9-82af-69778a8f2ffe}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\Boss\Sacrifice\Sacrifice_Laser\Laser_Attac">
-      <UniqueIdentifier>{4fb7e6c9-93d0-4512-bfd1-7985bd41c80f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\Object\Enemy\Boss\Sacrifice_Hand\Hand_Core">
       <UniqueIdentifier>{ee43804d-e82d-45a4-b31f-911c8b215808}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\Object\Enemy\Boss\Sacrifice_Hand\Hand_Sword">
       <UniqueIdentifier>{d3e4f901-7bcc-4c40-8977-538c53fa3f17}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Boss\Defiler\DefilerLaser">
+      <UniqueIdentifier>{a3dbcf0a-50d0-46cb-8314-ddecf4f0d7fd}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -2762,6 +2759,9 @@
     <ClInclude Include="..\Public\Hand_Sword.h">
       <Filter>02. GameObject\Object\Enemy\Boss\Sacrifice_Hand\Hand_Sword</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\DefilerLaser.h">
+      <Filter>02. GameObject\Object\Enemy\Boss\Defiler\DefilerLaser</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -4051,6 +4051,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Hand_Sword.cpp">
       <Filter>02. GameObject\Object\Enemy\Boss\Sacrifice_Hand\Hand_Sword</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\DefilerLaser.cpp">
+      <Filter>02. GameObject\Object\Enemy\Boss\Defiler\DefilerLaser</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

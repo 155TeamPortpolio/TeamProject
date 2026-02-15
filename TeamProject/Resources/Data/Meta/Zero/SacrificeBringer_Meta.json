@@ -198,9 +198,19 @@
       "ClipTag": "SacrificeBringer_Ani_P1_Attack_01",
       "Events": [
         {
+          "EventTime": 0.27789196372032166,
+          "EventType": "Sound",
+          "EventTag": "Sacrifice_Attack_Voice4.wav"
+        },
+        {
           "EventTime": 0.5099999904632568,
           "EventType": "Notify",
           "EventTag": "Start_Attack"
+        },
+        {
+          "EventTime": 0.6800000071525574,
+          "EventType": "Sound",
+          "EventTag": "Sacrifice_HitGround4.wav"
         },
         {
           "EventTime": 0.921234130859375,
@@ -354,7 +364,12 @@
         {
           "EventTime": 0.857374906539917,
           "EventType": "Sound",
-          "EventTag": "Sacrifice_Laser_Shot3.wav"
+          "EventTag": "Long_Laser.wav"
+        },
+        {
+          "EventTime": 1.1100000143051147,
+          "EventType": "Sound",
+          "EventTag": "Sacrifice_Laugh_Voice1.wav"
         }
       ]
     },
@@ -485,7 +500,7 @@
       "ClipTag": "SacrificeBringer_Ani_P1_Attack_Turn",
       "Events": [
         {
-          "EventTime": 0.9381698966026306,
+          "EventTime": 0.7099999785423279,
           "EventType": "Sound",
           "EventTag": "Sacrifice_Attack_Voice3.wav"
         },
@@ -493,6 +508,11 @@
           "EventTime": 1.1867003440856934,
           "EventType": "Notify",
           "EventTag": "Start_Attack"
+        },
+        {
+          "EventTime": 1.2000000476837158,
+          "EventType": "Sound",
+          "EventTag": "Sacrifice_HitGround5.wav"
         },
         {
           "EventTime": 1.4229127168655396,
