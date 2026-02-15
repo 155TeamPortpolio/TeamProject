@@ -6,6 +6,7 @@
 #include "Material.h"
 
 #include "UI_NameIndicator.h"
+#include "FieldSystem.h"
 
 CUI_ZeroEntranceLogo::CUI_ZeroEntranceLogo()
 	:CGameObject()
@@ -87,7 +88,8 @@ void CUI_ZeroEntranceLogo::OnTriggerExit(CGameObject* pOther)
 
 void CUI_ZeroEntranceLogo::Interact(CGameObject* pObject)
 {
-	LevelManager()->Request_ChangeLevel("Zero_Level", true);
+	FieldSystem()->RequestEnter("Party", true);
+	//LevelManager()->Request_ChangeLevel("Zero_Level", true);
 }
 
 OBJECT_HANDLE CUI_ZeroEntranceLogo::Get_InteractHandle()

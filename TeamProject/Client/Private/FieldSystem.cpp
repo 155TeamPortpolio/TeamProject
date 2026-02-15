@@ -54,7 +54,7 @@ void CFieldSystem::PlayBGM(string strBGM)
 	
 	m_pBGM->Slot(strBGM)
 		.Attribute3D(false)
-		.Volume(0.8)
+		.Volume(0.3)
 		.Loop(true)
 		.Play();
 	

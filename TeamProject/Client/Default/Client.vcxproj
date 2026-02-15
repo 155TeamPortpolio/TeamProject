@@ -467,6 +467,8 @@
     <ClInclude Include="..\Public\MiyabiState_SwitchInNormal.h" />
     <ClInclude Include="..\Public\MiyabiState_SwitchInParryAid.h" />
     <ClInclude Include="..\Public\MiyabiState_SwitchOut.h" />
+    <ClInclude Include="..\public\Room_Party.h" />
+    <ClInclude Include="..\public\Room_Scott.h" />
     <ClInclude Include="..\public\ThugBulkyEnforcer_Parried.h" />
     <ClInclude Include="..\Public\SoftDirectionalOutlineUI.h" />
     <ClInclude Include="..\Public\UI_PartyCard.h" />
@@ -958,6 +960,8 @@
     <ClCompile Include="..\Private\MiyabiState_SwitchInNormal.cpp" />
     <ClCompile Include="..\Private\MiyabiState_SwitchInParryAid.cpp" />
     <ClCompile Include="..\Private\MiyabiState_SwitchOut.cpp" />
+    <ClCompile Include="..\private\Room_Party.cpp" />
+    <ClCompile Include="..\private\Room_Scott.cpp" />
     <ClCompile Include="..\private\ThugBulkyEnforcer_Parried.cpp" />
     <ClCompile Include="..\Private\SoftDirectionalOutlineUI.cpp" />
     <ClCompile Include="..\Private\UI_PartyCard.cpp" />

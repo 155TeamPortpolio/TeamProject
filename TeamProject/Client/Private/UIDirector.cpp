@@ -76,6 +76,11 @@ void CUIDirector::Show_Party(vector<CHARACTER> characters)
 	UI_Active("party", &desc);
 }
 
+void CUIDirector::Hide_Party()
+{
+	UI_DeActive("party");
+}
+
 void CUIDirector::Request_DamageText(const DAMAGE_DESC& desc)
 {
 	const string levelKey = LevelManager()->Get_NowLevelKey();
