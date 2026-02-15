@@ -113,7 +113,7 @@ void CCharacter::Render_GUI()
 {
     ImGui::Separator();
     ImGui::Text("HP : %3.2f / %3.2f", m_fCurrentHP, m_fMaxHP);
-    ImGui::Text("AttackPower : %2.2f", m_fAttackPower);
+    ImGui::InputFloat("AttackPower", &m_fAttackPower ,0.f, 0.f, "%.2f");
 
     __super::Render_GUI();
 }

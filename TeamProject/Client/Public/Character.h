@@ -92,13 +92,16 @@ public: // 기본 정보
 public: // HP
     _float  Get_HP() const { return m_fCurrentHP; }
     _float  Get_MaxHP() const { return m_fMaxHP; }
+    void    Set_CurrentHP(_float fHp) { m_fCurrentHP = fHp; }
     void    Set_MaxHP(_float fMaxHp) { m_fMaxHP = fMaxHp; }
+    void    Set_FullHP() { m_fCurrentHP = m_fMaxHP; }
     _float  Get_AttackPower() const { return m_fAttackPower; }
 
 public: // 에너지
     const EnergyDesc& Get_EnergyDesc() const { return m_tEnergy; }
     void    Set_EnergyDesc(EnergyDesc desc) { m_tEnergy = desc; }
     void    Set_CurrentEnergy(_float fEnergy) { m_tEnergy.fCurrentEnergy = fEnergy; }
+    void    Set_FullEnergy() { m_tEnergy.fCurrentEnergy = MAX_ENERGY; }
     void    Set_EnergyWeight(_float fWeight) { m_tEnergy.fEnergyWeight = fWeight; }
     void    Set_SpecialEnergy(_float fEnergy) { m_tEnergy.fSpecialEnergy = fEnergy; }
     _float  Get_MaxEnergy() { return MAX_ENERGY; }
@@ -108,6 +111,7 @@ public: // 궁극기
     _float  Get_PrevDecibel() const { return m_fPrevDecibel; }
     _float  Get_MaxDecibel() const { return MAX_DECIBEL; }
     void    Set_Decibel(_float fDecibel) { m_fCurrentDecibel = fDecibel; }
+    void    Set_FullDecibel() { m_fCurrentDecibel = MAX_DECIBEL; }
 
 public: // 이동
     _vector3    Get_InputDir() const { return m_inputInfo.direction; }

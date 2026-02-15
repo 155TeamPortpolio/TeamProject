@@ -63,7 +63,12 @@ void CJaneDoeState_RushAttack::Update(CJaneDoe* pOwner, _float dt)
 
         if (Event.Tag == "LHandStart")
         {
-            pOwner->Begin_AttackCollider("HandWeapon_L", { pOwner->Get_CharacterName(), HIT_TYPE::ONCE, DAMAGE_TYPE::HARD, Helper::Get_Random_Float(10,30), 0, 0 });
+            pOwner->Begin_AttackCollider("HandWeapon_L", HitDesc()
+                .Type(HIT_TYPE::ONCE)
+                .Damage(pOwner->Get_AttackPower() * 0.35f * Helper::Get_Random_Float(1.f, 1.5f)
+                    , DAMAGE_TYPE::NORMAL)
+            );
+                
         }
         else if (Event.Tag == "LHandEnd")
         {
@@ -71,7 +76,11 @@ void CJaneDoeState_RushAttack::Update(CJaneDoe* pOwner, _float dt)
         }
         else if (Event.Tag == "RHandStart")
         {
-            pOwner->Begin_AttackCollider("HandWeapon_R", { pOwner->Get_CharacterName(), HIT_TYPE::ONCE, DAMAGE_TYPE::HARD, Helper::Get_Random_Float(10,30), 0, 0 });
+            pOwner->Begin_AttackCollider("HandWeapon_R", HitDesc()
+                .Type(HIT_TYPE::ONCE)
+                .Damage(pOwner->Get_AttackPower() * 0.35f * Helper::Get_Random_Float(1.f, 1.5f)
+                    , DAMAGE_TYPE::NORMAL)
+            );
         }
         else if (Event.Tag == "RHandEnd")
         {
@@ -79,7 +88,11 @@ void CJaneDoeState_RushAttack::Update(CJaneDoe* pOwner, _float dt)
         }
         else if (Event.Tag == "LFootStart")
         {
-            pOwner->Begin_AttackCollider("FootWeapon_L", { pOwner->Get_CharacterName(), HIT_TYPE::ONCE, DAMAGE_TYPE::HARD, Helper::Get_Random_Float(20,40), 0, 0 });
+            pOwner->Begin_AttackCollider("FootWeapon_L", HitDesc()
+                .Type(HIT_TYPE::ONCE)
+                .Damage(pOwner->Get_AttackPower() * 0.35f * Helper::Get_Random_Float(1.f, 1.5f)
+                    , DAMAGE_TYPE::NORMAL)
+            );
         }
         else if (Event.Tag == "LFootEnd")
         {
@@ -90,10 +103,12 @@ void CJaneDoeState_RushAttack::Update(CJaneDoe* pOwner, _float dt)
             //pOwner->Begin_AttackCollider("FootWeapon_R", { HIT_TYPE::ONCE, DAMAGE_TYPE::HARD, Helper::Get_Random_Float(20,40), 0, 0 });
             _vector3 vLook = pOwner->Get_Component<CTransform>()->Dir(STATE::LOOK);
             _vector3 vPos = pOwner->Get_WorldPos();
-            BattleSystem()->TakeAreaDamage(vPos + vLook *0.5f, 0.5f, HitDesc()
+            BattleSystem()->TakeAreaDamage(vPos + vLook * 0.5f, 0.5f, HitDesc()
+                .Name(pOwner->Get_CharacterName())
                 .Type(HIT_TYPE::ONCE)
-                .Damage(Helper::Get_Random_Float(20, 40), DAMAGE_TYPE::HARD)
-                );
+                .Damage(pOwner->Get_AttackPower() * 0.35f * Helper::Get_Random_Float(1.f, 1.5f)
+                    , DAMAGE_TYPE::NORMAL)
+            );
         }
         else if (Event.Tag == "RFootEnd")
         {

@@ -81,8 +81,10 @@ void CMiyabiState_Counter_Start::Enter(CMiyabi* pOwner)
 
 	m_iMask = pOwner->Get_CCT()->Get_CollisionMask();
 	pOwner->Get_CCT()->Set_CollisionMask(m_iMask - ENUM(COLLISION_GROUP::MONSTER));
-	pOwner->Set_LookTarget(false);
 	m_pOwnerStateMachine->Set_Bool("Penetrate", true);
+
+	pOwner->Rush_Target();
+	pOwner->Set_LookTarget(false);
 
 	m_vPos = pOwner->Get_WorldPos();
 	m_vLook = pOwner->Get_Component<CTransform>()->Dir(STATE::LOOK);
@@ -103,7 +105,7 @@ void CMiyabiState_Counter_Start::Update(CMiyabi* pOwner, _float dt)
 				.Name(pOwner->Get_CharacterName())
 				.Type(HIT_TYPE::ONCE)
 				.Damage(pOwner->Get_AttackPower() * 0.491f * Helper::Get_Random_Float(1.f, 1.5f)
-					, DAMAGE_TYPE::HARD)
+					, DAMAGE_TYPE::NORMAL)
 			);
 		}
 		else if (Event.Tag == "KatanaEnd")
@@ -111,6 +113,15 @@ void CMiyabiState_Counter_Start::Update(CMiyabi* pOwner, _float dt)
 			pOwner->End_AttackCollider("KatanaWeapon");
 		}
 		else if (Event.Tag == "AreaAttack")
+		{
+			BattleSystem()->TakeAreaDamage(m_vPos + m_vLook * 2.f, 3.f, HitDesc()
+				.Name(pOwner->Get_CharacterName())
+				.Type(HIT_TYPE::ONCE)
+				.Damage(pOwner->Get_AttackPower() * 0.491f * Helper::Get_Random_Float(1.f, 1.5f)
+					, DAMAGE_TYPE::NORMAL)
+			);
+		}
+		else if (Event.Tag == "AreaAttackHard")
 		{
 			BattleSystem()->TakeAreaDamage(m_vPos + m_vLook * 2.f, 3.f, HitDesc()
 				.Name(pOwner->Get_CharacterName())

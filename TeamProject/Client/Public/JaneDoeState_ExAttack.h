@@ -12,6 +12,9 @@ public:
     virtual void Update(CJaneDoe* pOwner, _float dt) override;
     virtual void Exit(CJaneDoe* pOwner) override;
 
+private:
+    DAMAGE_TYPE m_eType = DAMAGE_TYPE::NORMAL;
+
 public:
     static CJaneDoeState_ExAttack* Create();
     virtual void Free() override { __super::Free(); }

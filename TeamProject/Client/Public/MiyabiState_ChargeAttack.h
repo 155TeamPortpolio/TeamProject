@@ -96,6 +96,7 @@ public:
     virtual void Exit(CMiyabi* pOwner) override;
 
 private:
+    _int   m_iMask = {};
     _float m_fAreaTimer = { 0.f };
     _float m_fAreaInterval = { 0.05f };
     _bool  m_bAreaAttack = { false };

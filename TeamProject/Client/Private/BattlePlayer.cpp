@@ -30,10 +30,7 @@ HRESULT CBattlePlayer::Initialize()
 {
     CBattleSystem::GetInstance()->SetBattlePlayer(this);
     Initialize_CharacterPrototype();
-
-    // Jehyun : 원상복구 안해놓냐? 뒤질래?
-    //vector<CHARACTER> BattleCharacters = {CHARACTER::Corin, CHARACTER::Miyabi, CHARACTER::JaneDoe, };
-    vector<CHARACTER> BattleCharacters = {CHARACTER::Miyabi,CHARACTER::JaneDoe, CHARACTER::Corin, };
+    vector<CHARACTER> BattleCharacters = { CHARACTER::JaneDoe, CHARACTER::Miyabi, CHARACTER::Corin, };
     SetBattleCharacters(BattleCharacters);
 
     return S_OK;
@@ -131,6 +128,22 @@ void CBattlePlayer::Render_GUI()
 {
     if (nullptr == m_pCurrentCharacter)
         return;
+
+    ImGui::Separator();
+    if (ImGui::Button("RecoverHP"))
+    {
+        Recover_HP();
+    }
+    ImGui::SameLine();
+    if (ImGui::Button("RecoverEnergy"))
+    {
+        Recover_Energy();
+    }
+    ImGui::SameLine();
+    if (ImGui::Button("RecoverDecibel"))
+    {
+        Recover_Decibel();
+    }
 
     // Current Character Info
     if (ImGui::CollapsingHeader("Current Character", ImGuiTreeNodeFlags_DefaultOpen))
@@ -428,6 +441,30 @@ void CBattlePlayer::End_ChainParry()
         return;
     
     m_bChainParry = false;
+}
+
+void CBattlePlayer::Recover_HP()
+{
+    for (auto character : m_BattleCharacters)
+    {
+        character->Set_FullHP();
+    }
+}
+
+void CBattlePlayer::Recover_Energy()
+{
+    for (auto character : m_BattleCharacters)
+    {
+        character->Set_FullEnergy();
+    }
+}
+
+void CBattlePlayer::Recover_Decibel()
+{
+    for (auto character : m_BattleCharacters)
+    {
+        character->Set_FullDecibel();
+    }
 }
 
 void CBattlePlayer::Update_Input(_float dt)

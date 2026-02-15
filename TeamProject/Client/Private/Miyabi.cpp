@@ -945,6 +945,21 @@ HRESULT CMiyabi::Initialize_Sound()
 		, "Miyabi_NormalAttack05_Voice_03"
 		, "Miyabi_NormalAttack05_Voice_04"
 	);
+	AudioSrc->Add_Sequence("RushAttack"
+		, "Miyabi_RushAttack_Voice_01"
+		, "Miyabi_RushAttack_Voice_02"
+		, "Miyabi_RushAttack_Voice_03"
+		, "Miyabi_RushAttack_Voice_04"
+	);
+	AudioSrc->Add_Sequence("Evade_BackStep"
+		, "Miyabi_Evade_BackStep_Voice_01"
+		, "Miyabi_Evade_BackStep_Voice_02"
+	);
+	AudioSrc->Add_Sequence("Evade_Dash"
+		, "Miyabi_Evade_Dash_Voice_01"
+		, "Miyabi_Evade_Dash_Voice_02"
+	);
+
 
 	return S_OK;
 }
@@ -1149,9 +1164,9 @@ HRESULT CMiyabi::Update_MotionBlurQueue()
 
 	for (_int k = m_BoneMatrices.size() - 1; k >= 0; --k)
 	{
-		_float t = (_float)k / (_float)(m_BoneMatrices.size() - 1);
-		_float fAlpha = (1.f - t) * 0.1f + 0.25f;  // 0.25 ~ 0.35
-		_vector4 vColor = { 0.1f, 0.4f, 1.f, 0.25 }; 
+		_float t = (_float)k / (_float)(m_BoneMatrices.size());
+		//_float fAlpha = (1.f - t) * 0.1f + 0.25f;  // 0.25 ~ 0.35
+		_vector4 vColor = { 0.1f, 0.4f, 1.f, 0.25f }; 
 		for (_int i = 0; i < Model->Get_MeshCount(); ++i)
 		{
 			if (Model->isDrawable(i) == false) continue;

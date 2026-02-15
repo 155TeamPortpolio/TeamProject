@@ -102,6 +102,15 @@ void CMiyabiState_SwitchInAttack_Start::Update(CMiyabi* pOwner, _float dt)
                 .Name(pOwner->Get_CharacterName())
                 .Type(HIT_TYPE::ONCE)
                 .Damage(pOwner->Get_AttackPower() * 0.897f * Helper::Get_Random_Float(1.f, 1.5f)
+                    , DAMAGE_TYPE::NORMAL)
+            );
+        }
+        else if (Event.Tag == "AreaAttackHard")
+        {
+            BattleSystem()->TakeAreaDamage(m_vPos + m_vLook * 7.f, 7.f, HitDesc()
+                .Name(pOwner->Get_CharacterName())
+                .Type(HIT_TYPE::ONCE)
+                .Damage(pOwner->Get_AttackPower() * 0.897f * Helper::Get_Random_Float(1.f, 1.5f)
                     , DAMAGE_TYPE::HARD)
             );
         }

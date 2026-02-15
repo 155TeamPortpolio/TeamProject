@@ -95,11 +95,6 @@ void CMiyabiState_Assault_Start::Enter(CMiyabi* pOwner)
 
 void CMiyabiState_Assault_Start::Update(CMiyabi* pOwner, _float dt)
 {
-	//CCharacter::ROOTMOTION_DESC desc;
-	//desc.iModeMask = ENUM(CMiyabi::ROOTMOTION_MASK::MOVE)
-	//	| ENUM(CMiyabi::ROOTMOTION_MASK::QUATERNION);
-	//desc.fMoveWeight = 0.5f;
-	//pOwner->Process_RootMotion(dt, desc);
 	pOwner->Process_RootMotion(dt,
 		ENUM(CMiyabi::ROOTMOTION_MASK::MOVE) |
 		ENUM(CMiyabi::ROOTMOTION_MASK::QUATERNION));
@@ -115,6 +110,15 @@ void CMiyabiState_Assault_Start::Update(CMiyabi* pOwner, _float dt)
 				.Type(HIT_TYPE::ONCE)
 				.Damage(pOwner->Get_AttackPower() * 0.375f * Helper::Get_Random_Float(1.f, 1.5f)
 					, DAMAGE_TYPE::NORMAL)
+			);
+		}
+		else if (Event.Tag == "AreaAttackHard")
+		{
+			BattleSystem()->TakeAreaDamage(m_vPos + m_vLook * 2.f, 3.f, HitDesc()
+				.Name(pOwner->Get_CharacterName())
+				.Type(HIT_TYPE::ONCE)
+				.Damage(pOwner->Get_AttackPower() * 0.375f * Helper::Get_Random_Float(1.f, 1.5f)
+					, DAMAGE_TYPE::HARD)
 			);
 		}
 	}

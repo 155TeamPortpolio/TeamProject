@@ -387,6 +387,17 @@ void CMiyabiState_Attack_05::Update(CMiyabi* pOwner, _float dt)
                 .Name(pOwner->Get_CharacterName())
                 .Type(HIT_TYPE::ONCE)
                 .Damage(pOwner->Get_AttackPower() * 1.29f * Helper::Get_Random_Float(1.f, 1.5f)
+                    , DAMAGE_TYPE::NORMAL)
+            );
+        }
+        else if (Event.Tag == "AreaAttackHard")
+        {
+            _vector3 vLook = pOwner->Get_Component<CTransform>()->Dir(STATE::LOOK);
+            _vector3 vPos = pOwner->Get_WorldPos();
+            BattleSystem()->TakeAreaDamage(vPos, 3.f, HitDesc()
+                .Name(pOwner->Get_CharacterName())
+                .Type(HIT_TYPE::ONCE)
+                .Damage(pOwner->Get_AttackPower() * 1.29f * Helper::Get_Random_Float(1.f, 1.5f)
                     , DAMAGE_TYPE::HARD)
             );
         }
