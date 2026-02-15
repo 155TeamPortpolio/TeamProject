@@ -60,8 +60,8 @@ public:
             _float punchDistDelta = 0.75f;
             _float rollMaxDeg = 10.f;
 
-            _int   rollShakeCount = 3;
-            _float rollShakeDeg = 2.8f;
+            _int   rollShakeCount = 4;
+            _float rollShakeDeg = 3.0f;
 
             _float rollArcMul = 0.4f;
 
@@ -79,6 +79,7 @@ public:
     void Begin();
     void End();
     void Update(_float dt);
+    
 
 public:
     ParryTuning tune{};

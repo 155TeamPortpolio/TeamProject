@@ -129,6 +129,8 @@ void CCamDirector::Update(_float dt)
 
         if (m_playing.pendingStart)
         {
+            seqPlayer->Update(0.f);
+
             m_playing.blendInRemain -= dt;
 
             if (m_playing.blendInRemain <= 0.f)
@@ -165,8 +167,9 @@ void CCamDirector::Update(_float dt)
         m_dialogueUnlockPending = false;
     }
 
-     UpdateInput(dt);
+    UpdateInput(dt);
 }
+
 
 void CCamDirector::StartBattleIntro(CamSeqType type)
 {
