@@ -134,12 +134,13 @@ void CHealKit::OnTriggerExit(CGameObject* pOther)
 
 void CHealKit::Recovery_Health()
 {
-	BattleSystem()->GetBattlePlayer();
+	BattleSystem()->GetBattlePlayer()->Recover_HP();
 }
 
 void CHealKit::Recovery_Energy()
 {
-	BattleSystem()->GetBattlePlayer();
+	BattleSystem()->GetBattlePlayer()->Recover_Energy();
+	BattleSystem()->GetBattlePlayer()->Recover_Decibel();
 }
 
 void CHealKit::Setting_Child()
