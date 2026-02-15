@@ -292,9 +292,6 @@
     <Filter Include="00. MainApp\00. CursorController">
       <UniqueIdentifier>{5e864d76-8135-44f8-b744-bd0c5b16cda6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Object\Interactable\Barricade">
-      <UniqueIdentifier>{8b1edd40-c12b-4e78-9bb4-7bbe13b2d7ba}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\Object\Npc\Service\Howl">
       <UniqueIdentifier>{8ed08d95-7d7d-4549-9bbe-fd2a5fe86237}</UniqueIdentifier>
     </Filter>
@@ -1418,6 +1415,12 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Enemy\Elite\Giant\State\Parried">
       <UniqueIdentifier>{bc41c9e0-a786-45c2-8d45-4fbf00b4eab9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Interactable\HealKit">
+      <UniqueIdentifier>{8b1edd40-c12b-4e78-9bb4-7bbe13b2d7ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Interactable\HealKit\KitObject">
+      <UniqueIdentifier>{5f5264af-4f99-4805-ad3c-99dec2533a26}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -2744,6 +2747,12 @@
     <ClInclude Include="..\Public\Giant_Parried.h">
       <Filter>02. GameObject\Object\Enemy\Elite\Giant\State\Parried</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\HealKit.h">
+      <Filter>02. GameObject\Object\Interactable\HealKit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\KitObject.h">
+      <Filter>02. GameObject\Object\Interactable\HealKit\KitObject</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -4027,6 +4036,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\Giant_Parried.cpp">
       <Filter>02. GameObject\Object\Enemy\Elite\Giant\State\Parried</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\HealKit.cpp">
+      <Filter>02. GameObject\Object\Interactable\HealKit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\KitObject.cpp">
+      <Filter>02. GameObject\Object\Interactable\HealKit\KitObject</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

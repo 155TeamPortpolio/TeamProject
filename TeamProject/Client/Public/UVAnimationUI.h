@@ -11,6 +11,9 @@ private:
 	virtual ~CUVAnimationUI() DEFAULT;
 
 public:
+	void Reverse_Direction();
+
+public:
 	virtual HRESULT Initialize_Prototype()                override;
 	virtual HRESULT Initialize(INIT_DESC* pArg = nullptr) override;
 	virtual void    Priority_Update(_float dt)            override { __super::Priority_Update(dt); }

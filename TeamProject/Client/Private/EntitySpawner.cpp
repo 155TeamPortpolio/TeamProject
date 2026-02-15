@@ -25,6 +25,8 @@
 /* Maptool Type 1 (Interactable) */
 #include "Portal.h"
 #include "ZeroPortal.h"
+#include "UI_ZeroEntranceLogo.h"
+#include "HealKit.h"
 
 /* Maptool Type 2 (ETC) */
 #include "MilitaryHelicopter.h"
@@ -34,7 +36,7 @@
 
 /* Maptool Type 5 (ETC) */
 #include "Water.h"
-#include "UI_ZeroEntranceLogo.h"
+
 
 #pragma region Tables
 /* Maptool Type 0 */
@@ -56,8 +58,8 @@ static unordered_map<string, Spawner::OBJ_SPEC> s_InteractTable =
 {
 	{ "Portal",			Spawner::OBJ_SPEC{ "Proto_GameObject_Portal", &CPortal::Create }},
 	{ "ZeroPortal",		Spawner::OBJ_SPEC{ "Proto_GameObject_ZeroPortal", &CZeroPortal::Create }},
-	{ "Invwall",		Spawner::OBJ_SPEC{ "Proto_GameObject_Invwall", &CZeroPortal::Create }},
-	{ "UI_ZeroLogo",	Spawner::OBJ_SPEC{ "Proto_GameObject_ZeroEntranceLogo", &CUI_ZeroEntranceLogo::Create }}
+	{ "UI_ZeroLogo",	Spawner::OBJ_SPEC{ "Proto_GameObject_ZeroEntranceLogo", &CUI_ZeroEntranceLogo::Create }},
+	{ "HealKit",		Spawner::OBJ_SPEC{ "Proto_GameObject_HealKit", &CHealKit::Create }}
 };
 
 /* Maptool Type 2 */
@@ -189,6 +191,33 @@ OBJECT_HANDLE Client::Spawner::Create_Interactable(const SPAWNER_DESC& Desc)
 					CPortal::PORTAL_DESC* pPortalDesc = new CPortal::PORTAL_DESC;
 					pPortalDesc->InstanceName = "Portal" + NextLevelTag;
 					pPortalDesc->NextNameTag = NextLevelTag;
+					pOBJDesc = pPortalDesc;
+				}
+			}
+		}
+
+		if (nullptr == pOBJDesc)
+			return OBJECT_HANDLE();
+	}
+	else if (Desc.tagName == "HealKit") {
+		auto Slot = Desc.SlotDataValues.find("InteractSlot");
+
+		if (Slot != Desc.SlotDataValues.end()) {
+			for (auto tFieldData : Slot->second) {
+				if (tFieldData.TagName == "KitType")
+				{
+					string KitType = *GetSlotValue<string>(tFieldData.defaultvalue);
+
+					CHealKit::HEALKIT_DESC* pPortalDesc = new CHealKit::HEALKIT_DESC;
+					tColDesc.eGroup = COLLISION_GROUP::COMMON;
+
+					if (KitType == "HP")
+						pPortalDesc->eItemType = CHealKit::ITEMTYPE::HP;
+					else if (KitType == "Energy")
+						pPortalDesc->eItemType = CHealKit::ITEMTYPE::ENERGY;
+					else				
+						pPortalDesc->eItemType = CHealKit::ITEMTYPE::END;
+
 					pOBJDesc = pPortalDesc;
 				}
 			}
