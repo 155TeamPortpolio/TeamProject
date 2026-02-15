@@ -13,6 +13,7 @@
 #include "UI_GachaResult.h"
 #include "UI_RenderTargetScreen.h"
 #include "UI_Party.h"
+#include "UI_Switch.h"
 
 IMPLEMENT_SINGLETON(CUIDirector);
 
@@ -84,6 +85,15 @@ void CUIDirector::Request_DamageText(const DAMAGE_DESC& desc)
 	dmgText->UI_Active((void*)&desc);
 
 	UIManager()->Add_UIObject(dmgText, levelKey);
+}
+
+void CUIDirector::Show_Switch(CHARACTER eLeft, CHARACTER eRight)
+{
+	CUI_Switch::SWITCH_DESC desc = {};
+	desc.left = eLeft;
+	desc.right = eRight;
+
+	UI_Active("switch", &desc);
 }
 
 void CUIDirector::Show_Lottery()

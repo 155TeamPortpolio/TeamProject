@@ -74,6 +74,8 @@
 #include "UI_BossHUD.h" 
 #include "UI_EnemyStatus.h"
 
+#include "UI_Switch.h"
+
 #include "UI_MeshPyramid.h"
 
 #include "UI_IconLabel.h" 
@@ -283,6 +285,8 @@ void CMainApp::Initialize_GlobalPrototype()
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_FieldHUD", CUI_FieldHUD::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_BossHUD", CUI_BossHUD::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_EnemyStatus", CUI_EnemyStatus::Create());
+
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Switch", CUI_Switch::Create());
 
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_MeshPyramid", CUI_MeshPyramid::Create());
 

@@ -475,6 +475,9 @@
     <ClInclude Include="..\Public\UI_ClearRT.h" />
     <ClInclude Include="..\Public\UI_Party.h" />
     <ClInclude Include="..\Public\UI_ScreenRT.h" />
+    <ClInclude Include="..\Public\UI_Switch.h" />
+    <ClInclude Include="..\Public\UI_SwitchGauge.h" />
+    <ClInclude Include="..\Public\UI_SwitchRole.h" />
     <ClInclude Include="..\Public\UI_SwitchRT.h" />
     <ClInclude Include="..\Public\UI_TextButton.h" />
     <ClInclude Include="..\Public\StrikeJaeger.h" />
@@ -960,6 +963,9 @@
     <ClCompile Include="..\Private\UI_ClearRT.cpp" />
     <ClCompile Include="..\Private\UI_Party.cpp" />
     <ClCompile Include="..\Private\UI_ScreenRT.cpp" />
+    <ClCompile Include="..\Private\UI_Switch.cpp" />
+    <ClCompile Include="..\Private\UI_SwitchGauge.cpp" />
+    <ClCompile Include="..\Private\UI_SwitchRole.cpp" />
     <ClCompile Include="..\Private\UI_SwitchRT.cpp" />
     <ClCompile Include="..\Private\UI_TextButton.cpp" />
     <ClCompile Include="..\Private\StrikeJaeger.cpp" />

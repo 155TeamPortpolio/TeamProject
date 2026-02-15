@@ -50,6 +50,9 @@ HRESULT CUI_RenderTargetScreen::Initialize(INIT_DESC* pArg)
 
 void CUI_RenderTargetScreen::Update(_float dt)
 {
+    if (InputDevice()->Key_Tap('M'))
+        UIDirector()->Show_Switch(CHARACTER::JaneDoe, CHARACTER::Miyabi);
+
     if (InputDevice()->Key_Tap('L'))
     {
         vector<CHARACTER> characters;

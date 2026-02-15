@@ -1419,6 +1419,15 @@
     <Filter Include="02. GameObject\Object\Enemy\Elite\Giant\State\Parried">
       <UniqueIdentifier>{bc41c9e0-a786-45c2-8d45-4fbf00b4eab9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\Switch">
+      <UniqueIdentifier>{6a5c26b7-37b6-408f-af08-4af4501f3518}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\Switch\Gauge">
+      <UniqueIdentifier>{91640d98-fa91-43a7-a04a-d4098b03f3e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\Switch\Role">
+      <UniqueIdentifier>{7c08dd8d-58df-4374-9d44-d1c0db631e0b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -2744,6 +2753,15 @@
     <ClInclude Include="..\Public\Giant_Parried.h">
       <Filter>02. GameObject\Object\Enemy\Elite\Giant\State\Parried</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UI_Switch.h">
+      <Filter>02. GameObject\UI\01. 2D\Switch</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_SwitchGauge.h">
+      <Filter>02. GameObject\UI\01. 2D\Switch\Gauge</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_SwitchRole.h">
+      <Filter>02. GameObject\UI\01. 2D\Switch\Role</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -4027,6 +4045,15 @@
     </ClCompile>
     <ClCompile Include="..\Private\Giant_Parried.cpp">
       <Filter>02. GameObject\Object\Enemy\Elite\Giant\State\Parried</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Switch.cpp">
+      <Filter>02. GameObject\UI\01. 2D\Switch</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_SwitchGauge.cpp">
+      <Filter>02. GameObject\UI\01. 2D\Switch\Gauge</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_SwitchRole.cpp">
+      <Filter>02. GameObject\UI\01. 2D\Switch\Role</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

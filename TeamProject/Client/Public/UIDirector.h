@@ -47,6 +47,7 @@ public:
 
 	//==================== Battle ===============
 	void Request_DamageText(const DAMAGE_DESC& desc);
+	void Show_Switch(CHARACTER eLeft, CHARACTER eRight);
 
 	//==================== MainCity ===============
 	void Show_Lottery();
