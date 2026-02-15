@@ -24,6 +24,7 @@ public:
     void Apply_Material(ID3D11DeviceContext* pContext, _uint Index);
     vector<class CMaterialInstance*>& Get_MaterialInstances() { return m_MaterialInstances; }
     class CMaterialInstance* Get_MaterialInstanceByName(const string& MaterialName);
+    class CMaterialInstance* Find_MaterialInstanceByName(const string& MaterialName);
     class CMaterialInstance* Get_MaterialInstance(_uint Index);
     void ResetMaterial(_uint Index);
 

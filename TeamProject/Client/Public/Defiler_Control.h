@@ -100,6 +100,7 @@ inline void RemoveFlag(TraceFlag& value, TraceFlag flag)
 
 typedef struct tagDefilerBlackBoard
 {
+    _uint BloodPhase = {};
 	_vector3 vTargetPos = {};
 	_vector3 vTargetDir = {};
 	
@@ -194,7 +195,6 @@ NS_END
 
 
 #pragma once
-
 #ifdef _USING_GUI
 NS_BEGIN(Client)
 namespace DefilerDebugGUI
