@@ -1,5 +1,5 @@
 {
-  "AnimPath" : "../Bin/Resources/Global/FieldCharacter/Belle/Anim/",
+  "AnimPath": "../Bin/Resources/Global/FieldCharacter/Belle/Anim/",
   "PreTransform": {
     "_11": -0.009999999776482582,
     "_12": 0.0,
@@ -73,11 +73,43 @@
     },
     {
       "ClipTag": "Avatar_Female_Size02_Belle_Ani_MainCity_Run_End_L",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.029999999329447746,
+          "EventType": "Notify",
+          "EventTag": "FootStepSound.wav"
+        },
+        {
+          "EventTime": 0.2800000011920929,
+          "EventType": "Notify",
+          "EventTag": "FootStepSound.wav"
+        },
+        {
+          "EventTime": 0.5699999928474426,
+          "EventType": "Notify",
+          "EventTag": "FootStepSound.wav"
+        }
+      ]
     },
     {
       "ClipTag": "Avatar_Female_Size02_Belle_Ani_MainCity_Run_End_R",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.03999999910593033,
+          "EventType": "Notify",
+          "EventTag": "FootStepSound.wav"
+        },
+        {
+          "EventTime": 0.2800000011920929,
+          "EventType": "Notify",
+          "EventTag": "FootStepSound.wav"
+        },
+        {
+          "EventTime": 0.6399999856948853,
+          "EventType": "Notify",
+          "EventTag": "FootStepSound.wav"
+        }
+      ]
     },
     {
       "ClipTag": "Avatar_Female_Size02_Belle_Ani_MainCity_Run_Loop",
@@ -88,9 +120,19 @@
           "EventTag": "R"
         },
         {
+          "EventTime": 0.0,
+          "EventType": "Notify",
+          "EventTag": "FootStepSound.wav"
+        },
+        {
           "EventTime": 0.14463937282562256,
           "EventType": "Notify",
           "EventTag": "L"
+        },
+        {
+          "EventTime": 0.3100000023841858,
+          "EventType": "Notify",
+          "EventTag": "FootStepSound.wav"
         },
         {
           "EventTime": 0.4639376103878021,
@@ -108,9 +150,19 @@
           "EventTag": "R"
         },
         {
+          "EventTime": 0.07999999821186066,
+          "EventType": "Notify",
+          "EventTag": "FootStepSound.wav"
+        },
+        {
           "EventTime": 0.4048459231853485,
           "EventType": "Notify",
           "EventTag": "L"
+        },
+        {
+          "EventTime": 0.41999998688697815,
+          "EventType": "Notify",
+          "EventTag": "FootStepSound.wav"
         },
         {
           "EventTime": 0.706099808216095,
@@ -118,9 +170,19 @@
           "EventTag": "R"
         },
         {
+          "EventTime": 0.8299999833106995,
+          "EventType": "Notify",
+          "EventTag": "FootStepSound.wav"
+        },
+        {
           "EventTime": 1.019445538520813,
           "EventType": "Notify",
           "EventTag": "L"
+        },
+        {
+          "EventTime": 1.159999966621399,
+          "EventType": "Notify",
+          "EventTag": "FootStepSound.wav"
         },
         {
           "EventTime": 1.3300515413284302,
