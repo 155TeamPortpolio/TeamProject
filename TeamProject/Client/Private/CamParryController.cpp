@@ -114,10 +114,11 @@ void CamParryController::ApplyGoalPose_Snap(const ShotGoal& g)
     const _float baseYaw = CurCamYawDeg();
     const _float yaw = baseYaw + Math::WrapDeg(desiredYawWorld - baseYaw) * g.yawWeight;
 
-    const Quaternion q = YawPitchRollQuatDeg(yaw, g.pitchDeg, g.rollDeg);
-    const Vector3 camPos = OrbitPos(pivotWorld, q, g.dist);
+    const Quaternion qPos = YawPitchRollQuatDeg(yaw, g.pitchDeg, 0.f);
+    const Vector3 camPos = OrbitPos(pivotWorld, qPos, g.dist);
 
-    orbit->SnapFromOrbitPose(pivotWorld, camPos, q, g.dist);
+    const Quaternion qRot = YawPitchRollQuatDeg(yaw, g.pitchDeg, g.rollDeg);
+    orbit->SnapFromOrbitPose(pivotWorld, camPos, qRot, g.dist);
 }
 
 _float CamParryController::CurCamYawDeg() const
@@ -173,7 +174,6 @@ void CamParryController::UpdatePivots(_float dt)
     m_dirXZ.Normalize();
 }
 
-
 void CamParryController::ClampAboveGround(ShotGoal& g) const
 {
     auto attackerObj = ObjectManager()->Request_Object(m_attacker);
@@ -196,7 +196,7 @@ void CamParryController::ClampAboveGround(ShotGoal& g) const
     const _float attackerYaw = YawFromDirXZ(fwd);
     const _float yawWorld = attackerYaw + g.yawDeg;
 
-    const Quaternion q = YawPitchRollQuatDeg(yawWorld, g.pitchDeg, g.rollDeg);
+    const Quaternion q = YawPitchRollQuatDeg(yawWorld, g.pitchDeg, 0.f);
     const Vector3 camPos = OrbitPos(pivotWorld, q, g.dist);
 
     if (camPos.y < minCamY) g.pivotExt.y += (minCamY - camPos.y);
@@ -368,14 +368,16 @@ void CamParryController::CaptureCurAsImpactBase()
 
     m_impactBase = g;
     m_impactCaptured = true;
+
+    m_fovBase = m_fovSaved;
 }
 
-CamParryController::ShotGoal CamParryController::BuildImpactShot(_int sideSign, _float close01, _float roll01, _float u) const
+
+CamParryController::ShotGoal CamParryController::BuildImpactShot(_int sideSign, _float close01, _float u) const
 {
     ShotGoal g = m_impactBase;
 
     close01 = clamp(close01, 0.f, 1.f);
-    roll01 = clamp(roll01, 0.f, 1.f);
     u = clamp(u, 0.f, 1.f);
 
     Vector3 fwd, right;
@@ -443,18 +445,13 @@ CamParryController::ShotGoal CamParryController::BuildImpactShot(_int sideSign, 
     const _float pitchEnd = hi;
     g.pitchDeg = Math::Lerp(m_impactBase.pitchDeg, pitchEnd, close01);
 
-    const _float env = sinf(XM_PI * u);
-
-    g.rollDeg = (_float)sideSign * tune.impact.rollMaxDeg * roll01 * tune.impact.rollArcMul;
-
-    const _float rollPulse = sinf(2.f * XM_PI * (_float)tune.impact.rollShakeCount * u);
-    g.rollDeg = g.rollDeg + (_float)sideSign * tune.impact.rollShakeDeg * rollPulse * env;
+    const _float tRoll = Math::ApplyEase(tune.impact.rollEase, u);
+    g.rollDeg = (_float)sideSign * tune.impact.rollMaxDeg * tRoll * tune.impact.rollArcMul;
 
     ClampAboveGround(g);
 
     return g;
 }
-
 
 void CamParryController::ComputeSideFromCam()
 {
@@ -470,7 +467,7 @@ void CamParryController::ComputeSideFromCam()
 
 string CamParryController::BuildParryKey() const
 {
-    const CHARACTER charaName = CHARACTER::Miyabi;
+    const CHARACTER charaName = CamDirector()->GetCharacterName();
 
     string key = "Parry/";
     key += Helper::EnumToString(charaName);
@@ -507,6 +504,25 @@ Vector3 CamParryController::ExtFromPivotWorld(const Vector3& pivotWorld) const
     return Vector3(extWorld.Dot(right), extWorld.y, extWorld.Dot(fwd));
 }
 
+_float CamParryController::EvalImpactFov(_float u, _float close01) const
+{
+    const _float env = sinf(XM_PI * u);
+    const _float wave = sinf(2.f * XM_PI * (_float)tune.impact.fovWaveCount * u);
+
+    const _float bias = -tune.impact.fovBiasDeg * close01 * env;
+    const _float fov = m_fovBase + bias + tune.impact.fovWaveAmpDeg * wave * env;
+
+    const _float minFov = 8.f;
+    const _float maxFov = 120.f;
+    return clamp(fov, minFov, maxFov);
+}
+
+void CamParryController::ApplyImpactFov(_float u, _float close01)
+{
+    auto orbit = CamDirector()->GetOrbitCam();
+    orbit->Get_Component<CCamera>()->Set_FOV(EvalImpactFov(u, close01));
+}
+
 void CamParryController::Reset()
 {
     m_active = false;
@@ -537,6 +553,11 @@ void CamParryController::Reset()
 
     m_waitSeqKey.clear();
     m_waitSeqStarted = false;
+
+    m_holdShot = {};
+    m_holdActive = false;
+
+    m_fovBase = 0.f;
 }
 
 void CamParryController::Begin()
@@ -547,6 +568,8 @@ void CamParryController::Begin()
     auto orbit = CamDirector()->GetOrbitCam();
 
     CamDirector()->SetTarget(m_attacker);
+
+    m_fovSaved = orbit->Get_Component<CCamera>()->Get_FOV();
 
     const _float offsetY = orbit->GetOffsetY();
 
@@ -585,6 +608,11 @@ void CamParryController::End()
 {
     if (!m_active) return;
 
+    auto orbit = CamDirector()->GetOrbitCam();
+    orbit->Get_Component<CCamera>()->Set_FOV(m_fovSaved);
+
+    CameraManager()->Set_BlendEase(tune.impact.recoverRollEase);
+
     m_waitSeqKey = BuildParryKey();
     CamDirector()->RequestSequence(m_waitSeqKey);
 
@@ -600,7 +628,8 @@ void CamParryController::Update(_float dt)
 
     m_elapsed += dt;
 
-    UpdatePivots(dt);
+    if (m_state == State::Enter || m_state == State::Impact)
+        UpdatePivots(dt);
 
     if (m_state == State::Enter)
     {
@@ -623,15 +652,18 @@ void CamParryController::Update(_float dt)
         if (!m_impactCaptured) CaptureCurAsImpactBase();
 
         const _float u = (tune.common.impactSec > 0.f) ? clamp(m_elapsed / tune.common.impactSec, 0.f, 1.f) : 1.f;
-
         const _float close01 = Math::ApplyEase(tune.common.impactEase, u);
-        const _float roll01 = sinf(XM_PI * u);
 
-        ShotGoal g = BuildImpactShot(m_sideSign, close01, roll01, u);
+        ShotGoal g = BuildImpactShot(m_sideSign, close01, u);
         ApplyGoalPose_Snap(g);
+
+        ApplyImpactFov(u, close01);
 
         if (u >= 1.f)
         {
+            m_holdShot = g;
+            m_holdActive = true;
+
             End();
             return;
         }
@@ -640,6 +672,9 @@ void CamParryController::Update(_float dt)
 
     if (m_state == State::WaitEnd)
     {
+        if (m_holdActive && m_elapsed < tune.impact.recoverRollSec)
+            ApplyGoalPose_Snap(m_holdShot);
+
         if (!m_waitSeqStarted)
         {
             if (CamDirector()->IsPlaying(m_waitSeqKey))
@@ -656,5 +691,4 @@ void CamParryController::Update(_float dt)
         Reset();
         return;
     }
-
 }
