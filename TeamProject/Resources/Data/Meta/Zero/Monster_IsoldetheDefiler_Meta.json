@@ -316,6 +316,11 @@
           "EventTime": 2.100714683532715,
           "EventType": "Notify",
           "EventTag": "TargetLockOff"
+        },
+        {
+          "EventTime": 1.2699999809265137,
+          "EventType": "Sound",
+          "EventTag": "DefilerSwing2.wav"
         }
       ]
     },
@@ -466,6 +471,11 @@
           "EventTime": 4.823001861572266,
           "EventType": "Notify",
           "EventTag": "TargetLockOff"
+        },
+        {
+          "EventTime": 3.140000104904175,
+          "EventType": "Sound",
+          "EventTag": "DefilerSwing2.wav"
         }
       ]
     },
@@ -626,6 +636,11 @@
           "EventTime": 4.055100917816162,
           "EventType": "Notify",
           "EventTag": "A_Type_Off"
+        },
+        {
+          "EventTime": 2.75,
+          "EventType": "Sound",
+          "EventTag": "Defiler_Slash2.wav"
         }
       ]
     },
@@ -788,19 +803,24 @@
       "ClipTag": "Monster_IsoldetheDefiler_Ani_Attack_06",
       "Events": [
         {
-          "EventTime": 0.6361273527145386,
-          "EventType": "Notify",
-          "EventTag": "EvadeSign"
-        },
-        {
           "EventTime": 0.5799999833106995,
           "EventType": "Sound",
           "EventTag": "Defiler_Laser.wav"
         },
         {
+          "EventTime": 0.6361273527145386,
+          "EventType": "Notify",
+          "EventTag": "EvadeSign"
+        },
+        {
           "EventTime": 0.7517868280410767,
           "EventType": "Notify",
           "EventTag": "Laser"
+        },
+        {
+          "EventTime": 0.7599999904632568,
+          "EventType": "Sound",
+          "EventTag": "LaserFire01.wav"
         },
         {
           "EventTime": 1.8899999856948853,
@@ -818,9 +838,14 @@
           "EventTag": "Laser"
         },
         {
-          "EventTime": 3.119999885559082,
+          "EventTime": 2.1512670516967773,
           "EventType": "Sound",
-          "EventTag": "Defiler_Laser.wav"
+          "EventTag": "LaserFire01.wav"
+        },
+        {
+          "EventTime": 2.4700000286102295,
+          "EventType": "Sound",
+          "EventTag": "Defiler_Charge02.wav"
         },
         {
           "EventTime": 3.130000114440918,
@@ -831,21 +856,6 @@
           "EventTime": 3.4119558334350586,
           "EventType": "Notify",
           "EventTag": "Laser"
-        },
-        {
-          "EventTime": 2.559999942779541,
-          "EventType": "Sound",
-          "EventTag": "Defiler_Charge02.wav"
-        },
-        {
-          "EventTime": 0.7599999904632568,
-          "EventType": "Sound",
-          "EventTag": "LaserFire01.wav"
-        },
-        {
-          "EventTime": 2.1512670516967773,
-          "EventType": "Sound",
-          "EventTag": "LaserFire01.wav"
         },
         {
           "EventTime": 3.4235217571258545,
@@ -1050,6 +1060,11 @@
           "EventTag": "WeaponShow"
         },
         {
+          "EventTime": 4.940000057220459,
+          "EventType": "Sound",
+          "EventTag": "DefilerSwingBase.wav"
+        },
+        {
           "EventTime": 4.96999979019165,
           "EventType": "Sound",
           "EventTag": "Defiler_Fierce.wav"
@@ -1063,11 +1078,6 @@
           "EventTime": 6.300000190734863,
           "EventType": "Notify",
           "EventTag": "WeaponShow"
-        },
-        {
-          "EventTime": 4.940000057220459,
-          "EventType": "Sound",
-          "EventTag": "DefilerSwingBase.wav"
         }
       ]
     },
