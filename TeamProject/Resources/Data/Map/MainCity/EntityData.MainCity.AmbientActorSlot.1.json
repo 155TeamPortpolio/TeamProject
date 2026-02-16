@@ -1,0 +1,23 @@
+{
+  "TagDataFormat": "AmbientActorSlot",
+  "TagArea": "MainCity",
+  "iVersion": 1,
+  "values": [
+    {
+      "iObjID": 23,
+      "TagName": "AnimationName",
+      "defaultvalue": {
+        "type": "String",
+        "value": "MainCity_Prop_NewsstandStuff_08_Idle"
+      }
+    },
+    {
+      "iObjID": 24,
+      "TagName": "AnimationName",
+      "defaultvalue": {
+        "type": "String",
+        "value": "MainCity_Prop_NewsstandStuff_09_Idle"
+      }
+    }
+  ]
+}

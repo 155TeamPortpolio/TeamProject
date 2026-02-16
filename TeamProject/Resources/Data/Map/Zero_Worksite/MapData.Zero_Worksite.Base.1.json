@@ -327,8 +327,8 @@
         },
         {
           "iObjID": 11,
-          "TagModelResourceKey": "Stage_Zero_WorkSite_SceneObjectStateWidgetRootout.model",
-          "TagMaterialResourceKey": "Stage_Zero_WorkSite_SceneObjectStateWidgetRootout.mat",
+          "TagModelResourceKey": "NoScreen.model",
+          "TagMaterialResourceKey": "NoScreen.mat",
           "vRight": [
             1.0,
             0.0,

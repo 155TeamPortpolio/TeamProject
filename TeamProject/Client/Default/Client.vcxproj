@@ -389,6 +389,8 @@
     <ClInclude Include="..\Public\DefilerState_Other.h" />
     <ClInclude Include="..\Public\DefilerWall.h" />
     <ClInclude Include="..\Public\DefilerWeapon.h" />
+    <ClInclude Include="..\public\DogBone.h" />
+    <ClInclude Include="..\public\DogFan.h" />
     <ClInclude Include="..\Public\KitObject.h" />
     <ClInclude Include="..\Public\Giant.h" />
     <ClInclude Include="..\Public\Giant_Attack.h" />
@@ -474,6 +476,7 @@
     <ClInclude Include="..\Public\MiyabiState_SwitchOut.h" />
     <ClInclude Include="..\public\Room_Party.h" />
     <ClInclude Include="..\public\Room_Scott.h" />
+    <ClInclude Include="..\public\ScottScreen.h" />
     <ClInclude Include="..\public\ThugBulkyEnforcer_Parried.h" />
     <ClInclude Include="..\Public\SoftDirectionalOutlineUI.h" />
     <ClInclude Include="..\Public\UI_PartyCard.h" />
@@ -889,6 +892,8 @@
     <ClCompile Include="..\Private\DefilerState_Other.cpp" />
     <ClCompile Include="..\Private\DefilerWall.cpp" />
     <ClCompile Include="..\Private\DefilerWeapon.cpp" />
+    <ClCompile Include="..\private\DogBone.cpp" />
+    <ClCompile Include="..\private\DogFan.cpp" />
     <ClCompile Include="..\Private\KitObject.cpp" />
     <ClCompile Include="..\Private\Giant.cpp" />
     <ClCompile Include="..\Private\Giant_Attack.cpp" />
@@ -971,6 +976,7 @@
     <ClCompile Include="..\Private\MiyabiState_SwitchOut.cpp" />
     <ClCompile Include="..\private\Room_Party.cpp" />
     <ClCompile Include="..\private\Room_Scott.cpp" />
+    <ClCompile Include="..\private\ScottScreen.cpp" />
     <ClCompile Include="..\private\ThugBulkyEnforcer_Parried.cpp" />
     <ClCompile Include="..\Private\SoftDirectionalOutlineUI.cpp" />
     <ClCompile Include="..\Private\UI_PartyCard.cpp" />
