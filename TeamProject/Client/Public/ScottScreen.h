@@ -28,7 +28,7 @@ public:
 private:
     _uint  m_iScreenCount = { 6 };
     SCREEN m_pScreen[6];
-    _float m_fFrameDuration = { 0.01f };
+    _float m_fFrameDuration = { 0.025f };
     _float m_fFrameElapsedTime = { 0.f };
 
 public:
