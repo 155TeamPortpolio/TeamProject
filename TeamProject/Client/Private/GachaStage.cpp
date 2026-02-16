@@ -205,6 +205,8 @@ void CGachaStage::Update(_float dt)
 		}
 
 		CUIDirector::GetInstance()->Hide_GachaLabel();
+		if (m_pUITextReveal)
+			m_pUITextReveal->Hide();
 		SetMiddleLightEffect(_float4(1.f, 1.f, 1.f, 1.f), _float4(0.1f, 0.1f, 0.1f, 1.f), 1.f);
 	}
 }
