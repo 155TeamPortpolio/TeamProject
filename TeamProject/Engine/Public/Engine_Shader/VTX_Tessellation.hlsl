@@ -1,31 +1,40 @@
 #include "Shader_Define.hlsl"
 
-static const float g_TsunamiHeight = 38.0f;
+float g_Time;
+float g_CycleTime= 7.f; // 한 사이클 총 시간 (초)
 
-static const float g_PeakTime = 0.42f;
-static const float g_RiseWidth = 0.35f;
-static const float g_FallWidth = 0.12f;
+// --- 파도 형상 ---
+float g_TsunamiHeight = 38.f; // 최대 높이 (기본 38.0)
 
-static const float g_WallDepthStart = 0.30f;
-static const float g_WallDepthEnd = 0.70f;
-static const float g_CurlForward = 35.0f;
-static const float g_CurlDrop = 30.0f;
-static const float g_CrashForward = 50.0f;
-static const float g_CrashDrop = 55.0f;
+// --- 타이밍 (모두 0.0~1.0 사이클 비율) ---
+float g_PeakTime = 0.42f; // 피크 시점 (기본 0.42 = 42%)
+float g_RiseWidth = 0.35f; // 상승 가우시안 폭 (기본 0.35, 클수록 천천히)
+float g_FallWidth = 0.12f; // 하강 가우시안 폭 (기본 0.12, 작을수록 빨리)
+float g_FadeInEnd = 0.08f; // 페이드인 끝 (기본 0.08 = 8%)
+float g_FadeOutStart = 0.93f; // 페이드아웃 시작 (기본 0.93 = 93%)
+float g_CurlStartRatio = 0.9f; // 컬 시작 = PeakTime * 이 값 (기본 0.9)
+float g_CurlDuration = 0.35f; // 컬 지속 비율 (기본 0.35)
+
+// --- 파도 벽 깊이 프로파일 ---
+float g_WallDepthStart = 0.3f; // 벽 시작 depth (기본 0.30)
+float g_WallDepthEnd = 0.7f; // 벽 끝 depth (기본 0.70)
+
+// --- 컬 강도 ---
+float g_CurlForward = 35.f; // 컬 전방 기울기 (기본 35.0)
+float g_MaxCurlAngle = 3.456f; // 최대 컬 각도, 라디안 (기본 3.456 = PI*1.1)
+
+// --- 노이즈 ---
+float g_Roughness;
+float g_FoamAmount;
+float2 g_NoiseOffset;
+float3 g_WaterTint;
+float g_TintStrength;
 
 static const float g_TopNoiseScale = 6.0f;
 static const float g_SurfaceNoise = 2.0f;
 static const float g_NoiseFreqX = 0.04f;
 static const float g_NoiseFreqZ = 0.08f;
 static const float g_NoiseSpeed = 1.5f;
-
-float g_Time;
-float g_CycleTime;
-float g_Roughness;
-float g_FoamAmount;
-float2 g_NoiseOffset;
-float3 g_WaterTint;
-float g_TintStrength;
 
 float SafeRoughness()
 {
@@ -142,7 +151,7 @@ DS_OUT DS_TESS(PatchConstant pc, float3 bary : SV_DomainLocation, const OutputPa
     float2 texcoord = patch[0].vTexcoord * bary.x + patch[1].vTexcoord * bary.y + patch[2].vTexcoord * bary.z;
 
     float t = frac(g_Time / g_CycleTime);
-    float depth = texcoord.y;
+    float depth = texcoord.x;
     float roughness = SafeRoughness();
 
     float edgeMask = smoothstep(0.0, 0.03, texcoord.x) * smoothstep(1.0, 0.97, texcoord.x)
@@ -152,53 +161,54 @@ DS_OUT DS_TESS(PatchConstant pc, float3 bary : SV_DomainLocation, const OutputPa
     float wallBack = 1.0 - smoothstep(g_WallDepthEnd, 1.0, depth) * 0.3;
     float wallProfile = wallBase * wallBack;
 
-    float xCenter = abs(texcoord.x - 0.5) * 2.0;
-    float xProfile = 1.0 - pow(xCenter, 2.5) * 0.55;
-    xProfile = max(xProfile, 0.15);
+    float zCenter = abs(texcoord.y - 0.5) * 2.0;
+    float zProfile = 1.0 - pow(zCenter, 2.5) * 0.55;
+    zProfile = max(zProfile, 0.15);
 
+    // === 시간 엔벨로프 (uniform 사용) ===
     float risePart = exp(-pow((t - g_PeakTime) / g_RiseWidth, 2.0));
     float fallPart = exp(-pow((t - g_PeakTime) / g_FallWidth, 2.0));
     float blendFactor = smoothstep(g_PeakTime - 0.03, g_PeakTime + 0.03, t);
     float envelope = lerp(risePart, fallPart, blendFactor);
-    envelope *= smoothstep(0.0, 0.08, t);
-    envelope *= smoothstep(1.0, 0.93, t);
+    envelope *= smoothstep(0.0, g_FadeInEnd, t);
+    envelope *= smoothstep(1.0, g_FadeOutStart, t);
 
-    float height = g_TsunamiHeight * envelope * wallProfile * xProfile;
+    float height = g_TsunamiHeight * envelope * wallProfile * zProfile;
     float topRegion = smoothstep(0.5, 0.9, wallProfile);
 
-    float2 noiseCoord = float2(worldPos.x * g_NoiseFreqX, worldPos.z * g_NoiseFreqZ + g_Time * g_NoiseSpeed)
+    float2 noiseCoord = float2(worldPos.z * g_NoiseFreqX, worldPos.x * g_NoiseFreqZ + g_Time * g_NoiseSpeed)
                       + g_NoiseOffset;
     float topNoise = fbm(noiseCoord, 4) * 2.0 - 1.0;
-    height += topNoise * g_TopNoiseScale * roughness * topRegion * envelope * xProfile;
+    height += topNoise * g_TopNoiseScale * roughness * topRegion * envelope * zProfile;
 
-    float2 surfNoiseCoord = float2(worldPos.x * 0.15, worldPos.z * 0.15 + g_Time * 2.0)
+    float2 surfNoiseCoord = float2(worldPos.z * 0.15, worldPos.x * 0.15 + g_Time * 2.0)
                           + g_NoiseOffset * 1.7;
     float surfNoise = (valueNoise(surfNoiseCoord) - 0.5) * 2.0;
-    height += surfNoise * g_SurfaceNoise * roughness * wallProfile * envelope * xProfile;
+    height += surfNoise * g_SurfaceNoise * roughness * wallProfile * envelope * zProfile;
 
-    float2 bumpCoord = float2(worldPos.x * 0.02, g_Time * 0.3)
+    float2 bumpCoord = float2(worldPos.z * 0.02, g_Time * 0.3)
                      + g_NoiseOffset * 0.5;
     float largeBump = pow(valueNoise(bumpCoord), 2.0) * 7.5;
-    height += largeBump * roughness * topRegion * envelope * xProfile;
+    height += largeBump * roughness * topRegion * envelope * zProfile;
 
-    float spatialRatio = saturate(wallProfile * xProfile / 0.8);
+    float spatialRatio = saturate(wallProfile * zProfile / 0.8);
     float topFocus = saturate((spatialRatio - 0.1) / 0.9);
     float curlMask = pow(topFocus, 1.5);
 
-    float curlStart = g_PeakTime * 0.9;
-    float curlEnd = g_PeakTime + 0.35;
+    // === 컬 타이밍 (uniform 사용) ===
+    float curlStart = g_PeakTime * g_CurlStartRatio;
+    float curlEnd = g_PeakTime + g_CurlDuration;
     float overPeak = saturate((t - curlStart) / (curlEnd - curlStart));
     float curlCrash = overPeak * overPeak * (3.0 - 2.0 * overPeak);
 
-    float maxCurlAngle = 3.14159 * 1.1;
-    float curlAngle = curlCrash * curlMask * maxCurlAngle;
+    float curlAngle = curlCrash * curlMask * g_MaxCurlAngle;
 
-    float localPeakHeight = g_TsunamiHeight * envelope * wallProfile * xProfile;
+    float localPeakHeight = g_TsunamiHeight * envelope * wallProfile * zProfile;
     float pivotHeight = localPeakHeight * 0.55;
     float armLength = max(height - pivotHeight, 0.0);
 
     float preCurlLean = envelope * (1.0 - curlCrash) * curlMask * g_CurlForward * 0.4;
-    worldPos.z -= preCurlLean * edgeMask;
+    worldPos.x += preCurlLean * edgeMask;
 
     float sinA = sin(curlAngle);
     float cosA = cos(curlAngle);
@@ -207,14 +217,14 @@ DS_OUT DS_TESS(PatchConstant pc, float3 bary : SV_DomainLocation, const OutputPa
     {
         float localY = armLength;
         float rotatedY = localY * cosA;
-        float rotatedZ = localY * sinA;
+        float rotatedX = localY * sinA;
         height = pivotHeight + rotatedY;
-        worldPos.z -= rotatedZ * edgeMask;
+        worldPos.x += rotatedX * edgeMask;
     }
     else
     {
         float leanAmount = curlCrash * saturate(wallProfile - 0.2) * 15.0;
-        worldPos.z -= leanAmount * edgeMask * xProfile;
+        worldPos.x += leanAmount * edgeMask * zProfile;
     }
 
     height = max(height, 0.0);
@@ -223,13 +233,13 @@ DS_OUT DS_TESS(PatchConstant pc, float3 bary : SV_DomainLocation, const OutputPa
     float heightForShading = finalHeight;
 
     float eps = 0.8;
-    float2 ncXp = float2((worldPos.x + eps) * g_NoiseFreqX, worldPos.z * g_NoiseFreqZ + g_Time * g_NoiseSpeed)
+    float2 ncZp = float2((worldPos.z + eps) * g_NoiseFreqX, worldPos.x * g_NoiseFreqZ + g_Time * g_NoiseSpeed)
                 + g_NoiseOffset;
-    float2 ncXm = float2((worldPos.x - eps) * g_NoiseFreqX, worldPos.z * g_NoiseFreqZ + g_Time * g_NoiseSpeed)
+    float2 ncZm = float2((worldPos.z - eps) * g_NoiseFreqX, worldPos.x * g_NoiseFreqZ + g_Time * g_NoiseSpeed)
                 + g_NoiseOffset;
-    float hXp = fbm(ncXp, 4) * g_TopNoiseScale * roughness * topRegion * envelope;
-    float hXm = fbm(ncXm, 4) * g_TopNoiseScale * roughness * topRegion * envelope;
-    float dhdx = (hXp - hXm) / (2.0 * eps);
+    float hZp = fbm(ncZp, 4) * g_TopNoiseScale * roughness * topRegion * envelope;
+    float hZm = fbm(ncZm, 4) * g_TopNoiseScale * roughness * topRegion * envelope;
+    float dhdz = (hZp - hZm) / (2.0 * eps);
 
     float depthPlus = saturate(depth + 0.01);
     float depthMinus = saturate(depth - 0.01);
@@ -237,11 +247,11 @@ DS_OUT DS_TESS(PatchConstant pc, float3 bary : SV_DomainLocation, const OutputPa
                    * (1.0 - smoothstep(g_WallDepthEnd, 1.0, depthPlus) * 0.3);
     float wallMinus = smoothstep(g_WallDepthStart, g_WallDepthEnd, depthMinus)
                     * (1.0 - smoothstep(g_WallDepthEnd, 1.0, depthMinus) * 0.3);
-    float dhdz_wall = (wallPlus - wallMinus) * g_TsunamiHeight * envelope * xProfile / (2.0 * 0.01 * 100.0);
+    float dhdx_wall = (wallPlus - wallMinus) * g_TsunamiHeight * envelope * zProfile / (2.0 * 0.01 * 100.0);
 
-    float3 normal = normalize(float3(-dhdx, 1.0, -dhdz_wall));
+    float3 normal = normalize(float3(dhdx_wall, 1.0, -dhdz));
     float curlNormalStrength = saturate(curlCrash * curlMask);
-    float3 curlNormal = normalize(float3(0, -sinA, -cosA));
+    float3 curlNormal = normalize(float3(cosA, -sinA, 0));
     normal = normalize(lerp(normal, curlNormal, curlNormalStrength * 0.6));
 
     Out.vWorldPos = float4(worldPos, 1.0);
@@ -327,7 +337,7 @@ float4 PS_TESS(DS_OUT In) : SV_TARGET
 
     float veinLine = saturate(causticA.g * 0.6 + causticB.g * 0.5);
     veinLine = smoothstep(0.25, 0.70, veinLine);
-    float veinMask = smoothstep(0.08, 0.50, heightPct); 
+    float veinMask = smoothstep(0.08, 0.50, heightPct);
     float veinIntensity = veinLine * veinMask;
 
     float darkBlob = saturate(causticA.r * 0.5 + causticB.r * 0.5);
@@ -391,40 +401,18 @@ float4 PS_TESS(DS_OUT In) : SV_TARGET
 
     lit += DeepColor * 1.2 * smoothstep(0.0, 0.12, heightPct);
 
-// 1. [랜덤성 추가] 노이즈 텍스처 샘플링
-    // 이미 있는 LightTexture(거품용)를 재활용해서 랜덤한 얼룩을 만듭니다.
     float2 noiseUV = worldPos.xz * 0.15 + float2(g_Time * 0.1, g_Time * 0.05);
     float randPattern = LightTexture.Sample(LinearSampler, noiseUV).r;
-    
-    // 노이즈를 날카롭게 다듬습니다 (0.0~1.0 사이에서 대비를 키움)
-    // 이 수치들을 조절하면 얼룩덜룩한 정도가 바뀝니다.
     randPattern = smoothstep(0.3, 0.8, randPattern);
 
-    // 2. [색상 교정] 하얀색 방지 핑크
-    // 톤매핑 후에도 핑크가 남으려면 Green 채널을 낮게 유지해야 합니다.
-    // R과 B는 높고, G는 낮은 비율을 강제로 만듭니다.
-    // (기존 색: FE5BAD -> R:0.99, G:0.35, B:0.67)
-    float3 hdrPinkColor = float3(2.5, 0.4, 1.8); // G를 낮춰서 흰색으로 타는 걸 방지
+    float3 hdrPinkColor = float3(2.5, 0.4, 1.8);
 
-    // 3. [영역 제한] 파도 '능선'만 정확히 잡기
-    // (A) 기하학적 능선: 하늘을 보고 있는 면 (N.y)
     float ridgeGeo = pow(saturate(N.y), 10.0);
-    
-    // (B) 텍스처 좌표 제한: 파도의 앞/뒤가 아닌 '윗 입술' UV 좌표만 통과
-    // 파도가 낮을 때 전체가 빛나는 것을 막아주는 핵심입니다.
-    // 0.65~0.75 구간이 보통 파도의 꺾이는 부분입니다.
-    float ridgeUV = smoothstep(0.60, 0.70, In.vTexcoord.y) * (1.0 - smoothstep(0.75, 0.85, In.vTexcoord.y));
-
-    // (C) 높이 제한: 파도가 너무 낮을 땐(바닥) 아예 안 보이게
+    float ridgeUV = smoothstep(0.60, 0.70, In.vTexcoord.x) * (1.0 - smoothstep(0.75, 0.85, In.vTexcoord.x));
     float heightFade = smoothstep(0.1, 0.25, heightPct);
 
-    // 4. [마스크 합성]
-    // 능선(Geo) * 위치(UV) * 높이(Fade) * 랜덤(Noise)
     float finalRimMask = ridgeGeo * ridgeUV * heightFade * randPattern;
 
-    // 5. [최종 적용]
-    // 강도(Intensity)를 4.0 정도로 주어 은은하게 빛나게 합니다.
-    // (너무 높이면 다시 하얗게 변하니 주의)
     lit += hdrPinkColor * finalRimMask * 4.0;
     float alpha = smoothstep(0.0, 0.05, heightPct);
     alpha = lerp(alpha, 1.0, foamIntensity * 0.2);

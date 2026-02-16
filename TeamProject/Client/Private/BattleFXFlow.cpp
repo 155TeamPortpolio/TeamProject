@@ -303,8 +303,6 @@ void CBattleFXFlow::StartVfx_Parry()
 	auto& preset = m_BattleVFXData[ENUM(BATTLE_VFX_TYPE::PARRY)];
 	AddParallelTimeScaleAll(preset);
 
-	//AddCall([this, preset]() {CamDirector()->StartParry(); });
-
 	CPostRenderer* pPost = RenderSystem()->GetPostRenderer();
 	AddCall([this, preset, pPost]() {
 		pPost->GetCommand<CRadialBlurCommand>()
@@ -330,7 +328,8 @@ void CBattleFXFlow::StartVfx_Ultimate()
 	AddParallelTimeScale(BATTLE_OBJ_TYPE::MONSTER, preset.BattleTimeScale[ENUM(BATTLE_OBJ_TYPE::MONSTER)]);
 	AddCall([this]() {
 		string nowLevel = LevelManager()->Get_NowLevelKey();
-		ObjectManager()->Get_Layer({ nowLevel ,m_layerTag[ENUM(BATTLE_OBJ_TYPE::MONSTER)]})->Set_RenderState(false);
+		if(auto layer = ObjectManager()->Get_Layer({nowLevel, m_layerTag[ENUM(BATTLE_OBJ_TYPE::MONSTER)]}))
+			layer->Set_RenderState(false);
 		});
 	AddWait(preset.fVFXDuration);
 	AddCall([this, preset]() {
@@ -338,7 +337,8 @@ void CBattleFXFlow::StartVfx_Ultimate()
 		m_BattleVFX.vNowColor = {}; 
 		m_BattleVFX.isRunning = false;
 		string nowLevel = LevelManager()->Get_NowLevelKey();
-		ObjectManager()->Get_Layer({ nowLevel ,m_layerTag[ENUM(BATTLE_OBJ_TYPE::MONSTER)] })->Set_RenderState(true);
+		if(auto layer = ObjectManager()->Get_Layer({ nowLevel ,m_layerTag[ENUM(BATTLE_OBJ_TYPE::MONSTER)] }))
+			layer->Set_RenderState(true);
 		});
 	Start(nullptr);
 }
@@ -390,12 +390,16 @@ void CBattleFXFlow::StartVfx_WipeOut()
 	CPostRenderer* pPost = RenderSystem()->GetPostRenderer();
 	AddCall([this, preset, pPost]() {
 		pPost->GetCommand<CSaturationCommand>()
-			->SetIntensity(1.4f)
+			->SetIntensity(1.f)
 			->SetSaturationType(ENUM(SATURATIONTYPE::SKINNED))
 			->SetDuration(preset.fVFXDuration)
 			->SetEaseType(EaseType::OutBack)
 			->SetEnable(true);
 		});
+
+	//pPost->GetCommand<CGlitchCommand>()
+	//	->SetDuration()
+	//	->
 
 	AddCall([this]() {
 		CamDirector()->BeginWipeOut(); 

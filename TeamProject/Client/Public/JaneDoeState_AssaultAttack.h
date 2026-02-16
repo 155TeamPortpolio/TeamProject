@@ -28,6 +28,10 @@ public:
 public:
     static CJaneDoeState_Assault_Start* Create() { return new CJaneDoeState_Assault_Start(); }
     virtual void Free() override { __super::Free(); }
+
+private:
+    void Update_Effects(CJaneDoe* pOwner);
+
 };
 
 class CJaneDoeState_Assault_End : public IBaseState<CJaneDoe>

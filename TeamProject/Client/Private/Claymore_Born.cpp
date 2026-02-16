@@ -10,6 +10,7 @@ void CClaymore_Born::Enter(CClaymore* pOwner)
 {
 	pOwner->Get_Component<CAnimator3D>()->Change_Animation("Monster_Claymore_Ani_Born")
 		.Apply();
+
 }
 
 void CClaymore_Born::Update(CClaymore* pOwner, _float dt)

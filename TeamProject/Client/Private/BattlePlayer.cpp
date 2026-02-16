@@ -31,8 +31,9 @@ HRESULT CBattlePlayer::Initialize()
     CBattleSystem::GetInstance()->SetBattlePlayer(this);
     Initialize_CharacterPrototype();
 
-    vector<CHARACTER> BattleCharacters = { CHARACTER::Miyabi, CHARACTER::Corin, CHARACTER::JaneDoe,  };
-    //vector<CHARACTER> BattleCharacters = { CHARACTER::JaneDoe, CHARACTER::Miyabi, CHARACTER::Corin, };
+    vector<CHARACTER> BattleCharacters = {CHARACTER::Corin, CHARACTER::Miyabi,  CHARACTER::JaneDoe,  };
+    //    vector<CHARACTER> BattleCharacters = { CHARACTER::Miyabi, CHARACTER::Corin, CHARACTER::JaneDoe };
+
     SetBattleCharacters(BattleCharacters);
 
     return S_OK;
@@ -736,6 +737,8 @@ void CBattlePlayer::NotifyCharacterSwitchOut()
     else if (m_bComboSelect)
     {
         _vector3 vCharacterPos = m_pCurrentCharacter->Get_WorldPos();
+        if (!m_TargetHandle.isValid())
+            return;
         _vector3 vTargetPos = m_TargetHandle.Get()->Get_WorldPos();
         _vector3 vTargetLook = m_TargetHandle.Get()->Get_Component<CTransform>()->Dir(STATE::LOOK);
         vTargetLook.y = 0.f;

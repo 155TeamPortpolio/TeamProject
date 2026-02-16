@@ -43,8 +43,6 @@ HRESULT CGacha_Level::Awake()
 	UIDirector()->Load_LevelObjects("Gacha_Level");
 	UIDirector()->FadeIn_Screen(1.f);
 
-	Ready_GachaUI();	// UIDirector에서 Load_LevelObject 실행 한 뒤에
-
 	Ready_Map("Gacha_Level", "Gacha");
 
 	auto pCloud = ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Cloud));
@@ -58,9 +56,9 @@ HRESULT CGacha_Level::Awake()
 	LIGHT_DESC lightDesc = {};
 	lightDesc.vLightPosition = _float4(0.f, 50.f, 0.f, 1.f);
 	lightDesc.vLightDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
-	lightDesc.vLightAmbient = _float4(1.f, 1.f, 1.f, 1.f); //_float4(0.9f, 0.9f, 0.9f, 1.f);
+	lightDesc.vLightAmbient = _float4(1.f, 1.f, 1.f, 1.f); 
 	lightDesc.vLightSpecular = _float4(0.f, 0.f, 0.f, 1.f);
-	lightDesc.fLightIntensity = 1.f;// 0.7f;
+	lightDesc.fLightIntensity = 1.f;
 	pShadowCam->Get_Component<CLight>()->Set_Desc(lightDesc, LIGHT_TYPE::DIRECTIONAL);
 
 	Ready_GachaObjects(); 
@@ -76,6 +74,8 @@ HRESULT CGacha_Level::Awake()
 	auto pPost = RenderSystem()->GetPostRenderer();
 	pPost->GetCommand<CFogCommand>()->
 		SetEnable(false);
+
+	Ready_GachaUI();	// UIDirector에서 Load_LevelObject 실행 한 뒤에
 
 	return S_OK;
 }

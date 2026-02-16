@@ -52,7 +52,8 @@ HRESULT CAttackSign::Initialize(INIT_DESC* pArg)
 
 	pMaterial->Insert_MaterialInstance(pMaterialInstance, nullptr);
 
-	m_isAlive = false;
+	m_IsActive = true;
+	//m_isAlive = false;
 
 	return S_OK;
 }
@@ -79,7 +80,7 @@ void CAttackSign::Update(_float dt)
 			_float t = m_fElapsedTime / m_fDuration;
 		
 			m_fWidth = Math::Lerp(300.f, static_cast<_float>(g_iWinSizeX), Math::EaseOutSine(t));
-			m_fHeight = Math::Lerp(40.f, 1.f, Math::EaseOutSine(t));
+			m_fHeight = Math::Lerp(70.f, 0.f, Math::EaseOutSine(t));
 		}
 	}
 }

@@ -5,17 +5,17 @@
 
 #include "Animator3D.h"
 #include "AudioSource.h"
+#include "GameInstance.h"
 
 void CCorinState_Idle::Enter(CCorin* pOwner)
 {
     pOwner->Unlock_Move();
+
     _int iEntryMode = pOwner->Get_StateMachine()->Get_Int("IdleEntryMode");
     pOwner->Get_StateMachine()->Set_Int("IdleEntryMode", 0);
 
     if (iEntryMode == 1)
-    {
         pOwner->Get_StateMachine()->Set_Trigger("Evade");
-    }
     else if (iEntryMode == 2)
     {
         pOwner->Set_Switch(CCharacter::SWITCH::PARRYAID);
@@ -50,8 +50,6 @@ void CCorinState_Idle::Update(CCorin* pOwner, _float dt)
         return;
     }
 
-    constexpr _float kIdleVoiceDelay = 3.f;
-
     bool isPlaying = false;
     if (m_pIdleVoiceChannel)
         m_pIdleVoiceChannel->isPlaying(&isPlaying);
@@ -62,15 +60,20 @@ void CCorinState_Idle::Update(CCorin* pOwner, _float dt)
         return;
     }
 
+    m_pIdleVoiceChannel = nullptr;
+
     m_idleVoiceAcc += dt;
 
+    constexpr _float kIdleVoiceDelay = 5.f;
     if (m_idleVoiceAcc < kIdleVoiceDelay)
         return;
-    //JaeThingThing
-    //auto& sound = *pOwner->Get_Component<CAudioSource>();
-    //auto& slot = sound.Sequence("Idle_Voice").Attribute3D(true).Loop(0).PlayNext();
-    //
-    //m_pIdleVoiceChannel = slot.pChannels;
+
+    auto& sound = *pOwner->Get_Component<CAudioSource>();
+    auto& slot = sound.Sequence("Idle_Voice").Attribute3D(true).Loop(0).Volume(0.5f).PlayNext();
+
+    if (!slot.pChannels.empty())
+        m_pIdleVoiceChannel = slot.pChannels.back();
+
     m_idleVoiceAcc = 0.f;
 }
 

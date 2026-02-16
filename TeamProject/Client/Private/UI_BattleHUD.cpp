@@ -22,6 +22,7 @@
 #include "UI_UltimateAction.h"
 #include "UI_AnomalyStack.h"
 #include "UI_AnomalyGauge.h"
+#include "UIDirector.h"
 
 HRESULT CUI_BattleHUD::Initialize_Prototype()
 {
@@ -85,6 +86,12 @@ void CUI_BattleHUD::Awake()
 
 void CUI_BattleHUD::Update(_float dt)
 {
+    if (InputDevice()->Key_Tap('M'))
+        UIDirector()->Show_Switch(CHARACTER::JaneDoe, CHARACTER::Miyabi);
+
+    if (InputDevice()->Key_Tap('N'))
+        UIDirector()->Hide_Switch();
+
     __super::Update(dt);
 
     Update_HPBackGauge(dt);

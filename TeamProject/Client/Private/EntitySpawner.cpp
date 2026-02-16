@@ -21,7 +21,7 @@
 #include "SirChop.h"
 #include "ElectricBoo.h"
 #include "SilverAnbi.h"
-
+#include "BackgroundNpc.h"
 /* Maptool Type 1 (Interactable) */
 #include "Portal.h"
 #include "ZeroPortal.h"
@@ -30,6 +30,9 @@
 
 /* Maptool Type 2 (ETC) */
 #include "MilitaryHelicopter.h"
+#include "DogFan.h"
+#include "DogBone.h"
+#include "ScottScreen.h"
 
 /* Maptool Type 4 (InvWall) */
 #include "MapInvisibleWall.h"
@@ -50,7 +53,8 @@ static unordered_map<string, Spawner::OBJ_SPEC> s_NPCTable =
 	{ "Jaeger",         Spawner::OBJ_SPEC{ "Proto_GameObject_Jaeger", &CJaeger::Create } },
 	{ "ExploreBoo",     Spawner::OBJ_SPEC{ "Proto_GameObject_ExploreBoo", &CElectricBoo::Create } },
 	{ "Sirchop",		Spawner::OBJ_SPEC{ "Proto_GameObject_Sirchop", &CSirChop::Create } },
-	{ "SilverAnbi",     Spawner::OBJ_SPEC{ "Proto_GameObject_SilverAnbi", &CSilverAnbi::Create } }
+	{ "SilverAnbi",     Spawner::OBJ_SPEC{ "Proto_GameObject_SilverAnbi", &CSilverAnbi::Create } },
+	{ "BackGround",     Spawner::OBJ_SPEC{ "Proto_GameObject_CBackgroundNpc", &CBackgroundNpc::Create } }
 };
 
 /* Maptool Type 1 */
@@ -65,7 +69,10 @@ static unordered_map<string, Spawner::OBJ_SPEC> s_InteractTable =
 /* Maptool Type 2 */
 static unordered_map<string, Spawner::OBJ_SPEC> s_AmbientActorTable =
 {
-	{ "MilitaryHelicopter",     Spawner::OBJ_SPEC{ "MilitaryHelicopter", &CMilitaryHelicopter::Create }}
+	{ "MilitaryHelicopter", Spawner::OBJ_SPEC{ "Proto_GameObject_MilitaryHelicopter", &CMilitaryHelicopter::Create }},
+	{ "DogFan",				Spawner::OBJ_SPEC{ "Proto_GameObject_DogFan", &CDogFan::Create }},
+	{ "DogBone",			Spawner::OBJ_SPEC{ "Proto_GameObject_DogBone", &CDogBone::Create }},
+	{ "ScottScreen",		Spawner::OBJ_SPEC{ "Proto_GameObject_DogBone", &CScottScreen::Create }}
 };
 
 static unordered_map<string, Spawner::OBJ_SPEC> s_ETCTable =
@@ -140,8 +147,10 @@ OBJECT_HANDLE Client::Spawner::Create_NPC(const SPAWNER_DESC& Desc)
 		.Build(Desc.tagName);
 
 
-	Object->Get_Component<CCharacterController>()->Set_FootPosition(Desc.vTranslation);
-	
+	if (auto controller = Object->Get_Component<CCharacterController>())
+		controller->Set_FootPosition(Desc.vTranslation);
+	else
+		Object->Get_Component<CTransform>()->Set_Pos(Desc.vTranslation);
 	//Optional
 	auto iter = Desc.SlotDataValues.find("NPCSlot");
 	if (iter != Desc.SlotDataValues.end()) {
@@ -253,28 +262,26 @@ OBJECT_HANDLE Client::Spawner::Create_AmbientActor(const SPAWNER_DESC& Desc)
 		return OBJECT_HANDLE();
 
 	auto Slot = Desc.SlotDataValues.find("AmbientActorSlot");
-	if (Slot == Desc.SlotDataValues.end())
-		return OBJECT_HANDLE();
 
 	CAmbientActor::AMBIENTACTOR_DESC* pAmbientActorDesc = new CAmbientActor::AMBIENTACTOR_DESC;
 
-	for (auto tFieldData : Slot->second) {
-		if (tFieldData.TagName == "AnimationName")
-		{
-			pAmbientActorDesc->strAnimName = *GetSlotValue<string>(tFieldData.defaultvalue);
+	if (Slot != Desc.SlotDataValues.end()) {
+		CAmbientActor::AMBIENTACTOR_DESC* pAmbientActorDesc = new CAmbientActor::AMBIENTACTOR_DESC;
+
+		for (auto tFieldData : Slot->second) {
+			if (tFieldData.TagName == "AnimationName")
+			{
+				pAmbientActorDesc->strAnimName = *GetSlotValue<string>(tFieldData.defaultvalue);
+			}
 		}
 	}
 	
 	PrototypeManager()->Add_ProtoType(Desc.tagLevel, InteractTable->second.ProtoTag, InteractTable->second.Create());
 
-	if (pAmbientActorDesc->strAnimName.empty()) {
-		Safe_Delete(pAmbientActorDesc);
-		return OBJECT_HANDLE();
-	}
-
 	CGameObject* Object = Builder::Create_Object({ Desc.tagLevel, InteractTable->second.ProtoTag })
 		.Add_ObjDesc(pAmbientActorDesc)
 		.Position(Desc.vTranslation)
+		.Rotate(Desc.vRotation)
 		.Scale(Desc.vScale)
 		.Build(Desc.tagName);
 

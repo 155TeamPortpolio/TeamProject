@@ -574,6 +574,15 @@ HRESULT CMiyabi::Initialize_Effects()
 	auto pObjectContainer = Get_Component<CObjectContainer>();
 	auto pAnimator = Get_Component<CAnimator3D>();
 
+	// Dash
+	for (_uint i = 0; i < 4; ++i)
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_dash.json")
+			.Build("Miyabi_Dash" + to_string(i));
+		pObjectContainer->Add_Child(pEffect,false);
+	}
+
 	// Sword Fire
 	{
 		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })

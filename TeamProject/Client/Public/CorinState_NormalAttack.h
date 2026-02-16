@@ -97,6 +97,9 @@ public:
     virtual void Update(CCorin* pOwner, _float dt) override;
     virtual void Exit(CCorin* pOwner) override;
 
+private:
+    DAMAGE_TYPE m_eType = DAMAGE_TYPE::HARD;
+
 public:
     static CCorinState_Attack_05* Create() { return new CCorinState_Attack_05(); }
     virtual void Free() override { __super::Free(); }

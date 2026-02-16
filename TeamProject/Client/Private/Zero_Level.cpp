@@ -25,10 +25,13 @@
 #include "SacrificeHand.h"
 #include "Sacrifice_Laser.h"
 #include "Sacrifice_Orb.h"
+#include "Hand_Core.h"
+#include "Hand_Sword.h"
 #include "ThugBulkyEnforcer.h"
 #include "ThugAssaulter.h"
 #include "Defiler.h"
 #include "MiasmaBlade.h"
+#include "DefilerLaser.h"
 
 #include "EnemyAttackCollider.h"
 #include "EnemyTriggerCollider.h"
@@ -139,6 +142,7 @@ void CZero_Level::Ready_Prototype()
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_EnemyTriggerCollider", CEnemyTriggerCollider::Create());
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_Defiler", CDefiler::Create());
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_MiasmaBlade", CMiasmaBlade::Create());
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_DefilerLaser", CDefilerLaser::Create());
 
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_ZeroPortal", CZeroPortal::Create());
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_LevelObject_ZeroPortal", CStageRouter::Create());
@@ -146,10 +150,6 @@ void CZero_Level::Ready_Prototype()
 	/* Enemy */
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_ThugBulkyEnforcer", CThugBulkyEnforcer::Create());
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_ThugAssaulter", CThugAssaulter::Create());
-	PrototypeManager()->Add_ProtoType("Zero_Level",	"Proto_GameObject_SacrificeHand", CSacrificeHand::Create());
-	PrototypeManager()->Add_ProtoType("Zero_Level",	"Proto_GameObject_SacrificeLaser", CSacrifice_Laser::Create());
-	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_SacrificeOrb", CSacrifice_Orb::Create());
-	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_Sacrifice", CSacrifice::Create());
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_Defiler", CDefiler::Create());
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_ThugPoacher", CThugPoacher::Create());
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_ThugPoacher_Arrow", CThugPoacher_Arrow::Create());
@@ -159,6 +159,13 @@ void CZero_Level::Ready_Prototype()
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_MeleeJaeger", CMeleeJaeger::Create());
 	PrototypeManager()->Add_ProtoType("Test_Level", "Proto_GameObject_MeleeJaeger_Shield", CMeleeJaeger_Shield::Create());
 	PrototypeManager()->Add_ProtoType("Test_Level", "Proto_GameObject_Giant", CGiant::Create());
+
+	PrototypeManager()->Add_ProtoType("Zero_Level",	"Proto_GameObject_SacrificeHand", CSacrificeHand::Create());
+	PrototypeManager()->Add_ProtoType("Zero_Level",	"Proto_GameObject_SacrificeLaser", CSacrifice_Laser::Create());
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_SacrificeOrb", CSacrifice_Orb::Create());
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_Sacrifice", CSacrifice::Create());
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_HandCore", CHand_Core::Create());
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_HandSword", CHand_Sword::Create());
 }
 
 void CZero_Level::Ready_Stage()
@@ -197,7 +204,7 @@ void CZero_Level::Ready_Stage()
 	m_mapCycle[StageType::Boss].maps.push_back("Zero_Boss" + to_string(Boss_Process));
 	RuntimeBucket().Int64.Set(PersistScope::SaveSlot, "Boss_Process", ++Boss_Process);
 
-	ChangeStage(StageType::Start);
+	ChangeStage(StageType::Boss);
 }
 
 void CZero_Level::Shuffle_MapCycle(vector<string>& Map)

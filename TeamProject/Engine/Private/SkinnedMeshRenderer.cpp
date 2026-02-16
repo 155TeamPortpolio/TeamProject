@@ -50,7 +50,7 @@ HRESULT CSkinnedMeshRenderer::Render_SkinnedMesh(SkinnedOpaquePass* pOpaquePass)
 HRESULT CSkinnedMeshRenderer::Render_SkinnedMesh_Bloom()
 {
 	{
-		if (FAILED(m_pTargetManager->Begin_MRT("MRT_Bright_Skinned"))) return E_FAIL;
+		if (FAILED(m_pTargetManager->Begin_MRT("MRT_Bright_Skinned", 0xFF, nullptr, false))) return E_FAIL;
 
 		m_pTargetManager->Bind_Target("Target_Utility", m_pShader, "EmissiveTexture");
 
@@ -67,7 +67,7 @@ HRESULT CSkinnedMeshRenderer::Render_SkinnedMesh_Bloom()
 		m_pTargetManager->End_MRT();
 	}
 	{
-		if (FAILED(m_pTargetManager->Begin_MRT("MRT_Bloom_Skinned_H"))) return E_FAIL;
+		if (FAILED(m_pTargetManager->Begin_MRT("MRT_Bloom_Skinned_H", 0xFF, nullptr, false))) return E_FAIL;
 
 		m_pTargetManager->Bind_Target("Target_Bright_SkinnedMesh", m_pShader, "MeshBrightTexture");
 		m_pTargetManager->Bind_Target("Target_Utility", m_pShader, "EmissiveTexture");
@@ -88,7 +88,7 @@ HRESULT CSkinnedMeshRenderer::Render_SkinnedMesh_Bloom()
 	}
 
 	{
-		if (FAILED(m_pTargetManager->Begin_MRT("MRT_Bloom_Skinned_V"))) return E_FAIL;
+		if (FAILED(m_pTargetManager->Begin_MRT("MRT_Bloom_Skinned_V", 0xFF, nullptr, false))) return E_FAIL;
 
 		m_pTargetManager->Bind_Target("Target_BloomBlurX_SkinnedMesh", m_pShader, "MeshBlurXTexture");
 		m_pTargetManager->Bind_Target("Target_Utility", m_pShader, "EmissiveTexture");
@@ -114,7 +114,7 @@ HRESULT CSkinnedMeshRenderer::Render_SkinnedMesh_Bloom()
 
 HRESULT CSkinnedMeshRenderer::Render_RimLight()
 {
-	if (FAILED(m_pTargetManager->Begin_MRT("MRT_RimLightFinal"))) return E_FAIL;
+	if (FAILED(m_pTargetManager->Begin_MRT("MRT_RimLightFinal", 0xFF, nullptr, false))) return E_FAIL;
 
 	m_pTargetManager->Bind_Target("Target_RimLight", m_pShader, "RimLightTexture");
 	m_pTargetManager->Bind_Target("Target_Skinned_Normal", m_pShader, "NormalTexture");
@@ -149,7 +149,7 @@ HRESULT CSkinnedMeshRenderer::Render_RimLight()
 
 HRESULT CSkinnedMeshRenderer::Render_SkinnedMesh_LightAcc()
 {
-	if (FAILED(m_pTargetManager->Begin_MRT("MRT_LightAcc_Skinned"))) return E_FAIL;
+	if (FAILED(m_pTargetManager->Begin_MRT("MRT_LightAcc_Skinned", 0xFF, nullptr, false))) return E_FAIL;
 
 	m_pTargetManager->Bind_Target("Target_Skinned_Diffuse", m_pShader, "DiffuseTexture");
 	m_pTargetManager->Bind_Target("Target_Skinned_Normal", m_pShader, "NormalTexture");
@@ -168,7 +168,7 @@ HRESULT CSkinnedMeshRenderer::Render_SkinnedMesh_LightAcc()
 
 HRESULT CSkinnedMeshRenderer::Render_SkinnedMesh_Combined()
 {
-	if (FAILED(m_pTargetManager->Begin_MRT("MRT_Combined_Skinned"))) return E_FAIL;
+	if (FAILED(m_pTargetManager->Begin_MRT("MRT_Combined_Skinned", 0xFF, nullptr, false))) return E_FAIL;
 
 	m_pShader->SetConstantBuffer("FrameBuffer", m_pPipeLine->Get_FrameBuffer());
 	//m_pShader->SetConstantBuffer("ShadowBuffer", m_pPipeLine->Get_ShadowBuffer());
@@ -208,7 +208,7 @@ HRESULT CSkinnedMeshRenderer::Render_MotionBlur_Noise()
 		return S_OK;
 	}
 
-	if (FAILED(m_pTargetManager->Begin_MRT("MRT_MotionNoise"))) return E_FAIL;
+	if (FAILED(m_pTargetManager->Begin_MRT("MRT_MotionNoise", 0xFF, nullptr, false))) return E_FAIL;
 
 	m_pShader->SetConstantBuffer("FrameBuffer", m_pPipeLine->Get_FrameBuffer());
 
@@ -239,7 +239,7 @@ HRESULT CSkinnedMeshRenderer::Render_MotionBlur_Noise()
 
 HRESULT CSkinnedMeshRenderer::Render_Vanish_Noise()
 {
-	if (FAILED(m_pTargetManager->Begin_MRT("MRT_VanishNoise"))) return E_FAIL;
+	if (FAILED(m_pTargetManager->Begin_MRT("MRT_VanishNoise", 0xFF, nullptr, false))) return E_FAIL;
 
 	m_pShader->SetConstantBuffer("FrameBuffer", m_pPipeLine->Get_FrameBuffer());
 

@@ -13,6 +13,9 @@ public:
     virtual void Update(CCorin* pOwner, _float dt) override;
     virtual void Exit(CCorin* pOwner) override;
 
+private:
+    DAMAGE_TYPE m_eType = DAMAGE_TYPE::NORMAL;
+
 public:
     static CCorinState_CounterAttack* Create();
     virtual void Free() override { __super::Free(); }
@@ -28,6 +31,10 @@ public:
 public:
     static CCorinState_Counter_Start* Create() { return new CCorinState_Counter_Start(); }
     virtual void Free() override { __super::Free(); }
+
+private:
+    void Update_Effects(CCorin* pOwner);
+
 };
 
 class CCorinState_Counter_Explode : public IBaseState<CCorin>

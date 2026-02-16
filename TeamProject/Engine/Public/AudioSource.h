@@ -59,6 +59,7 @@ public:
         };
 
         AUDIO_SLOT& Play();
+        AUDIO_SLOT& PlayUnique();
 
     private:
         CAudioSource& ownerRef;
@@ -118,6 +119,7 @@ public:
     void    FadeIn_Volume(const string& slotKey, _float Durationfactor,_float dst = 1.f);
     void    Set_AudioPos(_vector3 pos, _vector3 velocity = {}); /*오디오 상에 보낼 3D상 위치*/
     void    Play(const string& soundKey, _bool continuePlay = false, _bool startPaused = false);
+    void    PlayUnique(const string& soundKey);
     void    Update_Audio(AUDIO_SLOT& slot);
 
 public:

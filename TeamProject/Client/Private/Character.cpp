@@ -23,6 +23,7 @@
 
 #include "EffectContainer.h"
 #include "AudioSource.h"
+#include "CamDirector.h"
 
 CCharacter::CCharacter(const CCharacter& rhs)
     : CGameObject(rhs)
@@ -691,6 +692,14 @@ void CCharacter::Take_Damage(DAMAGE_TYPE eType, _float fDamage)
     {
         if(m_bIsMain)
         {
+            auto pos = CamDirector()->GetParryPoint();
+            auto pParryEffect = Get_Component<CObjectContainer>()->Find_ObjectByName("Parry");
+            if (pParryEffect)
+            {
+                pParryEffect->Get_Component<CTransform>()->Set_WorldPos(pos);
+                static_cast<CEffectContainer*>(pParryEffect)->Play();
+            }
+
             BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::PARRY);
             m_ParryHandle.GetAs<CEnemy>()->Parried();
         }
@@ -739,6 +748,13 @@ HRESULT CCharacter::Initialize_Effects()
             .Build("Evade");
         pEffect->Stop();
         pEffect->AttachBone(m_pAnimator, "Bip001_Spine");
+        pObjectContainer->Add_Child(pEffect, false);
+    }
+    {
+        auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+            .Asset("parry.json")
+            .Build("Parry");
+        pEffect->Stop();
         pObjectContainer->Add_Child(pEffect, false);
     }
 

@@ -5,6 +5,7 @@
 #include "CorinState_Move.h"
 
 #include "CharacterController.h"
+#include "AudioSource.h"
 
 CCorinState_Walk* CCorinState_Walk::Create()
 {
@@ -70,6 +71,17 @@ void CCorinState_Walk_Start::Enter(CCorin* pOwner)
 void CCorinState_Walk_Start::Update(CCorin* pOwner, _float dt)
 {
     pOwner->Process_RootMotion(dt);
+
+    auto& sound = *pOwner->Get_Component<CAudioSource>();
+
+    if (IsCrossAnimProgress(0.14f))
+        sound.Slot("Corin_FootStep_SFX_01.wav").Attribute3D(true).Loop(0).Volume(1.f).Play();
+
+    if (IsCrossAnimProgress(0.47f))
+        sound.Slot("Corin_FootStep_SFX_01.wav").Attribute3D(true).Loop(0).Volume(1.f).Play();
+
+    if (IsCrossAnimProgress(0.70f))
+        sound.Slot("Corin_FootStep_SFX_01.wav").Attribute3D(true).Loop(0).Volume(1.f).Play();
 }
 
 void CCorinState_Walk_Loop::Enter(CCorin* pOwner)
@@ -84,6 +96,14 @@ void CCorinState_Walk_Loop::Enter(CCorin* pOwner)
 void CCorinState_Walk_Loop::Update(CCorin* pOwner, _float dt)
 {
     pOwner->Process_RootMotion(dt);
+
+    auto& sound = *pOwner->Get_Component<CAudioSource>();
+
+    if (IsCrossAnimProgress(0.01f))
+        sound.Slot("Corin_FootStep_SFX_01.wav").Attribute3D(true).Loop(0).Volume(1.f).Play();
+
+    if (IsCrossAnimProgress(0.44f))
+        sound.Slot("Corin_FootStep_SFX_01.wav").Attribute3D(true).Loop(0).Volume(1.f).Play();
 }
 
 void CCorinState_Walk_End::Enter(CCorin* pOwner)
