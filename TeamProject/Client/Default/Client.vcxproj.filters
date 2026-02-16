@@ -1416,6 +1416,15 @@
     <Filter Include="02. GameObject\Object\Enemy\Elite\Giant\State\Parried">
       <UniqueIdentifier>{bc41c9e0-a786-45c2-8d45-4fbf00b4eab9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Boss\Sacrifice_Hand\Hand_Core">
+      <UniqueIdentifier>{ee43804d-e82d-45a4-b31f-911c8b215808}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Boss\Sacrifice_Hand\Hand_Sword">
+      <UniqueIdentifier>{d3e4f901-7bcc-4c40-8977-538c53fa3f17}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Boss\Defiler\DefilerLaser">
+      <UniqueIdentifier>{a3dbcf0a-50d0-46cb-8314-ddecf4f0d7fd}</UniqueIdentifier>
+    </Filter>  
     <Filter Include="02. GameObject\UI\01. 2D\Switch">
       <UniqueIdentifier>{6a5c26b7-37b6-408f-af08-4af4501f3518}</UniqueIdentifier>
     </Filter>
@@ -2768,6 +2777,15 @@
     <ClInclude Include="..\Public\Giant_Parried.h">
       <Filter>02. GameObject\Object\Enemy\Elite\Giant\State\Parried</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Hand_Core.h">
+      <Filter>02. GameObject\Object\Enemy\Boss\Sacrifice_Hand\Hand_Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Hand_Sword.h">
+      <Filter>02. GameObject\Object\Enemy\Boss\Sacrifice_Hand\Hand_Sword</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\DefilerLaser.h">
+      <Filter>02. GameObject\Object\Enemy\Boss\Defiler\DefilerLaser</Filter>
+    </ClInclude>  
     <ClInclude Include="..\Public\UI_Switch.h">
       <Filter>02. GameObject\UI\01. 2D\Switch</Filter>
     </ClInclude>
@@ -4076,6 +4094,15 @@
     <ClCompile Include="..\Private\Giant_Parried.cpp">
       <Filter>02. GameObject\Object\Enemy\Elite\Giant\State\Parried</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\Hand_Core.cpp">
+      <Filter>02. GameObject\Object\Enemy\Boss\Sacrifice_Hand\Hand_Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Hand_Sword.cpp">
+      <Filter>02. GameObject\Object\Enemy\Boss\Sacrifice_Hand\Hand_Sword</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\DefilerLaser.cpp">
+      <Filter>02. GameObject\Object\Enemy\Boss\Defiler\DefilerLaser</Filter>
+    </ClCompile>  
     <ClCompile Include="..\Private\UI_Switch.cpp">
       <Filter>02. GameObject\UI\01. 2D\Switch</Filter>
     </ClCompile>

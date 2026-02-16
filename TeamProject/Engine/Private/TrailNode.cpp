@@ -60,6 +60,11 @@ HRESULT CTrailNode::Initialize(INIT_DESC* pArg)
 	return S_OK;
 }
 
+void CTrailNode::Post_EngineUpdate(_float dt)
+{
+	CGameObject::Post_EngineUpdate(dt);
+}
+
 void CTrailNode::Awake()
 {
 }
@@ -96,7 +101,7 @@ void CTrailNode::Update(_float dt)
 	{
 		auto pCild = Get_Component<CChild>();
 		auto pEffectContainer = static_cast<CEffectContainer*>(pCild->Get_Parent());
-		
+
 		if (!m_IsEffectActive)
 			pTrail->SetFadeOut(true);
 

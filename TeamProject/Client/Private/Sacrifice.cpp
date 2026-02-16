@@ -145,11 +145,15 @@ void CSacrifice::Update(_float dt)
 {
 	__super::Update(dt);
 
-	Update_States(dt);
 	m_pStateMachine->Update(dt);
-
+	Update_States(dt);
+	
+	_vector3 vBipPosition = Get_Component<CAnimator3D>()->Get_BonePosition(CAnimator3D::BoneSpace::COMBINED, "Bip001");
+	vBipPosition = _vector3::Transform(vBipPosition, m_pTransform->Get_WorldMatrix());
+	Get_Component<CAudioSource>()->Set_AudioPos(vBipPosition);
 	Get_Component<CAnimator3D>()->Update_Animation(dt);
 	Get_Component<CCharacterController>()->Update(dt);
+	Route_AnimEvent();
 }
 
 void CSacrifice::Late_Update(_float dt)
@@ -320,6 +324,7 @@ void CSacrifice::DeactiveWhip()
 void CSacrifice::SetOverDrive(_bool overdrive)
 {
 	m_IsOverDrive = overdrive;
+
 	if (!m_IsOverDrive)
 		m_fOverDriveElapsedTime = 0.f;
 }
@@ -442,9 +447,12 @@ void CSacrifice::ActiveLaser(_uint mode)
 	auto pLaser = Get_Component<CObjectContainer>()->Find_ObjectByName("Sacrifice_Laser");
 	static_cast<CSacrifice_Laser*>(pLaser)->ActiveLaser(mode);
 	
-	HitDesc desc{};
-	SetBattleColliderObject("Hand_Laser", BATTLE_COLTYPE::ATTACK, true, desc);
-	SetBattleColliderObject("Hand_Laser", BATTLE_COLTYPE::TRIGGER, true, desc);
+	if (1 != mode)
+	{
+		HitDesc desc{};
+		SetBattleColliderObject("Hand_Laser", BATTLE_COLTYPE::ATTACK, true, desc);
+		SetBattleColliderObject("Hand_Laser", BATTLE_COLTYPE::TRIGGER, true, desc);
+	}
 }
 
 void CSacrifice::DeactiveLaser()
@@ -660,77 +668,77 @@ HRESULT CSacrifice::Create_Colliders()
 			return E_FAIL;
 	}
 
-	/* Hand Laser */
-	{
-		BATTLE_COLLIDER_DESC HandLaserDesc{};
-
-		HandLaserDesc.tagName = "Hand_Laser";
-		HandLaserDesc.isAttachBone = true;
-		HandLaserDesc.tagBone = "Ctr_Eye6_05";
-		HandLaserDesc.pOwnerAnimator3D = pAnimator;
-		HandLaserDesc.eAttackColliderType = COLLIDER_TYPE::BOX;
-		HandLaserDesc.eTriggerColliderType = COLLIDER_TYPE::BOX;
-		HandLaserDesc.vCenter = _float3{ 16.f,0.f,0.f };
-		HandLaserDesc.vAttackSize = _float3{ 32.f,2.f,2.f };
-		HandLaserDesc.vTriggerSize = _float3{ 32.f,4.f,4.f };
-
-		if (FAILED(AttachBattleColliderObject(&HandLaserDesc)))
-			return E_FAIL;
-	}
-
-	/* Eye Laser0 */
-	{
-		BATTLE_COLLIDER_DESC HandLaserDesc{};
-
-		HandLaserDesc.tagName = "Eye_Laser0";
-		HandLaserDesc.isAttachBone = true;
-		HandLaserDesc.tagBone = "Ctr_WpnEye_01_1";
-		HandLaserDesc.pOwnerAnimator3D = pAnimator;
-		HandLaserDesc.eAttackColliderType = COLLIDER_TYPE::BOX;
-		HandLaserDesc.eTriggerColliderType = COLLIDER_TYPE::BOX;
-		HandLaserDesc.vCenter = _float3{ -16.f,0.f,0.f };
-		HandLaserDesc.vAttackSize = _float3{ 32.f,2.f,2.f };
-		HandLaserDesc.vTriggerSize = _float3{ 32.f,4.f,4.f };
-
-		if (FAILED(AttachBattleColliderObject(&HandLaserDesc)))
-			return E_FAIL;
-	}
-	
-	/* Eye Laser1 */
-	{
-		BATTLE_COLLIDER_DESC HandLaserDesc{};
-
-		HandLaserDesc.tagName = "Eye_Laser1";
-		HandLaserDesc.isAttachBone = true;
-		HandLaserDesc.tagBone = "Ctr_WpnEye_02_1";
-		HandLaserDesc.pOwnerAnimator3D = pAnimator;
-		HandLaserDesc.eAttackColliderType = COLLIDER_TYPE::BOX;
-		HandLaserDesc.eTriggerColliderType = COLLIDER_TYPE::BOX;
-		HandLaserDesc.vCenter = _float3{ -16.f,0.f,0.f };
-		HandLaserDesc.vAttackSize = _float3{ 32.f,2.f,2.f };
-		HandLaserDesc.vTriggerSize = _float3{ 32.f,4.f,4.f };
-
-		if (FAILED(AttachBattleColliderObject(&HandLaserDesc)))
-			return E_FAIL;
-	}
-	
-	/* Eye Laser2 */
-	{
-		BATTLE_COLLIDER_DESC HandLaserDesc{};
-
-		HandLaserDesc.tagName = "Eye_Laser2";
-		HandLaserDesc.isAttachBone = true;
-		HandLaserDesc.tagBone = "Ctr_WpnEye_03_1";
-		HandLaserDesc.pOwnerAnimator3D = pAnimator;
-		HandLaserDesc.eAttackColliderType = COLLIDER_TYPE::BOX;
-		HandLaserDesc.eTriggerColliderType = COLLIDER_TYPE::BOX;
-		HandLaserDesc.vCenter = _float3{ -16.f,0.f,0.f };
-		HandLaserDesc.vAttackSize = _float3{ 32.f,2.f,2.f };
-		HandLaserDesc.vTriggerSize = _float3{ 32.f,4.f,4.f };
-
-		if (FAILED(AttachBattleColliderObject(&HandLaserDesc)))
-			return E_FAIL;
-	}
+	///* Hand Laser */
+	//{
+	//	BATTLE_COLLIDER_DESC HandLaserDesc{};
+	//
+	//	HandLaserDesc.tagName = "Hand_Laser";
+	//	HandLaserDesc.isAttachBone = true;
+	//	HandLaserDesc.tagBone = "Ctr_Eye6_05";
+	//	HandLaserDesc.pOwnerAnimator3D = pAnimator;
+	//	HandLaserDesc.eAttackColliderType = COLLIDER_TYPE::BOX;
+	//	HandLaserDesc.eTriggerColliderType = COLLIDER_TYPE::BOX;
+	//	HandLaserDesc.vCenter = _float3{ 16.f,0.f,0.f };
+	//	HandLaserDesc.vAttackSize = _float3{ 32.f,2.f,2.f };
+	//	HandLaserDesc.vTriggerSize = _float3{ 32.f,4.f,4.f };
+	//
+	//	if (FAILED(AttachBattleColliderObject(&HandLaserDesc)))
+	//		return E_FAIL;
+	//}
+	//
+	///* Eye Laser0 */
+	//{
+	//	BATTLE_COLLIDER_DESC HandLaserDesc{};
+	//
+	//	HandLaserDesc.tagName = "Eye_Laser0";
+	//	HandLaserDesc.isAttachBone = true;
+	//	HandLaserDesc.tagBone = "Ctr_WpnEye_01_1";
+	//	HandLaserDesc.pOwnerAnimator3D = pAnimator;
+	//	HandLaserDesc.eAttackColliderType = COLLIDER_TYPE::BOX;
+	//	HandLaserDesc.eTriggerColliderType = COLLIDER_TYPE::BOX;
+	//	HandLaserDesc.vCenter = _float3{ -16.f,0.f,0.f };
+	//	HandLaserDesc.vAttackSize = _float3{ 32.f,2.f,2.f };
+	//	HandLaserDesc.vTriggerSize = _float3{ 32.f,4.f,4.f };
+	//
+	//	if (FAILED(AttachBattleColliderObject(&HandLaserDesc)))
+	//		return E_FAIL;
+	//}
+	//
+	///* Eye Laser1 */
+	//{
+	//	BATTLE_COLLIDER_DESC HandLaserDesc{};
+	//
+	//	HandLaserDesc.tagName = "Eye_Laser1";
+	//	HandLaserDesc.isAttachBone = true;
+	//	HandLaserDesc.tagBone = "Ctr_WpnEye_02_1";
+	//	HandLaserDesc.pOwnerAnimator3D = pAnimator;
+	//	HandLaserDesc.eAttackColliderType = COLLIDER_TYPE::BOX;
+	//	HandLaserDesc.eTriggerColliderType = COLLIDER_TYPE::BOX;
+	//	HandLaserDesc.vCenter = _float3{ -16.f,0.f,0.f };
+	//	HandLaserDesc.vAttackSize = _float3{ 32.f,2.f,2.f };
+	//	HandLaserDesc.vTriggerSize = _float3{ 32.f,4.f,4.f };
+	//
+	//	if (FAILED(AttachBattleColliderObject(&HandLaserDesc)))
+	//		return E_FAIL;
+	//}
+	//
+	///* Eye Laser2 */
+	//{
+	//	BATTLE_COLLIDER_DESC HandLaserDesc{};
+	//
+	//	HandLaserDesc.tagName = "Eye_Laser2";
+	//	HandLaserDesc.isAttachBone = true;
+	//	HandLaserDesc.tagBone = "Ctr_WpnEye_03_1";
+	//	HandLaserDesc.pOwnerAnimator3D = pAnimator;
+	//	HandLaserDesc.eAttackColliderType = COLLIDER_TYPE::BOX;
+	//	HandLaserDesc.eTriggerColliderType = COLLIDER_TYPE::BOX;
+	//	HandLaserDesc.vCenter = _float3{ -16.f,0.f,0.f };
+	//	HandLaserDesc.vAttackSize = _float3{ 32.f,2.f,2.f };
+	//	HandLaserDesc.vTriggerSize = _float3{ 32.f,4.f,4.f };
+	//
+	//	if (FAILED(AttachBattleColliderObject(&HandLaserDesc)))
+	//		return E_FAIL;
+	//}
 
 	return S_OK;
 }
@@ -872,14 +880,14 @@ void CSacrifice::Update_States(_float dt)
 		m_tStatus.iGroggyValue = 99;
 	}
 
-	if (InputDevice()->Key_Tap('O'))
-		m_IsOverDrive = true;
-
 	if (PHASE::PHASE2 == m_eCurrPhase && !m_IsOverDrive)
 	{
 		m_fOverDriveElapsedTime += dt;
 		if (m_fOverDriveElapsedTime >= m_fOverDriveDuration)
+		{
 			m_IsOverDrive = true;
+			m_fOverDriveElapsedTime = 0.f;
+		}
 	}
 
 	/* Idle */
@@ -916,4 +924,28 @@ void CSacrifice::Update_States(_float dt)
 
 	if ("Groggy" != m_pStateMachine->Get_CurrentStateName() && "Death" != m_pStateMachine->Get_CurrentStateName() && m_tStatus.isGroggy)
 		m_pStateMachine->Change_State("Groggy");
+}
+
+void CSacrifice::Route_AnimEvent()
+{
+	auto pAnimator = Get_Component<CAnimator3D>();
+	auto bus = pAnimator->Get_EventBus();
+
+	for (EVENT_INST& instance : bus)
+	{
+		switch (instance.Type)
+		{
+		case CLIP_EVENT_TYPE::NOTIFY:
+			break;
+
+		case CLIP_EVENT_TYPE::SOUND:
+			Control_Sound(instance.Tag);
+			break;
+		}
+	}
+}
+
+void CSacrifice::Control_Sound(const string& event)
+{
+	Get_Component<CAudioSource>()->Slot(event).Volume(0.4f).Attribute3D(true).Loop(false).Play();
 }

@@ -224,11 +224,10 @@ void CTestLevel::Update()
 	//}
 	if (InputDevice()->Key_Tap(VK_F5))
 	{
-		auto rushTrail = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
-			.Asset("sacrifice_rush_trail.json")
-			.Build("Rush");
+		auto pAttackSign = Builder::Create_Object({ G_GlobalLevelKey,"Proto_GameObject_AttackSign" })
+			.Build("AttackSign");
 		
-		ObjectManager()->Add_Object(rushTrail, { "Test_Level","Effect_Layer" });
+		ObjectManager()->Add_Object(pAttackSign, { "Test_Level","Effect_Layer" });
 	}
 	
 	// [`] 

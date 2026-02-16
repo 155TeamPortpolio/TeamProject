@@ -54,8 +54,12 @@ void CEnemyAttackCollider::Priority_Update(_float dt)
 
 void CEnemyAttackCollider::Update(_float dt)
 {
+	_float4x4 worldMatrix = m_pTransform->Get_WorldMatrix();
+	_vector scale, position, rotation;
+	XMMatrixDecompose(&scale, &rotation, &position, XMLoadFloat4x4(&worldMatrix));
+
 	Get_Component<CBoneFollower>()->Sync_Transform(dt, m_pTransform);
-	Get_Component<CRigidBody>()->Set_GlobalPos(Get_WorldPos(), m_pTransform->Get_QuaternionRotate());
+	Get_Component<CRigidBody>()->Set_GlobalPos(m_pTransform->Get_WorldPos(), rotation);
 	Get_Component<CCollider>()->Update(dt);
 }
 
