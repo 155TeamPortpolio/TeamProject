@@ -28,8 +28,8 @@ private:
     _vector3 Rotate90ByCw(const _vector3& v, bool cw);
 
 private:
-    NpcColorPreset preset;
-
+    NpcColorPreset colorPreset;
+    NpcModelPreset modelPreset;
 protected:
     _uint m_CurPointIdx = {};
     _float m_CurYaw = {};

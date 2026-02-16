@@ -29,29 +29,14 @@ HRESULT CPedestrianNpc::Initialize(INIT_DESC* pArg)
 {
     __super::Initialize(pArg);
 
-    string gederWord = "Male";
-    _int variation = Helper::Get_Random_Int(1, 6);
-    string model = gederWord + "0" + to_string(variation) + ".model";
-    string material = gederWord + "0" + to_string(variation) + ".mat";
-    string meta = gederWord + "0" + to_string(variation) + "_Meta.json";
-
-    Get_Component<CModel>()->Link_Model("MainCity_Level", model);
-    Get_Component<CMaterial>()->Link_Material("MainCity_Level", material);
-
-    Get_Component<CAnimator3D>()->LinkAnimate_Model("MainCity_Level", model);
-    Get_Component<CAnimator3D>()->Link_MetaData("MainCity_Level", meta);
-
-    string walk = gederWord + "0" + to_string(variation) + "_Walk_Normal02_015";
-    Get_Component<CAnimator3D>()->Set_Animation(walk).Loop(true).Apply();
-
     return S_OK;
 }
 
 void CPedestrianNpc::Awake()
 {
-
-    preset.Randomize_Natural(m_ObjectID);
-    preset.LinkMaterial(Get_Component<CMaterial>());
+    modelPreset.RandomizeModel(true, Get_Component<CSkeletalModel>(), Get_Component<CMaterial>(), Get_Component<CAnimator3D>());
+    colorPreset.Randomize_Natural(m_ObjectID);
+    colorPreset.LinkMaterial(Get_Component<CMaterial>());
 }
 
 void CPedestrianNpc::Priority_Update(_float dt)
@@ -245,23 +230,10 @@ void CPedestrianNpc::SnapToStart()
     m_Vel = dir01 * (float)m_MoveSpeed;
     m_Vel.y = 0.f;
 
-    string gederWord = "Male";
-    _int variation = Helper::Get_Random_Int(1, 6);
-    string model = gederWord + "0" + to_string(variation) + ".model";
-    string material = gederWord + "0" + to_string(variation) + ".mat";
-    string meta = gederWord + "0" + to_string(variation) + "_Meta.json";
-
-    Get_Component<CModel>()->Link_Model("MainCity_Level", model);
-    Get_Component<CMaterial>()->Link_Material("MainCity_Level", material);
-
-    Get_Component<CAnimator3D>()->LinkAnimate_Model("MainCity_Level", model);
-    Get_Component<CAnimator3D>()->Link_MetaData("MainCity_Level", meta);
-
-    string walk = gederWord + "0" + to_string(variation) + "_Walk_Normal02_015";
-    Get_Component<CAnimator3D>()->Set_Animation(walk).Loop(true).Apply();
-
-    preset.Randomize_Natural(m_ObjectID);
-    preset.LinkMaterial(Get_Component<CMaterial>());
+   
+    modelPreset.RandomizeModel(true, Get_Component<CSkeletalModel>(), Get_Component<CMaterial>(), Get_Component<CAnimator3D>());
+    colorPreset.Randomize_Natural(m_ObjectID);
+    colorPreset.LinkMaterial(Get_Component<CMaterial>());
 }
 
 void CPedestrianNpc::Set_MovePoint(vector<_float3> points)

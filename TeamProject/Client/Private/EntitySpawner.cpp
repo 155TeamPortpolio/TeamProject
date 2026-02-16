@@ -21,7 +21,7 @@
 #include "SirChop.h"
 #include "ElectricBoo.h"
 #include "SilverAnbi.h"
-
+#include "BackgroundNpc.h"
 /* Maptool Type 1 (Interactable) */
 #include "Portal.h"
 #include "ZeroPortal.h"
@@ -50,7 +50,8 @@ static unordered_map<string, Spawner::OBJ_SPEC> s_NPCTable =
 	{ "Jaeger",         Spawner::OBJ_SPEC{ "Proto_GameObject_Jaeger", &CJaeger::Create } },
 	{ "ExploreBoo",     Spawner::OBJ_SPEC{ "Proto_GameObject_ExploreBoo", &CElectricBoo::Create } },
 	{ "Sirchop",		Spawner::OBJ_SPEC{ "Proto_GameObject_Sirchop", &CSirChop::Create } },
-	{ "SilverAnbi",     Spawner::OBJ_SPEC{ "Proto_GameObject_SilverAnbi", &CSilverAnbi::Create } }
+	{ "SilverAnbi",     Spawner::OBJ_SPEC{ "Proto_GameObject_SilverAnbi", &CSilverAnbi::Create } },
+	{ "BackGround",     Spawner::OBJ_SPEC{ "Proto_GameObject_CBackgroundNpc", &CBackgroundNpc::Create } }
 };
 
 /* Maptool Type 1 */
@@ -140,8 +141,10 @@ OBJECT_HANDLE Client::Spawner::Create_NPC(const SPAWNER_DESC& Desc)
 		.Build(Desc.tagName);
 
 
-	Object->Get_Component<CCharacterController>()->Set_FootPosition(Desc.vTranslation);
-	
+	if (auto controller = Object->Get_Component<CCharacterController>())
+		controller->Set_FootPosition(Desc.vTranslation);
+	else
+		Object->Get_Component<CTransform>()->Set_Pos(Desc.vTranslation);
 	//Optional
 	auto iter = Desc.SlotDataValues.find("NPCSlot");
 	if (iter != Desc.SlotDataValues.end()) {

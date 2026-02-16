@@ -31,11 +31,20 @@ HRESULT CBackgroundNpc::Initialize_Prototype()
 HRESULT CBackgroundNpc::Initialize(INIT_DESC* pArg)
 {
 	__super::Initialize(pArg);
-	auto desc = static_cast<BackgroundDesc*>(pArg);
-	if (desc->isPedestrian) {
-		Build_Pedestrian(desc->BackgroundCount, desc->movePoint);
-	}else{
-		Build_Crowd(desc->BackgroundCount, desc->isCircle);
+	if (pArg == nullptr) {
+		Build_Crowd(Helper::Get_Random_Int(1,3), Helper::Get_Random_Bool());
+	}
+	else {
+		auto desc = dynamic_cast<BackgroundDesc*>(pArg);
+		if(desc){
+			if (desc->isPedestrian) {
+				Build_Pedestrian(desc->BackgroundCount, desc->movePoint);
+			}
+			else {
+				Build_Crowd(desc->BackgroundCount, desc->isCircle);
+			}
+		}else
+			Build_Crowd(Helper::Get_Random_Int(1, 3), Helper::Get_Random_Bool());
 	}
 	return S_OK;
 }

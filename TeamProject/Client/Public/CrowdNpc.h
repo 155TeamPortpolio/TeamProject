@@ -21,8 +21,8 @@ public:
     virtual void    Render_GUI() override;
 
 private:
-    NpcColorPreset preset;
-
+    NpcColorPreset colorPreset;
+    NpcModelPreset modelPreset;
 public:
     static CCrowdNpc* Create();
     CGameObject* Clone(INIT_DESC* pArg);

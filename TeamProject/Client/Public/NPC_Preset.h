@@ -1,7 +1,36 @@
 #pragma once
 #include "Engine_Defines.h"
 #include "Material.h"
+#include "SkeletalModel.h"
+#include "Animator3D.h"
 
+static vector<string> NPC_MALE_ANIM = {
+"_Idle_200",
+"_Stand_Cough01_075",
+"_Stand_DF_Idle01_051",
+"_Stand_Idle01_001",
+"_Stand_Idle02_002",
+"_Stand_Look_048",
+"_Stand_Positive_026",
+"_Stand_Talk03_010",
+"_Stand_Thinking01_008",
+"_Stand_Wait01_006",
+"_Stand_Wait01_007",
+};
+
+static vector<string> NPC_FEMALE_ANIM = {
+"_Idle_200",
+"_Stand_Cough01_075",
+"_Stand_DF_Idle01_051",
+"_Stand_Idle01_001",
+"_Stand_Idle02_002",
+"_Stand_Look_048",
+"_Stand_Positive_026",
+"_Stand_Talk03_010",
+"_Stand_Thinking01_008",
+"_Stand_Wait01_006",
+"_Stand_Wait01_007",
+};
 struct NpcColorPreset
 {
     _float4 HairColor = { 1.00f, 0.86f, 0.70f, 1.f };
@@ -33,7 +62,6 @@ private:
             return minValue + (maxValue - minValue) * Next01();
         }
     };
-
     static _uint MixSeed(_uint seedBase, _uint salt)
     {
         _uint mixed = seedBase ^ (salt * 0x9E3779B9u);
@@ -44,14 +72,12 @@ private:
         mixed ^= (mixed >> 16);
         return mixed;
     }
-
     static _float WrapHue(_float hueDeg)
     {
         while (hueDeg >= 360.f) hueDeg -= 360.f;
         while (hueDeg < 0.f)  hueDeg += 360.f;
         return hueDeg;
     }
-
     static _float ClampHueInRange(_float hueDeg, _float minHueDeg, _float maxHueDeg)
     {
         hueDeg = WrapHue(hueDeg);
@@ -61,7 +87,6 @@ private:
         if (hueDeg > maxHueDeg) return maxHueDeg;
         return hueDeg;
     }
-
     static void RgbToHsv(const _float3& rgb, _float3& hsvOut)
     {
         const _float red = rgb.x;
@@ -88,7 +113,6 @@ private:
 
         hsvOut = { hue, sat, val };
     }
-
     static void HsvToRgb(const _float3& hsv, _float3& rgbOut)
     {
         _float hue = WrapHue(hsv.x);
@@ -119,7 +143,6 @@ private:
         default: rgbOut = { val, p,   q }; break;
         }
     }
-
     static _float4 ApplyHsvJitterConstrained(
         _float4 baseColor,
         FastRng& rng,
@@ -156,7 +179,6 @@ private:
         baseColor.w = 1.f;
         return baseColor;
     }
-
     static void SetVariationColor(CMaterial* material, const char* instanceName, _float4* color)
     {
         if (!material || !instanceName || !color) return;
@@ -184,14 +206,86 @@ public:
         // --------------------
         // Skin (기존 제약 유지)
         // --------------------
-        SkinColor = ApplyHsvJitterConstrained(
-            SkinColor, rngSkin,
-            2.5f, 0.03f, 0.06f,
-            20.f, 55.f,
-            0.10f, 0.45f,
-            0.70f, 1.00f,
-            false);
+        const _float skinPick = rngSkin.Next01();
 
+        _float skinHueMin = 0.f, skinHueMax = 0.f;
+        _float skinSatMin = 0.f, skinSatMax = 0.f;
+        _float skinValMin = 0.f, skinValMax = 0.f;
+
+        // 톤 그룹 (가중치 예시)
+        // 10% very light / 25% light / 30% medium / 20% tan / 15% deep
+        if (skinPick < 0.10f)
+        {
+            // Very Light (porcelain)
+            skinHueMin = 18.f;  skinHueMax = 40.f;
+            skinSatMin = 0.06f; skinSatMax = 0.22f;
+            skinValMin = 0.88f; skinValMax = 1.00f;
+        }
+        else if (skinPick < 0.35f)
+        {
+            // Light
+            skinHueMin = 18.f;  skinHueMax = 45.f;
+            skinSatMin = 0.10f; skinSatMax = 0.30f;
+            skinValMin = 0.78f; skinValMax = 0.98f;
+        }
+        else if (skinPick < 0.65f)
+        {
+            // Medium
+            skinHueMin = 18.f;  skinHueMax = 50.f;
+            skinSatMin = 0.14f; skinSatMax = 0.38f;
+            skinValMin = 0.62f; skinValMax = 0.88f;
+        }
+        else if (skinPick < 0.85f)
+        {
+            // Tan
+            skinHueMin = 16.f;  skinHueMax = 52.f;
+            skinSatMin = 0.16f; skinSatMax = 0.44f;
+            skinValMin = 0.48f; skinValMax = 0.78f;
+        }
+        else
+        {
+            // Deep
+            skinHueMin = 14.f;  skinHueMax = 48.f;
+            skinSatMin = 0.16f; skinSatMax = 0.50f;
+            skinValMin = 0.28f; skinValMax = 0.62f;
+        }
+
+        // 언더톤 (웜/뉴트럴/쿨) - 같은 톤 그룹 안에서 Hue 범위를 살짝 좁혀 느낌을 다르게
+        const _float undertonePick = rngSkin.Next01();
+
+        if (undertonePick < 0.40f)
+        {
+            // Warm: 노랑/골드 쪽(대체로 Hue ↑)
+            skinHueMin = max(skinHueMin, 28.f);
+            skinHueMax = min(skinHueMax, 55.f);
+            skinSatMin = max(skinSatMin, 0.12f);
+        }
+        else if (undertonePick < 0.80f)
+        {
+            // Neutral: 그대로
+        }
+        else
+        {
+            // Cool: 핑크/레드 쪽(대체로 Hue ↓)
+            skinHueMin = max(skinHueMin, 12.f);
+            skinHueMax = min(skinHueMax, 36.f);
+            skinSatMax = min(skinSatMax, 0.42f);
+        }
+
+        const _float hueBase = rngSkin.Range(skinHueMin, skinHueMax);
+        const _float satBase = rngSkin.Range(skinSatMin, skinSatMax);
+        const _float valBase = rngSkin.Range(skinValMin, skinValMax);
+
+        _float4 baseSkin = MakeColorFromHsv(hueBase, satBase, valBase);
+
+        // 기존(2.5/0.03/0.06)보다 훨씬 크게 흔들되, 팔레트 범위 밖으로 못 나가게 Constrained
+        SkinColor = ApplyHsvJitterConstrained(
+            baseSkin, rngSkin,
+            9.f, 0.07f, 0.10f,           // ← 피부용 큰 변주(필요시 6~12 / 0.05~0.10 / 0.07~0.12에서 조절)
+            skinHueMin, skinHueMax,
+            skinSatMin, skinSatMax,
+            skinValMin, skinValMax,
+            true);
         // --------------------
         // Hair (바리에이션 크게)
         //  - 대부분 자연 모발, 아주 소량 '염색 느낌' 옵션
@@ -352,13 +446,12 @@ public:
     }
     void LinkMaterial(CMaterial* material)
     {
-        //SetVariationColor(material, "Body", &SkinColor);
+        SetVariationColor(material, "Body", &SkinColor);
         SetVariationColor(material, "Face", &SkinColor);
         SetVariationColor(material, "Hair", &HairColor);
         SetVariationColor(material, "Eye", &HairColor);
         SetVariationColor(material, "Cloth", &ClothColor);
     }
-
     void Render_Colors()
     {
         ImGui::DragFloat4("Hair", &HairColor.x, 0.01f, 0.f, 1.f);
@@ -367,31 +460,38 @@ public:
     }
 };
 
+struct NpcModelPreset {
+private:
+    _bool isMale = {};
+public:
+    void RandomizeModel(_bool isWalker, CSkeletalModel* pModel, CMaterial* pMaterial, CAnimator3D* pAnimator) {
+        _bool isMale = Helper::Get_Random_Bool();
+        string gederWord = isMale ? "Male" : "Female";
+        _int variation = Helper::Get_Random_Int(1, isMale ? 6 : 2);
+        string model = gederWord + "0" + to_string(variation) + ".model";
+        string material = gederWord + "0" + to_string(variation) + ".mat";
+        string meta = gederWord + "0" + to_string(variation) + "_Meta.json";
 
-static vector<string> NPC_MALE_ANIM = {
-"_Idle_200",
-"_Stand_Cough01_075",
-"_Stand_DF_Idle01_051",
-"_Stand_Idle01_001",
-"_Stand_Idle02_002",
-"_Stand_Look_048",
-"_Stand_Positive_026",
-"_Stand_Talk03_010",
-"_Stand_Thinking01_008",
-"_Stand_Wait01_006",
-"_Stand_Wait01_007",
-};
+        pModel->Link_Model("MainCity_Level", model);
+        pMaterial->Link_Material("MainCity_Level", material);
 
-static vector<string> NPC_FEMALE_ANIM = {
-"_Idle_200",
-"_Stand_Cough01_075",
-"_Stand_DF_Idle01_051",
-"_Stand_Idle01_001",
-"_Stand_Idle02_002",
-"_Stand_Look_048",
-"_Stand_Positive_026",
-"_Stand_Talk03_010",
-"_Stand_Thinking01_008",
-"_Stand_Wait01_006",
-"_Stand_Wait01_007",
+        pAnimator->LinkAnimate_Model("MainCity_Level", model);
+        pAnimator->Link_MetaData("MainCity_Level", meta);
+
+        if (isWalker) {
+            string walk = gederWord + "0" + to_string(variation) + (isMale ? "_Walk_Normal02_015" : "_Walk_Normal_020");
+            pAnimator->Set_Animation(walk).Loop(true).Apply();
+        }
+        else{
+            if (isMale) {
+                _int Anim = Helper::Get_Random_Int(0, NPC_MALE_ANIM.size() - 1);
+                pAnimator->Set_Animation(Anim).Loop(true).Apply();
+            }
+            else {
+                _int Anim = Helper::Get_Random_Int(0, NPC_FEMALE_ANIM.size() - 1);
+                pAnimator->Set_Animation(Anim).Loop(true).Apply();
+            }
+        }
+    }
+  
 };
