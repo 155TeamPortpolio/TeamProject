@@ -397,11 +397,10 @@ PS_OUT_BACKBUFFER PS_MAIN_COMBINED(PS_IN In)
     resultAlpha = resultAlpha * (1.0 - vBlend.a) + vBlend.a;
 
     result.rgb = lerp(result.rgb, vNonLight.rgb, vNonLight.a);
-    resultAlpha = lerp(resultAlpha, vNonLight.a, vNonLight.a);
-
+    resultAlpha = resultAlpha * (1.0 - vNonLight.a) + vNonLight.a;
     
     Out.vBackBuffer = float4(result.rgb, resultAlpha);
-    
+   
     return Out;
 }
 

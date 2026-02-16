@@ -624,8 +624,8 @@ void CDefiler::Control_Summon(const string& event)
 	}
 	else if (event == "Wave") {
 		auto testMap = Builder::Create_Object({ "Zero_Level", "Proto_Env_Water" })
-			.Position(_float3(0.f, -5.f, 20.f))
-			.Scale(_float3(6.f, 1.f, 0.2f))
+			.Position(_float3(-30.f, -2.5f, 0.f))
+			.Scale(_float3(0.4f, 1.f, 8.f))
 			.Build("Water");
 
 		ObjectManager()->Add_Object(testMap, {"Zero_Level", "Env"});
