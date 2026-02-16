@@ -22,7 +22,7 @@ void CDefilerState_Attack::Build_Pattern(CDefiler* pOwner, _int Type)
 	DEFILER_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
 	TARGETING_INFO& targetInfo = pOwner->GetTargetingInfo();
 	blackBoard.patternTransition.clear();
-	Type = 2;
+	Type = 10;
 	switch (Type)
 	{
 	case 0 :
@@ -156,7 +156,7 @@ void CDefilerState_Attack::Enter(CDefiler* pOwner)
 	__super::Enter(pOwner);
 	auto& blackboard = pOwner->GetBlackBoard();
 	Build_Pattern(pOwner, blackboard.patternIndex);
-	blackboard.patternIndex++; //= Helper::Get_Random_Int(0, 12);
+	blackboard.patternIndex++;
 	if (blackboard.patternIndex > 12)
 		blackboard.patternIndex = 0.f;
 
@@ -699,10 +699,12 @@ void CDefilerState_Attack_09_Start::Enter(CDefiler* pOwner)
 {
 	DEFILER_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
 	TARGETING_INFO& targetBoard = pOwner->GetTargetingInfo();
+	blackBoard.vTargetDir = { -1,0,0 };
+
 	pOwner->Control_TargetEnable(false);
+
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	blackBoard.TraceType_OnlyAnim();
-	blackBoard.TraceType_IgnoreRotation();
 	pAnimator->Change_Animation("Monster_IsoldetheDefiler_Ani_Attack_09_Start")
 		.StartAt(blackBoard.reservedPattern.animStartProgress)
 		.Speed(1.f)
@@ -724,6 +726,7 @@ void CDefilerState_Attack_09_Loop::Enter(CDefiler* pOwner)
 {
 	DEFILER_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
+	blackBoard.TraceType_IgnoreRotation();
 	pAnimator->Change_Animation("Monster_IsoldetheDefiler_Ani_Attack_09_Loop")
 		.StartAt(blackBoard.reservedPattern.animStartProgress)
 		.Speed(1.f)
@@ -828,7 +831,7 @@ void CDefilerState_RePos_Front::Update(CDefiler* pOwner, _float dt)
 	if (m_eState == EVADE_IN && dissolve.isComplete()) {
 		m_eState = EVADE_OUT;
 		dissolve.Set_DissolveState(dissolve.APPEAR, .5f);
-		pOwner->Set_CCTPos({ -13.f,-1.f,7.f});
+		pOwner->Set_CCTPos({ -15.f,-1.f,0.f});
 	}
 	else if (m_eState == EVADE_OUT && dissolve.isComplete()) {
 		blackBoard.isRequestNext = true;

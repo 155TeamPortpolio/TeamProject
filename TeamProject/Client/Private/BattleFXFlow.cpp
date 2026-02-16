@@ -36,7 +36,9 @@ void CBattleFXFlow::Initialize_Preset()
 		Parry.SetTimeData({ duration, 0.2f, 0.35f, 0.45f, EaseType::OutExpo });
 		Parry.BattleTimeScale[ENUM(BATTLE_OBJ_TYPE::MONSTER)] = 
 			TIME_SCALING({ duration, 0.05f, 0.1f, .2f , EaseType::InOutSine });
-	} 
+		Parry.BattleTimeScale[ENUM(BATTLE_OBJ_TYPE::CAMERA)] = TIME_SCALE_DATA{ duration, 1.0f, 0.3f, .0f, EaseType::OutQuint };
+	}
+
 	{
 		auto& Switch = m_BattleVFXData[ENUM(BATTLE_VFX_TYPE::SWITCH)];
 		const _float duration = 2.f;
@@ -46,7 +48,8 @@ void CBattleFXFlow::Initialize_Preset()
 		Switch.SetTimeData({ duration, 0.2f, 0.15f, 0.15f, EaseType::OutExpo });
 		Switch.BattleTimeScale[ENUM(BATTLE_OBJ_TYPE::MONSTER)] = 
 			TIME_SCALING({ duration, 0.2f, 0.15f, 0.15f , EaseType::OutExpo });
-	} 
+		Switch.BattleTimeScale[ENUM(BATTLE_OBJ_TYPE::CAMERA)] = TIME_SCALE_DATA{ duration, 1.0f, 0.3f, .0f, EaseType::OutQuint };
+	}
 	{
 		auto& Ultimate = m_BattleVFXData[ENUM(BATTLE_VFX_TYPE::ULTIMATE)];
 		const _float duration = 2.f;
@@ -55,6 +58,7 @@ void CBattleFXFlow::Initialize_Preset()
 		Ultimate.fBlurDuration = duration;
 		Ultimate.BattleTimeScale[ENUM(BATTLE_OBJ_TYPE::MONSTER)] = 
 			TIME_SCALING({ duration, 0.f, 1.f, 0.f , EaseType::InOutSine });
+		Ultimate.BattleTimeScale[ENUM(BATTLE_OBJ_TYPE::CAMERA)] = TIME_SCALE_DATA{ duration, 1.0f, 0.3f, .0f, EaseType::OutQuint };
 	}
 
 	{
@@ -64,6 +68,7 @@ void CBattleFXFlow::Initialize_Preset()
 		NormalHitLack.fVFXDuration = duration;
 		NormalHitLack.fBlurDuration = duration;
 		NormalHitLack.SetTimeData({ duration, 0.1f, 0.5f, .5f , EaseType::InOutSine });
+		NormalHitLack.BattleTimeScale[ENUM(BATTLE_OBJ_TYPE::CAMERA)] = TIME_SCALE_DATA{ duration, 1.0f, 0.3f, .0f, EaseType::OutQuint };
 	}
 
 	{
@@ -73,6 +78,7 @@ void CBattleFXFlow::Initialize_Preset()
 		HardHitLack.fVFXDuration = duration;
 		HardHitLack.fBlurDuration = duration;
 		HardHitLack.SetTimeData({ duration, 0.1f, 0.25f, .25f , EaseType::OutExpo });
+		HardHitLack.BattleTimeScale[ENUM(BATTLE_OBJ_TYPE::CAMERA)] = TIME_SCALE_DATA{ duration, 1.0f, 0.3f, .0f, EaseType::OutQuint };
 	}
 
 	{

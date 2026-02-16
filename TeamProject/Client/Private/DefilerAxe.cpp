@@ -50,7 +50,7 @@ HRESULT CDefilerAxe::Initialize(INIT_DESC* pArg)
 	m_vSlide = Math::NormalizeSafeXZ(m_vSlide)*5;
 	m_BaseRot = m_pTransform->Get_QuaternionRotate(); 
 	m_fElapsedTime = 0.f;
-	m_tStatus.iNowHP = 100.f;
+	m_tStatus.iNowHP = 10.f;
 	m_bDangle = true;
 	return S_OK;
 }
