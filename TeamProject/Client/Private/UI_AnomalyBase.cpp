@@ -19,7 +19,7 @@ HRESULT CUI_AnomalyBase::Initialize(INIT_DESC* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-	//Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("test.json")));
+	Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("test.json")));
 
 	Set_AnchorOffset({200.f, 200.f});
 

@@ -37,23 +37,22 @@ void CUI_AnomalyStack::Update(_float dt)
 
 HRESULT CUI_AnomalyStack::Ready_Slots()
 {
-    float containerWidth = 100.f;
-    float slotWidth = 15.f;   // 예시
-    float spacing = 2.f;
-    int count = 6;
+    _float fSlotWidth = 15.f;   // 예시
+    _float fSpacing = 2.f;
+    _int iCount = 6;
 
-    float totalWidth = slotWidth * count + spacing * (count - 1);
-    float startX = -totalWidth * 0.5f + slotWidth * 0.5f;
+    _float fTotalWidth = fSlotWidth * iCount + fSpacing * (iCount - 1);
+    _float fStartX = -fTotalWidth * 0.5f + fSlotWidth * 0.5f;
 
-    for (_int i = 0; i < count; ++i)
+    for (_int i = 0; i < iCount; ++i)
     {
         auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_AnomalyStackSlot" }).Build("slot");
         if (!pObj)
             continue;
 
-        float x = startX + i * (slotWidth + spacing);
+        _float fX = fStartX + i * (fSlotWidth + fSpacing);
 
-        pObj->Set_AnchorOffset({x, 0.f});
+        pObj->Set_AnchorOffset({ fX, 0.f});
 
         Get_Component<CObjectContainer>()->Add_Child(pObj);
     }
