@@ -61,6 +61,9 @@ public:
     Lens     Get_Lens()       const override;
     Lens     Get_ShadowLens() const override;
 
+    void     SetFov(_float deltaDeg, _float blendSec = 0.f, EaseType easeType = EaseType::Linear) override;
+    _float   GetFov() const override { return m_outputPose.lens.fov; }
+
 public:
     const Matrix* Get_ViewMatrix()         override { return &main.view; }
     const Matrix* Get_ProjMatrix()         override { return &main.proj; }
@@ -78,10 +81,6 @@ public:
 
     Vector4 GetForward() const override;
     Vector4 GetRight()   const override;
-
-public:
-    void   SetFov(_float deltaDeg, _float blendSec = 0.f, EaseType easeType = EaseType::Linear) override;
-    _float GetFov() const override { return m_outputPose.lens.fov; }
 
 private:
     struct OverrideEntry

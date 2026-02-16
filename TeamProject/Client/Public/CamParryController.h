@@ -174,6 +174,8 @@ private:
     _bool         m_recoverFovActive = false;
     _float        m_recoverFovElapsed = 0.f;
     _float        m_recoverFovFrom = 0.f;
+
+    _float        m_fovAppliedOffset = 0.f;
 };
 
 NS_END

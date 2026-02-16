@@ -511,7 +511,7 @@ HRESULT CJaneDoe::Initialize_Weapon()
     HandL_WeaponDesc.pOwnerAnimator = Get_Component<CAnimator3D>();
     HandL_WeaponDesc.tagBone = "Ctr_L_HandWpn_F";
     HandL_WeaponDesc.tagName = "HandWeapon_L";
-    HandL_WeaponDesc.vSize = { 0.6f, 0.3f, 0.3f };
+    HandL_WeaponDesc.vSize   = { 1.2f, 0.6f, 0.6f };
     HandL_WeaponDesc.vCenter = { 0.2f, 0.f, 0.f };
     if (FAILED(Attach_AttackCollider(&HandL_WeaponDesc)))
         return E_FAIL;
@@ -521,7 +521,7 @@ HRESULT CJaneDoe::Initialize_Weapon()
     HandR_WeaponDesc.pOwnerAnimator = Get_Component<CAnimator3D>();
     HandR_WeaponDesc.tagBone = "Ctr_R_HandWpn_F";
     HandR_WeaponDesc.tagName = "HandWeapon_R";
-    HandR_WeaponDesc.vSize = { 0.6f, 0.3f, 0.3f };
+    HandR_WeaponDesc.vSize   = {1.2f, 0.6f, 0.6f};
     HandR_WeaponDesc.vCenter = { 0.2f, 0.f, 0.f };
     if (FAILED(Attach_AttackCollider(&HandR_WeaponDesc)))
         return E_FAIL;
@@ -531,7 +531,7 @@ HRESULT CJaneDoe::Initialize_Weapon()
     BootsL_WeaponDesc.pOwnerAnimator = Get_Component<CAnimator3D>();
     BootsL_WeaponDesc.tagBone = "Ctr_L_BootsWpn_01";
     BootsL_WeaponDesc.tagName = "FootWeapon_L";
-    BootsL_WeaponDesc.vSize = { 0.5f, 0.0f, 0.0f };
+    BootsL_WeaponDesc.vSize   = { 1.f, 0.0f, 0.0f };
     BootsL_WeaponDesc.vCenter = { 0.f, 0.f, 0.f };
     if (FAILED(Attach_AttackCollider(&BootsL_WeaponDesc)))
         return E_FAIL;
@@ -541,7 +541,7 @@ HRESULT CJaneDoe::Initialize_Weapon()
     BootsR_WeaponDesc.pOwnerAnimator = Get_Component<CAnimator3D>();
     BootsR_WeaponDesc.tagBone = "Ctr_R_BootsWpn_01";
     BootsR_WeaponDesc.tagName = "FootWeapon_R";
-    BootsR_WeaponDesc.vSize = { 0.5f, 0.f, 0.f };
+    BootsR_WeaponDesc.vSize   = { 1.f, 0.f, 0.f };
     BootsR_WeaponDesc.vCenter = { 0.f, 0.f, 0.f };
     if (FAILED(Attach_AttackCollider(&BootsR_WeaponDesc)))
         return E_FAIL;

@@ -377,7 +377,6 @@ void CamParryController::CaptureCurAsImpactBase()
     m_fovBase = m_fovSaved;
 }
 
-
 CamParryController::ShotGoal CamParryController::BuildImpactShot(_int sideSign, _float close01, _float u) const
 {
     ShotGoal g = m_impactBase;
@@ -535,17 +534,20 @@ _float CamParryController::EvalImpactFov(_float u, _float close01) const
 
 void CamParryController::ApplyImpactFov(_float u, _float close01)
 {
-    auto orbit = CamDirector()->GetOrbitCam();
-    orbit->Get_Component<CCamera>()->Set_FOV(EvalImpactFov(u, close01));
+    const _float desiredFov = EvalImpactFov(u, close01);
+    const _float desiredOffset = desiredFov - m_fovSaved;
+
+    const _float delta = desiredOffset - m_fovAppliedOffset;
+    if (delta != 0.f) CameraManager()->SetFov(delta, 0.f);
+
+    m_fovAppliedOffset = desiredOffset;
 }
 
 void CamParryController::BeginRecoverFov()
 {
-    auto orbit = CamDirector()->GetOrbitCam();
-
     m_recoverFovActive = true;
     m_recoverFovElapsed = 0.f;
-    m_recoverFovFrom = orbit->Get_Component<CCamera>()->Get_FOV();
+    m_recoverFovFrom = m_fovAppliedOffset;
 }
 
 void CamParryController::UpdateRecoverFov(_float dt)
@@ -558,7 +560,7 @@ void CamParryController::UpdateRecoverFov(_float dt)
     const _float u = clamp(m_recoverFovElapsed / dur, 0.f, 1.f);
     const _float t = Math::ApplyEase(tune.impact.recoverFovEase, u);
 
-    const _float base = Math::Lerp(m_recoverFovFrom, m_fovSaved, t);
+    const _float baseOffset = Math::Lerp(m_recoverFovFrom, 0.f, t);
 
     const _float count = (_float)max(1, tune.impact.fovWaveCount);
     const _float phase = 2.f * XM_PI * count * u;
@@ -570,12 +572,15 @@ void CamParryController::UpdateRecoverFov(_float dt)
     const _float amp = tune.impact.fovWaveAmpDeg * 0.65f;
     const _float settle = amp * osc * decay;
 
-    auto orbit = CamDirector()->GetOrbitCam();
-    orbit->Get_Component<CCamera>()->Set_FOV(base + settle);
+    const _float desiredOffset = baseOffset + settle;
+
+    const _float delta = desiredOffset - m_fovAppliedOffset;
+    if (delta != 0.f) CameraManager()->SetFov(delta, 0.f);
+
+    m_fovAppliedOffset = desiredOffset;
 
     if (u >= 1.f) m_recoverFovActive = false;
 }
-
 
 void CamParryController::Reset()
 {
@@ -612,6 +617,9 @@ void CamParryController::Reset()
     m_holdActive = false;
 
     m_fovBase = 0.f;
+    m_fovSaved = 0.f;
+
+    m_fovAppliedOffset = 0.f;
 
     m_recoverFovActive = false;
     m_recoverFovElapsed = 0.f;
@@ -628,7 +636,8 @@ void CamParryController::Begin()
 
     CamDirector()->SetTarget(m_attacker);
 
-    m_fovSaved = orbit->Get_Component<CCamera>()->Get_FOV();
+    m_fovSaved = CameraManager()->GetFov();
+    m_fovAppliedOffset = 0.f;
 
     const _float offsetY = orbit->GetOffsetY();
 
@@ -665,6 +674,7 @@ void CamParryController::Begin()
 
     orbit->ParryMode_Begin();
 }
+
 
 void CamParryController::End()
 {
@@ -750,9 +760,10 @@ void CamParryController::Update(_float dt)
         if (m_recoverFovActive)
             return;
 
-        auto orbit = CamDirector()->GetOrbitCam();
-        orbit->Get_Component<CCamera>()->Set_FOV(m_fovSaved);
+        if (m_fovAppliedOffset != 0.f) CameraManager()->SetFov(-m_fovAppliedOffset, 0.f);
+        m_fovAppliedOffset = 0.f;
 
+        auto orbit = CamDirector()->GetOrbitCam();
         orbit->ParryMode_End();
 
         Reset();
