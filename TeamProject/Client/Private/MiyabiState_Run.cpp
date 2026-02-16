@@ -4,6 +4,7 @@
 
 #include "MiyabiState_Move.h"
 #include "CharacterController.h"
+#include "AudioSource.h"
 
 CMiyabiState_Run* CMiyabiState_Run::Create()
 {
@@ -69,6 +70,7 @@ void CMiyabiState_Run_Loop::Enter(CMiyabi* pOwner)
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Run")
         .Loop(true)
         .Speed(1.f)
+        .BlendDuration(0.04f)
         .EndAt(0.94f)
         .Apply();
 
@@ -97,6 +99,18 @@ void CMiyabiState_Run_Loop::Update(CMiyabi* pOwner, _float dt)
             return;
         }
     }
+
+    if (IsCrossAnimProgress(0.05f))
+        pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_Walk_L.wav")
+        .Attribute3D(true)
+        .Volume(0.6f)
+        .Play();
+    if (IsCrossAnimProgress(0.55f))
+        pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_Walk_R.wav")
+        .Attribute3D(true)
+        .Volume(0.6f)
+        .Play();
+
     pOwner->Process_RootMotion(dt);
 }
 

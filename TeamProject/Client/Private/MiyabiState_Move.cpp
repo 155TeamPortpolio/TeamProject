@@ -54,13 +54,13 @@ void CMiyabiState_Move::Update(CMiyabi* pOwner, _float dt)
 {
     __super::Update(pOwner, dt);
 
-    for (const auto& Event : pOwner->Get_Animator()->Get_EventBus())
-    {
-        if (Event.Type != CLIP_EVENT_TYPE::SOUND) continue;
-        pOwner->Get_Component<CAudioSource>()->Slot(Event.Tag)
-            .Attribute3D(true)
-            .Play();
-    }
+    //for (const auto& Event : pOwner->Get_Animator()->Get_EventBus())
+    //{
+    //    if (Event.Type != CLIP_EVENT_TYPE::SOUND) continue;
+    //    pOwner->Get_Component<CAudioSource>()->Slot(Event.Tag)
+    //        .Attribute3D(true)
+    //        .Play();
+    //}
 }
 
 void CMiyabiState_Move::Exit(CMiyabi* pOwner)

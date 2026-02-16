@@ -4,6 +4,7 @@
 #include "MiyabiState_Move.h"
 
 #include "CharacterController.h"
+#include "AudioSource.h"
 
 CMiyabiState_Walk* CMiyabiState_Walk::Create()
 {
@@ -61,7 +62,7 @@ void CMiyabiState_Walk_Start::Enter(CMiyabi* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Walk_Start")
         .Loop(false)
-        .Speed(1.2f)
+        .Speed(1.f)
         .EndAt(0.97f)
         .Apply();
 }
@@ -69,6 +70,21 @@ void CMiyabiState_Walk_Start::Enter(CMiyabi* pOwner)
 void CMiyabiState_Walk_Start::Update(CMiyabi* pOwner, _float dt)
 {
     pOwner->Process_RootMotion(dt);
+    if (IsCrossAnimProgress(0.42f))
+        pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_Walk_L.wav")
+        .Attribute3D(true)
+        .Volume(0.6f)
+        .Play();
+    if (IsCrossAnimProgress(0.69f))
+        pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_Walk_R.wav")
+        .Attribute3D(true)
+        .Volume(0.6f)
+        .Play();
+    if (IsCrossAnimProgress(0.96f))
+        pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_Walk_L.wav")
+        .Attribute3D(true)
+        .Volume(0.6f)
+        .Play();
 }
 
 void CMiyabiState_Walk_Loop::Enter(CMiyabi* pOwner)
@@ -76,7 +92,7 @@ void CMiyabiState_Walk_Loop::Enter(CMiyabi* pOwner)
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Walk")
         .BlendDuration(0.2f)
         .Loop(false)
-        .Speed(1.2f)
+        .Speed(1.f)
         .EndAt(0.95f)
         .Apply();
 }
@@ -84,6 +100,16 @@ void CMiyabiState_Walk_Loop::Enter(CMiyabi* pOwner)
 void CMiyabiState_Walk_Loop::Update(CMiyabi* pOwner, _float dt)
 {
     pOwner->Process_RootMotion(dt);
+    if (IsCrossAnimProgress(0.39f))
+        pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_Walk_L.wav")
+        .Attribute3D(true)
+        .Volume(0.6f)
+        .Play();
+    if (IsCrossAnimProgress(0.87f))
+        pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_Walk_R.wav")
+        .Attribute3D(true)
+        .Volume(0.6f)
+        .Play();
 }
 
 void CMiyabiState_Walk_End::Enter(CMiyabi* pOwner)

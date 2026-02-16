@@ -30,10 +30,7 @@ HRESULT CBattlePlayer::Initialize()
 {
     CBattleSystem::GetInstance()->SetBattlePlayer(this);
     Initialize_CharacterPrototype();
-
-    vector<CHARACTER> BattleCharacters = {CHARACTER::Corin, CHARACTER::Miyabi,  CHARACTER::JaneDoe,  };
-    //    vector<CHARACTER> BattleCharacters = { CHARACTER::Miyabi, CHARACTER::Corin, CHARACTER::JaneDoe };
-
+    vector<CHARACTER> BattleCharacters = { CHARACTER::Miyabi, CHARACTER::Corin, CHARACTER::JaneDoe };
     SetBattleCharacters(BattleCharacters);
 
     return S_OK;
@@ -46,6 +43,7 @@ void CBattlePlayer::Awake()
     EventSystem()->Broadcast<UI_ACTION_PRIMARY_DESC>({ desc });
     AudioDevice()->Set_Listener(m_pCurrentCharacter->Get_Component<CTransform>());
     m_bAwaked = true;
+    m_bChainParry = true;
 }
 
 void CBattlePlayer::Priority_Update(_float dt)
@@ -437,6 +435,7 @@ void CBattlePlayer::Start_ChainParry()
         return;
 
     m_bChainParry = true;
+    //Set_SwitchCoolDown(0.01);
 }
 
 void CBattlePlayer::End_ChainParry()
@@ -445,6 +444,7 @@ void CBattlePlayer::End_ChainParry()
         return;
     
     m_bChainParry = false;
+    //Reset_SwitchCoolDown();
 }
 
 void CBattlePlayer::Recover_HP()
@@ -533,7 +533,8 @@ void CBattlePlayer::Update_Input(_float dt)
         m_input.direction.Normalize();
     }
 
-    if (!m_pCurrentCharacter) return;
+    if (!m_pCurrentCharacter)
+        return;
 
     Process_Movement(dt);
     Process_Attack();

@@ -122,6 +122,7 @@ void CJaneDoeState_SwitchInParryAid_L_End::Update(CJaneDoe* pOwner, _float dt)
     {
         pOwner->Get_StateMachine()->Set_Trigger("Attack");
         pOwner->Get_StateMachine()->Set_Int("AttackEntryMode", 6);
+        m_pOwnerStateMachine->Set_Bool("ReserveAssaultAid", false);
     }
 
     pOwner->Process_RootMotion(dt);
