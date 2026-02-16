@@ -2825,9 +2825,6 @@
     <ClInclude Include="..\Public\KitObject.h">
       <Filter>02. GameObject\Object\Interactable\HealKit\KitObject</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\NPC_Preset.h">
-      <Filter>02. GameObject\Object\Npc\Background</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\BackGroundSpawner.h">
       <Filter>02. GameObject\Object\Npc\Background\Spawner</Filter>
     </ClInclude>
@@ -2836,6 +2833,9 @@
     </ClInclude>
     <ClInclude Include="..\public\Room_Party.h">
       <Filter>03. Utility\06. FieldSystem\Room\07. Party</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\NPC_Preset.h">
+      <Filter>02. GameObject\Object\Npc\Child</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UI_AnomalyBase.h">
       <Filter>02. GameObject\UI\01. 2D\Anomaly</Filter>

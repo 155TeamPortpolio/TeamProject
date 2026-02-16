@@ -116,10 +116,9 @@ void CMiasmaSpawner::SpawnGrandier(_int count, _float3 targetPos, _float3 ownerP
         _float3 spawnPos = ComputeCircular({0,0,0},15);
 
         spawnPos.y = y;
-
         CCT_DESC MonsterCCT;
         MonsterCCT.eGroup = COLLISION_GROUP::MONSTER;
-        MonsterCCT.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER) | ENUM(COLLISION_GROUP::COMMON) | ENUM(COLLISION_GROUP::PLAYER_ATTACK);
+        MonsterCCT.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER) | ENUM(COLLISION_GROUP::GROUND) | ENUM(COLLISION_GROUP::COMMON) | ENUM(COLLISION_GROUP::PLAYER_ATTACK);
         MonsterCCT.bAutoFit = false;
         MonsterCCT.fHeight = 1.28f;
         MonsterCCT.fRadius = 0.55f;
