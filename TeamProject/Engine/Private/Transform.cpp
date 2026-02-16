@@ -256,7 +256,7 @@ _float4x4* CTransform::Get_InverseWorldMatrix_Ptr()
 }
 
 _vector CTransform::Get_WorldPos()
-{
+	{
 	if (Check_Dirty())
 		Update_Transform();
 

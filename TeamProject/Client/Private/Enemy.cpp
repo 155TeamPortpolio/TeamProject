@@ -531,6 +531,7 @@ void CEnemy::ManageGroggy(const _float dt)
 {
 	if (false == m_tStatus.isGroggy && 100 <= m_tStatus.iGroggyValue)
 	{
+		SetOnAttack(false);
 		m_tStatus.iGroggyValue = 100;
 		m_tStatus.isGroggy = true;
 		// UI È¿°ú¿ë

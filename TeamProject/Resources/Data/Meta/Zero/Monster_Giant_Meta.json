@@ -30,7 +30,7 @@
         {
           "EventTime": 1.1695905923843384,
           "EventType": "Notify",
-          "EventTag": "TurnOnAttackCol_R"
+          "EventTag": "TurnOnAttackCol_R_Hard"
         },
         {
           "EventTime": 1.4863547086715698,
@@ -56,6 +56,11 @@
           "EventTime": 1.2288498878479004,
           "EventType": "Notify",
           "EventTag": "TurnOnAttackCol_L"
+        },
+        {
+          "EventTime": 1.3056529760360718,
+          "EventType": "Notify",
+          "EventTag": "ParryDisable"
         },
         {
           "EventTime": 1.4464586973190308,
@@ -118,14 +123,14 @@
           "EventTag": "TurnOnAttackCol_L"
         },
         {
-          "EventTime": 4.672189712524414,
-          "EventType": "Notify",
-          "EventTag": "TurnOffAttackCol_L"
-        },
-        {
           "EventTime": 4.670000076293945,
           "EventType": "Notify",
           "EventTag": "FinishAll"
+        },
+        {
+          "EventTime": 4.672189712524414,
+          "EventType": "Notify",
+          "EventTag": "TurnOffAttackCol_L"
         },
         {
           "EventTime": 5.005003452301025,
@@ -145,12 +150,12 @@
         {
           "EventTime": 1.4346978664398193,
           "EventType": "Notify",
-          "EventTag": "TurnOnAttackCol_L"
+          "EventTag": "TurnOnAttackCol_L_Hard"
         },
         {
           "EventTime": 1.6050682067871094,
           "EventType": "Notify",
-          "EventTag": "TurnOnAttackCol_R"
+          "EventTag": "TurnOffAttackCol_L"
         },
         {
           "EventTime": 1.6100000143051147,
@@ -170,7 +175,7 @@
         {
           "EventTime": 0.5653020739555359,
           "EventType": "Notify",
-          "EventTag": "TurnOnAttackCol_L"
+          "EventTag": "TurnOnAttackCol_L_Hard"
         },
         {
           "EventTime": 0.9195581078529358,
@@ -198,6 +203,16 @@
           "EventTag": "StartAttack3"
         },
         {
+          "EventTime": 3.029954671859741,
+          "EventType": "Notify",
+          "EventTag": "TurnOffAttackCol_R"
+        },
+        {
+          "EventTime": 3.049999952316284,
+          "EventType": "Notify",
+          "EventTag": "TurnOnAttackCol_R_Hard"
+        },
+        {
           "EventTime": 3.5756335258483887,
           "EventType": "Notify",
           "EventTag": "TurnOffAttackCol_R"
@@ -206,6 +221,11 @@
           "EventTime": 3.5756335258483887,
           "EventType": "Notify",
           "EventTag": "FinishAll"
+        },
+        {
+          "EventTime": 1.5939570665359497,
+          "EventType": "Notify",
+          "EventTag": "ParryDisable"
         }
       ]
     },
@@ -234,7 +254,7 @@
         {
           "EventTime": 1.626120924949646,
           "EventType": "Notify",
-          "EventTag": "TurnOnAttackCol_L"
+          "EventTag": "TurnOnAttackCol_L_Hard"
         },
         {
           "EventTime": 1.9362574815750122,
@@ -259,7 +279,7 @@
         {
           "EventTime": 0.5812864899635315,
           "EventType": "Notify",
-          "EventTag": "TurnOnAttackCol_L"
+          "EventTag": "TurnOnAttackCol_L_Hard"
         },
         {
           "EventTime": 0.949707567691803,

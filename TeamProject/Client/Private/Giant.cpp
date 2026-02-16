@@ -81,6 +81,8 @@ HRESULT CGiant::Initialize(INIT_DESC* pArg)
 	if (FAILED(Initialize_StateMachine()))
 		return E_FAIL;
 
+	Get_Component<CCharacterController>()->Set_StepOffset(0.01f);
+
 	return S_OK;
 }
 
@@ -247,15 +249,6 @@ void CGiant::Render_GUI()
 	ImGui::PopID();
 }
 
-void CGiant::OnPooledAcquire(INIT_DESC* pArg)
-{
-	Initialize(pArg);
-}
-
-void CGiant::OnPooledRelease()
-{
-}
-
 void CGiant::Parried()
 {
 	if ("Attack" != m_pStateMachine->Get_CurrentStateName() || false == m_isParryEnable)
@@ -263,8 +256,19 @@ void CGiant::Parried()
 
 	__super::Parried();
 
-	m_pStateMachine->Change_State("Parried");
+	if (false == m_isParryDontStop)
+		m_pStateMachine->Change_State("Parried");
+
 	SetOnAttack(false, ATTACK_SIDE::NONE); 
+	SetBattleColliderObject("Weapon_L", BATTLE_COLTYPE::ATTACK, false);
+	SetBattleColliderObject("Weapon_R", BATTLE_COLTYPE::ATTACK, false);
+}
+
+void CGiant::SetOnAttack(_bool is, ATTACK_SIDE eSide)
+{
+	__super::SetOnAttack(is, eSide);
+
+	m_isParryDontStop = false;
 }
 
 HRESULT CGiant::Ready_Children(INIT_DESC* pArg)
@@ -427,19 +431,16 @@ HRESULT CGiant::Initialize_Transitions()
 HRESULT CGiant::Ready_Rules()
 {
 	// x = Idle에서 다음 상태로 넘어가는 쿨타임, y = dt 더한 타이머용
-	m_vIdleTime = { 1.f, 0.f };
-
+	m_vIdleTime = { 0.2f, 0.f };
 
 	// 생각보다 가까움. 다시짜자
 	// 제일 가까이 붙으면 1.5f
 	
-	m_tHysteriesis.fEvadeEnter = 2.5f;
-	m_tHysteriesis.fComboEnter = 3.5f;		// Attack1, Attack2
-	m_tHysteriesis.fLeapAttack = 5.f;		// Attack4, Attack5
-	m_tHysteriesis.fJumpShort = 7.f;		// Attack2_Explode, Attack3
-	m_tHysteriesis.fJumpLong = 9.f;			// Attack2_1
-	m_tHysteriesis.fChaseEnter = 10.f;
-	m_tHysteriesis.fChaseExit = 9.5f;
+	m_tHysteriesis.fEvadeEnter = 3.f;
+	m_tHysteriesis.fComboEnter = 4.f;		// Attack1, Attack2
+	m_tHysteriesis.fComboExit = 12.f;		// Attack2_1, Attack3
+	m_tHysteriesis.fChaseEnter = 13.f;
+	m_tHysteriesis.fChaseExit = 8.f; ;		//  Attack2_Explode, Attack3, Attack4, Attack5
 
 	return S_OK;
 }
@@ -515,4 +516,11 @@ void CGiant::CheckDistanceFromPlayer()
 	if (true == m_pStateMachine->Get_Bool("Chase") &&
 		m_tTargetingInfo.fDistance <= m_tHysteriesis.fChaseExit)
 		m_pStateMachine->Set_Bool("Chase", false);
+}
+
+void CGiant::ManageAttackHistory()
+{
+	_uint iSize = static_cast<_uint>(m_AttackHistory.size());
+	if (5 <= iSize)
+		m_AttackHistory.pop_back();
 }

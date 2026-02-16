@@ -33,13 +33,19 @@ public:
 	static CGiant_Attack* Create() { return new CGiant_Attack(); }
 	virtual void Free() override { __super::Free(); }
 
+public:
+	void DecideAttackPattern(CGiant* pOwner);
+
 private:
 	void Register_States();
 	void Register_Transitions();
-	void AttackFromIndex(_int iMoveIndex);
+	void AttackFromIndex(CGiant* pOwner, _int iMoveIndex);
 
 private:
 	HitDesc		m_HitDesc = {};
+	HitDesc		m_HardHitDesc = {};
+	HitDesc		m_Attack3HitDesc = {};
+
 };
 
 class CGiant_Attack1 : public IBaseState<CGiant>

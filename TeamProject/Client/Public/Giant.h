@@ -8,17 +8,6 @@ class CStateMachine;
 
 class CGiant final : public CEnemyNormal
 {
-public:
-    struct GiantHys : public HYSTERIESIS
-    {
-        //_float  fPunch = {};
-        //_float  fBanging = {};
-        _float  fHug = {};
-        _float  fLeapAttack = {};
-        _float  fJumpLong = {};
-        _float  fJumpShort = {};
-    };
-
 private:
     CGiant();
     CGiant(const CGiant& rhg);
@@ -32,9 +21,8 @@ public:
     void    Update(_float dt) override;
     void    Late_Update(_float dt) override;
     virtual void Render_GUI() override;
-    virtual void OnPooledAcquire(INIT_DESC* pArg = nullptr) override;
-    virtual void OnPooledRelease() override;
     virtual void Parried() override;
+    virtual void SetOnAttack(_bool is, ATTACK_SIDE eSide = ATTACK_SIDE::NONE) override;
 
 public:
     static CGiant* Create();
@@ -46,12 +34,19 @@ private:
 
 public:
     /* Getter */
-    CStateMachine<CGiant>*   GetStateMachine() const { return m_pStateMachine; }
-    GiantHys                 GetHysteriesis() const { return m_tHysteriesis; }
+    CStateMachine<CGiant>*  GetStateMachine() const { return m_pStateMachine; }
+    ATTACK_BLACK_BOARD&     GetBlackBoard() { return m_tAttackBlackBoard; }
+    HYSTERIESIS             GetHysteriesis() const { return m_tHysteriesis; }
+    _int                    GetAttackHistoryFront() { return m_AttackHistory.front(); }
+    _int                    GetAttackCombo() { return m_iAttackCombo; }
 
     /* Setter */
     void            Idle() { m_isIdle = true; }
     virtual void    TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER charaName = CHARACTER::END) override;
+    void            AddAttackHistoryFront(_int i) { m_AttackHistory.push_front(i); }
+    void            AddAttackCombo() { m_iAttackCombo++; }
+    void            ResetAttackCombo() { m_iAttackCombo = 0; }
+    void            SetParryDontStop(_bool is) { m_isParryDontStop = is; }
 
 private:
     HRESULT Initialize_StateMachine();
@@ -61,18 +56,24 @@ private:
     void Update_States(const _float dt);
     void ControlState(const _float dt);
     void CheckDistanceFromPlayer();
+    void ManageAttackHistory();
+
 
 private:
     CStateMachine<CGiant>* m_pStateMachine = { nullptr };
     ATTACK_BLACK_BOARD  m_tAttackBlackBoard = {};
-    GiantHys            m_tHysteriesis = {};
+    HYSTERIESIS         m_tHysteriesis = {};
 
     _bool               m_isAutoPatternPlay = { true };
+    _bool               m_isParryDontStop = { false };
 
     /*For.Idle*/
     _bool               m_isIdle = { false };
     _float2             m_vIdleTime = {};
 
+    /*For.AttackAlgorithm*/
+    deque<_int>		    m_AttackHistory;
+    _int                m_iAttackCombo = {};
 };
 
 NS_END
@@ -93,7 +94,7 @@ Attack2_1   ->  fJumpLong
 높이 점프해서 내려찍기
 패링 되어도 끊기지않음
 
-Attack2_Explode ->  fJumpShort
+Attack2_Explode ->  fMiddleRangeAttack
 움직임 약 6.5m
 높이 점프해서 내려찍기
 
