@@ -24,14 +24,14 @@ HRESULT CDogFan::Initialize_Prototype()
 
     auto pResource = ResourceManager();
 
-    pResource->Add_ResourcePath("MainCity_Prop_NewsstandStuff_09out.model", "../Bin/Resources/MainCity/AmbientActor/DogBone/MainCity_Prop_NewsstandStuff_09out.model");
-    pResource->Add_ResourcePath("MainCity_Prop_NewsstandStuff_09out.mat", "../Bin/Resources/Scott/AmbientActor/DogBone/MainCity_Prop_NewsstandStuff_09out.mat");
-    pResource->Add_ResourcePath("MainCity_Prop_NewsstandStuff_09out_Meta.json", "../Bin/Resources/Scott/MainCity_Prop_NewsstandStuff_09out_Meta.json");
+    //pResource->Add_ResourcePath("MainCity_Prop_NewsstandStuff_08out.model", "../Bin/Resources/MainCity/AmbientActor/DogBone/MainCity_Prop_NewsstandStuff_08out.model");
+    //pResource->Add_ResourcePath("MainCity_Prop_NewsstandStuff_08out.mat", "../Bin/Resources/MainCity/AmbientActor/DogBone/MainCity_Prop_NewsstandStuff_08out.mat");
+    //pResource->Add_ResourcePath("MainCity_Prop_NewsstandStuff_08out_Meta.json", "../Bin/Resources/MainCity/MainCity_Prop_NewsstandStuff_08out_Meta.json");
 
     auto pModel = Get_Component<CSkeletalModel>();
-    pModel->Link_Model("MainCity_Level", "MainCity_Prop_NewsstandStuff_09out.model");
+    pModel->Link_Model("MainCity_Level", "MainCity_Prop_NewsstandStuff_08out.model");
     auto pMaterial = Get_Component<CMaterial>();
-    pMaterial->Link_Material("MainCity_Level", "MainCity_Prop_NewsstandStuff_09out.mat");
+    pMaterial->Link_Material("MainCity_Level", "MainCity_Prop_NewsstandStuff_08out.mat");
 
     return S_OK;
 }
@@ -51,19 +51,12 @@ HRESULT CDogFan::Initialize(INIT_DESC* pArg)
 void CDogFan::Awake()
 {
     auto pAnimator = Get_Component<CAnimator3D>();
-    pAnimator->LinkAnimate_Model("Scott_Level", "Device_Vehicle_MilitaryHelicopter_01out.model");
-    pAnimator->Link_MetaData("Scott_Level", "Device_Vehicle_MilitaryHelicopter_01_Meta.json");
+    pAnimator->LinkAnimate_Model("MainCity_Level", "MainCity_Prop_NewsstandStuff_08out.model");
+    pAnimator->Link_MetaData("MainCity_Level", "MainCity_Prop_NewsstandStuff_08_Idle_Meta.json");
 
     pAnimator->Set_Animation(m_AnimName)
         .Loop(true)
         .Apply();
-
-    Get_Component<CAudioSource>()->Slot("Helicopter.wav")
-        .Attribute3D(true)
-        .Group(SOUND_GROUP::ENV)
-        .Loop(true)
-        .Volume(0.15f)
-        .Play();
 }
 
 void CDogFan::Priority_Update(_float dt)
