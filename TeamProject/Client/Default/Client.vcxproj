@@ -471,6 +471,10 @@
     <ClInclude Include="..\public\Room_Scott.h" />
     <ClInclude Include="..\public\ThugBulkyEnforcer_Parried.h" />
     <ClInclude Include="..\Public\SoftDirectionalOutlineUI.h" />
+    <ClInclude Include="..\Public\UI_AnomalyBase.h" />
+    <ClInclude Include="..\Public\UI_AnomalyGauge.h" />
+    <ClInclude Include="..\Public\UI_AnomalyStack.h" />
+    <ClInclude Include="..\Public\UI_AnomalyStackSlot.h" />
     <ClInclude Include="..\Public\UI_PartyCard.h" />
     <ClInclude Include="..\Public\UI_PartyCardRTDraw.h" />
     <ClInclude Include="..\Public\UI_PartyAvatar.h" />
@@ -961,6 +965,10 @@
     <ClCompile Include="..\private\Room_Scott.cpp" />
     <ClCompile Include="..\private\ThugBulkyEnforcer_Parried.cpp" />
     <ClCompile Include="..\Private\SoftDirectionalOutlineUI.cpp" />
+    <ClCompile Include="..\Private\UI_AnomalyBase.cpp" />
+    <ClCompile Include="..\Private\UI_AnomalyGauge.cpp" />
+    <ClCompile Include="..\Private\UI_AnomalyStack.cpp" />
+    <ClCompile Include="..\Private\UI_AnomalyStackSlot.cpp" />
     <ClCompile Include="..\Private\UI_PartyCard.cpp" />
     <ClCompile Include="..\Private\UI_PartyCardRTDraw.cpp" />
     <ClCompile Include="..\Private\UI_PartyAvatar.cpp" />

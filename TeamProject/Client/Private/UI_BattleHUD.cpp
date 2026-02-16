@@ -9,12 +9,40 @@
 #include "TextSlot.h"
 #include "Sprite2D.h"
 
+#include "UI_Decibel.h"
+#include "UI_DecibelKanji.h"
+#include "UI_DecibelDigits.h"
+#include "UI_DecibelPts.h"
+#include "UI_DecibelText.h"
+#include "UI_BattleHUDAction.h"
+#include "UI_PrimaryAction.h"
+#include "UI_EvadeAction.h"
+#include "UI_SpecialAction.h"
+#include "UI_SwitchAction.h"
+#include "UI_UltimateAction.h"
+#include "UI_AnomalyStack.h"
+#include "UI_AnomalyGauge.h"
+
 HRESULT CUI_BattleHUD::Initialize_Prototype()
 {
     __super::Initialize_Prototype();
 
     Add_Component<CObjectContainer>();
     Add_Component<CEventListener>();
+    
+    PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Decibel", CUI_Decibel::Create());
+    PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_DecibelKanji", CUI_DecibelKanji::Create());
+    PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_DecibelDigits", CUI_DecibelDigits::Create());
+    PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_DecibelPts", CUI_DecibelPts::Create());
+    PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_DecibelText", CUI_DecibelText::Create());
+    PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_BattleHUDAction", CUI_BattleHUDAction::Create());
+    PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_PrimaryAction", CUI_PrimaryAction::Create());
+    PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_EvadeAction", CUI_EvadeAction::Create());
+    PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_SpecialAction", CUI_SpecialAction::Create());
+    PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_SwitchAction", CUI_SwitchAction::Create());
+    PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_UltimateAction", CUI_UltimateAction::Create());
+    PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_AnomalyStack", CUI_AnomalyStack::Create());
+    PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_AnomalyGauge", CUI_AnomalyGauge::Create());
 
     return S_OK;
 }
