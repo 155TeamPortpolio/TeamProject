@@ -74,6 +74,16 @@ void CCamDirector::SetTarget(OBJECT_HANDLE targetHandle)
     SetSpaceRef(targetHandle);
 }
 
+void CCamDirector::EnterBoss()
+{
+    CameraManager()->SetFov(15.f, 1.f, EaseType::InOutSine);
+}
+
+void CCamDirector::ExitBoss()
+{
+    CameraManager()->SetFov(-15.f, 1.f, EaseType::InOutSine);
+}
+
 void CCamDirector::AutoTarget()
 {
     auto handle = GetCurHandle();

@@ -67,7 +67,6 @@ _uint CCameraMgr::PushCamObj(OBJECT_HANDLE camObjHandle, _float blendSec)
     return handle;
 }
 
-
 _bool CCameraMgr::Pop(_uint handle, _float blendTime)
 {
     const OBJECT_HANDLE fromObj = GetActiveCamObj();
@@ -107,11 +106,62 @@ void CCameraMgr::SetShakeAxisWave(CamShakeAxis axes, _float ampDeg, _float freq,
     m_shake.SetAxisWave(axes, ampDeg, freq, dur, fadeOutSec, attackEase, decayEase);
 }
 
+void CCameraMgr::SetFov(_float deltaDeg, _float blendSec, EaseType easeType)
+{
+    m_fovOffsetFrom = m_fovOffsetCur;
+    m_fovOffsetTo = m_fovOffsetCur + deltaDeg;
+
+    m_fovOffsetTime = 0.f;
+    m_fovOffsetDuration = blendSec;
+    m_fovOffsetEaseType = easeType;
+
+    m_fovOffsetBlending = (blendSec > 0.f);
+    if (!m_fovOffsetBlending) m_fovOffsetCur = m_fovOffsetTo;
+}
+
+_float CCameraMgr::EvalFovOffset(_float dt)
+{
+    if (!m_fovOffsetBlending) return m_fovOffsetCur;
+
+    m_fovOffsetTime += dt;
+
+    const _float rawT = m_fovOffsetTime / m_fovOffsetDuration;
+    const _float t = Math::ApplyEase(m_fovOffsetEaseType, rawT);
+
+    if (rawT >= 1.f)
+    {
+        m_fovOffsetBlending = false;
+        m_fovOffsetCur = m_fovOffsetTo;
+        return m_fovOffsetCur;
+    }
+
+    m_fovOffsetCur = m_fovOffsetFrom + (m_fovOffsetTo - m_fovOffsetFrom) * t;
+    return m_fovOffsetCur;
+}
+
+void CCameraMgr::ApplyFov(_float dt)
+{
+    _float fov = m_outputPose.lens.fov;
+
+    const _float zoomDeg = m_zoom.Apply(dt);
+    if (zoomDeg != 0.f) fov -= zoomDeg;
+
+    fov += EvalFovOffset(dt);
+
+    const _float minFov = 8.f;
+    const _float maxFov = 120.f;
+
+    if (fov < minFov) fov = minFov;
+    if (fov > maxFov) fov = maxFov;
+
+    m_outputPose.lens.fov = fov;
+}
+
 CCameraMgr::CamPoseFrame CCameraMgr::CapturePose(CCamera* cam) const
 {
     CamPoseFrame pose{};
 
-    const Matrix view  = cam->Get_ViewMatrix();
+    const Matrix view = cam->Get_ViewMatrix();
     const Matrix world = view.Invert();
 
     pose.pos = world.Translation();
@@ -120,10 +170,10 @@ CCameraMgr::CamPoseFrame CCameraMgr::CapturePose(CCamera* cam) const
     pose.rot.Normalize();
 
     pose.lens.projType = cam->Get_ProjType();
-    pose.lens.fov      = cam->Get_FOV();
-    pose.lens.nearZ    = cam->Get_Near();
-    pose.lens.farZ     = cam->Get_Far();
-    pose.lens.aspect   = cam->Get_Aspect();
+    pose.lens.fov = cam->Get_FOV();
+    pose.lens.nearZ = cam->Get_Near();
+    pose.lens.farZ = cam->Get_Far();
+    pose.lens.aspect = cam->Get_Aspect();
 
     if (pose.lens.projType == CamProjType::Orthographic)
         pose.lens.orthoHeight = cam->Get_OrthoSize() * 2.f;
@@ -155,8 +205,8 @@ CCameraMgr::CamPoseFrame CCameraMgr::BlendPose(const CamPoseFrame& a, const CamP
 
 void CCameraMgr::ApplyCache(CamCache& outCache, const CamPoseFrame& pose)
 {
-    const Matrix rotM  = Matrix::CreateFromQuaternion(pose.rot);
-    const Matrix trM   = Matrix::CreateTranslation(pose.pos);
+    const Matrix rotM = Matrix::CreateFromQuaternion(pose.rot);
+    const Matrix trM = Matrix::CreateTranslation(pose.pos);
     const Matrix world = rotM * trM;
 
     outCache.view = world.Invert();
@@ -171,7 +221,7 @@ void CCameraMgr::ApplyCache(CamCache& outCache, const CamPoseFrame& pose)
     outCache.invView = outCache.view.Invert();
     outCache.invProj = outCache.proj.Invert();
 
-    outCache.pos  = {pose.pos.x, pose.pos.y, pose.pos.z, 1.f};
+    outCache.pos = {pose.pos.x, pose.pos.y, pose.pos.z, 1.f};
     outCache.farZ = pose.lens.farZ;
 }
 
@@ -248,24 +298,13 @@ void CCameraMgr::Update(_float dt)
     m_outputPose.rot.Normalize();
     m_outputPose.pos += posDelta;
 
-    const _float zoomDeg = m_zoom.Apply(dt);
-    if (zoomDeg != 0.f)
-    {
-        const _float minFov = 8.f;
-        const _float maxFov = 120.f;
-
-        m_outputPose.lens.fov -= zoomDeg;
-
-        if (m_outputPose.lens.fov < minFov) m_outputPose.lens.fov = minFov;
-        if (m_outputPose.lens.fov > maxFov) m_outputPose.lens.fov = maxFov;
-    }
+    ApplyFov(dt);
 
     ApplyCache(main, m_outputPose);
 
     if (m_shadowCamObj.isValid())
         UpdateShadowCache();
 }
-
 
 void CCameraMgr::AddImpact(_uint shakeType, _uint zoomType, _float strength)
 {
@@ -276,9 +315,9 @@ void CCameraMgr::AddImpact(_uint shakeType, _uint zoomType, _float strength)
 Lens CCameraMgr::Get_Lens() const
 {
     Lens out{};
-    out.fov    = m_outputPose.lens.fov;
-    out.zNear  = m_outputPose.lens.nearZ;
-    out.zFar   = m_outputPose.lens.farZ;
+    out.fov = m_outputPose.lens.fov;
+    out.zNear = m_outputPose.lens.nearZ;
+    out.zFar = m_outputPose.lens.farZ;
     out.aspect = m_outputPose.lens.aspect;
     return out;
 }
@@ -288,9 +327,9 @@ Lens CCameraMgr::Get_ShadowLens() const
     auto cam = ResolveCam(m_shadowCamObj);
 
     Lens out{};
-    out.fov    = cam->Get_FOV();
-    out.zNear  = cam->Get_Near();
-    out.zFar   = cam->Get_Far();
+    out.fov = cam->Get_FOV();
+    out.zNear = cam->Get_Near();
+    out.zFar = cam->Get_Far();
     out.aspect = cam->Get_Aspect();
     return out;
 }
@@ -314,12 +353,20 @@ void CCameraMgr::Free()
     m_baseCamObj.Reset();
     m_shadowCamObj.Reset();
 
-    m_isBlending    = false;
-    m_blendTime     = 0.f;
+    m_isBlending = false;
+    m_blendTime = 0.f;
     m_blendDuration = 0.f;
     m_blendTargetObj.Reset();
-    m_outputPose    = {};
+    m_outputPose = {};
 
-    main   = {};
+    m_fovOffsetBlending = false;
+    m_fovOffsetTime = 0.f;
+    m_fovOffsetDuration = 0.f;
+    m_fovOffsetCur = 0.f;
+    m_fovOffsetFrom = 0.f;
+    m_fovOffsetTo = 0.f;
+    m_fovOffsetEaseType = EaseType::Linear;
+
+    main = {};
     shadow = {};
 }

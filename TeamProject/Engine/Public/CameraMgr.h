@@ -79,6 +79,10 @@ public:
     Vector4 GetForward() const override;
     Vector4 GetRight()   const override;
 
+public:
+    void   SetFov(_float deltaDeg, _float blendSec = 0.f, EaseType easeType = EaseType::Linear) override;
+    _float GetFov() const override { return m_outputPose.lens.fov; }
+
 private:
     struct OverrideEntry
     {
@@ -132,6 +136,10 @@ private:
     void         UpdateShadowCache();
 
 private:
+    _float       EvalFovOffset(_float dt);
+    void         ApplyFov(_float dt);
+
+private:
     OBJECT_HANDLE   m_baseCamObj{};
     OBJECT_HANDLE   m_shadowCamObj{};
     OBJECT_HANDLE   m_blendFromObj{};
@@ -155,6 +163,15 @@ private:
     EaseType      m_easeType = EaseType::OutSine;
 
 private:
+    _bool   m_fovOffsetBlending = false;
+    _float  m_fovOffsetTime = 0.f;
+    _float  m_fovOffsetDuration = 0.f;
+    _float  m_fovOffsetCur = 0.f;
+    _float  m_fovOffsetFrom = 0.f;
+    _float  m_fovOffsetTo = 0.f;
+    EaseType m_fovOffsetEaseType = EaseType::Linear;
+
+private:
     CamCache main{};
     CamCache shadow{};
 
@@ -162,5 +179,6 @@ public:
     static CCameraMgr* Create() { return new CCameraMgr(); }
     void Free() override;
 };
+
 
 NS_END

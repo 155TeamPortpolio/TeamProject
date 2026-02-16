@@ -30,6 +30,9 @@ public:
     virtual _bool Pop(_uint handle, _float blendTime = 0.25f) PURE;
     virtual void  Clear(_float blendTime = 0.25f) PURE;
 
+    virtual void   SetFov(_float deltaDeg, _float blendSec = 0.f, EaseType easeType = EaseType::Linear) PURE;
+    virtual _float GetFov() const PURE;
+
 public:
     virtual void RegisterShakePresets(const CamShakePreset* presets, _uint count) PURE;
     virtual void RegisterZoomPresets(const CamZoomPreset* presets, _uint count) PURE;
