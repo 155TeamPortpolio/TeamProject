@@ -31,10 +31,10 @@ void CCorinState_Hit::Enter(CCorin* pOwner)
 
 	switch (iEntryMode)
 	{
-	case 2:
+	case 1:
 		m_pSubStateMachine->Set_DefaultState("HitHard");
 		break;
-	case 3:
+	case 4:
 		m_pSubStateMachine->Set_DefaultState("HitKnockOut");
 		break;
 	default :
@@ -63,15 +63,23 @@ void CCorinState_Hit::Enter(CCorin* pOwner)
 
 void CCorinState_Hit::Update(CCorin* pOwner, _float dt)
 {
-	m_fWeight += dt * 0.5f;
-	m_fWeight = min(m_fWeight, 1.f);
-	pOwner->Get_StateMachine()->Set_Float("MoveWeight", m_fWeight);	// 디버그 용
+	if (m_pSubStateMachine->Get_CurrentStateName() == "HitNormal")
+	{
+		m_fWeight += dt * 0.5f;
+		m_fWeight = min(m_fWeight, 1.f);
+		pOwner->Get_StateMachine()->Set_Float("MoveWeight", m_fWeight);	// 디버그 용
 
-	CCharacter::ROOTMOTION_DESC desc;
-	desc.iModeMask = ENUM(CCorin::ROOTMOTION_MASK::MOVE) |
-		ENUM(CCorin::ROOTMOTION_MASK::QUATERNION);
-	desc.fMoveWeight = m_fWeight;
-	pOwner->Process_RootMotion(dt, desc);
+		CCharacter::ROOTMOTION_DESC desc;
+		desc.iModeMask = ENUM(CCorin::ROOTMOTION_MASK::MOVE) |
+			ENUM(CCorin::ROOTMOTION_MASK::QUATERNION);
+		desc.fMoveWeight = m_fWeight;
+		pOwner->Process_RootMotion(dt, desc);
+	}
+	else
+	{
+		pOwner->Process_RootMotion(dt, ENUM(CCorin::ROOTMOTION_MASK::MOVE) |
+			ENUM(CCorin::ROOTMOTION_MASK::QUATERNION));
+	}
 
 	if (m_pSubStateMachine->Get_CurrentState()->Get_AnimProgress() > 0.3f)
 		pOwner->Unlock_Move();

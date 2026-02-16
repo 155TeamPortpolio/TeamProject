@@ -476,6 +476,20 @@ void CBattlePlayer::Update_Input(_float dt)
     // 콤보 테스트
     if (InputDevice()->Key_Tap('G'))
         Request_ComboAttack();
+    // 피격 테스트
+    //if(InputDevice()->Key_Tap('1'))
+    //{
+    //    m_pCurrentCharacter->Take_Damage(DAMAGE_TYPE::HARD, 1.f);
+    //}
+    //if (InputDevice()->Key_Tap('2'))
+    //{
+    //    m_pCurrentCharacter->Take_Damage(DAMAGE_TYPE::KNOCKOUT, 1.f);
+    //}
+    //if (InputDevice()->Key_Tap('3'))
+    //{
+    //    m_pCurrentCharacter->Take_Damage(DAMAGE_TYPE::NORMAL, 1.f);
+    //}
+
     if (m_bComboSelect)
     {
         Process_ComboSelect(dt);
