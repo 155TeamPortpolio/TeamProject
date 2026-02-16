@@ -48,13 +48,13 @@ void CFieldSystem::SetActive(_bool is)
 	m_isActive = is;
 }
 
-void CFieldSystem::PlayBGM(string strBGM)
+void CFieldSystem::PlayBGM(string strBGM, _float fVolume)
 {
 	if (!m_strPrevBGM.empty()) m_pBGM->Set_SlotPuase(m_strPrevBGM, true);
 	
 	m_pBGM->Slot(strBGM)
 		.Attribute3D(false)
-		.Volume(0.3)
+		.Volume(fVolume)
 		.Loop(true)
 		.Play();
 	
