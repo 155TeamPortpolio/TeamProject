@@ -84,8 +84,9 @@ PS_OUT_RESULT PS_FOG(PS_IN In)
     
     float4 vNonLight = NonLightTexture.Sample(DefaultSampler, In.vTexcoord);
     float4 vBlend = BlendTexture.Sample(DefaultSampler, In.vTexcoord);
-
-    if (vNonLight.a > 0.0001f || vBlend.a > 0.0001f)
+    float fNonLightFactor = saturate(vNonLight.a + vBlend.a);
+    
+    if (fNonLightFactor > 0.999f)
     {
         Out.vResult = vScene;
         return Out;
@@ -113,8 +114,7 @@ PS_OUT_RESULT PS_FOG(PS_IN In)
     fFogFactor = lerp(0.3f, 1.0f, fFogFactor);
     
     float4 vFoggedColor = lerp(FogColor, vScene, fFogFactor);
- 
-    Out.vResult = vFoggedColor;
+    Out.vResult = lerp(vFoggedColor, vScene, fNonLightFactor);
     
     return Out;
 }
@@ -297,6 +297,13 @@ PS_OUT_RESULT PS_SATURATION(PS_IN In)
     PS_OUT_RESULT Out;
     
     float4 scene = FinalTexture.Sample(DefaultSampler, In.vTexcoord);
+    vector vNonLight = NonLightTexture.Sample(DefaultSampler, In.vTexcoord);
+    
+    if(vNonLight.a > 0.01)
+    {
+        Out.vResult = scene;
+        return Out;
+    }
     
     float staticMask = bSaturateStaticUse ? StaticCombinedTexture.Sample(DefaultSampler, In.vTexcoord).a : 0.0;
     float skinnedMask = bSaturateSkinnedUse ? SkinnedCombinedTexture.Sample(DefaultSampler, In.vTexcoord).a : 0.0;
@@ -399,11 +406,10 @@ PS_OUT_BACKBUFFER PS_MAIN_COMBINED(PS_IN In)
     resultAlpha = resultAlpha * (1.0 - vBlend.a) + vBlend.a;
 
     result.rgb = lerp(result.rgb, vNonLight.rgb, vNonLight.a);
-    resultAlpha = lerp(resultAlpha, vNonLight.a, vNonLight.a);
-
+    resultAlpha = resultAlpha * (1.0 - vNonLight.a) + vNonLight.a;
     
     Out.vBackBuffer = float4(result.rgb, resultAlpha);
-    
+   
     return Out;
 }
 
