@@ -1,5 +1,7 @@
 #pragma once
 #include "Npc.h"
+#include "NPC_Preset.h"
+
 NS_BEGIN(Client)
 class CPedestrianNpc :
     public CNpc
@@ -17,19 +19,26 @@ public:
     virtual void    Update(_float dt) override;
     virtual void    Late_Update(_float dt) override;
 
-
+public:
+    void Set_MovePoint(vector<_float3> points);
 private:
-    void Calc_Destination(_float dt);
     _vector3 RotateTowardsXZ(_vector3 curDir, _vector3 targetDir, float maxRadDelta);
+    void Calc_Destination(_float dt);
     void SnapToStart();
     _vector3 Rotate90ByCw(const _vector3& v, bool cw);
+
+private:
+    NpcColorPreset colorPreset;
+    NpcModelPreset modelPreset;
 protected:
     _uint m_CurPointIdx = {};
     _float m_CurYaw = {};
     _float m_MoveSpeed = {};
     _vector3 m_Vel = { 3.f, 0.f, 3.f };  
     _float    m_PathOffset = 0.f;        
-    _uint m_RouteIdx = 0; 
+
+    vector<_float3> movePoints;
+
 public:
     static CPedestrianNpc* Create();
     CGameObject* Clone(INIT_DESC* pArg);

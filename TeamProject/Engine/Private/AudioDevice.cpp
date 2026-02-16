@@ -21,8 +21,8 @@ HRESULT CAudioDevice::Initialize()
 		m_Groups.push_back(pGroup);
 	}
     float dopplerScale = 1.0f; // 도플러 효과 강도
-    float distanceFactor = 15.0f; // 1.0이면 1 유닛 = 1m
-    float rolloffScale = 0.7f; // 작을수록 거리 감쇠가 완만해짐
+    float distanceFactor = 5.0f; // 1.0이면 1 유닛 = 1m
+    float rolloffScale = 0.8f; // 작을수록 거리 감쇠가 완만해짐
 
     m_pSystem->set3DSettings(dopplerScale, distanceFactor, rolloffScale);
 
