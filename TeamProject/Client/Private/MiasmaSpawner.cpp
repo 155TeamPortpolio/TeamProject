@@ -7,6 +7,7 @@
 #include "MiasmaBlade.h"
 #include "MiasmaSpawnBall.h"
 #include "DefilerWeapon.h"
+#include "EffectContainer.h"
 
 _float3 CMiasmaSpawner::ComputeArcSpawnPos(
     const _float3& ownerPos,
@@ -191,4 +192,27 @@ void CMiasmaSpawner::SpawnWeapon(_float3 Target, _float3 Owner, class CDefiler* 
 
     if (m_WeaponThrowCount >= 3)
         m_WeaponThrowCount = 0;
+
+    _vector3 vDir = _vector3(desc->vTargetPos) - _vector3(Owner);
+    vDir.Normalize();
+    if (desc->isFinal)
+    {
+        auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+            .Asset("defiler_throw_axe_shot_strong.json")
+            .Position(Owner)
+            .Build("Defiler_Axe_Shot_Strong");
+        
+        pEffect->Get_Component<CTransform>()->Set_Look(vDir);
+        ObjectManager()->Add_Object(pEffect, { pDefiler->Get_Level(),"Enemy_Effect_Layer" });
+    }
+    else
+    {
+        auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+            .Asset("defiler_throw_axe_shot_normal.json")
+            .Position(Owner)
+            .Build("Defiler_Axe_Shot_Normal");
+
+        pEffect->Get_Component<CTransform>()->Set_Look(vDir);
+        ObjectManager()->Add_Object(pEffect, { pDefiler->Get_Level(),"Enemy_Effect_Layer" });
+    }
 }

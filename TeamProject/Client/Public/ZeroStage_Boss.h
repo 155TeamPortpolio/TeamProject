@@ -6,6 +6,7 @@ class CGameInstance;
 class CUI_Object;
 class IProtoService;
 class IObjectService;
+class CAudioSource;
 NS_END
 
 NS_BEGIN(Client)
@@ -23,6 +24,7 @@ public:
 
 public:
 	virtual HRESULT Enter_Stage(StageContext& context)override;
+	virtual HRESULT Exit_Stage(StageContext& context)override;
 
 private:
 	void Intro();
@@ -32,6 +34,8 @@ private:
 
 private:
 	_bool m_isSequenceEnd = {};
+	CAudioSource* m_pBGM = nullptr;
+
 public:
 	static CZeroStage_Boss* Create(class CZero_Level* pOwnerLevel);
 	virtual void Free();

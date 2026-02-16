@@ -22,7 +22,7 @@ void CDefilerState_Attack::Build_Pattern(CDefiler* pOwner, _int Type)
 	DEFILER_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
 	TARGETING_INFO& targetInfo = pOwner->GetTargetingInfo();
 	blackBoard.patternTransition.clear();
-	Type = 2;
+	Type = 10;
 	switch (Type)
 	{
 	case 0 :
@@ -714,10 +714,22 @@ void CDefilerState_Attack_09_Start::Enter(CDefiler* pOwner)
 void CDefilerState_Attack_09_Start::Update(CDefiler* pOwner, _float dt)
 {
 	ComboTransition(pOwner);
+	Update_Effects(pOwner);
 }
 
 void CDefilerState_Attack_09_Start::Exit(CDefiler* pOwner)
 {
+}
+
+void CDefilerState_Attack_09_Start::Update_Effects(CDefiler* pOwner)
+{
+	if (IsCrossAnimProgress(0.56f))
+		pOwner->Play_Effect("Defiler_Wave_Axe_Charge", _vector3(), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+	if (IsCrossAnimProgress(0.7f))
+		pOwner->Stop_Effect("Defiler_Wave_Axe_Charge");
+
+	if (IsCrossAnimProgress(0.97f))
+		pOwner->Play_Effect("Defiler_Wave_Charge", _vector3(), _quaternion(0.f, 0.f, 0.f, 1.f), false);
 }
 
 void CDefilerState_Attack_09_Loop::Enter(CDefiler* pOwner)
@@ -744,6 +756,10 @@ void CDefilerState_Attack_09_Loop::Exit(CDefiler* pOwner)
 	m_ElapsedTime = 0.f;
 }
 
+void CDefilerState_Attack_09_Loop::Update_Effects(CDefiler* pOwner)
+{
+}
+
 void CDefilerState_Attack_09_End::Enter(CDefiler* pOwner)
 {
 	DEFILER_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
@@ -755,17 +771,24 @@ void CDefilerState_Attack_09_End::Enter(CDefiler* pOwner)
 		.Loop(false)
 		.Apply();
 	pOwner->GetDissolve().DisAppear(.2f);
+
+	pOwner->Stop_Effect("Defiler_Wave_Charge");
 }
 
 void CDefilerState_Attack_09_End::Update(CDefiler* pOwner, _float dt)
 {
 	ComboTransition(pOwner);
+	Update_Effects(pOwner);
 }
 
 void CDefilerState_Attack_09_End::Exit(CDefiler* pOwner)
 {
 	pOwner->Control_TargetEnable(true);
 	pOwner->GetDissolve().Appear(0.3f);
+}
+
+void CDefilerState_Attack_09_End::Update_Effects(CDefiler* pOwner)
+{
 }
 
 void CDefilerState_Attack_Grab::Enter(CDefiler* pOwner)

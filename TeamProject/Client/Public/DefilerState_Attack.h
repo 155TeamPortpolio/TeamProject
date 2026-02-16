@@ -247,6 +247,10 @@ public:
 public:
 	static CDefilerState_Attack_09_Start* Create() { return new CDefilerState_Attack_09_Start(); }
 	virtual void Free() override { __super::Free(); }
+
+private:
+	void Update_Effects(CDefiler* pOwner);
+
 };
 
 class CDefilerState_Attack_09_Loop : public CDefilerState_Attack
@@ -261,6 +265,10 @@ private:
 public:
 	static CDefilerState_Attack_09_Loop* Create() { return new CDefilerState_Attack_09_Loop(); }
 	virtual void Free() override { __super::Free(); }
+
+private:
+	void Update_Effects(CDefiler* pOwner);
+
 };
 
 class CDefilerState_Attack_09_End : public CDefilerState_Attack
@@ -273,6 +281,10 @@ public:
 public:
 	static CDefilerState_Attack_09_End* Create() { return new CDefilerState_Attack_09_End(); }
 	virtual void Free() override { __super::Free(); }
+
+private:
+	void Update_Effects(CDefiler* pOwner);
+
 };
 
 class CDefilerState_Attack_Grab : public CDefilerState_Attack

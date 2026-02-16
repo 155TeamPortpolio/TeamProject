@@ -198,7 +198,7 @@ void CDefilerLaser::SetUp_Effect()
 
     _vector3 vCurrPosition = m_vStartPoint;
     _vector3 vTargetPosition = BattleSystem()->GetCurCharacterHandle().Get()->Get_Component<CTransform>()->Get_WorldPos();
-    vTargetPosition.y += 1.f;
+    vTargetPosition.y += 0.5f;
     _vector3 vTargetDir = vTargetPosition - vCurrPosition;
 
     if (vTargetDir.Length() <= 0.01f)
