@@ -4,6 +4,8 @@
 #include "BattleSystem.h"
 #include "EnemyNormal.h"
 
+#include "AudioSource.h"
+
 CEnemyNormal::CEnemyNormal()
 	: CEnemy()
 {
@@ -42,6 +44,10 @@ void CEnemyNormal::Priority_Update(_float dt)
 void CEnemyNormal::Update(_float dt)
 {
 	RotateToDir(dt);
+
+	auto pAudioSrc = Get_Component<CAudioSource>();
+	if (nullptr != pAudioSrc)
+		pAudioSrc->Set_AudioPos(m_pTransform->Get_Pos());
 
 	__super::Update(dt);
 }

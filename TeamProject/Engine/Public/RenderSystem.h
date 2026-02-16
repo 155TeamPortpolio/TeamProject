@@ -35,6 +35,8 @@ public:
 
 	virtual void Set_GlitchDesc(GLITCH_DESC desc) override;
 	virtual void SetRimLightMode(RIMLIGHT eMode) override;
+	virtual void SetShadowUpdateInterval(_float fInterval) override;
+	virtual void ResetUpdateInterval() override;
 
 	virtual void Set_NoiseTexture(NOISE_FXTYPE eNoise, class CTexture* noiseTexture) override;
 	virtual CTexture* Get_NoiseTexture(NOISE_FXTYPE eNoise) override;

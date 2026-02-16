@@ -27,7 +27,7 @@ void CBelle::PlaySFX(string str)
 	auto pAudio = Get_Component<CAudioSource>();
 	pAudio->Slot(str)
 		.Attribute3D(false)
-		.Volume(0.8)
+		.Volume(1.0)
 		.Loop(false)
 		.Play();
 }
@@ -39,13 +39,6 @@ HRESULT CBelle::Initialize_Prototype()
 
 	auto pAudio = Add_Component<CAudioSource>();
 	pAudio->SoundFolder(G_GlobalLevelKey, "../Bin/Resources/Global/FieldCharacter/Sound");
-	//auto pRcsMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
-	//pRcsMgr->Add_ResourcePath("Belle.model",
-	//	"../Bin/Resources/Global/FieldCharacter/Belle/Belle.model");
-	//pRcsMgr->Add_ResourcePath("Belle.mat",
-	//	"../Bin/Resources/Global/FieldCharacter/Belle/Belle.mat");
-	//pRcsMgr->Add_ResourcePath("Avatar_Female_Size02_Belle_Suibianguan_Meta.json",
-	//	"../Bin/Resources/Global/FieldCharacter/Belle/Avatar_Female_Size02_Belle_Suibianguan_Meta.json")
 
 	Get_Component<CModel>()->Link_Model(G_GlobalLevelKey, "Belle.model");
 	Get_Component<CMaterial>()->Link_Material(G_GlobalLevelKey, "Belle.mat");

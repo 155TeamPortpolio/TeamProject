@@ -5,6 +5,8 @@
 
 /* Object */
 #include "EffectContainer.h"
+#include "Hand_Core.h"
+#include "Hand_Sword.h"
 
 /* Component */
 #include "SkeletalModel.h"
@@ -14,6 +16,7 @@
 #include "ObjectContainer.h"
 #include "Animator3D.h"
 #include "AudioSource.h"
+#include "BoneFollower.h"
 
 /* State */
 #include "StateMachine.h"
@@ -37,12 +40,6 @@ HRESULT CSacrificeHand::Initialize_Prototype()
 	Add_Component<CMaterial>();
 	Add_Component<CAnimator3D>();
 	Add_Component<CAudioSource>();
-
-	auto pResource = CGameInstance::GetInstance()->Get_ResourceMgr();
-	pResource->Add_ResourcePath("Monster_SacrificeBringerHand.model", "../Bin/Resources/Model/skeletal/Enemy/Sacrifice/Hand/Monster_SacrificeBringerHand.model");
-	pResource->Add_ResourcePath("Monster_SacrificeBringerHand.mat", "../Bin/Resources/Model/skeletal/Enemy/Sacrifice/Hand/Monster_SacrificeBringerHand.mat");
-	pResource->Add_ResourcePath("Monster_SacrificeBringerHand_Meta.json", "../Bin/Resources/Model/skeletal/Enemy/Sacrifice/Hand/Monster_SacrificeBringerHand_Meta.json");
-
 	return S_OK;
 }
 
@@ -63,22 +60,10 @@ HRESULT CSacrificeHand::Initialize(INIT_DESC* pArg)
 	auto pAudio = Get_Component<CAudioSource>();
 	pAudio->SoundFolder(G_GlobalLevelKey, "../Bin/Resources/Zero/Enemy/Sacrifice/Sound");
 
-	/* Hand Bubble */
-	auto pObjectContainer = Get_Component<CObjectContainer>();
-	auto pBubble = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
-		.Asset("sacrifice_hand_bubble.json")
-		.Build("Sacrifice_Hand_Bubble");
-	//pBubble->Stop();
-	pObjectContainer->Add_Child(pBubble,false);
-
-	_smatrix offsetMatrix = _smatrix::Identity;
-	offsetMatrix.Translation(_vector3(-4.f, 0.f, 0.f));
-	pBubble->AttachBone(pAnimator, "Ctr_Main", offsetMatrix);
-
 	if (FAILED(Initialize_StateMachine()))
 		return E_FAIL;
 
-	if (FAILED(Create_Colliders()))
+	if (FAILED(Create_Children()))
 		return E_FAIL;
 
 	return S_OK;
@@ -276,6 +261,34 @@ void CSacrificeHand::Update_Dissolve(_float dt)
 	}
 }
 
+void CSacrificeHand::Active_HandCore()
+{
+	auto pHandCore = Get_Component<CObjectContainer>()->Find_ObjectByName("Hand_Core");
+	if(pHandCore)
+		static_cast<CHand_Core*>(pHandCore)->Active_Hand();
+}
+
+void CSacrificeHand::Deactive_HandCore()
+{
+	auto pHandCore = Get_Component<CObjectContainer>()->Find_ObjectByName("Hand_Core");
+	if (pHandCore)
+		static_cast<CHand_Core*>(pHandCore)->Deactive_Hand();
+}
+
+void CSacrificeHand::Active_Sword()
+{
+	auto pHandSword = Get_Component<CObjectContainer>()->Find_ObjectByName("Hand_Sword");
+	if (pHandSword)
+		static_cast<CHand_Sword*>(pHandSword)->Active_Sword();
+}
+
+void CSacrificeHand::Deactive_Sword()
+{
+	auto pHandSword = Get_Component<CObjectContainer>()->Find_ObjectByName("Hand_Sword");
+	if (pHandSword)
+		static_cast<CHand_Sword*>(pHandSword)->Deactive_Sword();
+}
+
 HRESULT CSacrificeHand::Initialize_StateMachine()
 {
 	m_pStateMachine = CStateMachine<CSacrificeHand>::Create();
@@ -307,42 +320,51 @@ HRESULT CSacrificeHand::Initialize_Transitions()
 	return S_OK;
 }
 
-HRESULT CSacrificeHand::Create_Colliders()
+HRESULT CSacrificeHand::Create_Children()
 {
 	auto pAnimator = Get_Component<CAnimator3D>();
+	auto pObjectContainer = Get_Component<CObjectContainer>();
 
-	/* Hand */
 	{
-		BATTLE_COLLIDER_DESC HandDesc{};
+		COLLIDER_DESC desc{};
+		desc.eType = COLLIDER_TYPE::SPHERE;
 
-		HandDesc.tagName = "Hand";
-		HandDesc.isAttachBone = true;
-		HandDesc.tagBone = "Eye01_A1";
-		HandDesc.pOwnerAnimator3D = pAnimator;
-		HandDesc.vAttackSize = _float3{ 3.f,3.f,3.f };
-		HandDesc.vTriggerSize = _float3{ 5.f,5.f,5.f };
+		auto pHandCore = Builder::Create_Object({ "Zero_Level","Proto_GameObject_HandCore" })
+			.Collider(desc)
+			.Build("Hand_Core");
 
-		if (FAILED(AttachBattleColliderObject(&HandDesc)))
-			return E_FAIL;
+		if (pHandCore)
+		{
+			pHandCore->Get_Component<CBoneFollower>()->Link_Bone(pAnimator, "Eye01_A1");
+			pObjectContainer->Add_Child(pHandCore, false);
+		}
 	}
 
-	/* Hand Sword */
 	{
-		BATTLE_COLLIDER_DESC HandSwordDesc{};
+		COLLIDER_DESC desc{};
+		desc.eType = COLLIDER_TYPE::BOX;
 
-		HandSwordDesc.tagName = "Hand_Sword";
-		HandSwordDesc.isAttachBone = true;
-		HandSwordDesc.tagBone = "Ctr_HSword";
-		HandSwordDesc.pOwnerAnimator3D = pAnimator;
-		HandSwordDesc.eAttackColliderType = COLLIDER_TYPE::BOX;
-		HandSwordDesc.eTriggerColliderType = COLLIDER_TYPE::BOX;
-		HandSwordDesc.vCenter = _float3{ 19.5f,0.f,0.f };
-		HandSwordDesc.vAttackSize = _float3{ 34.f,3.f,4.f };
-		HandSwordDesc.vTriggerSize = _float3{ 34.f,6.f,4.f };
+		auto pHandSword = Builder::Create_Object({ "Zero_Level","Proto_GameObject_HandSword" })
+			.Collider(desc)
+			.Build("Hand_Sword");
 
-		if (FAILED(AttachBattleColliderObject(&HandSwordDesc)))
-			return E_FAIL;
+		if (pHandSword)
+		{
+			pHandSword->Get_Component<CBoneFollower>()->Link_Bone(pAnimator, "Ctr_HSword");
+			pObjectContainer->Add_Child(pHandSword, false);
+		}
 	}
 
+	{
+		auto pBubble = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_hand_bubble.json")
+			.Build("Sacrifice_Hand_Bubble");
+		//pBubble->Stop();
+		pObjectContainer->Add_Child(pBubble, false);
+
+		_smatrix offsetMatrix = _smatrix::Identity;
+		offsetMatrix.Translation(_vector3(-4.f, 0.f, 0.f));
+		pBubble->AttachBone(pAnimator, "Ctr_Main", offsetMatrix);
+	}
 	return S_OK;
 }

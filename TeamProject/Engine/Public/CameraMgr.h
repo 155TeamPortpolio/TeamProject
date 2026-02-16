@@ -12,7 +12,7 @@ private:
     virtual ~CCameraMgr() DEFAULT;
 
 public:
-    void     Update(_float dt)                                    override;
+    void     Update(_float dt)                                override;
 
     void     Set_MainCam(CCamera* cam, _float blendSec = 0.f) override;
     void     Set_ShadowCam(CCamera* cam)                      override;
@@ -46,14 +46,14 @@ public:
 public:
     void     SetZoomPunch(_float amountDeg, _float attackSec = 0.020f, _float releaseSec = 0.100f) override { m_zoom.SetPunch(amountDeg, attackSec, releaseSec); }
     void     AddZoomPunch(_float amountDeg, _float attackSec = 0.020f, _float releaseSec = 0.100f) override { m_zoom.AddPunch(amountDeg, attackSec, releaseSec); }
-    void     ClearZoom(_float fadeOutSec = 0.f)                                                         override { m_zoom.Clear(fadeOutSec); }
+    void     ClearZoom(_float fadeOutSec = 0.f)                                                    override { m_zoom.Clear(fadeOutSec); }
 
 public:
     void     SetShakeType(_uint type, _float strength = 1.f) override { m_shake.Set(type, strength); }
     void     AddShakeType(_uint type, _float strength = 1.f) override { m_shake.Add(type, strength); }
 
-    void     SetZoomType(_uint type, _float strength = 1.f)   override { m_zoom.Set(type, strength); }
-    void     AddZoomType(_uint type, _float strength = 1.f)   override { m_zoom.Add(type, strength); }
+    void     SetZoomType(_uint type, _float strength = 1.f)  override { m_zoom.Set(type, strength); }
+    void     AddZoomType(_uint type, _float strength = 1.f)  override { m_zoom.Add(type, strength); }
 
     void     AddImpact(_uint shakeType = 0u, _uint zoomType = 0u, _float strength = 1.f) override;
 
@@ -103,12 +103,12 @@ private:
     };
     struct CamCache
     {
-        Matrix  view = Matrix::Identity;
-        Matrix  proj = Matrix::Identity;
+        Matrix  view    = Matrix::Identity;
+        Matrix  proj    = Matrix::Identity;
         Matrix  invView = Matrix::Identity;
         Matrix  invProj = Matrix::Identity;
-        Vector4 pos = {0.f, 0.f, 0.f, 1.f};
-        _float  farZ = 0.f;
+        Vector4 pos     = {0.f, 0.f, 0.f, 1.f};
+        _float  farZ    = 0.f;
     };
 
 private:

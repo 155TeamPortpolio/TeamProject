@@ -88,6 +88,8 @@
 #include "WaterWave.h"
 #include "UI_RenderTargetScreen.h"
 
+#include "Light.h"
+
 CTestLevel::CTestLevel(const string& LevelKey)
 	:CLevel(LevelKey),
 	m_pGameInstance{ CGameInstance::GetInstance() },
@@ -137,31 +139,20 @@ HRESULT CTestLevel::Awake()
 
 	//==================== Interactable ===============
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Portal", CPortal::Create());
-	
-	//============== Map ============================
-	//Ready_Map("Test_Level", "Zero_Worksite");
+
 	Ready_Map("Test_Level", "TrainingRoom");
 
-	/* Miyabi */
-	//pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Miyabi", CCorin::Create());
-	//CCT_DESC miyabiCCT;
-	//miyabiCCT.eGroup = COLLISION_GROUP::PLAYER;
-	//miyabiCCT.iCollisionMask = 0xFFFFFFFF;
-	////miyabiCCT.iCollisionMask = 0xFFFFFFFF & ~ENUM(COLLISION_GROUP::COMMON);
-	//miyabiCCT.bAutoFit = false;
-	//miyabiCCT.fHeight = 1.28f;
-	//miyabiCCT.fRadius = 0.2f;
-	//miyabiCCT.eGroup = COLLISION_GROUP::PLAYER;
-	////miyabiCCT.fBoundingMinY = -0.88f;
-	//miyabiCCT.vPos = { 0.f, 1.5f, 0.f };
-	//auto Miyabi = Builder::Create_Object({ "Test_Level", "Proto_GameObject_Miyabi" })
-	//	.Position(_float3(3.f, 0.f, 0.f))
-	//	.CharacterController(miyabiCCT)
-	//	.Build("Miyabi");
-	//objMgr->Add_Object(Miyabi, { "Test_Level", "Model_Layer" });
-	//
-	//m_miyabiHandle = Miyabi->Get_Handle();
+	auto pShadowCam = ObjectManager()->Find_Global(ENUM(GLOBAL_ID::ShadowCam));
+	auto pTransform = pShadowCam->Get_Component<CTransform>();
+	pTransform->Set_Pos(_float4(0.f, 100.f, 0.f, 1.f));
 
+	LIGHT_DESC lightDesc = {};
+	lightDesc.vLightPosition = _float4(0.f, 50.f, 0.f, 1.f);
+	lightDesc.vLightDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
+	lightDesc.vLightAmbient = _float4(1.f, 1.f, 1.f, 1.f); 
+	lightDesc.vLightSpecular = _float4(0.f, 0.f, 0.f, 1.f);
+	lightDesc.fLightIntensity = 1.f;
+	pShadowCam->Get_Component<CLight>()->Set_Desc(lightDesc, LIGHT_TYPE::DIRECTIONAL);
 
 	/* Enemy */
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_ThugBulkyEnforcer", CThugBulkyEnforcer::Create());
@@ -224,11 +215,10 @@ void CTestLevel::Update()
 	//}
 	if (InputDevice()->Key_Tap(VK_F5))
 	{
-		auto rushTrail = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
-			.Asset("sacrifice_rush_trail.json")
-			.Build("Rush");
+		auto pAttackSign = Builder::Create_Object({ G_GlobalLevelKey,"Proto_GameObject_AttackSign" })
+			.Build("AttackSign");
 		
-		ObjectManager()->Add_Object(rushTrail, { "Test_Level","Effect_Layer" });
+		ObjectManager()->Add_Object(pAttackSign, { "Test_Level","Effect_Layer" });
 	}
 	
 	// [`] 

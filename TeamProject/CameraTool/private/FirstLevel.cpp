@@ -65,7 +65,7 @@ HRESULT CFirstLevel::Awake()
 	auto camPanel = CCamPanel::Create(GUISystem()->Get_Context());
 	camPanel->SetCaptureTarget(static_cast<CCamObj*>(freeCam));
 	camPanel->SetSpaceRefCandidates({corinHandle, janeHandle, miyabiHandle});
-	camPanel->SetSpaceReference(miyabiHandle);
+	camPanel->SetSpaceReference(corinHandle);
 	GUISystem()->Register_Panel(camPanel);
 
 	return S_OK;

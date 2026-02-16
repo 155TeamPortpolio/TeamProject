@@ -385,6 +385,7 @@
     <ClInclude Include="..\public\Claymore_Idle.h" />
     <ClInclude Include="..\public\Claymore_Move.h" />
     <ClInclude Include="..\Public\DefilerAxe.h" />
+    <ClInclude Include="..\Public\DefilerLaser.h" />
     <ClInclude Include="..\Public\DefilerState_Other.h" />
     <ClInclude Include="..\Public\DefilerWall.h" />
     <ClInclude Include="..\Public\DefilerWeapon.h" />
@@ -399,6 +400,8 @@
     <ClInclude Include="..\Public\Giant_Idle.h" />
     <ClInclude Include="..\Public\Giant_Move.h" />
     <ClInclude Include="..\Public\Giant_Parried.h" />
+    <ClInclude Include="..\Public\Hand_Core.h" />
+    <ClInclude Include="..\Public\Hand_Sword.h" />
     <ClInclude Include="..\public\HealKit.h" />
     <ClInclude Include="..\Public\MiasmaDummyUnit.h" />
     <ClInclude Include="..\Public\MiasmaGrandierJaeger.h" />
@@ -469,6 +472,8 @@
     <ClInclude Include="..\Public\MiyabiState_SwitchInNormal.h" />
     <ClInclude Include="..\Public\MiyabiState_SwitchInParryAid.h" />
     <ClInclude Include="..\Public\MiyabiState_SwitchOut.h" />
+    <ClInclude Include="..\public\Room_Party.h" />
+    <ClInclude Include="..\public\Room_Scott.h" />
     <ClInclude Include="..\public\ThugBulkyEnforcer_Parried.h" />
     <ClInclude Include="..\Public\SoftDirectionalOutlineUI.h" />
     <ClInclude Include="..\Public\UI_PartyCard.h" />
@@ -476,10 +481,13 @@
     <ClInclude Include="..\Public\UI_PartyAvatar.h" />
     <ClInclude Include="..\Public\UI_PartySynergy.h" />
     <ClInclude Include="..\Public\UI_PartyEnterButton.h" />
-    <ClInclude Include="..\Public\UI_Clear.h" />
+    <ClInclude Include="..\Public\UI_ClearRT.h" />
     <ClInclude Include="..\Public\UI_Party.h" />
-    <ClInclude Include="..\Public\UI_RTVDraw.h" />
+    <ClInclude Include="..\Public\UI_ScreenRT.h" />
     <ClInclude Include="..\Public\UI_Switch.h" />
+    <ClInclude Include="..\Public\UI_SwitchGauge.h" />
+    <ClInclude Include="..\Public\UI_SwitchRole.h" />
+    <ClInclude Include="..\Public\UI_SwitchRT.h" />
     <ClInclude Include="..\Public\UI_TextButton.h" />
     <ClInclude Include="..\Public\StrikeJaeger.h" />
     <ClInclude Include="..\Public\StrikeJaeger_Attack.h" />
@@ -498,7 +506,7 @@
     <ClInclude Include="..\Public\UI_GachaTextGroup.h" />
     <ClInclude Include="..\Public\UI_GachaVideo.h" />
     <ClInclude Include="..\Public\UI_RenderTargetScreen.h" />
-    <ClInclude Include="..\Public\UI_Wipeout.h" />
+    <ClInclude Include="..\Public\UI_WipeoutRT.h" />
     <ClInclude Include="..\public\Water.h" />
     <ClInclude Include="..\public\WaterWave.h" />
     <ClInclude Include="..\public\WaterWaves.h" />
@@ -877,6 +885,7 @@
     <ClCompile Include="..\private\Claymore_Move.cpp" />
     <ClCompile Include="..\private\Claymore_Parried.cpp" />
     <ClCompile Include="..\Private\DefilerAxe.cpp" />
+    <ClCompile Include="..\Private\DefilerLaser.cpp" />
     <ClCompile Include="..\Private\DefilerState_Other.cpp" />
     <ClCompile Include="..\Private\DefilerWall.cpp" />
     <ClCompile Include="..\Private\DefilerWeapon.cpp" />
@@ -891,6 +900,8 @@
     <ClCompile Include="..\Private\Giant_Idle.cpp" />
     <ClCompile Include="..\Private\Giant_Move.cpp" />
     <ClCompile Include="..\Private\Giant_Parried.cpp" />
+    <ClCompile Include="..\Private\Hand_Core.cpp" />
+    <ClCompile Include="..\Private\Hand_Sword.cpp" />
     <ClCompile Include="..\private\HealKit.cpp" />
     <ClCompile Include="..\Private\MiasmaDummyUnit.cpp" />
     <ClCompile Include="..\Private\MiasmaGrandierJaeger.cpp" />
@@ -958,6 +969,8 @@
     <ClCompile Include="..\Private\MiyabiState_SwitchInNormal.cpp" />
     <ClCompile Include="..\Private\MiyabiState_SwitchInParryAid.cpp" />
     <ClCompile Include="..\Private\MiyabiState_SwitchOut.cpp" />
+    <ClCompile Include="..\private\Room_Party.cpp" />
+    <ClCompile Include="..\private\Room_Scott.cpp" />
     <ClCompile Include="..\private\ThugBulkyEnforcer_Parried.cpp" />
     <ClCompile Include="..\Private\SoftDirectionalOutlineUI.cpp" />
     <ClCompile Include="..\Private\UI_PartyCard.cpp" />
@@ -965,10 +978,13 @@
     <ClCompile Include="..\Private\UI_PartyAvatar.cpp" />
     <ClCompile Include="..\Private\UI_PartySynergy.cpp" />
     <ClCompile Include="..\Private\UI_PartyEnterButton.cpp" />
-    <ClCompile Include="..\Private\UI_Clear.cpp" />
+    <ClCompile Include="..\Private\UI_ClearRT.cpp" />
     <ClCompile Include="..\Private\UI_Party.cpp" />
-    <ClCompile Include="..\Private\UI_RTVDraw.cpp" />
+    <ClCompile Include="..\Private\UI_ScreenRT.cpp" />
     <ClCompile Include="..\Private\UI_Switch.cpp" />
+    <ClCompile Include="..\Private\UI_SwitchGauge.cpp" />
+    <ClCompile Include="..\Private\UI_SwitchRole.cpp" />
+    <ClCompile Include="..\Private\UI_SwitchRT.cpp" />
     <ClCompile Include="..\Private\UI_TextButton.cpp" />
     <ClCompile Include="..\Private\StrikeJaeger.cpp" />
     <ClCompile Include="..\Private\StrikeJaeger_Attack.cpp" />
@@ -987,7 +1003,7 @@
     <ClCompile Include="..\Private\UI_GachaTextGroup.cpp" />
     <ClCompile Include="..\Private\UI_GachaVideo.cpp" />
     <ClCompile Include="..\Private\UI_RenderTargetScreen.cpp" />
-    <ClCompile Include="..\Private\UI_Wipeout.cpp" />
+    <ClCompile Include="..\Private\UI_WipeoutRT.cpp" />
     <ClCompile Include="..\private\Water.cpp" />
     <ClCompile Include="..\private\WaterWave.cpp" />
     <ClCompile Include="..\private\WaterWaves.cpp" />

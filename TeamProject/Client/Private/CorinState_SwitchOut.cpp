@@ -10,6 +10,11 @@ void CCorinState_SwitchOut::Enter(CCorin* pOwner)
         .BlendDuration(0.25f)
         .Speed(1.f)
         .Apply();
+
+    pOwner->Stop_Effect("Corin_Saw_Slash0");
+    pOwner->Stop_Effect("Corin_Saw_Slash1");
+    pOwner->Stop_Effect("Corin_Ex_Saw_Slash0");
+    pOwner->Stop_Effect("Corin_Ultimate_Saw_Slash0");
 }
 
 void CCorinState_SwitchOut::Update(CCorin* pOwner, _float dt)

@@ -1038,9 +1038,6 @@
     <Filter Include="01. Level\05. Gacha">
       <UniqueIdentifier>{fa9bd871-fe4c-4859-8b99-9123ce93fc2d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03. Utility\06. FieldSystem\Room\05. Room_Gacha">
-      <UniqueIdentifier>{820f4014-89e1-411c-b031-be391e0f1e5e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. Level\04. Zero\Stage_Start">
       <UniqueIdentifier>{68bfc06d-7f7e-4232-b8f1-d9e74f644886}</UniqueIdentifier>
     </Filter>
@@ -1410,6 +1407,24 @@
     <Filter Include="02. GameObject\Object\Enemy\Elite\Giant\State\Parried">
       <UniqueIdentifier>{bc41c9e0-a786-45c2-8d45-4fbf00b4eab9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Boss\Sacrifice_Hand\Hand_Core">
+      <UniqueIdentifier>{ee43804d-e82d-45a4-b31f-911c8b215808}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Boss\Sacrifice_Hand\Hand_Sword">
+      <UniqueIdentifier>{d3e4f901-7bcc-4c40-8977-538c53fa3f17}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Boss\Defiler\DefilerLaser">
+      <UniqueIdentifier>{a3dbcf0a-50d0-46cb-8314-ddecf4f0d7fd}</UniqueIdentifier>
+    </Filter>  
+    <Filter Include="02. GameObject\UI\01. 2D\Switch">
+      <UniqueIdentifier>{6a5c26b7-37b6-408f-af08-4af4501f3518}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\Switch\Gauge">
+      <UniqueIdentifier>{91640d98-fa91-43a7-a04a-d4098b03f3e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\Switch\Role">
+      <UniqueIdentifier>{7c08dd8d-58df-4374-9d44-d1c0db631e0b}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02. GameObject\Object\Interactable\HealKit">
       <UniqueIdentifier>{8b1edd40-c12b-4e78-9bb4-7bbe13b2d7ba}</UniqueIdentifier>
     </Filter>
@@ -1427,6 +1442,15 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Npc\Background\Spawner">
       <UniqueIdentifier>{ead39d53-3d44-47f3-8122-bea1dda8f3cc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\06. FieldSystem\Room\06. Scott">
+      <UniqueIdentifier>{37049a35-fd6e-4b21-8d6e-d37b7a1560c0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\06. FieldSystem\Room\05. Gacha">
+      <UniqueIdentifier>{820f4014-89e1-411c-b031-be391e0f1e5e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\06. FieldSystem\Room\07. Party">
+      <UniqueIdentifier>{47d49842-2238-46dd-b61f-399b1b8d45e6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -2484,7 +2508,7 @@
       <Filter>01. Level\04. Zero\StageRouter</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Room_Gacha.h">
-      <Filter>03. Utility\06. FieldSystem\Room\05. Room_Gacha</Filter>
+      <Filter>03. Utility\06. FieldSystem\Room\05. Gacha</Filter>
     </ClInclude>
     <ClInclude Include="..\public\ZeroStage_Start.h">
       <Filter>01. Level\04. Zero\Stage_Start</Filter>
@@ -2648,13 +2672,13 @@
     <ClInclude Include="..\Public\UI_RenderTargetScreen.h">
       <Filter>02. GameObject\UI\02. 3D\Mesh\RenderTargetScreen</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\UI_RTVDraw.h">
+    <ClInclude Include="..\Public\UI_ScreenRT.h">
       <Filter>02. GameObject\UI\01. 2D\RTVDraw</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\UI_Switch.h">
+    <ClInclude Include="..\Public\UI_SwitchRT.h">
       <Filter>02. GameObject\UI\01. 2D\RTVDraw\Switch</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\UI_Wipeout.h">
+    <ClInclude Include="..\Public\UI_WipeoutRT.h">
       <Filter>02. GameObject\UI\01. 2D\RTVDraw\Wipeout</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\DefilerWeapon.h">
@@ -2699,7 +2723,7 @@
     <ClInclude Include="..\Public\BattleSystem_Panel.h">
       <Filter>03. Utility\11. Gui_Panel\02. BattleSystemPanel</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\UI_Clear.h">
+    <ClInclude Include="..\Public\UI_ClearRT.h">
       <Filter>02. GameObject\UI\01. 2D\RTVDraw\Clear</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\SoftDirectionalOutlineUI.h">
@@ -2756,6 +2780,24 @@
     <ClInclude Include="..\Public\Giant_Parried.h">
       <Filter>02. GameObject\Object\Enemy\Elite\Giant\State\Parried</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Hand_Core.h">
+      <Filter>02. GameObject\Object\Enemy\Boss\Sacrifice_Hand\Hand_Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Hand_Sword.h">
+      <Filter>02. GameObject\Object\Enemy\Boss\Sacrifice_Hand\Hand_Sword</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\DefilerLaser.h">
+      <Filter>02. GameObject\Object\Enemy\Boss\Defiler\DefilerLaser</Filter>
+    </ClInclude>  
+    <ClInclude Include="..\Public\UI_Switch.h">
+      <Filter>02. GameObject\UI\01. 2D\Switch</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_SwitchGauge.h">
+      <Filter>02. GameObject\UI\01. 2D\Switch\Gauge</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_SwitchRole.h">
+      <Filter>02. GameObject\UI\01. 2D\Switch\Role</Filter>
+    </ClInclude>
     <ClInclude Include="..\public\HealKit.h">
       <Filter>02. GameObject\Object\Interactable\HealKit</Filter>
     </ClInclude>
@@ -2767,6 +2809,12 @@
     </ClInclude>
     <ClInclude Include="..\Public\BackGroundSpawner.h">
       <Filter>02. GameObject\Object\Npc\Background\Spawner</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Room_Scott.h">
+      <Filter>03. Utility\06. FieldSystem\Room\06. Scott</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Room_Party.h">
+      <Filter>03. Utility\06. FieldSystem\Room\07. Party</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -3786,7 +3834,7 @@
       <Filter>01. Level\04. Zero\StageRouter</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Room_Gacha.cpp">
-      <Filter>03. Utility\06. FieldSystem\Room\05. Room_Gacha</Filter>
+      <Filter>03. Utility\06. FieldSystem\Room\05. Gacha</Filter>
     </ClCompile>
     <ClCompile Include="..\private\ZeroStage_Start.cpp">
       <Filter>01. Level\04. Zero\Stage_Start</Filter>
@@ -3947,13 +3995,13 @@
     <ClCompile Include="..\Private\UI_RenderTargetScreen.cpp">
       <Filter>02. GameObject\UI\02. 3D\Mesh\RenderTargetScreen</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\UI_RTVDraw.cpp">
+    <ClCompile Include="..\Private\UI_ScreenRT.cpp">
       <Filter>02. GameObject\UI\01. 2D\RTVDraw</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\UI_Switch.cpp">
+    <ClCompile Include="..\Private\UI_SwitchRT.cpp">
       <Filter>02. GameObject\UI\01. 2D\RTVDraw\Switch</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\UI_Wipeout.cpp">
+    <ClCompile Include="..\Private\UI_WipeoutRT.cpp">
       <Filter>02. GameObject\UI\01. 2D\RTVDraw\Wipeout</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\DefilerWeapon.cpp">
@@ -3998,7 +4046,7 @@
     <ClCompile Include="..\Private\BattleSystem_Panel.cpp">
       <Filter>03. Utility\11. Gui_Panel\02. BattleSystemPanel</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\UI_Clear.cpp">
+    <ClCompile Include="..\Private\UI_ClearRT.cpp">
       <Filter>02. GameObject\UI\01. 2D\RTVDraw\Clear</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\SoftDirectionalOutlineUI.cpp">
@@ -4055,6 +4103,24 @@
     <ClCompile Include="..\Private\Giant_Parried.cpp">
       <Filter>02. GameObject\Object\Enemy\Elite\Giant\State\Parried</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\Hand_Core.cpp">
+      <Filter>02. GameObject\Object\Enemy\Boss\Sacrifice_Hand\Hand_Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Hand_Sword.cpp">
+      <Filter>02. GameObject\Object\Enemy\Boss\Sacrifice_Hand\Hand_Sword</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\DefilerLaser.cpp">
+      <Filter>02. GameObject\Object\Enemy\Boss\Defiler\DefilerLaser</Filter>
+    </ClCompile>  
+    <ClCompile Include="..\Private\UI_Switch.cpp">
+      <Filter>02. GameObject\UI\01. 2D\Switch</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_SwitchGauge.cpp">
+      <Filter>02. GameObject\UI\01. 2D\Switch\Gauge</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_SwitchRole.cpp">
+      <Filter>02. GameObject\UI\01. 2D\Switch\Role</Filter>
+    </ClCompile>
     <ClCompile Include="..\private\HealKit.cpp">
       <Filter>02. GameObject\Object\Interactable\HealKit</Filter>
     </ClCompile>
@@ -4063,6 +4129,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\BackGroundSpawner.cpp">
       <Filter>02. GameObject\Object\Npc\Background\Spawner</Filter>
+ </ClCompile>
+    <ClCompile Include="..\private\Room_Scott.cpp">
+      <Filter>03. Utility\06. FieldSystem\Room\06. Scott</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Room_Party.cpp">
+      <Filter>03. Utility\06. FieldSystem\Room\07. Party</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

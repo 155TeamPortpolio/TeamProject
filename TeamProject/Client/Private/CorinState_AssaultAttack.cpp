@@ -53,9 +53,19 @@ void CCorinState_AssaultAttack::Update(CCorin* pOwner, _float dt)
 			pOwner->Begin_AttackCollider("Saw",
 				HitDesc()
 				.Type(HIT_TYPE::INTERVAL)
-				.Damage(pOwner->Get_AttackPower() * 5.475f * Helper::Get_Random_Float(1.f,1.5f)
+				.Damage(pOwner->Get_AttackPower() * 0.684f * Helper::Get_Random_Float(1.f,1.5f)
 					, DAMAGE_TYPE::HARD)
 				.Interval(0.05f)
+			);
+		}
+		else if (Event.Tag == "SawIntervalHard")
+		{
+			pOwner->Begin_AttackCollider("Saw",
+				HitDesc()
+				.Type(HIT_TYPE::INTERVAL)
+				.Damage(pOwner->Get_AttackPower() * 0.684f * Helper::Get_Random_Float(1.f, 1.5f)
+					, DAMAGE_TYPE::HARD)
+				.Interval(0.1f)
 			);
 		}
 		else if (Event.Tag == "SawEnd")
@@ -91,6 +101,8 @@ void CCorinState_Assault_Start::Enter(CCorin* pOwner)
 	pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "AssaultAid")
 		.Speed(0.8f)
 		.Apply();
+
+	pOwner->Play_Effect("Corin_Saw_Slash0", _vector3(0.f, 0.f, 0.f), _quaternion(0.f, 0.f, 0.f, 1.f));
 }
 
 void CCorinState_Assault_Start::Update(CCorin* pOwner, _float dt)
@@ -98,6 +110,20 @@ void CCorinState_Assault_Start::Update(CCorin* pOwner, _float dt)
 	pOwner->Process_RootMotion(dt,
 		ENUM(CCorin::ROOTMOTION_MASK::MOVE) |
 		ENUM(CCorin::ROOTMOTION_MASK::QUATERNION));
+
+	Update_Effects(pOwner);
+}
+
+void CCorinState_Assault_Start::Update_Effects(CCorin* pOwner)
+{
+	if (IsCrossAnimProgress(0.08f))
+		pOwner->Play_Effect("Corin_Normal_Slash0", _vector3(0.f, 1.f, 0.f), _quaternion(0.09f, -0.67f, 0.11f, 0.73f));
+	if (IsCrossAnimProgress(0.2f))
+		pOwner->Play_Effect("Corin_Normal_Slash1", _vector3(0.f, 1.f, 0.f), _quaternion(0.19f, 0.68f, 0.11f, -0.7f));
+	if (IsCrossAnimProgress(0.32f))
+		pOwner->Play_Effect("Corin_Normal_Slash2", _vector3(0.f, 1.f, 0.f), _quaternion(-0.07f, -0.56f, 0.17f, 0.81f));
+	if (IsCrossAnimProgress(0.49f))
+		pOwner->Play_Effect("Corin_Normal_Slash3", _vector3(0.f, 1.f, 0.f), _quaternion(0.67f, 0.3f, 0.63f, 0.27f));
 }
 
 void CCorinState_Assault_End::Enter(CCorin* pOwner)
@@ -105,6 +131,9 @@ void CCorinState_Assault_End::Enter(CCorin* pOwner)
 	pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "AssaultAid_End")
 		.Speed(1.2f)
 		.Apply();
+
+	pOwner->Stop_Effect("Corin_Saw_Slash0");
+	pOwner->Play_Effect("Corin_Assault_Explode", _vector3(0.f, 0.f, 1.5f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
 }
 
 void CCorinState_Assault_End::Update(CCorin* pOwner, _float dt)

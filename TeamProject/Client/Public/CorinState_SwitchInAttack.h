@@ -28,6 +28,10 @@ public:
 public:
     static CCorinState_SwitchInAttack_Start* Create() { return new CCorinState_SwitchInAttack_Start(); }
     virtual void Free() override { __super::Free(); }
+
+private:
+    void Update_Effects(CCorin* pOwner);
+
 };
 
 class CCorinState_SwitchInAttack_End : public IBaseState<CCorin>

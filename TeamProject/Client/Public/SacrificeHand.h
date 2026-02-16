@@ -61,11 +61,17 @@ public:
     void Active_SwordRimLight() { m_fSwordRimLightPower = 2.f; }
     void Deactive_SwordRimLight() { m_fSwordRimLightPower = 0.f; }
 
+    /* Collider */
+    void Active_HandCore();
+    void Deactive_HandCore();
+    void Active_Sword();
+    void Deactive_Sword();
+
 private:
     HRESULT Initialize_StateMachine();
     HRESULT Initialize_States();
     HRESULT Initialize_Transitions();
-    HRESULT Create_Colliders();
+    HRESULT Create_Children();
 
 private:
     CStateMachine<CSacrificeHand>* m_pStateMachine = { nullptr };

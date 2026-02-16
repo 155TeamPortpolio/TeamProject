@@ -104,6 +104,8 @@ private:
     HRESULT Initialize_Transitions();
     HRESULT Initialize_Effects();
     void Update_States(_float dt);
+    void Route_AnimEvent();
+    void Control_Sound(const string& event);
 
 private:
     CStateMachine<CSacrifice>* m_pStateMachine{};

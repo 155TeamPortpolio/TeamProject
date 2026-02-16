@@ -160,14 +160,12 @@ void CSacrificeState_Attack_Phase2::BuildPattern(CSacrifice* pOwner)
 			}
 		}
 	}
-	//blackBoard.stateQueue.clear();
-	//blackBoard.stateQueue.push_back("OverDrive_Attack01");
-	//blackBoard.stateQueue.push_back("OverDrive_Attack02");
-	//blackBoard.stateQueue.push_back("OverDrive_Attack03");
-	//blackBoard.iPatternCount = 0;
-	//blackBoard.stateQueue.push_back("Attack08_Phase2");
-	//blackBoard.stateQueue.push_back("Attack08_Phase2");
-	//blackBoard.stateQueue.push_back("Attack08_Phase2");
+	blackBoard.stateQueue.clear();
+	blackBoard.stateQueue.push_back("Attack_Charge_Start_Phase2");
+	blackBoard.stateQueue.push_back("Attack_Charge_Loop_Phase2");
+	blackBoard.stateQueue.push_back("Attack_Charge_U_Start_Phase2");
+	blackBoard.stateQueue.push_back("Attack_Charge_U_Loop_Phase2");
+	blackBoard.stateQueue.push_back("Attack_Charge_U_End_Phase2");
 
 	blackBoard.isRequestNext = true;
 }
@@ -1058,7 +1056,6 @@ void CSacrificeState_OverDrive_Release_Start_Phase2::Enter(CSacrifice* pOwner)
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("Monster_SacrificeBringer_Ani_P2_OverDrive_Charge_Start_New").Loop(false).Speed(1.2f).Apply();
 	
-	pOwner->Get_Component<CAudioSource>()->Slot("Sacrifice_Phase1_Laser_Attack.wav").Attribute3D(false).Loop(false).Play();
 	pOwner->OverDrive_Start();
 }
 

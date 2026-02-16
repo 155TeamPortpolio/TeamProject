@@ -5,6 +5,7 @@
 
 #include "Animator3D.h"
 #include "CharacterController.h"
+#include "AudioSource.h"
 
 void CClaymore_Chase::Enter(CClaymore* pOwner)
 {
@@ -33,6 +34,10 @@ void CClaymore_Chase::Update(CClaymore* pOwner, _float dt)
 
 	if (false == pOwner->GetStateMachine()->Get_Bool("Chase"))
 		pOwner->Idle();
+
+	for (const auto& Event : pOwner->Get_Component<CAnimator3D>()->Get_EventBus())
+		if (Event.Type == CLIP_EVENT_TYPE::SOUND)
+			pOwner->Get_Component<CAudioSource>()->Slot(Event.Tag).Attribute3D(true).Play();
 }
 
 void CClaymore_Chase::Exit(CClaymore* pOwner)

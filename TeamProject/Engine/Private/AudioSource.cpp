@@ -41,17 +41,35 @@ CAudioSource::AUDIO_SLOT& CAudioSource::SlotBuilder::Play()
 	return ownerSlot;
 }
 
-CAudioSource::CAudioSource()
-	:m_pAudioDevice(CGameInstance::GetInstance()->Get_AudioDev())
+CAudioSource::AUDIO_SLOT& CAudioSource::SlotBuilder::PlayUnique()
+{
+	if (!ownerSlot.pSound) return ownerSlot;
+	const bool needFadeIn = ownerSlot.hasPendingFadeIn;
+
+	ownerRef.PlayUnique(ownerSlot.Key);
+
+	if (needFadeIn && !ownerSlot.pChannels.empty())
+	{
+		ownerRef.FadeIn_Volume(ownerSlot.Key, ownerSlot.pendingFadeInSec, ownerSlot.pendingFadeInDst);
+		ownerSlot.hasPendingFadeIn = false;
+	}
+
+	return ownerSlot;
+}
+
+CAudioSource::CAudioSource() 
+	: m_pAudioDevice(AudioDevice())
 {
 }
 
 CAudioSource::CAudioSource(const CAudioSource& rhs)
-	:m_pAudioDevice(CGameInstance::GetInstance()->Get_AudioDev())
+	:m_pAudioDevice(AudioDevice())
 	, CComponent(rhs), m_Audios(rhs.m_Audios), m_Sequences(rhs.m_Sequences)
 {
-	for (auto& sound : m_Audios)
+	for (auto& sound : m_Audios) {
+		sound.second.pChannels.clear();
 		Safe_AddRef(sound.second.pSound);
+	}
 }
 
 CAudioSource::~CAudioSource()
@@ -483,6 +501,27 @@ void CAudioSource::Play(const string& soundKey, _bool continuePlay, _bool startP
 
 	slot.hasStopScheduled = false;
 	slot.stopDspClock = 0;
+}
+
+void CAudioSource::PlayUnique(const string& soundKey)
+{
+	auto it = m_Audios.find(soundKey);
+	if (it == m_Audios.end()) return;
+
+	AUDIO_SLOT& slot = it->second;
+	if (!slot.pSound) return;
+
+	auto Channels = slot.pChannels;
+	for (auto& channel : Channels)
+	{
+		_bool isPlayingAny = false;
+		channel->isPlaying(&isPlayingAny);
+
+		if (isPlayingAny)
+			return;
+	}
+
+	Play(soundKey, false, false);
 }
 
 void CAudioSource::Update_Audio(AUDIO_SLOT& slot)

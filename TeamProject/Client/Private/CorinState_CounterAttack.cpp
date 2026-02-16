@@ -29,11 +29,15 @@ void CCorinState_CounterAttack::Enter(CCorin* pOwner)
 	m_pSubStateMachine->Set_Bool("ReserveNormal", false);
 	pOwner->Lock_Move();
 	pOwner->Push_Invincible();
+	m_eType = DAMAGE_TYPE::NORMAL;
 	__super::Enter(pOwner);
 }
 
 void CCorinState_CounterAttack::Update(CCorin* pOwner, _float dt)
 {
+	if (IsCrossAnimProgress(0.7f))
+		m_eType = DAMAGE_TYPE::HARD;
+
 	for (const auto& Event : pOwner->Get_Animator()->Get_EventBus())
 	{
 		if (Event.Type != CLIP_EVENT_TYPE::NOTIFY) continue;
@@ -42,8 +46,8 @@ void CCorinState_CounterAttack::Update(CCorin* pOwner, _float dt)
 			pOwner->Begin_AttackCollider("Saw",
 				HitDesc()
 				.Type(HIT_TYPE::INTERVAL)
-				.Damage(pOwner->Get_AttackPower() * 2.712f * Helper::Get_Random_Float(1.f, 1.5f)
-					, DAMAGE_TYPE::HARD)
+				.Damage(pOwner->Get_AttackPower() * 0.271f * Helper::Get_Random_Float(1.f, 1.5f)
+					, m_eType)
 				.Interval(0.05f)
 				.Charge(5.f, 50.f)
 			);
@@ -87,6 +91,8 @@ void CCorinState_Counter_Start::Enter(CCorin* pOwner)
 	pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_Counter")
 		.Speed(1.5f)
 		.Apply();
+
+	pOwner->Play_Effect("Corin_Saw_Slash0", _vector3(0.f, 0.f, 0.f), _quaternion(0.f, 0.f, 0.f, 1.f));
 }
 
 void CCorinState_Counter_Start::Update(CCorin* pOwner, _float dt)
@@ -94,6 +100,14 @@ void CCorinState_Counter_Start::Update(CCorin* pOwner, _float dt)
 	pOwner->Process_RootMotion(dt,
 		ENUM(CCorin::ROOTMOTION_MASK::MOVE) |
 		ENUM(CCorin::ROOTMOTION_MASK::QUATERNION));
+
+	Update_Effects(pOwner);
+}
+
+void CCorinState_Counter_Start::Update_Effects(CCorin* pOwner)
+{
+	if (IsCrossAnimProgress(0.3f))
+		pOwner->Play_Effect("Corin_Normal2_Slash0", _vector3(0.f, 0.2f, 0.f), _quaternion(0.09f, -0.67f, 0.11f, 0.73f));
 }
 
 void CCorinState_Counter_Explode::Enter(CCorin* pOwner)
@@ -102,6 +116,9 @@ void CCorinState_Counter_Explode::Enter(CCorin* pOwner)
 	pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_Counter_Explode")
 		.Speed(1.5f)
 		.Apply();
+
+	pOwner->Stop_Effect("Corin_Saw_Slash0");
+	pOwner->Play_Effect("Corin_Ex_Explode", _vector3(0.1f, 0.7f, 1.3f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
 }
 
 void CCorinState_Counter_Explode::Update(CCorin* pOwner, _float dt)

@@ -73,8 +73,6 @@ void CSacrificeState_Evade::Update(CSacrifice* pOwner, _float dt)
 		CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(pEffect, { "Test_Level","Effect_Layer" });
 		CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(pRockParticle, { "Test_Level","Effect_Layer" });
 
-		pOwner->Get_Component<CAudioSource>()->Slot("Sacrifice_Evade.wav").Attribute3D(true).Loop(false).Play();
-
 		m_IsSpawnEffect = true;
 	}
 }
