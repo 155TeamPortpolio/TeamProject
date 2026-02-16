@@ -454,20 +454,24 @@ void CBattleFXFlow::StartVfx_Switch()
 void CBattleFXFlow::StartVfx_WipeOut()
 {
 	Clear(false);
-	ObjectManager()->Get_Layer({ "Test_Level","PlacedObject_Layer" })->Set_RenderState(false);
 
 	auto& preset = m_BattleVFXData[ENUM(BATTLE_VFX_TYPE::WIPEOUT)];
 	CPostRenderer* postRenderer = RenderSystem()->GetPostRenderer();
 
 	const _float totalDuration = max(preset.fVFXDuration, 0.01f);
+	const _float blurDuration = min(preset.fBlurDuration, totalDuration);
+	(void)blurDuration;
 
 	auto defaultNoiseTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, "Eff_Noise_052.png");
 	using NoiseTextureType = decltype(defaultNoiseTexture);
+	auto ChooseGlitchEase = [](_float glitchDuration)
+		{
+			if (glitchDuration <= 0.08f) return EaseType::OutQuad;
+			if (glitchDuration <= 0.18f) return EaseType::OutCubic;
+			return  EaseType::OutExpo;
+		};
 
-	// -------------------------
-	// Glitch 호출 람다 (기존 그대로)
-	// -------------------------
-	auto RequestGlitch = [postRenderer](_float glitchIntensity, _float glitchDuration, NoiseTextureType noiseTexture)
+	auto RequestGlitch = [postRenderer, ChooseGlitchEase](_float glitchIntensity, _float glitchDuration, NoiseTextureType noiseTexture)
 		{
 			if (!postRenderer) return;
 			if (!noiseTexture) return;
@@ -476,26 +480,22 @@ void CBattleFXFlow::StartVfx_WipeOut()
 				->SetDuration(glitchDuration)
 				->SetIntensity(glitchIntensity)
 				->SetNoiseTexture(noiseTexture)
-				->SetEaseType(EaseType::OutQuart)
-				->SetEnable(true);
-		};
-
-	// -------------------------
-	// Saturation 호출 람다 (추가)
-	// -------------------------
-	auto RequestSaturation = [postRenderer](_float saturationIntensity, _float saturationDuration)
-		{
-			if (!postRenderer) return;
-
-			postRenderer->GetCommand<CSaturationCommand>()
-				->SetIntensity(saturationIntensity)
-				->SetSaturationType(ENUM(SATURATIONTYPE::SKINNED))
-				->SetDuration(saturationDuration)
-				->SetEaseType(EaseType::OutBack)
+				->SetEaseType(ChooseGlitchEase(glitchDuration))
 				->SetEnable(true);
 		};
 
 	AddParallelTimeScaleAll(preset);
+
+	AddCall([this, preset, postRenderer]() {
+		if (!postRenderer) return;
+
+		postRenderer->GetCommand<CSaturationCommand>()
+			->SetIntensity(1.f)
+			->SetSaturationType(ENUM(SATURATIONTYPE::SKINNED))
+			->SetDuration(preset.fVFXDuration)
+			->SetEaseType(EaseType::OutBack)
+			->SetEnable(true);
+		});
 
 	AddCall([this]() {
 		CamDirector()->BeginWipeOut();
@@ -503,21 +503,12 @@ void CBattleFXFlow::StartVfx_WipeOut()
 		UIDirector()->Hide_HUD(CUIDirector::BATTLE);
 		});
 
-	// (옵션) 시작 시 기본 새튜레이트를 한번 걸고 싶으면 여기서 호출
-	// 단, CSaturationCommand가 "매 호출이 덮어쓰기"라면 이후 키에서 값이 바뀐다.
-	AddCall([RequestSaturation, preset]() mutable {
-		RequestSaturation(1.f, preset.fVFXDuration);
-		});
-
-	// -------------------------
-	// 글리치 키 (그대로 유지)
-	// -------------------------
 	struct GlitchKeySec
 	{
-		_float timeSec;
-		_float intensity;
-		_float durSec;
-		const char* noiseKey;
+		_float timeSec;      // 발동 시점(초)
+		_float intensity;    // 강도
+		_float durSec;       // 지속 시간(초)
+		const char* noiseKey; // 노이즈 텍스처 키(선택)
 	};
 
 	const GlitchKeySec glitchKeys[] =
@@ -536,103 +527,42 @@ void CBattleFXFlow::StartVfx_WipeOut()
 		{ 4.35f, 6.2f, 0.26f, "Eff_Noise_086_LKJ_01.png" },
 	};
 
-	// -------------------------
-	// 새튜레이트 키(추가) : 글리치 사이사이에 펄스 넣기
-	// -------------------------
-	struct SaturationKeySec
-	{
-		_float timeSec;
-		_float intensity;
-		_float durSec;
-	};
-
-	const SaturationKeySec saturationKeys[] =
-	{
-		{ 0.00f, 1.35f, 0.10f },
-		{ 0.32f, 1.15f, 0.18f },
-		{ 1.32f, 1.40f, 0.22f },
-		{ 2.35f, 1.20f, 0.16f },
-		{ 3.50f, 1.30f, 0.20f },
-		{ 4.35f, 1.55f, 0.25f },
-	};
-
-	const _uint glitchKeyCount = (_uint)(sizeof(glitchKeys) / sizeof(glitchKeys[0]));
-	const _uint saturationKeyCount = (_uint)(sizeof(saturationKeys) / sizeof(saturationKeys[0]));
-
-	// -------------------------
-	// 핵심: 두 키를 "같은 타임라인"에서 merge
-	// -------------------------
-	_uint glitchIndex = 0;
-	_uint saturationIndex = 0;
-
 	_float accumulatedTimeSec = 0.f;
+	const _uint glitchKeyCount = (_uint)(sizeof(glitchKeys) / sizeof(glitchKeys[0]));
 
-	while (glitchIndex < glitchKeyCount || saturationIndex < saturationKeyCount)
+	for (_uint keyIndex = 0; keyIndex < glitchKeyCount; ++keyIndex)
 	{
-		const _float nextGlitchTime =
-			(glitchIndex < glitchKeyCount)
-			? clamp(glitchKeys[glitchIndex].timeSec, 0.f, totalDuration)
-			: 1e9f;
-
-		const _float nextSaturationTime =
-			(saturationIndex < saturationKeyCount)
-			? clamp(saturationKeys[saturationIndex].timeSec, 0.f, totalDuration)
-			: 1e9f;
-
-		const _float targetTimeSec = (nextGlitchTime < nextSaturationTime) ? nextGlitchTime : nextSaturationTime;
-
+		const _float targetTimeSec = clamp(glitchKeys[keyIndex].timeSec, 0.f, totalDuration);
 		const _float waitTimeSec = max(0.f, targetTimeSec - accumulatedTimeSec);
+
 		AddWait(waitTimeSec);
 		accumulatedTimeSec += waitTimeSec;
 
-		// 같은 시점이면 둘 다 발동되게(부동소수 오차 대비)
-		const _float timeEpsilon = 1e-4f;
+		const _float glitchIntensity = glitchKeys[keyIndex].intensity;
+		const _float glitchDurationSec = max(0.01f, min(glitchKeys[keyIndex].durSec, totalDuration));
 
-		if (glitchIndex < glitchKeyCount && fabsf(nextGlitchTime - targetTimeSec) <= timeEpsilon)
-		{
-			const _float glitchIntensity = glitchKeys[glitchIndex].intensity;
-			const _float glitchDurationSec = max(0.01f, min(glitchKeys[glitchIndex].durSec, totalDuration));
+		// 키에 noiseKey가 있으면 그걸 로드, 없으면 기본 텍스처 사용
+		const char* noiseKeyForThis = glitchKeys[keyIndex].noiseKey;
+		NoiseTextureType noiseTextureForThis =
+			(noiseKeyForThis && noiseKeyForThis[0] != '\0')
+			? ResourceManager()->Load_Texture(G_GlobalLevelKey, noiseKeyForThis)
+			: defaultNoiseTexture;
 
-			const char* noiseKeyForThis = glitchKeys[glitchIndex].noiseKey;
-			NoiseTextureType noiseTextureForThis =
-				(noiseKeyForThis && noiseKeyForThis[0] != '\0')
-				? ResourceManager()->Load_Texture(G_GlobalLevelKey, noiseKeyForThis)
-				: defaultNoiseTexture;
-
-			AddCall([RequestGlitch, glitchIntensity, glitchDurationSec, noiseTextureForThis]() mutable
-				{
-					RequestGlitch(glitchIntensity, glitchDurationSec, noiseTextureForThis);
-				});
-
-			++glitchIndex;
-		}
-
-		if (saturationIndex < saturationKeyCount && fabsf(nextSaturationTime - targetTimeSec) <= timeEpsilon)
-		{
-			const _float saturationIntensity = saturationKeys[saturationIndex].intensity;
-			const _float saturationDurationSec = max(0.01f, min(saturationKeys[saturationIndex].durSec, totalDuration));
-
-			AddCall([RequestSaturation, saturationIntensity, saturationDurationSec]() mutable
-				{
-					RequestSaturation(saturationIntensity, saturationDurationSec);
-				});
-
-			++saturationIndex;
-		}
+		AddCall([RequestGlitch, glitchIntensity, glitchDurationSec, noiseTextureForThis]() mutable
+			{
+				RequestGlitch(glitchIntensity, glitchDurationSec, noiseTextureForThis);
+			});
 	}
 
-	// 타임라인 끝까지 채우기
 	if (accumulatedTimeSec < totalDuration)
 		AddWait(totalDuration - accumulatedTimeSec);
 
-	// 정리
 	AddWait(preset.fVFXDuration);
 	AddCall([this, preset]() {
 		m_BattleVFX.fCurPos = 0.f;
 		m_BattleVFX.vNowColor = {};
 		m_BattleVFX.isRunning = false;
 		CamDirector()->EndWipeOut();
-		ObjectManager()->Get_Layer({ "Test_Level","PlacedObject_Layer" })->Set_RenderState(true);
 		});
 
 	Start(nullptr);
