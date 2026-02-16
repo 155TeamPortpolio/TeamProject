@@ -70,9 +70,9 @@ public:
             EaseType rollEase = EaseType::InOutSine;
             EaseType recoverRollEase = EaseType::InOutSine;
 
-            _int   fovWaveCount = 4;
-            _float fovWaveAmpDeg = 3.f;
-            _float fovBiasDeg = 15.f;
+            _int   fovWaveCount = 3;
+            _float fovWaveAmpDeg = 5.f;
+            _float fovBiasDeg = 30.f;
 
              _float impactStartYawExtraDeg = 30.f;
         };

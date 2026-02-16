@@ -511,16 +511,27 @@ Vector3 CamParryController::ExtFromPivotWorld(const Vector3& pivotWorld) const
 
 _float CamParryController::EvalImpactFov(_float u, _float close01) const
 {
-    const _float env = sinf(XM_PI * u);
-    const _float wave = sinf(2.f * XM_PI * (_float)tune.impact.fovWaveCount * u);
+    u = clamp(u, 0.f, 1.f);
 
-    const _float bias = -tune.impact.fovBiasDeg * close01 * env;
-    const _float fov = m_fovBase + bias + tune.impact.fovWaveAmpDeg * wave * env;
+    const _float tSec = u * max(tune.common.impactSec, 0.0001f);
+
+    const _float k = 1.4f; 
+    const _float decay = expf(-k * tSec);
+
+    const _float hz = 8.f; 
+    const _float osc = sinf(2.f * XM_PI * hz * tSec);
+
+    const _float bias = -tune.impact.fovBiasDeg * close01 * decay;
+
+    const _float wave = tune.impact.fovWaveAmpDeg * osc * decay;
+
+    const _float fov = m_fovBase + bias + wave;
 
     const _float minFov = 8.f;
     const _float maxFov = 120.f;
     return clamp(fov, minFov, maxFov);
 }
+
 
 void CamParryController::ApplyImpactFov(_float u, _float close01)
 {
