@@ -3,6 +3,7 @@
 
 #include "GameInstance.h"
 #include "ObjectContainer.h"
+#include "AudioSource.h"
 #include "Child.h"
 #include "StaticModel.h"
 #include "Material.h"
@@ -136,6 +137,9 @@ HRESULT CGachaStage::Initialize_Prototype(vector<GACHA_RESULT_DESC>* Desc)
 
 	m_pResultDesc = Desc;
 
+	Add_Component<CAudioSource>();
+	Get_Component<CAudioSource>()->SoundFolder(G_GlobalLevelKey, "../Bin/Resources/Gacha/Sound/");
+
     return S_OK;
 }
 
@@ -195,6 +199,11 @@ void CGachaStage::Update(_float dt)
 
 		CUIDirector::GetInstance()->Hide_GachaLabel();
 		SetMiddleLightEffect(_float4(1.f, 1.f, 1.f, 1.f), _float4(0.1f, 0.1f, 0.1f, 1.f), 1.f);
+
+		if ((*m_pResultDesc)[m_iIndex].Type == GachaType::Agent)
+			Get_Component<CAudioSource>()->Slot("GachaAgent.wav").Play();
+		else
+			Get_Component<CAudioSource>()->Slot("GachaEngine.wav").Play();
 	}
 }
 
