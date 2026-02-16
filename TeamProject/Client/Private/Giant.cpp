@@ -64,6 +64,8 @@ HRESULT CGiant::Initialize_Prototype()
 
 HRESULT CGiant::Initialize(INIT_DESC* pArg)
 {
+	m_eEnemyClass = ENEMY_CLASS::ELITE;
+
 	__super::Initialize(pArg);
 
 	auto pAnimator = Get_Component<CAnimator3D>();
@@ -78,6 +80,8 @@ HRESULT CGiant::Initialize(INIT_DESC* pArg)
 
 	if (FAILED(Initialize_StateMachine()))
 		return E_FAIL;
+
+	Get_Component<CCharacterController>()->Set_StepOffset(0.01f);
 
 	return S_OK;
 }
@@ -117,6 +121,8 @@ void CGiant::Render_GUI()
 	float childWidth = ImGui::GetContentRegionAvail().x;
 	const float textLineHeight = ImGui::GetTextLineHeightWithSpacing();
 	const float childHeight = (textLineHeight * 5) + (ImGui::GetStyle().WindowPadding.y * 2);
+	
+	GUI_DebugButton();
 
 #pragma region Component Inspector
 	if (ImGui::TreeNode("Inspector##ThugBulkyInspector")) {
@@ -124,7 +130,6 @@ void CGiant::Render_GUI()
 		ImGui::TreePop();
 	}
 #pragma endregion
-
 
 #pragma region Status
 	ImGui::SeparatorText("Status");
@@ -156,59 +161,81 @@ void CGiant::Render_GUI()
 
 #pragma region CheckState
 	if (ImGui::TreeNode("Test State##ThugAssaulterCheckState")) {
-		//ImGui::BeginChild("State##ThugBulkyEnforcerStatus", ImVec2{ 0, childHeight }, true);
 
 		if (ImGui::TreeNode("AttackState##ThugAssaulterTestState_Attack"))
 		{
-			if (ImGui::Button(u8"1. Attack01"))
+			_bool	isClicked = false;
+			_int	iClickedIndex = {};
+
+			if (ImGui::Button("Attack1,"))
 			{
-				m_pStateMachine->Set_Int("AttackPattern", 1);
+				isClicked = true;
+				iClickedIndex = 1;
+			}
+			if (ImGui::Button("Attack2,"))
+			{
+				isClicked = true;
+				iClickedIndex = 2;
+			}
+			if (ImGui::Button("Attack2_1,"))
+			{
+				isClicked = true;
+				iClickedIndex = 3;
+			}
+			if (ImGui::Button("Attack2_Explode,"))
+			{
+				isClicked = true;
+				iClickedIndex = 4;
+			}
+			if (ImGui::Button("Attack3,"))
+			{
+				isClicked = true;
+				iClickedIndex = 5;
+			}
+			if (ImGui::Button("Attack3_HitWall,"))
+			{
+				isClicked = true;
+				iClickedIndex = 6;
+			}
+			if (ImGui::Button("Attack4,"))
+			{
+				isClicked = true;
+				iClickedIndex = 7;
+			}
+			if (ImGui::Button("Attack5,"))
+			{
+				isClicked = true;
+				iClickedIndex = 8;
+			}
+			//if (ImGui::Button("Attack6_AttackBack,"))
+			//{
+			//	isClicked = true;
+			//	iClickedIndex = 9;
+			//}
+			//if (ImGui::Button("Attack7,"))
+			//{
+			//	isClicked = true;
+			//	iClickedIndex = 10;
+			//}
+			//if (ImGui::Button("Attack7_Jump,"))
+			//{
+			//	isClicked = true;
+			//	iClickedIndex = 11;
+			//}
+			//if (ImGui::Button("Attack7_Revenge"))
+			//{
+			//	isClicked = true;
+			//	iClickedIndex = 1;
+			//}
+
+			if (isClicked)
+			{
+				m_pStateMachine->Set_Int("AttackPattern", iClickedIndex);
 				m_pStateMachine->Set_Trigger("Idle_To_Attack");
 			}
-			if (ImGui::Button(u8"2. Attack02"))
-			{
-				m_pStateMachine->Set_Int("AttackPattern", 2);
-				m_pStateMachine->Set_Trigger("Idle_To_Attack");
-			}
-			if (ImGui::Button(u8"3. Attack03"))
-			{
-				m_pStateMachine->Set_Int("AttackPattern", 3);
-				m_pStateMachine->Set_Trigger("Idle_To_Attack");
-			}
-			ImGui::TreePop();
-		}
-		if (ImGui::TreeNode("Death##ThugAssaulterTestDeath"))
-		{
-			if (ImGui::Button("Death Front"))
-				m_pStateMachine->Change_State("Death");
-
-			if (ImGui::Button("Death Back"))
-			{
-				m_pStateMachine->Set_Bool("DeathBack", true);
-				m_pStateMachine->Change_State("Death");
-			}
 
 			ImGui::TreePop();
 		}
-		if (ImGui::TreeNode("Groggy&Hit##ThugAssaulterTestGroggy&Hit"))
-		{
-			if (ImGui::Button("Increase Groggy value 30"))
-				m_tStatus.iGroggyValue += 30;
-
-			if (ImGui::Button("Hit"))
-				TakeDamage(DAMAGE_TYPE::NORMAL, 20.f);
-
-			if (ImGui::Button("Parried"))
-				Parried();
-
-			if (ImGui::Button("Execute"))
-				m_tStatus.iNowHP -= m_tStatus.iMaxHP;
-
-
-
-			ImGui::TreePop();
-		}
-
 		ImGui::TreePop();
 	}
 #pragma endregion
@@ -222,15 +249,6 @@ void CGiant::Render_GUI()
 	ImGui::PopID();
 }
 
-void CGiant::OnPooledAcquire(INIT_DESC* pArg)
-{
-	Initialize(pArg);
-}
-
-void CGiant::OnPooledRelease()
-{
-}
-
 void CGiant::Parried()
 {
 	if ("Attack" != m_pStateMachine->Get_CurrentStateName() || false == m_isParryEnable)
@@ -238,24 +256,47 @@ void CGiant::Parried()
 
 	__super::Parried();
 
-	m_pStateMachine->Change_State("Parried");
+	if (false == m_isParryDontStop)
+		m_pStateMachine->Change_State("Parried");
+
 	SetOnAttack(false, ATTACK_SIDE::NONE); 
+	SetBattleColliderObject("Weapon_L", BATTLE_COLTYPE::ATTACK, false);
+	SetBattleColliderObject("Weapon_R", BATTLE_COLTYPE::ATTACK, false);
+}
+
+void CGiant::SetOnAttack(_bool is, ATTACK_SIDE eSide)
+{
+	__super::SetOnAttack(is, eSide);
+
+	m_isParryDontStop = false;
 }
 
 HRESULT CGiant::Ready_Children(INIT_DESC* pArg)
 {
-	BATTLE_COLLIDER_DESC WeaponDesc = {};
+	{
+		BATTLE_COLLIDER_DESC WeaponLDesc = {};
 
-	WeaponDesc.tagName = "Weapon";
-	WeaponDesc.isAttachBone = true;
-	WeaponDesc.tagBone = "Bip001_L_Forearm";
-	WeaponDesc.pOwnerAnimator3D = Get_Component<CAnimator3D>();
-	WeaponDesc.eAttackColliderType = COLLIDER_TYPE::BOX;
-	WeaponDesc.vCenter = { 0.8f, 0.f, 0.f };
-	WeaponDesc.vAttackSize = { 1.8f, 0.3f, 0.3f };
+		WeaponLDesc.tagName = "Weapon_L";
+		WeaponLDesc.isAttachBone = true;
+		WeaponLDesc.tagBone = "Bip001_L_Hand";
+		WeaponLDesc.pOwnerAnimator3D = Get_Component<CAnimator3D>();
+		WeaponLDesc.vAttackSize = { 2.f, 0.3f, 0.3f };
 
-	if (FAILED(AttachBattleColliderObject(&WeaponDesc)))
-		return E_FAIL;
+		if (FAILED(AttachBattleColliderObject(&WeaponLDesc)))
+			return E_FAIL;
+	}
+	{
+		BATTLE_COLLIDER_DESC WeaponRDesc = {};
+
+		WeaponRDesc.tagName = "Weapon_R";
+		WeaponRDesc.isAttachBone = true;
+		WeaponRDesc.tagBone = "Bip001_R_Hand";
+		WeaponRDesc.pOwnerAnimator3D = Get_Component<CAnimator3D>();
+		WeaponRDesc.vAttackSize = { 2.f, 0.3f, 0.3f };
+
+		if (FAILED(AttachBattleColliderObject(&WeaponRDesc)))
+			return E_FAIL;
+	}
 
 	Create_AttackSign("Bip001_Head");
 	Create_UIEnemyStatus("Bip001_Spine2");
@@ -307,7 +348,7 @@ void CGiant::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER chara
 
 	if ("Groggy" == m_pStateMachine->Get_CurrentStateName())
 	{
-		Get_Component<CAnimator3D>()->Set_Animation(1, "Claymore_Ani_Hit_Stay")
+		Get_Component<CAnimator3D>()->Set_Animation(1, "Giant_Ani_Hit_Stay")
 			.LayerBlend(1.f, 0.f, 1.f, EaseType::Linear)
 			.Loop(false)
 			.Apply();
@@ -320,7 +361,7 @@ void CGiant::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER chara
 	}
 	else
 	{
-		Get_Component<CAnimator3D>()->Set_Animation(1, "Claymore_Ani_Hit_Stay")
+		Get_Component<CAnimator3D>()->Set_Animation(1, "Giant_Ani_Hit_Stay")
 			.LayerBlend(1.f, 0.f, 1.f, EaseType::Linear)
 			.Loop(false)
 			.Apply();
@@ -346,7 +387,7 @@ HRESULT CGiant::Initialize_StateMachine()
 	m_pStateMachine->Set_DefaultState("Born");
 	m_pStateMachine->Initialize(this);
 
-	Get_Component<CAnimator3D>()->Set_Animation("Monster_Claymore_Ani_Born")
+	Get_Component<CAnimator3D>()->Set_Animation("Giant_Ani_Born")
 		.Apply();
 
 	return S_OK;
@@ -390,13 +431,16 @@ HRESULT CGiant::Initialize_Transitions()
 HRESULT CGiant::Ready_Rules()
 {
 	// x = Idle에서 다음 상태로 넘어가는 쿨타임, y = dt 더한 타이머용
-	m_vIdleTime = { 1.f, 0.f };
+	m_vIdleTime = { 0.2f, 0.f };
 
-	m_tHysteriesis.fEvadeEnter = 2.f;
-	m_tHysteriesis.fComboEnter = 3.f;
-	m_tHysteriesis.fComboExit = 4.5f;
-	m_tHysteriesis.fChaseEnter = 7.f;
-	m_tHysteriesis.fChaseExit = 5.f;
+	// 생각보다 가까움. 다시짜자
+	// 제일 가까이 붙으면 1.5f
+	
+	m_tHysteriesis.fEvadeEnter = 3.f;
+	m_tHysteriesis.fComboEnter = 4.f;		// Attack1, Attack2
+	m_tHysteriesis.fComboExit = 12.f;		// Attack2_1, Attack3
+	m_tHysteriesis.fChaseEnter = 13.f;
+	m_tHysteriesis.fChaseExit = 8.f; ;		//  Attack2_Explode, Attack3, Attack4, Attack5
 
 	return S_OK;
 }
@@ -472,4 +516,11 @@ void CGiant::CheckDistanceFromPlayer()
 	if (true == m_pStateMachine->Get_Bool("Chase") &&
 		m_tTargetingInfo.fDistance <= m_tHysteriesis.fChaseExit)
 		m_pStateMachine->Set_Bool("Chase", false);
+}
+
+void CGiant::ManageAttackHistory()
+{
+	_uint iSize = static_cast<_uint>(m_AttackHistory.size());
+	if (5 <= iSize)
+		m_AttackHistory.pop_back();
 }
