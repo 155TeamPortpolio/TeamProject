@@ -157,6 +157,12 @@ void CCameraMgr::ApplyFov(_float dt)
     m_outputPose.lens.fov = fov;
 }
 
+void CCameraMgr::ApplyNearFarOverrides()
+{
+    if (m_overrideNear) m_outputPose.lens.nearZ = m_nearOverride;
+    if (m_overrideFar)  m_outputPose.lens.farZ  = m_farOverride;
+}
+
 CCameraMgr::CamPoseFrame CCameraMgr::CapturePose(CCamera* cam) const
 {
     CamPoseFrame pose{};
@@ -281,8 +287,7 @@ void CCameraMgr::Update(_float dt)
             CamPoseFrame fromPose = m_blendFrom;
 
             auto fromCam = ResolveCam(m_blendFromObj);
-            if (fromCam)
-                fromPose = CapturePose(fromCam);
+            if (fromCam) fromPose = CapturePose(fromCam);
 
             m_outputPose = BlendPose(fromPose, targetPose, t);
         }
@@ -299,12 +304,13 @@ void CCameraMgr::Update(_float dt)
     m_outputPose.pos += posDelta;
 
     ApplyFov(dt);
+    ApplyNearFarOverrides();
 
     ApplyCache(main, m_outputPose);
 
-    if (m_shadowCamObj.isValid())
-        UpdateShadowCache();
+    if (m_shadowCamObj.isValid()) UpdateShadowCache();
 }
+
 
 void CCameraMgr::AddImpact(_uint shakeType, _uint zoomType, _float strength)
 {
@@ -366,6 +372,11 @@ void CCameraMgr::Free()
     m_fovOffsetFrom = 0.f;
     m_fovOffsetTo = 0.f;
     m_fovOffsetEaseType = EaseType::Linear;
+
+    m_overrideNear = false;
+    m_overrideFar = false;
+    m_nearOverride = 0.f;
+    m_farOverride = 0.f;
 
     main = {};
     shadow = {};

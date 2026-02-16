@@ -64,6 +64,11 @@ public:
     void     SetFov(_float deltaDeg, _float blendSec = 0.f, EaseType easeType = EaseType::Linear) override;
     _float   GetFov() const override { return m_outputPose.lens.fov; }
 
+    void     SetZNear(_float zNear) override { m_overrideNear = true; m_nearOverride = zNear;}
+    void     SetZFar(_float zFar)   override { m_overrideFar  = true; m_farOverride  = zFar; }
+    void     ClearZNear()           override { m_overrideNear = false; }
+    void     ClearZFar()            override { m_overrideFar  = false; }
+
 public:
     const Matrix* Get_ViewMatrix()         override { return &main.view; }
     const Matrix* Get_ProjMatrix()         override { return &main.proj; }
@@ -137,6 +142,7 @@ private:
 private:
     _float       EvalFovOffset(_float dt);
     void         ApplyFov(_float dt);
+    void         ApplyNearFarOverrides();
 
 private:
     OBJECT_HANDLE   m_baseCamObj{};
@@ -169,6 +175,11 @@ private:
     _float  m_fovOffsetFrom = 0.f;
     _float  m_fovOffsetTo = 0.f;
     EaseType m_fovOffsetEaseType = EaseType::Linear;
+
+    _bool   m_overrideNear = false;
+    _bool   m_overrideFar  = false;
+    _float  m_nearOverride = 0.f;
+    _float  m_farOverride  = 0.f;
 
 private:
     CamCache main{};
