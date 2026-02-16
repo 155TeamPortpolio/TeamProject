@@ -20,6 +20,8 @@ void CGiant_Chase::Enter(CGiant* pOwner)
 
 void CGiant_Chase::Update(CGiant* pOwner, _float dt)
 {
+	pOwner->CaptureRotateToDir(pOwner->GetTargetingInfo().vDirToTarget);
+
 	_vector3 vRootBoneMoveDelta = pOwner->Get_Component<CAnimator3D>()->Get_RootBoneMoveDelta();
 	_quaternion qRot = pOwner->Get_Component<CTransform>()->Get_QuaternionRotate();
 	pOwner->Get_Component<CCharacterController>()->Move_RootMotion(
@@ -72,7 +74,6 @@ void CGiant_Run_Loop::Enter(CGiant* pOwner)
 
 void CGiant_Run_Loop::Update(CGiant* pOwner, _float dt)
 {
-	pOwner->CaptureRotateToDir(pOwner->GetTargetingInfo().vDirToTarget);
 
 	if (false == pOwner->GetStateMachine()->Get_Bool("Chase"))
 		m_pOwnerStateMachine->Change_State("Run_End");

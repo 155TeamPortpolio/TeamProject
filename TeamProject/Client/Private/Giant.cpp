@@ -205,26 +205,26 @@ void CGiant::Render_GUI()
 				isClicked = true;
 				iClickedIndex = 8;
 			}
-			if (ImGui::Button("Attack6_AttackBack,"))
-			{
-				isClicked = true;
-				iClickedIndex = 9;
-			}
-			if (ImGui::Button("Attack7,"))
-			{
-				isClicked = true;
-				iClickedIndex = 10;
-			}
-			if (ImGui::Button("Attack7_Jump,"))
-			{
-				isClicked = true;
-				iClickedIndex = 11;
-			}
-			if (ImGui::Button("Attack7_Revenge"))
-			{
-				isClicked = true;
-				iClickedIndex = 1;
-			}
+			//if (ImGui::Button("Attack6_AttackBack,"))
+			//{
+			//	isClicked = true;
+			//	iClickedIndex = 9;
+			//}
+			//if (ImGui::Button("Attack7,"))
+			//{
+			//	isClicked = true;
+			//	iClickedIndex = 10;
+			//}
+			//if (ImGui::Button("Attack7_Jump,"))
+			//{
+			//	isClicked = true;
+			//	iClickedIndex = 11;
+			//}
+			//if (ImGui::Button("Attack7_Revenge"))
+			//{
+			//	isClicked = true;
+			//	iClickedIndex = 1;
+			//}
 
 			if (isClicked)
 			{
@@ -429,15 +429,17 @@ HRESULT CGiant::Ready_Rules()
 	// x = Idle에서 다음 상태로 넘어가는 쿨타임, y = dt 더한 타이머용
 	m_vIdleTime = { 1.f, 0.f };
 
+
+	// 생각보다 가까움. 다시짜자
+	// 제일 가까이 붙으면 1.5f
+	
 	m_tHysteriesis.fEvadeEnter = 2.5f;
-	//m_tHysteriesis.fComboEnter = 3.f;
-	//m_tHysteriesis.fComboExit = 4.5f;
-	m_tHysteriesis.fComboEnter = 3.5f;			// Attack1, Attack2
+	m_tHysteriesis.fComboEnter = 3.5f;		// Attack1, Attack2
 	m_tHysteriesis.fLeapAttack = 5.f;		// Attack4, Attack5
-	m_tHysteriesis.fJumpShort = 7.f;		// Attack2_Explode
+	m_tHysteriesis.fJumpShort = 7.f;		// Attack2_Explode, Attack3
 	m_tHysteriesis.fJumpLong = 9.f;			// Attack2_1
-	m_tHysteriesis.fChaseEnter = 8.f;
-	m_tHysteriesis.fChaseExit = 6.f;
+	m_tHysteriesis.fChaseEnter = 10.f;
+	m_tHysteriesis.fChaseExit = 9.5f;
 
 	return S_OK;
 }

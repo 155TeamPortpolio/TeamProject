@@ -32,25 +32,39 @@ void CGiant_Attack::Enter(CGiant* pOwner)
 	if (0 != iAttackPatternIndex) 
 		pStateMachine->Set_Int("AttackPattern", 0);
 	else {
-		// 돌진 공격 빼고
-		//if (targetinginfo.fDistance <= hysteriesis.fComboExit)
-		//{
-		//	while (iAttackPatternIndex == 3 || iAttackPatternIndex == 0)
-		//		iAttackPatternIndex = Helper::Get_Random_Int(1, 4);
-		//}
-		//else if (targetinginfo.fDistance < hysteriesis.fChaseEnter)
-		//{
-		//	// 멀 때, 돌진공격
-		//	iAttackPatternIndex = 3;
-		//}
-		//else
-		//{
-		//	// 너무멀면 다음행동
-		//	pOwner->Idle();
-		//	return;
-		//}
+		//돌진 공격 빼고
+		if (targetinginfo.fDistance <= hysteriesis.fComboEnter)
+		{
+			_int i = Helper::Get_Random_Int(1, 2);
+			if (i == 1)
+				iAttackPatternIndex = ATTACK::Attack1;
+			else 
+				iAttackPatternIndex = ATTACK::Attack2;
+		}
+		else if (targetinginfo.fDistance < hysteriesis.fLeapAttack)
+		{
+			_int i = Helper::Get_Random_Int(1, 2);
+			if (i == 1)
+				iAttackPatternIndex = ATTACK::Attack4;
+			else
+				iAttackPatternIndex = ATTACK::Attack5;
+		}
+		else if (targetinginfo.fDistance < hysteriesis.fJumpShort)
+		{
+			_int i = Helper::Get_Random_Int(1, 2);
+			if (i == 1)
+				iAttackPatternIndex = ATTACK::Attack2_Explode;
+			else
+				iAttackPatternIndex = ATTACK::Attack3;
+		}
+		else if (targetinginfo.fDistance < hysteriesis.fJumpLong)
+			iAttackPatternIndex = ATTACK::Attack2_1;
+		else
+		{
+			pOwner->Idle();
+			return;
+		}
 	}
-
 	AttackFromIndex(iAttackPatternIndex);
 	pOwner->CaptureRotateToDir(pOwner->GetTargetingInfo().vDirToTarget);
 
@@ -74,15 +88,17 @@ void CGiant_Attack::Update(CGiant* pOwner, _float dt)
 		{
 		case Engine::CLIP_EVENT_TYPE::NOTIFY:
 		{
-			if (Event.Tag == "UnleashAttack")
-				pOwner->UnleashAttack(CEnemy::ATTACK_SIDE::NONE, true);
-			else if (Event.Tag == "TurnOnAttackCol")
-				pOwner->SetBattleColliderObject("Weapon", CEnemy::BATTLE_COLTYPE::ATTACK, true, m_HitDesc);
-			else if (Event.Tag == "TurnOffAttackCol")
-				pOwner->SetBattleColliderObject("Weapon", CEnemy::BATTLE_COLTYPE::ATTACK, false);
-			else if (Event.Tag == "FinishAll")
-				pOwner->SetOnAttack(false);
-			break;
+			//if (Event.Tag == "UnleashAttack")
+			//	pOwner->UnleashAttack(CEnemy::ATTACK_SIDE::NONE, true);
+			//else if (Event.Tag == "TurnOnAttackCol")
+			//	pOwner->SetBattleColliderObject("Weapon", CEnemy::BATTLE_COLTYPE::ATTACK, true, m_HitDesc);
+			//else if (Event.Tag == "TurnOffAttackCol")
+			//	pOwner->SetBattleColliderObject("Weapon", CEnemy::BATTLE_COLTYPE::ATTACK, false);
+			//else if (Event.Tag == "FinishAll")
+			//	pOwner->SetOnAttack(false);
+			//break;
+			//"StartAttack3"
+
 		}
 		case Engine::CLIP_EVENT_TYPE::EFFECT:
 			break;
@@ -111,10 +127,10 @@ void CGiant_Attack::Register_States()
 	m_pSubStateMachine->Register_State("Attack3_HitWall", CGiant_Attack3_HitWall::Create());
 	m_pSubStateMachine->Register_State("Attack4", CGiant_Attack4::Create());
 	m_pSubStateMachine->Register_State("Attack5", CGiant_Attack5::Create());
-	m_pSubStateMachine->Register_State("Attack6_AttackBack", CGiant_Attack6_AttackBack::Create());
-	m_pSubStateMachine->Register_State("Attack7", CGiant_Attack7::Create());
-	m_pSubStateMachine->Register_State("Attack7_Jump", CGiant_Attack7_Jump::Create());
-	m_pSubStateMachine->Register_State("Attack7_Revenge", CGiant_Attack7_Revenge::Create());
+	//m_pSubStateMachine->Register_State("Attack6_AttackBack", CGiant_Attack6_AttackBack::Create());
+	//m_pSubStateMachine->Register_State("Attack7", CGiant_Attack7::Create());
+	//m_pSubStateMachine->Register_State("Attack7_Jump", CGiant_Attack7_Jump::Create());
+	//m_pSubStateMachine->Register_State("Attack7_Revenge", CGiant_Attack7_Revenge::Create());
 }
 
 void CGiant_Attack::Register_Transitions()
@@ -149,18 +165,18 @@ void CGiant_Attack::AttackFromIndex(_int iMoveIndex)
 	case Client::CGiant_Attack::Attack5:
 		m_pSubStateMachine->Change_State("Attack5");
 		break;
-	case Client::CGiant_Attack::Attack6_AttackBack:
-		m_pSubStateMachine->Change_State("Attack6_AttackBack");
-		break;
-	case Client::CGiant_Attack::Attack7:
-		m_pSubStateMachine->Change_State("Attack7");
-		break;
-	case Client::CGiant_Attack::Attack7_Jump:
-		m_pSubStateMachine->Change_State("Attack7_Jump");
-		break;
-	case Client::CGiant_Attack::Attack7_Revenge:
-		m_pSubStateMachine->Change_State("Attack7_Revenge");
-		break;
+	//case Client::CGiant_Attack::Attack6_AttackBack:
+	//	m_pSubStateMachine->Change_State("Attack6_AttackBack");
+	//	break;
+	//case Client::CGiant_Attack::Attack7:
+	//	m_pSubStateMachine->Change_State("Attack7");
+	//	break;
+	//case Client::CGiant_Attack::Attack7_Jump:
+	//	m_pSubStateMachine->Change_State("Attack7_Jump");
+	//	break;
+	//case Client::CGiant_Attack::Attack7_Revenge:
+	//	m_pSubStateMachine->Change_State("Attack7_Revenge");
+	//	break;
 	default:
 		break;
 	}

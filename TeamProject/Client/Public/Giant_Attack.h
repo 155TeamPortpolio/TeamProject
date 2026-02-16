@@ -18,10 +18,10 @@ private:
 		Attack3_HitWall,
 		Attack4,
 		Attack5,
-		Attack6_AttackBack,
-		Attack7,
-		Attack7_Jump,
-		Attack7_Revenge
+		//Attack6_AttackBack,
+		//Attack7,
+		//Attack7_Jump,
+		//Attack7_Revenge
 	};
 
 public:
