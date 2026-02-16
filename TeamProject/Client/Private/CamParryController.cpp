@@ -539,6 +539,31 @@ void CamParryController::ApplyImpactFov(_float u, _float close01)
     orbit->Get_Component<CCamera>()->Set_FOV(EvalImpactFov(u, close01));
 }
 
+void CamParryController::BeginRecoverFov()
+{
+    auto orbit = CamDirector()->GetOrbitCam();
+
+    m_recoverFovActive = true;
+    m_recoverFovElapsed = 0.f;
+    m_recoverFovFrom = orbit->Get_Component<CCamera>()->Get_FOV();
+}
+
+void CamParryController::UpdateRecoverFov(_float dt)
+{
+    if (!m_recoverFovActive) return;
+
+    m_recoverFovElapsed += dt;
+
+    const _float dur = max(tune.impact.recoverFovSec, 0.0001f);
+    const _float u = clamp(m_recoverFovElapsed / dur, 0.f, 1.f);
+    const _float t = Math::ApplyEase(tune.impact.recoverFovEase, u);
+
+    auto orbit = CamDirector()->GetOrbitCam();
+    orbit->Get_Component<CCamera>()->Set_FOV(Math::Lerp(m_recoverFovFrom, m_fovSaved, t));
+
+    if (u >= 1.f) m_recoverFovActive = false;
+}
+
 void CamParryController::Reset()
 {
     m_active = false;
@@ -574,7 +599,12 @@ void CamParryController::Reset()
     m_holdActive = false;
 
     m_fovBase = 0.f;
+
+    m_recoverFovActive = false;
+    m_recoverFovElapsed = 0.f;
+    m_recoverFovFrom = 0.f;
 }
+
 
 void CamParryController::Begin()
 {
@@ -628,8 +658,7 @@ void CamParryController::End()
 {
     if (!m_active) return;
 
-    auto orbit = CamDirector()->GetOrbitCam();
-    orbit->Get_Component<CCamera>()->Set_FOV(m_fovSaved);
+    BeginRecoverFov();
 
     CameraManager()->Set_BlendEase(tune.impact.recoverRollEase);
 
@@ -640,7 +669,6 @@ void CamParryController::End()
     m_elapsed = 0.f;
     m_waitSeqStarted = false;
 }
-
 
 void CamParryController::Update(_float dt)
 {
@@ -692,6 +720,8 @@ void CamParryController::Update(_float dt)
 
     if (m_state == State::WaitEnd)
     {
+        UpdateRecoverFov(dt);
+
         if (m_holdActive && m_elapsed < tune.impact.recoverRollSec)
             ApplyGoalPose_Snap(m_holdShot);
 
@@ -705,7 +735,12 @@ void CamParryController::Update(_float dt)
         if (CamDirector()->IsPlaying(m_waitSeqKey))
             return;
 
+        if (m_recoverFovActive)
+            return;
+
         auto orbit = CamDirector()->GetOrbitCam();
+        orbit->Get_Component<CCamera>()->Set_FOV(m_fovSaved);
+
         orbit->ParryMode_End();
 
         Reset();

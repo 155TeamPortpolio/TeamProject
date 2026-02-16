@@ -52,7 +52,7 @@ public:
             _float minCamAboveFootY = 0.05f;
 
             EaseType approachEase = EaseType::InOutSine;
-            EaseType impactEase = EaseType::InSine;
+            EaseType impactEase = EaseType::InCubic;
         };
 
         struct Impact
@@ -70,11 +70,14 @@ public:
             EaseType rollEase = EaseType::InOutSine;
             EaseType recoverRollEase = EaseType::InOutSine;
 
+            _float recoverFovSec = 0.35f;
+            EaseType recoverFovEase = EaseType::InOutSine;
+
             _int   fovWaveCount = 3;
             _float fovWaveAmpDeg = 5.f;
             _float fovBiasDeg = 30.f;
 
-             _float impactStartYawExtraDeg = 30.f;
+            _float impactStartYawExtraDeg = 30.f;
         };
 
         Common common{};
@@ -128,6 +131,9 @@ private:
     _float    EvalImpactFov(_float u, _float close01) const;
     void      ApplyImpactFov(_float u, _float close01);
 
+    void      BeginRecoverFov();
+    void      UpdateRecoverFov(_float dt);
+
 private:
     _bool         m_active = false;
     State         m_state = State::None;
@@ -164,6 +170,10 @@ private:
     
     _float        m_fovBase = 0.f;
     _float        m_fovSaved = 0.f;
+
+    _bool         m_recoverFovActive = false;
+    _float        m_recoverFovElapsed = 0.f;
+    _float        m_recoverFovFrom = 0.f;
 };
 
 NS_END
