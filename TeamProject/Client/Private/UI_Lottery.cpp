@@ -6,9 +6,11 @@
 #include "EventListener.h"
 #include "AudioSource.h"
 #include "Sprite2D.h"
-#include "ButtonUI.h" 
-#include "UI_ScratchCard.h"
+#include "ButtonUI.h"  
 #include "UI_BackButton.h"
+
+#include "UI_ScratchCard.h"
+#include "UI_Newspaper.h"
 #include "UI_LotteryResultBanner.h"
 
 #include "FieldSystem.h"
@@ -21,6 +23,10 @@ HRESULT CUI_Lottery::Initialize_Prototype()
     Add_Component<CEventListener>();
     Add_Component<CAudioSource>();
     Get_Component<CAudioSource>()->SoundFolder(G_GlobalLevelKey, "../Bin/Resources/Global/UI/Sound/");
+
+    PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_ScratchCard", CUI_ScratchCard::Create());
+    PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Newspaper", CUI_Newspaper::Create());
+    PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_LotteryResultBanner", CUI_LotteryResultBanner::Create());
 
 	return S_OK;
 }
