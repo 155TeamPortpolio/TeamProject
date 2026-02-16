@@ -20,13 +20,13 @@ CDogFan::CDogFan(const CDogFan& rhs)
 
 HRESULT CDogFan::Initialize_Prototype()
 {
-    __super::Initialize_Prototype();
+    if (FAILED(__super::Initialize_Prototype()))
+        return E_FAIL;
 
-    auto pResource = ResourceManager();
-
-    //pResource->Add_ResourcePath("MainCity_Prop_NewsstandStuff_08out.model", "../Bin/Resources/MainCity/AmbientActor/DogBone/MainCity_Prop_NewsstandStuff_08out.model");
-    //pResource->Add_ResourcePath("MainCity_Prop_NewsstandStuff_08out.mat", "../Bin/Resources/MainCity/AmbientActor/DogBone/MainCity_Prop_NewsstandStuff_08out.mat");
-    //pResource->Add_ResourcePath("MainCity_Prop_NewsstandStuff_08out_Meta.json", "../Bin/Resources/MainCity/MainCity_Prop_NewsstandStuff_08out_Meta.json");
+    Add_Component<CAnimator3D>();
+    Add_Component<CSkeletalModel>();
+    Add_Component<CMaterial>();
+    Add_Component<CAudioSource>();
 
     auto pModel = Get_Component<CSkeletalModel>();
     pModel->Link_Model("MainCity_Level", "MainCity_Prop_NewsstandStuff_08out.model");
@@ -38,7 +38,8 @@ HRESULT CDogFan::Initialize_Prototype()
 
 HRESULT CDogFan::Initialize(INIT_DESC* pArg)
 {
-    __super::Initialize(pArg);
+    if (FAILED(__super::Initialize(pArg)))
+        return E_FAIL;
 
     AMBIENTACTOR_DESC* pDesc = static_cast<AMBIENTACTOR_DESC*>(pArg);
 

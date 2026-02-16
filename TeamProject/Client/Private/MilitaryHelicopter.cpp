@@ -20,7 +20,13 @@ CMilitaryHelicopter::CMilitaryHelicopter(const CMilitaryHelicopter& rhs)
 
 HRESULT CMilitaryHelicopter::Initialize_Prototype()
 {
-    __super::Initialize_Prototype();
+    if (FAILED(__super::Initialize_Prototype()))
+        return E_FAIL;
+
+    Add_Component<CAnimator3D>();
+    Add_Component<CSkeletalModel>();
+    Add_Component<CMaterial>();
+    Add_Component<CAudioSource>();
 
     auto pResource = ResourceManager();
 
@@ -40,7 +46,8 @@ HRESULT CMilitaryHelicopter::Initialize_Prototype()
 
 HRESULT CMilitaryHelicopter::Initialize(INIT_DESC* pArg)
 {
-    __super::Initialize(pArg);
+    if (FAILED(__super::Initialize(pArg)))
+        return E_FAIL;
 
     AMBIENTACTOR_DESC* pDesc = static_cast<AMBIENTACTOR_DESC*>(pArg);
 

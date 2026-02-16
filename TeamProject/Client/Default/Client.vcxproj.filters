@@ -1458,6 +1458,9 @@
     <Filter Include="02. GameObject\Object\AmbientActor\DogFan">
       <UniqueIdentifier>{b9589ddd-046f-4f4b-992f-7f01bb892f46}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\AmbientActor\ScottScreen">
+      <UniqueIdentifier>{6d17d294-80ec-4451-ad14-dc127fd9f6d4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -2828,6 +2831,9 @@
     <ClInclude Include="..\public\DogBone.h">
       <Filter>02. GameObject\Object\AmbientActor\DogBone</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\ScottScreen.h">
+      <Filter>02. GameObject\Object\AmbientActor\ScottScreen</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -3635,6 +3641,9 @@
     <ClCompile Include="..\private\CamOcclusionTracker.cpp">
       <Filter>02. GameObject\Camera\04. OrbitCam\00. OrbitCamCollider</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\Defiler.cpp">
+      <Filter>02. GameObject\Object\Enemy\Boss\Defiler</Filter>
+    </ClCompile>
     <ClCompile Include="..\Private\DefilerState_Attack.cpp">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler\State\Attack</Filter>
     </ClCompile>
@@ -4138,7 +4147,7 @@
     </ClCompile>
     <ClCompile Include="..\Private\BackGroundSpawner.cpp">
       <Filter>02. GameObject\Object\Npc\Background\Spawner</Filter>
- </ClCompile>
+    </ClCompile>
     <ClCompile Include="..\private\Room_Scott.cpp">
       <Filter>03. Utility\06. FieldSystem\Room\06. Scott</Filter>
     </ClCompile>
@@ -4151,8 +4160,8 @@
     <ClCompile Include="..\private\DogBone.cpp">
       <Filter>02. GameObject\Object\AmbientActor\DogBone</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Defiler.cpp">
-      <Filter>02. GameObject\Object\Enemy\Boss\Defiler</Filter>
+    <ClCompile Include="..\private\ScottScreen.cpp">
+      <Filter>02. GameObject\Object\AmbientActor\ScottScreen</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
