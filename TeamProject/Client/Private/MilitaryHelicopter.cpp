@@ -62,6 +62,7 @@ void CMilitaryHelicopter::Awake()
 
     Get_Component<CAudioSource>()->Slot("Helicopter.wav")
         .Attribute3D(true)
+        .Group(SOUND_GROUP::ENV)
         .Loop(true)
         .Volume(0.15f)
         .Play();
