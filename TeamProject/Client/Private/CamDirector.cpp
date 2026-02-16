@@ -91,8 +91,8 @@ void CCamDirector::AutoField(CamStartDir dir)
     case CamStartDir::Back:  RequestSequence("Field/Back");  break;
     }
 
-   // if (m_gate.Pass())
-    //    RenderSystem()->SetOn(false);
+    if (m_gate.Pass())
+        RenderSystem()->SetOn(false);
 }
 
 void CCamDirector::AutoBattle(CamStartDir dir)
@@ -105,8 +105,8 @@ void CCamDirector::AutoBattle(CamStartDir dir)
     case CamStartDir::Back:  RequestSequence("Battle/Back");  break;
     }
 
-    //if (m_gate.Pass())
-    //    RenderSystem()->SetOn(false);
+    if (m_gate.Pass())
+        RenderSystem()->SetOn(false);
 }
 
 void CCamDirector::Update(_float dt)

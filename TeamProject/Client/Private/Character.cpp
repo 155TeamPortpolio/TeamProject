@@ -23,6 +23,7 @@
 
 #include "EffectContainer.h"
 #include "AudioSource.h"
+#include "CamDirector.h"
 
 CCharacter::CCharacter(const CCharacter& rhs)
     : CGameObject(rhs)
@@ -691,7 +692,14 @@ void CCharacter::Take_Damage(DAMAGE_TYPE eType, _float fDamage)
     {
         if(m_bIsMain)
         {
-            Play_Effect("Parry", _vector3(0.f, 0.5f, 0.4f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+            auto pos = CamDirector()->GetParryPoint();
+            auto pParryEffect = Get_Component<CObjectContainer>()->Find_ObjectByName("Parry");
+            if (pParryEffect)
+            {
+                pParryEffect->Get_Component<CTransform>()->Set_WorldPos(pos);
+                static_cast<CEffectContainer*>(pParryEffect)->Play();
+            }
+
             BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::PARRY);
             m_ParryHandle.GetAs<CEnemy>()->Parried();
         }
