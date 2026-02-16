@@ -35,14 +35,14 @@ void CUI_AnomalyGauge::Update(_float dt)
 {
     if (InputDevice()->Key_Down('I'))
     {
-        m_fRatio += dt * 5.f;
+        m_fRatio = min(1.f, m_fRatio + dt * 5.f);
         Set_Gauge(m_fRatio);
         Update_Gauge(m_fRatio);
     }
 
     if (InputDevice()->Key_Down('U'))
     {
-        m_fRatio -= dt * 5.f;
+        m_fRatio = max(0.f, m_fRatio - dt * 5.f);
         Set_Gauge(m_fRatio);
         Update_Gauge(m_fRatio);
     }

@@ -303,7 +303,7 @@
                     "animClips": [],
                     "children": [],
                     "typeTag": "Image",
-                    "textureTag": "Rectangle 9.png"
+                    "textureTag": "JaneFill.png"
                 },
                 {
                     "alive": true,
@@ -924,7 +924,7 @@
                     ],
                     "children": [],
                     "typeTag": "Image",
-                    "textureTag": "PipePointStateCircle04 (1).png"
+                    "textureTag": "PipePointStateCircle04_32.png"
                 }
             ],
             "typeTag": "CanvasPanel"

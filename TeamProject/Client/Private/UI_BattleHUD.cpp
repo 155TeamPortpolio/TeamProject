@@ -75,6 +75,11 @@ HRESULT CUI_BattleHUD::Initialize(INIT_DESC* pArg)
             Set_Values(desc);
         });
 
+
+    auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_AnomalyGauge" }).Build("gauge");
+    if(pObj)
+        Get_Component<CObjectContainer>()->Add_Child(pObj);
+
     return S_OK;
 }
 
