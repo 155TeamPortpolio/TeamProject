@@ -198,6 +198,7 @@ void CDefilerLaser::SetUp_Effect()
 
     _vector3 vCurrPosition = m_vStartPoint;
     _vector3 vTargetPosition = BattleSystem()->GetCurCharacterHandle().Get()->Get_Component<CTransform>()->Get_WorldPos();
+    vTargetPosition.y += 1.f;
     _vector3 vTargetDir = vTargetPosition - vCurrPosition;
 
     if (vTargetDir.Length() <= 0.01f)
@@ -207,7 +208,7 @@ void CDefilerLaser::SetUp_Effect()
 
     PHYSICS_RAY rayDesc{};
     PHYSICS_RAY_HIT output{};
-    rayDesc.iCollisionMask = ENUM(COLLISION_GROUP::COMMON);
+    rayDesc.iCollisionMask = ENUM(COLLISION_GROUP::COMMON) + ENUM(COLLISION_GROUP::GROUND) + ENUM(COLLISION_GROUP::NAP);
     rayDesc.vOrigin = vCurrPosition;
     rayDesc.vDirection = vTargetDir;
     rayDesc.fMaxDistance = 200.f;

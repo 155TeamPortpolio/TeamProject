@@ -1,5 +1,5 @@
 {
-  "AnimPath": "",
+  "AnimPath": "../Bin/Resources/MainCity/NPC/Female01/Anim/",
   "PreTransform": {
     "_11": -0.009999999776482582,
     "_12": 0.0,
@@ -20,67 +20,67 @@
   },
   "Clips": [
     {
-      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Sit_Wait01_056",
+      "ClipTag": "Female01_Sit_Wait01_056",
       "Events": []
     },
     {
-      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Sit_Wait02_060",
+      "ClipTag": "Female01_Sit_Wait02_060",
       "Events": []
     },
     {
-      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Sit_Wait_049",
+      "ClipTag": "Female01_Sit_Wait_049",
       "Events": []
     },
     {
-      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Stand_Calm01_017",
+      "ClipTag": "Female01_Stand_Calm01_017",
       "Events": []
     },
     {
-      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Stand_Calm02_018",
+      "ClipTag": "Female01_Stand_Calm02_018",
       "Events": []
     },
     {
-      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Stand_Idle01_001",
+      "ClipTag": "Female01_Stand_Idle01_001",
       "Events": []
     },
     {
-      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Stand_Positive_028",
+      "ClipTag": "Female01_Stand_Positive_028",
       "Events": []
     },
     {
-      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Stand_Talk02_007",
+      "ClipTag": "Female01_Stand_Talk02_007",
       "Events": []
     },
     {
-      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Stand_Talk03_008",
+      "ClipTag": "Female01_Stand_Talk03_008",
       "Events": []
     },
     {
-      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Stand_Talk04_009",
+      "ClipTag": "Female01_Stand_Talk04_009",
       "Events": []
     },
     {
-      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Stand_Talk05_010",
+      "ClipTag": "Female01_Stand_Talk05_010",
       "Events": []
     },
     {
-      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Stand_Talk_006",
+      "ClipTag": "Female01_Stand_Talk_006",
       "Events": []
     },
     {
-      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Stand_Thinkng02_012",
+      "ClipTag": "Female01_Stand_Thinkng02_012",
       "Events": []
     },
     {
-      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Stand_Thinkng_011",
+      "ClipTag": "Female01_Stand_Thinkng_011",
       "Events": []
     },
     {
-      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Walk_Normal_020",
+      "ClipTag": "Female01_Walk_Normal_020",
       "Events": []
     },
     {
-      "ClipTag": "NPC_Female_Size02_Ani_MainCity_Walk_PlayPhone_022",
+      "ClipTag": "Female01_Walk_PlayPhone_022",
       "Events": []
     }
   ]

@@ -48,7 +48,25 @@ HRESULT CWaterWave::Initialize(INIT_DESC* pArg)
 	customInstance->Set_Param("g_NoiseOffset", { &m_NoiseOffset, "float2", sizeof(_float2) });
 	customInstance->Set_Param("g_WaterTint", { &m_WaterTint, "float3", sizeof(_float3) });
 	customInstance->Set_Param("g_TintStrength", { &m_TintStrength, "float", sizeof(_float) });
+	// 형상
+	customInstance->Set_Param("g_TsunamiHeight", { &m_TsunamiHeight,"float",  sizeof(float) });
 
+	// 타이밍
+	customInstance->Set_Param("g_PeakTime", { &m_PeakTime,"float",  sizeof(float) });
+	customInstance->Set_Param("g_RiseWidth", { &m_RiseWidth, "float", sizeof(float) });
+	customInstance->Set_Param("g_FallWidth", {&m_FallWidth, "float", sizeof(float)});
+	customInstance->Set_Param("g_FadeInEnd", { &m_FadeInEnd, "float", sizeof(float) });
+	customInstance->Set_Param("g_FadeOutStart", { &m_FadeOutStart, "float", sizeof(float) });
+	customInstance->Set_Param("g_CurlStartRatio", { &m_CurlStartRatio, "float", sizeof(float) });
+	customInstance->Set_Param("g_CurlDuration", { &m_CurlDuration, "float", sizeof(float) });
+
+	// 벽 프로파일
+	customInstance->Set_Param("g_WallDepthStart", { &m_WallDepthStart, "float", sizeof(float) });
+	customInstance->Set_Param("g_WallDepthEnd", { &m_WallDepthEnd, "float", sizeof(float) });
+
+	// 컬 강도
+	customInstance->Set_Param("g_CurlForward", { &m_CurlForward, "float", sizeof(float) });
+	customInstance->Set_Param("g_MaxCurlAngle", { &m_MaxCurlAngle, "float", sizeof(float) });
 	pMaterial->Insert_MaterialInstance(customInstance, nullptr);
 	auto MaterialDat = customInstance->Get_MaterialData();
 	if (MaterialDat)
@@ -77,12 +95,12 @@ void CWaterWave::Update(_float dt)
 {
 	m_fAccTime += dt;
 
-	_float3 CrashDirection = { 0.f, 0.f, -1.f };
+	_float3 CrashDirection = { 1.f, 0.f, 0.f };
 
 	_float t = fmodf(m_fAccTime, m_CycleTime) / m_CycleTime;
 
 	_float overPeak = (t - m_PeakTime * 0.9f) / (1.0f - m_PeakTime * 0.9f);
-	overPeak = max(0.f, min(1.f, overPeak)); // saturate
+	overPeak = max(0.f, min(1.f, overPeak));
 
 	_float moveFactor = overPeak * overPeak * (3.0f - 2.0f * overPeak);
 
@@ -110,6 +128,18 @@ void CWaterWave::Initialize_Wave(WaterWaveDesc Desc)
 	m_NoiseOffset = Desc.fNoiseOffset;
 	m_WaterTint = Desc.vWaterTint;
 	m_TintStrength = Desc.fTintStrength;
+
+	m_TsunamiHeight = Desc.fTsunamiHeight;
+	m_PeakTime = Desc.fPeakTime;
+	m_FallWidth = Desc.fFallWidth;
+	m_FadeInEnd = Desc.fFadeInEnd;
+	m_FadeOutStart = Desc.fFadeOutStart;
+	m_CurlStartRatio = Desc.fCurlStartRatio;
+	m_CurlDuration = Desc.fCurlDuration;
+	m_WallDepthStart = Desc.fWallDepthStart;
+	m_WallDepthEnd = Desc.fWallDepthEnd;
+	m_CurlForward = Desc.fCurlForward;
+	m_MaxCurlAngle = Desc.fMaxCurlAngle;
 }
 
 CWaterWave* CWaterWave::Create()

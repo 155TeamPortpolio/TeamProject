@@ -564,6 +564,7 @@ void CEnemy::ManageGroggy(const _float dt)
 
 			if (0 > m_tStatus.iGroggyValue)
 			{
+
 				m_tStatus.iGroggyValue = 0;
 				m_tStatus.isGroggy = false;
 			}
