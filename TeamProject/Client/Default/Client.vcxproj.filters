@@ -1424,7 +1424,7 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Enemy\Boss\Defiler\DefilerLaser">
       <UniqueIdentifier>{a3dbcf0a-50d0-46cb-8314-ddecf4f0d7fd}</UniqueIdentifier>
-    </Filter>  
+    </Filter>
     <Filter Include="02. GameObject\UI\01. 2D\Switch">
       <UniqueIdentifier>{6a5c26b7-37b6-408f-af08-4af4501f3518}</UniqueIdentifier>
     </Filter>
@@ -1448,6 +1448,12 @@
     </Filter>
     <Filter Include="03. Utility\06. FieldSystem\Room\07. Party">
       <UniqueIdentifier>{47d49842-2238-46dd-b61f-399b1b8d45e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\AmbientActor\DogBone">
+      <UniqueIdentifier>{faecd42d-c38a-4510-b1e2-ea7ea32a0501}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\AmbientActor\DogFan">
+      <UniqueIdentifier>{b9589ddd-046f-4f4b-992f-7f01bb892f46}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -2785,7 +2791,7 @@
     </ClInclude>
     <ClInclude Include="..\Public\DefilerLaser.h">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler\DefilerLaser</Filter>
-    </ClInclude>  
+    </ClInclude>
     <ClInclude Include="..\Public\UI_Switch.h">
       <Filter>02. GameObject\UI\01. 2D\Switch</Filter>
     </ClInclude>
@@ -2806,6 +2812,12 @@
     </ClInclude>
     <ClInclude Include="..\public\Room_Party.h">
       <Filter>03. Utility\06. FieldSystem\Room\07. Party</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\DogFan.h">
+      <Filter>02. GameObject\Object\AmbientActor\DogFan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\DogBone.h">
+      <Filter>02. GameObject\Object\AmbientActor\DogBone</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -4102,7 +4114,7 @@
     </ClCompile>
     <ClCompile Include="..\Private\DefilerLaser.cpp">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler\DefilerLaser</Filter>
-    </ClCompile>  
+    </ClCompile>
     <ClCompile Include="..\Private\UI_Switch.cpp">
       <Filter>02. GameObject\UI\01. 2D\Switch</Filter>
     </ClCompile>
@@ -4123,6 +4135,12 @@
     </ClCompile>
     <ClCompile Include="..\private\Room_Party.cpp">
       <Filter>03. Utility\06. FieldSystem\Room\07. Party</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\DogFan.cpp">
+      <Filter>02. GameObject\Object\AmbientActor\DogFan</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\DogBone.cpp">
+      <Filter>02. GameObject\Object\AmbientActor\DogBone</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
