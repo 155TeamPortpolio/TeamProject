@@ -392,12 +392,16 @@ void CBattleFXFlow::StartVfx_WipeOut()
 	CPostRenderer* pPost = RenderSystem()->GetPostRenderer();
 	AddCall([this, preset, pPost]() {
 		pPost->GetCommand<CSaturationCommand>()
-			->SetIntensity(1.4f)
+			->SetIntensity(1.f)
 			->SetSaturationType(ENUM(SATURATIONTYPE::SKINNED))
 			->SetDuration(preset.fVFXDuration)
 			->SetEaseType(EaseType::OutBack)
 			->SetEnable(true);
 		});
+
+	//pPost->GetCommand<CGlitchCommand>()
+	//	->SetDuration()
+	//	->
 
 	AddCall([this]() {
 		CamDirector()->BeginWipeOut(); 

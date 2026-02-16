@@ -64,10 +64,6 @@ HRESULT CMainCity_Level::Awake()
 	//ObjectManager()->Get_Layer({"MainCity_Level", "PlacedObject_Layer"})->Set_RenderState(false);
 	//auto layer = ObjectManager()->Get_Layer({"MainCity_Level", "PlacedObject_Layer"});
 	pProto->Add_ProtoType("MainCity_Level", "Proto_GameObject_CBackgroundNpc", CBackgroundNpc::Create());
-	auto testBack = Builder::Create_Object({ "MainCity_Level","Proto_GameObject_CBackgroundNpc" }).Build("Back");
-
-	ObjectManager()->Add_Object(testBack, { "MainCity_Level","NPC_Layer" });
-
 
 	return S_OK;
 }
