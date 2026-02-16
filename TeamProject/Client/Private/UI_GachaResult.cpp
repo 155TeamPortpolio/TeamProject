@@ -15,6 +15,8 @@ HRESULT CUI_GachaResult::Initialize_Prototype()
     Add_Component<CAudioSource>();
     Get_Component<CAudioSource>()->SoundFolder(G_GlobalLevelKey, "../Bin/Resources/Global/UI/Sound/");
 
+    PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_GachaResultItem", CUI_GachaResultItem::Create());
+
 	return S_OK;
 }
 
