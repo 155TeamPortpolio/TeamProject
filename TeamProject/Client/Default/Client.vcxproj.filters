@@ -3623,9 +3623,6 @@
     <ClCompile Include="..\private\CamOcclusionTracker.cpp">
       <Filter>02. GameObject\Camera\04. OrbitCam\00. OrbitCamCollider</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Defiler.cpp">
-      <Filter>02. GameObject\Object\Enemy\Boss\Defiler</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\DefilerState_Attack.cpp">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler\State\Attack</Filter>
     </ClCompile>
@@ -4135,6 +4132,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Room_Party.cpp">
       <Filter>03. Utility\06. FieldSystem\Room\07. Party</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Defiler.cpp">
+      <Filter>02. GameObject\Object\Enemy\Boss\Defiler</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
