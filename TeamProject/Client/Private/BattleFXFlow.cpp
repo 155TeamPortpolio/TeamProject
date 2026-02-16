@@ -83,11 +83,11 @@ void CBattleFXFlow::Initialize_Preset()
 
 	{
 		auto& WipeOut = m_BattleVFXData[ENUM(BATTLE_VFX_TYPE::WIPEOUT)];
-		const _float duration = 4.8f;
+		const _float duration = 4.7f;
 		WipeOut.bCanIntersect = false;
 		WipeOut.fVFXDuration = duration;
 		WipeOut.fBlurDuration = duration;
-		WipeOut.SetTimeData({ duration, 0.0f, 0.4f, .02f , EaseType::OutQuint });
+		WipeOut.SetTimeData({ duration, 0.0f, 0.3f, .02f , EaseType::OutQuint });
 		WipeOut.BattleTimeScale[ENUM(BATTLE_OBJ_TYPE::CAMERA)] = TIME_SCALE_DATA{duration, 1.0f, 0.3f, .0f, EaseType::OutQuint};
 	}
 }
@@ -350,6 +350,7 @@ void CBattleFXFlow::StartVfx_Ultimate()
 		});
 	Start(nullptr);
 }
+
 void CBattleFXFlow::StartVfx_Switch()
 {
 	Clear(false);
@@ -453,17 +454,23 @@ void CBattleFXFlow::StartVfx_Switch()
 void CBattleFXFlow::StartVfx_WipeOut()
 {
 	Clear(false);
+	ObjectManager()->Get_Layer({ "Test_Level","PlacedObject_Layer" })->Set_RenderState(false);
 
 	auto& preset = m_BattleVFXData[ENUM(BATTLE_VFX_TYPE::WIPEOUT)];
-	auto noiseTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, "Eff_Noise_194.png");
 	CPostRenderer* postRenderer = RenderSystem()->GetPostRenderer();
 
 	const _float totalDuration = max(preset.fVFXDuration, 0.01f);
-	const _float blurDuration = min(preset.fBlurDuration, totalDuration);
 
-	auto RequestGlitch = [postRenderer, noiseTexture](_float glitchIntensity, _float glitchDuration)
+	auto defaultNoiseTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, "Eff_Noise_052.png");
+	using NoiseTextureType = decltype(defaultNoiseTexture);
+
+	// -------------------------
+	// Glitch 호출 람다 (기존 그대로)
+	// -------------------------
+	auto RequestGlitch = [postRenderer](_float glitchIntensity, _float glitchDuration, NoiseTextureType noiseTexture)
 		{
 			if (!postRenderer) return;
+			if (!noiseTexture) return;
 
 			postRenderer->GetCommand<CGlitchCommand>()
 				->SetDuration(glitchDuration)
@@ -473,68 +480,161 @@ void CBattleFXFlow::StartVfx_WipeOut()
 				->SetEnable(true);
 		};
 
+	// -------------------------
+	// Saturation 호출 람다 (추가)
+	// -------------------------
+	auto RequestSaturation = [postRenderer](_float saturationIntensity, _float saturationDuration)
+		{
+			if (!postRenderer) return;
+
+			postRenderer->GetCommand<CSaturationCommand>()
+				->SetIntensity(saturationIntensity)
+				->SetSaturationType(ENUM(SATURATIONTYPE::SKINNED))
+				->SetDuration(saturationDuration)
+				->SetEaseType(EaseType::OutBack)
+				->SetEnable(true);
+		};
+
 	AddParallelTimeScaleAll(preset);
-	AddCall([this, preset, postRenderer]() {
-		postRenderer->GetCommand<CSaturationCommand>()
-			->SetIntensity(1.f)
-			->SetSaturationType(ENUM(SATURATIONTYPE::SKINNED))
-			->SetDuration(preset.fVFXDuration)
-			->SetEaseType(EaseType::OutBack)
-			->SetEnable(true);
-		});
 
 	AddCall([this]() {
-		CamDirector()->BeginWipeOut(); 
+		CamDirector()->BeginWipeOut();
 		UIDirector()->Show_Wipeout();
 		UIDirector()->Hide_HUD(CUIDirector::BATTLE);
 		});
 
-	struct GlitchKey
+	// (옵션) 시작 시 기본 새튜레이트를 한번 걸고 싶으면 여기서 호출
+	// 단, CSaturationCommand가 "매 호출이 덮어쓰기"라면 이후 키에서 값이 바뀐다.
+	AddCall([RequestSaturation, preset]() mutable {
+		RequestSaturation(1.f, preset.fVFXDuration);
+		});
+
+	// -------------------------
+	// 글리치 키 (그대로 유지)
+	// -------------------------
+	struct GlitchKeySec
 	{
-		_float time01;
+		_float timeSec;
 		_float intensity;
-		_float dur01;
+		_float durSec;
+		const char* noiseKey;
 	};
 
-	const GlitchKey glitchKeys[] =
+	const GlitchKeySec glitchKeys[] =
 	{
-		{ 0.01f, 3.2f, 0.02f },
-		{ 0.23f, 1.2f, 0.02f },
-		{ 0.45f, 1.2f, 0.02f },
-		{ 0.65f, 1.2f, 0.02f },
-		{ 0.85f, 1.2f, 0.02f },
+		{ 0.00f, 4.2f, 0.06f, "Eff_Noise_119.png" },
+		{ 0.04f, 2.2f, 0.09f, "Eff_Noise_045_YC_01.png" },
+		{ 0.32f, 2.2f, 0.26f, "Eff_Noise_086_LKJ_01.png" },
+		{ 1.32f, 4.2f, 0.26f, "Eff_Noise_086_LKJ_01.png" },
+		{ 2.02f, 2.2f, 0.06f, "Eff_Noise_003 (1).png" },
+		{ 2.22f, 2.2f, 0.06f, "Eff_Noise_003 (1).png" },
+		{ 2.35f, 3.2f, 0.26f, "Eff_Noise_119.png" },
+		{ 3.10f, 2.2f, 0.06f, "Eff_Noise_003 (1).png" },
+		{ 3.50f, 4.2f, 0.26f, "Eff_Noise_045_YC_01.png" },
+		{ 4.00f, 6.2f, 0.06f, "Eff_Noise_003 (1).png" },
+		{ 4.33f, 3.2f, 0.06f, "Eff_Noise_052.png" },
+		{ 4.35f, 6.2f, 0.26f, "Eff_Noise_086_LKJ_01.png" },
 	};
 
-	_float accumulatedTime = 0.f;
+	// -------------------------
+	// 새튜레이트 키(추가) : 글리치 사이사이에 펄스 넣기
+	// -------------------------
+	struct SaturationKeySec
+	{
+		_float timeSec;
+		_float intensity;
+		_float durSec;
+	};
+
+	const SaturationKeySec saturationKeys[] =
+	{
+		{ 0.00f, 1.35f, 0.10f },
+		{ 0.32f, 1.15f, 0.18f },
+		{ 1.32f, 1.40f, 0.22f },
+		{ 2.35f, 1.20f, 0.16f },
+		{ 3.50f, 1.30f, 0.20f },
+		{ 4.35f, 1.55f, 0.25f },
+	};
+
 	const _uint glitchKeyCount = (_uint)(sizeof(glitchKeys) / sizeof(glitchKeys[0]));
+	const _uint saturationKeyCount = (_uint)(sizeof(saturationKeys) / sizeof(saturationKeys[0]));
 
-	for (_uint keyIndex = 0; keyIndex < glitchKeyCount; ++keyIndex)
+	// -------------------------
+	// 핵심: 두 키를 "같은 타임라인"에서 merge
+	// -------------------------
+	_uint glitchIndex = 0;
+	_uint saturationIndex = 0;
+
+	_float accumulatedTimeSec = 0.f;
+
+	while (glitchIndex < glitchKeyCount || saturationIndex < saturationKeyCount)
 	{
-		const _float targetTime = clamp(glitchKeys[keyIndex].time01, 0.f, 1.f) * totalDuration;
-		const _float waitTime = max(0.f, targetTime - accumulatedTime);
+		const _float nextGlitchTime =
+			(glitchIndex < glitchKeyCount)
+			? clamp(glitchKeys[glitchIndex].timeSec, 0.f, totalDuration)
+			: 1e9f;
 
-		AddWait(waitTime);
-		accumulatedTime += waitTime;
+		const _float nextSaturationTime =
+			(saturationIndex < saturationKeyCount)
+			? clamp(saturationKeys[saturationIndex].timeSec, 0.f, totalDuration)
+			: 1e9f;
 
-		const _float glitchIntensity = glitchKeys[keyIndex].intensity;
-		const _float glitchDuration = max(0.01f, clamp(glitchKeys[keyIndex].dur01, 0.f, 1.f) * totalDuration);
+		const _float targetTimeSec = (nextGlitchTime < nextSaturationTime) ? nextGlitchTime : nextSaturationTime;
 
-		AddCall([RequestGlitch, glitchIntensity, glitchDuration]() mutable
-			{
-				RequestGlitch(glitchIntensity, glitchDuration);
-			});
+		const _float waitTimeSec = max(0.f, targetTimeSec - accumulatedTimeSec);
+		AddWait(waitTimeSec);
+		accumulatedTimeSec += waitTimeSec;
+
+		// 같은 시점이면 둘 다 발동되게(부동소수 오차 대비)
+		const _float timeEpsilon = 1e-4f;
+
+		if (glitchIndex < glitchKeyCount && fabsf(nextGlitchTime - targetTimeSec) <= timeEpsilon)
+		{
+			const _float glitchIntensity = glitchKeys[glitchIndex].intensity;
+			const _float glitchDurationSec = max(0.01f, min(glitchKeys[glitchIndex].durSec, totalDuration));
+
+			const char* noiseKeyForThis = glitchKeys[glitchIndex].noiseKey;
+			NoiseTextureType noiseTextureForThis =
+				(noiseKeyForThis && noiseKeyForThis[0] != '\0')
+				? ResourceManager()->Load_Texture(G_GlobalLevelKey, noiseKeyForThis)
+				: defaultNoiseTexture;
+
+			AddCall([RequestGlitch, glitchIntensity, glitchDurationSec, noiseTextureForThis]() mutable
+				{
+					RequestGlitch(glitchIntensity, glitchDurationSec, noiseTextureForThis);
+				});
+
+			++glitchIndex;
+		}
+
+		if (saturationIndex < saturationKeyCount && fabsf(nextSaturationTime - targetTimeSec) <= timeEpsilon)
+		{
+			const _float saturationIntensity = saturationKeys[saturationIndex].intensity;
+			const _float saturationDurationSec = max(0.01f, min(saturationKeys[saturationIndex].durSec, totalDuration));
+
+			AddCall([RequestSaturation, saturationIntensity, saturationDurationSec]() mutable
+				{
+					RequestSaturation(saturationIntensity, saturationDurationSec);
+				});
+
+			++saturationIndex;
+		}
 	}
 
-	if (accumulatedTime < totalDuration)
-		AddWait(totalDuration - accumulatedTime);
+	// 타임라인 끝까지 채우기
+	if (accumulatedTimeSec < totalDuration)
+		AddWait(totalDuration - accumulatedTimeSec);
 
+	// 정리
 	AddWait(preset.fVFXDuration);
 	AddCall([this, preset]() {
 		m_BattleVFX.fCurPos = 0.f;
 		m_BattleVFX.vNowColor = {};
 		m_BattleVFX.isRunning = false;
 		CamDirector()->EndWipeOut();
+		ObjectManager()->Get_Layer({ "Test_Level","PlacedObject_Layer" })->Set_RenderState(true);
 		});
+
 	Start(nullptr);
 }
 
