@@ -92,6 +92,7 @@ void CJaneDoeState_SwitchInAttack::Exit(CJaneDoe* pOwner)
 {
     pOwner->Pop_Invincible();
     pOwner->Unlock_Move();
+    pOwner->Set_ResetMove(true);
     __super::Exit(pOwner);
 }
 

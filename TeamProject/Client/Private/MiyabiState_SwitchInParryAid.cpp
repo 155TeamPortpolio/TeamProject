@@ -37,7 +37,7 @@ CMiyabiState_SwitchInParryAid* CMiyabiState_SwitchInParryAid::Create()
 void CMiyabiState_SwitchInParryAid::Enter(CMiyabi* pOwner)
 {
     pOwner->Lock_Move();
-    pOwner->Lock_Rotate();
+    //pOwner->Lock_Rotate();
 
     CamDirector()->StartParry();
 
@@ -47,7 +47,7 @@ void CMiyabiState_SwitchInParryAid::Enter(CMiyabi* pOwner)
 void CMiyabiState_SwitchInParryAid::Update(CMiyabi* pOwner, _float dt)
 {
     __super::Update(pOwner, dt);
-
+    pOwner->Look_Target();
     if (m_pSubStateMachine->Get_Trigger("Complete"))
     {
         m_pSubStateMachine->Reset_Trigger("Complete");
@@ -64,7 +64,7 @@ void CMiyabiState_SwitchInParryAid::Exit(CMiyabi* pOwner)
 {
     pOwner->Unlock_Move();
     pOwner->Unlock_Rotate();
-
+    pOwner->Set_ResetMove(true);
     __super::Exit(pOwner);
 }
 
