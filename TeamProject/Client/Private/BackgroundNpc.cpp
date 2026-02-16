@@ -31,9 +31,21 @@ HRESULT CBackgroundNpc::Initialize_Prototype()
 HRESULT CBackgroundNpc::Initialize(INIT_DESC* pArg)
 {
 	__super::Initialize(pArg);
-	//Build_Pedestrian(3);
-	//Build_Crowd(13,true);
-	Build_Crowd(10);
+	if (pArg == nullptr) {
+		Build_Crowd(Helper::Get_Random_Int(1,3), Helper::Get_Random_Bool());
+	}
+	else {
+		auto desc = dynamic_cast<BackgroundDesc*>(pArg);
+		if(desc){
+			if (desc->isPedestrian) {
+				Build_Pedestrian(desc->BackgroundCount, desc->movePoint);
+			}
+			else {
+				Build_Crowd(desc->BackgroundCount, desc->isCircle);
+			}
+		}else
+			Build_Crowd(Helper::Get_Random_Int(1, 3), Helper::Get_Random_Bool());
+	}
 	return S_OK;
 }
 
@@ -117,13 +129,15 @@ void CBackgroundNpc::Build_Crowd(_uint Count, _bool Round)
     }
 }
 
-void CBackgroundNpc::Build_Pedestrian(_uint Count)
+void CBackgroundNpc::Build_Pedestrian(_uint Count , vector<_float3> points)
 {
 	_uint count = Count;
 	for (_uint idx = 0; idx < count; ++idx)
 	{
-		auto child = Builder::Create_Object({ "MainCity_Level", "Proto_GameObject_Pedestrian" }).
+		auto child = 
+			Builder::Create_Object({ "MainCity_Level", "Proto_GameObject_Pedestrian" }).
 			Build("Pedestrian_"+to_string(idx));
+		dynamic_cast<CPedestrianNpc*>(child)->Set_MovePoint(points);
 		Get_Component<CObjectContainer>()->Add_Child(child, false);
 	}
 }
