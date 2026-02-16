@@ -1095,9 +1095,6 @@
     <Filter Include="03. Utility\02. CamLoader">
       <UniqueIdentifier>{01fa8660-fa55-4073-9664-f30e02931412}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03. Utility\03. UILoader">
-      <UniqueIdentifier>{5142a8bf-9e06-4a8f-b695-a095b762835d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="03. Utility\04. BattleSystem">
       <UniqueIdentifier>{b180e495-0af6-48a7-9aa3-dd8d6b302e10}</UniqueIdentifier>
     </Filter>
@@ -1460,6 +1457,9 @@
     </Filter>
     <Filter Include="02. GameObject\Object\AmbientActor\ScottScreen">
       <UniqueIdentifier>{6d17d294-80ec-4451-ad14-dc127fd9f6d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\03. UILoader">
+      <UniqueIdentifier>{5142a8bf-9e06-4a8f-b695-a095b762835d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

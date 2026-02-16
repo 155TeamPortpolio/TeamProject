@@ -36,7 +36,8 @@ void CBattleFXFlow::Initialize_Preset()
 		Parry.SetTimeData({ duration, 0.2f, 0.35f, 0.45f, EaseType::OutExpo });
 		Parry.BattleTimeScale[ENUM(BATTLE_OBJ_TYPE::MONSTER)] = 
 			TIME_SCALING({ duration, 0.05f, 0.1f, .2f , EaseType::InOutSine });
-	} 
+		Parry.BattleTimeScale[ENUM(BATTLE_OBJ_TYPE::CAMERA)] = TIME_SCALE_DATA{duration, 1.0f, 0.3f, .0f, EaseType::OutQuint};
+	}
 	{
 		auto& Parry = m_BattleVFXData[ENUM(BATTLE_VFX_TYPE::SWITCH)];
 		const _float duration = 2.f;

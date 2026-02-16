@@ -47,13 +47,13 @@ void CamDebugInput::JehyunInput(_float dt)
 
     if (InputDevice()->Key_Tap(VK_F3))
     {
-       // cam.RequestSequence("Parry/Miyabi_Left");
-        //cam.RequestSequence(CamSeqType::BattleIntro);
-        cam.StartParry();
+        cam.EnterBoss();
+        //cam.StartParry();
     }
 
     if (InputDevice()->Key_Tap(VK_F4))
     {
-        cam.EndParry();
+        cam.ExitBoss();
+        //cam.EndParry();
     }
 }

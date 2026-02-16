@@ -7,6 +7,7 @@
 #include "ObjectContainer.h"
 
 #include "DefilerLaser.h"
+#include "DisplayGate.h"
 
 CDefilerState_Attack* CDefilerState_Attack::Create()
 {
@@ -23,6 +24,10 @@ void CDefilerState_Attack::Build_Pattern(CDefiler* pOwner, _int Type)
 	TARGETING_INFO& targetInfo = pOwner->GetTargetingInfo();
 	blackBoard.patternTransition.clear();
 	Type = 2;
+
+	CMonitorGate gate;
+	if (gate.Pass()) Type = 0;
+
 	switch (Type)
 	{
 	case 0 :

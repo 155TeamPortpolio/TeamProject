@@ -23,6 +23,10 @@ public:
     void          SetSpaceRef(OBJECT_HANDLE handle) { m_spaceRefHandle = handle; }
     void          SetReturnCam(CamType type) { m_returnCamType = type; }
     void          SetTarget(OBJECT_HANDLE targetHandle);
+    
+    void          EnterBoss();
+    void          ExitBoss();
+
     void          AutoTarget();
     void          AutoField(CamStartDir dir);
     void          AutoBattle(CamStartDir dir);
