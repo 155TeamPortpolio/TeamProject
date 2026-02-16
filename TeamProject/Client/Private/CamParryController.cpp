@@ -511,11 +511,22 @@ Vector3 CamParryController::ExtFromPivotWorld(const Vector3& pivotWorld) const
 
 _float CamParryController::EvalImpactFov(_float u, _float close01) const
 {
-    const _float env = sinf(XM_PI * u);
-    const _float wave = sinf(2.f * XM_PI * (_float)tune.impact.fovWaveCount * u);
+    u = clamp(u, 0.f, 1.f);
+    close01 = clamp(close01, 0.f, 1.f);
 
-    const _float bias = -tune.impact.fovBiasDeg * close01 * env;
-    const _float fov = m_fovBase + bias + tune.impact.fovWaveAmpDeg * wave * env;
+    const _float count = (_float)max(1, tune.impact.fovWaveCount);
+    const _float phase = 2.f * XM_PI * count * u;
+    const _float osc = sinf(phase);
+
+    const _float rampIn = clamp(u / 0.10f, 0.f, 1.f);
+    const _float ramp = Math::ApplyEase(EaseType::OutSine, rampIn);
+
+    const _float bias = -tune.impact.fovBiasDeg * close01;
+
+    const _float amp = tune.impact.fovWaveAmpDeg * close01 * ramp;
+    const _float wave = amp * osc;
+
+    const _float fov = m_fovBase + bias + wave;
 
     const _float minFov = 8.f;
     const _float maxFov = 120.f;
@@ -527,6 +538,44 @@ void CamParryController::ApplyImpactFov(_float u, _float close01)
     auto orbit = CamDirector()->GetOrbitCam();
     orbit->Get_Component<CCamera>()->Set_FOV(EvalImpactFov(u, close01));
 }
+
+void CamParryController::BeginRecoverFov()
+{
+    auto orbit = CamDirector()->GetOrbitCam();
+
+    m_recoverFovActive = true;
+    m_recoverFovElapsed = 0.f;
+    m_recoverFovFrom = orbit->Get_Component<CCamera>()->Get_FOV();
+}
+
+void CamParryController::UpdateRecoverFov(_float dt)
+{
+    if (!m_recoverFovActive) return;
+
+    m_recoverFovElapsed += dt;
+
+    const _float dur = max(tune.impact.recoverFovSec, 0.0001f);
+    const _float u = clamp(m_recoverFovElapsed / dur, 0.f, 1.f);
+    const _float t = Math::ApplyEase(tune.impact.recoverFovEase, u);
+
+    const _float base = Math::Lerp(m_recoverFovFrom, m_fovSaved, t);
+
+    const _float count = (_float)max(1, tune.impact.fovWaveCount);
+    const _float phase = 2.f * XM_PI * count * u;
+    const _float osc = sinf(phase);
+
+    const _float k = 3.5f;
+    const _float decay = expf(-k * u);
+
+    const _float amp = tune.impact.fovWaveAmpDeg * 0.65f;
+    const _float settle = amp * osc * decay;
+
+    auto orbit = CamDirector()->GetOrbitCam();
+    orbit->Get_Component<CCamera>()->Set_FOV(base + settle);
+
+    if (u >= 1.f) m_recoverFovActive = false;
+}
+
 
 void CamParryController::Reset()
 {
@@ -563,7 +612,12 @@ void CamParryController::Reset()
     m_holdActive = false;
 
     m_fovBase = 0.f;
+
+    m_recoverFovActive = false;
+    m_recoverFovElapsed = 0.f;
+    m_recoverFovFrom = 0.f;
 }
+
 
 void CamParryController::Begin()
 {
@@ -612,13 +666,11 @@ void CamParryController::Begin()
     orbit->ParryMode_Begin();
 }
 
-
 void CamParryController::End()
 {
     if (!m_active) return;
 
-    auto orbit = CamDirector()->GetOrbitCam();
-    orbit->Get_Component<CCamera>()->Set_FOV(m_fovSaved);
+    BeginRecoverFov();
 
     CameraManager()->Set_BlendEase(tune.impact.recoverRollEase);
 
@@ -629,7 +681,6 @@ void CamParryController::End()
     m_elapsed = 0.f;
     m_waitSeqStarted = false;
 }
-
 
 void CamParryController::Update(_float dt)
 {
@@ -681,6 +732,8 @@ void CamParryController::Update(_float dt)
 
     if (m_state == State::WaitEnd)
     {
+        UpdateRecoverFov(dt);
+
         if (m_holdActive && m_elapsed < tune.impact.recoverRollSec)
             ApplyGoalPose_Snap(m_holdShot);
 
@@ -694,7 +747,12 @@ void CamParryController::Update(_float dt)
         if (CamDirector()->IsPlaying(m_waitSeqKey))
             return;
 
+        if (m_recoverFovActive)
+            return;
+
         auto orbit = CamDirector()->GetOrbitCam();
+        orbit->Get_Component<CCamera>()->Set_FOV(m_fovSaved);
+
         orbit->ParryMode_End();
 
         Reset();
