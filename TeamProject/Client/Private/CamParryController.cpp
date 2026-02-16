@@ -666,7 +666,6 @@ void CamParryController::Begin()
     orbit->ParryMode_Begin();
 }
 
-
 void CamParryController::End()
 {
     if (!m_active) return;

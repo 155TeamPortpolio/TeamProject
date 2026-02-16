@@ -58,9 +58,9 @@ public:
         struct Impact
         {
             _float punchDistDelta = 1.5f;
-            _float rollMaxDeg = 25.f;
-
-            _float rollArcMul = 0.75f;
+           
+            _float rollMaxDeg = 30.f;
+            _float rollArcMul = 0.85f;
 
             _float endCamAboveFootY = 0.5f;
             _float targetCamYMix = 0.80f;
