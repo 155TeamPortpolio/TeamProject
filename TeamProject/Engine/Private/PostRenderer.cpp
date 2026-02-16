@@ -95,7 +95,7 @@ HRESULT CPostRenderer::Render_PostProcessCommand()
 HRESULT CPostRenderer::Render_HDRBloom_Internal()
 {
 	{
-		if (FAILED(m_pTargetManager->Begin_MRT("MRT_HDR_Bright"))) return E_FAIL;
+		if (FAILED(m_pTargetManager->Begin_MRT("MRT_HDR_Bright", 0xFF, nullptr, false))) return E_FAIL;
 
 		m_pTargetManager->Bind_Target(m_strLastTargetName, m_pShader, "FinalTexture");
 
@@ -118,7 +118,7 @@ HRESULT CPostRenderer::Render_HDRBloom_Internal()
 	}
 
 	{
-		if (FAILED(m_pTargetManager->Begin_MRT("MRT_HDR_BlurH"))) return E_FAIL;
+		if (FAILED(m_pTargetManager->Begin_MRT("MRT_HDR_BlurH", 0xFF, nullptr, false))) return E_FAIL;
 
 		m_pTargetManager->Bind_Target("Target_HDR_Bright", m_pShader, "HDRBrightTexture");
 
@@ -143,7 +143,7 @@ HRESULT CPostRenderer::Render_HDRBloom_Internal()
 	}
 
 	{
-		if (FAILED(m_pTargetManager->Begin_MRT("MRT_HDR_BlurV"))) return E_FAIL;
+		if (FAILED(m_pTargetManager->Begin_MRT("MRT_HDR_BlurV", 0xFF, nullptr, false))) return E_FAIL;
 
 		m_pTargetManager->Bind_Target("Target_HDR_BlurX", m_pShader, "HDRBlurXTexture");
 
@@ -165,7 +165,7 @@ HRESULT CPostRenderer::Render_HDRBloom_Internal()
 
 HRESULT CPostRenderer::Render_RadialBlur_Internal()
 {
-	if (FAILED(m_pTargetManager->Begin_MRT("MRT_RadialBlur"))) return E_FAIL;
+	if (FAILED(m_pTargetManager->Begin_MRT("MRT_RadialBlur", 0xFF, nullptr, false))) return E_FAIL;
 
 	m_pTargetManager->Bind_Target(m_strLastTargetName, m_pShader, "FinalTexture");
 
@@ -189,7 +189,7 @@ HRESULT CPostRenderer::Render_RadialBlur_Internal()
 
 HRESULT CPostRenderer::Render_Fog_Internal()
 {
-	if (FAILED(m_pTargetManager->Begin_MRT("MRT_Fog"))) return E_FAIL;
+	if (FAILED(m_pTargetManager->Begin_MRT("MRT_Fog", 0xFF, nullptr, false))) return E_FAIL;
 
 	m_pTargetManager->Bind_Target("Target_Static_Depth", m_pShader, "StaticDepthTexture");
 	m_pTargetManager->Bind_Target("Target_Skinned_Depth", m_pShader, "SkinnedDepthTexture");
@@ -219,7 +219,7 @@ HRESULT CPostRenderer::Render_Fog_Internal()
 
 HRESULT CPostRenderer::Render_Addictive_Internal()
 {
-	if (FAILED(m_pTargetManager->Begin_MRT("MRT_Addictive"))) return E_FAIL;
+	if (FAILED(m_pTargetManager->Begin_MRT("MRT_Addictive", 0xFF, nullptr, false))) return E_FAIL;
 
 	m_pShader->SetConstantBuffer("FrameBuffer", m_pPipeLine->Get_FrameBuffer());
 
@@ -245,7 +245,7 @@ HRESULT CPostRenderer::Render_Addictive_Internal()
 
 HRESULT CPostRenderer::Render_Glitch_Internal()
 {
-	if (FAILED(m_pTargetManager->Begin_MRT("MRT_Glitch"))) return E_FAIL;
+	if (FAILED(m_pTargetManager->Begin_MRT("MRT_Glitch", 0xFF, nullptr, false))) return E_FAIL;
 
 	m_pShader->SetConstantBuffer("FrameBuffer", m_pPipeLine->Get_FrameBuffer());
 
@@ -275,7 +275,7 @@ HRESULT CPostRenderer::Render_Glitch_Internal()
 HRESULT CPostRenderer::Render_GuassianBlur_Internal()
 {
 	{
-		if (FAILED(m_pTargetManager->Begin_MRT("MRT_Guassian_BlurH"))) return E_FAIL;
+		if (FAILED(m_pTargetManager->Begin_MRT("MRT_Guassian_BlurH", 0xFF, nullptr, false))) return E_FAIL;
 
 		m_pShader->SetConstantBuffer("FrameBuffer", m_pPipeLine->Get_FrameBuffer());
 
@@ -299,7 +299,7 @@ HRESULT CPostRenderer::Render_GuassianBlur_Internal()
 		m_pTargetManager->End_MRT();
 	}
 	{
-		if (FAILED(m_pTargetManager->Begin_MRT("MRT_Guassian_BlurV"))) return E_FAIL;
+		if (FAILED(m_pTargetManager->Begin_MRT("MRT_Guassian_BlurV", 0xFF, nullptr, false))) return E_FAIL;
 
 		m_pShader->SetConstantBuffer("FrameBuffer", m_pPipeLine->Get_FrameBuffer());
 
@@ -325,7 +325,7 @@ HRESULT CPostRenderer::Render_GuassianBlur_Internal()
 
 HRESULT CPostRenderer::Render_Saturation_Internal()
 {
-	if (FAILED(m_pTargetManager->Begin_MRT("MRT_Saturation"))) return E_FAIL;
+	if (FAILED(m_pTargetManager->Begin_MRT("MRT_Saturation", 0xFF, nullptr, false))) return E_FAIL;
 
 	m_pShader->SetConstantBuffer("FrameBuffer", m_pPipeLine->Get_FrameBuffer());
 
@@ -372,7 +372,7 @@ HRESULT CPostRenderer::Render_Saturation_Internal()
 
 HRESULT CPostRenderer::Render_Distortion_Internal()
 {
-	if (FAILED(m_pTargetManager->Begin_MRT("MRT_Distortion"))) return E_FAIL;
+	if (FAILED(m_pTargetManager->Begin_MRT("MRT_Distortion", 0xFF, nullptr, false))) return E_FAIL;
 
 	m_pShader->SetConstantBuffer("FrameBuffer", m_pPipeLine->Get_FrameBuffer());
 

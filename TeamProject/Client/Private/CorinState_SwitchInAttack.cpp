@@ -87,6 +87,24 @@ void CCorinState_SwitchInAttack_Start::Update(CCorin* pOwner, _float dt)
     pOwner->Process_RootMotion(dt,
         ENUM(CCorin::ROOTMOTION_MASK::MOVE) |
         ENUM(CCorin::ROOTMOTION_MASK::QUATERNION));
+
+    Update_Effects(pOwner);
+}
+
+void CCorinState_SwitchInAttack_Start::Update_Effects(CCorin* pOwner)
+{
+    if (IsCrossAnimProgress(0.08f))
+    {
+        pOwner->Play_Effect("Corin_Saw_Slash0", _vector3(), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+        pOwner->Play_Effect("Corin_Ultimate_Saw_Slash0", _vector3(), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+    }
+
+    if (IsCrossAnimProgress(0.27f))
+        pOwner->Play_Effect("Corin_Normal_Slash0", _vector3(0.f, 0.6f, 0.f), _quaternion(0.73f, -0.04f, 0.03f, -0.68f));
+    if (IsCrossAnimProgress(0.35f))
+        pOwner->Play_Effect("Corin_Normal_Slash1", _vector3(0.f, 0.4f, 0.f), _quaternion(0.72f, 0.f, -0.02f, -0.69f));
+    if (IsCrossAnimProgress(0.44f))
+        pOwner->Play_Effect("Corin_Normal_Slash2", _vector3(0.f, 0.5f, 0.f), _quaternion(0.7f, -0.13f, 0.13f, -0.69f));
 }
 
 void CCorinState_SwitchInAttack_End::Enter(CCorin* pOwner)
@@ -95,6 +113,9 @@ void CCorinState_SwitchInAttack_End::Enter(CCorin* pOwner)
         .Loop(false)
         .Speed(1.2f)
         .Apply();
+
+    pOwner->Stop_Effect("Corin_Saw_Slash0");
+    pOwner->Stop_Effect("Corin_Ultimate_Saw_Slash0");
 }
 
 void CCorinState_SwitchInAttack_End::Update(CCorin* pOwner, _float dt)

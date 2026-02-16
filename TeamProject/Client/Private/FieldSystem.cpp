@@ -186,6 +186,7 @@ void CFieldSystem::DayTimer::Update_Transition(_float dt)
 	if (time >= 1.0f)
 	{
 		IsTransition = false;
+		RenderSystem()->ResetUpdateInterval();
 	}
 }
 
@@ -197,6 +198,7 @@ void CFieldSystem::DayTimer::Set_DayPhase(DayPhase ePhase)
 	PreDayTime = DayTime;
 	IsTransition = true;
 	TransitionTime = 0.f;
+	RenderSystem()->SetShadowUpdateInterval(0.05);
 
 	StartFog = TargetFog;
 	StartCloud = TargetCloud;

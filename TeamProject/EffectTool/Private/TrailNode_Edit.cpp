@@ -81,9 +81,9 @@ void CTrailNode_Edit::Update(_float dt)
 		if (!pEffectContainer->IsLoop())
 			pTrail->SetFadeOut(true);
 
-		_vector3 vRight = m_pTransform->Dir(STATE::RIGHT);
+		_vector3 vLook = m_pTransform->Dir(STATE::LOOK);
 		_vector3 vPosition = m_pTransform->Get_WorldPos();
-		_vector3 vNextPostion = vPosition + vRight * 100.f;
+		_vector3 vNextPostion = vPosition + vLook * 100.f;
 		pTrail->Add_LinePoint(vPosition, vNextPostion);
 		pTrail->Update_LinePoint(dt);
 
@@ -105,7 +105,12 @@ void CTrailNode_Edit::Render_GUI()
 
 void CTrailNode_Edit::Play()
 {
-
+	m_IsEffectActive = true;
+	if (CTrailModel::POINT_MODE::LINE == m_eMode)
+	{
+		Get_Component<CTrailModel>()->Reset();
+		Get_Component<CTrailModel>()->SetFadeOut(false);
+	}
 }
 
 void CTrailNode_Edit::Import(nlohmann::ordered_json& json)

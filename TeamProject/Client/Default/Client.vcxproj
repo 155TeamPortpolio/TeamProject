@@ -384,6 +384,7 @@
     <ClInclude Include="..\public\Claymore_Idle.h" />
     <ClInclude Include="..\public\Claymore_Move.h" />
     <ClInclude Include="..\Public\DefilerAxe.h" />
+    <ClInclude Include="..\Public\DefilerLaser.h" />
     <ClInclude Include="..\Public\DefilerState_Other.h" />
     <ClInclude Include="..\Public\DefilerWall.h" />
     <ClInclude Include="..\Public\DefilerWeapon.h" />
@@ -398,6 +399,8 @@
     <ClInclude Include="..\Public\Giant_Idle.h" />
     <ClInclude Include="..\Public\Giant_Move.h" />
     <ClInclude Include="..\Public\Giant_Parried.h" />
+    <ClInclude Include="..\Public\Hand_Core.h" />
+    <ClInclude Include="..\Public\Hand_Sword.h" />
     <ClInclude Include="..\public\HealKit.h" />
     <ClInclude Include="..\Public\MiasmaDummyUnit.h" />
     <ClInclude Include="..\Public\MiasmaGrandierJaeger.h" />
@@ -879,6 +882,7 @@
     <ClCompile Include="..\private\Claymore_Move.cpp" />
     <ClCompile Include="..\private\Claymore_Parried.cpp" />
     <ClCompile Include="..\Private\DefilerAxe.cpp" />
+    <ClCompile Include="..\Private\DefilerLaser.cpp" />
     <ClCompile Include="..\Private\DefilerState_Other.cpp" />
     <ClCompile Include="..\Private\DefilerWall.cpp" />
     <ClCompile Include="..\Private\DefilerWeapon.cpp" />
@@ -893,6 +897,8 @@
     <ClCompile Include="..\Private\Giant_Idle.cpp" />
     <ClCompile Include="..\Private\Giant_Move.cpp" />
     <ClCompile Include="..\Private\Giant_Parried.cpp" />
+    <ClCompile Include="..\Private\Hand_Core.cpp" />
+    <ClCompile Include="..\Private\Hand_Sword.cpp" />
     <ClCompile Include="..\private\HealKit.cpp" />
     <ClCompile Include="..\Private\MiasmaDummyUnit.cpp" />
     <ClCompile Include="..\Private\MiasmaGrandierJaeger.cpp" />
