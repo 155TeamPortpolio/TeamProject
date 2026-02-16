@@ -75,7 +75,7 @@ public:
     /* 몬스터가 죽는 시퀀스가 다 끝나고 호출할 것. */
     void                Death();
     // 공격중인지 플래그 세팅하는 함수, 끝났을 때, 공격 관련 플래그를 전부 끔(m_isOnAttack, m_isParryEnable)
-    void                SetOnAttack(_bool is, ATTACK_SIDE eSide = ATTACK_SIDE::NONE); 
+    virtual void        SetOnAttack(_bool is, ATTACK_SIDE eSide = ATTACK_SIDE::NONE); 
     // 패링 당했을 때 플레이어 쪽에서 호출될 함수
     virtual void        Parried();
     // 공격 상태 진입 시, AttackSign 켜고 공격 관련 flag를 일괄 처리하는 함수

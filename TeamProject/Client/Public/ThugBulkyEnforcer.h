@@ -38,20 +38,20 @@ private:
 public:
     CStateMachine<CThugBulkyEnforcer>* Get_StateMachine() { return m_pStateMachine; }
     ATTACK_BLACK_BOARD& GetBlackBoard() { return m_tAttackBlackBoard; }
-    HYSTERIESIS& GetHysteriesis() { return m_tHysteriesis; }
-    _int                                GetAttackHistoryFront() { return m_AttackHistory.front(); }
-    _bool                               IsBattleTriggerColliderOn() { return m_isBattleTriggerOn; }
-    _bool                               IsBattleAttackColliderOn() { return m_isBattleAttackOn; }
+    HYSTERIESIS&        GetHysteriesis() { return m_tHysteriesis; }
+    _int                GetAttackHistoryFront() { return m_AttackHistory.front(); }
+    _bool               IsBattleTriggerColliderOn() { return m_isBattleTriggerOn; }
+    _bool               IsBattleAttackColliderOn() { return m_isBattleAttackOn; }
 
-    void                                Idle() { m_isIdle = true; }
-    void                                CaptureRotateDir(_float3 vTargetDir, _float fSpeed = 10.f);
-    void                                AddAttackHistoryFront(_int i) { m_AttackHistory.push_front(i); }
-    void                                TurnOnAttackCollider(BATTLE_PART ePart);
-    void                                TurnOnTriggerCollider(BATTLE_PART ePart);
-    void                                FinishWeaponCollider();
-    void                                SetBattleTriggerColliderOn(_bool is) { m_isBattleTriggerOn = is; }
-    void                                SetBattleAttackColliderOn(_bool is) { m_isBattleAttackOn = is; }
-    virtual void                        TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER charaName = CHARACTER::END) override;
+    void                Idle() { m_isIdle = true; }
+    void                CaptureRotateDir(_float3 vTargetDir, _float fSpeed = 10.f);
+    void                AddAttackHistoryFront(_int i) { m_AttackHistory.push_front(i); }
+    void                TurnOnAttackCollider(BATTLE_PART ePart);
+    void                TurnOnTriggerCollider(BATTLE_PART ePart);
+    void                FinishWeaponCollider();
+    void                SetBattleTriggerColliderOn(_bool is) { m_isBattleTriggerOn = is; }
+    void                SetBattleAttackColliderOn(_bool is) { m_isBattleAttackOn = is; }
+    virtual void        TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER charaName = CHARACTER::END) override;
 
 private:
     HRESULT Initialize_StateMachine();

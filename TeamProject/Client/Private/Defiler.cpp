@@ -298,7 +298,7 @@ void CDefiler::MoveByTraceMode(_float dt, _float moveScale)
 		controller->Move_Velocity(velocityWorld, dt);
 		m_pTransform->Add_Quaternion(rootQuatLocal);
 
-		// ½ÇÁ¦ ÀÌµ¿ ¹æÇâ Ä³½Ã(°¡´ÉÇÏ¸é)
+		// ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½ ï¿½ï¿½ï¿½ï¿½ Ä³ï¿½ï¿½(ï¿½ï¿½ï¿½ï¿½ï¿½Ï¸ï¿½)
 		if (velocityWorld.Length() > 1e-5f)
 		{
 			m_lastMoveDir = velocityWorld;
@@ -342,13 +342,13 @@ void CDefiler::MoveByTraceMode(_float dt, _float moveScale)
 	}
 	else
 	{
-		// Å¸°ÙÀÌ °ãÃÆ°Å³ª ³Ê¹« °¡±î¿ò
+		// Å¸ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Æ°Å³ï¿½ ï¿½Ê¹ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½
 		if (m_hasLastMoveDir) dirToTarget = m_lastMoveDir;
 		if (dirToTarget.Length() <= 1e-6f) dirToTarget = _vector3(0.f, 0.f, 1.f);
 		if (dirToTarget.Length() > 1e-6f) dirToTarget.Normalize();
 	}
 
-	// °üÅë ºÒ°¡¸é È¸Àü¸¸
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½Ò°ï¿½ï¿½ï¿½ È¸ï¿½ï¿½ï¿½ï¿½
 	if (distToTarget <= 1.f && !allowThrough)
 	{
 		m_pTransform->Add_Quaternion(rootQuatLocal);
@@ -412,7 +412,7 @@ void CDefiler::MoveByTraceMode(_float dt, _float moveScale)
 
 	if (passEvent)
 	{
-		m_passDir = passTestDir; // "½ÇÁ¦ ÀÌµ¿ ¹æÇâ"À» ±×´ë·Î À¯Áö
+		m_passDir = passTestDir; // "ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½ ï¿½ï¿½ï¿½ï¿½"ï¿½ï¿½ ï¿½×´ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		m_passDir.y = 0.f;
 
 		if (m_passDir.Length() > 1e-6f) m_passDir.Normalize();
@@ -691,7 +691,7 @@ void CDefiler::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER cha
 void CDefiler::Send_DamageText(_float damage, CHARACTER charaName)
 {
 	DAMAGE_DESC desc{};
-	damage = Helper::Get_Random_Int(1000, 10000); // ÀÓ½Ã
+	damage = Helper::Get_Random_Int(1000, 10000); // ï¿½Ó½ï¿½
 	desc.damage = damage;
 	desc.followHandle = Get_Handle();
 	desc.followOffset = Calc_WorldOffsetWithBip();
@@ -743,7 +743,7 @@ void CDefiler::Control_Summon(const string& event)
 
 void CDefiler::SummonWave()
 {
-	/*20ÃÊ ÁøÇà*/
+	/*20ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½*/
 	string nowLevelKey = LevelManager()->Get_NowLevelKey();
 	CWaterWave::WaterWaveDesc* waveDesc = new CWaterWave::WaterWaveDesc;
 
@@ -755,18 +755,18 @@ void CDefiler::SummonWave()
 	waveDesc->vWaterTint = _float3(1.f, 1.f, 1.f);
 	waveDesc->fNoiseOffset = _float2(0.f, 0.f);
 
-	waveDesc->fPeakTime = 0.90f;			// 0.82 -> 0.88~0.92 (ÇÇÅ©¸¦ µÚ·Î)
-	waveDesc->fRiseWidth = 0.85f;			// 0.55 -> 0.75~1.0 (ÃµÃµÈ÷/³Ð°Ô »ó½Â)
-	waveDesc->fFallWidth = 0.05f;			// 0.12 -> 0.04~0.07 (±Þ¶ô)
+	waveDesc->fPeakTime = 0.90f;			// 0.82 -> 0.88~0.92 (ï¿½ï¿½Å©ï¿½ï¿½ ï¿½Ú·ï¿½)
+	waveDesc->fRiseWidth = 0.85f;			// 0.55 -> 0.75~1.0 (ÃµÃµï¿½ï¿½/ï¿½Ð°ï¿½ ï¿½ï¿½ï¿½)
+	waveDesc->fFallWidth = 0.05f;			// 0.12 -> 0.04~0.07 (ï¿½Þ¶ï¿½)
 
-	waveDesc->fCurlStartRatio = 0.95f;		// 0.878 -> 0.93~0.97 (¸»¸² ½ÃÀÛÀ» ´ÊÃç¼­ ¡°¹öÆ¼´Ù ÃR¡±)
-	waveDesc->fCurlDuration = 0.08f;		// 0.15 -> 0.06~0.10 (¸»¸²À» Âª°í °­ÇÏ°Ô)
+	waveDesc->fCurlStartRatio = 0.95f;		// 0.878 -> 0.93~0.97 (ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ç¼­ ï¿½ï¿½ï¿½ï¿½Æ¼ï¿½ï¿½ ï¿½Rï¿½ï¿½)
+	waveDesc->fCurlDuration = 0.08f;		// 0.15 -> 0.06~0.10 (ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Âªï¿½ï¿½ ï¿½ï¿½ï¿½Ï°ï¿½)
 
-	waveDesc->fFadeInEnd = 0.12f;			// 0.08 -> 0.10~0.15 (ÃµÃµÈ÷ µîÀå ´À³¦)
-	waveDesc->fFadeOutStart = 0.995f;		// 0.98 -> 0.99~0.995 (³¡±îÁö ³²°ÜµÎ±â)
+	waveDesc->fFadeInEnd = 0.12f;			// 0.08 -> 0.10~0.15 (ÃµÃµï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
+	waveDesc->fFadeOutStart = 0.995f;		// 0.98 -> 0.99~0.995 (ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ÜµÎ±ï¿½)
 
 	waveDesc->fCurlForward = 45.f;			// 35 -> 40~55
-	waveDesc->fMaxCurlAngle = 3.8f;			// 6.456 -> 7.0~9.0 (´õ ¸»¸®°Ô)
+	waveDesc->fMaxCurlAngle = 3.8f;			// 6.456 -> 7.0~9.0 (ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½)
 
 	CGameObject* WaterWave = 
 		Builder::Create_Object({ "Zero_Level", "Proto_GameObject_WaterWave" })
@@ -926,7 +926,7 @@ HRESULT CDefiler::Initialize_States()
 
 HRESULT CDefiler::Initialize_Transitions()
 {
-	/* ÅÂ¾î³­ ÈÄ -> °­Á¦ IDLE*/
+	/* ï¿½Â¾î³­ ï¿½ï¿½ -> ï¿½ï¿½ï¿½ï¿½ IDLE*/
 	m_pStateMachine->Register_Transition("Born", "Idle",
 		CStateMachine<CDefiler>::CONDITION_ANIMATION_END);
 

@@ -8,4 +8,4 @@ Proto_GameObject_Cyclops,Cyclops,1.28,0.55,200,2101
 Proto_GameObject_Defiler,Defiler,1.28,0.55,1000,400
 Proto_GameObject_StrikeJaeger,StrikeJaeger,1.28,0.55,200,3100
 Proto_GameObject_MeleeJaeger,MeleeJaeger,0.9,0.55,200,3101  
-Proto_GameObject_Giant,Giant,1.28,0.8,1000,2200
+Proto_GameObject_Giant,Giant,1.28,1.2,500,2200

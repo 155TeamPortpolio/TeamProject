@@ -1095,9 +1095,6 @@
     <Filter Include="03. Utility\02. CamLoader">
       <UniqueIdentifier>{01fa8660-fa55-4073-9664-f30e02931412}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03. Utility\03. UILoader">
-      <UniqueIdentifier>{5142a8bf-9e06-4a8f-b695-a095b762835d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="03. Utility\04. BattleSystem">
       <UniqueIdentifier>{b180e495-0af6-48a7-9aa3-dd8d6b302e10}</UniqueIdentifier>
     </Filter>
@@ -1451,6 +1448,18 @@
     </Filter>
     <Filter Include="03. Utility\06. FieldSystem\Room\07. Party">
       <UniqueIdentifier>{47d49842-2238-46dd-b61f-399b1b8d45e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\AmbientActor\DogBone">
+      <UniqueIdentifier>{faecd42d-c38a-4510-b1e2-ea7ea32a0501}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\AmbientActor\DogFan">
+      <UniqueIdentifier>{b9589ddd-046f-4f4b-992f-7f01bb892f46}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\AmbientActor\ScottScreen">
+      <UniqueIdentifier>{6d17d294-80ec-4451-ad14-dc127fd9f6d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\03. UILoader">
+      <UniqueIdentifier>{5142a8bf-9e06-4a8f-b695-a095b762835d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -2816,6 +2825,15 @@
     <ClInclude Include="..\Public\NPC_Preset.h">
       <Filter>02. GameObject\Object\Npc\Child</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\DogFan.h">
+      <Filter>02. GameObject\Object\AmbientActor\DogFan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\DogBone.h">
+      <Filter>02. GameObject\Object\AmbientActor\DogBone</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ScottScreen.h">
+      <Filter>02. GameObject\Object\AmbientActor\ScottScreen</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -3623,6 +3641,9 @@
     <ClCompile Include="..\private\CamOcclusionTracker.cpp">
       <Filter>02. GameObject\Camera\04. OrbitCam\00. OrbitCamCollider</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\Defiler.cpp">
+      <Filter>02. GameObject\Object\Enemy\Boss\Defiler</Filter>
+    </ClCompile>
     <ClCompile Include="..\Private\DefilerState_Attack.cpp">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler\State\Attack</Filter>
     </ClCompile>
@@ -4133,8 +4154,14 @@
     <ClCompile Include="..\private\Room_Party.cpp">
       <Filter>03. Utility\06. FieldSystem\Room\07. Party</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Defiler.cpp">
-      <Filter>02. GameObject\Object\Enemy\Boss\Defiler</Filter>
+    <ClCompile Include="..\private\DogFan.cpp">
+      <Filter>02. GameObject\Object\AmbientActor\DogFan</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\DogBone.cpp">
+      <Filter>02. GameObject\Object\AmbientActor\DogBone</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ScottScreen.cpp">
+      <Filter>02. GameObject\Object\AmbientActor\ScottScreen</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
