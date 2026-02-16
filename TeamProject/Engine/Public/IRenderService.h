@@ -26,12 +26,13 @@ public:
     virtual void SetOn(_bool On) PURE;
 
     virtual void Update(_float dt) PURE;
-
 public:
     virtual class CRenderer* GetRenderer(RENDERER_TYPE eType = RENDERER_TYPE::FORWARD) PURE;
     virtual class CPostRenderer* GetPostRenderer() PURE;
     virtual HRESULT Create_RenderTarget(const RenderTargetDesc& desc) PURE;
     virtual void Set_GlitchDesc(GLITCH_DESC desc) PURE;
+    virtual void SetShadowUpdateInterval(_float fInterval) PURE;
+    virtual void ResetUpdateInterval() PURE;
     virtual void Set_NoiseTexture(NOISE_FXTYPE eNoise, class CTexture* noiseTexture) PURE;
     virtual CTexture* Get_NoiseTexture(NOISE_FXTYPE eNoise) PURE;
 

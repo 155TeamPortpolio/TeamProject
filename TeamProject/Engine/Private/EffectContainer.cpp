@@ -175,6 +175,8 @@ void CEffectContainer::AttachBone(CAnimator3D* pAnimator, const string& boneTag,
 
 void CEffectContainer::Play()
 {
+	m_isAlive = true;
+
 	for (const auto& node : m_Nodes)
 		static_cast<CEffectNode*>(node)->Play();
 }

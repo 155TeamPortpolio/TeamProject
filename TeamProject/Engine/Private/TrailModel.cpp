@@ -478,19 +478,21 @@ void CTrailModel::Build_LineVertices()
 	_float t = point.fLifeTime / m_fMaxLifeTime;
 	t = clamp(t, 0.f, 1.f);
 
-	p0.vPosition = _vector3(point.vPositionA) + vRight * 0.5f * point.fWidth;
+	_float fWidth = Math::Lerp(m_fStartWidth, m_fEndWidth, Math::ApplyEase(EaseType::OutQuint, t));
+
+	p0.vPosition = _vector3(point.vPositionA) + vRight * 0.5f * fWidth;
 	p0.vLifeTime = _float2(point.fLifeTime, m_fMaxLifeTime);
 	p0.vColor = _vector4::Lerp(m_vStartColor, m_vEndColor, t);
 
-	p1.vPosition = _vector3(point.vPositionA) - vRight * 0.5f * point.fWidth;
+	p1.vPosition = _vector3(point.vPositionA) - vRight * 0.5f * fWidth;
 	p1.vLifeTime = _float2(point.fLifeTime, m_fMaxLifeTime);
 	p1.vColor = _vector4::Lerp(m_vStartColor, m_vEndColor, t);
 	
-	p2.vPosition = _vector3(point.vPositionB) + vRight * 0.5f * point.fWidth;
+	p2.vPosition = _vector3(point.vPositionB) + vRight * 0.5f * fWidth;
 	p2.vLifeTime = _float2(point.fLifeTime, m_fMaxLifeTime);
 	p2.vColor = _vector4::Lerp(m_vStartColor, m_vEndColor, t);
 
-	p3.vPosition = _vector3(point.vPositionB) - vRight * 0.5f * point.fWidth;
+	p3.vPosition = _vector3(point.vPositionB) - vRight * 0.5f * fWidth;
 	p3.vLifeTime = _float2(point.fLifeTime, m_fMaxLifeTime);
 	p3.vColor = _vector4::Lerp(m_vStartColor, m_vEndColor, t);
 

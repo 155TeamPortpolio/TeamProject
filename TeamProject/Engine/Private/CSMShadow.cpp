@@ -107,7 +107,7 @@ void CCSMShadow::Update()
 
     Lens camLens = CamMgr->Get_Lens();
 
-    CalculateCascadeSplits(camLens.zNear, 300.f);
+    CalculateCascadeSplits(camLens.zNear, camLens.zFar);
 
     auto shadowTransform = CamMgr->Get_ShadowCam()->Get_Owner()->Get_Component<CTransform>();
     _vector lightDir = XMVector3Normalize(shadowTransform->Dir(STATE::LOOK));
