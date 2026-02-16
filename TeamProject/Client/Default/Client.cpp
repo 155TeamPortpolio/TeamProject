@@ -80,7 +80,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
            _float dt = gameInstance->Get_EngineDeltaTime();
            mainApp->Update(dt);
            mainApp->Render();
-           fTimeAcc = 0.f;
+           fTimeAcc = fTimeAcc-step;
        }
    }
 

@@ -34,11 +34,9 @@ void CTimer::Update_Timer()
 	if (raw > 0.1f) raw = 0.1f;
 
 	m_fRawDeltaTime = raw;
+	m_fRawDeltaTime = min(raw, 0.033f);
 
-	_float scaled = raw * m_fTimeScale;
-
-	// 필요하면 scaled도 clamp (예: 30fps 제한)
-	scaled = min(scaled, 0.033f);
+	_float scaled = m_fRawDeltaTime * m_fTimeScale;
 
 	m_fScaledDeltaTime = scaled;
 
@@ -49,7 +47,7 @@ void CTimer::Update_Timer()
 _float CTimer::Get_DeltaTime(_bool raw)
 {
 	if (!raw)
-		return min(m_fScaledDeltaTime, 0.017f);
+		return m_fScaledDeltaTime;
 	else
 		return m_fScaledDeltaTime;
 }
