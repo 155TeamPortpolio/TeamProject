@@ -745,6 +745,7 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\TrailModel.h" />
     <ClInclude Include="..\Public\TrailNode.h" />
     <ClInclude Include="..\Public\Transform.h" />
+    <ClInclude Include="..\public\TriangleModel.h" />
     <ClInclude Include="..\Public\UIObjcetBuilder.h" />
     <ClInclude Include="..\public\UIRenderer.h" />
     <ClInclude Include="..\Public\UI_Manager.h" />
@@ -761,6 +762,7 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\VI_Terrain.h" />
     <ClInclude Include="..\public\VI_Tessellation.h" />
     <ClInclude Include="..\Public\VI_Trail.h" />
+    <ClInclude Include="..\public\VI_Triangle.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\imgui_stdlib.cpp">
@@ -916,6 +918,7 @@ exit /b 0</Command>
     <ClCompile Include="..\Private\TrailModel.cpp" />
     <ClCompile Include="..\Private\TrailNode.cpp" />
     <ClCompile Include="..\Private\Transform.cpp" />
+    <ClCompile Include="..\private\TriangleModel.cpp" />
     <ClCompile Include="..\Private\UIObjcetBuilder.cpp" />
     <ClCompile Include="..\private\UIRenderer.cpp" />
     <ClCompile Include="..\Private\UI_Manager.cpp" />
@@ -935,6 +938,7 @@ exit /b 0</Command>
     <FxCompile Include="..\Public\Engine_Shader\VTX_PaperEffect.hlsl">
       <FileType>Document</FileType>
     </FxCompile>
+    <ClCompile Include="..\private\VI_Triangle.cpp" />
     <ClCompile Include="..\Public\GUI_Inc\backends\imgui_impl_dx11.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>

@@ -181,7 +181,7 @@ void CFieldSystem::DayTimer::Update_Transition(_float dt)
 		->SetEnable(true);
 
 	auto pCloud = dynamic_cast<CTestCloud*>(ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Cloud)));
-	pCloud->Set_CloudInfo(skyColor, cloudColor);
+	if(pCloud)pCloud->Set_CloudInfo(skyColor, cloudColor);
 
 	if (time >= 1.0f)
 	{

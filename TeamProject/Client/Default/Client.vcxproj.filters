@@ -1415,7 +1415,7 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Enemy\Boss\Defiler\DefilerLaser">
       <UniqueIdentifier>{a3dbcf0a-50d0-46cb-8314-ddecf4f0d7fd}</UniqueIdentifier>
-    </Filter>  
+    </Filter>
     <Filter Include="02. GameObject\UI\01. 2D\Switch">
       <UniqueIdentifier>{6a5c26b7-37b6-408f-af08-4af4501f3518}</UniqueIdentifier>
     </Filter>
@@ -1451,6 +1451,9 @@
     </Filter>
     <Filter Include="03. Utility\06. FieldSystem\Room\07. Party">
       <UniqueIdentifier>{47d49842-2238-46dd-b61f-399b1b8d45e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Env\Sky">
+      <UniqueIdentifier>{a34bc107-84e0-47c2-a2b4-d0e7709df620}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -2788,7 +2791,7 @@
     </ClInclude>
     <ClInclude Include="..\Public\DefilerLaser.h">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler\DefilerLaser</Filter>
-    </ClInclude>  
+    </ClInclude>
     <ClInclude Include="..\Public\UI_Switch.h">
       <Filter>02. GameObject\UI\01. 2D\Switch</Filter>
     </ClInclude>
@@ -2815,6 +2818,9 @@
     </ClInclude>
     <ClInclude Include="..\public\Room_Party.h">
       <Filter>03. Utility\06. FieldSystem\Room\07. Party</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ProceduralSky.h">
+      <Filter>02. GameObject\Object\Env\Sky</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -4108,7 +4114,7 @@
     </ClCompile>
     <ClCompile Include="..\Private\DefilerLaser.cpp">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler\DefilerLaser</Filter>
-    </ClCompile>  
+    </ClCompile>
     <ClCompile Include="..\Private\UI_Switch.cpp">
       <Filter>02. GameObject\UI\01. 2D\Switch</Filter>
     </ClCompile>
@@ -4126,7 +4132,7 @@
     </ClCompile>
     <ClCompile Include="..\Private\BackGroundSpawner.cpp">
       <Filter>02. GameObject\Object\Npc\Background\Spawner</Filter>
- </ClCompile>
+    </ClCompile>
     <ClCompile Include="..\private\Room_Scott.cpp">
       <Filter>03. Utility\06. FieldSystem\Room\06. Scott</Filter>
     </ClCompile>
@@ -4135,6 +4141,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Defiler.cpp">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ProceduralSky.cpp">
+      <Filter>02. GameObject\Object\Env\Sky</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
