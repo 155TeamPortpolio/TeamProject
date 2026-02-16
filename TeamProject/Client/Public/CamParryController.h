@@ -33,7 +33,7 @@ public:
     {
         struct Common
         {
-            _float enterSec = 0.5f;
+            _float enterSec = 0.3f;
             _float impactSec = 0.5f;
 
             _float pitchDeg = -8.f;
@@ -57,17 +57,24 @@ public:
 
         struct Impact
         {
-            _float punchDistDelta = 0.75f;
-            _float rollMaxDeg = 10.f;
+            _float punchDistDelta = 1.f;
+            _float rollMaxDeg = 25.f;
 
-            _int   rollShakeCount = 4;
-            _float rollShakeDeg = 3.0f;
-
-            _float rollArcMul = 0.4f;
+            _float rollArcMul = 0.5f;
 
             _float endCamAboveFootY = 0.5f;
             _float targetCamYMix = 0.80f;
             _float pivotDropY = 0.12f;
+
+            _float recoverRollSec = 0.5f;
+            EaseType rollEase = EaseType::InOutSine;
+            EaseType recoverRollEase = EaseType::InOutSine;
+
+            _int   fovWaveCount = 4;
+            _float fovWaveAmpDeg = 3.f;
+            _float fovBiasDeg = 15.f;
+
+             _float impactStartYawExtraDeg = 30.f;
         };
 
         Common common{};
@@ -79,7 +86,8 @@ public:
     void Begin();
     void End();
     void Update(_float dt);
-    
+
+    Vector3 GetImpactPointWorld() const { return m_fxPointWorld; }
 
 public:
     ParryTuning tune{};
@@ -107,11 +115,18 @@ private:
     void      ClampEnter_NoDrop(ShotGoal& g) const;
 
     void      CaptureCurAsImpactBase();
-    ShotGoal  BuildImpactShot(_int sideSign, _float close01, _float roll01, _float u) const;
+    ShotGoal  BuildImpactShot(_int sideSign, _float close01, _float u) const;
 
     void      ComputeSideFromCam();
 
     string    BuildParryKey() const;
+
+    void      BuildBasis(Vector3& outFwd, Vector3& outRight) const;
+    Vector3   PivotWorldFromExt(const Vector3& ext) const;
+    Vector3   ExtFromPivotWorld(const Vector3& pivotWorld) const;
+
+    _float    EvalImpactFov(_float u, _float close01) const;
+    void      ApplyImpactFov(_float u, _float close01);
 
 private:
     _bool         m_active = false;
@@ -141,6 +156,14 @@ private:
 
     string        m_waitSeqKey{};
     _bool         m_waitSeqStarted = false;
+
+    Vector3       m_fxPointWorld{};
+
+    ShotGoal      m_holdShot{};
+    _bool         m_holdActive = false;
+    
+    _float        m_fovBase = 0.f;
+    _float        m_fovSaved = 0.f;
 };
 
 NS_END
