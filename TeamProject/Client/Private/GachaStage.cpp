@@ -196,14 +196,16 @@ void CGachaStage::Update(_float dt)
 			m_iIndex = m_iMaxIndex - 1;
 			UIDirector()->Show_GachaResult(m_pResultDesc);
 		}
+		else
+		{
+			if ((*m_pResultDesc)[m_iIndex].Type == GachaType::Agent)
+				Get_Component<CAudioSource>()->Slot("GachaAgent.wav").Play();
+			else
+				Get_Component<CAudioSource>()->Slot("GachaEngine.wav").Play();
+		}
 
 		CUIDirector::GetInstance()->Hide_GachaLabel();
 		SetMiddleLightEffect(_float4(1.f, 1.f, 1.f, 1.f), _float4(0.1f, 0.1f, 0.1f, 1.f), 1.f);
-
-		if ((*m_pResultDesc)[m_iIndex].Type == GachaType::Agent)
-			Get_Component<CAudioSource>()->Slot("GachaAgent.wav").Play();
-		else
-			Get_Component<CAudioSource>()->Slot("GachaEngine.wav").Play();
 	}
 }
 
