@@ -200,7 +200,36 @@ void CMiyabiState_Dash_02::Update_Effects(CMiyabi* pOwner)
 {
     if (IsCrossAnimProgress(0.02f))
     {
+        pOwner->Play_Effect("Player_Run_Start0", _vector3(1.4f, 1.1f, -1.2f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+        pOwner->Play_Effect("Player_Run_Start1", _vector3(1.4f, 0.15f, -1.2f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+        pOwner->Play_Effect("Miyabi_Dash0", _vector3(1.4f, 1.1f, -1.2f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+    }
+
+    if (IsCrossAnimProgress(0.03f))
+    {
+        pOwner->Play_Effect("Player_Run_Start0", _vector3(0.6f, 1.1f, 0.7f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+        pOwner->Play_Effect("Player_Run_Start1", _vector3(0.6f, 0.15f, 0.7f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+        pOwner->Play_Effect("Miyabi_Dash1", _vector3(0.6f, 1.1f, 0.7f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+    }
+
+    if (IsCrossAnimProgress(0.05f))
+    {
+        pOwner->Play_Effect("Player_Run_Start0", _vector3(-1.5f, 1.1f, -0.2f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+        pOwner->Play_Effect("Player_Run_Start1", _vector3(-1.5f, 0.15f, -0.2f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+        pOwner->Play_Effect("Miyabi_Dash2", _vector3(-1.5f, 1.1f, -0.2f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+    }
+
+    if (IsCrossAnimProgress(0.07f))
+    {
+        pOwner->Play_Effect("Player_Run_Start0", _vector3(-0.7f, 1.1f, 0.5f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+        pOwner->Play_Effect("Player_Run_Start1", _vector3(-0.7f, 0.15f, 0.5f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+        pOwner->Play_Effect("Miyabi_Dash3", _vector3(-0.7f, 1.1f, 0.5f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+    }
+
+    if (IsCrossAnimProgress(0.09f))
+    {
         pOwner->Play_Effect("Player_Run_Start0", _vector3(0.f, 1.1f, 1.3f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
         pOwner->Play_Effect("Player_Run_Start1", _vector3(0.f, 0.15f, 0.f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+        pOwner->Play_Effect("Miyabi_Dash0", _vector3(0.f, 1.1f, 0.f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
     }
 }

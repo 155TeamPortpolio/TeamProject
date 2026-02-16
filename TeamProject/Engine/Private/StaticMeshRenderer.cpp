@@ -50,7 +50,7 @@ HRESULT CStaticMeshRenderer::Render_StaticMesh(StaticOpaquePass* pOpaquePass, In
 HRESULT CStaticMeshRenderer::Render_StaticMesh_Bloom()
 {
 	{
-		if (FAILED(m_pTargetManager->Begin_MRT("MRT_Bloom_Static_H"))) return E_FAIL;
+		if (FAILED(m_pTargetManager->Begin_MRT("MRT_Bloom_Static_H", 0xFF, nullptr, false))) return E_FAIL;
 
 		m_pTargetManager->Bind_Target("Target_Emissive", m_pShader, "MeshBrightTexture");
 		m_pTargetManager->Bind_Target("Target_EmissiveInfo", m_pShader, "MeshBloomInfo");
@@ -68,7 +68,7 @@ HRESULT CStaticMeshRenderer::Render_StaticMesh_Bloom()
 	}
 
 	{
-		if (FAILED(m_pTargetManager->Begin_MRT("MRT_Bloom_Static_V"))) return E_FAIL;
+		if (FAILED(m_pTargetManager->Begin_MRT("MRT_Bloom_Static_V", 0xFF, nullptr, false))) return E_FAIL;
 
 		m_pTargetManager->Bind_Target("Target_BloomBlurX_StaticMesh", m_pShader, "MeshBlurXTexture");
 		m_pTargetManager->Bind_Target("Target_EmissiveInfo", m_pShader, "MeshBloomInfo");
@@ -90,7 +90,7 @@ HRESULT CStaticMeshRenderer::Render_StaticMesh_Bloom()
 HRESULT CStaticMeshRenderer::Render_SSAO()
 {
 	{
-		if (FAILED(m_pTargetManager->Begin_MRT("MRT_SSAO"))) return E_FAIL;
+		if (FAILED(m_pTargetManager->Begin_MRT("MRT_SSAO", 0xFF, nullptr, false))) return E_FAIL;
 
 		m_pPipeLine->Update_SSAOBuffer(m_pContext);
 		m_pTargetManager->Bind_Target("Target_Static_Depth", m_pShader, "DepthTexture");
@@ -113,7 +113,7 @@ HRESULT CStaticMeshRenderer::Render_SSAO()
 	}
 
 	{
-		if (FAILED(m_pTargetManager->Begin_MRT("MRT_SSAO_Blur"))) return E_FAIL;
+		if (FAILED(m_pTargetManager->Begin_MRT("MRT_SSAO_Blur", 0xFF, nullptr, false))) return E_FAIL;
 
 		m_pTargetManager->Bind_Target("Target_SSAO", m_pShader, "SSAOTexture");
 		m_pShader->SetConstantBuffer("SSAOBuffer", m_pPipeLine->Get_SSAOBuffer());
@@ -134,7 +134,7 @@ HRESULT CStaticMeshRenderer::Render_SSAO()
 
 HRESULT CStaticMeshRenderer::Render_StaticMesh_LightAcc()
 {
-	if (FAILED(m_pTargetManager->Begin_MRT("MRT_LightAcc_Static"))) return E_FAIL;
+	if (FAILED(m_pTargetManager->Begin_MRT("MRT_LightAcc_Static", 0xFF, nullptr, false))) return E_FAIL;
 
 	m_pTargetManager->Bind_Target("Target_Static_Diffuse", m_pShader, "DiffuseTexture");
 	m_pTargetManager->Bind_Target("Target_Static_Normal", m_pShader, "NormalTexture");
@@ -154,7 +154,7 @@ HRESULT CStaticMeshRenderer::Render_StaticMesh_LightAcc()
 
 HRESULT CStaticMeshRenderer::Render_StaticMesh_Combined()
 {
-	if (FAILED(m_pTargetManager->Begin_MRT("MRT_Combined_Static"))) return E_FAIL;
+	if (FAILED(m_pTargetManager->Begin_MRT("MRT_Combined_Static", 0xFF, nullptr, false))) return E_FAIL;
 
 	m_pShader->SetConstantBuffer("FrameBuffer", m_pPipeLine->Get_FrameBuffer());
 	//m_pShader->SetConstantBuffer("ShadowBuffer", m_pPipeLine->Get_ShadowBuffer());

@@ -481,11 +481,18 @@ HRESULT CCorin::Initialize_Effects()
         pEffect->AttachBone(pAnimator, "Weapon_saw");
     }
 
-    // Ex Explode
+    //Explode
     {
         auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
             .Asset("corin_ex_explode.json")
             .Build("Corin_Ex_Explode");
+        pEffect->Stop();
+        pObjectContainer->Add_Child(pEffect, false);
+    }
+    {
+        auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+            .Asset("corin_assault_explode.json")
+            .Build("Corin_Assault_Explode");
         pEffect->Stop();
         pObjectContainer->Add_Child(pEffect, false);
     }

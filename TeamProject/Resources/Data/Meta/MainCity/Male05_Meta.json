@@ -1,5 +1,5 @@
 {
-  "AnimPath": "",
+  "AnimPath": "../Bin/Resources/MainCity/NPC/Male05/Anim/",
   "PreTransform": {
     "_11": -0.009999999776482582,
     "_12": 0.0,
@@ -20,75 +20,75 @@
   },
   "Clips": [
     {
-      "ClipTag": "NPC_Male_Size02_Ani_Blink",
+      "ClipTag": "Male05_Ani_Blink",
       "Events": []
     },
     {
-      "ClipTag": "NPC_Male_Size02_Ani_MainCity_Idle_200",
+      "ClipTag": "Male05_Idle_200",
       "Events": []
     },
     {
-      "ClipTag": "NPC_Male_Size02_Ani_MainCity_Pose_Loop_113",
+      "ClipTag": "Male05_Pose_Loop_113",
       "Events": []
     },
     {
-      "ClipTag": "NPC_Male_Size02_Ani_MainCity_Stand_Cough01_075",
+      "ClipTag": "Male05_Stand_Cough01_075",
       "Events": []
     },
     {
-      "ClipTag": "NPC_Male_Size02_Ani_MainCity_Stand_DF_Idle01_051",
+      "ClipTag": "Male05_Stand_DF_Idle01_051",
       "Events": []
     },
     {
-      "ClipTag": "NPC_Male_Size02_Ani_MainCity_Stand_Idle01_001",
+      "ClipTag": "Male05_Stand_Idle01_001",
       "Events": []
     },
     {
-      "ClipTag": "NPC_Male_Size02_Ani_MainCity_Stand_Idle02_002",
+      "ClipTag": "Male05_Stand_Idle02_002",
       "Events": []
     },
     {
-      "ClipTag": "NPC_Male_Size02_Ani_MainCity_Stand_Look_048",
+      "ClipTag": "Male05_Stand_Look_048",
       "Events": []
     },
     {
-      "ClipTag": "NPC_Male_Size02_Ani_MainCity_Stand_Pose_004",
+      "ClipTag": "Male05_Stand_Pose_004",
       "Events": []
     },
     {
-      "ClipTag": "NPC_Male_Size02_Ani_MainCity_Stand_Positive_026",
+      "ClipTag": "Male05_Stand_Positive_026",
       "Events": []
     },
     {
-      "ClipTag": "NPC_Male_Size02_Ani_MainCity_Stand_Talk01_012",
+      "ClipTag": "Male05_Stand_Talk01_012",
       "Events": []
     },
     {
-      "ClipTag": "NPC_Male_Size02_Ani_MainCity_Stand_Thinking01_008",
+      "ClipTag": "Male05_Stand_Thinking01_008",
       "Events": []
     },
     {
-      "ClipTag": "NPC_Male_Size02_Ani_MainCity_Stand_Thinking02_009",
+      "ClipTag": "Male05_Stand_Thinking02_009",
       "Events": []
     },
     {
-      "ClipTag": "NPC_Male_Size02_Ani_MainCity_Stand_Thinking03_010",
+      "ClipTag": "Male05_Stand_Thinking03_010",
       "Events": []
     },
     {
-      "ClipTag": "NPC_Male_Size02_Ani_MainCity_Stand_Wait01_006",
+      "ClipTag": "Male05_Stand_Wait01_006",
       "Events": []
     },
     {
-      "ClipTag": "NPC_Male_Size02_Ani_MainCity_Stand_Wait02_007",
+      "ClipTag": "Male05_Stand_Wait02_007",
       "Events": []
     },
     {
-      "ClipTag": "NPC_Male_Size02_Ani_MainCity_Stand_Work_050",
+      "ClipTag": "Male05_Stand_Work_050",
       "Events": []
     },
     {
-      "ClipTag": "NPC_Male_Size02_Ani_MainCity_Walk_Normal02_015",
+      "ClipTag": "Male05_Walk_Normal02_015",
       "Events": []
     }
   ]

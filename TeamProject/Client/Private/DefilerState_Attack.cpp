@@ -4,6 +4,9 @@
 #include "StateMachine.h"
 #include "GameInstance.h"
 #include "CharacterController.h"
+#include "ObjectContainer.h"
+
+#include "DefilerLaser.h"
 
 CDefilerState_Attack* CDefilerState_Attack::Create()
 {
@@ -19,7 +22,7 @@ void CDefilerState_Attack::Build_Pattern(CDefiler* pOwner, _int Type)
 	DEFILER_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
 	TARGETING_INFO& targetInfo = pOwner->GetTargetingInfo();
 	blackBoard.patternTransition.clear();
-	Type = 11;
+	Type = 2;
 	switch (Type)
 	{
 	case 0 :
@@ -224,6 +227,8 @@ void CDefilerState_Attack_01_01::Exit(CDefiler* pOwner)
 
 void CDefilerState_Attack_01_01::Update_Effects(CDefiler* pOwner)
 {
+	if (IsCrossAnimProgress(0.05f))
+		pOwner->Play_Effect("Defiler_Axe_Light0", _vector3(), _quaternion(0.f, 0.f, 0.f, 1.f), false);
 	if (IsCrossAnimProgress(0.19f))
 		pOwner->Play_Effect("Defiler_Slash0_0", _vector3(0.f, 1.1f, 0.f), _quaternion(0.72f, 0.14f, 0.11f, 0.67f));
 	if (IsCrossAnimProgress(0.3f))
@@ -275,10 +280,32 @@ void CDefilerState_Attack_01_01_P2::Enter(CDefiler* pOwner)
 void CDefilerState_Attack_01_01_P2::Update(CDefiler* pOwner, _float dt)
 {
 	ComboTransition(pOwner);
+	Update_Effects(pOwner);
 }
 
 void CDefilerState_Attack_01_01_P2::Exit(CDefiler* pOwner)
 {
+}
+
+void CDefilerState_Attack_01_01_P2::Update_Effects(CDefiler* pOwner)
+{
+	if (IsCrossAnimProgress(0.13f))
+		pOwner->Play_Effect("Defiler_Slash0_0", _vector3(0.f, 1.5f, 0.f), _quaternion(0.66f, 0.3f, -0.22f, 0.66f));
+	if (IsCrossAnimProgress(0.18f))
+		pOwner->Play_Effect("Defiler_Slash0_1", _vector3(0.f, 1.4f, 0.f), _quaternion(0.08f, 0.71f, 0.7f, 0.04f));
+	if (IsCrossAnimProgress(0.27f))
+		pOwner->Play_Effect("Defiler_Slash1_0", _vector3(0.f, 1.4f, 0.f), _quaternion(-0.1f, 0.71f, -0.53f, 0.46f));
+	if (IsCrossAnimProgress(0.35f))
+		pOwner->Play_Effect("Defiler_Slash1_1", _vector3(0.f, 1.4f, 0.f), _quaternion(0.56f, -0.47f, 0.03f, -0.69f));
+	if (IsCrossAnimProgress(0.44f))
+		pOwner->Play_Effect("Defiler_Slash1_0", _vector3(0.f, 0.8f, 0.f), _quaternion(-0.28f, 0.62f, 0.64f, 0.36f));
+	if (IsCrossAnimProgress(0.57f))
+		pOwner->Play_Effect("Defiler_Axe_Light0", _vector3(), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+	if (IsCrossAnimProgress(0.62f))
+	{
+		pOwner->Play_Effect("Defiler_Slash2_0", _vector3(0.f, 2.1f, 0.7f), _quaternion(-0.2f, 0.69f, -0.2f, 0.66f));
+		pOwner->Play_Effect("Defiler_HitGround0", _vector3(0.2f, 0.2f, 2.9f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+	}
 }
 
 void CDefilerState_Attack_01_03::Enter(CDefiler* pOwner)
@@ -311,6 +338,8 @@ void CDefilerState_Attack_01_03::Update_Effects(CDefiler* pOwner)
 		pOwner->Play_Effect("Defiler_Axe_Slash0_0", _vector3(0.f, 0.f, 0.f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
 	if (IsCrossAnimProgress(0.36f))
 		pOwner->Play_Effect("Defiler_Tail_Slash0_0", _vector3(-2.1f, 0.6f, 1.2f), _quaternion(0.52f, -0.48f, 0.5f, -0.5f));
+	if (IsCrossAnimProgress(0.51f))
+		pOwner->Play_Effect("Defiler_Axe_Light0", _vector3(0.f, 0.f, 0.f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
 	if (IsCrossAnimProgress(0.56f))
 		pOwner->Play_Effect("Defiler_Slash2_0", _vector3(0.4f, 1.5f, 1.9f), _quaternion(-0.22f, 0.54f, -0.31f, 0.75f));
 	if (IsCrossAnimProgress(0.565f))
@@ -327,15 +356,60 @@ void CDefilerState_Attack_02::Enter(CDefiler* pOwner)
 		.Speed(1.f)
 		.Loop(false)
 		.Apply();
+
+	m_iSlashCount = 0;
 }
 
 void CDefilerState_Attack_02::Update(CDefiler* pOwner, _float dt)
 {
 	ComboTransition(pOwner);
+	Update_Effects(pOwner);
 }
 
 void CDefilerState_Attack_02::Exit(CDefiler* pOwner)
 {
+}
+
+void CDefilerState_Attack_02::Update_Effects(CDefiler* pOwner)
+{
+	if (IsCrossAnimProgress(0.12f))
+		pOwner->Play_Effect("Defiler_Slash0_0", _vector3(0.f, 1.6f, 0.f), _quaternion(0.72f, 0.17f, -0.11f, 0.66f));
+
+	if (IsCrossAnimProgress(0.23f))
+		pOwner->Play_Effect("Defiler_Axe_Spin", _vector3(0.f, 3.5f, 0.f), _quaternion(0.71f, 0.f, 0.f, -0.71f));
+	if (IsCrossAnimProgress(0.46f))
+		pOwner->Stop_Effect("Defiler_Axe_Spin");
+
+	if (IsCrossAnimProgress(0.51f))
+		pOwner->Play_Effect("Defiler_Slash1_0", _vector3(0.f, 1.4f, 0.f), _quaternion(-0.13f, 0.64f, 0.73f, 0.2f));
+
+	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
+	const auto& events = pAnimator->Get_EventBus();
+	for (const auto& event : events)
+	{
+		if (event.Tag == "I_Type_On")
+		{
+			_float3 randPosition0{}, randPosition1{};
+			_float3 randAngle{};
+
+			randPosition0.y = Helper::Get_Random_Float(1.3f, 2.3f);
+			randPosition1.y = Helper::Get_Random_Float(1.3f, 2.3f);
+
+			randAngle.x = XMConvertToRadians(Helper::Get_Random_Float(-10.f, 10.f));
+			randAngle.y = XMConvertToRadians(Helper::Get_Random_Float(-5.f, 5.f));
+			randAngle.z = XMConvertToRadians(Helper::Get_Random_Float(-5.f, 5.f));
+
+			_quaternion rotation = m_BaseRotation;
+			rotation *= _quaternion::CreateFromYawPitchRoll(randAngle);
+
+			pOwner->Play_Effect("Defiler_Slash3_" + to_string(m_iSlashCount % 5), _vector3(randPosition0), rotation);
+			++m_iSlashCount;
+
+			rotation *= _quaternion::CreateFromYawPitchRoll(XMConvertToRadians(120.f), 0.f, 0.f);
+			pOwner->Play_Effect("Defiler_Slash3_" + to_string(m_iSlashCount % 5), _vector3(randPosition1), rotation);
+			++m_iSlashCount;
+		}
+	}
 }
 
 void CDefilerState_Attack_03::Enter(CDefiler* pOwner)
@@ -353,10 +427,26 @@ void CDefilerState_Attack_03::Enter(CDefiler* pOwner)
 void CDefilerState_Attack_03::Update(CDefiler* pOwner, _float dt)
 {
 	ComboTransition(pOwner);
+	Update_Effects(pOwner);
 }
 
 void CDefilerState_Attack_03::Exit(CDefiler* pOwner)
 {
+}
+
+void CDefilerState_Attack_03::Update_Effects(CDefiler* pOwner)
+{
+	if (IsCrossAnimProgress(0.01f))
+		pOwner->Play_Effect("Defiler_Axe_Charge0", _vector3(0.f, 0.f, 0.f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+	if (IsCrossAnimProgress(0.16f))
+		pOwner->Stop_Effect("Defiler_Axe_Charge0");
+	if (IsCrossAnimProgress(0.2f))
+		pOwner->Play_Effect("Defiler_Axe_Explode0", _vector3(0.f, 0.f, 0.f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+
+	if (IsCrossAnimProgress(0.3f))
+		pOwner->Play_Effect("Defiler_Slash2_0", _vector3(0.f, 2.9f, 1.6f), _quaternion(-0.31f, 0.67f, -0.15f, 0.66f));
+	if (IsCrossAnimProgress(0.31f))
+		pOwner->Play_Effect("Defiler_HitGround0", _vector3(0.f, 0.2f, 3.7f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
 }
 
 void CDefilerState_Attack_04::Enter(CDefiler* pOwner)
@@ -374,10 +464,24 @@ void CDefilerState_Attack_04::Enter(CDefiler* pOwner)
 void CDefilerState_Attack_04::Update(CDefiler* pOwner, _float dt)
 {
 	ComboTransition(pOwner);
+	Update_Effects(pOwner);
 }
 
 void CDefilerState_Attack_04::Exit(CDefiler* pOwner)
 {
+}
+
+void CDefilerState_Attack_04::Update_Effects(CDefiler* pOwner)
+{
+	if (IsCrossAnimProgress(0.05f))
+		pOwner->Play_Effect("Defiler_Axe_Light1", _vector3(), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+	if (IsCrossAnimProgress(0.31f))
+		pOwner->Play_Effect("Defiler_Axe_Explode0", _vector3(), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+
+	if (IsCrossAnimProgress(0.42f))
+		pOwner->Play_Effect("Defiler_Slash2_0", _vector3(0.6f, 1.7f, 0.f), _quaternion(-0.27f, 0.64f, -0.15f, 0.71f));
+	if (IsCrossAnimProgress(0.42f))
+		pOwner->Play_Effect("Defiler_HitGround0", _vector3(0.8f, 0.2f, 3.1f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
 }
 
 void CDefilerState_Attack_05::Enter(CDefiler* pOwner)
@@ -397,11 +501,22 @@ void CDefilerState_Attack_05::Enter(CDefiler* pOwner)
 void CDefilerState_Attack_05::Update(CDefiler* pOwner, _float dt)
 {
 	ComboTransition(pOwner);
+	Update_Effects(pOwner);
 }
 
 void CDefilerState_Attack_05::Exit(CDefiler* pOwner)
 {
 	pOwner->Release_CollisionMask();
+}
+
+void CDefilerState_Attack_05::Update_Effects(CDefiler* pOwner)
+{
+	if (IsCrossAnimProgress(0.08f))
+		pOwner->Play_Effect("Defiler_Axe_Light2", _vector3(), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+	if (IsCrossAnimProgress(0.3f))
+		pOwner->Stop_Effect("Defiler_Axe_Light2");
+	if (IsCrossAnimProgress(0.3f))
+		pOwner->Play_Effect("Defiler_Dash_Trail", _vector3(-0.2f, 2.5f, -4.7f), _quaternion(0.71f, 0.f, 0.f, 0.71f));
 }
 
 void CDefilerState_Attack_06::Enter(CDefiler* pOwner)
@@ -419,10 +534,43 @@ void CDefilerState_Attack_06::Enter(CDefiler* pOwner)
 void CDefilerState_Attack_06::Update(CDefiler* pOwner, _float dt)
 {
 	ComboTransition(pOwner);
+	Update_Effects(pOwner);
 }
 
 void CDefilerState_Attack_06::Exit(CDefiler* pOwner)
 {
+}
+
+void CDefilerState_Attack_06::Update_Effects(CDefiler* pOwner)
+{
+	if (IsCrossAnimProgress(0.12f))
+		pOwner->Play_Effect("Defiler_Laser_Charge_Normal", _vector3(), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+	if (IsCrossAnimProgress(0.16f))
+		pOwner->Stop_Effect("Defiler_Laser_Charge_Normal");
+
+	if (IsCrossAnimProgress(0.46f))
+		pOwner->Play_Effect("Defiler_Laser_Charge_Strong", _vector3(), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+	if (IsCrossAnimProgress(0.56f))
+		pOwner->Stop_Effect("Defiler_Laser_Charge_Strong");
+
+
+	if (IsCrossAnimProgress(0.18f))
+	{
+		auto pLaser = pOwner->Get_Component<CObjectContainer>()->Find_ObjectByName("Defiler_Laser_0");
+		static_cast<CDefilerLaser*>(pLaser)->Set_ActiveLaser(true, CDefilerLaser::LASER_TYPE::NORMAL);
+	}
+
+	if (IsCrossAnimProgress(0.35f))
+	{
+		auto pLaser = pOwner->Get_Component<CObjectContainer>()->Find_ObjectByName("Defiler_Laser_1");
+		static_cast<CDefilerLaser*>(pLaser)->Set_ActiveLaser(true, CDefilerLaser::LASER_TYPE::NORMAL);
+	}
+	
+	if (IsCrossAnimProgress(0.57f))
+	{
+		auto pLaser = pOwner->Get_Component<CObjectContainer>()->Find_ObjectByName("Defiler_Laser_2");
+		static_cast<CDefilerLaser*>(pLaser)->Set_ActiveLaser(true, CDefilerLaser::LASER_TYPE::STRONG);
+	}
 }
 
 void CDefilerState_Attack_07::Enter(CDefiler* pOwner)

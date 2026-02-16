@@ -27,7 +27,7 @@ public:
     virtual void Free() override;
 
 private:
-    _float m_fWidth = 50.f; //screen size
+    _float m_fWidth = 80.f; //screen size
     _float m_fHeight = 40.f;
     _float3 m_vColor{ 1.f,0.4f,0.f };
     _float m_fAlpha{ 1.f };
