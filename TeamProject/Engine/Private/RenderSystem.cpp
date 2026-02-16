@@ -178,6 +178,16 @@ void CRenderSystem::SetRimLightMode(RIMLIGHT eMode)
 	m_pForward->SetRimLightMode(eMode);
 }
 
+void CRenderSystem::SetShadowUpdateInterval(_float fInterval)
+{
+	m_pForward->SetShadowUpdateInterval(fInterval);
+}
+
+void CRenderSystem::ResetUpdateInterval()
+{
+	m_pForward->ResetUpdateInterval();
+}
+
 void CRenderSystem::Set_NoiseTexture(NOISE_FXTYPE eNoise, CTexture* noiseTexture)
 {
 	m_NoiseTextures[eNoise] = noiseTexture;
