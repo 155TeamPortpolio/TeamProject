@@ -11,7 +11,6 @@ class CStateMachine;
 class CDefiler :
     public CEnemy
 {
-
 private:
     CDefiler();
     CDefiler(const CDefiler& rhg);
@@ -41,10 +40,14 @@ public:
     void Change_CollisionMask(_uint iMask = ENUM(COLLISION_GROUP::PLAYER));
     void Release_CollisionMask();
     void Release_AttackCollider();
+    void ChainParry(_bool OnStart);
+    void HideHUD(_bool hide);
 
 public:
     void Hide_MeshGroup(const string& mesh);
     void Show_MeshGroup(const string& mesh);
+    virtual void   Set_Alive(_bool alive) override;
+
 public:
     void Set_CCTPos(_vector3 pos);
     _float3 Get_BipedPos(const string Bone = {"Bip001"});
@@ -80,6 +83,7 @@ private:
     HRESULT Initialize_Effects();
     HRESULT Create_Colliders();
     _float3 Calc_WorldOffsetWithBip();
+    virtual void  Create_UIEnemyStatus(string boneTag) override;
 
 private:
     CStateMachine<CDefiler>* m_pStateMachine = { nullptr };
@@ -105,6 +109,7 @@ private:
     _bool    m_prevPassedTarget = false;
     _bool    m_passArmed = false; // 근접했을 때만 "패스 판정" 허용
 
+    UI_HANDLE m_BoneHUD;
 public:
     static CDefiler* Create();
     CGameObject* Clone(INIT_DESC* pArg) override;

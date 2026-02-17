@@ -33,6 +33,8 @@
 
 #include "UI_DamageText.h"
 #include "WaterWave.h"
+#include "CamDirector.h"
+#include "UI_EnemyStatus.h"
 
 CDefiler::CDefiler()
 	:CEnemy()
@@ -205,6 +207,17 @@ void CDefiler::Release_AttackCollider()
 
 }
 
+void CDefiler::ChainParry(_bool OnStart)
+{
+	BattleSystem()->SetChainParryToPlayer(OnStart);
+}
+
+void CDefiler::HideHUD(_bool hide)
+{
+	if (m_BoneHUD.isValid())
+		m_BoneHUD.Get()->Set_Alive(!hide);
+}
+
 void CDefiler::Hide_MeshGroup(const string& mesh)
 {
 	Get_Component<CSkeletalModel>()->Hide_MehsByName(mesh);
@@ -213,6 +226,13 @@ void CDefiler::Hide_MeshGroup(const string& mesh)
 void CDefiler::Show_MeshGroup(const string& mesh)
 {
 	Get_Component<CSkeletalModel>()->Show_MehsByName(mesh);
+}
+
+void CDefiler::Set_Alive(_bool alive)
+{
+	__super::Set_Alive(alive);
+	if (m_BoneHUD.isValid())
+		m_BoneHUD.Get()->Set_Alive(alive);
 }
 
 void CDefiler::Set_CCTPos(_vector3 pos)
@@ -682,6 +702,12 @@ void CDefiler::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER cha
 		.FromPool()
 		.Build("BasicHit");
 
+	if (eDamageType == DAMAGE_TYPE::NORMAL) {
+		CameraManager()->AddImpact(ENUM(CamShakeType::HitLight), ENUM(CamZoomType::HitLight));
+	}
+	else {
+		CameraManager()->AddImpact(ENUM(CamShakeType::HitCrit), ENUM(CamZoomType::HitCrit), 1.3);
+	}
 	ObjectManager()->Add_Object(pEffect, { Get_Level(),"Effect_Layer" });
 	Send_DamageText(fDamage, charaName);
 }
@@ -748,7 +774,7 @@ void CDefiler::SummonWave()
 	waveDesc->fFoamAmount = 1.0f;
 	waveDesc->fRoughness = 1.0f;
 	waveDesc->fTintStrength = 0.f;
-	waveDesc->fTsunamiHeight = 40.f;
+	waveDesc->fTsunamiHeight = 50.f;
 
 	waveDesc->vWaterTint = _float3(1.f, 1.f, 1.f);
 	waveDesc->fNoiseOffset = _float2(0.f, 0.f);
@@ -785,30 +811,32 @@ void CDefiler::Control_TargetEnable(_bool On)
 	Get_Component<CCharacterController>()->Set_CompActive(On);
 }
 
-void CDefiler::Update_Dissolve(_float dt)
+void CDefiler::Update_Dissolve(_float deltaTime)
 {
-	const _float duration = m_Dissolve.fDissolveDuration;
+	const _float durationSeconds = m_Dissolve.fDissolveDuration;
 
-	if (duration <= 0.f)
+	if (durationSeconds <= 0.f)
 	{
 		m_fDissolveProgress =
-			(m_Dissolve.eDissolveState == DefilerDissolve::DISAPPEAR) ? 1.f : 0.f;
+			(m_Dissolve.eDissolveState == DefilerDissolve::DISAPPEAR) ? 1.05f : 0.f;
 		return;
 	}
 
-	m_Dissolve.fDissolveElapsedTime =
-		min(m_Dissolve.fDissolveElapsedTime + dt, duration);
+	m_Dissolve.fDissolveElapsedTime = min(m_Dissolve.fDissolveElapsedTime + deltaTime, durationSeconds);
 
-	_float t = m_Dissolve.fDissolveElapsedTime / duration; 
+	const _float ratio01 = clamp(m_Dissolve.fDissolveElapsedTime / durationSeconds, 0.f, 1.f);
+
+	const _float disappearEndOvershoot = 1.05f;
+	const _float appearEndUndershoot = -0.05f;
 
 	switch (m_Dissolve.eDissolveState)
 	{
 	case DefilerDissolve::DISAPPEAR:
-		m_fDissolveProgress = t;
+		m_fDissolveProgress = Math::Lerp(0.f, disappearEndOvershoot, ratio01);
 		break;
 
 	case DefilerDissolve::APPEAR:
-		m_fDissolveProgress = 1.f - t;
+		m_fDissolveProgress = Math::Lerp(disappearEndOvershoot, appearEndUndershoot, ratio01);
 		break;
 
 	default:
@@ -1197,4 +1225,39 @@ _float3 CDefiler::Calc_WorldOffsetWithBip()
 	_vector3 BipPos = Get_BipedPos();
 	_vector3 WorldPos = { pos.x, pos.y, pos.z };
 	return BipPos-WorldPos;
+}
+
+void CDefiler::Create_UIEnemyStatus(string boneTag)
+{
+
+	// 월드 행렬 포인터 
+	if (!m_pTransform)
+		return;
+
+	const _float4x4* pParentWorld = m_pTransform->Get_WorldMatrix_Ptr();
+	if (!pParentWorld)
+		return;
+
+	// 본 로컬 행렬 포인터
+	const _float4x4* pBoneLocal = Get_Component<CAnimator3D>()->Get_BoneMatrixPtr(CAnimator3D::BoneSpace::COMBINED, boneTag);
+	if (!pBoneLocal)
+		return;
+
+	// ENEMYSTATUS_DESC 생성
+	CUI_EnemyStatus::ENEMYSTATUS_DESC* pDesc = new CUI_EnemyStatus::ENEMYSTATUS_DESC;
+	pDesc->pParentWorld = pParentWorld;
+	pDesc->pBoneLocal = pBoneLocal;
+	pDesc->pMonsterStatus = &m_tStatus;
+	pDesc->tOwnerHandle = Get_Handle();
+
+	// EnemyStatus UI 생성
+	const string& strLevelKey = LevelManager()->Get_NowLevelKey();
+	auto pEnemyStatus = Builder::Create_UIObject({ G_GlobalLevelKey,"Proto_GameObject_EnemyStatus" })
+		.Add_UIDesc(pDesc)
+		.Build("EnemyStatus");
+
+	// UI Mgr에 등록
+	CGameInstance::GetInstance()->Get_UIMgr()->Add_UIObject(pEnemyStatus, strLevelKey);
+
+	m_BoneHUD = pEnemyStatus->Get_Handle();
 }

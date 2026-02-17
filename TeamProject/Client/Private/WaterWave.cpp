@@ -11,6 +11,7 @@
 #include "BattleSystem.h"
 
 #include "Helper_Func.h"
+#include "CamDirector.h"
 
 CWaterWave::CWaterWave()
 	:CGameObject()
@@ -122,8 +123,12 @@ void CWaterWave::Update(_float dt)
 
 void CWaterWave::Late_Update(_float dt)
 {
-	if (m_fAccTime >= m_CycleTime){
-		m_isAlive = false;
+	if (m_fAccTime >= m_CycleTime - 1.f) {
+		CameraManager()->AddImpact(ENUM(CamShakeType::EarthquakeShort), 
+			ENUM(CamZoomType::EarthquakeShort),1.3f);
+	}
+
+	if (m_fAccTime >= m_CycleTime-0.2f){
 		if (m_isAttackable) {
 			HitDesc desc;
 			desc.fDamage = 500.f;
@@ -131,6 +136,7 @@ void CWaterWave::Late_Update(_float dt)
 		}
 		EventSystem()->Broadcast<TsunamiDesc>({ true });
 		ObjectManager()->Remove_Object(this);
+		m_isAlive = false;
 	}
 }
 

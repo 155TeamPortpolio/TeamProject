@@ -150,6 +150,18 @@ void CBattleSystem::SetPlayer(vector<OBJECT_HANDLE> hPlayers)
 	}
 }
 
+void CBattleSystem::SetChainParryToPlayer(_bool onStart)
+{
+	if (!m_pBattlePlayer)
+		return;
+	if (onStart) {
+		m_pBattlePlayer->Start_ChainParry();
+	}
+	else {
+		m_pBattlePlayer->End_ChainParry();
+	}
+}
+
 void CBattleSystem::TakeAreaDamage(const _float3& vCenter, _float fRadius, const HitDesc& hitDesc)
 {
 	_float fRadiusSq = fRadius * fRadius;

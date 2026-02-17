@@ -44,7 +44,7 @@ public: //setter
 	void	SetActive(_bool is);
 	void	SetPlayer(vector<OBJECT_HANDLE> hPlayers);
 	void	SetBattlePlayer(class CBattlePlayer* pBattlePlayer) { m_pBattlePlayer = pBattlePlayer; }
-	
+	void	SetChainParryToPlayer(_bool onStart);
 public:
 	void	StartGimmick(BATTLE_VFX_TYPE eVFXType);
 	void	HitVFX(DAMAGE_TYPE eDamageType);

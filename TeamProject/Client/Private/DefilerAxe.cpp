@@ -17,7 +17,7 @@
 #include "UI_DamageText.h"
 #include "UIDirector.h"
 #include "DefilerWall.h"
-
+#include "CamDirector.h"
 CDefilerAxe::CDefilerAxe()
 	: CEnemy()
 {
@@ -134,6 +134,12 @@ void CDefilerAxe::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER 
 	const _float addDeg = Helper::Get_Random_Float(eDamageType == DAMAGE_TYPE::NORMAL ? 0.6f : 2.3f, eDamageType == DAMAGE_TYPE::NORMAL? 1.4f : 4.5);
 	m_HitShakeAmpDeg = min(m_HitShakeAmpDeg + addDeg, m_HitShakeMaxDeg);
 	UIDirector()->Request_DamageText(desc);
+	if (eDamageType == DAMAGE_TYPE::NORMAL) {
+		CameraManager()->AddImpact(ENUM(CamShakeType::HitLight), ENUM(CamZoomType::HitLight));
+	}
+	else {
+		CameraManager()->AddImpact(ENUM(CamShakeType::HitCrit), ENUM(CamZoomType::HitCrit), 1.3);
+	}
 }
 
 void CDefilerAxe::SummonWall()
