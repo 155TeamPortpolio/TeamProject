@@ -157,10 +157,47 @@ void CCorin::On_SwitchIn(SWITCH eType)
     m_pStateMachine->Set_Trigger("SwitchIn");
 }
 
+void CCorin::On_ParryImpact()
+{
+    IHState<CCorin>* pSwitchIn = dynamic_cast<IHState<CCorin>*>(
+        m_pStateMachine->Get_CurrentState());
+    if (!pSwitchIn || !pSwitchIn->Get_SubStateMachine())
+    {
+        m_pStateMachine->Set_Trigger("ReserveParryImpact");
+        return;
+    }
+
+    IHState<CCorin>* pParryAid = dynamic_cast<IHState<CCorin>*>(
+        pSwitchIn->Get_SubStateMachine()->Get_CurrentState());
+    if (!pParryAid || !pParryAid->Get_SubStateMachine())
+    {
+        m_pStateMachine->Set_Trigger("ReserveParryImpact");
+        return;
+    }
+
+    pParryAid->Get_SubStateMachine()->Set_Trigger("ParryImpact");
+}
+
 void CCorin::On_ChainParry()
 {
-    m_pStateMachine->Set_Int("IdleEntryMode", 2);
-    m_pStateMachine->Set_Trigger("ToIdle");
+    Set_Switch(CCharacter::SWITCH::PARRYAID);
+
+    if (m_pStateMachine->Get_CurrentStateName() == "SwitchIn")
+    {
+        // 이미 SwitchIn이면 서브만 리셋
+        IHState<CCorin>* pSwitchIn = dynamic_cast<IHState<CCorin>*>(
+            m_pStateMachine->Get_CurrentState());
+        if (pSwitchIn && pSwitchIn->Get_SubStateMachine())
+        {
+            pSwitchIn->Get_SubStateMachine()->Set_DefaultState("SwitchInParryAid");
+            pSwitchIn->Get_SubStateMachine()->Change_State("SwitchInParryAid");
+        }
+    }
+    else
+    {
+        // 다른 상태면 SwitchIn으로 전환
+        m_pStateMachine->Set_Trigger("SwitchIn");
+    }
 }
 
 void CCorin::On_SwitchOut()

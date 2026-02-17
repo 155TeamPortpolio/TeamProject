@@ -475,6 +475,7 @@
     <ClInclude Include="..\Public\MiyabiState_SwitchInNormal.h" />
     <ClInclude Include="..\Public\MiyabiState_SwitchInParryAid.h" />
     <ClInclude Include="..\Public\MiyabiState_SwitchOut.h" />
+    <ClInclude Include="..\public\ProceduralSky.h" />
     <ClInclude Include="..\public\Room_Party.h" />
     <ClInclude Include="..\public\Room_Scott.h" />
     <ClInclude Include="..\public\ScottScreen.h" />
@@ -484,6 +485,10 @@
     <ClInclude Include="..\Public\UI_AnomalyGauge.h" />
     <ClInclude Include="..\Public\UI_AnomalyStack.h" />
     <ClInclude Include="..\Public\UI_AnomalyStackSlot.h" />
+    <ClInclude Include="..\Public\UI_CleanupEntranceLogo.h" />
+    <ClInclude Include="..\Public\UI_DeadlyAssaultEntranceLogo.h" />
+    <ClInclude Include="..\Public\UI_EntranceLogo.h" />
+    <ClInclude Include="..\Public\UI_NotoriousHuntEntranceLogo.h" />
     <ClInclude Include="..\Public\UI_PartyCard.h" />
     <ClInclude Include="..\Public\UI_PartyCardRTDraw.h" />
     <ClInclude Include="..\Public\UI_PartyAvatar.h" />
@@ -492,6 +497,7 @@
     <ClInclude Include="..\Public\UI_ClearRT.h" />
     <ClInclude Include="..\Public\UI_Party.h" />
     <ClInclude Include="..\Public\UI_ScreenRT.h" />
+    <ClInclude Include="..\Public\UI_ShiyuEntranceLogo.h" />
     <ClInclude Include="..\Public\UI_Switch.h" />
     <ClInclude Include="..\Public\UI_SwitchGauge.h" />
     <ClInclude Include="..\Public\UI_SwitchRole.h" />
@@ -980,6 +986,7 @@
     <ClCompile Include="..\Private\MiyabiState_SwitchInNormal.cpp" />
     <ClCompile Include="..\Private\MiyabiState_SwitchInParryAid.cpp" />
     <ClCompile Include="..\Private\MiyabiState_SwitchOut.cpp" />
+    <ClCompile Include="..\private\ProceduralSky.cpp" />
     <ClCompile Include="..\private\Room_Party.cpp" />
     <ClCompile Include="..\private\Room_Scott.cpp" />
     <ClCompile Include="..\private\ScottScreen.cpp" />
@@ -989,6 +996,10 @@
     <ClCompile Include="..\Private\UI_AnomalyGauge.cpp" />
     <ClCompile Include="..\Private\UI_AnomalyStack.cpp" />
     <ClCompile Include="..\Private\UI_AnomalyStackSlot.cpp" />
+    <ClCompile Include="..\Private\UI_CleanupEntranceLogo.cpp" />
+    <ClCompile Include="..\Private\UI_DeadlyAssaultEntranceLogo.cpp" />
+    <ClCompile Include="..\Private\UI_EntranceLogo.cpp" />
+    <ClCompile Include="..\Private\UI_NotoriousHuntEntranceLogo.cpp" />
     <ClCompile Include="..\Private\UI_PartyCard.cpp" />
     <ClCompile Include="..\Private\UI_PartyCardRTDraw.cpp" />
     <ClCompile Include="..\Private\UI_PartyAvatar.cpp" />
@@ -997,6 +1008,7 @@
     <ClCompile Include="..\Private\UI_ClearRT.cpp" />
     <ClCompile Include="..\Private\UI_Party.cpp" />
     <ClCompile Include="..\Private\UI_ScreenRT.cpp" />
+    <ClCompile Include="..\Private\UI_ShiyuEntranceLogo.cpp" />
     <ClCompile Include="..\Private\UI_Switch.cpp" />
     <ClCompile Include="..\Private\UI_SwitchGauge.cpp" />
     <ClCompile Include="..\Private\UI_SwitchRole.cpp" />

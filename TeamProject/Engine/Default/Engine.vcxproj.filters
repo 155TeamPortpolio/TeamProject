@@ -377,9 +377,6 @@
     <ClInclude Include="..\Public\Channel.h">
       <Filter>01. Utility\05. Resources\06. AnimationClip\Channel</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\VIBuffer.h">
-      <Filter>01. Utility\05. Resources\07. VIBuffer</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\VI_Point.h">
       <Filter>01. Utility\05. Resources\07. VIBuffer\VI_Point</Filter>
     </ClInclude>
@@ -644,6 +641,15 @@
     </ClInclude>
     <ClInclude Include="..\public\TessellationModel.h">
       <Filter>01. Utility\04. Components\03. Model\TessellationModel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\VI_Quad.h">
+      <Filter>01. Utility\05. Resources\07. VIBuffer\VI_Triangle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\VIBuffer.h">
+      <Filter>01. Utility\05. Resources\07. VIBuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\QuadModel.h">
+      <Filter>01. Utility\04. Components\03. Model\TriangleModel</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1203,6 +1209,12 @@
     <Filter Include="01. Utility\04. Components\03. Model\TessellationModel">
       <UniqueIdentifier>{87db632e-a7b5-4284-9656-a75c05ae57c0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\05. Resources\07. VIBuffer\VI_Triangle">
+      <UniqueIdentifier>{2c9ea6e3-3ef7-4c1d-bbff-6725af8e286b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\03. Model\TriangleModel">
+      <UniqueIdentifier>{8528718f-b2f2-4583-aae2-825c4aa61a78}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <!-- ClCompile 항목들 - 중복 제거 버전 -->
@@ -1704,6 +1716,12 @@
     <ClCompile Include="..\private\TessellationModel.cpp">
       <Filter>01. Utility\04. Components\03. Model\TessellationModel</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\VI_Quad.cpp">
+      <Filter>01. Utility\05. Resources\07. VIBuffer\VI_Triangle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\QuadModel.cpp">
+      <Filter>01. Utility\04. Components\03. Model\TriangleModel</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <!-- Shader Files -->
@@ -1836,7 +1854,8 @@
     <FxCompile Include="..\Public\Engine_Shader\VTX_StaticEnemy.hlsl">
       <Filter>98. BasicShader\Mesh</Filter>
     </FxCompile>
-    <FxCompile Include="..\Public\Engine_Shader\VTX_PaperEffect.hlsl"> </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\VTX_PaperEffect.hlsl">
+    </FxCompile>
     <FxCompile Include="..\Public\Engine_Shader\VTX_Tessellation.hlsl">
       <Filter>98. BasicShader\Etc</Filter>
     </FxCompile>
