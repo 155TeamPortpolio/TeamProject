@@ -6,9 +6,14 @@ NS_BEGIN(Client)
 
 class CamParryController
 {
+public:
     enum class State
     {
         None, Enter, Impact, WaitEnd
+    };
+    enum class Mode
+    {
+        None, Boss
     };
 
     struct ShotGoal
@@ -89,8 +94,12 @@ public:
     void Begin();
     void End();
     void Update(_float dt);
+    
+    void SetParryMode(Mode mode) { m_mode = mode; }
+    Mode GetMode() const { return m_mode; }
 
     Vector3 GetImpactPointWorld() const { return m_fxPointWorld; }
+    
 
 public:
     ParryTuning tune{};
@@ -128,7 +137,7 @@ private:
     Vector3   PivotWorldFromExt(const Vector3& ext) const;
     Vector3   ExtFromPivotWorld(const Vector3& pivotWorld) const;
 
-    _float    EvalImpactFov(_float u, _float close01) const;
+    _float    EvalImpactFovOffset(_float u, _float close01, _float baseFov) const;
     void      ApplyImpactFov(_float u, _float close01);
 
     void      BeginRecoverFov();
@@ -137,6 +146,7 @@ private:
 private:
     _bool         m_active = false;
     State         m_state = State::None;
+    Mode          m_mode = Mode::None;
 
     _float        m_elapsed{};
 

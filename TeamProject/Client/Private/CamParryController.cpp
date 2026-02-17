@@ -473,7 +473,13 @@ string CamParryController::BuildParryKey() const
 {
     const CHARACTER charaName = CamDirector()->GetCharacterName();
 
-    string key = "Parry/";
+    string key;
+
+    if (m_mode == Mode::Boss)
+        key = "BossParry/";
+    else 
+        key = "Parry/";
+
     key += Helper::EnumToString(charaName);
     key += m_isLeft ? "_Left" : "_Right";
     return key;
@@ -508,7 +514,7 @@ Vector3 CamParryController::ExtFromPivotWorld(const Vector3& pivotWorld) const
     return Vector3(extWorld.Dot(right), extWorld.y, extWorld.Dot(fwd));
 }
 
-_float CamParryController::EvalImpactFov(_float u, _float close01) const
+_float CamParryController::EvalImpactFovOffset(_float u, _float close01, _float baseFov) const
 {
     u = clamp(u, 0.f, 1.f);
     close01 = clamp(close01, 0.f, 1.f);
@@ -525,23 +531,28 @@ _float CamParryController::EvalImpactFov(_float u, _float close01) const
     const _float amp = tune.impact.fovWaveAmpDeg * close01 * ramp;
     const _float wave = amp * osc;
 
-    const _float fov = m_fovBase + bias + wave;
+    _float offset = bias + wave;
 
     const _float minFov = 8.f;
     const _float maxFov = 120.f;
-    return clamp(fov, minFov, maxFov);
+
+    if (baseFov + offset < minFov) offset = minFov - baseFov;
+    if (baseFov + offset > maxFov) offset = maxFov - baseFov;
+
+    return offset;
 }
 
 void CamParryController::ApplyImpactFov(_float u, _float close01)
 {
-    const _float desiredFov = EvalImpactFov(u, close01);
-    const _float desiredOffset = desiredFov - m_fovSaved;
+    const _float baseFov = CameraManager()->GetFov() - m_fovAppliedOffset;
+    const _float desiredOffset = EvalImpactFovOffset(u, close01, baseFov);
 
     const _float delta = desiredOffset - m_fovAppliedOffset;
     if (delta != 0.f) CameraManager()->SetFov(delta, 0.f);
 
     m_fovAppliedOffset = desiredOffset;
 }
+
 
 void CamParryController::BeginRecoverFov()
 {
@@ -553,6 +564,8 @@ void CamParryController::BeginRecoverFov()
 void CamParryController::UpdateRecoverFov(_float dt)
 {
     if (!m_recoverFovActive) return;
+
+    auto fov = CameraManager()->GetFov();
 
     m_recoverFovElapsed += dt;
 
@@ -584,6 +597,8 @@ void CamParryController::UpdateRecoverFov(_float dt)
 
 void CamParryController::Reset()
 {
+    if (m_fovAppliedOffset != 0.f) CameraManager()->SetFov(-m_fovAppliedOffset, 0.f);
+
     m_active = false;
     m_state = State::None;
 
@@ -616,16 +631,12 @@ void CamParryController::Reset()
     m_holdShot = {};
     m_holdActive = false;
 
-    m_fovBase = 0.f;
-    m_fovSaved = 0.f;
-
     m_fovAppliedOffset = 0.f;
 
     m_recoverFovActive = false;
     m_recoverFovElapsed = 0.f;
     m_recoverFovFrom = 0.f;
 }
-
 
 void CamParryController::Begin()
 {
@@ -675,7 +686,6 @@ void CamParryController::Begin()
     orbit->ParryMode_Begin();
 }
 
-
 void CamParryController::End()
 {
     if (!m_active) return;
@@ -685,11 +695,13 @@ void CamParryController::End()
     CameraManager()->Set_BlendEase(tune.impact.recoverRollEase);
 
     m_waitSeqKey = BuildParryKey();
+
     CamDirector()->RequestSequence(m_waitSeqKey);
 
     m_state = State::WaitEnd;
     m_elapsed = 0.f;
     m_waitSeqStarted = false;
+
 }
 
 void CamParryController::Update(_float dt)
@@ -754,19 +766,18 @@ void CamParryController::Update(_float dt)
             return;
         }
 
-        if (CamDirector()->IsPlaying(m_waitSeqKey))
-            return;
+        if (CamDirector()->IsPlaying(m_waitSeqKey)) return;
+        if (m_recoverFovActive) return;
 
-        if (m_recoverFovActive)
-            return;
-
-        if (m_fovAppliedOffset != 0.f) CameraManager()->SetFov(-m_fovAppliedOffset, 0.f);
+        if (m_fovAppliedOffset != 0.f)
+            CameraManager()->SetFov(-m_fovAppliedOffset, 0.f);
         m_fovAppliedOffset = 0.f;
 
         auto orbit = CamDirector()->GetOrbitCam();
         orbit->ParryMode_End();
 
         Reset();
+
         return;
     }
 }

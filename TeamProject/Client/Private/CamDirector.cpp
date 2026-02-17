@@ -76,12 +76,16 @@ void CCamDirector::SetTarget(OBJECT_HANDLE targetHandle)
 
 void CCamDirector::EnterBoss()
 {
+    m_parry.SetParryMode(CamParryController::Mode::Boss);
+
     CameraManager()->SetFov(15.f, 1.f, EaseType::InOutSine);
     CameraManager()->SetZFar(1500.f);
 }
 
 void CCamDirector::ExitBoss()
 {
+    m_parry.SetParryMode(CamParryController::Mode::None);
+
     CameraManager()->SetFov(-15.f, 1.f, EaseType::InOutSine);
     CameraManager()->SetZFar(500.f);
 }
