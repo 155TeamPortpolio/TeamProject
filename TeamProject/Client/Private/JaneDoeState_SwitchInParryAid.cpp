@@ -91,14 +91,14 @@ void CJaneDoeState_SwitchInParryAid_L_Loop::Enter(CJaneDoe* pOwner)
         .ReserveSpeed(0.f, 1.f, 2.f, EaseType::OutExpo).ReserveSpeed(0.f, 1.f, 2.f, EaseType::OutExpo)
         .Apply();
 
-    OBJECT_HANDLE handle = pOwner->Get_ParryHandle();
-    if (handle.isValid())
-    {
-        TARGET_LOCK_DESC desc;
-        desc.bLock = false;
-        desc.tHandle = handle;
-        EventSystem()->Broadcast<TARGET_LOCK_DESC>({desc});
-    }
+    //OBJECT_HANDLE handle = pOwner->Get_ParryHandle();
+    //if (handle.isValid())
+    //{
+    //    TARGET_LOCK_DESC desc;
+    //    desc.bLock = false;
+    //    desc.tHandle = handle;
+    //    EventSystem()->Broadcast<TARGET_LOCK_DESC>({desc});
+    //}
 }
 
 void CJaneDoeState_SwitchInParryAid_L_Loop::Update(CJaneDoe* pOwner, _float dt)

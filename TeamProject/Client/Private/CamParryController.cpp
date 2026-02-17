@@ -26,8 +26,7 @@ CamParryController::PivotSample CamParryController::SamplePivots(OBJECT_HANDLE h
 
     auto obj = ObjectManager()->Request_Object(h);
 
-    auto tf = obj->Get_Component<CTransform>();
-    const Vector3 pos = tf->Get_WorldPos();
+    const Vector3 pos = obj->Get_WorldPos();
 
     auto cc = obj->Get_Component<CCharacterController>();
     if (!cc)
@@ -499,7 +498,6 @@ CamParryController::ShotGoal CamParryController::BuildImpactShot(_int sideSign, 
     return g;
 }
 
-
 void CamParryController::ComputeSideFromCam()
 {
     Vector3 fwd, right;
@@ -512,18 +510,10 @@ void CamParryController::ComputeSideFromCam()
     m_sideSign = m_isLeft ? -1 : 1;
 }
 
-
 string CamParryController::BuildParryKey() const
 {
     const CHARACTER charaName = CamDirector()->GetCharacterName();
-
-    string key;
-
-    if (IsChainParry())
-        key = "BossParry/";
-    else
-        key = "Parry/";
-
+    string key = "Parry/";
     key += Helper::EnumToString(charaName);
     key += m_isLeft ? "_Left" : "_Right";
     return key;
