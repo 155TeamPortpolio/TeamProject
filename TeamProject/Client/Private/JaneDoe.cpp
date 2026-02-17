@@ -123,6 +123,11 @@ void CJaneDoe::Priority_Update(_float dt)
     __super::Priority_Update(dt);
     if (!m_BoneMatrices.empty() && m_pCCT->Get_CompActive())
         Update_MotionBlurQueue();
+
+    UI_ANOMALY_JANEDOE desc;
+    desc.fRatio = m_fPassionStream / MAX_PASSIONSTREAM;
+    desc.isOn = m_bCanSalchow;
+    EventSystem()->Broadcast<UI_ANOMALY_JANEDOE>(desc);
 }
 
 void CJaneDoe::Update(_float dt)
@@ -145,6 +150,13 @@ void CJaneDoe::Render_GUI()
     ImGui::Separator();
     ImGui::Text("Passion: %s", (m_bPassion ? "ON" : "OFF"));
     ImGui::Text("Passion Stream : %3.1f", m_fPassionStream);
+    ImGui::PushButtonRepeat(true);
+    if (ImGui::Button("Increase Passion"))
+        Increase_Passion(10.f);
+    ImGui::SameLine();
+    if (ImGui::Button("Decrease Passion"))
+        Decrease_Passion(10.f);
+    ImGui::PopButtonRepeat();
     if (!m_bPassion)
     {
         if (ImGui::Button("Enter Passion"))
