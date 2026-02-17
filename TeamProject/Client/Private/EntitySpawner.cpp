@@ -22,11 +22,13 @@
 #include "ElectricBoo.h"
 #include "SilverAnbi.h"
 #include "BackgroundNpc.h"
+
 /* Maptool Type 1 (Interactable) */
 #include "Portal.h"
 #include "ZeroPortal.h"
 #include "UI_ZeroEntranceLogo.h"
 #include "HealKit.h"
+#include "BattleStarter.h"
 
 /* Maptool Type 2 (ETC) */
 #include "MilitaryHelicopter.h"
@@ -63,7 +65,8 @@ static unordered_map<string, Spawner::OBJ_SPEC> s_InteractTable =
 	{ "Portal",			Spawner::OBJ_SPEC{ "Proto_GameObject_Portal", &CPortal::Create }},
 	{ "ZeroPortal",		Spawner::OBJ_SPEC{ "Proto_GameObject_ZeroPortal", &CZeroPortal::Create }},
 	{ "UI_ZeroLogo",	Spawner::OBJ_SPEC{ "Proto_GameObject_ZeroEntranceLogo", &CUI_ZeroEntranceLogo::Create }},
-	{ "HealKit",		Spawner::OBJ_SPEC{ "Proto_GameObject_HealKit", &CHealKit::Create }}
+	{ "HealKit",		Spawner::OBJ_SPEC{ "Proto_GameObject_HealKit", &CHealKit::Create }},
+	{ "BattleStarter",	Spawner::OBJ_SPEC{ "Proto_GameObject_BattleStarter", &CBattleStarter::Create }}
 };
 
 /* Maptool Type 2 */
