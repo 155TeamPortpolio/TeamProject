@@ -25,6 +25,8 @@ public:
     virtual void    OnTriggerEnter(CGameObject* pOther) override;
     virtual void TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER charaName = CHARACTER::END);
 
+public:
+    void DisAppear();
 private:
     void SummonWall();
 

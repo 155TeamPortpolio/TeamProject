@@ -1,5 +1,6 @@
 #pragma once
 #include "GameObject.h"
+#include "Defiler_Control.h"
 
 NS_BEGIN(Client)
 
@@ -39,6 +40,9 @@ public:
     virtual void    Update(_float dt)           override;
     virtual void    Late_Update(_float dt)      override;
 
+public:
+    void Check_Attackable(const TsunamiWallDesc& desc);
+
 private:
     void Initialize_Wave(WaterWaveDesc Desc);
 
@@ -69,6 +73,7 @@ private:
      _float     m_CurlForward= 35.f;
      _float     m_MaxCurlAngle = 3.456f;
 
+     _bool      m_isAttackable = true;
 public:
     static CWaterWave* Create();
     virtual CGameObject* Clone(INIT_DESC* pArg) override;

@@ -17,6 +17,8 @@
 #include "UI_DamageText.h"
 #include "UIDirector.h"
 #include "DefilerWall.h"
+#include "CamDirector.h"
+#include "EventListener.h"
 
 CDefilerAxe::CDefilerAxe()
 	: CEnemy()
@@ -35,6 +37,7 @@ HRESULT CDefilerAxe::Initialize_Prototype()
 	Add_Component<CStaticModel>()->Link_Model("Zero_Level", "Defile_Axe.model");
 	Add_Component<CMaterial>()->Link_Material("Zero_Level", "Defile_Axe.mat");
 	Add_Component<CCharacterController>();
+	Add_Component<CEventListener>();
 
 	return S_OK;
 }
@@ -43,8 +46,9 @@ HRESULT CDefilerAxe::Initialize(INIT_DESC* pArg)
 {
 	__super::Initialize(pArg);
 	auto desc = static_cast<DefilerAxeDesc*>(pArg);
+	Get_Component<CEventListener>()->Add_Listener<TsunamiDesc>([&](TsunamiDesc desc) {DisAppear(); });
 	Get_Component<CCharacterController>()->Set_BoundingMinY(1.3f);
-	Get_Component<CCharacterController>()->Set_GravityEnabled(false);
+	Get_Component<CCharacterController>()->Set_GravityEnabled(true);
 	m_pTransform->Set_Look(desc->vLook);
 	m_vSlide = desc->vLook;
 	m_vSlide = Math::NormalizeSafeXZ(m_vSlide)*5;
@@ -134,6 +138,12 @@ void CDefilerAxe::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER 
 	const _float addDeg = Helper::Get_Random_Float(eDamageType == DAMAGE_TYPE::NORMAL ? 0.6f : 2.3f, eDamageType == DAMAGE_TYPE::NORMAL? 1.4f : 4.5);
 	m_HitShakeAmpDeg = min(m_HitShakeAmpDeg + addDeg, m_HitShakeMaxDeg);
 	UIDirector()->Request_DamageText(desc);
+	if (eDamageType == DAMAGE_TYPE::NORMAL) {
+		CameraManager()->AddImpact(ENUM(CamShakeType::HitLight), ENUM(CamZoomType::HitLight));
+	}
+	else {
+		CameraManager()->AddImpact(ENUM(CamShakeType::HitCrit), ENUM(CamZoomType::HitCrit), 1.3);
+	}
 }
 
 void CDefilerAxe::SummonWall()
@@ -142,12 +152,22 @@ void CDefilerAxe::SummonWall()
 	CDefilerWall::DefilerWallDesc* desc = new CDefilerWall::DefilerWallDesc;
 	desc->vLook = Math::NormalizeSafeXZ(m_pTransform->Dir(STATE::LOOK));
 	_vector3 pos =  m_pTransform->Get_Pos();
+
+
+	COLLIDER_DESC ColDesc = {};
+	ColDesc.eGroup = COLLISION_GROUP::COMMON;
+	ColDesc.iCollisionMask = ENUM(COLLISION_GROUP::GROUND)| ENUM(COLLISION_GROUP::PLAYER);
+	ColDesc.bTrigger = true;
+	ColDesc.bAutoFit = true;
+	ColDesc.eType = COLLIDER_TYPE::BOX;
+
 	auto pWall = Builder::Create_Object({ "Zero_Level","Proto_GameObject_DefilerWall" })
 		.Position(pos)
 		.Add_ObjDesc(desc)
+		.Collider(ColDesc)
 		.Build("Wall");
 	ObjectManager()->Add_Object(pWall, { nowLevelKey,"Enemy_Layer" });
-	ObjectManager()->Remove_Object(this);
+	DisAppear();
 }
 
 
@@ -189,4 +209,11 @@ void CDefilerAxe::OnTriggerEnter(CGameObject* pOther)
 
 	pEnemy->Take_Damage(DAMAGE_TYPE::HARD, 10);
 	CameraManager()->AddImpact(1, 0);
+}
+
+
+void CDefilerAxe::DisAppear()
+{
+	ObjectManager()->Remove_Object(this);
+	BattleSystem()->ExitBattleObject(BATTLE_OBJ_TYPE::MONSTER, this->Get_Handle());
 }

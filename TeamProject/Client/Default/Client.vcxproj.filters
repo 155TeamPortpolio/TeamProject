@@ -1473,6 +1473,9 @@
     <Filter Include="03. Utility\03. UILoader">
       <UniqueIdentifier>{5142a8bf-9e06-4a8f-b695-a095b762835d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Interactable\BattleStarter">
+      <UniqueIdentifier>{9f98887b-a642-43c8-b771-ee800b464130}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -2858,6 +2861,9 @@
     <ClInclude Include="..\public\ScottScreen.h">
       <Filter>02. GameObject\Object\AmbientActor\ScottScreen</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\BattleStarter.h">
+      <Filter>02. GameObject\Object\Interactable\BattleStarter</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -4198,6 +4204,9 @@
     </ClCompile>
     <ClCompile Include="..\private\ScottScreen.cpp">
       <Filter>02. GameObject\Object\AmbientActor\ScottScreen</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BattleStarter.cpp">
+      <Filter>02. GameObject\Object\Interactable\BattleStarter</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

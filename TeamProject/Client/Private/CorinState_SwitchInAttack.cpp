@@ -71,6 +71,7 @@ void CCorinState_SwitchInAttack::Exit(CCorin* pOwner)
 {
     pOwner->Pop_Invincible();
     pOwner->Unlock_Move();
+    pOwner->Set_ResetMove(true);
     __super::Exit(pOwner);
 }
 

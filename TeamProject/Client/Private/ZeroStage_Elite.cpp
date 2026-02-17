@@ -28,13 +28,16 @@ void CZeroStage_Elite::Update()
 {
 
 	float dt = TimeManager()->Get_RawDeltaTime(G_EngineTimerID);
-	switch (m_eStageStage)
+	switch (m_eStageState)
 	{
 	case Client::CStage::StageState::Entrance:
 		m_introFlow.Tick(dt);
 		Intro();
 		break;
 	case Client::CStage::StageState::BattleStart:
+		BattleStart();
+		break;
+	case Client::CStage::StageState::Battle:
 		Battle();
 		break;
 	case Client::CStage::StageState::BattleEnd:
@@ -55,7 +58,7 @@ HRESULT CZeroStage_Elite::Enter_Stage(StageContext& context)
 {
 	Ready_Map("Zero_Level", context.mapKey);
 	Reserve_Enemy("Zero_Level");
-	m_eStageStage = StageState::Entrance;
+	m_eStageState = StageState::Entrance;
 	m_PlayerHandle = context.hPlayer;
 	BaseIntro(context);
 	Active_Player(CStage::PlayerPoint::Typical);
@@ -66,10 +69,16 @@ void CZeroStage_Elite::Intro()
 {
 	if (m_introFlow.IsDoneAll())
 	{
-		Active_Enemy();
-		CBattleSystem::GetInstance()->SetActive(true);
-		m_eStageStage = StageState::BattleStart;
+		if (!HasBattleStarter())
+			m_eStageState = StageState::BattleStart;
 	}
+}
+
+void CZeroStage_Elite::BattleStart()
+{
+	Active_Enemy();
+	CBattleSystem::GetInstance()->SetActive(true);
+	m_eStageState = StageState::Battle;
 }
 
 void CZeroStage_Elite::Battle()
@@ -81,7 +90,7 @@ void CZeroStage_Elite::Battle()
 			return;
 		}
 
-		m_eStageStage = StageState::BattleEnd;
+		m_eStageState = StageState::BattleEnd;
 		CBattleSystem::GetInstance()->SetActive(false);
 		Active_Portal();
 	}
@@ -92,7 +101,7 @@ void CZeroStage_Elite::Outro()
 {
 	BaseOutro();
 	m_outroFlow.Start();
-	m_eStageStage = StageState::End;
+	m_eStageState = StageState::End;
 }
 
 void CZeroStage_Elite::End()

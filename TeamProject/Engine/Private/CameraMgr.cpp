@@ -108,15 +108,31 @@ void CCameraMgr::SetShakeAxisWave(CamShakeAxis axes, _float ampDeg, _float freq,
 
 void CCameraMgr::SetFov(_float deltaDeg, _float blendSec, EaseType easeType)
 {
+    if (blendSec <= 0.f)
+    {
+        m_fovOffsetCur += deltaDeg;
+
+        if (m_fovOffsetBlending)
+        {
+            m_fovOffsetFrom += deltaDeg;
+            m_fovOffsetTo += deltaDeg;
+        }
+        else
+        {
+            m_fovOffsetFrom = m_fovOffsetCur;
+            m_fovOffsetTo = m_fovOffsetCur;
+        }
+        return;
+    }
+
     m_fovOffsetFrom = m_fovOffsetCur;
     m_fovOffsetTo = m_fovOffsetCur + deltaDeg;
 
     m_fovOffsetTime = 0.f;
-    m_fovOffsetDuration = blendSec;
+    m_fovOffsetDuration = max(blendSec, 0.0001f);
     m_fovOffsetEaseType = easeType;
 
-    m_fovOffsetBlending = (blendSec > 0.f);
-    if (!m_fovOffsetBlending) m_fovOffsetCur = m_fovOffsetTo;
+    m_fovOffsetBlending = true;
 }
 
 _float CCameraMgr::EvalFovOffset(_float dt)
@@ -139,28 +155,16 @@ _float CCameraMgr::EvalFovOffset(_float dt)
     return m_fovOffsetCur;
 }
 
-void CCameraMgr::ApplyFov(_float dt)
+void CCameraMgr::ApplyFov(_float dt, _float baseFov)
 {
-    _float fov = m_outputPose.lens.fov;
-
-    const _float zoomDeg = m_zoom.Apply(dt);
-    if (zoomDeg != 0.f) fov -= zoomDeg;
-
-    fov += EvalFovOffset(dt);
-
-    const _float minFov = 8.f;
-    const _float maxFov = 120.f;
-
-    if (fov < minFov) fov = minFov;
-    if (fov > maxFov) fov = maxFov;
-
-    m_outputPose.lens.fov = fov;
+    const _float fovOffset = EvalFovOffset(dt);
+    m_outputPose.lens.fov = baseFov + fovOffset;
 }
 
 void CCameraMgr::ApplyNearFarOverrides()
 {
     if (m_overrideNear) m_outputPose.lens.nearZ = m_nearOverride;
-    if (m_overrideFar)  m_outputPose.lens.farZ  = m_farOverride;
+    if (m_overrideFar)  m_outputPose.lens.farZ = m_farOverride;
 }
 
 CCameraMgr::CamPoseFrame CCameraMgr::CapturePose(CCamera* cam) const
@@ -241,16 +245,13 @@ void CCameraMgr::BeginBlendTo(OBJECT_HANDLE fromObj, OBJECT_HANDLE targetObj, _f
     m_blendEaseType = m_easeType;
 
     auto fromCam = ResolveCam(m_blendFromObj);
-    if (fromCam)
-        m_blendFrom = CapturePose(fromCam);
-    else
-        m_blendFrom = m_outputPose;
+    if (fromCam) m_blendFrom = CapturePose(fromCam);
+    else m_blendFrom = m_outputPose;
 
     if (!m_isBlending)
     {
         auto cam = ResolveCam(m_blendTargetObj);
-        if (cam)
-            m_outputPose = CapturePose(cam);
+        if (cam) m_outputPose = CapturePose(cam);
     }
 }
 
@@ -303,14 +304,15 @@ void CCameraMgr::Update(_float dt)
     m_outputPose.rot.Normalize();
     m_outputPose.pos += posDelta;
 
-    ApplyFov(dt);
+    const _float baseFov = m_outputPose.lens.fov;
+
+    ApplyFov(dt, baseFov);
     ApplyNearFarOverrides();
 
     ApplyCache(main, m_outputPose);
 
     if (m_shadowCamObj.isValid()) UpdateShadowCache();
 }
-
 
 void CCameraMgr::AddImpact(_uint shakeType, _uint zoomType, _float strength)
 {

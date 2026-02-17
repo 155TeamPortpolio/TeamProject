@@ -179,7 +179,8 @@ void CZero_Level::Ready_Stage()
 	m_StageContainer.emplace(StageType::Elite, CZeroStage_Elite::Create(this));
 	m_StageContainer.emplace(StageType::Boss, CZeroStage_Boss::Create(this));
 
-	m_pRouter->BuildGraph(3, StageType::Start);
+	//BuildGraph
+	m_pRouter->BuildGraph(1		, StageType::Start);
 
 	//Start
 	m_mapCycle[StageType::Start].maps	= { "Zero_Start" };

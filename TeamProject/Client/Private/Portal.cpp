@@ -94,24 +94,24 @@ OBJECT_HANDLE CPortal::Get_InteractHandle()
 
 CPortal* CPortal::Create()
 {
-	CPortal* Instance = new CPortal();
-	if (FAILED(Instance->Initialize_Prototype()))
+	CPortal* pInstance = new CPortal();
+	if (FAILED(pInstance->Initialize_Prototype()))
 	{
-		Safe_Release(Instance);
+		Safe_Release(pInstance);
 		return nullptr;
 	}
-	return Instance;
+	return pInstance;
 }
 
 CGameObject* CPortal::Clone(INIT_DESC* pArg)
 {
-	CPortal* Instance = new CPortal(*this);
-	if (FAILED(Instance->Initialize(pArg)))
+	CPortal* pInstance = new CPortal(*this);
+	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		Safe_Release(Instance);
+		Safe_Release(pInstance);
 		return nullptr;
 	}
-	return Instance;
+	return pInstance;
 }
 
 void CPortal::Free()

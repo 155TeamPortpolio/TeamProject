@@ -55,6 +55,8 @@ void CScottScreen::Awake()
 {
     auto pMaterial = Get_Component<CMaterial>();
     auto pMaterialInstances = pMaterial->Get_MaterialInstances();
+    if (pMaterialInstances.size() <= m_iScreenCount)
+        return;
 
     for (_int idx = 0; idx < m_iScreenCount; ++idx)
     {

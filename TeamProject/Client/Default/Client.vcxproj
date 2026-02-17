@@ -371,6 +371,7 @@
     <ClInclude Include="..\Public\BackGroundSpawner.h" />
     <ClInclude Include="..\Public\BasicHitEffect.h" />
     <ClInclude Include="..\Public\BattleFXFlow.h" />
+    <ClInclude Include="..\public\BattleStarter.h" />
     <ClInclude Include="..\Public\BattleSystem_Panel.h" />
     <ClInclude Include="..\public\CamDebugInput.h" />
     <ClInclude Include="..\public\CamParryController.h" />
@@ -877,6 +878,7 @@
     <ClCompile Include="..\Private\BackGroundSpawner.cpp" />
     <ClCompile Include="..\Private\BasicHitEffect.cpp" />
     <ClCompile Include="..\Private\BattleFXFlow.cpp" />
+    <ClCompile Include="..\private\BattleStarter.cpp" />
     <ClCompile Include="..\Private\BattleSystem_Panel.cpp" />
     <ClCompile Include="..\private\CamDebugInput.cpp" />
     <ClCompile Include="..\private\CamParryController.cpp" />
