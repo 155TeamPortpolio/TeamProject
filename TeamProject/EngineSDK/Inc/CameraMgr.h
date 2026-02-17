@@ -115,17 +115,17 @@ private:
 
     struct CamCache
     {
-        Matrix  view = Matrix::Identity;
-        Matrix  proj = Matrix::Identity;
+        Matrix  view    = Matrix::Identity;
+        Matrix  proj    = Matrix::Identity;
         Matrix  invView = Matrix::Identity;
         Matrix  invProj = Matrix::Identity;
-        Vector4 pos = {0.f, 0.f, 0.f, 1.f};
-        _float  farZ = 0.f;
+        Vector4 pos     = {0.f, 0.f, 0.f, 1.f};
+        _float  farZ    = 0.f;
     };
 
 private:
     CGameObject* ResolveObj(OBJECT_HANDLE handle) const;
-    CCamera* ResolveCam(OBJECT_HANDLE handle) const;
+    CCamera*     ResolveCam(OBJECT_HANDLE handle) const;
 
     OBJECT_HANDLE GetActiveCamObj() const { return m_overrides.empty() ? m_baseCamObj : m_overrides.back().camObj; }
 

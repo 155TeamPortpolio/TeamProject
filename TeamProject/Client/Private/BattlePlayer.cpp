@@ -43,7 +43,7 @@ void CBattlePlayer::Awake()
     EventSystem()->Broadcast<UI_ACTION_PRIMARY_DESC>({ desc });
     AudioDevice()->Set_Listener(m_pCurrentCharacter->Get_Component<CTransform>());
     m_bAwaked = true;
-    m_bChainParry = true;
+    //m_bChainParry = true;
 }
 
 void CBattlePlayer::Priority_Update(_float dt)

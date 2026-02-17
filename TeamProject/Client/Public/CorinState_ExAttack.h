@@ -13,7 +13,7 @@ public:
     virtual void Exit(CCorin* pOwner) override;
 
 private:
-    DAMAGE_TYPE m_eType = DAMAGE_TYPE::NORMAL;
+    DAMAGE_TYPE m_eType = DAMAGE_TYPE::HARD;
 
 public:
     static CCorinState_ExAttack* Create();
