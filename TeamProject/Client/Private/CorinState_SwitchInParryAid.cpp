@@ -9,6 +9,8 @@
 
 #include "CamDirector.h"
 #include "CharacterController.h"
+#include "ObjectContainer.h"
+#include "EffectContainer.h"
 
 CCorinState_SwitchInParryAid* CCorinState_SwitchInParryAid::Create()
 {
@@ -26,7 +28,10 @@ CCorinState_SwitchInParryAid* CCorinState_SwitchInParryAid::Create()
     pSubStateMachine->Get_State("H_End")->Set_Tag("End");
 
     pSubStateMachine->Register_Transition("ParryAid_Start", "L_Loop",
-        CStateMachine<CCorin>::CONDITION_ANIMATION_END);
+        CStateMachine<CCorin>::CONDITION_TRIGGER, "ParryImpact");
+    // 타임아웃 안전장치 (몬스터 공격이 빗나간 경우)
+    pSubStateMachine->Register_Transition("ParryAid_Start", "L_End",
+        CStateMachine<CCorin>::CONDITION_TRIGGER, "ParryFail");
     pSubStateMachine->Register_Transition("L_Loop", "L_End",
         CStateMachine<CCorin>::CONDITION_ANIMATION_END);
 
@@ -40,7 +45,8 @@ void CCorinState_SwitchInParryAid::Enter(CCorin* pOwner)
 {
     pOwner->Lock_Move();
     //pOwner->Lock_Rotate();
-
+    m_pSubStateMachine->Reset_Trigger("ParryImpact");
+    m_pSubStateMachine->Reset_Trigger("ParryFail");
     CamDirector()->StartParry();
 
     __super::Enter(pOwner);
@@ -48,8 +54,6 @@ void CCorinState_SwitchInParryAid::Enter(CCorin* pOwner)
 
 void CCorinState_SwitchInParryAid::Update(CCorin* pOwner, _float dt)
 {
-    __super::Update(pOwner, dt);
-    pOwner->Look_Target();
     if (m_pSubStateMachine->Get_Trigger("Complete"))
     {
         m_pSubStateMachine->Reset_Trigger("Complete");
@@ -60,6 +64,8 @@ void CCorinState_SwitchInParryAid::Update(CCorin* pOwner, _float dt)
             pSwitchIn->Get_SubStateMachine()->Set_Trigger("Complete");
         }
     }
+    pOwner->Look_Target();
+    __super::Update(pOwner, dt);
 }
 
 void CCorinState_SwitchInParryAid::Exit(CCorin* pOwner)
@@ -74,9 +80,16 @@ void CCorinState_SwitchInParryAid_Start::Enter(CCorin* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_ParryAid_Start")
         .BlendDuration(0.2f)
-        .ReserveSpeed(0.f, 1.f, 2.f, EaseType::OutQuint)
+        .ReserveSpeed(0.f, 0.39f, 2.f, EaseType::OutQuint)
+        .ReserveSpeed(0.39f, 0.4f, 0.f, EaseType::OutQuint)
         .EndAt(0.4f)
         .Apply();
+
+    if (pOwner->Get_StateMachine()->Get_Trigger("ReserveParryImpact"))
+    {
+        pOwner->Get_StateMachine()->Reset_Trigger("ReserveParryImpact");
+        m_pOwnerStateMachine->Set_Trigger("ParryImpact");
+    }
 }
 
 void CCorinState_SwitchInParryAid_Start::Update(CCorin* pOwner, _float dt)
@@ -84,6 +97,11 @@ void CCorinState_SwitchInParryAid_Start::Update(CCorin* pOwner, _float dt)
     pOwner->Process_RootMotion(dt,
         ENUM(CCorin::ROOTMOTION_MASK::MOVE) |
         ENUM(CCorin::ROOTMOTION_MASK::QUATERNION));
+
+    if (m_fStateTime > 1.5f)  // 1.5초 타임아웃
+    {
+        m_pOwnerStateMachine->Set_Trigger("ParryFail");
+    }
 }
 
 void CCorinState_SwitchInParryAid_L_Loop::Enter(CCorin* pOwner)
@@ -92,7 +110,16 @@ void CCorinState_SwitchInParryAid_L_Loop::Enter(CCorin* pOwner)
         .ReserveSpeed(0.f, 1.f, 2.f, EaseType::OutExpo)
         .Apply();
 
-    //OBJECT_HANDLE handle = pOwner->Get_ParryHandle();
+    auto pos = CamDirector()->GetParryPoint();
+    auto pParryEffect = pOwner->Get_Component<CObjectContainer>()->Find_ObjectByName("Parry");
+    if (pParryEffect)
+    {
+        pParryEffect->Get_Component<CTransform>()->Set_WorldPos(pos);
+        static_cast<CEffectContainer*>(pParryEffect)->Play();
+    }
+    BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::PARRY);
+
+    OBJECT_HANDLE handle = pOwner->Get_ParryHandle();
     //if (handle.isValid())
     //{
     //    TARGET_LOCK_DESC desc;
