@@ -246,6 +246,21 @@ void CMiyabi::On_SwitchIn(SWITCH eType)
 	m_pStateMachine->Set_Trigger("SwitchIn");
 }
 
+void CMiyabi::On_ParryImpact()
+{
+	IHState<CMiyabi>* pSwitchIn = dynamic_cast<IHState<CMiyabi>*>(
+		m_pStateMachine->Get_CurrentState());
+	if (!pSwitchIn || !pSwitchIn->Get_SubStateMachine())
+		return;
+
+	IHState<CMiyabi>* pParryAid = dynamic_cast<IHState<CMiyabi>*>(
+		pSwitchIn->Get_SubStateMachine()->Get_CurrentState());
+	if (!pParryAid || !pParryAid->Get_SubStateMachine())
+		return;
+
+	pParryAid->Get_SubStateMachine()->Set_Trigger("ParryImpact");
+}
+
 void CMiyabi::On_ChainParry()
 {
 	m_pStateMachine->Set_Int("IdleEntryMode", 2);

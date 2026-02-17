@@ -702,6 +702,8 @@ void CCharacter::Take_Damage(DAMAGE_TYPE eType, _float fDamage)
 
             BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::PARRY);
             m_ParryHandle.GetAs<CEnemy>()->Parried();
+
+            On_ParryImpact();
         }
     }
 

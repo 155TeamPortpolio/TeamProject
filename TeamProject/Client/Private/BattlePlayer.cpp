@@ -30,7 +30,7 @@ HRESULT CBattlePlayer::Initialize()
 {
     CBattleSystem::GetInstance()->SetBattlePlayer(this);
     Initialize_CharacterPrototype();
-    vector<CHARACTER> BattleCharacters = { CHARACTER::Miyabi, CHARACTER::Corin, CHARACTER::JaneDoe };
+    vector<CHARACTER> BattleCharacters = { CHARACTER::Miyabi/*, CHARACTER::Corin, CHARACTER::JaneDoe */};
     SetBattleCharacters(BattleCharacters);
 
     return S_OK;
@@ -42,8 +42,9 @@ void CBattlePlayer::Awake()
     desc.eMode = UI_ACTION_PRIMARY_MODE::ATTACK;
     EventSystem()->Broadcast<UI_ACTION_PRIMARY_DESC>({ desc });
     AudioDevice()->Set_Listener(m_pCurrentCharacter->Get_Component<CTransform>());
-    m_bAwaked = true;
     m_bChainParry = true;
+
+    m_bAwaked = true;
 }
 
 void CBattlePlayer::Priority_Update(_float dt)
@@ -644,9 +645,11 @@ void CBattlePlayer::Process_Switch()
             m_vSwitchPosition = _vector4{ m_pCurrentCharacter->Get_ParryPos() };
             m_vSwitchLook = _vector4{ m_pCurrentCharacter->Get_ParryLook() };
 
+            m_pCurrentCharacter->Set_ParryHandle(m_ParryHandle);
+            m_pCurrentCharacter->Set_Switch(CCharacter::SWITCH::PARRYAID);
+
             m_pCurrentCharacter->Get_CCT()->Set_Position(m_vSwitchPosition);
             m_pCurrentCharacter->Get_Component<CTransform>()->Set_Look(m_vSwitchLook);
-            m_pCurrentCharacter->Set_ParryHandle(m_ParryHandle);
             m_pCurrentCharacter->On_ChainParry();
         }
     }
@@ -715,6 +718,13 @@ void CBattlePlayer::Process_ComboSelect(_float dt)
 
 void CBattlePlayer::NotifyCharacterSwitchIn()
 {
+    // 스위치 타입과 패링 핸들을 CCT 활성화 전에 세팅
+    if (m_bReserveParry)
+    {
+        m_pCurrentCharacter->Set_Switch(CCharacter::SWITCH::PARRYAID);
+        m_pCurrentCharacter->Set_ParryHandle(m_ParryHandle);
+    }
+
     m_pCurrentCharacter->Set_MainCharacter(true);
     m_pCurrentCharacter->Active_Character();
     m_pCurrentCharacter->Get_Component<CCharacterController>()->Set_Position(m_vSwitchPosition);
@@ -725,7 +735,6 @@ void CBattlePlayer::NotifyCharacterSwitchIn()
     if (m_bReserveParry)
     {
         m_pCurrentCharacter->On_SwitchIn(CCharacter::SWITCH::PARRYAID);
-        m_pCurrentCharacter->Set_ParryHandle(m_ParryHandle);
         m_bReserveParry = false;
     }
     else
