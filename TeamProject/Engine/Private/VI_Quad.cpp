@@ -1,21 +1,21 @@
 #include "Engine_Defines.h"
-#include "VI_Triangle.h"
+#include "VI_Quad.h"
 
-CVI_Triangle::CVI_Triangle(const string& bufferID)
+CVI_Quad::CVI_Quad(const string& bufferID)
     :CVIBuffer{ bufferID }
 {
 }
 
-CVI_Triangle::CVI_Triangle(const CVI_Triangle& rhs)
+CVI_Quad::CVI_Quad(const CVI_Quad& rhs)
     : CVIBuffer(rhs)
 {
 }
 
-CVI_Triangle::~CVI_Triangle()
+CVI_Quad::~CVI_Quad()
 {
 }
 
-HRESULT CVI_Triangle::Initialize(ID3D11Device* pDevice)
+HRESULT CVI_Quad::Initialize(ID3D11Device* pDevice)
 {
 	m_ElementCount = VTXRECT::iElementCount;
 	m_ElementKey = VTXRECT::Key;
@@ -37,7 +37,7 @@ HRESULT CVI_Triangle::Initialize(ID3D11Device* pDevice)
 	return S_OK;
 }
 
-HRESULT CVI_Triangle::Create_Vertex(ID3D11Device* pDevice)
+HRESULT CVI_Quad::Create_Vertex(ID3D11Device* pDevice)
 {
 	D3D11_BUFFER_DESC VBDesc;
 	VBDesc.ByteWidth = m_iVertexStride * m_iVerticesCount;
@@ -71,7 +71,7 @@ HRESULT CVI_Triangle::Create_Vertex(ID3D11Device* pDevice)
 	return hr;
 }
 
-HRESULT CVI_Triangle::Create_Index(ID3D11Device* pDevice)
+HRESULT CVI_Quad::Create_Index(ID3D11Device* pDevice)
 {
 	D3D11_BUFFER_DESC IDDesc;
 	IDDesc.ByteWidth = m_iIndexStride * m_iIndicesCount;
@@ -96,9 +96,9 @@ HRESULT CVI_Triangle::Create_Index(ID3D11Device* pDevice)
 	return hr;
 }
 
-CVI_Triangle* CVI_Triangle::Create(ID3D11Device* pDevice, const string& bufferID)
+CVI_Quad* CVI_Quad::Create(ID3D11Device* pDevice, const string& bufferID)
 {
-	CVI_Triangle* instance = new CVI_Triangle(bufferID);
+	CVI_Quad* instance = new CVI_Quad(bufferID);
 	if (FAILED(instance->Initialize(pDevice))) {
 		MSG_BOX("Failed to Created : CVIBuffer_Rect");
 		Safe_Release(instance);
@@ -106,7 +106,7 @@ CVI_Triangle* CVI_Triangle::Create(ID3D11Device* pDevice, const string& bufferID
 	return instance;
 }
 
-void CVI_Triangle::Free()
+void CVI_Quad::Free()
 {
 	__super::Free();
 }

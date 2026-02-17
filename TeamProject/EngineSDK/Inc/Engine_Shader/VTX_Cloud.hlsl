@@ -24,8 +24,8 @@ static const float SUN_INTENSITY = 22.0;
 static const float3 HorizonColor = float3(0.65, 0.80, 1.00);
 static const float3 SunsetMid = float3(1.0, 0.55, 0.20);
 
-static const float CloudBottom = 1000.0;
-static const float CloudTop = 2200.0;
+static const float CloudBottom = 1200.0;
+static const float CloudTop = 1600.0;
 
 static const int CLOUD_STEPS = 64;
 static const int LIGHT_STEPS = 6;
@@ -146,7 +146,7 @@ float sampleDensityLight(float3 pos)
 {
     float h = saturate((pos.y - CloudBottom) / (CloudTop - CloudBottom));
     float heightGrad = smoothstep(0.0, 0.07, h) * smoothstep(1.0, 0.4, h);
-    float hCoverage = g_CloudCoverage_Param * lerp(1.0, 0.5, pow(h, 0.8));
+    float hCoverage = g_CloudCoverage_Param * lerp(1.0, 0.2, pow(h, 0.6));
 
     float3 windDir = float3(1.0, 0.0, 0.3);
     float3 animPos = pos + windDir * g_Time * 15.0;
@@ -259,7 +259,7 @@ float sampleDensity(float3 pos, float t)
     float heightGrad = smoothstep(0.0, 0.07, h)
                      * smoothstep(1.0, 0.4, h);
 
-    float hCoverage = g_CloudCoverage_Param * lerp(1.0, 0.5, pow(h, 0.8));
+    float hCoverage = g_CloudCoverage_Param * lerp(1.0, 0.2, pow(h, 0.6));
 
     float3 windDir = float3(1.0, 0.0, 0.3);
     float3 animPos = pos + windDir * g_Time * 15.0;
@@ -281,13 +281,13 @@ float sampleDensity(float3 pos, float t)
     if (detailFade > 0.01)
     {
         float erosion = valueNoise(animPos * 0.004) * 0.3
-                      + valueNoise(animPos * 0.012) * 0.15;
+                  + valueNoise(animPos * 0.012) * 0.15;
 
         float erosionStrength = lerp(0.6, 0.2, smoothstep(0.5, 0.9, h));
         density = saturate(density - erosion * erosionStrength * detailFade);
     }
 
-    density = smoothstep(0.0, 0.15, density);
+    density = smoothstep(-0.02, 0.15, density);
 
     return density;
 }

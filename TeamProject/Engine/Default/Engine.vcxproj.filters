@@ -642,13 +642,13 @@
     <ClInclude Include="..\public\TessellationModel.h">
       <Filter>01. Utility\04. Components\03. Model\TessellationModel</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\VI_Triangle.h">
+    <ClInclude Include="..\public\VI_Quad.h">
       <Filter>01. Utility\05. Resources\07. VIBuffer\VI_Triangle</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\VIBuffer.h">
       <Filter>01. Utility\05. Resources\07. VIBuffer</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\TriangleModel.h">
+    <ClInclude Include="..\public\QuadModel.h">
       <Filter>01. Utility\04. Components\03. Model\TriangleModel</Filter>
     </ClInclude>
   </ItemGroup>
@@ -1716,10 +1716,10 @@
     <ClCompile Include="..\private\TessellationModel.cpp">
       <Filter>01. Utility\04. Components\03. Model\TessellationModel</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\VI_Triangle.cpp">
+    <ClCompile Include="..\private\VI_Quad.cpp">
       <Filter>01. Utility\05. Resources\07. VIBuffer\VI_Triangle</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\TriangleModel.cpp">
+    <ClCompile Include="..\private\QuadModel.cpp">
       <Filter>01. Utility\04. Components\03. Model\TriangleModel</Filter>
     </ClCompile>
   </ItemGroup>

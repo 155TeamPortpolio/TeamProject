@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "ProceduralSky.h"
 
-#include "TriangleModel.h"
+#include "QuadModel.h"
 #include "Material.h"
 #include "MaterialInstance.h"
 #include "MaterialData.h"
@@ -34,7 +34,7 @@ void CProceduralSky::Set_CloudInfo(CLOUD_DESC Desc)
 HRESULT CProceduralSky::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
-	Add_Component<CTriangleModel>();
+	Add_Component<CQuadModel>();
 	Add_Component<CMaterial>();
 	return S_OK;
 }
@@ -42,7 +42,7 @@ HRESULT CProceduralSky::Initialize_Prototype()
 HRESULT CProceduralSky::Initialize(INIT_DESC* pArg)
 {
 	__super::Initialize(pArg);
-	auto pModel = Get_Component<CTriangleModel>();
+	auto pModel = Get_Component<CQuadModel>();
 	pModel->ShadowCast(false);
 	pModel->Set_RenderType(RENDER_PASS_TYPE::PRIORITY);
 	ID3D11Device* pDevice = CGameInstance::GetInstance()->Get_Device();

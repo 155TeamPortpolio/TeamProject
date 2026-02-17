@@ -2,13 +2,13 @@
 #include "Model.h"
 NS_BEGIN(Engine)
 
-class ENGINE_DLL CTriangleModel :
+class ENGINE_DLL CQuadModel :
     public CModel
 {
 protected:
-	CTriangleModel();
-	CTriangleModel(const CTriangleModel& rhs);
-	virtual ~CTriangleModel() DEFAULT;
+	CQuadModel();
+	CQuadModel(const CQuadModel& rhs);
+	virtual ~CQuadModel() DEFAULT;
 
 public:
 	HRESULT Initialize_Prototype() override;
@@ -34,11 +34,11 @@ public:
 	virtual void Render_GUI() override;
 
 private:
-	class CVI_Triangle* m_pTriangle = nullptr;
+	class CVI_Quad* m_pQuad = nullptr;
 	_bool isDrawing = { true };
 
 public:
-	static CTriangleModel* Create();
+	static CQuadModel* Create();
 	CComponent* Clone() override;
 	virtual void Free() override;
 };
