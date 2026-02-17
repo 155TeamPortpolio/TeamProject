@@ -3,12 +3,12 @@
 
 NS_BEGIN(Client)
 
-class CUI_ZeroEntranceLogo : public CUI_EntranceLogo
+class CUI_DeadlyAssaultEntranceLogo : public CUI_EntranceLogo
 {
 private:
-    CUI_ZeroEntranceLogo();
-    CUI_ZeroEntranceLogo(const CUI_ZeroEntranceLogo& rhs);
-    virtual ~CUI_ZeroEntranceLogo() DEFAULT;
+    CUI_DeadlyAssaultEntranceLogo();
+    CUI_DeadlyAssaultEntranceLogo(const CUI_DeadlyAssaultEntranceLogo& rhs);
+    virtual ~CUI_DeadlyAssaultEntranceLogo() DEFAULT;
 
 public:
     virtual HRESULT Initialize_Prototype() override;
@@ -18,9 +18,7 @@ public:
     virtual void    Update(_float dt) override;
     virtual void    Late_Update(_float dt) override;
 
-    virtual void Interact(class CGameObject* pObject = nullptr) override;
-
-public:	
+public:
     static  CGameObject* Create();
     virtual CGameObject* Clone(INIT_DESC* pArg = {}) override;
     virtual void Free() override;
