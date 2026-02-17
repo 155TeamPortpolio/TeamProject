@@ -65,10 +65,10 @@ public:
     void     SetFov(_float deltaDeg, _float blendSec = 0.f, EaseType easeType = EaseType::Linear) override;
     _float   GetFov() const override { return m_outputPose.lens.fov; }
 
-    void     SetZNear(_float zNear) override { m_overrideNear = true; m_nearOverride = zNear; }
-    void     SetZFar(_float zFar) override { m_overrideFar = true; m_farOverride = zFar; }
-    void     ClearZNear() override { m_overrideNear = false; }
-    void     ClearZFar() override { m_overrideFar = false; }
+    void     SetZNear(_float zNear, _float blendSec = 0.f, EaseType easeType = EaseType::Linear) override;
+    void     SetZFar(_float zFar, _float blendSec = 0.f, EaseType easeType = EaseType::Linear) override;
+    void     ClearZNear() override { m_overrideNear = false; m_nearBlending = false; }
+    void     ClearZFar() override { m_overrideFar = false; m_farBlending = false; }
 
 public:
     const Matrix* Get_ViewMatrix() override { return &main.view; }
@@ -149,6 +149,11 @@ private:
     void         ApplyNearFarOverrides();
 
 private:
+    _float       EvalNearOverride(_float dt, _float baseNear);
+    _float       EvalFarOverride(_float dt, _float baseFar);
+    void         ApplyNearFarOverrides(_float dt);
+
+private:
     OBJECT_HANDLE   m_baseCamObj{};
     OBJECT_HANDLE   m_shadowCamObj{};
     OBJECT_HANDLE   m_blendFromObj{};
@@ -184,6 +189,22 @@ private:
     _bool   m_overrideFar = false;
     _float  m_nearOverride = 0.f;
     _float  m_farOverride = 0.f;
+
+    _bool    m_nearBlending = false;
+    _float   m_nearTime = 0.f;
+    _float   m_nearDuration = 0.f;
+    _float   m_nearCur = 0.f;
+    _float   m_nearFrom = 0.f;
+    _float   m_nearTo = 0.f;
+    EaseType m_nearEaseType = EaseType::Linear;
+
+    _bool    m_farBlending = false;
+    _float   m_farTime = 0.f;
+    _float   m_farDuration = 0.f;
+    _float   m_farCur = 0.f;
+    _float   m_farFrom = 0.f;
+    _float   m_farTo = 0.f;
+    EaseType m_farEaseType = EaseType::Linear;
 
 private:
     CamCache main{};

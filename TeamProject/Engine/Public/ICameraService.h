@@ -33,8 +33,8 @@ public:
     virtual void   SetFov(_float deltaDeg, _float blendSec = 0.f, EaseType easeType = EaseType::Linear) PURE;
     virtual _float GetFov() const PURE;
 
-    virtual void SetZNear(_float zNear) PURE;
-    virtual void SetZFar(_float zFar) PURE;
+    virtual void SetZNear(_float zNear, _float blendSec = 0.f, EaseType easeType = EaseType::Linear) PURE;
+    virtual void SetZFar(_float zFar, _float blendSec = 0.f, EaseType easeType = EaseType::Linear) PURE;
     virtual void ClearZNear() PURE;
     virtual void ClearZFar() PURE;
 
