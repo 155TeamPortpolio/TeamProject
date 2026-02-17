@@ -337,14 +337,10 @@ float4 raymarchClouds(float3 dir, float3 sunDir, float3 skyCol, float2 pixelPos)
 
     float sunHeight = saturate(sunDir.y);
 
-    float3 sunCol = lerp(float3(1.8, 0.6, 0.15),
-                         float3(1.0, 0.95, 0.9),
-                         saturate(sunHeight * 3.0));
+    float3 sunCol = g_CloudBright * g_SunIntensity * 0.12;
     sunCol *= g_SunIntensity * 0.12;
 
-    float3 ambientCol = lerp(g_CloudDark,
-                             skyCol * 0.4 + float3(0.02, 0.03, 0.05),
-                             sunHeight);
+    float3 ambientCol = lerp(g_CloudDark, g_CloudDark * 0.5 + skyCol * 0.2, sunHeight);
 
     float cosAngle = dot(dir, sunDir);
     float phase = cloudPhase(cosAngle);
