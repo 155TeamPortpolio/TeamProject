@@ -1476,6 +1476,24 @@
     <Filter Include="02. GameObject\Object\Interactable\BattleStarter">
       <UniqueIdentifier>{9f98887b-a642-43c8-b771-ee800b464130}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\UI\02. 3D\Mesh\EntranceLogo">
+      <UniqueIdentifier>{ba260446-6ecd-4832-80f9-06038b733a7f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\02. 3D\Mesh\EntranceLogo\Zero">
+      <UniqueIdentifier>{887d3694-de30-40d1-93a5-b757c8510913}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\02. 3D\Mesh\EntranceLogo\Shiyu">
+      <UniqueIdentifier>{2fbd17f0-e75b-4156-9068-72f0b7fccea0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\02. 3D\Mesh\EntranceLogo\Cleanup">
+      <UniqueIdentifier>{9b7ba11e-a5c8-4741-9845-5b5142951f5a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\02. 3D\Mesh\EntranceLogo\DeadlyAssault">
+      <UniqueIdentifier>{4d7d4680-84aa-4b86-91ea-61d9310998e3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\02. 3D\Mesh\EntranceLogo\NotoriousHunt">
+      <UniqueIdentifier>{dc6a89e3-072a-4cd3-bd13-da4d45acd8be}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -2723,9 +2741,6 @@
     <ClInclude Include="..\public\Water.h">
       <Filter>02. GameObject\Object\Env</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\UI_ZeroEntranceLogo.h">
-      <Filter>02. GameObject\UI\02. 3D\Mesh\ZeroEntranceLogo</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\BasicHitEffect.h">
       <Filter>02. GameObject\Effect\HitEffect\BasicHit</Filter>
     </ClInclude>
@@ -2863,6 +2878,24 @@
     </ClInclude>
     <ClInclude Include="..\public\BattleStarter.h">
       <Filter>02. GameObject\Object\Interactable\BattleStarter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_ZeroEntranceLogo.h">
+      <Filter>02. GameObject\UI\02. 3D\Mesh\EntranceLogo\Zero</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_EntranceLogo.h">
+      <Filter>02. GameObject\UI\02. 3D\Mesh\EntranceLogo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_ShiyuEntranceLogo.h">
+      <Filter>02. GameObject\UI\02. 3D\Mesh\EntranceLogo\Shiyu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_CleanupEntranceLogo.h">
+      <Filter>02. GameObject\UI\02. 3D\Mesh\EntranceLogo\Cleanup</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_DeadlyAssaultEntranceLogo.h">
+      <Filter>02. GameObject\UI\02. 3D\Mesh\EntranceLogo\DeadlyAssault</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_NotoriousHuntEntranceLogo.h">
+      <Filter>02. GameObject\UI\02. 3D\Mesh\EntranceLogo\NotoriousHunt</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -4070,9 +4103,6 @@
     <ClCompile Include="..\private\Water.cpp">
       <Filter>02. GameObject\Object\Env</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\UI_ZeroEntranceLogo.cpp">
-      <Filter>02. GameObject\UI\02. 3D\Mesh\ZeroEntranceLogo</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\BasicHitEffect.cpp">
       <Filter>02. GameObject\Effect\HitEffect\BasicHit</Filter>
     </ClCompile>
@@ -4207,6 +4237,24 @@
     </ClCompile>
     <ClCompile Include="..\private\BattleStarter.cpp">
       <Filter>02. GameObject\Object\Interactable\BattleStarter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_ZeroEntranceLogo.cpp">
+      <Filter>02. GameObject\UI\02. 3D\Mesh\EntranceLogo\Zero</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_EntranceLogo.cpp">
+      <Filter>02. GameObject\UI\02. 3D\Mesh\EntranceLogo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_ShiyuEntranceLogo.cpp">
+      <Filter>02. GameObject\UI\02. 3D\Mesh\EntranceLogo\Shiyu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_CleanupEntranceLogo.cpp">
+      <Filter>02. GameObject\UI\02. 3D\Mesh\EntranceLogo\Cleanup</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_DeadlyAssaultEntranceLogo.cpp">
+      <Filter>02. GameObject\UI\02. 3D\Mesh\EntranceLogo\DeadlyAssault</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_NotoriousHuntEntranceLogo.cpp">
+      <Filter>02. GameObject\UI\02. 3D\Mesh\EntranceLogo\NotoriousHunt</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
