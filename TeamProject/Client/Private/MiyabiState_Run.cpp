@@ -4,6 +4,7 @@
 
 #include "MiyabiState_Move.h"
 #include "CharacterController.h"
+#include "AudioSource.h"
 
 CMiyabiState_Run* CMiyabiState_Run::Create()
 {
@@ -47,7 +48,9 @@ void CMiyabiState_Run::Enter(CMiyabi* pOwner)
     if (iRunEntryMode == 1)
         m_pSubStateMachine->Set_DefaultState("Run_End");
     else
+    {
         m_pSubStateMachine->Set_DefaultState("Run_Loop");
+    }
 
     m_pSubStateMachine->Set_Bool("IsMove", pOwner->Is_Move_Buffer());
     __super::Enter(pOwner);
@@ -69,6 +72,7 @@ void CMiyabiState_Run_Loop::Enter(CMiyabi* pOwner)
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Run")
         .Loop(true)
         .Speed(1.f)
+        .BlendDuration(0.04f)
         .EndAt(0.94f)
         .Apply();
 
@@ -97,6 +101,18 @@ void CMiyabiState_Run_Loop::Update(CMiyabi* pOwner, _float dt)
             return;
         }
     }
+
+    if (IsCrossAnimProgress(0.05f))
+        pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_Walk_L.wav")
+        .Attribute3D(true)
+        .Volume(0.6f)
+        .Play();
+    if (IsCrossAnimProgress(0.55f))
+        pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_Walk_R.wav")
+        .Attribute3D(true)
+        .Volume(0.6f)
+        .Play();
+
     pOwner->Process_RootMotion(dt);
 }
 
@@ -119,6 +135,9 @@ void CMiyabiState_Run_Turnback::Enter(CMiyabi* pOwner)
         .Speed(1.f)
         .EndAt(0.35f)
         .Apply();
+    pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_TurnBack_SFX.wav")
+        .Attribute3D(true)
+        .Play();
     pOwner->Reset_InputBuffer();
     pOwner->Set_ResetMove(true);
 }
@@ -140,4 +159,11 @@ void CMiyabiState_Run_Turnback::Update(CMiyabi* pOwner, _float dt)
             pRunState->Get_SubStateMachine()->Set_Trigger("ToLoop");
         }
     }
+}
+
+void CMiyabiState_Run_Turnback::Exit(CMiyabi* pOwner)
+{
+    pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_TurnBack_SFX.wav")
+        .Attribute3D(true)
+        .Stop();
 }
