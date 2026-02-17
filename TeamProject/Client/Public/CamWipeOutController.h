@@ -11,9 +11,9 @@ class CamWipeOutController
     {
         None,
         Shot1_Enter, Shot1_Hold,
-        Shot2_Snap, Shot2_Hold,
-        Shot3_Snap, Shot3_Hold,
-        Shot4_Snap, Shot4_Hold,
+        Shot2_Snap,  Shot2_Hold,
+        Shot3_Snap,  Shot3_Hold,
+        Shot4_Snap,  Shot4_Hold,
         End
     };
     struct ShotGoal
