@@ -123,7 +123,6 @@ HRESULT COrbitCam::Initialize(INIT_DESC* pArg)
     Get_Component<CEventListener>()->Add_Listener<TARGET_LOCK_DESC>([&](TARGET_LOCK_DESC desc)
         {
             if (!desc.tHandle.isValid()) return;
-
             if (desc.bLock) SetLockOn(desc.tHandle);
             else ClearLockOn();
         });
@@ -569,6 +568,28 @@ void COrbitCam::DialogueYaw_Set(_float yawGoalDeg, _float weight)
     m_dialogueYaw.yawGoalDeg = yawGoalDeg; 
     m_dialogueYaw.weight     = clamp(weight, 0.f, 1.f);
 }
+
+void COrbitCam::ParryMode_ResumeSync()
+{
+    m_pose.rotGoalDeg = m_pose.rotCurDeg;
+
+    m_pose.distWanted = m_pose.distCur;
+    m_pose.distGoal = m_pose.distCur;
+
+    m_pose.pivotGoalWorld = m_pose.pivotCurWorld;
+
+    m_switch = {};
+    m_freeze = 0.f;
+
+    m_hitDist = false;
+    m_yawDeltaCapDeg = m_prof.yawDeltaCapDeg;
+    m_pitchDeltaCapDeg = m_prof.pitchDeltaCapDeg;
+
+    PivotStab_Reset(m_pose.pivotCurWorld);
+
+    ClampTargets();
+}
+
 
 void COrbitCam::ClampTargets()
 {

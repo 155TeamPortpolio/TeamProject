@@ -182,6 +182,9 @@ private:
 
     _bool         m_beginWasChain = false;
     _float        m_chainRefDist = 0.f;
+
+    Vector3       m_tBase{};
+    _bool         m_hasTBase = false;
 };
 
 NS_END

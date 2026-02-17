@@ -120,13 +120,13 @@ void CCorinState_SwitchInParryAid_L_Loop::Enter(CCorin* pOwner)
     BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::PARRY);
 
     OBJECT_HANDLE handle = pOwner->Get_ParryHandle();
-    //if (handle.isValid())
-    //{
-    //    TARGET_LOCK_DESC desc;
-    //    desc.bLock = false;
-    //    desc.tHandle = handle;
-    //    EventSystem()->Broadcast<TARGET_LOCK_DESC>({desc});
-    //}
+    if (handle.isValid())
+    {
+        TARGET_LOCK_DESC desc;
+        desc.bLock = false;
+        desc.tHandle = handle;
+        EventSystem()->Broadcast<TARGET_LOCK_DESC>({desc});
+    }
 }
 
 void CCorinState_SwitchInParryAid_L_Loop::Update(CCorin* pOwner, _float dt)

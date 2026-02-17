@@ -18,8 +18,6 @@ public:
     HRESULT Initialize(INIT_DESC* pArg) override;
     void    Awake()                     override;
     void    Priority_Update(_float dt)  override;
-    void    Update(_float dt)           override{}
-    void    Late_Update(_float dt)      override{}
 
 public:
     void    SetTarget(OBJECT_HANDLE h);
@@ -67,6 +65,7 @@ public:
     void  ParryMode_Begin() { m_parryMode = true; }
     void  ParryMode_End()   { m_parryMode = false; }
     _bool IsParryMode() const { return m_parryMode; }
+    void  ParryMode_ResumeSync();
 
 private:
     void    ClampTargets();

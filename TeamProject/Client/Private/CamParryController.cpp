@@ -1,12 +1,12 @@
 // CamParryController.cpp
 #include "pch.h"
 #include "CamParryController.h"
-
+// Client
 #include "CamDirector.h"
-#include "CharacterController.h"
-
 #include "BattleSystem.h"
 #include "BattlePlayer.h"
+// Components
+#include "CharacterController.h"
 
 CamParryController::PivotSample CamParryController::SamplePivots(OBJECT_HANDLE h, _float offsetY, _float faceYOffsetMul)
 {
@@ -167,6 +167,22 @@ void CamParryController::UpdatePivots(_float dt)
         m_aFace = Vector3::Lerp(m_aFace, attackerSample.facePivot, t);
     }
 
+    const OBJECT_HANDLE target = CamDirector()->GetCurTarget();
+    const PivotSample targetSample = SamplePivots(target, offsetY);
+    if (targetSample.valid)
+    {
+        if (!m_hasTBase)
+        {
+            m_tBase = targetSample.basePivot;
+            m_hasTBase = true;
+        }
+        else
+        {
+            const _float t = clamp(dt * 18.f, 0.f, 1.f);
+            m_tBase = Vector3::Lerp(m_tBase, targetSample.basePivot, t);
+        }
+    }
+
     auto attackerObj = ObjectManager()->Request_Object(m_attacker);
     auto attackerTf = attackerObj->Get_Component<CTransform>();
 
@@ -181,6 +197,7 @@ void CamParryController::UpdatePivots(_float dt)
     if (m_dirXZ.LengthSquared() <= 1e-10f) m_dirXZ = Vector3(0.f, 0.f, 1.f);
     m_dirXZ.Normalize();
 }
+
 
 void CamParryController::ClampAboveGround(ShotGoal& g) const
 {
@@ -267,15 +284,9 @@ Vector3 CamParryController::BasePivotWorld() const
 {
     constexpr _float kTargetWeight = 0.40f;
 
-    auto orbit = CamDirector()->GetOrbitCam();
-    const _float offsetY = orbit->GetOffsetY();
+    if (!m_hasTBase) return m_aBase;
 
-    const OBJECT_HANDLE target = CamDirector()->GetCurTarget();
-    const PivotSample targetSample = SamplePivots(target, offsetY);
-
-    if (!targetSample.valid) return m_aBase;
-
-    return Vector3::Lerp(m_aBase, targetSample.basePivot, kTargetWeight);
+    return Vector3::Lerp(m_aBase, m_tBase, kTargetWeight);
 }
 
 void CamParryController::CaptureCurAsFrom()
@@ -641,6 +652,9 @@ void CamParryController::Reset()
     m_aBase = Vector3::Zero;
     m_aFace = Vector3::Zero;
 
+    m_tBase = Vector3::Zero;
+    m_hasTBase = false;
+
     m_dirXZ = Vector3(0.f, 0.f, 1.f);
 
     m_shotFrom = {};
@@ -693,6 +707,14 @@ void CamParryController::Begin()
     m_aBase = attackerSample.basePivot;
     m_aFace = attackerSample.facePivot;
 
+    const OBJECT_HANDLE target = CamDirector()->GetCurTarget();
+    const PivotSample targetSample = SamplePivots(target, offsetY);
+    if (targetSample.valid)
+    {
+        m_tBase = targetSample.basePivot;
+        m_hasTBase = true;
+    }
+
     auto attackerObj = ObjectManager()->Request_Object(m_attacker);
     auto attackerTf = attackerObj->Get_Component<CTransform>();
 
@@ -727,6 +749,7 @@ void CamParryController::Begin()
 
     orbit->ParryMode_Begin();
 }
+
 
 void CamParryController::End()
 {
@@ -815,6 +838,7 @@ void CamParryController::Update(_float dt)
         m_fovAppliedOffset = 0.f;
 
         auto orbit = CamDirector()->GetOrbitCam();
+        orbit->ParryMode_ResumeSync();
         orbit->ParryMode_End();
 
         if (!m_beginWasChain) m_chainRefDist = 0.f;
@@ -824,6 +848,7 @@ void CamParryController::Update(_float dt)
         return;
     }
 }
+
 
 _bool CamParryController::IsChainReentryOpen() const
 {

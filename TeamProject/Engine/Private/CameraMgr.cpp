@@ -505,4 +505,3 @@ void CCameraMgr::Free()
     main = {};
     shadow = {};
 }
-
