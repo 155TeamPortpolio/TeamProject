@@ -191,6 +191,14 @@ struct DefilerDissolve {
 };
 
 
+struct TsunamiWallDesc {
+    _bool isCharcter_On_Wall = { false };
+};
+struct TsunamiDesc {
+    _bool isEndTsunami = { false };
+};
+
+
 NS_END
 
 

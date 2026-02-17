@@ -287,6 +287,8 @@ OBJECT_HANDLE Client::Spawner::Create_AmbientActor(const SPAWNER_DESC& Desc)
 		.Rotate(Desc.vRotation)
 		.Scale(Desc.vScale)
 		.Build(Desc.tagName);
+	if (!Object)
+		return OBJECT_HANDLE{};
 
 	ObjectManager()->Add_Object(Object, { Desc.tagLevel, "AmbientActor_Layer" });
 	return Object->Get_Handle();
