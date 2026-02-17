@@ -33,6 +33,8 @@ void CSacrificeState_Parry::Enter(CSacrifice* pOwner)
 	default:
 		break;
 	}
+
+
 }
 
 void CSacrificeState_Parry::Update(CSacrifice* pOwner, _float dt)

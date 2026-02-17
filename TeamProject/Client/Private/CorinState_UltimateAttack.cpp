@@ -135,6 +135,9 @@ void CCorinState_UltimateAttack_Loop::Update_Effects(CCorin* pOwner)
         pOwner->Play_Effect("Corin_Normal_Slash2", _vector3(0.f, 0.5f, 0.f), _quaternion(-0.62f, 0.25f, 0.08f, 0.74f));
     if (IsCrossAnimProgress(0.69f))
         pOwner->Play_Effect("Corin_Normal_Slash3", _vector3(-0.1f, 1.2f, 0.6f), _quaternion(0.72f, 0.14f, 0.66f, 0.15f));
+
+    if (IsCrossAnimProgress(0.73f))
+        pOwner->Play_Effect("Corin_Ultimate_HitGround", _vector3(0.f, 0.1f, 1.1f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
 }
 
 void CCorinState_UltimateAttack_End::Enter(CCorin* pOwner)
@@ -158,6 +161,9 @@ void CCorinState_UltimateAttack_End::Update(CCorin* pOwner, _float dt)
 
 void CCorinState_UltimateAttack_End::Update_Effects(CCorin* pOwner)
 {
+    if(IsCrossAnimProgress(0.1f))
+        pOwner->Stop_Effect("Corin_Ultimate_HitGround");
+
     if (IsCrossAnimProgress(0.2f))
     {
         pOwner->Stop_Effect("Corin_Saw_Slash0");

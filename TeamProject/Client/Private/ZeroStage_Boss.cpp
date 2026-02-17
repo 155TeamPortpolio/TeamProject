@@ -6,6 +6,9 @@
 #include "StageRouter.h"
 #include "EffectContainer.h"
 
+//component
+#include "AudioSource.h"
+
 CZeroStage_Boss::CZeroStage_Boss()
 {
 	m_eType = StageType::Boss;
@@ -17,6 +20,10 @@ HRESULT CZeroStage_Boss::Initialize(CZero_Level* pOwnerLevel)
 		return E_FAIL;
 
 	m_pOwnerLevel = pOwnerLevel;
+
+	m_pBGM = CAudioSource::Create();
+	m_pBGM->SoundFolder(G_GlobalLevelKey, "../Bin/Resources/Zero/BGM");
+
 	return S_OK;
 }
 
@@ -58,11 +65,11 @@ void CZeroStage_Boss::Update()
 
 HRESULT CZeroStage_Boss::Enter_Stage(StageContext& context)
 {
-	auto fog = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
-		.Asset("defiler_stage_fog.json")
-		.Position(_vector3(-1.f, -3.5f, 1.8f))
-		.Build("Stage_Fog");
-
+	//auto fog = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+	//	.Asset("defiler_stage_fog.json")
+	//	.Position(_vector3(-1.f, -3.5f, 1.8f))
+	//	.Build("Stage_Fog");
+	//
 	//ObjectManager()->Add_Object(fog, { "Zero_Level","Effect_Layer" });
 
 	Ready_Map("Zero_Level", context.mapKey);
@@ -72,9 +79,22 @@ HRESULT CZeroStage_Boss::Enter_Stage(StageContext& context)
 
 	Active_Player(CStage::PlayerPoint::Typical);
 	BossIntro(context);
+
+	if ("Zero_Boss1" == context.mapKey)
+		m_pBGM->Slot("Sacrifice_BGM.wav").Attribute3D(false).Loop(true).Volume(0.2f).Play();
+
 	return S_OK;
 }
 
+HRESULT CZeroStage_Boss::Exit_Stage(StageContext& context)
+{
+	__super::Exit_Stage(context);
+
+	if ("Zero_Boss1" == context.mapKey)
+		m_pBGM->FadeOut_Volume("Sacrifice_BGM.wav", 0.9f);
+
+	return E_NOTIMPL;
+}
 
 void CZeroStage_Boss::Intro()
 {
@@ -129,4 +149,6 @@ CZeroStage_Boss* CZeroStage_Boss::Create( CZero_Level* pOwnerLevel)
 void CZeroStage_Boss::Free()
 {
 	__super::Free();
+
+	Safe_Release(m_pBGM);
 }
