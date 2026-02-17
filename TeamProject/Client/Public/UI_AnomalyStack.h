@@ -26,8 +26,8 @@ private:
 private:
 	HRESULT Ready_Slots();
 
-	void Full();
-	void Decrease(_uint iIndex);
+	void Increase(_uint iCount);
+	void Decrease(_uint iCount);
 
 public:
 	static  CGameObject* Create();

@@ -6,7 +6,8 @@ NS_BEGIN(Client)
 class CUI_AnomalyStackSlot final : public CUI_Object
 {
 private:
-	enum class STATE { EMPTY, ACTIVATING, ACTIVE, DEACTIVATING, COUNT };
+	enum class STATE { FULL, EMPTY, COUNT };
+	enum class FIRE { START, LOOP, END, COUNT };
 
 	enum class CHILD { FILL, OVERLAY, START, LOOP, END, COUNT };
 	inline static const string INSTANCENAMES[ENUM(CHILD::COUNT)] = { "fill", "overlay", "start", "loop", "end" };
@@ -18,6 +19,7 @@ private:
 
 public:
 	void Activate(_bool isActive);
+	void PlayEffect();
 	void StopEffect();
 
 public:
@@ -32,6 +34,7 @@ public:
 	virtual void	UI_DeActive(void* pArg = nullptr) override;
 
 private:
+	FIRE m_eFire = { FIRE::COUNT };
 	STATE m_eState = { STATE::COUNT };
 
 	CUI_Object* m_pChildren[ENUM(CHILD::COUNT)] = {};
@@ -40,6 +43,7 @@ private:
 	void Cache(); 
 
 	void Change_State(STATE eState);
+	void Change_Fire(FIRE eFire);
 
 	void SetFill(_bool isFill);
 	void PlayFireStart();

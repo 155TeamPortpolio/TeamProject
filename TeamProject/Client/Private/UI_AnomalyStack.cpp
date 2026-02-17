@@ -33,16 +33,22 @@ void CUI_AnomalyStack::Awake()
 
 void CUI_AnomalyStack::Update(_float dt)
 {
-    if (InputDevice()->Key_Tap('P'))
-        Full();
+    if (InputDevice()->Key_Tap('Z'))
+        Increase(2);
 
-    if (InputDevice()->Key_Tap('O'))
+    if (InputDevice()->Key_Tap('X'))
+        Increase(4);
+
+    if (InputDevice()->Key_Tap('C'))
+        Increase(6);
+
+    if (InputDevice()->Key_Tap('V'))
         Decrease(4);
 
-    if (InputDevice()->Key_Tap('I'))
+    if (InputDevice()->Key_Tap('B'))
         Decrease(2);
 
-    if (InputDevice()->Key_Tap('U'))
+    if (InputDevice()->Key_Tap('N'))
         Decrease(0);
 
 	__super::Update(dt);
@@ -73,18 +79,22 @@ HRESULT CUI_AnomalyStack::Ready_Slots()
     return S_OK;
 }
 
-void CUI_AnomalyStack::Full()
+void CUI_AnomalyStack::Increase(_uint iCount)
 {
-    for (auto& pSlot : m_pSlots)
+    for (_int i = 0; i < m_iSlotCount; ++i)
     {
-        if (!pSlot)
+        if (!m_pSlots[i])
             continue;
 
-        pSlot->Activate(true);
+        if (iCount == m_iSlotCount)
+            m_pSlots[i]->PlayEffect();
+
+        if (iCount > i)
+            m_pSlots[i]->Activate(true);
     }
 }
 
-void CUI_AnomalyStack::Decrease(_uint iIndex)
+void CUI_AnomalyStack::Decrease(_uint iCount)
 {
     for (_int i = 0; i < m_iSlotCount; ++i)
     {
@@ -92,7 +102,7 @@ void CUI_AnomalyStack::Decrease(_uint iIndex)
             continue;
 
         m_pSlots[i]->StopEffect();
-        if (iIndex <= i)
+        if (iCount <= i)
             m_pSlots[i]->Activate(false);
     }
 }

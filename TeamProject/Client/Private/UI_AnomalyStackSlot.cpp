@@ -9,17 +9,19 @@
 void CUI_AnomalyStackSlot::Activate(_bool isActive)
 {
     if(isActive)
-        Change_State(STATE::ACTIVATING);
+        Change_State(STATE::FULL);
     else
         Change_State(STATE::EMPTY);
 }
 
+void CUI_AnomalyStackSlot::PlayEffect()
+{
+    Change_Fire(FIRE::START);
+}
+
 void CUI_AnomalyStackSlot::StopEffect()
 {
-    if (m_eState != STATE::ACTIVE)
-        return;
-
-    Change_State(STATE::DEACTIVATING);
+    Change_Fire(FIRE::END);
 }
 
 HRESULT CUI_AnomalyStackSlot::Initialize_Prototype()
@@ -53,11 +55,11 @@ void CUI_AnomalyStackSlot::Awake()
 
 void CUI_AnomalyStackSlot::Update(_float dt)
 {
-    switch (m_eState)
+    switch (m_eFire)
     {
-    case STATE::ACTIVATING:
+    case FIRE::START:
         if (Is_AnimationFinished(CHILD::START))
-            Change_State(STATE::ACTIVE);
+            Change_Fire(FIRE::LOOP);
         break;
     }
 
@@ -96,17 +98,30 @@ void CUI_AnomalyStackSlot::Change_State(STATE eState)
     m_eState = eState;
     switch (eState)
     {
+    case STATE::FULL:
+        SetFill(true);
+        break;
     case STATE::EMPTY:
         SetFill(false);
         break;
-    case STATE::ACTIVATING:
-        SetFill(true);
+    }
+}
+
+void CUI_AnomalyStackSlot::Change_Fire(FIRE eFire)
+{
+    if (m_eFire == eFire)
+        return;
+
+    m_eFire = eFire;
+    switch (eFire)
+    {
+    case FIRE::START:
         PlayFireStart();
         break;
-    case STATE::ACTIVE:
+    case FIRE::LOOP:
         PlayFireLoop();
         break;
-    case STATE::DEACTIVATING:
+    case FIRE::END:
         PlayFireEnd();
         break;
     }
