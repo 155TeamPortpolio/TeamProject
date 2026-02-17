@@ -37,7 +37,7 @@ class CMiyabiState_Run_Turnback : public IBaseState<CMiyabi>
 public:
     virtual void Enter(CMiyabi* pOwner) override;
     virtual void Update(CMiyabi* pOwner, _float dt) override;
-    virtual void Exit(CMiyabi* pOwner) override {}
+    virtual void Exit(CMiyabi* pOwner) override;
 
 public:
     static CMiyabiState_Run_Turnback* Create() { return new CMiyabiState_Run_Turnback(); }

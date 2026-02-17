@@ -66,6 +66,7 @@ void CMiyabiState_SwitchInAttack::Exit(CMiyabi* pOwner)
 {
     pOwner->Pop_Invincible();
     pOwner->Unlock_Move();
+    pOwner->Set_ResetMove(true);
     __super::Exit(pOwner);
 }
 

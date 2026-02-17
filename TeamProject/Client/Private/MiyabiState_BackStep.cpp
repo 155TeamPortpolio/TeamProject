@@ -14,6 +14,9 @@ void CMiyabiState_BackStep::Enter(CMiyabi* pOwner)
         pOwner->Get_Component<CAudioSource>()->Sequence("Evade_BackStep")
         .Attribute3D(true)
         .PlayNext();
+    pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_Evade_BackStep_SFX.wav")
+        .Attribute3D(true)
+        .Play();
 }
 
 void CMiyabiState_BackStep::Update(CMiyabi* pOwner, _float dt)
@@ -68,4 +71,11 @@ void CMiyabiState_BackStep::Update(CMiyabi* pOwner, _float dt)
         pSubMachine->Set_Int("ExitMode", 0);
         pSubMachine->Set_Trigger("Complete");
     }
+}
+
+void CMiyabiState_BackStep::Exit(CMiyabi* pOwner)
+{
+    pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_Evade_BackStep_SFX.wav")
+        .Attribute3D(true)
+        .Stop();
 }
