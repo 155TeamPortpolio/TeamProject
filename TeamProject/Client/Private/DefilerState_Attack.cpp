@@ -740,7 +740,7 @@ void CDefilerState_Attack_09_Start::Update_Effects(CDefiler* pOwner)
 {
 	if (IsCrossAnimProgress(0.56f))
 		pOwner->Play_Effect("Defiler_Wave_Axe_Charge", _vector3(), _quaternion(0.f, 0.f, 0.f, 1.f), false);
-	if (IsCrossAnimProgress(0.7f))
+	if (IsCrossAnimProgress(0.65f))
 		pOwner->Stop_Effect("Defiler_Wave_Axe_Charge");
 
 	if (IsCrossAnimProgress(0.97f))

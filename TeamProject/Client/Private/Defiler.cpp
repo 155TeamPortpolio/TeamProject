@@ -1180,7 +1180,7 @@ HRESULT CDefiler::Initialize_Effects()
 		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
 			.Asset("defiler_wave_charge.json")
 			.Build("Defiler_Wave_Charge");
-		pEffect->Stop();
+		pEffect->Set_Alive(false);
 		pEffect->AttachBone(pAnimator, "Ctr_M_Weapon_01", offsetMatrix);
 		pObjectContainer->Add_Child(pEffect, false);
 	}
