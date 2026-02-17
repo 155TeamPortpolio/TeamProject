@@ -4,11 +4,14 @@
 #include "GameInstance.h"
 #include "ObjectContainer.h"
 #include "Sprite2D.h"
+#include "EventListener.h"
 
 HRESULT CUI_AnomalyGauge::Initialize_Prototype()
 {
     if (FAILED(__super::Initialize_Prototype()))
         return E_FAIL;
+
+    Add_Component<CEventListener>();
 
     return S_OK;
 }
@@ -21,37 +24,32 @@ HRESULT CUI_AnomalyGauge::Initialize(INIT_DESC* pArg)
     Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("anomalyGauge_janeDoe.json")));
     Cache();
 
+    // ¿Ã∫•∆Æ : UI_PLAYER_STATUS_DESC
+    Get_Component<CEventListener>()->Add_Listener<UI_ANOMALY_JANEDOE>([&](const UI_ANOMALY_JANEDOE& desc)
+        {
+            Update_Gauge(desc.fRatio);
+
+            if(desc.isOn)
+                Change_State(TYPE::INDICATOR, STATE::ACTIVE);
+            else
+                Change_State(TYPE::INDICATOR, STATE::INACTIVE);
+        });
+
     return S_OK;
 }
 
 void CUI_AnomalyGauge::Awake()
 {
     __super::Awake();
-
-    Change_State(TYPE::GAUGE, STATE::INACTIVE);
+     
     Change_State(TYPE::INDICATOR, STATE::INACTIVE);
-    Set_Gauge(m_fRatio);
+    Update_Gauge(0.f);
+    //Change_State(TYPE::GAUGE, STATE::INACTIVE);
+    //Set_Gauge(0.f);
 }
 
 void CUI_AnomalyGauge::Update(_float dt)
 {
-    if (InputDevice()->Key_Down('I'))
-    {
-        m_fRatio = min(1.f, m_fRatio + dt * 5.f);
-        Set_Gauge(m_fRatio);
-        Update_Gauge(m_fRatio);
-    }
-
-    if (InputDevice()->Key_Down('U'))
-    {
-        m_fRatio = max(0.f, m_fRatio - dt * 5.f);
-        Set_Gauge(m_fRatio);
-        Update_Gauge(m_fRatio);
-    }
-
-    if (InputDevice()->Key_Tap('Y'))
-        Change_State(TYPE::INDICATOR, STATE::INACTIVE);
-
     __super::Update(dt);
 }
 
@@ -79,15 +77,11 @@ void CUI_AnomalyGauge::Cache()
 
 void CUI_AnomalyGauge::Update_Gauge(_float fRatio)
 {
-    if (m_fRatio >= 1.f)
-    {
-        Change_State(TYPE::INDICATOR, STATE::ACTIVE);
+    Set_Gauge(fRatio);
+    if (fRatio >= 1.f)
         Change_State(TYPE::GAUGE, STATE::ACTIVE);
-    }
-    else if (m_fRatio <= 0.f)
-    {
+    else if (fRatio <= 0.f)
         Change_State(TYPE::GAUGE, STATE::INACTIVE);
-    }
 }
 
 void CUI_AnomalyGauge::Change_State(TYPE eType, STATE eState)
