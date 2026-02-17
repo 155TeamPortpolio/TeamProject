@@ -7,6 +7,8 @@
 #include "MaterialData.h"
 #include "GameInstance.h"
 #include "Child.h"
+#include "EventListener.h"
+#include "BattleSystem.h"
 
 #include "Helper_Func.h"
 
@@ -25,6 +27,7 @@ HRESULT CWaterWave::Initialize_Prototype()
 	__super::Initialize_Prototype();
 	Add_Component<CTessellationModel>(32, 50.f);
 	Add_Component<CMaterial>();
+	Add_Component<CEventListener>();
 	return S_OK;
 }
 
@@ -80,6 +83,7 @@ HRESULT CWaterWave::Initialize(INIT_DESC* pArg)
 	}
 
 	m_vOriginPos = _vector3(m_pTransform->Get_Pos());
+	Get_Component<CEventListener>()->Add_Listener<TsunamiWallDesc>([&](const TsunamiWallDesc& desc) {Check_Attackable(desc); });
 	return S_OK;
 }
 
@@ -120,8 +124,19 @@ void CWaterWave::Late_Update(_float dt)
 {
 	if (m_fAccTime >= m_CycleTime){
 		m_isAlive = false;
+		if (m_isAttackable) {
+			HitDesc desc;
+			desc.fDamage = 500.f;
+			BattleSystem()->TakePlayerDamage(desc);
+		}
+		EventSystem()->Broadcast<TsunamiDesc>({ true });
 		ObjectManager()->Remove_Object(this);
 	}
+}
+
+void CWaterWave::Check_Attackable(const TsunamiWallDesc& desc)
+{
+	m_isAttackable = !desc.isCharcter_On_Wall;
 }
 
 void CWaterWave::Initialize_Wave(WaterWaveDesc Desc)

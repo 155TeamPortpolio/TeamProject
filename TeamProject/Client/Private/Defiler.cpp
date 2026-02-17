@@ -74,8 +74,9 @@ HRESULT CDefiler::Initialize(INIT_DESC* pArg)
 {
 	__super::Initialize(pArg);
 	Get_Component<CAudioSource>()->SoundFolder("Zero_Level","../Bin/Resources/Zero/Enemy/Defiler_Isolde/Sound/");
-	Get_Component<CCharacterController>()->Set_BoundingMinY(0.1f);
 	Get_Component<CCharacterController>()->Set_GravityEnabled(false);
+	m_BaseY = _vector3(Get_Component<CCharacterController>()->Get_FootPosition()).y;
+
 	m_eEnemyClass = ENEMY_CLASS::BOSS;
 	vector<_uint> ProMeshes = Get_Component<CSkeletalModel>()->Hide_MehsByName("Pro");
 	vector<_uint> WeaponMeshes = Get_Component<CSkeletalModel>()->Show_MehsByName("Weapon");
@@ -219,6 +220,7 @@ void CDefiler::Set_CCTPos(_vector3 pos)
 	auto controller= Get_Component<CCharacterController>();
 	if (!controller)
 		return;
+	pos.y = m_BaseY;
 	controller->Set_FootPosition(pos);
 }
 _float3 CDefiler::Get_BipedPos(const string Bone)
@@ -261,12 +263,8 @@ FOUR_DIR CDefiler::Get_FourDirection()
 
 void CDefiler::Parried()
 {
-	if (false == m_isParryEnable)
-		return;
-
-	m_tStatus.iGroggyValue += 1.5f;
+	m_tStatus.iGroggyValue += 1;
 }
-
 void CDefiler::MoveByTraceMode(_float dt, _float moveScale)
 {
 	if (m_passDampTime > 0.f)
@@ -638,7 +636,7 @@ void CDefiler::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER cha
 	if (m_tStatus.isGroggy)
 		fTakeDamage *= 1.5f;
 	else
-		m_tStatus.iGroggyValue += 0.5f;
+		m_tStatus.iGroggyValue += 1;
 
 	if(!m_isRecovering)
 		m_tStatus.iNowHP -= fTakeDamage;
@@ -646,7 +644,7 @@ void CDefiler::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER cha
 	if (0 >= m_tStatus.iNowHP) {
 		m_tStatus.iNowHP = 0.f;
 		m_BlackBoard.BloodPhase++;
-		if (m_BlackBoard.BloodPhase > 4) {
+		if (m_BlackBoard.BloodPhase > 2) {
 			m_pStateMachine->Set_Trigger("Death");
 		}
 		else {
@@ -771,8 +769,8 @@ void CDefiler::SummonWave()
 	CGameObject* WaterWave = 
 		Builder::Create_Object({ "Zero_Level", "Proto_GameObject_WaterWave" })
 		.Add_ObjDesc(waveDesc)
-		.Scale({0.2f,1.f,6.f})
-		.Position({ -50.f,-4,0.f })
+		.Scale({0.1f,1.f,6.f})
+		.Position({ -55.f,-4,0.f })
 		.Build("WaterWave1");
 	ObjectManager()->Add_Object(WaterWave, { nowLevelKey , "Enemy_Layer" });
 }
@@ -1155,7 +1153,7 @@ HRESULT CDefiler::Create_Colliders()
 		WeaponDesc.tagBone = "Ctr_M_Weapon_01";
 		WeaponDesc.pOwnerAnimator3D = pAnimator;
 		WeaponDesc.eAttackColliderType = COLLIDER_TYPE::BOX;
-		WeaponDesc.vAttackSize = _float3{ 3.5f,1.5f,0.5f };
+		WeaponDesc.vAttackSize = _float3{ 4.f,2.5f,2.5f };
 
 		if (FAILED(AttachBattleColliderObject(&WeaponDesc)))
 			return E_FAIL;

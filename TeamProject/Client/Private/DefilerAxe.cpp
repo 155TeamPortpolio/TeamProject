@@ -44,7 +44,7 @@ HRESULT CDefilerAxe::Initialize(INIT_DESC* pArg)
 	__super::Initialize(pArg);
 	auto desc = static_cast<DefilerAxeDesc*>(pArg);
 	Get_Component<CCharacterController>()->Set_BoundingMinY(1.3f);
-	Get_Component<CCharacterController>()->Set_GravityEnabled(false);
+	Get_Component<CCharacterController>()->Set_GravityEnabled(true);
 	m_pTransform->Set_Look(desc->vLook);
 	m_vSlide = desc->vLook;
 	m_vSlide = Math::NormalizeSafeXZ(m_vSlide)*5;
@@ -142,9 +142,19 @@ void CDefilerAxe::SummonWall()
 	CDefilerWall::DefilerWallDesc* desc = new CDefilerWall::DefilerWallDesc;
 	desc->vLook = Math::NormalizeSafeXZ(m_pTransform->Dir(STATE::LOOK));
 	_vector3 pos =  m_pTransform->Get_Pos();
+
+
+	COLLIDER_DESC ColDesc = {};
+	ColDesc.eGroup = COLLISION_GROUP::COMMON;
+	ColDesc.iCollisionMask = ENUM(COLLISION_GROUP::GROUND)| ENUM(COLLISION_GROUP::PLAYER);
+	ColDesc.bTrigger = true;
+	ColDesc.bAutoFit = true;
+	ColDesc.eType = COLLIDER_TYPE::BOX;
+
 	auto pWall = Builder::Create_Object({ "Zero_Level","Proto_GameObject_DefilerWall" })
 		.Position(pos)
 		.Add_ObjDesc(desc)
+		.Collider(ColDesc)
 		.Build("Wall");
 	ObjectManager()->Add_Object(pWall, { nowLevelKey,"Enemy_Layer" });
 	ObjectManager()->Remove_Object(this);

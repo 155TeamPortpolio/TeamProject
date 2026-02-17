@@ -48,12 +48,14 @@ public: //setter
 public:
 	void	StartGimmick(BATTLE_VFX_TYPE eVFXType);
 	void	HitVFX(DAMAGE_TYPE eDamageType);
+	void	StartSwitch(CHARACTER eLeft, CHARACTER eRight);
 
 public:
 	void	TakeAreaDamage(const _float3& vCenter, _float fRadius, const HitDesc& hitDesc);
 	void	TakeAreaDamage(const _float3& vCenter, _float fRadius, const _float3& vDir, _float fAngle, const HitDesc& hitDesc);
 	void	TakeBoxDamage(const _float3& vCenter, const _float3& vHalfExtents, const _quaternion& qRotation, const HitDesc& hitDesc);
-	void	TakeAllDamage(const HitDesc& hitDesc);
+	void	TakeAllDamage(const HitDesc& hitDesc, BATTLE_OBJ_TYPE type = BATTLE_OBJ_TYPE::MONSTER);
+	void	TakePlayerDamage(const HitDesc& hitDesc);
 
 private:
 	void CleanUp_Data();

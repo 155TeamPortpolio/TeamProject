@@ -93,8 +93,8 @@ private:
         ENUM(COLLISION_GROUP::PLAYER_ATTACK);
     _bool m_isRecovering = false;
 
+    _float m_BaseY = {};
 
-    // CDefiler ¸â¹ö·Î Ãß°¡
     _bool m_bDirLockedNear = false;
     _float m_passDampTime = 0.f;
     _vector3 m_passDir = { 0.f, 0.f, 1.f };

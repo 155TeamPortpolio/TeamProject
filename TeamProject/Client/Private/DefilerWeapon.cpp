@@ -274,7 +274,6 @@ void CDefilerWeapon::SummonAxe()
 
 	auto pBlade =
 		Builder::Create_Object({ "Zero_Level","Proto_GameObject_DefilerAxe" })
-		.FromPool()
 		.Add_ObjDesc(desc)
 		.CharacterController(MonsterCCT)
 		.Build("DefilerAxe");

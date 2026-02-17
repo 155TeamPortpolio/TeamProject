@@ -862,7 +862,7 @@ void CDefilerState_RePos_Back::Update(CDefiler* pOwner, _float dt)
 	if (m_eState == EVADE_IN && dissolve.isComplete()) {
 		m_eState = EVADE_OUT;
 		dissolve.Set_DissolveState(dissolve.APPEAR, .5f);
-		pOwner->Set_CCTPos({ 15.f,-1.f, -5.f });
+		pOwner->Set_CCTPos({ 15.f,-2.f, -5.f });
 	}
 	else if (m_eState == EVADE_OUT && dissolve.isComplete()) {
 		blackBoard.isRequestNext = true;

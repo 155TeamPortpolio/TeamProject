@@ -22,18 +22,21 @@ public:
     void    Update(_float dt) override;
     void    Late_Update(_float dt) override;
     void    Render_GUI()override;
+
 public:
     virtual void    OnTriggerEnter(CGameObject* pOther) override;
+    virtual void    OnTriggerExit(CGameObject* pOther) override;
     virtual void OnPooledAcquire(INIT_DESC* pArg = nullptr) override;		// 풀에서 꺼낼 때
     virtual void OnPooledRelease()override;
 
-private:
+public:
     void DisAppear();
 
 private:
     _float  m_ElapsedTime = 0.f;
     _float  m_EndY = 0.f;
     _bool m_bAwake = {};
+    _bool m_bDisApper = {};
 public:
     static CDefilerWall* Create();
     CGameObject* Clone(INIT_DESC* pArg) override;
