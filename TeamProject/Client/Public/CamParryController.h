@@ -11,10 +11,6 @@ public:
     {
         None, Enter, Impact, WaitEnd
     };
-    enum class Mode
-    {
-        None, Boss
-    };
 
     struct ShotGoal
     {
@@ -63,7 +59,7 @@ public:
         struct Impact
         {
             _float punchDistDelta = 1.25f;
-           
+
             _float rollMaxDeg = 25.f;
             _float rollArcMul = 0.75f;
 
@@ -94,12 +90,8 @@ public:
     void Begin();
     void End();
     void Update(_float dt);
-    
-    void SetParryMode(Mode mode) { m_mode = mode; }
-    Mode GetMode() const { return m_mode; }
 
     Vector3 GetImpactPointWorld() const { return m_fxPointWorld; }
-    
 
 public:
     ParryTuning tune{};
@@ -143,10 +135,11 @@ private:
     void      BeginRecoverFov();
     void      UpdateRecoverFov(_float dt);
 
+    _bool     IsChainParry() const;
+
 private:
     _bool         m_active = false;
     State         m_state = State::None;
-    Mode          m_mode = Mode::None;
 
     _float        m_elapsed{};
 
@@ -177,7 +170,7 @@ private:
 
     ShotGoal      m_holdShot{};
     _bool         m_holdActive = false;
-    
+
     _float        m_fovBase = 0.f;
     _float        m_fovSaved = 0.f;
 

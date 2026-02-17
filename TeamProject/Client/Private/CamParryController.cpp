@@ -5,6 +5,9 @@
 #include "GameInstance.h"
 #include "CharacterController.h"
 
+#include "BattleSystem.h"
+#include "BattlePlayer.h"
+
 namespace
 {
     Vector3 OrbitBasePivotWorld(OBJECT_HANDLE h, _float offsetY)
@@ -396,8 +399,6 @@ CamParryController::ShotGoal CamParryController::BuildImpactShot(_int sideSign, 
     const Vector4 foot4 = attackerCC->Get_FootPosition();
     const _float footY = foot4.y;
 
-    const _float targetCamYFixed = footY + tune.impact.endCamAboveFootY;
-
     const _float attackerYaw = YawFromDirXZ(fwd);
     const _float yawWorldBase = attackerYaw + m_impactBase.yawDeg;
 
@@ -406,11 +407,18 @@ CamParryController::ShotGoal CamParryController::BuildImpactShot(_int sideSign, 
     const Quaternion qStart = YawPitchRollQuatDeg(yawWorldBase, m_impactBase.pitchDeg, 0.f);
     const _float startCamY = OrbitPos(pivotWorldBase, qStart, m_impactBase.dist).y;
 
+    const _float targetCamYFixed = footY + tune.impact.endCamAboveFootY;
+
     const _float mix = clamp(tune.impact.targetCamYMix, 0.f, 1.f);
-    const _float targetCamY = Math::Lerp(startCamY, targetCamYFixed, mix);
+    _float targetCamY = Math::Lerp(startCamY, targetCamYFixed, mix);
+
+    if (IsChainParry())
+        targetCamY = max(targetCamY, startCamY);
 
     g.pivotExt = m_impactBase.pivotExt;
-    g.pivotExt.y -= tune.impact.pivotDropY * close01;
+
+    if (!IsChainParry())
+        g.pivotExt.y -= tune.impact.pivotDropY * close01;
 
     const Vector3 pivotWorld = m_aBase + right * g.pivotExt.x + Vector3::Up * g.pivotExt.y + fwd * g.pivotExt.z;
 
@@ -475,9 +483,9 @@ string CamParryController::BuildParryKey() const
 
     string key;
 
-    if (m_mode == Mode::Boss)
+    if (IsChainParry())
         key = "BossParry/";
-    else 
+    else
         key = "Parry/";
 
     key += Helper::EnumToString(charaName);
@@ -593,6 +601,11 @@ void CamParryController::UpdateRecoverFov(_float dt)
     m_fovAppliedOffset = desiredOffset;
 
     if (u >= 1.f) m_recoverFovActive = false;
+}
+
+_bool CamParryController::IsChainParry() const
+{
+    return BattleSystem()->GetBattlePlayer()->Is_ChainParry();
 }
 
 void CamParryController::Reset()
