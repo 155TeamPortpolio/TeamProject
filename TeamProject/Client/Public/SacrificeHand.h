@@ -31,6 +31,10 @@ public:
     void    Update(_float dt) override;
     void    Late_Update(_float dt) override;
 
+private:
+    void Route_AnimEvent();
+    void Control_Sound(const string& event);
+
 public:
     static CSacrificeHand* Create();
     CGameObject* Clone(INIT_DESC* pArg) override;

@@ -81,7 +81,7 @@ HRESULT CZeroStage_Boss::Enter_Stage(StageContext& context)
 	BossIntro(context);
 
 	if ("Zero_Boss1" == context.mapKey)
-		m_pBGM->Slot("Sacrifice_BGM2.wav").Attribute3D(false).Loop(true).Volume(0.2f).Play();
+		m_pBGM->Slot("Sacrifice_BGM.wav").Attribute3D(false).Loop(true).Volume(0.2f).Play();
 
 	return S_OK;
 }

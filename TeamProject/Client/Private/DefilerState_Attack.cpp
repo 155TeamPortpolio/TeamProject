@@ -957,9 +957,20 @@ void CDefilerState_Attack_Barrier::Enter(CDefiler* pOwner)
 void CDefilerState_Attack_Barrier::Update(CDefiler* pOwner, _float dt)
 {
 	ComboTransition(pOwner);
+	Update_Effects(pOwner);
 }
 
 void CDefilerState_Attack_Barrier::Exit(CDefiler* pOwner)
 {
 
+}
+
+void CDefilerState_Attack_Barrier::Update_Effects(CDefiler* pOwner)
+{
+	if (IsCrossAnimProgress(0.34f))
+		pOwner->Play_Effect("Defiler_Barrier0", _vector3(0.f, 0.f, 0.f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+	if (IsCrossAnimProgress(0.45f))
+		pOwner->Stop_Effect("Defiler_Barrier0");
+	if (IsCrossAnimProgress(0.57f))
+		pOwner->Play_Effect("Defiler_Barrier1", _vector3(0.f, 0.f, 0.f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
 }

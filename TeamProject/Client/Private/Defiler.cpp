@@ -1185,6 +1185,22 @@ HRESULT CDefiler::Initialize_Effects()
 		pObjectContainer->Add_Child(pEffect, false);
 	}
 
+	/* Barrier */
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("defiler_barrier0.json")
+			.Build("Defiler_Barrier0");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("defiler_barrier1.json")
+			.Build("Defiler_Barrier1");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+
 	return S_OK;
 }
 
