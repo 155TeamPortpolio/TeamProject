@@ -256,6 +256,8 @@ void CSacrifice::Parried()
 	__super::Parried();
 
 	m_pStateMachine->Change_State("Parry");
+	SetOnAttack(false);
+	SetParryEnable(false);
 	DeactiveAxe();
 	DeactiveSword();
 	DeactiveWhip();
@@ -947,5 +949,5 @@ void CSacrifice::Route_AnimEvent()
 
 void CSacrifice::Control_Sound(const string& event)
 {
-	Get_Component<CAudioSource>()->Slot(event).Volume(0.4f).Attribute3D(true).Loop(false).Play();
+	Get_Component<CAudioSource>()->Slot(event).Volume(0.7f).Attribute3D(false).Loop(false).Play();
 }

@@ -489,7 +489,7 @@ HRESULT CCorin::Initialize_Effects()
         auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
             .Asset("corin_normal1_saw_slash.json")
             .Build("Corin_Saw_Slash0");
-        pEffect->Stop();
+        pEffect->Set_Alive(false);
         pObjectContainer->Add_Child(pEffect, false);
         pEffect->AttachBone(pAnimator, "Weapon_saw");
     }
@@ -497,7 +497,7 @@ HRESULT CCorin::Initialize_Effects()
         auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
             .Asset("corin_normal2_saw_slash.json")
             .Build("Corin_Saw_Slash1");
-        pEffect->Stop();
+        pEffect->Set_Alive(false);
         pObjectContainer->Add_Child(pEffect, false);
         pEffect->AttachBone(pAnimator, "Weapon_saw");
     }
@@ -505,7 +505,7 @@ HRESULT CCorin::Initialize_Effects()
         auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
             .Asset("corin_ex_saw_slash.json")
             .Build("Corin_Ex_Saw_Slash0");
-        pEffect->Stop();
+        pEffect->Set_Alive(false);
         pObjectContainer->Add_Child(pEffect, false);
         pEffect->AttachBone(pAnimator, "Weapon_saw");
     }
@@ -513,7 +513,7 @@ HRESULT CCorin::Initialize_Effects()
         auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
             .Asset("corin_ultimate_saw_slash.json")
             .Build("Corin_Ultimate_Saw_Slash0");
-        pEffect->Stop();
+        pEffect->Set_Alive(false);
         pObjectContainer->Add_Child(pEffect, false);
         pEffect->AttachBone(pAnimator, "Weapon_saw");
     }
@@ -530,6 +530,15 @@ HRESULT CCorin::Initialize_Effects()
         auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
             .Asset("corin_assault_explode.json")
             .Build("Corin_Assault_Explode");
+        pEffect->Stop();
+        pObjectContainer->Add_Child(pEffect, false);
+    }
+
+    // Hit Ground
+    {
+        auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+            .Asset("corin_ultimate_hit_ground.json")
+            .Build("Corin_Ultimate_HitGround");
         pEffect->Stop();
         pObjectContainer->Add_Child(pEffect, false);
     }
