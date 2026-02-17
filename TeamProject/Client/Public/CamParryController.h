@@ -113,6 +113,7 @@ private:
     void      ClampAboveGround(ShotGoal& g) const;
 
     ShotGoal  BuildBaseShot_NoLens(_int sideSign) const;
+    Vector3   BasePivotWorld() const;
 
     void      CaptureCurAsFrom();
     void      ApplyInterpolated_Enter(const ShotGoal& a, const ShotGoal& b, _float t);

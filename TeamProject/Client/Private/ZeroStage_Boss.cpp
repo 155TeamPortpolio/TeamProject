@@ -64,7 +64,7 @@ HRESULT CZeroStage_Boss::Enter_Stage(StageContext& context)
 		.Position(_vector3(-1.f, -3.5f, 1.8f))
 		.Build("Stage_Fog");
 
-	//ObjectManager()->Add_Object(fog, { "Zero_Level","Effect_Layer" });
+	ObjectManager()->Add_Object(fog, { "Zero_Level","Effect_Layer" });
 
 	Ready_Map("Zero_Level", context.mapKey);
 	Reserve_Enemy("Zero_Level");
