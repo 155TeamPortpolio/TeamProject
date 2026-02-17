@@ -3,14 +3,14 @@
 float g_Time;
 float3 SunDir;
 
-float g_SunIntensity = 5.f; 
-float3 g_SkyTopColor = float3(0.002, 0.005, 0.015);
-float3 g_SkyHorizonColor = float3(0.01, 0.02, 0.05);
-float g_SkyAtmosphereBlend = 0.5;
+float g_SunIntensity = 15.0;
+float3 g_SkyTopColor = float3(0.01, 0.015, 0.06);
+float3 g_SkyHorizonColor = float3(0.12, 0.04, 0.02);
+float g_SkyAtmosphereBlend = 0.92;
 
-float3 g_CloudBright = float3(0.12, 0.14, 0.22);
-float3 g_CloudDark = float3(0.02, 0.02, 0.05);
-float g_CloudCoverage_Param = 0.40;
+float3 g_CloudBright = float3(1.2, 0.5, 0.18);
+float3 g_CloudDark = float3(0.15, 0.06, 0.08);
+float g_CloudCoverage_Param = 0.45;
 
 static const float EARTH_RADIUS = 6371000.0;
 static const float ATMO_RADIUS = EARTH_RADIUS + 100000.0;
@@ -24,28 +24,15 @@ static const float SUN_INTENSITY = 22.0;
 static const float3 HorizonColor = float3(0.65, 0.80, 1.00);
 static const float3 SunsetMid = float3(1.0, 0.55, 0.20);
 
-static const float CloudBottom = 800.0;
-static const float CloudTop = 1800.0;
-static const float CloudCoverage = 0.65; 
+static const float CloudBottom = 1000.0;
+static const float CloudTop = 2200.0;
 
-static const int CLOUD_STEPS = 32;
-static const int LIGHT_STEPS = 4;
+static const int CLOUD_STEPS = 64;
+static const int LIGHT_STEPS = 6;
 
 float remap(float v, float lo1, float hi1, float lo2, float hi2)
 {
     return lo2 + (v - lo1) * (hi2 - lo2) / (hi1 - lo1);
-}
-
-float3 hashGrad(float3 p)
-{
-    p = frac(p * float3(0.1031, 0.1030, 0.0973));
-    p += dot(p, p.yxz + 33.33);
-    float3 h = frac(float3(
-        (p.x + p.y) * p.z,
-        (p.x + p.z) * p.y,
-        (p.y + p.z) * p.x
-    ));
-    return h * 2.0 - 1.0;
 }
 
 uint pcgHash(uint input)
@@ -61,6 +48,15 @@ float hash3(float3 p)
     uint h = u.x * 374761393u + u.y * 668265263u + u.z * 967981169u;
     h = pcgHash(h);
     return float(h) * (1.0 / 4294967295.0);
+}
+
+float3 hash3Vec(float3 p)
+{
+    uint3 u = uint3(int3(floor(p)));
+    uint h1 = pcgHash(u.x * 374761393u + u.y * 668265263u + u.z * 967981169u);
+    uint h2 = pcgHash(h1);
+    uint h3 = pcgHash(h2);
+    return float3(h1, h2, h3) * (1.0 / 4294967295.0);
 }
 
 float valueNoise(float3 p)
@@ -87,13 +83,46 @@ float valueNoise(float3 p)
                 lerp(x3, x4, f.y), f.z);
 }
 
+float worleyNoise(float3 p)
+{
+    float3 i = floor(p);
+    float3 f = frac(p);
+
+    float minDist = 1.0;
+    float3 base = step(0.5, f);
+
+    for (int x = 0; x <= 1; x++)
+    {
+        for (int y = 0; y <= 1; y++)
+        {
+            for (int z = 0; z <= 1; z++)
+            {
+                float3 offset = float3(x, y, z) + base - 1.0;
+                float3 cellPoint = hash3Vec(i + offset);
+                float3 diff = offset + cellPoint - f;
+                float d = dot(diff, diff);
+                minDist = min(minDist, d);
+            }
+        }
+    }
+
+    return sqrt(minDist);
+}
+
+float worleyFbm(float3 p)
+{
+    float w1 = 1.0 - worleyNoise(p);
+    float w2 = 1.0 - worleyNoise(p * 2.0);
+    return w1 * 0.7 + w2 * 0.3;
+}
+
 static const float3x3 FBM_ROT = float3x3(
      0.00, 0.80, 0.60,
     -0.80, 0.36, -0.48,
     -0.60, -0.48, 0.64
 );
 
-float fbmShape(float3 p)
+float perlinFbm(float3 p)
 {
     float v = 0.0, a = 0.5;
     [unroll]
@@ -104,6 +133,28 @@ float fbmShape(float3 p)
         a *= 0.5;
     }
     return saturate(v / 0.875);
+}
+
+float perlinWorley(float3 p)
+{
+    float pn = perlinFbm(p);
+    float wn = worleyFbm(p);
+    return remap(pn, wn * 0.4, 1.0, 0.0, 1.0);
+}
+
+float sampleDensityLight(float3 pos)
+{
+    float h = saturate((pos.y - CloudBottom) / (CloudTop - CloudBottom));
+    float heightGrad = smoothstep(0.0, 0.07, h) * smoothstep(1.0, 0.4, h);
+    float hCoverage = g_CloudCoverage_Param * lerp(1.0, 0.5, pow(h, 0.8));
+
+    float3 windDir = float3(1.0, 0.0, 0.3);
+    float3 animPos = pos + windDir * g_Time * 15.0;
+
+    float baseShape = perlinFbm(animPos * 0.0004);
+    float density = saturate(remap(baseShape, 1.0 - hCoverage, 1.0, 0.0, 1.0));
+    density *= heightGrad;
+    return density;
 }
 
 float hg(float cosT, float g)
@@ -193,46 +244,58 @@ float3 atmosphericScatter(float3 dir, float3 sunDir)
     return g_SunIntensity * (sumR * BETA_R * phaseR + sumM * BETA_M * phaseM);
 }
 
-float sampleDensity(float3 pos)
+float BetterJitter(float2 pixelPos)
 {
-    float h = saturate((pos.y - CloudBottom) / (CloudTop - CloudBottom));
-
-    float heightMask = smoothstep(0.0, 0.08, h) * smoothstep(1.0, 0.3, h);
-    float hCoverage = lerp(g_CloudCoverage_Param, g_CloudCoverage_Param * 0.2, pow(h, 0.5));
-   
-    float3 sp = pos;
-    float lo = fbmShape(sp * 0.0006);
-    float mid = fbmShape(sp * 0.0018);
-
-    float baseShape = lo * 0.7 + mid * 0.3;
-
-    float density = saturate(remap(baseShape, 1.0 - hCoverage, 1.0, 0.0, 1.0));
-
-    density = smoothstep(0.0, 0.15, density);
-
-    density *= heightMask;
-    return density;
+    float2 alpha = float2(0.7548776662, 0.5698402909);
+    float base = frac(dot(pixelPos, alpha));
+    float timeOffset = frac(float(pcgHash(uint(floor(g_Time * 8.0)))) * (1.0 / 4294967295.0));
+    return frac(base + timeOffset);
 }
 
-float sampleDensityCheap(float3 pos)
+float sampleDensity(float3 pos, float t)
 {
     float h = saturate((pos.y - CloudBottom) / (CloudTop - CloudBottom));
-    float heightMask = smoothstep(0.0, 0.08, h) * smoothstep(1.0, 0.3, h);
-    float hCoverage = lerp(g_CloudCoverage_Param, g_CloudCoverage_Param * 0.2, pow(h, 0.5));
 
-    float3 sp = pos + float3(g_Time * 6.0, 0.0, g_Time * 2.0);
+    float heightGrad = smoothstep(0.0, 0.07, h)
+                     * smoothstep(1.0, 0.4, h);
 
-    float lo = fbmShape(sp * 0.0006);
-    float density = saturate(remap(lo, 1.0 - hCoverage, 1.0, 0.0, 1.0));
+    float hCoverage = g_CloudCoverage_Param * lerp(1.0, 0.5, pow(h, 0.8));
+
+    float3 windDir = float3(1.0, 0.0, 0.3);
+    float3 animPos = pos + windDir * g_Time * 15.0;
+
+    float pw = perlinWorley(animPos * 0.0004);
+
+    float midNoise = perlinFbm(animPos * 0.0012);
+
+    float baseShape = pw * 0.65 + midNoise * 0.35;
+
+    float density = saturate(remap(baseShape, 1.0 - hCoverage, 1.0, 0.0, 1.0));
+    density *= heightGrad;
+
+    if (density <= 0.0)
+        return 0.0;
+
+    float detailFade = 1.0 - saturate((t - 4000.0) / 6000.0);
+
+    if (detailFade > 0.01)
+    {
+        float erosion = valueNoise(animPos * 0.004) * 0.3
+                      + valueNoise(animPos * 0.012) * 0.15;
+
+        float erosionStrength = lerp(0.6, 0.2, smoothstep(0.5, 0.9, h));
+        density = saturate(density - erosion * erosionStrength * detailFade);
+    }
+
     density = smoothstep(0.0, 0.15, density);
-    density *= heightMask;
+
     return density;
 }
 
 float lightMarch(float3 pos)
 {
     float3 lightDir = normalize(-SunDir);
-    float stepLen = (CloudTop - CloudBottom) * 0.15;
+    float stepLen = (CloudTop - CloudBottom) * 0.12;
     float totalDensity = 0.0;
 
     [unroll]
@@ -241,18 +304,12 @@ float lightMarch(float3 pos)
         pos += lightDir * stepLen;
         if (pos.y < CloudBottom || pos.y > CloudTop)
             break;
-        totalDensity += sampleDensityCheap(pos);
+        totalDensity += sampleDensityLight(pos);
     }
 
-    float beer = exp(-totalDensity * 5.0);
-    float powder = 1.0 - exp(-totalDensity * 10.0);
-    return lerp(beer, beer * powder, 0.4);
-}
-
-float InterleavedGradientNoise(float2 pixelPos)
-{
-    float3 magic = float3(0.06711056, 0.00583715, 52.9829189);
-    return frac(magic.z * frac(dot(pixelPos, magic.xy)));
+    float beer = exp(-totalDensity * 4.0);
+    float powder = 1.0 - exp(-totalDensity * 8.0);
+    return lerp(beer, beer * powder, 0.5);
 }
 
 float4 raymarchClouds(float3 dir, float3 sunDir, float3 skyCol, float2 pixelPos)
@@ -265,23 +322,29 @@ float4 raymarchClouds(float3 dir, float3 sunDir, float3 skyCol, float2 pixelPos)
     float tStart = min(tBot, tTop);
     float tEnd = max(tBot, tTop);
     tStart = max(tStart, 0.0);
-    tEnd = min(tEnd, 15000.0);
+    tEnd = min(tEnd, 18000.0);
 
     if (tStart >= tEnd || tEnd <= 0.0)
         return float4(0, 0, 0, 0);
 
     float stepSize = (tEnd - tStart) / (float) CLOUD_STEPS;
 
-    float jitter = InterleavedGradientNoise(pixelPos);
+    float jitter = BetterJitter(pixelPos);
     tStart += stepSize * jitter;
 
     float transmittance = 1.0;
     float3 light = float3(0, 0, 0);
 
     float sunHeight = saturate(sunDir.y);
-    float3 sunCol = lerp(float3(1.5, 0.5, 0.15), g_CloudBright, saturate(sunHeight * 3.0));
-    sunCol *= g_SunIntensity * 0.15;
-    float3 ambientCol = lerp(g_CloudDark, skyCol * 0.5, sunHeight);
+
+    float3 sunCol = lerp(float3(1.8, 0.6, 0.15),
+                         float3(1.0, 0.95, 0.9),
+                         saturate(sunHeight * 3.0));
+    sunCol *= g_SunIntensity * 0.12;
+
+    float3 ambientCol = lerp(g_CloudDark,
+                             skyCol * 0.4 + float3(0.02, 0.03, 0.05),
+                             sunHeight);
 
     float cosAngle = dot(dir, sunDir);
     float phase = cloudPhase(cosAngle);
@@ -293,14 +356,14 @@ float4 raymarchClouds(float3 dir, float3 sunDir, float3 skyCol, float2 pixelPos)
         float t = tStart + stepSize * ((float) i + 0.5);
         float3 p = camPos + dir * t;
 
-        float d = sampleDensity(p);
+        float d = sampleDensity(p, t);
 
         if (d < 0.001)
         {
             zeroCount++;
-            if (zeroCount > 3)
+            if (zeroCount > 2)
             {
-                i++;
+                i += min(zeroCount - 2, 3);
                 zeroCount = 0;
             }
             continue;
@@ -310,14 +373,14 @@ float4 raymarchClouds(float3 dir, float3 sunDir, float3 skyCol, float2 pixelPos)
         float li = lightMarch(p);
 
         float3 s1 = sunCol * li * phase;
-        float3 s2 = sunCol * (li * 0.4 + 0.15) * 0.3;
-        float3 s3 = ambientCol * 0.35;
+        float3 s2 = sunCol * (li * 0.3 + 0.2) * 0.25;
+        float3 s3 = ambientCol * (0.3 + 0.1 * saturate(1.0 - d));
         float3 scattered = s1 + s2 + s3;
 
         float alpha = 1.0 - exp(-d * stepSize * 1.5);
 
-        float aerial = 1.0 - exp(-t * 0.00008);
-        scattered = lerp(scattered, skyCol * 0.7, aerial * 0.6);
+        float aerial = 1.0 - exp(-t * 0.00006);
+        scattered = lerp(scattered, skyCol * 0.6, aerial * 0.5);
 
         light += scattered * alpha * transmittance;
         transmittance *= (1.0 - alpha);
@@ -326,7 +389,10 @@ float4 raymarchClouds(float3 dir, float3 sunDir, float3 skyCol, float2 pixelPos)
             break;
     }
 
-    return float4(light, 1.0 - transmittance);
+    float finalAlpha = 1.0 - transmittance;
+    finalAlpha = smoothstep(0.0, 0.06, finalAlpha) * finalAlpha;
+
+    return float4(light, finalAlpha);
 }
 
 float stars(float3 dir)
@@ -401,7 +467,7 @@ PS_OUT PS_MAIN(PS_IN In)
 
     float3 scatterColor = atmosphericScatter(dir, sunDir);
     float heightFactor = saturate(dir.y * 0.5 + 0.5);
-    float3 manualSky = lerp(g_SkyHorizonColor, g_SkyTopColor, pow(heightFactor, 1.2));
+    float3 manualSky = lerp(g_SkyHorizonColor, g_SkyTopColor, pow(heightFactor, 3.5));
     float3 skyColor = lerp(scatterColor, manualSky, g_SkyAtmosphereBlend);
     skyColor += sunDisk(dir, sunDir);
 
@@ -410,20 +476,47 @@ PS_OUT PS_MAIN(PS_IN In)
 
     float4 cloud = raymarchClouds(dir, sunDir, skyColor, In.vPosition.xy);
     float3 finalColor = lerp(skyColor, cloud.rgb, cloud.a);
+    float sunH = saturate(sunDir.y);
+    
+    if (dir.y > 0.01)
+    {
+        float cirrusHeight = 6000.0;
+        float tCirrus = (cirrusHeight - vCamPosition.y) / dir.y;
+        float3 cirrusPos = vCamPosition.xyz + dir * tCirrus;
 
-    //float sunHeight = saturate(sunDir.y);
-    //float3 hazeColor = lerp(
-    //    float3(0.15, 0.1, 0.12),
-    //    lerp(SunsetMid, HorizonColor, sunHeight),
-    //    saturate(sunDir.y + 0.1)
-    //);
-    //float hazeFactor = 1.0 - smoothstep(0.0, 0.15, abs(dir.y));
-    //finalColor = lerp(finalColor, hazeColor, hazeFactor * 0.65);
+        cirrusPos.xz += g_Time * float2(20.0, 8.0);
 
-    //float groundMask = saturate(-dir.y * 8.0);
-    //float3 groundCol = lerp(hazeColor, float3(0.15, 0.15, 0.13), groundMask);
-    //finalColor = lerp(finalColor, groundCol, groundMask * 0.9);
+        float n1 = valueNoise(float3(cirrusPos.xz * 0.00015, 0.0));
+        float n2 = valueNoise(float3(cirrusPos.xz * 0.0008, 1.0));
+        float cirrus = saturate(n1 * 0.6 + n2 * 0.4 - 0.55) * 2.0;
+        cirrus = smoothstep(0.0, 0.5, cirrus);
 
+        float cirrusFade = smoothstep(0.01, 0.25, dir.y);
+        cirrus *= cirrusFade * 0.2;
+
+        float3 cirrusColor = lerp(float3(0.6, 0.55, 0.5), float3(0.9, 0.9, 0.95), sunH);
+        cirrusColor *= g_SunIntensity * 0.03;
+
+        finalColor = lerp(finalColor, cirrusColor, cirrus);
+    }
+
+    float3 hazeColor = lerp(
+    float3(0.25, 0.12, 0.08),
+    float3(0.45, 0.55, 0.7), 
+    sunH
+);
+    hazeColor *= g_SunIntensity * 0.04;
+
+    float hazeAbove = 1.0 - smoothstep(0.0, 0.15, dir.y);
+
+    float hazeBelow = 1.0 - smoothstep(0.0, 0.4, abs(dir.y));
+    float belowMask = saturate(-dir.y * 5.0); 
+
+    float hazeFactor = saturate(max(hazeAbove, hazeBelow));
+    finalColor = lerp(finalColor, hazeColor, hazeFactor * 0.7);
+
+    finalColor = lerp(finalColor, hazeColor, belowMask * 0.85);
+    
     finalColor = ACESFilm(finalColor);
     finalColor = pow(max(finalColor, 0.0), 1.0 / 2.2);
 
