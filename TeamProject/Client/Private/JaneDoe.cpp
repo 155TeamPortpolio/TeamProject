@@ -150,6 +150,7 @@ void CJaneDoe::Render_GUI()
     ImGui::Separator();
     ImGui::Text("Passion: %s", (m_bPassion ? "ON" : "OFF"));
     ImGui::Text("Passion Stream : %3.1f", m_fPassionStream);
+
     ImGui::PushButtonRepeat(true);
     if (ImGui::Button("Increase Passion"))
         Increase_Passion(10.f);
