@@ -122,7 +122,7 @@ void CDefilerWeapon::Update(_float dt)
 		m_slideVelXZ.y = 0.f;
 		Get_Component<CAudioSource>()->Slot("DefilerWeaponGround.wav").Volume(0.5f).Play();
 
-		//Stop_Effect("Defiler_Throw_Axe_Trail");
+		Stop_Effect("Defiler_Throw_Axe_Trail");
 
 		_vector3 vWorldPosition = m_pTransform->Get_WorldPos();
 		vWorldPosition.y += 0.1f;
