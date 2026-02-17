@@ -60,6 +60,23 @@ void CSpriteAnimationUI::Update(_float dt)
     }
 }
 
+void CSpriteAnimationUI::UI_Active(void* pArg)
+{
+    m_isPlaying = true;
+    m_iCurrentFrameIndex = 0;
+    m_fFrameAccTime = 0.f;
+}
+
+void CSpriteAnimationUI::UI_DeActive(void* pArg)
+{
+    m_isPlaying = false;
+}
+
+_bool CSpriteAnimationUI::Is_AnimFinished()
+{
+    return m_isPlaying;
+}
+
 void CSpriteAnimationUI::Load(const nlohmann::ordered_json& data)
 {
     __super::Load(data);
