@@ -13,6 +13,7 @@ class CUI_BossHUD final : public CUI_HUD
 public:
 	typedef struct tagBossHUDDesc : public UI_DESC {
 		const MONSTER_STATUS* pMonsterStatus = { nullptr };
+		BOSS eBoss = { BOSS::Sacrifice };
 	}BOSS_HUD_DESC;
 
 private:
@@ -41,6 +42,7 @@ private:
 	class CTextSlot*		m_pGroggyText = { nullptr };
 
 	const MONSTER_STATUS*	m_pMonsterStatus = { nullptr };
+	BOSS m_eBoss = {};
 
 	static constexpr _float HPBACK_DELTA = 5.f;
 	static constexpr _float HPBACK_LERP_SPEED = 7.f;
@@ -54,8 +56,9 @@ private:
 	const _float			m_fGroggyMax = { 100.f };	// 그로기 맥스는 무조건 100
 
 private:
-	void Load_Json(const string& resourceKey);
 	void Cache_Children();
+
+	const char* GetBossIcon(BOSS eBoss);
 
 	void Update_HPBackGauge(_float fRatio, _float dt);
 	void Apply_Blink(_float fRatio, _float dt);
