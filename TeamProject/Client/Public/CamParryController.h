@@ -1,3 +1,4 @@
+// CamParryController.h
 #pragma once
 
 #include "OrbitCamTypes.h"
@@ -61,17 +62,17 @@ public:
             _float punchDistDelta = 1.3f;
 
             _float rollMaxDeg = 30.f;
-            _float rollArcMul = 0.8f;
+            _float rollArcMul = 0.85f;
 
             _float endCamAboveFootY = 0.5f;
             _float targetCamYMix = 0.80f;
             _float pivotDropY = 0.12f;
 
-            _float recoverRollSec = 0.35f;
+            _float recoverRollSec = 0.25f;
             EaseType rollEase = EaseType::InOutSine;
             EaseType recoverRollEase = EaseType::InOutSine;
 
-            _float recoverFovSec = 0.35f;
+            _float recoverFovSec = 0.25f;
             EaseType recoverFovEase = EaseType::InOutSine;
 
             _int   fovWaveCount = 4;
@@ -91,6 +92,7 @@ public:
     void End();
     void Update(_float dt);
 
+    _bool   IsChainReentryOpen() const;
     Vector3 GetImpactPointWorld() const { return m_fxPointWorld; }
 
 public:
@@ -151,7 +153,6 @@ private:
 
     Vector3       m_aBase{};
     Vector3       m_aFace{};
-    _bool         m_aValid = false;
 
     Vector3       m_dirXZ = Vector3(0.f, 0.f, 1.f);
 
@@ -161,7 +162,6 @@ private:
     _float        m_enterCamY = 0.f;
 
     ShotGoal      m_impactBase{};
-    Vector3       m_impactPivotWorld{};
     _bool         m_impactCaptured = false;
 
     string        m_waitSeqKey{};
@@ -172,7 +172,6 @@ private:
     ShotGoal      m_holdShot{};
     _bool         m_holdActive = false;
 
-    _float        m_fovBase = 0.f;
     _float        m_fovSaved = 0.f;
 
     _bool         m_recoverFovActive = false;
@@ -180,6 +179,9 @@ private:
     _float        m_recoverFovFrom = 0.f;
 
     _float        m_fovAppliedOffset = 0.f;
+
+    _bool         m_beginWasChain = false;
+    _float        m_chainRefDist = 0.f;
 };
 
 NS_END
