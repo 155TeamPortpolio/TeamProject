@@ -5,6 +5,7 @@
 #include "ObjectContainer.h"
 #include "GaugeUI.h"
 #include "TextSlot.h"
+#include "Sprite2D.h"
 
 HRESULT CUI_BossHUD::Initialize_Prototype()
 {
@@ -20,10 +21,11 @@ HRESULT CUI_BossHUD::Initialize(INIT_DESC* pArg)
     // 외부에서 전달받은 몬스터 정보 설정
     BOSS_HUD_DESC* pDesc = static_cast<BOSS_HUD_DESC*>(pArg);
     m_pMonsterStatus = pDesc->pMonsterStatus;
+    m_eBoss = pDesc->eBoss;
 
     __super::Initialize(pArg);
 
-    Load_Json("hud_boss.json");
+    Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("hud_boss.json")));
     Cache_Children();
 
     return S_OK;
@@ -32,6 +34,11 @@ HRESULT CUI_BossHUD::Initialize(INIT_DESC* pArg)
 void CUI_BossHUD::Awake()
 {
     Set_Animation(0);
+
+    // 보스 종류에 따라 아이콘 이미지 바뀌게
+    if (auto pChild = m_pChildren[ENUM(CHILD::ICON)])
+        if (auto pSprite2D = pChild->Get_Component<CSprite2D>())
+            pSprite2D->Change_Texture(0, G_GlobalLevelKey, GetBossIcon(m_eBoss));
 }
 
 void CUI_BossHUD::Update(_float dt)
@@ -74,13 +81,6 @@ void CUI_BossHUD::UI_DeActive(void* pArg)
     Set_Alpha(0.f);
 }
 
-void CUI_BossHUD::Load_Json(const string& resourceKey)
-{
-    // JSON 기반 UI 구성 로드
-    const string& filePath = ResourceManager()->Get_ResourcePath(resourceKey);
-    Load(Helper::LoadJson<nlohmann::ordered_json>(filePath));
-}
-
 void CUI_BossHUD::Cache_Children()
 {
     auto pContainer = Get_Component<CObjectContainer>();
@@ -107,6 +107,16 @@ void CUI_BossHUD::Cache_Children()
     }
 
     m_pGroggyText = m_pChildren[ENUM(CHILD::TEXT_GROGGY)]->Get_Component<CTextSlot>();
+}
+
+const char* CUI_BossHUD::GetBossIcon(BOSS eBoss)
+{
+    switch (eBoss)
+    {
+    case BOSS::Defiler: return "IconMonster_IsoldetheDefiler.png";
+    case BOSS::Sacrifice: return "IconMonster_SacrificeBringer.png";
+    default: return "IconMonster_SacrificeBringer.png";
+    }
 }
 
 void CUI_BossHUD::Update_HPBackGauge(_float fRatio, _float dt)
