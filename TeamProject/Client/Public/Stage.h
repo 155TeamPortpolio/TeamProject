@@ -12,9 +12,11 @@ NS_BEGIN(Client)
 class CStage :
     public CBase
 {
-protected:
-	enum class StageState	{None, Entrance, BattleStart, BattleEnd, Outro, End};
+public:
+	enum class StageState	{None, Entrance, BattleStart, Battle, BattleEnd, Outro, End};
 	enum class PlayerPoint	{Typical, Sub, End};
+
+private:
 	struct Combined_MonsterData
 	{
 		struct creation {
@@ -49,6 +51,7 @@ public:
 	virtual HRESULT Enter_Stage(StageContext& context)PURE;
 	virtual HRESULT Exit_Stage(StageContext& context);
 	virtual void StageChangeOn(_int choiceIndex);
+	void Change_StageState(StageState eState);
 
 protected:
 	virtual void Ready_Map(const string& LevelTag, const string& AreaTag);
@@ -62,6 +65,9 @@ protected:
 	void BossIntro(StageContext& context);
 	void BaseOutro();
 
+protected:
+	_bool HasBattleStarter();
+
 private:
 	HRESULT ReadyPlayerPoint(const  vector<BATTLE_POINT_DATA>& point);
 	HRESULT ReadyPortalPoint(const  vector<BATTLE_POINT_DATA>& point);
@@ -70,8 +76,9 @@ private:
 
 protected:
 	class CZero_Level* m_pOwnerLevel = { nullptr };
-	StageState	m_eStageStage = {StageState::None };
+	StageState	m_eStageState = {StageState::None };
 	StageType	m_eType = {};
+	string		m_AreaTag = {};
 	_int m_iNextChoice = { -1 };
 
 	/*ø¨√‚*/

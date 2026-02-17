@@ -44,19 +44,25 @@ HRESULT CStage::Exit_Stage(StageContext& context)
 
 void CStage::StageChangeOn(_int choiceIndex)
 {
-	m_eStageStage = StageState::Outro;
+	m_eStageState = StageState::Outro;
 	m_iNextChoice = choiceIndex;
+}
+
+void CStage::Change_StageState(StageState eState)
+{
+	m_eStageState = eState;
 }
 
 void CStage::Ready_Map(const string& LevelTag, const string& AreaTag)
 {
+	m_AreaTag = AreaTag;
 	CMapLoader* pMapLoader = CMapLoader::Create(LevelTag, AreaTag);
 	if (nullptr == pMapLoader) {
 		MSG_BOX("Failed to Load MapData!");
 		return;
 	}
 
-	Safe_Release(pMapLoader);
+	Safe_Release(pMapLoader);	
 
 	const CASHED_OBJ_DATA* datas = CDataBase::GetInstance()->Get_CashedData(AreaTag);
 	if (datas->Battle.HasBattleData) {
@@ -326,6 +332,7 @@ void CStage::BaseIntro(StageContext& context)
 
 	m_introFlow.Start();
 }
+
 void CStage::BossIntro(StageContext& context)
 {
 	if (!m_introFlowBuilt)
@@ -357,6 +364,7 @@ void CStage::BossIntro(StageContext& context)
 
 	m_introFlow.Start();
 }
+
 void CStage::BaseOutro()
 {
 	if (!m_outroFlowBuilt) {
@@ -368,6 +376,15 @@ void CStage::BaseOutro()
 	}
 
 	m_outroFlow.Start();
+}
+
+_bool CStage::HasBattleStarter()
+{
+	if (const auto Database = CDataBase::GetInstance()->Get_CashedData(m_AreaTag))
+		if (Database->GetDataByDataName("BattleStarter", MAPOBJ_TYPE::ENTITY))
+			return true;
+
+	return false;
 }
 
 void CStage::Free()
