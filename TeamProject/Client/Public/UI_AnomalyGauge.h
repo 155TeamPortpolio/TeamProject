@@ -32,7 +32,7 @@ private:
 	CUI_Object* m_pChildren[ENUM(CHILD::END)] = { nullptr };
 
 	STATE m_eState[ENUM(TYPE::END)] = {STATE::END};
-	 
+
 	_float m_fRatio = {};
 
 private:
