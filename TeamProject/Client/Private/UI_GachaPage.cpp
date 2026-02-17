@@ -8,7 +8,9 @@
 #include "DataBase.h"
 #include "FieldSystem.h"
 #include "UI_BackButton.h"
+
 #include "UI_GachaChannel.h"
+#include "UI_GachaCurrency.h"
 #include "UI_GachaConversion.h"
 
 void CUI_GachaPage::Select_Channel(CUI_Object* pSelected)
@@ -30,6 +32,10 @@ HRESULT CUI_GachaPage::Initialize_Prototype()
 	Add_Component<CObjectContainer>();
     Add_Component<CAudioSource>();
     Get_Component<CAudioSource>()->SoundFolder(G_GlobalLevelKey, "../Bin/Resources/Global/UI/Sound/");
+
+    PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_GachaChannel", CUI_GachaChannel::Create());
+    PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_GachaCurrency", CUI_GachaCurrency::Create());
+    PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_GachaConversion", CUI_GachaConversion::Create());
 
 	return S_OK;
 }

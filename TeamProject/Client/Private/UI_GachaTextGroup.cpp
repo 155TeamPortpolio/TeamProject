@@ -14,7 +14,10 @@ void CUI_GachaTextGroup::Show(GachaGrade eGrade, const string& strCamSequenceKey
 
 void CUI_GachaTextGroup::Hide()
 {
-	Change_State(STATE::HIDE);
+	if(m_eState == STATE::BLINK)
+		Change_State(STATE::HIDE);
+	else
+		Change_State(STATE::BLINK);
 }
 
 HRESULT CUI_GachaTextGroup::Initialize_Prototype()

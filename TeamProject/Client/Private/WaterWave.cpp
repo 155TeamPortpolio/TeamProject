@@ -48,7 +48,25 @@ HRESULT CWaterWave::Initialize(INIT_DESC* pArg)
 	customInstance->Set_Param("g_NoiseOffset", { &m_NoiseOffset, "float2", sizeof(_float2) });
 	customInstance->Set_Param("g_WaterTint", { &m_WaterTint, "float3", sizeof(_float3) });
 	customInstance->Set_Param("g_TintStrength", { &m_TintStrength, "float", sizeof(_float) });
+	// 형상
+	customInstance->Set_Param("g_TsunamiHeight", { &m_TsunamiHeight,"float",  sizeof(float) });
 
+	// 타이밍
+	customInstance->Set_Param("g_PeakTime", { &m_PeakTime,"float",  sizeof(float) });
+	customInstance->Set_Param("g_RiseWidth", { &m_RiseWidth, "float", sizeof(float) });
+	customInstance->Set_Param("g_FallWidth", {&m_FallWidth, "float", sizeof(float)});
+	customInstance->Set_Param("g_FadeInEnd", { &m_FadeInEnd, "float", sizeof(float) });
+	customInstance->Set_Param("g_FadeOutStart", { &m_FadeOutStart, "float", sizeof(float) });
+	customInstance->Set_Param("g_CurlStartRatio", { &m_CurlStartRatio, "float", sizeof(float) });
+	customInstance->Set_Param("g_CurlDuration", { &m_CurlDuration, "float", sizeof(float) });
+
+	// 벽 프로파일
+	customInstance->Set_Param("g_WallDepthStart", { &m_WallDepthStart, "float", sizeof(float) });
+	customInstance->Set_Param("g_WallDepthEnd", { &m_WallDepthEnd, "float", sizeof(float) });
+
+	// 컬 강도
+	customInstance->Set_Param("g_CurlForward", { &m_CurlForward, "float", sizeof(float) });
+	customInstance->Set_Param("g_MaxCurlAngle", { &m_MaxCurlAngle, "float", sizeof(float) });
 	pMaterial->Insert_MaterialInstance(customInstance, nullptr);
 	auto MaterialDat = customInstance->Get_MaterialData();
 	if (MaterialDat)
@@ -72,35 +90,38 @@ void CWaterWave::Awake()
 void CWaterWave::Priority_Update(_float dt)
 {
 }
-
 void CWaterWave::Update(_float dt)
 {
 	m_fAccTime += dt;
 
-	_float3 CrashDirection = { 0.f, 0.f, -1.f };
+	if (m_CycleTime <= 1e-6f)
+		return;
 
-	_float t = fmodf(m_fAccTime, m_CycleTime) / m_CycleTime;
+	const _float3 crashDirection = { 1.f, 0.f, 0.f };
 
-	_float overPeak = (t - m_PeakTime * 0.9f) / (1.0f - m_PeakTime * 0.9f);
-	overPeak = max(0.f, min(1.f, overPeak)); // saturate
+	const _float time01 = fmodf(m_fAccTime, m_CycleTime) / m_CycleTime;
 
-	_float moveFactor = overPeak * overPeak * (3.0f - 2.0f * overPeak);
+	_float progress01 = (time01 - m_PeakTime * 0.9f) / (1.0f - m_PeakTime * 0.9f);
+	progress01 = max(0.f, min(1.f, progress01));
 
-	_float fadeOut = 1.0f - max(0.f, min(1.f, (t - 0.85f) / 0.15f));
-	fadeOut = fadeOut * fadeOut * (3.0f - 2.0f * fadeOut);
+	progress01 = progress01 * progress01 * (3.0f - 2.0f * progress01);
 
-	_float finalMove = moveFactor * fadeOut * m_CrashMoveDistance;
+	const _float forwardMove = progress01 * m_CrashMoveDistance;
 
 	_float3 newPos;
-	newPos.x = m_vOriginPos.x + CrashDirection.x * finalMove;
-	newPos.y = m_vOriginPos.y + CrashDirection.y * finalMove;
-	newPos.z = m_vOriginPos.z + CrashDirection.z * finalMove;
+	newPos.x = m_vOriginPos.x + crashDirection.x * forwardMove;
+	newPos.y = m_vOriginPos.y + crashDirection.y * forwardMove;
+	newPos.z = m_vOriginPos.z + crashDirection.z * forwardMove;
 
 	m_pTransform->Set_Pos(newPos);
 }
 
 void CWaterWave::Late_Update(_float dt)
 {
+	if (m_fAccTime >= m_CycleTime){
+		m_isAlive = false;
+		ObjectManager()->Remove_Object(this);
+	}
 }
 
 void CWaterWave::Initialize_Wave(WaterWaveDesc Desc)
@@ -110,6 +131,18 @@ void CWaterWave::Initialize_Wave(WaterWaveDesc Desc)
 	m_NoiseOffset = Desc.fNoiseOffset;
 	m_WaterTint = Desc.vWaterTint;
 	m_TintStrength = Desc.fTintStrength;
+	m_RiseWidth = Desc.fRiseWidth; 
+	m_TsunamiHeight = Desc.fTsunamiHeight;
+	m_PeakTime = Desc.fPeakTime;
+	m_FallWidth = Desc.fFallWidth;
+	m_FadeInEnd = Desc.fFadeInEnd;
+	m_FadeOutStart = Desc.fFadeOutStart;
+	m_CurlStartRatio = Desc.fCurlStartRatio;
+	m_CurlDuration = Desc.fCurlDuration;
+	m_WallDepthStart = Desc.fWallDepthStart;
+	m_WallDepthEnd = Desc.fWallDepthEnd;
+	m_CurlForward = Desc.fCurlForward;
+	m_MaxCurlAngle = Desc.fMaxCurlAngle;
 }
 
 CWaterWave* CWaterWave::Create()

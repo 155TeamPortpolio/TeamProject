@@ -47,7 +47,7 @@ HRESULT CDefilerWeapon::Initialize(INIT_DESC* pArg)
 	__super::Initialize(desc);
 	Reset_Value(desc);
 
-	Get_Component<CCollider>()->Set_CollisionMask(ENUM(COLLISION_GROUP::PLAYER) |ENUM(COLLISION_GROUP::PLAYER_ATTACK));
+	Get_Component<CCollider>()->Set_CollisionMask(ENUM(COLLISION_GROUP::PLAYER) | ENUM(COLLISION_GROUP::GROUND) |ENUM(COLLISION_GROUP::PLAYER_ATTACK));
 	Get_Component<CCollider>()->Set_CollisionGroup(COLLISION_GROUP::MONSTER);
 	Get_Component<CCollider>()->Set_Size(m_isFinalThrow? _vector3{3.f, 3.f, 3.f} : _vector3{2.f,2.f,2.f});
 	Get_Component<CCollider>()->Set_Trigger(false);
@@ -294,7 +294,7 @@ void CDefilerWeapon::SummonAxe()
 
 	CCT_DESC MonsterCCT;
 	MonsterCCT.eGroup = COLLISION_GROUP::MONSTER;
-	MonsterCCT.iCollisionMask =  ENUM(COLLISION_GROUP::COMMON) | ENUM(COLLISION_GROUP::PLAYER_ATTACK);
+	MonsterCCT.iCollisionMask =  ENUM(COLLISION_GROUP::COMMON) | ENUM(COLLISION_GROUP::GROUND) | ENUM(COLLISION_GROUP::PLAYER_ATTACK);
 	MonsterCCT.bAutoFit = false;
 	MonsterCCT.fHeight = .3f;
 	MonsterCCT.fRadius = 2.f;

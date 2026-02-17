@@ -43,8 +43,6 @@ HRESULT CGacha_Level::Awake()
 	UIDirector()->Load_LevelObjects("Gacha_Level");
 	UIDirector()->FadeIn_Screen(1.f);
 
-	Ready_GachaUI();	// UIDirector에서 Load_LevelObject 실행 한 뒤에
-
 	Ready_Map("Gacha_Level", "Gacha");
 
 	auto pCloud = ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Cloud));
@@ -76,6 +74,8 @@ HRESULT CGacha_Level::Awake()
 	auto pPost = RenderSystem()->GetPostRenderer();
 	pPost->GetCommand<CFogCommand>()->
 		SetEnable(false);
+
+	Ready_GachaUI();	// UIDirector에서 Load_LevelObject 실행 한 뒤에
 
 	return S_OK;
 }

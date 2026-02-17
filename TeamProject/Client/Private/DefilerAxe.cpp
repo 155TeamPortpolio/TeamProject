@@ -44,12 +44,13 @@ HRESULT CDefilerAxe::Initialize(INIT_DESC* pArg)
 	__super::Initialize(pArg);
 	auto desc = static_cast<DefilerAxeDesc*>(pArg);
 	Get_Component<CCharacterController>()->Set_BoundingMinY(1.3f);
+	Get_Component<CCharacterController>()->Set_GravityEnabled(false);
 	m_pTransform->Set_Look(desc->vLook);
 	m_vSlide = desc->vLook;
 	m_vSlide = Math::NormalizeSafeXZ(m_vSlide)*5;
 	m_BaseRot = m_pTransform->Get_QuaternionRotate(); 
 	m_fElapsedTime = 0.f;
-	m_tStatus.iNowHP = 100.f;
+	m_tStatus.iNowHP = 10.f;
 	m_bDangle = true;
 	return S_OK;
 }

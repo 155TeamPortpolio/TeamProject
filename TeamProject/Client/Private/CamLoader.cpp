@@ -114,7 +114,7 @@ namespace
 
         if (StartsWith(key, "Parry"))
         {
-            req.blendInSec  = 2.f;
+            req.blendInSec  = 1.8f;
             req.blendOutSec = 0.f;
             req.resetTime   = true;
             req.returnMode  = CamReturnMode::SnapToEnd;

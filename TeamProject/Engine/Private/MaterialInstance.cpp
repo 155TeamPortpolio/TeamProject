@@ -289,13 +289,13 @@ void CMaterialInstance::Render_GUI()
             ImGui::Dummy(ImVec2(radius * 2.0f + 2.0f, radius * 2.0f));
         };
 
-    const auto editParamValue = [&](const string& slotName, SHADER_PARAM& param)
+    const auto editParamValue = [&](string index, const string& slotName, SHADER_PARAM& param)
         {
             if (param.typeName == "float")
             {
                 float* valuePtr = reinterpret_cast<float*>(param.pData);
                 if (!valuePtr) { ImGui::TextDisabled("(null)"); return; }
-                ImGui::DragFloat("##v", valuePtr, 0.01f);
+                ImGui::DragFloat(index.c_str(), valuePtr, 0.01f);
                 return;
             }
 
@@ -303,7 +303,7 @@ void CMaterialInstance::Render_GUI()
             {
                 float* valuePtr = reinterpret_cast<float*>(param.pData);
                 if (!valuePtr) { ImGui::TextDisabled("(null)"); return; }
-                ImGui::DragFloat3("##v", valuePtr, 0.01f);
+                ImGui::DragFloat3(index.c_str(), valuePtr, 0.01f);
                 return;
             }
 
@@ -311,7 +311,7 @@ void CMaterialInstance::Render_GUI()
             {
                 bool* valuePtr = reinterpret_cast<bool*>(param.pData);
                 if (!valuePtr) { ImGui::TextDisabled("(null)"); return; }
-                ImGui::Checkbox("##v", valuePtr);
+                ImGui::Checkbox(index.c_str(), valuePtr);
                 return;
             }
 
@@ -425,7 +425,7 @@ void CMaterialInstance::Render_GUI()
                 // Value
                 ImGui::TableSetColumnIndex(3);
                 ImGui::PushItemWidth(-FLT_MIN);
-                editParamValue(slotName, param);
+                editParamValue(slotName,slotName, param);
                 ImGui::PopItemWidth();
             }
 
