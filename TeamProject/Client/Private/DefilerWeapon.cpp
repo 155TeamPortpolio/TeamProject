@@ -16,6 +16,7 @@
 #include "Texture.h"
 #include "AudioSource.h"
 #include "DefilerAxe.h"
+#include "CamDirector.h"
 
 CDefilerWeapon::CDefilerWeapon()
 	: CEnemy()
@@ -141,8 +142,10 @@ void CDefilerWeapon::Update(_float dt)
 			m_isEnd = true;
 		}
 
-		if (m_isEnd && m_Dissolve.isComplete())
+		if (m_isEnd && m_Dissolve.isComplete()) {
 			ObjectManager()->Remove_Object(this);
+			CameraManager()->AddImpact(ENUM(CamShakeType::EarthquakeShort), ENUM(CamZoomType::EarthquakeShort));
+		}
 
 		if (speedXZ < stopSpeed)
 		{
@@ -155,6 +158,7 @@ void CDefilerWeapon::Update(_float dt)
 		SummonAxe();
 		ObjectManager()->Remove_Object(this);
 		BattleSystem()->ExitBattleObject(BATTLE_OBJ_TYPE::MONSTER, Get_Handle());
+		CameraManager()->AddImpact(ENUM(CamShakeType::EarthquakeShort), ENUM(CamZoomType::EarthquakeShort));
 		return;
 	}
 
@@ -274,7 +278,6 @@ void CDefilerWeapon::SummonAxe()
 
 	auto pBlade =
 		Builder::Create_Object({ "Zero_Level","Proto_GameObject_DefilerAxe" })
-		.FromPool()
 		.Add_ObjDesc(desc)
 		.CharacterController(MonsterCCT)
 		.Build("DefilerAxe");
