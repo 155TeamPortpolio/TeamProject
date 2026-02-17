@@ -58,11 +58,11 @@ void CBattleSystem::Update()
 
 	if(InputDevice()->Key_Tap(VK_SHIFT))
 	{
-		StartGimmick(BATTLE_VFX_TYPE::WIPEOUT);
+		StartGimmick(BATTLE_VFX_TYPE::PARRY);
 	}
 	if(InputDevice()->Key_Tap(VK_CONTROL))
 	{
-		StartGimmick(BATTLE_VFX_TYPE::SWITCH);
+		StartGimmick(BATTLE_VFX_TYPE::EVADE);
 	}
 }
 
@@ -147,6 +147,18 @@ void CBattleSystem::SetPlayer(vector<OBJECT_HANDLE> hPlayers)
 		playerInfo.hObject = hPlayer;
 		playerInfo.isOnField = true;
 		m_BattleObjInfos[BATTLE_OBJ_TYPE::PLAYER].push_back(playerInfo);
+	}
+}
+
+void CBattleSystem::SetChainParryToPlayer(_bool onStart)
+{
+	if (!m_pBattlePlayer)
+		return;
+	if (onStart) {
+		m_pBattlePlayer->Start_ChainParry();
+	}
+	else {
+		m_pBattlePlayer->End_ChainParry();
 	}
 }
 
@@ -264,9 +276,9 @@ void CBattleSystem::TakeBoxDamage(const _float3& vCenter, const _float3& vHalfEx
 		HitVFX(hitDesc.eDamageType);
 }
 
-void CBattleSystem::TakeAllDamage(const HitDesc& hitDesc)
+void CBattleSystem::TakeAllDamage(const HitDesc& hitDesc, BATTLE_OBJ_TYPE type)
 {
-	for (auto& info : m_BattleSnapShots[BATTLE_OBJ_TYPE::MONSTER])
+	for (auto& info : m_BattleSnapShots[type])
 	{
 		auto& handle = info.hObject;
 
@@ -291,6 +303,16 @@ void CBattleSystem::TakeAllDamage(const HitDesc& hitDesc)
 	}
 	if(!m_BattleSnapShots[BATTLE_OBJ_TYPE::MONSTER].empty())
 		HitVFX(hitDesc.eDamageType);
+}
+
+void CBattleSystem::TakePlayerDamage(const HitDesc& hitDesc)
+{
+	if (!m_pBattlePlayer)
+		return;
+	auto character = m_pBattlePlayer->GetCurCharacterHandle().GetAs<CCharacter>();
+	if (character) {
+		character->Take_Damage(DAMAGE_TYPE::HARD, hitDesc.fDamage);
+	}
 }
 
 void CBattleSystem::CleanUp_Data()
@@ -468,6 +490,7 @@ void CBattleSystem::StartGimmick(BATTLE_VFX_TYPE eVFXType)
 {
 	m_pFXFlow->StartVfx(eVFXType);
 }
+
 void CBattleSystem::HitVFX(DAMAGE_TYPE eDamageType)
 {
 	switch (eDamageType)
@@ -485,6 +508,11 @@ void CBattleSystem::HitVFX(DAMAGE_TYPE eDamageType)
 	default:
 		break;
 	}
+}
+
+void CBattleSystem::StartSwitch(CHARACTER eLeft, CHARACTER eRight)
+{
+	m_pFXFlow->StartVfx_Switch(eLeft, eRight);
 }
 
 void CBattleSystem::Free()

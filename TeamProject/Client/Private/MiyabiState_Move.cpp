@@ -41,6 +41,8 @@ void CMiyabiState_Move::Enter(CMiyabi* pOwner)
     case 2:
         m_pSubStateMachine->Set_DefaultState("Run");
         m_pSubStateMachine->Set_Int("RunEntryMode", 0);
+        //static_cast<IHState<CMiyabi>*>(m_pSubStateMachine->Get_State("Run"))
+        //    ->Get_SubStateMachine()->Set_Float("TurnbackCooldown", 0.3f);
         break;
     default:
         m_pSubStateMachine->Set_DefaultState("Walk");
@@ -54,13 +56,13 @@ void CMiyabiState_Move::Update(CMiyabi* pOwner, _float dt)
 {
     __super::Update(pOwner, dt);
 
-    for (const auto& Event : pOwner->Get_Animator()->Get_EventBus())
-    {
-        if (Event.Type != CLIP_EVENT_TYPE::SOUND) continue;
-        pOwner->Get_Component<CAudioSource>()->Slot(Event.Tag)
-            .Attribute3D(true)
-            .Play();
-    }
+    //for (const auto& Event : pOwner->Get_Animator()->Get_EventBus())
+    //{
+    //    if (Event.Type != CLIP_EVENT_TYPE::SOUND) continue;
+    //    pOwner->Get_Component<CAudioSource>()->Slot(Event.Tag)
+    //        .Attribute3D(true)
+    //        .Play();
+    //}
 }
 
 void CMiyabiState_Move::Exit(CMiyabi* pOwner)

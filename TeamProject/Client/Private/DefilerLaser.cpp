@@ -10,6 +10,9 @@
 #include "Collider.h"
 #include "BoneFollower.h"
 
+#include "Child.h"
+#include "Defiler.h"
+
 CDefilerLaser::CDefilerLaser()
     :CEnemy()
 {
@@ -198,7 +201,13 @@ void CDefilerLaser::SetUp_Effect()
 
     _vector3 vCurrPosition = m_vStartPoint;
     _vector3 vTargetPosition = BattleSystem()->GetCurCharacterHandle().Get()->Get_Component<CTransform>()->Get_WorldPos();
-    vTargetPosition.y += 0.5f;
+    if (auto child = Get_Component<CChild>()) {
+        if (auto parent = child->Get_Parent()) {
+          auto board =   dynamic_cast<CDefiler*>(parent)->GetBlackBoard();
+          vTargetPosition = board.vTargetPos;
+        }
+    }
+    vTargetPosition.y += 1.f;
     _vector3 vTargetDir = vTargetPosition - vCurrPosition;
 
     if (vTargetDir.Length() <= 0.01f)
@@ -282,7 +291,7 @@ void CDefilerLaser::SetUp_Collider()
     auto pCollider = Get_Component<CCollider>();
     auto pRigidBody = Get_Component<CRigidBody>();
 
-    _vector3 vDir = m_vEndPoint - m_vStartPoint;
+    _vector3 vDir = _vector3(m_vEndPoint)-_vector3(m_vStartPoint);
     _float fLength = vDir.Length();
     vDir.Normalize();
 

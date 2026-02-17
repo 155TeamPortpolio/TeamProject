@@ -39,6 +39,7 @@ void CDefilerState_Attack::Build_Pattern(CDefiler* pOwner, _int Type)
 	}
 	case 2 :
 	{
+		blackBoard.patternTransition.push_back({ "RePos_Back",0.f,1.f });
 		blackBoard.patternTransition.push_back({ "Attack06",0.f,1.f });/*������*/
 		blackBoard.patternTransition.push_back({ "Attack03",0.f,1.f });/*������*/
 		break;
@@ -247,6 +248,7 @@ void CDefilerState_Attack_01_02::Enter(CDefiler* pOwner)
 		.Loop(false)
 		.Apply();
 
+	pOwner->ChainParry(true);
 }
 
 void CDefilerState_Attack_01_02::Update(CDefiler* pOwner, _float dt)
@@ -257,6 +259,7 @@ void CDefilerState_Attack_01_02::Update(CDefiler* pOwner, _float dt)
 
 void CDefilerState_Attack_01_02::Exit(CDefiler* pOwner)
 {
+	pOwner->ChainParry(false);
 }
 
 void CDefilerState_Attack_01_02::Update_Effects(CDefiler* pOwner)
@@ -276,6 +279,8 @@ void CDefilerState_Attack_01_01_P2::Enter(CDefiler* pOwner)
 		.Speed(1.f)
 		.Loop(false)
 		.Apply();
+
+	pOwner->ChainParry(true);
 }
 
 void CDefilerState_Attack_01_01_P2::Update(CDefiler* pOwner, _float dt)
@@ -286,6 +291,7 @@ void CDefilerState_Attack_01_01_P2::Update(CDefiler* pOwner, _float dt)
 
 void CDefilerState_Attack_01_01_P2::Exit(CDefiler* pOwner)
 {
+	pOwner->ChainParry(false);
 }
 
 void CDefilerState_Attack_01_01_P2::Update_Effects(CDefiler* pOwner)
@@ -586,6 +592,7 @@ void CDefilerState_Attack_07::Enter(CDefiler* pOwner)
 		.Speed(1.f)
 		.Loop(false)
 		.Apply();
+	pOwner->ChainParry(true);
 }
 
 void CDefilerState_Attack_07::Update(CDefiler* pOwner, _float dt)
@@ -595,6 +602,7 @@ void CDefilerState_Attack_07::Update(CDefiler* pOwner, _float dt)
 
 void CDefilerState_Attack_07::Exit(CDefiler* pOwner)
 {
+	pOwner->ChainParry(false);
 }
 
 void CDefilerState_Attack_08_01_Start::Enter(CDefiler* pOwner)
@@ -629,6 +637,7 @@ void CDefilerState_Attack_08_01_Loop::Enter(CDefiler* pOwner)
 		.Speed(1.f)
 		.Loop(true)
 		.Apply();
+	pOwner->ChainParry(true);
 }
 
 void CDefilerState_Attack_08_01_Loop::Update(CDefiler* pOwner, _float dt)
@@ -650,6 +659,7 @@ void CDefilerState_Attack_08_01_Loop::Exit(CDefiler* pOwner)
 {
 	m_Interval = 0.f;
 	m_Elapsed = 0.f;
+	pOwner->ChainParry(false);
 }
 
 void CDefilerState_Attack_08_01_End::Enter(CDefiler* pOwner)
@@ -699,8 +709,7 @@ void CDefilerState_Attack_08_02::Exit(CDefiler* pOwner)
 void CDefilerState_Attack_09_Start::Enter(CDefiler* pOwner)
 {
 	DEFILER_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
-	TARGETING_INFO& targetBoard = pOwner->GetTargetingInfo();
-	blackBoard.vTargetDir = { -1,0,0 };
+
 
 	pOwner->Control_TargetEnable(false);
 
@@ -716,6 +725,9 @@ void CDefilerState_Attack_09_Start::Enter(CDefiler* pOwner)
 
 void CDefilerState_Attack_09_Start::Update(CDefiler* pOwner, _float dt)
 {
+	DEFILER_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
+	blackBoard.vTargetDir = { 1,0,0 };
+
 	ComboTransition(pOwner);
 	Update_Effects(pOwner);
 }
@@ -774,9 +786,10 @@ void CDefilerState_Attack_09_End::Enter(CDefiler* pOwner)
 		.Speed(1.f)
 		.Loop(false)
 		.Apply();
-	pOwner->GetDissolve().DisAppear(.2f);
 
 	pOwner->Stop_Effect("Defiler_Wave_Charge");
+	pOwner->GetDissolve().DisAppear(.5f);
+	pOwner->HideHUD(true);
 }
 
 void CDefilerState_Attack_09_End::Update(CDefiler* pOwner, _float dt)
@@ -788,7 +801,8 @@ void CDefilerState_Attack_09_End::Update(CDefiler* pOwner, _float dt)
 void CDefilerState_Attack_09_End::Exit(CDefiler* pOwner)
 {
 	pOwner->Control_TargetEnable(true);
-	pOwner->GetDissolve().Appear(0.3f);
+	pOwner->GetDissolve().Appear(0.4f);
+	pOwner->HideHUD(false);
 }
 
 void CDefilerState_Attack_09_End::Update_Effects(CDefiler* pOwner)
@@ -885,7 +899,7 @@ void CDefilerState_RePos_Back::Update(CDefiler* pOwner, _float dt)
 	if (m_eState == EVADE_IN && dissolve.isComplete()) {
 		m_eState = EVADE_OUT;
 		dissolve.Set_DissolveState(dissolve.APPEAR, .5f);
-		pOwner->Set_CCTPos({ 15.f,-1.f, -5.f });
+		pOwner->Set_CCTPos({ 15.f,-2.f, -5.f });
 	}
 	else if (m_eState == EVADE_OUT && dissolve.isComplete()) {
 		blackBoard.isRequestNext = true;

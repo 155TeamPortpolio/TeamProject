@@ -17,7 +17,7 @@ namespace Client {
 	enum class UI_ACTION_PRIMARY_MODE { ATTACK, INTERACT, END };
 
 	enum class HIT_TYPE { ONCE, INTERVAL, COUNT };
-	enum class DAMAGE_TYPE {NORMAL, HARD, AIRBORNE, ULTIMATE};
+	enum class DAMAGE_TYPE {NORMAL, HARD, AIRBORNE, ULTIMATE, KNOCKOUT};
 
 	//------------------- Field -------------------
 	enum class DayPhase {EarlyMorning,Morning,Afternoon,LateNight,Any};

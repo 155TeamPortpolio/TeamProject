@@ -39,7 +39,7 @@ CCorinState_SwitchInParryAid* CCorinState_SwitchInParryAid::Create()
 void CCorinState_SwitchInParryAid::Enter(CCorin* pOwner)
 {
     pOwner->Lock_Move();
-    pOwner->Lock_Rotate();
+    //pOwner->Lock_Rotate();
 
     CamDirector()->StartParry();
 
@@ -49,7 +49,7 @@ void CCorinState_SwitchInParryAid::Enter(CCorin* pOwner)
 void CCorinState_SwitchInParryAid::Update(CCorin* pOwner, _float dt)
 {
     __super::Update(pOwner, dt);
-
+    pOwner->Look_Target();
     if (m_pSubStateMachine->Get_Trigger("Complete"))
     {
         m_pSubStateMachine->Reset_Trigger("Complete");
@@ -66,7 +66,7 @@ void CCorinState_SwitchInParryAid::Exit(CCorin* pOwner)
 {
     pOwner->Unlock_Move();
     pOwner->Unlock_Rotate();
-
+    pOwner->Set_ResetMove(true);
     __super::Exit(pOwner);
 }
 
@@ -123,6 +123,7 @@ void CCorinState_SwitchInParryAid_L_End::Update(CCorin* pOwner, _float dt)
     {
         pOwner->Get_StateMachine()->Set_Trigger("Attack");
         pOwner->Get_StateMachine()->Set_Int("AttackEntryMode", 6);
+        m_pOwnerStateMachine->Set_Bool("ReserveAssaultAid", false);
     }
 
     pOwner->Process_RootMotion(dt);

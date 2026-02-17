@@ -40,7 +40,10 @@ void CJaneDoeState_Dash::Update(CJaneDoe* pOwner, _float dt)
     if (!pEvade || !pEvade->Get_SubStateMachine()) return;
     auto pSubMachine = pEvade->Get_SubStateMachine();
 
-    pOwner->Process_RootMotion(dt);
+    //pOwner->Process_RootMotion(dt);
+    pOwner->Process_RootMotion(dt,
+        ENUM(CJaneDoe::ROOTMOTION_MASK::MOVE) |
+        ENUM(CJaneDoe::ROOTMOTION_MASK::QUATERNION));
 
     if (pOwner->Is_Attack())
     {

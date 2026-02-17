@@ -38,7 +38,7 @@ CJaneDoeState_SwitchInParryAid* CJaneDoeState_SwitchInParryAid::Create()
 void CJaneDoeState_SwitchInParryAid::Enter(CJaneDoe* pOwner)
 {
     pOwner->Lock_Move();
-    pOwner->Lock_Rotate();
+    //pOwner->Lock_Rotate();
 
     CamDirector()->StartParry();
 
@@ -57,7 +57,7 @@ void CJaneDoeState_SwitchInParryAid::Update(CJaneDoe* pOwner, _float dt)
             pSwitchIn->Get_SubStateMachine()->Set_Trigger("Complete");
         }
     }
-
+    pOwner->Look_Target();
     __super::Update(pOwner, dt);
 }
 
@@ -65,7 +65,7 @@ void CJaneDoeState_SwitchInParryAid::Exit(CJaneDoe* pOwner)
 {
     pOwner->Unlock_Move();
     pOwner->Unlock_Rotate();
-
+    pOwner->Set_ResetMove(true);
     __super::Exit(pOwner);
 }
 
@@ -122,6 +122,7 @@ void CJaneDoeState_SwitchInParryAid_L_End::Update(CJaneDoe* pOwner, _float dt)
     {
         pOwner->Get_StateMachine()->Set_Trigger("Attack");
         pOwner->Get_StateMachine()->Set_Int("AttackEntryMode", 6);
+        m_pOwnerStateMachine->Set_Bool("ReserveAssaultAid", false);
     }
 
     pOwner->Process_RootMotion(dt);
