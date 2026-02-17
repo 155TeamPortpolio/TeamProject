@@ -24,7 +24,7 @@ class CMiyabiState_Rush_Start final
 public:
     virtual void Enter(CMiyabi* pOwner) override;
     virtual void Update(CMiyabi* pOwner, _float dt) override;
-    virtual void Exit(CMiyabi* pOwner) override {}
+    virtual void Exit(CMiyabi* pOwner) override;
 
 public:
     static CMiyabiState_Rush_Start* Create() { return new CMiyabiState_Rush_Start(); }
@@ -39,8 +39,8 @@ class CMiyabiState_Rush_End final : public IBaseState<CMiyabi>
 {
 public:
     virtual void Enter(CMiyabi* pOwner) override;
-    virtual void Update(CMiyabi* pOwner, _float dt) override {}
-    virtual void Exit(CMiyabi* pOwner) override {}
+    virtual void Update(CMiyabi* pOwner, _float dt) override;
+    virtual void Exit(CMiyabi* pOwner) override;
 
 public:
     static CMiyabiState_Rush_End* Create() { return new CMiyabiState_Rush_End(); }
