@@ -24,7 +24,7 @@ HRESULT CUI_AnomalyGauge::Initialize(INIT_DESC* pArg)
     Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("anomalyGauge_janeDoe.json")));
     Cache();
 
-    // 이벤트 : UI_PLAYER_STATUS_DESC
+    // 이벤트 : UI_ANOMALY_JANEDOE
     Get_Component<CEventListener>()->Add_Listener<UI_ANOMALY_JANEDOE>([&](const UI_ANOMALY_JANEDOE& desc)
         {
             Update_Gauge(desc.fRatio);

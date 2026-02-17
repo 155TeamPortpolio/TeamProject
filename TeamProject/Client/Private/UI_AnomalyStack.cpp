@@ -3,6 +3,7 @@
 
 #include "GameInstance.h"
 #include "ObjectContainer.h"
+#include "EventListener.h"
 
 #include "UI_AnomalyStackSlot.h"
 
@@ -10,6 +11,8 @@ HRESULT CUI_AnomalyStack::Initialize_Prototype()
 {
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
+
+    Add_Component<CEventListener>();
 
     PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_AnomalyStackSlot", CUI_AnomalyStackSlot::Create());
 
@@ -23,6 +26,15 @@ HRESULT CUI_AnomalyStack::Initialize(INIT_DESC* pArg)
 
     Ready_Slots();
 
+    // ¿Ã∫•∆Æ : UI_ANOMALY_MIYABI
+    Get_Component<CEventListener>()->Add_Listener<UI_ANOMALY_MIYABI>([&](const UI_ANOMALY_MIYABI& desc)
+        {
+            if(desc.isIncreasing)
+                Increase(desc.iCount);
+            else
+                Decrease(desc.iCount);
+        });
+
 	return S_OK;
 }
 
@@ -33,24 +45,6 @@ void CUI_AnomalyStack::Awake()
 
 void CUI_AnomalyStack::Update(_float dt)
 {
-    if (InputDevice()->Key_Tap('Z'))
-        Increase(2);
-
-    if (InputDevice()->Key_Tap('X'))
-        Increase(4);
-
-    if (InputDevice()->Key_Tap('C'))
-        Increase(6);
-
-    if (InputDevice()->Key_Tap('V'))
-        Decrease(4);
-
-    if (InputDevice()->Key_Tap('B'))
-        Decrease(2);
-
-    if (InputDevice()->Key_Tap('N'))
-        Decrease(0);
-
 	__super::Update(dt);
 }
 
