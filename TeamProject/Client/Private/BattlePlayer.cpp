@@ -30,7 +30,7 @@ HRESULT CBattlePlayer::Initialize()
 {
     CBattleSystem::GetInstance()->SetBattlePlayer(this);
     Initialize_CharacterPrototype();
-    vector<CHARACTER> BattleCharacters = { CHARACTER::Miyabi/*, CHARACTER::Corin, CHARACTER::JaneDoe */};
+    vector<CHARACTER> BattleCharacters = { CHARACTER::Miyabi, CHARACTER::Corin, CHARACTER::JaneDoe };
     SetBattleCharacters(BattleCharacters);
 
     return S_OK;
@@ -640,7 +640,7 @@ void CBattlePlayer::Process_Switch()
         }
         else if (m_bChainParry && m_pCurrentCharacter->Can_Parry())
         {
-            // 교체 불가지만 체인 모드에서 패링 가능하면 현재 캐릭터로 재패링
+            // 교체 불가지만 체인 모드에서 패링 가능하면 현재 캐릭터로 패링
             m_ParryHandle = m_pCurrentCharacter->Calculate_Parry();
             m_vSwitchPosition = _vector4{ m_pCurrentCharacter->Get_ParryPos() };
             m_vSwitchLook = _vector4{ m_pCurrentCharacter->Get_ParryLook() };
