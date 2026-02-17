@@ -42,8 +42,9 @@ void CBattlePlayer::Awake()
     desc.eMode = UI_ACTION_PRIMARY_MODE::ATTACK;
     EventSystem()->Broadcast<UI_ACTION_PRIMARY_DESC>({ desc });
     AudioDevice()->Set_Listener(m_pCurrentCharacter->Get_Component<CTransform>());
-    m_bAwaked = true;
     m_bChainParry = true;
+
+    m_bAwaked = true;
 }
 
 void CBattlePlayer::Priority_Update(_float dt)
@@ -385,10 +386,24 @@ void CBattlePlayer::Request_ComboAttack()
     if (m_bComboSelect)
         return;
 
+    _int iNext = Find_SwitchIndex(true);
+    _int iPrev = Find_SwitchIndex(false);
+
+    CHARACTER eLeft, eRight;
+    if (iNext != -1 && iPrev != -1 && iNext != iPrev)
+    {
+        eLeft = m_BattleCharacters[iNext]->Get_CharacterName();
+        eRight = m_BattleCharacters[iPrev]->Get_CharacterName();
+    }
+    else
+    {
+        _int iValid = (iNext != -1) ? iNext : iPrev;
+        eLeft = m_BattleCharacters[iValid]->Get_CharacterName();
+        eRight = eLeft;
+    }
+
     m_bComboSelect = true;
-    // 타임스케일 2초간 느리게 하기 몬스터, 캐릭터
-    BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::SWITCH);
-    //UIDirector()->Show_Switch();
+    BattleSystem()->StartSwitch(eLeft, eRight);
 }
 
 void CBattlePlayer::Execute_ComboAttack(_bool bNext)
@@ -421,12 +436,14 @@ void CBattlePlayer::Execute_ComboAttack(_bool bNext)
     m_fSwitchTimer = m_fSwitchCoolDown;
     m_fComboSelectTimer = 0.f;
     m_bComboSelect = false;
+    BattleSystem()->EndSwitch();
 }
 
 void CBattlePlayer::Cancel_ComboAttack()
 {
     m_fComboSelectTimer = 0.f;
     m_bComboSelect = false;
+    BattleSystem()->EndSwitch();
 }
 
 void CBattlePlayer::Start_ChainParry()
@@ -639,14 +656,16 @@ void CBattlePlayer::Process_Switch()
         }
         else if (m_bChainParry && m_pCurrentCharacter->Can_Parry())
         {
-            // 교체 불가지만 체인 모드에서 패링 가능하면 현재 캐릭터로 재패링
+            // 교체 불가지만 체인 모드에서 패링 가능하면 현재 캐릭터로 패링
             m_ParryHandle = m_pCurrentCharacter->Calculate_Parry();
             m_vSwitchPosition = _vector4{ m_pCurrentCharacter->Get_ParryPos() };
             m_vSwitchLook = _vector4{ m_pCurrentCharacter->Get_ParryLook() };
 
+            m_pCurrentCharacter->Set_ParryHandle(m_ParryHandle);
+            m_pCurrentCharacter->Set_Switch(CCharacter::SWITCH::PARRYAID);
+
             m_pCurrentCharacter->Get_CCT()->Set_Position(m_vSwitchPosition);
             m_pCurrentCharacter->Get_Component<CTransform>()->Set_Look(m_vSwitchLook);
-            m_pCurrentCharacter->Set_ParryHandle(m_ParryHandle);
             m_pCurrentCharacter->On_ChainParry();
         }
     }
@@ -715,6 +734,13 @@ void CBattlePlayer::Process_ComboSelect(_float dt)
 
 void CBattlePlayer::NotifyCharacterSwitchIn()
 {
+    // 스위치 타입과 패링 핸들을 CCT 활성화 전에 세팅
+    if (m_bReserveParry)
+    {
+        m_pCurrentCharacter->Set_Switch(CCharacter::SWITCH::PARRYAID);
+        m_pCurrentCharacter->Set_ParryHandle(m_ParryHandle);
+    }
+
     m_pCurrentCharacter->Set_MainCharacter(true);
     m_pCurrentCharacter->Active_Character();
     m_pCurrentCharacter->Get_Component<CCharacterController>()->Set_Position(m_vSwitchPosition);
@@ -725,7 +751,6 @@ void CBattlePlayer::NotifyCharacterSwitchIn()
     if (m_bReserveParry)
     {
         m_pCurrentCharacter->On_SwitchIn(CCharacter::SWITCH::PARRYAID);
-        m_pCurrentCharacter->Set_ParryHandle(m_ParryHandle);
         m_bReserveParry = false;
     }
     else

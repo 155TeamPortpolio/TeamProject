@@ -515,6 +515,11 @@ void CBattleSystem::StartSwitch(CHARACTER eLeft, CHARACTER eRight)
 	m_pFXFlow->StartVfx_Switch(eLeft, eRight);
 }
 
+void CBattleSystem::EndSwitch()
+{
+	// 내용 추가
+}
+
 void CBattleSystem::Free()
 {
 	__super::Free();

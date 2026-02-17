@@ -118,6 +118,9 @@ void CMiyabiState_ExAttack_Start::Enter(CMiyabi* pOwner)
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_Branch_01_Start")
         .Speed(3.f)
         .Apply();
+    pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_ExAttack_Start_SFX.wav")
+        .Attribute3D(true)
+        .Play();
 }
 
 void CMiyabiState_ExAttack_Start::Update(CMiyabi* pOwner, _float dt)
@@ -186,6 +189,9 @@ void CMiyabiState_ExAttack_02::Enter(CMiyabi* pOwner)
         .ReserveSpeed(0.2f, 1.f, 2.5f, EaseType::InExpo)
         .Apply();
 
+    pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_ExAttack02_SFX.wav")
+        .Attribute3D(true)
+        .Play();
     pOwner->Get_Component<CAudioSource>()->Sequence("ExAttack02")
         .Attribute3D(true)
         .PlayNext();
@@ -321,6 +327,8 @@ void CMiyabiState_ExAttack_03::Enter(CMiyabi* pOwner)
         .ReserveSpeed(0.5f, 1.0f, 1.2f, EaseType::OutQuart)
         .Apply();
 
+
+
     m_iMask = pOwner->Get_CCT()->Get_CollisionMask();
     pOwner->Get_CCT()->Set_CollisionMask(m_iMask - ENUM(COLLISION_GROUP::MONSTER));
     pOwner->Look_Target();  // ���� ���� ����
@@ -378,6 +386,9 @@ void CMiyabiState_ExAttack_03::Update(CMiyabi* pOwner, _float dt)
         pOwner->Get_Component<CAudioSource>()->Sequence("ExAttack03")
             .Attribute3D(true)
             .PlayNext();
+        pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_ExAttack03_SFX.wav")
+            .Attribute3D(true)
+            .Play();
     }
 
     Update_Effects(pOwner);
@@ -469,4 +480,64 @@ void CMiyabiState_ExAttack_End::Enter(CMiyabi* pOwner)
         .ReserveSpeed(0.3f, 0.75f, 1.5f, EaseType::OutSine)
         .EndAt(0.75f)
         .Apply();
+
+
+}
+
+void CMiyabiState_ExAttack_End::Update(CMiyabi* pOwner, _float dt)
+{
+    if(IsCrossAnimProgress(0.4f))
+    {
+        _int iIndex = {};
+        if (!m_pOwnerStateMachine->Get_Bool("Enhanced"))
+            iIndex = 0;
+        else
+        {
+            if (!m_pOwnerStateMachine->Get_Bool("Extra"))
+                iIndex = 1;
+            else
+                iIndex = 2;
+        }
+        switch (iIndex)
+        {
+        case 1:
+            pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_ExAttack02_End_SFX.wav")
+                .Attribute3D(true)
+                .Play();
+            break;
+        //case 2:
+        //    pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_ExAttack03_End_SFX.wav")
+        //        .Attribute3D(true)
+        //        .Play();
+        //    break;
+        }
+    }
+}
+
+void CMiyabiState_ExAttack_End::Exit(CMiyabi* pOwner)
+{
+    _int iIndex = {};
+    if (!m_pOwnerStateMachine->Get_Bool("Enhanced"))
+        iIndex = 0;
+    else
+    {
+        if (!m_pOwnerStateMachine->Get_Bool("Extra"))
+            iIndex = 1;
+        else
+            iIndex = 2;
+    }
+    switch (iIndex)
+    {
+    case 1:
+        pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_ExAttack02_End_SFX.wav")
+            .Attribute3D(true)
+            .Stop();
+        break;
+
+    case 2:
+        pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_ExAttack03_End_SFX.wav")
+            .Attribute3D(true)
+            .Stop();
+        break;
+    }
 }

@@ -49,6 +49,7 @@ public:
 	void	StartGimmick(BATTLE_VFX_TYPE eVFXType);
 	void	HitVFX(DAMAGE_TYPE eDamageType);
 	void	StartSwitch(CHARACTER eLeft, CHARACTER eRight);
+	void	EndSwitch();
 
 public:
 	void	TakeAreaDamage(const _float3& vCenter, _float fRadius, const HitDesc& hitDesc);
