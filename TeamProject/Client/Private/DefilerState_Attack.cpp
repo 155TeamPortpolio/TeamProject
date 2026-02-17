@@ -39,6 +39,7 @@ void CDefilerState_Attack::Build_Pattern(CDefiler* pOwner, _int Type)
 	}
 	case 2 :
 	{
+		blackBoard.patternTransition.push_back({ "RePos_Back",0.f,1.f });
 		blackBoard.patternTransition.push_back({ "Attack06",0.f,1.f });/*������*/
 		blackBoard.patternTransition.push_back({ "Attack03",0.f,1.f });/*������*/
 		break;
@@ -699,8 +700,7 @@ void CDefilerState_Attack_08_02::Exit(CDefiler* pOwner)
 void CDefilerState_Attack_09_Start::Enter(CDefiler* pOwner)
 {
 	DEFILER_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
-	TARGETING_INFO& targetBoard = pOwner->GetTargetingInfo();
-	blackBoard.vTargetDir = { -1,0,0 };
+
 
 	pOwner->Control_TargetEnable(false);
 
@@ -716,6 +716,9 @@ void CDefilerState_Attack_09_Start::Enter(CDefiler* pOwner)
 
 void CDefilerState_Attack_09_Start::Update(CDefiler* pOwner, _float dt)
 {
+	DEFILER_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
+	blackBoard.vTargetDir = { 1,0,0 };
+
 	ComboTransition(pOwner);
 }
 
@@ -758,7 +761,8 @@ void CDefilerState_Attack_09_End::Enter(CDefiler* pOwner)
 		.Speed(1.f)
 		.Loop(false)
 		.Apply();
-	pOwner->GetDissolve().DisAppear(.2f);
+	pOwner->GetDissolve().DisAppear(.5f);
+	pOwner->HideHUD(true);
 }
 
 void CDefilerState_Attack_09_End::Update(CDefiler* pOwner, _float dt)
@@ -769,7 +773,8 @@ void CDefilerState_Attack_09_End::Update(CDefiler* pOwner, _float dt)
 void CDefilerState_Attack_09_End::Exit(CDefiler* pOwner)
 {
 	pOwner->Control_TargetEnable(true);
-	pOwner->GetDissolve().Appear(0.3f);
+	pOwner->GetDissolve().Appear(0.4f);
+	pOwner->HideHUD(false);
 }
 
 void CDefilerState_Attack_Grab::Enter(CDefiler* pOwner)
@@ -862,7 +867,7 @@ void CDefilerState_RePos_Back::Update(CDefiler* pOwner, _float dt)
 	if (m_eState == EVADE_IN && dissolve.isComplete()) {
 		m_eState = EVADE_OUT;
 		dissolve.Set_DissolveState(dissolve.APPEAR, .5f);
-		pOwner->Set_CCTPos({ 15.f,-1.f, -5.f });
+		pOwner->Set_CCTPos({ 15.f,-2.f, -5.f });
 	}
 	else if (m_eState == EVADE_OUT && dissolve.isComplete()) {
 		blackBoard.isRequestNext = true;
