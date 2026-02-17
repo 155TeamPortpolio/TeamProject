@@ -164,8 +164,8 @@ private:
     static constexpr _float KEY_BUFFER_TIME = 0.1f;
     static constexpr _float SWITCH_COOLDOWN = 1.f;
     static constexpr _float LOCKON_COOLDOWN = 0.3f;
-    static constexpr _float TARGET_MAXDISTANCE = 10.f;
-    static constexpr _float TARGET_BOSS_MAXDISTANCE = 100.f;
+    static constexpr _float TARGET_MAXDISTANCE = 9999.f;
+    static constexpr _float TARGET_BOSS_MAXDISTANCE = 9999.f;
     static constexpr _float COMBO_SELECT_DURATION = 2.5f;
 
 public:

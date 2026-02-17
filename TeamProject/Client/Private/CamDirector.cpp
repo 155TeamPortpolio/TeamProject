@@ -76,13 +76,13 @@ void CCamDirector::SetTarget(OBJECT_HANDLE targetHandle)
 
 void CCamDirector::EnterBoss()
 {
-    CameraManager()->SetFov(15.f, 1.f, EaseType::InOutSine);
+    CameraManager()->SetFov(10.f, 2.f, EaseType::InOutSine);
     CameraManager()->SetZFar(1500.f);
 }
 
 void CCamDirector::ExitBoss()
 {
-    CameraManager()->SetFov(-15.f, 1.f, EaseType::InOutSine);
+    CameraManager()->SetFov(-10.f, 2.f, EaseType::InOutSine);
     CameraManager()->SetZFar(500.f);
 }
 

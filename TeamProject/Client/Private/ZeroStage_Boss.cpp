@@ -5,6 +5,7 @@
 #include "Zero_Level.h"
 #include "StageRouter.h"
 #include "EffectContainer.h"
+#include "CamDirector.h"
 
 CZeroStage_Boss::CZeroStage_Boss()
 {
@@ -89,6 +90,7 @@ void CZeroStage_Boss::BattleStart()
 {
 	Active_Enemy();
 	CBattleSystem::GetInstance()->SetActive(true);
+	CamDirector()->EnterBoss();
 	m_eStageState = StageState::Battle;
 }
 

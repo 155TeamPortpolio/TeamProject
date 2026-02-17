@@ -58,10 +58,10 @@ public:
     void  DialogueMode_End()     { m_dialogueMode = false; }
     _bool IsDialogueMode() const { return m_dialogueMode; }
 
-    void    EvalOcclusion();
+    void  EvalOcclusion();
 
-    void    DialogueYaw_Set(_float yawGoalDeg, _float weight);
-    void    DialogueYaw_Clear() { m_dialogueYaw = {}; }
+    void  DialogueYaw_Set(_float yawGoalDeg, _float weight);
+    void  DialogueYaw_Clear() { m_dialogueYaw = {}; }
     
 public:
     void  ParryMode_Begin() { m_parryMode = true; }

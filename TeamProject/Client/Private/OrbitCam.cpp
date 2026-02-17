@@ -908,7 +908,7 @@ OrbitLockEval COrbitCam::EvalLock(_float dt, _float curYawDeg, _float curDist)
     if (w <= 0.f) return out;
     if (!m_lock.handle.isValid()) return out;
 
-    const Vector3 targetPivot = GetBasePivotTargetPos(m_lock.handle);
+    const Vector3 targetPivot = LockPivotPos(m_lock.handle, m_prof.offsetY);
 
     Vector3 flat = targetPivot - playerPivot;
     flat.y = 0.f;
@@ -948,7 +948,6 @@ OrbitLockEval COrbitCam::EvalLock(_float dt, _float curYawDeg, _float curDist)
 
     return out;
 }
-
 
 void COrbitCam::Lock_BlendStart(_bool entering)
 {
