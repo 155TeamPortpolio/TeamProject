@@ -1476,6 +1476,9 @@
     <Filter Include="02. GameObject\Object\Interactable\BattleStarter">
       <UniqueIdentifier>{9f98887b-a642-43c8-b771-ee800b464130}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Npc\Service\ScottCar">
+      <UniqueIdentifier>{dcf1cf60-9fe9-4cb6-853c-35fd64cdb80f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -2864,6 +2867,9 @@
     <ClInclude Include="..\public\BattleStarter.h">
       <Filter>02. GameObject\Object\Interactable\BattleStarter</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\ScottCar.h">
+      <Filter>02. GameObject\Object\Npc\Service\ScottCar</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -4207,6 +4213,9 @@
     </ClCompile>
     <ClCompile Include="..\private\BattleStarter.cpp">
       <Filter>02. GameObject\Object\Interactable\BattleStarter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ScottCar.cpp">
+      <Filter>02. GameObject\Object\Npc\Service\ScottCar</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

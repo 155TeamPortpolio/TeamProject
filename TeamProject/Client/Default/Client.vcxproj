@@ -477,6 +477,7 @@
     <ClInclude Include="..\Public\MiyabiState_SwitchOut.h" />
     <ClInclude Include="..\public\Room_Party.h" />
     <ClInclude Include="..\public\Room_Scott.h" />
+    <ClInclude Include="..\public\ScottCar.h" />
     <ClInclude Include="..\public\ScottScreen.h" />
     <ClInclude Include="..\public\ThugBulkyEnforcer_Parried.h" />
     <ClInclude Include="..\Public\SoftDirectionalOutlineUI.h" />
@@ -982,6 +983,7 @@
     <ClCompile Include="..\Private\MiyabiState_SwitchOut.cpp" />
     <ClCompile Include="..\private\Room_Party.cpp" />
     <ClCompile Include="..\private\Room_Scott.cpp" />
+    <ClCompile Include="..\private\ScottCar.cpp" />
     <ClCompile Include="..\private\ScottScreen.cpp" />
     <ClCompile Include="..\private\ThugBulkyEnforcer_Parried.cpp" />
     <ClCompile Include="..\Private\SoftDirectionalOutlineUI.cpp" />

@@ -22,6 +22,7 @@
 #include "ElectricBoo.h"
 #include "SilverAnbi.h"
 #include "BackgroundNpc.h"
+#include "ScottCar.h"
 
 /* Maptool Type 1 (Interactable) */
 #include "Portal.h"
@@ -56,7 +57,8 @@ static unordered_map<string, Spawner::OBJ_SPEC> s_NPCTable =
 	{ "ExploreBoo",     Spawner::OBJ_SPEC{ "Proto_GameObject_ExploreBoo", &CElectricBoo::Create } },
 	{ "Sirchop",		Spawner::OBJ_SPEC{ "Proto_GameObject_Sirchop", &CSirChop::Create } },
 	{ "SilverAnbi",     Spawner::OBJ_SPEC{ "Proto_GameObject_SilverAnbi", &CSilverAnbi::Create } },
-	{ "BackGround",     Spawner::OBJ_SPEC{ "Proto_GameObject_CBackgroundNpc", &CBackgroundNpc::Create } }
+	{ "BackGround",     Spawner::OBJ_SPEC{ "Proto_GameObject_CBackgroundNpc", &CBackgroundNpc::Create } },
+	{ "ScottCar",		Spawner::OBJ_SPEC{ "Proto_GameObject_ScottCar", &CScottCar::Create } }
 };
 
 /* Maptool Type 1 */
@@ -75,7 +77,7 @@ static unordered_map<string, Spawner::OBJ_SPEC> s_AmbientActorTable =
 	{ "MilitaryHelicopter", Spawner::OBJ_SPEC{ "Proto_GameObject_MilitaryHelicopter", &CMilitaryHelicopter::Create }},
 	{ "DogFan",				Spawner::OBJ_SPEC{ "Proto_GameObject_DogFan", &CDogFan::Create }},
 	{ "DogBone",			Spawner::OBJ_SPEC{ "Proto_GameObject_DogBone", &CDogBone::Create }},
-	{ "ScottScreen",		Spawner::OBJ_SPEC{ "Proto_GameObject_DogBone", &CScottScreen::Create }}
+	{ "ScottScreen",		Spawner::OBJ_SPEC{ "Proto_GameObject_ScottScreen", &CScottScreen::Create }}
 };
 
 static unordered_map<string, Spawner::OBJ_SPEC> s_ETCTable =
