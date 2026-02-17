@@ -41,6 +41,8 @@ void CMiyabiState_Move::Enter(CMiyabi* pOwner)
     case 2:
         m_pSubStateMachine->Set_DefaultState("Run");
         m_pSubStateMachine->Set_Int("RunEntryMode", 0);
+        //static_cast<IHState<CMiyabi>*>(m_pSubStateMachine->Get_State("Run"))
+        //    ->Get_SubStateMachine()->Set_Float("TurnbackCooldown", 0.3f);
         break;
     default:
         m_pSubStateMachine->Set_DefaultState("Walk");

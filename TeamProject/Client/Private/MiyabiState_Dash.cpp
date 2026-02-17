@@ -71,13 +71,18 @@ void CMiyabiState_Dash_01::Enter(CMiyabi* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Evade_Front")
         .Apply();
+    pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_Evade_Dash01_SFX.wav")
+        .Attribute3D(true)
+        .Play();
 }
 
 void CMiyabiState_Dash_01::Update(CMiyabi* pOwner, _float dt)
 {
     auto pSubMachine = Get_ParentState()->Get_OwnerStateMachine();
 
-    pOwner->Process_RootMotion(dt);
+    //pOwner->Process_RootMotion(dt);
+    pOwner->Process_RootMotion(dt, ENUM(CCharacter::ROOTMOTION_MASK::MOVE) |
+        ENUM(CCharacter::ROOTMOTION_MASK::QUATERNION));
 
     if (IsCrossAnimProgress(0.08f) && InputDevice()->Mouse_Hold(MOUSE_BTN::RB))
     {
@@ -110,6 +115,13 @@ void CMiyabiState_Dash_01::Update(CMiyabi* pOwner, _float dt)
     Update_Effects(pOwner);
 }
 
+void CMiyabiState_Dash_01::Exit(CMiyabi* pOwner)
+{
+    pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_Evade_Dash01_SFX.wav")
+        .Attribute3D(true)
+        .Stop();
+}
+
 void CMiyabiState_Dash_01::Update_Effects(CMiyabi* pOwner)
 {
     if (IsCrossAnimProgress(0.02f))
@@ -128,14 +140,16 @@ void CMiyabiState_Dash_02::Enter(CMiyabi* pOwner)
     auto effect = pOwner->Get_Component<CObjectContainer>()->Find_ObjectByName("Miyabi_Sword_Fire");
     if (effect)
         effect->Set_Alive(false);
-    //pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_Evade_Dash_SFX.wav")
-    //    .Attribute3D(true)
-    //    .Play();
+    pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_Evade_Dash02_SFX.wav")
+        .Attribute3D(true)
+        .Play();
 }
 
 void CMiyabiState_Dash_02::Update(CMiyabi* pOwner, _float dt)
 {
-    pOwner->Process_RootMotion(dt);
+    //pOwner->Process_RootMotion(dt);
+    pOwner->Process_RootMotion(dt, ENUM(CCharacter::ROOTMOTION_MASK::MOVE) |
+        ENUM(CCharacter::ROOTMOTION_MASK::QUATERNION));
     auto pSubMachine = Get_ParentState()->Get_OwnerStateMachine();
 
     if (IsCrossAnimProgress(0.12f))

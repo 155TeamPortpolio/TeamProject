@@ -48,7 +48,9 @@ void CMiyabiState_Run::Enter(CMiyabi* pOwner)
     if (iRunEntryMode == 1)
         m_pSubStateMachine->Set_DefaultState("Run_End");
     else
+    {
         m_pSubStateMachine->Set_DefaultState("Run_Loop");
+    }
 
     m_pSubStateMachine->Set_Bool("IsMove", pOwner->Is_Move_Buffer());
     __super::Enter(pOwner);
@@ -133,6 +135,9 @@ void CMiyabiState_Run_Turnback::Enter(CMiyabi* pOwner)
         .Speed(1.f)
         .EndAt(0.35f)
         .Apply();
+    pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_TurnBack_SFX.wav")
+        .Attribute3D(true)
+        .Play();
     pOwner->Reset_InputBuffer();
     pOwner->Set_ResetMove(true);
 }
@@ -154,4 +159,11 @@ void CMiyabiState_Run_Turnback::Update(CMiyabi* pOwner, _float dt)
             pRunState->Get_SubStateMachine()->Set_Trigger("ToLoop");
         }
     }
+}
+
+void CMiyabiState_Run_Turnback::Exit(CMiyabi* pOwner)
+{
+    pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_TurnBack_SFX.wav")
+        .Attribute3D(true)
+        .Stop();
 }
