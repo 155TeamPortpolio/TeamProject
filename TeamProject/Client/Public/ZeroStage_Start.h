@@ -17,7 +17,6 @@ public:
 
 private:
 	void Intro();
-	void Battle();
 	void Outro();
 	void End();
 

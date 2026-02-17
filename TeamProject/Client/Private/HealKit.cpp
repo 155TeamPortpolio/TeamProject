@@ -157,24 +157,24 @@ void CHealKit::Setting_Child()
 
 CHealKit* CHealKit::Create()
 {
-	CHealKit* Instance = new CHealKit();
-	if (FAILED(Instance->Initialize_Prototype()))
+	CHealKit* pInstance = new CHealKit();
+	if (FAILED(pInstance->Initialize_Prototype()))
 	{
-		Safe_Release(Instance);
+		Safe_Release(pInstance);
 		return nullptr;
 	}
-	return Instance;
+	return pInstance;
 }
 
 CGameObject* CHealKit::Clone(INIT_DESC* pArg)
 {
-	CHealKit* Instance = new CHealKit(*this);
-	if (FAILED(Instance->Initialize(pArg)))
+	CHealKit* pInstance = new CHealKit(*this);
+	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		Safe_Release(Instance);
+		Safe_Release(pInstance);
 		return nullptr;
 	}
-	return Instance;
+	return pInstance;
 }
 
 void CHealKit::Free()
