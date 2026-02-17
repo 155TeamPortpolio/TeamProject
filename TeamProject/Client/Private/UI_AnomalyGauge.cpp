@@ -26,6 +26,8 @@ HRESULT CUI_AnomalyGauge::Initialize(INIT_DESC* pArg)
 
 void CUI_AnomalyGauge::Awake()
 {
+    __super::Awake();
+
     Change_State(TYPE::GAUGE, STATE::INACTIVE);
     Change_State(TYPE::INDICATOR, STATE::INACTIVE);
     Set_Gauge(m_fRatio);

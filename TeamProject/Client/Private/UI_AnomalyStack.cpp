@@ -28,6 +28,7 @@ HRESULT CUI_AnomalyStack::Initialize(INIT_DESC* pArg)
 
 void CUI_AnomalyStack::Awake()
 {
+    __super::Awake();
 }
 
 void CUI_AnomalyStack::Update(_float dt)
@@ -116,4 +117,11 @@ CGameObject* CUI_AnomalyStack::Clone(INIT_DESC* pArg)
         Safe_Release(pInstance);
     }
     return pInstance;
+}
+
+void CUI_AnomalyStack::Free()
+{
+    __super::Free();
+
+    m_pSlots.clear();
 }
