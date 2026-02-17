@@ -4,12 +4,14 @@
 #include "ICamCollidable.h"
 // Engine
 #include "GameInstance.h"
-#include "Character.h"
 #include "Helper_Func.h"
 #include "PhysicsSystem.h"
+// Component
+#include "Character.h"
 #include "CharacterController.h"
 #include "EventListener.h"
 #include "ObjectContainer.h"
+#include "Animator3D.h"
 
 namespace
 {
@@ -32,19 +34,14 @@ namespace
     Vector3 FootPos(OBJECT_HANDLE h)
     {
         auto obj = ObjectManager()->Request_Object(h);
-        auto cc = obj->Get_Component<CCharacterController>();
-
-        const Vector4 foot4 = cc->Get_FootPosition();
-        return Vector3(foot4.x, foot4.y, foot4.z);
+        auto cc  = obj->Get_Component<CCharacterController>();
+        return cc->Get_FootPosition();
     }
     Vector3 BasePivotPos(OBJECT_HANDLE h, _float offsetY)
     {
         auto obj = ObjectManager()->Request_Object(h);
-        auto cc = obj->Get_Component<CCharacterController>();
-
-        const Vector4 foot4 = cc->Get_FootPosition();
-        const Vector3 foot(foot4.x, foot4.y, foot4.z);
-
+        auto cc  = obj->Get_Component<CCharacterController>();
+        const Vector3 foot = cc->Get_FootPosition();
         return foot + Vector3(0.f, cc->Get_HalfSize() * 1.5f + offsetY, 0.f);
     }
     void BuildOrbitBasis(const Vector2& rotDeg, Vector3& outLook, Vector3& outRight, Quaternion& outQ)
@@ -54,6 +51,31 @@ namespace
         const Vector3 backDir = Vector3::Transform(Vector3(0.f, 0.f, -1.f), outQ);
         outLook = -backDir;
         outRight = Vector3::Transform(Vector3(1.f, 0.f, 0.f), outQ);
+    }
+    Vector3 LockPivotPos(OBJECT_HANDLE h, _float offsetY)
+    {
+        auto obj = ObjectManager()->Request_Object(h);
+
+        auto anim = obj->Get_Component<CAnimator3D>();
+        if (anim)
+        {
+            _float4x4 m{};
+            if (anim->Get_BipWorld(&m))
+            {
+                const Vector3 bip(m._41, m._42, m._43);
+                return bip + Vector3(0.f, offsetY, 0.f);
+            }
+        }
+
+        auto cc = obj->Get_Component<CCharacterController>();
+        if (cc)
+        {
+            const Vector3 foot = cc->Get_FootPosition();
+            return foot + Vector3(0.f, cc->Get_HalfSize() * 1.5f + offsetY, 0.f);
+        }
+
+        auto tf = obj->Get_Component<CTransform>();
+        return Vector3(tf->Get_WorldPos()) + Vector3(0.f, offsetY, 0.f);
     }
 }
 
@@ -101,7 +123,7 @@ HRESULT COrbitCam::Initialize(INIT_DESC* pArg)
     Get_Component<CEventListener>()->Add_Listener<TARGET_LOCK_DESC>([&](TARGET_LOCK_DESC desc)
         {
             if (!desc.tHandle.isValid()) return;
-            if (!desc.tHandle.Get()->Get_Component<CCharacterController>()) return;
+
             if (desc.bLock) SetLockOn(desc.tHandle);
             else ClearLockOn();
         });

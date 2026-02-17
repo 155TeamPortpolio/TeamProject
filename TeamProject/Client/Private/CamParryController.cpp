@@ -14,10 +14,7 @@ namespace
     {
         auto obj = ObjectManager()->Request_Object(h);
         auto cc = obj->Get_Component<CCharacterController>();
-
-        const Vector4 foot4 = cc->Get_FootPosition();
-        const Vector3 foot(foot4.x, foot4.y, foot4.z);
-
+        const Vector3 foot = cc->Get_FootPosition();
         return foot + Vector3(0.f, cc->Get_HalfSize() * 1.5f + offsetY, 0.f);
     }
 }
@@ -187,8 +184,8 @@ void CamParryController::ClampAboveGround(ShotGoal& g) const
     auto attackerObj = ObjectManager()->Request_Object(m_attacker);
     auto attackerCC = attackerObj->Get_Component<CCharacterController>();
 
-    const Vector4 foot4 = attackerCC->Get_FootPosition();
-    const _float minFootY = foot4.y;
+    const Vector3 foot = attackerCC->Get_FootPosition();
+    const _float minFootY = foot.y;
 
     const _float minPivotY = minFootY + tune.common.minPivotAboveFootY;
     const _float minCamY = minFootY + tune.common.minCamAboveFootY;
@@ -396,8 +393,7 @@ CamParryController::ShotGoal CamParryController::BuildImpactShot(_int sideSign, 
     auto attackerObj = ObjectManager()->Request_Object(m_attacker);
     auto attackerCC = attackerObj->Get_Component<CCharacterController>();
 
-    const Vector4 foot4 = attackerCC->Get_FootPosition();
-    const _float footY = foot4.y;
+    const Vector3 foot = attackerCC->Get_FootPosition();
 
     const _float attackerYaw = YawFromDirXZ(fwd);
     const _float yawWorldBase = attackerYaw + m_impactBase.yawDeg;
@@ -407,7 +403,7 @@ CamParryController::ShotGoal CamParryController::BuildImpactShot(_int sideSign, 
     const Quaternion qStart = YawPitchRollQuatDeg(yawWorldBase, m_impactBase.pitchDeg, 0.f);
     const _float startCamY = OrbitPos(pivotWorldBase, qStart, m_impactBase.dist).y;
 
-    const _float targetCamYFixed = footY + tune.impact.endCamAboveFootY;
+    const _float targetCamYFixed = foot.y + tune.impact.endCamAboveFootY;
 
     const _float mix = clamp(tune.impact.targetCamYMix, 0.f, 1.f);
     _float targetCamY = Math::Lerp(startCamY, targetCamYFixed, mix);
