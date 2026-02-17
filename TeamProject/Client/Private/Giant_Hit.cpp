@@ -17,13 +17,10 @@ void CGiant_Hit::Enter(CGiant* pOwner)
 		__super::Enter(pOwner);
 	}
 
-	auto pStateMachine = pOwner->GetStateMachine();
-
-	_int iDir = pStateMachine->Get_Int("Dir");
-	if (-1 == iDir)
-		pOwner->Idle();
-	Decide_L_HitState(static_cast<DIR>(iDir), pOwner->GetTargetingInfo().fDotTarget);
-
+	if (pOwner->GetTargetingInfo().fDotTarget >= 0.f)		// 내적 값이 양수 == 앞쪽에 가까움 
+		m_pSubStateMachine->Change_State("Hit_H_Front");
+	else                                                    // 내적 값이 음수 == 뒤쪽
+		m_pSubStateMachine->Change_State("Hit_H_Back");
 }
 
 void CGiant_Hit::Update(CGiant* pOwner, _float dt)
@@ -49,68 +46,16 @@ void CGiant_Hit::Register_States()
 {
 	m_pSubStateMachine->Register_State("Hit_H_Front", CGiant_Hit_H_Front::Create());
 	m_pSubStateMachine->Register_State("Hit_H_Back", CGiant_Hit_H_Back::Create());
-	m_pSubStateMachine->Register_State("Hit_L_Back_Down", CGiant_Hit_L_Back_Down::Create());
-	m_pSubStateMachine->Register_State("Hit_L_Back_Up", CGiant_Hit_L_Back_Up::Create());
-	m_pSubStateMachine->Register_State("Hit_L_Back_Left", CGiant_Hit_L_Back_Left::Create());
-	m_pSubStateMachine->Register_State("Hit_L_Back_Right", CGiant_Hit_L_Back_Right::Create());
-	m_pSubStateMachine->Register_State("Hit_L_Front_Down", CGiant_Hit_L_Front_Down::Create());
-	m_pSubStateMachine->Register_State("Hit_L_Front_Up", CGiant_Hit_L_Front_Up::Create());
-	m_pSubStateMachine->Register_State("Hit_L_Front_Left", CGiant_Hit_L_Front_Left::Create());
-	m_pSubStateMachine->Register_State("Hit_L_Front_Right", CGiant_Hit_L_Front_Right::Create());
 }
 
 void CGiant_Hit::Register_Transitions()
 {
 }
 
-void CGiant_Hit::Decide_L_HitState(DIR eDir, _float fDot)
-{
-	_bool isBack = fDot < 0.f ? true : false;
-
-	switch (eDir)
-	{
-	case Client::DIR::F:
-		m_pSubStateMachine->Change_State("Hit_L_Front_Up");
-		break;
-	case Client::DIR::FR:
-		m_pSubStateMachine->Change_State("Hit_L_Front_Right");
-		break;
-	case Client::DIR::R:
-	{
-		if (isBack)
-			m_pSubStateMachine->Change_State("Hit_L_Back_Right");
-		else
-			m_pSubStateMachine->Change_State("Hit_L_Front_Right");
-
-		break;
-	}
-	case Client::DIR::BR:
-		m_pSubStateMachine->Change_State("Hit_L_Back_Right");
-		break;
-	case Client::DIR::B:
-		m_pSubStateMachine->Change_State("Hit_L_Back_Up");
-		break;
-	case Client::DIR::BL:
-		m_pSubStateMachine->Change_State("Hit_L_Back_Left");
-		break;
-	case Client::DIR::L:
-	{
-		if (isBack)
-			m_pSubStateMachine->Change_State("Hit_L_Back_Left");
-		else
-			m_pSubStateMachine->Change_State("Hit_L_Front_Left");
-		break;
-	}
-	case Client::DIR::FL:
-		m_pSubStateMachine->Change_State("Hit_L_Front_Left");
-		break;
-	}
-}
-
 /*============================================================================*/
 void CGiant_Hit_H_Front::Enter(CGiant* pOwner)
 {
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("Monster_Claymore_Ani_Hit_H_Front")
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("Giant_Ani_Hit_H_Front")
 		.Apply();
 }
 
@@ -125,7 +70,7 @@ void CGiant_Hit_H_Front::Exit(CGiant* pOwner)
 /*============================================================================*/
 void CGiant_Hit_H_Back::Enter(CGiant* pOwner)
 {
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("Monster_Claymore_Ani_Hit_H_Back")
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("Giant_Ani_Hit_H_Back")
 		.Apply();
 }
 
@@ -138,121 +83,3 @@ void CGiant_Hit_H_Back::Exit(CGiant* pOwner)
 }
 
 /*============================================================================*/
-void CGiant_Hit_L_Back_Down::Enter(CGiant* pOwner)
-{
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("Monster_Claymore_Ani_Hit_L_Back_Down")
-		.Apply();
-}
-
-void CGiant_Hit_L_Back_Down::Update(CGiant* pOwner, _float dt)
-{
-}
-
-void CGiant_Hit_L_Back_Down::Exit(CGiant* pOwner)
-{
-}
-
-/*============================================================================*/
-void CGiant_Hit_L_Back_Up::Enter(CGiant* pOwner)
-{
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("Monster_Claymore_Ani_Hit_L_Back_Up")
-		.Apply();
-}
-
-void CGiant_Hit_L_Back_Up::Update(CGiant* pOwner, _float dt)
-{
-}
-
-void CGiant_Hit_L_Back_Up::Exit(CGiant* pOwner)
-{
-}
-
-/*============================================================================*/
-void CGiant_Hit_L_Back_Left::Enter(CGiant* pOwner)
-{
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("Monster_Claymore_Ani_Hit_L_Back_Left")
-		.Apply();
-}
-
-void CGiant_Hit_L_Back_Left::Update(CGiant* pOwner, _float dt)
-{
-}
-
-void CGiant_Hit_L_Back_Left::Exit(CGiant* pOwner)
-{
-}
-
-/*============================================================================*/
-void CGiant_Hit_L_Back_Right::Enter(CGiant* pOwner)
-{
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("Monster_Claymore_Ani_Hit_L_Back_Right")
-		.Apply();
-}
-
-void CGiant_Hit_L_Back_Right::Update(CGiant* pOwner, _float dt)
-{
-}
-
-void CGiant_Hit_L_Back_Right::Exit(CGiant* pOwner)
-{
-}
-
-/*============================================================================*/
-void CGiant_Hit_L_Front_Down::Enter(CGiant* pOwner)
-{
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("Monster_Claymore_Ani_Hit_L_Front_Down")
-		.Apply();
-}
-
-void CGiant_Hit_L_Front_Down::Update(CGiant* pOwner, _float dt)
-{
-}
-
-void CGiant_Hit_L_Front_Down::Exit(CGiant* pOwner)
-{
-}
-
-/*============================================================================*/
-void CGiant_Hit_L_Front_Up::Enter(CGiant* pOwner)
-{
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("Monster_Claymore_Ani_Hit_L_Front_Up")
-		.Apply();
-}
-
-void CGiant_Hit_L_Front_Up::Update(CGiant* pOwner, _float dt)
-{
-}
-
-void CGiant_Hit_L_Front_Up::Exit(CGiant* pOwner)
-{
-}
-
-/*============================================================================*/
-void CGiant_Hit_L_Front_Left::Enter(CGiant* pOwner)
-{
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("Monster_Claymore_Ani_Hit_L_Front_Left")
-		.Apply();
-}
-
-void CGiant_Hit_L_Front_Left::Update(CGiant* pOwner, _float dt)
-{
-}
-
-void CGiant_Hit_L_Front_Left::Exit(CGiant* pOwner)
-{
-}
-
-/*============================================================================*/
-void CGiant_Hit_L_Front_Right::Enter(CGiant* pOwner)
-{
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("Monster_Claymore_Ani_Hit_L_Front_Right")
-		.Apply();
-}
-
-void CGiant_Hit_L_Front_Right::Update(CGiant* pOwner, _float dt)
-{
-}
-
-void CGiant_Hit_L_Front_Right::Exit(CGiant* pOwner)
-{
-}

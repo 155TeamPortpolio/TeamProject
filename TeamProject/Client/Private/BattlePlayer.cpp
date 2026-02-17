@@ -737,8 +737,9 @@ void CBattlePlayer::NotifyCharacterSwitchOut()
     else if (m_bComboSelect)
     {
         _vector3 vCharacterPos = m_pCurrentCharacter->Get_WorldPos();
-        if (!m_TargetHandle.isValid())
+        if (!m_TargetHandle.isValid() || !BattleSystem()->isValidTarget(BATTLE_OBJ_TYPE::MONSTER, m_TargetHandle))
             return;
+        
         _vector3 vTargetPos = m_TargetHandle.Get()->Get_WorldPos();
         _vector3 vTargetLook = m_TargetHandle.Get()->Get_Component<CTransform>()->Dir(STATE::LOOK);
         vTargetLook.y = 0.f;

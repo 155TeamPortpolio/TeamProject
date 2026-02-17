@@ -8,7 +8,7 @@
 
 void CGiant_Idle::Enter(CGiant* pOwner)
 {
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("Claymore_Ani_Idle")
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("Monster_Giant_Ani_Idle")
 		.Loop(true)
 		.Apply();
 }

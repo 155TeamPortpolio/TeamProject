@@ -7,7 +7,10 @@
 #include "TextSlot.h"
 #include "ButtonUI.h"
 #include "UI_BackButton.h"
-#include "UI_RamenMenu.h"  
+
+#include "UI_RamenMenu.h"
+#include "UI_RamenAttributeIcon.h"
+#include "UI_RamenAttributeText.h"
 #include "UI_RamenOrderBanner.h"
 #include "UI_RamenVideo.h"
 #include "UI_RamenResultBanner.h"
@@ -40,6 +43,13 @@ HRESULT CUI_Ramen::Initialize_Prototype()
     Add_Component<CAudioSource>();
     Get_Component<CAudioSource>()->SoundFolder(G_GlobalLevelKey, "../Bin/Resources/Global/UI/Sound/");
     Get_Component<CAudioSource>()->SoundFolder(G_GlobalLevelKey, "../Bin/Resources/MainCity/Sound/NPC/");
+
+    PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_RamenMenu", CUI_RamenMenu::Create());
+    PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_RamenAttributeIcon", CUI_RamenAttributeIcon::Create());
+    PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_RamenAttributeText", CUI_RamenAttributeText::Create());
+    PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_RamenOrderBanner", CUI_RamenOrderBanner::Create());
+    PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_RamenVideo", CUI_RamenVideo::Create());
+    PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_RamenResultBanner", CUI_RamenResultBanner::Create());
 
 	return S_OK;
 }

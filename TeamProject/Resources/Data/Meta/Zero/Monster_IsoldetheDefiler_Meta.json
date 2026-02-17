@@ -293,6 +293,11 @@
           "EventTag": "ParrySign"
         },
         {
+          "EventTime": 1.2699999809265137,
+          "EventType": "Sound",
+          "EventTag": "DefilerSwing2.wav"
+        },
+        {
           "EventTime": 1.2999999523162842,
           "EventType": "Sound",
           "EventTag": "DefilerSwingBase.wav"
@@ -316,11 +321,6 @@
           "EventTime": 2.100714683532715,
           "EventType": "Notify",
           "EventTag": "TargetLockOff"
-        },
-        {
-          "EventTime": 1.2699999809265137,
-          "EventType": "Sound",
-          "EventTag": "DefilerSwing2.wav"
         }
       ]
     },
@@ -443,6 +443,11 @@
           "EventTag": "ParrySign"
         },
         {
+          "EventTime": 3.140000104904175,
+          "EventType": "Sound",
+          "EventTag": "DefilerSwing2.wav"
+        },
+        {
           "EventTime": 3.215334892272949,
           "EventType": "Sound",
           "EventTag": "DefilerSwingBase.wav"
@@ -471,11 +476,6 @@
           "EventTime": 4.823001861572266,
           "EventType": "Notify",
           "EventTag": "TargetLockOff"
-        },
-        {
-          "EventTime": 3.140000104904175,
-          "EventType": "Sound",
-          "EventTag": "DefilerSwing2.wav"
         }
       ]
     },
@@ -598,6 +598,11 @@
           "EventTag": "I_Type_Off"
         },
         {
+          "EventTime": 2.75,
+          "EventType": "Sound",
+          "EventTag": "Defiler_Slash2.wav"
+        },
+        {
           "EventTime": 2.8399999141693115,
           "EventType": "Notify",
           "EventTag": "ParrySign"
@@ -636,11 +641,6 @@
           "EventTime": 4.055100917816162,
           "EventType": "Notify",
           "EventTag": "A_Type_Off"
-        },
-        {
-          "EventTime": 2.75,
-          "EventType": "Sound",
-          "EventTag": "Defiler_Slash2.wav"
         }
       ]
     },
@@ -1025,11 +1025,6 @@
       "ClipTag": "Monster_IsoldetheDefiler_Ani_Attack_09_Start",
       "Events": [
         {
-          "EventTime": 0.0,
-          "EventType": "Notify",
-          "EventTag": "TsunamiStart"
-        },
-        {
           "EventTime": 2.619999885559082,
           "EventType": "Sound",
           "EventTag": "Defiler_Fierce.wav"
@@ -1078,6 +1073,11 @@
           "EventTime": 6.300000190734863,
           "EventType": "Notify",
           "EventTag": "WeaponShow"
+        },
+        {
+          "EventTime": 0.03999999910593033,
+          "EventType": "Notify",
+          "EventTag": "Tsunami"
         }
       ]
     },
@@ -1161,6 +1161,16 @@
           "EventTime": 2.077777862548828,
           "EventType": "Notify",
           "EventTag": "ShowMesh_Pro"
+        },
+        {
+          "EventTime": 1.600000023841858,
+          "EventType": "Sound",
+          "EventTag": "Defiler_Miasma.wav"
+        },
+        {
+          "EventTime": 0.20000000298023224,
+          "EventType": "Sound",
+          "EventTag": "Defiler_Entrance.wav"
         }
       ]
     },
