@@ -7,8 +7,11 @@
 #include "MaterialData.h"
 #include "GameInstance.h"
 #include "Child.h"
+#include "EventListener.h"
+#include "BattleSystem.h"
 
 #include "Helper_Func.h"
+#include "CamDirector.h"
 
 CWaterWave::CWaterWave()
 	:CGameObject()
@@ -25,6 +28,7 @@ HRESULT CWaterWave::Initialize_Prototype()
 	__super::Initialize_Prototype();
 	Add_Component<CTessellationModel>(32, 50.f);
 	Add_Component<CMaterial>();
+	Add_Component<CEventListener>();
 	return S_OK;
 }
 
@@ -80,6 +84,7 @@ HRESULT CWaterWave::Initialize(INIT_DESC* pArg)
 	}
 
 	m_vOriginPos = _vector3(m_pTransform->Get_Pos());
+	Get_Component<CEventListener>()->Add_Listener<TsunamiWallDesc>([&](const TsunamiWallDesc& desc) {Check_Attackable(desc); });
 	return S_OK;
 }
 
@@ -90,35 +95,54 @@ void CWaterWave::Awake()
 void CWaterWave::Priority_Update(_float dt)
 {
 }
-
 void CWaterWave::Update(_float dt)
 {
 	m_fAccTime += dt;
 
-	_float3 CrashDirection = { 1.f, 0.f, 0.f };
+	if (m_CycleTime <= 1e-6f)
+		return;
 
-	_float t = fmodf(m_fAccTime, m_CycleTime) / m_CycleTime;
+	const _float3 crashDirection = { 1.f, 0.f, 0.f };
 
-	_float overPeak = (t - m_PeakTime * 0.9f) / (1.0f - m_PeakTime * 0.9f);
-	overPeak = max(0.f, min(1.f, overPeak));
+	const _float time01 = fmodf(m_fAccTime, m_CycleTime) / m_CycleTime;
 
-	_float moveFactor = overPeak * overPeak * (3.0f - 2.0f * overPeak);
+	_float progress01 = (time01 - m_PeakTime * 0.9f) / (1.0f - m_PeakTime * 0.9f);
+	progress01 = max(0.f, min(1.f, progress01));
 
-	_float fadeOut = 1.0f - max(0.f, min(1.f, (t - 0.85f) / 0.15f));
-	fadeOut = fadeOut * fadeOut * (3.0f - 2.0f * fadeOut);
+	progress01 = progress01 * progress01 * (3.0f - 2.0f * progress01);
 
-	_float finalMove = moveFactor * fadeOut * m_CrashMoveDistance;
+	const _float forwardMove = progress01 * m_CrashMoveDistance;
 
 	_float3 newPos;
-	newPos.x = m_vOriginPos.x + CrashDirection.x * finalMove;
-	newPos.y = m_vOriginPos.y + CrashDirection.y * finalMove;
-	newPos.z = m_vOriginPos.z + CrashDirection.z * finalMove;
+	newPos.x = m_vOriginPos.x + crashDirection.x * forwardMove;
+	newPos.y = m_vOriginPos.y + crashDirection.y * forwardMove;
+	newPos.z = m_vOriginPos.z + crashDirection.z * forwardMove;
 
 	m_pTransform->Set_Pos(newPos);
 }
 
 void CWaterWave::Late_Update(_float dt)
 {
+	if (m_fAccTime >= m_CycleTime - 1.f) {
+		CameraManager()->AddImpact(ENUM(CamShakeType::EarthquakeShort), 
+			ENUM(CamZoomType::EarthquakeShort),1.3f);
+	}
+
+	if (m_fAccTime >= m_CycleTime-0.2f){
+		if (m_isAttackable) {
+			HitDesc desc;
+			desc.fDamage = 500.f;
+			BattleSystem()->TakePlayerDamage(desc);
+		}
+		EventSystem()->Broadcast<TsunamiDesc>({ true });
+		ObjectManager()->Remove_Object(this);
+		m_isAlive = false;
+	}
+}
+
+void CWaterWave::Check_Attackable(const TsunamiWallDesc& desc)
+{
+	m_isAttackable = !desc.isCharcter_On_Wall;
 }
 
 void CWaterWave::Initialize_Wave(WaterWaveDesc Desc)
@@ -128,7 +152,7 @@ void CWaterWave::Initialize_Wave(WaterWaveDesc Desc)
 	m_NoiseOffset = Desc.fNoiseOffset;
 	m_WaterTint = Desc.vWaterTint;
 	m_TintStrength = Desc.fTintStrength;
-
+	m_RiseWidth = Desc.fRiseWidth; 
 	m_TsunamiHeight = Desc.fTsunamiHeight;
 	m_PeakTime = Desc.fPeakTime;
 	m_FallWidth = Desc.fFallWidth;

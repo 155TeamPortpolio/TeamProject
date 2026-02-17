@@ -23,6 +23,10 @@ public:
     void          SetSpaceRef(OBJECT_HANDLE handle) { m_spaceRefHandle = handle; }
     void          SetReturnCam(CamType type) { m_returnCamType = type; }
     void          SetTarget(OBJECT_HANDLE targetHandle);
+    
+    void          EnterBoss();
+    void          ExitBoss();
+
     void          AutoTarget();
     void          AutoField(CamStartDir dir);
     void          AutoBattle(CamStartDir dir);
@@ -50,7 +54,7 @@ public:
     _float        GetTime()                  const { return GetSeqPlayer()->GetTime(); }
     const string& GetCurSeqName()            const { return m_playing.active ? m_playing.key : kEmpty; }
     SeqPlayer*    GetSeqPlayer()             const { return GetSeqObj()->Get_Component<CCamSequencePlayer>(); }
-    Vector3       GetParryPoint()            const { m_parry.GetImpactPointWorld(); }
+    Vector3       GetParryPoint()            const { return m_parry.GetImpactPointWorld(); }
 
 public:
     _bool         Register(const string& key, const fs::path& path);

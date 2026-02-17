@@ -46,7 +46,7 @@ public:
 	_bool	IsActive() const { return m_isActive; }
 	
 //Sound
-	void	PlayBGM(string strBGM);
+	void	PlayBGM(string strBGM, _float fVolume = 0.3f);
 	void	FadeOutBGM();
 
 public:

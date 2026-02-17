@@ -55,8 +55,8 @@ _float3 CMiasmaSpawner::ComputeParabolarPos(const _float3& ownerPos, const _floa
     const _float sideSign = m_parabolLeft ? -1.f : +1.f; // øﬁ¬ ¿Ã∏È -1
     m_parabolLeft = !m_parabolLeft;
 
-    const _float sideOffset = 5.0f;   
-    const _float forwardOffset = length * 0.7f;
+    const _float sideOffset = 3.0f;   
+    const _float forwardOffset = length * 0.4f;
     _vector3 offset = right * (sideOffset * sideSign) + forward * forwardOffset;
 
     _vector3 pos = _vector3(ownerPos) + offset;
@@ -116,10 +116,9 @@ void CMiasmaSpawner::SpawnGrandier(_int count, _float3 targetPos, _float3 ownerP
         _float3 spawnPos = ComputeCircular({0,0,0},15);
 
         spawnPos.y = y;
-
         CCT_DESC MonsterCCT;
         MonsterCCT.eGroup = COLLISION_GROUP::MONSTER;
-        MonsterCCT.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER) | ENUM(COLLISION_GROUP::COMMON) | ENUM(COLLISION_GROUP::PLAYER_ATTACK);
+        MonsterCCT.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER) | ENUM(COLLISION_GROUP::GROUND) | ENUM(COLLISION_GROUP::COMMON) | ENUM(COLLISION_GROUP::PLAYER_ATTACK);
         MonsterCCT.bAutoFit = false;
         MonsterCCT.fHeight = 1.28f;
         MonsterCCT.fRadius = 0.55f;

@@ -6,6 +6,7 @@ NS_BEGIN(Client)
 
 class CamParryController
 {
+public:
     enum class State
     {
         None, Enter, Impact, WaitEnd
@@ -33,8 +34,8 @@ public:
     {
         struct Common
         {
-            _float enterSec = 0.3f;
-            _float impactSec = 0.5f;
+            _float enterSec = 0.1f;
+            _float impactSec = 0.3f;
 
             _float pitchDeg = -8.f;
             _float dist = 2.85f;
@@ -52,29 +53,32 @@ public:
             _float minCamAboveFootY = 0.05f;
 
             EaseType approachEase = EaseType::InOutSine;
-            EaseType impactEase = EaseType::InSine;
+            EaseType impactEase = EaseType::OutSine;
         };
 
         struct Impact
         {
-            _float punchDistDelta = 1.f;
-            _float rollMaxDeg = 25.f;
+            _float punchDistDelta = 1.25f;
 
-            _float rollArcMul = 0.5f;
+            _float rollMaxDeg = 25.f;
+            _float rollArcMul = 0.75f;
 
             _float endCamAboveFootY = 0.5f;
             _float targetCamYMix = 0.80f;
             _float pivotDropY = 0.12f;
 
-            _float recoverRollSec = 0.5f;
+            _float recoverRollSec = 0.35f;
             EaseType rollEase = EaseType::InOutSine;
             EaseType recoverRollEase = EaseType::InOutSine;
 
-            _int   fovWaveCount = 4;
-            _float fovWaveAmpDeg = 3.f;
-            _float fovBiasDeg = 15.f;
+            _float recoverFovSec = 0.35f;
+            EaseType recoverFovEase = EaseType::InOutSine;
 
-             _float impactStartYawExtraDeg = 30.f;
+            _int   fovWaveCount = 4;
+            _float fovWaveAmpDeg = 1.5f;
+            _float fovBiasDeg = 4.f;
+
+            _float impactStartYawExtraDeg = 30.f;
         };
 
         Common common{};
@@ -125,8 +129,13 @@ private:
     Vector3   PivotWorldFromExt(const Vector3& ext) const;
     Vector3   ExtFromPivotWorld(const Vector3& pivotWorld) const;
 
-    _float    EvalImpactFov(_float u, _float close01) const;
+    _float    EvalImpactFovOffset(_float u, _float close01, _float baseFov) const;
     void      ApplyImpactFov(_float u, _float close01);
+
+    void      BeginRecoverFov();
+    void      UpdateRecoverFov(_float dt);
+
+    _bool     IsChainParry() const;
 
 private:
     _bool         m_active = false;
@@ -161,9 +170,15 @@ private:
 
     ShotGoal      m_holdShot{};
     _bool         m_holdActive = false;
-    
+
     _float        m_fovBase = 0.f;
     _float        m_fovSaved = 0.f;
+
+    _bool         m_recoverFovActive = false;
+    _float        m_recoverFovElapsed = 0.f;
+    _float        m_recoverFovFrom = 0.f;
+
+    _float        m_fovAppliedOffset = 0.f;
 };
 
 NS_END

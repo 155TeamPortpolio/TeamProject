@@ -29,16 +29,11 @@ void CZeroStage_Start::Update()
 {
 	float dt = TimeManager()->Get_RawDeltaTime(G_EngineTimerID);
 
-	switch (m_eStageStage)
+	switch (m_eStageState)
 	{
 	case Client::CStage::StageState::Entrance:
 		m_introFlow.Tick(dt);
 		Intro();
-		break;
-	case Client::CStage::StageState::BattleStart:
-		Battle();
-		break;
-	case Client::CStage::StageState::BattleEnd:
 		break;
 	case Client::CStage::StageState::Outro:
 		Outro();
@@ -57,7 +52,7 @@ HRESULT CZeroStage_Start::Enter_Stage(StageContext& context)
 {
 	Ready_Map("Zero_Level", context.mapKey);
 	Reserve_Enemy("Zero_Level");
-	m_eStageStage = StageState::Entrance;
+	m_eStageState = StageState::Entrance;
 	m_PlayerHandle = context.hPlayer;
 	Active_Player(CStage::PlayerPoint::Typical);
 	BaseIntro(context);
@@ -71,19 +66,15 @@ void CZeroStage_Start::Intro()
 	{
 		Active_Enemy();
 		CBattleSystem::GetInstance()->SetActive(true);
-		m_eStageStage = StageState::BattleStart;
+		m_eStageState = StageState::None;
 		Active_Portal();
 	}
-}
-
-void CZeroStage_Start::Battle()
-{
 }
 
 void CZeroStage_Start::Outro()
 {
 	BaseOutro();
-	m_eStageStage = StageState::End;
+	m_eStageState = StageState::End;
 }
 
 void CZeroStage_Start::End()

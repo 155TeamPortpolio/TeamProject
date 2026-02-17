@@ -15,6 +15,7 @@
 #include "Defiler.h"
 #include "Texture.h"
 #include "AudioSource.h"
+#include "EventListener.h"
 
 CDefilerWall::CDefilerWall()
 	: CEnemy()
@@ -32,7 +33,8 @@ HRESULT CDefilerWall::Initialize_Prototype()
 
 	Add_Component<CStaticModel>()->Link_Model("Zero_Level", "Defiler_Wall.model");
 	Add_Component<CMaterial>()->Link_Material("Zero_Level", "Defiler_Wall.mat");
-	//Add_Component<CCollider>();
+	Add_Component<CCollider>();
+	Add_Component<CEventListener>();
 	//Add_Component<CRigidBody>();
 	Add_Component<CAudioSource>();
 	return S_OK;
@@ -51,10 +53,12 @@ HRESULT CDefilerWall::Initialize(INIT_DESC* pArg)
 		instance->Override_Pass("Opaque");
 		instance->Set_Param("fTime",{ &m_ElapsedTime,"float",  sizeof(_float) });
 	}
+
 	m_pTransform->Scale({ 0,0,0 });
 	m_EndY = -2.3f;
 	m_pTransform->Set_Y(-5.f);
 	m_bAwake = true;
+	Get_Component<CEventListener>()->Add_Listener<TsunamiDesc>([&](TsunamiDesc desc) {DisAppear();});
 
 	return S_OK;
 }
@@ -70,27 +74,29 @@ void CDefilerWall::Priority_Update(_float dt)
 
 void CDefilerWall::Update(_float dt)
 {
-	if (!m_bAwake)
-		return;
-
 	m_ElapsedTime += dt;
-
-	const _float duration = .45f;
-	const _float t01 = clamp(m_ElapsedTime / duration, 0.f, 1.f);
-	const _float eased = Math::ApplyEase(EaseType::OutBack, t01);
-	const _vector3 startScale = { 0.2f, 0.05f, 0.2f };
-	const _vector3 endScale = { 1.f, 1.f, 1.f };
-	const _float startY = -5.f;
-	const _float endY = m_EndY;
-	const _vector3 scale = startScale + (endScale - startScale) * eased;
-	const _float y = Math::Lerp(startY, endY, eased);
-	m_pTransform->Scale(scale); 
-	m_pTransform->Set_Y(y);
-	if (t01 >= 1.f)
-	{
-		m_pTransform->Scale(endScale);
-		m_pTransform->Set_Y(endY);
-		m_bAwake = false; // 계속 계산 안 하게(선택)
+	if (m_bAwake) {
+		const _float duration = .45f;
+		const _float t01 = clamp(m_ElapsedTime / duration, 0.f, 1.f);
+		const _float eased = Math::ApplyEase(EaseType::OutBack, t01);
+		const _vector3 startScale = { 0.2f, 0.05f, 0.2f };
+		const _vector3 endScale = { 1.f, 1.f, 1.f };
+		const _float startY = -5.f;
+		const _float endY = m_EndY;
+		const _vector3 scale = startScale + (endScale - startScale) * eased;
+		const _float y = Math::Lerp(startY, endY, eased);
+		m_pTransform->Scale(scale);
+		m_pTransform->Set_Y(y);
+		if (t01 >= 1.f)
+		{
+			m_pTransform->Scale(endScale);
+			m_pTransform->Set_Y(endY);
+			m_bAwake = false;
+		}
+	}
+	else if (m_bDisApper) {
+		if (m_ElapsedTime > 4.f)
+			ObjectManager()->Remove_Object(this);
 	}
 }
 
@@ -114,6 +120,14 @@ void CDefilerWall::OnPooledRelease()
 
 void CDefilerWall::DisAppear()
 {
+	auto pMaterial = Get_Component<CMaterial>();
+	auto& materialInstances = pMaterial->Get_MaterialInstances();
+	m_ElapsedTime = 0.f;
+	for (const auto& instance : materialInstances)
+	{
+		instance->Override_Pass("Wall");
+	}
+	m_bDisApper = true;
 }
 
 CDefilerWall* CDefilerWall::Create()
@@ -150,15 +164,29 @@ void CDefilerWall::Free()
 void CDefilerWall::OnTriggerEnter(CGameObject* pOther)
 {
 	auto pCollidable = pOther->Get_Component<ICollidable>();
-	if (pCollidable)
+	if (!pCollidable)
 		return;
 
 	else {
 		auto pEnemy = dynamic_cast<CCharacter*>(pOther);
 		if (nullptr != pEnemy)
 		{
-			pEnemy->Take_Damage(DAMAGE_TYPE::NORMAL, 10);
-			CameraManager()->AddImpact(1, 0);
+			EventSystem()->Broadcast<TsunamiWallDesc>({true});
+		}
+	}
+}
+
+void CDefilerWall::OnTriggerExit(CGameObject* pOther)
+{
+	auto pCollidable = pOther->Get_Component<ICollidable>();
+	if (!pCollidable)
+		return;
+
+	else {
+		auto pEnemy = dynamic_cast<CCharacter*>(pOther);
+		if (nullptr != pEnemy)
+		{
+			EventSystem()->Broadcast<TsunamiWallDesc>({ false });
 		}
 	}
 }

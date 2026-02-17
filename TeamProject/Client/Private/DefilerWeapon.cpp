@@ -16,6 +16,7 @@
 #include "Texture.h"
 #include "AudioSource.h"
 #include "DefilerAxe.h"
+#include "CamDirector.h"
 
 CDefilerWeapon::CDefilerWeapon()
 	: CEnemy()
@@ -46,7 +47,7 @@ HRESULT CDefilerWeapon::Initialize(INIT_DESC* pArg)
 	__super::Initialize(desc);
 	Reset_Value(desc);
 
-	Get_Component<CCollider>()->Set_CollisionMask(ENUM(COLLISION_GROUP::PLAYER) |ENUM(COLLISION_GROUP::PLAYER_ATTACK));
+	Get_Component<CCollider>()->Set_CollisionMask(ENUM(COLLISION_GROUP::PLAYER) | ENUM(COLLISION_GROUP::GROUND) |ENUM(COLLISION_GROUP::PLAYER_ATTACK));
 	Get_Component<CCollider>()->Set_CollisionGroup(COLLISION_GROUP::MONSTER);
 	Get_Component<CCollider>()->Set_Size(m_isFinalThrow? _vector3{3.f, 3.f, 3.f} : _vector3{2.f,2.f,2.f});
 	Get_Component<CCollider>()->Set_Trigger(false);
@@ -141,8 +142,10 @@ void CDefilerWeapon::Update(_float dt)
 			m_isEnd = true;
 		}
 
-		if (m_isEnd && m_Dissolve.isComplete())
+		if (m_isEnd && m_Dissolve.isComplete()) {
 			ObjectManager()->Remove_Object(this);
+			CameraManager()->AddImpact(ENUM(CamShakeType::EarthquakeShort), ENUM(CamZoomType::EarthquakeShort));
+		}
 
 		if (speedXZ < stopSpeed)
 		{
@@ -155,6 +158,7 @@ void CDefilerWeapon::Update(_float dt)
 		SummonAxe();
 		ObjectManager()->Remove_Object(this);
 		BattleSystem()->ExitBattleObject(BATTLE_OBJ_TYPE::MONSTER, Get_Handle());
+		CameraManager()->AddImpact(ENUM(CamShakeType::EarthquakeShort), ENUM(CamZoomType::EarthquakeShort));
 		return;
 	}
 
@@ -265,7 +269,7 @@ void CDefilerWeapon::SummonAxe()
 
 	CCT_DESC MonsterCCT;
 	MonsterCCT.eGroup = COLLISION_GROUP::MONSTER;
-	MonsterCCT.iCollisionMask =  ENUM(COLLISION_GROUP::COMMON) | ENUM(COLLISION_GROUP::PLAYER_ATTACK);
+	MonsterCCT.iCollisionMask =  ENUM(COLLISION_GROUP::COMMON) | ENUM(COLLISION_GROUP::GROUND) | ENUM(COLLISION_GROUP::PLAYER_ATTACK);
 	MonsterCCT.bAutoFit = false;
 	MonsterCCT.fHeight = .3f;
 	MonsterCCT.fRadius = 2.f;
@@ -274,7 +278,6 @@ void CDefilerWeapon::SummonAxe()
 
 	auto pBlade =
 		Builder::Create_Object({ "Zero_Level","Proto_GameObject_DefilerAxe" })
-		.FromPool()
 		.Add_ObjDesc(desc)
 		.CharacterController(MonsterCCT)
 		.Build("DefilerAxe");

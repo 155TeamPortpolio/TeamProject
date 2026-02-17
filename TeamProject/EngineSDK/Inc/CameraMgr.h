@@ -12,30 +12,30 @@ private:
     virtual ~CCameraMgr() DEFAULT;
 
 public:
-    void     Update(_float dt)                                override;
+    void     Update(_float dt) override;
 
     void     Set_MainCam(CCamera* cam, _float blendSec = 0.f) override;
-    void     Set_ShadowCam(CCamera* cam)                      override;
+    void     Set_ShadowCam(CCamera* cam) override;
 
-    CCamera* Get_BaseCam()   const override;
+    CCamera* Get_BaseCam() const override;
     CCamera* Get_ActiveCam() const override;
     CCamera* Get_ShadowCam() const override;
 
     void     Set_BlendEase(EaseType ease) override { m_easeType = ease; }
-    EaseType Get_BlendEase() const        override { return m_easeType; }
+    EaseType Get_BlendEase() const override { return m_easeType; }
 
     _uint    Push(CCamera* cam, _float blendTime = 0.25f) override;
-    _bool    Pop(_uint handle, _float blendTime = 0.25f)  override;
-    void     Clear(_float blendTime = 0.25f)              override;
+    _bool    Pop(_uint handle, _float blendTime = 0.25f) override;
+    void     Clear(_float blendTime = 0.25f) override;
 
 public:
     void     RegisterShakePresets(const CamShakePreset* presets, _uint count) override { m_shake.RegisterPresets(presets, count); }
-    void     RegisterZoomPresets(const CamZoomPreset* presets, _uint count)   override { m_zoom.RegisterPresets(presets, count); }
+    void     RegisterZoomPresets(const CamZoomPreset* presets, _uint count) override { m_zoom.RegisterPresets(presets, count); }
 
 public:
-    void     SetShake(_float ampDeg, _float freq, _float dur, _float fadeOutSec = 0.f)  override { m_shake.Set(ampDeg, freq, dur, fadeOutSec); }
-    void     AddShake(_float ampDeg, _float freq, _float dur, _float fadeOutSec = 0.f)  override { m_shake.Add(ampDeg, freq, dur, fadeOutSec); }
-    void     ClearShake(_float fadeOutSec = 0.f)                                        override { m_shake.Clear(fadeOutSec); }
+    void     SetShake(_float ampDeg, _float freq, _float dur, _float fadeOutSec = 0.f) override { m_shake.Set(ampDeg, freq, dur, fadeOutSec); }
+    void     AddShake(_float ampDeg, _float freq, _float dur, _float fadeOutSec = 0.f) override { m_shake.Add(ampDeg, freq, dur, fadeOutSec); }
+    void     ClearShake(_float fadeOutSec = 0.f) override { m_shake.Clear(fadeOutSec); }
 
     void     AddShakeAxis(CamShakeAxis axes, _float ampDeg, _float freq, _float dur, _float fadeOutSec) override;
     void     SetShakeAxis(CamShakeAxis axes, _float ampDeg, _float freq, _float dur, _float fadeOutSec) override;
@@ -46,38 +46,47 @@ public:
 public:
     void     SetZoomPunch(_float amountDeg, _float attackSec = 0.020f, _float releaseSec = 0.100f) override { m_zoom.SetPunch(amountDeg, attackSec, releaseSec); }
     void     AddZoomPunch(_float amountDeg, _float attackSec = 0.020f, _float releaseSec = 0.100f) override { m_zoom.AddPunch(amountDeg, attackSec, releaseSec); }
-    void     ClearZoom(_float fadeOutSec = 0.f)                                                    override { m_zoom.Clear(fadeOutSec); }
+    void     ClearZoom(_float fadeOutSec = 0.f) override { m_zoom.Clear(fadeOutSec); }
 
 public:
     void     SetShakeType(_uint type, _float strength = 1.f) override { m_shake.Set(type, strength); }
     void     AddShakeType(_uint type, _float strength = 1.f) override { m_shake.Add(type, strength); }
 
-    void     SetZoomType(_uint type, _float strength = 1.f)  override { m_zoom.Set(type, strength); }
-    void     AddZoomType(_uint type, _float strength = 1.f)  override { m_zoom.Add(type, strength); }
+    void     SetZoomType(_uint type, _float strength = 1.f) override { m_zoom.Set(type, strength); }
+    void     AddZoomType(_uint type, _float strength = 1.f) override { m_zoom.Add(type, strength); }
 
     void     AddImpact(_uint shakeType = 0u, _uint zoomType = 0u, _float strength = 1.f) override;
 
 public:
-    Lens     Get_Lens()       const override;
+    Lens     Get_Lens() const override;
     Lens     Get_ShadowLens() const override;
 
 public:
-    const Matrix* Get_ViewMatrix()         override { return &main.view; }
-    const Matrix* Get_ProjMatrix()         override { return &main.proj; }
+    void     SetFov(_float deltaDeg, _float blendSec = 0.f, EaseType easeType = EaseType::Linear) override;
+    _float   GetFov() const override { return m_outputPose.lens.fov; }
+
+    void     SetZNear(_float zNear) override { m_overrideNear = true; m_nearOverride = zNear; }
+    void     SetZFar(_float zFar) override { m_overrideFar = true; m_farOverride = zFar; }
+    void     ClearZNear() override { m_overrideNear = false; }
+    void     ClearZFar() override { m_overrideFar = false; }
+
+public:
+    const Matrix* Get_ViewMatrix() override { return &main.view; }
+    const Matrix* Get_ProjMatrix() override { return &main.proj; }
     const Matrix* Get_InversedViewMatrix() override { return &main.invView; }
     const Matrix* Get_InversedProjMatrix() override { return &main.invProj; }
-    const Vector4 Get_CameraPos()          override { return main.pos; }
-    const _float  Get_Far()                override { return main.farZ; }
+    const Vector4 Get_CameraPos() override { return main.pos; }
+    const _float  Get_Far() override { return main.farZ; }
 
-    const Matrix* Get_ShadowViewMatrix()         override { return &shadow.view; }
-    const Matrix* Get_ShadowProjMatrix()         override { return &shadow.proj; }
-    const Vector4 Get_ShadowCameraPos()          override { return shadow.pos; }
-    const _float  Get_ShadowFar()                override { return shadow.farZ; }
+    const Matrix* Get_ShadowViewMatrix() override { return &shadow.view; }
+    const Matrix* Get_ShadowProjMatrix() override { return &shadow.proj; }
+    const Vector4 Get_ShadowCameraPos() override { return shadow.pos; }
+    const _float  Get_ShadowFar() override { return shadow.farZ; }
     const Matrix* Get_InversedShadowViewMatrix() override { return &shadow.invView; }
     const Matrix* Get_InversedShadowProjMatrix() override { return &shadow.invProj; }
 
     Vector4 GetForward() const override;
-    Vector4 GetRight()   const override;
+    Vector4 GetRight() const override;
 
 private:
     struct OverrideEntry
@@ -85,6 +94,7 @@ private:
         _uint         handle{};
         OBJECT_HANDLE camObj{};
     };
+
     struct CamLens
     {
         CamProjType projType = CamProjType::Perspective;
@@ -95,25 +105,27 @@ private:
         _float aspect{};
         _float orthoHeight = 10.f;
     };
+
     struct CamPoseFrame
     {
         Vector3     pos{};
         Quaternion  rot = Quaternion::Identity;
         CamLens     lens{};
     };
+
     struct CamCache
     {
-        Matrix  view    = Matrix::Identity;
-        Matrix  proj    = Matrix::Identity;
+        Matrix  view = Matrix::Identity;
+        Matrix  proj = Matrix::Identity;
         Matrix  invView = Matrix::Identity;
         Matrix  invProj = Matrix::Identity;
-        Vector4 pos     = {0.f, 0.f, 0.f, 1.f};
-        _float  farZ    = 0.f;
+        Vector4 pos = {0.f, 0.f, 0.f, 1.f};
+        _float  farZ = 0.f;
     };
 
 private:
     CGameObject* ResolveObj(OBJECT_HANDLE handle) const;
-    CCamera*     ResolveCam(OBJECT_HANDLE handle) const;
+    CCamera* ResolveCam(OBJECT_HANDLE handle) const;
 
     OBJECT_HANDLE GetActiveCamObj() const { return m_overrides.empty() ? m_baseCamObj : m_overrides.back().camObj; }
 
@@ -130,6 +142,11 @@ private:
     void         BeginBlendTo(OBJECT_HANDLE fromObj, OBJECT_HANDLE targetObj, _float blendSec);
 
     void         UpdateShadowCache();
+
+private:
+    _float       EvalFovOffset(_float dt);
+    void         ApplyFov(_float dt, _float baseFov);
+    void         ApplyNearFarOverrides();
 
 private:
     OBJECT_HANDLE   m_baseCamObj{};
@@ -153,6 +170,20 @@ private:
 private:
     CamPoseFrame  m_outputPose{};
     EaseType      m_easeType = EaseType::OutSine;
+
+private:
+    _bool    m_fovOffsetBlending = false;
+    _float   m_fovOffsetTime = 0.f;
+    _float   m_fovOffsetDuration = 0.f;
+    _float   m_fovOffsetCur = 0.f;
+    _float   m_fovOffsetFrom = 0.f;
+    _float   m_fovOffsetTo = 0.f;
+    EaseType m_fovOffsetEaseType = EaseType::Linear;
+
+    _bool   m_overrideNear = false;
+    _bool   m_overrideFar = false;
+    _float  m_nearOverride = 0.f;
+    _float  m_farOverride = 0.f;
 
 private:
     CamCache main{};

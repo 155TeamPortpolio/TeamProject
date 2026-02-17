@@ -371,6 +371,7 @@
     <ClInclude Include="..\Public\BackGroundSpawner.h" />
     <ClInclude Include="..\Public\BasicHitEffect.h" />
     <ClInclude Include="..\Public\BattleFXFlow.h" />
+    <ClInclude Include="..\public\BattleStarter.h" />
     <ClInclude Include="..\Public\BattleSystem_Panel.h" />
     <ClInclude Include="..\public\CamDebugInput.h" />
     <ClInclude Include="..\public\CamParryController.h" />
@@ -389,6 +390,8 @@
     <ClInclude Include="..\Public\DefilerState_Other.h" />
     <ClInclude Include="..\Public\DefilerWall.h" />
     <ClInclude Include="..\Public\DefilerWeapon.h" />
+    <ClInclude Include="..\public\DogBone.h" />
+    <ClInclude Include="..\public\DogFan.h" />
     <ClInclude Include="..\Public\KitObject.h" />
     <ClInclude Include="..\Public\Giant.h" />
     <ClInclude Include="..\Public\Giant_Attack.h" />
@@ -475,8 +478,13 @@
     <ClInclude Include="..\public\ProceduralSky.h" />
     <ClInclude Include="..\public\Room_Party.h" />
     <ClInclude Include="..\public\Room_Scott.h" />
+    <ClInclude Include="..\public\ScottScreen.h" />
     <ClInclude Include="..\public\ThugBulkyEnforcer_Parried.h" />
     <ClInclude Include="..\Public\SoftDirectionalOutlineUI.h" />
+    <ClInclude Include="..\Public\UI_AnomalyBase.h" />
+    <ClInclude Include="..\Public\UI_AnomalyGauge.h" />
+    <ClInclude Include="..\Public\UI_AnomalyStack.h" />
+    <ClInclude Include="..\Public\UI_AnomalyStackSlot.h" />
     <ClInclude Include="..\Public\UI_PartyCard.h" />
     <ClInclude Include="..\Public\UI_PartyCardRTDraw.h" />
     <ClInclude Include="..\Public\UI_PartyAvatar.h" />
@@ -871,6 +879,7 @@
     <ClCompile Include="..\Private\BackGroundSpawner.cpp" />
     <ClCompile Include="..\Private\BasicHitEffect.cpp" />
     <ClCompile Include="..\Private\BattleFXFlow.cpp" />
+    <ClCompile Include="..\private\BattleStarter.cpp" />
     <ClCompile Include="..\Private\BattleSystem_Panel.cpp" />
     <ClCompile Include="..\private\CamDebugInput.cpp" />
     <ClCompile Include="..\private\CamParryController.cpp" />
@@ -890,6 +899,8 @@
     <ClCompile Include="..\Private\DefilerState_Other.cpp" />
     <ClCompile Include="..\Private\DefilerWall.cpp" />
     <ClCompile Include="..\Private\DefilerWeapon.cpp" />
+    <ClCompile Include="..\private\DogBone.cpp" />
+    <ClCompile Include="..\private\DogFan.cpp" />
     <ClCompile Include="..\Private\KitObject.cpp" />
     <ClCompile Include="..\Private\Giant.cpp" />
     <ClCompile Include="..\Private\Giant_Attack.cpp" />
@@ -973,8 +984,13 @@
     <ClCompile Include="..\private\ProceduralSky.cpp" />
     <ClCompile Include="..\private\Room_Party.cpp" />
     <ClCompile Include="..\private\Room_Scott.cpp" />
+    <ClCompile Include="..\private\ScottScreen.cpp" />
     <ClCompile Include="..\private\ThugBulkyEnforcer_Parried.cpp" />
     <ClCompile Include="..\Private\SoftDirectionalOutlineUI.cpp" />
+    <ClCompile Include="..\Private\UI_AnomalyBase.cpp" />
+    <ClCompile Include="..\Private\UI_AnomalyGauge.cpp" />
+    <ClCompile Include="..\Private\UI_AnomalyStack.cpp" />
+    <ClCompile Include="..\Private\UI_AnomalyStackSlot.cpp" />
     <ClCompile Include="..\Private\UI_PartyCard.cpp" />
     <ClCompile Include="..\Private\UI_PartyCardRTDraw.cpp" />
     <ClCompile Include="..\Private\UI_PartyAvatar.cpp" />

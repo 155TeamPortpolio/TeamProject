@@ -31,6 +31,7 @@ public:
 
     virtual void                Interact(CGameObject* pObject = nullptr) override;
     virtual OBJECT_HANDLE       Get_InteractHandle() override;
+
 private:
     string m_NextLevelTag{};
 

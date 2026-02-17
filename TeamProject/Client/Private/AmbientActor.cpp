@@ -20,10 +20,6 @@ CAmbientActor::CAmbientActor(const CAmbientActor& rhs)
 HRESULT CAmbientActor::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
-	Add_Component<CAnimator3D>();
-	Add_Component<CSkeletalModel>();
-	Add_Component<CMaterial>();
-	Add_Component<CAudioSource>();
 	return S_OK;
 }
 

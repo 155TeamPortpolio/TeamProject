@@ -11,7 +11,6 @@ class CStateMachine;
 class CDefiler :
     public CEnemy
 {
-
 private:
     CDefiler();
     CDefiler(const CDefiler& rhg);
@@ -41,10 +40,14 @@ public:
     void Change_CollisionMask(_uint iMask = ENUM(COLLISION_GROUP::PLAYER));
     void Release_CollisionMask();
     void Release_AttackCollider();
+    void ChainParry(_bool OnStart);
+    void HideHUD(_bool hide);
 
 public:
     void Hide_MeshGroup(const string& mesh);
     void Show_MeshGroup(const string& mesh);
+    virtual void   Set_Alive(_bool alive) override;
+
 public:
     void Set_CCTPos(_vector3 pos);
     _float3 Get_BipedPos(const string Bone = {"Bip001"});
@@ -59,7 +62,6 @@ public:
 
 public:
     void Parried() override;
-    void StopSlashEff();
 
 private:
     void MoveByTraceMode(_float dt, _float moveScale = 1.f);
@@ -68,9 +70,11 @@ private:
     void Route_AnimEvent(CAnimator3D* animator);
     void Controll_Attack(const string& event);
     void Send_DamageText(_float damage, CHARACTER charaName);
+    void SummonWave();
 
 public:
     void ResetAllFlags();
+    void Start_WaveTime();
 
 private:
     HRESULT Initialize_StateMachine();
@@ -79,6 +83,7 @@ private:
     HRESULT Initialize_Effects();
     HRESULT Create_Colliders();
     _float3 Calc_WorldOffsetWithBip();
+    virtual void  Create_UIEnemyStatus(string boneTag) override;
 
 private:
     CStateMachine<CDefiler>* m_pStateMachine = { nullptr };
@@ -90,14 +95,21 @@ private:
         ENUM(COLLISION_GROUP::COMMON) | 
         ENUM(COLLISION_GROUP::PLAYER) | 
         ENUM(COLLISION_GROUP::PLAYER_ATTACK);
+    _bool m_isRecovering = false;
+
+    _float m_BaseY = {};
 
     _bool m_bDirLockedNear = false;
     _float m_passDampTime = 0.f;
     _vector3 m_passDir = { 0.f, 0.f, 1.f };
     _bool    m_hasPassDir = false;
+    _vector3 m_lastMoveDir = _vector3(0.f, 0.f, 1.f);
+    _bool    m_hasLastMoveDir = false;
+    _vector3 m_lastTargetPos = _vector3(FLT_MAX, FLT_MAX, FLT_MAX);
+    _bool    m_prevPassedTarget = false;
+    _bool    m_passArmed = false; // 근접했을 때만 "패스 판정" 허용
 
-    _bool m_isRecovering = false;
-
+    UI_HANDLE m_BoneHUD;
 public:
     static CDefiler* Create();
     CGameObject* Clone(INIT_DESC* pArg) override;

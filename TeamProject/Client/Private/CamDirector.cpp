@@ -74,6 +74,18 @@ void CCamDirector::SetTarget(OBJECT_HANDLE targetHandle)
     SetSpaceRef(targetHandle);
 }
 
+void CCamDirector::EnterBoss()
+{
+    CameraManager()->SetFov(15.f, 1.f, EaseType::InOutSine);
+    CameraManager()->SetZFar(1500.f);
+}
+
+void CCamDirector::ExitBoss()
+{
+    CameraManager()->SetFov(-15.f, 1.f, EaseType::InOutSine);
+    CameraManager()->SetZFar(500.f);
+}
+
 void CCamDirector::AutoTarget()
 {
     auto handle = GetCurHandle();
@@ -169,7 +181,6 @@ void CCamDirector::Update(_float dt)
 
     UpdateInput(dt);
 }
-
 
 void CCamDirector::StartBattleIntro(CamSeqType type)
 {

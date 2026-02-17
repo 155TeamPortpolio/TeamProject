@@ -18,13 +18,13 @@ void CBattleFXFlow::Initialize_Preset()
 
 	{
 		auto& evade = m_BattleVFXData[ENUM(BATTLE_VFX_TYPE::EVADE)];
-		const _float duration = .8f;
+		const _float duration = 1.f;
 		evade.bCanIntersect = true;
 		evade.fVFXDuration = duration;
-		evade.fBlurDuration = .8f;
+		evade.vTargetColor = { 0.96f,0.98f,0.96f };
 		evade.vStartColor = { 1.f,1.f,1.f };
-		evade.vTargetColor = { 0.1f,0.1f,0.1f };
-		evade.SetTimeData({ duration, 0.4f, 0.4f, 0.4f , EaseType::OutCubic });
+		evade.fBlurDuration = .4f;
+		evade.SetTimeData({ duration, 0.4f, 0.8f, 0.2f , EaseType::OutCubic });
 	}
 
 	{
@@ -32,21 +32,21 @@ void CBattleFXFlow::Initialize_Preset()
 		const _float duration = 1.f;
 		Parry.bCanIntersect = true;
 		Parry.fVFXDuration = duration;
-		Parry.fBlurDuration = .5f;
-		Parry.SetTimeData({ duration, 0.2f, 0.35f, 0.45f, EaseType::OutExpo });
-		Parry.BattleTimeScale[ENUM(BATTLE_OBJ_TYPE::MONSTER)] = 
-			TIME_SCALING({ duration, 0.05f, 0.1f, .2f , EaseType::InOutSine });
-	} 
+		Parry.fBlurDuration = .2f;
+		Parry.SetTimeData({ duration, 0.3f, 0.35f, 0.45f, EaseType::OutCubic });
+		Parry.BattleTimeScale[ENUM(BATTLE_OBJ_TYPE::MONSTER)] = TIME_SCALING({ duration, 0.01f, 0.05f, .2f , EaseType::InOutSine });
+		Parry.BattleTimeScale[ENUM(BATTLE_OBJ_TYPE::CAMERA)] =	TIME_SCALE_DATA{ duration, 1.0f, 0.3f, .0f, EaseType::OutQuint };
+	}
+
 	{
-		auto& Parry = m_BattleVFXData[ENUM(BATTLE_VFX_TYPE::SWITCH)];
-		const _float duration = 2.f;
-		Parry.bCanIntersect = false;
-		Parry.fVFXDuration = duration;
-		Parry.fBlurDuration = .5f;
-		Parry.SetTimeData({ duration, 0.2f, 0.15f, 0.15f, EaseType::OutExpo });
-		Parry.BattleTimeScale[ENUM(BATTLE_OBJ_TYPE::MONSTER)] = 
-			TIME_SCALING({ duration, 0.2f, 0.15f, 0.15f , EaseType::OutExpo });
-	} 
+		auto& Switch = m_BattleVFXData[ENUM(BATTLE_VFX_TYPE::SWITCH)];
+		const _float duration = 2.5f;
+		Switch.bCanIntersect = false;
+		Switch.fVFXDuration = duration;
+		Switch.fBlurDuration = 2.3f;
+		Switch.SetTimeData({ duration, 0.02f, 0.15f, 0.05f, EaseType::InOutSine });
+		Switch.BattleTimeScale[ENUM(BATTLE_OBJ_TYPE::CAMERA)] = TIME_SCALE_DATA{ duration, 1.0f, 0.3f, .0f, EaseType::OutQuint };
+	}
 	{
 		auto& Ultimate = m_BattleVFXData[ENUM(BATTLE_VFX_TYPE::ULTIMATE)];
 		const _float duration = 2.f;
@@ -55,6 +55,7 @@ void CBattleFXFlow::Initialize_Preset()
 		Ultimate.fBlurDuration = duration;
 		Ultimate.BattleTimeScale[ENUM(BATTLE_OBJ_TYPE::MONSTER)] = 
 			TIME_SCALING({ duration, 0.f, 1.f, 0.f , EaseType::InOutSine });
+		Ultimate.BattleTimeScale[ENUM(BATTLE_OBJ_TYPE::CAMERA)] = TIME_SCALE_DATA{ duration, 1.0f, 0.3f, .0f, EaseType::OutQuint };
 	}
 
 	{
@@ -64,6 +65,7 @@ void CBattleFXFlow::Initialize_Preset()
 		NormalHitLack.fVFXDuration = duration;
 		NormalHitLack.fBlurDuration = duration;
 		NormalHitLack.SetTimeData({ duration, 0.1f, 0.5f, .5f , EaseType::InOutSine });
+		NormalHitLack.BattleTimeScale[ENUM(BATTLE_OBJ_TYPE::CAMERA)] = TIME_SCALE_DATA{ duration, 1.0f, 0.3f, .0f, EaseType::OutQuint };
 	}
 
 	{
@@ -73,15 +75,16 @@ void CBattleFXFlow::Initialize_Preset()
 		HardHitLack.fVFXDuration = duration;
 		HardHitLack.fBlurDuration = duration;
 		HardHitLack.SetTimeData({ duration, 0.1f, 0.25f, .25f , EaseType::OutExpo });
+		HardHitLack.BattleTimeScale[ENUM(BATTLE_OBJ_TYPE::CAMERA)] = TIME_SCALE_DATA{ duration, 1.0f, 0.3f, .0f, EaseType::OutQuint };
 	}
 
 	{
 		auto& WipeOut = m_BattleVFXData[ENUM(BATTLE_VFX_TYPE::WIPEOUT)];
-		const _float duration = 4.8f;
+		const _float duration = 4.7f;
 		WipeOut.bCanIntersect = false;
 		WipeOut.fVFXDuration = duration;
 		WipeOut.fBlurDuration = duration;
-		WipeOut.SetTimeData({ duration, 0.0f, 0.3f, .0f , EaseType::OutQuint });
+		WipeOut.SetTimeData({ duration, 0.0f, 0.3f, .02f , EaseType::OutQuint });
 		WipeOut.BattleTimeScale[ENUM(BATTLE_OBJ_TYPE::CAMERA)] = TIME_SCALE_DATA{duration, 1.0f, 0.3f, .0f, EaseType::OutQuint};
 	}
 }
@@ -188,13 +191,24 @@ void CBattleFXFlow::Cancel()
 	m_steps.clear();
 	m_parallelTracks.clear();
 	m_onEnd = {};
+	CPostRenderer* postRenderer = RenderSystem()->GetPostRenderer();
+	if (postRenderer)
+	{
+		postRenderer->GetCommand<CAddictiveColorCommand>()->SetEnable(false);
+		postRenderer->GetCommand<CRadialBlurCommand>()->SetEnable(false);
+		postRenderer->GetCommand<CSaturationCommand>()->SetEnable(false);
+	}
 }
 
 
 void CBattleFXFlow::StartVfx(BATTLE_VFX_TYPE vfxType)
 {
-	if (m_BattleVFX.isRunning && !m_BattleVFX.bCanIntersect)
-		return;
+	if (m_BattleVFX.isRunning)
+	{
+		if (!m_BattleVFX.bCanIntersect)
+			return;
+		Cancel(); 
+	}
 
 	auto& preset = m_BattleVFXData[ENUM(vfxType)];
 
@@ -214,7 +228,7 @@ void CBattleFXFlow::StartVfx(BATTLE_VFX_TYPE vfxType)
 		StartVfx_Parry();
 		break;
 	case BATTLE_VFX_TYPE::SWITCH:
-		StartVfx_Switch();
+		StartVfx_Switch(CHARACTER::JaneDoe,CHARACTER::Miyabi);
 		break;
 	
 	case BATTLE_VFX_TYPE::ULTIMATE:
@@ -230,14 +244,12 @@ void CBattleFXFlow::StartVfx(BATTLE_VFX_TYPE vfxType)
 		StartVfx_WipeOut();
 		break;
 	case BATTLE_VFX_TYPE::CLEAR:
-		StartVfx_Switch();
 		break;
 	default:
 		m_BattleVFX.isRunning = false;
 		break;
 	}
 }
-
 void CBattleFXFlow::StartVfx_Evade()
 {
 	Clear(false);
@@ -245,52 +257,94 @@ void CBattleFXFlow::StartVfx_Evade()
 	auto& preset = m_BattleVFXData[ENUM(BATTLE_VFX_TYPE::EVADE)];
 	AddParallelTimeScaleAll(preset);
 
-	CPostRenderer* pPost = RenderSystem()->GetPostRenderer();
+	m_BattleVFX.isRunning = true;
+	m_BattleVFX.fDuration = max(preset.fVFXDuration, 0.01f);
+	m_BattleVFX.fCurPos = 0.f;
+	m_BattleVFX.vNowColor = preset.vStartColor;
 
-	AddCall([this, preset,pPost]() {
-		pPost->GetCommand<CSaturationCommand>()
-			->SetIntensity(.4f)
-			->SetSaturationType(ENUM(SATURATIONTYPE::FULL))
-			->SetDuration(preset.fVFXDuration)
-			->SetEaseType(EaseType::OutBack)
-			->SetEnable(true);
-		});
+	CPostRenderer* postRenderer = RenderSystem()->GetPostRenderer();
 
-	AddCall([this, preset, pPost]() {
-		pPost->GetCommand<CRadialBlurCommand>()
-			->SetDuration(preset.fBlurDuration)
-			->SetEaseType(EaseType::OutSine)
-			->SetIntensity(0.1)
-			->SetEnable(true);
-		});
+	const _float totalDurationSeconds = m_BattleVFX.fDuration;
+	const _float halfDurationSeconds = totalDurationSeconds * 0.3f;
+	const _float blurDurationSeconds = max(totalDurationSeconds - halfDurationSeconds, 0.01f);
 
-	AddStep(
-		[this, preset, elapsed = 0.f, duration = m_BattleVFX.fDuration](_float dt) mutable -> _bool
+	// ¾ÖµðÆ¼ºê/»õÃò·¹ÀÌ¼Ç: ½ÃÀÛ¿¡ ÄÑ°í, ³¡¿¡¸¸ ²ö´Ù
+	AddCall([this, postRenderer, totalDurationSeconds]()
 		{
-			elapsed += dt;
-			_float time01 = 1.f;
-			if (duration > 0.f)
-				time01 = clamp(elapsed / duration, 0.f, 1.f);
+			if (!postRenderer) return;
 
-			_float normalizedT = 1.f - time01;
-			_float pingpongT = (normalizedT < 0.5f) ? (normalizedT * 2.f) : (2.f - normalizedT * 2.f);
-			_float easeT = Math::ApplyEase(EaseType::OutCubic, pingpongT);
-			_vector startColor = XMLoadFloat3(&preset.vStartColor);
-			_vector targetColor = XMLoadFloat3(&preset.vTargetColor);
-			XMStoreFloat3(&m_BattleVFX.vNowColor, XMVectorLerp(startColor, targetColor, easeT));
+			postRenderer->GetCommand<CAddictiveColorCommand>()
+				->SetAddictiveColor(&m_BattleVFX.vNowColor)
+				->SetEnable(true);
 
-			m_BattleVFX.fCurPos = duration * time01;
+			postRenderer->GetCommand<CSaturationCommand>()
+				->SetIntensity(1.f)
+				->SetSaturationType(ENUM(SATURATIONTYPE::FULL))
+				->SetDuration(totalDurationSeconds)
+				->SetEaseType(EaseType::InOutCubic)
+				->SetEnable(true);
+		});
 
-			return elapsed < duration;
-		}
-	);
+	// 0 ~ 0.5 : start -> target
+	AddStep([this, preset, elapsedSeconds = 0.f, halfDurationSeconds](_float deltaTime) mutable -> _bool
+		{
+			elapsedSeconds += deltaTime;
 
-	AddCall([this, preset, pPost]() {
-		pPost->GetCommand<CAddictiveColorCommand>()
-			->SetEnable(false);
-		m_BattleVFX.fCurPos = 0.f;
-		m_BattleVFX.vNowColor = {};
-		m_BattleVFX.isRunning = false;
+			const _float time01 = clamp(elapsedSeconds / max(halfDurationSeconds, 0.01f), 0.f, 1.f);
+			const _float eased01 = Math::ApplyEase(EaseType::OutCubic, time01);
+
+			_vector startColorVec = XMLoadFloat3(&preset.vStartColor);
+			_vector targetColorVec = XMLoadFloat3(&preset.vTargetColor);
+			XMStoreFloat3(&m_BattleVFX.vNowColor, XMVectorLerp(startColorVec, targetColorVec, eased01));
+
+			m_BattleVFX.fCurPos = halfDurationSeconds * time01;
+			return elapsedSeconds < halfDurationSeconds;
+		});
+
+	// 0.5 ½ÃÁ¡¿¡ ºí·¯ ½ÃÀÛ (¾ÖµðÆ¼ºê´Â ²ôÁö ¾ÊÀ½)
+	AddCall([postRenderer, blurDurationSeconds]()
+		{
+			if (!postRenderer) return;
+
+			postRenderer->GetCommand<CRadialBlurCommand>()
+				->SetDuration(blurDurationSeconds)
+				->SetEaseType(EaseType::OutSine)
+				->SetIntensity(0.1f)
+				->SetEnable(true);
+		});
+
+	// 0.5 ~ 1.0 : ÇöÀç »ö -> (1,1,1) ·Î º¹±Í
+	AddStep([this, elapsedSeconds = 0.f, blurDurationSeconds, startFadeColor = _float3{}](_float deltaTime) mutable -> _bool
+		{
+			if (elapsedSeconds == 0.f)
+				startFadeColor = m_BattleVFX.vNowColor;
+
+			elapsedSeconds += deltaTime;
+
+			const _float time01 = clamp(elapsedSeconds / max(blurDurationSeconds, 0.01f), 0.f, 1.f);
+			const _float eased01 = Math::ApplyEase(EaseType::OutSine, time01);
+
+			_float3 neutralColor = { 1.f, 1.f, 1.f }; 
+			_vector fromColorVec = XMLoadFloat3(&startFadeColor);
+			_vector toColorVec = XMLoadFloat3(&neutralColor);
+
+			XMStoreFloat3(&m_BattleVFX.vNowColor, XMVectorLerp(fromColorVec, toColorVec, eased01));
+			return elapsedSeconds < blurDurationSeconds;
+		});
+
+	AddCall([this, postRenderer]()
+		{
+			m_BattleVFX.vNowColor = { 1.f, 1.f, 1.f }; 
+			if (postRenderer)
+			{
+				postRenderer->GetCommand<CAddictiveColorCommand>()->SetEnable(false);
+				postRenderer->GetCommand<CRadialBlurCommand>()->SetEnable(false);
+				postRenderer->GetCommand<CSaturationCommand>()->SetEnable(false);
+			}
+
+			m_BattleVFX.fCurPos = 0.f;
+			m_BattleVFX.vNowColor = {};
+			m_BattleVFX.isRunning = false;
 		});
 
 	Start(nullptr);
@@ -299,8 +353,8 @@ void CBattleFXFlow::StartVfx_Evade()
 void CBattleFXFlow::StartVfx_Parry()
 {
 	Clear(false);
-
 	auto& preset = m_BattleVFXData[ENUM(BATTLE_VFX_TYPE::PARRY)];
+	
 	AddParallelTimeScaleAll(preset);
 
 	//AddCall([this, preset]() {CamDirector()->StartParry(); });
@@ -345,39 +399,44 @@ void CBattleFXFlow::StartVfx_Ultimate()
 	Start(nullptr);
 }
 
-void CBattleFXFlow::StartVfx_Switch()
+void CBattleFXFlow::StartVfx_Switch(CHARACTER eLeft, CHARACTER eRight)
 {
 	Clear(false);
-
+	//2.5f;
 	auto& preset = m_BattleVFXData[ENUM(BATTLE_VFX_TYPE::SWITCH)];
+	CPostRenderer* postRenderer = RenderSystem()->GetPostRenderer();
+	const _float totalDuration = max(preset.fVFXDuration, 0.01f);
+	const _float blurDuration = min(preset.fBlurDuration, totalDuration);
+	if (!postRenderer) return;
 	AddParallelTimeScaleAll(preset);
-
-	CPostRenderer* pPost = RenderSystem()->GetPostRenderer();
-
-	AddCall([this, preset, pPost]() {
-		pPost->GetCommand<CSaturationCommand>()
+	AddCall([postRenderer, totalDuration]()
+	{
+		postRenderer->GetCommand<CSaturationCommand>()
 			->SetIntensity(1.f)
 			->SetSaturationType(ENUM(SATURATIONTYPE::STATIC))
-			->SetDuration(preset.fVFXDuration)
-			->SetEaseType(EaseType::OutBack)
+			->SetDuration(totalDuration)
+			->SetEaseType(EaseType::InOutCubic)
 			->SetEnable(true);
+	});
+
+	AddCall([this, eLeft, eRight](){UIDirector()->Show_Switch(eLeft,eRight);});
+	AddWait(0.3f);
+	AddCall([postRenderer, blurDuration]()
+		{
+			postRenderer->GetCommand<CRadialBlurCommand>()
+				->SetDuration(blurDuration)
+				->SetEaseType(EaseType::InOutSine)
+				->SetIntensity(0.15f)
+				->SetEnable(true);
 		});
 
-	AddCall([this, preset, pPost]() {
-		pPost->GetCommand<CRadialBlurCommand>()
-			->SetDuration(preset.fBlurDuration)
-			->SetEaseType(EaseType::OutSine)
-			->SetIntensity(0.1)
-			->SetEnable(true);
-		});
-	AddCall([this]() {
-		UIDirector()->Show_Switch();
-		});
-	AddWait(preset.fVFXDuration);
-	AddCall([this, preset, pPost]() {
-		m_BattleVFX.fCurPos = 0.f;
-		m_BattleVFX.vNowColor = {};
-		m_BattleVFX.isRunning = false;
+	AddWait(totalDuration - 0.2f);
+
+	AddCall([this]()
+		{
+			m_BattleVFX.fCurPos = 0.f;
+			m_BattleVFX.vNowColor = {};
+			m_BattleVFX.isRunning = false;
 		});
 
 	Start(nullptr);
@@ -388,10 +447,40 @@ void CBattleFXFlow::StartVfx_WipeOut()
 	Clear(false);
 
 	auto& preset = m_BattleVFXData[ENUM(BATTLE_VFX_TYPE::WIPEOUT)];
+	CPostRenderer* postRenderer = RenderSystem()->GetPostRenderer();
+
+	const _float totalDuration = max(preset.fVFXDuration, 0.01f);
+	const _float blurDuration = min(preset.fBlurDuration, totalDuration);
+	(void)blurDuration;
+
+	auto defaultNoiseTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, "Eff_Noise_052.png");
+	using NoiseTextureType = decltype(defaultNoiseTexture);
+	auto ChooseGlitchEase = [](_float glitchDuration)
+		{
+			if (glitchDuration <= 0.08f) return EaseType::OutQuad;
+			if (glitchDuration <= 0.18f) return EaseType::OutCubic;
+			return  EaseType::OutExpo;
+		};
+
+	auto RequestGlitch = [postRenderer, ChooseGlitchEase](_float glitchIntensity, _float glitchDuration, NoiseTextureType noiseTexture)
+		{
+			if (!postRenderer) return;
+			if (!noiseTexture) return;
+
+			postRenderer->GetCommand<CGlitchCommand>()
+				->SetDuration(glitchDuration)
+				->SetIntensity(glitchIntensity)
+				->SetNoiseTexture(noiseTexture)
+				->SetEaseType(ChooseGlitchEase(glitchDuration))
+				->SetEnable(true);
+		};
+
 	AddParallelTimeScaleAll(preset);
-	CPostRenderer* pPost = RenderSystem()->GetPostRenderer();
-	AddCall([this, preset, pPost]() {
-		pPost->GetCommand<CSaturationCommand>()
+
+	AddCall([this, preset, postRenderer]() {
+		if (!postRenderer) return;
+
+		postRenderer->GetCommand<CSaturationCommand>()
 			->SetIntensity(1.f)
 			->SetSaturationType(ENUM(SATURATIONTYPE::SKINNED))
 			->SetDuration(preset.fVFXDuration)
@@ -399,15 +488,67 @@ void CBattleFXFlow::StartVfx_WipeOut()
 			->SetEnable(true);
 		});
 
-	//pPost->GetCommand<CGlitchCommand>()
-	//	->SetDuration()
-	//	->
-
 	AddCall([this]() {
-		CamDirector()->BeginWipeOut(); 
+		CamDirector()->BeginWipeOut();
 		UIDirector()->Show_Wipeout();
 		UIDirector()->Hide_HUD(CUIDirector::BATTLE);
 		});
+
+	struct GlitchKeySec
+	{
+		_float timeSec;      // ¹ßµ¿ ½ÃÁ¡(ÃÊ)
+		_float intensity;    // °­µµ
+		_float durSec;       // Áö¼Ó ½Ã°£(ÃÊ)
+		const char* noiseKey; // ³ëÀÌÁî ÅØ½ºÃ³ Å°(¼±ÅÃ)
+	};
+
+	const GlitchKeySec glitchKeys[] =
+	{
+		{ 0.00f, 4.2f, 0.06f, "Eff_Noise_119.png" },
+		{ 0.04f, 2.2f, 0.09f, "Eff_Noise_045_YC_01.png" },
+		{ 0.32f, 2.2f, 0.26f, "Eff_Noise_086_LKJ_01.png" },
+		{ 0.35f, 3.2f, 0.06f, "Eff_Noise_119.png" },
+		{ 1.32f, 4.2f, 0.26f, "Eff_Noise_086_LKJ_01.png" },
+		{ 2.02f, 2.2f, 0.06f, "Eff_Noise_003 (1).png" },
+		{ 2.22f, 2.2f, 0.06f, "Eff_Noise_003 (1).png" },
+		{ 2.35f, 3.2f, 0.26f, "Eff_Noise_119.png" },
+		{ 3.10f, 2.2f, 0.06f, "Eff_Noise_003 (1).png" },
+		{ 3.50f, 4.2f, 0.26f, "Eff_Noise_045_YC_01.png" },
+		{ 4.00f, 6.2f, 0.06f, "Eff_Noise_003 (1).png" },
+		{ 4.33f, 3.2f, 0.06f, "Eff_Noise_052.png" },
+		{ 4.35f, 6.2f, 0.26f, "Eff_Noise_086_LKJ_01.png" },
+	};
+
+	_float accumulatedTimeSec = 0.f;
+	const _uint glitchKeyCount = (_uint)(sizeof(glitchKeys) / sizeof(glitchKeys[0]));
+
+	for (_uint keyIndex = 0; keyIndex < glitchKeyCount; ++keyIndex)
+	{
+		const _float targetTimeSec = clamp(glitchKeys[keyIndex].timeSec, 0.f, totalDuration);
+		const _float waitTimeSec = max(0.f, targetTimeSec - accumulatedTimeSec);
+
+		AddWait(waitTimeSec);
+		accumulatedTimeSec += waitTimeSec;
+
+		const _float glitchIntensity = glitchKeys[keyIndex].intensity;
+		const _float glitchDurationSec = max(0.01f, min(glitchKeys[keyIndex].durSec, totalDuration));
+
+		// Å°¿¡ noiseKey°¡ ÀÖÀ¸¸é ±×°É ·Îµå, ¾øÀ¸¸é ±âº» ÅØ½ºÃ³ »ç¿ë
+		const char* noiseKeyForThis = glitchKeys[keyIndex].noiseKey;
+		NoiseTextureType noiseTextureForThis =
+			(noiseKeyForThis && noiseKeyForThis[0] != '\0')
+			? ResourceManager()->Load_Texture(G_GlobalLevelKey, noiseKeyForThis)
+			: defaultNoiseTexture;
+
+		AddCall([RequestGlitch, glitchIntensity, glitchDurationSec, noiseTextureForThis]() mutable
+			{
+				RequestGlitch(glitchIntensity, glitchDurationSec, noiseTextureForThis);
+			});
+	}
+
+	if (accumulatedTimeSec < totalDuration)
+		AddWait(totalDuration - accumulatedTimeSec);
+
 	AddWait(preset.fVFXDuration);
 	AddCall([this, preset]() {
 		m_BattleVFX.fCurPos = 0.f;
@@ -415,6 +556,7 @@ void CBattleFXFlow::StartVfx_WipeOut()
 		m_BattleVFX.isRunning = false;
 		CamDirector()->EndWipeOut();
 		});
+
 	Start(nullptr);
 }
 
@@ -505,8 +647,6 @@ void CBattleFXFlow::AddParallelTimeScale(BATTLE_OBJ_TYPE type, TIME_SCALING& tim
 					_float t01 = 1.f;
 					if (data.fDuration > 0.f)
 						t01 = clamp(elapsed / data.fDuration, 0.f, 1.f);
-
-					// TIME_SCALINGï¿½ï¿½ EvalScale01 ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½×´ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 					TIME_SCALING tmp(data);
 					const _float scale = tmp.EvalScale01(t01);
 
