@@ -39,8 +39,8 @@ void CamDebugInput::UpdateInput(_float dt)
 
 void CamDebugInput::JehyunInput(_float dt)
 {
-    CMonitorGate gate;
-    if (!gate.Pass()) return;
+    //CMonitorGate gate;
+    //if (!gate.Pass()) return;
 
     auto& cam = *CamDirector();
     auto& mgr = *CameraManager();
@@ -48,12 +48,10 @@ void CamDebugInput::JehyunInput(_float dt)
     if (InputDevice()->Key_Tap(VK_F3))
     {
         cam.EnterBoss();
-        //cam.StartParry();
     }
 
     if (InputDevice()->Key_Tap(VK_F4))
     {
         cam.ExitBoss();
-        //cam.EndParry();
     }
 }

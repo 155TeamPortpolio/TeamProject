@@ -27,6 +27,7 @@ HRESULT CCamSequencePlayer::Initialize(COMPONENT_DESC* pArg)
     eval.evaluator->SetFovEvaluator(eval.fov);
 
     seq = nullptr;
+
     playback.playing = false;
     playback.playTime = 0.f;
     playback.timeScale = 1.f;
@@ -56,6 +57,7 @@ void CCamSequencePlayer::Play()
 void CCamSequencePlayer::Stop(_bool resetTime)
 {
     playback.playing = false;
+
     if (resetTime)
         playback.playTime = 0.f;
 }
@@ -82,17 +84,23 @@ void CCamSequencePlayer::SetApplyEnabled(_bool enabled)
 {
     apply.applyEnabled = enabled;
 
-    if (!apply.applyEnabled || !seq) return;
+    if (!apply.applyEnabled)
+        return;
+
+    if (!seq)
+        return;
 
     SetTime(playback.playTime);
 }
 
 void CCamSequencePlayer::Update(_float dt)
 {
-    if (!seq || !apply.applyEnabled) return;
+    if (!seq || !apply.applyEnabled)
+        return;
 
     const _bool hasKeys = !seq->keyframes.empty();
-    if (hasKeys) RebuildIfNeeded();
+    if (hasKeys)
+        RebuildIfNeeded();
 
     const float dur = GetPlaybackDur();
 
@@ -113,7 +121,7 @@ void CCamSequencePlayer::Update(_float dt)
                 playback.playing = false;
             }
             else if (playback.playTime < 0.f)
-                playback.playTime = 0.f;
+                playback.playing = 0.f;
         }
     }
 
@@ -200,13 +208,10 @@ void CCamSequencePlayer::ApplyPose(const CamPose& pose)
         finalRot.Normalize();
     }
 
-    auto delta = (Vector3(apply.transform->Get_Pos()) - finalPos).Length();
-
     apply.transform->Set_Pos(_vector3(finalPos.x, finalPos.y, finalPos.z));
     apply.transform->Set_Quaternion(_vector4(finalRot.x, finalRot.y, finalRot.z, finalRot.w));
 
-    if (apply.cam && hasKeys)
-        apply.cam->Set_FOV(pose.fov);
+    apply.cam->Set_FOV(pose.fov);
 }
 
 _float CCamSequencePlayer::GetPlaybackDur() const
@@ -235,12 +240,13 @@ void CCamSequencePlayer::ApplyAtSampleTime(_float sampleTime)
         pose.fov = apply.cam->Get_FOV();
         pose.roll = 0.f;
     }
+
     ApplyPose(pose);
 }
 
 CCamSequencePlayer* CCamSequencePlayer::Create()
 {
-    auto inst = new CCamSequencePlayer(); 
+    auto inst = new CCamSequencePlayer();
     if (FAILED(inst->Initialize_Prototype()))
     {
         MSG_BOX("CamSequencePlayer Create Failed : CamSequencePlayer");
