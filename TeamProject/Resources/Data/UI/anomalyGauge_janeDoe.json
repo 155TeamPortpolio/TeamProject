@@ -2,10 +2,10 @@
     "alive": true,
     "instanceName": "anomalyGauge_janeDoe",
     "transform": {
-        "anchor": 0,
+        "anchor": 5,
         "anchorOffset": [
-            50.0,
-            7.5
+            0.0,
+            0.0
         ],
         "size": [
             100.0,
@@ -75,7 +75,7 @@
                 1.0,
                 1.0,
                 1.0,
-                0.7568627595901489
+                1.0
             ],
             "stencilMode": 0,
             "pass": "NineSlice",
@@ -288,7 +288,7 @@
                     "colorTexMix": 1.0,
                     "colorUVUse": 1,
                     "colorUVOffset": [
-                        0.5108717679977417,
+                        0.40247243642807007,
                         0.0
                     ],
                     "colorUVScale": [
@@ -726,7 +726,7 @@
                     "colorTexMix": 1.0,
                     "colorUVUse": 1,
                     "colorUVOffset": [
-                        0.5233776569366455,
+                        0.6317782402038574,
                         0.0
                     ],
                     "colorUVScale": [

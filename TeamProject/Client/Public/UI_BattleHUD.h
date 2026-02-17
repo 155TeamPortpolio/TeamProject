@@ -20,6 +20,7 @@ private:
 		SPECIALARROW1, SPECIALARROW2, SPECIALARROW3,
 		ULTIMATE1,     ULTIMATE2,     ULTIMATE3,
 		ULTIMATEICON1, ULTIMATEICON2, ULTIMATEICON3,
+		ANOMALY1,		ANOMALY2,		ANOMALY3,
 		CUR_HP_TEXT,   MAX_HP_TEXT,
 		ACTION,
 		END
@@ -34,6 +35,7 @@ private:
 		"specialArrow1", "specialArrow2", "specialArrow3",
 		"ultimate1",     "ultimate2",     "ultimate3",
 		"ultimateIcon1", "ultimateIcon2", "ultimateIcon3",
+		"anomaly1", "anomaly2", "anomaly3",
 		"curHpText",     "maxHpText",
 		"action",
 	};
@@ -47,6 +49,7 @@ private:
 	inline static constexpr CHILD  SPECIALARROW_CHILD[] = { SPECIALARROW1, SPECIALARROW2, SPECIALARROW3 };
 	inline static constexpr CHILD  ULTIMATE_CHILD[]     = { ULTIMATE1, ULTIMATE2, ULTIMATE3 };
 	inline static constexpr CHILD  ULTIMATEICON_CHILD[] = { ULTIMATEICON1, ULTIMATEICON2, ULTIMATEICON3 };
+	inline static constexpr CHILD  ANOMALY_CHILD[]		= { ANOMALY1, ANOMALY2, ANOMALY3 };
 
 	inline static const string ICONTEXTURES[ENUM(CHARACTER::END)] = { "IconRoleGeneral24.png", "IconRoleGeneral09.png", "IconRoleGeneral13.png" };
 
@@ -78,14 +81,18 @@ private:
 
 	GAUGE_DELAY_DESC	m_hpBack[ROLE_COUNT] = {};
 
+	map<CHARACTER, class CUI_Object*> m_Anomalies;
+
 private:
 	const _int			m_iPlayerHPWidth = 5;
 	const _int			m_iBossHPWidth   = 2;
 
 private:
-	void Add_PartObject( const string& strLevelKey, const string& strPrototypeTag, const string& strInstanceName, CHILD child, _float2 vOffset = _float2(), UI_DESC* pDesc = {});
 	void Cache_Children();
-	 
+
+	void Add_PartObject( const string& strLevelKey, const string& strPrototypeTag, const string& strInstanceName, CHILD child, _float2 vOffset = _float2(), UI_DESC* pDesc = {});
+	void Add_Anomaly(CHARACTER eCharacter, const string& strLevelKey, const string& strPrototypeTag, const string& strInstanceName);
+
 	void Set_Values(UI_PLAYER_STATUS_DESC desc);
 	void Set_Special(_int iIndex, _float fRatio, _float fThresRatio);
 	void Set_UltimateIcon(_int iIndex, _float fRatio);
@@ -105,7 +112,7 @@ private:
 public:
 	static  CGameObject* Create();
 	virtual CGameObject* Clone(INIT_DESC* pArg = {}) override;
-	virtual void Free() { __super::Free(); }
+	virtual void Free() override;
 };
 
 NS_END

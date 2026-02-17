@@ -21,14 +21,18 @@ public:
 
 private:
 	vector<class CUI_AnomalyStackSlot*> m_pSlots = {};
+	const _int m_iSlotCount = 6;
 
 private:
 	HRESULT Ready_Slots();
 
+	void Increase(_uint iCount);
+	void Decrease(_uint iCount);
+
 public:
 	static  CGameObject* Create();
 	virtual CGameObject* Clone(INIT_DESC* pArg = {}) override;
-	virtual void Free() { __super::Free(); }
+	virtual void Free() override;
 };
 
 NS_END

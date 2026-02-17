@@ -3,12 +3,12 @@
 
 NS_BEGIN(Client)
 
-class CUI_ZeroEntranceLogo : public CUI_EntranceLogo
+class CUI_NotoriousHuntEntranceLogo : public CUI_EntranceLogo
 {
 private:
-    CUI_ZeroEntranceLogo();
-    CUI_ZeroEntranceLogo(const CUI_ZeroEntranceLogo& rhs);
-    virtual ~CUI_ZeroEntranceLogo() DEFAULT;
+    CUI_NotoriousHuntEntranceLogo();
+    CUI_NotoriousHuntEntranceLogo(const CUI_NotoriousHuntEntranceLogo& rhs);
+    virtual ~CUI_NotoriousHuntEntranceLogo() DEFAULT;
 
 public:
     virtual HRESULT Initialize_Prototype() override;
@@ -18,9 +18,7 @@ public:
     virtual void    Update(_float dt) override;
     virtual void    Late_Update(_float dt) override;
 
-    virtual void Interact(class CGameObject* pObject = nullptr) override;
-
-public:	
+public:
     static  CGameObject* Create();
     virtual CGameObject* Clone(INIT_DESC* pArg = {}) override;
     virtual void Free() override;

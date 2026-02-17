@@ -386,10 +386,24 @@ void CBattlePlayer::Request_ComboAttack()
     if (m_bComboSelect)
         return;
 
+    _int iNext = Find_SwitchIndex(true);
+    _int iPrev = Find_SwitchIndex(false);
+
+    CHARACTER eLeft, eRight;
+    if (iNext != -1 && iPrev != -1 && iNext != iPrev)
+    {
+        eLeft = m_BattleCharacters[iNext]->Get_CharacterName();
+        eRight = m_BattleCharacters[iPrev]->Get_CharacterName();
+    }
+    else
+    {
+        _int iValid = (iNext != -1) ? iNext : iPrev;
+        eLeft = m_BattleCharacters[iValid]->Get_CharacterName();
+        eRight = eLeft;
+    }
+
     m_bComboSelect = true;
-    // 타임스케일 2초간 느리게 하기 몬스터, 캐릭터
-    BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::SWITCH);
-    //UIDirector()->Show_Switch();
+    BattleSystem()->StartSwitch(eLeft, eRight);
 }
 
 void CBattlePlayer::Execute_ComboAttack(_bool bNext)
@@ -422,12 +436,14 @@ void CBattlePlayer::Execute_ComboAttack(_bool bNext)
     m_fSwitchTimer = m_fSwitchCoolDown;
     m_fComboSelectTimer = 0.f;
     m_bComboSelect = false;
+    BattleSystem()->EndSwitch();
 }
 
 void CBattlePlayer::Cancel_ComboAttack()
 {
     m_fComboSelectTimer = 0.f;
     m_bComboSelect = false;
+    BattleSystem()->EndSwitch();
 }
 
 void CBattlePlayer::Start_ChainParry()

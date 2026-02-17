@@ -248,6 +248,7 @@ void CDefilerState_Attack_01_02::Enter(CDefiler* pOwner)
 		.Loop(false)
 		.Apply();
 
+	pOwner->ChainParry(true);
 }
 
 void CDefilerState_Attack_01_02::Update(CDefiler* pOwner, _float dt)
@@ -258,6 +259,7 @@ void CDefilerState_Attack_01_02::Update(CDefiler* pOwner, _float dt)
 
 void CDefilerState_Attack_01_02::Exit(CDefiler* pOwner)
 {
+	pOwner->ChainParry(false);
 }
 
 void CDefilerState_Attack_01_02::Update_Effects(CDefiler* pOwner)
@@ -277,6 +279,8 @@ void CDefilerState_Attack_01_01_P2::Enter(CDefiler* pOwner)
 		.Speed(1.f)
 		.Loop(false)
 		.Apply();
+
+	pOwner->ChainParry(true);
 }
 
 void CDefilerState_Attack_01_01_P2::Update(CDefiler* pOwner, _float dt)
@@ -287,6 +291,7 @@ void CDefilerState_Attack_01_01_P2::Update(CDefiler* pOwner, _float dt)
 
 void CDefilerState_Attack_01_01_P2::Exit(CDefiler* pOwner)
 {
+	pOwner->ChainParry(false);
 }
 
 void CDefilerState_Attack_01_01_P2::Update_Effects(CDefiler* pOwner)
@@ -587,6 +592,7 @@ void CDefilerState_Attack_07::Enter(CDefiler* pOwner)
 		.Speed(1.f)
 		.Loop(false)
 		.Apply();
+	pOwner->ChainParry(true);
 }
 
 void CDefilerState_Attack_07::Update(CDefiler* pOwner, _float dt)
@@ -596,6 +602,7 @@ void CDefilerState_Attack_07::Update(CDefiler* pOwner, _float dt)
 
 void CDefilerState_Attack_07::Exit(CDefiler* pOwner)
 {
+	pOwner->ChainParry(false);
 }
 
 void CDefilerState_Attack_08_01_Start::Enter(CDefiler* pOwner)
@@ -630,6 +637,7 @@ void CDefilerState_Attack_08_01_Loop::Enter(CDefiler* pOwner)
 		.Speed(1.f)
 		.Loop(true)
 		.Apply();
+	pOwner->ChainParry(true);
 }
 
 void CDefilerState_Attack_08_01_Loop::Update(CDefiler* pOwner, _float dt)
@@ -651,6 +659,7 @@ void CDefilerState_Attack_08_01_Loop::Exit(CDefiler* pOwner)
 {
 	m_Interval = 0.f;
 	m_Elapsed = 0.f;
+	pOwner->ChainParry(false);
 }
 
 void CDefilerState_Attack_08_01_End::Enter(CDefiler* pOwner)

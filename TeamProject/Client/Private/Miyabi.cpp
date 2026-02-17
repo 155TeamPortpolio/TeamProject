@@ -108,6 +108,7 @@ void CMiyabi::Awake()
 
 	Get_Component<CSkeletalModel>()->Hide_MehsByName("0012_Unagi_PET_mesh0012");
 	Set_WeaponEffectMesh(false);
+
 }
 
 void CMiyabi::Priority_Update(_float dt)
@@ -115,7 +116,6 @@ void CMiyabi::Priority_Update(_float dt)
 	__super::Priority_Update(dt);
 	if (!m_BoneMatrices.empty() && m_pCCT->Get_CompActive())
 		Update_MotionBlurQueue();
-
 }
 
 void CMiyabi::Update(_float dt)
@@ -219,12 +219,22 @@ void CMiyabi::Increase_Frost(_uint iFrost)
 {
 	m_iFrost += iFrost;
 	m_iFrost = min(m_iFrost, MAX_FROST);
+
+	UI_ANOMALY_MIYABI desc;
+	desc.iCount = m_iFrost;
+	desc.isIncreasing = true;
+	EventSystem()->Broadcast<UI_ANOMALY_MIYABI>(desc);
 }
 
 void CMiyabi::Decrease_Frost(_uint iFrost)
 {
 	m_iFrost -= iFrost;
 	m_iFrost = max(m_iFrost, 0.f);
+
+	UI_ANOMALY_MIYABI desc;
+	desc.iCount = m_iFrost;
+	desc.isIncreasing = false;
+	EventSystem()->Broadcast<UI_ANOMALY_MIYABI>(desc);
 }
 
 void CMiyabi::Reset_State()

@@ -39,6 +39,19 @@ typedef struct tagUIActionDesc {
 typedef struct tagUIActionPrimaryDesc {
 	UI_ACTION_PRIMARY_MODE eMode = {};		// 현재 primary의 액션 모드 (attack, interact)
 }UI_ACTION_PRIMARY_DESC;
+
+/* 이상게이지 (미야비) */
+typedef struct tagAnomalyMiyabiDesc {
+	_int iCount = {};
+	_bool isIncreasing = {};
+}UI_ANOMALY_MIYABI;
+
+/* 이상게이지 (제인도) */
+typedef struct tagAnomalyJaneDoeDesc {
+	_float fRatio = {};
+	_bool isOn = {};
+}UI_ANOMALY_JANEDOE;
+
 #pragma endregion
 
 #pragma region TargetLockOn

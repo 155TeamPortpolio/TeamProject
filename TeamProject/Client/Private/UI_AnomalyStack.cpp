@@ -3,6 +3,7 @@
 
 #include "GameInstance.h"
 #include "ObjectContainer.h"
+#include "EventListener.h"
 
 #include "UI_AnomalyStackSlot.h"
 
@@ -10,6 +11,8 @@ HRESULT CUI_AnomalyStack::Initialize_Prototype()
 {
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
+
+    Add_Component<CEventListener>();
 
     PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_AnomalyStackSlot", CUI_AnomalyStackSlot::Create());
 
@@ -23,11 +26,21 @@ HRESULT CUI_AnomalyStack::Initialize(INIT_DESC* pArg)
 
     Ready_Slots();
 
+    // 이벤트 : UI_ANOMALY_MIYABI
+    Get_Component<CEventListener>()->Add_Listener<UI_ANOMALY_MIYABI>([&](const UI_ANOMALY_MIYABI& desc)
+        {
+            if(desc.isIncreasing)
+                Increase(desc.iCount);
+            else
+                Decrease(desc.iCount);
+        });
+
 	return S_OK;
 }
 
 void CUI_AnomalyStack::Awake()
 {
+    __super::Awake();
 }
 
 void CUI_AnomalyStack::Update(_float dt)
@@ -37,14 +50,13 @@ void CUI_AnomalyStack::Update(_float dt)
 
 HRESULT CUI_AnomalyStack::Ready_Slots()
 {
-    _float fSlotWidth = 15.f;   // 예시
+    _float fSlotWidth = 15.f;
     _float fSpacing = 2.f;
-    _int iCount = 6;
 
-    _float fTotalWidth = fSlotWidth * iCount + fSpacing * (iCount - 1);
+    _float fTotalWidth = fSlotWidth * m_iSlotCount + fSpacing * (m_iSlotCount - 1);
     _float fStartX = -fTotalWidth * 0.5f + fSlotWidth * 0.5f;
 
-    for (_int i = 0; i < iCount; ++i)
+    for (_int i = 0; i < m_iSlotCount; ++i)
     {
         auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_AnomalyStackSlot" }).Build("slot");
         if (!pObj)
@@ -55,9 +67,38 @@ HRESULT CUI_AnomalyStack::Ready_Slots()
         pObj->Set_AnchorOffset({ fX, 0.f});
 
         Get_Component<CObjectContainer>()->Add_Child(pObj);
+        m_pSlots.push_back(dynamic_cast<CUI_AnomalyStackSlot*>(pObj));
     }
 
     return S_OK;
+}
+
+void CUI_AnomalyStack::Increase(_uint iCount)
+{
+    for (_int i = 0; i < m_iSlotCount; ++i)
+    {
+        if (!m_pSlots[i])
+            continue;
+
+        if (iCount == m_iSlotCount)
+            m_pSlots[i]->PlayEffect();
+
+        if (iCount > i)
+            m_pSlots[i]->Activate(true);
+    }
+}
+
+void CUI_AnomalyStack::Decrease(_uint iCount)
+{
+    for (_int i = 0; i < m_iSlotCount; ++i)
+    {
+        if (!m_pSlots[i])
+            continue;
+
+        m_pSlots[i]->StopEffect();
+        if (iCount <= i)
+            m_pSlots[i]->Activate(false);
+    }
 }
 
 CGameObject* CUI_AnomalyStack::Create()
@@ -80,4 +121,11 @@ CGameObject* CUI_AnomalyStack::Clone(INIT_DESC* pArg)
         Safe_Release(pInstance);
     }
     return pInstance;
+}
+
+void CUI_AnomalyStack::Free()
+{
+    __super::Free();
+
+    m_pSlots.clear();
 }
