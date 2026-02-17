@@ -25,6 +25,8 @@ void CRoom_Noodle::Enter()
 
 	UIDirector()->Hide_HUD(CUIDirector::HUD::FIELD);
 	UIDirector()->Show_Ramen();
+
+	FieldSystem()->PlayBGM("NoodleBGM.wav", 0.04f);
 }
 
 void CRoom_Noodle::Exit()
@@ -41,6 +43,8 @@ void CRoom_Noodle::Exit()
 
 	UIDirector()->Show_HUD(CUIDirector::HUD::FIELD);
 	UIDirector()->Hide_Ramen();
+
+	FieldSystem()->FadeOutBGM();
 }
 
 void CRoom_Noodle::Update()

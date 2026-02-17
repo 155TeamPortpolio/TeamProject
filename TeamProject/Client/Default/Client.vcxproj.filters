@@ -1095,9 +1095,6 @@
     <Filter Include="03. Utility\02. CamLoader">
       <UniqueIdentifier>{01fa8660-fa55-4073-9664-f30e02931412}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03. Utility\03. UILoader">
-      <UniqueIdentifier>{5142a8bf-9e06-4a8f-b695-a095b762835d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="03. Utility\04. BattleSystem">
       <UniqueIdentifier>{b180e495-0af6-48a7-9aa3-dd8d6b302e10}</UniqueIdentifier>
     </Filter>
@@ -1415,7 +1412,7 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Enemy\Boss\Defiler\DefilerLaser">
       <UniqueIdentifier>{a3dbcf0a-50d0-46cb-8314-ddecf4f0d7fd}</UniqueIdentifier>
-    </Filter>  
+    </Filter>
     <Filter Include="02. GameObject\UI\01. 2D\Switch">
       <UniqueIdentifier>{6a5c26b7-37b6-408f-af08-4af4501f3518}</UniqueIdentifier>
     </Filter>
@@ -1451,6 +1448,30 @@
     </Filter>
     <Filter Include="03. Utility\06. FieldSystem\Room\07. Party">
       <UniqueIdentifier>{47d49842-2238-46dd-b61f-399b1b8d45e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\Anomaly">
+      <UniqueIdentifier>{e4b9a9ed-8ca2-49d0-a693-96a7c103a6b4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\Anomaly\Stack">
+      <UniqueIdentifier>{2bbe95c0-7496-4c27-856c-7d01ff77e85b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\Anomaly\Stack\Slot">
+      <UniqueIdentifier>{f009d99b-8c8d-4afd-a4f0-7d72d13bea09}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\Anomaly\Gauge">
+      <UniqueIdentifier>{0006ab3d-3f77-43c0-8040-6888546cb6d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\AmbientActor\DogBone">
+      <UniqueIdentifier>{faecd42d-c38a-4510-b1e2-ea7ea32a0501}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\AmbientActor\DogFan">
+      <UniqueIdentifier>{b9589ddd-046f-4f4b-992f-7f01bb892f46}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\AmbientActor\ScottScreen">
+      <UniqueIdentifier>{6d17d294-80ec-4451-ad14-dc127fd9f6d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\03. UILoader">
+      <UniqueIdentifier>{5142a8bf-9e06-4a8f-b695-a095b762835d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -2788,7 +2809,7 @@
     </ClInclude>
     <ClInclude Include="..\Public\DefilerLaser.h">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler\DefilerLaser</Filter>
-    </ClInclude>  
+    </ClInclude>
     <ClInclude Include="..\Public\UI_Switch.h">
       <Filter>02. GameObject\UI\01. 2D\Switch</Filter>
     </ClInclude>
@@ -2804,9 +2825,6 @@
     <ClInclude Include="..\Public\KitObject.h">
       <Filter>02. GameObject\Object\Interactable\HealKit\KitObject</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\NPC_Preset.h">
-      <Filter>02. GameObject\Object\Npc\Background</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\BackGroundSpawner.h">
       <Filter>02. GameObject\Object\Npc\Background\Spawner</Filter>
     </ClInclude>
@@ -2815,6 +2833,30 @@
     </ClInclude>
     <ClInclude Include="..\public\Room_Party.h">
       <Filter>03. Utility\06. FieldSystem\Room\07. Party</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\NPC_Preset.h">
+      <Filter>02. GameObject\Object\Npc\Child</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_AnomalyBase.h">
+      <Filter>02. GameObject\UI\01. 2D\Anomaly</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_AnomalyStack.h">
+      <Filter>02. GameObject\UI\01. 2D\Anomaly\Stack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_AnomalyStackSlot.h">
+      <Filter>02. GameObject\UI\01. 2D\Anomaly\Stack\Slot</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_AnomalyGauge.h">
+      <Filter>02. GameObject\UI\01. 2D\Anomaly\Gauge</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\DogFan.h">
+      <Filter>02. GameObject\Object\AmbientActor\DogFan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\DogBone.h">
+      <Filter>02. GameObject\Object\AmbientActor\DogBone</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ScottScreen.h">
+      <Filter>02. GameObject\Object\AmbientActor\ScottScreen</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -3623,6 +3665,9 @@
     <ClCompile Include="..\private\CamOcclusionTracker.cpp">
       <Filter>02. GameObject\Camera\04. OrbitCam\00. OrbitCamCollider</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\Defiler.cpp">
+      <Filter>02. GameObject\Object\Enemy\Boss\Defiler</Filter>
+    </ClCompile>
     <ClCompile Include="..\Private\DefilerState_Attack.cpp">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler\State\Attack</Filter>
     </ClCompile>
@@ -4108,7 +4153,7 @@
     </ClCompile>
     <ClCompile Include="..\Private\DefilerLaser.cpp">
       <Filter>02. GameObject\Object\Enemy\Boss\Defiler\DefilerLaser</Filter>
-    </ClCompile>  
+    </ClCompile>
     <ClCompile Include="..\Private\UI_Switch.cpp">
       <Filter>02. GameObject\UI\01. 2D\Switch</Filter>
     </ClCompile>
@@ -4126,15 +4171,33 @@
     </ClCompile>
     <ClCompile Include="..\Private\BackGroundSpawner.cpp">
       <Filter>02. GameObject\Object\Npc\Background\Spawner</Filter>
- </ClCompile>
+    </ClCompile>
     <ClCompile Include="..\private\Room_Scott.cpp">
       <Filter>03. Utility\06. FieldSystem\Room\06. Scott</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Room_Party.cpp">
       <Filter>03. Utility\06. FieldSystem\Room\07. Party</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Defiler.cpp">
-      <Filter>02. GameObject\Object\Enemy\Boss\Defiler</Filter>
+    <ClCompile Include="..\Private\UI_AnomalyBase.cpp">
+      <Filter>02. GameObject\UI\01. 2D\Anomaly</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_AnomalyStack.cpp">
+      <Filter>02. GameObject\UI\01. 2D\Anomaly\Stack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_AnomalyStackSlot.cpp">
+      <Filter>02. GameObject\UI\01. 2D\Anomaly\Stack\Slot</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_AnomalyGauge.cpp">
+      <Filter>02. GameObject\UI\01. 2D\Anomaly\Gauge</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\DogFan.cpp">
+      <Filter>02. GameObject\Object\AmbientActor\DogFan</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\DogBone.cpp">
+      <Filter>02. GameObject\Object\AmbientActor\DogBone</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ScottScreen.cpp">
+      <Filter>02. GameObject\Object\AmbientActor\ScottScreen</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

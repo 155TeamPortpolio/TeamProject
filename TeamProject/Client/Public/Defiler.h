@@ -59,7 +59,6 @@ public:
 
 public:
     void Parried() override;
-    void StopSlashEff();
 
 private:
     void MoveByTraceMode(_float dt, _float moveScale = 1.f);
@@ -68,9 +67,11 @@ private:
     void Route_AnimEvent(CAnimator3D* animator);
     void Controll_Attack(const string& event);
     void Send_DamageText(_float damage, CHARACTER charaName);
+    void SummonWave();
 
 public:
     void ResetAllFlags();
+    void Start_WaveTime();
 
 private:
     HRESULT Initialize_StateMachine();
@@ -90,13 +91,19 @@ private:
         ENUM(COLLISION_GROUP::COMMON) | 
         ENUM(COLLISION_GROUP::PLAYER) | 
         ENUM(COLLISION_GROUP::PLAYER_ATTACK);
+    _bool m_isRecovering = false;
 
+
+    // CDefiler 멤버로 추가
     _bool m_bDirLockedNear = false;
     _float m_passDampTime = 0.f;
     _vector3 m_passDir = { 0.f, 0.f, 1.f };
     _bool    m_hasPassDir = false;
-
-    _bool m_isRecovering = false;
+    _vector3 m_lastMoveDir = _vector3(0.f, 0.f, 1.f);
+    _bool    m_hasLastMoveDir = false;
+    _vector3 m_lastTargetPos = _vector3(FLT_MAX, FLT_MAX, FLT_MAX);
+    _bool    m_prevPassedTarget = false;
+    _bool    m_passArmed = false; // 근접했을 때만 "패스 판정" 허용
 
 public:
     static CDefiler* Create();

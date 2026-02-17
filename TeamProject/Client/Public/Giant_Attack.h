@@ -10,7 +10,7 @@ class CGiant_Attack : public IHState<CGiant>
 {
 private:
 	enum ATTACK {
-		Attack1,
+		Attack1 = 1,
 		Attack2,
 		Attack2_1,
 		Attack2_Explode,
@@ -18,10 +18,10 @@ private:
 		Attack3_HitWall,
 		Attack4,
 		Attack5,
-		Attack6_AttackBack,
-		Attack7,
-		Attack7_Jump,
-		Attack7_Revenge
+		//Attack6_AttackBack,
+		//Attack7,
+		//Attack7_Jump,
+		//Attack7_Revenge
 	};
 
 public:
@@ -33,13 +33,19 @@ public:
 	static CGiant_Attack* Create() { return new CGiant_Attack(); }
 	virtual void Free() override { __super::Free(); }
 
+public:
+	void DecideAttackPattern(CGiant* pOwner);
+
 private:
 	void Register_States();
 	void Register_Transitions();
-	void AttackFromIndex(_int iMoveIndex);
+	void AttackFromIndex(CGiant* pOwner, _int iMoveIndex);
 
 private:
 	HitDesc		m_HitDesc = {};
+	HitDesc		m_HardHitDesc = {};
+	HitDesc		m_Attack3HitDesc = {};
+
 };
 
 class CGiant_Attack1 : public IBaseState<CGiant>

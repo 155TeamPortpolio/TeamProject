@@ -3,6 +3,7 @@
 
 #include "GameInstance.h"
 #include "ObjectContainer.h"
+#include "AudioSource.h"
 #include "Sprite2D.h"
 #include "MFVideoDecoderBackend.h"
 
@@ -41,6 +42,8 @@ HRESULT CUI_GachaVideo::Initialize_Prototype()
     __super::Initialize_Prototype();
 
     Add_Component<CObjectContainer>();
+    Add_Component<CAudioSource>();
+    Get_Component<CAudioSource>()->SoundFolder(G_GlobalLevelKey, "../Bin/Resources/Gacha/Sound/");
 
     return S_OK;
 }
@@ -105,6 +108,7 @@ void CUI_GachaVideo::UI_Active(void* pArg)
     VideoService()->StartDecode(m_PlayerID);
     m_pPlayer->Play();
     m_isFinished = false;
+    Get_Component<CAudioSource>()->Slot("GachaTV.wav").Play();
 }
 
 void CUI_GachaVideo::UI_DeActive(void* pArg)

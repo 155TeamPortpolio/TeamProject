@@ -145,8 +145,8 @@ void CGameInstance::Update_Engine(_float dt)
 	m_pRenderSystem->Update(dt);
 
 #ifdef USINGPHYSICS
-	m_pCollisionSystem->Update(dt);
-	m_pPhysicsSystem->Update(dt);
+	m_pCollisionSystem->Update(realDt);
+	m_pPhysicsSystem->Update(realDt);
 #endif // USINPHYSICS
 
 #if defined _USING_GUI
@@ -156,13 +156,13 @@ void CGameInstance::Update_Engine(_float dt)
 	m_pObjectManager->Late_Update(dt);
 	m_pUIManager->Late_Update(realDt);
 #ifdef USINGPHYSICS
-	m_pPhysicsSystem->Late_Update(dt);
-	m_pCollisionSystem->Late_Update(dt);
+	m_pPhysicsSystem->Late_Update(realDt);
+	m_pCollisionSystem->Late_Update(realDt);
 #endif // USINPHYSICS
 	/*엔진 제어 업데이트 -> 렌더 패킷 제출용*/
 	m_pVideoService->Tick(dt); 
 	m_pInputDevice->Update();
-	m_pObjectManager->Post_EngineUpdate(realDt);
+	m_pObjectManager->Post_EngineUpdate(dt);
 	m_pUIManager->Post_EngineUpdate(realDt);
 	m_pClickManager->Update(realDt);
 

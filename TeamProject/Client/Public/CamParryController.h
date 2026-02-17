@@ -57,16 +57,16 @@ public:
 
         struct Impact
         {
-            _float punchDistDelta = 1.5f;
+            _float punchDistDelta = 1.25f;
            
-            _float rollMaxDeg = 30.f;
-            _float rollArcMul = 0.85f;
+            _float rollMaxDeg = 25.f;
+            _float rollArcMul = 0.75f;
 
             _float endCamAboveFootY = 0.5f;
             _float targetCamYMix = 0.80f;
             _float pivotDropY = 0.12f;
 
-            _float recoverRollSec = 0.5f;
+            _float recoverRollSec = 0.35f;
             EaseType rollEase = EaseType::InOutSine;
             EaseType recoverRollEase = EaseType::InOutSine;
 
@@ -174,6 +174,8 @@ private:
     _bool         m_recoverFovActive = false;
     _float        m_recoverFovElapsed = 0.f;
     _float        m_recoverFovFrom = 0.f;
+
+    _float        m_fovAppliedOffset = 0.f;
 };
 
 NS_END

@@ -19,40 +19,29 @@ void CGiant_Attack::Enter(CGiant* pOwner)
 		m_HitDesc.eDamageType = DAMAGE_TYPE::NORMAL;
 		m_HitDesc.eHitType = HIT_TYPE::ONCE;
 		m_HitDesc.fDamage = 10.f;
+
+		m_HardHitDesc.eDamageType = DAMAGE_TYPE::HARD;
+		m_HardHitDesc.eHitType = HIT_TYPE::ONCE;
+		m_HardHitDesc.fDamage = 15.f;
+
+		m_Attack3HitDesc.eDamageType = DAMAGE_TYPE::NORMAL;
+		m_Attack3HitDesc.eHitType = HIT_TYPE::INTERVAL;
+		m_Attack3HitDesc.fDamage = 10.f;
+		m_Attack3HitDesc.fInterval = 0.3f;
+
+		pOwner->AddAttackHistoryFront(0);
 	}
 
-	auto pStateMachine = pOwner->GetStateMachine();
-	if (nullptr == pStateMachine)
+	DecideAttackPattern(pOwner);
+
+	ATTACK_BLACK_BOARD& blackboard = pOwner->GetBlackBoard();
+	if (true == blackboard.stateQueue.empty()) 
+	{
+		pOwner->Idle();
 		return;
-
-	auto hysteriesis = pOwner->GetHysteriesis();
-	auto targetinginfo = pOwner->GetTargetingInfo();
-
-	_int iAttackPatternIndex = pStateMachine->Get_Int("AttackPattern");
-	if (0 != iAttackPatternIndex) {
-		pStateMachine->Set_Int("AttackPattern", 0);
-		AttackFromIndex(iAttackPatternIndex);
 	}
-	else {
-		// 돌진 공격 빼고
-		//if (targetinginfo.fDistance <= hysteriesis.fComboExit)
-		//{
-		//	while (iAttackPatternIndex == 3 || iAttackPatternIndex == 0)
-		//		iAttackPatternIndex = Helper::Get_Random_Int(1, 4);
-		//}
-		//else if (targetinginfo.fDistance < hysteriesis.fChaseEnter)
-		//{
-		//	// 멀 때, 돌진공격
-		//	iAttackPatternIndex = 3;
-		//}
-		//else
-		//{
-		//	// 너무멀면 다음행동
-		//	pOwner->Idle();
-		//	return;
-		//}
-		AttackFromIndex(iAttackPatternIndex);
-	}
+	blackboard.isRequestNext = true;
+
 	pOwner->CaptureRotateToDir(pOwner->GetTargetingInfo().vDirToTarget);
 
 }
@@ -77,12 +66,41 @@ void CGiant_Attack::Update(CGiant* pOwner, _float dt)
 		{
 			if (Event.Tag == "UnleashAttack")
 				pOwner->UnleashAttack(CEnemy::ATTACK_SIDE::NONE, true);
-			else if (Event.Tag == "TurnOnAttackCol")
-				pOwner->SetBattleColliderObject("Weapon", CEnemy::BATTLE_COLTYPE::ATTACK, true, m_HitDesc);
-			else if (Event.Tag == "TurnOffAttackCol")
-				pOwner->SetBattleColliderObject("Weapon", CEnemy::BATTLE_COLTYPE::ATTACK, false);
+			else if (Event.Tag == "TurnOnAttackCol_L")
+			{
+				pOwner->SetOnAttack(true, CEnemy::ATTACK_SIDE::LEFT);
+				pOwner->SetBattleColliderObject("Weapon_L", CEnemy::BATTLE_COLTYPE::ATTACK, true, m_HitDesc);
+			}
+			else if (Event.Tag == "TurnOnAttackCol_L_Hard")
+			{
+				pOwner->SetOnAttack(true, CEnemy::ATTACK_SIDE::LEFT);
+				pOwner->SetBattleColliderObject("Weapon_L", CEnemy::BATTLE_COLTYPE::ATTACK, true, m_HardHitDesc);
+			}
+			else if (Event.Tag == "TurnOffAttackCol_L")
+				pOwner->SetBattleColliderObject("Weapon_L", CEnemy::BATTLE_COLTYPE::ATTACK, false);
+			else if (Event.Tag == "TurnOnAttackCol_R")
+			{
+				pOwner->SetOnAttack(true, CEnemy::ATTACK_SIDE::RIGHT);
+				pOwner->SetBattleColliderObject("Weapon_R", CEnemy::BATTLE_COLTYPE::ATTACK, true, m_HitDesc);
+			}
+			else if (Event.Tag == "TurnOnAttackCol_R_Hard")
+			{
+				pOwner->SetOnAttack(true, CEnemy::ATTACK_SIDE::RIGHT);
+				pOwner->SetBattleColliderObject("Weapon_R", CEnemy::BATTLE_COLTYPE::ATTACK, true, m_HardHitDesc);
+			}
+			else if (Event.Tag == "TurnOffAttackCol_R")
+				pOwner->SetBattleColliderObject("Weapon_R", CEnemy::BATTLE_COLTYPE::ATTACK, false);
+			else if (Event.Tag == "StartAttack3")		// 돌진 공격       
+			{
+				pOwner->SetOnAttack(true, CEnemy::ATTACK_SIDE::RIGHT);
+				pOwner->SetBattleColliderObject("Weapon_R", CEnemy::BATTLE_COLTYPE::ATTACK, true, m_Attack3HitDesc);
+			}
 			else if (Event.Tag == "FinishAll")
 				pOwner->SetOnAttack(false);
+			else if (Event.Tag == "ParryDisable")
+				pOwner->SetParryEnable(false);
+
+			
 			break;
 		}
 		case Engine::CLIP_EVENT_TYPE::EFFECT:
@@ -94,12 +112,123 @@ void CGiant_Attack::Update(CGiant* pOwner, _float dt)
 		}
 	}
 
+	ATTACK_BLACK_BOARD& blackboard = pOwner->GetBlackBoard();
+
 	if (m_fAnimProgress >= 0.99f)
+	{
+		blackboard.isChainOpen = true;
+
+		if (!blackboard.stateQueue.empty())
+			blackboard.isRequestNext = true;
+		else
+		{
+			_int iComboAttackCount = pOwner->GetAttackCombo();
+			if (iComboAttackCount >= 2)
+			{
+				pOwner->ResetAttackCombo();
+				blackboard.isRequestNext = false;
+			}
+			else
+			{
+				DecideAttackPattern(pOwner);
+				blackboard.isRequestNext = true;
+			}
+		}
+	}
+
+	if (true == blackboard.isRequestNext) {
+		blackboard.isRequestNext = false;
+		blackboard.isChainOpen = false;
+
+		if (!blackboard.stateQueue.empty()) {
+			string nextStateTag = blackboard.stateQueue.front();
+			blackboard.stateQueue.pop_front();
+
+			blackboard.currentStateTag = nextStateTag;
+			m_pSubStateMachine->Change_State(nextStateTag);
+		}
+	}
+
+	if (true == blackboard.isChainOpen && false == blackboard.isRequestNext) {
+		blackboard.currentStateTag = "";
 		pOwner->Idle();
+	}
 }
 
 void CGiant_Attack::Exit(CGiant* pOwner)
 {
+}
+
+void CGiant_Attack::DecideAttackPattern(CGiant* pOwner)
+{
+	auto pStateMachine = pOwner->GetStateMachine();
+	if (nullptr == pStateMachine)
+	{
+		pOwner->Idle();
+		return;
+	}
+
+	auto hysteriesis = pOwner->GetHysteriesis();
+	auto targetinginfo = pOwner->GetTargetingInfo();
+
+	_int iAttackPatternIndex = pStateMachine->Get_Int("AttackPattern");
+	if (0 != iAttackPatternIndex)
+		pStateMachine->Set_Int("AttackPattern", 0);
+	else {
+		if (targetinginfo.fDistance <= hysteriesis.fComboEnter)				// 근점
+		{
+			iAttackPatternIndex = pOwner->GetAttackHistoryFront();
+			while (iAttackPatternIndex == pOwner->GetAttackHistoryFront())
+			{
+				_int i = Helper::Get_Random_Int(1, 2);
+				if (i == 1)
+					iAttackPatternIndex = ATTACK::Attack1;
+				else
+					iAttackPatternIndex = ATTACK::Attack2;
+			}
+		}
+		else if (targetinginfo.fDistance <= hysteriesis.fChaseExit)			// 중거리 공격(도약 공격 등)
+		{
+			iAttackPatternIndex = pOwner->GetAttackHistoryFront();
+			while (iAttackPatternIndex == pOwner->GetAttackHistoryFront())
+			{
+				_int i = Helper::Get_Random_Int(1, 4);
+				switch (i)
+				{
+				case 1:
+					iAttackPatternIndex = ATTACK::Attack2_Explode;
+					break;
+				case 2:
+					iAttackPatternIndex = ATTACK::Attack3;
+					break;
+				case 3:
+					iAttackPatternIndex = ATTACK::Attack4;
+					break;
+				case 4:
+					iAttackPatternIndex = ATTACK::Attack5;
+					break;
+				}
+			}
+		}
+		else if (targetinginfo.fDistance <= hysteriesis.fComboExit)			// 장거리 공격(도약 및 돌진)
+		{
+			iAttackPatternIndex = pOwner->GetAttackHistoryFront();
+			while (iAttackPatternIndex == pOwner->GetAttackHistoryFront())
+			{
+				_int i = Helper::Get_Random_Int(1, 2);
+				switch (i)
+				{
+				case 1:
+					iAttackPatternIndex = ATTACK::Attack2_1;
+					break;
+				case 2:
+					iAttackPatternIndex = ATTACK::Attack3;
+					break;
+				}
+			}
+		}
+	}
+	AttackFromIndex(pOwner, iAttackPatternIndex);
 }
 
 void CGiant_Attack::Register_States()
@@ -112,59 +241,48 @@ void CGiant_Attack::Register_States()
 	m_pSubStateMachine->Register_State("Attack3_HitWall", CGiant_Attack3_HitWall::Create());
 	m_pSubStateMachine->Register_State("Attack4", CGiant_Attack4::Create());
 	m_pSubStateMachine->Register_State("Attack5", CGiant_Attack5::Create());
-	m_pSubStateMachine->Register_State("Attack6_AttackBack", CGiant_Attack6_AttackBack::Create());
-	m_pSubStateMachine->Register_State("Attack7", CGiant_Attack7::Create());
-	m_pSubStateMachine->Register_State("Attack7_Jump", CGiant_Attack7_Jump::Create());
-	m_pSubStateMachine->Register_State("Attack7_Revenge", CGiant_Attack7_Revenge::Create());
 }
 
 void CGiant_Attack::Register_Transitions()
 {
 }
 
-void CGiant_Attack::AttackFromIndex(_int iMoveIndex)
+void CGiant_Attack::AttackFromIndex(CGiant* pOwner, _int iMoveIndex)
 {
+	ATTACK_BLACK_BOARD& blackboard = pOwner->GetBlackBoard();
+
 	switch (iMoveIndex)
 	{
 	case Client::CGiant_Attack::Attack1:
-		m_pSubStateMachine->Change_State("Attack1");
+		blackboard.stateQueue.push_back("Attack1");
 		break;
 	case Client::CGiant_Attack::Attack2:
-		m_pSubStateMachine->Change_State("Attack2");
+		blackboard.stateQueue.push_back("Attack2");
 		break;
 	case Client::CGiant_Attack::Attack2_1:
-		m_pSubStateMachine->Change_State("Attack2_1");
+		blackboard.stateQueue.push_back("Attack2_1");
 		break;
 	case Client::CGiant_Attack::Attack2_Explode:
-		m_pSubStateMachine->Change_State("Attack2_Explode");
+		blackboard.stateQueue.push_back("Attack2_Explode");
 		break;
 	case Client::CGiant_Attack::Attack3:
-		m_pSubStateMachine->Change_State("Attack3");
+		blackboard.stateQueue.push_back("Attack3");
 		break;
 	case Client::CGiant_Attack::Attack3_HitWall:
-		m_pSubStateMachine->Change_State("Attack3_HitWall");
+		blackboard.stateQueue.push_back("Attack3_HitWall");
 		break;
 	case Client::CGiant_Attack::Attack4:
-		m_pSubStateMachine->Change_State("Attack4");
+		blackboard.stateQueue.push_back("Attack4");
 		break;
 	case Client::CGiant_Attack::Attack5:
-		m_pSubStateMachine->Change_State("Attack5");
-		break;
-	case Client::CGiant_Attack::Attack6_AttackBack:
-		m_pSubStateMachine->Change_State("Attack6_AttackBack");
-		break;
-	case Client::CGiant_Attack::Attack7:
-		m_pSubStateMachine->Change_State("Attack7");
-		break;
-	case Client::CGiant_Attack::Attack7_Jump:
-		m_pSubStateMachine->Change_State("Attack7_Jump");
-		break;
-	case Client::CGiant_Attack::Attack7_Revenge:
-		m_pSubStateMachine->Change_State("Attack7_Revenge");
+		blackboard.stateQueue.push_back("Attack5");
 		break;
 	default:
-		break;
+		return;
 	}
+
+	pOwner->AddAttackHistoryFront(iMoveIndex);
+	pOwner->AddAttackCombo();
 }
 
 /*============================================================================*/
@@ -187,10 +305,25 @@ void CGiant_Attack2::Enter(CGiant* pOwner)
 {
 	pOwner->Get_Component<CAnimator3D>()->Change_Animation("Giant_Ani_Attack_02")
 		.Apply();
+
+	pOwner->SetParryDontStop(true);
 }
 
 void CGiant_Attack2::Update(CGiant* pOwner, _float dt)
 {
+	pOwner->CaptureRotateToDir(pOwner->GetTargetingInfo().vDirToTarget);
+
+	for (const auto& Event : pOwner->Get_Component<CAnimator3D>()->Get_EventBus())
+		if (Event.Type == CLIP_EVENT_TYPE::NOTIFY)
+			if (Event.Tag == "Skip")
+			{
+				auto TargetingInfo = pOwner->GetTargetingInfo();
+				auto Hysteriesis = pOwner->GetHysteriesis();
+				if (Hysteriesis.fComboEnter <= TargetingInfo.fDistance &&
+					Hysteriesis.fComboExit >= TargetingInfo.fDistance)
+					m_pOwnerStateMachine->Change_State("Attack2_Explode");
+			}
+
 }
 
 void CGiant_Attack2::Exit(CGiant* pOwner)
@@ -202,6 +335,8 @@ void CGiant_Attack2_1::Enter(CGiant* pOwner)
 {
 	pOwner->Get_Component<CAnimator3D>()->Change_Animation("Giant_Ani_Attack_02_01")
 		.Apply();
+
+	pOwner->SetParryDontStop(true);
 }
 
 void CGiant_Attack2_1::Update(CGiant* pOwner, _float dt)
@@ -217,6 +352,8 @@ void CGiant_Attack2_Explode::Enter(CGiant* pOwner)
 {
 	pOwner->Get_Component<CAnimator3D>()->Change_Animation("Giant_Ani_Attack_02_Explode")
 		.Apply();
+
+	pOwner->SetParryDontStop(true);
 }
 
 void CGiant_Attack2_Explode::Update(CGiant* pOwner, _float dt)
@@ -236,6 +373,7 @@ void CGiant_Attack3::Enter(CGiant* pOwner)
 
 void CGiant_Attack3::Update(CGiant* pOwner, _float dt)
 {
+	pOwner->CaptureRotateToDir(pOwner->GetTargetingInfo().vDirToTarget);
 }
 
 void CGiant_Attack3::Exit(CGiant* pOwner)
@@ -277,6 +415,8 @@ void CGiant_Attack5::Enter(CGiant* pOwner)
 {
 	pOwner->Get_Component<CAnimator3D>()->Change_Animation("Giant_Ani_Attack_05")
 		.Apply();
+
+	pOwner->SetParryDontStop(true);
 }
 
 void CGiant_Attack5::Update(CGiant* pOwner, _float dt)
