@@ -76,9 +76,9 @@ HRESULT CUI_BattleHUD::Initialize(INIT_DESC* pArg)
         });
 
 
-    //auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_AnomalyStack" }).Build("Anomaly");
-    //if(pObj)
-    //    Get_Component<CObjectContainer>()->Add_Child(pObj);
+    auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_AnomalyStack" }).Build("Anomaly");
+    if(pObj)
+        Get_Component<CObjectContainer>()->Add_Child(pObj);
 
     return S_OK;
 }

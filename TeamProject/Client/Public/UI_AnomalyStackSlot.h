@@ -6,7 +6,10 @@ NS_BEGIN(Client)
 class CUI_AnomalyStackSlot final : public CUI_Object
 {
 private:
-	enum class STATE { EMPTY, FULL, END };
+	enum class STATE { EMPTY, ACTIVATING, ACTIVE, DEACTIVATING, COUNT };
+
+	enum class CHILD { FILL, OVERLAY, START, LOOP, END, COUNT };
+	inline static const string INSTANCENAMES[ENUM(CHILD::COUNT)] = { "fill", "overlay", "start", "loop", "end" };
 
 private:
 	CUI_AnomalyStackSlot() {}
@@ -14,7 +17,8 @@ private:
 	virtual ~CUI_AnomalyStackSlot() DEFAULT;
 
 public:
-	void Change_State(STATE eState);
+	void Activate(_bool isActive);
+	void StopEffect();
 
 public:
 	virtual HRESULT Initialize_Prototype()           override;
@@ -28,7 +32,25 @@ public:
 	virtual void	UI_DeActive(void* pArg = nullptr) override;
 
 private:
-	STATE m_eState = { STATE::END };
+	STATE m_eState = { STATE::COUNT };
+
+	CUI_Object* m_pChildren[ENUM(CHILD::COUNT)] = {};
+
+private:
+	void Cache(); 
+
+	void Change_State(STATE eState);
+
+	void SetFill(_bool isFill);
+	void PlayFireStart();
+	void PlayFireLoop();
+	void PlayFireEnd();
+
+	void Set_ChildAlive(CHILD child, _bool isAlive);
+	void Set_ChildAnimation(CHILD child, _int iIndex);
+	void Set_ChildSpriteAnimation(CHILD child, _bool isActive);
+
+	_bool Is_AnimationFinished(CHILD child);
 
 public:
 	static  CGameObject* Create();

@@ -21,9 +21,13 @@ public:
 
 private:
 	vector<class CUI_AnomalyStackSlot*> m_pSlots = {};
+	const _int m_iSlotCount = 6;
 
 private:
 	HRESULT Ready_Slots();
+
+	void Full();
+	void Decrease(_uint iIndex);
 
 public:
 	static  CGameObject* Create();
