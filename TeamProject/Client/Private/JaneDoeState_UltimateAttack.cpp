@@ -78,6 +78,8 @@ void CJaneDoeState_UltimateAttack_Loop::Enter(CJaneDoe* pOwner)
         .Apply();
 
     m_fDamageTimer = m_fDamageInterval;
+    
+    pOwner->Play_Effect("JaneDoe_Ultimate_Smoke", _vector3(0.f, 0.f, 6.3f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
 }
 
 void CJaneDoeState_UltimateAttack_Loop::Update(CJaneDoe* pOwner, _float dt)

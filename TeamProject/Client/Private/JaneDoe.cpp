@@ -724,6 +724,14 @@ HRESULT CJaneDoe::Initialize_Effects()
         pEffect->Stop();
         pObjectContainer->Add_Child(pEffect, false);
     }
+    {
+        auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+            .Asset("janedoe_ultimate_smoke.json")
+            .Build("JaneDoe_Ultimate_Smoke");
+
+        pEffect->Stop();
+        pObjectContainer->Add_Child(pEffect, false);
+    }
     return S_OK;
 }
 
