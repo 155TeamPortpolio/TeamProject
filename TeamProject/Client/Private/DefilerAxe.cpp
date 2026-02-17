@@ -18,6 +18,8 @@
 #include "UIDirector.h"
 #include "DefilerWall.h"
 #include "CamDirector.h"
+#include "EventListener.h"
+
 CDefilerAxe::CDefilerAxe()
 	: CEnemy()
 {
@@ -35,6 +37,7 @@ HRESULT CDefilerAxe::Initialize_Prototype()
 	Add_Component<CStaticModel>()->Link_Model("Zero_Level", "Defile_Axe.model");
 	Add_Component<CMaterial>()->Link_Material("Zero_Level", "Defile_Axe.mat");
 	Add_Component<CCharacterController>();
+	Add_Component<CEventListener>();
 
 	return S_OK;
 }
@@ -43,6 +46,7 @@ HRESULT CDefilerAxe::Initialize(INIT_DESC* pArg)
 {
 	__super::Initialize(pArg);
 	auto desc = static_cast<DefilerAxeDesc*>(pArg);
+	Get_Component<CEventListener>()->Add_Listener<TsunamiDesc>([&](TsunamiDesc desc) {DisAppear(); });
 	Get_Component<CCharacterController>()->Set_BoundingMinY(1.3f);
 	Get_Component<CCharacterController>()->Set_GravityEnabled(true);
 	m_pTransform->Set_Look(desc->vLook);
@@ -163,7 +167,7 @@ void CDefilerAxe::SummonWall()
 		.Collider(ColDesc)
 		.Build("Wall");
 	ObjectManager()->Add_Object(pWall, { nowLevelKey,"Enemy_Layer" });
-	ObjectManager()->Remove_Object(this);
+	DisAppear();
 }
 
 
@@ -205,4 +209,11 @@ void CDefilerAxe::OnTriggerEnter(CGameObject* pOther)
 
 	pEnemy->Take_Damage(DAMAGE_TYPE::HARD, 10);
 	CameraManager()->AddImpact(1, 0);
+}
+
+
+void CDefilerAxe::DisAppear()
+{
+	ObjectManager()->Remove_Object(this);
+	BattleSystem()->ExitBattleObject(BATTLE_OBJ_TYPE::MONSTER, this->Get_Handle());
 }
