@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "AiBone.h"
-
+#include "Helper_Func.h"
 CAIBone::CAIBone()
 {
 }
@@ -12,7 +12,6 @@ HRESULT CAIBone::Initialize(const aiNode* _pAINode, _int _iParentIndex)
     memcpy(&m_TransformationMatrix, &_pAINode->mTransformation, sizeof(_float4x4));
 
     XMStoreFloat4x4(&m_TransformationMatrix, XMMatrixTranspose(XMLoadFloat4x4(&m_TransformationMatrix)));
-
     return S_OK;
 }
 
@@ -21,7 +20,7 @@ CAIBone* CAIBone::Create(const aiNode* _pAINode, _int _iParentIndex)
     CAIBone* pBone = new CAIBone();
 
     if (FAILED(pBone->Initialize(_pAINode, _iParentIndex))) {
-        MSG_BOX("Create Failed : Engine | CAIBone");
+        //MSG_BOX("Create Failed : Engine | CAIBone");
         return nullptr;
     }
 

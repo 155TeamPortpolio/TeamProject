@@ -155,6 +155,7 @@ public:
 
 public:
 	_bool IsRunning() const { return m_BattleVFX.isRunning; }
+	_bool IsRunning(BATTLE_VFX_TYPE vfxType) const;
 	const _float3& GetAddictiveColor() const { return m_BattleVFX.vNowColor; }
 	void SetLayerTag(BATTLE_OBJ_TYPE type, const string& tag){m_layerTag[ENUM(type)] = tag;}
 	void StartVfx(BATTLE_VFX_TYPE vfxType);
@@ -164,6 +165,7 @@ public:
 	void StartVfx_Parry();
 	void StartVfx_Ultimate();
 	void StartVfx_Switch(CHARACTER eLeft, CHARACTER eRight);
+	void Cancle_Switch();
 	void StartVfx_WipeOut();
 	void StartVfx_Clear();
 	void NormalHitLack();

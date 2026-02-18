@@ -84,6 +84,7 @@ private:
     HRESULT Create_Colliders();
     _float3 Calc_WorldOffsetWithBip();
     virtual void  Create_UIEnemyStatus(string boneTag) override;
+    virtual void  Create_UIBossHUD();
 
 private:
     CStateMachine<CDefiler>* m_pStateMachine = { nullptr };
