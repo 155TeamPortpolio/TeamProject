@@ -14,33 +14,38 @@ namespace
         x ^= x >> 16;
         return x;
     }
+
     _float Hash01(_uint x)
     {
         return (HashU(x) & 0x00FFFFFF) / (float)0x01000000;
     }
+
+    _uint FloatBits(_float f)
+    {
+        static_assert(sizeof(_uint) == 4);
+        _uint u{};
+        memcpy(&u, &f, 4);
+        return u;
+    }
+
+    _uint Mix(_uint h, _uint v)
+    {
+        return HashU(h ^ v);
+    }
+
     _float Clamp01(_float t)
     {
         if (t < 0.f) return 0.f;
         if (t > 1.f) return 1.f;
         return t;
     }
+
     _float Smooth01(_float t)
     {
         t = Clamp01(t);
         return t * t * (3.f - 2.f * t);
     }
-    _float Envelope(_float elapsed, _float attackSec, _float sustainSec, _float decaySec)
-    {
-        if (elapsed < attackSec) return attackSec <= 0.f ? 1.f : Smooth01(elapsed / attackSec);
 
-        elapsed -= attackSec;
-        if (elapsed < sustainSec) return 1.f;
-
-        elapsed -= sustainSec;
-        if (decaySec <= 0.f) return 0.f;
-
-        return 1.f - Smooth01(elapsed / decaySec);
-    }
     _float KickCurve(_float t, _float kickDur)
     {
         if (kickDur <= 0.f) return 0.f;
@@ -51,6 +56,7 @@ namespace
         const _float s = sinf(u * XM_PI);
         return a * s;
     }
+
     _float Noise3(_float t, _float f, _float p0, _float p1, _float p2)
     {
         const _float x0 = sinf((t + p0) * f * (2.f * XM_PI));
@@ -58,11 +64,13 @@ namespace
         const _float x2 = sinf((t + p2) * f * (2.f * XM_PI) * 2.31f);
         return x0 * 0.56f + x1 * 0.30f + x2 * 0.14f;
     }
+
     _float ClampAttack(_float dur)
     {
         const _float a = dur * 0.18f;
         return min(0.045f, max(0.010f, a));
     }
+
     _float ZoomWeight(const CamZoomInstance& s)
     {
         const _float a = s.attackSec;
@@ -80,12 +88,14 @@ namespace
 
         return 1.f - Smooth01(t / r);
     }
+
     _float Ease01(EaseType type, _float u)
     {
         u = Clamp01(u);
         if (type == EaseType::None) return Smooth01(u);
         return Math::ApplyEase(type, u);
     }
+
     _float Envelope(_float elapsed, _float attackSec, _float sustainSec, _float decaySec, EaseType attackEase, EaseType decayEase)
     {
         if (elapsed < attackSec)
@@ -107,9 +117,47 @@ void ShakeController::Reset()
     m_seed = 1u;
 }
 
+_uint ShakeController::MakeKey(const CamShakePreset& p, _float strength, uint8_t axisMask, EaseType attackEase, EaseType decayEase) const
+{
+    _uint h = 0xA3C59AC3u;
+
+    h = Mix(h, (_uint)axisMask);
+    h = Mix(h, (_uint)(uint8_t)attackEase);
+    h = Mix(h, (_uint)(uint8_t)decayEase);
+    h = Mix(h, FloatBits(strength));
+
+    h = Mix(h, FloatBits(p.kickRotDeg));
+    h = Mix(h, FloatBits(p.kickPos));
+    h = Mix(h, FloatBits(p.kickDur));
+
+    h = Mix(h, FloatBits(p.noiseRotDeg));
+    h = Mix(h, FloatBits(p.noisePos));
+    h = Mix(h, FloatBits(p.noiseFreq));
+
+    h = Mix(h, FloatBits(p.dur));
+    h = Mix(h, FloatBits(p.fadeOutSec));
+
+    return h;
+}
+
+_bool ShakeController::HasActiveKey(_uint key) const
+{
+    for (auto& s : m_instances)
+    {
+        const _float endT = s.attackSec + s.sustainSec + max(0.f, s.decaySec);
+        if (s.key == key && s.elapsed < endT) return true;
+    }
+    return false;
+}
+
 void ShakeController::AddPreset(const CamShakePreset& p, _float strength, uint8_t axisMask, EaseType attackEase, EaseType decayEase)
 {
+    const _uint key = MakeKey(p, strength, axisMask, attackEase, decayEase);
+    if (HasActiveKey(key)) return;
+
     CamShakeInstance s{};
+
+    s.key = key;
 
     s.seed = HashU(m_seed++);
     s.elapsed = 0.f;
@@ -148,20 +196,35 @@ void ShakeController::AddPreset(const CamShakePreset& p, _float strength, uint8_
 
 void ShakeController::Set(_float ampDeg, _float freq, _float dur, _float fadeOutSec)
 {
+    CamShakePreset p{};
+    p.kickRotDeg = ampDeg;
+    p.kickPos = ampDeg * 0.0022f;
+    p.kickDur = min(0.070f, max(0.035f, dur * 0.32f));
+
+    p.noiseRotDeg = ampDeg * 0.55f;
+    p.noisePos = ampDeg * 0.0011f;
+    p.noiseFreq = max(8.f, freq);
+
+    p.dur = max(0.030f, dur);
+    p.fadeOutSec = max(0.f, fadeOutSec);
+
+    const _uint key = MakeKey(p, 1.f, (uint8_t)CamShakeAxis::All, EaseType::None, EaseType::None);
+    if (HasActiveKey(key)) return;
+
     m_instances.clear();
-    Add(ampDeg, freq, dur, fadeOutSec);
+    AddPreset(p, 1.f);
 }
 
 void ShakeController::Add(_float ampDeg, _float freq, _float dur, _float fadeOutSec)
 {
     CamShakePreset p{};
     p.kickRotDeg = ampDeg;
-    p.kickPos    = ampDeg * 0.0022f;
-    p.kickDur    = min(0.070f, max(0.035f, dur * 0.32f));
+    p.kickPos = ampDeg * 0.0022f;
+    p.kickDur = min(0.070f, max(0.035f, dur * 0.32f));
 
     p.noiseRotDeg = ampDeg * 0.55f;
-    p.noisePos    = ampDeg * 0.0011f;
-    p.noiseFreq   = max(8.f, freq);
+    p.noisePos = ampDeg * 0.0011f;
+    p.noiseFreq = max(8.f, freq);
 
     p.dur = max(0.030f, dur);
     p.fadeOutSec = max(0.f, fadeOutSec);
@@ -171,8 +234,12 @@ void ShakeController::Add(_float ampDeg, _float freq, _float dur, _float fadeOut
 
 void ShakeController::Set(_uint type, _float strength)
 {
+    const CamShakePreset& p = GetPreset(type);
+    const _uint key = MakeKey(p, strength, (uint8_t)CamShakeAxis::All, EaseType::None, EaseType::None);
+    if (HasActiveKey(key)) return;
+
     m_instances.clear();
-    Add(type, strength);
+    AddPreset(p, strength);
 }
 
 void ShakeController::Add(_uint type, _float strength)
@@ -182,8 +249,24 @@ void ShakeController::Add(_uint type, _float strength)
 
 void ShakeController::SetAxis(CamShakeAxis axes, _float ampDeg, _float freq, _float dur, _float fadeOutSec)
 {
+    CamShakePreset p{};
+    p.kickRotDeg = ampDeg;
+    p.kickPos = 0.f;
+    p.kickDur = min(0.070f, max(0.035f, dur * 0.32f));
+
+    p.noiseRotDeg = ampDeg * 0.55f;
+    p.noisePos = 0.f;
+    p.noiseFreq = max(8.f, freq);
+
+    p.dur = max(0.030f, dur);
+    p.fadeOutSec = max(0.f, fadeOutSec);
+
+    const uint8_t axisMask = ToAxisMask(axes);
+    const _uint key = MakeKey(p, 1.f, axisMask, EaseType::None, EaseType::None);
+    if (HasActiveKey(key)) return;
+
     m_instances.clear();
-    AddAxis(axes, ampDeg, freq, dur, fadeOutSec);
+    AddPreset(p, 1.f, axisMask);
 }
 
 void ShakeController::AddAxis(CamShakeAxis axes, _float ampDeg, _float freq, _float dur, _float fadeOutSec)
@@ -205,8 +288,39 @@ void ShakeController::AddAxis(CamShakeAxis axes, _float ampDeg, _float freq, _fl
 
 void ShakeController::SetAxisWave(CamShakeAxis axes, _float ampDeg, _float freq, _float dur, _float fadeOutSec, EaseType attackEase, EaseType decayEase)
 {
+    CamShakePreset p{};
+    p.kickRotDeg = ampDeg * 0.35f;
+    p.kickPos = 0.f;
+    p.kickDur = min(0.10f, max(0.04f, dur * 0.12f));
+
+    p.noiseRotDeg = ampDeg;
+    p.noisePos = 0.f;
+    p.noiseFreq = max(0.1f, freq);
+
+    p.dur = 0.f;
+    p.fadeOutSec = max(0.f, dur + fadeOutSec);
+
+    const uint8_t axisMask = ToAxisMask(axes);
+    const _uint key = MakeKey(p, 1.f, axisMask, attackEase, decayEase);
+    if (HasActiveKey(key)) return;
+
     m_instances.clear();
-    AddAxisWave(axes, ampDeg, freq, dur, fadeOutSec, attackEase, decayEase);
+    AddPreset(p, 1.f, axisMask, attackEase, decayEase);
+
+    auto& s = m_instances.back();
+    s.attackSec = 0.f;
+    s.sustainSec = 0.f;
+
+    s.spring = true;
+    s.noiseFreq = p.noiseFreq;
+
+    s.yawSign = 1.f;
+    s.rollSign = 1.f;
+    s.sideSign = 1.f;
+
+    s.springPhase = XM_PIDIV2;
+    s.springPhase2 = XM_PIDIV2;
+    s.springH2 = 0.35f;
 }
 
 void ShakeController::AddAxisWave(CamShakeAxis axes, _float ampDeg, _float freq, _float dur, _float fadeOutSec, EaseType attackEase, EaseType decayEase)
@@ -223,7 +337,11 @@ void ShakeController::AddAxisWave(CamShakeAxis axes, _float ampDeg, _float freq,
     p.dur = 0.f;
     p.fadeOutSec = max(0.f, dur + fadeOutSec);
 
-    AddPreset(p, 1.f, ToAxisMask(axes), attackEase, decayEase);
+    const uint8_t axisMask = ToAxisMask(axes);
+    const _uint key = MakeKey(p, 1.f, axisMask, attackEase, decayEase);
+    if (HasActiveKey(key)) return;
+
+    AddPreset(p, 1.f, axisMask, attackEase, decayEase);
 
     auto& s = m_instances.back();
     s.attackSec = 0.f;
@@ -330,23 +448,49 @@ void ShakeController::Apply(const Quaternion& camRot, _float dt, Vector3& outWor
 
 void ZoomController::RegisterPresets(const CamZoomPreset* presets, _uint count)
 {
-    m_presets     = presets;
+    m_presets = presets;
     m_presetCount = count;
+}
+
+_uint ZoomController::MakeKey(_float amountDeg, _float attackSec, _float releaseSec) const
+{
+    _uint h = 0x5B2D3A1Fu;
+    h = Mix(h, FloatBits(amountDeg));
+    h = Mix(h, FloatBits(attackSec));
+    h = Mix(h, FloatBits(releaseSec));
+    return h;
+}
+
+_bool ZoomController::HasActiveKey(_uint key) const
+{
+    for (auto& s : m_instances)
+    {
+        const _float endT = max(0.f, s.attackSec) + max(0.f, s.releaseSec);
+        if (s.key == key && s.elapsed < endT) return true;
+    }
+    return false;
 }
 
 void ZoomController::SetPunch(_float amountDeg, _float attackSec, _float releaseSec)
 {
+    const _uint key = MakeKey(amountDeg, attackSec, releaseSec);
+    if (HasActiveKey(key)) return;
+
     m_instances.clear();
     AddPunch(amountDeg, attackSec, releaseSec);
 }
 
 void ZoomController::AddPunch(_float amountDeg, _float attackSec, _float releaseSec)
 {
+    const _uint key = MakeKey(amountDeg, attackSec, releaseSec);
+    if (HasActiveKey(key)) return;
+
     CamZoomInstance s{};
-    s.amountDeg  = amountDeg;
-    s.attackSec  = attackSec;
+    s.key = key;
+    s.amountDeg = amountDeg;
+    s.attackSec = attackSec;
     s.releaseSec = releaseSec;
-    s.elapsed    = 0.f;
+    s.elapsed = 0.f;
 
     m_instances.push_back(s);
 
@@ -356,8 +500,14 @@ void ZoomController::AddPunch(_float amountDeg, _float attackSec, _float release
 
 void ZoomController::Set(_uint type, _float strength)
 {
+    const CamZoomPreset& p = GetPreset(type);
+
+    const _float amount = p.amountDeg * strength;
+    const _uint key = MakeKey(amount, p.attackSec, p.releaseSec);
+    if (HasActiveKey(key)) return;
+
     m_instances.clear();
-    Add(type, strength);
+    AddPreset(p, strength);
 }
 
 void ZoomController::Add(_uint type, _float strength)
@@ -367,11 +517,16 @@ void ZoomController::Add(_uint type, _float strength)
 
 void ZoomController::AddPreset(const CamZoomPreset& p, _float strength)
 {
+    const _float amount = p.amountDeg * strength;
+    const _uint key = MakeKey(amount, p.attackSec, p.releaseSec);
+    if (HasActiveKey(key)) return;
+
     CamZoomInstance s{};
-    s.amountDeg  = p.amountDeg * strength;
-    s.attackSec  = p.attackSec;
+    s.key = key;
+    s.amountDeg = amount;
+    s.attackSec = p.attackSec;
     s.releaseSec = p.releaseSec;
-    s.elapsed    = 0.f;
+    s.elapsed = 0.f;
 
     m_instances.push_back(s);
 
@@ -391,9 +546,9 @@ void ZoomController::Clear(_float fadeOutSec)
     {
         const _float w = ZoomWeight(s);
         s.amountDeg *= w;
-        s.attackSec  = 0.f;
+        s.attackSec = 0.f;
         s.releaseSec = fadeOutSec;
-        s.elapsed    = 0.f;
+        s.elapsed = 0.f;
     }
 }
 

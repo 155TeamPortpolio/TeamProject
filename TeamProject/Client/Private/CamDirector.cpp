@@ -23,12 +23,17 @@
 
 namespace
 {
-    size_t FindEventKeyIdx(const vector<CamKeyFrame>& keys, const string& eventTag)
+    _bool StartsWith(const string& s, const char* prefix)
     {
-        for (size_t i = 0; i < keys.size(); ++i)
-            if (keys[i].eventTag == eventTag) return i;
-
-        return (size_t)-1;
+        const size_t n = strlen(prefix);
+        if (s.size() < n) return false;
+        return memcmp(s.data(), prefix, n) == 0;
+    }
+    _bool IsParrySeqKey(const string& key)
+    {
+        if (StartsWith(key, "Parry/")) return true;
+        if (StartsWith(key, "BossParry/")) return true;
+        return false;
     }
 }
 
@@ -76,14 +81,14 @@ void CCamDirector::SetTarget(OBJECT_HANDLE targetHandle)
 
 void CCamDirector::EnterBoss()
 {
-    CameraManager()->SetFov(15.f, 1.f, EaseType::InOutSine);
-    CameraManager()->SetZFar(1500.f);
+    CameraManager()->SetFov(10.f, 2.f, EaseType::InOutCubic);
+    CameraManager()->SetZFar(1500.f, 2.f, EaseType::InOutCubic);
 }
 
 void CCamDirector::ExitBoss()
 {
-    CameraManager()->SetFov(-15.f, 1.f, EaseType::InOutSine);
-    CameraManager()->SetZFar(500.f);
+    CameraManager()->SetFov(-10.f, 2.f, EaseType::InOutCubic);
+    CameraManager()->SetZFar(500.f, 2.f, EaseType::InOutCubic);
 }
 
 void CCamDirector::AutoTarget()
@@ -229,7 +234,10 @@ void CCamDirector::AbortSequenceToOrbit(_bool resetTime)
 
 void CCamDirector::SyncSeqInputLock()
 {
-    const _bool wantLock = m_playing.active;
+    _bool wantLock = m_playing.active;
+
+    if (wantLock && IsParrySeqKey(m_playing.key) && BattleSystem()->GetBattlePlayer()->Is_ChainParry() && m_parry.IsChainReentryOpen())
+        wantLock = false;
 
     if (wantLock && !m_seqInputLocked)
     {
@@ -263,6 +271,14 @@ void CCamDirector::EndDialog()
 
 void CCamDirector::StartParry()
 {
+    if (m_playing.active)
+    {
+        if (IsParrySeqKey(m_playing.key) && BattleSystem()->GetBattlePlayer()->Is_ChainParry() && m_parry.IsChainReentryOpen())
+            StopAll(0.f);
+        else
+            return;
+    }
+
     m_parry.Begin();
 }
 

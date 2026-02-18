@@ -34,6 +34,9 @@ private:
     void AddPreset(const CamShakePreset& p, _float strength, uint8_t axisMask = (uint8_t)CamShakeAxis::All,
         EaseType attackEase = EaseType::None, EaseType decayEase = EaseType::None);
 
+    _bool HasActiveKey(_uint key) const;
+    _uint MakeKey(const CamShakePreset& p, _float strength, uint8_t axisMask, EaseType attackEase, EaseType decayEase) const;
+
     const CamShakePreset& GetPreset(_uint type) const { return m_presets[type]; }
 
 private:
@@ -65,6 +68,9 @@ public:
 
 private:
     void                 AddPreset(const CamZoomPreset& p, _float strength);
+    _bool                HasActiveKey(_uint key) const;
+    _uint                MakeKey(_float amountDeg, _float attackSec, _float releaseSec) const;
+
     const CamZoomPreset& GetPreset(_uint type) const { return m_presets[type]; }
 
 private:
