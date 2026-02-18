@@ -18,6 +18,8 @@
 #include "BangBooDeliver.h"
 #include "Howl.h"
 #include "Jaeger.h"
+#include "Jaeger2.h"
+#include "Jaeger3.h"
 #include "SirChop.h"
 #include "ElectricBoo.h"
 #include "SilverAnbi.h"
@@ -62,7 +64,9 @@ static unordered_map<string, Spawner::OBJ_SPEC> s_NPCTable =
 	{ "Sirchop",		Spawner::OBJ_SPEC{ "Proto_GameObject_Sirchop", &CSirChop::Create } },
 	{ "SilverAnbi",     Spawner::OBJ_SPEC{ "Proto_GameObject_SilverAnbi", &CSilverAnbi::Create } },
 	{ "BackGround",     Spawner::OBJ_SPEC{ "Proto_GameObject_CBackgroundNpc", &CBackgroundNpc::Create } },
-	{ "ScottCar",		Spawner::OBJ_SPEC{ "Proto_GameObject_ScottCar", &CScottCar::Create } }
+	{ "ScottCar",		Spawner::OBJ_SPEC{ "Proto_GameObject_ScottCar", &CScottCar::Create } },
+	{ "Jaeger2",         Spawner::OBJ_SPEC{ "Proto_GameObject_Jaeger2", &CJaeger2::Create } },
+	{ "Jaeger3",         Spawner::OBJ_SPEC{ "Proto_GameObject_Jaeger3", &CJaeger3::Create } }
 };
 
 /* Maptool Type 1 */
