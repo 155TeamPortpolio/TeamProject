@@ -731,6 +731,9 @@ void CamParryController::Begin()
 {
     if (core.active && core.state != State::WaitEnd) return;
 
+    const _bool continuingChain = core.active && core.state == State::WaitEnd && IsChainReentryOpen() && core.beginWasChain;
+    const _float prevChainRefDist = core.chainRefDist;
+
     Reset();
 
     core.beginWasChain = IsChainParry();
@@ -774,9 +777,14 @@ void CamParryController::Begin()
 
     const _float startDist = shot.shotFrom.dist;
 
-    if (!chain) core.chainRefDist = startDist;
-    else if (core.chainRefDist <= 0.f) core.chainRefDist = startDist;
-    else if (startDist > core.chainRefDist) core.chainRefDist = startDist;
+    if (chain)
+    {
+        if (continuingChain && prevChainRefDist > 0.f) core.chainRefDist = prevChainRefDist;
+        else core.chainRefDist = startDist;
+
+        if (startDist > core.chainRefDist) core.chainRefDist = startDist;
+    }
+    else core.chainRefDist = startDist;
 
     shot.shotTo = BuildBaseShot_NoLens(side.sideSign);
     shot.shotTo.dist = startDist;
@@ -792,6 +800,7 @@ void CamParryController::Begin()
 
     orbit->ParryMode_Begin();
 }
+
 
 void CamParryController::End()
 {
