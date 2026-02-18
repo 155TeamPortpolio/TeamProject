@@ -1518,6 +1518,9 @@
     <Filter Include="02. GameObject\Object\Npc\Service\Jaeger3">
       <UniqueIdentifier>{76d183b0-7c77-4102-8491-3ea9e304c6ea}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\UI\02. 3D\Plane\SpeechBubble">
+      <UniqueIdentifier>{a3eec9a0-1ba0-4d0c-95de-cd036d0d0857}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -2954,6 +2957,9 @@
     <ClInclude Include="..\Public\Jaeger3.h">
       <Filter>02. GameObject\Object\Npc\Service\Jaeger3</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UI_SpeechBubble.h">
+      <Filter>02. GameObject\UI\02. 3D\Plane\SpeechBubble</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -4342,6 +4348,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Jaeger3.cpp">
       <Filter>02. GameObject\Object\Npc\Service\Jaeger3</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_SpeechBubble.cpp">
+      <Filter>02. GameObject\UI\02. 3D\Plane\SpeechBubble</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

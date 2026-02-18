@@ -483,6 +483,7 @@
     <ClInclude Include="..\public\Room_Scott.h" />
     <ClInclude Include="..\public\ScottCar.h" />
     <ClInclude Include="..\public\ScottScreen.h" />
+    <ClInclude Include="..\Public\UI_SpeechBubble.h" />
     <ClInclude Include="..\public\ZeroStage_Rest.h" />
     <ClInclude Include="..\public\ThugBulkyEnforcer_Parried.h" />
     <ClInclude Include="..\Public\SoftDirectionalOutlineUI.h" />
@@ -1003,6 +1004,7 @@
     <ClCompile Include="..\private\Room_Scott.cpp" />
     <ClCompile Include="..\private\ScottCar.cpp" />
     <ClCompile Include="..\private\ScottScreen.cpp" />
+    <ClCompile Include="..\Private\UI_SpeechBubble.cpp" />
     <ClCompile Include="..\private\ZeroStage_Rest.cpp" />
     <ClCompile Include="..\private\ThugBulkyEnforcer_Parried.cpp" />
     <ClCompile Include="..\Private\SoftDirectionalOutlineUI.cpp" />

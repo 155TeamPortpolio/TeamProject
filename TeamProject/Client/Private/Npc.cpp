@@ -2,6 +2,7 @@
 #include "Npc.h"
 
 #include "UI_NameIndicator.h"
+#include "UI_SpeechBubble.h"
 #include "NpcInteractZone.h"
 #include "FieldSystem.h"
 #include "GameInstance.h"
@@ -95,10 +96,31 @@ HRESULT CNpc::Add_NameIndicator()
     CUI_NameIndicator::INDICATOR_DESC* pDesc = new CUI_NameIndicator::INDICATOR_DESC;
     pDesc->strName = m_strName;
     pDesc->pCCT = Get_Component<CCharacterController>();
-    auto pUI = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_NameIndicator" })
+    auto pNameIndicator = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_NameIndicator" })
         .Add_UIDesc(pDesc)
         .Build("nameIndicator");
-    UIManager()->Add_UIObject(pUI, LevelManager()->Get_NowLevelKey());
+
+    if (!pNameIndicator)
+        return E_FAIL;
+
+    UIManager()->Add_UIObject(pNameIndicator, LevelManager()->Get_NowLevelKey());
+
+    return S_OK;
+}
+
+HRESULT CNpc::Add_SpeechBubble()
+{
+    CUI_SpeechBubble::SPEECHBUBBLE_DESC* pDesc = new  CUI_SpeechBubble::SPEECHBUBBLE_DESC;
+    pDesc->strSpeech = m_strSpeech;// L"155±â";
+    pDesc->pCCT = Get_Component<CCharacterController>();
+    auto pSpeechBubble = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_SpeechBubble" })
+        .Add_UIDesc(pDesc)
+        .Build("speechBubble");
+
+    if (!pSpeechBubble)
+        return E_FAIL;
+
+    UIManager()->Add_UIObject(pSpeechBubble, LevelManager()->Get_NowLevelKey());
 
     return S_OK;
 }
