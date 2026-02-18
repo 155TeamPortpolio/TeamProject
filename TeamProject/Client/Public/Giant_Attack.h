@@ -42,8 +42,9 @@ private:
 	void AttackFromIndex(CGiant* pOwner, _int iMoveIndex);
 
 private:
-	HitDesc		m_HitDesc = {};
+	HitDesc		m_NormalHitDesc = {};
 	HitDesc		m_HardHitDesc = {};
+	HitDesc		m_KnockOutHitDesc = {};
 	HitDesc		m_Attack3HitDesc = {};
 
 };
