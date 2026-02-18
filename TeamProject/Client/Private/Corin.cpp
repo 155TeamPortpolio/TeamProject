@@ -72,7 +72,7 @@ void CCorin::Awake()
     __super::Awake();
 
     m_pAnimator->LinkAnimate_Model(G_GlobalLevelKey, "Corin.model");
-    m_pAnimator->Link_MetaData(G_GlobalLevelKey, "Avatar_Female_Size01_Corin_Meta.json");
+    m_pAnimator->Link_MetaData(G_GlobalLevelKey, "Corin_Meta.json");
     m_pAnimator->Set_ExtractMotionboneMovement(AXIS::X | AXIS::Z);
     m_strAnimName = "Avatar_Female_Size01_Corin_Ani_";
     m_pAnimator->Set_Animation(Get_Name() + "Idle")
@@ -254,11 +254,19 @@ void CCorin::On_Special()
             m_pStateMachine->Get_CurrentState());
         if (pAttack && pAttack->Get_SubStateMachine())
         {
-            if (pAttack->Get_SubStateMachine()->Get_CurrentStateName() == "NormalAttack")
+            string strAttackType = pAttack->Get_SubStateMachine()->Get_CurrentStateName();
+
+            if (strAttackType == "NormalAttack")
             {
                 pAttack->Get_SubStateMachine()->Set_Trigger("ToExAttack");
                 return;
             }
+            else if (strAttackType == "RushAttack")
+            {
+                pAttack->Get_SubStateMachine()->Set_Trigger("ToExAttack");
+                return;
+            }
+            return;
         }
     }
 
