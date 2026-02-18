@@ -55,6 +55,10 @@ void CStage::Change_StageState(StageState eState)
 
 void CStage::Ready_Map(const string& LevelTag, const string& AreaTag)
 {
+	m_introFlowBuilt = false;
+	m_outroFlowBuilt = false;
+	m_clearFlowBuilt = false;
+
 	m_AreaTag = AreaTag;
 	CMapLoader* pMapLoader = CMapLoader::Create(LevelTag, AreaTag);
 	if (nullptr == pMapLoader) {
@@ -376,6 +380,32 @@ void CStage::BaseOutro()
 	}
 
 	m_outroFlow.Start();
+}
+
+void CStage::ClearFX()
+{
+	if (!m_clearFlowBuilt) {
+		m_clearFlowBuilt = true;
+		size_t seqId = m_ClearFlow.BeginSequence();
+		m_ClearFlow.AddOnce(seqId, [this]() {BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::CLEAR); });
+		m_ClearFlow.AddWaitUntil(seqId, [this]()->_bool {
+			return !BattleSystem()->isVFXRunning(BATTLE_VFX_TYPE::CLEAR); 
+			});
+	}
+	m_ClearFlow.Start();
+}
+
+void CStage::WipeOutFX()
+{
+	if (!m_clearFlowBuilt) {
+		m_clearFlowBuilt = true;
+		size_t seqId = m_ClearFlow.BeginSequence();
+		m_ClearFlow.AddOnce(seqId, [this]() {BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::WIPEOUT); });
+		m_ClearFlow.AddWaitUntil(seqId, [this]()->_bool {
+			return !BattleSystem()->isVFXRunning(BATTLE_VFX_TYPE::WIPEOUT);
+			});
+	}
+	m_ClearFlow.Start();
 }
 
 _bool CStage::HasBattleStarter()

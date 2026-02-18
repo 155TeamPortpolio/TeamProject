@@ -153,7 +153,7 @@ HRESULT CMainApp::Render()
 	return S_OK;
 }
 
-void CMainApp::Set_Levels()
+void CMainApp::Set_Levels() 
 {
 	LevelManager()->Register_Level("Test_Level",     []()->CLevel* {return CTestLevel::Create("Test_Level"); });
 	LevelManager()->Register_Level("Logo_Level",     []()->CLevel* {return CLogoLevel::Create("Logo_Level"); });
@@ -165,7 +165,7 @@ void CMainApp::Set_Levels()
 
 	LevelManager()->Set_LoadingLevel("Loading_Level");
 	m_pGameInstance->Notify_LevelSet(); 
-	m_pGameInstance->Get_LevelMgr()->Request_ChangeLevel("Test_Level", true);
+	m_pGameInstance->Get_LevelMgr()->Request_ChangeLevel("Scott_Level", true);
 } 
 
 CMainApp* CMainApp::Create()

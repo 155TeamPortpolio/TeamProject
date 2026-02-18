@@ -161,11 +161,116 @@ void CCameraMgr::ApplyFov(_float dt, _float baseFov)
     m_outputPose.lens.fov = baseFov + fovOffset;
 }
 
+void CCameraMgr::SetZNear(_float zNear, _float blendSec, EaseType easeType)
+{
+    const _float start = m_overrideNear ? m_nearCur : m_outputPose.lens.nearZ;
+
+    m_overrideNear = true;
+
+    if (blendSec <= 0.f)
+    {
+        m_nearBlending = false;
+
+        m_nearCur = zNear;
+        m_nearFrom = m_nearCur;
+        m_nearTo = m_nearCur;
+        return;
+    }
+
+    m_nearFrom = start;
+    m_nearTo = zNear;
+
+    m_nearTime = 0.f;
+    m_nearDuration = max(blendSec, 0.0001f);
+    m_nearEaseType = easeType;
+
+    m_nearBlending = true;
+}
+
+void CCameraMgr::SetZFar(_float zFar, _float blendSec, EaseType easeType)
+{
+    const _float start = m_overrideFar ? m_farCur : m_outputPose.lens.farZ;
+
+    m_overrideFar = true;
+
+    if (blendSec <= 0.f)
+    {
+        m_farBlending = false;
+
+        m_farCur = zFar;
+        m_farFrom = m_farCur;
+        m_farTo = m_farCur;
+        return;
+    }
+
+    m_farFrom = start;
+    m_farTo = zFar;
+
+    m_farTime = 0.f;
+    m_farDuration = max(blendSec, 0.0001f);
+    m_farEaseType = easeType;
+
+    m_farBlending = true;
+}
+
+
 void CCameraMgr::ApplyNearFarOverrides()
 {
     if (m_overrideNear) m_outputPose.lens.nearZ = m_nearOverride;
     if (m_overrideFar)  m_outputPose.lens.farZ = m_farOverride;
 }
+
+_float CCameraMgr::EvalNearOverride(_float dt, _float baseNear)
+{
+    if (!m_overrideNear) return baseNear;
+    if (!m_nearBlending) return m_nearCur;
+
+    m_nearTime += dt;
+
+    const _float rawT = m_nearTime / m_nearDuration;
+    const _float t = Math::ApplyEase(m_nearEaseType, rawT);
+
+    if (rawT >= 1.f)
+    {
+        m_nearBlending = false;
+        m_nearCur = m_nearTo;
+        return m_nearCur;
+    }
+
+    m_nearCur = m_nearFrom + (m_nearTo - m_nearFrom) * t;
+    return m_nearCur;
+}
+
+_float CCameraMgr::EvalFarOverride(_float dt, _float baseFar)
+{
+    if (!m_overrideFar) return baseFar;
+    if (!m_farBlending) return m_farCur;
+
+    m_farTime += dt;
+
+    const _float rawT = m_farTime / m_farDuration;
+    const _float t = Math::ApplyEase(m_farEaseType, rawT);
+
+    if (rawT >= 1.f)
+    {
+        m_farBlending = false;
+        m_farCur = m_farTo;
+        return m_farCur;
+    }
+
+    m_farCur = m_farFrom + (m_farTo - m_farFrom) * t;
+    return m_farCur;
+}
+
+void CCameraMgr::ApplyNearFarOverrides(_float dt)
+{
+    const _float baseNear = m_outputPose.lens.nearZ;
+    const _float baseFar = m_outputPose.lens.farZ;
+
+    m_outputPose.lens.nearZ = EvalNearOverride(dt, baseNear);
+    m_outputPose.lens.farZ = EvalFarOverride(dt, baseFar);
+}
+
 
 CCameraMgr::CamPoseFrame CCameraMgr::CapturePose(CCamera* cam) const
 {
@@ -307,12 +412,13 @@ void CCameraMgr::Update(_float dt)
     const _float baseFov = m_outputPose.lens.fov;
 
     ApplyFov(dt, baseFov);
-    ApplyNearFarOverrides();
+    ApplyNearFarOverrides(dt);
 
     ApplyCache(main, m_outputPose);
 
     if (m_shadowCamObj.isValid()) UpdateShadowCache();
 }
+
 
 void CCameraMgr::AddImpact(_uint shakeType, _uint zoomType, _float strength)
 {
@@ -379,6 +485,22 @@ void CCameraMgr::Free()
     m_overrideFar = false;
     m_nearOverride = 0.f;
     m_farOverride = 0.f;
+
+    m_nearBlending = false;
+    m_nearTime = 0.f;
+    m_nearDuration = 0.f;
+    m_nearCur = 0.f;
+    m_nearFrom = 0.f;
+    m_nearTo = 0.f;
+    m_nearEaseType = EaseType::Linear;
+
+    m_farBlending = false;
+    m_farTime = 0.f;
+    m_farDuration = 0.f;
+    m_farCur = 0.f;
+    m_farFrom = 0.f;
+    m_farTo = 0.f;
+    m_farEaseType = EaseType::Linear;
 
     main = {};
     shadow = {};

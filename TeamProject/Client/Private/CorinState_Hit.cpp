@@ -63,23 +63,22 @@ void CCorinState_Hit::Enter(CCorin* pOwner)
 
 void CCorinState_Hit::Update(CCorin* pOwner, _float dt)
 {
+	_float fFront = pOwner->Get_StateMachine()->Get_Bool("IsBehind") ? -1.f : 1.f;
+	CCharacter::ROOTMOTION_DESC desc;
+	desc.iModeMask = ENUM(CCorin::ROOTMOTION_MASK::MOVE) |
+		ENUM(CCorin::ROOTMOTION_MASK::QUATERNION);
 	if (m_pSubStateMachine->Get_CurrentStateName() == "HitNormal")
 	{
 		m_fWeight += dt * 0.5f;
 		m_fWeight = min(m_fWeight, 1.f);
 		pOwner->Get_StateMachine()->Set_Float("MoveWeight", m_fWeight);	// 디버그 용
-
-		CCharacter::ROOTMOTION_DESC desc;
-		desc.iModeMask = ENUM(CCorin::ROOTMOTION_MASK::MOVE) |
-			ENUM(CCorin::ROOTMOTION_MASK::QUATERNION);
-		desc.fMoveWeight = m_fWeight;
-		pOwner->Process_RootMotion(dt, desc);
+		desc.fMoveWeight = m_fWeight * fFront;
 	}
 	else
 	{
-		pOwner->Process_RootMotion(dt, ENUM(CCorin::ROOTMOTION_MASK::MOVE) |
-			ENUM(CCorin::ROOTMOTION_MASK::QUATERNION));
+		desc.fMoveWeight = fFront;
 	}
+	pOwner->Process_RootMotion(dt, desc);
 
 	if (m_pSubStateMachine->Get_CurrentState()->Get_AnimProgress() > 0.3f)
 		pOwner->Unlock_Move();

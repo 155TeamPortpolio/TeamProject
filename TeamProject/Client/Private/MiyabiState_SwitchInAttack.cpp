@@ -3,6 +3,7 @@
 
 #include "BattleSystem.h"
 
+#include "CamDirector.h"
 #include "Miyabi.h"
 
 CMiyabiState_SwitchInAttack* CMiyabiState_SwitchInAttack::Create()
@@ -29,6 +30,9 @@ void CMiyabiState_SwitchInAttack::Enter(CMiyabi* pOwner)
     pOwner->Set_WeaponEffectMesh(true);
     pOwner->Push_Invincible();
     pOwner->Lock_Move();
+
+    //CamDirector()->AutoTarget();
+    //CamDirector()->RequestSequence("Switch/Switch");
 
     __super::Enter(pOwner);
 }

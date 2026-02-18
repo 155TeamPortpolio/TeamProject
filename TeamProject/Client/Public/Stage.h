@@ -64,6 +64,8 @@ protected:
 	void BaseIntro(StageContext& context);
 	void BossIntro(StageContext& context);
 	void BaseOutro();
+	void ClearFX();
+	void WipeOutFX();
 
 protected:
 	_bool HasBattleStarter();
@@ -84,6 +86,8 @@ protected:
 	/*ø¨√‚*/
 	EffectFlow m_introFlow;
 	_bool m_introFlowBuilt = false;
+	EffectFlow m_ClearFlow;
+	_bool m_clearFlowBuilt = false;
 	EffectFlow m_outroFlow;
 	_bool m_outroFlowBuilt = false;
 

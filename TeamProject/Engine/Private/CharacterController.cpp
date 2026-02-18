@@ -780,6 +780,12 @@ _vector CCharacterController::Get_FootPosition()
 	return XMVectorSet((float)pos.x, (float)pos.y, (float)pos.z, 1.f);
 }
 
+Vector3 CCharacterController::Get_FootPosition() const
+{
+	const PxExtendedVec3& pos = m_pController->getFootPosition();
+	return Vector3((float)pos.x, (float)pos.y, (float)pos.z);
+}
+
 _bool CCharacterController::Shoot_Ray(_fvector vDirection, _float fDistance, PHYSICS_RAY_HIT& hit)
 {
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();

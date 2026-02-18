@@ -5,6 +5,7 @@
 #include "Zero_Level.h"
 #include "StageRouter.h"
 #include "EffectContainer.h"
+#include "CamDirector.h"
 
 //component
 #include "AudioSource.h"
@@ -49,6 +50,8 @@ void CZeroStage_Boss::Update()
 		Battle();
 		break;
 	case Client::CStage::StageState::BattleEnd:
+		m_ClearFlow.Tick(dt);
+		BattleEnd();
 		break;
 	case Client::CStage::StageState::Outro:
 		Outro();
@@ -109,6 +112,7 @@ void CZeroStage_Boss::BattleStart()
 {
 	Active_Enemy();
 	CBattleSystem::GetInstance()->SetActive(true);
+	CamDirector()->EnterBoss();
 	m_eStageState = StageState::Battle;
 }
 
@@ -116,11 +120,20 @@ void CZeroStage_Boss::Battle()
 {
 	_bool isBattleEnd = CBattleSystem::GetInstance()->isMonsterCleared();
 	if (isBattleEnd) {
-		m_eStageState = StageState::Outro;
-		CBattleSystem::GetInstance()->SetActive(false);
+		WipeOutFX();
+		m_eStageState = StageState::BattleEnd;
 	}
 }
 
+
+void CZeroStage_Boss::BattleEnd()
+{
+	if (m_ClearFlow.IsDoneAll())
+	{
+		CBattleSystem::GetInstance()->SetActive(false);
+		m_eStageState = StageState::Outro;
+	}
+}
 void CZeroStage_Boss::Outro()
 {
 	BaseOutro();
