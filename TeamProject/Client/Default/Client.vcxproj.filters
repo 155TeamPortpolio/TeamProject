@@ -1451,7 +1451,7 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Env\Sky">
       <UniqueIdentifier>{a34bc107-84e0-47c2-a2b4-d0e7709df620}</UniqueIdentifier>
-	</Filter>
+    </Filter>
     <Filter Include="02. GameObject\UI\01. 2D\Anomaly">
       <UniqueIdentifier>{e4b9a9ed-8ca2-49d0-a693-96a7c103a6b4}</UniqueIdentifier>
     </Filter>
@@ -1499,6 +1499,12 @@
     </Filter>
     <Filter Include="02. GameObject\UI\02. 3D\Mesh\EntranceLogo\NotoriousHunt">
       <UniqueIdentifier>{dc6a89e3-072a-4cd3-bd13-da4d45acd8be}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\Tutorial">
+      <UniqueIdentifier>{201aeb3c-6fc8-4879-994a-f465e959c40f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\Button">
+      <UniqueIdentifier>{a4d91da9-ec9d-4aad-bdde-23bc7ed45fbb}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -2860,7 +2866,7 @@
     </ClInclude>
     <ClInclude Include="..\public\ProceduralSky.h">
       <Filter>02. GameObject\Object\Env\Sky</Filter>
-	</ClInclude>
+    </ClInclude>
     <ClInclude Include="..\Public\NPC_Preset.h">
       <Filter>02. GameObject\Object\Npc\Child</Filter>
     </ClInclude>
@@ -2908,6 +2914,12 @@
     </ClInclude>
     <ClInclude Include="..\Public\UI_NotoriousHuntEntranceLogo.h">
       <Filter>02. GameObject\UI\02. 3D\Mesh\EntranceLogo\NotoriousHunt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Tutorial.h">
+      <Filter>02. GameObject\UI\01. 2D\Tutorial</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_ButtonPanel.h">
+      <Filter>02. GameObject\UI\01. 2D\Button</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -4273,6 +4285,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\UI_NotoriousHuntEntranceLogo.cpp">
       <Filter>02. GameObject\UI\02. 3D\Mesh\EntranceLogo\NotoriousHunt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Tutorial.cpp">
+      <Filter>02. GameObject\UI\01. 2D\Tutorial</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_ButtonPanel.cpp">
+      <Filter>02. GameObject\UI\01. 2D\Button</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -54,6 +54,7 @@
 #include "TextUI.h"
 #include "UVAnimationUI.h" 
 
+#include "UI_ButtonPanel.h"
 #include "UI_BackButton.h"
 #include "UI_IconButton.h"
 #include "UI_TextButton.h"
@@ -82,6 +83,8 @@
 #include "UI_GachaPage.h" 
 
 #include "UI_GachaResult.h"
+
+#include "UI_Tutorial.h"
 
 CMainApp::CMainApp()
 {
@@ -229,6 +232,7 @@ void CMainApp::Initialize_GlobalPrototype()
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Mask", CMaskUI::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_NineSlice", CNineSliceUI::Create());
 
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_ButtonPanel", CUI_ButtonPanel::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_BackButton", CUI_BackButton::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_IconButton", CUI_IconButton::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_TextButton", CUI_TextButton::Create());
@@ -258,9 +262,10 @@ void CMainApp::Initialize_GlobalPrototype()
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Dialogue", CUI_Dialogue::Create()); 
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Lottery", CUI_Lottery::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Ramen", CUI_Ramen::Create()); 
-
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_GachaPage", CUI_GachaPage::Create());
-	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_GachaResult", CUI_GachaResult::Create()); 
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_GachaResult", CUI_GachaResult::Create());
+
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Tutorial", CUI_Tutorial::Create());
 
 	/*Enviroment*/
 	ResourceManager()->Add_ResourcePath("cloud_noise.png", "../Bin/Resources/Global/Shader/cloud_noise.png");

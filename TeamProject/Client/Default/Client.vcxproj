@@ -521,6 +521,8 @@
     <ClInclude Include="..\Public\UI_GachaTextGroup.h" />
     <ClInclude Include="..\Public\UI_GachaVideo.h" />
     <ClInclude Include="..\Public\UI_RenderTargetScreen.h" />
+    <ClInclude Include="..\Public\UI_Tutorial.h" />
+    <ClInclude Include="..\Public\UI_ButtonPanel.h" />
     <ClInclude Include="..\Public\UI_WipeoutRT.h" />
     <ClInclude Include="..\public\Water.h" />
     <ClInclude Include="..\public\WaterWave.h" />
@@ -1033,6 +1035,8 @@
     <ClCompile Include="..\Private\UI_GachaTextGroup.cpp" />
     <ClCompile Include="..\Private\UI_GachaVideo.cpp" />
     <ClCompile Include="..\Private\UI_RenderTargetScreen.cpp" />
+    <ClCompile Include="..\Private\UI_Tutorial.cpp" />
+    <ClCompile Include="..\Private\UI_ButtonPanel.cpp" />
     <ClCompile Include="..\Private\UI_WipeoutRT.cpp" />
     <ClCompile Include="..\private\Water.cpp" />
     <ClCompile Include="..\private\WaterWave.cpp" />

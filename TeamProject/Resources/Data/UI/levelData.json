@@ -54,6 +54,12 @@
           "prototypeTag": "Proto_GameObject_Switch",
           "instanceName": "switch",
           "prefabPath" : ""
+        },
+        
+        {
+          "prototypeTag": "Proto_GameObject_Tutorial",
+          "instanceName": "tutorial",
+          "prefabPath" : ""
         }
       ]
     },
