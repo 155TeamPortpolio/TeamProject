@@ -2921,6 +2921,9 @@
     <ClInclude Include="..\Public\UI_NotoriousHuntEntranceLogo.h">
       <Filter>02. GameObject\UI\02. 3D\Mesh\EntranceLogo\NotoriousHunt</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\NPC_Preset.h">
+      <Filter>02. GameObject\Object\Npc\Background</Filter>
+    </ClInclude>
     <ClInclude Include="..\public\CamSwitchController.h">
       <Filter>03. Utility\08. CamDirector\05. CamSwitchController</Filter>
     </ClInclude>

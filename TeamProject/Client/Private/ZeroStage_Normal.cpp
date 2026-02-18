@@ -42,6 +42,8 @@ void CZeroStage_Normal::Update()
 		Battle();
 		break;
 	case Client::CStage::StageState::BattleEnd:
+		m_ClearFlow.Tick(dt);
+		BattleEnd();
 		break;
 	case Client::CStage::StageState::Outro:
 		Outro();
@@ -95,7 +97,15 @@ void CZeroStage_Normal::Battle()
 			return;
 		}
 
+		ClearFX();
 		m_eStageState = StageState::BattleEnd;
+	}
+}
+
+void CZeroStage_Normal::BattleEnd()
+{
+	if (m_ClearFlow.IsDoneAll())
+	{
 		CBattleSystem::GetInstance()->SetActive(false);
 		Active_Portal();
 	}
