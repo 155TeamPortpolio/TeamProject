@@ -1,11 +1,11 @@
 {
-  "TagDataFormat": "Collider",
-  "TagArea": "Zero_Start",
+  "TagDataFormat": "ColliderGroup",
+  "TagArea": "Zero_Start1",
   "iVersion": 1,
   "values": [
     {
       "iObjID": 1,
-      "TagName": "bCooking",
+      "TagName": "Ground",
       "defaultvalue": {
         "type": "Bool",
         "value": true
@@ -13,7 +13,7 @@
     },
     {
       "iObjID": 5,
-      "TagName": "bCooking",
+      "TagName": "Ground",
       "defaultvalue": {
         "type": "Bool",
         "value": true
@@ -21,15 +21,7 @@
     },
     {
       "iObjID": 8,
-      "TagName": "bCooking",
-      "defaultvalue": {
-        "type": "Bool",
-        "value": true
-      }
-    },
-    {
-      "iObjID": 12,
-      "TagName": "bCooking",
+      "TagName": "Ground",
       "defaultvalue": {
         "type": "Bool",
         "value": true
@@ -37,19 +29,12 @@
     },
     {
       "iObjID": 14,
-      "TagName": "bCooking",
-      "defaultvalue": {
-        "type": "Bool",
-        "value": true
-      }
-    },
-    {
-      "iObjID": 15,
-      "TagName": "bCooking",
+      "TagName": "Ground",
       "defaultvalue": {
         "type": "Bool",
         "value": true
       }
     }
+
   ]
 }

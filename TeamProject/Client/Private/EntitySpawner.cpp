@@ -233,10 +233,12 @@ OBJECT_HANDLE Client::Spawner::Create_Interactable(const SPAWNER_DESC& Desc)
 					CHealKit::HEALKIT_DESC* pPortalDesc = new CHealKit::HEALKIT_DESC;
 					tColDesc.eGroup = COLLISION_GROUP::COMMON;
 
-					if (KitType == "HP")
-						pPortalDesc->eItemType = CHealKit::ITEMTYPE::HP;
+					if (KitType == "Ult")
+						pPortalDesc->eItemType = CHealKit::ITEMTYPE::ULT;
 					else if (KitType == "Energy")
 						pPortalDesc->eItemType = CHealKit::ITEMTYPE::ENERGY;
+					else if (KitType == "HP")
+						pPortalDesc->eItemType = CHealKit::ITEMTYPE::HP;
 					else				
 						pPortalDesc->eItemType = CHealKit::ITEMTYPE::END;
 

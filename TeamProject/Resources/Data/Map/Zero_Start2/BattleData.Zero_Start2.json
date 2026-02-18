@@ -1,9 +1,9 @@
 {
   "TagDataFormat": "BattleData",
-  "TagArea": "Zero_Start",
+  "TagArea": "Zero_Start2",
   "PlayerSpawnPoint": [
     {
-      "tagType": "PlayerPoint0",
+      "tagType": "PlayerPoint",
       "iIndex": 0,
       "vScale": [
         0.7952134609222412,
@@ -13,25 +13,6 @@
       "vRotation": [
         -0.0,
         -3.141592502593994,
-        0.0
-      ],
-      "vTranslation": [
-        24.99362564086914,
-        47.40000534057617,
-        18.28774642944336
-      ]
-    },
-    {
-      "tagType": "PlayerPoint1",
-      "iIndex": 1,
-      "vScale": [
-        0.7952134609222412,
-        0.8361367583274841,
-        0.8361368179321289
-      ],
-      "vRotation": [
-        -0.0,
-        0.0,
         0.0
       ],
       "vTranslation": [
@@ -55,44 +36,6 @@
       "vRotation": [
         -0.0,
         0.0,
-        -0.0
-      ],
-      "vTranslation": [
-        26.3439884185791,
-        48.49371337890625,
-        -27.047101974487305
-      ]
-    },
-    {
-      "tagType": "EndPoint",
-      "iIndex": 1,
-      "vScale": [
-        0.7952134609222412,
-        0.8361367583274841,
-        0.8361368179321289
-      ],
-      "vRotation": [
-        -0.0,
-        0.0,
-        -0.0
-      ],
-      "vTranslation": [
-        20.33377456665039,
-        48.49371337890625,
-        -27.018611907958984
-      ]
-    },
-    {
-      "tagType": "EndPoint",
-      "iIndex": 2,
-      "vScale": [
-        0.7952134609222412,
-        0.8361367583274841,
-        0.8361368179321289
-      ],
-      "vRotation": [
-        -0.0,
-        0.0,
         0.0
       ],
       "vTranslation": [
@@ -103,7 +46,7 @@
     },
     {
       "tagType": "EndPoint",
-      "iIndex": 3,
+      "iIndex": 1,
       "vScale": [
         0.7952134609222412,
         0.8361367583274841,
@@ -122,7 +65,7 @@
     },
     {
       "tagType": "EndPoint",
-      "iIndex": 4,
+      "iIndex": 2,
       "vScale": [
         0.7952134609222412,
         0.8361367583274841,
