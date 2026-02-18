@@ -2,14 +2,17 @@
 #include "OrbitCam.h"
 #include "CamOcclusionTracker.h"
 #include "ICamCollidable.h"
+#include "Enemy.h"
 // Engine
 #include "GameInstance.h"
-#include "Character.h"
 #include "Helper_Func.h"
 #include "PhysicsSystem.h"
+// Component
+#include "Character.h"
 #include "CharacterController.h"
 #include "EventListener.h"
 #include "ObjectContainer.h"
+#include "Animator3D.h"
 
 namespace
 {
@@ -32,39 +35,74 @@ namespace
     Vector3 FootPos(OBJECT_HANDLE h)
     {
         auto obj = ObjectManager()->Request_Object(h);
-        auto cc = obj->Get_Component<CCharacterController>();
-
-        const Vector4 foot4 = cc->Get_FootPosition();
-        return Vector3(foot4.x, foot4.y, foot4.z);
+        auto cc  = obj->Get_Component<CCharacterController>();
+        return cc->Get_FootPosition();
     }
     Vector3 BasePivotPos(OBJECT_HANDLE h, _float offsetY)
     {
         auto obj = ObjectManager()->Request_Object(h);
-        auto cc = obj->Get_Component<CCharacterController>();
-
-        const Vector4 foot4 = cc->Get_FootPosition();
-        const Vector3 foot(foot4.x, foot4.y, foot4.z);
-
+        auto cc  = obj->Get_Component<CCharacterController>();
+        const Vector3 foot = cc->Get_FootPosition();
         return foot + Vector3(0.f, cc->Get_HalfSize() * 1.5f + offsetY, 0.f);
     }
     void BuildOrbitBasis(const Vector2& rotDeg, Vector3& outLook, Vector3& outRight, Quaternion& outQ)
     {
         outQ = YawPitchQuat(rotDeg);
-
         const Vector3 backDir = Vector3::Transform(Vector3(0.f, 0.f, -1.f), outQ);
         outLook = -backDir;
         outRight = Vector3::Transform(Vector3(1.f, 0.f, 0.f), outQ);
+    }
+    Vector3 LockPivotPos(OBJECT_HANDLE h, _float offsetY)
+    {
+        auto obj = ObjectManager()->Request_Object(h);
+
+        CEnemy::ENEMY_CLASS enemyClass = static_cast<CEnemy*>(obj)->GetEnemyClass();
+
+        auto GetBipPivot = [&]() -> Vector3
+            {
+                auto anim = obj->Get_Component<CAnimator3D>();
+                if (anim)
+                {
+                    _float4x4 m{};
+                    if (anim->Get_BipWorld(&m))
+                    {
+                        const Vector3 bip(m._41, m._42, m._43);
+                        return bip + Vector3(0.f, offsetY, 0.f);
+                    }
+                }
+
+                auto tf = obj->Get_Component<CTransform>();
+                return Vector3(tf->Get_WorldPos()) + Vector3(0.f, offsetY, 0.f);
+            };
+
+        auto GetCcPivot = [&]() -> Vector3
+            {
+                auto cc = obj->Get_Component<CCharacterController>();
+                if (cc)
+                {
+                    const Vector3 foot = cc->Get_FootPosition();
+                    return foot + Vector3(0.f, cc->Get_HalfSize() * 1.5f + offsetY, 0.f);
+                }
+
+                auto tf = obj->Get_Component<CTransform>();
+                return Vector3(tf->Get_WorldPos()) + Vector3(0.f, offsetY, 0.f);
+            };
+
+        if (enemyClass == CEnemy::ENEMY_CLASS::BOSS/* || enemyClass == CEnemy::ENEMY_CLASS::ELITE*/)
+            return GetBipPivot();
+
+        return GetCcPivot();
     }
 }
 
 void COrbitCam::Awake()
 {
     auto cc = Get_Component<CCharacterController>();
-    cc->Resize(0.2f, 0.2f);
+    cc->Resize(0.3f, 0.3f);
     cc->Set_GravityEnabled(false);
     cc->Set_StepOffset(0.f);
     cc->Set_SlopeLimit(89.f);
-    cc->Set_MinMoveDist(0.01f);
+    cc->Set_MinMoveDist(0.1f);
 }
 
 HRESULT COrbitCam::Initialize_Prototype()
@@ -101,7 +139,6 @@ HRESULT COrbitCam::Initialize(INIT_DESC* pArg)
     Get_Component<CEventListener>()->Add_Listener<TARGET_LOCK_DESC>([&](TARGET_LOCK_DESC desc)
         {
             if (!desc.tHandle.isValid()) return;
-            if (!desc.tHandle.Get()->Get_Component<CCharacterController>()) return;
             if (desc.bLock) SetLockOn(desc.tHandle);
             else ClearLockOn();
         });
@@ -188,6 +225,51 @@ void COrbitCam::ClearLockOn()
 
     Lock_Exit();
     AutoYaw_OnInput();
+}
+
+void COrbitCam::Lock_ReenterBlend(_float blendInSec)
+{
+    m_lockBlend.active = true;
+    m_lockBlend.entering = true;
+    m_lockBlend.elapsed = 0.f;
+    m_lockBlend.duration = max(blendInSec, 0.0001f);
+    m_lockBlend.ease = m_prof.lockBlendInEase;
+    m_lockBlend.weight = 0.f;
+
+    m_lockFocus = {};
+    m_hasLockFocus = false;
+}
+
+void COrbitCam::ReturnPreset_Begin(const Vector3& pivotWorld, const Vector3& camPosTo, _float sec, EaseType ease)
+{
+    m_returnPreset.active = true;
+    m_returnPreset.elapsed = 0.f;
+    m_returnPreset.duration = max(sec, 0.0001f);
+    m_returnPreset.ease = ease;
+
+    m_returnPreset.pivotWorld = pivotWorld;
+
+    m_returnPreset.camPosFrom = m_pTransform->Get_WorldPos();
+    m_returnPreset.camPosTo = camPosTo;
+}
+
+Vector3 COrbitCam::ReturnPreset_EvalCamPos(_float dt, const Vector3& fallbackCamPos)
+{
+    if (!m_returnPreset.active) return fallbackCamPos;
+
+    m_returnPreset.elapsed += dt;
+
+    _float u = m_returnPreset.elapsed / m_returnPreset.duration;
+    if (u >= 1.f)
+    {
+        m_returnPreset.active = false;
+        return m_returnPreset.camPosTo;
+    }
+
+    u = clamp(u, 0.f, 1.f);
+    const _float t = Math::ApplyEase(m_returnPreset.ease, u);
+
+    return Vector3::Lerp(m_returnPreset.camPosFrom, m_returnPreset.camPosTo, t);
 }
 
 void COrbitCam::CaptureSnapshot(OrbitSnapshot& out) const
@@ -548,6 +630,28 @@ void COrbitCam::DialogueYaw_Set(_float yawGoalDeg, _float weight)
     m_dialogueYaw.weight     = clamp(weight, 0.f, 1.f);
 }
 
+void COrbitCam::ParryMode_ResumeSync()
+{
+    m_pose.rotGoalDeg = m_pose.rotCurDeg;
+
+    m_pose.distWanted = m_pose.distCur;
+    m_pose.distGoal = m_pose.distCur;
+
+    m_pose.pivotGoalWorld = m_pose.pivotCurWorld;
+
+    m_switch = {};
+    m_freeze = 0.f;
+
+    m_hitDist = false;
+    m_yawDeltaCapDeg = m_prof.yawDeltaCapDeg;
+    m_pitchDeltaCapDeg = m_prof.pitchDeltaCapDeg;
+
+    PivotStab_Reset(m_pose.pivotCurWorld);
+
+    ClampTargets();
+}
+
+
 void COrbitCam::ClampTargets()
 {
     m_pose.rotGoalDeg.y = clamp(m_pose.rotGoalDeg.y, m_prof.pitchLimitMinDeg, m_prof.pitchLimitMaxDeg);
@@ -569,10 +673,36 @@ float COrbitCam::GetDist() const
 void COrbitCam::ApplyPose(_float dt, const OrbitLockEval& lockRes)
 {
     const Vector3 pivot = GetPivotPos();
-    const Quaternion q = YawPitchQuat(m_pose.rotCurDeg);
+
+    const Quaternion qYawPitch = YawPitchQuat(m_pose.rotCurDeg);
 
     const float dist = GetDist();
-    const Vector3 camPos = OrbitCamPos(pivot, q, dist);
+    const Vector3 orbitPos = OrbitCamPos(pivot, qYawPitch, dist);
+
+    Vector3 camPos = orbitPos;
+
+    if (m_returnPreset.active)
+        camPos = ReturnPreset_EvalCamPos(dt, orbitPos);
+
+    if (m_returnPreset.active)
+    {
+        Vector3 toPivot = pivot - camPos;
+        const float d = toPivot.Length();
+        if (d > 0.f)
+        {
+            toPivot /= d;
+
+            Vector2 rot{};
+            CalcRotDeg(toPivot, rot);
+
+            m_pose.rotCurDeg = rot;
+            m_pose.rotGoalDeg = rot;
+
+            m_pose.distCur = d;
+            m_pose.distGoal = d;
+            m_pose.distWanted = d;
+        }
+    }
 
     auto cc = Get_Component<CCharacterController>();
     cc->Set_Position(Vector4(camPos.x, camPos.y, camPos.z, 1.f));
@@ -586,7 +716,7 @@ void COrbitCam::ApplyPose(_float dt, const OrbitLockEval& lockRes)
         return;
     }
 
-    m_pTransform->Set_WorldQuaternion(q);
+    m_pTransform->Set_WorldQuaternion(qYawPitch);
 }
 
 Vector3 COrbitCam::GetFoot() const
@@ -886,7 +1016,7 @@ OrbitLockEval COrbitCam::EvalLock(_float dt, _float curYawDeg, _float curDist)
     if (w <= 0.f) return out;
     if (!m_lock.handle.isValid()) return out;
 
-    const Vector3 targetPivot = GetBasePivotTargetPos(m_lock.handle);
+    const Vector3 targetPivot = LockPivotPos(m_lock.handle, m_prof.offsetY);
 
     Vector3 flat = targetPivot - playerPivot;
     flat.y = 0.f;
@@ -926,7 +1056,6 @@ OrbitLockEval COrbitCam::EvalLock(_float dt, _float curYawDeg, _float curDist)
 
     return out;
 }
-
 
 void COrbitCam::Lock_BlendStart(_bool entering)
 {

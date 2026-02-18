@@ -1,11 +1,12 @@
-// CamWipeOutController.cpp
 #include "pch.h"
 #include "CamWipeOutController.h"
-
 #include "CamDirector.h"
+// Engine
 #include "Helper_Func.h"
 #include "GameInstance.h"
+// Components
 #include "CharacterController.h"
+#include "Animator3D.h"
 
 CamWipeOutController::PivotSample CamWipeOutController::SamplePivots(OBJECT_HANDLE h, _float offsetY, _float faceYOffsetMul)
 {
@@ -13,6 +14,29 @@ CamWipeOutController::PivotSample CamWipeOutController::SamplePivots(OBJECT_HAND
     if (!h.isValid()) return s;
 
     auto obj = ObjectManager()->Request_Object(h);
+
+    auto anim = obj->Get_Component<CAnimator3D>();
+    if (anim)
+    {
+        _float4x4 m{};
+        if (anim->Get_BipWorld(&m))
+        {
+            const Vector3 bip(m._41, m._42, m._43);
+
+            const _float baseMul = 1.1f;
+            const _float topMul = 1.3f;
+
+            _float t = clamp(faceYOffsetMul, 0.f, 1.f);
+            const _float faceMul = baseMul + (topMul - baseMul) * t;
+
+            s.basePivot = bip + Vector3(0.f, offsetY, 0.f);
+            s.facePivot = bip + Vector3(0.f, offsetY + faceMul * 0.10f, 0.f);
+
+            s.valid = true;
+            return s;
+        }
+    }
+
     auto cc = obj->Get_Component<CCharacterController>();
 
     const Vector3 foot = cc->Get_FootPosition();
@@ -33,6 +57,7 @@ CamWipeOutController::PivotSample CamWipeOutController::SamplePivots(OBJECT_HAND
     s.valid = true;
     return s;
 }
+
 
 Vector3 CamWipeOutController::ClampOffset(const Vector3& offset, _float maxLen)
 {
@@ -192,11 +217,10 @@ void CamWipeOutController::ClampShot1AboveGround(ShotGoal& g) const
     auto attackerObj = ObjectManager()->Request_Object(m_attacker);
     auto attackerCC = attackerObj->Get_Component<CCharacterController>();
 
-    const Vector4 foot4 = attackerCC->Get_FootPosition();
-    const _float minFootY = foot4.y;
+    const Vector3 foot = attackerCC->Get_FootPosition();
 
-    const _float minPivotY = minFootY + tune.shot1.minPivotAboveFootY;
-    const _float minCamY = minFootY + tune.shot1.minCamAboveFootY;
+    const _float minPivotY = foot.y + tune.shot1.minPivotAboveFootY;
+    const _float minCamY = foot.y + tune.shot1.minCamAboveFootY;
 
     const Vector3 basePivot = BasePivotWorld(g.baseVictimWeight);
 

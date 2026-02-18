@@ -153,4 +153,16 @@ struct OrbitDialogueYaw
     _float yawGoalDeg = 0.f;
     _float weight = 0.f;
 };
+struct OrbitReturnPreset
+{
+    _bool   active = false;
+    _float  elapsed = 0.f;
+    _float  duration = 0.5f;
+    EaseType ease = EaseType::InOutSine;
+
+    Vector3 pivotWorld{};
+    Vector3 camPosFrom{};
+    Vector3 camPosTo{};
+};
+
 NS_END
