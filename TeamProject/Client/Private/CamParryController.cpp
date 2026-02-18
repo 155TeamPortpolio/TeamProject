@@ -819,6 +819,8 @@ void CamParryController::End()
 
         exit.exitSec = 1.f;
 
+        orbit->Lock_ReenterBlend(exit.exitSec);
+
         core.state = State::ExitBlend;
         core.elapsed = 0.f;
 
@@ -837,6 +839,7 @@ void CamParryController::End()
     core.elapsed = 0.f;
     wait.seqStarted = false;
 }
+
 
 void CamParryController::Update(_float dt)
 {
@@ -891,6 +894,7 @@ void CamParryController::Update(_float dt)
         UpdateRecoverFov(dt);
 
         auto orbit = CamDirector()->GetOrbitCam();
+        orbit->Lock_BlendUpdate_External(dt);
 
         const _float dur = max(exit.exitSec, 0.0001f);
         const _float u = clamp(core.elapsed / dur, 0.f, 1.f);
@@ -917,8 +921,19 @@ void CamParryController::Update(_float dt)
         const float dist = toPivot.Length();
         toPivot /= dist;
 
-        const _float yawWorldDeg = XMConvertToDegrees(atan2f(toPivot.x, toPivot.z));
-        const _float pitchDeg = XMConvertToDegrees(asinf(clamp(-toPivot.y, -1.f, 1.f)));
+        const _float yawPivotWorldDeg = XMConvertToDegrees(atan2f(toPivot.x, toPivot.z));
+
+        OrbitLockEval lockRes = orbit->Lock_Eval_External(dt, yawPivotWorldDeg, (_float)dist);
+
+        Vector3 lookAt = pivotWorld;
+        if (lockRes.weight > 0.f) lookAt = Vector3::Lerp(pivotWorld, lockRes.focusPos, lockRes.weight);
+
+        Vector3 toLook = lookAt - camPosWorld;
+        const float lookDist = toLook.Length();
+        toLook /= lookDist;
+
+        const _float yawWorldDeg = XMConvertToDegrees(atan2f(toLook.x, toLook.z));
+        const _float pitchDeg = XMConvertToDegrees(asinf(clamp(-toLook.y, -1.f, 1.f)));
         const _float rollDeg = Math::Lerp(shot.holdShot.rollDeg, 0.f, t);
 
         const Quaternion qRot = YawPitchRollQuatDeg(yawWorldDeg, pitchDeg, rollDeg);
@@ -930,8 +945,6 @@ void CamParryController::Update(_float dt)
             orbit->ParryMode_ResumeSync();
             orbit->ParryMode_End();
 
-            orbit->Lock_ReenterBlend(dur);
-
             core.state = State::WaitEnd;
             core.elapsed = 0.f;
 
@@ -941,6 +954,7 @@ void CamParryController::Update(_float dt)
         }
         return;
     }
+
 
     if (core.state == State::WaitEnd)
     {

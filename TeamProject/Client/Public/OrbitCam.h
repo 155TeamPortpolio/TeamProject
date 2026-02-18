@@ -55,6 +55,9 @@ public:
     _bool   IsDistHit() const { return m_hitDist; }
     _float  GetOffsetY() const { return m_prof.offsetY; }
 
+    void          Lock_BlendUpdate_External(_float dt) { Lock_BlendUpdate(dt); }
+    OrbitLockEval Lock_Eval_External(_float dt, _float curYawDeg, _float curDist) { return EvalLock(dt, curYawDeg, curDist); }
+
     OBJECT_HANDLE GetTarget() const { return m_target; }
 
 public:
