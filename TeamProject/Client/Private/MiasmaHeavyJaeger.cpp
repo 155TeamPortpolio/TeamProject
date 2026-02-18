@@ -90,7 +90,7 @@ HRESULT CMiasmaHeavyJaeger::Initialize(INIT_DESC* pArg)
 		WeaponDesc.tagBone = "RootNode";
 		WeaponDesc.pOwnerAnimator3D = pAnimator;
 		WeaponDesc.eAttackColliderType = COLLIDER_TYPE::BOX;
-		WeaponDesc.vAttackSize = _float3{ 2.f,2.5f,2.5f };
+		WeaponDesc.vAttackSize = _float3{ 5.f,2.5f,2.5f };
 
 		if (FAILED(AttachBattleColliderObject(&WeaponDesc)))
 			return E_FAIL;
