@@ -68,7 +68,8 @@ HRESULT CPhysicsSystem::Initialize()
     if (!m_pPhysics) return E_FAIL;
     if (!PxInitExtensions(*m_pPhysics, m_pPvd)) return E_FAIL;   // Extensions 초기화 (필수적인 확장 기능들)
 
-    m_pDispatcher = PxDefaultCpuDispatcherCreate(2);             // Dispatcher 생성 (CPU 스레드 2개 사용)
+    const _uint threadCount = min(4u, max(1u, (unsigned int)std::thread::hardware_concurrency() - 1));
+    m_pDispatcher = PxDefaultCpuDispatcherCreate(threadCount);      // Dispatcher 생성
 
     // Scene(물리 월드) 생성
     PxSceneDesc sceneDesc(m_pPhysics->getTolerancesScale());
