@@ -54,6 +54,8 @@ void CEnemyAttackCollider::Priority_Update(_float dt)
 
 void CEnemyAttackCollider::Update(_float dt)
 {
+	m_fTimer += dt;
+
 	_float4x4 worldMatrix = m_pTransform->Get_WorldMatrix();
 	_vector scale, position, rotation;
 	XMMatrixDecompose(&scale, &rotation, &position, XMLoadFloat4x4(&worldMatrix));
@@ -117,7 +119,7 @@ void CEnemyAttackCollider::OnTriggerEnter(CGameObject* pOther)
 	auto pEnemy = dynamic_cast<CCharacter*>(pOther);
 	if (nullptr != pEnemy)
 	{
-		pEnemy->Take_Damage(DAMAGE_TYPE::NORMAL, 10);
+		pEnemy->Take_Damage(m_tHitDesc.eDamageType, m_tHitDesc.fDamage);
 		CameraManager()->AddImpact(1,0);
 	}
 }
@@ -134,7 +136,7 @@ void CEnemyAttackCollider::OnTriggerStay(CGameObject* pOther)
 	auto pEnemy = dynamic_cast<CCharacter*>(pOther);
 	if (nullptr != pEnemy)
 	{
-		pEnemy->Take_Damage(DAMAGE_TYPE::NORMAL, 10);
+		pEnemy->Take_Damage(m_tHitDesc.eDamageType, m_tHitDesc.fDamage);
 		CameraManager()->AddImpact(1,0);
 	}
 }
