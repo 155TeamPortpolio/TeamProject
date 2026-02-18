@@ -523,6 +523,7 @@
     <ClInclude Include="..\Public\UI_RenderTargetScreen.h" />
     <ClInclude Include="..\Public\UI_Tutorial.h" />
     <ClInclude Include="..\Public\UI_ButtonPanel.h" />
+    <ClInclude Include="..\Public\UI_TutorialDescription.h" />
     <ClInclude Include="..\Public\UI_WipeoutRT.h" />
     <ClInclude Include="..\public\Water.h" />
     <ClInclude Include="..\public\WaterWave.h" />
@@ -1037,6 +1038,7 @@
     <ClCompile Include="..\Private\UI_RenderTargetScreen.cpp" />
     <ClCompile Include="..\Private\UI_Tutorial.cpp" />
     <ClCompile Include="..\Private\UI_ButtonPanel.cpp" />
+    <ClCompile Include="..\Private\UI_TutorialDescription.cpp" />
     <ClCompile Include="..\Private\UI_WipeoutRT.cpp" />
     <ClCompile Include="..\private\Water.cpp" />
     <ClCompile Include="..\private\WaterWave.cpp" />

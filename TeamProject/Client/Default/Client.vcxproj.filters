@@ -1308,9 +1308,6 @@
     <Filter Include="03. Utility\08. CamDirector\04. CamWipeOutController">
       <UniqueIdentifier>{bbca9106-529f-4e73-b6f1-7102012e5969}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\UI\02. 3D\Mesh\ZeroEntranceLogo">
-      <UniqueIdentifier>{89478ed2-2501-4d4d-ac18-3d96e9af3442}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\UI\02. 3D\Mesh\GachaReveal">
       <UniqueIdentifier>{6f7a1e1a-1051-4414-a663-f226a6f0240f}</UniqueIdentifier>
     </Filter>
@@ -1505,6 +1502,9 @@
     </Filter>
     <Filter Include="02. GameObject\UI\01. 2D\Button">
       <UniqueIdentifier>{a4d91da9-ec9d-4aad-bdde-23bc7ed45fbb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\Tutorial\Description">
+      <UniqueIdentifier>{f4aeede2-7d4b-4aa3-a818-5c7a7000e2f8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -2921,6 +2921,9 @@
     <ClInclude Include="..\Public\UI_ButtonPanel.h">
       <Filter>02. GameObject\UI\01. 2D\Button</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UI_TutorialDescription.h">
+      <Filter>02. GameObject\UI\01. 2D\Tutorial\Description</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -4291,6 +4294,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\UI_ButtonPanel.cpp">
       <Filter>02. GameObject\UI\01. 2D\Button</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_TutorialDescription.cpp">
+      <Filter>02. GameObject\UI\01. 2D\Tutorial\Description</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

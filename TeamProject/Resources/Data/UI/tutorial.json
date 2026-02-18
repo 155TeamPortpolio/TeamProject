@@ -46,7 +46,98 @@
         0.0,
         0.0
     ],
-    "animClips": [],
+    "animClips": [
+        {
+            "duration": 0.20000000298023224,
+            "keyframes": [
+                {
+                    "angle": 0.0,
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        0.0
+                    ],
+                    "easeType": 0,
+                    "position": [
+                        0.0,
+                        0.0
+                    ],
+                    "scale": [
+                        1.0,
+                        1.0
+                    ],
+                    "time": 0.0
+                },
+                {
+                    "angle": 0.0,
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "easeType": 0,
+                    "position": [
+                        0.0,
+                        0.0
+                    ],
+                    "scale": [
+                        1.0,
+                        1.0
+                    ],
+                    "time": 0.20000000298023224
+                }
+            ],
+            "loop": false,
+            "name": "clip0"
+        },
+        {
+            "duration": 0.20000000298023224,
+            "keyframes": [
+                {
+                    "angle": 0.0,
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "easeType": 0,
+                    "position": [
+                        0.0,
+                        0.0
+                    ],
+                    "scale": [
+                        1.0,
+                        1.0
+                    ],
+                    "time": 0.0
+                },
+                {
+                    "angle": 0.0,
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        0.0
+                    ],
+                    "easeType": 0,
+                    "position": [
+                        0.0,
+                        0.0
+                    ],
+                    "scale": [
+                        1.0,
+                        1.0
+                    ],
+                    "time": 0.5
+                }
+            ],
+            "loop": false,
+            "name": "clip0"
+        }
+    ],
     "children": [
         {
             "alive": true,
@@ -336,7 +427,7 @@
             "children": [],
             "typeTag": "Text",
             "text": {
-                "content": "극한 회피 및 회피 반격",
+                "content": "제목",
                 "fontTag": "NanumSquareNeo.spritefont",
                 "fontScale": 0.6499999165534973,
                 "outlined": false,

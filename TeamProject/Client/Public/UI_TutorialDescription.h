@@ -1,18 +1,19 @@
 #pragma once
 #include "UI_Object.h"
 
-NS_BEGIN(Engine)
-class CTextSlot;
-NS_END
-
 NS_BEGIN(Client)
 
-class CUI_Tutorial final : public CUI_Object
+class CUI_TutorialDescription final : public CUI_Object
 {
+public:
+	typedef struct tagTutorialDesc : public UI_DESC {
+		TUTORIAL eTutorial;
+	}TUTORIAL_DESC;
+
 private:
-	CUI_Tutorial() {}
-	CUI_Tutorial(const CUI_Tutorial& rhs) : CUI_Object(rhs) {}
-	virtual ~CUI_Tutorial() DEFAULT;
+	CUI_TutorialDescription() {}
+	CUI_TutorialDescription(const CUI_TutorialDescription& rhs) : CUI_Object(rhs) {}
+	virtual ~CUI_TutorialDescription() DEFAULT;
 
 public:
 	virtual HRESULT Initialize_Prototype()           override;
@@ -26,26 +27,12 @@ public:
 	virtual void	UI_DeActive(void* pArg = nullptr) override;
 
 private:
-	class CTextSlot* m_pTitle = {};
-
-	TUTORIAL m_eCurrentTutorial = { TUTORIAL::END };
-	map<TUTORIAL, CUI_Object*> m_Descriptions;
-
-private:
-	void Cache();
-	HRESULT Create_ExitButton();
-	HRESULT Create_EnterButton();
-	HRESULT Create_TutorialDescriptions();
-	 
-	void Change_Description(TUTORIAL eTutorial);
-	void Change_TitleText();
-
-	wstring Get_TitleText(TUTORIAL eTutorial);
+	const char* Get_PrefaPath(TUTORIAL eTutorial);
 
 public:
 	static  CGameObject* Create();
 	virtual CGameObject* Clone(INIT_DESC* pArg = {}) override;
-	virtual void Free() override;
+	virtual void Free() { __super::Free(); }
 };
 
 NS_END
