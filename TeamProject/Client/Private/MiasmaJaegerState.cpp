@@ -106,6 +106,7 @@ CMiasmaGrandierJaeger_DisAppear* CMiasmaGrandierJaeger_DisAppear::Create()
 void CMiasmaGrandierJaeger_DisAppear::Enter(CMiasmaGrandierJaeger* pOwner)
 {
 	pOwner->Get_Dissolve().DisAppear(0.5f);
+	BattleSystem()->ExitBattleObject(BATTLE_OBJ_TYPE::MONSTER, pOwner->Get_Handle());
 }
 
 void CMiasmaGrandierJaeger_DisAppear::Update(CMiasmaGrandierJaeger* pOwner, _float dt)
@@ -238,19 +239,18 @@ CMiasmaHeavyJaeger_DisAppear* CMiasmaHeavyJaeger_DisAppear::Create()
 {
 	CMiasmaHeavyJaeger_DisAppear* pInstance = new CMiasmaHeavyJaeger_DisAppear();
 	pInstance->m_pSubStateMachine = CStateMachine<CMiasmaHeavyJaeger>::Create();
-
 	return pInstance;
 }
 
 void CMiasmaHeavyJaeger_DisAppear::Enter(CMiasmaHeavyJaeger* pOwner)
 {
+	BattleSystem()->ExitBattleObject(BATTLE_OBJ_TYPE::MONSTER, pOwner->Get_Handle());
 	pOwner->Dissolve(false);
 }
 
 void CMiasmaHeavyJaeger_DisAppear::Update(CMiasmaHeavyJaeger* pOwner, _float dt)
 {
 	if (pOwner->Get_Dissolve().isComplete()) {
-		BattleSystem()->ExitBattleObject(BATTLE_OBJ_TYPE::MONSTER, pOwner->Get_Handle());
 		ObjectManager()->Remove_Object(pOwner);
 	}
 }
