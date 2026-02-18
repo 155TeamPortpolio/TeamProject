@@ -58,6 +58,7 @@ HRESULT CDefilerWeapon::Initialize(INIT_DESC* pArg)
 	m_vRimLightColor = _float3(0.378, 0.029, 0.070);
 	m_fRimLightPower = 4.f;
 	m_fDissolveTilling = 6.f;
+	m_isOnAttack = true;
 
 	auto pMaterial = Get_Component<CMaterial>();
 	auto& materialInstances = pMaterial->Get_MaterialInstances();
@@ -71,7 +72,6 @@ HRESULT CDefilerWeapon::Initialize(INIT_DESC* pArg)
 		instance->Set_Param("fDissolveProgress", { &m_fDissolveProgress,"float",sizeof(_float) });
 		instance->Set_Param("fDissolveTiling", { &m_fDissolveTilling,"float",sizeof(_float) });
 	}
-	m_isOnAttack = true;
 	{
 		BATTLE_COLLIDER_DESC BladeDesc{};
 	
