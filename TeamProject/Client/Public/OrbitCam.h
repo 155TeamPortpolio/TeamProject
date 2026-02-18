@@ -18,8 +18,6 @@ public:
     HRESULT Initialize(INIT_DESC* pArg) override;
     void    Awake()                     override;
     void    Priority_Update(_float dt)  override;
-    void    Update(_float dt)           override{}
-    void    Late_Update(_float dt)      override{}
 
 public:
     void    SetTarget(OBJECT_HANDLE h);
@@ -40,6 +38,12 @@ public:
     void    Lock_Input() { m_lockInput = true; }
     void    Unlock_Input() { m_lockInput = false; }
     _bool   IsInputLocked() const { return m_lockInput; }
+    void    Lock_ReenterBlend(_float blendInSec);
+
+    void    ReturnPreset_Begin(const Vector3& pivotWorld, const Vector3& camPosTo, _float sec, EaseType ease);
+    _bool   ReturnPreset_Active() const { return m_returnPreset.active; }
+    Vector3 ReturnPreset_EvalCamPos(_float dt, const Vector3& fallbackCamPos);
+    void    ReturnPreset_Reset() { m_returnPreset = {}; }
 
     void    SetPivotExt(const Vector3& off) { m_pose.pivotExternalOffset = off; }
     Vector3 GetPivotExt() const { return m_pose.pivotExternalOffset; }
@@ -51,6 +55,9 @@ public:
     _bool   IsDistHit() const { return m_hitDist; }
     _float  GetOffsetY() const { return m_prof.offsetY; }
 
+    void          Lock_BlendUpdate_External(_float dt) { Lock_BlendUpdate(dt); }
+    OrbitLockEval Lock_Eval_External(_float dt, _float curYawDeg, _float curDist) { return EvalLock(dt, curYawDeg, curDist); }
+
     OBJECT_HANDLE GetTarget() const { return m_target; }
 
 public:
@@ -58,15 +65,16 @@ public:
     void  DialogueMode_End()     { m_dialogueMode = false; }
     _bool IsDialogueMode() const { return m_dialogueMode; }
 
-    void    EvalOcclusion();
+    void  EvalOcclusion();
 
-    void    DialogueYaw_Set(_float yawGoalDeg, _float weight);
-    void    DialogueYaw_Clear() { m_dialogueYaw = {}; }
+    void  DialogueYaw_Set(_float yawGoalDeg, _float weight);
+    void  DialogueYaw_Clear() { m_dialogueYaw = {}; }
     
 public:
     void  ParryMode_Begin() { m_parryMode = true; }
     void  ParryMode_End()   { m_parryMode = false; }
     _bool IsParryMode() const { return m_parryMode; }
+    void  ParryMode_ResumeSync();
 
 private:
     void    ClampTargets();
@@ -151,6 +159,7 @@ private:
     OrbitPivotStabilizer m_pivotStab{};
     CCamOcclusionTracker m_occlusion{};
     OrbitDialogueYaw     m_dialogueYaw{};
+    OrbitReturnPreset    m_returnPreset{};
 
 public:
     static  COrbitCam* Create();

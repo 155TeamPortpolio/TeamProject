@@ -26,7 +26,6 @@ void CBattleFXFlow::Initialize_Preset()
 		evade.fBlurDuration = .4f;
 		evade.SetTimeData({ duration, 0.4f, 0.8f, 0.2f , EaseType::OutCubic });
 	}
-
 	{
 		auto& Parry = m_BattleVFXData[ENUM(BATTLE_VFX_TYPE::PARRY)];
 		const _float duration = 1.f;
