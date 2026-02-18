@@ -84,8 +84,6 @@
 
 #include "UI_GachaResult.h"
 
-#include "UI_Tutorial.h"
-
 CMainApp::CMainApp()
 {
 }
@@ -264,8 +262,6 @@ void CMainApp::Initialize_GlobalPrototype()
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Ramen", CUI_Ramen::Create()); 
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_GachaPage", CUI_GachaPage::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_GachaResult", CUI_GachaResult::Create());
-
-	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Tutorial", CUI_Tutorial::Create());
 
 	/*Enviroment*/
 	ResourceManager()->Add_ResourcePath("cloud_noise.png", "../Bin/Resources/Global/Shader/cloud_noise.png");

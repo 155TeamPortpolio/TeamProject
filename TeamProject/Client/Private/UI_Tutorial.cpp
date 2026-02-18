@@ -7,6 +7,7 @@
 
 #include "UI_ButtonPanel.h"
 #include "UI_TutorialDescription.h"
+#include "UI_TutorialVideo.h"
 
 HRESULT CUI_Tutorial::Initialize_Prototype()
 {
@@ -15,7 +16,8 @@ HRESULT CUI_Tutorial::Initialize_Prototype()
 
     Add_Component<CObjectContainer>();
 
-    PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_TutorialDescription", CUI_TutorialDescription::Create());
+    PrototypeManager()->Add_ProtoType("Scott_Level", "Proto_GameObject_TutorialDescription", CUI_TutorialDescription::Create());
+    PrototypeManager()->Add_ProtoType("Scott_Level", "Proto_GameObject_TutorialVideo", CUI_TutorialVideo::Create());
 
 	return S_OK;
 }
@@ -31,36 +33,44 @@ HRESULT CUI_Tutorial::Initialize(INIT_DESC* pArg)
     Create_ExitButton();
     Create_EnterButton();
     Create_TutorialDescriptions();
+    Create_TutorialVideo();
 
 	return S_OK;
 }
 
 void CUI_Tutorial::Awake()
 {
-    UI_Active();
+    Set_Alive(false);
 }
 
 void CUI_Tutorial::Update(_float dt)
 {
-    if (InputDevice()->Key_Tap('P'))
-        UI_Active();
-    if (InputDevice()->Key_Tap('O'))
-        UI_DeActive();
-
     __super::Update(dt);
     Get_Component<CObjectContainer>()->UpdateChild(dt);
+
+    if (m_isCheck && Is_AnimFinished())
+        Set_Alive(false);
 }
 
 void CUI_Tutorial::UI_Active(void* pArg)
 {
+    if (!pArg)
+        return;
+     
+    TUTORIAL_DESC* pDesc = static_cast<TUTORIAL_DESC*>(pArg);
+
+    m_isCheck = false;
+    Set_Alive(true);
     Set_Animation(0);
-    Change_Description(static_cast<TUTORIAL>((static_cast<_int>(m_eCurrentTutorial) + 1) % static_cast<_int>(TUTORIAL::END)));
-    //Change_Description(TUTORIAL::DECIBEL_ULTIMATE);
+    Change_Description(pDesc->eTutorial);
 }
 
 void CUI_Tutorial::UI_DeActive(void* pArg)
 {
+    m_isCheck = true;
     Set_Animation(1);
+    if (m_pVideo)
+        m_pVideo->UI_DeActive();
 }
 
 void CUI_Tutorial::Cache()
@@ -75,7 +85,7 @@ HRESULT CUI_Tutorial::Create_ExitButton()
     CUI_ButtonPanel::BUTTON_DESC* pDesc = new CUI_ButtonPanel::BUTTON_DESC;
     pDesc->strJsonKey = "tutorial_exitButton.json";
 
-    auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_ButtonPanel" })
+    auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_ButtonPanel"})
         .Add_UIDesc(pDesc)
         .Build("buttonExit");
 
@@ -93,7 +103,7 @@ HRESULT CUI_Tutorial::Create_EnterButton()
     CUI_ButtonPanel::BUTTON_DESC* pDesc = new CUI_ButtonPanel::BUTTON_DESC;
     pDesc->strJsonKey = "tutorial_enterButton.json";
 
-    auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_ButtonPanel" })
+    auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_ButtonPanel"})
         .Add_UIDesc(pDesc)
         .Build("buttonEnter");
 
@@ -114,7 +124,7 @@ HRESULT CUI_Tutorial::Create_TutorialDescriptions()
         CUI_TutorialDescription::TUTORIAL_DESC* pDesc = new CUI_TutorialDescription::TUTORIAL_DESC;
         pDesc->eTutorial = eTutorial;
 
-        auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_TutorialDescription" })
+        auto pObj = Builder::Create_UIObject({ "Scott_Level", "Proto_GameObject_TutorialDescription"})
             .Add_UIDesc(pDesc)
             .Build("description");
 
@@ -128,31 +138,43 @@ HRESULT CUI_Tutorial::Create_TutorialDescriptions()
     return S_OK;
 }
 
+HRESULT CUI_Tutorial::Create_TutorialVideo()
+{
+    auto pObj = Builder::Create_UIObject({ "Scott_Level", "Proto_GameObject_TutorialVideo"})
+        .Build("video");
+
+    if (!pObj)
+        return E_FAIL;
+
+    Get_Component<CObjectContainer>()->Add_Child(pObj);
+    m_pVideo = dynamic_cast<CUI_TutorialVideo*>(pObj);
+
+    return S_OK;
+}
+
 void CUI_Tutorial::Change_Description(TUTORIAL eTutorial)
 {
-    if (m_eCurrentTutorial == eTutorial)
-        return;
-
     for (auto& pair : m_Descriptions)
         pair.second->Set_Alpha(0.f);
 
     auto iter = m_Descriptions.find(eTutorial);
     if (iter == m_Descriptions.end())
-        iter;
+        return;
 
     iter->second->Set_Alpha(1.f);
 
-    m_eCurrentTutorial = eTutorial;
+    Change_TitleText(eTutorial);
 
-    Change_TitleText();
+    if (m_pVideo) 
+        m_pVideo->Play(eTutorial);
 }
 
-void CUI_Tutorial::Change_TitleText()
+void CUI_Tutorial::Change_TitleText(TUTORIAL eTutorial)
 {
     if (!m_pTitle)
         return;
 
-    m_pTitle->Set_Text(Get_TitleText(m_eCurrentTutorial));
+    m_pTitle->Set_Text(Get_TitleText(eTutorial));
 }
 
 wstring CUI_Tutorial::Get_TitleText(TUTORIAL eTutorial)

@@ -1506,6 +1506,9 @@
     <Filter Include="02. GameObject\UI\01. 2D\Tutorial\Description">
       <UniqueIdentifier>{f4aeede2-7d4b-4aa3-a818-5c7a7000e2f8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\Tutorial\Video">
+      <UniqueIdentifier>{68f11833-e895-49ac-a315-afca6d826518}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -2924,6 +2927,9 @@
     <ClInclude Include="..\Public\UI_TutorialDescription.h">
       <Filter>02. GameObject\UI\01. 2D\Tutorial\Description</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UI_TutorialVideo.h">
+      <Filter>02. GameObject\UI\01. 2D\Tutorial\Video</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -4297,6 +4303,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\UI_TutorialDescription.cpp">
       <Filter>02. GameObject\UI\01. 2D\Tutorial\Description</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_TutorialVideo.cpp">
+      <Filter>02. GameObject\UI\01. 2D\Tutorial\Video</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

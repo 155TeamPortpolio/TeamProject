@@ -58,7 +58,7 @@
                         1.0,
                         0.0
                     ],
-                    "easeType": 0,
+                    "easeType": 2,
                     "position": [
                         0.0,
                         0.0
@@ -90,7 +90,7 @@
                 }
             ],
             "loop": false,
-            "name": "clip0"
+            "name": "appear"
         },
         {
             "duration": 0.20000000298023224,
@@ -103,7 +103,7 @@
                         1.0,
                         1.0
                     ],
-                    "easeType": 0,
+                    "easeType": 2,
                     "position": [
                         0.0,
                         0.0
@@ -135,7 +135,7 @@
                 }
             ],
             "loop": false,
-            "name": "clip0"
+            "name": "disappear"
         }
     ],
     "children": [

@@ -2,22 +2,21 @@
 #include "UI_Object.h"
 
 NS_BEGIN(Engine)
-class CTextSlot;
+class CVideoPlayer;
+class CMFVideoDecoderBackend;
 NS_END
 
 NS_BEGIN(Client)
 
-class CUI_Tutorial final : public CUI_Object
+class CUI_TutorialVideo final : public CUI_Object
 {
-public:
-	typedef struct tagTutorialDesc {
-		TUTORIAL eTutorial = {};
-	}TUTORIAL_DESC;
-
 private:
-	CUI_Tutorial() {}
-	CUI_Tutorial(const CUI_Tutorial& rhs) : CUI_Object(rhs) {}
-	virtual ~CUI_Tutorial() DEFAULT;
+	CUI_TutorialVideo() {}
+	CUI_TutorialVideo(const CUI_TutorialVideo& rhs) : CUI_Object(rhs) {}
+	virtual ~CUI_TutorialVideo() DEFAULT;
+
+public:
+	void Play(TUTORIAL eTutorial);
 
 public:
 	virtual HRESULT Initialize_Prototype()           override;
@@ -31,25 +30,13 @@ public:
 	virtual void	UI_DeActive(void* pArg = nullptr) override;
 
 private:
-	_bool m_isCheck = {};
-
-	class CTextSlot* m_pTitle = {};
-	
-	map<TUTORIAL, CUI_Object*> m_Descriptions;
-
-	class CUI_TutorialVideo* m_pVideo = {};
+	CVideoPlayer* m_pPlayer = { nullptr };
+	CMFVideoDecoderBackend* m_pDecoder = { nullptr };
+	_uint64 m_startTimeSec = 0.0;
+	_uint m_PlayerID = {};
 
 private:
-	void Cache();
-	HRESULT Create_ExitButton();
-	HRESULT Create_EnterButton();
-	HRESULT Create_TutorialDescriptions();
-	HRESULT Create_TutorialVideo();
-
-	void Change_Description(TUTORIAL eTutorial);
-	void Change_TitleText(TUTORIAL eTutorial);
-
-	wstring Get_TitleText(TUTORIAL eTutorial);
+	const char* Get_VideoPath(TUTORIAL eTutorial);
 
 public:
 	static  CGameObject* Create();
