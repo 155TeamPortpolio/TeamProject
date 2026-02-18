@@ -26,6 +26,8 @@ void CJaneDoeState_BranchAttack::Enter(CJaneDoe* pOwner)
         m_pSubStateMachine->Set_DefaultState("Start");
     }
     __super::Enter(pOwner);
+
+    pOwner->Increase_Passion(30.f);
 }
 
 void CJaneDoeState_BranchAttack::Update(CJaneDoe* pOwner, _float dt)
@@ -93,7 +95,17 @@ void CJaneDoeState_BranchAttack_Start::Update(CJaneDoe* pOwner, _float dt)
         }
     }
 
+    if (IsCrossAnimProgress(m_fRepeatProgress))
+    {
+        pOwner->Add_MotionBlur();
+    }
+  
     Update_Effects(pOwner);
+}
+
+void CJaneDoeState_BranchAttack_Start::Exit(CJaneDoe* pOwner)
+{
+    pOwner->Clear_MotionBlur();
 }
 
 void CJaneDoeState_BranchAttack_Start::Update_Effects(CJaneDoe* pOwner)
