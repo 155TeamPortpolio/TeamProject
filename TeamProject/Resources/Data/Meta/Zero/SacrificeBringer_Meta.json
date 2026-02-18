@@ -362,12 +362,12 @@
       "ClipTag": "SacrificeBringer_Ani_P1_Attack_06",
       "Events": [
         {
-          "EventTime": 0.857374906539917,
+          "EventTime": 1.0099999904632568,
           "EventType": "Sound",
           "EventTag": "Long_Laser.wav"
         },
         {
-          "EventTime": 1.1100000143051147,
+          "EventTime": 1.2599999904632568,
           "EventType": "Sound",
           "EventTag": "Sacrifice_Laugh_Voice1.wav"
         }

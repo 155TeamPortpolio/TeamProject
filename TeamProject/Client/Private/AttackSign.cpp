@@ -52,8 +52,8 @@ HRESULT CAttackSign::Initialize(INIT_DESC* pArg)
 
 	pMaterial->Insert_MaterialInstance(pMaterialInstance, nullptr);
 
-	m_IsActive = true;
-	//m_isAlive = false;
+	m_IsActive = false;
+	m_isAlive = false;
 
 	return S_OK;
 }

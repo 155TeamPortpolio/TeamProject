@@ -84,7 +84,8 @@ PS_OUT_RESULT PS_FOG(PS_IN In)
     
     float4 vNonLight = NonLightTexture.Sample(DefaultSampler, In.vTexcoord);
     float4 vBlend = BlendTexture.Sample(DefaultSampler, In.vTexcoord);
-    float fNonLightFactor = saturate(vNonLight.a + vBlend.a);
+    float4 v3DUI = UI3DTexture.Sample(DefaultSampler, In.vTexcoord);
+    float fNonLightFactor = saturate(vNonLight.a + vBlend.a + v3DUI.a);
     
     if (fNonLightFactor > 0.999f)
     {

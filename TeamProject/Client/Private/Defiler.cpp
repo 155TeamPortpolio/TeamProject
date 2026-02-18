@@ -35,6 +35,7 @@
 #include "WaterWave.h"
 #include "CamDirector.h"
 #include "UI_EnemyStatus.h"
+#include "UI_BossHUD.h"
 
 CDefiler::CDefiler()
 	:CEnemy()
@@ -1162,6 +1163,44 @@ HRESULT CDefiler::Initialize_Effects()
 		pEffect->AttachBone(pAnimator, "Ctr_M_Weapon_01", offsetMatrix);
 		pObjectContainer->Add_Child(pEffect, false);
 	}
+	{
+		_smatrix offsetMatrix = _smatrix::Identity;
+		offsetMatrix.Translation(_vector3(2.f, 0.f, 0.f));
+
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("defiler_wave_axe_charge.json")
+			.Build("Defiler_Wave_Axe_Charge");
+		pEffect->Stop();
+		pEffect->AttachBone(pAnimator, "Ctr_M_Weapon_01", offsetMatrix);
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+	{
+		_smatrix offsetMatrix = _smatrix::Identity;
+		offsetMatrix.Translation(_vector3(0.5f, 0.f, 0.f));
+
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("defiler_wave_charge.json")
+			.Build("Defiler_Wave_Charge");
+		pEffect->Set_Alive(false);
+		pEffect->AttachBone(pAnimator, "Ctr_M_Weapon_01", offsetMatrix);
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+
+	/* Barrier */
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("defiler_barrier0.json")
+			.Build("Defiler_Barrier0");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("defiler_barrier1.json")
+			.Build("Defiler_Barrier1");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
 
 	return S_OK;
 }
@@ -1229,7 +1268,6 @@ _float3 CDefiler::Calc_WorldOffsetWithBip()
 
 void CDefiler::Create_UIEnemyStatus(string boneTag)
 {
-
 	// 월드 행렬 포인터 
 	if (!m_pTransform)
 		return;
@@ -1260,4 +1298,24 @@ void CDefiler::Create_UIEnemyStatus(string boneTag)
 	CGameInstance::GetInstance()->Get_UIMgr()->Add_UIObject(pEnemyStatus, strLevelKey);
 
 	m_BoneHUD = pEnemyStatus->Get_Handle();
+}
+
+void CDefiler::Create_UIBossHUD()
+{
+	// BOSS_HUD_DESC 생성
+	CUI_BossHUD::BOSS_HUD_DESC* pDesc = new CUI_BossHUD::BOSS_HUD_DESC;
+	pDesc->pMonsterStatus = &m_tStatus;
+	pDesc->eBoss = BOSS::Defiler;
+
+	//pDesc.
+	// BossHUD UI 생성
+	const string& strLevelKey = LevelManager()->Get_NowLevelKey();
+	auto pBossHUD = Builder::Create_UIObject({ G_GlobalLevelKey,"Proto_GameObject_BossHUD" })
+		.Add_UIDesc(pDesc)
+		.Build("bossHUD");
+
+	// UI Mgr에 등록
+	CGameInstance::GetInstance()->Get_UIMgr()->Add_UIObject(pBossHUD, strLevelKey);
+
+	m_hUIEnemyStatus = pBossHUD->Get_Handle();
 }

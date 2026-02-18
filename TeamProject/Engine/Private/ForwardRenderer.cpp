@@ -62,7 +62,7 @@ void CForwardRenderer::ResetUpdateInterval()
 
 HRESULT CForwardRenderer::Render_Priority(PriorityPass* pPriorityPass)
 {
-	
+	m_pShader->SetConstantBuffer("FrameBuffer", m_pPipeLine->Get_FrameBuffer());
 	if (FAILED(m_pTargetManager->Begin_MRT("MRT_Final"))) return E_FAIL;
 	pPriorityPass->Execute(m_pContext, this);
 

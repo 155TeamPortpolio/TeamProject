@@ -19,7 +19,6 @@ CBattleSystem::CBattleSystem()
 {
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_MonsterSpawner", CMonsterSpawner::Create());
 
-	// 빈 값 채우기
 	for (_int i = 0; i < static_cast<_int>(BATTLE_OBJ_TYPE::END); ++i) {
 		auto eType = static_cast<BATTLE_OBJ_TYPE>(i);
 		vector<BATTLEOBJ_INFO> infos;
@@ -62,7 +61,7 @@ void CBattleSystem::Update()
 	}
 	if(InputDevice()->Key_Tap(VK_CONTROL))
 	{
-		StartGimmick(BATTLE_VFX_TYPE::EVADE);
+		StartGimmick(BATTLE_VFX_TYPE::CLEAR);
 	}
 }
 
@@ -103,7 +102,6 @@ void CBattleSystem::SetActive(_bool isActive)
 	}
 }
 
-/*지금 싸우려는 애들->*/
 void CBattleSystem::SpawnMosnter(const string& MonsterProtoTag, _float3 vSpawnPos, _float3 vRot)
 {
 	MonsterCreationDesc MonsterTableDesc = CDataBase::GetInstance()->GetMonsterDesc(MonsterProtoTag);
@@ -356,9 +354,9 @@ _bool CBattleSystem::isMonsterCleared()
 	return m_BattleObjInfos[BATTLE_OBJ_TYPE::MONSTER].empty();
 }
 
-_bool CBattleSystem::isVFXRunning()
+_bool CBattleSystem::isVFXRunning(BATTLE_VFX_TYPE type)
 {
-	return m_pFXFlow->IsRunning();
+	return m_pFXFlow->IsRunning(type);
 }
 
 void CBattleSystem::CheckVFX(const _float dt)
@@ -471,18 +469,18 @@ _bool CBattleSystem::RemoveFromListSwapPop(TypeVector& infoList, _uint removeInd
 	const _uint lastIndex = (_uint)infoList.size() - 1;
 	if (removeIndex != lastIndex)
 	{
-		infoList[removeIndex] = infoList[lastIndex]; /*마지막 인덱스 애를 리무브 인덱스로 옮겨줌*/
+		infoList[removeIndex] = infoList[lastIndex];
 
 		OBJECT_HANDLE movedHandle = infoList[removeIndex].hObject; 
 		auto itMoved = m_BattleObjIndex.find(movedHandle);
 		if (itMoved != m_BattleObjIndex.end())
-		{	/*인덱스 관련 정보도 바꿔줌*/
+		{	
 			itMoved->second.objType = objType;
 			itMoved->second.indexInVector = removeIndex;
 		}
 	}
 
-	infoList.pop_back(); /*마지막 정보 삭제*/
+	infoList.pop_back(); 
 	return true;
 }
 
@@ -517,7 +515,7 @@ void CBattleSystem::StartSwitch(CHARACTER eLeft, CHARACTER eRight)
 
 void CBattleSystem::EndSwitch()
 {
-	// 내용 추가
+	m_pFXFlow->Cancle_Switch();
 }
 
 void CBattleSystem::Free()
