@@ -205,7 +205,7 @@ public:
 	virtual void Exit(CDefiler* pOwner) override;
 
 private:
-	_float m_Duration = 3.f;
+	_float m_Duration = 5.f;
 	_float m_Elapsed = 0.f;
 	_float  m_Interval = 0.f;
 public:
@@ -247,6 +247,10 @@ public:
 public:
 	static CDefilerState_Attack_09_Start* Create() { return new CDefilerState_Attack_09_Start(); }
 	virtual void Free() override { __super::Free(); }
+
+private:
+	void Update_Effects(CDefiler* pOwner);
+
 };
 
 class CDefilerState_Attack_09_Loop : public CDefilerState_Attack
@@ -261,6 +265,10 @@ private:
 public:
 	static CDefilerState_Attack_09_Loop* Create() { return new CDefilerState_Attack_09_Loop(); }
 	virtual void Free() override { __super::Free(); }
+
+private:
+	void Update_Effects(CDefiler* pOwner);
+
 };
 
 class CDefilerState_Attack_09_End : public CDefilerState_Attack
@@ -273,6 +281,10 @@ public:
 public:
 	static CDefilerState_Attack_09_End* Create() { return new CDefilerState_Attack_09_End(); }
 	virtual void Free() override { __super::Free(); }
+
+private:
+	void Update_Effects(CDefiler* pOwner);
+
 };
 
 class CDefilerState_Attack_Grab : public CDefilerState_Attack
@@ -356,6 +368,10 @@ public:
 public:
 	static CDefilerState_Attack_Barrier* Create() { return new CDefilerState_Attack_Barrier(); }
 	virtual void Free() override { __super::Free(); }
+
+private:
+	void Update_Effects(CDefiler* pOwner);
+
 };
 
 

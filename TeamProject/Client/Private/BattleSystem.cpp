@@ -58,11 +58,12 @@ void CBattleSystem::Update()
 
 	if(InputDevice()->Key_Tap(VK_SHIFT))
 	{
-		StartGimmick(BATTLE_VFX_TYPE::PARRY);
+		//m_pFXFlow->StartVfx_Switch(CHARACTER::Corin, CHARACTER::JaneDoe);
+		StartGimmick(BATTLE_VFX_TYPE::WIPEOUT);
 	}
 	if(InputDevice()->Key_Tap(VK_CONTROL))
 	{
-		StartGimmick(BATTLE_VFX_TYPE::EVADE);
+		StartGimmick(BATTLE_VFX_TYPE::CLEAR);
 	}
 }
 
@@ -356,9 +357,9 @@ _bool CBattleSystem::isMonsterCleared()
 	return m_BattleObjInfos[BATTLE_OBJ_TYPE::MONSTER].empty();
 }
 
-_bool CBattleSystem::isVFXRunning()
+_bool CBattleSystem::isVFXRunning(BATTLE_VFX_TYPE type)
 {
-	return m_pFXFlow->IsRunning();
+	return m_pFXFlow->IsRunning(type);
 }
 
 void CBattleSystem::CheckVFX(const _float dt)
@@ -517,7 +518,7 @@ void CBattleSystem::StartSwitch(CHARACTER eLeft, CHARACTER eRight)
 
 void CBattleSystem::EndSwitch()
 {
-	// 내용 추가
+	m_pFXFlow->Cancle_Switch();
 }
 
 void CBattleSystem::Free()

@@ -34,6 +34,12 @@ private:
     void SummonAxe();
 
 private:
+    HRESULT Initialize_Effects();
+
+    void Play_Effect(const string& effectTag, _fvector offsetPosition, _fvector offsetQuaternion, _bool syncTransform = true);
+    void Stop_Effect(const string& effectTag);
+
+private:
     _bool m_isEnd = {};
     _bool m_isSliding = false;
     _bool m_isFinalThrow = false;
