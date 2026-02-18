@@ -157,10 +157,47 @@ void CCorin::On_SwitchIn(SWITCH eType)
     m_pStateMachine->Set_Trigger("SwitchIn");
 }
 
+void CCorin::On_ParryImpact()
+{
+    IHState<CCorin>* pSwitchIn = dynamic_cast<IHState<CCorin>*>(
+        m_pStateMachine->Get_CurrentState());
+    if (!pSwitchIn || !pSwitchIn->Get_SubStateMachine())
+    {
+        m_pStateMachine->Set_Trigger("ReserveParryImpact");
+        return;
+    }
+
+    IHState<CCorin>* pParryAid = dynamic_cast<IHState<CCorin>*>(
+        pSwitchIn->Get_SubStateMachine()->Get_CurrentState());
+    if (!pParryAid || !pParryAid->Get_SubStateMachine())
+    {
+        m_pStateMachine->Set_Trigger("ReserveParryImpact");
+        return;
+    }
+
+    pParryAid->Get_SubStateMachine()->Set_Trigger("ParryImpact");
+}
+
 void CCorin::On_ChainParry()
 {
-    m_pStateMachine->Set_Int("IdleEntryMode", 2);
-    m_pStateMachine->Set_Trigger("ToIdle");
+    Set_Switch(CCharacter::SWITCH::PARRYAID);
+
+    if (m_pStateMachine->Get_CurrentStateName() == "SwitchIn")
+    {
+        // 이미 SwitchIn이면 서브만 리셋
+        IHState<CCorin>* pSwitchIn = dynamic_cast<IHState<CCorin>*>(
+            m_pStateMachine->Get_CurrentState());
+        if (pSwitchIn && pSwitchIn->Get_SubStateMachine())
+        {
+            pSwitchIn->Get_SubStateMachine()->Set_DefaultState("SwitchInParryAid");
+            pSwitchIn->Get_SubStateMachine()->Change_State("SwitchInParryAid");
+        }
+    }
+    else
+    {
+        // 다른 상태면 SwitchIn으로 전환
+        m_pStateMachine->Set_Trigger("SwitchIn");
+    }
 }
 
 void CCorin::On_SwitchOut()
@@ -452,7 +489,7 @@ HRESULT CCorin::Initialize_Effects()
         auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
             .Asset("corin_normal1_saw_slash.json")
             .Build("Corin_Saw_Slash0");
-        pEffect->Stop();
+        pEffect->Set_Alive(false);
         pObjectContainer->Add_Child(pEffect, false);
         pEffect->AttachBone(pAnimator, "Weapon_saw");
     }
@@ -460,7 +497,7 @@ HRESULT CCorin::Initialize_Effects()
         auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
             .Asset("corin_normal2_saw_slash.json")
             .Build("Corin_Saw_Slash1");
-        pEffect->Stop();
+        pEffect->Set_Alive(false);
         pObjectContainer->Add_Child(pEffect, false);
         pEffect->AttachBone(pAnimator, "Weapon_saw");
     }
@@ -468,7 +505,7 @@ HRESULT CCorin::Initialize_Effects()
         auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
             .Asset("corin_ex_saw_slash.json")
             .Build("Corin_Ex_Saw_Slash0");
-        pEffect->Stop();
+        pEffect->Set_Alive(false);
         pObjectContainer->Add_Child(pEffect, false);
         pEffect->AttachBone(pAnimator, "Weapon_saw");
     }
@@ -476,7 +513,7 @@ HRESULT CCorin::Initialize_Effects()
         auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
             .Asset("corin_ultimate_saw_slash.json")
             .Build("Corin_Ultimate_Saw_Slash0");
-        pEffect->Stop();
+        pEffect->Set_Alive(false);
         pObjectContainer->Add_Child(pEffect, false);
         pEffect->AttachBone(pAnimator, "Weapon_saw");
     }
@@ -493,6 +530,15 @@ HRESULT CCorin::Initialize_Effects()
         auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
             .Asset("corin_assault_explode.json")
             .Build("Corin_Assault_Explode");
+        pEffect->Stop();
+        pObjectContainer->Add_Child(pEffect, false);
+    }
+
+    // Hit Ground
+    {
+        auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+            .Asset("corin_ultimate_hit_ground.json")
+            .Build("Corin_Ultimate_HitGround");
         pEffect->Stop();
         pObjectContainer->Add_Child(pEffect, false);
     }

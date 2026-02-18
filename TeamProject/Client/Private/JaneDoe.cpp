@@ -227,10 +227,47 @@ void CJaneDoe::On_SwitchIn(SWITCH eType)
     m_pStateMachine->Set_Trigger("SwitchIn");
 }
 
+void CJaneDoe::On_ParryImpact()
+{
+    IHState<CJaneDoe>* pSwitchIn = dynamic_cast<IHState<CJaneDoe>*>(
+        m_pStateMachine->Get_CurrentState());
+    if (!pSwitchIn || !pSwitchIn->Get_SubStateMachine())
+    {
+        m_pStateMachine->Set_Trigger("ReserveParryImpact");
+        return;
+    }
+
+    IHState<CJaneDoe>* pParryAid = dynamic_cast<IHState<CJaneDoe>*>(
+        pSwitchIn->Get_SubStateMachine()->Get_CurrentState());
+    if (!pParryAid || !pParryAid->Get_SubStateMachine())
+    {
+        m_pStateMachine->Set_Trigger("ReserveParryImpact");
+        return;
+    }
+
+    pParryAid->Get_SubStateMachine()->Set_Trigger("ParryImpact");
+}
+
 void CJaneDoe::On_ChainParry()
 {
-    m_pStateMachine->Set_Int("IdleEntryMode", 2);
-    m_pStateMachine->Set_Trigger("ToIdle");
+    Set_Switch(CCharacter::SWITCH::PARRYAID);
+
+    if (m_pStateMachine->Get_CurrentStateName() == "SwitchIn")
+    {
+        // 이미 SwitchIn이면 서브만 리셋
+        IHState<CJaneDoe>* pSwitchIn = dynamic_cast<IHState<CJaneDoe>*>(
+            m_pStateMachine->Get_CurrentState());
+        if (pSwitchIn && pSwitchIn->Get_SubStateMachine())
+        {
+            pSwitchIn->Get_SubStateMachine()->Set_DefaultState("SwitchInParryAid");
+            pSwitchIn->Get_SubStateMachine()->Change_State("SwitchInParryAid");
+        }
+    }
+    else
+    {
+        // 다른 상태면 SwitchIn으로 전환
+        m_pStateMachine->Set_Trigger("SwitchIn");
+    }
 }
 
 void CJaneDoe::On_SwitchOut()
@@ -729,6 +766,22 @@ HRESULT CJaneDoe::Initialize_Effects()
         pObjectContainer->Add_Child(pEffect);
     }
 
+    // HitGround
+    {
+        auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+            .Asset("janedoe_ultimate_hit_ground.json")
+            .Build("JaneDoe_Ultimate_HitGround");
+        pEffect->Stop();
+        pObjectContainer->Add_Child(pEffect, false);
+    }
+    {
+        auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+            .Asset("janedoe_ultimate_smoke.json")
+            .Build("JaneDoe_Ultimate_Smoke");
+
+        pEffect->Stop();
+        pObjectContainer->Add_Child(pEffect, false);
+    }
     return S_OK;
 }
 

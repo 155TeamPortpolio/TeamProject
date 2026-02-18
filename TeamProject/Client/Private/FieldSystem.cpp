@@ -4,7 +4,7 @@
 #include "GameObject.h"
 #include "GameInstance.h"
 #include "RoomDirector.h"
-#include "TestCloud.h"
+#include "ProceduralSky.h"
 
 #include "PostRenderer.h"
 #include "PostProcessCommand.h"
@@ -17,9 +17,9 @@ CFieldSystem::CFieldSystem()
 {
 	m_pRoomDirector = CRoomDirector::Create();
 
-	m_DayTime.TargetFog = { _float4(0.95f, 0.75f, 0.8f, 1.0f), 0.003f };
+	m_DayTime.TargetFog = { true,_float4(0.95f, 0.75f, 0.8f, 1.0f), 0.003f };
 	m_DayTime.TargetCloud = { _float3(0.7f, 0.5f, 0.65f), _float3(0.95f, 0.7f, 0.75f) };
-	m_DayTime.StartFog = { _float4(0.95f, 0.75f, 0.8f, 1.0f),0.003f };
+	m_DayTime.StartFog = { true, _float4(0.95f, 0.75f, 0.8f, 1.0f),0.003f };
 	m_DayTime.StartCloud = { _float3(0.7f, 0.5f, 0.65f), _float3(0.95f, 0.7f, 0.75f) };
 
 	m_pBGM = CAudioSource::Create();
@@ -157,31 +157,35 @@ void CFieldSystem::DayTimer::Update_Transition(_float dt)
 	_float time = min(TransitionTime / TransitionDuration, 1.0f);
 
 	Vector4 fogColor = XMVectorLerp(
-		XMLoadFloat4(&StartFog.fogColor),
-		XMLoadFloat4(&TargetFog.fogColor),
+		XMLoadFloat4(&StartFog.Desc.fogColor),
+		XMLoadFloat4(&TargetFog.Desc.fogColor),
 		time
 	);
-	_float fogDensity = StartFog.fogDensity + (TargetFog.fogDensity - StartFog.fogDensity) * time;
+	_float fogDensity = StartFog.Desc.fogDensity + (TargetFog.Desc.fogDensity - StartFog.Desc.fogDensity) * time;
 
-	Vector3 cloudColor = XMVectorLerp(
-		XMLoadFloat3(&StartCloud.cloudColor),
-		XMLoadFloat3(&TargetCloud.cloudColor),
-		time
-	);
-	Vector3 skyColor = XMVectorLerp(
-		XMLoadFloat3(&StartCloud.skyColor),
-		XMLoadFloat3(&TargetCloud.skyColor),
-		time
-	);
+	Vector3 topCol = XMVectorLerp(
+		XMLoadFloat3(&StartCloud.topColor),
+		XMLoadFloat3(&TargetCloud.topColor), time);
+	Vector3 horizonCol = XMVectorLerp(
+		XMLoadFloat3(&StartCloud.horizonColor),
+		XMLoadFloat3(&TargetCloud.horizonColor), time);
+	_float atmoBlend = StartCloud.atmosphereBlend + (TargetCloud.atmosphereBlend - StartCloud.atmosphereBlend) * time;
+	Vector3 brightCol = XMVectorLerp(
+		XMLoadFloat3(&StartCloud.cloudBright),
+		XMLoadFloat3(&TargetCloud.cloudBright), time);
+	Vector3 darkCol = XMVectorLerp(
+		XMLoadFloat3(&StartCloud.cloudDark),
+		XMLoadFloat3(&TargetCloud.cloudDark), time);
+	_float coverage = StartCloud.coverage + (TargetCloud.coverage - StartCloud.coverage) * time;
 
 	RenderSystem()->GetPostRenderer()
 		->GetCommand<CFogCommand>()
 		->SetColor(fogColor)
 		->SetDensity(fogDensity)
-		->SetEnable(true);
+		->SetEnable(TargetFog.bEnabled);
 
-	auto pCloud = dynamic_cast<CTestCloud*>(ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Cloud)));
-	pCloud->Set_CloudInfo(skyColor, cloudColor);
+	auto pCloud = dynamic_cast<CProceduralSky*>(ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Cloud)));
+	if (pCloud)pCloud->Set_CloudInfo({ topCol,horizonCol,atmoBlend,brightCol,darkCol,coverage });
 
 	if (time >= 1.0f)
 	{
@@ -203,27 +207,55 @@ void CFieldSystem::DayTimer::Set_DayPhase(DayPhase ePhase)
 	StartFog = TargetFog;
 	StartCloud = TargetCloud;
 
-	auto pCloud = dynamic_cast<CTestCloud*>(ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Cloud)));
+	auto pCloud = dynamic_cast<CProceduralSky*>(ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Cloud)));
 	switch (ePhase)
 	{
 	case Client::DayPhase::EarlyMorning:
-		TargetFog = { _float4(0.95f, 0.75f, 0.8f, 1.0f),0.003f };
-		TargetCloud = { _float3(0.7f, 0.5f, 0.65f), _float3(0.95f, 0.7f, 0.75f) };
+		TargetFog = { true, _float4(0.95f, 0.75f, 0.8f, 1.0f),0.003f };
+		TargetCloud = {
+		  _float3(0.008f, 0.012f, 0.05f),   
+		  _float3(0.08f, 0.04f, 0.03f),     
+		 0.93,                              
+		  _float3(0.8f, 0.35f, 0.15f),      
+		  _float3(0.08f, 0.05f, 0.1f),      
+		  0.5f                              
+		};
 		currentHour = 0.f;
 		break;
 	case Client::DayPhase::Morning:
-		TargetFog = { _float4(0.85f, 0.9f, 0.95f, 1.0f), 0.0015f };
-		TargetCloud = { _float3(0.4f, 0.7f, 1.0f), _float3(1.0f, 1.0f, 1.0f) };
+		TargetFog = { false,_float4(0.85f, 0.9f, 0.95f, 1.0f), 0.0015f };
+		TargetCloud = {
+		   _float3(0.01f, 0.025f, 0.08f),   
+		   _float3(0.04f, 0.06f, 0.12f),    
+		  0.93,                             
+		   _float3(0.95f, 0.95f, 0.92f),    
+		   _float3(0.35f, 0.38f, 0.45f),    
+		   0.5f                             
+		};
 		currentHour = 6.0f;
 		break;
 	case Client::DayPhase::Afternoon:
-		TargetFog = { _float4(1.0f, 0.55f, 0.45f, 1.0f), 0.0035f };
-		TargetCloud = { _float3(0.486f, 0.073f, 0.073f), _float3(1.0f, 0.6f, 0.5f) };
+		TargetFog = { false, _float4(1.0f, 0.55f, 0.45f, 1.0f), 0.0035f };
+		TargetCloud = {
+		_float3(0.01f, 0.015f, 0.06f),    
+		_float3(0.12f, 0.04f, 0.02f),     
+		0.93,                             
+		_float3(1.2f, 0.5f, 0.18f),       
+		_float3(0.15f, 0.06f, 0.08f),     
+		0.55f                             
+		};
 		currentHour = 12.0f;
 		break;
 	case Client::DayPhase::LateNight:
-		TargetFog = { _float4(0.25f, 0.3f, 0.45f, 1.0f), 0.004f };
-		TargetCloud = { _float3(0.1f, 0.15f, 0.3f), _float3(0.3f, 0.35f, 0.5f) };
+		TargetFog = { true, _float4(0.25f, 0.3f, 0.45f, 1.0f), 0.004f };
+		TargetCloud = {
+		 _float3(0.001f, 0.002f, 0.008f),  
+		 _float3(0.005f, 0.008f, 0.02f),   
+		0.93,                              
+		 _float3(0.04f, 0.045f, 0.06f),    
+		 _float3(0.008f, 0.008f, 0.015f),  
+		 0.5f                              
+		};
 		currentHour = 18.0f;
 		break;
 	default:

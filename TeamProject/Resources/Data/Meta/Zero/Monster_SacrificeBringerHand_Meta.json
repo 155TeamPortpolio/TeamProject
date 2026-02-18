@@ -1,5 +1,5 @@
 {
-  "AnimPath" : "../Bin/Resources/Zero/Enemy/Sacrifice/Hand/Anim/",
+  "AnimPath": "../Bin/Resources/Zero/Enemy/Sacrifice/Hand/Anim/",
   "PreTransform": {
     "_11": -0.009999999776482582,
     "_12": 0.0,
@@ -43,7 +43,7 @@
       "ClipTag": "Monster_SacrificeBringer_Ani_P2_OverDrive_Release_Attack01",
       "Events": [
         {
-          "EventTime": 0.01,
+          "EventTime": 0.009999999776482582,
           "EventType": "Notify",
           "EventTag": "Start_Bubble"
         },
@@ -68,7 +68,7 @@
       "ClipTag": "Monster_SacrificeBringer_Ani_P2_OverDrive_Release_Attack02",
       "Events": [
         {
-          "EventTime": 0.01,
+          "EventTime": 0.009999999776482582,
           "EventType": "Notify",
           "EventTag": "Start_Bubble"
         },
@@ -93,7 +93,7 @@
       "ClipTag": "Monster_SacrificeBringer_Ani_P2_OverDrive_Release_Attack03",
       "Events": [
         {
-          "EventTime": 0.01,
+          "EventTime": 0.009999999776482582,
           "EventType": "Notify",
           "EventTag": "Start_Bubble"
         },
@@ -172,7 +172,7 @@
       "ClipTag": "SacrificeBringerHand_Ani_P1_Attack_10",
       "Events": [
         {
-          "EventTime": 0.01,
+          "EventTime": 0.009999999776482582,
           "EventType": "Notify",
           "EventTag": "Start_Bubble"
         },
@@ -185,6 +185,16 @@
           "EventTime": 1.1231968402862549,
           "EventType": "Notify",
           "EventTag": "End_Collider"
+        },
+        {
+          "EventTime": 0.25702813267707825,
+          "EventType": "Sound",
+          "EventTag": "Sacrifice_Hand_Appear.wav"
+        },
+        {
+          "EventTime": 0.6700000166893005,
+          "EventType": "Sound",
+          "EventTag": "Sacrifice_Hand_Swing0.wav"
         }
       ]
     },
@@ -205,6 +215,11 @@
           "EventTime": 1.3322014808654785,
           "EventType": "Notify",
           "EventTag": "End_Bubble"
+        },
+        {
+          "EventTime": 0.5099999904632568,
+          "EventType": "Sound",
+          "EventTag": "Sacrifice_Hand_Swing1.wav"
         }
       ]
     },
@@ -230,6 +245,11 @@
           "EventTime": 2.0385963916778564,
           "EventType": "Notify",
           "EventTag": "End_Bubble"
+        },
+        {
+          "EventTime": 0.7599999904632568,
+          "EventType": "Sound",
+          "EventTag": "Sacrifice_HitGround3.wav"
         }
       ]
     },

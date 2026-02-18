@@ -40,6 +40,7 @@
 #include "Player.h"
 #include "TestCloud.h"
 #include "BasicHitEffect.h"
+#include "ProceduralSky.h"
 
 /* UI */
 #include "ButtonUI.h"
@@ -163,7 +164,7 @@ void CMainApp::Set_Levels()
 
 	LevelManager()->Set_LoadingLevel("Loading_Level");
 	m_pGameInstance->Notify_LevelSet(); 
-	m_pGameInstance->Get_LevelMgr()->Request_ChangeLevel("Zero_Level", true);
+	m_pGameInstance->Get_LevelMgr()->Request_ChangeLevel("Scott_Level", true);
 } 
 
 CMainApp* CMainApp::Create()
@@ -262,7 +263,11 @@ void CMainApp::Initialize_GlobalPrototype()
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_GachaResult", CUI_GachaResult::Create()); 
 
 	/*Enviroment*/
-	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Cloud", CTestCloud::Create());
+	ResourceManager()->Add_ResourcePath("cloud_noise.png", "../Bin/Resources/Global/Shader/cloud_noise.png");
+	ResourceManager()->Add_ResourcePath("Eff_Noise_092.png", "../Bin/Resources/Global/Shader/Eff_Noise_092.png");
+	ResourceManager()->Add_ResourcePath("Eff_Noise_146.png", "../Bin/Resources/Global/Shader/Eff_Noise_146.png");
+
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Cloud", CProceduralSky::Create());
 
 }
 
@@ -330,7 +335,6 @@ void CMainApp::Create_GlobalPlayer()
 void CMainApp::Create_GlobalEnviroment()
 {
 	auto Cloud = Builder::Create_Object({ G_GlobalLevelKey, "Proto_GameObject_Cloud" })
-		.Scale(_float3(2.f, 2.f, 2.f))
 		.Build("Cloud");
 	ObjectManager()->Add_Object(Cloud, { G_GlobalLevelKey, "Enviroment_Layer" });
 

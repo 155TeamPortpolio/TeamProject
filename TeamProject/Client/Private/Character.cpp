@@ -692,20 +692,24 @@ void CCharacter::Take_Damage(DAMAGE_TYPE eType, _float fDamage)
     {
         if(m_bIsMain)
         {
-            auto pos = CamDirector()->GetParryPoint();
-            auto pParryEffect = Get_Component<CObjectContainer>()->Find_ObjectByName("Parry");
-            if (pParryEffect)
-            {
-                pParryEffect->Get_Component<CTransform>()->Set_WorldPos(pos);
-                static_cast<CEffectContainer*>(pParryEffect)->Play();
-            }
+            //auto pos = CamDirector()->GetParryPoint();
+            //auto pParryEffect = Get_Component<CObjectContainer>()->Find_ObjectByName("Parry");
+            //if (pParryEffect)
+            //{
+            //    pParryEffect->Get_Component<CTransform>()->Set_WorldPos(pos);
+            //    static_cast<CEffectContainer*>(pParryEffect)->Play();
+            //}
 
-            BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::PARRY);
+            //BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::PARRY);
             m_ParryHandle.GetAs<CEnemy>()->Parried();
+
+            On_ParryImpact();
         }
+        return;
     }
 
-    if (Is_Invincible()) return;
+    if (Is_Invincible()) 
+        return;
     {
         _int damage = Helper::Get_Random_Int(1000.f, 10000.f);
 
