@@ -74,6 +74,9 @@ public: // 캐릭터 관리
 public: // 타겟팅
     OBJECT_HANDLE   GetTargetHandle() const { return m_TargetHandle; }
 
+public: // 패링 타겟
+    OBJECT_HANDLE   GetParryHandle() const { return m_ParryHandle; }
+
 public: // 입력 제어
     void            Set_Move(_vector3 vPos, _vector3 vRot);
     void            Lock_Input() { m_bLockInput = true; }
@@ -113,7 +116,7 @@ private: // 입력 처리
 
 private: // 캐릭터 전환
     void    NotifyCharacterSwitchIn();
-    void    NotifyCharacterSwitchOut();
+    void    NotifyCharacterSwitchOut(_bool bNext = true);
     _bool   Can_Switch() const;
     _bool   Can_SwitchTo(_uint iIndex) const;
     _int    Find_SwitchIndex(_bool bNext) const;
