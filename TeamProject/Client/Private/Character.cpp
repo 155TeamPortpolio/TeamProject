@@ -306,7 +306,7 @@ OBJECT_HANDLE CCharacter::Calculate_Parry()
     {
         vAttackPos = targetHandle.Get()->Get_WorldPos();
         vAttackPos.y = vPos.y;
-        vAttackLook = targetHandle.Get()->Get_Component<CTransform>()->Dir(STATE::LOOK);
+        vAttackLook = vPos - vAttackPos;
         vAttackLook.y = 0.f;
         vAttackLook.Normalize();
 
@@ -318,12 +318,45 @@ OBJECT_HANDLE CCharacter::Calculate_Parry()
         else
         {
             CCollider* pCollider = targetHandle.Get()->Get_Component<CCollider>();
+            CTransform* pMonsterTransform = targetHandle.Get()->Get_Component<CTransform>();
             _float3 vSize = pCollider->Get_Size();
-            vAttackOffset = max(vSize.x, vSize.z) * 0.5f;
+            _vector3 vMonsterLook = pMonsterTransform->Dir(STATE::LOOK);
+            vMonsterLook.y = 0.f;
+            vMonsterLook.Normalize();
+            _vector3 vMonsterRight = pMonsterTransform->Dir(STATE::RIGHT);
+            vMonsterRight.y = 0.f;
+            vMonsterRight.Normalize();
+            vAttackOffset = fabsf(vAttackLook.Dot(vMonsterLook)) * vSize.z * 0.5f
+                + fabsf(vAttackLook.Dot(vMonsterRight)) * vSize.x * 0.5f;
+#pragma region PARRY_POSITION_DEBUG
+            //{
+            //    _float fDotLook = fabsf(vAttackLook.Dot(vMonsterLook));
+            //    _float fDotRight = fabsf(vAttackLook.Dot(vMonsterRight));
+
+            //    wstring strDebug = L"[Parry Debug]\n";
+            //    strDebug += L"  PlayerPos: (" + to_wstring(vPos.x) + L", " + to_wstring(vPos.z) + L")\n";
+            //    strDebug += L"  MonsterPos: (" + to_wstring(vAttackPos.x) + L", " + to_wstring(vAttackPos.z) + L")\n";
+            //    strDebug += L"  ApproachDir: (" + to_wstring(vAttackLook.x) + L", " + to_wstring(vAttackLook.z) + L")\n";
+            //    strDebug += L"  MonsterLook: (" + to_wstring(vMonsterLook.x) + L", " + to_wstring(vMonsterLook.z) + L")\n";
+            //    strDebug += L"  MonsterRight: (" + to_wstring(vMonsterRight.x) + L", " + to_wstring(vMonsterRight.z) + L")\n";
+            //    strDebug += L"  Dot(Approach, MLook): " + to_wstring(fDotLook) + L"\n";
+            //    strDebug += L"  Dot(Approach, MRight): " + to_wstring(fDotRight) + L"\n";
+            //    strDebug += L"  DotSum: " + to_wstring(fDotLook + fDotRight) + L"\n";
+            //    strDebug += L"  ColliderSize: (" + to_wstring(vSize.x) + L", " + to_wstring(vSize.z) + L")\n";
+            //    strDebug += L"  AttackOffset: " + to_wstring(vAttackOffset) + L"\n";
+            //    strDebug += L"  FinalOffset(x3): " + to_wstring(vAttackOffset * 3.f) + L"\n";
+            //    strDebug += L"  ParryPos: (" + to_wstring(vAttackPos.x + vAttackLook.x * vAttackOffset * 3.f)
+            //        + L", " + to_wstring(vAttackPos.z + vAttackLook.z * vAttackOffset * 3.f) + L")\n";
+            //    strDebug += L"  FinalParryPos: (" + to_wstring(vAttackPos.x + vAttackLook.x * min(vAttackOffset * 3.f, fMinDist))
+            //        + L", " + to_wstring(vAttackPos.z + vAttackLook.z * vAttackOffset * min(vAttackOffset * 3.f, fMinDist)) + L")\n";
+            //    OutputDebugString(strDebug.c_str());
+            //}
+#pragma endregion
         }
     }
 
-    m_vParryPos = vAttackPos + vAttackLook * vAttackOffset * 3.f;
+    _float fFinalOffset = min(vAttackOffset * 3.f, fMinDist);   // 위치 튀는거 방지
+    m_vParryPos = vAttackPos + vAttackLook * fFinalOffset;
     m_vParryPos.y = vPos.y + 1.f;
 
     m_vParryLook = vAttackPos - m_vParryPos;
