@@ -64,6 +64,8 @@
 #include "UI_ScreenFade.h"
 #include "UI_SceneFrame.h"
 
+#include "UI_Mouse.h"
+
 #include "UI_NameIndicator.h" 
 #include "UI_SpeechBubble.h"
 
@@ -244,6 +246,8 @@ void CMainApp::Initialize_GlobalPrototype()
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Loading", CUI_Loading::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_ScreenFade", CUI_ScreenFade::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_SceneFrame", CUI_SceneFrame::Create());
+
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Mouse", CUI_Mouse::Create());
 
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_NameIndicator", CUI_NameIndicator::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_SpeechBubble", CUI_SpeechBubble::Create());
