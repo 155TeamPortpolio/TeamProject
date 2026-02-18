@@ -392,10 +392,10 @@ void CJaneDoe::OnDefensiveAssist()
 
 void CJaneDoe::Add_MotionBlur()
 {
-    ++m_iFrameCount;
-    if (m_iFrameCount < FRAMECOUNT)
-        return;
-    m_iFrameCount = 0;
+    //++m_iFrameCount;
+    //if (m_iFrameCount < FRAMECOUNT)
+    //    return;
+    //m_iFrameCount = 0;
 
     if (m_BoneMatrices.size() > 5)
     {
