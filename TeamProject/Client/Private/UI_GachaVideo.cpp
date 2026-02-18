@@ -11,6 +11,8 @@
 
 void CUI_GachaVideo::Play_Video(GachaGrade eGrade)
 {
+    m_pPlayer->Close();
+
     string filePath = "../Bin/Resources/Video/GachaNormal.mp4";
 
     switch (eGrade)

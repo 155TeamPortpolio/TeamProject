@@ -50,9 +50,13 @@ void CFieldSystem::SetActive(_bool is)
 
 void CFieldSystem::PlayBGM(string strBGM, _float fVolume)
 {
-	if (!m_strPrevBGM.empty()) m_pBGM->Set_SlotPuase(m_strPrevBGM, true);
+	if (!m_strPrevBGM.empty()) {
+		m_pBGM->Slot(m_strPrevBGM).FadeOut(0.9f);
+		//m_pBGM->FadeOut_Volume(m_strPrevBGM, true);
+	}
 	
 	m_pBGM->Slot(strBGM)
+		.Group(SOUND_GROUP::BGM)
 		.Attribute3D(false)
 		.Volume(fVolume)
 		.Loop(true)

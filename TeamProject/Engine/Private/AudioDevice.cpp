@@ -12,12 +12,17 @@ CAudioDevice::CAudioDevice()
 HRESULT CAudioDevice::Initialize()
 {
 	//FMOD 초기화
-	FMOD::System_Create(&m_pSystem);
+    FMOD::ChannelGroup* master = nullptr;
+    FMOD::System_Create(&m_pSystem);
 	m_pSystem->init(m_iChannelSize, FMOD_INIT_NORMAL, 0);
+    m_pSystem->getMasterChannelGroup(&master);
 
 	for(size_t i =0; i<static_cast<int>(SOUND_GROUP::END);++i ){
 		FMOD::ChannelGroup* pGroup;
 		m_pSystem->createChannelGroup(to_string(i).c_str(), &pGroup);
+        //if (master && pGroup)
+        //    master->addGroup(pGroup);
+
 		m_Groups.push_back(pGroup);
 	}
     float dopplerScale = 1.0f; // 도플러 효과 강도
@@ -34,6 +39,7 @@ void CAudioDevice::Update()
 {
 	if (m_pSystem)
 		m_pSystem->update();
+
     CGameInstance::GetInstance()->Get_TimeMgr()->Update_Timer("Audio_Timer");
     if (m_pTransform) {
         _float3 pos;
@@ -50,6 +56,7 @@ void CAudioDevice::Update()
 
         m_pSystem->set3DListenerAttributes(0, &listenerPos, &listenerVel, &listenerForward, &listenerUp);
     }
+
 }
 
 void CAudioDevice::StopAll()
@@ -148,20 +155,98 @@ FMOD::System* CAudioDevice::Get_System()
      newChannel->setPaused(packet.isPaused);
  }
 
+ //void CAudioDevice::ClearFadePoints(FMOD::Channel* channel)
+ //{
+ //    if (!channel || !m_pSystem) return;
+ //
+ //    unsigned long long channelClock = 0, parentClock = 0;
+ //    if (channel->getDSPClock(&channelClock, &parentClock) != FMOD_OK) return;
+ //
+ //    int sampleRate = 0;
+ //    if (m_pSystem->getSoftwareFormat(&sampleRate, 0, 0) != FMOD_OK || sampleRate <= 0) return;
+ //
+ //    const unsigned long long dspNow = parentClock; 
+ //    const unsigned long long dspFar = dspNow + (unsigned long long)(30.0f * (double)sampleRate);
+ //    channel->removeFadePoints(dspNow, dspFar);
+ //}
 
- void CAudioDevice::ClearFadePoints(FMOD::Channel* channel)
+ void CAudioDevice::ClearFadePoints(FMOD::ChannelControl* controlPtr)
  {
-     if (!channel || !m_pSystem) return;
+     if (!controlPtr || !m_pSystem) return;
 
-     unsigned long long channelClock = 0, parentClock = 0;
-     if (channel->getDSPClock(&channelClock, &parentClock) != FMOD_OK) return;
+     unsigned long long dspClock = 0, parentClock = 0;
+     if (controlPtr->getDSPClock(&dspClock, &parentClock) != FMOD_OK) return;
 
      int sampleRate = 0;
      if (m_pSystem->getSoftwareFormat(&sampleRate, 0, 0) != FMOD_OK || sampleRate <= 0) return;
 
-     const unsigned long long dspNow = parentClock; 
+     const unsigned long long dspNow = parentClock;
      const unsigned long long dspFar = dspNow + (unsigned long long)(30.0f * (double)sampleRate);
-     channel->removeFadePoints(dspNow, dspFar);
+     controlPtr->removeFadePoints(dspNow, dspFar);
+ }
+
+ void CAudioDevice::FadeVolume(FMOD::ChannelControl* controlPtr, 
+     _float targetVolume01, _float fadeSeconds)
+ {
+     if (!controlPtr || !m_pSystem) return;
+
+     targetVolume01 = clamp(targetVolume01, 0.f, 1.f);
+
+     ClearFadePoints(controlPtr);
+
+     if (fadeSeconds <= 0.f)
+     {
+         controlPtr->setVolume(targetVolume01);
+         return;
+     }
+
+     float currentVolume = 1.f;
+     controlPtr->getVolume(&currentVolume);
+
+     unsigned long long dspClock = 0, parentClock = 0;
+     if (controlPtr->getDSPClock(&dspClock, &parentClock) != FMOD_OK) return;
+
+     int sampleRate = 0;
+     if (m_pSystem->getSoftwareFormat(&sampleRate, 0, 0) != FMOD_OK || sampleRate <= 0) return;
+
+     const unsigned long long dspNow = parentClock;
+     const unsigned long long dspEnd = dspNow + (unsigned long long)((double)fadeSeconds * (double)sampleRate);
+
+     controlPtr->addFadePoint(dspNow, currentVolume);
+     controlPtr->addFadePoint(dspEnd, targetVolume01);
+ }
+
+ void CAudioDevice::Push_GroupVolume(SOUND_GROUP group, _float tempVolume01, _float fadeOutSec)
+ {
+     const _uint groupIndex = static_cast<_uint>(group);
+     if (groupIndex >= ENUM(SOUND_GROUP::END)) return;
+
+     FMOD::ChannelGroup* groupPtr = m_Groups[groupIndex];
+     if (!groupPtr) return;
+
+     float currentVolume = 1.f;
+     groupPtr->getVolume(&currentVolume);
+
+     m_groupVolumeStack[groupIndex].push_back((_float)currentVolume);
+     FadeVolume(groupPtr, tempVolume01, fadeOutSec);
+ }
+
+ _bool CAudioDevice::Pop_GroupVolume(SOUND_GROUP group, _float fadeInSec)
+ {
+     const _uint groupIndex = static_cast<_uint>(group);
+     if (groupIndex >= ENUM(SOUND_GROUP::END)) return false;
+
+     FMOD::ChannelGroup* groupPtr = m_Groups[groupIndex];
+     if (!groupPtr) return false;
+
+     auto& stackRef = m_groupVolumeStack[groupIndex];
+     if (stackRef.empty()) return false;
+
+     const _float restoreVolume = stackRef.back();
+     stackRef.pop_back();
+
+     FadeVolume(groupPtr, restoreVolume, fadeInSec);
+     return true;
  }
 
 void CAudioDevice::Set_Listener(CTransform* pTransform)

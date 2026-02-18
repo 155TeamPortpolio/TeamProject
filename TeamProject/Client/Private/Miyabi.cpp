@@ -1210,8 +1210,10 @@ void CMiyabi::Process_EndState(const string& strCurrentState)
 HRESULT CMiyabi::Update_MotionBlurQueue()
 {
 	auto Model = Get_Component<CSkeletalModel>();
-	m_vRimLightColor = _vector3(0.36f, 0.75f, 1.f);
-	m_fRimLightPower = 5.f;
+	//m_vRimLightColor = _vector3(0.36f, 0.75f, 1.f);
+	m_vRimLightColor = _vector3(0.f, 0.f, 1.f);
+	//m_fRimLightPower = 5.f;
+	m_fRimLightPower = 4.f;
 
 	for (_int k = m_BoneMatrices.size() - 1; k >= 0; --k)
 	{

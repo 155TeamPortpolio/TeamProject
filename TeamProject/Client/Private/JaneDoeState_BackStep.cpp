@@ -34,6 +34,27 @@ void CJaneDoeState_BackStep::Update(CJaneDoe* pOwner, _float dt)
         ENUM(CJaneDoe::ROOTMOTION_MASK::MOVE) |
         ENUM(CJaneDoe::ROOTMOTION_MASK::QUATERNION));
 
+    if (pOwner->Is_Passion())
+    {
+        if (IsCrossAnimProgress(0.02f))
+        {
+            pOwner->SetRenderLayer(RENDER_LAYER::CustomOnly);
+        }
+        for (const auto& Event : pOwner->Get_Animator()->Get_EventBus())
+        {
+            if (Event.Type != CLIP_EVENT_TYPE::NOTIFY) continue;
+            if (Event.Tag == "MotionBlur")
+            {
+                pOwner->Add_MotionBlur();
+            }
+        }
+        if (IsCrossAnimProgress(0.04f))
+        {
+            pOwner->SetRenderLayer(RENDER_LAYER::Default);
+            pOwner->Clear_MotionBlur();
+        }
+    }
+
     if (pOwner->Is_Attack())
     {   
         if (pSubMachine->Get_Bool("Extreme"))
@@ -59,10 +80,7 @@ void CJaneDoeState_BackStep::Update(CJaneDoe* pOwner, _float dt)
             pSubMachine->Set_Trigger("Complete");
             return;
         }
-    }
 
-    if (m_fAnimProgress >= 0.3f)
-    {   // Run
         if (pOwner->Is_Move())
         {
             pSubMachine->Set_Int("ExitMode", 2);
@@ -76,4 +94,10 @@ void CJaneDoeState_BackStep::Update(CJaneDoe* pOwner, _float dt)
         pSubMachine->Set_Int("ExitMode", 0);
         pSubMachine->Set_Trigger("Complete");
     }
+}
+
+void CJaneDoeState_BackStep::Exit(CJaneDoe* pOwner)
+{
+    pOwner->SetRenderLayer(RENDER_LAYER::Default);
+    pOwner->Clear_MotionBlur();
 }

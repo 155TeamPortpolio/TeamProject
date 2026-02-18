@@ -114,8 +114,8 @@ void CJaneDoe::Awake()
     if (FAILED(Attach_ParryCollider()))
         return;
 
-    //auto Texture = ResourceManager()->Load_Texture(G_GlobalLevelKey, "Eff_Noise_045.png");
-    //RenderSystem()->Set_NoiseTexture(NOISE_FXTYPE::MOTIONBLUR, Texture);
+    auto Texture = ResourceManager()->Load_Texture(G_GlobalLevelKey, "Eff_Noise_045.png");
+    RenderSystem()->Set_NoiseTexture(NOISE_FXTYPE::MOTIONBLUR, Texture);
 }
 
 void CJaneDoe::Priority_Update(_float dt)
@@ -363,7 +363,7 @@ void CJaneDoe::OnDamage()
     // 열광 상태가 아닐때 열광누적
     // 열광 상태일때 열광 소모
     if (!m_bPassion)
-        Increase_Passion(1.f);
+        Increase_Passion(5.f);
     else
     {
         // 열광 상태의 살코점프 적중시엔 열광 증가
@@ -374,9 +374,9 @@ void CJaneDoe::OnDamage()
         string strAttacktype = pAttack->Get_SubStateMachine()->Get_CurrentStateName();
 
         if (strAttacktype == "BranchAttack")
-            Increase_Passion(1.f);
+            Increase_Passion(5.f);
         else
-            Decrease_Passion(1.f);
+            Decrease_Passion(5.f);
     }
 }
 
@@ -392,10 +392,10 @@ void CJaneDoe::OnDefensiveAssist()
 
 void CJaneDoe::Add_MotionBlur()
 {
-    ++m_iFrameCount;
-    if (m_iFrameCount < FRAMECOUNT)
-        return;
-    m_iFrameCount = 0;
+    //++m_iFrameCount;
+    //if (m_iFrameCount < FRAMECOUNT)
+    //    return;
+    //m_iFrameCount = 0;
 
     if (m_BoneMatrices.size() > 5)
     {
@@ -962,17 +962,23 @@ void CJaneDoe::Process_EndState(const string& strCurrentState)
 HRESULT CJaneDoe::Update_MotionBlurQueue()
 {
     auto Model = Get_Component<CSkeletalModel>();
-    m_vRimLightColor = _float3(1.f, 0.1f, 0.f);
-    m_fRimLightPower = 3.f;
+    //m_vRimLightColor = _float3(1.f, 0.1f, 0.f);
+    //m_fRimLightPower = 6.f;
+    m_vRimLightColor = _float3(0.5f, 0.05f, 0.f);
+    m_fRimLightPower = 4.f;
 
     for (_int k = m_BoneMatrices.size() - 1; k >= 0; --k)
     {
         _float t = (_float)k / (_float)(m_BoneMatrices.size());
         _float4 vColor;
-        vColor.x = 0.3f + (0.7f * t);
-        vColor.y = 0.0f + (0.15f * t);
+        //vColor.x = 0.3f + (0.7f * t);
+        //vColor.y = 0.0f + (0.15f * t);
+        //vColor.z = 0.0f;
+        //vColor.w = 1.f - 0.08f + (0.9f * t);
+        vColor.x = 0.22f + (0.52f * t);
+        vColor.y = 0.0f + (0.12f * t); 
         vColor.z = 0.0f;
-        vColor.w = 0.08f + (0.9f * t);
+        vColor.w = 0.15f + (0.4f * t);
 
         for (_int i = 0; i < Model->Get_MeshCount(); ++i)
         {
