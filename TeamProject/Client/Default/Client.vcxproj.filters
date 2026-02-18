@@ -1479,6 +1479,9 @@
     <Filter Include="02. GameObject\Object\Interactable\BattleStarter">
       <UniqueIdentifier>{9f98887b-a642-43c8-b771-ee800b464130}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Npc\Service\ScottCar">
+      <UniqueIdentifier>{dcf1cf60-9fe9-4cb6-853c-35fd64cdb80f}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02. GameObject\UI\02. 3D\Mesh\EntranceLogo">
       <UniqueIdentifier>{ba260446-6ecd-4832-80f9-06038b733a7f}</UniqueIdentifier>
     </Filter>
@@ -2885,6 +2888,9 @@
     <ClInclude Include="..\public\BattleStarter.h">
       <Filter>02. GameObject\Object\Interactable\BattleStarter</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\ScottCar.h">
+      <Filter>02. GameObject\Object\Npc\Service\ScottCar</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\UI_ZeroEntranceLogo.h">
       <Filter>02. GameObject\UI\02. 3D\Mesh\EntranceLogo\Zero</Filter>
     </ClInclude>
@@ -4244,9 +4250,12 @@
     <ClCompile Include="..\private\BattleStarter.cpp">
       <Filter>02. GameObject\Object\Interactable\BattleStarter</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\ScottCar.cpp">
+      <Filter>02. GameObject\Object\Npc\Service\ScottCar</Filter>
+    </ClCompile>
     <ClCompile Include="..\private\ProceduralSky.cpp">
       <Filter>02. GameObject\Object\Env\Sky</Filter>
-          </ClCompile>
+    </ClCompile>
     <ClCompile Include="..\Private\UI_ZeroEntranceLogo.cpp">
       <Filter>02. GameObject\UI\02. 3D\Mesh\EntranceLogo\Zero</Filter>
     </ClCompile>

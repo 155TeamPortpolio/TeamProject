@@ -13,3 +13,4 @@ Dialogue_004,충전부,6,Npc,Any,Normal,1,웅나!(전류감별부만 믿을게!)
 Dialogue_005,11호,0,Npc,Any,Normal,1,출발하죠. 신병들이 많이 기대하고 있습니다,Running,,,,,1
 Dialogue_005,11호,1,Npc,Any,Normal,1,당신은 가서 전초기지의 장치를 연결하세요. 잠시 후에 뵙죠,Fail,,,,,0
 Dialogue_006,마를렌,0,Npc,Any,Normal,1,침식 저항 처리를 거친 부품은 사용 수명이 짧아지는 것 같네요,Fail,,,,,0
+Dialogue_007,전초기지 차량,0,Npc,Any,Choice,1,전초기지까지 모셔다 드리겠습니다. \n지금 출발하시겠습니까?,None,2,Choice_007,Choice_008,,0
