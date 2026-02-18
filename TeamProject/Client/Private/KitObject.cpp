@@ -67,7 +67,6 @@ void CKitObject::Late_Update(_float dt)
 {
 }
 
-
 void CKitObject::RotatePerSec(_float dt)
 {
 	if (m_vDegreePerSec == _vector3::Zero)
