@@ -28,6 +28,7 @@ void CRoom_Scott::Update()
 
 void CRoom_Scott::OnResumeFromOverlay()
 {
+	FieldSystem()->PlayBGM("ScottBGM.wav");
 }
 
 CRoom_Scott* CRoom_Scott::Create(const ROOM_DESC& desc)
