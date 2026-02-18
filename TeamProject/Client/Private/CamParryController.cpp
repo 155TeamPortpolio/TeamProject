@@ -218,13 +218,11 @@ void CamParryController::ApplyGoalPose_Snap(const ShotGoal& g)
 _float CamParryController::CurCamYawDeg() const
 {
     auto orbit = CamDirector()->GetOrbitCam();
-    auto tf = orbit->Get_Component<CTransform>();
 
-    Vector3 camLook = tf->Dir(STATE::LOOK);
-    camLook.y = 0.f;
-    camLook.Normalize();
+    OrbitSnapshot s{};
+    orbit->CaptureSnapshot(s);
 
-    return YawFromDirXZ(camLook);
+    return s.pose.rotCurDeg.x;
 }
 
 Vector3 CamParryController::CurCamPosWorld() const

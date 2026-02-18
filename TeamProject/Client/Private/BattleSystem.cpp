@@ -12,6 +12,7 @@
 #include "BattleFXFlow.h"
 #include"BattleSystem_Panel.h"
 #include "AudioSource.h"
+#include "CamDirector.h"
 
 IMPLEMENT_SINGLETON(CBattleSystem)
 
