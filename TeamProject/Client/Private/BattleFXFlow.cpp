@@ -34,7 +34,7 @@ void CBattleFXFlow::Initialize_Preset()
 		Parry.fVFXDuration = duration;
 		Parry.fBlurDuration = .2f;
 		Parry.SetTimeData({ duration, 0.3f, 0.35f, 0.45f, EaseType::OutCubic });
-		Parry.BattleTimeScale[ENUM(BATTLE_OBJ_TYPE::MONSTER)] = TIME_SCALING({ duration, 0.01f, 0.05f, .2f , EaseType::InOutSine });
+		Parry.BattleTimeScale[ENUM(BATTLE_OBJ_TYPE::MONSTER)] = TIME_SCALING({ duration, 0.01f, 0.1f, .2f , EaseType::InOutSine });
 		Parry.BattleTimeScale[ENUM(BATTLE_OBJ_TYPE::CAMERA)] =	TIME_SCALE_DATA{ duration, 1.0f, 0.3f, .0f, EaseType::OutQuint };
 	}
 
@@ -60,11 +60,11 @@ void CBattleFXFlow::Initialize_Preset()
 
 	{
 		auto& NormalHitLack = m_BattleVFXData[ENUM(BATTLE_VFX_TYPE::HIT_NORMAL)];
-		const _float duration = .08f;
+		const _float duration = .09f;
 		NormalHitLack.bCanIntersect = true;
 		NormalHitLack.fVFXDuration = duration;
 		NormalHitLack.fBlurDuration = duration;
-		NormalHitLack.SetTimeData({ duration, 0.1f, 0.5f, .5f , EaseType::InOutSine });
+		NormalHitLack.SetTimeData({ duration, 0.1f, 0.05f, .2f , EaseType::InOutSine });
 		NormalHitLack.BattleTimeScale[ENUM(BATTLE_OBJ_TYPE::CAMERA)] = TIME_SCALE_DATA{ duration, 1.0f, 0.3f, .0f, EaseType::OutQuint };
 	}
 
@@ -74,7 +74,7 @@ void CBattleFXFlow::Initialize_Preset()
 		HardHitLack.bCanIntersect = true;
 		HardHitLack.fVFXDuration = duration;
 		HardHitLack.fBlurDuration = duration;
-		HardHitLack.SetTimeData({ duration, 0.1f, 0.25f, .25f , EaseType::OutExpo });
+		HardHitLack.SetTimeData({ duration, 0.1f, 0.05f, .25f , EaseType::OutExpo });
 		HardHitLack.BattleTimeScale[ENUM(BATTLE_OBJ_TYPE::CAMERA)] = TIME_SCALE_DATA{ duration, 1.0f, 0.3f, .0f, EaseType::OutQuint };
 	}
 
@@ -86,6 +86,15 @@ void CBattleFXFlow::Initialize_Preset()
 		WipeOut.fBlurDuration = duration;
 		WipeOut.SetTimeData({ duration, 0.0f, 0.3f, .02f , EaseType::OutQuint });
 		WipeOut.BattleTimeScale[ENUM(BATTLE_OBJ_TYPE::CAMERA)] = TIME_SCALE_DATA{duration, 1.0f, 0.3f, .0f, EaseType::OutQuint};
+	}
+	{
+		auto& Clear = m_BattleVFXData[ENUM(BATTLE_VFX_TYPE::CLEAR)];
+		const _float duration = 1.5f;
+		Clear.bCanIntersect = false;
+		Clear.fVFXDuration = duration;
+		Clear.fBlurDuration = duration;
+		Clear.SetTimeData({ duration, 0.0f, 0.3f, .02f , EaseType::OutQuint });
+		Clear.BattleTimeScale[ENUM(BATTLE_OBJ_TYPE::CAMERA)] = TIME_SCALE_DATA{duration, 1.0f, 0.3f, .0f, EaseType::OutQuint};
 	}
 }
 
@@ -201,6 +210,11 @@ void CBattleFXFlow::Cancel()
 }
 
 
+_bool CBattleFXFlow::IsRunning(BATTLE_VFX_TYPE vfxType) const
+{
+	return (m_BattleVFX.isRunning && m_BattleVFX.eVFXType == vfxType);
+}
+
 void CBattleFXFlow::StartVfx(BATTLE_VFX_TYPE vfxType)
 {
 	if (m_BattleVFX.isRunning)
@@ -244,6 +258,7 @@ void CBattleFXFlow::StartVfx(BATTLE_VFX_TYPE vfxType)
 		StartVfx_WipeOut();
 		break;
 	case BATTLE_VFX_TYPE::CLEAR:
+		StartVfx_Clear();
 		break;
 	default:
 		m_BattleVFX.isRunning = false;
@@ -402,8 +417,15 @@ void CBattleFXFlow::StartVfx_Ultimate()
 void CBattleFXFlow::StartVfx_Switch(CHARACTER eLeft, CHARACTER eRight)
 {
 	Clear(false);
-	//2.5f;
 	auto& preset = m_BattleVFXData[ENUM(BATTLE_VFX_TYPE::SWITCH)];
+	m_BattleVFX.isRunning = true;
+	m_BattleVFX.eVFXType = BATTLE_VFX_TYPE::SWITCH;
+	m_BattleVFX.fDuration = preset.fVFXDuration;
+	m_BattleVFX.fCurPos = 0.f;
+	m_BattleVFX.vNowColor = preset.vStartColor;
+	m_BattleVFX.bCanIntersect = preset.bCanIntersect;
+
+	//2.5f;
 	CPostRenderer* postRenderer = RenderSystem()->GetPostRenderer();
 	const _float totalDuration = max(preset.fVFXDuration, 0.01f);
 	const _float blurDuration = min(preset.fBlurDuration, totalDuration);
@@ -419,7 +441,10 @@ void CBattleFXFlow::StartVfx_Switch(CHARACTER eLeft, CHARACTER eRight)
 			->SetEnable(true);
 	});
 
-	AddCall([this, eLeft, eRight](){UIDirector()->Show_Switch(eLeft,eRight);});
+	AddCall([this, eLeft, eRight](){
+		UIDirector()->Show_Switch(eLeft,eRight);
+		UIDirector()->Hide_HUD(CUIDirector::BATTLE);
+		});
 	AddWait(0.3f);
 	AddCall([postRenderer, blurDuration]()
 		{
@@ -439,7 +464,19 @@ void CBattleFXFlow::StartVfx_Switch(CHARACTER eLeft, CHARACTER eRight)
 			m_BattleVFX.isRunning = false;
 		});
 
-	Start(nullptr);
+	Start([]() {
+		UIDirector()->Hide_Switch();
+		UIDirector()->Show_HUD(CUIDirector::BATTLE);
+		});
+}
+
+void CBattleFXFlow::Cancle_Switch()
+{
+	if (m_BattleVFX.isRunning && m_BattleVFX.eVFXType == BATTLE_VFX_TYPE::SWITCH) {
+		Cancel();
+		UIDirector()->Hide_Switch();
+		UIDirector()->Show_HUD(CUIDirector::BATTLE);
+	}
 }
 
 void CBattleFXFlow::StartVfx_WipeOut()
@@ -563,20 +600,19 @@ void CBattleFXFlow::StartVfx_WipeOut()
 void CBattleFXFlow::StartVfx_Clear()
 {
 	Clear(false);
-	auto& preset = m_BattleVFXData[ENUM(BATTLE_VFX_TYPE::WIPEOUT)];
+	auto& preset = m_BattleVFXData[ENUM(BATTLE_VFX_TYPE::CLEAR)];
 	AddParallelTimeScaleAll(preset);
 	CPostRenderer* pPost = RenderSystem()->GetPostRenderer();
 	AddCall([this, preset, pPost]() {
 		pPost->GetCommand<CSaturationCommand>()
-			->SetIntensity(1.4f)
-			->SetSaturationType(ENUM(SATURATIONTYPE::SKINNED))
+			->SetIntensity(1.f)
+			->SetSaturationType(ENUM(SATURATIONTYPE::FULL))
 			->SetDuration(preset.fVFXDuration)
 			->SetEaseType(EaseType::OutBack)
 			->SetEnable(true);
 		});
 
 	AddCall([this]() {
-		CamDirector()->BeginWipeOut();
 		UIDirector()->Show_Clear();
 		UIDirector()->Hide_HUD(CUIDirector::BATTLE);
 		});
@@ -585,7 +621,6 @@ void CBattleFXFlow::StartVfx_Clear()
 		m_BattleVFX.fCurPos = 0.f;
 		m_BattleVFX.vNowColor = {};
 		m_BattleVFX.isRunning = false;
-		CamDirector()->EndWipeOut();
 		});
 	Start(nullptr);
 }

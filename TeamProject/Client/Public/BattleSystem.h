@@ -38,7 +38,7 @@ public: //getter
 	const vector<BATTLEOBJ_INFO>&	GetBattleObjects(BATTLE_OBJ_TYPE eType) const;
 	vector<BATTLEOBJ_INFO>			CopyBattleObjects(BATTLE_OBJ_TYPE eType);/*복사반환*/
 	_bool							isMonsterCleared();
-	_bool							isVFXRunning();
+	_bool							isVFXRunning(BATTLE_VFX_TYPE type);
 
 public: //setter
 	void	SetActive(_bool is);
