@@ -206,6 +206,7 @@ void CMiasmaHeavyJaeger::Parried()
 {
 	m_bStopMove = true;
 	m_pStateMachine->Set_Trigger("Parried");
+	BattleSystem()->ExitBattleObject(BATTLE_OBJ_TYPE::MONSTER, this->Get_Handle());
 }
 
 void CMiasmaHeavyJaeger::SpawnChild()

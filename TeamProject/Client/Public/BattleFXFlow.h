@@ -198,6 +198,7 @@ private:/*시퀀스 추가 함수*/
 private:
 	const BATTLE_VFX_DATA& GetPreset(BATTLE_VFX_TYPE type) const {return m_BattleVFXData[ENUM(type)];};
 	_bool IsValidTimeScale(const TIME_SCALE_DATA& timeScale);
+	void ResetBattleVfxState();
 private:
 	_bool m_isRunning = false;
 

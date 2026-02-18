@@ -168,15 +168,14 @@ void CBattleFXFlow::Update(_float dt)
 		m_isRunning = true;
 	}
 }
+
 void CBattleFXFlow::Clear(_bool callOnEnd)
 {
 	if (callOnEnd && m_isRunning && m_onEnd)
 		m_onEnd();
 
 	for (auto& track : m_parallelTracks)
-	{
 		if (track.onEnd) track.onEnd();
-	}
 
 	m_steps.clear();
 	m_parallelTracks.clear();
@@ -184,6 +183,7 @@ void CBattleFXFlow::Clear(_bool callOnEnd)
 	m_isRunning = false;
 	m_timeInStep = 0.f;
 	m_onEnd = {};
+
 }
 
 void CBattleFXFlow::Cancel()
@@ -191,15 +191,14 @@ void CBattleFXFlow::Cancel()
 	if (m_onCancel) m_onCancel();
 
 	for (auto& track : m_parallelTracks)
-	{
 		if (track.onEnd) track.onEnd();
-	}
 
 	m_isRunning = false;
 	m_stepIndex = 0;
 	m_steps.clear();
 	m_parallelTracks.clear();
 	m_onEnd = {};
+
 	CPostRenderer* postRenderer = RenderSystem()->GetPostRenderer();
 	if (postRenderer)
 	{
@@ -207,20 +206,27 @@ void CBattleFXFlow::Cancel()
 		postRenderer->GetCommand<CRadialBlurCommand>()->SetEnable(false);
 		postRenderer->GetCommand<CSaturationCommand>()->SetEnable(false);
 	}
+
+	ResetBattleVfxState(); 
 }
 
 
 _bool CBattleFXFlow::IsRunning(BATTLE_VFX_TYPE vfxType) const
 {
-	return (m_BattleVFX.isRunning && m_BattleVFX.eVFXType == vfxType);
+	return (m_isRunning&&m_BattleVFX.isRunning && m_BattleVFX.eVFXType == vfxType);
 }
 
 void CBattleFXFlow::StartVfx(BATTLE_VFX_TYPE vfxType)
 {
+	if (m_BattleVFX.isRunning && !m_BattleVFX.bCanIntersect)
+	{
+		if (m_isRunning)
+			return;
+		ResetBattleVfxState();
+	}
+
 	if (m_BattleVFX.isRunning)
 	{
-		if (!m_BattleVFX.bCanIntersect)
-			return;
 		Cancel(); 
 	}
 
@@ -235,36 +241,25 @@ void CBattleFXFlow::StartVfx(BATTLE_VFX_TYPE vfxType)
 
 	switch (vfxType)
 	{
-	case BATTLE_VFX_TYPE::EVADE:
-		StartVfx_Evade();
-		break;
-	case BATTLE_VFX_TYPE::PARRY:
-		StartVfx_Parry();
-		break;
-	case BATTLE_VFX_TYPE::SWITCH:
-		StartVfx_Switch(CHARACTER::JaneDoe,CHARACTER::Miyabi);
-		break;
-	
-	case BATTLE_VFX_TYPE::ULTIMATE:
-		StartVfx_Ultimate();
-		break;
-	case BATTLE_VFX_TYPE::HIT_NORMAL:
-		NormalHitLack();
-		break;
-	case BATTLE_VFX_TYPE::HIT_HARD:
-		HardHitLack();
-		break;
-	case BATTLE_VFX_TYPE::WIPEOUT:
-		StartVfx_WipeOut();
-		break;
-	case BATTLE_VFX_TYPE::CLEAR:
-		StartVfx_Clear();
-		break;
+	case BATTLE_VFX_TYPE::EVADE:      StartVfx_Evade(); break;
+	case BATTLE_VFX_TYPE::PARRY:      StartVfx_Parry(); break;
+	case BATTLE_VFX_TYPE::SWITCH:     StartVfx_Switch(CHARACTER::JaneDoe, CHARACTER::Miyabi); break;
+	case BATTLE_VFX_TYPE::ULTIMATE:   StartVfx_Ultimate(); break;
+	case BATTLE_VFX_TYPE::HIT_NORMAL: NormalHitLack(); break;
+	case BATTLE_VFX_TYPE::HIT_HARD:   HardHitLack(); break;
+	case BATTLE_VFX_TYPE::WIPEOUT:    StartVfx_WipeOut(); break;
+	case BATTLE_VFX_TYPE::CLEAR:      StartVfx_Clear(); break;
 	default:
-		m_BattleVFX.isRunning = false;
-		break;
+		ResetBattleVfxState();
+		return;
+	}
+
+	if (m_BattleVFX.isRunning && !m_isRunning && m_steps.empty() && m_parallelTracks.empty())
+	{
+		ResetBattleVfxState();
 	}
 }
+
 void CBattleFXFlow::StartVfx_Evade()
 {
 	Clear(false);
@@ -844,6 +839,14 @@ void CBattleFXFlow::AddPingPongColor3(_float3* colorPtr, const _float3& peakValu
 		});
 }
 
+void CBattleFXFlow::ResetBattleVfxState()
+{
+	m_BattleVFX.fCurPos = 0.f;
+	m_BattleVFX.vNowColor = {};
+	m_BattleVFX.isRunning = false;
+	m_BattleVFX.bCanIntersect = true;
+	m_BattleVFX.eVFXType = BATTLE_VFX_TYPE::END; // 없으면 적당한 기본값
+}
 
 _bool CBattleFXFlow::IsValidTimeScale(const TIME_SCALE_DATA& timeScale)
 {
