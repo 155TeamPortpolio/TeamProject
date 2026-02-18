@@ -10,7 +10,11 @@ class CFieldSystem :
     public CBase
 {
   DECLARE_SINGLETON(CFieldSystem)
-
+  struct FOG_SETTING
+  {
+	  _bool			bEnabled = false;
+	  FOG_DESC		Desc{};
+  };
   struct DayTimer {
 	  DayPhase DayTime = { DayPhase::EarlyMorning };
 	  DayPhase PreDayTime = { DayPhase::LateNight };
@@ -21,7 +25,7 @@ class CFieldSystem :
 	  _float TransitionTime = 0.f;
 	  _float TransitionDuration = 2.0f;
 
-	  FOG_DESC StartFog{}, TargetFog{};
+	  FOG_SETTING StartFog{}, TargetFog{};
 	  CLOUD_DESC StartCloud{}, TargetCloud{};
 
 	  void Update_Timer(_float dt);

@@ -16,6 +16,8 @@
 #include "Texture.h"
 #include "AudioSource.h"
 #include "DefilerAxe.h"
+#include "EffectContainer.h"
+#include "CamDirector.h"
 
 CDefilerWeapon::CDefilerWeapon()
 	: CEnemy()
@@ -90,6 +92,10 @@ HRESULT CDefilerWeapon::Initialize(INIT_DESC* pArg)
 	HitDesc.fInterval = 0.f;
 	HitDesc.iMaxCount = 1;
 	SetBattleColliderObject("HEl", CEnemy::BATTLE_COLTYPE::ATTACK, true, HitDesc);
+
+	if (FAILED(Initialize_Effects()))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -105,7 +111,7 @@ void CDefilerWeapon::Priority_Update(_float dt)
 void CDefilerWeapon::Update(_float dt)
 {
 	m_ElapsedTime += dt;
-
+	Get_Component<CObjectContainer>()->UpdateChild(dt);
 	const _vector3 nowPos = Get_WorldPos();
 	const bool hitGround = m_vTargetPos.y + 0.5f >= nowPos.y;
 
@@ -116,6 +122,30 @@ void CDefilerWeapon::Update(_float dt)
 		m_slideVelXZ = m_vVelocity;
 		m_slideVelXZ.y = 0.f;
 		Get_Component<CAudioSource>()->Slot("DefilerWeaponGround.wav").Volume(0.5f).Play();
+
+		Stop_Effect("Defiler_Throw_Axe_Trail");
+
+		_vector3 vWorldPosition = m_pTransform->Get_WorldPos();
+		vWorldPosition.y += 0.1f;
+		if (m_isFinalThrow)
+		{
+			auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+				.Asset("defiler_throw_axe_hit_ground1.json")
+				.Position(vWorldPosition)
+				.Build("Defiler_Throw_Axe_HitGround_Strong");
+
+			ObjectManager()->Add_Object(pEffect, { Get_Level(),"Enemy_Effect_Layer" });
+		}	
+		else
+		{
+			auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+				.Asset("defiler_throw_axe_hit_ground0.json")
+				.Position(vWorldPosition)
+				.Build("Defiler_Throw_Axe_HitGround_Normal");
+
+			ObjectManager()->Add_Object(pEffect, { Get_Level(),"Enemy_Effect_Layer" });
+		}
+
 	}
 
 	if (m_isSliding&& !m_isFinalThrow)
@@ -141,8 +171,10 @@ void CDefilerWeapon::Update(_float dt)
 			m_isEnd = true;
 		}
 
-		if (m_isEnd && m_Dissolve.isComplete())
+		if (m_isEnd && m_Dissolve.isComplete()) {
 			ObjectManager()->Remove_Object(this);
+			CameraManager()->AddImpact(ENUM(CamShakeType::EarthquakeShort), ENUM(CamZoomType::EarthquakeShort));
+		}
 
 		if (speedXZ < stopSpeed)
 		{
@@ -155,6 +187,7 @@ void CDefilerWeapon::Update(_float dt)
 		SummonAxe();
 		ObjectManager()->Remove_Object(this);
 		BattleSystem()->ExitBattleObject(BATTLE_OBJ_TYPE::MONSTER, Get_Handle());
+		CameraManager()->AddImpact(ENUM(CamShakeType::EarthquakeShort), ENUM(CamZoomType::EarthquakeShort));
 		return;
 	}
 
@@ -165,7 +198,7 @@ void CDefilerWeapon::Update(_float dt)
 	m_pTransform->Translate(m_vVelocity * dt);
 	Get_Component<CRigidBody>()->Set_GlobalPos(m_pTransform->Get_WorldPos(), m_pTransform->Get_QuaternionRotate());
 	Get_Component<CCollider>()->Update(dt);
-	Get_Component<CObjectContainer>()->UpdateChild(dt);
+
 	Update_Dissolve(dt);
 }
 void CDefilerWeapon::Late_Update(_float dt)
@@ -274,13 +307,65 @@ void CDefilerWeapon::SummonAxe()
 
 	auto pBlade =
 		Builder::Create_Object({ "Zero_Level","Proto_GameObject_DefilerAxe" })
-		.FromPool()
 		.Add_ObjDesc(desc)
 		.CharacterController(MonsterCCT)
 		.Build("DefilerAxe");
 
 	ObjectManager()->Add_Object(pBlade, { levelKey ,"Enemy_Layer" });
 	BattleSystem()->EnterBattleObject(BATTLE_OBJ_TYPE::MONSTER, pBlade->Get_Handle());
+}
+
+HRESULT CDefilerWeapon::Initialize_Effects()
+{
+	auto pObjectContainer = Get_Component<CObjectContainer>();
+	/* Trail */
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("defiler_throw_axe_trail.json")
+			.Build("Defiler_Throw_Axe_Trail");
+		
+		pEffect->Play();
+		pObjectContainer->Add_Child(pEffect);
+	}
+
+	return S_OK;
+}
+
+void CDefilerWeapon::Play_Effect(const string& effectTag, _fvector offsetPosition, _fvector offsetQuaternion, _bool syncTransform)
+{
+	auto pEffect = Get_Component<CObjectContainer>()->Find_ObjectByName(effectTag);
+	if (!pEffect)
+		return;
+
+	auto pEffectTransform = pEffect->Get_Component<CTransform>();
+	if (syncTransform)
+	{
+		pEffectTransform->Set_Pos(_vector3(offsetPosition));
+		pEffectTransform->Set_Quaternion(offsetQuaternion);
+	}
+	else
+	{
+		_smatrix worldMatrix = m_pTransform->Get_WorldMatrix();
+		_quaternion worldQuaternion = m_pTransform->Get_QuaternionRotate();
+
+		_vector3 vWorldPosition = _vector3::Transform(offsetPosition, worldMatrix);
+		_quaternion localQuaternion(offsetQuaternion);
+		localQuaternion *= worldQuaternion;
+
+		pEffectTransform->Set_WorldPos(vWorldPosition);
+		pEffectTransform->Set_WorldQuaternion(localQuaternion);
+	}
+
+	static_cast<CEffectContainer*>(pEffect)->Play();
+}
+
+void CDefilerWeapon::Stop_Effect(const string& effectTag)
+{
+	auto pEffect = Get_Component<CObjectContainer>()->Find_ObjectByName(effectTag);
+	if (!pEffect)
+		return;
+
+	static_cast<CEffectContainer*>(pEffect)->Stop();
 }
 
 void CDefilerWeapon::Update_Dissolve(_float dt)

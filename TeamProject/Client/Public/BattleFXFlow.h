@@ -163,7 +163,7 @@ public:
 	void StartVfx_Evade();
 	void StartVfx_Parry();
 	void StartVfx_Ultimate();
-	void StartVfx_Switch();
+	void StartVfx_Switch(CHARACTER eLeft, CHARACTER eRight);
 	void StartVfx_WipeOut();
 	void StartVfx_Clear();
 	void NormalHitLack();

@@ -104,10 +104,35 @@ void CSacrificeHand::Update(_float dt)
 
 	m_pStateMachine->Update(dt);
 	Get_Component<CAnimator3D>()->Update_Animation(dt);
+	Route_AnimEvent();
 }
 
 void CSacrificeHand::Late_Update(_float dt)
 {
+}
+
+void CSacrificeHand::Route_AnimEvent()
+{
+	auto pAnimator = Get_Component<CAnimator3D>();
+	auto bus = pAnimator->Get_EventBus();
+
+	for (EVENT_INST& instance : bus)
+	{
+		switch (instance.Type)
+		{
+		case CLIP_EVENT_TYPE::NOTIFY:
+			break;
+
+		case CLIP_EVENT_TYPE::SOUND:
+			Control_Sound(instance.Tag);
+			break;
+		}
+	}
+}
+
+void CSacrificeHand::Control_Sound(const string& event)
+{
+	Get_Component<CAudioSource>()->Slot(event).Volume(0.7f).Attribute3D(false).Loop(false).Play();
 }
 
 CSacrificeHand* CSacrificeHand::Create()

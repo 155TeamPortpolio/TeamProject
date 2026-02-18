@@ -158,4 +158,17 @@ namespace Engine {
 			{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,    0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
 		};
 	}VTXTESS;
+
+	typedef struct ENGINE_DLL tagVertexTriangle
+	{
+		XMFLOAT3    vPosition;
+		XMFLOAT2    vTexcoord;
+
+		static constexpr string_view  Key = "VTXRECT";
+		static constexpr unsigned int iElementCount = { 2 };
+		static constexpr D3D11_INPUT_ELEMENT_DESC Elements[iElementCount] = {
+			{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0,  D3D11_INPUT_PER_VERTEX_DATA, 0},
+			{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,    0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		};
+	}VTXRECT;
 };

@@ -34,6 +34,8 @@ namespace Client {
 
 	//------------------- Gacha --------------------
 	enum class GACHA_STAGE { BANGBOO, AVATAR, END };
+
+	enum class BOSS { Sacrifice, Defiler, End };
 }
 
 #endif

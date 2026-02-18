@@ -173,8 +173,12 @@ namespace Client {
 	}GACHA_CHANNEL_DESC;
 
 	typedef struct tagCloudDesc {
-		_float3 skyColor = {};
-		_float3 cloudColor = {};
+		_float3 topColor = {};
+		_float3 horizonColor = {};
+		_float atmosphereBlend = {};
+		_float3 cloudBright = {};
+		_float3 cloudDark = {};
+		_float coverage = {};
 	}CLOUD_DESC;
 
 	typedef struct  tagInstanceXWall
