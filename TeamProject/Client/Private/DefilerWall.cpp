@@ -146,9 +146,14 @@ void CDefilerWall::Play_Effect(_bool isPlayEffect)
 	if (!isPlayEffect)
 		return;
 
+	if (m_bPlayEffect)
+		return;
+
 	auto pEffect = Get_Component<CObjectContainer>()->Find_ObjectByName("Defiler_Wave_HitGround");
 	if (pEffect)
 		static_cast<CEffectContainer*>(pEffect)->Play();
+
+	m_bPlayEffect = true;
 }
 
 void CDefilerWall::Initialize_Effects()

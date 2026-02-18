@@ -41,6 +41,7 @@ private:
     _float  m_EndY = 0.f;
     _bool m_bAwake = {};
     _bool m_bDisApper = {};
+    _bool m_bPlayEffect = {};
 public:
     static CDefilerWall* Create();
     CGameObject* Clone(INIT_DESC* pArg) override;
