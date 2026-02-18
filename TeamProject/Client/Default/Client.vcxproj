@@ -481,7 +481,6 @@
     <ClInclude Include="..\public\ProceduralSky.h" />
     <ClInclude Include="..\public\Room_Party.h" />
     <ClInclude Include="..\public\Room_Scott.h" />
-    <ClInclude Include="..\public\Room_Tutorial.h" />
     <ClInclude Include="..\public\ScottCar.h" />
     <ClInclude Include="..\public\ScottScreen.h" />
     <ClInclude Include="..\public\ZeroStage_Rest.h" />
@@ -998,7 +997,6 @@
     <ClCompile Include="..\private\ProceduralSky.cpp" />
     <ClCompile Include="..\private\Room_Party.cpp" />
     <ClCompile Include="..\private\Room_Scott.cpp" />
-    <ClCompile Include="..\private\Room_Tutorial.cpp" />
     <ClCompile Include="..\private\ScottCar.cpp" />
     <ClCompile Include="..\private\ScottScreen.cpp" />
     <ClCompile Include="..\private\ZeroStage_Rest.cpp" />

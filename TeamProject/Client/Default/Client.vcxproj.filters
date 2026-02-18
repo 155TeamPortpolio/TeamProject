@@ -1503,9 +1503,6 @@
     <Filter Include="01. Level\04. Zero\Stage_Rest">
       <UniqueIdentifier>{fdb4fe2f-1406-4b73-9a75-ebc4647bfbe4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03. Utility\06. FieldSystem\Room\08. Tutorial">
-      <UniqueIdentifier>{6c0d0481-e758-4ed0-90a4-ded55659fcdf}</UniqueIdentifier>
-          </Filter>
     <Filter Include="02. GameObject\Object\Npc\Service\Jagger2">
       <UniqueIdentifier>{52162e67-3539-449e-92e9-d8af302bb95b}</UniqueIdentifier>
     </Filter>
@@ -2924,12 +2921,9 @@
     <ClInclude Include="..\public\ZeroStage_Rest.h">
       <Filter>01. Level\04. Zero\Stage_Rest</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Room_Tutorial.h">
-      <Filter>03. Utility\06. FieldSystem\Room\08. Tutorial</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\NPC_Preset.h">
       <Filter>02. GameObject\Object\Npc\Background</Filter>
-          </ClInclude>
+    </ClInclude>
     <ClInclude Include="..\Public\Jaeger2.h">
       <Filter>02. GameObject\Object\Npc\Service\Jagger2</Filter>
     </ClInclude>
@@ -4307,9 +4301,6 @@
     <ClCompile Include="..\private\ZeroStage_Rest.cpp">
       <Filter>01. Level\04. Zero\Stage_Rest</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Room_Tutorial.cpp">
-      <Filter>03. Utility\06. FieldSystem\Room\08. Tutorial</Filter>
-          </ClCompile>
     <ClCompile Include="..\Private\Jaeger2.cpp">
       <Filter>02. GameObject\Object\Npc\Service\Jagger2</Filter>
     </ClCompile>
