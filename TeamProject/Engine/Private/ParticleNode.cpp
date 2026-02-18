@@ -72,6 +72,13 @@ HRESULT CParticleNode::Initialize(INIT_DESC* pArg)
 			customInstance->Set_Param("MaskTexture", { pTexture->Get_SRV(),"Texture2D",0 });
 		}
 	}
+	else
+	{
+		if (0 == pParticleNode->iUseDepthTest)
+			customInstance->Override_Pass("None_Depth");
+		else
+			customInstance->Override_Pass("Default");
+	}
 
 	m_pTransform->Set_Pos(vPosition);
 	m_pTransform->Set_Quaternion(vQuaternion);
