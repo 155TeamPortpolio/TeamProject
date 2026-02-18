@@ -175,8 +175,8 @@ void CCamDirector::Update(_float dt)
         m_dialogue.Update(dt);
 
     m_parry.Update(dt);
-
     m_wipeOut.Update(dt);
+    m_switch.Update(dt);
 
     if (m_dialogueUnlockPending && !m_dialogue.IsBusy())
     {
@@ -476,4 +476,26 @@ void CCamDirector::StopAll(_float blendOutSec)
 {
     if (!m_playing.active) return;
     StopRequest(m_playing.handle, blendOutSec, true);
+}
+
+void CCamDirector::EnterSwitch()
+{
+    if (m_switchMode) return;
+    if (m_playing.active) return;
+
+    m_switchMode = true;
+    m_switch.Begin();
+}
+
+void CCamDirector::SwitchTo()
+{
+    if (!m_switchMode) return;
+    m_switch.Switch();
+}
+
+void CCamDirector::EndSwitch()
+{
+    if (!m_switchMode) return;
+    m_switch.End();
+    m_switchMode = false;
 }

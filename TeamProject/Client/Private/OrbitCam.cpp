@@ -400,6 +400,7 @@ void COrbitCam::SnapFromOrbitPose(const Vector3& pivotWorld, const Vector3& camP
 _bool COrbitCam::SkipUpdate(_float dt)
 {
     if (m_parryMode) return true;
+    if (m_switchMode) return true;
     if (!m_target.isValid()) return true;
 
     if (m_freeze > 0.f)
@@ -440,6 +441,7 @@ OrbitLockEval COrbitCam::ApplyLock(_float dt)
     if (!Lock_On()) return lockRes;
 
     if (m_parryMode) return lockRes;
+    if (m_switchMode) return lockRes;
 
     lockRes = EvalLock(dt, m_pose.rotGoalDeg.x, m_pose.distWanted);
 
@@ -448,6 +450,7 @@ OrbitLockEval COrbitCam::ApplyLock(_float dt)
 
     return lockRes;
 }
+
 
 void COrbitCam::ApplyAutoYaw(_float dt, const OrbitLockEval& lockRes)
 {
@@ -630,6 +633,28 @@ void COrbitCam::DialogueYaw_Set(_float yawGoalDeg, _float weight)
     m_dialogueYaw.weight     = clamp(weight, 0.f, 1.f);
 }
 
+void COrbitCam::SwitchMode_ResumeSync()
+{
+    m_pose.rotGoalDeg = m_pose.rotCurDeg;
+
+    m_pose.distWanted = m_pose.distCur;
+    m_pose.distGoal = m_pose.distCur;
+
+    m_pose.pivotGoalWorld = m_pose.pivotCurWorld;
+
+    m_switch = {};
+    m_freeze = 0.f;
+
+    m_hitDist = false;
+    m_yawDeltaCapDeg = m_prof.yawDeltaCapDeg;
+    m_pitchDeltaCapDeg = m_prof.pitchDeltaCapDeg;
+
+    PivotStab_Reset(m_pose.pivotCurWorld);
+
+    ClampTargets();
+}
+
+
 void COrbitCam::ParryMode_ResumeSync()
 {
     m_pose.rotGoalDeg = m_pose.rotCurDeg;
@@ -739,6 +764,7 @@ void COrbitCam::AutoYaw_OnTarget()
 _float COrbitCam::EvalAutoYaw(_float dt, const Vector3& foot, const Vector3& camLookWorld, const Vector3& camRightWorld, _float curYawDeg)
 {
     if (m_parryMode) return 0.f;
+    if (m_switchMode) return 0.f;
     if (!m_prof.autoYaw) return 0.f;
 
     if (m_autoYaw.holdTimer > 0.f)
