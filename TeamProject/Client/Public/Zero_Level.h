@@ -70,7 +70,7 @@ private:
 private:
 	StageContext m_Context = {};
 	class CStageRouter* m_pRouter = { nullptr };
-	unordered_map<StageType,class CStage*> m_StageContainer;
+	unordered_map<StageType, class CStage*> m_StageContainer;
 	unordered_map<StageType, MapCycle> m_mapCycle;
 
 public:
