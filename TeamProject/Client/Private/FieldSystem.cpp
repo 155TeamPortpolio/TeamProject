@@ -169,6 +169,9 @@ void CFieldSystem::DayTimer::Update_Transition(_float dt)
 	Vector3 horizonCol = XMVectorLerp(
 		XMLoadFloat3(&StartCloud.horizonColor),
 		XMLoadFloat3(&TargetCloud.horizonColor), time);
+	Vector3 hazeCol = XMVectorLerp(
+		XMLoadFloat3(&StartCloud.hazeColor),
+		XMLoadFloat3(&TargetCloud.hazeColor), time);
 	_float atmoBlend = StartCloud.atmosphereBlend + (TargetCloud.atmosphereBlend - StartCloud.atmosphereBlend) * time;
 	Vector3 brightCol = XMVectorLerp(
 		XMLoadFloat3(&StartCloud.cloudBright),
@@ -185,7 +188,7 @@ void CFieldSystem::DayTimer::Update_Transition(_float dt)
 		->SetEnable(TargetFog.bEnabled);
 
 	auto pCloud = dynamic_cast<CProceduralSky*>(ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Cloud)));
-	if (pCloud)pCloud->Set_CloudInfo({ topCol,horizonCol,atmoBlend,brightCol,darkCol,coverage });
+	if (pCloud)pCloud->Set_CloudInfo({ topCol,horizonCol,hazeCol,atmoBlend,brightCol,darkCol,coverage });
 
 	if (time >= 1.0f)
 	{
@@ -214,7 +217,8 @@ void CFieldSystem::DayTimer::Set_DayPhase(DayPhase ePhase)
 		TargetFog = { true, _float4(0.95f, 0.75f, 0.8f, 1.0f),0.003f };
 		TargetCloud = {
 		  _float3(0.008f, 0.012f, 0.05f),   
-		  _float3(0.08f, 0.04f, 0.03f),     
+		  _float3(0.08f, 0.04f, 0.03f), 
+		 _float3(0.6f, 0.45f, 0.5f),      
 		 0.93,                              
 		  _float3(0.8f, 0.35f, 0.15f),      
 		  _float3(0.08f, 0.05f, 0.1f),      
@@ -226,7 +230,8 @@ void CFieldSystem::DayTimer::Set_DayPhase(DayPhase ePhase)
 		TargetFog = { false,_float4(0.85f, 0.9f, 0.95f, 1.0f), 0.0015f };
 		TargetCloud = {
 		   _float3(0.01f, 0.025f, 0.08f),   
-		   _float3(0.04f, 0.06f, 0.12f),    
+		   _float3(0.04f, 0.06f, 0.12f),   
+		 _float3(0.6f, 0.7f, 0.85f),
 		  0.93,                             
 		   _float3(0.95f, 0.95f, 0.92f),    
 		   _float3(0.35f, 0.38f, 0.45f),    
@@ -238,7 +243,8 @@ void CFieldSystem::DayTimer::Set_DayPhase(DayPhase ePhase)
 		TargetFog = { false, _float4(1.0f, 0.55f, 0.45f, 1.0f), 0.0035f };
 		TargetCloud = {
 		_float3(0.01f, 0.015f, 0.06f),    
-		_float3(0.12f, 0.04f, 0.02f),     
+		_float3(0.12f, 0.04f, 0.02f),    
+		_float3(0.45f, 0.55f, 0.7f),
 		0.93,                             
 		_float3(1.2f, 0.5f, 0.18f),       
 		_float3(0.15f, 0.06f, 0.08f),     
@@ -251,6 +257,7 @@ void CFieldSystem::DayTimer::Set_DayPhase(DayPhase ePhase)
 		TargetCloud = {
 		 _float3(0.001f, 0.002f, 0.008f),  
 		 _float3(0.005f, 0.008f, 0.02f),   
+		 _float3(0.08f, 0.1f, 0.18f),
 		0.93,                              
 		 _float3(0.04f, 0.045f, 0.06f),    
 		 _float3(0.008f, 0.008f, 0.015f),  

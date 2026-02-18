@@ -22,6 +22,7 @@
 #include "ElectricBoo.h"
 #include "SilverAnbi.h"
 #include "BackgroundNpc.h"
+#include "ScottCar.h"
 
 /* Maptool Type 1 (Interactable) */
 #include "Portal.h"
@@ -29,6 +30,10 @@
 #include "UI_ZeroEntranceLogo.h"
 #include "HealKit.h"
 #include "BattleStarter.h"
+#include "UI_CleanupEntranceLogo.h"
+#include "UI_DeadlyAssaultEntranceLogo.h"
+#include "UI_NotoriousHuntEntranceLogo.h"
+#include "UI_ShiyuEntranceLogo.h"
 
 /* Maptool Type 2 (ETC) */
 #include "MilitaryHelicopter.h"
@@ -56,7 +61,8 @@ static unordered_map<string, Spawner::OBJ_SPEC> s_NPCTable =
 	{ "ExploreBoo",     Spawner::OBJ_SPEC{ "Proto_GameObject_ExploreBoo", &CElectricBoo::Create } },
 	{ "Sirchop",		Spawner::OBJ_SPEC{ "Proto_GameObject_Sirchop", &CSirChop::Create } },
 	{ "SilverAnbi",     Spawner::OBJ_SPEC{ "Proto_GameObject_SilverAnbi", &CSilverAnbi::Create } },
-	{ "BackGround",     Spawner::OBJ_SPEC{ "Proto_GameObject_CBackgroundNpc", &CBackgroundNpc::Create } }
+	{ "BackGround",     Spawner::OBJ_SPEC{ "Proto_GameObject_CBackgroundNpc", &CBackgroundNpc::Create } },
+	{ "ScottCar",		Spawner::OBJ_SPEC{ "Proto_GameObject_ScottCar", &CScottCar::Create } }
 };
 
 /* Maptool Type 1 */
@@ -65,6 +71,10 @@ static unordered_map<string, Spawner::OBJ_SPEC> s_InteractTable =
 	{ "Portal",			Spawner::OBJ_SPEC{ "Proto_GameObject_Portal", &CPortal::Create }},
 	{ "ZeroPortal",		Spawner::OBJ_SPEC{ "Proto_GameObject_ZeroPortal", &CZeroPortal::Create }},
 	{ "UI_ZeroLogo",	Spawner::OBJ_SPEC{ "Proto_GameObject_ZeroEntranceLogo", &CUI_ZeroEntranceLogo::Create }},
+	{ "UI_CleanupLogo",	Spawner::OBJ_SPEC{ "Proto_GameObject_CleanupEntranceLogo", &CUI_CleanupEntranceLogo::Create }},
+	{ "UI_DeadlyAssaultLogo",	Spawner::OBJ_SPEC{ "Proto_GameObject_DeadlyAssaultEntranceLogo", &CUI_DeadlyAssaultEntranceLogo::Create }},
+	{ "UI_NotoriousHuntLogo",	Spawner::OBJ_SPEC{ "Proto_GameObject_NotoriousHuntEntranceLogo", &CUI_NotoriousHuntEntranceLogo::Create }},
+	{ "UI_ShiyuLogo",	Spawner::OBJ_SPEC{ "Proto_GameObject_ShiyuEntranceLogo", &CUI_ShiyuEntranceLogo::Create }},
 	{ "HealKit",		Spawner::OBJ_SPEC{ "Proto_GameObject_HealKit", &CHealKit::Create }},
 	{ "BattleStarter",	Spawner::OBJ_SPEC{ "Proto_GameObject_BattleStarter", &CBattleStarter::Create }}
 };
@@ -75,7 +85,7 @@ static unordered_map<string, Spawner::OBJ_SPEC> s_AmbientActorTable =
 	{ "MilitaryHelicopter", Spawner::OBJ_SPEC{ "Proto_GameObject_MilitaryHelicopter", &CMilitaryHelicopter::Create }},
 	{ "DogFan",				Spawner::OBJ_SPEC{ "Proto_GameObject_DogFan", &CDogFan::Create }},
 	{ "DogBone",			Spawner::OBJ_SPEC{ "Proto_GameObject_DogBone", &CDogBone::Create }},
-	{ "ScottScreen",		Spawner::OBJ_SPEC{ "Proto_GameObject_DogBone", &CScottScreen::Create }}
+	{ "ScottScreen",		Spawner::OBJ_SPEC{ "Proto_GameObject_ScottScreen", &CScottScreen::Create }}
 };
 
 static unordered_map<string, Spawner::OBJ_SPEC> s_ETCTable =
