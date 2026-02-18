@@ -103,6 +103,7 @@ void CMiasmaHeavyJaeger::Awake()
 	m_vRimLightColor = _float3(0.127, 0.029, 0.070);
 	m_fRimLightPower = 2.2f;
 	m_fDissolveTilling = 12.f;
+	m_eEnemyClass = ENEMY_CLASS::NORMAL;
 
 	auto pMaterial = Get_Component<CMaterial>();
 	auto& materialInstances = pMaterial->Get_MaterialInstances();
@@ -205,6 +206,7 @@ void CMiasmaHeavyJaeger::Parried()
 {
 	m_bStopMove = true;
 	m_pStateMachine->Set_Trigger("Parried");
+	BattleSystem()->ExitBattleObject(BATTLE_OBJ_TYPE::MONSTER, this->Get_Handle());
 }
 
 void CMiasmaHeavyJaeger::SpawnChild()

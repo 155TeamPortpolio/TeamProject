@@ -4,7 +4,7 @@
 #include "GameInstance.h"
 #include "BattleFXFlow.h"
 #include "Engine_Math.h"
-
+#include "Layer.h"
 #ifdef _USING_GUI
 
 NS_BEGIN(Client)
@@ -90,10 +90,8 @@ void CBattleSystem_Panel::DrawHeader()
 
     auto* fx = bs->Debug_GetFXFlow();
     ImGui::Text("FXFlow: %s", (fx && fx->IsRunning()) ? "RUNNING" : "idle");
-
     ImGui::Checkbox("Auto Refresh", &m_autoRefresh);
     ImGui::SameLine();
-    ImGui::Checkbox("Show Index Audit", &m_showIndexAudit);
 
     ImGui::Separator();
 }
@@ -104,6 +102,7 @@ void CBattleSystem_Panel::DrawTab_Overview()
     const auto& infos = bs->Debug_GetInfos();
     const auto& snaps = bs->Debug_GetSnapshots();
     const auto& indexMap = BattleSystem()->Debug_GetIndexMap();
+    const auto& layerArray = bs->Get_BattleLayer();
     ImGui::SeparatorText("Counts");
 
     // 타입별 집계
@@ -138,10 +137,20 @@ void CBattleSystem_Panel::DrawTab_Overview()
     ImGui::SeparatorText("IndexMap");
     ImGui::Text("m_BattleObjIndex size: %d", (int)indexMap.size());
 
-    if (m_showIndexAudit)
+    const string nowLevelKey = LevelManager()->Get_NowLevelKey();
+
+    for (const string& layerKey : layerArray)
     {
-        ImGui::Separator();
-        ImGui::TextColored(ImVec4(0.8f, 0.8f, 1.f, 1.f), "Tip: Index Audit 탭에서 무결성 검사 결과 확인");
+        CLayer* layerPtr = ObjectManager()->Get_Layer({ nowLevelKey, layerKey });
+        if (layerPtr)
+        {
+            const _float timeScaleValue = layerPtr->Get_TimeScale();
+            ImGui::Text("%s : TimeScale: %.5f", layerKey.c_str(), (double)timeScaleValue);
+        }
+        else
+        {
+            ImGui::TextColored(ImVec4(1.f, 0.3f, 0.3f, 1.f), "%s : (missing)", layerKey.c_str());
+        }
     }
 }
 

@@ -80,8 +80,10 @@ bool CRoomDirector::RequestExitTop()
 
 	CRoom* topRoom = itTop->second;
 
-	if (topRoom->IsPersistent())
+	if (topRoom->IsPersistent()) {
+		topRoom->OnResumeToOverlay();
 		return false;
+	}
 
 	topRoom->Exit();
 
@@ -125,6 +127,10 @@ void CRoomDirector::DoEnter(const string& key, _bool overlay)
 		{
 			itCur->second->Exit();
 			m_ActiveStacks.pop_back();
+		}
+		else if (itCur != m_Rooms.end() && itCur->second && itCur->second->IsPersistent())
+		{
+			itCur->second->OnResumeToOverlay();
 		}
 	}
 

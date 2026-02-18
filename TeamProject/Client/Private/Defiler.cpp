@@ -114,7 +114,7 @@ void CDefiler::Awake()
 	m_vRimLightColor = _float3(0.378, 0.029, 0.070);
 	m_fRimLightPower = 4.f;
 	m_fDissolveTilling = 6.f;
-
+	m_eEnemyClass = ENEMY_CLASS::BOSS;
 	auto pMaterial = Get_Component<CMaterial>();
 	auto& materialInstances = pMaterial->Get_MaterialInstances();
 	auto dissolveTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, "Dissolve.png");
