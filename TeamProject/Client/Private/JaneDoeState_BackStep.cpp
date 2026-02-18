@@ -80,10 +80,7 @@ void CJaneDoeState_BackStep::Update(CJaneDoe* pOwner, _float dt)
             pSubMachine->Set_Trigger("Complete");
             return;
         }
-    }
 
-    if (m_fAnimProgress >= 0.3f)
-    {   // Run
         if (pOwner->Is_Move())
         {
             pSubMachine->Set_Int("ExitMode", 2);

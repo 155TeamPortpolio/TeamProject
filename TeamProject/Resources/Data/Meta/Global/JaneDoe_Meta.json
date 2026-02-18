@@ -338,6 +338,21 @@
           "EventTime": 0.26471734046936035,
           "EventType": "Notify",
           "EventTag": "RHandEnd"
+        },
+        {
+          "EventTime": 0.0,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.06959064304828644,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.16510720551013947,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
         }
       ]
     },
@@ -377,6 +392,31 @@
           "EventTime": 0.39532163739204407,
           "EventType": "Notify",
           "EventTag": "LFootEnd"
+        },
+        {
+          "EventTime": 0.07953216880559921,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.11461988836526871,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.1801169514656067,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.24327486753463745,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.2947368621826172,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
         }
       ]
     },
@@ -406,6 +446,26 @@
           "EventTime": 0.27017542719841003,
           "EventType": "Notify",
           "EventTag": "RHandEnd"
+        },
+        {
+          "EventTime": 0.14463937282562256,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.12144248932600021,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.19922025501728058,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.23879142105579376,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
         }
       ]
     },
@@ -455,6 +515,26 @@
           "EventTime": 0.7095516324043274,
           "EventType": "Notify",
           "EventTag": "RHandEnd"
+        },
+        {
+          "EventTime": 0.16725145280361176,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.23313839733600616,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.2669265568256378,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.25341129302978516,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
         }
       ]
     },
@@ -484,6 +564,41 @@
           "EventTime": 0.4105263352394104,
           "EventType": "Notify",
           "EventTag": "LHandEnd"
+        },
+        {
+          "EventTime": 0.054061081260442734,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.06588693708181381,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.09460689127445221,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.14022092521190643,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.20779727399349213,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.2939571142196655,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.3057829737663269,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
         }
       ]
     },
@@ -528,6 +643,56 @@
           "EventTime": 0.877193033695221,
           "EventType": "Notify",
           "EventTag": "CheckCombo"
+        },
+        {
+          "EventTime": 0.20116959512233734,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.2502923905849457,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.28304094076156616,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.3461988568305969,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.40000003576278687,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.5005847811698914,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.5169590711593628,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.5356725454330444,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.5567251443862915,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.8584795594215393,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
         }
       ]
     },
