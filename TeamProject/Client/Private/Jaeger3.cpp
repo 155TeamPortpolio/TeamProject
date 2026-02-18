@@ -25,10 +25,11 @@ CJaeger3::CJaeger3(const CJaeger3& rhs)
 
 void CJaeger3::Execute()
 {
-	UI_DIALOGUE_REQUEST_DESC desc;
-	desc.strDialogueID = m_DiagloueData.StartDialogueID;
-	desc.iSequenceID = m_iNextSequceID;
-	EventSystem()->Broadcast<UI_DIALOGUE_REQUEST_DESC>({ desc });
+	//UI_DIALOGUE_REQUEST_DESC desc;
+	//desc.strDialogueID = m_DiagloueData.StartDialogueID;
+	//desc.iSequenceID = m_iNextSequceID;
+	//EventSystem()->Broadcast<UI_DIALOGUE_REQUEST_DESC>({ desc });
+	Success(0);
 }
 
 HRESULT CJaeger3::Initialize_Prototype()
@@ -91,7 +92,7 @@ void CJaeger3::Late_Update(_float dt)
 
 void CJaeger3::Success(_uint curSequenceID)
 {
-	LevelManager()->Request_ChangeLevel("MainCity_Level", true);
+	//FieldSystem()->RequestEnter("Tutorial", false);
 }
 
 CJaeger3* CJaeger3::Create()

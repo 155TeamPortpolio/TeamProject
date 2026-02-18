@@ -15,6 +15,7 @@ public:
     virtual void Exit();
     virtual void Update();
     virtual void OnResumeFromOverlay();
+    virtual void OnResumeToOverlay();
 
 private:
     class CMapLoader* m_pLoader = { nullptr };

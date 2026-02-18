@@ -1128,9 +1128,6 @@
     <Filter Include="03. Utility\06. FieldSystem\Room\04. Noodle">
       <UniqueIdentifier>{810c5f63-0a50-441a-b876-0b38ab52f72c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03. Utility\06. FieldSystem\Room\05. Room_Gacha">
-      <UniqueIdentifier>{820f4014-89e1-411c-b031-be391e0f1e5e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="03. Utility\07. UIDirector">
       <UniqueIdentifier>{42edd944-ef6d-4efd-b82d-9cadbc7ddc9f}</UniqueIdentifier>
     </Filter>
@@ -2882,9 +2879,6 @@
     <ClInclude Include="..\public\ProceduralSky.h">
       <Filter>02. GameObject\Object\Env\Sky</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\NPC_Preset.h">
-      <Filter>02. GameObject\Object\Npc\Child</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\UI_AnomalyBase.h">
       <Filter>02. GameObject\UI\01. 2D\Anomaly</Filter>
     </ClInclude>
@@ -2950,6 +2944,9 @@
     </ClInclude>
     <ClInclude Include="..\public\ZeroStage_Rest.h">
       <Filter>01. Level\04. Zero\Stage_Rest</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\NPC_Preset.h">
+      <Filter>02. GameObject\Object\Npc\Background</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Jaeger2.h">
       <Filter>02. GameObject\Object\Npc\Service\Jagger2</Filter>
