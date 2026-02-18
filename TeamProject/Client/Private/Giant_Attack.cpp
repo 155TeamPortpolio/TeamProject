@@ -16,18 +16,22 @@ void CGiant_Attack::Enter(CGiant* pOwner)
 
 		__super::Enter(pOwner);
 
-		m_HitDesc.eDamageType = DAMAGE_TYPE::NORMAL;
-		m_HitDesc.eHitType = HIT_TYPE::ONCE;
-		m_HitDesc.fDamage = 10.f;
+		m_NormalHitDesc.eDamageType = DAMAGE_TYPE::NORMAL;
+		m_NormalHitDesc.eHitType = HIT_TYPE::ONCE;
+		m_NormalHitDesc.fDamage = 10.f;
 
 		m_HardHitDesc.eDamageType = DAMAGE_TYPE::HARD;
 		m_HardHitDesc.eHitType = HIT_TYPE::ONCE;
 		m_HardHitDesc.fDamage = 15.f;
 
-		m_Attack3HitDesc.eDamageType = DAMAGE_TYPE::NORMAL;
+		m_KnockOutHitDesc.eDamageType = DAMAGE_TYPE::KNOCKOUT;
+		m_KnockOutHitDesc.eHitType = HIT_TYPE::ONCE;
+		m_KnockOutHitDesc.fDamage = 15.f;
+
+		m_Attack3HitDesc.eDamageType = DAMAGE_TYPE::HARD;
 		m_Attack3HitDesc.eHitType = HIT_TYPE::INTERVAL;
 		m_Attack3HitDesc.fDamage = 10.f;
-		m_Attack3HitDesc.fInterval = 0.3f;
+		m_Attack3HitDesc.fInterval = 0.5f;
 
 		pOwner->AddAttackHistoryFront(0);
 	}
@@ -42,7 +46,6 @@ void CGiant_Attack::Enter(CGiant* pOwner)
 	}
 	blackboard.isRequestNext = true;
 
-	pOwner->CaptureRotateToDir(pOwner->GetTargetingInfo().vDirToTarget);
 
 }
 
@@ -69,24 +72,40 @@ void CGiant_Attack::Update(CGiant* pOwner, _float dt)
 			else if (Event.Tag == "TurnOnAttackCol_L")
 			{
 				pOwner->SetOnAttack(true, CEnemy::ATTACK_SIDE::LEFT);
-				pOwner->SetBattleColliderObject("Weapon_L", CEnemy::BATTLE_COLTYPE::ATTACK, true, m_HitDesc);
+				pOwner->SetBattleColliderObject("Weapon_L", CEnemy::BATTLE_COLTYPE::ATTACK, true, m_NormalHitDesc);
+				pOwner->CaptureRotateToDir(pOwner->GetTargetingInfo().vDirToTarget);
 			}
 			else if (Event.Tag == "TurnOnAttackCol_L_Hard")
 			{
 				pOwner->SetOnAttack(true, CEnemy::ATTACK_SIDE::LEFT);
 				pOwner->SetBattleColliderObject("Weapon_L", CEnemy::BATTLE_COLTYPE::ATTACK, true, m_HardHitDesc);
+				pOwner->CaptureRotateToDir(pOwner->GetTargetingInfo().vDirToTarget);
+			}
+			else if (Event.Tag == "TurnOnAttackCol_L_KnockOut")
+			{
+				pOwner->SetOnAttack(true, CEnemy::ATTACK_SIDE::LEFT);
+				pOwner->SetBattleColliderObject("Weapon_L", CEnemy::BATTLE_COLTYPE::ATTACK, true, m_KnockOutHitDesc);
+				pOwner->CaptureRotateToDir(pOwner->GetTargetingInfo().vDirToTarget);
 			}
 			else if (Event.Tag == "TurnOffAttackCol_L")
 				pOwner->SetBattleColliderObject("Weapon_L", CEnemy::BATTLE_COLTYPE::ATTACK, false);
 			else if (Event.Tag == "TurnOnAttackCol_R")
 			{
 				pOwner->SetOnAttack(true, CEnemy::ATTACK_SIDE::RIGHT);
-				pOwner->SetBattleColliderObject("Weapon_R", CEnemy::BATTLE_COLTYPE::ATTACK, true, m_HitDesc);
+				pOwner->SetBattleColliderObject("Weapon_R", CEnemy::BATTLE_COLTYPE::ATTACK, true, m_NormalHitDesc);
+				pOwner->CaptureRotateToDir(pOwner->GetTargetingInfo().vDirToTarget);
 			}
 			else if (Event.Tag == "TurnOnAttackCol_R_Hard")
 			{
 				pOwner->SetOnAttack(true, CEnemy::ATTACK_SIDE::RIGHT);
 				pOwner->SetBattleColliderObject("Weapon_R", CEnemy::BATTLE_COLTYPE::ATTACK, true, m_HardHitDesc);
+				pOwner->CaptureRotateToDir(pOwner->GetTargetingInfo().vDirToTarget);
+			}
+			else if (Event.Tag == "TurnOnAttackCol_R_KnockOut")
+			{
+				pOwner->SetOnAttack(true, CEnemy::ATTACK_SIDE::RIGHT);
+				pOwner->SetBattleColliderObject("Weapon_R", CEnemy::BATTLE_COLTYPE::ATTACK, true, m_KnockOutHitDesc);
+				pOwner->CaptureRotateToDir(pOwner->GetTargetingInfo().vDirToTarget);
 			}
 			else if (Event.Tag == "TurnOffAttackCol_R")
 				pOwner->SetBattleColliderObject("Weapon_R", CEnemy::BATTLE_COLTYPE::ATTACK, false);
@@ -131,7 +150,8 @@ void CGiant_Attack::Update(CGiant* pOwner, _float dt)
 			else
 			{
 				DecideAttackPattern(pOwner);
-				blackboard.isRequestNext = true;
+				if (!blackboard.stateQueue.empty())
+					blackboard.isRequestNext = true;
 			}
 		}
 	}
@@ -283,6 +303,7 @@ void CGiant_Attack::AttackFromIndex(CGiant* pOwner, _int iMoveIndex)
 
 	pOwner->AddAttackHistoryFront(iMoveIndex);
 	pOwner->AddAttackCombo();
+	pOwner->CaptureRotateToDir(pOwner->GetTargetingInfo().vDirToTarget);
 }
 
 /*============================================================================*/
