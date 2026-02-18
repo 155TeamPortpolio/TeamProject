@@ -45,6 +45,27 @@ void CJaneDoeState_Dash::Update(CJaneDoe* pOwner, _float dt)
         ENUM(CJaneDoe::ROOTMOTION_MASK::MOVE) |
         ENUM(CJaneDoe::ROOTMOTION_MASK::QUATERNION));
 
+    if (pOwner->Is_Passion())
+    {
+        if (IsCrossAnimProgress(0.02f))
+        {
+            pOwner->SetRenderLayer(RENDER_LAYER::CustomOnly);
+        }
+        for (const auto& Event : pOwner->Get_Animator()->Get_EventBus())
+        {
+            if (Event.Type != CLIP_EVENT_TYPE::NOTIFY) continue;
+            if (Event.Tag == "MotionBlur")
+            {
+                pOwner->Add_MotionBlur();
+            }
+        }
+        if (IsCrossAnimProgress(0.08f))
+        {
+            pOwner->SetRenderLayer(RENDER_LAYER::Default);
+            pOwner->Clear_MotionBlur();
+        }
+    }
+
     if (pOwner->Is_Attack())
     {
         if (pSubMachine->Get_Bool("Extreme"))
@@ -86,6 +107,12 @@ void CJaneDoeState_Dash::Update(CJaneDoe* pOwner, _float dt)
     }
 
     Update_Effects(pOwner);
+}
+
+void CJaneDoeState_Dash::Exit(CJaneDoe* pOwner)
+{
+    pOwner->SetRenderLayer(RENDER_LAYER::Default);
+    pOwner->Clear_MotionBlur();
 }
 
 void CJaneDoeState_Dash::Update_Effects(CJaneDoe* pOwner)

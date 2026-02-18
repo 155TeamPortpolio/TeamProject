@@ -43,6 +43,7 @@ HRESULT CEffectContainer_Edit::Initialize(INIT_DESC* pArg)
 	LoadMaterialFromDirectory("../Bin/Resources/Mesh");
 	m_InstanceName = "EffectContainer";
 
+	m_pTransform->Set_Quaternion(_quaternion(0.f, 0.f, 0.f, 1.f));
 	return S_OK;
 }
 

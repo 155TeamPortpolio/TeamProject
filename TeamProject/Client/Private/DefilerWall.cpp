@@ -17,6 +17,8 @@
 #include "AudioSource.h"
 #include "EventListener.h"
 
+#include "EffectContainer.h"
+
 CDefilerWall::CDefilerWall()
 	: CEnemy()
 {
@@ -58,7 +60,10 @@ HRESULT CDefilerWall::Initialize(INIT_DESC* pArg)
 	m_EndY = -2.3f;
 	m_pTransform->Set_Y(-5.f);
 	m_bAwake = true;
-	Get_Component<CEventListener>()->Add_Listener<TsunamiDesc>([&](TsunamiDesc desc) {DisAppear();});
+	Get_Component<CEventListener>()->Add_Listener<TsunamiDesc>([&](TsunamiDesc desc) {DisAppear(desc.isEndTsunami);});
+	Get_Component<CEventListener>()->Add_Listener<TsunamiDesc>([&](TsunamiDesc desc) {Play_Effect(desc.isHitGround); });
+
+	Initialize_Effects();
 
 	return S_OK;
 }
@@ -98,6 +103,8 @@ void CDefilerWall::Update(_float dt)
 		if (m_ElapsedTime > 4.f)
 			ObjectManager()->Remove_Object(this);
 	}
+
+	Get_Component<CObjectContainer>()->UpdateChild(dt);
 }
 
 void CDefilerWall::Late_Update(_float dt)
@@ -118,8 +125,11 @@ void CDefilerWall::OnPooledRelease()
 	
 }
 
-void CDefilerWall::DisAppear()
+void CDefilerWall::DisAppear(_bool isDisappear)
 {
+	if (!isDisappear)
+		return;
+
 	auto pMaterial = Get_Component<CMaterial>();
 	auto& materialInstances = pMaterial->Get_MaterialInstances();
 	m_ElapsedTime = 0.f;
@@ -128,6 +138,36 @@ void CDefilerWall::DisAppear()
 		instance->Override_Pass("Wall");
 	}
 	m_bDisApper = true;
+
+}
+
+void CDefilerWall::Play_Effect(_bool isPlayEffect)
+{
+	if (!isPlayEffect)
+		return;
+
+	if (m_bPlayEffect)
+		return;
+
+	auto pEffect = Get_Component<CObjectContainer>()->Find_ObjectByName("Defiler_Wave_HitGround");
+	if (pEffect)
+		static_cast<CEffectContainer*>(pEffect)->Play();
+
+	m_bPlayEffect = true;
+}
+
+void CDefilerWall::Initialize_Effects()
+{
+	auto pObjectContainer = Get_Component<CObjectContainer>();
+
+	auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+		.Asset("defiler_wave_hit_ground.json")
+		.Position(_float3(0.f, 0.f, -4.f))
+		.Build("Defiler_Wave_HitGround");
+	pEffect->Get_Component<CTransform>()->Rotate(_float3(0.f, XMConvertToRadians(90.f), 0.f));
+		
+	pEffect->Stop();
+	pObjectContainer->Add_Child(pEffect);
 }
 
 CDefilerWall* CDefilerWall::Create()
