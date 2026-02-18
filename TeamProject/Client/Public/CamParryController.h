@@ -29,7 +29,7 @@ public:
     {
         struct Common
         {
-            _float enterSec = 0.15f;
+            _float enterSec = 0.1f;
             _float impactSec = 0.3f;
 
             _float pitchDeg = -8.f;
