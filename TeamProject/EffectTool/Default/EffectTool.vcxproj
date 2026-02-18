@@ -331,6 +331,7 @@
     <ClInclude Include="..\Public\ToolLight.h" />
     <ClInclude Include="..\Public\ToolMap.h" />
     <ClInclude Include="..\Public\ToolModel.h" />
+    <ClInclude Include="..\Public\Tool_WaterWave.h" />
     <ClInclude Include="..\Public\TrailNode_Edit.h" />
     <ClInclude Include="EffectTool.h" />
     <ClInclude Include="framework.h" />
@@ -447,6 +448,7 @@
     <ClCompile Include="..\Private\ToolLight.cpp" />
     <ClCompile Include="..\Private\ToolMap.cpp" />
     <ClCompile Include="..\Private\ToolModel.cpp" />
+    <ClCompile Include="..\Private\Tool_WaterWave.cpp" />
     <ClCompile Include="..\Private\TrailNode_Edit.cpp" />
     <ClCompile Include="EffectTool.cpp" />
     <ClCompile Include="pch.cpp">
