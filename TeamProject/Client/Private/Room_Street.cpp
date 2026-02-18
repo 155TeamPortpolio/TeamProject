@@ -33,6 +33,7 @@ void CRoom_Street::Exit()
 void CRoom_Street::OnResumeFromOverlay()
 {
 	/*메인 스트리트는 나가지 않음*/
+	FieldSystem()->PlayBGM("MainCityBGM.wav");
 }
 
 

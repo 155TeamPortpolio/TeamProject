@@ -25,12 +25,14 @@ void CFrameQueue::PushDropOldest(VIDEO_FRAME_CPU&& frame)
 	m_queue.emplace_back(move(frame));
 }
 
-_bool CFrameQueue::PopOldest(VIDEO_FRAME_CPU& out)
+_bool CFrameQueue::PopOldest(VIDEO_FRAME_CPU& outFrame)
 {
+    std::lock_guard<std::mutex> lock(m_mutex);
+
     if (m_queue.empty())
         return false;
 
-    out = std::move(m_queue.front());
+    outFrame = std::move(m_queue.front());
     m_queue.pop_front();
     return true;
 }

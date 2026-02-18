@@ -213,10 +213,7 @@ void CUI_Party::Create_EnterButton()
     if (!pObj)
         return;
 
-    pObj->Set_OnClick([this]() {  
-        LevelManager()->Request_ChangeLevel("Zero_Level", true);
-        // 배틀 시스템 통해서 캐릭터
-        }); // 클릭했을 때 실행할 함수 필요
+    pObj->Set_OnClick([this]() {   LevelManager()->Request_ChangeLevel("Zero_Level", true);    });
     Get_Component<CObjectContainer>()->Add_Child(pObj);
 }
 

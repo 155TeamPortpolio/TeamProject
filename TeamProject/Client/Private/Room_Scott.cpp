@@ -14,7 +14,7 @@ void CRoom_Scott::Enter()
 	m_pLoader = CMapLoader::Create("Scott_Level", "Zero_Worksite");
 	if (nullptr == m_pLoader)
 		MSG_BOX("Failed to Load MapData!");
-
+	ReserveMap("Scott_Level", "Zero_Worksite");
 	FieldSystem()->PlayBGM("ScottBGM.wav");
 }
 
@@ -28,6 +28,13 @@ void CRoom_Scott::Update()
 
 void CRoom_Scott::OnResumeFromOverlay()
 {
+	ActiveMap();
+	FieldSystem()->PlayBGM("ScottBGM.wav");
+}
+
+void CRoom_Scott::OnResumeToOverlay()
+{
+	DeActiveMap();
 }
 
 CRoom_Scott* CRoom_Scott::Create(const ROOM_DESC& desc)

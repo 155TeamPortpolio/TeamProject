@@ -56,6 +56,7 @@ HRESULT CDefilerAxe::Initialize(INIT_DESC* pArg)
 	m_fElapsedTime = 0.f;
 	m_tStatus.iNowHP = 10.f;
 	m_bDangle = true;
+	m_eEnemyClass = ENEMY_CLASS::NORMAL;
 	return S_OK;
 }
 

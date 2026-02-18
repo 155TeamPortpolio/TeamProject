@@ -230,6 +230,7 @@ HRESULT CPostRenderer::Render_Addictive_Internal()
 	m_pShader->Bind_Value("AddictiveColor", { vAddictiveColor, "float3", sizeof(_float3) });
 	m_pShader->Bind_Value("bSkinned", { &bSkinned, "bool", sizeof(_bool) });
 	m_pTargetManager->Bind_Target("Target_Combined_SkinnedMesh", m_pShader, "SkinnedCombinedTexture");
+	m_pTargetManager->Bind_Target("Target_DiffuseUI", m_pShader, "UI3DTexture");
 
 	ID3D11InputLayout* pLayout;
 	Get_BufferInputLayout(m_pVIBuffer, m_pShader, "ADDICTIVECOLOR", &pLayout);
@@ -376,9 +377,9 @@ HRESULT CPostRenderer::Render_Distortion_Internal()
 	if (FAILED(m_pTargetManager->Begin_MRT("MRT_Distortion", 0xFF, nullptr, false))) return E_FAIL;
 
 	m_pShader->SetConstantBuffer("FrameBuffer", m_pPipeLine->Get_FrameBuffer());
-
 	m_pTargetManager->Bind_Target(m_strLastTargetName, m_pShader, "FinalTexture");
-
+	m_pTargetManager->Bind_Target("Target_DiffuseUI", m_pShader, "UI3DTexture");
+	 
 	Bind_WorldMatrix();
 
 	ID3D11InputLayout* pLayout;

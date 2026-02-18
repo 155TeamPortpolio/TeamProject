@@ -45,6 +45,8 @@ public:
 
 private:
     void Initialize_Wave(WaterWaveDesc Desc);
+    void Initialize_Effects();
+    void Control_Effect(_float progress);
 
 private:
     _float      m_fAccTime = 0.f;
@@ -74,10 +76,17 @@ private:
      _float     m_MaxCurlAngle = 3.456f;
 
      _bool      m_isAttackable = true;
+
+     /* Effect */
+     _bool m_IsActive_Wave = false;
+     _float m_fStartHeight = 0.f;
+     _float m_fEndHeight = 18.5f;
+
 public:
     static CWaterWave* Create();
     virtual CGameObject* Clone(INIT_DESC* pArg) override;
     virtual void Free() override;
+
 
 };
 

@@ -26,7 +26,7 @@ public:
 	virtual void	Load(const nlohmann::ordered_json& data) override;
 
 private:
-	_char		m_szText[MAX_PATH]{};
+	_char		m_szText[2048]{};
 	_float		m_fFontScale = 1.f; 
 
 	_bool		m_isOutlined{};

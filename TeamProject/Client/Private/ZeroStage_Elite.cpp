@@ -40,6 +40,8 @@ void CZeroStage_Elite::Update()
 		Battle();
 		break;
 	case Client::CStage::StageState::BattleEnd:
+		m_ClearFlow.Tick(dt);
+		BattleEnd();
 		break;
 	case Client::CStage::StageState::Outro:
 		Outro();
@@ -89,12 +91,21 @@ void CZeroStage_Elite::Battle()
 			return;
 		}
 
+		WipeOutFX();
+		m_eStageState = StageState::BattleEnd;
+	}
+}
+
+
+void CZeroStage_Elite::BattleEnd()
+{
+	if (m_ClearFlow.IsDoneAll())
+	{
 		m_eStageState = StageState::Outro;
 		CBattleSystem::GetInstance()->SetActive(false);
 		Active_Portal();
 	}
 }
-
 
 void CZeroStage_Elite::Outro()
 {
