@@ -122,15 +122,15 @@ namespace
             return req;
         }
 
-        if (StartsWith(key, "BossParry"))
-        {
-            req.blendInSec  = 0.5f;
-            req.blendOutSec = 0.f;
-            req.resetTime   = true;
-            req.returnMode  = CamReturnMode::SnapToEnd;
-            req.blendInEase = EaseType::InOutSine;
-            return req;
-        }
+        //if (StartsWith(key, "BossParry"))
+        //{
+        //    req.blendInSec  = 0.5f;
+        //    req.blendOutSec = 0.f;
+        //    req.resetTime   = true;
+        //    req.returnMode  = CamReturnMode::SnapToEnd;
+        //    req.blendInEase = EaseType::InOutSine;
+        //    return req;
+        //}
 
         req.blendInSec  = 0.f;
         req.blendOutSec = 0.f;
