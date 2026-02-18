@@ -8,11 +8,7 @@ NS_BEGIN(Client)
 class CamParryController
 {
 public:
-    enum class State
-    {
-        None, Enter, Impact, WaitEnd
-    };
-
+    enum class State { None, Enter, Impact, ExitBlend, WaitEnd };
     struct ShotGoal
     {
         Vector3 pivotExt{};
@@ -22,15 +18,12 @@ public:
         _float  dist = 0.f;
         _float  yawWeight = 1.f;
     };
-
     struct PivotSample
     {
         Vector3 basePivot{};
         Vector3 facePivot{};
         _bool   valid = false;
     };
-
-public:
     struct ParryTuning
     {
         struct Common
@@ -56,7 +49,6 @@ public:
             EaseType approachEase = EaseType::InOutSine;
             EaseType impactEase = EaseType::OutSine;
         };
-
         struct Impact
         {
             _float punchDistDelta = 1.3f;
@@ -81,10 +73,11 @@ public:
 
             _float impactStartYawExtraDeg = 30.f;
         };
-
         Common common{};
         Impact impact{};
     };
+
+    ParryTuning tune{};
 
 public:
     void Reset();
@@ -94,9 +87,6 @@ public:
 
     _bool   IsChainReentryOpen() const;
     Vector3 GetImpactPointWorld() const { return m_fxPointWorld; }
-
-public:
-    ParryTuning tune{};
 
 private:
     static PivotSample SamplePivots(OBJECT_HANDLE h, _float offsetY, _float faceYOffsetMul = 0.85f);
@@ -139,6 +129,8 @@ private:
     void      UpdateRecoverFov(_float dt);
 
     _bool     IsChainParry() const;
+    Vector3   BuildReturnPresetCamPos() const;
+    ShotGoal  BuildExitShot_FromCamPos(const Vector3& pivotWorld, const Vector3& camPosWorld) const;
 
 private:
     _bool         m_active = false;
@@ -185,6 +177,17 @@ private:
 
     Vector3       m_tBase{};
     _bool         m_hasTBase = false;
+
+    _bool         m_returnLockBlend = false;
+    OBJECT_HANDLE m_returnLockHandle{};
+
+    ShotGoal      m_exitTo = {};
+    Vector3       m_exitPivotWorld = Vector3::Zero;
+    Vector3       m_exitCamPosTo = Vector3::Zero;
+    _float        m_exitSec = 0.f;
+
+    Vector3       m_exitPivotFrom = Vector3::Zero;
+    Vector3       m_exitCamPosFrom = Vector3::Zero;
 };
 
 NS_END

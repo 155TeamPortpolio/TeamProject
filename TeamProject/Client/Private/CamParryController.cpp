@@ -102,6 +102,63 @@ Vector3 CamParryController::OrbitPos(const Vector3& pivotWorld, const Quaternion
     return pivotWorld + backDir * dist;
 }
 
+Vector3 CamParryController::BuildReturnPresetCamPos() const
+{
+    auto attackerObj = ObjectManager()->Request_Object(m_attacker);
+    auto attackerTf = attackerObj->Get_Component<CTransform>();
+
+    Vector3 fwd = attackerTf->Dir(STATE::LOOK);
+    fwd.y = 0.f;
+    if (fwd.LengthSquared() <= 1e-10f) fwd = Vector3(0.f, 0.f, 1.f);
+    fwd.Normalize();
+
+    Vector3 right = Vector3::Up.Cross(fwd);
+    right.y = 0.f;
+    if (right.LengthSquared() <= 1e-10f) right = Vector3(1.f, 0.f, 0.f);
+    right.Normalize();
+
+    const Vector3 pivot = BasePivotWorld();
+
+    const Vector3 offL(-2.f, 1.f, -3.5f);
+    const Vector3 offR( 2.f, 1.f, -3.5f);
+
+    const Vector3 off = m_isLeft ? offL : offR;
+
+    return pivot + right * off.x + Vector3::Up * off.y + fwd * off.z;
+}
+
+CamParryController::ShotGoal CamParryController::BuildExitShot_FromCamPos(const Vector3& pivotWorld, const Vector3& camPosWorld) const
+{
+    ShotGoal g{};
+
+    Vector3 fwd{}, right{};
+    BuildBasis(fwd, right);
+
+    g.pivotExt = ExtFromPivotWorld(pivotWorld);
+
+    Vector3 toPivot = pivotWorld - camPosWorld;
+    const float dist = toPivot.Length();
+    toPivot /= dist;
+
+    const float yawRad = atan2f(toPivot.x, toPivot.z);
+    const float pitchRad = asinf(clamp(-toPivot.y, -1.f, 1.f));
+
+    const _float yawWorldDeg = XMConvertToDegrees(yawRad);
+    const _float pitchDeg = XMConvertToDegrees(pitchRad);
+
+    const _float attackerYaw = YawFromDirXZ(fwd);
+
+    g.yawDeg = Math::WrapDeg(yawWorldDeg - attackerYaw);
+    g.pitchDeg = pitchDeg;
+    g.rollDeg = 0.f;
+
+    g.dist = (_float)dist;
+    g.yawWeight = 1.f;
+
+    return g;
+}
+
+
 void CamParryController::ApplyGoalPose_Snap(const ShotGoal& g)
 {
     auto orbit = CamDirector()->GetOrbitCam();
@@ -197,7 +254,6 @@ void CamParryController::UpdatePivots(_float dt)
     if (m_dirXZ.LengthSquared() <= 1e-10f) m_dirXZ = Vector3(0.f, 0.f, 1.f);
     m_dirXZ.Normalize();
 }
-
 
 void CamParryController::ClampAboveGround(ShotGoal& g) const
 {
@@ -513,7 +569,13 @@ void CamParryController::ComputeSideFromCam()
 string CamParryController::BuildParryKey() const
 {
     const CHARACTER charaName = CamDirector()->GetCharacterName();
-    string key = "Parry/";
+    string key;
+    
+    //if (IsChainParry())
+    //    key = "ChainParry/";
+    //else
+        key = "Parry/";
+
     key += Helper::EnumToString(charaName);
     key += m_isLeft ? "_Left" : "_Right";
     return key;
@@ -682,6 +744,14 @@ void CamParryController::Reset()
     m_recoverFovFrom = 0.f;
 
     m_beginWasChain = false;
+
+    m_returnLockBlend = false;
+    m_returnLockHandle.Reset();
+
+    m_exitTo = {};
+    m_exitPivotWorld = Vector3::Zero;
+    m_exitCamPosTo = Vector3::Zero;
+    m_exitSec = 0.f;
 }
 
 void CamParryController::Begin()
@@ -750,17 +820,44 @@ void CamParryController::Begin()
     orbit->ParryMode_Begin();
 }
 
-
 void CamParryController::End()
 {
     if (!m_active) return;
 
     BeginRecoverFov();
 
+    auto orbit = CamDirector()->GetOrbitCam();
+
+    OrbitSnapshot snap{};
+    orbit->CaptureSnapshot(snap);
+
+    m_returnLockHandle = snap.lock.handle;
+    m_returnLockBlend = m_returnLockHandle.isValid() && (snap.lock.active || snap.lockBlend.active || snap.lockBlend.weight > 0.f);
+
+    if (m_returnLockBlend)
+    {
+        m_exitPivotWorld = BasePivotWorld();
+        m_exitCamPosTo = BuildReturnPresetCamPos();
+
+        m_exitTo = BuildExitShot_FromCamPos(m_exitPivotWorld, m_exitCamPosTo);
+
+        m_exitPivotFrom = snap.pose.pivotCurWorld;
+        m_exitCamPosFrom = CurCamPosWorld();
+
+        m_exitSec = 1.f;
+
+        m_state = State::ExitBlend;
+        m_elapsed = 0.f;
+
+        m_waitSeqKey.clear();
+        m_waitSeqStarted = false;
+
+        return;
+    }
+
     CameraManager()->Set_BlendEase(tune.impact.recoverRollEase);
 
     m_waitSeqKey = BuildParryKey();
-
     CamDirector()->RequestSequence(m_waitSeqKey);
 
     m_state = State::WaitEnd;
@@ -816,9 +913,79 @@ void CamParryController::Update(_float dt)
         return;
     }
 
+    if (m_state == State::ExitBlend)
+    {
+        UpdateRecoverFov(dt);
+
+        auto orbit = CamDirector()->GetOrbitCam();
+
+        const _float dur = max(m_exitSec, 0.0001f);
+        const _float u = clamp(m_elapsed / dur, 0.f, 1.f);
+        const _float t = Math::ApplyEase(EaseType::InOutSine, u);
+
+        Vector3 pivotWorld = Vector3::Lerp(m_exitPivotFrom, m_exitPivotWorld, t);
+        Vector3 camPosWorld = Vector3::Lerp(m_exitCamPosFrom, m_exitCamPosTo, t);
+
+        auto attackerObj = ObjectManager()->Request_Object(m_attacker);
+        auto attackerCC = attackerObj->Get_Component<CCharacterController>();
+        const Vector3 foot = attackerCC->Get_FootPosition();
+
+        const _float minPivotY = foot.y + tune.common.minPivotAboveFootY;
+        const _float minCamY = foot.y + tune.common.minCamAboveFootY;
+
+        _float lift = 0.f;
+        if (pivotWorld.y < minPivotY) lift = max(lift, minPivotY - pivotWorld.y);
+        if (camPosWorld.y < minCamY) lift = max(lift, minCamY - camPosWorld.y);
+
+        pivotWorld.y += lift;
+        camPosWorld.y += lift;
+
+        Vector3 toPivot = pivotWorld - camPosWorld;
+        const float dist = toPivot.Length();
+        toPivot /= dist;
+
+        const _float yawWorldDeg = XMConvertToDegrees(atan2f(toPivot.x, toPivot.z));
+        const _float pitchDeg = XMConvertToDegrees(asinf(clamp(-toPivot.y, -1.f, 1.f)));
+        const _float rollDeg = Math::Lerp(m_holdShot.rollDeg, 0.f, t);
+
+        const Quaternion qRot = YawPitchRollQuatDeg(yawWorldDeg, pitchDeg, rollDeg);
+
+        orbit->SnapFromOrbitPose(pivotWorld, camPosWorld, qRot, (_float)dist);
+
+        if (u >= 1.f)
+        {
+            orbit->ParryMode_ResumeSync();
+            orbit->ParryMode_End();
+
+            orbit->Lock_ReenterBlend(dur);
+
+            m_state = State::WaitEnd;
+            m_elapsed = 0.f;
+
+            m_holdActive = false;
+            m_waitSeqKey.clear();
+            m_waitSeqStarted = true;
+        }
+        return;
+    }
+
     if (m_state == State::WaitEnd)
     {
         UpdateRecoverFov(dt);
+
+        if (m_returnLockBlend)
+        {
+            if (m_recoverFovActive) return;
+
+            if (m_fovAppliedOffset != 0.f)
+                CameraManager()->SetFov(-m_fovAppliedOffset, 0.f);
+            m_fovAppliedOffset = 0.f;
+
+            if (!m_beginWasChain) m_chainRefDist = 0.f;
+
+            Reset();
+            return;
+        }
 
         if (m_holdActive && m_elapsed < tune.impact.recoverRollSec)
             ApplyGoalPose_Snap(m_holdShot);
@@ -844,11 +1011,9 @@ void CamParryController::Update(_float dt)
         if (!m_beginWasChain) m_chainRefDist = 0.f;
 
         Reset();
-
         return;
     }
 }
-
 
 _bool CamParryController::IsChainReentryOpen() const
 {

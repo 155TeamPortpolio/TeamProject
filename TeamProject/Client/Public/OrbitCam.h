@@ -38,6 +38,12 @@ public:
     void    Lock_Input() { m_lockInput = true; }
     void    Unlock_Input() { m_lockInput = false; }
     _bool   IsInputLocked() const { return m_lockInput; }
+    void    Lock_ReenterBlend(_float blendInSec);
+
+    void    ReturnPreset_Begin(const Vector3& pivotWorld, const Vector3& camPosTo, _float sec, EaseType ease);
+    _bool   ReturnPreset_Active() const { return m_returnPreset.active; }
+    Vector3 ReturnPreset_EvalCamPos(_float dt, const Vector3& fallbackCamPos);
+    void    ReturnPreset_Reset() { m_returnPreset = {}; }
 
     void    SetPivotExt(const Vector3& off) { m_pose.pivotExternalOffset = off; }
     Vector3 GetPivotExt() const { return m_pose.pivotExternalOffset; }
@@ -150,6 +156,7 @@ private:
     OrbitPivotStabilizer m_pivotStab{};
     CCamOcclusionTracker m_occlusion{};
     OrbitDialogueYaw     m_dialogueYaw{};
+    OrbitReturnPreset    m_returnPreset{};
 
 public:
     static  COrbitCam* Create();
