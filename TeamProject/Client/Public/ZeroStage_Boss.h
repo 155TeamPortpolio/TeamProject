@@ -30,6 +30,7 @@ private:
 	void Intro();
 	void BattleStart();
 	void Battle();
+	void BattleEnd();
 	void Outro();
 	void End();
 

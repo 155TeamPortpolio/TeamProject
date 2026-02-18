@@ -98,6 +98,7 @@ public:
 	const decltype(m_BattleObjIndex)& Debug_GetIndexMap() const { return m_BattleObjIndex; }
 	CBattleFXFlow* Debug_GetFXFlow() const { return m_pFXFlow; }
 	_bool Debug_IsActive() const { return m_isActive; }
+	const array<string, ENUM(BATTLE_OBJ_TYPE::END)>& Get_BattleLayer() { return m_pFXFlow->Get_BattleLayer(); };
 #endif
 
 private:
