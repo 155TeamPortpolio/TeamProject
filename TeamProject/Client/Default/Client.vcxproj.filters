@@ -1503,6 +1503,12 @@
     <Filter Include="01. Level\04. Zero\Stage_Rest">
       <UniqueIdentifier>{fdb4fe2f-1406-4b73-9a75-ebc4647bfbe4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Npc\Service\Jagger2">
+      <UniqueIdentifier>{52162e67-3539-449e-92e9-d8af302bb95b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Npc\Service\Jaeger3">
+      <UniqueIdentifier>{76d183b0-7c77-4102-8491-3ea9e304c6ea}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -2915,6 +2921,12 @@
     <ClInclude Include="..\public\ZeroStage_Rest.h">
       <Filter>01. Level\04. Zero\Stage_Rest</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Jaeger2.h">
+      <Filter>02. GameObject\Object\Npc\Service\Jagger2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Jaeger3.h">
+      <Filter>02. GameObject\Object\Npc\Service\Jaeger3</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -4282,6 +4294,12 @@
     </ClCompile>
     <ClCompile Include="..\private\ZeroStage_Rest.cpp">
       <Filter>01. Level\04. Zero\Stage_Rest</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Jaeger2.cpp">
+      <Filter>02. GameObject\Object\Npc\Service\Jagger2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Jaeger3.cpp">
+      <Filter>02. GameObject\Object\Npc\Service\Jaeger3</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
