@@ -506,8 +506,11 @@ public:
         string material = genderWord + "0" + to_string(variation) + ".mat";
         string meta = genderWord + "0" + to_string(variation) + "_Meta.json";
 
-        pModel->Link_Model("MainCity_Level", model);
-        pMaterial->Link_Material("MainCity_Level", material);
+        HRESULT Modelhr =pModel->Link_Model("MainCity_Level", model);
+        HRESULT MatHr = pMaterial->Link_Material("MainCity_Level", material);
+
+        if (FAILED(Modelhr) || FAILED(MatHr))
+            return;
 
         pAnimator->LinkAnimate_Model("MainCity_Level", model);
         pAnimator->Link_MetaData("MainCity_Level", meta);
