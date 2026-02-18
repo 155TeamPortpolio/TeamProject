@@ -105,10 +105,11 @@ void CHealKit::OnTriggerEnter(CGameObject* pOther)
 
 	switch (m_eItemType)
 	{
-	case Client::CHealKit::ITEMTYPE::HP:		Recovery_Health();	break;
-	case Client::CHealKit::ITEMTYPE::ENERGY:	Recovery_Energy();	break;
-	case Client::CHealKit::ITEMTYPE::END:							break;
-	default:														break;
+	case Client::CHealKit::ITEMTYPE::ULT:		BattleSystem()->GetBattlePlayer()->Recover_Decibel();	break;
+	case Client::CHealKit::ITEMTYPE::ENERGY:	BattleSystem()->GetBattlePlayer()->Recover_Energy();	break;
+	case Client::CHealKit::ITEMTYPE::HP:		BattleSystem()->GetBattlePlayer()->Recover_HP();		break;
+	case Client::CHealKit::ITEMTYPE::END:																break;
+	default:																							break;
 	}
 
 	_int RandSound = Helper::Get_Random_Int(1, 4);
@@ -130,17 +131,6 @@ void CHealKit::OnTriggerExit(CGameObject* pOther)
 	auto pCollidable = pOther->Get_Component<ICollidable>();
 	if (pCollidable && (pCollidable->Get_Group() != COLLISION_GROUP::PLAYER))
 		return;
-}
-
-void CHealKit::Recovery_Health()
-{
-	BattleSystem()->GetBattlePlayer()->Recover_HP();
-}
-
-void CHealKit::Recovery_Energy()
-{
-	BattleSystem()->GetBattlePlayer()->Recover_Energy();
-	BattleSystem()->GetBattlePlayer()->Recover_Decibel();
 }
 
 void CHealKit::Setting_Child()

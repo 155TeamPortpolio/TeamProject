@@ -9,6 +9,49 @@
 #include "BattlePlayer.h"
 #include "Helper_Func.h"
 
+namespace
+{
+    _float EvalOrbitCamY(const Vector3& pivotWorld, _float yawWorldDeg, _float pitchDeg, _float dist)
+    {
+        const _float yawRad = XMConvertToRadians(yawWorldDeg);
+        const _float pitchRad = XMConvertToRadians(pitchDeg);
+        const Quaternion q = Quaternion::CreateFromYawPitchRoll(yawRad, pitchRad, 0.f);
+
+        const Vector3 backDir = Vector3::Transform(Vector3(0.f, 0.f, -1.f), q);
+        return (pivotWorld + backDir * dist).y;
+    }
+
+    _float SolvePitchDegForCamY(const Vector3& pivotWorld, _float yawWorldDeg, _float dist, _float desiredCamY)
+    {
+        auto EvalCamY = [&](float pitchDeg) { return EvalOrbitCamY(pivotWorld, yawWorldDeg, pitchDeg, dist); };
+
+        const _float y0 = EvalCamY(0.f);
+        const _float yPlus = EvalCamY(1.f);
+        const _bool plusRaises = (yPlus > y0);
+
+        _float lo = -89.f;
+        _float hi = 89.f;
+
+        for (_int i = 0; i < 16; ++i)
+        {
+            const _float mid = (lo + hi) * 0.5f;
+            const _float yMid = EvalCamY(mid);
+
+            if (plusRaises)
+            {
+                if (yMid < desiredCamY) lo = mid;
+                else hi = mid;
+            }
+            else
+            {
+                if (yMid < desiredCamY) hi = mid;
+                else lo = mid;
+            }
+        }
+        return hi;
+    }
+}
+
 CamParryController::PivotSample CamParryController::SamplePivots(OBJECT_HANDLE h, _float offsetY, _float faceYOffsetMul)
 {
     PivotSample s{};
@@ -175,13 +218,11 @@ void CamParryController::ApplyGoalPose_Snap(const ShotGoal& g)
 _float CamParryController::CurCamYawDeg() const
 {
     auto orbit = CamDirector()->GetOrbitCam();
-    auto tf = orbit->Get_Component<CTransform>();
 
-    Vector3 camLook = tf->Dir(STATE::LOOK);
-    camLook.y = 0.f;
-    camLook.Normalize();
+    OrbitSnapshot s{};
+    orbit->CaptureSnapshot(s);
 
-    return YawFromDirXZ(camLook);
+    return s.pose.rotCurDeg.x;
 }
 
 Vector3 CamParryController::CurCamPosWorld() const
@@ -227,15 +268,19 @@ void CamParryController::UpdatePivots(_float dt)
     auto attackerObj = ObjectManager()->Request_Object(core.attacker);
     auto attackerTf = attackerObj->Get_Component<CTransform>();
 
-    Vector3 fwd = attackerTf->Dir(STATE::LOOK);
-    fwd.y = 0.f;
-    fwd.Normalize();
+    Vector3 desiredDir = attackerTf->Dir(STATE::LOOK);
+    desiredDir.y = 0.f;
+    desiredDir.Normalize();
 
-    const _float tDir = clamp(dt * 18.f, 0.f, 1.f);
-    side.dirXZ = Vector3::Lerp(side.dirXZ, fwd, tDir);
-    side.dirXZ.y = 0.f;
-    side.dirXZ.Normalize();
+    const _float curYaw = YawFromDirXZ(side.dirXZ);
+    const _float desiredYaw = YawFromDirXZ(desiredDir);
+
+    const _float a = clamp(dt * 18.f, 0.f, 1.f);
+    const _float yaw = curYaw + Math::WrapDeg(desiredYaw - curYaw) * a;
+
+    side.dirXZ = RotateYDegXZ(Vector3(0.f, 0.f, 1.f), yaw);
 }
+
 
 void CamParryController::ClampAboveGround(ShotGoal& g) const
 {
@@ -474,12 +519,17 @@ CamParryController::ShotGoal CamParryController::BuildImpactShot(_int sideSign, 
     const Quaternion qStart = YawPitchRollQuatDeg(yawWorldBase, shot.impactBase.pitchDeg, 0.f);
     const _float startCamY = OrbitPos(pivotWorldBase, qStart, shot.impactBase.dist).y;
 
-    const _float targetCamYFixed = foot.y + tune.impact.endCamAboveFootY;
+    _float endCamAboveFootY = tune.impact.endCamAboveFootY;
+    _float mix = clamp(tune.impact.targetCamYMix, 0.f, 1.f);
 
-    const _float mix = clamp(tune.impact.targetCamYMix, 0.f, 1.f);
+    if (core.beginWasChain)
+    {
+        endCamAboveFootY = tune.impact.chainEndCamAboveFootY;
+        mix = clamp(tune.impact.chainTargetCamYMix, 0.f, 1.f);
+    }
+
+    const _float targetCamYFixed = foot.y + endCamAboveFootY;
     _float targetCamY = Math::Lerp(startCamY, targetCamYFixed, mix);
-
-    if (core.beginWasChain) targetCamY = max(targetCamY, startCamY);
 
     g.pivotExt = shot.impactBase.pivotExt;
 
@@ -531,6 +581,7 @@ CamParryController::ShotGoal CamParryController::BuildImpactShot(_int sideSign, 
     return g;
 }
 
+
 void CamParryController::ComputeSideFromCam()
 {
     Vector3 fwd, right;
@@ -546,9 +597,7 @@ void CamParryController::ComputeSideFromCam()
 string CamParryController::BuildParryKey() const
 {
     const CHARACTER charaName = CamDirector()->GetCharacterName();
-    string key;
-
-    key = "Parry/";
+    string key = "Parry/";
     key += Helper::EnumToString(charaName);
     key += side.isLeft ? "_Left" : "_Right";
     return key;
@@ -773,7 +822,6 @@ void CamParryController::Begin()
     ComputeSideFromCam();
 
     CaptureCurAsFrom();
-    piv.enterCamY = CurCamPosWorld().y;
 
     const _float startDist = shot.shotFrom.dist;
 
@@ -792,6 +840,28 @@ void CamParryController::Begin()
     const _int lookSign = -side.sideSign;
     shot.shotTo.yawDeg = Math::WrapDeg(shot.shotTo.yawDeg + (_float)lookSign * tune.impact.impactStartYawExtraDeg);
 
+    piv.enterCamY = CurCamPosWorld().y;
+
+    if (chain)
+    {
+        auto attackerCC = attackerObj->Get_Component<CCharacterController>();
+        const Vector3 foot = attackerCC->Get_FootPosition();
+
+        const _float desiredCamY = foot.y + tune.common.chainEnterCamAboveFootY;
+        piv.enterCamY = desiredCamY;
+
+        Vector3 fwd, right;
+        BuildBasis(fwd, right);
+
+        const _float attackerYaw = YawFromDirXZ(fwd);
+        const _float yawWorld = attackerYaw + shot.shotTo.yawDeg;
+
+        const Vector3 pivotWorld = PivotWorldFromExt(shot.shotTo.pivotExt);
+        const _float pitchEnd = SolvePitchDegForCamY(pivotWorld, yawWorld, shot.shotTo.dist, desiredCamY);
+
+        shot.shotTo.pitchDeg = pitchEnd;
+    }
+
     core.active = true;
     core.state = State::Enter;
     core.elapsed = 0.f;
@@ -800,6 +870,7 @@ void CamParryController::Begin()
 
     orbit->ParryMode_Begin();
 }
+
 
 
 void CamParryController::End()

@@ -1,6 +1,6 @@
 {
   "TagDataFormat": "InteractSlot",
-  "TagArea": "Zero_Start",
+  "TagArea": "Zero_Start1",
   "iVersion": 1,
   "values": [
     {
@@ -16,23 +16,7 @@
       "TagName": "KitType",
       "defaultvalue": {
         "type": "String",
-        "value": "HP"
-      }
-    },
-    {
-      "iObjID": 2,
-      "TagName": "KitType",
-      "defaultvalue": {
-        "type": "String",
-        "value": "Energy"
-      }
-    },
-    {
-      "iObjID": 3,
-      "TagName": "KitType",
-      "defaultvalue": {
-        "type": "String",
-        "value": "HP"
+        "value": "Ult"
       }
     }
   ]
