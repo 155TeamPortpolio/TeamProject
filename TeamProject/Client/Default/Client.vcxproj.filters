@@ -1451,7 +1451,7 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Env\Sky">
       <UniqueIdentifier>{a34bc107-84e0-47c2-a2b4-d0e7709df620}</UniqueIdentifier>
-	</Filter>
+    </Filter>
     <Filter Include="02. GameObject\UI\01. 2D\Anomaly">
       <UniqueIdentifier>{e4b9a9ed-8ca2-49d0-a693-96a7c103a6b4}</UniqueIdentifier>
     </Filter>
@@ -2857,9 +2857,6 @@
     </ClInclude>
     <ClInclude Include="..\public\ProceduralSky.h">
       <Filter>02. GameObject\Object\Env\Sky</Filter>
-	</ClInclude>
-    <ClInclude Include="..\Public\NPC_Preset.h">
-      <Filter>02. GameObject\Object\Npc\Child</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UI_AnomalyBase.h">
       <Filter>02. GameObject\UI\01. 2D\Anomaly</Filter>
@@ -2902,6 +2899,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\UI_NotoriousHuntEntranceLogo.h">
       <Filter>02. GameObject\UI\02. 3D\Mesh\EntranceLogo\NotoriousHunt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\NPC_Preset.h">
+      <Filter>02. GameObject\Object\Npc\Background</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -4246,7 +4246,7 @@
     </ClCompile>
     <ClCompile Include="..\private\ProceduralSky.cpp">
       <Filter>02. GameObject\Object\Env\Sky</Filter>
-          </ClCompile>
+    </ClCompile>
     <ClCompile Include="..\Private\UI_ZeroEntranceLogo.cpp">
       <Filter>02. GameObject\UI\02. 3D\Mesh\EntranceLogo\Zero</Filter>
     </ClCompile>
