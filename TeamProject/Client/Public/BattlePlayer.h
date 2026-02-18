@@ -116,7 +116,7 @@ private: // 입력 처리
 
 private: // 캐릭터 전환
     void    NotifyCharacterSwitchIn();
-    void    NotifyCharacterSwitchOut();
+    void    NotifyCharacterSwitchOut(_bool bNext = true);
     _bool   Can_Switch() const;
     _bool   Can_SwitchTo(_uint iIndex) const;
     _int    Find_SwitchIndex(_bool bNext) const;

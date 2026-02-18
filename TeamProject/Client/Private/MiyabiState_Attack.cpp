@@ -34,6 +34,9 @@ CMiyabiState_Attack* CMiyabiState_Attack::Create()
     pSubStateMachine->Register_Transition("NormalAttack", "ExAttack",
         CStateMachine<CMiyabi>::CONDITION_TRIGGER, "ToExAttack");
 
+    pSubStateMachine->Register_Transition("RushAttack", "ExAttack",
+        CStateMachine<CMiyabi>::CONDITION_TRIGGER, "ToExAttack");
+
     pSubStateMachine->Register_AnyStateTransition("UltimateAttack",
         CStateMachine<CMiyabi>::CONDITION_TRIGGER, "ToUltimate");
 
@@ -92,6 +95,7 @@ void CMiyabiState_Attack::Update(CMiyabi* pOwner, _float dt)
 
 void CMiyabiState_Attack::Exit(CMiyabi* pOwner)
 {
+    pOwner->Get_StateMachine()->Reset_Trigger("Attack");
     pOwner->Set_WeaponEffectMesh(false);
     pOwner->End_AllAttackColliders();
     pOwner->Unlock_Move();

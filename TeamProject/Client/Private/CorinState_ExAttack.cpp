@@ -87,7 +87,7 @@ void CCorinState_ExAttack::Update(CCorin* pOwner, _float dt)
                 HitDesc()
                 .Type(HIT_TYPE::INTERVAL)
                 .Damage(pOwner->Get_AttackPower() * fIntervalRatio * Helper::Get_Random_Float(1.0f, 1.5f)
-                    , m_eType)
+                    , DAMAGE_TYPE::HARD)
                 .Interval(0.1f)
                 .Charge(0.f, 50.f)
             );
