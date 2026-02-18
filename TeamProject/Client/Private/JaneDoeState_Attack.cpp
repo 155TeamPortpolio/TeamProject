@@ -41,6 +41,9 @@ CJaneDoeState_Attack* CJaneDoeState_Attack::Create()
     pSubStateMachine->Register_Transition("NormalAttack", "ExAttack",
         CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "ToExAttack");
 
+    pSubStateMachine->Register_Transition("RushAttack", "ExAttack",
+        CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "ToExAttack");
+
     pSubStateMachine->Register_AnyStateTransition("UltimateAttack",
         CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "ToUltimate");
 
@@ -123,6 +126,7 @@ void CJaneDoeState_Attack::Update(CJaneDoe* pOwner, _float dt)
 
 void CJaneDoeState_Attack::Exit(CJaneDoe* pOwner)
 {
+    pOwner->Get_StateMachine()->Reset_Trigger("Attack");
     pOwner->End_AllAttackColliders();
     pOwner->Unlock_Move();
     pOwner->Clear_MotionBlur();
