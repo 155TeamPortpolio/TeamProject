@@ -205,7 +205,7 @@ public:
 	virtual void Exit(CDefiler* pOwner) override;
 
 private:
-	_float m_Duration = 3.f;
+	_float m_Duration = 5.f;
 	_float m_Elapsed = 0.f;
 	_float  m_Interval = 0.f;
 public:

@@ -193,6 +193,7 @@ HRESULT CPostRenderer::Render_Fog_Internal()
 
 	m_pTargetManager->Bind_Target("Target_Static_Depth", m_pShader, "StaticDepthTexture");
 	m_pTargetManager->Bind_Target("Target_Skinned_Depth", m_pShader, "SkinnedDepthTexture");
+	m_pTargetManager->Bind_Target("Target_DiffuseUI", m_pShader, "UI3DTexture");
 	m_pTargetManager->Bind_Target(m_strLastTargetName, m_pShader, "FinalTexture");
 	
 	m_pShader->SetConstantBuffer("FrameBuffer", m_pPipeLine->Get_FrameBuffer());

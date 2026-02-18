@@ -33,6 +33,8 @@ private:
     _float3         m_vCloudBright = _float3(1.2, 0.5, 0.18);
     _float3         m_vCloudDark = _float3(0.15, 0.06, 0.08);
     _float          m_fCloudCoverage = 0.45;
+    _float3         m_vHazeColor = _float3(0.f, 0.f, 0.f);
+
 
     Matrix          m_MatProjectionInv;
     Matrix          m_MatViewInv;

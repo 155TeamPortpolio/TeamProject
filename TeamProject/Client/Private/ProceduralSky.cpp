@@ -25,6 +25,7 @@ void CProceduralSky::Set_CloudInfo(CLOUD_DESC Desc)
 {
 	m_vTopColor = Desc.topColor;
 	m_vHorizonColor = Desc.horizonColor;
+	m_vHazeColor = Desc.hazeColor;
 	m_fSkyAtmosphereBlend = Desc.atmosphereBlend;
 	m_vCloudBright = Desc.cloudBright;
 	m_vCloudDark = Desc.cloudDark;
@@ -58,6 +59,7 @@ HRESULT CProceduralSky::Initialize(INIT_DESC* pArg)
 	customInstance->Set_Param("g_CloudBright", { &m_vCloudBright, "float3", sizeof(_float3) });
 	customInstance->Set_Param("g_CloudDark", { &m_vCloudDark, "float3", sizeof(_float3) });
 	customInstance->Set_Param("g_CloudCoverage_Param", { &m_fCloudCoverage, "float", sizeof(_float) });
+	customInstance->Set_Param("g_HazeColor", { &m_vHazeColor, "float3", sizeof(_float3) });
 	
 	customInstance->Set_Param("matProjInv", { &m_MatProjectionInv, "matrix", sizeof(_float4x4) });
 	customInstance->Set_Param("matViewInv", { &m_MatViewInv, "matrix", sizeof(_float4x4) });
@@ -121,6 +123,15 @@ void CProceduralSky::Render_GUI()
 		m_vHorizonColor.z = horizonColor[2];
 	}
 
+	float hazeColor[3] = { m_vHazeColor.x, m_vHazeColor.y, m_vHazeColor.z };
+	if (ImGui::ColorEdit3("Haze Color", hazeColor,
+		ImGuiColorEditFlags_Float | ImGuiColorEditFlags_DisplayRGB | ImGuiColorEditFlags_InputRGB))
+	{
+		m_vHazeColor.x = hazeColor[0];
+		m_vHazeColor.y = hazeColor[1];
+		m_vHazeColor.z = hazeColor[2];
+	}
+
 	ImGui::SliderFloat("Atmosphere Blend", &m_fSkyAtmosphereBlend, 0.0f, 1.0f, "%.2f");
 
 	ImGui::SeparatorText("Cloud");
@@ -153,6 +164,10 @@ void CProceduralSky::Render_GUI()
 	ImGui::ColorButton("##HorizonPrev", ImVec4(m_vHorizonColor.x, m_vHorizonColor.y, m_vHorizonColor.z, 1.0f),
 		ImGuiColorEditFlags_NoTooltip, ImVec2(18, 18));
 	ImGui::SameLine(); ImGui::Text("Horizon");
+	ImGui::SameLine();
+	ImGui::ColorButton("##HazePrev", ImVec4(m_vHazeColor.x, m_vHazeColor.y, m_vHazeColor.z, 1.0f),
+		ImGuiColorEditFlags_NoTooltip, ImVec2(18, 18));
+	ImGui::SameLine(); ImGui::Text("Haze");
 	ImGui::SameLine();
 	ImGui::ColorButton("##BrightPrev", ImVec4(m_vCloudBright.x, m_vCloudBright.y, m_vCloudBright.z, 1.0f),
 		ImGuiColorEditFlags_NoTooltip, ImVec2(18, 18));
