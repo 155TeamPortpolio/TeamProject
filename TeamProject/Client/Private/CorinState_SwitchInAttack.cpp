@@ -29,8 +29,7 @@ void CCorinState_SwitchInAttack::Enter(CCorin* pOwner)
     pOwner->Push_Invincible();
     pOwner->Lock_Move();
 
-    //CamDirector()->AutoTarget();
-    //CamDirector()->RequestSequence("Switch/Switch");
+    CamDirector()->SwitchTo();
 
     __super::Enter(pOwner);
 }

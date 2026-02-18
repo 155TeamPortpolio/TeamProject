@@ -809,6 +809,7 @@ void CDefiler::Control_TargetEnable(_bool On)
 	else {
 		BattleSystem()->EnterBattleObject(BATTLE_OBJ_TYPE::MONSTER, this->Get_Handle());
 	}
+
 	Get_Component<CCharacterController>()->Set_CompActive(On);
 }
 

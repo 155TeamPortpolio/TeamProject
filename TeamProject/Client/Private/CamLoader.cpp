@@ -124,7 +124,7 @@ namespace
 
         if (StartsWith(key, "Switch"))
         {
-            req.blendInSec  = 1.f;
+            req.blendInSec  = 1.5f;
             req.blendOutSec = 0.f;
             req.resetTime   = true;
             req.returnMode  = CamReturnMode::SnapToEnd;

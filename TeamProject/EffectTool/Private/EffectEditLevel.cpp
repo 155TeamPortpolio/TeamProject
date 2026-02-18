@@ -9,6 +9,7 @@
 #include "ToolLight.h"
 #include "ToolGrid.h"
 #include "Camera.h"
+#include "EffectContainer.h"
 #include "EffectContainer_Edit.h"
 #include "SpriteNode_Edit.h"
 #include "ParticleNode_Edit.h"
@@ -16,7 +17,7 @@
 #include "TrailNode_Edit.h"
 #include "ToolModel.h"
 #include "ToolMap.h"
-
+#include "Tool_WaterWave.h"
 
 CEffectEditLevel::CEffectEditLevel(const string& LevelKey)
 	: CLevel{ LevelKey },
@@ -45,6 +46,7 @@ HRESULT CEffectEditLevel::Awake()
 	pProto->Add_ProtoType("EffectEdit_Level", "Proto_GameObject_ToolGrid", CToolGrid::Create());
 	pProto->Add_ProtoType("EffectEdit_Level", "Proto_GameObject_ToolModel", CToolModel::Create());
 	pProto->Add_ProtoType("EffectEdit_Level", "Proto_GameObject_ToolMap", CToolMap::Create());
+	pProto->Add_ProtoType("EffectEdit_Level", "Proto_GameObject_ToolWaterWave", CWaterWave::Create());
 
 	//pResource->Add_ResourcePath("test.json", "../Bin/Resource/Data/test.json");
 	//pResource->Load_EffectAsset(G_GlobalLevelKey, "test.json");
@@ -87,6 +89,35 @@ HRESULT CEffectEditLevel::Awake()
 	CGameObject* Map = Builder::Create_Object({ "EffectEdit_Level","Proto_GameObject_ToolMap" })
 		.Build("Map");
 
+	CWaterWave::WaterWaveDesc* waveDesc = new CWaterWave::WaterWaveDesc;
+	waveDesc->fFoamAmount = 1.0f;
+	waveDesc->fRoughness = 1.0f;
+	waveDesc->fTintStrength = 0.f;
+	waveDesc->fTsunamiHeight = 50.f;
+
+	waveDesc->vWaterTint = _float3(1.f, 1.f, 1.f);
+	waveDesc->fNoiseOffset = _float2(0.f, 0.f);
+
+	waveDesc->fPeakTime = 0.90f;			
+	waveDesc->fRiseWidth = 0.85f;			
+	waveDesc->fFallWidth = 0.05f;			
+
+	waveDesc->fCurlStartRatio = 0.95f;		
+	waveDesc->fCurlDuration = 0.08f;		
+
+	waveDesc->fFadeInEnd = 0.12f;			
+	waveDesc->fFadeOutStart = 0.995f;		
+
+	waveDesc->fCurlForward = 45.f;			
+	waveDesc->fMaxCurlAngle = 3.8f;			
+
+	//CGameObject* WaterWave =
+	//	Builder::Create_Object({ "EffectEdit_Level", "Proto_GameObject_ToolWaterWave" })
+	//	.Add_ObjDesc(waveDesc)
+	//	.Scale({ 0.1f,1.f,6.f })
+	//	.Position({ -55.f,-4,0.f })
+	//	.Build("WaterWave1");
+
 	LIGHT_INIT_DESC LightDesc{};
 	LightDesc.eType = LIGHT_TYPE::DIRECTIONAL;
 	LightDesc.vDiffuse = _float4{ 1.f,1.f,1.f,1.f };
@@ -105,6 +136,7 @@ HRESULT CEffectEditLevel::Awake()
 	pObjMgr->Add_Object(Model, { "EffectEdit_Level","Model_Layer" });
 	pObjMgr->Add_Object(Light, { "EffectEdit_Level","Light_Layer" });
 	pObjMgr->Add_Object(Camera, { "EffectEdit_Level","Camera_Layer" });
+	//pObjMgr->Add_Object(WaterWave, { "EffectEdit_Level","Model_Layer" });
 
 	m_pGameInstance->Get_CameraMgr()->Set_MainCam(Camera->Get_Component<CCamera>());
 

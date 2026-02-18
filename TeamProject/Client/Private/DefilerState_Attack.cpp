@@ -23,7 +23,7 @@ void CDefilerState_Attack::Build_Pattern(CDefiler* pOwner, _int Type)
 	DEFILER_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
 	TARGETING_INFO& targetInfo = pOwner->GetTargetingInfo();
 	blackBoard.patternTransition.clear();
-	Type = 0;
+	Type = 9;
 	switch (Type)
 	{
 	case 0 :
@@ -364,6 +364,7 @@ void CDefilerState_Attack_02::Enter(CDefiler* pOwner)
 		.Loop(false)
 		.Apply();
 
+	pOwner->ChainParry(true);
 	m_iSlashCount = 0;
 }
 
@@ -375,6 +376,7 @@ void CDefilerState_Attack_02::Update(CDefiler* pOwner, _float dt)
 
 void CDefilerState_Attack_02::Exit(CDefiler* pOwner)
 {
+	pOwner->ChainParry(false);
 }
 
 void CDefilerState_Attack_02::Update_Effects(CDefiler* pOwner)
@@ -649,7 +651,7 @@ void CDefilerState_Attack_08_01_Loop::Update(CDefiler* pOwner, _float dt)
 		blackBoard.isRequestNext = true;
 	}
 
-	if (m_Interval >= 0.6f) {
+	if (m_Interval >= 1.f) {
 		pOwner->Control_Summon("Heavy");
 		m_Interval = 0.f;
 	}

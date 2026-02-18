@@ -25,6 +25,7 @@ public:
 private:
 	void			FollowTarget(_float dt);
 	void			Update_Dissolve(_float dt);
+	void			Initialize_Effects();
 
 private:
 	CTransform*		m_pTargetTransform = nullptr;

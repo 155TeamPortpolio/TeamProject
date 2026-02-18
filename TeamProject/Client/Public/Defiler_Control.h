@@ -196,6 +196,7 @@ struct TsunamiWallDesc {
 };
 struct TsunamiDesc {
     _bool isEndTsunami = { false };
+    _bool isHitGround = { false };
 };
 
 

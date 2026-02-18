@@ -163,7 +163,7 @@ PS_OUT_RESULT PS_MOTIONBLUR(PS_IN In)
     }
 
     float screenGradient = MotionHeightTexture.Sample(DefaultSampler, In.vTexcoord).r;
-    screenGradient = screenGradient * screenGradient; 
+    screenGradient = pow(screenGradient, 1.5f);
     
     float3 darkColor = motionBlur.rgb * 0.05f; 
     motionBlur.rgb = lerp(darkColor, motionBlur.rgb, screenGradient);

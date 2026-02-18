@@ -63,7 +63,7 @@ void CJaneDoeState_ExAttack::Update(CJaneDoe* pOwner, _float dt)
                 .Type(HIT_TYPE::INTERVAL)
                 .Damage(pOwner->Get_AttackPower() * 0.574f * Helper::Get_Random_Float(1.f, 1.5f)
                     , m_eType)
-                .Interval(0.05f)
+                .Interval(0.1f)
             );
         }
         else if (Event.Tag == "LFootEnd")
@@ -76,12 +76,20 @@ void CJaneDoeState_ExAttack::Update(CJaneDoe* pOwner, _float dt)
                 .Type(HIT_TYPE::INTERVAL)
                 .Damage(pOwner->Get_AttackPower() * 0.574f * Helper::Get_Random_Float(1.f, 1.5f)
                     , m_eType)
-                .Interval(0.05f)
+                .Interval(0.1f)
             );
         }
         else if (Event.Tag == "RFootEnd")
         {
             pOwner->End_AttackCollider("FootWeapon_R");
+        }
+
+        if (pOwner->Is_Passion())
+        {
+            if (Event.Tag == "MotionBlur")
+            {
+                pOwner->Add_MotionBlur();
+            }
         }
     }
 
@@ -122,6 +130,11 @@ void CJaneDoeState_ExAttack_Start::Update(CJaneDoe* pOwner, _float dt)
         ENUM(CJaneDoe::ROOTMOTION_MASK::QUATERNION));
 
     Update_Effects(pOwner);
+}
+
+void CJaneDoeState_ExAttack_Start::Exit(CJaneDoe* pOwner)
+{
+    pOwner->Clear_MotionBlur();
 }
 
 void CJaneDoeState_ExAttack_Start::Update_Effects(CJaneDoe* pOwner)

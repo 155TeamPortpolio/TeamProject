@@ -667,7 +667,7 @@
           "EventTag": "Sacrifice_Roar_Voice.wav"
         },
         {
-          "EventTime": 2.940000057220459,
+          "EventTime": 2.75,
           "EventType": "Sound",
           "EventTag": "Sacrifice_Phase1_Laser_Attack.wav"
         }
@@ -680,6 +680,11 @@
           "EventTime": 3.6753087043762207,
           "EventType": "Sound",
           "EventTag": "Sacrifice_Phase2_Born_Voice.wav"
+        },
+        {
+          "EventTime": 0.09629630297422409,
+          "EventType": "Sound",
+          "EventTag": "Sacrifice_Switch_Phase.wav"
         }
       ]
     },
