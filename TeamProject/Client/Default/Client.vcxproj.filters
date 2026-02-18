@@ -1500,6 +1500,9 @@
     <Filter Include="02. GameObject\UI\02. 3D\Mesh\EntranceLogo\NotoriousHunt">
       <UniqueIdentifier>{dc6a89e3-072a-4cd3-bd13-da4d45acd8be}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03. Utility\08. CamDirector\05. CamSwitchController">
+      <UniqueIdentifier>{164c060e-5d58-4815-8ce6-9f9718c4b054}</UniqueIdentifier>
+    </Filter>
     <Filter Include="01. Level\04. Zero\Stage_Rest">
       <UniqueIdentifier>{fdb4fe2f-1406-4b73-9a75-ebc4647bfbe4}</UniqueIdentifier>
     </Filter>
@@ -2912,6 +2915,9 @@
     <ClInclude Include="..\Public\UI_NotoriousHuntEntranceLogo.h">
       <Filter>02. GameObject\UI\02. 3D\Mesh\EntranceLogo\NotoriousHunt</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\CamSwitchController.h">
+      <Filter>03. Utility\08. CamDirector\05. CamSwitchController</Filter>
+    </ClInclude>
     <ClInclude Include="..\public\ZeroStage_Rest.h">
       <Filter>01. Level\04. Zero\Stage_Rest</Filter>
     </ClInclude>
@@ -4279,6 +4285,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\UI_NotoriousHuntEntranceLogo.cpp">
       <Filter>02. GameObject\UI\02. 3D\Mesh\EntranceLogo\NotoriousHunt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CamSwitchController.cpp">
+      <Filter>03. Utility\08. CamDirector\05. CamSwitchController</Filter>
     </ClCompile>
     <ClCompile Include="..\private\ZeroStage_Rest.cpp">
       <Filter>01. Level\04. Zero\Stage_Rest</Filter>
