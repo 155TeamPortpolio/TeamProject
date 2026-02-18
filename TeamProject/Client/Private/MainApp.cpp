@@ -83,7 +83,7 @@
 #include "UI_GachaPage.h" 
 
 #include "UI_GachaResult.h"
-
+#include "VideoPanel.h"
 CMainApp::CMainApp()
 {
 }
