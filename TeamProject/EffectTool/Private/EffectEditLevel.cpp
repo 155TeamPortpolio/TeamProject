@@ -111,12 +111,12 @@ HRESULT CEffectEditLevel::Awake()
 	waveDesc->fCurlForward = 45.f;			
 	waveDesc->fMaxCurlAngle = 3.8f;			
 
-	CGameObject* WaterWave =
-		Builder::Create_Object({ "EffectEdit_Level", "Proto_GameObject_ToolWaterWave" })
-		.Add_ObjDesc(waveDesc)
-		.Scale({ 0.1f,1.f,6.f })
-		.Position({ -55.f,-4,0.f })
-		.Build("WaterWave1");
+	//CGameObject* WaterWave =
+	//	Builder::Create_Object({ "EffectEdit_Level", "Proto_GameObject_ToolWaterWave" })
+	//	.Add_ObjDesc(waveDesc)
+	//	.Scale({ 0.1f,1.f,6.f })
+	//	.Position({ -55.f,-4,0.f })
+	//	.Build("WaterWave1");
 
 	LIGHT_INIT_DESC LightDesc{};
 	LightDesc.eType = LIGHT_TYPE::DIRECTIONAL;
@@ -136,7 +136,7 @@ HRESULT CEffectEditLevel::Awake()
 	pObjMgr->Add_Object(Model, { "EffectEdit_Level","Model_Layer" });
 	pObjMgr->Add_Object(Light, { "EffectEdit_Level","Light_Layer" });
 	pObjMgr->Add_Object(Camera, { "EffectEdit_Level","Camera_Layer" });
-	pObjMgr->Add_Object(WaterWave, { "EffectEdit_Level","Model_Layer" });
+	//pObjMgr->Add_Object(WaterWave, { "EffectEdit_Level","Model_Layer" });
 
 	m_pGameInstance->Get_CameraMgr()->Set_MainCam(Camera->Get_Component<CCamera>());
 
