@@ -94,7 +94,6 @@ private:
         _uint         handle{};
         OBJECT_HANDLE camObj{};
     };
-
     struct CamLens
     {
         CamProjType projType = CamProjType::Perspective;
@@ -105,14 +104,12 @@ private:
         _float aspect{};
         _float orthoHeight = 10.f;
     };
-
     struct CamPoseFrame
     {
         Vector3     pos{};
         Quaternion  rot = Quaternion::Identity;
         CamLens     lens{};
     };
-
     struct CamCache
     {
         Matrix  view    = Matrix::Identity;

@@ -9,6 +9,7 @@ class CamParryController
 {
 public:
     enum class State { None, Enter, Impact, ExitBlend, WaitEnd };
+
     struct ShotGoal
     {
         Vector3 pivotExt{};
@@ -48,7 +49,7 @@ public:
 
             EaseType approachEase = EaseType::InOutSine;
             EaseType impactEase = EaseType::OutSine;
-        };
+        } common;
         struct Impact
         {
             _float punchDistDelta = 1.3f;
@@ -72,12 +73,8 @@ public:
             _float fovBiasDeg = 4.f;
 
             _float impactStartYawExtraDeg = 30.f;
-        };
-        Common common{};
-        Impact impact{};
-    };
-
-    ParryTuning tune{};
+        } impact;
+    } tune;
 
 public:
     void Reset();
@@ -86,7 +83,7 @@ public:
     void Update(_float dt);
 
     _bool   IsChainReentryOpen() const;
-    Vector3 GetImpactPointWorld() const { return m_fxPointWorld; }
+    Vector3 GetImpactPointWorld() const { return shot.fxPointWorld; }
 
 private:
     static PivotSample SamplePivots(OBJECT_HANDLE h, _float offsetY, _float faceYOffsetMul = 0.85f);
@@ -115,7 +112,6 @@ private:
     ShotGoal  BuildImpactShot(_int sideSign, _float close01, _float u) const;
 
     void      ComputeSideFromCam();
-
     string    BuildParryKey() const;
 
     void      BuildBasis(Vector3& outFwd, Vector3& outRight) const;
@@ -133,61 +129,72 @@ private:
     ShotGoal  BuildExitShot_FromCamPos(const Vector3& pivotWorld, const Vector3& camPosWorld) const;
 
 private:
-    _bool         m_active = false;
-    State         m_state = State::None;
+    struct CoreRuntime
+    {
+        _bool         active = false;
+        State         state = State::None;
+        _float        elapsed = 0.f;
+        OBJECT_HANDLE attacker{};
+        _bool         beginWasChain = false;
+        _float        chainRefDist = 0.f;
+    };
+    struct SideRuntime
+    {
+        _int    sideSign = 1;
+        _bool   isLeft = false;
+        Vector3 dirXZ = Vector3(0.f, 0.f, 1.f);
+    };
+    struct PivotRuntime
+    {
+        Vector3 aBase{};
+        Vector3 aFace{};
+        Vector3 tBase{};
+        _bool   hasTBase = false;
+        _float  enterCamY = 0.f;
+    };
+    struct ShotRuntime
+    {
+        ShotGoal shotFrom{};
+        ShotGoal shotTo{};
+        ShotGoal impactBase{};
+        _bool    impactCaptured = false;
+        ShotGoal holdShot{};
+        _bool    holdActive = false;
+        Vector3  fxPointWorld{};
+    };
+    struct WaitRuntime
+    {
+        string seqKey{};
+        _bool  seqStarted = false;
+    };
+    struct LensRuntime
+    {
+        _float fovSaved = 0.f;
+        _float fovAppliedOffset = 0.f;
+        _bool  recoverFovActive = false;
+        _float recoverFovElapsed = 0.f;
+        _float recoverFovFrom = 0.f;
+    };
+    struct ExitRuntime
+    {
+        _bool         returnLockBlend = false;
+        OBJECT_HANDLE returnLockHandle{};
+        ShotGoal      exitTo{};
+        Vector3       exitPivotWorld{};
+        Vector3       exitCamPosTo{};
+        _float        exitSec = 0.f;
+        Vector3       exitPivotFrom{};
+        Vector3       exitCamPosFrom{};
+    };
 
-    _float        m_elapsed{};
-
-    OBJECT_HANDLE m_attacker{};
-
-    _int          m_sideSign = 1;
-    _bool         m_isLeft = false;
-
-    Vector3       m_aBase{};
-    Vector3       m_aFace{};
-
-    Vector3       m_dirXZ = Vector3(0.f, 0.f, 1.f);
-
-    ShotGoal      m_shotFrom{};
-    ShotGoal      m_shotTo{};
-
-    _float        m_enterCamY = 0.f;
-
-    ShotGoal      m_impactBase{};
-    _bool         m_impactCaptured = false;
-
-    string        m_waitSeqKey{};
-    _bool         m_waitSeqStarted = false;
-
-    Vector3       m_fxPointWorld{};
-
-    ShotGoal      m_holdShot{};
-    _bool         m_holdActive = false;
-
-    _float        m_fovSaved = 0.f;
-
-    _bool         m_recoverFovActive = false;
-    _float        m_recoverFovElapsed = 0.f;
-    _float        m_recoverFovFrom = 0.f;
-
-    _float        m_fovAppliedOffset = 0.f;
-
-    _bool         m_beginWasChain = false;
-    _float        m_chainRefDist = 0.f;
-
-    Vector3       m_tBase{};
-    _bool         m_hasTBase = false;
-
-    _bool         m_returnLockBlend = false;
-    OBJECT_HANDLE m_returnLockHandle{};
-
-    ShotGoal      m_exitTo = {};
-    Vector3       m_exitPivotWorld = Vector3::Zero;
-    Vector3       m_exitCamPosTo = Vector3::Zero;
-    _float        m_exitSec = 0.f;
-
-    Vector3       m_exitPivotFrom = Vector3::Zero;
-    Vector3       m_exitCamPosFrom = Vector3::Zero;
+private:
+    CoreRuntime core{};
+    SideRuntime side{};
+    PivotRuntime piv{};
+    ShotRuntime shot{};
+    WaitRuntime wait{};
+    LensRuntime lens{};
+    ExitRuntime exit{};
 };
 
 NS_END
