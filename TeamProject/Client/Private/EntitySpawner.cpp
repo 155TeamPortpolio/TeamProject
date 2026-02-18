@@ -30,6 +30,10 @@
 #include "UI_ZeroEntranceLogo.h"
 #include "HealKit.h"
 #include "BattleStarter.h"
+#include "UI_CleanupEntranceLogo.h"
+#include "UI_DeadlyAssaultEntranceLogo.h"
+#include "UI_NotoriousHuntEntranceLogo.h"
+#include "UI_ShiyuEntranceLogo.h"
 
 /* Maptool Type 2 (ETC) */
 #include "MilitaryHelicopter.h"
@@ -67,6 +71,10 @@ static unordered_map<string, Spawner::OBJ_SPEC> s_InteractTable =
 	{ "Portal",			Spawner::OBJ_SPEC{ "Proto_GameObject_Portal", &CPortal::Create }},
 	{ "ZeroPortal",		Spawner::OBJ_SPEC{ "Proto_GameObject_ZeroPortal", &CZeroPortal::Create }},
 	{ "UI_ZeroLogo",	Spawner::OBJ_SPEC{ "Proto_GameObject_ZeroEntranceLogo", &CUI_ZeroEntranceLogo::Create }},
+	{ "UI_CleanupLogo",	Spawner::OBJ_SPEC{ "Proto_GameObject_CleanupEntranceLogo", &CUI_CleanupEntranceLogo::Create }},
+	{ "UI_DeadlyAssaultLogo",	Spawner::OBJ_SPEC{ "Proto_GameObject_DeadlyAssaultEntranceLogo", &CUI_DeadlyAssaultEntranceLogo::Create }},
+	{ "UI_NotoriousHuntLogo",	Spawner::OBJ_SPEC{ "Proto_GameObject_NotoriousHuntEntranceLogo", &CUI_NotoriousHuntEntranceLogo::Create }},
+	{ "UI_ShiyuLogo",	Spawner::OBJ_SPEC{ "Proto_GameObject_ShiyuEntranceLogo", &CUI_ShiyuEntranceLogo::Create }},
 	{ "HealKit",		Spawner::OBJ_SPEC{ "Proto_GameObject_HealKit", &CHealKit::Create }},
 	{ "BattleStarter",	Spawner::OBJ_SPEC{ "Proto_GameObject_BattleStarter", &CBattleStarter::Create }}
 };
