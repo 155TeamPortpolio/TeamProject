@@ -1503,6 +1503,9 @@
     <Filter Include="03. Utility\08. CamDirector\05. CamSwitchController">
       <UniqueIdentifier>{164c060e-5d58-4815-8ce6-9f9718c4b054}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Level\04. Zero\Stage_Rest">
+      <UniqueIdentifier>{fdb4fe2f-1406-4b73-9a75-ebc4647bfbe4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -2915,6 +2918,9 @@
     <ClInclude Include="..\public\CamSwitchController.h">
       <Filter>03. Utility\08. CamDirector\05. CamSwitchController</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\ZeroStage_Rest.h">
+      <Filter>01. Level\04. Zero\Stage_Rest</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -4282,6 +4288,9 @@
     </ClCompile>
     <ClCompile Include="..\private\CamSwitchController.cpp">
       <Filter>03. Utility\08. CamDirector\05. CamSwitchController</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ZeroStage_Rest.cpp">
+      <Filter>01. Level\04. Zero\Stage_Rest</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
