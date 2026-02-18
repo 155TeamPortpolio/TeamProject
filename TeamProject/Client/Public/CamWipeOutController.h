@@ -1,4 +1,3 @@
-// CamWipeOutController.h
 #pragma once
 
 #include "OrbitCamTypes.h"

@@ -94,7 +94,7 @@ void CMiyabi::Awake()
 	Initialize_Stat();
 	m_fCurrentHP = 312.f;
 	m_tEnergy.fCurrentEnergy = 75;
-	m_iFrost = 6;
+	m_iFrost = 0;
 
 	if (FAILED(Attach_ParryCollider()))
 		return;
@@ -368,7 +368,11 @@ void CMiyabi::On_Special()
 				pAttack->Get_SubStateMachine()->Set_Trigger("ToExAttack");
 				return;
 			}
-			// NormalAttack이 아니면 아무것도 안함 (ExAttack 포함)
+			else if (strAttackType == "RushAttack")
+			{
+				pAttack->Get_SubStateMachine()->Set_Trigger("ToExAttack");
+				return;
+			}
 			return;
 		}
 	}

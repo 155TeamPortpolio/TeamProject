@@ -3,6 +3,7 @@
 
 #include "Corin.h"
 #include "AudioSource.h"
+#include "CamDirector.h"
 
 CCorinState_SwitchInAttack* CCorinState_SwitchInAttack::Create()
 {
@@ -27,6 +28,9 @@ void CCorinState_SwitchInAttack::Enter(CCorin* pOwner)
 {
     pOwner->Push_Invincible();
     pOwner->Lock_Move();
+
+    //CamDirector()->AutoTarget();
+    //CamDirector()->RequestSequence("Switch/Switch");
 
     __super::Enter(pOwner);
 }

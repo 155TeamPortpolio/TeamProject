@@ -30,15 +30,6 @@ HRESULT CMilitaryHelicopter::Initialize_Prototype()
 
     auto pResource = ResourceManager();
 
-    pResource->Add_ResourcePath("Device_Vehicle_MilitaryHelicopter_01out.model", "../Bin/Resources/Scott/AmbientActor/MilitaryHelicopter/Device_Vehicle_MilitaryHelicopter_01out.model");
-    pResource->Add_ResourcePath("Device_Vehicle_MilitaryHelicopter_01out.mat", "../Bin/Resources/Scott/AmbientActor/MilitaryHelicopter/Device_Vehicle_MilitaryHelicopter_01out.mat");
-    pResource->Add_ResourcePath("Device_Vehicle_MilitaryHelicopter_01out_Meta.json", "../Bin/Resources/Scott/Device_Vehicle_MilitaryHelicopter_01_Meta.json");
-
-    auto pModel = Get_Component<CSkeletalModel>();
-    pModel->Link_Model("Scott_Level", "Device_Vehicle_MilitaryHelicopter_01out.model");
-    auto pMaterial = Get_Component<CMaterial>();
-    pMaterial->Link_Material("Scott_Level", "Device_Vehicle_MilitaryHelicopter_01out.mat");
-
     Get_Component<CAudioSource>()->SoundFolder("Scott_Level", "../Bin/Resources/Scott/AmbientActor/MilitaryHelicopter/Sound/");
 
     return S_OK;
@@ -50,6 +41,11 @@ HRESULT CMilitaryHelicopter::Initialize(INIT_DESC* pArg)
         return E_FAIL;
 
     AMBIENTACTOR_DESC* pDesc = static_cast<AMBIENTACTOR_DESC*>(pArg);
+
+    auto pModel = Get_Component<CSkeletalModel>();
+    pModel->Link_Model("Scott_Level", "Device_Vehicle_MilitaryHelicopter_01out.model");
+    auto pMaterial = Get_Component<CMaterial>();
+    pMaterial->Link_Material("Scott_Level", "Device_Vehicle_MilitaryHelicopter_01out.mat");
 
     m_AnimName = pDesc->strAnimName;
     m_bLoop = pDesc->bLoop;

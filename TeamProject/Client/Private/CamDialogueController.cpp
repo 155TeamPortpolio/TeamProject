@@ -30,8 +30,7 @@ namespace
         auto cc = obj->Get_Component<CCharacterController>();
         if (!cc) return s;
 
-        const Vector4 foot4 = cc->Get_FootPosition();
-        const Vector3 foot(foot4.x, foot4.y, foot4.z);
+        const Vector3 foot = cc->Get_FootPosition();
 
         const _float half = cc->Get_HalfSize();
         const Vector3 base = foot + Vector3(0.f, half * 1.5f + offsetY, 0.f);

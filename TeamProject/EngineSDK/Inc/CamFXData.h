@@ -14,8 +14,10 @@ struct CamShakePreset
     _float dur{};
     _float fadeOutSec{};
 };
+
 struct CamShakeInstance
 {
+    _uint    key{};
     _uint    seed{};
     _float   elapsed{};
     uint8_t  axisMask{0x7};
@@ -46,44 +48,53 @@ struct CamShakeInstance
     _float   springPhase2{};
     _float   springH2 = 0.35f;
 };
+
 struct CamZoomPreset
 {
     _float amountDeg{};
     _float attackSec{};
     _float releaseSec{};
 };
+
 struct CamZoomInstance
 {
+    _uint  key{};
     _float amountDeg{};
     _float attackSec{};
     _float releaseSec{};
     _float elapsed{};
 };
+
 enum class CamShakeAxis : uint8_t
 {
-    None  = 0,
+    None = 0,
     Pitch = 0x1,
-    Yaw   = 0x2,
-    Roll  = 0x4,
-    All   = 0x7,
+    Yaw = 0x2,
+    Roll = 0x4,
+    All = 0x7,
 };
+
 constexpr CamShakeAxis operator|(CamShakeAxis a, CamShakeAxis b)
 {
     return (CamShakeAxis)((uint8_t)a | (uint8_t)b);
 }
+
 constexpr CamShakeAxis operator&(CamShakeAxis a, CamShakeAxis b)
 {
     return (CamShakeAxis)((uint8_t)a & (uint8_t)b);
 }
+
 constexpr CamShakeAxis& operator|=(CamShakeAxis& a, CamShakeAxis b)
 {
     a = a | b;
     return a;
 }
+
 constexpr bool HasAxis(CamShakeAxis mask, CamShakeAxis axis)
 {
     return (((uint8_t)mask & (uint8_t)axis) != 0);
 }
+
 constexpr uint8_t ToAxisMask(CamShakeAxis axes)
 {
     return (uint8_t)axes;
