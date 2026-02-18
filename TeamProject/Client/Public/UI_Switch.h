@@ -45,7 +45,7 @@ private:
 	CHARACTER m_characters[ENUM(ROLE::END)] = {};
 
 	_float m_fTimer = {};
-	const float m_fDuration = { 3.f };
+	const float m_fDuration = { 2.5f };
 
 private:
 	void Cache();
