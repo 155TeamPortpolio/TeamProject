@@ -40,6 +40,7 @@
 #include "ThugPoacher_Arrow.h"
 #include "Claymore.h"
 #include "Cyclops.h"
+#include "Cyclops_Spit.h"
 #include "StrikeJaeger.h"
 #include "MeleeJaeger.h"
 #include "MeleeJaeger_Shield.h"
@@ -155,6 +156,7 @@ void CZero_Level::Ready_Prototype()
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_ThugPoacher_Arrow", CThugPoacher_Arrow::Create());
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_Claymore", CClaymore::Create());
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_Cyclops", CCyclops::Create());
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_Cyclops_Spit", CCyclops_Spit::Create());
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_StrikeJaeger", CStrikeJaeger::Create());
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_MeleeJaeger", CMeleeJaeger::Create());
 	PrototypeManager()->Add_ProtoType("Test_Level", "Proto_GameObject_MeleeJaeger_Shield", CMeleeJaeger_Shield::Create());
@@ -175,37 +177,35 @@ void CZero_Level::Ready_Stage()
 	ObjectManager()->Add_Object(m_pRouter, { "Zero_Level","Router_Layer" });
 
 	m_StageContainer.emplace(StageType::Start, CZeroStage_Start::Create(this));
+	m_StageContainer.emplace(StageType::Rest, CZeroStage_Start::Create(this));
 	m_StageContainer.emplace(StageType::Normal, CZeroStage_Normal::Create(this));
 	m_StageContainer.emplace(StageType::Elite, CZeroStage_Elite::Create(this));
 	m_StageContainer.emplace(StageType::Boss, CZeroStage_Boss::Create(this));
 
 	//BuildGraph
-	m_pRouter->BuildGraph(1		, StageType::Start);
+	m_pRouter->BuildGraph(2, StageType::Start, StageType::Elite);
 
 	//Start
-	m_mapCycle[StageType::Start].maps	= { "Zero_Start" };
+	m_mapCycle[StageType::Start].maps	= { "Zero_Start1" };
+	m_mapCycle[StageType::Rest].maps = { "Zero_Start2" };
 
 	//Normal
  	m_mapCycle[StageType::Normal].maps	= { "Zero_1_1",	"Zero_1_2", "Zero_2_1", "Zero_5_1" };
 	Shuffle_MapCycle(m_mapCycle[StageType::Normal].maps);
 
 	//Elite
-	_bool Elite_Process{};
-	if (!RuntimeBucket().Bool.TryGet(PersistScope::SaveSlot, "Elite_Process", Elite_Process))
-		Elite_Process = 0;
-
 	m_mapCycle[StageType::Elite].maps	= { "Zero_1_1", "Zero_2_1" };
 	Shuffle_MapCycle(m_mapCycle[StageType::Elite].maps);
 
 	//Boss
 	_uint Boss_Process{};
 	if(!RuntimeBucket().Int64.TryGet(PersistScope::SaveSlot, "Boss_Process", Boss_Process))
-		Boss_Process = 2; //Start BossMap Index;
+		Boss_Process = 1; //Start BossMap Index;
 
 	m_mapCycle[StageType::Boss].maps.push_back("Zero_Boss" + to_string(Boss_Process));
 	RuntimeBucket().Int64.Set(PersistScope::SaveSlot, "Boss_Process", ++Boss_Process);
 
-	ChangeStage(StageType::Boss);
+	ChangeStage(StageType::Start);
 }
 
 void CZero_Level::Shuffle_MapCycle(vector<string>& Map)

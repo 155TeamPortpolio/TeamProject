@@ -364,7 +364,7 @@ _int CStageRouter::AddNode(StageType type, _int parentIndex, _int depth)
 	return static_cast<_int>(m_stageNodes.size() - 1);
 }
 
-void CStageRouter::BuildGraph(_int MaxDepth, StageType root)
+void CStageRouter::BuildGraph(_int MaxDepth, StageType root, StageType end)
 {
     m_stageNodes.clear();
     m_currentNode = -1;
@@ -387,7 +387,7 @@ void CStageRouter::BuildGraph(_int MaxDepth, StageType root)
 
             for (_int i = 0; i < childCount; ++i)
             {
-                StageType type = RollType(depth + 1, m_maxDepth);
+                StageType type = RollType(depth + 1, m_maxDepth, end);
                 _int childIndex = AddNode(type, parentIndex, depth + 1);
 
                 m_stageNodes[parentIndex].ChildrenIndex.push_back(childIndex);
@@ -424,19 +424,20 @@ _int CStageRouter::RollChildCount(_int depth, _int maxDepth)
 	return 2;
 }
 
-StageType CStageRouter::RollType(_int depth, _int maxDepth)
+StageType CStageRouter::RollType(_int depth, _int maxDepth, StageType end)
 {
 	if (depth == maxDepth)
-		return StageType::Boss;
+		return end;
 
 	_float r = Helper::Get_Random_Float(0,1);
 
 	// 너무 자주 Elite 나오지 않게 대충 제한
-	if (r < 0.30f) return StageType::Normal;
-	//if (r < 0.80f) return StageType::Shop;
-	if (r < 0.55f) return StageType::Elite;
+	//if (r < 0.30f) return StageType::Normal;
+	////if (r < 0.80f) return StageType::Shop;
+	//if (r < 0.55f) return StageType::Elite;
 	return StageType::Normal;
 }
+
 _bool CStageRouter::Choose(_int choiceIndex)
 {
     if (m_currentNode < 0) return false;

@@ -4,6 +4,7 @@
 #include "BattleSystem.h"
 
 #include "JaneDoe.h"
+#include "CamDirector.h"
 
 CJaneDoeState_SwitchInAttack* CJaneDoeState_SwitchInAttack::Create()
 {
@@ -28,6 +29,9 @@ void CJaneDoeState_SwitchInAttack::Enter(CJaneDoe* pOwner)
 {
     pOwner->Push_Invincible();
     pOwner->Lock_Move();
+
+    //CamDirector()->AutoTarget();
+    //CamDirector()->RequestSequence("Switch/Switch");
 
     __super::Enter(pOwner);
 }

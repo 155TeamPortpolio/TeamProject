@@ -28,7 +28,7 @@ namespace Client {
 	enum class GachaType { Agent, Engine, End };
 
 	//------------------- Battle -------------------
-	enum class StageType { Start, Normal, Elite, Boss, End };
+	enum class StageType { Start, Rest, Normal, Elite, Boss, End };
 	enum class BATTLE_VFX_TYPE { HIT_NORMAL, HIT_HARD, EVADE, PARRY, SWITCH,ULTIMATE, CLEAR, WIPEOUT,END };
 	enum class BATTLE_OBJ_TYPE { PLAYER, MONSTER, CAMERA,EFFECT, ENVOBJECT, END };
 
@@ -36,6 +36,8 @@ namespace Client {
 	enum class GACHA_STAGE { BANGBOO, AVATAR, END };
 
 	enum class BOSS { Sacrifice, Defiler, End };
+
+	enum class TUTORIAL { EXTREME_EVADE, EXTREME_SUPPORT, DECIBEL_ULTIMATE, GROGGY_COMBO, END };
 }
 
 #endif

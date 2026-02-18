@@ -26,7 +26,7 @@ public:
     /*NodeControl*/
     _int AddNode(StageType type, _int parentIndex, _int depth);
     _int CreateNode(StageType type, _int parentIndex);
-    void BuildGraph(_int MaxDepth, StageType root);
+    void BuildGraph(_int MaxDepth, StageType root, StageType end = StageType::Boss);
     _int GetChoiceNodeIndex(_int choiceIndex);
     _int GetChoiceCount();
 
@@ -36,7 +36,7 @@ public:
 private:
     /*Rand*/
     _int RollChildCount(_int depth, _int maxDepth);
-    StageType RollType(_int depth, _int maxDepth);
+    StageType RollType(_int depth, _int maxDepth, StageType end);
 
     /*Data*/
 

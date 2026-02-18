@@ -1,0 +1,869 @@
+{
+    "alive": true,
+    "instanceName": "tutorial_extremeSupport",
+    "transform": {
+        "anchor": 5,
+        "anchorOffset": [
+            90.0,
+            166.0
+        ],
+        "size": [
+            702.0,
+            271.0
+        ],
+        "scale": [
+            1.0,
+            1.0
+        ],
+        "pivot": [
+            0.0,
+            0.0
+        ],
+        "radian": 0.0
+    },
+    "color": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+    ],
+    "stencilMode": 0,
+    "pass": "Opaque",
+    "colorTexKey": "empty.png",
+    "colorTexMode": 0,
+    "colorTexMix": 1.0,
+    "colorUVUse": 0,
+    "colorUVOffset": [
+        0.0,
+        0.0
+    ],
+    "colorUVScale": [
+        1.0,
+        1.0
+    ],
+    "colorUVAutoScroll": false,
+    "colorUVSpeed": [
+        0.0,
+        0.0
+    ],
+    "animClips": [],
+    "children": [
+        {
+            "alive": true,
+            "instanceName": "tutorial_descSlot",
+            "transform": {
+                "anchor": 5,
+                "anchorOffset": [
+                    0.0,
+                    0.0
+                ],
+                "size": [
+                    702.0,
+                    47.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "stencilMode": 0,
+            "pass": "Opaque",
+            "colorTexKey": "empty.png",
+            "colorTexMode": 0,
+            "colorTexMix": 1.0,
+            "colorUVUse": 0,
+            "colorUVOffset": [
+                0.0,
+                0.0
+            ],
+            "colorUVScale": [
+                1.0,
+                1.0
+            ],
+            "colorUVAutoScroll": false,
+            "colorUVSpeed": [
+                0.0,
+                0.0
+            ],
+            "animClips": [],
+            "children": [
+                {
+                    "alive": true,
+                    "instanceName": "NineSlice",
+                    "transform": {
+                        "anchor": 1,
+                        "anchorOffset": [
+                            -12.0,
+                            -23.5
+                        ],
+                        "size": [
+                            716.0,
+                            47.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "stencilMode": 0,
+                    "pass": "NineSlice",
+                    "colorTexKey": "empty.png",
+                    "colorTexMode": 0,
+                    "colorTexMix": 1.0,
+                    "colorUVUse": 0,
+                    "colorUVOffset": [
+                        0.0,
+                        0.0
+                    ],
+                    "colorUVScale": [
+                        1.0,
+                        1.0
+                    ],
+                    "colorUVAutoScroll": false,
+                    "colorUVSpeed": [
+                        0.0,
+                        0.0
+                    ],
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "NineSlice",
+                    "textureTag": "MissionGetBg.png",
+                    "nineSlice": {
+                        "borderPx": [
+                            24.0,
+                            24.0,
+                            0.0,
+                            0.0
+                        ],
+                        "uvRangeX": [
+                            0.0,
+                            0.5106382966041565,
+                            0.4893617033958435,
+                            1.0
+                        ],
+                        "uvRangeY": [
+                            0.0,
+                            0.0,
+                            1.0,
+                            1.0
+                        ],
+                        "textureSize": [
+                            47.0,
+                            47.0
+                        ]
+                    }
+                },
+                {
+                    "alive": true,
+                    "instanceName": "Text",
+                    "transform": {
+                        "anchor": 1,
+                        "anchorOffset": [
+                            0.0,
+                            -0.0
+                        ],
+                        "size": [
+                            0.0,
+                            0.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        0.7490196228027344,
+                        0.7490196228027344,
+                        0.7490196228027344,
+                        1.0
+                    ],
+                    "stencilMode": 0,
+                    "pass": "Opaque",
+                    "colorTexKey": "empty.png",
+                    "colorTexMode": 0,
+                    "colorTexMix": 1.0,
+                    "colorUVUse": 0,
+                    "colorUVOffset": [
+                        0.0,
+                        0.0
+                    ],
+                    "colorUVScale": [
+                        1.0,
+                        1.0
+                    ],
+                    "colorUVAutoScroll": false,
+                    "colorUVSpeed": [
+                        0.0,
+                        0.0
+                    ],
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "Text",
+                    "text": {
+                        "content": "극한 지원 발동 타이밍",
+                        "fontTag": "NanumSquareNeo.spritefont",
+                        "fontScale": 0.49999988079071045,
+                        "outlined": false,
+                        "outlineThickness": 1.0,
+                        "outlineColor": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                        ],
+                        "shear": [
+                            0.0,
+                            0.0
+                        ],
+                        "autoPos": true,
+                        "anchor": 1
+                    }
+                },
+                {
+                    "alive": true,
+                    "instanceName": "Text",
+                    "transform": {
+                        "anchor": 5,
+                        "anchorOffset": [
+                            0.0,
+                            60.0
+                        ],
+                        "size": [
+                            0.0,
+                            0.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "stencilMode": 0,
+                    "pass": "Opaque",
+                    "colorTexKey": "empty.png",
+                    "colorTexMode": 0,
+                    "colorTexMix": 1.0,
+                    "colorUVUse": 0,
+                    "colorUVOffset": [
+                        0.0,
+                        0.0
+                    ],
+                    "colorUVScale": [
+                        1.0,
+                        1.0
+                    ],
+                    "colorUVAutoScroll": false,
+                    "colorUVSpeed": [
+                        0.0,
+                        0.0
+                    ],
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "Text",
+                    "text": {
+                        "content": "적이 특정한 공격 시전 시 금빛 알림이 나타납니다. 알림이 나타난 후 짧은 \n시간 안에 [Space]을 누르면 다음 캐릭터로 교체되며 [극한 지원]을 발동할\n수 있습니다.",
+                        "fontTag": "NanumSquareNeo.spritefont",
+                        "fontScale": 0.49999988079071045,
+                        "outlined": false,
+                        "outlineThickness": 1.0,
+                        "outlineColor": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                        ],
+                        "shear": [
+                            0.0,
+                            0.0
+                        ],
+                        "autoPos": true,
+                        "anchor": 5
+                    }
+                }
+            ],
+            "typeTag": "CanvasPanel"
+        },
+        {
+            "alive": true,
+            "instanceName": "tutorial_descSlot",
+            "transform": {
+                "anchor": 5,
+                "anchorOffset": [
+                    0.0,
+                    160.0
+                ],
+                "size": [
+                    702.0,
+                    47.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "stencilMode": 0,
+            "pass": "Opaque",
+            "colorTexKey": "empty.png",
+            "colorTexMode": 0,
+            "colorTexMix": 1.0,
+            "colorUVUse": 0,
+            "colorUVOffset": [
+                0.0,
+                0.0
+            ],
+            "colorUVScale": [
+                1.0,
+                1.0
+            ],
+            "colorUVAutoScroll": false,
+            "colorUVSpeed": [
+                0.0,
+                0.0
+            ],
+            "animClips": [],
+            "children": [
+                {
+                    "alive": true,
+                    "instanceName": "NineSlice",
+                    "transform": {
+                        "anchor": 1,
+                        "anchorOffset": [
+                            -12.0,
+                            -23.5
+                        ],
+                        "size": [
+                            716.0,
+                            47.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "stencilMode": 0,
+                    "pass": "NineSlice",
+                    "colorTexKey": "empty.png",
+                    "colorTexMode": 0,
+                    "colorTexMix": 1.0,
+                    "colorUVUse": 0,
+                    "colorUVOffset": [
+                        0.0,
+                        0.0
+                    ],
+                    "colorUVScale": [
+                        1.0,
+                        1.0
+                    ],
+                    "colorUVAutoScroll": false,
+                    "colorUVSpeed": [
+                        0.0,
+                        0.0
+                    ],
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "NineSlice",
+                    "textureTag": "MissionGetBg.png",
+                    "nineSlice": {
+                        "borderPx": [
+                            24.0,
+                            24.0,
+                            0.0,
+                            0.0
+                        ],
+                        "uvRangeX": [
+                            0.0,
+                            0.5106382966041565,
+                            0.4893617033958435,
+                            1.0
+                        ],
+                        "uvRangeY": [
+                            0.0,
+                            0.0,
+                            1.0,
+                            1.0
+                        ],
+                        "textureSize": [
+                            47.0,
+                            47.0
+                        ]
+                    }
+                },
+                {
+                    "alive": true,
+                    "instanceName": "Text",
+                    "transform": {
+                        "anchor": 1,
+                        "anchorOffset": [
+                            0.0,
+                            -0.0
+                        ],
+                        "size": [
+                            0.0,
+                            0.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        0.7490196228027344,
+                        0.7490196228027344,
+                        0.7490196228027344,
+                        1.0
+                    ],
+                    "stencilMode": 0,
+                    "pass": "Opaque",
+                    "colorTexKey": "empty.png",
+                    "colorTexMode": 0,
+                    "colorTexMix": 1.0,
+                    "colorUVUse": 0,
+                    "colorUVOffset": [
+                        0.0,
+                        0.0
+                    ],
+                    "colorUVScale": [
+                        1.0,
+                        1.0
+                    ],
+                    "colorUVAutoScroll": false,
+                    "colorUVSpeed": [
+                        0.0,
+                        0.0
+                    ],
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "Text",
+                    "text": {
+                        "content": "패링 지원",
+                        "fontTag": "NanumSquareNeo.spritefont",
+                        "fontScale": 0.49999988079071045,
+                        "outlined": false,
+                        "outlineThickness": 1.0,
+                        "outlineColor": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                        ],
+                        "shear": [
+                            0.0,
+                            0.0
+                        ],
+                        "autoPos": true,
+                        "anchor": 1
+                    }
+                },
+                {
+                    "alive": true,
+                    "instanceName": "Text",
+                    "transform": {
+                        "anchor": 5,
+                        "anchorOffset": [
+                            0.0,
+                            60.0
+                        ],
+                        "size": [
+                            0.0,
+                            0.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "stencilMode": 0,
+                    "pass": "Opaque",
+                    "colorTexKey": "empty.png",
+                    "colorTexMode": 0,
+                    "colorTexMix": 1.0,
+                    "colorUVUse": 0,
+                    "colorUVOffset": [
+                        0.0,
+                        0.0
+                    ],
+                    "colorUVScale": [
+                        1.0,
+                        1.0
+                    ],
+                    "colorUVAutoScroll": false,
+                    "colorUVSpeed": [
+                        0.0,
+                        0.0
+                    ],
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "Text",
+                    "text": {
+                        "content": "적의 공격을 패링하고 대량의 그로기 수치를 누적하며 대부분의 공격을 중단\n시켜 주로 근접 공격에 사용할 수 있습니다.",
+                        "fontTag": "NanumSquareNeo.spritefont",
+                        "fontScale": 0.49999988079071045,
+                        "outlined": false,
+                        "outlineThickness": 1.0,
+                        "outlineColor": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                        ],
+                        "shear": [
+                            0.0,
+                            0.0
+                        ],
+                        "autoPos": true,
+                        "anchor": 5
+                    }
+                }
+            ],
+            "typeTag": "CanvasPanel"
+        },
+        {
+            "alive": true,
+            "instanceName": "tutorial_descSlot",
+            "transform": {
+                "anchor": 5,
+                "anchorOffset": [
+                    0.0,
+                    300.0
+                ],
+                "size": [
+                    702.0,
+                    47.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "stencilMode": 0,
+            "pass": "Opaque",
+            "colorTexKey": "empty.png",
+            "colorTexMode": 0,
+            "colorTexMix": 1.0,
+            "colorUVUse": 0,
+            "colorUVOffset": [
+                0.0,
+                0.0
+            ],
+            "colorUVScale": [
+                1.0,
+                1.0
+            ],
+            "colorUVAutoScroll": false,
+            "colorUVSpeed": [
+                0.0,
+                0.0
+            ],
+            "animClips": [],
+            "children": [
+                {
+                    "alive": true,
+                    "instanceName": "NineSlice",
+                    "transform": {
+                        "anchor": 1,
+                        "anchorOffset": [
+                            -12.0,
+                            -23.5
+                        ],
+                        "size": [
+                            716.0,
+                            47.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "stencilMode": 0,
+                    "pass": "NineSlice",
+                    "colorTexKey": "empty.png",
+                    "colorTexMode": 0,
+                    "colorTexMix": 1.0,
+                    "colorUVUse": 0,
+                    "colorUVOffset": [
+                        0.0,
+                        0.0
+                    ],
+                    "colorUVScale": [
+                        1.0,
+                        1.0
+                    ],
+                    "colorUVAutoScroll": false,
+                    "colorUVSpeed": [
+                        0.0,
+                        0.0
+                    ],
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "NineSlice",
+                    "textureTag": "MissionGetBg.png",
+                    "nineSlice": {
+                        "borderPx": [
+                            24.0,
+                            24.0,
+                            0.0,
+                            0.0
+                        ],
+                        "uvRangeX": [
+                            0.0,
+                            0.5106382966041565,
+                            0.4893617033958435,
+                            1.0
+                        ],
+                        "uvRangeY": [
+                            0.0,
+                            0.0,
+                            1.0,
+                            1.0
+                        ],
+                        "textureSize": [
+                            47.0,
+                            47.0
+                        ]
+                    }
+                },
+                {
+                    "alive": true,
+                    "instanceName": "Text",
+                    "transform": {
+                        "anchor": 5,
+                        "anchorOffset": [
+                            0.0,
+                            60.0
+                        ],
+                        "size": [
+                            0.0,
+                            0.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "stencilMode": 0,
+                    "pass": "Opaque",
+                    "colorTexKey": "empty.png",
+                    "colorTexMode": 0,
+                    "colorTexMix": 1.0,
+                    "colorUVUse": 0,
+                    "colorUVOffset": [
+                        0.0,
+                        0.0
+                    ],
+                    "colorUVScale": [
+                        1.0,
+                        1.0
+                    ],
+                    "colorUVAutoScroll": false,
+                    "colorUVSpeed": [
+                        0.0,
+                        0.0
+                    ],
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "Text",
+                    "text": {
+                        "content": "[극한 지원] 발동 후 즉히       을 누르면 [지원 돌격] 을 시전하여 빠르게\n적에게 돌진해 후속 공격을 이어나갈 수 있습니다.\n[극한 지원] 발동 시 지원 포인트를 소모합니다. 소모량은 공격 강도와 캐릭터\n성능에 영향을 받습니다.",
+                        "fontTag": "NanumSquareNeo.spritefont",
+                        "fontScale": 0.49999988079071045,
+                        "outlined": false,
+                        "outlineThickness": 1.0,
+                        "outlineColor": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                        ],
+                        "shear": [
+                            0.0,
+                            0.0
+                        ],
+                        "autoPos": true,
+                        "anchor": 5
+                    }
+                },
+                {
+                    "alive": true,
+                    "instanceName": "Text",
+                    "transform": {
+                        "anchor": 1,
+                        "anchorOffset": [
+                            0.0,
+                            -0.0
+                        ],
+                        "size": [
+                            0.0,
+                            0.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        0.7490196228027344,
+                        0.7490196228027344,
+                        0.7490196228027344,
+                        1.0
+                    ],
+                    "stencilMode": 0,
+                    "pass": "Opaque",
+                    "colorTexKey": "empty.png",
+                    "colorTexMode": 0,
+                    "colorTexMix": 1.0,
+                    "colorUVUse": 0,
+                    "colorUVOffset": [
+                        0.0,
+                        0.0
+                    ],
+                    "colorUVScale": [
+                        1.0,
+                        1.0
+                    ],
+                    "colorUVAutoScroll": false,
+                    "colorUVSpeed": [
+                        0.0,
+                        0.0
+                    ],
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "Text",
+                    "text": {
+                        "content": "지원 돌격과 포인트에 대해",
+                        "fontTag": "NanumSquareNeo.spritefont",
+                        "fontScale": 0.49999988079071045,
+                        "outlined": false,
+                        "outlineThickness": 1.0,
+                        "outlineColor": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                        ],
+                        "shear": [
+                            0.0,
+                            0.0
+                        ],
+                        "autoPos": true,
+                        "anchor": 1
+                    }
+                }
+            ],
+            "typeTag": "CanvasPanel"
+        }
+    ],
+    "typeTag": "CanvasPanel"
+}
