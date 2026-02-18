@@ -535,11 +535,22 @@ void CJaneDoeState_Attack_05::Update(CJaneDoe* pOwner, _float dt)
         }
     }
 
+    if (IsCrossAnimProgress(0.1f))
+    {
+        pOwner->SetRenderLayer(RENDER_LAYER::CustomOnly);
+    }
+
+    if (IsCrossAnimProgress(0.3f))
+    {
+        pOwner->SetRenderLayer(RENDER_LAYER::Default);
+    }
+
     Update_Effects(pOwner);
 }
 
 void CJaneDoeState_Attack_05::Exit(CJaneDoe* pOwner)
 {
+    pOwner->SetRenderLayer(RENDER_LAYER::Default);
     pOwner->Clear_MotionBlur();
     static_cast<CJaneDoeState_NormalAttack*>(m_pParentState)->Set_ComboIndex(4);
 }

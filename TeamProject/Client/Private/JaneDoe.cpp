@@ -363,7 +363,7 @@ void CJaneDoe::OnDamage()
     // 열광 상태가 아닐때 열광누적
     // 열광 상태일때 열광 소모
     if (!m_bPassion)
-        Increase_Passion(1.f);
+        Increase_Passion(5.f);
     else
     {
         // 열광 상태의 살코점프 적중시엔 열광 증가
@@ -374,9 +374,9 @@ void CJaneDoe::OnDamage()
         string strAttacktype = pAttack->Get_SubStateMachine()->Get_CurrentStateName();
 
         if (strAttacktype == "BranchAttack")
-            Increase_Passion(1.f);
+            Increase_Passion(5.f);
         else
-            Decrease_Passion(1.f);
+            Decrease_Passion(5.f);
     }
 }
 

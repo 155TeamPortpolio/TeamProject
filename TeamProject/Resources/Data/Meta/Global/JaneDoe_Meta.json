@@ -294,19 +294,59 @@
           "EventTag": "LFootStart"
         },
         {
+          "EventTime": 0.7599999904632568,
+          "EventType": "Notify",
+          "EventTag": "LFootEnd"
+        },
+        {
+          "EventTime": 0.7599999904632568,
+          "EventType": "Notify",
+          "EventTag": "RFootEnd"
+        },
+        {
           "EventTime": 0.8326185345649719,
           "EventType": "Notify",
           "EventTag": "CheckCombo"
         },
         {
-          "EventTime": 1.2293696403503418,
+          "EventTime": 0.19837555289268494,
           "EventType": "Notify",
-          "EventTag": "LFootEnd"
+          "EventTag": "MotionBlur"
         },
         {
-          "EventTime": 1.2293696403503418,
+          "EventTime": 0.22910980880260468,
           "EventType": "Notify",
-          "EventTag": "RFootEnd"
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.2514619827270508,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.2710201144218445,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.30454838275909424,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.7068875432014465,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.7432098388671875,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.8745288848876953,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
         }
       ]
     },
@@ -330,16 +370,6 @@
       "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Attack_Normal_01",
       "Events": [
         {
-          "EventTime": 0.10916179418563843,
-          "EventType": "Notify",
-          "EventTag": "RHandStart"
-        },
-        {
-          "EventTime": 0.26471734046936035,
-          "EventType": "Notify",
-          "EventTag": "RHandEnd"
-        },
-        {
           "EventTime": 0.0,
           "EventType": "Notify",
           "EventTag": "MotionBlur"
@@ -350,9 +380,19 @@
           "EventTag": "MotionBlur"
         },
         {
+          "EventTime": 0.10916179418563843,
+          "EventType": "Notify",
+          "EventTag": "RHandStart"
+        },
+        {
           "EventTime": 0.16510720551013947,
           "EventType": "Notify",
           "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.26471734046936035,
+          "EventType": "Notify",
+          "EventTag": "RHandEnd"
         }
       ]
     },
@@ -369,6 +409,11 @@
           "EventTag": "RHandStart"
         },
         {
+          "EventTime": 0.07953216880559921,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
           "EventTime": 0.08187134563922882,
           "EventType": "Notify",
           "EventTag": "RHandEnd"
@@ -382,21 +427,6 @@
           "EventTime": 0.09122807532548904,
           "EventType": "Notify",
           "EventTag": "LFootStart"
-        },
-        {
-          "EventTime": 0.39532163739204407,
-          "EventType": "Notify",
-          "EventTag": "LHandEnd"
-        },
-        {
-          "EventTime": 0.39532163739204407,
-          "EventType": "Notify",
-          "EventTag": "LFootEnd"
-        },
-        {
-          "EventTime": 0.07953216880559921,
-          "EventType": "Notify",
-          "EventTag": "MotionBlur"
         },
         {
           "EventTime": 0.11461988836526871,
@@ -417,6 +447,16 @@
           "EventTime": 0.2947368621826172,
           "EventType": "Notify",
           "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.39532163739204407,
+          "EventType": "Notify",
+          "EventTag": "LHandEnd"
+        },
+        {
+          "EventTime": 0.39532163739204407,
+          "EventType": "Notify",
+          "EventTag": "LFootEnd"
         }
       ]
     },
@@ -428,6 +468,16 @@
       "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Attack_Normal_03",
       "Events": [
         {
+          "EventTime": 0.12144248932600021,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.14463937282562256,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
           "EventTime": 0.17056529223918915,
           "EventType": "Notify",
           "EventTag": "LHandStart"
@@ -438,26 +488,6 @@
           "EventTag": "RHandStart"
         },
         {
-          "EventTime": 0.27017542719841003,
-          "EventType": "Notify",
-          "EventTag": "LHandEnd"
-        },
-        {
-          "EventTime": 0.27017542719841003,
-          "EventType": "Notify",
-          "EventTag": "RHandEnd"
-        },
-        {
-          "EventTime": 0.14463937282562256,
-          "EventType": "Notify",
-          "EventTag": "MotionBlur"
-        },
-        {
-          "EventTime": 0.12144248932600021,
-          "EventType": "Notify",
-          "EventTag": "MotionBlur"
-        },
-        {
           "EventTime": 0.19922025501728058,
           "EventType": "Notify",
           "EventTag": "MotionBlur"
@@ -466,6 +496,16 @@
           "EventTime": 0.23879142105579376,
           "EventType": "Notify",
           "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.27017542719841003,
+          "EventType": "Notify",
+          "EventTag": "LHandEnd"
+        },
+        {
+          "EventTime": 0.27017542719841003,
+          "EventType": "Notify",
+          "EventTag": "RHandEnd"
         }
       ]
     },
@@ -482,6 +522,11 @@
           "EventTag": "LHandStart"
         },
         {
+          "EventTime": 0.16725145280361176,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
           "EventTime": 0.20272904634475708,
           "EventType": "Notify",
           "EventTag": "RHandStart"
@@ -492,9 +537,24 @@
           "EventTag": "LHandEnd"
         },
         {
+          "EventTime": 0.23313839733600616,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.25341129302978516,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
           "EventTime": 0.26185837388038635,
           "EventType": "Notify",
           "EventTag": "RHandEnd"
+        },
+        {
+          "EventTime": 0.2669265568256378,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
         },
         {
           "EventTime": 0.4476933181285858,
@@ -515,26 +575,6 @@
           "EventTime": 0.7095516324043274,
           "EventType": "Notify",
           "EventTag": "RHandEnd"
-        },
-        {
-          "EventTime": 0.16725145280361176,
-          "EventType": "Notify",
-          "EventTag": "MotionBlur"
-        },
-        {
-          "EventTime": 0.23313839733600616,
-          "EventType": "Notify",
-          "EventTag": "MotionBlur"
-        },
-        {
-          "EventTime": 0.2669265568256378,
-          "EventType": "Notify",
-          "EventTag": "MotionBlur"
-        },
-        {
-          "EventTime": 0.25341129302978516,
-          "EventType": "Notify",
-          "EventTag": "MotionBlur"
         }
       ]
     },
@@ -545,26 +585,6 @@
     {
       "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Attack_Normal_05",
       "Events": [
-        {
-          "EventTime": 0.11319037526845932,
-          "EventType": "Notify",
-          "EventTag": "LFootStart"
-        },
-        {
-          "EventTime": 0.11319037526845932,
-          "EventType": "Notify",
-          "EventTag": "LHandStart"
-        },
-        {
-          "EventTime": 0.22300195693969727,
-          "EventType": "Notify",
-          "EventTag": "LFootEnd"
-        },
-        {
-          "EventTime": 0.4105263352394104,
-          "EventType": "Notify",
-          "EventTag": "LHandEnd"
-        },
         {
           "EventTime": 0.054061081260442734,
           "EventType": "Notify",
@@ -581,6 +601,16 @@
           "EventTag": "MotionBlur"
         },
         {
+          "EventTime": 0.11319037526845932,
+          "EventType": "Notify",
+          "EventTag": "LFootStart"
+        },
+        {
+          "EventTime": 0.11319037526845932,
+          "EventType": "Notify",
+          "EventTag": "LHandStart"
+        },
+        {
           "EventTime": 0.14022092521190643,
           "EventType": "Notify",
           "EventTag": "MotionBlur"
@@ -591,6 +621,11 @@
           "EventTag": "MotionBlur"
         },
         {
+          "EventTime": 0.22300195693969727,
+          "EventType": "Notify",
+          "EventTag": "LFootEnd"
+        },
+        {
           "EventTime": 0.2939571142196655,
           "EventType": "Notify",
           "EventTag": "MotionBlur"
@@ -599,6 +634,11 @@
           "EventTime": 0.3057829737663269,
           "EventType": "Notify",
           "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.4105263352394104,
+          "EventType": "Notify",
+          "EventTag": "LHandEnd"
         }
       ]
     },
@@ -623,26 +663,6 @@
           "EventTime": 0.13567252457141876,
           "EventType": "Notify",
           "EventTag": "RFootStart"
-        },
-        {
-          "EventTime": 0.8608187437057495,
-          "EventType": "Notify",
-          "EventTag": "RHandEnd"
-        },
-        {
-          "EventTime": 0.8608187437057495,
-          "EventType": "Notify",
-          "EventTag": "LFootEnd"
-        },
-        {
-          "EventTime": 0.8608187437057495,
-          "EventType": "Notify",
-          "EventTag": "RFootEnd"
-        },
-        {
-          "EventTime": 0.877193033695221,
-          "EventType": "Notify",
-          "EventTag": "CheckCombo"
         },
         {
           "EventTime": 0.20116959512233734,
@@ -693,6 +713,26 @@
           "EventTime": 0.8584795594215393,
           "EventType": "Notify",
           "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.8608187437057495,
+          "EventType": "Notify",
+          "EventTag": "RHandEnd"
+        },
+        {
+          "EventTime": 0.8608187437057495,
+          "EventType": "Notify",
+          "EventTag": "LFootEnd"
+        },
+        {
+          "EventTime": 0.8608187437057495,
+          "EventType": "Notify",
+          "EventTag": "RFootEnd"
+        },
+        {
+          "EventTime": 0.877193033695221,
+          "EventType": "Notify",
+          "EventTag": "CheckCombo"
         }
       ]
     },
