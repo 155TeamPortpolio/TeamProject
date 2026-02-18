@@ -39,6 +39,10 @@ HRESULT CKitObject::Initialize(INIT_DESC* pArg)
 		Get_Component<CStaticModel>()->Link_Model("Scott_Level", "InLevelItem_Prop_ResourceItem_02.model");
 		Get_Component<CMaterial>()->Link_Material("Scott_Level", "InLevelItem_Prop_ResourceItem_02.mat");
 	}
+	else if (pDesc->iItemType == 2) {
+		Get_Component<CStaticModel>()->Link_Model("Scott_Level", "InLevelItem_Prop_ResourceItem_03.model");
+		Get_Component<CMaterial>()->Link_Material("Scott_Level", "InLevelItem_Prop_ResourceItem_03.mat");
+	}
 	else
 		return E_FAIL;
 

@@ -8,7 +8,7 @@ class CHealKit final :
     public CInteractable
 {
 public:
-    enum class ITEMTYPE { HP, ENERGY, END };
+    enum class ITEMTYPE { ULT, ENERGY, HP, END };
     typedef struct tagHealKitDesc : public Engine::GAMEOBJECT_DESC {
         ITEMTYPE eItemType{};
     }HEALKIT_DESC;
@@ -31,8 +31,6 @@ public:
     virtual void    OnTriggerExit(CGameObject* pOther)  override;
 
 private:
-    void Recovery_Health();
-    void Recovery_Energy();
     void Setting_Child();
 
 private:
