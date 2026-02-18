@@ -173,6 +173,9 @@ public:
 	void SetLayerTimeScale(BATTLE_OBJ_TYPE type, _float scale);
 	void ResetLayerTimeScale(BATTLE_OBJ_TYPE type);
 
+public:
+	const array<string, ENUM(BATTLE_OBJ_TYPE::END)>& Get_BattleLayer() {return m_layerTag;};
+
 private:/*시퀀스 추가 함수*/
 	void AddStep(StepFunc step);
 	void AddWait(_float duration);
@@ -195,7 +198,6 @@ private:/*시퀀스 추가 함수*/
 private:
 	const BATTLE_VFX_DATA& GetPreset(BATTLE_VFX_TYPE type) const {return m_BattleVFXData[ENUM(type)];};
 	_bool IsValidTimeScale(const TIME_SCALE_DATA& timeScale);
-	
 private:
 	_bool m_isRunning = false;
 

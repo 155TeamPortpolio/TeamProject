@@ -500,7 +500,7 @@ public:
         isMale = Helper::Get_Random_Bool();
 
         string genderWord = isMale ? "Male" : "Female";
-        _int variation = Helper::Get_Random_Int(1, isMale ? 5 : 2);
+        _int variation = Helper::Get_Random_Int(1, isMale ? 5 : 5);
 
         string model = genderWord + "0" + to_string(variation) + ".model";
         string material = genderWord + "0" + to_string(variation) + ".mat";
