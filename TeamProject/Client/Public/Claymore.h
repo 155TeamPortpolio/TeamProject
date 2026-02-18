@@ -41,6 +41,7 @@ public:
     /* Setter */
     void            Idle() { m_isIdle = true; }
     virtual void    TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER charaName = CHARACTER::END) override;
+    void            SetTutorialMode(_bool is) { m_isTutorial = is; }
 
 private:
     HRESULT Initialize_StateMachine();
@@ -57,6 +58,7 @@ private:
     HYSTERIESIS         m_tHysteriesis = {};
 
     _bool               m_isAutoPatternPlay = { true };
+    _bool               m_isTutorial = { false };
 
     /*For.Idle*/
     _bool               m_isIdle = { false };
