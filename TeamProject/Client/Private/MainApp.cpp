@@ -82,7 +82,7 @@
 #include "UI_GachaPage.h" 
 
 #include "UI_GachaResult.h"
-
+#include "VideoPanel.h"
 CMainApp::CMainApp()
 {
 }
@@ -125,7 +125,7 @@ HRESULT CMainApp::Initialize()
 
 	#ifdef  _USING_GUI
 		ImGui::SetCurrentContext(m_pGameInstance->Get_GUISystem()->GetEngineImGuiContext());
-		//GUISystem()->Register_Panel(CVideoPanel::Create(GUISystem()->Get_Context()));
+		GUISystem()->Register_Panel(CVideoPanel::Create(GUISystem()->Get_Context()));
 	#endif //  _USING_GUI
 
 	m_cursorController.Initialize();

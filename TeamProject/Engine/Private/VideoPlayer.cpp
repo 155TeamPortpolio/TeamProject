@@ -17,6 +17,10 @@ bool CVideoPlayer::Open(const VIDEO_PLAYER_DESC& desc)
 {
     lock_guard<mutex> lock(m_mutex);
 
+    m_playPtsMs = 0;
+    m_hasPtsBase = false;
+    m_ptsBaseMs = 0;
+    m_lastPushedPtsMs = 0;
     m_desc = desc;
     m_playPtsMs = 0;
     m_state.store(VIDEO_PLAY_STATE::Ready, std::memory_order_release);
@@ -80,24 +84,54 @@ void CVideoPlayer::PushDecodedFrame(VIDEO_FRAME_CPU&& frame)
 
     m_pushCount.fetch_add(1, std::memory_order_relaxed);
 
-    lock_guard<mutex> lock(m_mutex);
+    const uint64_t framePtsMs = (uint64_t)frame.PresentTime; // 단위가 ms가 맞는지 아래 3) 참고
+
+    std::lock_guard<std::mutex> lock(m_mutex);
+
+    if (!m_hasPtsBase)
+    {
+        m_ptsBaseMs = framePtsMs;
+        m_lastPushedPtsMs = framePtsMs;
+        m_hasPtsBase = true;
+    }
+    else
+    {
+        // 루프/리오픈 감지: PTS가 의미있게 감소하면 새 세션으로 취급
+        const uint64_t ptsDecreaseThresholdMs = 200; // 0.2s 이상 떨어지면 루프라고 봄
+        if (framePtsMs + ptsDecreaseThresholdMs < m_lastPushedPtsMs)
+        {
+            m_ptsBaseMs = framePtsMs;
+            m_playPtsMs = 0;
+            m_presentCount.store(0, std::memory_order_relaxed);
+            m_frameQueue.Clear();
+        }
+
+        m_lastPushedPtsMs = framePtsMs;
+    }
+
     m_frameQueue.PushDropOldest(std::move(frame));
 }
-
-void CVideoPlayer::PumpPresent(_uint64 nowPts)
+void CVideoPlayer::PumpPresent(_uint64 /*nowPts*/)
 {
     if (m_state.load(std::memory_order_acquire) != VIDEO_PLAY_STATE::Playing)
         return;
 
     VIDEO_FRAME_CPU pickedFrame;
 
+    uint64_t nowPtsAbsMs = 0;
+
     {
-        lock_guard<mutex> lock(m_mutex);
-        bool popped = m_frameQueue.PopLatestNotAfter(nowPts, pickedFrame);
+        std::lock_guard<std::mutex> lock(m_mutex);
+
+        if (!m_hasPtsBase)
+            return;
+
+        nowPtsAbsMs = m_ptsBaseMs + m_playPtsMs;
+
+        const bool popped = m_frameQueue.PopLatestNotAfter(nowPtsAbsMs, pickedFrame);
 
         if (!popped)
         {
-            // ★ 처음 시작 / 리플레이 직후 보정
             if (m_presentCount.load(std::memory_order_relaxed) == 0)
             {
                 if (!m_frameQueue.PopOldest(pickedFrame))
@@ -108,7 +142,6 @@ void CVideoPlayer::PumpPresent(_uint64 nowPts)
                 return;
             }
         }
-
     }
 
     m_presentCount.fetch_add(1, std::memory_order_relaxed);
@@ -116,9 +149,9 @@ void CVideoPlayer::PumpPresent(_uint64 nowPts)
     if (!EnsureGpuTexture(pickedFrame.width, pickedFrame.height))
         return;
 
-    const UINT rowPitch = (UINT)pickedFrame.width * 4;
+    const UINT rowPitchBytes = (UINT)pickedFrame.width * 4;
     m_pContext->UpdateSubresource(m_pTexture, 0, nullptr,
-        pickedFrame.rgba.data(), rowPitch, 0);
+        pickedFrame.rgba.data(), rowPitchBytes, 0);
 }
 
 _bool CVideoPlayer::EnsureGpuTexture(_uint width, _uint height)
@@ -169,12 +202,17 @@ void CVideoPlayer::SkipToEnd()
 
 void CVideoPlayer::Replay()
 {
-    lock_guard<mutex> lock(m_mutex);
+    std::lock_guard<std::mutex> lock(m_mutex);
 
     m_playPtsMs = 0;
-    m_frameQueue.Clear();
+    m_hasPtsBase = false;
+    m_ptsBaseMs = 0;
+    m_lastPushedPtsMs = 0;
 
-    // 재생 시작
+    m_presentCount.store(0, std::memory_order_relaxed);
+    m_pushCount.store(0, std::memory_order_relaxed);
+
+    m_frameQueue.Clear();
     m_state.store(VIDEO_PLAY_STATE::Playing, std::memory_order_release);
 }
 

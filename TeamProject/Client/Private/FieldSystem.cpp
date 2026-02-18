@@ -53,6 +53,7 @@ void CFieldSystem::PlayBGM(string strBGM, _float fVolume)
 	if (!m_strPrevBGM.empty()) m_pBGM->Set_SlotPuase(m_strPrevBGM, true);
 	
 	m_pBGM->Slot(strBGM)
+		.Group(SOUND_GROUP::BGM)
 		.Attribute3D(false)
 		.Volume(fVolume)
 		.Loop(true)
