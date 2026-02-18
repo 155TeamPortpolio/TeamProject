@@ -326,18 +326,25 @@ void CJaneDoe::On_Special()
 
     string strCurrentState = m_pStateMachine->Get_CurrentStateName();
 
-    // NormalAttack Áß Äµ½½ÇØ¼­ ExAttack
     if (strCurrentState == "Attack")
     {
         CJaneDoeState_Attack* pAttack = static_cast<CJaneDoeState_Attack*>(
             m_pStateMachine->Get_CurrentState());
         if (pAttack && pAttack->Get_SubStateMachine())
         {
-            if (pAttack->Get_SubStateMachine()->Get_CurrentStateName() == "NormalAttack")
+            string strAttackType = pAttack->Get_SubStateMachine()->Get_CurrentStateName();
+
+            if (strAttackType == "NormalAttack")
             {
                 pAttack->Get_SubStateMachine()->Set_Trigger("ToExAttack");
                 return;
             }
+            else if (strAttackType == "RushAttack")
+            {
+                pAttack->Get_SubStateMachine()->Set_Trigger("ToExAttack");
+                return;
+            }
+            return;
         }
     }
 

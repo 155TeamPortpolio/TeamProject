@@ -28,7 +28,6 @@ CJaneDoeState_SwitchInParryAid* CJaneDoeState_SwitchInParryAid::Create()
 
     pSubStateMachine->Register_Transition("ParryAid_Start", "L_Loop",
         CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "ParryImpact");
-    // 타임아웃 안전장치 (몬스터 공격이 빗나간 경우)
     pSubStateMachine->Register_Transition("ParryAid_Start", "L_End",
         CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "ParryFail");
     pSubStateMachine->Register_Transition("L_Loop", "L_End",
@@ -59,7 +58,7 @@ void CJaneDoeState_SwitchInParryAid::Update(CJaneDoe* pOwner, _float dt)
         IHState<CJaneDoe>* pSwitchIn = Get_ParentState();
         if (pSwitchIn && pSwitchIn->Get_SubStateMachine())
         {
-            pSwitchIn->Get_SubStateMachine()->Set_Int("ExitMode", 0);  // Idle로
+            pSwitchIn->Get_SubStateMachine()->Set_Int("ExitMode", 0);  
             pSwitchIn->Get_SubStateMachine()->Set_Trigger("Complete");
         }
     }
@@ -97,7 +96,7 @@ void CJaneDoeState_SwitchInParryAid_Start::Update(CJaneDoe* pOwner, _float dt)
         ENUM(CJaneDoe::ROOTMOTION_MASK::MOVE) |
         ENUM(CJaneDoe::ROOTMOTION_MASK::QUATERNION));
 
-    if (m_fStateTime > 1.5f)  // 1.5초 타임아웃
+    if (m_fStateTime > 1.5f)  
     {
         m_pOwnerStateMachine->Set_Trigger("ParryFail");
     }
@@ -119,13 +118,13 @@ void CJaneDoeState_SwitchInParryAid_L_Loop::Enter(CJaneDoe* pOwner)
     BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::PARRY);
 
     OBJECT_HANDLE handle = pOwner->Get_ParryHandle();
-    if (handle.isValid())
-    {
-        TARGET_LOCK_DESC desc;
-        desc.bLock = false;
-        desc.tHandle = handle;
-        EventSystem()->Broadcast<TARGET_LOCK_DESC>({desc});
-    }
+    //if (handle.isValid())
+    //{
+    //    TARGET_LOCK_DESC desc;
+    //    desc.bLock = false;
+    //    desc.tHandle = handle;
+    //    EventSystem()->Broadcast<TARGET_LOCK_DESC>({desc});
+    //}
 }
 
 void CJaneDoeState_SwitchInParryAid_L_Loop::Update(CJaneDoe* pOwner, _float dt)

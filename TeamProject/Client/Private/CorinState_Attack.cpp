@@ -34,6 +34,9 @@ CCorinState_Attack* CCorinState_Attack::Create()
     pSubStateMachine->Register_Transition("NormalAttack", "ExAttack",
         CStateMachine<CCorin>::CONDITION_TRIGGER, "ToExAttack");
 
+    pSubStateMachine->Register_Transition("RushAttack", "ExAttack",
+        CStateMachine<CCorin>::CONDITION_TRIGGER, "ToExAttack");
+
     pSubStateMachine->Register_AnyStateTransition("UltimateAttack",
         CStateMachine<CCorin>::CONDITION_TRIGGER, "ToUltimate");
 
@@ -92,6 +95,7 @@ void CCorinState_Attack::Update(CCorin* pOwner, _float dt)
 
 void CCorinState_Attack::Exit(CCorin* pOwner)
 {
+    pOwner->Get_StateMachine()->Reset_Trigger("Attack");
     pOwner->End_AllAttackColliders();
     pOwner->Unlock_Move();
     __super::Exit(pOwner);

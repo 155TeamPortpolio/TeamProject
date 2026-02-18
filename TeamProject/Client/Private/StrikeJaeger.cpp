@@ -325,8 +325,7 @@ void CStrikeJaeger::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTE
 
 	if ("Groggy" == m_pStateMachine->Get_CurrentStateName())
 	{
-		//Get_Component<CAnimator3D>()->Set_Animation(1, "StrikeJaeger_Ani_Hit_Stay")
-		Get_Component<CAnimator3D>()->Set_Animation(1, "StrikeJaeger_Ani_Hit_Knock")
+		Get_Component<CAnimator3D>()->Set_Animation(1, "StrikeJaeger_Ani_Hit_Stay")
 			.LayerBlend(1.f, 0.f, 1.f, EaseType::Linear)
 			.Loop(false)
 			.Apply();

@@ -116,7 +116,7 @@ private: // 입력 처리
 
 private: // 캐릭터 전환
     void    NotifyCharacterSwitchIn();
-    void    NotifyCharacterSwitchOut();
+    void    NotifyCharacterSwitchOut(_bool bNext = true);
     _bool   Can_Switch() const;
     _bool   Can_SwitchTo(_uint iIndex) const;
     _int    Find_SwitchIndex(_bool bNext) const;
@@ -167,8 +167,8 @@ private:
     static constexpr _float KEY_BUFFER_TIME = 0.1f;
     static constexpr _float SWITCH_COOLDOWN = 1.f;
     static constexpr _float LOCKON_COOLDOWN = 0.3f;
-    static constexpr _float TARGET_MAXDISTANCE = 10.f;
-    static constexpr _float TARGET_BOSS_MAXDISTANCE = 100.f;
+    static constexpr _float TARGET_MAXDISTANCE = 9999.f;
+    static constexpr _float TARGET_BOSS_MAXDISTANCE = 9999.f;
     static constexpr _float COMBO_SELECT_DURATION = 2.5f;
 
 public:
