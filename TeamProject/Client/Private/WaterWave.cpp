@@ -9,9 +9,12 @@
 #include "Child.h"
 #include "EventListener.h"
 #include "BattleSystem.h"
+#include "ObjectContainer.h"
 
 #include "Helper_Func.h"
 #include "CamDirector.h"
+
+#include "EffectContainer.h"
 
 CWaterWave::CWaterWave()
 	:CGameObject()
@@ -29,6 +32,7 @@ HRESULT CWaterWave::Initialize_Prototype()
 	Add_Component<CTessellationModel>(32, 50.f);
 	Add_Component<CMaterial>();
 	Add_Component<CEventListener>();
+	Add_Component<CObjectContainer>();
 	return S_OK;
 }
 
@@ -83,6 +87,8 @@ HRESULT CWaterWave::Initialize(INIT_DESC* pArg)
 		MaterialDat->Link_Texture(G_GlobalLevelKey, "Port_WaterFoam_single_01.png", TEXTURE_TYPE::LIGHTMAP);
 	}
 
+	Initialize_Effects();
+
 	m_vOriginPos = _vector3(m_pTransform->Get_Pos());
 	Get_Component<CEventListener>()->Add_Listener<TsunamiWallDesc>([&](const TsunamiWallDesc& desc) {Check_Attackable(desc); });
 	return S_OK;
@@ -119,6 +125,8 @@ void CWaterWave::Update(_float dt)
 	newPos.z = m_vOriginPos.z + crashDirection.z * forwardMove;
 
 	m_pTransform->Set_Pos(newPos);
+	Control_Effect(progress01);
+	Get_Component<CObjectContainer>()->UpdateChild(dt);
 }
 
 void CWaterWave::Late_Update(_float dt)
@@ -126,6 +134,8 @@ void CWaterWave::Late_Update(_float dt)
 	if (m_fAccTime >= m_CycleTime - 1.f) {
 		CameraManager()->AddImpact(ENUM(CamShakeType::EarthquakeShort), 
 			ENUM(CamZoomType::EarthquakeShort),1.3f);
+
+		EventSystem()->Broadcast<TsunamiDesc>({ false,true });
 	}
 
 	if (m_fAccTime >= m_CycleTime-0.2f){
@@ -134,7 +144,7 @@ void CWaterWave::Late_Update(_float dt)
 			desc.fDamage = 500.f;
 			BattleSystem()->TakePlayerDamage(desc);
 		}
-		EventSystem()->Broadcast<TsunamiDesc>({ true });
+		EventSystem()->Broadcast<TsunamiDesc>({ true,false });
 		ObjectManager()->Remove_Object(this);
 		m_isAlive = false;
 	}
@@ -164,6 +174,64 @@ void CWaterWave::Initialize_Wave(WaterWaveDesc Desc)
 	m_WallDepthEnd = Desc.fWallDepthEnd;
 	m_CurlForward = Desc.fCurlForward;
 	m_MaxCurlAngle = Desc.fMaxCurlAngle;
+}
+
+void CWaterWave::Initialize_Effects()
+{
+	auto pObjectContainer = Get_Component<CObjectContainer>();
+
+	/* Wave Down*/
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("defiler_wave_down.json")
+			.Position(_float3(-34.f,-3.f,0.f))
+			.Build("Defiler_Wave_Down");
+
+		pObjectContainer->Add_Child(pEffect,false);
+	}
+
+	/* Wave */
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("defiler_wave.json")
+			.Position(_float3(-37.6f, 18.4f, 0.f))
+			.Build("Defiler_Wave");
+
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+}
+
+void CWaterWave::Control_Effect(_float progress)
+{
+	if (!m_IsActive_Wave)
+	{
+		if (m_fAccTime >= 1.5f)
+		{
+			auto pEffect = Get_Component<CObjectContainer>()->Find_ObjectByName("Defiler_Wave");
+			static_cast<CEffectContainer*>(pEffect)->Play();
+			m_IsActive_Wave = true;
+		}
+	}
+	else
+	{
+		if (m_fAccTime >= 1.5f && m_fAccTime < 6.5f)
+		{
+			auto pEffect = Get_Component<CObjectContainer>()->Find_ObjectByName("Defiler_Wave");
+
+			_float t = (m_fAccTime - 1.5f) / 5.f;
+			_float height = Math::Lerp(m_fStartHeight, m_fEndHeight, t);
+			pEffect->Get_Component<CTransform>()->Set_WorldPos(_vector3(-37.6f, height, 0.f));
+		}
+
+		if (m_fAccTime >= 16.5f)
+		{
+			auto pWave = Get_Component<CObjectContainer>()->Find_ObjectByName("Defiler_Wave");
+			auto pWaveDown = Get_Component<CObjectContainer>()->Find_ObjectByName("Defiler_Wave_Down");
+			static_cast<CEffectContainer*>(pWave)->Stop();
+			static_cast<CEffectContainer*>(pWaveDown)->Stop();
+		}
+	}
 }
 
 CWaterWave* CWaterWave::Create()

@@ -9,6 +9,7 @@
 #include "ToolLight.h"
 #include "ToolGrid.h"
 #include "Camera.h"
+#include "EffectContainer.h"
 #include "EffectContainer_Edit.h"
 #include "SpriteNode_Edit.h"
 #include "ParticleNode_Edit.h"

@@ -30,7 +30,11 @@ public:
     virtual void OnPooledRelease()override;
 
 public:
-    void DisAppear();
+    void DisAppear(_bool isDisapear);
+    void Play_Effect(_bool isPlayEffect);
+
+private:
+    void Initialize_Effects();
 
 private:
     _float  m_ElapsedTime = 0.f;

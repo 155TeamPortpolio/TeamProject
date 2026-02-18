@@ -8,6 +8,7 @@
 #include "GameInstance.h"
 #include "Child.h"
 #include "EventListener.h"
+#include "ObjectContainer.h"
 
 #include "Helper_Func.h"
 
@@ -27,6 +28,7 @@ HRESULT CWaterWave::Initialize_Prototype()
 	Add_Component<CTessellationModel>(32, 50.f);
 	Add_Component<CMaterial>();
 	Add_Component<CEventListener>();
+	Add_Component<CObjectContainer>();
 	return S_OK;
 }
 
@@ -99,23 +101,23 @@ void CWaterWave::Update(_float dt)
 	if (m_CycleTime <= 1e-6f)
 		return;
 
-	//const _float3 crashDirection = { 1.f, 0.f, 0.f };
-	//
-	//const _float time01 = fmodf(m_fAccTime, m_CycleTime) / m_CycleTime;
-	//
-	//_float progress01 = (time01 - m_PeakTime * 0.9f) / (1.0f - m_PeakTime * 0.9f);
-	//progress01 = max(0.f, min(1.f, progress01));
-	//
-	//progress01 = progress01 * progress01 * (3.0f - 2.0f * progress01);
-	//
-	//const _float forwardMove = progress01 * m_CrashMoveDistance;
-	//
-	//_float3 newPos;
-	//newPos.x = m_vOriginPos.x + crashDirection.x * forwardMove;
-	//newPos.y = m_vOriginPos.y + crashDirection.y * forwardMove;
-	//newPos.z = m_vOriginPos.z + crashDirection.z * forwardMove;
-	//
-	//m_pTransform->Set_Pos(newPos);
+	const _float3 crashDirection = { 1.f, 0.f, 0.f };
+	
+	const _float time01 = fmodf(m_fAccTime, m_CycleTime) / m_CycleTime;
+	
+	_float progress01 = (time01 - m_PeakTime * 0.9f) / (1.0f - m_PeakTime * 0.9f);
+	progress01 = max(0.f, min(1.f, progress01));
+	
+	progress01 = progress01 * progress01 * (3.0f - 2.0f * progress01);
+	
+	const _float forwardMove = progress01 * m_CrashMoveDistance;
+	
+	_float3 newPos;
+	newPos.x = m_vOriginPos.x + crashDirection.x * forwardMove;
+	newPos.y = m_vOriginPos.y + crashDirection.y * forwardMove;
+	newPos.z = m_vOriginPos.z + crashDirection.z * forwardMove;
+	
+	m_pTransform->Set_Pos(newPos);
 }
 
 void CWaterWave::Late_Update(_float dt)
