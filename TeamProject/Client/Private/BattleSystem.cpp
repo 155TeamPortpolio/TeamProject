@@ -468,10 +468,11 @@ vector<BATTLEOBJ_INFO>& CBattleSystem::FindBattleType(BATTLE_OBJ_TYPE eObjType)
 _bool CBattleSystem::RemoveFromListSwapPop(TypeVector& infoList, _uint removeIndex, BATTLE_OBJ_TYPE objType)
 {
 	const _uint lastIndex = (_uint)infoList.size() - 1;
+	if (removeIndex >= infoList.size())
+		return true;
 	if (removeIndex != lastIndex)
 	{
 		infoList[removeIndex] = infoList[lastIndex];
-
 		OBJECT_HANDLE movedHandle = infoList[removeIndex].hObject; 
 		auto itMoved = m_BattleObjIndex.find(movedHandle);
 		if (itMoved != m_BattleObjIndex.end())
