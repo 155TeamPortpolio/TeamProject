@@ -415,7 +415,7 @@ void CBattlePlayer::Execute_ComboAttack(_bool bNext)
         return;
     }
 
-    NotifyCharacterSwitchOut();
+    NotifyCharacterSwitchOut(bNext);
 
     rotate(m_BattleCharacters.begin(),
         m_BattleCharacters.begin() + iTargetIndex,
@@ -757,7 +757,7 @@ void CBattlePlayer::NotifyCharacterSwitchIn()
         m_pCurrentCharacter->On_SwitchIn(CCharacter::SWITCH::NORMAL);
 }
 
-void CBattlePlayer::NotifyCharacterSwitchOut()
+void CBattlePlayer::NotifyCharacterSwitchOut(_bool bNext)
 {
     auto vRight = m_pCurrentCharacter->Get_Component<CTransform>()->Dir(STATE::RIGHT);
     m_vSwitchLook = m_pCurrentCharacter->Get_Component<CTransform>()->Dir(STATE::LOOK);
@@ -779,28 +779,29 @@ void CBattlePlayer::NotifyCharacterSwitchOut()
         _vector3 vCharacterPos = m_pCurrentCharacter->Get_WorldPos();
         if (!m_TargetHandle.isValid() || !BattleSystem()->isValidTarget(BATTLE_OBJ_TYPE::MONSTER, m_TargetHandle))
             return;
-        
+
         _vector3 vTargetPos = m_TargetHandle.Get()->Get_WorldPos();
-        _vector3 vTargetLook = m_TargetHandle.Get()->Get_Component<CTransform>()->Dir(STATE::LOOK);
-        vTargetLook.y = 0.f;
-        vTargetLook.Normalize();
 
-        // XZ 평면에서 몬스터 기준 캐릭터 상대 위치
-        _vector3 vRelative = vCharacterPos - vTargetPos;
-        vRelative.y = 0.f;
+        // 몬스터에서 현재 캐릭터를 향하는 방향
+        _vector3 vToCharacter = vCharacterPos - vTargetPos;
+        vToCharacter.y = 0.f;
+        vToCharacter.Normalize();
 
-        // 몬스터 Look 축 기준 반사 : 2(v dot n)n - v
-        _float fDot = vRelative.Dot(vTargetLook);
-        _vector3 vReflected = vTargetLook * (2.f * fDot) - vRelative;
-        vReflected.Normalize();
+        // bNext(Left) : +60도, !bNext(Right) : -60도 회전
+        _float fAngle = XMConvertToRadians(bNext ? 60.f : -60.f);
+        _float fCos = cosf(fAngle);
+        _float fSin = sinf(fAngle);
 
-        _float fSpawnDist = 2.f;
-        _vector3 vSpawn = vTargetPos + vReflected * fSpawnDist;
+        _vector3 vSwitchDir;
+        vSwitchDir.x = vToCharacter.x * fCos + vToCharacter.z * fSin;
+        vSwitchDir.y = 0.f;
+        vSwitchDir.z = -vToCharacter.x * fSin + vToCharacter.z * fCos;
 
-        m_vSwitchPosition = XMVectorSet(vSpawn.x, vCharacterPos.y + 1.f, vSpawn.z, 1.f);
+        _vector3 vSwitch = vTargetPos + vSwitchDir * 2.f;
+        m_vSwitchPosition = XMVectorSet(vSwitch.x, vCharacterPos.y + 1.f, vSwitch.z, 1.f);
 
         // 스폰 지점에서 몬스터를 바라보는 방향
-        _vector3 vLookDir = vTargetPos - vSpawn;
+        _vector3 vLookDir = vTargetPos - vSwitch;
         vLookDir.y = 0.f;
         vLookDir.Normalize();
         m_vSwitchLook = XMVectorSet(vLookDir.x, 0.f, vLookDir.z, 0.f);
