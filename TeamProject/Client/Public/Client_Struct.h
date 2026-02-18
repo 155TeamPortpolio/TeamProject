@@ -175,6 +175,7 @@ namespace Client {
 	typedef struct tagCloudDesc {
 		_float3 topColor = {};
 		_float3 horizonColor = {};
+		_float3 hazeColor = {};
 		_float atmosphereBlend = {};
 		_float3 cloudBright = {};
 		_float3 cloudDark = {};
