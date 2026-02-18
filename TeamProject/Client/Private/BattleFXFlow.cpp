@@ -440,6 +440,8 @@ void CBattleFXFlow::StartVfx_Switch(CHARACTER eLeft, CHARACTER eRight)
 			->SetEnable(true);
 	});
 
+	AddCall([this]() { CamDirector()->EnterSwitch(); });
+
 	AddCall([this, eLeft, eRight](){
 		UIDirector()->Show_Switch(eLeft,eRight);
 		UIDirector()->Hide_HUD(CUIDirector::BATTLE);
@@ -475,6 +477,7 @@ void CBattleFXFlow::Cancle_Switch()
 		Cancel();
 		UIDirector()->Hide_Switch();
 		UIDirector()->Show_HUD(CUIDirector::BATTLE);
+		CamDirector()->EndSwitch();
 	}
 }
 
