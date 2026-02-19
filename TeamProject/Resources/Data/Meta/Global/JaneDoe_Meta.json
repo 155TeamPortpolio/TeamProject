@@ -1421,7 +1421,7 @@
           "EventTime": 1.9800000190734863,
           "EventType": "Sound",
           "EventTag": "JaneDoe_L_Step.wav"
-        }
+        },
         {
           "EventTime": 0.26731643080711365,
           "EventType": "Notify",
