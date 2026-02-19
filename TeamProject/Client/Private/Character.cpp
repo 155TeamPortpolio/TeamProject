@@ -2,6 +2,7 @@
 #include "Character.h"
 #include "GameInstance.h"
 #include "BattleSystem.h"
+#include "BattlePlayer.h"
 
 #include "CamObject.h"
 #include "Enemy.h"
@@ -280,6 +281,8 @@ _bool CCharacter::Can_Parry()
 
 OBJECT_HANDLE CCharacter::Calculate_Parry()
 {
+    _bool isChainParry = BattleSystem()->GetBattlePlayer()->Is_ChainParry();
+
     CCharacterParryCollider* pParry = dynamic_cast<CCharacterParryCollider*>
         (Get_Component<CObjectContainer>()->Get_Children()[m_iParryColliderIndex]);
     _vector3 vPos = Get_WorldPos();
@@ -354,8 +357,8 @@ OBJECT_HANDLE CCharacter::Calculate_Parry()
 #pragma endregion
         }
     }
-
     _float fFinalOffset = min(vAttackOffset * 3.f, fMinDist);   // 위치 튀는거 방지
+
     m_vParryPos = vAttackPos + vAttackLook * fFinalOffset;
     m_vParryPos.y = vPos.y + 1.f;
 

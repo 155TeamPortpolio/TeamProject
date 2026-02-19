@@ -192,6 +192,7 @@ private:
     {
         _bool         returnLockBlend = false;
         OBJECT_HANDLE returnLockHandle{};
+        ShotGoal      exitFrom{};
         ShotGoal      exitTo{};
         Vector3       exitPivotWorld{};
         Vector3       exitCamPosTo{};
@@ -202,7 +203,6 @@ private:
         _bool         savedLockWasOn = false;
         OBJECT_HANDLE savedLockHandle{};
     };
-
 
 private:
     CoreRuntime core{};

@@ -229,11 +229,16 @@ void COrbitCam::ClearLockOn()
 
 void COrbitCam::Lock_ReenterBlend(_float blendInSec)
 {
+    Lock_ReenterBlend(blendInSec, m_prof.lockBlendInEase);
+}
+
+void COrbitCam::Lock_ReenterBlend(_float blendInSec, EaseType ease)
+{
     m_lockBlend.active = true;
     m_lockBlend.entering = true;
     m_lockBlend.elapsed = 0.f;
     m_lockBlend.duration = max(blendInSec, 0.0001f);
-    m_lockBlend.ease = m_prof.lockBlendInEase;
+    m_lockBlend.ease = ease;
     m_lockBlend.weight = 0.f;
 
     m_lockFocus = {};

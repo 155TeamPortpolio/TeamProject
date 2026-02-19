@@ -12,6 +12,7 @@
 #include "OrbitCam.h"
 #include "FreeCam.h"
 #include "CamDebugInput.h"
+#include "CamObject.h"
 // Component
 #include "CharacterController.h"
 #include "CamSequencePlayer.h"

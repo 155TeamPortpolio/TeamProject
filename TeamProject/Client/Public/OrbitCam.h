@@ -40,6 +40,7 @@ public:
     void    Unlock_Input() { m_lockInput = false; }
     _bool   IsInputLocked() const { return m_lockInput; }
     void    Lock_ReenterBlend(_float blendInSec);
+    void    Lock_ReenterBlend(_float blendInSec, EaseType ease);
 
     void    ReturnPreset_Begin(const Vector3& pivotWorld, const Vector3& camPosTo, _float sec, EaseType ease);
     _bool   ReturnPreset_Active() const { return m_returnPreset.active; }

@@ -154,7 +154,7 @@ HRESULT CMainApp::Render()
 	m_pGameInstance->Draw_Begin(&color);
 	m_pGameInstance->Draw();
 	m_pGameInstance->Draw_End();
-	return S_OK;
+	return S_OK;	
 }
 
 void CMainApp::Set_Levels() 
