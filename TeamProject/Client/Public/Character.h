@@ -182,7 +182,7 @@ public: // 행동 이벤트
     virtual void    On_SwitchIn(SWITCH eType) {}
     virtual void    On_ParryImpact() {}
     virtual void    On_ChainParry() {}
-    virtual void    On_SwitchOut();
+    virtual void    On_SwitchOut(_bool isParry = false);
     virtual void    On_Ultimate();
     virtual void    On_Special() {}
     virtual void    On_Hit(DAMAGE_TYPE eType) {}

@@ -34,18 +34,18 @@ public: // 열광
     void    Set_Salchow(_bool bSalchow) { m_bCanSalchow = bSalchow; }
 
 public: // 행동 이벤트
-    virtual void    Reset_State()              override;
-    virtual void    On_Start()                 override;
-    virtual void    On_SwitchIn(SWITCH eType)  override;
-    virtual void    On_ParryImpact()            override;
-    virtual void    On_ChainParry()            override;
-    virtual void    On_SwitchOut()             override;
-    virtual void    On_Ultimate()              override;
-    virtual void    On_Special()               override;
-    virtual void    On_Hit(DAMAGE_TYPE eType)  override;
-    virtual void    OnDamage()                 override;
-    virtual void    OnPerfectDodge()           override;
-    virtual void    OnDefensiveAssist()        override;
+    virtual void    Reset_State()                   override;
+    virtual void    On_Start()                      override;
+    virtual void    On_SwitchIn(SWITCH eType)       override;
+    virtual void    On_ParryImpact()                override;
+    virtual void    On_ChainParry()                 override;
+    virtual void    On_SwitchOut(_bool isParry)     override;
+    virtual void    On_Ultimate()                   override;
+    virtual void    On_Special()                    override;
+    virtual void    On_Hit(DAMAGE_TYPE eType)       override;
+    virtual void    OnDamage()                      override;
+    virtual void    OnPerfectDodge()                override;
+    virtual void    OnDefensiveAssist()             override;
 
 //public: // 모션블러
 //    void    Update_MotionBlurQueue();

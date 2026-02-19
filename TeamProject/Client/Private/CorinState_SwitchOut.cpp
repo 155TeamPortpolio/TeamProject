@@ -8,7 +8,7 @@ void CCorinState_SwitchOut::Enter(CCorin* pOwner)
     pOwner->Get_StateMachine()->Reset_Trigger("ToIdle");
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "SwitchOut_Normal")
         .BlendDuration(0.25f)
-        .Speed(1.f)
+        .Speed(1.5f)
         .Apply();
 
     pOwner->Stop_Effect("Corin_Saw_Slash0");

@@ -399,7 +399,7 @@ void CCharacter::On_Evade()
     m_bIsEvade = true;
 }
 
-void CCharacter::On_SwitchOut()
+void CCharacter::On_SwitchOut(_bool isParry)
 {
     Push_Invincible();
     Lock_Move();

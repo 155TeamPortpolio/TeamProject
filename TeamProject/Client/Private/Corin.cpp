@@ -200,7 +200,7 @@ void CCorin::On_ChainParry()
     }
 }
 
-void CCorin::On_SwitchOut()
+void CCorin::On_SwitchOut(_bool isParry)
 {
     __super::On_SwitchOut();
 
@@ -215,6 +215,12 @@ void CCorin::On_SwitchOut()
     m_pStateMachine->Reset_Trigger("ToMove");
     m_pStateMachine->Reset_Trigger("ToIdle");
     m_pStateMachine->Reset_Trigger("ResetState");
+
+    if (isParry)
+    {
+        m_pStateMachine->Set_Trigger("SwitchOut");
+        return;
+    }
 
     if (m_pStateMachine->Get_CurrentStateName() == "Attack")
     {
