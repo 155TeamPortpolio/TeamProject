@@ -75,12 +75,12 @@ HRESULT CDefiler::Initialize_Prototype()
 
 HRESULT CDefiler::Initialize(INIT_DESC* pArg)
 {
+	m_eEnemyClass = ENEMY_CLASS::BOSS;
 	__super::Initialize(pArg);
 	Get_Component<CAudioSource>()->SoundFolder("Zero_Level","../Bin/Resources/Zero/Enemy/Defiler_Isolde/Sound/");
 	Get_Component<CCharacterController>()->Set_GravityEnabled(false);
 	m_BaseY = _vector3(Get_Component<CCharacterController>()->Get_FootPosition()).y;
 
-	m_eEnemyClass = ENEMY_CLASS::BOSS;
 	vector<_uint> ProMeshes = Get_Component<CSkeletalModel>()->Hide_MehsByName("Pro");
 	vector<_uint> WeaponMeshes = Get_Component<CSkeletalModel>()->Show_MehsByName("Weapon");
 

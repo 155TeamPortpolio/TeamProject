@@ -146,7 +146,7 @@ void CCharacterAttackCollider::OnTriggerStay(CGameObject* pOther)
 			pCharacter->OnDamage();
 			if (m_tHitDesc.eDamageType == DAMAGE_TYPE::HARD && pEnemy->IsGroggy() && pEnemy->Get_ComboCount() != 0)
 			{
-				if (pCharacter->Is_MainCharacter())
+				if (pCharacter->Is_MainCharacter() && !pCharacter->Is_ReserveCombo())
 				{
 					pEnemy->Decrease_ComboCount();
 					pCharacter->Reserve_ComboAttack();
