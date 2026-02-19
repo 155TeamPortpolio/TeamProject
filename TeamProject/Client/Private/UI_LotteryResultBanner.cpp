@@ -10,7 +10,8 @@
 
 HRESULT CUI_LotteryResultBanner::Initialize_Prototype()
 {
-    __super::Initialize_Prototype();
+    if (FAILED(__super::Initialize_Prototype()))
+        return E_FAIL;
 
     Add_Component<CObjectContainer>();
     Add_Component<CAudioSource>();
@@ -21,7 +22,8 @@ HRESULT CUI_LotteryResultBanner::Initialize_Prototype()
 
 HRESULT CUI_LotteryResultBanner::Initialize(INIT_DESC* pArg)
 {
-    __super::Initialize(pArg);
+    if (FAILED(__super::Initialize(pArg)))
+        return E_FAIL;
 
     Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("lottery_result_banner.json")));
     Cache();

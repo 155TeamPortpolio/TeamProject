@@ -6,7 +6,8 @@
 
 HRESULT CUI_Loading::Initialize_Prototype()
 {
-    __super::Initialize_Prototype();
+    if (FAILED(__super::Initialize_Prototype()))
+        return E_FAIL;
 
     Add_Component<CObjectContainer>();
 
@@ -15,7 +16,8 @@ HRESULT CUI_Loading::Initialize_Prototype()
 
 HRESULT CUI_Loading::Initialize(INIT_DESC* pArg)
 {
-    __super::Initialize(pArg);
+    if (FAILED(__super::Initialize(pArg)))
+        return E_FAIL;
 
     const string& strNextLevelKey = CGameInstance::GetInstance()->Get_LevelMgr()->Get_NextLevel();
     string fileName = {};

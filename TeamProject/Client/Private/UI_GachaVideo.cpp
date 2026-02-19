@@ -11,25 +11,19 @@
 
 void CUI_GachaVideo::Play_Video(GachaGrade eGrade)
 {
+    if (!m_pPlayer)
+        return;
+
+    m_pPlayer->Stop();
     m_pPlayer->Close();
 
-    string filePath = "../Bin/Resources/Video/GachaNormal.mp4";
-
-    switch (eGrade)
-    {
-    case GachaGrade::S:
-        filePath = "../Bin/Resources/Video/GachaS.mp4";
-        break;
-    case GachaGrade::A:
-    case GachaGrade::B:
-        filePath = "../Bin/Resources/Video/GachaNormal.mp4";
-        break; 
-    }
-
     CVideoPlayer::VIDEO_PLAYER_DESC desc;
-    desc.filePath = filePath;
+    desc.filePath = Get_VideoPath(eGrade);
     desc.loop = false;
     m_pPlayer->Open(desc);
+
+    VideoService()->StartDecode(m_PlayerID);
+    m_pPlayer->Play();
 
     UI_Active();
 }
@@ -41,7 +35,8 @@ void CUI_GachaVideo::Set_OnVideoFinished(function<void()> onVideoFinished)
 
 HRESULT CUI_GachaVideo::Initialize_Prototype()
 {
-    __super::Initialize_Prototype();
+    if (FAILED(__super::Initialize_Prototype()))
+        return E_FAIL;
 
     Add_Component<CObjectContainer>();
     Add_Component<CAudioSource>();
@@ -52,7 +47,8 @@ HRESULT CUI_GachaVideo::Initialize_Prototype()
 
 HRESULT CUI_GachaVideo::Initialize(INIT_DESC* pArg)
 {
-    __super::Initialize(pArg);
+    if (FAILED(__super::Initialize(pArg)))
+        return E_FAIL;
 
     /*비디오를 읽는 디코더를 우선 생성*/
     m_pDecoder = CMFVideoDecoderBackend::Create();
@@ -94,7 +90,9 @@ void CUI_GachaVideo::Update(_float dt)
             return;
         } 
 
-        UI_DeActive();
+        m_isFinished = true;
+        if (m_onVideoFinished)
+            m_onVideoFinished(); 
     } 
 
     __super::Update(dt);
@@ -107,17 +105,23 @@ void CUI_GachaVideo::Update(_float dt)
 void CUI_GachaVideo::UI_Active(void* pArg)
 { 
     Set_Alive(true);
-    VideoService()->StartDecode(m_PlayerID);
-    m_pPlayer->Play();
     m_isFinished = false;
     Get_Component<CAudioSource>()->Slot("GachaTV.wav").Play();
 }
 
 void CUI_GachaVideo::UI_DeActive(void* pArg)
 { 
-    if (m_onVideoFinished)
-        m_onVideoFinished(); 
-    m_isFinished = true;
+}
+
+string CUI_GachaVideo::Get_VideoPath(GachaGrade eGrade)
+{
+    switch (eGrade)
+    {
+    case GachaGrade::S: return "../Bin/Resources/Video/GachaS.mp4";
+    case GachaGrade::A:
+    case GachaGrade::B: return "../Bin/Resources/Video/GachaNormal.mp4";
+    default:  return "../Bin/Resources/Video/GachaNormal.mp4";
+    }
 }
 
 CGameObject* CUI_GachaVideo::Create()
