@@ -985,7 +985,7 @@ HRESULT CJaneDoe::Update_MotionBlurQueue()
         vColor.y = 0.0f + (0.12f * t); 
         vColor.z = 0.0f;
         //vColor.w = 0.15f + (0.4f * t);
-        vColor.w = (0.15f + (0.4f * t)) * m_fMotionBlurFade;
+        vColor.w = (0.25f + (0.4f * t)) * m_fMotionBlurFade;
 
         for (_int i = 0; i < Model->Get_MeshCount(); ++i)
         {
