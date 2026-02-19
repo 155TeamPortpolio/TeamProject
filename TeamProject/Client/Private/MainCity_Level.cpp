@@ -64,6 +64,13 @@ HRESULT CMainCity_Level::Awake()
 	//ObjectManager()->Get_Layer({"MainCity_Level", "PlacedObject_Layer"})->Set_RenderState(false);
 	//auto layer = ObjectManager()->Get_Layer({"MainCity_Level", "PlacedObject_Layer"});
 	pProto->Add_ProtoType("MainCity_Level", "Proto_GameObject_CBackgroundNpc", CBackgroundNpc::Create());
+	
+	_uint Version{};
+	if (!RuntimeBucket().Int64.TryGet(PersistScope::SaveSlot, "MainCity_Level", Version))
+	{
+		Version = 1;
+		RuntimeBucket().Int64.Set(PersistScope::SaveSlot, "MainCity_Level", Version);
+	}
 
 	return S_OK;
 }
