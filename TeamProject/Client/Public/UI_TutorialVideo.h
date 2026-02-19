@@ -36,7 +36,7 @@ private:
 	_uint m_PlayerID = {};
 
 private:
-	const char* Get_VideoPath(TUTORIAL eTutorial);
+	string Get_VideoPath(TUTORIAL eTutorial);
 
 public:
 	static  CGameObject* Create();
