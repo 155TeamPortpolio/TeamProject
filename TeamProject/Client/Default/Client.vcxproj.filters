@@ -1509,6 +1509,9 @@
     <Filter Include="02. GameObject\Object\Npc\Service\Jaeger3">
       <UniqueIdentifier>{76d183b0-7c77-4102-8491-3ea9e304c6ea}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Level\06. Tutorial">
+      <UniqueIdentifier>{937f8cb6-d299-481d-8f88-01dfe42cc7ae}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -2933,6 +2936,9 @@
     <ClInclude Include="..\Public\Jaeger3.h">
       <Filter>02. GameObject\Object\Npc\Service\Jaeger3</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Tutorial_Level.h">
+      <Filter>01. Level\06. Tutorial</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -4309,6 +4315,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Jaeger3.cpp">
       <Filter>02. GameObject\Object\Npc\Service\Jaeger3</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Tutorial_Level.cpp">
+      <Filter>01. Level\06. Tutorial</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
