@@ -35,7 +35,7 @@ HRESULT CCrowdNpc::Initialize(INIT_DESC* pArg)
 
 void CCrowdNpc::Awake()
 {
-    Add_SpeechBubble();
+    //Add_SpeechBubble();
 
     modelPreset.RandomizeModel(false, Get_Component<CSkeletalModel>(), Get_Component<CMaterial>(), Get_Component<CAnimator3D>());
     colorPreset.Randomize_Natural(m_ObjectID);

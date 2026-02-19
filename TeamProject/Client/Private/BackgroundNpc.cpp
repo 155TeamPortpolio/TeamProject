@@ -59,7 +59,6 @@ HRESULT CBackgroundNpc::Initialize(INIT_DESC* pArg)
 
 void CBackgroundNpc::Awake()
 {
-
 }
 
 void CBackgroundNpc::Priority_Update(_float dt)
@@ -135,6 +134,8 @@ void CBackgroundNpc::Build_Crowd(_uint Count, _bool Round)
 				.Build("Crowd_R_" + to_string(idx));
 
 			Get_Component<CObjectContainer>()->Add_Child(child, true);
+
+			dynamic_cast<CNpc*>(child)->Add_SpeechBubble();
 		}
 		else {
 			auto child = Builder::Create_Object({ "MainCity_Level", "Proto_GameObject_Crowd" })
