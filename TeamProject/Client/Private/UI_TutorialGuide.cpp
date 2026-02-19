@@ -5,6 +5,8 @@
 #include "ObjectContainer.h"
 #include "EventListener.h"
 
+#include "BattleSystem.h"
+
 HRESULT CUI_TutorialGuide::Initialize_Prototype()
 {
 	if (FAILED(__super::Initialize_Prototype()))
@@ -29,7 +31,7 @@ HRESULT CUI_TutorialGuide::Initialize(INIT_DESC* pArg)
             if (desc.eState != TUTORIAL_STATE::PLAY)
                 return;
 
-            Set_Alive(true);
+            Change_State(STATE::ACTIVE);
             m_eType = desc.eType;
         });
 
@@ -44,7 +46,10 @@ void CUI_TutorialGuide::Awake()
 void CUI_TutorialGuide::Update(_float dt)
 {
     if (InputDevice()->Key_Tap('M'))
-        AdvanceTutorial();
+        Change_State(STATE::DEACTIVATING);
+
+    if (m_eState == STATE::DEACTIVATING && !BattleSystem()->isVFXRunning(BATTLE_VFX_TYPE::WIPEOUT))
+        Change_State(STATE::INACTIVE); 
 
 	__super::Update(dt);
 
@@ -59,10 +64,31 @@ void CUI_TutorialGuide::UI_DeActive(void* pArg)
 {
 }
 
-void CUI_TutorialGuide::AdvanceTutorial()
+void CUI_TutorialGuide::Change_State(STATE eState)
 {
-    auto next = GetNextTutorialType(m_eType);
+    if (m_eState == eState)
+        return;
 
+    m_eState = eState;
+    switch (eState)
+    {
+    case STATE::ACTIVE:
+        Set_Alive(true);
+        break;
+    case STATE::DEACTIVATING:
+        BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::WIPEOUT);
+        break;
+    case STATE::INACTIVE:
+        AdvanceTutorial();
+        Set_Alive(false);
+        break;
+    }
+}
+
+void CUI_TutorialGuide::AdvanceTutorial()
+{ 
+    auto next = GetNextTutorialType(m_eType);
+    
     if (next == TUTORIAL_TYPE::END)
         LevelManager()->Request_ChangeLevel("Scott_Level", true);
     else

@@ -281,7 +281,8 @@ void CUIDirector::Load_LevelObjects(const string& levelKey)
 	}
 
 	if (levelKey == "Test_Level" ||
-		levelKey == "Zero_Level")
+		levelKey == "Zero_Level" ||
+		levelKey == "Tutorial_Level")
 	{
 		Ready_UIObject(levelKey, "Proto_GameObject_RenderTargetScreen", "rendertargetScreen", CUI_RenderTargetScreen::Create());
 	}

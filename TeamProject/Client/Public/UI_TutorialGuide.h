@@ -6,6 +6,9 @@ NS_BEGIN(Client)
 class CUI_TutorialGuide final : public CUI_Object
 {
 private:
+	enum class STATE { ACTIVE, DEACTIVATING, INACTIVE, END };
+
+private:
 	CUI_TutorialGuide() {}
 	CUI_TutorialGuide(const CUI_TutorialGuide& rhs) : CUI_Object(rhs) {}
 	virtual ~CUI_TutorialGuide() DEFAULT;
@@ -23,8 +26,11 @@ public:
 
 private:
 	TUTORIAL_TYPE m_eType = {};
-	
+	STATE m_eState = { STATE::END };
+
 private:
+	void Change_State(STATE eState);
+
 	void AdvanceTutorial();
 
 	TUTORIAL_TYPE GetNextTutorialType(TUTORIAL_TYPE eType);
