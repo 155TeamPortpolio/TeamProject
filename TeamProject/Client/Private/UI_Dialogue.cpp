@@ -171,13 +171,6 @@ void CUI_Dialogue::Bind_EventListener()
         { 
             // 대화 UI 시작
             Open_Dialogue(desc.strDialogueID, desc.iSequenceID);
-            // 대화용 카메라 연출 시작
-            CamDirector()->StartDialog();
-            CUIDirector::GetInstance()->Hide_HUD(CUIDirector::HUD::FIELD);
-            CUIDirector::GetInstance()->Hide_HUD(CUIDirector::HUD::BATTLE); 
-            // 플레이어 입력 잠금
-            if (auto pPlayer = dynamic_cast<CPlayer*>(ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Player))))
-                pPlayer->Lock_Input();
         });
 }
 
@@ -223,19 +216,30 @@ void CUI_Dialogue::Change_State(STATE eState)
 {
     if (m_eState == eState)
         return;
-    
+     
     m_eState = eState;
+    auto pUIDirector = UIDirector();
     switch (eState)
     {
     case STATE::INVISIBLE:
         // 메시지 UI 비활성화 + 카메라 연출 종료
         Set_ChildUIDeActive(CHILD::MESSAGE);
+
         CamDirector()->EndDialog();
+        pUIDirector->Hide_Mouse();
         break;
     case STATE::VISIBLE:
         // UI 활성화
         Set_ChildUIActive(CHILD::MESSAGE);
-        Set_Alive(true);
+        Set_Alive(true); 
+        // 대화용 카메라 연출 시작
+        CamDirector()->StartDialog(); 
+        pUIDirector->Hide_HUD(CUIDirector::HUD::FIELD);
+        pUIDirector->Hide_HUD(CUIDirector::HUD::BATTLE);
+        pUIDirector->Show_Mouse();
+        // 플레이어 입력 잠금
+        if (auto pPlayer = dynamic_cast<CPlayer*>(ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Player))))
+            pPlayer->Lock_Input();
         break;
     }
 }
