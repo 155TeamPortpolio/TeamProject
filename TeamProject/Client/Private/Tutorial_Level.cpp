@@ -49,6 +49,7 @@ HRESULT CTutorial_Level::Awake()
 
     CUIDirector::GetInstance()->Show_HUD(CUIDirector::HUD::BATTLE);
 
+    RuntimeBucket().Int64.Set(PersistScope::SaveSlot, "Scott_Level", 2);
     LIGHT_DESC lightDesc = {};
     lightDesc.vLightPosition = _float4(0.f, 50.f, 0.f, 1.f);
     lightDesc.vLightDiffuse = _float4(1.f, 1.f, 1.f, 1.f);

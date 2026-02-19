@@ -159,6 +159,7 @@ OBJECT_HANDLE Client::Spawner::Create_NPC(const SPAWNER_DESC& Desc)
 
 	CGameObject* Object = Builder::Create_Object({ Desc.tagLevel, NPCTable->second.ProtoTag })
 		.CharacterController(CCT)
+		.Position(Desc.vTranslation)
 		.Rotate(Desc.vRotation)
 		.Scale(Desc.vScale)
 		.Build(Desc.tagName);

@@ -22,6 +22,7 @@ public:
 
 public:
     virtual void OnCameraCollision(const CamOcclusionHit& hit) override;
+    HRESULT         Add_SpeechBubble();
 
 public:
     virtual HRESULT Initialize_Prototype() override;
@@ -33,7 +34,6 @@ public:
 
 protected:
     HRESULT         Add_NameIndicator();
-    HRESULT         Add_SpeechBubble();
     HRESULT         Add_InteractZonePrototype();
     HRESULT         Add_InteractZone(_float4 vCenter, _float3 vOffset,
         _float3 vRotate, _float3 vSize = _float3(1.f,1.f,1.f));
