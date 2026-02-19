@@ -111,7 +111,7 @@ NpcDialogueDesc CDataBase::GetNpcDialogueDesc(pair<string, _uint> dialogueID)
 
 SpeechBubbleDesc CDataBase::GetNpcSpeechBubble(pair<string, _uint> speechBubbleID)
 {
-	if (Helper::Get_Random_Bool() == false)
+	if (Helper::Get_Random_Bool(0.6) == false)
 		return SpeechBubbleDesc{};
 
 	auto range = m_SpeechBubbleTables.equal_range(speechBubbleID);
