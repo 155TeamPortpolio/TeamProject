@@ -25,7 +25,7 @@ HRESULT CUI_GachaCharacterIntro::Initialize(INIT_DESC* pArg)
 
     /*비디오 플레이어에게 플레이할 영상을 알려줌*/
     CVideoPlayer::VIDEO_PLAYER_DESC desc;
-    desc.filePath = "../Bin/Resources/Video/GachaCharacterIntro_JaneDoe.mp4";
+    desc.filePath = "../Bin/Resources/Video/GachaCharacterIntro_Miyabi.mp4";
     desc.loop = false;
     m_pPlayer->Open(desc);
 
