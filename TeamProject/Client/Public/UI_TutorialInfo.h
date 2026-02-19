@@ -7,17 +7,17 @@ NS_END
 
 NS_BEGIN(Client)
 
-class CUI_Tutorial final : public CUI_Object
+class CUI_TutorialInfo final : public CUI_Object
 {
 public:
-	typedef struct tagUITutorialDesc{
+	typedef struct tagTutorialInfoDesc{
 		TUTORIAL_TYPE eType = {};
-	}UI_TUTORIAL_DESC;
+	}TUTORIAL_INFO_DESC;
 
 private:
-	CUI_Tutorial() {}
-	CUI_Tutorial(const CUI_Tutorial& rhs) : CUI_Object(rhs) {}
-	virtual ~CUI_Tutorial() DEFAULT;
+	CUI_TutorialInfo() {}
+	CUI_TutorialInfo(const CUI_TutorialInfo& rhs) : CUI_Object(rhs) {}
+	virtual ~CUI_TutorialInfo() DEFAULT;
 
 public:
 	virtual HRESULT Initialize_Prototype()           override;

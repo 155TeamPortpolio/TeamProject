@@ -17,7 +17,7 @@
 #include "ProceduralSky.h"
 
 /* UI */
-#include "UI_Tutorial.h"
+#include "UI_TutorialInfo.h"
 
 #include "Claymore.h"
 #include "EnemyAttackCollider.h"
@@ -105,22 +105,22 @@ void CTutorial_Level::Ready_UI()
     auto uiDirector = CUIDirector::GetInstance();
     uiDirector->Load_LevelObjects("Tutorial_Level");
 
-    if (FAILED(PrototypeManager()->Add_ProtoType("Tutorial_Level", "Proto_GameObject_Tutorial", CUI_Tutorial::Create())))
+    if (FAILED(PrototypeManager()->Add_ProtoType("Tutorial_Level", "Proto_GameObject_TutorialInfo", CUI_TutorialInfo::Create())))
         return;
 
-    auto ptutorial = Builder::Create_UIObject({ "Tutorial_Level", "Proto_GameObject_Tutorial" })
-        .Build("tutorial");
+    auto ptutorialInfo = Builder::Create_UIObject({ "Tutorial_Level", "Proto_GameObject_TutorialInfo" })
+        .Build("tutorialInfo");
 
-    if (ptutorial)
+    if (ptutorialInfo)
     {
-        UIManager()->Add_UIObject(ptutorial, "Tutorial_Level");
-        UIDirector()->Register(ptutorial);
+        UIManager()->Add_UIObject(ptutorialInfo, "Tutorial_Level");
+        UIDirector()->Register(ptutorialInfo);
     }
 
     // ui ¼ÂÆÃ
     uiDirector->FadeIn_Screen(1.f); 
     uiDirector->Show_HUD(CUIDirector::HUD::BATTLE);
-    uiDirector->Show_Tutorial(TUTORIAL_TYPE::EXTREME_EVADE);
+    uiDirector->Show_TutorialInfo(TUTORIAL_TYPE::EXTREME_EVADE);
 }
 
 CTutorial_Level* CTutorial_Level::Create(const string& LevelKey)

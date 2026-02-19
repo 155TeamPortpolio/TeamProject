@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "UI_Tutorial.h"
+#include "UI_TutorialInfo.h"
 
 #include "GameInstance.h"
 #include "ObjectContainer.h"
@@ -11,7 +11,7 @@
 
 #include "UIDirector.h"
 
-HRESULT CUI_Tutorial::Initialize_Prototype()
+HRESULT CUI_TutorialInfo::Initialize_Prototype()
 {
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
@@ -24,12 +24,12 @@ HRESULT CUI_Tutorial::Initialize_Prototype()
 	return S_OK;
 }
 
-HRESULT CUI_Tutorial::Initialize(INIT_DESC* pArg)
+HRESULT CUI_TutorialInfo::Initialize(INIT_DESC* pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-    Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("tutorial.json")));
+    Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("tutorialInfo.json")));
     Cache();
 
     Create_ExitButton();
@@ -40,12 +40,12 @@ HRESULT CUI_Tutorial::Initialize(INIT_DESC* pArg)
 	return S_OK;
 }
 
-void CUI_Tutorial::Awake()
+void CUI_TutorialInfo::Awake()
 {
     Set_Alive(false);
 }
 
-void CUI_Tutorial::Update(_float dt)
+void CUI_TutorialInfo::Update(_float dt)
 {
     __super::Update(dt);
     Get_Component<CObjectContainer>()->UpdateChild(dt);
@@ -54,12 +54,12 @@ void CUI_Tutorial::Update(_float dt)
         Set_Alive(false);
 }
 
-void CUI_Tutorial::UI_Active(void* pArg)
+void CUI_TutorialInfo::UI_Active(void* pArg)
 {
     if (!pArg)
         return;
      
-    TUTORIAL_DESC* pDesc = static_cast<TUTORIAL_DESC*>(pArg);
+    TUTORIAL_INFO_DESC* pDesc = static_cast<TUTORIAL_INFO_DESC*>(pArg);
     m_eType = pDesc->eType;
 
     m_isCheck = false; 
@@ -71,7 +71,7 @@ void CUI_Tutorial::UI_Active(void* pArg)
     GameInstance()->Set_EngineTimeScale(0.f);
 }
 
-void CUI_Tutorial::UI_DeActive(void* pArg)
+void CUI_TutorialInfo::UI_DeActive(void* pArg)
 {
     m_isCheck = true;
     Set_Animation(1);
@@ -87,14 +87,14 @@ void CUI_Tutorial::UI_DeActive(void* pArg)
     EventSystem()->Broadcast<TUTORIAL_DESC>({ desc });
 }
 
-void CUI_Tutorial::Cache()
+void CUI_TutorialInfo::Cache()
 {
     auto pTitle = Get_Component<CObjectContainer>()->Find_Descendant("title");
     if (pTitle)
         m_pTitle = pTitle->Get_Component<CTextSlot>();
 }
 
-HRESULT CUI_Tutorial::Create_ExitButton()
+HRESULT CUI_TutorialInfo::Create_ExitButton()
 {
     CUI_ButtonPanel::BUTTON_DESC* pDesc = new CUI_ButtonPanel::BUTTON_DESC;
     pDesc->strJsonKey = "tutorial_exitButton.json";
@@ -111,7 +111,7 @@ HRESULT CUI_Tutorial::Create_ExitButton()
     return S_OK;
 }
 
-HRESULT CUI_Tutorial::Create_EnterButton()
+HRESULT CUI_TutorialInfo::Create_EnterButton()
 {
     CUI_ButtonPanel::BUTTON_DESC* pDesc = new CUI_ButtonPanel::BUTTON_DESC;
     pDesc->strJsonKey = "tutorial_enterButton.json";
@@ -129,7 +129,7 @@ HRESULT CUI_Tutorial::Create_EnterButton()
     return S_OK;
 }
 
-HRESULT CUI_Tutorial::Create_TutorialDescriptions()
+HRESULT CUI_TutorialInfo::Create_TutorialDescriptions()
 {
     for (_int i = 0; i < ENUM(TUTORIAL_TYPE::END); ++i)
     {
@@ -151,7 +151,7 @@ HRESULT CUI_Tutorial::Create_TutorialDescriptions()
     return S_OK;
 }
 
-HRESULT CUI_Tutorial::Create_TutorialVideo()
+HRESULT CUI_TutorialInfo::Create_TutorialVideo()
 {
     auto pObj = Builder::Create_UIObject({ "Tutorial_Level", "Proto_GameObject_TutorialVideo"})
         .Build("video");
@@ -165,7 +165,7 @@ HRESULT CUI_Tutorial::Create_TutorialVideo()
     return S_OK;
 }
 
-void CUI_Tutorial::Change_Description(TUTORIAL_TYPE eType)
+void CUI_TutorialInfo::Change_Description(TUTORIAL_TYPE eType)
 {
     for (auto& pair : m_Descriptions)
         pair.second->Set_Alpha(0.f);
@@ -182,7 +182,7 @@ void CUI_Tutorial::Change_Description(TUTORIAL_TYPE eType)
         m_pVideo->Play(eType);
 }
 
-void CUI_Tutorial::Change_TitleText(TUTORIAL_TYPE eType)
+void CUI_TutorialInfo::Change_TitleText(TUTORIAL_TYPE eType)
 {
     if (!m_pTitle)
         return;
@@ -190,7 +190,7 @@ void CUI_Tutorial::Change_TitleText(TUTORIAL_TYPE eType)
     m_pTitle->Set_Text(Get_TitleText(eType));
 }
 
-wstring CUI_Tutorial::Get_TitleText(TUTORIAL_TYPE eType)
+wstring CUI_TutorialInfo::Get_TitleText(TUTORIAL_TYPE eType)
 {
     switch (eType)
     {
@@ -202,29 +202,29 @@ wstring CUI_Tutorial::Get_TitleText(TUTORIAL_TYPE eType)
     }
 }
 
-CGameObject* CUI_Tutorial::Create()
+CGameObject* CUI_TutorialInfo::Create()
 {
-    CUI_Tutorial* pInstance = new CUI_Tutorial();
+    CUI_TutorialInfo* pInstance = new CUI_TutorialInfo();
     if (FAILED(pInstance->Initialize_Prototype()))
     {
-        MSG_BOX("Failed to Create : CUI_Tutorial");
+        MSG_BOX("Failed to Create : CUI_TutorialInfo");
         Safe_Release(pInstance);
     }
     return pInstance;
 }
 
-CGameObject* CUI_Tutorial::Clone(INIT_DESC* pArg)
+CGameObject* CUI_TutorialInfo::Clone(INIT_DESC* pArg)
 {
-    CUI_Tutorial* pInstance = new CUI_Tutorial(*this);
+    CUI_TutorialInfo* pInstance = new CUI_TutorialInfo(*this);
     if (FAILED(pInstance->Initialize(pArg)))
     {
-        MSG_BOX("Failed to Clone : CUI_Tutorial");
+        MSG_BOX("Failed to Clone : CUI_TutorialInfo");
         Safe_Release(pInstance);
     }
     return pInstance;
 }
 
-void CUI_Tutorial::Free()
+void CUI_TutorialInfo::Free()
 {
     __super::Free();
 

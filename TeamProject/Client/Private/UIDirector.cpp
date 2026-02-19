@@ -14,7 +14,7 @@
 #include "UI_RenderTargetScreen.h"
 #include "UI_Party.h"
 #include "UI_Switch.h"
-#include "UI_Tutorial.h"
+#include "UI_TutorialInfo.h"
 
 IMPLEMENT_SINGLETON(CUIDirector);
 
@@ -92,17 +92,17 @@ void CUIDirector::Hide_Party()
 	UI_DeActive("party");
 }
 
-void CUIDirector::Show_Tutorial(TUTORIAL_TYPE eType)
+void CUIDirector::Show_TutorialInfo(TUTORIAL_TYPE eType)
 {
-	CUI_Tutorial::UI_TUTORIAL_DESC desc = {};
+	CUI_TutorialInfo::TUTORIAL_INFO_DESC desc = {};
 	desc.eType = eType;
 	
-	UI_Active("tutorial", &desc);
+	UI_Active("tutorialInfo", &desc);
 }
 
-void CUIDirector::Hide_Tutorial()
+void CUIDirector::Hide_TutorialInfo()
 {
-	UI_DeActive("tutorial");
+	UI_DeActive("tutorialInfo");
 }
 
 void CUIDirector::Request_DamageText(const DAMAGE_DESC& desc)
