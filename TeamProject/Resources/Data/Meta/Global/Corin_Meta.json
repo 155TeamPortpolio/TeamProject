@@ -694,6 +694,11 @@
           "EventTime": 1.1810916662216187,
           "EventType": "Notify",
           "EventTag": "SawEnd"
+        },
+        {
+          "EventTime": 1.1910916662216187,
+          "EventType": "Notify",
+          "EventTag": "CheckCombo"
         }
       ]
     },

@@ -296,6 +296,7 @@ protected:
     _float      m_fRimLightPower = { 0.f };
     _float      m_fDissolveProgress = { 0.f };
     _float      m_fDissolveTiling = { 20.f };
+    _float      m_fMotionBlurFade = { 0.f };
     // 테스트
     _bool       m_bTest = { false };
 
