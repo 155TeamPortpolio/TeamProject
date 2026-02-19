@@ -31,9 +31,7 @@ namespace
     }
     _bool IsParrySeqKey(const string& key)
     {
-        if (StartsWith(key, "Parry/")) return true;
-        if (StartsWith(key, "BossParry/")) return true;
-        return false;
+        return (StartsWith(key, "Parry/")) ? true : false;
     }
 }
 
@@ -108,8 +106,8 @@ void CCamDirector::AutoField(CamStartDir dir)
     case CamStartDir::Back:  RequestSequence("Field/Back");  break;
     }
 
-    if (m_gate.Pass())
-        RenderSystem()->SetOn(false);
+    //if (m_gate.Pass())
+    //    RenderSystem()->SetOn(false);
 }
 
 void CCamDirector::AutoBattle(CamStartDir dir)
@@ -122,8 +120,8 @@ void CCamDirector::AutoBattle(CamStartDir dir)
     case CamStartDir::Back:  RequestSequence("Battle/Back");  break;
     }
 
-    if (m_gate.Pass())
-        RenderSystem()->SetOn(false);
+    //if (m_gate.Pass())
+    //    RenderSystem()->SetOn(false);
 }
 
 void CCamDirector::Update(_float dt)
@@ -476,26 +474,4 @@ void CCamDirector::StopAll(_float blendOutSec)
 {
     if (!m_playing.active) return;
     StopRequest(m_playing.handle, blendOutSec, true);
-}
-
-void CCamDirector::EnterSwitch()
-{
-    if (m_switchMode) return;
-    if (m_playing.active) return;
-
-    m_switchMode = true;
-    m_switch.Begin();
-}
-
-void CCamDirector::SwitchTo()
-{
-    if (!m_switchMode) return;
-    m_switch.Switch();
-}
-
-void CCamDirector::EndSwitch()
-{
-    if (!m_switchMode) return;
-    m_switch.End();
-    m_switchMode = false;
 }

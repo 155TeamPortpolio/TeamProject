@@ -26,6 +26,7 @@ public:
     void    SyncFromCurTransform();
     void    SnapFromCamPose(const Vector3& pos, const Quaternion& rot);
     void    SnapFromOrbitPose(const Vector3& pivotWorld, const Vector3& camPos, const Quaternion& camRot, _float dist);
+    void    SnapFromExternalPose(const Vector3& pivotWorld, const Vector3& camPos, const Quaternion& camRot, _float dist);
 
     void    CaptureSnapshot(OrbitSnapshot& out) const;
     void    RestoreSnapshot(const OrbitSnapshot& s);
