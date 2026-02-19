@@ -48,8 +48,6 @@ public:
 	//==================== Scott ===============
 	void Show_Party(vector<CHARACTER> characters);
 	void Hide_Party();
-	void Show_TutorialInfo(TUTORIAL_TYPE eType);
-	void Hide_TutorialInfo();
 
 	//==================== Battle ===============
 	void Request_DamageText(const DAMAGE_DESC& desc);

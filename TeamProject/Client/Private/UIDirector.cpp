@@ -92,19 +92,6 @@ void CUIDirector::Hide_Party()
 	UI_DeActive("party");
 }
 
-void CUIDirector::Show_TutorialInfo(TUTORIAL_TYPE eType)
-{
-	CUI_TutorialInfo::TUTORIAL_INFO_DESC desc = {};
-	desc.eType = eType;
-	
-	UI_Active("tutorialInfo", &desc);
-}
-
-void CUIDirector::Hide_TutorialInfo()
-{
-	UI_DeActive("tutorialInfo");
-}
-
 void CUIDirector::Request_DamageText(const DAMAGE_DESC& desc)
 {
 	const string levelKey = LevelManager()->Get_NowLevelKey();

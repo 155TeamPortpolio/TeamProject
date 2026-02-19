@@ -3,6 +3,7 @@
 
 #include "GameInstance.h"
 #include "ObjectContainer.h"
+#include "EventListener.h"
 #include "TextSlot.h"
 
 #include "UI_ButtonPanel.h"
@@ -17,6 +18,7 @@ HRESULT CUI_TutorialInfo::Initialize_Prototype()
 		return E_FAIL;
 
     Add_Component<CObjectContainer>();
+    Add_Component<CEventListener>();
 
     PrototypeManager()->Add_ProtoType("Tutorial_Level", "Proto_GameObject_TutorialDescription", CUI_TutorialDescription::Create());
     PrototypeManager()->Add_ProtoType("Tutorial_Level", "Proto_GameObject_TutorialVideo", CUI_TutorialVideo::Create());
@@ -29,20 +31,36 @@ HRESULT CUI_TutorialInfo::Initialize(INIT_DESC* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-    Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("tutorialInfo.json")));
+    Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("tutorial_info.json")));
     Cache();
 
     Create_ExitButton();
     Create_EnterButton();
     Create_TutorialDescriptions();
-    Create_TutorialVideo();
+    //Create_TutorialVideo();
+
+    // ¿Ã∫•∆Æ : TUTORIAL_DESC
+    Get_Component<CEventListener>()->Add_Listener<TUTORIAL_DESC>([&](const TUTORIAL_DESC& desc)
+        {
+            if (desc.eState != TUTORIAL_STATE::INFO)
+                return;
+             
+            m_isCheck = false;
+            Set_Animation(0);
+            Set_Alive(true);
+            Change_Description(desc.eType);
+
+            UIDirector()->Show_Mouse();
+            GameInstance()->Set_EngineTimeScale(0.f);
+        });
 
 	return S_OK;
 }
 
 void CUI_TutorialInfo::Awake()
 {
-    Set_Alive(false);
+    //Set_Alive(false);
+    Change_Description(TUTORIAL_TYPE::EXTREME_EVADE);
 }
 
 void CUI_TutorialInfo::Update(_float dt)
@@ -106,6 +124,7 @@ HRESULT CUI_TutorialInfo::Create_ExitButton()
     if (!pObj)
         return E_FAIL;
 
+    pObj->Set_OnClick([]() { LevelManager()->Request_ChangeLevel("Scott_Level", true); });
     Get_Component<CObjectContainer>()->Add_Child(pObj);
 
     return S_OK;
@@ -167,6 +186,8 @@ HRESULT CUI_TutorialInfo::Create_TutorialVideo()
 
 void CUI_TutorialInfo::Change_Description(TUTORIAL_TYPE eType)
 {
+    m_eType = eType;
+
     for (auto& pair : m_Descriptions)
         pair.second->Set_Alpha(0.f);
 
@@ -178,8 +199,8 @@ void CUI_TutorialInfo::Change_Description(TUTORIAL_TYPE eType)
 
     Change_TitleText(eType);
 
-    if (m_pVideo) 
-        m_pVideo->Play(eType);
+    //if (m_pVideo) 
+    //    m_pVideo->Play(eType);
 }
 
 void CUI_TutorialInfo::Change_TitleText(TUTORIAL_TYPE eType)

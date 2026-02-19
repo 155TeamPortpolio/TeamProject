@@ -1530,6 +1530,9 @@
     <Filter Include="02. GameObject\UI\01. 2D\TutorialInfo\Video">
       <UniqueIdentifier>{68f11833-e895-49ac-a315-afca6d826518}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\TutorialGuide">
+      <UniqueIdentifier>{18163600-78f6-4e09-884d-246f0fd9103a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -2978,6 +2981,9 @@
     <ClInclude Include="..\Public\UI_GachaCharacterIntro.h">
       <Filter>02. GameObject\UI\01. 2D\Gacha\Page\CharacterIntro</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UI_TutorialGuide.h">
+      <Filter>02. GameObject\UI\01. 2D\TutorialGuide</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -4378,6 +4384,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\UI_GachaCharacterIntro.cpp">
       <Filter>02. GameObject\UI\01. 2D\Gacha\Page\CharacterIntro</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_TutorialGuide.cpp">
+      <Filter>02. GameObject\UI\01. 2D\TutorialGuide</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

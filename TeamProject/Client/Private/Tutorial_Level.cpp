@@ -18,6 +18,7 @@
 
 /* UI */
 #include "UI_TutorialInfo.h"
+#include "UI_TutorialGuide.h"
 
 #include "Claymore.h"
 #include "EnemyAttackCollider.h"
@@ -76,6 +77,12 @@ HRESULT CTutorial_Level::Awake()
     PrototypeManager()->Add_ProtoType("Tutorial_Level", "Proto_GameObject_EnemyAttackCollider", CEnemyAttackCollider::Create());
     BattleSystem()->SpawnMosnter("Proto_GameObject_Claymore", _float3(-0.18f, 2.f, 1.59f));
 
+    /**/
+    //TUTORIAL_DESC desc = {};
+    //desc.eType = TUTORIAL_TYPE::EXTREME_EVADE;
+    //desc.eState = TUTORIAL_STATE::INFO;
+    //EventSystem()->Broadcast<TUTORIAL_DESC>({ desc });
+
     return S_OK;
 }
 
@@ -107,20 +114,28 @@ void CTutorial_Level::Ready_UI()
 
     if (FAILED(PrototypeManager()->Add_ProtoType("Tutorial_Level", "Proto_GameObject_TutorialInfo", CUI_TutorialInfo::Create())))
         return;
+    if (FAILED(PrototypeManager()->Add_ProtoType("Tutorial_Level", "Proto_GameObject_TutorialGuide", CUI_TutorialGuide::Create())))
+        return;
 
     auto ptutorialInfo = Builder::Create_UIObject({ "Tutorial_Level", "Proto_GameObject_TutorialInfo" })
         .Build("tutorialInfo");
-
     if (ptutorialInfo)
     {
         UIManager()->Add_UIObject(ptutorialInfo, "Tutorial_Level");
         UIDirector()->Register(ptutorialInfo);
     }
 
+    auto ptutorialGuide = Builder::Create_UIObject({ "Tutorial_Level", "Proto_GameObject_TutorialGuide" })
+        .Build("tutorialGuide");
+    if (ptutorialGuide)
+    {
+        UIManager()->Add_UIObject(ptutorialGuide, "Tutorial_Level");
+        UIDirector()->Register(ptutorialGuide);
+    }
+
     // ui ¼ÂÆÃ
     uiDirector->FadeIn_Screen(1.f); 
     uiDirector->Show_HUD(CUIDirector::HUD::BATTLE);
-    uiDirector->Show_TutorialInfo(TUTORIAL_TYPE::EXTREME_EVADE);
 }
 
 CTutorial_Level* CTutorial_Level::Create(const string& LevelKey)

@@ -1,6 +1,6 @@
 {
     "alive": true,
-    "instanceName": "tutorialInfo",
+    "instanceName": "tutorial_info",
     "transform": {
         "anchor": 0,
         "anchorOffset": [

@@ -1,0 +1,620 @@
+{
+    "alive": true,
+    "instanceName": "tutorial_bubble",
+    "transform": {
+        "anchor": 6,
+        "anchorOffset": [
+            -568.0,
+            37.0
+        ],
+        "size": [
+            500.0,
+            58.0
+        ],
+        "scale": [
+            1.0,
+            1.0
+        ],
+        "pivot": [
+            0.0,
+            0.0
+        ],
+        "radian": 0.0
+    },
+    "color": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+    ],
+    "stencilMode": 0,
+    "pass": "Opaque",
+    "colorTexKey": "empty.png",
+    "colorTexMode": 0,
+    "colorTexMix": 1.0,
+    "colorUVUse": 0,
+    "colorUVOffset": [
+        0.0,
+        0.0
+    ],
+    "colorUVScale": [
+        1.0,
+        1.0
+    ],
+    "colorUVAutoScroll": false,
+    "colorUVSpeed": [
+        0.0,
+        0.0
+    ],
+    "animClips": [],
+    "children": [
+        {
+            "alive": true,
+            "instanceName": "CanvasPanel",
+            "transform": {
+                "anchor": 2,
+                "anchorOffset": [
+                    0.0,
+                    -29.0
+                ],
+                "size": [
+                    500.0,
+                    58.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    1.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "stencilMode": 0,
+            "pass": "Opaque",
+            "colorTexKey": "empty.png",
+            "colorTexMode": 0,
+            "colorTexMix": 1.0,
+            "colorUVUse": 0,
+            "colorUVOffset": [
+                0.0,
+                0.0
+            ],
+            "colorUVScale": [
+                1.0,
+                1.0
+            ],
+            "colorUVAutoScroll": false,
+            "colorUVSpeed": [
+                0.0,
+                0.0
+            ],
+            "animClips": [],
+            "children": [
+                {
+                    "alive": true,
+                    "instanceName": "NineSlice",
+                    "transform": {
+                        "anchor": 2,
+                        "anchorOffset": [
+                            0.0,
+                            -25.0
+                        ],
+                        "size": [
+                            500.0,
+                            50.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            1.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "stencilMode": 0,
+                    "pass": "NineSlice",
+                    "colorTexKey": "empty.png",
+                    "colorTexMode": 0,
+                    "colorTexMix": 1.0,
+                    "colorUVUse": 0,
+                    "colorUVOffset": [
+                        0.0,
+                        0.0
+                    ],
+                    "colorUVScale": [
+                        1.0,
+                        1.0
+                    ],
+                    "colorUVAutoScroll": false,
+                    "colorUVSpeed": [
+                        0.0,
+                        0.0
+                    ],
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "NineSlice",
+                    "textureTag": "MissionGetBg.png",
+                    "nineSlice": {
+                        "borderPx": [
+                            25.0,
+                            25.0,
+                            25.0,
+                            25.0
+                        ],
+                        "uvRangeX": [
+                            0.0,
+                            0.5319148898124695,
+                            0.4680851101875305,
+                            1.0
+                        ],
+                        "uvRangeY": [
+                            0.0,
+                            0.5319148898124695,
+                            0.4680851101875305,
+                            1.0
+                        ],
+                        "textureSize": [
+                            47.0,
+                            47.0
+                        ]
+                    }
+                },
+                {
+                    "alive": true,
+                    "instanceName": "Text",
+                    "transform": {
+                        "anchor": 2,
+                        "anchorOffset": [
+                            -108.0,
+                            -0.0
+                        ],
+                        "size": [
+                            0.0,
+                            0.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "stencilMode": 0,
+                    "pass": "Opaque",
+                    "colorTexKey": "empty.png",
+                    "colorTexMode": 0,
+                    "colorTexMix": 1.0,
+                    "colorUVUse": 0,
+                    "colorUVOffset": [
+                        0.0,
+                        0.0
+                    ],
+                    "colorUVScale": [
+                        1.0,
+                        1.0
+                    ],
+                    "colorUVAutoScroll": false,
+                    "colorUVSpeed": [
+                        0.0,
+                        0.0
+                    ],
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "Text",
+                    "text": {
+                        "content": "피격 직전에 을 짧게 탭하여 [극한 회피] 발동",
+                        "fontTag": "NanumSquareNeo.spritefont",
+                        "fontScale": 0.4499998688697815,
+                        "outlined": false,
+                        "outlineThickness": 1.0,
+                        "outlineColor": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                        ],
+                        "shear": [
+                            -0.20000000298023224,
+                            0.0
+                        ],
+                        "autoPos": true,
+                        "anchor": 2
+                    }
+                },
+                {
+                    "alive": true,
+                    "instanceName": "Text",
+                    "transform": {
+                        "anchor": 2,
+                        "anchorOffset": [
+                            -64.0,
+                            0.0
+                        ],
+                        "size": [
+                            0.0,
+                            0.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        0.9034749269485474,
+                        0.5434803366661072,
+                        0.00348832574672997,
+                        1.0
+                    ],
+                    "stencilMode": 0,
+                    "pass": "Opaque",
+                    "colorTexKey": "empty.png",
+                    "colorTexMode": 0,
+                    "colorTexMix": 1.0,
+                    "colorUVUse": 0,
+                    "colorUVOffset": [
+                        0.0,
+                        0.0
+                    ],
+                    "colorUVScale": [
+                        1.0,
+                        1.0
+                    ],
+                    "colorUVAutoScroll": false,
+                    "colorUVSpeed": [
+                        0.0,
+                        0.0
+                    ],
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "Text",
+                    "text": {
+                        "content": "0/2",
+                        "fontTag": "NanumSquareNeo.spritefont",
+                        "fontScale": 0.39999985694885254,
+                        "outlined": false,
+                        "outlineThickness": 1.0,
+                        "outlineColor": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                        ],
+                        "shear": [
+                            -0.20000000298023224,
+                            0.0
+                        ],
+                        "autoPos": true,
+                        "anchor": 2
+                    }
+                }
+            ],
+            "typeTag": "CanvasPanel"
+        },
+        {
+            "alive": true,
+            "instanceName": "CanvasPanel",
+            "transform": {
+                "anchor": 2,
+                "anchorOffset": [
+                    0.0,
+                    29.0
+                ],
+                "size": [
+                    58.0,
+                    58.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    1.0,
+                    1.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "stencilMode": 0,
+            "pass": "Opaque",
+            "colorTexKey": "empty.png",
+            "colorTexMode": 0,
+            "colorTexMix": 1.0,
+            "colorUVUse": 0,
+            "colorUVOffset": [
+                0.0,
+                0.0
+            ],
+            "colorUVScale": [
+                1.0,
+                1.0
+            ],
+            "colorUVAutoScroll": false,
+            "colorUVSpeed": [
+                0.0,
+                0.0
+            ],
+            "animClips": [
+                {
+                    "duration": 1.0,
+                    "keyframes": [
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "easeType": 0,
+                            "position": [
+                                0.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 0.0
+                        },
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "easeType": 0,
+                            "position": [
+                                0.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 0.5
+                        }
+                    ],
+                    "loop": false,
+                    "name": "clip0"
+                },
+                {
+                    "duration": 3.0,
+                    "keyframes": [
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "easeType": 0,
+                            "position": [
+                                0.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 0.0
+                        },
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "easeType": 0,
+                            "position": [
+                                0.0,
+                                0.0
+                            ],
+                            "scale": [
+                                0.6000000238418579,
+                                1.2000000476837158
+                            ],
+                            "time": 0.5
+                        },
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "easeType": 0,
+                            "position": [
+                                0.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.2000000476837158,
+                                0.6000000238418579
+                            ],
+                            "time": 1.0
+                        },
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "easeType": 0,
+                            "position": [
+                                0.0,
+                                0.0
+                            ],
+                            "scale": [
+                                0.0,
+                                0.0
+                            ],
+                            "time": 1.5
+                        }
+                    ],
+                    "loop": false,
+                    "name": "clip1"
+                }
+            ],
+            "children": [
+                {
+                    "alive": true,
+                    "instanceName": "Image",
+                    "transform": {
+                        "anchor": 0,
+                        "anchorOffset": [
+                            3.0,
+                            0.0
+                        ],
+                        "size": [
+                            64.44444274902344,
+                            60.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.5,
+                            0.5
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "stencilMode": 0,
+                    "pass": "Opaque",
+                    "colorTexKey": "empty.png",
+                    "colorTexMode": 0,
+                    "colorTexMix": 1.0,
+                    "colorUVUse": 0,
+                    "colorUVOffset": [
+                        0.0,
+                        0.0
+                    ],
+                    "colorUVScale": [
+                        1.0,
+                        1.0
+                    ],
+                    "colorUVAutoScroll": false,
+                    "colorUVSpeed": [
+                        0.0,
+                        0.0
+                    ],
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "Image",
+                    "textureTag": "sactx-512x512-DXT5-NewsBubble_Packer-46aede52 1.png"
+                },
+                {
+                    "alive": true,
+                    "instanceName": "SpriteAnimation",
+                    "transform": {
+                        "anchor": 0,
+                        "anchorOffset": [
+                            0.0,
+                            0.0
+                        ],
+                        "size": [
+                            48.0,
+                            48.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.5,
+                            0.5
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "stencilMode": 0,
+                    "pass": "SpriteAnimation",
+                    "colorTexKey": "empty.png",
+                    "colorTexMode": 0,
+                    "colorTexMix": 1.0,
+                    "colorUVUse": 0,
+                    "colorUVOffset": [
+                        0.0,
+                        0.0
+                    ],
+                    "colorUVScale": [
+                        1.0,
+                        1.0
+                    ],
+                    "colorUVAutoScroll": false,
+                    "colorUVSpeed": [
+                        0.0,
+                        0.0
+                    ],
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "SpriteAnimation",
+                    "textureTag": "Fairy_Normal.png",
+                    "spriteAnimation": {
+                        "loop": true,
+                        "frameCountX": 6,
+                        "frameCountY": 5,
+                        "frameCountTotal": 29,
+                        "frameSpeed": 30.0
+                    }
+                }
+            ],
+            "typeTag": "CanvasPanel"
+        }
+    ],
+    "typeTag": "CanvasPanel"
+}
