@@ -16,12 +16,12 @@ HRESULT CUI_TutorialDescription::Initialize_Prototype()
 
 HRESULT CUI_TutorialDescription::Initialize(INIT_DESC* pArg)
 {
-    TUTORIAL_DESC* pDesc = static_cast<TUTORIAL_DESC*>(pArg);
-
     if (FAILED(__super::Initialize(pArg)))
         return E_FAIL;
 
-    Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath(Get_PrefaPath(pDesc->eTutorial))));// "tutorial_extremeEvade.json")));
+    TUTORIAL_DESC* pDesc = static_cast<TUTORIAL_DESC*>(pArg);
+
+    Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath(Get_PrefaPath(pDesc->eType))));// "tutorial_extremeEvade.json")));
 
     return S_OK;
 }
@@ -44,14 +44,14 @@ void CUI_TutorialDescription::UI_DeActive(void* pArg)
 {
 }
 
-const char* CUI_TutorialDescription::Get_PrefaPath(TUTORIAL eTutorial)
+string CUI_TutorialDescription::Get_PrefaPath(TUTORIAL_TYPE eType)
 {
-    switch (eTutorial)
+    switch (eType)
     {
-    case TUTORIAL::EXTREME_EVADE: return "tutorial_extremeEvade.json";
-    case TUTORIAL::EXTREME_SUPPORT: return "tutorial_extremeSupport.json";
-    case TUTORIAL::DECIBEL_ULTIMATE: return "tutorial_decibelUltimate.json";
-    case TUTORIAL::GROGGY_COMBO: return "tutorial_groggyCombo.json";
+    case TUTORIAL_TYPE::EXTREME_EVADE: return "tutorial_extremeEvade.json";
+    case TUTORIAL_TYPE::EXTREME_SUPPORT: return "tutorial_extremeSupport.json";
+    case TUTORIAL_TYPE::DECIBEL_ULTIMATE: return "tutorial_decibelUltimate.json";
+    case TUTORIAL_TYPE::GROGGY_COMBO: return "tutorial_groggyCombo.json";
     default: return "tutorial_extremeEvade.png";
     }
 }

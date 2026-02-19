@@ -37,7 +37,8 @@ namespace Client {
 
 	enum class BOSS { Sacrifice, Defiler, End };
 
-	enum class TUTORIAL { EXTREME_EVADE, EXTREME_SUPPORT, DECIBEL_ULTIMATE, GROGGY_COMBO, END };
+	enum class TUTORIAL_TYPE { EXTREME_EVADE, EXTREME_SUPPORT, DECIBEL_ULTIMATE, GROGGY_COMBO, END };
+	enum class TUTORIAL_STATE { INFO, PLAY, COMPLETE, END };
 }
 
 #endif

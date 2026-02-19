@@ -7,7 +7,7 @@ class CUI_TutorialDescription final : public CUI_Object
 {
 public:
 	typedef struct tagTutorialDesc : public UI_DESC {
-		TUTORIAL eTutorial;
+		TUTORIAL_TYPE eType;
 	}TUTORIAL_DESC;
 
 private:
@@ -27,7 +27,7 @@ public:
 	virtual void	UI_DeActive(void* pArg = nullptr) override;
 
 private:
-	const char* Get_PrefaPath(TUTORIAL eTutorial);
+	string Get_PrefaPath(TUTORIAL_TYPE eType);
 
 public:
 	static  CGameObject* Create();

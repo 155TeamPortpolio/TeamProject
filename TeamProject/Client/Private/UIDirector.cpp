@@ -92,11 +92,11 @@ void CUIDirector::Hide_Party()
 	UI_DeActive("party");
 }
 
-void CUIDirector::Show_Tutorial(TUTORIAL eTutorial)
+void CUIDirector::Show_Tutorial(TUTORIAL_TYPE eType)
 {
-	CUI_Tutorial::TUTORIAL_DESC desc = {};
-	desc.eTutorial = eTutorial;
-
+	CUI_Tutorial::UI_TUTORIAL_DESC desc = {};
+	desc.eType = eType;
+	
 	UI_Active("tutorial", &desc);
 }
 

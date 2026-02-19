@@ -101,4 +101,8 @@ typedef struct tagNpcInteractDesc {
 }NPC_INTERACT_DESC;
 #pragma endregion
 
+typedef struct tagTutorialDesc {
+	TUTORIAL_TYPE eType = {};
+	TUTORIAL_STATE eState = {};
+}TUTORIAL_DESC;
 NS_END

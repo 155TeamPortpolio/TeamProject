@@ -10,9 +10,9 @@ NS_BEGIN(Client)
 class CUI_Tutorial final : public CUI_Object
 {
 public:
-	typedef struct tagTutorialDesc {
-		TUTORIAL eTutorial = {};
-	}TUTORIAL_DESC;
+	typedef struct tagUITutorialDesc{
+		TUTORIAL_TYPE eType = {};
+	}UI_TUTORIAL_DESC;
 
 private:
 	CUI_Tutorial() {}
@@ -31,11 +31,13 @@ public:
 	virtual void	UI_DeActive(void* pArg = nullptr) override;
 
 private:
+	TUTORIAL_TYPE m_eType = {};
+
 	_bool m_isCheck = {};
 
 	class CTextSlot* m_pTitle = {};
 	
-	map<TUTORIAL, CUI_Object*> m_Descriptions;
+	map<TUTORIAL_TYPE, CUI_Object*> m_Descriptions;
 
 	class CUI_TutorialVideo* m_pVideo = {};
 
@@ -46,10 +48,10 @@ private:
 	HRESULT Create_TutorialDescriptions();
 	HRESULT Create_TutorialVideo();
 
-	void Change_Description(TUTORIAL eTutorial);
-	void Change_TitleText(TUTORIAL eTutorial);
+	void Change_Description(TUTORIAL_TYPE eType);
+	void Change_TitleText(TUTORIAL_TYPE eType);
 
-	wstring Get_TitleText(TUTORIAL eTutorial);
+	wstring Get_TitleText(TUTORIAL_TYPE eType);
 
 public:
 	static  CGameObject* Create();
