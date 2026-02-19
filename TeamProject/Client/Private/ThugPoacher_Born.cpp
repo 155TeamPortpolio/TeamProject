@@ -14,6 +14,7 @@ void CThugPoacher_Born::Enter(CThugPoacher* pOwner)
 
 void CThugPoacher_Born::Update(CThugPoacher* pOwner, _float dt)
 {
+	pOwner->Update_SpawnSequence(dt);
 }
 
 void CThugPoacher_Born::Exit(CThugPoacher* pOwner)

@@ -897,9 +897,6 @@
     <Filter Include="02. GameObject\Object\Enemy\Normal\EtherClaymore\State\Born">
       <UniqueIdentifier>{c2a0b3f3-c8a4-46a4-81b3-aa0f1e1a74dc}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\Normal\EtherClaymore\State\Chase">
-      <UniqueIdentifier>{aca0e369-cacf-41e6-a0ee-16f83b25c4de}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\Object\Enemy\Normal\EtherClaymore\State\Death">
       <UniqueIdentifier>{2db3d7c9-b8f9-4c75-93f2-be7ffd8ff4a9}</UniqueIdentifier>
     </Filter>
@@ -1526,6 +1523,9 @@
     </Filter>
     <Filter Include="02. GameObject\UI\01. 2D\Mouse">
       <UniqueIdentifier>{98fd454b-877d-440b-b021-4f579ad934bf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\EtherClaymore\State\Chase">
+      <UniqueIdentifier>{aca0e369-cacf-41e6-a0ee-16f83b25c4de}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

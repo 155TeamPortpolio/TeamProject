@@ -249,22 +249,6 @@ void CamParryController::UpdatePivots(_float dt)
         piv.aFace = Vector3::Lerp(piv.aFace, attackerSample.facePivot, t);
     }
 
-    const OBJECT_HANDLE target = CamDirector()->GetCurTarget();
-    const PivotSample targetSample = SamplePivots(target, offsetY);
-    if (targetSample.valid)
-    {
-        if (!piv.hasTBase)
-        {
-            piv.tBase = targetSample.basePivot;
-            piv.hasTBase = true;
-        }
-        else
-        {
-            const _float t = clamp(dt * 18.f, 0.f, 1.f);
-            piv.tBase = Vector3::Lerp(piv.tBase, targetSample.basePivot, t);
-        }
-    }
-
     auto attackerObj = ObjectManager()->Request_Object(core.attacker);
     auto attackerTf = attackerObj->Get_Component<CTransform>();
 
@@ -280,7 +264,6 @@ void CamParryController::UpdatePivots(_float dt)
 
     side.dirXZ = RotateYDegXZ(Vector3(0.f, 0.f, 1.f), yaw);
 }
-
 
 void CamParryController::ClampAboveGround(ShotGoal& g) const
 {
@@ -358,13 +341,6 @@ CamParryController::ShotGoal CamParryController::BuildBaseShot_NoLens(_int sideS
     ClampAboveGround(g);
 
     return g;
-}
-
-Vector3 CamParryController::BasePivotWorld() const
-{
-    constexpr _float kTargetWeight = 0.40f;
-    if (!piv.hasTBase) return piv.aBase;
-    return Vector3::Lerp(piv.aBase, piv.tBase, kTargetWeight);
 }
 
 void CamParryController::CaptureCurAsFrom()
@@ -735,9 +711,6 @@ void CamParryController::Reset()
     piv.aBase = Vector3::Zero;
     piv.aFace = Vector3::Zero;
 
-    piv.tBase = Vector3::Zero;
-    piv.hasTBase = false;
-
     piv.enterCamY = 0.f;
 
     shot.shotFrom = {};
@@ -802,14 +775,6 @@ void CamParryController::Begin()
     piv.aBase = attackerSample.basePivot;
     piv.aFace = attackerSample.facePivot;
 
-    const OBJECT_HANDLE target = BattleSystem()->GetBattlePlayer()->GetParryHandle();
-    const PivotSample targetSample = SamplePivots(target, offsetY);
-    if (targetSample.valid)
-    {
-        piv.tBase = targetSample.basePivot;
-        piv.hasTBase = true;
-    }
-
     auto attackerObj = ObjectManager()->Request_Object(core.attacker);
     auto attackerTf = attackerObj->Get_Component<CTransform>();
 
@@ -870,8 +835,6 @@ void CamParryController::Begin()
 
     orbit->ParryMode_Begin();
 }
-
-
 
 void CamParryController::End()
 {

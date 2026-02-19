@@ -29,6 +29,7 @@ public:
     void DisAppear();
 private:
     void SummonWall();
+    void SpawnEffect();
 
 private:
     _bool m_bDangle = {};

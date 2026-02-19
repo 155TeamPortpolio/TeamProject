@@ -39,6 +39,7 @@ void CAnimToolPanel::Update_Panel(_float dt)
 
 				if (m_pSelectAnimator->isCurrentAnimEnd()) {
 					if (m_iCurrentPrevIndex < m_PreviewList.size() - 1) {
+						m_fPrevTrackPos = 0.f;
 						m_fTrackPos = 0.f;
 						m_pSelectAnimator->Set_Animation(m_PreviewList[++m_iCurrentPrevIndex])
 							.Loop(false);
@@ -49,24 +50,22 @@ void CAnimToolPanel::Update_Panel(_float dt)
 			}
 		}
 
-		_float Cur = m_pSelectAnimator->Get_AnimLayers()[0].fCurrentTrackPosition;
-		_float Prev = m_pSelectAnimator->Get_AnimLayers()[0].fPrevTrackPosition;
 		if (m_iCurClipIndex != -1)
 		{
 			for (auto& Event : m_AnimClip[m_iCurClipIndex].Events)
 			{
 				bool bTrigger = false;
 
-				if (Prev <= Cur)
+				if (m_fPrevTrackPos <= m_fTrackPos)
 				{
 					// 老馆 柳青
-					if (Prev < Event.EventTime && Event.EventTime <= Cur)
+					if (m_fPrevTrackPos < Event.EventTime && Event.EventTime <= m_fTrackPos)
 						bTrigger = true;
 				}
 				else
 				{
 					// 风橇 惯积 (Prev > Cur)
-					if (Event.EventTime > Prev || Event.EventTime <= Cur)
+					if (Event.EventTime > m_fPrevTrackPos || Event.EventTime <= m_fTrackPos)
 						bTrigger = true;
 				}
 
@@ -77,7 +76,7 @@ void CAnimToolPanel::Update_Panel(_float dt)
 				}
 			}
 		}
-
+		m_fPrevTrackPos = m_fTrackPos;
 	}
 	return;
 

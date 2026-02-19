@@ -3,19 +3,19 @@
 #include "Material.h"
 #include "SkeletalModel.h"
 #include "Animator3D.h"
-
+#include "GameInstance.h"
 static vector<string> NPC_MALE_ANIM = {
     "_Idle_200",
     "_Stand_Cough01_075",
-    "_Stand_DF_Idle01_051",
     "_Stand_Idle01_001",
     "_Stand_Idle02_002",
     "_Stand_Look_048",
     "_Stand_Positive_026",
-    "_Stand_Talk03_010",
+    "_Stand_Talk01_012",
     "_Stand_Thinking01_008",
+    "_Stand_Thinking03_010",
     "_Stand_Wait01_006",
-    "_Stand_Wait01_007",
+    "_Stand_Wait02_007",
 };
 
 static vector<string> NPC_FEMALE_ANIM = {
@@ -474,6 +474,7 @@ public:
 
         SetVariationColor(material, "Hair", &HairColor);
         SetVariationColor(material, "Ebr", &HairColor);
+        SetVariationColor(material, "Bear", &HairColor);
 
         SetVariationColor(material, "Eye", &EyeColor);
         SetVariationColor(material, "Cloth", &ClothColor);
@@ -482,6 +483,7 @@ public:
     void Render_Colors()
     {
         ImGui::DragFloat4("Hair", &HairColor.x, 0.01f, 0.f, 1.f);
+        ImGui::DragFloat4("Ebr", &HairColor.x, 0.01f, 0.f, 1.f);
         ImGui::DragFloat4("Skin", &SkinColor.x, 0.01f, 0.f, 1.f);
         ImGui::DragFloat4("Eye", &EyeColor.x, 0.01f, 0.f, 1.f);
         ImGui::DragFloat4("Cloth", &ClothColor.x, 0.01f, 0.f, 1.f);
@@ -492,14 +494,18 @@ struct NpcModelPreset
 {
 private:
     _bool isMale = false;
-
 public:
     void RandomizeModel(_bool isWalker, CSkeletalModel* pModel, CMaterial* pMaterial, CAnimator3D* pAnimator)
     {
+         string NowLevel = LevelManager()->Get_NowLevelKey();
         isMale = Helper::Get_Random_Bool();
+        if (NowLevel == "Scott_Level")
+            isMale = true;
 
         string genderWord = isMale ? "Male" : "Female";
         _int variation = Helper::Get_Random_Int(1, isMale ? 6 : 5);
+        if (NowLevel == "Scott_Level")
+            variation = Helper::Get_Random_Int(4, 6);
 
         string model = genderWord + "0" + to_string(variation) + ".model";
         string material = genderWord + "0" + to_string(variation) + ".mat";
@@ -537,4 +543,5 @@ public:
             }
         }
     }
+
 };

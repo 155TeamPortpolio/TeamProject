@@ -20,6 +20,8 @@
 #include "CamDirector.h"
 #include "EventListener.h"
 
+#include "EffectContainer.h"
+
 CDefilerAxe::CDefilerAxe()
 	: CEnemy()
 {
@@ -104,7 +106,10 @@ void CDefilerAxe::Update(_float dt)
 	}
 
 	if (m_tStatus.iNowHP <= 0.f)
+	{
 		SummonWall();
+		SpawnEffect();
+	}
 }
 
 void CDefilerAxe::Late_Update(_float dt)
@@ -169,6 +174,19 @@ void CDefilerAxe::SummonWall()
 		.Build("Wall");
 	ObjectManager()->Add_Object(pWall, { nowLevelKey,"Enemy_Layer" });
 	DisAppear();
+}
+
+void CDefilerAxe::SpawnEffect()
+{
+	_vector3 vWorldPosition = m_pTransform->Get_WorldPos();
+	vWorldPosition.y += 1.5f;
+
+	auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+		.Asset("defiler_wave_explode.json")
+		.Position(vWorldPosition)
+		.Build("Defiler_Wave_Explode");
+
+	ObjectManager()->Add_Object(pEffect, { "Zero_Level","Effect_Layer"});
 }
 
 
