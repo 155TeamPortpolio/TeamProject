@@ -150,13 +150,41 @@ void CCamDialogueController::Update(_float dt)
 {
     if (!hold && !blend) return;
 
-    auto cam     = CamDirector()->GetOrbitCamComp();
-    auto orbit   = CamDirector()->GetOrbitCam();
-    auto camTf   = orbit->Get_Component<CTransform>();
+    auto cam = CamDirector()->GetOrbitCamComp();
+    auto orbit = CamDirector()->GetOrbitCam();
+    auto camTf = orbit->Get_Component<CTransform>();
 
     const _float curFov = cam->Get_FOV();
-
     if ((hold || restore) && fovSaved == 0.f) fovSaved = curFov;
+
+    auto ForceFinish = [&]()
+        {
+            cam->Set_FOV(fovSaved != 0.f ? fovSaved : curFov);
+            orbit->ClearPivotExt();
+            orbit->DialogueYaw_Clear();
+
+            hold = false;
+            blend = false;
+            restore = false;
+
+            fovSaved = 0.f;
+            fovFrom = 0.f;
+            fovTo = 0.f;
+
+            pivotFrom = Vector3::Zero;
+            pivotTo = Vector3::Zero;
+
+            hasBlendInit = false;
+
+            partner.Reset();
+
+            sideInit = false;
+            sideSign = 0;
+            yawInit = false;
+            wSm = 0.f;
+
+            blendTime = 0.f;
+        };
 
     if (hold && !partner.isValid())
         partner = FieldSystem()->GetInteractHandle();
@@ -165,6 +193,17 @@ void CCamDialogueController::Update(_float dt)
 
     const OBJECT_HANDLE ih = FieldSystem()->GetInteractHandle();
     const OBJECT_HANDLE iph = FieldSystem()->GetInteractPartnerHandle();
+
+    if (restore && blend && blendDur > 0.f)
+    {
+        const _bool interactGone = !ih.isValid() && !iph.isValid();
+        const _bool cachedPartnerGone = !partner.isValid();
+        if (interactGone && cachedPartnerGone)
+        {
+            ForceFinish();
+            return;
+        }
+    }
 
     OBJECT_HANDLE aHandle = orbit->GetTarget();
     OBJECT_HANDLE bHandle = partner;
@@ -188,38 +227,52 @@ void CCamDialogueController::Update(_float dt)
         }
     }
 
-    const PivotSample me = SamplePivots(aHandle, offsetY, faceYOffsetMul);
-    if (!me.valid) return;
+    PivotSample me{};
+    PivotSample other{};
 
-    const PivotSample other = SamplePivots(bHandle, offsetY, faceYOffsetMul);
+    if (!restore)
+    {
+        me = SamplePivots(aHandle, offsetY, faceYOffsetMul);
+        if (!me.valid)
+        {
+            ForceFinish();
+            return;
+        }
+
+        other = SamplePivots(bHandle, offsetY, faceYOffsetMul);
+    }
 
     const Vector3 basePivot = orbit->GetBasePivot();
 
-    Vector3 desiredPivot = basePivot;
+    Vector3 desiredExt = Vector3::Zero;
+    _float desiredHoldFov = restore ? fovSaved : this->fovHold;
 
-    if (other.valid)
+    if (!restore)
     {
-        const Vector3 midXZ(
-            (me.facePivot.x + other.facePivot.x) * 0.5f,
-            0.f,
-            (me.facePivot.z + other.facePivot.z) * 0.5f
-        );
+        Vector3 desiredPivot = basePivot;
 
-        const _float midY = (me.facePivot.y + other.facePivot.y) * 0.5f;
-        desiredPivot = Vector3(midXZ.x, midY, midXZ.z);
-    }
+        if (other.valid)
+        {
+            const Vector3 midXZ(
+                (me.facePivot.x + other.facePivot.x) * 0.5f,
+                0.f,
+                (me.facePivot.z + other.facePivot.z) * 0.5f
+            );
 
-    const Vector3 rawOff = desiredPivot - basePivot;
-    desiredPivot = basePivot + ClampOffset(rawOff, maxPivotOff);
+            const _float midY = (me.facePivot.y + other.facePivot.y) * 0.5f;
+            desiredPivot = Vector3(midXZ.x, midY, midXZ.z);
+        }
 
-    Vector3 desiredExt = desiredPivot - basePivot;
+        const Vector3 rawOff = desiredPivot - basePivot;
+        desiredPivot = basePivot + ClampOffset(rawOff, maxPivotOff);
 
-    _float desiredHoldFov = this->fovHold;
+        desiredExt = desiredPivot - basePivot;
 
-    if (orbit->IsDistHit())
-    {
-        desiredHoldFov = fovSaved;
-        desiredExt = Vector3::Zero;
+        if (orbit->IsDistHit())
+        {
+            desiredHoldFov = fovSaved;
+            desiredExt = Vector3::Zero;
+        }
     }
 
     const _float blendDurSafe = max(blendDur, 0.f);

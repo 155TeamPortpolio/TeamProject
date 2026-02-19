@@ -13,6 +13,7 @@
 #include "Helper_Func.h"
 #include "Character.h"
 #include "Defiler.h"
+#include "EffectContainer.h"
 
 CMiasmaBlade::CMiasmaBlade()
 	: CEnemy()
@@ -28,8 +29,8 @@ HRESULT CMiasmaBlade::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
 
-	Add_Component<CStaticModel>()->Link_Model(G_GlobalLevelKey, "Default.model");
-	Add_Component<CMaterial>()->Link_Material(G_GlobalLevelKey, "Default.mat");
+	//Add_Component<CStaticModel>()->Link_Model(G_GlobalLevelKey, "Default.model");
+	//Add_Component<CMaterial>()->Link_Material(G_GlobalLevelKey, "Default.mat");
 	Add_Component<CRigidBody>();
 	Add_Component<CCollider>();
 	return S_OK;
@@ -57,6 +58,8 @@ HRESULT CMiasmaBlade::Initialize(INIT_DESC* pArg)
 	m_vTargetVelocity = m_pTransform->Dir(STATE::LOOK) * m_fMoveSpeed;
 	m_ElapsedTime = 0;
 
+	Initialize_Effects(desc->iCount);
+	
 	{
 		BATTLE_COLLIDER_DESC BladeDesc{};
 	
@@ -141,6 +144,35 @@ void CMiasmaBlade::Parried()
 		m_ElapsedTime = 1;
 		m_vTargetVelocity = m_pTransform->Dir(STATE::LOOK) * m_fMoveSpeed;
 		Get_Component<CRigidBody>()->Set_Velocity(m_vVelocity);
+	}
+}
+
+void CMiasmaBlade::Initialize_Effects(_uint count)
+{
+	auto pObjectContainer = Get_Component<CObjectContainer>();
+
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("defiler_miasma.json")
+			.Build("Defiler_Miasma");
+
+		auto pEffectTransform = pEffect->Get_Component<CTransform>();
+		switch (count)
+		{
+		case 0:
+			pEffectTransform->Rotate(_vector3(0.f, 0.f, 0.7747f));
+			break;
+		case 1:
+			pEffectTransform->Rotate(_vector3(0.f, 0.f, -0.7875f));
+			break;
+		case 2:
+			pEffectTransform->Rotate(_vector3(0.f, 0.f, 1.6f));
+			break;
+		default:
+			break;
+		}
+
+		pObjectContainer->Add_Child(pEffect);
 	}
 }
 

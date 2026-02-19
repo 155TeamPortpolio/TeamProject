@@ -139,6 +139,7 @@ void CMiasmaSpawner::SpawnBlade(_float3 Target, _float3 Owner, CDefiler* pDefile
 {
     const string levelKey = LevelManager()->Get_NowLevelKey();
     auto desc = new CMiasmaBlade::BladeDesc;
+    desc->iCount = m_MiasmaBladeCount;
     desc->pOwner = pDefiler;
     desc->vTargetPos = Target;
     auto pBlade =
@@ -148,6 +149,10 @@ void CMiasmaSpawner::SpawnBlade(_float3 Target, _float3 Owner, CDefiler* pDefile
     .Build("MiasmaBlade");
     ObjectManager()->Add_Object(pBlade, { levelKey ,"Enemy_Layer" });
     BattleSystem()->EnterBattleObject(BATTLE_OBJ_TYPE::MONSTER, pBlade->Get_Handle());
+
+    ++m_MiasmaBladeCount;
+    if (m_MiasmaBladeCount >= 3)
+        m_MiasmaBladeCount = 0;
 }
 
 void CMiasmaSpawner::SpawnHeavy(_float3 Target, _float3 Owner)

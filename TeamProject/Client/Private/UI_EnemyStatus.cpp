@@ -10,7 +10,8 @@
 
 HRESULT CUI_EnemyStatus::Initialize_Prototype()
 {
-    __super::Initialize_Prototype();
+    if (FAILED(__super::Initialize_Prototype()))
+        return E_FAIL;
 
     Add_Component<CObjectContainer>();
     Add_Component<CEventListener>();
@@ -20,14 +21,15 @@ HRESULT CUI_EnemyStatus::Initialize_Prototype()
 
 HRESULT CUI_EnemyStatus::Initialize(INIT_DESC* pArg)
 {
+    if (FAILED(__super::Initialize(pArg)))
+        return E_FAIL;
+
     // 외부에서 전달받은 몬스터/트랜스폼 정보 설정
     ENEMYSTATUS_DESC* pDesc = static_cast<ENEMYSTATUS_DESC*>(pArg);
     m_pParentWorld = pDesc->pParentWorld;
     m_pBoneLocal = pDesc->pBoneLocal;
     m_pMonsterStatus = pDesc->pMonsterStatus;
     m_tOwnerHandle = pDesc->tOwnerHandle;
-
-    __super::Initialize(pArg);
 
     Load_Json("enemy_status.json");
     Cache_Children();

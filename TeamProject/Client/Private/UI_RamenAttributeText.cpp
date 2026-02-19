@@ -8,7 +8,8 @@
 
 HRESULT CUI_RamenAttributeText::Initialize_Prototype()
 {
-    __super::Initialize_Prototype();
+    if (FAILED(__super::Initialize_Prototype()))
+        return E_FAIL;
 
     Add_Component<CObjectContainer>();
 
@@ -17,9 +18,10 @@ HRESULT CUI_RamenAttributeText::Initialize_Prototype()
 
 HRESULT CUI_RamenAttributeText::Initialize(INIT_DESC* pArg)
 {
-    ATTRIBUTE_DESC* pDesc = static_cast<ATTRIBUTE_DESC*>(pArg);
+    if (FAILED(__super::Initialize(pArg)))
+        return E_FAIL;
 
-    __super::Initialize(pArg);
+    ATTRIBUTE_DESC* pDesc = static_cast<ATTRIBUTE_DESC*>(pArg);
 
     auto pContainer = Get_Component<CObjectContainer>();
     _int iIndex = {}; 

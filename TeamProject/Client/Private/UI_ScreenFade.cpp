@@ -6,14 +6,16 @@
 
 HRESULT CUI_ScreenFade::Initialize_Prototype()
 {
-    __super::Initialize_Prototype();
+    if (FAILED(__super::Initialize_Prototype()))
+        return E_FAIL;
 
 	return S_OK;
 }
 
 HRESULT CUI_ScreenFade::Initialize(INIT_DESC* pArg)
 {
-    __super::Initialize(pArg);
+    if (FAILED(__super::Initialize(pArg)))
+        return E_FAIL;
 
     auto pSprite = Get_Component<CSprite2D>();
     pSprite->Link_Shader(G_GlobalLevelKey, "VTX_UI.hlsl");

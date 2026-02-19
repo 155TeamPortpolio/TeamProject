@@ -14,6 +14,7 @@
 
 #include "UIDirector.h"
 #include "DataBase.h"
+#include "BattleSystem.h"
 
 HRESULT CUI_Party::Initialize_Prototype()
 {
@@ -48,7 +49,7 @@ HRESULT CUI_Party::Initialize(INIT_DESC* pArg)
     Create_RenderTargets();
     Create_PartyCards();
 
-    Set_Alive(false);
+    UI_DeActive();
 
     return S_OK;
 }
@@ -113,11 +114,14 @@ void CUI_Party::UI_Active(void* pArg)
 
     // 시너지 셋팅
     m_pPartySynergy->Set_Synergy(iPartySynergyCount, iTotalPartyCount);
+
+    UIDirector()->Show_Mouse();
 }
 
 void CUI_Party::UI_DeActive(void* pArg)
 {
     Set_Alive(false);
+    UIDirector()->Hide_Mouse();
 }
 
 void CUI_Party::Create_BackButton()
@@ -213,7 +217,10 @@ void CUI_Party::Create_EnterButton()
     if (!pObj)
         return;
 
-    pObj->Set_OnClick([this]() {   LevelManager()->Request_ChangeLevel("Zero_Level", true);    });
+    pObj->Set_OnClick([this]() {  
+        LevelManager()->Request_ChangeLevel("Zero_Level", true);
+        BattleSystem()->SetBattleCharacters(m_characters);
+        });
     Get_Component<CObjectContainer>()->Add_Child(pObj);
 }
 

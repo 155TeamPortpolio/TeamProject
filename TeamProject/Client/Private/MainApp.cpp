@@ -10,6 +10,7 @@
 #include "Scott_Level.h"
 #include "Zero_Level.h"
 #include "Gacha_Level.h"
+#include "Tutorial_Level.h"
 
 #include "UIDirector.h"
 #include "DataBase.h"
@@ -158,17 +159,18 @@ HRESULT CMainApp::Render()
 
 void CMainApp::Set_Levels() 
 {
-	LevelManager()->Register_Level("Test_Level",     []()->CLevel* {return CTestLevel::Create("Test_Level"); });
-	LevelManager()->Register_Level("Logo_Level",     []()->CLevel* {return CLogoLevel::Create("Logo_Level"); });
-	LevelManager()->Register_Level("Loading_Level",  []()->CLevel* {return CLoadingLevel::Create("Loading_Level"); });
-	LevelManager()->Register_Level("MainCity_Level", []()->CLevel* {return CMainCity_Level::Create("MainCity_Level"); });
-	LevelManager()->Register_Level("Scott_Level",    []()->CLevel* {return CScott_Level::Create("Scott_Level"); });
-	LevelManager()->Register_Level("Zero_Level",     []()->CLevel* {return CZero_Level::Create("Zero_Level"); });
-	LevelManager()->Register_Level("Gacha_Level",    []()->CLevel* {return CGacha_Level::Create("Gacha_Level"); });
+	LevelManager()->Register_Level("Test_Level",			[]()->CLevel* {return CTestLevel::Create("Test_Level"); });
+	LevelManager()->Register_Level("Logo_Level",			[]()->CLevel* {return CLogoLevel::Create("Logo_Level"); });
+	LevelManager()->Register_Level("Loading_Level",			[]()->CLevel* {return CLoadingLevel::Create("Loading_Level"); });
+	LevelManager()->Register_Level("MainCity_Level",		[]()->CLevel* {return CMainCity_Level::Create("MainCity_Level"); });
+	LevelManager()->Register_Level("Scott_Level",			[]()->CLevel* {return CScott_Level::Create("Scott_Level"); });
+	LevelManager()->Register_Level("Zero_Level",			[]()->CLevel* {return CZero_Level::Create("Zero_Level"); });
+	LevelManager()->Register_Level("Gacha_Level",			[]()->CLevel* {return CGacha_Level::Create("Gacha_Level"); });
+	LevelManager()->Register_Level("Tutorial_Level",		[]()->CLevel* {return CTutorial_Level::Create("Tutorial_Level"); });
 
 	LevelManager()->Set_LoadingLevel("Loading_Level");
 	m_pGameInstance->Notify_LevelSet(); 
-	m_pGameInstance->Get_LevelMgr()->Request_ChangeLevel("Test_Level", true);
+	m_pGameInstance->Get_LevelMgr()->Request_ChangeLevel("Zero_Level", true);
 } 
 
 CMainApp* CMainApp::Create()

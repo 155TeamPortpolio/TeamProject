@@ -7,7 +7,8 @@
 
 HRESULT CUI_DecibelPts::Initialize_Prototype()
 {
-    __super::Initialize_Prototype();
+    if (FAILED(__super::Initialize_Prototype()))
+        return E_FAIL;
 
     Add_Component<CObjectContainer>();
 
@@ -16,10 +17,11 @@ HRESULT CUI_DecibelPts::Initialize_Prototype()
 
 HRESULT CUI_DecibelPts::Initialize(INIT_DESC* pArg)
 {
+    if (FAILED(__super::Initialize(pArg)))
+        return E_FAIL;
+
     PTS_DESC* pDesc = static_cast<PTS_DESC*>(pArg);
     m_pColor = pDesc->pColor;
-
-    __super::Initialize(pArg);
 
     Ready_PartObjects();
 

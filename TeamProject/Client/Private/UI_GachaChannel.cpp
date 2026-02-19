@@ -11,7 +11,8 @@
 
 HRESULT CUI_GachaChannel::Initialize_Prototype()
 {
-    __super::Initialize_Prototype();
+    if (FAILED(__super::Initialize_Prototype()))
+        return E_FAIL;
 
     Add_Component<CObjectContainer>();
     Add_Component<CAudioSource>();
@@ -22,10 +23,12 @@ HRESULT CUI_GachaChannel::Initialize_Prototype()
 
 HRESULT CUI_GachaChannel::Initialize(INIT_DESC* pArg)
 {
+    if (FAILED(__super::Initialize(pArg)))
+        return E_FAIL;
+
     CHANNEL_DESC* pDesc = static_cast<CHANNEL_DESC*>(pArg);
     m_onSelect = pDesc->onSelect;
-
-    __super::Initialize(pArg);
+    m_eChannel = pDesc->eChannel;
 
     Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("gacha_channel.json")));
     Cache();
