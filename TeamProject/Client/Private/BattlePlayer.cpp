@@ -837,7 +837,7 @@ void CBattlePlayer::NotifyCharacterSwitchOut(_bool bNext)
     }
 
     m_pCurrentCharacter->Set_MainCharacter(false);
-    m_pCurrentCharacter->On_SwitchOut();
+    m_pCurrentCharacter->On_SwitchOut(m_bReserveParry);
     m_input.ResetBuffer();
 
     if (!m_bChainParry)

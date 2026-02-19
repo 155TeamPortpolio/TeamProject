@@ -277,7 +277,7 @@ void CJaneDoe::On_ChainParry()
     }
 }
 
-void CJaneDoe::On_SwitchOut()
+void CJaneDoe::On_SwitchOut(_bool isParry)
 {
     __super::On_SwitchOut();
 
@@ -292,6 +292,12 @@ void CJaneDoe::On_SwitchOut()
     m_pStateMachine->Reset_Trigger("ToMove");
     m_pStateMachine->Reset_Trigger("ToIdle");
     m_pStateMachine->Reset_Trigger("ResetState");
+
+    if (isParry)
+    {
+        m_pStateMachine->Set_Trigger("SwitchOut");
+        return;
+    }
 
     if (m_pStateMachine->Get_CurrentStateName() == "Attack")
     {
