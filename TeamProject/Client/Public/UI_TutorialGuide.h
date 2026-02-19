@@ -28,10 +28,13 @@ private:
 	TUTORIAL_TYPE m_eType = {};
 	STATE m_eState = { STATE::END };
 
+	vector<CUI_Object*> m_pSlots;
+
 private:
 	HRESULT Create_Slot();
 
 	void Change_State(STATE eState);
+	void Ready_Slots(TUTORIAL_TYPE eType);
 
 	void AdvanceTutorial();
 

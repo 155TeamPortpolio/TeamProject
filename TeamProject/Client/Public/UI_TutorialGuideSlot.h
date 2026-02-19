@@ -5,6 +5,11 @@ NS_BEGIN(Client)
 
 class CUI_TutorialGuideSlot final : public CUI_Object
 {
+public:
+	typedef struct tagSlotDesc {
+		TUTORIAL_ACTION_DESC desc = {};
+	}SLOT_DESC;
+
 private:
 	CUI_TutorialGuideSlot() {}
 	CUI_TutorialGuideSlot(const CUI_TutorialGuideSlot& rhs) : CUI_Object(rhs) {}
@@ -20,6 +25,9 @@ public:
 	virtual void    Render_GUI()                     override { __super::Render_GUI(); }
 	virtual void	UI_Active(void* pArg = nullptr) override;
 	virtual void	UI_DeActive(void* pArg = nullptr) override;
+
+private:
+	string Get_PrefabPath(TUTORIAL_ACTION eAction);
 
 public:
 	static  CGameObject* Create();

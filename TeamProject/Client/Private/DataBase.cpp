@@ -58,7 +58,7 @@ HRESULT CDataBase::CreateTable()
 		return E_FAIL;
 
 	// Tutorial
-	if (FAILED(LoadPartyData("../../Resources/Data/Tutorial/Tutorial.csv")))
+	if (FAILED(LoadTutorialData("../../Resources/Data/Tutorial/Tutorial.csv")))
 		return E_FAIL;
 
 	return S_OK;

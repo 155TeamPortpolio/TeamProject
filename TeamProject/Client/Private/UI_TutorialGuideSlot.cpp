@@ -44,10 +44,28 @@ void CUI_TutorialGuideSlot::Update(_float dt)
 
 void CUI_TutorialGuideSlot::UI_Active(void* pArg)
 {
+    SLOT_DESC* pDesc = static_cast<SLOT_DESC*>(pArg);
+
+    // 기존꺼 삭제하고 새로 로드 ??
+    Get_PrefabPath(pDesc->desc.eAction);
 }
 
 void CUI_TutorialGuideSlot::UI_DeActive(void* pArg)
 {
+    Set_Alive(false);
+}
+
+string CUI_TutorialGuideSlot::Get_PrefabPath(TUTORIAL_ACTION eAction)
+{
+    switch (eAction)
+    {
+    case TUTORIAL_ACTION::DODGE: return "tutorial_slot_dodge.json";
+    case TUTORIAL_ACTION::DODGE_COUNTER: return "tutorial_slot_dodgeCounter.json";
+    case TUTORIAL_ACTION::ASSIST: return "tutorial_slot_assist.json";
+    case TUTORIAL_ACTION::ASSIST_CHARGE: return "tutorial_slot_assistCharge";
+    case TUTORIAL_ACTION::ULTIMATE: return "tutorial_slot_ultimate.json";
+    }
+    return"tutorial_bubble.json";
 }
 
 CGameObject* CUI_TutorialGuideSlot::Create()

@@ -6,6 +6,7 @@
 #include "EventListener.h"
 
 #include "BattleSystem.h"
+#include "DataBase.h"
 
 #include "UI_TutorialGuideSlot.h"
 
@@ -37,11 +38,13 @@ HRESULT CUI_TutorialGuide::Initialize(INIT_DESC* pArg)
 
             Change_State(STATE::ACTIVE);
             m_eType = desc.eType;
+            Ready_Slots(desc.eType);
+             
         });
 
     m_vSize = m_WinSize;
 
-    Create_Slot();
+    //Create_Slot();
 
 	return S_OK;
 }
@@ -79,6 +82,7 @@ HRESULT CUI_TutorialGuide::Create_Slot()
         return E_FAIL;
 
     Get_Component<CObjectContainer>()->Add_Child(pSlot);
+    m_pSlots.push_back(pSlot);
 
     return S_OK;
 }
@@ -101,6 +105,31 @@ void CUI_TutorialGuide::Change_State(STATE eState)
         AdvanceTutorial();
         Set_Alive(false);
         break;
+    }
+}
+
+void CUI_TutorialGuide::Ready_Slots(TUTORIAL_TYPE eType)
+{
+    const auto& actions = CDataBase::GetInstance()->GetTutorialActions(eType);
+
+    // 그냥 벡터 말고 타입 별로 풀을 만들자
+    // 모자란 만큼 생성하고
+    while (m_pSlots.size() < actions.size())
+    {
+        Create_Slot();
+    }
+
+    _int iCount = (m_pSlots.size() >= actions.size()) ? actions.size() : m_pSlots.size();
+    // 비활성화
+    for (_int i = iCount; i < m_pSlots.size(); ++i)
+    {
+        m_pSlots[i]->UI_DeActive();
+    }
+
+    for (_int i = 0; i < iCount; ++i)
+    {
+        m_pSlots[i]->Set_Anchor(ANCHOR::Left | ANCHOR::Top);
+        m_pSlots[i]->Set_AnchorOffset(_float2( 500.f, 200.f * i));
     }
 }
 
