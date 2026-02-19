@@ -114,6 +114,15 @@ void CMiyabi::Awake()
 void CMiyabi::Priority_Update(_float dt)
 {
 	__super::Priority_Update(dt);
+
+	m_fMotionBlurFade = max(0.f, m_fMotionBlurFade - dt * 6.f);
+	if (m_fMotionBlurFade <= 0.01f && !m_BoneMatrices.empty())
+	{
+		m_fRimLightPower = 0.f;
+		m_BoneMatrices.clear();
+		m_WorldMatrices.clear();
+	}
+
 	if (!m_BoneMatrices.empty() && m_pCCT->Get_CompActive())
 		Update_MotionBlurQueue();
 }
@@ -401,6 +410,7 @@ void CMiyabi::OnDefensiveAssist()
 
 void CMiyabi::Add_MotionBlur()
 {
+	m_fMotionBlurFade = 1.f;
 	if (m_BoneMatrices.size() > 5)
 	{
 		m_BoneMatrices.pop_front();
@@ -421,9 +431,9 @@ void CMiyabi::Add_MotionBlur()
 
 void CMiyabi::Clear_MotionBlur()
 {
-	m_fRimLightPower = 0.f;
-	m_BoneMatrices.clear();
-	m_WorldMatrices.clear();
+	//m_fRimLightPower = 0.f;
+	//m_BoneMatrices.clear();
+	//m_WorldMatrices.clear();
 }
 
 void CMiyabi::Set_WeaponEffectMesh(_bool bOn)
@@ -1210,16 +1220,14 @@ void CMiyabi::Process_EndState(const string& strCurrentState)
 HRESULT CMiyabi::Update_MotionBlurQueue()
 {
 	auto Model = Get_Component<CSkeletalModel>();
-	//m_vRimLightColor = _vector3(0.36f, 0.75f, 1.f);
-	m_vRimLightColor = _vector3(0.f, 0.f, 1.f);
-	//m_fRimLightPower = 5.f;
-	m_fRimLightPower = 4.f;
+	m_vRimLightColor = _vector3(0.25f, 0.5f, 1.f) * m_fMotionBlurFade;
+	m_fRimLightPower = 3.5f * m_fMotionBlurFade;
 
 	for (_int k = m_BoneMatrices.size() - 1; k >= 0; --k)
 	{
 		_float t = (_float)k / (_float)(m_BoneMatrices.size());
-		//_float fAlpha = (1.f - t) * 0.1f + 0.25f;  // 0.25 ~ 0.35
-		_vector4 vColor = { 0.1f, 0.4f, 1.f, 0.25f }; 
+		_vector4 vColor = { 0.01f, 0.05f, 0.35f, 0.5f * m_fMotionBlurFade };
+
 		for (_int i = 0; i < Model->Get_MeshCount(); ++i)
 		{
 			if (Model->isDrawable(i) == false) continue;
