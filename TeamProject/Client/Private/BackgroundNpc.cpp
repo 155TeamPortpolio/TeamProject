@@ -8,6 +8,8 @@
 #include "PedestrianNpc.h"
 #include "CrowdNpc.h"
 
+#include "DataBase.h"
+
 CBackgroundNpc::CBackgroundNpc()
 {
 }
@@ -117,18 +119,27 @@ void CBackgroundNpc::Build_Crowd(_uint Count, _bool Round)
 
 		_float yaw = atan2f(toCenter.x, toCenter.z);
 
+		string NowLevel = LevelManager()->Get_NowLevelKey();
+		_uint Version = {};
+		if (!RuntimeBucket().Int64.TryGet(PersistScope::SaveSlot, NowLevel, Version))
+			Version = 1;
+		
+		SpeechBubbleDesc Desc = CDataBase::GetInstance()->GetNpcSpeechBubble({ NowLevel,Version });
+		CCrowdNpc::CrowdNpcDesc* crowdDesc = new CCrowdNpc::CrowdNpcDesc;
+		crowdDesc->Text = Desc.Text;
 		if (Round) {
 			auto child = Builder::Create_Object({ "MainCity_Level", "Proto_GameObject_Crowd" })
 				.Position({ pos.x, 0.f, pos.z })
 				.Rotate({ 0.f, yaw, 0.f })
+				.Add_ObjDesc(crowdDesc)
 				.Build("Crowd_R_" + to_string(idx));
-			string NowLevel = LevelManager()->Get_NowLevelKey();
 
 			Get_Component<CObjectContainer>()->Add_Child(child, true);
 		}
 		else {
 			auto child = Builder::Create_Object({ "MainCity_Level", "Proto_GameObject_Crowd" })
 				.Position({ idx * radius, 0.f, pos.z * 0.4f })
+				.Add_ObjDesc(crowdDesc)
 				.Build("Crowd_L" + to_string(idx));
 
 			Get_Component<CObjectContainer>()->Add_Child(child, true);

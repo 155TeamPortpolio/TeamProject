@@ -39,7 +39,8 @@ HRESULT CDataBase::CreateTable()
 		return E_FAIL;
 	if (FAILED(LoadNpcIDData("../../Resources/Data/Npc/Npc_ID.csv")))
 		return E_FAIL;
-
+	if (FAILED(LoadSpeechBubble("../../Resources/Data/Npc/SpeechBubble.csv")))
+		return E_FAIL;
 	//Shop
 	if (FAILED(LoadRamenData("../../Resources/Data/Shop/Shop_Ramen.csv")))
 		return E_FAIL;
@@ -104,6 +105,20 @@ NpcDialogueDesc CDataBase::GetNpcDialogueDesc(pair<string, _uint> dialogueID)
 	auto iter = m_DialogueTables.find(dialogueID);
 	if (iter == m_DialogueTables.end())
 		return NpcDialogueDesc{};
+
+	return iter->second;
+}
+
+SpeechBubbleDesc CDataBase::GetNpcSpeechBubble(pair<string, _uint> speechBubbleID)
+{
+	auto range = m_SpeechBubbleTables.equal_range(speechBubbleID);
+	if (range.first == range.second)
+		return SpeechBubbleDesc{};
+
+	_uint count = (_uint)distance(range.first, range.second);
+
+	auto iter = range.first;
+	advance(iter, Helper::Get_Random_Int(0, count -1));
 
 	return iter->second;
 }
@@ -808,6 +823,36 @@ HRESULT CDataBase::LoadPartyData(const string& csvPath)
 
 		if(desc.eCharacter != CHARACTER::END)
 			m_PartyTables.emplace(desc.eCharacter, desc);
+	}
+
+	return S_OK;
+}
+
+HRESULT CDataBase::LoadSpeechBubble(const string& csvPath)
+{
+	io::CSVReader<
+		3,
+		io::trim_chars<' ', '\t'>,
+		io::double_quote_escape<',', '"'>
+	>in(csvPath);
+
+	in.read_header(
+		io::ignore_extra_column | io::ignore_missing_column,
+		"Level", "Version", "Text"
+	);
+	string			Level, Text;
+	_int			Version;
+
+	while (in.read_row(Level, Version, Text))
+	{
+		if (Level.empty()) continue;
+
+		SpeechBubbleDesc desc = {};
+		desc.Level = Level;
+		desc.Version = Version;
+		desc.Text = StringToWString(Text);
+
+		m_SpeechBubbleTables.emplace(make_pair(desc.Level, desc.Version), move(desc));
 	}
 
 	return S_OK;

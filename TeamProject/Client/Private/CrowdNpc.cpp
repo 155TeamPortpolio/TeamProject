@@ -26,11 +26,17 @@ HRESULT CCrowdNpc::Initialize_Prototype()
 HRESULT CCrowdNpc::Initialize(INIT_DESC* pArg)
 {
     __super::Initialize(pArg);
+
+    auto Desc = static_cast<CrowdNpcDesc*>(pArg);
+    m_strSpeech = Desc->Text;
+
     return S_OK;
 }
 
 void CCrowdNpc::Awake()
 {
+    Add_SpeechBubble();
+
     modelPreset.RandomizeModel(false, Get_Component<CSkeletalModel>(), Get_Component<CMaterial>(), Get_Component<CAnimator3D>());
     colorPreset.Randomize_Natural(m_ObjectID);
     colorPreset.LinkMaterial(Get_Component<CMaterial>());

@@ -24,6 +24,7 @@ public:
     const EncounterTable*               GetMonsterSpawnData(const string& tagArea, _uint iStageType);
     NpcIDDesc               GetNpcIDData(const wstring& strName);
     NpcDialogueDesc         GetNpcDialogueDesc(pair<string, _uint> dialogueID);
+    SpeechBubbleDesc         GetNpcSpeechBubble(pair<string, _uint> speechBubbleID);
     ChoiceDesc              GetNpcChoiceDesc(const string& strName);
     RAMEN_DESC                      GetRamenDesc(const string& strName);
     vector<const RAMEN_DESC*>       GetRamenTable();
@@ -48,6 +49,7 @@ public:
     HRESULT LoadTVData(const string& csvPath);
     HRESULT LoadGachaChannelData(const string& csvPath);
     HRESULT LoadPartyData(const string& csvPath);
+    HRESULT LoadSpeechBubble(const string& csvPath);
 
 public:
     const CASHED_OBJ_DATA* Get_CashedData(const string& AreaTag);
@@ -81,6 +83,7 @@ private:
     //NpcData
     unordered_map<wstring, NpcIDDesc>                       m_NpcIDTables;
     map<pair<string, _uint>, NpcDialogueDesc>		        m_DialogueTables;
+    multimap<pair<string, _uint>, SpeechBubbleDesc>		        m_SpeechBubbleTables;
     unordered_map<string, ChoiceDesc>				        m_DialgoueChoiceTables;
     //FieldData
     unordered_map<_int, GACHA_RESULT_DESC>                  m_ResultTables;
