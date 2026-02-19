@@ -24,6 +24,8 @@ HRESULT CUI_Mouse::Initialize(INIT_DESC* pArg)
 
     Set_Size({ 28.f, 28.f });
 
+    m_Zpriority = -9999;
+
     return S_OK;
 }
 
