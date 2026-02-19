@@ -15,6 +15,7 @@ void CThugAssaulter_Born::Enter(CThugAssaulter* pOwner)
 
 void CThugAssaulter_Born::Update(CThugAssaulter* pOwner, _float dt)
 {
+	pOwner->Update_SpawnSequence(dt);
 }
 
 void CThugAssaulter_Born::Exit(CThugAssaulter* pOwner)

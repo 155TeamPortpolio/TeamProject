@@ -19,12 +19,14 @@ public:
         _float  dist = 0.f;
         _float  yawWeight = 1.f;
     };
+
     struct PivotSample
     {
         Vector3 basePivot{};
         Vector3 facePivot{};
         _bool   valid = false;
     };
+
     struct ParryTuning
     {
         struct Common
@@ -109,7 +111,7 @@ private:
     void      ClampAboveGround(ShotGoal& g) const;
 
     ShotGoal  BuildBaseShot_NoLens(_int sideSign) const;
-    Vector3   BasePivotWorld() const;
+    Vector3   BasePivotWorld() const { return piv.aBase; }
 
     void      CaptureCurAsFrom();
     void      ApplyInterpolated_Enter(const ShotGoal& a, const ShotGoal& b, _float t);
@@ -145,20 +147,21 @@ private:
         _bool         beginWasChain = false;
         _float        chainRefDist = 0.f;
     };
+
     struct SideRuntime
     {
         _int    sideSign = 1;
         _bool   isLeft = false;
         Vector3 dirXZ = Vector3(0.f, 0.f, 1.f);
     };
+
     struct PivotRuntime
     {
         Vector3 aBase{};
         Vector3 aFace{};
-        Vector3 tBase{};
-        _bool   hasTBase = false;
         _float  enterCamY = 0.f;
     };
+
     struct ShotRuntime
     {
         ShotGoal shotFrom{};
@@ -169,11 +172,13 @@ private:
         _bool    holdActive = false;
         Vector3  fxPointWorld{};
     };
+
     struct WaitRuntime
     {
         string seqKey{};
         _bool  seqStarted = false;
     };
+
     struct LensRuntime
     {
         _float fovSaved = 0.f;
@@ -182,6 +187,7 @@ private:
         _float recoverFovElapsed = 0.f;
         _float recoverFovFrom = 0.f;
     };
+
     struct ExitRuntime
     {
         _bool         returnLockBlend = false;

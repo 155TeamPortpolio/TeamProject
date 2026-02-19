@@ -82,7 +82,7 @@ void CJaneDoeState_UltimateAttack_Loop::Enter(CJaneDoe* pOwner)
         .Apply();
 
     m_fDamageTimer = m_fDamageInterval;
-    
+    pOwner->SetRenderLayer(RENDER_LAYER::CustomOnly);
     pOwner->Play_Effect("JaneDoe_Ultimate_Smoke", _vector3(0.f, 0.f, 6.3f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
 }
 
@@ -116,6 +116,10 @@ void CJaneDoeState_UltimateAttack_Loop::Update(CJaneDoe* pOwner, _float dt)
         }
     }
 
+    if (IsCrossAnimProgress(0.57))
+    {
+        pOwner->SetRenderLayer(RENDER_LAYER::Default);
+    }
     Update_Effects(pOwner);
 }
 
@@ -123,6 +127,7 @@ void CJaneDoeState_UltimateAttack_Loop::Exit(CJaneDoe* pOwner)
 {
     m_fDamageTimer = 0.f;
     m_bDamageActive = true;
+    pOwner->SetRenderLayer(RENDER_LAYER::Default);
 }
 
 void CJaneDoeState_UltimateAttack_Loop::Update_Effects(CJaneDoe* pOwner)

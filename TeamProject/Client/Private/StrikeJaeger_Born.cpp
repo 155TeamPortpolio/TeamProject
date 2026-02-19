@@ -14,6 +14,8 @@ void CStrikeJaeger_Born::Enter(CStrikeJaeger* pOwner)
 
 void CStrikeJaeger_Born::Update(CStrikeJaeger* pOwner, _float dt)
 {
+	pOwner->Update_SpawnSequence(dt);
+
 	_vector3 vRootBoneMoveDelta = pOwner->Get_Component<CAnimator3D>()->Get_RootBoneMoveDelta();
 	_quaternion qRot = pOwner->Get_Component<CTransform>()->Get_QuaternionRotate();
 	pOwner->Get_Component<CCharacterController>()->Move_RootMotion(

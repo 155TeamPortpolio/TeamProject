@@ -83,10 +83,8 @@ public:
     void          StartParry();
     void          EndParry() { m_parry.End(); }
     // Switch
-    void          EnterSwitch();
-    void          SwitchTo();
-    void          EndSwitch();
-    _bool         IsSwitchMode() const { return m_switchMode; }
+    void          EnterSwitch() { m_switch.Begin(); }
+    void          EndSwitch() { m_switch.End(); }
 
     void          AbortSequenceToOrbit(_bool resetTime);
 
@@ -120,7 +118,6 @@ private:
     string                 m_lastEndedKey{};
     _bool                  m_seqInputLocked = false;
     _bool                  m_dialogueUnlockPending = false;
-    _bool                  m_switchMode = false;
 
     inline static const string kEmpty{};
 }; 

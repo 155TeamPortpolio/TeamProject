@@ -6,7 +6,7 @@
 
 void CBackGroundSpawner::CreatePedestrian(string AreaTag)
 {
-	/*auto data = CDataBase::GetInstance()->Get_CashedData(AreaTag);
+	auto data = CDataBase::GetInstance()->Get_CashedData(AreaTag);
 	auto MovePoints = data->MovePoint;
 
 	for (size_t i = 0; i < MovePoints.size(); i++)
@@ -21,5 +21,5 @@ void CBackGroundSpawner::CreatePedestrian(string AreaTag)
 			.Build("Back");
 		ObjectManager()->Add_Object(pedstrian, { LevelManager()->Get_NowLevelKey(),"NPC_Layer"});
 		pedestrinaHandles.push_back(pedstrian->Get_Handle());
-	}*/
+	}
 }

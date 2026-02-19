@@ -14,6 +14,7 @@ void CCyclops_Born::Enter(CCyclops* pOwner)
 
 void CCyclops_Born::Update(CCyclops* pOwner, _float dt)
 {
+	pOwner->Update_SpawnSequence(dt);
 }
 
 void CCyclops_Born::Exit(CCyclops* pOwner)

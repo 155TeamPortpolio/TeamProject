@@ -15,6 +15,7 @@ void CClaymore_Born::Enter(CClaymore* pOwner)
 
 void CClaymore_Born::Update(CClaymore* pOwner, _float dt)
 {
+	pOwner->Update_SpawnSequence(dt);
 }
 
 void CClaymore_Born::Exit(CClaymore* pOwner)

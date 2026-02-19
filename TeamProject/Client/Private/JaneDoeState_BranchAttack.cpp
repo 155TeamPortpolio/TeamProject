@@ -154,6 +154,19 @@ void CJaneDoeState_BranchAttack_Release01::Update(CJaneDoe* pOwner, _float dt)
         ENUM(CJaneDoe::ROOTMOTION_MASK::MOVE) |
         ENUM(CJaneDoe::ROOTMOTION_MASK::QUATERNION));
 
+    if (IsCrossAnimProgress(0.19f))
+    {
+        pOwner->SetRenderLayer(RENDER_LAYER::CustomOnly);
+    }
+    if (IsCrossAnimProgress(0.36f))
+    {
+        pOwner->SetRenderLayer(RENDER_LAYER::Default);
+    }
+    if (IsCrossAnimProgress(0.41f))
+    {
+        pOwner->Clear_MotionBlur();
+    }
+
     for (const auto& Event : pOwner->Get_Component<CAnimator3D>()->Get_EventBus())
     {
         if (Event.Type != CLIP_EVENT_TYPE::NOTIFY) continue;
@@ -184,9 +197,20 @@ void CJaneDoeState_BranchAttack_Release01::Update(CJaneDoe* pOwner, _float dt)
         {
             pOwner->End_AttackCollider("FootWeapon_R");
         }
+
+        if (Event.Tag == "MotionBlur")
+        {
+            pOwner->Add_MotionBlur();
+        }
     }
 
     Update_Effects(pOwner);
+}
+
+void CJaneDoeState_BranchAttack_Release01::Exit(CJaneDoe* pOwner)
+{
+    pOwner->Clear_MotionBlur();
+    pOwner->SetRenderLayer(RENDER_LAYER::Default);
 }
 
 void CJaneDoeState_BranchAttack_Release01::Update_Effects(CJaneDoe* pOwner)

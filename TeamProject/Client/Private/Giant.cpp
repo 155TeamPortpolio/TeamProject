@@ -89,11 +89,11 @@ HRESULT CGiant::Initialize(INIT_DESC* pArg)
 void CGiant::Awake()
 {
 	__super::Awake();
-	auto instance = Get_Component<CMaterial>()->Find_MaterialInstanceByName("Giant_2");
-	if (instance) {
-		instance->Set_Blended(true);
-		instance->Override_Pass("Blend");
-	}
+	//auto instance = Get_Component<CMaterial>()->Find_MaterialInstanceByName("Giant_2");
+	//if (instance) {
+	//	instance->Set_Blended(true);
+	//	instance->Override_Pass("Blend");
+	//}
 }
 
 void CGiant::Priority_Update(_float dt)
