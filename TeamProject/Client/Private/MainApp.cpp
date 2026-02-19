@@ -168,11 +168,8 @@ void CMainApp::Set_Levels()
 
 	LevelManager()->Set_LoadingLevel("Loading_Level");
 	m_pGameInstance->Notify_LevelSet(); 
-<<<<<<< 1346-feat-모독자-이펙트
-	m_pGameInstance->Get_LevelMgr()->Request_ChangeLevel("Zero_Level", true);
-=======
+	
 	m_pGameInstance->Get_LevelMgr()->Request_ChangeLevel("Test_Level", true);
->>>>>>> develop
 } 
 
 CMainApp* CMainApp::Create()
