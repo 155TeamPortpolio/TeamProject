@@ -247,6 +247,7 @@ _bool CCharacter::Can_SwitchIn() const
 
 void CCharacter::Active_Character()
 {
+    m_pCCT->Set_CollisionMask(m_iDefaultMask);
     m_pCCT->Set_CompActive(true);
     Active_ParryCollider(true);
     SetRenderLayer(RENDER_LAYER::Default);
@@ -404,6 +405,7 @@ void CCharacter::On_SwitchOut()
     Lock_Move();
     Stop_Rotation();
     m_bReserveCombo = false;
+    m_pCCT->Set_CollisionMask(m_iDefaultMask - ENUM(COLLISION_GROUP::MONSTER));
 }
 
 void CCharacter::On_Ultimate()

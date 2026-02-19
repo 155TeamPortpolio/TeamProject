@@ -241,6 +241,8 @@ protected:
     // 컴포넌트
     CAnimator3D* m_pAnimator = { nullptr };
     CCharacterController* m_pCCT = { nullptr };
+    _int                  m_iDefaultMask = 0xFFFFFFFF -
+        (ENUM(COLLISION_GROUP::PLAYER) | ENUM(COLLISION_GROUP::PLAYER_ATTACK));
     // 기본 정보
     string      m_strAnimName = "";
     string      m_strName = "";

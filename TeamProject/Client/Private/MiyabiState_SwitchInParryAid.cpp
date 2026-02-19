@@ -105,7 +105,7 @@ void CMiyabiState_SwitchInParryAid_Start::Update(CMiyabi* pOwner, _float dt)
 
 void CMiyabiState_SwitchInParryAid_L_Loop::Enter(CMiyabi* pOwner)
 {
-    pOwner->Get_Animator()->Set_Animation(pOwner->Get_Name() + "ParryAid_L")
+    pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "ParryAid_L")
         .ReserveSpeed(0.f, 1.f, 2.f, EaseType::OutExpo)
         .Apply();
 
