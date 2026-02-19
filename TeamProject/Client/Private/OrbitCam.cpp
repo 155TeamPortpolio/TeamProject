@@ -1250,7 +1250,6 @@ void COrbitCam::SnapFromExternalPose(const Vector3& pivotWorld, const Vector3& c
     ClampTargets();
 }
 
-
 COrbitCam* COrbitCam::Create()
 {
     auto inst = new COrbitCam();

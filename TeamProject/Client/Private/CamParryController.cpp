@@ -747,7 +747,11 @@ void CamParryController::Reset()
 
     exit.exitPivotFrom = Vector3::Zero;
     exit.exitCamPosFrom = Vector3::Zero;
+
+    exit.savedLockWasOn = false;
+    exit.savedLockHandle.Reset();
 }
+
 
 void CamParryController::Begin()
 {
@@ -755,6 +759,9 @@ void CamParryController::Begin()
 
     const _bool continuingChain = core.active && core.state == State::WaitEnd && IsChainReentryOpen() && core.beginWasChain;
     const _float prevChainRefDist = core.chainRefDist;
+
+    const _bool prevSavedLockWasOn = exit.savedLockWasOn;
+    const OBJECT_HANDLE prevSavedLockHandle = exit.savedLockHandle;
 
     Reset();
 
@@ -768,6 +775,22 @@ void CamParryController::Begin()
 
     lens.fovSaved = CameraManager()->GetFov();
     lens.fovAppliedOffset = 0.f;
+
+    OrbitSnapshot preSnap{};
+    orbit->CaptureSnapshot(preSnap);
+
+    const _bool preLockOn = preSnap.lock.handle.isValid() && (preSnap.lock.active || preSnap.lockBlend.active || preSnap.lockBlend.weight > 0.f);
+
+    if (continuingChain)
+    {
+        exit.savedLockWasOn = prevSavedLockWasOn;
+        exit.savedLockHandle = prevSavedLockHandle;
+    }
+    else
+    {
+        exit.savedLockWasOn = preLockOn;
+        exit.savedLockHandle = preSnap.lock.handle;
+    }
 
     const _float offsetY = orbit->GetOffsetY();
 
@@ -847,11 +870,22 @@ void CamParryController::End()
     OrbitSnapshot snap{};
     orbit->CaptureSnapshot(snap);
 
-    exit.returnLockHandle = snap.lock.handle;
-    exit.returnLockBlend = exit.returnLockHandle.isValid() && (snap.lock.active || snap.lockBlend.active || snap.lockBlend.weight > 0.f);
+    OBJECT_HANDLE lockHandle = snap.lock.handle;
+    _bool lockOn = lockHandle.isValid() && (snap.lock.active || snap.lockBlend.active || snap.lockBlend.weight > 0.f);
+
+    if (!lockOn && exit.savedLockWasOn && exit.savedLockHandle.isValid())
+    {
+        lockHandle = exit.savedLockHandle;
+        lockOn = true;
+    }
+
+    exit.returnLockHandle = lockHandle;
+    exit.returnLockBlend = lockOn && exit.returnLockHandle.isValid();
 
     if (exit.returnLockBlend)
     {
+        orbit->SetLockOn(exit.returnLockHandle);
+
         exit.exitPivotWorld = BasePivotWorld();
         exit.exitCamPosTo = BuildReturnPresetCamPos();
 
@@ -882,7 +916,6 @@ void CamParryController::End()
     core.elapsed = 0.f;
     wait.seqStarted = false;
 }
-
 
 void CamParryController::Update(_float dt)
 {

@@ -198,7 +198,11 @@ private:
         _float        exitSec = 0.f;
         Vector3       exitPivotFrom{};
         Vector3       exitCamPosFrom{};
+
+        _bool         savedLockWasOn = false;
+        OBJECT_HANDLE savedLockHandle{};
     };
+
 
 private:
     CoreRuntime core{};
