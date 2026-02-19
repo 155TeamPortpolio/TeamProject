@@ -30,6 +30,7 @@
 #include "JaneDoeState_NormalAttack.h"
 #include "JaneDoeState_Hit.h"
 #include "JaneDoeState_Evade.h"
+#include <AudioSource.h>
 
 CJaneDoe::CJaneDoe()
 {
@@ -64,6 +65,8 @@ HRESULT CJaneDoe::Initialize(INIT_DESC* pArg)
 
     if (FAILED(Initialize_Effects()))
         return E_FAIL;
+
+    Get_Component<CAudioSource>()->SoundFolder(G_GlobalLevelKey, "../Bin/Resources/Global/BattleCharacter/JaneDoe/Sound");
 
     return S_OK;
 }
@@ -124,6 +127,23 @@ void CJaneDoe::Update(_float dt)
         Update_States();
         m_pStateMachine->Update(dt);
     }
+
+    auto pAnimator = Get_Component<CAnimator3D>();
+    auto bus = pAnimator->Get_EventBus();
+
+    for (EVENT_INST& instance : bus)
+    {
+        switch (instance.Type)
+        {
+        case CLIP_EVENT_TYPE::NOTIFY:
+            break;
+
+        case CLIP_EVENT_TYPE::SOUND:
+            Get_Component<CAudioSource>()->Slot(instance.Tag).Volume(0.7f).Attribute3D(false).Loop(false).Play();
+            break;
+        }
+    }
+
     __super::Update(dt);
 }
 
