@@ -1199,6 +1199,14 @@ HRESULT CDefiler::Initialize_Effects()
 		pObjectContainer->Add_Child(pEffect, false);
 	}
 
+	/* Miasma Explode */
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("defiler_miasma_explode.json")
+			.Build("Defiler_Miasma_Explode");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
 	return S_OK;
 }
 
