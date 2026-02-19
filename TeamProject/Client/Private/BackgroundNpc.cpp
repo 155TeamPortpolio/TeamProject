@@ -121,7 +121,7 @@ void CBackgroundNpc::Build_Crowd(_uint Count, _bool Round)
 		}
 		else {
 			auto child = Builder::Create_Object({ "MainCity_Level", "Proto_GameObject_Crowd" })
-				.Position({ idx *radius, 0.f, pos.z })
+				.Position({ idx *radius, 0.f, pos.z*0.4f })
 				.Build("Crowd_L" + to_string(idx));
 
 			Get_Component<CObjectContainer>()->Add_Child(child, true);

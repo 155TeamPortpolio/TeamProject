@@ -73,7 +73,7 @@ void CBattleFXFlow::Initialize_Preset()
 		HardHitLack.bCanIntersect = true;
 		HardHitLack.fVFXDuration = duration;
 		HardHitLack.fBlurDuration = duration;
-		HardHitLack.SetTimeData({ duration, 0.1f, 0.05f, .25f , EaseType::OutExpo });
+		HardHitLack.SetTimeData({ duration, 0.1f, 0.05f, .05f , EaseType::OutExpo });
 		HardHitLack.BattleTimeScale[ENUM(BATTLE_OBJ_TYPE::CAMERA)] = TIME_SCALE_DATA{ duration, 1.0f, 0.3f, .0f, EaseType::OutQuint };
 	}
 
@@ -88,11 +88,11 @@ void CBattleFXFlow::Initialize_Preset()
 	}
 	{
 		auto& Clear = m_BattleVFXData[ENUM(BATTLE_VFX_TYPE::CLEAR)];
-		const _float duration = 1.5f;
+		const _float duration = 1.f;
 		Clear.bCanIntersect = false;
 		Clear.fVFXDuration = duration;
 		Clear.fBlurDuration = duration;
-		Clear.SetTimeData({ duration, 0.0f, 0.3f, .02f , EaseType::OutQuint });
+		Clear.SetTimeData({ duration, 0.05f, 0.0f, .02f , EaseType::OutQuint });
 		Clear.BattleTimeScale[ENUM(BATTLE_OBJ_TYPE::CAMERA)] = TIME_SCALE_DATA{duration, 1.0f, 0.3f, .0f, EaseType::OutQuint};
 	}
 }
