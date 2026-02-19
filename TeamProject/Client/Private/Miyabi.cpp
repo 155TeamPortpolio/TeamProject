@@ -171,6 +171,11 @@ void CMiyabi::Render_GUI()
 	__super::Render_GUI();
 }
 
+_uint CMiyabi::Release()
+{
+	return _uint();
+}
+
 void CMiyabi::Show_Ghost()
 {
 	if (m_pGhost)

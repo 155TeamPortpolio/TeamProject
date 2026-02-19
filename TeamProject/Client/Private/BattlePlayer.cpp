@@ -28,8 +28,7 @@ CBattlePlayer::CBattlePlayer()
 
 HRESULT CBattlePlayer::Initialize()
 {
-    CBattleSystem::GetInstance()->SetBattlePlayer(this);
-    Initialize_CharacterPrototype();
+   
     //vector<CHARACTER> BattleCharacters = { CHARACTER::Miyabi, CHARACTER::Corin, CHARACTER::JaneDoe };
     //SetBattleCharacters(BattleCharacters);
 
@@ -282,6 +281,11 @@ OBJECT_HANDLE CBattlePlayer::GetCurCharacterHandle()
 
 void CBattlePlayer::SetBattleCharacters(vector<CHARACTER> battleCharacters)
 {
+    if (!m_bInitialized) {
+        Initialize_CharacterPrototype();
+        m_bInitialized = true;
+    }
+
     for (auto& character : battleCharacters)
     {
         auto newCharacter = dynamic_cast<CCharacter*>(CreateBattleCharacter(character));
@@ -989,7 +993,7 @@ CGameObject* CBattlePlayer::CreateBattleCharacter(CHARACTER character)
             .Position(_float3(3.f, 0.f, 0.f))
             .CharacterController(characterCCT)
             .Build("JaneDoe");
-        ObjectManager()->Add_Object(JaneDoe, { LevelManager()->Get_NowLevelKey(), "Model_Layer" });
+        ObjectManager()->Add_Object(JaneDoe, { G_GlobalLevelKey, "Model_Layer" });
         return JaneDoe;
     }
     case CHARACTER::Corin:
@@ -1000,7 +1004,7 @@ CGameObject* CBattlePlayer::CreateBattleCharacter(CHARACTER character)
             .Position(_float3(3.f, 0.f, 0.f))
             .CharacterController(characterCCT)
             .Build("Corin");
-        ObjectManager()->Add_Object(Corin, { LevelManager()->Get_NowLevelKey(), "Model_Layer" });
+        ObjectManager()->Add_Object(Corin, { G_GlobalLevelKey, "Model_Layer" });
         return Corin;
     }
     case CHARACTER::Miyabi:
@@ -1011,7 +1015,7 @@ CGameObject* CBattlePlayer::CreateBattleCharacter(CHARACTER character)
             .Position(_float3(3.f, 0.f, 0.f))
             .CharacterController(characterCCT)
             .Build("Miyabi");
-        ObjectManager()->Add_Object(Miyabi, { LevelManager()->Get_NowLevelKey(), "Model_Layer" });
+        ObjectManager()->Add_Object(Miyabi, { G_GlobalLevelKey, "Model_Layer" });
         return Miyabi;
     }
     }
@@ -1022,6 +1026,10 @@ CGameObject* CBattlePlayer::CreateBattleCharacter(CHARACTER character)
 CBattlePlayer* CBattlePlayer::Create()
 {
     CBattlePlayer* Instance = new CBattlePlayer();
+    if (FAILED(Instance->Initialize()))
+    {
+        Safe_Release(Instance);
+    }
     return Instance;
 }
 
