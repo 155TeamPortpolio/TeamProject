@@ -76,6 +76,13 @@ namespace Client {
 		variant<monostate, _bool, _int, _float, string> Value;
 	};
 
+	struct SpeechBubble
+	{
+		string			Level;
+		_int			Version;
+		string			Text;
+	};
+
 	typedef struct tagMapDataFilePacket {
 		string		TagDataFormat = {};			// MapData, EntityData, BattleData
 		string		TagSlotFormat = {};			// Base, Physics, Effect, SlotA, SlotB ...
