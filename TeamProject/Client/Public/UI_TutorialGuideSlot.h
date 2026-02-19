@@ -3,15 +3,12 @@
 
 NS_BEGIN(Client)
 
-class CUI_TutorialGuide final : public CUI_Object
+class CUI_TutorialGuideSlot final : public CUI_Object
 {
 private:
-	enum class STATE { ACTIVE, DEACTIVATING, INACTIVE, END };
-
-private:
-	CUI_TutorialGuide() {}
-	CUI_TutorialGuide(const CUI_TutorialGuide& rhs) : CUI_Object(rhs) {}
-	virtual ~CUI_TutorialGuide() DEFAULT;
+	CUI_TutorialGuideSlot() {}
+	CUI_TutorialGuideSlot(const CUI_TutorialGuideSlot& rhs) : CUI_Object(rhs) {}
+	virtual ~CUI_TutorialGuideSlot() DEFAULT;
 
 public:
 	virtual HRESULT Initialize_Prototype()           override;
@@ -23,19 +20,6 @@ public:
 	virtual void    Render_GUI()                     override { __super::Render_GUI(); }
 	virtual void	UI_Active(void* pArg = nullptr) override;
 	virtual void	UI_DeActive(void* pArg = nullptr) override;
-
-private:
-	TUTORIAL_TYPE m_eType = {};
-	STATE m_eState = { STATE::END };
-
-private:
-	HRESULT Create_Slot();
-
-	void Change_State(STATE eState);
-
-	void AdvanceTutorial();
-
-	TUTORIAL_TYPE GetNextTutorialType(TUTORIAL_TYPE eType);
 
 public:
 	static  CGameObject* Create();

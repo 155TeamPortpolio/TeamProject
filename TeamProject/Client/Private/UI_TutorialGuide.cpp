@@ -7,6 +7,8 @@
 
 #include "BattleSystem.h"
 
+#include "UI_TutorialGuideSlot.h"
+
 HRESULT CUI_TutorialGuide::Initialize_Prototype()
 {
 	if (FAILED(__super::Initialize_Prototype()))
@@ -14,6 +16,8 @@ HRESULT CUI_TutorialGuide::Initialize_Prototype()
 
 	Add_Component<CObjectContainer>();
     Add_Component<CEventListener>();
+
+    PrototypeManager()->Add_ProtoType("Tutorial_Level", "Proto_GameObject_TutorialGuideSlot", CUI_TutorialGuideSlot::Create());
 
 	return S_OK;
 }
@@ -23,7 +27,7 @@ HRESULT CUI_TutorialGuide::Initialize(INIT_DESC* pArg)
     if (FAILED(__super::Initialize(pArg)))
         return E_FAIL;
 
-    Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("tutorial_bubble.json")));
+    //Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("tutorial_bubble.json")));
 
     // ¿Ã∫•∆Æ : TUTORIAL_DESC
     Get_Component<CEventListener>()->Add_Listener<TUTORIAL_DESC>([&](const TUTORIAL_DESC& desc)
@@ -34,6 +38,10 @@ HRESULT CUI_TutorialGuide::Initialize(INIT_DESC* pArg)
             Change_State(STATE::ACTIVE);
             m_eType = desc.eType;
         });
+
+    m_vSize = m_WinSize;
+
+    Create_Slot();
 
 	return S_OK;
 }
@@ -62,6 +70,17 @@ void CUI_TutorialGuide::UI_Active(void* pArg)
 
 void CUI_TutorialGuide::UI_DeActive(void* pArg)
 {
+}
+
+HRESULT CUI_TutorialGuide::Create_Slot()
+{
+    auto pSlot = Builder::Create_UIObject({"Tutorial_Level", "Proto_GameObject_TutorialGuideSlot"}).Build("slot");
+    if (!pSlot)
+        return E_FAIL;
+
+    Get_Component<CObjectContainer>()->Add_Child(pSlot);
+
+    return S_OK;
 }
 
 void CUI_TutorialGuide::Change_State(STATE eState)
