@@ -7,6 +7,8 @@
 #include "UI_GachaResultItem.h"
 #include "UI_TextButton.h"
 
+#include "UIDirector.h"
+
 HRESULT CUI_GachaResult::Initialize_Prototype()
 {
     if (FAILED(__super::Initialize_Prototype()))
@@ -76,10 +78,14 @@ void CUI_GachaResult::UI_Active(void* pArg)
         m_pItems[i]->Set_ResultDesc((*m_pResultDesc)[i]);
 
     Update_ItemLayout();
+    UIDirector()->Show_Mouse();
 }
 
 void CUI_GachaResult::UI_DeActive(void* pArg)
 {
+    Set_Alive(false);
+    LevelManager()->Request_ChangeLevel("MainCity_Level", false);
+    UIDirector()->Hide_Mouse();
 }
 
 void CUI_GachaResult::Cache()
@@ -91,7 +97,7 @@ void CUI_GachaResult::Create_ConfirmButton()
 {
     CUI_TextButton::BUTTON_DESC* pDesc = new CUI_TextButton::BUTTON_DESC;
     pDesc->strLabel = L"È®ÀÎ";
-    pDesc->onClick = []() { LevelManager()->Request_ChangeLevel("MainCity_Level", false); };
+    pDesc->onClick = [this]() { UI_DeActive(); };
     pDesc->strSoundKey = "UI_Tick.wav";
 
     auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_TextButton" })

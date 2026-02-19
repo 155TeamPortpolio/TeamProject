@@ -6,6 +6,7 @@
 #include "TextSlot.h"
 #include "UI_IconButton.h"
 #include "UI_GachaVideo.h"
+#include "UIDirector.h"
 
 HRESULT CUI_GachaDisplay::Initialize_Prototype()
 {
@@ -70,6 +71,7 @@ void CUI_GachaDisplay::UI_Active(void* pArg)
             m_pSkipButton->Set_Alive(true);
         break;
     } 
+    UIDirector()->Show_Mouse();
 }
 
 void CUI_GachaDisplay::UI_DeActive(void* pArg)
@@ -93,6 +95,7 @@ void CUI_GachaDisplay::UI_DeActive(void* pArg)
             m_pSkipButton->Set_Alive(false);
         break;
     } 
+    UIDirector()->Hide_Mouse();
 }
 
 void CUI_GachaDisplay::Cache()

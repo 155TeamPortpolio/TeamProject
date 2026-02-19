@@ -7,7 +7,9 @@
 
 #include "DataBase.h"
 #include "FieldSystem.h"
-#include "UI_BackButton.h"
+#include "UIDirector.h"
+
+#include "UI_BackButton.h" 
 
 #include "UI_GachaCharacterIntro.h"
 #include "UI_GachaChannel.h"
@@ -80,6 +82,7 @@ void CUI_GachaPage::UI_Active(void* pArg)
     Select_Channel(m_pFirstChannel);
     Set_Alive(true);        
     Get_Component<CAudioSource>()->Slot("UI_Beep.wav").Play();
+    UIDirector()->Show_Mouse();
 }
 
 void CUI_GachaPage::UI_DeActive(void* pArg)
@@ -88,6 +91,7 @@ void CUI_GachaPage::UI_DeActive(void* pArg)
     Set_Alive(false);
     if (m_pIntro)
         m_pIntro->UI_DeActive();
+    UIDirector()->Hide_Mouse();
 }
 
 void CUI_GachaPage::Create_CharacterIntro()
