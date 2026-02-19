@@ -29,6 +29,8 @@ public:
 
 private:
 	class CUI_GachaChannel* m_pSelectedChannel = {};
+	class CUI_GachaChannel* m_pFirstChannel = {};
+
 	class CUI_GachaCharacterIntro* m_pIntro = {};
 
 	_uint	m_iDenny = {};	// µ¥´Ï
@@ -39,6 +41,8 @@ private:
 	void Create_Currency();
 	void Create_Channels();
 	void Create_Conversions();
+
+	void Deactive_SelectedChannel();
 
 	void OnClick_Conversion();
 

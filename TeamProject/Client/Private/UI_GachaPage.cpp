@@ -58,13 +58,12 @@ HRESULT CUI_GachaPage::Initialize(INIT_DESC* pArg)
     Create_Channels();
     Create_Conversions();
 
-    Set_Alive(false);
-
 	return S_OK;
 }
 
 void CUI_GachaPage::Awake()
 {
+    Set_Alive(false);
 }
 
 void CUI_GachaPage::Update(_float dt)
@@ -76,13 +75,18 @@ void CUI_GachaPage::Update(_float dt)
 
 void CUI_GachaPage::UI_Active(void* pArg)
 {
+    Select_Channel(m_pFirstChannel);
     Set_Alive(true);        
     Get_Component<CAudioSource>()->Slot("UI_Beep.wav").Play();
 }
 
 void CUI_GachaPage::UI_DeActive(void* pArg)
 {
+    Deactive_SelectedChannel();
+
     Set_Alive(false);
+    if (m_pIntro)
+        m_pIntro->UI_DeActive();
 }
 
 void CUI_GachaPage::Create_CharacterIntro()
@@ -140,7 +144,9 @@ void CUI_GachaPage::Create_Channels()
             continue;
         
         if (i == 0)
-            Select_Channel(dynamic_cast<CUI_GachaChannel*>(pObj));
+            m_pFirstChannel = dynamic_cast<CUI_GachaChannel*>(pObj);
+        //if (i == 0)
+        //    Select_Channel(dynamic_cast<CUI_GachaChannel*>(pObj));
 
         pObj->Set_Anchor(ANCHOR::Left | ANCHOR::Top);
         pObj->Set_AnchorOffset({ 57.f, 118.f + 88.f  * i });
@@ -175,6 +181,14 @@ void CUI_GachaPage::Create_Conversions()
         pObj->Set_AnchorOffset({ fStartX + fSpacing * i, -68.f });
         Get_Component<CObjectContainer>()->Add_Child(pObj);
     }
+}
+
+void CUI_GachaPage::Deactive_SelectedChannel()
+{
+    if (m_pSelectedChannel)
+        m_pSelectedChannel->UI_DeActive();
+
+    m_pSelectedChannel = nullptr;
 }
 
 void CUI_GachaPage::OnClick_Conversion()
