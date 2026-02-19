@@ -58,21 +58,8 @@ HRESULT CMiasmaBlade::Initialize(INIT_DESC* pArg)
 	m_vTargetVelocity = m_pTransform->Dir(STATE::LOOK) * m_fMoveSpeed;
 	m_ElapsedTime = 0;
 
-	switch (desc->iCount)
-	{
-	case 0:
-		m_pTransform->Rotation(_vector3(0.f, 0.f, -0.7875f));
-		break;
-	case 1:
-		m_pTransform->Rotation(_vector3(0.f, 0.f, 0.7747f));
-		break;
-	case 2:
-		m_pTransform->Rotation(_vector3(0.f, 0.f, 1.6f));
-		break;
-	default:
-		break;
-	}
-
+	Initialize_Effects(desc->iCount);
+	
 	{
 		BATTLE_COLLIDER_DESC BladeDesc{};
 	
@@ -94,8 +81,6 @@ HRESULT CMiasmaBlade::Initialize(INIT_DESC* pArg)
 	HitDesc.fInterval = 0.f;
 	HitDesc.iMaxCount = 1;
 	SetBattleColliderObject("HEl", CEnemy::BATTLE_COLTYPE::ATTACK, true, HitDesc);
-
-	Initialize_Effects();
 
 	return S_OK;
 }
@@ -162,7 +147,7 @@ void CMiasmaBlade::Parried()
 	}
 }
 
-void CMiasmaBlade::Initialize_Effects()
+void CMiasmaBlade::Initialize_Effects(_uint count)
 {
 	auto pObjectContainer = Get_Component<CObjectContainer>();
 
@@ -170,6 +155,22 @@ void CMiasmaBlade::Initialize_Effects()
 		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
 			.Asset("defiler_miasma.json")
 			.Build("Defiler_Miasma");
+
+		auto pEffectTransform = pEffect->Get_Component<CTransform>();
+		switch (count)
+		{
+		case 0:
+			pEffectTransform->Rotate(_vector3(0.f, 0.f, 0.7747f));
+			break;
+		case 1:
+			pEffectTransform->Rotate(_vector3(0.f, 0.f, -0.7875f));
+			break;
+		case 2:
+			pEffectTransform->Rotate(_vector3(0.f, 0.f, 1.6f));
+			break;
+		default:
+			break;
+		}
 
 		pObjectContainer->Add_Child(pEffect);
 	}

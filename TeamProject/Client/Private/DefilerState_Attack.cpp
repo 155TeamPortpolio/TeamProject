@@ -611,9 +611,9 @@ void CDefilerState_Attack_07::Exit(CDefiler* pOwner)
 void CDefilerState_Attack_07::Update_Effects(CDefiler* pOwner)
 {
 	if (IsCrossAnimProgress(0.25f))
-		pOwner->Play_Effect("Defiler_Slash0_0", _vector3(0.f, 5.3f, 0.f), _quaternion(0.63f, -0.31f, -0.25f, 0.66f));
+		pOwner->Play_Effect("Defiler_Slash0_0", _vector3(0.f, 5.8f, 0.f), _quaternion(0.76f, 0.17f, -0.5f, 0.38f));
 	if(IsCrossAnimProgress(0.31f))
-		pOwner->Play_Effect("Defiler_Slash0_1", _vector3(0.f, 5.7f, 0.f), _quaternion(-0.23f, 0.65f, 0.68f, -0.26f));
+		pOwner->Play_Effect("Defiler_Slash0_1", _vector3(0.f, 5.8f, 0.f), _quaternion(-0.46f, 0.44f, 0.77f, 0.f));
 	if(IsCrossAnimProgress(0.53f))
 		pOwner->Play_Effect("Defiler_Slash0_0", _vector3(0.f, 1.2f, 0.f), _quaternion(0.04f, 0.72f, 0.68f, 0.1f));
 	if(IsCrossAnimProgress(0.64f))

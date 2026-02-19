@@ -30,7 +30,7 @@ public:
 
 private:
     _bool   Try_Hit(CGameObject* pTarget);
-    void Initialize_Effects();
+    void Initialize_Effects(_uint count);
 private:
     _float m_ElapsedTime = {};
     _float m_fMoveSpeed = {70.f};
