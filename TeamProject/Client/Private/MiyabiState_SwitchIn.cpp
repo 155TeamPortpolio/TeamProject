@@ -7,6 +7,8 @@
 #include "MiyabiState_SwitchInAttack.h"
 #include "MiyabiState_SwitchInParryAid.h"
 
+#include "ObjectContainer.h"
+
 CMiyabiState_SwitchIn* CMiyabiState_SwitchIn::Create()
 {
     auto pInstance = new CMiyabiState_SwitchIn();
@@ -47,6 +49,9 @@ void CMiyabiState_SwitchIn::Enter(CMiyabi* pOwner)
 
     m_pSubStateMachine->Reset_Trigger("Complete");
     m_pSubStateMachine->Set_Int("ExitMode", 0);
+
+    pOwner->Get_Component<CObjectContainer>()->Find_ObjectByName("Miyabi_Sword_Fire")
+        ->Set_Alive(true);
 
     __super::Enter(pOwner);
 }
