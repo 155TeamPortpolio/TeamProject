@@ -27,7 +27,7 @@ HRESULT CLayer::Add_GameObject(CGameObject* pGameObject)
 		return E_FAIL;
 
 	/*같은 ID의 오브젝트가 없다면*/
-	if(ObjectIndex == m_GameObjects.size()) /*마지막에 추가*/
+	if (ObjectIndex == m_GameObjects.size()) /*마지막에 추가*/
 		m_GameObjects.push_back(pGameObject);
 	else
 		m_GameObjects[ObjectIndex] = pGameObject;
@@ -58,7 +58,7 @@ void CLayer::Priority_Update(_float dt)
 {
 	dt *= m_LayerTimeScale;
 	for (auto& pGameObject : m_GameObjects)
-		if (pGameObject && pGameObject ->Is_Alive() && pGameObject->Is_Root())
+		if (pGameObject && pGameObject->Is_Alive() && pGameObject->Is_Root())
 			pGameObject->Priority_Update(dt);
 }
 
@@ -108,7 +108,7 @@ void CLayer::Remove_GameObject(_uint ObjectID)
 	auto iter = m_IndexByID.find(ObjectID);
 
 	if (iter == m_IndexByID.end())
-		return ;
+		return;
 
 	const _uint removeIdx = iter->second; //삭제해야할 오브젝트 인덱스
 	const _uint lastIdx = static_cast<_uint>(m_GameObjects.size() - 1); //마지막 친구
@@ -153,8 +153,15 @@ CGameObject* CLayer::Find_ObjectByID(_uint ObjectID)
 void CLayer::Clear_Layer()
 {
 	for (auto& pGameObject : m_GameObjects)
-		if (pGameObject&& pGameObject->Is_Root()) {
-			Safe_Release(pGameObject);
+		if (pGameObject)
+		{
+			if (pGameObject->Is_Root()) {
+				pGameObject->Set_Layer(nullptr);
+				Safe_Release(pGameObject);
+			}
+			else {
+				pGameObject->Set_Layer(nullptr);
+			}
 		}
 
 	vector<CGameObject*> emptyVec;
@@ -180,7 +187,12 @@ void CLayer::Free()
 {
 	__super::Free();
 
-	Clear_Layer();
+	for (auto& pGameObject : m_GameObjects)
+		if (pGameObject)
+		{
+			pGameObject->Set_Layer(nullptr);
+			Safe_Release(pGameObject);
+		}
 	m_GameObjects.clear();
 	m_IndexByID.clear();
 }

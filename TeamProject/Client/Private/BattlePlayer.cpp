@@ -29,7 +29,7 @@ CBattlePlayer::CBattlePlayer()
 HRESULT CBattlePlayer::Initialize()
 {
     if (m_BattleCharacters.empty()) {
-        SetBattleCharacters({ CHARACTER::Corin });
+        SetBattleCharacters({ CHARACTER::Corin,CHARACTER::JaneDoe,CHARACTER::Miyabi });
     }
     return S_OK;
 }
@@ -362,9 +362,9 @@ HRESULT CBattlePlayer::ClearCharacters()
 {
     for (auto& character : m_BattleCharacters)
     {
-        BattleSystem()->ExitBattleObject(BATTLE_OBJ_TYPE::PLAYER, character->Get_Handle());
-        Safe_Release(character);
+        ObjectManager()->Remove_Object(character);
     }
+
     m_BattleCharacters.clear();
     m_iCurrentIndex = 0;
     m_pCurrentCharacter = nullptr;
@@ -1018,8 +1018,7 @@ CGameObject* CBattlePlayer::CreateBattleCharacter(CHARACTER character)
             .Position(_float3(3.f, 0.f, 0.f))
             .CharacterController(characterCCT)
             .Build("JaneDoe");
-        ObjectManager()->Add_Object(JaneDoe, { nowLevelKey, "Model_Layer" });
-        Safe_AddRef(JaneDoe);
+        ObjectManager()->Add_Object(JaneDoe, { G_GlobalLevelKey, "Model_Layer" });
         return JaneDoe;
     }
     case CHARACTER::Corin:
@@ -1030,8 +1029,7 @@ CGameObject* CBattlePlayer::CreateBattleCharacter(CHARACTER character)
             .Position(_float3(3.f, 0.f, 0.f))
             .CharacterController(characterCCT)
             .Build("Corin");
-        ObjectManager()->Add_Object(Corin, { nowLevelKey, "Model_Layer" });
-        Safe_AddRef(Corin);
+        ObjectManager()->Add_Object(Corin, { G_GlobalLevelKey, "Model_Layer" });
         return Corin;
     }
     case CHARACTER::Miyabi:
@@ -1042,8 +1040,7 @@ CGameObject* CBattlePlayer::CreateBattleCharacter(CHARACTER character)
             .Position(_float3(3.f, 0.f, 0.f))
             .CharacterController(characterCCT)
             .Build("Miyabi");
-        ObjectManager()->Add_Object(Miyabi, { nowLevelKey, "Model_Layer" });
-        Safe_AddRef(Miyabi);
+        ObjectManager()->Add_Object(Miyabi, { G_GlobalLevelKey, "Model_Layer" });
         return Miyabi;
     }
     }

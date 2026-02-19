@@ -7,8 +7,6 @@
 CSoundData::CSoundData(const string& soundKey)
 	:m_SoundKey{ soundKey }
 {
-	m_pService = AudioDevice();
-	Safe_AddRef(m_pService);
 }
 
 HRESULT CSoundData::Initialize(const string& filePath)
@@ -38,5 +36,4 @@ void CSoundData::Free()
 		return;   // 최소 방어
 	
 	m_pSound = nullptr;
-	Safe_Release(m_pService);
 }

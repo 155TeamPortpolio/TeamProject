@@ -197,7 +197,6 @@ void CMainApp::Free()
 	CDataBase::GetInstance()->DestroyInstance();
 	CFieldSystem::GetInstance()->DestroyInstance();
 
-	
 }
 
 void CMainApp::Initialize_GlobalPrototype()

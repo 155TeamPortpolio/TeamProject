@@ -190,14 +190,25 @@ void CObjectMgr::Clear(const string& LevelTag)
 		MSG_BOX("There is No Same Level Tag  : CObjectMgr");
 		return;
 	}
-
 	Prune_Queues_ByLevel(LevelTag);
+
+	auto releaseSnap = m_ReleaseObjs;
+	auto releaseIdSnap = m_ReleaseIDs;
+	auto deleteSnap = m_DeleteObjs;
+	auto deleteIdSnap = m_DeleteIDs;
 
 	for (auto& pair : m_Layers[LevelTag]) {
 		Safe_Release(pair.second);
 	}
-	m_DeleteObjs.clear();
-	m_DeleteIDs.clear();
+
+	m_ReleaseObjs.clear(); m_ReleaseIDs.clear();
+	m_DeleteObjs.clear();  m_DeleteIDs.clear();
+
+	m_ReleaseObjs = releaseSnap;
+	m_ReleaseIDs = releaseIdSnap;
+	m_DeleteObjs = deleteSnap;
+	m_DeleteIDs = deleteIdSnap;
+
 	m_pObjectPool->ClearAll();
 	m_Layers[LevelTag].clear();
 }
@@ -373,7 +384,6 @@ void CObjectMgr::Release_Subtree_ToPool(CGameObject* root)
 	m_pObjectPool->Return(poolKey, root);
 }
 
-
 void CObjectMgr::Set_LevelTimeScale(string LevelTag, _float scale)
 {
 	auto iter = m_Layers.find(LevelTag);
@@ -504,8 +514,6 @@ void CObjectMgr::Free()
 {
 	__super::Free();
 
-	m_ReleaseObjs.clear(); m_ReleaseIDs.clear();
-	m_DeleteObjs.clear();  m_DeleteIDs.clear();
 
 	for (auto& pair : m_Layers)
 		Clear(pair.first);
@@ -513,6 +521,14 @@ void CObjectMgr::Free()
 
 	if (m_pObjectPool)
 		m_pObjectPool->ClearAll();
+
+	for (auto& pObject : m_DeleteObjs)
+	{
+		Safe_Release(pObject);
+	}
+
+	m_ReleaseObjs.clear(); m_ReleaseIDs.clear();
+	m_DeleteObjs.clear();  m_DeleteIDs.clear();
 
 	Safe_Release(m_pObjectPool);
 	Safe_Release(m_pGameInstance);
