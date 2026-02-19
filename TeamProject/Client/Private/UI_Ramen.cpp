@@ -17,6 +17,7 @@
 
 #include "DataBase.h"
 #include "FieldSystem.h"
+#include "UIDirector.h"
 
 void CUI_Ramen::Select_Menu(CUI_Object* pSelected, const RAMEN_DESC& tRamenDesc)
 {
@@ -37,7 +38,8 @@ void CUI_Ramen::Select_Menu(CUI_Object* pSelected, const RAMEN_DESC& tRamenDesc)
 
 HRESULT CUI_Ramen::Initialize_Prototype()
 {
-    __super::Initialize_Prototype();
+    if (FAILED(__super::Initialize_Prototype()))
+        return E_FAIL;
 
     Add_Component<CObjectContainer>();
     Add_Component<CAudioSource>();
@@ -56,7 +58,8 @@ HRESULT CUI_Ramen::Initialize_Prototype()
 
 HRESULT CUI_Ramen::Initialize(INIT_DESC* pArg)
 {
-    __super::Initialize(pArg);
+    if (FAILED(__super::Initialize(pArg)))
+        return E_FAIL;
 
     Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("ramen.json")));
     Cache();
@@ -98,12 +101,14 @@ void CUI_Ramen::UI_Active(void* pArg)
     m_isPurchased = false;
     for (auto& pMenu : m_pMenus)
         pMenu->UI_DeActive();
+    UIDirector()->Show_Mouse();
 }
 
 void CUI_Ramen::UI_DeActive(void* pArg)
 {
     Set_ChildAnimation(CHILD::ORDER, 1);
     Set_Alive(false);
+    UIDirector()->Hide_Mouse();
 }
 
 void CUI_Ramen::Create_BackButton()

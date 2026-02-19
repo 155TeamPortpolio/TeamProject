@@ -6,14 +6,18 @@
 
 HRESULT CUI_IconLabel::Initialize_Prototype()
 {
-    __super::Initialize_Prototype();
+    if (FAILED(__super::Initialize_Prototype()))
+        return E_FAIL;
+
     Add_Component<CObjectContainer>();
+
     return S_OK;
 }
 
 HRESULT CUI_IconLabel::Initialize(INIT_DESC* pArg)
 {
-    __super::Initialize(pArg);
+    if (FAILED(__super::Initialize(pArg)))
+        return E_FAIL;
 
     const string& filePath = ResourceManager()->Get_ResourcePath(static_cast<UI_DESC*>(pArg)->UIAssetKey);
     Load(Helper::LoadJson<nlohmann::ordered_json>(filePath));

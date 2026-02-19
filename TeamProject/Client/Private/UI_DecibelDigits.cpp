@@ -11,7 +11,8 @@ CUI_DecibelDigits::Digit CUI_DecibelDigits::digitOrder[] = { Digit::DIGIT_1000, 
 
 HRESULT CUI_DecibelDigits::Initialize_Prototype()
 {
-    __super::Initialize_Prototype();
+    if (FAILED(__super::Initialize_Prototype()))
+        return E_FAIL;
 
     Add_Component<CObjectContainer>();
 
@@ -20,11 +21,12 @@ HRESULT CUI_DecibelDigits::Initialize_Prototype()
 
 HRESULT CUI_DecibelDigits::Initialize(INIT_DESC* pArg)
 {
+    if (FAILED(__super::Initialize(pArg)))
+        return E_FAIL;
+
     DIGITS_DESC* pDesc = static_cast<DIGITS_DESC*>(pArg);
     m_pDecibel = pDesc->pDecibel;
     m_pColor = pDesc->pColor;
-
-    __super::Initialize(pArg);
 
     Ready_PartObjects();
 

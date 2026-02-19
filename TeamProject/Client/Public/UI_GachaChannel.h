@@ -1,5 +1,6 @@
 #pragma once
 #include "UI_Object.h"
+#include "UI_GachaPage.h"
 
 NS_BEGIN(Engine)
 class CSprite2D;
@@ -12,15 +13,19 @@ class CUI_GachaChannel final : public CUI_Object
 {
 public:
 	typedef struct tagChannelDesc : public UI_DESC {
+		CUI_GachaPage::CHANNEL eChannel = {};
 		wstring strLabel = {};
 		string strTextureKey = {}; 
-		function<void(CUI_Object* pObj)>	onSelect = {};
+		function<void(CUI_GachaChannel* pChannel)>	onSelect = {};
 	}CHANNEL_DESC;
 
 private:
 	CUI_GachaChannel() {}
 	CUI_GachaChannel(const CUI_GachaChannel& rhs) : CUI_Object(rhs) {}
 	virtual ~CUI_GachaChannel() DEFAULT;
+
+public:
+	const CUI_GachaPage::CHANNEL& Get_Channel() { return m_eChannel; }
 
 public:
 	virtual HRESULT Initialize_Prototype()           override;
@@ -34,8 +39,10 @@ public:
 	virtual void	UI_DeActive(void* pArg = nullptr) override;
 
 private:
+	CUI_GachaPage::CHANNEL m_eChannel = {};
+
 	_bool			m_isSelected = {};
-	function<void(CUI_Object* pObj)>	m_onSelect = {};
+	function<void(CUI_GachaChannel* pChannel)>	m_onSelect = {};
 
 	_float			m_fLerpTimer = {};
 	_float			m_fLerpSpeed = { 4.f };

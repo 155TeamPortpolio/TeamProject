@@ -616,6 +616,8 @@ void CDefilerState_Attack_07::Update_Effects(CDefiler* pOwner)
 		pOwner->Play_Effect("Defiler_Slash0_0", _vector3(0.f, 5.8f, 0.f), _quaternion(0.76f, 0.17f, -0.5f, 0.38f));
 	if(IsCrossAnimProgress(0.31f))
 		pOwner->Play_Effect("Defiler_Slash0_1", _vector3(0.f, 5.8f, 0.f), _quaternion(-0.46f, 0.44f, 0.77f, 0.f));
+	if (IsCrossAnimProgress(0.41f))
+		pOwner->Play_Effect("Defiler_Miasma_Explode", _vector3(0.f, 6.f, 2.f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
 	if(IsCrossAnimProgress(0.53f))
 		pOwner->Play_Effect("Defiler_Slash0_0", _vector3(0.f, 1.2f, 0.f), _quaternion(0.04f, 0.72f, 0.68f, 0.1f));
 	if(IsCrossAnimProgress(0.64f))

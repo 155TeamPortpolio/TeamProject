@@ -14,10 +14,12 @@
 #include "UI_LotteryResultBanner.h"
 
 #include "FieldSystem.h"
+#include "UIDirector.h"
 
 HRESULT CUI_Lottery::Initialize_Prototype()
 {
-	__super::Initialize_Prototype();
+    if (FAILED(__super::Initialize_Prototype()))
+        return E_FAIL;
 
     Add_Component<CObjectContainer>();
     Add_Component<CEventListener>();
@@ -33,7 +35,8 @@ HRESULT CUI_Lottery::Initialize_Prototype()
 
 HRESULT CUI_Lottery::Initialize(INIT_DESC* pArg)
 {
-	__super::Initialize(pArg);
+    if (FAILED(	__super::Initialize(pArg)))
+        return E_FAIL;
 
     // JSON ·Îµå
     Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("lottery.json"))); 
@@ -92,11 +95,13 @@ void CUI_Lottery::UI_Active(void* pArg)
     Get_Component<CAudioSource>()->Slot("UI_PageTurning.wav").Attribute3D(false).Loop(false).Play();
     if(m_iState == STATE::READY)
         m_iReward = rand() % ENUM(REWARD::END); 
+    UIDirector()->Show_Mouse();
 }
 
 void CUI_Lottery::UI_DeActive(void* pArg)
 {
     Set_Alive(false);
+    UIDirector()->Hide_Mouse();
 }
 
 void CUI_Lottery::Create_Newspaper()

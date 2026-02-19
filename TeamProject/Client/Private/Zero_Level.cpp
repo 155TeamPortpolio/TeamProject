@@ -71,7 +71,6 @@ HRESULT CZero_Level::Initialize()
 
 	/* UI */
 	CUIDirector::GetInstance()->Load_LevelObjects("Zero_Level");
-
 	/*ENV*/
 	auto pCloud = ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Cloud));
 	pCloud->Set_Alive(false);

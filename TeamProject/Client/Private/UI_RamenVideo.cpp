@@ -11,7 +11,8 @@
 
 HRESULT CUI_RamenVideo::Initialize_Prototype()
 {
-	__super::Initialize_Prototype();
+    if (FAILED(__super::Initialize_Prototype()))
+        return E_FAIL;
 
     Add_Component<CObjectContainer>();
     Add_Component<CAudioSource>();
@@ -22,10 +23,11 @@ HRESULT CUI_RamenVideo::Initialize_Prototype()
 
 HRESULT CUI_RamenVideo::Initialize(INIT_DESC* pArg)
 {
+    if (FAILED(__super::Initialize(pArg)))
+        return E_FAIL;
+
     VIDEO_DESC* pDesc = static_cast<VIDEO_DESC*>(pArg);
     m_OnClick = pDesc->onVideoFinished;
-
-	__super::Initialize(pArg);
 
     /*비디오를 읽는 디코더를 우선 생성*/
     m_pDecoder = CMFVideoDecoderBackend::Create();

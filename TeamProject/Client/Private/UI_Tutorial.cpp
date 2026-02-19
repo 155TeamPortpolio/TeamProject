@@ -9,6 +9,8 @@
 #include "UI_TutorialDescription.h"
 #include "UI_TutorialVideo.h"
 
+#include "UIDirector.h"
+
 HRESULT CUI_Tutorial::Initialize_Prototype()
 {
 	if (FAILED(__super::Initialize_Prototype()))
@@ -63,6 +65,8 @@ void CUI_Tutorial::UI_Active(void* pArg)
     Set_Alive(true);
     Set_Animation(0);
     Change_Description(pDesc->eTutorial);
+
+    UIDirector()->Show_Mouse();
 }
 
 void CUI_Tutorial::UI_DeActive(void* pArg)
@@ -71,6 +75,8 @@ void CUI_Tutorial::UI_DeActive(void* pArg)
     Set_Animation(1);
     if (m_pVideo)
         m_pVideo->UI_DeActive();
+
+    UIDirector()->Hide_Mouse();
 }
 
 void CUI_Tutorial::Cache()
