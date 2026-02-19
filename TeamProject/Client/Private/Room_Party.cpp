@@ -4,6 +4,7 @@
 #include  "FieldSystem.h"
 #include "FieldPlayer.h"
 #include "UIDirector.h"
+#include "DataBase.h"
 
 CRoom_Party::CRoom_Party(const ROOM_DESC& desc)
     :CRoom(desc)
@@ -15,8 +16,7 @@ void CRoom_Party::Enter()
     auto pFieldPlayer = FieldSystem()->GetFieldPlayer();
     pFieldPlayer->Lock_Input();
     pFieldPlayer->DeActive_Field();
-
-    UIDirector()->Show_Party({ CHARACTER::JaneDoe, CHARACTER::Miyabi });
+    UIDirector()->Show_Party(CDataBase::GetInstance()->Get_EnableCharacters());
 }
 
 void CRoom_Party::Exit()

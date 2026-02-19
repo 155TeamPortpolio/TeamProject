@@ -33,6 +33,8 @@ const char* CBattleSystem_Panel::TypeName(BATTLE_OBJ_TYPE type) const
 
 void CBattleSystem_Panel::Render_GUI()
 {
+    if (!BattleSystem()->Debug_IsActive())
+        return;
     if (!ImGui::Begin("BattleSystem##DebugPanel"))
     {
         ImGui::End();

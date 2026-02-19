@@ -120,7 +120,6 @@ HRESULT CTestLevel::Awake()
 	m_pPlayer = dynamic_cast<CPlayer*>(ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Player)));
 	m_pPlayer->Set_PlayerType(CPlayer::PLAYER::BATTLE);
 
-	BattleSystem()->SetBattleCharacters({ CHARACTER::JaneDoe,CHARACTER::Miyabi,CHARACTER::Corin });
 	auto pCloud = ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Cloud));
 	pCloud->Set_Alive(true);
 
@@ -445,7 +444,7 @@ void CTestLevel::Free()
 	__super::Free();
 	//CBattleSystem::GetInstance()->DestroyInstance();
 	//CDataBase::GetInstance()->DestroyInstance();
+	m_pPlayer->Clear_Characters();
 	m_pCamDirector->DestroyInstance();
 	m_pGameInstance->DestroyInstance();
-	m_pPlayer->Clear_Characters();
 }

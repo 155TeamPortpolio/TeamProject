@@ -32,7 +32,8 @@ CSoundData* CSoundData::Create( const string& filePath, const string& soundKey)
 
 void CSoundData::Free()
 {
-	if (!m_pSound) return;   // 置社 号嬢
-	m_pSound->release();
+	if (!m_pSound) 
+		return;   // 置社 号嬢
+	
 	m_pSound = nullptr;
 }

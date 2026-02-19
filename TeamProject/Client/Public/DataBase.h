@@ -49,6 +49,7 @@ public:
     HRESULT LoadTVData(const string& csvPath);
     HRESULT LoadGachaChannelData(const string& csvPath);
     HRESULT LoadPartyData(const string& csvPath);
+    vector<CHARACTER> Get_EnableCharacters();
     HRESULT LoadSpeechBubble(const string& csvPath);
 
 public:
@@ -58,7 +59,6 @@ public:
 
 private:
     vector<string_view> SplitFileName(string_view s, _char delim);
-
 //enum 변환함수
 private:
     DayPhase        StringToDayPhase(const string& str);

@@ -4,6 +4,8 @@
 #include "SkeletalModel.h"
 #include "Material.h"
 #include "Animator3D.h"
+#include "GameInstance.h"
+#include "PipeLine.h"
 
 CCrowdNpc::CCrowdNpc()
 {
@@ -42,6 +44,18 @@ void CCrowdNpc::Awake()
 
 void CCrowdNpc::Priority_Update(_float dt)
 {
+  auto pPipeLine = RenderSystem()->Get_Pipeline();
+  if (pPipeLine) {
+      auto pModel = Get_Component<CModel>();
+      auto box = pModel->Get_LocalBoundingBox();
+     _bool isVisible =  pPipeLine->isVisible(pModel->Get_LocalBoundingBox(), _smatrix(m_pTransform->Get_WorldMatrix()));
+     if (isVisible) {
+         m_eRenderLayer = RENDER_LAYER::Default;
+     }
+     else {
+         m_eRenderLayer = RENDER_LAYER::None;
+     }
+  }
 }
 
 void CCrowdNpc::Update(_float dt)
