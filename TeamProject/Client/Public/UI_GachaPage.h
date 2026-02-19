@@ -5,13 +5,16 @@ NS_BEGIN(Client)
 
 class CUI_GachaPage final : public CUI_Object
 {
+public:
+	enum class CHANNEL { MIYABI, JANEDOE, ALICE, ENGINE1, ENGINE2, NORMAL, BANGBOO, END };
+
 private:
 	CUI_GachaPage() {}
 	CUI_GachaPage(const CUI_GachaPage& rhs) : CUI_Object(rhs) {}
 	virtual ~CUI_GachaPage() DEFAULT;
 
 public:
-	void Select_Channel(CUI_Object* pSelected);
+	void Select_Channel(class CUI_GachaChannel* pSelected);
 
 public:
 	virtual HRESULT Initialize_Prototype()           override;
@@ -25,11 +28,13 @@ public:
 	virtual void	UI_DeActive(void* pArg = nullptr) override;
 
 private:
-	CUI_Object* m_pSelectedChannel = {};
+	class CUI_GachaChannel* m_pSelectedChannel = {};
+	class CUI_GachaCharacterIntro* m_pIntro = {};
 
 	_uint	m_iDenny = {};	// µ¥´Ï
 
 private:
+	void Create_CharacterIntro();
 	void Create_BackButton();
 	void Create_Currency();
 	void Create_Channels();

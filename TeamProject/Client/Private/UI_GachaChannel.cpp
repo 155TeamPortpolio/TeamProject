@@ -24,6 +24,7 @@ HRESULT CUI_GachaChannel::Initialize(INIT_DESC* pArg)
 {
     CHANNEL_DESC* pDesc = static_cast<CHANNEL_DESC*>(pArg);
     m_onSelect = pDesc->onSelect;
+    m_eChannel = pDesc->eChannel;
 
     __super::Initialize(pArg);
 
