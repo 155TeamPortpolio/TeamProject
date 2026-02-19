@@ -29,8 +29,6 @@ void CCorinState_SwitchInAttack::Enter(CCorin* pOwner)
     pOwner->Push_Invincible();
     pOwner->Lock_Move();
 
-    CamDirector()->SwitchTo();
-
     __super::Enter(pOwner);
 }
 
@@ -53,6 +51,17 @@ void CCorinState_SwitchInAttack::Update(CCorin* pOwner, _float dt)
         else if (Event.Tag == "SawEnd")
         {
             pOwner->End_AttackCollider("Saw");
+        }
+    }
+
+    auto pCorinState = pOwner->Get_StateMachine();
+    if (pCorinState->Get_Bool("OutReserve"))
+    {
+        if (m_pSubStateMachine->Get_CurrentState()->Get_Tag() == "End" ||
+            Is_AnimEnd())
+        {
+            pCorinState->Set_Trigger("SwitchOut");
+            pCorinState->Set_Bool("OutReserve", false);
         }
     }
 

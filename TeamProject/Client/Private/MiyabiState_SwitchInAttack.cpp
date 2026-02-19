@@ -31,8 +31,6 @@ void CMiyabiState_SwitchInAttack::Enter(CMiyabi* pOwner)
     pOwner->Push_Invincible();
     pOwner->Lock_Move();
 
-    CamDirector()->SwitchTo();
-
     __super::Enter(pOwner);
 }
 

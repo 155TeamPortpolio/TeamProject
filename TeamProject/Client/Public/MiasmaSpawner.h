@@ -18,6 +18,7 @@ public:
 private:
 	_bool m_parabolLeft = {};
 	_uint m_WeaponThrowCount = {};
+	_uint m_MiasmaBladeCount = {};
 };
 
 NS_END

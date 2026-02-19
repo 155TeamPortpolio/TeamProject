@@ -26,6 +26,7 @@ CCyclops_Spit::CCyclops_Spit(const CCyclops_Spit& rhg)
 
 HRESULT CCyclops_Spit::Initialize_Prototype()
 {
+	__super::Initialize_Prototype();
 	Add_Component<CObjectContainer>();
 	Add_Component<CCollider>();
 	Add_Component<CRigidBody>();

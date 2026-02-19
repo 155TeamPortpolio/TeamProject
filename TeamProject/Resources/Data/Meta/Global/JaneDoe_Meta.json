@@ -127,6 +127,31 @@
           "EventTag": "RFootStart"
         },
         {
+          "EventTime": 0.2570500373840332,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.3213125169277191,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.3604288399219513,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.4693956971168518,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.5364522337913513,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
           "EventTime": 0.6118908524513245,
           "EventType": "Notify",
           "EventTag": "CheckCombo"
@@ -325,6 +350,51 @@
           "EventTag": "JaneDoe_Ex_Attack_2.wav"
         },
         {
+          "EventTime": 0.19837555289268494,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.22910980880260468,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.2514619827270508,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.2710201144218445,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.30454838275909424,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.7068875432014465,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.7432098388671875,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.7599999904632568,
+          "EventType": "Notify",
+          "EventTag": "LFootEnd"
+        },
+        {
+          "EventTime": 0.7599999904632568,
+          "EventType": "Notify",
+          "EventTag": "RFootEnd"
+        },
+        {
           "EventTime": 0.8326185345649719,
           "EventType": "Notify",
           "EventTag": "CheckCombo"
@@ -338,6 +408,11 @@
           "EventTime": 1.2293696403503418,
           "EventType": "Notify",
           "EventTag": "RFootEnd"
+        },
+        {
+          "EventTime": 0.8745288848876953,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
         }
       ]
     },
@@ -860,6 +935,61 @@
           "EventTime": 0.6239765882492065,
           "EventType": "Notify",
           "EventTag": "LFootEnd"
+        },
+        {
+          "EventTime": 0.004288499243557453,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.030019493773579597,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.1350877285003662,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.18226119875907898,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.22514620423316956,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.28089669346809387,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.34522417187690735,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.38167640566825867,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.46744638681411743,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.5146198868751526,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.5617933869361877,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
         }
       ]
     },

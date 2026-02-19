@@ -14,6 +14,8 @@ void CMeleeJaeger_Born::Enter(CMeleeJaeger* pOwner)
 
 void CMeleeJaeger_Born::Update(CMeleeJaeger* pOwner, _float dt)
 {
+	pOwner->Update_SpawnSequence(dt);
+
 	_vector3 vRootBoneMoveDelta = pOwner->Get_Component<CAnimator3D>()->Get_RootBoneMoveDelta();
 	_quaternion qRot = pOwner->Get_Component<CTransform>()->Get_QuaternionRotate();
 	pOwner->Get_Component<CCharacterController>()->Move_RootMotion(

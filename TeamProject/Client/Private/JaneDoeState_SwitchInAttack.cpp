@@ -30,8 +30,6 @@ void CJaneDoeState_SwitchInAttack::Enter(CJaneDoe* pOwner)
     pOwner->Push_Invincible();
     pOwner->Lock_Move();
 
-    CamDirector()->SwitchTo();
-
     __super::Enter(pOwner);
 }
 

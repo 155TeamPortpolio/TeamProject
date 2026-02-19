@@ -124,6 +124,15 @@ void CJaneDoe::Awake()
 void CJaneDoe::Priority_Update(_float dt)
 {
     __super::Priority_Update(dt);
+
+    m_fMotionBlurFade = max(0.f, m_fMotionBlurFade - dt * 6.f);
+    if (m_fMotionBlurFade <= 0.01f && !m_BoneMatrices.empty())
+    {
+        m_fRimLightPower = 0.f;
+        m_BoneMatrices.clear();
+        m_WorldMatrices.clear();
+    }
+
     if (!m_BoneMatrices.empty() && m_pCCT->Get_CompActive())
         Update_MotionBlurQueue();
 
@@ -412,11 +421,7 @@ void CJaneDoe::OnDefensiveAssist()
 
 void CJaneDoe::Add_MotionBlur()
 {
-    //++m_iFrameCount;
-    //if (m_iFrameCount < FRAMECOUNT)
-    //    return;
-    //m_iFrameCount = 0;
-
+    m_fMotionBlurFade = 1.f;
     if (m_BoneMatrices.size() > 5)
     {
         m_BoneMatrices.pop_front();
@@ -437,9 +442,9 @@ void CJaneDoe::Add_MotionBlur()
 
 void CJaneDoe::Clear_MotionBlur()
 {
-    m_fRimLightPower = 0.f;
-    m_BoneMatrices.clear();
-    m_WorldMatrices.clear();
+    //m_fRimLightPower = 0.f;
+    //m_BoneMatrices.clear();
+    //m_WorldMatrices.clear();
 }
 
 HRESULT CJaneDoe::Initialize_StateMachine()
@@ -982,23 +987,17 @@ void CJaneDoe::Process_EndState(const string& strCurrentState)
 HRESULT CJaneDoe::Update_MotionBlurQueue()
 {
     auto Model = Get_Component<CSkeletalModel>();
-    //m_vRimLightColor = _float3(1.f, 0.1f, 0.f);
-    //m_fRimLightPower = 6.f;
-    m_vRimLightColor = _float3(0.5f, 0.05f, 0.f);
-    m_fRimLightPower = 4.f;
+    m_vRimLightColor = _float3(0.5f, 0.05f, 0.f) * m_fMotionBlurFade;
+    m_fRimLightPower = 4.f * m_fMotionBlurFade;
 
     for (_int k = m_BoneMatrices.size() - 1; k >= 0; --k)
     {
         _float t = (_float)k / (_float)(m_BoneMatrices.size());
         _float4 vColor;
-        //vColor.x = 0.3f + (0.7f * t);
-        //vColor.y = 0.0f + (0.15f * t);
-        //vColor.z = 0.0f;
-        //vColor.w = 1.f - 0.08f + (0.9f * t);
         vColor.x = 0.22f + (0.52f * t);
         vColor.y = 0.0f + (0.12f * t); 
         vColor.z = 0.0f;
-        vColor.w = 0.15f + (0.4f * t);
+        vColor.w = (0.5f + (0.4f * t)) * m_fMotionBlurFade;
 
         for (_int i = 0; i < Model->Get_MeshCount(); ++i)
         {

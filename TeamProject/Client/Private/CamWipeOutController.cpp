@@ -502,7 +502,6 @@ void CamWipeOutController::Advance()
         m_shotElapsed = 0.f;
         return;
     }
-
     if (m_state == State::Shot2_Hold)
     {
         m_state = State::Shot3_Snap;
@@ -512,7 +511,6 @@ void CamWipeOutController::Advance()
         m_shotElapsed = 0.f;
         return;
     }
-
     if (m_state == State::Shot3_Hold)
     {
         m_state = State::Shot4_Snap;
@@ -533,7 +531,6 @@ void CamWipeOutController::Advance()
         m_shotElapsed = 0.f;
         return;
     }
-
     if (m_state == State::Shot4_Hold)
     {
         End();
@@ -554,7 +551,6 @@ void CamWipeOutController::UpdatePivots(_float dt)
         m_aFace = Vector3::Lerp(m_aFace, attackerSample.facePivot, t);
         m_aValid = true;
     }
-
     if (m_victimBlocked)
     {
         m_vBase = Vector3::Zero;

@@ -11,7 +11,7 @@ void CThugBulkyEnforcer_Born::Enter(CThugBulkyEnforcer* pOwner)
 
 void CThugBulkyEnforcer_Born::Update(CThugBulkyEnforcer* pOwner, _float dt)
 {
-
+	pOwner->Update_SpawnSequence(dt);
 }
 
 void CThugBulkyEnforcer_Born::Exit(CThugBulkyEnforcer* pOwner)
