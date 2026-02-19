@@ -40,13 +40,12 @@ void CPlayer::Set_PlayerType(PLAYER ePlayer)
 {
 	m_ePlayerType = ePlayer;
 
-	if (m_ePlayerType == PLAYER::BATTLE)
-	{
-		m_pBattlePlayer->Initialize();
-	}
-	else
+	if (m_ePlayerType == PLAYER::FIELD)
 	{
 		m_pFieldPlayer->Initialize();
+	}
+	else {
+		m_pBattlePlayer->Initialize();
 	}
 }
 
@@ -63,7 +62,7 @@ HRESULT CPlayer::Initialize(INIT_DESC* pArg)
 
 	m_pBattlePlayer = CBattlePlayer::Create();
 	m_pFieldPlayer = CFieldPlayer::Create();
-
+	CBattleSystem::GetInstance()->SetBattlePlayer(m_pBattlePlayer);
 	return S_OK;
 }
 

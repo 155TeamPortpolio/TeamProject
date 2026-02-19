@@ -22,6 +22,8 @@ public:
     virtual void    Render_GUI() override;
     //void          Render_OutLine(ID3D11DeviceContext* pContext, _uint idx);
     
+public:
+    _uint Release() override;
 public: // °í½ºÆ®
     CMiyabi_Ghost* Get_Ghost() { return m_pGhost; }
     const string&  Get_GhostName() const { return m_strGhostName; }

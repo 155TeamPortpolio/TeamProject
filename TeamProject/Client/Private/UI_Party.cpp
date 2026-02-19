@@ -14,6 +14,7 @@
 
 #include "UIDirector.h"
 #include "DataBase.h"
+#include "BattleSystem.h"
 
 HRESULT CUI_Party::Initialize_Prototype()
 {
@@ -213,7 +214,10 @@ void CUI_Party::Create_EnterButton()
     if (!pObj)
         return;
 
-    pObj->Set_OnClick([this]() {   LevelManager()->Request_ChangeLevel("Zero_Level", true);    });
+    pObj->Set_OnClick([this]() {  
+        LevelManager()->Request_ChangeLevel("Zero_Level", true);
+        BattleSystem()->SetBattleCharacters(m_characters);
+        });
     Get_Component<CObjectContainer>()->Add_Child(pObj);
 }
 

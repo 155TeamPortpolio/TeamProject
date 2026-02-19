@@ -120,8 +120,10 @@ HRESULT CTestLevel::Awake()
 	m_pPlayer = dynamic_cast<CPlayer*>(ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Player)));
 	m_pPlayer->Set_PlayerType(CPlayer::PLAYER::BATTLE);
 
+	BattleSystem()->SetBattleCharacters({ CHARACTER::JaneDoe,CHARACTER::Miyabi,CHARACTER::Corin });
 	auto pCloud = ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Cloud));
 	pCloud->Set_Alive(true);
+
 
 	IProtoService* pProto = CGameInstance::GetInstance()->Get_PrototypeMgr();
 	IResourceService* pResource = CGameInstance::GetInstance()->Get_ResourceMgr();

@@ -92,7 +92,7 @@ void CJaeger3::Late_Update(_float dt)
 
 void CJaeger3::Success(_uint curSequenceID)
 {
-	//FieldSystem()->RequestEnter("Tutorial", false);
+	LevelManager()->Request_ChangeLevel("Tutorial_Level", true);
 }
 
 CJaeger3* CJaeger3::Create()

@@ -48,28 +48,6 @@ HRESULT CJaneDoe::Initialize_Prototype()
     Get_Component<CModel>()->Link_Model(G_GlobalLevelKey, "JaneDoeModel.model");
     Get_Component<CMaterial>()->Link_Material(G_GlobalLevelKey, "JaneDoe.mat");
 
-    // 이펙트 리소스 임시 로드
-    {
-        ResourceManager()->Add_ResourcePath("janedoe_normal1_slash.json", "../Bin/Resources/Effect/Data/JaneDoe/janedoe_normal1_slash.json");
-        ResourceManager()->Add_ResourcePath("janedoe_normal2_slash.json", "../Bin/Resources/Effect/Data/JaneDoe/janedoe_normal2_slash.json");
-        ResourceManager()->Add_ResourcePath("janedoe_normal3_slash.json", "../Bin/Resources/Effect/Data/JaneDoe/janedoe_normal3_slash.json");
-        ResourceManager()->Add_ResourcePath("janedoe_normal1_sting.json", "../Bin/Resources/Effect/Data/JaneDoe/janedoe_normal1_sting.json");
-        ResourceManager()->Add_ResourcePath("janedoe_normal2_sting.json", "../Bin/Resources/Effect/Data/JaneDoe/janedoe_normal2_sting.json");
-
-        ResourceManager()->Add_ResourcePath("Eff_MeleeTrail_078_YZ_05.png", "../Bin/Resources/Effect/Texture/Eff_MeleeTrail_078_YZ_05.png");
-        ResourceManager()->Add_ResourcePath("smoke2.png", "../Bin/Resources/Effect/Texture/smoke2.png");
-        ResourceManager()->Add_ResourcePath("Dissolve.png", "../Bin/Resources/Effect/Texture/Dissolve.png");
-        ResourceManager()->Add_ResourcePath("smoke0.png", "../Bin/Resources/Effect/Texture/smoke0.png");
-        ResourceManager()->Add_ResourcePath("Eff_Trail_140_LYF_01.png", "../Bin/Resources/Effect/Texture/Eff_Trail_140_LYF_01.png");
-
-        ResourceManager()->Add_ResourcePath("JaneDoe_Slash0.model", "../Bin/Resources/Effect/Model/JaneDoe_Slash0/JaneDoe_Slash0.model");
-        ResourceManager()->Add_ResourcePath("JaneDoe_Slash0.mat", "../Bin/Resources/Effect/Model/JaneDoe_Slash0/JaneDoe_Slash0.mat");
-        ResourceManager()->Add_ResourcePath("JaneDoe_Slash1.model", "../Bin/Resources/Effect/Model/JaneDoe_Slash1/JaneDoe_Slash1.model");
-        ResourceManager()->Add_ResourcePath("JaneDoe_Slash1.mat", "../Bin/Resources/Effect/Model/JaneDoe_Slash1/JaneDoe_Slash1.mat");
-        ResourceManager()->Add_ResourcePath("JaneDoe_Sting0.model", "../Bin/Resources/Effect/Model/JaneDoe_Sting0/JaneDoe_Sting0.model");
-        ResourceManager()->Add_ResourcePath("JaneDoe_Sting0.mat", "../Bin/Resources/Effect/Model/JaneDoe_Sting0/JaneDoe_Sting0.mat");
-    }
-
     return S_OK;
 }
 

@@ -136,6 +136,7 @@ private: // 초기화
 
 private:
     _bool           m_bAwaked = false;
+    _bool           m_bInitialized = false;
     // 입력
     InputState      m_input;
     _bool           m_bLockInput = false;
