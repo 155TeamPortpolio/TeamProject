@@ -1213,6 +1213,41 @@ Vector3 COrbitCam::PivotStab_Eval(_float dt, const Vector3& rawPivot)
     return m_pivotStab.filteredPivot;
 }
 
+void COrbitCam::DrawDebugPivot()
+{
+#ifdef _USING_GUI
+    const Vector3 pivotWorld = m_pose.pivotCurWorld;
+
+    const Vector3 camPos = m_pTransform->Get_WorldPos();
+    const Vector3 camLook = m_pTransform->Dir(STATE::LOOK);
+    const Vector3 camUp = m_pTransform->Dir(STATE::UP);
+
+    const auto& io = ImGui::GetIO();
+    const float w = io.DisplaySize.x;
+    const float h = io.DisplaySize.y;
+    const float aspect = w / max(h, 0.0001f);
+
+    const float fovDeg = CameraManager()->GetFov();
+    const float fovRad = XMConvertToRadians(fovDeg);
+
+    const Matrix view = Matrix::CreateLookAt(camPos, camPos + camLook, camUp);
+    const Matrix proj = Matrix::CreatePerspectiveFieldOfView(fovRad, aspect, 0.1f, 1000.f);
+
+    const Matrix viewProj = view * proj;
+    const Vector4 clip = Vector4::Transform(Vector4(pivotWorld.x, pivotWorld.y, pivotWorld.z, 1.f), viewProj);
+
+    const float invW = 1.f / clip.w;
+    const float ndcX = clip.x * invW;
+    const float ndcY = clip.y * invW;
+
+    const float sx = (ndcX * 0.5f + 0.5f) * w;
+    const float sy = (-ndcY * 0.5f + 0.5f) * h;
+
+    ImDrawList* dl = ImGui::GetBackgroundDrawList();
+    dl->AddCircleFilled(ImVec2(sx, sy), 4.f, IM_COL32(255, 0, 0, 255));
+#endif
+}
+
 void COrbitCam::SnapFromExternalPose(const Vector3& pivotWorld, const Vector3& camPos, const Quaternion& camRot, _float dist)
 {
     auto cc = Get_Component<CCharacterController>();
@@ -1275,4 +1310,57 @@ CGameObject* COrbitCam::Clone(INIT_DESC* pArg)
         Safe_Release(inst);
     }
     return inst;
+}
+
+void COrbitCam::Render_GUI()
+{
+    Get_Component<CTransform>()->Render_GUI();
+
+#ifdef _USING_GUI
+    ImGui::SeparatorText("OrbitCam");
+
+    const float textLineHeight = ImGui::GetTextLineHeightWithSpacing();
+    const float childHeight = (textLineHeight * 8) + (ImGui::GetStyle().WindowPadding.y * 2);
+
+    const Vector3 pivotWorld = m_pose.pivotCurWorld;
+
+    ImGui::BeginChild("##OrbitCamChild", ImVec2{0, childHeight}, true);
+
+    ImGui::Text("Distance");
+    ImGui::Text("%.3f", m_pose.distCur);
+
+    ImGui::Text("Pivot World");
+    ImGui::Text("x %.3f", pivotWorld.x);
+    ImGui::SameLine(); ImGui::Text("y %.3f", pivotWorld.y);
+    ImGui::SameLine(); ImGui::Text("z %.3f", pivotWorld.z);
+
+    const Vector3 localOffset = m_pose.pivotInternalOffset + m_pose.pivotExternalOffset;
+    ImGui::Text("Pivot LocalOffset");
+    ImGui::Text("x %.3f", localOffset.x);
+    ImGui::SameLine(); ImGui::Text("y %.3f", localOffset.y);
+    ImGui::SameLine(); ImGui::Text("z %.3f", localOffset.z);
+
+    ImGui::EndChild();
+
+    const Vector3 camPos = m_pTransform->Get_WorldPos();
+    const Vector3 camLook = m_pTransform->Dir(STATE::LOOK);
+    const Vector3 camUp = m_pTransform->Dir(STATE::UP);
+
+    const auto& io = ImGui::GetIO();
+    const float w = io.DisplaySize.x;
+    const float h = io.DisplaySize.y;
+
+    const Matrix view = *CameraManager()->Get_ViewMatrix();
+    const Matrix proj = *CameraManager()->Get_ProjMatrix();
+
+    const _float4 vp = {0.f, 0.f, w, h};
+
+    GameInstance()->Get_ClientSize();
+
+    Vector2 screen{};
+
+    ImDrawList* dl = ImGui::GetBackgroundDrawList();
+    if (Helper::WorldToScreen(pivotWorld, screen, view, proj, vp)) 
+        dl->AddCircleFilled(ImVec2(screen.x, screen.y), 4.f, IM_COL32(255, 0, 0, 255));
+#endif
 }

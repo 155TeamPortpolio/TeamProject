@@ -18,6 +18,7 @@ public:
     HRESULT Initialize(INIT_DESC* pArg) override;
     void    Awake()                     override;
     void    Priority_Update(_float dt)  override;
+    void    Render_GUI()                override;
 
 public:
     void    SetTarget(OBJECT_HANDLE h);
@@ -141,6 +142,8 @@ private:
 
     void    PivotStab_Reset(const Vector3& pivot);
     Vector3 PivotStab_Eval(_float dt, const Vector3& rawPivot);
+
+    void    DrawDebugPivot();
 
 private:
     OrbitPose     m_pose{};

@@ -161,8 +161,23 @@ Vector3 CamParryController::BuildReturnPresetCamPos() const
     fwd.Normalize();
 
     const Vector3 pivot = BasePivotWorld();
-    return pivot + Vector3::Up * 1.f + fwd * -3.6f;
+
+    Vector3 camPos = pivot + fwd * -3.6f;
+
+    if (core.beginWasChain)
+    {
+        auto attackerCC = attackerObj->Get_Component<CCharacterController>();
+        const Vector3 foot = attackerCC->Get_FootPosition();
+        camPos.y = foot.y + tune.impact.chainEndCamAboveFootY;
+    }
+    else
+    {
+        camPos.y += 1.f;
+    }
+
+    return camPos;
 }
+
 
 CamParryController::ShotGoal CamParryController::BuildExitShot_FromCamPos(const Vector3& pivotWorld, const Vector3& camPosWorld) const
 {
@@ -837,8 +852,16 @@ void CamParryController::Begin()
     shot.shotTo = BuildBaseShot_NoLens(side.sideSign);
     shot.shotTo.dist = startDist;
 
-    const _int lookSign = -side.sideSign;
-    shot.shotTo.yawDeg = Math::WrapDeg(shot.shotTo.yawDeg + (_float)lookSign * tune.impact.impactStartYawExtraDeg);
+    if (chain)
+    {
+        shot.shotTo.yawDeg = 0.f;
+        shot.shotTo.yawWeight = 1.f;
+    }
+    else
+    {
+        const _int lookSign = -side.sideSign;
+        shot.shotTo.yawDeg = Math::WrapDeg(shot.shotTo.yawDeg + (_float)lookSign * tune.impact.impactStartYawExtraDeg);
+    }
 
     piv.enterCamY = CurCamPosWorld().y;
 
@@ -870,6 +893,7 @@ void CamParryController::Begin()
 
     orbit->ParryMode_Begin();
 }
+
 
 void CamParryController::End()
 {
