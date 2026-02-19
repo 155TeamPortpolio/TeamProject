@@ -26,6 +26,8 @@ CThugPoacher_Arrow::CThugPoacher_Arrow(const CThugPoacher_Arrow& rhg)
 
 HRESULT CThugPoacher_Arrow::Initialize_Prototype()
 {
+	__super::Initialize_Prototype();
+
 	Add_Component<CObjectContainer>();
 	Add_Component<CCollider>();
 	Add_Component<CRigidBody>();

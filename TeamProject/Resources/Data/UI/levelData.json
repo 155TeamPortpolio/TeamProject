@@ -18,6 +18,12 @@
           "prototypeTag": "Proto_GameObject_SceneFrame",
           "instanceName": "scene_frame",
           "prefabPath" : ""
+        },
+        
+        {
+          "prototypeTag": "Proto_GameObject_Mouse",
+          "instanceName": "mouse",
+          "prefabPath" : ""
         }
       ]
     },
