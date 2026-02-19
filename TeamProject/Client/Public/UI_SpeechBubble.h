@@ -13,7 +13,7 @@ class CUI_SpeechBubble final : public CUI_WorldToScreen
 public:
 	typedef struct tagSpeechBubbleDesc : public UI_DESC {
 		wstring strSpeech = {};
-		class CCharacterController* pCCT = { nullptr };
+		_float3 vPosition = {};
 	}SPEECHBUBBLE_DESC;
 
 private:
@@ -39,6 +39,7 @@ private:
 	 
 	class CCharacterController* m_pCCT = { nullptr }; 
 	_float3 m_vPosition = {};
+	_float3 m_vOffset = { 0.f, 0.2f, 0.f};
 
 	STATE_VISIBLE		m_eVisible = { STATE_VISIBLE::END };
 

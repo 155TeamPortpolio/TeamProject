@@ -15,6 +15,7 @@
 #include "UIDirector.h"
 #include "DataBase.h"
 #include "BattleSystem.h"
+#include "Player.h"
 
 HRESULT CUI_Party::Initialize_Prototype()
 {
@@ -218,6 +219,8 @@ void CUI_Party::Create_EnterButton()
         return;
 
     pObj->Set_OnClick([this]() {  
+        if (auto pPlayer = dynamic_cast<CPlayer*>(ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Player))))
+            pPlayer->Unlock_Input();
         LevelManager()->Request_ChangeLevel("Zero_Level", true);
         BattleSystem()->SetBattleCharacters(m_characters);
         });

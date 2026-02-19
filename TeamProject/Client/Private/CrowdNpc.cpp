@@ -28,6 +28,10 @@ HRESULT CCrowdNpc::Initialize_Prototype()
 HRESULT CCrowdNpc::Initialize(INIT_DESC* pArg)
 {
     __super::Initialize(pArg);
+
+    auto Desc = static_cast<CrowdNpcDesc*>(pArg);
+    m_strSpeech = Desc->Text;
+
     return S_OK;
 }
 
