@@ -601,6 +601,8 @@ void CDefilerState_Attack_07::Update(CDefiler* pOwner, _float dt)
 {
 	ComboTransition(pOwner);
 	Update_Effects(pOwner);
+
+
 }
 
 void CDefilerState_Attack_07::Exit(CDefiler* pOwner)
